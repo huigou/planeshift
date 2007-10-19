@@ -15,7 +15,6 @@
 			Name="Release|Win32"
 			OutputDirectory="..\..\out\release71\build\libpsutil\"
 			IntermediateDirectory="..\..\out\release71\build\libpsutil\"
-			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
 			<Tool
@@ -66,7 +65,6 @@
 				TargetMachine="1"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\out\release71\libs\libpsutil.lib"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
@@ -97,7 +95,6 @@
 			Name="Debug|Win32"
 			OutputDirectory="..\..\out\debug71\build\libpsutil\"
 			IntermediateDirectory="..\..\out\debug71\build\libpsutil\"
-			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
 			<Tool
@@ -136,7 +133,6 @@
 				TargetMachine="1"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\out\debug71\libs\libpsutil_d.lib"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
@@ -167,7 +163,6 @@
 			Name="MemoryTracker|Win32"
 			OutputDirectory="..\..\out\debug71\build\libpsutil\"
 			IntermediateDirectory="..\..\out\debug71\build\libpsutil\"
-			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
 			<Tool
@@ -206,7 +201,6 @@
 				TargetMachine="1"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\out\debug71\libs\libpsutil_d.lib"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
@@ -237,7 +231,6 @@
 			Name="RefTracker|Win32"
 			OutputDirectory="..\..\out\debug71\build\libpsutil\"
 			IntermediateDirectory="..\..\out\debug71\build\libpsutil\"
-			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
 			<Tool
@@ -276,7 +269,6 @@
 				TargetMachine="1"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\out\debug71\libs\libpsutil_d.lib"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
@@ -307,7 +299,6 @@
 			Name="DebugPSReleaseCSCEL|Win32"
 			OutputDirectory="..\..\out\debug71\build\libpsutil\"
 			IntermediateDirectory="..\..\out\debug71\build\libpsutil\"
-			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
 			<Tool
@@ -346,7 +337,6 @@
 				TargetMachine="1"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\out\debug71\libs\libpsutil_d.lib"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
