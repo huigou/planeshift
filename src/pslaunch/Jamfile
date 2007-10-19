@@ -1,7 +1,7 @@
 SubDir TOP src pslaunch ;
 
 Application psupdater :
-	[ Wildcard *.cpp *.h ]
+	[ Wildcard *.cpp *.h ] : console
 ;
 
 ExternalLibs psupdater : CRYSTAL CURL ;
