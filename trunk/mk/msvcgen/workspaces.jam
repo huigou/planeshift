@@ -36,8 +36,8 @@ MsvcGenWorkspace psstatic : static ^lib.* :
 
 # Minimal workspace
 MsvcGenWorkspace psminimal : :
-  "grp.+_(?!pstypical$)" static appase_2_spr appeedit apppawseditor apppaws_generic apppssetup apptexparse appupdater ;
+  "grp.+_(?!pstypical$)" static appeedit apppsupdater ;
 
 # Static minimal workspace
 MsvcGenWorkspace psminimalstatic : static ^lib.* :
-  "grp.+_(?!psstatic$)" appase_2_spr appeedit apppawseditor apppaws_generic apppssetup apptexparse appupdater ;
+  "grp.+_(?!psstatic$)" appeedit apppsupdater ;
