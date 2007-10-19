@@ -630,7 +630,7 @@ public:
     bool FitsInSlots(PSITEMSTATS_SLOTLIST slotmask);
     bool FitsInSlot(INVENTORY_SLOT_NUMBER slot);
     float GetDecayResistance();
-    psMoney& GetPrice();
+    psMoney GetPrice();
     psMoney GetSellPrice();    ///< Merchants want a percentage
     psItemCategory* GetCategory();
 

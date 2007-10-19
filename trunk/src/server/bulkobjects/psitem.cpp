@@ -26,6 +26,7 @@
 #include "util/log.h"
 #include "util/psstring.h"
 #include "util/serverconsole.h"
+#include "util/mathscript.h"
 
 #include "psitem.h"
 #include "pscharacter.h"
@@ -1465,9 +1466,34 @@ float psItem::GetDecayResistance()
     return decay_resistance;
 }
 
-psMoney& psItem::GetPrice()
+psMoney psItem::GetPrice()
 {
-    return current_stats->GetPrice();
+    static MathScript *script;
+    if (!script)
+        script = psserver->GetMathScriptEngine()->FindScript("Calc Item Price");
+    if (!script)
+    {
+        Error1("Cannot find mathscript: Calc Item Price");
+        return current_stats->GetPrice();
+    }
+
+    static MathScriptVar *price;
+    static MathScriptVar *quality;
+    static MathScriptVar *maxquality;
+    static MathScriptVar *finalprice;
+
+    price = script->GetOrCreateVar("Price");
+    quality = script->GetOrCreateVar("Quality");
+    maxquality = script->GetOrCreateVar("MaxQuality");
+    finalprice = script->GetOrCreateVar("FinalPrice");
+
+    price->SetValue(current_stats->GetPrice().GetTotal());
+    quality->SetValue(GetItemQuality());
+    maxquality->SetValue(GetMaxItemQuality());
+
+    script->Execute();
+
+    return psMoney((int)(finalprice->GetValue()));
 }
 
 psMoney psItem::GetSellPrice()
@@ -1475,7 +1501,7 @@ psMoney psItem::GetSellPrice()
     // Merchants like 20% profit. So we take the total price,
     // multiply with 0.8 and make a new money with that amount
     // as trias.
-    int price = int(current_stats->GetPrice().GetTotal() * 0.8);
+    int price = int(GetPrice().GetTotal() * 0.8);
     if (price == 0)
         price = 1;
     return psMoney(price);

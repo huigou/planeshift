@@ -1,3 +1,7 @@
+*** 2007-10-20 by Sasha Levin
+- Added dynamic item price calculation. Now it uses math script to include quality of the
+  item in the calculation.
+
 *** 2007-10-19 by Michael Gist
 - Wrote a new updater. Console only atm.
 
