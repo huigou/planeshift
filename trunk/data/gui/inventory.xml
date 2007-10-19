@@ -1,0 +1,243 @@
+<widget_description>
+
+<widget name="InventoryWindow" factory="pawsInventoryWindow" 
+        visible="no" savepositions="yes" movable="yes" 
+        resizable="no" configurable="yes">
+        
+    <frame x="200" y="100" width="570" height="450" border="yes" />
+    <bgimage resource="Inventory" alpha="200" />
+    <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="64" size="15" />
+        
+    <title resource="Blue Title" text="Inventory" align="left" close_button="yes"/>    
+
+    <widget name="View" factory="pawsButton" id="1005" tooltip="View Item">
+        <frame x="481" y="25" width="32" height="32"/>
+        <bgimage resource="view"/>
+    </widget>
+
+    <widget name="InventoryDoll" factory="pawsInventoryDollView" >
+        <frame x="200" y="86" width="175" height="293" border="no"/>
+        <mask resource="invborder" />
+        <map file="/planeshift/world/podium" sector="room" />
+        <distance value="4.5"/>
+        <subscriptions>
+            <subscribe data="sigActorUpdate" />
+        </subscriptions>                    
+    </widget>
+
+    <widget name="BulkList" factory="pawsListBox" selectable="0">
+        <frame x="449" y="60" width="116" height="344" border="no"/>
+        <columns height="48" headings="no" >
+            <column width="48" >
+                <widget name="Bulk0" factory="pawsSlot">
+                    <frame x="0" y="0" width="48" height="48" />
+                    <bgimage resource="Bulk Item Slot" alpha="0"/>
+                    <subscriptions>
+                        <subscribe data="sigClearSlot" />
+                    </subscriptions>                        
+                </widget>
+            </column>
+            <column width="48" >
+                <widget name="Bulk1" factory="pawsSlot">
+                    <frame x="0" y="0" width="48" height="48" />
+                    <bgimage resource="Bulk Item Slot" alpha="0"/>
+                    <subscriptions>
+                        <subscribe data="sigClearSlot" />
+                    </subscriptions>                                            
+                </widget>
+            </column>
+        </columns>
+    </widget>
+    
+    <widget name="Money" factory="pawsMoney" border="no" spacing="7">
+        <frame x="17" y="66" width="0" height="0"/>        
+        <subscriptions>
+            <subscribe data="sigInvMoney" />
+        </subscriptions> 
+    </widget>
+    
+    
+    <widget name="righthand" factory="pawsSlot" tooltip="Right Hand">
+        <frame x="149" y="240" width="47" height="47" />        
+        <ident container="-2" id="0" />
+        <subscriptions>
+            <subscribe data="sigClearSlot" />
+            <subscribe data="invslot_0" />
+        </subscriptions>                                
+    </widget>
+    <widget name="lefthand" factory="pawsSlot" tooltip="Left Hand">
+        <frame x="378" y="240" width="47" height="47" />
+        <ident container="-2" id="1" />
+        <subscriptions>
+            <subscribe data="sigClearSlot" />
+            <subscribe data="invslot_1" />
+        </subscriptions>                                
+    </widget>
+
+    <widget name="leftfinger" factory="pawsSlot" tooltip="Right Fingers">
+        <frame x="14" y="243" width="47" height="47" />        
+        <ident container="-2" id="0" />
+        <subscriptions>
+            <subscribe data="sigClearSlot" />
+            <subscribe data="invslot_4" />
+        </subscriptions>     
+    </widget>
+    <widget name="rightfinger" factory="pawsSlot" tooltip="Left Fingers">
+        <frame x="75" y="243" width="47" height="47" />
+        <ident container="-2" id="1" />
+        <subscriptions>
+            <subscribe data="sigClearSlot" />
+            <subscribe data="invslot_3" />
+        </subscriptions>     
+    </widget>
+
+    <widget name="head" factory="pawsSlot" tooltip="Head">
+        <frame x="265" y="22" width="48" height="48" />
+        <subscriptions>
+            <subscribe data="sigClearSlot" />
+            <subscribe data="invslot_5" />
+        </subscriptions>                                        
+    </widget>
+    <widget name="neck" factory="pawsSlot" tooltip="Neck">
+        <frame x="358" y="55" width="48" height="48" />
+        <subscriptions>
+            <subscribe data="sigClearSlot" />
+            <subscribe data="invslot_6" />
+        </subscriptions>                                        
+    </widget>
+    <widget name="back" factory="pawsSlot" tooltip="Back">
+        <frame x="175" y="56" width="48" height="48" />
+        <subscriptions>
+            <subscribe data="sigClearSlot" />
+            <subscribe data="invslot_7" />
+        </subscriptions>                                        
+    </widget>
+    
+    <widget name="arms" factory="pawsSlot" tooltip="Arms">
+        <frame x="378" y="116" width="48" height="48" />
+        <subscriptions>
+            <subscribe data="sigClearSlot" />
+            <subscribe data="invslot_8" />
+        </subscriptions>                                        
+    </widget>
+    
+    <widget name="gloves" factory="pawsSlot" tooltip="Gloves">
+        <frame x="378" y="173" width="48" height="48" />
+        <subscriptions>
+            <subscribe data="sigClearSlot" />
+            <subscribe data="invslot_9" />
+        </subscriptions>                                        
+    </widget>
+    
+    <widget name="boots" factory="pawsSlot" tooltip="Boots">
+        <frame x="263" y="399" width="48" height="48" />
+        <subscriptions>
+            <subscribe data="sigClearSlot" />
+            <subscribe data="invslot_10" />
+        </subscriptions>                                        
+    </widget>
+    
+    <widget name="legs" factory="pawsSlot" tooltip="Legs">
+        <frame x="350" y="368" width="48" height="48" />
+        <subscriptions>
+            <subscribe data="sigClearSlot" /> 
+            <subscribe data="invslot_11" />
+        </subscriptions>                                        
+    </widget>
+    
+    <widget name="belt" factory="pawsSlot" tooltip="Belt">
+        <frame x="178" y="369" width="48" height="48" />
+        <subscriptions>
+            <subscribe data="sigClearSlot" />
+            <subscribe data="invslot_12" />
+        </subscriptions>                                        
+    </widget>
+
+    <widget name="bracers" factory="pawsSlot" tooltip="Bracers">
+        <frame x="149" y="173" width="48" height="48" />
+        <subscriptions>
+            <subscribe data="sigClearSlot" />
+            <subscribe data="invslot_13" />
+        </subscriptions>                                        
+    </widget>
+    
+    <widget name="torso" factory="pawsSlot" tooltip="Torso">
+        <frame x="149" y="118" width="48" height="48" />
+        <subscriptions>
+            <subscribe data="sigClearSlot" />
+            <subscribe data="invslot_14" />
+        </subscriptions>                                        
+    </widget>
+
+    <widget name="mind" factory="pawsSlot" tooltip="Mind">
+        <frame x="46" y="352" width="48" height="48" />
+        <ident container="-2" id="13" />
+        <subscriptions>
+            <subscribe data="sigClearSlot" />
+            <subscribe data="invslot_15" />
+        </subscriptions>                        
+    </widget>
+    
+    
+    
+    <widget name="TotalTrias" factory="pawsTextBox">
+        <frame x="60" y="172" width="90" height="30" />
+        <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="64" size="12" />    
+        <text string="0" />
+        <subscriptions>
+            <subscribe data="sigInvMoneyTotal" />
+        </subscriptions>
+    </widget>
+
+    
+    <widget name="TotalWeight" factory="pawsTextBox">
+        <frame x="60" y="185" width="90" height="30" />
+        <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="64" size="12" />    
+        <text string="0" />
+        <subscriptions>
+            <subscribe data="sigInvWeightTotal" />
+        </subscriptions>        
+    </widget>
+    
+    <widget name="TotalCapacity" factory="pawsTextBox">
+        <frame x="70" y="212" width="60" height="30"/>
+        <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="64" size="12" />            
+        <text string="0" />
+        <subscriptions>
+            <subscribe data="fmaxcapacity" />
+        </subscriptions>
+    </widget>
+    
+        <widget name="CurrCapacity" factory="pawsTextBox">
+        <frame x="5" y="212" width="60" height="30"/>
+        <font name="/planeshift/data/ttf/cupandtalon.ttf" r="215" g="167" b="32" size="12" />            
+        <text string="0" />
+        <subscriptions>
+            <subscribe data="fcurrcap" />
+        </subscriptions>
+    </widget>
+        
+            
+    <widget name="TotalTriasLabel" factory="pawsTextBox">
+        <frame x="5" y="172" width="50" height="30" />
+        <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="128" size="10" />    
+        <text string="Trias" />
+    </widget>
+
+    <widget name="TotalWeightLabel" factory="pawsTextBox">
+        <frame x="5" y="185" width="50" height="30" />
+        <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="128" size="10" />    
+        <text string="Weight:" />
+    </widget>
+    
+    <widget name="TotalCapLabel" factory="pawsTextBox">
+        <frame x="5" y="200" width="50" height="30" />
+        <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="128" size="10" />    
+        <text string="Capacity:" />
+    </widget>
+    
+</widget>
+
+
+
+</widget_description>

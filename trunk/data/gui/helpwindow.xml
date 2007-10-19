@@ -1,0 +1,16 @@
+<widget_description>
+    <widget name="HelpWindow" factory="pawsHelp" visible="no" savepositions="yes" movable="yes" resizable="no" configurable="yes">
+        <frame x="100" y="90" width="630" height="285" border="yes"/>
+        <bgimage resource="Help Background" alpha="0"/>
+        <title resource="Blue Title" text="Help" align="left" close_button="yes"/>
+        <widget name="HelpText" factory="pawsMultiLineTextBox">
+            <frame x="294" y="29" width="300" height="224" border="no"/>
+            <attachpoints>
+                <attach point="ATTACH_RIGHT"/>
+                <attach point="ATTACH_TOP"/>
+                <attach point="ATTACH_LEFT"/>
+                <attach point="ATTACH_BOTTOM"/>
+            </attachpoints>
+        </widget>
+    </widget>
+</widget_description>

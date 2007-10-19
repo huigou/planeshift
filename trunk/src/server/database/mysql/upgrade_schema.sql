@@ -1,0 +1,784 @@
+# from 1086 to 1088
+
+ALTER TABLE traits ADD shader varchar(32);
+ALTER TABLE character_quests DROP notes;
+
+# from 1088 to 1090
+
+ALTER TABLE accounts ADD (spam_points tinyint(1) default '0');
+ALTER TABLE accounts MODIFY COLUMN spam_points tinyint(1) default '0' AFTER banned_until;
+
+ALTER TABLE characters ADD (animal_affinity text);
+ALTER TABLE characters ADD (familiar_id int(10) NOT NULL DEFAULT '0');
+
+DELETE FROM movement_base where name='Fly';
+UPDATE movement_base SET family=4 where id=4 and id=5;
+
+#ALTER TABLE skills ADD (category varchar(255) NOT NULL default 'VARIOUS');
+source skills.sql
+
+UPDATE server_options set option_value=1090 where option_name='db_version';
+
+#from 1090 to 1091
+
+ALTER TABLE characters ADD (last_login datetime default NULL);
+ALTER TABLE characters MODIFY COLUMN last_login datetime default NULL AFTER guild_private_notes;
+
+UPDATE server_options SET option_value=1091 where option_name='db_version';
+
+#from 1091 to 1092
+ALTER TABLE characters ADD ( `character_type` int(10) unsigned default '0' );
+ALTER TABLE characters MODIFY COLUMN character_type int(10) unsigned default '0' AFTER racegender_id;
+ALTER TABLE characters ADD ( `owner_id` int(10) unsigned NOT NULL default '0' );
+
+UPDATE server_options SET option_value=1092 where option_name='db_version';
+
+#from 1092 to 1093
+
+DROP TABLE movement_base;
+DROP TABLE movement_require;
+DROP TABLE movement_variant;
+DROP TABLE movement_extras;
+SOURCE movement_extras.sql;
+SOURCE movement_require.sql;
+SOURCE movement_variant.sql;
+SOURCE movement_base.sql;
+
+UPDATE server_options SET option_value=1093 where option_name='db_version';
+
+ALTER TABLE tips MODIFY COLUMN tip varchar(64);
+ALTER TABLE server_options MODIFY COLUMN option_value varchar(90);
+ALTER TABLE guilds MODIFY COLUMN motd char(90);
+
+
+#from 1093 to 1096
+
+INSERT INTO item_categories VALUES (21,'Coins');
+
+ALTER TABLE character_quests CHANGE completiondate remaininglockout int(10) default '0';
+ALTER TABLE npc_triggers DROP COLUMN quest_id;
+ALTER TABLE quests ADD COLUMN category varchar(30) NOT NULL DEFAULT '' AFTER quest_lockout_time;
+ALTER TABLE quests ADD COLUMN prerequisite varchar(250) NOT NULL DEFAULT '' AFTER category;
+ALTER TABLE quest_scripts ADD COLUMN quest_id int(10) unsigned NOT NULL DEFAULT '0' AFTER id;
+
+UPDATE quests, quest_scripts  SET quests.category=quest_scripts.category where quests.id=quest_scripts.id;
+UPDATE quest_scripts SET quest_id=id;
+
+ALTER TABLE quest_scripts DROP COLUMN category;
+ALTER TABLE quest_scripts DROP COLUMN name;
+ALTER TABLE accounts MODIFY COLUMN security_level tinyint(3);
+
+UPDATE server_options SET option_value=1096 where option_name='db_version';
+
+#from 1096 to 1097
+SOURCE command_access.sql;
+
+#from 1097 to 1098
+
+SOURCE bans.sql;
+
+ALTER TABLE accounts DROP COLUMN banned_until;
+ALTER TABLE accounts ADD COLUMN last_login_hostname varchar(255) default NULL AFTER last_login_ip;
+
+UPDATE server_options SET option_value=1098 where option_name='db_version';
+
+#from 1098 to 1099
+
+ALTER TABLE item_stats MODIFY COLUMN id bigint(20);
+ALTER TABLE hunt_locations MODIFY COLUMN itemid bigint(20);
+ALTER TABLE natural_resources MODIFY COLUMN item_id_reward bigint(20);
+ALTER TABLE spell_glyphs MODIFY COLUMN item_id bigint(20);
+ALTER TABLE loot_rule_details MODIFY COLUMN item_stat_id bigint(20);
+
+DROP TABLE command_group_assignment;
+DROP TABLE command_groups;
+SOURCE command_access.sql;
+
+UPDATE server_options SET option_value=1099 where option_name='db_version';
+
+#from 1099 to 1100
+
+ALTER TABLE accounts ADD COLUMN advisor_points int(10) NOT NULL default '0' AFTER spam_points;
+ALTER TABLE characters DROP COLUMN advisor_points;
+
+UPDATE server_options SET option_value=1100 where option_name='db_version';
+
+# Does not require a db version dump.
+drop table sys_modules;
+drop table sys_privileges;
+drop table sys_privileges_list;
+drop table sys_programs;
+
+#from 1100 to 1101
+
+DROP TABLE command_group_assignment;
+DROP TABLE command_groups;
+SOURCE command_access.sql;
+
+UPDATE server_options SET option_value=1101 where option_name='db_version';
+
+#from 1101 to 1102
+
+ALTER TABLE item_stats ADD COLUMN cstr_id_part_mesh int(10) NOT NULL default '0' AFTER cstr_id_part;
+UPDATE server_options SET option_value=1102 where option_name='db_version';
+
+#from 1102 to 1103
+
+DROP TABLE command_group_assignment;
+DROP TABLE command_groups;
+SOURCE command_access.sql;
+
+UPDATE characters SET mod_hitpoints = base_hitpoints_max WHERE (character_type = 1 OR character_type = 2) AND base_hitpoints_max > 0.0;
+
+UPDATE server_options SET option_value=1103 where option_name='db_version';
+
+#from 1103 to 1104
+
+ALTER TABLE sectors ADD COLUMN rain_min_fade_in int(10) unsigned NOT NULL DEFAULT '0' AFTER rain_max_drops;
+ALTER TABLE sectors ADD COLUMN rain_max_fade_in int(10) unsigned NOT NULL DEFAULT '0' AFTER rain_min_fade_in;
+ALTER TABLE sectors ADD COLUMN rain_min_fade_out int(10) unsigned NOT NULL DEFAULT '0' AFTER rain_max_fade_in;
+ALTER TABLE sectors ADD COLUMN rain_max_fade_out int(10) unsigned NOT NULL DEFAULT '0' AFTER rain_min_fade_out;
+
+UPDATE server_options SET option_value=1104 where option_name='db_version';
+
+#from 1104 to 1105
+
+ALTER TABLE characters
+  ADD COLUMN help_event_flags int(11) unsigned NULL DEFAULT 0 COMMENT 'Bit field of which instruction events have played for him.';
+ALTER TABLE `tips`
+  CHANGE COLUMN `id` `id` int(10) unsigned NULL auto_increment;
+ALTER TABLE `tips`
+  CHANGE COLUMN `tip` `tip` varchar(255) NOT NULL DEFAULT '';
+
+
+INSERT INTO `tips` VALUES (1001,'Welcome to the world of Yliakum, a huge underground cave with many strange and wonderful sights.  Use your arrow keys to walk around and explore.');
+INSERT INTO `tips` VALUES (1002,'You can move using the arrow keys, or strafe using WASD keys.  Holding Shift makes you run.  Movement takes your stamina, which means you get tired faster running than walking.  Next, find the merchant named Thorian and right-click him.');
+INSERT INTO `tips` VALUES (1003,'When you right-click another player or npc in the game, that is called \"targeting.\"  You always have to target what you are focused on so that PlaneShift knows your intent when attacking, chatting or inspecting.');
+INSERT INTO `tips` VALUES (1004,'To talk to any NPC, target him/her and talk normally in the chat window.  Say \'hello\' to the NPC now and see if he responds in your chat window.');
+INSERT INTO `tips` VALUES (1005,'Congratulations, you now have a quest assigned.  To help find rats, try targeting the sign behind Thorian to get directions.');
+
+
+UPDATE server_options SET option_value=1105 where option_name='db_version';
+
+#from 1105 to 1106
+
+ALTER TABLE sectors ADD COLUMN rain_enabled char(1) NOT NULL DEFAULT 'N' AFTER name;
+UPDATE sectors SET rain_enabled="Y" where rain_max_duration != 0;
+
+UPDATE server_options SET option_value=1106 where option_name='db_version';
+
+#from 1106 to 1107
+
+DROP TABLE command_group_assignment;
+DROP TABLE command_groups;
+SOURCE command_access.sql;
+
+#from 1107 to 1108
+ALTER TABLE characters DROP COLUMN familiar_id;
+SOURCE char_create_affinity.sql;
+
+UPDATE server_options SET option_value=1108 where option_name='db_version';
+
+#from 1108 to 1109
+
+ALTER TABLE characters CHANGE COLUMN `experience_points` `experience_points` int(10) unsigned default '0';
+ALTER TABLE hunt_locations CHANGE COLUMN `itemid` `itemid` int(10) NOT NULL default '0';
+ALTER TABLE item_instances CHANGE COLUMN id id int(10) unsigned NOT NULL auto_increment;
+ALTER TABLE item_instances CHANGE COLUMN parent_item_id parent_item_id int(10) unsigned default '0';
+ALTER TABLE item_stats CHANGE COLUMN `id` `id` int(10) unsigned NOT NULL auto_increment;
+ALTER TABLE loot_rule_details CHANGE COLUMN item_stat_id item_stat_id int(10) unsigned NOT NULL DEFAULT '0';
+ALTER TABLE natural_resources CHANGE COLUMN item_id_reward item_id_reward int(10) unsigned DEFAULT '0';
+ALTER TABLE npc_spawn_rules CHANGE COLUMN min_spawn_time min_spawn_time int(10) unsigned NOT NULL DEFAULT '0';
+ALTER TABLE npc_spawn_rules CHANGE COLUMN max_spawn_time max_spawn_time int(10) unsigned NOT NULL DEFAULT '0';
+ALTER TABLE spell_glyphs CHANGE COLUMN item_id item_id int(10) unsigned NOT NULL DEFAULT '0';
+ALTER TABLE trade_autocontainers CHANGE COLUMN item_instance_id item_instance_id int(10) unsigned DEFAULT '0';
+ALTER TABLE trade_autocontainers CHANGE COLUMN garbage_item_id garbage_item_id int(10) unsigned DEFAULT '0';
+ALTER TABLE trade_combinations CHANGE COLUMN result_id result_id int(10) unsigned NOT NULL;
+ALTER TABLE trade_combinations CHANGE COLUMN item_id item_id int(10) unsigned NOT NULL;
+ALTER TABLE trade_patterns CHANGE COLUMN designitem_id designitem_id int(10) unsigned;
+ALTER TABLE trade_transformations CHANGE COLUMN result_id result_id int(10) unsigned NOT NULL;
+ALTER TABLE trade_transformations CHANGE COLUMN item_id item_id int(10) unsigned NOT NULL;
+ALTER TABLE trade_transformations CHANGE COLUMN workitem_id workitem_id int(10) unsigned NOT NULL;
+ALTER TABLE trade_transformations CHANGE COLUMN equipment_id equipment_id int(10) unsigned;
+ALTER TABLE trade_transformations CHANGE COLUMN garbage_id garbage_id int(10) unsigned;
+
+UPDATE server_options SET option_value=1109 where option_name='db_version';
+
+#from 1109 to 1110
+
+### Create character_relationships table
+CREATE TABLE `character_relationships` 
+( 
+	character_id int(11) NOT NULL default '0' 			COMMENT 'character id from the characters table' ,
+	related_id int(11) NOT NULL default '0'             COMMENT 'character id of the related character' ,
+	relationship_type varchar(15) NOT NULL default ''   COMMENT 'one of three values currently `familiar`, `buddy`, or `spouse` ' ,
+	spousename  varchar(30) default NULL                COMMENT 'used for marriages, historical data in case of deletion' ,
+	
+	PRIMARY KEY (`character_id`, `relationship_type`, `related_id` ), 
+	KEY ( `character_id` ),
+	KEY (`related_id`, `relationship_type`) 
+); 
+
+### Copy Buddies
+INSERT INTO character_relationships ( character_id, related_id, relationship_type )
+SELECT player_id, player_buddy, 'buddy' FROM buddy_list;
+DROP TABLE buddy_list;
+
+### Copy Marriage Data
+ALTER TABLE characters ADD COLUMN old_lastname VARCHAR(30) NOT NULL DEFAULT '' AFTER lastname;
+UPDATE characters c, character_marriage_details cmd SET c.old_lastname = cmd.old_lastname
+	WHERE cmd.character_id = c.id;
+	
+INSERT INTO character_relationships ( character_id, related_id, relationship_type, spousename )
+	SELECT character_id, spouse.id, 'spouse', CONCAT( spouse.name, ' ', spouse.lastname )
+	FROM character_marriage_details cmd, characters spouse
+	WHERE STRCMP( cmd.spousename , CONCAT( spouse.name, ' ', spouse.lastname ) ) = 0;
+	
+DROP TABLE character_marriage_details;
+
+### Copy Pet Data
+INSERT INTO character_relationships ( character_id, related_id, relationship_type )
+	SELECT owner_id, id, 'familiar'
+	FROM characters
+	WHERE owner_id <> 0;
+	
+ALTER TABLE characters DROP COLUMN owner_id;
+
+
+UPDATE server_options SET option_value=1110 where option_name='db_version';
+
+#from 1110 to 1111
+
+source tribes.sql
+source tribe_members.sql
+
+UPDATE server_options SET option_value=1111 where option_name='db_version';
+
+### 1111 to 1112 - Keith
+
+#add item quality tracking columns
+ALTER TABLE `item_stats` CHANGE COLUMN `item_quality` `item_max_quality` int(4) NULL DEFAULT 100;
+
+ALTER TABLE `item_instances` DROP COLUMN `item_decay`;
+ALTER TABLE `item_instances` ADD COLUMN `decay_resistance` float(3,2) NOT NULL DEFAULT 0.0 AFTER `loc_yrot`;
+
+ALTER TABLE `item_stats` DROP COLUMN `decay_resistance`;
+ALTER TABLE `item_stats` ADD COLUMN `decay_rate` float(3,2) NOT NULL DEFAULT 0.1 AFTER `flags`;
+
+# Set all current items to defaults
+update item_stats set decay_rate=0.1;
+update item_stats set item_max_quality=50;
+update item_instances set decay_resistance=0;
+update item_instances set item_quality=50;
+
+UPDATE server_options SET option_value=1112 where option_name='db_version';
+
+### 1112 to 1113 - Luca
+
+ALTER TABLE tips CHANGE COLUMN tip tip text NOT NULL default '';
+UPDATE server_options SET option_value=1113 where option_name='db_version';
+
+### 1113 to 1114 - Keith
+
+ALTER TABLE `item_categories` ADD COLUMN `item_stat_id_repair_tool` int(11) NULL;
+ALTER TABLE `item_categories` ADD COLUMN `is_repair_tool_consumed` char(1) NULL DEFAULT 'Y';
+ALTER TABLE `item_categories` ADD COLUMN `skill_id_repair` int(11) NULL;
+UPDATE server_options SET option_value=1114 where option_name='db_version';
+
+
+### 1114 to 1115 - Keith
+ALTER TABLE `npc_bad_text` ADD COLUMN `triggertext` varchar(255) NULL AFTER `badtext`;
+UPDATE `server_options` SET `option_value`='1115' WHERE `option_name`='db_version';
+
+
+### 1115 to 1116 - Keith
+ALTER TABLE item_stats ADD COLUMN `illum_definition` text NULL COMMENT 'This is used for map/sketch xml';
+UPDATE `server_options` SET `option_value`='1116' WHERE `option_name`='db_version';
+
+### 1116 to 1117 - Dave
+ALTER TABLE accounts DROP COLUMN last_login_hostname;
+ALTER TABLE bans DROP COLUMN host_mask;
+ALTER TABLE bans ADD COLUMN ip_range CHAR(15) default NULL AFTER account;
+UPDATE `server_options` SET `option_value`='1117' WHERE `option_name`='db_version';
+
+### 1117 to 1118 - Dave
+DROP TABLE command_group_assignment;
+DROP TABLE command_groups;
+SOURCE command_access.sql;
+UPDATE `server_options` SET `option_value`='1118' WHERE `option_name`='db_version';
+
+### 1118 to 1119 - Dave
+DROP TABLE movement_base;
+DROP TABLE movement_extras;
+DROP TABLE movement_require;
+DROP TABLE movement_variant;
+SOURCE movement.sql;
+UPDATE `server_options` SET `option_value`='1119' WHERE `option_name`='db_version';
+
+
+### 1119 to 1120 - Acraig,  adding render_effect column to trades 
+ALTER TABLE trade_transformations ADD COLUMN render_effect CHAR(32) default NULL AFTER animation;
+UPDATE `server_options` SET `option_value`='1120' WHERE `option_name`='db_version';
+
+### 1120 to 1121 - Michael - Added familiar types to complete familiar affinity
+CREATE TABLE `familiar_types`
+(
+	`id` INT UNSIGNED NOT NULL ,
+	`name` VARCHAR(30) NOT NULL,
+	`type` VARCHAR(30) NOT NULL,
+	`lifecycle` VARCHAR(30) NOT NULL,
+	`attacktool` VARCHAR(30) NOT NULL,
+	`attacktype` VARCHAR(30) NOT NULL,
+	`magicalaffinity` VARCHAR(30) NOT NULL,
+	`vision` INT NULL,   /* 1 = enhanced, 0 = normal, -1 = limited */
+	`speed` INT NULL,    /* 1 = enhanced, 0 = normal, -1 = limited */
+	`hearing` INT NULL,  /* 1 = enhanced, 0 = normal, -1 = limited */
+	PRIMARY KEY (`id`)
+) ENGINE=MyISAM ;
+UPDATE `server_options` SET `option_value`='1121' WHERE `option_name`='db_version';
+
+### 1121 to 1122 - Luca - changed natural res to use id of sector
+alter table natural_resources drop column sector;
+alter table natural_resources ADD COLUMN loc_sector_id int(10) unsigned NOT NULL default '0' AFTER id;
+UPDATE `server_options` SET `option_value`='1122' WHERE `option_name`='db_version';
+
+### 1122 to 1123 - Magodra - Added table for waypoints used in super clients (NPC Client).
+source sc_waypoints.sql;
+source sc_waypoint_links.sql;
+UPDATE `server_options` SET `option_value`='1123' WHERE `option_name`='db_version';
+
+### 1123 to 1124 - Magodra - Added tribe home
+DROP table tribes; # Since tribes is not deployed yet, assumes that there are now data.
+source tribes.sql;
+UPDATE `server_options` SET `option_value`='1124' WHERE `option_name`='db_version';
+
+### 1124 to 1125 - Luca - added armor_id on the race definition to manage natural armor
+alter table race_info add column `armor_id` int(10) default '0';
+UPDATE `server_options` SET `option_value`='1125' WHERE `option_name`='db_version';
+
+### 1125 to 1126 - acraig - Added helm column to races to have a helm group
+ALTER TABLE race_info ADD  COLUMN `helm` varchar(16) default '';
+UPDATE race_info SET helm='ylianm' WHERE race_id=13 OR race_id=11;
+UPDATE server_options SET option_value=1126 where option_name='db_version';
+
+### 1126 to 1127 - Magodra - Added location table
+source sc_location_type.sql;
+source sc_locations.sql;
+UPDATE `server_options` SET `option_value`='1127' WHERE `option_name`='db_version';
+
+alter table item_instances add column `crafted_quality` float(5,2) default '-1';
+ALTER TABLE item_instances MODIFY COLUMN crafted_quality float(5,2) default '-1' AFTER item_quality;
+UPDATE `server_options` SET `option_value`='1128' WHERE `option_name`='db_version';
+
+### 1128 to 1129 - Magodra - Added location table
+ALTER TABLE tribes add column max_size int(10) signed DEFAULT '0' AFTER home_radius;
+ALTER TABLE tribes add column wealth_resource_name varchar(30) NOT NULL default '' AFTER max_size;
+ALTER TABLE tribes add column wealth_resource_area varchar(30) NOT NULL default '' AFTER wealth_resource_name;
+ALTER TABLE tribes add column reproduction_cost int(10) signed DEFAULT '0' AFTER wealth_resource_area;
+UPDATE `server_options` SET `option_value`='1129' WHERE `option_name`='db_version';
+
+
+### 1129 to 1130 - TomT - Added TradeProcess table and split up TradeTransforms
+DROP TABLE trade_transformations;
+CREATE TABLE trade_transformations (
+  id int(10) unsigned NOT NULL auto_increment,
+  pattern_id int(10) unsigned NOT NULL,                         # pattern for transformation
+  process_id int(10) unsigned NOT NULL,                         # process for transformation
+  result_id int(10) unsigned NOT NULL,                  	# resulting item
+  result_qty int(8) unsigned NOT NULL ,                         # resulting item quantity
+  item_id int(10) unsigned NOT NULL,                         	# item to be transformed
+  item_qty int(8) unsigned NOT NULL ,                           # required quantity for transformation
+  trans_points int(8) unsigned NOT NULL DEFAULT '0' ,           # ammount of time to complete transformation
+  penilty_pct float(10,6) NOT NULL DEFAULT '1.000000' ,     # percent of quality for resulting item 
+  description varchar(255) NOT NULL DEFAULT '' ,
+  PRIMARY KEY (id)
+);
+CREATE TABLE trade_processes (
+  process_id int(10) unsigned NOT NULL auto_increment,
+  animation varchar(30) ,                                       # transformation animation
+  render_effect CHAR(32) default NULL,                          # transformation render effect
+  workitem_id int(10) unsigned NOT NULL,                        # target item to complete transformation
+  equipment_id int(10) unsigned  ,                              # required equipted item
+  constraints varchar(64) NOT NULL DEFAULT '',                  # constraints that apply to transformation
+  garbage_id int(10) unsigned ,                                 # garbage item for flubbed transformations
+  garbage_qty int(8) unsigned ,                                 # garbage quantity for flubbed transformations
+  primary_skill_id int(10) ,                                    # primary skill for transformation
+  primary_min_skill int(8) unsigned ,                           # minimum primary skill level required to perform transformation, 0 is no minimum
+  primary_max_skill int(8) unsigned ,                           # maximum primary skill level at which practice and quality are effected, 0 is no maximum
+  primary_practice_points int(4) ,                              # number of practice primary skill points gained for performing transformation
+  primary_quality_factor int(3) unsigned DEFAULT '0' ,          # percentage of the primary skill range that applies to quality
+  secondary_skill_id int(10) unsigned ,                         # secondary skill foriegn key
+  secondary_min_skill int(8) unsigned ,                         # minimum secondary skill level required to perform transformation, 0 is no minimum
+  secondary_max_skill int(8) unsigned ,                         # maximum secondary skill level at which practice and quality are effected, 0 is no maximum
+  secondary_practice_points int(4) ,                            # number of practice secondary skill points gained for performing transformation
+  secondary_quality_factor int(3) unsigned ,                    # percentage of the secondary skill range that applies to quality
+  description varchar(255) NOT NULL DEFAULT '' ,
+  PRIMARY KEY (process_id)
+);
+UPDATE `server_options` SET `option_value`='1130' WHERE `option_name`='db_version';
+
+### 1129 to 1130 - TomT - Added name column to TradeProcess table
+###   No need to alter table because data has not been loaded yet
+DROP TABLE trade_processes;
+CREATE TABLE trade_processes (
+  process_id int(10) unsigned NOT NULL auto_increment,
+  name varchar(40) default NULL,				# process name
+  animation varchar(30) ,                                       # transformation animation
+  render_effect CHAR(32) default NULL,                          # transformation render effect
+  workitem_id int(10) unsigned NOT NULL,                        # target item to complete transformation
+  equipment_id int(10) unsigned  ,                              # required equipted item
+  constraints varchar(64) NOT NULL DEFAULT '',                  # constraints that apply to transformation
+  garbage_id int(10) unsigned ,                                 # garbage item for flubbed transformations
+  garbage_qty int(8) unsigned ,                                 # garbage quantity for flubbed transformations
+  primary_skill_id int(10) ,                                    # primary skill for transformation
+  primary_min_skill int(8) unsigned ,                           # minimum primary skill level required to perform transformation, 0 is no minimum
+  primary_max_skill int(8) unsigned ,                           # maximum primary skill level at which practice and quality are effected, 0 is no maximum
+  primary_practice_points int(4) ,                              # number of practice primary skill points gained for performing transformation
+  primary_quality_factor int(3) unsigned DEFAULT '0' ,          # percentage of the primary skill range that applies to quality
+  secondary_skill_id int(10) unsigned ,                         # secondary skill foriegn key
+  secondary_min_skill int(8) unsigned ,                         # minimum secondary skill level required to perform transformation, 0 is no minimum
+  secondary_max_skill int(8) unsigned ,                         # maximum secondary skill level at which practice and quality are effected, 0 is no maximum
+  secondary_practice_points int(4) ,                            # number of practice secondary skill points gained for performing transformation
+  secondary_quality_factor int(3) unsigned ,                    # percentage of the secondary skill range that applies to quality
+  description varchar(255) NOT NULL DEFAULT '' ,
+  PRIMARY KEY (process_id)
+);
+UPDATE `server_options` SET `option_value`='1131' WHERE `option_name`='db_version';
+
+### 1131 to 1132 - Magodra - Added angle
+ALTER TABLE sc_waypoints change `flags` `flags` varchar(30) DEFAULT '';
+ALTER TABLE sc_waypoint_links change `flags` `flags` varchar(30) DEFAULT '';
+ALTER TABLE sc_locations change `flags` `flags` varchar(30) DEFAULT '';
+UPDATE `server_options` SET `option_value`='1132' WHERE `option_name`='db_version';
+#
+# At npc client run: importnpcdefs /this/data/npcdefs.xml
+#
+### 1132 to 1133 - Borrillis - moved spells.casting_duration to MathScripts
+ALTER TABLE spells DROP COLUMN casting_duration;
+UPDATE `server_options` SET `option_value`='1133' WHERE `option_name`='db_version';
+
+### 1133 to 1134 - Talad - increase name field size
+ALTER TABLE item_stats modify `name` varchar(60) DEFAULT NULL;
+UPDATE `server_options` SET `option_value`='1134' WHERE `option_name`='db_version';
+
+
+
+
+### 1134 to 1135 - Keith Fulton - Add instances to characters and items.
+
+ALTER TABLE `characters`
+  ADD COLUMN `loc_instance` int(11) NULL DEFAULT 0 AFTER `bank_money_trias`;
+ALTER TABLE `item_instances`
+  ADD COLUMN `loc_instance` int(11) NULL DEFAULT 0 AFTER `guild_mark_id`;
+UPDATE `server_options` SET `option_value`='1135' WHERE `option_name`='db_version';
+
+### 1135 to 1136 - Keith Fulton - Add instances to characters and items.
+
+ALTER TABLE `planeshift`.`item_stats`
+  CHANGE COLUMN `illum_definition` `sketch_definition` text NULL COMMENT 'This is used for map/sketch xml';
+UPDATE `server_options` SET `option_value`='1136' WHERE `option_name`='db_version';
+
+### 1136 to 1137 - Dave Bentham - Add GM-Events tables.
+
+DROP TABLE character_events;
+DROP TABLE gm_events;
+SOURCE gm_events.sql;
+SOURCE character_events.sql;
+INSERT INTO command_group_assignment VALUES( "/event", 30 );
+INSERT INTO command_group_assignment VALUES( "/event", 26 );
+INSERT INTO command_group_assignment VALUES( "/event", 25 );
+INSERT INTO command_group_assignment VALUES( "/event", 24 );
+UPDATE `server_options` SET `option_value`='1137' WHERE `option_name`='db_version';
+
+### 1137 to 1138 - Tom Towey - Add active indicator to action locations.
+ALTER TABLE `action_locations`
+  ADD COLUMN `active_ind`  char(1) NOT NULL default 'Y' AFTER `response`;
+UPDATE `action_locations` SET `active_ind`='Y';
+UPDATE `server_options` SET `option_value`='1138' WHERE `option_name`='db_version';
+
+### 1138 to 1139 - Anders Reggestad - Infinite player lockout on quests
+UPDATE quests SET player_lockout_time=-1 WHERE player_lockout_time=2147483647;
+UPDATE quests SET player_lockout_time=-1 WHERE player_lockout_time=2147483;
+
+UPDATE `server_options` SET `option_value`='1139' WHERE `option_name`='db_version';
+
+### 1139 to 1141 - Anders Reggestad - Trigger/Response update
+ALTER TABLE `npc_responses`
+  ADD COLUMN `prerequisite` blob AFTER `script`;
+ALTER TABLE `npc_responses`
+  ADD COLUMN `trigger_id` int(10) unsigned default '0' AFTER `id`;
+UPDATE npc_responses r, npc_triggers t SET r.trigger_id=t.id WHERE t.response_id=r.id;
+#Check if you will delete something
+SELECT id FROM npc_responses where trigger_id=0;
+
+# Delete any respose that do not have a trigger
+DELETE FROM npc_responses where trigger_id=0;
+# Should check if any trigger point to multiple responses. Did not figure
+# out the sql for this. Though to display a table with count of dublicates run
+# the following query and check everywhere count is diffrent from 1.
+SELECT response_id,count(response_id) AS val from npc_triggers group by response_id;
+# Remove not used colums
+ALTER TABLE npc_triggers DROP COLUMN response_id;
+ALTER TABLE npc_triggers DROP COLUMN min_attitude_required;
+ALTER TABLE npc_triggers DROP COLUMN max_attitude_required;
+
+# Keith - limitations for sketches
+SOURCE character_limitations.sql;
+
+UPDATE `server_options` SET `option_value`='1141' WHERE `option_name`='db_version';
+
+### 1141 to 1142 - Anders Reggestad - Trigger reserved word in new databaes
+ALTER TABLE npc_triggers CHANGE COLUMN trigger trigger_text varchar(255) default NULL;
+
+UPDATE `server_options` SET `option_value`='1142' WHERE `option_name`='db_version';
+
+
+#
+# Needs to be done at server at some point. Include in next update - Anders Reggestad
+#
+INSERT INTO command_group_assignment VALUES( "/waypoint", 30 );
+INSERT INTO command_group_assignment VALUES( "/action", 30 );
+
+
+# Item inventory updates -- THIS IS NOT COMPLETE YET AND WILL NOT PRESERVE DATA YET
+ALTER TABLE `planeshift`.`item_instances`
+  CHANGE COLUMN `location_in_parent` `location_in_parent` smallint(4) NULL 
+  DEFAULT 0 COMMENT 'Slot number in inventory, container or -1 in world.';
+
+### 1142 to 1144 - Daniel Fryer - Books keeping text in new unique_content table
+SOURCE unique_content.sql;
+
+#First get the content from the descriptions (where they used to be stored..) 
+INSERT INTO unique_content (content) SELECT description FROM item_stats WHERE flags like "%readable%";
+
+#Then update the item_instances so that their content key is pointing at the same text that was just copied from their description
+UPDATE item_instances inst SET item_stats_id_unique = (SELECT id from unique_content WHERE content = (select description from item_stats where item_stats.id = inst.item_stats_id_standard)) WHERE (SELECT flags FROM item_stats WHERE item_stats.id = inst.item_stats_id_standard) like "%readable%";
+
+UPDATE `server_options` SET `option_value`='1143' WHERE `option_name`='db_version';
+
+
+### 1144 to 1145 - Kenny Graunke - Simplify weapon and armor in item_stats
+
+# First remove unused columns...
+ALTER TABLE item_stats DROP COLUMN weapon_dmg_force;
+ALTER TABLE item_stats DROP COLUMN weapon_dmg_fire;
+ALTER TABLE item_stats DROP COLUMN weapon_dmg_ice;
+ALTER TABLE item_stats DROP COLUMN weapon_dmg_air;
+ALTER TABLE item_stats DROP COLUMN weapon_dmg_poison;
+ALTER TABLE item_stats DROP COLUMN weapon_dmg_disease;
+ALTER TABLE item_stats DROP COLUMN weapon_dmg_holy;
+ALTER TABLE item_stats DROP COLUMN weapon_dmg_unholy;
+ALTER TABLE item_stats DROP COLUMN weapon_dmg_pct_force;
+ALTER TABLE item_stats DROP COLUMN weapon_dmg_pct_fire;
+ALTER TABLE item_stats DROP COLUMN weapon_dmg_pct_ice;
+ALTER TABLE item_stats DROP COLUMN weapon_dmg_pct_air;
+ALTER TABLE item_stats DROP COLUMN weapon_dmg_pct_poison;
+ALTER TABLE item_stats DROP COLUMN weapon_dmg_pct_disease;
+ALTER TABLE item_stats DROP COLUMN weapon_dmg_pct_holy;
+ALTER TABLE item_stats DROP COLUMN weapon_dmg_pct_unholy;
+ALTER TABLE item_stats DROP COLUMN armor_prot_force;
+ALTER TABLE item_stats DROP COLUMN armor_prot_fire;
+ALTER TABLE item_stats DROP COLUMN armor_prot_ice;
+ALTER TABLE item_stats DROP COLUMN armor_prot_air;
+ALTER TABLE item_stats DROP COLUMN armor_prot_poison;
+ALTER TABLE item_stats DROP COLUMN armor_prot_disease;
+ALTER TABLE item_stats DROP COLUMN armor_prot_holy;
+ALTER TABLE item_stats DROP COLUMN armor_prot_unholy;
+
+# Merge data from weapon_dmg_X and armor_prot_X into single dmg_X column
+# Create new columns...
+ALTER TABLE item_stats ADD COLUMN `dmg_slash` float(10,2) default '0.00' AFTER `item_bonus_3_max`;
+ALTER TABLE item_stats ADD COLUMN `dmg_blunt` float(10,2) default '0.00' AFTER `dmg_slash`;
+ALTER TABLE item_stats ADD COLUMN `dmg_pierce` float(10,2) default '0.00' AFTER `dmg_blunt`;
+# Merge the two data sources...
+UPDATE `item_stats` SET `dmg_slash`=IF(weapon_dmg_slash > armor_prot_slash, weapon_dmg_slash, armor_prot_slash);
+UPDATE `item_stats` SET `dmg_blunt`=IF(weapon_dmg_blunt > armor_prot_blunt, weapon_dmg_blunt, armor_prot_blunt);
+UPDATE `item_stats` SET `dmg_pierce`=IF(weapon_dmg_pierce > armor_prot_pierce, weapon_dmg_pierce, armor_prot_pierce);
+# Delete old columns...
+ALTER TABLE item_stats DROP COLUMN weapon_dmg_slash;
+ALTER TABLE item_stats DROP COLUMN weapon_dmg_blunt;
+ALTER TABLE item_stats DROP COLUMN weapon_dmg_pierce;
+ALTER TABLE item_stats DROP COLUMN armor_prot_slash;
+ALTER TABLE item_stats DROP COLUMN armor_prot_blunt;
+ALTER TABLE item_stats DROP COLUMN armor_prot_pierce;
+
+UPDATE `server_options` SET `option_value`='1145' WHERE `option_name`='db_version';
+
+### 1145 to 1146 - Kenny Graunke - Remove more unusued columns
+# According to Talad, these all had 0 in them and thus were essentially unused.
+ALTER TABLE item_stats DROP COLUMN weapon_dmg_pct_slash;
+ALTER TABLE item_stats DROP COLUMN weapon_dmg_pct_blunt;
+ALTER TABLE item_stats DROP COLUMN weapon_dmg_pct_pierce;
+
+UPDATE `server_options` SET `option_value`='1146' WHERE `option_name`='db_version';
+
+### 1146 to 1147 - Anders Reggestad - Added tribe memory.
+source sc_tribe_memories.sql;
+UPDATE `server_options` SET `option_value`='1147' WHERE `option_name`='db_version';
+
+### 1147 to 1148 - Anders Reggestad - Added tribe memory.
+source sc_tribe_resources.sql;
+ALTER TABLE tribes ADD COLUMN wealth_resource_nick varchar(30) NOT NULL default '' AFTER wealth_resource_name;
+update tribes set wealth_resource_nick="iron" where wealth_resource_name="Iron Ore";
+update tribes set wealth_resource_nick="gold" where wealth_resource_name="Gold Ore";
+UPDATE `server_options` SET `option_value`='1148' WHERE `option_name`='db_version';
+
+# inventory migration
+
+# slot 16 is the first bulk slot, equipped slots start from 0
+update item_instances set location_in_parent=location_in_parent+16 where location='I' and char_id_owner is not null;
+
+#update equipped items ( no update needed for containers )
+update item_instances set location_in_parent=0 where location='E' and equipped_slot='righthand' and char_id_owner is not null;
+update item_instances set location_in_parent=1 where location='E' and equipped_slot='lefthand' and char_id_owner is not null;
+update item_instances set location_in_parent=3 where location='E' and equipped_slot='leftfinger' and char_id_owner is not null;
+update item_instances set location_in_parent=4 where location='E' and equipped_slot='rightfinger' and char_id_owner is not null;
+update item_instances set location_in_parent=5 where location='E' and equipped_slot='head' and char_id_owner is not null;
+update item_instances set location_in_parent=6 where location='E' and equipped_slot='neck' and char_id_owner is not null;
+update item_instances set location_in_parent=7 where location='E' and equipped_slot='back' and char_id_owner is not null;
+update item_instances set location_in_parent=8 where location='E' and equipped_slot='arms' and char_id_owner is not null;    
+update item_instances set location_in_parent=9 where location='E' and equipped_slot='gloves' and char_id_owner is not null;        
+update item_instances set location_in_parent=10 where location='E' and equipped_slot='boots' and char_id_owner is not null;            
+update item_instances set location_in_parent=11 where location='E' and equipped_slot='legs' and char_id_owner is not null;            
+update item_instances set location_in_parent=12 where location='E' and equipped_slot='belt' and char_id_owner is not null;                
+update item_instances set location_in_parent=13 where location='E' and equipped_slot='bracers' and char_id_owner is not null;            
+update item_instances set location_in_parent=14 where location='E' and equipped_slot='torso' and char_id_owner is not null;                
+update item_instances set location_in_parent=15 where location='E' and equipped_slot='mind' and char_id_owner is not null;
+
+#update containers owned by players, which have location_in_parent 16-based instead of 0-based
+delete from temp;
+insert into temp 
+(select i.id from item_instances i, item_stats s where i.item_stats_id_standard=s.id and char_id_owner!=0 and container_max_size>0 and item_stats_id_standard<300);
+
+update item_instances set location_in_parent=
+location_in_parent+16 where parent_item_id IN (
+select id from temp);
+
+alter table item_instances drop column location;
+alter table item_instances drop column equipped_slot;
+
+### 1148 to 1149 - Luca Pancallo - Added gender, birth to accounts.
+
+ALTER TABLE accounts ADD COLUMN gender varchar(1) default 'N' AFTER country;
+ALTER TABLE accounts ADD COLUMN birth int(4) default '0' AFTER gender;
+
+### 1149 to 1150 - Kenny Graunke - Added char_id_guardian to item_instances.
+ALTER TABLE item_instances ADD COLUMN char_id_guardian int(10) unsigned default '0' AFTER char_id_owner;
+UPDATE `server_options` SET `option_value`='1150' WHERE `option_name`='db_version';
+
+# Fix for traits
+alter table character_traits modify trait_id int(10) unsigned NOT NULL DEFAULT '0';
+
+### 1150 - Andrew Dai - Added creation timestamp to characters table.
+
+ALTER TABLE characters
+  ADD COLUMN creation_time timestamp default current_timestamp;
+#reset newly added column to 0
+update characters set creation_time=0;
+
+### 1151 - Dave Bentham - "creative content" method of holding book & sketch data
+# There is set of data conversion scripts (mysql & awk) to convert item_stats table
+# in situ, if recreating item_stats from source is not desired. It is available
+# from Acissej and Talad.
+ALTER TABLE `planeshift`.`item_stats`
+  CHANGE COLUMN `sketch_definition` `creative_definition` text NULL COMMENT 'This is used for creative things xml, such as sketches/maps, books';
+# otherwise, recreate item_stats from scratch:
+DROP TABLE item_stats;
+SOURCE item_stats.sql;
+
+# DB bump
+UPDATE `server_options` SET `option_value`='1151' WHERE `option_name`='db_version';
+
+### 1152 - Kenny Graunke - remove duel points
+ALTER TABLE characters DROP COLUMN duel_points;
+UPDATE server_options SET option_value='1152' WHERE option_name='db_version';
+
+### 1153 - Sasha Levin - Remove hardcoded race info
+ALTER TABLE `planeshift`.`race_info` CHANGE COLUMN `race_id` `id` INT(10) NOT NULL DEFAULT 0,
+ ADD COLUMN `race` INT(5) UNSIGNED NOT NULL AFTER `helm`,
+ DROP PRIMARY KEY,
+ ADD PRIMARY KEY  USING BTREE(`id`);
+
+#### 1154 - Michael Cummings - Moved RPGRules.xml into math_scripts DB table
+SOURCE math_scripts.sql
+
+#### 1155 - Michael Gist - Added stances table.
+SOURCE stances.sql
+UPDATE `server_options` SET `option_value`='1155' WHERE `option_name`='db_version';
+
+#### 1156 - Kenny Graunke - Separate equip and consume actions
+ALTER TABLE item_stats ADD COLUMN prg_evt_consume text AFTER prg_evt_unequip;
+UPDATE item_stats SET prg_evt_consume=prg_evt_equip WHERE flags LIKE '%CONSUMABLE%';
+UPDATE item_stats SET prg_evt_equip='' WHERE flags LIKE '%CONSUMABLE%';
+UPDATE `server_options` SET `option_value`='1156' WHERE `option_name`='db_version';
+
+
+### 1157 - Michael Gist - Added banker flag to characters table. Added bank money values for guilds.
+ALTER TABLE characters ADD COLUMN banker tinyint(1) unsigned NOT NULL default '0';
+ALTER TABLE guilds ADD COLUMN bank_money_circles int(10) unsigned NOT NULL default '0';
+ALTER TABLE guilds ADD COLUMN bank_money_octas int(10) unsigned NOT NULL default '0';
+ALTER TABLE guilds ADD COLUMN bank_money_hexas int(10) unsigned NOT NULL default '0';
+ALTER TABLE guilds ADD COLUMN bank_money_trias int(10) unsigned NOT NULL default '0';
+UPDATE `server_options` SET `option_value`='1157' WHERE `option_name`='db_version';
+
+### 1158 - Dave Bentham - item_stats.name now unique key.
+ALTER TABLE `item_stats` ADD UNIQUE KEY (`name`);
+UPDATE `server_options` SET `option_value`='1158' WHERE `option_name`='db_version';
+
+### 1159 - Michael Gist - Added money events table.
+SOURCE money_events.sql
+UPDATE `server_options` SET `option_value`='1159' WHERE `option_name`='db_version';
+
+#### 1160 - Anders Reggestad - Modified waypoint system to use predefined paths
+ALTER TABLE sc_waypoint_links ADD COLUMN name VARCHAR(30) NOT NULL DEFAULT '' AFTER id;
+ALTER TABLE sc_waypoint_links ADD COLUMN type VARCHAR(30) NOT NULL DEFAULT '' AFTER name;
+INSERT INTO command_group_assignment VALUES( "/path", 30 );
+INSERT INTO command_group_assignment VALUES( "/location", 30 );
+UPDATE sc_waypoint_links SET type='LINEAR';
+SOURCE sc_path_points.sql
+UPDATE `server_options` SET `option_value`='1160' WHERE `option_name`='db_version';
+
+### 1161 - Sasha Levin - Added required action info in natural resources
+ALTER TABLE `natural_resources` ADD COLUMN `action` VARCHAR(45) NOT NULL AFTER `reward_nickname`;
+UPDATE `server_options` SET `option_value`='1161' WHERE `option_name`='db_version';
+
+#### 1162 - Anders Reggestad - Add order of points in paths.
+ALTER TABLE sc_path_points ADD COLUMN  `prev_point` int(8) unsigned NOT NULL default '0' AFTER path_id;
+update sc_path_points set prev_point=id-1; # Start points has to be set to 0.
+UPDATE `server_options` SET `option_value`='1162' WHERE `option_name`='db_version';
+
+#### 1163 - Thomas Towey - Removed autoincr on id column and added subprocess number column
+ALTER TABLE trade_processes MODIFY COLUMN process_id int(10) unsigned NOT NULL,
+  ADD COLUMN subprocess_number int(4) unsigned NOT NULL default '0' AFTER process_id,
+  DROP PRIMARY KEY,
+  ADD PRIMARY KEY (process_id,subprocess_number);
+UPDATE `server_options` SET `option_value`='1163' WHERE `option_name`='db_version';
+
+#### 1164 - Michael Gist - Update money events for more auto-tax stuff.
+ALTER TABLE money_events ADD COLUMN prg_evt_paid text;
+ALTER TABLE money_events ADD COLUMN prg_evt_npaid text;
+ALTER TABLE money_events ADD COLUMN prg_evt_fnpaid text;
+ALTER TABLE money_events ADD COLUMN latePayment bool;
+ALTER TABLE money_events ADD COLUMN lateBy int(3) NOT NULL;
+ALTER TABLE money_events ADD COLUMN instance int(11) default '0';
+UPDATE `server_options` SET `option_value`='1164' WHERE `option_name`='db_version';
+
+#### Add weather command.
+INSERT INTO command_group_assignment VALUES( "/weather", 30 );
+INSERT INTO command_group_assignment VALUES( "/weather", 26 );
+INSERT INTO command_group_assignment VALUES( "/weather", 25 );
+
+#### Add command to alter the label colour.
+INSERT INTO command_group_assignment VALUES( "/setlabelcolor", 30 );
+INSERT INTO command_group_assignment VALUES( "/setlabelcolor", 26 );
+INSERT INTO command_group_assignment VALUES( "/setlabelcolor", 25 );
+INSERT INTO command_group_assignment VALUES( "/setlabelcolor", 24 );
+INSERT INTO command_group_assignment VALUES( "/setlabelcolor", 23 );
+INSERT INTO command_group_assignment VALUES( "/setlabelcolor", 22 );
+
+#
+# Insert your upgrade before this line. Remember when you set a new db_version
+# to update the server_options.sql file and update psserver.cpp as well.
+# This to ensure that everything is working if you use the create_all.sql to
+# create a new fresh DB.
+

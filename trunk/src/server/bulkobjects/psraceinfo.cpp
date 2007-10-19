@@ -1,0 +1,197 @@
+/*
+ * psraceinfo.cpp
+ *
+ * Copyright (C) 2001 Atomic Blue (info@planeshift.it, http://www.atomicblue.org) 
+ *
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation (version 2 of the License)
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ */
+
+
+
+
+#include <psconfig.h>
+
+#include <iutil/vfs.h>
+#include <csutil/xmltiny.h>
+
+#include "../psserver.h"
+#include "../cachemanager.h"
+#include "../globals.h"
+#include "util/log.h"
+
+#include "psraceinfo.h"
+
+#include "pssectorinfo.h"
+
+psRaceInfo::psRaceInfo()
+{
+    uid=0;
+    mesh_name=NULL;
+    base_texture_name=NULL;
+    start_sector_name=NULL;
+    start_x=start_y=start_z=start_yrot=0.0f;
+    size.Set(0.0f);
+    memset(&attributes,0,sizeof(attributes));
+    natural_armor_id=0;
+    walkMinSpeed=0.0;
+    walkBaseSpeed=3.0;
+    walkMaxSpeed=3.0;
+    runMinSpeed=3.0;
+    runBaseSpeed=5.0;
+    runMaxSpeed=10.0;
+}
+
+psRaceInfo::~psRaceInfo()
+{
+}
+
+bool psRaceInfo::Load(iResultRow& row)
+{
+    uid  = row.GetUInt32("id");
+    name = row["name"];
+    initialCP = row.GetUInt32("initial_cp");
+    race = row.GetUInt32("race");
+
+    gender = CacheManager::GetSingleton().ConvertGenderString(row["sex"]);
+
+    psSectorInfo *secinfo=CacheManager::GetSingleton().GetSectorInfoByID(row.GetUInt32("start_sector_id"));
+    if (secinfo==NULL)
+    {
+        Error3("Unresolvable sector id %lu in start_sector_id field of race info for race %s.  Failing!",
+               row.GetUInt32("start_sector_id"),name.GetData());
+        return false;
+    }
+
+    start_sector_name = secinfo->name;
+    start_x = row.GetFloat("start_x");
+    start_y = row.GetFloat("start_y");
+    start_z = row.GetFloat("start_z");
+    start_yrot = row.GetFloat("start_yrot");
+
+    size.x = row.GetFloat("size_x");
+    size.y = row.GetFloat("size_y");
+    size.z = row.GetFloat("size_z");
+
+    baseRegen[PSRACEINFO_STAMINA_PHYSICAL_STILL] = row.GetFloat("base_physical_regen_still");
+    baseRegen[PSRACEINFO_STAMINA_PHYSICAL_WALK]  = row.GetFloat("base_physical_regen_walk");
+    baseRegen[PSRACEINFO_STAMINA_MENTAL_STILL]   = row.GetFloat("base_mental_regen_still");
+    baseRegen[PSRACEINFO_STAMINA_MENTAL_WALK]    = row.GetFloat("base_mental_regen_walk");
+
+    const char *meshname=CacheManager::GetSingleton().FindCommonString(row.GetUInt32("cstr_id_mesh"));
+    if (meshname==NULL)
+    {
+        Warning3(LOG_ANY,"Unresolvable mesh id %lu in mesh_id field of race info for race %s. Using NULL mesh.",
+                 row.GetUInt32("cstr_id_mesh"),name.GetData() );
+    }
+    mesh_name = meshname;
+    meshFileName.Format("/planeshift/models/%s/%s.cal3d",mesh_name,mesh_name);
+
+    const char *textname=CacheManager::GetSingleton().FindCommonString(row.GetUInt32("cstr_id_base_texture"));
+    if (textname==NULL)
+    {
+        Warning3(LOG_ANY,"Unresolvable texture id %lu in base_texture_id field of race info for race %s. Using NULL texture.",
+                 row.GetUInt32("base_texture_id"),name.GetData() );
+    }
+    base_texture_name = textname;
+
+    // Load starting stats
+    SetBaseAttribute(PSITEMSTATS_STAT_STRENGTH      ,row.GetUInt32("start_str"));
+    SetBaseAttribute(PSITEMSTATS_STAT_ENDURANCE     ,row.GetUInt32("start_end"));
+    SetBaseAttribute(PSITEMSTATS_STAT_AGILITY       ,row.GetUInt32("start_agi"));
+    SetBaseAttribute(PSITEMSTATS_STAT_INTELLIGENCE  ,row.GetUInt32("start_int"));
+    SetBaseAttribute(PSITEMSTATS_STAT_WILL          ,row.GetUInt32("start_will"));
+    SetBaseAttribute(PSITEMSTATS_STAT_CHARISMA      ,row.GetUInt32("start_cha"));
+
+    // Load natural armor
+    natural_armor_id = row.GetUInt32("armor_id");
+
+    return true;
+}
+
+bool psRaceInfo::LoadBaseSpeeds(iObjectRegistry *object_reg)
+{
+    csRef<iVFS> vfs =  csQueryRegistry<iVFS > ( object_reg);
+
+    csRef<iDocumentSystem> xml (
+         csQueryRegistry<iDocumentSystem> (object_reg));
+
+    csRef<iDocument> doc = xml->CreateDocument();
+
+    csRef<iDataBuffer> buf (vfs->ReadFile (meshFileName.GetData()));
+    if (!buf || !buf->GetSize ())
+    {
+        Error2("Error loading race mesh file. %s\n", meshFileName.GetData());
+        return false;
+    }
+
+    const char* error = doc->Parse( buf );
+
+    if( error )
+    {
+        Error3("Error %s loading file %s\n",error, meshFileName.GetData());
+        return false;
+    }
+
+    csRef<iDocumentNode> cal3dlib = doc->GetRoot()->GetNode("library");
+    csRef<iDocumentNode> meshfact = cal3dlib->GetNode("meshfact");
+    csRef<iDocumentNode> params = meshfact->GetNode("params");
+
+    csRef<iDocumentNodeIterator> animations = params->GetNodes("animation");
+    while ( animations->HasNext() )
+    {
+        csRef<iDocumentNode> animation = animations->Next();
+
+        if (strcasecmp(animation->GetAttributeValue("name"),"walk") == 0)
+        {
+            walkBaseSpeed = animation->GetAttributeValueAsFloat("base_vel");
+            walkMinSpeed = animation->GetAttributeValueAsFloat("min_vel");
+            walkMaxSpeed = animation->GetAttributeValueAsFloat("max_vel");
+        }
+        else if (strcasecmp(animation->GetAttributeValue("name"),"run") == 0)
+        {
+            runBaseSpeed = animation->GetAttributeValueAsFloat("base_vel");
+            runMinSpeed = animation->GetAttributeValueAsFloat("min_vel");
+            runMaxSpeed = animation->GetAttributeValueAsFloat("max_vel");
+        }
+    }
+
+    Debug8(LOG_STARTUP,0,"LoadedBaseSpeed Walk %.2f(%.2f,%.2f) Run %.2f(%.2f,%.2f) for %s.",
+           walkBaseSpeed,walkMinSpeed,walkMaxSpeed,runBaseSpeed,runMinSpeed,runMaxSpeed,name.GetData());
+
+    return true;
+}
+
+
+csString psRaceInfo::GetMeshFileName()
+{
+    return meshFileName;
+}
+
+
+float psRaceInfo::GetBaseAttribute(PSITEMSTATS_STAT attrib)
+{
+    if (attrib<0 || attrib>=PSITEMSTATS_STAT_COUNT)
+        return 0.0f;
+
+    return ((float)attributes[attrib])/10.0f;
+}
+
+void psRaceInfo::SetBaseAttribute(PSITEMSTATS_STAT attrib, float val)
+{
+    if (attrib<0 || attrib>=PSITEMSTATS_STAT_COUNT)
+        return;
+    if (val<0.0f)
+        val=0.0f;
+    attributes[attrib]=(unsigned short)(val*10.0f);
+}

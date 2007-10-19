@@ -1,0 +1,175 @@
+TOP ?= "@top_srcdir@" ;
+BUILDTOP ?= "@top_builddir@" ;
+
+SubDir TOP ;
+
+# Common include directories.
+
+IncludeDir ;
+IncludeDir "include" ;
+IncludeDir src client ;
+IncludeDir src server ;
+IncludeDir src common ;
+IncludeDir src tools wordnet ;
+IncludeDir $(BUILDTOP) : : literal transient ;
+
+
+# Delete the following dir and subdirs on running 'jam clean'.
+
+CleanDir clean :
+    out ;
+	
+# Delete the following files on running 'jam distclean'.
+
+Clean distclean :
+    config.log
+	configure
+    Jamconfig
+    Jamfile
+	include/psconfig.h
+	include/psconfig.h.in
+	include/psstdint.h ;
+	
+# Delete the following dir and subdirs on running 'jam distclean'.
+
+CleanDir distclean :
+    autom4te.cache ;
+	
+# Invokes 'jam clean' on running 'jam distclean'.
+
+Depends distclean : clean ;
+
+# Description for 'jam help'.
+
+Help distclean : "Remove built targets and configuration" ;
+
+#######################################################################
+#						    Msvcgen Setup							  #
+#######################################################################
+
+# Specify the folder in which they are contained, and then the version of the project files to be generated.
+
+MsvcGenSubDir TOP mk msvc : common ;
+MsvcGenSubDir TOP mk msvc7 : 7 ;
+MsvcGenSubDir TOP mk msvc71 : 71 ;
+MsvcGenSubDir TOP mk msvc8 : 8 ;
+
+# Dir in which the msvcgen files are located.
+
+MsvcGenTemplateDir TOP mk msvcgen ;
+
+# For MSVC project files, we need to include a dir containing MSVC specific includes.
+
+if [ Property build : projgen ] = msvc
+{
+  IncludeDir "include" msvc ;
+}
+
+# File containing custom scripting. Found in mk/msvcgen.
+
+MsvcGenVariable customize : custom.cslib custom2.cslib custom3.cslib ;
+
+# Set up the workspaces we want msvcgen to synthesize.
+
+include [ ConcatDirs $(SUBDIR) mk msvcgen workspaces.jam ] ;
+
+# Set project-specific compiler and linker options for msvcgen.
+
+local hash = "\$" ;
+
+# CrystalSpace 
+
+MsvcGenConfig CRYSTAL.AVAILABLE : yes ;
+MsvcGenConfig CRYSTAL.DEFINES ;
+MsvcGenConfig CRYSTAL.CFLAGS ;
+MsvcGenConfig CRYSTAL.LFLAGS ;
+MsvcGenConfig CRYSTAL.LIBS : "libcrystalspace.lib ws2_32.lib zlib.lib" ;
+MsvcGenConfig CRYSTAL.LIBS.DEBUG : "libcrystalspace_d.lib ws2_32.lib zlib.lib" ;
+MsvcGenConfig CRYSTAL.INCDIRS :
+  [ ConcatDirs .. .. .. CS include ]
+  [ ConcatDirs "$(hash)(CRYSTAL)" include ]
+  [ ConcatDirs "$(hash)(CRYSTAL)" include csutil ]
+  [ ConcatDirs "$(hash)(CRYSTAL)" include csutil win32 ] ;
+MsvcGenConfig CRYSTAL.LIBDIRS :
+  [ ConcatDirs .. .. .. CS out release$(MSVC_VERSION) libs ]
+  [ ConcatDirs .. .. .. CS libs csutil win32 ]
+  [ ConcatDirs "$(hash)(CRYSTAL)" out release$(MSVC_VERSION) libs ]
+  [ ConcatDirs "$(hash)(CRYSTAL)" libs ]
+  [ ConcatDirs "$(hash)(CRYSTAL)" libs csutil win32 libs ] ;
+MsvcGenConfig CRYSTAL.LIBDIRS.DEBUG :
+  [ ConcatDirs .. .. .. CS out debug$(MSVC_VERSION) libs ]
+  [ ConcatDirs .. .. .. CS libs csutil win32 ]
+  [ ConcatDirs "$(hash)(CRYSTAL)" out debug$(MSVC_VERSION) libs ]
+  [ ConcatDirs "$(hash)(CRYSTAL)" libs ]
+  [ ConcatDirs "$(hash)(CRYSTAL)" libs csutil win32 libs ] ;
+MsvcGenConfig CRYSTAL.STATICDEPS : $(TOP)/mk/jam/crystalspace_staticplugins_msvc.jam ;
+
+# Cel
+
+  MsvcGenConfig CEL.AVAILABLE : yes ;
+  MsvcGenConfig CEL.DEFINES : USE_CEL ;
+  MsvcGenConfig CEL.CFLAGS ;
+  MsvcGenConfig CEL.LFLAGS ;
+  MsvcGenConfig CEL.LIBS : "libceltool.lib" ;
+  MsvcGenConfig CEL.LIBS.DEBUG : "libceltool_d.lib" ;
+  MsvcGenConfig CEL.INCDIRS :
+    [ ConcatDirs .. .. .. cel include ]
+    [ ConcatDirs "$(hash)(CEL)" include ]
+    [ ConcatDirs "$(hash)(CEL)" include cel ] ;
+  MsvcGenConfig CEL.LIBDIRS :
+    [ ConcatDirs .. .. .. cel out release$(MSVC_VERSION) libs ]
+    [ ConcatDirs "$(hash)(CEL)" out release$(MSVC_VERSION) libs ]
+    [ ConcatDirs "$(hash)(CEL)" libs ] ;
+  MsvcGenConfig CEL.LIBDIRS.DEBUG :
+    [ ConcatDirs .. .. .. cel out debug$(MSVC_VERSION) libs ]
+    [ ConcatDirs "$(hash)(CEL)" out debug$(MSVC_VERSION) libs ]
+    [ ConcatDirs "$(hash)(CEL)" libs ] ;
+MsvcGenConfig CEL.STATICDEPS : $(TOP)/mk/jam/cel_staticplugins_msvc.jam ;
+
+# Generate project files for static targets.
+
+MsvcGenConfig HAVE_STATIC_PLUGINS : yes ;
+
+# MySQL
+
+MsvcGenConfig LIBMYSQLCLIENT.AVAILABLE : yes ;
+MsvcGenConfig LIBMYSQLCLIENT.DEFINES ;
+MsvcGenConfig LIBMYSQLCLIENT.CFLAGS ;
+MsvcGenConfig LIBMYSQLCLIENT.LFLAGS ;
+MsvcGenConfig LIBMYSQLCLIENT.LIBS : "libmysql.lib" ;
+MsvcGenConfig LIBMYSQLCLIENT.LIBS.DEBUG : "libmysql.lib" ;
+MsvcGenConfig LIBMYSQLCLIENT.INCDIRS ;
+MsvcGenConfig LIBMYSQLCLIENT.LIBDIRS ;
+MsvcGenConfig LIBMYSQLCLIENT.LIBDIRS.DEBUG ;
+
+# CURL
+
+MsvcGenConfig CURL.AVAILABLE : yes ;
+MsvcGenConfig CURL.DEFINES ;
+MsvcGenConfig CURL.CFLAGS ;
+MsvcGenConfig CURL.LFLAGS ;
+MsvcGenConfig CURL.LIBS : "libcurl.lib" ;
+MsvcGenConfig CURL.LIBS.DEBUG : "libcurl.lib"  ;
+MsvcGenConfig CURL.INCDIRS ;
+MsvcGenConfig CURL.LIBDIRS ;
+MsvcGenConfig CURL.LIBDIRS.DEBUG ;
+
+####################################################################
+
+# Msvcgen setup _must_ occur before compile group registration!
+
+# Write a description of each compile group for 'jam help'
+Description server : "Server components" ;
+Description client : "Client components" ;
+Description tools : "Tools" ;
+Description client_static : "Static client components" ;
+Description server_static : "Static server components" ;
+
+# Register the compile groups. To add a project to a compile group, add the line CompileGroups project : compilegroup ; in the projects Jamfile.
+
+RegisterCompileGroups server client tools client_static server_static ;
+
+# List the first layer of subdirectories containing the jamfiles for the projects you wish to compile. This is order sensistive.
+# Library targets must be seen by Jam before Application and Plugin targets.
+
+SubInclude TOP src ;

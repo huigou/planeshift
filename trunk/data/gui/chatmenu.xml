@@ -1,0 +1,45 @@
+<widget_description name="x">
+
+<widget name="ChatMenu_Main" factory="pawsMenu" 
+        movable="yes" 
+        label="Communication"
+        >
+    
+    <bgimage resource="Standard Background" alpha="50" />
+
+    <widget name="" label="Greetings" action="submenu" param1="data/gui/chatmenu.xml" param2="ChatMenu_Greet" factory="pawsChatMenuItem">
+        <widget name="ChatMenu_Greet" factory="pawsMenu" 
+                movable="yes" 
+                label="Greetings"
+                >
+            
+            <bgimage resource="Standard Background" alpha="50" />
+
+            <widget name="" label="Hi" factory="pawsChatMenuItem"/>
+            <widget name="" label="Hello" factory="pawsChatMenuItem"/>
+            <widget name="" label="Welcome back" factory="pawsChatMenuItem"/>
+        </widget>
+    </widget>
+    <widget name="" label="Group" action="submenu" param1="data/gui/chatmenu.xml" param2="ChatMenu_Group" factory="pawsChatMenuItem">
+        <widget name="ChatMenu_Group" factory="pawsMenu" 
+                movable="yes" 
+                label="Group"
+                >
+            
+            <bgimage resource="Standard Background" alpha="50" />
+
+            <widget name="" label="Can I join you ?" factory="pawsChatMenuItem"/>
+            <widget name="" label="Defend me !" factory="pawsChatMenuItem"/>
+            <widget name="" factory="pawsMenuSeparator"/>
+            <widget name="" label="Lets go !" factory="pawsChatMenuItem"/>
+            <widget name="" label="I am leaving" factory="pawsChatMenuItem"/>
+        </widget>
+    </widget>
+    <widget name="" label="Trade" factory="pawsChatMenuItem"/>
+    <widget name="" label="Hostility" factory="pawsChatMenuItem"/>
+</widget>
+
+
+
+</widget_description>
+

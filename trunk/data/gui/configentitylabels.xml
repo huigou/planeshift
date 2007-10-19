@@ -1,0 +1,38 @@
+<widget_description>
+
+<widget name="ConfigEntityLabels" factory="pawsConfigEntityLabels"
+        visible="no" savepositions="no" movable="no" 
+        resizable="no">
+
+    <widget name="visibility" factory="pawsRadioButtonGroup">
+        <frame x="10" y="10" width="190" height="120" />
+        <widget name="always" factory="pawsRadioButton" id="0">
+            <frame x="10" y="10" width="190" height="30" />
+            <text string="Always visible" position="right"/>
+        </widget>
+        <widget name="mouse" factory="pawsRadioButton" id="1">
+            <frame x="10" y="50" width="190" height="30" />        
+            <text string="Visible on mouse" position="right"/>
+        </widget>
+        <widget name="never" factory="pawsRadioButton" id="2">
+            <frame x="10" y="90" width="190" height="30" />        
+            <text string="Invisible" position="right"/>
+        </widget>
+    </widget>
+
+    <widget name="content" factory="pawsRadioButtonGroup">
+        <frame x="10" y="160" width="190" height="80" />
+        <widget name="guild" factory="pawsRadioButton" id="0">
+            <frame x="10" y="10" width="190" height="30" />        
+            <text string="Name and guild" position="right"/>
+        </widget>
+        <widget name="name" factory="pawsRadioButton" id="1">
+            <frame x="10" y="50" width="190" height="30" />        
+            <text string="Name only" position="right"/>
+        </widget>
+    </widget>
+
+</widget>
+
+</widget_description>
+

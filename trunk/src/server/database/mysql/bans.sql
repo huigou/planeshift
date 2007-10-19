@@ -1,0 +1,12 @@
+#
+# Table structure for table 'bans'
+#
+
+CREATE TABLE bans (
+  account int(10) unsigned NOT NULL DEFAULT '0',
+  ip_range CHAR(15) default NULL,
+  start int(20) unsigned default '0',
+  end int(20) unsigned default '0',
+  reason text default NULL,
+  PRIMARY KEY  (account)
+);

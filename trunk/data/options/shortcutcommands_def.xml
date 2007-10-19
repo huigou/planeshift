@@ -1,0 +1,18 @@
+<shortcuts>
+    <shortcut0 name="Buy">/buy</shortcut0>
+    <shortcut1 name="Sell">/sell</shortcut1>
+    <shortcut2 name="Trade">/trade</shortcut2>
+    <shortcut3 name="Start Atk">/attack</shortcut3>
+    <shortcut4 name="Stop Atk">/stopattack</shortcut4>
+    <shortcut5 name="Challenge">/challenge</shortcut5>
+    <shortcut6 name="Yield">/yield</shortcut6>
+    <shortcut7 name="Next Player">/target next player</shortcut7>
+    <shortcut8 name="Next NPC">/target next npc</shortcut8>
+    <shortcut9 name="Greet">/greet</shortcut9>
+    <shortcut10 name="Online">/who</shortcut10>
+    <shortcut11 name="Clear target">/target clear</shortcut11>
+    <shortcut12 name="Train">/train</shortcut12>
+    <shortcut13 name="Use">/use</shortcut13>
+    <shortcut14 name="Stop using">/stopusing</shortcut14>
+    <shortcut15 name="Unstick">/unstick</shortcut15>
+</shortcuts>

@@ -1,0 +1,32 @@
+<widget_description>
+
+    <widget name="LoadWindow" factory="pawsLoadWindow" 
+            visible="yes" movable="no" resizable="no">
+        <frame x="0" y="0" width="800" height="600" border="no" />
+        <bgimage resource="Loading Background" />
+        
+        <widget name="loadtext" factory="pawsMessageTextBox" >
+            <frame x="30" y="160" width="295" height="120" border="no" />
+            <font name="/planeshift/data/ttf/cupandtalon.ttf" r="-1" g="-1" b="-1" size="10" shadow="yes"/>
+        </widget>
+        <widget name="motd" factory="pawsMultiLineTextBox" >
+            <frame x="30" y="280" width="295" height="80" border="no" />
+            <font name="/planeshift/data/ttf/cupandtalon.ttf" r="-1" g="-1" b="-1" size="12" shadow="yes"/>
+        </widget>
+        <widget name="guildmotd" factory="pawsMultiLineTextBox" >
+            <frame x="30" y="380" width="295" height="80" border="no" />
+            <font name="/planeshift/data/ttf/cupandtalon.ttf" r="-1" g="-1" b="-1" size="12" shadow="yes"/>
+        </widget>
+        <widget name="tip" factory="pawsMultiLineTextBox" >
+            <frame x="380" y="510" width="410" height="40" border="no" />
+            <font name="/planeshift/data/ttf/cupandtalon.ttf" r="-1" g="-1" b="-1" size="12" shadow="yes"/>
+            <bgimage resource="Standard Background" alpha="120" />
+        </widget>
+        <widget name="Progress" factory="pawsProgressBar">
+            <frame x="10" y="570" height="20" width="700" border="yes" />
+            <fadecolor r="100" g="100" b="255" />
+        </widget>
+    </widget>
+    
+</widget_description>
+

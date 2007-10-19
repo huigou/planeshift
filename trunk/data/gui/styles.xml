@@ -1,0 +1,96 @@
+
+<styles>
+
+
+    <!-- note that some widgets have default sizes 
+            - it is better to keep them standardized -->
+    
+    
+    <!-- standard noneditable piece of text in a window -->
+    <style name="label">
+        <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="8" />
+        <frame height="20" />
+    </style>
+
+    <!-- bigger noneditable piece of text in a window that can denote a group of widgets -->
+    <style name="header">
+        <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" size="12" />
+        <frame height="20" />
+    </style>
+    
+    <!-- for inputs where you edit text -->
+    <style name="textinput" inherit="label">
+        <frame border="yes" />
+    </style>
+    
+    <!-- top level window (i.e. child of mainwidget) -->
+    <style name="topwindow" inherit="label" movable="yes" savepositions="yes" configurable="yes">
+        <title resource="Blue Title" align="left" close_button="yes" />
+        <frame border="yes" />
+        <bgimage resource="Standard Background" alpha="128" />
+    </style>
+    
+    <!-- tab window - note that it has standardized relative position -->
+    <style name="tabwindow">
+        <frame x="5" y="30" border="no"/>
+    </style>
+
+    <style name="tabbutton" toggle="yes" >
+        <frame width="80" height="22" border="no" />
+        <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="240" g="240" b="200" size="8" />
+        <buttondown resource="Tab Button Down" />
+        <buttonup resource="Tab Button Up" />
+    </style>
+    
+    <style name="tabbuttonskills" toggle="yes" >
+        <frame width="80" height="22" border="no" />
+        <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="240" g="240" b="200" size="8" />
+        <buttondown resource="Chat Tab Button Down" />
+        <buttonup resource="Chat Tab Button Up" />
+    </style>
+
+    <style name="tabpanel" >
+        <frame border="no" />
+        <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="240" g="240" b="200" size="8" />
+        <bgimage resource="Grey Background" alpha="0" />
+    </style>
+    
+    <!-- standard button -->
+    <style name="button" toggle="no" >
+        <frame width="80" height="22" border="no" />
+        <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="240" g="240" b="200" size="8" />
+        <bgimage resource="Standard Button" alpha="0"/>
+    </style>
+
+    <style name="nicebutton" toggle="no" >
+        <frame width="80" height="22" border="no" />
+        <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="240" g="240" b="200" size="8" />
+        <buttonup resource="Chat Tab Button Up" />
+        <buttondown resource="Chat Tab Button Down" />
+    </style>
+    
+
+    <style name="checkbox" shadows="yes" >
+        <frame width="120" height="20" />
+        <text position="right" />
+    </style>
+
+    <style name="combobox" >
+        <frame height="20" border="yes"/>
+        <listbox rows="2" height="20" text="Choose one..."/>
+    </style>
+
+    <style name="listbox">
+        <frame border="no" margin="5"/>
+        <bgimage resource="Standard Background" alpha="128" />
+        <highlight resource="Grey Background" alpha="128" />
+        <childborders>
+            <colour r="0" g="0" b="0" />
+            <colour r="180" g="180" b="180" />
+            <colour r="32" g="32" b="32" />
+            <colour r="220" g="220" b="220" />
+            <colour r="64" g="64" b="64" />
+        </childborders>
+    </style>
+    
+</styles>

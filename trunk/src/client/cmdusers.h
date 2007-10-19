@@ -1,0 +1,88 @@
+/*
+ * cmdusers.h - Author: Keith Fulton
+ *
+ * Copyright (C) 2001 Atomic Blue (info@planeshift.it, http://www.atomicblue.org) 
+ *
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation (version 2 of the License)
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ */
+
+#ifndef __CMDUSERS_H__
+#define __CMDUSERS_H__
+
+#include "net/cmdbase.h"
+
+class MsgHandler;
+class GEMClientObject;
+
+// Maximum range for the nearby target searches.  NOTE: If you change this,
+// update the command documentation in the constructor.
+#define NEARBY_TARGET_MAX_RANGE 50
+
+/** Manages different commands that are player based in nature.
+ */
+class psUserCommands : public psCmdBase
+{
+    // Types of entities.
+    enum EntityTypes
+    {
+        PSENTITYTYPE_PLAYER_CHARACTER,
+        PSENTITYTYPE_NON_PLAYER_CHARACTER,
+        PSENTITYTYPE_ITEM,
+        PSENTITYTYPE_NO_TARGET
+    };
+
+    // Directions for a search.
+    enum SearchDirection
+    {
+        SEARCH_FORWARD,
+        SEARCH_BACK,
+        SEARCH_NONE
+    };
+
+protected:
+    GEMClientObject* FindEntityWithName(const char *name);
+
+    void UpdateTarget(SearchDirection searchDirection,
+                      EntityTypes entityType);
+
+
+	// Struct to hold our emote data.
+    struct EMOTE {
+    csString command;
+    csString general;
+    csString specific;
+    csString anim;
+    };
+
+	csArray<EMOTE> emoteList;
+
+    void AskToSlayBeforeSending(psMessageCracker *msg);
+
+public:
+    psUserCommands(MsgHandler* mh,CmdHandler *ch,iObjectRegistry* obj);
+    virtual ~psUserCommands();
+
+    static void HandleSlay(bool answeredYes, void *data);
+
+    // Load emotes from xml.
+    bool LoadEmotes();
+
+    // iCmdSubscriber interface
+    virtual const char *HandleCommand(const char *cmd);
+
+    // iNetSubscriber interface
+    virtual void HandleMessage(MsgEntry *msg);
+};
+
+#endif

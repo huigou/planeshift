@@ -1,0 +1,131 @@
+<widget_description>
+    <widget name="ConfigChatTabs" factory="pawsConfigChatTabs"
+            visible="no" savepositions="no" movable="no"
+            resizable="no" >
+
+    <!-- Labels -->
+    <widget name="lblMainIncludes" factory="pawsTextBox">
+        <frame x="20" y="10" width="120" height="20" />
+        <text string="Main tab" />
+    </widget>
+
+    <widget name="lblFlashingTabs" factory="pawsTextBox">
+        <frame x="140" y="10" width="120" height="20" />
+        <text string="Flashing" />
+    </widget>
+	<widget name="lblFlashingOnCharNameTabs" factory="pawsTextBox">
+        <frame x="260" y="10" width="120" height="20" />
+        <text string="Flashing" />
+	</widget>
+	<widget name="lblFlashingOnCharNameTabsRow" factory="pawsTextBox">
+		<frame x="260" y="30" width="120" height="20" />
+		<text string="Char Name" />
+	</widget>
+
+
+
+		<!-- Other chat channels included on the Main tab -->
+    <widget name="isysbase" factory="pawsCheckBox">
+        <frame x="20" y="60" width="120" height="20" />
+        <text string="System Base" />
+    </widget>
+    <widget name="inpc" factory="pawsCheckBox">
+        <frame x="20" y="80" width="120" height="20" />
+        <text string="NPC" />
+    </widget>
+    <widget name="itells" factory="pawsCheckBox">
+        <frame x="20" y="100" width="120" height="20" />
+        <text string="Tells" />
+    </widget>
+    <widget name="iguild" factory="pawsCheckBox">
+        <frame x="20" y="120" width="120" height="20" />
+        <text string="Guild" />
+    </widget>
+    <widget name="igroup" factory="pawsCheckBox">
+        <frame x="20" y="140" width="120" height="20" />
+        <text string="Group" />
+    </widget>
+    <widget name="iauction" factory="pawsCheckBox">
+        <frame x="20" y="160" width="120" height="20" />
+        <text string="Auction" />
+    </widget>
+    <widget name="isys" factory="pawsCheckBox">
+        <frame x="20" y="180" width="120" height="20" />
+        <text string="System" />
+    </widget>
+    <widget name="ihelp" factory="pawsCheckBox">
+        <frame x="20" y="200" width="120" height="20" />
+        <text string="Help" />
+    </widget>
+
+    <!-- Tabs that are flashing -->
+    <widget name="fmain" factory="pawsCheckBox">
+        <frame x="140" y="60" width="120" height="20" />
+        <text string="Main" />
+    </widget>
+    <widget name="fnpc" factory="pawsCheckBox">
+        <frame x="140" y="80" width="120" height="20" />
+        <text string="NPC" />
+    </widget>
+    <widget name="ftells" factory="pawsCheckBox">
+        <frame x="140" y="100" width="120" height="20" />
+        <text string="Tells" />
+    </widget>
+    <widget name="fguild" factory="pawsCheckBox">
+        <frame x="140" y="120" width="120" height="20" />
+        <text string="Guild" />
+    </widget>
+    <widget name="fgroup" factory="pawsCheckBox">
+        <frame x="140" y="140" width="120" height="20" />
+        <text string="Group" />
+    </widget>
+    <widget name="fauction" factory="pawsCheckBox">
+        <frame x="140" y="160" width="120" height="20" />
+        <text string="Auction" />
+    </widget>
+    <widget name="fsys" factory="pawsCheckBox">
+        <frame x="140" y="180" width="120" height="20" />
+        <text string="System" />
+    </widget>
+    <widget name="fhelp" factory="pawsCheckBox">
+        <frame x="140" y="200" width="120" height="20" />
+        <text string="Help" />
+    </widget>
+
+	<!-- Tabs that are flashing on char name-->
+    <widget name="fcmain" factory="pawsCheckBox">
+        <frame x="260" y="60" width="70" height="20" />
+        <text string="Main" />
+	</widget>
+    <widget name="fcnpc" factory="pawsCheckBox">
+        <frame x="260" y="80" width="70" height="20" />
+        <text string="NPC" />
+	</widget>
+    <widget name="fctells" factory="pawsCheckBox">
+        <frame x="260" y="100" width="70" height="20" />
+        <text string="Tells" />
+	</widget>
+    <widget name="fcguild" factory="pawsCheckBox">
+        <frame x="260" y="120" width="70" height="20" />
+        <text string="Guild" />
+	</widget>
+    <widget name="fcgroup" factory="pawsCheckBox">
+        <frame x="260" y="140" width="70" height="20" />
+        <text string="Group" />
+	</widget>
+    <widget name="fcauction" factory="pawsCheckBox">
+        <frame x="260" y="160" width="70" height="20" />
+        <text string="Auction" />
+	</widget>
+    <widget name="fcsys" factory="pawsCheckBox">
+        <frame x="260" y="180" width="70" height="20" />
+        <text string="System" />
+	</widget>
+    <widget name="fchelp" factory="pawsCheckBox">
+        <frame x="260" y="200" width="70" height="20" />
+    	<text string="Help" />
+	</widget>
+
+
+	</widget>
+</widget_description>

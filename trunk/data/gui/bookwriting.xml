@@ -1,0 +1,31 @@
+<widget_description>
+
+    <widget name="WritingWindow" factory="pawsWritingWindow" resizeable = "no" visible="no" movable="yes">
+        <frame x="100" y="100" width="447" height="450" border="yes"/>
+        <bgimage resource="ReadBook Background" />
+        <title resource="Blue Title" text="Book Writing" align="left" close_button="yes"/>
+
+        <widget name="ItemName" factory="pawsEditTextBox" >
+            <frame x="35" y="44" width="385" height="20"/>
+        </widget>
+
+        <widget name="body" factory="pawsMultilineEditTextBox"  style="textinput">
+            <frame x="38" y="100" width="380" height="280" />
+            <font name="/planeshift/data/ttf/becker-m.ttf" r="20" g="10" b="0" size="12"/>
+        </widget>
+
+        <widget name="save" factory="pawsButton" id="103"  style="button" >
+            <frame x="106" y="400" width="50"/>
+            <label text="OK"/>
+        </widget>
+
+        <widget name="cancel" factory="pawsButton" id="101"  style="button" >
+            <frame x="290" y="400" width="50"/>
+            <label text="Cancel"/>
+        </widget>
+
+   </widget>
+
+</widget_description>
+
+

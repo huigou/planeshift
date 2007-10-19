@@ -1,0 +1,10 @@
+SubDir TOP src ;
+
+SubInclude TOP src common ;
+SubInclude TOP src tools ;
+SubInclude TOP src server ;
+SubInclude TOP src client ;
+SubInclude TOP src eedit ;
+SubInclude TOP src npcclient ;
+
+

@@ -1,0 +1,10 @@
+SubDir TOP src eedit ;
+
+Application eedit :
+	[ Wildcard *.cpp *.h ]
+;
+
+CompileGroups eedit : tools ;
+CFlags eedit : $(CAL3D.CFLAGS) ;
+ExternalLibs eedit : CRYSTAL CEL ;
+LinkWith eedit : paws psutil effects fparser ;

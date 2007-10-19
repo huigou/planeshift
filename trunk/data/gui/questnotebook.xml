@@ -1,0 +1,165 @@
+<widget_description>
+
+    <widget name="QuestNotebook" factory="pawsQuestListWindow" style="topwindow" visible="no">
+
+    <frame x="100" y="100" width="550" height="400" />
+    <title text="Quest & Events Notebook"/>
+    <bgimage resource="Quests Background" alpha="128" />
+
+    <widget name="" factory="pawsTextBox" style="header">
+        <frame x="40" y="12" width="135" />
+        <text string="List:" />
+    </widget>
+
+    <widget name="QuestTabs" factory="pawsTabWindow">
+        <frame x="5" y="3" width="250" height="250" border="no" />
+        <widget name="UncompletedButton" factory="pawsButton" style="button" id="1000">
+            <frame x="17" y="190" />
+            <label text="Uncompleted" />
+        </widget>    
+        <widget name="CompletedButton" factory="pawsButton" style="button" id="1001" >
+            <frame x="106" y="190" />
+            <label text="Completed" />
+        </widget>    
+
+        <widget name="EventLists" factory="pawsButton" style="button" id="1300">
+            <frame x="106" y="3" />
+            <label text="Events" />
+        </widget>
+
+        <widget name="UncompletedQuestList" factory="pawsListBox" style="listbox" xmlbinding="quests" id="1100">
+            <frame x="16" y="27" width="186" height="161"/>
+            <highlight resource="Hightlight" alpha="128" />
+            <columns height="30" headings="no" xmlbinding="q" >
+            <column width="40" xmlbinding="image" >
+                <widget name="Icon" factory="pawsSlot">
+                <frame x="0" y="0" width="40" height="40" />
+                <offset left="0" top="0" />
+                </widget>
+            </column>
+            <column width="130" xmlbinding="desc" >
+                <widget name="Name" factory="pawsTextBox" style="label">
+                </widget>
+            </column>
+            <column width="0" xmlbinding="id">
+                <widget name="ID" factory="pawsTextBox" visible="no"></widget>
+            </column>
+            <column width="0" xmlbinding="status">
+                <widget name="Status" factory="pawsTextBox" visible="no"></widget>
+            </column>
+            </columns>
+        </widget>
+
+        <widget name="CompletedQuestList" factory="pawsListBox" style="listbox" xmlbinding="quests" id="1101">
+            <frame x="16" y="27" width="186" height="161" />
+            <highlight resource="Hightlight" alpha="128" />
+            <columns height="30" headings="no" xmlbinding="q" >
+            <column width="40" xmlbinding="image" >
+                <widget name="Icon" factory="pawsSlot">
+                <frame x="0" y="0" width="40" height="40" />
+                <offset left="0" top="0" />
+                </widget>
+            </column>
+            <column width="130" xmlbinding="desc" >
+                <widget name="Name" factory="pawsTextBox" style="label">
+                </widget>
+            </column>
+            <column width="0" xmlbinding="id">
+                <widget name="ID" factory="pawsTextBox" visible="no"></widget>
+            </column>
+            <column width="0" xmlbinding="status">
+                <widget name="Status" factory="pawsTextBox" visible="no"></widget>
+            </column>
+            </columns>
+        </widget>
+    </widget>
+
+    <widget name="EventTabs" factory="pawsTabWindow">
+        <frame x="5" y="3" width="250" height="250" border="no" />
+        <widget name="UncompletedButton" factory="pawsButton" style="button" id="1000">
+            <frame x="17" y="190" />
+            <label text="Uncompleted" />
+        </widget>    
+        <widget name="CompletedButton" factory="pawsButton" style="button" id="1001" >
+            <frame x="106" y="190" />
+            <label text="Completed" />
+        </widget>    
+
+        <widget name="QuestLists" factory="pawsButton" style="button" id="1300">
+            <frame x="106" y="3" />
+            <label text="Quests" />
+        </widget>
+
+        <widget name="UncompletedEventList" factory="pawsListBox" style="listbox" xmlbinding="gmevents" id="1100">
+            <frame x="16" y="27" width="186" height="161"/>
+            <highlight resource="Hightlight" alpha="128" />
+            <columns height="30" headings="no" xmlbinding="event" >
+            <column width="130" xmlbinding="name" >
+                <widget name="Name" factory="pawsTextBox" style="label"></widget>
+            </column>
+            <column width="7" xmlbinding="role" >
+                <widget name="Role" factory="pawsTextBox" visible="yes"></widget>
+            </column>
+            <column width="0" xmlbinding="id">
+                <widget name="ID" factory="pawsTextBox" visible="no"></widget>
+            </column>
+            <column width="0" xmlbinding="status">
+                <widget name="Status" factory="pawsTextBox" visible="no"></widget>
+            </column>
+            </columns>
+        </widget>
+
+        <widget name="CompletedEventList" factory="pawsListBox" style="listbox" xmlbinding="gmevents" id="1101">
+            <frame x="16" y="27" width="186" height="161" />
+            <highlight resource="Hightlight" alpha="128" />
+            <columns height="30" headings="no" xmlbinding="event" >
+            <column width="130" xmlbinding="name" >
+                <widget name="Name" factory="pawsTextBox" style="label"></widget>
+            </column>
+            <column width="7" xmlbinding="role" >
+                <widget name="Role" factory="pawsTextBox" visible="yes"></widget>
+            </column>
+            <column width="0" xmlbinding="id">
+                <widget name="ID" factory="pawsTextBox" visible="no"></widget>
+            </column>
+            <column width="0" xmlbinding="status">
+                <widget name="Status" factory="pawsTextBox" visible="no"></widget>
+            </column>
+            </columns>
+        </widget>
+    </widget>
+
+    <widget name="Discard" factory="pawsButton" id="1201"  style="button" >
+        <frame x="300" y="195" width="100"/>
+        <label text="Discard quest"/>
+    </widget>
+
+
+    <widget name="" factory="pawsTextBox" style="header">
+        <frame x="267" y="14" width="135" />
+        <text string="Description:" />
+    </widget>
+    <widget name="Description" factory="pawsMessageTextBox" style="label">
+        <frame x="256" y="37" width="267" height="161"/>
+    </widget>
+
+    <widget name="" factory="pawsTextBox" style="header">
+        <frame x="50" y="235" width="100" />
+        <text string="Your notes:" />
+    </widget>
+    <widget name="Notes" factory="pawsMultilineEditTextBox" style="textinput">
+        <frame x="30" y="255" width="490" height="100" />
+    </widget>
+
+    <widget name="SaveButton" factory="pawsButton"  style="button" id="1203">
+        <frame x="22" y="370"/>
+        <label text="Save" />
+    </widget>
+    <widget name="CancelButton" factory="pawsButton" style="button" id="1204">
+        <frame x="111" y="370"/>
+        <label text="Reload" />
+    </widget>
+
+    </widget>
+
+</widget_description>

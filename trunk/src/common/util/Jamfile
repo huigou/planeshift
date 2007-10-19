@@ -1,0 +1,8 @@
+SubDir TOP src common util ;
+
+Library psutil 
+	: [ Wildcard *.cpp *.h ]
+	: noinstall
+;
+ExternalLibs psutil : CRYSTAL CEL MYSQLCLIENT ;
+LinkWith psutil : fparser ;

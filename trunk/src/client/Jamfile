@@ -1,0 +1,134 @@
+SubDir TOP src client ;
+SubInclude TOP src client sound ;
+SubInclude TOP src client gui ;
+
+local extrafiles ;
+if [ Property build : projgen ] = msvc
+{
+ extrafiles += [ Wildcard win32 : *.cpp *.h ] ;
+}
+Application psclient : [ Wildcard *.cpp *.h ] $(extrafiles) ;
+CFlags psclient : $(CAL3D.CFLAGS) ;
+ExternalLibs psclient : CRYSTAL CEL ;
+CompileGroups psclient : client ;
+LinkWith psclient : gui psnet psengine psrpgrules pssound psutil paws effects fparser ;
+
+if $(HAVE_STATIC_PLUGINS) = "yes"
+{
+
+SubVariant static ;
+if [ Property build : projgen ] = msvc
+{
+ extrafiles += [ Wildcard win32 : *.cpp *.h ] ;
+}
+Application psclient_static : [ Wildcard *.cpp *.h ] $(extrafiles) : independent noinstall nohelp ;
+CFlags psclient_static : [ FDefines CS_STATIC_LINKED ] ;
+LFlags psclient_static : -lcrystalspace_staticplugins-1.2 -lcel_staticplugins-1.2 ;
+MsvcDefine psclient_static : CS_STATIC_LINKED ;
+LinkWith psclient_static : gui psnet psengine psrpgrules pssound psutil paws effects fparser ;
+
+#
+# The plugins that we need
+#
+STATIC.PLUGINLIST =
+  bindoc
+  bruteblock
+  cpersist
+  csddsimg
+  csfont
+  csjpgimg
+  csopcode
+  csparser
+  cspngimg
+  cssynldr
+  cstgaimg
+  decal
+  dsplex
+  dynavis
+  emit
+  emitldr
+  engine
+  engseq
+  fontplex
+  freefnt2
+  frustvis
+  genmesh
+  gl3d
+  glshader_fixed
+  gmeshanim
+  gmeshanimpdl
+  gmeshldr
+  imgplex
+  null2d
+  null3d
+  nullmesh
+  nullmeshldr
+  particles
+  particlesldr
+  ptanimimg
+  ptpdlight
+  rendloop_loader
+  rendstep_std
+  reporter
+  sequence
+  shadermgr
+  simpleformer
+  simpleformerldr
+  sndmanager
+  sndsysloader
+  sndsysogg
+  sndsyssoft
+  sndsyswav
+  spr2d
+  spr3d
+  spr3dbin
+  spr3dldr
+  sprcal3d
+  sprcal3dldr
+  stdrep
+  terrainldr
+  thing
+  thingldr
+  vfs
+  xmlread
+  xmlshader
+  ;
+
+#
+# The plugins that are nice to have if pressent
+#
+STATIC.OPTIONALPLUGINLIST =
+  glshader_cg
+  glshader_ps1
+  ;
+
+if $(TARGET.OS) != "WIN32"
+{
+if $(X11.AVAILABLE) = "yes" { STATIC.PLUGINLIST += xwin ; }
+if $(XFREE86VM.AVAILABLE) = "yes" { STATIC.PLUGINLIST += xext86vm ; }
+STATIC.OPTIONALPLUGINLIST += glx2d sndsysalsa sndsysoss ;
+}
+if $(TARGET.OS) = "WIN32" { STATIC.PLUGINLIST += glwin32 sndsyswin ; }
+if $(TARGET.OS) = "MACOS_X" { STATIC.PLUGINLIST += glosx2d sndsyscoreaudio ; }
+
+
+LinkStaticPlugins psclient_static : $(STATIC.PLUGINLIST) : $(STATIC.OPTIONALPLUGINLIST)
+: CRYSTAL
+;
+
+LinkStaticPlugins psclient_static :
+  pfdefcam
+  pfengine
+  pfinput
+  pfmesh
+  pfmove
+  stdphyslayer
+:
+: CEL
+;
+
+ExternalLibs psclient_static : CRYSTAL CEL ;
+CompileGroups psclient_static : client_static ;
+
+SubVariant ;
+}

@@ -1,0 +1,108 @@
+<widget_description>
+    <widget name="CharPickerWindow" factory="pawsCharacterPickerWindow" visible="no" movable="no" resizable="no">
+    <frame x="0" y="0" width="800" height="600" border="no"/>
+    <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" size="14"/>
+    <bgimage resource="Charpick Background"/>
+
+    <form>
+    <!-- Button to simulate click on if enter is pressed -->
+        <enter name="login"/>
+    <!-- Add the tab order here -->
+    </form>
+
+    <!-- Title -->
+    <widget name="label_login" factory="pawsTextBox">
+        <frame x="200" y="10" width="400" height="40" border="no"/>
+        <font name="/planeshift/data/ttf/cupandtalon.ttf" r="-1" g="-1" b="-1" size="26" sr="0" sg="0" sb="0" shadow="yes"/>
+        <text string="CHARACTER SELECT" horizAdjust="CENTRE"/>
+    </widget>
+
+    <!-- Server wait -->
+    <widget name="wait_label" factory="pawsTextBox">
+        <frame x="0" y="55" width="800" height="30" border="no"/>
+        <font name="/planeshift/data/ttf/cupandtalon.ttf" r="-1" g="-1" b="-1" size="16" sr="0" sg="0" sb="0" shadow="yes"/>
+        <text string="Waiting on server data.." horizAdjust="CENTRE"/>
+        </widget>
+
+    <!-- Character Select -->
+    <widget name="ImgCharacter0" factory="pawsWidget" visible="no">
+        <frame x="700" y="213" width="30" height="30" border="no"/>
+        <bgimage resource="radiooff2"/>
+    </widget>
+
+    <widget name="SelectCharacter0" factory="pawsButton" id="0" visible="no">
+        <frame x="550" y="210" width="140" height="40" border="no"/>
+        <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" b="255" g="255" size="13"/>
+        <label text="New Character"/>
+    </widget>
+
+    <widget name="ImgCharacter1" factory="pawsWidget" visible="no">
+        <frame x="715" y="266" width="30" height="30" border="no"/>
+        <bgimage resource="radiooff2"/>
+    </widget>
+
+    <widget name="SelectCharacter1" factory="pawsButton" id="1" visible="no">
+        <frame x="550" y="265" width="140" height="40" border="no"/>
+        <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" b="255" g="255" size="13"/>
+        <label text="New Character"/>
+    </widget>
+
+    <widget name="ImgCharacter2" factory="pawsWidget" visible="no">
+        <frame x="714" y="322" width="30" height="30" border="no"/>
+        <bgimage resource="radiooff2"/>
+    </widget>
+
+    <widget name="SelectCharacter2" factory="pawsButton" id="2" visible="no">
+        <frame x="550" y="320" width="140" height="40" border="no"/>
+        <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" b="255" g="255" size="13"/>
+        <label text="New Character"/>
+    </widget>
+
+    <widget name="ImgCharacter3" factory="pawsWidget" visible="no">
+        <frame x="695" y="378" width="30" height="30" border="no"/>
+        <bgimage resource="radiooff2"/>
+    </widget>
+
+    <widget name="SelectCharacter3" factory="pawsButton" id="3" visible="no">
+        <frame x="550" y="375" width="140" height="40" border="no"/>
+        <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" b="255" g="255" size="13"/>
+        <label text="New Character"/>
+    </widget>
+
+    <widget name="PaperDollView" factory="pawsObjectView">
+        <frame x="290" y="120" width="223" height="398" border="no"/>
+        <mask resource="charborder"/>
+        <map file="/planeshift/world/podium" sector="room"/>
+        <distance value="4"/>
+    </widget>
+
+    <!-- Join Game Button -->
+    <widget name="login" factory="pawsButton" id="100" visible="yes" key="L">
+        <frame x="550" y="440" width="135" height="50" border="no"/>
+        <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" size="20" sr="0" sg="0" sb="0" shadow="yes"/>
+        <label text="Join"/>
+    </widget>
+
+    <!-- Delete Char Button -->
+    <widget name="delete" factory="pawsButton" id="150" visible="yes">
+        <frame x="336" y="515" width="135" height="50" border="no"/>
+        <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" b="255" g="255" size="14" sr="0" sg="0" sb="0" shaddow="yes"/>
+        <label text="Delete"/>
+    </widget>
+
+    <!-- Back Button -->
+    <widget name="back" factory="pawsButton" id="200" key="B">
+        <frame x="80" y="290" width="120" height="50" border="no"/>
+        <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" b="255" g="255" size="22" sr="0" sg="0" sb="0" shaddow="yes"/>
+        <label text="Back"/>
+    </widget>
+
+    <!-- Navigation Buttons -->
+    <widget name="quit" factory="pawsButton" id="250" key="Q">
+        <frame x="20" y="484" width="100" height="90" border="no"/>
+        <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" size="28" sr="0" sg="0" sb="0" shadow="yes"/>
+        <label text="Quit"/>
+    </widget>
+
+</widget>
+</widget_description>

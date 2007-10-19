@@ -1,0 +1,87 @@
+/*
+* pawsgmgui.h - Author: Andrew Robberts
+*
+* Copyright (C) 2003 Atomic Blue (info@planeshift.it, http://www.atomicblue.org)
+*
+*
+* This program is free software; you can redistribute it and/or
+* modify it under the terms of the GNU General Public License
+* as published by the Free Software Foundation (version 2 of the License)
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+* You should have received a copy of the GNU General Public License
+* along with this program; if not, write to the Free Software
+* Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+*
+*/
+
+#ifndef PAWS_GMGUI_WINDOW
+#define PAWS_GMGUI_WINDOW
+// CS INCLUDES
+#include "paws/pawswidget.h"
+#include "paws/pawsbutton.h"
+#include "paws/pawstextbox.h"
+#include "paws/pawslistbox.h"
+#include "paws/pawsstringpromptwindow.h"
+#include "net/cmdbase.h"
+
+class pawsGmGUIWindow : public pawsWidget, public psCmdBase, public iOnStringEnteredAction
+{
+public:
+    pawsGmGUIWindow();
+
+    virtual ~pawsGmGUIWindow();
+
+    /// Handles petition server messages
+    void HandleMessage( MsgEntry* message );
+
+    /// Handles commands
+    const char* HandleCommand(const char* cmd);
+
+    virtual bool PostSetup();
+    virtual void Show();
+    virtual void OnListAction( pawsListBox* widget, int status );
+
+    void HideWidget(const char* name);
+    void ShowWidget(const char* name);
+
+    /// Handle button clicks
+    bool OnButtonPressed(int mouseButton, int keyModifier, pawsWidget* reporter);
+
+    const char* GetSelectedName();
+    const char* GetSelectedSector();
+    int GetSelectedGender();
+
+    void QueryServer();
+
+    void OnStringEntered(const char *name,int param,const char *value);
+
+    int GetCurrentTab() { return currentTab; };
+
+protected:
+    pawsMessageTextBox* systemText;
+    CmdHandler *cmdsource;
+
+    csRef<iVFS> vfs;
+    csRef<iDocumentSystem> xml;
+
+    void SetSecurity();
+
+    void QueryActionLocations();
+
+    void FillPlayerList(psGMGuiMessage& msg);
+    void FillActionList(psMapActionMessage& msg);
+
+    pawsListBox* playerList;
+    pawsListBox* actionList;
+
+    pawsTextBox* playerCount;
+
+    int currentTab;
+    csString cmdToExectute;
+    csString actionXML;
+};
+CREATE_PAWS_FACTORY( pawsGmGUIWindow );
+#endif
