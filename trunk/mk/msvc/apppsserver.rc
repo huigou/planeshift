@@ -28,6 +28,11 @@ FILEFLAGS 0x0
       VALUE "WWW", "http://www.planeshift.it/"
     }
   }
+  BLOCK "VarFileInfo"
+  {
+      VALUE "Translation", 0x409, 1200
+  }
+
 }
 // This file is generated automatically.
 
