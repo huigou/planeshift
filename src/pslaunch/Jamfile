@@ -1,0 +1,9 @@
+SubDir TOP src pslaunch ;
+
+Application psupdater :
+	[ Wildcard *.cpp *.h ]
+;
+
+ExternalLibs psupdater : CRYSTAL CURL ;
+CompileGroups psupdater : client ;
+LinkWith psupdater : xdelta3 ;
