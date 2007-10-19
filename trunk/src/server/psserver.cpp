@@ -80,7 +80,7 @@
 
 
 // Remember to bump this in server_options.sql and add to upgrade_schema.sql!
-#define DATABASE_VERSION_STR "1164"
+#define DATABASE_VERSION_STR "1165"
 
 
 psCharacterLoader psServer::CharacterLoader;

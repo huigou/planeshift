@@ -177,6 +177,8 @@ struct QuestAssignment
     bool dirty;
     /// When a quest is completed, often it cannot immediately be repeated.  This indicate the time when it can be started again.
     unsigned long lockout_end;
+    /// To avoid loosing a chain of responses in a quest, last responses are stored per assigned quest.
+    int last_response;
     /// Since "quest" member can be nulled without notice, this accessor function attempts to refresh it if NULL
     csWeakRef<psQuest>& GetQuest();
     void SetQuest(psQuest *q);
@@ -548,7 +550,9 @@ protected:
 
 	// Array of items waiting to be looted.
     csArray<psItemStats *> loot_pending;
-    
+    /// Last response of an NPC to this character (not saved)
+    int  lastResponse;
+
 public:
     psCharacterInventory& Inventory() { return inventory; }
     
@@ -744,7 +748,13 @@ public:
     QuestAssignment *AssignQuest(psQuest *quest, int assigner_id);
     bool CompleteQuest(psQuest *quest);
     void DiscardQuest(QuestAssignment *q);
-    
+    bool SetAssignedQuestLastResponse(psQuest *quest, int response);
+    size_t GetNumAssignedQuests() { return assigned_quests.GetSize(); }
+    int GetAssignedQuestLastResponse(int i);
+    /// The last_response given by an npc to this player.
+    int GetLastResponse() { return lastResponse; }
+    void SetLastResponse(int response) { lastResponse=response; }
+
     /**
      * Sync dirty Quest Assignemnt to DB
      *

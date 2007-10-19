@@ -327,6 +327,14 @@ NpcResponse *psNPCDialog::FindResponse(csString& trigger,const char *text)
     NpcResponse *resp = NULL;
     csString trigger_error;
 
+    //May be it is safe not to check for characterdata (now needed for GetLastRespons())
+    if (currentClient->GetCharacterData() == NULL)
+    {
+        Error1("NpcResponse *psNPCDialog::FindResponse(csString& trigger,const char *text) called with "
+            "currentClient->GetCharacterData() returning NULL.");
+        return NULL;
+    }
+
     if (trigger.GetData() == NULL) 
         return NULL;
 
@@ -339,15 +347,37 @@ NpcResponse *psNPCDialog::FindResponse(csString& trigger,const char *text)
     {
         area = knowareas[z];
         Debug4(LOG_NPC, currentClient->GetClientNum(),"NPC checking %s for trigger %s , with lastResponseID %d...",
-                (const char *)area->area,(const char *)trigger,currentClient->GetLastResponse());
+                    (const char *)area->area,(const char *)trigger,currentClient->GetCharacterData()->GetLastResponse());
 
-        resp = dict->FindResponse(self, area->area,trigger,0,currentClient->GetLastResponse(),currentClient);
+        //first try with last responses of all assigned quests
+        for (size_t q = 0; q < currentClient->GetCharacterData()->GetNumAssignedQuests(); q++)
+        {
+            resp = dict->FindResponse(self, area->area,trigger,0,
+                currentClient->GetCharacterData()->GetAssignedQuestLastResponse(q),currentClient); 
+            if (resp)
+                break;
+        }
+        if (!resp) //else, try old way with general last response
+        {
+            resp = dict->FindResponse(self, area->area,trigger,0,currentClient->GetCharacterData()->GetLastResponse(),currentClient);
+        }
         if (!resp) // If no response found, try search for error trigger
         {
-            resp = dict->FindResponse(self, area->area,trigger_error,0,currentClient->GetLastResponse(),currentClient);
+            //first try with last responses of all assigned quests
+            for (size_t q = 0; q < currentClient->GetCharacterData()->GetNumAssignedQuests(); q++)
+            {
+                resp = dict->FindResponse(self, area->area,trigger_error,0,
+                    currentClient->GetCharacterData()->GetAssignedQuestLastResponse(q),currentClient); 
+                if (resp)
+                    break;
+            }
+            if (!resp) //else, try old way with general last response
+            {
+                resp = dict->FindResponse(self, area->area,trigger_error,0,currentClient->GetCharacterData()->GetLastResponse(),currentClient);
+            }
             if (!resp) // If no response found, try search without last response
             {
-                if (currentClient->GetLastResponse() == -1)
+                if (currentClient->GetCharacterData()->GetLastResponse() == -1)
                 {
                     // No point testing without last response
                     // if last response where no last response.
@@ -571,10 +601,20 @@ NpcResponse *psNPCDialog::Respond(const char * text,Client *client)
         //         else
         //             dialogHistory.AddToHistory(client->GetPlayerID(), resp->id, csGetTicks() );
 
-
-        Debug3(LOG_NPC, currentClient->GetClientNum(),"Setting last response %d: %s",resp->id,resp->GetResponse());
-        currentClient->SetLastResponse(resp->id);
-        return resp; // Found what we are looking for
+        //May be it is safe not to check for characterdata (now needed for GetLastRespons())
+        if (currentClient->GetCharacterData() == NULL)
+        {
+            Error1("NpcResponse *psNPCDialog::Respond(const char * text,Client *client) called with "
+                "currentClient->GetCharacterData() returning NULL.");
+        }
+        else
+        {
+            Debug3(LOG_NPC, currentClient->GetClientNum(),"Setting last response %d: %s",resp->id,resp->GetResponse());
+            currentClient->GetCharacterData()->SetLastResponse(resp->id);
+            Debug4(LOG_NPC, currentClient->GetClientNum(),"Setting last response for quest %d, %d: %s",
+               resp->quest,resp->id,resp->GetResponse());
+            currentClient->GetCharacterData()->SetAssignedQuestLastResponse(resp->quest,resp->id);
+        }
     }
     else
     {

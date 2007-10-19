@@ -776,6 +776,11 @@ INSERT INTO command_group_assignment VALUES( "/setlabelcolor", 24 );
 INSERT INTO command_group_assignment VALUES( "/setlabelcolor", 23 );
 INSERT INTO command_group_assignment VALUES( "/setlabelcolor", 22 );
 
+#### 1165 - Sasha Levin - Fix by Lanarel to quests
+ALTER TABLE `planeshift`.`character_quests` MODIFY COLUMN `remaininglockout` INT(10) UNSIGNED DEFAULT 0,
+ ADD COLUMN `last_response` INT(10) DEFAULT '-1' AFTER `remaininglockout`;
+
+
 #
 # Insert your upgrade before this line. Remember when you set a new db_version
 # to update the server_options.sql file and update psserver.cpp as well.
