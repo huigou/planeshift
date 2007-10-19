@@ -1,3 +1,4 @@
 SubDir TOP src tools ;
 
 SubInclude TOP src tools fparser ;
+SubInclude TOP src tools wordnet ;
