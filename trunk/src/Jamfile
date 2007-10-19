@@ -6,5 +6,4 @@ SubInclude TOP src server ;
 SubInclude TOP src client ;
 SubInclude TOP src eedit ;
 SubInclude TOP src npcclient ;
-
-
+SubInclude TOP src pslaunch ;

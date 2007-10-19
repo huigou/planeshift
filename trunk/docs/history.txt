@@ -1,3 +1,6 @@
+*** 2007-10-19 by Michael Gist
+- Wrote a new updater. Console only atm.
+
 *** 2007-10-18 by Michael Gist
 - Removed the disable of texture_rectangle OGL extensions.
   We need to track down the cards this doesn't work on, not disable it for everyone!
