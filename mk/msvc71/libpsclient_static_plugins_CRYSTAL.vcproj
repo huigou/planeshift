@@ -11,28 +11,22 @@
 			Name="Win32"/>
 	</Platforms>
 	<Configurations>
-		<Configuration
-			Name="Release|Win32"
+  		<Configuration
+			Name="Release (with static libs)|Win32"
 			OutputDirectory="..\..\out\release71\build\libpsclient_static_plugins_CRYSTAL\"
 			IntermediateDirectory="..\..\out\release71\build\libpsclient_static_plugins_CRYSTAL\"
+			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="2"
-				InlineFunctionExpansion="2"
-				StringPooling="true"
-				EnableFunctionLevelLinking="true"
-				EnableIntrinsicFunctions="true"
-				FavorSizeOrSpeed="1"
-				OmitFramePointers="true"
-				EnableFiberSafeOptimizations="true"
-				WholeProgramOptimization="true"
+				StringPooling="TRUE"
+				EnableFunctionLevelLinking="TRUE"
 				RuntimeLibrary="2"
-				FloatingPointModel="2"
 				DebugInformationFormat="3"
 				BufferSecurityCheck="FALSE"
-				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;_WINDOWS;WIN32"
+				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;WIN32"
 				OptimizeForProcessor="1"
 				AdditionalOptions="/D CS_HAVE_CAL3D "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
@@ -41,10 +35,10 @@
 				ObjectFile="..\..\out\release71\build\libpsclient_static_plugins_CRYSTAL\"
 				ProgramDataBaseFileName="..\..\out\release71\build\libpsclient_static_plugins_CRYSTAL\psclient_static_plugins_CRYSTAL.pdb"
 				WarningLevel="3"
-				RuntimeTypeInfo="TRUE"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="TRUE"
 				TreatWChar_tAsBuiltInType="false"
+				ForceConformanceInForLoopScope="true"
 				CompileAs="0"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
@@ -55,13 +49,87 @@
 				EnableCOMDATFolding="2"
 				GenerateDebugInformation="TRUE"
 				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD"
-				LinkTimeCodeGeneration="1"
 				AdditionalOptions="libcel_staticplugins.lib libjpeg.lib libpng.lib freetype2.lib vorbisfile.lib vorbis.lib ogg.lib cal3d-vc71.lib libcrystalspace_windows.lib libcrystalspace_opengl.lib version.lib libcrystalspace_directx.lib dsound.lib ddraw.lib dinput.lib cg.lib cgGL.lib libcrystalspace_staticplugins.lib libcrystalspace.lib zlib.lib opengl32.lib "
 				AdditionalDependencies=""
-				IgnoreImportLibrary="TRUE"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories=""
-				ProgramDatabaseFile="..\..\out\release71\build\libpsclient_static_plugins_CRYSTAL\psclient_static_plugins_CRYSTAL.pdb"
+				TargetMachine="1"/>
+			<Tool
+				Name="VCLibrarianTool"
+				OutputFile="..\..\out\release71\libs\libpsclient_static_plugins_CRYSTAL.lib"
+				SuppressStartupBanner="TRUE"/>
+			<Tool
+				Name="VCMIDLTool"
+				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__"
+				MkTypLibCompatible="TRUE"
+				SuppressStartupBanner="TRUE"
+				TargetEnvironment="1"
+				TypeLibraryName="..\..\out\release71\build\libpsclient_static_plugins_CRYSTAL\libpsclient_static_plugins_CRYSTAL.tlb"/>
+			<Tool
+				Name="VCPostBuildEventTool"
+				CommandLine="md ..\..\out\release71\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\release71\bin\&#x0D;&#x0A;"
+				CommandLine="copy &quot;$(TargetPath)&quot; ..\..\&#x0D;&#x0A;del ..\..\$(TargetName).lib&#x0D;&#x0A;"
+				/>
+			<Tool
+				Name="VCPreBuildEventTool"/>
+			<Tool
+				Name="VCPreLinkEventTool"/>
+			<Tool
+				Name="VCResourceCompilerTool"
+				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;PROJECTGEN_VERSION=71"
+				AdditionalIncludeDirectories=".;..\..\src\client;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
+				Culture="1033"/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"/>
+			<Tool
+				Name="VCWebDeploymentTool"/>
+		</Configuration>
+  		<Configuration
+			Name="Release (with DLLs)|Win32"
+			OutputDirectory="..\..\out\release71\build\libpsclient_static_plugins_CRYSTAL\"
+			IntermediateDirectory="..\..\out\release71\build\libpsclient_static_plugins_CRYSTAL\"
+			ConfigurationType="2"
+			WholeProgramOptimization="1"
+			UseOfMFC="0"
+			ATLMinimizesCRunTimeLibraryUsage="FALSE">
+			<Tool
+				Name="VCCLCompilerTool"
+				Optimization="2"
+				StringPooling="TRUE"
+				EnableFunctionLevelLinking="TRUE"
+				RuntimeLibrary="2"
+				DebugInformationFormat="3"
+				BufferSecurityCheck="FALSE"
+				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;_WINDOWS;WIN32;CS_BUILD_SHARED_LIBS"
+				OptimizeForProcessor="1"
+				AdditionalOptions="/D CS_HAVE_CAL3D "
+				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
+				PrecompiledHeaderFile="..\..\out\release71\build\libpsclient_static_plugins_CRYSTAL\libpsclient_static_plugins_CRYSTAL.pch"
+				AssemblerListingLocation="..\..\out\release71\build\libpsclient_static_plugins_CRYSTAL\"
+				ObjectFile="..\..\out\release71\build\libpsclient_static_plugins_CRYSTAL\"
+				ProgramDataBaseFileName="..\..\out\release71\build\libpsclient_static_plugins_CRYSTAL\psclient_static_plugins_CRYSTAL.pdb"
+				WarningLevel="3"
+				SuppressStartupBanner="TRUE"
+				Detect64BitPortabilityProblems="TRUE"
+				TreatWChar_tAsBuiltInType="false"
+				ForceConformanceInForLoopScope="true"
+				CompileAs="0"/>
+			<Tool
+				Name="VCCustomBuildTool"/>
+			<Tool
+				Name="VCLinkerTool"
+				LinkIncremental="1"
+				OptimizeReferences="2"
+				EnableCOMDATFolding="2"
+				GenerateDebugInformation="TRUE"
+				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD"
+                                OutputFile="..\..\psclient_static_plugins_CRYSTAL-0.3-vc71.dll"
+				ImportLibrary="..\..\out\release71\libs\libpsclient_static_plugins_CRYSTAL.lib"
+				ProgramDatabaseFile="..\..\out\release71\build\libpsclient_static_plugins_CRYSTAL\psclient_static_plugins_CRYSTAL-0.3-vc71.pdb"
+				AdditionalOptions="libcel_staticplugins.lib libjpeg.lib libpng.lib freetype2.lib vorbisfile.lib vorbis.lib ogg.lib cal3d-vc71.lib libcrystalspace_windows.lib libcrystalspace_opengl.lib version.lib libcrystalspace_directx.lib dsound.lib ddraw.lib dinput.lib cg.lib cgGL.lib libcrystalspace_staticplugins.lib libcrystalspace.lib zlib.lib opengl32.lib "
+				AdditionalDependencies=""
+				SuppressStartupBanner="TRUE"
+				AdditionalLibraryDirectories=""
 				TargetMachine="1"/>
 			<Tool
 				Name="VCLibrarianTool"
@@ -75,6 +143,7 @@
 				TypeLibraryName="..\..\out\release71\build\libpsclient_static_plugins_CRYSTAL\libpsclient_static_plugins_CRYSTAL.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
+				CommandLine="md ..\..\out\release71\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\release71\bin\&#x0D;&#x0A;"
 				CommandLine="copy &quot;$(TargetPath)&quot; ..\..\&#x0D;&#x0A;del ..\..\$(TargetName).lib&#x0D;&#x0A;"
 				/>
 			<Tool
@@ -84,17 +153,18 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;_WINDOWS;PROJECTGEN_VERSION=71"
-				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
+				AdditionalIncludeDirectories=".;..\..\src\client;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
 			<Tool
 				Name="VCWebDeploymentTool"/>
 		</Configuration>
-		<Configuration
-			Name="Debug|Win32"
+    		<Configuration
+			Name="Debug (with static libs)|Win32"
 			OutputDirectory="..\..\out\debug71\build\libpsclient_static_plugins_CRYSTAL\"
 			IntermediateDirectory="..\..\out\debug71\build\libpsclient_static_plugins_CRYSTAL\"
+			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
 			<Tool
@@ -102,8 +172,10 @@
 				Optimization="0"
 				MinimalRebuild="TRUE"
 				DebugInformationFormat="4"
+				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;_WINDOWS;WIN32"
+
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;WIN32"
 				OptimizeForProcessor="1"
 				AdditionalOptions="/D CS_HAVE_CAL3D "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
@@ -112,10 +184,10 @@
 				ObjectFile="..\..\out\debug71\build\libpsclient_static_plugins_CRYSTAL\"
 				ProgramDataBaseFileName="..\..\out\debug71\build\libpsclient_static_plugins_CRYSTAL\psclient_static_plugins_CRYSTAL.pdb"
 				WarningLevel="3"
-				RuntimeTypeInfo="TRUE"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="TRUE"
 				TreatWChar_tAsBuiltInType="false"
+				ForceConformanceInForLoopScope="true"
 				CompileAs="0"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
@@ -126,10 +198,82 @@
 				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD,MSVCRT"
 				AdditionalOptions="libcel_staticplugins_d.lib libjpeg.lib libpng.lib freetype2.lib vorbisfile.lib vorbis.lib ogg.lib cal3d-vc71_d.lib libcrystalspace_windows_d.lib libcrystalspace_opengl_d.lib version.lib libcrystalspace_directx_d.lib dsound.lib ddraw.lib dinput.lib cg.lib cgGL.lib libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib zlib.lib opengl32.lib "
 				AdditionalDependencies=""
-				IgnoreImportLibrary="TRUE"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories=""
-				ProgramDatabaseFile="..\..\out\debug71\build\libpsclient_static_plugins_CRYSTAL\psclient_static_plugins_CRYSTAL.pdb"
+				TargetMachine="1"/>
+			<Tool
+				Name="VCLibrarianTool"
+				OutputFile="..\..\out\debug71\libs\libpsclient_static_plugins_CRYSTAL_d.lib"
+				SuppressStartupBanner="TRUE"/>
+			<Tool
+				Name="VCMIDLTool"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__"
+				MkTypLibCompatible="TRUE"
+				SuppressStartupBanner="TRUE"
+				TargetEnvironment="1"
+				TypeLibraryName="..\..\out\debug71\build\libpsclient_static_plugins_CRYSTAL\libpsclient_static_plugins_CRYSTAL.tlb"/>
+			<Tool
+				Name="VCPostBuildEventTool"
+				CommandLine="md ..\..\out\debug71\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug71\bin\&#x0D;&#x0A;"
+				CommandLine="copy &quot;$(TargetPath)&quot; ..\..\&#x0D;&#x0A;del ..\..\$(TargetName).lib&#x0D;&#x0A;"
+				/>
+			<Tool
+				Name="VCPreBuildEventTool"/>
+			<Tool
+				Name="VCPreLinkEventTool"/>
+			<Tool
+				Name="VCResourceCompilerTool"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;PROJECTGEN_VERSION=71"
+				AdditionalIncludeDirectories=".;..\..\src\client;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
+				Culture="1033"/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"/>
+			<Tool
+				Name="VCWebDeploymentTool"/>
+		</Configuration>
+  		<Configuration
+			Name="Debug (with DLLs)|Win32"
+			OutputDirectory="..\..\out\debug71\build\libpsclient_static_plugins_CRYSTAL\"
+			IntermediateDirectory="..\..\out\debug71\build\libpsclient_static_plugins_CRYSTAL\"
+			ConfigurationType="2"
+			UseOfMFC="0"
+			ATLMinimizesCRunTimeLibraryUsage="FALSE">
+			<Tool
+				Name="VCCLCompilerTool"
+				Optimization="0"
+				MinimalRebuild="TRUE"
+				DebugInformationFormat="4"
+				RuntimeTypeInfo="TRUE"
+				RuntimeLibrary="3"
+
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;_WINDOWS;WIN32;CS_BUILD_SHARED_LIBS"
+				OptimizeForProcessor="1"
+				AdditionalOptions="/D CS_HAVE_CAL3D "
+				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
+				PrecompiledHeaderFile="..\..\out\debug71\build\libpsclient_static_plugins_CRYSTAL\libpsclient_static_plugins_CRYSTAL.pch"
+				AssemblerListingLocation="..\..\out\debug71\build\libpsclient_static_plugins_CRYSTAL\"
+				ObjectFile="..\..\out\debug71\build\libpsclient_static_plugins_CRYSTAL\"
+				ProgramDataBaseFileName="..\..\out\debug71\build\libpsclient_static_plugins_CRYSTAL\psclient_static_plugins_CRYSTAL.pdb"
+				WarningLevel="3"
+				SuppressStartupBanner="TRUE"
+				Detect64BitPortabilityProblems="TRUE"
+				TreatWChar_tAsBuiltInType="false"
+				ForceConformanceInForLoopScope="true"
+				CompileAs="0"/>
+			<Tool
+				Name="VCCustomBuildTool"/>
+			<Tool
+				Name="VCLinkerTool"
+				LinkIncremental="2"
+				GenerateDebugInformation="TRUE"
+				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD,MSVCRT"
+                                OutputFile="..\..\psclient_static_plugins_CRYSTAL-0.3-vc71_d.dll"
+				ImportLibrary="..\..\out\debug71\libs\libpsclient_static_plugins_CRYSTAL_d.lib"
+				ProgramDatabaseFile="..\..\out\debug71\build\libpsclient_static_plugins_CRYSTAL\psclient_static_plugins_CRYSTAL-0.3-vc71_d.pdb"
+				AdditionalOptions="libcel_staticplugins_d.lib libjpeg.lib libpng.lib freetype2.lib vorbisfile.lib vorbis.lib ogg.lib cal3d-vc71_d.lib libcrystalspace_windows_d.lib libcrystalspace_opengl_d.lib version.lib libcrystalspace_directx_d.lib dsound.lib ddraw.lib dinput.lib cg.lib cgGL.lib libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib zlib.lib opengl32.lib "
+				AdditionalDependencies=""
+				SuppressStartupBanner="TRUE"
+				AdditionalLibraryDirectories=""
 				TargetMachine="1"/>
 			<Tool
 				Name="VCLibrarianTool"
@@ -143,6 +287,7 @@
 				TypeLibraryName="..\..\out\debug71\build\libpsclient_static_plugins_CRYSTAL\libpsclient_static_plugins_CRYSTAL.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
+				CommandLine="md ..\..\out\debug71\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug71\bin\&#x0D;&#x0A;"
 				CommandLine="copy &quot;$(TargetPath)&quot; ..\..\&#x0D;&#x0A;del ..\..\$(TargetName).lib&#x0D;&#x0A;"
 				/>
 			<Tool
@@ -152,17 +297,18 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;_WINDOWS;PROJECTGEN_VERSION=71"
-				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
+				AdditionalIncludeDirectories=".;..\..\src\client;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
 			<Tool
 				Name="VCWebDeploymentTool"/>
 		</Configuration>
-		<Configuration
-			Name="MemoryTracker|Win32"
+    		<Configuration
+			Name="MemoryTracker (with static libs)|Win32"
 			OutputDirectory="..\..\out\debug71\build\libpsclient_static_plugins_CRYSTAL\"
 			IntermediateDirectory="..\..\out\debug71\build\libpsclient_static_plugins_CRYSTAL\"
+			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
 			<Tool
@@ -170,8 +316,10 @@
 				Optimization="0"
 				MinimalRebuild="TRUE"
 				DebugInformationFormat="4"
+				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_MEMORY_TRACKER;_WINDOWS;WIN32"
+
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_MEMORY_TRACKER;WIN32"
 				OptimizeForProcessor="1"
 				AdditionalOptions="/D CS_HAVE_CAL3D "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
@@ -180,10 +328,10 @@
 				ObjectFile="..\..\out\debug71\build\libpsclient_static_plugins_CRYSTAL\"
 				ProgramDataBaseFileName="..\..\out\debug71\build\libpsclient_static_plugins_CRYSTAL\psclient_static_plugins_CRYSTAL.pdb"
 				WarningLevel="3"
-				RuntimeTypeInfo="TRUE"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="TRUE"
 				TreatWChar_tAsBuiltInType="false"
+				ForceConformanceInForLoopScope="true"
 				CompileAs="0"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
@@ -194,10 +342,82 @@
 				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD,MSVCRT"
 				AdditionalOptions="libcel_staticplugins_d.lib libjpeg.lib libpng.lib freetype2.lib vorbisfile.lib vorbis.lib ogg.lib cal3d-vc71_d.lib libcrystalspace_windows_d.lib libcrystalspace_opengl_d.lib version.lib libcrystalspace_directx_d.lib dsound.lib ddraw.lib dinput.lib cg.lib cgGL.lib libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib zlib.lib opengl32.lib "
 				AdditionalDependencies=""
-				IgnoreImportLibrary="TRUE"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories=""
-				ProgramDatabaseFile="..\..\out\debug71\build\libpsclient_static_plugins_CRYSTAL\psclient_static_plugins_CRYSTAL.pdb"
+				TargetMachine="1"/>
+			<Tool
+				Name="VCLibrarianTool"
+				OutputFile="..\..\out\debug71\libs\libpsclient_static_plugins_CRYSTAL_d.lib"
+				SuppressStartupBanner="TRUE"/>
+			<Tool
+				Name="VCMIDLTool"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_MEMORY_TRACKER"
+				MkTypLibCompatible="TRUE"
+				SuppressStartupBanner="TRUE"
+				TargetEnvironment="1"
+				TypeLibraryName="..\..\out\debug71\build\libpsclient_static_plugins_CRYSTAL\libpsclient_static_plugins_CRYSTAL.tlb"/>
+			<Tool
+				Name="VCPostBuildEventTool"
+				CommandLine="md ..\..\out\debug71\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug71\bin\&#x0D;&#x0A;"
+				CommandLine="copy &quot;$(TargetPath)&quot; ..\..\&#x0D;&#x0A;del ..\..\$(TargetName).lib&#x0D;&#x0A;"
+				/>
+			<Tool
+				Name="VCPreBuildEventTool"/>
+			<Tool
+				Name="VCPreLinkEventTool"/>
+			<Tool
+				Name="VCResourceCompilerTool"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_MEMORY_TRACKER;PROJECTGEN_VERSION=71"
+				AdditionalIncludeDirectories=".;..\..\src\client;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
+				Culture="1033"/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"/>
+			<Tool
+				Name="VCWebDeploymentTool"/>
+		</Configuration>
+  		<Configuration
+			Name="MemoryTracker (with DLLs)|Win32"
+			OutputDirectory="..\..\out\debug71\build\libpsclient_static_plugins_CRYSTAL\"
+			IntermediateDirectory="..\..\out\debug71\build\libpsclient_static_plugins_CRYSTAL\"
+			ConfigurationType="2"
+			UseOfMFC="0"
+			ATLMinimizesCRunTimeLibraryUsage="FALSE">
+			<Tool
+				Name="VCCLCompilerTool"
+				Optimization="0"
+				MinimalRebuild="TRUE"
+				DebugInformationFormat="4"
+				RuntimeTypeInfo="TRUE"
+				RuntimeLibrary="3"
+
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_MEMORY_TRACKER;_WINDOWS;WIN32;CS_BUILD_SHARED_LIBS"
+				OptimizeForProcessor="1"
+				AdditionalOptions="/D CS_HAVE_CAL3D "
+				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
+				PrecompiledHeaderFile="..\..\out\debug71\build\libpsclient_static_plugins_CRYSTAL\libpsclient_static_plugins_CRYSTAL.pch"
+				AssemblerListingLocation="..\..\out\debug71\build\libpsclient_static_plugins_CRYSTAL\"
+				ObjectFile="..\..\out\debug71\build\libpsclient_static_plugins_CRYSTAL\"
+				ProgramDataBaseFileName="..\..\out\debug71\build\libpsclient_static_plugins_CRYSTAL\psclient_static_plugins_CRYSTAL.pdb"
+				WarningLevel="3"
+				SuppressStartupBanner="TRUE"
+				Detect64BitPortabilityProblems="TRUE"
+				TreatWChar_tAsBuiltInType="false"
+				ForceConformanceInForLoopScope="true"
+				CompileAs="0"/>
+			<Tool
+				Name="VCCustomBuildTool"/>
+			<Tool
+				Name="VCLinkerTool"
+				LinkIncremental="2"
+				GenerateDebugInformation="TRUE"
+				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD,MSVCRT"
+                                OutputFile="..\..\psclient_static_plugins_CRYSTAL-0.3-vc71_d.dll"
+				ImportLibrary="..\..\out\debug71\libs\libpsclient_static_plugins_CRYSTAL_d.lib"
+				ProgramDatabaseFile="..\..\out\debug71\build\libpsclient_static_plugins_CRYSTAL\psclient_static_plugins_CRYSTAL-0.3-vc71_d.pdb"
+				AdditionalOptions="libcel_staticplugins_d.lib libjpeg.lib libpng.lib freetype2.lib vorbisfile.lib vorbis.lib ogg.lib cal3d-vc71_d.lib libcrystalspace_windows_d.lib libcrystalspace_opengl_d.lib version.lib libcrystalspace_directx_d.lib dsound.lib ddraw.lib dinput.lib cg.lib cgGL.lib libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib zlib.lib opengl32.lib "
+				AdditionalDependencies=""
+				SuppressStartupBanner="TRUE"
+				AdditionalLibraryDirectories=""
 				TargetMachine="1"/>
 			<Tool
 				Name="VCLibrarianTool"
@@ -211,6 +431,7 @@
 				TypeLibraryName="..\..\out\debug71\build\libpsclient_static_plugins_CRYSTAL\libpsclient_static_plugins_CRYSTAL.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
+				CommandLine="md ..\..\out\debug71\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug71\bin\&#x0D;&#x0A;"
 				CommandLine="copy &quot;$(TargetPath)&quot; ..\..\&#x0D;&#x0A;del ..\..\$(TargetName).lib&#x0D;&#x0A;"
 				/>
 			<Tool
@@ -220,17 +441,18 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_MEMORY_TRACKER;_WINDOWS;PROJECTGEN_VERSION=71"
-				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
+				AdditionalIncludeDirectories=".;..\..\src\client;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
 			<Tool
 				Name="VCWebDeploymentTool"/>
 		</Configuration>
-		<Configuration
-			Name="RefTracker|Win32"
+    		<Configuration
+			Name="RefTracker (with static libs)|Win32"
 			OutputDirectory="..\..\out\debug71\build\libpsclient_static_plugins_CRYSTAL\"
 			IntermediateDirectory="..\..\out\debug71\build\libpsclient_static_plugins_CRYSTAL\"
+			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
 			<Tool
@@ -238,8 +460,10 @@
 				Optimization="0"
 				MinimalRebuild="TRUE"
 				DebugInformationFormat="4"
+				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_REF_TRACKER;_WINDOWS;WIN32"
+
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_REF_TRACKER;WIN32"
 				OptimizeForProcessor="1"
 				AdditionalOptions="/D CS_HAVE_CAL3D "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
@@ -248,10 +472,10 @@
 				ObjectFile="..\..\out\debug71\build\libpsclient_static_plugins_CRYSTAL\"
 				ProgramDataBaseFileName="..\..\out\debug71\build\libpsclient_static_plugins_CRYSTAL\psclient_static_plugins_CRYSTAL.pdb"
 				WarningLevel="3"
-				RuntimeTypeInfo="TRUE"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="TRUE"
 				TreatWChar_tAsBuiltInType="false"
+				ForceConformanceInForLoopScope="true"
 				CompileAs="0"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
@@ -262,10 +486,82 @@
 				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD,MSVCRT"
 				AdditionalOptions="libcel_staticplugins_d.lib libjpeg.lib libpng.lib freetype2.lib vorbisfile.lib vorbis.lib ogg.lib cal3d-vc71_d.lib libcrystalspace_windows_d.lib libcrystalspace_opengl_d.lib version.lib libcrystalspace_directx_d.lib dsound.lib ddraw.lib dinput.lib cg.lib cgGL.lib libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib zlib.lib opengl32.lib "
 				AdditionalDependencies=""
-				IgnoreImportLibrary="TRUE"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories=""
-				ProgramDatabaseFile="..\..\out\debug71\build\libpsclient_static_plugins_CRYSTAL\psclient_static_plugins_CRYSTAL.pdb"
+				TargetMachine="1"/>
+			<Tool
+				Name="VCLibrarianTool"
+				OutputFile="..\..\out\debug71\libs\libpsclient_static_plugins_CRYSTAL_d.lib"
+				SuppressStartupBanner="TRUE"/>
+			<Tool
+				Name="VCMIDLTool"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_REF_TRACKER"
+				MkTypLibCompatible="TRUE"
+				SuppressStartupBanner="TRUE"
+				TargetEnvironment="1"
+				TypeLibraryName="..\..\out\debug71\build\libpsclient_static_plugins_CRYSTAL\libpsclient_static_plugins_CRYSTAL.tlb"/>
+			<Tool
+				Name="VCPostBuildEventTool"
+				CommandLine="md ..\..\out\debug71\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug71\bin\&#x0D;&#x0A;"
+				CommandLine="copy &quot;$(TargetPath)&quot; ..\..\&#x0D;&#x0A;del ..\..\$(TargetName).lib&#x0D;&#x0A;"
+				/>
+			<Tool
+				Name="VCPreBuildEventTool"/>
+			<Tool
+				Name="VCPreLinkEventTool"/>
+			<Tool
+				Name="VCResourceCompilerTool"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_REF_TRACKER;PROJECTGEN_VERSION=71"
+				AdditionalIncludeDirectories=".;..\..\src\client;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
+				Culture="1033"/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"/>
+			<Tool
+				Name="VCWebDeploymentTool"/>
+		</Configuration>
+  		<Configuration
+			Name="RefTracker (with DLLs)|Win32"
+			OutputDirectory="..\..\out\debug71\build\libpsclient_static_plugins_CRYSTAL\"
+			IntermediateDirectory="..\..\out\debug71\build\libpsclient_static_plugins_CRYSTAL\"
+			ConfigurationType="2"
+			UseOfMFC="0"
+			ATLMinimizesCRunTimeLibraryUsage="FALSE">
+			<Tool
+				Name="VCCLCompilerTool"
+				Optimization="0"
+				MinimalRebuild="TRUE"
+				DebugInformationFormat="4"
+				RuntimeTypeInfo="TRUE"
+				RuntimeLibrary="3"
+
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_REF_TRACKER;_WINDOWS;WIN32;CS_BUILD_SHARED_LIBS"
+				OptimizeForProcessor="1"
+				AdditionalOptions="/D CS_HAVE_CAL3D "
+				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
+				PrecompiledHeaderFile="..\..\out\debug71\build\libpsclient_static_plugins_CRYSTAL\libpsclient_static_plugins_CRYSTAL.pch"
+				AssemblerListingLocation="..\..\out\debug71\build\libpsclient_static_plugins_CRYSTAL\"
+				ObjectFile="..\..\out\debug71\build\libpsclient_static_plugins_CRYSTAL\"
+				ProgramDataBaseFileName="..\..\out\debug71\build\libpsclient_static_plugins_CRYSTAL\psclient_static_plugins_CRYSTAL.pdb"
+				WarningLevel="3"
+				SuppressStartupBanner="TRUE"
+				Detect64BitPortabilityProblems="TRUE"
+				TreatWChar_tAsBuiltInType="false"
+				ForceConformanceInForLoopScope="true"
+				CompileAs="0"/>
+			<Tool
+				Name="VCCustomBuildTool"/>
+			<Tool
+				Name="VCLinkerTool"
+				LinkIncremental="2"
+				GenerateDebugInformation="TRUE"
+				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD,MSVCRT"
+                                OutputFile="..\..\psclient_static_plugins_CRYSTAL-0.3-vc71_d.dll"
+				ImportLibrary="..\..\out\debug71\libs\libpsclient_static_plugins_CRYSTAL_d.lib"
+				ProgramDatabaseFile="..\..\out\debug71\build\libpsclient_static_plugins_CRYSTAL\psclient_static_plugins_CRYSTAL-0.3-vc71_d.pdb"
+				AdditionalOptions="libcel_staticplugins_d.lib libjpeg.lib libpng.lib freetype2.lib vorbisfile.lib vorbis.lib ogg.lib cal3d-vc71_d.lib libcrystalspace_windows_d.lib libcrystalspace_opengl_d.lib version.lib libcrystalspace_directx_d.lib dsound.lib ddraw.lib dinput.lib cg.lib cgGL.lib libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib zlib.lib opengl32.lib "
+				AdditionalDependencies=""
+				SuppressStartupBanner="TRUE"
+				AdditionalLibraryDirectories=""
 				TargetMachine="1"/>
 			<Tool
 				Name="VCLibrarianTool"
@@ -279,6 +575,7 @@
 				TypeLibraryName="..\..\out\debug71\build\libpsclient_static_plugins_CRYSTAL\libpsclient_static_plugins_CRYSTAL.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
+				CommandLine="md ..\..\out\debug71\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug71\bin\&#x0D;&#x0A;"
 				CommandLine="copy &quot;$(TargetPath)&quot; ..\..\&#x0D;&#x0A;del ..\..\$(TargetName).lib&#x0D;&#x0A;"
 				/>
 			<Tool
@@ -288,17 +585,18 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_REF_TRACKER;_WINDOWS;PROJECTGEN_VERSION=71"
-				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
+				AdditionalIncludeDirectories=".;..\..\src\client;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
 			<Tool
 				Name="VCWebDeploymentTool"/>
 		</Configuration>
-		<Configuration
-			Name="DebugPSReleaseCSCEL|Win32"
+    		<Configuration
+			Name="DebugPSReleaseCSCEL (with static libs)|Win32"
 			OutputDirectory="..\..\out\debug71\build\libpsclient_static_plugins_CRYSTAL\"
 			IntermediateDirectory="..\..\out\debug71\build\libpsclient_static_plugins_CRYSTAL\"
+			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
 			<Tool
@@ -306,8 +604,10 @@
 				Optimization="0"
 				MinimalRebuild="TRUE"
 				DebugInformationFormat="4"
+				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
-				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;_WINDOWS;WIN32"
+
+				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;WIN32"
 				OptimizeForProcessor="1"
 				AdditionalOptions="/D CS_HAVE_CAL3D "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
@@ -316,10 +616,10 @@
 				ObjectFile="..\..\out\debug71\build\libpsclient_static_plugins_CRYSTAL\"
 				ProgramDataBaseFileName="..\..\out\debug71\build\libpsclient_static_plugins_CRYSTAL\psclient_static_plugins_CRYSTAL.pdb"
 				WarningLevel="3"
-				RuntimeTypeInfo="TRUE"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="TRUE"
 				TreatWChar_tAsBuiltInType="false"
+				ForceConformanceInForLoopScope="true"
 				CompileAs="0"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
@@ -330,10 +630,82 @@
 				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD,MSVCRT"
 				AdditionalOptions="libcel_staticplugins_d.lib libjpeg.lib libpng.lib freetype2.lib vorbisfile.lib vorbis.lib ogg.lib cal3d-vc71_d.lib libcrystalspace_windows_d.lib libcrystalspace_opengl_d.lib version.lib libcrystalspace_directx_d.lib dsound.lib ddraw.lib dinput.lib cg.lib cgGL.lib libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib zlib.lib opengl32.lib "
 				AdditionalDependencies=""
-				IgnoreImportLibrary="TRUE"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories=""
-				ProgramDatabaseFile="..\..\out\debug71\build\libpsclient_static_plugins_CRYSTAL\psclient_static_plugins_CRYSTAL.pdb"
+				TargetMachine="1"/>
+			<Tool
+				Name="VCLibrarianTool"
+				OutputFile="..\..\out\debug71\libs\libpsclient_static_plugins_CRYSTAL_d.lib"
+				SuppressStartupBanner="TRUE"/>
+			<Tool
+				Name="VCMIDLTool"
+				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__"
+				MkTypLibCompatible="TRUE"
+				SuppressStartupBanner="TRUE"
+				TargetEnvironment="1"
+				TypeLibraryName="..\..\out\debug71\build\libpsclient_static_plugins_CRYSTAL\libpsclient_static_plugins_CRYSTAL.tlb"/>
+			<Tool
+				Name="VCPostBuildEventTool"
+				CommandLine="md ..\..\out\debug71\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug71\bin\&#x0D;&#x0A;"
+				CommandLine="copy &quot;$(TargetPath)&quot; ..\..\&#x0D;&#x0A;del ..\..\$(TargetName).lib&#x0D;&#x0A;"
+				/>
+			<Tool
+				Name="VCPreBuildEventTool"/>
+			<Tool
+				Name="VCPreLinkEventTool"/>
+			<Tool
+				Name="VCResourceCompilerTool"
+				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;PROJECTGEN_VERSION=71"
+				AdditionalIncludeDirectories=".;..\..\src\client;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
+				Culture="1033"/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"/>
+			<Tool
+				Name="VCWebDeploymentTool"/>
+		</Configuration>
+  		<Configuration
+			Name="DebugPSReleaseCSCEL (with DLLs)|Win32"
+			OutputDirectory="..\..\out\debug71\build\libpsclient_static_plugins_CRYSTAL\"
+			IntermediateDirectory="..\..\out\debug71\build\libpsclient_static_plugins_CRYSTAL\"
+			ConfigurationType="2"
+			UseOfMFC="0"
+			ATLMinimizesCRunTimeLibraryUsage="FALSE">
+			<Tool
+				Name="VCCLCompilerTool"
+				Optimization="0"
+				MinimalRebuild="TRUE"
+				DebugInformationFormat="4"
+				RuntimeTypeInfo="TRUE"
+				RuntimeLibrary="3"
+
+				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;_WINDOWS;WIN32;CS_BUILD_SHARED_LIBS"
+				OptimizeForProcessor="1"
+				AdditionalOptions="/D CS_HAVE_CAL3D "
+				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
+				PrecompiledHeaderFile="..\..\out\debug71\build\libpsclient_static_plugins_CRYSTAL\libpsclient_static_plugins_CRYSTAL.pch"
+				AssemblerListingLocation="..\..\out\debug71\build\libpsclient_static_plugins_CRYSTAL\"
+				ObjectFile="..\..\out\debug71\build\libpsclient_static_plugins_CRYSTAL\"
+				ProgramDataBaseFileName="..\..\out\debug71\build\libpsclient_static_plugins_CRYSTAL\psclient_static_plugins_CRYSTAL.pdb"
+				WarningLevel="3"
+				SuppressStartupBanner="TRUE"
+				Detect64BitPortabilityProblems="TRUE"
+				TreatWChar_tAsBuiltInType="false"
+				ForceConformanceInForLoopScope="true"
+				CompileAs="0"/>
+			<Tool
+				Name="VCCustomBuildTool"/>
+			<Tool
+				Name="VCLinkerTool"
+				LinkIncremental="2"
+				GenerateDebugInformation="TRUE"
+				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD,MSVCRT"
+                                OutputFile="..\..\psclient_static_plugins_CRYSTAL-0.3-vc71_d.dll"
+				ImportLibrary="..\..\out\debug71\libs\libpsclient_static_plugins_CRYSTAL_d.lib"
+				ProgramDatabaseFile="..\..\out\debug71\build\libpsclient_static_plugins_CRYSTAL\psclient_static_plugins_CRYSTAL-0.3-vc71_d.pdb"
+				AdditionalOptions="libcel_staticplugins_d.lib libjpeg.lib libpng.lib freetype2.lib vorbisfile.lib vorbis.lib ogg.lib cal3d-vc71_d.lib libcrystalspace_windows_d.lib libcrystalspace_opengl_d.lib version.lib libcrystalspace_directx_d.lib dsound.lib ddraw.lib dinput.lib cg.lib cgGL.lib libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib zlib.lib opengl32.lib "
+				AdditionalDependencies=""
+				SuppressStartupBanner="TRUE"
+				AdditionalLibraryDirectories=""
 				TargetMachine="1"/>
 			<Tool
 				Name="VCLibrarianTool"
@@ -347,6 +719,7 @@
 				TypeLibraryName="..\..\out\debug71\build\libpsclient_static_plugins_CRYSTAL\libpsclient_static_plugins_CRYSTAL.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
+				CommandLine="md ..\..\out\debug71\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug71\bin\&#x0D;&#x0A;"
 				CommandLine="copy &quot;$(TargetPath)&quot; ..\..\&#x0D;&#x0A;del ..\..\$(TargetName).lib&#x0D;&#x0A;"
 				/>
 			<Tool
@@ -356,14 +729,14 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;_WINDOWS;PROJECTGEN_VERSION=71"
-				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
+				AdditionalIncludeDirectories=".;..\..\src\client;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
 			<Tool
 				Name="VCWebDeploymentTool"/>
 		</Configuration>
-	</Configurations>
+  	</Configurations>
 	<Files>
 		<Filter
 			Name="Source Files"
