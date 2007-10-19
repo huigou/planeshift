@@ -44,7 +44,7 @@
 			CharacterSet="2"
 [% END %]
 [% MACRO global_app_release BLOCK -%]
-			WholeProgramOptimization="TRUE"
+			WholeProgramOptimization="1"
 [% END %]
 [% MACRO global_appcon GET global_app %]
 [% MACRO global_appcon_release GET global_app_release %]
@@ -58,26 +58,39 @@
 [% MACRO global_library BLOCK -%]
 			ConfigurationType="4"
 [% END %]
+[% MACRO global_library_shared BLOCK -%]
+			ConfigurationType="2"
+[% END %]
+[% MACRO global_library_shared_release BLOCK -%]
+			WholeProgramOptimization="1"
+[% END %]
 
 [% MACRO global_plugin BLOCK -%]
 			ConfigurationType="2"
 [% END %]
 [% MACRO global_plugin_release BLOCK -%]
-			WholeProgramOptimization="true"
+			WholeProgramOptimization="1"
+[% END %]
+
+[% MACRO global_dll BLOCK -%]
+			ConfigurationType="2"
+[% END %]
+[% MACRO global_dll_release BLOCK -%]
+			WholeProgramOptimization="1"
+[% END %]
+
+[% MACRO precompiled_header BLOCK -%]
+[%- IF my.doc.pch.0 -%]
+				UsePrecompiledHeader="1"
+				PrecompiledHeaderThrough="[% my.doc.pch.0 %]"
+[% END %]
 [% END %]
 
 [% MACRO compiler_release BLOCK -%]
 				Optimization="2"
-				InlineFunctionExpansion="2"
-				StringPooling="true"
-				EnableFunctionLevelLinking="true"
-				EnableIntrinsicFunctions="true"
-				FavorSizeOrSpeed="1"
-				OmitFramePointers="true"
-				EnableFiberSafeOptimizations="true"
-				WholeProgramOptimization="true"
+				StringPooling="TRUE"
+				EnableFunctionLevelLinking="TRUE"
 				RuntimeLibrary="2"
-				FloatingPointModel="2"
 				DebugInformationFormat="3"
 				BufferSecurityCheck="FALSE"
 [% END %]
@@ -85,7 +98,9 @@
 				Optimization="0"
 				MinimalRebuild="TRUE"
 				DebugInformationFormat="4"
+				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
+[% precompiled_header -%]
 [% END %]
 
 [% MACRO linker_release BLOCK -%]
@@ -94,7 +109,6 @@
 				EnableCOMDATFolding="2"
 				GenerateDebugInformation="TRUE"
 				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD"
-				LinkTimeCodeGeneration="1"
 [% END %]
 [% MACRO linker_debug BLOCK -%]
 				LinkIncremental="2"
@@ -103,7 +117,8 @@
 [% END %]
 
 [% MACRO linker_common BLOCK -%]
-				OutputFile="[% path([workbuild, my.doc.target.0]) %]"
+				OutputFile="[% path([my.doc.buildroot.0, my.doc.target.0]) %]"
+				ProgramDatabaseFile="[% workbuild([my.doc.rawtarget.0,'.pdb']) %]"
 [% END %]
 
 [% MACRO linker_app(subsys) BLOCK -%]
@@ -114,7 +129,31 @@
 [% MACRO linker_appgui_release GET linker_app(2) %]
 [% MACRO linker_appgui_debug GET linker_app(1) %]
 
+[% MACRO library_dll_versuffix GET 
+  ('-' _ my.doc.packageversion.0) IF my.doc.packageversion.0 -%]
+[% MACRO library_dll_outfile(suffix) GET
+  my.doc.rawtarget.0 _ library_dll_versuffix _ '-vc' _ my.doc.msvcversion.0 _ suffix
+%]
+[% MACRO linker_library_shared_release BLOCK -%]
+                                OutputFile="[% path([my.doc.buildroot.0, library_dll_outfile('.dll')]) %]"
+				ImportLibrary="[% worklibout %]\[% my.doc.project.0 %].lib"
+				ProgramDatabaseFile="[% workbuild(library_dll_outfile('.pdb')) %]"
+[% END %]
+
+[% MACRO linker_library_shared_debug BLOCK -%]
+                                OutputFile="[% path([my.doc.buildroot.0, library_dll_outfile('_d.dll')]) %]"
+				ImportLibrary="[% worklibout %]\[% my.doc.project.0 %]_d.lib"
+				ProgramDatabaseFile="[% workbuild(library_dll_outfile('_d.pdb')) %]"
+[% END %]
+
 [% MACRO linker_plugin BLOCK -%]
+[% linker_common -%]
+				IgnoreImportLibrary="TRUE"
+				DelayLoadDLLs="[% glue(my.doc.librarydelay,';','','.dll') %]"
+				ImportLibrary="[% workbuild([my.doc.project.0,'.lib']) %]"
+[% END %]
+
+[% MACRO linker_dll BLOCK -%]
 [% linker_common -%]
 				DelayLoadDLLs="[% glue(my.doc.librarydelay,';','','.dll') %]"
 				ImportLibrary="[% workbuild([my.doc.project.0,'.lib']) %]"
@@ -126,3 +165,10 @@
 [% MACRO librarian_library_release GET library_outfile('') %]
 [% MACRO librarian_library_debug   GET library_outfile('_d') %]
 [% MACRO librarian_group	   GET library_outfile('') %]
+
+[% MACRO postbuild_common BLOCK -%]
+				CommandLine="md [% path([workroot, 'bin']) %] 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; [% path([workroot, 'bin\\']) %]&#x0D;&#x0A;"
+[% END %]
+
+[% MACRO postbuild_release GET postbuild_common %]
+[% MACRO postbuild_debug   GET postbuild_common %]
