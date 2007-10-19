@@ -1,0 +1,573 @@
+<npctypes>
+
+ <npctype name="smith" vel="2"> 
+      <behavior name="do nothing" decay="0" growth="0" initial="10">
+	  <wait duration="1" anim="stand" />
+      </behavior>
+ <behavior name="go_climbing1" initial="0" completion_decay="20" loop="no"> 
+  <moveto x="-53.6003" y="0.0" z="-155.041" anim="walk" />
+  <moveto x="-8.89576" y="0.0" z="-162.498" anim="walk" />
+  <moveto x="18.4303" y="21.9941" z="-163.082" anim="walk" />
+  <moveto x="-9.01569" y="0.0" z="-159.477" anim="walk" />
+  <moveto x="-19.7409" y="0.0" z="-153.539" anim="walk" />
+  <moveto x="-42.8985" y="0.0" z="-146.811" anim="walk" />
+  <moveto x="-53.6242" y="0.0" z="-155.023" anim="walk" />
+  <wait duration="60" anim="stand" />
+  <moveto x="-53.6242" y="0.0" z="-155.023" anim="walk" />
+  <moveto x="-42.8985" y="0.0" z="-146.811" anim="walk" />
+  <moveto x="-19.7409" y="0.0" z="-153.539" anim="walk" />
+  <moveto x="-9.01569" y="0.0" z="-159.477" anim="walk" />
+  <moveto x="18.4303" y="21.9941" z="-163.082" anim="walk" />
+  <moveto x="-8.89576" y="0.0" z="-162.498" anim="walk" />
+  <moveto x="-53.6003" y="0.0" z="-155.041" anim="walk" />
+ </behavior> 
+ <behavior name="go_obstacles1" initial="0" completion_decay="20" loop="no"> 
+  <moveto x="-53.5112" y="0.0" z="-155.135" anim="walk" />
+  <moveto x="-44.2481" y="0.0" z="-153.507" anim="walk" />
+  <moveto x="-27.3333" y="0.0" z="-163.914" anim="walk" />
+  <moveto x="-32.8587" y="0.0" z="-199.55" anim="walk" />
+  <moveto x="-45.5557" y="0.0" z="-213.535" anim="walk" />
+  <moveto x="-45.5928" y="0.0" z="-225.046" anim="walk" />
+  <moveto x="-42.5066" y="0.0" z="-247.016" anim="walk" />
+  <moveto x="-35.3197" y="0.0" z="-246.967" anim="walk" />
+  <moveto x="-35.1166" y="0.0" z="-237.451" anim="walk" />
+  <moveto x="-26.9788" y="0.0" z="-237.333" anim="walk" />
+  <moveto x="-26.5143" y="0.0" z="-248.163" anim="walk" />
+  <moveto x="-19.3833" y="0.0" z="-247.596" anim="walk" />
+  <moveto x="-19.4912" y="0.0" z="-236.566" anim="walk" />
+  <moveto x="-10.7207" y="0.0" z="-236.432" anim="walk" />
+  <moveto x="-11.0175" y="0.0" z="-249.279" anim="walk" />
+  <moveto x="-4.43381" y="0.0" z="-248.536" anim="walk" />
+  <moveto x="-4.49285" y="0.0" z="-236.315" anim="walk" />
+  <moveto x="1.82961" y="0.0" z="-235.959" anim="walk" />
+  <moveto x="1.64485" y="0.0" z="-249.233" anim="walk" />
+  <moveto x="8.12992" y="0.0" z="-249.23" anim="walk" />
+  <moveto x="8.19972" y="0.0" z="-230.12" anim="walk" />
+  <moveto x="-24.0757" y="0.0" z="-222.12" anim="walk" />
+  <moveto x="-24.8802" y="0.0" z="-205.212" anim="walk" />
+  <moveto x="-42.7254" y="0.0" z="-166.754" anim="walk" />
+  <moveto x="-46.2027" y="0.0" z="-152.995" anim="walk" />
+  <moveto x="-53.5608" y="0.0" z="-155.176" anim="walk" />
+  <wait duration="30" anim="stand" />
+  <moveto x="-53.5608" y="0.0" z="-155.176" anim="walk" />
+  <moveto x="-46.2027" y="0.0" z="-152.995" anim="walk" />
+  <moveto x="-42.7254" y="0.0" z="-166.754" anim="walk" />
+  <moveto x="-24.8802" y="0.0" z="-205.212" anim="walk" />
+  <moveto x="-24.0757" y="0.0" z="-222.12" anim="walk" />
+  <moveto x="8.19972" y="0.0" z="-230.12" anim="walk" />
+  <moveto x="8.12992" y="0.0" z="-249.23" anim="walk" />
+  <moveto x="1.64485" y="0.0" z="-249.233" anim="walk" />
+  <moveto x="1.82961" y="0.0" z="-235.959" anim="walk" />
+  <moveto x="-4.49285" y="0.0" z="-236.315" anim="walk" />
+  <moveto x="-4.43381" y="0.0" z="-248.536" anim="walk" />
+  <moveto x="-11.0175" y="0.0" z="-249.279" anim="walk" />
+  <moveto x="-10.7207" y="0.0" z="-236.432" anim="walk" />
+  <moveto x="-19.4912" y="0.0" z="-236.566" anim="walk" />
+  <moveto x="-19.3833" y="0.0" z="-247.596" anim="walk" />
+  <moveto x="-26.5143" y="0.0" z="-248.163" anim="walk" />
+  <moveto x="-26.9788" y="0.0" z="-237.333" anim="walk" />
+  <moveto x="-35.1166" y="0.0" z="-237.451" anim="walk" />
+  <moveto x="-35.3197" y="0.0" z="-246.967" anim="walk" />
+  <moveto x="-42.5066" y="0.0" z="-247.016" anim="walk" />
+  <moveto x="-45.5928" y="0.0" z="-225.046" anim="walk" />
+  <moveto x="-45.5557" y="0.0" z="-213.535" anim="walk" />
+  <moveto x="-32.8587" y="0.0" z="-199.55" anim="walk" />
+  <moveto x="-27.3333" y="0.0" z="-163.914" anim="walk" />
+  <moveto x="-44.2481" y="0.0" z="-153.507" anim="walk" />
+  <moveto x="-53.5112" y="0.0" z="-155.135" anim="walk" />
+ </behavior> 
+ <behavior name="go_other_sector1" initial="0" completion_decay="20" loop="no"> 
+  <moveto x="-53.546" y="0.0" z="-155.243" anim="walk" />
+  <moveto x="-42.1452" y="0.0" z="-140.879" anim="walk" />
+  <moveto x="-55.2024" y="0.0" z="-126.302" anim="walk" />
+  <moveto x="-57.6445" y="0.0" z="-113.753" anim="walk" />
+  <wait duration="30" anim="stand" />
+  <moveto x="-57.6445" y="0.0" z="-113.753" anim="walk" />
+  <moveto x="-55.2024" y="0.0" z="-126.302" anim="walk" />
+  <moveto x="-42.1452" y="0.0" z="-140.879" anim="walk" />
+  <moveto x="-53.546" y="0.0" z="-155.243" anim="walk" />
+ </behavior> 
+ <behavior name="go_sleep1" initial="0" completion_decay="20" loop="no"> 
+  <moveto x="-53.6185" y="0.0" z="-155.243" anim="walk" />
+  <moveto x="-51.4396" y="0.0" z="-149.481" anim="walk" />
+  <moveto x="-54.8432" y="0.0" z="-146.474" anim="walk" />
+  <moveto x="-55.6514" y="0.0" z="-147.652" anim="walk" />
+  <invisible/>
+  <wait duration="30" anim="stand" />
+  <visible/>
+  <moveto x="-55.6514" y="0.0" z="-147.652" anim="walk" />
+  <moveto x="-54.8432" y="0.0" z="-146.474" anim="walk" />
+  <moveto x="-51.4396" y="0.0" z="-149.481" anim="walk" />
+  <moveto x="-53.6185" y="0.0" z="-155.243" anim="walk" />
+ </behavior> 
+ <react event="time" value="8"  behavior="go_other_sector1" delta="20" /> 
+ <react event="time" value="10"  behavior="go_sleep1" delta="20" /> 
+ <react event="time" value="12"  behavior="go_obstacles1" delta="20" /> 
+ <react event="time" value="14"  behavior="go_climbing1" delta="20" /> 
+ </npctype> 
+
+ 
+  <npctype name="Wanderer">
+      <behavior name="walk" decay="0" growth="0" initial="50">
+          <move vel="1" anim="walk" />
+      </behavior>
+      <behavior name="turn" completion_decay="-1" growth="0" initial="0">
+          <rotate type="random" min="90" max="270" anim="walk" ang_vel="30" />
+          <move vel="2" anim="walk" duration="1.0"/>
+      </behavior>
+      <behavior name="turnregion" completion_decay="-1" growth="0" initial="0">
+          <rotate type="inregion" min="90" max="270" anim="walk" ang_vel="30" />
+      </behavior>
+      <behavior name="fight" decay="0" growth="0" initial="0">
+	  <locate obj="target" />
+          <rotate type="locatedest" anim="walk" ang_vel="120" />
+	  <melee seek_range="50" melee_range="2" />
+      </behavior>
+      <behavior name="chase" completion_decay="100" growth="0" initial="0">
+          <chase type="target" anim="walk" />
+      </behavior>
+      <!--behavior name="hunt">
+          <chase type="target" anim="walk" />
+	  <melee seek_range="50" melee_range="2" />
+      </behavior-->
+      <react event="collision"           behavior="turn"  delta="100" />
+      <react event="out of bounds"       behavior="turnregion"  delta="100" />
+      <react event="attack"              behavior="fight" delta="150" />
+      <react event="damage"              behavior="fight" delta="20" weight="1" />
+      <react event="target out of range" behavior="chase" delta="0" />
+      <react event="death"               behavior="fight" delta="-1" />
+  </npctype>
+
+  <npctype name="Fighter">
+      <behavior name="do nothing" decay="0" growth="0" initial="50">
+	  <wait duration="1" anim="stand" />
+      </behavior>
+      <behavior name="turn" completion_decay="100" growth="0" initial="0">
+          <rotate type="random" min="90" max="270" anim="walk" ang_vel="30" />
+      </behavior>
+      <behavior name="fight" decay="0" growth="0" initial="0">
+	  <locate obj="target"  range="50"/>
+          <rotate type="locatedest" anim="walk" ang_vel="120" />
+	  <melee seek_range="50" melee_range="3" />
+      </behavior>
+      <behavior name="chase" completion_decay="100" growth="0" initial="0">
+          <chase type="target" anim="run" vel="5" />
+      </behavior>
+      <react event="collision"           behavior="turn" delta="100" />
+      <react event="out of bounds"       behavior="turn" delta="100" />
+      <react event="attack"              behavior="fight" delta="0" />
+      <react event="damage"              behavior="fight" delta="20" weight="1" />
+      <react event="target out of range" behavior="chase" delta="0" />
+      <react event="death"               behavior="fight" delta="-1" />
+  </npctype>
+
+  <npctype name="On Sight Fighter" parent="Fighter">
+      <!-- Test use of parent to expand the parent behavior -->
+
+      <behavior name="turn to face" completion_decay="100" growth="0" initial="0">
+	  <locate obj="perception" />
+          <rotate type="locatedest" anim="walk" ang_vel="120" />
+      </behavior>
+
+      <react event="player sensed"       behavior="turn to face" delta="100" inactive_only="yes" />
+      <react event="player nearby"       behavior="fight" delta="100" inactive_only="yes" faction_diff="-200" oper=">"  />
+
+  </npctype>
+
+  <npctype name="Guard" vel="2">
+      <behavior name="march" decay="0" growth="0" initial="80" loop="yes">
+          <moveto x="-38" y="0" z="-169" anim="walk" />
+          <wait anim="stand" duration="10" />
+          <moveto x="-36.84" y="0" z="-155.61" anim="walk" />
+          <wait anim="stand" duration="10" />
+      </behavior>
+  </npctype>
+
+  <npctype name="Answerer">
+      <behavior name="do nothing" decay="0" growth="0" initial="50">
+	  <wait duration="1" anim="stand" />
+      </behavior>
+      <behavior name="turn to face" completion_decay="-1" growth="0" initial="0" >
+	  <locate obj="perception" />
+          <rotate type="locatedest" anim="walk" ang_vel="20" />
+          <wait duration="10" anim="stand" />
+      </behavior>
+      <react event="talk" inactive_only="yes" faction_diff="-100" oper=">" behavior="turn to face" delta="100"  when_invisible="yes" when_invincible="yes" />
+  </npctype>  
+  
+  <npctype name="Dynamic Guard" ang_vel=".6" >
+      <behavior name="march" decay="0" growth="0" initial="80" loop="yes">
+          <locate obj="guard stop 1" range="50" />
+          <rotate type="locatedest" anim="walk" />
+          <wait anim="stand" duration="5" />
+          <navigate anim="walk" />
+          <wait anim="stand" duration="5" />
+          <locate obj="guard stop 2" range="50" />
+          <rotate type="locatedest" anim="walk" />
+          <wait anim="stand" duration="5" />
+          <navigate anim="walk" />
+          <wait anim="stand" duration="5" />
+      </behavior>
+  </npctype>
+
+  <npctype name="Chaser" parent="Answerer">
+      <behavior name="chase" decay="0" growth="0" initial="100">
+          <chase type="owner" anim="walk" />
+      </behavior>
+      <react event="enemy in range" range="50" behavior="chase" delta="100" />
+      <react event="enemy outside range" range="50" behavior="chase" delta="-100" />
+  </npctype>
+
+  <npctype name="Bird">
+      <behavior name="fly" decay="0" growth="0" initial="50">
+	   <movepath path="bird1" />
+      </behavior>
+  </npctype>
+
+  <npctype name="Guard/Smith" parent="Guard">
+    <behavior name="hang out at smithy" completion_decay="0" growth="0" initial="-5">
+      <moveto x="-35" y="0" z="-160" anim="walk" />
+    </behavior>
+    <react event="time" value="0"  behavior="hang out at smithy" delta="0" />
+    <react event="time" value="1" behavior="march" delta="0" />
+    <react event="time" value="2"  behavior="hang out at smithy" delta="0" />
+    <react event="time" value="3" behavior="march" delta="0" />
+    <react event="time" value="4"  behavior="hang out at smithy" delta="0" />
+    <react event="time" value="5" behavior="march" delta="0" />
+    <react event="time" value="6"  behavior="hang out at smithy" delta="0" />
+    <react event="time" value="7" behavior="march" delta="0" />
+    <react event="time" value="8"  behavior="hang out at smithy" delta="0" />
+    <react event="time" value="9" behavior="march" delta="0" />
+    <react event="time" value="10"  behavior="hang out at smithy" delta="0" />
+    <react event="time" value="11" behavior="march" delta="0" />
+    <react event="time" value="12"  behavior="hang out at smithy" delta="0" />
+    <react event="time" value="13" behavior="march" delta="0" />
+    <react event="time" value="14"  behavior="hang out at smithy" delta="0" />
+    <react event="time" value="15" behavior="march" delta="0" />
+    <react event="time" value="16"  behavior="hang out at smithy" delta="0" />
+    <react event="time" value="17" behavior="march" delta="0" />
+    <react event="time" value="18"  behavior="hang out at smithy" delta="0" />
+    <react event="time" value="19" behavior="march" delta="0" />
+    <react event="time" value="20"  behavior="hang out at smithy" delta="0" />
+    <react event="time" value="21" behavior="march" delta="0" />
+    <react event="time" value="22"  behavior="hang out at smithy" delta="0" />
+    <react event="time" value="23" behavior="march" delta="0" />
+  </npctype>
+  
+  <npctype name="Minion">
+			
+    <behavior name="do nothing" decay="0" growth="0" initial="50">
+      <wait duration="1" anim="stand" />
+    </behavior>
+
+    <behavior name="follow" completion_decay="100" decay="0" growth="0" initial="0">
+      <chase type="owner" anim="walk" offset_x="1.0" offset_z="1.0" />
+    </behavior>
+
+    <behavior name="turn" completion_decay="100" growth="0" initial="0">
+      <rotate type="random" min="90" max="270" anim="walk" ang_vel="30" />
+    </behavior>
+	
+    <react event="collision"        behavior="turn"     delta="100" />
+    <react event="ownercmd:stay"    behavior="follow"   delta="-100"/>
+    <react event="ownercmd:follow"  behavior="follow"   delta="100"/>
+  </npctype>
+  
+  <npctype name="Blacksmith">
+     <behavior name="smith" decay="0" growth="0" initial="80">
+         <locate obj="raw metal" range="10" />
+         <navigate anim="walk" />
+         <pickup obj="raw metal" equip="lefthand" />
+         <loop iterations="20">
+           <locate obj="fire" range="10" />
+           <navigate anim="walk" />
+           <wait anim="stand" duration="30" />
+           <locate obj="anvil" range="10" />
+           <navigate anim="walk" />
+           <wait anim="hammer" duration="20" />
+         </loop>
+         <locate obj="shelf" />
+         <navigate anim="walk" />
+         <drop slot="lefthand" />
+     </behavior>
+  </npctype>
+
+  <npctype name="Tribe" vel="5.0">
+			
+    <behavior name="do nothing" decay="0" growth="0" initial="10">
+      <wait duration="1" anim="stand" />
+    </behavior>
+    <behavior name="Explore" completion_decay="100" growth="0" initial="0" resume="yes">
+      <debug level="0" />
+      <locate obj="waypoint"  static="no" />    <!-- Locate nearest waypoint -->
+      <navigate anim="walk" />                  <!-- Local navigation -->
+      <locate obj="waypoint" static="no" random="yes" range="80" />
+      <wander anim="walk" />        <!-- Navigate using waypoints -->
+      <wait anim="stand" duration="5" />
+      <locate obj="tribe:home"  static="no" />
+      <wander anim="walk" />        <!-- Navigate using waypoints -->
+      <navigate anim="walk" />      <!-- Local navigation -->
+    </behavior>
+    <behavior name="Dig" completion_decay="100" growth="0" initial="0">
+      <locate obj="waypoint"  static="no" />    <!-- Locate nearest waypoint -->
+      <navigate anim="walk" />                  <!-- Local navigation -->
+      <locate obj="tribe:resource" static="no" random="yes" range="200" />
+      <wander anim="walk" />        <!-- Navigate using waypoints -->
+      <loop iterations="3">
+        <navigate anim="walk" />      <!-- Local navigation -->
+        <equip item="Rock Pick" slot="righthand" />
+        <dig resource="tribe:wealth" />
+	<wait anim="stand" duration="20" /> <!-- Temp until dig is implemented -->
+        <dequip slot="righthand" />
+        <locate obj="tribe:resource" static="no" random="no" range="80" /> <!-- Get new random pos in field -->
+      </loop>
+      <locate obj="tribe:home"  static="no" />
+      <wander anim="walk" />        <!-- Navigate using waypoints -->
+      <navigate anim="walk" />      <!-- Local navigation -->
+      <transfer item="tribe:wealth" target="tribe" />
+    </behavior>
+    <behavior name="Path1" completion_decay="100" growth="0" initial="0">
+      <locate obj="waypoint"  static="no" />    <!-- Locate nearest waypoint -->
+      <navigate anim="walk" />                  <!-- Local navigation -->
+      <locate obj="field" static="no" random="yes" range="800" />
+      <wander anim="walk" />        <!-- Navigate using waypoints -->
+      <navigate anim="walk" />      <!-- Local navigation -->
+      <wait anim="stand" duration="30" />
+      <locate obj="tribe:home"  static="no" />
+      <wander anim="walk" />        <!-- Navigate using waypoints -->
+      <navigate anim="walk" />      <!-- Local navigation -->
+    </behavior>
+    <behavior name="Path2" completion_decay="100" growth="0" initial="0">
+      <locate obj="waypoint"  static="no" />    <!-- Locate nearest waypoint -->
+      <navigate anim="walk" />                  <!-- Local navigation -->
+      <locate obj="field" static="no" random="yes" range="400" />
+      <wander anim="walk" />        <!-- Navigate using waypoints -->
+      <navigate anim="walk" />      <!-- Local navigation -->
+      <wait anim="stand" duration="30" />
+      <locate obj="tribe:home"  static="no" />
+      <wander anim="walk" />        <!-- Navigate using waypoints -->
+      <navigate anim="walk" />      <!-- Local navigation -->
+    </behavior>
+    <behavior name="Reproduce" completion_decay="200" growth="0" initial="0">
+      <!--  Should include a go home behaviour here first -->
+      <wait duration="10" anim="sit" />
+      <locate obj="self" /> <!-- Update target for reproduce to be self -->
+      <reproduce/>
+      <wait duration="10" anim="sit" />
+    </behavior>
+    <behavior name="Resurrect" completion_decay="200" growth="0" initial="0" when_dead="yes">
+      <resurrect/>
+    </behavior>
+    <behavior name="ExploreLoc" completion_decay="0" growth="0" initial="0" >
+      <memorize obj="perception" />
+    </behavior>
+    <behavior name="RememberLoc" completion_decay="0" growth="0" initial="0" >
+      <!-- debug level="5" /-->
+      <memorize obj="perception" />
+      <!-- debug level="0" /-->
+    </behavior>
+
+    <react event="tribe:explore"      behavior="Explore"     delta="100" />
+    <react event="location sensed"    behavior="ExploreLoc"  delta="0"   type="mine" only_interrupt="Explore" />
+    <react event="tribe:dig"          behavior="Dig"         delta="100" />
+    <react event="tribe:path1"        behavior="Path1"       delta="100" />
+    <react event="tribe:path2"        behavior="Path2"       delta="100" />
+    <react event="tribe:reproduce"    behavior="Reproduce"   delta="0"   inactive_only="yes" />
+    <react event="tribe:resurrect"    behavior="Resurrect"   delta="0"   inactive_only="yes" when_dead="yes" />
+    <react event="inventory:added"    behavior="RememberLoc" delta="0"   type="Gold Ore"/>
+  </npctype>
+
+
+  <npctype name="MoveTest1" vel="$walk">
+    <!-- Testing the wander operation. -->
+
+    <!-- Locate nearest waypoint -->
+    <behavior name="Locate waypoint" completion_decay="-1" initial="100">
+      <locate obj="waypoint"  static="no" />
+      <navigate anim="walk" />        <!-- Local navigation -->
+    </behavior>
+    <behavior name="Wander waypoints" decay="0" growth="0" initial="50" loop="yes">
+      <debug level="0" />
+      <wander anim="walk" random="yes" />
+    </behavior>
+  </npctype>
+
+  <npctype name="MoveTest2" vel="$run">
+    <!-- Advanced movement using waypoints -->
+    <behavior name="Move1" decay="0" growth="0" initial="80" loop="yes">
+      <debug level="0" />
+      <locate obj="waypoint"  static="no" />    <!-- Locate nearest waypoint -->
+      <navigate anim="walk" />                  <!-- Local navigation -->
+      <locate obj="waypoint:p1"  static="no" />
+      <wander anim="walk" />        <!-- Navigate using waypoints -->
+      <wait anim="stand" duration="5" />
+      <rotate type="relative" value="180" ang_vel="45"/>
+      <locate obj="waypoint:tower_2"  static="no" />
+      <wander anim="walk" />        <!-- Navigate using waypoints -->
+      <wait anim="stand" duration="5" />
+      <movepath path="Test Path 1" direction="REVERSE" />
+      <wait anim="stand" duration="5" />
+    </behavior>
+  </npctype>
+
+  <npctype name="MoveTest3">
+    <!-- Testing that advanced movement using waypoints -->
+    <!-- work fine when interruped. If working ok this NPC -->
+    <!-- should go the same way as MoveTest2 -->
+
+    <!-- Advanced movement using waypoints -->
+    <behavior name="Move1" decay="0" growth="0" initial="80" loop="yes" resume="yes">
+      <debug level="0" />
+      <locate obj="waypoint"  static="no" />    <!-- Locate nearest waypoint -->
+      <navigate anim="walk" />                  <!-- Local navigation -->
+      <locate obj="waypoint:p1"  static="no" />
+      <wander anim="walk" />        <!-- Navigate using waypoints -->
+      <wait anim="stand" duration="5" />
+      <rotate type="relative" value="180" ang_vel="45"/>
+      <locate obj="waypoint:tower_2"  static="no" />
+      <wander anim="walk" />        <!-- Navigate using waypoints -->
+      <wait anim="stand" duration="5" />
+      <rotate type="relative" value="180" ang_vel="45"/>
+    </behavior>
+    <behavior name="Interrupt" completion_decay="0" growth="0" initial="0">
+      <!-- Test that a Move1 behaviour is interrupted without failing to move -->
+      <!-- Use this as a null operation. -->
+      <memorize obj="perception" />
+    </behavior>
+    <react event="location sensed"    behavior="Interrupt"  delta="0"/>
+  </npctype>
+
+  <npctype name="MoveTest4">
+    <!-- This test moving between sectors -->
+
+    <!-- Advanced movement using waypoints -->
+    <behavior name="Move1" decay="0" growth="0" initial="80" loop="yes">
+      <locate obj="waypoint"  static="no" />    <!-- Locate nearest waypoint -->
+      <navigate anim="walk" />                  <!-- Local navigation -->
+
+      <locate obj="waypoint:p13"  static="no" />
+      <wander anim="walk" vel="$walk" />        <!-- Navigate using waypoints -->
+      <wait anim="stand" duration="5" />
+      <locate obj="waypoint:p3"  static="no" />
+      <wander anim="walk" vel="$run" />        <!-- Navigate using waypoints -->
+      <wait anim="stand" duration="5" />
+    </behavior>
+  </npctype>
+
+  <npctype name="MoveTest5" vel="$walk" parent="Answerer">
+    <!-- Example Citizen behaviour -->
+
+    <behavior name="GoHome" decay="0" growth="0" initial="0">
+      <locate obj="waypoint"  static="no" />    <!-- Locate nearest waypoint -->
+      <navigate anim="walk" />                  <!-- Local navigation -->
+
+      <locate obj="home:$name"  static="no" />
+      <wander anim="walk" />        <!-- Navigate using waypoints -->
+      <navigate anim="walk" />      <!-- Local navigation -->    
+      <!-- Simulate going inside by setting invisbile -->
+      <invisible/>
+      <wait duration="30" anim="stand" />
+      <visible/>
+    </behavior>
+
+    <behavior name="GoWork" decay="0" growth="0" initial="0">
+      <locate obj="waypoint"  static="no" />    <!-- Locate nearest waypoint -->
+      <navigate anim="walk" />                  <!-- Local navigation -->
+
+      <locate obj="work:$name"  static="no" />
+      <wander anim="walk" />        <!-- Navigate using waypoints -->
+      <navigate anim="walk" />      <!-- Local navigation -->    
+    </behavior>
+
+    <react event="time" value="0"  behavior="GoWork" delta="0" /> 
+    <react event="time" value="1"  behavior="GoHome" delta="0" /> 
+    <react event="time" value="2"  behavior="GoWork" delta="0" /> 
+    <react event="time" value="3"  behavior="GoHome" delta="0" /> 
+    <react event="time" value="4"  behavior="GoWork" delta="0" /> 
+    <react event="time" value="5"  behavior="GoHome" delta="0" /> 
+    <react event="time" value="6"  behavior="GoWork" delta="0" /> 
+    <react event="time" value="7"  behavior="GoHome" delta="0" /> 
+    <react event="time" value="8"  behavior="GoWork" delta="0" /> 
+    <react event="time" value="9"  behavior="GoHome" delta="0" /> 
+    <react event="time" value="10"  behavior="GoWork" delta="0" /> 
+    <react event="time" value="11"  behavior="GoHome" delta="0" /> 
+    <react event="time" value="12"  behavior="GoWork" delta="0" /> 
+    <react event="time" value="13"  behavior="GoHome" delta="0" /> 
+    <react event="time" value="14"  behavior="GoWork" delta="0" /> 
+    <react event="time" value="15"  behavior="GoHome" delta="0" /> 
+    <react event="time" value="16"  behavior="GoWork" delta="0" /> 
+    <react event="time" value="17"  behavior="GoHome" delta="0" /> 
+    <react event="time" value="18"  behavior="GoWork" delta="0" /> 
+    <react event="time" value="19"  behavior="GoHome" delta="0" /> 
+    <react event="time" value="20"  behavior="GoWork" delta="0" /> 
+    <react event="time" value="21"  behavior="GoHome" delta="0" /> 
+    <react event="time" value="22"  behavior="GoWork" delta="0" /> 
+    <react event="time" value="23"  behavior="GoHome" delta="0" /> 
+
+  </npctype>
+
+  <npctype name="WinchMover">
+
+    <!-- Initial behavior to locate the starting point -->
+    <behavior name="Initialize" completion_decay="-1" initial="1000">
+      <debug level="0" />
+      <locate obj="waypoint"  static="no" />    <!-- Locate nearest waypoint -->
+      <navigate anim="walk" />                  <!-- Local navigation -->
+      <locate obj="winch:Mover pos 1" static="no" />
+      <wander anim="walk" />        <!-- Navigate using waypoints -->
+      <navigate anim="walk" />      <!-- Local navigation -->
+      <rotate type="absolute" value="180" ang_vel="20"/>
+    </behavior>
+
+    <behavior name="do nothing" decay="0" growth="0" initial="1">
+      <wait duration="1" anim="stand" />
+    </behavior>
+
+    <behavior name="turn to face" completion_decay="-1" growth="0" initial="0" >
+      <locate obj="perception" />
+      <rotate type="locatedest" anim="walk" ang_vel="20" />
+      <wait duration="10" anim="stand" />
+    </behavior>
+
+    <react event="talk" inactive_only="yes" faction_diff="-100" oper=">" behavior="turn to face" delta="100"  when_invisible="yes" when_invincible="yes" />
+  </npctype>
+
+  <npctype name="WinchBeast">
+    <!-- Test interaction with sequences in the map -->
+    <!-- and communication from other NPCs using NPCCMD -->
+
+    <!-- Initial behavior to locate the starting point -->
+    <behavior name="Initialize" completion_decay="-1" initial="1000">
+      <debug level="0" />
+      <locate obj="waypoint"  static="no" />    <!-- Locate nearest waypoint -->
+      <navigate anim="walk" />                  <!-- Local navigation -->
+      <locate obj="winch:Beast pos 1" static="no" />
+      <wander anim="walk" />        <!-- Navigate using waypoints -->
+      <navigate anim="walk" />      <!-- Local navigation -->
+      <rotate type="absolute" value="90" ang_vel="20"/>
+    </behavior>
+
+    <behavior name="do nothing" decay="0" growth="0" initial="1">
+      <wait duration="1" anim="stand" />
+    </behavior>
+
+    <!-- Running the wheel -->
+    <behavior name="winch_up" completion_decay="100">
+      <rotate type="absolute" value="180" ang_vel="20"/>
+      <sequence name="winch_up" cmd="start" />
+      <circle radius="2.5" angle="360" anim="walk" vel="2" />
+      <rotate type="relative" value="-90" ang_vel="20"/>
+    </behavior> 
+    <behavior name="winch_down" completion_decay="100">
+      <rotate type="absolute" value="0" ang_vel="20"/>
+      <sequence name="winch_down" cmd="start" />
+      <circle radius="2.5" angle="-360" anim="walk" vel="2" />
+      <rotate type="relative" value="90" ang_vel="20"/>
+    </behavior> 
+
+    <react event="npccmd:global:winch_up" behavior="winch_up" delta="100" inactive_only="yes"/>
+    <react event="npccmd:global:winch_down" behavior="winch_down" delta="100" inactive_only="yes"/>
+
+  </npctype>
+
+</npctypes>

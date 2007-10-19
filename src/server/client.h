@@ -1,0 +1,436 @@
+/*
+ * client.h - Author: Keith Fulton
+ *
+ * Copyright (C) 2001 Atomic Blue (info@planeshift.it, http://www.atomicblue.org)
+ *
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation (version 2 of the License)
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+
+#ifndef __CLIENT_H__
+#define __CLIENT_H__
+
+#include <csutil/ref.h>
+#include <csutil/csstring.h>
+#include <csutil/weakreferenced.h>
+#include "util/prb.h"
+#include "net/netbase.h"
+
+struct iCelEntity;
+class ClientConnectionSet;
+class psCharacter;
+class psItem;
+class gemObject;
+class gemActor;
+class gemNPC;
+
+class FloodBuffRow
+{
+public:
+    FloodBuffRow(csString newstr, unsigned int newticks);
+    FloodBuffRow(){}
+    csString str;
+    unsigned int ticks;
+};
+
+enum TARGET_TYPES
+{
+    TARGET_NONE     = 0x01, /* Also Area */
+    TARGET_NPC      = 0x02,
+    TARGET_ITEM     = 0x04,
+    TARGET_SELF     = 0x08,
+    TARGET_FRIEND   = 0x10,
+    TARGET_FOE      = 0x20,
+    TARGET_DEAD     = 0x40,
+    TARGET_GM       = 0x80,
+    TARGET_PVP      = 0x100
+};
+
+class Client;
+
+/**
+* This class collects data of a netclient. While the socket data like
+* ip adress and port is managed inside NetManager and not stored here
+* this is the object that will be saved in the ObjectManager and will
+* get an Object ID
+*/
+class Client : protected NetBase::Connection, public CS::Utility::WeakReferenced
+{
+public:
+    /**
+    * Please call constructor with the connection object produced by
+    * handleUnknownClient
+    */
+    Client();
+    
+    /**
+     * This ctor below is ONLY for constructing search keys in BinaryTree.
+     */
+    Client(LPSOCKADDR_IN addr);
+
+
+    ~Client();
+
+    bool Initialize(LPSOCKADDR_IN addr, uint32_t clientnum);
+    bool Disconnect();
+
+    /// Permit the player to disconnect? Players cannot quit while in combat (includes spell casting).
+    /// Also causes the client to be set as a zombie indicating that the server knows the connection has been broken.
+    bool AllowDisconnect();
+
+    /// SetMute is the function that toggles the muted flag
+    void SetMute(bool flag) { mute = flag; }
+    bool IsMute() { return mute; }
+
+    void SetName(const char* n) { name = n; }
+    const char* GetName() { return name; }
+
+    // Additional Entity information
+    void SetActor(gemActor* myactor) { actor = myactor; }
+    gemActor* GetActor() const { return actor; }
+    psCharacter *GetCharacterData();
+
+    // Get / Set Familiar information;
+	void SetFamiliar(gemActor *familiar);
+	gemActor* GetFamiliar();
+
+	// Get / Set Pet information;
+	void AddPet(gemActor *pet);
+	void RemovePet( size_t index );
+	gemActor *GetPet( size_t index );
+    size_t GetNumPets();
+
+    /// Returns whether the client's character is alive.
+    bool IsAlive() const;
+
+    /// Check whether the client is frozen.
+    bool IsFrozen() const { return isFrozen; }
+    void SetFrozen(bool frozen) { isFrozen = frozen; }
+
+    /// Check if distance between client and target is within range.
+    bool ValidateDistanceToTarget(float range);
+
+    // Target information
+    void SetTargetObject(gemObject *object, bool updateClientGUI=false);
+    gemObject* GetTargetObject() const { return target; }
+
+    // Mesh information
+    void SetMesh(csString nextMesh) { mesh = nextMesh; }
+    csString GetMesh() const { return mesh; }
+
+    /** Get the current selected target player.
+     * @return -1 if no target selected or target not a player
+     */
+    int GetTargetClientID();
+
+    /** Get the current selected object id.
+    * @return -1 if no target selected
+    */
+    //    int GetTargetObjectID();
+
+    uint32_t GetClientNum() const { return clientnum; }
+
+    /// The account number for this client.
+    int GetAccountID() { return accountID; }
+    void SetAccountID(int ID) { accountID = ID; }
+
+    /// The player number for this client.
+    unsigned int GetPlayerID() { return playerID; }
+    void SetPlayerID(unsigned int ID) { playerID = ID; }
+
+    int GetExchangeID() { return exchangeID; }
+    void SetExchangeID(int ID) { exchangeID = ID; }
+
+    /// The object number for this client.
+    //    int GetObjectID() { return objectID; }
+    //    void SetObjectID(int ID) { objectID = ID; }
+
+    /// The security level of this player
+    int GetSecurityLevel() { return securityLevel; }
+    void SetSecurityLevel(int level) { securityLevel=level; }
+
+    /// The guild id value if player is member of guild.
+    int GetGuildID();
+    //    bool IsGuildSecret() { return guild_is_secret; }
+
+    void SetReady(bool rdy) { ready = rdy; }
+    bool IsReady() { return ready; }
+
+    /** Checks if out client can attack given target
+     *  If not, it sends him some informative text message
+     */
+    bool IsAllowedToAttack(gemObject* target, bool inform = true);
+
+    /** Checks if this client is allowed to pick up an item, or take it
+     *  out of the container.
+     */
+    bool CanTake(psItem* item);
+
+    /** Returns the type of the target, from TARGET_TYPES.
+     *
+     * @param target The target to check.
+     * @return The type of the target.
+     */
+    int GetTargetType(gemObject* target);
+
+    /** Builds a list of target type names associated with a target type
+     *  bitmap (formed by OR-ing TARGET_TYPES).
+     *
+     * @param targetType A target type bitmap.
+     * @param targetDesc [CHANGES] Gets filled in with a comma-separated list
+     *                   of target names.
+     */
+    void GetTargetTypeName(int32_t targetType, csString& targetDesc) const;
+
+    //    void SetExchange(csRef<ExchangeManager> exch);
+
+    /*
+    typedef enum
+    { NOT_TRADING, SELLING, BUYING} TradingStatus;
+
+    void SetTradingStatus( TradingStatus trading, int merchantID)
+    { tradingStatus = trading; this->merchantID = merchantID; }
+
+    TradingStatus GetTradingStatus() { return tradingStatus; }
+    int GetMerchantID() { return merchantID; }
+    */
+
+    /// The last_response given by an npc to this player
+    int GetLastResponse() { return lastResponse; }
+    void SetLastResponse(int response) { lastResponse=response; }
+
+    /// Allow distinguishing superclients from regular player clients
+    bool IsSuperClient() { return superclient; }
+    void SetSuperClient(bool flag) { superclient = flag; }
+
+    long GetIPAddress(char *addr)
+    {
+        unsigned int a1,a2,a3,a4;
+#ifdef WIN32
+        unsigned long a = this->addr.sin_addr.S_un.S_addr;
+#else
+        unsigned long a = this->addr.sin_addr.s_addr;
+#endif
+
+        if (addr)
+        {
+            a1 = a&0x000000FF;
+            a2 = (a&0x0000FF00)>>8;
+            a3 = (a&0x00FF0000)>>16;
+            a4 = (a&0xFF000000)>>24;
+            sprintf(addr,"%d.%d.%d.%d",a1,a2,a3,a4);
+        }
+        return a;
+    }
+
+    csString GetIPRange(int octets=3)
+    {
+        char ipaddr[20] = {0};
+        GetIPAddress(ipaddr);
+        return GetIPRange(ipaddr,octets);
+    }
+
+    static csString GetIPRange(const char* ipaddr, int octets=3)
+    {
+        csString range(ipaddr);
+        for (size_t i=0; i<range.Length(); i++)
+        {
+            if (range[i] == '.')
+                --octets;
+    
+            if (!octets)
+            {
+                range[i+1] = '\0';
+                break;
+            }
+        }
+        return range;
+    }
+
+    NetBase::Connection* GetConnection() const { return (NetBase::Connection*)this; }
+
+    //    bool SetTradingStopped(bool stopped);
+
+    //    bool ReadyToExchange();
+
+    // These operators are required for all BinaryTree<> classes.
+    bool operator < (const Client& other) const
+    {
+        if (isValid() != other.isValid())
+            return isValid() < other.isValid();
+        if (addr.sin_addr.s_addr != other.addr.sin_addr.s_addr)
+            return addr.sin_addr.s_addr < other.addr.sin_addr.s_addr;
+        if (addr.sin_port != other.addr.sin_port)
+            return addr.sin_port < other.addr.sin_port;
+        
+        return false;
+    };
+    bool operator == (const Client& other) const
+    {
+        return (isValid() &&
+            addr.sin_port == other.addr.sin_port &&
+            addr.sin_addr.s_addr == other.addr.sin_addr.s_addr);
+    };
+
+    csRef<NetPacketQueueRefCount> outqueue;
+
+    void AddDuelClient(int clientnum);
+    void RemoveDuelClient(Client *client);
+    void ClearAllDuelClients();
+    int GetDuelClientCount();
+    int GetDuelClient(int id);
+    bool IsDuelClient(int clientnum);
+    void AnnounceToDuelClients(gemActor *attacker, const char *event);
+
+    // Flood stuff
+    size_t GetFloodMax(){return FLOODMAXBUFFSIZE;}
+    size_t GetFloodWarn(){return FLOODWARBUFFSIZE;}
+    FloodBuffRow GetFlood(int row);
+    void SetFloodStr(int row,csString& what,unsigned int ticks);
+    void ClearFlood();
+    void ShovelFlood(csString last);
+    void CheckBuffer();
+
+    void SetAdvisorPoints(int p) { advisorPoints = p; }
+    void IncrementAdvisorPoints(int n=1) { advisorPoints += n; }
+    int GetAdvisorPoints() { return advisorPoints; }
+
+    /// Set this client's advisor status
+    void SetAdvisor(bool advisor) { isAdvisor = advisor; }
+    bool GetAdvisor() { return isAdvisor; }
+
+    /// For cheat detection
+    csTicks accumulatedLag;
+
+    // Invite flood control
+    csTicks GetLastInviteTime() { return lastInviteTime; }
+    void SetLastInviteTime(csTicks time) { lastInviteTime = time; }
+    bool GetLastInviteResult() { return lastInviteResult; }
+    void SetLastInviteResult(bool result) { lastInviteResult = result; }
+    bool HasBeenWarned() { return hasBeenWarned; }
+    void SetWarned() { hasBeenWarned = true; }
+    bool HasBeenPenalized() { return hasBeenPenalized; }
+    void SetPenalized(bool value) { hasBeenPenalized = value; }
+    int GetSpamPoints() { return spamPoints; }
+    void SetSpamPoints(int points) { spamPoints = points; }  // For setting on account load
+    void IncrementSpamPoints() { if (spamPoints<4) spamPoints++; }
+    void DecrementSpamPoints() { if (spamPoints>0) spamPoints--; }
+
+    /// Has the player disconnected from this client?
+    bool zombie;
+
+    /// Online edit of waypoints
+    void WaypointSetPath(csString& path, int index) { waypointPathName = path; waypointPathIndex = index; waypointPathLast = -1; }
+    csString& WaypointGetPathName(){ return waypointPathName; }
+    int WaypointGetPathIndex() { return waypointPathIndex; }
+    int WaypointGetNewPathIndex() { return waypointPathIndex++; }
+    int WaypointGetLast() { return waypointPathLast; }
+    void WaypointSetLast(int last) { waypointPathLast = last; }
+    uint32_t WaypointGetEffectID();
+    void WaypointSetIsDisplaying( bool displaying ) { waypointIsDisplaying = displaying; }
+    bool WaypointIsDisplaying() { return waypointIsDisplaying; }
+    
+
+    /// Online edit of paths
+    uint32_t PathGetEffectID();
+    int PathGetPathID(){return pathPathID; }
+    void PathSetPathID(int id) { pathPathID = id; }
+    int PathGetPrevPointID(){return pathPrevPointID; }
+    void PathSetPrevPointID(int id) { pathPrevPointID = id; }
+    void PathSetIsDisplaying( bool displaying ) { pathIsDisplaying = displaying; }
+    bool PathIsDisplaying() { return pathIsDisplaying; }
+
+    /// Online edit of location
+    uint32_t LocationGetEffectID();    
+    void LocationSetIsDisplaying( bool displaying ) { locationIsDisplaying = displaying; }
+    bool LocationIsDisplaying() { return locationIsDisplaying; }
+
+    /// Give a warning to the client silently. Capped at 10000.
+    void FlagExploit() {if(flags < 10000) flags++; }
+    
+    int GetFlagCount() { return flags;}
+
+protected:
+
+    csTicks zombietimeout;
+
+    int exchangeID;
+    gemActor *actor;
+    csArray<uint32> pets;
+    gemObject *target;
+    csString mesh;
+    //    csRef<ExchangeManager> exchangeMgr;
+    bool ready;
+
+    /// Store if this client is acting as an advisor.
+    bool isAdvisor;
+
+    /// mute flag
+    bool mute;
+
+    int  accountID;
+    unsigned int playerID;
+    int  securityLevel;
+    bool superclient;
+    int  lastResponse;
+    csArray<gemNPC *> listeningNpc;
+    csString name;
+
+    csArray<int> duel_clients;
+
+    // Flood control
+    static const int FLOODMAXBUFFSIZE = 5; //Mute client
+    static const int FLOODWARBUFFSIZE = 3; //Warn client
+    static const unsigned int FLOODFORGIVETIME = 10000; //Warn client
+    csArray<FloodBuffRow> FloodMessagebuff[FLOODMAXBUFFSIZE];
+
+    int spamPoints;
+    int advisorPoints;
+
+    void SaveAccountData();
+
+    // Invite flood
+    csTicks lastInviteTime;
+    bool lastInviteResult;
+    bool hasBeenWarned;
+    bool hasBeenPenalized;
+
+    // State information for merchants
+    //    TradingStatus tradingStatus;
+    //    int merchantID;
+
+    // Waypoint edit global vars for client
+    csString waypointPathName;
+    int waypointPathIndex;
+    int waypointPathLast;
+    uint32_t waypointEffectID;
+    bool waypointIsDisplaying;
+    
+    // Path edit global vars for client
+    uint32_t pathEffectID;
+    int pathPathID,pathPrevPointID;
+    bool pathIsDisplaying;
+    
+    // Location edit global vars for client
+    uint32_t locationEffectID;
+    bool locationIsDisplaying;
+    
+private:
+    /// Whether the client is frozen or not.
+    bool isFrozen;
+
+    /// Potential number of exploits automatically detected.
+    /// This needs more work as it's only a preliminary measure so far.
+    int flags;
+};
+
+#endif

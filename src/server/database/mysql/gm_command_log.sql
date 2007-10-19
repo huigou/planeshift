@@ -1,0 +1,19 @@
+#
+# Table structure for table 'gm_command_log'
+#
+
+CREATE TABLE gm_command_log (
+  id int(10) unsigned NOT NULL auto_increment,
+  gm int(11) NOT NULL DEFAULT '0', 
+  command varchar(200) NOT NULL DEFAULT '/none',
+  player int(11) NOT NULL DEFAULT '0',
+  ex_time datetime ,
+  PRIMARY KEY (id),
+  UNIQUE id (id)
+);
+
+
+#
+# Dumping data for table 'gm_command_log'
+#
+INSERT INTO gm_command_log VALUES("1", "1", "/test", "1", "2003-01-01 12:12:12");

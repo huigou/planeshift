@@ -1,0 +1,9 @@
+SubDir TOP src client sound ;
+
+Library pssound :
+	[ Wildcard *.cpp *.h ]
+	: noinstall
+;
+CompileGroups pssound : client ;
+ExternalLibs pssound : CRYSTAL ;
+LinkWith pssound : psutil ;

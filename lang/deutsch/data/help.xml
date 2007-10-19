@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<help>
+	<branch name="Commands">
+		<branch name="Chat Commands">
+			<topic name="/say" text="Talk to the people in your immediate vicinity."/>
+			<topic name="/shout" text="Talk to people in your sector."/>
+			<topic name="/tell" text="Talk to someone privately."/>
+			<topic name="/guild" text="Talk to everyone in your guild privately."/>
+			<topic name="/group" text="Talk to your group privately."/>
+			<topic name="/me" text="Perform an action see by people in your vicinity."/>
+			<topic name="/auction" text="Put an item up for sale or offer to buy something."/>
+			<topic name="/report" text="Makes the server log what target player is saying."/>
+		</branch>
+		<branch name="User Commands">
+			<topic name="/who" text="&lt;Filter&gt;    Listet alle Spieler auf, die im Moment online sind und zum Filter passen."/>
+			<topic name="/buddy" text="&lt;Name&gt;      Fügt den benannten Spieler zu deiner Buddy-Liste hinzu."/>
+			<topic name="/notbuddy" text="&lt;Name&gt;      Entfernt den benannten Spieler von deiner Buddy-Liste."/>
+			<topic name="/buddylist" text="Zeigt deine momentane Buddy-Liste."/>
+			<topic name="/online" text="Zeigt deine Buddies, die im Moment online sind."/>
+			<topic name="/roll" text="&lt;#&gt; &lt;Seiten&gt; Würfelt eine bestimmte Anzahl von Würfeln mit den angegebenen Seiten und nennt das Ergebnis."/>
+			<topic name="/rollstat" text="&lt;Attribut&gt; Sagt dir, ob deine stat gut genug war, um in einer bestimmten angewendet zu werden."/>
+			<topic name="/rollskill" text="&lt;Skill&gt;     Sagt dir, ob dein Skill erfolgreich war."/>
+			<topic name="/pos" text="Sagt dir deine Position im aktuellen Sektor.  (Nur zum debuggen)"/>
+			<topic name="/spawn" text="Bewegt dich zu der Position zurück, wo du gestartet bist.  (Nur zum debuggen)"/>
+			<topic name="/attack" text="&lt;#&gt;         Greift den gewählten Character mit einer Agressivität von 1-5 an."/>
+			<topic name="/stopattack" text="Nicht mehr angreifen."/>
+			<topic name="/admin" text="Admin-Konsole"/>
+			<topic name="/greet" text="Wink deinen Freunden Hallo."/>
+			<topic name="/stoptrading" text="Irgendjemanden daran hindern, mit dir zu Handeln."/>
+			<topic name="/starttrading" text="You are ready to trade."/>
+			<topic name="/buy" text="Vom Händler kaufen."/>
+			<topic name="/sell" text="Dem Händler verkaufen."/>
+			<topic name="/trade" text="Handel mit gewählten Spieler starten."/>
+			<topic name="/give" text="Give items to current Target NPC_IN_DEUTSCH."/>
+			<topic name="/assist" text="[Spieler]    Macht die Auswahl des angegebenen Spielers zu deiner eigenen, oder wähl dich selbst aus, wenn keine Spieler angegeben ist."/>
+			<topic name="/ignore" text="Shows ignore window."/>
+			<topic name="/add_ignore" text="[Spieler]    Alle Kommunikation vom gewählten Spieler im Chat-Fenster ignorieren."/>
+			<topic name="/remove_ignore" text="[player]    Remove target player from ignore list."/>
+			<topic name="/cast" text="&lt;Spell-Name&gt; Spruch ausführen."/>
+			<topic name="/away" text="&lt;Meldung&gt;   Setzt eine Meldung zum automatischen Antworten ('off' deaktivert automatisches Antworten)"/>
+			<topic name="/loot" text="Loots an available corpse if you have authority."/>
+			<topic name="/clear" text="Clears the history of the chat window."/>
+			<topic name="/advisor" text="&lt;on/off&gt;/&lt;question&gt;   Turn advisor mode on/off. Ask an question about the game."/>
+			<topic name="/advice" text="&lt;message&gt;    Send an message as advice to some one that did &quot;/advisor &lt;question&gt;&quot;."/>
+			<topic name="/train" text="Start a training session with a trainer target."/>
+			<topic name="/quests" text="Display current quest notebook."/>
+			<topic name="/use" text="Uses the targeted item."/>
+			<topic name="/stopusing" text="Stop using the targeted item."/>
+			<topic name="/dig" text="Mine for natural resources in the ground."/>
+			<topic name="/target_next_nearest_player" text="Targets the player that is the next nearest to you after your current target.  If you do not have a target, it targets the closest player.  If there is no next target, it cycles back to the nearest player.  Maximum range: 50 meters."/>
+			<topic name="/target_prev_nearest_player" text="Targets the player that is the next furthest from you after your current target.  If you do not have a target, it targets the furthest player.  If there is no next target, it cycles back to the furthest player.  Maximum range: 50 meters."/>
+			<topic name="/target_next_nearest_npc" text="Targets the NPC that is the next nearest to you after your current target.  If you do not have a target, it targets the closest NPC.  If there is no next target, it cycles back to the nearest NPC.  Maximum range: 50 meters."/>
+			<topic name="/target_prev_nearest_npc" text="Targets the NPC that is the next furthest from you after your current target.  If you do not have a target, it targets the furthest NPC.  If there is no next target, it cycles back to the furthest NPC.  Maximum range: 50 meters."/>
+			<topic name="/target_clear" text="Clears your target."/>
+			<topic name="/tip" text="Requests a tip from the server."/>
+			<topic name="/motd" text="Requests the MOTD from the server."/>
+			<topic name="/challenge" text="Challenge another player to a duel."/>
+			<topic name="/yield" text="Surrender to a dueling player."/>
+			<topic name="/petition" text="&lt;Anfrage&gt;            Gibt eine Petition zu den GMs für Features oder Fehlerbehebungen."/>
+			<topic name="/petition_list" text="List all of the petitions you have submitted."/>
+		</branch>
+		<branch name="Group Commands">
+			<topic name="/invite" text="&lt;Spieler&gt; Lädt den benannten Spieler ein, der Gruppe beizutreten."/>
+			<topic name="/disband" text="Gruppe wird aufgelöst, wenn vom Anführer."/>
+			<topic name="/leavegroup" text="Du verlässt die momentane Gruppe."/>
+			<topic name="/groupmembers" text="Alle Gruppenmitglieder auflisten."/>
+		</branch>
+		<branch name="Guild Commands">
+			<topic name="/guildinfo" text="Opens the guild window."/>
+			<topic name="/newguild" text="&lt;Name&gt;  Erstellt eine neue Gilde mit dem angegebenen Namen und dem aktuellen Spieler als Anführer."/>
+			<topic name="/endguild" text="Gilde wird aufgelöst, wenn vom Anführer."/>
+			<topic name="/guildinvite" text="&lt;Spieler&gt; Lädt den benannted Spieler ein, der Gilde beizutreten."/>
+			<topic name="/guildremove" text="&lt;Spieler&gt; Entfernt den benannten Spieler aus der Gilde."/>
+			<topic name="/guildlevel" text="&lt;Level&gt; &lt;Name&gt; Nennt das Level # als den Namen fü diese Gilde."/>
+			<topic name="/guildpromote" text="&lt;Spieler&gt; &lt;Level&gt; Setzt den benannten Spieler auf ein Level der Gilde."/>
+			<topic name="/guildsymbol" text="&lt;Symbolname&gt;  Setzt das benannte Symbol als das Gilden-Symbol."/>
+			<topic name="/guildmembers" text="&lt;Level&gt; Zeigt alle Spieler der Gilde, aussortiert nach Level wenn angegeben."/>
+			<topic name="/guildpoints" text="&lt;Gildenname&gt; Zeigt die Karma-Punkte der angegebenen Gilde."/>
+			<topic name="/guildname" text="&lt;guildname&gt; Changes name of your guild to the new guild name."/>
+			<topic name="/guildsecret" text="[on|off] Ändert die Geheim-Einstellung der Gilde.  Zeigt den aktuellen Wert an, wenn ohne Argument aufgerufen."/>
+			<topic name="/guildweb" text="Sets URL of guild web page."/>
+			<topic name="/guildmotd" text="Sets/views the guild's MOTD."/>
+			<topic name="/guildwar" text="Invites another guild (the target's guild) to start a guild war."/>
+			<topic name="/guildyield" text="Surrenders to the target's guild to end a guild war."/>
+			<topic name="/newalliance" text="&lt;alliance name&gt; Creates new alliance of guilds."/>
+			<topic name="/allianceinvite" text="&lt;leader name&gt; Invites leader of another guild to your guild alliance."/>
+			<topic name="/allianceremove" text="&lt;guild name&gt; Removes a guild from your guild alliance."/>
+			<topic name="/allianceleave" text="Leave your guild alliance."/>
+			<topic name="/allianceleader" text="&lt;guild name&gt; Hands over alliance leadership to another guild."/>
+			<topic name="/endalliance" text="Disband your guild alliance."/>
+		</branch>
+		<branch name="Utility Commands">
+			<topic name="/quit" text="Beendet das Spiel."/>
+			<topic name="/echo" text="Wiederholt, was du im Chat-Fenster tippst, ohne es jemandem zu senden."/>
+			<topic name="/confirm" text="Zeigt ein Bestätigungsfenster mit Ja/Nein-Buttons."/>
+			<topic name="/ping" text="Shows your average ping to the server."/>
+			<topic name="/screenshot" text="Takes a screenshot and saves it in your PlaneShift folder."/>
+			<topic name="/spelleffect" text="Tests a particle."/>
+			<topic name="/targetinfo" text="Displays more info about the target."/>
+			<topic name="/help" text="Displays this window."/>
+		</branch>
+		<branch name="Admin Commands" level="1">
+			<topic name="/petition_manage" level="1" text="Manage petitions to help users."/>
+			<topic name="/show_gm" level="1" text="Displays the GM commands window."/>
+			<topic name="/teleport_to" level="1" text="&lt;player name&gt;      Teleports a GM to the given player."/>
+			<topic name="/slide" level="1" text="&lt;name&gt;,&lt;direction&gt; Slides the targetted petitioner in the direction specified (L,R,F,B,U,D)."/>
+			<topic name="/slide_me" level="1" text="&lt;L,R,F,B,U,D&gt;      Slides self in the direction specified."/>
+			<topic name="/mute" level="1" text="&lt;player name&gt;      Mutes the named player until they log back in to this server."/>
+			<topic name="/unmute" level="1" text="&lt;player name&gt;      Unmutes the named player."/>
+			<topic name="/death" level="1" text="Finger of Death on target."/>
+			<topic name="/kick" level="2" text="&lt;Spieler-Name&gt;      Kickt den Spieler vom Server."/>
+			<topic name="/npc" level="9" text="&lt;Master-NPC-Name&gt;  Klont den benannten NPC an der aktuellen Position."/>
+			<topic name="/killnpc" level="9" text="Killt den gewählten NPC."/>
+			<topic name="/item" level="9" text="&lt;Item-Name&gt;        Erstellt ein neues object aus dem benannten Item an der aktuellen Position."/>
+			<topic name="/crystal" level="9" text="Erstellt einen neuen Eintrag in der Crystal-Hunt-Datenback an der aktuellen position."/>
+		</branch>
+	</branch>
+	<branch name="Interface">
+		<topic name="Usage" text="Click stuff, and stuff will happen. Well it's meant to anyway.... Sometimes."/>
+	</branch>
+	<branch name="Crystals">
+		<topic name="Info" text="Makes the world go round."/>
+	</branch>
+	<branch name="Glossary">
+		<topic name="Vengeance" text="Be afraid, very afraid."/>
+		<topic name="Planeshift" text="What do you think this is called? Idiot."/>
+	</branch>
+	<branch name="Monsters">
+		<topic name="Trepor" text="Size: 3ft Likes: Dwarf flesh. Dislikes: Devs posing as gods."/>
+	</branch>
+</help>

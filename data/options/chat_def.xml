@@ -1,0 +1,130 @@
+<chat>
+    <chatoptions>
+        <selecttabstyle value="2" />
+        <echoscreeninsystem value="1" />
+        <loose value="0" />
+        <logAllChat value="1" />
+        <logSystemChat value="0" />
+    </chatoptions>
+    <maintabincludes>
+        <npc value="no" />
+        <tell value="no" />
+        <guild value="no" />
+        <group value="no" />
+        <auction value="no" />
+        <system value="no" />
+        <systembase value="yes" />
+        <help value="no" />
+    </maintabincludes>
+    <flashingoptions>
+        <main value="yes" />
+        <npc value="yes" />
+        <tell value="yes" />
+        <guild value="yes" />
+        <group value="yes" />
+        <auction value="yes" />
+        <system value="yes" />
+        <help value="yes" />
+    </flashingoptions>
+	<flashingoncharoptions>
+        <main value="yes" />
+        <npc value="yes" />
+        <tell value="yes" />
+        <guild value="yes" />
+        <group value="yes" />
+        <auction value="yes" />
+        <system value="yes" />
+        <help value="yes" />
+    </flashingoncharoptions>
+
+		<chatcolors>
+        <systemtext     r="0"   g="255" b="0" />
+        <admintext      r="255" g="0"   b="0" />
+        <playernametext r="157" g="187" b="255" />
+        <chattext       r="255" g="255" b="255" />
+        <telltext       r="255" g="255" b="0" />
+        <shouttext      r="255" g="0"   b="255" />
+        <guildtext      r="200" g="200" b="200" />
+        <yourtext       r="255" g="255" b="255" />
+        <grouptext      r="255" g="180" b="0" />
+        <auctiontext    r="255" g="0"   b="0" />
+        <helptext       r="190" g="190" b="190" />
+        <gmtext         r="200" g="200" b="200" />
+    </chatcolors>
+    <filters>
+    <badwords incoming="yes" outgoing="yes">
+            <!-- starting with George Carlin's Seven Dirty Words -->
+            shit piss fuck cunt cocksucker motherfucker tits
+            <!-- and tune to your liking -->
+            damn bastard bitch fuk asshole whore dickhead cybersex fag wanker
+            <!-- you can specify a replacement word using a semicolon -->
+            h4x0r;hacker
+            <!-- or you can use this xml syntax -->
+        <replace bad="l33t" good="elite"/>
+        <replace bad="d00d" good="Sir"/>
+        <replace bad="1337" good="great"/>
+        <replace bad="l33tsp34k" good="RS talk"/>
+        <replace bad="ph34r" good="fear"/>
+        <replace bad="j0" good="hail"/>
+        <replace bad="j00" good="you"/>
+        <replace bad="r0x0rz" good="rocks"/>
+        <replace bad="pwnd" good="owned"/>
+        <replace bad="n00b" good="newbie"/>
+        <replace bad="omg" good="by the gods"/>
+        <replace bad="wtf" good="what the heck"/>
+        <replace bad="h8" good="hate"/>
+        <replace bad="w8" good="wait"/>
+        <replace bad="l8r" good="later"/>
+        <replace bad="some1" good="someone"/>
+        <replace bad="ne1" good="anyone"/>
+        <replace bad="hax0r" good="expert"/>
+        <replace bad="l4m3r" good="yokel"/>
+        <replace bad="sux0r" good="suck"/>
+        <replace bad="sux0rs" good="sucks"/>
+        <replace bad="sux0rz" good="sucks"/>
+        <replace bad="r0x0r" good="rock"/>
+        <replace bad="r0x0rs" good="rocks"/>
+        <replace bad="r0x0rz" good="rocks"/>
+        <replace bad="sk1||z" good="skills"/>
+        <replace bad="sk1llz" good="skills"/>
+        <replace bad="13wt" good="loot"/>
+        <replace bad="ub3r" good="great"/>
+        <replace bad="m4d" good="mad"/>
+        <replace bad="pr0n" good="nudity"/>
+        <replace bad="w00t" good="woohoo"/>
+        <replace bad="stfu" good="please be quiet"/>
+        <replace bad="teh" good="the"/>
+        <replace bad="r0xx0r" good="great"/>
+        <replace bad="@$$" good="backside"/>
+        <replace bad="g4y" good="gay"/>
+        <replace bad="u" good="you"/>
+        <replace bad="ur" good="your"/>
+        <replace bad="t3h" good="the"/>
+        <replace bad="n00blit" good="young newbie"/>
+        <replace bad="wh4ck0rs" good="weird"/>
+        <replace bad="ex0t|c" good="exotic"/>
+        <replace bad="wassup" good="how fare thee"/>
+        <replace bad="sup" good="how farest thou"/>
+        <replace bad="u2" good="you too"/>
+        <replace bad="cu" good="see you later"/>
+        <replace bad="cya" good="see you later"/>
+        <replace bad="ty" good="thank you"/>
+        <replace bad="yw" good="you're welcome"/>
+        <replace bad="dunno" good="don't know"/>
+    </badwords>
+    </filters>
+    <msgfilters>
+        <me type="SUC" value="true" />
+        <vicinity type="SUC" value="true" />
+        <me type="BLO" value="true" />
+        <vicinity type="BLO" value="true" />
+        <me type="DOD" value="true" />
+        <vicinity type="DOD" value="true" />
+        <me type="MIS" value="true" />
+        <vicinity type="MIS" value="true" />
+        <me type="FAI" value="true" />
+        <vicinity type="FAI" value="true" />
+        <me type="STA" value="true" />
+        <vicinity type="STA" value="true" />
+    </msgfilters>
+</chat>

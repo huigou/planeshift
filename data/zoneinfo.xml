@@ -1,0 +1,112 @@
+<zonelist>
+  <zone sector="one">
+    <region map="warpsector" />
+  </zone>
+  <zone sector="two">
+    <region map="warpsector" />
+  </zone>
+  <zone sector="three">
+    <region map="warpsector" />
+  </zone>
+  <zone sector="four">
+    <region map="warpsector" />
+  </zone>
+  <zone sector="NPCroom">
+    <region map="npcroom" />
+  </zone>
+  <zone sector="NPCroom1">
+    <region map="npcroom" />
+  </zone>
+  <zone sector="hydlaa_plaza">
+    <region map="temple" />
+    <region map="tower" />
+    <region map="dungeon" />
+    <region map="hydlaa" />
+  </zone>
+  <zone sector="laanx_inside">
+    <region map="temple" />
+    <region map="tower" />
+    <region map="dungeon" />
+    <region map="hydlaa" />
+  </zone>
+  <zone sector="jayose_inside">
+    <region map="temple" />
+    <region map="tower" />
+    <region map="dungeon" />
+    <region map="hydlaa" />
+  </zone>
+  <zone sector="tavern_de_kadel">
+    <region map="temple" />
+    <region map="tower" />
+    <region map="dungeon" />
+    <region map="hydlaa" />
+  </zone>
+  <zone sector="laanx_dungeon">
+    <region map="temple" />
+    <region map="tower" />
+    <region map="dungeon" />
+    <region map="hydlaa" />
+  </zone>
+  <zone sector="laanx_entrance">
+    <region map="temple" />
+    <region map="tower" />
+    <region map="dungeon" />
+    <region map="hydlaa" />
+  </zone>
+  <zone sector="laanx_main">
+    <region map="temple" />
+    <region map="tower" />
+    <region map="dungeon" />
+    <region map="hydlaa" />
+  </zone>
+  <zone sector="laanx_well">
+    <region map="temple" />
+    <region map="tower" />
+    <region map="dungeon" />
+    <region map="hydlaa" />
+  </zone>
+  <zone sector="windowless_tower_dungeon">
+    <region map="temple" />
+    <region map="tower" />
+    <region map="dungeon" />
+    <region map="hydlaa" />
+  </zone>
+  <zone sector="windowless_tower_exit">
+    <region map="temple" />
+    <region map="tower" />
+    <region map="dungeon" />
+    <region map="hydlaa" />
+  </zone>
+  <zone sector="windowless_tower_top">
+    <region map="temple" />
+    <region map="tower" />
+    <region map="dungeon" />
+    <region map="hydlaa" />
+  </zone>
+  <zone sector="windowless_tower">
+    <region map="temple" />
+    <region map="tower" />
+    <region map="dungeon" />
+    <region map="hydlaa" />
+  </zone>
+  <zone sector="room">
+    <region map="podium" />
+  </zone>
+  <zone sector="one">
+    <region map="room1" />
+    <region map="room2" />
+    <region map="room4" />
+  </zone>
+  <zone sector="two" transitional="yes">
+    <region map="room2" />
+    <region map="room3" />
+  </zone>
+  <zone sector="three">
+    <region map="room3" />
+    <region map="room4" />
+  </zone>
+  <zone sector="four" transitional="yes">
+    <region map="room4" />
+    <region map="room1" />
+  </zone>
+</zonelist> 

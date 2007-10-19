@@ -1,0 +1,209 @@
+/*
+ * netpacket.h
+ *
+ * Copyright (C) 2001 Atomic Blue (info@planeshift.it, http://www.atomicblue.org) 
+ *
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation (version 2 of the License)
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ */
+#ifndef __NETPACKET_H__
+#define __NETPACKET_H__
+
+#include <csutil/csendian.h>
+#include <csutil/refcount.h>
+
+#include "net/packing.h"
+#include "net/message.h"
+
+enum
+{
+  PKTSIZE_ACK    = 0,        // 0 pktsize means ACK pkt
+  PKTMAXLATENCY    = 3000,        // 500 mseconds till packet resent
+  
+  FLAG_MULTIPACKET = 0x08,  // priority bit 8 is multipacket 
+  /// MAXPACKETSIZE includes header length ( sizeof(struct psNetPacket) )
+  MAXPACKETSIZE       = 515    // 515 bytes is max size of network packet
+};
+
+/**
+ * psNetPacket gives the networking code
+ * the context it needs, and all of this info
+ * goes out on the wire.  None of NetPacketEntry's info goes
+ * on the wire.
+ * A packet is exactly one udp packet that goes over the net,
+ *      you can embed multiple messages in one packet
+ *      or you can split up one message over multiple
+ *      packets
+ */
+#pragma pack(1)
+struct psNetPacket
+{
+    /** Each packet needs to know its own priority */
+    uint8_t    flags;
+    /** each packet must know what message it's a part of */
+    uint32_t    pktid;
+
+    /** offset and size together specify a memory block within the psMessageBytes
+     * struct 
+     */
+    uint32_t    offset;
+    uint32_t    msgsize;
+    uint16_t    pktsize;
+    
+    /** this can be used as a pointer to the data */
+    char    data[0];
+
+    //------------------------------------------------------------------------
+    
+    size_t GetPacketSize() const
+    {
+        if (pktsize == PKTSIZE_ACK)
+            return sizeof(psNetPacket);
+        else
+            return sizeof(psNetPacket) + pktsize;
+    };
+
+    bool IsMultiPacket() const
+    {
+        return (flags & FLAG_MULTIPACKET)? true: false;
+    }
+    uint8_t GetPriority() const
+    {
+        return flags & PRIORITY_MASK;
+    }
+
+    void MarshallEndian() {
+        // Pack up for transmission.  This endian-izes the packet.
+        pktid = csLittleEndian::Convert((uint32)pktid);
+        offset = csLittleEndian::Convert((uint32)offset);
+        msgsize = csLittleEndian::Convert((uint32)msgsize);
+        pktsize = csLittleEndian::Convert((uint16)pktsize);
+    }
+
+    void UnmarshallEndian() {
+        // Unpack from transmission.  This deendian-izes the packet.
+        pktid = csLittleEndian::UInt32(pktid);
+        offset = csLittleEndian::UInt32(offset);
+        msgsize = csLittleEndian::UInt32(msgsize);
+        pktsize = csLittleEndian::UInt16(pktsize);
+    }
+
+    /*  The goal here is to verify fields that later parsing can't.
+     *  Specifically we need to make sure the buffer can hold at least the 
+     *  fields that must be present in every packet, and also that the reported
+     *  packet length is less than or equal to the data provided in the buffer.
+     *  (Really it should be the same length, but extra won't cause us to crash)
+     */
+    static struct psNetPacket *NetPacketFromBuffer(void *buffer,int buffer_length)
+    {
+        if ( !buffer )
+            return NULL;
+
+        struct psNetPacket *potentialpacket;
+        
+        if (buffer_length < (int)sizeof(struct psNetPacket))
+            return NULL; // Buffer data too short for even the header
+        
+        potentialpacket=(struct psNetPacket *)buffer;
+        
+        if ((unsigned int)buffer_length < csLittleEndian::Convert(potentialpacket->pktsize) + sizeof(struct psNetPacket))
+            return NULL; // Buffer data too short for the packet length reported in the header
+        
+        return potentialpacket;
+    }
+
+};
+#pragma pack()
+
+class psNetPacketEntry : public csRefCount
+{
+public:
+    /** clientnum this packet comes from/goes to */
+    uint32_t clientnum;
+
+    csTicks  timestamp;
+
+    /** The Packet like it is returned from reading UDP socket / will be
+     * written to socket
+     */
+    psNetPacket* packet;
+
+    /** construct a new PacketEntry from a packet, not that this classe calls
+     * free on the packet pointer later!
+     */
+    psNetPacketEntry (psNetPacket* packet, uint32_t cnum, uint16_t sz);
+    
+    /** construct a new PacketEntry for a single or partial message */
+    psNetPacketEntry (uint8_t pri, uint32_t cnum, uint32_t id,
+                      uint32_t off, uint32_t totalsize, uint16_t sz,
+              psMessageBytes *msg);
+
+    /** construct a new PacketEntry for a specified buffer of bytes */
+    psNetPacketEntry (uint8_t pri, uint32_t cnum,
+                      uint32_t id, uint32_t off, uint32_t totalsize, uint16_t sz,
+                      const char *bytes);
+
+    psNetPacketEntry (psNetPacketEntry* )
+    {
+        CS_ASSERT(false);
+    }
+
+    ~psNetPacketEntry();
+    
+    bool Append(psNetPacketEntry *next);
+    psNetPacketEntry *GetNextPacket(psNetPacket* &packetdata);
+
+
+    void* GetData()
+    {
+        return packet;
+    }
+
+    bool operator == (const psNetPacketEntry& other) const
+    {
+        return (clientnum == other.clientnum &&
+                packet->pktid  == other.packet->pktid &&
+                packet->offset == other.packet->offset);
+    };
+
+    bool operator < (const psNetPacketEntry& other) const
+    {
+        if (clientnum < other.clientnum)
+            return true;
+        if (clientnum > other.clientnum)
+            return false;
+    
+        if (packet->pktid < other.packet->pktid)
+            return true;
+        if (packet->pktid > other.packet->pktid)
+            return false;
+    
+        if (packet->offset < other.packet->offset)
+            return true;
+
+        return false;
+    };
+
+    /////////////////////////////////
+    // Dummy functions required by GenericQueue
+    ////////////////////////////////////
+    void SetPending(bool flag)
+    {   }
+    bool GetPending()
+    { return false; }
+    void IncRef() {};
+    void DecRef() {};
+};
+
+#endif
+

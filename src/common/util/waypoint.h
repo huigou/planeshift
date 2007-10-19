@@ -1,0 +1,72 @@
+/*
+ * location.h
+ *
+ * Copyright (C) 2004 Atomic Blue (info@planeshift.it, http://www.atomicblue.org) 
+ *
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation (version 2 of the License)
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ */
+#ifndef __WAYPOINT_H__
+#define __WAYPOINT_H__
+
+#include <csutil/csstring.h>
+#include <csgeom/vector3.h>
+#include <iengine/sector.h>
+
+#include "util/psdatabase.h"
+#include "util/location.h"
+#include "util/pspath.h"
+
+/**
+ * A waypoint is a specified circle on the map with a name,
+ * location, and a list of waypoints it is connected to.  With
+ * this class, a network of nodes can be created which will
+ * allow for pathfinding and path wandering by NPCs.
+ */
+class Waypoint
+{
+public:
+    Location                   loc;            /// Id and position
+    bool                       allow_return;   /// This prevents the link back to the prior waypoint
+                                               /// from being chosen, if true.
+    csArray<bool>              prevent_wander; /// This prevents wandering NPCs from going that way. 
+    csArray<Waypoint*>         links;          /// Links to other waypoinst connected with paths from this node.
+    csArray<float>             dists;          /// Distances of each link.
+    csArray<psPath*>           paths;          /// Path object for each of the links
+    csArray<psPath::Direction> pathDir;        /// Forward or reverse indication for each path.
+
+    Waypoint();
+    Waypoint(const char*name);
+    
+    bool operator==(Waypoint& other) const
+    { return loc.name==other.loc.name; }
+    bool operator<(Waypoint& other) const
+    { return (strcmp(loc.name,other.loc.name)<0); }
+
+    bool Load(iDocumentNode *node, iEngine *engine);
+    bool Import(iDocumentNode *node, iEngine *engine, iDataConnection *db);
+    bool Load(iResultRow& row, iEngine *engine); 
+
+    /// Get the sector from the location.
+    iSector*            GetSector(iEngine * engine) { return loc.GetSector(engine); }
+    const char * GetName(){ return loc.name.GetDataSafe(); }
+
+    bool CheckWithin(iEngine * engine, const csVector3& pos, const iSector* sector);
+
+    /// Data used in the dijkstra's algorithm to find waypoint path
+    float distance; /// Hold current shortest distance to the start WP.
+    Waypoint * pi;  /// Predecessor WP to track shortest way back to start.
+    
+};
+
+#endif

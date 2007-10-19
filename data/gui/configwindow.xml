@@ -1,0 +1,99 @@
+<widget_description>
+
+<widget name="ConfigWindow" factory="pawsConfigWindow"
+        visible="no" savepositions="yes" movable="yes" 
+        resizable="no"
+        configurable="yes" >
+        
+    <frame x="10" y="100" width="630" height="346" border="yes" />
+    <title resource="Blue Title" text="Options" align="left" close_button="yes"/>    
+    <bgimage resource="Config Background"/>
+
+    <widget name="ConfigTree" factory="pawsSimpleTree" colour="FFFFFF" font="/this/data/ttf/LiberationSans-Regular.ttf">
+        
+        <frame x="10" y="10" width="200" height="300" border="yes" />
+        <title resource="Blue Title" text="Options" align="left" close_button="yes"/>    
+        <bgimage resource="Options Background"  />
+
+        <widget factory="pawsSimpleTreeNode">
+
+            <widget factory="pawsSimpleTreeNode" label="Controls">
+                <widget factory="pawsSimpleTreeNode" label="Keys">
+                    <attr name="SectionName" value="keyboard"/>
+                    <attr name="factory" value="pawsConfigKeys"/>
+                </widget>
+                <widget factory="pawsSimpleTreeNode" label="Mouse">
+                    <attr name="SectionName" value="mouse"/>
+                    <attr name="factory" value="pawsConfigMouse"/>
+                </widget>
+                <widget factory="pawsSimpleTreeNode" label="Entities">
+                    <attr name="SectionName" value="entityinteract"/>
+                    <attr name="factory" value="pawsConfigEntityInteraction"/>
+                </widget>
+        </widget>
+
+            <widget factory="pawsSimpleTreeNode" label="Graphics">
+              <widget factory="pawsSimpleTreeNode" label="Camera">
+                    <attr name="SectionName" value="camera"/>
+                    <attr name="factory" value="pawsConfigCamera"/>        
+                </widget>
+                <widget factory="pawsSimpleTreeNode" label="Details">
+                    <attr name="SectionName" value="details"/>
+                    <attr name="factory" value="pawsConfigDetails"/>
+                </widget>
+                <widget factory="pawsSimpleTreeNode" label="Labels">
+                    <attr name="SectionName" value="entitylabels"/>
+                    <attr name="factory" value="pawsConfigEntityLabels"/>
+                </widget>
+            </widget>
+    
+        <widget factory="pawsSimpleTreeNode" label="Sound">
+                <widget factory="pawsSimpleTreeNode" label="General">
+                    <attr name="SectionName" value="configsound"/>
+                    <attr name="factory" value="pawsConfigSound"/>
+                </widget>
+        </widget>
+
+            <widget factory="pawsSimpleTreeNode" label="PvP">
+                <widget factory="pawsSimpleTreeNode" label="Confirmation">
+                    <attr name="SectionName" value="configpvp"/>
+                    <attr name="factory" value="pawsConfigPvP"/>
+                </widget>
+            </widget>
+
+            <widget factory="pawsSimpleTreeNode" label="Interface">
+                <widget factory="pawsSimpleTreeNode" label="Chat">
+                    <attr name="SectionName" value="chat"/>
+                    <attr name="factory" value="pawsConfigChat"/>
+                </widget>       
+                <widget factory="pawsSimpleTreeNode" label="Chat - Filters">
+                    <attr name="SectionName" value="chatfilter"/>
+                    <attr name="factory" value="pawsConfigChatFilter"/>
+                </widget>
+                <widget factory="pawsSimpleTreeNode" label="Chat - Tabs">
+                    <attr name="SectionName" value="chattabs" />
+                    <attr name="factory" value="pawsConfigChatTabs" />
+                </widget>
+            </widget>
+            
+        </widget>
+
+    </widget>
+
+    <widget name="OKButton" factory="pawsButton" id="-10" toggle="no">
+        <frame x="10" y="320" width="80" height="16" border="no"/>
+        <buttonup resource="Blue Title"/>
+	<buttondown resource="Blue Title"/>
+        <label text="Save"/>
+    </widget>
+    
+    <widget name="ResetButton" factory="pawsButton" id="-20" toggle="no">
+        <frame x="100" y="320" width="80" height="16" border="no"/>
+        <buttonup resource="Blue Title"/>
+	<buttondown resource="Blue Title"/>
+        <label text="Reset"/>
+    </widget>
+
+</widget>
+
+</widget_description>

@@ -1,0 +1,7 @@
+<mouse>
+    <Actions action="ContextMenu" button="1" modifier="0"/>
+    <Actions action="EntitySelect" button="0" modifier="0"/>
+    <OnOff   option="InvertMouse" value="0"/>
+    <Int     option="VertSensitivity" value="70"/>
+    <Int     option="HorzSensitivity" value="70"/>
+</mouse>

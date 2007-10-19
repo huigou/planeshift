@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8" ?> 
+<library>
+    <library>/planeshift/weapons/wand01a.spr</library>
+    <addon plugin="PSEffects">
+        <effect name="admin_path_point">
+            <anchor type="basic" name="pos">
+                <dir>none</dir>
+            </anchor>
+            <obj type="mesh" name="weapons#wand01a" fact="weapons#wand01a">
+                <attach>pos</attach>
+                <death>none</death>
+                <mixmode>mult2</mixmode>
+            </obj>
+        </effect>
+    </addon>
+</library>

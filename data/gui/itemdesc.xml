@@ -1,0 +1,32 @@
+<widget_description>
+
+    <widget name="ItemDescWindow" factory="pawsItemDescriptionWindow" resizeable = "no" visible="no" movable="yes">
+        <frame x="100" y="100" width="300" height="200" border="yes"/>
+        <bgimage resource="Examine Background" />
+        <title resource="Blue Title" text="Examine" align="left" close_button="yes"/>
+        
+        <widget name="ItemImage" factory="pawsWidget" 
+            visible="yes" >
+            <frame x="22" y="60" width="45" height="45" border="no"/>
+        </widget>
+
+        <widget name="ItemName" factory="pawsTextBox" >
+            <frame x="10" y="10" width="300" height="20"/>
+	    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="8" />
+        </widget>
+
+        <widget name="ItemDescription" factory="pawsMultiLineTextBox" >
+            <frame x="117" y="65" width="181" height="120" border="no"/>
+	    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="8" />
+        </widget>
+        
+	<!-- Study button --> 
+	<widget name="StudyButton" factory="pawsButton" tooltip="Study Item" visible="no">
+            <frame x="25" y="120" width="50" height="20"/>
+            <buttonup resource="Standard Button" />
+            <label text="Study" />
+    	</widget>
+    
+    </widget>
+
+</widget_description>

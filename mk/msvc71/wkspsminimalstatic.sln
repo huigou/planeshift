@@ -1,0 +1,19 @@
+Microsoft Visual Studio Solution File, Format Version 8.00
+# Visual C++ Express 2005
+Global
+	GlobalSection(SolutionConfiguration) = preSolution
+		ConfigName.0 = Release
+		ConfigName.1 = Debug
+		ConfigName.2 = MemoryTracker
+		ConfigName.3 = RefTracker
+		ConfigName.4 = DebugPSReleaseCSCEL
+	EndGlobalSection
+	GlobalSection(ProjectDependencies) = postSolution
+	EndGlobalSection
+	GlobalSection(ProjectConfiguration) = postSolution
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+	EndGlobalSection
+	GlobalSection(ExtensibilityAddIns) = postSolution
+	EndGlobalSection
+EndGlobal

@@ -1,0 +1,42 @@
+<widget_description>
+
+<widget name="LootWindow" factory="pawsLootWindow" 
+        visible="no"
+        movable="yes">
+    <frame x="100" y="100" width="290" height="308" border="yes" />
+    <title resource="Blue Title" text="Loot" align="left" close_button="yes" />
+    <bgimage resource="Loot Background" alpha="128" />
+
+
+    <widget name="Roll" factory="pawsButton" id="100" tooltip="Group loot">
+        <frame x="94" y="5" width="32" height="32" />
+        <bgimage resource="ButtonLoot" />
+    </widget>
+
+    <widget name="Take" factory="pawsButton" id="200" tooltip="Take item">
+        <frame x="164" y="5" width="32" height="32" />
+        <bgimage resource="ButtonPickup" />
+    </widget>
+
+    <widget name="LootList" factory="pawsListBox" xmlbinding="loot" >
+        <frame x="14" y="49" width="268" height="222" border="no"/>
+        <columns height="42" headings="no" xmlbinding="li" >
+            <column width="40" xmlbinding="image" >
+                <widget name="Icon" factory="pawsSlot">
+                    <frame x="0" y="0" width="40" height="40" />
+                    <offset left="0" top="0" />
+                    <!--bgimage resource="Bulk Item Slot" /-->
+                </widget>
+            </column>
+            <column width="170" xmlbinding="desc" >
+                <widget name="Name" factory="pawsTextBox"></widget>
+            </column>
+            <column width="0" xmlbinding="id">
+                <widget name="ID" factory="pawsTextBox" visible="no"></widget>
+            </column>
+        </columns>
+    </widget>
+
+</widget>
+
+</widget_description>

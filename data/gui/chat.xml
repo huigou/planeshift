@@ -1,0 +1,226 @@
+<widget_description>
+    <widget name="ChatWindow" factory="pawsChatWindow" visible="yes" savepositions="yes" movable="yes"
+        resizable="yes" configurable="yes" scalablefont="yes">
+            <!-- ContextMenu="data/gui/chatmenu.xml" disabled until its finished -->
+        <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="-1" g="-1" b="-1" size="8" />
+        <frame x="360" y="300" width="330" height="122" border="no" />
+        <minframe width="330" height="120" />
+        <bgimage resource="Chat Background" alpha="255" />
+        <title resource="Nanaki Title Bar" text="Communication" align="left" close_button="yes"/>
+        <childborders>
+            <colour r="0" g="0" b="0" />
+            <colour r="0" g="0" b="255" />
+            <colour r="32" g="32" b="32" />
+            <colour r="148" g="138" b="255" />
+            <colour r="64" g="64" b="64" />
+        </childborders>
+        
+
+        <widget name="InputText" factory="pawsEditTextBox">
+            <frame x="18" y="90" width="287" height="15" border="no" />
+            <attachpoints>
+                <attach point="ATTACH_RIGHT" />
+                <attach point="PROPORTIONAL_BOTTOM" />
+                                <attach point="PROPORTIONAL_TOP" />
+                <attach point="ATTACH_LEFT" />
+            </attachpoints>
+        </widget>
+
+        <widget name="Chat Tabs" factory="pawsTabWindow">
+            <frame x="6" y="6" width="330" height="100" border="no" />
+            <attachpoints>
+                <attach point="ATTACH_RIGHT" />
+                <attach point="ATTACH_TOP" />
+                <attach point="ATTACH_LEFT" />
+                <attach point="PROPORTIONAL_BOTTOM" />
+            </attachpoints>
+            <childborders>
+                <colour r="0" g="0" b="0" />
+                <colour r="32" g="32" b="32" />
+                <colour r="180" g="180" b="180" />
+                <colour r="180" g="180" b="180" />
+                <colour r="220" g="220" b="220" />
+            </childborders>
+            <widget name="Main Button" factory="pawsButton" toggle="yes" id="1000" shadows="yes">
+                <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="-1" g="-1" b="-1" size="8" />
+                <frame x="19" y="2" width="25" height="16" border="no" />
+                <buttonup resource="Chat Tab Button Up" />
+                <buttondown resource="Chat Tab Button Down" />
+		        <buttonspecial resource="Chat Tab Button Special" />
+                <attachpoints>
+                    <attach point="PROPORTIONAL_RIGHT" />
+                    <attach point="ATTACH_LEFT" />
+                </attachpoints>
+                <label text="Main" />
+            </widget>
+            <widget name="NPC Button" factory="pawsButton" toggle="yes" id="1002" shadows="yes">
+                <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="-1" g="-1" b="-1" size="8" />
+                <frame x="45" y="2" width="30" height="16" border="no" />
+                <buttonup resource="Chat Tab Button Up" />
+                <buttondown resource="Chat Tab Button Down" />
+		    <buttonspecial resource="Chat Tab Button Special" />
+                <attachpoints>
+                    <attach point="PROPORTIONAL_RIGHT" />
+                    <attach point="PROPORTIONAL_LEFT" />
+                </attachpoints>
+                <label text="NPC" />
+            </widget>
+            <widget name="Tell Button" factory="pawsButton" toggle="yes" id="1003" shadows="yes">
+                <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="-1" g="-1" b="-1" size="8" />
+                <frame x="76" y="2" width="30" height="16" border="no" />
+                <buttonup resource="Chat Tab Button Up" />
+                <buttondown resource="Chat Tab Button Down" />
+		    <buttonspecial resource="Chat Tab Button Special" />
+                <attachpoints>
+                    <attach point="PROPORTIONAL_RIGHT" />
+                    <attach point="PROPORTIONAL_LEFT" />
+                </attachpoints>
+                <label text="Tells" />
+            </widget>
+            <widget name="Guild Button" factory="pawsButton" toggle="yes" id="1004" shadows="yes">
+                <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="-1" g="-1" b="-1" size="8" />
+                <frame x="107" y="2" width="35" height="16" border="no" />
+                <buttonup resource="Chat Tab Button Up" />
+                <buttondown resource="Chat Tab Button Down" />
+		    <buttonspecial resource="Chat Tab Button Special" />
+                <attachpoints>
+                    <attach point="PROPORTIONAL_RIGHT" />
+                    <attach point="PROPORTIONAL_LEFT" />
+                </attachpoints>
+                <label text="Guild" />
+            </widget>
+            <widget name="Group Button" factory="pawsButton" toggle="yes" id="1005" shadows="yes">
+                <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="-1" g="-1" b="-1" size="8" />
+                <frame x="143" y="2" width="35" height="16" border="no" />
+                <buttonup resource="Chat Tab Button Up" />
+                <buttondown resource="Chat Tab Button Down" />
+		    <buttonspecial resource="Chat Tab Button Special" />
+                <attachpoints>
+                    <attach point="PROPORTIONAL_RIGHT" />
+                    <attach point="PROPORTIONAL_LEFT" />
+                </attachpoints>
+                <label text="Group" />
+            </widget>
+            <widget name="Auction Button" factory="pawsButton" toggle="yes" id="1006" shadows="yes">
+                <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="-1" g="-1" b="-1" size="8" />
+                <frame x="179" y="2" width="40" height="16" border="no" />
+                <buttonup resource="Chat Tab Button Up" />
+                <buttondown resource="Chat Tab Button Down" />
+		    <buttonspecial resource="Chat Tab Button Special" />
+                <attachpoints>
+                    <attach point="PROPORTIONAL_RIGHT" />
+                    <attach point="PROPORTIONAL_LEFT" />
+                </attachpoints>
+                <label text="Auction" />
+            </widget>
+            <widget name="System Button" factory="pawsButton" toggle="yes" id="1001" shadows="yes">
+                <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="-1" g="-1" b="-1" size="8" />
+                <frame x="220" y="2" width="45" height="16" border="no" />
+                <buttonup resource="Chat Tab Button Up" />
+				<buttondown resource="Chat Tab Button Down" />
+		    <buttonspecial resource="Chat Tab Button Special" />
+                <attachpoints>
+                    <attach point="PROPORTIONAL_RIGHT" />
+                    <attach point="PROPORTIONAL_LEFT" />
+                </attachpoints>
+                <label text="System" />
+            </widget>
+             <widget name="Help Button" factory="pawsButton" toggle="yes" id="1007" shadows="yes">
+                <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="-1" g="-1" b="-1" size="8" />
+                 <frame x="285" y="2" width="30" height="16" border="no" />
+                 <buttonup resource="Chat Tab Button Up" />
+                 <buttondown resource="Chat Tab Button Down" />
+		     <buttonspecial resource="Chat Tab Button Special" />
+                 <attachpoints>
+                     <attach point="ATTACH_RIGHT" />
+                     <attach point="PROPORTIONAL_LEFT" />
+                 </attachpoints>
+                 <label text="Help" />
+             </widget>
+
+            <widget name="MainText" factory="pawsMessageTextBox" visible="no" id="1100">
+                <frame x="15" y="15" width="300" height="74" border="no" />
+                <attachpoints>
+                    <attach point="ATTACH_RIGHT" />
+                    <attach point="PROPORTIONAL_TOP" />
+                    <attach point="ATTACH_LEFT" />
+                    <attach point="PROPORTIONAL_BOTTOM" />
+                </attachpoints>
+            </widget>
+            <widget name="SystemText" factory="pawsMessageTextBox" visible="no" id="1101">
+                <frame x="15" y="15" width="300" height="74" border="no" />
+                <attachpoints>
+                    <attach point="ATTACH_RIGHT" />
+                    <attach point="PROPORTIONAL_TOP" />
+                    <attach point="ATTACH_LEFT" />
+                    <attach point="PROPORTIONAL_BOTTOM" />
+                </attachpoints>
+            </widget>
+            <widget name="NpcText" factory="pawsMessageTextBox" visible="no" id="1102">
+                <frame x="15" y="15" width="300" height="74" border="no" />
+                <attachpoints>
+                    <attach point="ATTACH_RIGHT" />
+                    <attach point="PROPORTIONAL_TOP" />
+                    <attach point="ATTACH_LEFT" />
+                    <attach point="PROPORTIONAL_BOTTOM" />
+                </attachpoints>
+            </widget>
+            <widget name="TellText" factory="pawsMessageTextBox" visible="no" id="1103">
+                <frame x="15" y="15" width="300" height="74" border="no" />
+                <attachpoints>
+                    <attach point="ATTACH_RIGHT" />
+                    <attach point="PROPORTIONAL_TOP" />
+                    <attach point="ATTACH_LEFT" />
+                    <attach point="PROPORTIONAL_BOTTOM" />
+                </attachpoints>
+            </widget>
+            <widget name="GuildText" factory="pawsMessageTextBox" visible="no" id="1104">
+                <frame x="15" y="15" width="300" height="74" border="no" />
+                <attachpoints>
+                    <attach point="ATTACH_RIGHT" />
+                    <attach point="PROPORTIONAL_TOP" />
+                    <attach point="ATTACH_LEFT" />
+                    <attach point="PROPORTIONAL_BOTTOM" />
+                </attachpoints>
+            </widget>
+            <widget name="GroupText" factory="pawsMessageTextBox" visible="no" id="1105">
+                <frame x="15" y="15" width="300" height="74" border="no" />
+                <attachpoints>
+                    <attach point="ATTACH_RIGHT" />
+                    <attach point="PROPORTIONAL_TOP" />
+                    <attach point="ATTACH_LEFT" />
+                    <attach point="PROPORTIONAL_BOTTOM" />
+                </attachpoints>
+            </widget>
+            <widget name="AuctionText" factory="pawsMessageTextBox" visible="no" id="1106">
+                <frame x="15" y="15" width="300" height="74" border="no" />
+                <attachpoints>
+                    <attach point="ATTACH_RIGHT" />
+                    <attach point="PROPORTIONAL_TOP" />
+                    <attach point="ATTACH_LEFT" />
+                    <attach point="PROPORTIONAL_BOTTOM" />
+                </attachpoints>
+            </widget>
+            <widget name="HelpText" factory="pawsMessageTextBox" visible="no" id="1107">
+                <frame x="15" y="15" width="300" height="74" border="no" />
+                <attachpoints>
+                    <attach point="ATTACH_RIGHT" />
+                    <attach point="PROPORTIONAL_TOP" />
+                    <attach point="ATTACH_LEFT" />
+                    <attach point="PROPORTIONAL_BOTTOM" />
+                </attachpoints>
+            </widget>
+        </widget> 
+
+        <!--widget name="inputback" factory="pawsButton" ignore="yes">
+            <bgimage resource="Chat Text Background" />
+            <frame x="0" y="235" width="392" height="115" border="no" />
+            <attachpoints>
+                <attach point="ATTACH_RIGHT" />
+                <attach point="ATTACH_BOTTOM" />
+                <attach point="ATTACH_LEFT" />
+            </attachpoints>
+        </widget-->
+
+    </widget>
+</widget_description>

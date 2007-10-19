@@ -1,0 +1,98 @@
+/*
+ * paladinjr.h - Author: Andrew Dai
+ *
+ * Copyright (C) 2002 Atomic Blue (info@planeshift.it, http://www.atomicblue.org) 
+ *
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation (version 2 of the License)
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ */
+
+#ifndef __PALADIN_H__
+#define __PALADIN_H__
+#define PALADIN_DEBUG
+
+#include "entitymanager.h"
+#include <iutil/cfgmgr.h>
+
+#ifdef PALADIN_DEBUG
+#define PALADIN_MAX_SWITCH_TIME 0
+#else
+#define PALADIN_MAX_SWITCH_TIME 5000
+#endif
+
+#define PALADIN_VERSION "0.12"
+
+class PaladinJr
+{
+public:
+
+    // Extrapolate the current position from last DR packet
+    void PredictClient(Client*, psDRMessage& drmsg);
+    // Compare extrapolated displacement with new displacement from new DR packet
+    // Should be called after actor has been updated with newest recieved DR packet
+    void CheckClient(Client*);
+
+    void Initialize(EntityManager* celbase);
+    PaladinJr()
+    {  }
+    ~PaladinJr()
+    {  }
+
+    bool IsEnabled()
+    {
+        return enabled;
+    }
+
+private:
+
+    bool enabled;
+    unsigned int watchTime;
+
+    void SpeedCheck(Client* client, psDRMessage& currUpdate);
+
+
+    EntityManager         *entitymanager;
+
+    /// Already checked list of clientnums
+    csSet<uint32_t> checked;
+
+    /// Currently checking client
+    Client* target;
+
+    /// Time at which we started to check target client
+    csTicks started;
+    /// Predicted, extrapolated, position based on last recieved DR packet
+    csVector3 predictedPos;
+    /// Position before extrapolation
+    csVector3 origPos;
+    csVector3 vel;
+    csVector3 angVel;
+
+    /// Maximum displacement vector
+    csVector3 maxmove;
+
+    /// Check this client?
+    bool checkClient;
+
+    /// Data from last DR update stored here
+    psDRMessage lastUpdate;
+
+    /// Maximum absolute velocities
+    csVector3 maxVelocity;
+
+    /// Maximum speed
+    float maxSpeed;
+};
+
+
+#endif
