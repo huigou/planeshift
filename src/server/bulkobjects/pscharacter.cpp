@@ -164,6 +164,7 @@ psCharacter::psCharacter() : inventory(this),
     if( !staminaCalc)
         Warning1(LOG_CHARACTER, "Can't find math script StaminaBase!");
 
+    lastResponse = -1;
     banker = false;
 }
 
@@ -2290,6 +2291,48 @@ QuestAssignment *psCharacter::IsQuestAssigned(int id)
     return NULL;
 }
 
+int psCharacter::GetAssignedQuestLastResponse(int i)
+{
+    if ((size_t) i<assigned_quests.GetSize())
+    {
+        return assigned_quests[i]->last_response;
+    }
+    else
+    {
+        //could use error message
+        return -1; //return no response
+    }
+}
+
+//if (parent of) quest id is an assigned quest, set its last response
+bool psCharacter::SetAssignedQuestLastResponse(psQuest *quest, int response)
+{   
+    int id = 0;
+
+    if (quest)
+    {
+        while (quest->GetParentQuest()) //get highest parent
+            quest= quest->GetParentQuest();
+        id = quest->GetID();
+    }
+    else
+        return false;
+
+
+    for (size_t i=0; i<assigned_quests.GetSize(); i++)
+    {
+        if (assigned_quests[i]->GetQuest().IsValid() && assigned_quests[i]->GetQuest()->GetID() == id &&
+            assigned_quests[i]->status == PSQUEST_ASSIGNED)
+        {
+            assigned_quests[i]->last_response = response;
+            assigned_quests[i]->dirty = true;
+            UpdateQuestAssignments();
+            return true;
+        }
+    }
+    return false;
+}
+
 size_t  psCharacter::GetAssignedQuests(psQuestListMessage& questmsg,int cnum)
 {
     if (assigned_quests.GetSize() )
@@ -2329,6 +2372,19 @@ QuestAssignment *psCharacter::AssignQuest(psQuest *quest, int assigner_id)
 {
     CS_ASSERT( quest );  // Must not be NULL
 
+    //first check if there is not another assigned quest with the same NPC
+    for (size_t i=0; i<assigned_quests.GetSize(); i++)
+    {
+        if (assigned_quests[i]->GetQuest().IsValid() && assigned_quests[i]->assigner_id == assigner_id &&
+            assigned_quests[i]->GetQuest()->GetID() != quest->GetID() &&
+            assigned_quests[i]->GetQuest()->GetParentQuest() == NULL &&
+            assigned_quests[i]->status == PSQUEST_ASSIGNED)
+        {
+            Debug3(LOG_QUESTS, GetCharacterID(), "Did not assign %s quest to %s because (s)he already has a quest assigned with this npc.\n",quest->GetName(),GetCharName() );
+            return false; // Cannot have multiple quests from the same guy
+        }
+    }
+
     QuestAssignment *q = IsQuestAssigned(quest->GetID() );
     if (!q)  // make new entry if needed, reuse if old
     {
@@ -2345,6 +2401,7 @@ QuestAssignment *psCharacter::AssignQuest(psQuest *quest, int assigner_id)
         q->status = PSQUEST_ASSIGNED;
         q->lockout_end = 0;
         q->assigner_id = assigner_id;
+        q->last_response = this->lastResponse; //This should be the response given when starting this quest
 
         // assign any skipped parent quests
         if (quest->GetParentQuest() && !IsQuestAssigned(quest->GetParentQuest()->GetID()))
@@ -2490,15 +2547,18 @@ bool psCharacter::CheckQuestCompleted(psQuest *quest)
     return false;
 }
 
+//This incorrectly named function checks if the npc (assigner_id) is supposed to answer
+// in the (parent)quest at this moment.
 bool psCharacter::CheckQuestAvailable(psQuest *quest,int assigner_id)
 {
     CS_ASSERT( quest );  // Must not be NULL
 
     csTicks now = csGetTicks();
-    bool quest_started = false;
 
     if (quest->GetParentQuest())
+    {
         quest = quest->GetParentQuest();
+    }
 
     bool notify = false;
     if (GetActor()->GetClient())
@@ -2506,9 +2566,17 @@ bool psCharacter::CheckQuestAvailable(psQuest *quest,int assigner_id)
         notify = CacheManager::GetSingleton().GetCommandManager()->Validate(GetActor()->GetClient()->GetSecurityLevel(), "quest notify");
     }
 
+    //NPC should always answer, if the quest is assigned, no matter who started the quest. 
+    QuestAssignment *q = IsQuestAssigned(quest->GetID());
+    if (q && q->status == PSQUEST_ASSIGNED)
+    {
+        return true;
+    }
+
+    //Since the quest is not assigned, this conversation will lead to starting the quest.
+    //Check all assigned quests, to make sure there is no other quest already started by this NPC
     for (size_t i=0; i<assigned_quests.GetSize(); i++)
     {
-		/*************************
         if (assigned_quests[i]->GetQuest().IsValid() && assigned_quests[i]->assigner_id == assigner_id &&
             assigned_quests[i]->GetQuest()->GetID() != quest->GetID() &&
             assigned_quests[i]->GetQuest()->GetParentQuest() == NULL &&
@@ -2522,55 +2590,48 @@ bool psCharacter::CheckQuestAvailable(psQuest *quest,int assigner_id)
 
             return false; // Cannot have multiple quests from the same guy
         }
-		************************************/
-
-        // Character have this quest
-        if (assigned_quests[i]->GetQuest().IsValid() && assigned_quests[i]->GetQuest()->GetID() == quest->GetID())
+    }
+    if (q) //then quest in assigned list, but not PSQUEST_ASSIGNED
+    {
+        // Character has this quest in completed list. Check if still in lockout
+        if ( q->GetQuest()->HasInfinitePlayerLockout() ||
+             q->lockout_end > now)
         {
-            // Still in lockout
-            if ( ((assigned_quests[i]->status != PSQUEST_ASSIGNED) && assigned_quests[i]->GetQuest()->HasInfinitePlayerLockout()) ||
-                assigned_quests[i]->lockout_end > now)
+            if (notify)
             {
-                if (notify)
+                if (GetActor()->questtester) // GM flag
                 {
-                    if (GetActor()->questtester) // GM flag
+                    psserver->SendSystemInfo(GetActor()->GetClientID(),
+                                             "GM NOTICE: Quest (%s) found and player lockout time has been overridden.",
+                                             quest->GetName());
+                    return true; // Quest is available for GM
+                }
+                else
+                {
+                    if (q->GetQuest()->HasInfinitePlayerLockout())
                     {
                         psserver->SendSystemInfo(GetActor()->GetClientID(),
-                                                 "GM NOTICE: Quest (%s) found and player lockout time has been overridden.",
+                                                 "GM NOTICE: Quest (%s) found but quest has infinite player lockout.",
                                                  quest->GetName());
-                        return true; // Quest is available for GM
                     }
                     else
                     {
-                        if (assigned_quests[i]->GetQuest()->HasInfinitePlayerLockout())
-                        {
-                            psserver->SendSystemInfo(GetActor()->GetClientID(),
-                                                     "GM NOTICE: Quest (%s) found but quest has infinite player lockout.",
-                                                     quest->GetName());
-                        }
-                        else
-                        {
-                            psserver->SendSystemInfo(GetActor()->GetClientID(),
-                                                     "GM NOTICE: Quest (%s) found but player lockout time hasn't elapsed yet. %d seconds remaining.",
-                                                     quest->GetName(), (assigned_quests[i]->lockout_end - now)/1000 );
-                        }
-
+                        psserver->SendSystemInfo(GetActor()->GetClientID(),
+                                                 "GM NOTICE: Quest (%s) found but player lockout time hasn't elapsed yet. %d seconds remaining.",
+                                                 quest->GetName(), (q->lockout_end - now)/1000 );
                     }
 
                 }
 
-                return false; // Cannot have the same quest while in player lockout time.
             }
 
-            if (assigned_quests[i]->status == PSQUEST_ASSIGNED)
-            {
-                quest_started = true;
-            }
+            return false; // Cannot have the same quest while in player lockout time.
         }
     }
 
-    // If player dosn't have this quest check if quest have lockout
-    if (!quest_started && quest->GetQuestLastActivatedTime() &&
+    // If here, quest is not in assigned_quests, or it is completed and not in player lockout time
+    // Player is allowed to start this quest, now check if quest has a lockout
+    if (quest->GetQuestLastActivatedTime() &&
         (quest->GetQuestLastActivatedTime() + quest->GetQuestLockoutTime() > now))
     {
         if (notify)
@@ -2655,23 +2716,26 @@ bool psCharacter::UpdateQuestAssignments(bool force_update)
 
             r = db->Command("update character_quests "
                             "set status='%c',"
-                            "remaininglockout=%ld "
+                            "remaininglockout=%ld, "
+                            "last_response=%ld "
                             " where player_id=%d"
                             "   and quest_id=%d",
                             q->status,
                             remaining_time,
+                            q->last_response,
                             characterid,
                             q->GetQuest()->GetID() );
             if (!r)  // no update done
             {
                 r = db->Command("insert into character_quests"
-                                "(player_id, assigner_id, quest_id, status, remaininglockout) "
-                                "values (%d, %d, %d, '%c', %d)",
+                                "(player_id, assigner_id, quest_id, status, remaininglockout, last_response) "
+                                "values (%d, %d, %d, '%c', %d, %d)",
                                 characterid,
                                 q->assigner_id,
                                 q->GetQuest()->GetID(),
                                 q->status,
-                                remaining_time);
+                                remaining_time,
+                                q->last_response);
 
                 if (r == -1)
                 {
@@ -2713,6 +2777,7 @@ bool psCharacter::LoadQuestAssignments()
         q->status = result[i]["status"][0];
         q->lockout_end = now + result[i].GetInt("remaininglockout");
         q->assigner_id = result[i].GetInt("assigner_id");
+        q->last_response = result[i].GetInt("last_response");
 
         if (!q->GetQuest())
         {
@@ -2726,9 +2791,9 @@ bool psCharacter::LoadQuestAssignments()
         if (q->lockout_end > now + q->GetQuest()->GetPlayerLockoutTime())
             q->lockout_end = now + q->GetQuest()->GetPlayerLockoutTime();
 
-        Debug5(LOG_QUESTS, characterid, "Loaded quest %-40.40s, status %c, lockout %lu, for player %s.\n",
+        Debug6(LOG_QUESTS, characterid, "Loaded quest %-40.40s, status %c, lockout %lu, last_response %d, for player %s.\n",
                q->GetQuest()->GetName(),q->status,
-               ( q->lockout_end > now ? q->lockout_end-now:0),GetCharFullName());
+               ( q->lockout_end > now ? q->lockout_end-now:0),q->last_response, GetCharFullName());
         assigned_quests.Push(q);
     }
     return true;

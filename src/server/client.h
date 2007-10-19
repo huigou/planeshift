@@ -204,10 +204,6 @@ public:
     int GetMerchantID() { return merchantID; }
     */
 
-    /// The last_response given by an npc to this player
-    int GetLastResponse() { return lastResponse; }
-    void SetLastResponse(int response) { lastResponse=response; }
-
     /// Allow distinguishing superclients from regular player clients
     bool IsSuperClient() { return superclient; }
     void SetSuperClient(bool flag) { superclient = flag; }
@@ -381,7 +377,6 @@ protected:
     unsigned int playerID;
     int  securityLevel;
     bool superclient;
-    int  lastResponse;
     csArray<gemNPC *> listeningNpc;
     csString name;
 
