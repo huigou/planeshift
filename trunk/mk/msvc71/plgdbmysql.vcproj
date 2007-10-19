@@ -11,27 +11,20 @@
 			Name="Win32"/>
 	</Platforms>
 	<Configurations>
-		<Configuration
-			Name="Release|Win32"
+  		<Configuration
+			Name="Release (with static libs)|Win32"
 			OutputDirectory="..\..\out\release71\build\plgdbmysql\"
 			IntermediateDirectory="..\..\out\release71\build\plgdbmysql\"
 			ConfigurationType="2"
-			WholeProgramOptimization="true"
+			WholeProgramOptimization="1"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="2"
-				InlineFunctionExpansion="2"
-				StringPooling="true"
-				EnableFunctionLevelLinking="true"
-				EnableIntrinsicFunctions="true"
-				FavorSizeOrSpeed="1"
-				OmitFramePointers="true"
-				EnableFiberSafeOptimizations="true"
-				WholeProgramOptimization="true"
+				StringPooling="TRUE"
+				EnableFunctionLevelLinking="TRUE"
 				RuntimeLibrary="2"
-				FloatingPointModel="2"
 				DebugInformationFormat="3"
 				BufferSecurityCheck="FALSE"
 				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;_WINDOWS;USE_CEL;WIN32"
@@ -43,10 +36,10 @@
 				ObjectFile="..\..\out\release71\build\plgdbmysql\"
 				ProgramDataBaseFileName="..\..\out\release71\build\plgdbmysql\dbmysql.pdb"
 				WarningLevel="3"
-				RuntimeTypeInfo="TRUE"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="TRUE"
 				TreatWChar_tAsBuiltInType="false"
+				ForceConformanceInForLoopScope="true"
 				CompileAs="0"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
@@ -57,16 +50,15 @@
 				EnableCOMDATFolding="2"
 				GenerateDebugInformation="TRUE"
 				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD"
-				LinkTimeCodeGeneration="1"
-				OutputFile="..\..\out\release71\build\plgdbmysql\\dbmysql.dll"
+				OutputFile="..\..\dbmysql.dll"
+				ProgramDatabaseFile="..\..\out\release71\build\plgdbmysql\dbmysql.pdb"
+				IgnoreImportLibrary="TRUE"
 				DelayLoadDLLs=""
 				ImportLibrary="..\..\out\release71\build\plgdbmysql\plgdbmysql.lib"
 				AdditionalOptions=" "
 				AdditionalDependencies="delayimp.lib libcrystalspace.lib ws2_32.lib zlib.lib libmysql.lib libceltool.lib"
-				IgnoreImportLibrary="TRUE"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\release71\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\release71\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs;..\..\..\cel\out\release71\libs;$(CEL)\out\release71\libs;$(CEL)\libs"
-				ProgramDatabaseFile="..\..\out\release71\build\plgdbmysql\dbmysql.pdb"
 				TargetMachine="1"/>
 			<Tool
 				Name="VCLibrarianTool"
@@ -80,6 +72,7 @@
 				TypeLibraryName="..\..\out\release71\build\plgdbmysql\plgdbmysql.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
+				CommandLine="md ..\..\out\release71\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\release71\bin\&#x0D;&#x0A;"
 				CommandLine="copy &quot;$(TargetPath)&quot; ..\..\&#x0D;&#x0A;del ..\..\$(TargetName).lib&#x0D;&#x0A;"
 				/>
 			<Tool
@@ -89,15 +82,93 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;_WINDOWS;USE_CEL;PROJECTGEN_VERSION=71"
-				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32;..\..\..\cel\include;$(CEL)\include;$(CEL)\include\cel"
+				AdditionalIncludeDirectories=".;..\..\src\server\database\mysql;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32;..\..\..\cel\include;$(CEL)\include;$(CEL)\include\cel"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
 			<Tool
 				Name="VCWebDeploymentTool"/>
 		</Configuration>
-		<Configuration
-			Name="Debug|Win32"
+  		<Configuration
+			Name="Release (with DLLs)|Win32"
+			OutputDirectory="..\..\out\release71\build\plgdbmysql\"
+			IntermediateDirectory="..\..\out\release71\build\plgdbmysql\"
+			ConfigurationType="2"
+			WholeProgramOptimization="1"
+			UseOfMFC="0"
+			ATLMinimizesCRunTimeLibraryUsage="FALSE">
+			<Tool
+				Name="VCCLCompilerTool"
+				Optimization="2"
+				StringPooling="TRUE"
+				EnableFunctionLevelLinking="TRUE"
+				RuntimeLibrary="2"
+				DebugInformationFormat="3"
+				BufferSecurityCheck="FALSE"
+				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;_WINDOWS;USE_CEL;WIN32;CS_BUILD_SHARED_LIBS"
+				OptimizeForProcessor="1"
+				AdditionalOptions=" "
+				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32;..\..\..\cel\include;$(CEL)\include;$(CEL)\include\cel"
+				PrecompiledHeaderFile="..\..\out\release71\build\plgdbmysql\plgdbmysql.pch"
+				AssemblerListingLocation="..\..\out\release71\build\plgdbmysql\"
+				ObjectFile="..\..\out\release71\build\plgdbmysql\"
+				ProgramDataBaseFileName="..\..\out\release71\build\plgdbmysql\dbmysql.pdb"
+				WarningLevel="3"
+				SuppressStartupBanner="TRUE"
+				Detect64BitPortabilityProblems="TRUE"
+				TreatWChar_tAsBuiltInType="false"
+				ForceConformanceInForLoopScope="true"
+				CompileAs="0"/>
+			<Tool
+				Name="VCCustomBuildTool"/>
+			<Tool
+				Name="VCLinkerTool"
+				LinkIncremental="1"
+				OptimizeReferences="2"
+				EnableCOMDATFolding="2"
+				GenerateDebugInformation="TRUE"
+				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD"
+				OutputFile="..\..\dbmysql.dll"
+				ProgramDatabaseFile="..\..\out\release71\build\plgdbmysql\dbmysql.pdb"
+				IgnoreImportLibrary="TRUE"
+				DelayLoadDLLs=""
+				ImportLibrary="..\..\out\release71\build\plgdbmysql\plgdbmysql.lib"
+				AdditionalOptions=" "
+				AdditionalDependencies="delayimp.lib libcrystalspace.lib ws2_32.lib zlib.lib libmysql.lib libceltool.lib"
+				SuppressStartupBanner="TRUE"
+				AdditionalLibraryDirectories="..\..\..\CS\out\release71\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\release71\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs;..\..\..\cel\out\release71\libs;$(CEL)\out\release71\libs;$(CEL)\libs"
+				TargetMachine="1"/>
+			<Tool
+				Name="VCLibrarianTool"
+				SuppressStartupBanner="TRUE"/>
+			<Tool
+				Name="VCMIDLTool"
+				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;_WINDOWS;USE_CEL"
+				MkTypLibCompatible="TRUE"
+				SuppressStartupBanner="TRUE"
+				TargetEnvironment="1"
+				TypeLibraryName="..\..\out\release71\build\plgdbmysql\plgdbmysql.tlb"/>
+			<Tool
+				Name="VCPostBuildEventTool"
+				CommandLine="md ..\..\out\release71\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\release71\bin\&#x0D;&#x0A;"
+				CommandLine="copy &quot;$(TargetPath)&quot; ..\..\&#x0D;&#x0A;del ..\..\$(TargetName).lib&#x0D;&#x0A;"
+				/>
+			<Tool
+				Name="VCPreBuildEventTool"/>
+			<Tool
+				Name="VCPreLinkEventTool"/>
+			<Tool
+				Name="VCResourceCompilerTool"
+				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;_WINDOWS;USE_CEL;PROJECTGEN_VERSION=71"
+				AdditionalIncludeDirectories=".;..\..\src\server\database\mysql;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32;..\..\..\cel\include;$(CEL)\include;$(CEL)\include\cel"
+				Culture="1033"/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"/>
+			<Tool
+				Name="VCWebDeploymentTool"/>
+		</Configuration>
+    		<Configuration
+			Name="Debug (with static libs)|Win32"
 			OutputDirectory="..\..\out\debug71\build\plgdbmysql\"
 			IntermediateDirectory="..\..\out\debug71\build\plgdbmysql\"
 			ConfigurationType="2"
@@ -108,7 +179,9 @@
 				Optimization="0"
 				MinimalRebuild="TRUE"
 				DebugInformationFormat="4"
+				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
+
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;_WINDOWS;USE_CEL;WIN32"
 				OptimizeForProcessor="1"
 				AdditionalOptions=" "
@@ -118,10 +191,10 @@
 				ObjectFile="..\..\out\debug71\build\plgdbmysql\"
 				ProgramDataBaseFileName="..\..\out\debug71\build\plgdbmysql\dbmysql.pdb"
 				WarningLevel="3"
-				RuntimeTypeInfo="TRUE"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="TRUE"
 				TreatWChar_tAsBuiltInType="false"
+				ForceConformanceInForLoopScope="true"
 				CompileAs="0"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
@@ -130,15 +203,15 @@
 				LinkIncremental="2"
 				GenerateDebugInformation="TRUE"
 				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD,MSVCRT"
-				OutputFile="..\..\out\debug71\build\plgdbmysql\\dbmysql.dll"
+				OutputFile="..\..\dbmysql.dll"
+				ProgramDatabaseFile="..\..\out\debug71\build\plgdbmysql\dbmysql.pdb"
+				IgnoreImportLibrary="TRUE"
 				DelayLoadDLLs=""
 				ImportLibrary="..\..\out\debug71\build\plgdbmysql\plgdbmysql.lib"
 				AdditionalOptions=" "
 				AdditionalDependencies="delayimp.lib libcrystalspace_d.lib ws2_32.lib zlib.lib libmysql.lib libceltool_d.lib"
-				IgnoreImportLibrary="TRUE"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\debug71\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug71\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs;..\..\..\cel\out\debug71\libs;$(CEL)\out\debug71\libs;$(CEL)\libs"
-				ProgramDatabaseFile="..\..\out\debug71\build\plgdbmysql\dbmysql.pdb"
 				TargetMachine="1"/>
 			<Tool
 				Name="VCLibrarianTool"
@@ -152,6 +225,7 @@
 				TypeLibraryName="..\..\out\debug71\build\plgdbmysql\plgdbmysql.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
+				CommandLine="md ..\..\out\debug71\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug71\bin\&#x0D;&#x0A;"
 				CommandLine="copy &quot;$(TargetPath)&quot; ..\..\&#x0D;&#x0A;del ..\..\$(TargetName).lib&#x0D;&#x0A;"
 				/>
 			<Tool
@@ -161,15 +235,15 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;_WINDOWS;USE_CEL;PROJECTGEN_VERSION=71"
-				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32;..\..\..\cel\include;$(CEL)\include;$(CEL)\include\cel"
+				AdditionalIncludeDirectories=".;..\..\src\server\database\mysql;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32;..\..\..\cel\include;$(CEL)\include;$(CEL)\include\cel"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
 			<Tool
 				Name="VCWebDeploymentTool"/>
 		</Configuration>
-		<Configuration
-			Name="MemoryTracker|Win32"
+  		<Configuration
+			Name="Debug (with DLLs)|Win32"
 			OutputDirectory="..\..\out\debug71\build\plgdbmysql\"
 			IntermediateDirectory="..\..\out\debug71\build\plgdbmysql\"
 			ConfigurationType="2"
@@ -180,7 +254,84 @@
 				Optimization="0"
 				MinimalRebuild="TRUE"
 				DebugInformationFormat="4"
+				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
+
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;_WINDOWS;USE_CEL;WIN32;CS_BUILD_SHARED_LIBS"
+				OptimizeForProcessor="1"
+				AdditionalOptions=" "
+				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32;..\..\..\cel\include;$(CEL)\include;$(CEL)\include\cel"
+				PrecompiledHeaderFile="..\..\out\debug71\build\plgdbmysql\plgdbmysql.pch"
+				AssemblerListingLocation="..\..\out\debug71\build\plgdbmysql\"
+				ObjectFile="..\..\out\debug71\build\plgdbmysql\"
+				ProgramDataBaseFileName="..\..\out\debug71\build\plgdbmysql\dbmysql.pdb"
+				WarningLevel="3"
+				SuppressStartupBanner="TRUE"
+				Detect64BitPortabilityProblems="TRUE"
+				TreatWChar_tAsBuiltInType="false"
+				ForceConformanceInForLoopScope="true"
+				CompileAs="0"/>
+			<Tool
+				Name="VCCustomBuildTool"/>
+			<Tool
+				Name="VCLinkerTool"
+				LinkIncremental="2"
+				GenerateDebugInformation="TRUE"
+				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD,MSVCRT"
+				OutputFile="..\..\dbmysql.dll"
+				ProgramDatabaseFile="..\..\out\debug71\build\plgdbmysql\dbmysql.pdb"
+				IgnoreImportLibrary="TRUE"
+				DelayLoadDLLs=""
+				ImportLibrary="..\..\out\debug71\build\plgdbmysql\plgdbmysql.lib"
+				AdditionalOptions=" "
+				AdditionalDependencies="delayimp.lib libcrystalspace_d.lib ws2_32.lib zlib.lib libmysql.lib libceltool_d.lib"
+				SuppressStartupBanner="TRUE"
+				AdditionalLibraryDirectories="..\..\..\CS\out\debug71\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug71\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs;..\..\..\cel\out\debug71\libs;$(CEL)\out\debug71\libs;$(CEL)\libs"
+				TargetMachine="1"/>
+			<Tool
+				Name="VCLibrarianTool"
+				SuppressStartupBanner="TRUE"/>
+			<Tool
+				Name="VCMIDLTool"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;_WINDOWS;USE_CEL"
+				MkTypLibCompatible="TRUE"
+				SuppressStartupBanner="TRUE"
+				TargetEnvironment="1"
+				TypeLibraryName="..\..\out\debug71\build\plgdbmysql\plgdbmysql.tlb"/>
+			<Tool
+				Name="VCPostBuildEventTool"
+				CommandLine="md ..\..\out\debug71\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug71\bin\&#x0D;&#x0A;"
+				CommandLine="copy &quot;$(TargetPath)&quot; ..\..\&#x0D;&#x0A;del ..\..\$(TargetName).lib&#x0D;&#x0A;"
+				/>
+			<Tool
+				Name="VCPreBuildEventTool"/>
+			<Tool
+				Name="VCPreLinkEventTool"/>
+			<Tool
+				Name="VCResourceCompilerTool"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;_WINDOWS;USE_CEL;PROJECTGEN_VERSION=71"
+				AdditionalIncludeDirectories=".;..\..\src\server\database\mysql;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32;..\..\..\cel\include;$(CEL)\include;$(CEL)\include\cel"
+				Culture="1033"/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"/>
+			<Tool
+				Name="VCWebDeploymentTool"/>
+		</Configuration>
+    		<Configuration
+			Name="MemoryTracker (with static libs)|Win32"
+			OutputDirectory="..\..\out\debug71\build\plgdbmysql\"
+			IntermediateDirectory="..\..\out\debug71\build\plgdbmysql\"
+			ConfigurationType="2"
+			UseOfMFC="0"
+			ATLMinimizesCRunTimeLibraryUsage="FALSE">
+			<Tool
+				Name="VCCLCompilerTool"
+				Optimization="0"
+				MinimalRebuild="TRUE"
+				DebugInformationFormat="4"
+				RuntimeTypeInfo="TRUE"
+				RuntimeLibrary="3"
+
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_MEMORY_TRACKER;_WINDOWS;USE_CEL;WIN32"
 				OptimizeForProcessor="1"
 				AdditionalOptions=" "
@@ -190,10 +341,10 @@
 				ObjectFile="..\..\out\debug71\build\plgdbmysql\"
 				ProgramDataBaseFileName="..\..\out\debug71\build\plgdbmysql\dbmysql.pdb"
 				WarningLevel="3"
-				RuntimeTypeInfo="TRUE"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="TRUE"
 				TreatWChar_tAsBuiltInType="false"
+				ForceConformanceInForLoopScope="true"
 				CompileAs="0"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
@@ -202,15 +353,15 @@
 				LinkIncremental="2"
 				GenerateDebugInformation="TRUE"
 				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD,MSVCRT"
-				OutputFile="..\..\out\debug71\build\plgdbmysql\\dbmysql.dll"
+				OutputFile="..\..\dbmysql.dll"
+				ProgramDatabaseFile="..\..\out\debug71\build\plgdbmysql\dbmysql.pdb"
+				IgnoreImportLibrary="TRUE"
 				DelayLoadDLLs=""
 				ImportLibrary="..\..\out\debug71\build\plgdbmysql\plgdbmysql.lib"
 				AdditionalOptions=" "
 				AdditionalDependencies="delayimp.lib libcrystalspace_d.lib ws2_32.lib zlib.lib libmysql.lib libceltool_d.lib"
-				IgnoreImportLibrary="TRUE"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\debug71\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug71\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs;..\..\..\cel\out\debug71\libs;$(CEL)\out\debug71\libs;$(CEL)\libs"
-				ProgramDatabaseFile="..\..\out\debug71\build\plgdbmysql\dbmysql.pdb"
 				TargetMachine="1"/>
 			<Tool
 				Name="VCLibrarianTool"
@@ -224,6 +375,7 @@
 				TypeLibraryName="..\..\out\debug71\build\plgdbmysql\plgdbmysql.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
+				CommandLine="md ..\..\out\debug71\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug71\bin\&#x0D;&#x0A;"
 				CommandLine="copy &quot;$(TargetPath)&quot; ..\..\&#x0D;&#x0A;del ..\..\$(TargetName).lib&#x0D;&#x0A;"
 				/>
 			<Tool
@@ -233,15 +385,15 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_MEMORY_TRACKER;_WINDOWS;USE_CEL;PROJECTGEN_VERSION=71"
-				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32;..\..\..\cel\include;$(CEL)\include;$(CEL)\include\cel"
+				AdditionalIncludeDirectories=".;..\..\src\server\database\mysql;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32;..\..\..\cel\include;$(CEL)\include;$(CEL)\include\cel"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
 			<Tool
 				Name="VCWebDeploymentTool"/>
 		</Configuration>
-		<Configuration
-			Name="RefTracker|Win32"
+  		<Configuration
+			Name="MemoryTracker (with DLLs)|Win32"
 			OutputDirectory="..\..\out\debug71\build\plgdbmysql\"
 			IntermediateDirectory="..\..\out\debug71\build\plgdbmysql\"
 			ConfigurationType="2"
@@ -252,7 +404,84 @@
 				Optimization="0"
 				MinimalRebuild="TRUE"
 				DebugInformationFormat="4"
+				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
+
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_MEMORY_TRACKER;_WINDOWS;USE_CEL;WIN32;CS_BUILD_SHARED_LIBS"
+				OptimizeForProcessor="1"
+				AdditionalOptions=" "
+				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32;..\..\..\cel\include;$(CEL)\include;$(CEL)\include\cel"
+				PrecompiledHeaderFile="..\..\out\debug71\build\plgdbmysql\plgdbmysql.pch"
+				AssemblerListingLocation="..\..\out\debug71\build\plgdbmysql\"
+				ObjectFile="..\..\out\debug71\build\plgdbmysql\"
+				ProgramDataBaseFileName="..\..\out\debug71\build\plgdbmysql\dbmysql.pdb"
+				WarningLevel="3"
+				SuppressStartupBanner="TRUE"
+				Detect64BitPortabilityProblems="TRUE"
+				TreatWChar_tAsBuiltInType="false"
+				ForceConformanceInForLoopScope="true"
+				CompileAs="0"/>
+			<Tool
+				Name="VCCustomBuildTool"/>
+			<Tool
+				Name="VCLinkerTool"
+				LinkIncremental="2"
+				GenerateDebugInformation="TRUE"
+				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD,MSVCRT"
+				OutputFile="..\..\dbmysql.dll"
+				ProgramDatabaseFile="..\..\out\debug71\build\plgdbmysql\dbmysql.pdb"
+				IgnoreImportLibrary="TRUE"
+				DelayLoadDLLs=""
+				ImportLibrary="..\..\out\debug71\build\plgdbmysql\plgdbmysql.lib"
+				AdditionalOptions=" "
+				AdditionalDependencies="delayimp.lib libcrystalspace_d.lib ws2_32.lib zlib.lib libmysql.lib libceltool_d.lib"
+				SuppressStartupBanner="TRUE"
+				AdditionalLibraryDirectories="..\..\..\CS\out\debug71\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug71\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs;..\..\..\cel\out\debug71\libs;$(CEL)\out\debug71\libs;$(CEL)\libs"
+				TargetMachine="1"/>
+			<Tool
+				Name="VCLibrarianTool"
+				SuppressStartupBanner="TRUE"/>
+			<Tool
+				Name="VCMIDLTool"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_MEMORY_TRACKER;_WINDOWS;USE_CEL"
+				MkTypLibCompatible="TRUE"
+				SuppressStartupBanner="TRUE"
+				TargetEnvironment="1"
+				TypeLibraryName="..\..\out\debug71\build\plgdbmysql\plgdbmysql.tlb"/>
+			<Tool
+				Name="VCPostBuildEventTool"
+				CommandLine="md ..\..\out\debug71\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug71\bin\&#x0D;&#x0A;"
+				CommandLine="copy &quot;$(TargetPath)&quot; ..\..\&#x0D;&#x0A;del ..\..\$(TargetName).lib&#x0D;&#x0A;"
+				/>
+			<Tool
+				Name="VCPreBuildEventTool"/>
+			<Tool
+				Name="VCPreLinkEventTool"/>
+			<Tool
+				Name="VCResourceCompilerTool"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_MEMORY_TRACKER;_WINDOWS;USE_CEL;PROJECTGEN_VERSION=71"
+				AdditionalIncludeDirectories=".;..\..\src\server\database\mysql;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32;..\..\..\cel\include;$(CEL)\include;$(CEL)\include\cel"
+				Culture="1033"/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"/>
+			<Tool
+				Name="VCWebDeploymentTool"/>
+		</Configuration>
+    		<Configuration
+			Name="RefTracker (with static libs)|Win32"
+			OutputDirectory="..\..\out\debug71\build\plgdbmysql\"
+			IntermediateDirectory="..\..\out\debug71\build\plgdbmysql\"
+			ConfigurationType="2"
+			UseOfMFC="0"
+			ATLMinimizesCRunTimeLibraryUsage="FALSE">
+			<Tool
+				Name="VCCLCompilerTool"
+				Optimization="0"
+				MinimalRebuild="TRUE"
+				DebugInformationFormat="4"
+				RuntimeTypeInfo="TRUE"
+				RuntimeLibrary="3"
+
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_REF_TRACKER;_WINDOWS;USE_CEL;WIN32"
 				OptimizeForProcessor="1"
 				AdditionalOptions=" "
@@ -262,10 +491,10 @@
 				ObjectFile="..\..\out\debug71\build\plgdbmysql\"
 				ProgramDataBaseFileName="..\..\out\debug71\build\plgdbmysql\dbmysql.pdb"
 				WarningLevel="3"
-				RuntimeTypeInfo="TRUE"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="TRUE"
 				TreatWChar_tAsBuiltInType="false"
+				ForceConformanceInForLoopScope="true"
 				CompileAs="0"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
@@ -274,15 +503,15 @@
 				LinkIncremental="2"
 				GenerateDebugInformation="TRUE"
 				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD,MSVCRT"
-				OutputFile="..\..\out\debug71\build\plgdbmysql\\dbmysql.dll"
+				OutputFile="..\..\dbmysql.dll"
+				ProgramDatabaseFile="..\..\out\debug71\build\plgdbmysql\dbmysql.pdb"
+				IgnoreImportLibrary="TRUE"
 				DelayLoadDLLs=""
 				ImportLibrary="..\..\out\debug71\build\plgdbmysql\plgdbmysql.lib"
 				AdditionalOptions=" "
 				AdditionalDependencies="delayimp.lib libcrystalspace_d.lib ws2_32.lib zlib.lib libmysql.lib libceltool_d.lib"
-				IgnoreImportLibrary="TRUE"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\debug71\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug71\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs;..\..\..\cel\out\debug71\libs;$(CEL)\out\debug71\libs;$(CEL)\libs"
-				ProgramDatabaseFile="..\..\out\debug71\build\plgdbmysql\dbmysql.pdb"
 				TargetMachine="1"/>
 			<Tool
 				Name="VCLibrarianTool"
@@ -296,6 +525,7 @@
 				TypeLibraryName="..\..\out\debug71\build\plgdbmysql\plgdbmysql.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
+				CommandLine="md ..\..\out\debug71\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug71\bin\&#x0D;&#x0A;"
 				CommandLine="copy &quot;$(TargetPath)&quot; ..\..\&#x0D;&#x0A;del ..\..\$(TargetName).lib&#x0D;&#x0A;"
 				/>
 			<Tool
@@ -305,15 +535,15 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_REF_TRACKER;_WINDOWS;USE_CEL;PROJECTGEN_VERSION=71"
-				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32;..\..\..\cel\include;$(CEL)\include;$(CEL)\include\cel"
+				AdditionalIncludeDirectories=".;..\..\src\server\database\mysql;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32;..\..\..\cel\include;$(CEL)\include;$(CEL)\include\cel"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
 			<Tool
 				Name="VCWebDeploymentTool"/>
 		</Configuration>
-		<Configuration
-			Name="DebugPSReleaseCSCEL|Win32"
+  		<Configuration
+			Name="RefTracker (with DLLs)|Win32"
 			OutputDirectory="..\..\out\debug71\build\plgdbmysql\"
 			IntermediateDirectory="..\..\out\debug71\build\plgdbmysql\"
 			ConfigurationType="2"
@@ -324,7 +554,84 @@
 				Optimization="0"
 				MinimalRebuild="TRUE"
 				DebugInformationFormat="4"
+				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
+
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_REF_TRACKER;_WINDOWS;USE_CEL;WIN32;CS_BUILD_SHARED_LIBS"
+				OptimizeForProcessor="1"
+				AdditionalOptions=" "
+				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32;..\..\..\cel\include;$(CEL)\include;$(CEL)\include\cel"
+				PrecompiledHeaderFile="..\..\out\debug71\build\plgdbmysql\plgdbmysql.pch"
+				AssemblerListingLocation="..\..\out\debug71\build\plgdbmysql\"
+				ObjectFile="..\..\out\debug71\build\plgdbmysql\"
+				ProgramDataBaseFileName="..\..\out\debug71\build\plgdbmysql\dbmysql.pdb"
+				WarningLevel="3"
+				SuppressStartupBanner="TRUE"
+				Detect64BitPortabilityProblems="TRUE"
+				TreatWChar_tAsBuiltInType="false"
+				ForceConformanceInForLoopScope="true"
+				CompileAs="0"/>
+			<Tool
+				Name="VCCustomBuildTool"/>
+			<Tool
+				Name="VCLinkerTool"
+				LinkIncremental="2"
+				GenerateDebugInformation="TRUE"
+				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD,MSVCRT"
+				OutputFile="..\..\dbmysql.dll"
+				ProgramDatabaseFile="..\..\out\debug71\build\plgdbmysql\dbmysql.pdb"
+				IgnoreImportLibrary="TRUE"
+				DelayLoadDLLs=""
+				ImportLibrary="..\..\out\debug71\build\plgdbmysql\plgdbmysql.lib"
+				AdditionalOptions=" "
+				AdditionalDependencies="delayimp.lib libcrystalspace_d.lib ws2_32.lib zlib.lib libmysql.lib libceltool_d.lib"
+				SuppressStartupBanner="TRUE"
+				AdditionalLibraryDirectories="..\..\..\CS\out\debug71\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug71\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs;..\..\..\cel\out\debug71\libs;$(CEL)\out\debug71\libs;$(CEL)\libs"
+				TargetMachine="1"/>
+			<Tool
+				Name="VCLibrarianTool"
+				SuppressStartupBanner="TRUE"/>
+			<Tool
+				Name="VCMIDLTool"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_REF_TRACKER;_WINDOWS;USE_CEL"
+				MkTypLibCompatible="TRUE"
+				SuppressStartupBanner="TRUE"
+				TargetEnvironment="1"
+				TypeLibraryName="..\..\out\debug71\build\plgdbmysql\plgdbmysql.tlb"/>
+			<Tool
+				Name="VCPostBuildEventTool"
+				CommandLine="md ..\..\out\debug71\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug71\bin\&#x0D;&#x0A;"
+				CommandLine="copy &quot;$(TargetPath)&quot; ..\..\&#x0D;&#x0A;del ..\..\$(TargetName).lib&#x0D;&#x0A;"
+				/>
+			<Tool
+				Name="VCPreBuildEventTool"/>
+			<Tool
+				Name="VCPreLinkEventTool"/>
+			<Tool
+				Name="VCResourceCompilerTool"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_REF_TRACKER;_WINDOWS;USE_CEL;PROJECTGEN_VERSION=71"
+				AdditionalIncludeDirectories=".;..\..\src\server\database\mysql;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32;..\..\..\cel\include;$(CEL)\include;$(CEL)\include\cel"
+				Culture="1033"/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"/>
+			<Tool
+				Name="VCWebDeploymentTool"/>
+		</Configuration>
+    		<Configuration
+			Name="DebugPSReleaseCSCEL (with static libs)|Win32"
+			OutputDirectory="..\..\out\debug71\build\plgdbmysql\"
+			IntermediateDirectory="..\..\out\debug71\build\plgdbmysql\"
+			ConfigurationType="2"
+			UseOfMFC="0"
+			ATLMinimizesCRunTimeLibraryUsage="FALSE">
+			<Tool
+				Name="VCCLCompilerTool"
+				Optimization="0"
+				MinimalRebuild="TRUE"
+				DebugInformationFormat="4"
+				RuntimeTypeInfo="TRUE"
+				RuntimeLibrary="3"
+
 				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;_WINDOWS;USE_CEL;WIN32"
 				OptimizeForProcessor="1"
 				AdditionalOptions=" "
@@ -334,10 +641,10 @@
 				ObjectFile="..\..\out\debug71\build\plgdbmysql\"
 				ProgramDataBaseFileName="..\..\out\debug71\build\plgdbmysql\dbmysql.pdb"
 				WarningLevel="3"
-				RuntimeTypeInfo="TRUE"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="TRUE"
 				TreatWChar_tAsBuiltInType="false"
+				ForceConformanceInForLoopScope="true"
 				CompileAs="0"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
@@ -346,15 +653,15 @@
 				LinkIncremental="2"
 				GenerateDebugInformation="TRUE"
 				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD,MSVCRT"
-				OutputFile="..\..\out\debug71\build\plgdbmysql\\dbmysql.dll"
+				OutputFile="..\..\dbmysql.dll"
+				ProgramDatabaseFile="..\..\out\debug71\build\plgdbmysql\dbmysql.pdb"
+				IgnoreImportLibrary="TRUE"
 				DelayLoadDLLs=""
 				ImportLibrary="..\..\out\debug71\build\plgdbmysql\plgdbmysql.lib"
 				AdditionalOptions=" "
 				AdditionalDependencies="delayimp.lib libcrystalspace.lib ws2_32.lib zlib.lib libmysql.lib libceltool.lib"
-				IgnoreImportLibrary="TRUE"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\release71\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\release71\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs;..\..\..\cel\out\release71\libs;$(CEL)\out\release71\libs;$(CEL)\libs"
-				ProgramDatabaseFile="..\..\out\debug71\build\plgdbmysql\dbmysql.pdb"
 				TargetMachine="1"/>
 			<Tool
 				Name="VCLibrarianTool"
@@ -368,6 +675,7 @@
 				TypeLibraryName="..\..\out\debug71\build\plgdbmysql\plgdbmysql.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
+				CommandLine="md ..\..\out\debug71\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug71\bin\&#x0D;&#x0A;"
 				CommandLine="copy &quot;$(TargetPath)&quot; ..\..\&#x0D;&#x0A;del ..\..\$(TargetName).lib&#x0D;&#x0A;"
 				/>
 			<Tool
@@ -377,14 +685,89 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;_WINDOWS;USE_CEL;PROJECTGEN_VERSION=71"
-				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32;..\..\..\cel\include;$(CEL)\include;$(CEL)\include\cel"
+				AdditionalIncludeDirectories=".;..\..\src\server\database\mysql;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32;..\..\..\cel\include;$(CEL)\include;$(CEL)\include\cel"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
 			<Tool
 				Name="VCWebDeploymentTool"/>
 		</Configuration>
-	</Configurations>
+  		<Configuration
+			Name="DebugPSReleaseCSCEL (with DLLs)|Win32"
+			OutputDirectory="..\..\out\debug71\build\plgdbmysql\"
+			IntermediateDirectory="..\..\out\debug71\build\plgdbmysql\"
+			ConfigurationType="2"
+			UseOfMFC="0"
+			ATLMinimizesCRunTimeLibraryUsage="FALSE">
+			<Tool
+				Name="VCCLCompilerTool"
+				Optimization="0"
+				MinimalRebuild="TRUE"
+				DebugInformationFormat="4"
+				RuntimeTypeInfo="TRUE"
+				RuntimeLibrary="3"
+
+				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;_WINDOWS;USE_CEL;WIN32;CS_BUILD_SHARED_LIBS"
+				OptimizeForProcessor="1"
+				AdditionalOptions=" "
+				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32;..\..\..\cel\include;$(CEL)\include;$(CEL)\include\cel"
+				PrecompiledHeaderFile="..\..\out\debug71\build\plgdbmysql\plgdbmysql.pch"
+				AssemblerListingLocation="..\..\out\debug71\build\plgdbmysql\"
+				ObjectFile="..\..\out\debug71\build\plgdbmysql\"
+				ProgramDataBaseFileName="..\..\out\debug71\build\plgdbmysql\dbmysql.pdb"
+				WarningLevel="3"
+				SuppressStartupBanner="TRUE"
+				Detect64BitPortabilityProblems="TRUE"
+				TreatWChar_tAsBuiltInType="false"
+				ForceConformanceInForLoopScope="true"
+				CompileAs="0"/>
+			<Tool
+				Name="VCCustomBuildTool"/>
+			<Tool
+				Name="VCLinkerTool"
+				LinkIncremental="2"
+				GenerateDebugInformation="TRUE"
+				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD,MSVCRT"
+				OutputFile="..\..\dbmysql.dll"
+				ProgramDatabaseFile="..\..\out\debug71\build\plgdbmysql\dbmysql.pdb"
+				IgnoreImportLibrary="TRUE"
+				DelayLoadDLLs=""
+				ImportLibrary="..\..\out\debug71\build\plgdbmysql\plgdbmysql.lib"
+				AdditionalOptions=" "
+				AdditionalDependencies="delayimp.lib libcrystalspace.lib ws2_32.lib zlib.lib libmysql.lib libceltool.lib"
+				SuppressStartupBanner="TRUE"
+				AdditionalLibraryDirectories="..\..\..\CS\out\release71\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\release71\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs;..\..\..\cel\out\release71\libs;$(CEL)\out\release71\libs;$(CEL)\libs"
+				TargetMachine="1"/>
+			<Tool
+				Name="VCLibrarianTool"
+				SuppressStartupBanner="TRUE"/>
+			<Tool
+				Name="VCMIDLTool"
+				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;_WINDOWS;USE_CEL"
+				MkTypLibCompatible="TRUE"
+				SuppressStartupBanner="TRUE"
+				TargetEnvironment="1"
+				TypeLibraryName="..\..\out\debug71\build\plgdbmysql\plgdbmysql.tlb"/>
+			<Tool
+				Name="VCPostBuildEventTool"
+				CommandLine="md ..\..\out\debug71\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug71\bin\&#x0D;&#x0A;"
+				CommandLine="copy &quot;$(TargetPath)&quot; ..\..\&#x0D;&#x0A;del ..\..\$(TargetName).lib&#x0D;&#x0A;"
+				/>
+			<Tool
+				Name="VCPreBuildEventTool"/>
+			<Tool
+				Name="VCPreLinkEventTool"/>
+			<Tool
+				Name="VCResourceCompilerTool"
+				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;_WINDOWS;USE_CEL;PROJECTGEN_VERSION=71"
+				AdditionalIncludeDirectories=".;..\..\src\server\database\mysql;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32;..\..\..\cel\include;$(CEL)\include;$(CEL)\include\cel"
+				Culture="1033"/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"/>
+			<Tool
+				Name="VCWebDeploymentTool"/>
+		</Configuration>
+  	</Configurations>
 	<Files>
 		<Filter
 			Name="Source Files"
