@@ -1,22 +1,34 @@
 <zonelist>
-  <zone sector="one">
-    <region map="warpsector" />
+
+ <!-- NPCRoom test level -->
+
+  <zone sector="NPCroom" loadimage="Loading Background">
+    <region map="npcroom1" />
+    <region map="npcroom_corr" />
   </zone>
-  <zone sector="two">
-    <region map="warpsector" />
+
+  <zone sector="NPCroom1" loadimage="Loading Background">
+    <region map="npcroom1" />
+    <region map="npcroom_corr" />
   </zone>
-  <zone sector="three">
-    <region map="warpsector" />
+
+  <zone sector="NPCroom2" loadimage="Loading Background">
+    <region map="npcroom2" />
+    <region map="npcroom_corr" />
   </zone>
-  <zone sector="four">
-    <region map="warpsector" />
+
+  <zone sector="NPCroom3" loadimage="Loading Background">
+    <region map="npcroom2" />
+    <region map="npcroom_corr" />
   </zone>
-  <zone sector="NPCroom">
-    <region map="npcroom" />
+
+  <zone sector="NPCroomwarp" loadimage="Loading Background">
+    <region map="npcroom2" />
+    <region map="npcroom_corr" />
   </zone>
-  <zone sector="NPCroom1">
-    <region map="npcroom" />
-  </zone>
+
+
+ <!-- final in game levels -->
   <zone sector="hydlaa_plaza">
     <region map="temple" />
     <region map="tower" />
