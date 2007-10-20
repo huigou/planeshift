@@ -361,7 +361,7 @@ bool psCharAppearance::Dequip(csString& slotname,
                               csString& subMesh,
                               csString& texture)
 {  
-       
+                   
     if ( slotname == "head" )
     {
          ShowHair(true);
@@ -376,6 +376,7 @@ bool psCharAppearance::Dequip(csString& slotname,
 
     if ( subMesh.Length() )
     {
+        printf("Setting Default Mesh on %s\n", part.GetData());
         DefaultMesh(part); 
     }
 
@@ -389,6 +390,7 @@ bool psCharAppearance::Dequip(csString& slotname,
         {
             DefaultMaterial(part);
         }            
+        DefaultMesh(part);
     }
 
     return true;
@@ -402,11 +404,13 @@ void psCharAppearance::DefaultMesh(const char* part)
     for (int idx=0; idx < stateFactory->GetMeshCount(); idx++)
     {
         const char * meshName = stateFactory->GetMeshName( idx );
-        if (strstr(meshName,part))
+        printf("Part: %s Mesh %d = %s\n", part, idx, meshName );
+        if (strstr(meshName, part))
         {
             state->DetachCoreMesh( meshName );
             if (stateFactory->IsMeshDefault(idx))
             {
+                printf("This is default mesh\n");
                 defaultPart = meshName;
             }
         }
