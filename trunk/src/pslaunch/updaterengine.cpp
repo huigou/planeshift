@@ -19,12 +19,12 @@
 
 #include <psconfig.h>
 
+#include <csutil/csmd5.h>
 #include <csutil/xmltiny.h>
 #include <iutil/stringarray.h>
 
 #include "updaterconfig.h"
 #include "updaterengine.h"
-#include "md5.h"
 #include "binarypatch.h"
 
 #ifndef CS_COMPILER_MSVC
@@ -306,15 +306,16 @@ bool psUpdaterEngine::selfUpdate(int selfUpdating)
             downloader->DownloadFile(zip, zip);         
 
             // Check md5sum is correct.
-            MD5Sum md5(vfs);
-            bool md5status = md5.ReadFile("/this/" + zip);
-            if(!md5status)
+            csRef<iDataBuffer> buffer = vfs->ReadFile("/this/" + zip, true);
+            if (!buffer)
             {
                 printf("Could not get MD5 of updater zip!!\n");
                 PS_PAUSEEXIT(1);
             }
 
-            csString md5sum = md5.Get();
+            csMD5::Digest md5 = csMD5::Encode(buffer->GetData(), buffer->GetSize());
+
+            csString md5sum = md5.HexString();
 
             if(!md5sum.Compare(config->GetNewConfig()->GetUpdaterVersionLatestMD5()))
             {
@@ -395,15 +396,16 @@ bool psUpdaterEngine::selfUpdate(int selfUpdating)
             downloader->DownloadFile(zip, zip);         
 
             // Check md5sum is correct.
-            MD5Sum md5(vfs);
-            bool md5status = md5.ReadFile("/this/" + zip);
-            if(!md5status)
+            csRef<iDataBuffer> buffer = vfs->ReadFile("/this/" + zip, true);
+            if (!buffer)
             {
                 printf("Could not get MD5 of updater zip!!\n");
                 PS_PAUSEEXIT(1);
             }
 
-            csString md5sum = md5.Get();
+            csMD5::Digest md5 = csMD5::Encode(buffer->GetData(), buffer->GetSize());
+
+            csString md5sum = md5.HexString();
 
             if(!md5sum.Compare(config->GetNewConfig()->GetUpdaterVersionLatestMD5()))
             {
@@ -470,15 +472,16 @@ void psUpdaterEngine::generalUpdate()
         downloader->DownloadFile(zip, zip);
 
         // Check md5sum is correct.
-        MD5Sum md5(vfs);
-        bool md5status = md5.ReadFile("/this/" + zip);
-        if(!md5status)
+        csRef<iDataBuffer> buffer = vfs->ReadFile("/this/" + zip, true);
+        if (!buffer)
         {
-            printf("Could not get MD5 of client zip!!\n");
+            printf("Could not get MD5 of updater zip!!\n");
             PS_PAUSEEXIT(1);
         }
 
-        csString md5sum = md5.Get();
+        csMD5::Digest md5 = csMD5::Encode(buffer->GetData(), buffer->GetSize());
+
+        csString md5sum = md5.HexString();
 
         if(!md5sum.Compare(newCv->GetMD5Sum()))
         {
@@ -570,9 +573,8 @@ void psUpdaterEngine::generalUpdate()
 
                     // Check md5sum is correct.
                     printf("Checking for correct md5sum: ");
-                    MD5Sum md5(vfs);
-                    bool md5status = md5.ReadFile("/this/" + newFilePath);
-                    if(!md5status)
+                    csRef<iDataBuffer> buffer = vfs->ReadFile("/this/" + newFilePath, true);
+                    if(!buffer)
                     {
                         printf("Could not get MD5 of patched file %s! Reverting file!\n", newFilePath.GetData());
                         fileUtil->RemoveFile("/this/" + newFilePath);
@@ -580,8 +582,9 @@ void psUpdaterEngine::generalUpdate()
                     }
                     else
                     {
+                        csMD5::Digest md5 = csMD5::Encode(buffer->GetData(), buffer->GetSize());
+                        csString md5sum = md5.HexString();
 
-                        csString md5sum = md5.Get();
                         csString fileMD5 = next->GetAttributeValue("md5sum");
 
                         if(!md5sum.Compare(fileMD5))
