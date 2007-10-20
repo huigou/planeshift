@@ -135,9 +135,12 @@ void psServerStatusRunEvent::ReportClient(Client * curr, ClientStatusLogger & cl
     csString escpxml_name = EscpXML(curr->GetName());
     csString escpxml_guildname = EscpXML(guildName);
     csString escpxml_guildtitle = EscpXML(guildTitle);
-    player.Format("<player name=\"%s\" guild=\"%s\" title=\"%s\" security=\"%d\" secret=\"%s\" />\n", 
+    if ( guild == false || (guild && guild->IsSecret() == false) )
+    {
+        player.Format("<player name=\"%s\" guild=\"%s\" title=\"%s\" security=\"%d\"  />\n", 
                     escpxml_name.GetData(), escpxml_guildname.GetData(), escpxml_guildtitle.GetData(),
-                    curr->GetSecurityLevel(), guildSecret.GetData());
+                    curr->GetSecurityLevel());
+    }                    
 
     reportString.Append( player ); 
 }
