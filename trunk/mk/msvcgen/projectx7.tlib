@@ -167,7 +167,7 @@
 [% MACRO librarian_group	   GET library_outfile('') %]
 
 [% MACRO postbuild_common BLOCK -%]
-				CommandLine="md [% path([workroot, 'bin']) %] 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; [% path([workroot, 'bin\\']) %]&#x0D;&#x0A;"
+				CommandLine="md [% path([workroot, 'bin']) %] 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; [% path([workroot, 'bin\\']) %]&#x0D;&#x0A;copy &quot;$(TargetPath)&quot; ..\..\&#x0D;&#x0A;del ..\..\$(TargetName).lib&#x0D;&#x0A;"
 [% END %]
 
 [% MACRO postbuild_release GET postbuild_common %]
