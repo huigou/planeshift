@@ -611,8 +611,8 @@ NpcResponse *psNPCDialog::Respond(const char * text,Client *client)
         {
             Debug3(LOG_NPC, currentClient->GetClientNum(),"Setting last response %d: %s",resp->id,resp->GetResponse());
             currentClient->GetCharacterData()->SetLastResponse(resp->id);
-            Debug4(LOG_NPC, currentClient->GetClientNum(),"Setting last response for quest %d, %d: %s",
-               resp->quest,resp->id,resp->GetResponse());
+            Debug4(LOG_NPC, currentClient->GetClientNum(),"Setting last response for quest '%s', %d: %s",
+               resp->quest ? resp->quest->GetName() : "none", resp->id, resp->GetResponse());
             currentClient->GetCharacterData()->SetAssignedQuestLastResponse(resp->quest,resp->id);
         }
 
