@@ -1213,7 +1213,7 @@ void show_item_stats(psItem *item,int depth)
         CPrintf(CON_CMDOUTPUT ,"ImageName:%s\n", item->GetImageName());
     }
 
-    psMoney& price = item->GetPrice();
+    psMoney price = item->GetPrice();
     if (price.GetTotal() > 0)
     {
     indent(depth);
