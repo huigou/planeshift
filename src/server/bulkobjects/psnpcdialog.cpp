@@ -615,6 +615,8 @@ NpcResponse *psNPCDialog::Respond(const char * text,Client *client)
                resp->quest,resp->id,resp->GetResponse());
             currentClient->GetCharacterData()->SetAssignedQuestLastResponse(resp->quest,resp->id);
         }
+
+        return resp; // Found what we are looking for
     }
     else
     {
