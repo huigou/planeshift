@@ -165,6 +165,7 @@ psCharacter::psCharacter() : inventory(this),
         Warning1(LOG_CHARACTER, "Can't find math script StaminaBase!");
 
     lastResponse = -1;
+
     banker = false;
 }
 
@@ -2304,6 +2305,7 @@ int psCharacter::GetAssignedQuestLastResponse(int i)
     }
 }
 
+
 //if (parent of) quest id is an assigned quest, set its last response
 bool psCharacter::SetAssignedQuestLastResponse(psQuest *quest, int response)
 {   
@@ -2391,7 +2393,7 @@ QuestAssignment *psCharacter::AssignQuest(psQuest *quest, int assigner_id)
         q = new QuestAssignment;
         q->SetQuest(quest);
         q->status = PSQUEST_DELETE;
-
+        
         assigned_quests.Push(q);
     }
 
@@ -2402,7 +2404,7 @@ QuestAssignment *psCharacter::AssignQuest(psQuest *quest, int assigner_id)
         q->lockout_end = 0;
         q->assigner_id = assigner_id;
         q->last_response = this->lastResponse; //This should be the response given when starting this quest
-
+        
         // assign any skipped parent quests
         if (quest->GetParentQuest() && !IsQuestAssigned(quest->GetParentQuest()->GetID()))
                 AssignQuest(quest->GetParentQuest(),assigner_id );
@@ -2461,6 +2463,7 @@ bool psCharacter::CompleteQuest(psQuest *quest)
         q->dirty  = true;
         q->status = PSQUEST_COMPLETE; // completed
         q->lockout_end = csGetTicks() + q->GetQuest()->GetPlayerLockoutTime();
+        q->last_response = -1; //reset last response for this quest in case it is restarted
 
         // Complete all substeps if this is the parent quest
         if (!q->GetQuest()->GetParentQuest())
@@ -2555,7 +2558,7 @@ bool psCharacter::CheckQuestAvailable(psQuest *quest,int assigner_id)
 
     csTicks now = csGetTicks();
 
-    if (quest->GetParentQuest())
+    if (quest->GetParentQuest()) 
     {
         quest = quest->GetParentQuest();
     }
@@ -2591,6 +2594,7 @@ bool psCharacter::CheckQuestAvailable(psQuest *quest,int assigner_id)
             return false; // Cannot have multiple quests from the same guy
         }
     }
+
     if (q) //then quest in assigned list, but not PSQUEST_ASSIGNED
     {
         // Character has this quest in completed list. Check if still in lockout
@@ -2602,8 +2606,8 @@ bool psCharacter::CheckQuestAvailable(psQuest *quest,int assigner_id)
                 if (GetActor()->questtester) // GM flag
                 {
                     psserver->SendSystemInfo(GetActor()->GetClientID(),
-                                             "GM NOTICE: Quest (%s) found and player lockout time has been overridden.",
-                                             quest->GetName());
+                        "GM NOTICE: Quest (%s) found and player lockout time has been overridden.",
+                        quest->GetName());
                     return true; // Quest is available for GM
                 }
                 else
@@ -2611,14 +2615,14 @@ bool psCharacter::CheckQuestAvailable(psQuest *quest,int assigner_id)
                     if (q->GetQuest()->HasInfinitePlayerLockout())
                     {
                         psserver->SendSystemInfo(GetActor()->GetClientID(),
-                                                 "GM NOTICE: Quest (%s) found but quest has infinite player lockout.",
-                                                 quest->GetName());
+                            "GM NOTICE: Quest (%s) found but quest has infinite player lockout.",
+                            quest->GetName());
                     }
                     else
                     {
                         psserver->SendSystemInfo(GetActor()->GetClientID(),
-                                                 "GM NOTICE: Quest (%s) found but player lockout time hasn't elapsed yet. %d seconds remaining.",
-                                                 quest->GetName(), (q->lockout_end - now)/1000 );
+                            "GM NOTICE: Quest (%s) found but player lockout time hasn't elapsed yet. %d seconds remaining.",
+                            quest->GetName(), (q->lockout_end - now)/1000 );
                     }
 
                 }
