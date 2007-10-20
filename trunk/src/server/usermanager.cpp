@@ -506,7 +506,6 @@ csString fmtStatLine(const char *const label, unsigned int value, unsigned int b
 void UserManager::SendCharacterDescription(Client * client, psCharacter * charData, bool full, bool simple, const csString & requestor)
 {
     StatSet* playerAttr = client->GetCharacterData()->GetAttributes();
-    StatSet* charAttr   = charData->GetAttributes();
 
     bool isSelf = (charData->GetCharacterID() == client->GetCharacterData()->GetCharacterID());
 
