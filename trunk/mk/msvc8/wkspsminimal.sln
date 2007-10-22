@@ -2,6 +2,8 @@ Microsoft Visual Studio Solution File, Format Version 9.00
 # Visual C++ Express 2005
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "apppsclient", "apppsclient.vcproj", "{FEAFE33B-F1B6-42F9-55F1-7E6413431BF1}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "apppslaunch", "apppslaunch.vcproj", "{B1CE87F5-3C6B-77FA-DBAF-8F9DE20914BC}"
+EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "apppsnpcclient", "apppsnpcclient.vcproj", "{D7B7BACC-11C8-CED6-DEEF-7CE8B0C8175E}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "apppsserver", "apppsserver.vcproj", "{8783816D-CE3F-5245-D95F-1D459D5A9FD5}"
@@ -69,6 +71,7 @@ Global
 		{FEAFE33B-F1B6-42F9-55F1-7E6413431BF1}.6 = {4B7B2CDB-4DE7-2E3D-0FF6-EA8AC90E4A27}
 		{FEAFE33B-F1B6-42F9-55F1-7E6413431BF1}.7 = {C0CD3069-8659-1151-26AC-40C98186358B}
 		{FEAFE33B-F1B6-42F9-55F1-7E6413431BF1}.8 = {D9DEA6DD-ED82-1526-6BBF-851FF399854C}
+		{B1CE87F5-3C6B-77FA-DBAF-8F9DE20914BC}.0 = {E048E636-1BDD-CC82-0479-CD22C187E490}
 		{D7B7BACC-11C8-CED6-DEEF-7CE8B0C8175E}.0 = {56CFA369-1F2F-7609-9E86-069C1B5F5651}
 		{D7B7BACC-11C8-CED6-DEEF-7CE8B0C8175E}.1 = {8B42FE9F-3E16-6CD1-D6C2-A04C37417888}
 		{D7B7BACC-11C8-CED6-DEEF-7CE8B0C8175E}.2 = {DCD16C71-CB69-046C-3AF4-8BBDA8CD0361}
@@ -106,6 +109,26 @@ Global
 		{FEAFE33B-F1B6-42F9-55F1-7E6413431BF1}.DebugPSReleaseCSCEL (with static libs).Build.0 = DebugPSReleaseCSCEL (with static libs)|Win32
   		{FEAFE33B-F1B6-42F9-55F1-7E6413431BF1}.DebugPSReleaseCSCEL (with DLLs).ActiveCfg = DebugPSReleaseCSCEL (with DLLs)|Win32
 		{FEAFE33B-F1B6-42F9-55F1-7E6413431BF1}.DebugPSReleaseCSCEL (with DLLs).Build.0 = DebugPSReleaseCSCEL (with DLLs)|Win32
+    		{B1CE87F5-3C6B-77FA-DBAF-8F9DE20914BC}.Release (with static libs).ActiveCfg = Release (with static libs)|Win32
+		{B1CE87F5-3C6B-77FA-DBAF-8F9DE20914BC}.Release (with static libs).Build.0 = Release (with static libs)|Win32
+  		{B1CE87F5-3C6B-77FA-DBAF-8F9DE20914BC}.Release (with DLLs).ActiveCfg = Release (with DLLs)|Win32
+		{B1CE87F5-3C6B-77FA-DBAF-8F9DE20914BC}.Release (with DLLs).Build.0 = Release (with DLLs)|Win32
+    		{B1CE87F5-3C6B-77FA-DBAF-8F9DE20914BC}.Debug (with static libs).ActiveCfg = Debug (with static libs)|Win32
+		{B1CE87F5-3C6B-77FA-DBAF-8F9DE20914BC}.Debug (with static libs).Build.0 = Debug (with static libs)|Win32
+  		{B1CE87F5-3C6B-77FA-DBAF-8F9DE20914BC}.Debug (with DLLs).ActiveCfg = Debug (with DLLs)|Win32
+		{B1CE87F5-3C6B-77FA-DBAF-8F9DE20914BC}.Debug (with DLLs).Build.0 = Debug (with DLLs)|Win32
+    		{B1CE87F5-3C6B-77FA-DBAF-8F9DE20914BC}.MemoryTracker (with static libs).ActiveCfg = MemoryTracker (with static libs)|Win32
+		{B1CE87F5-3C6B-77FA-DBAF-8F9DE20914BC}.MemoryTracker (with static libs).Build.0 = MemoryTracker (with static libs)|Win32
+  		{B1CE87F5-3C6B-77FA-DBAF-8F9DE20914BC}.MemoryTracker (with DLLs).ActiveCfg = MemoryTracker (with DLLs)|Win32
+		{B1CE87F5-3C6B-77FA-DBAF-8F9DE20914BC}.MemoryTracker (with DLLs).Build.0 = MemoryTracker (with DLLs)|Win32
+    		{B1CE87F5-3C6B-77FA-DBAF-8F9DE20914BC}.RefTracker (with static libs).ActiveCfg = RefTracker (with static libs)|Win32
+		{B1CE87F5-3C6B-77FA-DBAF-8F9DE20914BC}.RefTracker (with static libs).Build.0 = RefTracker (with static libs)|Win32
+  		{B1CE87F5-3C6B-77FA-DBAF-8F9DE20914BC}.RefTracker (with DLLs).ActiveCfg = RefTracker (with DLLs)|Win32
+		{B1CE87F5-3C6B-77FA-DBAF-8F9DE20914BC}.RefTracker (with DLLs).Build.0 = RefTracker (with DLLs)|Win32
+    		{B1CE87F5-3C6B-77FA-DBAF-8F9DE20914BC}.DebugPSReleaseCSCEL (with static libs).ActiveCfg = DebugPSReleaseCSCEL (with static libs)|Win32
+		{B1CE87F5-3C6B-77FA-DBAF-8F9DE20914BC}.DebugPSReleaseCSCEL (with static libs).Build.0 = DebugPSReleaseCSCEL (with static libs)|Win32
+  		{B1CE87F5-3C6B-77FA-DBAF-8F9DE20914BC}.DebugPSReleaseCSCEL (with DLLs).ActiveCfg = DebugPSReleaseCSCEL (with DLLs)|Win32
+		{B1CE87F5-3C6B-77FA-DBAF-8F9DE20914BC}.DebugPSReleaseCSCEL (with DLLs).Build.0 = DebugPSReleaseCSCEL (with DLLs)|Win32
     		{D7B7BACC-11C8-CED6-DEEF-7CE8B0C8175E}.Release (with static libs).ActiveCfg = Release (with static libs)|Win32
 		{D7B7BACC-11C8-CED6-DEEF-7CE8B0C8175E}.Release (with static libs).Build.0 = Release (with static libs)|Win32
   		{D7B7BACC-11C8-CED6-DEEF-7CE8B0C8175E}.Release (with DLLs).ActiveCfg = Release (with DLLs)|Win32
