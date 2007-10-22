@@ -1307,6 +1307,24 @@ void gemActiveObject::SendBehaviorMessage(const csString & msg_id, gemObject *ac
 
             psItem* item = GetItem();
 
+            unsigned int guard = item->GetGuardingCharacterID();
+            gemActor* guardActor = GEMSupervisor::GetSingleton().FindPlayerEntity(guard);
+            if (guard &&
+                guard != actor->GetCharacterData()->GetCharacterID() &&
+                guardActor &&
+                guardActor->RangeTo(item->GetGemObject()) < 5)
+            {
+                if (guardActor)
+                {
+                    psserver->SendSystemInfo(clientnum,"You notice that the item is being guarded by %s",
+                        guardActor->GetCharacterData()->GetCharFullName());
+                }
+                else
+                    psserver->SendSystemInfo(clientnum,"You notice that the item is being guarded");
+
+                return;
+            }
+
             item->ScheduleRespawn();
 
             // Cache values from item, because item might be deleted by Add

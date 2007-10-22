@@ -1304,6 +1304,7 @@ void psCharacter::DropItem(psItem *&item, csVector3 suggestedPos, bool transient
     {
         // Assign new object to replace the original object
         item = obj->GetItem();
+        item->SetGuardingCharacterID(GetCharacterID());
     }
 
     // If a container, move its contents as well...
@@ -1323,6 +1324,7 @@ void psCharacter::DropItem(psItem *&item, csVector3 suggestedPos, bool transient
                     Error2("Cannot add item into container slot %zu.\n", slot);
                     return;
                 }
+                item->SetGuardingCharacterID(item->GetOwningCharacterID());
                 i--; // indexes shift when we remove one.
                 item->Save(false);
             }
