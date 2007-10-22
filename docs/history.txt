@@ -1,3 +1,6 @@
+*** 2007-10-22 by Anders Reggestad
+- Added listing of faction to WC.
+
 *** 2007-10-22 by Sasha Levin
 - Fixed FS#498 - Repair issue
 - Added guard for dropped items. Chars guard any items they dropped on the ground within
