@@ -255,6 +255,7 @@ void SlotManager::MoveFromWorldContainer(psSlotMovementMsg& msg, Client *fromCli
                 // Now that it was successful, take it out of the world container
                 worldContainer->RemoveFromContainer(itemProposed,fromClient);
                 chr->Inventory().Add(itemProposed, false);
+                itemProposed->SetGuardingCharacterID(0);
                 return;
             }
 
@@ -351,6 +352,12 @@ void SlotManager::MoveFromInventory(psSlotMovementMsg& msg, Client *fromClient)
         return;
     }
     // printf("Proposing to move item %s\n", itemProposed->GetName());
+
+    if (itemProposed->IsInUse())
+    {
+        psserver->SendSystemError(fromClient->GetClientNum(), "You cannot move an item being used.");
+        return;
+    }
 
     if (chr->Inventory().GetOfferedStackCount(itemProposed) > 0)
     {
