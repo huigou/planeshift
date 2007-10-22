@@ -86,30 +86,12 @@ const char* Config::GetPlatform()
 
 bool Config::Initialize(csRef<iDocumentNode> node)
 {
-    // Nodes we'll use to hold temp data.
-    csRef<iDocumentNode> tempNode;
-    csRef<iDocumentNode> tempNode2;
-
     // Get Updater info.
-    tempNode = node->GetNode("updater");
-    if(tempNode)
+    csRef<iDocumentNode> updaterNode = node->GetNode("updater");
+    if(updaterNode)
     {
-        tempNode2 = tempNode->GetNode("version");
-        if(tempNode2)
-            updaterVersionLatest = tempNode2->GetContentsValueAsInt();
-        else
-        {
-            printf("Unable to load version node!\n");
-            return false;
-        }
-        tempNode2 = tempNode->GetNode("md5sum");
-        if(tempNode2)
-            updaterVersionLatestMD5 = tempNode2->GetContentsValue();
-        else
-        {
-            printf("Unable to load md5sum node!\n");
-            return false;
-        }
+        updaterVersionLatest = updaterNode->GetAttributeValueAsInt("version");
+        updaterVersionLatestMD5 = updaterNode->GetAttributeValue(GetPlatform());
     }
     else
     {
