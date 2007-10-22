@@ -8,6 +8,7 @@
 
 *** 2007-10-22 by Michael Gist.
 - Changed updater xml to hold an updater md5 for each platform.
+- Some Jamfile work for the updater.
 
 *** 2007-10-20 by Michael Gist
 - Updated build files from CS.
