@@ -762,6 +762,9 @@
 				RelativePath="..\..\src\pslaunch\fileutil.cpp">
 			</File>
 			<File
+				RelativePath="..\..\src\pslaunch\pslaunch.cpp">
+			</File>
+			<File
 				RelativePath="..\..\src\pslaunch\updaterconfig.cpp">
 			</File>
 			<File
@@ -779,6 +782,9 @@
 			</File>
 			<File
 				RelativePath="..\..\src\pslaunch\fileutil.h">
+			</File>
+			<File
+				RelativePath="..\..\src\pslaunch\pslaunch.h">
 			</File>
 			<File
 				RelativePath="..\..\src\pslaunch\updaterconfig.h">
