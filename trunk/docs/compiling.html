@@ -1154,7 +1154,7 @@ subversion zlibc libttf2 libfreetype6-dev libfreetype6 libasound2-dev alsa-oss l
     <p>Make sure that your specific 'msvc' folder has the 'read only' box unchecked (right click on the folder
 and select Properties, 'read only' is one of the attributes in the General tab) before continuing.</p>
     
-    <p>Go into the 'Build' menu, and select 'configuration manager'. Change the 'Active Solution Configuration' to 'Debug'.<br>
+    <p>Go into the 'Build' menu, and select 'configuration manager'. Change the 'Active Solution Configuration' to 'Release(static libs)'.<br>
     Right click on the solution and select 'Build Solution'. To test the build of CS, run walktest.exe in C:\development\CS.<br>
     If you encounter any errors, check you have done everything correctly, and then if the problem persists, you can
     ask for help in the CS IRC channel:<br>
@@ -1181,8 +1181,8 @@ and select Properties, 'read only' is one of the attributes in the General tab) 
     folder. Under Projects choose "VC++ Directories". In the Show Directories for: choose
     "Library Files". Click the new folder icon to add the following directories:</p>
     <p>
-        C:\development\CS\out\debugX\libs<br>
-        C:\development\cel\out\debugX\libs
+        C:\development\CS\out\releaseX\libs<br>
+        C:\development\cel\out\releaseX\libs
     </p>
     <p>You have to change X (in the path concerning CS and cel libraries) to these
     values, depending from the version you have of MSVC:</p>
