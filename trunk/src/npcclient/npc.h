@@ -101,6 +101,7 @@ protected:
     iSector*           checkedSector;
     bool               checked;
     bool               checkedResult;
+    bool               disabled;
 
 public:
     HateList           hatelist;
@@ -123,6 +124,7 @@ public:
     const char* GetName() {return name.GetDataSafe();}
     void SetAlive(bool a) { alive = a; }
     bool IsAlive() const { return alive; }
+    void Disable();
 
     Behavior *GetCurrentBehavior() { return brain->GetCurrentBehavior(); }
     NPCType  *GetBrain() { return brain; }
