@@ -3,7 +3,7 @@ Compile psupdater, copy updaterinfo.xml and pslaunch.cfg to your root dir.
 Now you'll need to create a zip containing psupdater or pslaunch. Naming is important, it must be called appName + platform + .zip
 So for 'psupdater' on win32 it would be called: psupdaterwin32.zip
 
-Possible names are: win32, lin32, lin64, osx.
+Possible names are: win32, linux32, linux64, macosx.
 
 Get the md5sum of that zip and in a different updaterinfo.xml change the <version> to a number higher than the number in your current UPDATER_VERSION in psupdaterengine.h
 and place the md5sum in the correct platform "".
