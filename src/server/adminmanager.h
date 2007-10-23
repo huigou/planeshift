@@ -26,7 +26,6 @@
 #include "client.h"                 // Client, and ClientConnectionSet classes
 #include "msgmanager.h"             // Parent class
 #include "bulkobjects/psitem.h"
-#include "net/adminmessage.h"
 
 class psDatabase;
 class psSpawnManager;

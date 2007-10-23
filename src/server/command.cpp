@@ -52,7 +52,6 @@
 #include "spawnmanager.h"
 #include "actionmanager.h"
 #include "psproxlist.h"
-#include "net/adminmessage.h"
 #include "adminmanager.h"
 #include "groupmanager.h"
 #include "progressionmanager.h"
