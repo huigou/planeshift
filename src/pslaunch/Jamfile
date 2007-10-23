@@ -35,7 +35,7 @@ Application pslaunch :
 
 ExternalLibs pslaunch : CRYSTAL CURL ;
 CompileGroups pslaunch : client ;
-LinkWith pslaunch : xdelta3 paws ;
+LinkWith pslaunch : xdelta3 paws psutil fparser ;
 SubVariant ;
 
 if $(HAVE_STATIC_PLUGINS) = "yes"
@@ -46,7 +46,7 @@ Application pslaunch_static : [ Filter [ Wildcard *.cpp *.h ] : updater.cpp upda
 CFlags pslaunch_static : [ FDefines CS_STATIC_LINKED ] ;
 LFlags pslaunch_static : -lcrystalspace_staticplugins-1.2 ;
 MsvcDefine pslaunch_static : CS_STATIC_LINKED ;
-LinkWith pslaunch_static : xdelta3 paws ;
+LinkWith pslaunch_static : xdelta3 paws psutil fparser ;
 
 STATIC.PLUGINLIST = 
   vfs
