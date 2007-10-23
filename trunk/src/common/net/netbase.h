@@ -33,7 +33,7 @@
 #include "netprofile.h"
 
 #define NUM_BROADCAST        0xffffffff
-#define MAXQUEUESIZE        2000
+#define MAXQUEUESIZE        20000
 #define MAXPACKETHISTORY    200
 
 // The number of times the SendTo function will retry on a EAGAIN or EWOULDBLOCK

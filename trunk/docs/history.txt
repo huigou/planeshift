@@ -1,3 +1,6 @@
+*** 2007-10-23 by Michael Gist
+- Increased MAXQUEUESIZE to 20000.
+
 *** 2007-10-23 by Andrew Craig
 - Added disabling and stopping of NPCs that use to long time on a tick.
 
@@ -15,7 +18,7 @@
 - Added guard for dropped items. Chars guard any items they dropped on the ground within
   5m range. Should prevent item 'stealing'.
 
-*** 2007-10-22 by Michael Gist.
+*** 2007-10-22 by Michael Gist
 - Changed updater xml to hold an updater md5 for each platform.
 - Some Jamfile work for the updater.
 
