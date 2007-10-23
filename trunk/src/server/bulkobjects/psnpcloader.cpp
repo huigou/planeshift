@@ -39,7 +39,6 @@
 #include "../globals.h"
 #include "../exchangemanager.h"
 #include "../cachemanager.h"
-#include "net/adminmessage.h"
 
 #include <csutil/xmltiny.h>
 

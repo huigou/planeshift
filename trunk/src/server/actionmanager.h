@@ -31,7 +31,6 @@
 #include "net/msghandler.h"         // Subscriber definition
 #include "client.h"                 // Client, and ClientConnectionSet classes
 #include "msgmanager.h"             // Parent class
-#include "net/adminmessage.h"
 #include "util/gameevent.h"
 
 class psDatabase;
