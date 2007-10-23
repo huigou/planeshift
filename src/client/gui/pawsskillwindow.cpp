@@ -889,13 +889,24 @@ void pawsSkillIndicator::Draw()
 {
     csRect sf = screenFrame;
 
+    int t1;
+
     if (y < yCost)
     {
+        if (GetRelCoord(x) + GetRelCoord(y) < sf.Width())
+        {
+            t1 = GetRelCoord(x) + GetRelCoord(y);
+        }
+        else
+        {
+            t1 = sf.Width();
+        }
+   
         int split = GetRelCoord(yCost);
         DrawSkillProgressBar(sf.xmin, sf.ymin, split, sf.Height(), 180, 180, 30);
         DrawSkillProgressBar(sf.xmin+split, sf.ymin, sf.Width()-split, sf.Height(), 180, 30, 30);
-        DrawSkillProgressBar(sf.xmin, sf.ymin, GetRelCoord(y), sf.Height(), 0, 80, 0);
-        DrawSkillProgressBar(sf.xmin, sf.ymin, GetRelCoord(x), sf.Height()/2, 30, 30, 180);
+        DrawSkillProgressBar(sf.xmin, sf.ymin, t1, sf.Height()/2, 30, 30, 180);
+        DrawSkillProgressBar(sf.xmin, sf.ymin, GetRelCoord(y), sf.Height(), 0, 80, 0);        
     }
     else
     {

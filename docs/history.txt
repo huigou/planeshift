@@ -1,4 +1,7 @@
 *** 2007-10-22 by Andrew Craig
+- Added patch from DarcSabre to improve the look of the pawsSkill window.
+
+*** 2007-10-22 by Andrew Craig
 - /report logs are now time stamped.
 
 *** 2007-10-22 by Anders Reggestad
