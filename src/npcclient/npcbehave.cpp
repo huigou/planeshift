@@ -3109,8 +3109,9 @@ void ChaseOperation::Advance(float timedelta,NPC *npc,EventManager *eventmgr)
                 localDest.x,localDest.y,localDest.z,
                 Calc2DDistance(localDest, myPos));
 
-    {ScopedTimer st(250, "chase extrapolate %.2f time for EID: %u",timedelta,npc->GetEntity()->GetID());
-    npc->GetLinMove()->ExtrapolatePosition(timedelta);
+    {
+        ScopedTimer st(250, "chase extrapolate %.2f time for EID: %u",timedelta,npc->GetEntity()->GetID());
+        npc->GetLinMove()->ExtrapolatePosition(timedelta);
     }
     npc->GetLinMove()->GetLastPosition(myNewPos,myRot,mySector);
     if((fabs(myPos.x)> 1000 || fabs(myNewPos.x)> 1000) || (fabs(myPos.y)>1000 || fabs(myNewPos.y)>1000) || (fabs(myPos.z)>1000 || fabs(myNewPos.z)>1000))

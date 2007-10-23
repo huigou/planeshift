@@ -1,3 +1,6 @@
+*** 2007-10-23 by Andrew Craig
+- Added disabling and stopping of NPCs that use to long time on a tick.
+
 *** 2007-10-22 by Andrew Craig
 - Added patch from DarcSabre to improve the look of the pawsSkill window.
 

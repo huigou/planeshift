@@ -44,6 +44,7 @@
 #include "util/psdatabase.h"
 #include "util/location.h"
 #include "engine/psworld.h"
+#include "networkmgr.h"
 
 extern iDataConnection *db;
 
@@ -67,6 +68,7 @@ NPC::NPC(): checked(false)
     target_id=(uint32_t)-1;
     tribe=NULL;
     checkedSector=NULL;
+    disabled = false;
 }
 
 NPC::~NPC()
@@ -188,7 +190,7 @@ void NPC::SetActor(gemNPCActor * actor)
 
 void NPC::Advance(csTicks when,EventManager *eventmgr)
 {
-    if (last_update)
+    if (last_update && !disabled)
     {
         brain->Advance(when-last_update,this,eventmgr);
     }
@@ -198,13 +200,19 @@ void NPC::Advance(csTicks when,EventManager *eventmgr)
 
 void NPC::ResumeScript(EventManager *eventmgr,Behavior *which)
 {
-    brain->ResumeScript(this,eventmgr,which);
+    if (!disabled)
+    {
+        brain->ResumeScript(this,eventmgr,which);
+    }
 }
 
 void NPC::TriggerEvent(Perception *pcpt,EventManager *eventmgr)
 {
-    Printf(6,"Got event %s",pcpt->ToString().GetData() );
-    brain->FirePerception(this,eventmgr,pcpt);
+    if (!disabled)
+    {
+        Printf(6,"Got event %s",pcpt->ToString().GetData() );
+        brain->FirePerception(this,eventmgr,pcpt);
+    }
 }
 
 void NPC::SetLastPerception(Perception *pcpt)
@@ -293,6 +301,20 @@ LocationType *NPC::GetRegion()
         region = npcclient->FindRegion(region_name);
         return region;
     }
+}
+
+void NPC::Disable()
+{
+    disabled = true;
+
+    // Stop the movement
+    
+    // Set Vel to zero again
+    GetLinMove()->SetVelocity( csVector3(0,0,0) );
+    GetLinMove()->SetAngularVelocity( 0 );
+
+    //now persist
+    npcclient->GetNetworkMgr()->QueueDRData(this);
 }
 
 void NPC::DumpBehaviorList()
