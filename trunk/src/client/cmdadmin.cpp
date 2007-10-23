@@ -20,7 +20,7 @@
 #include "cmdadmin.h"
 #include "net/cmdhandler.h"
 #include "net/msghandler.h"
-#include "net/adminmessage.h"
+#include "net/messages.h"
 #include "paws/pawsmanager.h"
 #include "gui/chatwindow.h"
 #include "pscelclient.h"
@@ -33,14 +33,14 @@ psAdminCommands::psAdminCommands(MsgHandler* mh,
                                  iObjectRegistry* obj )
   : psCmdBase(mh,ch,obj)
 {
-    msgqueue->Subscribe(this, MSGTYPE_ADMIN);
+    msgqueue->Subscribe(this, MSGTYPE_ADMINCMD);
     cmdsource->Subscribe( "/petition", this );
     cmdsource->Subscribe( "/deputize", this );
 }
 
 psAdminCommands::~psAdminCommands()
 {
-    msgqueue->Unsubscribe(this, MSGTYPE_ADMIN);
+    msgqueue->Unsubscribe(this, MSGTYPE_ADMINCMD);
     cmdsource->UnsubscribeAll(this);
 }
 
@@ -66,7 +66,7 @@ const char *psAdminCommands::HandleCommand(const char *cmd)
     }
     else
     {
-        psAdminCmdMessage cmdmsg(cmd);
+        psAdminCmdMessage cmdmsg(cmd,0);
         cmdmsg.SendMessage();        
     }
     return NULL;  // don't display anything here
@@ -74,16 +74,11 @@ const char *psAdminCommands::HandleCommand(const char *cmd)
 
 void psAdminCommands::HandleMessage(MsgEntry *me)
 {
-    if ( me->GetType() == MSGTYPE_ADMIN )
+    if ( me->GetType() == MSGTYPE_ADMINCMD )
     {        
-        psAdminMessage msg(me);
+        psAdminCmdMessage msg(me);
 
-        if ( msg.command != ADMIN_ACCESS )
-            return;
-
-        //cmdsource->UnsubscribeAll(this);
-
-        if( !msg.data)
+        if( !msg.cmd)
         {
             psSystemMessage sysMsg( 0, MSG_INFO, "You lack administrator access" );
             msgqueue->Publish( sysMsg.msg );
@@ -93,7 +88,7 @@ void psAdminCommands::HandleMessage(MsgEntry *me)
         psSystemMessage sysMsg( 0, MSG_INFO, "You now have the following admin commands available:" );
         msgqueue->Publish( sysMsg.msg );
 
-        psXMLString main ( msg.data );
+        psXMLString main ( msg.cmd );
 
         int start = (int)main.FindTag("command");
         csString commands;

@@ -63,8 +63,6 @@ enum GM_LEVEL
  */
 class AdminManager : public MessageManager
 {
-    friend class psAdminGameEvent;
-
 public:
 
     AdminManager();
@@ -94,8 +92,7 @@ protected:
     bool Valid( int level, const char* command, int clientnum );
     bool IsReseting(const csString& command);
 
-    void HandleAdminMessage(MsgEntry *pMsg, psAdminMessage& msg, Client *client);
-
+    
     typedef struct AdminCmdData
     {
         csString player, target, command, subCmd, commandMod;
@@ -119,9 +116,9 @@ protected:
         unsigned short stackCount;
         int instance;
 
-        bool DecodeAdminCmdMessage(MsgEntry *pMsg, psAdminCmdMessage& msg, Client *client);
-        
+        bool DecodeAdminCmdMessage(MsgEntry *pMsg, psAdminCmdMessage& msg, Client *client);        
     };
+    
     void CommandArea(MsgEntry *me, psAdminCmdMessage& msg, AdminCmdData& data, Client *client, int range);
     void HandleAdminCmdMessage(MsgEntry *pMsg, psAdminCmdMessage& msg, AdminCmdData& data, Client *client);
     void HandlePetitionMessage(MsgEntry *pMsg, psPetitionRequestMessage& msg, Client *client);
@@ -231,11 +228,7 @@ protected:
     
     void SendGMPlayerList(MsgEntry* me, psGMGuiMessage& msg, Client *client);
 
-    void AdminItemRequestTypes(uint32_t clientnum);
-    bool AdminItemCreate( psAdminMessage &msg);
-    void AdminRaceRequest(int clientnum, const char* sex,Client *client);
-    void AdminRequestKnowledgeAreas( int clientnum );
-
+    
     void ChangeName(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data, Client *client);
 
     /// Handles a change to set the NPC's default spawn location.
@@ -306,10 +299,6 @@ protected:
     void HandleCompleteQuest(MsgEntry* me,psAdminCmdMessage& msg, AdminCmdData& data, Client *client, Client *subject);
 
 protected:
-    void AdminCreateNewNPC(int clientnum, csString& data);
-    void AdminRequestTriggers( uint32_t clientnum, csString& data );
-    void AdminRequestResponses(uint32_t clientnum, csString& trig);
-    void AdminDialogChange( uint32_t clientnum, csString& trig );
 
     /** Adds a petition under the passed user's name to the 'petitions' table in the database
      * Will automatically add the date and time of the petition's submission

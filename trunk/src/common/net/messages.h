@@ -42,7 +42,7 @@ struct iEngine;
 
 // This holds the version number of the network code, remember to increase
 // this each time you do an update which breaks compatibility
-#define PS_NETVERSION   0x007C
+#define PS_NETVERSION   0x007D
 // Remember to bump the version in pscssetup.h, as well.
 
 // NPC Networking version is separate so we don't have to break compatibility
@@ -86,7 +86,7 @@ enum MSG_TYPES
     MSGTYPE_CELPERSIST,
     MSGTYPE_CONFIRMQUESTION,
     MSGTYPE_USERACTION,
-    MSGTYPE_ADMIN,
+    MSGTYPE_ADMINCMD,
     MSGTYPE_GUIINTERACT,
     MSGTYPE_GUIINVENTORY,       // 20
     MSGTYPE_VIEW_ITEM,
@@ -99,7 +99,6 @@ enum MSG_TYPES
     MSGTYPE_MODE,
     MSGTYPE_WEATHER,
     MSGTYPE_NEWSECTOR,          // 30
-    MSGTYPE_ADMINCMD,
     MSGTYPE_GUIGUILD,
     MSGTYPE_EQUIPMENT,
     MSGTYPE_GUIEXCHANGE,
@@ -1140,6 +1139,8 @@ public:
     csString cmd;
     
     psAdminCmdMessage(const char *cmd);
+    psAdminCmdMessage(const char *cmd, uint32_t client = 0);
+    
     psAdminCmdMessage(MsgEntry *message);
 
     PSF_DECLARE_MSG_FACTORY();

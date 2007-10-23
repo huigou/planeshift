@@ -1419,6 +1419,20 @@ psAdminCmdMessage::psAdminCmdMessage(const char *cmd)
     valid=!(msg->overrun);
 }
 
+psAdminCmdMessage::psAdminCmdMessage(const char *cmd, uint32_t client)
+{
+    msg = new MsgEntry(strlen(cmd) + 1);
+
+    msg->SetType(MSGTYPE_ADMINCMD);
+    msg->clientnum      = client;
+    msg->priority       = PRIORITY_HIGH;
+
+    msg->Add(cmd);
+
+    // Sets valid flag based on message overrun state
+    valid=!(msg->overrun);
+}
+
 psAdminCmdMessage::psAdminCmdMessage(MsgEntry *message)
 {
     valid = true;

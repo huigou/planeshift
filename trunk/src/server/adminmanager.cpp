@@ -78,7 +78,6 @@ AdminManager::AdminManager()
 {
     clients = psserver->GetNetManager()->GetConnections();
 
-    psserver->GetEventManager()->Subscribe(this,MSGTYPE_ADMIN,REQUIRE_READY_CLIENT);
     psserver->GetEventManager()->Subscribe(this,MSGTYPE_ADMINCMD,REQUIRE_READY_CLIENT);
     psserver->GetEventManager()->Subscribe(this,MSGTYPE_PETITION_REQUEST,REQUIRE_READY_CLIENT);
     psserver->GetEventManager()->Subscribe(this,MSGTYPE_GMGUI,REQUIRE_READY_CLIENT);
@@ -93,7 +92,6 @@ AdminManager::AdminManager()
 
 AdminManager::~AdminManager()
 {
-    psserver->GetEventManager()->Unsubscribe(this,MSGTYPE_ADMIN);
     psserver->GetEventManager()->Unsubscribe(this,MSGTYPE_ADMINCMD);
     psserver->GetEventManager()->Unsubscribe(this,MSGTYPE_PETITION_REQUEST);
     psserver->GetEventManager()->Unsubscribe(this,MSGTYPE_GMGUI);
@@ -103,68 +101,12 @@ AdminManager::~AdminManager()
     delete npcdlg;
 }
 
-void AdminManager::AdminItemRequestTypes(uint32_t clientnum)
-{
-    csString outBuffer;
-    outBuffer.Append("<UL>");
-/* TODO - this is currently not used, which is good since it has a infinite loop
-    unsigned int i=0;
-    psItemStats *itemstats;
-    char itemBuffer[256];
-    while ((itemstats=CacheManager::GetSingleton().GetBasicItemStatsByIndex(i))!=NULL)
-    {
-        csString escpxml = EscpXML(itemstats->GetName());
-        sprintf(itemBuffer,  "<ITEM NAME=\"%s\" ID=\"%u\" />",
-            escpxml.GetData(),
-            itemstats->GetUID() );
-
-        outBuffer.Append(itemBuffer);
-    }
-*/
-    outBuffer.Append("</UL>");
-
-    psAdminMessage out( clientnum,ADMIN_ITEM_REQUEST_TYPES,outBuffer );
-    out.SendMessage();
-}
-
-
-bool AdminManager::AdminItemCreate( psAdminMessage &msg )
-{
-    csRef<iDocumentSystem> xml = csPtr<iDocumentSystem>(new csTinyDocumentSystem);
-
-    csRef<iDocument> doc = xml->CreateDocument();
-
-    const char* error = doc->Parse(msg.data);
-    if ( error )
-    {
-        Error2("Error in XML: %s", error );
-        return false;
-    }
-
-    csRef<iDocumentNode> newitemNode = doc->GetRoot()->GetNode("NEWITEM");
-
-    if (!newitemNode)
-        return false;
-
-    return CreateItem(newitemNode->GetAttributeValue("NAME"),
-        newitemNode->GetAttributeValueAsFloat("X"),
-        newitemNode->GetAttributeValueAsFloat("Y"),
-        newitemNode->GetAttributeValueAsFloat("Z"),
-        0.0f,newitemNode->GetAttributeValue("SECTOR"),0, // TODO: Hardcoded instance 0 here
-        newitemNode->GetAttributeValueAsInt("COUNT"),0,0);
-}
 
 void AdminManager::HandleMessage(MsgEntry *me, Client *client)
 {
     switch ( me->GetType() )
     {
-    case MSGTYPE_ADMIN:
-        {
-            psAdminMessage msg(me);
-            HandleAdminMessage(me, msg, client);
-            break;
-        }
-    case MSGTYPE_ADMINCMD:
+        case MSGTYPE_ADMINCMD:
         {
             AdminCmdData data;
 
@@ -180,25 +122,29 @@ void AdminManager::HandleMessage(MsgEntry *me, Client *client)
             HandleAdminCmdMessage(me, msg, data, client);
             break;
         }
-    case MSGTYPE_PETITION_REQUEST:
+        
+        case MSGTYPE_PETITION_REQUEST:
         {
             psPetitionRequestMessage msg(me);
             HandlePetitionMessage(me, msg, client);
             break;
         }
-    case MSGTYPE_GMGUI:
+        
+        case MSGTYPE_GMGUI:
         {
             psGMGuiMessage msg(me);
             HandleGMGuiMessage(me, msg, client);
             break;
         }
-    case MSGTYPE_GMSPAWNITEMS:
+        
+        case MSGTYPE_GMSPAWNITEMS:
         {
             psGMSpawnItems msg(me);
             SendSpawnItems(me, msg, client);
             break;
         }
-    case MSGTYPE_GMSPAWNITEM:
+        
+        case MSGTYPE_GMSPAWNITEM:
         {
             psGMSpawnItem msg(me);
             SpawnItemInv(me, msg, client);
@@ -207,90 +153,7 @@ void AdminManager::HandleMessage(MsgEntry *me, Client *client)
     }
 }
 
-void AdminManager::HandleAdminMessage(MsgEntry *me, psAdminMessage & msg,Client *client)
-{
-    if (!msg.valid)
-        return;
 
-    // No specific checks here, Simply make sure that the client is a GM
-    if (client->GetSecurityLevel() < GM_LEVEL_0)
-    {
-        psserver->SendSystemError(me->clientnum, "You are not a GM.");
-        return;
-    }
-
-    switch ( msg.command )
-    {
-    case ADMIN_ITEM_REQUEST_TYPES:
-        {
-            AdminItemRequestTypes(me->clientnum);
-            break;
-        }
-
-    case ADMIN_ITEM_CREATE:
-        {
-            if ( AdminItemCreate(msg) )
-            {
-                psserver->SendSystemInfo(me->clientnum,"Item Created");
-            }
-            break;
-        }
-
-        /* These three cases send a list of the races available with a
-        particular gender
-        */
-    case ADMIN_MALE_RACES:
-        {
-            AdminRaceRequest(me->clientnum, "M",client);
-            break;
-        }
-    case ADMIN_FEMALE_RACES:
-        {
-            AdminRaceRequest(me->clientnum, "F",client);
-            break;
-        }
-    case ADMIN_NEUTRAL_RACES:
-        {
-            AdminRaceRequest(me->clientnum, "N",client);
-            break;
-        }
-
-    case ADMIN_REQUEST_KNOWLEDGE_AREAS:
-        {
-            AdminRequestKnowledgeAreas(me->clientnum);
-            break;
-        }
-
-        /// A new NPC is incomming
-    case ADMIN_CREATE_NEW_NPC:
-        {
-            Debug1(LOG_ADMIN,me->clientnum,"Creating new NPC!");
-            AdminCreateNewNPC(me->clientnum, msg.data);
-            break;
-        }
-
-        /// A request for the triggers in a dialog area
-    case ADMIN_REQUEST_TRIGGERS:
-        {
-            Debug1(LOG_ADMIN,me->clientnum,"Admin_request_triggers");
-            AdminRequestTriggers( me->clientnum, msg.data);
-            break;
-        }
-
-    case ADMIN_REQUEST_RESPONSES:
-        {
-            Debug1(LOG_ADMIN,me->clientnum,"Admin request responses");
-            AdminRequestResponses(me->clientnum, msg.data);
-            break;
-        }
-    case ADMIN_DIALOG_CHANGE:
-        {
-            Debug1(LOG_ADMIN,me->clientnum,"Admin dialog change");
-            AdminDialogChange(me->clientnum, msg.data);
-        }
-
-    }
-}
 
 bool AdminManager::IsReseting(const csString& command)
 {
@@ -1594,6 +1457,7 @@ void AdminManager::HandlePetitionMessage(MsgEntry *me, psPetitionRequestMessage&
         GMHandlePetition(me, msg,client);
     }
 }
+
 void AdminManager::HandleGMGuiMessage(MsgEntry *me, psGMGuiMessage& msg,Client *client)
 {
     if (msg.type == psGMGuiMessage::TYPE_QUERYPLAYERLIST)
@@ -3031,6 +2895,7 @@ void AdminManager::CreateNPC(MsgEntry* me,psAdminCmdMessage& msg, AdminCmdData& 
     psserver->SendSystemOK(me->clientnum, "New NPC created!");
 }
 
+
 int AdminManager::CopyNPCFromDatabase(int master_id, float x, float y, float z, float angle, const csString & sector, int instance)
 {
     psCharacter* npc = NULL;
@@ -3612,238 +3477,11 @@ void AdminManager::Admin ( int playerID, int clientnum,Client *client )
 
     CacheManager::GetSingleton().GetCommandManager()->BuildXML( type, commandList );
     
-    psAdminMessage admin(clientnum, ADMIN_ACCESS, commandList.GetDataSafe() );
+    psAdminCmdMessage admin(commandList.GetDataSafe(), clientnum);
     admin.SendMessage();
 }
 
-void AdminManager::AdminRaceRequest(int clientnum, const char* sex,Client *client)
-{
-    // Check to see if this client has admin level
-    if ( client->GetSecurityLevel() < GM_LEVEL_4 )
-    {
-        //TODO: Should be an automatic kick here for trying to cheat
-        return;
-    }
 
-    // Builds up the xml list
-    psAdminRaceList list;
-    psRaceInfo *raceinfo;
-
-    int i=0;
-    PSCHARACTER_GENDER gender;
-    gender=PSCHARACTER_GENDER_NONE;
-    if (sex[0]=='M' || sex[0]=='m')
-        gender=PSCHARACTER_GENDER_MALE;
-    if (sex[0]=='F' || sex[0]=='f')
-        gender=PSCHARACTER_GENDER_FEMALE;
-
-    while ((raceinfo=CacheManager::GetSingleton().GetRaceInfoByIndex(i++))!=NULL)
-    {
-        if (raceinfo->gender==gender)
-            list.AddRace(raceinfo->name);
-    }
-
-    // Send race list back to client
-    psAdminMessage mesg( clientnum, ADMIN_RACES_LIST, list.XML() );
-    mesg.SendMessage();
-}
-
-void AdminManager::AdminRequestKnowledgeAreas( int clientnum )
-{
-    psAdminKnowledgeAreaList list;
-
-    /// Fill up the XML list
-    Result result(db->Select("SELECT DISTINCT area FROM npc_knowledge_areas"));
-
-    if (!result.IsValid())
-    {
-        Error1("Error with npc_knowledge_areas table!");
-        return;
-    }
-
-    for ( unsigned int i=0; i < result.Count(); i++ )
-    {
-        list.AddArea( result[i][0] );
-    }
-
-    psAdminMessage mesg( clientnum,
-        ADMIN_REQUEST_KNOWLEDGE_AREAS,
-        list.XML() );
-
-    mesg.SendMessage();
-}
-
-class psAdminGameEvent : public psGameEvent
-{
-public:
-    psAdminGameEvent( AdminManager * mgr, csString& NPCName )
-        : psGameEvent(0,0,"psAdminGameEvent"),adminMgr(mgr),name(NPCName)
-    {
-    }
-    virtual void Trigger()
-    {
-        adminMgr->AdminCreateNewNPC(0,name);
-    }
-
-private:
-    AdminManager * adminMgr;
-    csString name;
-};
-
-/**
-* This function is thread safe, uses a game event to call
-* the executing function.
-*/
-void AdminManager::AdminCreateNewNPC(csString& data)
-{
-    psserver->GetEventManager()->Push( new psAdminGameEvent(this, data ) );
-}
-
-
-void AdminManager::AdminCreateNewNPC(int clientnum, csString& data)
-{
-
-    CPrintf(CON_DEBUG, "Start loading npc: %s\n",data.GetData());
-
-    // Removed pending changes
-    /*
-
-    bool success = false;
-
-    // Create the npcdata cracker
-    psAdminNPCData * newnpc = new psAdminNPCData(data);
-
-    // Insert data into the database
-    int id = database->CreateNewNPC(newnpc);
-
-    if ( id )
-    {
-    #if 1
-    {
-    Debug1(LOG_ADMIN,"Dictionary Exists");
-    int totalTrig = newnpc->dialogManager->triggerIDs.Length();
-    for ( int trig = 0; trig < totalTrig; trig++ )
-    {
-    int idToAdd = newnpc->dialogManager->triggerIDs[trig];
-    npcdlg->AddNewTrigger( idToAdd );
-    }
-
-    int totalResp = newnpc->dialogManager->responseIDs.Length();
-    for ( int resp = 0; resp < totalResp; resp++ )
-    {
-    int idToAdd = newnpc->dialogManager->responseIDs[resp];
-    npcdlg->AddNewResponse( idToAdd );
-    }
-    }
-    #endif
-
-    // entitymanager handles the detials of broadcasting the npc
-    if ( entitymanager->CreateNPC(id) )
-    {
-    success = true;
-    }
-    }
-
-
-
-
-    // Error response to send to client.
-    char buffer[256];
-    if (success)
-    {
-    sprintf(buffer, "New NPC %s created and added", newnpc->GetName());
-    Debug2(LOG_ADMIN,"Result: %s\n", buffer);
-    }
-    else
-    {
-    sprintf(buffer, "New NPC %s FAILED to be created", newnpc->GetName());
-    Error2("Result: %s\n", buffer);
-    }
-
-    if (clientnum != 0)
-    {
-    psSystemMessage newmsg(clientnum,MSG_INFO, buffer);
-    if (newdata.valid)
-    eventmanager->SendMessage(newdata.msg);
-    }
-
-    delete newnpc;
-    */
-}
-
-
-void AdminManager::AdminRequestTriggers( uint32_t clientnum, csString& data )
-{
-    iResultSet* triggers = psserver->GetAllTriggersInArea(data);
-    if (triggers == NULL)
-        return;
-
-    psAdminTriggerList triggerList;
-    for ( unsigned int i = 0; i < triggers->Count(); i++ )
-    {
-        triggerList.AddTrigger( (*triggers)[i][0] );
-    }
-
-    psAdminMessage outmessage(clientnum,
-        ADMIN_REQUEST_TRIGGERS,
-        triggerList.XML());
-
-    outmessage.SendMessage();
-    triggers->Release();
-}
-
-
-void AdminManager::AdminRequestResponses(uint32_t clientnum, csString& trig)
-{
-    iResultSet* responses = psserver->GetAllResponses(trig);
-
-    if ( !responses )
-        return;
-
-    psAdminResponseList responseList;
-
-    responseList.AddResponse( (*responses)[0]["response1"]);
-    responseList.AddResponse( (*responses)[0]["response2"]);
-    responseList.AddResponse( (*responses)[0]["response3"]);
-    responseList.AddResponse( (*responses)[0]["response4"]);
-    responseList.AddResponse( (*responses)[0]["response5"]);
-    responseList.AddPronounSet( (*responses)[0]["pronoun_him"],
-        (*responses)[0]["pronoun_her"],
-        (*responses)[0]["pronoun_it"],
-        (*responses)[0]["pronoun_them"]);
-
-    responses->Release();
-
-    psAdminMessage outmesg(clientnum,
-        ADMIN_REQUEST_RESPONSES,
-        responseList.XML() );
-    if (outmesg.valid)
-        outmesg.SendMessage();
-}
-
-void AdminManager::AdminDialogChange(uint32_t clientnum, csString& data)
-{
-    psAdminResponseList dialog(data);
-
-    for ( int z = 0; z < dialog.responses.Length(); z++ )
-    {
-        psserver->UpdateDialog( dialog.GetArea(),
-            dialog.GetTrigger(),
-            dialog.responses[z]->GetData(),
-            z+1);   // database goes from 1-5
-    }
-
-    // Update pronoun set
-    psserver->UpdateDialog( dialog.GetArea(),
-        dialog.GetTrigger(),
-        dialog.GetPronounHim(),
-        dialog.GetPronounHer(),
-        dialog.GetPronounIt(),
-        dialog.GetPronounThem());
-
-
-    psserver->SendSystemInfo(clientnum,"Dialog changes made");
-}
 
 
 void AdminManager::WarnMessage(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data,Client *client,Client *target)

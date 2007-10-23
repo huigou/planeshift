@@ -573,12 +573,17 @@ int com_filtermsg(char* arg)
 int com_loadnpc(char* npcName)
 {
 
-    AdminManager * adminmgr = psserver->GetAdminManager();
+    //TODO Rewrite
+    CPrintf(CON_CMDOUTPUT, "Disabled at the moment");
 
-    csString name = npcName;
 
+
+//    AdminManager * adminmgr = psserver->GetAdminManager();
+//
+//    csString name = npcName;
+//
     // Call this thread save function to initiate loading of NPC.
-    adminmgr->AdminCreateNewNPC(name);
+//    adminmgr->AdminCreateNewNPC(name);
 
     return 0;
 }
