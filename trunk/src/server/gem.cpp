@@ -70,6 +70,7 @@
 #include "util/pserror.h"
 #include "util/strutil.h"
 #include "util/eventmanager.h"
+#include "util/psutil.h"
 #include "net/npcmessages.h"
 #include "engine/psworld.h"
 #include "gem.h"
@@ -2449,6 +2450,12 @@ bool gemActor::LogMessage(const char *who, const psChatMessage &msg)
         return false;
 
     // Write to the log file
+    csString tod;
+    GetTimeOfDay(tod);
+    csString line;
+    line.Format("[%s] :", tod.GetData());
+    
+    logging_chat_file->Write(line.GetData(), line.Length());
     logging_chat_file->Write(s->GetData(), s->Length());
     logging_chat_file->Write("\n", 1);
 

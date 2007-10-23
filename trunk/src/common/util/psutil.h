@@ -23,6 +23,11 @@
 #include <cstypes.h>
 #include <csutil/csstring.h>
 
+/** Get the time of day in GMT.
+  * @param string The string to place the time of day.
+  */
+void GetTimeOfDay(csString& string);
+
 struct psPoint
 {
     int x;
