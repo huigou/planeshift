@@ -28,10 +28,10 @@
 				RuntimeLibrary="2"
 				DebugInformationFormat="3"
 				BufferSecurityCheck="FALSE"
-				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;_WINDOWS;WIN32"
+				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;_WINDOWS;USE_CEL;WIN32"
 				OptimizeForProcessor="1"
 				AdditionalOptions=" "
-				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
+				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32;..\..\..\cel\include;$(CEL)\include;$(CEL)\include\cel"
 				PrecompiledHeaderFile="..\..\out\release7\build\apppslaunch\apppslaunch.pch"
 				AssemblerListingLocation="..\..\out\release7\build\apppslaunch\"
 				ObjectFile="..\..\out\release7\build\apppslaunch\"
@@ -55,16 +55,16 @@
 				ProgramDatabaseFile="..\..\out\release7\build\apppslaunch\pslaunch.pdb"
 				SubSystem="2"
 				AdditionalOptions=" "
-				AdditionalDependencies="libcrystalspace.lib ws2_32.lib zlib.lib libcurl.lib"
+				AdditionalDependencies="libcrystalspace.lib ws2_32.lib zlib.lib libcurl.lib libceltool.lib"
 				SuppressStartupBanner="TRUE"
-				AdditionalLibraryDirectories="..\..\..\CS\out\release7\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\release7\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
+				AdditionalLibraryDirectories="..\..\..\CS\out\release7\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\release7\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs;..\..\..\cel\out\release7\libs;$(CEL)\out\release7\libs;$(CEL)\libs"
 				TargetMachine="1"/>
 			<Tool
 				Name="VCLibrarianTool"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
-				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;_WINDOWS"
+				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;_WINDOWS;USE_CEL"
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
@@ -79,8 +79,8 @@
 				Name="VCPreLinkEventTool"/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;_WINDOWS;PROJECTGEN_VERSION=7"
-				AdditionalIncludeDirectories=".;..\..\src\pslaunch;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
+				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;_WINDOWS;USE_CEL;PROJECTGEN_VERSION=7"
+				AdditionalIncludeDirectories=".;..\..\src\pslaunch;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32;..\..\..\cel\include;$(CEL)\include;$(CEL)\include\cel"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -104,10 +104,10 @@
 				RuntimeLibrary="2"
 				DebugInformationFormat="3"
 				BufferSecurityCheck="FALSE"
-				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;_WINDOWS;WIN32;CS_BUILD_SHARED_LIBS"
+				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;_WINDOWS;USE_CEL;WIN32;CS_BUILD_SHARED_LIBS"
 				OptimizeForProcessor="1"
 				AdditionalOptions=" "
-				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
+				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32;..\..\..\cel\include;$(CEL)\include;$(CEL)\include\cel"
 				PrecompiledHeaderFile="..\..\out\release7\build\apppslaunch\apppslaunch.pch"
 				AssemblerListingLocation="..\..\out\release7\build\apppslaunch\"
 				ObjectFile="..\..\out\release7\build\apppslaunch\"
@@ -131,16 +131,16 @@
 				ProgramDatabaseFile="..\..\out\release7\build\apppslaunch\pslaunch.pdb"
 				SubSystem="2"
 				AdditionalOptions=" "
-				AdditionalDependencies="libcrystalspace.lib ws2_32.lib zlib.lib libcurl.lib"
+				AdditionalDependencies="libcrystalspace.lib ws2_32.lib zlib.lib libcurl.lib libceltool.lib"
 				SuppressStartupBanner="TRUE"
-				AdditionalLibraryDirectories="..\..\..\CS\out\release7\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\release7\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
+				AdditionalLibraryDirectories="..\..\..\CS\out\release7\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\release7\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs;..\..\..\cel\out\release7\libs;$(CEL)\out\release7\libs;$(CEL)\libs"
 				TargetMachine="1"/>
 			<Tool
 				Name="VCLibrarianTool"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
-				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;_WINDOWS"
+				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;_WINDOWS;USE_CEL"
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
@@ -155,8 +155,8 @@
 				Name="VCPreLinkEventTool"/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;_WINDOWS;PROJECTGEN_VERSION=7"
-				AdditionalIncludeDirectories=".;..\..\src\pslaunch;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
+				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;_WINDOWS;USE_CEL;PROJECTGEN_VERSION=7"
+				AdditionalIncludeDirectories=".;..\..\src\pslaunch;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32;..\..\..\cel\include;$(CEL)\include;$(CEL)\include\cel"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -179,10 +179,10 @@
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;_WINDOWS;WIN32"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;_WINDOWS;USE_CEL;WIN32"
 				OptimizeForProcessor="1"
 				AdditionalOptions=" "
-				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
+				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32;..\..\..\cel\include;$(CEL)\include;$(CEL)\include\cel"
 				PrecompiledHeaderFile="..\..\out\debug7\build\apppslaunch\apppslaunch.pch"
 				AssemblerListingLocation="..\..\out\debug7\build\apppslaunch\"
 				ObjectFile="..\..\out\debug7\build\apppslaunch\"
@@ -204,16 +204,16 @@
 				ProgramDatabaseFile="..\..\out\debug7\build\apppslaunch\pslaunch.pdb"
 				SubSystem="1"
 				AdditionalOptions=" "
-				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib libcurl.lib"
+				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib libcurl.lib libceltool_d.lib"
 				SuppressStartupBanner="TRUE"
-				AdditionalLibraryDirectories="..\..\..\CS\out\debug7\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug7\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
+				AdditionalLibraryDirectories="..\..\..\CS\out\debug7\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug7\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs;..\..\..\cel\out\debug7\libs;$(CEL)\out\debug7\libs;$(CEL)\libs"
 				TargetMachine="1"/>
 			<Tool
 				Name="VCLibrarianTool"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;_WINDOWS"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;_WINDOWS;USE_CEL"
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
@@ -228,8 +228,8 @@
 				Name="VCPreLinkEventTool"/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;_WINDOWS;PROJECTGEN_VERSION=7"
-				AdditionalIncludeDirectories=".;..\..\src\pslaunch;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;_WINDOWS;USE_CEL;PROJECTGEN_VERSION=7"
+				AdditionalIncludeDirectories=".;..\..\src\pslaunch;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32;..\..\..\cel\include;$(CEL)\include;$(CEL)\include\cel"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -252,10 +252,10 @@
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;_WINDOWS;WIN32;CS_BUILD_SHARED_LIBS"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;_WINDOWS;USE_CEL;WIN32;CS_BUILD_SHARED_LIBS"
 				OptimizeForProcessor="1"
 				AdditionalOptions=" "
-				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
+				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32;..\..\..\cel\include;$(CEL)\include;$(CEL)\include\cel"
 				PrecompiledHeaderFile="..\..\out\debug7\build\apppslaunch\apppslaunch.pch"
 				AssemblerListingLocation="..\..\out\debug7\build\apppslaunch\"
 				ObjectFile="..\..\out\debug7\build\apppslaunch\"
@@ -277,16 +277,16 @@
 				ProgramDatabaseFile="..\..\out\debug7\build\apppslaunch\pslaunch.pdb"
 				SubSystem="1"
 				AdditionalOptions=" "
-				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib libcurl.lib"
+				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib libcurl.lib libceltool_d.lib"
 				SuppressStartupBanner="TRUE"
-				AdditionalLibraryDirectories="..\..\..\CS\out\debug7\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug7\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
+				AdditionalLibraryDirectories="..\..\..\CS\out\debug7\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug7\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs;..\..\..\cel\out\debug7\libs;$(CEL)\out\debug7\libs;$(CEL)\libs"
 				TargetMachine="1"/>
 			<Tool
 				Name="VCLibrarianTool"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;_WINDOWS"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;_WINDOWS;USE_CEL"
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
@@ -301,8 +301,8 @@
 				Name="VCPreLinkEventTool"/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;_WINDOWS;PROJECTGEN_VERSION=7"
-				AdditionalIncludeDirectories=".;..\..\src\pslaunch;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;_WINDOWS;USE_CEL;PROJECTGEN_VERSION=7"
+				AdditionalIncludeDirectories=".;..\..\src\pslaunch;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32;..\..\..\cel\include;$(CEL)\include;$(CEL)\include\cel"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -325,10 +325,10 @@
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_MEMORY_TRACKER;_WINDOWS;WIN32"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_MEMORY_TRACKER;_WINDOWS;USE_CEL;WIN32"
 				OptimizeForProcessor="1"
 				AdditionalOptions=" "
-				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
+				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32;..\..\..\cel\include;$(CEL)\include;$(CEL)\include\cel"
 				PrecompiledHeaderFile="..\..\out\debug7\build\apppslaunch\apppslaunch.pch"
 				AssemblerListingLocation="..\..\out\debug7\build\apppslaunch\"
 				ObjectFile="..\..\out\debug7\build\apppslaunch\"
@@ -350,16 +350,16 @@
 				ProgramDatabaseFile="..\..\out\debug7\build\apppslaunch\pslaunch.pdb"
 				SubSystem="1"
 				AdditionalOptions=" "
-				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib libcurl.lib"
+				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib libcurl.lib libceltool_d.lib"
 				SuppressStartupBanner="TRUE"
-				AdditionalLibraryDirectories="..\..\..\CS\out\debug7\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug7\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
+				AdditionalLibraryDirectories="..\..\..\CS\out\debug7\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug7\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs;..\..\..\cel\out\debug7\libs;$(CEL)\out\debug7\libs;$(CEL)\libs"
 				TargetMachine="1"/>
 			<Tool
 				Name="VCLibrarianTool"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_MEMORY_TRACKER;_WINDOWS"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_MEMORY_TRACKER;_WINDOWS;USE_CEL"
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
@@ -374,8 +374,8 @@
 				Name="VCPreLinkEventTool"/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_MEMORY_TRACKER;_WINDOWS;PROJECTGEN_VERSION=7"
-				AdditionalIncludeDirectories=".;..\..\src\pslaunch;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_MEMORY_TRACKER;_WINDOWS;USE_CEL;PROJECTGEN_VERSION=7"
+				AdditionalIncludeDirectories=".;..\..\src\pslaunch;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32;..\..\..\cel\include;$(CEL)\include;$(CEL)\include\cel"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -398,10 +398,10 @@
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_MEMORY_TRACKER;_WINDOWS;WIN32;CS_BUILD_SHARED_LIBS"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_MEMORY_TRACKER;_WINDOWS;USE_CEL;WIN32;CS_BUILD_SHARED_LIBS"
 				OptimizeForProcessor="1"
 				AdditionalOptions=" "
-				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
+				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32;..\..\..\cel\include;$(CEL)\include;$(CEL)\include\cel"
 				PrecompiledHeaderFile="..\..\out\debug7\build\apppslaunch\apppslaunch.pch"
 				AssemblerListingLocation="..\..\out\debug7\build\apppslaunch\"
 				ObjectFile="..\..\out\debug7\build\apppslaunch\"
@@ -423,16 +423,16 @@
 				ProgramDatabaseFile="..\..\out\debug7\build\apppslaunch\pslaunch.pdb"
 				SubSystem="1"
 				AdditionalOptions=" "
-				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib libcurl.lib"
+				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib libcurl.lib libceltool_d.lib"
 				SuppressStartupBanner="TRUE"
-				AdditionalLibraryDirectories="..\..\..\CS\out\debug7\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug7\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
+				AdditionalLibraryDirectories="..\..\..\CS\out\debug7\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug7\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs;..\..\..\cel\out\debug7\libs;$(CEL)\out\debug7\libs;$(CEL)\libs"
 				TargetMachine="1"/>
 			<Tool
 				Name="VCLibrarianTool"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_MEMORY_TRACKER;_WINDOWS"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_MEMORY_TRACKER;_WINDOWS;USE_CEL"
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
@@ -447,8 +447,8 @@
 				Name="VCPreLinkEventTool"/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_MEMORY_TRACKER;_WINDOWS;PROJECTGEN_VERSION=7"
-				AdditionalIncludeDirectories=".;..\..\src\pslaunch;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_MEMORY_TRACKER;_WINDOWS;USE_CEL;PROJECTGEN_VERSION=7"
+				AdditionalIncludeDirectories=".;..\..\src\pslaunch;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32;..\..\..\cel\include;$(CEL)\include;$(CEL)\include\cel"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -471,10 +471,10 @@
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_REF_TRACKER;_WINDOWS;WIN32"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_REF_TRACKER;_WINDOWS;USE_CEL;WIN32"
 				OptimizeForProcessor="1"
 				AdditionalOptions=" "
-				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
+				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32;..\..\..\cel\include;$(CEL)\include;$(CEL)\include\cel"
 				PrecompiledHeaderFile="..\..\out\debug7\build\apppslaunch\apppslaunch.pch"
 				AssemblerListingLocation="..\..\out\debug7\build\apppslaunch\"
 				ObjectFile="..\..\out\debug7\build\apppslaunch\"
@@ -496,16 +496,16 @@
 				ProgramDatabaseFile="..\..\out\debug7\build\apppslaunch\pslaunch.pdb"
 				SubSystem="1"
 				AdditionalOptions=" "
-				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib libcurl.lib"
+				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib libcurl.lib libceltool_d.lib"
 				SuppressStartupBanner="TRUE"
-				AdditionalLibraryDirectories="..\..\..\CS\out\debug7\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug7\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
+				AdditionalLibraryDirectories="..\..\..\CS\out\debug7\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug7\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs;..\..\..\cel\out\debug7\libs;$(CEL)\out\debug7\libs;$(CEL)\libs"
 				TargetMachine="1"/>
 			<Tool
 				Name="VCLibrarianTool"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_REF_TRACKER;_WINDOWS"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_REF_TRACKER;_WINDOWS;USE_CEL"
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
@@ -520,8 +520,8 @@
 				Name="VCPreLinkEventTool"/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_REF_TRACKER;_WINDOWS;PROJECTGEN_VERSION=7"
-				AdditionalIncludeDirectories=".;..\..\src\pslaunch;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_REF_TRACKER;_WINDOWS;USE_CEL;PROJECTGEN_VERSION=7"
+				AdditionalIncludeDirectories=".;..\..\src\pslaunch;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32;..\..\..\cel\include;$(CEL)\include;$(CEL)\include\cel"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -544,10 +544,10 @@
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_REF_TRACKER;_WINDOWS;WIN32;CS_BUILD_SHARED_LIBS"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_REF_TRACKER;_WINDOWS;USE_CEL;WIN32;CS_BUILD_SHARED_LIBS"
 				OptimizeForProcessor="1"
 				AdditionalOptions=" "
-				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
+				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32;..\..\..\cel\include;$(CEL)\include;$(CEL)\include\cel"
 				PrecompiledHeaderFile="..\..\out\debug7\build\apppslaunch\apppslaunch.pch"
 				AssemblerListingLocation="..\..\out\debug7\build\apppslaunch\"
 				ObjectFile="..\..\out\debug7\build\apppslaunch\"
@@ -569,16 +569,16 @@
 				ProgramDatabaseFile="..\..\out\debug7\build\apppslaunch\pslaunch.pdb"
 				SubSystem="1"
 				AdditionalOptions=" "
-				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib libcurl.lib"
+				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib libcurl.lib libceltool_d.lib"
 				SuppressStartupBanner="TRUE"
-				AdditionalLibraryDirectories="..\..\..\CS\out\debug7\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug7\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
+				AdditionalLibraryDirectories="..\..\..\CS\out\debug7\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug7\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs;..\..\..\cel\out\debug7\libs;$(CEL)\out\debug7\libs;$(CEL)\libs"
 				TargetMachine="1"/>
 			<Tool
 				Name="VCLibrarianTool"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_REF_TRACKER;_WINDOWS"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_REF_TRACKER;_WINDOWS;USE_CEL"
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
@@ -593,8 +593,8 @@
 				Name="VCPreLinkEventTool"/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_REF_TRACKER;_WINDOWS;PROJECTGEN_VERSION=7"
-				AdditionalIncludeDirectories=".;..\..\src\pslaunch;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_REF_TRACKER;_WINDOWS;USE_CEL;PROJECTGEN_VERSION=7"
+				AdditionalIncludeDirectories=".;..\..\src\pslaunch;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32;..\..\..\cel\include;$(CEL)\include;$(CEL)\include\cel"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -617,10 +617,10 @@
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
-				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;_WINDOWS;WIN32"
+				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;_WINDOWS;USE_CEL;WIN32"
 				OptimizeForProcessor="1"
 				AdditionalOptions=" "
-				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
+				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32;..\..\..\cel\include;$(CEL)\include;$(CEL)\include\cel"
 				PrecompiledHeaderFile="..\..\out\debug7\build\apppslaunch\apppslaunch.pch"
 				AssemblerListingLocation="..\..\out\debug7\build\apppslaunch\"
 				ObjectFile="..\..\out\debug7\build\apppslaunch\"
@@ -642,16 +642,16 @@
 				ProgramDatabaseFile="..\..\out\debug7\build\apppslaunch\pslaunch.pdb"
 				SubSystem="1"
 				AdditionalOptions=" "
-				AdditionalDependencies="libcrystalspace.lib ws2_32.lib zlib.lib libcurl.lib"
+				AdditionalDependencies="libcrystalspace.lib ws2_32.lib zlib.lib libcurl.lib libceltool.lib"
 				SuppressStartupBanner="TRUE"
-				AdditionalLibraryDirectories="..\..\..\CS\out\release7\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\release7\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
+				AdditionalLibraryDirectories="..\..\..\CS\out\release7\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\release7\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs;..\..\..\cel\out\release7\libs;$(CEL)\out\release7\libs;$(CEL)\libs"
 				TargetMachine="1"/>
 			<Tool
 				Name="VCLibrarianTool"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
-				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;_WINDOWS"
+				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;_WINDOWS;USE_CEL"
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
@@ -666,8 +666,8 @@
 				Name="VCPreLinkEventTool"/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;_WINDOWS;PROJECTGEN_VERSION=7"
-				AdditionalIncludeDirectories=".;..\..\src\pslaunch;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
+				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;_WINDOWS;USE_CEL;PROJECTGEN_VERSION=7"
+				AdditionalIncludeDirectories=".;..\..\src\pslaunch;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32;..\..\..\cel\include;$(CEL)\include;$(CEL)\include\cel"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -690,10 +690,10 @@
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
-				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;_WINDOWS;WIN32;CS_BUILD_SHARED_LIBS"
+				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;_WINDOWS;USE_CEL;WIN32;CS_BUILD_SHARED_LIBS"
 				OptimizeForProcessor="1"
 				AdditionalOptions=" "
-				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
+				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32;..\..\..\cel\include;$(CEL)\include;$(CEL)\include\cel"
 				PrecompiledHeaderFile="..\..\out\debug7\build\apppslaunch\apppslaunch.pch"
 				AssemblerListingLocation="..\..\out\debug7\build\apppslaunch\"
 				ObjectFile="..\..\out\debug7\build\apppslaunch\"
@@ -715,16 +715,16 @@
 				ProgramDatabaseFile="..\..\out\debug7\build\apppslaunch\pslaunch.pdb"
 				SubSystem="1"
 				AdditionalOptions=" "
-				AdditionalDependencies="libcrystalspace.lib ws2_32.lib zlib.lib libcurl.lib"
+				AdditionalDependencies="libcrystalspace.lib ws2_32.lib zlib.lib libcurl.lib libceltool.lib"
 				SuppressStartupBanner="TRUE"
-				AdditionalLibraryDirectories="..\..\..\CS\out\release7\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\release7\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
+				AdditionalLibraryDirectories="..\..\..\CS\out\release7\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\release7\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs;..\..\..\cel\out\release7\libs;$(CEL)\out\release7\libs;$(CEL)\libs"
 				TargetMachine="1"/>
 			<Tool
 				Name="VCLibrarianTool"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
-				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;_WINDOWS"
+				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;_WINDOWS;USE_CEL"
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
@@ -739,8 +739,8 @@
 				Name="VCPreLinkEventTool"/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;_WINDOWS;PROJECTGEN_VERSION=7"
-				AdditionalIncludeDirectories=".;..\..\src\pslaunch;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
+				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;_WINDOWS;USE_CEL;PROJECTGEN_VERSION=7"
+				AdditionalIncludeDirectories=".;..\..\src\pslaunch;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32;..\..\..\cel\include;$(CEL)\include;$(CEL)\include\cel"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
