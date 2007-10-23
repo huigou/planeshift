@@ -24,6 +24,21 @@
 #include "psutil.h"
 #include "util/consoleout.h"
 
+void GetTimeOfDay(csString& string)
+{
+    time_t curr=time(0);
+    tm* gmtm = gmtime(&curr);
+    
+    string.Format("%d-%02d-%02d %02d:%02d:%02d",
+                        gmtm->tm_year+1900,
+                        gmtm->tm_mon+1,
+                        gmtm->tm_mday,
+                        gmtm->tm_hour,
+                        gmtm->tm_min,
+                        gmtm->tm_sec);
+}                        
+
+
 ScopedTimer::ScopedTimer(csTicks limit, const char * format, ... ):
     limit(limit)
 { 
@@ -60,3 +75,4 @@ uint32 psGetRandom(uint32 limit)
 {
     return psrandomGen.Get(limit);
 }
+
