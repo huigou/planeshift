@@ -257,6 +257,20 @@ bool GMEventManager::RegisterPlayersInRangeInGMEvent (Client* client, float rang
     return true;
 }
 
+bool GMEventManager::ListGMEvents (Client* client)
+{
+    psserver->SendSystemInfo(client->GetClientNum(), "Event list");
+    psserver->SendSystemInfo(client->GetClientNum(), "--------------------");
+    for (unsigned int i = 0 ; i < gmEvents.GetSize() ; i++)
+    {
+        if (gmEvents[i]->status == RUNNING)
+        {
+            psserver->SendSystemInfo(client->GetClientNum(), "%s", gmEvents[i]->eventName.GetData());
+        }            
+    }
+    return true;
+}
+
 bool GMEventManager::CompleteGMEvent (Client* client, csString eventName)
 {
     int zero = 0;

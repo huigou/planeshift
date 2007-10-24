@@ -10,6 +10,7 @@
   repaired item 'stick' in your hand. Fixed.
 - Added an optional parameter to /event complete, allowing other GMs to close events
   that they didn't start.
+- Added /event list - Listing all running events.
 
 *** 2007-10-24 by Michael Gist
 - Added skeleton version of launcher app. Atm there's just 'Quit' and 'Launch Client'
