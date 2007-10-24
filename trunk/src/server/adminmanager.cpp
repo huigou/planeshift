@@ -703,6 +703,10 @@ bool AdminManager::AdminCmdData::DecodeAdminCmdMessage(MsgEntry *pMsg, psAdminCm
         {
             name = words.Get(2);
         }
+        else if (subCmd == "list")
+        {
+            // No params
+        }
         else
         {
             subCmd = "help"; // unknown command so force help on event
@@ -5795,7 +5799,8 @@ void AdminManager::HandleGMEvent(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdD
                                   "/event register [<range> | <player>]\n"
                                   "/event reward [all | range <range>] [#] <item>\n"
                                   "/event remove <player>\n"
-                                  "/event complete [name]\n");
+                                  "/event complete [name]\n"
+                                  "/event list\n");
         return;
     }
 
@@ -5851,6 +5856,12 @@ void AdminManager::HandleGMEvent(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdD
                                                                data.range,
                                                                data.stackCount,
                                                                data.item);
+        return;
+    }
+
+    if (data.subCmd == "list")
+    {
+        gmeventResult = gmeventManager->ListGMEvents(client);
         return;
     }
 }

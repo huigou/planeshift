@@ -91,6 +91,13 @@ public:
      */
     bool CompleteGMEvent (Client* client, csString eventName);
 
+    /** Sends a list of all events to client.
+     *
+     * @param client: client pointer.
+     * @return bool: true = success, false = failed.
+     */
+    bool ListGMEvents (Client* client);
+
     /** A player is removed from a running event.
      * A player can be excused from finishing an event.
      * @param clientnum: client number
