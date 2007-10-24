@@ -6,6 +6,8 @@
 - Added guarding for items in sacks too.
 - Public containers now also have the 5m guard limit. If you walk from your furnace, Your
   items are free for all!
+- Interrupting repair work wasn't resetting the repaired item in-use status. Makes the
+  repaired item 'stick' in your hand. Fixed.
 
 *** 2007-10-24 by Michael Gist
 - Added skeleton version of launcher app. Atm there's just 'Quit' and 'Launch Client'

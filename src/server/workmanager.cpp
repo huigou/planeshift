@@ -3489,7 +3489,13 @@ void psWorkGameEvent::Interrupt()
 
         // Stop event from being executed when triggered.
 	    if(category == REPAIR && client->GetActor() && (client->GetActor()->GetMode() == PSCHARACTER_MODE_WORK))
+        {
 	       client->GetActor()->SetMode(PSCHARACTER_MODE_PEACE);
+           
+            psItem *repairTarget = client->GetCharacterData()->Inventory().GetInventoryItem(PSCHARACTER_SLOT_RIGHTHAND);
+            if (repairTarget)
+                repairTarget->SetInUse(false);
+        }
     }
 }
 
