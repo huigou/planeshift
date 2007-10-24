@@ -19,6 +19,10 @@
 
 #include <psconfig.h>
 
+#ifndef CS_COMPILER_MSVC
+#include <sys/wait.h>
+#endif
+
 #include <iutil/eventq.h>
 #include <ivideo/graph2d.h>
 #include <ivideo/natwin.h>
@@ -335,7 +339,7 @@ int main(int argc, char* argv[])
                 else
                 {
                     int status;
-                    wait(status);
+                    wait(&status);
                     exitApp = status ? 0 : !0;
                 }
 #endif
