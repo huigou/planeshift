@@ -39,8 +39,6 @@ psRaceInfo::psRaceInfo()
     uid=0;
     mesh_name=NULL;
     base_texture_name=NULL;
-    start_sector_name=NULL;
-    start_x=start_y=start_z=start_yrot=0.0f;
     size.Set(0.0f);
     memset(&attributes,0,sizeof(attributes));
     natural_armor_id=0;
@@ -65,19 +63,36 @@ bool psRaceInfo::Load(iResultRow& row)
 
     gender = CacheManager::GetSingleton().ConvertGenderString(row["sex"]);
 
-    psSectorInfo *secinfo=CacheManager::GetSingleton().GetSectorInfoByID(row.GetUInt32("start_sector_id"));
-    if (secinfo==NULL)
+    iResultSet * rs = db->Select("SELECT * FROM race_spawns WHERE raceid = %lu", race);
+
+    if (!rs || rs->Count() == 0)
     {
-        Error3("Unresolvable sector id %lu in start_sector_id field of race info for race %s.  Failing!",
-               row.GetUInt32("start_sector_id"),name.GetData());
+        Error2("Race spawn points for race %d not found.", race);
         return false;
     }
 
-    start_sector_name = secinfo->name;
-    start_x = row.GetFloat("start_x");
-    start_y = row.GetFloat("start_y");
-    start_z = row.GetFloat("start_z");
-    start_yrot = row.GetFloat("start_yrot");
+    for (unsigned int i = 0 ; i < rs->Count() ; i++)
+    {
+        psRaceStartingLocation startingLoc;
+        startingLoc.x = (*rs)[i].GetFloat("x");
+        startingLoc.y = (*rs)[i].GetFloat("y");
+        startingLoc.z = (*rs)[i].GetFloat("z");
+        startingLoc.yrot = (*rs)[i].GetFloat("yrot");
+
+        psSectorInfo *secinfo=CacheManager::GetSingleton().GetSectorInfoByID((*rs)[i].GetUInt32("sector_id"));
+        if (secinfo==NULL)
+        {
+            Error3("Unresolvable sector id %lu in start_sector_id field of race info for race %lu.  Failing!",
+                   (*rs)[i].GetUInt32("sector_id"),race);
+            return false;
+        }
+
+        startingLoc.sector_name = secinfo->name;
+
+        startingLocations.Push(startingLoc);
+    }
+
+    rs->Release();
 
     size.x = row.GetFloat("size_x");
     size.y = row.GetFloat("size_y");
@@ -195,3 +210,13 @@ void psRaceInfo::SetBaseAttribute(PSITEMSTATS_STAT attrib, float val)
         val=0.0f;
     attributes[attrib]=(unsigned short)(val*10.0f);
 }
+
+void psRaceInfo::GetStartingLocation(float& x,float& y, float& z,float& rot,const char*& sectorname)
+{
+    psRaceStartingLocation selectedLoc = startingLocations[psserver->GetRandom(startingLocations.GetSize())];
+    x = selectedLoc.x;
+    y = selectedLoc.y;
+    z = selectedLoc.z;
+    rot = selectedLoc.yrot;
+    sectorname = selectedLoc.sector_name;
+};

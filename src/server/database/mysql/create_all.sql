@@ -53,6 +53,7 @@ source progress_events.sql;
 source quest_scripts.sql;
 source quests.sql;
 source race_info.sql;
+source race_spawns.sql;
 source sc_locations.sql;
 source sc_location_type.sql;
 source sc_npc_definitions.sql;
