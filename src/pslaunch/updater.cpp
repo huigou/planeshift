@@ -52,7 +52,7 @@ psUpdater::~psUpdater()
 void psUpdater::RunUpdate(psUpdaterEngine* engine)
 {
     // Check if we're already in the middle of a self-update.
-    if(engine->GetConfig()->IsSelfUpdating() != 0)
+    if(engine->GetConfig()->IsSelfUpdating())
     {
         // Continue the self update, passing the update stage.
         if(engine->selfUpdate(engine->GetConfig()->IsSelfUpdating()))
@@ -77,8 +77,12 @@ int main(int argc, char* argv[])
         args.Push(argv[i]);
     }
 
+    // Inputs to satisfy updaterengine.
+    bool a = false, b = false, c = true;
+    csArray<csString> d;
+
     // Initialize updater engine.
-    psUpdaterEngine* engine = new psUpdaterEngine(args, updater->GetObjectRegistry(), "psupdater");
+    psUpdaterEngine* engine = new psUpdaterEngine(args, updater->GetObjectRegistry(), "psupdater", &a, &b, &c, &d);
 
     // Run the update process!
     updater->RunUpdate(engine);

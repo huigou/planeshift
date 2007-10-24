@@ -1,5 +1,5 @@
 /*
-* pawslauncherwindow.cpp - Author: Mike Gist
+* globals.h - Author: Mike Gist
 *
 * Copyright (C) 2007 Atomic Blue (info@planeshift.it, http://www.atomicblue.org)
 *
@@ -17,29 +17,11 @@
 *
 */
 
-#include <psconfig.h>
+#ifndef __GLOBALS_H__
+#define __GLOBALS_H__
 
-#include "globals.h"
-#include "pawslauncherwindow.h"
+#include "pslaunch.h"
 
-bool pawsLauncherWindow::PostSetup()
-{
-    quit = (pawsButton*)FindWidget("Quit");
-    launchClient = (pawsButton*)FindWidget("LaunchButton");
+extern psLauncherGUI* psLaunchGUI;
 
-    return true;
-}
-
-bool pawsLauncherWindow::OnButtonPressed(int mouseButton, int keyModifier, pawsWidget* widget)
-{
-    if (widget==(pawsWidget*)quit)
-    {
-        psLaunchGUI->Quit();
-    }
-    else if (widget==(pawsWidget*)launchClient)
-    {
-        psLaunchGUI->ExecClient(true);
-        psLaunchGUI->Quit();
-    }
-    return true;
-}
+#endif // __GLOBALS_H__

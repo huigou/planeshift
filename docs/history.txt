@@ -1,3 +1,10 @@
+*** 2007-10-24 by Michael Gist
+- Added skeleton version of launcher app. Atm there's just 'Quit' and 'Launch Client'
+  buttons on the GUI. Supports update checking and launcher self-restarting on client
+  crash. Also added basic .cfg and .xml files to the PS root dir, so the updater
+  can successfully find no updates available (and exit correctly).
+- A few more changes to the updater version layout in updaterinfo.xml
+
 *** 2007-10-23 by Andrew Craig
 - Cleaned up some more code.  Moved server side stuff out of common and into server. 
 

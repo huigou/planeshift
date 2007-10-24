@@ -1,0 +1,30 @@
+<widget_description>
+
+<widget name="launcher" factory="pawsLauncherWindow" visible="yes" savepositions="no" movable="no" resizable="no">
+        
+    <bgimage resource="SetupBackground" alpha="255" fade="false"/>
+
+    <frame x="0" y="0" width="850" height="600" border="no"/>
+    <title resource="Blue Title" text="Planeshift Launcher" align="left"/>
+
+    <!-- Quit button -->
+    <widget name="Quit" factory="pawsButton">
+        <frame x="210" y="520" width="130" height="30" border="no"/>
+        <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="12"/>  
+         <buttonup resource="SetupButtonDown"/>
+         <buttondown resource="SetupButtonDown"/>
+		<label text="Quit"/>
+    </widget>
+   
+       <!-- Launch Client button -->
+    <widget name="LaunchButton" factory="pawsButton">
+        <frame x="350" y="520" width="130" height="30" border="no"/>
+        <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="12"/>  
+         <buttonup resource="SetupButtonDown"/>
+         <buttondown resource="SetupButtonDown"/>
+		<label text="Launch Client"/>
+    </widget>
+    
+</widget>
+
+</widget_description>

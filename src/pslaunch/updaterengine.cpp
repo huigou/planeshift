@@ -33,7 +33,8 @@
 
 iObjectRegistry* psUpdaterEngine::object_reg = NULL;
 
-psUpdaterEngine::psUpdaterEngine(const csArray<csString> args, iObjectRegistry* _object_reg, const char* _appName)
+psUpdaterEngine::psUpdaterEngine(const csArray<csString> args, iObjectRegistry* _object_reg, const char* _appName,
+                                 bool *_performUpdate, bool *_exitGui, bool *_updateNeeded, csArray<csString> *_consoleOut)
 {
     object_reg = _object_reg;
     vfs = csQueryRegistry<iVFS> (object_reg);
@@ -45,18 +46,35 @@ psUpdaterEngine::psUpdaterEngine(const csArray<csString> args, iObjectRegistry* 
     config = new psUpdaterConfig(args, object_reg, vfs);
     fileUtil = new FileUtil(vfs);
     appName = _appName;
+    exitGUI = _exitGui;
+    updateNeeded = _updateNeeded;
+    consoleOut = _consoleOut;
+    performUpdate = _performUpdate;
 }
 
 psUpdaterEngine::~psUpdaterEngine()
 {
     delete fileUtil;
+    delete config;
     fileUtil = NULL;
+    config = NULL;
+}
+
+void psUpdaterEngine::printOutput(const char *string, ...)
+{
+    csString outputString;
+    va_list args;
+    va_start (args, string);
+    outputString.FormatV (string, args);
+    va_end (args);
+    consoleOut->Push(outputString);
+    printf("%s\n", outputString.GetData());
 }
 
 void psUpdaterEngine::checkForUpdates()
 {
     // Make sure the old instance had time to terminate (self-update).
-    if(config->IsSelfUpdating() != 0)
+    if(config->IsSelfUpdating())
         csSleep(500);
 
     // Check if the last attempt at a general updated ended in failure.
@@ -73,21 +91,21 @@ void psUpdaterEngine::checkForUpdates()
     csRef<iDocumentNode> root = GetRootNode(UPDATERINFO_FILENAME);
     if(!root)
     {
-        printf("Unable to get root node");
+        printOutput("Unable to get root node");
         PS_PAUSEEXIT(1);
     }
 
     csRef<iDocumentNode> confignode = root->GetNode("config");
     if (!confignode)
     {
-        printf("Couldn't find config node in configfile!\n");
+        printOutput("Couldn't find config node in configfile!\n");
         PS_PAUSEEXIT(1);
     }
 
     // Load updater config
     if (!config->GetCurrentConfig()->Initialize(confignode))
     {
-        printf("Failed to Initialize mirror config current!\n");
+        printOutput("Failed to Initialize mirror config current!\n");
         return;
     }
 
@@ -98,28 +116,55 @@ void psUpdaterEngine::checkForUpdates()
     downloader->SetProxy(GetConfig()->GetProxy().host.GetData(),
         GetConfig()->GetProxy().port);
 
-    printf("Checking for updates to the updater!\n");
+    printOutput("Checking for updates to the updater: ");
 
     // Check for updater updates.
     if(checkUpdater())
     {
+        printOutput("Update Available!\n");
+        // If using a GUI, prompt user whether or not to update.
+        *updateNeeded = true;
+        while(!*performUpdate)
+        {
+            if(!*updateNeeded)
+            {
+                delete downloader;
+                downloader = NULL;
+                return;
+            }
+        }
+
         // Begin the self update process.
         selfUpdate(false);
         // Restore config files before terminate.
         fileUtil->RemoveFile("updaterinfo.xml");
         fileUtil->CopyFile("updaterinfo.xml.bak", "updaterinfo.xml", false, false);
         fileUtil->RemoveFile("updaterinfo.xml.bak");
+        *exitGUI = true;
         return;
     }
 
-    printf("Checking for updates to all files!\n");
+    printOutput("No updates needed!\nChecking for updates to all files: ");
 
     // Check for normal updates.
     if(checkGeneral())
     {
+        printOutput("Updates Available!\n");
         // Mark update as incomplete.
         config->GetConfigFile()->SetBool("Update.Clean", false);
         config->GetConfigFile()->Save();
+
+        // If using a GUI, prompt user whether or not to update.
+        *updateNeeded = true;
+        while(!*performUpdate)
+        {
+            if(!*updateNeeded)
+            {
+                delete downloader;
+                downloader = NULL;
+                return;
+            }
+        }
 
         // Begin general update.
         generalUpdate();
@@ -128,6 +173,8 @@ void psUpdaterEngine::checkForUpdates()
         config->GetConfigFile()->SetBool("Update.Clean", true);
         config->GetConfigFile()->Save();
     }
+    else
+        printOutput("No updates needed!\n");
 
     delete downloader;
     downloader = NULL;
@@ -145,20 +192,20 @@ bool psUpdaterEngine::checkUpdater()
     csRef<iDocumentNode> root = GetRootNode(UPDATERINFO_FILENAME);
     if(!root)
     {
-        printf("Unable to get root node");
+        printOutput("Unable to get root node");
         PS_PAUSEEXIT(1);
     }
 
     csRef<iDocumentNode> confignode = root->GetNode("config");
     if (!confignode)
     {
-        printf("Couldn't find config node in configfile!\n");
+        printOutput("Couldn't find config node in configfile!\n");
         PS_PAUSEEXIT(1);
     }
 
     if (!config->GetNewConfig()->Initialize(confignode))
     {
-        printf("Failed to Initialize mirror config new!\n");
+        printOutput("Failed to Initialize mirror config new!\n");
         PS_PAUSEEXIT(1);
     }
 
@@ -190,7 +237,7 @@ bool psUpdaterEngine::checkGeneral()
             if(!newCv->GetName().Compare(oldCv->GetName()))
             {
                 // There's a problem and we can't continue. Throw a boo boo and clean up.
-                printf("Local config and server config are incompatible!\n");
+                printOutput("Local config and server config are incompatible!\n");
                 fileUtil->RemoveFile("updaterinfo.xml");
                 fileUtil->CopyFile("updaterinfo.xml.bak", "updaterinfo.xml", false, false);
                 fileUtil->RemoveFile("updaterinfo.xml.bak");
@@ -212,7 +259,7 @@ csRef<iDocumentNode> psUpdaterEngine::GetRootNode(csString nodeName)
     csRef<iDocumentSystem> xml = csPtr<iDocumentSystem> (new csTinyDocumentSystem);
     if (!xml)
     {
-        printf("Could not load the XML Document System\n");
+        printOutput("Could not load the XML Document System\n");
         return NULL;
     }
 
@@ -220,7 +267,7 @@ csRef<iDocumentNode> psUpdaterEngine::GetRootNode(csString nodeName)
     csRef<iDataBuffer> buf = vfs->ReadFile (nodeName.GetData());
     if (!buf || !buf->GetSize())
     {
-        printf("Couldn't open config file '%s'!\n", nodeName.GetData());
+        printOutput("Couldn't open config file '%s'!\n", nodeName.GetData());
         return NULL;
     }
 
@@ -229,7 +276,7 @@ csRef<iDocumentNode> psUpdaterEngine::GetRootNode(csString nodeName)
     const char* error = configdoc->Parse(buf);
     if (error)
     {
-        printf("XML Parsing error in file '%s': %s.\n", nodeName.GetData(), error);
+        printOutput("XML Parsing error in file '%s': %s.\n", nodeName.GetData(), error);
         return NULL;
     }
 
@@ -237,7 +284,7 @@ csRef<iDocumentNode> psUpdaterEngine::GetRootNode(csString nodeName)
     csRef<iDocumentNode> root = configdoc->GetRoot ();
     if (!root)
     {
-        printf("Couldn't get config file rootnode!");
+        printOutput("Couldn't get config file rootnode!");
         return NULL;
     }
 
@@ -260,7 +307,7 @@ bool psUpdaterEngine::selfUpdate(int selfUpdating)
     {
     case 1: // We've downloaded the new file and executed it.
         {
-            printf("Copying new files!\n");
+            printOutput("Copying new files!\n");
 
             // Construct executable names.
             csString tempName = appName;
@@ -278,7 +325,7 @@ bool psUpdaterEngine::selfUpdate(int selfUpdating)
     case 2: // We're now running the new updater in the correct location.
         {
             // Clean up left over files.
-            printf("\nCleaning up!\n");
+            printOutput("\nCleaning up!\n");
 
             // Construct zip name.
             csString zip = appName;
@@ -295,7 +342,7 @@ bool psUpdaterEngine::selfUpdate(int selfUpdating)
         }
     default: // We need to extract the new updater and execute it.
         {
-            printf("Beginning self update!\n");
+            printOutput("Beginning self update!\n");
 
             // Construct zip name.
             csString zip = appName;
@@ -309,7 +356,7 @@ bool psUpdaterEngine::selfUpdate(int selfUpdating)
             csRef<iDataBuffer> buffer = vfs->ReadFile("/this/" + zip, true);
             if (!buffer)
             {
-                printf("Could not get MD5 of updater zip!!\n");
+                printOutput("Could not get MD5 of updater zip!!\n");
                 PS_PAUSEEXIT(1);
             }
 
@@ -319,7 +366,7 @@ bool psUpdaterEngine::selfUpdate(int selfUpdating)
 
             if(!md5sum.Compare(config->GetNewConfig()->GetUpdaterVersionLatestMD5()))
             {
-                printf("md5sum of updater zip does not match correct md5sum!!\n");
+                printOutput("md5sum of updater zip does not match correct md5sum!!\n");
                 PS_PAUSEEXIT(1);
             }
 
@@ -349,7 +396,7 @@ bool psUpdaterEngine::selfUpdate(int selfUpdating)
     {
     case 1: // We've downloaded the new file and executed it.
         {
-            printf("Copying new files!\n");
+            printOutput("Copying new files!\n");
 
             // Construct executable names.
             csString appName2 = appName;
@@ -368,7 +415,7 @@ bool psUpdaterEngine::selfUpdate(int selfUpdating)
     case 2: // We're now running the new updater in the correct location.
         {
             // Clean up left over files.
-            printf("\nCleaning up!\n");
+            printOutput("\nCleaning up!\n");
 
             // Construct zip name.
             csString zip = appName;
@@ -385,7 +432,7 @@ bool psUpdaterEngine::selfUpdate(int selfUpdating)
         }
     default: // We need to extract the new updater and execute it.
         {
-            printf("Beginning self update!\n");
+            printOutput("Beginning self update!\n");
 
             // Construct zip name.
             csString zip = appName;
@@ -399,7 +446,7 @@ bool psUpdaterEngine::selfUpdate(int selfUpdating)
             csRef<iDataBuffer> buffer = vfs->ReadFile("/this/" + zip, true);
             if (!buffer)
             {
-                printf("Could not get MD5 of updater zip!!\n");
+                printOutput("Could not get MD5 of updater zip!!\n");
                 PS_PAUSEEXIT(1);
             }
 
@@ -409,7 +456,7 @@ bool psUpdaterEngine::selfUpdate(int selfUpdating)
 
             if(!md5sum.Compare(config->GetNewConfig()->GetUpdaterVersionLatestMD5()))
             {
-                printf("md5sum of updater zip does not match correct md5sum!!\n");
+                printOutput("md5sum of updater zip does not match correct md5sum!!\n");
                 PS_PAUSEEXIT(1);
             }
 
@@ -450,7 +497,7 @@ void psUpdaterEngine::generalUpdate()
 
     if (!confignode)
     {
-        printf("Couldn't find config node in configfile!\n");
+        printOutput("Couldn't find config node in configfile!\n");
         PS_PAUSEEXIT(1);
     }
 
@@ -475,7 +522,7 @@ void psUpdaterEngine::generalUpdate()
         csRef<iDataBuffer> buffer = vfs->ReadFile("/this/" + zip, true);
         if (!buffer)
         {
-            printf("Could not get MD5 of updater zip!!\n");
+            printOutput("Could not get MD5 of updater zip!!\n");
             PS_PAUSEEXIT(1);
         }
 
@@ -485,7 +532,7 @@ void psUpdaterEngine::generalUpdate()
 
         if(!md5sum.Compare(newCv->GetMD5Sum()))
         {
-            printf("md5sum of client zip does not match correct md5sum!!\n");
+            printOutput("md5sum of client zip does not match correct md5sum!!\n");
             PS_PAUSEEXIT(1);
         }
 
@@ -563,20 +610,23 @@ void psUpdaterEngine::generalUpdate()
                 diff = newFilePath + ".vcdiff";
 
                 // Binary patch.
+                printOutput("Patching file %s: ", newFilePath);
                 if(!PatchFile(oldFilePath, diff, newFilePath))
                 {
-                    printf("Patching failed for file: %s. Reverting file!\n", newFilePath.GetData());
+                    printOutput("Failed!\n");
+                    printOutput("Patching failed for file: %s. Reverting file!\n", newFilePath.GetData());
                     fileUtil->CopyFile(oldFilePath, newFilePath, false, false);
                 }
                 else
                 {
+                    printOutput("Done!\n");
 
                     // Check md5sum is correct.
-                    printf("Checking for correct md5sum: ");
+                    printOutput("Checking for correct md5sum: ");
                     csRef<iDataBuffer> buffer = vfs->ReadFile("/this/" + newFilePath, true);
                     if(!buffer)
                     {
-                        printf("Could not get MD5 of patched file %s! Reverting file!\n", newFilePath.GetData());
+                        printOutput("Could not get MD5 of patched file %s! Reverting file!\n", newFilePath.GetData());
                         fileUtil->RemoveFile("/this/" + newFilePath);
                         fileUtil->CopyFile(oldFilePath, newFilePath, false, false);
                     }
@@ -589,12 +639,12 @@ void psUpdaterEngine::generalUpdate()
 
                         if(!md5sum.Compare(fileMD5))
                         {
-                            printf("md5sum of file %s does not match correct md5sum! Reverting file!\n", newFilePath.GetData());
+                            printOutput("md5sum of file %s does not match correct md5sum! Reverting file!\n", newFilePath.GetData());
                             fileUtil->RemoveFile("/this/" + newFilePath);
                             fileUtil->CopyFile(oldFilePath, newFilePath, false, false);
                         }
                         else
-                            printf("Success!\n");
+                            printOutput("Success!\n");
                     }
                 }
 
