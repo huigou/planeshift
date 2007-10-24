@@ -1,3 +1,8 @@
+*** 2007-10-24 by Dave Bentham
+- Rewards can be given to individual participants of events.
+  /event reward [all | range # | playername] # item
+  playername can be by target. # items is now mandatory.
+
 *** 2007-10-24 by Sasha Levin
 - Added support for multiple spawn points for each race.
 - DB VER BUMP!
