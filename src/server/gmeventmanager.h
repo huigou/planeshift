@@ -83,6 +83,14 @@ public:
      */
     bool CompleteGMEvent (Client* client, int gmID);
 
+    /** A player completes an event.
+     *
+     * @param client: client pointer.
+     * @param eventName: Name of the event.
+     * @return bool: true = success, false = failed.
+     */
+    bool CompleteGMEvent (Client* client, csString eventName);
+
     /** A player is removed from a running event.
      * A player can be excused from finishing an event.
      * @param clientnum: client number
@@ -169,6 +177,15 @@ private:
      * @return GMEvent*: ptr to GM event structure.
      */
     GMEvent* GetGMEventByGM(unsigned int gmID, GMEventStatus status, int& startIndex);
+
+    /** find a particular GM's event from them all.
+     *
+     * @param eventName: Name of the event.
+     * @param status: event of status looked for.
+     * @param startIndex: start index into array.
+     * @return GMEvent*: ptr to GM event structure.
+     */
+    GMEvent* GetGMEventByName(csString eventName, GMEventStatus status, int& startIndex);
 
     /** Find any event that a player may be/was registered to, returns index.
      *

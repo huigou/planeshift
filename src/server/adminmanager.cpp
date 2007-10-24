@@ -699,7 +699,11 @@ bool AdminManager::AdminCmdData::DecodeAdminCmdMessage(MsgEntry *pMsg, psAdminCm
         {
             player = words[2];
         }
-        else if (subCmd != "complete")
+        else if (subCmd == "complete")
+        {
+            name = words.Get(2);
+        }
+        else
         {
             subCmd = "help"; // unknown command so force help on event
         }
@@ -5791,7 +5795,7 @@ void AdminManager::HandleGMEvent(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdD
                                   "/event register [<range> | <player>]\n"
                                   "/event reward [all | range <range>] [#] <item>\n"
                                   "/event remove <player>\n"
-                                  "/event complete\n");
+                                  "/event complete [name]\n");
         return;
     }
 
@@ -5822,8 +5826,12 @@ void AdminManager::HandleGMEvent(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdD
     // player completed event
     if (data.subCmd == "complete")
     {
-        gmeventResult = gmeventManager->CompleteGMEvent(client,
-                                                        client->GetPlayerID());
+        if (data.name == "")
+            gmeventResult = gmeventManager->CompleteGMEvent(client,
+                                                            client->GetPlayerID());
+        else
+            gmeventResult = gmeventManager->CompleteGMEvent(client,
+                                                            data.name);
         return;
     }
 
