@@ -495,15 +495,28 @@ bool Client::CanTake(psItem* item)
 				return false;
 		}
 	}
+
     // Allow if the item is pickupable and either: public, guarded by the character, or the guarding character is offline
     unsigned int guard = item->GetGuardingCharacterID();
+    gemActor* guardingActor = GEMSupervisor::GetSingleton().FindPlayerEntity(guard);
+
     if ((guard == 0 || 
 		 guard == GetCharacterData()->GetCharacterID() || 
-		 !GEMSupervisor::GetSingleton().FindPlayerEntity(guard)
-		 )
+		 !guardingActor
+         )
 		 && !item->GetIsNpcOwned() && !item->GetIsNoPickup()
 		)
         return true;
+
+    if (guard && guardingActor)
+    {
+        gemItem* gemitem = item->GetGemObject();
+        if (item->GetContainerID())
+            gemitem = GEMSupervisor::GetSingleton().FindItemEntity(item->GetContainerID());
+        if (gemitem &&
+            guardingActor->RangeTo(gemitem) > 5)
+            return true;
+    }
 
     // Allow GM2s to take any PC-owned stuff
     if (GetSecurityLevel() >= 22 && !item->GetIsNpcOwned() && !item->GetIsNoPickup())

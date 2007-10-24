@@ -2,6 +2,10 @@
 - Added support for multiple spawn points for each race.
 - DB VER BUMP!
 - Fixed crash in MoveFromInventory.
+- GM2+ can now pick up any PC guarded items.
+- Added guarding for items in sacks too.
+- Public containers now also have the 5m guard limit. If you walk from your furnace, Your
+  items are free for all!
 
 *** 2007-10-24 by Michael Gist
 - Added skeleton version of launcher app. Atm there's just 'Quit' and 'Launch Client'
