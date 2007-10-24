@@ -552,6 +552,12 @@ void SlotManager::MoveFromInventory(psSlotMovementMsg& msg, Client *fromClient)
                     // easy case is to stack compatible items
                     chr->Inventory().SetLockEncumbranceState(true);
                     psItem *stack = chr->Inventory().RemoveItem(NULL, srcSlot, msg.stackCount);
+                    if (!stack)
+                    {
+                        chr->Inventory().SetLockEncumbranceState(false);
+                        return;
+                    }
+
                     item->CombineStack(stack);
                     item->Save(false);
                     chr->Inventory().SetLockEncumbranceState(false);
