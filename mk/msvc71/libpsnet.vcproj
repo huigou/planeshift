@@ -721,9 +721,6 @@
 			Name="Source Files"
 			Filter="">
 			<File
-				RelativePath="..\..\src\common\net\adminmessage.cpp">
-			</File>
-			<File
 				RelativePath="..\..\src\common\net\charmessages.cpp">
 			</File>
 			<File
@@ -766,9 +763,6 @@
 		<Filter
 			Name="Header Files"
 			Filter="">
-			<File
-				RelativePath="..\..\src\common\net\adminmessage.h">
-			</File>
 			<File
 				RelativePath="..\..\src\common\net\charmessages.h">
 			</File>
