@@ -64,10 +64,8 @@ psUpdaterConfig::~psUpdaterConfig()
 {
     delete currentCon;
     delete newCon;
-    delete configFile;
     currentCon = NULL;
     newCon = NULL;
-    configFile = NULL;
 }
 
 const char* Config::GetPlatform()
@@ -90,8 +88,15 @@ bool Config::Initialize(csRef<iDocumentNode> node)
     csRef<iDocumentNode> updaterNode = node->GetNode("updater");
     if(updaterNode)
     {
-        updaterVersionLatest = updaterNode->GetAttributeValueAsInt("version");
-        updaterVersionLatestMD5 = updaterNode->GetAttributeValue(GetPlatform());
+        csRef<iDocumentNodeIterator> nodeItr = updaterNode->GetNodes();
+        while(nodeItr->HasNext())
+        {
+            csRef<iDocumentNode> nNode = nodeItr->Next();
+            if(!strcmp(nNode->GetValue(),"version"))
+                updaterVersionLatest = nNode->GetAttributeValueAsInt("version");
+            else if(!strcmp(nNode->GetValue(),GetPlatform()))
+                updaterVersionLatestMD5 = nNode->GetAttributeValue(GetPlatform());
+        }
     }
     else
     {

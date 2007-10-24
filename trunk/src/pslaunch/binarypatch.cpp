@@ -137,8 +137,6 @@ process:
 
 bool PatchFile(const char *oldFilePath, const char *vcdiff, const char *newFilePath)
 {
-    printf("Patching file %s: ", newFilePath);
-
     FILE* srcFile = fopen(oldFilePath, "rb");
     FILE* patchFile = fopen(vcdiff, "rb");
     FILE* outFile = fopen(newFilePath, "wb");
@@ -149,12 +147,5 @@ bool PatchFile(const char *oldFilePath, const char *vcdiff, const char *newFileP
     fclose(patchFile);
     fclose(srcFile);
 
-    if(res != 0)
-    {
-        printf("Failed!\n");
-        return false;
-    }
-
-    printf("Done!\n");
-    return true;
+    return (!res);
 }

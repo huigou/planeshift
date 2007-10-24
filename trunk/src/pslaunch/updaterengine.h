@@ -57,8 +57,22 @@ private:
 
     /* XML doc; reading from xml files in the update zip. */
     csRef<iDocument> configdoc;
+
+    /* Array to store console output. */
+    csArray<csString> *consoleOut;
+
+    /* Set to true if we want the GUI to exit. */
+    bool *exitGUI;
+
+    /* Set to true if we need to tell the GUI that an update is pending. */
+    bool *updateNeeded;
+
+    /* If true, then it's okay to perform the update. */
+    bool *performUpdate;
+
 public:
-    psUpdaterEngine(const csArray<csString> args, iObjectRegistry* _object_reg, const char* _appName);
+    psUpdaterEngine(const csArray<csString> args, iObjectRegistry* _object_reg, const char* _appName,
+                    bool *_performUpdate, bool *_exitGui, bool *_updateNeeded, csArray<csString> *_consoleOut);
     ~psUpdaterEngine();
 
     /* Return the config object */
@@ -87,6 +101,9 @@ public:
 
     /* Check for 'general' updates */
     bool checkGeneral();
+
+    /* Print to console and save to array for GUI output. */
+    void printOutput(const char* string, ...);
 };
 
 #endif // __UPDATERENGINE_H__
