@@ -610,7 +610,7 @@ void psUpdaterEngine::generalUpdate()
                 diff = newFilePath + ".vcdiff";
 
                 // Binary patch.
-                printOutput("Patching file %s: ", newFilePath);
+                printOutput("Patching file %s: ", newFilePath.GetData());
                 if(!PatchFile(oldFilePath, diff, newFilePath))
                 {
                     printOutput("Failed!\n");
