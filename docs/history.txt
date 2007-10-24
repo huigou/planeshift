@@ -1,3 +1,9 @@
+*** 2007-10-24 by Anders Reggestad
+- Added setting of impervious when disabling stuck NPCs so that they would not be easy
+  targets for players. 
+  NPC NET VERSION BUMPED
+- Fixed compiler warning in psraceinfo.cpp
+
 *** 2007-10-24 by Dave Bentham
 - Rewards can be given to individual participants of events.
   /event reward [all | range # | playername] # item
@@ -33,7 +39,7 @@
 *** 2007-10-23 by Michael Gist
 - Increased MAXQUEUESIZE to 20000.
 
-*** 2007-10-23 by Andrew Craig
+*** 2007-10-23 by Anders Reggestad
 - Added disabling and stopping of NPCs that use to long time on a tick.
 
 *** 2007-10-22 by Andrew Craig

@@ -94,6 +94,7 @@ public:
     void QueueDropCommand(iCelEntity *entity, csString slot);
     void QueueResurrectCommand(csVector3 where, float rot, csString sector, int character_id);
     void QueueSequenceCommand(csString name, int cmd, int count);
+    void QueueImperviousCommand(iCelEntity * entity, bool impervious);
     void SendAllCommands(bool final = false);
 
     void SendConsoleCommand(const char *cmd);

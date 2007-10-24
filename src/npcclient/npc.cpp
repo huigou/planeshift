@@ -315,6 +315,7 @@ void NPC::Disable()
 
     //now persist
     npcclient->GetNetworkMgr()->QueueDRData(this);
+    npcclient->GetNetworkMgr()->QueueImperviousCommand(GetEntity(),true);
 }
 
 void NPC::DumpBehaviorList()
@@ -342,6 +343,7 @@ void NPC::ClearState()
     SetAlive(false);
     // Enable position check next time npc is attached
     checked = false;
+    disabled = false;
 }
 
 void NPC::GetNearestEntity(uint32_t& target_id,csVector3& dest,csString& name,float range)
