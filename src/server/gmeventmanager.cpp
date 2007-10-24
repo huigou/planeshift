@@ -375,7 +375,9 @@ bool GMEventManager::RemovePlayerFromGMEvent (int clientnum, int gmID, Client* t
 
 /// Reward player(s). Create reward item(s) and put in player's inventory if possible.
 bool GMEventManager::RewardPlayersInGMEvent (Client* client,
+                                             RangeSpecifier rewardRecipient,
                                              float range,
+                                             Client* target,
                                              unsigned short stackCount,
                                              csString itemName)
 {
@@ -389,7 +391,7 @@ bool GMEventManager::RewardPlayersInGMEvent (Client* client,
         return false;
     }
     // check range is within max permissable
-    if (range != NO_RANGE && (range <= 0.0 || range > MAX_REGISTER_RANGE))
+    if (rewardRecipient == IN_RANGE && (range <= 0.0 || range > MAX_REGISTER_RANGE))
     {
        psserver->SendSystemInfo(clientnum,
                                 "Range should be greater than 0m upto %.2fm to reward participants.",
@@ -407,20 +409,47 @@ bool GMEventManager::RewardPlayersInGMEvent (Client* client,
         return false;
     }
 
-    // reward ALL players
-    ClientConnectionSet* clientConnections = psserver->GetConnections();
-    Client* target;
-    gemActor* clientActor = client->GetActor();
-    for (size_t p = 0; p < gmEvent->playerID.GetSize(); p++)
+    if (stackCount <= 0)
     {
-        if ((target = clientConnections->FindPlayer(gmEvent->playerID[p])))
+       psserver->SendSystemInfo(clientnum,
+                                "Cannot reward 0 items to participants.");
+       return false;
+    }
+
+    if (rewardRecipient == INDIVIDUAL)
+    {
+        if (!target)
+            psserver->SendSystemInfo(clientnum, "Invalid target for reward.");
+        else
         {
-            if (range == NO_RANGE || clientActor->RangeTo(target->GetActor()) <= range)
+            zero = 0;
+            GMEvent* playersEvent = GetGMEventByPlayer(target->GetPlayerID(), RUNNING, zero);
+            if (playersEvent && playersEvent->id == gmEvent->id)
             {
-                if (RewardPlayer(target, stackCount, basestats))
-                   psserver->SendSystemInfo(clientnum, "%s has been rewarded.", target->GetName());
-                else
-                   psserver->SendSystemInfo(clientnum, "%s has not been rewarded.", target->GetName());
+                RewardPlayer(clientnum, target, stackCount, basestats);
+            }
+            else
+            {
+                psserver->SendSystemInfo(clientnum,
+                                         "%s is not registered in your \'%s\' event.",
+                                         target->GetName(),
+                                         gmEvent->eventName.GetDataSafe());
+            }
+        }
+    }
+    else
+    {
+        // reward ALL players (incl. within range)
+        ClientConnectionSet* clientConnections = psserver->GetConnections();
+        gemActor* clientActor = client->GetActor();
+        for (size_t p = 0; p < gmEvent->playerID.GetSize(); p++)
+        {
+            if ((target = clientConnections->FindPlayer(gmEvent->playerID[p])))
+            {
+                if (rewardRecipient == ALL || clientActor->RangeTo(target->GetActor()) <= range)
+                {
+                    RewardPlayer(clientnum, target, stackCount, basestats);
+                }
             }
         }
     }
@@ -704,14 +733,15 @@ GMEventManager::GMEvent* GMEventManager::GetGMEventByPlayer(unsigned int playerI
 }
 
 /// reward an individual player.
-bool GMEventManager::RewardPlayer(Client* target, unsigned short stackCount, psItemStats* basestats)
+void GMEventManager::RewardPlayer(int clientnum, Client* target, unsigned short stackCount, psItemStats* basestats)
 {
     // generate the prize item
     psItem* newitem = basestats->InstantiateBasicItem(true);
     if (newitem == NULL)
     {
         Error1("Could not instantiate from base item.");
-        return false;
+        psserver->SendSystemInfo(clientnum, "%s has not been rewarded.", target->GetName());
+        return;
     }
     newitem->SetItemQuality(basestats->GetQuality());
     newitem->SetStackCount(stackCount);
@@ -722,15 +752,13 @@ bool GMEventManager::RewardPlayer(Client* target, unsigned short stackCount, psI
     {
         // inform recipient of their prize
         psserver->SendSystemInfo(target->GetClientNum(), 
-                                 "You have been rewarded for participating in this GM event.");
-
-        return true;
+                                 "You have been rewarded for participating in this GM event.");        psserver->SendSystemInfo(clientnum, "%s has been rewarded.", target->GetName());
+        return;
     }
 
     // failed to stash item, so remove it
     CacheManager::GetSingleton().RemoveInstance(newitem);
-
-    return false;
+    psserver->SendSystemInfo(clientnum, "%s has not been rewarded.", target->GetName());
 }
 
 /// allocates the next GM event id

@@ -666,30 +666,52 @@ bool AdminManager::AdminCmdData::DecodeAdminCmdMessage(MsgEntry *pMsg, psAdminCm
         }
         else if (subCmd == "reward")
         {
-            // "/event reward [range # | all] <#> item"
+            // "/event reward [range # | all | [player_name]] <#> item"
             int rewardIndex = 3;
+            stackCount = 0;
 
-            commandMod = words[2];    // 'range' or 'all'
-            range = -1.0;
-            if (commandMod == "range" && 
-                strspn(words[3].GetDataSafe(), "0123456789.") == words[3].Length())
+            if (strspn(words[2].GetDataSafe(), "0123456789") == words[2].Length())
             {
-                range = words.GetFloat(3);
-                rewardIndex = 4;
+                commandMod.Empty();
+                (words.GetInt(2) > TOP_SHORT_INT_VAL) ? stackCount = TOP_SHORT_INT_VAL : stackCount = words.GetInt(2);
+                rangeSpecifier = INDIVIDUAL;  // expecting a player by target
             }
-            else if (commandMod != "all")
+            else
             {
-                subCmd = "help";
-                return true;
-            }
+                commandMod = words[2];    // 'range' or 'all'
+                range = 0;
+                if (commandMod == "range")
+                {
+                    rangeSpecifier = IN_RANGE;
+                    if (strspn(words[3].GetDataSafe(), "0123456789.") == words[3].Length())
+                    {
+                        range = words.GetFloat(3);
+                        rewardIndex = 4;
+                    }
+                }
+                else if (commandMod == "all")
+                {
+                    rangeSpecifier = ALL;
+                }
+                else
+                {
+                    rangeSpecifier = INDIVIDUAL;
+                    player = words[2];
+                    commandMod.Empty();
+                }
 
-            // if next 'word' is numeric, then its number of items. If missing, assume 1.
-            stackCount = 1;
-            if (strspn(words[rewardIndex].GetDataSafe(), "0123456789") == words[rewardIndex].Length())
-            {
-                (words.GetInt(rewardIndex) > TOP_SHORT_INT_VAL) ? stackCount = TOP_SHORT_INT_VAL : stackCount = words.GetInt(rewardIndex);
+                // next 'word' should be numeric: number of items.
+                if (strspn(words[rewardIndex].GetDataSafe(), "0123456789") == words[rewardIndex].Length())
+                {
+                    (words.GetInt(rewardIndex) > TOP_SHORT_INT_VAL) ? stackCount = TOP_SHORT_INT_VAL : stackCount = words.GetInt(rewardIndex);
  
-                rewardIndex++;
+                    rewardIndex++;
+                }
+                else
+                {
+                    subCmd = "help";
+                    return true;
+                }
             }
 
             // last bit is the item name itself!
@@ -5786,7 +5808,7 @@ void AdminManager::HandleGMEvent(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdD
         (data.gmeventName.Length() == 0 || data.gmeventDesc.Length() == 0)) ||
         (data.subCmd == "register" && data.player.Length() == 0 && data.range == NO_RANGE) ||
         (data.subCmd == "remove" && data.player.Length() == 0) ||
-        (data.subCmd == "reward" && data.item.Length() == 0))
+        (data.subCmd == "reward" && data.item.Length() == 0 && data.stackCount == 0))
     {
         data.subCmd = "help";
     }
@@ -5797,7 +5819,7 @@ void AdminManager::HandleGMEvent(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdD
         psserver->SendSystemInfo( me->clientnum, "/event help\n"
                                   "/event create <name> <description>\n"
                                   "/event register [<range> | <player>]\n"
-                                  "/event reward [all | range <range>] [#] <item>\n"
+                                  "/event reward [all | range <range> | <player>] # <item>\n"
                                   "/event remove <player>\n"
                                   "/event complete [name]\n"
                                   "/event list\n");
@@ -5853,7 +5875,9 @@ void AdminManager::HandleGMEvent(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdD
     if (data.subCmd == "reward")
     {
         gmeventResult = gmeventManager->RewardPlayersInGMEvent(client,
+                                                               data.rangeSpecifier,
                                                                data.range,
+                                                               target,
                                                                data.stackCount,
                                                                data.item);
         return;
