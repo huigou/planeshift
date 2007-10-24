@@ -26,6 +26,7 @@
 #include "client.h"                 // Client, and ClientConnectionSet classes
 #include "msgmanager.h"             // Parent class
 #include "bulkobjects/psitem.h"
+#include "gmeventmanager.h"
 
 class psDatabase;
 class psSpawnManager;
@@ -114,6 +115,7 @@ protected:
         float radius, range;
         unsigned short stackCount;
         int instance;
+        RangeSpecifier rangeSpecifier;
 
         bool DecodeAdminCmdMessage(MsgEntry *pMsg, psAdminCmdMessage& msg, Client *client);        
     };

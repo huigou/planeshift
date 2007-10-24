@@ -30,13 +30,20 @@
 #define MAX_EVENT_NAME_LENGTH 40
 #define MAX_REGISTER_RANGE    100.0
 
-#define NO_RANGE              -1.0
-
 enum GMEventStatus
 {
     EMPTY = 0,                 // no GM event
     RUNNING,                   // GM event is running
     COMPLETED                  // GM event is complete
+};
+
+#define NO_RANGE -1.0
+
+enum RangeSpecifier
+{
+    ALL,
+    IN_RANGE,
+    INDIVIDUAL
 };
  
 /** GameMaster Events manager class.
@@ -111,13 +118,17 @@ public:
      *  of reward).
      *
      * @param client: client pointer.
+     * @param rewardRecipient: who will receive the reward.
      * @param range: required range of winners (NO_RANGE = all participants).
+     * @parame target: specific individual winner.
      * @param stackCount: number of items to reward.
      * @param itemName: name of the reward item.
      * @return bool: true = success, false = failed.
      */
     bool RewardPlayersInGMEvent (Client* client,
+                                 RangeSpecifier rewardRecipient,
                                  float range,
+                                 Client *target,
                                  unsigned short stackCount,
                                  csString itemName);
 
@@ -205,10 +216,12 @@ private:
 
     /** Reward player in event.
      * 
+     * @param clientnum: GM client number.
      * @param target: client pointer to recipient.
-     * @return bool: true = success, false = failed.
+     * @param stackCount: stack count # items in reward.
+     * @param basestats: base stats of reward item.
      */
-    bool RewardPlayer(Client* target, unsigned short stackCount, psItemStats* basestats);
+    void RewardPlayer(int clientnum, Client* target, unsigned short stackCount, psItemStats* basestats);
 
     /** Get next free event id number.
      */
