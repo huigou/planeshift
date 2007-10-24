@@ -1158,12 +1158,31 @@ void NetworkManager::QueueSequenceCommand(csString name, int cmd, int count)
 
     if ( outbound->msg->overrun )
     {
-        CS_ASSERT(!"NetworkManager::QueueResurrectCommand put message in overrun state!\n");
+        CS_ASSERT(!"NetworkManager::QueueSequenceCommand put message in overrun state!\n");
     }
 
     cmd_count++;
 }
 
+void NetworkManager::QueueImperviousCommand(iCelEntity * entity, bool impervious)
+{
+    if ( outbound->msg->current > ( outbound->msg->bytes->GetSize() - 100 ) )
+    {
+        CPrintf(CON_DEBUG, "Sent all commands [%d] due to possible Message overrun.\n", cmd_count );
+        SendAllCommands();
+    }
+
+    outbound->msg->Add( (int8_t) psNPCCommandsMessage::CMD_IMPERVIOUS);
+    outbound->msg->Add( (uint32_t) entity->GetID() );
+    outbound->msg->Add( (bool) impervious );
+
+    if ( outbound->msg->overrun )
+    {
+        CS_ASSERT(!"NetworkManager::QueueImperviousCommand put message in overrun state!\n");
+    }
+
+    cmd_count++;
+}
 
 void NetworkManager::SendAllCommands(bool final)
 {

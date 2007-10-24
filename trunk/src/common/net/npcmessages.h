@@ -185,6 +185,7 @@ public:
         CMD_TRANSFER,
         CMD_RESURRECT,
         CMD_SEQUENCE,
+        CMD_IMPERVIOUS,
         PCPT_TALK,   // perceptions go from server to superclient
         PCPT_ATTACK,
         PCPT_GROUPATTACK,

@@ -1115,13 +1115,13 @@ csList<Waypoint*> psNPCClient::FindWaypointRoute(Waypoint * start, Waypoint * en
 
 void psNPCClient::ListAllNPCs(const char * pattern)
 {
-    CPrintf(CON_CMDOUTPUT, "%-7s %-5s %-30s %-6s %-6s %-20s %-15s %-4s %-20s %-20s %-20s %-3s\n", 
-            "NPC ID", "EID", "Name", "Entity", "Status", "Brain","Behaviour","Step","Owner","Tribe","Region","Dbg");
+    CPrintf(CON_CMDOUTPUT, "%-7s %-5s %-30s %-6s %-6s %-20s %-15s %-4s %-20s %-20s %-20s %-3s %-8s\n", 
+            "NPC ID", "EID", "Name", "Entity", "Status", "Brain","Behaviour","Step","Owner","Tribe","Region","Dbg","Disabled");
     for (size_t i = 0; i < npcs.GetSize(); i++)
     {
         if (!pattern || strstr(npcs[i]->GetName(),pattern))
         {
-            CPrintf(CON_CMDOUTPUT, "%-7u %-5d %-30s %-6s %-6s %-20s %-15s %4d %-20s %-20s %-3s\n" ,
+            CPrintf(CON_CMDOUTPUT, "%-7u %-5d %-30s %-6s %-6s %-20s %-15s %4d %-20s %-20s %-20s %-3s %-8s\n" ,
                     npcs[i]->GetPID(),
                     (npcs[i]->GetEntity()?npcs[i]->GetEntity()->GetID():0),
                     npcs[i]->GetName(),
@@ -1133,7 +1133,8 @@ void psNPCClient::ListAllNPCs(const char * pattern)
                     npcs[i]->GetOwnerName().GetDataSafe(),
                     (npcs[i]->GetTribe()?npcs[i]->GetTribe()->GetName().GetDataSafe():"(None)"),
                     (npcs[i]->GetRegion()?npcs[i]->GetRegion()->name.GetDataSafe():"(None)"),
-                    (npcs[i]->IsDebugging()?"Yes":"No")
+                    (npcs[i]->IsDebugging()?"Yes":"No"),
+                    (npcs[i]->IsDisabled()?"Disabled":"")
                     );
         }
     }

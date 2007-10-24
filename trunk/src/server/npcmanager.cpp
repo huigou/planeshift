@@ -1151,9 +1151,36 @@ void NPCManager::HandleCommandList(MsgEntry *me)
                 
                 psSequenceMessage msg(0,name,cmd,count);
                 psserver->GetEventManager()->Broadcast(msg.msg,NetBase::BC_EVERYONE);
+
+                break;
             }
             
+            case psNPCCommandsMessage::CMD_IMPERVIOUS:
+            {
+                PS_ID entity_id = list.msg->GetUInt32();
+                int impervious = list.msg->GetBool();
+                
+                gemNPC *entity = dynamic_cast<gemNPC *> (GEMSupervisor::GetSingleton().FindObject(entity_id));
 
+                psCharacter* chardata = NULL;
+                if (entity) chardata = entity->GetCharacterData();
+                if (!chardata)
+                {
+                    Debug1(LOG_SUPERCLIENT,entity_id,"Couldn't find character data.\n");
+                    break;
+                }
+
+                if (impervious)
+                {
+                    chardata->SetImperviousToAttack(chardata->GetImperviousToAttack() | TEMPORARILY_IMPERVIOUS);
+                }
+                else
+                {
+                    chardata->SetImperviousToAttack(chardata->GetImperviousToAttack() & ~TEMPORARILY_IMPERVIOUS);
+                }
+
+                break;
+            }
 
         }
         times[cmd] += csGetTicks() - cmdBegin;

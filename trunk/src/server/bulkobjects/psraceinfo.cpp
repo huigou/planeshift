@@ -82,7 +82,7 @@ bool psRaceInfo::Load(iResultRow& row)
         psSectorInfo *secinfo=CacheManager::GetSingleton().GetSectorInfoByID((*rs)[i].GetUInt32("sector_id"));
         if (secinfo==NULL)
         {
-            Error3("Unresolvable sector id %lu in start_sector_id field of race info for race %lu.  Failing!",
+            Error3("Unresolvable sector id %lu in start_sector_id field of race info for race %u.  Failing!",
                    (*rs)[i].GetUInt32("sector_id"),race);
             return false;
         }

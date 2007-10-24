@@ -125,6 +125,7 @@ public:
     void SetAlive(bool a) { alive = a; }
     bool IsAlive() const { return alive; }
     void Disable();
+    bool IsDisabled() { return disabled; }
 
     Behavior *GetCurrentBehavior() { return brain->GetCurrentBehavior(); }
     NPCType  *GetBrain() { return brain; }

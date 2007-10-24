@@ -490,6 +490,25 @@ csString psNPCCommandsMessage::ToString(AccessPointers * access_ptrs)
                 break;
             }
 
+            case psNPCCommandsMessage::CMD_IMPERVIOUS:
+            {
+                msgtext.Append("CMD_IMPERVIOUS: ");
+
+                PS_ID entity_id = msg->GetUInt32();
+                bool impervious = msg->GetBool();
+
+                // Make sure we haven't run past the end of the buffer
+                if (msg->overrun)
+                {
+                    Debug2(LOG_SUPERCLIENT,msg->clientnum,"Received incomplete CMD_IMPERVIOUS from NPC client %u.\n",msg->clientnum);
+                    break;
+                }
+
+                msgtext.AppendFmt("EID: %u Impervious: %s",
+                                  entity_id,impervious?"true":"false");
+                break;
+            }
+
             // perceptions go from server to superclient
             
             case psNPCCommandsMessage::PCPT_TALK: 
