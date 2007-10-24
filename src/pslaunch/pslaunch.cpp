@@ -331,6 +331,8 @@ int main(int argc, char* argv[])
                     GetExitCodeProcess(piProcessInfo.hProcess, &dwExitCode);
                 }
                 exitApp = dwExitCode ? 0 : !0;
+                CloseHandle(piProcessInfo.hProcess);
+                CloseHandle(piProcessInfo.hThread);
 #else
                 if(fork() == 0)
                 {
