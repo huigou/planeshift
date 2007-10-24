@@ -276,7 +276,7 @@ int main(int argc, char* argv[])
 
             // Request needed plugins for GUI.
             csInitializer::RequestPlugins(object_reg, CS_REQUEST_FONTSERVER, CS_REQUEST_IMAGELOADER,
-                                          CS_REQUEST_OPENGL3D, CS_REQUEST_ENGINE, CS_REQUEST_VFS, CS_REQUEST_END);
+                                          CS_REQUEST_OPENGL3D, CS_REQUEST_ENGINE, CS_REQUEST_END);
 
             // Start up GUI.
             csRef<Runnable> gui;
