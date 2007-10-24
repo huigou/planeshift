@@ -134,7 +134,7 @@ bool psLauncherGUI::InitApp()
     paws->SetMainWidget(mainWidget);
 
     // Register factory
-    pawsWidgetFactory* factory = new pawsLauncherWindowFactory;
+    new pawsLauncherWindowFactory;
 
     // Load and assign a default button click sound for pawsbutton
     paws->LoadSound("/planeshift/art/music/gui/ccreate/next.wav","sound.standardButtonClick");
