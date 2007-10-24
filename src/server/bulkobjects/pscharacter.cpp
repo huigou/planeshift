@@ -1324,7 +1324,7 @@ void psCharacter::DropItem(psItem *&item, csVector3 suggestedPos, bool transient
                     Error2("Cannot add item into container slot %zu.\n", slot);
                     return;
                 }
-                item->SetGuardingCharacterID(item->GetOwningCharacterID());
+                item->SetGuardingCharacterID(GetCharacterID());
                 i--; // indexes shift when we remove one.
                 item->Save(false);
             }
