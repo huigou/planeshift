@@ -8,6 +8,8 @@
   items are free for all!
 - Interrupting repair work wasn't resetting the repaired item in-use status. Makes the
   repaired item 'stick' in your hand. Fixed.
+- Added an optional parameter to /event complete, allowing other GMs to close events
+  that they didn't start.
 
 *** 2007-10-24 by Michael Gist
 - Added skeleton version of launcher app. Atm there's just 'Quit' and 'Launch Client'

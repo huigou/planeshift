@@ -257,6 +257,18 @@ bool GMEventManager::RegisterPlayersInRangeInGMEvent (Client* client, float rang
     return true;
 }
 
+bool GMEventManager::CompleteGMEvent (Client* client, csString eventName)
+{
+    int zero = 0;
+    GMEvent* theEvent = GetGMEventByName(eventName, RUNNING, zero);
+    if (!theEvent)
+    {
+        psserver->SendSystemInfo(client->GetClientNum(), "Event %s wasn't found.", eventName.GetData());
+        return false;
+    }
+    return CompleteGMEvent(client, theEvent->gmID);
+}
+
 /// GM completes their event
 bool GMEventManager::CompleteGMEvent (Client* client, int gmID)
 {
@@ -634,6 +646,19 @@ GMEventManager::GMEvent* GMEventManager::GetGMEventByGM(unsigned int gmID, GMEve
     {
         startIndex++;
         if (gmEvents[e]->gmID == gmID && gmEvents[e]->status == status)
+            return gmEvents[e];
+    }
+
+    return NULL;
+}
+
+/// returns a RUNNING event by name or NULL
+GMEventManager::GMEvent* GMEventManager::GetGMEventByName(csString eventName, GMEventStatus status, int& startIndex)
+{
+    for (size_t e = startIndex; e < gmEvents.GetSize(); e++)
+    {
+        startIndex++;
+        if (gmEvents[e]->eventName == eventName && gmEvents[e]->status == status)
             return gmEvents[e];
     }
 
