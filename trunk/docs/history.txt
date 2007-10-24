@@ -1,3 +1,7 @@
+*** 2007-10-24 by Sasha Levin
+- Added support for multiple spawn points for each race.
+- DB VER BUMP!
+
 *** 2007-10-24 by Michael Gist
 - Added skeleton version of launcher app. Atm there's just 'Quit' and 'Launch Client'
   buttons on the GUI. Supports update checking and launcher self-restarting on client

@@ -55,6 +55,7 @@ DROP TABLE progression_events;
 DROP TABLE `quest_scripts`;
 DROP TABLE quests;
 DROP TABLE `race_info`;
+DROP TABLE race_spawns;
 DROP TABLE `sc_locations`;
 DROP TABLE `sc_location_type`;
 DROP TABLE sc_npc_definitions;

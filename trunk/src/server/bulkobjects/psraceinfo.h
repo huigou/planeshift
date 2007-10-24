@@ -33,6 +33,12 @@ enum PSRACEINFO_STAMINA
     PSRACEINFO_STAMINA_MENTAL_WALK
 };
 
+struct psRaceStartingLocation
+{
+    float x,y,z,yrot;
+    const char* sector_name;
+};
+
 struct psRaceInfo
 {
 protected:
@@ -54,9 +60,7 @@ public:
     
     const char *mesh_name;
     const char *base_texture_name;
-    float start_x,start_y,start_z,start_yrot;
     csVector3 size;
-    const char *start_sector_name;
     int initialCP;
     int natural_armor_id;
     float runMinSpeed,runBaseSpeed,runMaxSpeed;
@@ -71,14 +75,9 @@ public:
 
     float baseRegen[4];
 
-    void GetStartingLocation(float& x,float& y, float& z,float& rot,const char*& sectorname)
-    {
-        x = start_x;
-        y = start_y;
-        z = start_z;
-        rot = start_yrot;
-        sectorname = start_sector_name;
-    };
+    csArray<psRaceStartingLocation> startingLocations;
+
+    void GetStartingLocation(float& x,float& y, float& z,float& rot,const char*& sectorname);
     void GetSize(csVector3& size)
     {
         size = this->size;

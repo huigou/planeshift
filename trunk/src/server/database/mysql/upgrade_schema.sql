@@ -780,6 +780,23 @@ INSERT INTO command_group_assignment VALUES( "/setlabelcolor", 22 );
 ALTER TABLE `planeshift`.`character_quests` MODIFY COLUMN `remaininglockout` INT(10) UNSIGNED DEFAULT 0,
  ADD COLUMN `last_response` INT(10) DEFAULT '-1' AFTER `remaininglockout`;
 
+#### 1166 - Sasha Levin - Added multiple spawn points support
+CREATE TABLE `planeshift`.`race_spawns` (
+  `raceid` INTEGER,
+  `x` FLOAT,
+  `y` FLOAT,
+  `z` FLOAT,
+  `yrot` FLOAT,
+  `sector_id` INTEGER,,
+  PRIMARY KEY (`raceid`, `x`, `y`, `z`, `yrot`, `sector_id`)
+)
+
+ALTER TABLE `planeshift`.`race_info` DROP COLUMN `start_x`,
+ DROP COLUMN `start_y`,
+ DROP COLUMN `start_z`,
+ DROP COLUMN `start_sector_id`,
+ DROP COLUMN `start_yrot`;
+
 
 #
 # Insert your upgrade before this line. Remember when you set a new db_version
