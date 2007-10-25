@@ -1,3 +1,6 @@
+*** 2007-10-24 by Andrew Craig
+- Fixed an issue with hair colours not being set correctly when removing helm.
+
 *** 2007-10-24 by Anders Reggestad
 - Added setting of impervious when disabling stuck NPCs so that they would not be easy
   targets for players. 

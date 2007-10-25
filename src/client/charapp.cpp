@@ -216,8 +216,11 @@ void psCharAppearance::ShowHair(bool show)
     }
     else if ( show == true )
     {            
-        state->AttachCoreMesh(hairMesh);
-        HairColor(hairShader);
+        state->AttachCoreMesh(hairMesh);        
+        
+        if (colorSet)
+            HairColor(hairShader);
+            
         hairAttached = true;
     }
 }
@@ -733,11 +736,12 @@ bool psCharAppearance::Detach(const char* socketName )
 
 void psCharAppearance::Clone(psCharAppearance* clone)
 {
-    this->hairMesh = clone->hairMesh;
-    this->beardMesh = clone->beardMesh;
+    this->hairMesh      = clone->hairMesh;
+    this->beardMesh     = clone->beardMesh;
     
-    this->hairShader = clone->hairShader;    
-    this->faceMaterial = clone->faceMaterial;
-    this->skinToneSet = clone->skinToneSet;   
-    this->hairAttached = clone->hairAttached;
+    this->hairShader    = clone->hairShader;    
+    this->faceMaterial  = clone->faceMaterial;
+    this->skinToneSet   = clone->skinToneSet;   
+    this->hairAttached  = clone->hairAttached;
+    this->colorSet      = clone->colorSet;
 }
