@@ -540,19 +540,11 @@ void psClientCharManager::HandleEquipment( MsgEntry* me )
                 p.Clone(object->charApp);
                 p.SetMesh(dollObject);
                 p.Equip(slotname,equip.mesh,equip.part,equip.partMesh,equip.texture);
-                //doll->charApp->Equip(slotname,equip->mesh,equip->part,equip->partMesh,equip->texture);
-                //Equip(dollObject, &equip, slotname, object->traitList);
             }
         }
     }
     else
     {
-        printf("Dequipping item\n");
-        
-        
-        // Update the actor
-        //Equip(object->pcmesh->GetMesh(), &equip, slotname, object->traitList);
-
         // Update any doll views registered for changes
         csArray<iPAWSSubscriber*> dolls = PawsManager::GetSingleton().ListSubscribers("sigActorUpdate");
         for (size_t i=0; i<dolls.GetSize(); i++)
@@ -577,8 +569,6 @@ void psClientCharManager::HandleEquipment( MsgEntry* me )
                 p.SetMesh(dollObject);
                 p.Clone(object->charApp);
                 p.Dequip(slotname,equip.mesh,equip.part,equip.partMesh,equip.texture);
-                //doll->charApp->Equip(slotname,equip->mesh,equip->part,equip->partMesh,equip->texture);
-                //Equip(dollObject, &equip, slotname, object->traitList);
             }
         }    
         
