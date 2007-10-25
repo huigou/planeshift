@@ -388,8 +388,8 @@ The GM can remove a player from a current event by (note, [player] can be by nam
 When an event is complete, the GM should enter:
 /event complete
 
-To reward the participants (all of them, or those within a specified range) of a current event:
-/event reward [range 0-100 | all] [#] [item name]</topic>
+To reward the participants (all of them, those within a specified range or an individual - by name or by target) of a current event:
+/event reward [range 0-100 | all | player] [#] [item name]</topic>
         <topic name="/freeze">/freeze player
 
 Prevents a player from moving or using any commands until they quit/relog.</topic>

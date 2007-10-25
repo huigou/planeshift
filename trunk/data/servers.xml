@@ -1,3 +1,5 @@
-<serverlist>
-    <server name="localhost" ip="localhost" port="13331" />
-</serverlist>    
+<serverlist>
+    <server name="Outland" ip="localhost" port="13331" />
+    <server name="Laanx" ip="laanx.fragnetics.com" port="7777" />
+    <server name="Laanx Dev" ip="laanx.fragnetics.com" port="6767" />
+</serverlist>
