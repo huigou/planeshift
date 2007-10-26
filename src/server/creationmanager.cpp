@@ -838,7 +838,7 @@ void psCharCreationManager::HandleUploadMessage( MsgEntry* me, Client *client )
     {
         // Now try the raceinfo starting location.
         raceinfo->GetStartingLocation(x,y,z,yrot,sectorname);
-        psSectorInfo *sectorinfo = CacheManager::GetSingleton().GetSectorInfoByName(sectorname);
+        sectorinfo = CacheManager::GetSingleton().GetSectorInfoByName(sectorname);
         if (!sectorinfo)
         {        
             Error2("Unresolvable starting sector='%s'", sectorname );
