@@ -42,7 +42,7 @@ INSERT INTO `movement_types` VALUES (1, 'forward',       0.0,  0.0, -3.0,  0.0, 
 INSERT INTO `movement_types` VALUES (2, 'backward',      0.0,  0.0, +3.0,  0.0,  0.0,  0.0);
 INSERT INTO `movement_types` VALUES (3, 'rotate left',   0.0,  0.0,  0.0,  0.0, +1.5,  0.0);
 INSERT INTO `movement_types` VALUES (4, 'rotate right',  0.0,  0.0,  0.0,  0.0, -1.5,  0.0);
-INSERT INTO `movement_types` VALUES (5, 'strafe left',  +0.4,  0.0,  0.0,  0.0,  0.0,  0.0);
-INSERT INTO `movement_types` VALUES (6, 'strafe right', -0.4,  0.0,  0.0,  0.0,  0.0,  0.0);
+INSERT INTO `movement_types` VALUES (5, 'strafe left',  +2.0,  0.0,  0.0,  0.0,  0.0,  0.0);
+INSERT INTO `movement_types` VALUES (6, 'strafe right', -2.0,  0.0,  0.0,  0.0,  0.0,  0.0);
 INSERT INTO `movement_types` VALUES (7, 'jump',          0.0, +3.0,  0.0,  0.0,  0.0,  0.0);
 
