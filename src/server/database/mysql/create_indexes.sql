@@ -1,0 +1,11 @@
+create index indx_sector_name on sectors (name);
+create index indx_AL_sectorname on action_locations (sectorname);
+create index indx_AL_master_id on action_locations (master_id);
+create index indx_quests_name on quests (name);
+create index indx_char_name on characters (name);
+create index indx_char_lastname on characters (lastname);
+create index indx_item_instance_flags on item_instances (flags);
+create index indx_petition_status on petitions (status);
+create index indx_petition_escalation_level on petitions (escalation_level);
+create index indx_petition_player on petitions (player);
+create index indx_guild_name on guilds (name);

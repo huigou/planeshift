@@ -1,3 +1,6 @@
+*** 2007-10-26 by Sasha Levin
+- Added db indexes for common selects. Should speed up those operations.
+
 *** 2007-10-24 by Andrew Craig
 - Fixed an issue with hair colours not being set correctly when removing helm.
 
