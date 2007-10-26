@@ -461,6 +461,10 @@ Manage petitions to help users.</topic>
         <topic name="/pos">/pos target
 
 GMs have an enhanced version of the /pos command which shows your current region and the direction you are facing.  It also has an optional parameter to get the position of another entity.  (may specify by name or an ID)</topic>
+        <topic name="/quest">/quest command
+
+Manage completion of quests. When a player is targeted, commands are applied on him. Use /quest to list the quest completion status of the player. '/quest [status (0-discard, 1-complete)] [quest name]' to control the completion status of a player.
+	</topic>
         <topic name="/rain"> /rain sector [drops [length [fade]]|stop]
 
 It creates rain effect in a specific sector, with a specific number of drops, the length of the effect (in milliseconds) and its fading
@@ -474,6 +478,10 @@ Set a GM attribute on or off.  Available flags are:  invincible, invisible, view
 <topic name="/setlabelcolor">/setlabelcolor [target] [npc|player|gm|gm1|normal]
 
 Set the color of the label of target to the given value. The normal setting will again display the targets normal label color.</topic>  
+        <topic name="/setquality">/setquality command
+
+Allows changing the quality of the targeted item. Usage: /setquality [quality] [max quality]. Max quality is optional.
+	</topic>
 <topic name="/setskill">/setskill [target] [skill|'all'] [value|-1]
 
 Set one of your or target's skills or stats to a specific value.  Use 'all' as the name to set all skills and stats to the given value. Use -1 for value if you would like to view the current value of a skill or stat.</topic>
@@ -493,10 +501,6 @@ Use /snow sector 0 or /snow sector off for ending the event.</topic>
         <topic name="/takeitem">/takeitem [target] [quantity|'all'|''] [item]
 
 Command used to transfer an item to you from another character.  Example: "/takeitem target 3 Sabre"</topic>
-        <topic name="/quest">/quest command
-
-Manage completion of quests. When a player is targeted, commands are applied on him. Use /quest to list the quest completion status of the player. '/quest [status (0-discard, 1-complete)] [quest name]' to control the completion status of a player.
-	</topic>
 	<topic name="/teleport">/teleport subject destination
 
 Move the subject object/NPC/player to the given destination. In addition to the standard command syntax, the destination may be 'last' (last valid location; undo last teleport), 'spawn' (spawn point for that character), 'restore' (teleport offline character here), or 'map' followed by a mapname OR a sector and coordinates. Examples: "/teleport target here", "/teleport me Bob", "/teleport me map npcroom", "/teleport me map hydlaa_plaza 3 -42 10", "/teleport "Ink and Paper" map here -234.11 2.23 832"</topic>

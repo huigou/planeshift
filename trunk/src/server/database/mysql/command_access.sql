@@ -225,6 +225,12 @@ INSERT INTO command_group_assignment VALUES( "view stats", 25 );
 INSERT INTO command_group_assignment VALUES( "view stats", 24 );
 INSERT INTO command_group_assignment VALUES( "view stats", 23 );
 INSERT INTO command_group_assignment VALUES( "view stats", 22 );
+INSERT INTO command_group_assignment VALUES( "/setquality", 30 );
+INSERT INTO command_group_assignment VALUES( "/setquality", 26 );
+INSERT INTO command_group_assignment VALUES( "/setquality", 25 );
+INSERT INTO command_group_assignment VALUES( "/setquality", 24 );
+INSERT INTO command_group_assignment VALUES( "/setquality", 23 );
+INSERT INTO command_group_assignment VALUES( "/setquality", 22 );
 
 # GM1 and above
 INSERT INTO command_group_assignment VALUES( "/teleport", 30 );

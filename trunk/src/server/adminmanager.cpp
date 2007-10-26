@@ -757,6 +757,12 @@ bool AdminManager::AdminCmdData::DecodeAdminCmdMessage(MsgEntry *pMsg, psAdminCm
         }
         return true;
     }
+    else if (command == "/setquality")
+    {
+        x = words.GetFloat(1);
+        y = words.GetFloat(2);
+        return true;
+    }
 
     return false;
 }
@@ -1044,6 +1050,10 @@ void AdminManager::HandleAdminCmdMessage(MsgEntry *me, psAdminCmdMessage &msg, A
     else if (data.command == "/quest")
     {
         HandleCompleteQuest(me, msg, data, client, targetclient);
+    }
+    else if (data.command == "/setquality")
+    {
+        HandleSetQuality(msg, data, client, targetobject);
     }
 }
 
@@ -5973,3 +5983,24 @@ void AdminManager::HandleCompleteQuest(MsgEntry* me,psAdminCmdMessage& msg, Admi
     }
 }
 
+void AdminManager::HandleSetQuality(psAdminCmdMessage& msg, AdminCmdData& data, Client *client, gemObject* object )
+{
+    if (!object)
+    {
+        psserver->SendSystemError(client->GetClientNum(), "No target selected");
+        return;
+    }
+
+    psItem *item = object->GetItem();
+    if (!item)
+    {
+        psserver->SendSystemError(client->GetClientNum(), "Not an item");
+        return;
+    }
+    
+    item->SetItemQuality(data.x);
+    if (data.y)
+        item->SetMaxItemQuality(data.y);
+
+    item->Save(false);
+}
