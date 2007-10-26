@@ -485,6 +485,11 @@ Allows changing the quality of the targeted item. Usage: /setquality [quality] [
 <topic name="/setskill">/setskill [target] [skill|'all'] [value|-1]
 
 Set one of your or target's skills or stats to a specific value.  Use 'all' as the name to set all skills and stats to the given value. Use -1 for value if you would like to view the current value of a skill or stat.</topic>
+        <topic name="/settrait">/settrait command
+
+Allows changing the traits of a targeted char (or self if no target). Usage: /settrait [trait name].
+	</topic>
+
         <topic name="/show_gm">/show_gm
 
 Shows the GM GUI, a window with a player list and quick access to many commands.</topic>
