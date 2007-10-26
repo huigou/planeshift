@@ -297,7 +297,11 @@ protected:
     /// Handle request to view bad text from the targeted NPC.
     void HandleBadText(psAdminCmdMessage& msg, AdminCmdData& data, Client *client, gemObject* object );
 
+    /// Manipulate quests from characters
     void HandleCompleteQuest(MsgEntry* me,psAdminCmdMessage& msg, AdminCmdData& data, Client *client, Client *subject);
+
+    /// Change quality of items
+    void HandleSetQuality(psAdminCmdMessage& msg, AdminCmdData& data, Client *client, gemObject* object );
 
 protected:
 
