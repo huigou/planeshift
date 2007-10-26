@@ -8,6 +8,7 @@
 - Added a /setquality command for GMs.
 - Added a fix for #2593 by Vornne
 - Fixed broken char creation if tutorial doesn't exist (like in svn).
+- Added /settrait command for GMs.
 
 *** 2007-10-24 by Andrew Craig
 - Fixed an issue with hair colours not being set correctly when removing helm.

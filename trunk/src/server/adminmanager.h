@@ -303,6 +303,9 @@ protected:
     /// Change quality of items
     void HandleSetQuality(psAdminCmdMessage& msg, AdminCmdData& data, Client *client, gemObject* object );
 
+    /// Set trait of a char
+    void HandleSetTrait(psAdminCmdMessage& msg, AdminCmdData& data, Client *client, gemObject* object );
+
 protected:
 
     /** Adds a petition under the passed user's name to the 'petitions' table in the database

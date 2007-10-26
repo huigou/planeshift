@@ -763,6 +763,11 @@ bool AdminManager::AdminCmdData::DecodeAdminCmdMessage(MsgEntry *pMsg, psAdminCm
         y = words.GetFloat(2);
         return true;
     }
+    else if (command == "/settrait")
+    {
+        name = words.Get(1);
+        return true;
+    }
 
     return false;
 }
@@ -1054,6 +1059,10 @@ void AdminManager::HandleAdminCmdMessage(MsgEntry *me, psAdminCmdMessage &msg, A
     else if (data.command == "/setquality")
     {
         HandleSetQuality(msg, data, client, targetobject);
+    }
+    else if (data.command == "/settrait")
+    {
+        HandleSetTrait(msg, data, client, targetobject);
     }
 }
 
@@ -6003,4 +6012,33 @@ void AdminManager::HandleSetQuality(psAdminCmdMessage& msg, AdminCmdData& data, 
         item->SetMaxItemQuality(data.y);
 
     item->Save(false);
+}
+
+void AdminManager::HandleSetTrait(psAdminCmdMessage& msg, AdminCmdData& data, Client *client, gemObject* object )
+{
+    psCharacter* target;
+    if (object && object->GetCharacterData())
+        target = object->GetCharacterData();
+    else
+        target = client->GetCharacterData();
+
+    CacheManager::TraitIterator ti = CacheManager::GetSingleton().GetTraitIterator();
+    while(ti.HasNext())
+    {
+        psTrait* currTrait = ti.Next();
+        if (currTrait->gender == target->GetRaceInfo()->gender &&
+            currTrait->race == target->GetRaceInfo()->race &&
+            currTrait->name == data.name)
+        {
+            target->SetTraitForLocation(currTrait->location, currTrait);
+            csString str( "<traits>" );
+            str.Append(currTrait->ToXML() );
+            str.Append("</traits>");        
+            psTraitChangeMessage message( client->GetClientNum(), (uint32_t)target->GetActor()->GetEntity()->GetID(), str );
+            message.Multicast( target->GetActor()->GetMulticastClients(), 0, PROX_LIST_ANY_RANGE );     
+            psserver->SendSystemOK(client->GetClientNum(), "Trait successfully changed");
+            return;
+        }
+    }
+    psserver->SendSystemError(client->GetClientNum(), "Trait not found");
 }
