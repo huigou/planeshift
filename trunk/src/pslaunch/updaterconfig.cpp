@@ -88,14 +88,17 @@ bool Config::Initialize(csRef<iDocumentNode> node)
     csRef<iDocumentNode> updaterNode = node->GetNode("updater");
     if(updaterNode)
     {
-        csRef<iDocumentNodeIterator> nodeItr = updaterNode->GetNodes();
-        while(nodeItr->HasNext())
+        csRef<iDocumentNode> versionNode;
+        versionNode = updaterNode->GetNode("version");
+        if(versionNode)
         {
-            csRef<iDocumentNode> nNode = nodeItr->Next();
-            if(!strcmp(nNode->GetValue(),"version"))
-                updaterVersionLatest = nNode->GetAttributeValueAsInt("version");
-            else if(!strcmp(nNode->GetValue(),GetPlatform()))
-                updaterVersionLatestMD5 = nNode->GetAttributeValue(GetPlatform());
+            updaterVersionLatest = versionNode->GetContentsValueAsInt();
+        }
+        csRef<iDocumentNode> md5Node;
+        md5Node = updaterNode->GetNode(GetPlatform());
+        if(md5Node)
+        {
+            updaterVersionLatestMD5 = md5Node->GetContentsValue();
         }
     }
     else
