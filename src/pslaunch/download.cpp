@@ -45,6 +45,18 @@ Downloader::Downloader(csRef<iVFS> _vfs, psUpdaterConfig* _config)
     activeMirrorID = startingMirrorID;    
 }
 
+Downloader::Downloader(csRef<iVFS> _vfs)
+{
+    curl_global_init(CURL_GLOBAL_ALL);
+    curl = curl_easy_init();
+    curlerror = new char[CURL_ERROR_SIZE];
+    curl_easy_setopt (curl, CURLOPT_ERRORBUFFER, curlerror);
+    curl_easy_setopt(curl, CURLOPT_HEADER, 0);
+    curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1);
+
+    vfs = _vfs;
+}
+
 Downloader::~Downloader()
 {
     delete[] curlerror;
@@ -57,14 +69,26 @@ void Downloader::SetProxy (const char* host, int port)
     curl_easy_setopt (curl, CURLOPT_PROXYPORT, port);
 }
 
-bool Downloader::DownloadFile (const char* file, const char* dest)
+bool Downloader::DownloadFile (const char* file, const char* dest, bool URL)
 {
     // Get active url, append file to get full path.
-    Mirror* mirror = config->GetCurrentConfig()->GetMirrors()->Get(activeMirrorID);
+    Mirror* mirror;
+    if(URL)
+    {
+        mirror = new Mirror;
+        mirror->SetBaseURL(file);
+    }
+    else
+    {
+        mirror = config->GetCurrentConfig()->GetMirrors()->Get(activeMirrorID);
+    }
     while(mirror)
     {
         csString url = mirror->GetBaseURL();
-        url.AppendFmt(file);
+        if(!URL)
+        {
+            url.AppendFmt(file);
+        }
 
         char* destpath;
 
@@ -121,14 +145,28 @@ bool Downloader::DownloadFile (const char* file, const char* dest)
             else
                 printf ("Server error: %s (%ld).\n",error.GetData(),curlhttpcode);
 
-            // Try the next mirror.
-            mirror = config->GetCurrentConfig()->GetMirrors()->Get(CycleActiveMirror());
-            continue;
+            if(!URL)
+            {
+                // Try the next mirror.
+                mirror = config->GetCurrentConfig()->GetMirrors()->Get(CycleActiveMirror());
+                continue;
+            }
+            break;
         }
         // Success!
+        if(URL)
+        {
+            delete mirror;
+            mirror = NULL;
+        }
         return true;
     }
     printf("There are no active mirrors! Please check the forums for more info and help!\n");
+    if(URL)
+    {
+        delete mirror;
+        mirror = NULL;
+    }
     return false;
 }
 
