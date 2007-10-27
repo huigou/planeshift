@@ -774,6 +774,14 @@ bool AdminManager::AdminCmdData::DecodeAdminCmdMessage(MsgEntry *pMsg, psAdminCm
         description = words.Get(2);
         return true;
     }
+    else if (command == "/reload")
+    {
+        subCmd = words.Get(1);
+        if (subCmd == "item")
+            value = words.GetInt(2);
+        
+        return true;
+    }
     return false;
 }
 
@@ -1072,6 +1080,10 @@ void AdminManager::HandleAdminCmdMessage(MsgEntry *me, psAdminCmdMessage &msg, A
     else if (data.command == "/setitemname")
     {
         HandleSetItemName(msg, data, client, targetobject);
+    }
+    else if (data.command == "/reload")
+    {
+        HandleReload(msg, data, client, targetobject);
     }
 }
 
@@ -6076,4 +6088,40 @@ void AdminManager::HandleSetItemName(psAdminCmdMessage& msg, AdminCmdData& data,
     item->Save(false);
 
     psserver->SendSystemOK(client->GetClientNum(), "Name changed successfully");
+}
+
+void AdminManager::HandleReload(psAdminCmdMessage& msg, AdminCmdData& data, Client *client, gemObject* object )
+{
+    if (data.subCmd == "item")
+    {
+        bool bCreatingNew = false;
+        psItemStats* itemStats = CacheManager::GetSingleton().GetBasicItemStatsByID(data.value);
+        iResultSet* rs = db->Select("select * from item_stats where id = %d", data.value);
+        if (!rs || rs->Count() == 0)
+        {
+            psserver->SendSystemError(client->GetClientNum(), "Item stats for %d not found", data.value);
+            return;
+        }
+        if (itemStats == NULL)
+        {
+            bCreatingNew = true;
+            itemStats = new psItemStats();
+        }
+
+        if (!itemStats->ReadItemStats((*rs)[0]))
+        {
+            psserver->SendSystemError(client->GetClientNum(), "Couldn't load new item stats", data.value);
+            if (bCreatingNew)
+                delete itemStats;
+            return;
+        }
+        
+        if (bCreatingNew)
+        {
+            CacheManager::GetSingleton().AddItemStatsToHashTable(itemStats);
+            psserver->SendSystemOK(client->GetClientNum(), "Successfully created new item", data.value);
+        }
+        else
+            psserver->SendSystemOK(client->GetClientNum(), "Successfully modified item", data.value);
+    }
 }

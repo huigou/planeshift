@@ -328,6 +328,8 @@ public:
     // Map of locations.
     csArray<csString> stanceID;
 
+    void AddItemStatsToHashTable(psItemStats* newitem);
+
 protected:
     uint32_t effectID;
     uint32_t maxCommonStrID;                //< The max common string id
