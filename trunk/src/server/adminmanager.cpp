@@ -6021,6 +6021,8 @@ void AdminManager::HandleSetQuality(psAdminCmdMessage& msg, AdminCmdData& data, 
         item->SetMaxItemQuality(data.y);
 
     item->Save(false);
+
+    psserver->SendSystemOK(client->GetClientNum(), "Quality changed successfully");
 }
 
 void AdminManager::HandleSetTrait(psAdminCmdMessage& msg, AdminCmdData& data, Client *client, gemObject* object )
