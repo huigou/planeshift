@@ -261,7 +261,7 @@ iImage * pawsImageDrawable::GetImage()
 
     image = imageLoader->Load(buf, CS_IMGFMT_ANY | CS_IMGFMT_ALPHA);
 
-    if (image)
+    if (!image)
     {
         Error2( "Could not load image: '%s'", imageFileLocation.GetData());
         return 0;
