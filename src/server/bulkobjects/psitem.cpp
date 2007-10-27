@@ -407,6 +407,9 @@ bool psItem::Load(iResultRow& row)
        
     }
 
+    item_name = row["item_name"];
+    item_description = row["item_description"];
+
     return true;
 }
 
@@ -483,7 +486,9 @@ void psItem::Commit(bool children)
         "lock_str",
         "lock_skill",
         "openable_locks",
-        "loc_instance"
+        "loc_instance",
+        "item_name",
+        "item_description"
     };
 
     GetFieldArray(fields);
@@ -675,6 +680,9 @@ void psItem::GetFieldArray(psStringArray& fields)
     }
     fields.Push(openableLocksString);
     fields.FormatPush("%d", instance);
+
+    fields.Push(item_name);
+    fields.Push(item_description);
 }
 
 void psItem::ForceSaveIfNew()
@@ -1329,10 +1337,34 @@ bool psItem::GetBuyPersonalise()
 
 const char *psItem::GetName()
 {
+    if (item_name != "")
+        return item_name;
     return current_stats->GetName();
 }
 
 const char *psItem::GetDescription()
+{
+    if (item_description != "")
+        return item_description;
+    return current_stats->GetDescription();
+}
+
+void psItem::SetName(const char* newName)
+{
+    item_name = newName;
+}
+
+void psItem::SetDescription(const char* newDescription)
+{
+    item_description = newDescription;
+}
+
+const char *psItem::GetStandardName()
+{
+    return current_stats->GetName();
+}
+
+const char *psItem::GetStandardDescription()
 {
     return current_stats->GetDescription();
 }

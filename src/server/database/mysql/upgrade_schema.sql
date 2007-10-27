@@ -797,6 +797,10 @@ ALTER TABLE `planeshift`.`race_info` DROP COLUMN `start_x`,
  DROP COLUMN `start_sector_id`,
  DROP COLUMN `start_yrot`;
 
+#### 1167 - Sasha Levin - Added custom item name support
+ALTER TABLE `planeshift`.`item_instances` ADD COLUMN `item_name` VARCHAR(100) DEFAULT '' AFTER `openable_locks`,
+ ADD COLUMN `item_description` VARCHAR(100) DEFAULT '' AFTER `item_name`;
+
 
 #
 # Insert your upgrade before this line. Remember when you set a new db_version
