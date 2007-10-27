@@ -49,6 +49,10 @@ public:
 
     /* Return mirror URL */
     csString GetBaseURL() { return baseURL; }
+
+    /* Set mirror URL */
+    void SetBaseURL(csString url) { baseURL = url; }
+
 protected:
     friend class Config;
     /* Mirror ID */
