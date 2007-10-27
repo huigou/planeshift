@@ -117,6 +117,10 @@ INSERT INTO command_group_assignment VALUES( "quest others", 30 );
 INSERT INTO command_group_assignment VALUES( "quest others", 26 );
 INSERT INTO command_group_assignment VALUES( "quest others", 25 );
 INSERT INTO command_group_assignment VALUES( "quest others", 24 );
+INSERT INTO command_group_assignment VALUES( "/setitemname", 30 );
+INSERT INTO command_group_assignment VALUES( "/setitemname", 26 );
+INSERT INTO command_group_assignment VALUES( "/setitemname", 25 );
+INSERT INTO command_group_assignment VALUES( "/setitemname", 24 );
 
 # GM3 and above
 INSERT INTO command_group_assignment VALUES( "/ban", 30 );
