@@ -768,7 +768,12 @@ bool AdminManager::AdminCmdData::DecodeAdminCmdMessage(MsgEntry *pMsg, psAdminCm
         name = words.Get(1);
         return true;
     }
-
+    else if (command == "/setitemname")
+    {
+        name = words.Get(1);
+        description = words.Get(2);
+        return true;
+    }
     return false;
 }
 
@@ -1063,6 +1068,10 @@ void AdminManager::HandleAdminCmdMessage(MsgEntry *me, psAdminCmdMessage &msg, A
     else if (data.command == "/settrait")
     {
         HandleSetTrait(msg, data, client, targetobject);
+    }
+    else if (data.command == "/setitemname")
+    {
+        HandleSetItemName(msg, data, client, targetobject);
     }
 }
 
@@ -6041,4 +6050,28 @@ void AdminManager::HandleSetTrait(psAdminCmdMessage& msg, AdminCmdData& data, Cl
         }
     }
     psserver->SendSystemError(client->GetClientNum(), "Trait not found");
+}
+
+void AdminManager::HandleSetItemName(psAdminCmdMessage& msg, AdminCmdData& data, Client *client, gemObject* object )
+{
+    if (!object)
+    {
+        psserver->SendSystemError(client->GetClientNum(), "No target selected");
+        return;
+    }
+
+    psItem *item = object->GetItem();
+    if (!item)
+    {
+        psserver->SendSystemError(client->GetClientNum(), "Not an item");
+        return;
+    }
+
+    item->SetName(data.name);
+    if (data.description != "")
+        item->SetDescription(data.description);
+
+    item->Save(false);
+
+    psserver->SendSystemOK(client->GetClientNum(), "Name changed successfully");
 }

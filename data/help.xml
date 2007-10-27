@@ -477,6 +477,9 @@ Set a GM attribute on or off.  Available flags are:  invincible, invisible, view
 <topic name="/setlabelcolor">/setlabelcolor [target] [npc|player|gm|gm1|normal]
 
 Set the color of the label of target to the given value. The normal setting will again display the targets normal label color.</topic>  
+        <topic name="/setitemname">/setitemname command
+
+Allows changing the name and description of the targeted item. Usage: /setitemname [name] [description]. Description is optional.</topic>
         <topic name="/setquality">/setquality command
 
 Allows changing the quality of the targeted item. Usage: /setquality [quality] [max quality]. Max quality is optional.</topic>
