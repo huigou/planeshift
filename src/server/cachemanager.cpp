@@ -2182,6 +2182,12 @@ psItemSet *CacheManager::LoadWorldItems(psSectorInfo *sector,int &loadeditems)
     return itemset;
 }
 
+void CacheManager::AddItemStatsToHashTable(psItemStats* newitem)
+{
+    itemStats_IDHash.Put(newitem->GetUID(),newitem);
+    itemStats_NameHash.Put(newitem->GetDownCaseName(),newitem);
+}
+
 bool CacheManager::PreloadItemStatsDatabase()
 {
     uint32 currentrow;
@@ -2206,9 +2212,7 @@ bool CacheManager::PreloadItemStatsDatabase()
         {
             CS_ASSERT( newitem->GetUID() != 0 );
 
-//            basicitemstatslist.Push(newitem);
-            itemStats_IDHash.Put(newitem->GetUID(),newitem);
-            itemStats_NameHash.Put(newitem->GetDownCaseName(),newitem);
+            AddItemStatsToHashTable(newitem);
         }
     }
     Notify2( LOG_STARTUP, "%lu Item Stats Loaded", result.Count() );

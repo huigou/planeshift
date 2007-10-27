@@ -5,6 +5,7 @@
 - Added missing message after changing quality.
 - Fixed slow mouse pointer. Seems like the cause was a wrong check, that made images fail
   loading all the time, Making it impossible for the OS to accelerate them.
+- Added /reload item command, allowing to reload (or load) item stats from db.
 
 *** 2007-10-26 by Kenny Graunke
 - Changed default strafe speed to 2.0 m/s, halfway between sneak and walk.

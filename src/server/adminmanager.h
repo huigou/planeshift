@@ -309,6 +309,9 @@ protected:
     /// Change name of items
     void HandleSetItemName(psAdminCmdMessage& msg, AdminCmdData& data, Client *client, gemObject* object );
 
+    // Handle reloads from DB
+    void HandleReload(psAdminCmdMessage& msg, AdminCmdData& data, Client *client, gemObject* object );
+
 protected:
 
     /** Adds a petition under the passed user's name to the 'petitions' table in the database
