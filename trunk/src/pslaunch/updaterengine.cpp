@@ -123,14 +123,17 @@ void psUpdaterEngine::checkForUpdates()
     {
         printOutput("Update Available!\n");
         // If using a GUI, prompt user whether or not to update.
-        *updateNeeded = true;
-        while(!*performUpdate)
+        if(!appName.Compare("psupdater"))
         {
-            if(!*updateNeeded)
+            *updateNeeded = true;
+            while(!*performUpdate)
             {
-                delete downloader;
-                downloader = NULL;
-                return;
+                if(!*updateNeeded)
+                {
+                    delete downloader;
+                    downloader = NULL;
+                    return;
+                }
             }
         }
 
@@ -155,14 +158,17 @@ void psUpdaterEngine::checkForUpdates()
         config->GetConfigFile()->Save();
 
         // If using a GUI, prompt user whether or not to update.
-        *updateNeeded = true;
-        while(!*performUpdate)
+        if(!appName.Compare("psupdater"))
         {
-            if(!*updateNeeded)
+            *updateNeeded = true;
+            while(!*performUpdate)
             {
-                delete downloader;
-                downloader = NULL;
-                return;
+                if(!*updateNeeded)
+                {
+                    delete downloader;
+                    downloader = NULL;
+                    return;
+                }
             }
         }
 
@@ -186,7 +192,7 @@ bool psUpdaterEngine::checkUpdater()
     // Backup old config, download new.
     fileUtil->CopyFile("updaterinfo.xml", "updaterinfo.xml.bak", false, false);
     fileUtil->RemoveFile("updaterinfo.xml");
-    downloader->DownloadFile("updaterinfo.xml", "updaterinfo.xml");
+    downloader->DownloadFile("updaterinfo.xml", "updaterinfo.xml", false);
 
     // Load new config data.
     csRef<iDocumentNode> root = GetRootNode(UPDATERINFO_FILENAME);
@@ -350,7 +356,7 @@ bool psUpdaterEngine::selfUpdate(int selfUpdating)
             zip.AppendFmt(".zip");
 
             // Download new updater file.
-            downloader->DownloadFile(zip, zip);         
+            downloader->DownloadFile(zip, zip, false);         
 
             // Check md5sum is correct.
             csRef<iDataBuffer> buffer = vfs->ReadFile("/this/" + zip, true);
@@ -516,7 +522,7 @@ void psUpdaterEngine::generalUpdate()
         zip.AppendFmt(".zip");
 
         // Download update zip.
-        downloader->DownloadFile(zip, zip);
+        downloader->DownloadFile(zip, zip, false);
 
         // Check md5sum is correct.
         csRef<iDataBuffer> buffer = vfs->ReadFile("/this/" + zip, true);
