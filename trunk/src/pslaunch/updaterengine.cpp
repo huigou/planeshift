@@ -446,7 +446,7 @@ bool psUpdaterEngine::selfUpdate(int selfUpdating)
             zip.AppendFmt(".zip");
 
             // Download new updater file.
-            downloader->DownloadFile(zip, zip);         
+            downloader->DownloadFile(zip, zip, false);         
 
             // Check md5sum is correct.
             csRef<iDataBuffer> buffer = vfs->ReadFile("/this/" + zip, true);
