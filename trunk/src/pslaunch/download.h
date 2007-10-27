@@ -28,10 +28,15 @@ class Downloader
 {
 public:
     Downloader(csRef<iVFS> _vfs, psUpdaterConfig* _config);
+    Downloader(csRef<iVFS> _vfs);
     ~Downloader();
 
-    /* Download a file from 'file' and save to 'dest' */
-    bool DownloadFile (const char* file, const char* dest);
+    /*
+     * If URL is false; download a file from 'file' and save to 'dest'.
+     * If URL is true; download a file from 'file' where 'file' is the
+     * full URL to the file, and save to 'dest'
+     */
+    bool DownloadFile (const char* file, const char* dest, bool URL);
 
     /* Set the proxy server host and port */
     void SetProxy (const char* host, int port);
