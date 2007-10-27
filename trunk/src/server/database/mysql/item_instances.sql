@@ -42,6 +42,8 @@ CREATE TABLE `item_instances` (
   `lock_str` int(5) NOT NULL default '0',
   `lock_skill` int(2) NOT NULL default '-1',
   `openable_locks` varchar(100) default '0',
+  `item_name` varchar(100) default '',
+  `item_description` varchar(100) default '',
   PRIMARY KEY  (`id`),
   KEY `char_id_owner` (`char_id_owner`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;

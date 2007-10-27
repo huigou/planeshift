@@ -1,3 +1,7 @@
+*** 2007-10-26 by Sasha Levin
+- Added support for custom item names.
+- DB VER BUMP!
+
 *** 2007-10-26 by Kenny Graunke
 - Changed default strafe speed to 2.0 m/s, halfway between sneak and walk.
   Karyuu already updated most art for this a while ago, and Trymm is going

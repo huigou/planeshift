@@ -341,6 +341,16 @@ private:
     /// Commit() is called primarily from psDelaySave::Trigger()
     friend class psDelaySave;
 
+    /**
+     * Holds a custom item name. Can be empty.
+     */
+    csString item_name;
+
+    /**
+     * Holds a custom item description. Can be empty.
+     */
+    csString item_description;
+
 public:
     /** Loads data from a database row into the current psItem.
      * This is used only by the character loader.
@@ -602,6 +612,10 @@ public:
 
     const char *GetName();
     const char *GetDescription();
+    void SetName(const char* newName);
+    void SetDescription(const char* newDescription);
+    const char *GetStandardName();
+    const char *GetStandardDescription();
 
     PSITEMSTATS_WEAPONTYPE GetWeaponType();
     PSSKILL GetWeaponSkill(PSITEMSTATS_WEAPONSKILL_INDEX index);
