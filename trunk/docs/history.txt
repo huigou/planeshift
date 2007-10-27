@@ -3,6 +3,8 @@
 - DB VER BUMP!
 - Added GM interface to change item names and descs, /setitemname.
 - Added missing message after changing quality.
+- Fixed slow mouse pointer. Seems like the cause was a wrong check, that made images fail
+  loading all the time, Making it impossible for the OS to accelerate them.
 
 *** 2007-10-26 by Kenny Graunke
 - Changed default strafe speed to 2.0 m/s, halfway between sneak and walk.
