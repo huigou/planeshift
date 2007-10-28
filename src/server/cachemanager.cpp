@@ -1779,6 +1779,9 @@ uint32 CacheManager::BasicItemStatsByNameExist(csString name)
 // Get item basic stats by hashed table
 psItemStats *CacheManager::GetBasicItemStatsByID(uint32 id)
 {
+    if ( id == 0 )
+        return NULL;
+        
     psItemStats *itemstats = itemStats_IDHash.Get(id,NULL);
     if(itemstats)
         return itemstats;
