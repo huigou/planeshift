@@ -462,26 +462,39 @@ bool psCharacterLoader::ClearCharacterSkills(unsigned int character_id)
     return true;
 }
 
+
 bool psCharacterLoader::UpdateCharacterSkill(unsigned int character_id,unsigned int skill_id,
                                            unsigned int skill_z, unsigned int skill_y, unsigned int skill_rank)
 {
     csString sql;
-    sql.Format("DELETE FROM character_skills WHERE character_id='%u' AND skill_id='%u'",
-        character_id,
-        (unsigned int)skill_id);
-
-    unsigned long result=db->Command(sql);
-    if (result==QUERY_FAILED)
-        return false;
     
-    return SaveCharacterSkill(
-        character_id,
-        skill_id,
-        skill_z,
-        skill_y,
-        skill_rank
-        );
+    sql.Format("UPDATE character_skills SET skill_z=%u, skill_y=%u, skill_rank=%u WHERE character_id=%u AND skill_id=%u",
+        skill_z, skill_y, skill_rank, character_id, (unsigned int)skill_id );
+     
+    unsigned long result=db->Command(sql);
+
+    // If there was nothing to update we can add the skill to the database
+    if (result == 0)
+    {                
+        return SaveCharacterSkill(
+            character_id,
+            skill_id,
+            skill_z,
+            skill_y,
+            skill_rank
+            );
+    }
+    else if ( result == 1 )
+    {
+        return true;
+    }
+    else 
+    {
+        // If it updated more than one row than that is a problem.
+        return false;
+    }                
 }
+
 
 bool psCharacterLoader::SaveCharacterSkill(unsigned int character_id,unsigned int skill_id,
                                            unsigned int skill_z, unsigned int skill_y, unsigned int skill_rank)
@@ -853,16 +866,14 @@ bool psCharacterLoader::SaveCharacterData(psCharacter *chardata,gemActor *actor,
             SaveCharacterTrait(chardata->GetCharacterID(),trait->uid);
     }
 
-
-    // skills
-    if (!ClearCharacterSkills(chardata->GetCharacterID()))
-        Error3("Failed to clear skills for character id %u.  Error %s.",chardata->GetCharacterID(),db->GetLastError());
+    // For all the skills we have update them. If the update fails it will automatically save a new
+    // one to the database.
     for (i=0;i<PSSKILL_COUNT;i++)
     {
         unsigned int skillY=chardata->GetSkills()->GetSkillKnowledge((PSSKILL)i);
         unsigned int skillZ=chardata->GetSkills()->GetSkillPractice((PSSKILL)i);
         unsigned int skillRank=chardata->GetSkills()->GetSkillRank((PSSKILL)i, false);
-        SaveCharacterSkill(chardata->GetCharacterID(),i,skillZ,skillY,skillRank);
+        UpdateCharacterSkill(chardata->GetCharacterID(),i,skillZ,skillY,skillRank);
     }
 
 

@@ -2,6 +2,8 @@
 - The last login time for guild memebers is now cached when guild
   created.  Before was hitting the database everytime a guild window
   was opened.
+- Saving of character skills now doesn't clear them all and rewrite them 
+  anymore.  Now it does and update and if that fails will do an insert.   
 
 *** 2007-10-26 by Sasha Levin
 - Added support for custom item names.
