@@ -1,3 +1,8 @@
+*** 2007-10-28 by Andrew Craig
+- character skills now have a 'dirty' flag so they are only saved if
+  they have been changed since login.  This should again greatly 
+  reduce the total number of database hits. 
+
 *** 2007-10-26 by Andrew Craig
 - The last login time for guild memebers is now cached when guild
   created.  Before was hitting the database everytime a guild window
