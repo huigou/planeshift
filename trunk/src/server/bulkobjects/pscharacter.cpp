@@ -704,6 +704,7 @@ bool psCharacter::LoadSkills(unsigned int use_id)
                 skills.SetSkillPractice(  skill, skillResult[i].GetInt("skill_Z") );
                 skills.SetSkillKnowledge( skill, skillResult[i].GetInt("skill_Y") );
                 skills.SetSkillRank(      skill, skillResult[i].GetInt("skill_Rank"),false );
+                skills.GetSkill(skill)->dirtyFlag = false;
             }
         }
         skills.Calculate();
@@ -719,6 +720,13 @@ bool psCharacter::LoadSkills(unsigned int use_id)
     skills.SetSkillRank( PSSKILL_WILL ,attributes.GetStat( PSITEMSTATS_STAT_WILL           , false), false);
     skills.SetSkillRank( PSSKILL_STR,  attributes.GetStat( PSITEMSTATS_STAT_STRENGTH       , false), false);
 
+    skills.GetSkill(PSSKILL_AGI)->dirtyFlag = false;
+    skills.GetSkill(PSSKILL_CHA)->dirtyFlag = false;
+    skills.GetSkill(PSSKILL_END)->dirtyFlag = false;
+    skills.GetSkill(PSSKILL_INT)->dirtyFlag = false;
+    skills.GetSkill(PSSKILL_WILL)->dirtyFlag = false;
+    skills.GetSkill(PSSKILL_STR)->dirtyFlag = false;
+    
     return true;
 }
 
@@ -3179,9 +3187,15 @@ void Skill::CalculateCosts(psCharacter* user)
     // Make sure the y values is clamped to the cost.  Otherwise Practice may always
     // fail.
     if  (y > yCost)
+    {
+        dirtyFlag = true;
         y = yCost;
+    }
     if ( z > zCost )
-        z = zCost;
+    {
+        dirtyFlag = true;
+        z = zCost;        
+    }
 }
 
 void Skill::Train( int yIncrease )
@@ -3189,6 +3203,8 @@ void Skill::Train( int yIncrease )
     y+=yIncrease;
     if ( y > yCost )
         y = yCost;
+
+    dirtyFlag = true;        
 }
 
 
@@ -3219,6 +3235,7 @@ bool Skill::Practice( unsigned int amount, unsigned int& actuallyAdded,psCharact
         actuallyAdded = 0;
     }
 
+    dirtyFlag = true;
     return rankup;
 }
 
@@ -3687,6 +3704,7 @@ void SkillSet::SetSkillRank( PSSKILL which, int rank, bool recalculatestats )
 
     skills[which].rank = rank;
     skills[which].CalculateCosts(self);
+    skills[which].dirtyFlag = true;
 
     if (recalculatestats)
       self->RecalculateStats();
@@ -3708,6 +3726,7 @@ void SkillSet::SetSkillKnowledge( PSSKILL which, int y_value )
     if (y_value < 0)
         y_value = 0;
     skills[which].y = y_value;
+    skills[which].dirtyFlag = true;
 }
 
 
@@ -3719,6 +3738,7 @@ void SkillSet::SetSkillPractice(PSSKILL which,int z_value)
         z_value = 0;
 
     skills[which].z = z_value;
+    skills[which].dirtyFlag = true;
 }
 
 

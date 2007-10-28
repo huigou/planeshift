@@ -869,11 +869,14 @@ bool psCharacterLoader::SaveCharacterData(psCharacter *chardata,gemActor *actor,
     // For all the skills we have update them. If the update fails it will automatically save a new
     // one to the database.
     for (i=0;i<PSSKILL_COUNT;i++)
-    {
-        unsigned int skillY=chardata->GetSkills()->GetSkillKnowledge((PSSKILL)i);
-        unsigned int skillZ=chardata->GetSkills()->GetSkillPractice((PSSKILL)i);
-        unsigned int skillRank=chardata->GetSkills()->GetSkillRank((PSSKILL)i, false);
-        UpdateCharacterSkill(chardata->GetCharacterID(),i,skillZ,skillY,skillRank);
+    {            
+        if ( chardata->GetSkills()->GetSkill((PSSKILL)i)->dirtyFlag )
+        {            
+            unsigned int skillY=chardata->GetSkills()->GetSkillKnowledge((PSSKILL)i);
+            unsigned int skillZ=chardata->GetSkills()->GetSkillPractice((PSSKILL)i);
+            unsigned int skillRank=chardata->GetSkills()->GetSkillRank((PSSKILL)i, false);
+            UpdateCharacterSkill(chardata->GetCharacterID(),i,skillZ,skillY,skillRank);
+        }            
     }
 
 

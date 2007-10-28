@@ -316,11 +316,12 @@ struct Skill
        
     unsigned short zCost;          // Cost in Z points.
     unsigned short yCost;          // cost in y points.
+    bool dirtyFlag;                 // Flag if this was changed after load from database
     
     psSkillInfo *info;       // Database information about the skill.
 
     Skill() { Clear(); }
-    void Clear() { z=y=rank=rankBuff=0; zCost=yCost=0; info = NULL;}
+    void Clear() { z=y=rank=rankBuff=0; zCost=yCost=0; info = NULL; dirtyFlag = false;}
 
     void CalculateCosts(psCharacter* user);
 
