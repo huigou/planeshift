@@ -1,3 +1,8 @@
+*** 2007-10-26 by Andrew Craig
+- The last login time for guild memebers is now cached when guild
+  created.  Before was hitting the database everytime a guild window
+  was opened.
+
 *** 2007-10-26 by Sasha Levin
 - Added support for custom item names.
 - DB VER BUMP!

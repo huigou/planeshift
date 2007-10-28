@@ -111,7 +111,7 @@ bool psGuildInfo::Load(iResultRow& row)
     }
 
     // Now preload members
-    Result member(db->Select("select id,name,guild_level,guild_points,guild_public_notes,guild_private_notes"
+    Result member(db->Select("select id,name,guild_level,guild_points,guild_public_notes,guild_private_notes, last_login"
         "  from characters"
         " where guild_member_of=%d",id));
 
@@ -135,6 +135,7 @@ bool psGuildInfo::Load(iResultRow& row)
         gm->guild_points  = member[i].GetInt("guild_points");
         gm->public_notes  = member[i]["guild_public_notes"];
         gm->private_notes = member[i]["guild_private_notes"];
+        gm->last_login    = member[i]["last_login"];
 
         if (!gm->guildlevel)
         {

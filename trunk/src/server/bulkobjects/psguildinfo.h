@@ -91,6 +91,7 @@ public:
     int guild_points;           ///< Their points in the guild.
     csString public_notes;      ///< The public notes the member has.
     csString private_notes;     ///< Private Guild notes for the player.
+    csString last_login;        ///< The last login time for that user. 
 };
 
 //------------------------------------------------------------------------------

@@ -866,27 +866,9 @@ void GuildManager::SendMemberData(Client *client,bool onlineOnly)
         else
         {
             online = "no";
-            lastOnline = "";
-            //The guild member can be NOT online, in this case we have to query the db directly
-            Result result(db->Select("SELECT last_login FROM characters WHERE id = '%d'",member->char_id));
-            if (result.Count() > 0)
-            {
-                lastOnline = result[0][0];
-                lastOnline.Truncate(16);    // cut date+time string to date only
-            }
+            lastOnline = member->last_login.Truncate(16);
         }
-
-        //account = CacheManager::GetSingleton().GetAccountInfoByCharID(member->char_id);                        
-
-        /*if (account != NULL)
-        {
-            lastOnline = account->lastlogintime;
-            lastOnline.Truncate(16);    // cut date+time string to date only
-           delete account;
-        }                
-        else
-            Error2("Could not find account info for player %s !", member->name.GetData());*/
-
+        
         if (online=="yes"  ||  !onlineOnly)
         {
             open.Append("<m>");
