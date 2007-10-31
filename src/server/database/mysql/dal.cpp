@@ -125,7 +125,7 @@ unsigned long psMysqlConnection::Command(const char *sql,...)
     lastquery = querystr;
 
     timer.Start();
-    if (!mysql_query(conn, querystr.GetData()))
+    if (!mysql_real_query(conn, querystr, querystr.Length()))
     {
         if(timer.Stop() > 1000)
         {
@@ -154,7 +154,7 @@ iResultSet *psMysqlConnection::Select(const char *sql, ...)
     lastquery = querystr;
 
     timer.Start();
-    if (!mysql_query(conn, querystr.GetData()))
+    if (!mysql_real_query(conn, querystr, querystr.Length()))
     {
         if(timer.Stop() > 1000)
         {
@@ -184,7 +184,7 @@ int psMysqlConnection::SelectSingleNumber(const char *sql, ...)
     lastquery = querystr;
 
     timer.Start();
-    if (!mysql_query(conn, querystr.GetData()))
+    if (!mysql_real_query(conn, querystr, querystr.Length()))
     {
         if(timer.Stop() > 1000)
         {
