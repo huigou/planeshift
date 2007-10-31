@@ -1,3 +1,7 @@
+*** 2007-10-31 by Sasha Levin
+- Removed usage of strcmp in psNPCDialog::SubstituteKeywords.
+- Moved gender string generation to the psRaceInfo class.
+
 *** 2007-10-28 by Andrew Craig
 - character skills now have a 'dirty' flag so they are only saved if
   they have been changed since login.  This should again greatly 

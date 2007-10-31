@@ -220,3 +220,16 @@ void psRaceInfo::GetStartingLocation(float& x,float& y, float& z,float& rot,cons
     rot = selectedLoc.yrot;
     sectorname = selectedLoc.sector_name;
 };
+
+csString psRaceInfo::GenderString()
+{
+    switch (gender)
+    {
+    case PSCHARACTER_GENDER_FEMALE:
+        return "Maddam";
+    case PSCHARACTER_GENDER_MALE:
+        return "Sir";
+    default:
+        return "Gemma";
+    }
+}
