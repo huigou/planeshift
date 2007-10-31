@@ -893,7 +893,7 @@ bool psCharacterInventory::HaveKeyForLock(uint32 lock)
     // Inventory indexes start at 1.  0 is reserved for the "NULL" item.
     for (size_t i=1; i<inventory.GetSize(); i++)
     {
-        if (inventory[i].item->CanOpenLock(lock, true))
+        if (inventory[i].item->CanOpenLock(lock, false))
             return true;
     }
     return false;
