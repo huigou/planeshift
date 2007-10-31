@@ -176,9 +176,8 @@ psCharacter::~psCharacter()
 
     // First force and update of the DB of all QuestAssignments before deleting
     // every assignment.
-    UpdateQuestAssignments(true);
-    while (assigned_quests.GetSize() )
-        delete assigned_quests.Pop() ;
+    UpdateQuestAssignments(false);
+    assigned_quests.DeleteAll();
 
     delete vitals;
     vitals = NULL;
