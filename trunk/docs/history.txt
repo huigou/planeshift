@@ -2,6 +2,8 @@
 - Removed usage of strcmp in psNPCDialog::SubstituteKeywords.
 - Moved gender string generation to the psRaceInfo class.
 - Calling mysql_real_query for queries, Should save up on lots of strlens.
+- Not forcing QuestAssignments updates into db on char logout, dirty flag
+  is doing a good job already.
 
 *** 2007-10-28 by Andrew Craig
 - character skills now have a 'dirty' flag so they are only saved if
