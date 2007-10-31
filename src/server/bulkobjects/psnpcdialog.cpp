@@ -426,29 +426,23 @@ void psNPCDialog::SubstituteKeywords(Client * player, csString& resp) const
         word = "$";
         word.Append(word2);  // include $sign in subst.
 
-        if (strcmp(word.GetData(),"$playername")==0)
+        if (word == "$playername")
         {
             if (!response.ReplaceSubString(word,player->GetName()))
             {
                 Error4("Failed to replace substring %s in %s with %s",word.GetData(),response.GetData(),player->GetName());
             }
         }
-        else if (strcmp(word.GetData(),"$playerrace")==0)
+        else if (word == "$playerrace")
         {            
             if (!response.ReplaceSubString(word, player->GetCharacterData()->raceinfo->name))
             {
                 Error4("Failed to replace substring %s in %s with %s",word.GetData(),response.GetData(),player->GetName());
             }
         }
-        else if (strcmp(word.GetData(),"$sir")==0)
+        else if (word == "$sir")
         {
-            const char* sir;
-            if ( player->GetCharacterData()->raceinfo->gender == PSCHARACTER_GENDER_FEMALE )
-                sir = "Madam";
-            else if (player->GetCharacterData()->raceinfo->gender == PSCHARACTER_GENDER_MALE)
-                sir = "Sir";
-            else
-                sir = "Gemma";
+            csString sir = player->GetCharacterData()->raceinfo->GenderString();
                 
             if (!response.ReplaceSubString(word,sir))
             {

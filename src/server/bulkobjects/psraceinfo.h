@@ -82,6 +82,8 @@ public:
     {
         size = this->size;
     };
+
+    csString GenderString();
 };
 
 
