@@ -62,12 +62,13 @@ private:
     void HandleBanking(Client* client, psGUIBankingMessage& msg);
     int CoinsForExchange(psCharacter* pschar, bool guild, int type, float fee);
     int CalculateAccountLevel(psCharacter* pschar, bool guild);
-    inline float CalculateFee(psCharacter* pschar, bool guild)
-    { 
-        return (5.25 - CalculateAccountLevel(pschar, guild)*0.25);
-    }
+    inline float CalculateFee(psCharacter* pschar, bool guild);
 
     csArray<MoneyEvent> monEvts;
+
+	MathScript* accountCharLvlScript;
+	MathScript* accountGuildLvlScript;
+	MathScript* CalcBankFeeScript;
 
 protected:
     template<class T>
