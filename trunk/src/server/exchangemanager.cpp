@@ -603,11 +603,17 @@ bool ExchangingCharacter::GetExchangedItems(csString& text)
     // RMS: Add the money count
     if (offeringMoney.GetTotal() > 0)
     {
-        text.AppendFmt("%i Trias, ", offeringMoney.GetTotal());
+        text.AppendFmt("%i Tria, ", offeringMoney.GetTotal());
     }
     if (!text.IsEmpty())
     {
         text.Truncate(text.Length() - 2);
+        size_t lastSep = text.FindLast(',');
+        if (lastSep != (size_t)-1)
+        {
+            csString tempText = text.Slice(0, lastSep) + " and" + text.Slice(lastSep+1);
+            text = tempText;
+        }
         return true;
     }
 
