@@ -76,7 +76,7 @@ psUtilityCommands::~psUtilityCommands()
 
 const char *psUtilityCommands::HandleCommand(const char *cmd)
 { 
-    WordArray words(cmd);
+    WordArray words(cmd, false);
 
     if (words.GetCount() == 0)
         return "";

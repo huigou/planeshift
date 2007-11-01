@@ -2,6 +2,7 @@
 - Converted the following hardcoded formulas into math scripts: Item sell price, Guild
   account level (banking), Char account level (banking), Bank fee and Mining odds.
 - Proper formatting of exchange messages.
+- Fixed message parsing in cmdutil, Now /confirm works right with quotes.
 
 *** 2007-10-31 by Sasha Levin
 - Removed usage of strcmp in psNPCDialog::SubstituteKeywords.
