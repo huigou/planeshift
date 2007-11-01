@@ -1530,13 +1530,26 @@ psMoney psItem::GetPrice()
 
 psMoney psItem::GetSellPrice()
 {
-    // Merchants like 20% profit. So we take the total price,
-    // multiply with 0.8 and make a new money with that amount
-    // as trias.
-    int price = int(GetPrice().GetTotal() * 0.8);
-    if (price == 0)
-        price = 1;
-    return psMoney(price);
+    static MathScript *script;
+    if (!script)
+        script = psserver->GetMathScriptEngine()->FindScript("Calc Item Sell Price");
+    if (!script)
+    {
+        Error1("Cannot find mathscript: Calc Item Sell Price");
+		int sellPrice = current_stats->GetPrice().GetTotal() * 0.8;
+		if (sellPrice == 0)
+			sellPrice = 1;
+		return sellPrice;
+    }
+
+    MathScriptVar *price = script->GetOrCreateVar("Price");
+    MathScriptVar *finalPrice = script->GetOrCreateVar("FinalPrice");
+
+    price->SetValue(GetPrice().GetTotal());
+
+    script->Execute();
+
+	return psMoney(finalPrice->GetValue());
 }
 
 psItemCategory * psItem::GetCategory()

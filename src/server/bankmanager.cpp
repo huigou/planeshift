@@ -20,6 +20,7 @@
 #include <psconfig.h>
 #include "globals.h"
 
+#include "util/mathscript.h"
 #include "bankmanager.h" 
 #include "cachemanager.h"
 #include "bulkobjects/pscharacterloader.h"
@@ -69,6 +70,10 @@ BankManager::BankManager()
         monEvt.instance = row.GetInt("instance");
         monEvts.Push(monEvt);
     }
+
+	accountGuildLvlScript = psserver->GetMathScriptEngine()->FindScript("Calc Guild Account Level");
+	accountCharLvlScript= psserver->GetMathScriptEngine()->FindScript("Calc Char Account Level");
+	CalcBankFeeScript = psserver->GetMathScriptEngine()->FindScript("Calc Bank Fee");
 
     ProcessTax();
 }
@@ -780,37 +785,39 @@ int BankManager::CoinsForExchange(psCharacter* pschar, bool guild, int type, flo
 
 int BankManager::CalculateAccountLevel(psCharacter *pschar, bool guild)
 {
-    // Guilds have higher limits.
-    int gFactor = 1;
-    if(guild)
-        gFactor = 10;
+	MathScript* accountLevelScript;
+	if (guild)
+		accountLevelScript = accountGuildLvlScript;
+	else
+		accountLevelScript = accountCharLvlScript;
 
-    int totalTrias;
-    if(guild)
-    {
+	MathScriptVar* totalTrias = accountLvlScript->GetOrCreateVar("totalTrias");
+	MathScriptVar* accountLevel = accountLvlScript->GetOrCreateVar("accountLevel");
+
+	if (guild)
+	{
         psGuildInfo *g = pschar->GetGuild();
         if(!g)
             return 0;
-        totalTrias = g->GetBankMoney().GetTotal();
-    }
-    else
-        totalTrias = pschar->BankMoney().GetTotal();
+		totalTrias->SetValue(g->GetBankMoney().GetTotal());
+	}
+	else
+		totalTrias->SetValue(pschar->BankMoney().GetTotal();
 
-    int aLevel = 0;
-    int aLimit = 0;
-    int aInc = 5000;
+	accountLvlScript->Execute();
 
-    while(aLimit*gFactor < totalTrias && aLevel <= 20)
-    {
-        int i=0;
-        while(i<2 && aLimit*gFactor < totalTrias && aLevel <= 20)
-        {
-            aLevel++;
-            aLimit += aInc;
-            i++;
-        }
-        aInc *= 2;
-    }
+	return accountLevel->GetValue();
+}
 
-    return aLevel;    
+float BankManager::CalculateFee(psCharacter* pschar, bool guild)
+{ 
+#error 5.25 - CalculateAccountLevel(pschar, guild)*0.25
+	MathScriptVar* accountLevel = CalcBankFeeScript->GetOrCreateVar("accountLevel");
+	MathScriptVar* bankFee = CalcBankFeeScript->GetOrCreateVar("bankFee");
+
+	accountLevel->SetValue(CalculateAccountLevel(pschar, guild));
+
+	CalcBankFeeScript->Execute();
+
+	return bankFee->GetValue();
 }

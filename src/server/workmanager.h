@@ -123,13 +123,19 @@ protected:
     MathScriptEngine *script_engine;        /// Scripting engine handles all RPG calculations.
     MathScript *calc_repair_time;           /// This is the calculation for how long a repair takes.
     MathScript *calc_repair_result;         /// This is the calculation for how many points of quality are added in a repair.
+	MathScript *calc_mining_chance;         /// This is the calculation for chance of successful mining.
     MathScriptVar *var_time_Worker;         /// Variable representing worker in time calculation
     MathScriptVar *var_time_Object;         /// Variable representing the repaired object in time calculation
     MathScriptVar *var_time_Result;         /// Variable representing the answer in time calculation
     MathScriptVar *var_result_Worker;       /// Variable representing worker in result calculation
     MathScriptVar *var_result_Object;       /// Variable representing the repaired object in result calculation
     MathScriptVar *var_result_Result;       /// Variable representing the answer in result calculation
-   
+	MathScriptVar *var_mining_distance;		/// Distance from mine to the actual mining.
+	MathScriptVar *var_mining_probability;	/// Probability of successful mining
+	MathScriptVar *var_mining_quality;		/// Quality of mining equipment
+	MathScriptVar *var_mining_skill;		/// Mining skill
+	MathScriptVar *var_mining_total;		/// Final result
+
 public:
 
     psWorkManager();

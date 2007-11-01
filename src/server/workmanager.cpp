@@ -104,6 +104,7 @@ psWorkManager::psWorkManager()
     script_engine = psserver->GetMathScriptEngine();
     calc_repair_time   = script_engine->FindScript("Calculate Repair Time");
     calc_repair_result = script_engine->FindScript("Calculate Repair Result");
+    calc_mining_chance = script_engine->FindScript("Calculate Mining Odds");
 
     if (!calc_repair_time)
     {
@@ -136,6 +137,19 @@ psWorkManager::psWorkManager()
             Error1("Either var 'Worker', 'Object' or 'Result' is missing from Calculate Repair Result script in rpgrules.xml.");
         }
     }
+
+	if (!calc_mining_chance)
+	{
+		Error1("Could not find mathscript 'Calculate Mining Odds' in rpgrules");
+	}
+	else
+	{
+		var_mining_distance = calc_mining_chance->GetOrCreateVar("Distance");
+		var_mining_probability = calc_mining_chance->GetOrCreateVar("Probability");
+		var_mining_quality = calc_mining_chance->GetOrCreateVar("Quality");
+		var_mining_skill = calc_mining_chance->GetOrCreateVar("Skill");
+		var_mining_total = calc_mining_chance->GetVar("Total");
+	}
 
     Initialize();
 };
@@ -786,7 +800,14 @@ void psWorkManager::HandleProductionEvent(psWorkGameEvent* workEvent)
     float f3 = 1 - (dist / workEvent->nr->radius);
     if (f3 < 0.0) f3 = 0.0f; // Clamp value 0..1
 
-    float total = workEvent->nr->probability * f1 * f2 * f3 + 0.1f;
+	var_mining_distance->SetValue(f3);
+	var_mining_probability->SetValue(workEvent->nr->probability);
+	var_mining_quality->SetValue(f2);
+	var_mining_skill->SetValue(f1);
+
+	calc_mining_chance->Execute();
+
+	float total = var_mining_total->GetValue();
 
     psString debug;
     debug.AppendFmt( "Probability:     %1.3f\n",workEvent->nr->probability);
