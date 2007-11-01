@@ -1,4 +1,4 @@
-*** 2007-10-31 by Sasha Levin
+*** 2007-11-01 by Sasha Levin
 - Converted the following hardcoded formulas into math scripts: Item sell price, Guild
   account level (banking), Char account level (banking), Bank fee and Mining odds.
 - Proper formatting of exchange messages.
