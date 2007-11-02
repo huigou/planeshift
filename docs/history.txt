@@ -1,11 +1,13 @@
+*** 2007-11-02 by Sasha Levin
+- Committed Lanarels' fix for FS#545.
+- Added force discard for quest assignments.
+- /quest now discards quests with infinite lockouts too.
+
 *** 2007-11-01 by Sasha Levin
 - Converted the following hardcoded formulas into math scripts: Item sell price, Guild
   account level (banking), Char account level (banking), Bank fee and Mining odds.
 - Proper formatting of exchange messages.
 - Fixed message parsing in cmdutil, Now /confirm works right with quotes.
-- Committed Lanarels' fix for FS#545.
-- Added force discard for quest assignments.
-- /quest now discards quests with infinite lockouts too.
 
 *** 2007-10-31 by Sasha Levin
 - Removed usage of strcmp in psNPCDialog::SubstituteKeywords.
