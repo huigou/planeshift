@@ -1138,6 +1138,9 @@ bool psItem::CheckStackableWith(const psItem *otheritem, bool precise) const
     if (location.worldInstance != otheritem->location.worldInstance)
         return false;
 
+    if (GetIsKey() != otheritem->GetIsKey() || GetIsMasterKey() != otheritem->GetIsMasterKey())
+        return false;
+
     // TODO: Check effects
 
     if (GetCurrentStats()==otheritem->GetCurrentStats())
