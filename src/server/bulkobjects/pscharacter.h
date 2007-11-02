@@ -748,7 +748,7 @@ public:
     QuestAssignment *IsQuestAssigned(int id);
     QuestAssignment *AssignQuest(psQuest *quest, int assigner_id);
     bool CompleteQuest(psQuest *quest);
-    void DiscardQuest(QuestAssignment *q);
+    void DiscardQuest(QuestAssignment *q, bool force = false);
     bool SetAssignedQuestLastResponse(psQuest *quest, int response);
     size_t GetNumAssignedQuests() { return assigned_quests.GetSize(); }
     int GetAssignedQuestLastResponse(int i);
