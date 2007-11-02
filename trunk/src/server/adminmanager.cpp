@@ -3121,6 +3121,15 @@ void AdminManager::ModifyKey(MsgEntry *me, psAdminCmdMessage& msg, AdminCmdData&
 
     // Find key item from hands
     psItem* key = client->GetCharacterData()->Inventory().GetInventoryItem(PSCHARACTER_SLOT_RIGHTHAND);
+    if ( !key || !key->GetIsKey() )
+    {
+        key = client->GetCharacterData()->Inventory().GetInventoryItem(PSCHARACTER_SLOT_LEFTHAND);
+        if ( !key || !key->GetIsKey() )
+        {
+            psserver->SendSystemError(me->clientnum,"You need to be holding the key you want to work on");
+            return;
+        }
+    }
 
     // Make or unmake key a skeleton key that will open any lock
     if ( data.subCmd == "skel" )
@@ -3133,16 +3142,6 @@ void AdminManager::ModifyKey(MsgEntry *me, psAdminCmdMessage& msg, AdminCmdData&
             psserver->SendSystemInfo(me->clientnum, "Your %s is now a skeleton key", key->GetName());
         key->Save(false);
         return;
-    }
-    
-    if ( !key || !key->GetIsKey() )
-    {
-        key = client->GetCharacterData()->Inventory().GetInventoryItem(PSCHARACTER_SLOT_LEFTHAND);
-        if ( !key || !key->GetIsKey() )
-        {
-            psserver->SendSystemError(me->clientnum,"You need to be holding the key you want to work on");
-            return;
-        }
     }
 
     // Copy key item
@@ -3341,14 +3340,29 @@ void AdminManager::MakeKey(MsgEntry *me, psAdminCmdMessage& msg, AdminCmdData& d
         psserver->SendSystemError(me->clientnum,"You need to hold the item you want to make into a key in your right hand.");
         return;
     }
-    if ( key->GetIsMasterKey() )
+    if (masterkey)
     {
-        psserver->SendSystemError(me->clientnum,"Your %s is already a master key.", key->GetName());
-        return;
+        if ( key->GetIsMasterKey() )
+        {
+            psserver->SendSystemError(me->clientnum,"Your %s is already a master key.", key->GetName());
+            return;
+        }
+        key->SetIsKey(true);
+        key->SetIsMasterKey(true);
+        psserver->SendSystemOK(me->clientnum,"Your %s is now a master key.", key->GetName());
     }
-    key->SetIsMasterKey(true);
+    else
+    {
+        if ( key->GetIsKey() )
+        {
+            psserver->SendSystemError(me->clientnum,"Your %s is already a key.", key->GetName());
+            return;
+        }
+        key->SetIsKey(true);
+        psserver->SendSystemOK(me->clientnum,"Your %s is now a key.", key->GetName());
+    }
+
     key->Save(false);
-    psserver->SendSystemOK(me->clientnum,"Your %s is now a master key.", key->GetName());
 }
 
 void AdminManager::AddRemoveLock(MsgEntry *me, psAdminCmdMessage& msg, AdminCmdData& data, Client *client, psItem* key )
