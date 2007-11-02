@@ -725,10 +725,10 @@ public:
     bool GetIsNpcOwned() const { return (flags & PSITEM_FLAG_NPCOWNED) != 0; }
     void SetIsNpcOwned(bool v);
 
-    bool GetIsKey() { return ((flags & PSITEM_FLAG_KEY)? true : false); }
+    bool GetIsKey() const { return ((flags & PSITEM_FLAG_KEY)? true : false); } 
     void SetIsKey(bool v);
 
-    bool GetIsMasterKey() { return ((flags & PSITEM_FLAG_MASTERKEY)? true : false); }
+    bool GetIsMasterKey() const { return ((flags & PSITEM_FLAG_MASTERKEY)? true : false); }
     void SetIsMasterKey(bool v);
 
     bool IsTransient() { return ((flags & PSITEM_FLAG_TRANSIENT) ? true : false); }

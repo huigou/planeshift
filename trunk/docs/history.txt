@@ -3,6 +3,7 @@
 - Added force discard for quest assignments.
 - /quest now discards quests with infinite lockouts too.
 - Fixed the MakeKey method, Now it properly creates simple keys too.
+- Key properties are being checked when stacking.
 
 *** 2007-11-01 by Sasha Levin
 - Converted the following hardcoded formulas into math scripts: Item sell price, Guild
