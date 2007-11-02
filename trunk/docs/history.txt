@@ -1,3 +1,6 @@
+*** 2007-11-02 by Andrew Craig
+- Patch from Roland to fix FS#530 Ctrl+LeftClick combo does not work
+
 *** 2007-11-02 by Sasha Levin
 - Committed Lanarels' fix for FS#545.
 - Added force discard for quest assignments.
