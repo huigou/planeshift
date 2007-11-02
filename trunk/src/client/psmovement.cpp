@@ -722,8 +722,8 @@ void psMovementManager::UpdateRunTo()
         linearMove->GetLastPosition(currPos, yRot, sector);
         csVector3 diff = runToDiff - currPos;
 
-        // only move the char if we are not stuck and we're not targeting anyone
-        if (!psengine->GetCharManager()->GetTarget() && diff.SquaredNorm() > RUNTO_EPSILON*RUNTO_EPSILON)
+        // only move the char if we are not stuck
+        if (diff.SquaredNorm() > RUNTO_EPSILON*RUNTO_EPSILON)
         {
             float targetYRot = atan2(-diff.x,-diff.z);
             lastDist = diff.SquaredNorm();

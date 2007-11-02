@@ -1,5 +1,6 @@
 *** 2007-11-02 by Andrew Craig
 - Patch from Roland to fix FS#530 Ctrl+LeftClick combo does not work
+- Patch from Roladn to fix FS#415: Mouserun doesn't work when target selected
 
 *** 2007-11-02 by Sasha Levin
 - Committed Lanarels' fix for FS#545.
