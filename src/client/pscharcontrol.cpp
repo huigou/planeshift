@@ -119,14 +119,13 @@ csString GetDisplayName(const char* n)
 
 uint32 GetPSMods(const iEvent* event)
 {
-    csKeyModifiers m;
-    csKeyEventHelper::GetModifiers(event,m);
-
-    bool shift = m.modifiers[csKeyModifierTypeShift] != 0;
-    bool ctrl = m.modifiers[csKeyModifierTypeCtrl] != 0;
-    bool alt = m.modifiers[csKeyModifierTypeAlt] != 0;
-    
-    return (shift << csKeyModifierTypeShift) | (ctrl << csKeyModifierTypeCtrl) | (alt << csKeyModifierTypeAlt);
+    if(!event) 
+    {
+        return 0;
+    }
+    uint32 modifiers;
+    event->Retrieve( "keyModifiers", modifiers );
+    return modifiers & PS_MODS_MASK;
 }
 
 
