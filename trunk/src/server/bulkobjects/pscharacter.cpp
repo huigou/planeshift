@@ -2498,26 +2498,18 @@ bool psCharacter::CompleteQuest(psQuest *quest)
     return false;
 }
 
-void psCharacter::DiscardQuest(QuestAssignment *q)
+void psCharacter::DiscardQuest(QuestAssignment *q, bool force)
 {
     CS_ASSERT( q );  // Must not be NULL
 
-    if (q->status == PSQUEST_COMPLETE && !q->GetQuest()->HasInfinitePlayerLockout())
+    if (force || (q->status != PSQUEST_DELETE && !q->GetQuest()->HasInfinitePlayerLockout()) )
     {
         q->dirty = true;
         q->status = PSQUEST_DELETE;  // discarded
-        q->lockout_end = 0; // No lockout end for quest with infinite player lockout.
-
-        Debug3(LOG_QUESTS, GetCharacterID(), "Player '%s' just discarded quest '%s' with infinite player lockout.\n",
-               GetCharName(),q->GetQuest()->GetName() );
-
-        UpdateQuestAssignments();
-    }
-    else if (q->status != PSQUEST_DELETE && !q->GetQuest()->HasInfinitePlayerLockout() )
-    {
-        q->dirty = true;
-        q->status = PSQUEST_DELETE;  // discarded
-        q->lockout_end = csGetTicks() + q->GetQuest()->GetPlayerLockoutTime();  // assignment entry will be deleted after expiration
+        if (q->GetQuest()->HasInfinitePlayerLockout())
+            q->lockout_end = 0;
+        else
+            q->lockout_end = csGetTicks() + q->GetQuest()->GetPlayerLockoutTime();  // assignment entry will be deleted after expiration
 
         Debug3(LOG_QUESTS, GetCharacterID(), "Player '%s' just discarded quest '%s'.\n",
                GetCharName(),q->GetQuest()->GetName() );

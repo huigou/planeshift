@@ -5995,7 +5995,7 @@ void AdminManager::HandleCompleteQuest(MsgEntry* me,psAdminCmdMessage& msg, Admi
                 psserver->SendSystemError(me->clientnum, "Quest was never started!");
                 return;
             }
-            target->GetActor()->GetCharacterData()->DiscardQuest(questassignment);
+            target->GetActor()->GetCharacterData()->DiscardQuest(questassignment, true);
             psserver->SendSystemInfo(me->clientnum, "Quest %s discarded!", data.text.GetData());
             break;
         }
