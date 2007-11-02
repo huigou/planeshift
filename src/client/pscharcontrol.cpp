@@ -474,40 +474,37 @@ void psTriggerHandler::HandleZoom(const psControl* trigger, bool value)
 
 void psTriggerHandler::HandleMouseLook(const psControl* trigger, bool value)
 {
-	// KL: Changed order to match HandleMouseLookToggle (no change in functionality, just to keep code more readable).
- 	if (movement->MouseLook()!=value) // KL: Switch only if necessary to avoid jumping mouse cursor or overwriting last saved position.
- 	{
- 		movement->MouseLook(value);
-		if (!movement->MouseZoom()) // KL: No CenterMouse while in MouseZoom mode.
- 			charcontrol->CenterMouse(value);
- 	}
+    // RS: invert mouselook status so the mouselook button can be
+    // used to temporarily switch out of mouselook mode too
+    movement->MouseLook(!movement->MouseLook());
+    if (!movement->MouseZoom()) { // KL: No CenterMouse while in MouseZoom mode.
+        charcontrol->CenterMouse(value);
+    }
  
-    if (value)
+    if (movement->MouseLook() )
     {
-        if (psengine->GetPSCamera()->GetCameraMode() == psCamera::CAMERA_FIRST_PERSON)
+        PawsManager::GetSingleton().GetMouse()->Hide(true);
+
+        if (psengine->GetPSCamera()->GetCameraMode()
+             == psCamera::CAMERA_FIRST_PERSON)
+        {
             PawsManager::GetSingleton().GetMouse()->WantCrosshair();
-        else
+        } else {
             PawsManager::GetSingleton().GetMouse()->WantCrosshair(false);
+        }
+    } else {
+        PawsManager::GetSingleton().GetMouse()->Hide(false);
     }
 }
 
 // KL: New function HandleMouseLookToggle to handle keyboard toggle for MouseLook seperately.
 void psTriggerHandler::HandleMouseLookToggle(const psControl* trigger, bool value)
 {
-	if (value)
- 	{
- 		movement->MouseLook(!movement->MouseLook());
-		if (!movement->MouseZoom()) // KL: No CenterMouse while in MouseZoom mode.
- 			charcontrol->CenterMouse(movement->MouseLook());
- 
- 		if (movement->MouseLook())
- 		{
- 			if (psengine->GetPSCamera()->GetCameraMode() == psCamera::CAMERA_FIRST_PERSON)
- 				PawsManager::GetSingleton().GetMouse()->WantCrosshair();
- 			else
- 				PawsManager::GetSingleton().GetMouse()->WantCrosshair(false);
- 		}
- 	}
+    if (!value) {
+        return;
+    }
+
+    HandleMouseLook(trigger,!movement->MouseLook());
 }
   
 void psTriggerHandler::HandleMouseZoom(const psControl* trigger, bool value)
@@ -833,8 +830,9 @@ bool psCharController::HandleEvent( iEvent &event )
     if ( !IsReady() )
         return false;
 
-    if (event.Name == event_mouseclick && movement.MouseLook())
-        CancelMouseLook();
+    // RS: do not leave mouselook mode on mouseclick
+    //if (event.Name == event_mouseclick && movement.MouseLook())
+    //    CancelMouseLook();
 
     if ( controls.HandleEvent(event) )
         return true;

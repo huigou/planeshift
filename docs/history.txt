@@ -1,6 +1,18 @@
 *** 2007-11-02 by Andrew Craig
 - Patch from Roland to fix FS#530 Ctrl+LeftClick combo does not work
-- Patch from Roladn to fix FS#415: Mouserun doesn't work when target selected
+- Patch from Roland to fix FS#415: Mouserun doesn't work when target selected
+- Patch from Roland for Mouse Look:
+Patch changes the mouselook behavior to allow selecting of items,
+npcs and players in that mode. When in first person view, the item selected
+is the one in the center of the screen (some pointing hand or crosshair like
+in the cvs skin would be nice to have here) and in the other modes an item
+roughly in front of the character (not the camera view) is selected. The
+mouselook button
+is also made into a toggle, so it can be used to temporarily switch out of
+mouselook mode. Mouselook mode is no longer aborted when the left or right
+mousebuttons are pressed and paws handling is passed through in mouselook
+mode (otherwise the selection would never reach the handling layer)
+
 
 *** 2007-11-02 by Sasha Levin
 - Committed Lanarels' fix for FS#545.
