@@ -698,15 +698,16 @@ iNetManager* psEngine::GetNetManager()
 bool psEngine::HandleEvent (iEvent &ev)
 {
     lastEvent = &ev;
-    
- 	// KL: No paws eventhandling while in MouseLook mode to avoid char selection or popup menus.
- 	//     State of toggle key is checked to prevent events coming trough while toggling is in progress.
- 	if (!charController || (charController && !charController->GetMovementManager()->MouseLook() && !charController->GetTrigger("Toggle MouseLook")->state))
- 	{
- 		if (paws->HandleEvent(ev))
- 			return true;
- 	}
-
+ 
+    if ( paws->HandleEvent( ev ) )
+    {
+        if (charController)
+        {
+            charController->GetMovementManager()->StopControlledMovement();
+        }                    
+        return true;
+    }
+     
     if ( charController && ( !paws->GetFocusOverridesControls() || ev.Name == event_frame ))
     {
         if ( charController->HandleEvent( ev ) )
