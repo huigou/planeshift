@@ -1,6 +1,7 @@
 *** 2007-11-03 by Andrew Craig
 - Fixed problem where clicking on a tree node button ( ie the +/- ) would
   also make the character walk to point.
+- Fixed problem with scroll bar that had the same issue.  
 
 *** 2007-11-03 by Michael Gist
 - Fixes to the region unloading code.
