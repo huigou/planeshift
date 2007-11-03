@@ -291,17 +291,17 @@ void pawsButton::Draw()
 }
 
 bool pawsButton::OnMouseDown( int button, int modifiers, int x, int y )
-{
-	if (!enabled)
-		return false;
+{  
+    if (!enabled)
+        return true;
 
     // plays a sound
     PawsManager::GetSingleton().PlaySound(sound_click);
     
     if ( toggle ) 
         SetState(!IsDown());
-	else
-		SetState(true, false);
+    else
+        SetState(true, false);
 
     if ( flash )
         flash = 0;
