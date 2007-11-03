@@ -1138,8 +1138,17 @@ bool psItem::CheckStackableWith(const psItem *otheritem, bool precise) const
     if (location.worldInstance != otheritem->location.worldInstance)
         return false;
 
+    // Check for keys
     if (GetIsKey() != otheritem->GetIsKey() || GetIsMasterKey() != otheritem->GetIsMasterKey())
         return false;
+    else
+    {
+        // Both are either keys or master keys
+        size_t locksCount = openableLocks.GetSize();
+        for (size_t i = 0 ; i < locksCount ; i++)
+            if (!otheritem->CanOpenLock(openableLocks[i], false))
+                return false;
+    }
 
     // TODO: Check effects
 
@@ -1817,7 +1826,7 @@ void psItem::SetLockStrength(unsigned int v)
     lockStrength = v;
 }
 
-bool psItem::CanOpenLock(uint32 id, bool includeSkel)
+bool psItem::CanOpenLock(uint32 id, bool includeSkel) const
 {
     if (includeSkel)
         return openableLocks.Find(id) != csArrayItemNotFound || openableLocks.Find(KEY_SKELETON) != csArrayItemNotFound;
