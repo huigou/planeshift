@@ -87,6 +87,8 @@ public:
 
     gemObject* FindObjectByString(const csString& str);
 
+    void AwardExperienceToTarget(int gmClientnum, Client* target, csString recipient, int ppAward);
+
 protected:
 
     bool Valid( int level, const char* command, int clientnum );
