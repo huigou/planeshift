@@ -741,7 +741,7 @@ public:
     unsigned int GetLockStrength() { return lockStrength; }
     void SetLockStrength(unsigned int v);
 
-    bool CanOpenLock(uint32 id, bool includeSkel);
+    bool CanOpenLock(uint32 id, bool includeSkel) const;
     void AddOpenableLock(uint32 v);
     void RemoveOpenableLock(uint32 v);
     void ClearOpenableLocks();

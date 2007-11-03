@@ -9,6 +9,7 @@
 *** 2007-11-03 by Sasha Levin
 - Fixed bug in material manager where LoadTexture() recieved a wrong name due
   to wrong location of a temporary var.
+- Keys that open different locks won't stack.
 
 *** 2007-11-02 by Andrew Craig
 - Patch from Roland to fix FS#530 Ctrl+LeftClick combo does not work
