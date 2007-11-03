@@ -885,7 +885,7 @@ bool pawsStdTreeDecorator::OnMouseDown(int button, int modifiers, int x, int y)
             }
         }
     }
-    return false;
+    return true;
 }
 
 void pawsStdTreeDecorator::GetCollapseSignFrame(pawsTreeNode * node, csRect & rect)
