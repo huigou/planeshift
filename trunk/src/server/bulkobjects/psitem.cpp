@@ -1141,7 +1141,8 @@ bool psItem::CheckStackableWith(const psItem *otheritem, bool precise) const
     // Check for keys
     if (GetIsKey() != otheritem->GetIsKey() || GetIsMasterKey() != otheritem->GetIsMasterKey())
         return false;
-    else
+    
+    if (GetIsKey())
     {
         // Both are either keys or master keys
         size_t locksCount = openableLocks.GetSize();
