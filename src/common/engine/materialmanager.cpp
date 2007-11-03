@@ -59,9 +59,9 @@ iTextureWrapper* MaterialManager::MissingTexture(const char *name, const char *f
 {
     // name is the material name; blah.dds
     // filename will be /planeshift/blah/blah.dds
+    csString tempName;
     if(!name)
     {
-        csString tempName;
         tempName = filename;
         size_t last = tempName.FindLast('/');
         tempName.DeleteAt(0, last+1);
