@@ -1,3 +1,8 @@
+*** 2007-11-03 by Dave Bentham
+- Event GMs can award experience to participants.
+  /event reward [all | range # | playername] # item
+  where item = "exp" then # progression points are given.
+
 *** 2007-11-03 by Sasha Levin
 - Fixed bug in material manager where LoadTexture() recieved a wrong name due
   to wrong location of a temporary var.
