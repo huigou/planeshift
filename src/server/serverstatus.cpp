@@ -134,7 +134,7 @@ void psServerStatusRunEvent::ReportClient(Client * curr, ClientStatusLogger & cl
     csString escpxml_guildname = EscpXML(guildName);
     csString escpxml_guildtitle = EscpXML(guildTitle);
     
-    if ( guild == false || (guild && guild->IsSecret() == false) )
+    if ( guild  && guild->IsSecret() == true)
     {       
         escpxml_guildname = EscpXML("");
         escpxml_guildtitle = EscpXML("");
