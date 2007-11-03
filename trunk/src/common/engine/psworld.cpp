@@ -577,6 +577,7 @@ void psRegion::Unload()
     {
         csWeakRef<iObject> o = iter->Next ();
         csWeakRef<iSector> sec = scfQueryInterface<iSector>(o);
+        csWeakRef<iLight> light = scfQueryInterface<iLight>(o);
         // If the object is a sector then remove it now, else copy the object.
         if(sec)
         {
@@ -591,7 +592,7 @@ void psRegion::Unload()
             // Remove sector.
             engine->RemoveObject(o);
         }
-        else
+        else if(!light)
             copy.Push (o);
     }
 
@@ -615,7 +616,8 @@ void psRegion::Unload()
         {
             if(!copy[i]) 
             {
-                copy.DeleteIndexFast (i);
+                printf("Removing null object!\n");
+                copy.DeleteIndex (i);
                 continue;
             }
 
@@ -624,7 +626,7 @@ void psRegion::Unload()
             {
                 if (engine->RemoveObject (b))
                 {
-                    copy.DeleteIndexFast (i);
+                    copy.DeleteIndex (i);
                     doClean = true;
                     continue;
                 }

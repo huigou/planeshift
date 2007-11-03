@@ -1,3 +1,6 @@
+*** 2007-11-03 by Michael Gist
+- Fixes to the region unloading code.
+
 *** 2007-11-03 by Dave Bentham
 - Event GMs can award experience to participants.
   /event reward [all | range # | playername] # item
