@@ -27,6 +27,8 @@
 #include "util/eventmanager.h"
 #include "cachemanager.h"
 #include "entitymanager.h"
+#include "util/strutil.h"
+#include "adminmanager.h"
 
 GMEventManager::GMEventManager()
 {
@@ -378,11 +380,13 @@ bool GMEventManager::RewardPlayersInGMEvent (Client* client,
                                              RangeSpecifier rewardRecipient,
                                              float range,
                                              Client* target,
-                                             unsigned short stackCount,
+                                             short stackCount,
                                              csString itemName)
 {
     GMEvent* gmEvent;
     int clientnum = client->GetClientNum(), zero = 0;
+    WordArray rewardDesc(itemName);
+    RewardType rewardType = REWARD_ITEM;
 
     // make sure GM is running an event
     if ((gmEvent = GetGMEventByGM(client->GetPlayerID(), RUNNING, zero)) == NULL)
@@ -399,22 +403,33 @@ bool GMEventManager::RewardPlayersInGMEvent (Client* client,
        return false;
     }
 
-    // retrieve base stats item
-    psItemStats *basestats = CacheManager::GetSingleton().GetBasicItemStatsByName(
-                                                                itemName.GetDataSafe());
-    if (basestats == NULL)
-    {
-        psserver->SendSystemInfo(clientnum, "Reward \'%s\' not recognised.", itemName.GetDataSafe());
-        Error2("'%s' was not found as a valid base item.", itemName.GetDataSafe());
-        return false;
-    }
+    // identify reward type: experience, faction points or an item
+    if (rewardDesc[0] == "exp" && rewardDesc.GetCount() == 1)
+        rewardType = REWARD_EXPERIENCE;
+    else if (rewardDesc[0] == "faction" && rewardDesc.GetCount() > 1)
+        rewardType = REWARD_FACTION_POINTS;
 
-    if (stackCount <= 0)
+    // retrieve base stats item
+    psItemStats *basestats;
+    if (rewardType == REWARD_ITEM)
     {
-       psserver->SendSystemInfo(clientnum,
-                                "Cannot reward 0 items to participants.");
-       return false;
+        basestats = CacheManager::GetSingleton().GetBasicItemStatsByName(itemName.GetDataSafe());
+        if (basestats == NULL)
+        {
+            psserver->SendSystemInfo(clientnum, "Reward \'%s\' not recognised.", itemName.GetDataSafe());
+            Error2("'%s' was not found as a valid base item.", itemName.GetDataSafe());
+            return false;
+        }
+        if (stackCount <= 0)
+        {
+           psserver->SendSystemInfo(clientnum,
+                                "You must reward at least 1 item to participant(s).");
+           return false;
+        }
     }
+    else
+        basestats = NULL;
+
 
     if (rewardRecipient == INDIVIDUAL)
     {
@@ -426,7 +441,12 @@ bool GMEventManager::RewardPlayersInGMEvent (Client* client,
             GMEvent* playersEvent = GetGMEventByPlayer(target->GetPlayerID(), RUNNING, zero);
             if (playersEvent && playersEvent->id == gmEvent->id)
             {
-                RewardPlayer(clientnum, target, stackCount, basestats);
+                if (rewardType == REWARD_EXPERIENCE)
+                    psserver->GetAdminManager()->AwardExperienceToTarget(clientnum, target, target->GetName(), stackCount);
+                else if (rewardType == REWARD_FACTION_POINTS)
+                    psserver->SendSystemInfo(clientnum, "Cannot award faction points yet. Sorry.");
+                else
+                    RewardPlayer(clientnum, target, stackCount, basestats);
             }
             else
             {
@@ -448,7 +468,12 @@ bool GMEventManager::RewardPlayersInGMEvent (Client* client,
             {
                 if (rewardRecipient == ALL || clientActor->RangeTo(target->GetActor()) <= range)
                 {
-                    RewardPlayer(clientnum, target, stackCount, basestats);
+                    if (rewardType == REWARD_EXPERIENCE)
+                        psserver->GetAdminManager()->AwardExperienceToTarget(clientnum, target, target->GetName(), stackCount);
+                    else if (rewardType == REWARD_FACTION_POINTS)
+                        psserver->SendSystemInfo(clientnum, "Cannot award faction points yet. Sorry.");
+                    else
+                        RewardPlayer(clientnum, target, stackCount, basestats);
                 }
             }
         }
@@ -733,7 +758,7 @@ GMEventManager::GMEvent* GMEventManager::GetGMEventByPlayer(unsigned int playerI
 }
 
 /// reward an individual player.
-void GMEventManager::RewardPlayer(int clientnum, Client* target, unsigned short stackCount, psItemStats* basestats)
+void GMEventManager::RewardPlayer(int clientnum, Client* target, short stackCount, psItemStats* basestats)
 {
     // generate the prize item
     psItem* newitem = basestats->InstantiateBasicItem(true);

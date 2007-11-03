@@ -670,10 +670,10 @@ bool AdminManager::AdminCmdData::DecodeAdminCmdMessage(MsgEntry *pMsg, psAdminCm
             int rewardIndex = 3;
             stackCount = 0;
 
-            if (strspn(words[2].GetDataSafe(), "0123456789") == words[2].Length())
+            if (strspn(words[2].GetDataSafe(), "-0123456789") == words[2].Length())
             {
                 commandMod.Empty();
-                (words.GetInt(2) > TOP_SHORT_INT_VAL) ? stackCount = TOP_SHORT_INT_VAL : stackCount = words.GetInt(2);
+                stackCount = words.GetInt(2);
                 rangeSpecifier = INDIVIDUAL;  // expecting a player by target
             }
             else
@@ -701,10 +701,9 @@ bool AdminManager::AdminCmdData::DecodeAdminCmdMessage(MsgEntry *pMsg, psAdminCm
                 }
 
                 // next 'word' should be numeric: number of items.
-                if (strspn(words[rewardIndex].GetDataSafe(), "0123456789") == words[rewardIndex].Length())
+                if (strspn(words[rewardIndex].GetDataSafe(), "-0123456789") == words[rewardIndex].Length())
                 {
-                    (words.GetInt(rewardIndex) > TOP_SHORT_INT_VAL) ? stackCount = TOP_SHORT_INT_VAL : stackCount = words.GetInt(rewardIndex);
- 
+                    stackCount = words.GetInt(rewardIndex);
                     rewardIndex++;
                 }
                 else
@@ -4912,41 +4911,46 @@ void AdminManager::AwardExperience(MsgEntry* me, psAdminCmdMessage& msg, AdminCm
         return;
     }
 
+    AwardExperienceToTarget(me->clientnum, target, data.player, data.value);
+}
+
+void AdminManager::AwardExperienceToTarget(int gmClientnum, Client* target, csString recipient, int ppAward)
+{
     int pp = target->GetCharacterData()->GetProgressionPoints();
 
-    if (pp == 0 && data.value < 0)
+    if (pp == 0 && ppAward < 0)
     {
-        psserver->SendSystemError(me->clientnum, "Target has no experience to penalize");
+        psserver->SendSystemError(gmClientnum, "Target has no experience to penalize");
         return;
     }
     //Limiting the amount of awarded pp.
-    if (abs(data.value) > MAXIMUM_EXP_CHANGE)
+    if (abs(ppAward) > MAXIMUM_EXP_CHANGE)
     {
-        data.value = (data.value > 0 ? MAXIMUM_EXP_CHANGE : -MAXIMUM_EXP_CHANGE);
-        psserver->SendSystemError(me->clientnum, "The experience awarded is too large. Limited to %d", data.value);
+        ppAward = (ppAward > 0 ? MAXIMUM_EXP_CHANGE : -MAXIMUM_EXP_CHANGE);
+        psserver->SendSystemError(gmClientnum, "The experience awarded is too large. Limited to %d", ppAward);
     }
 
-    pp += data.value; // Negative changes are allowed
+    pp += ppAward; // Negative changes are allowed
     if (pp < 0) // Negative values are not
     {
-        data.value += -pp;
+        ppAward += -pp;
         pp = 0;
     }
 
     target->GetCharacterData()->SetProgressionPoints(pp,true);
 
-    if (data.value > 0)
+    if (ppAward > 0)
     {
         psserver->SendSystemOK(target->GetClientNum(),"You have been awarded experience by a GM");
-        psserver->SendSystemInfo(target->GetClientNum(),"You gained %d progression points.", data.value);
+        psserver->SendSystemInfo(target->GetClientNum(),"You gained %d progression points.", ppAward);
     }
-    else if (data.value < 0)
+    else if (ppAward < 0)
     {
         psserver->SendSystemError(target->GetClientNum(),"You have been penalized experience by a GM");
-        psserver->SendSystemInfo(target->GetClientNum(),"You lost %d progression points.", -data.value);
+        psserver->SendSystemInfo(target->GetClientNum(),"You lost %d progression points.", -ppAward);
     }
 
-    psserver->SendSystemInfo(me->clientnum, "You awarded %s %d progression points.", data.player.GetData(), data.value);
+    psserver->SendSystemInfo(gmClientnum, "You awarded %s %d progression points.", recipient.GetData(), ppAward);
 }
 
 void AdminManager::TransferItem(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data, Client* source, Client* target)

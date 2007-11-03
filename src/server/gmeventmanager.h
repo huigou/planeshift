@@ -129,7 +129,7 @@ public:
                                  RangeSpecifier rewardRecipient,
                                  float range,
                                  Client *target,
-                                 unsigned short stackCount,
+                                 short stackCount,
                                  csString itemName);
 
     /** Returns all events for a player.
@@ -221,7 +221,13 @@ private:
      * @param stackCount: stack count # items in reward.
      * @param basestats: base stats of reward item.
      */
-    void RewardPlayer(int clientnum, Client* target, unsigned short stackCount, psItemStats* basestats);
+    void RewardPlayer(int clientnum, Client* target, short stackCount, psItemStats* basestats);
+    enum RewardType
+    {
+        REWARD_ITEM, 
+        REWARD_EXPERIENCE,
+        REWARD_FACTION_POINTS
+    };
 
     /** Get next free event id number.
      */
