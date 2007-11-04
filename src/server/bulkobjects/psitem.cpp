@@ -1359,14 +1359,14 @@ bool psItem::GetBuyPersonalise()
     return current_stats->GetBuyPersonalise();
 }
 
-const char *psItem::GetName()
+const char *psItem::GetName() const
 {
     if (item_name != "")
         return item_name;
     return current_stats->GetName();
 }
 
-const char *psItem::GetDescription()
+const char *psItem::GetDescription() const
 {
     if (item_description != "")
         return item_description;

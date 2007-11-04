@@ -610,8 +610,8 @@ public:
     PSITEMSTATS_CREATIVETYPE GetCreative();
     bool GetBuyPersonalise();
 
-    const char *GetName();
-    const char *GetDescription();
+    const char *GetName() const;
+    const char *GetDescription() const;
     void SetName(const char* newName);
     void SetDescription(const char* newDescription);
     const char *GetStandardName();
