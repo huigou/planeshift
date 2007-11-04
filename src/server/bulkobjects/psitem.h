@@ -741,6 +741,7 @@ public:
     unsigned int GetLockStrength() { return lockStrength; }
     void SetLockStrength(unsigned int v);
 
+    bool CompareOpenableLocks(const psItem* key) const;
     bool CanOpenLock(uint32 id, bool includeSkel) const;
     void AddOpenableLock(uint32 v);
     void RemoveOpenableLock(uint32 v);
