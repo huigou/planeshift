@@ -1176,7 +1176,7 @@ bool psItem::CompareOpenableLocks(const psItem* key) const
     for (size_t i = 0 ; i < locksCount ; i++)
         if (!key->CanOpenLock(openableLocks[i], false))
             return false;
-    return false;
+    return true;
 }
 
 psItem *psItem::Copy(unsigned short newstackcount)
