@@ -40,7 +40,6 @@
 #include "paws/pawsprogressbar.h"
 #include "gui/pawscontrolwindow.h"
 
-
 #define BTN_BUY     100
 #define BTN_FILTER  101
 //#define BTN_QUIT    102
@@ -616,6 +615,24 @@ void pawsSkillWindow::HandleSkillDescription( csString& description )
     }
 }
 
+void pawsSkillWindow::OnNumberEntered(const char *name,int param,int number)
+{
+    char commandData[256];
+    csString escpxml = "";
+    escpxml = EscpXML(selectedSkill);
+    if (escpxml== "")
+    {
+        csString warning="You have to select a skill before.";
+        PawsManager::GetSingleton().CreateWarningBox(warning); 
+        return;
+    }
+
+    sprintf( commandData, "<B NAME=\"%s\" AMOUNT=\"%d\"/>", escpxml.GetData(), number );
+    psGUISkillMessage outgoing( psGUISkillMessage::BUY_SKILL, commandData);
+
+    msgHandler->SendMessage( outgoing.msg );
+}
+
 void pawsSkillWindow::BuySkill()
 {
     char commandData[256];
@@ -627,10 +644,14 @@ void pawsSkillWindow::BuySkill()
         PawsManager::GetSingleton().CreateWarningBox(warning); 
         return;
     }
-    sprintf( commandData, "<B NAME=\"%s\" />", escpxml.GetData() );
-    psGUISkillMessage outgoing( psGUISkillMessage::BUY_SKILL, commandData);
 
-    msgHandler->SendMessage( outgoing.msg );
+    size_t skillId = psengine->FindCommonStringId(selectedSkill);
+    psSkillCacheItem* currSkill = skillCache.getItemBySkillId(skillId);
+    unsigned short possibleTraining = currSkill->getKnowledgeCost() - currSkill->getKnowledge();
+
+    if (skillCache.getProgressionPoints() < possibleTraining)
+        possibleTraining = skillCache.getProgressionPoints();
+    pawsNumberPromptWindow::Create("Training amount", 0, 1, possibleTraining, this, "Training amount");
 }
 
 void pawsSkillWindow::Show()
@@ -672,6 +693,7 @@ void pawsSkillWindow::OnListAction( pawsListBox* widget, int status )
     if (status==LISTBOX_HIGHLIGHTED)
     {
         pawsListBoxRow* row = widget->GetSelectedRow();
+        selectedRow = row;
 
         pawsTextBox* skillName = (pawsTextBox*)(row->GetColumn(0));
 

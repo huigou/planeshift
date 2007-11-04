@@ -24,6 +24,7 @@
 #include "net/cmdbase.h"
 #include "util/skillcache.h"
 #include "gui/pawscontrolwindow.h"
+#include "paws/pawsnumberpromptwindow.h"
 
 class pawsTextBox;
 class pawsListBox;
@@ -76,7 +77,7 @@ private:
 
 /** This handles all the details about how the skill window.
  */
-class pawsSkillWindow : public pawsControlledWindow, public psClientNetSubscriber
+class pawsSkillWindow : public pawsControlledWindow, public psClientNetSubscriber, public iOnNumberEnteredAction
 {
 public:
     pawsSkillWindow();
@@ -92,6 +93,7 @@ public:
     virtual void Hide();
     virtual void Close();
     
+    virtual void OnNumberEntered(const char *name,int param,int number);
 protected:
 
     bool SetupDoll();
@@ -127,6 +129,7 @@ protected:
 
     csString skillString;
     csString selectedSkill;
+    pawsListBoxRow* selectedRow;
     
     int hitpointsMax, manaMax, physStaminaMax, menStaminaMax;
 
