@@ -136,7 +136,7 @@ size_t WordArray::AddQuotedWord(const csString & cmd, size_t pos)
         return AddWord(cmd, pos);
 }
 
-csString WordArray::GetTail(size_t wordNum)
+csString WordArray::GetTail(size_t wordNum) const
 {
     csString str;
 
@@ -149,7 +149,7 @@ csString WordArray::GetTail(size_t wordNum)
     return str;
 }
 
-void WordArray::GetTail(size_t wordNum, csString& buff)
+void WordArray::GetTail(size_t wordNum, csString& buff) const
 {
     buff.Clear();
 
@@ -163,7 +163,7 @@ void WordArray::GetTail(size_t wordNum, csString& buff)
 }
 
 
-csString WordArray::GetWords( size_t startWord, size_t endWord)
+csString WordArray::GetWords( size_t startWord, size_t endWord) const
 {
     csString str;
 
@@ -182,7 +182,7 @@ csString WordArray::GetWords( size_t startWord, size_t endWord)
     return str;
 }
 
-size_t WordArray::FindStr(const char *str,int start)
+size_t WordArray::FindStr(const csString& str,int start) const
 {
     for (size_t i=start; i<GetSize(); i++)
     {
@@ -223,7 +223,7 @@ bool psSentenceContain(const csString& sentence,const csString& word)
 }
 
 
-char* PS_GetFileName(char* path)
+const char* PS_GetFileName(const char* path)
 {
     size_t pos = strlen(path);
     for ( ; pos>0; pos--)
