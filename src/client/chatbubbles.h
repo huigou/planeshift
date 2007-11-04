@@ -32,22 +32,23 @@
 
 struct BubbleChatType
 {
-    int                 chatType;			// the chat type this settings will apply to
-    psEffectTextRow     textSettings;		// the settings
+    int                 chatType;           // the chat type this settings will apply to
+    psEffectTextRow     textSettings;       // the settings
     char                effectPrefix[64];   // the prefix of the effect name to apply, effects of name <prefix>longphrase, <prefix>normal, and <prefix>shortphrase should exist
 };
+
 
 class psChatBubbles : public iNetSubscriber
 {
 private:
-    psEngine *		psengine;
-    MsgHandler *	msgHandler;
+    psEngine *      psengine;
+    MsgHandler *    msgHandler;
 
-	csArray<BubbleChatType>	chatTypes;
+    csArray<BubbleChatType> chatTypes;
 
-	size_t bubbleMaxLineLen;			// maximum number of characters per line
-	size_t bubbleShortPhraseCharCount;	// messages with fewer than this many characters get small bubble
-	size_t bubbleLongPhraseLineCount;	// messages with more than this many lines get large bubble
+    size_t bubbleMaxLineLen;            // maximum number of characters per line
+    size_t bubbleShortPhraseCharCount;  // messages with fewer than this many characters get small bubble
+    size_t bubbleLongPhraseLineCount;   // messages with more than this many lines get large bubble
 
 public:
     psChatBubbles();
@@ -55,7 +56,7 @@ public:
 
     bool Initialize(psEngine * engine);
 
-	bool Load(const char * filename);
+    bool Load(const char * filename);
 
     // implemented iNetSubscriber messages
     virtual bool Verify(MsgEntry * msg, unsigned int flags, Client *& client);
