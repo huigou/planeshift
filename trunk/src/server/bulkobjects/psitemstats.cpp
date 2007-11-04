@@ -859,7 +859,7 @@ const char *psItemStats::GetUIDStr()
     return str;
 }
 
-const char *psItemStats::GetName()
+const char *psItemStats::GetName() const
 {
     return name.GetData();
 }
@@ -897,7 +897,7 @@ void psItemStats::SaveName(void)
 
 }
 
-const char *psItemStats::GetDescription()
+const char *psItemStats::GetDescription() const
 {
     return description;
 }

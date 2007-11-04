@@ -3,6 +3,8 @@
 - A new training system to save up on sql queries and mouse clicks. Instead of
   clicking lots of times on the train button, A number prompt window opens up.
 - Preventing stacking of items with different name or description.
+- Constified some methods in psItem and psItem stats. Todo: Constify anything
+  possible!
 
 *** 2007-11-04 by Andrew Craig
 - Did some work on the slot manager to fix up some issue related to containers.  

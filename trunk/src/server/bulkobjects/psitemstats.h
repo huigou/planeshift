@@ -478,7 +478,7 @@ public:
 
     uint32 GetUID();
     const char *GetUIDStr();
-    const char *GetDescription();
+    const char *GetDescription() const;
     void SetDescription(const char *v);
     PSITEMSTATS_AMMOTYPE GetAmmoType();
     float GetQuality() const { return item_quality; }
@@ -497,7 +497,7 @@ public:
     
     int GetAttackAnimID(unsigned int skill_level, iCelEntity *ent);
 
-    const char *GetName();
+    const char *GetName() const;
     const csString GetDownCaseName();
     void SetName(const char *v);
     void SaveName(void);
