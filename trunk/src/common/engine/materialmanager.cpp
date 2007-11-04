@@ -108,8 +108,8 @@ bool MaterialManager::LoadTextureDir(const char *dir)
         if ( strstr( filename, "_icon" ) )
             continue;
         
-        char* name = csStrNew(filename);
-        char* onlyname = PS_GetFileName(name);
+        const char* name = csStrNew(filename);
+        const char* onlyname = PS_GetFileName(name);
 
         if (!MissingMaterial(onlyname,filename))
         {

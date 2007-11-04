@@ -58,39 +58,36 @@ public:
     }
 
     /* Returns given word, or empty string if it does not exist */
-    csString Get(size_t wordNum) 
+    csString Get(size_t wordNum) const
     {
         if(wordNum < GetSize())
             return csStringArray::Get(wordNum);
         else
             return "";
     }
-    csString operator[](size_t wordNum) 
+    csString operator[](size_t wordNum) const
     {
-        if(wordNum < GetSize())
-            return csStringArray::Get(wordNum);
-        else
-            return "";
+        return Get(wordNum);
     }
 
-    int GetInt(size_t wordNum) 
+    int GetInt(size_t wordNum) const 
     {
         return atoi(Get(wordNum).GetData());
     }
 
-    float GetFloat(size_t wordNum)
+    float GetFloat(size_t wordNum) const
     {
         return atof(Get(wordNum).GetData());
     }
 
     /* Returns all words, starting at given word */
-    csString GetTail(size_t wordNum);
-    void GetTail(size_t wordNum, csString& dest);
+    csString GetTail(size_t wordNum) const;
+    void GetTail(size_t wordNum, csString& dest) const;
 
     /* Gets all the words from startWord to endWord */
-    csString GetWords( size_t startWord, size_t endWord);
+    csString GetWords( size_t startWord, size_t endWord) const;
 
-    size_t FindStr(const char *str,int start=0);
+    size_t FindStr(const csString& str,int start=0) const;
 
 protected:
     size_t AddWord(const csString& cmd, size_t pos);
@@ -101,7 +98,7 @@ protected:
 
 bool psContain(const csString& str, const csArray<csString>& strs);
 bool psSentenceContain(const csString& sentence,const csString& word);
-char* PS_GetFileName(char* path);
+const char* PS_GetFileName(const char* path);
 csArray<csString> psSplit(csString& str, char delimer);
 
 csString toString(const csVector3& pos);
