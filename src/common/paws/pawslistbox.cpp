@@ -660,7 +660,8 @@ bool pawsListBox::OnMouseDown(int button, int modifiers, int x, int y )
             scrollBar->SetCurrentValue(scrollBar->GetCurrentValue() + LISTBOX_MOUSE_SCROLL_AMOUNT);
         return true;
     }
-    return false;
+    
+    return true;
 }
 
 pawsListBoxRow* pawsListBox::GetSelectedRow()

@@ -3,6 +3,7 @@
   It was not splitting them correctly so was causing some problems when items 
   moved around.  Fixes bug:
   FS#246 - Changing furnace slots results in wrong number of molten
+- Fixed some more problems with mouse clicks falling through some widgets.  
 
 *** 2007-11-03 by Andrew Craig
 - Fixed problem where clicking on a tree node button ( ie the +/- ) would
