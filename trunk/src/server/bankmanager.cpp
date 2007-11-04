@@ -820,3 +820,4 @@ float BankManager::CalculateFee(psCharacter* pschar, bool guild)
 
 	return bankFee->GetValue();
 }
+
