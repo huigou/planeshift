@@ -1145,10 +1145,9 @@ bool psItem::CheckStackableWith(const psItem *otheritem, bool precise) const
     if (GetIsKey())
     {
         // Both are either keys or master keys
-        size_t locksCount = openableLocks.GetSize();
-        for (size_t i = 0 ; i < locksCount ; i++)
-            if (!otheritem->CanOpenLock(openableLocks[i], false))
-                return false;
+        if (!CompareOpenableLocks(otheritem) ||
+            !otheritem->CompareOpenableLocks(this))
+            return false;
     }
 
     // TODO: Check effects
@@ -1168,6 +1167,15 @@ bool psItem::CheckStackableWith(const psItem *otheritem, bool precise) const
 			return false;
 	}
 
+    return false;
+}
+
+bool psItem::CompareOpenableLocks(const psItem* key) const
+{
+    size_t locksCount = openableLocks.GetSize();
+    for (size_t i = 0 ; i < locksCount ; i++)
+        if (!key->CanOpenLock(openableLocks[i], false))
+            return false;
     return false;
 }
 
