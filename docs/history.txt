@@ -4,6 +4,8 @@
   moved around.  Fixes bug:
   FS#246 - Changing furnace slots results in wrong number of molten
 - Fixed some more problems with mouse clicks falling through some widgets.  
+- Fix FS#372 - Player's books showing in GM item spawn gui.  Those 
+  items will not show up under the /item->item window now.  
 
 *** 2007-11-03 by Andrew Craig
 - Fixed problem where clicking on a tree node button ( ie the +/- ) would
