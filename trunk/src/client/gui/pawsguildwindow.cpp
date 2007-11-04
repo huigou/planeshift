@@ -670,17 +670,20 @@ bool pawsGuildWindow::OnButtonPressed( int mouseButton, int keyModifier, pawsWid
         return true;
     }
 
+    bool retVal = false;
     switch ( widget->GetID() )
     {
         case CREATE_GUILD_CONFIRM:
         {
             pawsStringPromptWindow::Create("Enter name of the new guild", "",
                                            false, 250, 25, this,"NewGuildName");
+            retVal = true;                                               
             break;
         }
         case CREATE_GUILD_DECLINE:
         {
             SetCreatingGuild(false);
+            retVal = true;                                               
             break;
         }
 
@@ -693,6 +696,7 @@ bool pawsGuildWindow::OnButtonPressed( int mouseButton, int keyModifier, pawsWid
             currentPanel->Show();
             currentTab->SetState(true);
             SetTheRightBackground();
+            retVal = true;                                               
             break;
         }
         case BTN_MEMBER_TAB:
@@ -704,6 +708,7 @@ bool pawsGuildWindow::OnButtonPressed( int mouseButton, int keyModifier, pawsWid
             currentPanel->Show();
             currentTab->SetState(true);
             SetTheRightBackground();
+            retVal = true;                                               
             break;
         }
         case BTN_ALLIANCE_TAB:
@@ -715,6 +720,7 @@ bool pawsGuildWindow::OnButtonPressed( int mouseButton, int keyModifier, pawsWid
             currentPanel->Show();
             currentTab->SetState(true);
             SetTheRightBackground();
+            retVal = true;                                               
             break;
         }
         case BTN_SETTINGS_Tab:
@@ -726,6 +732,7 @@ bool pawsGuildWindow::OnButtonPressed( int mouseButton, int keyModifier, pawsWid
             currentPanel->Show();
             currentTab->SetState(true);
             SetTheRightBackground();
+            retVal = true;                                               
             break;
         }
         
@@ -734,6 +741,7 @@ bool pawsGuildWindow::OnButtonPressed( int mouseButton, int keyModifier, pawsWid
             csString command;
             command.Format("/guildsecret %s",(guildSecret->GetState()?"on":"off"));
             psengine->GetCmdHandler()->Execute(command);
+            retVal = true;                                               
             break;
         }
 
@@ -743,7 +751,7 @@ bool pawsGuildWindow::OnButtonPressed( int mouseButton, int keyModifier, pawsWid
             command.Format("<r onlineonly=\"%s\"/>", onlineOnly->GetState() ? "yes":"no");
             psGUIGuildMessage msg(psGUIGuildMessage::SET_ONLINE, command);
             msgHandler->SendMessage(msg.msg);
-            
+            retVal = true;                                                           
             break;
         }
         
@@ -757,6 +765,7 @@ bool pawsGuildWindow::OnButtonPressed( int mouseButton, int keyModifier, pawsWid
                 else
                     pawsYesNoBox::Create(this, "Do you really want to remove this member from the guild ?", REMOVE_MEMBER_CONFIRM, -1);
             }
+            retVal = true;                                               
             break;
         }
         case REMOVE_MEMBER_CONFIRM:
@@ -768,6 +777,7 @@ bool pawsGuildWindow::OnButtonPressed( int mouseButton, int keyModifier, pawsWid
                 command.Format("/guildremove %s", member->name.GetData());
                 psengine->GetCmdHandler()->Execute(command);
             }
+            retVal = true;                                               
             break;
         }
         case EDIT_LEVEL_BUTTON:
@@ -788,6 +798,7 @@ bool pawsGuildWindow::OnButtonPressed( int mouseButton, int keyModifier, pawsWid
                     pw->NewOption(levels[i]);
                 pw->Select(0);
             }
+            retVal = true;                                               
             break;
         }
         case EDIT_GUILD_POINTS_BUTTON:
@@ -796,6 +807,7 @@ bool pawsGuildWindow::OnButtonPressed( int mouseButton, int keyModifier, pawsWid
             if (member != NULL)
                 pawsNumberPromptWindow::Create("Enter points", member->points, 0, 100, 
                                                this, "GuildPoints",member->char_id);
+            retVal = true;                                                                                              
             break;
         }
         case EDIT_PUBLIC_NOTES_BUTTON:
@@ -804,6 +816,7 @@ bool pawsGuildWindow::OnButtonPressed( int mouseButton, int keyModifier, pawsWid
             if (member != NULL)
                 pawsStringPromptWindow::Create("Public notes", member->public_notes, 
                                                true, 400, 300, this, "PublicNotes", member->char_id);
+            retVal = true;                                                                                              
             break;
         }
         case EDIT_PRIVATE_NOTES_BUTTON:
@@ -812,6 +825,7 @@ bool pawsGuildWindow::OnButtonPressed( int mouseButton, int keyModifier, pawsWid
             if (member != NULL)
                 pawsStringPromptWindow::Create("Private notes", member->private_notes, 
                                                true, 400, 300, this, "PrivateNotes",member->char_id);
+            retVal = true;                                                                                              
             break;
         }
         case INVITE_BUTTON:
@@ -820,15 +834,18 @@ bool pawsGuildWindow::OnButtonPressed( int mouseButton, int keyModifier, pawsWid
                 pawsStringPromptWindow::Create("Enter name of the person to invite", "", 
                                                false, 250, 20, this, "Invitee");
             pmwindow->SetAlwaysOnTop(true);
+            retVal = true;                                               
             break;
         }
         case LEAVE_BUTTON:
         {
             OpenGuildLeaveConfirm();
+            retVal = true;                                               
             break;
         }
         case LEAVE_CONFIRM:
         {
+            retVal = true;                                               
             guildMemberInfo * player = FindMemberInfo(char_id);
             if (player == NULL)
                 break;
@@ -844,12 +861,14 @@ bool pawsGuildWindow::OnButtonPressed( int mouseButton, int keyModifier, pawsWid
         {
             pawsStringPromptWindow::Create("Enter new name of the guild", guildName->GetText(),
                                            false, 220, 20, this, "GuildName");
+            retVal = true;                                                                                          
             break;
         }
         case EDIT_GUILD_WEB_PAGE:
         {
             pawsStringPromptWindow::Create("Enter new web page of the guild", guildWebPage->GetText(),
                                            false, 220, 20, this, "NewURL");
+            retVal = true;                                                                                          
             break;
         }
         case SAVE_MOTD_BUTTON:
@@ -859,45 +878,53 @@ bool pawsGuildWindow::OnButtonPressed( int mouseButton, int keyModifier, pawsWid
 
             psGuildMOTDSetMessage motdSet(motdMsg,nameMsg);
             msgHandler->SendMessage(motdSet.msg);
+            retVal = true;                                                           
             break;
         }
         case REFRESH_MOTD_BUTTON:
         {
             psMOTDRequestMessage motdReq;
             msgHandler->SendMessage(motdReq.msg);
+            retVal = true;                                               
             break;
         }
         case REMOVE_GUILD:
         {
             pawsYesNoBox::Create(this, "Do you really want to remove this member from the alliance ?", REMOVE_GUILD_CONFIRM, -1);
+            retVal = true;                                               
             break;
         }
         case SET_ALLIANCE_LEADER:
         {
             if (allianceMemberList->GetSelectedRow() != NULL)
                 pawsYesNoBox::Create(this, "Do you really want to transfer leadership to this guild ?", SET_ALLIANCE_LEADER_CONFIRM, -1);
+            retVal = true;                                                               
             break;
         }
         case INVITE_GUILD:
         {
             pawsStringPromptWindow::Create("Enter name of the guild leader to invite", "",
                                            false, 270, 20, this, "NewAllianceInvitee");
+            retVal = true;                                                                                          
             break;
         }
         case LEAVE_ALLIANCE:
         {
             pawsYesNoBox::Create(this, "Do you really want to leave the alliance ?", LEAVE_ALLIANCE_CONFIRM, -1);
+            retVal = true;                                                           
             break;
         }
         case DISBAND_ALLIANCE:
         {
             pawsYesNoBox::Create(this, "Do you really want to disband the alliance ?", DISBAND_ALLIANCE_CONFIRM, -1);
+            retVal = true;                                                           
             break;
         }
         case CREATE_ALLIANCE:
         {
             pawsStringPromptWindow::Create("Enter name of the new alliance", "",
                                            false, 220, 20, this, "NewAllianceName");
+            retVal = true;                                                                                          
             break;
         }
         case REMOVE_GUILD_CONFIRM:
@@ -905,6 +932,7 @@ bool pawsGuildWindow::OnButtonPressed( int mouseButton, int keyModifier, pawsWid
             csString command;
             command.Format("/allianceremove %s", allianceMemberList->GetTextCellValue(allianceMemberList->GetSelection(), 0).GetData());
             psengine->GetCmdHandler()->Execute(command);
+            retVal = true;                                               
             break;
         }
         case SET_ALLIANCE_LEADER_CONFIRM:
@@ -912,21 +940,24 @@ bool pawsGuildWindow::OnButtonPressed( int mouseButton, int keyModifier, pawsWid
             csString command;
             command.Format("/allianceleader %s", allianceMemberList->GetTextCellValue(allianceMemberList->GetSelection(), 0).GetData());
             psengine->GetCmdHandler()->Execute(command);
+            retVal = true;                                               
             break;
         }
         case LEAVE_ALLIANCE_CONFIRM:
         {
             psengine->GetCmdHandler()->Execute("/allianceleave");
+            retVal = true;                                               
             break;
         }
         case DISBAND_ALLIANCE_CONFIRM:
         {
             psengine->GetCmdHandler()->Execute("/endalliance");
+            retVal = true;                                               
             break;
         }
     }
 
-    return false;
+    return retVal;
 }
 
 void pawsGuildWindow::Show()
