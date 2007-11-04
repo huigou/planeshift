@@ -139,7 +139,9 @@ void SlotManager::MoveFromWorldContainer(psSlotMovementMsg& msg, Client *fromCli
         return;
     }
 
-    psItem *itemProposed = worldContainer->FindItemInSlot(msg.fromSlot);
+    // Check to see if that item exists in the container with the required amount.
+    // This will return the entire stack of items despite the count that we want.
+    psItem *itemProposed = worldContainer->FindItemInSlot(msg.fromSlot, msg.stackCount);
 
     if (!itemProposed)
     {
@@ -161,6 +163,7 @@ void SlotManager::MoveFromWorldContainer(psSlotMovementMsg& msg, Client *fromCli
     }
 
     psserver->GetWorkManager()->StopWork(fromClient, itemProposed);
+    
     if (msg.toContainer > 100)
     {
         containerEntityID = msg.toContainer;
@@ -169,6 +172,10 @@ void SlotManager::MoveFromWorldContainer(psSlotMovementMsg& msg, Client *fromCli
 
     switch (msg.toContainer)
     {
+        //---------------------------------------------------------------------
+        // Moving from a world container to another world container.  Possibly
+        // the same one but in a different slot.
+        //---------------------------------------------------------------------        
         case CONTAINER_GEM_OBJECT:
         {
             // TODO: Talad would like to be able to put containers in world containers.
@@ -203,21 +210,39 @@ void SlotManager::MoveFromWorldContainer(psSlotMovementMsg& msg, Client *fromCli
 
             // Now take this out of slot and put in other slot
             // TODO: This should be msg.stackCount once we can split stacks inside a container.
-            if (worldContainer->CanAdd(itemProposed->GetStackCount(), itemProposed, msg.toSlot))
+            
+            psItem* newItem = NULL;
+                
+            if (worldContainer->CanAdd(msg.stackCount, itemProposed, msg.toSlot))
             {
-                if (!worldContainer->RemoveFromContainer(itemProposed,fromClient))
+                newItem = worldContainer->RemoveFromContainer(itemProposed, msg.fromSlot,fromClient, msg.stackCount);
+                
+                //if (!worldContainer->RemoveFromContainer(itemProposed,fromClient) )
+                if ( !newItem ) 
                 {
                     Error1("Can not delete item from container");
                     return;
                 }
-                if (!worldContainer->AddToContainer(itemProposed, fromClient, msg.toSlot))
+                
+                if (!worldContainer->AddToContainer(newItem, fromClient, msg.toSlot))
                 {
                     Error2("Bad container slot %i when trying to add items to container", msg.toSlot);
                     return;
                 }
             }
+            
             // Start work on item again
-            psserver->GetWorkManager()->StartAutoWork(fromClient, worldContainer, itemProposed, msg.stackCount);
+            // If the entire stack was taken then newItem will be the same as itemProposed.  If that is not the
+            // case there was a stack split so setup work on the two stacks.
+            if ( newItem != itemProposed )
+            {
+                psserver->GetWorkManager()->StartAutoWork(fromClient, worldContainer, itemProposed, itemProposed->GetStackCount());
+            }                
+            
+            if ( newItem )
+            {                
+                psserver->GetWorkManager()->StartAutoWork(fromClient, worldContainer, newItem, newItem->GetStackCount());
+            }                
 
             // psserver->GetCharManager()->SendContainerContents(fromClient, parentItem, containerEntityID);
 
@@ -250,12 +275,25 @@ void SlotManager::MoveFromWorldContainer(psSlotMovementMsg& msg, Client *fromCli
             // TODO: Can't use destSlot here because Add doesn't check if the destination slot's full.
             // After fixing Add, re-enable this.
             //INVENTORY_SLOT_NUMBER destSlot = (INVENTORY_SLOT_NUMBER) (msg.toSlot + (int) PSCHARACTER_SLOT_BULK1);
+            psItem* newItem;
+            
             if (chr->Inventory().Add(itemProposed, true))
             {
                 // Now that it was successful, take it out of the world container
-                worldContainer->RemoveFromContainer(itemProposed,fromClient);
-                chr->Inventory().Add(itemProposed, false);
+                //worldContainer->RemoveFromContainer(itemProposed,fromClient);                                
+                newItem = worldContainer->RemoveFromContainer(itemProposed, msg.fromSlot,fromClient, msg.stackCount);
+                
+                // If we did not take the entire stack, restart the work on the items that are left over.                
+                if ( newItem != itemProposed )
+                {
+                    psserver->GetWorkManager()->StartAutoWork(fromClient, worldContainer, itemProposed, itemProposed->GetStackCount());
+                }   
+                
+                chr->Inventory().Add(newItem, false);
                 itemProposed->SetGuardingCharacterID(0);
+                
+                             
+            
                 return;
             }
 

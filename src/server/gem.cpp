@@ -4007,7 +4007,53 @@ bool gemContainer::RemoveFromContainer(psItem *item,Client *fromClient)
         return false;
 }
 
-psItem *gemContainer::FindItemInSlot(int slot)
+
+psItem* gemContainer::RemoveFromContainer(psItem *itemStack, int fromSlot, Client *fromClient, int stackCount)
+{
+    // printf("Removing %s from container now.\n", item->GetName() );
+    
+    psItem* item = NULL;
+    bool clear = false;
+ 
+    // If the stack count is the taken amount then we can delete the entire stack from the itemlist       
+    if ( itemStack->GetStackCount() == stackCount )
+    {
+        item = itemStack;        
+        itemlist.Delete(itemStack);
+        clear = true;   // Clear out the slot on the client
+    }
+    else
+    {
+        // Split out the stack for the required amount.
+        item = itemStack->SplitStack(stackCount);
+    }
+            
+    // Send out messages about the change in the item stack.    
+    uint32_t slot = itemStack->GetLocInParent();
+
+    if (fromClient)
+    {
+        // printf("Multicasting removal update to nearby clients of %s.\n\n", fromClient->GetName() );
+        // Update client(s)
+        psViewItemUpdate mesg(fromClient->GetClientNum(), 
+                              GetEntity()->GetID(),
+                              slot,
+                              clear,
+                              itemStack->GetName(),
+                              itemStack->GetImageName(),
+                              itemStack->GetStackCount(),
+                              0);
+        
+        mesg.Multicast(fromClient->GetActor()->GetMulticastClients(),0,5);
+    }                
+    
+    return item;
+}
+
+
+
+
+psItem *gemContainer::FindItemInSlot(int slot, int stackCount)
 {
     if (slot < 0 || slot >= SlotCount())
         return NULL;
@@ -4026,7 +4072,15 @@ psItem *gemContainer::FindItemInSlot(int slot)
         // Return the item in parrent location slot
         if (item->GetLocInParent() == slot)
         {
-            return item;
+            // If the item is here and the stack count we want is available.
+            if ( stackCount == -1 || item->GetStackCount() >= stackCount )
+            {
+                return item;
+            }
+            else
+            {
+                return NULL;
+            }                
         }
     }
     return NULL;

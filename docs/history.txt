@@ -1,3 +1,9 @@
+*** 2007-11-04 by Andrew Craig
+- Did some work on the slot manager to fix up some issue related to containers.  
+  It was not splitting them correctly so was causing some problems when items 
+  moved around.  Fixes bug:
+  FS#246 - Changing furnace slots results in wrong number of molten
+
 *** 2007-11-03 by Andrew Craig
 - Fixed problem where clicking on a tree node button ( ie the +/- ) would
   also make the character walk to point.

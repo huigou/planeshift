@@ -391,7 +391,19 @@ public:
     bool CanAdd(unsigned short amountToAdd, psItem *item, int slot=-1);
     bool AddToContainer(psItem *item,Client *fromClient, int slot=-1) { return AddToContainer(item, fromClient, slot, false); }
     bool RemoveFromContainer(psItem *item,Client *fromClient);
-    psItem *FindItemInSlot(int slot);
+    
+    /** Remove an item from the container.
+      * @param itemStack A pointer to the complete stack of the items we are looking at.
+      * @param fromslot  Where in the container the items are removed from.
+      * @param fromClient The client that is removing the items. 
+      * @param stackCount The amount of items we want to remove.
+      *
+      * @return An item pointer that is the removed items from container.  If itemStack == the item returned
+      *         then the entire stack has been removed.  Otherwise it will be a new item instance. 
+      */
+    psItem* RemoveFromContainer(psItem *itemStack, int fromSlot, Client *fromClient, int stackCount);
+
+    psItem *FindItemInSlot(int slot, int stackCount = -1);
     int SlotCount() const { return PSITEM_MAX_CONTAINER_SLOTS; }
     size_t CountItems() { return itemlist.GetSize(); }
     psItem *GetIndexItem(size_t i) { return itemlist[i]; }
