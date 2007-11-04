@@ -1115,6 +1115,9 @@ bool psItem::CheckStackableWith(const psItem *otheritem, bool precise) const
     if (otheritem->GetStackCount() > MAX_STACK_COUNT - stack_count)
         return false;
 
+    if (strcmp(GetName(), otheritem->GetName()) || strcmp(GetDescription(), otheritem->GetDescription()))
+        return false;
+
     /* Conditions that must be met for stacking:
      * 1) Base item stats point to the same entry
      * 2) If there are any modifiers they must point to the same entry in the same order
