@@ -4378,6 +4378,7 @@ void ProgressionManager::HandleSkill(Client * client, psGUISkillMessage& msg)
             }
             
             csString skillName = topNode->GetAttributeValue("NAME");
+            int skillAmount = topNode->GetAttributeValueAsInt("AMOUNT");
             
             psSkillInfo * info = CacheManager::GetSingleton().GetSkillByName(skillName);
             Debug2(LOG_SKILLXP, client->GetClientNum(),"    Looking for: %s\n", (const char*)skillName);
@@ -4420,16 +4421,16 @@ void ProgressionManager::HandleSkill(Client * client, psGUISkillMessage& msg)
             Debug2(LOG_SKILLXP, client->GetClientNum(),"    PP available: %d\n", character->GetProgressionPoints() );
             
             // Test for progression points
-            if (character->GetProgressionPoints() <= 0)
+            if (character->GetProgressionPoints() < skillAmount)
             {
                 psserver->SendSystemInfo(client->GetClientNum(),
-                                         "You don't have any progression points!");
+                                         "You don't have enough progression points!");
                 return;
             }
 
             // Test for money
             
-            if (info->price > character->Money())
+            if ((info->price * skillAmount) > character->Money())
             {
                 psserver->SendSystemInfo(client->GetClientNum(),
                                          "You don't have the money to buy this skill!");
@@ -4451,9 +4452,9 @@ void ProgressionManager::HandleSkill(Client * client, psGUISkillMessage& msg)
                 return;            
             }
 
-            character->UseProgressionPoints(1);
-            character->SetMoney(character->Money()-info->price);            
-            character->Train(info->id,1);
+            character->UseProgressionPoints(skillAmount);
+            character->SetMoney(character->Money()-(info->price * skillAmount));            
+            character->Train(info->id,skillAmount);
             SendSkillList(client,true,info->id);
             psserver->GetCharManager()->UpdateItemViews(client->GetClientNum());
             psserver->SendSystemInfo(client->GetClientNum(), "You've received some %s training", skillName.GetData());
