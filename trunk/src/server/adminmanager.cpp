@@ -4783,7 +4783,7 @@ void AdminManager::SendSpawnItems (MsgEntry* me, psGMSpawnItems& msg,Client *cli
     // Database hit.  
     // Justification:  This is a rare event and it is quicker than us doing a sort.  
     //                 Is also a read only event.     
-    Result result(db->Select("SELECT id FROM item_stats WHERE category_id=%d AND id < %d ORDER BY Name AND flags NOT LIKE '%BUY_PERSONALISE%'", category->id, SPAWN_ITEM_ID_CEILING));
+    Result result(db->Select("SELECT id FROM item_stats WHERE category_id=%d AND flags NOT LIKE '%BUY_PERSONALISE%' AND id < %d ORDER BY Name ", category->id, SPAWN_ITEM_ID_CEILING));
     if (!result.IsValid() || result.Count() == 0)
     {
         psserver->SendSystemError(me->clientnum, "Could not query database for category %s.", msg.type.GetData() );
