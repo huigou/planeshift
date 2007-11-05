@@ -87,7 +87,7 @@ psUserCommands::psUserCommands(MsgHandler* mh,CmdHandler *ch,iObjectRegistry* ob
     cmdsource->Subscribe("/quests", this);
     cmdsource->Subscribe("/use", this);
     cmdsource->Subscribe("/dig", this);
-	cmdsource->Subscribe("/fish", this);
+    cmdsource->Subscribe("/fish", this);
     cmdsource->Subscribe("/target", this);
     cmdsource->Subscribe("/target_context", this);
     cmdsource->Subscribe("/tip", this);
@@ -154,7 +154,7 @@ psUserCommands::~psUserCommands()
     cmdsource->Unsubscribe("/quests",    this);
     cmdsource->Unsubscribe("/use",       this);
     cmdsource->Unsubscribe("/dig",       this);
-	cmdsource->Unsubscribe("/fish",		 this);
+    cmdsource->Unsubscribe("/fish",		 this);
     cmdsource->Unsubscribe("/target",    this);
     cmdsource->Unsubscribe("/target_context",this);
     cmdsource->Unsubscribe("/tip",       this);
@@ -185,7 +185,7 @@ psUserCommands::~psUserCommands()
     // Unsubscribe emotes.
     for(unsigned int i=0; i < emoteList.GetSize(); i++)
     {
-		cmdsource->Unsubscribe(emoteList[i].command, this);
+        cmdsource->Unsubscribe(emoteList[i].command, this);
     }
 }
 
@@ -480,7 +480,7 @@ const char *psUserCommands::HandleCommand(const char *cmd)
     else if (words[0] == "/use" ||
              words[0] == "/combine" ||
              words[0] == "/dig" ||
-			 words[0] == "/fish" ||
+             words[0] == "/fish" ||
              words[0] == "/repair" )
     {
         psWorkCmdMessage work(cmd);
@@ -683,7 +683,9 @@ void psUserCommands::UpdateTarget(SearchDirection searchDirection,
         seDistance = csSquaredDist::PointPoint(myPos, sePos);
     }
     else
+    {
         seDistance = (searchDirection == SEARCH_FORWARD) ? 0 : FLT_MAX;
+    }        
 
     float max_range = NEARBY_TARGET_MAX_RANGE;
   

@@ -57,15 +57,16 @@ protected:
                       EntityTypes entityType);
 
 
-	// Struct to hold our emote data.
-    struct EMOTE {
-    csString command;
-    csString general;
-    csString specific;
-    csString anim;
+    // Struct to hold our emote data.
+    struct EMOTE 
+    {
+        csString command;
+        csString general;
+        csString specific;
+        csString anim;
     };
 
-	csArray<EMOTE> emoteList;
+    csArray<EMOTE> emoteList;
 
     void AskToSlayBeforeSending(psMessageCracker *msg);
 
