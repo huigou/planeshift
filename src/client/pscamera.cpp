@@ -126,13 +126,13 @@ psCamera::psCamera()
     camData[CAMERA_TRANSITION].turnSpeed = 0.0f;
     camData[CAMERA_TRANSITION].swingCoef = 0.0f;
 
-	camData[CAMERA_NPCTALK].springCoef = 3.5f;
-	camData[CAMERA_NPCTALK].InertialDampeningCoef = 0.25f;
-	camData[CAMERA_NPCTALK].springLength = 0.01f;
-	camData[CAMERA_NPCTALK].maxDistance = 15.0f;
-	camData[CAMERA_NPCTALK].minDistance = 0.05f;
-	camData[CAMERA_NPCTALK].turnSpeed = 0.0f;
-	camData[CAMERA_NPCTALK].swingCoef = 0.0f;
+    camData[CAMERA_NPCTALK].springCoef = 3.5f;
+    camData[CAMERA_NPCTALK].InertialDampeningCoef = 0.25f;
+    camData[CAMERA_NPCTALK].springLength = 0.01f;
+    camData[CAMERA_NPCTALK].maxDistance = 15.0f;
+    camData[CAMERA_NPCTALK].minDistance = 0.05f;
+    camData[CAMERA_NPCTALK].turnSpeed = 0.0f;
+    camData[CAMERA_NPCTALK].swingCoef = 0.0f;
 
     camData[CAMERA_COLLISION].springCoef = 1.0f;
     camData[CAMERA_COLLISION].InertialDampeningCoef = 0.25f;
@@ -167,8 +167,8 @@ psCamera::psCamera()
     cameraInitialized = false;
 
 
-	cmdsource->Subscribe("/tellnpc", this);
-	msgqueue->Subscribe(this, MSGTYPE_CHAT);
+    cmdsource->Subscribe("/tellnpc", this);
+    msgqueue->Subscribe(this, MSGTYPE_CHAT);
 
 
     psengine->GetOptions()->RegisterOptionsClass("camera", this);
@@ -192,7 +192,7 @@ const float CAM_MODE_SCALE[psCamera::CAMERA_MODES_COUNT] = {
     0.0f,   //CAMERA_ACTUAL_DATA
     0.0f,   //CAMERA_LAST_ACTUAL
     0.285f, //CAMERA_TRANSITION
-	0.285f, //CAMERA_NPCTALK
+    0.285f, //CAMERA_NPCTALK
     1.0f,   //CAMERA_COLLISION
     0.0f    //CAMERA_ERR
 };
@@ -219,15 +219,15 @@ const char * psCamera::HandleCommand(const char *cmd)
 
 void psCamera::HandleMessage(MsgEntry *msg)
 {
-	return;
-	psChatMessage chatMsg(msg);
+    return;
+    psChatMessage chatMsg(msg);
 
 
-	if (chatMsg.iChatType == CHAT_NPC)
-	if (GetCameraMode() == CAMERA_NPCTALK)
-	if (npcModeTarget)
-	if (!strcmp(npcModeTarget->GetName(), chatMsg.sPerson))
-		npcModeLookAtNPC = true;
+    if (chatMsg.iChatType == CHAT_NPC)
+    if (GetCameraMode() == CAMERA_NPCTALK)
+    if (npcModeTarget)
+    if (!strcmp(npcModeTarget->GetName(), chatMsg.sPerson))
+        npcModeLookAtNPC = true;
 }
 
 float psCamera::CalcSpringCoef(float springyness, float scale) const
@@ -636,18 +636,18 @@ bool psCamera::Draw()
 
     // calculate the eye position of the actor according to his eye offset (defined by the race definition)
     csVector3 actorEye = actorPos;
-	if(actor->GetMode() == psModeMessage::SIT)
-	{
-		actorEye += csVector3(sinf(actorYRot)*firstPersonPositionOffset.z,
+    if(actor->GetMode() == psModeMessage::SIT)
+    {
+        actorEye += csVector3(sinf(actorYRot)*firstPersonPositionOffset.z,
                               firstPersonPositionOffset.y*0.5f,
                               cosf(actorYRot)*firstPersonPositionOffset.z);
-	}
-	else
-	{
-		actorEye += csVector3(sinf(actorYRot)*firstPersonPositionOffset.z,
+    }
+    else
+    {
+        actorEye += csVector3(sinf(actorYRot)*firstPersonPositionOffset.z,
                                                    firstPersonPositionOffset.y,
                                                    cosf(actorYRot)*firstPersonPositionOffset.z);
-	}
+    }
 
 
     // calculate ideal camera data (won't affect the actual camera data yet)
@@ -688,17 +688,14 @@ bool psCamera::Draw()
         SetTarget(GetTarget() + GetTarget(CAMERA_ERR), CAMERA_ACTUAL_DATA);
         SetUp(GetUp() + GetUp(CAMERA_ERR), CAMERA_ACTUAL_DATA);
     }
-	
+
     // assume the normal camera movement is good, and move the camera
     view->GetCamera()->SetSector(actorSector);
     view->GetCamera()->GetTransform().SetOrigin(actorPos + csVector3(0,1,0));
     view->GetCamera()->OnlyPortals(true);
-	view->GetCamera()->GetTransform().LookAt(GetTarget(CAMERA_ACTUAL_DATA) - GetPosition(CAMERA_ACTUAL_DATA), GetUp(CAMERA_ACTUAL_DATA));
+    view->GetCamera()->GetTransform().LookAt(GetTarget(CAMERA_ACTUAL_DATA) - GetPosition(CAMERA_ACTUAL_DATA), GetUp(CAMERA_ACTUAL_DATA));
     view->GetCamera()->MoveWorld(GetPosition(CAMERA_ACTUAL_DATA) - view->GetCamera()->GetTransform().GetOrigin());
 
-
-
-  
     view->Draw();
 
     // calculate the error of the camera
@@ -765,8 +762,8 @@ void psCamera::NextCameraMode()
 
 void psCamera::SetCameraMode(int mode)
 {
-//	if (lastCameraMode == currCameraMode)
-//		return;
+//  if (lastCameraMode == currCameraMode)
+//      return;
 
     lastCameraMode = currCameraMode;
     currCameraMode = mode;
@@ -817,11 +814,11 @@ void psCamera::SetCameraMode(int mode)
             SetYaw(GetYaw(lastCameraMode));
             break;
 
-		case CAMERA_NPCTALK:
-			SetYaw(0);
-			SetPitch(0.1f);
-			SetDistance(camData[CAMERA_NPCTALK].minDistance);
-			break;
+        case CAMERA_NPCTALK:
+            SetYaw(0);
+            SetPitch(0.1f);
+            SetDistance(camData[CAMERA_NPCTALK].minDistance);
+            break;
     }
 
     // enable transition phase
@@ -870,7 +867,7 @@ iMeshWrapper *psCamera::Get3DPointFrom2D(int x, int y, csVector3 * worldCoord, c
     csVector3 vc, vo, vw;
 
     csVector2 perspective( x, GetICamera()->GetShiftY() * 2 - y );
-	vc = GetICamera()->InvPerspective( perspective, 1 );
+    vc = GetICamera()->InvPerspective( perspective, 1 );
     vw = GetICamera()->GetTransform().This2Other( vc );
 
     iSector* sector = GetICamera()->GetSector();
@@ -904,7 +901,7 @@ iMeshWrapper* psCamera::FindMeshUnder2D(int x, int y, csVector3 *pos, int *poly)
     csVector3 vc, vo, vw;
 
     csVector2 perspective( x, GetICamera()->GetShiftY() * 2 - y );
-	vc = GetICamera()->InvPerspective( perspective, 1 );
+    vc = GetICamera()->InvPerspective( perspective, 1 );
     vw = GetICamera()->GetTransform().This2Other( vc );
 
     iSector* sector = GetICamera()->GetSector();
@@ -915,7 +912,7 @@ iMeshWrapper* psCamera::FindMeshUnder2D(int x, int y, csVector3 *pos, int *poly)
         csVector3 end = vo + (vw-vo)*100;
         csSectorHitBeamResult result; 
 
-		result = sector->HitBeamPortals( vo, end );
+        result = sector->HitBeamPortals( vo, end );
         //iMeshWrapper* sel = sector->HitBeamPortals(vo, end, isect, poly);
         if ( pos != NULL ) *pos = result.isect;
         return result.mesh;
@@ -1029,7 +1026,7 @@ bool psCamera::RotateCameraWithPlayer() const
     return !(GetCameraMode() == CAMERA_M64_THIRD_PERSON ||
              GetCameraMode() == CAMERA_LARA_THIRD_PERSON ||
              GetCameraMode() == CAMERA_FREE ||
-			 GetCameraMode() == CAMERA_NPCTALK);
+             GetCameraMode() == CAMERA_NPCTALK);
 }
 
 csVector3 psCamera::GetForwardVector(int mode) const
@@ -1265,50 +1262,51 @@ void psCamera::DoCameraIdealCalcs(const csTicks elapsedTicks, const csVector3& a
             SetTarget(actorEye);
             EnsureCameraDistance();
             CalculatePositionFromYawPitchRoll();
-			break;
-		case CAMERA_NPCTALK:
-		{
-			if (!npcModeTarget || !actor)
-				break;
+            break;
+        case CAMERA_NPCTALK:
+        {
+            if (!npcModeTarget || !actor)
+                break;
 
-			psClientCharManager* clientChar = psengine->GetCharManager();
-			if (npcModeTarget != clientChar->GetTarget() || npcModePosition != actor->pcmesh->GetMesh()->GetMovable()->GetFullPosition())
-			{
-				SetCameraMode(lastCameraMode);
-				break;
-			}
-			csVector3 targetPos = npcModeTarget->pcmesh->GetMesh()->GetMovable()->GetFullPosition();
-			targetPos.y += npcModeTarget->pcmesh->GetMesh()->GetWorldBoundingBox().MaxY();
-			csVector3 charPos = actorPos;
-			charPos.y += actor->pcmesh->GetMesh()->GetWorldBoundingBox().MaxY();
-			csVector3 middle = charPos + (targetPos - charPos) * 0.5f;
+            psClientCharManager* clientChar = psengine->GetCharManager();
+            if (npcModeTarget != clientChar->GetTarget() || npcModePosition != actor->pcmesh->GetMesh()->GetMovable()->GetFullPosition())
+            {
+                SetCameraMode(lastCameraMode);
+                break;
+            }
+            
+            csVector3 targetPos = npcModeTarget->pcmesh->GetMesh()->GetMovable()->GetFullPosition();
+            targetPos.y += npcModeTarget->pcmesh->GetMesh()->GetWorldBoundingBox().MaxY();
+            csVector3 charPos = actorPos;
+            charPos.y += actor->pcmesh->GetMesh()->GetWorldBoundingBox().MaxY();
+            csVector3 middle = charPos + (targetPos - charPos) * 0.5f;
 
-			/*
-			if (npcModeLookAtNPC)
-				SetTarget(targetPos);
-			else
-				SetTarget(charPos);
-			*/
-			SetTarget(middle);
+            /*
+            if (npcModeLookAtNPC)
+                SetTarget(targetPos);
+            else
+                SetTarget(charPos);
+            */
+            SetTarget(middle);
 
-			csVector3 delta = targetPos - charPos;
+            csVector3 delta = targetPos - charPos;
 
-			float aspect = view->GetCamera()->GetShiftX() / view->GetCamera()->GetShiftY();
-			float d = (middle - charPos).Norm() / (tanf(view->GetCamera()->GetFOVAngle()) * aspect * 0.5f) * 20.1f;
-			d += GetDistance();
+            float aspect = view->GetCamera()->GetShiftX() / view->GetCamera()->GetShiftY();
+            float d = (middle - charPos).Norm() / (tanf(view->GetCamera()->GetFOVAngle()) * aspect * 0.5f) * 20.1f;
+            d += GetDistance();
 
-			if (d < 2.0f)
-				d = 2.0f;
+            if (d < 2.0f)
+                d = 2.0f;
 
-			float pitch = -GetPitch();
-			float yaw = GetYaw();
-			float x = cosf(yaw) * cosf(pitch) * d;
-			float y = sinf(pitch) * d;
-			float z = sinf(yaw) * cosf(pitch) * d;
+            float pitch = -GetPitch();
+            float yaw = GetYaw();
+            float x = cosf(yaw) * cosf(pitch) * d;
+            float y = sinf(pitch) * d;
+            float z = sinf(yaw) * cosf(pitch) * d;
 
-			SetPosition(middle + (delta % GetUp()).Unit() * x + GetUp() * y + delta.Unit() * z);
-			break;
-		}
+            SetPosition(middle + (delta % GetUp()).Unit() * x + GetUp() * y + delta.Unit() * z);
+            break;
+        }
     }
 }
 
