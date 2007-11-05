@@ -257,19 +257,21 @@ void psEntityLabels::SetObjectText(GEMClientObject* object)
         return;
     }
 
-	size_t nameCharCount = nameRow.text.Length();
-	size_t guildCharCount = guildRow.text.Length();
-	size_t maxCharCount = nameCharCount > guildCharCount ? nameCharCount : guildCharCount;
-	float scale = sqrt((float)maxCharCount) / 4.0f;
+    size_t nameCharCount = nameRow.text.Length();
+    size_t guildCharCount = guildRow.text.Length();
+    size_t maxCharCount = nameCharCount > guildCharCount ? nameCharCount : guildCharCount;
+    float scale = sqrt((float)maxCharCount) / 4.0f;
 
     // Finally set the text, with a black outline
     if (guildRow.text.Length())
-	{
+    {
         txt->SetText(2, &nameRow, &guildRow);
-		scale *= 1.5f;
-	}
+        scale *= 1.5f;
+    }
     else
+    {
         txt->SetText(1, &nameRow);
+    }        
 
     entityLabel->SetScaling(scale, 1.0f);
 }
