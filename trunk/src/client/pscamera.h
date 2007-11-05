@@ -67,8 +67,8 @@ public:
         // This is a camera mode that occurs in the transition phase in between normal camera modes.
         CAMERA_TRANSITION,
 
-		// camera mode for talking to an NPC
-		CAMERA_NPCTALK,
+        // camera mode for talking to an NPC
+        CAMERA_NPCTALK,
 
         // A camera mode that is used when a collision occurs.
         // It allows for collisions to be rectified faster than normal
@@ -87,8 +87,8 @@ public:
         int minDist;        // minimum acceptable distance (used when adaptive=true)
     };
 
-	const char *HandleCommand(const char *cmd);
-	void HandleMessage(MsgEntry *msg);
+    const char *HandleCommand(const char *cmd);
+    void HandleMessage(MsgEntry *msg);
 
 
     /** creates the viewport
@@ -620,8 +620,8 @@ private:
     /// perform collision detection between the camera target and position
     bool useCameraCD;
 
-	/// Have the settings been loaded from file and the camera mode been initialized?
-	bool cameraInitialized;
+    /// Have the settings been loaded from file and the camera mode been initialized?
+    bool cameraInitialized;
 
     iSector * lastActorSector;
 
@@ -644,9 +644,9 @@ private:
 
     DistanceCfg distanceCfg;
 
-	GEMClientObject* npcModeTarget;
-	csVector3 npcModePosition;
-	bool npcModeLookAtNPC;
+    GEMClientObject* npcModeTarget;
+    csVector3 npcModePosition;
+    bool npcModeLookAtNPC;
     int fixedDistClip;
 };
 

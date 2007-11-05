@@ -506,13 +506,13 @@ GEMClientActor * psCelClient::GetActorByName(const char * name) const
     for (size_t a=0; a<len; ++a)
     {
         GEMClientActor * actor = dynamic_cast<GEMClientActor*>(entities[a]);
-	if (!actor)
-	  continue;
+        if (!actor)
+            continue;
 
-	testName = actor->GetName();
-	firstName = testName.Slice(0, testName.FindFirst(' '));
-	if (firstName == name)
-	  return actor;
+        testName = actor->GetName();
+        firstName = testName.Slice(0, testName.FindFirst(' '));
+        if (firstName == name)
+            return actor;
     }
     return 0;
 }
@@ -1099,9 +1099,16 @@ GEMClientActor::~GEMClientActor()
 
 int GEMClientActor::GetAnimIndex (csStringHash* msgstrings, csStringID animid)
 {
-    if (!cal3dstate) return -1;
+    if (!cal3dstate) 
+    {
+        return -1;
+    }
+    
     int idx = anim_hash.Get (animid, -1);
-    if (idx >= 0) return idx;
+    if (idx >= 0)
+    {
+        return idx;
+    }
 
     // Not cached yet.
     csString animName = msgstrings->Request (animid);
@@ -1307,37 +1314,10 @@ bool GEMClientActor::InitCharData( const char* traits, const char* equipment )
 
     this->traits = traits;
     this->equipment = equipment;
-/*
-    iDocumentSystem* xml = psengine->GetXMLParser ();
-    csRef<iDocument> doc = xml->CreateDocument();
-    const char* traitError = doc->Parse(textParts);
-
-    if ( traitError )
-    {
-        Error2("Error in XML: %s", traitError );
-        return false;
-
-    }
     
-    csRef<iDocumentNodeIterator> traitIter = doc->GetRoot()->GetNode("traits")->GetNodes("trait");
-    
-    while ( traitIter->HasNext() )
-    {
-        csRef<iDocumentNode> traitNode = traitIter->Next();
-
-        Trait * trait = new Trait;
-        trait->Load(traitNode);
-        traitList.Push(trait);
-    }
-    
-    bool a = psengine->BuildAppearance(pcmesh->GetMesh(),textParts);
-    bool e = psengine->BuildEquipment(pcmesh->GetMesh(),equipment, traitList);
-      
-      
-    return (a && e);
-*/
     csString trt(traits);
     csString equip(equipment);
+    
     charApp->ApplyTraits(trt);
     charApp->ApplyEquipment(equip);
     return true;    
@@ -1452,8 +1432,8 @@ void GEMClientActor::SetMode(uint8_t mode, bool newactor)
         case psModeMessage::PEACE:
         case psModeMessage::WORK:
         case psModeMessage::EXHAUSTED:
-			SetIdleAnimation(psengine->GetCharControl()->GetMovementManager()->GetModeIdleAnim(movementMode));
-			break;
+            SetIdleAnimation(psengine->GetCharControl()->GetMovementManager()->GetModeIdleAnim(movementMode));
+            break;
         case psModeMessage::SPELL_CASTING:
             SetIdleAnimation("cast");
             break;
@@ -1586,13 +1566,14 @@ GEMClientActionLocation::GEMClientActionLocation( psCelClient* cel, psPersistAct
         Error1("Could not create GEMClientActionLocation because crystalspace.mesh.onbject.null could not be created.");
         return ;
     }
-	csRef<iNullMeshState> state =  scfQueryInterface<iNullMeshState> (nullmesh->GetMeshObject());
+    
+    csRef<iNullMeshState> state =  scfQueryInterface<iNullMeshState> (nullmesh->GetMeshObject());
     if (!state)
     {
-		Error1("No NullMeshState.");
+        Error1("No NullMeshState.");
         return ;
     }
-	state->SetRadius(1.0);
+    state->SetRadius(1.0);
     pcmesh->SetMesh( nullmesh );
 
 
