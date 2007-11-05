@@ -16,6 +16,8 @@
  */
 #include <psconfig.h>
 
+#include <iutil/document.h>
+
 #include "globals.h"
 #include "cmdadmin.h"
 #include "net/cmdhandler.h"
@@ -88,30 +90,35 @@ void psAdminCommands::HandleMessage(MsgEntry *me)
         psSystemMessage sysMsg( 0, MSG_INFO, "You now have the following admin commands available:" );
         msgqueue->Publish( sysMsg.msg );
 
-        psXMLString main ( msg.cmd );
+        
+        iDocumentSystem* xml = psengine->GetXMLParser ();
+        csRef<iDocument> doc = xml->CreateDocument();
+        const char* error = doc->Parse(msg.cmd);
 
-        int start = (int)main.FindTag("command");
-        csString commands;
-
-        while ( start != -1 )
+        if ( error )
         {
-            csString cmdString;
-            psXMLTag tag( main, start );
-            tag.GetTagParm( "name", cmdString );
+            Error3("Failure to parse XML string %s Error %s\n", msg.cmd, error);            
+        }
+        else
+        {
+            csRef<iDocumentNodeIterator> cmdIter = doc->GetRoot()->GetNodes("command");
+        
+            csString commands = "";
+            while ( cmdIter->HasNext() )
+            {
+                csRef<iDocumentNode> commandNode = cmdIter->Next();
+                csString cmdString = commandNode->GetAttributeValue("name");
+                commands.Append( cmdString );
+                commands.Append( "  " );
+                cmdsource->Subscribe( cmdString, this );
+            }
+            
+            psSystemMessage commandMsg( 0, MSG_INFO, commands.GetData() );
+            msgqueue->Publish( commandMsg.msg );
 
-            commands.Append( cmdString );
-            commands.Append( "  " );
-
-            cmdsource->Subscribe( cmdString, this );
-
-            start = main.FindTag( "command", start + 1 );
-        } 
-
-        psSystemMessage commandMsg( 0, MSG_INFO, commands.GetData() );
-        msgqueue->Publish( commandMsg.msg );
-
-        // Update the auto-complete list
-        pawsChatWindow* chat = static_cast<pawsChatWindow*>(PawsManager::GetSingleton().FindWidget("ChatWindow"));
-        chat->RefreshCommandList();
+            // Update the auto-complete list
+            pawsChatWindow* chat = static_cast<pawsChatWindow*>(PawsManager::GetSingleton().FindWidget("ChatWindow"));
+            chat->RefreshCommandList();
+        }            
     }
 }
