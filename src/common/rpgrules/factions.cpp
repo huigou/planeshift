@@ -97,16 +97,15 @@ void FactionSet::GetFactionListCSV(csString& csv)
 {
     csHash<FactionStanding*, int>::GlobalIterator iter = factionstandings.GetIterator();
     
-    char * delim = "";
+    if (iter.HasNext())
+    {
+        FactionStanding *fs = iter.Next();
+        csv.AppendFmt("%d,%d", fs->faction->id, fs->score);
+    }
     while (iter.HasNext())
     {
-        FactionStanding *fs;
-        fs = iter.Next();
-    
-        char buff[512];
-        sprintf(buff,"%s%d,%d",delim,fs->faction->id,fs->score);
-        csv.Append(buff);
-        delim = ",";
+        FactionStanding *fs = iter.Next();
+        csv.AppendFmt(",%d,%d", fs->faction->id, fs->score);
     }
 }
 
