@@ -1,5 +1,7 @@
 *** 2007-11-06 by Sasha Levin
 - Shortcuts can be edited with alt + left click.
+- Set unique flag on some uniqe indexes.
+- Added more indexes - Including a unique one on username in accounts table.
 
 *** 2007-11-04 by Andrew Craig
 - Fixed command parser on client to use standard XML parser system.
