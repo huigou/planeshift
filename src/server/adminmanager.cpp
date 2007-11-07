@@ -1816,6 +1816,8 @@ void AdminManager::Divorce(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& d
     }
 
     // Delete entries of character's from DB
+    csString spouseFullName = divorcerChar->GetSpouseName();
+    csString spouseName = spouseFullName.Slice( 0, spouseFullName.FindFirst(' '));
     marriageMgr->DeleteMarriageInfo(divorcerChar);
     psserver->SendSystemInfo(me->clientnum, "You have divorced %s from %s.", data.player.GetData(), spouseName.GetData());
     Debug3(LOG_MARRIAGE, me->clientnum, "%s divorced from %s.", data.player.GetData(), spouseName.GetData());
