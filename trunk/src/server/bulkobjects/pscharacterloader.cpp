@@ -411,7 +411,7 @@ bool psCharacterLoader::UpdateQuestAssignments(psCharacter *chr)
 bool psCharacterLoader::ClearCharacterSpell( psCharacter * character )
 {
     unsigned int character_id = character->GetCharacterID();
-    unsigned long result=db->Command("DELETE FROM player_spells WHERE player_id='%u'",character_id);
+    unsigned long result=db->CommandPump("DELETE FROM player_spells WHERE player_id='%u'",character_id);
     if (result==QUERY_FAILED)
         return false;
 
@@ -424,7 +424,7 @@ bool psCharacterLoader::SaveCharacterSpell( psCharacter * character )
     while (psSpell * spell = character->GetSpellByIdx(index))
     {
         unsigned int character_id = character->GetCharacterID();
-        unsigned long result=db->Command("INSERT INTO player_spells (player_id,spell_id,spell_slot) VALUES('%u','%u','%u')",
+        unsigned long result=db->CommandPump("INSERT INTO player_spells (player_id,spell_id,spell_slot) VALUES('%u','%u','%u')",
             character_id,spell->GetID(),index);
         if (result==QUERY_FAILED)
             return false;
@@ -437,7 +437,7 @@ bool psCharacterLoader::SaveCharacterSpell( psCharacter * character )
 
 bool psCharacterLoader::ClearCharacterTraits(unsigned int character_id)
 {
-    unsigned long result=db->Command("DELETE FROM character_traits WHERE character_id='%u'",character_id);
+    unsigned long result=db->CommandPump("DELETE FROM character_traits WHERE character_id='%u'",character_id);
     if (result==QUERY_FAILED)
         return false;
 
@@ -446,7 +446,7 @@ bool psCharacterLoader::ClearCharacterTraits(unsigned int character_id)
 
 bool psCharacterLoader::SaveCharacterTrait(unsigned int character_id,unsigned int trait_id)
 {
-    unsigned long result=db->Command("INSERT INTO character_traits (character_id,trait_id) VALUES('%u','%u')",character_id,trait_id);
+    unsigned long result=db->CommandPump("INSERT INTO character_traits (character_id,trait_id) VALUES('%u','%u')",character_id,trait_id);
     if (result==QUERY_FAILED)
         return false;
 
@@ -455,7 +455,7 @@ bool psCharacterLoader::SaveCharacterTrait(unsigned int character_id,unsigned in
 
 bool psCharacterLoader::ClearCharacterSkills(unsigned int character_id)
 {
-    unsigned long result=db->Command("DELETE FROM character_skills WHERE character_id='%u'",character_id);
+    unsigned long result=db->CommandPump("DELETE FROM character_skills WHERE character_id='%u'",character_id);
     if (result==QUERY_FAILED)
         return false;
 
@@ -503,7 +503,7 @@ bool psCharacterLoader::SaveCharacterSkill(unsigned int character_id,unsigned in
     if ( skill_z == 0 && skill_y == 0 && skill_rank == 0 )
         return true;
         
-    unsigned long result=db->Command("INSERT INTO character_skills (character_id,skill_id,skill_y,skill_z,skill_rank) VALUES('%u','%u','%u','%u','%u')",
+    unsigned long result=db->CommandPump("INSERT INTO character_skills (character_id,skill_id,skill_y,skill_z,skill_rank) VALUES('%u','%u','%u','%u','%u')",
         character_id,skill_id,skill_y,skill_z,skill_rank);
     if (result==QUERY_FAILED)
         return false;
@@ -513,7 +513,7 @@ bool psCharacterLoader::SaveCharacterSkill(unsigned int character_id,unsigned in
 
 bool psCharacterLoader::ClearCharacterAdvantages(unsigned int character_id)
 {
-    unsigned long result=db->Command("DELETE FROM character_advantages WHERE character_id='%u'",character_id);
+    unsigned long result=db->CommandPump("DELETE FROM character_advantages WHERE character_id='%u'",character_id);
     if (result==QUERY_FAILED)
         return false;
 
@@ -522,7 +522,7 @@ bool psCharacterLoader::ClearCharacterAdvantages(unsigned int character_id)
 
 bool psCharacterLoader::SaveCharacterAdvantage(unsigned int character_id,unsigned int advantage_id)
 {
-    unsigned long result=db->Command("INSERT INTO character_advantages (character_id,advantages_id) VALUES('%u','%u')",
+    unsigned long result=db->CommandPump("INSERT INTO character_advantages (character_id,advantages_id) VALUES('%u','%u')",
         character_id,advantage_id);
     if (result==QUERY_FAILED)
         return false;
@@ -575,22 +575,22 @@ bool psCharacterLoader::DeleteCharacterData( unsigned int charID, csString& erro
     // Note: Need to delete the pets using this function as well.
 
     query.Format( "delete from character_relationships where character_id=%d or related_id=%d", charID, charID );
-    db->Command( query ); 
+    db->CommandPump( query ); 
 
     query.Format("delete from character_quests where player_id=%d", charID );
-    db->Command( query );
+    db->CommandPump( query );
         
     query.Format("delete from character_skills where character_id=%d", charID );
-    db->Command( query );
+    db->CommandPump( query );
     
     query.Format("delete from character_traits where character_id=%d", charID );
-    db->Command( query );
+    db->CommandPump( query );
             
     query.Format("delete from player_spells where player_id=%d", charID);
-    db->Command( query );
+    db->CommandPump( query );
 
     query.Format("delete from characters where id=%d", charID );
-    db->Command( query );
+    db->CommandPump( query );
 
     /// Let GMEventManager sort the DB out, as it is a bit complex, and its cached too
     if (!psserver->GetGMEventManager()->RemovePlayerFromGMEvents(charID))
@@ -604,7 +604,7 @@ bool psCharacterLoader::DeleteCharacterData( unsigned int charID, csString& erro
     }                            
     
     query.Format("delete from item_instances where char_id_owner=%d", charID );
-    db->Command( query );
+    db->CommandPump( query );
 
     CPrintf( CON_DEBUG, "\nSuccessfully delete character id: %d\n", charID );
 
