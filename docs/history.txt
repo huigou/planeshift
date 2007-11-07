@@ -1,5 +1,6 @@
 *** 2007-11-07 by Michael Gist
 - Deprecation fixes.
+- Removed some hindering checks from GM /divorce command.
 
 *** 2007-11-07 by Sasha Levin
 - Add a threaded sql query executor, allowing to run async queries. Usefull
