@@ -1782,65 +1782,43 @@ void AdminManager::SetLabelColor(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdD
 
 void AdminManager::Divorce(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data, Client *client)
 {
-    bool onlineDivorcer = false;
-    bool onlineTarget = false;
-   
-    if ( !data.player.Length())
+    if (!data.player.Length())
     {
-        psserver->SendSystemInfo( me->clientnum, "Usage: \"/divorce [character]\"");
+        psserver->SendSystemInfo(me->clientnum, "Usage: \"/divorce [character]\"");
         return;
     }
 
     Client* divorcer = clients->Find( data.player );
-    onlineDivorcer = ( divorcer != NULL );
     
-    //If the player that wishes to divorce is not online, we can't proceed.
-    if ( !onlineDivorcer )
+    // If the player that wishes to divorce is not online, we can't proceed.
+    if (!divorcer)
     {
-        psserver->SendSystemInfo( me->clientnum, "The player that wishes to divorce must be online." );
+        psserver->SendSystemInfo(me->clientnum, "The player that wishes to divorce must be online." );
         return;
     }
 
     psCharacter* divorcerChar = divorcer->GetCharacterData();
-    //If the player is not married, we can't divorce anything.
-    if( !divorcerChar->GetIsMarried() )
-    {
-        psserver->SendSystemInfo( me->clientnum, "For obtaining a divorce, there must be a marriage before.");
-        return;
-    }
-    csString spouseFullName = divorcerChar->GetSpouseName();
-    csString spouseName = spouseFullName.Slice( 0, spouseFullName.FindFirst(' '));
 
-    //If the "spouse" is online, than there is no need to use GM powers for the divorce.
-    Client* target = clients->Find( spouseName );
-    onlineTarget = ( target != NULL );
-
-    if ( onlineTarget )
+    // If the player is not married, we can't divorce.
+    if(!divorcerChar->GetIsMarried())
     {
-        psserver->SendSystemInfo( me->clientnum, "The two players can agree by themselves on the divorce, since both are online.");
+        psserver->SendSystemInfo(me->clientnum, "You can't divorce people who aren't married!");
         return;
     }
 
-    if ( !psserver->GetCharManager()->HasConnected( spouseName ))//The player was connected recently.
-    {
-        psserver->SendSystemInfo( me->clientnum, "The spouse has been online recently, therefore it is not up to you to divorce the couple.");
-        return;
-    }
-
-    //Now is it time to divorce the player.
+    // Divorce the players.
     psMarriageManager* marriageMgr = psserver->GetMarriageManager();
-    if ( !marriageMgr )
+    if (!marriageMgr)
     {
-        psserver->SendSystemError( me->clientnum, "Can't load MarriageManager.");
-        Error1( "MarriageManager failed to load." );
+        psserver->SendSystemError(me->clientnum, "Can't load MarriageManager.");
+        Error1("MarriageManager failed to load.");
         return;
     }
 
     // Delete entries of character's from DB
-    marriageMgr->DeleteMarriageInfo( divorcerChar );
-    psserver->SendSystemInfo( me->clientnum, "You have divorced %s from %s.", data.player.GetData(), spouseName.GetData() );
-    Debug3( LOG_MARRIAGE, me->clientnum, "%s divorced from %s.", data.player.GetData(), spouseName.GetData() );
-
+    marriageMgr->DeleteMarriageInfo(divorcerChar);
+    psserver->SendSystemInfo(me->clientnum, "You have divorced %s from %s.", data.player.GetData(), spouseName.GetData());
+    Debug3(LOG_MARRIAGE, me->clientnum, "%s divorced from %s.", data.player.GetData(), spouseName.GetData());
 }
 
 void AdminManager::Teleport(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data, Client *client, gemObject* subject)
