@@ -65,7 +65,7 @@ bool CelBase::Initialize(iObjectRegistry* object_reg)
 
     QUERYPLUG(pluginMgr,iPluginManager, "iPluginManager");
     
-    pl = CS_LOAD_PLUGIN(pluginMgr, "cel.physicallayer", iCelPlLayer);
+    pl = csLoadPlugin<iCelPlLayer>(pluginMgr, "cel.physicallayer");
     if (!pl) 
     {
         CPrintf (CON_ERROR, "Couldn't load plugin for PlLayer.\n");
@@ -86,7 +86,7 @@ bool CelBase::Initialize(iObjectRegistry* object_reg)
 
 bool CelBase::LoadPlugin (const char* pcfactname)
 {
-    csRef<iBase> plug = CS_LOAD_PLUGIN_ALWAYS(pluginMgr, pcfactname);
+    csRef<iBase> plug = csLoadPluginAlways(pluginMgr, pcfactname);
     if (!plug)
     {
         csReport (object_reg, CS_REPORTER_SEVERITY_ERROR,

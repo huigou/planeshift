@@ -26,7 +26,6 @@
 #include <imesh/nullmesh.h>
 #include <cstool/collider.h>
 #include <ivaria/collider.h>
-#include <igeom/polymesh.h>
 #include <iengine/mesh.h>
 #include <imesh/object.h>
 #include <imesh/spritecal3d.h>
