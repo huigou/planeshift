@@ -1,4 +1,8 @@
 *** 2007-11-06 by Roland Schulz
+- fixed bug 1952 on the old BT: backward movement now also cancels autorun.
+- comment out debug msgs from last commit
+
+*** 2007-11-06 by Roland Schulz
 - fixed fix to FS#530 (the fix broke modifiers for keyboard keys). Both
   key and mouse modifiers should work now.
   
