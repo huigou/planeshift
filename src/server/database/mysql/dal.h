@@ -10,6 +10,8 @@
 #include "iserver/idal.h"
 
 #include <csutil/scf.h>
+#include <csutil/threading/thread.h>
+
 #include "iutil/comp.h"
 
 #include "net/netbase.h"  // Make sure that winsock is included.
@@ -20,20 +22,24 @@
 #include "util/stringarray.h"
 #include "util/dbprofile.h"
 
+using namespace CS::Threading;
+
 struct iObjectRegistry;
 
 class DelayedQueryManager : public CS::Threading::Runnable
 {
 public:
-    virtual void Run ();
-    void SetConn(const char *host, unsigned int port, const char *database,
+    DelayedQueryManager(const char *host, unsigned int port, const char *database,
                               const char *user, const char *pwd);
+
+    virtual void Run ();
     void Push(csString query);
-    ~DelayedQueryManager();
+    void Stop();
 private:
     MYSQL* m_conn;
     csArray<csString> arr;
     CS::Threading::RecursiveMutex mutex;
+    CS::Threading::RecursiveMutex mutexArray;
     CS::Threading::Condition datacondition;
     bool m_Close;
 };
@@ -88,8 +94,8 @@ public:
     virtual const char* DumpProfile();
     virtual void ResetProfile();
 
-    DelayedQueryManager* mp;
-    CS::Threading::Thread* m_mpThread;
+    csRef<DelayedQueryManager> dqm;
+    csRef<Thread> dqmThread;
 };
 
 
