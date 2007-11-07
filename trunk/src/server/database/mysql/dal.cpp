@@ -19,7 +19,6 @@
 
 #include <psconfig.h>
 #include <csutil/stringarray.h>
-#include <csutil/threading/thread.h>
 
 #include "util/log.h"
 #include "util/consoleout.h"
@@ -80,10 +79,10 @@ bool psMysqlConnection::Initialize(const char *host, unsigned int port, const ch
     // errors if this call fails.
     MYSQL *conn_check = mysql_real_connect(conn,host,user,pwd,database,port,NULL,CLIENT_FOUND_ROWS);
 
-    mp = new DelayedQueryManager();
-    mp->SetConn(host,port,user,pwd,database);
-    m_mpThread = new CS::Threading::Thread(mp, true);
-    m_mpThread->Start();
+    dqm.AttachNew(new DelayedQueryManager(host,port,user,pwd,database));
+    dqmThread.AttachNew(new Thread(dqm));
+    dqmThread->Start();
+
     return (conn == conn_check);
 }
 
@@ -91,9 +90,9 @@ bool psMysqlConnection::Close()
 {
     mysql_close(conn);
     conn = NULL;
-    delete mp;
-    m_mpThread->Stop();
-    m_mpThread->Wait();
+
+    dqm->Stop();
+    dqmThread->Stop();
     return true;
 }
 
@@ -128,7 +127,7 @@ unsigned long psMysqlConnection::CommandPump(const char *sql,...)
     va_start(args, sql);
     querystr.FormatV(sql, args);
     va_end(args);
-    mp->Push(querystr);
+    dqm->Push(querystr);
 
     return 1;
 }
@@ -509,7 +508,7 @@ uint64 psResultRow::stringtouint64(const char *stringbuf)
 }
 
 
-void DelayedQueryManager::SetConn(const char *host, unsigned int port, const char *database,
+DelayedQueryManager::DelayedQueryManager(const char *host, unsigned int port, const char *database,
                               const char *user, const char *pwd)
 {
     m_Close = false;
@@ -517,7 +516,7 @@ void DelayedQueryManager::SetConn(const char *host, unsigned int port, const cha
     m_conn = mysql_real_connect(conn,host,user,pwd,database,port,NULL,CLIENT_FOUND_ROWS);
 }
 
-DelayedQueryManager::~DelayedQueryManager()
+void DelayedQueryManager::Stop()
 {
     m_Close = true;
     datacondition.NotifyOne();
@@ -528,18 +527,26 @@ void DelayedQueryManager::Run()
 {
     while(!m_Close)
     {
+        datacondition.Wait(mutex);
         while (arr.GetSize() > 0)
         {
-            csString currQuery = arr.Pop();
+            csString currQuery;
+            {
+                CS::Threading::RecursiveMutexScopedLock lock(mutexArray);
+                currQuery = arr.Pop();
+            }
             printf("Executing delayed query: %s\n", currQuery.GetData());
-            mysql_real_query(m_conn, currQuery, currQuery.Length());
+            if (mysql_real_query(m_conn, currQuery, currQuery.Length()))
+                printf("Failed executing query!\n");
         }
-        datacondition.Wait(mutex);
     }
 }
 
 void DelayedQueryManager::Push(csString query) 
 { 
-    arr.Push(query); 
+    {
+        CS::Threading::RecursiveMutexScopedLock lock(mutexArray);
+        arr.Push(query); 
+    }
     datacondition.NotifyOne();
 }
