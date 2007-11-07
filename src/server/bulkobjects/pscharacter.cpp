@@ -626,7 +626,7 @@ void psCharacter::SetLastLoginTime(const char *last_login, bool save )
     if ( save )
     {
         //Store in database
-        if(!db->Command("UPDATE characters SET last_login='%s' WHERE id='%d'", timeStr.GetData(),
+        if(!db->CommandPump("UPDATE characters SET last_login='%s' WHERE id='%d'", timeStr.GetData(),
             this->GetCharacterID()))
         {
              Error2( "Last login storage: DB Error: %s\n", db->GetLastError() );
@@ -995,7 +995,7 @@ void psCharacter::SetProgressionPoints(unsigned int X,bool save)
         // Update the DB
         csString sql;
         sql.Format("UPDATE characters SET progression_points = '%u', experience_points = '%d' WHERE id ='%u'",X,exp,GetCharacterID());
-        if(!db->Command(sql))
+        if(!db->CommandPump(sql))
         {
             Error3("Couldn't execute SQL %s!, Character %u's PP points are NOT saved",sql.GetData(),GetCharacterID());
         }
@@ -1497,7 +1497,7 @@ void psCharacter::SaveMoney(bool bank)
                       money.GetCircles(), money.GetTrias(), money.GetHexas(), money.GetOctas(), GetCharacterID());
     }
 
-    if (db->Command(sql) != 1)
+    if (db->CommandPump(sql) != 1)
     {
         Error3 ("Couldn't save character's money to database.\nCommand was "
             "<%s>.\nError returned was <%s>\n",db->GetLastQuery(),db->GetLastError());
@@ -2166,7 +2166,7 @@ void psCharacter::SaveLocationInWorld()
 
     sql.AppendFmt("update characters set loc_x=%10.2f, loc_y=%10.2f, loc_z=%10.2f, loc_yrot=%10.2f, loc_sector_id=%u, loc_instance=%u where id=%u",
                      l.loc_x, l.loc_y, l.loc_z, l.loc_yrot, l.loc_sector->uid, l.worldInstance, characterid);
-    if (db->Command(sql) != 1)
+    if (db->CommandPump(sql) != 1)
     {
         Error3 ("Couldn't save character's position to database.\nCommand was "
             "<%s>.\nError returned was <%s>\n",db->GetLastQuery(),db->GetLastError());
@@ -2700,7 +2700,7 @@ bool psCharacter::UpdateQuestAssignments(bool force_update)
                 (!q->GetQuest()->GetPlayerLockoutTime() || !q->lockout_end ||
                  (q->lockout_end < now))) // delete
             {
-                r = db->Command("delete from character_quests"
+                r = db->CommandPump("delete from character_quests"
                                 " where player_id=%d"
                                 "   and quest_id=%d",
                                 characterid,q->GetQuest()->GetID() );
@@ -2719,7 +2719,7 @@ bool psCharacter::UpdateQuestAssignments(bool force_update)
             if (q->lockout_end && q->lockout_end > now)
                 remaining_time = q->lockout_end - now;
 
-            r = db->Command("update character_quests "
+            r = db->CommandPump("update character_quests "
                             "set status='%c',"
                             "remaininglockout=%ld, "
                             "last_response=%ld "
@@ -2732,7 +2732,7 @@ bool psCharacter::UpdateQuestAssignments(bool force_update)
                             q->GetQuest()->GetID() );
             if (!r)  // no update done
             {
-                r = db->Command("insert into character_quests"
+                r = db->CommandPump("insert into character_quests"
                                 "(player_id, assigner_id, quest_id, status, remaininglockout, last_response) "
                                 "values (%d, %d, %d, '%c', %d, %d)",
                                 characterid,

@@ -22,6 +22,22 @@
 
 struct iObjectRegistry;
 
+class DelayedQueryManager : public CS::Threading::Runnable
+{
+public:
+    virtual void Run ();
+    void SetConn(const char *host, unsigned int port, const char *database,
+                              const char *user, const char *pwd);
+    void Push(csString query);
+    ~DelayedQueryManager();
+private:
+    MYSQL* m_conn;
+    csArray<csString> arr;
+    CS::Threading::RecursiveMutex mutex;
+    CS::Threading::Condition datacondition;
+    bool m_Close;
+};
+
 class psMysqlConnection : public iComponent, public iDataConnection
 {
 protected:
@@ -55,6 +71,7 @@ public:
     iResultSet *Select(const char *sql,...);
     int SelectSingleNumber(const char *sql, ...);
     unsigned long Command(const char *sql,...);
+    unsigned long CommandPump(const char *sql,...);
 
     uint64 GenericInsertWithID(const char *table,const char **fieldnames,psStringArray& fieldvalues);
     bool GenericUpdateWithID(const char *table,const char *idfield,const char *id,const char **fieldnames,psStringArray& fieldvalues);
@@ -70,6 +87,9 @@ public:
 
     virtual const char* DumpProfile();
     virtual void ResetProfile();
+
+    DelayedQueryManager* mp;
+    CS::Threading::Thread* m_mpThread;
 };
 
 

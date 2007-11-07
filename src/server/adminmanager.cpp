@@ -1874,7 +1874,7 @@ void AdminManager::Teleport(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& 
         sql.AppendFmt("update characters set loc_x=%10.2f, loc_y=%10.2f, loc_z=%10.2f, loc_yrot=%10.2f, loc_sector_id=%u, loc_instance=%d where name='%s'",
             myPoint.x, myPoint.y, myPoint.z, yRot, mysectorinfo->uid, client->GetActor()->GetInstance(), data.player.GetData());
         
-        if (db->Command(sql) != 1)
+        if (db->CommandPump(sql) != 1)
         {
             Error3 ("Couldn't save character's position to database.\nCommand was "
                     "<%s>.\nError returned was <%s>\n",db->GetLastQuery(),db->GetLastError());
@@ -2236,7 +2236,7 @@ void AdminManager::HandleWaypoint(MsgEntry* me, psAdminCmdMessage& msg, AdminCmd
             return;
         }
         
-        db->Command("UPDATE sc_waypoints SET x=%.2f,y=%.2f,z=%.2f WHERE id=%d",
+        db->CommandPump("UPDATE sc_waypoints SET x=%.2f,y=%.2f,z=%.2f WHERE id=%d",
                     myPos.x,myPos.y,myPos.z,wp_id);
         
         if (client->WaypointIsDisplaying())
@@ -2422,7 +2422,7 @@ void AdminManager::HandlePath(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
             return;
         }
         
-        db->Command("UPDATE sc_path_points SET x=%.2f,y=%.2f,z=%.2f WHERE id=%d",
+        db->CommandPump("UPDATE sc_path_points SET x=%.2f,y=%.2f,z=%.2f WHERE id=%d",
                     myPos.x,myPos.y,myPos.z,pp_id);
         
         if (client->PathIsDisplaying())
@@ -2586,7 +2586,7 @@ void AdminManager::HandleLocation(MsgEntry* me, psAdminCmdMessage& msg, AdminCmd
             return;
         }
         
-        db->Command("UPDATE sc_locations SET x=%.2f,y=%.2f,z=%.2f WHERE id=%d",
+        db->CommandPump("UPDATE sc_locations SET x=%.2f,y=%.2f,z=%.2f WHERE id=%d",
                     myPos.x,myPos.y,myPos.z,loc_id);
         
         if (client->LocationIsDisplaying())
@@ -2981,7 +2981,7 @@ int AdminManager::CopyNPCFromDatabase(int master_id, float x, float y, float z, 
     if (psServer::CharacterLoader.NewNPCCharacterData(0, npc))
     {
         new_id = npc->GetCharacterID();
-        db->Command("update characters set npc_master_id=%i where id=%i", master_id, new_id);
+        db->CommandPump("update characters set npc_master_id=%i where id=%i", master_id, new_id);
     }
     else
         new_id = 0;
@@ -3491,7 +3491,7 @@ void AdminManager::ChangeLock(MsgEntry *me, psAdminCmdMessage& msg, AdminCmdData
                     lstr.Append(word);
 
                     // write back to database
-                    int result = db->Command("UPDATE item_instances SET openable_locks='%s' WHERE id=%d", 
+                    int result = db->CommandPump("UPDATE item_instances SET openable_locks='%s' WHERE id=%d", 
                         lstr.GetData(), keyID);
                     if (result == -1)
                     {
@@ -4017,7 +4017,7 @@ void AdminManager::SendGMPlayerList(MsgEntry* me, psGMGuiMessage& msg,Client *cl
 
 bool AdminManager::EscalatePetition(int gmID, int gmLevel, int petitionID)
 {
-    int result = db->Command("UPDATE petitions SET status='Open',assigned_gm=-1,"
+    int result = db->CommandPump("UPDATE petitions SET status='Open',assigned_gm=-1,"
                             "escalation_level=(escalation_level+1) "
                             "WHERE id=%d AND escalation_level<=%d AND escalation_level<%d "
                             "AND (assigned_gm=%d OR status='Open')", petitionID, gmLevel, GM_DEVELOPER-20, gmID);
@@ -4034,7 +4034,7 @@ bool AdminManager::EscalatePetition(int gmID, int gmLevel, int petitionID)
 bool AdminManager::DescalatePetition(int gmID, int gmLevel, int petitionID)
 {
     
-    int result = db->Command("UPDATE petitions SET status='Open',assigned_gm=-1,"
+    int result = db->CommandPump("UPDATE petitions SET status='Open',assigned_gm=-1,"
                             "escalation_level=(escalation_level-1)"
                             "WHERE id=%d AND escalation_level<=%d AND (assigned_gm=%d OR status='Open' AND escalation_level != 0)", petitionID, gmLevel, gmID);
     // If this failed if means that there is a serious error
@@ -4098,7 +4098,7 @@ bool AdminManager::CancelPetition(int playerID, int petitionID)
     // If player ID is -1, just cancel the petition (a GM is requesting the change)
     if (playerID == -1)
     {
-        int result = db->Command("UPDATE petitions SET status='Cancelled' WHERE id=%d", petitionID);
+        int result = db->CommandPump("UPDATE petitions SET status='Cancelled' WHERE id=%d", petitionID);
         return (result != -1);
     }
 
@@ -4113,7 +4113,7 @@ bool AdminManager::CancelPetition(int playerID, int petitionID)
     }
 
     // Update the petition status
-    result = db->Command("UPDATE petitions SET status='Cancelled' WHERE id=%d AND player=%d", petitionID, playerID);
+    result = db->CommandPump("UPDATE petitions SET status='Cancelled' WHERE id=%d AND player=%d", petitionID, playerID);
 
     return (result != -1);
 }
@@ -4122,7 +4122,7 @@ bool AdminManager::ClosePetition(int gmID, int petitionID, const char* desc)
 {
     csString escape;
     db->Escape( escape, desc );
-    int result = db->Command("UPDATE petitions SET status='Closed',closed_date=Now(),resolution='%s' "
+    int result = db->CommandPump("UPDATE petitions SET status='Closed',closed_date=Now(),resolution='%s' "
                              "WHERE id=%d AND assigned_gm=%d", escape.GetData(), petitionID, gmID);
 
     // If this failed if means that there is a serious error, or the GM was not assigned
@@ -4138,7 +4138,7 @@ bool AdminManager::ClosePetition(int gmID, int petitionID, const char* desc)
 
 bool AdminManager::AssignPetition(int gmID, int petitionID)
 {
-    int result = db->Command("UPDATE petitions SET assigned_gm=%d,status=\"In Progress\" WHERE id=%d AND assigned_gm=-1",gmID, petitionID);
+    int result = db->CommandPump("UPDATE petitions SET assigned_gm=%d,status=\"In Progress\" WHERE id=%d AND assigned_gm=-1",gmID, petitionID);
 
     // If this failed if means that there is a serious error, or another GM was already assigned
     if (result == -1)
@@ -4473,7 +4473,7 @@ void AdminManager::ChangeName(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
     }
 
     // Need instant DB update if we should be able to change the same persons name twice
-    db->Command("UPDATE characters SET name='%s', lastname='%s' WHERE id='%u'",data.newName.GetData(),data.newLastName.GetDataSafe(), id );
+    db->CommandPump("UPDATE characters SET name='%s', lastname='%s' WHERE id='%u'",data.newName.GetData(),data.newLastName.GetDataSafe(), id );
 
     // Resend group list
     if(online)

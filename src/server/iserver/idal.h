@@ -59,6 +59,7 @@ public:
      * signify an error.
      */
     virtual unsigned long Command(const char *sql,...)=0;
+    virtual unsigned long CommandPump(const char *sql,...) = 0;
 
     /**
      * This dynamically builds an insert sql statement

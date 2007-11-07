@@ -1,3 +1,8 @@
+*** 2007-11-07 by Sasha Levin
+- Add a threaded sql query executor, allowing to run async queries. Usefull
+  for update and delete commands - Where waiting on return value isn't
+  necessary.
+
 *** 2007-11-06 by Roland Schulz
 - fixed bug 1952 on the old BT: backward movement now also cancels autorun.
 - comment out debug msgs from last commit
