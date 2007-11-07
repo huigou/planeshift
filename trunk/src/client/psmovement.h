@@ -125,6 +125,7 @@ protected:
     csEventID event_mousemove;
 
     const psMovement* forward;
+    const psMovement* backward;
     const psCharMode* run;
 
 public:

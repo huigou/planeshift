@@ -354,7 +354,7 @@ bool psControlManager::HandleEvent( iEvent &event )
         utf32_char key = csKeyEventHelper::GetRawCode(&event);
         uint32 mods = GetPSKeyMods(&event);
         bool state = (event.Name == event_key_down);
-        printf("KeyPress: %c %u %s\n", key, mods, state?"down":"up" );
+        //printf("KeyPress: %c %u %s\n", key, mods, state?"down":"up" );
         HandleButton(psControl::KEYBOARD,key,mods,state);
         return true;
     }
@@ -363,7 +363,7 @@ bool psControlManager::HandleEvent( iEvent &event )
         uint button = csMouseEventHelper::GetButton(&event);
         uint32 mods = GetPSMouseMods(&event);
         bool state = (event.Name == event_mouse_down);
-        printf("MouseClick: btn%u %u %s\n", button, mods, state?"down":"up" );
+        //printf("MouseClick: btn%u %u %s\n", button, mods, state?"down":"up" );
         HandleButton(psControl::MOUSE,button,mods,state);
         return true;
     }

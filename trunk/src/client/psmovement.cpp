@@ -100,6 +100,7 @@ psMovementManager::psMovementManager(iEventNameRegistry* eventname_reg, psContro
     activeModType = psMoveModMsg::NONE;
 
     forward = NULL;
+    backward = NULL;
     run = NULL;
 }
 
@@ -352,6 +353,7 @@ void psMovementManager::SetupMovements(psMovementInfoMessage& movemsg)
     }
 
     forward = FindMovement("forward");
+    backward = FindMovement("backward");
     run = FindCharMode("run");
 
     ready = true;
@@ -423,7 +425,7 @@ void psMovementManager::Start(const psMovement* move)
     #endif
 
     // Cancel autorun if starting to move forward on own
-    if (move == forward && autoRun)
+    if ((move == forward || move == backward ) && autoRun)
         ToggleAutoRun();
 
     uint bit = (1 << move->id);
