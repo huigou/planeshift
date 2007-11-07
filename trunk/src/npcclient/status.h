@@ -3,7 +3,7 @@
 
 #include <iutil/vfs.h>
 
-#include <csutil/thread.h>
+#include <csutil/threading/thread.h>
 #include <csutil/csstring.h>
 
 struct iObjectRegistry;

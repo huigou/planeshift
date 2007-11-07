@@ -1,3 +1,6 @@
+*** 2007-11-07 by Michael Gist
+- Deprecation fixes.
+
 *** 2007-11-07 by Sasha Levin
 - Add a threaded sql query executor, allowing to run async queries. Usefull
   for update and delete commands - Where waiting on return value isn't

@@ -21,7 +21,7 @@
 
 #include <psconfig.h>
 #include <iutil/object.h>
-#include <csutil/thread.h>
+#include <csutil/threading/thread.h>
 #include <csutil/stringarray.h>
 #include <physicallayer/entity.h>
 #include <propclass/mesh.h>

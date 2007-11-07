@@ -528,7 +528,7 @@ void DelayedQueryManager::Run()
 {
     while(!m_Close)
     {
-        while (arr.Length() > 0)
+        while (arr.GetSize() > 0)
         {
             csString currQuery = arr.Pop();
             printf("Executing delayed query: %s\n", currQuery.GetData());

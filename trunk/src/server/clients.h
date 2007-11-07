@@ -20,7 +20,7 @@
 #define __CLIENTS_H__
 
 #include <csutil/hash.h>
-#include <csutil/thread.h>
+#include <csutil/threading/thread.h>
 
 #include "client.h"
 
