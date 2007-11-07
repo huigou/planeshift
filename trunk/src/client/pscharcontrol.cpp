@@ -117,7 +117,7 @@ csString GetDisplayName(const char* n)
     return name;
 }
 
-uint32 GetPSMods(const iEvent* event)
+uint32 GetPSMouseMods(const iEvent* event)
 {
     if(!event) 
     {
@@ -128,6 +128,19 @@ uint32 GetPSMods(const iEvent* event)
     return modifiers & PS_MODS_MASK;
 }
 
+uint32 GetPSKeyMods(const iEvent* event)
+{
+    csKeyModifiers m;
+    csKeyEventHelper::GetModifiers(event,m);
+
+    bool shift = m.modifiers[csKeyModifierTypeShift] != 0;
+    bool ctrl = m.modifiers[csKeyModifierTypeCtrl] != 0;
+    bool alt = m.modifiers[csKeyModifierTypeAlt] != 0;
+    
+    return (shift << csKeyModifierTypeShift)
+         | (ctrl << csKeyModifierTypeCtrl)
+         | (alt << csKeyModifierTypeAlt);
+}
 
 //----------------------------------------------------------------------------------------------------
 
@@ -339,18 +352,18 @@ bool psControlManager::HandleEvent( iEvent &event )
     if ( event.Name == event_key_down || event.Name == event_key_up )  // Is this a key press?
     {
         utf32_char key = csKeyEventHelper::GetRawCode(&event);
-        uint32 mods = GetPSMods(&event);
+        uint32 mods = GetPSKeyMods(&event);
         bool state = (event.Name == event_key_down);
-        //printf("KeyPress: %c %u %s\n", key, mods, state?"down":"up" );
+        printf("KeyPress: %c %u %s\n", key, mods, state?"down":"up" );
         HandleButton(psControl::KEYBOARD,key,mods,state);
         return true;
     }
     else if ( event.Name == event_mouse_down || event.Name == event_mouse_up )  // Mouse button press?
     {
         uint button = csMouseEventHelper::GetButton(&event);
-        uint32 mods = GetPSMods(&event);
+        uint32 mods = GetPSMouseMods(&event);
         bool state = (event.Name == event_mouse_down);
-        //printf("MouseClick: btn%u %u %s\n", button, mods, state?"down":"up" );
+        printf("MouseClick: btn%u %u %s\n", button, mods, state?"down":"up" );
         HandleButton(psControl::MOUSE,button,mods,state);
         return true;
     }

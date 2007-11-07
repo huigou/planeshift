@@ -1,3 +1,7 @@
+*** 2007-11-06 by Roland Schulz
+- fixed fix to FS#530 (the fix broke modifiers for keyboard keys). Both
+  key and mouse modifiers should work now.
+  
 *** 2007-11-06 by Sasha Levin
 - Shortcuts can be edited with alt + left click.
 - Set unique flag on some uniqe indexes.
