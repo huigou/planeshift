@@ -184,7 +184,6 @@ psItem::~psItem()
 	
     if (item_quality != item_quality_original )
     {
-
         UpdateItemQuality(uid, item_quality);
     }
 
@@ -199,7 +198,7 @@ void psItem::UpdateItemQuality(uint32 id, float qual)
         return;
 
     Debug3(LOG_USER,id,"UpdateItemQuality(%u,%1.2f)\n",id, qual);
-    int ret = db->Command("update item_instances set item_quality=%1.2f where id=%u",qual, id);
+    int ret = db->CommandPump("update item_instances set item_quality=%1.2f where id=%u",qual, id);
     if (ret == 0 && strlen(db->GetLastError())) // 0 updates could mean the value was the same, not an error
     {
         Error3("Could not update item quality.  SQL was <%s> and error was <%s>",db->GetLastQuery(),db->GetLastError());
@@ -2093,7 +2092,7 @@ bool psItem::Destroy()
 
 bool psItem::DeleteFromDatabase()
 {
-    if ( db->Command("DELETE FROM item_instances where id='%u'",this->uid)!=1)
+    if ( db->CommandPump("DELETE FROM item_instances where id='%u'",this->uid)!=1)
         return false;
 
     uid = ID_DONT_SAVE_ITEM;  // prevent update attempts when key is -1 unsigned
