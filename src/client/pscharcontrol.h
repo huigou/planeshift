@@ -87,7 +87,9 @@ csString GetDisplayName(const char* name);
  *  We use only shift, alt, and ctrl.  The full CS mods also contain caps lock, num
  *  lock, scroll lock, etc. which we do not want to affect button mappings.
  */
-uint32 GetPSMods(const iEvent* event);
+// CS strangeness requires different methods for mouse and key modifiers
+uint32 GetPSKeyMods(const iEvent* event);
+uint32 GetPSMouseMods(const iEvent* event);
 
 /** Mask which may be used to convert CS generated modifier bits to ones used here.
  *  We use only shift, alt, and ctrl.  The full CS mods also contain caps lock, num
