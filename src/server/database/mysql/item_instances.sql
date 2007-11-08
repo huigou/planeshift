@@ -38,7 +38,7 @@ CREATE TABLE `item_instances` (
   `crafted_quality` float(5,2) default '50.00',
   `item_stats_id_standard` int(10) unsigned NOT NULL default '0',
   `item_stats_id_unique` int(10) unsigned default '0',
-  `flags` varchar(40) default '0',
+  `flags` varchar(200) default '0',
   `lock_str` int(5) NOT NULL default '0',
   `lock_skill` int(2) NOT NULL default '-1',
   `openable_locks` varchar(100) default '0',
