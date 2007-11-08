@@ -189,16 +189,7 @@ void CacheManager::PreloadCommandGroups()
 void CacheManager::UnloadAll()
 {
     delete commandManager;
-
-    {
-        csHash<psQuest *>::GlobalIterator it (quests_by_id.GetIterator ());
-        quests_by_id.Empty();
-        while (it.HasNext ())
-        {
-            psQuest* quest = it.Next ();
-            delete quest;
-        }
-    }
+    quests_by_id.DeleteAll();
 
     {
         csHash<csPDelArray<CombinationConstruction>*,uint32>::GlobalIterator it(tradeCombinations_IDHash.GetIterator ());

@@ -1,3 +1,6 @@
+*** 2007-11-08 by Sasha Levin
+- Fixed #2573 - Leak in CachaManager.
+
 *** 2007-11-07 by Michael Gist
 - Deprecation fixes.
 - Removed some hindering checks from GM /divorce command.
