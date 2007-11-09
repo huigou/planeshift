@@ -1050,3 +1050,19 @@ bool psServer::GetServerOption(const char *option_name,csString& value)
 
     return false;
 }
+
+bool psServer::SetServerOption(const char *option_name,const csString& value)
+{
+    csString escape, dummy;
+    bool bExists = GetServerOption(option_name, dummy);
+    unsigned long result;
+
+    db->Escape( escape, option_name );
+
+    if (bExists)
+        result = db->Command("update server_options set option_value='%s' where option_name='%s'", value.GetData(), option_name);
+    else
+        result = db->Command("insert into server_options(option_name, option_value) values('%s','%s')", option_name, value.GetData());
+
+    return result==1;
+}

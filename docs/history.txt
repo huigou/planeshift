@@ -3,6 +3,7 @@
 - Fixed FS#128 & FS#370 - The flags field for items in the db was too short,
   items that had many flags couldn't saved all of them to the db, causing
   a wrong status when relogging (glyphs unpurified & keys unlocked for example)
+- Game time is now saved between server restarts (and crashes).
 
 *** 2007-11-07 by Michael Gist
 - Deprecation fixes.

@@ -55,8 +55,11 @@ void WeatherManager::Initialize()
 
     }
 
+    csString lastTime;
+    psserver->GetServerOption("last_time", lastTime);
+
     // Start the time of day clock
-    QueueNextEvent(GAME_HOUR,psWeatherMessage::DAYNIGHT,12,0,0,"",NULL);
+    QueueNextEvent(0,psWeatherMessage::DAYNIGHT,atoi(lastTime.GetDataSafe()),0,0,"",NULL);
 }
 
 void WeatherManager::StartWeather(psSectorInfo *si)
@@ -455,6 +458,11 @@ void WeatherManager::HandleWeatherEvent(psWeatherGameEvent *event)
 
 
             current_daynight = event->value;
+            
+            csString currTimeStr;
+            currTimeStr.Format("%d", current_daynight);
+
+            psserver->SetServerOption("last_time", currTimeStr);
 
             QueueNextEvent(GAME_HOUR,
                            psWeatherMessage::DAYNIGHT,

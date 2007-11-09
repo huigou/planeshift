@@ -510,6 +510,13 @@ public:
      * @return Return false is option not found or if an error happened. True otherwise.
      */
     bool GetServerOption(const char *option_name,csString& value);
+
+    /** Set an option in table 'server_options'
+     * @param option_name: the desired option
+     * @param value: Value of the found option will be replaced with this string.
+     * @return Return false is option not found or if an error happened. True otherwise.
+     */
+    bool SetServerOption(const char *option_name,const csString& value);
    
     iResultSet* GetAllResponses( csString& trigger );
 
