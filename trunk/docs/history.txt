@@ -10,6 +10,7 @@
 - Players in the global instance can also see everybody else.
 - Threaded sql executor is now a queue instead of a stack.
 - Added guarding char info in item details window.
+- Added something to mark master keys in item details window.
 
 *** 2007-11-07 by Michael Gist
 - Deprecation fixes.
