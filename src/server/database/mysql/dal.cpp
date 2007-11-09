@@ -25,6 +25,8 @@
 
 #include "dal.h"
 
+#define THREADED_BUFFER_SIZE 100
+
 /**
  *
  * Standard SCF stuff to make plugin work
@@ -511,6 +513,8 @@ uint64 psResultRow::stringtouint64(const char *stringbuf)
 DelayedQueryManager::DelayedQueryManager(const char *host, unsigned int port, const char *database,
                               const char *user, const char *pwd)
 {
+    start=end=0;
+    arr.SetSize(THREADED_BUFFER_SIZE);
     m_Close = false;
     MYSQL *conn=mysql_init(NULL);
     m_conn = mysql_real_connect(conn,host,user,pwd,database,port,NULL,CLIENT_FOUND_ROWS);
@@ -528,12 +532,13 @@ void DelayedQueryManager::Run()
     while(!m_Close)
     {
         datacondition.Wait(mutex);
-        while (arr.GetSize() > 0)
+        while (start != end)
         {
             csString currQuery;
             {
                 CS::Threading::RecursiveMutexScopedLock lock(mutexArray);
-                currQuery = arr.Pop();
+                currQuery = arr[end];
+                end = (end+1) % arr.GetSize();
             }
             printf("Executing delayed query: %s\n", currQuery.GetData());
             if (mysql_real_query(m_conn, currQuery, currQuery.Length()))
@@ -546,7 +551,13 @@ void DelayedQueryManager::Push(csString query)
 { 
     {
         CS::Threading::RecursiveMutexScopedLock lock(mutexArray);
-        arr.Push(query); 
+        size_t tstart = (start+1) % arr.GetSize();
+        if (tstart == end)
+        {
+            return;
+        }
+        arr[start] = query;
+        start = tstart;
     }
     datacondition.NotifyOne();
 }

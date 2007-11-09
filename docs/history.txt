@@ -5,6 +5,7 @@
   a wrong status when relogging (glyphs unpurified & keys unlocked for example)
 - Game time is now saved between server restarts (and crashes).
 - Players in the global instance can also see everybody else.
+- Threaded sql executor is now a queue instead of a stack.
 
 *** 2007-11-07 by Michael Gist
 - Deprecation fixes.
