@@ -4,6 +4,7 @@
   items that had many flags couldn't saved all of them to the db, causing
   a wrong status when relogging (glyphs unpurified & keys unlocked for example)
 - Game time is now saved between server restarts (and crashes).
+- Players in the global instance can also see everybody else.
 
 *** 2007-11-07 by Michael Gist
 - Deprecation fixes.
