@@ -1,3 +1,6 @@
+*** 2007-11-09 by Roland Schulz
+- fixed FS#585 (Autorun interrupted by mouseclick)
+
 *** 2007-11-08 by Sasha Levin
 - Fixed #2573 - Leak in CachaManager.
 - Fixed FS#128 & FS#370 - The flags field for items in the db was too short,
