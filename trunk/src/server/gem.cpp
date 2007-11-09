@@ -1891,7 +1891,7 @@ bool gemActor::SeesObject(gemObject * object, float range)
             log.AppendFmt("Sees object: %s in Instance %d vs %s in %d.\n", name.GetData(), worldInstance, object->GetName(),object->GetInstance());
 #endif
     return
-        (worldInstance == object->GetInstance() || object->GetInstance() == GLOBAL_INSTANCE)
+        (worldInstance == object->GetInstance() || object->GetInstance() == GLOBAL_INSTANCE || GetInstance() == GLOBAL_INSTANCE)
             &&
         (GetBaseAdvertiseRange() >= range)
             &&
