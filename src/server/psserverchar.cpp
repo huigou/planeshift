@@ -1470,6 +1470,11 @@ bool psServerCharManager::SendItemDescription( Client *client, psItem *item)
     if ( item->GetIsKey() )
     {
         csString lockInfo;
+        if (item->GetIsMasterKey())
+        {
+            lockInfo.Format( "\nThis is a master key!", item->GetOpenableLockNames().GetData());
+            itemInfo += lockInfo;
+        }
         lockInfo.Format( "\nOpens: %s", item->GetOpenableLockNames().GetData());
         itemInfo += lockInfo;
     }
