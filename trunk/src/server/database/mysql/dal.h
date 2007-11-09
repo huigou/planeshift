@@ -38,6 +38,7 @@ public:
 private:
     MYSQL* m_conn;
     csArray<csString> arr;
+    size_t start, end;
     CS::Threading::RecursiveMutex mutex;
     CS::Threading::RecursiveMutex mutexArray;
     CS::Threading::Condition datacondition;
