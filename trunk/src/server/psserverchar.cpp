@@ -1455,6 +1455,17 @@ bool psServerCharManager::SendItemDescription( Client *client, psItem *item)
         }
     }
 
+    if ( item->GetGuardingCharacterID() )
+    {
+        csString guardingChar;
+        gemActor *guardian = GEMSupervisor::GetSingleton().FindPlayerEntity(item->GetGuardingCharacterID());
+        if (guardian && guardian->GetCharacterData())
+        {
+            guardingChar.Format("\nGuarded by: %s", guardian->GetCharacterData()->GetCharFullName());
+            itemInfo += guardingChar;
+        }
+    }
+
     // Item is a key
     if ( item->GetIsKey() )
     {
