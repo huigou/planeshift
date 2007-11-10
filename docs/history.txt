@@ -1,3 +1,9 @@
+*** 2007-11-10 by Roland Schulz
+- changed quest lockouts to be in seconds not in ticks
+- changed player quest lockouts to be expressed in player age, so those
+  quest entries only need to be updated in db once the player lockout expires,
+  not on every signoff.
+
 *** 2007-11-10 by Michael Gist
 - Made a number of fixes to the updater/launcher.
 - Added 'server news' widget to the launcher.

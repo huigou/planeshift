@@ -98,10 +98,10 @@ bool psQuest::Load(iResultRow& row)
     else
     {
         infinitePlayerLockout = false;
-        player_lockout_time = lockout_time*1000; // Convert from sec to ticks 
+        player_lockout_time = lockout_time;
     }
     
-    quest_lockout_time  = row.GetInt("quest_lockout_time")*1000;  // Convert from sec to ticks 
+    quest_lockout_time  = row.GetInt("quest_lockout_time");
 
     return true;
 }

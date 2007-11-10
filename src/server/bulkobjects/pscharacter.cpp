@@ -2430,7 +2430,7 @@ QuestAssignment *psCharacter::AssignQuest(psQuest *quest, int assigner_id)
             }
         }
 
-        q->GetQuest()->SetQuestLastActivatedTime( csGetTicks() );
+        q->GetQuest()->SetQuestLastActivatedTime( csGetTicks() / 1000 );
 
         Debug3(LOG_QUESTS, GetCharacterID(), "Assigned quest '%s' to player '%s'\n",quest->GetName(),GetCharName() );
         UpdateQuestAssignments();
@@ -2471,7 +2471,8 @@ bool psCharacter::CompleteQuest(psQuest *quest)
 
         q->dirty  = true;
         q->status = PSQUEST_COMPLETE; // completed
-        q->lockout_end = csGetTicks() + q->GetQuest()->GetPlayerLockoutTime();
+        q->lockout_end = GetTotalOnlineTime() +
+                         q->GetQuest()->GetPlayerLockoutTime();
         q->last_response = -1; //reset last response for this quest in case it is restarted
 
         // Complete all substeps if this is the parent quest
@@ -2509,7 +2510,9 @@ void psCharacter::DiscardQuest(QuestAssignment *q, bool force)
         if (q->GetQuest()->HasInfinitePlayerLockout())
             q->lockout_end = 0;
         else
-            q->lockout_end = csGetTicks() + q->GetQuest()->GetPlayerLockoutTime();  // assignment entry will be deleted after expiration
+            q->lockout_end = GetTotalOnlineTime() +
+                             q->GetQuest()->GetPlayerLockoutTime();
+            // assignment entry will be deleted after expiration
 
         Debug3(LOG_QUESTS, GetCharacterID(), "Player '%s' just discarded quest '%s'.\n",
                GetCharName(),q->GetQuest()->GetName() );
@@ -2557,7 +2560,7 @@ bool psCharacter::CheckQuestAvailable(psQuest *quest,int assigner_id)
 {
     CS_ASSERT( quest );  // Must not be NULL
 
-    csTicks now = csGetTicks();
+    unsigned int now = csGetTicks() / 1000;
 
     if (quest->GetParentQuest()) 
     {
@@ -2600,7 +2603,7 @@ bool psCharacter::CheckQuestAvailable(psQuest *quest,int assigner_id)
     {
         // Character has this quest in completed list. Check if still in lockout
         if ( q->GetQuest()->HasInfinitePlayerLockout() ||
-             q->lockout_end > now)
+             q->lockout_end > GetTotalOnlineTime() )
         {
             if (notify)
             {
@@ -2623,7 +2626,7 @@ bool psCharacter::CheckQuestAvailable(psQuest *quest,int assigner_id)
                     {
                         psserver->SendSystemInfo(GetActor()->GetClientID(),
                             "GM NOTICE: Quest (%s) found but player lockout time hasn't elapsed yet. %d seconds remaining.",
-                            quest->GetName(), (q->lockout_end - now)/1000 );
+                            quest->GetName(), q->lockout_end - GetTotalOnlineTime() );
                     }
 
                 }
@@ -2651,7 +2654,7 @@ bool psCharacter::CheckQuestAvailable(psQuest *quest,int assigner_id)
             else
                 psserver->SendSystemInfo(GetActor()->GetClientID(),
                                          "GM NOTICE: Quest(%s) found, but quest lockout time hasn't elapsed yet. %d seconds remaining.",
-                                         quest->GetName(),(quest->GetQuestLastActivatedTime()+quest->GetQuestLockoutTime()-now)/1000);
+                                         quest->GetName(),quest->GetQuestLastActivatedTime()+quest->GetQuestLockoutTime() - now);
         }
 
         return false; // Cannot start this quest while in quest lockout time.
@@ -2698,7 +2701,7 @@ bool psCharacter::UpdateQuestAssignments(bool force_update)
             if (q->status == PSQUEST_DELETE &&
                 !q->GetQuest()->HasInfinitePlayerLockout() &&
                 (!q->GetQuest()->GetPlayerLockoutTime() || !q->lockout_end ||
-                 (q->lockout_end < now))) // delete
+                 (q->lockout_end < GetTotalOnlineTime()))) // delete
             {
                 r = db->CommandPump("delete from character_quests"
                                 " where player_id=%d"
@@ -2713,11 +2716,8 @@ bool psCharacter::UpdateQuestAssignments(bool force_update)
 
             // Update or create a new entry in DB
 
-            // Store remaining time to DB. Than remaining time has to be added to current time
-            // at load from DB.
-            csTicks remaining_time = 0;
-            if (q->lockout_end && q->lockout_end > now)
-                remaining_time = q->lockout_end - now;
+            if(!q->dirty)
+                continue;
 
             r = db->CommandPump("update character_quests "
                             "set status='%c',"
@@ -2726,7 +2726,7 @@ bool psCharacter::UpdateQuestAssignments(bool force_update)
                             " where player_id=%d"
                             "   and quest_id=%d",
                             q->status,
-                            remaining_time,
+                            q->lockout_end,
                             q->last_response,
                             characterid,
                             q->GetQuest()->GetID() );
@@ -2739,7 +2739,7 @@ bool psCharacter::UpdateQuestAssignments(bool force_update)
                                 q->assigner_id,
                                 q->GetQuest()->GetID(),
                                 q->status,
-                                remaining_time,
+                                q->lockout_end,
                                 q->last_response);
 
                 if (r == -1)
@@ -2773,6 +2773,7 @@ bool psCharacter::LoadQuestAssignments()
     }
 
     csTicks now = csGetTicks();
+    unsigned int age = GetTotalOnlineTime();
 
     for (unsigned int i=0; i<result.Count(); i++)
     {
@@ -2780,7 +2781,7 @@ bool psCharacter::LoadQuestAssignments()
         q->dirty = false;
         q->SetQuest(CacheManager::GetSingleton().GetQuestByID( result[i].GetInt("quest_id") ) );
         q->status = result[i]["status"][0];
-        q->lockout_end = now + result[i].GetInt("remaininglockout");
+        q->lockout_end = result[i].GetInt("remaininglockout");
         q->assigner_id = result[i].GetInt("assigner_id");
         q->last_response = result[i].GetInt("last_response");
 
@@ -2793,12 +2794,12 @@ bool psCharacter::LoadQuestAssignments()
 
         // Sanity check to see if time for completion is withing
         // lockout time.
-        if (q->lockout_end > now + q->GetQuest()->GetPlayerLockoutTime())
-            q->lockout_end = now + q->GetQuest()->GetPlayerLockoutTime();
+        if (q->lockout_end > age + q->GetQuest()->GetPlayerLockoutTime())
+            q->lockout_end = age + q->GetQuest()->GetPlayerLockoutTime();
 
         Debug6(LOG_QUESTS, characterid, "Loaded quest %-40.40s, status %c, lockout %lu, last_response %d, for player %s.\n",
                q->GetQuest()->GetName(),q->status,
-               ( q->lockout_end > now ? q->lockout_end-now:0),q->last_response, GetCharFullName());
+               ( q->lockout_end > age ? q->lockout_end-age:0),q->last_response, GetCharFullName());
         assigned_quests.Push(q);
     }
     return true;

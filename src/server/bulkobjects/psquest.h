@@ -66,10 +66,10 @@ class psQuest : public CS::Utility::WeakReferenced
     void SetParentQuest(psQuest *parent) { parent_quest=parent; }
     int GetStep() const { return step_id; }
     bool HasInfinitePlayerLockout() const { return infinitePlayerLockout; }
-    csTicks GetPlayerLockoutTime() const { return player_lockout_time; }
-    csTicks GetQuestLockoutTime() const { return quest_lockout_time; }
-    csTicks GetQuestLastActivatedTime() const { return quest_last_activated; }
-    void    SetQuestLastActivatedTime(csTicks when) { quest_last_activated=when; }
+    unsigned int GetPlayerLockoutTime() const { return player_lockout_time; }
+    unsigned int GetQuestLockoutTime() const { return quest_lockout_time; }
+    unsigned int GetQuestLastActivatedTime() const { return quest_last_activated; }
+    void SetQuestLastActivatedTime(unsigned int when) { quest_last_activated=when; }
     // csString QuestToXML() const;
     bool AddPrerequisite(csString prerequisitescript);
     bool AddPrerequisite(psQuestPrereqOp * op);
@@ -100,9 +100,9 @@ class psQuest : public CS::Utility::WeakReferenced
     csString prerequisiteStr;
     bool infinitePlayerLockout;
     
-    csTicks player_lockout_time;
-    csTicks quest_lockout_time;
-    csTicks quest_last_activated;
+    unsigned int player_lockout_time;
+    unsigned int quest_lockout_time;
+    unsigned int quest_last_activated;
 
     struct TriggerResponse
     {
