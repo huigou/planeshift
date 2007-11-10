@@ -99,6 +99,7 @@ protected:
     bool SetupDoll();
 
     void BuySkill();
+    void BuyMaxSkill();
     
     void HandleSkillList(psSkillCache *skills, int selectedNameId = -1, int *rowIdx = NULL);
     void HandleSkillDescription( csString& description );

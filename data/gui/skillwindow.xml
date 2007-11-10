@@ -143,18 +143,23 @@
 		</subscriptions>
 	</widget>
 
-	<widget name="BuySkill" factory="pawsButton" id="100" tooltip="Buy Skill" >
+    <widget name="BuySkill" factory="pawsButton" id="100" tooltip="Buy Skill" >
         <frame x="40" y="185" width="32" height="32" />
         <bgimage resource="BuySkill" />
     </widget>
 
-    <widget name="Filter" factory="pawsButton" id="101" tooltip="Filter" >
+    <widget name="BuySkillLevel" factory="pawsButton" id="103" tooltip="Buy Skill Level" >
         <frame x="85" y="185" width="32" height="32" />
+        <bgimage resource="BuySkill" />
+    </widget>
+
+    <widget name="Filter" factory="pawsButton" id="101" tooltip="Filter" >
+        <frame x="130" y="185" width="32" height="32" />
         <bgimage resource="FilterSkill" />
     </widget>
     
     <widget name="EditDesc" factory="pawsButton" id="102" tooltip="Modify Description" >
-        <frame x="130" y="185" width="32" height="32" />
+        <frame x="175" y="185" width="32" height="32" />
         <bgimage resource="Scribe" />
     </widget>
     
