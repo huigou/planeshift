@@ -13,3 +13,4 @@ create unique index indx_guild_name on guilds (name);
 create index indx_item_instance_char_id_owner on item_instances (char_id_owner);
 create index indx_item_instance_location_in_parent on item_instances (location_in_parent);
 create unique index indx_accounts_username on accounts (username);
+create index indx_accounts_ip on accounts (last_login_ip);
