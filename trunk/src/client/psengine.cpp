@@ -974,7 +974,7 @@ const char* psEngine::FindCommonString(unsigned int cstr_id)
    return clientDR->GetMsgStrings()->Request(cstr_id);
 }
 
-size_t psEngine::FindCommonStringId(const char *str)
+uint psEngine::FindCommonStringId(const char *str)
 {
     if (!celclient)
         return csInvalidStringID;

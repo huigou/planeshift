@@ -18,15 +18,32 @@
 */
 
 #include <psconfig.h>
+#include <fstream>
 
 #include "globals.h"
 #include "pawslauncherwindow.h"
 
+using namespace std;
+
 bool pawsLauncherWindow::PostSetup()
 {
+    configFile = new csConfigFile(CONFIG_FILENAME, psLaunchGUI->GetVFS());
     quit = (pawsButton*)FindWidget("Quit");
     launchClient = (pawsButton*)FindWidget("LaunchButton");
+    settings = (pawsButton*)FindWidget("SettingsButton");
 
+    // Get server news.
+    serverNews = (pawsMultiLineTextBox*)FindWidget("ServerNews");
+    psLaunchGUI->GetDownloader()->DownloadFile(configFile->GetStr("Launcher.News.URL", ""), "servernews", true);
+    ifstream newsFile("servernews", ifstream::in);
+    csString buffer;
+    while(newsFile.good())
+    {
+        buffer.Append((char)newsFile.get());
+    }
+    buffer.Truncate(buffer.Length()-1);
+    serverNews->SetText(buffer.GetDataSafe());
+        
     return true;
 }
 
@@ -41,5 +58,10 @@ bool pawsLauncherWindow::OnButtonPressed(int mouseButton, int keyModifier, pawsW
         psLaunchGUI->ExecClient(true);
         psLaunchGUI->Quit();
     }
+    else if (widget==(pawsWidget*)settings)
+    {
+        // Show settings widgets.
+    }
+
     return true;
 }

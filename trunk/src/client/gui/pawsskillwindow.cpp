@@ -652,7 +652,7 @@ void pawsSkillWindow::BuyMaxSkill()
         return;
     }
 
-    size_t skillId = psengine->FindCommonStringId(selectedSkill);
+    uint skillId = psengine->FindCommonStringId(selectedSkill);
     psSkillCacheItem* currSkill = skillCache.getItemBySkillId(skillId);
     unsigned short possibleTraining = currSkill->getKnowledgeCost() - currSkill->getKnowledge();
 
@@ -667,7 +667,6 @@ void pawsSkillWindow::BuyMaxSkill()
 
 void pawsSkillWindow::BuySkill()
 {
-    char commandData[256];
     csString escpxml = "";
     escpxml = EscpXML(selectedSkill);
     if (escpxml== "")
@@ -677,7 +676,7 @@ void pawsSkillWindow::BuySkill()
         return;
     }
 
-    size_t skillId = psengine->FindCommonStringId(selectedSkill);
+    uint skillId = psengine->FindCommonStringId(selectedSkill);
     psSkillCacheItem* currSkill = skillCache.getItemBySkillId(skillId);
     unsigned short possibleTraining = currSkill->getKnowledgeCost() - currSkill->getKnowledge();
 

@@ -179,7 +179,7 @@ class psSkillCache {
          *
          * The returned skill item is owned by the cache.
          */
-        psSkillCacheItem *getItemBySkillId(int id);
+        psSkillCacheItem *getItemBySkillId(uint id);
 
         psSkillCacheIter iterBegin() { return psSkillCacheIter(skillCache); }
 

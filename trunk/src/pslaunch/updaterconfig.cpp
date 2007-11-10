@@ -94,8 +94,9 @@ bool Config::Initialize(csRef<iDocumentNode> node)
         {
             updaterVersionLatest = versionNode->GetContentsValueAsInt();
         }
+        csString md5 = "md5";
         csRef<iDocumentNode> md5Node;
-        md5Node = updaterNode->GetNode(GetPlatform());
+        md5Node = updaterNode->GetNode(md5.Append(GetPlatform()));
         if(md5Node)
         {
             updaterVersionLatestMD5 = md5Node->GetContentsValue();
@@ -144,7 +145,8 @@ bool Config::Initialize(csRef<iDocumentNode> node)
             {
                 ClientVersion* cVersion = new ClientVersion;
                 cVersion->name = cNode->GetAttributeValue("name");
-                cVersion->md5sum = cNode->GetAttributeValue(GetPlatform());
+                csString md5 = "md5";
+                cVersion->md5sum = cNode->GetAttributeValue(md5.Append(GetPlatform()));
                 clientVersions.Push(cVersion);
             }
         }
@@ -159,7 +161,7 @@ bool Config::Initialize(csRef<iDocumentNode> node)
     return true;
 }
 
-Mirror* Config::GetMirror(int x)
+Mirror* Config::GetMirror(uint x)
 {
     Mirror * mirror = NULL;
     if ( x >=0 && x < mirrors.GetSize() )
