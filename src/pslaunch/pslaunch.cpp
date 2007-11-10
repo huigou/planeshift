@@ -27,6 +27,8 @@
 #include <ivideo/graph2d.h>
 #include <ivideo/natwin.h>
 
+#include "download.h"
+#include "fileutil.h"
 #include "globals.h"
 #include "pslaunch.h"
 #include "pawslauncherwindow.h"
@@ -60,6 +62,10 @@ void psLauncherGUI::Run()
 
     delete paws;
     paws = NULL;
+    delete downloader;
+    downloader = NULL;
+    delete fileUtil;
+    fileUtil = NULL;
 
     csInitializer::CloseApplication(object_reg);
 }
@@ -112,6 +118,12 @@ bool psLauncherGUI::InitApp()
     if (nw)
         nw->SetTitle(APPNAME);
     
+    // Initialise downloader.
+    downloader = new Downloader(vfs);
+
+    // Initialise file utilities.
+    fileUtil = new FileUtil(vfs);
+
     if(!csInitializer::OpenApplication(object_reg))
     {
         printf("Error initialising app (CRYSTAL not set?)\n");
@@ -182,7 +194,7 @@ void psLauncherGUI::HandleData()
     mutex->Lock();
     for ( size_t z = 0; z < consoleOut->GetSize(); z++ )
     {
-        textBox->AddMessage( consoleOut->Get(z).GetData());   
+        //textBox->AddMessage( consoleOut->Get(z).GetData());   
     }
     consoleOut->DeleteAll();
     
@@ -258,20 +270,7 @@ int main(int argc, char* argv[])
     {
         // Set up CS
         iObjectRegistry* object_reg = csInitializer::CreateEnvironment (argc, argv);
-        
-        if ( !csInitializer::SetupConfigManager(object_reg, "/this/pslaunch.cfg") )
-        {
-            csReport(object_reg, CS_REPORTER_SEVERITY_ERROR, "psclient",
-               "csInitializer::SetupConfigManager failed!\n"
-               "Is your CRYSTAL environment variable set?");
-            PS_PAUSEEXIT(1);
-        }                
-        csRef<iConfigManager> configManager =  csQueryRegistry<iConfigManager> (object_reg);
-        csRef<iVFS> vfs =  csQueryRegistry<iVFS> (object_reg);        
-        csRef<iConfigFile> cfg = configManager->AddDomain("/this/pslaunch.cfg",vfs,iConfigManager::ConfigPriorityApplication+1);
-        configManager->SetDynamicDomain(cfg);
-         
-                
+   
         if(!object_reg)
         {
             printf("Object Reg failed to Init!\n");
@@ -316,7 +315,10 @@ int main(int argc, char* argv[])
             bool execPSClient = false;
             // Ping stuff.
 
-        
+            // Request needed plugins for GUI.
+            csInitializer::RequestPlugins(object_reg, CS_REQUEST_FONTSERVER, CS_REQUEST_IMAGELOADER,
+                                          CS_REQUEST_OPENGL3D, CS_REQUEST_ENGINE, CS_REQUEST_END);
+
             // Start up GUI.
             csRef<Runnable> gui;
             gui.AttachNew(new psLauncherGUI(object_reg, &exitGUI, &updateNeeded, &performUpdate, &execPSClient, &consoleOut, &mutex));

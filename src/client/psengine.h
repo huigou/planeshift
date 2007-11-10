@@ -338,7 +338,7 @@ public:
      * @param[in] str The string we are looking for
      * @return The id of the common string or csInvalidStringID if not found
      */
-    size_t FindCommonStringId(const char *str);
+    uint FindCommonStringId(const char *str);
 
 
     ///Get the status of the sound plugin, if available or not.

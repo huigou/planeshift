@@ -282,7 +282,7 @@ void psSkillCache::addItem(int skillId, psSkillCacheItem *item)
     skillCache.PushBack(item);
 }
 
-psSkillCacheItem *psSkillCache::getItemBySkillId(int id)
+psSkillCacheItem *psSkillCache::getItemBySkillId(uint id)
 {
     psSkillCacheIter p(skillCache);
     while (p.HasNext())

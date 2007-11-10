@@ -1,3 +1,8 @@
+*** 2007-11-10 by Michael Gist
+- Made a number of fixes to the updater/launcher.
+- Added 'server news' widget to the launcher.
+- Warning fixes.
+
 *** 2007-11-10 by Dave Bentham
 - 'Discard' works for events in the Quest/Event notebook. Only works
   for participants, not for GMs who are running the event.

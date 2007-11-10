@@ -22,6 +22,7 @@
 
 #include "pslaunch.h"
 #include "paws/pawswidget.h"
+#include "paws/pawstextbox.h"
 
 class pawsLauncherWindow : public pawsWidget
 {
@@ -32,6 +33,9 @@ public:
 private:
     pawsButton* quit;
     pawsButton* launchClient;
+    pawsButton* settings;
+    pawsMultiLineTextBox* serverNews;
+    csRef<iConfigFile> configFile;
 };
 
 CREATE_PAWS_FACTORY( pawsLauncherWindow );

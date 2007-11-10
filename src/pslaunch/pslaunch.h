@@ -91,6 +91,12 @@ private:
     
     void HandleData();
         
+    /* Downloads server news */
+    Downloader* downloader;
+
+    /* File utilities */
+    FileUtil* fileUtil;
+
 public:
     /* Quit the application */
     void Quit();
@@ -98,6 +104,10 @@ public:
     void ExecClient(bool value) { *execPSClient = value; }
 
     psLauncherGUI(iObjectRegistry* _object_reg, bool *_exitGUI, bool *_updateNeeded, bool *_performUpdate, bool *_execPSClient, csArray<csString> *_consoleOut,  CS::Threading::Mutex *_mutex);
+
+    Downloader* GetDownloader() { return downloader; }
+
+    iVFS* GetVFS() { return vfs; }
 
     // Run thread.
     void Run();
