@@ -1,3 +1,7 @@
+*** 2007-11-10 by Dave Bentham
+- 'Discard' works for events in the Quest/Event notebook. Only works
+  for participants, not for GMs who are running the event.
+
 *** 2007-11-10 by Sasha Levin
 - Added a 'Buy Skill Level' button to the skills window, Allowing to buy a
   whole skill level (or maximum part of one level).
