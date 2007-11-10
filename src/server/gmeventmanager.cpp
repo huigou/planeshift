@@ -364,7 +364,7 @@ bool GMEventManager::RemovePlayerFromGMEvent (int clientnum, int gmID, Client* t
     gmEvent->playerID.Delete(playerID);
     
     // keep psCharacter up to date
-    target->GetActor()->GetCharacterData()->RemoveGMEvent();
+    target->GetActor()->GetCharacterData()->RemoveGMEvent(gmEvent->id);
 
     psserver->SendSystemInfo(clientnum, "%s has been removed from the \'%s\' event.",
                              target->GetName(),
@@ -593,6 +593,10 @@ void GMEventManager::HandleMessage(MsgEntry* me, Client* client)
                 Error3("Client %s requested unavailable GM Event %d", client->GetName(), msg.id);
             }
         }
+        else if (msg.command == psGMEventInfoMessage::CMD_DISCARD)
+        {
+            DiscardGMEvent(client, msg.id);
+        }
     }
 }
      
@@ -791,5 +795,47 @@ int GMEventManager::GetNextEventID(void)
 {
     // TODO this is just too simple
     return nextEventID++;
+}
+
+/// player discards GM event
+void GMEventManager::DiscardGMEvent(Client* client, int eventID)
+{
+    int runningEventIDAsGM;
+    int runningEventID, playerID;
+    csArray<int> completedEventIDsAsGM;
+    csArray<int> completedEventIDs;
+    GMEvent* gmEvent;
+ 
+    // look for this event in the player's events
+    runningEventID = GetAllGMEventsForPlayer((playerID = client->GetPlayerID()),
+                                             completedEventIDs,
+                                             runningEventIDAsGM,
+                                             completedEventIDsAsGM);
+
+    // cannot discard an event if the player was/is the GM of it
+    if (runningEventIDAsGM == eventID || completedEventIDsAsGM.Find(eventID) != csArrayItemNotFound)
+    {
+        psserver->SendSystemError(client->GetClientNum(), "You cannot discard an event for which you are/were the GM");
+        return;
+    }
+
+    // attempt to remove player from event...
+    if ((runningEventID == eventID || completedEventIDs.Find(eventID) != csArrayItemNotFound) &&
+        (gmEvent = GetGMEventByID(eventID)))
+    {
+        if (gmEvent->playerID.Delete(playerID))
+        {
+            // ...from the database
+            db->Command("DELETE FROM character_events WHERE event_id = %d AND player_id = %d", eventID, playerID);
+
+            // ...from psCharacter
+            client->GetActor()->GetCharacterData()->RemoveGMEvent(eventID);
+        }
+    }
+    else
+    {
+        psserver->SendSystemError(client->GetClientNum(), "Cannot find this event...");
+        Error2("Cannot find event ID %d.", eventID);
+    }
 }
 

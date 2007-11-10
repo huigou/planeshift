@@ -102,6 +102,11 @@ pawsQuestListWindow::~pawsQuestListWindow()
 
 void pawsQuestListWindow::Show(void)
 {
+    eventList->Clear();
+    uncompletedEventList->Clear();
+    description->Clear();
+    notes->Clear();
+ 
     psUserCmdMessage msg("/quests");
     psengine->GetMsgHandler()->SendMessage(msg.msg);
  
@@ -315,10 +320,11 @@ bool pawsQuestListWindow::OnButtonPressed( int mouseButton, int keyModifier, paw
         // These cases are for the discard funciton, and it's confirmation prompt
         case DISCARD_BUTTON:
         {
-            if (topTab == eventTab)
+            if (topTab == eventTab && questID != -1)
             {
-                PawsManager::GetSingleton().CreateWarningBox(
-                    "GM-Events cannot yet be discarded. Sorry.", this);
+                PawsManager::GetSingleton().CreateYesNoBox(
+                    "Are you sure you want to discard the selected event?", this);
+                questIDBuffer = questID;
             }
             else if (topTab == questTab && questID != -1)
             {
@@ -330,11 +336,18 @@ bool pawsQuestListWindow::OnButtonPressed( int mouseButton, int keyModifier, paw
         }
         case CONFIRM_YES:
         {
-            DiscardQuest(questIDBuffer);
+            if (topTab == questTab)
+                DiscardQuest(questIDBuffer);
+            else if (topTab == eventTab)
+                DiscardGMEvent(questIDBuffer);
             questID = -1;
             
             // Refresh window
             notes->Clear();
+            description->Clear();
+            eventList->Clear();
+            questList->Clear();
+
             psUserCmdMessage msg("/quests");
             psengine->GetMsgHandler()->SendMessage(msg.msg);
             break;
@@ -420,6 +433,12 @@ inline void pawsQuestListWindow::RequestGMEventData(int id)
 inline void pawsQuestListWindow::DiscardQuest(int id)
 {
     psQuestInfoMessage info(0,psQuestInfoMessage::CMD_DISCARD,id,NULL,NULL);
+    msgqueue->SendMessage(info.msg);
+}
+
+inline void pawsQuestListWindow::DiscardGMEvent(int id)
+{
+    psGMEventInfoMessage info(0,psGMEventInfoMessage::CMD_DISCARD,id,NULL,NULL);
     msgqueue->SendMessage(info.msg);
 }
 

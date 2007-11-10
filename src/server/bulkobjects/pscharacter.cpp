@@ -3420,9 +3420,12 @@ void psCharacter::CompleteGMEvent(bool playerIsGM)
     }
 }
 
-void psCharacter::RemoveGMEvent(void)
+void psCharacter::RemoveGMEvent(int id)
 {
-    assigned_events.runningEventID = -1;
+    if (assigned_events.runningEventID == id)
+        assigned_events.runningEventID = -1;
+    else
+        assigned_events.completedEventIDs.Delete(id);
 }
 
 

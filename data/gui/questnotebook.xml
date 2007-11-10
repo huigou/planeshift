@@ -130,8 +130,8 @@
     </widget>
 
     <widget name="Discard" factory="pawsButton" id="1201"  style="button" >
-        <frame x="300" y="195" width="100"/>
-        <label text="Discard quest"/>
+        <frame x="300" y="195" width="80"/>
+        <label text="Discard"/>
     </widget>
 
 
