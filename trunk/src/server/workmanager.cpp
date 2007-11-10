@@ -868,6 +868,7 @@ void psWorkManager::HandleProductionEvent(psWorkGameEvent* workEvent)
                 worke->DropItem( item );
 
             }
+            else
             {
                 if (workEvent->client)
                 {
