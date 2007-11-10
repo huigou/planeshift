@@ -143,7 +143,7 @@ void psUpdaterEngine::checkForUpdates()
         if(!appName.Compare("psupdater"))
         {
             *updateNeeded = true;            
-            while(*performUpdate == false && *exitGUI == false)
+            while(*performUpdate == false || *exitGUI == false)
             {                                             
                 // Make sure we die if we exit the gui as well.
                 if(*updateNeeded == false || *exitGUI == true )
