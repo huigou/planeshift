@@ -53,6 +53,7 @@ psLauncherGUI::psLauncherGUI(iObjectRegistry* _object_reg, bool *_exitGUI, bool 
     
     psLaunchGUI = this;
     paws = NULL;
+    updateTold = false;
 }
 
 void psLauncherGUI::Run()
@@ -203,6 +204,18 @@ void psLauncherGUI::HandleData()
 
 bool psLauncherGUI::HandleEvent (iEvent &ev)
 {
+    if(*exitGUI)
+        Quit();
+
+    if(!updateTold)
+    {
+        if(*updateNeeded)
+        {
+            paws->FindWidget("UpdateAvailable")->Show();
+            updateTold = true;
+        }
+    }
+
     if (paws->HandleEvent(ev))
         return true;
 
@@ -257,8 +270,8 @@ void psLauncherGUI::FrameLimit()
 
 void psLauncherGUI::Quit()
 {
-    *exitGUI = true;
     queue->GetEventOutlet()->Broadcast(csevQuit (object_reg));
+    *exitGUI = true;
 }
 
 int main(int argc, char* argv[])

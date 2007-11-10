@@ -23,6 +23,7 @@
 #include "pslaunch.h"
 #include "paws/pawswidget.h"
 #include "paws/pawstextbox.h"
+#include "paws/pawsyesnobox.h"
 
 class pawsLauncherWindow : public pawsWidget
 {
@@ -35,7 +36,9 @@ private:
     pawsButton* launchClient;
     pawsButton* settings;
     pawsMultiLineTextBox* serverNews;
+    pawsYesNoBox* updateAvailable;
     csRef<iConfigFile> configFile;
+    static void HandleUpdateButton(bool yes, void *thisptr);
 };
 
 CREATE_PAWS_FACTORY( pawsLauncherWindow );

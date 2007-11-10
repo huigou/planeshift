@@ -3,11 +3,11 @@
         <mirror id="1" name="Xordan" url="http://www.xordan.com/psupdater/" />
     </mirrors>
     <updater>
-        <version>1</version>
-        <md5win32>01234556789abcdef</md5win32>
+        <version>999</version>
+        <md5win32>960e82f40499794ca3bdda33efc33e86</md5win32>
         <md5linux32>01234556789abcdef</md5linux32>
         <md5linux64>01234556789abcdef</md5linux64>
-        <md5macosx>01234556789abcdef</md5macosx>
+        <md5macosx>aa4266f38b0a4a93e83bc7aacd2ed1a7</md5macosx>
     </updater>
     <client>
         <version name="0.3.019-0.3.020" md5win32="01234556789abcdef" md5linux32="01234556789abcdef" md5linux64="01234556789abcdef" md5macosx="01234556789abcdef" />

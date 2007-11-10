@@ -43,7 +43,11 @@ bool pawsLauncherWindow::PostSetup()
     }
     buffer.Truncate(buffer.Length()-1);
     serverNews->SetText(buffer.GetDataSafe());
-        
+
+    // Setup update available window.
+    updateAvailable = (pawsYesNoBox*)FindWidget("UpdateAvailable");
+    updateAvailable->SetCallBack(HandleUpdateButton, updateAvailable, "An update to PlaneShift is available. Do you wish to update now?");
+
     return true;
 }
 
@@ -64,4 +68,18 @@ bool pawsLauncherWindow::OnButtonPressed(int mouseButton, int keyModifier, pawsW
     }
 
     return true;
+}
+
+void pawsLauncherWindow::HandleUpdateButton(bool yes, void *updatewindow)
+{
+    pawsYesNoBox* updateWindow = (pawsYesNoBox *)updatewindow;
+    if(yes)
+    {
+        psLaunchGUI->PerformUpdate(true);
+    }
+    else
+    {
+        psLaunchGUI->PerformUpdate(false);
+        updateWindow->Hide();
+    }
 }
