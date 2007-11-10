@@ -3463,7 +3463,24 @@ bool psCharacter::CheckFaction(Faction * faction, int value)
     return GetActor()->GetFactions()->CheckFaction(faction,value);
 }
 
+const char* psCharacter::GetDescription()
+{
+    return description; 
+}
 
+void psCharacter::SetDescription(const char* newValue) 
+{
+    description = newValue;
+    bool bChanged = false;
+    while (description.Find("\n\n\n\n") != (size_t)-1)
+    {
+        bChanged = true;
+        description.ReplaceAll("\n\n\n\n", "\n\n\n");
+    }
+
+    if (bChanged && GetActor() && GetActor()->GetClient())
+        psserver->SendSystemError(GetActor()->GetClient()->GetClientNum(), "Warning! Description trimmed.");
+}
 
 
 //TODO: Make this not return a temp csString, but fix in place

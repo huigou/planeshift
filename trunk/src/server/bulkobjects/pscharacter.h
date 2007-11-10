@@ -1039,8 +1039,8 @@ public:
 
     unsigned int GetTimeConnected() { return timeconnected; }
 
-    const char* GetDescription() { return description; }
-    void SetDescription(const char* newValue) { description = newValue; }
+    const char* GetDescription();
+    void SetDescription(const char* newValue);
 
     /// This is used by the math scripting engine to get various values.
     double GetProperty(const char *ptr);
