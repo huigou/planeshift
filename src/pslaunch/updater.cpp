@@ -82,7 +82,7 @@ int main(int argc, char* argv[])
     csArray<csString> d;
 
     // Initialize updater engine.
-    psUpdaterEngine* engine = new psUpdaterEngine(args, updater->GetObjectRegistry(), "psupdater", &a, &b, &c, &d);
+    psUpdaterEngine* engine = new psUpdaterEngine(args, updater->GetObjectRegistry(), "psupdater", &a, &b, &c, &d, NULL);
 
     // Run the update process!
     updater->RunUpdate(engine);

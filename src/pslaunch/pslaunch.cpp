@@ -31,11 +31,15 @@
 #include "pslaunch.h"
 #include "pawslauncherwindow.h"
 
+#include "paws/pawstextbox.h"
+
 CS_IMPLEMENT_APPLICATION
 
 psLauncherGUI* psLaunchGUI;
+CS::Threading::Mutex mutex;
 
-psLauncherGUI::psLauncherGUI(iObjectRegistry* _object_reg, bool *_exitGUI, bool *_updateNeeded, bool *_performUpdate, bool *_execPSClient, csArray<csString> *_consoleOut)
+    
+psLauncherGUI::psLauncherGUI(iObjectRegistry* _object_reg, bool *_exitGUI, bool *_updateNeeded, bool *_performUpdate, bool *_execPSClient, csArray<csString> *_consoleOut,  CS::Threading::Mutex *_mutex)
 {
     exitGUI = _exitGUI;
     updateNeeded = _updateNeeded;
@@ -43,6 +47,8 @@ psLauncherGUI::psLauncherGUI(iObjectRegistry* _object_reg, bool *_exitGUI, bool 
     execPSClient = _execPSClient;
     consoleOut = _consoleOut;
     object_reg = _object_reg;
+    mutex = _mutex;
+    
     psLaunchGUI = this;
     paws = NULL;
 }
@@ -105,13 +111,14 @@ bool psLauncherGUI::InitApp()
     iNativeWindow *nw = g3d->GetDriver2D()->GetNativeWindow();
     if (nw)
         nw->SetTitle(APPNAME);
-    g3d->GetDriver2D()->AllowResize(false);
-
+    
     if(!csInitializer::OpenApplication(object_reg))
     {
         printf("Error initialising app (CRYSTAL not set?)\n");
         return false;
     }
+    
+    g3d->GetDriver2D()->AllowResize(false);
 
     // Mount the skin
     if (!vfs->Mount ("/planeshift/", "$^"))
@@ -147,25 +154,39 @@ bool psLauncherGUI::InitApp()
     }
 
     pawsWidget* launcher = paws->FindWidget("launcher");
+    textBox =  (pawsMessageTextBox*)launcher->FindWidget("launch_list");
     launcher->SetBackgroundAlpha(0);
 
     paws->GetMouse()->ChangeImage("Standard Mouse Pointer");
 
     // Register our event handler
     event_handler = csPtr<EventHandler> (new EventHandler (this));
-    csEventID esub[] = {
-	  csevPreProcess (object_reg),
-	  csevProcess (object_reg),
-	  csevPostProcess (object_reg),
-	  csevFinalProcess (object_reg),
-	  csevFrame (object_reg),
-	  csevMouseEvent (object_reg),
-	  csevKeyboardEvent (object_reg),
-	  CS_EVENTLIST_END
+    csEventID esub[] = 
+    {
+        csevPreProcess (object_reg),
+        csevProcess (object_reg),
+        csevPostProcess (object_reg),
+        csevFinalProcess (object_reg),
+        csevFrame (object_reg),
+        csevMouseEvent (object_reg),
+        csevKeyboardEvent (object_reg),
+        CS_EVENTLIST_END
     };
     queue->RegisterListener(event_handler, esub);
 
     return true;
+}
+
+void psLauncherGUI::HandleData()
+{
+    mutex->Lock();
+    for ( size_t z = 0; z < consoleOut->GetSize(); z++ )
+    {
+        textBox->AddMessage( consoleOut->Get(z).GetData());   
+    }
+    consoleOut->DeleteAll();
+    
+    mutex->Unlock();
 }
 
 bool psLauncherGUI::HandleEvent (iEvent &ev)
@@ -177,15 +198,16 @@ bool psLauncherGUI::HandleEvent (iEvent &ev)
         return true;
     else if (ev.Name == csevFinalProcess (object_reg))
     {
-	g3d->FinishDraw ();
-	g3d->Print (NULL);
-	return true;
+        g3d->FinishDraw ();
+        g3d->Print (NULL);
+        return true;
     }
     else if (ev.Name == csevPostProcess (object_reg))
-    {
-	if (drawScreen)
+    {    
+        if (drawScreen)
         {
-	        FrameLimit();
+            HandleData();
+            FrameLimit();
             g3d->BeginDraw(engine->GetBeginDrawFlags() | CSDRAW_2DGRAPHICS);
             paws->Draw();
         }
@@ -196,14 +218,15 @@ bool psLauncherGUI::HandleEvent (iEvent &ev)
     }
     else if (ev.Name == csevCanvasHidden (object_reg, g3d->GetDriver2D ()))
     {
-	drawScreen = false;
+        drawScreen = false;
     }
     else if (ev.Name == csevCanvasExposed (object_reg, g3d->GetDriver2D ()))
     {
-	drawScreen = true;
+        drawScreen = true;
     }
     return false;
 }
+
 
 void psLauncherGUI::FrameLimit()
 {
@@ -222,6 +245,7 @@ void psLauncherGUI::FrameLimit()
 
 void psLauncherGUI::Quit()
 {
+    *exitGUI = true;
     queue->GetEventOutlet()->Broadcast(csevQuit (object_reg));
 }
 
@@ -229,10 +253,25 @@ int main(int argc, char* argv[])
 {
     // Set to true to exit the app.
     bool exitApp = false;
+    
     while(!exitApp)
     {
         // Set up CS
         iObjectRegistry* object_reg = csInitializer::CreateEnvironment (argc, argv);
+        
+        if ( !csInitializer::SetupConfigManager(object_reg, "/this/pslaunch.cfg") )
+        {
+            csReport(object_reg, CS_REPORTER_SEVERITY_ERROR, "psclient",
+               "csInitializer::SetupConfigManager failed!\n"
+               "Is your CRYSTAL environment variable set?");
+            PS_PAUSEEXIT(1);
+        }                
+        csRef<iConfigManager> configManager =  csQueryRegistry<iConfigManager> (object_reg);
+        csRef<iVFS> vfs =  csQueryRegistry<iVFS> (object_reg);        
+        csRef<iConfigFile> cfg = configManager->AddDomain("/this/pslaunch.cfg",vfs,iConfigManager::ConfigPriorityApplication+1);
+        configManager->SetDynamicDomain(cfg);
+         
+                
         if(!object_reg)
         {
             printf("Object Reg failed to Init!\n");
@@ -251,15 +290,18 @@ int main(int argc, char* argv[])
 
         // Set to true to tell the GUI to exit.
         bool exitGUI = false;
+        
         // Set to true to tell the GUI that an update is required.
         bool updateNeeded = false;
+        
         // Set to true to tell the updater that it's okay to perform the update.
         bool performUpdate = false;
+        
         // Console output.
         csArray<csString> consoleOut;
 
         // Initialize updater engine.
-        psUpdaterEngine* engine = new psUpdaterEngine(args, object_reg, "pslaunch", &exitGUI, &updateNeeded, &performUpdate, &consoleOut);
+        psUpdaterEngine* engine = new psUpdaterEngine(args, object_reg, "pslaunch", &performUpdate, &exitGUI, &updateNeeded,  &consoleOut, &mutex);
 
         // If we're self updating, continue self update.
         if(engine->GetConfig()->IsSelfUpdating())
@@ -274,18 +316,15 @@ int main(int argc, char* argv[])
             bool execPSClient = false;
             // Ping stuff.
 
-            // Request needed plugins for GUI.
-            csInitializer::RequestPlugins(object_reg, CS_REQUEST_FONTSERVER, CS_REQUEST_IMAGELOADER,
-                                          CS_REQUEST_OPENGL3D, CS_REQUEST_ENGINE, CS_REQUEST_END);
-
+        
             // Start up GUI.
             csRef<Runnable> gui;
-            gui.AttachNew(new psLauncherGUI(object_reg, &exitGUI, &updateNeeded, &performUpdate, &execPSClient, &consoleOut));
+            gui.AttachNew(new psLauncherGUI(object_reg, &exitGUI, &updateNeeded, &performUpdate, &execPSClient, &consoleOut, &mutex));
             csRef<Thread> guiThread;
             guiThread.AttachNew(new Thread(gui));
             guiThread->Start();
-
-            // Begin update checking.
+            
+            //Begin update checking.
             if(engine)
                 engine->checkForUpdates();
 
@@ -307,8 +346,8 @@ int main(int argc, char* argv[])
             // Clean up everything else.
             csInitializer::DestroyApplication(object_reg);
             object_reg = NULL;
-
-            if(execPSClient)
+            
+            if(execPSClient == true)
             {
                 // Execute psclient process.
 
@@ -336,14 +375,14 @@ int main(int argc, char* argv[])
 #else
                 if(fork() == 0)
                 {
-                    execl("psclient", "psclient", NULL, NULL);
-                }
+                    execl("./psclient", "./psclient", (char*)0);                                        
+                }                
                 else
                 {
                     int status;
                     wait(&status);
                     exitApp = status ? 0 : !0;
-                }
+                }                
 #endif
             }
             else

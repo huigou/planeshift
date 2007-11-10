@@ -25,6 +25,8 @@
 #include <iutil/cfgmgr.h>
 #include <csutil/csstring.h>
 #include <iutil/document.h>
+#include <csutil/threading/thread.h>
+
 
 #include "download.h"
 #include "fileutil.h"
@@ -69,10 +71,13 @@ private:
 
     /* If true, then it's okay to perform the update. */
     bool *performUpdate;
-
+    
+    CS::Threading::Mutex *mutex;
+    
 public:
     psUpdaterEngine(const csArray<csString> args, iObjectRegistry* _object_reg, const char* _appName,
-                    bool *_performUpdate, bool *_exitGui, bool *_updateNeeded, csArray<csString> *_consoleOut);
+                    bool *_performUpdate, bool *_exitGui, bool *_updateNeeded, csArray<csString> *_consoleOut,
+                     CS::Threading::Mutex *_mutex);
     ~psUpdaterEngine();
 
     /* Return the config object */

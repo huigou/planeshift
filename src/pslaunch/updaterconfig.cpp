@@ -159,6 +159,17 @@ bool Config::Initialize(csRef<iDocumentNode> node)
     return true;
 }
 
+Mirror* Config::GetMirror(int x)
+{
+    Mirror * mirror = NULL;
+    if ( x >=0 && x < mirrors.GetSize() )
+    {
+        mirror = mirrors[x];
+    }
+    
+    return mirror;
+}
+
 csPDelArray<Mirror>* Config::GetMirrors()
 {
     csPDelArray<Mirror>* a;

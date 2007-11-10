@@ -93,6 +93,8 @@ struct Proxy
 class Config
 {
 public:
+    Mirror* GetMirror(int mirrorNumber);
+
     /* Get mirrors. */
     csPDelArray<Mirror>* GetMirrors();
 

@@ -65,12 +65,13 @@ Downloader::~Downloader()
 
 void Downloader::SetProxy (const char* host, int port)
 {
-    curl_easy_setopt (curl, CURLOPT_PROXY, host);
-    curl_easy_setopt (curl, CURLOPT_PROXYPORT, port);
+    //curl_easy_setopt (curl, CURLOPT_PROXY, host);
+    //curl_easy_setopt (curl, CURLOPT_PROXYPORT, port);
 }
 
 bool Downloader::DownloadFile (const char* file, const char* dest, bool URL)
 {
+
     // Get active url, append file to get full path.
     Mirror* mirror;
     if(URL)
@@ -82,9 +83,11 @@ bool Downloader::DownloadFile (const char* file, const char* dest, bool URL)
     {
         mirror = config->GetCurrentConfig()->GetMirrors()->Get(activeMirrorID);
     }
+    
     while(mirror)
     {
         csString url = mirror->GetBaseURL();
+        
         if(!URL)
         {
             url.AppendFmt(file);
@@ -148,11 +151,12 @@ bool Downloader::DownloadFile (const char* file, const char* dest, bool URL)
             if(!URL)
             {
                 // Try the next mirror.
-                mirror = config->GetCurrentConfig()->GetMirrors()->Get(CycleActiveMirror());
+                mirror = config->GetCurrentConfig()->GetMirror(CycleActiveMirror());
                 continue;
             }
             break;
         }
+        
         // Success!
         if(URL)
         {
@@ -161,6 +165,8 @@ bool Downloader::DownloadFile (const char* file, const char* dest, bool URL)
         }
         return true;
     }
+    
+    
     printf("There are no active mirrors! Please check the forums for more info and help!\n");
     if(URL)
     {
