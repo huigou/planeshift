@@ -29,6 +29,8 @@
 #include "paws/pawsmainwidget.h"
 #include "util/genericevent.h"
 
+class pawsMessageTextBox;
+
 #define APPNAME "PlaneShift Launcher"
 
 struct iObjectRegistry;
@@ -52,7 +54,9 @@ private:
     // PAWS
     PawsManager*    paws;
     pawsMainWidget* mainWidget;
-
+    
+    pawsMessageTextBox* textBox;
+    
     /* Array to store console output. */
     csArray<csString> *consoleOut;
 
@@ -68,6 +72,8 @@ private:
     /* Set to true to launch the client. */
     bool *execPSClient;
 
+    CS::Threading::Mutex *mutex;
+    
     /* keeps track of whether the window is visible or not. */
     bool drawScreen;
 
@@ -82,17 +88,20 @@ private:
 
     /* Handles an event from the event handler */
     bool HandleEvent (iEvent &ev);
-
+    
+    void HandleData();
+        
 public:
     /* Quit the application */
     void Quit();
 
     void ExecClient(bool value) { *execPSClient = value; }
 
-    psLauncherGUI(iObjectRegistry* _object_reg, bool *_exitGUI, bool *_updateNeeded, bool *_performUpdate, bool *_execPSClient, csArray<csString> *_consoleOut);
+    psLauncherGUI(iObjectRegistry* _object_reg, bool *_exitGUI, bool *_updateNeeded, bool *_performUpdate, bool *_execPSClient, csArray<csString> *_consoleOut,  CS::Threading::Mutex *_mutex);
 
     // Run thread.
     void Run();
+    
 };
 
 #endif // __PSLAUNCH_H__

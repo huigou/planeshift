@@ -19,8 +19,10 @@
 
 #include <psconfig.h>
 
+
 #include <csutil/csmd5.h>
 #include <csutil/xmltiny.h>
+
 #include <iutil/stringarray.h>
 
 #include "updaterconfig.h"
@@ -34,7 +36,7 @@
 iObjectRegistry* psUpdaterEngine::object_reg = NULL;
 
 psUpdaterEngine::psUpdaterEngine(const csArray<csString> args, iObjectRegistry* _object_reg, const char* _appName,
-                                 bool *_performUpdate, bool *_exitGui, bool *_updateNeeded, csArray<csString> *_consoleOut)
+                                 bool *_performUpdate, bool *_exitGui, bool *_updateNeeded, csArray<csString> *_consoleOut,  CS::Threading::Mutex *_mutex)
 {
     object_reg = _object_reg;
     vfs = csQueryRegistry<iVFS> (object_reg);
@@ -50,6 +52,7 @@ psUpdaterEngine::psUpdaterEngine(const csArray<csString> args, iObjectRegistry* 
     updateNeeded = _updateNeeded;
     consoleOut = _consoleOut;
     performUpdate = _performUpdate;
+    mutex = _mutex;
 }
 
 psUpdaterEngine::~psUpdaterEngine()
@@ -62,17 +65,28 @@ psUpdaterEngine::~psUpdaterEngine()
 
 void psUpdaterEngine::printOutput(const char *string, ...)
 {
+    if ( mutex )
+    {
+        mutex->Lock();
+    }
+            
     csString outputString;
     va_list args;
     va_start (args, string);
     outputString.FormatV (string, args);
     va_end (args);
     consoleOut->Push(outputString);
-    printf("%s\n", outputString.GetData());
+    printf("%s\n", outputString.GetData());    
+    
+    if ( mutex )
+    {
+        mutex->Unlock();
+    }        
 }
 
 void psUpdaterEngine::checkForUpdates()
 {
+
     // Make sure the old instance had time to terminate (self-update).
     if(config->IsSelfUpdating())
         csSleep(500);
@@ -112,23 +126,27 @@ void psUpdaterEngine::checkForUpdates()
     // Initialise downloader.
     downloader = new Downloader(GetVFS(), config);
 
+    
     //Set proxy
     downloader->SetProxy(GetConfig()->GetProxy().host.GetData(),
         GetConfig()->GetProxy().port);
 
     printOutput("Checking for updates to the updater: ");
 
-    // Check for updater updates.
+    
     if(checkUpdater())
     {
-        printOutput("Update Available!\n");
+        printOutput("Update Available!");
+     
+           
         // If using a GUI, prompt user whether or not to update.
         if(!appName.Compare("psupdater"))
         {
-            *updateNeeded = true;
-            while(!*performUpdate)
-            {
-                if(!*updateNeeded)
+            *updateNeeded = true;            
+            while(*performUpdate == false && *exitGUI == false)
+            {                                             
+                // Make sure we die if we exit the gui as well.
+                if(*updateNeeded == false || *exitGUI == true )
                 {
                     delete downloader;
                     downloader = NULL;
@@ -136,7 +154,7 @@ void psUpdaterEngine::checkForUpdates()
                 }
             }
         }
-
+        
         // Begin the self update process.
         selfUpdate(false);
         // Restore config files before terminate.
@@ -144,11 +162,12 @@ void psUpdaterEngine::checkForUpdates()
         fileUtil->CopyFile("updaterinfo.xml.bak", "updaterinfo.xml", false, false);
         fileUtil->RemoveFile("updaterinfo.xml.bak");
         *exitGUI = true;
+        
         return;
     }
-
+        
     printOutput("No updates needed!\nChecking for updates to all files: ");
-
+    
     // Check for normal updates.
     if(checkGeneral())
     {
@@ -182,18 +201,23 @@ void psUpdaterEngine::checkForUpdates()
     else
         printOutput("No updates needed!\n");
 
+    
     delete downloader;
     downloader = NULL;
+    
     return;
 }
 
 bool psUpdaterEngine::checkUpdater()
 {
+
     // Backup old config, download new.
     fileUtil->CopyFile("updaterinfo.xml", "updaterinfo.xml.bak", false, false);
+    
     fileUtil->RemoveFile("updaterinfo.xml");
     downloader->DownloadFile("updaterinfo.xml", "updaterinfo.xml", false);
 
+    
     // Load new config data.
     csRef<iDocumentNode> root = GetRootNode(UPDATERINFO_FILENAME);
     if(!root)
@@ -216,7 +240,7 @@ bool psUpdaterEngine::checkUpdater()
     }
 
     // Compare Versions.
-    return(config->GetNewConfig()->GetUpdaterVersionLatest() > UPDATER_VERSION);
+    return(config->GetNewConfig()->GetUpdaterVersionLatest() > UPDATER_VERSION);        
 }
 
 bool psUpdaterEngine::checkGeneral()
