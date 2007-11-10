@@ -25,7 +25,7 @@
 
 #include "dal.h"
 
-#define THREADED_BUFFER_SIZE 100
+#define THREADED_BUFFER_SIZE 300
 
 /**
  *
@@ -531,6 +531,7 @@ void DelayedQueryManager::Run()
 {
     while(!m_Close)
     {
+        CS::Threading::MutexScopedLock lock(mutex);
         datacondition.Wait(mutex);
         while (start != end)
         {

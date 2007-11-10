@@ -11,6 +11,7 @@
 - Threaded sql executor is now a queue instead of a stack.
 - Added guarding char info in item details window.
 - Added something to mark master keys in item details window.
+- Fixed psserver using 100% cpu on linux, Thanks thebolt!
 
 *** 2007-11-07 by Michael Gist
 - Deprecation fixes.
