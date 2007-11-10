@@ -3058,7 +3058,7 @@ void AdminManager::ModifyKey(MsgEntry *me, psAdminCmdMessage& msg, AdminCmdData&
     // Give syntax
     if(data.subCmd.Length() == 0)
     {
-        psserver->SendSystemError(me->clientnum, "Syntax: /key [changelock|makeunlockable|make|copy|clearlocks|addlock|removelock|skel]");
+        psserver->SendSystemError(me->clientnum, "Syntax: /key [changelock|makeunlockable|securitylockable|make|makemaster|copy|clearlocks|addlock|removelock|skel]");
         return;
     }
 

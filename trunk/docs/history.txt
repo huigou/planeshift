@@ -12,6 +12,7 @@
 - Added guarding char info in item details window.
 - Added something to mark master keys in item details window.
 - Fixed psserver using 100% cpu on linux, Thanks thebolt!
+- Updated error message in /key. Thanks Vornne.
 
 *** 2007-11-07 by Michael Gist
 - Deprecation fixes.
