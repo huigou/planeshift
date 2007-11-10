@@ -2,6 +2,8 @@
 - Made a number of fixes to the updater/launcher.
 - Added 'server news' widget to the launcher.
 - Warning fixes.
+- Added yes/no box for when an update is available.
+- Updated xdelta3 lib.
 
 *** 2007-11-10 by Dave Bentham
 - 'Discard' works for events in the Quest/Event notebook. Only works

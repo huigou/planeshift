@@ -6,38 +6,57 @@
 
     <frame x="0" y="0" width="850" height="600" border="no"/>
     <title resource="Blue Title" text="Planeshift Launcher" align="left"/>
+    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="12"/>
 
     <!-- Server news -->
     <widget name="ServerNews" factory="pawsMultiLineTextBox">
         <frame x="280" y="350" width="400" height="120" />
-        <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="12"/>
     </widget>
+
+    <widget name="UpdateAvailable" factory="pawsYesNoBox" visible="no" savepositions="no" movable="no" resizable="no" >        
+    <frame x="200" y="100" width="400" height="250" border="no" />
+    <bgimage resource="YesNo" alpha="0" />
+
+        <widget name="Message Box" factory="pawsMultiLineTextBox">
+            <frame x="100" y="50" width="250" height="68" border="no" />
+        </widget>
+
+        <widget name="YesButton" factory="pawsButton" id="-10" key="Y" >
+            <frame x="120" y="180" width="80" height="40" border="no" />
+            <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" size="20" />
+            <label text="Yes" />
+        </widget>
+
+        <widget name="NoButton" factory="pawsButton" id="-20" key="N" >
+            <frame x="220" y="180" width="50" height="40" border="no" />
+            <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" size="20" />
+            <label text="No" />
+        </widget>
+    </widget>
+
 
     <!-- Quit button -->
     <widget name="Quit" factory="pawsButton">
-        <frame x="210" y="520" width="130" height="30" border="no"/>
-        <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="12"/>  
+        <frame x="210" y="520" width="130" height="30" border="no"/> 
          <buttonup resource="SetupButtonDown"/>
          <buttondown resource="SetupButtonDown"/>
-		<label text="Quit"/>
+	 <label text="Quit"/>
     </widget>
    
        <!-- Launch Client button -->
     <widget name="LaunchButton" factory="pawsButton">
         <frame x="350" y="520" width="130" height="30" border="no"/>
-        <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="12"/>  
          <buttonup resource="SetupButtonDown"/>
          <buttondown resource="SetupButtonDown"/>
-		<label text="Launch Client"/>
+	 <label text="Launch Client"/>
     </widget>
 
    <!-- Settings button --> 
     <widget name="SettingsButton" factory="pawsButton" toggle="no" shadows="yes">
-        <frame x="490" y="520" width="130" height="30" border="no"/>
-       	<font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="12"/>  
+        <frame x="490" y="520" width="130" height="30" border="no"/> 
          <buttonup resource="SetupButtonDown"/>
          <buttondown resource="SetupButtonDown"/>
-		<label text="Settings"/>
+	 <label text="Settings"/>
     </widget>
     
 </widget>

@@ -126,7 +126,6 @@ void psUpdaterEngine::checkForUpdates()
     // Initialise downloader.
     downloader = new Downloader(GetVFS(), config);
 
-    
     //Set proxy
     downloader->SetProxy(GetConfig()->GetProxy().host.GetData(),
         GetConfig()->GetProxy().port);
@@ -137,14 +136,13 @@ void psUpdaterEngine::checkForUpdates()
     if(checkUpdater())
     {
         printOutput("Update Available!");
-     
-           
+
         // If using a GUI, prompt user whether or not to update.
         if(!appName.Compare("psupdater"))
         {
             *updateNeeded = true;            
             while(*performUpdate == false || *exitGUI == false)
-            {                                             
+            {
                 // Make sure we die if we exit the gui as well.
                 if(*updateNeeded == false || *exitGUI == true )
                 {
@@ -152,6 +150,10 @@ void psUpdaterEngine::checkForUpdates()
                     downloader = NULL;
                     return;
                 }
+
+                // If we're going to self-update, close the GUI.
+                if(*performUpdate)
+                    *exitGUI = true;
             }
         }
         
@@ -161,11 +163,10 @@ void psUpdaterEngine::checkForUpdates()
         fileUtil->RemoveFile("updaterinfo.xml");
         fileUtil->CopyFile("updaterinfo.xml.bak", "updaterinfo.xml", false, false);
         fileUtil->RemoveFile("updaterinfo.xml.bak");
-        *exitGUI = true;
         
         return;
     }
-        
+
     printOutput("No updates needed!\nChecking for updates to all files: ");
     
     // Check for normal updates.

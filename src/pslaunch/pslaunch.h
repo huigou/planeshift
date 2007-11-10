@@ -97,6 +97,9 @@ private:
     /* File utilities */
     FileUtil* fileUtil;
 
+    /* True if we've already been told there's an update available. */
+    bool updateTold;
+
 public:
     /* Quit the application */
     void Quit();
@@ -108,6 +111,8 @@ public:
     Downloader* GetDownloader() { return downloader; }
 
     iVFS* GetVFS() { return vfs; }
+
+    void PerformUpdate(bool update) { if(update) *performUpdate = true; else *updateNeeded = false; }
 
     // Run thread.
     void Run();
