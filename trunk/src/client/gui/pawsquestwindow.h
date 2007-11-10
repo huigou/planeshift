@@ -106,6 +106,9 @@ protected:
     /// Ask server to discard a given quest
     void DiscardQuest(int id);
 
+    /// Ask server to discard a given GM event
+    void DiscardGMEvent(int id);
+
     /// Populate Quest tab
     void PopulateQuestTab(void);
 

@@ -880,7 +880,7 @@ public:
     size_t GetAssignedGMEvents(psGMEventListMessage& gmevents, int clientnum);
     void AssignGMEvent(int id, bool playerIsGM);
     void CompleteGMEvent(bool PlayerIsGM);
-    void RemoveGMEvent(void);
+    void RemoveGMEvent(int id);
     
     /** Update a npc's default spawn position with given data.
     */

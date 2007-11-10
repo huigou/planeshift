@@ -232,6 +232,12 @@ private:
     /** Get next free event id number.
      */
     int GetNextEventID(void);
+
+    /** Player discards an event
+     * @param client: the player client
+     * @param eventID: id of the event
+     */
+    void DiscardGMEvent(Client* client, int eventID);
 };
 
 #endif

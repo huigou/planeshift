@@ -4827,7 +4827,7 @@ public:
     {
         CMD_QUERY,
         CMD_INFO,
-        CMD_DISCARD // TODO
+        CMD_DISCARD
     };
     psGMEventInfoMessage(int cnum, int cmd, int id, const char *name,const char *info);
     psGMEventInfoMessage(MsgEntry* message);
