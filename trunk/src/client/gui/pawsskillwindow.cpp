@@ -44,6 +44,7 @@
 #define BTN_FILTER  101
 //#define BTN_QUIT    102
 #define BTN_EDIT    102 //Edit description
+#define BTN_BUYLVL    103
 #define BTN_STATS    1000 //Stats button for the tab panel
 #define BTN_COMBAT   1001 //Combat button for the tab panel
 #define BTN_MAGIC    1002 //Magic button for the tab panel
@@ -387,6 +388,12 @@ bool pawsSkillWindow::OnButtonPressed( int mouseButton, int keyModifier, pawsWid
             return true;
         }
 
+        case BTN_BUYLVL:
+        {
+            BuyMaxSkill();
+            return true;
+        }
+
         case BTN_EDIT:
         {
             pawsCharDescription* descWnd = (pawsCharDescription*)PawsManager::GetSingleton().FindWidget("DescriptionEdit");
@@ -628,6 +635,31 @@ void pawsSkillWindow::OnNumberEntered(const char *name,int param,int number)
     }
 
     sprintf( commandData, "<B NAME=\"%s\" AMOUNT=\"%d\"/>", escpxml.GetData(), number );
+    psGUISkillMessage outgoing( psGUISkillMessage::BUY_SKILL, commandData);
+
+    msgHandler->SendMessage( outgoing.msg );
+}
+
+void pawsSkillWindow::BuyMaxSkill()
+{
+    char commandData[256];
+    csString escpxml = "";
+    escpxml = EscpXML(selectedSkill);
+    if (escpxml== "")
+    {
+        csString warning="You have to select a skill before.";
+        PawsManager::GetSingleton().CreateWarningBox(warning); 
+        return;
+    }
+
+    size_t skillId = psengine->FindCommonStringId(selectedSkill);
+    psSkillCacheItem* currSkill = skillCache.getItemBySkillId(skillId);
+    unsigned short possibleTraining = currSkill->getKnowledgeCost() - currSkill->getKnowledge();
+
+    if (skillCache.getProgressionPoints() < possibleTraining)
+        possibleTraining = skillCache.getProgressionPoints();
+
+    sprintf( commandData, "<B NAME=\"%s\" AMOUNT=\"%d\"/>", escpxml.GetData(), possibleTraining );
     psGUISkillMessage outgoing( psGUISkillMessage::BUY_SKILL, commandData);
 
     msgHandler->SendMessage( outgoing.msg );

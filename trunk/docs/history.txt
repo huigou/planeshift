@@ -1,3 +1,7 @@
+*** 2007-11-10 by Sasha Levin
+- Added a 'Buy Skill Level' button to the skills window, Allowing to buy a
+  whole skill level (or maximum part of one level).
+
 *** 2007-11-09 by Roland Schulz
 - fixed FS#585 (Autorun interrupted by mouseclick)
 
