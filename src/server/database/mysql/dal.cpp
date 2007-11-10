@@ -530,6 +530,7 @@ void DelayedQueryManager::Stop()
 
 void DelayedQueryManager::Run()
 {
+    psStopWatch timer;
     while(!m_Close)
     {
         CS::Threading::MutexScopedLock lock(mutex);
@@ -542,9 +543,9 @@ void DelayedQueryManager::Run()
                 currQuery = arr[end];
                 end = (end+1) % arr.GetSize();
             }
-            printf("Executing delayed query: %s\n", currQuery.GetData());
-            if (mysql_real_query(m_conn, currQuery, currQuery.Length()))
-                printf("Failed executing query!\n");
+            timer.Start();
+            if (!mysql_real_query(m_conn, currQuery, currQuery.Length()))
+                profs.AddSQLTime(currQuery, timer.Stop());
         }
     }
 }

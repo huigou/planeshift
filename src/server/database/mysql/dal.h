@@ -43,6 +43,7 @@ private:
     CS::Threading::RecursiveMutex mutexArray;
     CS::Threading::Condition datacondition;
     bool m_Close;
+    psDBProfiles profs;
 };
 
 class psMysqlConnection : public iComponent, public iDataConnection
