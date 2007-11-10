@@ -77,13 +77,14 @@ bool psMysqlConnection::Initialize(const char *host, unsigned int port, const ch
     // Create a mydb
     conn=mysql_init(NULL);
 
-    // Conn is the valid connection to be used for mydb. Have to store the mydb to get
-    // errors if this call fails.
-    MYSQL *conn_check = mysql_real_connect(conn,host,user,pwd,database,port,NULL,CLIENT_FOUND_ROWS);
-
     dqm.AttachNew(new DelayedQueryManager(host,port,user,pwd,database));
     dqmThread.AttachNew(new Thread(dqm));
     dqmThread->Start();
+
+
+    // Conn is the valid connection to be used for mydb. Have to store the mydb to get
+    // errors if this call fails.
+    MYSQL *conn_check = mysql_real_connect(conn,host,user,pwd,database,port,NULL,CLIENT_FOUND_ROWS);
 
     return (conn == conn_check);
 }
