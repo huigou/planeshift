@@ -6,6 +6,8 @@
   everytime a character is loaded.  
 - Moved some data when quick loading a character so only one query to the
   character table is needed.  
+- Removed the loading of skills on quick load. There is no verification of 
+  item equipping here so the skills are not needed.   
 
 *** 2007-11-10 by Roland Schulz
 - fix for BT#2755: Guild edit permission. Now actor can only change priviledges
