@@ -229,7 +229,7 @@ psCharacter *psCharacterLoader::LoadCharacterData(unsigned int uid, bool forceRe
 
 psCharacter *psCharacterLoader::QuickLoadCharacterData(unsigned int uid, bool noInventory)
 {
-    Result result(db->Select("SELECT id, name, lastname, racegender_id from characters where id=%u LIMIT 1",uid));
+    Result result(db->Select("SELECT id, name, lastname, racegender_id,  base_strength,base_agility, base_endurance, base_intelligence, base_will, base_charisma from characters where id=%u LIMIT 1",uid));
 
     if (!result.IsValid() || result.Count() < 1)
     {
