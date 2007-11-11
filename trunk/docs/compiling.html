@@ -17,8 +17,8 @@
     var CAL3Drev_HEAD = "407"; // CAL3D_SOURCE_REV_HEAD
     var csWinLibsVersion = "1.2_002"; // cs win32 libs version.
     //Update date and author, to be changed everytime and updates occurred
-    var UpdateDate = "19 Oct 2007"; //Date when the update occurred
-    var UpdateAuthor = "Mike Gist"; //Author of the update
+    var UpdateDate = "11 Nov 2007"; //Date when the update occurred
+    var UpdateAuthor = "Arianna Benigno"; //Author of the update
 -->
 </script>
 
@@ -376,7 +376,7 @@ function Initialize()
 <!---------------------------------------------------------------------------------------------------->
 
 <h2><a name="dir">Set Working Directory</a></h2>
-    The first step is to create your development. If you  want to choose a specific directory, you can do that, 
+    The first step is to create your development directory. If you  want to choose a specific directory, you can do that, 
     however this guide will assume you use: 
 
 <div class="Linux">
@@ -408,6 +408,9 @@ function Initialize()
         <a href="http://msdn.microsoft.com/vstudio/express/visualc/usingpsdk/">http://msdn.microsoft.com/vstudio/express/visualc/usingpsdk/</a><br>
         Remember to follow all the listed steps to get things working: this includes to update the directories for Visual C++ and 
         edit corewin_express.vsprops as indicated.</p>
+        
+        <h3>MSVC 8 Full Edition</h3>
+        <p>If you are using this version of the build environment, you need to update it with the Service Pack 1!</p>
     </div>
     <div class="MINGW">
         <h3>MinGW32 and MSYS</h3>
@@ -553,21 +556,7 @@ function Initialize()
         </div></p>
     </div>
 
-    <h3>CS Windows Libraries</h3>
-    <p>Rather than having to install CS dependant components manually, Microsoft Visual C++, MinGW/MSYS and Cygwin
-    users can download a single package which contains all common headers, pre-built library files, and dynamic link
-    libraries in pre-compiled form from the Crystal Space website, http://www.crystalspace3d.org/.</p>
-
-    <p>The latest version of such libraries is available at:
-    <div class="Normal">
-    <a href="http://www.crystalspace3d.org/downloads/cs-win32libs/">http://www.crystalspace3d.org/downloads/cs-win32libs/</a><br/>
-    </div>
-    <div class="Static">
-    <a href="http://www.crystalspace3d.org/downloads/cs-win32libs/static/">http://www.crystalspace3d.org/downloads/cs-win32libs/static/</a><br/>
-    </div>
-    The currently used CS revision needs version <b>LIBS_VER</b>. Don't mix up with other versions!</p>
-
-    <p>At this stage, do not install yet the libraries. This needs to be done later on.</p>   
+    
 
     <h3>Set Environment Variables</h3>
     <p>Right-Click My Computer on your desktop and choose Properties. Under Advanced choose Environmental Variables.
@@ -648,13 +637,8 @@ function Initialize()
         pick the devel package with or without ssl. Choose the latest version of the package. 
         Unzip this into C:\development\curl.
      </div>
-    <h3>CVS client</h3>
-    <p>The two recommended CVS clients for Windows are <a href="http://www.wincvs.org/">WinCVS</a> and <a href="http://www.tortoisecvs.org/">TortoiseCVS</a>.
-        Both provide a GUI to access the CVS repositories.
-        You can find a Planeshift specific quickguide for WinCVS here: 
-	  <a href="http://planeshift.cvs.sourceforge.net/*checkout*/planeshift/planeshift/docs/wincvs_quickguide.txt">http://planeshift.cvs.sourceforge.net/*checkout*/planeshift/planeshift/docs/wincvs_quickguide.txt</a></p>
     <h3>SVN client</h3>
-    <p>CS and CEL use SVN for their source repositories, so you will need an SVN client as well.<br>
+    <p>PS, CS and CEL use SVN for their source repositories, so you will need an SVN client.<br>
        The SVN client for Windows is <a href="http://tortoisesvn.tigris.org/">TortoiseSVN</a>.</p>
 </div>
 <div class="MacOSX">
@@ -881,7 +865,21 @@ subversion zlibc libttf2 libfreetype6-dev libfreetype6 libasound2-dev alsa-oss l
         CS revision number: CS_SOURCE_REV_HEAD
     </p>
 
-<h3>Install CSWinLibs</h3>
+
+h3>CS Windows Libraries</h3>
+    <p>Rather than having to install CS dependant components manually, Microsoft Visual C++, MinGW/MSYS and Cygwin
+    users can download a single package which contains all common headers, pre-built library files, and dynamic link
+    libraries in pre-compiled form from the Crystal Space website, http://www.crystalspace3d.org/.</p>
+
+    <p>The latest version of such libraries is available at:
+    <div class="Normal">
+    <a href="http://www.crystalspace3d.org/downloads/cs-win32libs/">http://www.crystalspace3d.org/downloads/cs-win32libs/</a><br/>
+    </div>
+    <div class="Static">
+    <a href="http://www.crystalspace3d.org/downloads/cs-win32libs/static/">http://www.crystalspace3d.org/downloads/cs-win32libs/static/</a><br/>
+    </div>
+    The currently used CS revision needs version <b>LIBS_VER</b>. Don't mix up with other versions!</p> 
+
  <p>Run the program and install the libraries. The Default name is fine. When it asks you for the CS directory, enter
     <b>C:\development\CS</b>.<br>
     When you have to select the components, you can select the options you prefer through the check boxes.<br>
@@ -928,7 +926,7 @@ subversion zlibc libttf2 libfreetype6-dev libfreetype6 libasound2-dev alsa-oss l
     <h3>PlaneShift</h3>
     <p>Lastly, download Planeshift source code:</p>
     <p>
-        If you are using TortoisesSVN, right-click on the development directory and select "SVN Checkout".<br>
+        Right-click on the development directory and select "SVN Checkout".<br>
         Enter the following as the URL:
         <div class="User">
         <p><i class="command">https://planeshift.svn.sourceforge.net/svnroot/planeshift/stable</i></p>
@@ -1045,6 +1043,8 @@ subversion zlibc libttf2 libfreetype6-dev libfreetype6 libasound2-dev alsa-oss l
 </div>
 <div class="MINGW">
     <div class="Windows">
+
+
         <p>Run MSYS from the start menu to open the shell.</p>
     
         <h3>Crystal Space (CS)</h3>
@@ -1113,6 +1113,7 @@ subversion zlibc libttf2 libfreetype6-dev libfreetype6 libasound2-dev alsa-oss l
 </div>
     
 <div class="MSVC">
+<
     <h3>Setup MSVC Environment</h3>
 
     <p><b>Note for MSVC 2005 (also known as Visual Studio 8.0, MSVC 8.0 or Visual Studio .NET 2005)
@@ -1229,9 +1230,9 @@ and select Properties, 'read only' is one of the attributes in the General tab) 
 
 <h2><a name="update">Get PS Art</a></h2>
 <p>
-The artwork for PlaneShift is not included in CVS. There are two ways to get it: you can either get the data
-from a Planeshift release or use the Planeshift 
-.<br>It's suggested, if you have a release of
+The artwork for PlaneShift is not included in SVN. There are two ways to get it: you can either get the data
+from a Planeshift release or use the Planeshift updater.<br>
+It's suggested, if you have a release of
 Planeshift installed, to get the data from it, saving download time and bandwidth.
 </p>
 
@@ -1408,7 +1409,15 @@ Type the following to load the correct map and spawn all items and NPCs:
 <p>Additional maps can be listed with the "maplist" command, and loaded via the "loadmap" command.
 To see a list of all available psserver commands, type "help".  You can shut down the server with "quit".</p>
 
-<p>You should now be able to start psclient and log in. (The server is localhost on port 13331). The following accounts are in the CVS DB:</p>
+<p>You should now be able to start psclient and log in. The server is localhost on port 13331, if your server
+is located somewhere else or you want to connect to somebody's else server, you need to modify the servers list.
+
+<div class="Windows">The servers list is located in C:\development\planeshift\data\servers.xml.</div>
+<div class="Linux">The servers list is located in home/user/development/planeshift/data/servers.xml.</div>
+<div class="MacOSX">The servers list is located in home/user/development/planeshift/data/servers.xml.</div>
+
+
+ The following accounts are in the CVS DB:</p>
 
 <table>
     <tr>
