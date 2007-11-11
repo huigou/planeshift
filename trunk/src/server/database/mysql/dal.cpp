@@ -76,10 +76,12 @@ bool psMysqlConnection::Initialize(const char *host, unsigned int port, const ch
 {
     // Create a mydb
     conn=mysql_init(NULL);
-
+    
+#ifdef USE_DELAY_QUERY
     dqm.AttachNew(new DelayedQueryManager(host,port,user,pwd,database));
     dqmThread.AttachNew(new Thread(dqm));
     dqmThread->Start();
+#endif    
 
 
     // Conn is the valid connection to be used for mydb. Have to store the mydb to get
@@ -93,9 +95,11 @@ bool psMysqlConnection::Close()
 {
     mysql_close(conn);
     conn = NULL;
-
+    
+#ifdef USE_DELAY_QUERY
     dqm->Stop();
     dqmThread->Stop();
+#endif    
     return true;
 }
 
@@ -123,6 +127,7 @@ void psMysqlConnection::Escape(csString& to, const char *from)
 
 unsigned long psMysqlConnection::CommandPump(const char *sql,...)
 {
+#ifdef USE_DELAY_QUERY
     psStopWatch timer;
     csString querystr;
     va_list args;
@@ -133,6 +138,34 @@ unsigned long psMysqlConnection::CommandPump(const char *sql,...)
     dqm->Push(querystr);
 
     return 1;
+#else
+    psStopWatch timer;
+    csString querystr;
+    va_list args;
+
+    va_start(args, sql);
+    querystr.FormatV(sql, args);
+    va_end(args);
+
+    lastquery = querystr;
+
+    timer.Start();
+    if (!mysql_real_query(conn, querystr, querystr.Length()))
+    {
+        if(timer.Stop() > 1000)
+        {
+            csString status;
+            status.Format("SQL query %s, has taken %u time to process.\n", querystr.GetData(), timer.Stop());
+            if(LogCSV::GetSingletonPtr())
+                LogCSV::GetSingleton().Write(CSV_STATUS, status);
+        }
+        profs.AddSQLTime(querystr, timer.Stop());
+        return (unsigned long) mysql_affected_rows(conn);
+    }
+    else
+        return QUERY_FAILED;
+    
+#endif    
 }
 
 unsigned long psMysqlConnection::Command(const char *sql,...)
@@ -510,6 +543,7 @@ uint64 psResultRow::stringtouint64(const char *stringbuf)
     return result;
 }
 
+#ifdef USE_DELAY_QUERY
 
 DelayedQueryManager::DelayedQueryManager(const char *host, unsigned int port, const char *database,
                               const char *user, const char *pwd)
@@ -564,3 +598,4 @@ void DelayedQueryManager::Push(csString query)
     }
     datacondition.NotifyOne();
 }
+#endif
