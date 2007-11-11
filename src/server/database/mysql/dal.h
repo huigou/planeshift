@@ -26,6 +26,7 @@ using namespace CS::Threading;
 
 struct iObjectRegistry;
 
+#ifdef USE_DELAY_QUERY
 class DelayedQueryManager : public CS::Threading::Runnable
 {
 public:
@@ -45,6 +46,8 @@ private:
     bool m_Close;
     psDBProfiles profs;
 };
+#endif
+
 
 class psMysqlConnection : public iComponent, public iDataConnection
 {
@@ -96,8 +99,10 @@ public:
     virtual const char* DumpProfile();
     virtual void ResetProfile();
 
+#ifdef USE_DELAY_QUERY    
     csRef<DelayedQueryManager> dqm;
     csRef<Thread> dqmThread;
+#endif    
 };
 
 
