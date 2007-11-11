@@ -255,23 +255,24 @@ bool psCharacterInventory::QuickLoad(unsigned int use_id)
         {
             unsigned int stats_id = items[i].GetUInt32("item_stats_id_standard");
             psItemStats *stats = CacheManager::GetSingleton().GetBasicItemStatsByID(stats_id);
-            if ( !stats )
-            {
-                Bug2("Error! Item %s could not be loaded. Skipping.\n", items[i]["id"] );
-                continue;
-            }
-
-            // Quick load; we just need to know what it looks like
-            psItem* item = stats->InstantiateBasicItem();
             
-            item->UpdateInventoryStatus(owner, 0, (INVENTORY_SLOT_NUMBER) items[i].GetInt("location_in_parent"));
-
-            if (!AddLoadedItem(0, (INVENTORY_SLOT_NUMBER) items[i].GetInt("location_in_parent"), item))
+            if ( stats )
             {
-                Bug5("Item %s(%s) could not be quick loaded for %s(%d). Skipping this item.\n",
+                // Quick load; we just need to know what it looks like
+                psItem* item = stats->InstantiateBasicItem();
+            
+                item->UpdateInventoryStatus(owner, 0, (INVENTORY_SLOT_NUMBER) items[i].GetInt("location_in_parent"));
+
+                if (!AddLoadedItem(0, (INVENTORY_SLOT_NUMBER) items[i].GetInt("location_in_parent"), item))
+                {
+                    Bug5("Item %s(%s) could not be quick loaded for %s(%d). Skipping this item.\n",
                     item->GetName(), items[i]["id"], owner->GetCharName(), owner->GetCharacterID() );
-                delete item;
-                continue;
+                    delete item;
+                }
+            }
+            else
+            {
+              Bug2("Error! Item %s could not be loaded. Skipping.\n", items[i]["id"] );
             }
         }
 
@@ -279,8 +280,11 @@ bool psCharacterInventory::QuickLoad(unsigned int use_id)
         return true;
     }
     else
+    {
         return false;
-}
+    }
+}    
+
 
 bool psCharacterInventory::AddLoadedItem(uint32 parentID, INVENTORY_SLOT_NUMBER slot, psItem *item)
 {
