@@ -60,6 +60,7 @@ bool psRaceInfo::Load(iResultRow& row)
     name = row["name"];
     initialCP = row.GetUInt32("initial_cp");
     race = row.GetUInt32("race");
+    helmGroup = row["helm"];
 
     gender = CacheManager::GetSingleton().ConvertGenderString(row["sex"]);
 
