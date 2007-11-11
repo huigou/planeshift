@@ -439,8 +439,7 @@ bool psCharacter::QuickLoad(iResultRow& row, bool noInventory)
             return false;
         }
 
-        Result helmResult(db->Select("SELECT helm FROM race_info WHERE id=%d", raceid));
-        helmGroup = helmResult[0]["helm"];
+        helmGroup = raceinfo->helmGroup;
 
         if (!LoadTraits(characterid))
         {

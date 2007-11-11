@@ -2,6 +2,8 @@
 - Added #ifdef around the delay MYSQL query system.  For some 
   reason it doesn't work well for me so add the define in 
   dal.h to turn it on/off.
+- Race info now stores the helm group.  This saves a mysql query 
+  everytime a character is loaded.  
 
 *** 2007-11-10 by Roland Schulz
 - fix for BT#2755: Guild edit permission. Now actor can only change priviledges
