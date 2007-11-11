@@ -1,3 +1,6 @@
+*** 2007-11-11 by Sasha Levin
+- Enabled mysql auto-reconnect option in dbmysql.
+
 *** 2007-11-10 by Andrew Craig
 - Added #ifdef around the delay MYSQL query system.  For some 
   reason it doesn't work well for me so add the define in 

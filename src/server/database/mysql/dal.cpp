@@ -76,7 +76,6 @@ bool psMysqlConnection::Initialize(const char *host, unsigned int port, const ch
                               const char *user, const char *pwd)
 {
     // Create a mydb
-    conn=mysql_init(NULL);
     
 #ifdef USE_DELAY_QUERY
     dqm.AttachNew(new DelayedQueryManager(host,port,user,pwd,database));
@@ -84,10 +83,12 @@ bool psMysqlConnection::Initialize(const char *host, unsigned int port, const ch
     dqmThread->Start();
 #endif    
 
-
+    conn=mysql_init(NULL);
     // Conn is the valid connection to be used for mydb. Have to store the mydb to get
     // errors if this call fails.
     MYSQL *conn_check = mysql_real_connect(conn,host,user,pwd,database,port,NULL,CLIENT_FOUND_ROWS);
+    my_bool my_true = true;
+    mysql_options(conn_check, MYSQL_OPT_RECONNECT, &my_true);
 
     return (conn == conn_check);
 }
@@ -554,6 +555,8 @@ DelayedQueryManager::DelayedQueryManager(const char *host, unsigned int port, co
     m_Close = false;
     MYSQL *conn=mysql_init(NULL);
     m_conn = mysql_real_connect(conn,host,user,pwd,database,port,NULL,CLIENT_FOUND_ROWS);
+    my_bool my_true = true;
+    mysql_options(m_conn, MYSQL_OPT_RECONNECT, &my_true);    
 }
 
 void DelayedQueryManager::Stop()
