@@ -1,4 +1,8 @@
 *** 2007-11-10 by Roland Schulz
+- fix for BT#2755: Guild edit permission. Now actor can only change priviledges
+  that the actor himself has in the guild.
+
+*** 2007-11-10 by Roland Schulz
 - changed quest lockouts to be in seconds not in ticks
 - changed player quest lockouts to be expressed in player age, so those
   quest entries only need to be updated in db once the player lockout expires,

@@ -648,6 +648,13 @@ void GuildManager::HandleSetLevelRight(Client * client, iDocumentNode* root)
         return;
     }
 
+    if ( ! IsLeader(client))
+    {
+        if ( ! CheckClientRights(client, right, "You cannot change a priviledge that you do not have yourself."))
+        {
+            return;
+        }
+    }
     if (guild->SetPrivilege(level,right,state=="on"))
     {
         psGuildLevel *lev = guild->FindLevel(level);
