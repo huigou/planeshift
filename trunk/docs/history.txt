@@ -4,6 +4,8 @@
   dal.h to turn it on/off.
 - Race info now stores the helm group.  This saves a mysql query 
   everytime a character is loaded.  
+- Moved some data when quick loading a character so only one query to the
+  character table is needed.  
 
 *** 2007-11-10 by Roland Schulz
 - fix for BT#2755: Guild edit permission. Now actor can only change priviledges

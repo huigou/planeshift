@@ -423,15 +423,13 @@ bool psCharacter::QuickLoad(iResultRow& row, bool noInventory)
     {
         SetRaceInfo(raceinfo);
 
-        Result result(db->Select("SELECT base_strength,base_agility, base_endurance, base_intelligence, base_will, base_charisma from characters where id=%u LIMIT 1",characterid));
+        attributes.SetStat(PSITEMSTATS_STAT_STRENGTH,(unsigned int)row.GetFloat("base_strength"), false);
 
-        attributes.SetStat(PSITEMSTATS_STAT_STRENGTH,(unsigned int)result[0].GetFloat("base_strength"), false);
-
-        attributes.SetStat(PSITEMSTATS_STAT_AGILITY,(unsigned int)result[0].GetFloat("base_agility"), false);
-        attributes.SetStat(PSITEMSTATS_STAT_ENDURANCE,(unsigned int)result[0].GetFloat("base_endurance"), false);
-        attributes.SetStat(PSITEMSTATS_STAT_INTELLIGENCE,(unsigned int)result[0].GetFloat("base_intelligence"), false);
-        attributes.SetStat(PSITEMSTATS_STAT_WILL,(unsigned int)result[0].GetFloat("base_will"), false);
-        attributes.SetStat(PSITEMSTATS_STAT_CHARISMA,(unsigned int)result[0].GetFloat("base_charisma"), false);
+        attributes.SetStat(PSITEMSTATS_STAT_AGILITY,(unsigned int)row.GetFloat("base_agility"), false);
+        attributes.SetStat(PSITEMSTATS_STAT_ENDURANCE,(unsigned int)row.GetFloat("base_endurance"), false);
+        attributes.SetStat(PSITEMSTATS_STAT_INTELLIGENCE,(unsigned int)row.GetFloat("base_intelligence"), false);
+        attributes.SetStat(PSITEMSTATS_STAT_WILL,(unsigned int)row.GetFloat("base_will"), false);
+        attributes.SetStat(PSITEMSTATS_STAT_CHARISMA,(unsigned int)row.GetFloat("base_charisma"), false);
 
         if (!LoadSkills(characterid))
         {
