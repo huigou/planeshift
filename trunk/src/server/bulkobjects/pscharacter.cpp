@@ -422,21 +422,7 @@ bool psCharacter::QuickLoad(iResultRow& row, bool noInventory)
     if (!noInventory)
     {
         SetRaceInfo(raceinfo);
-
-        attributes.SetStat(PSITEMSTATS_STAT_STRENGTH,(unsigned int)row.GetFloat("base_strength"), false);
-
-        attributes.SetStat(PSITEMSTATS_STAT_AGILITY,(unsigned int)row.GetFloat("base_agility"), false);
-        attributes.SetStat(PSITEMSTATS_STAT_ENDURANCE,(unsigned int)row.GetFloat("base_endurance"), false);
-        attributes.SetStat(PSITEMSTATS_STAT_INTELLIGENCE,(unsigned int)row.GetFloat("base_intelligence"), false);
-        attributes.SetStat(PSITEMSTATS_STAT_WILL,(unsigned int)row.GetFloat("base_will"), false);
-        attributes.SetStat(PSITEMSTATS_STAT_CHARISMA,(unsigned int)row.GetFloat("base_charisma"), false);
-
-        if (!LoadSkills(characterid))
-        {
-            Error2("Cannot load skills for Character ID %u.",characterid);
-            return false;
-        }
-
+        
         helmGroup = raceinfo->helmGroup;
 
         if (!LoadTraits(characterid))
