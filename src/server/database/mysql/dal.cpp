@@ -23,6 +23,7 @@
 #include "util/log.h"
 #include "util/consoleout.h"
 
+#define USE_DELAY_QUERY
 #include "dal.h"
 
 #define THREADED_BUFFER_SIZE 300
