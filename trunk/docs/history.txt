@@ -1,3 +1,7 @@
+*** 2007-11-11 by Roland Schulz
+- Stab at FS#141 ... mental stats affect the cost of training, but this cost was not recalculated
+  when stats are modified by items, SetSkill or training, only on next login.
+
 *** 2007-11-11 by Sasha Levin
 - Enabled mysql auto-reconnect option in dbmysql.
 

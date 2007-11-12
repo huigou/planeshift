@@ -1351,6 +1351,8 @@ void psCharacter::CalculateEquipmentModifiers()
             modifiers.AddToStat(currentitem->GetWeaponAttributeBonusType(stat), (int)bonus);
         }
     }
+    // Equipped items may influence stats that determine training cost for skills
+    skills.Calculate();
 }
 
 void psCharacter::AddLootItem(psItemStats *item)
@@ -3079,6 +3081,7 @@ void psCharacter::Train( PSSKILL skill, int yIncrease )
             // When a stat is ranked up, hp, mana and stamina are recalculated
             RecalculateStats();
             inventory.CalculateLimits();
+            skills.Calculate();
         }
     }
     else
@@ -3093,6 +3096,7 @@ void psCharacter::Train( PSSKILL skill, int yIncrease )
                 );
         RecalculateStats();
         inventory.CalculateLimits();
+        skills.Calculate();
     }
 }
 
@@ -3234,7 +3238,8 @@ void psCharacter::SetSkillRank( PSSKILL which, int rank)
     else if( which == PSSKILL_WILL)
         attributes.SetStat(PSITEMSTATS_STAT_WILL,rank);
 
-    inventory.CalculateLimits();    
+    inventory.CalculateLimits();
+    skills.Calculate();
 }
 
 unsigned int psCharacter::GetCharLevel()
