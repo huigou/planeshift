@@ -36,7 +36,7 @@
 #define PS_PAUSEEXIT(x) exit(x)
 #endif
 
-class psUpdaterConfig;
+class UpdaterConfig;
 
 class Mirror
 {
@@ -128,11 +128,11 @@ private:
     csPDelArray<ClientVersion> clientVersions;
 };
 
-class psUpdaterConfig
+class UpdaterConfig
 {
 public:
-    psUpdaterConfig(const csArray<csString> args, iObjectRegistry* _object_reg, csRef<iVFS> _vfs);
-    ~psUpdaterConfig();
+    UpdaterConfig(const csArray<csString> args, iObjectRegistry* _object_reg, csRef<iVFS> _vfs);
+    ~UpdaterConfig();
 
     /* Returns true if the updater is self updating */
     int IsSelfUpdating() const { return selfUpdating; }

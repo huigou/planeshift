@@ -33,9 +33,16 @@
 #include <unistd.h>
 #endif
 
-iObjectRegistry* psUpdaterEngine::object_reg = NULL;
+iObjectRegistry* UpdaterEngine::object_reg = NULL;
 
-psUpdaterEngine::psUpdaterEngine(const csArray<csString> args, iObjectRegistry* _object_reg, const char* _appName,
+UpdaterEngine::UpdaterEngine(const csArray<csString> args, iObjectRegistry* object_reg, const char* appName)
+{
+    bool a = false, b = false, c = true;
+    csArray<csString> d;
+    UpdaterEngine(args, object_reg, appName, &a, &b, &c, &d, NULL);
+}
+
+UpdaterEngine::UpdaterEngine(const csArray<csString> args, iObjectRegistry* _object_reg, const char* _appName,
                                  bool *_performUpdate, bool *_exitGui, bool *_updateNeeded, csArray<csString> *_consoleOut,  CS::Threading::Mutex *_mutex)
 {
     object_reg = _object_reg;
@@ -45,7 +52,7 @@ psUpdaterEngine::psUpdaterEngine(const csArray<csString> args, iObjectRegistry* 
         printf("No VFS!\n");
         PS_PAUSEEXIT(1);
     }
-    config = new psUpdaterConfig(args, object_reg, vfs);
+    config = new UpdaterConfig(args, object_reg, vfs);
     fileUtil = new FileUtil(vfs);
     appName = _appName;
     exitGUI = _exitGui;
@@ -55,7 +62,7 @@ psUpdaterEngine::psUpdaterEngine(const csArray<csString> args, iObjectRegistry* 
     mutex = _mutex;
 }
 
-psUpdaterEngine::~psUpdaterEngine()
+UpdaterEngine::~UpdaterEngine()
 {
     delete fileUtil;
     delete config;
@@ -63,7 +70,7 @@ psUpdaterEngine::~psUpdaterEngine()
     config = NULL;
 }
 
-void psUpdaterEngine::printOutput(const char *string, ...)
+void UpdaterEngine::printOutput(const char *string, ...)
 {
     if ( mutex )
     {
@@ -84,7 +91,7 @@ void psUpdaterEngine::printOutput(const char *string, ...)
     }        
 }
 
-void psUpdaterEngine::checkForUpdates()
+void UpdaterEngine::checkForUpdates()
 {
 
     // Make sure the old instance had time to terminate (self-update).
@@ -209,7 +216,7 @@ void psUpdaterEngine::checkForUpdates()
     return;
 }
 
-bool psUpdaterEngine::checkUpdater()
+bool UpdaterEngine::checkUpdater()
 {
 
     // Backup old config, download new.
@@ -244,7 +251,7 @@ bool psUpdaterEngine::checkUpdater()
     return(config->GetNewConfig()->GetUpdaterVersionLatest() > UPDATER_VERSION);        
 }
 
-bool psUpdaterEngine::checkGeneral()
+bool UpdaterEngine::checkGeneral()
 {
     /*
     * Compare length of both old and new client version lists.
@@ -284,7 +291,7 @@ bool psUpdaterEngine::checkGeneral()
     return true;
 }
 
-csRef<iDocumentNode> psUpdaterEngine::GetRootNode(csString nodeName)
+csRef<iDocumentNode> UpdaterEngine::GetRootNode(csString nodeName)
 {
     // Load xml.
     csRef<iDocumentSystem> xml = csPtr<iDocumentSystem> (new csTinyDocumentSystem);
@@ -324,7 +331,7 @@ csRef<iDocumentNode> psUpdaterEngine::GetRootNode(csString nodeName)
 
 #ifdef CS_PLATFORM_WIN32
 
-bool psUpdaterEngine::selfUpdate(int selfUpdating)
+bool UpdaterEngine::selfUpdate(int selfUpdating)
 {
     // Info for CreateProcess.
     STARTUPINFO siStartupInfo;
@@ -420,7 +427,7 @@ bool psUpdaterEngine::selfUpdate(int selfUpdating)
 
 #else
 
-bool psUpdaterEngine::selfUpdate(int selfUpdating)
+bool UpdaterEngine::selfUpdate(int selfUpdating)
 {
     // Check what stage of the update we're in.
     switch(selfUpdating)
@@ -511,7 +518,7 @@ bool psUpdaterEngine::selfUpdate(int selfUpdating)
 #endif
 
 
-void psUpdaterEngine::generalUpdate()
+void UpdaterEngine::generalUpdate()
 {
     /*
     * This function updates our non-updater files to the latest versions,

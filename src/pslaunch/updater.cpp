@@ -49,7 +49,7 @@ psUpdater::~psUpdater()
     csInitializer::DestroyApplication(object_reg);
 }
 
-void psUpdater::RunUpdate(psUpdaterEngine* engine)
+void psUpdater::RunUpdate(UpdaterEngine* engine)
 {
     // Check if we're already in the middle of a self-update.
     if(engine->GetConfig()->IsSelfUpdating())
@@ -77,12 +77,8 @@ int main(int argc, char* argv[])
         args.Push(argv[i]);
     }
 
-    // Inputs to satisfy updaterengine.
-    bool a = false, b = false, c = true;
-    csArray<csString> d;
-
     // Initialize updater engine.
-    psUpdaterEngine* engine = new psUpdaterEngine(args, updater->GetObjectRegistry(), "psupdater", &a, &b, &c, &d, NULL);
+    UpdaterEngine* engine = new UpdaterEngine(args, updater->GetObjectRegistry(), "psupdater");
 
     // Run the update process!
     updater->RunUpdate(engine);

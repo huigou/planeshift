@@ -35,7 +35,7 @@ public:
     psUpdater(int argc, char* argv[]);
     ~psUpdater();
     iObjectRegistry* GetObjectRegistry(){ return object_reg; }
-    void RunUpdate(psUpdaterEngine* engine);
+    void RunUpdate(UpdaterEngine* engine);
 private:
     static iObjectRegistry* object_reg;
 };

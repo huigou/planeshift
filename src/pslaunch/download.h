@@ -27,7 +27,7 @@
 class Downloader
 {
 public:
-    Downloader(csRef<iVFS> _vfs, psUpdaterConfig* _config);
+    Downloader(csRef<iVFS> _vfs, UpdaterConfig* _config);
     Downloader(csRef<iVFS> _vfs);
     ~Downloader();
 
@@ -60,7 +60,7 @@ private:
     csRef<iVFS> vfs;
 
     /* Config pointer */
-    psUpdaterConfig* config;
+    UpdaterConfig* config;
 };
 
 #endif // __DOWNLOAD_H__
