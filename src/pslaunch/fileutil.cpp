@@ -196,8 +196,10 @@ bool FileUtil::CopyFile(csString from, csString to, bool vfsPath, bool executabl
     // On unix type systems we might need to set permissions after copy.
     if(executable)
     {
-        if(chmod(to.GetData(), S_IRUSR | S_IWUSR | S_IXUSR | S_IRGRP | S_IXGRP) == -1)
-            printf("Failed to set permissions on file %s.\n", n2.GetData());
+        csString real(to);
+        real.FindReplace("/this/", "./");
+        if(chmod(real.GetData(), S_IRUSR | S_IWUSR | S_IXUSR | S_IRGRP | S_IXGRP) == -1)
+            printf("Failed to set permissions on file %s.\n", real.GetData());
     }
 #endif
 

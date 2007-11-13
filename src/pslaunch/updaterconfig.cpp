@@ -82,25 +82,23 @@ const char* Config::GetPlatform()
 
 }
 
+Config::Config()
+{
+    updaterVersionLatest = 0;    
+}
+
 bool Config::Initialize(csRef<iDocumentNode> node)
 {
     // Get Updater info.
     csRef<iDocumentNode> updaterNode = node->GetNode("updater");
     if(updaterNode)
     {
-        csRef<iDocumentNode> versionNode;
-        versionNode = updaterNode->GetNode("version");
-        if(versionNode)
-        {
-            updaterVersionLatest = versionNode->GetContentsValueAsInt();
-        }
+        updaterVersionLatest = updaterNode->GetAttributeValueAsInt("version");
+        
         csString md5 = "md5";
         csRef<iDocumentNode> md5Node;
-        md5Node = updaterNode->GetNode(md5.Append(GetPlatform()));
-        if(md5Node)
-        {
-            updaterVersionLatestMD5 = md5Node->GetContentsValue();
-        }
+        md5.Append(GetPlatform());
+        updaterVersionLatestMD5 = updaterNode->GetAttributeValue(md5);
     }
     else
     {

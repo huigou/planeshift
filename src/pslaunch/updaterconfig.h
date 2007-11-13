@@ -90,9 +90,13 @@ struct Proxy
     uint port;
 };
 
+/** Holds an updater configuration file.
+ */
 class Config
 {
 public:
+    Config();
+    
     Mirror* GetMirror(uint mirrorNumber);
 
     /* Get mirrors. */
