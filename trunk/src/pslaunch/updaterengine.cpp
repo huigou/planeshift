@@ -218,14 +218,11 @@ void UpdaterEngine::checkForUpdates()
 
 bool UpdaterEngine::checkUpdater()
 {
-
     // Backup old config, download new.
-    fileUtil->CopyFile("updaterinfo.xml", "updaterinfo.xml.bak", false, false);
-    
+    fileUtil->CopyFile("updaterinfo.xml", "updaterinfo.xml.bak", false, false);    
     fileUtil->RemoveFile("updaterinfo.xml");
     downloader->DownloadFile("updaterinfo.xml", "updaterinfo.xml", false);
 
-    
     // Load new config data.
     csRef<iDocumentNode> root = GetRootNode(UPDATERINFO_FILENAME);
     if(!root)
@@ -399,9 +396,8 @@ bool UpdaterEngine::selfUpdate(int selfUpdating)
             }
 
             csMD5::Digest md5 = csMD5::Encode(buffer->GetData(), buffer->GetSize());
-
             csString md5sum = md5.HexString();
-
+                                                                
             if(!md5sum.Compare(config->GetNewConfig()->GetUpdaterVersionLatestMD5()))
             {
                 printOutput("md5sum of updater zip does not match correct md5sum!!\n");
@@ -491,7 +487,7 @@ bool UpdaterEngine::selfUpdate(int selfUpdating)
             csMD5::Digest md5 = csMD5::Encode(buffer->GetData(), buffer->GetSize());
 
             csString md5sum = md5.HexString();
-
+            
             if(!md5sum.Compare(config->GetNewConfig()->GetUpdaterVersionLatestMD5()))
             {
                 printOutput("md5sum of updater zip does not match correct md5sum!!\n");
