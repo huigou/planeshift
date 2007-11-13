@@ -29,7 +29,7 @@ size_t write_data(void *ptr, size_t size, size_t nmemb, void *stream)
     return written;
 }
 
-Downloader::Downloader(csRef<iVFS> _vfs, psUpdaterConfig* _config)
+Downloader::Downloader(csRef<iVFS> _vfs, UpdaterConfig* _config)
 {
     curl_global_init(CURL_GLOBAL_ALL);
     curl = curl_easy_init();

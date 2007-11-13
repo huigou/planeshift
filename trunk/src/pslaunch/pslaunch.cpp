@@ -313,7 +313,7 @@ int main(int argc, char* argv[])
         csArray<csString> consoleOut;
 
         // Initialize updater engine.
-        psUpdaterEngine* engine = new psUpdaterEngine(args, object_reg, "pslaunch", &performUpdate, &exitGUI, &updateNeeded,  &consoleOut, &mutex);
+        UpdaterEngine* engine = new UpdaterEngine(args, object_reg, "pslaunch", &performUpdate, &exitGUI, &updateNeeded,  &consoleOut, &mutex);
 
         // If we're self updating, continue self update.
         if(engine->GetConfig()->IsSelfUpdating())

@@ -37,7 +37,7 @@
 struct iConfigManager;
 struct iVFS;
 
-class psUpdaterEngine
+class UpdaterEngine
 {
 private:
     static iObjectRegistry* object_reg;
@@ -52,7 +52,7 @@ private:
     Downloader* downloader;
 
     /* Config file; check for proxy and clean update. */
-    psUpdaterConfig* config;
+    UpdaterConfig* config;
 
     /* Real name of the app (e.g. updater, pslaunch, etc.) */
     csString appName;
@@ -75,13 +75,14 @@ private:
     CS::Threading::Mutex *mutex;
     
 public:
-    psUpdaterEngine(const csArray<csString> args, iObjectRegistry* _object_reg, const char* _appName,
+    UpdaterEngine(const csArray<csString> args, iObjectRegistry* _object_reg, const char* _appName);
+    UpdaterEngine(const csArray<csString> args, iObjectRegistry* _object_reg, const char* _appName,
                     bool *_performUpdate, bool *_exitGui, bool *_updateNeeded, csArray<csString> *_consoleOut,
                      CS::Threading::Mutex *_mutex);
-    ~psUpdaterEngine();
+    ~UpdaterEngine();
 
     /* Return the config object */
-    psUpdaterConfig* GetConfig() { return config; }
+    UpdaterConfig* GetConfig() { return config; }
 
     /* Return VFS */
     csRef<iVFS> GetVFS() { return vfs; }

@@ -21,9 +21,9 @@
 
 #include "updaterconfig.h"
 
-iObjectRegistry* psUpdaterConfig::object_reg = NULL;
+iObjectRegistry* UpdaterConfig::object_reg = NULL;
 
-psUpdaterConfig::psUpdaterConfig(csArray<csString> args, iObjectRegistry* _object_reg, csRef<iVFS> _vfs)
+UpdaterConfig::UpdaterConfig(csArray<csString> args, iObjectRegistry* _object_reg, csRef<iVFS> _vfs)
 {
     // Initialize the config manager.
     object_reg = _object_reg;
@@ -60,7 +60,7 @@ psUpdaterConfig::psUpdaterConfig(csArray<csString> args, iObjectRegistry* _objec
     newCon = new Config;
 }
 
-psUpdaterConfig::~psUpdaterConfig()
+UpdaterConfig::~UpdaterConfig()
 {
     delete currentCon;
     delete newCon;
