@@ -632,7 +632,7 @@ void UpdaterEngine::generalUpdate()
                 csString newFilePath = next->GetAttributeValue("filepath");
                 csString diff = next->GetAttributeValue("diff");
                 csString oldFilePath = newFilePath;
-                oldFilePath.AppendFmt("_temp");
+                oldFilePath.AppendFmt(".old");
 
                 // Move old file to a temp location ready for input.
                 fileUtil->CopyFile(newFilePath, oldFilePath, false, false);
@@ -648,8 +648,22 @@ void UpdaterEngine::generalUpdate()
                 if(!PatchFile(oldFilePath, diff, newFilePath))
                 {
                     printOutput("Failed!\n");
-                    printOutput("Patching failed for file: %s. Reverting file!\n", newFilePath.GetData());
-                    fileUtil->CopyFile(oldFilePath, newFilePath, false, false);
+                    printOutput("Attempting to download full version of %s\n", newFilePath.GetData());
+
+                    // Get the 'backup' mirror, should always be the first in the list.
+                    csString url = config->GetNewConfig()->GetMirror(0)->GetBaseURL();
+
+                    // Try path from base URL.
+                    if(!downloader->DownloadFile(url.Append(newFilePath.GetData()), newFilePath.GetData(), true))
+                    {
+                        // Maybe it's in a platform specific subdirectory. Try that next.
+                        url.Append(config->GetNewConfig()->GetPlatform());
+                        if(downloader->DownloadFile(url.Append(newFilePath.GetData()), newFilePath.GetData(), true))
+                        {
+                            printOutput("Unable to update file: %s. Reverting file!\n", newFilePath.GetData());
+                            fileUtil->CopyFile(oldFilePath, newFilePath, false, false);
+                        }
+                    }
                 }
                 else
                 {
