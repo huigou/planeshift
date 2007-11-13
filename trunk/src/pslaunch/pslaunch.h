@@ -54,9 +54,7 @@ private:
     // PAWS
     PawsManager*    paws;
     pawsMainWidget* mainWidget;
-    
-    pawsMessageTextBox* textBox;
-    
+
     /* Array to store console output. */
     csArray<csString> *consoleOut;
 
@@ -88,9 +86,9 @@ private:
 
     /* Handles an event from the event handler */
     bool HandleEvent (iEvent &ev);
-    
+
     void HandleData();
-        
+
     /* Downloads server news */
     Downloader* downloader;
 

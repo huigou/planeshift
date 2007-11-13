@@ -24,6 +24,10 @@
 
 #include "binarypatch.h"
 
+#ifdef WIN32
+#pragma warning( disable : 4996 )
+#endif
+
 extern "C"
 {
 #include "../tools/xdelta3/xdelta3.h"

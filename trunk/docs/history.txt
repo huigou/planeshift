@@ -5,10 +5,12 @@
 *** 2007-11-13 by Michael Gist
 - A few class renames and improvement to UpdaterEngine ctor.
 - Added a fallback download of the full file if patching fails.
+- Fixed some bugs in the updater and started to add the updating output window.
 
 *** 2007-11-11 by Roland Schulz
-- Stab at FS#141 ... mental stats affect the cost of training, but this cost was not recalculated
-  when stats are modified by items, SetSkill or training, only on next login.
+- Stab at FS#141 ... mental stats affect the cost of training, but this cost
+  was not recalculated when stats are modified by items, SetSkill or training,
+  only on next login.
 
 *** 2007-11-11 by Sasha Levin
 - Enabled mysql auto-reconnect option in dbmysql.

@@ -32,10 +32,6 @@
 #define UPDATERINFO_FILENAME "/this/updaterinfo.xml"
 #define UPDATERINFO_OLD_FILENAME "/this/updaterinfo.xml.bak"
 
-#ifndef PS_PAUSEEXIT
-#define PS_PAUSEEXIT(x) exit(x)
-#endif
-
 class UpdaterConfig;
 
 class Mirror

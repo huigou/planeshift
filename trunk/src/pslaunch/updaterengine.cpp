@@ -17,9 +17,6 @@
 *
 */
 
-#include <psconfig.h>
-
-
 #include <csutil/csmd5.h>
 #include <csutil/xmltiny.h>
 
@@ -50,7 +47,7 @@ UpdaterEngine::UpdaterEngine(const csArray<csString> args, iObjectRegistry* _obj
     if(!vfs)
     {
         printf("No VFS!\n");
-        PS_PAUSEEXIT(1);
+        exit(1);
     }
     config = new UpdaterConfig(args, object_reg, vfs);
     fileUtil = new FileUtil(vfs);
@@ -113,14 +110,14 @@ void UpdaterEngine::checkForUpdates()
     if(!root)
     {
         printOutput("Unable to get root node");
-        PS_PAUSEEXIT(1);
+        return;
     }
 
     csRef<iDocumentNode> confignode = root->GetNode("config");
     if (!confignode)
     {
         printOutput("Couldn't find config node in configfile!\n");
-        PS_PAUSEEXIT(1);
+        return;
     }
 
     // Load updater config
@@ -228,20 +225,20 @@ bool UpdaterEngine::checkUpdater()
     if(!root)
     {
         printOutput("Unable to get root node");
-        PS_PAUSEEXIT(1);
+        return false;
     }
 
     csRef<iDocumentNode> confignode = root->GetNode("config");
     if (!confignode)
     {
         printOutput("Couldn't find config node in configfile!\n");
-        PS_PAUSEEXIT(1);
+        return false;
     }
 
     if (!config->GetNewConfig()->Initialize(confignode))
     {
         printOutput("Failed to Initialize mirror config new!\n");
-        PS_PAUSEEXIT(1);
+        return false;
     }
 
     // Compare Versions.
@@ -276,7 +273,7 @@ bool UpdaterEngine::checkGeneral()
                 fileUtil->RemoveFile("updaterinfo.xml");
                 fileUtil->CopyFile("updaterinfo.xml.bak", "updaterinfo.xml", false, false);
                 fileUtil->RemoveFile("updaterinfo.xml.bak");
-                PS_PAUSEEXIT(1);
+                return false;
             }
         }
         // Remove the backup of the xml (they're the same).
@@ -392,7 +389,7 @@ bool UpdaterEngine::selfUpdate(int selfUpdating)
             if (!buffer)
             {
                 printOutput("Could not get MD5 of updater zip!!\n");
-                PS_PAUSEEXIT(1);
+                return false;
             }
 
             csMD5::Digest md5 = csMD5::Encode(buffer->GetData(), buffer->GetSize());
@@ -401,7 +398,7 @@ bool UpdaterEngine::selfUpdate(int selfUpdating)
             if(!md5sum.Compare(config->GetNewConfig()->GetUpdaterVersionLatestMD5()))
             {
                 printOutput("md5sum of updater zip does not match correct md5sum!!\n");
-                PS_PAUSEEXIT(1);
+                return false;
             }
 
             // md5sum is correct, mount zip and copy file.
@@ -481,7 +478,7 @@ bool UpdaterEngine::selfUpdate(int selfUpdating)
             if (!buffer)
             {
                 printOutput("Could not get MD5 of updater zip!!\n");
-                PS_PAUSEEXIT(1);
+                return false;
             }
 
             csMD5::Digest md5 = csMD5::Encode(buffer->GetData(), buffer->GetSize());
@@ -491,7 +488,7 @@ bool UpdaterEngine::selfUpdate(int selfUpdating)
             if(!md5sum.Compare(config->GetNewConfig()->GetUpdaterVersionLatestMD5()))
             {
                 printOutput("md5sum of updater zip does not match correct md5sum!!\n");
-                PS_PAUSEEXIT(1);
+                return false;
             }
 
             // md5sum is correct, mount zip and copy file.
@@ -532,7 +529,7 @@ void UpdaterEngine::generalUpdate()
     if (!confignode)
     {
         printOutput("Couldn't find config node in configfile!\n");
-        PS_PAUSEEXIT(1);
+        return;
     }
 
     // Main loop.
@@ -557,7 +554,7 @@ void UpdaterEngine::generalUpdate()
         if (!buffer)
         {
             printOutput("Could not get MD5 of updater zip!!\n");
-            PS_PAUSEEXIT(1);
+            return;
         }
 
         csMD5::Digest md5 = csMD5::Encode(buffer->GetData(), buffer->GetSize());
@@ -567,7 +564,7 @@ void UpdaterEngine::generalUpdate()
         if(!md5sum.Compare(newCv->GetMD5Sum()))
         {
             printOutput("md5sum of client zip does not match correct md5sum!!\n");
-            PS_PAUSEEXIT(1);
+            return;
         }
 
         // Mount zip

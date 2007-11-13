@@ -17,7 +17,7 @@
 *
 */
 
-#include <psconfig.h>
+#include <cssysdef.h>
 
 #include <csutil/randomgen.h>
 

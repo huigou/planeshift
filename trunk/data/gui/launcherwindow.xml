@@ -13,6 +13,7 @@
         <frame x="280" y="350" width="400" height="120" />
     </widget>
 
+    <!-- Update available window -->
     <widget name="UpdateAvailable" factory="pawsYesNoBox" visible="no" savepositions="no" movable="no" resizable="no" >        
     <frame x="200" y="100" width="400" height="250" border="no" />
     <bgimage resource="YesNo" alpha="0" />
@@ -31,6 +32,16 @@
             <frame x="220" y="180" width="50" height="40" border="no" />
             <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" size="20" />
             <label text="No" />
+        </widget>
+    </widget>
+
+    <!-- Update output window -->
+    <widget name="UpdateProgress" factory="pawsWidget" visible="no" savepositions="no" movable="no" resizable="no">
+        <bgimage resource="UpdaterBackground" alpha="255" fade="false"/>
+        <frame x="0" y="0" width="850" height="600" border="no"/>
+
+        <widget name="UpdaterOutput" factory="pawsMultiLineTextBox">
+            <frame x="50" y="50" width="700" height="313" />
         </widget>
     </widget>
 
