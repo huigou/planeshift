@@ -17,8 +17,6 @@
 *
 */
 
-#include <psconfig.h>
-
 #include "updaterconfig.h"
 
 iObjectRegistry* UpdaterConfig::object_reg = NULL;
@@ -34,7 +32,7 @@ UpdaterConfig::UpdaterConfig(csArray<csString> args, iObjectRegistry* _object_re
         csReport(object_reg, CS_REPORTER_SEVERITY_ERROR, "updater2",
             "csInitializer::SetupConfigManager failed!\n"
             "Is your CRYSTAL environment variable set?");
-        PS_PAUSEEXIT(1);
+        exit(1);
     }
     configManager = csQueryRegistry<iConfigManager> (object_reg);
 

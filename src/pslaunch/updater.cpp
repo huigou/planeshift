@@ -38,7 +38,7 @@ psUpdater::psUpdater(int argc, char* argv[])
     if(!object_reg)
     {
         printf("Object Reg failed to Init!\n");
-        PS_PAUSEEXIT(1);
+        exit(1);
     }
     // Request needed plugins.
     csInitializer::RequestPlugins(object_reg, CS_REQUEST_VFS, CS_REQUEST_END);

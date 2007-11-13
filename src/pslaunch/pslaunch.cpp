@@ -167,7 +167,6 @@ bool psLauncherGUI::InitApp()
     }
 
     pawsWidget* launcher = paws->FindWidget("launcher");
-    textBox =  (pawsMessageTextBox*)launcher->FindWidget("launch_list");
     launcher->SetBackgroundAlpha(0);
 
     paws->GetMouse()->ChangeImage("Standard Mouse Pointer");
@@ -213,6 +212,39 @@ bool psLauncherGUI::HandleEvent (iEvent &ev)
         {
             paws->FindWidget("UpdateAvailable")->Show();
             updateTold = true;
+        }
+    }
+    else if(*performUpdate)
+    {
+        pawsWidget* updateProgress = paws->FindWidget("UpdateProgress");
+        if(*updateNeeded)
+        {
+            pawsMultiLineTextBox* updateProgressOutput = (pawsMultiLineTextBox*)updateProgress->FindWidget("UpdaterOutput");
+            updateProgress->Show();
+            paws->FindWidget("launcher")->Hide();
+
+            if(mutex)
+            {
+                mutex->Lock();
+            }
+
+            for(uint i=0; i<consoleOut->GetSize(); i++)
+            {
+                csString currentText = updateProgressOutput->GetText();
+                updateProgressOutput->SetText(currentText.Append(consoleOut->Get(i)));
+            }
+            consoleOut->DeleteAll();
+
+            if(mutex)
+            {
+                mutex->Unlock();
+            }
+
+        }
+        else
+        {
+            paws->FindWidget("launcher")->Show();
+            updateProgress->Hide();
         }
     }
 
@@ -287,7 +319,7 @@ int main(int argc, char* argv[])
         if(!object_reg)
         {
             printf("Object Reg failed to Init!\n");
-            PS_PAUSEEXIT(1);
+            exit(1);
         }
 
         // Request needed plugins for updater.

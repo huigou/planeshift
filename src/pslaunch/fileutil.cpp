@@ -19,7 +19,10 @@
 
 // All OS specific stuff should be in this file
 #define CS_SYSDEF_PROVIDE_DIR
-#include <psconfig.h>
+
+#ifdef WIN32
+#pragma warning( disable : 4996 )
+#endif
 
 #include <sys/stat.h>
 #include <csutil/util.h>

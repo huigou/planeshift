@@ -81,6 +81,6 @@ void pawsLauncherWindow::HandleUpdateButton(bool yes, void *updatewindow)
     else
     {
         psLaunchGUI->PerformUpdate(false);
-        updateWindow->Hide();
     }
+    updateWindow->Hide();
 }
