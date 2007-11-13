@@ -2,6 +2,10 @@
 - Some updates to the linux side of the updater and some fixing to parsing 
   of the XML data.
 
+*** 2007-11-13 by Michael Gist
+- A few class renames and improvement to UpdaterEngine ctor.
+- Added a fallback download of the full file if patching fails.
+
 *** 2007-11-11 by Roland Schulz
 - Stab at FS#141 ... mental stats affect the cost of training, but this cost was not recalculated
   when stats are modified by items, SetSkill or training, only on next login.
