@@ -1,3 +1,11 @@
+*** 2007-11-14 by Dave Bentham
+- GMs can reward faction standing points to participants of an event.
+  /event reward [all | range # | playername] # item
+  where item = "faction <name>" then # points are given.
+- Fixed bug where a Faction Update to a client could inhibit that client
+  requesting a Faction Full List if it happens before the client's Skill
+  window is first opened.
+
 *** 2007-11-14 by Sasha Levin
 - Some fixes to the mysql threading code.
 - Fixed mouse click-through on the group windows buttons.

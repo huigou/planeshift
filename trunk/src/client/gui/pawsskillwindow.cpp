@@ -202,14 +202,15 @@ bool pawsSkillWindow::SetupDoll()
 
 void pawsSkillWindow::HandleFactionMsg(MsgEntry* me)
 {
-	// Flag that we have received our faction information.
-	factRequest = true;	
 	char buffer[16];
 				
 	psFactionMessage factMsg(me);
 
 	if ( factMsg.cmd == psFactionMessage::MSG_FULL_LIST )
 	{
+        // Flag that we have received our faction information.
+        factRequest = true;	
+
 		factions.DeleteAll();
 		factionList->Clear();
 
@@ -240,7 +241,7 @@ void pawsSkillWindow::HandleFactionMsg(MsgEntry* me)
 			rank->SetText(buffer);			
 		}
 	}
-	else
+	else if (factRequest)   // ignore MSG_UPDATE if weve not had full list first
 	{
 		//Put all the faction updates into the gui.
 		for ( size_t z = 0; z < factMsg.factionInfo.GetSize(); z++ )
