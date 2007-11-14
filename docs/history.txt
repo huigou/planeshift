@@ -1,3 +1,6 @@
+*** 2007-11-14 by Sasha Levin
+- Some fixes to the mysql threading code.
+
 *** 2007-11-14 by Kenny Graunke
 - Bugfix: Right clicks are no longer passed through when they trigger a
   context menu or the window settings dialog.  This was causing my character
