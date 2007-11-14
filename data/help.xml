@@ -389,7 +389,9 @@ When an event is complete, the GM should enter:
 /event complete
 
 To reward the participants (all of them, those within a specified range or an individual - by name or by target) of a current event:
-/event reward [range 0-100 | all | player] [#] [item name]</topic>
+/event reward [range 0-100 | all | player] # [item name]
+[item name] can be "exp" (experience) where # Progression Points are awarded.
+[item name] can be "faction [faction name]" to adjust the faction standing.</topic>
         <topic name="/freeze">/freeze player
 
 Prevents a player from moving or using any commands until they quit/relog.</topic>

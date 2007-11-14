@@ -67,6 +67,7 @@
 #include "gmeventmanager.h"
 #include "actionmanager.h"
 #include "progressionmanager.h"
+#include "rpgrules/factions.h"
 
 // Show only items up to this ID when using the item spawn GUI (hide randomly generated items with IDs set above this)
 #define SPAWN_ITEM_ID_CEILING 10000
@@ -4931,6 +4932,23 @@ void AdminManager::AwardExperienceToTarget(int gmClientnum, Client* target, csSt
     }
 
     psserver->SendSystemInfo(gmClientnum, "You awarded %s %d progression points.", recipient.GetData(), ppAward);
+}
+
+void AdminManager::AdjustFactionStandingOfTarget(int gmClientnum, Client* target, csString factionName, int standingDelta)
+{
+    Faction *faction = CacheManager::GetSingleton().GetFaction(factionName.GetData());
+    if (!faction)
+    {
+        psserver->SendSystemInfo(gmClientnum, "\'%s\' Unrecognised faction.", factionName.GetData());
+        return;
+    }
+
+    if (target->GetCharacterData()->UpdateFaction(faction, standingDelta))
+        psserver->SendSystemInfo(gmClientnum, "%s\'s standing on \'%s\' faction has been adjusted.", 
+                               target->GetName(), faction->name.GetData());
+    else
+        psserver->SendSystemError(gmClientnum, "%s\'s standing on \'%s\' faction failed.", 
+                               target->GetName(), faction->name.GetData());
 }
 
 void AdminManager::TransferItem(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data, Client* source, Client* target)

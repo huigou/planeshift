@@ -444,7 +444,7 @@ bool GMEventManager::RewardPlayersInGMEvent (Client* client,
                 if (rewardType == REWARD_EXPERIENCE)
                     psserver->GetAdminManager()->AwardExperienceToTarget(clientnum, target, target->GetName(), stackCount);
                 else if (rewardType == REWARD_FACTION_POINTS)
-                    psserver->SendSystemInfo(clientnum, "Cannot award faction points yet. Sorry.");
+                    psserver->GetAdminManager()->AdjustFactionStandingOfTarget(clientnum, target, rewardDesc.GetTail(1), stackCount);
                 else
                     RewardPlayer(clientnum, target, stackCount, basestats);
             }
@@ -471,7 +471,7 @@ bool GMEventManager::RewardPlayersInGMEvent (Client* client,
                     if (rewardType == REWARD_EXPERIENCE)
                         psserver->GetAdminManager()->AwardExperienceToTarget(clientnum, target, target->GetName(), stackCount);
                     else if (rewardType == REWARD_FACTION_POINTS)
-                        psserver->SendSystemInfo(clientnum, "Cannot award faction points yet. Sorry.");
+                        psserver->GetAdminManager()->AdjustFactionStandingOfTarget(clientnum, target, rewardDesc.GetTail(1), stackCount);
                     else
                         RewardPlayer(clientnum, target, stackCount, basestats);
                 }
