@@ -202,6 +202,7 @@ void UpdaterEngine::checkForUpdates()
         // Mark update as complete and clean up.
         config->GetConfigFile()->SetBool("Update.Clean", true);
         config->GetConfigFile()->Save();
+        printOutput("Update successful!\n");
     }
     else
         printOutput("No updates needed!\n");
@@ -209,6 +210,7 @@ void UpdaterEngine::checkForUpdates()
     
     delete downloader;
     downloader = NULL;
+    *updateNeeded = false;
     
     return;
 }
