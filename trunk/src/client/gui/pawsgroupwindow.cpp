@@ -255,13 +255,13 @@ bool pawsGroupWindow::OnButtonPressed( int mouseButton, int keyModifier, pawsWid
         case INVITE_BUTTON:
             pawsStringPromptWindow::Create("Who do you want to invite ?", "",
                                            false, 250, 20, this, "NewInvitee");
-            break;
+            return true;
         case LEAVE_BUTTON:
             psengine->GetCmdHandler()->Execute("/leavegroup");
-            break;
+            return true;
         case DISBAND_BUTTON:
             psengine->GetCmdHandler()->Execute("/disband");
-            break;
+            return true;
     }
 
     return false;
