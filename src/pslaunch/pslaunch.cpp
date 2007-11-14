@@ -245,6 +245,7 @@ bool psLauncherGUI::HandleEvent (iEvent &ev)
         {
             paws->FindWidget("launcher")->Show();
             updateProgress->Hide();
+            *performUpdate = false;
         }
     }
 
