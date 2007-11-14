@@ -1467,13 +1467,15 @@ bool pawsWidget::OnMouseDown( int button, int modifiers, int x, int y )
         }
         else if (button == csmbRight)
         {
-            if ((contextMenu == NULL) && (contextMenuFile != ""))
+            if (!contextMenu && contextMenuFile != "")
             {
                 CreateContextMenu();
+                return true;
             }                
-            else if ((contextMenuFile=="") && (configurable))
+            else if (contextMenuFile == "" && configurable)
             {
                 CreateWidgetConfigWindow();
+                return true;
             }
         }
     }

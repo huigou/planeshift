@@ -1,3 +1,8 @@
+*** 2007-11-14 by Kenny Graunke
+- Bugfix: Right clicks are no longer passed through when they trigger a
+  context menu or the window settings dialog.  This was causing my character
+  to auto-run when trying to use context menus.
+
 *** 2007-11-13 by Andrew Craig
 - Some updates to the linux side of the updater and some fixing to parsing 
   of the XML data.
