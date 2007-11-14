@@ -57,10 +57,14 @@ UpdaterEngine::UpdaterEngine(const csArray<csString> args, iObjectRegistry* _obj
     consoleOut = _consoleOut;
     performUpdate = _performUpdate;
     mutex = _mutex;
+
+    fileUtil->RemoveFile("updater.log");
+    log = fopen("updater.log", "a");
 }
 
 UpdaterEngine::~UpdaterEngine()
 {
+    fclose(log);
     delete fileUtil;
     delete config;
     fileUtil = NULL;
@@ -80,7 +84,8 @@ void UpdaterEngine::printOutput(const char *string, ...)
     outputString.FormatV (string, args);
     va_end (args);
     consoleOut->Push(outputString);
-    printf("%s\n", outputString.GetData());    
+    printf("%s", outputString.GetData());
+    fprintf(log, "%s", outputString.GetData());
     
     if ( mutex )
     {
@@ -202,7 +207,7 @@ void UpdaterEngine::checkForUpdates()
         // Mark update as complete and clean up.
         config->GetConfigFile()->SetBool("Update.Clean", true);
         config->GetConfigFile()->Save();
-        printOutput("Update successful!\n");
+        printOutput("Update finished!\n");
     }
     else
         printOutput("No updates needed!\n");
