@@ -6,6 +6,7 @@
 - A few class renames and improvement to UpdaterEngine ctor.
 - Added a fallback download of the full file if patching fails.
 - Fixed some bugs in the updater and started to add the updating output window.
+- Updater output is now logged in updater.log
 
 *** 2007-11-11 by Roland Schulz
 - Stab at FS#141 ... mental stats affect the cost of training, but this cost

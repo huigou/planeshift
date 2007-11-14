@@ -239,10 +239,10 @@ bool psLauncherGUI::HandleEvent (iEvent &ev)
             {
                 mutex->Unlock();
             }
-
         }
         else
         {
+            csSleep(3000);
             paws->FindWidget("launcher")->Show();
             updateProgress->Hide();
             *performUpdate = false;

@@ -71,6 +71,9 @@ private:
 
     /* If true, then it's okay to perform the update. */
     bool *performUpdate;
+
+    /* Output console prints to file. */
+    FILE* log;
     
     CS::Threading::Mutex *mutex;
     
