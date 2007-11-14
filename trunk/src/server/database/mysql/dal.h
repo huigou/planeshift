@@ -45,6 +45,11 @@ private:
     CS::Threading::Condition datacondition;
     bool m_Close;
     psDBProfiles profs;
+    csString m_host;
+    unsigned int m_port;
+    csString m_db;
+    csString m_user;
+    csString m_pwd;
 };
 #endif
 

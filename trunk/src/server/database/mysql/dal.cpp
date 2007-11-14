@@ -76,13 +76,15 @@ bool psMysqlConnection::Initialize(const char *host, unsigned int port, const ch
                               const char *user, const char *pwd)
 {
     // Create a mydb
-    
+    mysql_library_init(0, NULL, NULL);
+
 #ifdef USE_DELAY_QUERY
     dqm.AttachNew(new DelayedQueryManager(host,port,user,pwd,database));
     dqmThread.AttachNew(new Thread(dqm));
     dqmThread->Start();
 #endif    
 
+    mysql_thread_init();
     conn=mysql_init(NULL);
     // Conn is the valid connection to be used for mydb. Have to store the mydb to get
     // errors if this call fails.
@@ -97,11 +99,14 @@ bool psMysqlConnection::Close()
 {
     mysql_close(conn);
     conn = NULL;
-    
+    mysql_thread_end();
+
 #ifdef USE_DELAY_QUERY
     dqm->Stop();
     dqmThread->Stop();
 #endif    
+
+    mysql_library_end();
     return true;
 }
 
@@ -152,7 +157,7 @@ unsigned long psMysqlConnection::CommandPump(const char *sql,...)
     lastquery = querystr;
 
     timer.Start();
-    if (!mysql_real_query(conn, querystr, querystr.Length()))
+    if (!mysql_query(conn, querystr))
     {
         if(timer.Stop() > 1000)
         {
@@ -183,7 +188,7 @@ unsigned long psMysqlConnection::Command(const char *sql,...)
     lastquery = querystr;
 
     timer.Start();
-    if (!mysql_real_query(conn, querystr, querystr.Length()))
+    if (!mysql_query(conn, querystr))
     {
         if(timer.Stop() > 1000)
         {
@@ -212,7 +217,7 @@ iResultSet *psMysqlConnection::Select(const char *sql, ...)
     lastquery = querystr;
 
     timer.Start();
-    if (!mysql_real_query(conn, querystr, querystr.Length()))
+    if (!mysql_query(conn, querystr))
     {
         if(timer.Stop() > 1000)
         {
@@ -242,7 +247,7 @@ int psMysqlConnection::SelectSingleNumber(const char *sql, ...)
     lastquery = querystr;
 
     timer.Start();
-    if (!mysql_real_query(conn, querystr, querystr.Length()))
+    if (!mysql_query(conn, querystr))
     {
         if(timer.Stop() > 1000)
         {
@@ -553,10 +558,11 @@ DelayedQueryManager::DelayedQueryManager(const char *host, unsigned int port, co
     start=end=0;
     arr.SetSize(THREADED_BUFFER_SIZE);
     m_Close = false;
-    MYSQL *conn=mysql_init(NULL);
-    m_conn = mysql_real_connect(conn,host,user,pwd,database,port,NULL,CLIENT_FOUND_ROWS);
-    my_bool my_true = true;
-    mysql_options(m_conn, MYSQL_OPT_RECONNECT, &my_true);    
+    m_host = csString(host);
+    m_port = port;
+    m_db = csString(database);
+    m_user = csString(user);
+    m_pwd = csString(pwd);
 }
 
 void DelayedQueryManager::Stop()
@@ -568,6 +574,12 @@ void DelayedQueryManager::Stop()
 
 void DelayedQueryManager::Run()
 {
+    mysql_thread_init();
+    MYSQL *conn=mysql_init(NULL);
+    m_conn = mysql_real_connect(conn,m_host,m_user,m_pwd,m_db,m_port,NULL,CLIENT_FOUND_ROWS);
+    my_bool my_true = true;
+    mysql_options(m_conn, MYSQL_OPT_RECONNECT, &my_true);    
+
     psStopWatch timer;
     while(!m_Close)
     {
@@ -582,10 +594,12 @@ void DelayedQueryManager::Run()
                 end = (end+1) % arr.GetSize();
             }
             timer.Start();
-            if (!mysql_real_query(m_conn, currQuery, currQuery.Length()))
+            if (!mysql_query(m_conn, currQuery))
                 profs.AddSQLTime(currQuery, timer.Stop());
         }
     }
+    mysql_close(m_conn);
+    mysql_thread_end();
 }
 
 void DelayedQueryManager::Push(csString query) 
