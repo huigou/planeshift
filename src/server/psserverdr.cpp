@@ -21,6 +21,7 @@
 #include <iutil/databuff.h>
 #include <iengine/movable.h>
 #include <iengine/mesh.h>
+#include <iengine/region.h>
 #include <iutil/object.h>
 #include "client.h"
 #include "clients.h"
@@ -42,7 +43,7 @@
 #include "gem.h"
 #include "entitymanager.h"
 #include "progressionmanager.h"
-
+#include "adminmanager.h"
 #include "paladinjr.h"
 
 #include "util/serverconsole.h"
@@ -125,6 +126,26 @@ void psServerDR::HandleFallDamage(gemActor *actor,int clientnum, const csVector3
     }
 }
 
+void psServerDR::ResetPos(gemActor* actor)
+{
+    psserver->SendSystemInfo(actor->GetClient()->GetClientNum(), "Received out of bounds positional data, resetting your position.");
+    iSector* targetSector;
+    csVector3 targetPoint;
+    csString targetSectorName;
+    float yRot = 0;
+    actor->GetPosition(targetPoint, yRot, targetSector);
+    csRef<iRegion> region =  scfQueryInterface<iRegion> (targetSector->QueryObject()->GetObjectParent());
+    if (region)
+        targetSectorName = region->QueryObject()->GetName();
+    else
+        targetSectorName = targetSector->QueryObject()->GetName();
+    psserver->GetAdminManager()->GetStartOfMap(actor->GetClient(), targetSectorName, targetSector, targetPoint);
+    actor->pcmove->SetOnGround(false);
+    actor->pcmove->SetVelocity(csVector3(0,0,0));
+    actor->SetPosition(targetPoint,0, targetSector);
+    actor->UpdateProxList(true);  // true= force update
+    actor->MulticastDRUpdate();
+}
 
 void psServerDR::HandleMessage (MsgEntry* me,Client *client)
 {
@@ -171,22 +192,19 @@ void psServerDR::HandleMessage (MsgEntry* me,Client *client)
     if(drmsg.pos.x != drmsg.pos.x || drmsg.pos.y != drmsg.pos.y || drmsg.pos.z != drmsg.pos.z ||
         fabs(drmsg.pos.x) > 100000 || fabs(drmsg.pos.y) > 1000 || fabs(drmsg.pos.z) > 100000)
     {
-        psserver->SendSystemInfo(me->clientnum, "Received out of bounds positional data, resetting your position.");
-        actor->MoveToSpawnPos();
+        ResetPos(actor);
         return;
     }
     else if(drmsg.vel.x != drmsg.vel.x || drmsg.vel.y != drmsg.vel.y || drmsg.vel.z != drmsg.vel.z ||
         fabs(drmsg.vel.x) > 1000 || fabs(drmsg.vel.y) > 1000 || fabs(drmsg.vel.z) > 1000)
     {
-        psserver->SendSystemInfo(me->clientnum, "Received out of bounds velocity data, resetting your position.");
-        actor->MoveToSpawnPos();
+        ResetPos(actor);
         return;
     }
     else if(drmsg.worldVel.x != drmsg.worldVel.x || drmsg.worldVel.y != drmsg.worldVel.y || drmsg.worldVel.z != drmsg.worldVel.z ||
         fabs(drmsg.worldVel.x) > 1000 || fabs(drmsg.worldVel.y) > 1000 || fabs(drmsg.worldVel.z) > 1000)
     {
-        psserver->SendSystemInfo(me->clientnum, "Received out of bounds velocity data, resetting your position.");
-        actor->MoveToSpawnPos();
+        ResetPos(actor);
         return;
     }
 

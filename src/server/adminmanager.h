@@ -89,6 +89,9 @@ public:
 
     void AwardExperienceToTarget(int gmClientnum, Client* target, csString recipient, int ppAward);
     void AdjustFactionStandingOfTarget(int gmClientnum, Client* target, csString factionName, int standingDelta);
+    
+    /** Get sector and coordinates of starting point of a map. Returns success. */
+    bool GetStartOfMap(Client *client, const csString & map, iSector * & targetSector,  csVector3 & targetPoint);
 
 protected:
 
@@ -158,9 +161,6 @@ protected:
     /** Get sector and coordinates of target of teleportation described by 'msg'.
         Return success */
     bool GetTargetOfTeleport(Client *client, psAdminCmdMessage& msg, AdminCmdData& data, iSector * & targetSector,  csVector3 & targetPoint, float &yRot, gemObject *subject, int &instance);
-
-    /** Get sector and coordinates of starting point of a map. Returns success. */
-    bool GetStartOfMap(Client *client, const csString & map, iSector * & targetSector,  csVector3 & targetPoint);
 
     /** Handles movement of objects for teleport and slide. */
     bool MoveObject(Client *client, gemObject *target, csVector3& pos, float yrot, iSector* sector, int instance);
