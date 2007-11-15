@@ -24,6 +24,7 @@
 #include <csutil/util.h>
 #include <iutil/evdefs.h>
 #include <csutil/xmltiny.h>
+#include <iutil/databuff.h>
 
 #include <stdlib.h>
 #include <string.h>
@@ -37,7 +38,7 @@
 #include "net/cmdhandler.h"
 #include "util/strutil.h"
 #include "util/psxmlparser.h"
-
+#include "util/fileutil.h"
 #include "util/log.h"
 
 #include "pscelclient.h"
@@ -741,13 +742,12 @@ void pawsChatWindow::LogMessage(enum E_CHAT_LOG channel, const char* message)
     {
         if (!logFile[channel])
         {
-            // Open the file for the first time on this session
-#ifdef CS_PLATFORM_WIN32
-            mkdir("logs");
-#else
-            mkdir("logs", 0755);
-#endif
-            psString filename = "logs/";
+            // Open the file for the first time in this session
+            FileUtil file(psengine->GetVFS());
+            file.MakeDirectory("logs");
+            csRef<iDataBuffer> realpath = psengine->GetVFS()->GetRealPath("/this/logs/");
+
+            psString filename = realpath->GetData();
             filename.Append(psengine->GetCelClient()->GetMainActor()->GetName());
             filename.Append("_");
             filename.Append(logFileName[channel]);
