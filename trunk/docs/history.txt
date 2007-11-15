@@ -1,5 +1,7 @@
 *** 2007-11-15 by Sasha Levin
 - Added lots of effects for testing on svn.
+- Players will get moved to the sector starting location instead of their 
+  spawn points when receiving oob data (falling off the map).
 
 *** 2007-11-15 by Kenny Graunke
 - Fixed PBT#2086, "Flooding does not take recipient into consideration."
