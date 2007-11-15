@@ -56,39 +56,6 @@ ChatManager::~ChatManager()
     psserver->GetEventManager()->Unsubscribe(this,MSGTYPE_CHAT);
 }
 
-bool ChatManager::FloodControl(csString& newmessage, Client *client)
-{
-    size_t count=0;
-
-    //Shovel 1 back
-    client->ShovelFlood(newmessage);
-
-    //Delete everything older than 10 (or if other defined) secs
-    client->CheckBuffer();
-
-    for (int i = 0; i <= (int)(client->GetFloodMax()-1); i++)
-    {
-        if (client->GetFlood(i).str==newmessage)
-            count++;
-    }
-
-    //Now when the loops is finished, check what count is
-    if (count==client->GetFloodWarn())
-    {
-        psserver->SendSystemError(client->GetClientNum(),"Flood warning. Stop or you will be muted.");
-    }
-
-    if (count==client->GetFloodMax())
-    {
-        client->SetMute(true);
-        client->ClearFlood();
-        psserver->SendSystemError(client->GetClientNum(),"BAM! Muted.");
-        return false;
-    }
-
-    return true;
-}
-
 void ChatManager::HandleMessage(MsgEntry *me,Client *client)
 {
     psChatMessage msg(me);
@@ -292,7 +259,7 @@ void ChatManager::HandleMessage(MsgEntry *me,Client *client)
     }
 
     if (saveFlood)
-        FloodControl(msg.sText,client);
+        client->FloodControl(msg.iChatType, msg.sText, msg.sPerson);
 }
 
 /// TODO: This function is guaranteed not to work atm.-Keith

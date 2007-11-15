@@ -389,7 +389,7 @@ void AdviceManager::HandleMessage(MsgEntry *me,Client *client)
             //User is muted but tries to chat anyway. Remind the user that he/she/it is muted
             psserver->SendSystemInfo(client->GetClientNum(),"You can't send messages because you are muted.");
         }
-        FloodControl( msg.sMessage, client );
+        client->FloodControl(CHAT_ADVICE, msg.sMessage, msg.sTarget);
 
     }
     else if ( msg.sCommand == "/advice" )
@@ -404,41 +404,8 @@ void AdviceManager::HandleMessage(MsgEntry *me,Client *client)
             psserver->SendSystemInfo(client->GetClientNum(),"You can't send messages because you are muted.");
         }
         if ( msg.sMessage.Length() != 0 )
-            FloodControl( msg.sMessage, client );
+            client->FloodControl(CHAT_ADVICE, msg.sMessage, msg.sTarget);
     }
-}
-
-bool AdviceManager::FloodControl(csString& newmessage, Client *client)
-{
-    size_t count=0;
-
-    //Shovel 1 back
-    client->ShovelFlood(newmessage);
-
-    //Delete everything older than 10 (or if other defined) secs
-    client->CheckBuffer();
-
-    for (int i = 0; i <= (int)(client->GetFloodMax()-1); i++)
-    {
-        if (client->GetFlood(i).str==newmessage)
-            count++;
-    }
-
-    //Now when the loops is finished, check what count is
-    if (count==client->GetFloodWarn())
-    {
-        psserver->SendSystemInfo(client->GetClientNum(),"Flood warning. Stop or you will be muted.");
-    }
-
-    if (count==client->GetFloodMax())
-    {
-        client->SetMute(true);
-        client->ClearFlood();
-        psserver->SendSystemInfo(client->GetClientNum(),"BAM! Muted.");
-        return false;
-    }
-
-    return true;
 }
 
 void AdviceManager::HandleAdviseeList( Client *advisor )

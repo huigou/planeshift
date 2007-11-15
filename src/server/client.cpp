@@ -63,6 +63,7 @@ Client::Client ()
     spamPoints = 0;
     hasBeenWarned = false;
     hasBeenPenalized = false;
+    nextFloodHistoryIndex = 0;
 
     advisorPoints = 0;
 
@@ -318,71 +319,36 @@ void Client::AnnounceToDuelClients(gemActor *attacker, const char *event)
     }
 }
 
-FloodBuffRow Client::GetFlood(int row)
+void Client::FloodControl(uint8_t chatType, const csString & newMessage, const csString & recipient)
 {
-    if (FloodMessagebuff->GetSize() < GetFloodMax())
-        ClearFlood();
+    int matches = 0;
 
-    return FloodMessagebuff->Get(row);
-}
+    floodHistory[nextFloodHistoryIndex] = FloodBuffRow(chatType, newMessage, recipient, csGetTicks());
+    nextFloodHistoryIndex = (nextFloodHistoryIndex + 1) % floodMax;
 
-void Client::SetFloodStr(int row,csString& what,unsigned int ticks)
-{
-    if (FloodMessagebuff->GetSize() < GetFloodMax())
-        ClearFlood();
-
-    FloodBuffRow newEnt(what,ticks);
-    FloodMessagebuff->Put(row,newEnt);
-}
-
-void Client::ClearFlood()
-{
-    FloodMessagebuff->DeleteAll();
-
-    //Fill with nothing
-    FloodBuffRow empty("",0);
-    for (size_t i =0;i < GetFloodMax();i++)
+    // Count occurances of this new message in the flood history.
+    for (int i = 0; i < floodMax; i++)
     {
-        FloodMessagebuff->Put(i,empty);
+        if (csGetTicks() - floodHistory[i].ticks < floodForgiveTime && floodHistory[i].chatType == chatType && floodHistory[i].text == newMessage && floodHistory[i].recipient == recipient)
+            matches++;
     }
-}
 
-void Client::ShovelFlood(csString last)
-{
-    if (FloodMessagebuff->GetSize() < GetFloodMax())
-        ClearFlood();
-
-    for (size_t z = 0; z < (GetFloodMax()-1); z++)
+    if (matches >= floodMax)
     {
-        FloodBuffRow temp;
-
-        temp.str = FloodMessagebuff->Get(z+1).str;
-        temp.ticks = FloodMessagebuff->Get(z+1).ticks;
-
-        FloodMessagebuff->Put(z,temp);
+        SetMute(true);
+        psserver->SendSystemError(clientnum, "BAM! Muted.");
     }
-    //Add new msg last in the array
-    FloodBuffRow newMsg(last,csGetTicks());
-    FloodMessagebuff->DeleteIndex(GetFloodMax()-1);
-    FloodMessagebuff->Put(GetFloodMax()-1,newMsg);
-
-}
-
-void Client::CheckBuffer()
-{
-    for ( size_t z = GetFloodMax(); z-- > 0; ){
-        if ((csGetTicks() - GetFlood((int)z).ticks) >= FLOODFORGIVETIME)
-        {
-            //Time has elapsed, delete chat msg
-            FloodBuffRow empty("",0);
-            FloodMessagebuff->Put(z,empty);
-        }
+    else if (matches >= floodWarn)
+    {
+        psserver->SendSystemError(clientnum, "Flood warning. Stop or you will be muted.");
     }
 }
 
-FloodBuffRow::FloodBuffRow(csString newstr, unsigned int newticks)
+FloodBuffRow::FloodBuffRow(uint8_t chtType, csString txt, csString rcpt, unsigned int newticks)
 {
-    str = newstr;
+    chatType = chtType;
+    recipient = rcpt;
+    text = txt;
     ticks = newticks;
 }
 
