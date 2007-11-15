@@ -36,9 +36,11 @@ class gemNPC;
 class FloodBuffRow
 {
 public:
-    FloodBuffRow(csString newstr, unsigned int newticks);
-    FloodBuffRow(){}
-    csString str;
+    FloodBuffRow(uint8_t chtType, csString txt, csString rcpt, unsigned int newticks);
+    FloodBuffRow() : ticks(0) {}
+    uint8_t chatType;
+    csString text;
+    csString recipient;
     unsigned int ticks;
 };
 
@@ -287,14 +289,8 @@ public:
     bool IsDuelClient(int clientnum);
     void AnnounceToDuelClients(gemActor *attacker, const char *event);
 
-    // Flood stuff
-    size_t GetFloodMax(){return FLOODMAXBUFFSIZE;}
-    size_t GetFloodWarn(){return FLOODWARBUFFSIZE;}
-    FloodBuffRow GetFlood(int row);
-    void SetFloodStr(int row,csString& what,unsigned int ticks);
-    void ClearFlood();
-    void ShovelFlood(csString last);
-    void CheckBuffer();
+    /// Warn or mute for chat spamming
+    void FloodControl(uint8_t chatType, const csString & newMessage, const csString & recipient);
 
     void SetAdvisorPoints(int p) { advisorPoints = p; }
     void IncrementAdvisorPoints(int n=1) { advisorPoints += n; }
@@ -383,10 +379,11 @@ protected:
     csArray<int> duel_clients;
 
     // Flood control
-    static const int FLOODMAXBUFFSIZE = 5; //Mute client
-    static const int FLOODWARBUFFSIZE = 3; //Warn client
-    static const unsigned int FLOODFORGIVETIME = 10000; //Warn client
-    csArray<FloodBuffRow> FloodMessagebuff[FLOODMAXBUFFSIZE];
+    static const int floodWarn = 3; // Warn client after 3 repeated messages
+    static const int floodMax  = 5; // Mute client after 5 repeated messages
+    static const unsigned int floodForgiveTime = 10000; // How long to wait before forgiving a repeated message
+    FloodBuffRow floodHistory[floodMax];
+    int nextFloodHistoryIndex;
 
     int spamPoints;
     int advisorPoints;
