@@ -1,3 +1,6 @@
+*** 2007-11-15 by Sasha Levin
+- Added lots of effects for testing on svn.
+
 *** 2007-11-15 by Kenny Graunke
 - Fixed PBT#2086, "Flooding does not take recipient into consideration."
   Also greatly simplified the anti-flood code.
