@@ -1,3 +1,6 @@
+*** 2007-11-16 by Sasha Levin
+- Fixed factions with 2 or more words in the name.
+
 *** 2007-11-15 by Sasha Levin
 - Added lots of effects for testing on svn.
 - Players will get moved to the sector starting location instead of their 

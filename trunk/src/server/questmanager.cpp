@@ -319,7 +319,7 @@ bool QuestManager::HandleScriptCommand(csString& block,
             }
             else if (words.GetInt(1) != 0 && words.Get(2).CompareNoCase("faction") && words.GetCount() > 3) // give faction points
             {
-                op.Format("<faction name=\"%s\" value=\"%d\" />", words.Get(3).GetDataSafe(), words.GetInt(1) );  
+                op.Format("<faction name=\"%s\" value=\"%d\" />", words.GetTail(3).GetDataSafe(), words.GetInt(1) );  
             }
             else
             {
