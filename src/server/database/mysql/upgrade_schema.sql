@@ -801,6 +801,13 @@ ALTER TABLE `planeshift`.`race_info` DROP COLUMN `start_x`,
 ALTER TABLE `planeshift`.`item_instances` ADD COLUMN `item_name` VARCHAR(100) DEFAULT '' AFTER `openable_locks`,
  ADD COLUMN `item_description` VARCHAR(100) DEFAULT '' AFTER `item_name`;
 
+#### 1168 - Sasha Levin - Add introduction manager
+CREATE TABLE "introductions" (
+  "charid" int(10) unsigned NOT NULL,
+  "introcharid" int(10) unsigned NOT NULL,
+  PRIMARY KEY  ("charid","introcharid")
+) TYPE=MyISAM;
+
 
 #
 # Insert your upgrade before this line. Remember when you set a new db_version

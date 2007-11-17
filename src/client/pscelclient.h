@@ -254,8 +254,8 @@ public:
     
     int GetType() { return type; }
     
-    const char* GetName() { return name; }
-    void ChangeName(const char* name);
+    virtual const char* GetName() { return name; }
+    virtual void ChangeName(const char* name);
 
     const char* GetFactName() { return factname; }
 
@@ -327,6 +327,8 @@ public:
     csVector3 Pos();
     csVector3 Rot();
     iSector *GetSector();
+
+    virtual const char* GetName();
 
     const char* GetGuildName() { return guildName; }
     void SetGuildName(const char* guild) { guildName = guild; }

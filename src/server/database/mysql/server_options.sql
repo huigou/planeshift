@@ -28,7 +28,7 @@ CREATE TABLE `server_options` (
 # Dumping data for table server_options
 #
 
-INSERT INTO `server_options` VALUES ('db_version','1167');
+INSERT INTO `server_options` VALUES ('db_version','1168');
 INSERT INTO `server_options` VALUES ('standard_motd','This is the message of the day from server_options table.');
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

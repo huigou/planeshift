@@ -65,6 +65,7 @@
 #include "netmanager.h"
 #include "advicemanager.h"
 #include "actionmanager.h"
+#include "introductionmanager.h"
 
 #include "bulkobjects/pscharacter.h"
 #include "bulkobjects/psraceinfo.h"
@@ -620,6 +621,12 @@ void UserManager::SendCharacterDescription(Client * client, psCharacter * charDa
             if (owner)
                 desc.AppendFmt( "\n\nA pet owned by: %s", owner->GetName() );
         }
+    }
+
+    if (!psserver->GetIntroductionManager()->IsIntroduced(client->GetCharacterData()->GetCharacterID(),
+                                                         charData->GetCharacterID()))
+    {
+        charName = "[Unknown]";
     }
 
     // Finally send the details message

@@ -26,6 +26,9 @@ Talk to everyone in your guild privately.  Only guild members in the same guild 
         <topic name="/ignore">/ignore 
 
 Shows ignore window.</topic>
+        <topic name="/introduce">/introduce
+
+Introduce yourself to the targeted player.</topic>
         <topic name="/me">/me action
 
 Perform an action seen by people in your vicinity (within 10 meters).  This is a great roleplaying tool when you want your character to do something not directly supported by the game. 
