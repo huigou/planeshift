@@ -2212,7 +2212,8 @@ void gemActor::Send( int clientnum, bool control, bool to_superclient  )
     Client* targetClient = psserver->GetConnections()->Find(clientnum);
     if (targetClient && targetClient->GetCharacterData())
     {
-        if (psserver->GetIntroductionManager()->IsIntroduced(targetClient->GetCharacterData()->GetCharacterID(),
+        if ((targetClient->GetSecurityLevel() >= GM_LEVEL_0) ||
+            psserver->GetIntroductionManager()->IsIntroduced(targetClient->GetCharacterData()->GetCharacterID(),
                                                                 psChar->GetCharacterID()))
                                                              flags |= psPersistActor::NAMEKNOWN;
     }
@@ -3093,6 +3094,10 @@ void gemActor::SendBehaviorMessage(const csString & msg_id, gemObject *actor)
 						options |= psGUIInteractMessage::MARRIAGE;
 					}					
                 }
+
+                // Introduce yourself
+                if (IsAlive())
+                    options |= psGUIInteractMessage::INTRODUCE;
             }
 
             if (!options)
@@ -3515,6 +3520,7 @@ void gemNPC::SendBehaviorMessage(const csString & msg_id, gemObject *actor)
                     // Train with a trainer
                     if (psChar->IsTrainer() && IsAlive())
                         options |= psGUIInteractMessage::TRAIN;
+
                 }
 
                 // If we are alive then we can talk with an NPC

@@ -1081,7 +1081,7 @@ GEMClientActor::GEMClientActor( psCelClient* cel, psPersistActor& mesg )
 
     SetAnimationVelocity(mesg.vel);
 
-    if (!control)
+    if (!control && ((flags & psPersistActor::NAMEKNOWN) || flags & psPersistActor::NPC))
         cel->GetEntityLabels()->OnObjectArrived(this);
     cel->GetShadowManager()->CreateShadow(this);
     

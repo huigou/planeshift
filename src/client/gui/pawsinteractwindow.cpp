@@ -77,6 +77,7 @@
 #define INTERACT_LOCK        2200
 #define INTERACT_ENTERLOCKED 2300
 #define INTERACT_BANK        2400
+#define INTERACT_INTRODUCE   2500
 
 //////////////////////////////////////////////////////////////////////
 
@@ -106,6 +107,7 @@ pawsInteractWindow::pawsInteractWindow()
     names.Push("ButtonEnter");
     names.Push("ButtonLock");
     names.Push("ButtonEnterLocked");
+    names.Push("ButtonIntroduce");
 
     types.Push(psGUIInteractMessage::EXAMINE);
     types.Push(psGUIInteractMessage::UNLOCK);
@@ -131,6 +133,7 @@ pawsInteractWindow::pawsInteractWindow()
     types.Push(psGUIInteractMessage::ENTER);
     types.Push(psGUIInteractMessage::LOCK);
     types.Push(psGUIInteractMessage::ENTERLOCKED);
+    types.Push(psGUIInteractMessage::INTRODUCE);
     openTick = 0;
 }
 
@@ -322,6 +325,13 @@ bool pawsInteractWindow::OnButtonPressed( int mouseButton, int keyModifier, paws
         case INTERACT_BANK:
         {
             psengine->GetCmdHandler()->Execute("/bank personal");
+            Hide();
+            PawsManager::GetSingleton().SetCurrentFocusedWidget( NULL );
+            return true;
+        }
+        case INTERACT_INTRODUCE:
+        {
+            psengine->GetCmdHandler()->Execute("/introduce");
             Hide();
             PawsManager::GetSingleton().SetCurrentFocusedWidget( NULL );
             return true;

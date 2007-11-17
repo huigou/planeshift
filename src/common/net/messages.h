@@ -1243,7 +1243,8 @@ public:
         ENTER       = 0x0080000,
         LOCK        = 0x0100000,
         ENTERLOCKED = 0x0200000,
-        BANK        = 0x0400000
+        BANK        = 0x0400000,
+        INTRODUCE   = 0x0800000
     };
 
 public:
