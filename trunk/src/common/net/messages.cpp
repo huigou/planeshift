@@ -6943,3 +6943,24 @@ csString psCharCreateCPMessage::ToString(AccessPointers * /*access_ptrs*/)
     //msgtext.AppendFmt("Race '%i': has '%i' cppoints", raceID, CPValue);
     return msgtext;
 }
+
+PSF_IMPLEMENT_MSG_FACTORY(psCharIntroduction,MSGTYPE_INTRODUCTION);
+
+psCharIntroduction::psCharIntroduction( )
+{
+    msg = new MsgEntry(100);
+    msg->SetType(MSGTYPE_INTRODUCTION);
+    msg->clientnum = 0;
+    msg->ClipToCurrentSize();
+    valid = !(msg->overrun);
+}
+
+psCharIntroduction::psCharIntroduction( MsgEntry* message )
+{
+}
+
+csString psCharIntroduction::ToString(AccessPointers * access_ptrs)
+{
+    csString msgtext;
+    return msgtext;
+}

@@ -1,3 +1,12 @@
+*** 2007-11-17 by Sasha Levin
+- Added the introduction manager. By default, Your char doesn't know any
+  other chars. You can introduce your char to other chars by targeting
+  the other char and running /introduce. Until introduced, your name will
+  remain hidden from entity labels, char name in info window and the char
+  info window.
+- DB VER BUMP!
+- NET VER BUMP!
+
 *** 2007-11-16 by Sasha Levin
 - Fixed factions with 2 or more words in the name.
 - Improved banking window. Thanks Sajut!

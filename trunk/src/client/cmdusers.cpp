@@ -113,6 +113,7 @@ psUserCommands::psUserCommands(MsgHandler* mh,CmdHandler *ch,iObjectRegistry* ob
     cmdsource->Subscribe("/repair", this);
     cmdsource->Subscribe("/game", this);
     cmdsource->Subscribe("/bank", this);
+    cmdsource->Subscribe("/introduce", this);
 
 }
 
@@ -180,6 +181,7 @@ psUserCommands::~psUserCommands()
     cmdsource->Unsubscribe("/repair",     this);
     cmdsource->Unsubscribe("/game",       this);
     cmdsource->Unsubscribe("/bank",       this);
+    cmdsource->Unsubscribe("/introduce",       this);
 
 
     // Unsubscribe emotes.
@@ -644,6 +646,13 @@ const char *psUserCommands::HandleCommand(const char *cmd)
     {
         AskToSlayBeforeSending(new psUserCmdMessage(cmd));
     }
+
+    else if (words[0] == "/introduce")
+    {
+        psCharIntroduction introduce;
+        msgqueue->SendMessage(introduce.msg);
+    }
+
     else
     {
         psUserCmdMessage cmdmsg(cmd);

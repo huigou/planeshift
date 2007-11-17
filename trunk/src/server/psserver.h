@@ -66,6 +66,7 @@ class  Client;
 class  MathScriptEngine;
 class  AdviceManager;
 class  ActionManager;
+class  IntroductionManager;
 class  psMiniGameManager;
 class  LogCSV;
 class  iResultSet;
@@ -326,6 +327,12 @@ public:
      */
     BankManager *GetBankManager() { return bankmanager; } 
 
+    /** Returns the Introduction Manager
+     *
+     * @return returns a reference to the introduction manager for the server.
+     */
+    IntroductionManager *GetIntroductionManager() { return intromanager; } 
+
     /// Returns a pointer to the psAuthenticationServer
     psAuthenticationServer* GetAuthServer() { return authserver; }
 
@@ -552,6 +559,7 @@ protected:
     EconomyManager*                 economymanager;
     TutorialManager*                tutorialmanager;
     psMiniGameManager*              minigamemanager;
+    IntroductionManager*            intromanager;
     csRandomGen                     randomGen;
     MathScriptEngine*               mathscriptengine;
     iObjectRegistry*                objreg;

@@ -1,1049 +1,1448 @@
-<?xml version="1.0" encoding = "Windows-1252"?>
+<?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="8.00"
 	Name="apppsserver"
 	ProjectGUID="{8783816D-CE3F-5245-D95F-1D459D5A9FD5}"
-	SccProjectName=""
-	SccLocalPath="">
+	>
 	<Platforms>
 		<Platform
-			Name="Win32"/>
+			Name="Win32"
+		/>
 	</Platforms>
+	<ToolFiles>
+	</ToolFiles>
 	<Configurations>
-  		<Configuration
+		<Configuration
 			Name="Release (with static libs)|Win32"
 			OutputDirectory="..\..\out\release8\build\apppsserver\"
 			IntermediateDirectory="..\..\out\release8\build\apppsserver\"
 			ConfigurationType="1"
+			UseOfMFC="0"
+			ATLMinimizesCRunTimeLibraryUsage="false"
 			CharacterSet="2"
 			WholeProgramOptimization="1"
-			UseOfMFC="0"
-			ATLMinimizesCRunTimeLibraryUsage="FALSE">
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;_CONSOLE;USE_CEL"
+				MkTypLibCompatible="true"
+				SuppressStartupBanner="true"
+				TargetEnvironment="1"
+				TypeLibraryName="..\..\out\release8\build\apppsserver\apppsserver.tlb"
+			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				Optimization="2"
-				StringPooling="TRUE"
-				EnableFunctionLevelLinking="TRUE"
-				RuntimeLibrary="2"
-				DebugInformationFormat="3"
-				BufferSecurityCheck="FALSE"
-				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;_CONSOLE;USE_CEL;WIN32"
-				OptimizeForProcessor="1"
 				AdditionalOptions=" "
+				Optimization="2"
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32;..\..\..\cel\include;$(CEL)\include;$(CEL)\include\cel"
+				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;_CONSOLE;USE_CEL;WIN32"
+				StringPooling="true"
+				RuntimeLibrary="2"
+				BufferSecurityCheck="false"
+				EnableFunctionLevelLinking="true"
+				TreatWChar_tAsBuiltInType="false"
+				ForceConformanceInForLoopScope="true"
 				PrecompiledHeaderFile="..\..\out\release8\build\apppsserver\apppsserver.pch"
 				AssemblerListingLocation="..\..\out\release8\build\apppsserver\"
 				ObjectFile="..\..\out\release8\build\apppsserver\"
 				ProgramDataBaseFileName="..\..\out\release8\build\apppsserver\psserver.pdb"
 				WarningLevel="3"
-				SuppressStartupBanner="TRUE"
-				Detect64BitPortabilityProblems="TRUE"
-				TreatWChar_tAsBuiltInType="false"
-				ForceConformanceInForLoopScope="true"
-				CompileAs="0"/>
+				SuppressStartupBanner="true"
+				Detect64BitPortabilityProblems="true"
+				DebugInformationFormat="3"
+				CompileAs="0"
+			/>
 			<Tool
-				Name="VCCustomBuildTool"/>
-			<Tool
-				Name="VCLinkerTool"
-				LinkIncremental="1"
-				OptimizeReferences="2"
-				EnableCOMDATFolding="2"
-				GenerateDebugInformation="TRUE"
-				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD"
-				OutputFile="..\..\psserver.exe"
-				ProgramDatabaseFile="..\..\out\release8\build\apppsserver\psserver.pdb"
-				SubSystem="1"
-				AdditionalOptions=" "
-				AdditionalDependencies="libcrystalspace.lib ws2_32.lib zlib.lib libceltool.lib"
-				SuppressStartupBanner="TRUE"
-				AdditionalLibraryDirectories="..\..\..\CS\out\release8\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\release8\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs;..\..\..\cel\out\release8\libs;$(CEL)\out\release8\libs;$(CEL)\libs"
-				TargetMachine="1"/>
-			<Tool
-				Name="VCLibrarianTool"
-				SuppressStartupBanner="TRUE"/>
-			<Tool
-				Name="VCMIDLTool"
-				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;_CONSOLE;USE_CEL"
-				MkTypLibCompatible="TRUE"
-				SuppressStartupBanner="TRUE"
-				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\release8\build\apppsserver\apppsserver.tlb"/>
-			<Tool
-				Name="VCPostBuildEventTool"
-				CommandLine="md ..\..\out\release8\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\release8\bin\&#x0D;&#x0A;copy &quot;$(TargetPath)&quot; ..\..\&#x0D;&#x0A;del ..\..\$(TargetName).lib&#x0D;&#x0A;"
-				/>
-			<Tool
-				Name="VCPreBuildEventTool"/>
-			<Tool
-				Name="VCPreLinkEventTool"/>
+				Name="VCManagedResourceCompilerTool"
+			/>
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;_CONSOLE;USE_CEL;PROJECTGEN_VERSION=8"
+				Culture="1033"
 				AdditionalIncludeDirectories=".;..\..\src\server;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32;..\..\..\cel\include;$(CEL)\include;$(CEL)\include\cel"
-				Culture="1033"/>
+			/>
 			<Tool
-				Name="VCWebServiceProxyGeneratorTool"/>
+				Name="VCPreLinkEventTool"
+			/>
 			<Tool
-				Name="VCWebDeploymentTool"/>
+				Name="VCLinkerTool"
+				AdditionalOptions=" "
+				AdditionalDependencies="libcrystalspace.lib ws2_32.lib zlib.lib libceltool.lib"
+				OutputFile="..\..\psserver.exe"
+				LinkIncremental="1"
+				SuppressStartupBanner="true"
+				AdditionalLibraryDirectories="..\..\..\CS\out\release8\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\release8\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs;..\..\..\cel\out\release8\libs;$(CEL)\out\release8\libs;$(CEL)\libs"
+				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD"
+				GenerateDebugInformation="true"
+				ProgramDatabaseFile="..\..\out\release8\build\apppsserver\psserver.pdb"
+				SubSystem="1"
+				OptimizeReferences="2"
+				EnableCOMDATFolding="2"
+				TargetMachine="1"
+			/>
+			<Tool
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCManifestTool"
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCAppVerifierTool"
+			/>
+			<Tool
+				Name="VCWebDeploymentTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+				CommandLine="md ..\..\out\release8\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\release8\bin\&#x0D;&#x0A;copy &quot;$(TargetPath)&quot; ..\..\&#x0D;&#x0A;del ..\..\$(TargetName).lib&#x0D;&#x0A;"
+			/>
 		</Configuration>
-  		<Configuration
+		<Configuration
 			Name="Release (with DLLs)|Win32"
 			OutputDirectory="..\..\out\release8\build\apppsserver\"
 			IntermediateDirectory="..\..\out\release8\build\apppsserver\"
 			ConfigurationType="1"
+			UseOfMFC="0"
+			ATLMinimizesCRunTimeLibraryUsage="false"
 			CharacterSet="2"
 			WholeProgramOptimization="1"
-			UseOfMFC="0"
-			ATLMinimizesCRunTimeLibraryUsage="FALSE">
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;_CONSOLE;USE_CEL"
+				MkTypLibCompatible="true"
+				SuppressStartupBanner="true"
+				TargetEnvironment="1"
+				TypeLibraryName="..\..\out\release8\build\apppsserver\apppsserver.tlb"
+			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				Optimization="2"
-				StringPooling="TRUE"
-				EnableFunctionLevelLinking="TRUE"
-				RuntimeLibrary="2"
-				DebugInformationFormat="3"
-				BufferSecurityCheck="FALSE"
-				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;_CONSOLE;USE_CEL;WIN32;CS_BUILD_SHARED_LIBS"
-				OptimizeForProcessor="1"
 				AdditionalOptions=" "
+				Optimization="2"
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32;..\..\..\cel\include;$(CEL)\include;$(CEL)\include\cel"
+				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;_CONSOLE;USE_CEL;WIN32;CS_BUILD_SHARED_LIBS"
+				StringPooling="true"
+				RuntimeLibrary="2"
+				BufferSecurityCheck="false"
+				EnableFunctionLevelLinking="true"
+				TreatWChar_tAsBuiltInType="false"
+				ForceConformanceInForLoopScope="true"
 				PrecompiledHeaderFile="..\..\out\release8\build\apppsserver\apppsserver.pch"
 				AssemblerListingLocation="..\..\out\release8\build\apppsserver\"
 				ObjectFile="..\..\out\release8\build\apppsserver\"
 				ProgramDataBaseFileName="..\..\out\release8\build\apppsserver\psserver.pdb"
 				WarningLevel="3"
-				SuppressStartupBanner="TRUE"
-				Detect64BitPortabilityProblems="TRUE"
-				TreatWChar_tAsBuiltInType="false"
-				ForceConformanceInForLoopScope="true"
-				CompileAs="0"/>
+				SuppressStartupBanner="true"
+				Detect64BitPortabilityProblems="true"
+				DebugInformationFormat="3"
+				CompileAs="0"
+			/>
 			<Tool
-				Name="VCCustomBuildTool"/>
-			<Tool
-				Name="VCLinkerTool"
-				LinkIncremental="1"
-				OptimizeReferences="2"
-				EnableCOMDATFolding="2"
-				GenerateDebugInformation="TRUE"
-				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD"
-				OutputFile="..\..\psserver.exe"
-				ProgramDatabaseFile="..\..\out\release8\build\apppsserver\psserver.pdb"
-				SubSystem="1"
-				AdditionalOptions=" "
-				AdditionalDependencies="libcrystalspace.lib ws2_32.lib zlib.lib libceltool.lib"
-				SuppressStartupBanner="TRUE"
-				AdditionalLibraryDirectories="..\..\..\CS\out\release8\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\release8\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs;..\..\..\cel\out\release8\libs;$(CEL)\out\release8\libs;$(CEL)\libs"
-				TargetMachine="1"/>
-			<Tool
-				Name="VCLibrarianTool"
-				SuppressStartupBanner="TRUE"/>
-			<Tool
-				Name="VCMIDLTool"
-				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;_CONSOLE;USE_CEL"
-				MkTypLibCompatible="TRUE"
-				SuppressStartupBanner="TRUE"
-				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\release8\build\apppsserver\apppsserver.tlb"/>
-			<Tool
-				Name="VCPostBuildEventTool"
-				CommandLine="md ..\..\out\release8\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\release8\bin\&#x0D;&#x0A;copy &quot;$(TargetPath)&quot; ..\..\&#x0D;&#x0A;del ..\..\$(TargetName).lib&#x0D;&#x0A;"
-				/>
-			<Tool
-				Name="VCPreBuildEventTool"/>
-			<Tool
-				Name="VCPreLinkEventTool"/>
+				Name="VCManagedResourceCompilerTool"
+			/>
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;_CONSOLE;USE_CEL;PROJECTGEN_VERSION=8"
+				Culture="1033"
 				AdditionalIncludeDirectories=".;..\..\src\server;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32;..\..\..\cel\include;$(CEL)\include;$(CEL)\include\cel"
-				Culture="1033"/>
+			/>
 			<Tool
-				Name="VCWebServiceProxyGeneratorTool"/>
+				Name="VCPreLinkEventTool"
+			/>
 			<Tool
-				Name="VCWebDeploymentTool"/>
+				Name="VCLinkerTool"
+				AdditionalOptions=" "
+				AdditionalDependencies="libcrystalspace.lib ws2_32.lib zlib.lib libceltool.lib"
+				OutputFile="..\..\psserver.exe"
+				LinkIncremental="1"
+				SuppressStartupBanner="true"
+				AdditionalLibraryDirectories="..\..\..\CS\out\release8\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\release8\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs;..\..\..\cel\out\release8\libs;$(CEL)\out\release8\libs;$(CEL)\libs"
+				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD"
+				GenerateDebugInformation="true"
+				ProgramDatabaseFile="..\..\out\release8\build\apppsserver\psserver.pdb"
+				SubSystem="1"
+				OptimizeReferences="2"
+				EnableCOMDATFolding="2"
+				TargetMachine="1"
+			/>
+			<Tool
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCManifestTool"
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCAppVerifierTool"
+			/>
+			<Tool
+				Name="VCWebDeploymentTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+				CommandLine="md ..\..\out\release8\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\release8\bin\&#x0D;&#x0A;copy &quot;$(TargetPath)&quot; ..\..\&#x0D;&#x0A;del ..\..\$(TargetName).lib&#x0D;&#x0A;"
+			/>
 		</Configuration>
-    		<Configuration
+		<Configuration
 			Name="Debug (with static libs)|Win32"
 			OutputDirectory="..\..\out\debug8\build\apppsserver\"
 			IntermediateDirectory="..\..\out\debug8\build\apppsserver\"
 			ConfigurationType="1"
-			CharacterSet="2"
 			UseOfMFC="0"
-			ATLMinimizesCRunTimeLibraryUsage="FALSE">
+			ATLMinimizesCRunTimeLibraryUsage="false"
+			CharacterSet="2"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;_CONSOLE;USE_CEL"
+				MkTypLibCompatible="true"
+				SuppressStartupBanner="true"
+				TargetEnvironment="1"
+				TypeLibraryName="..\..\out\debug8\build\apppsserver\apppsserver.tlb"
+			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				Optimization="0"
-				MinimalRebuild="TRUE"
-				DebugInformationFormat="4"
-				RuntimeTypeInfo="TRUE"
-				RuntimeLibrary="3"
-
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;_CONSOLE;USE_CEL;WIN32"
-				OptimizeForProcessor="1"
 				AdditionalOptions=" "
+				Optimization="0"
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32;..\..\..\cel\include;$(CEL)\include;$(CEL)\include\cel"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;_CONSOLE;USE_CEL;WIN32"
+				MinimalRebuild="true"
+				RuntimeLibrary="3"
+				TreatWChar_tAsBuiltInType="false"
+				ForceConformanceInForLoopScope="true"
+				RuntimeTypeInfo="true"
 				PrecompiledHeaderFile="..\..\out\debug8\build\apppsserver\apppsserver.pch"
 				AssemblerListingLocation="..\..\out\debug8\build\apppsserver\"
 				ObjectFile="..\..\out\debug8\build\apppsserver\"
 				ProgramDataBaseFileName="..\..\out\debug8\build\apppsserver\psserver.pdb"
 				WarningLevel="3"
-				SuppressStartupBanner="TRUE"
-				Detect64BitPortabilityProblems="TRUE"
-				TreatWChar_tAsBuiltInType="false"
-				ForceConformanceInForLoopScope="true"
-				CompileAs="0"/>
+				SuppressStartupBanner="true"
+				Detect64BitPortabilityProblems="true"
+				DebugInformationFormat="4"
+				CompileAs="0"
+			/>
 			<Tool
-				Name="VCCustomBuildTool"/>
-			<Tool
-				Name="VCLinkerTool"
-				LinkIncremental="2"
-				GenerateDebugInformation="TRUE"
-				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD,MSVCRT"
-				OutputFile="..\..\psserver.exe"
-				ProgramDatabaseFile="..\..\out\debug8\build\apppsserver\psserver.pdb"
-				SubSystem="1"
-				AdditionalOptions=" "
-				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib libceltool_d.lib"
-				SuppressStartupBanner="TRUE"
-				AdditionalLibraryDirectories="..\..\..\CS\out\debug8\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug8\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs;..\..\..\cel\out\debug8\libs;$(CEL)\out\debug8\libs;$(CEL)\libs"
-				TargetMachine="1"/>
-			<Tool
-				Name="VCLibrarianTool"
-				SuppressStartupBanner="TRUE"/>
-			<Tool
-				Name="VCMIDLTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;_CONSOLE;USE_CEL"
-				MkTypLibCompatible="TRUE"
-				SuppressStartupBanner="TRUE"
-				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug8\build\apppsserver\apppsserver.tlb"/>
-			<Tool
-				Name="VCPostBuildEventTool"
-				CommandLine="md ..\..\out\debug8\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug8\bin\&#x0D;&#x0A;copy &quot;$(TargetPath)&quot; ..\..\&#x0D;&#x0A;del ..\..\$(TargetName).lib&#x0D;&#x0A;"
-				/>
-			<Tool
-				Name="VCPreBuildEventTool"/>
-			<Tool
-				Name="VCPreLinkEventTool"/>
+				Name="VCManagedResourceCompilerTool"
+			/>
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;_CONSOLE;USE_CEL;PROJECTGEN_VERSION=8"
+				Culture="1033"
 				AdditionalIncludeDirectories=".;..\..\src\server;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32;..\..\..\cel\include;$(CEL)\include;$(CEL)\include\cel"
-				Culture="1033"/>
+			/>
 			<Tool
-				Name="VCWebServiceProxyGeneratorTool"/>
+				Name="VCPreLinkEventTool"
+			/>
 			<Tool
-				Name="VCWebDeploymentTool"/>
+				Name="VCLinkerTool"
+				AdditionalOptions=" "
+				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib libceltool_d.lib"
+				OutputFile="..\..\psserver.exe"
+				LinkIncremental="2"
+				SuppressStartupBanner="true"
+				AdditionalLibraryDirectories="..\..\..\CS\out\debug8\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug8\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs;..\..\..\cel\out\debug8\libs;$(CEL)\out\debug8\libs;$(CEL)\libs"
+				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD,MSVCRT"
+				GenerateDebugInformation="true"
+				ProgramDatabaseFile="..\..\out\debug8\build\apppsserver\psserver.pdb"
+				SubSystem="1"
+				TargetMachine="1"
+			/>
+			<Tool
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCManifestTool"
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCAppVerifierTool"
+			/>
+			<Tool
+				Name="VCWebDeploymentTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+				CommandLine="md ..\..\out\debug8\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug8\bin\&#x0D;&#x0A;copy &quot;$(TargetPath)&quot; ..\..\&#x0D;&#x0A;del ..\..\$(TargetName).lib&#x0D;&#x0A;"
+			/>
 		</Configuration>
-  		<Configuration
+		<Configuration
 			Name="Debug (with DLLs)|Win32"
 			OutputDirectory="..\..\out\debug8\build\apppsserver\"
 			IntermediateDirectory="..\..\out\debug8\build\apppsserver\"
 			ConfigurationType="1"
-			CharacterSet="2"
 			UseOfMFC="0"
-			ATLMinimizesCRunTimeLibraryUsage="FALSE">
+			ATLMinimizesCRunTimeLibraryUsage="false"
+			CharacterSet="2"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;_CONSOLE;USE_CEL"
+				MkTypLibCompatible="true"
+				SuppressStartupBanner="true"
+				TargetEnvironment="1"
+				TypeLibraryName="..\..\out\debug8\build\apppsserver\apppsserver.tlb"
+			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				Optimization="0"
-				MinimalRebuild="TRUE"
-				DebugInformationFormat="4"
-				RuntimeTypeInfo="TRUE"
-				RuntimeLibrary="3"
-
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;_CONSOLE;USE_CEL;WIN32;CS_BUILD_SHARED_LIBS"
-				OptimizeForProcessor="1"
 				AdditionalOptions=" "
+				Optimization="0"
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32;..\..\..\cel\include;$(CEL)\include;$(CEL)\include\cel"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;_CONSOLE;USE_CEL;WIN32;CS_BUILD_SHARED_LIBS"
+				MinimalRebuild="true"
+				RuntimeLibrary="3"
+				TreatWChar_tAsBuiltInType="false"
+				ForceConformanceInForLoopScope="true"
+				RuntimeTypeInfo="true"
 				PrecompiledHeaderFile="..\..\out\debug8\build\apppsserver\apppsserver.pch"
 				AssemblerListingLocation="..\..\out\debug8\build\apppsserver\"
 				ObjectFile="..\..\out\debug8\build\apppsserver\"
 				ProgramDataBaseFileName="..\..\out\debug8\build\apppsserver\psserver.pdb"
 				WarningLevel="3"
-				SuppressStartupBanner="TRUE"
-				Detect64BitPortabilityProblems="TRUE"
-				TreatWChar_tAsBuiltInType="false"
-				ForceConformanceInForLoopScope="true"
-				CompileAs="0"/>
+				SuppressStartupBanner="true"
+				Detect64BitPortabilityProblems="true"
+				DebugInformationFormat="4"
+				CompileAs="0"
+			/>
 			<Tool
-				Name="VCCustomBuildTool"/>
-			<Tool
-				Name="VCLinkerTool"
-				LinkIncremental="2"
-				GenerateDebugInformation="TRUE"
-				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD,MSVCRT"
-				OutputFile="..\..\psserver.exe"
-				ProgramDatabaseFile="..\..\out\debug8\build\apppsserver\psserver.pdb"
-				SubSystem="1"
-				AdditionalOptions=" "
-				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib libceltool_d.lib"
-				SuppressStartupBanner="TRUE"
-				AdditionalLibraryDirectories="..\..\..\CS\out\debug8\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug8\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs;..\..\..\cel\out\debug8\libs;$(CEL)\out\debug8\libs;$(CEL)\libs"
-				TargetMachine="1"/>
-			<Tool
-				Name="VCLibrarianTool"
-				SuppressStartupBanner="TRUE"/>
-			<Tool
-				Name="VCMIDLTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;_CONSOLE;USE_CEL"
-				MkTypLibCompatible="TRUE"
-				SuppressStartupBanner="TRUE"
-				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug8\build\apppsserver\apppsserver.tlb"/>
-			<Tool
-				Name="VCPostBuildEventTool"
-				CommandLine="md ..\..\out\debug8\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug8\bin\&#x0D;&#x0A;copy &quot;$(TargetPath)&quot; ..\..\&#x0D;&#x0A;del ..\..\$(TargetName).lib&#x0D;&#x0A;"
-				/>
-			<Tool
-				Name="VCPreBuildEventTool"/>
-			<Tool
-				Name="VCPreLinkEventTool"/>
+				Name="VCManagedResourceCompilerTool"
+			/>
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;_CONSOLE;USE_CEL;PROJECTGEN_VERSION=8"
+				Culture="1033"
 				AdditionalIncludeDirectories=".;..\..\src\server;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32;..\..\..\cel\include;$(CEL)\include;$(CEL)\include\cel"
-				Culture="1033"/>
+			/>
 			<Tool
-				Name="VCWebServiceProxyGeneratorTool"/>
+				Name="VCPreLinkEventTool"
+			/>
 			<Tool
-				Name="VCWebDeploymentTool"/>
+				Name="VCLinkerTool"
+				AdditionalOptions=" "
+				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib libceltool_d.lib"
+				OutputFile="..\..\psserver.exe"
+				LinkIncremental="2"
+				SuppressStartupBanner="true"
+				AdditionalLibraryDirectories="..\..\..\CS\out\debug8\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug8\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs;..\..\..\cel\out\debug8\libs;$(CEL)\out\debug8\libs;$(CEL)\libs"
+				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD,MSVCRT"
+				GenerateDebugInformation="true"
+				ProgramDatabaseFile="..\..\out\debug8\build\apppsserver\psserver.pdb"
+				SubSystem="1"
+				TargetMachine="1"
+			/>
+			<Tool
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCManifestTool"
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCAppVerifierTool"
+			/>
+			<Tool
+				Name="VCWebDeploymentTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+				CommandLine="md ..\..\out\debug8\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug8\bin\&#x0D;&#x0A;copy &quot;$(TargetPath)&quot; ..\..\&#x0D;&#x0A;del ..\..\$(TargetName).lib&#x0D;&#x0A;"
+			/>
 		</Configuration>
-    		<Configuration
+		<Configuration
 			Name="MemoryTracker (with static libs)|Win32"
 			OutputDirectory="..\..\out\debug8\build\apppsserver\"
 			IntermediateDirectory="..\..\out\debug8\build\apppsserver\"
 			ConfigurationType="1"
-			CharacterSet="2"
 			UseOfMFC="0"
-			ATLMinimizesCRunTimeLibraryUsage="FALSE">
+			ATLMinimizesCRunTimeLibraryUsage="false"
+			CharacterSet="2"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_MEMORY_TRACKER;_CONSOLE;USE_CEL"
+				MkTypLibCompatible="true"
+				SuppressStartupBanner="true"
+				TargetEnvironment="1"
+				TypeLibraryName="..\..\out\debug8\build\apppsserver\apppsserver.tlb"
+			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				Optimization="0"
-				MinimalRebuild="TRUE"
-				DebugInformationFormat="4"
-				RuntimeTypeInfo="TRUE"
-				RuntimeLibrary="3"
-
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_MEMORY_TRACKER;_CONSOLE;USE_CEL;WIN32"
-				OptimizeForProcessor="1"
 				AdditionalOptions=" "
+				Optimization="0"
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32;..\..\..\cel\include;$(CEL)\include;$(CEL)\include\cel"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_MEMORY_TRACKER;_CONSOLE;USE_CEL;WIN32"
+				MinimalRebuild="true"
+				RuntimeLibrary="3"
+				TreatWChar_tAsBuiltInType="false"
+				ForceConformanceInForLoopScope="true"
+				RuntimeTypeInfo="true"
 				PrecompiledHeaderFile="..\..\out\debug8\build\apppsserver\apppsserver.pch"
 				AssemblerListingLocation="..\..\out\debug8\build\apppsserver\"
 				ObjectFile="..\..\out\debug8\build\apppsserver\"
 				ProgramDataBaseFileName="..\..\out\debug8\build\apppsserver\psserver.pdb"
 				WarningLevel="3"
-				SuppressStartupBanner="TRUE"
-				Detect64BitPortabilityProblems="TRUE"
-				TreatWChar_tAsBuiltInType="false"
-				ForceConformanceInForLoopScope="true"
-				CompileAs="0"/>
+				SuppressStartupBanner="true"
+				Detect64BitPortabilityProblems="true"
+				DebugInformationFormat="4"
+				CompileAs="0"
+			/>
 			<Tool
-				Name="VCCustomBuildTool"/>
-			<Tool
-				Name="VCLinkerTool"
-				LinkIncremental="2"
-				GenerateDebugInformation="TRUE"
-				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD,MSVCRT"
-				OutputFile="..\..\psserver.exe"
-				ProgramDatabaseFile="..\..\out\debug8\build\apppsserver\psserver.pdb"
-				SubSystem="1"
-				AdditionalOptions=" "
-				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib libceltool_d.lib"
-				SuppressStartupBanner="TRUE"
-				AdditionalLibraryDirectories="..\..\..\CS\out\debug8\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug8\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs;..\..\..\cel\out\debug8\libs;$(CEL)\out\debug8\libs;$(CEL)\libs"
-				TargetMachine="1"/>
-			<Tool
-				Name="VCLibrarianTool"
-				SuppressStartupBanner="TRUE"/>
-			<Tool
-				Name="VCMIDLTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_MEMORY_TRACKER;_CONSOLE;USE_CEL"
-				MkTypLibCompatible="TRUE"
-				SuppressStartupBanner="TRUE"
-				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug8\build\apppsserver\apppsserver.tlb"/>
-			<Tool
-				Name="VCPostBuildEventTool"
-				CommandLine="md ..\..\out\debug8\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug8\bin\&#x0D;&#x0A;copy &quot;$(TargetPath)&quot; ..\..\&#x0D;&#x0A;del ..\..\$(TargetName).lib&#x0D;&#x0A;"
-				/>
-			<Tool
-				Name="VCPreBuildEventTool"/>
-			<Tool
-				Name="VCPreLinkEventTool"/>
+				Name="VCManagedResourceCompilerTool"
+			/>
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_MEMORY_TRACKER;_CONSOLE;USE_CEL;PROJECTGEN_VERSION=8"
+				Culture="1033"
 				AdditionalIncludeDirectories=".;..\..\src\server;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32;..\..\..\cel\include;$(CEL)\include;$(CEL)\include\cel"
-				Culture="1033"/>
+			/>
 			<Tool
-				Name="VCWebServiceProxyGeneratorTool"/>
+				Name="VCPreLinkEventTool"
+			/>
 			<Tool
-				Name="VCWebDeploymentTool"/>
+				Name="VCLinkerTool"
+				AdditionalOptions=" "
+				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib libceltool_d.lib"
+				OutputFile="..\..\psserver.exe"
+				LinkIncremental="2"
+				SuppressStartupBanner="true"
+				AdditionalLibraryDirectories="..\..\..\CS\out\debug8\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug8\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs;..\..\..\cel\out\debug8\libs;$(CEL)\out\debug8\libs;$(CEL)\libs"
+				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD,MSVCRT"
+				GenerateDebugInformation="true"
+				ProgramDatabaseFile="..\..\out\debug8\build\apppsserver\psserver.pdb"
+				SubSystem="1"
+				TargetMachine="1"
+			/>
+			<Tool
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCManifestTool"
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCAppVerifierTool"
+			/>
+			<Tool
+				Name="VCWebDeploymentTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+				CommandLine="md ..\..\out\debug8\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug8\bin\&#x0D;&#x0A;copy &quot;$(TargetPath)&quot; ..\..\&#x0D;&#x0A;del ..\..\$(TargetName).lib&#x0D;&#x0A;"
+			/>
 		</Configuration>
-  		<Configuration
+		<Configuration
 			Name="MemoryTracker (with DLLs)|Win32"
 			OutputDirectory="..\..\out\debug8\build\apppsserver\"
 			IntermediateDirectory="..\..\out\debug8\build\apppsserver\"
 			ConfigurationType="1"
-			CharacterSet="2"
 			UseOfMFC="0"
-			ATLMinimizesCRunTimeLibraryUsage="FALSE">
+			ATLMinimizesCRunTimeLibraryUsage="false"
+			CharacterSet="2"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_MEMORY_TRACKER;_CONSOLE;USE_CEL"
+				MkTypLibCompatible="true"
+				SuppressStartupBanner="true"
+				TargetEnvironment="1"
+				TypeLibraryName="..\..\out\debug8\build\apppsserver\apppsserver.tlb"
+			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				Optimization="0"
-				MinimalRebuild="TRUE"
-				DebugInformationFormat="4"
-				RuntimeTypeInfo="TRUE"
-				RuntimeLibrary="3"
-
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_MEMORY_TRACKER;_CONSOLE;USE_CEL;WIN32;CS_BUILD_SHARED_LIBS"
-				OptimizeForProcessor="1"
 				AdditionalOptions=" "
+				Optimization="0"
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32;..\..\..\cel\include;$(CEL)\include;$(CEL)\include\cel"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_MEMORY_TRACKER;_CONSOLE;USE_CEL;WIN32;CS_BUILD_SHARED_LIBS"
+				MinimalRebuild="true"
+				RuntimeLibrary="3"
+				TreatWChar_tAsBuiltInType="false"
+				ForceConformanceInForLoopScope="true"
+				RuntimeTypeInfo="true"
 				PrecompiledHeaderFile="..\..\out\debug8\build\apppsserver\apppsserver.pch"
 				AssemblerListingLocation="..\..\out\debug8\build\apppsserver\"
 				ObjectFile="..\..\out\debug8\build\apppsserver\"
 				ProgramDataBaseFileName="..\..\out\debug8\build\apppsserver\psserver.pdb"
 				WarningLevel="3"
-				SuppressStartupBanner="TRUE"
-				Detect64BitPortabilityProblems="TRUE"
-				TreatWChar_tAsBuiltInType="false"
-				ForceConformanceInForLoopScope="true"
-				CompileAs="0"/>
+				SuppressStartupBanner="true"
+				Detect64BitPortabilityProblems="true"
+				DebugInformationFormat="4"
+				CompileAs="0"
+			/>
 			<Tool
-				Name="VCCustomBuildTool"/>
-			<Tool
-				Name="VCLinkerTool"
-				LinkIncremental="2"
-				GenerateDebugInformation="TRUE"
-				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD,MSVCRT"
-				OutputFile="..\..\psserver.exe"
-				ProgramDatabaseFile="..\..\out\debug8\build\apppsserver\psserver.pdb"
-				SubSystem="1"
-				AdditionalOptions=" "
-				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib libceltool_d.lib"
-				SuppressStartupBanner="TRUE"
-				AdditionalLibraryDirectories="..\..\..\CS\out\debug8\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug8\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs;..\..\..\cel\out\debug8\libs;$(CEL)\out\debug8\libs;$(CEL)\libs"
-				TargetMachine="1"/>
-			<Tool
-				Name="VCLibrarianTool"
-				SuppressStartupBanner="TRUE"/>
-			<Tool
-				Name="VCMIDLTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_MEMORY_TRACKER;_CONSOLE;USE_CEL"
-				MkTypLibCompatible="TRUE"
-				SuppressStartupBanner="TRUE"
-				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug8\build\apppsserver\apppsserver.tlb"/>
-			<Tool
-				Name="VCPostBuildEventTool"
-				CommandLine="md ..\..\out\debug8\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug8\bin\&#x0D;&#x0A;copy &quot;$(TargetPath)&quot; ..\..\&#x0D;&#x0A;del ..\..\$(TargetName).lib&#x0D;&#x0A;"
-				/>
-			<Tool
-				Name="VCPreBuildEventTool"/>
-			<Tool
-				Name="VCPreLinkEventTool"/>
+				Name="VCManagedResourceCompilerTool"
+			/>
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_MEMORY_TRACKER;_CONSOLE;USE_CEL;PROJECTGEN_VERSION=8"
+				Culture="1033"
 				AdditionalIncludeDirectories=".;..\..\src\server;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32;..\..\..\cel\include;$(CEL)\include;$(CEL)\include\cel"
-				Culture="1033"/>
+			/>
 			<Tool
-				Name="VCWebServiceProxyGeneratorTool"/>
+				Name="VCPreLinkEventTool"
+			/>
 			<Tool
-				Name="VCWebDeploymentTool"/>
+				Name="VCLinkerTool"
+				AdditionalOptions=" "
+				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib libceltool_d.lib"
+				OutputFile="..\..\psserver.exe"
+				LinkIncremental="2"
+				SuppressStartupBanner="true"
+				AdditionalLibraryDirectories="..\..\..\CS\out\debug8\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug8\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs;..\..\..\cel\out\debug8\libs;$(CEL)\out\debug8\libs;$(CEL)\libs"
+				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD,MSVCRT"
+				GenerateDebugInformation="true"
+				ProgramDatabaseFile="..\..\out\debug8\build\apppsserver\psserver.pdb"
+				SubSystem="1"
+				TargetMachine="1"
+			/>
+			<Tool
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCManifestTool"
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCAppVerifierTool"
+			/>
+			<Tool
+				Name="VCWebDeploymentTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+				CommandLine="md ..\..\out\debug8\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug8\bin\&#x0D;&#x0A;copy &quot;$(TargetPath)&quot; ..\..\&#x0D;&#x0A;del ..\..\$(TargetName).lib&#x0D;&#x0A;"
+			/>
 		</Configuration>
-    		<Configuration
+		<Configuration
 			Name="RefTracker (with static libs)|Win32"
 			OutputDirectory="..\..\out\debug8\build\apppsserver\"
 			IntermediateDirectory="..\..\out\debug8\build\apppsserver\"
 			ConfigurationType="1"
-			CharacterSet="2"
 			UseOfMFC="0"
-			ATLMinimizesCRunTimeLibraryUsage="FALSE">
+			ATLMinimizesCRunTimeLibraryUsage="false"
+			CharacterSet="2"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_REF_TRACKER;_CONSOLE;USE_CEL"
+				MkTypLibCompatible="true"
+				SuppressStartupBanner="true"
+				TargetEnvironment="1"
+				TypeLibraryName="..\..\out\debug8\build\apppsserver\apppsserver.tlb"
+			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				Optimization="0"
-				MinimalRebuild="TRUE"
-				DebugInformationFormat="4"
-				RuntimeTypeInfo="TRUE"
-				RuntimeLibrary="3"
-
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_REF_TRACKER;_CONSOLE;USE_CEL;WIN32"
-				OptimizeForProcessor="1"
 				AdditionalOptions=" "
+				Optimization="0"
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32;..\..\..\cel\include;$(CEL)\include;$(CEL)\include\cel"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_REF_TRACKER;_CONSOLE;USE_CEL;WIN32"
+				MinimalRebuild="true"
+				RuntimeLibrary="3"
+				TreatWChar_tAsBuiltInType="false"
+				ForceConformanceInForLoopScope="true"
+				RuntimeTypeInfo="true"
 				PrecompiledHeaderFile="..\..\out\debug8\build\apppsserver\apppsserver.pch"
 				AssemblerListingLocation="..\..\out\debug8\build\apppsserver\"
 				ObjectFile="..\..\out\debug8\build\apppsserver\"
 				ProgramDataBaseFileName="..\..\out\debug8\build\apppsserver\psserver.pdb"
 				WarningLevel="3"
-				SuppressStartupBanner="TRUE"
-				Detect64BitPortabilityProblems="TRUE"
-				TreatWChar_tAsBuiltInType="false"
-				ForceConformanceInForLoopScope="true"
-				CompileAs="0"/>
+				SuppressStartupBanner="true"
+				Detect64BitPortabilityProblems="true"
+				DebugInformationFormat="4"
+				CompileAs="0"
+			/>
 			<Tool
-				Name="VCCustomBuildTool"/>
-			<Tool
-				Name="VCLinkerTool"
-				LinkIncremental="2"
-				GenerateDebugInformation="TRUE"
-				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD,MSVCRT"
-				OutputFile="..\..\psserver.exe"
-				ProgramDatabaseFile="..\..\out\debug8\build\apppsserver\psserver.pdb"
-				SubSystem="1"
-				AdditionalOptions=" "
-				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib libceltool_d.lib"
-				SuppressStartupBanner="TRUE"
-				AdditionalLibraryDirectories="..\..\..\CS\out\debug8\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug8\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs;..\..\..\cel\out\debug8\libs;$(CEL)\out\debug8\libs;$(CEL)\libs"
-				TargetMachine="1"/>
-			<Tool
-				Name="VCLibrarianTool"
-				SuppressStartupBanner="TRUE"/>
-			<Tool
-				Name="VCMIDLTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_REF_TRACKER;_CONSOLE;USE_CEL"
-				MkTypLibCompatible="TRUE"
-				SuppressStartupBanner="TRUE"
-				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug8\build\apppsserver\apppsserver.tlb"/>
-			<Tool
-				Name="VCPostBuildEventTool"
-				CommandLine="md ..\..\out\debug8\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug8\bin\&#x0D;&#x0A;copy &quot;$(TargetPath)&quot; ..\..\&#x0D;&#x0A;del ..\..\$(TargetName).lib&#x0D;&#x0A;"
-				/>
-			<Tool
-				Name="VCPreBuildEventTool"/>
-			<Tool
-				Name="VCPreLinkEventTool"/>
+				Name="VCManagedResourceCompilerTool"
+			/>
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_REF_TRACKER;_CONSOLE;USE_CEL;PROJECTGEN_VERSION=8"
+				Culture="1033"
 				AdditionalIncludeDirectories=".;..\..\src\server;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32;..\..\..\cel\include;$(CEL)\include;$(CEL)\include\cel"
-				Culture="1033"/>
+			/>
 			<Tool
-				Name="VCWebServiceProxyGeneratorTool"/>
+				Name="VCPreLinkEventTool"
+			/>
 			<Tool
-				Name="VCWebDeploymentTool"/>
+				Name="VCLinkerTool"
+				AdditionalOptions=" "
+				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib libceltool_d.lib"
+				OutputFile="..\..\psserver.exe"
+				LinkIncremental="2"
+				SuppressStartupBanner="true"
+				AdditionalLibraryDirectories="..\..\..\CS\out\debug8\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug8\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs;..\..\..\cel\out\debug8\libs;$(CEL)\out\debug8\libs;$(CEL)\libs"
+				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD,MSVCRT"
+				GenerateDebugInformation="true"
+				ProgramDatabaseFile="..\..\out\debug8\build\apppsserver\psserver.pdb"
+				SubSystem="1"
+				TargetMachine="1"
+			/>
+			<Tool
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCManifestTool"
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCAppVerifierTool"
+			/>
+			<Tool
+				Name="VCWebDeploymentTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+				CommandLine="md ..\..\out\debug8\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug8\bin\&#x0D;&#x0A;copy &quot;$(TargetPath)&quot; ..\..\&#x0D;&#x0A;del ..\..\$(TargetName).lib&#x0D;&#x0A;"
+			/>
 		</Configuration>
-  		<Configuration
+		<Configuration
 			Name="RefTracker (with DLLs)|Win32"
 			OutputDirectory="..\..\out\debug8\build\apppsserver\"
 			IntermediateDirectory="..\..\out\debug8\build\apppsserver\"
 			ConfigurationType="1"
-			CharacterSet="2"
 			UseOfMFC="0"
-			ATLMinimizesCRunTimeLibraryUsage="FALSE">
+			ATLMinimizesCRunTimeLibraryUsage="false"
+			CharacterSet="2"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_REF_TRACKER;_CONSOLE;USE_CEL"
+				MkTypLibCompatible="true"
+				SuppressStartupBanner="true"
+				TargetEnvironment="1"
+				TypeLibraryName="..\..\out\debug8\build\apppsserver\apppsserver.tlb"
+			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				Optimization="0"
-				MinimalRebuild="TRUE"
-				DebugInformationFormat="4"
-				RuntimeTypeInfo="TRUE"
-				RuntimeLibrary="3"
-
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_REF_TRACKER;_CONSOLE;USE_CEL;WIN32;CS_BUILD_SHARED_LIBS"
-				OptimizeForProcessor="1"
 				AdditionalOptions=" "
+				Optimization="0"
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32;..\..\..\cel\include;$(CEL)\include;$(CEL)\include\cel"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_REF_TRACKER;_CONSOLE;USE_CEL;WIN32;CS_BUILD_SHARED_LIBS"
+				MinimalRebuild="true"
+				RuntimeLibrary="3"
+				TreatWChar_tAsBuiltInType="false"
+				ForceConformanceInForLoopScope="true"
+				RuntimeTypeInfo="true"
 				PrecompiledHeaderFile="..\..\out\debug8\build\apppsserver\apppsserver.pch"
 				AssemblerListingLocation="..\..\out\debug8\build\apppsserver\"
 				ObjectFile="..\..\out\debug8\build\apppsserver\"
 				ProgramDataBaseFileName="..\..\out\debug8\build\apppsserver\psserver.pdb"
 				WarningLevel="3"
-				SuppressStartupBanner="TRUE"
-				Detect64BitPortabilityProblems="TRUE"
-				TreatWChar_tAsBuiltInType="false"
-				ForceConformanceInForLoopScope="true"
-				CompileAs="0"/>
+				SuppressStartupBanner="true"
+				Detect64BitPortabilityProblems="true"
+				DebugInformationFormat="4"
+				CompileAs="0"
+			/>
 			<Tool
-				Name="VCCustomBuildTool"/>
-			<Tool
-				Name="VCLinkerTool"
-				LinkIncremental="2"
-				GenerateDebugInformation="TRUE"
-				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD,MSVCRT"
-				OutputFile="..\..\psserver.exe"
-				ProgramDatabaseFile="..\..\out\debug8\build\apppsserver\psserver.pdb"
-				SubSystem="1"
-				AdditionalOptions=" "
-				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib libceltool_d.lib"
-				SuppressStartupBanner="TRUE"
-				AdditionalLibraryDirectories="..\..\..\CS\out\debug8\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug8\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs;..\..\..\cel\out\debug8\libs;$(CEL)\out\debug8\libs;$(CEL)\libs"
-				TargetMachine="1"/>
-			<Tool
-				Name="VCLibrarianTool"
-				SuppressStartupBanner="TRUE"/>
-			<Tool
-				Name="VCMIDLTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_REF_TRACKER;_CONSOLE;USE_CEL"
-				MkTypLibCompatible="TRUE"
-				SuppressStartupBanner="TRUE"
-				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug8\build\apppsserver\apppsserver.tlb"/>
-			<Tool
-				Name="VCPostBuildEventTool"
-				CommandLine="md ..\..\out\debug8\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug8\bin\&#x0D;&#x0A;copy &quot;$(TargetPath)&quot; ..\..\&#x0D;&#x0A;del ..\..\$(TargetName).lib&#x0D;&#x0A;"
-				/>
-			<Tool
-				Name="VCPreBuildEventTool"/>
-			<Tool
-				Name="VCPreLinkEventTool"/>
+				Name="VCManagedResourceCompilerTool"
+			/>
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_REF_TRACKER;_CONSOLE;USE_CEL;PROJECTGEN_VERSION=8"
+				Culture="1033"
 				AdditionalIncludeDirectories=".;..\..\src\server;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32;..\..\..\cel\include;$(CEL)\include;$(CEL)\include\cel"
-				Culture="1033"/>
+			/>
 			<Tool
-				Name="VCWebServiceProxyGeneratorTool"/>
+				Name="VCPreLinkEventTool"
+			/>
 			<Tool
-				Name="VCWebDeploymentTool"/>
+				Name="VCLinkerTool"
+				AdditionalOptions=" "
+				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib libceltool_d.lib"
+				OutputFile="..\..\psserver.exe"
+				LinkIncremental="2"
+				SuppressStartupBanner="true"
+				AdditionalLibraryDirectories="..\..\..\CS\out\debug8\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug8\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs;..\..\..\cel\out\debug8\libs;$(CEL)\out\debug8\libs;$(CEL)\libs"
+				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD,MSVCRT"
+				GenerateDebugInformation="true"
+				ProgramDatabaseFile="..\..\out\debug8\build\apppsserver\psserver.pdb"
+				SubSystem="1"
+				TargetMachine="1"
+			/>
+			<Tool
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCManifestTool"
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCAppVerifierTool"
+			/>
+			<Tool
+				Name="VCWebDeploymentTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+				CommandLine="md ..\..\out\debug8\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug8\bin\&#x0D;&#x0A;copy &quot;$(TargetPath)&quot; ..\..\&#x0D;&#x0A;del ..\..\$(TargetName).lib&#x0D;&#x0A;"
+			/>
 		</Configuration>
-    		<Configuration
+		<Configuration
 			Name="DebugPSReleaseCSCEL (with static libs)|Win32"
 			OutputDirectory="..\..\out\debug8\build\apppsserver\"
 			IntermediateDirectory="..\..\out\debug8\build\apppsserver\"
 			ConfigurationType="1"
-			CharacterSet="2"
 			UseOfMFC="0"
-			ATLMinimizesCRunTimeLibraryUsage="FALSE">
+			ATLMinimizesCRunTimeLibraryUsage="false"
+			CharacterSet="2"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;_CONSOLE;USE_CEL"
+				MkTypLibCompatible="true"
+				SuppressStartupBanner="true"
+				TargetEnvironment="1"
+				TypeLibraryName="..\..\out\debug8\build\apppsserver\apppsserver.tlb"
+			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				Optimization="0"
-				MinimalRebuild="TRUE"
-				DebugInformationFormat="4"
-				RuntimeTypeInfo="TRUE"
-				RuntimeLibrary="3"
-
-				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;_CONSOLE;USE_CEL;WIN32"
-				OptimizeForProcessor="1"
 				AdditionalOptions=" "
+				Optimization="0"
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32;..\..\..\cel\include;$(CEL)\include;$(CEL)\include\cel"
+				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;_CONSOLE;USE_CEL;WIN32"
+				MinimalRebuild="true"
+				RuntimeLibrary="3"
+				TreatWChar_tAsBuiltInType="false"
+				ForceConformanceInForLoopScope="true"
+				RuntimeTypeInfo="true"
 				PrecompiledHeaderFile="..\..\out\debug8\build\apppsserver\apppsserver.pch"
 				AssemblerListingLocation="..\..\out\debug8\build\apppsserver\"
 				ObjectFile="..\..\out\debug8\build\apppsserver\"
 				ProgramDataBaseFileName="..\..\out\debug8\build\apppsserver\psserver.pdb"
 				WarningLevel="3"
-				SuppressStartupBanner="TRUE"
-				Detect64BitPortabilityProblems="TRUE"
-				TreatWChar_tAsBuiltInType="false"
-				ForceConformanceInForLoopScope="true"
-				CompileAs="0"/>
+				SuppressStartupBanner="true"
+				Detect64BitPortabilityProblems="true"
+				DebugInformationFormat="4"
+				CompileAs="0"
+			/>
 			<Tool
-				Name="VCCustomBuildTool"/>
-			<Tool
-				Name="VCLinkerTool"
-				LinkIncremental="2"
-				GenerateDebugInformation="TRUE"
-				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD,MSVCRT"
-				OutputFile="..\..\psserver.exe"
-				ProgramDatabaseFile="..\..\out\debug8\build\apppsserver\psserver.pdb"
-				SubSystem="1"
-				AdditionalOptions=" "
-				AdditionalDependencies="libcrystalspace.lib ws2_32.lib zlib.lib libceltool.lib"
-				SuppressStartupBanner="TRUE"
-				AdditionalLibraryDirectories="..\..\..\CS\out\release8\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\release8\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs;..\..\..\cel\out\release8\libs;$(CEL)\out\release8\libs;$(CEL)\libs"
-				TargetMachine="1"/>
-			<Tool
-				Name="VCLibrarianTool"
-				SuppressStartupBanner="TRUE"/>
-			<Tool
-				Name="VCMIDLTool"
-				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;_CONSOLE;USE_CEL"
-				MkTypLibCompatible="TRUE"
-				SuppressStartupBanner="TRUE"
-				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug8\build\apppsserver\apppsserver.tlb"/>
-			<Tool
-				Name="VCPostBuildEventTool"
-				CommandLine="md ..\..\out\debug8\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug8\bin\&#x0D;&#x0A;copy &quot;$(TargetPath)&quot; ..\..\&#x0D;&#x0A;del ..\..\$(TargetName).lib&#x0D;&#x0A;"
-				/>
-			<Tool
-				Name="VCPreBuildEventTool"/>
-			<Tool
-				Name="VCPreLinkEventTool"/>
+				Name="VCManagedResourceCompilerTool"
+			/>
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;_CONSOLE;USE_CEL;PROJECTGEN_VERSION=8"
+				Culture="1033"
 				AdditionalIncludeDirectories=".;..\..\src\server;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32;..\..\..\cel\include;$(CEL)\include;$(CEL)\include\cel"
-				Culture="1033"/>
+			/>
 			<Tool
-				Name="VCWebServiceProxyGeneratorTool"/>
+				Name="VCPreLinkEventTool"
+			/>
 			<Tool
-				Name="VCWebDeploymentTool"/>
+				Name="VCLinkerTool"
+				AdditionalOptions=" "
+				AdditionalDependencies="libcrystalspace.lib ws2_32.lib zlib.lib libceltool.lib"
+				OutputFile="..\..\psserver.exe"
+				LinkIncremental="2"
+				SuppressStartupBanner="true"
+				AdditionalLibraryDirectories="..\..\..\CS\out\release8\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\release8\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs;..\..\..\cel\out\release8\libs;$(CEL)\out\release8\libs;$(CEL)\libs"
+				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD,MSVCRT"
+				GenerateDebugInformation="true"
+				ProgramDatabaseFile="..\..\out\debug8\build\apppsserver\psserver.pdb"
+				SubSystem="1"
+				TargetMachine="1"
+			/>
+			<Tool
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCManifestTool"
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCAppVerifierTool"
+			/>
+			<Tool
+				Name="VCWebDeploymentTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+				CommandLine="md ..\..\out\debug8\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug8\bin\&#x0D;&#x0A;copy &quot;$(TargetPath)&quot; ..\..\&#x0D;&#x0A;del ..\..\$(TargetName).lib&#x0D;&#x0A;"
+			/>
 		</Configuration>
-  		<Configuration
+		<Configuration
 			Name="DebugPSReleaseCSCEL (with DLLs)|Win32"
 			OutputDirectory="..\..\out\debug8\build\apppsserver\"
 			IntermediateDirectory="..\..\out\debug8\build\apppsserver\"
 			ConfigurationType="1"
-			CharacterSet="2"
 			UseOfMFC="0"
-			ATLMinimizesCRunTimeLibraryUsage="FALSE">
+			ATLMinimizesCRunTimeLibraryUsage="false"
+			CharacterSet="2"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;_CONSOLE;USE_CEL"
+				MkTypLibCompatible="true"
+				SuppressStartupBanner="true"
+				TargetEnvironment="1"
+				TypeLibraryName="..\..\out\debug8\build\apppsserver\apppsserver.tlb"
+			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				Optimization="0"
-				MinimalRebuild="TRUE"
-				DebugInformationFormat="4"
-				RuntimeTypeInfo="TRUE"
-				RuntimeLibrary="3"
-
-				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;_CONSOLE;USE_CEL;WIN32;CS_BUILD_SHARED_LIBS"
-				OptimizeForProcessor="1"
 				AdditionalOptions=" "
+				Optimization="0"
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32;..\..\..\cel\include;$(CEL)\include;$(CEL)\include\cel"
+				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;_CONSOLE;USE_CEL;WIN32;CS_BUILD_SHARED_LIBS"
+				MinimalRebuild="true"
+				RuntimeLibrary="3"
+				TreatWChar_tAsBuiltInType="false"
+				ForceConformanceInForLoopScope="true"
+				RuntimeTypeInfo="true"
 				PrecompiledHeaderFile="..\..\out\debug8\build\apppsserver\apppsserver.pch"
 				AssemblerListingLocation="..\..\out\debug8\build\apppsserver\"
 				ObjectFile="..\..\out\debug8\build\apppsserver\"
 				ProgramDataBaseFileName="..\..\out\debug8\build\apppsserver\psserver.pdb"
 				WarningLevel="3"
-				SuppressStartupBanner="TRUE"
-				Detect64BitPortabilityProblems="TRUE"
-				TreatWChar_tAsBuiltInType="false"
-				ForceConformanceInForLoopScope="true"
-				CompileAs="0"/>
+				SuppressStartupBanner="true"
+				Detect64BitPortabilityProblems="true"
+				DebugInformationFormat="4"
+				CompileAs="0"
+			/>
 			<Tool
-				Name="VCCustomBuildTool"/>
-			<Tool
-				Name="VCLinkerTool"
-				LinkIncremental="2"
-				GenerateDebugInformation="TRUE"
-				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD,MSVCRT"
-				OutputFile="..\..\psserver.exe"
-				ProgramDatabaseFile="..\..\out\debug8\build\apppsserver\psserver.pdb"
-				SubSystem="1"
-				AdditionalOptions=" "
-				AdditionalDependencies="libcrystalspace.lib ws2_32.lib zlib.lib libceltool.lib"
-				SuppressStartupBanner="TRUE"
-				AdditionalLibraryDirectories="..\..\..\CS\out\release8\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\release8\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs;..\..\..\cel\out\release8\libs;$(CEL)\out\release8\libs;$(CEL)\libs"
-				TargetMachine="1"/>
-			<Tool
-				Name="VCLibrarianTool"
-				SuppressStartupBanner="TRUE"/>
-			<Tool
-				Name="VCMIDLTool"
-				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;_CONSOLE;USE_CEL"
-				MkTypLibCompatible="TRUE"
-				SuppressStartupBanner="TRUE"
-				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug8\build\apppsserver\apppsserver.tlb"/>
-			<Tool
-				Name="VCPostBuildEventTool"
-				CommandLine="md ..\..\out\debug8\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug8\bin\&#x0D;&#x0A;copy &quot;$(TargetPath)&quot; ..\..\&#x0D;&#x0A;del ..\..\$(TargetName).lib&#x0D;&#x0A;"
-				/>
-			<Tool
-				Name="VCPreBuildEventTool"/>
-			<Tool
-				Name="VCPreLinkEventTool"/>
+				Name="VCManagedResourceCompilerTool"
+			/>
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;_CONSOLE;USE_CEL;PROJECTGEN_VERSION=8"
+				Culture="1033"
 				AdditionalIncludeDirectories=".;..\..\src\server;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32;..\..\..\cel\include;$(CEL)\include;$(CEL)\include\cel"
-				Culture="1033"/>
+			/>
 			<Tool
-				Name="VCWebServiceProxyGeneratorTool"/>
+				Name="VCPreLinkEventTool"
+			/>
 			<Tool
-				Name="VCWebDeploymentTool"/>
+				Name="VCLinkerTool"
+				AdditionalOptions=" "
+				AdditionalDependencies="libcrystalspace.lib ws2_32.lib zlib.lib libceltool.lib"
+				OutputFile="..\..\psserver.exe"
+				LinkIncremental="2"
+				SuppressStartupBanner="true"
+				AdditionalLibraryDirectories="..\..\..\CS\out\release8\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\release8\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs;..\..\..\cel\out\release8\libs;$(CEL)\out\release8\libs;$(CEL)\libs"
+				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD,MSVCRT"
+				GenerateDebugInformation="true"
+				ProgramDatabaseFile="..\..\out\debug8\build\apppsserver\psserver.pdb"
+				SubSystem="1"
+				TargetMachine="1"
+			/>
+			<Tool
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCManifestTool"
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCAppVerifierTool"
+			/>
+			<Tool
+				Name="VCWebDeploymentTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+				CommandLine="md ..\..\out\debug8\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug8\bin\&#x0D;&#x0A;copy &quot;$(TargetPath)&quot; ..\..\&#x0D;&#x0A;del ..\..\$(TargetName).lib&#x0D;&#x0A;"
+			/>
 		</Configuration>
-  	</Configurations>
+	</Configurations>
+	<References>
+	</References>
 	<Files>
 		<Filter
 			Name="Source Files"
-			Filter="">
+			>
 			<File
-				RelativePath="..\..\src\server\actionmanager.cpp">
+				RelativePath="..\..\src\server\actionmanager.cpp"
+				>
 			</File>
 			<File
-				RelativePath="..\..\src\server\adminmanager.cpp">
+				RelativePath="..\..\src\server\adminmanager.cpp"
+				>
 			</File>
 			<File
-				RelativePath="..\..\src\server\advicemanager.cpp">
+				RelativePath="..\..\src\server\advicemanager.cpp"
+				>
 			</File>
 			<File
-				RelativePath="..\..\src\server\authentserver.cpp">
+				RelativePath="..\..\src\server\authentserver.cpp"
+				>
 			</File>
 			<File
-				RelativePath="..\..\src\server\bankmanager.cpp">
+				RelativePath="..\..\src\server\bankmanager.cpp"
+				>
 			</File>
 			<File
-				RelativePath="..\..\src\server\cachemanager.cpp">
+				RelativePath="..\..\src\server\cachemanager.cpp"
+				>
 			</File>
 			<File
-				RelativePath="..\..\src\server\chatmanager.cpp">
+				RelativePath="..\..\src\server\chatmanager.cpp"
+				>
 			</File>
 			<File
-				RelativePath="..\..\src\server\client.cpp">
+				RelativePath="..\..\src\server\client.cpp"
+				>
 			</File>
 			<File
-				RelativePath="..\..\src\server\clients.cpp">
+				RelativePath="..\..\src\server\clients.cpp"
+				>
 			</File>
 			<File
-				RelativePath="..\..\src\server\clientstatuslogger.cpp">
+				RelativePath="..\..\src\server\clientstatuslogger.cpp"
+				>
 			</File>
 			<File
-				RelativePath="..\..\src\server\combatmanager.cpp">
+				RelativePath="..\..\src\server\combatmanager.cpp"
+				>
 			</File>
 			<File
-				RelativePath="..\..\src\server\command.cpp">
+				RelativePath="..\..\src\server\command.cpp"
+				>
 			</File>
 			<File
-				RelativePath="..\..\src\server\commandmanager.cpp">
+				RelativePath="..\..\src\server\commandmanager.cpp"
+				>
 			</File>
 			<File
-				RelativePath="..\..\src\server\creationmanager.cpp">
+				RelativePath="..\..\src\server\creationmanager.cpp"
+				>
 			</File>
 			<File
-				RelativePath="..\..\src\server\economymanager.cpp">
+				RelativePath="..\..\src\server\economymanager.cpp"
+				>
 			</File>
 			<File
-				RelativePath="..\..\src\server\entitymanager.cpp">
+				RelativePath="..\..\src\server\entitymanager.cpp"
+				>
 			</File>
 			<File
-				RelativePath="..\..\src\server\events.cpp">
+				RelativePath="..\..\src\server\events.cpp"
+				>
 			</File>
 			<File
-				RelativePath="..\..\src\server\exchangemanager.cpp">
+				RelativePath="..\..\src\server\exchangemanager.cpp"
+				>
 			</File>
 			<File
-				RelativePath="..\..\src\server\gem.cpp">
+				RelativePath="..\..\src\server\gem.cpp"
+				>
 			</File>
 			<File
-				RelativePath="..\..\src\server\gmeventmanager.cpp">
+				RelativePath="..\..\src\server\gmeventmanager.cpp"
+				>
 			</File>
 			<File
-				RelativePath="..\..\src\server\groupmanager.cpp">
+				RelativePath="..\..\src\server\groupmanager.cpp"
+				>
 			</File>
 			<File
-				RelativePath="..\..\src\server\guildmanager.cpp">
+				RelativePath="..\..\src\server\guildmanager.cpp"
+				>
 			</File>
 			<File
-				RelativePath="..\..\src\server\invitemanager.cpp">
+				RelativePath="..\..\src\server\introductionmanager.cpp"
+				>
 			</File>
 			<File
-				RelativePath="..\..\src\server\main.cpp">
+				RelativePath="..\..\src\server\invitemanager.cpp"
+				>
 			</File>
 			<File
-				RelativePath="..\..\src\server\marriagemanager.cpp">
+				RelativePath="..\..\src\server\main.cpp"
+				>
 			</File>
 			<File
-				RelativePath="..\..\src\server\minigamemanager.cpp">
+				RelativePath="..\..\src\server\marriagemanager.cpp"
+				>
 			</File>
 			<File
-				RelativePath="..\..\src\server\msgmanager.cpp">
+				RelativePath="..\..\src\server\minigamemanager.cpp"
+				>
 			</File>
 			<File
-				RelativePath="..\..\src\server\netmanager.cpp">
+				RelativePath="..\..\src\server\msgmanager.cpp"
+				>
 			</File>
 			<File
-				RelativePath="..\..\src\server\npcmanager.cpp">
+				RelativePath="..\..\src\server\netmanager.cpp"
+				>
 			</File>
 			<File
-				RelativePath="..\..\src\server\paladinjr.cpp">
+				RelativePath="..\..\src\server\npcmanager.cpp"
+				>
 			</File>
 			<File
-				RelativePath="..\..\src\server\progressionmanager.cpp">
+				RelativePath="..\..\src\server\paladinjr.cpp"
+				>
 			</File>
 			<File
-				RelativePath="..\..\src\server\psproxlist.cpp">
+				RelativePath="..\..\src\server\progressionmanager.cpp"
+				>
 			</File>
 			<File
-				RelativePath="..\..\src\server\psserver.cpp">
+				RelativePath="..\..\src\server\psproxlist.cpp"
+				>
 			</File>
 			<File
-				RelativePath="..\..\src\server\psserverchar.cpp">
+				RelativePath="..\..\src\server\psserver.cpp"
+				>
 			</File>
 			<File
-				RelativePath="..\..\src\server\psserverdr.cpp">
+				RelativePath="..\..\src\server\psserverchar.cpp"
+				>
 			</File>
 			<File
-				RelativePath="..\..\src\server\questionmanager.cpp">
+				RelativePath="..\..\src\server\psserverdr.cpp"
+				>
 			</File>
 			<File
-				RelativePath="..\..\src\server\questmanager.cpp">
+				RelativePath="..\..\src\server\questionmanager.cpp"
+				>
 			</File>
 			<File
-				RelativePath="..\..\src\server\serverstatus.cpp">
+				RelativePath="..\..\src\server\questmanager.cpp"
+				>
 			</File>
 			<File
-				RelativePath="..\..\src\server\slotmanager.cpp">
+				RelativePath="..\..\src\server\serverstatus.cpp"
+				>
 			</File>
 			<File
-				RelativePath="..\..\src\server\spawnmanager.cpp">
+				RelativePath="..\..\src\server\slotmanager.cpp"
+				>
 			</File>
 			<File
-				RelativePath="..\..\src\server\spellmanager.cpp">
+				RelativePath="..\..\src\server\spawnmanager.cpp"
+				>
 			</File>
 			<File
-				RelativePath="..\..\src\server\tutorialmanager.cpp">
+				RelativePath="..\..\src\server\spellmanager.cpp"
+				>
 			</File>
 			<File
-				RelativePath="..\..\src\server\usermanager.cpp">
+				RelativePath="..\..\src\server\tutorialmanager.cpp"
+				>
 			</File>
 			<File
-				RelativePath="..\..\src\server\weathermanager.cpp">
+				RelativePath="..\..\src\server\usermanager.cpp"
+				>
 			</File>
 			<File
-				RelativePath="..\..\src\server\workmanager.cpp">
+				RelativePath="..\..\src\server\weathermanager.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\server\workmanager.cpp"
+				>
 			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
-			Filter="">
+			>
 			<File
-				RelativePath="..\..\src\server\actionmanager.h">
+				RelativePath="..\..\src\server\actionmanager.h"
+				>
 			</File>
 			<File
-				RelativePath="..\..\src\server\adminmanager.h">
+				RelativePath="..\..\src\server\adminmanager.h"
+				>
 			</File>
 			<File
-				RelativePath="..\..\src\server\advicemanager.h">
+				RelativePath="..\..\src\server\advicemanager.h"
+				>
 			</File>
 			<File
-				RelativePath="..\..\src\server\authentserver.h">
+				RelativePath="..\..\src\server\authentserver.h"
+				>
 			</File>
 			<File
-				RelativePath="..\..\src\server\bankmanager.h">
+				RelativePath="..\..\src\server\bankmanager.h"
+				>
 			</File>
 			<File
-				RelativePath="..\..\src\server\cachemanager.h">
+				RelativePath="..\..\src\server\cachemanager.h"
+				>
 			</File>
 			<File
-				RelativePath="..\..\src\server\chatmanager.h">
+				RelativePath="..\..\src\server\chatmanager.h"
+				>
 			</File>
 			<File
-				RelativePath="..\..\src\server\client.h">
+				RelativePath="..\..\src\server\client.h"
+				>
 			</File>
 			<File
-				RelativePath="..\..\src\server\clients.h">
+				RelativePath="..\..\src\server\clients.h"
+				>
 			</File>
 			<File
-				RelativePath="..\..\src\server\clientstatuslogger.h">
+				RelativePath="..\..\src\server\clientstatuslogger.h"
+				>
 			</File>
 			<File
-				RelativePath="..\..\src\server\combatmanager.h">
+				RelativePath="..\..\src\server\combatmanager.h"
+				>
 			</File>
 			<File
-				RelativePath="..\..\src\server\commandmanager.h">
+				RelativePath="..\..\src\server\commandmanager.h"
+				>
 			</File>
 			<File
-				RelativePath="..\..\src\server\creationmanager.h">
+				RelativePath="..\..\src\server\creationmanager.h"
+				>
 			</File>
 			<File
-				RelativePath="..\..\src\server\deathcallback.h">
+				RelativePath="..\..\src\server\deathcallback.h"
+				>
 			</File>
 			<File
-				RelativePath="..\..\src\server\deleteobjcallback.h">
+				RelativePath="..\..\src\server\deleteobjcallback.h"
+				>
 			</File>
 			<File
-				RelativePath="..\..\src\server\economymanager.h">
+				RelativePath="..\..\src\server\economymanager.h"
+				>
 			</File>
 			<File
-				RelativePath="..\..\src\server\entitymanager.h">
+				RelativePath="..\..\src\server\entitymanager.h"
+				>
 			</File>
 			<File
-				RelativePath="..\..\src\server\events.h">
+				RelativePath="..\..\src\server\events.h"
+				>
 			</File>
 			<File
-				RelativePath="..\..\src\server\exchangemanager.h">
+				RelativePath="..\..\src\server\exchangemanager.h"
+				>
 			</File>
 			<File
-				RelativePath="..\..\src\server\gem.h">
+				RelativePath="..\..\src\server\gem.h"
+				>
 			</File>
 			<File
-				RelativePath="..\..\src\server\globals.h">
+				RelativePath="..\..\src\server\globals.h"
+				>
 			</File>
 			<File
-				RelativePath="..\..\src\server\gmeventmanager.h">
+				RelativePath="..\..\src\server\gmeventmanager.h"
+				>
 			</File>
 			<File
-				RelativePath="..\..\src\server\groupmanager.h">
+				RelativePath="..\..\src\server\groupmanager.h"
+				>
 			</File>
 			<File
-				RelativePath="..\..\src\server\guildmanager.h">
+				RelativePath="..\..\src\server\guildmanager.h"
+				>
 			</File>
 			<File
-				RelativePath="..\..\src\server\icachedobject.h">
+				RelativePath="..\..\src\server\icachedobject.h"
+				>
 			</File>
 			<File
-				RelativePath="..\..\src\server\invitemanager.h">
+				RelativePath="..\..\src\server\introductionmanager.h"
+				>
 			</File>
 			<File
-				RelativePath="..\..\src\server\marriagemanager.h">
+				RelativePath="..\..\src\server\invitemanager.h"
+				>
 			</File>
 			<File
-				RelativePath="..\..\src\server\minigamemanager.h">
+				RelativePath="..\..\src\server\marriagemanager.h"
+				>
 			</File>
 			<File
-				RelativePath="..\..\src\server\msgmanager.h">
+				RelativePath="..\..\src\server\minigamemanager.h"
+				>
 			</File>
 			<File
-				RelativePath="..\..\src\server\netmanager.h">
+				RelativePath="..\..\src\server\msgmanager.h"
+				>
 			</File>
 			<File
-				RelativePath="..\..\src\server\npcmanager.h">
+				RelativePath="..\..\src\server\netmanager.h"
+				>
 			</File>
 			<File
-				RelativePath="..\..\src\server\paladinjr.h">
+				RelativePath="..\..\src\server\npcmanager.h"
+				>
 			</File>
 			<File
-				RelativePath="..\..\src\server\playergroup.h">
+				RelativePath="..\..\src\server\paladinjr.h"
+				>
 			</File>
 			<File
-				RelativePath="..\..\src\server\progressionmanager.h">
+				RelativePath="..\..\src\server\playergroup.h"
+				>
 			</File>
 			<File
-				RelativePath="..\..\src\server\psproxlist.h">
+				RelativePath="..\..\src\server\progressionmanager.h"
+				>
 			</File>
 			<File
-				RelativePath="..\..\src\server\psserver.h">
+				RelativePath="..\..\src\server\psproxlist.h"
+				>
 			</File>
 			<File
-				RelativePath="..\..\src\server\psserverchar.h">
+				RelativePath="..\..\src\server\psserver.h"
+				>
 			</File>
 			<File
-				RelativePath="..\..\src\server\psserverdr.h">
+				RelativePath="..\..\src\server\psserverchar.h"
+				>
 			</File>
 			<File
-				RelativePath="..\..\src\server\questionmanager.h">
+				RelativePath="..\..\src\server\psserverdr.h"
+				>
 			</File>
 			<File
-				RelativePath="..\..\src\server\questmanager.h">
+				RelativePath="..\..\src\server\questionmanager.h"
+				>
 			</File>
 			<File
-				RelativePath="..\..\src\server\serverstatus.h">
+				RelativePath="..\..\src\server\questmanager.h"
+				>
 			</File>
 			<File
-				RelativePath="..\..\src\server\slotmanager.h">
+				RelativePath="..\..\src\server\serverstatus.h"
+				>
 			</File>
 			<File
-				RelativePath="..\..\src\server\spawnmanager.h">
+				RelativePath="..\..\src\server\slotmanager.h"
+				>
 			</File>
 			<File
-				RelativePath="..\..\src\server\spellmanager.h">
+				RelativePath="..\..\src\server\spawnmanager.h"
+				>
 			</File>
 			<File
-				RelativePath="..\..\src\server\tutorialmanager.h">
+				RelativePath="..\..\src\server\spellmanager.h"
+				>
 			</File>
 			<File
-				RelativePath="..\..\src\server\usermanager.h">
+				RelativePath="..\..\src\server\tutorialmanager.h"
+				>
 			</File>
 			<File
-				RelativePath="..\..\src\server\weathermanager.h">
+				RelativePath="..\..\src\server\usermanager.h"
+				>
 			</File>
 			<File
-				RelativePath="..\..\src\server\workmanager.h">
+				RelativePath="..\..\src\server\weathermanager.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\server\workmanager.h"
+				>
 			</File>
 		</Filter>
 		<Filter
 			Name="Resource Files"
-			Filter="">
+			>
 			<File
-				RelativePath="..\..\mk\msvc\apppsserver.manifest">
+				RelativePath="..\..\mk\msvc\apppsserver.manifest"
+				>
 			</File>
 			<File
-				RelativePath="..\..\mk\msvc\apppsserver.rc">
+				RelativePath="..\..\mk\msvc\apppsserver.rc"
+				>
 			</File>
 		</Filter>
 	</Files>

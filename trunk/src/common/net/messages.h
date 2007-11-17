@@ -42,7 +42,7 @@ struct iEngine;
 
 // This holds the version number of the network code, remember to increase
 // this each time you do an update which breaks compatibility
-#define PS_NETVERSION   0x007D
+#define PS_NETVERSION   0x007E
 // Remember to bump the version in pscssetup.h, as well.
 
 // NPC Networking version is separate so we don't have to break compatibility
@@ -239,7 +239,9 @@ enum MSG_TYPES
     MSGTYPE_GMEVENT_INFO,
 
     MSGTYPE_SEQUENCE,
-    MSGTYPE_NPCRACELIST      // 150    
+    MSGTYPE_NPCRACELIST,      // 150    
+
+    MSGTYPE_INTRODUCTION
 };
 
 class psMessageCracker;
@@ -2831,7 +2833,8 @@ public:
         INVISIBLE       = 1 << 0, // Used to inform super client. Clients will not get this
                                   // since actor is removed when invisible.
         INVINCIBLE      = 1 << 1, // Used to inform super client.
-        NPC             = 1 << 2  // Set for NPCs
+        NPC             = 1 << 2, // Set for NPCs
+        NAMEKNOWN       = 1 << 3  // Used to tell the client if he knows this actor
     };
 
     psPersistActor( uint32_t clientnum,
@@ -4974,5 +4977,27 @@ public:
 
     int32_t raceID;
     int32_t CPValue;
+};
+
+//-----------------------------------------------------------------------------
+
+/** The message sent from client to server to request a new introduction
+ */
+
+class psCharIntroduction : public psMessageCracker
+{
+public:
+    psCharIntroduction( );
+    psCharIntroduction( MsgEntry* message );
+
+    PSF_DECLARE_MSG_FACTORY();
+
+    /**
+     * Convert the message into human readable string.
+     *
+     * @param access_ptrs A struct to a number of access pointers.
+     * @return Return a human readable string for the message.
+     */
+    virtual csString ToString(AccessPointers * access_ptrs);
 };
 #endif

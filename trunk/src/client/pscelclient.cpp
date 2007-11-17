@@ -1511,6 +1511,14 @@ unsigned int GEMClientActor::GetChatBubbleID() const
     return chatBubbleID;
 }
 
+const char* GEMClientActor::GetName()
+{
+    static const char* strUnknown = "[Unknown]";
+    if ((Flags() & psPersistActor::NAMEKNOWN) || (Flags() & psPersistActor::NPC))
+        return name;
+    return strUnknown;
+}
+
 GEMClientItem::GEMClientItem( psCelClient* cel, psPersistItem& mesg )
                : GEMClientObject( cel, mesg.id )
 {        

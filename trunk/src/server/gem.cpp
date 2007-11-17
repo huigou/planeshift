@@ -106,6 +106,8 @@
 #include "adminmanager.h"
 #include "commandmanager.h"
 #include "combatmanager.h"
+#include "introductionmanager.h"
+
 // #define PSPROXDEBUG
 
 #define SPEED_WALK 2.0f
@@ -2206,7 +2208,15 @@ void gemActor::Send( int clientnum, bool control, bool to_superclient  )
 
     if (!GetVisibility())    flags |= psPersistActor::INVISIBLE;
     if (GetInvincibility())  flags |= psPersistActor::INVINCIBLE;
-        
+
+    Client* targetClient = psserver->GetConnections()->Find(clientnum);
+    if (targetClient && targetClient->GetCharacterData())
+    {
+        if (psserver->GetIntroductionManager()->IsIntroduced(targetClient->GetCharacterData()->GetCharacterID(),
+                                                                psChar->GetCharacterID()))
+                                                             flags |= psPersistActor::NAMEKNOWN;
+    }
+
     psPersistActor mesg( clientnum,
                          securityLevel,
                          masqueradeLevel,
@@ -2256,56 +2266,12 @@ void gemActor::Send( int clientnum, bool control, bool to_superclient  )
 
 void gemActor::Broadcast(int clientnum, bool control)
 {        
-    csString texparts;
-    csString equipmentParts;
-    
-    psChar->MakeTextureString( texparts );    
-    psChar->MakeEquipmentString( equipmentParts );
-     
-    csString guildName;
-    guildName.Clear();
-    if ( psChar->GetGuild() && !psChar->GetGuild()->IsSecret() )
-        guildName = psChar->GetGuild()->name;
-     
-    uint32_t groupID = 0;
-    if(group)
-        groupID = group->id;
-
-    uint32_t flags = 0;
-
-    csString helmGroup = psChar->GetHelmGroup();
-    
-    if (!GetVisibility())    flags |= psPersistActor::INVISIBLE;
-    if (GetInvincibility())  flags |= psPersistActor::INVINCIBLE;
-        
-    psPersistActor mesg( clientnum,
-                         securityLevel,
-                         masqueradeLevel,
-                         control,
-                         name, 
-                         guildName,
-                         factname, 
-                         filename, 
-                         psChar->GetRaceInfo()->name,
-                         helmGroup,
-                         top, bottom,offset,
-                         texparts,
-                         equipmentParts,
-                         DRcounter,
-                         entity->GetID(),
-                         CacheManager::GetSingleton().GetMsgStrings(),
-                         pcmove,
-                         movementMode,
-                         GetMode(),
-                         0, // playerID should not be distributed to clients
-                         groupID,
-                         0, // ownerEID
-                         flags
-                         );
-                         
-    mesg.Multicast(GetMulticastClients(),clientnum,PROX_LIST_ANY_RANGE);
-    mesg.SetPlayerID(playerID); // Insert player id before sending to super client.
-    mesg.Multicast(psserver->GetNPCManager()->GetSuperClients(),-1,PROX_LIST_ANY_RANGE);
+    csArray<PublishDestination>& dest = GetMulticastClients();
+    for (unsigned long i = 0 ; i < dest.Length() ; i++)
+    {
+        if (dest[i].dist < PROX_LIST_ANY_RANGE)
+            Send(dest[i].client, control, false);
+    }
     
     // Update the labels of people in your secret guild
     if ( psChar->GetGuild() && psChar->GetGuild()->IsSecret() )

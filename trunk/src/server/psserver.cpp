@@ -77,10 +77,10 @@
 #include "util/consoleout.h"
 #include "gmeventmanager.h"
 #include "bankmanager.h"
-
+#include "introductionmanager.h"
 
 // Remember to bump this in server_options.sql and add to upgrade_schema.sql!
-#define DATABASE_VERSION_STR "1167"
+#define DATABASE_VERSION_STR "1168"
 
 
 psCharacterLoader psServer::CharacterLoader;
@@ -478,6 +478,9 @@ bool psServer::Initialize(iObjectRegistry* object_reg)
 
     // Init Bank Manager.
     bankmanager = new BankManager();
+
+    intromanager = new IntroductionManager();
+    Debug1(LOG_STARTUP,0, "Started Introduction Manager");
 
     if (!ServerStatus::Initialize (object_reg))
     {
