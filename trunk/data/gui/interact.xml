@@ -125,6 +125,12 @@
              <frame x="0" y="128" width="64" height="64" />
              <bgimage resource="ButtonGive" />
         </widget>
+
+
+        <widget name="ButtonIntroduce" factory="pawsButton" id="2500" tooltip="Introduce yourself">
+             <frame x="128" y="128" width="64" height="64" />
+             <bgimage resource="ButtonMarriage" />
+        </widget>
      
     </widget>
     

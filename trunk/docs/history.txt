@@ -6,6 +6,8 @@
   info window.
 - DB VER BUMP!
 - NET VER BUMP!
+- Added Introduce button to interactive menu.
+- GMs know everybody, gods can do that :)
 
 *** 2007-11-16 by Sasha Levin
 - Fixed factions with 2 or more words in the name.
