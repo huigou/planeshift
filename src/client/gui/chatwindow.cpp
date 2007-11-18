@@ -1158,6 +1158,9 @@ void pawsChatWindow::HandleMessage (MsgEntry *me)
 
     psChatMessage msg(me);
 
+    if (psengine->GetCelClient()->GetActorByName(msg.sPerson, false) == NULL)
+        msg.sPerson = "Someone";
+
     if (msg.translate)
         msg.sText = PawsManager::GetSingleton().Translate(msg.sText);
 
