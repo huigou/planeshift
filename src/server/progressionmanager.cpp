@@ -872,28 +872,9 @@ public:
     csString CreateUndoScript(float oldValue, float finalValue)
     {
         csString script;
-        csString baseStr, adjustStr, aimStr;
-        float value;
         
-        if (base)
-            baseStr = "yes";
-        else
-            baseStr = "no";
-        
-        script = "<evt>";
-        if (adjust == adjust_mul)
-        {
-            adjustStr = "mul";
-            value = oldValue / finalValue;
-        }
-        else
-        {
-            adjustStr = "add";
-            value = oldValue - finalValue;
-        }
-        
-        script.AppendFmt("<%s adjust=\"%s\" aim=\"target\" base=\"%s\" value=\"%f\" />", 
-                            statToString[stat], adjustStr.GetData(), baseStr.GetData(), value);
+        script.Format("<evt><%s adjust=\"add\" aim=\"target\" base=\"%s\" value=\"%f\" />", 
+                      statToString[stat], base ? "yes" : "no", oldValue - finalValue);
         if (undoMsg.Length() > 0)
             script.AppendFmt("<msg aim=\"target\" text=\"%s\"/>", undoMsg.GetData());
         script += "</evt>";

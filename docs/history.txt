@@ -1,3 +1,6 @@
+*** 2007-11-18 by Kenny Graunke
+- Fixed bug #319: Undo script incorrect for non-additive adjustments.
+
 *** 2007-11-18 by Sasha Levin
 - Introduce button is shown only if you didn't introduce yourself to the 
   target char.
