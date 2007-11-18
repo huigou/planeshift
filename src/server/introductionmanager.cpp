@@ -33,22 +33,52 @@
 #include "util/eventmanager.h"
 #include "introductionmanager.h"
 
-IntroductionManager::IntroductionManager() : introMap(10000, 10000, 2000000)
+IntroductionManager::IntroductionManager() : introMap(100, 10, 500)
 {
-    Result r = db->Select("select * from introductions");
+    psserver->GetEventManager()->Subscribe(this,MSGTYPE_INTRODUCTION,REQUIRE_READY_CLIENT);
+}
+
+IntroductionManager::~IntroductionManager()
+{
+    csHash< csSet<unsigned int>* >::GlobalIterator iter = introMap.GetIterator();
+    while(iter.HasNext())
+    {
+        csSet<unsigned int>* currSet = iter.Next();
+        delete currSet;
+    }
+}
+
+bool IntroductionManager::LoadCharIntroductions(unsigned int charid)
+{
+    if (introMap.Contains(charid))
+        return true;
+
+    Result r = db->Select("select * from introductions where charid=%d", charid);
     if (r.IsValid())
     {
+        csSet<unsigned int> *newSet = new csSet<unsigned int>(100, 10, 500);
+        introMap.Put(charid, newSet);
         for (unsigned long i = 0 ; i < r.Count() ; i++)
         {
             unsigned int charid = r[i].GetUInt32("charid");
             unsigned int charintroid = r[i].GetUInt32("introcharid");
-            if (!introMap.Contains(charid))
-                introMap.Put(charid, *(new csSet<unsigned int>(10000, 10000, 2000000)));
-            introMap[charid]->Add(charintroid);  
+            newSet->Add(charintroid);  
         }
+        return true;
     }
 
-    psserver->GetEventManager()->Subscribe(this,MSGTYPE_INTRODUCTION,REQUIRE_READY_CLIENT);
+    return false;
+}
+bool IntroductionManager::UnloadCharIntroductions(unsigned int charid)
+{
+    if (!introMap.Contains(charid))
+        return true;
+
+    delete introMap.Get(charid, NULL);
+
+    introMap.DeleteAll(charid);
+
+    return true;
 }
 
 bool IntroductionManager::Introduce(unsigned int charid, unsigned int targetcharid)
@@ -56,7 +86,7 @@ bool IntroductionManager::Introduce(unsigned int charid, unsigned int targetchar
     if (IsIntroduced(charid, targetcharid))
         return false;
 
-    introMap[charid]->Add(targetcharid);
+    introMap.Get(charid, NULL)->Add(targetcharid);
 
     db->CommandPump("insert into introductions values(%d, %d)", charid, targetcharid);
 
@@ -68,7 +98,7 @@ bool IntroductionManager::UnIntroduce(unsigned int charid, unsigned int targetch
     if (!IsIntroduced(charid, targetcharid))
         return false;
 
-    introMap[charid]->Delete(targetcharid);
+    introMap.Get(charid, NULL)->Delete(targetcharid);
 
     db->CommandPump("delete from introductions where charid=%d and introcharid=%d", charid, targetcharid);
 
@@ -77,7 +107,11 @@ bool IntroductionManager::UnIntroduce(unsigned int charid, unsigned int targetch
 
 bool IntroductionManager::IsIntroduced(unsigned int charid, unsigned int targetcharid)
 {
-    return introMap[charid]->Contains(targetcharid);
+    csSet<unsigned int> *targetSet = introMap.Get(charid, NULL);
+    if (!targetSet)
+        return false;
+
+    return targetSet->Contains(targetcharid);
 }
 
 void IntroductionManager::HandleMessage(MsgEntry *pMsg,Client *client)

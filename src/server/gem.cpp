@@ -3097,7 +3097,13 @@ void gemActor::SendBehaviorMessage(const csString & msg_id, gemObject *actor)
 
                 // Introduce yourself
                 if (IsAlive())
-                    options |= psGUIInteractMessage::INTRODUCE;
+                {
+                    unsigned int myCharId = GetCharacterData()->GetCharacterID();
+                    unsigned int targetCharId = activeActor->GetCharacterData()->GetCharacterID();
+                    bool areIntroduced = psserver->GetIntroductionManager()->IsIntroduced(myCharId, targetCharId);
+                    if (!areIntroduced)
+                        options |= psGUIInteractMessage::INTRODUCE;
+                }
             }
 
             if (!options)
