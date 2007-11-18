@@ -1079,14 +1079,7 @@ h3>CS Windows Libraries</h3>
         You can test this build by running the demo application "celtst.exe" in /c/development/cel to check that everything is ok.
 
         <h3>PlaneShift</h3>
-        <p>Change your working directory to PS's.<br>
-   Sometimes when compiling with GCC it says the list of linker flags for CEL is
-too long and that many of the flags are duplicates.
-Use this <a href="http://ojafighters.uk.to/flagfixer.html">link</a> to
-remove the duplicates: you must paste the content of the file Jamconfig
-(all of it, no need to find the right line) and click "Fix flags",
-then just copy it back to the file.<br>
-
+        <p>Change your working directory to PS's, 
  and do:</p>
         <p><div class="commandBox">
             ./autogen.sh<br>
@@ -1096,6 +1089,47 @@ then just copy it back to the file.<br>
            <div class="Developer">
             ./configure --enable-debug --with-libcal3d=/home/user/development/cal3d<br>
            </div>
+</div>
+</p>
+<p>
+ Sometimes when compiling with GCC it says the list of linker flags for CEL is
+too long and that many of the flags are duplicates.<br>
+<script language="Javascript">
+<!--
+function fixflags()
+{
+  var config=document.getElementById("flagfixerbox").value;
+  while(config.indexOf("\r\n")>-1){config=config.replace("\r\n","\n");} // Different platforms using different newline indications
+  while(config.indexOf("\n\r")>-1){config=config.replace("\n\r","\n");}
+  while(config.indexOf("\r")>-1){config=config.replace("\r","\n");}
+  config=config.split("\n");
+  var i=0;
+  var i2=0;
+  while(i<config.length)
+  {
+    if(config[i].indexOf("\"")>-1) // In case of empty lines
+    {
+      var flags=config[i].substring(config[i].indexOf("\"")+1,config[i].indexOf("\"",config[i].indexOf("\"")+1)).split(" ");
+      var newflags=new Array();
+      i2=0;
+      while(i2<flags.length)
+      {
+        if(("µ"+newflags.join("µ")+"µ").indexOf("µ"+flags[i2]+"µ")<0){newflags[newflags.length]=flags[i2];}
+      i2++;}
+      config[i]=config[i].substring(0,config[i].indexOf("\"")+1)+newflags.join(" ")+config[i].substring(config[i].indexOf("\"",config[i].indexOf("\"")+1),config[i].length);
+    }
+  i++;}
+  document.getElementById("flagfixerbox").value=config.join("\r\n");
+}
+//-->
+</script>
+
+<textarea rows="10" cols="40" id="flagfixerbox"></textarea><br>
+<button onclick="fixflags();">Fix flags</button><br>
+You must paste the content of the file Jamconfig
+(all of it, no need to find the right line) and click "Fix flags",
+then just copy it back to the file.<br></p>
+<p><div class="commandBox">
            <div class="Normal">
 
             jam -aq client
