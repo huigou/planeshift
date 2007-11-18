@@ -17,7 +17,7 @@
     var CAL3Drev_HEAD = "407"; // CAL3D_SOURCE_REV_HEAD
     var csWinLibsVersion = "1.2_002"; // cs win32 libs version.
     //Update date and author, to be changed everytime and updates occurred
-    var UpdateDate = "11 Nov 2007"; //Date when the update occurred
+    var UpdateDate = "18 Nov 2007"; //Date when the update occurred
     var UpdateAuthor = "Arianna Benigno"; //Author of the update
 -->
 </script>
@@ -1079,7 +1079,15 @@ h3>CS Windows Libraries</h3>
         You can test this build by running the demo application "celtst.exe" in /c/development/cel to check that everything is ok.
 
         <h3>PlaneShift</h3>
-        <p>Change your working directory to PS's, and do:</p>
+        <p>Change your working directory to PS's.<br>
+   Sometimes when compiling with GCC it says the list of linker flags for CEL is
+too long and that many of the flags are duplicates.
+Use this <a href="http://ojafighters.uk.to/flagfixer.html">link</a> to
+remove the duplicates: you must paste the content of the file Jamconfig
+(all of it, no need to find the right line) and click "Fix flags",
+then just copy it back to the file.<br>
+
+ and do:</p>
         <p><div class="commandBox">
             ./autogen.sh<br>
            <div class="User">
@@ -1089,6 +1097,7 @@ h3>CS Windows Libraries</h3>
             ./configure --enable-debug --with-libcal3d=/home/user/development/cal3d<br>
            </div>
            <div class="Normal">
+
             jam -aq client
            </div>
            <div class="Static">
