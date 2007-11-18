@@ -124,7 +124,7 @@ public:
     psClientDR* GetClientDR()       { return clientdr; }
     const csPDelArray<GEMClientObject>& GetEntities () const { return entities; }
     bool IsMeshSubjectToAction(const char* sector,const char* mesh);
-    GEMClientActor * GetActorByName(const char * name) const;
+    GEMClientActor * GetActorByName(const char * name, bool trueName = true) const;
 
     virtual void HandleMessage(MsgEntry* me);
 
@@ -328,7 +328,7 @@ public:
     csVector3 Rot();
     iSector *GetSector();
 
-    virtual const char* GetName();
+    virtual const char* GetName(bool realName = true);
 
     const char* GetGuildName() { return guildName; }
     void SetGuildName(const char* guild) { guildName = guild; }

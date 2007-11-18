@@ -498,7 +498,7 @@ bool psCelClient::IsMeshSubjectToAction(const char* sector,const char* mesh)
     return false;
 }
 
-GEMClientActor * psCelClient::GetActorByName(const char * name) const
+GEMClientActor * psCelClient::GetActorByName(const char * name, bool trueName) const
 {
     size_t len = entities.GetSize();
     csString testName, firstName;
@@ -508,7 +508,7 @@ GEMClientActor * psCelClient::GetActorByName(const char * name) const
         if (!actor)
             continue;
 
-        testName = actor->GetName();
+        testName = actor->GetName(trueName);
         firstName = testName.Slice(0, testName.FindFirst(' '));
         if (firstName == name)
             return actor;
@@ -549,7 +549,10 @@ void psCelClient::HandleNameChange( MsgEntry* me )
     // If object is targeted update the target information.
     if (psengine->GetCharManager()->GetTarget() == object)
     {
-        PawsManager::GetSingleton().Publish("sTargetName",object->GetName() ); 
+        if (object->GetType() == GEM_ACTOR)
+            PawsManager::GetSingleton().Publish("sTargetName",((GEMClientActor*)object)->GetName(false) ); 
+        else
+            PawsManager::GetSingleton().Publish("sTargetName",object->GetName() ); 
     } 
 }
 
@@ -1511,10 +1514,10 @@ unsigned int GEMClientActor::GetChatBubbleID() const
     return chatBubbleID;
 }
 
-const char* GEMClientActor::GetName()
+const char* GEMClientActor::GetName(bool trueName)
 {
     static const char* strUnknown = "[Unknown]";
-    if ((Flags() & psPersistActor::NAMEKNOWN) || (Flags() & psPersistActor::NPC))
+    if (trueName || ((Flags() & psPersistActor::NAMEKNOWN) || (Flags() & psPersistActor::NPC)) || name == psengine->GetCelClient()->GetMainActor()->GetName())
         return name;
     return strUnknown;
 }

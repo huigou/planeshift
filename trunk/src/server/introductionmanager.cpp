@@ -33,7 +33,7 @@
 #include "util/eventmanager.h"
 #include "introductionmanager.h"
 
-IntroductionManager::IntroductionManager()
+IntroductionManager::IntroductionManager() : introMap(10000, 10000, 2000000)
 {
     Result r = db->Select("select * from introductions");
     if (r.IsValid())
@@ -43,7 +43,7 @@ IntroductionManager::IntroductionManager()
             unsigned int charid = r[i].GetUInt32("charid");
             unsigned int charintroid = r[i].GetUInt32("introcharid");
             if (!introMap.Contains(charid))
-                introMap.Put(charid, *(new csSet<unsigned int>));
+                introMap.Put(charid, *(new csSet<unsigned int>(10000, 10000, 2000000)));
             introMap[charid]->Add(charintroid);  
         }
     }
