@@ -57,6 +57,7 @@
 #include "../commandmanager.h"
 #include "../gmeventmanager.h"
 #include "rpgrules/factions.h"
+#include "../introductionmanager.h"
 
 // The sizes and scripts need balancing.  For now, maxSize is disabled.
 #define ENABLE_MAX_CAPACITY 0
@@ -181,6 +182,9 @@ psCharacter::~psCharacter()
 
     delete vitals;
     vitals = NULL;
+
+    psserver->GetIntroductionManager()->UnloadCharIntroductions(characterid);
+
 //    delete workInfo;
 }
 

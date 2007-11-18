@@ -48,6 +48,7 @@
 #include "pscharacterlist.h"
 #include <iengine/sector.h>
 #include "gmeventmanager.h"
+#include "../introductionmanager.h"
 
 psCharacterLoader::psCharacterLoader()
 {
@@ -215,6 +216,7 @@ psCharacter *psCharacterLoader::LoadCharacterData(unsigned int uid, bool forceRe
         delete chardata;
         return NULL;
     }
+
     if(csGetTicks() - start > 500)
     {
         csString status;
@@ -222,6 +224,8 @@ psCharacter *psCharacterLoader::LoadCharacterData(unsigned int uid, bool forceRe
             csGetTicks() - start, uid);
         psserver->GetLogCSV()->Write(CSV_STATUS, status);
     }
+
+    psserver->GetIntroductionManager()->LoadCharIntroductions(chardata->GetCharacterID());
 
     return chardata;
 }

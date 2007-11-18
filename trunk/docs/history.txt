@@ -1,3 +1,10 @@
+*** 2007-11-18 by Sasha Levin
+- Introduce button is shown only if you didn't introduce yourself to the 
+  target char.
+- Not loading all introductions on startup, But loading them on char login
+  and unloading on logoff.
+- Fixed crash on new char creation.
+
 *** 2007-11-17 by Sasha Levin
 - Added the introduction manager. By default, Your char doesn't know any
   other chars. You can introduce your char to other chars by targeting
