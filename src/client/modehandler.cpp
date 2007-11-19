@@ -134,7 +134,6 @@ ModeHandler::~ModeHandler()
         msghandler->Unsubscribe(this,MSGTYPE_WEATHER);
         msghandler->Unsubscribe(this,MSGTYPE_NEWSECTOR);
         msghandler->Unsubscribe(this,MSGTYPE_COMBATEVENT);
-        msghandler->Unsubscribe(this,MSGTYPE_UPDATE_CHECK);
     }
     if (randomgen)
         delete randomgen;
@@ -149,7 +148,6 @@ bool ModeHandler::Initialize()
     msghandler->Subscribe(this,MSGTYPE_WEATHER);
     msghandler->Subscribe(this,MSGTYPE_NEWSECTOR);
     msghandler->Subscribe(this,MSGTYPE_COMBATEVENT);
-    msghandler->Subscribe(this,MSGTYPE_UPDATE_CHECK);
 
     // Light levels
     if(!LoadLightingLevels())
@@ -301,10 +299,6 @@ void ModeHandler::HandleMessage(MsgEntry* me)
 
         case MSGTYPE_COMBATEVENT:
             HandleCombatEvent(me);
-            return;
-        
-        case MSGTYPE_UPDATE_CHECK:
-            HandleUpdateCheck(me);
             return;
     }
 }
@@ -2027,36 +2021,3 @@ void ModeHandler::SetCombatAnim( GEMClientActor* atObject, csStringID anim )
         }
     }    
 }
-
-void ModeHandler::HandleUpdateCheck(MsgEntry* me)
-{
-    psUpdateInfo msg(me);
-    if (msg.timestamp == 0)
-        return;
-
-    csRef<iDataBuffer> data = psengine->GetVFS()->ReadFile("/this/version.dat");
-    if (!data)
-    {
-        Warning1(LOG_ANY,"Missing /this/version.dat!  Cannot process update notifications.");
-        psSystemMessage note(0,MSG_ACK,"Please run the updater to check for updates.");
-        note.FireEvent();  // Probably first load; tell them to run the updater
-        return;
-    }
-
-    // The first 32 characters are the version stamp.
-    // We want the time stamp after it.
-    csString tmp(data->GetData());
-    tmp.DeleteAt(0,33);
-    unsigned int currentTimeStamp = atoi( tmp.GetDataSafe() );
-
-    if (currentTimeStamp == 0)
-        return;  // Disabled
-
-    // If our timestamp is older than the server's, updates are available
-    if (currentTimeStamp < msg.timestamp)
-    {
-        psSystemMessage alert(0,MSG_ACK,"New updates are available!");
-        alert.FireEvent();
-    }
-}
-

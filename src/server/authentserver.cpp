@@ -512,8 +512,6 @@ void psAuthenticationServer::HandleAuthent(MsgEntry *me)
 
     psserver->GetWeatherManager()->SendClientCurrentTime(me->clientnum);
 
-    SendUpdateInfo(me->clientnum);
-
     if(csGetTicks() - start > 500)
     {
         csString status;
@@ -592,16 +590,6 @@ void psAuthenticationServer::HandleStatusUpdate(MsgEntry* me, Client* client)
         psConnectEvent evt(client->GetClientNum());
         evt.FireEvent();
         client->SetReady(msg.ready);
-    }
-}
-
-void psAuthenticationServer::SendUpdateInfo(unsigned int cnum)
-{
-    unsigned int timestamp = CacheManager::GetSingleton().GetUpdateTimeStamp();
-    if (cnum && timestamp)
-    {
-        psUpdateInfo info(cnum,timestamp);
-        info.SendMessage();
     }
 }
 

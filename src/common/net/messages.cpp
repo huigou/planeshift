@@ -6262,20 +6262,6 @@ csString psTraitChangeMessage::ToString(AccessPointers * /*access_ptrs*/)
 
 //---------------------------------------------------------------------------
 
-PSF_IMPLEMENT_MSG_FACTORY(psUpdateInfo,MSGTYPE_UPDATE_CHECK);
-
-csString psUpdateInfo::ToString(AccessPointers * /*access_ptrs*/)
-{
-    csString msgtext;
-
-    msgtext.AppendFmt("Timestamp: %d", timestamp);
-
-    return msgtext;
-}
-
-//---------------------------------------------------------------------------
-//---------------------------------------------------------------------------
-
 PSF_IMPLEMENT_MSG_FACTORY(psTutorialMessage,MSGTYPE_TUTORIAL);
 
 csString psTutorialMessage::ToString(AccessPointers * /*access_ptrs*/)

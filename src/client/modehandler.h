@@ -137,7 +137,6 @@ protected:
     void HandleWeatherMessage(MsgEntry* me);
     void HandleNewSectorMessage(MsgEntry* me);
     void HandleCombatEvent(MsgEntry* me);
-    void HandleUpdateCheck(MsgEntry* me);
 
     bool ProcessLighting(LightingSetting *color,float pct);
     LightingSetting *FindLight(LightingSetting *light,int which);

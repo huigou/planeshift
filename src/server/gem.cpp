@@ -2268,7 +2268,7 @@ void gemActor::Send( int clientnum, bool control, bool to_superclient  )
 void gemActor::Broadcast(int clientnum, bool control)
 {        
     csArray<PublishDestination>& dest = GetMulticastClients();
-    for (unsigned long i = 0 ; i < dest.Length() ; i++)
+    for (unsigned long i = 0 ; i < dest.GetSize(); i++)
     {
         if (dest[i].dist < PROX_LIST_ANY_RANGE)
             Send(dest[i].client, control, false);
