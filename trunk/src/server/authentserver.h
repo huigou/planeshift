@@ -119,11 +119,6 @@ protected:
      *  Can remove the player using psServer::RemovePlayer if invalid.
      */
     void HandleAuthCharacter(MsgEntry* me);
-    
-    /** Sends the current update timestamp to the client,
-     *  which is then compared to their last used stamp.
-     */
-    void SendUpdateInfo(unsigned int cnum);
 
 public:
 

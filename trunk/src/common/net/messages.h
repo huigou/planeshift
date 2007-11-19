@@ -42,7 +42,7 @@ struct iEngine;
 
 // This holds the version number of the network code, remember to increase
 // this each time you do an update which breaks compatibility
-#define PS_NETVERSION   0x007E
+#define PS_NETVERSION   0x007F
 // Remember to bump the version in pscssetup.h, as well.
 
 // NPC Networking version is separate so we don't have to break compatibility
@@ -220,10 +220,9 @@ enum MSG_TYPES
 
     MSGTYPE_CRAFT_INFO,
 
-    MSGTYPE_UPDATE_CHECK,
     MSGTYPE_PETITION_REQUEST,
     MSGTYPE_HEART_BEAT,
-    MSGTYPE_PERSIST_ACTOR_REQUEST, // 141
+    MSGTYPE_PERSIST_ACTOR_REQUEST, // 140
     MSGTYPE_NPC_COMMAND,
 
     // Minigame messages
@@ -239,9 +238,9 @@ enum MSG_TYPES
     MSGTYPE_GMEVENT_INFO,
 
     MSGTYPE_SEQUENCE,
-    MSGTYPE_NPCRACELIST,      // 150    
+    MSGTYPE_NPCRACELIST,
 
-    MSGTYPE_INTRODUCTION
+    MSGTYPE_INTRODUCTION         // 150
 };
 
 class psMessageCracker;
@@ -4518,36 +4517,6 @@ public:
 };
 
 //-----------------------------------------------------------------------------
-
-class psUpdateInfo : public psMessageCracker
-{
-public:
-    psUpdateInfo( uint32_t client, uint32_t timestamp)
-    {
-        msg = new MsgEntry( sizeof(uint32_t) );
-
-        msg->SetType(MSGTYPE_UPDATE_CHECK);
-        msg->clientnum = client;
-        msg->Add( timestamp );
-    }
-
-    psUpdateInfo( MsgEntry* me )
-    {
-        timestamp = me->GetUInt32();
-    }
-
-    PSF_DECLARE_MSG_FACTORY();
-
-    /**
-     * Convert the message into human readable string.
-     *
-     * @param access_ptrs A struct to a number of access pointers.
-     * @return Return a human readable string for the message.
-     */
-    virtual csString ToString(AccessPointers * access_ptrs);
-
-    uint32_t timestamp;
-};
 
 /**
  *  Class to send instructions from server to client on a tutorial event.

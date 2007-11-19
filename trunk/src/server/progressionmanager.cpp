@@ -4359,7 +4359,7 @@ void ProgressionManager::HandleSkill(Client * client, psGUISkillMessage& msg)
             }
             
             csString skillName = topNode->GetAttributeValue("NAME");
-            int skillAmount = topNode->GetAttributeValueAsInt("AMOUNT");
+            uint skillAmount = topNode->GetAttributeValueAsInt("AMOUNT");
             
             psSkillInfo * info = CacheManager::GetSingleton().GetSkillByName(skillName);
             Debug2(LOG_SKILLXP, client->GetClientNum(),"    Looking for: %s\n", (const char*)skillName);
