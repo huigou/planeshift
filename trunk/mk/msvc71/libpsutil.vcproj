@@ -733,6 +733,9 @@
 				RelativePath="..\..\src\common\util\eventmanager.cpp">
 			</File>
 			<File
+				RelativePath="..\..\src\common\util\fileutil.cpp">
+			</File>
+			<File
 				RelativePath="..\..\src\common\util\gameevent.cpp">
 			</File>
 			<File
@@ -834,6 +837,9 @@
 			</File>
 			<File
 				RelativePath="..\..\src\common\util\eventmanager.h">
+			</File>
+			<File
+				RelativePath="..\..\src\common\util\fileutil.h">
 			</File>
 			<File
 				RelativePath="..\..\src\common\util\gameevent.h">
