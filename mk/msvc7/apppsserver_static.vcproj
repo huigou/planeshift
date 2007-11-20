@@ -828,6 +828,9 @@
 				RelativePath="..\..\src\server\guildmanager.cpp">
 			</File>
 			<File
+				RelativePath="..\..\src\server\introductionmanager.cpp">
+			</File>
+			<File
 				RelativePath="..\..\src\server\invitemanager.cpp">
 			</File>
 			<File
@@ -974,6 +977,9 @@
 			</File>
 			<File
 				RelativePath="..\..\src\server\icachedobject.h">
+			</File>
+			<File
+				RelativePath="..\..\src\server\introductionmanager.h">
 			</File>
 			<File
 				RelativePath="..\..\src\server\invitemanager.h">
