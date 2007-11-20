@@ -1629,14 +1629,16 @@ void AdminManager::SetAttrib(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData&
                                                 "nevertired = %s\n"
                                                 "nofalldamage = %s\n"
                                                 "infiniteinventory = %s\n"
-                                                "questtester = %s",
+                                                "questtester = %s\n"
+                                                "infinitemana = %s",
                                                 (actor->GetInvincibility())?"on":"off",
                                                 (!actor->GetVisibility())?"on":"off",
                                                 (actor->GetViewAllObjects())?"on":"off",
                                                 (actor->nevertired)?"on":"off",
                                                 (actor->safefall)?"on":"off",
                                                 (!actor->GetFiniteInventory())?"on":"off",
-                                                (actor->questtester)?"on":"off" );
+                                                (actor->questtester)?"on":"off",
+                                                actor->infinitemana?"on":"off");
         return;
     }
     else if (data.attribute == "invinciblity" || data.attribute == "invincible")
@@ -1686,6 +1688,18 @@ void AdminManager::SetAttrib(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData&
             already = true;
         else
             actor->nevertired = onoff;
+    }
+    else if (data.attribute == "infinitemana")
+    {
+        if (toggle)
+        {
+            actor->infinitemana = !actor->infinitemana;
+            onoff = actor->infinitemana;
+        }
+        else if (actor->infinitemana == onoff)
+            already = true;
+        else
+            actor->infinitemana = onoff;
     }
     else if (data.attribute == "nofalldamage")
     {

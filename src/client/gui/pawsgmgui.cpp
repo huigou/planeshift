@@ -318,6 +318,12 @@ bool pawsGmGUIWindow::OnButtonPressed( int mouseButton, int keyModifier, pawsWid
         confirm = false;
         break;
     }
+    case 1258:// questtester
+    {
+        cmd.Format("/set infinitemana"); // Toggle
+        confirm = false;
+        break;
+    }
     // Action Location Tab Buttons
     case 1260:    // Refresh List
         QueryActionLocations();
@@ -497,6 +503,7 @@ void pawsGmGUIWindow::SetSecurity()
     HideWidget("nofalldamage");
     HideWidget("infiniteinventory");
     HideWidget("questtester");
+    HideWidget("infinitemana");
 
     // int to hold the access level
     int level = psengine->GetCelClient()->GetMainPlayer()->GetType();
@@ -551,6 +558,7 @@ void pawsGmGUIWindow::SetSecurity()
         ShowWidget("nofalldamage");
         ShowWidget("infiniteinventory");
         ShowWidget("questtester");
+        ShowWidget("infinitemana");
     case 0:
         break;
     }

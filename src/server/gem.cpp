@@ -1683,6 +1683,7 @@ gemActor::gemActor( psCharacter *chardata,
     invincible = false;
     safefall = false;
     nevertired = false;
+    infinitemana = false;
 
     meshcache = factname;
 
@@ -2133,6 +2134,10 @@ void gemActor::UpdateStats()
 
 float gemActor::DrainMana(float adjust,bool absolute)
 {
+    // GM flag
+    if (infinitemana)
+        return GetCharacterData()->GetMana();
+
     float finalMana = 0;
     if(absolute)
     {
@@ -2574,6 +2579,7 @@ void gemActor::SetGMDefaults()
         invincible = true;
         safefall = true;
         nevertired = true;
+        infinitemana = true;
     }
 
     if ( CacheManager::GetSingleton().GetCommandManager()->Validate(securityLevel, "default invisible") )
