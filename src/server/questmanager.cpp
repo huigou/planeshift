@@ -406,9 +406,13 @@ bool QuestManager::HandleScriptCommand(csString& block,
             }
             op.Append("/>");
         }
-        else if (!strncasecmp(block,"Introduce",10)) 
+        else if (!strncasecmp(block,"Introduce",9)) 
         {
-            op.Format("<introduce/>" ); 
+            csString charname = block.Slice(10).Trim();
+            if (!charname.IsEmpty())
+                op.Format("<introduce name=\"%s\"/>", charname.GetData() ); 
+            else
+                op.Format("<introduce/>"); 
         }
         else // unknown block
         {

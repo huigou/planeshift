@@ -41,6 +41,7 @@
 #include "../cachemanager.h"
 #include "../questionmanager.h"
 #include "../npcmanager.h"
+#include "../adminmanager.h"
 #include "net/messages.h"
 #include "pscharacter.h"
 #include "pscharacterloader.h"
@@ -2231,6 +2232,11 @@ bool MoneyResponseOp::Run(gemNPC *who, Client *target,NpcResponse *owner,csTicks
 
 bool IntroduceResponseOp::Load(iDocumentNode *node)
 {
+    if (node->GetAttributeValue("name"))
+        targetName = node->GetAttributeValue("name");
+    else
+        targetName = "Me";
+
     return true;
 }
 
@@ -2238,6 +2244,7 @@ csString IntroduceResponseOp::GetResponseScript()
 {
     psString resp;
     resp = GetName();
+    resp.AppendFmt(" name=\"%s\"",targetName.GetData());
     return resp;
 }
 
@@ -2246,10 +2253,22 @@ bool IntroduceResponseOp::Run(gemNPC *who, Client *target,NpcResponse *owner,csT
     psCharacter * character = target->GetCharacterData();
     psCharacter * npcChar = who->GetCharacterData();
 
-    psserver->GetIntroductionManager()->Introduce(character->GetCharacterID(), npcChar->GetCharacterID());
-
-    who->Send(target->GetClientNum(), false, false);
-
-    psserver->SendSystemInfo(target->GetClientNum(), "You now know %s",who->GetName());
+    if (targetName != "Me")
+    {
+        gemObject* obj = psserver->GetAdminManager()->FindObjectByString(targetName);
+        if (obj)
+        {
+            psserver->GetIntroductionManager()->Introduce(character->GetCharacterID(), ((gemNPC*)obj)->GetCharacterData()->GetCharacterID());
+            obj->Send(target->GetClientNum(), false, false);
+            psserver->SendSystemInfo(target->GetClientNum(), "You now know %s",((gemNPC*)obj)->GetName());
+        }            
+    }
+    else
+    {
+        psserver->GetIntroductionManager()->Introduce(character->GetCharacterID(), npcChar->GetCharacterID());
+        who->Send(target->GetClientNum(), false, false);
+        psserver->SendSystemInfo(target->GetClientNum(), "You now know %s",who->GetName());
+    }
+    
     return true;
 }
