@@ -4831,10 +4831,11 @@ void ProgressionManager::ChangeScript( csString& script, int param, const char* 
 
 /*-------------------------------------------------------------*/
 
-ProgressionDelay::ProgressionDelay(ProgressionEvent * progEvent, csTicks delay)
+ProgressionDelay::ProgressionDelay(ProgressionEvent * progEvent, csTicks delay, unsigned int clientnum)
                 : psGameEvent(0, delay, "Progression Event Delay"),
 				  progEvent(progEvent)
 {
+    client = clientnum;
 }
 
 ProgressionDelay::~ProgressionDelay()
@@ -4843,7 +4844,8 @@ ProgressionDelay::~ProgressionDelay()
 
 void ProgressionDelay::Trigger()
 {
-	progEvent->ForceRun();
+    if (psserver->GetConnections()->FindAny(client))
+	    progEvent->ForceRun();
 }
 
 ProgressionEvent::ProgressionEvent()
@@ -5235,9 +5237,9 @@ float ProgressionEvent::ForceRun()
         ProgressionOperation * po = seq.Next();
         po->LoadVariables(variables);
         if (!po->Run(runParamActor, runParamTarget, runParamInverse))
-		{
-			break;
-		}
+	    {
+		    break;
+	    }
         result += po->GetResult();
         Notify3(LOG_SCRIPT,"Event: %s with result %f\n", po->ToString().GetData(), po->GetResult());
     }
@@ -5269,7 +5271,7 @@ float ProgressionEvent::Run(gemActor * actor, gemObject *target, bool inverse)
 		return ForceRun();
 
 	// schedule a delay
-	progDelay = new ProgressionDelay(this, delay);
+    progDelay = new ProgressionDelay(this, delay, actor->GetClientID());
 	progDelay->QueueEvent();
 
 	return 1.0f; // we don't have a good return at this point, so just assume it didn't fail and return non-zero

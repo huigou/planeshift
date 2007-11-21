@@ -11,6 +11,7 @@
 - Improved the IntroduceResponseOp, Allowing npcs to introduce other
   npcs, And not just themselves.
 - NpcTerm is now saved downcased to fix any case-sensetivity problems.
+- An attempt to fix crashes on delayed progression events.
 
 *** 2007-11-19 by Michael Gist
 - Removed update checking code from client and server.
