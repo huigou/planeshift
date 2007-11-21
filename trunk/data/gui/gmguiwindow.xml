@@ -313,6 +313,10 @@
                     <frame x="21" y="163" width="160" height="16" border="no" />
                     <label text="Toggle Quest Test Mode" />
                 </widget>
+                <widget name="infinitemana" factory="pawsButton" toggle="no" id="1258" style="button">
+                    <frame x="21" y="181" width="160" height="16" border="no" />
+                    <label text="Toggle Infinite Mana" />
+                </widget>
             </widget>
         </widget>
     </widget>
