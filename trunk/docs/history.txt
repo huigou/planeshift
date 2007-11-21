@@ -1,3 +1,6 @@
+*** 2007-11-21 by Michael Gist
+- Fix for FS#112 from Rakhun & Kaerli.
+
 *** 2007-11-21 by Sasha Levin
 - Added infinite mana option for GMs.
 - Added an IntroductionOp to be used within scripts. Adding many
@@ -5,7 +8,6 @@
 - NPCs are now also unknown to the player, until they introduce
   themselves.
 - Added an IntroduceResponseOp to be used with npcs.
-
 
 *** 2007-11-19 by Michael Gist
 - Removed update checking code from client and server.
