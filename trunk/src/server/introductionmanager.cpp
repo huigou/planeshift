@@ -86,9 +86,12 @@ bool IntroductionManager::Introduce(unsigned int charid, unsigned int targetchar
     if (IsIntroduced(charid, targetcharid))
         return false;
 
-    introMap.Get(charid, NULL)->Add(targetcharid);
-
-    db->CommandPump("insert into introductions values(%d, %d)", charid, targetcharid);
+    csSet<unsigned int> *targetSet = introMap.Get(charid, NULL);
+    if (targetSet)
+    {
+        targetSet->Add(targetcharid);
+        db->CommandPump("insert into introductions values(%d, %d)", charid, targetcharid);
+    }
 
     return true;
 }
@@ -98,9 +101,12 @@ bool IntroductionManager::UnIntroduce(unsigned int charid, unsigned int targetch
     if (!IsIntroduced(charid, targetcharid))
         return false;
 
-    introMap.Get(charid, NULL)->Delete(targetcharid);
-
-    db->CommandPump("delete from introductions where charid=%d and introcharid=%d", charid, targetcharid);
+    csSet<unsigned int> *targetSet = introMap.Get(charid, NULL);
+    if (targetSet)
+    {
+        targetSet->Delete(targetcharid);
+        db->CommandPump("delete from introductions where charid=%d and introcharid=%d", charid, targetcharid);
+    }
 
     return true;
 }
