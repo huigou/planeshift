@@ -3749,6 +3749,15 @@ void gemNPC::Send( int clientnum, bool control, bool to_superclient )
     if (!GetVisibility())    flags |= psPersistActor::INVISIBLE;
     if (GetInvincibility())  flags |= psPersistActor::INVINCIBLE;
 
+    Client* targetClient = psserver->GetConnections()->Find(clientnum);
+    if (targetClient && targetClient->GetCharacterData())
+    {
+        if ((targetClient->GetSecurityLevel() >= GM_LEVEL_0) ||
+            psserver->GetIntroductionManager()->IsIntroduced(targetClient->GetCharacterData()->GetCharacterID(),
+                                                                psChar->GetCharacterID()))
+                                                             flags |= psPersistActor::NAMEKNOWN;
+    }
+
     csString helmGroup = psChar->GetHelmGroup();
     
     psPersistActor mesg( 
@@ -3799,57 +3808,20 @@ void gemNPC::Send( int clientnum, bool control, bool to_superclient )
 
 void gemNPC::Broadcast(int clientnum, bool control)
 {        
-    csString texparts;
-    csString equipmentParts;
-    int ownerEID = 0;
-    
-    psChar->MakeTextureString( texparts );    
-    psChar->MakeEquipmentString( equipmentParts );
-     
-    csString guildName;
-    guildName.Clear();
-    if ( psChar->GetGuild() && !psChar->GetGuild()->IsSecret() )
-        guildName = psChar->GetGuild()->name;
-
-    if ( this->owner.IsValid() )
+    csArray<PublishDestination>& dest = GetMulticastClients();
+    for (unsigned long i = 0 ; i < dest.GetSize(); i++)
     {
-        ownerEID = this->owner->GetEntity()->GetID();
+        if (dest[i].dist < PROX_LIST_ANY_RANGE)
+            Send(dest[i].client, control, false);
     }
-
-    uint32_t flags = psPersistActor::NPC;
-
-    if (!GetVisibility())    flags |= psPersistActor::INVISIBLE;
-    if (GetInvincibility())  flags |= psPersistActor::INVINCIBLE;
-
-    csString helmGroup = psChar->GetHelmGroup();
     
-    psPersistActor mesg( clientnum,
-                         securityLevel,
-                         masqueradeLevel,
-                         control,
-                         name, 
-                         guildName,
-                         factname, 
-                         filename,
-                         psChar->GetRaceInfo()->name,
-                         helmGroup,
-                         top, bottom,offset,
-                         texparts,
-                         equipmentParts,
-                         DRcounter,
-                         entity->GetID(),
-                         CacheManager::GetSingleton().GetMsgStrings(),
-                         pcmove,
-                         movementMode,
-                         GetMode(),
-                         playerID,
-                         0, // groupID
-                         ownerEID,
-                         flags
-                         );
-                         
-    mesg.Multicast(GetMulticastClients(),clientnum,PROX_LIST_ANY_RANGE);   
-    mesg.Multicast(psserver->GetNPCManager()->GetSuperClients(),-1,PROX_LIST_ANY_RANGE);        
+    csArray<PublishDestination>& destSuper = psserver->GetNPCManager()->GetSuperClients();
+    for (unsigned long i = 0 ; i < destSuper.GetSize(); i++)
+    {
+        if (destSuper[i].dist < PROX_LIST_ANY_RANGE)
+            Send(destSuper[i].client, control, true);
+    }
+     
 }
 
 #if 0   // This function is redundant with npc->Say()

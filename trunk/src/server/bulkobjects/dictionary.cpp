@@ -51,6 +51,7 @@
 #include "../tools/wordnet/wn.h"
 #include "rpgrules/factions.h"
 #include "util/psxmlparser.h"
+#include "../introductionmanager.h"
 
 NPCDialogDict *dict;
 
@@ -1275,6 +1276,10 @@ bool NpcResponse::ParseResponseScript(const char *xmlstr,bool insertBeginning)
         {
             op = new MoneyResponseOp;
         }
+        else if ( strcmp( node->GetValue(), "introduce" ) == 0 )
+        {
+            op = new IntroduceResponseOp;
+        }
         else
         {
             Error2("undefined operation specified in response script %d.",id);
@@ -2221,5 +2226,30 @@ bool MoneyResponseOp::Run(gemNPC *who, Client *target,NpcResponse *owner,csTicks
     character->SetMoney(character->Money()+money);
 
     psserver->SendSystemInfo(target->GetClientNum(), "You've received %s",money.ToUserString().GetData());
+    return true;
+}
+
+bool IntroduceResponseOp::Load(iDocumentNode *node)
+{
+    return true;
+}
+
+csString IntroduceResponseOp::GetResponseScript()
+{
+    psString resp;
+    resp = GetName();
+    return resp;
+}
+
+bool IntroduceResponseOp::Run(gemNPC *who, Client *target,NpcResponse *owner,csTicks& timeDelay)
+{
+    psCharacter * character = target->GetCharacterData();
+    psCharacter * npcChar = who->GetCharacterData();
+
+    psserver->GetIntroductionManager()->Introduce(character->GetCharacterID(), npcChar->GetCharacterID());
+
+    who->Send(target->GetClientNum(), false, false);
+
+    psserver->SendSystemInfo(target->GetClientNum(), "You now know %s",who->GetName());
     return true;
 }
