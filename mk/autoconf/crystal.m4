@@ -20,7 +20,7 @@
 AC_PREREQ([2.56])
 
 # Should stay in sync with csver.h
-m4_define([cs_min_version_default], [1.1])
+m4_define([cs_min_version_default], [1.3])
 
 #------------------------------------------------------------------------------
 # CS_PATH_CRYSTAL_CHECK([DESIRED-VERSION], [ACTION-IF-FOUND],
@@ -66,7 +66,7 @@ AC_ARG_ENABLE([cstest],
 # Split the DESIRED-VERSION into the major and minor version number 
 # components.
 cs_version_desired=m4_default([$1],[cs_min_version_default])
-sed_expr_base=[\\\([0-9]\\\+\\\)\.\\\([0-9]\\\+\\\).*]
+sed_expr_base=['\([0-9][0-9]*\)\.\([0-9][0-9]*\).*']
 cs_version_major=`echo $cs_version_desired | sed "s/$sed_expr_base/\1/"`
 cs_version_minor=`echo $cs_version_desired | sed "s/$sed_expr_base/\2/"`
 
