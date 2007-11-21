@@ -100,9 +100,10 @@ class ProgressionDelay : public psGameEvent
 {
 private:
 	ProgressionEvent * progEvent;
+    unsigned int client;
 
 public:
-	ProgressionDelay(ProgressionEvent * progEvent, csTicks delay);
+	ProgressionDelay(ProgressionEvent * progEvent, csTicks delay, unsigned int clientnum);
 	virtual ~ProgressionDelay();
 	void Trigger(); 
 };
