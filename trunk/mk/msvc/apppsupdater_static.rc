@@ -36,6 +36,6 @@ FILEFLAGS 0x0
 }
 // This file is generated automatically.
 
-#if !defined(PROJECTGEN_VERSION) || (PROJECTGEN_VERSION != 8)
+#if !defined(PROJECTGEN_VERSION) || (PROJECTGEN_VERSION < 8)
 1 24 "apppsupdater_static.manifest"
 #endif
