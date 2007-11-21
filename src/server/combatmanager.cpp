@@ -280,18 +280,15 @@ void psCombatManager::AttackSomeone(gemActor *attacker,gemObject *target,Stance 
             psItem *weapon=attacker_character->Inventory().GetEffectiveWeaponInSlot(weaponSlot);
             if (weapon!=NULL)
             {
-                haveWeapon = true;
-                Debug5(LOG_COMBAT,attacker->GetClientID(),"%s tries to attack with %s weapon %s at %.2f range",
-                       attacker->GetName(),(weapon->GetIsRangeWeapon()?"range":"melee"),weapon->GetName(),attacker->RangeTo(target,false));
-                if (ValidDistance(attacker,target,weapon))
-                {
-                    Debug3(LOG_COMBAT,attacker->GetClientID(),"%s started attacking with %s",attacker->GetName(),weapon->GetName())
+              haveWeapon = true;
+              Debug5(LOG_COMBAT,attacker->GetClientID(),"%s tries to attack with %s weapon %s at %.2f range",
+                attacker->GetName(),(weapon->GetIsRangeWeapon()?"range":"melee"),weapon->GetName(),attacker->RangeTo(target,false));
+              Debug3(LOG_COMBAT,attacker->GetClientID(),"%s started attacking with %s",attacker->GetName(),weapon->GetName())
 
-                    // start the ball rolling
-                    QueueNextEvent(attacker,weaponSlot,target,attacker->GetClientID(),target->GetClientID());  
+                // start the ball rolling
+                QueueNextEvent(attacker,weaponSlot,target,attacker->GetClientID(),target->GetClientID());  
 
-                    startedAttacking=true;
-                }
+              startedAttacking=true;
             }
         }
     }
@@ -308,8 +305,6 @@ void psCombatManager::AttackSomeone(gemActor *attacker,gemObject *target,Stance 
             {
                 SetCombat(attacker,stance);
             }
-            
-            NotifyTarget(attacker,target);
         }
         else
         {
@@ -575,6 +570,7 @@ void psCombatManager::ApplyCombatEvent(psCombatGameEvent *event, int attack_resu
             {
                 struckArmor->AddDecay(ArmorVsWeapon);
             }
+            NotifyTarget(gemAttacker,gemTarget);
 
             break;
         }
@@ -597,6 +593,7 @@ void psCombatManager::ApplyCombatEvent(psCombatGameEvent *event, int attack_resu
                 Debug1(LOG_COMBAT, gemAttacker->GetClientID(), "Training Armour Skills On Dodge\n");
                 gemTarget->GetCharacterData()->PracticeArmorSkills(1, event->AttackLocation);
             }
+            NotifyTarget(gemAttacker,gemTarget);
             break;
         }
         case ATTACK_BLOCKED:
@@ -627,6 +624,7 @@ void psCombatManager::ApplyCombatEvent(psCombatGameEvent *event, int attack_resu
             {
                 blockingWeapon->AddDecay(ITEM_DECAY_FACTOR_PARRY);
             }
+            NotifyTarget(gemAttacker,gemTarget);
 
             break;
         }
@@ -642,6 +640,7 @@ void psCombatManager::ApplyCombatEvent(psCombatGameEvent *event, int attack_resu
                 (unsigned int)-1); // no defense anims yet
 
             ev.Multicast(gemTarget->GetMulticastClients(),0,MAX_COMBAT_EVENT_RANGE);
+            NotifyTarget(gemAttacker,gemTarget);
             break;
         }
         case ATTACK_OUTOFRANGE:
