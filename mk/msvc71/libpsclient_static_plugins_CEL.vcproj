@@ -26,14 +26,14 @@
 				RuntimeLibrary="2"
 				DebugInformationFormat="3"
 				BufferSecurityCheck="FALSE"
-				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;WIN32"
+				ProgramDataBaseFileName="..\..\out\release71\build\libpsclient_static_plugins_CEL\psclient_static_plugins_CEL.pdb"
+				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;WIN32"
 				OptimizeForProcessor="1"
 				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
 				PrecompiledHeaderFile="..\..\out\release71\build\libpsclient_static_plugins_CEL\libpsclient_static_plugins_CEL.pch"
 				AssemblerListingLocation="..\..\out\release71\build\libpsclient_static_plugins_CEL\"
 				ObjectFile="..\..\out\release71\build\libpsclient_static_plugins_CEL\"
-				ProgramDataBaseFileName="..\..\out\release71\build\libpsclient_static_plugins_CEL\psclient_static_plugins_CEL.pdb"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="TRUE"
@@ -60,14 +60,14 @@
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
-				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__"
+				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX"
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
 				TypeLibraryName="..\..\out\release71\build\libpsclient_static_plugins_CEL\libpsclient_static_plugins_CEL.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="md ..\..\out\release71\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\release71\bin\&#x0D;&#x0A;copy &quot;$(TargetPath)&quot; ..\..\&#x0D;&#x0A;del ..\..\$(TargetName).lib&#x0D;&#x0A;"
+				CommandLine="md ..\..\out\release71\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\release71\bin\&#x0D;&#x0A;"
 				/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
@@ -75,7 +75,7 @@
 				Name="VCPreLinkEventTool"/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;PROJECTGEN_VERSION=71"
+				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;PROJECTGEN_VERSION=71"
 				AdditionalIncludeDirectories=".;..\..\src\client;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
 				Culture="1033"/>
 			<Tool
@@ -99,14 +99,14 @@
 				RuntimeLibrary="2"
 				DebugInformationFormat="3"
 				BufferSecurityCheck="FALSE"
-				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;_WINDOWS;WIN32;CS_BUILD_SHARED_LIBS"
+				ProgramDatabaseFileName="..\..\out\release71\build\libpsclient_static_plugins_CEL\psclient_static_plugins_CEL-0.3-vc71.pdb"
+				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_WINDOWS;WIN32;CS_BUILD_SHARED_LIBS"
 				OptimizeForProcessor="1"
 				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
 				PrecompiledHeaderFile="..\..\out\release71\build\libpsclient_static_plugins_CEL\libpsclient_static_plugins_CEL.pch"
 				AssemblerListingLocation="..\..\out\release71\build\libpsclient_static_plugins_CEL\"
 				ObjectFile="..\..\out\release71\build\libpsclient_static_plugins_CEL\"
-				ProgramDataBaseFileName="..\..\out\release71\build\libpsclient_static_plugins_CEL\psclient_static_plugins_CEL.pdb"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="TRUE"
@@ -135,14 +135,14 @@
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
-				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;_WINDOWS"
+				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_WINDOWS"
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
 				TypeLibraryName="..\..\out\release71\build\libpsclient_static_plugins_CEL\libpsclient_static_plugins_CEL.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="md ..\..\out\release71\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\release71\bin\&#x0D;&#x0A;copy &quot;$(TargetPath)&quot; ..\..\&#x0D;&#x0A;del ..\..\$(TargetName).lib&#x0D;&#x0A;"
+				CommandLine="md ..\..\out\release71\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\release71\bin\&#x0D;&#x0A;"
 				/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
@@ -150,7 +150,7 @@
 				Name="VCPreLinkEventTool"/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;_WINDOWS;PROJECTGEN_VERSION=71"
+				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_WINDOWS;PROJECTGEN_VERSION=71"
 				AdditionalIncludeDirectories=".;..\..\src\client;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
 				Culture="1033"/>
 			<Tool
@@ -173,14 +173,14 @@
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;WIN32"
+				ProgramDataBaseFileName="..\..\out\debug71\build\libpsclient_static_plugins_CEL\psclient_static_plugins_CEL.pdb"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;WIN32"
 				OptimizeForProcessor="1"
 				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
 				PrecompiledHeaderFile="..\..\out\debug71\build\libpsclient_static_plugins_CEL\libpsclient_static_plugins_CEL.pch"
 				AssemblerListingLocation="..\..\out\debug71\build\libpsclient_static_plugins_CEL\"
 				ObjectFile="..\..\out\debug71\build\libpsclient_static_plugins_CEL\"
-				ProgramDataBaseFileName="..\..\out\debug71\build\libpsclient_static_plugins_CEL\psclient_static_plugins_CEL.pdb"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="TRUE"
@@ -205,14 +205,14 @@
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX"
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
 				TypeLibraryName="..\..\out\debug71\build\libpsclient_static_plugins_CEL\libpsclient_static_plugins_CEL.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="md ..\..\out\debug71\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug71\bin\&#x0D;&#x0A;copy &quot;$(TargetPath)&quot; ..\..\&#x0D;&#x0A;del ..\..\$(TargetName).lib&#x0D;&#x0A;"
+				CommandLine="md ..\..\out\debug71\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug71\bin\&#x0D;&#x0A;"
 				/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
@@ -220,7 +220,7 @@
 				Name="VCPreLinkEventTool"/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;PROJECTGEN_VERSION=71"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;PROJECTGEN_VERSION=71"
 				AdditionalIncludeDirectories=".;..\..\src\client;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
 				Culture="1033"/>
 			<Tool
@@ -243,14 +243,15 @@
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;_WINDOWS;WIN32;CS_BUILD_SHARED_LIBS"
+
+				ProgramDatabaseFileName="..\..\out\debug71\build\libpsclient_static_plugins_CEL\psclient_static_plugins_CEL-0.3-vc71_d.pdb"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_WINDOWS;WIN32;CS_BUILD_SHARED_LIBS"
 				OptimizeForProcessor="1"
 				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
 				PrecompiledHeaderFile="..\..\out\debug71\build\libpsclient_static_plugins_CEL\libpsclient_static_plugins_CEL.pch"
 				AssemblerListingLocation="..\..\out\debug71\build\libpsclient_static_plugins_CEL\"
 				ObjectFile="..\..\out\debug71\build\libpsclient_static_plugins_CEL\"
-				ProgramDataBaseFileName="..\..\out\debug71\build\libpsclient_static_plugins_CEL\psclient_static_plugins_CEL.pdb"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="TRUE"
@@ -277,14 +278,14 @@
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;_WINDOWS"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_WINDOWS"
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
 				TypeLibraryName="..\..\out\debug71\build\libpsclient_static_plugins_CEL\libpsclient_static_plugins_CEL.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="md ..\..\out\debug71\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug71\bin\&#x0D;&#x0A;copy &quot;$(TargetPath)&quot; ..\..\&#x0D;&#x0A;del ..\..\$(TargetName).lib&#x0D;&#x0A;"
+				CommandLine="md ..\..\out\debug71\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug71\bin\&#x0D;&#x0A;"
 				/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
@@ -292,7 +293,7 @@
 				Name="VCPreLinkEventTool"/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;_WINDOWS;PROJECTGEN_VERSION=71"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_WINDOWS;PROJECTGEN_VERSION=71"
 				AdditionalIncludeDirectories=".;..\..\src\client;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
 				Culture="1033"/>
 			<Tool
@@ -315,14 +316,14 @@
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_MEMORY_TRACKER;WIN32"
+				ProgramDataBaseFileName="..\..\out\debug71\build\libpsclient_static_plugins_CEL\psclient_static_plugins_CEL.pdb"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;WIN32"
 				OptimizeForProcessor="1"
 				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
 				PrecompiledHeaderFile="..\..\out\debug71\build\libpsclient_static_plugins_CEL\libpsclient_static_plugins_CEL.pch"
 				AssemblerListingLocation="..\..\out\debug71\build\libpsclient_static_plugins_CEL\"
 				ObjectFile="..\..\out\debug71\build\libpsclient_static_plugins_CEL\"
-				ProgramDataBaseFileName="..\..\out\debug71\build\libpsclient_static_plugins_CEL\psclient_static_plugins_CEL.pdb"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="TRUE"
@@ -347,14 +348,14 @@
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_MEMORY_TRACKER"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER"
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
 				TypeLibraryName="..\..\out\debug71\build\libpsclient_static_plugins_CEL\libpsclient_static_plugins_CEL.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="md ..\..\out\debug71\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug71\bin\&#x0D;&#x0A;copy &quot;$(TargetPath)&quot; ..\..\&#x0D;&#x0A;del ..\..\$(TargetName).lib&#x0D;&#x0A;"
+				CommandLine="md ..\..\out\debug71\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug71\bin\&#x0D;&#x0A;"
 				/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
@@ -362,7 +363,7 @@
 				Name="VCPreLinkEventTool"/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_MEMORY_TRACKER;PROJECTGEN_VERSION=71"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;PROJECTGEN_VERSION=71"
 				AdditionalIncludeDirectories=".;..\..\src\client;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
 				Culture="1033"/>
 			<Tool
@@ -385,14 +386,15 @@
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_MEMORY_TRACKER;_WINDOWS;WIN32;CS_BUILD_SHARED_LIBS"
+
+				ProgramDatabaseFileName="..\..\out\debug71\build\libpsclient_static_plugins_CEL\psclient_static_plugins_CEL-0.3-vc71_d.pdb"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;_WINDOWS;WIN32;CS_BUILD_SHARED_LIBS"
 				OptimizeForProcessor="1"
 				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
 				PrecompiledHeaderFile="..\..\out\debug71\build\libpsclient_static_plugins_CEL\libpsclient_static_plugins_CEL.pch"
 				AssemblerListingLocation="..\..\out\debug71\build\libpsclient_static_plugins_CEL\"
 				ObjectFile="..\..\out\debug71\build\libpsclient_static_plugins_CEL\"
-				ProgramDataBaseFileName="..\..\out\debug71\build\libpsclient_static_plugins_CEL\psclient_static_plugins_CEL.pdb"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="TRUE"
@@ -419,14 +421,14 @@
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_MEMORY_TRACKER;_WINDOWS"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;_WINDOWS"
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
 				TypeLibraryName="..\..\out\debug71\build\libpsclient_static_plugins_CEL\libpsclient_static_plugins_CEL.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="md ..\..\out\debug71\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug71\bin\&#x0D;&#x0A;copy &quot;$(TargetPath)&quot; ..\..\&#x0D;&#x0A;del ..\..\$(TargetName).lib&#x0D;&#x0A;"
+				CommandLine="md ..\..\out\debug71\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug71\bin\&#x0D;&#x0A;"
 				/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
@@ -434,7 +436,7 @@
 				Name="VCPreLinkEventTool"/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_MEMORY_TRACKER;_WINDOWS;PROJECTGEN_VERSION=71"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;_WINDOWS;PROJECTGEN_VERSION=71"
 				AdditionalIncludeDirectories=".;..\..\src\client;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
 				Culture="1033"/>
 			<Tool
@@ -457,14 +459,14 @@
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_REF_TRACKER;WIN32"
+				ProgramDataBaseFileName="..\..\out\debug71\build\libpsclient_static_plugins_CEL\psclient_static_plugins_CEL.pdb"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;WIN32"
 				OptimizeForProcessor="1"
 				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
 				PrecompiledHeaderFile="..\..\out\debug71\build\libpsclient_static_plugins_CEL\libpsclient_static_plugins_CEL.pch"
 				AssemblerListingLocation="..\..\out\debug71\build\libpsclient_static_plugins_CEL\"
 				ObjectFile="..\..\out\debug71\build\libpsclient_static_plugins_CEL\"
-				ProgramDataBaseFileName="..\..\out\debug71\build\libpsclient_static_plugins_CEL\psclient_static_plugins_CEL.pdb"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="TRUE"
@@ -489,14 +491,14 @@
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_REF_TRACKER"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER"
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
 				TypeLibraryName="..\..\out\debug71\build\libpsclient_static_plugins_CEL\libpsclient_static_plugins_CEL.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="md ..\..\out\debug71\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug71\bin\&#x0D;&#x0A;copy &quot;$(TargetPath)&quot; ..\..\&#x0D;&#x0A;del ..\..\$(TargetName).lib&#x0D;&#x0A;"
+				CommandLine="md ..\..\out\debug71\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug71\bin\&#x0D;&#x0A;"
 				/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
@@ -504,7 +506,7 @@
 				Name="VCPreLinkEventTool"/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_REF_TRACKER;PROJECTGEN_VERSION=71"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;PROJECTGEN_VERSION=71"
 				AdditionalIncludeDirectories=".;..\..\src\client;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
 				Culture="1033"/>
 			<Tool
@@ -527,14 +529,15 @@
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_REF_TRACKER;_WINDOWS;WIN32;CS_BUILD_SHARED_LIBS"
+
+				ProgramDatabaseFileName="..\..\out\debug71\build\libpsclient_static_plugins_CEL\psclient_static_plugins_CEL-0.3-vc71_d.pdb"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;_WINDOWS;WIN32;CS_BUILD_SHARED_LIBS"
 				OptimizeForProcessor="1"
 				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
 				PrecompiledHeaderFile="..\..\out\debug71\build\libpsclient_static_plugins_CEL\libpsclient_static_plugins_CEL.pch"
 				AssemblerListingLocation="..\..\out\debug71\build\libpsclient_static_plugins_CEL\"
 				ObjectFile="..\..\out\debug71\build\libpsclient_static_plugins_CEL\"
-				ProgramDataBaseFileName="..\..\out\debug71\build\libpsclient_static_plugins_CEL\psclient_static_plugins_CEL.pdb"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="TRUE"
@@ -561,14 +564,14 @@
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_REF_TRACKER;_WINDOWS"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;_WINDOWS"
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
 				TypeLibraryName="..\..\out\debug71\build\libpsclient_static_plugins_CEL\libpsclient_static_plugins_CEL.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="md ..\..\out\debug71\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug71\bin\&#x0D;&#x0A;copy &quot;$(TargetPath)&quot; ..\..\&#x0D;&#x0A;del ..\..\$(TargetName).lib&#x0D;&#x0A;"
+				CommandLine="md ..\..\out\debug71\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug71\bin\&#x0D;&#x0A;"
 				/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
@@ -576,7 +579,7 @@
 				Name="VCPreLinkEventTool"/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_REF_TRACKER;_WINDOWS;PROJECTGEN_VERSION=71"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;_WINDOWS;PROJECTGEN_VERSION=71"
 				AdditionalIncludeDirectories=".;..\..\src\client;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
 				Culture="1033"/>
 			<Tool
@@ -599,14 +602,14 @@
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
-				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;WIN32"
+				ProgramDataBaseFileName="..\..\out\debug71\build\libpsclient_static_plugins_CEL\psclient_static_plugins_CEL.pdb"
+				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;WIN32"
 				OptimizeForProcessor="1"
 				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
 				PrecompiledHeaderFile="..\..\out\debug71\build\libpsclient_static_plugins_CEL\libpsclient_static_plugins_CEL.pch"
 				AssemblerListingLocation="..\..\out\debug71\build\libpsclient_static_plugins_CEL\"
 				ObjectFile="..\..\out\debug71\build\libpsclient_static_plugins_CEL\"
-				ProgramDataBaseFileName="..\..\out\debug71\build\libpsclient_static_plugins_CEL\psclient_static_plugins_CEL.pdb"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="TRUE"
@@ -631,14 +634,14 @@
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
-				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__"
+				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX"
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
 				TypeLibraryName="..\..\out\debug71\build\libpsclient_static_plugins_CEL\libpsclient_static_plugins_CEL.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="md ..\..\out\debug71\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug71\bin\&#x0D;&#x0A;copy &quot;$(TargetPath)&quot; ..\..\&#x0D;&#x0A;del ..\..\$(TargetName).lib&#x0D;&#x0A;"
+				CommandLine="md ..\..\out\debug71\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug71\bin\&#x0D;&#x0A;"
 				/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
@@ -646,7 +649,7 @@
 				Name="VCPreLinkEventTool"/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;PROJECTGEN_VERSION=71"
+				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;PROJECTGEN_VERSION=71"
 				AdditionalIncludeDirectories=".;..\..\src\client;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
 				Culture="1033"/>
 			<Tool
@@ -669,14 +672,15 @@
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
-				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;_WINDOWS;WIN32;CS_BUILD_SHARED_LIBS"
+
+				ProgramDatabaseFileName="..\..\out\debug71\build\libpsclient_static_plugins_CEL\psclient_static_plugins_CEL-0.3-vc71_d.pdb"
+				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_WINDOWS;WIN32;CS_BUILD_SHARED_LIBS"
 				OptimizeForProcessor="1"
 				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
 				PrecompiledHeaderFile="..\..\out\debug71\build\libpsclient_static_plugins_CEL\libpsclient_static_plugins_CEL.pch"
 				AssemblerListingLocation="..\..\out\debug71\build\libpsclient_static_plugins_CEL\"
 				ObjectFile="..\..\out\debug71\build\libpsclient_static_plugins_CEL\"
-				ProgramDataBaseFileName="..\..\out\debug71\build\libpsclient_static_plugins_CEL\psclient_static_plugins_CEL.pdb"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="TRUE"
@@ -703,14 +707,14 @@
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
-				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;_WINDOWS"
+				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_WINDOWS"
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
 				TypeLibraryName="..\..\out\debug71\build\libpsclient_static_plugins_CEL\libpsclient_static_plugins_CEL.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="md ..\..\out\debug71\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug71\bin\&#x0D;&#x0A;copy &quot;$(TargetPath)&quot; ..\..\&#x0D;&#x0A;del ..\..\$(TargetName).lib&#x0D;&#x0A;"
+				CommandLine="md ..\..\out\debug71\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug71\bin\&#x0D;&#x0A;"
 				/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
@@ -718,7 +722,7 @@
 				Name="VCPreLinkEventTool"/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;_WINDOWS;PROJECTGEN_VERSION=71"
+				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_WINDOWS;PROJECTGEN_VERSION=71"
 				AdditionalIncludeDirectories=".;..\..\src\client;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
 				Culture="1033"/>
 			<Tool

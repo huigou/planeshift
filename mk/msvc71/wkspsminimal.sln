@@ -1,5 +1,5 @@
 Microsoft Visual Studio Solution File, Format Version 8.00
-# Visual C++ Express 2005
+
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "apppsclient", "apppsclient.vcproj", "{FEAFE33B-F1B6-42F9-55F1-7E6413431BF1}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "apppslaunch", "apppslaunch.vcproj", "{B1CE87F5-3C6B-77FA-DBAF-8F9DE20914BC}"

@@ -1,5 +1,5 @@
 Microsoft Visual Studio Solution File, Format Version 7.00
-# Visual C++ Express 2005
+
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "appeedit", "appeedit.vcproj", "{D7B7BF86-AA99-ECF1-150B-AFF316BDA7D8}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "apppsclient", "apppsclient.vcproj", "{FEAFE33B-F1B6-42F9-55F1-7E6413431BF1}"
