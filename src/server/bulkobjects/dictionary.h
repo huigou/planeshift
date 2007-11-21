@@ -166,6 +166,7 @@ public:
         synonym     = NULL;
         hypernymSynNet = NULL;
         this->term = term;
+        this->term.Downcase();
     }
     ~NpcTerm()
     {
