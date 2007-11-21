@@ -672,6 +672,8 @@ public:
  */
 class IntroduceResponseOp : public ResponseOperation
 {
+protected:
+    csString targetName;
 public:
     IntroduceResponseOp() { name = "introduce"; }
     virtual ~IntroduceResponseOp() {};

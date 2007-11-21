@@ -8,6 +8,8 @@
 - NPCs are now also unknown to the player, until they introduce
   themselves.
 - Added an IntroduceResponseOp to be used with npcs.
+- Improved the IntroduceResponseOp, Allowing npcs to introduce other
+  npcs, And not just themselves.
 
 *** 2007-11-19 by Michael Gist
 - Removed update checking code from client and server.
