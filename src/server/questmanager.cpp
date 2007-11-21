@@ -406,6 +406,10 @@ bool QuestManager::HandleScriptCommand(csString& block,
             }
             op.Append("/>");
         }
+        else if (!strncasecmp(block,"Introduce",10)) 
+        {
+            op.Format("<introduce/>" ); 
+        }
         else // unknown block
         {
             Error2("Unknown command '%s' !",block.GetData());

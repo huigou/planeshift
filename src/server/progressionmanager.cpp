@@ -51,6 +51,7 @@
 #include "actionmanager.h"
 #include "npcmanager.h"
 #include "usermanager.h"
+#include "introductionmanager.h"
 
 #include "bulkobjects/pscharacterloader.h"
 #include "bulkobjects/pscharacter.h"
@@ -2225,6 +2226,55 @@ public:
     }
 protected:
     uint32 glyphUID;
+};
+
+/*-------------------------------------------------------------*/
+
+/**
+ * IntroduceOp
+ * Introduce 2 players
+ *
+ * Syntax:
+ *    <introduce/>
+ */
+class IntroduceOp : public ProgressionOperation
+{
+public:
+    IntroduceOp() : ProgressionOperation() { };
+    virtual ~IntroduceOp() {};
+
+    bool Load(iDocumentNode *node, ProgressionEvent *script)
+    {
+        return true;
+    }
+    
+    virtual csString ToString()
+    {
+        csString xml ;
+        xml.Format("<introduce/>");
+        return xml;
+    }
+
+    bool Run(gemActor *actor, gemObject *target, bool inverse)
+    {
+        if (!actor || !target)
+            return false;
+
+        psCharacter* actorChar = actor->GetCharacterData();
+        psCharacter* targetChar = target->GetCharacterData();
+
+        if (inverse)
+        {
+            psserver->GetIntroductionManager()->UnIntroduce(actorChar->GetCharacterID(), targetChar->GetCharacterID());
+            return true;
+        }
+
+        psserver->GetIntroductionManager()->Introduce(actorChar->GetCharacterID(), targetChar->GetCharacterID());
+
+        target->Send(actor->GetClientID(), false, actor->GetClient()->IsSuperClient());
+
+        return true;
+    }
 };
 
 /*-------------------------------------------------------------*/
@@ -5048,6 +5098,10 @@ bool ProgressionEvent::LoadScript(iDocumentNode *topNode)
         else if ( strcmp( node->GetValue(), "action" ) == 0 )
         {
             op = new ActionOp();
+        }
+        else if ( strcmp( node->GetValue(), "introduce" ) == 0 )
+        {
+            op = new IntroduceOp();
         }
         else
         {

@@ -667,4 +667,17 @@ public:
     virtual bool Run(gemNPC *who, Client *target,NpcResponse *owner,csTicks& timeDelay);
 };
 
+/**
+ * This script operation introduces an npc
+ */
+class IntroduceResponseOp : public ResponseOperation
+{
+public:
+    IntroduceResponseOp() { name = "introduce"; }
+    virtual ~IntroduceResponseOp() {};
+    virtual bool Load(iDocumentNode *node);
+    virtual csString GetResponseScript();    
+    virtual bool Run(gemNPC *who, Client *target,NpcResponse *owner,csTicks& timeDelay);
+};
+
 #endif

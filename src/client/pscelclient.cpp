@@ -1084,7 +1084,7 @@ GEMClientActor::GEMClientActor( psCelClient* cel, psPersistActor& mesg )
 
     SetAnimationVelocity(mesg.vel);
 
-    if (!control && ((flags & psPersistActor::NAMEKNOWN) || flags & psPersistActor::NPC))
+    if (!control && (flags & psPersistActor::NAMEKNOWN))
         cel->GetEntityLabels()->OnObjectArrived(this);
     cel->GetShadowManager()->CreateShadow(this);
     
@@ -1517,7 +1517,7 @@ unsigned int GEMClientActor::GetChatBubbleID() const
 const char* GEMClientActor::GetName(bool trueName)
 {
     static const char* strUnknown = "[Unknown]";
-    if (trueName || ((Flags() & psPersistActor::NAMEKNOWN) || (Flags() & psPersistActor::NPC)) || name == psengine->GetCelClient()->GetMainActor()->GetName())
+    if (trueName || (Flags() & psPersistActor::NAMEKNOWN) || (GetID() == psengine->GetCelClient()->GetMainActor()->GetID()))
         return name;
     return strUnknown;
 }
