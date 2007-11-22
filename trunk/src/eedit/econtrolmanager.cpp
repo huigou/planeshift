@@ -46,8 +46,10 @@ KeyCommand commands[] = {
     {"forward2",        eControlManager::HandleForward},
     {"backward1",       eControlManager::HandleBackward},
     {"backward2",       eControlManager::HandleBackward},
-    {"rotateleft",      eControlManager::HandleRotateLeft},
-    {"rotateright",     eControlManager::HandleRotateRight},
+    {"rotateleft1",     eControlManager::HandleRotateLeft},
+    {"rotateleft2",     eControlManager::HandleRotateLeft},
+    {"rotateright1",    eControlManager::HandleRotateRight},
+    {"rotateright2",    eControlManager::HandleRotateRight},
     {"lookup",          eControlManager::HandleLookUp},
     {"lookdown",        eControlManager::HandleLookDown},
     {0, 0}

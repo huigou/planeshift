@@ -1,3 +1,6 @@
+*** 2007-11-22 by Michael Gist
+- Camera key additions from Caarrie for eedit, resolving FS#642.
+
 *** 2007-11-21 by Michael Gist
 - Fix for FS#112 from Rakhun & Kaerli.
 
