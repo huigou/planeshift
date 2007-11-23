@@ -303,7 +303,9 @@ bool LoadPrerequisiteXML(iDocumentNode * topNode, psQuest * self, psQuestPrereqO
 
         int value = topNode->GetAttributeValueAsInt("value");
 
-        prerequisite = new psQuestPrereqOpFaction(faction,value);
+        int max = topNode->GetAttributeValueAsInt("max");
+
+        prerequisite = new psQuestPrereqOpFaction(faction,value,max);
 
     }
     else if ( strcmp( topNode->GetValue(), "activemagic" ) == 0 )
