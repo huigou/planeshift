@@ -531,6 +531,7 @@ class psQuestPrereqOpFaction: public psQuestPrereqOp
      * The faction level needed
      */
     int value;
+    bool max;
  public:
 
     /**
@@ -538,7 +539,7 @@ class psQuestPrereqOpFaction: public psQuestPrereqOp
      *
      * @param faction The quest that need to be assigned.
      */
-    psQuestPrereqOpFaction(Faction* faction, int value):faction(faction),value(value){};
+    psQuestPrereqOpFaction(Faction* faction, int value, bool max):faction(faction),value(value),max(max){};
 
     /**
      */

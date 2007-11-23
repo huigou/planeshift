@@ -275,6 +275,8 @@ psQuestPrereqOp* psQuestPrereqOpQuestCompletedCategory::Copy()
 
 bool psQuestPrereqOpFaction::Check(psCharacter * character)
 {
+    if(max) // If value is max, make sure we're below it
+        return !character->CheckFaction(faction,value);
     return character->CheckFaction(faction,value);
 }
 
@@ -282,14 +284,14 @@ csString psQuestPrereqOpFaction::GetScriptOp()
 {
     csString script;
     
-    script.AppendFmt("<faction name=\"%s\" value=\"%d\"/>",faction->name.GetData(),value);
+    script.AppendFmt("<faction name=\"%s\" value=\"%d\" max=\"%d\"/>",faction->name.GetData(),value,max);
 
     return script;
 }
 
 psQuestPrereqOp* psQuestPrereqOpFaction::Copy()
 {
-    psQuestPrereqOpFaction* copy = new psQuestPrereqOpFaction(faction,value);
+    psQuestPrereqOpFaction* copy = new psQuestPrereqOpFaction(faction,value,max);
     return copy;
 }
 

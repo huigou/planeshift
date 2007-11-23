@@ -5,6 +5,7 @@
   script too. Allowing to change the price based on character stats
   and skills. The test script adds CHA/10 to price when selling and
   decreases CHA/10 when buying.
+- Added possibility to specify max values for faction prereqs.
 
 *** 2007-11-22 by Michael Gist
 - Camera key additions from Caarrie for eedit, resolving FS#642.
