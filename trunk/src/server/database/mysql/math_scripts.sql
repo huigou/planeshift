@@ -236,3 +236,7 @@ INSERT INTO math_scripts VALUES( "Calc Char Account Level", "accountLevel = log(
 INSERT INTO math_scripts VALUES( "Calc Bank Fee", "bankFee = 5.25 - (accountLevel * 0.25);");
 
 INSERT INTO math_scripts VALUES( "Calculate Mining Odds", "Total = Distance * Probability * Quality * Skill + 0.1");
+
+INSERT INTO math_scripts VALUES( "Calc Item Merchant Price Buy", "Result = ItemPrice - CharData:getSkillValue(47)/10;");
+
+INSERT INTO math_scripts VALUES( "Calc Item Merchant Price Sell", "Result = ItemPrice + CharData:getSkillValue(47)/10;");

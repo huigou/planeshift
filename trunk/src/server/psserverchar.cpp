@@ -78,6 +78,22 @@
 psServerCharManager::psServerCharManager()
 {
     slotManager = NULL;
+
+    calc_item_merchant_price_buy = psserver->GetMathScriptEngine()->FindScript("Calc Item Merchant Price Buy");
+    if (calc_item_merchant_price_buy)
+    {
+        calc_item_merchant_price_item_price_buy = calc_item_merchant_price_buy->GetOrCreateVar("ItemPrice");
+        calc_item_merchant_price_char_data_buy = calc_item_merchant_price_buy->GetOrCreateVar("CharData");
+        calc_item_merchant_price_char_result_buy = calc_item_merchant_price_buy->GetOrCreateVar("Result");
+    }
+
+    calc_item_merchant_price_sell = psserver->GetMathScriptEngine()->FindScript("Calc Item Merchant Price Sell");
+    if (calc_item_merchant_price_sell)
+    {
+        calc_item_merchant_price_item_price_sell = calc_item_merchant_price_sell->GetOrCreateVar("ItemPrice");
+        calc_item_merchant_price_char_data_sell = calc_item_merchant_price_sell->GetOrCreateVar("CharData");
+        calc_item_merchant_price_char_result_sell = calc_item_merchant_price_sell->GetOrCreateVar("Result");
+    }
 }
 
 psServerCharManager::~psServerCharManager()
@@ -973,7 +989,7 @@ void psServerCharManager::HandleMerchantBuy(psGUIMerchantMessage& msg, Client *c
             psserver->SendSystemError(client->GetClientNum(),"That merchant is dead");
             return;
         }
-        psMoney price = item->GetPrice();
+        psMoney price = CalculateMerchantPrice(item, client, false);
         psMoney money = character->Money();
 
         if (price*count > money)
@@ -1124,7 +1140,7 @@ void psServerCharManager::HandleMerchantSell(psGUIMerchantMessage& msg, Client *
             return;
         }
 
-        psMoney price = item->GetSellPrice();
+        psMoney price = CalculateMerchantPrice(item, client, true);
         psMoney money = character->Money();
 
         count = MIN(count, item->GetStackCount());
@@ -1736,7 +1752,7 @@ bool psServerCharManager::SendMerchantItems( Client *client, psCharacter* mercha
                     items[z]->GetUID(),
                     escpxml_name.GetData(),
                     escpxml_imagename.GetData(),
-                    items[z]->GetPrice().GetTotal(),
+                    CalculateMerchantPrice(items[z], client, false),
                     items[z]->GetStackCount());
 
         buff.Append(item);
@@ -1753,6 +1769,30 @@ bool psServerCharManager::SendMerchantItems( Client *client, psCharacter* mercha
 
 
     return true;
+}
+
+int psServerCharManager::CalculateMerchantPrice(psItem *item, Client *client, bool sellPrice)
+{
+    int basePrice = sellPrice?item->GetSellPrice().GetTotal():item->GetPrice().GetTotal();
+    int finalPrice = basePrice;
+    if((sellPrice && !calc_item_merchant_price_sell) || (!sellPrice && !calc_item_merchant_price_buy))
+        return basePrice;
+
+    if (sellPrice)
+    {
+        calc_item_merchant_price_char_data_sell->SetObject(client->GetCharacterData());
+        calc_item_merchant_price_item_price_sell->SetValue(basePrice);
+        calc_item_merchant_price_sell->Execute();
+        finalPrice = calc_item_merchant_price_char_result_sell->GetValue();
+    }
+    else
+    {
+        calc_item_merchant_price_char_data_buy->SetObject(client->GetCharacterData());
+        calc_item_merchant_price_item_price_buy->SetValue(basePrice);
+        calc_item_merchant_price_buy->Execute();
+        finalPrice = calc_item_merchant_price_char_result_buy->GetValue();
+    }
+    return finalPrice;
 }
 
 bool psServerCharManager::SendPlayerItems( Client *client, psItemCategory* category)
@@ -1788,7 +1828,7 @@ bool psServerCharManager::SendPlayerItems( Client *client, psItemCategory* categ
                     itemID.GetDataSafe(),
                     escpxml_name.GetData(),
                     escpxml_imagename.GetData(),
-                    items[z]->GetSellPrice().GetTotal(),
+                    CalculateMerchantPrice(items[z], client, true),
                     items[z]->GetStackCount(),
                     purified.GetData());
 

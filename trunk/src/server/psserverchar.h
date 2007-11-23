@@ -103,6 +103,7 @@ public:
 protected:
 
     // -------------------Merchant Handling -------------------------------
+    int CalculateMerchantPrice(psItem *item, Client *client, bool sellPrice);
     bool SendMerchantItems( Client *client, psCharacter * merchant, psItemCategory * category);
     void HandleMerchantMessage( MsgEntry* me, Client *client );
     void HandleMerchantRequest(psGUIMerchantMessage& msg, Client *client);
@@ -145,6 +146,16 @@ protected:
 
     void ViewItem( MsgEntry* me );
     void UpdateSketch( MsgEntry* me );
+
+    MathScript* calc_item_merchant_price_buy;
+    MathScriptVar* calc_item_merchant_price_item_price_buy;
+    MathScriptVar* calc_item_merchant_price_char_data_buy;
+    MathScriptVar* calc_item_merchant_price_char_result_buy;
+    
+    MathScript* calc_item_merchant_price_sell;
+    MathScriptVar* calc_item_merchant_price_item_price_sell;
+    MathScriptVar* calc_item_merchant_price_char_data_sell;
+    MathScriptVar* calc_item_merchant_price_char_result_sell;
 };
 
 #endif
