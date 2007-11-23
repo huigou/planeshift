@@ -324,10 +324,10 @@ bool pawsShortcutWindow::OnButtonPressed( int mouseButton, int keyModifier, paws
     }            // switch( ... )
 
     // Execute clicked on button
-    if ( mouseButton == csmbLeft && !(keyModifier & CSMASK_ALT))
+    if ( mouseButton == csmbLeft && !(keyModifier & CSMASK_CTRL))
         ExecuteCommand( widget->GetID() - 1000, false );
     // Configure the button that was clicked on
-    else if ( mouseButton == csmbRight || (mouseButton == csmbLeft && (keyModifier & CSMASK_ALT)) )
+    else if ( mouseButton == csmbRight || (mouseButton == csmbLeft && (keyModifier & CSMASK_CTRL)) )
     {
         edit = widget->GetID() - 1000;
         if ( edit < 0 || edit >= NUM_SHORTCUTS )

@@ -1,3 +1,7 @@
+*** 2007-11-23 by Sasha Levin
+- Ctrl+left click on shortcut opens up the shortcut edit menu 
+  Instead of alt+left click.
+
 *** 2007-11-22 by Michael Gist
 - Camera key additions from Caarrie for eedit, resolving FS#642.
 
