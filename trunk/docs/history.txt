@@ -1,3 +1,8 @@
+*** 2007-11-24 by Sasha Levin
+- Added support for collision detection on items.
+- Added a /modify collide option to enable/disable collision
+  detection on items.
+
 *** 2007-11-23 by Sasha Levin
 - Ctrl+left click on shortcut opens up the shortcut edit menu 
   Instead of alt+left click.

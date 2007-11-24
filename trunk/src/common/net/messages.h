@@ -2901,7 +2901,8 @@ public:
     enum Flags
     {
         NONE            = 0,
-        NOPICKUP        = 1 << 0
+        NOPICKUP        = 1 << 0,
+        COLLIDE         = 1 << 1
     };
 
     psPersistItem(  uint32_t clientnum,

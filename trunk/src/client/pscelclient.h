@@ -416,6 +416,7 @@ public:
     virtual GEMOBJECT_TYPE GetObjectType() { return GEM_ITEM; }
 
 protected:
+    csRef<iPcSolid> solid;
 };
 
 /** An action location on the client. */

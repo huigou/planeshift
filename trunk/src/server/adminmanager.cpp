@@ -5676,6 +5676,13 @@ void AdminManager::ModifyHuntLocation(MsgEntry* me, psAdminCmdMessage& msg, Admi
             psserver->SendSystemInfo(me->clientnum, "%s is now %s",
                                     item->GetName(), onoff ? "npc owned" : "not npc owned");
         }
+        else if (data.action == "collide")
+        {
+            item->SetIsCD(onoff);
+            psserver->SendSystemInfo(me->clientnum, "%s is now %s",
+                                    item->GetName(), onoff ? "using collision detection" : "not using collision detection");
+            item->GetGemObject()->Send(me->clientnum, false, false);
+        }
         // TODO: Add more flags
         else
         {

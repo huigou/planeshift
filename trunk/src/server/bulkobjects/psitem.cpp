@@ -302,7 +302,10 @@ bool psItem::Load(iResultRow& row)
     {
         flags |= PSITEM_FLAG_NPCOWNED;
     }
-
+    if (flagstr.FindSubString("USECD", 0, true) != -1)
+    {
+        flags |= PSITEM_FLAG_USE_CD;
+    }
 
     // Lockpick stuff
     SetLockStrength(row.GetInt("lock_str"));
@@ -608,6 +611,11 @@ void psItem::GetFieldArray(psStringArray& fields)
     {
         if (flagString != "") flagString.Append(",");
         flagString.Append("NPCOWNED");
+    }
+    if (flags & PSITEM_FLAG_USE_CD)
+    {
+        if (flagString != "") flagString.Append(",");
+        flagString.Append("USECD");
     }
 
     fields.Push(flagString);
@@ -1811,6 +1819,14 @@ void psItem::SetIsNpcOwned(bool v)
         flags |= PSITEM_FLAG_NPCOWNED;
     else
         flags &= ~PSITEM_FLAG_NPCOWNED;
+}
+
+void psItem::SetIsCD(bool v)
+{
+    if (v)
+        flags |= PSITEM_FLAG_USE_CD;
+    else
+        flags &= ~PSITEM_FLAG_USE_CD;
 }
 
 void psItem::SetIsKey(bool v)

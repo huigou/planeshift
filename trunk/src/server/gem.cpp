@@ -1422,6 +1422,7 @@ void gemItem::Broadcast(int clientnum, bool control )
 {
     int flags = 0;
     if (!IsPickable()) flags |= psPersistItem::NOPICKUP;
+    if (IsUsingCD()) flags |= psPersistItem::COLLIDE;
 
     psPersistItem mesg(  
                          clientnum,                         
@@ -1475,6 +1476,7 @@ void gemItem::Send( int clientnum, bool , bool to_superclient)
 {
     int flags = 0;
     if (!IsPickable()) flags |= psPersistItem::NOPICKUP;
+    if (IsUsingCD()) flags |= psPersistItem::COLLIDE;
     
     psPersistItem mesg(
                          clientnum,
@@ -1507,6 +1509,8 @@ bool gemItem::IsPickable() { return !(itemdata->GetFlags() & PSITEM_FLAG_NOPICKU
 bool gemItem::IsLockable() { return itemdata->GetIsLockable();}
 
 bool gemItem::IsLocked() { return itemdata->GetIsLocked();}
+
+bool gemItem::IsUsingCD() { return itemdata->GetIsCD();}
 
 bool gemItem::IsSecurityLocked() { return itemdata->GetIsSecurityLocked();}
 

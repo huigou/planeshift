@@ -362,6 +362,7 @@ public:
     virtual bool IsLocked();
     virtual bool IsSecurityLocked();
     virtual bool IsContainer();
+    virtual bool IsUsingCD();
 
     virtual bool GetCanTransform();
     virtual bool GetVisibility();
