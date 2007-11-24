@@ -450,7 +450,7 @@ Kills the targeted NPC, using the current target if no name is given. The reload
 
 Alters the settings for an item.  Allowed actions:
 
-'intervals' followed by 2 integer values for the interval and max modifier for spawning this item (must already spawn), 'remove' deletes this item and its spawn if it has one, 'pickupable' followed by 'true' or 'false', 'transient' followed by 'true or 'false' (transient items auto-delete in ~3 hours), 'npcowned' followed by 'true' or 'false', 'move' followed by x, y, z and optionally y-rotation coordinates.</topic>
+'intervals' followed by 2 integer values for the interval and max modifier for spawning this item (must already spawn), 'remove' deletes this item and its spawn if it has one, 'pickupable' followed by 'true' or 'false', 'transient' followed by 'true or 'false' (transient items auto-delete in ~3 hours), 'npcowned' followed by 'true' or 'false', 'move' followed by x, y, z and optionally y-rotation coordinates. 'collide' - enable/disable collision detection for that item.</topic>
         <topic name="/morph">/morph [player] [mesh name]
 
 Changes the model used for a player until logout.  Use 'reset' in place of the mesh name to reset the mesh.  Do "/morph list" to see the full list of available meshes.</topic>

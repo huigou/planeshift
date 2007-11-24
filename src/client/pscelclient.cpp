@@ -52,6 +52,7 @@
 #include <propclass/timer.h>
 #include <propclass/input.h>
 #include <propclass/colldet.h>
+#include <propclass/solid.h>
 
 #include "globals.h"
 #include "charapp.h"
@@ -876,7 +877,7 @@ void psCelClient::PruneEntities()
                 if (vel.y < -50)            // Large speed puts too much stress on CPU
                 {
                     Debug3(LOG_ANY,0, "Disabling CD on actor(%d): %s", actor->GetID(),actor->GetName());
-                    actor->colldet->SetOnGround(true);
+                    actor->colldet->SetOnGround(false);
                     // Reset velocity
                     actor->StopMoving(true);
                 }
@@ -1534,6 +1535,14 @@ GEMClientItem::GEMClientItem( psCelClient* cel, psPersistItem& mesg )
     factname = mesg.factname;
 
     InitMesh( mesg.factname, mesg.filename, mesg.pos, mesg.yRot, mesg.sector );
+
+    if (mesg.flags & psPersistItem::COLLIDE)
+    {
+        cel->GetPlLayer()->CreatePropertyClass(entity, "pcsolid");
+        solid = CEL_QUERY_PROPCLASS_ENT(entity, iPcSolid); 
+        solid->SetMesh(pcmesh);
+        solid->Setup();
+    }
 
     cel->GetEntityLabels()->OnObjectArrived(this);
     cel->GetShadowManager()->CreateShadow(this);

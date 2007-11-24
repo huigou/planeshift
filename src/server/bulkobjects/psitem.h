@@ -101,6 +101,8 @@ class psString;
 /// Flag defines any item as a key to a locked object that can be used to make a copy of the key
 #define PSITEM_FLAG_MASTERKEY           0x00004000
 
+/// Flag defines if CD should be used on this item
+#define PSITEM_FLAG_USE_CD              0x00008000
 
 #define KEY_SKELETON      ((unsigned int)-2)
 
@@ -721,7 +723,10 @@ public:
     void SetIsUnpickable(bool v);
 
     bool GetIsNoPickup() { return ((flags & PSITEM_FLAG_NOPICKUP)? true : false); }
-    
+
+    bool GetIsCD() const { return ((flags & PSITEM_FLAG_USE_CD)? true : false); }
+    void SetIsCD(bool v);
+
     bool GetIsNpcOwned() const { return (flags & PSITEM_FLAG_NPCOWNED) != 0; }
     void SetIsNpcOwned(bool v);
 
