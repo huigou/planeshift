@@ -1408,6 +1408,8 @@ void AdminManager::GetInfo(MsgEntry* me,psAdminCmdMessage& msg, AdminCmdData& da
                   info += " 'masterkey'";
               if ( flags & PSITEM_FLAG_TRANSIENT )
                   info += " 'transient'";
+              if ( flags & PSITEM_FLAG_USE_CD)
+                  info += " 'collide'";
           }
 
           psserver->SendSystemInfo(client->GetClientNum(),info);
@@ -5681,7 +5683,7 @@ void AdminManager::ModifyHuntLocation(MsgEntry* me, psAdminCmdMessage& msg, Admi
             item->SetIsCD(onoff);
             psserver->SendSystemInfo(me->clientnum, "%s is now %s",
                                     item->GetName(), onoff ? "using collision detection" : "not using collision detection");
-            item->GetGemObject()->Send(me->clientnum, false, false);
+            item->GetGemObject()->Broadcast(me->clientnum, false);
         }
         // TODO: Add more flags
         else
