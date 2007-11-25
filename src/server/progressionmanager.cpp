@@ -4865,7 +4865,11 @@ ProgressionEvent::~ProgressionEvent()
     }
 
 	delete triggerDelay;
+
+    if( progDelay )
+    {
 	delete progDelay;
+    }
 }
 
 

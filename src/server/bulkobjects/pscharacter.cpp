@@ -1328,35 +1328,73 @@ void psCharacter::DropItem(psItem *&item, csVector3 suggestedPos, bool transient
 
 void psCharacter::CalculateEquipmentModifiers()
 {
+    csList<psItem*> itemlist;
+
     modifiers.Clear();
+
+    psItem *currentitem = NULL;
 
     // Loop through every holding item
     for(int i = 0; i < PSCHARACTER_SLOT_BULK1; i++)
     {
-        psItem *currentitem = NULL;
         currentitem=inventory.GetInventoryItem((INVENTORY_SLOT_NUMBER)i);
-        if(!currentitem)
+
+        // checking the equipment array is necessary since the item could be just unequipped
+        // (this method is called by Unequip)
+        if(!currentitem || inventory.GetEquipmentObject(currentitem->GetLocInParent()).itemIndexEquipped == 0)
             continue;
 
-        // Check for attr bonuses
-        for(int z = 0; z < PSITEMSTATS_STAT_BONUS_INDEX_COUNT; z++)
+        itemlist.PushBack(currentitem);
+    }
+    int haschanged = 1;   // go through list at least once
+    while( haschanged )
+    {
+        haschanged = 0;
+        csList<psItem*>::Iterator i(itemlist);
+        while( i.HasNext() )
         {
-            PSITEMSTATS_STAT_BONUS_INDEX stat;
-            if(z == 0)
-                stat = PSITEMSTATS_STAT_BONUS_INDEX_0;
-            else if( z == 1)
-                stat = PSITEMSTATS_STAT_BONUS_INDEX_1;
-            else if( z == 2)
-                stat = PSITEMSTATS_STAT_BONUS_INDEX_2;
+            currentitem = i.Next();
 
-            float bonus = currentitem->GetWeaponAttributeBonusMax(stat);
+            csString response;
+            if (!currentitem->CheckRequirements(this, response))
+            {
+                continue;
+            }
+            if( !currentitem->IsActive() )
+            {
+                Inventory().RunEquipScript(currentitem);
+            }
+            // Check for attr bonuses
+            for(int z = 0; z < PSITEMSTATS_STAT_BONUS_INDEX_COUNT; z++)
+            {
+                PSITEMSTATS_STAT_BONUS_INDEX stat;
+                if(z == 0)
+                    stat = PSITEMSTATS_STAT_BONUS_INDEX_0;
+                else if( z == 1)
+                    stat = PSITEMSTATS_STAT_BONUS_INDEX_1;
+                else if( z == 2)
+                    stat = PSITEMSTATS_STAT_BONUS_INDEX_2;
 
-            // Add to right var
-            modifiers.AddToStat(currentitem->GetWeaponAttributeBonusType(stat), (int)bonus);
+                float bonus = currentitem->GetWeaponAttributeBonusMax(stat);
+
+                // Add to right var
+                modifiers.AddToStat(currentitem->GetWeaponAttributeBonusType(stat), (int)bonus);
+            }
+            haschanged = 1;
+            itemlist.Delete(i);
+            break;
         }
     }
-    // Equipped items may influence stats that determine training cost for skills
-    skills.Calculate();
+    csList<psItem*>::Iterator i(itemlist);
+    while( i.HasNext() )
+    {
+        currentitem = i.Next();
+        if( currentitem->IsActive() )
+        {
+            Inventory().RunUnequipScript(currentitem);
+        }
+    }
+    itemlist.DeleteAll();
 }
 
 void psCharacter::AddLootItem(psItemStats *item)
@@ -2677,8 +2715,6 @@ int psCharacter::NumberOfQuestsCompleted(csString category)
 
 bool psCharacter::UpdateQuestAssignments(bool force_update)
 {
-    csTicks now = csGetTicks();
-
     for (size_t i=0; i<assigned_quests.GetSize(); i++)
     {
         QuestAssignment *q = assigned_quests[i];
@@ -2761,7 +2797,6 @@ bool psCharacter::LoadQuestAssignments()
         return false;
     }
 
-    csTicks now = csGetTicks();
     unsigned int age = GetTotalOnlineTime();
 
     for (unsigned int i=0; i<result.Count(); i++)
@@ -3100,7 +3135,6 @@ void psCharacter::Train( PSSKILL skill, int yIncrease )
                 );
         RecalculateStats();
         inventory.CalculateLimits();
-        skills.Calculate();
     }
 }
 
@@ -3167,6 +3201,7 @@ void Skill::CalculateCosts(psCharacter* user)
     // Get the output
     yCost = (int)yCostVar->GetValue();
     zCost = (int)zCostVar->GetValue();
+/*
     // Make sure the y values is clamped to the cost.  Otherwise Practice may always
     // fail.
     if  (y > yCost)
@@ -3179,15 +3214,16 @@ void Skill::CalculateCosts(psCharacter* user)
         dirtyFlag = true;
         z = zCost;        
     }
+*/
 }
 
 void Skill::Train( int yIncrease )
 {
-    y+=yIncrease;
-    if ( y > yCost )
-        y = yCost;
-
-    dirtyFlag = true;        
+    if(y < yCost)
+    {
+        y+=yIncrease;
+        dirtyFlag = true;        
+    }
 }
 
 
@@ -3243,7 +3279,6 @@ void psCharacter::SetSkillRank( PSSKILL which, int rank)
         attributes.SetStat(PSITEMSTATS_STAT_WILL,rank);
 
     inventory.CalculateLimits();
-    skills.Calculate();
 }
 
 unsigned int psCharacter::GetCharLevel()

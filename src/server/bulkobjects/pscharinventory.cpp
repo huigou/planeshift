@@ -337,9 +337,7 @@ void psCharacterInventory::Equip(psItem *item)
     psserver->GetCharManager()->SendOutPlaySoundMessage(fromClient->GetClientNum(), item->GetSound(), "equip");
     psserver->GetCharManager()->SendOutEquipmentMessages(actor, item->GetLocInParent(false), item, psEquipmentMessage::EQUIP);
 
-    csString equipScript = item->GetBaseStats()->GetProgressionEventEquip();            
-    if (!equipScript.IsEmpty())
-        psserver->GetProgressionManager()->ProcessEvent(equipScript, actor);
+    RunEquipScript(item);
 
     owner->CalculateEquipmentModifiers();
 }
@@ -362,6 +360,23 @@ void psCharacterInventory::Unequip(psItem *item)
     psserver->GetCharManager()->SendOutEquipmentMessages(actor, item->GetLocInParent(), item, psEquipmentMessage::DEEQUIP);
 
     // 3. Run unequip script
+    RunUnequipScript(item);
+
+    owner->CalculateEquipmentModifiers();
+}
+
+void psCharacterInventory::RunEquipScript(psItem *item)
+{
+    gemActor *actor = owner->GetActor();
+    csString equipScript = item->GetBaseStats()->GetProgressionEventEquip();            
+    if (!equipScript.IsEmpty())
+        psserver->GetProgressionManager()->ProcessEvent(equipScript, actor);
+    item->SetActive(true);
+}
+
+void psCharacterInventory::RunUnequipScript(psItem *item)
+{
+    gemActor *actor = owner->GetActor();
     csString unequipScript = item->GetBaseStats()->GetProgressionEventUnEquip();
     csString equipScript = item->GetBaseStats()->GetProgressionEventEquip();
 
@@ -374,8 +389,7 @@ void psCharacterInventory::Unequip(psItem *item)
     {
         psserver->GetProgressionManager()->ProcessEvent(unequipScript, actor);
     }
-
-    owner->CalculateEquipmentModifiers();
+    item->SetActive(false);
 }
 
 bool psCharacterInventory::CheckSlotRequirements(psItem *item, INVENTORY_SLOT_NUMBER proposedSlot, unsigned short stackCount)
@@ -854,12 +868,7 @@ void psCharacterInventory::RunEquipScripts()
     {
         if (equipment[equipslot].itemIndexEquipped!=0) // 0 is Default fist item
         {
-            csString script = inventory[equipment[equipslot].itemIndexEquipped].item->GetBaseStats()->GetProgressionEventEquip();
-            if ( script.Length() > 0 )
-            {
-                gemActor *actor = owner->GetActor();
-                psserver->GetProgressionManager()->ProcessEvent(script,  actor );
-            }
+            RunEquipScript(inventory[equipment[equipslot].itemIndexEquipped].item);
         }
     }
 }

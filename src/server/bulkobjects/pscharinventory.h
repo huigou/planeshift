@@ -326,6 +326,8 @@ public:
 
     void Equip(psItem *item);
     void Unequip(psItem *item);
+    void RunEquipScript(psItem *item);
+    void RunUnequipScript(psItem *item);
     bool CheckSlotRequirements(psItem *item, INVENTORY_SLOT_NUMBER proposedSlot, unsigned short stackCount = 0);
 
     /** Track what is equipped where here.
