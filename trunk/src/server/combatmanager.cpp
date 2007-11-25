@@ -278,7 +278,9 @@ void psCombatManager::AttackSomeone(gemActor *attacker,gemObject *target,Stance 
             INVENTORY_SLOT_NUMBER weaponSlot = (INVENTORY_SLOT_NUMBER) slot;
             // Get the data for the "weapon" that is used in this slot
             psItem *weapon=attacker_character->Inventory().GetEffectiveWeaponInSlot(weaponSlot);
-            if (weapon!=NULL)
+
+            csString response;
+            if (weapon!=NULL && weapon->CheckRequirements(attacker_character,response) )
             {
               haveWeapon = true;
               Debug5(LOG_COMBAT,attacker->GetClientID(),"%s tries to attack with %s weapon %s at %.2f range",
@@ -289,6 +291,14 @@ void psCombatManager::AttackSomeone(gemActor *attacker,gemObject *target,Stance 
                 QueueNextEvent(attacker,weaponSlot,target,attacker->GetClientID(),target->GetClientID());  
 
               startedAttacking=true;
+            }
+            else
+            {
+                if( weapon  && attacker_character->GetActor())
+                {
+                    Debug3(LOG_COMBAT,attacker->GetClientID(),"%s tried attacking with %s but can't use it.",attacker->GetName(),weapon->GetName())
+                    psserver->SendSystemError(attacker_character->GetActor()->GetClientID(), response);
+                } 
             }
         }
     }

@@ -1,3 +1,20 @@
+*** 2007-11-25 by Roland Schulz
+- Added IsActive flag for psItem. This is to solve the problem of
+  an item which has requirements for equipping, which may not be
+  fulfilled later on. Unequipping the item seems not indicated
+  (inventory could be full), hence a way to leave the item in place
+  but disable its effects.
+- modified CalculateEquipmentModifiers to enable/disable items
+  using IsActive flag.
+- adjusted combatmanager to verify item requirements before attack.
+TODO: Still needs work for spells/delayed progression events.
+- remove (unnecessary) clamping of training points, in case the training
+  costs someday will again be based on buffed attributes. (FS#599)
+- reverted ^M-ness from mk/jam/debuginfo.jam, unix shells dont seem
+  to like ^M in shell scripts. Please exercise caution when editing
+  jam files under windows/mac.
+- fix small crash on server exit (progressionmanager.c)
+
 *** 2007-11-24 by Sasha Levin
 - Added support for collision detection on items.
 - Added a /modify collide option to enable/disable collision

@@ -1086,6 +1086,23 @@ bool psItem::IsEquipped() const
         && loc_in_parent >= 0);
 }
 
+bool psItem::IsActive() const
+{
+    return (flags & PSITEM_FLAG_ACTIVE) != 0;
+}
+
+void psItem::SetActive(bool state)
+{
+    if(state)
+    {
+        flags |= PSITEM_FLAG_ACTIVE;
+    }
+    else
+    {
+        flags &= ~PSITEM_FLAG_ACTIVE;
+    }
+}
+
 bool psItem::CheckStackableWith(const psItem *otheritem, bool precise) const
 {
     int i;

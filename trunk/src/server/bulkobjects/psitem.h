@@ -104,6 +104,9 @@ class psString;
 /// Flag defines if CD should be used on this item
 #define PSITEM_FLAG_USE_CD              0x00008000
 
+/// Flag defines if item can be used while equipped
+#define PSITEM_FLAG_ACTIVE              0x00010000
+
 #define KEY_SKELETON      ((unsigned int)-2)
 
 #define MAX_STACK_COUNT        65  // This is the most items a player can have in a stack
@@ -702,6 +705,13 @@ public:
     void UpdateInventoryStatus(psCharacter *owner,uint32 parent_id, INVENTORY_SLOT_NUMBER slot);
 
     bool IsEquipped() const;
+    // an item can be equipped, but not active. This happens when its equip requirements
+    // fail to be met while the item is still equipped.
+    //   IsActive = true means the progression script for this item is active
+    //   IsActive = false means the progression script for this item is inactive
+    bool IsActive() const;
+    void SetActive(bool state);
+
     bool CheckStackableWith(const psItem *otheritem, bool precise) const;
 
     const char *GetSound();
