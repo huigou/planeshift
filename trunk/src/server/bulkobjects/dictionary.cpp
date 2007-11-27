@@ -53,6 +53,7 @@
 #include "rpgrules/factions.h"
 #include "util/psxmlparser.h"
 #include "../introductionmanager.h"
+#include "../netmanager.h"
 
 NPCDialogDict *dict;
 
@@ -1281,6 +1282,10 @@ bool NpcResponse::ParseResponseScript(const char *xmlstr,bool insertBeginning)
         {
             op = new IntroduceResponseOp;
         }
+        else if ( strcmp( node->GetValue(), "doadmincmd" ) == 0 )
+        {
+            op = new DoAdminCommandResponseOp;
+        }
         else
         {
             Error2("undefined operation specified in response script %d.",id);
@@ -2270,5 +2275,31 @@ bool IntroduceResponseOp::Run(gemNPC *who, Client *target,NpcResponse *owner,csT
         psserver->SendSystemInfo(target->GetClientNum(), "You now know %s",who->GetName());
     }
     
+    return true;
+}
+
+bool DoAdminCommandResponseOp::Load(iDocumentNode *node)
+{
+    origCommandString = node->GetAttributeValue("command");
+    return true;
+}
+
+csString DoAdminCommandResponseOp::GetResponseScript()
+{
+    psString resp;
+    return resp;
+}
+
+bool DoAdminCommandResponseOp::Run(gemNPC *who, Client *target,NpcResponse *owner,csTicks& timeDelay)
+{
+    modifiedCommandString = origCommandString;
+    csString format;
+    format.Format("\"%s\"", target->GetCharacterData()->GetCharFullName());
+    modifiedCommandString.ReplaceAll("targetchar", format);
+    format.Format("\"%s\"", who->GetNPCPtr()->GetCharacterData()->GetCharFullName());
+    modifiedCommandString.ReplaceAll("sourcenpc", format);
+    psAdminCmdMessage msg(modifiedCommandString, 0);
+    msg.msg->current=0;
+    psserver->GetAdminManager()->HandleMessage(msg.msg, target);
     return true;
 }

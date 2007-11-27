@@ -1,6 +1,9 @@
 *** 2007-11-27 by Sasha Levin
 - Added a time-of-day quest prerequisite operator.
 - Entity labels are only rendered when needed, not always.
+- Added a 'DoAdminCmd' script command, Allowing to run and admin
+  command as a script. Example syntax: 
+  'DoAdminCmd /slide targetchar u 1'.
 
 *** 2007-11-26 by Roland Schulz
 - fix FS#666 - repair with skill 0 and no training

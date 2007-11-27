@@ -414,6 +414,11 @@ bool QuestManager::HandleScriptCommand(csString& block,
             else
                 op.Format("<introduce/>"); 
         }
+        else if (!strncasecmp(block,"DoAdminCmd",10)) 
+        {
+            csString command = block.Slice(11).Trim();
+            op.Format("<doadmincmd command=\"%s\"/>", command.GetData() ); 
+        }
         else // unknown block
         {
             Error2("Unknown command '%s' !",block.GetData());
