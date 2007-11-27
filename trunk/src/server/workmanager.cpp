@@ -375,6 +375,15 @@ void psWorkManager::HandleRepair(Client *client, psWorkCmdMessage &msg)
         return;
     }
 
+    // If skill=0, check if it has at least theoretical training in that skill
+    if (repairskillrank==0) {
+        if( client->GetCharacterData()->GetSkills()->GetSkill(PSSKILL(skillid))->CanTrain() )
+        {
+            psserver->SendSystemInfo(client->GetClientNum(),"You don't have the skill to repair your %s.",repairTarget->GetName());
+            return;
+        }
+    }
+
     // Calculate time required for repair based on item and skill level
     var_time_Object->SetObject(repairTarget);
     var_time_Worker->SetObject(client->GetCharacterData());
