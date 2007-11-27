@@ -319,6 +319,9 @@ void psEntityLabels::OnObjectArrived( GEMClientObject* object )
 {
     CS_ASSERT_MSG("Effects Manager must exist before loading entity labels!", psengine->GetEffectManager() );
 
+    if (visibility == LABEL_NEVER)
+        return;
+
     if (!object)
     {
         Debug1( LOG_ANY, 0, "NULL object passed to psEntityLabels::OnObjectArried" );

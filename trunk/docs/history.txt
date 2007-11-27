@@ -1,5 +1,6 @@
 *** 2007-11-27 by Sasha Levin
 - Added a time-of-day quest prerequisite operator.
+- Entity labels are only rendered when needed, not always.
 
 *** 2007-11-26 by Roland Schulz
 - fix FS#666 - repair with skill 0 and no training
