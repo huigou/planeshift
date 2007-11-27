@@ -601,7 +601,7 @@ class psQuestPrereqOpActiveMagic : public psQuestPrereqOp
      * Check if the specified magic is active
      *
      * @param  character The character that are checking for a prerequisite
-     * @return True if the faction is positive.
+     * @return True if the magic is active.
      */
     virtual bool Check(psCharacter * character);
 
@@ -610,6 +610,57 @@ class psQuestPrereqOpActiveMagic : public psQuestPrereqOp
      *
      * Convert the operator into the xml string: 
      * <activemagic name="-activemagic"/>
+     *
+     * @return XML string for the prerequisite operator.
+     */
+    virtual csString GetScriptOp();
+
+    /**
+     * Copy the prerequisite operator
+     *
+     * Override this function to return a copy of the prerequisite
+     * operator.
+     *
+     * @return Copy of the prerequisite operator.
+     */
+    virtual psQuestPrereqOp* Copy();
+};
+
+/**
+ * Time of day prerequisite operator
+ *
+ * The time must be between mintime and maxtime.
+ */
+class psQuestPrereqOpTimeOfDay : public psQuestPrereqOp
+{
+ protected:
+    int minTime, maxTime;
+
+ public:
+
+    /**
+     * Construct an active magic operator
+     *
+     * @param minTime Minimal time of day
+     * @param maxTime Maximal time of day
+     */
+     psQuestPrereqOpTimeOfDay(int minTime, int maxTime):minTime(minTime),maxTime(maxTime){};
+
+    virtual ~psQuestPrereqOpTimeOfDay() {}
+
+    /**
+     * Check if within the time range
+     *
+     * @param  character The character that are checking for a prerequisite
+     * @return True if in the valid range
+     */
+    virtual bool Check(psCharacter * character);
+
+    /**
+     * Convert the prerequisite operator to a xml string
+     *
+     * Convert the operator into the xml string: 
+     * <timeofday min="-min" max="-max"/>
      *
      * @return XML string for the prerequisite operator.
      */
