@@ -106,8 +106,8 @@ struct NaturalResource
 struct constraint
 {
     bool (*constraintFunction)(psWorkManager* that, char* param);
-    char* name;
-    char* message;
+    const char* name;
+    const char* message;
 };
 
 //-----------------------------------------------------------------------------
