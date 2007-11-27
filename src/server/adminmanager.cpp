@@ -790,7 +790,7 @@ void AdminManager::HandleAdminCmdMessage(MsgEntry *me, psAdminCmdMessage &msg, A
 {
 
     // Security check
-    if ( !IsReseting(msg.cmd) && !Valid(client->GetSecurityLevel(), data.command,  me->clientnum) )
+    if ( me->clientnum != 0 && !IsReseting(msg.cmd) && !Valid(client->GetSecurityLevel(), data.command,  me->clientnum) )
     {
         psserver->SendSystemError(me->clientnum, "You are not allowed to use %s.", data.command.GetData());
         return;       
@@ -864,7 +864,8 @@ void AdminManager::HandleAdminCmdMessage(MsgEntry *me, psAdminCmdMessage &msg, A
     if (targetobject)
         targetID = targetobject->GetPlayerID();
 
-    LogGMCommand( client->GetPlayerID(), targetID, msg.cmd );
+    if (me->clientnum)
+        LogGMCommand( client->GetPlayerID(), targetID, msg.cmd );
     
     if (data.command == "/npc")
     {

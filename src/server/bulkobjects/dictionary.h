@@ -683,4 +683,19 @@ public:
     virtual bool Run(gemNPC *who, Client *target,NpcResponse *owner,csTicks& timeDelay);
 };
 
+/**
+ * This script operation executes an admin command
+ */
+class DoAdminCommandResponseOp : public ResponseOperation
+{
+protected:
+    csString origCommandString, modifiedCommandString;
+public:
+    DoAdminCommandResponseOp() { name = "doadmincmd"; }
+    virtual ~DoAdminCommandResponseOp() {};
+    virtual bool Load(iDocumentNode *node);
+    virtual csString GetResponseScript();    
+    virtual bool Run(gemNPC *who, Client *target,NpcResponse *owner,csTicks& timeDelay);
+};
+
 #endif
