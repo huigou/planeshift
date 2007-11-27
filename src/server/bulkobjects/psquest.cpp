@@ -319,6 +319,15 @@ bool LoadPrerequisiteXML(iDocumentNode * topNode, psQuest * self, psQuestPrereqO
         
         prerequisite = new psQuestPrereqOpActiveMagic(name);
     }
+    else if ( strcmp( topNode->GetValue(), "timeofday" ) == 0 )
+    {
+        int min = topNode->GetAttributeValueAsInt("min");
+
+        int max = topNode->GetAttributeValueAsInt("max");
+
+        prerequisite = new psQuestPrereqOpTimeOfDay(min,max);
+
+    }
     else if ( strcmp( topNode->GetValue(), "not" ) == 0 )
     {
         csRef<iDocumentNodeIterator> iter = topNode->GetNodes();

@@ -24,6 +24,8 @@
 #include "psquestprereqops.h"
 #include "rpgrules/factions.h"
 #include "../gem.h"
+#include "../globals.h"
+#include "weathermanager.h"
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 
@@ -319,3 +321,25 @@ psQuestPrereqOp* psQuestPrereqOpActiveMagic::Copy()
     return copy;
 }
 
+///////////////////////////////////////////////////////////////////////////////////////////
+
+bool psQuestPrereqOpTimeOfDay::Check(psCharacter * character)
+{
+    int currTime = psserver->GetWeatherManager()->GetCurrentTime();
+    return (currTime <= maxTime) && (currTime >= minTime);
+}
+
+csString psQuestPrereqOpTimeOfDay::GetScriptOp()
+{
+    csString script;
+    
+    script.Format("<timeofday min=\"%d\" max=\"%d\"/>", minTime, maxTime);
+
+    return script;
+}
+
+psQuestPrereqOp* psQuestPrereqOpTimeOfDay::Copy()
+{
+    psQuestPrereqOpTimeOfDay* copy = new psQuestPrereqOpTimeOfDay(minTime, maxTime);
+    return copy;
+}
