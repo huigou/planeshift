@@ -1177,6 +1177,9 @@ bool psItem::CheckStackableWith(const psItem *otheritem, bool precise) const
             return false;
     }
 
+    if (GetGuardingCharacterID() != otheritem->GetGuardingCharacterID())
+        return false;
+
     // TODO: Check effects
 
     if (GetCurrentStats()==otheritem->GetCurrentStats())

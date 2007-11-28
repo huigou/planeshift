@@ -531,18 +531,18 @@ public:
     /** Get the ID of the owning character.  This is required in cases where the owning 
       * character may not be online and the above pointer is undefined.
       */
-    unsigned int GetOwningCharacterID() { return owningCharacterID; }
+    unsigned int GetOwningCharacterID() const { return owningCharacterID; }
 
     /// Alters the owning character of this item.  Also see UpdateInventoryStatus.
     virtual void SetOwningCharacter(psCharacter *owner);
 
     /* Item guardians: items dropped in the world or placed in a public
      * container are not owned, but "guarded" by a character. */
-    unsigned int GetGuardingCharacterID() { return guardingCharacterID; }
+    unsigned int GetGuardingCharacterID() const { return guardingCharacterID; }
     void SetGuardingCharacterID(unsigned int guardian) { guardingCharacterID = guardian; }
 
     /// Returns the item that contains this item, or NULL if it's not contained by another item.
-    uint32 GetContainerID() 
+    uint32 GetContainerID() const
     { return parent_item_instance_id; }
     void SetContainerID(uint32 parentId) { parent_item_instance_id = parentId; }
 
