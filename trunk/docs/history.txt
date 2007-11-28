@@ -1,3 +1,6 @@
+*** 2007-11-28 by Michael Gist
+- Launcher fix.
+
 *** 2007-11-28 by Sasha Levin
 - Modified /action create_entrance: Now it accepts name for the house,
   changes the locks name and AL's name to match. Also, Creating a

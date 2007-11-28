@@ -152,6 +152,7 @@ void UpdaterEngine::checkForUpdates()
             *updateNeeded = true;            
             while(*performUpdate == false || *exitGUI == false)
             {
+                csSleep(500);
                 // Make sure we die if we exit the gui as well.
                 if(*updateNeeded == false || *exitGUI == true )
                 {
@@ -192,6 +193,7 @@ void UpdaterEngine::checkForUpdates()
             *updateNeeded = true;
             while(!*performUpdate)
             {
+                csSleep(500);
                 if(!*updateNeeded)
                 {
                     delete downloader;
