@@ -6,6 +6,9 @@
   changes the locks name and AL's name to match. Also, Creating a
   sign (currently a claymore - art needed!) infront of the door with
   a label with the house name.
+- Added 'Require time of day' and 'Require not time of day' quest ops.
+  Usage: 'Require time of day [minTime]-[maxTime].' Same for the 'not'
+  version.
 
 *** 2007-11-27 by Sasha Levin
 - Added a time-of-day quest prerequisite operator.

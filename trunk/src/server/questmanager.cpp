@@ -419,6 +419,24 @@ bool QuestManager::HandleScriptCommand(csString& block,
             csString command = block.Slice(11).Trim();
             op.Format("<doadmincmd command=\"%s\"/>", command.GetData() ); 
         }
+        else if (!strncasecmp(block,"Require time of day",19)) 
+        {
+            csString data = block.Slice(20);
+            csArray<csString> timeinfo = psSplit(data, '-');
+            if (timeinfo.Length() == 2)
+            {
+                response_requireop.AppendFmt("<timeofday min=\"%s\" max=\"%s\" />", timeinfo[0].GetData(), timeinfo[1].GetData() );
+            }
+        }
+        else if (!strncasecmp(block,"Require not time of day",23)) 
+        {
+            csString data = block.Slice(24);
+            csArray<csString> timeinfo = psSplit(data, '-');
+            if (timeinfo.Length() == 2)
+            {
+                response_requireop.AppendFmt("<not><timeofday min=\"%s\" max=\"%s\" /></not>", timeinfo[0].GetData(), timeinfo[1].GetData() );
+            }
+        }
         else // unknown block
         {
             Error2("Unknown command '%s' !",block.GetData());
