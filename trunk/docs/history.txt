@@ -1,3 +1,9 @@
+*** 2007-11-28 by Sasha Levin
+- Modified /action create_entrance: Now it accepts name for the house,
+  changes the locks name and AL's name to match. Also, Creating a
+  sign (currently a claymore - art needed!) infront of the door with
+  a label with the house name.
+
 *** 2007-11-27 by Sasha Levin
 - Added a time-of-day quest prerequisite operator.
 - Entity labels are only rendered when needed, not always.
