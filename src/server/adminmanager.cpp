@@ -527,7 +527,8 @@ bool AdminManager::AdminCmdData::DecodeAdminCmdMessage(MsgEntry *pMsg, psAdminCm
         if (subCmd == "create_entrance")
         {
             sector = words[2];
-            description = words[3];
+            name = words[3];
+            description = words[4];
         }
         else
         {
@@ -1986,14 +1987,14 @@ void AdminManager::HandleActionLocation(MsgEntry* me, psAdminCmdMessage& msg, Ad
 {
     if ( !data.subCmd.Length() || data.subCmd == "help" )
     {
-        psserver->SendSystemInfo( me->clientnum, "Usage: \"/action create_entrance sector description\"");
+        psserver->SendSystemInfo( me->clientnum, "Usage: \"/action create_entrance sector guildname description\"");
         return;
     }
 
     if (data.subCmd == "create_entrance")
     {
-        // Create new lock for entrance
-        csString doorLock = "Simple Lock";
+        // Create sign
+        csString doorLock = "Claymore";
         psItemStats *itemstats=CacheManager::GetSingleton().GetBasicItemStatsByName(doorLock.GetData());
         if (!itemstats)
         {
@@ -2012,6 +2013,7 @@ void AdminManager::HandleActionLocation(MsgEntry* me, psAdminCmdMessage& msg, Ad
         // Get client location for exit
         csVector3 pos;
         iSector* sector = 0;
+        csString name = data.name;
         float angle;
         gemObject *object = client->GetActor();
         if (!object)
@@ -2030,9 +2032,50 @@ void AdminManager::HandleActionLocation(MsgEntry* me, psAdminCmdMessage& msg, Ad
             return;
         }
 
-        // Setup the lock item -10 below player
+        // Setup the sign
         lockItem->SetStackCount(1);
-        lockItem->SetLocationInWorld(0,sectorInfo,pos.x,pos.y-10,pos.z,angle);
+        lockItem->SetLocationInWorld(0,sectorInfo,pos.x,pos.y,pos.z,angle);
+        lockItem->SetOwningCharacter(NULL);
+        lockItem->SetMaxItemQuality(50.0);
+
+        // Assign the lock attributes and save to create ID
+        lockItem->SetFlags(PSITEM_FLAG_UNPICKABLE | PSITEM_FLAG_SECURITYLOCK | PSITEM_FLAG_LOCKED | PSITEM_FLAG_LOCKABLE);
+        lockItem->SetIsPickupable(false);
+        lockItem->SetLoaded();
+        lockItem->SetName(name);
+        lockItem->Save(false);
+
+        // Create lock in world
+        if (!EntityManager::GetSingleton().CreateItem(lockItem,false))
+        {
+            delete lockItem;
+            Error1("Error: Action entrance failed to create lock item.\n");
+            return;
+        }
+
+
+        //-------------
+
+        // Create new lock for entrance
+        doorLock = "Simple Lock";
+        itemstats=CacheManager::GetSingleton().GetBasicItemStatsByName(doorLock.GetData());
+        if (!itemstats)
+        {
+            Error2("Error: Action entrance failed to get item stats for item %s.\n",doorLock.GetData());
+            return;
+        }
+
+        // Make item
+        lockItem = itemstats->InstantiateBasicItem();
+        if (!lockItem)
+        {
+            Error2("Error: Action entrance failed to create item %s.\n",doorLock.GetData());
+            return;
+        }
+
+        // Setup the lock item in instance 1
+        lockItem->SetStackCount(1);
+        lockItem->SetLocationInWorld(1,sectorInfo,pos.x,pos.y,pos.z,angle);
         lockItem->SetOwningCharacter(NULL);
         lockItem->SetMaxItemQuality(50.0);
 
@@ -2042,6 +2085,7 @@ void AdminManager::HandleActionLocation(MsgEntry* me, psAdminCmdMessage& msg, Ad
         lockItem->SetIsSecurityLocked(true);
         lockItem->SetIsLocked(true);
         lockItem->SetLoaded();
+        lockItem->SetName(name);
         lockItem->Save(false);
 
         // Create lock in world
@@ -2059,8 +2103,7 @@ void AdminManager::HandleActionLocation(MsgEntry* me, psAdminCmdMessage& msg, Ad
         csString meshTarget = client->GetMesh();
 
         // Create entrance name
-        csString name;
-        name.Format("Enter %s",data.sector.GetData());
+        name.Format("Enter %s",data.name.GetData());
 
         // Create entrance response string
         csString resp = "<Examine><Entrance Type='ActionID' ";
