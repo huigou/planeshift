@@ -139,7 +139,7 @@ void FileUtil::MakeDirectory (const char* directory)
     delete[] path;
 
     if (rc < 0)
-        if(vfs->Exists(csString("/this/") + directory))
+        if(!vfs->Exists(csString("/this/") + directory))
             printf("Couldn't create directory '%s'.", directory);
 }
 
