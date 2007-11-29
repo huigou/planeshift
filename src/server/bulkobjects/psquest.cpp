@@ -253,6 +253,35 @@ bool LoadPrerequisiteXML(iDocumentNode * topNode, psQuest * self, psQuestPrereqO
                 return false;
         }
     }
+    else if ( strcmp( topNode->GetValue(), "xor" ) == 0 )
+    {
+        psQuestPrereqOpList * list = new psQuestPrereqOpXor();
+        prerequisite = list;
+        
+        csRef<iDocumentNodeIterator> iter = topNode->GetNodes();
+
+        while ( iter->HasNext() )
+        {
+            csRef<iDocumentNode> node = iter->Next();
+            
+            if ( node->GetType() != CS_NODE_ELEMENT )
+                continue;
+
+            psQuestPrereqOp * op = NULL;
+            
+            if (!LoadPrerequisiteXML(node, self, op))
+            {
+                return false;
+            }
+            
+            if (op)
+            {
+                list->Push(op);
+            }
+            else
+                return false;
+        }
+    }
     else if ( strcmp( topNode->GetValue(), "require" ) == 0 )
     {
         int min = -1,max = -1;

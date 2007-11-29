@@ -347,3 +347,39 @@ psQuestPrereqOp* psQuestPrereqOpTimeOfDay::Copy()
     psQuestPrereqOpTimeOfDay* copy = new psQuestPrereqOpTimeOfDay(minTime, maxTime);
     return copy;
 }
+
+///////////////////////////////////////////////////////////////////////////////////////////
+
+bool psQuestPrereqOpXor::Check(psCharacter * character)
+{
+    // Check if any of the prereqs are valid
+    bool flag = 0;
+    for (size_t i = 0; i < prereqlist.GetSize(); i++)
+    {
+        flag ^= prereqlist[i]->Check(character);
+    }
+
+    return flag;
+}
+
+csString psQuestPrereqOpXor::GetScriptOp()
+{
+    csString script;
+    script.Append("<xor>");
+    for (size_t i = 0; i < prereqlist.GetSize(); i++)
+    {
+    script.Append(prereqlist[i]->GetScriptOp());
+    }
+    script.Append("</xor>");
+    return script;
+}
+
+psQuestPrereqOp* psQuestPrereqOpXor::Copy()
+{
+    psQuestPrereqOpXor* copy = new psQuestPrereqOpXor();
+    for (size_t i = 0; i < prereqlist.GetSize(); i++)
+    {
+        copy->Push(prereqlist[i]->Copy());
+    }    
+    return copy;
+}
