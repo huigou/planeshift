@@ -1,41 +1,67 @@
-# MySQL-Front Dump 1.16 beta
-#
-# Host: localhost Database: planeshift
-#--------------------------------------------------------
-# Server version 3.23.52-max-nt
-#
-# Table structure for table 'sectors'
-#
-
-CREATE TABLE sectors (
-  id smallint(3) unsigned NOT NULL auto_increment,
-  name varchar(30) NOT NULL DEFAULT '' ,
-  rain_enabled char(1) NOT NULL DEFAULT 'N' ,
-  rain_min_gap int(10) unsigned NOT NULL DEFAULT '0' ,
-  rain_max_gap int(10) unsigned NOT NULL DEFAULT '0' ,
-  rain_min_duration int(10) unsigned NOT NULL DEFAULT '0' ,
-  rain_max_duration int(10) unsigned NOT NULL DEFAULT '0' ,
-  rain_min_drops int(10) unsigned NOT NULL DEFAULT '0' ,
-  rain_max_drops int(10) unsigned DEFAULT '0' ,
-  rain_min_fade_in int(10) unsigned NOT NULL DEFAULT '0' ,
-  rain_max_fade_in int(10) unsigned NOT NULL DEFAULT '0' ,
-  rain_min_fade_out int(10) unsigned NOT NULL DEFAULT '0' ,
-  rain_max_fade_out int(10) unsigned NOT NULL DEFAULT '0' ,
-  lightning_min_gap int(10) unsigned DEFAULT '0' ,
-  lightning_max_gap int(10) unsigned NOT NULL DEFAULT '0' ,
-  PRIMARY KEY (id),
-  UNIQUE name (name)
-);
+-- MySQL Administrator dump 1.4
+--
+-- ------------------------------------------------------
+-- Server version	5.0.37-community-nt
 
 
-#
-# Dumping data for table 'sectors'
-#
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8 */;
 
-INSERT INTO sectors VALUES("1","room","N","0","0","0","0","0","0","0","0","0","0","0","0");
-INSERT INTO sectors VALUES("2","temple","N","0","0","0","0","0","0","0","0","0","0","0","0");
-INSERT INTO sectors VALUES("3","NPCroom","N","15000","15000","10000","10000","8000","8000","5000","5000","5000","5000","4000","4000");
-INSERT INTO sectors VALUES("4","NPCroom1","N","15000","15000","10000","10000","8000","8000","5000","5000","5000","5000","4000","4000");
-INSERT INTO sectors VALUES("5","NPCroom2","N","15000","15000","10000","10000","8000","8000","5000","5000","5000","5000","4000","4000");
-INSERT INTO sectors VALUES("6","NPCroom3","N","15000","15000","10000","10000","8000","8000","5000","5000","5000","5000","4000","4000");
-INSERT INTO sectors VALUES("7","NPCroomwarp","N","15000","15000","10000","10000","8000","8000","5000","5000","5000","5000","4000","4000");
+/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+
+--
+-- Definition of table `sectors`
+--
+
+DROP TABLE IF EXISTS `sectors`;
+CREATE TABLE `sectors` (
+  `id` smallint(3) unsigned NOT NULL auto_increment,
+  `name` varchar(30) NOT NULL default '',
+  `rain_enabled` char(1) NOT NULL default 'N',
+  `rain_min_gap` int(10) unsigned NOT NULL default '0',
+  `rain_max_gap` int(10) unsigned NOT NULL default '0',
+  `rain_min_duration` int(10) unsigned NOT NULL default '0',
+  `rain_max_duration` int(10) unsigned NOT NULL default '0',
+  `rain_min_drops` int(10) unsigned NOT NULL default '0',
+  `rain_max_drops` int(10) unsigned default '0',
+  `rain_min_fade_in` int(10) unsigned NOT NULL default '0',
+  `rain_max_fade_in` int(10) unsigned NOT NULL default '0',
+  `rain_min_fade_out` int(10) unsigned NOT NULL default '0',
+  `rain_max_fade_out` int(10) unsigned NOT NULL default '0',
+  `lightning_min_gap` int(10) unsigned default '0',
+  `lightning_max_gap` int(10) unsigned NOT NULL default '0',
+  `collide_objects` tinyint(1) NOT NULL default '0',
+  PRIMARY KEY  (`id`),
+  UNIQUE KEY `name` (`name`),
+  UNIQUE KEY `indx_sector_name` (`name`)
+) ENGINE=MyISAM AUTO_INCREMENT=8 DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `sectors`
+--
+
+/*!40000 ALTER TABLE `sectors` DISABLE KEYS */;
+INSERT INTO `sectors` (`id`,`name`,`rain_enabled`,`rain_min_gap`,`rain_max_gap`,`rain_min_duration`,`rain_max_duration`,`rain_min_drops`,`rain_max_drops`,`rain_min_fade_in`,`rain_max_fade_in`,`rain_min_fade_out`,`rain_max_fade_out`,`lightning_min_gap`,`lightning_max_gap`,`collide_objects`) VALUES 
+ (1,'room','N',0,0,0,0,0,0,0,0,0,0,0,0,0),
+ (2,'temple','N',0,0,0,0,0,0,0,0,0,0,0,0,0),
+ (3,'NPCroom','N',15000,15000,10000,10000,8000,8000,5000,5000,5000,5000,4000,4000,0),
+ (4,'NPCroom1','N',15000,15000,10000,10000,8000,8000,5000,5000,5000,5000,4000,4000,0),
+ (5,'NPCroom2','N',15000,15000,10000,10000,8000,8000,5000,5000,5000,5000,4000,4000,0),
+ (6,'NPCroom3','N',15000,15000,10000,10000,8000,8000,5000,5000,5000,5000,4000,4000,1),
+ (7,'NPCroomwarp','N',15000,15000,10000,10000,8000,8000,5000,5000,5000,5000,4000,4000,0);
+/*!40000 ALTER TABLE `sectors` ENABLE KEYS */;
+
+
+
+
+/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
+/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

@@ -1,3 +1,10 @@
+*** 2007-11-29 by Sasha Levin
+- Added support for sectors with colldet enabled - to be used in
+  guildhouses.
+- Colldet data change on /modify is now being sent to both player
+  and area.
+- DB VER BUMP!
+
 *** 2007-11-28 by Michael Gist
 - Launcher fix.
 

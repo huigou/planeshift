@@ -5727,6 +5727,7 @@ void AdminManager::ModifyHuntLocation(MsgEntry* me, psAdminCmdMessage& msg, Admi
             item->SetIsCD(onoff);
             psserver->SendSystemInfo(me->clientnum, "%s is now %s",
                                     item->GetName(), onoff ? "using collision detection" : "not using collision detection");
+            item->GetGemObject()->Send(me->clientnum, false, false);
             item->GetGemObject()->Broadcast(me->clientnum, false);
         }
         // TODO: Add more flags
