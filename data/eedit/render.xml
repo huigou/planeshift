@@ -1,7 +1,7 @@
 <widget_description>
 
 <widget name="RenderToolbox" factory="EEditRenderToolbox" 
-        visible="yes" savepositions="no" movable="yes" resizable="no" resizetoscreen="no">
+        visible="yes" savepositions="yes" movable="yes" resizable="no" resizetoscreen="no">
 	
     <frame x="805" y="400" width="210" height="65" border="yes" justtitle="yes" />
     <title resource="TitleBar" text="Render Effect" align="left" />

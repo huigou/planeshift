@@ -1,7 +1,7 @@
 <widget_description>
 
 <widget name="FPSToolbox" factory="EEditFPSToolbox" 
-        visible="yes" savepositions="no" movable="yes" resizable="no" resizetoscreen="no" >
+        visible="yes" savepositions="yes" movable="yes" resizable="no" resizetoscreen="no" >
         
     <frame x="590" y="115" width="210" height="45" border="yes" justtitle="yes" />
     <title resource="TitleBar" text="FPS: 0.0" align="left" />

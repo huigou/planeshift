@@ -1,3 +1,6 @@
+*** 2007-11-29 by Roland Schulz
+- add position saving for eedit widgets as requested in FS#641
+
 *** 2007-11-29 by Sasha Levin
 - Added support for sectors with colldet enabled - to be used in
   guildhouses.

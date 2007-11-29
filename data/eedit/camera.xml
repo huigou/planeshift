@@ -1,6 +1,6 @@
 <widget_description>
 <widget name="CameraToolbox" factory="EEditCameraToolbox" 
-    visible="yes" savepositions="no" movable="yes" resizable="no" 
+    visible="yes" savepositions="yes" movable="yes" resizable="no" 
     resizetoscreen="no">
 
     <frame x="325" y="30" width="90" height="55" border="yes" justtitle="yes" />
