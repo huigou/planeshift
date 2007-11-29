@@ -1,7 +1,7 @@
 <widget_description>
 
 <widget name="LoadMapToolbox" factory="EEditLoadMapToolbox" 
-        visible="yes" savepositions="no" movable="yes" resizable="no" resizetoscreen="no" >
+        visible="yes" savepositions="yes" movable="yes" resizable="no" resizetoscreen="no" >
         
     <frame x="590" y="30" width="210" height="60" border="yes" justtitle="yes" />
     <title resource="TitleBar" text="Load Map" align="left" />

@@ -1,7 +1,7 @@
 <widget_description>
 
 <widget name="EditEffectToolbox" factory="EEditEditEffectToolbox" 
-        visible="yes" savepositions="no" movable="yes" 
+        visible="yes" savepositions="yes" movable="yes" 
         resizable="no" resizetoscreen="no" >
         
     <frame x="8" y="30" width="310" height="690" border="yes" justtitle="yes" />

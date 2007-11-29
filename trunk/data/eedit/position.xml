@@ -1,7 +1,7 @@
 <widget_description>
 
 <widget name="PositionToolbox" factory="EEditPositionToolbox" 
-        visible="yes" savepositions="no" movable="yes" resizable="no" resizetoscreen="no" >
+        visible="yes" savepositions="yes" movable="yes" resizable="no" resizetoscreen="no" >
         
     <frame x="805" y="30" width="210" height="160" border="yes" justtitle="yes" />
     <title resource="TitleBar" text="Effect Position" align="left" />

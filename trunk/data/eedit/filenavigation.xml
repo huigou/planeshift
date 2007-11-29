@@ -1,6 +1,6 @@
 <widget_description>
 <widget name="filenavigation" factory="pawsFileNavigation" 
-        visible="no" savepositions="no" movable="yes" 
+        visible="no" savepositions="yes" movable="yes" 
         resizable="no" >
     
     <frame x="0" y="0" width="400" height="400" border="yes" justtitle="yes" />
