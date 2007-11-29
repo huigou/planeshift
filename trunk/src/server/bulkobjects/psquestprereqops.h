@@ -129,7 +129,7 @@ class psQuestPrereqOpList: public psQuestPrereqOp
 /**
  * And Prerequisite operator.
  * 
- * A multi term and operaotr. Every prerequisite have to be true
+ * A multi term and operator. Every prerequisite have to be true
  * for this operator to be valid.
  */
 class psQuestPrereqOpAnd: public psQuestPrereqOpList
@@ -176,7 +176,7 @@ class psQuestPrereqOpAnd: public psQuestPrereqOpList
 /**
  * Or prerequisite operator.
  * 
- * A multi term or operaotr. One prerequisite have to be true
+ * A multi term or operator. One prerequisite have to be true
  * for this operator to be valid.
  */
 class psQuestPrereqOpOr: public psQuestPrereqOpList
@@ -661,6 +661,52 @@ class psQuestPrereqOpTimeOfDay : public psQuestPrereqOp
      *
      * Convert the operator into the xml string: 
      * <timeofday min="-min" max="-max"/>
+     *
+     * @return XML string for the prerequisite operator.
+     */
+    virtual csString GetScriptOp();
+
+    /**
+     * Copy the prerequisite operator
+     *
+     * Override this function to return a copy of the prerequisite
+     * operator.
+     *
+     * @return Copy of the prerequisite operator.
+     */
+    virtual psQuestPrereqOp* Copy();
+};
+
+/**
+ * Xor prerequisite operator.
+ * 
+ * A multi term or operator. Value of XORs between prerequisites
+ * must be true.
+ */
+class psQuestPrereqOpXor: public psQuestPrereqOpList
+{
+ public:
+
+    /**
+     * Destructor for the or prerequisite operator.
+     */
+    virtual ~psQuestPrereqOpXor() {}
+
+    /**
+     * Check if value of XORs between prerequisites is true.
+     *
+     * prerequisite = child1 or child 2 or ... childN
+     *
+     * @param  character The character that are checking for a prerequisite
+     * @return True if value of XORs between prerequisites is true.
+     */
+    virtual bool Check(psCharacter * character);
+
+    /**
+     * Convert the prerequisite operator to a xml string
+     *
+     * Convert the operator to the xml string:
+     * <xor><child1/>...<childN/></xor>
      *
      * @return XML string for the prerequisite operator.
      */

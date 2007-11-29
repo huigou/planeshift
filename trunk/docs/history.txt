@@ -4,6 +4,7 @@
 - Colldet data change on /modify is now being sent to both player
   and area.
 - DB VER BUMP!
+- Added XOR operator for quest prerequisites.
 
 *** 2007-11-28 by Michael Gist
 - Launcher fix.
