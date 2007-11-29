@@ -808,6 +808,8 @@ CREATE TABLE "introductions" (
   PRIMARY KEY  ("charid","introcharid")
 ) TYPE=MyISAM;
 
+#### 1169 - Sasha Levin - Add support for collideable sectors.
+ALTER TABLE `planeshift`.`sectors` ADD COLUMN `collide_objects` BOOLEAN NOT NULL DEFAULT 0 AFTER `lightning_max_gap`;
 
 #
 # Insert your upgrade before this line. Remember when you set a new db_version

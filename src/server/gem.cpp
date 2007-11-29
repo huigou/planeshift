@@ -1476,7 +1476,8 @@ void gemItem::Send( int clientnum, bool , bool to_superclient)
 {
     int flags = 0;
     if (!IsPickable()) flags |= psPersistItem::NOPICKUP;
-    if (IsUsingCD()) flags |= psPersistItem::COLLIDE;
+    if (IsUsingCD() ||
+        GetItem()->GetSector()->GetIsColliding()) flags |= psPersistItem::COLLIDE;
     
     psPersistItem mesg(
                          clientnum,

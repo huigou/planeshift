@@ -436,6 +436,8 @@ bool CacheManager::PreloadSectors()
         newsector->rain_max_fade_out = result[currentrow].GetInt("rain_max_fade_out");
         CS_ASSERT(newsector->rain_min_fade_out <= newsector->rain_max_fade_out);
 
+        newsector->is_colliding = result[currentrow].GetInt("collide_objects");
+
         sectorinfo_by_id.Put(newsector->uid,newsector);
         sectorinfo_by_name.Put(csHashCompute(newsector->name),newsector);
 

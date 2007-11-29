@@ -655,8 +655,10 @@ public:
 
     float GetVisibleDistance();
 
-    void GetLocationInWorld(int &instance,psSectorInfo **sectorinfo,float &loc_x,float &loc_y,float &loc_z,float &loc_yrot);
+    void GetLocationInWorld(int &instance,psSectorInfo **sectorinfo,float &loc_x,float &loc_y,float &loc_z,float &loc_yrot) const;
     void SetLocationInWorld(int instance,psSectorInfo *sectorinfo,float loc_x,float loc_y,float loc_z,float loc_yrot);
+
+    psSectorInfo* GetSector() const { return location.loc_sectorinfo; }
 
     /** Get the Mesh Name for the item.
      *

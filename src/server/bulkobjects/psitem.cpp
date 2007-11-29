@@ -846,7 +846,7 @@ bool psItem::GetRequiredRepairToolConsumed()
 }
 
 
-void psItem::GetLocationInWorld(int &instance,psSectorInfo **sectorinfo,float &loc_x,float &loc_y,float &loc_z,float &loc_yrot)
+void psItem::GetLocationInWorld(int &instance,psSectorInfo **sectorinfo,float &loc_x,float &loc_y,float &loc_z,float &loc_yrot) const
 {
     instance    = location.worldInstance;
     *sectorinfo = location.loc_sectorinfo;
