@@ -377,7 +377,10 @@ Deletes a character on the same account as the specified petitioner's.  (petitio
 Temporarily changes a character's access level.  Used to give GMs abilities needed for special instances, or to temporarily add a player to a testers group.  May also be used to demote yourself to a player's status for testing.  (temp level expires on logout, and may be reset by anyone via "/deputize me reset")</topic>
         <topic name="/divorce">/divorce name
 
-Divorce a character from another one that hasn't been online in the latest two months or has deleted himself.</topic>
+Divorce a character from another one if they are married.</topic>
+        <topic name="/marriageinfo">/marriageinfo name
+
+View the details of a characters marriage.</topic>
         <topic name="/event">Administer events.
 To create a new event, a GM should enter:
 /event create [name] [description]
