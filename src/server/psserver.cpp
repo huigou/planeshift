@@ -1070,3 +1070,4 @@ bool psServer::SetServerOption(const char *option_name,const csString& value)
 
     return result==1;
 }
+
