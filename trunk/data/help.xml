@@ -378,9 +378,6 @@ Temporarily changes a character's access level.  Used to give GMs abilities need
         <topic name="/divorce">/divorce name
 
 Divorce a character from another one if they are married.</topic>
-        <topic name="/marriageinfo">/marriageinfo name
-
-View the details of a characters marriage.</topic>
         <topic name="/event">Administer events.
 To create a new event, a GM should enter:
 /event create [name] [description]
@@ -449,6 +446,9 @@ Kicks the named player off of the server.</topic>
         <topic name="/killnpc">/killnpc name reload
 
 Kills the targeted NPC, using the current target if no name is given. The reload option recreates the NPC with stats and triggers from the DB.</topic>
+        <topic name="/marriageinfo">/marriageinfo name
+
+View the details of a characters marriage.</topic>
         <topic name="/modify">/modify [target OR eid:#] [action] [setting(s)]
 
 Alters the settings for an item.  Allowed actions:
