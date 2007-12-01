@@ -423,7 +423,7 @@ bool QuestManager::HandleScriptCommand(csString& block,
         {
             csString data = block.Slice(20);
             csArray<csString> timeinfo = psSplit(data, '-');
-            if (timeinfo.Length() == 2)
+            if (timeinfo.GetSize() == 2)
             {
                 response_requireop.AppendFmt("<timeofday min=\"%s\" max=\"%s\" />", timeinfo[0].GetData(), timeinfo[1].GetData() );
             }
@@ -432,7 +432,7 @@ bool QuestManager::HandleScriptCommand(csString& block,
         {
             csString data = block.Slice(24);
             csArray<csString> timeinfo = psSplit(data, '-');
-            if (timeinfo.Length() == 2)
+            if (timeinfo.GetSize() == 2)
             {
                 response_requireop.AppendFmt("<not><timeofday min=\"%s\" max=\"%s\" /></not>", timeinfo[0].GetData(), timeinfo[1].GetData() );
             }
