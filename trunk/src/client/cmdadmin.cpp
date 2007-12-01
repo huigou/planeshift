@@ -97,7 +97,7 @@ void psAdminCommands::HandleMessage(MsgEntry *me)
 
         if ( error )
         {
-            Error3("Failure to parse XML string %s Error %s\n", msg.cmd, error);            
+            Error3("Failure to parse XML string %s Error %s\n", msg.cmd.GetData(), error);            
         }
         else
         {
