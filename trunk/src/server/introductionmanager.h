@@ -23,3 +23,4 @@ public:
 protected:
     csHash< csSet<unsigned int>* > introMap;
 };
+

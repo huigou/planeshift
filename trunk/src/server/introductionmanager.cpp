@@ -60,7 +60,6 @@ bool IntroductionManager::LoadCharIntroductions(unsigned int charid)
         introMap.Put(charid, newSet);
         for (unsigned long i = 0 ; i < r.Count() ; i++)
         {
-            unsigned int charid = r[i].GetUInt32("charid");
             unsigned int charintroid = r[i].GetUInt32("introcharid");
             newSet->Add(charintroid);  
         }
@@ -138,3 +137,4 @@ void IntroductionManager::HandleMessage(MsgEntry *pMsg,Client *client)
 
     client->GetActor()->Send(client->GetTargetClientID(), false, false);
 }
+
