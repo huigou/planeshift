@@ -144,6 +144,11 @@ INSERT INTO command_group_assignment VALUES( "/divorce", 26 );
 INSERT INTO command_group_assignment VALUES( "/divorce", 25 );
 INSERT INTO command_group_assignment VALUES( "/divorce", 24 );
 INSERT INTO command_group_assignment VALUES( "/divorce", 23 );
+INSERT INTO command_group_assignment VALUES( "/marriageinfo", 30 );
+INSERT INTO command_group_assignment VALUES( "/marriageinfo", 26 );
+INSERT INTO command_group_assignment VALUES( "/marriageinfo", 25 );
+INSERT INTO command_group_assignment VALUES( "/marriageinfo", 24 );
+INSERT INTO command_group_assignment VALUES( "/marriageinfo", 23 );
 
 # GM2 and above
 INSERT INTO command_group_assignment VALUES( "/updaterespawn", 30 );

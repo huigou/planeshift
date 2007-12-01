@@ -95,7 +95,7 @@ public:
     bool IsBanned(const char* name);
 
     ///Checked if the character exists still or if it hasn't connected in two months.
-    int HasConnected( csString name );
+    bool HasConnected( csString name );
 
     bool SendContainerContents(Client *client, psItem *item, 
                                int containerID = CONTAINER_INVENTORY_BULK);

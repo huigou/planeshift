@@ -192,8 +192,11 @@ protected:
     /// Set the label color for char
     void SetLabelColor(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data, Client *client, gemActor * subject);
 
-    //Divorce char1 and char2, if char2 hasn't been online in the latest 2 months, or is deleted.
-    void Divorce( MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data, Client *client );
+    /// Divorce char1 and char2, if they're married.
+    void Divorce(MsgEntry* me, AdminCmdData& data);
+
+    /// Get the marriage info of a player.
+    void ViewMarriage(MsgEntry* me, AdminCmdData& data);
 
     /// Add new wp to DB
     int WaypointCreate(csString& name, csVector3& pos, csString& sectorName, float radius, csString& flags);
