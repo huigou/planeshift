@@ -320,7 +320,8 @@ bool AdminManager::AdminCmdData::DecodeAdminCmdMessage(MsgEntry *pMsg, psAdminCm
         setting = words[2];
         return true;
     }
-    else if (command == "/divorce")
+    else if (command == "/divorce" ||
+             command == "/marriageinfo")
     {
         player = words[1];
         return true;
@@ -1037,7 +1038,11 @@ void AdminManager::HandleAdminCmdMessage(MsgEntry *me, psAdminCmdMessage &msg, A
     }
     else if (data.command == "/divorce")
     {
-        Divorce(me, msg, data, client);
+        Divorce(me, data);
+    }
+    else if (data.command == "/marriageinfo")
+    {
+        ViewMarriage(me, data);
     }
     else if (data.command == "/waypoint")
     {
@@ -1799,7 +1804,7 @@ void AdminManager::SetLabelColor(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdD
                              data.player.GetData(), data.setting.GetData() );
 }
 
-void AdminManager::Divorce(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data, Client *client)
+void AdminManager::Divorce(MsgEntry* me, AdminCmdData& data)
 {
     if (!data.player.Length())
     {
@@ -1840,6 +1845,45 @@ void AdminManager::Divorce(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& d
     marriageMgr->DeleteMarriageInfo(divorcerChar);
     psserver->SendSystemInfo(me->clientnum, "You have divorced %s from %s.", data.player.GetData(), spouseName.GetData());
     Debug3(LOG_MARRIAGE, me->clientnum, "%s divorced from %s.", data.player.GetData(), spouseName.GetData());
+}
+
+void AdminManager::ViewMarriage(MsgEntry* me, AdminCmdData& data)
+{
+    if (!data.player.Length())
+    {
+        psserver->SendSystemInfo(me->clientnum, "Usage: \"/marriageinfo [character]\"");
+        return;
+    }
+
+    Client* player = clients->Find( data.player );
+    
+    // If the player is not online, we can't proceed.
+    if (!player)
+    {
+        psserver->SendSystemInfo(me->clientnum, "The player who's marriage info you wish to check must be online." );
+        return;
+    }
+
+    psCharacter* playerData = player->GetCharacterData();
+
+    // If the player is not married, there's no info.
+    if(!playerData->GetIsMarried())
+    {
+        psserver->SendSystemInfo(me->clientnum, "This player is not married.");
+        return;
+    }
+
+    csString spouseFullName = playerData->GetSpouseName();
+    csString spouseName = spouseFullName.Slice( 0, spouseFullName.FindFirst(' '));
+
+    if(psserver->GetCharManager()->HasConnected(spouseName))
+    {
+        psserver->SendSystemInfo(me->clientnum, "%s is married to %s, who was last online less than two months ago.", data.player.GetData(), spouseName.GetData());
+    }
+    else
+    {
+        psserver->SendSystemInfo(me->clientnum, "%s is married to %s, who was last online more than two months ago.", data.player.GetData(), spouseName.GetData());
+    }
 }
 
 void AdminManager::Teleport(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data, Client *client, gemObject* subject)

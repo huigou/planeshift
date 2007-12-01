@@ -605,7 +605,7 @@ bool psServerCharManager::IsBanned(const char* name)
 }
 
 
-int psServerCharManager::HasConnected( csString name )
+bool psServerCharManager::HasConnected( csString name )
 {
     int secondsLastLogin;
     secondsLastLogin = 0;
@@ -615,18 +615,18 @@ int psServerCharManager::HasConnected( csString name )
     //There is no character with such a name. 
     if (!result.IsValid() || result.Count() == 0)
     {
-        return 1;
+        return false;
     }
     //We check when the char was last online.    
     secondsLastLogin = result[0].GetInt(1);
 
-    if ( secondsLastLogin > MAX_DAYS_NO_LOGON )//the result is major than 2 month 
+    if ( secondsLastLogin > MAX_DAYS_NO_LOGON ) // More than 2 months since last login.
     { 
-        return 2;
+        return false;
     }
     
     //The char has connected recently.
-    return 0;
+    return true;
 }
 
 
