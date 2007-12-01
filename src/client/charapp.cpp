@@ -364,7 +364,6 @@ bool psCharAppearance::Dequip(csString& slotname,
                               csString& subMesh,
                               csString& texture)
 {  
-                   
     if ( slotname == "head" )
     {
          ShowHair(true);
@@ -379,21 +378,21 @@ bool psCharAppearance::Dequip(csString& slotname,
 
     if ( subMesh.Length() )
     {
-        printf("Setting Default Mesh on %s\n", part.GetData());
         DefaultMesh(part); 
     }
 
+    
     if ( part.Length() )
     {
         if ( texture.Length() )
         {
             ChangeMaterial(part, texture, texture);
         }
-        else
+        else            
         {
             DefaultMaterial(part);
         }            
-        DefaultMesh(part);
+        DefaultMaterial(part);
     }
 
     return true;
@@ -407,13 +406,11 @@ void psCharAppearance::DefaultMesh(const char* part)
     for (int idx=0; idx < stateFactory->GetMeshCount(); idx++)
     {
         const char * meshName = stateFactory->GetMeshName( idx );
-        printf("Part: %s Mesh %d = %s\n", part, idx, meshName );
         if (strstr(meshName, part))
         {
             state->DetachCoreMesh( meshName );
             if (stateFactory->IsMeshDefault(idx))
             {
-                printf("This is default mesh\n");
                 defaultPart = meshName;
             }
         }
@@ -675,19 +672,26 @@ bool psCharAppearance::SetTrait(Trait * trait)
 
 
 void psCharAppearance::DefaultMaterial(csString& part)
-{
+{    
+    bool torsoFound = false;
+    
     for ( size_t z = 0; z < skinToneSet.GetSize(); z++ )
     {
+        if ( skinToneSet[z].part == "Torso" )
+        {
+            torsoFound = true;
+        }
+        
         if ( part == skinToneSet[z].part )
         {
             ChangeMaterial(part, skinToneSet[z].material, skinToneSet[z].texture);
         }
     }
-    
-    if ( part == "Torso" )
+        
+    if ( part == "Torso" && torsoFound == false)
     {                                
         ChangeMaterial(part, stateFactory->GetDefaultMaterial(part), stateFactory->GetDefaultMaterial(part));
-    }    
+    }        
 }
 
 

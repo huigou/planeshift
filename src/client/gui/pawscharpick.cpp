@@ -551,7 +551,7 @@ void pawsCharacterPickerWindow::SelectCharacter(int character, pawsWidget* widge
         csString traits(models[selectedCharacter].traits);
         csString equipment( models[selectedCharacter].equipment );
         
-        charApp->SetMesh(view->GetObject());            
+        charApp->SetMesh(view->GetObject());                    
         charApp->ApplyTraits(traits);            
         charApp->ApplyEquipment(equipment);
         

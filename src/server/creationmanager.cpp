@@ -824,7 +824,7 @@ void psCharCreationManager::HandleUploadMessage( MsgEntry* me, Client *client )
     chardata->SetRaceInfo(raceinfo);
     chardata->SetHitPoints(50.0);
     chardata->SetHitPointsMax(0.0);
-	chardata->SetHitPointsMaxModifier(0.0);
+    chardata->SetHitPointsMaxModifier(0.0);
 
     // Try tutorial level first.
     const char* sectorname = "tutorial";
@@ -834,21 +834,36 @@ void psCharCreationManager::HandleUploadMessage( MsgEntry* me, Client *client )
     float yrot = 4.0f;
 
     psSectorInfo *sectorinfo = CacheManager::GetSingleton().GetSectorInfoByName(sectorname);
-    if (!sectorinfo)
+    
+    bool sectorFound = true;
+    
+    if ( sectorinfo && EntityManager::GetSingleton().FindSector(sectorinfo->name) == NULL )
     {
-        // Now try the raceinfo starting location.
-        raceinfo->GetStartingLocation(x,y,z,yrot,sectorname);
-        sectorinfo = CacheManager::GetSingleton().GetSectorInfoByName(sectorname);
-        if (!sectorinfo)
-        {        
-            Error2("Unresolvable starting sector='%s'", sectorname );
-            psCharRejectedMessage reject(me->clientnum);
-            psserver->GetEventManager()->Broadcast(reject.msg, NetBase::BC_FINALPACKET);
-            psserver->RemovePlayer (me->clientnum,"No starting Sector.");
-            delete chardata;
-            return;
-        }
+        Error2("Sector='%s' found but no map file was detected for it. Using NPCroom1", sectorname );    
+        sectorinfo = CacheManager::GetSingleton().GetSectorInfoByName("NPCroom1");
+        if ( sectorinfo && EntityManager::GetSingleton().FindSector(sectorinfo->name) == NULL )
+        {
+            Error1("NPCroom1 failed - Critical");                
+            sectorFound = false;    
+        }                            
     }
+    else
+    {
+        sectorFound = false;
+    }
+    
+    
+    if ( sectorFound == false )
+    {
+        Error2("Unresolvable starting sector='%s'", sectorname );
+        psCharRejectedMessage reject(me->clientnum);
+        psserver->GetEventManager()->Broadcast(reject.msg, NetBase::BC_FINALPACKET);
+        psserver->RemovePlayer (me->clientnum,"No starting Sector.");
+        delete chardata;
+        return;    
+    }
+    
+    
 
     uint32 newinstance = psserver->GetRandom(INT_MAX-1)+1;
     chardata->SetLocationInWorld(newinstance, sectorinfo, x, y, z, yrot);  // Chars will start on random instance
@@ -874,7 +889,10 @@ void psCharCreationManager::HandleUploadMessage( MsgEntry* me, Client *client )
     trait = CacheManager::GetSingleton().GetTraitByID(upload.selectedSkinColour);    
     if ( trait )
         chardata->SetTraitForLocation( trait->location, trait );
-                    
+    
+    printf("Uploaded Skin Colour: %d\n", upload.selectedSkinColour );
+            
+                        
     csString filename;
     filename.Format("/planeshift/models/%s/%s.cal3d",raceinfo->mesh_name,raceinfo->mesh_name);
 

@@ -1,3 +1,7 @@
+*** 2007-12-01 by Andrew Craig
+- FS#594 - wrong body color (texture) when unwielding torso armor on kran.
+- Cleaned up some error handling when tutorial not found.
+
 *** 2007-11-29 by Roland Schulz
 - add position saving for eedit widgets as requested in FS#641
 
