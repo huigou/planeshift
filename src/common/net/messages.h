@@ -42,7 +42,7 @@ struct iEngine;
 
 // This holds the version number of the network code, remember to increase
 // this each time you do an update which breaks compatibility
-#define PS_NETVERSION   0x007F
+#define PS_NETVERSION   0x0080
 // Remember to bump the version in pscssetup.h, as well.
 
 // NPC Networking version is separate so we don't have to break compatibility
@@ -2846,6 +2846,7 @@ public:
                     const char* factname,
                     const char* filename,
                     const char* raceName,
+                    unsigned short int gender,
                     const char* helmGroup,
                     csVector3 collTop, csVector3 collBottom, csVector3 collOffset,
                     const char* texParts,
@@ -2879,6 +2880,7 @@ public:
     csString factname;
     csString filename;
     csString race;
+    unsigned short int gender;
     csString helmGroup;                 // Used for helm groupings. 
     csVector3 top, bottom, offset;
     csString texParts;

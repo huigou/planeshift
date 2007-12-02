@@ -545,6 +545,45 @@ void pawsShortcutWindow::ExecuteCommand(int shortcutNum, bool local)
                     command.ReplaceAll("$target",name); // actually replace target
                 }
             }
+            if(command.FindFirst("$guild") != command.Length() - 1)
+            {
+                GEMClientActor *object= dynamic_cast<GEMClientActor*>(psengine->GetCharManager()->GetTarget());
+                if(object)
+                {
+                    csString name = object->GetGuildName(); //grab guild name of target
+                    command.ReplaceAll("$guild",name); // actually replace target
+                }
+            }
+            if(command.FindFirst("$race") != command.Length() - 1)
+            {
+                GEMClientActor *object= dynamic_cast<GEMClientActor*>(psengine->GetCharManager()->GetTarget());
+                if(object)
+                {
+                    csString name = object->race; //grab race name of target
+                    command.ReplaceAll("$race",name); // actually replace target
+                }
+            }
+            if(command.FindFirst("$sir") != command.Length() - 1)
+            {
+                GEMClientActor *object= dynamic_cast<GEMClientActor*>(psengine->GetCharManager()->GetTarget());
+                if(object)
+                {
+                    csString name = "Dear";
+                    switch (object->gender)
+                    {
+                    case PSCHARACTER_GENDER_NONE:
+                        name = "Gemma";
+                        break;
+                    case PSCHARACTER_GENDER_FEMALE:
+                        name = "Lady";
+                        break;
+                    case PSCHARACTER_GENDER_MALE:
+                        name = "Sir";
+                        break;
+                    }
+                    command.ReplaceAll("$sir",name); // actually replace target
+                }
+            }
             const char* errorMessage = cmdsource->Publish( command );
             if ( errorMessage )
                 systemText->AddMessage( errorMessage );

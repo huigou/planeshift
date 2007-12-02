@@ -4381,6 +4381,7 @@ psPersistActor::psPersistActor( uint32_t clientNum,
                                 const char* factname,
                                 const char* filename,
                                 const char* race,
+                                unsigned short int gender,
                                 const char* helmGroup,
                                 csVector3 collTop, csVector3 collBottom, csVector3 collOffSet,
                                 const char* texParts,
@@ -4417,6 +4418,7 @@ psPersistActor::psPersistActor( uint32_t clientNum,
     msg->Add( factname );
     msg->Add( filename );
     msg->Add( race );
+    msg->Add ( gender );
     msg->Add( helmGroup );
     msg->Add( collTop );
     msg->Add( collBottom );
@@ -4451,6 +4453,7 @@ psPersistActor::psPersistActor( MsgEntry* me, csStringHash* msgstrings, iEngine 
     factname    = csString ( me->GetStr() );
     filename    = csString ( me->GetStr() );
     race        = csString ( me->GetStr() );
+    gender      = me->GetInt16();
     helmGroup   = csString ( me->GetStr() );
 
     top         = me->GetVector();
