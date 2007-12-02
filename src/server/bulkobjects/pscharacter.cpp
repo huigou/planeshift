@@ -1328,24 +1328,37 @@ void psCharacter::DropItem(psItem *&item, csVector3 suggestedPos, bool transient
 
 void psCharacter::CalculateEquipmentModifiers()
 {
+    // In this method we potentially call Equip and Unequip scripts that modify stats.
+    // The stat effects that these scripts have are indistinguishable from magic effects on stats,
+    // and magical changes to stats also need to call this method (weapon may need to be set
+    // inactive when strength spell expires). This could result in an
+    // endless loop, hence this method locks itself against being called recursively.
+    static bool lock_me = false;
+    if(lock_me) {
+      return;
+    }
+    lock_me = true;
+
     csList<psItem*> itemlist;
 
     modifiers.Clear();
 
     psItem *currentitem = NULL;
 
-    // Loop through every holding item
+    // Loop through every holding item adding it to list of items to check
     for(int i = 0; i < PSCHARACTER_SLOT_BULK1; i++)
     {
         currentitem=inventory.GetInventoryItem((INVENTORY_SLOT_NUMBER)i);
 
         // checking the equipment array is necessary since the item could be just unequipped
-        // (this method is called by Unequip)
+        // (this method is also called by Unequip)
         if(!currentitem || inventory.GetEquipmentObject(currentitem->GetLocInParent()).itemIndexEquipped == 0)
             continue;
 
         itemlist.PushBack(currentitem);
     }
+    // go through list and make items active whose requirements are fulfilled and remove item from list.
+    // stop when a complete loop has been made without making a change.
     int haschanged = 1;   // go through list at least once
     while( haschanged )
     {
@@ -1385,6 +1398,8 @@ void psCharacter::CalculateEquipmentModifiers()
             break;
         }
     }
+
+    // go through list of items whose requirements are not fulfilled and deactivate them
     csList<psItem*>::Iterator i(itemlist);
     while( i.HasNext() )
     {
@@ -1395,6 +1410,7 @@ void psCharacter::CalculateEquipmentModifiers()
         }
     }
     itemlist.DeleteAll();
+    lock_me = false;
 }
 
 void psCharacter::AddLootItem(psItemStats *item)

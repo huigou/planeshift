@@ -1,3 +1,10 @@
+*** 2007-12-01 by Roland Schulz
+- Added one more position saving for eedit
+- More work on inactive items extending 2007-11-25 commit. Items are now
+  properly set to active/inactive when spells are cast or expire.
+  Should actually work with anything that uses a progression script to change
+  players stats. This should fix bug 2618 on the old bugtracker.
+
 *** 2007-12-01 by Andrew Craig
 - Moved some more stuff inside the defines in the database plugin to 
   help fix some strange behaviours. 

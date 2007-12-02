@@ -835,9 +835,13 @@ public:
         case CON:
         case STA:
             if (base)
+            {
                 targetChar->GetAttributes()->SetStat(statToAttrib[stat],(unsigned)newValue);
-            else
+                targetChar->CalculateEquipmentModifiers();
+            } else {
                 targetChar->GetAttributes()->BuffStat(statToAttrib[stat],unsigned(newValue-oldValue));
+                targetChar->CalculateEquipmentModifiers();
+            }
             break;
         case ATTACK:
             targetChar->AdjustAttackValueModifier(newValue/oldValue);
@@ -938,7 +942,7 @@ public:
         {
             float finalValue = GetCurrentValue(targetChar);
             csString undoScript = CreateUndoScript(oldValue, finalValue);
-            
+
             int persistentID = targetChar->RegisterProgressionEvent(ToString(), ticksElapsed);
             psserver->GetProgressionManager()->QueueUndoScript(undoScript.GetData(), delay, actor, object, persistentID);
         }
