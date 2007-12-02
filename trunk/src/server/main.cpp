@@ -65,8 +65,9 @@ int main(int argc, char **argv)
     // Setup ServerConsole
     ServerConsole::Init(argv[0],"PS Server");
 
-    // Start the server
+    // Start the server      
     psserver = new psServer;
+    
     if (!psserver->Initialize(object_reg))
     {
         CPrintf (CON_ERROR, COL_RED "error while initializing server!\n" COL_NORMAL);
@@ -74,7 +75,9 @@ int main(int argc, char **argv)
     }
 
     psserver->MainLoop ();
+    
     delete psserver;
+    
 
     // Save Configuration
     csRef<iConfigManager> cfgmgr= csQueryRegistry<iConfigManager> (object_reg);

@@ -393,6 +393,8 @@ MathScriptEngine::~MathScriptEngine()
         delete script;
     }
     scripts.DeleteAll();
+    
+    MathScriptEngine::customCompoundFunctions.DeleteAll();
 }
 
 MathScript *MathScriptEngine::FindScript(const char *name)

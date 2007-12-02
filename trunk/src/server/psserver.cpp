@@ -19,6 +19,9 @@
 
 #include <psconfig.h>
 
+//=============================================================================
+// Crystal Space Includes
+//=============================================================================
 #include <iutil/vfs.h>
 #include <iutil/objreg.h>
 #include <iutil/cfgmgr.h>
@@ -26,21 +29,38 @@
 #include <iutil/object.h>
 #include <ivaria/reporter.h>
 #include <ivaria/stdrep.h>
+
+//=============================================================================
+// Library Include
+//=============================================================================
+#include "util/serverconsole.h"
+#include "util/sleep.h"
+#include "util/mathscript.h"
+#include "util/psdatabase.h"
+#include "util/eventmanager.h"
+#include "util/log.h"
+#include "util/consoleout.h"
+
 #include "engine/netpersist.h"
 
+#include "net/msghandler.h"
+#include "net/messages.h"
 
+#include "bulkobjects/pscharacterloader.h"
+#include "bulkobjects/psitem.h"
+#include "bulkobjects/psaccountinfo.h"
+
+//=============================================================================
+// Application Includes
+//=============================================================================
 #include "gem.h"
 #include "questionmanager.h"
 #include "advicemanager.h"
 #include "actionmanager.h"
 #include "entitymanager.h"
 #include "psserver.h"
-#include "util/serverconsole.h"
-#include "util/sleep.h"
-#include "util/mathscript.h"
 #include "chatmanager.h"
 #include "netmanager.h"
-#include "net/msghandler.h"
 #include "client.h"
 #include "authentserver.h"
 #include "guildmanager.h"
@@ -48,14 +68,11 @@
 #include "playergroup.h"
 #include "usermanager.h"
 #include "tutorialmanager.h"
-#include "net/messages.h"
-#include "util/psdatabase.h"
 #include "psserverchar.h"
 #include "spawnmanager.h"
 #include "adminmanager.h"
 #include "commandmanager.h"
 #include "exchangemanager.h"
-#include "util/eventmanager.h"
 #include "marriagemanager.h"
 #include "combatmanager.h"
 #include "spellmanager.h"
@@ -70,11 +87,6 @@
 #include "workmanager.h"
 #include "minigamemanager.h"
 #include "globals.h"
-#include "bulkobjects/pscharacterloader.h"
-#include "bulkobjects/psitem.h"
-#include "bulkobjects/psaccountinfo.h"
-#include "util/log.h"
-#include "util/consoleout.h"
 #include "gmeventmanager.h"
 #include "bankmanager.h"
 #include "introductionmanager.h"
@@ -114,27 +126,30 @@ psServer::psServer ()
 psServer::~psServer()
 {
     // Kick players from server
-    ClientConnectionSet* clients = serverthread->GetConnections();
-
-    Client* p;
-    do
+    if ( serverthread )
     {
-        // this is needed to not block the RemovePlayer later...
-        {
-            ClientIterator i(*clients);
-            p = i.First();
-        }
+        ClientConnectionSet* clients = serverthread->GetConnections();
 
-        if (p)
-        {
-            psAuthRejectedMessage msgb
-                (p->GetClientNum(),"The server was restarted or shut down.  Please check the website or forums for more news.");
+        Client* p;
+        do
+        {       
+            // this is needed to not block the RemovePlayer later...
+            {
+                ClientIterator i(*clients);
+                p = i.First();
+            }
 
-            eventmanager->Broadcast(msgb.msg, NetBase::BC_FINALPACKET);
-            RemovePlayer(p->GetClientNum(),"The server was restarted or shut down.  Please check the website or forums for more news.");
-        }
-    } while (p);
+            if (p)
+            {
+                psAuthRejectedMessage msgb
+                    (p->GetClientNum(),"The server was restarted or shut down.  Please check the website or forums for more news.");
 
+                eventmanager->Broadcast(msgb.msg, NetBase::BC_FINALPACKET);
+                RemovePlayer(p->GetClientNum(),"The server was restarted or shut down.  Please check the website or forums for more news.");
+            }
+        } while (p);
+    }
+    
     delete economymanager;
     delete tutorialmanager;
     delete charmanager;
@@ -216,6 +231,7 @@ bool psServer::Initialize(iObjectRegistry* object_reg)
 
     rng = new csRandomGen();
 
+    
     vfs =  csQueryRegistry<iVFS> (objreg);
     configmanager =  csQueryRegistry<iConfigManager> (object_reg);
 
@@ -238,13 +254,13 @@ bool psServer::Initialize(iObjectRegistry* object_reg)
     database = new psDatabase(object_reg);
 
     csString db_host, db_user, db_pass, db_name;
-	unsigned int db_port;
+    unsigned int db_port;
 
     db_host = configmanager->GetStr("Planeshift.Database.host", "localhost");
     db_user = configmanager->GetStr("Planeshift.Database.userid", "planeshift");
     db_pass = configmanager->GetStr("Planeshift.Database.password", "planeshift");
     db_name = configmanager->GetStr("Planeshift.Database.name", "planeshift");
-	db_port = configmanager->GetInt("Planeshift.Database.port");
+    db_port = configmanager->GetInt("Planeshift.Database.port");
 
     Debug4(LOG_STARTUP,0,COL_BLUE "Database Host: '%s' User: '%s' Databasename: '%s'\n" COL_NORMAL,
       (const char*) db_host, (const char*) db_user, (const char*) db_name);
@@ -277,8 +293,9 @@ bool psServer::Initialize(iObjectRegistry* object_reg)
     // Initialise the CSV logger
     logcsv = new LogCSV(configmanager, vfs);
 
+    
     cachemanager = new CacheManager();
-
+    
     //Loads the standard motd message from db
     Result result(db->Select("SELECT option_value FROM server_options WHERE option_name = 'standard_motd'"));
     if (result.IsValid()  &&  result.Count()>0)
@@ -286,9 +303,11 @@ bool psServer::Initialize(iObjectRegistry* object_reg)
     else
         motd = "";
 
+    
     // MathScript Engine
     mathscriptengine = new MathScriptEngine();
-
+    
+    
     // Initialize DB settings cache
     if (!cachemanager->PreloadAll())
     {
@@ -474,7 +493,7 @@ bool psServer::Initialize(iObjectRegistry* object_reg)
     if (!gmeventManager->Initialise())
     {
         Error1("Failed to load GM Events Manager");
-	return false;
+        return false;
     }
 
     // Init Bank Manager.
@@ -492,7 +511,8 @@ bool psServer::Initialize(iObjectRegistry* object_reg)
         Debug1(LOG_STARTUP,0,"Server status reporter initialized.\n");
     }
 
-    return true;
+
+    return true;    
 }
 
 void psServer::MainLoop ()

@@ -328,7 +328,7 @@ bool NPCDialogDict::LoadTriggers(iDataConnection *db)
         CPrintf(CON_ERROR, db->GetLastError());
         return false;
     }
-
+    
     for (unsigned int i=0; i<result.Count(); i++)
     {
         NpcTrigger *newtrig = new NpcTrigger;
