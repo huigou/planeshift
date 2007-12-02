@@ -566,7 +566,7 @@ int Client::GetTargetType(gemObject* target)
     {
         DamageHistory *dh = GetActor()->GetDamageHistory((int)i);
         // If the target has ever hit you, you can attack them back.  Logging out clears this.
-        if (dh->attacker_ref.IsValid() && dh->attacker_ref == target)
+        if (dh->attacker_ref.IsValid() && dh->attacker_ref->GetActorPtr() == target)
             return TARGET_PVP;
     }
 
