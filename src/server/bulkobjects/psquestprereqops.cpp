@@ -44,7 +44,9 @@ csString psQuestPrereqOp::GetScript()
 psQuestPrereqOpList::~psQuestPrereqOpList()
 {
     while (prereqlist.GetSize())
+    {
         delete prereqlist.Pop();
+    }        
 }
 
 
@@ -65,7 +67,10 @@ bool psQuestPrereqOpAnd::Check(psCharacter * character)
     // Check if all prereqs are valid
     for (size_t i = 0; i < prereqlist.GetSize(); i++)
     {
-        if (!prereqlist[i]->Check(character)) return false;
+        if (!prereqlist[i]->Check(character)) 
+        {
+            return false;
+        }            
     }
 
     return true;
@@ -100,7 +105,10 @@ bool psQuestPrereqOpOr::Check(psCharacter * character)
     // Check if any of the prereqs are valid
     for (size_t i = 0; i < prereqlist.GetSize(); i++)
     {
-        if (prereqlist[i]->Check(character)) return true;
+        if (prereqlist[i]->Check(character)) 
+        {
+            return true;
+        }            
     }
 
     return false;
@@ -112,7 +120,7 @@ csString psQuestPrereqOpOr::GetScriptOp()
     script.Append("<or>");
     for (size_t i = 0; i < prereqlist.GetSize(); i++)
     {
-    script.Append(prereqlist[i]->GetScriptOp());
+        script.Append(prereqlist[i]->GetScriptOp());
     }
     script.Append("</or>");
     return script;
@@ -142,7 +150,10 @@ bool psQuestPrereqOpRequire::Check(psCharacter * character)
     int count=0;
     for (size_t i = 0; i < prereqlist.GetSize(); i++)
     {
-        if (prereqlist[i]->Check(character)) count++;
+        if (prereqlist[i]->Check(character)) 
+        {
+            count++;
+        }            
     }
     // Verify that the appropiate numbers of prereqs was counted. 
     return ((min == -1 || count >= min) && (max == -1 || count <= max));
@@ -152,8 +163,16 @@ csString psQuestPrereqOpRequire::GetScriptOp()
 {
     csString script;
     script.Append("<require");
-    if (min != -1) script.AppendFmt(" min=\"%d\"",min);
-    if (max != -1) script.AppendFmt(" max=\"%d\"",max);
+    if (min != -1)
+    {
+        script.AppendFmt(" min=\"%d\"",min);
+    }
+            
+    if (max != -1)
+    {
+        script.AppendFmt(" max=\"%d\"",max);
+    }
+            
     script.Append(">");
     for (size_t i = 0; i < prereqlist.GetSize(); i++)
     {
@@ -185,7 +204,9 @@ csString psQuestPrereqOpNot::GetScriptOp()
     csString script;
     script.Append("<not>");
     if (prereqlist.GetSize())
+    {
         script.Append(prereqlist[0]->GetScriptOp());
+    }        
     script.Append("</not>");
     return script;
 }
@@ -259,8 +280,15 @@ csString psQuestPrereqOpQuestCompletedCategory::GetScriptOp()
     csString script;
     
     script.AppendFmt("<completed category=\"%s\"",category.GetDataSafe());
-    if (min != -1) script.AppendFmt(" min=\"%d\"",min);
-    if (max != -1) script.AppendFmt(" max=\"%d\"",max);
+    if (min != -1)
+    {
+        script.AppendFmt(" min=\"%d\"",min);
+    }
+            
+    if (max != -1)
+    {
+        script.AppendFmt(" max=\"%d\"",max);
+    }        
     script.Append("/>");
 
     return script;
@@ -277,8 +305,11 @@ psQuestPrereqOp* psQuestPrereqOpQuestCompletedCategory::Copy()
 
 bool psQuestPrereqOpFaction::Check(psCharacter * character)
 {
-    if(max) // If value is max, make sure we're below it
+    if(max)
+    { 
+        // If value is max, make sure we're below it        
         return !character->CheckFaction(faction,value);
+    }        
     return character->CheckFaction(faction,value);
 }
 
@@ -302,7 +333,9 @@ psQuestPrereqOp* psQuestPrereqOpFaction::Copy()
 bool psQuestPrereqOpActiveMagic::Check(psCharacter * character)
 {
     if (character->GetActor())
+    {
         return character->GetActor()->IsMagicCategoryActive(activeMagic);
+    }        
     return false;
 }
 
@@ -328,7 +361,9 @@ bool psQuestPrereqOpTimeOfDay::Check(psCharacter * character)
     int currTime = psserver->GetWeatherManager()->GetCurrentTime();
 
     if (minTime <= maxTime) 
+    {
         return (currTime <= maxTime) && (currTime >= minTime); // quests during the day
+    }        
 
     return (currTime >= maxTime) || (currTime <= minTime); // quests overnight
 }
@@ -368,7 +403,7 @@ csString psQuestPrereqOpXor::GetScriptOp()
     script.Append("<xor>");
     for (size_t i = 0; i < prereqlist.GetSize(); i++)
     {
-    script.Append(prereqlist[i]->GetScriptOp());
+        script.Append(prereqlist[i]->GetScriptOp());
     }
     script.Append("</xor>");
     return script;
