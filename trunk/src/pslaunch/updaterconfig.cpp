@@ -160,7 +160,7 @@ bool Config::Initialize(csRef<iDocumentNode> node)
 Mirror* Config::GetMirror(uint x)
 {
     Mirror * mirror = NULL;
-    if ( x >=0 && x < mirrors.GetSize() )
+    if (x < mirrors.GetSize())
     {
         mirror = mirrors[x];
     }
