@@ -75,16 +75,18 @@ bool psMysqlConnection::Initialize (iObjectRegistry *objectreg)
 bool psMysqlConnection::Initialize(const char *host, unsigned int port, const char *database,
                               const char *user, const char *pwd)
 {
+#ifdef USE_DELAY_QUERY
+
     // Create a mydb
     mysql_library_init(0, NULL, NULL);
 
-#ifdef USE_DELAY_QUERY
     dqm.AttachNew(new DelayedQueryManager(host,port,user,pwd,database));
     dqmThread.AttachNew(new Thread(dqm));
     dqmThread->Start();
-#endif    
 
     mysql_thread_init();
+#endif    
+    
     conn=mysql_init(NULL);
     // Conn is the valid connection to be used for mydb. Have to store the mydb to get
     // errors if this call fails.
@@ -99,9 +101,10 @@ bool psMysqlConnection::Close()
 {
     mysql_close(conn);
     conn = NULL;
+    
+#ifdef USE_DELAY_QUERY
     mysql_thread_end();
 
-#ifdef USE_DELAY_QUERY
     dqm->Stop();
     dqmThread->Stop();
 #endif    
