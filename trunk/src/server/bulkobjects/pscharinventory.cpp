@@ -337,8 +337,10 @@ void psCharacterInventory::Equip(psItem *item)
     psserver->GetCharManager()->SendOutPlaySoundMessage(fromClient->GetClientNum(), item->GetSound(), "equip");
     psserver->GetCharManager()->SendOutEquipmentMessages(actor, item->GetLocInParent(false), item, psEquipmentMessage::EQUIP);
 
-    RunEquipScript(item);
-
+    if(!item->IsActive())
+    {
+        RunEquipScript(item);
+    }
     owner->CalculateEquipmentModifiers();
 }
 
@@ -360,8 +362,10 @@ void psCharacterInventory::Unequip(psItem *item)
     psserver->GetCharManager()->SendOutEquipmentMessages(actor, item->GetLocInParent(), item, psEquipmentMessage::DEEQUIP);
 
     // 3. Run unequip script
-    RunUnequipScript(item);
-
+    if(item->IsActive())
+    {
+        RunUnequipScript(item);
+    }
     owner->CalculateEquipmentModifiers();
 }
 
@@ -369,9 +373,9 @@ void psCharacterInventory::RunEquipScript(psItem *item)
 {
     gemActor *actor = owner->GetActor();
     csString equipScript = item->GetBaseStats()->GetProgressionEventEquip();            
+    item->SetActive(true);
     if (!equipScript.IsEmpty())
         psserver->GetProgressionManager()->ProcessEvent(equipScript, actor);
-    item->SetActive(true);
 }
 
 void psCharacterInventory::RunUnequipScript(psItem *item)
@@ -380,6 +384,7 @@ void psCharacterInventory::RunUnequipScript(psItem *item)
     csString unequipScript = item->GetBaseStats()->GetProgressionEventUnEquip();
     csString equipScript = item->GetBaseStats()->GetProgressionEventEquip();
 
+    item->SetActive(false);
     if ((unequipScript.IsEmpty() || unequipScript == "undo_equip") && !equipScript.IsEmpty())
     {
         Notify2(LOG_SCRIPT, "Item \"%s\" has no prg_evt_unequip script. Using \"undo_equip\"", item->GetName());
@@ -389,7 +394,6 @@ void psCharacterInventory::RunUnequipScript(psItem *item)
     {
         psserver->GetProgressionManager()->ProcessEvent(unequipScript, actor);
     }
-    item->SetActive(false);
 }
 
 bool psCharacterInventory::CheckSlotRequirements(psItem *item, INVENTORY_SLOT_NUMBER proposedSlot, unsigned short stackCount)
