@@ -78,6 +78,7 @@ psAuthenticationServer::psAuthenticationServer(ClientConnectionSet *pCCS,
     psserver->GetEventManager()->Subscribe(this,MSGTYPE_AUTHCHARACTER,REQUIRE_ANY_CLIENT);
     psserver->GetEventManager()->Subscribe(this,MSGTYPE_SYSTEM,REQUIRE_ANY_CLIENT); // Handle the heartbeat from the client
     psserver->GetEventManager()->Subscribe(this,MSGTYPE_CLIENTSTATUS,REQUIRE_ANY_CLIENT); // Handle the heartbeat from the client
+    psserver->GetEventManager()->Subscribe(this,MSGTYPE_HEART_BEAT,REQUIRE_ANY_CLIENT); // Handle the heartbeat from the client
 }
 
 psAuthenticationServer::~psAuthenticationServer()
