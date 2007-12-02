@@ -1,4 +1,7 @@
 *** 2007-12-01 by Roland Schulz
+- Also check for weapon requirements during combat, not just at start.
+
+*** 2007-12-01 by Roland Schulz
 - Added one more position saving for eedit
 - More work on inactive items extending 2007-11-25 commit. Items are now
   properly set to active/inactive when spells are cast or expire.
