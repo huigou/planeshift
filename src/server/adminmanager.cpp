@@ -19,12 +19,40 @@
 
 #include <psconfig.h>
 #include <ctype.h>
-#include "iutil/object.h"
+//=============================================================================
+// Crystal Space Includes
+//=============================================================================
+#include <iutil/object.h>
+#include <iutil/stringarray.h>
 #include <iengine/campos.h>
 #include <iengine/region.h>
 #include <propclass/linmove.h>
-#include <iutil/stringarray.h>
+#include <iengine/mesh.h>
+#include <iengine/movable.h>
 
+//=============================================================================
+// Library Includes
+//=============================================================================
+#include "util/psdatabase.h"
+#include "util/log.h"
+#include "util/serverconsole.h"
+#include "util/strutil.h"
+#include "util/eventmanager.h"
+
+#include "net/msghandler.h"
+
+#include "bulkobjects/psnpcdialog.h"
+#include "bulkobjects/psnpcloader.h"
+#include "bulkobjects/pscharacterloader.h"
+#include "bulkobjects/psraceinfo.h"
+#include "bulkobjects/psmerchantinfo.h"
+#include "bulkobjects/psactionlocationinfo.h"
+
+#include "rpgrules/factions.h"
+
+//=============================================================================
+// Application Includes
+//=============================================================================
 #include "adminmanager.h"
 #include "spawnmanager.h"
 #include "chatmanager.h"
@@ -33,26 +61,10 @@
 #include "clients.h"
 #include "psserver.h"
 #include "playergroup.h"
-#include "util/psdatabase.h"
-#include "net/msghandler.h"
 #include "entitymanager.h"
-#include "bulkobjects/psnpcdialog.h"
-#include "bulkobjects/psnpcloader.h"
-#include "util/log.h"
-#include "util/serverconsole.h"
-#include "util/strutil.h"
-#include "util/eventmanager.h"
 #include "psserver.h"
 #include "usermanager.h"
 #include "globals.h"
-#include "iserver/idal.h"
-#include "iengine/mesh.h"
-#include "iengine/movable.h"
-
-#include "bulkobjects/pscharacterloader.h"
-#include "bulkobjects/psraceinfo.h"
-#include "bulkobjects/psmerchantinfo.h"
-#include "bulkobjects/psactionlocationinfo.h"
 #include "cachemanager.h"
 #include "combatmanager.h"
 #include "netmanager.h"
@@ -67,7 +79,8 @@
 #include "gmeventmanager.h"
 #include "actionmanager.h"
 #include "progressionmanager.h"
-#include "rpgrules/factions.h"
+
+#include "iserver/idal.h"
 
 // Show only items up to this ID when using the item spawn GUI (hide randomly generated items with IDs set above this)
 #define SPAWN_ITEM_ID_CEILING 10000
