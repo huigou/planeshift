@@ -1,3 +1,6 @@
+*** 2007-12-02 by Michael Gist
+- Fixed FS#638.
+
 *** 2007-12-02 by Sasha Levin
 - Added $sir, $guild and $race to the shortcut commands (works
   just like $target).
