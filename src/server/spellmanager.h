@@ -20,13 +20,28 @@
 #ifndef __SPELLMANAGER_H__
 #define __SPELLMANAGER_H__
 
+//=============================================================================
+// Crystal Space Includes
+//=============================================================================
 #include <csutil/randomgen.h>
 #include <csutil/sysfunc.h>
-#include "msgmanager.h"   // Subscriber class
+
+//=============================================================================
+// Library Includes
+//=============================================================================
 #include "util/gameevent.h"
 #include "bulkobjects/pscharacter.h"
+
+//=============================================================================
+// Server includes
+//=============================================================================
+#include "msgmanager.h"   // Subscriber class
 #include "events.h"
 #include "gem.h"
+
+//=============================================================================
+// Forward Declarations
+//=============================================================================
 
 class psSpellCastGameEvent;
 class psSpellAffectGameEvent;
@@ -41,9 +56,9 @@ class MathScriptVar;
 
 
 
-/**
- *  This class handles all calculations around spell
- */
+/** Manager class that handles loading/searching/casting spells. 
+  * This class also manages a number of psSpell Events.  
+  */
 class psSpellManager : public MessageManager
 {
 public:
@@ -51,40 +66,125 @@ public:
     psSpellManager(ClientConnectionSet *clients,
                    iObjectRegistry * object_reg);
     virtual ~psSpellManager();
+    
+    /** Handles a network message.  
+      * This is a factory for the different types of message that the manager handles.
+      *
+      * @param me The message entry incoming.
+      * @param client The client that this message came from.
+      */
     virtual void HandleMessage(MsgEntry *me,Client *client);
 
+    /** Purifying on a glyph has been complete.  
+      *  This will send out a network message to the client and update it's inventory 
+      *  with the new purified glyph.
+      *
+      *  @param character The character this is for.
+      *  @param glyphUID  The unique ID for this item instance of the glyph.
+      */
     void EndPurifying(psCharacter * character, uint32 glyphUID);
+    
+    /** Sends out the glyphs to a client.  
+      * Builds and sends psRequestGlyphsMessage for the client.
+      *
+      * @param client  The client that will be sent it's current glyphs.
+      */
     void SendGlyphs(Client * client);
 
+    /** Handles a cast event object.
+      * @param event  The event that needs to be handled.
+      */
     void HandleSpellCastEvent( psSpellCastGameEvent *event );
+
+    /** Handles a spell effect event.  
+      * @param event The spell affect event that needs to be handled.
+      */    
     void HandleSpellAffectEvent( psSpellAffectGameEvent *event );
 
 protected:    
+    /** Save a spell to the database for when a player has researched it.
+      *
+      * @param client The client that this is for.
+      * @param spellName The name of the spell to save for that player.
+      */      
     void SaveSpell(Client * client, csString spellName);
+    
+    /** Case a particular spell.
+      * 
+      * @param client The client that is casting the spell.
+      * @param spellName The name of the spell to cast.
+      * @param kFactor The power factor that the spell is cast with.
+      */
     void Cast(Client * client, csString spellName, float kFactor);
+    
+    /** Abort a spell cast.
+      * 
+      * @param castor The castor that was casting this spell.
+      */
     void CancelSpellCasting(gemActor * caster);
+    
+    /** Send the player's spell book.
+      * 
+      * @param client The client that will be sent the spell book.
+      */
     void SendSpellBook(Client * client);
+    
+    /** Start to purify a glyph.
+      * This will also send out notifications to the client about the start of operation.
+      *
+      * @param client The client that this data is for.
+      * @param The stat ID of the glyph that the player wants to purify.
+      */  
     void StartPurifying(Client * client, int statID);
+    
+    /** Find a spell in the assorted glyphs.
+      * This checks ths list of glyphs and see if it matches any 
+      * known spell. This is for when players are researching spells.
+      * 
+      * @param client The client this data is for.
+      * @param assembler A list of glyphs to check for spell match.
+      *
+      * @return A spell if a match found, NULL otherwise.
+      */
     psSpell* FindSpell(Client * client, const glyphList_t & assembler);
 
+    /** Find a spell based on name.
+      *
+      * @param name The name of the spell to find.
+      * 
+      * @return a psSpell object that matches the name or NULL if no match found.
+      */    
     psSpell * FindSpell(csString& name);
+    
+    /** Find a spell based on id.
+      *
+      * @param id The id of the spell to find in the spells table.
+      * 
+      * @return a psSpell object that matches the id or NULL if no match found.
+      */        
     psSpell * FindSpell(int spellID);
 
-    MathScript *researchSpellScript;
+    /** Handles a command when player tries to research.
+      * 
+      * @param client The client this is for.
+      * @param me The message from that client.
+      */
+    void HandleAssembler(Client* client, MsgEntry* me);
+    
+    MathScript *researchSpellScript;                
     MathScriptVar *varCaster;
     MathScriptVar *varSpell;
     MathScriptVar *varSuccess;
-
-    void HandleAssembler(Client* client, MsgEntry* me);
-    
+     
     csRandomGen* randomgen;
-    //    BinaryTree<psSpell> spells;
     ClientConnectionSet *clients;
     iObjectRegistry *object_reg;
 };
 
+//-----------------------------------------------------------------------------
 
-/**
+/** A spell event.
+  * These are fired off when spells are cast.
  */
 class psSpellCastGameEvent : public psGameEvent, public iDeleteObjectCallback
 {
@@ -93,10 +193,11 @@ class psSpellCastGameEvent : public psGameEvent, public iDeleteObjectCallback
     
  public:
 
-    Client      *caster;     /// Entity who casting this spell
-    gemObject   *target;     /// Entity who is target of this spell
-    const psSpell     *spell;      /// The spell that is casted
-    float        max_range;
+    Client      *caster;        ///< Entity who casting this spell
+    gemObject   *target;        ///< Entity who is target of this spell
+    const psSpell     *spell;   ///< The spell that is casted
+    
+    float        max_range;     
     float        powerLevel;
     csTicks      duration;
     
@@ -117,7 +218,10 @@ class psSpellCastGameEvent : public psGameEvent, public iDeleteObjectCallback
     virtual void DeleteObjectCallback(iDeleteNotificationObject * object);
 };
 
-/**
+//-----------------------------------------------------------------------------
+
+/** A spell event.
+  * These are fired off when spells are cast.
  */
 class psSpellAffectGameEvent : public psGameEvent, public iDeleteObjectCallback, public iDeathCallback
 {
@@ -126,15 +230,15 @@ class psSpellAffectGameEvent : public psGameEvent, public iDeleteObjectCallback,
     
  public:
 
-    Client      *caster;     /// Entity who casting this spell
-    gemObject   *target;     /// Entity who is target of this spell
-    const psSpell     *spell;      /// The spell that is casted
+    Client      *caster;        ///< Entity who casting this spell
+    gemObject   *target;        ///< Entity who is target of this spell
+    const psSpell     *spell;   ///< The spell that is casted
     float        min_range;
     float        max_range;
     bool         saved;
     float        powerLevel;
     csTicks      duration;
-    bool         inverse;   // specifies if the progression script should run it's inverse or not.
+    bool         inverse;       ///< specifies if the progression script should run it's inverse or not.
     
     psSpellAffectGameEvent(psSpellManager *mgr,
                            const psSpell *spell,
