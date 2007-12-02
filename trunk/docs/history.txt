@@ -1,6 +1,7 @@
 *** 2007-12-01 by Andrew Craig
 - Moved some more stuff inside the defines in the database plugin to 
   help fix some strange behaviours. 
+- Fixed crash in text box when NULL text passed in.  
   
 *** 2007-12-01 by Michael Gist
 - Added basic /marriageinfo GM command. Can be extended further.
