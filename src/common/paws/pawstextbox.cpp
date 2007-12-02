@@ -553,59 +553,64 @@ void pawsMessageTextBox::FullScroll()
 
 void pawsMessageTextBox::SplitMessage( const char* newText, int colour )
 {
-    int maxWidth;
-    int maxHeight;
+    if ( newText != NULL )
+    {    
+        int maxWidth;
+        int maxHeight;
     
-    GetFont()->GetMaxSize( maxWidth, maxHeight );
+        GetFont()->GetMaxSize( maxWidth, maxHeight );
         
-    char* dummy = new char[strlen( newText ) + 1];
-    char* head = dummy;
+        char* dummy = new char[strlen( newText ) + 1];
+        char* head = dummy;
     
-    strcpy( dummy, newText );
+        strcpy( dummy, newText );
     
-    int offSet = 40;
+        int offSet = 40;
             
-    while ( dummy )
-    {
-        /// See how many characters can be drawn on a single line.                
-        int canDrawLength =  GetFont()->GetLength( dummy, screenFrame.Width()-offSet );
+        while ( dummy )
+        {
+            /// See how many characters can be drawn on a single line.                
+            int canDrawLength =  GetFont()->GetLength( dummy, screenFrame.Width()-offSet );
         
-        /// If it can fit the entire string then return.
-        if ( canDrawLength == (int)strlen( dummy ) )
-        {
-            csString temp( dummy );
-            MessageLine* msgLine = new MessageLine;
-            msgLine->text   = temp;
-            msgLine->colour = colour;
-            adjusted.Push( msgLine );
-            break;
-        }
-        // We have to push in a new line to the lines bit.
-        else
-        {
-            // Find out the nearest white space to break the line. 
-            int index = canDrawLength;
-            
-            while ( index > 0 && dummy[index] != ' ' )
+            /// If it can fit the entire string then return.
+            if ( canDrawLength == (int)strlen( dummy ) )
             {
-                index--;
+                csString temp( dummy );
+                MessageLine* msgLine = new MessageLine;
+                msgLine->text   = temp;
+                msgLine->colour = colour;
+                adjusted.Push( msgLine );
+                break;
             }
-            if (index == 0)
-                index = canDrawLength;
-            
-            // Index now points to the whitespace line so we can break it here.
-            
-            csString test;
-            test.Append( dummy, index );
-            dummy+=index;        
-            MessageLine* msgLine = new MessageLine;
-            msgLine->text   = test;
-            msgLine->colour = colour;
-            adjusted.Push( msgLine );            
-        }
-    }
+            // We have to push in a new line to the lines bit.
+            else
+            {
+                // Find out the nearest white space to break the line. 
+                int index = canDrawLength;
                 
-    delete [] head;        
+                while ( index > 0 && dummy[index] != ' ' )
+                {
+                    index--;
+                }   
+                if (index == 0)
+                {
+                    index = canDrawLength;
+                }                    
+            
+                // Index now points to the whitespace line so we can break it here.
+            
+                csString test;
+                test.Append( dummy, index );
+                dummy+=index;        
+                MessageLine* msgLine = new MessageLine;
+                msgLine->text   = test;
+                msgLine->colour = colour;
+                adjusted.Push( msgLine );            
+            }
+        }
+                
+        delete [] head;        
+    }        
 }
 
 bool pawsMessageTextBox::OnScroll( int direction, pawsScrollBar* widget )
