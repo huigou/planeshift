@@ -712,6 +712,15 @@ void psCombatManager::HandleCombatEvent(psCombatGameEvent *event)
 
     psItem* weapon = attacker_data->Inventory().GetEffectiveWeaponInSlot(event->GetWeaponSlot());
 
+    // weapon became unwieldable
+    csString response;
+    if(weapon!=NULL && !weapon->CheckRequirements(attacker_data,response))
+    {
+        Debug2(LOG_COMBAT, gemAttacker->GetClientID(),"%s has lost use of weapon", gemAttacker->GetName() );
+        psserver->SendSystemError(event->AttackerCID, "You can't use your %s any more.", weapon->GetName() );
+        return;
+    }
+
     // If the weapon in the slot has been changed, skip a turn (latency for this slot may also have changed)
     if (event->WeaponID != weapon->GetUID())
     {
