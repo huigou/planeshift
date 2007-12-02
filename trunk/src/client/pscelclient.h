@@ -375,6 +375,7 @@ public:
     bool stationary,path_sent;
     csTicks lastDRUpdateTime;
     bool ready;
+    unsigned short gender;
 
     // Access functions for the group var
     bool IsGroupedWith(GEMClientActor* actor);

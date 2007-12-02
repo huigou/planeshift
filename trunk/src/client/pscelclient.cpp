@@ -1047,6 +1047,7 @@ GEMClientActor::GEMClientActor( psCelClient* cel, psPersistActor& mesg )
     linmove = NULL;
     colldet = NULL;
     groupID = mesg.groupID;
+    gender = mesg.gender;
     factname = mesg.factname;
     ownerEID = mesg.ownerEID;
     lastSentVelocity = lastSentRotation = 0.0f;

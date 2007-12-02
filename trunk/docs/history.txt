@@ -1,3 +1,8 @@
+*** 2007-12-02 by Sasha Levin
+- Added $sir, $guild and $race to the shortcut commands (works
+  just like $target).
+- NETVER BUMP!
+
 *** 2007-12-01 by Roland Schulz
 - Also check for weapon requirements during combat, not just at start.
 
