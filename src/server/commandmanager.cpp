@@ -41,7 +41,6 @@ psCommandManager::~psCommandManager()
             delete list;
         }
     }
-
 }
 
 bool psCommandManager::LoadFromDatabase()

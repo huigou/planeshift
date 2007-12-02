@@ -113,6 +113,8 @@ CacheManager::CacheManager()
     ItemStatFlagArray.Push(statflag);
 
     effectID = 0;
+    
+    commandManager = NULL;
 }
 
 CacheManager::~CacheManager()
@@ -188,11 +190,15 @@ void CacheManager::PreloadCommandGroups()
 
 void CacheManager::UnloadAll()
 {
-    delete commandManager;
-    quests_by_id.DeleteAll();
 
+    delete commandManager;
+    
+    quests_by_id.DeleteAll();
+    
+    
     {
         csHash<csPDelArray<CombinationConstruction>*,uint32>::GlobalIterator it(tradeCombinations_IDHash.GetIterator ());
+        
         while (it.HasNext ())
         {
             csPDelArray<CombinationConstruction>* newArray = it.Next ();
@@ -307,7 +313,7 @@ void CacheManager::UnloadAll()
         }
         sectorinfo_by_id.Empty();
     }
-    // ToDo: unload everything else
+    // ToDo: unload everything else    
 }
 
 void CacheManager::RemoveInstance( psItem * & item )

@@ -1,3 +1,7 @@
+*** 2007-12-02 by Andrew Craig
+- Some code formatting clean ups and fixed a crash when 
+  server exists.
+
 *** 2007-12-02 by Michael Gist
 - Fixed FS#638.
 
