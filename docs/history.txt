@@ -6,6 +6,13 @@
   just like $target).
 - NETVER BUMP!
 - Fixed FS#689.
+- Fixed imprecise location of items when dropping and random item movements
+  when starting server. Code was doing artificial collision detection checks
+  in attempt to prevent items appearing inside each other. Since either
+  actor was always in range (when dropping) or item was around many other
+  items (like in guildhouses), items used to move and spin a bit.
+  Code was removed - Real colldet (thats now implemented) should be used when
+  that behaviour is desired.
 
 *** 2007-12-01 by Roland Schulz
 - Also check for weapon requirements during combat, not just at start.
