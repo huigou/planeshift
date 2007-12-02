@@ -829,21 +829,6 @@ gemObject *EntityManager::CreateItem( psItem *& iteminstance, bool transient )
     }
 
     // Cannot stack, so make a new one
-    // Try to find a spot without an object, so this doesn't appear inside something
-    int tries = 0;
-    float angle;
-    if (count) do
-    {
-        // Try a random spot around here
-        angle = psserver->rng->Get()*2*PI;
-        newpos.x += sinf(angle)*RANGE_TO_STACK/2;
-        newpos.z += cosf(angle)*RANGE_TO_STACK/2;
-
-        // Search within RANGE_TO_STACK wide area
-        nearlist = gem->pl->FindNearbyEntities( isec, newpos, RANGE_TO_STACK/2 );
-        count = nearlist->GetCount();
-    } while (count && tries++ < 3); // Don't bother doing this more than 3 times
-
     // Get the mesh for this object
     meshname = iteminstance->GetMeshName();
     if (meshname!=NULL)
