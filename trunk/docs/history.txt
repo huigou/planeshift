@@ -2,6 +2,8 @@
 - Some code formatting clean ups and fixed a crash when 
   server exists.
 - Fixed issue with tutorial map loading.  
+- Added a subscriber to the heart beat messages so they have at 
+  least one handler to remove warning about unknown messages. 
 
 *** 2007-12-02 by Michael Gist
 - Fixed FS#638.
