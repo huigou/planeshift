@@ -18,24 +18,32 @@
  */
 #include <psconfig.h>
 
-
-#include "psserver.h"
-#include "globals.h"
-#include "creationmanager.h"
+//=============================================================================
+// Library Includes
+//=============================================================================
 #include "util/psdatabase.h"
 #include "util/serverconsole.h"
 #include "util/eventmanager.h"
-#include "iserver/idal.h"
+
+#include "bulkobjects/psraceinfo.h"
+#include "bulkobjects/pscharacterloader.h"
+
 #include "net/msghandler.h"
 #include "net/charmessages.h"
+
+//=============================================================================
+// Application Includes
+//=============================================================================
+#include "psserver.h"
+#include "globals.h"
+#include "creationmanager.h"
 #include "client.h"
 #include "clients.h"
 #include "psserverchar.h"
 #include "entitymanager.h"
 #include "progressionmanager.h"
 #include "cachemanager.h"
-#include "bulkobjects/psraceinfo.h"
-#include "bulkobjects/pscharacterloader.h"
+#include "iserver/idal.h"
 
 
 // The number of characters per email account
@@ -845,9 +853,21 @@ void psCharCreationManager::HandleUploadMessage( MsgEntry* me, Client *client )
         {
             Error1("NPCroom1 failed - Critical");                
             sectorFound = false;    
-        }                            
+        }    
+        else if ( sectorinfo && EntityManager::GetSingleton().FindSector(sectorinfo->name) )
+        {
+            sectorFound = true;
+        }                        
+        else
+        {
+            sectorFound = false;
+        }
     }
-    else
+    else if ( sectorinfo && EntityManager::GetSingleton().FindSector(sectorinfo->name) )
+    {
+        sectorFound = true;
+    }
+    else 
     {
         sectorFound = false;
     }
