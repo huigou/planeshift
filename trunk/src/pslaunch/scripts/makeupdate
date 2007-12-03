@@ -172,51 +172,51 @@ mv $OLDPATH/osx platform/old/osx
 mv $OLDPATH/lin64 platform/old/lin64
 
 echo "Creating 32-bit Linux update."
-cp platform/old/lin32/* $OLDPATH/
-cp platform/new/lin32/* $NEWPATH/
+cp -R platform/old/lin32/* $OLDPATH/
+cp -R platform/new/lin32/* $NEWPATH/
 createupdate
 cd $REPO
 zip -r -9 "linux32-"$VERSION".zip" $OUTPUTDIR/*
 cd $OLDPATH
-rm $(ls $TOPDIR/platform/old/lin32/)
+rm -R $(ls $TOPDIR/platform/old/lin32/)
 cd $NEWPATH
-rm $(ls $TOPDIR/platform/new/lin32/)
+rm -R $(ls $TOPDIR/platform/new/lin32/)
 cd $TOPDIR
 
 echo "Creating 64-bit Linux update."
-cp platform/old/lin64/* $OLDPATH
-cp platform/new/lin64/* $NEWPATH/
+cp -R platform/old/lin64/* $OLDPATH
+cp -R platform/new/lin64/* $NEWPATH/
 createupdate
 cd $REPO
 zip -r -9 "linux64-"$VERSION".zip" $OUTPUTDIR/*
 cd $OLDPATH
-rm $(ls $TOPDIR/platform/old/lin64/)
+rm -R $(ls $TOPDIR/platform/old/lin64/)
 cd $NEWPATH
-rm $(ls $TOPDIR/platform/new/lin64/)
+rm -R $(ls $TOPDIR/platform/new/lin64/)
 cd $TOPDIR
 
 echo "Creating OSX update."
-cp platform/old/osx/* old/
-cp platform/new/osx/* new/
+cp -R platform/old/osx/* old/
+cp -R platform/new/osx/* new/
 createupdate
 cd $REPO
 zip -r -9 "macosx-"$VERSION".zip" $OUTPUTDIR/*
 cd $OLDPATH
-rm $(ls $TOPDIR/platform/old/osx/)
+rm -R $(ls $TOPDIR/platform/old/osx/)
 cd $NEWPATH
-rm $(ls $TOPDIR/platform/new/osx/)
+rm -R $(ls $TOPDIR/platform/new/osx/)
 cd $TOPDIR
 
 echo "Creating Windows update."
-cp platform/old/win32/* $OLDPATH
-cp platform/new/win32/* $NEWPATH
+cp -R platform/old/win32/* $OLDPATH
+cp -R platform/new/win32/* $NEWPATH
 createupdate
 cd $REPO
 zip -r -9 "win32-"$VERSION".zip" $OUTPUTDIR/*
 cd $OLDPATH
-rm $(ls $TOPDIR/platform/old/win32/)
+rm -R $(ls $TOPDIR/platform/old/win32/)
 cd $NEWPATH
-rm $(ls $TOPDIR/platform/new/win32/)
+rm -R $(ls $TOPDIR/platform/new/win32/)
 cd $TOPDIR
 
 # Restore platform files and clean up.
