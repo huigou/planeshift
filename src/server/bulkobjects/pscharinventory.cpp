@@ -504,6 +504,19 @@ size_t psCharacterInventory::FindCompatibleStackedItem(psItem *item)
     return SIZET_NOT_FOUND;
 }
 
+csArray<size_t> psCharacterInventory::FindCompatibleStackedItems(psItem *item)
+{
+    csArray<size_t> compatibleItems;
+    for (size_t i=1; i<inventory.GetSize(); i++)
+    {
+        if (inventory[i].item->CheckStackableWith(item, true))
+        {
+            compatibleItems.Push(i);
+        }
+    }
+    return compatibleItems;
+}
+
 INVENTORY_SLOT_NUMBER psCharacterInventory::FindFreeEquipSlot(psItem* itemToPlace)
 {
     csArray<INVENTORY_SLOT_NUMBER> fitsIn;
@@ -590,33 +603,43 @@ bool psCharacterInventory::Add(psItem *&item, bool test, bool stack, INVENTORY_S
      */
     size_t i;
     size_t itemIndex = SIZET_NOT_FOUND;
+    csArray<size_t> itemIndices;
 
 
     // Next see if we can stack this with an existing stack in inventory
     if (stack && slot == ANY_BULK_SLOT && item->GetIsStackable())
     {
-        itemIndex = FindCompatibleStackedItem(item);
-        if (itemIndex != SIZET_NOT_FOUND) // Found a compatible one
+
+        itemIndices = FindCompatibleStackedItems(item);
+        for (i=0; i<itemIndices.GetSize(); i++)
         {
-            if (test)
-                return true; // not really doing it here            
+            int size=0;
+            if(inventory[itemIndices[i]].item->GetContainerID()){
+                size = GetContainedSize(FindItemID(inventory[itemIndices[i]].item->GetContainerID()));
+            }
+            if (!inventory[itemIndices[i]].item->GetContainerID() || size + item->GetTotalStackSize() <= FindItemID(inventory[itemIndices[i]].item->GetContainerID())->GetContainerMaxSize()) // adequate space in container
+            {
+                if (test)
+                    return true; // not really doing it here            
 
-            inventory[itemIndex].item->CombineStack(item);
+                inventory[itemIndices[i]].item->CombineStack(item);
 
-            // Here we update the passed in parameter so it points at the merged stack instead of the item that is gone now
-            item = inventory[itemIndex].item;
+                // Here we update the passed in parameter so it points at the merged stack instead of the item that is gone now
+                item = inventory[itemIndices[i]].item;
 
-            // Save new combined stack to db
-            inventory[itemIndex].item->Save(true);
+                // Save new combined stack to db
+                inventory[itemIndices[i]].item->Save(true);
 
-            UpdateEncumbrance();
+                UpdateEncumbrance();
 
-            if (owner->IsNPC() || owner->IsPet())
-                psserver->GetNPCManager()->QueueInventoryPerception(owner->GetActor(), item, true);
-
-            return true;
+                if (owner->IsNPC() || owner->IsPet())
+                    psserver->GetNPCManager()->QueueInventoryPerception(owner->GetActor(), item, true);
+                return true;
+            }
         }
     }
+
+    itemIndex = SIZET_NOT_FOUND; // We need to reset this in case a stack was found, but the container it was in was full
 
     // Next check the main bulk slots
     if (itemIndex == SIZET_NOT_FOUND && slot < 0)
@@ -672,7 +695,7 @@ bool psCharacterInventory::Add(psItem *&item, bool test, bool stack, INVENTORY_S
             if (inventory[i].item->GetIsContainer())
             {
                 int size = GetContainedSize(inventory[i].item);
-                if (size + item->GetTotalStackSize() < inventory[i].item->GetContainerMaxSize()) // adequate space in container
+                if (size + item->GetTotalStackSize() <= inventory[i].item->GetContainerMaxSize()) // adequate space in container
                 {
                     INVENTORY_SLOT_NUMBER containerSlot = (INVENTORY_SLOT_NUMBER)FindFirstOpenSlot(inventory[i].item);
                     if (containerSlot == PSCHARACTER_SLOT_NONE)

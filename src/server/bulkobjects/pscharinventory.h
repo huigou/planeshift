@@ -398,6 +398,11 @@ private:
      */
     size_t FindCompatibleStackedItem(psItem *item);
 
+    /** Returns an array of array indices for items that match the specified 
+     *  ones, so they can be combined.
+     */
+    csArray<size_t> FindCompatibleStackedItems(psItem *item);
+
     /// Allocate either a psItem or a psGlyph
     psItem *GetItemFactory(psItemStats *stats);
 
