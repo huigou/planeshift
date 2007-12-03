@@ -658,6 +658,7 @@ void UpdaterEngine::generalUpdate()
 
                     // Get the 'backup' mirror, should always be the first in the list.
                     csString url = config->GetNewConfig()->GetMirror(0)->GetBaseURL();
+                    url.Append("backup/");
 
                     // Try path from base URL.
                     if(!downloader->DownloadFile(url.Append(newFilePath.GetData()), newFilePath.GetData(), true))
