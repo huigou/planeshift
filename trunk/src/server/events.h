@@ -117,7 +117,7 @@ public:
 class psBuyEvent : public psMessageCracker
 {
 public:
-    psBuyEvent( int from, int to, const char* item, int stack, int quality,unsigned int price);
+    psBuyEvent( int from, int to, unsigned int item, int stack, int quality,unsigned int price);
     psBuyEvent( MsgEntry* event);
 
     PSF_DECLARE_MSG_FACTORY();
@@ -136,7 +136,7 @@ public:
 class psSellEvent : public psMessageCracker
 {
 public:
-    psSellEvent( int from, int to, const char* item, int stack, int quality,unsigned int price);
+    psSellEvent( int from, int to, unsigned int item, int stack, int quality,unsigned int price);
     psSellEvent( MsgEntry* event);
 
     PSF_DECLARE_MSG_FACTORY();

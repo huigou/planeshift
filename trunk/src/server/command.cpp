@@ -2157,10 +2157,10 @@ int com_transactions(char* str)
                 // Dump it
                 CPrintf(
                     CON_CMDOUTPUT,
-                    "%s transaction for %d %s (Quality %d) (%d => %d) with price %u/ (%d)\n",
+                    "%s transaction for %d %d (Quality %d) (%d => %d) with price %u/ (%d)\n",
                     trans->selling?"Selling":" Buying",
                     trans->count,
-                    trans->item.GetData(),
+                    trans->item,
                     trans->quality,
                     trans->from,
                     trans->to,

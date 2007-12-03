@@ -183,12 +183,12 @@ csString psZPointsGainedEvent::ToString(AccessPointers * /*access_ptrs*/)
 
 PSF_IMPLEMENT_MSG_FACTORY(psBuyEvent,MSGTYPE_BUY_EVENT);
 
-psBuyEvent::psBuyEvent( int from, int to, const char* item, int stack, int quality,unsigned int price)
+psBuyEvent::psBuyEvent( int from, int to, unsigned int item, int stack, int quality,unsigned int price)
 {
     // Merchant => Player
 
     msg = new MsgEntry( (sizeof(int) * 4) + sizeof(unsigned int)+
-                       strlen(item)+1, PRIORITY_LOW);
+                       sizeof(item), PRIORITY_LOW);
                        
     msg->SetType(MSGTYPE_BUY_EVENT);                   
     msg->clientnum = 0;  
@@ -210,7 +210,7 @@ psBuyEvent::psBuyEvent( MsgEntry* event)
     trans->from = event->GetInt32();
     trans->to = event->GetInt32();
 
-    trans->item = event->GetStr();
+    trans->item = event->GetUInt32();
     trans->count = event->GetInt32();
     trans->quality = event->GetInt32();
     trans->price = event->GetUInt32();
@@ -220,8 +220,8 @@ csString psBuyEvent::ToString(AccessPointers * /*access_ptrs*/)
 {
     csString msgtext;
     
-    msgtext.AppendFmt("From: %d To: %d Item: '%s' Count: %d Quality: %d Price %d",
-                      trans->from,trans->to,trans->item.GetDataSafe(),
+    msgtext.AppendFmt("From: %d To: %d Item: '%d' Count: %d Quality: %d Price %d",
+                      trans->from,trans->to,trans->item,
                       trans->count,trans->quality,trans->price);
 
     return msgtext;
@@ -231,12 +231,12 @@ csString psBuyEvent::ToString(AccessPointers * /*access_ptrs*/)
 
 PSF_IMPLEMENT_MSG_FACTORY(psSellEvent,MSGTYPE_SELL_EVENT);
 
-psSellEvent::psSellEvent( int from, int to, const char* item, int stack, int quality,unsigned int price)
+psSellEvent::psSellEvent( int from, int to, unsigned int item, int stack, int quality,unsigned int price)
 {
     // Player => Merchant
 
     msg = new MsgEntry( (sizeof(int) * 4) + sizeof(unsigned int)+
-                       strlen(item)+1, PRIORITY_LOW);
+                       sizeof(item), PRIORITY_LOW);
                        
     msg->SetType(MSGTYPE_SELL_EVENT);                   
     msg->clientnum = 0;  
@@ -258,7 +258,7 @@ psSellEvent::psSellEvent( MsgEntry* event)
     trans->from = event->GetInt32();
     trans->to = event->GetInt32();
 
-    trans->item = event->GetStr();
+    trans->item = event->GetUInt32();
     trans->count = event->GetInt32();
     trans->quality = event->GetInt32();
     trans->price = event->GetUInt32();
@@ -268,8 +268,8 @@ csString psSellEvent::ToString(AccessPointers * /*access_ptrs*/)
 {
     csString msgtext;
     
-    msgtext.AppendFmt("From: %d To: %d Item: '%s' Count: %d Quality: %d Price %d",
-                      trans->from,trans->to,trans->item.GetDataSafe(),
+    msgtext.AppendFmt("From: %d To: %d Item: '%d' Count: %d Quality: %d Price %d",
+                      trans->from,trans->to,trans->item,
                       trans->count,trans->quality,trans->price);
 
     return msgtext;
