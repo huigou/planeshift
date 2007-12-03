@@ -68,6 +68,8 @@
 #include "exchangemanager.h"
 #include "actionmanager.h"
 #include "serverstatus.h"
+#include "economymanager.h"
+#include "weathermanager.h"
 
 ///This expresses in seconds how many days the char hasn't logon. 60 days, at the moment.
 #define MAX_DAYS_NO_LOGON 5184000 
@@ -85,6 +87,9 @@ psServerCharManager::psServerCharManager()
         calc_item_merchant_price_item_price_buy = calc_item_merchant_price_buy->GetOrCreateVar("ItemPrice");
         calc_item_merchant_price_char_data_buy = calc_item_merchant_price_buy->GetOrCreateVar("CharData");
         calc_item_merchant_price_char_result_buy = calc_item_merchant_price_buy->GetOrCreateVar("Result");
+        calc_item_merchant_price_supply_buy = calc_item_merchant_price_buy->GetOrCreateVar("Supply");
+        calc_item_merchant_price_demand_buy = calc_item_merchant_price_buy->GetOrCreateVar("Demand");
+        calc_item_merchant_price_time_buy = calc_item_merchant_price_buy->GetOrCreateVar("Time");
     }
 
     calc_item_merchant_price_sell = psserver->GetMathScriptEngine()->FindScript("Calc Item Merchant Price Sell");
@@ -93,6 +98,9 @@ psServerCharManager::psServerCharManager()
         calc_item_merchant_price_item_price_sell = calc_item_merchant_price_sell->GetOrCreateVar("ItemPrice");
         calc_item_merchant_price_char_data_sell = calc_item_merchant_price_sell->GetOrCreateVar("CharData");
         calc_item_merchant_price_char_result_sell = calc_item_merchant_price_sell->GetOrCreateVar("Result");
+        calc_item_merchant_price_supply_sell = calc_item_merchant_price_buy->GetOrCreateVar("Supply");
+        calc_item_merchant_price_demand_sell = calc_item_merchant_price_buy->GetOrCreateVar("Demand");
+        calc_item_merchant_price_time_sell = calc_item_merchant_price_buy->GetOrCreateVar("Time");
     }
 }
 
@@ -1072,7 +1080,7 @@ void psServerCharManager::HandleMerchantBuy(psGUIMerchantMessage& msg, Client *c
             psBuyEvent evt(
                 character->GetCharacterID(),
                 merchant->GetCharacterID(),
-                item->GetName(),
+                item->GetUID(),
                 count,
                 (int)item->GetCurrentStats()->GetQuality(),
                 cost.GetTotal()
@@ -1164,7 +1172,7 @@ void psServerCharManager::HandleMerchantSell(psGUIMerchantMessage& msg, Client *
         // Record
         psSellEvent evt(character->GetCharacterID(),
                         merchant->GetCharacterID(),
-                        item->GetName(),
+                        item->GetUID(),
                         count,
                         (int)item->GetCurrentStats()->GetQuality(),
                         cost.GetTotal() );
@@ -1778,10 +1786,15 @@ int psServerCharManager::CalculateMerchantPrice(psItem *item, Client *client, bo
     if((sellPrice && !calc_item_merchant_price_sell) || (!sellPrice && !calc_item_merchant_price_buy))
         return basePrice;
 
+    csRef<ItemSupplyDemandInfo> suppInfo = psserver->GetEconomyManager()->GetItemSupplyDemandInfo(item->GetUID());
+
     if (sellPrice)
     {
         calc_item_merchant_price_char_data_sell->SetObject(client->GetCharacterData());
         calc_item_merchant_price_item_price_sell->SetValue(basePrice);
+        calc_item_merchant_price_demand_sell->SetValue(suppInfo->sold);
+        calc_item_merchant_price_supply_sell->SetValue(suppInfo->bought);
+        calc_item_merchant_price_time_sell->SetValue(psserver->GetWeatherManager()->GetCurrentTime());
         calc_item_merchant_price_sell->Execute();
         finalPrice = calc_item_merchant_price_char_result_sell->GetValue();
     }
@@ -1789,6 +1802,9 @@ int psServerCharManager::CalculateMerchantPrice(psItem *item, Client *client, bo
     {
         calc_item_merchant_price_char_data_buy->SetObject(client->GetCharacterData());
         calc_item_merchant_price_item_price_buy->SetValue(basePrice);
+        calc_item_merchant_price_demand_buy->SetValue(suppInfo->sold);
+        calc_item_merchant_price_supply_buy->SetValue(suppInfo->bought);
+        calc_item_merchant_price_time_buy->SetValue(psserver->GetWeatherManager()->GetCurrentTime());
         calc_item_merchant_price_buy->Execute();
         finalPrice = calc_item_merchant_price_char_result_buy->GetValue();
     }

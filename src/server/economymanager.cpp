@@ -87,6 +87,18 @@ void EconomyManager::AddTransaction(TransactionEntity* trans,bool sell)
     trans->stamp = time(NULL);
 
     history.Push(trans);
+
+    if (!supplyDemandInfo.Contains(trans->item))
+    {
+        csRef<ItemSupplyDemandInfo> newInfo(new ItemSupplyDemandInfo);
+        supplyDemandInfo.Put(trans->item, newInfo);
+    }
+
+    if (sell)
+        (*supplyDemandInfo[trans->item])->sold+=trans->count;
+    else
+        (*supplyDemandInfo[trans->item])->bought+=trans->count;
+
 }
 
 void EconomyManager::HandleMessage(MsgEntry* me,Client* client)
@@ -133,6 +145,17 @@ unsigned int EconomyManager::GetTotalTransactions()
 void EconomyManager::ClearTransactions()
 {
     history.DeleteAll();
+    supplyDemandInfo.DeleteAll();
+}
+
+csRef<ItemSupplyDemandInfo> EconomyManager::GetItemSupplyDemandInfo(unsigned int itemId)
+{
+    if (!supplyDemandInfo.Contains(itemId))
+    {
+        csRef<ItemSupplyDemandInfo> newInfo(new ItemSupplyDemandInfo);
+        supplyDemandInfo.Put(itemId, newInfo);
+    }
+    return *supplyDemandInfo[itemId];
 }
 
 psEconomyDrop::psEconomyDrop(EconomyManager* manager,csTicks ticks, bool loop)
@@ -145,7 +168,7 @@ psEconomyDrop::psEconomyDrop(EconomyManager* manager,csTicks ticks, bool loop)
 
 struct ItemCount
 {
-    csString item;
+    unsigned int item;
     bool sold;
     int count;
     int price;
@@ -200,10 +223,10 @@ void psEconomyDrop::Trigger()
 
                 // Dump it
                 csString str;
-                str.Format("%s,%d,%s,%d,%d,%d,%u,%d",
+                str.Format("%s,%d,%d,%d,%d,%d,%u,%d",
                     trans->selling?"S":"B",
                     trans->count,
-                    trans->item.GetData(),
+                    trans->item,
                     trans->quality,
                     trans->from,
                     trans->to,
@@ -235,11 +258,11 @@ void psEconomyDrop::Trigger()
         }
 
         // Write the ending stuff
-        seperator.Format("Most valueable item: %s (%d), Most sold item: %s, Most bought item: %s",
-            items[mostv].item.GetData(),
+        seperator.Format("Most valueable item: %d (%d), Most sold item: %d, Most bought item: %d",
+            items[mostv].item,
             items[mostv].price,
-            items[mosts].item.GetData(),
-            items[mostb].item.GetData()
+            items[mosts].item,
+            items[mostb].item
             );
         psserver->GetLogCSV()->Write(CSV_ECONOMY, seperator );
     #ifdef ECONOMY_DEBUG

@@ -32,6 +32,7 @@
 #include "net/msghandler.h"         // Network access
 #include "util/gameevent.h"
 
+#include <csutil/hash.h>
 #include <csutil/sysfunc.h>
 
 struct TransactionEntity
@@ -39,13 +40,20 @@ struct TransactionEntity
     int from;
     int to;
 
-    csString item;
+    unsigned int item;
     int count;
     int quality;
     unsigned int price;
 
     bool selling;
     int stamp;
+};
+
+struct ItemSupplyDemandInfo : public csRefCount
+{
+    unsigned int itemId;
+    unsigned int bought;
+    unsigned int sold;
 };
 
 class EconomyManager : public MessageManager
@@ -63,8 +71,11 @@ public:
     void ClearTransactions();
     void ScheduleDrop(csTicks ticks,bool loop);
 
+    csRef<ItemSupplyDemandInfo> GetItemSupplyDemandInfo(unsigned int itemId);
+
 protected:
     csPDelArray<TransactionEntity> history;
+    csHash< csRef<ItemSupplyDemandInfo> > supplyDemandInfo;
     
 };
 
