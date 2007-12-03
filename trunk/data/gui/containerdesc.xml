@@ -16,6 +16,11 @@
             <bgimage resource="view" />
         </widget>
 
+        <widget name="Combine" factory="pawsButton" id="13" tooltip="Combine items in container">
+            <frame x="48" y="92" width="32" height="32" />
+            <bgimage resource="ButtonCombine" />
+        </widget>
+
         <widget name="Inventory" factory="pawsButton" id="12" tooltip="Transfer to inventory">
             <frame x="48" y="0" width="32" height="32" />
             <bgimage resource="InventoryBulk" />

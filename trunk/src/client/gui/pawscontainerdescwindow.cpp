@@ -37,6 +37,7 @@
 #include "paws/pawsmanager.h"
 #include "net/messages.h"
 #include "net/msghandler.h"
+#include "net/cmdhandler.h"
 
 #include "util/log.h"
 #include "gui/pawsslot.h"
@@ -47,6 +48,7 @@
 // BUTTONS AND SLOTS
 #define VIEW_BUTTON 11
 #define INVENTORY_BUTTON 12
+#define COMBINE_BUTTON 13
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
@@ -262,7 +264,23 @@ bool pawsContainerDescWindow::OnButtonPressed( int mouseButton, int keyModifier,
 
         return true;
     }
-
+    else if ( widget->GetID() == COMBINE_BUTTON )
+    {
+        GEMClientObject* oldtarget = psengine->GetCharManager()->GetTarget();
+        int oldID = 0;
+        if(oldtarget)
+        {
+             oldID = oldtarget->GetEntity()->GetID();
+        }
+        //printf("selecting containerID %d, oldID %d\n", containerID, oldID);
+        psUserActionMessage setnewtarget(0, containerID, "select");
+        setnewtarget.SendMessage();
+        //printf("combining\n");
+        psengine->GetCmdHandler()->Execute("/combine");
+        //printf("selecting oldID %d\n", oldID);
+        psUserActionMessage setoldtarget(0, oldID, "select");
+        setoldtarget.SendMessage();
+    }
     return true;
 }
 
