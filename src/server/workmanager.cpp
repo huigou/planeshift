@@ -48,6 +48,7 @@
 #include "util/mathscript.h"
 
 //#define DEBUG_WORKMANAGER         // debugging only
+//#define NO_RANDOM_QUALITY         // no not apply randomness to calculations
 
 /*
  *  There are four types of work that can be done:
@@ -3198,6 +3199,7 @@ bool psWorkManager::ApplySkills(float factor, psItem* transItem)
             }
         }
 
+#ifndef NO_RANDOM_QUALITY
 	    // Randomize the final quality results
 	    // We are using a logrithmic calculation so that normally there is little quality change
 	    //  except at the edges of the random distribution.
@@ -3205,6 +3207,7 @@ bool psWorkManager::ApplySkills(float factor, psItem* transItem)
         float roll = psserver->rng->Get();
         float expFactor = factor*log((1/roll)-1);
         currentQuality = currentQuality -((currentQuality*expFactor)/100);
+#endif
     }
 
     // Adjust the final quality with the transformation quality factor

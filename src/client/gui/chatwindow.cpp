@@ -671,12 +671,45 @@ const char* pawsChatWindow::HandleCommand( const char* cmd )
         }
         else if (words[0] == "/me" || words[0] == "/my")
         {
+            pPerson = "";
             csString chatType = tabs->GetActiveTab()->GetName();
 
             csArray<csString> allowedTabs;
             csString defaultButton("Main Button");
 
-            if (chatType == "GuildText")
+            if (chatType == "TellText")
+            {
+                int i = 0;
+                while (!replyList[i].IsEmpty() && i <= 4)
+                    i++;
+                if (i)
+                {
+                    if (replyCount >= i)
+                        replyCount = 0;
+                    pPerson=replyList[replyCount].GetData();
+                    replyCount++;
+                }
+                words.GetTail(0,text);
+                chattype = CHAT_TELL;
+                csArray<csString> allowedTabs;
+                allowedTabs.Push("TellText");
+                defaultButton = "Tell Button";
+                if (settings.tellIncluded)
+                    allowedTabs.Push("MainText");
+                switch (settings.selectTabStyle)
+                {
+                    case 1:
+                        AutoselectChatTabIfNeeded(allowedTabs, "Tell Button");
+                        break;
+                    case 2:
+                        AutoselectChatTabIfNeeded(allowedTabs, settings.tellIncluded ?
+                                "Main Button" : "Tell Button");
+                        break;
+                    default:
+                        break;
+                }
+            }
+            else if (chatType == "GuildText")
             {
                 chattype = CHAT_GUILD;
                 words.GetTail(0,text);
@@ -714,7 +747,7 @@ const char* pawsChatWindow::HandleCommand( const char* cmd )
                 words.GetTail(1,text);
                 allowedTabs.Push("MainText");
             }
-            pPerson = "";
+            //pPerson = "";
             switch (settings.selectTabStyle)
             {
                 case 1:
@@ -1619,7 +1652,24 @@ void pawsChatWindow::SendChatLine()
         {
             csString chatType = tabs->GetActiveTab()->GetName();
 
-            if (chatType == "GuildText")
+            if (chatType == "TellText")
+            {
+                int i = 0;
+                csString buf;
+                while (!replyList[i].IsEmpty() && i <= 4)
+                    i++;
+                if (!i)
+                {
+                    textToSend.Insert(0, "/tell ");
+                }else{
+                    if (replyCount >= i)
+                        replyCount = 0;
+                    buf.Format("/tell %s ", replyList[replyCount].GetData());
+                    textToSend.Insert(0, buf.GetData());
+                    replyCount++;
+                }
+            }
+            else if (chatType == "GuildText")
                 textToSend.Insert(0, "/guild ");
             else if (chatType == "GroupText")
                 textToSend.Insert(0, "/group ");
@@ -1864,7 +1914,7 @@ void pawsChatWindow::TabCompleteName(const char *cmdstr)
 void pawsChatWindow::AutoReply(void)
 {
     int i = 0;
-    char buf[100];
+    csString buf;
 
     while (!replyList[i].IsEmpty() && i <= 4)
         i++;
@@ -1878,8 +1928,8 @@ void pawsChatWindow::AutoReply(void)
     if (replyCount >= i)
         replyCount = 0;
 
-    sprintf(buf, "/tell %s ", replyList[replyCount].GetData());
-    inputText->SetText(buf);
+    buf.Format("/tell %s ", replyList[replyCount].GetData());
+    inputText->SetText(buf.GetData());
 
     replyCount++;
 }

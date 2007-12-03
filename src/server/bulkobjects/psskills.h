@@ -94,7 +94,9 @@ enum PSSKILL {
     PSSKILL_GEMCUTTING      =   61,
     PSSKILL_POTTERY         =   62,
     PSSKILL_METALLURGY      =   63,
-    PSSKILL_COUNT           =   64
+    PSSKILL_ARMORMAKING     =   64,
+    PSSKILL_ILLUSTRATION    =   65,
+    PSSKILL_COUNT           =   66
 };
 //These flags define the possible skills categories
 enum PSSKILLS_CATEGORY

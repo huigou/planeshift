@@ -1,3 +1,10 @@
+*** 2007-12-02 by Roland Schulz
+- Fix tell window to use last addressed character instead of outputting to
+  main when player forgets the /tell, thanks to Rakhun *bows*.
+- Add armor making skill as requested by TomT.
+- Added NO_RANDOM_QUALITY define to workmanager for testing crafting.
+- Added combine button to paws container window.
+
 *** 2007-12-02 by Andrew Craig
 - Some code formatting clean ups and fixed a crash when 
   server exists.
