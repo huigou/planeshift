@@ -1,3 +1,7 @@
+*** 2007-12-03 by Michael Gist
+- A few updater fixes.
+- Wrote the server side script for the updater.
+
 *** 2007-12-02 by Roland Schulz
 - Fix tell window to use last addressed character instead of outputting to
   main when player forgets the /tell, thanks to Rakhun *bows*.

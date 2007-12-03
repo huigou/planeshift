@@ -1,0 +1,234 @@
+#!/bin/bash
+
+TOPDIR=$PWD
+OUTPUTDIR=$TOPDIR/updatefiles
+REPO=$TOPDIR/repo
+VERSION=$1
+OLDPATH=$TOPDIR/old
+NEWPATH=$TOPDIR/new
+XD3PATH=$TOPDIR/xdelta3
+
+function generatedeleted {
+for i in $(ls .);
+do
+  if [ -d $i ]
+  then
+    cd $i
+    generatedeleted $1$i"/"
+    cd ..
+    continue
+  fi
+  removed=1
+  if [ ! -d $NEWPATH/$1 ]
+  then
+    mkdir $NEWPATH/$1
+  fi
+  for j in $(ls $NEWPATH/$1);
+  do
+    if [ $i == $j ]
+    then
+      removed=0
+    fi
+  done
+  if [ $removed == 1 ]
+  then
+    echo "    <deleted name=\""$1$i"\" />" >> $OUTPUTDIR/deletedfiles.xml
+  fi
+done
+}
+
+function generatenew {
+for i in $(ls .);
+do
+  if [ -d $i ]
+  then
+    cd $i
+    generatenew $1$i"/"
+    cd ..
+    continue
+  fi
+  new=1
+  if [ ! -d $OLDPATH/$1 ]
+  then
+    mkdir $OLDPATH/$1
+  fi
+  for j in $(ls $OLDPATH/$1);
+  do
+    if [ $i == $j ]
+    then
+      new=0
+    fi
+  done
+  if [ $new == 1 ]
+  then
+    echo "    <newfile name=\""$1$i"\" />" >> $OUTPUTDIR/newfiles.xml
+  fi
+done
+}
+
+function generatechanged {
+for i in $(ls .);
+do
+  if [ -d $i ]
+  then
+    cd $i
+    generatechanged $1$i"/"
+    cd ..
+    continue
+  fi
+  for j in $(ls $NEWPATH/$1);
+  do
+    if [ $i != $j ]
+    then
+      continue
+    fi
+    md5sum1=$(md5sum $i)
+    md5sum2=$(md5sum $NEWPATH/$1$j)
+    if [ ${md5sum1% $i} != ${md5sum2% $NEWPATH/$1$j} ]
+    then
+      path=$1$i
+      echo "    <changedfile filepath=\""$1$i"\" diff=\""${path%.*}".vcdiff\"/>" >> $OUTPUTDIR/changedfiles.xml
+      if [ ! -d $OUTPUTDIR"/"$1 ]
+      then
+        mkdir $OUTPUTDIR"/"$1
+      fi
+      $XD3PATH -e -9 -s $i $NEWPATH/$1$j $OUTPUTDIR/${path%.*}".vcdiff"
+      break;
+    else
+      break;
+    fi
+  done
+done
+}
+
+function createupdate {
+if [ -d $OUTPUTDIR ]
+then
+  rm -R $OUTPUTDIR
+fi
+mkdir $OUTPUTDIR
+
+echo "Checking for deleted files."
+echo "<deletedfiles>" > $OUTPUTDIR/deletedfiles.xml
+cd $OLDPATH
+generatedeleted
+cd $TOPDIR
+echo "</deletedfiles>" >> $OUTPUTDIR/deletedfiles.xml
+
+echo "Checking for new files."
+echo "<newfiles>" > $OUTPUTDIR/newfiles.xml
+cd $NEWPATH
+generatenew
+cd $TOPDIR
+echo "</newfiles>" >> $OUTPUTDIR/newfiles.xml
+
+echo "Checking for changed files."
+echo "<changedfiles>" > $OUTPUTDIR/changedfiles.xml
+cd $OLDPATH
+generatechanged
+cd $TOPDIR
+echo "</changedfiles>" >> $OUTPUTDIR/changedfiles.xml
+}
+
+# Check for version
+if [ ! $VERSION ]
+then
+  echo "You must enter a version for the update."
+  echo "So you'd enter \"./makeupdate 1.5.23\" for version 1.5.23"
+  exit
+fi
+
+# Create repository.
+if [ ! -d $REPO ]
+then
+  mkdir $REPO
+else
+  # Create backup.
+  if [ -d $REPO"_backup" ]
+  then
+    rm -R $REPO"_backup"
+  fi
+  mv $REPO $REPO"_backup"
+  mkdir $REPO
+  # Move new 'backup' download files to the repo.
+  cp -R $NEWPATH $REPO/backup
+  cd $REPO"_backup"
+  # Restore old update files from the backup.
+  cp $(ls | grep -v backup) $REPO
+  cd $TOPDIR
+fi
+
+# Move platform specific files out of 'new' and 'old'
+mkdir platform
+mkdir platform/new
+mkdir platform/old
+mv $NEWPATH/win32 platform/new/win32
+mv $NEWPATH/lin32 platform/new/lin32
+mv $NEWPATH/osx platform/new/osx
+mv $NEWPATH/lin64 platform/new/lin64
+mv $OLDPATH/win32 platform/old/win32
+mv $OLDPATH/lin32 platform/old/lin32
+mv $OLDPATH/osx platform/old/osx
+mv $OLDPATH/lin64 platform/old/lin64
+
+echo "Creating 32-bit Linux update."
+cp platform/old/lin32/* $OLDPATH/
+cp platform/new/lin32/* $NEWPATH/
+createupdate
+cd $REPO
+zip -r -9 "linux32-"$VERSION".zip" $OUTPUTDIR/*
+cd $OLDPATH
+rm $(ls $TOPDIR/platform/old/lin32/)
+cd $NEWPATH
+rm $(ls $TOPDIR/platform/new/lin32/)
+cd $TOPDIR
+
+echo "Creating 64-bit Linux update."
+cp platform/old/lin64/* $OLDPATH
+cp platform/new/lin64/* $NEWPATH/
+createupdate
+cd $REPO
+zip -r -9 "linux64-"$VERSION".zip" $OUTPUTDIR/*
+cd $OLDPATH
+rm $(ls $TOPDIR/platform/old/lin64/)
+cd $NEWPATH
+rm $(ls $TOPDIR/platform/new/lin64/)
+cd $TOPDIR
+
+echo "Creating OSX update."
+cp platform/old/osx/* old/
+cp platform/new/osx/* new/
+createupdate
+cd $REPO
+zip -r -9 "macosx-"$VERSION".zip" $OUTPUTDIR/*
+cd $OLDPATH
+rm $(ls $TOPDIR/platform/old/osx/)
+cd $NEWPATH
+rm $(ls $TOPDIR/platform/new/osx/)
+cd $TOPDIR
+
+echo "Creating Windows update."
+cp platform/old/win32/* $OLDPATH
+cp platform/new/win32/* $NEWPATH
+createupdate
+cd $REPO
+zip -r -9 "win32-"$VERSION".zip" $OUTPUTDIR/*
+cd $OLDPATH
+rm $(ls $TOPDIR/platform/old/win32/)
+cd $NEWPATH
+rm $(ls $TOPDIR/platform/new/win32/)
+cd $TOPDIR
+
+# Restore platform files and clean up.
+mv platform/new/win32 $NEWPATH/win32
+mv platform/new/lin32 $NEWPATH/lin32
+mv platform/new/osx $NEWPATH/osx
+mv platform/new/lin64 $NEWPATH/lin64
+mv platform/old/win32 $OLDPATH/win32
+mv platform/old/lin32 $OLDPATH/lin32
+mv platform/old/osx $OLDPATH/osx
+mv platform/old/lin64 $OLDPATH/lin64
+rm -Rf platform
+rm -Rf updatefiles
+
+echo "Done!"
