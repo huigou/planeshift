@@ -552,8 +552,7 @@ void UpdaterEngine::generalUpdate()
 
         // Construct zip name.
         csString zip = config->GetCurrentConfig()->GetPlatform();
-        zip.AppendFmt(newCv->GetName());
-        zip.AppendFmt(".zip");
+        zip.AppendFmt("-%s.zip", newCv->GetName().GetData());
 
         // Download update zip.
         downloader->DownloadFile(zip, zip, false);
