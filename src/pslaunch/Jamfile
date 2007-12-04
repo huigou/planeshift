@@ -11,7 +11,7 @@ if $(HAVE_STATIC_PLUGINS) = "yes"
 {
 
 SubVariant updaterStatic ;
-Application psupdater_static : [ Filter [ Wildcard *.cpp *.h ] : pslaunch.cpp pslaunch.h ] : console ;
+Application psupdater_static : [ Filter [ Wildcard *.cpp *.h ] : pslaunch.cpp pawslauncherwindow.cpp pslaunch.h pawslauncherwindow.h globals.h ] : console ;
 CFlags psupdater_static : [ FDefines CS_STATIC_LINKED ] ;
 LFlags psupdater_static : -lcrystalspace_staticplugins-1.2 ;
 MsvcDefine psupdater_static : CS_STATIC_LINKED ;
