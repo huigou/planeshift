@@ -1,4 +1,8 @@
-*** 2007-12-04 by Sasha Levin
+*** 2007-12-04 by Andrew Craig
+- Some more cleanups to the exit sequence of the client to make 
+  it shutdown cleanly.
+
+*** 2007-12-03 by Sasha Levin
 - Added support for item pricing according to supply/demand rules, allowing
   to take amount of items inserted into the economy and amount of items 
   taken out when calculating the price of an item.

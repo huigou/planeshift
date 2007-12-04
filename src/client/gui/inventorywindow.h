@@ -54,6 +54,7 @@ class pawsInventoryWindow  : public pawsControlledWindow
 {
 public:
     pawsInventoryWindow();
+    ~pawsInventoryWindow();
         
     /** From pawsWidget
      */

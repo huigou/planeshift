@@ -181,6 +181,8 @@ psMainWidget::~psMainWidget()
 {
     if(msgqueue)
         msgqueue->Unsubscribe(this, MSGTYPE_SYSTEM);
+        
+    ClearFadingText();
 }
 
 bool psMainWidget::OnDoubleClick( int button, int keyModifier, int x, int y )

@@ -79,6 +79,12 @@ pawsInventoryWindow::pawsInventoryWindow()
     charApp = new psCharAppearance(PawsManager::GetSingleton().GetObjectRegistry());        
 }
 
+pawsInventoryWindow::~pawsInventoryWindow()
+{
+    delete charApp;
+}
+
+
 void pawsInventoryWindow::Show()
 {
     pawsControlledWindow::Show();

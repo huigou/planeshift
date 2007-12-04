@@ -33,9 +33,16 @@ psCharAppearance::psCharAppearance(iObjectRegistry* objectReg)
     hairMesh = "Hair";
     beardMesh = "Beard";
     hairAttached = true;    
-    colorSet = false;
+    colorSet = false;   
+    
+    state = NULL;
+    stateFactory = NULL;
 }
 
+psCharAppearance::~psCharAppearance()
+{
+    
+}
 
 void psCharAppearance::SetMesh(iMeshWrapper* mesh)
 {

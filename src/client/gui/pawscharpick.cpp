@@ -68,6 +68,7 @@ pawsCharacterPickerWindow::pawsCharacterPickerWindow()
 
 pawsCharacterPickerWindow::~pawsCharacterPickerWindow()
 {
+    delete charApp;
     if(msgHandler)
     {
         msgHandler->Unsubscribe( this, MSGTYPE_AUTHAPPROVED );
@@ -98,7 +99,7 @@ void pawsCharacterPickerWindow::HandleMessage( MsgEntry* me )
     switch( me->GetType() )
     {
         // Incomming character description.  At the moment it is just the
-        // character name and the factory of the mesh.
+//         // character name and the factory of the mesh.
         case MSGTYPE_AUTHAPPROVED:
         {
             psAuthApprovedMessage msg(me);            
