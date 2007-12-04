@@ -271,17 +271,17 @@ void psEngine::Cleanup()
 {
     if (loadstate==LS_DONE)
         QuitClient();
-
+    
     delete charmanager;
     delete charController;
     delete camera;
     delete chatBubbles;
-
+    
     if (scfiEventHandler && queue)
         queue->RemoveListener (scfiEventHandler);
 
     delete paws; // Include delete of mainWidget
-
+    
     delete questionclient;
     delete cachemanager;
     delete slotManager;
@@ -289,8 +289,10 @@ void psEngine::Cleanup()
     delete mouseBinds;
     delete guiHandler;
     delete inventoryCache;
-
+        
     object_reg->Unregister ((iSoundManager*)soundmanager, "iSoundManager");
+    delete soundmanager;
+                
     delete options;
 }
 
@@ -324,8 +326,9 @@ bool psEngine::Initialize (int level)
         PS_QUERY_PLUGIN (loader, iLoader,        "iLoader");
         PS_QUERY_PLUGIN (vc,     iVirtualClock,  "iVirtualClock");
         PS_QUERY_PLUGIN (cmdline,iCommandLineParser, "iCommandLineParser");
-
+        
         g2d = g3d->GetDriver2D();
+        
         g2d->AllowResize(false);
         
         // Check for configuration values for crash dump action and mode
@@ -366,7 +369,9 @@ bool psEngine::Initialize (int level)
         // Initialize and tweak the Texture Manager
         txtmgr = g3d->GetTextureManager ();
         if (!txtmgr)
+        {
             return false;
+        }            
 
         // Check if we're preloading models.
         preloadModels = (cmdline->GetBoolOption("preload_models", false) || GetConfig()->GetBool("PlaneShift.Client.Loading.PreloadModels", false));
@@ -379,6 +384,7 @@ bool psEngine::Initialize (int level)
         if (soundOn)
         {
             psSoundManager* pssound = new psSoundManager(0);
+            
             pssound->Initialize(object_reg);
             soundmanager = pssound;
             object_reg->Register ((iSoundManager*) soundmanager, "iSoundManager");
@@ -401,28 +407,35 @@ bool psEngine::Initialize (int level)
         // This .zip could be a file or a dir
         csString slash(CS_PATH_SEPARATOR);
         if ( vfs->Exists(skinPath + slash) )
+        {
             skinPath += slash;
+        }            
 
+        
         // Create the PAWS window manager
         paws = new PawsManager( object_reg, skinPath );
+        
         options = new psOptions("/this/data/options.cfg");
-
+        
         // Default to maximum 1000/(14)fps (71.4 fps)
         // Actual fps get be up to 10 fps less so set a reasonably high limit
         frameLimit = cfgmgr->GetInt("Video.FrameLimit", 14);
 
         // Mount base skin to satisfy unskined elements
-		skinPath = cfgmgr->GetStr("Planeshift.GUI.Skin.Base","/planeshift/art/skins/base/client_base.zip");
-		if(!paws->LoadAdditionalSkin(skinPath))
+        skinPath = cfgmgr->GetStr("Planeshift.GUI.Skin.Base","/planeshift/art/skins/base/client_base.zip");
+        if(!paws->LoadAdditionalSkin(skinPath))
+        {
             Error2("Couldn't load base skin '%s'!\n",skinPath.GetData());
-
+        }            
+        
         paws->SetSoundStatus(soundOn);
         mainWidget = new psMainWidget();
         paws->SetMainWidget( mainWidget );
+        
         paws->GetMouse()->Hide(true);
 
         DeclareExtraFactories();
-
+        
         // Register default PAWS sounds
         if (soundmanager.IsValid() && soundOn)
         {
@@ -442,6 +455,7 @@ bool psEngine::Initialize (int level)
              }
         }
 
+        
         if ( ! paws->LoadWidget("data/gui/splash.xml") )
             return false;
         if ( ! paws->LoadWidget("data/gui/ok.xml") )
@@ -487,14 +501,17 @@ bool psEngine::Initialize (int level)
         csReport (object_reg, CS_REPORTER_SEVERITY_NOTIFY, PSAPP,
             "psEngine initialized.");
 
+        
         return true;
     }
     else if (level==1)
     {
+        
         // Initialize Networking
         if (!netmanager)
         {
             netmanager = csPtr<psNetManager> (new psNetManager);
+            
             if (!netmanager->Initialize(object_reg))
             {
                 lasterror = "Couldn't init Network Manager.";
@@ -506,7 +523,6 @@ bool psEngine::Initialize (int level)
         inventoryCache = new psInventoryCache();
         guiHandler = new GUIHandler();
         meshUtil = new psMeshUtil(object_reg);
-
         celclient = csPtr<psCelClient> (new psCelClient());
         slotManager = new psSlotManager();
         modehandler = csPtr<ModeHandler> (new ModeHandler (soundmanager, celclient,netmanager->GetMsgHandler(),object_reg));
@@ -514,7 +530,7 @@ bool psEngine::Initialize (int level)
         zonehandler = csPtr<ZoneHandler> (new ZoneHandler(netmanager->GetMsgHandler(),object_reg,celclient));
         cachemanager = new ClientCacheManager();
         questionclient = new psQuestionClient(GetMsgHandler(), object_reg);
-
+        
         if (cmdline)
             celclient->IgnoreOthers(cmdline->GetBoolOption("ignore_others"));
 
@@ -522,7 +538,7 @@ bool psEngine::Initialize (int level)
         zonehandler->SetKeepMapsLoaded(GetConfig()->GetBool("Planeshift.Client.Loading.KeepMaps",false));
 
         materialmanager.AttachNew(new MaterialManager(object_reg, preloadModels));
-
+        
         if(preloadModels)
             materialmanager->PreloadTextures();
 
@@ -533,6 +549,7 @@ bool psEngine::Initialize (int level)
             return false;
         }
 
+        
         if(!modehandler->Initialize())
         {
             lasterror = "ModeHandler failed init.";
@@ -543,12 +560,15 @@ bool psEngine::Initialize (int level)
         // Init the main widget
         mainWidget->SetupMain();
 
-		if (!camera)
-			camera = new psCamera();
+        if (!camera)
+        {
+            camera = new psCamera();            
+        }            
 
         if (!charmanager)
         {
             charmanager = new psClientCharManager(object_reg);
+
             if (!charmanager->Initialize( GetMsgHandler(), celclient))
             {
                 lasterror = "Couldn't init Character Manager.";
@@ -556,11 +576,13 @@ bool psEngine::Initialize (int level)
             }
         }
 
+        
         // This widget requires NetManager to exist so must be in this stage
         if ( ! paws->LoadWidget("data/gui/charpick.xml") )
             return false;
-
+        
         okToLoadModels = true;
+        
         return true;
     }
 
@@ -1025,7 +1047,11 @@ void psEngine::QuitClient()
 {
     // Only run through the shut down procedure once
     static bool alreadyQuitting = false;
-    if (alreadyQuitting) return;
+    if (alreadyQuitting)
+    { 
+        return;
+    }
+    
     alreadyQuitting = true;
 
     loadstate = LS_NONE;
@@ -1037,7 +1063,9 @@ void psEngine::QuitClient()
 
     csRef<iConfigManager> cfg( csQueryRegistry<iConfigManager> (object_reg) );
     if (cfg)
+    {
         cfg->Save();
+    }        
 
     Disconnect(true);
 
@@ -1132,12 +1160,12 @@ void psEngine::LoadGame()
         }
         
 
-	// load chat bubbles
-	if (!chatBubbles)
-	{
-	  chatBubbles = new psChatBubbles();
-	  chatBubbles->Initialize(this);
-	}
+        // load chat bubbles
+        if (!chatBubbles)
+        {
+            chatBubbles = new psChatBubbles();
+            chatBubbles->Initialize(this);
+        }
 
         loadstate = LS_REQUEST_WORLD;
         break;
@@ -1791,17 +1819,17 @@ bool psEngine::LoadCustomPawsWidgets(const char * filename)
         return false;
     }
 
-	csRef<iDocumentNode> customWidgetsNode = root->GetNode("custom_widgets");
-	if (!customWidgetsNode)
-	{
-		Error2("No custom_widgets node in %s", filename);
-		return false;
-	}
+    csRef<iDocumentNode> customWidgetsNode = root->GetNode("custom_widgets");
+    if (!customWidgetsNode)
+    {
+        Error2("No custom_widgets node in %s", filename);
+        return false;
+    }
 
     csRef<iDocumentNodeIterator> nodes = customWidgetsNode->GetNodes("widget");
-	while (nodes->HasNext())
-	{
-		csRef<iDocumentNode> widgetNode = nodes->Next();
+    while (nodes->HasNext())
+    {
+        csRef<iDocumentNode> widgetNode = nodes->Next();
 
         csString name = widgetNode->GetAttributeValue("name");
         csString file = widgetNode->GetAttributeValue("file");
@@ -1863,6 +1891,7 @@ int main (int argc, char *argv[])
     // Create our application object
     psengine = new psEngine(object_reg);
 
+    
     // Initialize engine
     if (!psengine->Initialize(0))
     {
@@ -1875,6 +1904,7 @@ int main (int argc, char *argv[])
     csDefaultRunLoop(object_reg);
 
     psengine->Cleanup();
+    
 
     Notify1(LOG_ANY,"Removing engine...");
 

@@ -102,7 +102,7 @@ psCelClient::psCelClient() : ignore_others(false)
 }
 
 psCelClient::~psCelClient()
-{
+{   
     delete gameWorld;
     Clear();
 
@@ -127,6 +127,10 @@ psCelClient::~psCelClient()
     if (shadowManager)
         delete shadowManager;
         
+
+    entities.DeleteAll();
+    entities_hash.DeleteAll();
+    
 }
 
 iCelEntity* psCelClient::GetMainActor()
@@ -1375,6 +1379,7 @@ bool GEMClientActor::SetAnimation(const char* anim, int duration)
             
                                 scfQueryInterface<iSpriteCal3DFactoryState> (pcmesh->GetMesh()->GetFactory()->GetMeshObjectFactory());
 
+                                
         vmAnimCallback* callback = new vmAnimCallback;
 
         // Stuff callback's face with what he needs.
@@ -1387,6 +1392,7 @@ bool GEMClientActor::SetAnimation(const char* anim, int duration)
             Error2("Failed to register callback for animation %s",anim);
             delete callback;
         }
+        
     }
 
     float fadein = 0.25;

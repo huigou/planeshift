@@ -38,6 +38,7 @@ public:
       *                   objects.
       */
     psCharAppearance(iObjectRegistry* objectReg);
+    ~psCharAppearance();
 
     /** Set the mesh that is the base model character.
       * @param mesh The mesh that will be the core model that we want to manage

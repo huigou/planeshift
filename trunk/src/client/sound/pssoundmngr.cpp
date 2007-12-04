@@ -94,7 +94,9 @@ psSoundManager::~psSoundManager()
         queue->RemoveListener( eventHandler );
     }
 
+    
     delete backgroundSong;   
+    delete mapSoundSystem;
 }
 
 bool psSoundManager::Initialize(iObjectRegistry* objectReg)
