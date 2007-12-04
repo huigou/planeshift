@@ -1544,7 +1544,7 @@ unsigned int GEMClientActor::GetChatBubbleID() const
 const char* GEMClientActor::GetName(bool trueName)
 {
     static const char* strUnknown = "[Unknown]";
-    if (trueName || (Flags() & psPersistActor::NAMEKNOWN) || (GetID() == psengine->GetCelClient()->GetMainActor()->GetID()))
+    if (trueName || (Flags() & psPersistActor::NAMEKNOWN) || ((uint)GetID() == psengine->GetCelClient()->GetMainActor()->GetID()))
         return name;
     return strUnknown;
 }

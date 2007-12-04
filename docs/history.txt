@@ -1,3 +1,8 @@
+*** 2007-12-03 by Roland Schulz
+- /settrait command now takes target argument like most other GM commands and
+  help cleanups, thanks to Vornne
+- Fixed some warnings.
+
 *** 2007-12-04 by Andrew Craig
 - Some more cleanups to the exit sequence of the client to make 
   it shutdown cleanly.
