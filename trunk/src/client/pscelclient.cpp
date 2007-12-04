@@ -19,21 +19,23 @@
  */
 #include <psconfig.h>
 
+//=============================================================================
+// Crystal Space Includes
+//=============================================================================
 #include <csutil/scf.h>
 #include <csutil/csstring.h>
+#include <cstool/collider.h>
 #include <iutil/objreg.h>
 #include <iutil/vfs.h>
-#include <imesh/nullmesh.h>
-#include <cstool/collider.h>
 #include <ivaria/collider.h>
 #include <iengine/mesh.h>
+#include <iengine/region.h>
+#include <iengine/movable.h>
 #include <imesh/object.h>
 #include <imesh/spritecal3d.h>
 #include <imesh/nullmesh.h>
-#include <iengine/region.h>
-#include <iengine/movable.h>
+#include <imesh/nullmesh.h>
 #include <csgeom/math3d.h>
-
 #include <physicallayer/pl.h>
 #include <behaviourlayer/bl.h>
 #include <behaviourlayer/behave.h>
@@ -54,14 +56,34 @@
 #include <propclass/colldet.h>
 #include <propclass/solid.h>
 
-#include "globals.h"
-#include "charapp.h"
+//=============================================================================
+// Library Includes
+//=============================================================================
 #include "engine/celbase.h"
 #include "engine/netpersist.h"
+#include "engine/psworld.h"
+
 #include "net/messages.h"
 #include "net/msghandler.h"
+
 #include "util/psxmlparser.h"
-#include "engine/psworld.h"
+#include "util/psconst.h"
+#include "util/psmeshutil.h"
+
+#include "gui/pawsinfowindow.h"
+#include "gui/pawsconfigkeys.h"
+#include "gui/inventorywindow.h"
+#include "gui/chatwindow.h"
+#include "gui/pawslootwindow.h"
+
+#include "paws/pawsmanager.h"
+
+
+//=============================================================================
+// Application Includes
+//=============================================================================
+#include "globals.h"
+#include "charapp.h"
 #include "clientvitals.h"
 #include "modehandler.h"
 #include "zonehandler.h"
@@ -75,15 +97,7 @@
 
 #include "pscal3dcallback.h"
 
-#include "util/psconst.h"
-#include "util/psmeshutil.h"
 
-#include "gui/pawsinfowindow.h"
-#include "gui/pawsconfigkeys.h"
-#include "gui/inventorywindow.h"
-#include "gui/chatwindow.h"
-#include "gui/pawslootwindow.h"
-#include "paws/pawsmanager.h"
 
 psCelClient *GEMClientObject::cel = NULL;
 
@@ -91,14 +105,15 @@ psCelClient *GEMClientObject::cel = NULL;
 psCelClient::psCelClient() : ignore_others(false)
 {
     requeststatus = 0;
-    clientdr = NULL;
-    modehandler = NULL;
-    zonehandler = NULL;
-    entityLabels = NULL;
-    shadowManager = 0;
-    gameWorld = NULL;
-    local_player = NULL;
-    unresSector = NULL;
+    
+    clientdr        = NULL;
+    modehandler     = NULL;
+    zonehandler     = NULL;
+    entityLabels    = NULL;
+    shadowManager   = NULL;
+    gameWorld       = NULL;
+    local_player    = NULL;
+    unresSector     = NULL;
 }
 
 psCelClient::~psCelClient()
@@ -129,8 +144,7 @@ psCelClient::~psCelClient()
         
 
     entities.DeleteAll();
-    entities_hash.DeleteAll();
-    
+    entities_hash.DeleteAll();    
 }
 
 iCelEntity* psCelClient::GetMainActor()
@@ -144,7 +158,9 @@ bool psCelClient::Initialize(iObjectRegistry* object_reg,
         ZoneHandler *zonehndlr)
 {
     if (!CelBase::Initialize(object_reg))
+    {
         return false;
+    }        
 
     entityLabels = new psEntityLabels();
     entityLabels->Initialize(object_reg, this);
@@ -153,7 +169,9 @@ bool psCelClient::Initialize(iObjectRegistry* object_reg,
     
     vfs =  csQueryRegistry<iVFS> (object_reg);
     if (!vfs)
+    {
         return false;
+    }        
 
     modehandler = modehndlr;
     zonehandler = zonehndlr;
@@ -190,12 +208,13 @@ GEMClientObject* psCelClient::FindObject( int id )
 
 void psCelClient::SetMainActor(iCelEntity* entity)
 {
-    if (!entity)
-        return;
-    mainPlayerEntity = entity;
+    if (entity)
+    {
+        mainPlayerEntity = entity;
 
-    // ModeHandler has no good way to find out the entity
-    modehandler->SetEntity(entity);
+        // ModeHandler has no good way to find out the entity
+        modehandler->SetEntity(entity);
+    }        
 }
 
 void psCelClient::RequestServerWorld()
