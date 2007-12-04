@@ -777,39 +777,44 @@ INSERT INTO command_group_assignment VALUES( "/setlabelcolor", 23 );
 INSERT INTO command_group_assignment VALUES( "/setlabelcolor", 22 );
 
 #### 1165 - Sasha Levin - Fix by Lanarel to quests
-ALTER TABLE `planeshift`.`character_quests` MODIFY COLUMN `remaininglockout` INT(10) UNSIGNED DEFAULT 0,
+ALTER TABLE `character_quests` MODIFY COLUMN `remaininglockout` INT(10) UNSIGNED DEFAULT 0,
  ADD COLUMN `last_response` INT(10) DEFAULT '-1' AFTER `remaininglockout`;
 
 #### 1166 - Sasha Levin - Added multiple spawn points support
-CREATE TABLE `planeshift`.`race_spawns` (
+CREATE TABLE `race_spawns` (
   `raceid` INTEGER,
   `x` FLOAT,
   `y` FLOAT,
   `z` FLOAT,
   `yrot` FLOAT,
-  `sector_id` INTEGER,,
+  `sector_id` INTEGER,
   PRIMARY KEY (`raceid`, `x`, `y`, `z`, `yrot`, `sector_id`)
 )
 
-ALTER TABLE `planeshift`.`race_info` DROP COLUMN `start_x`,
+# moves start location data from old table to new table
+INSERT INTO race_spawns (select id,start_x,start_y,start_z,start_yrot,start_sector_id from race_info);
+
+ALTER TABLE `race_info` DROP COLUMN `start_x`,
  DROP COLUMN `start_y`,
  DROP COLUMN `start_z`,
  DROP COLUMN `start_sector_id`,
  DROP COLUMN `start_yrot`;
 
 #### 1167 - Sasha Levin - Added custom item name support
-ALTER TABLE `planeshift`.`item_instances` ADD COLUMN `item_name` VARCHAR(100) DEFAULT '' AFTER `openable_locks`,
+ALTER TABLE `item_instances` ADD COLUMN `item_name` VARCHAR(100) DEFAULT '' AFTER `openable_locks`,
  ADD COLUMN `item_description` VARCHAR(100) DEFAULT '' AFTER `item_name`;
 
 #### 1168 - Sasha Levin - Add introduction manager
-CREATE TABLE "introductions" (
-  "charid" int(10) unsigned NOT NULL,
-  "introcharid" int(10) unsigned NOT NULL,
-  PRIMARY KEY  ("charid","introcharid")
+CREATE TABLE `introductions` (
+  `charid` int(10) unsigned NOT NULL,
+  `introcharid` int(10) unsigned NOT NULL,
+  PRIMARY KEY  (`charid`,`introcharid`)
 ) TYPE=MyISAM;
 
 #### 1169 - Sasha Levin - Add support for collideable sectors.
-ALTER TABLE `planeshift`.`sectors` ADD COLUMN `collide_objects` BOOLEAN NOT NULL DEFAULT 0 AFTER `lightning_max_gap`;
+ALTER TABLE `sectors` ADD COLUMN `collide_objects` BOOLEAN NOT NULL DEFAULT 0 AFTER `lightning_max_gap`;
+
+UPDATE `server_options` SET `option_value`='1169' WHERE `option_name`='db_version';
 
 #
 # Insert your upgrade before this line. Remember when you set a new db_version
