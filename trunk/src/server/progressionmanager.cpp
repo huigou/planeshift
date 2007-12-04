@@ -155,7 +155,7 @@ void ProgressionOperation::LoadVariables(csArray<MathScriptVar*> & variables)
 bool ProgressionOperation::LoadValue(iDocumentNode *node, ProgressionEvent *prg_script)
 {
     // check if value is valid
-    if (node->GetAttributeValue("value")==NULL || node->GetAttributeValue("value")=="") {
+    if (node->GetAttributeValue("value")==NULL || strlen(node->GetAttributeValue("value")) == 0) {
         Error1("Script MUST contain an attribute called \"Value\"");
         return false;
     }

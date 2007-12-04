@@ -780,7 +780,8 @@ bool AdminManager::AdminCmdData::DecodeAdminCmdMessage(MsgEntry *pMsg, psAdminCm
     }
     else if (command == "/settrait")
     {
-        name = words.Get(1);
+        player = words.Get(1);
+        name = words.Get(2);
         return true;
     }
     else if (command == "/setitemname")
@@ -6180,11 +6181,22 @@ void AdminManager::HandleSetQuality(psAdminCmdMessage& msg, AdminCmdData& data, 
 
 void AdminManager::HandleSetTrait(psAdminCmdMessage& msg, AdminCmdData& data, Client *client, gemObject* object )
 {
+    if (data.name.IsEmpty())
+    {
+        psserver->SendSystemError(client->GetClientNum(), "Syntax: /settrait [target] [trait]");
+        return;
+    }
+
     psCharacter* target;
     if (object && object->GetCharacterData())
+    {
         target = object->GetCharacterData();
+    }
     else
-        target = client->GetCharacterData();
+    {
+        psserver->SendSystemError(client->GetClientNum(), "Invalid target for setting traits");
+        return;
+    }
 
     CacheManager::TraitIterator ti = CacheManager::GetSingleton().GetTraitIterator();
     while(ti.HasNext())
@@ -6192,7 +6204,7 @@ void AdminManager::HandleSetTrait(psAdminCmdMessage& msg, AdminCmdData& data, Cl
         psTrait* currTrait = ti.Next();
         if (currTrait->gender == target->GetRaceInfo()->gender &&
             currTrait->race == target->GetRaceInfo()->race &&
-            currTrait->name == data.name)
+            currTrait->name.CompareNoCase(data.name))
         {
             target->SetTraitForLocation(currTrait->location, currTrait);
             csString str( "<traits>" );

@@ -288,7 +288,7 @@ psSkillCacheItem *psSkillCache::getItemBySkillId(uint id)
     while (p.HasNext())
     {
         psSkillCacheItem *item = p.Next();
-        if (item && item->getSkillId() == id)
+        if (item && (uint)item->getSkillId() == id)
             return item;
     }
     return NULL;
