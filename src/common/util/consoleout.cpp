@@ -144,7 +144,7 @@ void ConsoleOut::Intern_VPrintf (ConsoleOutMsgClass con, const char* string, va_
         if (atStartOfLine)
         {
             // Append timestamp
-            output.AppendFmt("%8u ", csGetTicks());
+            output.AppendFmt("%8u) ", csGetTicks());
             
             // Append any shift
             for (int i=0; i < shift; i++)
@@ -257,7 +257,7 @@ void ConsoleOut::SetPrompt(const char *format, ...)
         atStartOfLine = true;
     }
 
-    printf("%8u %s",csGetTicks(),buffer);
+    printf("%8u) %s",csGetTicks(),buffer);
     promptDisplayed = true;
 }
 
