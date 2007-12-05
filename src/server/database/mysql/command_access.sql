@@ -149,6 +149,11 @@ INSERT INTO command_group_assignment VALUES( "/marriageinfo", 26 );
 INSERT INTO command_group_assignment VALUES( "/marriageinfo", 25 );
 INSERT INTO command_group_assignment VALUES( "/marriageinfo", 24 );
 INSERT INTO command_group_assignment VALUES( "/marriageinfo", 23 );
+INSERT INTO command_group_assignment VALUES( "cast all spells", 30 );
+INSERT INTO command_group_assignment VALUES( "cast all spells", 26 );
+INSERT INTO command_group_assignment VALUES( "cast all spells", 25 );
+INSERT INTO command_group_assignment VALUES( "cast all spells", 24 );
+INSERT INTO command_group_assignment VALUES( "cast all spells", 23 );
 
 # GM2 and above
 INSERT INTO command_group_assignment VALUES( "/updaterespawn", 30 );
