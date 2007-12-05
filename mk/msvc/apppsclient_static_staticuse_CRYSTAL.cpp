@@ -12,6 +12,8 @@
 #pragma comment(linker, "/section:.CSmeta,er")
 #pragma comment(linker, "/merge:.CSmetai=.CSmeta")
 #endif
+struct _static_use_CRYSTAL { _static_use_CRYSTAL (); };
+_static_use_CRYSTAL::_static_use_CRYSTAL () {}
 SCF_USE_STATIC_PLUGIN(bindoc)
 SCF_USE_STATIC_PLUGIN(bruteblock)
 SCF_USE_STATIC_PLUGIN(cpersist)
