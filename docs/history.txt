@@ -1,3 +1,6 @@
+*** 2007-12-05 by Sasha Levin
+- Added message to both parties on intruduction.
+
 *** 2007-12-03 by Roland Schulz
 - /settrait command now takes target argument like most other GM commands and
   help cleanups, thanks to Vornne
