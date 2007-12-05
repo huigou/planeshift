@@ -3,6 +3,8 @@
 - Instead of letting only devs cast all spells, It's now checked just like
   any other gm command - So if needed, gms can cast all spells too.
 - Added item quality to /inspect.
+- Improvements to gm window: No longer hidden on teleport/change name/...
+  Sorting order and selected player are maintained through list updates.
 
 *** 2007-12-03 by Roland Schulz
 - /settrait command now takes target argument like most other GM commands and
