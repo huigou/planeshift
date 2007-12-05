@@ -5374,6 +5374,7 @@ void AdminManager::Inspect(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& d
         {
             found = true;
             message += item->GetName();
+            message.AppendFmt(" (%d/%d)", (int)item->GetItemQuality(), (int)item->GetMaxItemQuality());
             if (item->GetStackCount() > 1)
                 message.AppendFmt(" (x%u)", item->GetStackCount());
 
