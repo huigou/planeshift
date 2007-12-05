@@ -1,5 +1,7 @@
 *** 2007-12-05 by Sasha Levin
 - Added message to both parties on intruduction.
+- Instead of letting only devs cast all spells, It's now checked just like
+  any other gm command - So if needed, gms can cast all spells too.
 
 *** 2007-12-03 by Roland Schulz
 - /settrait command now takes target argument like most other GM commands and

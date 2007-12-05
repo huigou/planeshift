@@ -51,6 +51,7 @@
 #include "psserverchar.h"
 #include "cachemanager.h"
 #include "progressionmanager.h"
+#include "commandmanager.h"
 
 
 psSpellManager::psSpellManager(ClientConnectionSet *ccs,
@@ -289,7 +290,7 @@ void psSpellManager::Cast(Client * client, csString spellName, float kFactor)
     psSpell *spell = NULL;
 
     // Allow developers to cast any spell, even if unknown to the character.
-    if (client->GetSecurityLevel() >= 30)
+    if (CacheManager::GetSingleton().GetCommandManager()->Validate(client->GetSecurityLevel(), "cast all spells"))
     {
         spell = CacheManager::GetSingleton().GetSpellByName(spellName);
     }        
