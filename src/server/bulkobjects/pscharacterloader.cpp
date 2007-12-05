@@ -610,6 +610,9 @@ bool psCharacterLoader::DeleteCharacterData( unsigned int charID, csString& erro
     query.Format("delete from item_instances where char_id_owner=%d", charID );
     db->CommandPump( query );
 
+    query.Format("delete from introductions where charid=%d or introcharid=%d", charID, charID);
+    db->CommandPump( query );
+
     CPrintf( CON_DEBUG, "\nSuccessfully delete character id: %d\n", charID );
 
     return true;
