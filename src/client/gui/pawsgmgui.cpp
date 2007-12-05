@@ -178,9 +178,6 @@ bool pawsGmGUIWindow::OnButtonPressed( int mouseButton, int keyModifier, pawsWid
         errorMessage = cmdsource->Publish( cmdToExectute );
         if ( errorMessage )
             systemText->AddMessage( errorMessage );
-    case 1: // quit
-        Hide();
-        break;
     case 1000: // Players tab
     case 1001: // Tournament Tab
     case 1002: // Action Tab
@@ -629,6 +626,10 @@ void pawsGmGUIWindow::FillPlayerList(psGMGuiMessage& msg)
     csArray<int> playerOrder;
     
     // Clear the list from old data
+    int sortedCol = playerList->GetSortedColumn();
+    csString selectedPlayer;
+    if (playerList->GetSelectedRow())
+        selectedPlayer = ((pawsTextBox*)playerList->GetSelectedRow()->GetColumn(0))->GetText();
     playerList->Clear();
 
     // Loop through all players
@@ -659,6 +660,10 @@ void pawsGmGUIWindow::FillPlayerList(psGMGuiMessage& msg)
         // Set the name
         csString name = playerInfo.name;
         nameBox->SetText(name);
+        
+        // Select if needed
+        if (name == selectedPlayer)
+            playerList->Select(playerList->GetRow(i), true);
 
         // Set the family name
         csString lastName = playerInfo.lastName;
@@ -689,10 +694,10 @@ void pawsGmGUIWindow::FillPlayerList(psGMGuiMessage& msg)
         sectorBox->SetText(playerInfo.sector);
     }
 
-    playerList->SetSortedColumn(0);
+    playerList->SetSortedColumn(sortedCol);
+    if (!playerList->GetSelectedRow())
+        playerList->Select(playerList->GetRow(0));
 
-    playerList->Select(playerList->GetRow(0));
-    
     csString str;
     str.Format("%u players currently online",(unsigned int)msg.players.GetSize());
     playerCount->SetText(str);
