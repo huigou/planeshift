@@ -12,6 +12,8 @@
 #pragma comment(linker, "/section:.CSmeta,er")
 #pragma comment(linker, "/merge:.CSmetai=.CSmeta")
 #endif
+struct _static_use_CEL { _static_use_CEL (); };
+_static_use_CEL::_static_use_CEL () {}
 SCF_USE_STATIC_PLUGIN(pfdefcam)
 SCF_USE_STATIC_PLUGIN(pfengine)
 SCF_USE_STATIC_PLUGIN(pfinput)

@@ -12,6 +12,8 @@ struct CS_EXPORT_SYM _Bind_psserver_static_plugins
 {
   _Bind_psserver_static_plugins ();
 };
+struct _static_use { _static_use (); };
 _Bind_psserver_static_plugins::_Bind_psserver_static_plugins () {}
 // Needed to pull in _cs_static_use object file
+namespace { _static_use _static_use_bind; }
 
