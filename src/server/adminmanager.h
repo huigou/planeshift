@@ -318,6 +318,9 @@ protected:
     // Handle reloads from DB
     void HandleReload(psAdminCmdMessage& msg, AdminCmdData& data, Client *client, gemObject* object );
 
+    /// List warnings given to account
+    void HandleListWarnings(psAdminCmdMessage& msg, AdminCmdData& data, Client *client, gemObject* object );
+
 protected:
 
     /** Adds a petition under the passed user's name to the 'petitions' table in the database

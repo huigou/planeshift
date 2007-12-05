@@ -6,6 +6,9 @@
 - Improvements to gm window: No longer hidden on teleport/change name/...
   Sorting order and selected player are maintained through list updates.
 - Character introductions are deleted from db when char is deleted.
+- Added logging of warnings given to accounts.
+- Added the GM /listwarnings.
+- DB VER BUMP!
 
 *** 2007-12-03 by Roland Schulz
 - /settrait command now takes target argument like most other GM commands and

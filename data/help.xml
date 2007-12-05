@@ -445,6 +445,8 @@ Kicks the named player off of the server.</topic>
         <topic name="/killnpc">/killnpc name reload
 
 Kills the targeted NPC, using the current target if no name is given. The reload option recreates the NPC with stats and triggers from the DB.</topic>
+        <topic name="/listwarnings">/listwarnings [target]
+List all warnings given to the targeted account. Target is optional.</topic>
         <topic name="/marriageinfo">/marriageinfo name
 
 View the details of a characters marriage.</topic>

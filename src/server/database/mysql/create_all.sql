@@ -86,5 +86,6 @@ source char_create_affinity.sql;
 source gm_events.sql;
 source character_events.sql;
 source introductions.sql;
+source warnings.sql;
 
 source create_indexes.sql;

@@ -798,6 +798,11 @@ bool AdminManager::AdminCmdData::DecodeAdminCmdMessage(MsgEntry *pMsg, psAdminCm
         
         return true;
     }
+    else if (command == "/listwarnings")
+    {
+        target = words.Get(1);
+        return true;
+    }
     return false;
 }
 
@@ -1105,6 +1110,10 @@ void AdminManager::HandleAdminCmdMessage(MsgEntry *me, psAdminCmdMessage &msg, A
     else if (data.command == "/reload")
     {
         HandleReload(msg, data, client, targetobject);
+    }
+    else if (data.command == "/listwarnings")
+    {
+        HandleListWarnings(msg, data, client, targetobject);
     }
 }
 
@@ -3686,6 +3695,7 @@ void AdminManager::WarnMessage(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdDat
 
     // This message will be in big red letters on their screen
     psserver->SendSystemError(target->GetClientNum(), data.reason);
+    db->CommandPump("insert into warnings values(%d, '%s', NOW(), '%s')", target->GetAccountID(), client->GetName(), data.reason.GetData());
 
     psserver->SendSystemInfo(client->GetClientNum(), "You warned '%s': " + data.reason, target->GetName());
 }
@@ -6278,4 +6288,38 @@ void AdminManager::HandleReload(psAdminCmdMessage& msg, AdminCmdData& data, Clie
         else
             psserver->SendSystemOK(client->GetClientNum(), "Successfully modified item", data.value);
     }
+}
+
+void AdminManager::HandleListWarnings(psAdminCmdMessage& msg, AdminCmdData& data, Client *client, gemObject* object )
+{
+    Client* target = NULL;
+    if (data.target != "" && data.target != "target")
+    {
+        target = psserver->GetCharManager()->FindPlayerClient(data.target);
+    }
+    else if(object)
+    {
+        gemActor* targetActor = dynamic_cast<gemActor*>(object);
+        if (targetActor)
+            target = targetActor->GetClient();
+    }
+
+    if (target)
+    {
+        Result rs(db->Select("select warningGM, timeOfWarn, warnMessage from warnings where accountid = %d", client->GetAccountID()));
+        if (rs.IsValid())
+        {
+            csString newLine;
+            int i = 0;
+            for (i = 0 ; i < rs.Count() ; i++)
+            {
+                newLine.Format("%s - %s - %s", rs[i]["warningGM"], rs[i]["timeOfWarn"], rs[i]["warnMessage"]);
+                psserver->SendSystemInfo(client->GetClientNum(), newLine.GetData());
+            }
+            if (i == 0)
+                psserver->SendSystemInfo(client->GetClientNum(), "No warnings found");
+        }
+    }
+    else
+        psserver->SendSystemError(client->GetClientNum(), "Target wasn't found");
 }

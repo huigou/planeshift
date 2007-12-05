@@ -359,6 +359,13 @@ INSERT INTO command_group_assignment VALUES( "/quest", 24 );
 INSERT INTO command_group_assignment VALUES( "/quest", 23 );
 INSERT INTO command_group_assignment VALUES( "/quest", 22 );
 INSERT INTO command_group_assignment VALUES( "/quest", 21 );
+INSERT INTO command_group_assignment VALUES( "/listwarnings", 30 );
+INSERT INTO command_group_assignment VALUES( "/listwarnings", 26 );
+INSERT INTO command_group_assignment VALUES( "/listwarnings", 25 );
+INSERT INTO command_group_assignment VALUES( "/listwarnings", 24 );
+INSERT INTO command_group_assignment VALUES( "/listwarnings", 23 );
+INSERT INTO command_group_assignment VALUES( "/listwarnings", 22 );
+INSERT INTO command_group_assignment VALUES( "/listwarnings", 21 );
 
 # testers group
 INSERT INTO command_group_assignment VALUES( "/slide", 10 );
