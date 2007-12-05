@@ -816,6 +816,16 @@ ALTER TABLE `sectors` ADD COLUMN `collide_objects` BOOLEAN NOT NULL DEFAULT 0 AF
 
 UPDATE `server_options` SET `option_value`='1169' WHERE `option_name`='db_version';
 
+#### 1170 - Sasha Levin - Add logging of warnings given to accounts.
+CREATE TABLE `warnings` (
+  `accountid` INTEGER UNSIGNED NOT NULL,
+  `warningGM` VARCHAR(45) NOT NULL,
+  `timeOfWarn` DATETIME NOT NULL,
+  `warnMessage` TEXT NOT NULL,
+  PRIMARY KEY (`accountid`, `warningGM`, `timeOfWarn`)
+);
+
+
 #
 # Insert your upgrade before this line. Remember when you set a new db_version
 # to update the server_options.sql file and update psserver.cpp as well.
