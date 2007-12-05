@@ -134,6 +134,7 @@ void IntroductionManager::HandleMessage(MsgEntry *pMsg,Client *client)
                 client->GetCharacterData()->GetCharacterID());
     
     psserver->SendSystemOK(client->GetClientNum(), "You have successfully introduced yourself");
+    psserver->SendSystemOK(client->GetTargetObject()->GetClientID(), "%s was introduced to you", client->GetName());
 
     client->GetActor()->Send(client->GetTargetClientID(), false, false);
 }
