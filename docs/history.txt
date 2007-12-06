@@ -1,3 +1,6 @@
+*** 2007-12-06 by Michael Gist
+- Updater fixes.
+
 *** 2007-12-05 by Sasha Levin
 - Added message to both parties on intruduction.
 - Instead of letting only devs cast all spells, It's now checked just like
