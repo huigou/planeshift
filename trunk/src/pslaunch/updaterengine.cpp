@@ -36,11 +36,17 @@ UpdaterEngine::UpdaterEngine(const csArray<csString> args, iObjectRegistry* obje
 {
     bool a = false, b = false, c = true;
     csArray<csString> d;
-    UpdaterEngine(args, object_reg, appName, &a, &b, &c, &d, NULL);
+    Init(args, object_reg, appName, &a, &b, &c, &d, NULL);
 }
 
 UpdaterEngine::UpdaterEngine(const csArray<csString> args, iObjectRegistry* _object_reg, const char* _appName,
-                                 bool *_performUpdate, bool *_exitGui, bool *_updateNeeded, csArray<csString> *_consoleOut,  CS::Threading::Mutex *_mutex)
+                             bool *_performUpdate, bool *_exitGui, bool *_updateNeeded, csArray<csString> *_consoleOut,  CS::Threading::Mutex *_mutex)
+{
+    Init(args, _object_reg, _appName, _performUpdate, _exitGui, _updateNeeded, _consoleOut, _mutex);
+}
+
+void UpdaterEngine::Init(const csArray<csString> args, iObjectRegistry* _object_reg, const char* _appName,
+                         bool *_performUpdate, bool *_exitGui, bool *_updateNeeded, csArray<csString> *_consoleOut,  CS::Threading::Mutex *_mutex)
 {
     object_reg = _object_reg;
     vfs = csQueryRegistry<iVFS> (object_reg);
@@ -58,7 +64,10 @@ UpdaterEngine::UpdaterEngine(const csArray<csString> args, iObjectRegistry* _obj
     performUpdate = _performUpdate;
     mutex = _mutex;
 
-    fileUtil->RemoveFile("updater.log");
+    if(vfs->Exists("/this/updater.log"))
+    {
+        fileUtil->RemoveFile("updater.log");
+    }
     log = fopen("updater.log", "a");
 }
 
@@ -77,7 +86,7 @@ void UpdaterEngine::printOutput(const char *string, ...)
     {
         mutex->Lock();
     }
-            
+
     csString outputString;
     va_list args;
     va_start (args, string);
@@ -86,7 +95,7 @@ void UpdaterEngine::printOutput(const char *string, ...)
     consoleOut->Push(outputString);
     printf("%s", outputString.GetData());
     fprintf(log, "%s", outputString.GetData());
-    
+
     if ( mutex )
     {
         mutex->Unlock();
@@ -141,10 +150,10 @@ void UpdaterEngine::checkForUpdates()
 
     printOutput("Checking for updates to the updater: ");
 
-    
+
     if(checkUpdater())
     {
-        printOutput("Update Available!");
+        printOutput("Update Available!\n");
 
         // If using a GUI, prompt user whether or not to update.
         if(!appName.Compare("psupdater"))
@@ -166,19 +175,19 @@ void UpdaterEngine::checkForUpdates()
                     *exitGUI = true;
             }
         }
-        
+
         // Begin the self update process.
         selfUpdate(false);
         // Restore config files before terminate.
         fileUtil->RemoveFile("updaterinfo.xml");
         fileUtil->CopyFile("updaterinfo.xml.bak", "updaterinfo.xml", false, false);
         fileUtil->RemoveFile("updaterinfo.xml.bak");
-        
+
         return;
     }
 
     printOutput("No updates needed!\nChecking for updates to all files: ");
-    
+
     // Check for normal updates.
     if(checkGeneral())
     {
@@ -214,11 +223,11 @@ void UpdaterEngine::checkForUpdates()
     else
         printOutput("No updates needed!\n");
 
-    
+
     delete downloader;
     downloader = NULL;
     *updateNeeded = false;
-    
+
     return;
 }
 
@@ -403,7 +412,7 @@ bool UpdaterEngine::selfUpdate(int selfUpdating)
 
             csMD5::Digest md5 = csMD5::Encode(buffer->GetData(), buffer->GetSize());
             csString md5sum = md5.HexString();
-                                                                
+
             if(!md5sum.Compare(config->GetNewConfig()->GetUpdaterVersionLatestMD5()))
             {
                 printOutput("md5sum of updater zip does not match correct md5sum!!\n");
@@ -493,7 +502,7 @@ bool UpdaterEngine::selfUpdate(int selfUpdating)
             csMD5::Digest md5 = csMD5::Encode(buffer->GetData(), buffer->GetSize());
 
             csString md5sum = md5.HexString();
-            
+
             if(!md5sum.Compare(config->GetNewConfig()->GetUpdaterVersionLatestMD5()))
             {
                 printOutput("md5sum of updater zip does not match correct md5sum!!\n");

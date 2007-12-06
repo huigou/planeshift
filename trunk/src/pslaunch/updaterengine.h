@@ -76,12 +76,17 @@ private:
     FILE* log;
     
     CS::Threading::Mutex *mutex;
+
+    /* Function shared by ctors */
+    void Init(const csArray<csString> args, iObjectRegistry* _object_reg, const char* _appName,
+         bool *_performUpdate, bool *_exitGui, bool *_updateNeeded, csArray<csString> *_consoleOut,
+         CS::Threading::Mutex *_mutex);
     
 public:
     UpdaterEngine(const csArray<csString> args, iObjectRegistry* _object_reg, const char* _appName);
     UpdaterEngine(const csArray<csString> args, iObjectRegistry* _object_reg, const char* _appName,
-                    bool *_performUpdate, bool *_exitGui, bool *_updateNeeded, csArray<csString> *_consoleOut,
-                     CS::Threading::Mutex *_mutex);
+                  bool *_performUpdate, bool *_exitGui, bool *_updateNeeded, csArray<csString> *_consoleOut,
+                  CS::Threading::Mutex *_mutex);
     ~UpdaterEngine();
 
     /* Return the config object */
