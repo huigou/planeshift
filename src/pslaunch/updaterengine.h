@@ -32,7 +32,7 @@
 #include "fileutil.h"
 
 /* To be incremented every commit */
-#define UPDATER_VERSION 1
+#define UPDATER_VERSION 2
 
 struct iConfigManager;
 struct iVFS;
