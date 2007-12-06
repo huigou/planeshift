@@ -723,6 +723,9 @@ bool psEngine::HandleEvent (iEvent &ev)
  
     if ( paws->HandleEvent( ev ) )
     {
+        if (charController)
+            charController->GetMovementManager()->StopControlledMovement();
+
         return true;
     }
      
