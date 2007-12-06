@@ -48,6 +48,10 @@ UpdaterConfig::UpdaterConfig(csArray<csString> args, iObjectRegistry* _object_re
     }
 
     // Load config settings from cfg file.
+    if(!vfs->Exists(CONFIG_FILENAME))
+    {
+        fclose(fopen(CONFIG_FILENAME, "wb"));
+    }
     configFile = new csConfigFile(CONFIG_FILENAME, vfs);
     cleanUpdate = configFile->GetBool("Update.Clean", true);
     proxy.host = configFile->GetStr("Updater.Proxy.Host", "");
