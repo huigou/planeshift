@@ -36,8 +36,7 @@ CREATE TABLE `sectors` (
   `lightning_max_gap` int(10) unsigned NOT NULL default '0',
   `collide_objects` tinyint(1) NOT NULL default '0',
   PRIMARY KEY  (`id`),
-  UNIQUE KEY `name` (`name`),
-  UNIQUE KEY `indx_sector_name` (`name`)
+  UNIQUE KEY `name` (`name`)
 ) ENGINE=MyISAM AUTO_INCREMENT=8 DEFAULT CHARSET=latin1;
 
 --
