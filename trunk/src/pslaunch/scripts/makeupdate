@@ -7,6 +7,8 @@ VERSION=$1
 OLDPATH=$TOPDIR/old
 NEWPATH=$TOPDIR/new
 XD3PATH=$TOPDIR/xdelta3
+MIRRORS=$TOPDIR/mirrors
+UPDATERNAME=psupdater
 
 function generatedeleted {
 for i in $(ls .);
@@ -108,6 +110,64 @@ do
 done
 }
 
+function generateupdaterinfo {
+echo "<config>" > $REPO/updaterinfo.xml
+echo "    <mirrors>" >> $REPO/updaterinfo.xml
+if [ -e $MIRRORS ]
+then
+  exec < $MIRRORS
+  while read line
+  do
+    echo "        "$line >> $REPO/updaterinfo.xml
+  done
+fi
+echo "    </mirrors>" >> $REPO/updaterinfo.xml
+
+UPDATER_VERSION=$(wget -q -O - 'http://planeshift.svn.sourceforge.net/viewvc/*checkout*/planeshift/trunk/src/pslaunch/updaterengine.h' | grep '^#define UPDATER_VERSION' | sed 's/^#define UPDATER_VERSION \([0-9]*\).*$/\1/g')
+md5win32updater=$(md5sum $REPO/psupdaterwin32.zip)
+md5win32updater=${md5win32updater% $REPO/psupdaterwin32.zip}
+md5lin32updater=$(md5sum $REPO/psupdaterlinux32.zip)
+md5lin32updater=${md5lin32updater% $REPO/psupdaterlinux32.zip}
+md5lin64updater=$(md5sum $REPO/psupdaterlinux64.zip)
+md5lin64updater=${md5lin64updater% $REPO/psupdaterlinux64.zip}
+md5osxupdater=$(md5sum $REPO/psupdatermacosx.zip)
+md5osxupdater=${md5osxupdater% $REPO/psupdatermacosx.zip}
+echo "    <updater version=\""$UPDATER_VERSION"\" md5win32=\""$md5win32updater"\" md5linux32=\""$md5lin32updater"\" md5linux64=\""$md5lin64updater"\" md5macosx=\""$md5osxupdater"\" />" >> $REPO/updaterinfo.xml
+
+echo "    <client>" >> $REPO/updaterinfo.xml
+if [ -d $REPO"_backup" }
+then
+  copy=0
+  exec < $REPO"_backup/updaterinfo.xml"
+  while read line
+  do
+    if [ $line == "<client>" ]
+    then
+      copy=1
+    fi
+    elif [ $line == "</client>" ]
+    then
+      copy=0
+    fi
+    elif [ copy == 1 ]
+    then
+      echo $line >> $REPO/updaterinfo.xml
+    fi
+  done
+fi
+md5win32=${md5sum $REPO"/win32-"$VERSION".zip"}
+md5win32=${md5win32% $REPO"/win32-"$VERSION".zip"}
+md5lin32=${md5sum $REPO"/linux32-"$VERSION".zip"}
+md5lin32=${md5lin32% $REPO"/linux32-"$VERSION".zip"}
+md5lin64=${md5sum $REPO"/linux64-"$VERSION".zip"}
+md5lin64=${md5lin64% $REPO"/linux64-"$VERSION".zip"}
+md5osx=${md5sum $REPO"/macosx-"$VERSION".zip"}
+md5osx=${md5osx% $REPO"/macosx-"$VERSION".zip"}
+echo "        <version name=\""$VERSION"\" md5win32=\""$md5win32"\" md5linux32=\""$md5lin32"\" md5linux64=\""$md5lin64"\" md5macosx=\""$md5osx"\" />"
+echo "    </client>" >> $REPO/updaterinfo.xml
+echo "</config>" >> $REPO/updaterinfo.xml
+}
+
 function createupdate {
 if [ -d $OUTPUTDIR ]
 then
@@ -180,8 +240,11 @@ mv $OLDPATH/osx platform/old/osx
 mv $OLDPATH/lin64 platform/old/lin64
 
 echo "Creating 32-bit Linux update."
-cp -R platform/old/lin32/* $OLDPATH/
-cp -R platform/new/lin32/* $NEWPATH/
+zip -9 $REPO/psupdaterlinux32.zip platform/new/lin32/$UPDATERNAME
+cp -R platform/old/lin32/* $OLDPATH
+cp -R platform/new/lin32/* $NEWPATH
+rm $OLDPATH/$UPDATERNAME
+rm $NEWPATH/$UPDATERNAME
 createupdate
 cd $OUTPUTDIR
 zip -r -9 $REPO/linux32-"$VERSION".zip *
@@ -192,8 +255,11 @@ rm -R $(ls $TOPDIR/platform/new/lin32/)
 cd $TOPDIR
 
 echo "Creating 64-bit Linux update."
+zip -9 $REPO/psupdaterlinux64.zip platform/new/lin64/$UPDATERNAME
 cp -R platform/old/lin64/* $OLDPATH
-cp -R platform/new/lin64/* $NEWPATH/
+cp -R platform/new/lin64/* $NEWPATH
+rm $OLDPATH/$UPDATERNAME
+rm $NEWPATH/$UPDATERNAME
 createupdate
 cd $OUTPUTDIR
 zip -r -9 $REPO/linux64-"$VERSION".zip *
@@ -204,8 +270,11 @@ rm -R $(ls $TOPDIR/platform/new/lin64/)
 cd $TOPDIR
 
 echo "Creating OSX update."
-cp -R platform/old/osx/* old/
-cp -R platform/new/osx/* new/
+zip -9 $REPO/psupdatermacosx.zip platform/new/osx/$UPDATERNAME
+cp -R platform/old/osx/* $OLDPATH
+cp -R platform/new/osx/* $NEWPATH
+rm $OLDPATH/$UPDATERNAME
+rm $NEWPATH/$UPDATERNAME
 createupdate
 cd $OUTPUTDIR
 zip -r -9 $REPO/macosx-"$VERSION".zip *
@@ -216,8 +285,11 @@ rm -R $(ls $TOPDIR/platform/new/osx/)
 cd $TOPDIR
 
 echo "Creating Windows update."
+zip -9 $REPO/psupdaterwin32.zip platform/new/win32/$UPDATERNAME".exe"
 cp -R platform/old/win32/* $OLDPATH
 cp -R platform/new/win32/* $NEWPATH
+rm $OLDPATH/$UPDATERNAME
+rm $NEWPATH/$UPDATERNAME
 createupdate
 cd $OUTPUTDIR
 zip -r -9 $REPO/win32-"$VERSION".zip *
@@ -238,5 +310,8 @@ mv platform/old/osx $OLDPATH/osx
 mv platform/old/lin64 $OLDPATH/lin64
 rm -Rf platform
 rm -Rf updatefiles
+
+# Generate updaterinfo.xml
+generateupdaterinfo
 
 echo "Done!"
