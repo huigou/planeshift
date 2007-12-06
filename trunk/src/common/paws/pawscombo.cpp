@@ -64,7 +64,7 @@ bool pawsComboBox::PostSetup()
     ///////////////////////////////////////////////////////////////////////
     // Create the drop arrow button that will cause the list box to drop.
     ///////////////////////////////////////////////////////////////////////
-    arrow = (pawsButton*)PawsManager::GetSingleton().CreateWidget("pawsButton");
+    arrow = new pawsButton;
     AddChild( arrow );
 
     // Puts the button at the edge of the text box widget
@@ -79,7 +79,7 @@ bool pawsComboBox::PostSetup()
     ///////////////////////////////////////////////////////////////////////
     // Create the textbox that has the current selected choice
     ///////////////////////////////////////////////////////////////////////    
-    itemChoice = (pawsTextBox*)PawsManager::GetSingleton().CreateWidget("pawsTextBox");
+    itemChoice = new pawsTextBox;
     AddChild( itemChoice );
 
     // Puts the button at the edge of the text box widget
@@ -93,7 +93,7 @@ bool pawsComboBox::PostSetup()
     ///////////////////////////////////////////////////////////////////////
     // Create the drop down list box
     ///////////////////////////////////////////////////////////////////////      
-    listChoice = (pawsListBox*)PawsManager::GetSingleton().CreateWidget("pawsListBox");
+    listChoice = new pawsListBox;
     AddChild( listChoice );
     if (fliptotop)
         listChoice->SetRelativeFrame( 0 , 0, defaultFrame.Width(), rows*GetActualHeight(rowHeight)+15);

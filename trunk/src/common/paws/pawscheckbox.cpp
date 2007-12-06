@@ -60,7 +60,7 @@ bool pawsCheckBox::Setup( iDocumentNode* node )
     ///////////////////////////////////////////////////////////////////////
     // Create the check box
     ///////////////////////////////////////////////////////////////////////
-    checkBox = (pawsButton*)PawsManager::GetSingleton().CreateWidget("pawsButton");
+    checkBox = new pawsButton;
     AddChild( checkBox );
     checkBox->SetNotify(this);
 
@@ -127,7 +127,7 @@ bool pawsCheckBox::Setup( iDocumentNode* node )
     ///////////////////////////////////////////////////////////////////////    
     csString str(textNode->GetAttributeValue("string"));
     
-    text = (pawsTextBox*)PawsManager::GetSingleton().CreateWidget("pawsTextBox");
+    text = new pawsTextBox;
     AddChild( text );
 
     // Puts the box at the edge of the text box widget

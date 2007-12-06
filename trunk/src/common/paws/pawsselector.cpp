@@ -44,7 +44,7 @@ bool pawsSelectorBox::Setup( iDocumentNode* node )
     int width = availableNode->GetAttributeValueAsInt("width");
     int rowHeight = availableNode->GetAttributeValueAsInt("rowheight");
     
-    available = (pawsListBox*)PawsManager::GetSingleton().CreateWidget("pawsListBox");
+    available = new pawsListBox;
     AddChild( available );
     
     available->SetRelativeFrame( 0 , 0, GetActualWidth(width), defaultFrame.Height() );    
@@ -67,7 +67,7 @@ bool pawsSelectorBox::Setup( iDocumentNode* node )
     width = selectedNode->GetAttributeValueAsInt("width");
     rowHeight = selectedNode->GetAttributeValueAsInt("rowheight");
     
-    selected = (pawsListBox*)PawsManager::GetSingleton().CreateWidget("pawsListBox");
+    selected = new pawsListBox;
     AddChild( selected );
     
     selected->SetRelativeFrame( defaultFrame.Width()-width , 0, width, defaultFrame.Height() );    
@@ -89,7 +89,7 @@ bool pawsSelectorBox::Setup( iDocumentNode* node )
     // Create the addbutton 
     ///////////////////////////////////////////////////////////////////////          
     csRef<iDocumentNode> addNode = node->GetNode( "addbutton" ); 
-    add = (pawsButton*)PawsManager::GetSingleton().CreateWidget("pawsButton");
+    add = new pawsButton;
     AddChild( add );
 
     // Puts the button at the edge of the text box widget
@@ -104,7 +104,7 @@ bool pawsSelectorBox::Setup( iDocumentNode* node )
     // Create the removebutton 
     ///////////////////////////////////////////////////////////////////////          
     csRef<iDocumentNode> removeNode = node->GetNode( "removebutton" ); 
-    remove = (pawsButton*)PawsManager::GetSingleton().CreateWidget("pawsButton");
+    remove = new pawsButton;
     AddChild( remove );
 
     // Puts the button at the edge of the text box widget

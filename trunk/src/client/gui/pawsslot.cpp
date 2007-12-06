@@ -41,7 +41,7 @@ pawsSlot::pawsSlot()
     purifySign->Hide();
     SetPurifyStatus(0);
 
-    stackCountLabel = (pawsTextBox*)PawsManager::GetSingleton().CreateWidget( "pawsTextBox" );
+    stackCountLabel = new pawsTextBox;
     AddChild( stackCountLabel );
     stackCountLabel->SetAlwaysOnTop(true);
     stackCountLabel->SetRelativeFrame( 8, 8, 40, 20 );

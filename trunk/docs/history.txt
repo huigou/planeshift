@@ -1,5 +1,7 @@
 *** 2007-12-06 by Kenny Graunke
 - Removed extraneous indx_sector_name from sectors.sql - it broke create_all.
+- Tidying: No need to use CreateWidget() when the widget type is statically
+  known...it's exactly the same as using "new" but less clear and efficient.
 
 *** 2007-12-06 by Michael Gist
 - Updater fixes.

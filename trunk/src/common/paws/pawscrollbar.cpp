@@ -257,7 +257,7 @@ void pawsScrollBar::SetHorizontal (bool value)
 bool pawsScrollBar::PostSetup()
 {
     // Create the scroll up/left button
-    upButton = (pawsButton*)PawsManager::GetSingleton().CreateWidget( "pawsButton" );
+    upButton = new pawsButton;
     upButton->SetParent( this );
     int flags;
     if (!horizontal)
@@ -293,7 +293,7 @@ bool pawsScrollBar::PostSetup()
     AddChild( upButton );
 
     // Create the scroll down button.
-    downButton  = ( pawsButton *) PawsManager::GetSingleton().CreateWidget( "pawsButton" );
+    downButton = new pawsButton;
     downButton->SetParent( this );
     if (!horizontal)
     {

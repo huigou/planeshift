@@ -99,9 +99,9 @@ bool pawsSpinBox::Setup( iDocumentNode* node )
 bool pawsSpinBox::ManualSetup( csString& value, float Min, float Max, float Inc, csString& pos )
 {
      
-    upButton = (pawsButton*)PawsManager::GetSingleton().CreateWidget("pawsButton");
+    upButton   = new pawsButton;
     AddChild( upButton );
-    downButton = (pawsButton*)PawsManager::GetSingleton().CreateWidget("pawsButton");
+    downButton = new pawsButton;
     AddChild( downButton );
 
     csRect buttonsRect;
@@ -139,7 +139,7 @@ bool pawsSpinBox::ManualSetup( csString& value, float Min, float Max, float Inc,
     // Create the textbox that has the value
     csString str(value);
     
-    text = (pawsEditTextBox*)PawsManager::GetSingleton().CreateWidget("pawsEditTextBox");
+    text = new pawsEditTextBox;
     AddChild( text );
 
     // Puts the box at the edge of the text box widget

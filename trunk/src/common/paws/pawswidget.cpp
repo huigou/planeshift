@@ -2492,7 +2492,7 @@ bool pawsWidget::SetTitle( const char* text, const char* image, const char* alig
         
         if ( close_button && (strcmp(close_button,"yes") == 0) )
         {
-            close_widget = (pawsButton*)PawsManager::GetSingleton().CreateWidget("pawsButton");
+            close_widget = new pawsButton;
             close_widget->SetParent( this );
             close_widget->SetBackground( "quit" );
             csString name( GetName() );

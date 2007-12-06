@@ -251,7 +251,7 @@ bool pawsListBox::Setup( iDocumentNode* node )
 bool pawsListBox::PostSetup()
 {
 
-    scrollBar = ( pawsScrollBar* ) PawsManager::GetSingleton().CreateWidget( "pawsScrollBar" );
+    scrollBar = new pawsScrollBar();
     scrollBar->SetParent( this );
     scrollBar->SetRelativeFrame( defaultFrame.Width() - GetActualWidth(scrollbarWidth),
                                  titleRow ? titleRow->DefaultFrame().ymax : 6,
@@ -267,7 +267,7 @@ bool pawsListBox::PostSetup()
     AddChild( scrollBar );
 
     // Add horizontal scollie
-    horzscrollBar = ( pawsScrollBar* ) PawsManager::GetSingleton().CreateWidget( "pawsScrollBar" );
+    horzscrollBar = new pawsScrollBar();
     horzscrollBar->SetParent( this );
     horzscrollBar->SetHorizontal(true);
 
@@ -1130,7 +1130,7 @@ void pawsListBoxRow::AddColumn( int column, ColumnDef* def )
 void pawsListBoxRow::AddTitleColumn( int column, ColumnDef* def )
 {
     // create the real title widget
-    pawsTextBox * innerWidget = dynamic_cast <pawsTextBox*> (PawsManager::GetSingleton().CreateWidget("pawsTextBox"));
+    pawsTextBox *innerWidget = new pawsTextBox;
     
     innerWidget->SetName( def[column].widgetNode->GetAttributeValue("name") );
     innerWidget->SetText( def[column].widgetNode->GetAttributeValue("name") );

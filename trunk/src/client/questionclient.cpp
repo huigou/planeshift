@@ -47,7 +47,7 @@ public:
               psQuestionClient * qc) 
                     : psQuestion(questionID)
     {
-        wnd = static_cast <pawsYesNoBox*> (PawsManager::GetSingleton().CreateWidget("pawsYesNoBox"));
+        wnd = new pawsYesNoBox;
         PawsManager::GetSingleton().GetMainWidget()->AddChild(wnd);
         wnd->LoadFromFile("data/gui/yesno.xml");
         //wnd->CenterToMouse();
