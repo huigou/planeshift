@@ -500,27 +500,25 @@ void psMovementManager::StopAllMovement()
 
 void psMovementManager::StopControlledMovement()
 {
-    if (!ready || !actor)  // Not fully loaded yet
+    // Don't stop if not fully loaded yet, run-to or autorun is active, or character is already stopped
+    if (!ready || !actor || runToMarkerID != 0 || autoRun || activeMoves == 0)
         return;
 
-    if (runToMarkerID == 0)  // Only stop if no run-to
+    // Cancel all active
+    activeMoves = 0;
+    move_total = psVelocity(0.0f,0.0f);
+
+    if (autoRun)  // Don't stop autorun
     {
-        // Cancel all active
-        activeMoves = 0;
-        move_total = psVelocity(0.0f,0.0f);
-
-        if (autoRun)  // Don't stop autorun
-        {
-            Start(forward);
-            autoRun = true;
-        }
-        else
-        {
-            SetActorMode(defaultmode);
-        }
-
-        UpdateVelocity();
+        Start(forward);
+        autoRun = true;
     }
+    else
+    {
+        SetActorMode(defaultmode);
+    }
+
+    UpdateVelocity();
 }
 
 void psMovementManager::UpdateVelocity()

@@ -1,3 +1,9 @@
+*** 2007-12-06 by Roland Schulz
+- Added mouselook target selection code for modes != 1st person (BT#2377)
+- Fix for FS#585 (reintroduced StopControlledMovement call and fix that
+  to only stop movement if not autorun or mouserun as suggested by
+  Vornne)
+
 *** 2007-12-06 by Kenny Graunke
 - Removed extraneous indx_sector_name from sectors.sql - it broke create_all.
 - Tidying: No need to use CreateWidget() when the widget type is statically

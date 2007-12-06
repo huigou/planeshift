@@ -906,8 +906,101 @@ iMeshWrapper* psCamera::FindMeshUnder2D(int x, int y, csVector3 *pos, int *poly)
 
     iSector* sector = GetICamera()->GetSector();
 
-    if ( sector )
+    if(!sector) {
+        return NULL;
+    }
+  
+    // RS: when in mouselook mode, do not use the mouse x,y coords ... the
+    // mouse is pinned to the center of the screen in this case, and the mesh
+    // at this position will be the player
+    if (psengine->GetCharControl() && 
+        psengine->GetCharControl()->GetMovementManager()->MouseLook() &&
+        currCameraMode != CAMERA_FIRST_PERSON )
     {
+        csVector3 actorPos, targetPos, isect;
+        float actorYRot;
+        iSector* sector;
+        psCelClient * cel = psengine->GetCelClient();
+        if(!cel) {
+            return 0;
+        }
+        GEMClientObject* myEntity = cel->GetMainPlayer();
+        if(!myEntity) {
+            return 0;
+        }
+
+        actor->linmove->GetLastPosition(actorPos, actorYRot, sector);
+        //printf("actor %f %f %f  rot %f\n", actorPos.x, actorPos.y, actorPos.z, actorYRot);
+
+        float optRange = 1000000.0;
+        csRef<iPcMesh> bestMesh = 0;
+        csVector3 bestPos;
+
+        float s = sin(actorYRot);
+        float c = cos(actorYRot);
+
+        // Find all entities within a certain radius.
+        csRef<iCelEntityList> entities =
+            cel->GetPlLayer()->FindNearbyEntities(sector, actorPos, RANGE_TO_SELECT * 2);
+
+        size_t entityCount = entities->GetCount();
+
+        for (size_t i = 0; i < entityCount; ++i)
+        {
+            iCelEntity* entity = entities->Get(i);
+            if (entity == myEntity->GetEntity() )
+                continue;
+
+            GEMClientObject* object = cel->FindObject( entity->GetID() );
+            if( !object )
+                continue;
+
+            int eType = object->GetType();
+
+            csRef<iPcMesh> mesh = object->pcmesh;
+            csVector3 objPos = mesh->GetMesh()->GetMovable()->GetPosition();
+
+            //printf("object %s etype %d pos %f %f %f\n", object->GetName(), eType, objPos.x, objPos.y, objPos.z);
+
+            float dx = objPos.x - actorPos.x;
+            float dz = objPos.z - actorPos.z;
+            float a = 0; float b = 0;
+
+            /* check if the object is in the view cone of the player by solving
+             * actorPos + a * viewvec + b * normalvec = objectPos and verify a > b
+             * for a 45 degree angle. Ignore height for now.
+             * a * s + b * c + dx = 0;  ||  a * c + b * s + dz = 0;
+             */
+            if( s == 0.0 ) {
+                 a = (-dz) / c; b = (-dx) / c;
+            } else if( c == 0.0 ) {
+                 a = (-dx) / s; b = (-dz) / s;
+            } else {
+                 a = (dx / c - dz / s) / (c/s - s/c);
+                 b = (dx / s - dz / c) / (s/c - c/s);
+            }
+            //printf("a: %f   b: %f\n", a, b);
+
+            float score = abs(b) + abs(a);
+
+            // outside the view cone gets a bad score
+            if( abs(b) > abs(a) ) {
+                 score = score + 10;
+            }
+            // and even worse at the back of the player
+            if( a < 0 ) {
+                 score = score + 30;
+            }
+
+            if( score < optRange) {
+                bestMesh = mesh;
+                bestPos = objPos;
+                optRange = score;
+            }
+        }
+        if ( pos != NULL && bestMesh ) *pos = bestPos;
+        return (bestMesh? bestMesh->GetMesh() : 0);
+    } else {
         vo = GetICamera()->GetTransform().GetO2TTranslation();
         csVector3 end = vo + (vw-vo)*100;
         csSectorHitBeamResult result; 
