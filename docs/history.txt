@@ -5,6 +5,7 @@
 
 *** 2007-12-06 by Michael Gist
 - Updater fixes.
+- Added updaterinfo.xml generation to the updater-server script.
 
 *** 2007-12-05 by Sasha Levin
 - Added message to both parties on intruduction.
