@@ -88,7 +88,7 @@ bool pawsRadioButton::Setup( iDocumentNode* node )
     ///////////////////////////////////////////////////////////////////////
     // Create the radio button
     ///////////////////////////////////////////////////////////////////////
-    radioButton = (pawsButton*)PawsManager::GetSingleton().CreateWidget("pawsButton");
+    radioButton = new pawsButton;
     AddChild( radioButton );
 
     csRect buttonRect;
@@ -137,7 +137,7 @@ bool pawsRadioButton::Setup( iDocumentNode* node )
     ///////////////////////////////////////////////////////////////////////    
     csString str(textNode->GetAttributeValue("string"));
     
-    text = (pawsTextBox*)PawsManager::GetSingleton().CreateWidget("pawsTextBox");
+    text = new pawsTextBox;
     AddChild( text );
 
     // Puts the button at the edge of the text box widget

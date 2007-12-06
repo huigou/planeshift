@@ -972,14 +972,9 @@ void pawsTree::SetRoot(pawsTreeNode * _root)
 
 void pawsTree::SetScrollBars(bool horiz, bool vert)
 {
-    if (horiz && (horizScrollBar == NULL))
+    if (horiz && !horizScrollBar)
     {
-        horizScrollBar = (pawsScrollBar*)PawsManager::GetSingleton().CreateWidget("pawsScrollBar");
-        if (horizScrollBar == NULL)
-        { 
-            Error1("Could not created pawsScrollBar");
-            return;
-        }
+        horizScrollBar = new pawsScrollBar;
         AddChild(horizScrollBar);
         horizScrollBar->SetRelativeFrame(0, defaultFrame.Width()-GetActualHeight(SCROLLBAR_WIDTH),
                                          defaultFrame.Width(), GetActualHeight(SCROLLBAR_WIDTH));
@@ -987,7 +982,7 @@ void pawsTree::SetScrollBars(bool horiz, bool vert)
         horizScrollBar->SetTickValue(20);
         horizScrollBar->Show();
     }
-    if (!horiz && (horizScrollBar != NULL))
+    if (!horiz && horizScrollBar)
     {
         pawsWidget::DeleteChild(horizScrollBar);
         horizScrollBar = NULL;
@@ -995,9 +990,9 @@ void pawsTree::SetScrollBars(bool horiz, bool vert)
             layout->SetHorizScroll(0);
     }
 
-    if (vert && (vertScrollBar == NULL))
+    if (vert && !vertScrollBar)
     {
-        vertScrollBar = (pawsScrollBar*)PawsManager::GetSingleton().CreateWidget("pawsScrollBar");
+        vertScrollBar = new pawsScrollBar;
         if (vertScrollBar == NULL)
         { 
             Error1("Could not created pawsScrollBar");
@@ -1454,7 +1449,7 @@ void pawsSimpleTreeNode::Set(int mode, bool checked, const csString & imageName,
     }
     if (mode & showLabel)
     {
-        textBox = (pawsTextBox*)PawsManager::GetSingleton().CreateWidget("pawsTextBox");
+        textBox = new pawsTextBox;
         textBox->SetParent(widget);
         if (textBox == NULL)
             return;

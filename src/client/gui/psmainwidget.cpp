@@ -536,13 +536,7 @@ void psMainWidget::PrintOnScreen( const char* text, int color, float ymod )
     }
 
     // Create a fading textbox widget
-    pawsFadingTextBox* txtBox = (pawsFadingTextBox*)PawsManager::GetSingleton().CreateWidget("pawsFadingTextBox");
-    if (!txtBox)
-    {
-        Error1("Couldn't create a pawsFadingTextBox for onscreen message!");
-        return;
-    }
-
+    pawsFadingTextBox* txtBox = new pawsFadingTextBox;
     txtBox->SetParent(this);
     txtBox->SetText(text,mesgFirstFont,mesgFont,color); // Set options and enable
     txtBox->Show();

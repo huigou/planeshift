@@ -352,28 +352,15 @@ void pawsMessageTextBox::CalcLineHeight()
 
 bool pawsMessageTextBox::Setup( iDocumentNode* node )
 {
-    CalcLineHeight();
-
-    // Create the optional scroll bar here as well but hidden.
-    scrollBar = (pawsScrollBar*) PawsManager::GetSingleton().CreateWidget ( "pawsScrollBar" );
-    scrollBar->SetParent( this );
-    scrollBar->SetRelativeFrame( defaultFrame.Width() - 24, 6, 24, defaultFrame.Height() - 12 ); 
-    int attach = ATTACH_TOP | ATTACH_BOTTOM | ATTACH_RIGHT;
-    scrollBar->SetAttachFlags( attach );
-    scrollBar->PostSetup();
-    scrollBar->SetTickValue( 1.0 );
-    AddChild( scrollBar );
-   
-    OnResize();
-
-    return true;
+    return Setup();
 }
-bool pawsMessageTextBox::Setup( void )
+
+bool pawsMessageTextBox::Setup()
 {
     CalcLineHeight();
 
     // Create the optional scroll bar here as well but hidden.
-    scrollBar = (pawsScrollBar*) PawsManager::GetSingleton().CreateWidget ( "pawsScrollBar" );
+    scrollBar = new pawsScrollBar;
     scrollBar->SetParent( this );
     scrollBar->SetRelativeFrame( defaultFrame.Width() - 24, 6, 24, defaultFrame.Height() - 12 ); 
     int attach = ATTACH_TOP | ATTACH_BOTTOM | ATTACH_RIGHT;
@@ -1167,7 +1154,7 @@ void pawsMultiLineTextBox::SetText( const char* newText )
         if ( !scrollBar )
         {
             // Create the optional scroll bar here as well but hidden.
-            scrollBar = (pawsScrollBar*) PawsManager::GetSingleton().CreateWidget ( "pawsScrollBar" );
+            scrollBar = new pawsScrollBar();
             scrollBar->SetParent( this );
             scrollBar->SetRelativeFrame( defaultFrame.Width() - 40, 6, 24, defaultFrame.Height() - 12 ); 
             scrollBar->PostSetup();

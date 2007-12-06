@@ -55,7 +55,7 @@ bool pawsHelp::PostSetup(void)
     return false;
 
     // creates tree:
-    helpTree = (pawsSimpleTree*) (PawsManager::GetSingleton().CreateWidget("pawsSimpleTree"));
+    helpTree = new pawsSimpleTree;
     if (helpTree == NULL)
     {
         Error1("Could not create widget pawsSimpleTree");

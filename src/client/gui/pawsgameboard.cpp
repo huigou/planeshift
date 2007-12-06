@@ -267,8 +267,7 @@ void pawsGameBoard::SetupBoard(psMGBoardMessage &msg)
             if (state != DisabledTile)
             {
 
-                pawsGameTile *tile = (pawsGameTile *)
-                        (PawsManager::GetSingleton().CreateWidget("pawsGameTile"));
+                pawsGameTile *tile = new pawsGameTile;
                 if (!tile)
                 {
                     Error1("Could not create widget pawsGameTile");

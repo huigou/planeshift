@@ -235,7 +235,7 @@ void pawsMultilineEditTextBox::SetupScrollBar()
 {
     if (!vScrollBar)
     {
-        vScrollBar = (pawsScrollBar*) PawsManager::GetSingleton().CreateWidget ( "pawsScrollBar" );
+        vScrollBar = new pawsScrollBar;
         vScrollBar->SetParent( this );
         vScrollBar->SetRelativeFrame( screenFrame.Width() - 24, 0, 24, screenFrame.Height() - 12 );
         vScrollBar->SetAttachFlags(ATTACH_TOP | ATTACH_BOTTOM | ATTACH_RIGHT);

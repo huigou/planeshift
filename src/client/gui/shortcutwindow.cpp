@@ -136,7 +136,7 @@ void pawsShortcutWindow::RebuildMatrix()
         matrix[i].SetSize(matrixHeight);
         for (k=0; k < matrix[i].GetSize(); k++)
         {
-            button = (pawsButton*)PawsManager::GetSingleton().CreateWidget("pawsButton");
+            button = new pawsButton;
             button->SetSound("gui.shortcut");
             AddChild(button);
             button->SetBackground("Shortcut Button");
@@ -200,7 +200,7 @@ void  pawsShortcutWindow::UpdateMatrix()
 bool pawsShortcutWindow::PostSetup()
 {
     // Create the scroll bar
-    scrollBar = (pawsScrollBar*) PawsManager::GetSingleton().CreateWidget ( "pawsScrollBar" );
+    scrollBar = new pawsScrollBar;
     AddChild( scrollBar );
     scrollBar->SetHorizontal(false);
     int attach = ATTACH_BOTTOM | ATTACH_RIGHT | ATTACH_TOP;

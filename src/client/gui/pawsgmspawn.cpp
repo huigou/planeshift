@@ -69,7 +69,7 @@ bool pawsGMSpawnWindow::PostSetup()
     lockStr = (pawsEditTextBox*)FindWidget("LockStr");
 
     // creates tree:
-    itemTree = (pawsSimpleTree*) (PawsManager::GetSingleton().CreateWidget("pawsSimpleTree"));
+    itemTree = new pawsSimpleTree;
     if (itemTree == NULL)
     {
         Error1("Could not create widget pawsSimpleTree");
