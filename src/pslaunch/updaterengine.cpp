@@ -665,13 +665,15 @@ void UpdaterEngine::generalUpdate()
                     printOutput("Attempting to download full version of %s\n", newFilePath.GetData());
 
                     // Get the 'backup' mirror, should always be the first in the list.
-                    csString url = config->GetNewConfig()->GetMirror(0)->GetBaseURL();
-                    url.Append("backup/");
+                    csString baseurl = config->GetNewConfig()->GetMirror(0)->GetBaseURL();
+                    baseurl.Append("backup/");
 
                     // Try path from base URL.
+                    csString url = baseurl;
                     if(!downloader->DownloadFile(url.Append(newFilePath.GetData()), newFilePath.GetData(), true))
                     {
                         // Maybe it's in a platform specific subdirectory. Try that next.
+                        url = baseurl;
                         url.Append(config->GetNewConfig()->GetPlatform());
                         if(downloader->DownloadFile(url.Append(newFilePath.GetData()), newFilePath.GetData(), true))
                         {
