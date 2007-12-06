@@ -144,11 +144,9 @@ then
     if [ $line == "<client>" ]
     then
       copy=1
-    fi
     elif [ $line == "</client>" ]
     then
       copy=0
-    fi
     elif [ copy == 1 ]
     then
       echo $line >> $REPO/updaterinfo.xml
