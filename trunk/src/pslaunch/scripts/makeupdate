@@ -13,6 +13,10 @@ UPDATERNAME=psupdater
 function generatedeleted {
 for i in $(ls .);
 do
+  if [ ! -d $NEWPATH/$1 ]
+  then
+    mkdir $NEWPATH/$1
+  fi
   if [ -d $i ]
   then
     cd $i
@@ -76,6 +80,10 @@ done
 function generatechanged {
 for i in $(ls .);
 do
+  if [ ! -d $NEWPATH/$1 ]
+  then
+    mkdir $NEWPATH/$1
+  fi
   if [ -d $i ]
   then
     cd $i
@@ -124,44 +132,52 @@ fi
 echo "    </mirrors>" >> $REPO/updaterinfo.xml
 
 UPDATER_VERSION=$(wget -q -O - 'http://planeshift.svn.sourceforge.net/viewvc/*checkout*/planeshift/trunk/src/pslaunch/updaterengine.h' | grep '^#define UPDATER_VERSION' | sed 's/^#define UPDATER_VERSION \([0-9]*\).*$/\1/g')
-md5win32updater=$(md5sum $REPO/psupdaterwin32.zip)
-md5win32updater=${md5win32updater% $REPO/psupdaterwin32.zip}
-md5lin32updater=$(md5sum $REPO/psupdaterlinux32.zip)
-md5lin32updater=${md5lin32updater% $REPO/psupdaterlinux32.zip}
-md5lin64updater=$(md5sum $REPO/psupdaterlinux64.zip)
-md5lin64updater=${md5lin64updater% $REPO/psupdaterlinux64.zip}
-md5osxupdater=$(md5sum $REPO/psupdatermacosx.zip)
-md5osxupdater=${md5osxupdater% $REPO/psupdatermacosx.zip}
+md5win32updater=$(md5sum $REPO"/"$UPDATERNAME"win32.zip")
+md5win32updater=${md5win32updater% $REPO"/"$UPDATERNAME"win32.zip"}
+read md5win32updater<<< "$md5win32updater"
+md5lin32updater=$(md5sum $REPO"/"$UPDATERNAME"linux32.zip")
+md5lin32updater=${md5lin32updater% $REPO"/"$UPDATERNAME"linux32.zip"}
+read md5lin32updater<<< "$md5lin32updater"
+md5lin64updater=$(md5sum $REPO"/"$UPDATERNAME"linux64.zip")
+md5lin64updater=${md5lin64updater% $REPO"/"$UPDATERNAME"linux64.zip"}
+read md5lin64updater<<< "$md5lin64updater"
+md5osxupdater=$(md5sum $REPO"/"$UPDATERNAME"macosx.zip")
+md5osxupdater=${md5osxupdater% $REPO"/"$UPDATERNAME"macosx.zip"}
+read md5osxupdater<<< "$md5osxupdater"
 echo "    <updater version=\""$UPDATER_VERSION"\" md5win32=\""$md5win32updater"\" md5linux32=\""$md5lin32updater"\" md5linux64=\""$md5lin64updater"\" md5macosx=\""$md5osxupdater"\" />" >> $REPO/updaterinfo.xml
 
 echo "    <client>" >> $REPO/updaterinfo.xml
-if [ -d $REPO"_backup" }
+if [ -d $REPO"_backup" ]
 then
   copy=0
   exec < $REPO"_backup/updaterinfo.xml"
   while read line
   do
-    if [ $line == "<client>" ]
+    if [ "$line" == "<client>" ]
     then
       copy=1
-    elif [ $line == "</client>" ]
+    elif [ "$line" == "</client>" ]
     then
       copy=0
-    elif [ copy == 1 ]
+    elif [ $copy -eq 1 ]
     then
-      echo $line >> $REPO/updaterinfo.xml
+      echo "        "$line >> $REPO/updaterinfo.xml
     fi
   done
 fi
-md5win32=${md5sum $REPO"/win32-"$VERSION".zip"}
+md5win32=$(md5sum $REPO"/win32-"$VERSION".zip")
 md5win32=${md5win32% $REPO"/win32-"$VERSION".zip"}
-md5lin32=${md5sum $REPO"/linux32-"$VERSION".zip"}
+read md5win32<<< "$md5win32"
+md5lin32=$(md5sum $REPO"/linux32-"$VERSION".zip")
 md5lin32=${md5lin32% $REPO"/linux32-"$VERSION".zip"}
-md5lin64=${md5sum $REPO"/linux64-"$VERSION".zip"}
+read md5lin32<<< "$md5lin32"
+md5lin64=$(md5sum $REPO"/linux64-"$VERSION".zip")
 md5lin64=${md5lin64% $REPO"/linux64-"$VERSION".zip"}
-md5osx=${md5sum $REPO"/macosx-"$VERSION".zip"}
+read md5lin64<<< "$md5lin64"
+md5osx=$(md5sum $REPO"/macosx-"$VERSION".zip")
 md5osx=${md5osx% $REPO"/macosx-"$VERSION".zip"}
-echo "        <version name=\""$VERSION"\" md5win32=\""$md5win32"\" md5linux32=\""$md5lin32"\" md5linux64=\""$md5lin64"\" md5macosx=\""$md5osx"\" />"
+read md5osx<<< "$md5osx"
+echo "        <version name=\""$VERSION"\" md5win32=\""$md5win32"\" md5linux32=\""$md5lin32"\" md5linux64=\""$md5lin64"\" md5macosx=\""$md5osx"\" />" >> $REPO/updaterinfo.xml
 echo "    </client>" >> $REPO/updaterinfo.xml
 echo "</config>" >> $REPO/updaterinfo.xml
 }
@@ -286,15 +302,15 @@ echo "Creating Windows update."
 zip -9 $REPO/psupdaterwin32.zip platform/new/win32/$UPDATERNAME".exe"
 cp -R platform/old/win32/* $OLDPATH
 cp -R platform/new/win32/* $NEWPATH
-rm $OLDPATH/$UPDATERNAME
-rm $NEWPATH/$UPDATERNAME
+rm $OLDPATH/$UPDATERNAME".exe"
+rm $NEWPATH/$UPDATERNAME".exe"
 createupdate
 cd $OUTPUTDIR
 zip -r -9 $REPO/win32-"$VERSION".zip *
 cd $OLDPATH
-rm -R $(ls $TOPDIR/platform/old/win32/)
+rm -R $(ls $TOPDIR/platform/old/win32/ | grep -v $UPDATERNAME".exe")
 cd $NEWPATH
-rm -R $(ls $TOPDIR/platform/new/win32/)
+rm -R $(ls $TOPDIR/platform/new/win32/ | grep -v $UPDATERNAME".exe")
 cd $TOPDIR
 
 # Restore platform files and clean up.
