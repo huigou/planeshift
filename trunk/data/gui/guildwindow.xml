@@ -673,13 +673,13 @@
 
             <widget name="GuildName" factory="pawsTextBox">
 
-                <frame x="80" y="260" width="150" height="20"/>
+                <frame x="50" y="260" width="200" height="20"/>
 
             </widget>
 
             <widget name="GuildNameButton" factory="pawsButton" id="1001">
 
-                <frame x="215" y="260" width="60" height="19"/>
+                <frame x="220" y="260" width="60" height="19"/>
 
                 <bgimage resource="Standard Button" />
 
@@ -695,19 +695,19 @@
 
                 <frame x="10" y="290" width="75" height="20" />
 
-                <text string="Web page:" />
+                <text string="Website:" />
 
             </widget>
 
             <widget name="GuildWebPage" factory="pawsTextBox">
 
-                <frame x="80" y="290" width="150" height="20"/>
+                <frame x="60" y="290" width="140" height="20"/>
 
             </widget>
 
             <widget name="GuildWebPageButton" factory="pawsButton" id="1004">
 
-                <frame x="215" y="290" width="60" height="19"/>
+                <frame x="220" y="290" width="60" height="19"/>
 
                 <bgimage resource="Standard Button" />
 
