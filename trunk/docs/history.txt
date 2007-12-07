@@ -1,7 +1,7 @@
 *** 2007-12-07 by Sasha Levin
 - Increased the priority of the delayed db writer.
 - Fixed #3029.
-- Increased skills to a max of 10000.
+- Removed skill and stat limits.
 
 *** 2007-12-07 by Kenny Graunke
 - Commit minor guild window changes from PBT#1519, slightly improved.

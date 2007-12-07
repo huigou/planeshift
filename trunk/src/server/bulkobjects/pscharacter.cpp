@@ -3581,10 +3581,6 @@ void StatSet::SetStat(PSITEMSTATS_STAT attrib, unsigned int val, bool recalculat
     if (attrib<0 || attrib>=PSITEMSTATS_STAT_COUNT)
         return;
 
-    // Clamp values to prevent huge numbers resulting from bugs.
-    if (val > MAX_STAT)
-        val = MAX_STAT;
-
     stats[attrib].rank=val;
     if (recalculatestats)
       self->RecalculateStats();
@@ -3752,10 +3748,6 @@ void SkillSet::SetSkillRank( PSSKILL which, int rank, bool recalculatestats )
     bool isStat = which >= PSSKILL_AGI && which <= PSSKILL_WILL;
     if (rank < 0)
         rank = 0;
-    else if (isStat && rank > MAX_STAT)
-        rank = MAX_STAT;
-    else if (!isStat && rank > MAX_SKILL)
-        rank = MAX_SKILL;
 
     skills[which].rank = rank;
     skills[which].CalculateCosts(self);

@@ -5251,27 +5251,10 @@ void AdminManager::SetSkill(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& 
 
     if (data.skill == "all")
     {
-        if (data.value<0  ||  data.value>MAX(MAX_SKILL,MAX_STAT))
-        {
-            psserver->SendSystemError(me->clientnum, "Valid values are between 0 and %i", MAX(MAX_SKILL,MAX_STAT));
-            return;
-        }
-
         for (int i=0; i<PSSKILL_COUNT; i++)
         {
             psSkillInfo * skill = CacheManager::GetSingleton().GetSkillByID(i);
             if (skill == NULL) continue;
-
-            // Make sure value is in range for each category.
-            int value = data.value;
-            if (skill->category == PSSKILLS_CATEGORY_STATS && value > MAX_STAT)
-            {
-                value = MAX_STAT;
-            }
-            else if (skill->category != PSSKILLS_CATEGORY_STATS && value > MAX_SKILL)
-            {
-                value = MAX_SKILL;
-            }
 
             pchar->SetSkillRank(skill->id, data.value);
         }
@@ -5293,17 +5276,6 @@ void AdminManager::SetSkill(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& 
             psserver->SendSystemInfo(me->clientnum, "Current '%s' is %d",skill->name.GetDataSafe(),old_value);
             return;
         } else
-        if (skill->category == PSSKILLS_CATEGORY_STATS && (data.value < 0 || data.value > MAX_STAT) )
-        {
-            psserver->SendSystemError(me->clientnum, "Stats values are between 0 and %i", MAX_STAT);    
-            return;
-        }
-        else if (skill->category != PSSKILLS_CATEGORY_STATS && (data.value < 0 || data.value > MAX_SKILL))
-        {
-            psserver->SendSystemError(me->clientnum, "Skill values are between 0 and %i", MAX_SKILL);    
-            return;
-        }
-
     
         pchar->SetSkillRank(skill->id, data.value);
         psserver->SendSystemInfo(me->clientnum, "Changed '%s' from %d to %d",skill->name.GetDataSafe(),old_value,data.value);
