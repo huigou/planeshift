@@ -2760,42 +2760,23 @@ bool psCharacter::UpdateQuestAssignments(bool force_update)
             if(!q->dirty)
                 continue;
 
-            r = db->CommandPump("update character_quests "
-                            "set status='%c',"
-                            "remaininglockout=%ld, "
-                            "last_response=%ld "
-                            " where player_id=%d"
-                            "   and quest_id=%d",
+
+            db->CommandPump("insert into character_quests "
+                            "(player_id, assigner_id, quest_id, "
+                            "status, remaininglockout, last_response) "
+                            "values (%d, %d, %d, '%c', %d, %d) "
+                            "ON DUPLICATE KEY UPDATE "
+                            "status='%c',remaininglockout=%ld,last_response=%ld;",
+                            characterid,
+                            q->assigner_id,
+                            q->GetQuest()->GetID(),
                             q->status,
                             q->lockout_end,
                             q->last_response,
-                            characterid,
-                            q->GetQuest()->GetID() );
-            if (!r)  // no update done
-            {
-                r = db->CommandPump("insert into character_quests"
-                                "(player_id, assigner_id, quest_id, status, remaininglockout, last_response) "
-                                "values (%d, %d, %d, '%c', %d, %d)",
-                                characterid,
-                                q->assigner_id,
-                                q->GetQuest()->GetID(),
-                                q->status,
-                                q->lockout_end,
-                                q->last_response);
-
-                if (r == -1)
-                {
-                    Error2("Could not insert character_quest row.  Error was <%s>.",db->GetLastError() );
-                }
-                else
-                {
-                    Debug3(LOG_QUESTS, GetCharacterID(), "Inserted quest info for player %d, quest %d.\n",characterid,assigned_quests[i]->GetQuest()->GetID() );
-                }
-            }
-            else
-            {
-                Debug3(LOG_QUESTS, GetCharacterID(), "Updated quest info for player %d, quest %d.\n",characterid,assigned_quests[i]->GetQuest()->GetID() );
-            }
+                            q->status,
+                            q->lockout_end,
+                            q->last_response );
+            Debug3(LOG_QUESTS, GetCharacterID(), "Updated quest info for player %d, quest %d.\n",characterid,assigned_quests[i]->GetQuest()->GetID() );
             assigned_quests[i]->dirty = false;
         }
     }
