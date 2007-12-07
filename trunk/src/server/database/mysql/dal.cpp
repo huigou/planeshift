@@ -74,25 +74,24 @@ bool psMysqlConnection::Initialize (iObjectRegistry *objectreg)
 
 bool psMysqlConnection::Initialize(const char *host, unsigned int port, const char *database,
                               const char *user, const char *pwd)
-{
-#ifdef USE_DELAY_QUERY
+{    
 
     // Create a mydb
     mysql_library_init(0, NULL, NULL);
-
-    dqm.AttachNew(new DelayedQueryManager(host,port,user,pwd,database));
-    dqmThread.AttachNew(new Thread(dqm));
-    dqmThread->Start();
-
     mysql_thread_init();
-#endif    
-    
     conn=mysql_init(NULL);
     // Conn is the valid connection to be used for mydb. Have to store the mydb to get
     // errors if this call fails.
     MYSQL *conn_check = mysql_real_connect(conn,host,user,pwd,database,port,NULL,CLIENT_FOUND_ROWS);
     my_bool my_true = true;
     mysql_options(conn_check, MYSQL_OPT_RECONNECT, &my_true);
+
+#ifdef USE_DELAY_QUERY
+    dqm.AttachNew(new DelayedQueryManager(host,port,user,pwd,database));
+    dqmThread.AttachNew(new Thread(dqm));
+    dqmThread->SetPriority(THREAD_PRIO_HIGH);
+    dqmThread->Start();
+#endif   
 
     return (conn == conn_check);
 }
