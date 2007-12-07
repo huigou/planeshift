@@ -50,7 +50,7 @@ UpdaterConfig::UpdaterConfig(csArray<csString> args, iObjectRegistry* _object_re
     // Load config settings from cfg file.
     if(!vfs->Exists(CONFIG_FILENAME))
     {
-        fclose(fopen(CONFIG_FILENAME, "wb"));
+        vfs->WriteFile(CONFIG_FILENAME, "", 0);
     }
     configFile = new csConfigFile(CONFIG_FILENAME, vfs);
     cleanUpdate = configFile->GetBool("Update.Clean", true);
