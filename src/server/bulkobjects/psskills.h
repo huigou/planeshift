@@ -25,9 +25,6 @@
 #include "util/poolallocator.h"
 #include "rpgrules/psmoney.h"
 
-#define MAX_SKILL 10000
-#define MAX_STAT  10000
-
 enum PSSKILL {
     PSSKILL_NONE            =   -1,
     PSSKILL_SWORD           =   0,
