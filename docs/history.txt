@@ -2,6 +2,7 @@
 - Increased the priority of the delayed db writer.
 - Fixed #3029.
 - Removed skill and stat limits.
+- Issue with quest status not saved was resolved.
 
 *** 2007-12-07 by Kenny Graunke
 - Commit minor guild window changes from PBT#1519, slightly improved.
