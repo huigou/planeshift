@@ -1,3 +1,6 @@
+*** 2007-12-07 by Kenny Graunke
+- Commit minor guild window changes from PBT#1519, slightly improved.
+
 *** 2007-12-06 by Roland Schulz
 - Added mouselook target selection code for modes != 1st person (BT#2377)
 - Fix for FS#585 (reintroduced StopControlledMovement call and fix that
