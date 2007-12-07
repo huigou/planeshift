@@ -219,11 +219,6 @@ iResultSet *psMysqlConnection::Select(const char *sql, ...)
     lastquery = querystr;
 
     timer.Start();
-    if (IsBadStringPtrA(querystr, 200))
-    {
-        printf("\n\nATTACH!!!!\n\n");
-        Sleep(20000);
-    }
     if (!mysql_query(conn, querystr))
     {
         if(timer.Stop() > 1000)
@@ -484,7 +479,6 @@ const char *psResultRow::operator[](const char *fieldname)
     }
   }
   CPrintf(CON_BUG, "Could not find field %s!. Exiting.\n",fieldname);
-    Sleep(20000);
   CS_ASSERT(false);
   return ""; // Illegal name.
 }

@@ -5270,7 +5270,7 @@ void AdminManager::SetSkill(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& 
             return;
         }
 
-        int old_value = pchar->GetSkills()->GetSkillRank(skill->id);
+        unsigned int old_value = pchar->GetSkills()->GetSkillRank(skill->id);
         if (data.value == -1)
         {
             psserver->SendSystemInfo(me->clientnum, "Current '%s' is %d",skill->name.GetDataSafe(),old_value);

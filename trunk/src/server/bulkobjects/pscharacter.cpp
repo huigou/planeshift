@@ -1053,7 +1053,7 @@ float psCharacter::GetPowerLevel( PSSKILL skill )
 
 int psCharacter::GetMaxAllowedRealm( PSSKILL skill )
 {
-    int waySkillRank = skills.GetSkillRank(skill);
+    unsigned int waySkillRank = skills.GetSkillRank(skill);
 
     if (waySkillRank == 0)  // zero skill = no casting
         return 0;
@@ -3274,7 +3274,7 @@ bool Skill::Practice( unsigned int amount, unsigned int& actuallyAdded,psCharact
     return rankup;
 }
 
-void psCharacter::SetSkillRank( PSSKILL which, int rank)
+void psCharacter::SetSkillRank( PSSKILL which, unsigned int rank)
 {
     if (rank < 0)
         rank = 0;
