@@ -41,7 +41,7 @@ class psTrainerInfo : public csRefCount
 {
 public:
     bool Load(unsigned int characterid);
-    bool TrainingInSkill(PSSKILL skill, int rank, float faction);
+    bool TrainingInSkill(PSSKILL skill, unsigned int rank, float faction);
 
 private:
     csPDelArray<psTrainerSkill> skills;

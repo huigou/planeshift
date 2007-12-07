@@ -1943,9 +1943,9 @@ int com_liststats(char *line)
             continue;
         }
 
-        int z = charData->GetSkills()->GetSkillPractice(info->id);
-        int y = charData->GetSkills()->GetSkillKnowledge(info->id);
-        int rank = charData->GetSkills()->GetSkillRank(info->id);
+        unsigned int z = charData->GetSkills()->GetSkillPractice(info->id);
+        unsigned int y = charData->GetSkills()->GetSkillKnowledge(info->id);
+        unsigned int rank = charData->GetSkills()->GetSkillRank(info->id);
 
 
         if ( z == 0 && y == 0 && rank == 0 )

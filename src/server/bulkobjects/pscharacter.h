@@ -1005,7 +1005,7 @@ public:
     
     /** Directly sets rank of given skill. It completely bypasses the skill logic,
        it is used for testing only. */
-    void SetSkillRank( PSSKILL which, int rank);
+    void SetSkillRank( PSSKILL which, unsigned int rank);
     
     psSpell * GetSpellByName(const csString& spellName);
     psSpell * GetSpellByIdx(int index);

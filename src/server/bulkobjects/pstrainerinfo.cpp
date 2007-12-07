@@ -64,7 +64,7 @@ bool psTrainerInfo::Load(unsigned int characterid)
     return isTrainer;
 }
 
-bool psTrainerInfo::TrainingInSkill(PSSKILL skill, int rank, float faction)
+bool psTrainerInfo::TrainingInSkill(PSSKILL skill, unsigned int rank, float faction)
 {
     csArray<psTrainerSkill*, csPDelArrayElementHandler<psTrainerSkill*> >::Iterator iter = skills.GetIterator();
 

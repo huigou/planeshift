@@ -2265,7 +2265,7 @@ bool psWorkManager::ValidateTraining(psTradeTransformations* transCandidate, psT
     if ( priSkill > 0 )
     {
         // If primary skill is zero, check if this skill should be trained first
-        int basePriSkill = owner->GetSkills()->GetSkillRank((PSSKILL)priSkill);
+        unsigned int basePriSkill = owner->GetSkills()->GetSkillRank((PSSKILL)priSkill);
         if ( basePriSkill == 0 )
         {
             if( owner->GetSkills()->GetSkill((PSSKILL)priSkill)->CanTrain() )
@@ -2278,7 +2278,7 @@ bool psWorkManager::ValidateTraining(psTradeTransformations* transCandidate, psT
     if ( secSkill > 0 )
     {
         // If secondary skill is zero, check if this skill should be trained first
-        int baseSecSkill = owner->GetSkills()->GetSkillRank((PSSKILL)secSkill);
+        unsigned int baseSecSkill = owner->GetSkills()->GetSkillRank((PSSKILL)secSkill);
         if ( baseSecSkill == 0 )
         {
             if( owner->GetSkills()->GetSkill((PSSKILL)secSkill)->CanTrain() )
@@ -2296,8 +2296,8 @@ bool psWorkManager::ValidateSkills(psTradeTransformations* transCandidate, psTra
     int priSkill = processCandidate->GetPrimarySkillId();
     if ( priSkill > 0 )
     {
-        int minPriSkill = processCandidate->GetMinPrimarySkill();
-        int basePriSkill = owner->GetSkills()->GetSkillRank((PSSKILL)priSkill);
+        unsigned int minPriSkill = processCandidate->GetMinPrimarySkill();
+        unsigned int basePriSkill = owner->GetSkills()->GetSkillRank((PSSKILL)priSkill);
         if ( minPriSkill > basePriSkill )
         {
             return false;
@@ -2308,8 +2308,8 @@ bool psWorkManager::ValidateSkills(psTradeTransformations* transCandidate, psTra
     int secSkill = processCandidate->GetSecondarySkillId();
     if ( secSkill > 0 )
     {
-        int minSecSkill = processCandidate->GetMinSecondarySkill();
-        int baseSecSkill = owner->GetSkills()->GetSkillRank((PSSKILL)secSkill);
+        unsigned int minSecSkill = processCandidate->GetMinSecondarySkill();
+        unsigned int baseSecSkill = owner->GetSkills()->GetSkillRank((PSSKILL)secSkill);
         if ( minSecSkill > baseSecSkill )
         {
             return false;
@@ -2334,8 +2334,8 @@ bool psWorkManager::ValidateNotOverSkilled(psTradeTransformations* transCandidat
     int priSkill = processCandidate->GetPrimarySkillId();
     if ( priSkill > 0 )
     {
-        int maxPriSkill = processCandidate->GetMaxPrimarySkill();
-        int basePriSkill = owner->GetSkills()->GetSkillRank((PSSKILL)priSkill);
+        unsigned int maxPriSkill = processCandidate->GetMaxPrimarySkill();
+        unsigned int basePriSkill = owner->GetSkills()->GetSkillRank((PSSKILL)priSkill);
         if ( maxPriSkill < basePriSkill )
         {
             return false;
@@ -2346,8 +2346,8 @@ bool psWorkManager::ValidateNotOverSkilled(psTradeTransformations* transCandidat
     int secSkill = processCandidate->GetSecondarySkillId();
     if ( secSkill > 0 )
     {
-        int maxSecSkill = processCandidate->GetMaxSecondarySkill();
-        int baseSecSkill = owner->GetSkills()->GetSkillRank((PSSKILL)secSkill);
+        unsigned int maxSecSkill = processCandidate->GetMaxSecondarySkill();
+        unsigned int baseSecSkill = owner->GetSkills()->GetSkillRank((PSSKILL)secSkill);
         if ( maxSecSkill < baseSecSkill )
         {
             return false;
@@ -3123,8 +3123,8 @@ bool psWorkManager::ApplySkills(float factor, psItem* transItem)
         }
 
 		// Get the players skill level using the transformations primary skill
-		int basePriSkill = owner->GetSkills()->GetSkillRank((PSSKILL)priSkill);
-        int maxPriSkill = process->GetMaxPrimarySkill();
+		unsigned int basePriSkill = owner->GetSkills()->GetSkillRank((PSSKILL)priSkill);
+        unsigned int maxPriSkill = process->GetMaxPrimarySkill();
 
         // Get the quality factor for this primary skill
         //  and only use it if in range.
@@ -3164,8 +3164,8 @@ bool psWorkManager::ApplySkills(float factor, psItem* transItem)
         int secSkill = process->GetSecondarySkillId();
         if ( secSkill > 0)
         {
-            int baseSecSkill = owner->GetSkills()->GetSkillRank((PSSKILL)secSkill);
-            int maxSecSkill = process->GetMaxSecondarySkill();
+            unsigned int baseSecSkill = owner->GetSkills()->GetSkillRank((PSSKILL)secSkill);
+            unsigned int maxSecSkill = process->GetMaxSecondarySkill();
 
             // Get the quality factor for this secmary skill
             //  and only use it if in range.
