@@ -307,7 +307,7 @@ void psWorkManager::HandleRepair(Client *client, psWorkCmdMessage &msg)
     // Make sure client isn't already busy digging, etc.
     if ( client->GetActor()->GetMode() != PSCHARACTER_MODE_PEACE )
     {
-        psserver->SendSystemError(client->GetClientNum(),"You cannot repair anything because you are already busy.");
+        psserver->SendSystemError(client->GetClientNum(),"You cannot repair anything because you are %s.", client->GetActor()->GetCharacterData()->GetModeStr());
         return;
     }
 
