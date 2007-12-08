@@ -450,7 +450,12 @@ const char *psUserCommands::HandleCommand(const char *cmd)
             psengine->GetCharManager()->SetTarget(psengine->GetCelClient()->GetMainPlayer(),"select");
         else
         {
-            csString tail = words.GetTail(words.GetCount()-1);
+            csString tail;
+            if(words[1] == "next" || words[1] == "prev")
+                tail = words.GetTail(2);
+            else
+                tail = words.GetTail(1);
+
             SearchDirection dir = (words[1] == "prev") ? SEARCH_BACK : SEARCH_FORWARD;
 
             if (tail == "item")
@@ -806,10 +811,6 @@ GEMClientObject* psUserCommands::FindEntityWithName(const char *name)
         iCelEntity* entity = entities->Get(i);
         GEMClientObject* object = cel->FindObject( entity->GetID() );
         CS_ASSERT( object );
-
-        // Skip if the entity is an object.
-        if ( object->GetType() == -2 )
-            continue;
 
         if (csString(object->GetName()).StartsWith(name, true))
             return object;
