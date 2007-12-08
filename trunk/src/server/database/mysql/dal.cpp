@@ -89,8 +89,8 @@ bool psMysqlConnection::Initialize(const char *host, unsigned int port, const ch
 #ifdef USE_DELAY_QUERY
     dqm.AttachNew(new DelayedQueryManager(host,port,user,pwd,database));
     dqmThread.AttachNew(new Thread(dqm));
-    dqmThread->SetPriority(THREAD_PRIO_HIGH);
     dqmThread->Start();
+    dqmThread->SetPriority(THREAD_PRIO_HIGH);
 #endif   
 
     return (conn == conn_check);
