@@ -56,6 +56,11 @@
 #include <propclass/colldet.h>
 #include <propclass/solid.h>
 
+//============================
+// Cal3D includes
+//============================
+#include <cal3d/cal3d.h>
+
 //=============================================================================
 // Library Includes
 //=============================================================================
@@ -1388,11 +1393,12 @@ bool GEMClientActor::IsGroupedWith(GEMClientActor* actor)
 
 bool GEMClientActor::SetAnimation(const char* anim, int duration)
 {
+    float ani_duration = cal3dstate->GetCal3DModel()->getCoreModel()->getCoreAnimation(cal3dstate->FindAnim(anim))->getDuration();
     // Check if the duration demands more than 1 playback?
-    if (duration > cal3dstate->GetAnimationDuration())
+    if (duration > ani_duration)
     {
         // Yes. Set up callback to handle repetition
-        int repeat = (int)(duration / cal3dstate->GetAnimationDuration());
+        int repeat = (int)(duration / ani_duration);
 
         csRef<iSpriteCal3DFactoryState> sprite =
             

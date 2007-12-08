@@ -1,3 +1,6 @@
+*** 2007-12-08 by Michael Gist
+- Patch from Trymm to fix BT#961.
+
 *** 2007-12-08 by Andrew Craig
 - Applied patch for: FS#703 - Some svn quests in trunk do not work
   http://www.hydlaa.com/flyspray_upgrade/index.php?do=details&task_id=703
