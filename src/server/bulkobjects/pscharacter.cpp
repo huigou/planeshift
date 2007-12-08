@@ -2430,8 +2430,10 @@ QuestAssignment *psCharacter::AssignQuest(psQuest *quest, int assigner_id)
     //first check if there is not another assigned quest with the same NPC
     for (size_t i=0; i<assigned_quests.GetSize(); i++)
     {
-        if (assigned_quests[i]->GetQuest().IsValid() && assigned_quests[i]->assigner_id == assigner_id &&
+        if (assigned_quests[i]->GetQuest().IsValid() && 
+            assigned_quests[i]->assigner_id == assigner_id &&
             assigned_quests[i]->GetQuest()->GetID() != quest->GetID() &&
+            quest->GetParentQuest() == NULL && 
             assigned_quests[i]->GetQuest()->GetParentQuest() == NULL &&
             assigned_quests[i]->status == PSQUEST_ASSIGNED)
         {
