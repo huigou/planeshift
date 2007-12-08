@@ -1380,7 +1380,8 @@ void psCharacter::CalculateEquipmentModifiers()
             // Check for attr bonuses
             for(int z = 0; z < PSITEMSTATS_STAT_BONUS_INDEX_COUNT; z++)
             {
-                PSITEMSTATS_STAT_BONUS_INDEX stat;
+                PSITEMSTATS_STAT_BONUS_INDEX stat = PSITEMSTATS_STAT_BONUS_INDEX_0;
+
                 if(z == 0)
                     stat = PSITEMSTATS_STAT_BONUS_INDEX_0;
                 else if( z == 1)
@@ -3726,7 +3727,6 @@ void SkillSet::SetSkillRank( PSSKILL which, int rank, bool recalculatestats )
         return;
 
     // Clamp rank to stay within sane values, even if given something totally outrageous.
-    bool isStat = which >= PSSKILL_AGI && which <= PSSKILL_WILL;
     if (rank < 0)
         rank = 0;
 

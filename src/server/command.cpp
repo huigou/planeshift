@@ -1985,7 +1985,7 @@ int com_progress(char * line)
 
     csHash<gemObject *>::GlobalIterator i(gems.GetIterator());
     gemObject* obj;
-    gemActor* actor;
+    gemActor* actor = NULL;
     bool found = false;
 
     if (clientnum == 0)
