@@ -296,6 +296,13 @@ bool psMainWidget::OnMouseDown( int button, int keyModifier, int x, int y )
     if (!bar)
         return false;// no gui loaded, so nothing here can be done.
 
+    // ignore mouse clicks if character is dead
+    if( psengine->GetCelClient() && psengine->GetCelClient()->GetMainPlayer()
+     && !psengine->GetCelClient()->GetMainPlayer()->IsAlive() )
+    {
+        return false;
+    }
+
     // Check to see if we are dropping an item
     if ( psengine->GetSlotManager() && psengine->GetSlotManager()->IsDragging() )
     {

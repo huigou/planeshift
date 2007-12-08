@@ -224,8 +224,7 @@ void psEntityLabels::SetObjectText(GEMClientObject* object)
         csString guild( actor->GetGuildName() );
         csString guild2( psengine->GetGuildName() );
 
-        if ( guild.Length() )
-        if ( guild.Length() )
+        if ( guild2.Length() && guild.Length() == guild2.Length() )
         {
             // If same guild, indicate with color
             if (guild == guild2)
@@ -278,6 +277,16 @@ void psEntityLabels::SetObjectText(GEMClientObject* object)
 
 void psEntityLabels::CreateLabelOfObject(GEMClientObject *object)
 {
+    if (!object)
+    {
+        Debug1( LOG_ANY, 0, "NULL object passed to psEntityLabels::CreateLabelOfObject" );
+        return;
+    }
+
+    // Don't make labels for the player or action locations
+    if (object->GetEntity() == celClient->GetMainActor() || object->GetObjectType() == GEM_ACTION_LOC)
+        return;
+
     iMeshWrapper* mesh = object->pcmesh->GetMesh();
 
     // Has it got a mesh to attach to?
@@ -296,7 +305,6 @@ void psEntityLabels::CreateLabelOfObject(GEMClientObject *object)
 
     psEffect* effect = effectMgr->FindEffect(id);
     object->SetEntityLabel(effect);
-    effectMgr->ShowEffect(id,false);  // Hide until told to show
 
     // Update text
     SetObjectText(object);
@@ -319,22 +327,10 @@ void psEntityLabels::OnObjectArrived( GEMClientObject* object )
 {
     CS_ASSERT_MSG("Effects Manager must exist before loading entity labels!", psengine->GetEffectManager() );
 
-    if (visibility == LABEL_NEVER)
+    if (visibility == LABEL_NEVER || visibility == LABEL_ONMOUSE)
         return;
 
-    if (!object)
-    {
-        Debug1( LOG_ANY, 0, "NULL object passed to psEntityLabels::OnObjectArried" );
-        return;
-    }
-
-    // Action location?
-    if (object->GetObjectType() == GEM_ACTION_LOC)
-        return;
-
-    DeleteLabelOfObject(object); // just to be sure
-    if ( object->GetEntity() != celClient->GetMainActor() )
-        CreateLabelOfObject( object );
+    CreateLabelOfObject( object );
 }
 
 
@@ -478,9 +474,16 @@ void psEntityLabels::RemoveObject( GEMClientObject* object )
 
 inline void psEntityLabels::ShowLabelOfObject(GEMClientObject* object, bool show)
 {
-    psEffect* effect = object->GetEntityLabel();
-    if (effect != NULL)
-        psengine->GetEffectManager()->ShowEffect(effect->GetUniqueID(),show);
+    if (object->GetEntityLabel() == NULL)
+    {
+        CreateLabelOfObject(object);
+    }
+
+    psEffect* entityLabel = object->GetEntityLabel();
+    if (entityLabel != NULL)
+    {
+        psengine->GetEffectManager()->ShowEffect(entityLabel->GetUniqueID(),show);
+    }
 }
 
 void psEntityLabels::RepaintAllLabels()
