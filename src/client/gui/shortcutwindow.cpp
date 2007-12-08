@@ -16,28 +16,38 @@
 * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 *
 */
-
-
-// CS INCLUDES
 #include <psconfig.h>
+#include "globals.h"
+
+//=============================================================================
+// Crystal Space Includes
+//=============================================================================
 #include <csutil/xmltiny.h>
 #include <csutil/inputdef.h>
 #include <iutil/evdefs.h>
 #include <ivideo/fontserv.h>
 
+//=============================================================================
+// Library Includes
+//=============================================================================
 #include "paws/pawswidget.h"
 #include "paws/pawsborder.h"
 #include "paws/pawsmanager.h"
 #include "paws/pawsprefmanager.h"
-#include "net/cmdhandler.h"
 #include "paws/pawstextbox.h"
-#include "shortcutwindow.h"
 #include "paws/pawscrollbar.h"
+
+#include "net/cmdhandler.h"
+
 #include "gui/pawsconfigkeys.h"
 #include "gui/pawscontrolwindow.h"
-#include "globals.h"
 
+//=============================================================================
+// Application Includes
+//=============================================================================
+#include "shortcutwindow.h"
 #include "pscelclient.h"
+
 
 #define COMMAND_FILE         "/this/data/options/shortcutcommands.xml"
 #define DEFAULT_COMMAND_FILE "/this/data/options/shortcutcommands_def.xml"
@@ -91,7 +101,9 @@ void pawsShortcutWindow::CalcButtonSize()
     for (shortcutNum = 0; shortcutNum < NUM_SHORTCUTS; shortcutNum++)
     {
         if (names[shortcutNum].GetData() != NULL)
+        {
             GetFont()->GetDimensions( names[shortcutNum], width, height );
+        }            
         maxWidth   = MAX(width,  maxWidth);
         maxHeight  = MAX(height, maxHeight);
     }
@@ -123,8 +135,12 @@ void pawsShortcutWindow::RebuildMatrix()
 
     // delete old matrix
     for (i=0; i < matrix.GetSize(); i++)
+    {
         for (k=0; k < matrix[i].GetSize(); k++)
+        {
             DeleteChild(matrix[i][k]);
+        }
+    }            
     matrix.DeleteAll();
     
     CalcMatrixSize(matrixWidth, matrixHeight);
@@ -149,7 +165,9 @@ void pawsShortcutWindow::RebuildMatrix()
     
     CS_ASSERT(matrix.GetSize()>0);
     if (scrollBar != NULL)
+    {    
         scrollBar->SetMaxValue(ceil(    NUM_SHORTCUTS / (float)(matrixWidth*matrixHeight)    )   - 1   );
+    }        
 }
 
 void  pawsShortcutWindow::LayoutMatrix()
@@ -177,11 +195,16 @@ void  pawsShortcutWindow::UpdateMatrix()
     size_t i, k;
 
     if (scrollBar != NULL)
+    {
         scrollBarPos = (int)scrollBar->GetCurrentValue();
+    }        
     else
+    {
         scrollBarPos = 0;
+    }        
 
     for (i=0; i < matrix.GetSize(); i++)
+    {
         for (k=0; k < matrix[i].GetSize(); k++)
         {
             button = matrix[i][k];
@@ -190,11 +213,14 @@ void  pawsShortcutWindow::UpdateMatrix()
             {
                 button->Show();
                 button->SetText(names[shortcutNum]);
-                button->SetID(1000 + (int)shortcutNum);
+                button->SetID(2000 + (int)shortcutNum);
             }
             else
+            {
                 button->Hide();
+            }                
         }
+    }        
 }
 
 bool pawsShortcutWindow::PostSetup()
@@ -220,13 +246,17 @@ void pawsShortcutWindow::OnResize()
     size_t newMatrixWidth, newMatrixHeight;
 
     if (matrix.GetSize() == 0)
+    {
         return;
+    }        
     
     // If the matrix size that is appropriate for current window size differs from actual matrix size,
     // we will adjust the matrix to it
     CalcMatrixSize(newMatrixWidth, newMatrixHeight);
     if (matrix.GetSize() != newMatrixWidth   ||   matrix[0].GetSize() != newMatrixHeight)
+    {
         RebuildMatrix();
+    }                    
 }
 
 bool pawsShortcutWindow::OnButtonPressed( int mouseButton, int keyModifier, pawsWidget* widget )
@@ -276,14 +306,21 @@ bool pawsShortcutWindow::OnButtonPressed( int mouseButton, int keyModifier, paws
 
             pawsWidget * configKeyAsWidget = PawsManager::GetSingleton().FindWidget("ConfigKeys");
             if (!configKeyAsWidget)
+            {
                 printf("Did not find config key widget\n");
+            }                
         
             pawsConfigKeys * configKey = dynamic_cast<pawsConfigKeys*>
                 (configKeyAsWidget);
+                
             if (configKey)
+            {
                 configKey->UpdateNicks();
+            }                
             else
+            {
                 printf("Widget isn't a pawsConfigKeys\n");
+            }                
 
             SaveCommands();
             return true;
@@ -325,11 +362,11 @@ bool pawsShortcutWindow::OnButtonPressed( int mouseButton, int keyModifier, paws
 
     // Execute clicked on button
     if ( mouseButton == csmbLeft && !(keyModifier & CSMASK_CTRL))
-        ExecuteCommand( widget->GetID() - 1000, false );
+        ExecuteCommand( widget->GetID() - 2000, false );
     // Configure the button that was clicked on
     else if ( mouseButton == csmbRight || (mouseButton == csmbLeft && (keyModifier & CSMASK_CTRL)) )
     {
-        edit = widget->GetID() - 1000;
+        edit = widget->GetID() - 2000;
         if ( edit < 0 || edit >= NUM_SHORTCUTS )
             return false;
 
