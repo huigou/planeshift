@@ -6282,7 +6282,7 @@ void AdminManager::HandleListWarnings(psAdminCmdMessage& msg, AdminCmdData& data
         if (rs.IsValid())
         {
             csString newLine;
-            int i = 0;
+            size_t i = 0;
             for (i = 0 ; i < rs.Count() ; i++)
             {
                 newLine.Format("%s - %s - %s", rs[i]["warningGM"], rs[i]["timeOfWarn"], rs[i]["warnMessage"]);

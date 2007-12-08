@@ -1796,7 +1796,7 @@ int psServerCharManager::CalculateMerchantPrice(psItem *item, Client *client, bo
         calc_item_merchant_price_supply_sell->SetValue(suppInfo->bought);
         calc_item_merchant_price_time_sell->SetValue(psserver->GetWeatherManager()->GetCurrentTime());
         calc_item_merchant_price_sell->Execute();
-        finalPrice = calc_item_merchant_price_char_result_sell->GetValue();
+        finalPrice = (int)calc_item_merchant_price_char_result_sell->GetValue();
     }
     else
     {
@@ -1806,7 +1806,7 @@ int psServerCharManager::CalculateMerchantPrice(psItem *item, Client *client, bo
         calc_item_merchant_price_supply_buy->SetValue(suppInfo->bought);
         calc_item_merchant_price_time_buy->SetValue(psserver->GetWeatherManager()->GetCurrentTime());
         calc_item_merchant_price_buy->Execute();
-        finalPrice = calc_item_merchant_price_char_result_buy->GetValue();
+        finalPrice = (int)calc_item_merchant_price_char_result_buy->GetValue();
     }
     return finalPrice;
 }

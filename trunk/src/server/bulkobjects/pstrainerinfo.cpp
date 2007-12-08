@@ -80,7 +80,7 @@ bool psTrainerInfo::TrainingInSkill(PSSKILL skill, unsigned int rank, float fact
             printf("    Compare rank(%d) < (%d)info->max_rank\n", rank , info->max_rank );
             printf("    Compare faction(%f) >= (%f)info->min_faction\n", faction, info->min_faction );
         */            
-            if (rank >= info->min_rank && rank < info->max_rank && faction >= info->min_faction)
+            if (rank >= (unsigned int)info->min_rank && rank < (unsigned int)info->max_rank && faction >= info->min_faction)
                 return true;
         }
     }

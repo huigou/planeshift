@@ -1589,10 +1589,12 @@ psMoney psItem::GetSellPrice()
     if (!script)
     {
         Error1("Cannot find mathscript: Calc Item Sell Price");
-		int sellPrice = current_stats->GetPrice().GetTotal() * 0.8;
-		if (sellPrice == 0)
-			sellPrice = 1;
-		return sellPrice;
+        int sellPrice = (int)(current_stats->GetPrice().GetTotal() * 0.8);
+        if (sellPrice == 0)
+        {
+            sellPrice = 1;
+        }
+        return sellPrice;
     }
 
     MathScriptVar *price = script->GetOrCreateVar("Price");
@@ -1602,7 +1604,7 @@ psMoney psItem::GetSellPrice()
 
     script->Execute();
 
-	return psMoney(finalPrice->GetValue());
+    return psMoney((int)finalPrice->GetValue());
 }
 
 psItemCategory * psItem::GetCategory()

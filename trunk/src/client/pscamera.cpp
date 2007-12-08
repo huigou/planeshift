@@ -955,8 +955,6 @@ iMeshWrapper* psCamera::FindMeshUnder2D(int x, int y, csVector3 *pos, int *poly)
             if( !object )
                 continue;
 
-            int eType = object->GetType();
-
             csRef<iPcMesh> mesh = object->pcmesh;
             csVector3 objPos = mesh->GetMesh()->GetMovable()->GetPosition();
 
@@ -971,28 +969,36 @@ iMeshWrapper* psCamera::FindMeshUnder2D(int x, int y, csVector3 *pos, int *poly)
              * for a 45 degree angle. Ignore height for now.
              * a * s + b * c + dx = 0;  ||  a * c + b * s + dz = 0;
              */
-            if( s == 0.0 ) {
-                 a = (-dz) / c; b = (-dx) / c;
-            } else if( c == 0.0 ) {
-                 a = (-dx) / s; b = (-dz) / s;
-            } else {
-                 a = (dx / c - dz / s) / (c/s - s/c);
-                 b = (dx / s - dz / c) / (s/c - c/s);
+            if( s == 0.0 ) 
+            {
+                a = (-dz) / c; b = (-dx) / c;
+            } 
+            else if( c == 0.0 ) 
+            {
+                a = (-dx) / s; b = (-dz) / s;
+            } 
+            else 
+            {
+                a = (dx / c - dz / s) / (c/s - s/c);
+                b = (dx / s - dz / c) / (s/c - c/s);
             }
             //printf("a: %f   b: %f\n", a, b);
 
-            float score = abs(b) + abs(a);
+            float score = fabs(b) + fabs(a);
 
             // outside the view cone gets a bad score
-            if( abs(b) > abs(a) ) {
+            if( fabs(b) > fabs(a) ) 
+            {
                  score = score + 10;
             }
             // and even worse at the back of the player
-            if( a < 0 ) {
+            if( a < 0.0 ) 
+            {
                  score = score + 30;
             }
 
-            if( score < optRange) {
+            if( score < optRange) 
+            {
                 bestMesh = mesh;
                 bestPos = objPos;
                 optRange = score;

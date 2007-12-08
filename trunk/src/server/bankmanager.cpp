@@ -785,28 +785,36 @@ int BankManager::CoinsForExchange(psCharacter* pschar, bool guild, int type, flo
 
 int BankManager::CalculateAccountLevel(psCharacter *pschar, bool guild)
 {
-	MathScript* accountLevelScript;
-	if (guild)
-		accountLevelScript = accountGuildLvlScript;
-	else
-		accountLevelScript = accountCharLvlScript;
+    MathScript* accountLevelScript;
+    if (guild)
+    {
+        accountLevelScript = accountGuildLvlScript;
+    }
+    else
+    {
+        accountLevelScript = accountCharLvlScript;
+    }
 
-	MathScriptVar* totalTrias = accountLevelScript->GetOrCreateVar("totalTrias");
-	MathScriptVar* accountLevel = accountLevelScript->GetOrCreateVar("accountLevel");
+    MathScriptVar* totalTrias = accountLevelScript->GetOrCreateVar("totalTrias");
+    MathScriptVar* accountLevel = accountLevelScript->GetOrCreateVar("accountLevel");
 
-	if (guild)
-	{
+    if (guild)
+    {
         psGuildInfo *g = pschar->GetGuild();
         if(!g)
+        {
             return 0;
-		totalTrias->SetValue(g->GetBankMoney().GetTotal());
-	}
-	else
-		totalTrias->SetValue(pschar->BankMoney().GetTotal());
+        }
+        totalTrias->SetValue(g->GetBankMoney().GetTotal());
+    }
+    else
+    {
+        totalTrias->SetValue(pschar->BankMoney().GetTotal());
+    }
 
-	accountLevelScript->Execute();
+    accountLevelScript->Execute();
 
-	return accountLevel->GetValue();
+    return (int)accountLevel->GetValue();
 }
 
 float BankManager::CalculateFee(psCharacter* pschar, bool guild)
