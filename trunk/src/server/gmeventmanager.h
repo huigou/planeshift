@@ -30,6 +30,8 @@
 #define MAX_EVENT_NAME_LENGTH 40
 #define MAX_REGISTER_RANGE    100.0
 
+#define UNDEFINED_GMID        0
+
 enum GMEventStatus
 {
     EMPTY = 0,                 // no GM event
@@ -72,7 +74,7 @@ public:
      * @param target: registeree player client.
      * @return bool: true = success, false = failed.
      */
-    bool RegisterPlayerInGMEvent (int clientnum, int gmID, Client* target);
+    bool RegisterPlayerInGMEvent (int clientnum, unsigned int gmID, Client* target);
    
     /** GM registers all players in range.
      *
@@ -88,7 +90,7 @@ public:
      * @param gmID: Game Master player ID.
      * @return bool: true = success, false = failed.
      */
-    bool CompleteGMEvent (Client* client, int gmID);
+    bool CompleteGMEvent (Client* client, unsigned int gmID);
 
     /** A player completes an event.
      *
@@ -112,7 +114,7 @@ public:
      * @param target: registeree player client to be removed.
      * @return bool: true = success, false = failed.
      */
-    bool RemovePlayerFromGMEvent (int clientnum, int gmID, Client* target);
+    bool RemovePlayerFromGMEvent (int clientnum, unsigned int gmID, Client* target);
 
     /** Reward players who complete an event (NB event must be live at the time
      *  of reward).
@@ -140,7 +142,7 @@ public:
      * @param completedEventsAsGM: array of ids of completed events as GM.
      * @return int: running event id.
      */
-    int GetAllGMEventsForPlayer (int playerID,
+    int GetAllGMEventsForPlayer (unsigned int playerID,
                                  csArray<int>& completedEvents,
                                  int& runningEventAsGM,
                                  csArray<int>& completedEventsAsGM);
@@ -163,7 +165,7 @@ public:
       * @param playerID: id of player being removed
       * @returns bool: true = success
       */
-     bool RemovePlayerFromGMEvents(int playerID);
+     bool RemovePlayerFromGMEvents(unsigned int playerID);
 
 private:
 
