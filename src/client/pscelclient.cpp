@@ -1441,18 +1441,7 @@ void GEMClientActor::SetAnimationVelocity(const csVector3& velocity)
     // Taking larger of the 2 axis; cal3d axis are the opposite of CEL's
     bool useZ = ABS(velocity.z) > ABS(velocity.x);
     float cal3dvel = useZ ? velocity.z : velocity.x;
-
-    // FIXME: Kludge.  When setting the velocity to 0 from a negative number,
-    //        animations stay reversed unless we set it positive first.
-    if (cal3dvel == 0)
-    {
-        cal3dstate->SetVelocity(0.1f, &psengine->GetRandomGen());
-        cal3dstate->SetVelocity(0.0f, &psengine->GetRandomGen());
-    }
-    else
-    {
-        cal3dstate->SetVelocity(-cal3dvel, &psengine->GetRandomGen());
-    }
+    cal3dstate->SetVelocity(-cal3dvel, &psengine->GetRandomGen());
 }
 
 void GEMClientActor::SetMode(uint8_t mode, bool newactor)
