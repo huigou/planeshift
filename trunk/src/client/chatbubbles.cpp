@@ -47,7 +47,7 @@ bool psChatBubbles::Initialize(psEngine * psengine)
     msgHandler = psengine->GetMsgHandler();
 
     msgHandler->Subscribe(this, MSGTYPE_CHAT);
-    Load("/this/data/options/chatbubbles.xml");
+    Load("/planeshift/userdata/options/chatbubbles.xml");
     return true;
 }
 

@@ -46,6 +46,7 @@
 #include <csutil/databuf.h>
 #include <iutil/stringarray.h>
 
+#include "util/fileutil.h"
 #include "util/log.h"
 #include "util/consoleout.h"
 #include "pscssetup.h"
@@ -385,6 +386,30 @@ void psCSSetup::PS_MountModelsZip(const char* key, bool vfspath)
     }
 }
 
+void psCSSetup::PS_MountUserData()
+{
+    // Mount the per-user configuration directory (platform specific)
+    // - On Linux, use ~/.PlaneShift instead of ~/.crystalspace/PlaneShift.
+    csString configPath = csGetPlatformConfigPath("PlaneShift");
+    configPath.ReplaceAll("/.crystalspace/", "/.");
+
+    printf("Your configuration files are in... %s\n", configPath.GetData());
+
+    // Create the mount point if it doesn't exist...die if we can't.
+    FileUtil fileUtil(vfs);
+    if (!fileUtil.StatFile(configPath) && CS_MKDIR(configPath) < 0)
+    {
+        Error2("Could not create required %s directory!", configPath.GetData());
+        exit(-1);
+    }
+
+    if (!vfs->Mount("/planeshift/userdata", configPath + "$/"))
+    {
+        Error2("Could not mount %s as /planeshift/userdata!", configPath.GetData());
+        exit(-1);
+    }
+}
+
 bool psCSSetup::PS_InitMounts ()
 {
     if (!vfs)
@@ -401,6 +426,8 @@ bool psCSSetup::PS_InitMounts ()
     
     if ( !PS_Mount ("/planeshift/", "$^") )
         return false;
+
+    PS_MountUserData();
   
     PS_MountMaps ();
     PS_MountModels ();

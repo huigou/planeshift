@@ -102,7 +102,7 @@ bool pawsIgnoreWindow::LoadIgnoreList()
 
     if (vfs && xml)
     {
-        csRef<iFile> file = vfs->Open ("/this/data/options/ignore.xml", VFS_FILE_READ);
+        csRef<iFile> file = vfs->Open ("/planeshift/userdata/options/ignore.xml", VFS_FILE_READ);
 
         if ( file )
         {
@@ -157,7 +157,7 @@ void pawsIgnoreWindow::SaveIgnoreList()
         node->SetValue("Ignored");
         node->SetAttribute("name",ignoredNames[i]);
     }
-    doc->Write(vfs, "/this/data/options/ignore.xml");
+    doc->Write(vfs, "/planeshift/userdata/options/ignore.xml");
 }
 
 

@@ -43,8 +43,8 @@
 
 #define NO_BIND ""
 
-#define MOUSE_FILE         "/this/data/options/mouse.xml"
-#define DEFAULT_MOUSE_FILE "/this/data/options/mouse_def.xml"
+#define MOUSE_FILE         "/planeshift/userdata/options/mouse.xml"
+#define DEFAULT_MOUSE_FILE "/planeshift/data/options/mouse_def.xml"
 
 //////////////////////////////////////////////////////////////////////
 //

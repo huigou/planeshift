@@ -48,9 +48,8 @@
 #include "shortcutwindow.h"
 #include "pscelclient.h"
 
-
-#define COMMAND_FILE         "/this/data/options/shortcutcommands.xml"
-#define DEFAULT_COMMAND_FILE "/this/data/options/shortcutcommands_def.xml"
+#define COMMAND_FILE         "/planeshift/userdata/options/shortcutcommands.xml"
+#define DEFAULT_COMMAND_FILE "/planeshift/data/options/shortcutcommands_def.xml"
 
 #define BUTTON_PADDING       2
 #define BUTTON_SPACING       2

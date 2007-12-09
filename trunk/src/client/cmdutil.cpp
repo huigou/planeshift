@@ -359,7 +359,7 @@ void psUtilityCommands::HandleScreenShot(bool compress)
     {
         ssNumber++;
         filename.Format("%s%02u.%s", ssFilename, ssNumber, format );
-        fullpath = "/this/screenshots/" + filename;
+        fullpath = "/planeshift/userdata/screenshots/" + filename;
     } while ( psengine->GetVFS()->Exists(fullpath) );
         
     // Save the number we're using, to improve the next use of this function

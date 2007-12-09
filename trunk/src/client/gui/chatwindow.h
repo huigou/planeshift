@@ -37,8 +37,8 @@
 #include "gui/pawsignore.h"
 #include "gui/pawscontrolwindow.h"
 
-#define CONFIG_CHAT_FILE_NAME       "/this/data/options/chat.xml"
-#define CONFIG_CHAT_FILE_NAME_DEF   "/this/data/options/chat_def.xml"
+#define CONFIG_CHAT_FILE_NAME       "/planeshift/userdata/options/chat.xml"
+#define CONFIG_CHAT_FILE_NAME_DEF   "/planeshift/data/options/chat_def.xml"
 
 enum E_CHAT_LOG {
     CHAT_LOG_ALL    = 0,
@@ -257,7 +257,7 @@ protected:
 
     ChatSettings settings;
 
-    FILE *logFile[CHAT_NLOG];
+    csRef<iFile> logFile[CHAT_NLOG];
     
     void LogMessage(enum E_CHAT_LOG channel, const char* message);
 
