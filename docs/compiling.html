@@ -17,8 +17,8 @@
     var CAL3Drev_HEAD = "493"; // CAL3D_SOURCE_REV_HEAD
     var csWinLibsVersion = "1.2_002"; // cs win32 libs version.
     //Update date and author, to be changed everytime and updates occurred
-    var UpdateDate = "08 Dec 2007"; //Date when the update occurred
-    var UpdateAuthor = "Mike Gist"; //Author of the update
+    var UpdateDate = "09 Dec 2007"; //Date when the update occurred
+    var UpdateAuthor = "Kenny Graunke"; //Author of the update
 -->
 </script>
 
@@ -1006,7 +1006,7 @@ trim down the length of the CEL linker flag list.</div>
         To do this, use the prefix line that was used for Cal3d above.</p>
 
         <p><div class="commandBox">
-            /home/user/development/cs$ ./configure --without-java --without-perl --without-python --without-lib3ds --with-libcal3d=/home/user/development/cal3d<br>
+            /home/user/development/cs$ ./configure --without-java --without-perl --without-python --without-lib3ds --with-cal3d=/home/user/development/cal3d<br>
            <div class="Normal">
             /home/user/development/cs$ jam -aq libs plugins cs-config walktest
            </div>
@@ -1038,10 +1038,10 @@ trim down the length of the CEL linker flag list.</div>
         <p><div class="commandBox">
             /home/user/development/planeshift$ ./autogen.sh<br>
            <div class="User">
-            /home/user/development/planeshift$ ./configure --with-libcal3d=/home/user/development/cal3d<br>
+            /home/user/development/planeshift$ ./configure --with-cal3d=/home/user/development/cal3d<br>
            </div>
            <div class="Developer">
-            /home/user/development/planeshift$ ./configure --enable-debug --with-libcal3d=/home/user/development/cal3d<br>
+            /home/user/development/planeshift$ ./configure --enable-debug --with-cal3d=/home/user/development/cal3d<br>
            </div>
            <div class="Normal">
             /home/user/development/planeshift$ jam -aq client
