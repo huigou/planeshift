@@ -178,7 +178,7 @@ bool pawsConfigSound::SaveConfig()
 
     dirty = false;
 
-    return psengine->GetVFS()->WriteFile("/planeshift/data/options/sound.xml",
+    return psengine->GetVFS()->WriteFile("/planeshift/userdata/options/sound.xml",
                                          xml,xml.Length());
 }
 

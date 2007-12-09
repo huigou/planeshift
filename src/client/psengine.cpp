@@ -415,7 +415,7 @@ bool psEngine::Initialize (int level)
         // Create the PAWS window manager
         paws = new PawsManager( object_reg, skinPath );
         
-        options = new psOptions("/this/data/options.cfg");
+        options = new psOptions("/planeshift/userdata/options.cfg");
         
         // Default to maximum 1000/(14)fps (71.4 fps)
         // Actual fps get be up to 10 fps less so set a reasonably high limit
@@ -1386,10 +1386,10 @@ psMouseBinds* psEngine::GetMouseBinds()
     {
         mouseBinds = new psMouseBinds();
 
-        csString fileName = "/this/data/options/mouse.xml";
+        csString fileName = "/planeshift/userdata/options/mouse.xml";
         if (!vfs->Exists(fileName))
         {
-            fileName = "/this/data/options/mouse_def.xml";
+            fileName = "/planeshift/data/options/mouse_def.xml";
         }
 
         if ( !mouseBinds->LoadFromFile( object_reg, fileName))
@@ -1601,7 +1601,7 @@ void psEngine::SetDuelConfirm(int confirmType)
     xml += "\"/>\n";
     xml += "</PvP>\n";
 
-    vfs->WriteFile("/this/data/options/pvp.xml", xml.GetData(), xml.Length());
+    vfs->WriteFile("/planeshift/userdata/options/pvp.xml", xml.GetData(), xml.Length());
 }
 
 bool psEngine::LoadDuelConfirm()
@@ -1609,10 +1609,10 @@ bool psEngine::LoadDuelConfirm()
     csRef<iDocument> doc;
     csRef<iDocumentNode> root, mainNode, optionNode;
 
-    csString fileName = "/this/data/options/pvp.xml";
+    csString fileName = "/planeshift/userdata/options/pvp.xml";
     if (!psengine->GetVFS()->Exists(fileName))
     {
-        fileName = "/this/data/options/pvp_def.xml";
+        fileName = "/planeshift/data/options/pvp_def.xml";
     }
 
     doc = ParseFile(object_reg, fileName);
@@ -1650,7 +1650,7 @@ bool psEngine::LoadSoundSettings(bool forceDef)
 
     csString fileName;
     if(!forceDef)
-        fileName = "/planeshift/data/options/sound.xml";
+        fileName = "/planeshift/userdata/options/sound.xml";
 
     if (forceDef || !psengine->GetVFS()->Exists(fileName))
     {
@@ -1885,6 +1885,7 @@ psEngine * psengine;
 
 int main (int argc, char *argv[])
 {
+    // TODO: Move planeshift.cfg to /planeshift/userdata
     psCSSetup* CSSetup = new psCSSetup( argc, argv, "/this/psclient.cfg", CONFIGFILENAME );
     iObjectRegistry* object_reg = CSSetup->InitCS();
 

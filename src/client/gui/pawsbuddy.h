@@ -28,7 +28,7 @@
 
 class pawsListBox;
 
-#define ALIASES_FILE_PREFIX       "/this/data/aliases_"
+#define ALIASES_FILE_PREFIX       "/planeshift/userdata/aliases_"
 
 
 /** The buddy window that shows your current list of in game 'friends'.  

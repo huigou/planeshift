@@ -1,5 +1,32 @@
 *** 2007-12-09 by Kenny Graunke
 - Remove ugly hack to unreverse animation direction - the new CS fixes it.
+- Introduced /planeshift/userdata VFS mount, a platform-specific location for
+  storing user-customized data files.
+  
+  It uses csGetPlatformConfigPath(), which maps to:
+  - [Linux]   ~/.PlaneShift
+  - [MacOS X] ~/Library/Application Support/PlaneShift
+  - [Windows] Application Data\PlaneShift, falling back to "My Documents"
+  I also print "Your configuration files are in..." on startup to help
+  everyone find the new location while we transition.
+
+  All options, quest notes, chat logs, and screenshots now live there.
+  I plan to move planeshift.cfg there in a future commit.
+
+  Should fix many issues:
+  - The "data" folder now only contains static data, making it easier to
+    prepare an update.
+  - The updater won't overwrite your settings if someone accidentally
+    uploads shortcuts.xml or such (and then doesn't fix it for months).
+  - If you have multiple users on your computer, each will get their own
+    separate settings - so you and your little brother don't edit each others
+    controls (or, eventually, read & overwrite each others' email/passwords).
+  - [Mac OS X] PS shouldn't write to / anymore, fixing permission denied errors.
+  - [Linux] You can now install PS system-wide, in /opt or such, and not have
+            to grant 777 permissions on /opt/planeshift/data/options and such.
+
+  Please test this thoroughly.  To get your shortcuts/controls back, copy the
+  non-"_def" XML files from data/options to the new location.
 
 *** 2007-12-08 by Roland Schulz
 - fix for bt#2432 - annoying message on mouseclick when dead, thanks to

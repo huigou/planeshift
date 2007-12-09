@@ -75,7 +75,7 @@ pawsQuestListWindow::pawsQuestListWindow()
 
     questID = -1;
 
-    filename = "/this/data/questnotes_";
+    filename = "/planeshift/userdata/questnotes_";
     filename.Append(psengine->GetCelClient()->GetMainActor()->GetName());
     filename.Append(".xml");
     filename.ReplaceAllSubString(" ", "_");

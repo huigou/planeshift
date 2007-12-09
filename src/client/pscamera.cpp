@@ -345,10 +345,10 @@ bool psCamera::InitializeView(GEMClientActor* entity)
 
 bool psCamera::LoadFromFile(bool useDefault)
 {
-    csString fileName = "/this/data/options/camera.xml";
+    csString fileName = "/planeshift/userdata/options/camera.xml";
     if (!psengine->GetVFS()->Exists(fileName) || useDefault)
     {
-        fileName = "/this/data/options/camera_def.xml";
+        fileName = "/planeshift/data/options/camera_def.xml";
     }
 
     csRef<iDocument> doc;
@@ -596,7 +596,7 @@ bool psCamera::SaveToFile()
 
     fixedDistClip = distanceCfg.dist;
 
-    return psengine->GetVFS()->WriteFile("/this/data/options/camera.xml", xml.GetData(), xml.Length());
+    return psengine->GetVFS()->WriteFile("/planeshift/userdata/options/camera.xml", xml.GetData(), xml.Length());
 }
 
 

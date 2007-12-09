@@ -43,8 +43,8 @@
 #include "gui/psmainwidget.h"
 
 
-#define CUSTOM_CONTROLS_FILE "/this/data/options/controls.xml"
-#define DEFAULT_CONTROLS_FILE "/this/data/options/controls_def.xml"
+#define CUSTOM_CONTROLS_FILE "/planeshift/userdata/options/controls.xml"
+#define DEFAULT_CONTROLS_FILE "/planeshift/data/options/controls_def.xml"
 
 
 //#define CONTROLS_DEBUG

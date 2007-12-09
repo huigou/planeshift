@@ -62,6 +62,7 @@ protected:
     void PS_MountMaps();
     void PS_MountModels();
     void PS_MountModelsZip(const char* key, bool vfspath);
+    void PS_MountUserData();
     bool PS_InitMounts();
 
     int argc;

@@ -99,8 +99,7 @@ pawsChatWindow::~pawsChatWindow()
 
     delete chatHistory;
     for (int i = 0; i < CHAT_NLOG; i++)
-        if (logFile[i])
-            fclose(logFile[i]);
+        logFile[i].Invalidate();
 }
 
 bool pawsChatWindow::PostSetup()
@@ -775,19 +774,13 @@ void pawsChatWindow::LogMessage(enum E_CHAT_LOG channel, const char* message)
     {
         if (!logFile[channel])
         {
-            // Open the file for the first time in this session
-            FileUtil file(psengine->GetVFS());
-            file.MakeDirectory("logs");
-            csRef<iDataBuffer> realpath = psengine->GetVFS()->GetRealPath("/this/logs/");
+	    csString filename;
+	    filename.Format("/planeshift/userdata/logs/%s_%s",
+                            psengine->GetCelClient()->GetMainActor()->GetName(),
+			    logFileName[channel]);
+            filename.ReplaceAll(" ", "_");
 
-            psString filename = realpath->GetData();
-            filename.Append(psengine->GetCelClient()->GetMainActor()->GetName());
-            filename.Append("_");
-            filename.Append(logFileName[channel]);
-
-            filename.ReplaceAllSubString(" ", "_");
-
-            logFile[channel] = fopen((const char*)filename, "at");
+	    logFile[channel] = psengine->GetVFS()->Open(filename, VFS_FILE_APPEND);
             if (logFile[channel])
             {
                 time_t aclock;
@@ -797,17 +790,19 @@ void pawsChatWindow::LogMessage(enum E_CHAT_LOG channel, const char* message)
                 time(&aclock);
                 newtime = localtime(&aclock);
                 strftime(buf, 32, "%a %d-%b-%Y %H:%M:%S", newtime);
-                fprintf (logFile[channel],
+		csString buffer;
+		buffer.Format(
                     "================================================\n"
                     "%s %s\n"
                     "------------------------------------------------\n",
                     buf, psengine->GetCelClient()->GetMainActor()->GetName()
                     );
+                logFile[channel]->Write(buffer.GetData(), buffer.Length());
             }
             else
             {
                 // Trouble opening the log file
-                fprintf(stderr, "Couldn't create chat log file '%s'.\n", logFileName[channel]);
+                Error2("Couldn't create chat log file '%s'.\n", logFileName[channel]);
             }
         }
         if (logFile[channel])
@@ -819,8 +814,10 @@ void pawsChatWindow::LogMessage(enum E_CHAT_LOG channel, const char* message)
             time(&aclock);
             newtime = localtime(&aclock);
             strftime(buf, 32, "(%H:%M:%S)", newtime);
-            fprintf(logFile[channel], "%s %s\n", buf, message);
-            fflush(logFile[channel]);
+	    csString buffer;
+	    buffer.Format("%s %s\n", buf, message);
+	    logFile[channel]->Write(buffer.GetData(), buffer.Length());
+	    logFile[channel]->Flush();
         }
     }
 }
@@ -1302,7 +1299,6 @@ void pawsChatWindow::HandleMessage (MsgEntry *me)
         }
         case CHAT_PET_ACTION:
         {
-            //if (msg.sText.Length() >= 3 && msg.sText[0] == '\'' && msg.sText[1] == 's' && msg.sText[2] == ' ')
             if (msg.sText.StartsWith("'s "))
                 buff.Format("%s%s", (const char *)msg.sPerson, ((const char *)msg.sText));
             else

@@ -55,7 +55,7 @@
 #define LABEL_MESH_NAME        "EntityLabel"
 #define ENTITY_LABEL_SPACING   5       // horizontal space between label parts
 #define LABEL_MARGIN           2
-#define CONFIG_FILE_NAME       "/this/data/options/entitylabels.xml"
+#define CONFIG_FILE_NAME       "/planeshift/userdata/options/entitylabels.xml"
 #define CONFIG_FILE_NAME_DEF   "/this/data/options/entitylabels_def.xml"
 
 #define SCALE    0.004

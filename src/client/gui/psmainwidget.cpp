@@ -49,9 +49,9 @@
 #include "paws/pawsprefmanager.h"
 #include "pawsgameboard.h"
 
-#define DEFAULT_CONFIG_FILE_NAME       "/this/data/options/entityinter_def.xml"
-#define CONFIG_FILE_NAME       "/this/data/options/entityinter.xml"
-#define FONT_SIZE              13  // Size for the font at 800x600
+#define DEFAULT_CONFIG_FILE_NAME "/planeshift/data/options/entityinter_def.xml"
+#define CONFIG_FILE_NAME         "/planeshift/userdata/options/entityinter.xml"
+#define FONT_SIZE                13  // Size for the font at 800x600
 
 //////////////////////////////////////////////////////////////////////
 //                  entity types
