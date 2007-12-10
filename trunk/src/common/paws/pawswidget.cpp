@@ -66,7 +66,7 @@ pawsWidget::pawsWidget( )
     alwaysOnTop = false;
     isResizable = false;
     showResize = true;
-    resizeToScreen = true;
+    resizeToScreen = false;
     id = -1;
     parent   = NULL;
     bgColour = -1;
@@ -377,7 +377,7 @@ bool pawsWidget::LoadAttributes( iDocumentNode* node )
     {
             fontName = fontAttribute->GetAttributeValue("name");
             fontSize = fontAttribute->GetAttributeValueAsFloat("size");
-            bool scaleToScreen = fontAttribute->GetAttributeValueAsBool("resizetoscreen",true);
+            bool scaleToScreen = fontAttribute->GetAttributeValueAsBool("resizetoscreen", false);
 
             if ( this->resizeToScreen && scaleToScreen )
                 fontSize *= PawsManager::GetSingleton().GetFontFactor();

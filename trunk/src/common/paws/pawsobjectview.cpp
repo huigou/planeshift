@@ -63,7 +63,12 @@ bool pawsObjectView::Setup(iDocumentNode* node )
     if ( distanceNode )
         distance = distanceNode->GetAttributeValueAsFloat("value");
     else
-        distance = 6;
+        distance = 4;
+
+    float width = (float)defaultFrame.Width();
+    float height = (float)defaultFrame.Height();
+
+    distance *= distance / (width/267.5 + height/393);
 
     csRef<iDocumentNode> mapNode = node->GetNode( "map" );
     if ( mapNode )
