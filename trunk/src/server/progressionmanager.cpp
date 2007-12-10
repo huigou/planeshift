@@ -19,13 +19,18 @@
 
 #include <psconfig.h>
 #include <stdlib.h>
+#include "globals.h"
 
+//=============================================================================
+// Crystal Space Includes
+//=============================================================================
 #include <iutil/document.h>
 #include <csutil/xmltiny.h>
 #include <iutil/object.h>
 
-#include "globals.h"
-
+//=============================================================================
+// Library Includes
+//=============================================================================
 #include "util/skillcache.h"
 #include "util/eventmanager.h"
 #include "util/log.h"
@@ -33,25 +38,7 @@
 #include "util/mathscript.h"
 #include "util/psxmlparser.h"
 
-#include "clients.h"
-#include "psserver.h"
-#include "events.h"
-#include "psserverchar.h"
-#include "playergroup.h"
-#include "gem.h"
-
 #include "rpgrules/factions.h"
-
-#include "progressionmanager.h"
-#include "entitymanager.h"
-#include "cachemanager.h"
-#include "spellmanager.h"
-#include "combatmanager.h"
-#include "weathermanager.h"
-#include "actionmanager.h"
-#include "npcmanager.h"
-#include "usermanager.h"
-#include "introductionmanager.h"
 
 #include "bulkobjects/pscharacterloader.h"
 #include "bulkobjects/pscharacter.h"
@@ -65,9 +52,26 @@
 
 #include "engine/psworld.h"
 
+//=============================================================================
+// Application Includes
+//=============================================================================
+#include "clients.h"
+#include "psserver.h"
+#include "events.h"
+#include "psserverchar.h"
+#include "playergroup.h"
+#include "gem.h"
+#include "progressionmanager.h"
+#include "entitymanager.h"
+#include "cachemanager.h"
+#include "spellmanager.h"
+#include "combatmanager.h"
+#include "weathermanager.h"
+#include "actionmanager.h"
+#include "npcmanager.h"
+#include "usermanager.h"
+#include "introductionmanager.h"
 
-
-/*-------------------------------------------------------------*/
 
 class ScriptOp;
 
@@ -768,110 +772,148 @@ public:
     {
         switch (stat)
         {
-        case HP:
-            if (base)
-			{
-                targetChar->AdjustHitPointsMaxModifier(newValue - oldValue);
-			}
-            else
+            case HP:
             {
-                if (newValue < oldValue)
+                if (base)
                 {
-                    targetChar->GetActor()->DoDamage(actor, targetChar->GetHP()- newValue);
+                    targetChar->AdjustHitPointsMaxModifier(newValue - oldValue);
                 }
                 else
                 {
-                    if (oldValue == targetChar->GetHitPointsMax())
+                    if (newValue < oldValue)
                     {
-                        if (!strcmp(actor->GetName(), targetChar->GetActor()->GetName()))
+                        targetChar->GetActor()->DoDamage(actor, targetChar->GetHP()- newValue);
+                    }
+                    else
+                    {
+                        if (oldValue == targetChar->GetHitPointsMax())
                         {
-                            psserver->SendSystemInfo(actor->GetClient()->GetClientNum(), 
+                            if (!strcmp(actor->GetName(), targetChar->GetActor()->GetName()))
+                            {
+                                psserver->SendSystemInfo(actor->GetClient()->GetClientNum(), 
                                                      "Your attempt doesn't have any effect since you don't have any wounds.");
-                        }
-                        else
-                        {
-                            psserver->SendSystemInfo(actor->GetClient()->GetClientNum(),
+                            }
+                            else
+                            {
+                                psserver->SendSystemInfo(actor->GetClient()->GetClientNum(),
                                                      "Your attempt doesn't have any effect since %s doesn't have any wounds.", 
                                                      targetChar->GetActor()->GetName());
+                            }
+                            return false;
                         }
-                        return false;
+                        targetChar->SetHitPoints(newValue);
                     }
-                    targetChar->SetHitPoints(newValue);
                 }
+                break;
             }
-            break;
-        case MANA:
-            if (base)
-			{
-                targetChar->AdjustManaMaxModifier(newValue - oldValue);
-			}
-            else
-			{
-                targetChar->SetMana(newValue);
-			}
-            break;
-        case PSTAMINA:
-            if (base)
-			{
-                targetChar->AdjustStaminaMaxModifier(newValue - oldValue, true);
-			}
-            else
-			{
-                targetChar->SetStamina(newValue, true);
-			}
-            break;
-        case MSTAMINA:
-            if (base)
-                targetChar->AdjustStaminaMaxModifier(newValue - oldValue, false);
-            else
-                targetChar->SetStamina(newValue, false);
-            break;
-        case STR:        
-        case AGI:
-        case END:
-        case INT:
-        case WIL:
-        case CHA:
-        case CON:
-        case STA:
-            if (base)
+                            
+            case MANA:
             {
-                targetChar->GetAttributes()->SetStat(statToAttrib[stat],(unsigned)newValue);
-                targetChar->CalculateEquipmentModifiers();
-            } else {
-                targetChar->GetAttributes()->BuffStat(statToAttrib[stat],unsigned(newValue-oldValue));
-                targetChar->CalculateEquipmentModifiers();
+                if (base)
+                {
+                    targetChar->AdjustManaMaxModifier(newValue - oldValue);
+                }
+                else
+                {
+                    targetChar->SetMana(newValue);
+                }
+                break;
             }
-            break;
-        case ATTACK:
-            targetChar->AdjustAttackValueModifier(newValue/oldValue);
-            break;
-        case DEFENSE:
-            targetChar->AdjustDefenseValueModifier(newValue/oldValue);
-            break;
-        case HPRATE:
-            targetChar->GetActor()->DoDamage(actor, 0.0, newValue-oldValue, duration);
-            break;
-        case MRATE:
-            targetChar->AdjustManaRate(newValue);
-            break;
-        case PSTAMRATE:
-            targetChar->AdjustStaminaRate(newValue, true);
-            break;
-        case MSTAMRATE:
-            targetChar->AdjustStaminaRate(newValue, false);
-            break;
-        default:
-            break;            
+                            
+            case PSTAMINA:
+            {
+                if (base)
+                {
+                    targetChar->AdjustStaminaMaxModifier(newValue - oldValue, true);
+                }
+                else
+                {
+                    targetChar->SetStamina(newValue, true);
+                }
+                break;
+            }
+                            
+            case MSTAMINA:
+            {
+                if (base)
+                    targetChar->AdjustStaminaMaxModifier(newValue - oldValue, false);
+                else
+                    targetChar->SetStamina(newValue, false);
+                break;
+            }
+                            
+            case STR:        
+            case AGI:
+            case END:
+            case INT:
+            case WIL:
+            case CHA:
+            case CON:
+            case STA:
+            {
+                if (base)
+                {
+                    targetChar->GetAttributes()->SetStat(statToAttrib[stat],(unsigned)newValue);
+                    targetChar->CalculateEquipmentModifiers();
+                } 
+                else 
+                {
+                    targetChar->GetAttributes()->BuffStat(statToAttrib[stat],unsigned(newValue-oldValue));
+                    targetChar->CalculateEquipmentModifiers();
+                }
+                break;
+            }                
+            
+            case ATTACK:
+            {
+                targetChar->AdjustAttackValueModifier(newValue/oldValue);
+                break;
+            }
+                            
+            case DEFENSE:
+            {
+                targetChar->AdjustDefenseValueModifier(newValue/oldValue);
+                break;
+            }                
+                        
+            case HPRATE:
+            {
+                targetChar->GetActor()->DoDamage(actor, 0.0, newValue-oldValue, duration);
+                break;
+            }                
+            
+            case MRATE:
+            {
+                targetChar->AdjustManaRate(newValue);
+                break;
+            }
+                            
+            case PSTAMRATE:
+            {
+                targetChar->AdjustStaminaRate(newValue, true);
+                break;
+            }
+                            
+            case MSTAMRATE:
+            {
+                targetChar->AdjustStaminaRate(newValue, false);
+                break;
+            }
+                            
+            default:
+            {
+                break;            
+            }                
         }
 
         // This function recalculates the target HP, Mana and Stamina
         targetChar->RecalculateStats();
 
         Client *client = actor ? actor->GetClient() : NULL;
-	    if (client && client->GetCharacterData())
+        if (client && client->GetCharacterData())
             psserver->GetProgressionManager()->SendSkillList( client, false );
-	    return true;
+            
+        return true;
     }
     
     csString CreateUndoScript(float oldValue, float finalValue)
@@ -906,16 +948,16 @@ public:
             return true;
         }
         
-	    Client* client = NULL;
-	    if ( actor )
-		{
-	       client = psserver->GetConnections()->Find( actor->GetClientID() );
-		}
-	       
+        Client* client = NULL;
+        if ( actor )
+        {
+           client = psserver->GetConnections()->Find( actor->GetClientID() );
+        }
+       
         if ( client )
-		{
+        {
             object->SendTargetStatDR( client );
-		}
+        }
         
         int delay = GetDelay(actor, target);
         if (delay < 0)
@@ -927,15 +969,15 @@ public:
         float newValue = CalcNewValue(oldValue, adjustValue, inverse, baseValue);
 
         if ( !SetValue(actor, targetChar, oldValue, newValue, delay) )
-		{
-			Notify2(LOG_SCRIPT,"Error: ProgressionEvent(%s): StatsOp SetValue not possible.\n",eventName->GetData());
+        {
+            Notify2(LOG_SCRIPT,"Error: ProgressionEvent(%s): StatsOp SetValue not possible.\n",eventName->GetData());
             return false;
-		}
+        }
 
-		if ( client )
-		{
+        if ( client )
+        {
            object->SendTargetStatDR( client );
-		}
+        }
  
 
         if (delay > 0)                    
@@ -969,7 +1011,7 @@ const PSITEMSTATS_STAT StatsOp::statToAttrib[] =
     {PSITEMSTATS_STAT_NONE, // hp
      PSITEMSTATS_STAT_NONE, // mana
      PSITEMSTATS_STAT_NONE, //stamina
-    PSITEMSTATS_STAT_NONE, //stamina
+     PSITEMSTATS_STAT_NONE, //stamina
      PSITEMSTATS_STAT_STRENGTH,
      PSITEMSTATS_STAT_AGILITY,
      PSITEMSTATS_STAT_ENDURANCE,
@@ -1339,10 +1381,10 @@ public:
     virtual csString ToString()
     {
         psString xml;
-    csString escpxml = EscpXML(operationToString[operation]);
+        csString escpxml = EscpXML(operationToString[operation]);
         xml.Format( "<block " );
         xml.AppendFmt( "operation=\"%s\" ", escpxml.GetData() );
-    escpxml = EscpXML(category);
+        escpxml = EscpXML(category);
         xml.AppendFmt( "category=\"%s\" ", escpxml.GetData() );
         xml.AppendFmt( "delay=\"%s\" ", delay_text.GetData() );
         xml.AppendFmt( " /> " );
@@ -1369,31 +1411,37 @@ public:
             targetActor = actor;
         }
         else
+        {
             targetActor = target->GetActorPtr();
+        }            
 
         switch ( operation )
         {
-        case BLOCK_ADD:
-
-            if (targetActor->AddActiveMagicCategory(category))
+            case BLOCK_ADD:
             {
-                int delay = GetDelay(actor, target);
-                if (delay < 0)
-                    return false; // No time left for the effect to apply, so don't bother.
+
+                if (targetActor->AddActiveMagicCategory(category))
+                {
+                    int delay = GetDelay(actor, target);
+                    if (delay < 0)
+                        return false; // No time left for the effect to apply, so don't bother.
             
-                int persistentID = targetActor->GetCharacterData() ? targetActor->GetCharacterData()->RegisterProgressionEvent(ToString(), ticksElapsed) : 0;
-                psString undoscript = CreateUndoScript();
-                psserver->GetProgressionManager()->QueueUndoScript(undoscript.GetData(), delay, actor, target, persistentID);
-            }
-            else
-            {
-                return false;
-            }
-            break;
+                    int persistentID = targetActor->GetCharacterData() ? targetActor->GetCharacterData()->RegisterProgressionEvent(ToString(), ticksElapsed) : 0;
+                    psString undoscript = CreateUndoScript();
+                    psserver->GetProgressionManager()->QueueUndoScript(undoscript.GetData(), delay, actor, target, persistentID);
+                }
+                else
+                {
+                    return false;
+                }
+                break;
+            }                
 
-        case BLOCK_REMOVE:
-            targetActor->RemoveActiveMagicCategory(category);
-            break;
+            case BLOCK_REMOVE:
+            {
+                targetActor->RemoveActiveMagicCategory(category);
+                break;
+            }                
         }
 
         return true;
@@ -1888,7 +1936,7 @@ public:
 #define NORMALIZE_NEG_ANGLE(a)  { if (a < 0.0f) a += TWO_PI; }
 
         float max_angle = 0.0f;
-	float min_angle = 0.0f;
+        float min_angle = 0.0f;
         if (anglerange)
         {
             float actor_angle;
@@ -2040,13 +2088,13 @@ public:
     virtual csString ToString()
     {
         psString xml;
-    csString escpxml = EscpXML(name);
+        csString escpxml = EscpXML(name);
         xml.Format("<item name=\"%s\" ",escpxml.GetData());
         if (location != "") 
-    {
-        escpxml = EscpXML(location);
+        {
+            escpxml = EscpXML(location);
             xml.AppendFmt("location=\"%s\" ",escpxml.GetData());
-    }
+        }
         if (!aimIsActor)
             xml.AppendFmt("aim=\"target\" ");
         if (stackCount != 0) 
@@ -2409,6 +2457,7 @@ public:
                     xml.AppendFmt("aim=\"target\" ");
                 xml.AppendFmt("prerequisite=\"%s\" />", questName.GetData() );
             }
+            
             default:
                 break;
         }
@@ -3749,49 +3798,49 @@ public:
         //    return true;
         //}
 
-		psCharacter *chardata = actor->GetCharacterData();
-		csString animalAffinity = chardata->GetAnimalAffinity();
+        psCharacter *chardata = actor->GetCharacterData();
+        csString animalAffinity = chardata->GetAnimalAffinity();
 
-		if ( animalAffinity.Length() == 0 ) 
-		{
-			animalAffinity.Append("");
-		}
+        if ( animalAffinity.Length() == 0 ) 
+        {
+            animalAffinity.Append("");
+        }
 
-		//     <category attribute="Type|Lifecycle|AttackTool|AttackType|..." name="" value="" />
-		//     <category attribute="Type|Lifecycle|AttackTool|AttackType|..." name="" value="" />
+        //     <category attribute="Type|Lifecycle|AttackTool|AttackType|..." name="" value="" />
+        //     <category attribute="Type|Lifecycle|AttackTool|AttackType|..." name="" value="" />
         //     ...
-		//     <category attribute="Type|Lifecycle|AttackTool|AttackType|..." name="" value="" />
+        //     <category attribute="Type|Lifecycle|AttackTool|AttackType|..." name="" value="" />
 
-		// Parse the string into an XML document.
+        // Parse the string into an XML document.
         csRef<iDocumentSystem> xml = csPtr<iDocumentSystem>(new csTinyDocumentSystem);
         CS_ASSERT(xml != NULL);
         csRef<iDocument> xmlDoc  = xml->CreateDocument();
         const char* error = xmlDoc->Parse( animalAffinity );
 
-		csRef<iDocumentNode> node;
+        csRef<iDocumentNode> node;
         bool found = false;
 
         if ( !error )
         {
-		    // Find existing node
-		    csRef<iDocumentNodeIterator> iter = xmlDoc->GetRoot()->GetNodes();
-		    while ( iter->HasNext() )
-		    {
-			    node = iter->Next();
+            // Find existing node
+            csRef<iDocumentNodeIterator> iter = xmlDoc->GetRoot()->GetNodes();
+            while ( iter->HasNext() )
+            {
+                node = iter->Next();
 
-			    csString operationStr = node->GetAttributeValue( "name" );
-			    if ( operationStr.CompareNoCase( name ) )
-			    {
-				    found = true;
+                csString operationStr = node->GetAttributeValue( "name" );
+                if ( operationStr.CompareNoCase( name ) )
+                {
+                    found = true;
                     Debug3( LOG_PETS, actor->GetClientID(),"AnimalAffinityOp: %s : %s \n", name.GetData(), operationStr.GetData() );
-				    break;
-			    }
-		    }
+                    break;
+                }
+            }
         }
 
-		// Add new node if one doesn't exist
-		if ( !found )
-		{
+        // Add new node if one doesn't exist
+        if ( !found )
+        {
             csString attrNode = psserver->GetProgressionManager()->GetAffinityCategories().Get( name.Downcase() , "" ).GetData();
             if ( attrNode.Length() != 0 )
             {
@@ -3806,28 +3855,28 @@ public:
                 Error2( "Error: ProgressionEvent(%s) AnimalAffinityOp needs a valid category\n", eventName->GetData() );
                 return false;
             }
-		}
+        }
 
-		// Modify Value
-		if ( node )
-		{
-      float oldValue = node->GetAttributeValueAsFloat( "value" );
-      float adjustValue = GetValue(actor, target);
-      float newValue = CalcNewValue(oldValue, adjustValue, inverse, oldValue);
+        // Modify Value
+        if ( node )
+        {
+            float oldValue = node->GetAttributeValueAsFloat( "value" );
+            float adjustValue = GetValue(actor, target);
+            float newValue = CalcNewValue(oldValue, adjustValue, inverse, oldValue);
 
-      Debug4( LOG_PETS, actor->GetClientID(),"AnimalAffinityOp: %f : %f : %f\n", oldValue, adjustValue, newValue );
+            Debug4( LOG_PETS, actor->GetClientID(),"AnimalAffinityOp: %f : %f : %f\n", oldValue, adjustValue, newValue );
 
-			node->SetAttributeAsFloat( "value", newValue );
-		}
+            node->SetAttributeAsFloat( "value", newValue );
+        }
 
-		// Save changes back
-		csRef<scfString> str;
-		str.AttachNew( new scfString() );
-		xmlDoc->Write( str );
-		chardata->SetAnimialAffinity( str->GetData() );
-    Debug2( LOG_PETS, actor->GetClientID(),"AnimalAffinityOp: %s \n", str->GetData() );
+        // Save changes back
+        csRef<scfString> str;
+        str.AttachNew( new scfString() );
+        xmlDoc->Write( str );
+        chardata->SetAnimialAffinity( str->GetData() );
+        Debug2( LOG_PETS, actor->GetClientID(),"AnimalAffinityOp: %s \n", str->GetData() );
 
-		return true;
+        return true;
     }
 
 
@@ -3843,7 +3892,7 @@ public:
     }
 
     virtual bool Load(iDocumentNode *node, ProgressionEvent *script)
-    {		
+    {
         attribute = adjust_add;
 
         if (node->GetAttributeValue("attribute"))
@@ -3870,14 +3919,14 @@ public:
             case adjust_set: attrStr = "set"; break;
             case adjust_add: attrStr = "adjust"; break;
         }
-		xml.Format( "<animalaffinity name='%s' attribute='%s' value='%s'/>", name.GetData(), attrStr.GetData(), script_text.GetData() );
-		
-		return xml;
+        xml.Format( "<animalaffinity name='%s' attribute='%s' value='%s'/>", name.GetData(), attrStr.GetData(), script_text.GetData() );
+        
+        return xml;
     }
 
 protected:
     adjust_t attribute; 
-	csString name;
+    csString name;
 };
 
 /*-------------------------------------------------------------*/
@@ -4837,7 +4886,7 @@ void ProgressionManager::ChangeScript( csString& script, int param, const char* 
 
 ProgressionDelay::ProgressionDelay(ProgressionEvent * progEvent, csTicks delay, unsigned int clientnum)
                 : psGameEvent(0, delay, "Progression Event Delay"),
-				  progEvent(progEvent)
+                  progEvent(progEvent)
 {
     client = clientnum;
 }
@@ -4849,7 +4898,7 @@ ProgressionDelay::~ProgressionDelay()
 void ProgressionDelay::Trigger()
 {
     if (psserver->GetConnections()->FindAny(client))
-	    progEvent->ForceRun();
+        progEvent->ForceRun();
 }
 
 ProgressionEvent::ProgressionEvent()
@@ -4868,11 +4917,11 @@ ProgressionEvent::~ProgressionEvent()
         delete variables.Pop();
     }
 
-	delete triggerDelay;
+    delete triggerDelay;
 
     if( progDelay )
     {
-	delete progDelay;
+        delete progDelay;
     }
 }
 
@@ -4892,30 +4941,32 @@ bool ProgressionEvent::LoadScript(iDocument *doc)
         return false;
     }
 
-	return LoadScript(topNode);
+    return LoadScript(topNode);
 }
 
 bool ProgressionEvent::LoadScript(iDocumentNode *topNode)
 {
-	progDelay = 0;
+    progDelay = 0;
 
     // get the elapsed time, in case this is a saved event that already ran for a while
-	int ticksElapsed = topNode->GetAttributeValueAsInt("elapsed");
+    int ticksElapsed = topNode->GetAttributeValueAsInt("elapsed");
 
-	// get the delay between the call to Run() and actually executing the script
-	csString delayText = topNode->GetAttributeValue("delay");
-	if (delayText != "")
-	{
-		csString triggerDelayScript = "TriggerDelay = ";
-		triggerDelayScript += delayText;
+    // get the delay between the call to Run() and actually executing the script
+    csString delayText = topNode->GetAttributeValue("delay");
+    if (delayText != "")
+    {
+        csString triggerDelayScript = "TriggerDelay = ";
+        triggerDelayScript += delayText;
 
-		csString scriptName = name;
-		scriptName += "_triggerDelay";
-		triggerDelay = new MathScript(scriptName, triggerDelayScript);
-		triggerDelayVar = triggerDelay->GetVar("TriggerDelay");
-	}
-	else
-		triggerDelay = 0;
+        csString scriptName = name;
+        scriptName += "_triggerDelay";
+        triggerDelay = new MathScript(scriptName, triggerDelayScript);
+        triggerDelayVar = triggerDelay->GetVar("TriggerDelay");
+    }
+    else
+    {
+        triggerDelay = 0;
+    }        
 
     csRef<iDocumentNodeIterator> iter = topNode->GetNodes();
 
@@ -5236,7 +5287,7 @@ float ProgressionEvent::ForceRun()
     Notify5(LOG_SCRIPT,"%s is running this script %s on %s:\n%s",
             (runParamActor ? runParamActor->GetName() : ""),
             (runParamInverse ? "inversed":""), 
-			(runParamTarget ? runParamTarget->GetName() : "nobody"),
+            (runParamTarget ? runParamTarget->GetName() : "nobody"),
             dump_str.GetData());
 
     csArray<ProgressionOperation*>::Iterator seq = sequence.GetIterator();
@@ -5245,9 +5296,9 @@ float ProgressionEvent::ForceRun()
         ProgressionOperation * po = seq.Next();
         po->LoadVariables(variables);
         if (!po->Run(runParamActor, runParamTarget, runParamInverse))
-	    {
-		    break;
-	    }
+        {
+            break;
+        }
         result += po->GetResult();
         Notify3(LOG_SCRIPT,"Event: %s with result %f\n", po->ToString().GetData(), po->GetResult());
     }
@@ -5256,33 +5307,33 @@ float ProgressionEvent::ForceRun()
 
 float ProgressionEvent::Run(gemActor * actor, gemObject *target, bool inverse)
 {
-	runParamActor = actor;
-	runParamTarget = target;
-	runParamInverse = inverse;
+    runParamActor = actor;
+    runParamTarget = target;
+    runParamInverse = inverse;
 
-	// calculate delay if there is one
-	csTicks delay = 0;
-	if (triggerDelay)
-	{
-		size_t a;
-		size_t len = variables.GetSize();
-		for (a=0; a<len; ++a)
-		{
-			MathScriptVar * var = triggerDelay->GetOrCreateVar(variables[a]->name);
-			var->SetValue(variables[a]->GetValue());
-		}
-		triggerDelay->Execute();
-		delay = (csTicks)triggerDelayVar->GetValue();
-	}
+    // calculate delay if there is one
+    csTicks delay = 0;
+    if (triggerDelay)
+    {
+        size_t a;
+        size_t len = variables.GetSize();
+        for (a=0; a<len; ++a)
+        {
+            MathScriptVar * var = triggerDelay->GetOrCreateVar(variables[a]->name);
+            var->SetValue(variables[a]->GetValue());
+        }
+        triggerDelay->Execute();
+        delay = (csTicks)triggerDelayVar->GetValue();
+    }
 
-	if (delay <= 0)
-		return ForceRun();
+    if (delay <= 0)
+        return ForceRun();
 
-	// schedule a delay
+    // schedule a delay
     progDelay = new ProgressionDelay(this, delay, actor->GetClientID());
-	progDelay->QueueEvent();
+    progDelay->QueueEvent();
 
-	return 1.0f; // we don't have a good return at this point, so just assume it didn't fail and return non-zero
+    return 1.0f; // we don't have a good return at this point, so just assume it didn't fail and return non-zero
 }
 
 csString ProgressionEvent::Dump() const

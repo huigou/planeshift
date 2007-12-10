@@ -19,20 +19,33 @@
 #ifndef __PROGRESSIONMANAGER_H__
 #define __PROGRESSIONMANAGER_H__
 
+//=============================================================================
+// Crystal Space Includes
+//=============================================================================
 #include <csutil/array.h>
 #include <csutil/hash.h>
 #include <iutil/document.h>
 
+//=============================================================================
+// Library Includes
+//=============================================================================
+#include "util/prb.h"                   // Red Black tree template class
+#include "bulkobjects/psskills.h"       // Red Black tree template class
 
-#include "msgmanager.h"   // Subscriber class
-#include "util/prb.h"     // Red Black tree template class
-#include "bulkobjects/psskills.h"     // Red Black tree template class
+//=============================================================================
+// Application Includes
+//=============================================================================
+#include "msgmanager.h"                 // Subscriber class
 
 class psServer;
-struct ProgressionEvent;
 class ProgressionOperation;
 class psGUISkillMessage;
+class MathScriptVar;
+class MathScript;
+
+struct ProgressionEvent;
 struct Faction;
+
 
 class ProgressionManager : public MessageManager
 {
@@ -93,43 +106,45 @@ protected:
     ClientConnectionSet    *clients;
 };
 
-class MathScriptVar;
-class MathScript;
+
+//-----------------------------------------------------------------------------
 
 class ProgressionDelay : public psGameEvent
 {
 private:
-	ProgressionEvent * progEvent;
+    ProgressionEvent * progEvent;
     unsigned int client;
 
 public:
-	ProgressionDelay(ProgressionEvent * progEvent, csTicks delay, unsigned int clientnum);
-	virtual ~ProgressionDelay();
-	void Trigger(); 
+    ProgressionDelay(ProgressionEvent * progEvent, csTicks delay, unsigned int clientnum);
+    virtual ~ProgressionDelay();
+    void Trigger(); 
 };
+
+//-----------------------------------------------------------------------------
 
 struct ProgressionEvent
 {
-	// saved parameters given to Run() so that we can use callbacks for delayed events
-	gemActor * runParamActor;
-	gemObject * runParamTarget;
-	bool runParamInverse;
+    // saved parameters given to Run() so that we can use callbacks for delayed events
+    gemActor * runParamActor;
+    gemObject * runParamTarget;
+    bool runParamInverse;
 
     csString name;
     csArray<ProgressionOperation*> sequence;
     csArray<MathScriptVar*>        variables;
 
-	MathScript * triggerDelay;
-	MathScriptVar * triggerDelayVar;
-	ProgressionDelay * progDelay;
+    MathScript * triggerDelay;
+    MathScriptVar * triggerDelayVar;
+    ProgressionDelay * progDelay;
 
-	ProgressionEvent();
+    ProgressionEvent();
     virtual ~ProgressionEvent();
 
     bool LoadScript(iDocument *doc);
     bool LoadScript(iDocumentNode *topNode);
     virtual csString ToString(bool topLevel) const;
-	float ForceRun();
+    float ForceRun();
     float Run(gemActor *actor, gemObject *target, bool inverse = false);
     void LoadVariables(MathScript *script);
     void CopyVariables(MathScript *from);
