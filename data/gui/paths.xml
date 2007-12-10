@@ -1,12 +1,12 @@
 <widget_description>
-    <widget name="Paths" factory="pawsPathWindow" visible="no" movable="no" resizable="no">
+    <widget name="Paths" factory="pawsPathWindow" visible="no" movable="no" resizable="no" resizetoscreen="yes" >
         <frame x="0" y="0" width="800" height="600" border="no" />
         <bgimage resource="Paths Background" />
         
         <!-- Title -->
         <widget name="label_paths" factory="pawsTextBox">    
             <frame x="230" y="10" width="350" height="30" border="no"/>
-        <font name="/planeshift/data/ttf/cupandtalon.ttf" r="-1" g="-1" b="-1" size="26" shadow="yes"/>
+        <font name="/planeshift/data/ttf/cupandtalon.ttf" r="-1" g="-1" b="-1" size="26" shadow="yes" resizetoscreen="yes" />
             <text string="PATHS" horizAdjust="CENTRE" />    
         </widget>
 
@@ -17,115 +17,115 @@
         
         <widget name="label_parents_header" factory="pawsTextBox">
             <frame x="168" y="116" width="100" height="17" border="no" />
-            <font name="/planeshift/data/ttf/cupandtalon.ttf" r="11" g="221" b="255" size="14" shadow="yes"/>  
+            <font name="/planeshift/data/ttf/cupandtalon.ttf" r="11" g="221" b="255" size="14" shadow="yes" resizetoscreen="yes" />  
             <text string="Parents" />
         </widget>
         <widget name="label_parents" factory="pawsMultiLineTextBox">
             <frame x="168" y="147" width="158" height="153" border="no" />
-            <font name="/planeshift/data/ttf/cupandtalon.ttf" r="-1" g="-1" b="-1" size="14" shadow="yes"/>  
+            <font name="/planeshift/data/ttf/cupandtalon.ttf" r="-1" g="-1" b="-1" size="14" shadow="yes" resizetoscreen="yes" />  
         </widget>
         <widget name="label_life_header" factory="pawsTextBox">
             <frame x="472" y="116" width="100" height="17" border="no" />
-            <font name="/planeshift/data/ttf/cupandtalon.ttf" r="11" g="221" b="255" size="14" shadow="yes"/>  
+            <font name="/planeshift/data/ttf/cupandtalon.ttf" r="11" g="221" b="255" size="14" shadow="yes" resizetoscreen="yes" />  
             <text string="Life" />
         </widget>
         <widget name="label_life" factory="pawsMultiLineTextBox">
             <frame x="472" y="147" width="158" height="153" border="no" />
-            <font name="/planeshift/data/ttf/cupandtalon.ttf" r="-1" g="-1" b="-1" size="14" shadow="yes"/>  
+            <font name="/planeshift/data/ttf/cupandtalon.ttf" r="-1" g="-1" b="-1" size="14" shadow="yes" resizetoscreen="yes" />  
         </widget>
         <widget name="label_stat_header" factory="pawsTextBox">
             <frame x="198" y="354" width="40" height="16" border="no" />
-            <font name="/planeshift/data/ttf/cupandtalon.ttf" r="11" g="221" b="255" size="14" shadow="yes"/>  
+            <font name="/planeshift/data/ttf/cupandtalon.ttf" r="11" g="221" b="255" size="14" shadow="yes" resizetoscreen="yes" />  
             <text string="Stat" />
         </widget>
         <widget name="label_stat" factory="pawsMultiLineTextBox">
             <frame x="198" y="379" width="100" height="110" border="no" />
-            <font name="/planeshift/data/ttf/cupandtalon.ttf" r="-1" g="-1" b="-1" size="14" shadow="yes"/>  
+            <font name="/planeshift/data/ttf/cupandtalon.ttf" r="-1" g="-1" b="-1" size="14" shadow="yes" resizetoscreen="yes" />  
         </widget>
         <widget name="values_stat_header" factory="pawsTextBox">
             <frame x="298" y="354" width="40" height="16" border="no" />
-            <font name="/planeshift/data/ttf/cupandtalon.ttf" r="11" g="221" b="255" size="14" shadow="yes"/>          
+            <font name="/planeshift/data/ttf/cupandtalon.ttf" r="11" g="221" b="255" size="14" shadow="yes" resizetoscreen="yes" />          
             <text string="Path" />
         </widget>
         <widget name="values_stat" factory="pawsMultiLineTextBox">
             <frame x="298" y="379" width="50" height="110" border="no" />
-            <font name="/planeshift/data/ttf/cupandtalon.ttf" r="-1" g="-1" b="-1" size="14" shadow="yes"/>  
+            <font name="/planeshift/data/ttf/cupandtalon.ttf" r="-1" g="-1" b="-1" size="14" shadow="yes" resizetoscreen="yes" />  
         </widget>
         <widget name="label_skill_header" factory="pawsTextBox">
             <frame x="455" y="354" width="40" height="16" border="no" />
-            <font name="/planeshift/data/ttf/cupandtalon.ttf" r="11" g="221" b="255" size="14" sr="0" sg="0" sb="0" shadow="yes"/>  
+            <font name="/planeshift/data/ttf/cupandtalon.ttf" r="11" g="221" b="255" size="14" sr="0" sg="0" sb="0" shadow="yes" resizetoscreen="yes" />  
             <text string="Skill" />
         </widget>
         <widget name="label_skill" factory="pawsMultiLineTextBox">
             <frame x="455" y="379" width="100" height="110" border="no" />
-            <font name="/planeshift/data/ttf/cupandtalon.ttf" r="-1" g="-1" b="-1" size="14" shadow="yes"/>      
+            <font name="/planeshift/data/ttf/cupandtalon.ttf" r="-1" g="-1" b="-1" size="14" shadow="yes" resizetoscreen="yes" />      
         </widget>
         <widget name="values_skill_header" factory="pawsTextBox">
             <frame x="555" y="354" width="40" height="16" border="no" />
-            <font name="/planeshift/data/ttf/cupandtalon.ttf" r="11" g="221" b="255" size="14" sr="0" sg="0" sb="0" shadow="yes"/>  
+            <font name="/planeshift/data/ttf/cupandtalon.ttf" r="11" g="221" b="255" size="14" sr="0" sg="0" sb="0" shadow="yes" resizetoscreen="yes" />  
             <text string="Rank" />
         </widget>
         <widget name="values_skill" factory="pawsMultiLineTextBox">
             <frame x="555" y="379" width="50" height="110" border="no" />
-            <font name="/planeshift/data/ttf/cupandtalon.ttf" r="-1" g="-1" b="-1" size="14" shadow="yes"/>  
+            <font name="/planeshift/data/ttf/cupandtalon.ttf" r="-1" g="-1" b="-1" size="14" shadow="yes" resizetoscreen="yes" />  
         </widget>
         <widget name="label_description_header" factory="pawsTextBox">
             <frame x="216" y="511" width="92" height="18" border="no" />
-            <font name="/planeshift/data/ttf/cupandtalon.ttf" r="11" g="221" b="255" size="14" sr="0" sg="0" sb="0" shadow="yes"/>  
+            <font name="/planeshift/data/ttf/cupandtalon.ttf" r="11" g="221" b="255" size="14" sr="0" sg="0" sb="0" shadow="yes" resizetoscreen="yes" />  
             <text string="Description:" />
         </widget>
         <widget name="label_description" factory="pawsMultiLineTextBox">
             <frame x="216" y="531" width="378" height="53" border="no" />
-            <font name="/planeshift/data/ttf/cupandtalon.ttf" r="-1" g="-1" b="-1" size="14" shadow="yes"/>  
+            <font name="/planeshift/data/ttf/cupandtalon.ttf" r="-1" g="-1" b="-1" size="14" shadow="yes" resizetoscreen="yes" />  
             <text string="Please select a path" />
         </widget>
         <!-- Path Buttons -->
         <widget name="Path 1" factory="pawsButton" id="1001" toggle="true">
             <frame x="13" y="165" width="104" height="72" />
             <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" size="16" sr="0"
-                sg="0" sb="0" shadow="yes" />
+                sg="0" sb="0" shadow="yes" resizetoscreen="yes" />
         </widget>
         <widget name="Path 2" factory="pawsButton" id="1002" toggle="true">
             <frame x="13" y="263" width="104" height="72" />
             <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" size="16" sr="0"
-                sg="0" sb="0" shadow="yes" />
+                sg="0" sb="0" shadow="yes" resizetoscreen="yes" />
         </widget>
         <widget name="Path 3" factory="pawsButton" id="1003" toggle="true">
             <frame x="10" y="361" width="104" height="72" />
             <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" size="16" sr="0"
-                sg="0" sb="0" shadow="yes" />
+                sg="0" sb="0" shadow="yes" resizetoscreen="yes" />
         </widget>
         <widget name="Path 4" factory="pawsButton" id="1004" toggle="true">
             <frame x="684" y="165" width="104" height="72" />
             <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" size="16" sr="0"
-                sg="0" sb="0" shadow="yes" />
+                sg="0" sb="0" shadow="yes" resizetoscreen="yes" />
         </widget>
         <widget name="Path 5" factory="pawsButton" id="1005" toggle="true">
             <frame x="684" y="263" width="104" height="72" />
             <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" size="16" sr="0"
-                sg="0" sb="0" shadow="yes" />
+                sg="0" sb="0" shadow="yes" resizetoscreen="yes" />
         </widget>
         <widget name="Path 6" factory="pawsButton" id="1006" toggle="true">
             <frame x="684" y="361" width="104" height="72" />
             <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" size="16" sr="0"
-                sg="0" sb="0" shadow="yes" />
+                sg="0" sb="0" shadow="yes" resizetoscreen="yes" />
         </widget>
         <!-- Navigation Buttons -->
         <widget name="BackButton" factory="pawsButton" id="6000">
             <frame x="30" y="503" width="80" height="50" border="no" />
-             <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" size="28" sr="0" sg="0" sb="0" shadow="yes"/>
+             <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" size="28" sr="0" sg="0" sb="0" shadow="yes" resizetoscreen="yes" />
             <label text="Prev"/>
         </widget>
         <widget name="RandomButton" factory="pawsButton" id="4000">
             <frame x="640" y="62" width="80" height="24" />
             <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" size="20" sr="0"
-                sg="0" sb="0" shadow="yes" />
+                sg="0" sb="0" shadow="yes" resizetoscreen="yes" />
             <label text="Random" />
         </widget>
         <widget name="UploadButton" factory="pawsButton" id="5000">
             <frame x="690" y="523" width="100" height="50" />
             <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" size="28" sr="0"
-                sg="0" sb="0" shadow="yes" />
+                sg="0" sb="0" shadow="yes" resizetoscreen="yes" />
             <label text="Upload" />
         </widget>
         <!-- End of Navigation Buttons -->

@@ -1,3 +1,11 @@
+*** 2007-12-10 by Michael Gist
+- Widgets now default to not scaling to client resolution. This means that
+  they're displayed at the widgets defined size (which is a Good Thing).
+- Changed pawsObjectView to scale based on widget size and not resolution.
+- Fixed most of the fallout of the above changes, but some things might need
+  a little tweaking to look at their best (like missing <font /> needing to be
+  defined).
+
 *** 2007-12-10 by Kenny Graunke
 - Remove unnecessary check in ProgressionManager - I made consumable items not
   use the equip script, so we don't have to rule out false positives anymore.

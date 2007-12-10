@@ -1,36 +1,36 @@
 <widget_description>
 
     <widget name="Parents" factory="pawsCharParents" 
-            visible="no" movable="no" resizable="no">
+            visible="no" movable="no" resizable="no" resizetoscreen="yes" >
         <frame x="0" y="0" width="800" height="600" border="no" />
-        <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" size="15" />
+        <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" size="15" resizetoscreen="yes" />
         <bgimage resource="Charparents Background" />
    
         <!-- Title -->
         <widget name="label_parents" factory="pawsTextBox">
             <frame x="230" y="10" width="350" height="40" border="no"/>
-        <font name="/planeshift/data/ttf/cupandtalon.ttf" r="-1" g="-1" b="-1" size="26" shadow="yes"/>
+        <font name="/planeshift/data/ttf/cupandtalon.ttf" r="-1" g="-1" b="-1" size="26" shadow="yes" resizetoscreen="yes" />
             <text string="PARENTS" horizAdjust="CENTRE" />
         </widget>
         
         <!-- CP -->
         <widget name="CP" factory="pawsTextBox">
             <frame x="695" y="133" width="70" height="30" border="no" />
-        <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" size="15" shadow="yes"/>
+        <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" size="15" shadow="yes" resizetoscreen="yes" />
             <text string="CP: 0" horizAdjust="CENTRE" />
         </widget> 
      
         <!-- Randomize button -->   
         <widget name="randomize" factory="pawsButton">
             <frame x="693" y="210" width="75" height="30" border="no" />
-            <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" size="13" sr="0" sg="0" sb="0" shadow="yes"/>
+            <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" size="13" sr="0" sg="0" sb="0" shadow="yes" resizetoscreen="yes" />
         <label text="Randomize"/>
         </widget>
 
         <!-- Father Name -->
         <widget name="label_father" factory="pawsTextBox">
             <frame x="140" y="150" width="150" height="30" border="no"/>
-        <font name="/planeshift/data/ttf/cupandtalon.ttf"  r="-1" g="-1" b="-1" size="18" shadow="yes"/>
+        <font name="/planeshift/data/ttf/cupandtalon.ttf"  r="-1" g="-1" b="-1" size="18" shadow="yes" resizetoscreen="yes" />
             <text string="Father Name:" />
         </widget>
         
@@ -41,7 +41,7 @@
         <!-- Father Status -->
         <widget name="fstatus" factory="pawsRadioButtonGroup" >
             <frame x="80" y="225" width="220" height="90" border="no" />
-            <font name="/planeshift/data/ttf/cupandtalon.ttf" r="-1" g="-1" b="-1" size="14" />
+            <font name="/planeshift/data/ttf/cupandtalon.ttf" r="-1" g="-1" b="-1" size="14" resizetoscreen="yes" />
             <radio on="radioon2" off="radiooff2" size="32"/>
                         
             <widget name="FNormal" factory="pawsRadioButton">
@@ -63,19 +63,19 @@
         <!-- Father Job -->  
         <widget name="text" factory="pawsTextBox" >
             <frame x="345" y="148" width="80" height="30" />
-            <font name="/planeshift/data/ttf/cupandtalon.ttf"  r="-1" g="-1" b="-1" size="18" shadow="yes"/>
+            <font name="/planeshift/data/ttf/cupandtalon.ttf"  r="-1" g="-1" b="-1" size="18" shadow="yes" resizetoscreen="yes" />
             <text string="Job:" />
         </widget>
         
         <widget name="fjobdesc" factory="pawsMultiLineTextBox"  >
             <frame x="520" y="158" width="160" height="150" border="no" />
-            <font name="/planeshift/data/ttf/cupandtalon.ttf" r="-1" g="-1" b="-1" size="15" resizetoscreen="no" />
+            <font name="/planeshift/data/ttf/cupandtalon.ttf" r="-1" g="-1" b="-1" size="15" />
             <text string="Select the job your father has" />
         </widget>
         
         <widget name="fatherjobs" factory="pawsListBox" id="1000" >
             <frame x="345" y="168" width="140" height="130" border="no" />
-            <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" size="13" />
+            <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" size="13" resizetoscreen="yes" />
             <scrollbar arrowup="Up Arrow" arrowdown="Down Arrow" arrowsize="8" width="15"  border="no"/>
             <columns height="18">
                 <column width="120" >
@@ -87,7 +87,7 @@
         <!-- Mother Name -->   
         <widget name="mlabel" factory="pawsTextBox">
             <frame x="140" y="341" width="150" height="30" border="no"/>
-            <font name="/planeshift/data/ttf/cupandtalon.ttf" r="-1" g="-1" b="-1" size="18" shadow="yes"/>
+            <font name="/planeshift/data/ttf/cupandtalon.ttf" r="-1" g="-1" b="-1" size="18" shadow="yes" resizetoscreen="yes" />
             <text string="Mother Name:" />
         </widget>
                 
@@ -98,7 +98,7 @@
         <!-- Mother Status -->    
         <widget name="mstatus" factory="pawsRadioButtonGroup" >
             <frame x="110" y="415" width="200" height="90" border="no" />
-            <font name="/planeshift/data/ttf/cupandtalon.ttf" r="-1" g="-1" b="-1" size="14" />
+            <font name="/planeshift/data/ttf/cupandtalon.ttf" r="-1" g="-1" b="-1" size="14" resizetoscreen="yes" />
             <radio on="radioon2" off="radiooff2" size="32"/>
                             
             <widget name="MNormal" factory="pawsRadioButton">
@@ -120,19 +120,19 @@
         <!-- Mother Job -->
         <widget name="text" factory="pawsTextBox" >
             <frame x="345" y="341" width="80" height="30" />
-            <font name="/planeshift/data/ttf/cupandtalon.ttf" r="-1" g="-1" b="-1" size="18" shadow="yes"/>
+            <font name="/planeshift/data/ttf/cupandtalon.ttf" r="-1" g="-1" b="-1" size="18" shadow="yes" resizetoscreen="yes" />
             <text string="Job:" />
         </widget>
         
         <widget name="mjobdesc" factory="pawsMultiLineTextBox"  >
             <frame x="520" y="330" width="160" height="150" border="no" />
-            <font name="/planeshift/data/ttf/cupandtalon.ttf" r="-1" g="-1" b="-1" size="15" resizetoscreen="no" />
+            <font name="/planeshift/data/ttf/cupandtalon.ttf" r="-1" g="-1" b="-1" size="15" />
             <text string="Select the job your mother has" />
         </widget>
  
         <widget name="motherjobs" factory="pawsListBox" id="2000" >
             <frame x="345" y="360" width="140" height="130" border="no" />
-            <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" size="13" />
+            <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" size="13" resizetoscreen="yes" />
             <scrollbar arrowup="Up Arrow" arrowdown="Down Arrow" arrowsize="8" width="15"  border="no"/>
             <columns height="18">
                 <column width="120" >
@@ -144,13 +144,13 @@
         <!-- Religion Select -->      
         <widget name="text" factory="pawsTextBox">
             <frame x="373" y="497" width="100" height="20" />
-            <font name="/planeshift/data/ttf/cupandtalon.ttf" r="-1" g="-1" b="-1" size="15" shadow="yes"/>
+            <font name="/planeshift/data/ttf/cupandtalon.ttf" r="-1" g="-1" b="-1" size="15" shadow="yes" resizetoscreen="yes" />
             <text string="Religion:" />
         </widget>
            
         <widget name="Religions" factory="pawsListBox" id="4000">
             <frame x="265" y="530" width="75" height="60" border="no" />
-            <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" size="13" />
+            <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" size="13" resizetoscreen="yes" />
             <scrollbar arrowup="Up Arrow" arrowdown="Down Arrow" arrowsize="8" width="15"  border="no"/>
             <columns height="17" headings="no">
                 <column width="115" >
@@ -161,20 +161,20 @@
 
         <widget name="religiondesc" factory="pawsMultiLineTextBox">
           <frame x="345" y="530" width="275" height="60" border="no" />
-            <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" size="12" />
+            <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" size="12" resizetoscreen="yes" />
           <text string="Please select your character's religion."/>
         </widget>
         
          <!-- Navigation Buttons -->
         <widget name="BackButton" factory="pawsButton" id="6000">
             <frame x="30" y="503" width="80" height="50" border="no" />
-            <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" size="28" sr="0" sg="0" sb="0" shadow="yes"/>
+            <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" size="28" sr="0" sg="0" sb="0" shadow="yes" resizetoscreen="yes" />
             <label text="Prev"/>
         </widget>
 
         <widget name="NextButton" factory="pawsButton" id="5000">
             <frame x="699" y="516" width="80" height="55" border="no" />
-            <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" size="28" sr="0" sg="0" sb="0" shadow="yes"/>
+            <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" size="28" sr="0" sg="0" sb="0" shadow="yes" resizetoscreen="yes" />
             <label text="Next"/>
         </widget>
         
