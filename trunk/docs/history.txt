@@ -5,6 +5,7 @@
 - Fixed most of the fallout of the above changes, but some things might need
   a little tweaking to look at their best (like missing <font /> needing to be
   defined).
+- Patch from Wired_Crawler to fix BT#1953 (crash with /screenshot nogui).
 
 *** 2007-12-10 by Kenny Graunke
 - Remove unnecessary check in ProgressionManager - I made consumable items not

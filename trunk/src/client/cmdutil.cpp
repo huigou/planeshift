@@ -122,6 +122,10 @@ const char *psUtilityCommands::HandleCommand(const char *cmd)
         bool compress = words.FindStr("lossless",1) == SIZET_NOT_FOUND;
 
         HandleScreenShot(compress);
+
+        // Wait for frame (which we might have drawn just above) to finish.
+        psengine->FinishFrame();
+
         return NULL;
     }
     else if(words[0] == "/help")
