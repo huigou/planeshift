@@ -20,7 +20,6 @@
 #ifndef __WORKMANAGER_H__
 #define __WORKMANAGER_H__
 
-#include "bulkobjects/psitem.h"
 #include "msgmanager.h"             // Parent class
 #include "net/messages.h"           // Message definitions
 #include "net/msghandler.h"         // Network access
