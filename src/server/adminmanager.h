@@ -23,7 +23,6 @@
 
 #include "net/messages.h"            // Chat Message definitions
 #include "net/msghandler.h"         // Subscriber definition
-#include "client.h"                 // Client, and ClientConnectionSet classes
 #include "msgmanager.h"             // Parent class
 #include "gmeventmanager.h"
 
@@ -40,7 +39,7 @@ class psNPCDialog;
 class psItem;
 struct Result;
 class iResultSet;
-
+class Client;
 
 // List of GM levels and their security level.
 enum GM_LEVEL
