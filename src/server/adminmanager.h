@@ -25,7 +25,6 @@
 #include "net/msghandler.h"         // Subscriber definition
 #include "client.h"                 // Client, and ClientConnectionSet classes
 #include "msgmanager.h"             // Parent class
-#include "bulkobjects/psitem.h"
 #include "gmeventmanager.h"
 
 class psDatabase;
@@ -38,6 +37,7 @@ class EntityManager;
 class psSpawnManager;
 class psAdminGameEvent;
 class psNPCDialog;
+class psItem;
 struct Result;
 class iResultSet;
 
