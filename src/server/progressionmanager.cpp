@@ -1711,7 +1711,7 @@ public:
         
         psItemStats * stats = item->GetItem()->GetBaseStats();
         // this is really bad.. should have specific flag?
-        if (!stats->GetIsConsumable() && (stats->GetProgressionEventEquip().Length()>0 || stats->GetProgressionEventUnEquip().Length()>0))
+        if (stats->GetProgressionEventEquip().Length() > 0 || stats->GetProgressionEventUnEquip().Length() > 0)
             psserver->SendSystemInfo(clientnum,"You found magical properties in this item !");
         else
             psserver->SendSystemInfo(clientnum,"This is an ordinary item without any magical powers.");
