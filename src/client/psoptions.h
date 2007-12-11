@@ -60,7 +60,7 @@ private:
     void EnsureSubscription(const char * name);
 
 public:
-    psOptions(const char * filename);
+    psOptions(const char * filename, csRef<iVFS> vfs);
     ~psOptions();
 
     // inherited from iPAWSSubscriber

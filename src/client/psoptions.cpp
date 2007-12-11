@@ -40,10 +40,10 @@ void psOptions::EnsureSubscription(const char * name)
     PawsManager::GetSingleton().Subscribe(name, this);
 }
 
-psOptions::psOptions(const char * filename)
+psOptions::psOptions(const char * filename, csRef<iVFS> vfs)
          : filename(filename)
 {
-    configFile.AttachNew(new csConfigFile(filename));    
+    configFile.AttachNew(new csConfigFile(filename, vfs));
     PawsManager::GetSingleton().AddExtraScriptVar(this, "Options");
 }
 
