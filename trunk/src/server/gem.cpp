@@ -2062,7 +2062,7 @@ void gemActor::DoDamage(gemActor * attacker, float damage, float damageRate, csT
             psserver->GetEventManager()->Push(evt);
             SetMode(PSCHARACTER_MODE_DEFEATED);
 
-            psserver->SendSystemOK(GetClientID(), "You've been defeated by %s!", attacker->GetName());
+            psserver->SendSystemError(GetClientID(), "You've been defeated by %s!", attacker->GetName());
             GetClient()->AnnounceToDuelClients(attacker, "defeated");
         }
         else
@@ -2072,7 +2072,7 @@ void gemActor::DoDamage(gemActor * attacker, float damage, float damageRate, csT
         
             if (GetMode() == PSCHARACTER_MODE_DEFEATED && attacker)
             {
-                psserver->SendSystemOK(GetClientID(), "You've been slain by %s!", attacker->GetName());
+                psserver->SendSystemError(GetClientID(), "You've been slain by %s!", attacker->GetName());
                 GetClient()->AnnounceToDuelClients(attacker, "slain");
             }
             SetMode(PSCHARACTER_MODE_DEAD);

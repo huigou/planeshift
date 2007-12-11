@@ -534,7 +534,9 @@ void psTriggerHandler::HandleMouseZoom(const psControl* trigger, bool value)
 
 void psTriggerHandler::HandleMouseRun(const psControl* trigger, bool value)
 {
-    if (value)
+    if (value && psengine->GetCelClient()
+     && psengine->GetCelClient()->GetMainPlayer()
+     && psengine->GetCelClient()->GetMainPlayer()->IsAlive())
     {
         movement->MouseRun(value);
         psPoint pos = PawsManager::GetSingleton().GetMouse()->GetPosition();

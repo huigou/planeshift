@@ -1,3 +1,7 @@
+*** 2007-12-10 by Roland Schulz
+- fix FS#743 and second part of BT#2432 (set target for mouserun also
+  disabled when dead).
+
 *** 2007-12-10 by Michael Gist
 - Widgets now default to not scaling to client resolution. This means that
   they're displayed at the widgets defined size (which is a Good Thing).
