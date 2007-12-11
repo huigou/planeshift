@@ -131,12 +131,15 @@ public:
      */
     void Cleanup();
 
-    /// update all things that move
-    void SetupFrame();
-    void FinishFrame();
-
     /// Do anything that needs to happen after the frame is rendered each time.
     void UpdatePerFrame();
+
+    /// Wait to finish drawing the current frame.
+    inline void FinishFrame()
+    {
+        g3d->FinishDraw();
+        g3d->Print(NULL);
+    }
 
     /**
      * Everything is event base for csApp based system. This method is called

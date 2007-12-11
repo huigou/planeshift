@@ -124,7 +124,7 @@ const char *psUtilityCommands::HandleCommand(const char *cmd)
         HandleScreenShot(compress);
 
         // Wait for frame (which we might have drawn just above) to finish.
-        psengine->FinishFrame();
+        psengine->GetG3D()->FinishDraw();
 
         return NULL;
     }

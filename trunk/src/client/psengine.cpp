@@ -795,8 +795,6 @@ bool psEngine::HandleEvent (iEvent &ev)
     }
     else if (ev.Name == event_process)
     {
-        SetupFrame ();
-
         if (drawScreen)
         {
             // FPS limits
@@ -1081,18 +1079,6 @@ void psEngine::Disconnect(bool final)
 {
     netmanager->SendDisconnect(final);
     netmanager->Disconnect();
-}
-
-// ----------------------------------------------------------------------------
-
-inline void psEngine::SetupFrame()
-{
-}
-
-void psEngine::FinishFrame()
-{
-    g3d->FinishDraw ();
-    g3d->Print (NULL);
 }
 
 // ----------------------------------------------------------------------------
