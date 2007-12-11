@@ -237,6 +237,7 @@ void pawsBuddyWindow::OnStringEntered(const char *name,int param,const char *val
         csString command;
         command.Format("/buddy %s", value);
         psengine->GetCmdHandler()->Execute(command);
+        PawsManager::GetSingleton().SetCurrentFocusedWidget(NULL);
     }
     else if (!strcmp(name,"RemoveBuddy"))
     {

@@ -6,6 +6,7 @@
 - fix BT#2883 - change shortcut numbers to start with 1 everywhere
   (old 0-based in shortcutcommands.xml still read and translated).
 - fix BT#2860 - Autorun is disabled after /unstick now.
+- fix BT#2646 - After adding a buddy, focus is now returned to world.
 
 *** 2007-12-10 by Michael Gist
 - Widgets now default to not scaling to client resolution. This means that
