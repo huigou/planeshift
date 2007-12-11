@@ -228,11 +228,11 @@ bool psNPCDialog::CheckPronouns(psString& text)
     return true;
 }
 
-void psNPCDialog::CleanPunctuation(psString& str)
+void psNPCDialog::CleanPunctuation(psString& str, bool cleanQMark)
 {
     for (unsigned int i=0; i<str.Length(); i++)
     {
-        if (ispunct(str.GetAt(i)) && str.GetAt(i)!='\'')
+      if (ispunct(str.GetAt(i)) && str.GetAt(i)!='\'' && (str.GetAt(i)!='?' || !cleanQMark))
         {
             str.DeleteAt(i);
             i--;
@@ -551,7 +551,9 @@ NpcResponse *psNPCDialog::Respond(const char * text,Client *client)
     if (trigger.TermLength() == 0)
     {
         Debug1(LOG_NPC, currentClient->GetClientNum(),"Failed filter known terms check");
-        return ErrorResponse(pstext,"(no known words)");
+        psString pstextError(text);
+        CleanPunctuation(pstextError, false);
+        return ErrorResponse(pstextError,"(no known words)");
     }
 
     csString copy;
@@ -659,7 +661,19 @@ NpcResponse *psNPCDialog::ErrorResponse(const psString & text, const char *trigg
     AddBadText(text,trigger);
 
     psString error("error");
+
+    if(text.Find("?") != (size_t)-1)
+    {
+        error = "unknown";
+    }
+
     NpcResponse *resp = FindResponse(error,text);
+
+    if(!resp && error.Compare("unknown"))
+    {
+      error = "error";
+      resp = FindResponse(error,text);
+    }
 
     // save the trigger that didn't work for possible display to devs
     if (resp)
