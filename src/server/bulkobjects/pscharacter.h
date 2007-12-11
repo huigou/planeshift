@@ -934,6 +934,7 @@ public:
 
     bool GetSlotAutoAttackable(INVENTORY_SLOT_NUMBER slot);
     bool GetSlotSingleAttackable(INVENTORY_SLOT_NUMBER slot);
+    void ResetSwings(csTicks timeofattack);
     void NotifyAttackPerformed(INVENTORY_SLOT_NUMBER slot,csTicks timeofattack);
     csTicks GetSlotNextAttackTime(INVENTORY_SLOT_NUMBER slot);
 

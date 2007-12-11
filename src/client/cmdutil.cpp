@@ -40,8 +40,8 @@
 #include "entitylabels.h"
 #include "pscharcontrol.h"
 #include "gui/chatwindow.h"
+#include "psengine.h"
 #include <igraphic/imageio.h>
-
 
 psUtilityCommands::psUtilityCommands(MsgHandler *mh,
                                      CmdHandler *ch,

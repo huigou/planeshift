@@ -263,6 +263,8 @@ void psCombatManager::AttackSomeone(gemActor *attacker,gemObject *target,Stance 
     {
         SetCombat(attacker,stance);  // switch stance from Bloody to Defensive, etc.
         return;
+    } else {
+        attacker_character->ResetSwings(csGetTicks());
     }
 
     // Indicator of whether any weapons are available to attack with

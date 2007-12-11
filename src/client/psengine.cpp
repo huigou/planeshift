@@ -851,8 +851,10 @@ bool psEngine::HandleEvent (iEvent &ev)
         {
             UnmuteAllSounds();
         }
-        if (IsGameLoaded())
-            celclient->GetEntityLabels()->RepaintAllLabels();
+        // RS: this causes a freeze switching back to the client window
+        // for up to a few seconds, and seems very much unnecessary
+        //if (IsGameLoaded())
+        //    celclient->GetEntityLabels()->RepaintAllLabels();
     }    
     else if (ev.Name == event_focusgained)
     {
@@ -1087,7 +1089,7 @@ inline void psEngine::SetupFrame()
 {
 }
 
-inline void psEngine::FinishFrame()
+void psEngine::FinishFrame()
 {
     g3d->FinishDraw ();
     g3d->Print (NULL);
