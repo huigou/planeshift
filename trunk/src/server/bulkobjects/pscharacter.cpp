@@ -1933,8 +1933,19 @@ void psCharacter::SetStaminaRate(float v,bool pys)
 }
 
 
+void psCharacter::ResetSwings(csTicks timeofattack)
+{
+    psItem *Weapon;
 
-
+    for (int slot = 0; slot < PSCHARACTER_SLOT_BULK1; slot++)
+    {
+        Weapon = Inventory().GetEffectiveWeaponInSlot((INVENTORY_SLOT_NUMBER)slot);
+        if (Weapon !=NULL)
+        {
+            inventory.GetEquipmentObject((INVENTORY_SLOT_NUMBER)slot).NextSwingTime=csTicks(timeofattack+ (Weapon->GetLatency() * 1000.0f));
+        }
+    }
+}
 
 
 void psCharacter::NotifyAttackPerformed(INVENTORY_SLOT_NUMBER slot,csTicks timeofattack)
