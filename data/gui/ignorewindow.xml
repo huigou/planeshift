@@ -41,6 +41,7 @@
     <widget name="add" factory="pawsButton" toggle="no" id="3000" shadows="yes">
         <frame x="140" y="210" width="50" height="16" border="yes" />
         <buttonup resource="Blue Title" />
+        <buttondown resource="Blue Title" /> 
         <label text="Add" />
         <attachpoints>  
             <attach point="ATTACH_LEFT" />

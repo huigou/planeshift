@@ -2,6 +2,7 @@
 - Added 'unknown' npc trigger. This allows us to have a seperate 'error'
   response for a question. (e.g. "Sorry I don't know." instead of 
   "I don't understand.")
+- Patch from Caarrie to add some more options to /show.
 
 *** 2007-12-11 by Kenny Graunke
 - Moved planeshift.cfg to /planeshift/userdata VFS mount point.

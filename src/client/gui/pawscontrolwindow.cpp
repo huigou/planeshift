@@ -300,7 +300,7 @@ bool pawsControlWindow::HandleWindowName(csString widgetStr)
         widget = "HelpWindow";
     else if(widgetStr == "buddy")
         widget = "BuddyWindow";
-    else if(widgetStr == "status window" || widgetStr == "info")
+    else if(widgetStr == "info")
         widget = "InfoWindow";
     else if(widgetStr == "petition")
         widget = "PetitionWindow";
@@ -316,6 +316,26 @@ bool pawsControlWindow::HandleWindowName(csString widgetStr)
         widget = "GuildWindow";
     else if(widgetStr == "glyph")
         widget = "GlyphWindow";
+    else if(widgetStr == "sketch")
+    widget = "SketchWindow";
+    else if(widgetStr == "merchant")
+    widget = "MerchantWindow";
+    else if(widgetStr == "loot")
+    widget = "LootWindow";
+    else if(widgetStr == "detail")
+    widget = "DetailWindow";
+    else if(widgetStr == "exchange")
+    widget = "ExchangeWindow";
+    else if(widgetStr == "write")
+    widget = "WritingWindow";
+    else if(widgetStr == "read")
+    widget = "BookReadingWindow";
+    else if(widgetStr == "questreward")
+    widget = "QuestRewardWindow";
+    else if(widgetStr == "craft")
+    widget = "CraftWindow";
+    else if(widgetStr == "ignore")
+    widget = "IgnoreWindow";
     else if(widgetStr == "bag" || widgetStr == "smallinventory")
         widget = "SmallInventoryWindow";
     else if(widgetStr == "talk" || widgetStr == "chat" || widgetStr == "communications")
