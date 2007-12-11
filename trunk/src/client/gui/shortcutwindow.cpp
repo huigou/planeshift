@@ -470,6 +470,8 @@ void pawsShortcutWindow::LoadCommands(const char * fileName)
 
     csRef<iDocumentNodeIterator> iter = doc->GetRoot()->GetNode("shortcuts")->GetNodes();
 
+    bool zerobased = false;
+
     while ( iter->HasNext() )
     {
         csRef<iDocumentNode> child = iter->Next();
@@ -477,6 +479,14 @@ void pawsShortcutWindow::LoadCommands(const char * fileName)
         if ( child->GetType() != CS_NODE_ELEMENT )
             continue;
         sscanf(child->GetValue(), "shortcut%d", &number);
+        if(number == 0)
+        {
+            zerobased = true;
+        }
+        if(!zerobased)
+        {
+            number--;
+        }
         if (number < 0 || number >= NUM_SHORTCUTS)
             continue;
         names[number] = child->GetAttributeValue("name");
@@ -520,7 +530,7 @@ void pawsShortcutWindow::SaveCommands(void)
         if (cmds[i].IsEmpty())
             continue;
         parent = parentMain->CreateNodeBefore (CS_NODE_ELEMENT);
-        sprintf(temp, "shortcut%d", i);
+        sprintf(temp, "shortcut%d", i + 1);
         parent->SetValue(temp);
 
         if (names[i].IsEmpty())
