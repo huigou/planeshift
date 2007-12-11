@@ -41,7 +41,7 @@ MiniDumper minidumper;
 //////////////////////////////////////////////////////////////////////////////
 
 #define APPNAME              "PlaneShift Crystal Blue"
-#define CONFIGFILENAME       "/this/planeshift.cfg"
+#define CONFIGFILENAME       "/planeshift/userdata/planeshift.cfg"
 #define PSAPP                "planeshift.application.client"
 
 
@@ -1873,7 +1873,6 @@ psEngine * psengine;
 
 int main (int argc, char *argv[])
 {
-    // TODO: Move planeshift.cfg to /planeshift/userdata
     psCSSetup* CSSetup = new psCSSetup( argc, argv, "/this/psclient.cfg", CONFIGFILENAME );
     iObjectRegistry* object_reg = CSSetup->InitCS();
 

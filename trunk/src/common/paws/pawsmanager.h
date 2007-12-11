@@ -73,7 +73,7 @@ class PawsManager : public Singleton<PawsManager>
 {
 public:
 
-    PawsManager(iObjectRegistry* objectReg,const char* skin, const char * pawsConfigFile = "/this/planeshift.cfg");
+    PawsManager(iObjectRegistry* objectReg, const char* skin, const char* pawsConfigFile = "/planeshift/userdata/planeshift.cfg");
 
     virtual ~PawsManager();
 
