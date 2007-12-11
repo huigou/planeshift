@@ -63,6 +63,7 @@ INSERT INTO `npc_triggers` VALUES (31,'!shortrange',0,'general');
 INSERT INTO `npc_triggers` VALUES (32,'!longrange',0,'general');
 INSERT INTO `npc_triggers` VALUES (33,'winch up',0,'WinchMovers');
 INSERT INTO `npc_triggers` VALUES (34,'winch down',0,'WinchMovers');
+INSERT INTO `npc_triggers` VALUES (35,'unknown',0,'general');
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;

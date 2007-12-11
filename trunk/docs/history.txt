@@ -1,3 +1,8 @@
+*** 2007-12-11 by Michael Gist
+- Added 'unknown' npc trigger. This allows us to have a seperate 'error'
+  response for a question. (e.g. "Sorry I don't know." instead of 
+  "I don't understand.")
+
 *** 2007-12-11 by Kenny Graunke
 - Moved planeshift.cfg to /planeshift/userdata VFS mount point.
 - Cleaned up some formatting and naming in psCSSetup.

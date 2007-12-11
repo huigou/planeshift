@@ -144,7 +144,7 @@ protected:
     void AddBadText(const char *text,const char *trigger);
 
 protected:
-    void CleanPunctuation(psString& str);
+    void CleanPunctuation(psString& str, bool cleanQMark = true);
     
     /** Recognizes phrases in the text and translates them to synonyms,
         Ignores any unrecognized phrases. Returns array of recognized phrases. */

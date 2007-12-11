@@ -74,6 +74,7 @@ INSERT INTO `npc_responses` VALUES (40,33,'Ok, I will winch send the \"winch up\
 INSERT INTO `npc_responses` VALUES (41,34,'Ok, I will winch send the \"winch down\" command to the beast.','','','','','','','','','<response><respond/><npccmd cmd=\"winch_down\" /></response>','',0);
 INSERT INTO `npc_responses` VALUES (42,8,'I will train you','','','','','','','','','<response><respond/><train skill=\"Sword\"/></response>','',0);
 INSERT INTO `npc_responses` VALUES (43,18,'this is my error response.','','','','','','','','','','',0);
+INSERT INTO `npc_responses` VALUES (44,35,'You just asked a question that I do not know the answer to.','','','','','','','','','','',0);
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
