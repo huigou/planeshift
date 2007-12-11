@@ -415,7 +415,7 @@ bool psEngine::Initialize (int level)
         // Create the PAWS window manager
         paws = new PawsManager( object_reg, skinPath );
         
-        options = new psOptions("/planeshift/userdata/options.cfg");
+        options = new psOptions("/planeshift/userdata/options.cfg", vfs);
         
         // Default to maximum 1000/(14)fps (71.4 fps)
         // Actual fps get be up to 10 fps less so set a reasonably high limit
