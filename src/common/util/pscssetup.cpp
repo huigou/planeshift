@@ -134,12 +134,15 @@ iObjectRegistry* psCSSetup::InitCS(iReporterListener * customReporter)
         csReport(object_reg, CS_REPORTER_SEVERITY_ERROR, "psclient",
                "csInitializer::SetupConfigManager failed!\n"
                "Is your CRYSTAL environment variable set?");
-      PS_PAUSEEXIT(1);
+        PS_PAUSEEXIT(1);
     }
 
     vfs  =  csQueryRegistry<iVFS> (object_reg);
     configManager =  csQueryRegistry<iConfigManager> (object_reg);
 
+    // Mount any directories required early - before trying to read our .cfg.
+    MountEarly();
+  
     if (userConfigfile != NULL)
     {
         cfg = configManager->AddDomain(userConfigfile,vfs,iConfigManager::ConfigPriorityApplication+1);
@@ -217,14 +220,7 @@ iObjectRegistry* psCSSetup::InitCS(iReporterListener * customReporter)
         }
     }
 
-    if (!PS_InitMounts())
-    {
-        csReport (object_reg, CS_REPORTER_SEVERITY_ERROR, 
-                "psclient",
-                "Failed to mount all required stuff in!");
-        csInitializer::DestroyApplication (object_reg); 
-        PS_PAUSEEXIT(1);
-    }
+    MountArt();
 
     return object_reg;
 }
@@ -242,15 +238,6 @@ char* psCSSetup::PS_GetFileName(char* path)
     return path+pos+1;
 }
 
-bool psCSSetup::PS_Mount(const char* to, const char* from)
-{
-    bool rc = vfs->Mount(to, from);
-    if (!rc)
-        CPrintf (CON_ERROR, "Mount: %s -> %s failed.\n", from, to);
-
-    return rc;
-}
-
 /**
  * Creates a mount point for the a thing zip file.
  * The thing zip file contains 3 seperate things
@@ -261,7 +248,7 @@ bool psCSSetup::PS_Mount(const char* to, const char* from)
  * It is mounted into /planeshift/<mount_point> and the location to mount
  * is defined in the psclient.cfg/psserver.cfg file under Planeshift.Mount.<thing>.
  */
-void psCSSetup::PS_MountThings(const char *zip, const char *mount_point)
+void psCSSetup::MountThings(const char *zip, const char *mount_point)
 {
     csString cfg_mount;
     csString mount;
@@ -269,43 +256,43 @@ void psCSSetup::PS_MountThings(const char *zip, const char *mount_point)
     mount.Format("/planeshift/%s/", mount_point);
     
     csRef<iConfigIterator> i = configManager->Enumerate(cfg_mount);
-    if (i) 
+    if (i)
     {
-     	while ( i->HasNext() )
-		{
-			i->Next();
-			if (!i->GetKey() || !strcmp(i->GetKey(), "")) continue;
+        while (i->HasNext())
+        {
+            i->Next();
+            if (!i->GetKey() || !strcmp(i->GetKey(), "")) continue;
             const char* zipfile = configManager->GetStr(i->GetKey(), "");
             csRef<iDataBuffer> xrpath = vfs->GetRealPath(zipfile);
-            PS_Mount (mount, **xrpath);
-        } 
-    }    
+            vfs->Mount(mount, **xrpath);
+        }
+    }
     
     // Check for development versions.
     cfg_mount.Format("Planeshift.Dev.%s", zip);
     csRef<iConfigIterator> i2 = configManager->Enumerate(cfg_mount);
-    if (i2) 
+    if (i2)
     {
-    	while ( i2->HasNext() )
-		{
-			i2->Next();
-			if (!i2->GetKey() || !strcmp(i2->GetKey(), "")) continue;
+        while (i2->HasNext())
+        {
+            i2->Next();
+            if (!i2->GetKey() || !strcmp(i2->GetKey(), "")) continue;
             const char* zipfile = configManager->GetStr(i2->GetKey(), "");            
-            PS_Mount (mount, zipfile);
-        } 
-    }            
+            vfs->Mount(mount, zipfile);
+        }
+    }
 }
 
 
-void psCSSetup::PS_MountMaps()
+void psCSSetup::MountMaps()
 {
     csRef<iConfigIterator> it = configManager->Enumerate("Planeshift.Mount.zipmapdir");
     if (!it) 
         return;
 
-	while ( it->HasNext() )
-	{
-		it->Next();
+    while ( it->HasNext() )
+    {
+        it->Next();
 
         if (it->GetKey())
         {
@@ -319,7 +306,7 @@ void psCSSetup::PS_MountMaps()
             {
                 const char* filename = files->Get(i);
                 if (strcmp (filename + strlen(filename) - 4, ".zip"))
-                continue;
+                    continue;
 
                 char* name = csStrNew(filename);
                 char* onlyname = PS_GetFileName(name);
@@ -328,7 +315,7 @@ void psCSSetup::PS_MountMaps()
                 finaldir += onlyname;
 
                 csRef<iDataBuffer> xrpath = vfs->GetRealPath(filename);
-                PS_Mount (finaldir, **xrpath);
+                vfs->Mount(finaldir, **xrpath);
             
                 delete[] name;
             }
@@ -338,12 +325,12 @@ void psCSSetup::PS_MountMaps()
     it = configManager->Enumerate("Planeshift.Mount.zipmapdir");
     if (!it) return;
 
-	while ( it->HasNext() )
-	{
-		it->Next();
+    while ( it->HasNext() )
+    {
+        it->Next();
         if (!it->GetKey() || !strcmp(it->GetKey(), "")) continue;
         const char* dir = configManager->GetStr(it->GetKey(), "");
-        if (!PS_Mount ( dir, "/planeshift/world/"))
+        if (!vfs->Mount(dir, "/planeshift/world/"))
         {
             Error2 ("Couldn't mount user specified dir: %s.", dir);
         }
@@ -351,23 +338,23 @@ void psCSSetup::PS_MountMaps()
 }
 
 
-void psCSSetup::PS_MountModels ()
+void psCSSetup::MountModels ()
 {
     // Check for the mount point using a VFS directory.
-    PS_MountModelsZip("Planeshift.Mount.modelzip",true);
-    PS_MountModelsZip("Planeshift.Mount.characterszip",true);
-    PS_MountModelsZip("Planeshift.Mount.npcszip",true);
+    MountModelsZip("Planeshift.Mount.modelzip",true);
+    MountModelsZip("Planeshift.Mount.characterszip",true);
+    MountModelsZip("Planeshift.Mount.npcszip",true);
 
     // Check using the dev ( absolute real path ) directory.
-    PS_MountModelsZip("Planeshift.Dev.modelzip",false);
-    PS_MountModelsZip("Planeshift.Dev.characterszip",false);
-    PS_MountModelsZip("Planeshift.Dev.npcszip",false);
+    MountModelsZip("Planeshift.Dev.modelzip",false);
+    MountModelsZip("Planeshift.Dev.characterszip",false);
+    MountModelsZip("Planeshift.Dev.npcszip",false);
 }
 
-void psCSSetup::PS_MountModelsZip(const char* key, bool vfspath)
+void psCSSetup::MountModelsZip(const char* key, bool vfspath)
 {
     csRef<iConfigIterator> i = configManager->Enumerate(key);
-    while ( i->Next() )
+    while (i->Next())
     {    
         if (!i->GetKey() || !strcmp(i->GetKey(), ""))
             continue;
@@ -377,16 +364,16 @@ void psCSSetup::PS_MountModelsZip(const char* key, bool vfspath)
         if (vfspath)
         {
             csRef<iDataBuffer> xrpath = vfs->GetRealPath(zipfile);
-            PS_Mount ("/planeshift/models/", **xrpath);
+            vfs->Mount("/planeshift/models/", **xrpath);
         }
         else
         {
-            PS_Mount ("/planeshift/models", zipfile);
+            vfs->Mount("/planeshift/models", zipfile);
         }
     }
 }
 
-void psCSSetup::PS_MountUserData()
+void psCSSetup::MountUserData()
 {
     // Mount the per-user configuration directory (platform specific)
     // - On Linux, use ~/.PlaneShift instead of ~/.crystalspace/PlaneShift.
@@ -400,62 +387,51 @@ void psCSSetup::PS_MountUserData()
     if (!fileUtil.StatFile(configPath) && CS_MKDIR(configPath) < 0)
     {
         Error2("Could not create required %s directory!", configPath.GetData());
-        exit(-1);
+        PS_PAUSEEXIT(1);
     }
 
     if (!vfs->Mount("/planeshift/userdata", configPath + "$/"))
     {
         Error2("Could not mount %s as /planeshift/userdata!", configPath.GetData());
-        exit(-1);
+        PS_PAUSEEXIT(1);
     }
 }
 
-bool psCSSetup::PS_InitMounts ()
+void psCSSetup::MountEarly()
 {
-    if (!vfs)
+    if (!vfs->Mount("/planeshift/", "$^"))
     {
-        csReport(object_reg, CS_REPORTER_SEVERITY_ERROR, "psinitializer", "couldn't find VFS!");
-        return false;
-    }
-
-    if (!configManager)
-    {
-        csReport(object_reg, CS_REPORTER_SEVERITY_ERROR, "psinitializer", "couldn't find Config Manager!");
-        return false;
+        Error1("Could not mount /planeshift!");
+        PS_PAUSEEXIT(1);
     }
     
-    if ( !PS_Mount ("/planeshift/", "$^") )
-        return false;
+    // We need /planeshift/userdata early, so we can read planeshift.cfg.
+    MountUserData();
+}
 
-    PS_MountUserData();
-  
-    PS_MountMaps ();
-    PS_MountModels ();
+void psCSSetup::MountArt()
+{
+    MountMaps();
+    MountModels();
 
-    // Create the mount point for weapons
-    PS_MountThings( "weaponzip", "weapons" );
+    MountThings("itemzip",       "items");
+    MountThings("potionszip",    "potions");
+    MountThings("moneyzip",      "money");
+    MountThings("bookszip",      "books");
+    MountThings("weaponzip",     "weapons");
+    MountThings("shieldszip",    "shields");
+    MountThings("helmszip",      "helms");
+    MountThings("toolszip",      "tools");
+    MountThings("naturalreszip", "naturalres");
+    MountThings("foodzip",       "food");
+    MountThings("jewelryzip",    "jewelry");
+    MountThings("furniturezip",  "furniture");
 
-    // Create the mount point for items
-    PS_MountThings( "itemzip",    "items" );
-    PS_MountThings( "potionszip", "potions");
-    PS_MountThings( "moneyzip",   "money");
-    PS_MountThings( "bookszip",   "books");
-    PS_MountThings( "shieldszip", "shields");
-    PS_MountThings( "toolszip",   "tools");
-    PS_MountThings( "naturalreszip", "naturalres");
-    PS_MountThings( "foodzip", "food");
-    PS_MountThings( "helmszip", "helms" );
-    PS_MountThings( "jewelryzip", "jewelry" );
-    PS_MountThings( "furniturezip", "furniture" );
-
-    // Create the mount point for glyphs
-    PS_MountThings( "azurezip", "azure_way" );
-    PS_MountThings( "bluezip", "blue_way" );
-    PS_MountThings( "brownzip", "brown_way" );
-    PS_MountThings( "crystalzip", "crystal_way" );
-    PS_MountThings( "darkzip", "dark_way" );
-    PS_MountThings( "redzip", "red_way" );
-    
-
-    return true;
+    // Create the mount points for glyphs
+    MountThings("azurezip",      "azure_way");
+    MountThings("bluezip",       "blue_way");
+    MountThings("brownzip",      "brown_way");
+    MountThings("crystalzip",    "crystal_way");
+    MountThings("darkzip",       "dark_way");
+    MountThings("redzip",        "red_way");
 }

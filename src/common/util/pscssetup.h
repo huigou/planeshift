@@ -57,13 +57,14 @@ protected:
     bool InitCSWindow(const char *);
   
     char * PS_GetFileName(char*);
-    bool PS_Mount(const char *, const char *);
-    void PS_MountThings(const char *, const char *);
-    void PS_MountMaps();
-    void PS_MountModels();
-    void PS_MountModelsZip(const char* key, bool vfspath);
-    void PS_MountUserData();
-    bool PS_InitMounts();
+
+    void MountEarly();
+    void MountArt();
+    void MountThings(const char *, const char *);
+    void MountMaps();
+    void MountModels();
+    void MountModelsZip(const char* key, bool vfspath);
+    void MountUserData();
 
     int argc;
     char **argv;

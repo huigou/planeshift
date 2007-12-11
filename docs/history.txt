@@ -1,3 +1,7 @@
+*** 2007-12-11 by Kenny Graunke
+- Moved planeshift.cfg to /planeshift/userdata VFS mount point.
+- Cleaned up some formatting and naming in psCSSetup.
+
 *** 2007-12-10 by Roland Schulz
 - fix FS#743 and second part of BT#2432 (set target for mouserun also
   disabled when dead).
