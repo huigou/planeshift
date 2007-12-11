@@ -44,6 +44,7 @@
 #include "engine/netpersist.h"
 #include "util/strutil.h"
 #include "modehandler.h"
+#include "pscharcontrol.h"
 #include "net/messages.h"
 #include "net/npcmessages.h"
 
@@ -656,6 +657,13 @@ const char *psUserCommands::HandleCommand(const char *cmd)
     {
         psCharIntroduction introduce;
         msgqueue->SendMessage(introduce.msg);
+    }
+
+    else if (words[0] == "/unstick")
+    {
+        psUserCmdMessage cmdmsg(cmd);
+        msgqueue->SendMessage(cmdmsg.msg);
+        psengine->GetCharControl()->GetMovementManager()->StopAllMovement();
     }
 
     else
