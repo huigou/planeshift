@@ -1275,6 +1275,11 @@ void UserManager::Attack(Stance stance, Client *client,int clientnum)
         psserver->SendSystemError(clientnum,"You do not have a target selected.");
         return;
     }
+    if (target->GetItem() || strcmp(target->GetObjectType(), "ActionLocation") == 0 )
+    {
+        psserver->SendSystemError(clientnum,"You cannot attack %s.", (const char*)target->GetName() );
+        return;
+    }
     if ( target->IsAlive() == false )
     {
         psserver->SendSystemError(clientnum,"%s is already dead.", (const char*)target->GetName() );
