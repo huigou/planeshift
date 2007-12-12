@@ -66,6 +66,8 @@
   Please test this thoroughly.  To get your shortcuts/controls back, copy the
   non-"_def" XML files from data/options to the new location.
 
+  Thanks to azaghal for doing much of the work in making this happen!
+
 *** 2007-12-08 by Roland Schulz
 - fix for bt#2432 - annoying message on mouseclick when dead, thanks to
   Wired_Crawler.
