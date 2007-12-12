@@ -1,3 +1,7 @@
+*** 2007-12-12
+- short fix for FS#621 by Lanarel, attacking action locations
+  or items gives more appropriate error message now.
+
 *** 2007-12-11 by Michael Gist
 - Added 'unknown' npc trigger. This allows us to have a seperate 'error'
   response for a question. (e.g. "Sorry I don't know." instead of 
