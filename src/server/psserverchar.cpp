@@ -1833,7 +1833,17 @@ bool psServerCharManager::SendPlayerItems( Client *client, psItemCategory* categ
         else
             purified = "no";
 
-        csString escpxml_name = EscpXML(items[z]->GetName());
+        csString itemName;
+        if (items[z]->GetCrafterID() != 0)
+        {
+            itemName.Format("%s %s", items[z]->GetQualityString(),
+			             items[z]->GetName());
+        }
+        else
+        {
+            itemName = items[z]->GetName();
+        }
+        csString escpxml_name = EscpXML(itemName);
         csString escpxml_imagename = EscpXML(items[z]->GetImageName());
         item.Format("<ITEM ID=\"%s\" "
                     "NAME=\"%s\" "

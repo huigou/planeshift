@@ -1,4 +1,9 @@
-*** 2007-12-12
+*** 2007-12-13 by Kenny Graunke
+- Made the sell window display quality as well as the item name (for example,
+  Inferior Dagger) for crafted items.  Vizanti and starg hope this will
+  prevent people from accidentally selling their good items.
+
+*** 2007-12-12 by Roland Schulz
 - short fix for FS#621 by Lanarel, attacking action locations
   or items gives more appropriate error message now.
 
