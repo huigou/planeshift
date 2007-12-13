@@ -1,3 +1,8 @@
+*** 2007-12-13 by Dave Bentham
+- GM's can take over control of an Event if the originator GM has abandoned
+  it (e.g. had to logoff prior to completion, character deleted).
+  /event control <event name>
+
 *** 2007-12-13 by Kenny Graunke
 - Made the sell window display quality as well as the item name (for example,
   Inferior Dagger) for crafted items.  Vizanti and starg hope this will

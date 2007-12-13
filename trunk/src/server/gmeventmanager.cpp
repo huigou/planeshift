@@ -361,12 +361,7 @@ bool GMEventManager::RemovePlayerFromGMEvent (int clientnum, unsigned int gmID, 
     }
 
     // all tests pass, drop the player
-    db->Command("DELETE FROM character_events WHERE player_id = %d AND event_id = %d",
-                playerID, gmEvent->id);
-    gmEvent->playerID.Delete(playerID);
-    
-    // keep psCharacter up to date
-    target->GetActor()->GetCharacterData()->RemoveGMEvent(gmEvent->id);
+    RemovePlayerRefFromGMEvent(gmEvent, target, playerID);
 
     psserver->SendSystemInfo(clientnum, "%s has been removed from the \'%s\' event.",
                              target->GetName(),
@@ -681,6 +676,74 @@ bool GMEventManager::RemovePlayerFromGMEvents(unsigned int playerID)
     return true;
 }
 
+/// GM assumes control of ongoing event.
+bool GMEventManager::AssumeControlOfGMEvent(Client* client, csString eventName)
+{
+    int zero=0;
+    unsigned int newGMID = client->GetPlayerID();
+    int clientnum = client->GetClientNum();
+    GMEvent* gmEvent;
+
+    // if this GM already has an active event, he/she cant control another
+    if ((gmEvent = GetGMEventByGM(newGMID, RUNNING, zero)))
+    {
+        psserver->SendSystemInfo(clientnum, 
+                                 "You are already running the \'%s\' event.",
+                                 gmEvent->eventName.GetDataSafe());
+        return false;
+    }
+
+    // find the requested event
+    zero = 0;
+    if (!(gmEvent = GetGMEventByName(eventName, RUNNING, zero)))
+    {
+        psserver->SendSystemInfo(clientnum, 
+                                 "The \'%s\' event is not recognised or not running.",
+                                 eventName.GetDataSafe());
+        return false;
+    }
+
+    // look for the current GM if there is one
+    ClientConnectionSet* clientConnections = psserver->GetConnections();
+    Client* target;
+    if (gmEvent->gmID != UNDEFINED_GMID)
+    {
+        if ((target = clientConnections->FindPlayer(gmEvent->gmID)))
+        {
+            psserver->SendSystemInfo(clientnum, 
+                                     "The \'%s\' event's GM, %s, is online: you cannot assume control.",
+                                     gmEvent->eventName.GetDataSafe(),
+                                     target->GetName());
+            return false;
+        }
+    }
+
+    // if the GM is a participant, then remove the reference
+    RemovePlayerRefFromGMEvent(gmEvent, client, newGMID);
+
+    // OK, assume control
+    gmEvent->gmID = newGMID;
+    db->Command("UPDATE gm_events SET gm_id = %d WHERE id = %d", newGMID, gmEvent->id);
+    client->GetActor()->GetCharacterData()->AssignGMEvent(gmEvent->id,true);
+    psserver->SendSystemInfo(clientnum, 
+                             "You now control the \'%s\' event.",
+                             gmEvent->eventName.GetDataSafe());
+
+    csArray<unsigned int>::Iterator iter = gmEvent->playerID.GetIterator();
+    while (iter.HasNext())
+    {
+        if ((target = clientConnections->FindPlayer(iter.Next())))
+        {
+            psserver->SendSystemInfo(target->GetClientNum(),
+                                     "The GM %s is now controlling the \'%s\' event.",
+                                     client->GetName(),
+                                     gmEvent->eventName.GetDataSafe());
+        }
+    }
+
+    return true;
+}
+
 /// returns details of an event
 GMEventStatus GMEventManager::GetGMEventDetailsByID (int id, 
                                                      csString& name,
@@ -826,14 +889,7 @@ void GMEventManager::DiscardGMEvent(Client* client, int eventID)
     if ((runningEventID == eventID || completedEventIDs.Find(eventID) != csArrayItemNotFound) &&
         (gmEvent = GetGMEventByID(eventID)))
     {
-        if (gmEvent->playerID.Delete(playerID))
-        {
-            // ...from the database
-            db->Command("DELETE FROM character_events WHERE event_id = %d AND player_id = %d", eventID, playerID);
-
-            // ...from psCharacter
-            client->GetActor()->GetCharacterData()->RemoveGMEvent(eventID);
-        }
+        RemovePlayerRefFromGMEvent(gmEvent, client, playerID);
     }
     else
     {
@@ -842,3 +898,18 @@ void GMEventManager::DiscardGMEvent(Client* client, int eventID)
     }
 }
 
+/// Actually remove player reference from GMEvent.
+bool GMEventManager::RemovePlayerRefFromGMEvent(GMEvent* gmEvent, Client* client, unsigned int playerID)
+{
+    if (gmEvent->playerID.Delete(playerID))
+    {
+        // ...from the database
+        db->Command("DELETE FROM character_events WHERE event_id = %d AND player_id = %d", gmEvent->id, playerID);
+        // ...from psCharacter
+        client->GetActor()->GetCharacterData()->RemoveGMEvent(gmEvent->id);
+
+        return true;
+    }
+
+    return false;
+}
