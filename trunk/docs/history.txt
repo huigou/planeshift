@@ -3,6 +3,9 @@
   Inferior Dagger) for crafted items.  Vizanti and starg hope this will
   prevent people from accidentally selling their good items.
 - Removed some disgusting fixed-length buffers and sprintfs.
+- Fixed a bug where out-of-bounds window positions would be restored - namely,
+  if you ran PS at high resolution, moved the windows to the lower right, and
+  then ran it at low resolution, your windows would be entirely offscreen.
 
 *** 2007-12-12 by Roland Schulz
 - short fix for FS#621 by Lanarel, attacking action locations

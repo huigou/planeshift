@@ -1685,6 +1685,9 @@ csRect pawsWidget::LoadPositions()
  
     csString configName;
 
+    if (strcmp(GetName(), "InventoryWindow") == 0)
+        printf("KAYDEN: BREAKPOINT\n");
+
     configName.Format("PlaneShift.GUI.%s.Visible", GetName());
     SetVisibility(config->GetBool(configName, visible));
                           
@@ -1694,14 +1697,11 @@ csRect pawsWidget::LoadPositions()
     configName.Format("PlaneShift.GUI.%s.PosY", GetName());
     int winPosY = config->GetInt(configName, defaultFrame.ymin);
 
-    winPosX = GetActualWidth( winPosX );
-    winPosY = GetActualHeight( winPosY );
-
     int screenWidth  = graphics2D->GetWidth();
     int screenHeight = graphics2D->GetHeight();
 
-    int winWidth = 0;
-    int winHeight = 0;
+    int winWidth = defaultFrame.Width();
+    int winHeight = defaultFrame.Height();
 
     //don't do this if widget is not resizable
     if ( IsResizable() )
@@ -1787,10 +1787,10 @@ void pawsWidget::SavePosition()
     config->SetBool(configName, visible);
 
     configName.Format("PlaneShift.GUI.%s.PosX", GetName());
-    config->SetInt(configName, RX(screenFrame.xmin));
+    config->SetInt(configName, screenFrame.xmin);
 
     configName.Format("PlaneShift.GUI.%s.PosY", GetName());
-    config->SetInt(configName, RY(screenFrame.ymin));
+    config->SetInt(configName, screenFrame.ymin);
 
     if ( IsResizable() )
     {
