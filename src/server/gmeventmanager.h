@@ -167,6 +167,14 @@ public:
       */
      bool RemovePlayerFromGMEvents(unsigned int playerID);
 
+    /** GM attempts to assume control of an event, after originator has absconded.
+     *
+     * @param client: client pointer.
+     * @param eventName: event name.
+     * @return bool: true = success, false = failed.
+     */
+    bool AssumeControlOfGMEvent(Client* client, csString eventName);
+
 private:
 
     int nextEventID;
@@ -240,6 +248,14 @@ private:
      * @param eventID: id of the event
      */
     void DiscardGMEvent(Client* client, int eventID);
+
+    /** Remove player references to event.
+     * @param gmEvent: the GMEvent*.
+     * @param client: the Client* to be removed.
+     * @param playerID: the player id to be removed.
+     * @return bool: true/false success.
+     */
+    bool RemovePlayerRefFromGMEvent(GMEvent* gmEvent, Client* client, unsigned int playerID);
 };
 
 #endif
