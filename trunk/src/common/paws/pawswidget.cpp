@@ -1225,19 +1225,19 @@ void pawsWidget::SaveSettings()
 
     csRef<iConfigFile> config = cfgMgr->LookupDomain(PawsManager::GetSingleton().GetConfigFile());        
 
-    char buffer[512];
+    csString configName;
 
-    sprintf(buffer, "PlaneShift.GUI.%s.MinTransparency", GetName() );
-    config->SetInt(buffer, alphaMin );
+    configName.Format("PlaneShift.GUI.%s.MinTransparency", GetName());
+    config->SetInt(configName, alphaMin);
 
-    sprintf(buffer, "PlaneShift.GUI.%s.MaxTransparency", GetName() );
-    config->SetInt(buffer, alpha );
+    configName.Format("PlaneShift.GUI.%s.MaxTransparency", GetName());
+    config->SetInt(configName, alpha);
 
-    sprintf(buffer, "PlaneShift.GUI.%s.FadeSpeed", GetName() );
-    config->SetFloat( buffer, fadeSpeed );
+    configName.Format("PlaneShift.GUI.%s.FadeSpeed", GetName());
+    config->SetFloat(configName, fadeSpeed);
 
-    sprintf(buffer, "PlaneShift.GUI.%s.Fade", GetName() );
-    config->SetBool( buffer, fade );
+    configName.Format("PlaneShift.GUI.%s.Fade", GetName());
+    config->SetBool(configName, fade);
 
     config->Save();
 }
@@ -1247,21 +1247,21 @@ void pawsWidget::LoadSettings()
     csRef<iConfigManager> cfgMgr;
     cfgMgr =  csQueryRegistry<iConfigManager > ( PawsManager::GetSingleton().GetObjectRegistry());
   
-    char buffer[512];
-
     csRef<iConfigFile> config = cfgMgr->LookupDomain(PawsManager::GetSingleton().GetConfigFile());
 
-    sprintf(buffer, "PlaneShift.GUI.%s.MaxTransparency", GetName() );
-    SetBackgroundAlpha(config->GetInt (buffer, alpha ));
+    csString configName;
 
-    sprintf(buffer, "PlaneShift.GUI.%s.MinTransparency", GetName() );
-    alphaMin = config->GetInt (buffer, alphaMin );
+    configName.Format("PlaneShift.GUI.%s.MaxTransparency", GetName());
+    SetBackgroundAlpha(config->GetInt(configName, alpha));
 
-    sprintf(buffer, "PlaneShift.GUI.%s.Fade", GetName() );
-    fade = config->GetBool (buffer, fade );
+    configName.Format("PlaneShift.GUI.%s.MinTransparency", GetName());
+    alphaMin = config->GetInt(configName, alphaMin);
 
-    sprintf(buffer, "PlaneShift.GUI.%s.FadeSpeed", GetName() );
-    fadeSpeed = config->GetFloat (buffer, fadeSpeed );
+    configName.Format("PlaneShift.GUI.%s.Fade", GetName());
+    fade = config->GetBool(configName, fade);
+
+    configName.Format("PlaneShift.GUI.%s.FadeSpeed", GetName());
+    fadeSpeed = config->GetFloat(configName, fadeSpeed);
 }
 
 void pawsWidget::SaveFontSettings()
@@ -1271,10 +1271,9 @@ void pawsWidget::SaveFontSettings()
 
     csRef<iConfigFile> config = cfgMgr->LookupDomain(PawsManager::GetSingleton().GetConfigFile());
 
-    char buffer[512];
-
-    sprintf(buffer, "PlaneShift.GUI.%s.FontScaling", GetName() );
-    config->SetInt(buffer, fontScaling);
+    csString configName;
+    configName.Format("PlaneShift.GUI.%s.FontScaling", GetName());
+    config->SetInt(configName, fontScaling);
     
     config->Save();
 }
@@ -1286,10 +1285,9 @@ void pawsWidget::LoadFontSettings()
   
     csRef<iConfigFile> config = cfgMgr->LookupDomain(PawsManager::GetSingleton().GetConfigFile());
 
-    char buffer[512];
-
-    sprintf(buffer, "PlaneShift.GUI.%s.FontScaling", GetName() );
-    fontScaling = config->GetInt (buffer, fontScaling);
+    csString configName;
+    configName.Format("PlaneShift.GUI.%s.FontScaling", GetName());
+    fontScaling = config->GetInt(configName, fontScaling);
 }
 
 void pawsWidget::CreateWidgetConfigWindow()
@@ -1683,18 +1681,18 @@ csRect pawsWidget::LoadPositions()
     csRef<iConfigManager> cfgMgr;
     cfgMgr =  csQueryRegistry<iConfigManager > ( PawsManager::GetSingleton().GetObjectRegistry());
   
-    char buffer[512];
-
     csRef<iConfigFile> config = cfgMgr->LookupDomain(PawsManager::GetSingleton().GetConfigFile());
  
-    sprintf(buffer, "PlaneShift.GUI.%s.Visible", GetName() );
-    SetVisibility(config->GetBool (buffer, visible ));
-                          
-    sprintf(buffer, "PlaneShift.GUI.%s.PosX", GetName() );
-    int winPosX = config->GetInt (buffer, defaultFrame.xmin );
+    csString configName;
 
-    sprintf(buffer, "PlaneShift.GUI.%s.PosY", GetName() );
-    int winPosY = config->GetInt (buffer, defaultFrame.ymin );
+    configName.Format("PlaneShift.GUI.%s.Visible", GetName());
+    SetVisibility(config->GetBool(configName, visible));
+                          
+    configName.Format("PlaneShift.GUI.%s.PosX", GetName());
+    int winPosX = config->GetInt(configName, defaultFrame.xmin);
+
+    configName.Format("PlaneShift.GUI.%s.PosY", GetName());
+    int winPosY = config->GetInt(configName, defaultFrame.ymin);
 
     winPosX = GetActualWidth( winPosX );
     winPosY = GetActualHeight( winPosY );
@@ -1708,11 +1706,11 @@ csRect pawsWidget::LoadPositions()
     //don't do this if widget is not resizable
     if ( IsResizable() )
     {
-        sprintf(buffer, "PlaneShift.GUI.%s.Width", GetName() );
-        winWidth = config->GetInt (buffer, defaultFrame.Width() );
+        configName.Format("PlaneShift.GUI.%s.Width", GetName());
+        winWidth = config->GetInt(configName, defaultFrame.Width());
 
-        sprintf(buffer, "PlaneShift.GUI.%s.Height", GetName() );
-        winHeight = config->GetInt (buffer, defaultFrame.Height() );
+        configName.Format("PlaneShift.GUI.%s.Height", GetName());
+        winHeight = config->GetInt(configName, defaultFrame.Height());
         if (resizeToScreen)
         {
             float ratio = ((float) winHeight) / ((float) winWidth);
@@ -1773,7 +1771,6 @@ void pawsWidget::SavePosition()
 
     csRef<iConfigFile> config = cfgMgr->LookupDomain(PawsManager::GetSingleton().GetConfigFile());        
 
-    char buffer[512];
 
     int desktopWidth  = graphics2D->GetWidth(); 
     int desktopHeight = graphics2D->GetHeight();
@@ -1784,22 +1781,24 @@ void pawsWidget::SavePosition()
     if (!resizeToScreen)
         ratioX = ratioY = 1;
 
-    sprintf(buffer, "PlaneShift.GUI.%s.Visible", GetName() );
-    config->SetBool( buffer, visible );
+    csString configName;
 
-    sprintf(buffer, "PlaneShift.GUI.%s.PosX", GetName() );
-    config->SetInt( buffer, RX(screenFrame.xmin) );
+    configName.Format("PlaneShift.GUI.%s.Visible", GetName());
+    config->SetBool(configName, visible);
 
-    sprintf(buffer, "PlaneShift.GUI.%s.PosY", GetName() );
-    config->SetInt( buffer, RY(screenFrame.ymin) );
+    configName.Format("PlaneShift.GUI.%s.PosX", GetName());
+    config->SetInt(configName, RX(screenFrame.xmin));
+
+    configName.Format("PlaneShift.GUI.%s.PosY", GetName());
+    config->SetInt(configName, RY(screenFrame.ymin));
 
     if ( IsResizable() )
     {
-        sprintf(buffer, "PlaneShift.GUI.%s.Width", GetName() );
-        config->SetInt( buffer, RX(screenFrame.Width()) );
+        configName.Format("PlaneShift.GUI.%s.Width", GetName());
+        config->SetInt(configName, RX(screenFrame.Width()));
 
-        sprintf(buffer, "PlaneShift.GUI.%s.Height", GetName() );
-        config->SetInt( buffer, RY(screenFrame.Height()) );
+        configName.Format("PlaneShift.GUI.%s.Height", GetName());
+        config->SetInt(configName, RY(screenFrame.Height()));
     }
 
     config->Save();
