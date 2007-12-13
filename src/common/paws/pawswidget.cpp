@@ -1685,9 +1685,6 @@ csRect pawsWidget::LoadPositions()
  
     csString configName;
 
-    if (strcmp(GetName(), "InventoryWindow") == 0)
-        printf("KAYDEN: BREAKPOINT\n");
-
     configName.Format("PlaneShift.GUI.%s.Visible", GetName());
     SetVisibility(config->GetBool(configName, visible));
                           
