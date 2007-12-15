@@ -18,15 +18,23 @@
 */
 
 #include <psconfig.h>
-#include "globals.h"
+//=============================================================================
+// Project Includes
+//=============================================================================
+#include "bulkobjects/pscharacterloader.h"
 
 #include "util/mathscript.h"
-#include "bankmanager.h" 
-#include "cachemanager.h"
-#include "bulkobjects/pscharacterloader.h"
 #include "util/eventmanager.h"
 #include "util/psdatabase.h"
+
+//=============================================================================
+// Local Includes
+//=============================================================================
+#include "globals.h"
+#include "bankmanager.h" 
+#include "cachemanager.h"
 #include "progressionmanager.h"
+
 
 enum coin
 {
@@ -71,9 +79,9 @@ BankManager::BankManager()
         monEvts.Push(monEvt);
     }
 
-	accountGuildLvlScript = psserver->GetMathScriptEngine()->FindScript("Calc Guild Account Level");
-	accountCharLvlScript= psserver->GetMathScriptEngine()->FindScript("Calc Char Account Level");
-	CalcBankFeeScript = psserver->GetMathScriptEngine()->FindScript("Calc Bank Fee");
+    accountGuildLvlScript = psserver->GetMathScriptEngine()->FindScript("Calc Guild Account Level");
+    accountCharLvlScript= psserver->GetMathScriptEngine()->FindScript("Calc Char Account Level");
+    CalcBankFeeScript = psserver->GetMathScriptEngine()->FindScript("Calc Bank Fee");
 
     ProcessTax();
 }
@@ -819,13 +827,13 @@ int BankManager::CalculateAccountLevel(psCharacter *pschar, bool guild)
 
 float BankManager::CalculateFee(psCharacter* pschar, bool guild)
 { 
-	MathScriptVar* accountLevel = CalcBankFeeScript->GetOrCreateVar("accountLevel");
-	MathScriptVar* bankFee = CalcBankFeeScript->GetOrCreateVar("bankFee");
+    MathScriptVar* accountLevel = CalcBankFeeScript->GetOrCreateVar("accountLevel");
+    MathScriptVar* bankFee = CalcBankFeeScript->GetOrCreateVar("bankFee");
 
-	accountLevel->SetValue(CalculateAccountLevel(pschar, guild));
+    accountLevel->SetValue(CalculateAccountLevel(pschar, guild));
 
-	CalcBankFeeScript->Execute();
+    CalcBankFeeScript->Execute();
 
-	return bankFee->GetValue();
+    return bankFee->GetValue();
 }
 

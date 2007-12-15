@@ -19,14 +19,18 @@
 
 #ifndef __BANKMANAGER_H__
 #define __BANKMANAGER_H__
-
-#include "util/log.h"
-#include "bulkobjects/psguildinfo.h"
-#include "clients.h"
-#include "msgmanager.h"
+//=============================================================================
+// Project Includes
+//=============================================================================
 #include "util/gameevent.h"
 
+//=============================================================================
+// Local Includes
+//=============================================================================
+#include "msgmanager.h"
+
 class psMoneyGameEvent;
+class Client;
 
 class BankManager : public Singleton<BankManager>, public MessageManager
 {
@@ -36,7 +40,8 @@ public:
     inline void StartBanking(Client* client, bool guild) { SendBankWindow(client, guild, true); }
     void HandleMessage(MsgEntry *me, Client *client);
     void ProcessTax();
-private:
+
+protected:
     struct MoneyEvent
     {
         uint id;
@@ -54,6 +59,11 @@ private:
         int instance;
     };
 
+
+    template<class T>
+    void TaxAccount(T guildOrChar, MoneyEvent monEvt, int index);
+    
+private:
     void SendBankWindow(Client* client, bool guild, bool forceOpen);
     void WithdrawFunds(Client* client, bool guild, int circles, int octas, int hexas, int trias);
     void DepositFunds(Client* client, bool guild, int circles, int octas, int hexas, int trias);
@@ -66,25 +76,22 @@ private:
 
     csArray<MoneyEvent> monEvts;
 
-	MathScript* accountCharLvlScript;
-	MathScript* accountGuildLvlScript;
-	MathScript* CalcBankFeeScript;
-
-protected:
-    template<class T>
-    void TaxAccount(T guildOrChar, MoneyEvent monEvt, int index);
+    MathScript* accountCharLvlScript;
+    MathScript* accountGuildLvlScript;
+    MathScript* CalcBankFeeScript;    
 };
+
 
 class psMoneyGameEvent : public psGameEvent
 {
-private:
-    BankManager *bankManager;
-
 public:
     
     psMoneyGameEvent(int delayTicks, BankManager *bankMan);
 
     virtual void Trigger() { bankManager->ProcessTax(); } // Abstract event processing function
+    
+private:
+    BankManager *bankManager;
 };
 
 #endif // __BANKMANAGER_H__
