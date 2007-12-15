@@ -24,49 +24,57 @@
 */
 
 #include <psconfig.h>
+//=============================================================================
+// CrystalSpace Includes
+//=============================================================================
 #include <csutil/xmltiny.h>
-
-#include "iutil/object.h"
+#include <csgeom/math3d.h>
+#include <iutil/object.h>
 #include <iengine/campos.h>
 #include <iengine/region.h>
 #include <propclass/linmove.h>
-#include <csgeom/math3d.h>
 
+//=============================================================================
+// Project Includes
+//=============================================================================
+#include "util/psdatabase.h"
+#include "util/log.h"
+#include "util/serverconsole.h"
+#include "util/eventmanager.h"
+
+#include "bulkobjects/psactionlocationinfo.h"
+
+#include "net/msghandler.h"
+#include "net/messages.h"
+
+//=============================================================================
+// Local Includes
+//=============================================================================
 #include "globals.h"
-#include "iserver/idal.h"
 #include "actionmanager.h"
 #include "gem.h"
 #include "clients.h"
 #include "events.h"
-#include "psserver.h"
-#include "util/psdatabase.h"
-#include "net/msghandler.h"
-#include "net/messages.h"
-#include "util/log.h"
-#include "util/serverconsole.h"
-
 #include "cachemanager.h"
-#include "combatmanager.h"
 #include "netmanager.h"
 #include "npcmanager.h"
 #include "psserverchar.h"
-#include "bulkobjects/psactionlocationinfo.h"
 #include "entitymanager.h"
 #include "progressionmanager.h"
-#include "util/eventmanager.h"
 
 
 psActionTimeoutGameEvent::psActionTimeoutGameEvent( ActionManager *mgr, const psActionLocation * actionLocation, size_t clientnum)
 : psGameEvent(0, 1000, "psActionTimeoutGameEvent")
 {
     valid = false;
-    if ( !mgr ) 
-        return;
-    actionmanager =  mgr;
-    info = actionLocation;
-    client = clientnum;
+    if ( mgr ) 
+    {            
+        actionmanager =  mgr;
+        info = actionLocation;
+        client = clientnum;
 
-    valid = true;
+        valid = true;
+    }        
 }
 
 psActionTimeoutGameEvent::~psActionTimeoutGameEvent()
@@ -196,8 +204,15 @@ void ActionManager::HandleQueryMessage( csString xml, Client *client )
 
         LoadXML(topNode);
 
-        if ( triggerType.CompareNoCase( "SELECT" )    )   handled = HandleSelectQuery   ( topNode, client );
-        if ( triggerType.CompareNoCase( "PROXIMITY" ) )   handled = HandleProximityQuery( topNode, client );
+        if ( triggerType.CompareNoCase( "SELECT" )    )   
+        {
+            handled = HandleSelectQuery   ( topNode, client );
+        }
+        
+        if ( triggerType.CompareNoCase( "PROXIMITY" ) )
+        {   
+            handled = HandleProximityQuery( topNode, client );
+        }            
 
         // evk: Sending to clients with security level 30+ only.
         if ( !handled && client->GetSecurityLevel() > 29 )
@@ -209,7 +224,9 @@ void ActionManager::HandleQueryMessage( csString xml, Client *client )
             // Send unhandled message to client
             psMapActionMessage msg(  client->GetClientNum(), psMapActionMessage::NOT_HANDLED, xml );
             if ( msg.valid ) 
+            {
                 msg.SendMessage();
+            }                
         }
     }
     else
@@ -339,7 +356,9 @@ bool ActionManager::HandleProximityQuery( csRef<iDocumentNode> topNode, Client *
                  ( csSquaredDist::PointPoint( actionLocation->position, position ) < ( actionLocation->radius * actionLocation->radius ) ) )
             { // Found match
                 if ( !active.HasNext() )
+                {
                     matches.Push( actionLocation );
+                }                    
             }
         }
     }

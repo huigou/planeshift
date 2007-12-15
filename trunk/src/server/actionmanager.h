@@ -25,13 +25,21 @@
 #ifndef __ACTIONMANAGER_H__
 #define __ACTIONMANAGER_H__
 
+//=============================================================================
+// Crystal Space Includes
+//=============================================================================
 #include <csutil/ref.h>
 
-#include "net/messages.h"              // Chat Message definitions
-#include "net/msghandler.h"         // Subscriber definition
-#include "client.h"                 // Client, and ClientConnectionSet classes
-#include "msgmanager.h"             // Parent class
+//=============================================================================
+// Project Includes
+//=============================================================================
 #include "util/gameevent.h"
+
+//=============================================================================
+// Local Includes
+//=============================================================================
+#include "msgmanager.h"             // Parent class
+
 
 class psDatabase;
 class SpawnManager;
@@ -41,29 +49,30 @@ class ClientConnectionSet;
 class psActionLocation;
 class ActionManager;
 class psSectorInfo;
+class Client;
 
 /** Time out event on interacting with an action item.
  */
 class psActionTimeoutGameEvent : public psGameEvent
 {
- protected:
-    ActionManager *actionmanager;
-    bool valid;
-    
- public:
-
-    size_t                       client;     
-    const  psActionLocation      *info;     
-    
+public:    
     psActionTimeoutGameEvent(ActionManager *mgr,
                      const psActionLocation *actionLocation,
                      size_t  client);
 
     ~psActionTimeoutGameEvent();
     
-    virtual void Trigger();  // Abstract event processing function
-    
+    /** Abstract event processing function.
+    */
+    virtual void Trigger();  
     virtual bool IsValid() { return valid; }
+    
+protected:
+    ActionManager *actionmanager;
+    bool valid;
+    
+    size_t                       client;     
+    const  psActionLocation      *info;         
 };
 
 
