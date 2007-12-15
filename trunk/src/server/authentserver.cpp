@@ -17,36 +17,47 @@
  *
  */
 #include <psconfig.h>
-#include <physicallayer/entity.h>
-#include <propclass/mesh.h>
-
+//=============================================================================
+// Crystal Space Includes
+//=============================================================================
 #include <iutil/cfgmgr.h>
 #include <csutil/csmd5.h>
 
-#include "authentserver.h"
-#include "adminmanager.h"
-#include "util/psdatabase.h"
+#include <physicallayer/entity.h>
+#include <propclass/mesh.h>
 
-#include "weathermanager.h"
-#include "net/messages.h"
-#include "net/msghandler.h"
-#include "client.h"
-#include "playergroup.h"
-#include "gem.h"
+//=============================================================================
+// Project Includes
+//=============================================================================
 #include "bulkobjects/psaccountinfo.h"
 #include "bulkobjects/psguildinfo.h"
 #include "bulkobjects/pscharacterlist.h"
-#include "clients.h"
-//#include "util/serverconsole.h"
+#include "bulkobjects/pscharacterloader.h"
+#include "bulkobjects/pscharacter.h"
+
+#include "net/messages.h"
+#include "net/msghandler.h"
+
+#include "util/psdatabase.h"
 #include "util/log.h"
+#include "util/eventmanager.h"
+
+//=============================================================================
+// Local Includes
+//=============================================================================
+#include "authentserver.h"
+#include "adminmanager.h"
+#include "weathermanager.h"
+#include "client.h"
+#include "playergroup.h"
+#include "gem.h"
+#include "clients.h"
 #include "psserver.h"
 #include "events.h"
 #include "cachemanager.h"
-#include "bulkobjects/pscharacterloader.h"
-#include "bulkobjects/pscharacter.h"
 #include "globals.h"
-#include "util/eventmanager.h"
 #include "icachedobject.h"
+
 
 class CachedAuthMessage : public iCachedObject
 {
@@ -616,7 +627,7 @@ BanManager::BanManager()
         newentry->account = account;
         newentry->end = end;
         newentry->start = result[i].GetUInt32("start");
-        newentry->ip_range = result[i]["ip_range"];
+        newentry->ipRange = result[i]["ip_range"];
         newentry->reason = result[i]["reason"];
         
         // If account ban, add to list
@@ -624,7 +635,7 @@ BanManager::BanManager()
             banList_IDHash.Put(newentry->account,newentry);
 
         // If IP range ban, add to list
-        if ( newentry->ip_range.Length() && (!end || now < newentry->start + IP_RANGE_BAN_TIME) )
+        if ( newentry->ipRange.Length() && (!end || now < newentry->start + IP_RANGE_BAN_TIME) )
             banList_IPRList.Push(newentry);
     }
 }
@@ -663,7 +674,7 @@ bool BanManager::AddBan(uint32 account, csString ipRange, time_t duration, csStr
     newentry->account = account;
     newentry->start = now;
     newentry->end = now + duration;
-    newentry->ip_range = ipRange;
+    newentry->ipRange = ipRange;
     newentry->reason = reason;
 
     csString escaped;
@@ -672,7 +683,7 @@ bool BanManager::AddBan(uint32 account, csString ipRange, time_t duration, csStr
                           "(account,ip_range,start,end,reason) "
                           "VALUES ('%u','%s','%u','%u','%s')",
                           newentry->account,
-                          newentry->ip_range.GetData(),
+                          newentry->ipRange.GetData(),
                           newentry->start,
                           newentry->end,
                           escaped.GetData() );
@@ -685,7 +696,7 @@ bool BanManager::AddBan(uint32 account, csString ipRange, time_t duration, csStr
     if (newentry->account)
         banList_IDHash.Put(newentry->account,newentry);
 
-    if (newentry->ip_range.Length())
+    if (newentry->ipRange.Length())
         banList_IPRList.Push(newentry);
 
     return true;
@@ -699,7 +710,7 @@ BanEntry* BanManager::GetBanByAccount(uint32 account)
 BanEntry* BanManager::GetBanByIPRange(csString IPRange)
 {
     for (size_t i=0; i<banList_IPRList.GetSize(); i++)
-        if ( IPRange.StartsWith(banList_IPRList[i]->ip_range) )
+        if ( IPRange.StartsWith(banList_IPRList[i]->ipRange) )
             return banList_IPRList[i];
     return NULL;
 }
