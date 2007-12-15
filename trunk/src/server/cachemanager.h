@@ -20,22 +20,30 @@
 #ifndef __CACHEMANAGER_H__
 #define __CACHEMANAGER_H__
 
-#include "csutil/array.h"
+//=============================================================================
+// Crystal Space Includes
+//=============================================================================
+#include <csutil/array.h>
 #include <csutil/hash.h>
 #include <csgeom/vector3.h>
 
+//=============================================================================
+// Project Space Includes
+//=============================================================================
 #include "util/slots.h"
-#include "bulkobjects/pscharacter.h"
-#include "bulkobjects/pssectorinfo.h"
 #include "util/gameevent.h"
+
+#include "bulkobjects/pscharacter.h"
+
+//=============================================================================
+// Local Includes
+//=============================================================================
 #include "icachedobject.h"
 
 class psSectorInfo;
 class Client;
 class psGuildInfo;
 class psGuildAlliance;
-struct psTrait;
-struct psRaceInfo;
 class psSkillInfo;
 class psAccountInfo;
 class psQuest;
@@ -44,14 +52,17 @@ class psTradeProcesses;
 class psTradeCombinations;
 class psTradeTransformations;
 class psTradeAutoContainers;
+class psItemSet;
+class psCommandManager;
+
 struct CraftTransInfo;
 struct CombinationConstruction;
 struct CombinationSet;
 struct CraftComboInfo;
 struct psWay;
 struct Faction;
-class psItemSet;
-class psCommandManager;
+struct psTrait;
+struct psRaceInfo;
 struct Stance;
 
 struct ArmorVsWeapon

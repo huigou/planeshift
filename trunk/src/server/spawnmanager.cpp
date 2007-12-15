@@ -37,6 +37,7 @@
 #include "bulkobjects/psitem.h"
 #include "bulkobjects/psitemstats.h"
 #include "bulkobjects/psraceinfo.h"
+#include "bulkobjects/pssectorinfo.h"
 #include "cachemanager.h"
 #include "client.h"
 #include "clients.h"

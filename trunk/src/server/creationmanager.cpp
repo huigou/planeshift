@@ -27,6 +27,7 @@
 
 #include "bulkobjects/psraceinfo.h"
 #include "bulkobjects/pscharacterloader.h"
+#include "bulkobjects/pssectorinfo.h"
 
 #include "net/msghandler.h"
 #include "net/charmessages.h"

@@ -20,29 +20,40 @@
 
 #ifndef __GEM_H__
 #define __GEM_H__
-
+//=============================================================================
+// Crystal Space Includes
+//=============================================================================
 #include <iutil/vfs.h>
 #include <csutil/csstring.h>
 #include <csutil/hash.h>
 #include <csutil/weakreferenced.h>
 
-//#include "engine/celbase.h"
+//=============================================================================
+// Project Space Includes
+//=============================================================================
 #include "bulkobjects/pscharacter.h"
-//#include "playergroup.h"
+
 #include "util/gameevent.h"
 #include "util/consoleout.h"
+
+#include "net/npcmessages.h"  // required for psNPCCommandsMessage::PerceptionType
+
+//=============================================================================
+// Local Space Includes
+//=============================================================================
 #include "msgmanager.h"
 #include "deathcallback.h"
-//#include "groupmanager.h"
-
-//#include <physicallayer/entity.h>
 
 struct iCelPlLayer;
 struct iCelEntityList;
 struct iCelEntity;
-class ProximityList;
 struct iPcLinearMovement;
 struct iPcNPCDialog;
+struct iPcCharacterData;
+struct iPcMesh;
+struct iMeshWrapper;
+
+class ProximityList;
 class psServerCharManager;
 class EntityManager;
 class gemObject;
@@ -50,7 +61,6 @@ class PlayerGroup;
 class psDatabase;
 class psItem;
 class csMatrix3;
-struct iPcCharacterData;
 class NPCManager;
 class psGlyphList;
 class FactionSet;
@@ -60,42 +70,27 @@ class psAllEntityPosMessage;
 class psActionLocation;
 class MathScript;
 class gemItem;
-
-#include <net/npcmessages.h>  // required for psNPCCommandsMessage::PerceptionType
+class gemActor;
+class gemNPC;
+class ClientConnectionSet;
+class PublishVector;
 
 #define BUFF_INDICATOR          "+"
 #define DEBUFF_INDICATOR        "-"
 
 #define UNSTICK_TIME 15000
 
-class gemActor;
-class gemNPC;
-class gemItem;
 
 /**
 * This class holds the refs to the core factories, etc in CEL.
 */
 class GEMSupervisor : public MessageManager, public Singleton<GEMSupervisor>
 {
-protected:
-    csHash<gemObject *> entities_by_cel_id;
-    csHash<gemObject *> entities_by_ps_id;
-    int                 count_players;
-
-    PS_ID               nextEID;
-    csList<PS_ID>       freeListEID;
-    unsigned int        freeListEIDLength;
-    
-    void FreeEID(PS_ID eid);
-    PS_ID GetEID();
-
 public:
     iObjectRegistry*        object_reg;
     csRef<iCelPlLayer>      pl;
     psDatabase             *database;
     NPCManager             *npcmanager;
-
-public:
 
     GEMSupervisor(iObjectRegistry *objreg,
         iCelPlLayer *player,
@@ -148,15 +143,21 @@ public:
     void Teleport( gemObject* object, float x, float y, float z, float rot, const char* sectorname );
 
     void HandleMessage(MsgEntry *me,Client *client);
+
+protected:
+    csHash<gemObject *> entities_by_cel_id;
+    csHash<gemObject *> entities_by_ps_id;
+    int                 count_players;
+
+    PS_ID               nextEID;
+    csList<PS_ID>       freeListEID;
+    unsigned int        freeListEIDLength;
+    
+    void FreeEID(PS_ID eid);
+    PS_ID GetEID();
+    
 };
 
-
-class gemActor;
-class gemNPC;
-class ClientConnectionSet;
-class PublishVector;
-struct iPcMesh;
-struct iMeshWrapper;
 
 /**
 * A gemObject is any solid, graphical object visible in PS with normal physics
@@ -164,35 +165,6 @@ struct iMeshWrapper;
 */
 class gemObject : public iDeleteNotificationObject, public CS::Utility::WeakReferenced
 {
-protected:
-    bool valid;                             // Is object fully loaded
-//    csRef<gemObjectSafe> self_reference;    // Placeholder for ref 1 of saferef
-    csRef<iCelEntity> entity;               // link to CEL entity for CEL's purposes
-    csRef<iPcMesh> pcmesh;                  // link to CEL mesh class
-    ProximityList *proxlist;                // Proximity List for this object
-    csString name;                          // Name of this object, used mostly for debugging
-    static GEMSupervisor *cel;              // Static ptr back to main collection of all objects
-    int worldInstance;                      // Only objects which match instances can see each other
-    csVector3 pos;                          // Position in 3d space
-    float yRot;                             // Left-Right rotation, in radians
-    iSector *sector;                        // Ptr to the CS sector inhabited
-    bool is_alive;                          // Flag indicating whether object is alive or not
-    csString factname;                      // Name of CS Mesh Factory used to create this object
-    csString filename;                      // VFS Filename of mesh
-    uint32 gemID;                           // Unique identifier for object
-
-    csArray<iDeleteObjectCallback*> receivers;  // List of objects which are to be notified when this object is deleted.
-
-    float prox_distance_desired;        // What is the maximum range of proxlist we want
-    float prox_distance_current;        // What is the current actual range for proxlists (they adjust when the # of objects gets too high)
-
-    bool InitProximityList(float radius,int clientnum);
-
-    bool InitMesh(const char *name,const char *factname,const char *filename,
-        const csVector3& pos,const float rotangle,iSector* room, const char *action);
-
-    float Matrix2YRot(const csMatrix3& mat);
-    float GetAngle(float x, float y);
 
 public:
     gemObject(const char* name, const char* factname,const char* filename,int myinstance,iSector* room,
@@ -296,6 +268,37 @@ public:
 
     virtual bool GetVisibility() { return true; }
     virtual bool SeesObject(gemObject * object, float range) { return false; }
+    
+protected:
+    bool valid;                             // Is object fully loaded
+//    csRef<gemObjectSafe> self_reference;    // Placeholder for ref 1 of saferef
+    csRef<iCelEntity> entity;               // link to CEL entity for CEL's purposes
+    csRef<iPcMesh> pcmesh;                  // link to CEL mesh class
+    ProximityList *proxlist;                // Proximity List for this object
+    csString name;                          // Name of this object, used mostly for debugging
+    static GEMSupervisor *cel;              // Static ptr back to main collection of all objects
+    int worldInstance;                      // Only objects which match instances can see each other
+    csVector3 pos;                          // Position in 3d space
+    float yRot;                             // Left-Right rotation, in radians
+    iSector *sector;                        // Ptr to the CS sector inhabited
+    bool is_alive;                          // Flag indicating whether object is alive or not
+    csString factname;                      // Name of CS Mesh Factory used to create this object
+    csString filename;                      // VFS Filename of mesh
+    uint32 gemID;                           // Unique identifier for object
+
+    csArray<iDeleteObjectCallback*> receivers;  // List of objects which are to be notified when this object is deleted.
+
+    float prox_distance_desired;        // What is the maximum range of proxlist we want
+    float prox_distance_current;        // What is the current actual range for proxlists (they adjust when the # of objects gets too high)
+
+    bool InitProximityList(float radius,int clientnum);
+
+    bool InitMesh(const char *name,const char *factname,const char *filename,
+        const csVector3& pos,const float rotangle,iSector* room, const char *action);
+
+    float Matrix2YRot(const csMatrix3& mat);
+    float GetAngle(float x, float y);
+    
 };
 
 /*

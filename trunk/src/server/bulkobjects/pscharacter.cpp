@@ -59,7 +59,7 @@
 #include "rpgrules/factions.h"
 #include "../introductionmanager.h"
 #include "../progressionmanager.h"
-
+#include "pssectorinfo.h"
 // The sizes and scripts need balancing.  For now, maxSize is disabled.
 #define ENABLE_MAX_CAPACITY 0
 

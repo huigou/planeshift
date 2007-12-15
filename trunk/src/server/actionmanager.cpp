@@ -43,6 +43,7 @@
 #include "util/eventmanager.h"
 
 #include "bulkobjects/psactionlocationinfo.h"
+#include "bulkobjects/pssectorinfo.h"
 
 #include "net/msghandler.h"
 #include "net/messages.h"
