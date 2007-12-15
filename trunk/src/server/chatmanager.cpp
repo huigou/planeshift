@@ -18,32 +18,41 @@
  */
 
 #include <psconfig.h>
-
-#include <physicallayer/entity.h>
-#include <propclass/mesh.h>
-
 #include <string.h>
 #include <memory.h>
 
+//=============================================================================
+// Crystal Space Includes
+//=============================================================================
+#include <physicallayer/entity.h>
+#include <propclass/mesh.h>
+
+//=============================================================================
+// Project Space Includes
+//=============================================================================
 #include "util/serverconsole.h"
+#include "util/log.h"
+#include "util/pserror.h"
+#include "util/eventmanager.h"
+#include "util/strutil.h"
+
+#include "net/msghandler.h"
+
+#include "bulkobjects/psnpcdialog.h"
+#include "bulkobjects/dictionary.h"
+#include "bulkobjects/psguildinfo.h"
+
+//=============================================================================
+// Local Space Includes
+//=============================================================================
 #include "cachemanager.h"
 #include "chatmanager.h"
 #include "clients.h"
 #include "playergroup.h"
 #include "gem.h"
-#include "util/log.h"
-#include "util/pserror.h"
-#include "net/msghandler.h"
-#include "bulkobjects/psnpcdialog.h"
-#include "bulkobjects/dictionary.h"
-#include "bulkobjects/psguildinfo.h"
 #include "globals.h"
 #include "psserver.h"
 #include "npcmanager.h"
-#include "util/eventmanager.h"
-#include "util/strutil.h"
-
-
 
 
 ChatManager::ChatManager()

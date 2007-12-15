@@ -23,11 +23,21 @@
 #ifndef __CHATMANAGER_H__
 #define __CHATMANAGER_H__
 
+//=============================================================================
+// Crystal Space Includes
+//=============================================================================
 #include <csutil/ref.h>
 
+//=============================================================================
+// Project Space Includes
+//=============================================================================
 #include "util/gameevent.h"
+
 #include "net/messages.h"            // Chat Message definitions
-#include "net/msghandler.h"        
+
+//=============================================================================
+// Local Space Includes
+//=============================================================================
 #include "msgmanager.h"             // parent class
 
 class Client;
@@ -66,15 +76,16 @@ protected:
 
     //If this returns true, all went well.
     //If it returns false, the client was muted
-    bool FloodControl(csString& newmessage, Client *client);
+    bool FloodControl(csString& newMessage, Client *client);
 };
+
 
 class psEndChatLoggingEvent : public psGameEvent
 {
 public:
     uint32_t clientnum;
 
-    psEndChatLoggingEvent(uint32_t _clientnum, const int delayticks);
+    psEndChatLoggingEvent(uint32_t clientNum, const int delayTicks);
 
     virtual void Trigger();
 
