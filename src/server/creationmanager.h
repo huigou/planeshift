@@ -18,13 +18,24 @@
  */
 #ifndef PS_CHAR_CREATION_MANAGER_H
 #define PS_CHAR_CREATION_MANAGER_H
+//=============================================================================
+// Crystal Space Includes
+//=============================================================================
 
-#include "msgmanager.h"
+//=============================================================================
+// Project Space Includes
+//=============================================================================
 #include "net/charmessages.h"
+
+
+//=============================================================================
+// Local Space Includes
+//=============================================================================
+#include "msgmanager.h"
 
 enum ReservedNames {NAME_RESERVED_FOR_YOU, NAME_RESERVED, NAME_AVAILABLE};
 
-/* Server manager for character creation.
+/** Server manager for character creation.
  * This guy loads all the data that may be needed to be sent to the client
  * for the character creation.  It loads data from these tables:
  *   race_info
@@ -33,43 +44,7 @@ enum ReservedNames {NAME_RESERVED_FOR_YOU, NAME_RESERVED, NAME_AVAILABLE};
  */
 class psCharCreationManager : MessageManager
 {
-
-private:
-    // Structure to hold the initial CP race values.
-    struct RaceCP
-    {
-        int id;
-        int value;
-    };
-    
-    ////////////////////////////////////////////////////
-    // Structure for cached character creation choices
-    ////////////////////////////////////////////////////
-public:    
-    struct CreationChoice
-    {
-        int id;                     
-        csString name;              
-        csString description;       
-        int choiceArea;
-        int cpCost;
-        csString eventScript;
-    };
-    ////////////////////////////////////////////////////
-private:    
-    //////////////////////////////////////////////////////
-    // Structure for cached character creation life event
-    //////////////////////////////////////////////////////    
-    class LifeEventChoiceServer : public LifeEventChoice
-    {
-    public:
-        csString eventScript;       
-    };        
-    //////////////////////////////////////////////////////    
-    
-    
-public:
-    
+public:        
     psCharCreationManager();
     virtual ~psCharCreationManager();
     
@@ -82,8 +57,6 @@ public:
      */    
     virtual void HandleMessage(MsgEntry *pMsg,Client *client);
     
-    LifeEventChoiceServer* FindLifeEvent( int id );
-    CreationChoice* FindChoice( int id );
     
     bool Validate( psCharUploadMessage& mesg, csString& errorMsg );
 
@@ -112,14 +85,8 @@ protected:
     
     bool LoadLifeEvents();
     
-    RaceCP* raceCPValues;
     int raceCPValuesLength;    // length of the raceCPValues array
-    
-    /// A list of all the for the parent screen.
-    csPDelArray<CreationChoice> parentData;
-    csPDelArray<CreationChoice>  childhoodData;
-    csPDelArray<LifeEventChoiceServer> lifeEvents;
-    
+        
     /** Takes a string name of a choice and converts it to it's enum value.
      * This is useful to have string names in the database ( ie human readable ) but
      * then use them as ints in the application ( ie easier to use ).
@@ -180,6 +147,52 @@ protected:
       *          </UL>
       */
     int IsReserved( const char* playerName, int acctID );
+
+        
+private:
+    // Structure to hold the initial CP race values.
+    struct RaceCP
+    {
+        int id;
+        int value;
+    };        
+    
+    ////////////////////////////////////////////////////
+    // Structure for cached character creation choices
+    ////////////////////////////////////////////////////
+    struct CreationChoice
+    {
+        int id;                     
+        csString name;              
+        csString description;       
+        int choiceArea;
+        int cpCost;
+        csString eventScript;
+    };
+    ////////////////////////////////////////////////////
+
+        
+    //////////////////////////////////////////////////////
+    // Structure for cached character creation life event
+    //////////////////////////////////////////////////////    
+    class LifeEventChoiceServer : public LifeEventChoice
+    {
+    public:
+        csString eventScript;       
+    };        
+    //////////////////////////////////////////////////////    
+
+    LifeEventChoiceServer* FindLifeEvent( int id );
+    CreationChoice* FindChoice( int id );
+    
+    
+    RaceCP* raceCPValues;            
+    
+    /// A list of all the for the parent screen.
+    csPDelArray<CreationChoice> parentData;
+    csPDelArray<CreationChoice>  childhoodData;
+    csPDelArray<LifeEventChoiceServer> lifeEvents;
+        
 };
 
 
