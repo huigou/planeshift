@@ -50,8 +50,8 @@ psEffectObjLabel::psEffectObjLabel(iView * parentView, psEffect2DRenderer * rend
     width.SetSize(NUM_GLYPHS,64);
     for(int i=0; i<256; i++)
     {
-        xpos[i] = (i%8) * 64;
-        ypos[i] = (i/8-5) * 64;
+        xpos[i] = (i%16) * 64;
+        ypos[i] = (i/16-2) * 64;
     }
 }
 
@@ -390,7 +390,7 @@ bool psEffectObjLabel::SetText(int rows, ...)
         const char * text = elemBuffer[i].text;
         for(size_t j=0; j<strlen(text); j++)
         {
-            uint c = toupper(text[j]);
+            uint c =text[j];
             float fx1, fy1, fx2, fy2;
             fx1 = (float)x / maxWidth*3 - 1.5;
             fy1 = (float)y / maxWidth*3;
