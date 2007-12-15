@@ -19,12 +19,22 @@
 #ifndef __ADMINMANAGER_H__
 #define __ADMINMANAGER_H__
 
+//=============================================================================
+// Crystal Space Includes
+//=============================================================================
 #include <csutil/ref.h>
 
+//=============================================================================
+// Project Includes
+//=============================================================================
 #include "net/messages.h"            // Chat Message definitions
-#include "net/msghandler.h"         // Subscriber definition
+
+//=============================================================================
+// Local Includes
+//=============================================================================
 #include "msgmanager.h"             // Parent class
 #include "gmeventmanager.h"
+
 
 class psDatabase;
 class psSpawnManager;
@@ -63,9 +73,7 @@ enum GM_LEVEL
 class AdminManager : public MessageManager
 {
 public:
-
     AdminManager();
-
     virtual ~AdminManager();
 
     virtual void HandleMessage(MsgEntry *pMsg,Client *client);
@@ -319,8 +327,6 @@ protected:
 
     /// List warnings given to account
     void HandleListWarnings(psAdminCmdMessage& msg, AdminCmdData& data, Client *client, gemObject* object );
-
-protected:
 
     /** Adds a petition under the passed user's name to the 'petitions' table in the database
      * Will automatically add the date and time of the petition's submission
