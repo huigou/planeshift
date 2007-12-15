@@ -511,7 +511,7 @@ bool psServer::Initialize(iObjectRegistry* object_reg)
         Debug1(LOG_STARTUP,0,"Server status reporter initialized.\n");
     }
 
-
+    weathermanager->StartTime();
     return true;    
 }
 
