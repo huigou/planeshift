@@ -19,10 +19,15 @@
 #ifndef __AUTHENTICATIONSERVER_H__
 #define __AUTHENTICATIONSERVER_H__
 
+//=============================================================================
+// Crystal Space Includes
+//=============================================================================
 #include <csutil/ref.h>
 #include <csutil/hash.h>
 
-//#include "net/message.h"        // Subscriber base class
+//=============================================================================
+// Local Includes
+//=============================================================================
 #include "msgmanager.h"         // Parent class
 
 class psMsgStringsMessage;
@@ -33,9 +38,10 @@ class Client;
 
 struct BanEntry
 {
-    uint32 account;
-    csString ip_range;
-    time_t start, end;
+    uint32   account;
+    csString ipRange;
+    time_t   start;
+    time_t   end;
     csString reason;
 };
 
@@ -69,57 +75,6 @@ protected:
  */
 class psAuthenticationServer : public MessageManager
 {
-protected:
-
-    /// Holds a list of all the currently connect clients.
-    ClientConnectionSet *clients;
-    
-    /// Is the user manager.
-    UserManager *usermanager;
-    
-    /// Is a manager for the guilds.
-    GuildManager *guildmanager;
-
-    /// This holds a large message which is sent the same way to every client.
-    psMsgStringsMessage *msgstringsmessage;
-
-    /// Manages banned users and IP ranges
-    BanManager banmanager;
-
-    /**
-     * Common preconditions for HandlePreAuthent and HandleAuthent
-     */
-    bool CheckAuthenticationPreCondition(int clientnum, bool netversionok, const char* sUser);
-    
-    /** Handles an authenticate message from the message queue.
-     * This method recieves a authenticate message which is passed from the
-     * HandleMessage() method. uses the following steps to atuthenticate a
-     * client. Sends a psAuthMessageApproved message back to the client if it
-     * was successfully authenticated and adds the client to the current
-     * client list.
-     *
-     * @param me: Is a message entry that contains the authenticate message.
-     * @see psAuthMessageApproved 
-     */
-    void HandleAuthent(MsgEntry *me);
-    /*  This just questsions a random number (clientnum) from server 
-    *   It is used for authenticating*/
-    void HandlePreAuthent(MsgEntry *me);
-    
-    /** Handles a disconnect message from the message queue.
-     * This will remove the player from the server using
-     * psServer::RemovePlayer() 
-     *
-     * @param me: Is the disconnect message that was recieved.
-     * @param msg: Is the reason for the disconnect.
-     */
-    void HandleDisconnect(MsgEntry* me,const char *msg);
-    
-    /** Handles a message where a client picks his character to play with.
-     *  Can remove the player using psServer::RemovePlayer if invalid.
-     */
-    void HandleAuthCharacter(MsgEntry* me);
-
 public:
 
     /** Initializing Constructor.
@@ -182,6 +137,58 @@ public:
     void HandleStatusUpdate(MsgEntry *me, Client *client);
     
     BanManager* GetBanManager() { return &banmanager; }
+
+
+protected:
+
+    /// Holds a list of all the currently connect clients.
+    ClientConnectionSet *clients;
+    
+    /// Is the user manager.
+    UserManager *usermanager;
+    
+    /// Is a manager for the guilds.
+    GuildManager *guildmanager;
+
+    /// This holds a large message which is sent the same way to every client.
+    psMsgStringsMessage *msgstringsmessage;
+
+    /// Manages banned users and IP ranges
+    BanManager banmanager;
+
+    /**
+     * Common preconditions for HandlePreAuthent and HandleAuthent
+     */
+    bool CheckAuthenticationPreCondition(int clientnum, bool netversionok, const char* sUser);
+    
+    /** Handles an authenticate message from the message queue.
+     * This method recieves a authenticate message which is passed from the
+     * HandleMessage() method. uses the following steps to atuthenticate a
+     * client. Sends a psAuthMessageApproved message back to the client if it
+     * was successfully authenticated and adds the client to the current
+     * client list.
+     *
+     * @param me: Is a message entry that contains the authenticate message.
+     * @see psAuthMessageApproved 
+     */
+    void HandleAuthent(MsgEntry *me);
+    /*  This just questsions a random number (clientnum) from server 
+    *   It is used for authenticating*/
+    void HandlePreAuthent(MsgEntry *me);
+    
+    /** Handles a disconnect message from the message queue.
+     * This will remove the player from the server using
+     * psServer::RemovePlayer() 
+     *
+     * @param me: Is the disconnect message that was recieved.
+     * @param msg: Is the reason for the disconnect.
+     */
+    void HandleDisconnect(MsgEntry* me,const char *msg);
+    
+    /** Handles a message where a client picks his character to play with.
+     *  Can remove the player using psServer::RemovePlayer if invalid.
+     */
+    void HandleAuthCharacter(MsgEntry* me);    
 };
 
 #endif
