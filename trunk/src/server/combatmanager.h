@@ -20,9 +20,21 @@
 #ifndef __COMBATMANAGER_H__
 #define __COMBATMANAGER_H__
 
+//=============================================================================
+// Crystal Space Includes
+//=============================================================================
 #include <csutil/randomgen.h>
 #include <csutil/sysfunc.h>
+
+//=============================================================================
+// Project Includes
+//=============================================================================
+
+//=============================================================================
+// Local Includes
+//=============================================================================
 #include "msgmanager.h"
+
 
 #define SECONDS_BEFORE_SPARING_DEFEATED 30
 
@@ -53,28 +65,6 @@ class EntityManager;
  */
 class psCombatManager : public MessageManager
 {
-protected:
-//    psSpawnManager *spawnmanager;
-    csRandomGen* randomgen;
-    LocationType* pvp_region;
-
-    MathScriptEngine *script_engine; /// Scripting engine handles all RPG calculations.
-    MathScript *calc_damage;         /// This is the particular calculation for damage.
-    MathScriptVar *var_IAH;          /// IAH == If Attack Hit
-    MathScriptVar *var_AHR;          /// AHR == Attack Hit Roll
-    MathScriptVar *var_Blocked;      /// Blocked == Blocked by weapon
-    MathScriptVar *var_QOH;          /// QOH == Quality Of Hit
-    MathScriptVar *var_FinalDmg;     /// Actual Damage done, if any
-    MathScriptVar *var_AttackWeapon;
-    //MathScriptVar *var_AttackWeaponSecondary; TODO
-    MathScriptVar *var_TargetAttackWeapon;
-    //MathScriptVar *var_TargetAttackWeaponSecondary; TODO
-    MathScriptVar *var_Target;
-    MathScriptVar *var_Attacker;
-    MathScriptVar *var_AttackLocationItem;
-
-    void HandleDeathEvent(MsgEntry *me);
-
 public:
 
     psCombatManager();
@@ -120,16 +110,42 @@ public:
     
     csArray<INVENTORY_SLOT_NUMBER> targetLocations;
     
+    
+protected:
+//    psSpawnManager *spawnmanager;
+    csRandomGen* randomgen;
+    LocationType* pvp_region;
+
+    MathScriptEngine *script_engine; /// Scripting engine handles all RPG calculations.
+    MathScript *calc_damage;         /// This is the particular calculation for damage.
+    MathScriptVar *var_IAH;          /// IAH == If Attack Hit
+    MathScriptVar *var_AHR;          /// AHR == Attack Hit Roll
+    MathScriptVar *var_Blocked;      /// Blocked == Blocked by weapon
+    MathScriptVar *var_QOH;          /// QOH == Quality Of Hit
+    MathScriptVar *var_FinalDmg;     /// Actual Damage done, if any
+    MathScriptVar *var_AttackWeapon;
+    //MathScriptVar *var_AttackWeaponSecondary; TODO
+    MathScriptVar *var_TargetAttackWeapon;
+    //MathScriptVar *var_TargetAttackWeaponSecondary; TODO
+    MathScriptVar *var_Target;
+    MathScriptVar *var_Attacker;
+    MathScriptVar *var_AttackLocationItem;
+
+    void HandleDeathEvent(MsgEntry *me);
+
+    
 };
+
 
 class psSpareDefeatedEvent : public psGameEvent
 {
-protected:
-    csWeakRef<Client> loser;
-
 public:
     psSpareDefeatedEvent(gemActor *losr);
     void Trigger();
+
+protected:
+    csWeakRef<Client> loser;
+    
 };
 
 #endif

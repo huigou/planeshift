@@ -18,22 +18,35 @@
  */
 
 #include <psconfig.h>
+//=============================================================================
+// Crystal Space Includes
+//=============================================================================
 #include <csutil/xmltiny.h>
 
 #include <physicallayer/entity.h>
 #include <propclass/mesh.h>
 
-#include "psserver.h"
-#include "playergroup.h"
+//=============================================================================
+// Project Includes
+//=============================================================================
 #include "net/msghandler.h"
 #include "net/messages.h"
-#include "events.h"
-#include "gem.h"
-#include "entitymanager.h"
+
 #include "util/eventmanager.h"
 #include "util/location.h"
 #include "util/mathscript.h"
 #include "util/serverconsole.h"
+
+#include "bulkobjects/psitem.h"
+
+//=============================================================================
+// Local Includes
+//=============================================================================
+#include "psserver.h"
+#include "playergroup.h"
+#include "events.h"
+#include "gem.h"
+#include "entitymanager.h"
 #include "psproxlist.h"
 #include "spawnmanager.h"
 #include "progressionmanager.h"
@@ -41,7 +54,6 @@
 #include "npcmanager.h"
 #include "combatmanager.h"
 #include "globals.h"
-#include "bulkobjects/psitem.h"
 #include "netmanager.h"
 
 /// This #define determines how far away people will get detailed combat events.
@@ -68,10 +80,6 @@
  */
 class psCombatGameEvent : public psGameEvent
 {
-protected:
-    psCombatManager *combatmanager;
-    int action;
-
 public:
 
     csWeakRef<gemObject>  attacker;  ///< Entity who instigated this attack
@@ -140,6 +148,10 @@ public:
     int GetTargetID()               { return TargetCID; };
     int GetAttackerID()             { return AttackerCID; };
     int GetAttackResult()           { return AttackResult; };
+
+protected:
+    psCombatManager *combatmanager;
+    int action;    
 };
 
 psCombatManager::psCombatManager() : pvp_region(NULL)
