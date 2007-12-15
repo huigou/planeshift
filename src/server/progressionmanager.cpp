@@ -46,6 +46,7 @@
 #include "bulkobjects/pstrainerinfo.h"
 #include "bulkobjects/psraceinfo.h"
 #include "bulkobjects/psactionlocationinfo.h"
+#include "bulkobjects/pssectorinfo.h"
 
 #include "net/messages.h"
 #include "net/npcmessages.h"

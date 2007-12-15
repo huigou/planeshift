@@ -88,6 +88,7 @@
 #include "bulkobjects/psraceinfo.h"
 #include "bulkobjects/psitem.h"
 #include "bulkobjects/psactionlocationinfo.h"
+#include "bulkobjects/pssectorinfo.h"
 
 EntityManager::EntityManager()
 {

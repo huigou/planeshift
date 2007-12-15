@@ -18,29 +18,39 @@
  */
 
 #include <psconfig.h>
+//=============================================================================
+// Crystal Space Includes
+//=============================================================================
 
+//=============================================================================
+// Project Space Includes
+//=============================================================================
 #include "util/log.h"
 #include "util/stringarray.h"
 #include "util/serverconsole.h"
-
-#include "cachemanager.h"
-#include "commandmanager.h"
-#include "questmanager.h"
 #include "util/eventmanager.h"
 #include "util/psdatabase.h"
-#include "globals.h"
+
 #include "bulkobjects/psraceinfo.h"
 #include "bulkobjects/psguildinfo.h"
 #include "bulkobjects/pstrade.h"
 #include "bulkobjects/psaccountinfo.h"
-#include "client.h"
+#include "bulkobjects/pssectorinfo.h"
 #include "bulkobjects/psquest.h"
 #include "bulkobjects/psmerchantinfo.h"
 #include "bulkobjects/psspell.h"
 #include "bulkobjects/psglyph.h"
+
 #include "rpgrules/factions.h"
 
-
+//=============================================================================
+// Local Space Includes
+//=============================================================================
+#include "cachemanager.h"
+#include "commandmanager.h"
+#include "questmanager.h"
+#include "client.h"
+#include "globals.h"
 
 CacheManager::CacheManager()
 {

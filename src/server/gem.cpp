@@ -18,7 +18,9 @@
 */
 
 #include <psconfig.h>
-
+//=============================================================================
+// Crystal Space Includes
+//=============================================================================
 #include <iengine/engine.h>
 #include <iengine/campos.h>
 #include <iengine/mesh.h>
@@ -37,7 +39,6 @@
 #include <imesh/object.h>
 #include <imesh/spritecal3d.h>
 #include <imesh/nullmesh.h>
-#include <iengine/mesh.h>
 #include <csqsqrt.h>  // CS quick square root
 
 #include <physicallayer/pl.h>
@@ -60,19 +61,39 @@
 #include <propclass/linmove.h>
 #include <propclass/colldet.h>
 
-#include "client.h"
-#include "clients.h"
-#include "playergroup.h"
+//=============================================================================
+// Project Space Includes
+//=============================================================================
+#include "bulkobjects/psraceinfo.h"
+#include "bulkobjects/servervitals.h"
+#include "bulkobjects/psactionlocationinfo.h"
+#include "bulkobjects/pssectorinfo.h"
+#include "bulkobjects/psnpcdialog.h"
+#include "bulkobjects/pscharacter.h"
+
+#include "rpgrules/factions.h"
+
 #include "util/gameevent.h"
-#include "net/message.h"
-#include "engine/netpersist.h"
-#include "net/msghandler.h"
 #include "util/pserror.h"
 #include "util/strutil.h"
 #include "util/eventmanager.h"
 #include "util/psutil.h"
+#include "util/serverconsole.h"
+#include "util/mathscript.h"
+
 #include "net/npcmessages.h"
+#include "net/message.h"
+#include "net/msghandler.h"
+
 #include "engine/psworld.h"
+#include "engine/netpersist.h"
+
+//=============================================================================
+// Local Space Includes
+//=============================================================================
+#include "client.h"
+#include "clients.h"
+#include "playergroup.h"
 #include "gem.h"
 #include "invitemanager.h"
 #include "chatmanager.h"
@@ -84,7 +105,6 @@
 #include "events.h"
 #include "psserverdr.h"
 #include "psserver.h"
-#include "util/serverconsole.h"
 #include "weathermanager.h"
 #include "npcmanager.h"
 #include "netmanager.h"
@@ -92,17 +112,9 @@
 #include "progressionmanager.h"
 #include "workmanager.h"
 #include "cachemanager.h"
-#include "bulkobjects/psraceinfo.h"
-#include "bulkobjects/servervitals.h"
-#include "bulkobjects/psactionlocationinfo.h"
-
 #include "psproxlist.h"
-#include "bulkobjects/psnpcdialog.h"
-#include "rpgrules/factions.h"
 #include "spellmanager.h"
-#include "bulkobjects/pscharacter.h"
 #include "psserverchar.h"
-#include "util/mathscript.h"
 #include "adminmanager.h"
 #include "commandmanager.h"
 #include "combatmanager.h"

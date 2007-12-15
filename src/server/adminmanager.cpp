@@ -48,6 +48,7 @@
 #include "bulkobjects/psmerchantinfo.h"
 #include "bulkobjects/psactionlocationinfo.h"
 #include "bulkobjects/psitem.h"
+#include "bulkobjects/pssectorinfo.h"
 
 #include "rpgrules/factions.h"
 

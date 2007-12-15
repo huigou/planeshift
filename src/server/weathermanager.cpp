@@ -28,6 +28,7 @@
 #include "netmanager.h"
 #include "client.h"
 #include "gem.h"
+#include "bulkobjects/pssectorinfo.h"
 #include "util/eventmanager.h"
 
 //#define WEATHER_DEBUG

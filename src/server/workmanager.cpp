@@ -42,6 +42,7 @@
 #include "bulkobjects/psmerchantinfo.h"
 #include "bulkobjects/psraceinfo.h"
 #include "bulkobjects/pstrade.h"
+#include "bulkobjects/pssectorinfo.h"
 #include "cachemanager.h"
 #include "workmanager.h"
 #include "globals.h"
