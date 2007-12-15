@@ -25,13 +25,11 @@
 #include "util/growarray.h"
 #include "util/gameevent.h"
 
-#include "net/messages.h"            // Message definitions
 
 #define GAME_HOUR (10*60*1000)
 
 class psWeatherGameEvent;
-
-#include "bulkobjects/pssectorinfo.h"
+class psSectorInfo;
 
 /**
  * This class handles generation of any and all weather events in the game,
@@ -39,13 +37,6 @@ class psWeatherGameEvent;
  */
 class WeatherManager
 {
-protected:
-    csRandomGen* randomgen;
-    int current_daynight;
-
-    csArray<psWeatherGameEvent*> ignored; // Used for overriding commands like /rain
-    csArray<psWeatherGameEvent*> events; // Ugly, but we need a copy of our events
-
 public:
     WeatherManager();
     ~WeatherManager();
@@ -69,6 +60,18 @@ public:
     void SendClientCurrentTime(int cnum);
     void UpdateClient(uint32_t cnum);
     int GetCurrentTime() {return current_daynight;}
+    
+    /** Look into the database for the saved time.
+      * This starts the event pushing for the time.
+      */
+    void StartTime();
+    
+protected:
+    csRandomGen* randomgen;
+    int current_daynight;
+
+    csArray<psWeatherGameEvent*> ignored; // Used for overriding commands like /rain
+    csArray<psWeatherGameEvent*> events; // Ugly, but we need a copy of our events    
 };
 
 /**
@@ -76,16 +79,7 @@ public:
  */
 class psWeatherGameEvent : public psGameEvent
 {
-protected:
-    WeatherManager *weathermanager;
-    
 public:
-    int cr,cg,cb;
-    int type, value, duration,fade;
-    csString sector;
-    psSectorInfo *si;
-    uint clientnum;
-
     psWeatherGameEvent(WeatherManager *mgr,
                        int delayticks,
                        int eventtype,
@@ -102,6 +96,18 @@ public:
     virtual void Trigger();  // Abstract event processing function
 
     const char *GetType();
+
+    int cr,cg,cb;
+    int type, value, duration,fade;
+    csString sector;
+    psSectorInfo *si;
+    uint clientnum;
+
+        
+protected:
+    WeatherManager *weathermanager;
+    
+    
 };
 
 #endif

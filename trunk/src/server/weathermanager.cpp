@@ -54,11 +54,14 @@ void WeatherManager::Initialize()
         StartWeather(si);
 
     }
+}
 
+void WeatherManager::StartTime()
+{
     csString lastTime;
     psserver->GetServerOption("last_time", lastTime);
 
-    // Start the time of day clock
+    // Start the time of day clock  
     QueueNextEvent(0,psWeatherMessage::DAYNIGHT,atoi(lastTime.GetDataSafe()),0,0,"",NULL);
 }
 
@@ -207,7 +210,7 @@ void WeatherManager::HandleWeatherEvent(psWeatherGameEvent *event)
             info.has_lightning    = false;
 
             info.downfall_drops = event->value;
-
+            
             // Save current fog and calculate new.
             if (event->value)
             {
