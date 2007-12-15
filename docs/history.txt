@@ -1,3 +1,8 @@
+*** 2007-12-24 by Roland Schulz
+- Added new effect pseffectobjlabel to replace entity labels.
+  Will avoid prerendering of labels, instead putting them into a mesh
+  and texturing the mesh from a font table.
+
 *** 2007-12-14 by Andrew Craig
 - Added ability to setup duration events.  This is done using:
     <evt duration="time in ticks">
