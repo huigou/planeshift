@@ -18,29 +18,38 @@
  */
  
 #include <psconfig.h>
-
+//=============================================================================
+// Crystal Space Includes
+//=============================================================================
 #include <csutil/util.h>
 
 #include <physicallayer/entity.h>
 #include <propclass/mesh.h>
-#include "usermanager.h"
 
+//=============================================================================
+// Project Space Includes
+//=============================================================================
+#include "bulkobjects/pscharacter.h"
+#include "bulkobjects/psitem.h"
+
+#include "util/psscf.h"
+#include "util/consoleout.h"
+#include "util/psdatabase.h"
+
+//=============================================================================
+// Local Space Includes
+//=============================================================================
+#include "usermanager.h"
 #include "client.h"
 #include "psserver.h"
 #include "playergroup.h"
 #include "globals.h"
 #include "netmanager.h"
-#include "bulkobjects/pscharacter.h"
-#include "bulkobjects/psitem.h"
 #include "combatmanager.h"
-#include "util/psscf.h"
-#include "util/consoleout.h"
 #include "events.h"
 #include "advicemanager.h"
 #include "entitymanager.h"
-#include "util/psdatabase.h"
 #include "cachemanager.h"
-//#include "entitymanager.h"
 
 Client::Client ()
     : accumulatedLag(0), zombie(false), ready(false), mute(false), 
@@ -49,28 +58,26 @@ Client::Client ()
       pathEffectID(0), pathPathID(0), pathIsDisplaying(false),
       locationEffectID(0), locationIsDisplaying(false)
 {
-    actor = NULL;
-    target = NULL;
-    exchangeID = 0;
-    isAdvisor = false;
-    isFrozen = false;
+    actor           = 0;
+    target          = 0;
+    exchangeID      = 0;
+    advisorPoints   = 0;
+    lastInviteTime  = 0;
+    spamPoints      = 0;
+    clientnum       = 0;    
+    flags           = 0;
 
-   	// pets[0] is a special case for the players familiar.
-	pets.Insert( 0, (uint32)-1 );
-
-    lastInviteTime = 0;
-    lastInviteResult = true;
-    spamPoints = 0;
-    hasBeenWarned = false;
-    hasBeenPenalized = false;
     nextFloodHistoryIndex = 0;
-
-    advisorPoints = 0;
-
-    clientnum = 0;
-    valid = false;
-	flags = 0;
-
+    
+    isAdvisor           = false;
+    isFrozen            = false;    
+    lastInviteResult    = true;
+    hasBeenWarned       = false;
+    hasBeenPenalized    = false;    
+    valid               = false;
+    
+    // pets[0] is a special case for the players familiar.
+    pets.Insert( 0, (uint32)-1 );
 }
 
 // Constructor for key search of bin tree
@@ -166,14 +173,14 @@ void Client::SetTargetObject(gemObject* newobject, bool updateClientGUI)
 void Client::SetFamiliar( gemActor *familiar ) 
 { 
     if ( familiar )
-	    pets[0] = familiar->GetGemID(); 
+        pets[0] = familiar->GetGemID(); 
     else
         pets[0] = (uint32)-1;
 }
 
 gemActor* Client::GetFamiliar() 
 {
-uint32 id;
+    uint32 id;
 
     id = pets[ 0 ];
     if ( id != (uint32)-1 )
@@ -186,11 +193,11 @@ uint32 id;
 
 void Client::AddPet( gemActor *pet ) 
 { 
-	pets.Push( pet->GetGemID() ); 
+    pets.Push( pet->GetGemID() ); 
 }
 void Client::RemovePet( size_t index ) 
 { 
-	pets[index] = (uint32)-1; 
+    pets[index] = (uint32)-1; 
 }
 
 gemActor* Client::GetPet( size_t index ) 
@@ -450,29 +457,31 @@ bool Client::CanTake(psItem* item)
     if (!item)
         return false;
 
-	// Check for npc-owned container
-	if (item->GetContainerID() && GetSecurityLevel() < 22)
-	{
-		gemObject *gemcont = GEMSupervisor::GetSingleton().FindItemEntity(item->GetContainerID());
-		if (gemcont)
-		{
-			psItem *cont = gemcont->GetItem();
-			if (cont->GetIsNpcOwned())
-				return false;
-		}
-	}
+    // Check for npc-owned container
+    if (item->GetContainerID() && GetSecurityLevel() < 22)
+    {
+        gemObject *gemcont = GEMSupervisor::GetSingleton().FindItemEntity(item->GetContainerID());
+        if (gemcont)
+        {
+            psItem *cont = gemcont->GetItem();
+            if (cont->GetIsNpcOwned())
+                return false;
+        }
+    }
 
     // Allow if the item is pickupable and either: public, guarded by the character, or the guarding character is offline
     unsigned int guard = item->GetGuardingCharacterID();
     gemActor* guardingActor = GEMSupervisor::GetSingleton().FindPlayerEntity(guard);
 
     if ((guard == 0 || 
-		 guard == GetCharacterData()->GetCharacterID() || 
-		 !guardingActor
+         guard == GetCharacterData()->GetCharacterID() || 
+         !guardingActor
          )
-		 && !item->GetIsNpcOwned() && !item->GetIsNoPickup()
-		)
+         && !item->GetIsNpcOwned() && !item->GetIsNoPickup()
+        )
+    {        
         return true;
+    }        
 
     if (guard && guardingActor)
     {
