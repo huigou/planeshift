@@ -54,18 +54,17 @@
 //=============================================================================
 // Application Includes
 //=============================================================================
+#include "globals.h"
 #include "adminmanager.h"
 #include "spawnmanager.h"
 #include "chatmanager.h"
 #include "marriagemanager.h"
 #include "gem.h"
 #include "clients.h"
-#include "psserver.h"
 #include "playergroup.h"
 #include "entitymanager.h"
 #include "psserver.h"
 #include "usermanager.h"
-#include "globals.h"
 #include "cachemanager.h"
 #include "combatmanager.h"
 #include "netmanager.h"
@@ -81,7 +80,6 @@
 #include "actionmanager.h"
 #include "progressionmanager.h"
 
-#include "iserver/idal.h"
 
 // Show only items up to this ID when using the item spawn GUI (hide randomly generated items with IDs set above this)
 #define SPAWN_ITEM_ID_CEILING 10000
@@ -186,7 +184,8 @@ bool AdminManager::AdminCmdData::DecodeAdminCmdMessage(MsgEntry *pMsg, psAdminCm
     if ( command == "/updaterespawn" )
     {
         return true;
-    } else if (command == "/deletechar")
+    } 
+    else if (command == "/deletechar")
     {
         zombie = words[1];
         requestor = words[2];
@@ -1148,7 +1147,9 @@ void AdminManager::HandleLoadQuest(psAdminCmdMessage& msg, AdminCmdData& data, C
         psserver->SendSystemError(client->GetClientNum(), psserver->questmanager->LastError());
     }        
     else
+    {
         psserver->SendSystemError(client->GetClientNum(), "Quest <%s> loaded", data.text.GetData());                    
+    }        
 }
 
 
@@ -1156,7 +1157,10 @@ gemObject* AdminManager::FindObjectByString(const csString& str)
 {
     gemObject* found = NULL;
     GEMSupervisor *gem = GEMSupervisor::GetSingletonPtr();
-    if (!gem) return NULL;
+    if (!gem) 
+    {
+        return NULL;
+    }        
 
     if ( str.StartsWith("pid:",true) ) // Find by player ID
     {
@@ -1173,7 +1177,9 @@ gemObject* AdminManager::FindObjectByString(const csString& str)
             found = gem->FindObject( eID );
     }
     else // Try finding an entity by name
+    {
         found = gem->FindObject(str);
+    }        
 
     return found;
 }
@@ -1535,7 +1541,7 @@ void AdminManager::GetInfo(MsgEntry* me,psAdminCmdMessage& msg, AdminCmdData& da
             
         info.AppendFmt("total time connected is %1.1f hours", timeConnected );
 
-		info.AppendFmt(" has had %d exploits flagged", client->GetFlagCount());
+        info.AppendFmt(" has had %d exploits flagged", client->GetFlagCount());
 
         psserver->SendSystemInfo(client->GetClientNum(),info);
     }
