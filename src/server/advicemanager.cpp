@@ -16,29 +16,38 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
  */
-
-
 #include <psconfig.h>
-#include <physicallayer/entity.h>
-#include <propclass/mesh.h>
-
 #include <string.h>
 #include <memory.h>
 
-#include "client.h"
-#include "clients.h"
-#include "psserver.h"
-#include "playergroup.h"
+//=============================================================================
+// Crystal Space Includes
+//=============================================================================
+#include <propclass/mesh.h>
+
+#include <physicallayer/entity.h>
+
+//=============================================================================
+// Project Includes
+//=============================================================================
 #include "util/serverconsole.h"
-#include "gem.h"
 #include "util/eventmanager.h"
-#include "netmanager.h"
 #include "util/pserror.h"
 #include "util/log.h"
 #include "util/strutil.h"
-#include "globals.h"
-#include "advicemanager.h"
+
 #include "bulkobjects/pscharacterloader.h"
+
+//=============================================================================
+// Local Includes
+//=============================================================================
+#include "globals.h"
+#include "client.h"
+#include "clients.h"
+#include "playergroup.h"
+#include "gem.h"
+#include "netmanager.h"
+#include "advicemanager.h"
 
 
 /**
@@ -48,17 +57,20 @@ class AdviceSession : public iDeleteObjectCallback
 {
 protected:
 
-    csWeakRef<Client> advisor, // Safe reference to the client who has indicated they can assist other users.
-						 advisee; // Safe refereneces to the client who is requesting help.
-	AdviceManager *manager;		  // The parent controller
+    csWeakRef<Client> advisor;  ///< Safe reference to the client who has indicated they can assist other users.
+    csWeakRef<Client> advisee;  ///< Safe refereneces to the client who is requesting help.
+    AdviceManager*    manager;  ///< The parent controller
 
 public:
 
     uint32_t AdvisorClientNum; // cache the client number for the Advisor
     uint32_t AdviseeClientNum; // cache the client number for the Advisee
+    
     csString adviseeName;      // cache the name of the advisee
+    
     psAdviceRequestTimeoutGameEvent *requestEvent; // event to cancel the current request
     psAdviceSessionTimeoutGameEvent *timeoutEvent; // event to cancel the current session
+    
     csString lastRequest; // cache the text of the last request
     int status; // current status of the session -- this should be changed to an enum
     bool answered; // has the initial question been answered?
@@ -500,12 +512,12 @@ void AdviceManager::HandleAdviceRequest( Client *advisee, csString message )
     // Create an adviceSession if one doesn't exist and the message is valid
     if ( !activeSession )
     {
-		WordArray words(message);
+        WordArray words(message);
         // Check to make sure the request is 'good'
         if ( words.GetCount() < 2 )
         {
             psserver->SendSystemInfo( advisee->GetClientNum(),
-				                      "An Advisor will need more information than this to help you, please include as much as you can in your request.");
+                                     "An Advisor will need more information than this to help you, please include as much as you can in your request.");
             return;            
         }
 
@@ -625,13 +637,13 @@ void AdviceManager::HandleAdviceResponse( Client *advisor, csString sAdvisee, cs
     key.AdviseeClientNum = advisee->GetClientNum();
     AdviceSession *activeSession = AdviseeList.Find(&key);
 
-    if ( ( !activeSession ) || ( ( activeSession ) && ( !activeSession->requestEvent ) && ( activeSession->GetAdvisor() == NULL ) ) )
+    if (!activeSession || (activeSession  && ( !activeSession->requestEvent ) && ( activeSession->GetAdvisor() == NULL ) ) )
     {
         psserver->SendSystemError(advisor->GetClientNum(), "%s has not requested help.", advisee->GetName());
         return;
     }
 
-    if ( ( activeSession ) && ( activeSession->AdviseeClientNum != advisee->GetClientNum() ) )
+    if (activeSession  && ( activeSession->AdviseeClientNum != advisee->GetClientNum() ) )
     {
         Debug2( LOG_ANY, advisee->GetClientNum(), "Grabbed wrong advisor session: %d", activeSession->AdviseeClientNum );
     }
@@ -673,7 +685,7 @@ void AdviceManager::HandleAdviceResponse( Client *advisor, csString sAdvisee, cs
     }
     else
     {
-        if(message.IsEmpty())
+        if (message.IsEmpty())
         {
             psserver->SendSystemInfo(advisor->GetClientNum(), "Please enter the advice you wish to give.");
             return;            
@@ -713,6 +725,7 @@ void AdviceManager::HandleAdviceResponse( Client *advisor, csString sAdvisee, cs
 
         if ( activeSession->requestEvent )
             activeSession->requestEvent->valid = false;  // This keeps the cancellation timeout from firing.    
+        
         activeSession->answered = true;
 
         // Send Message to Advisee

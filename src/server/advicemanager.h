@@ -21,11 +21,19 @@
 #ifndef __ADVICEMANAGER_H__
 #define __ADVICEMANAGER_H__
 
+//=============================================================================
+// Crystal Space Includes
+//=============================================================================
+
+//=============================================================================
+// Project Includes
+//=============================================================================
 #include "net/messages.h"       // Message definitions
-#include "net/msghandler.h"         // Network access
+
+//=============================================================================
+// Local Includes
+//=============================================================================
 #include "msgmanager.h"         // parent class
-//#include "util/psdatabase.h"    // Database
-#include "client.h"
 #include "gem.h"
 
 class psAdviceRequestTimeoutGameEvent;
