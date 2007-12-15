@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8" ?> 
+<library>
+    <textures>
+        <texture name="labelfonttable">
+            <file>/this/art/effects/character_set_myriad.dds</file>
+            <alpha><binary/></alpha>
+        </texture>
+    </textures>
+    <materials>
+        <material name="mat_labelfonttable">
+            <texture>labelfonttable</texture>
+        </material>
+    </materials>
+    <addon plugin="PSEffects">
+        <effect name="label">
+            <anchor type="basic" name="pos">
+                <dir>none</dir>
+            </anchor>
+            <obj type="label" name="label" material="mat_labelfonttable"
+             sizefile="/this/data/effects/misc/labelfontglyphs.xml">
+                <mixmode>alpha</mixmode>
+                <attach>pos</attach>
+                <death>none</death>
+                <dir>billboard</dir>
+            </obj>
+        </effect>
+    </addon>
+</library>

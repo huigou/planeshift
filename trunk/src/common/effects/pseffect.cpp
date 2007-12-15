@@ -45,6 +45,7 @@
 #include "pseffectobjtrail.h"
 #include "pseffectobjdecal.h"
 #include "pseffectobjtext2d.h"
+#include "pseffectobjlabel.h"
 
 #include "util/log.h"
 #include "util/pscssetup.h"
@@ -183,6 +184,10 @@ bool psEffect::Load(iDocumentNode * node, iView * parentView, psEffect2DRenderer
         else if (type == "text")
         {
             obj = new psEffectObjText(parentView, renderer2d);
+        }
+        else if (type == "label")
+        {
+            obj = new psEffectObjLabel(parentView, renderer2d);
         }
         else if (type == "trail")
         {
