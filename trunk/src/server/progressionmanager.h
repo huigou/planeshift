@@ -111,14 +111,16 @@ protected:
 
 class ProgressionDelay : public psGameEvent
 {
-private:
-    ProgressionEvent * progEvent;
+private:    
     unsigned int client;
 
 public:
+    ProgressionEvent * progEvent;
+    
     ProgressionDelay(ProgressionEvent * progEvent, csTicks delay, unsigned int clientnum);
     virtual ~ProgressionDelay();
     void Trigger(); 
+    virtual bool CheckTrigger();
 };
 
 //-----------------------------------------------------------------------------
@@ -131,11 +133,16 @@ struct ProgressionEvent
     bool runParamInverse;
 
     csString name;
+    csString savedName;
+    
     csArray<ProgressionOperation*> sequence;
     csArray<MathScriptVar*>        variables;
 
     MathScript * triggerDelay;
     MathScriptVar * triggerDelayVar;
+    MathScript * durationScript;
+    MathScriptVar * durationVar;
+   
     ProgressionDelay * progDelay;
 
     ProgressionEvent();
@@ -143,6 +150,8 @@ struct ProgressionEvent
 
     bool LoadScript(iDocument *doc);
     bool LoadScript(iDocumentNode *topNode);
+    bool LoadScript(const char* str);
+    
     virtual csString ToString(bool topLevel) const;
     float ForceRun();
     float Run(gemActor *actor, gemObject *target, bool inverse = false);

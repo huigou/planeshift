@@ -49,6 +49,7 @@
 #include <iengine/sector.h>
 #include "gmeventmanager.h"
 #include "../introductionmanager.h"
+#include "../progressionmanager.h"
 
 psCharacterLoader::psCharacterLoader()
 {
@@ -822,13 +823,26 @@ bool psCharacterLoader::SaveCharacterData(psCharacter *chardata,gemActor *actor,
     fields.FormatPush("%s",csv.GetData());
 
     csString progressionEvents;
+    
     while (chardata->progressionEvents.GetSize() > 0)
     {
         SavedProgressionEvent evt = chardata->progressionEvents.Pop();
         evt.ticksElapsed += csGetTicks() - evt.registrationTime;
         progressionEvents.AppendFmt("<evt elapsed=\"%u\">%s</evt>", evt.ticksElapsed, evt.script.GetData());
     }
-    fields.FormatPush("<evts>%s</evts>", progressionEvents.GetData());
+    
+    csString durationEventStr;
+    while ( chardata->durationEvents.GetSize() > 0 )
+    {
+        DurationEvent* devent = chardata->durationEvents.Pop();
+        csTicks ticks = devent->duration - (csGetTicks()- devent->appliedTime);
+        
+        durationEventStr.AppendFmt("<evt duration='%u' name='%s'>%s</evt>", ticks, devent->name.GetData(), devent->queuedObject->progEvent->ToString(false).GetData());        
+    }
+    
+    
+    
+    fields.FormatPush("<evts>%s%s</evts>", progressionEvents.GetData(), durationEventStr.GetData());
   
     fields.FormatPush("%u", chardata->GetTotalOnlineTime());
     fields.FormatPush("%d", chardata->GetExperiencePoints()); // Save W

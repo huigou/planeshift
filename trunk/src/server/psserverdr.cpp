@@ -281,10 +281,12 @@ void psServerDR::HandleMessage (MsgEntry* me,Client *client)
                           me->clientnum,PROX_LIST_ANY_RANGE);
 
     //paladin->CheckClient(client);
-    
+
+    // Swap lines for easy Death Penalty testing.            
+    //if (strcmp(drmsg.sector->QueryObject()->GetName(), "NPCroom1") == 0)
     if (strcmp(drmsg.sector->QueryObject()->GetName(), "DRexit") == 0)
     {
-        psserver->GetProgressionManager()->ProcessEvent("death_penalty", actor);
+         psserver->GetProgressionManager()->ProcessEvent("death_penalty", actor);
 
         actor->pcmove->SetOnGround(false);
         actor->MoveToSpawnPos();

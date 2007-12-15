@@ -1286,6 +1286,10 @@ bool NpcResponse::ParseResponseScript(const char *xmlstr,bool insertBeginning)
         {
             op = new DoAdminCommandResponseOp;
         }
+        else if (strcmp(node->GetValue(), "fire_event") == 0)
+        {
+            op = new FireEventResponseOp;
+        }
         else
         {
             Error2("undefined operation specified in response script %d.",id);
@@ -1850,6 +1854,26 @@ csString AssignQuestSelectOp::GetResponseScript()
     return resp;
 }
 
+
+bool FireEventResponseOp::Load(iDocumentNode *node)
+{
+    event = node->GetAttributeValue("name");
+    return true;
+}
+
+csString FireEventResponseOp::GetResponseScript()
+{
+    psString resp = GetName();
+    return resp;
+}    
+
+bool FireEventResponseOp::Run(gemNPC *who, Client *target,NpcResponse *owner,csTicks& timeDelay)
+{
+    psCharacter *character = target->GetActor()->GetCharacterData();
+    character->FireEvent(event);        
+    
+    return true;
+}
 
 bool CheckQuestTimeoutOp::Run(gemNPC *who, Client *target,NpcResponse *owner,csTicks& timeDelay)
 {
