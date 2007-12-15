@@ -277,18 +277,24 @@ bool QuestManager::HandleScriptCommand(csString& block,
     for (size_t i = 0 ; i < commands.GetSize () ; i++)
     {
         block = commands.Get(i);
-
         // Take off trailing dots(.)
         if (block[block.Length()-1] == '.')
         {
             block.DeleteAt(block.Length()-1);
         }
-
+                
         if (!strncasecmp(block,"Assign Quest",12))
         {
             op.Format("<assign q1=\"%s\" />",mainQuest->GetName());
             quest_assigned_already = true;
         }
+        
+        else if ( !strncasecmp(block, "FireEvent", 9) )
+        {
+            csString eventname = block.Slice(9,block.Length()-1).Trim();
+            op.Format("<fire_event name='%s'/>", eventname.GetData());
+        }         
+        
         else if (!strncasecmp(block,"Complete",8))
         {
             csString questname = block.Slice(8,block.Length()-1).Trim();

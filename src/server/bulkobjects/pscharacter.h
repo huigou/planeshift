@@ -47,6 +47,7 @@ class psQuest;
 class psGuildInfo;
 struct Result;
 struct Faction;
+class ProgressionDelay;
 
 /** "Normalizes" name of character i.e. makes the first letter uppercase and all the rest downcase */
 csString NormalizeCharacterName(const csString & name);
@@ -515,11 +516,21 @@ struct SavedProgressionEvent
     csString script;
 };
 
+/** A duration event stored on this object.
+ */
+struct DurationEvent
+{
+    ProgressionDelay* queuedObject;  ///< The actual event that is in the queue
+    csString name;                  ///< The name of the event
+    csTicks appliedTime;            ///< Time applied. 
+    csTicks duration;               ///< Duration for the event.
+};
+
 //-----------------------------------------------------------------------------
 
 class psCharacter : public iScriptableVar, public iCachedObject
 {
-protected:
+protected:    
     psCharacterInventory      inventory;                    /// Character's inventory handler.
     psMoney money;                                          /// Current cash set on player.
     psMoney bankMoney;                                      /// Money stored in the players bank account.
@@ -555,6 +566,10 @@ protected:
     int  lastResponse;
 
 public:
+    void RegisterDurationEvent(ProgressionDelay* progDelay, csString& name, csTicks duration);
+    void UnregisterDurationEvent(ProgressionDelay* progDelay);
+    void FireEvent(const char* name);
+    
     psCharacterInventory& Inventory() { return inventory; }
     
     psMoney Money() { return money; }
@@ -591,6 +606,8 @@ public:
     const Stance& getStance(csString name);
     csString faction_standings;
     csArray<SavedProgressionEvent> progressionEvents;
+    csPDelArray<DurationEvent> durationEvents;
+    
     csString progressionEventsText; // flat string with evts, loaded from the DB.
     int nextProgressionEventID;
     int     impervious_to_attack;

@@ -58,6 +58,7 @@
 #include "../gmeventmanager.h"
 #include "rpgrules/factions.h"
 #include "../introductionmanager.h"
+#include "../progressionmanager.h"
 
 // The sizes and scripts need balancing.  For now, maxSize is disabled.
 #define ENABLE_MAX_CAPACITY 0
@@ -834,7 +835,7 @@ void psCharacter::LoadSavedProgressionEvents()
             continue;
 
         csString script = GetNodeXML(evt, false);
-        printf("Restoring saved script: %s\n", script.GetData());
+        //printf("Restoring saved script: %s\n", script.GetData());
         psserver->GetProgressionManager()->ProcessScript(script, actor, actor);
     }
     progressionEventsText.Clear();
@@ -3149,7 +3150,40 @@ void psCharacter::Train( PSSKILL skill, int yIncrease )
     }
 }
 
+void psCharacter::RegisterDurationEvent(ProgressionDelay* progDelay, csString& name, csTicks duration)
+{
+    FireEvent(name);
+    
+    DurationEvent * newEvent = new DurationEvent;
+    newEvent->queuedObject = progDelay;
+    newEvent->name = name;
+    newEvent->appliedTime = csGetTicks();
+    newEvent->duration = duration;
+    
+    durationEvents.Push(newEvent);
+}
 
+void psCharacter::UnregisterDurationEvent(ProgressionDelay* progDelay)
+{
+    for ( size_t z = 0; z < durationEvents.GetSize(); z++ )
+    {
+        if ( durationEvents[z]->queuedObject == progDelay )
+        {
+            durationEvents.DeleteIndex(z);
+        }
+    }
+}
+
+void psCharacter::FireEvent(const char* name)
+{
+    for ( size_t z = 0; z < durationEvents.GetSize(); z++ )
+    {
+        if ( durationEvents[z]->name == name )
+        {
+            durationEvents[z]->queuedObject->Trigger(); 
+        }
+    }   
+}
 
 /*-----------------------------------------------------------------*/
 

@@ -1,3 +1,22 @@
+*** 2007-12-14 by Andrew Craig
+- Added ability to setup duration events.  This is done using:
+    <evt duration="time in ticks">
+        <op>
+        <op>
+        <op>
+    </evt>
+  The entire event will run the inverse once the duration time has expired. 
+- These events are also stored through login/logout by saving the remaining
+  duration left on event.
+- Only one event can be active at a time and if another added it will replace 
+  the current one.
+
+- Added ability to fire this duration event early based on actions.
+  Can be done via quest script:  FireEvent <name>                      
+  
+- Fixed issue with ActiveWindow magic not showing correctly on login.  Server
+  was sending data to it before it was fully ready.  
+
 *** 2007-12-13 by Dave Bentham
 - GM's can take over control of an Event if the originator GM has abandoned
   it (e.g. had to logoff prior to completion, character deleted).

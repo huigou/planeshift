@@ -133,7 +133,13 @@ public:
     MathScript *GetMathScript() { return value_script; }
     virtual void LoadVariables(csArray<MathScriptVar*> & variables);
     virtual float GetResult() { return result; };
+    virtual csString Absolute();
 };
+
+csString ProgressionOperation::Absolute()
+{
+    return ToString();
+} 
 
 void ProgressionOperation::LoadVariables(csArray<MathScriptVar*> & variables)
 {
@@ -217,6 +223,7 @@ float ProgressionOperation::GetValue(gemActor *actor, gemObject *target)
         Error2("Invalid value script in Progression Event '%s'.",this->eventName->GetData() );
         return 0.0;
     }
+    
     targetvar->SetObject(target ? target->GetCharacterData() : NULL);            
     actorvar->SetObject(actor ? actor->GetCharacterData() : NULL );
 
@@ -246,6 +253,47 @@ int ProgressionOperation::GetDelay(gemActor *actor, gemObject *target)
     return (int) delayvar->GetValue() - ticksElapsed;
 }
 
+
+class FireEventOp : public ProgressionOperation
+{
+protected:
+    csString event;
+    
+public:
+    FireEventOp() : ProgressionOperation() {}
+    virtual ~FireEventOp() {}
+    
+    bool Load(iDocumentNode* node, ProgressionEvent* script)
+    {
+        event = node->GetAttributeValue( "event" );            
+        return LoadValue(node, script);
+    }
+    
+    virtual csString ToString()
+    {
+        csString xml;           
+        xml.Format("<fire_event name='%s' />", event.GetData() );
+        return xml;
+    }
+
+    bool Run(gemActor *actor, gemObject* target, bool inverse)
+    {
+        // Remove this when adding support for the inverse operation
+        if (inverse)
+            return true;
+
+        // Cannot be run if there is no actor
+        if (!actor)
+        {
+            Error2("Error: ProgressionEvent(%s) FireEventOp needs an actor\n",eventName->GetData());
+            return true;
+        }
+
+        psCharacter *data = actor->GetCharacterData();
+        data->FireEvent(event);
+        return true;
+    }
+};
 
 /*-------------------------------------------------------------*/
 
@@ -799,9 +847,12 @@ public:
                                                      "Your attempt doesn't have any effect since %s doesn't have any wounds.", 
                                                      targetChar->GetActor()->GetName());
                             }
-                            return false;
+                            //return false;
                         }
-                        targetChar->SetHitPoints(newValue);
+                        else
+                        {                        
+                            targetChar->SetHitPoints(newValue);
+                        }                            
                     }
                 }
                 break;
@@ -929,6 +980,14 @@ public:
         return script;
     }
 
+    csString Absolute()        
+    {
+        csString script;        
+        script.Format("<%s adjust=\"add\" aim=\"target\" base=\"%s\" value=\"%f\" />", 
+                      statToString[stat], base ? "yes" : "no", newValue - oldValue);    
+        return script;                      
+    }
+    
     bool Run(gemActor *actor, gemObject *target, bool inverse)
     {
         psCharacter * targetChar;
@@ -961,12 +1020,14 @@ public:
         
         int delay = GetDelay(actor, target);
         if (delay < 0)
+        {
             return false; // No time left for the effect to apply, so don't bother.
+        }            
 
-        float oldValue = GetCurrentValue(targetChar);
+        oldValue = GetCurrentValue(targetChar);
         float adjustValue = GetValue(actor, target);
         float baseValue = GetCurrentValue( targetChar, true );
-        float newValue = CalcNewValue(oldValue, adjustValue, inverse, baseValue);
+        newValue = CalcNewValue(oldValue, adjustValue, inverse, baseValue);
 
         if ( !SetValue(actor, targetChar, oldValue, newValue, delay) )
         {
@@ -992,7 +1053,9 @@ public:
     }
     
 protected:
-
+    float oldValue;
+    float newValue;
+ 
     adjust_t adjust; 
 
     // True if it is the base value that should be used.
@@ -1395,8 +1458,17 @@ public:
     {
         // Remove this when adding support for the inverse operation
         if ( inverse )
-            return true;
-
+        {
+            if ( operation == BLOCK_ADD )
+            {
+                operation = BLOCK_REMOVE;
+            }
+            else if ( operation == BLOCK_REMOVE )
+            {
+                operation = BLOCK_ADD;
+            }                
+        }
+         
         gemActor *targetActor;
 
         if ( !target )
@@ -1423,12 +1495,13 @@ public:
                 if (targetActor->AddActiveMagicCategory(category))
                 {
                     int delay = GetDelay(actor, target);
-                    if (delay < 0)
-                        return false; // No time left for the effect to apply, so don't bother.
-            
-                    int persistentID = targetActor->GetCharacterData() ? targetActor->GetCharacterData()->RegisterProgressionEvent(ToString(), ticksElapsed) : 0;
-                    psString undoscript = CreateUndoScript();
-                    psserver->GetProgressionManager()->QueueUndoScript(undoscript.GetData(), delay, actor, target, persistentID);
+                    
+                    if ( delay > 0 )
+                    {
+                        int persistentID = targetActor->GetCharacterData() ? targetActor->GetCharacterData()->RegisterProgressionEvent(ToString(), ticksElapsed) : 0;
+                        psString undoscript = CreateUndoScript();
+                        psserver->GetProgressionManager()->QueueUndoScript(undoscript.GetData(), delay, actor, target, persistentID);
+                    }                        
                 }
                 else
                 {
@@ -4801,7 +4874,7 @@ ProgressionEvent * ProgressionManager::CreateEvent(const char *name, const char 
 
 
 float ProgressionManager::ProcessScript(const char *script, gemActor * actor, gemObject *target)
-{
+{    
     ProgressionEvent * ev = CreateEvent((actor?actor->GetName():"Unknown"),script);
     
     if (ev)
@@ -4895,16 +4968,39 @@ ProgressionDelay::~ProgressionDelay()
 {
 }
 
+bool ProgressionDelay::CheckTrigger()
+{
+    if ( !valid )
+    {
+        Client* clt = psserver->GetConnections()->FindAny(client);
+        if (clt)
+        {
+            clt->GetCharacterData()->UnregisterDurationEvent(this);
+        }        
+    }
+    
+    return valid;
+}
+
+
 void ProgressionDelay::Trigger()
 {
-    if (psserver->GetConnections()->FindAny(client))
+    Client* clt = psserver->GetConnections()->FindAny(client);
+    if (clt)
+    {
         progEvent->ForceRun();
+        clt->GetCharacterData()->UnregisterDurationEvent(this);
+    }        
+    
+    valid = false;
 }
 
 ProgressionEvent::ProgressionEvent()
                 : triggerDelay(0), progDelay(0)
 {
-}
+    durationScript = NULL;
+    durationVar = NULL;       
+}                            
 
 ProgressionEvent::~ProgressionEvent()
 {
@@ -4918,13 +5014,20 @@ ProgressionEvent::~ProgressionEvent()
     }
 
     delete triggerDelay;
+    delete durationScript;
 
     if( progDelay )
     {
-        delete progDelay;
+        //delete progDelay;
     }
 }
 
+
+bool ProgressionEvent::LoadScript(const char* data)
+{
+   csRef<iDocument> xmlDoc = ParseString(data); 
+   return LoadScript(xmlDoc);
+}
 
 bool ProgressionEvent::LoadScript(iDocument *doc)
 {
@@ -4951,6 +5054,23 @@ bool ProgressionEvent::LoadScript(iDocumentNode *topNode)
     // get the elapsed time, in case this is a saved event that already ran for a while
     int ticksElapsed = topNode->GetAttributeValueAsInt("elapsed");
 
+    if ( topNode->GetAttribute("name") )
+    {
+        savedName = topNode->GetAttributeValue("name");
+    }
+        
+    // Check to see if there is a duration script to load.
+    if ( topNode->GetAttribute("duration") )
+    {
+        csString durationString = "Duration = ";
+        durationString += topNode->GetAttributeValue("duration");
+                
+        csString scriptName = name;
+        scriptName += "_duration";
+        durationScript = new MathScript(scriptName, durationString);
+        durationVar = durationScript->GetVar("Duration");
+    }
+    
     // get the delay between the call to Run() and actually executing the script
     csString delayText = topNode->GetAttributeValue("delay");
     if (delayText != "")
@@ -5164,6 +5284,10 @@ bool ProgressionEvent::LoadScript(iDocumentNode *topNode)
         {
             op = new IntroduceOp();
         }
+        else if ( strcmp( node->GetValue(), "fire_event" ) == 0 )
+        {
+            op = new FireEventOp();
+        }
         else
         {
             Error3("Unknown script operation %s in script %s.",node->GetValue(), name.GetData() );
@@ -5291,17 +5415,81 @@ float ProgressionEvent::ForceRun()
             dump_str.GetData());
 
     csArray<ProgressionOperation*>::Iterator seq = sequence.GetIterator();
+    csString finalScript;
     while (seq.HasNext())
     {
         ProgressionOperation * po = seq.Next();
-        po->LoadVariables(variables);
+        po->LoadVariables(variables);       
+        
         if (!po->Run(runParamActor, runParamTarget, runParamInverse))
         {
             break;
         }
+        finalScript.Append(po->Absolute());
+                                            
         result += po->GetResult();
         Notify3(LOG_SCRIPT,"Event: %s with result %f\n", po->ToString().GetData(), po->GetResult());
     }
+    
+    
+    // If this script is set to run for a particular length of time. Then insert a new 
+    // event that is the inverse to run.    
+    if ( durationScript != NULL )
+    {   
+        size_t a;
+        size_t len = variables.GetSize();
+        for (a=0; a<len; ++a)
+        {
+            MathScriptVar * var = durationScript->GetOrCreateVar(variables[a]->name);
+            var->SetValue(variables[a]->GetValue());
+        }
+        durationScript->Execute();
+        csTicks duration  = (csTicks)durationVar->GetValue();        
+        
+        
+        csString scriptStr;
+        scriptStr.Format("<evt>%s</evt>", finalScript.GetData());
+        
+        // Memory Leak?
+        ProgressionEvent * script =  new ProgressionEvent();
+        script->LoadScript(scriptStr.GetData());
+        script->name = name;
+        script->runParamInverse = true;
+        script->runParamActor = runParamActor;
+        script->runParamTarget = runParamTarget;        
+        
+        // Memory Leak?        
+        progDelay = new ProgressionDelay(script, duration, runParamActor->GetClientID());
+        
+        if ( savedName.Length() > 0 )
+        {
+            runParamActor->GetCharacterData()->RegisterDurationEvent(progDelay, savedName, duration);
+        }
+        else
+        {
+            runParamActor->GetCharacterData()->RegisterDurationEvent(progDelay, name, duration);
+        }            
+        
+        progDelay->QueueEvent();    
+    }
+    
+             
+        /*
+        // Memory Leak?
+        ProgressionEvent * script =  new ProgressionEvent();
+        script->LoadScript(ToString(false));
+        script->name = name;
+        script->runParamInverse = false;
+        script->runParamActor = runParamActor;
+        script->runParamTarget = runParamTarget;
+        
+        // Memory Leak?
+        progDelay = new ProgressionDelay(script, duration, runParamActor->GetClientID());
+        progDelay->QueueEvent();    
+        */
+           
+        
+    
     return result;
 }
 

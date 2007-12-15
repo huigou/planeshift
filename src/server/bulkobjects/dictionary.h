@@ -444,6 +444,17 @@ public:
     virtual bool Run(gemNPC *who, Client *target,NpcResponse *owner,csTicks& timeDelay);
 };
 
+class FireEventResponseOp : public ResponseOperation
+{
+protected:
+    csString event;
+public:
+    FireEventResponseOp() { name="fireevent"; }
+    virtual ~FireEventResponseOp() {};
+    virtual bool Load(iDocumentNode *node);
+    virtual csString GetResponseScript();    
+    virtual bool Run(gemNPC *who, Client *target,NpcResponse *owner,csTicks& timeDelay);    
+};
 
 /**
  * This script operation checks to make sure a named quest
