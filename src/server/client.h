@@ -19,11 +19,23 @@
 #ifndef __CLIENT_H__
 #define __CLIENT_H__
 
+//=============================================================================
+// Crystal Space Includes
+//=============================================================================
 #include <csutil/ref.h>
 #include <csutil/csstring.h>
 #include <csutil/weakreferenced.h>
+
+//=============================================================================
+// Project Space Includes
+//=============================================================================
 #include "util/prb.h"
 #include "net/netbase.h"
+
+//=============================================================================
+// Local Includes
+//=============================================================================
+
 
 struct iCelEntity;
 class ClientConnectionSet;
@@ -57,7 +69,6 @@ enum TARGET_TYPES
     TARGET_PVP      = 0x100
 };
 
-class Client;
 
 /**
 * This class collects data of a netclient. While the socket data like
@@ -102,13 +113,13 @@ public:
     psCharacter *GetCharacterData();
 
     // Get / Set Familiar information;
-	void SetFamiliar(gemActor *familiar);
-	gemActor* GetFamiliar();
+    void SetFamiliar(gemActor *familiar);
+    gemActor* GetFamiliar();
 
-	// Get / Set Pet information;
-	void AddPet(gemActor *pet);
-	void RemovePet( size_t index );
-	gemActor *GetPet( size_t index );
+    // Get / Set Pet information;
+    void AddPet(gemActor *pet);
+    void RemovePet( size_t index );
+    gemActor *GetPet( size_t index );
     size_t GetNumPets();
 
     /// Returns whether the client's character is alive.
@@ -271,13 +282,14 @@ public:
             return addr.sin_port < other.addr.sin_port;
         
         return false;
-    };
+    }
+    
     bool operator == (const Client& other) const
     {
         return (isValid() &&
             addr.sin_port == other.addr.sin_port &&
             addr.sin_addr.s_addr == other.addr.sin_addr.s_addr);
-    };
+    }
 
     csRef<NetPacketQueueRefCount> outqueue;
 
@@ -360,11 +372,10 @@ protected:
     csArray<uint32> pets;
     gemObject *target;
     csString mesh;
-    //    csRef<ExchangeManager> exchangeMgr;
     bool ready;
 
-    /// Store if this client is acting as an advisor.
-    bool isAdvisor;
+    
+    bool isAdvisor;         ///< Store if this client is acting as an advisor.
 
     /// mute flag
     bool mute;
@@ -379,9 +390,9 @@ protected:
     csArray<int> duel_clients;
 
     // Flood control
-    static const int floodWarn = 3; // Warn client after 3 repeated messages
-    static const int floodMax  = 5; // Mute client after 5 repeated messages
-    static const unsigned int floodForgiveTime = 10000; // How long to wait before forgiving a repeated message
+    static const int floodWarn = 3;                     ///< Warn client after 3 repeated messages
+    static const int floodMax  = 5;                     ///< Mute client after 5 repeated messages
+    static const unsigned int floodForgiveTime = 10000; ///< How long to wait before forgiving a repeated message
     FloodBuffRow floodHistory[floodMax];
     int nextFloodHistoryIndex;
 
@@ -416,9 +427,8 @@ protected:
     uint32_t locationEffectID;
     bool locationIsDisplaying;
     
-private:
-    /// Whether the client is frozen or not.
-    bool isFrozen;
+private:    
+    bool isFrozen;  ///< Whether the client is frozen or not.
 
     /// Potential number of exploits automatically detected.
     /// This needs more work as it's only a preliminary measure so far.
