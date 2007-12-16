@@ -18,41 +18,48 @@
  */
 
 #include <psconfig.h>
-
 #include "psstdint.h"
-
-//CS includes
+//=============================================================================
+// Crystal Space Includes
+//=============================================================================
 #include <iutil/objreg.h>
 #include <iutil/event.h>
 #include <iutil/eventq.h>
 #include <iutil/evdefs.h>
 #include <iutil/virtclk.h>
-#include "util/serverconsole.h"
-
 #include <imesh/sprite3d.h>
 
 #include <csutil/databuf.h>
 #include <csutil/plugmgr.h>
+#include <cstool/collider.h>
 #include <iengine/movable.h>
 #include <iengine/engine.h>
 #include <iengine/region.h>
-#include <cstool/collider.h>
 #include <ivaria/collider.h>
 
 #include <physicallayer/entity.h>
 #include <propclass/mesh.h>
-
-// PS Includes
 #include <propclass/linmove.h>
+
+//=============================================================================
+// Project Includes
+//=============================================================================
+#include "util/serverconsole.h"
 #include "util/log.h"
-#include "gem.h"
+
+#include "net/npcmessages.h"
+
+#include "engine/psworld.h"
+
+//=============================================================================
+// Local Includes
+//=============================================================================
 #include "psproxlist.h"
+#include "gem.h"
 #include "playergroup.h"
 #include "globals.h"
 #include "npcmanager.h"
-#include "net/npcmessages.h"
 #include "entitymanager.h"
-#include "engine/psworld.h"
 
 // define if you want loads of debug printfs
 //#define PSPROXDEBUG

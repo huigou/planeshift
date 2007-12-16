@@ -18,17 +18,23 @@
  * Communicates with the client side version of charmanager.
  */
 #include <psconfig.h>
-
+//=============================================================================
+// Crystal Space Includes
+//=============================================================================
 #include <iutil/databuff.h>
 #include <iutil/object.h>
 #include <csutil/csstring.h>
 
+//=============================================================================
+// Project Includes
+//=============================================================================
 #include "util/serverconsole.h"
 #include "util/psxmlparser.h"
 #include "util/log.h"
 #include "util/mathscript.h"
 #include "util/psconst.h"
 #include "util/eventmanager.h"
+#include "util/psdatabase.h"
 
 #include "rpgrules/factions.h"
 
@@ -48,13 +54,13 @@
 #include "bulkobjects/psmerchantinfo.h"
 #include "bulkobjects/psactionlocationinfo.h"
 
-#include "globals.h"
-
+//=============================================================================
+// Local Includes
+//=============================================================================
 #include "psserverchar.h"
 #include "client.h"
 #include "playergroup.h"
 #include "clients.h"
-#include "util/psdatabase.h"
 #include "psserver.h"
 #include "chatmanager.h"
 #include "groupmanager.h"
@@ -70,6 +76,7 @@
 #include "serverstatus.h"
 #include "economymanager.h"
 #include "weathermanager.h"
+#include "globals.h"
 
 ///This expresses in seconds how many days the char hasn't logon. 60 days, at the moment.
 #define MAX_DAYS_NO_LOGON 5184000 

@@ -20,17 +20,25 @@
 #ifndef __PS_IMP_PROXIMITYLIST__
 #define __PS_IMP_PROXIMITYLIST__
 
-//CS Includes
-#include "cstypes.h"
-#include "iutil/comp.h"
-#include "csutil/scf.h"
-#include "util/growarray.h"
-#include "net/netbase.h"
+//=============================================================================
+// Crystal Space Includes
+//=============================================================================
+#include <cstypes.h>
+#include <iutil/comp.h>
+#include <csutil/scf.h>
+#include <util/growarray.h>
+#include <net/netbase.h>
 
-
-//psincludes
+//=============================================================================
+// Project Includes
+//=============================================================================
 #include "util/psconst.h"
 
+//=============================================================================
+// Local Includes
+//=============================================================================
+
+class gemObject;
 struct iObjectRegistry;
 
 /* ProximityList must maintain following properties:
