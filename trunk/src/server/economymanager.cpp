@@ -26,25 +26,37 @@
 
 #include <psconfig.h>
 #include <math.h>
+//=============================================================================
+// Crystal Space Includes
+//=============================================================================
 
-#include "gem.h"
-#include "globals.h"
-#include "netmanager.h"
-#include "util/psdatabase.h"
-#include "psserver.h"
+//=============================================================================
+// Project Includes
+//=============================================================================
 #include "net/messages.h"
+
 #include "util/eventmanager.h"
 #include "util/serverconsole.h"
-#include "entitymanager.h"
+#include "util/psdatabase.h"
+#include "util/mathscript.h"
+
 #include "bulkobjects/pstrade.h"
 #include "bulkobjects/pscharacterloader.h"
 #include "bulkobjects/psitem.h"
 #include "bulkobjects/psmerchantinfo.h"
+
+//=============================================================================
+// Local Includes
+//=============================================================================
+#include "gem.h"
+#include "globals.h"
+#include "netmanager.h"
+#include "psserver.h"
+#include "entitymanager.h"
 #include "cachemanager.h"
 #include "economymanager.h"
 #include "events.h"
 #include "globals.h"
-#include "util/mathscript.h"
 
 #if 0
 #define ECONOMY_DEBUG
@@ -163,7 +175,7 @@ psEconomyDrop::psEconomyDrop(EconomyManager* manager,csTicks ticks, bool loop)
 {
     this->loop = loop;
     economy = manager;
-    eachTime = ticks;
+    eachTimeTicks = ticks;
 }
 
 struct ItemCount
@@ -272,6 +284,6 @@ void psEconomyDrop::Trigger()
     }
     
     if(loop)
-        economy->ScheduleDrop(eachTime,true);
+        economy->ScheduleDrop(eachTimeTicks,true);
 }
 
