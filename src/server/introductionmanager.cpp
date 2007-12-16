@@ -18,20 +18,30 @@
 */
 
 #include <psconfig.h>
-
+//=============================================================================
+// Crystal Space Includes
+//=============================================================================
 #include <csutil/hash.h>
 #include <csutil/set.h>
 
+//=============================================================================
+// Project Includes
+//=============================================================================
+#include "bulkobjects/pscharacter.h"
+
+#include "util/psdatabase.h"
+#include "util/eventmanager.h"
+
+//=============================================================================
+// Local Includes
+//=============================================================================
+#include "introductionmanager.h"
 #include "client.h"
 #include "clients.h"
 #include "gem.h"
 #include "globals.h"
 #include "psserver.h"
-#include "bulkobjects/pscharacter.h"
 #include "globals.h"
-#include "util/psdatabase.h"
-#include "util/eventmanager.h"
-#include "introductionmanager.h"
 
 IntroductionManager::IntroductionManager() : introMap(100, 10, 500)
 {
