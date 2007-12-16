@@ -20,11 +20,22 @@
 #ifndef __NETMANAGER_H__
 #define __NETMANAGER_H__
 
-#include "net/netbase.h"
+//=============================================================================
+// Crystal Space Includes
+//=============================================================================
 #include <csutil/threading/thread.h>
+
+//=============================================================================
+// Project Includes
+//=============================================================================
+#include "net/netbase.h"
+#include "net/subscriber.h"   // Subscriber class
+
+//=============================================================================
+// Local Includes
+//=============================================================================
 #include "clients.h"
 
-#include "net/subscriber.h"   // Subscriber class
 
 /**
  * This is the network thread handling packets sending/receiving to/from network

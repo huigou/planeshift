@@ -16,6 +16,19 @@
 #ifndef __MARRIGEMANAGER_H__
 #define __MARRIGEMANAGER_H__
 
+//=============================================================================
+// Crystal Space Includes
+//=============================================================================
+
+//=============================================================================
+// Project Includes
+//=============================================================================
+
+//=============================================================================
+// Local Includes
+//=============================================================================
+
+
 /** This class manages all marriage related stuff.
  *  This class manages all marriage related functionality and has 
  *  functions to retrieve/edit character's marriage related details.

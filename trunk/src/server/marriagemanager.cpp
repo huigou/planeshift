@@ -13,30 +13,41 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-
 #include <psconfig.h>
+//=============================================================================
+// Crystal Space Includes
+//=============================================================================
 #include <csutil/xmltiny.h>
 
 #include <physicallayer/entity.h>
 #include <propclass/mesh.h>
 
-#include "chatmanager.h"
+//=============================================================================
+// Project Includes
+//=============================================================================
 #include "bulkobjects/psraceinfo.h"  // for gender 
-#include "marriagemanager.h"
-#include "util/psstring.h"
-#include "psserver.h"
-#include "psserverchar.h"
-#include "util/psdatabase.h"
 #include "bulkobjects/pscharacterloader.h"
+
+#include "util/psstring.h"
+#include "util/psdatabase.h"
 #include "util/eventmanager.h"
+
 #include "net/msghandler.h"
 #include "net/messages.h"
+
+//=============================================================================
+// Local Includes
+//=============================================================================
+#include "marriagemanager.h"
+#include "chatmanager.h"
+#include "psserver.h"
+#include "psserverchar.h"
 #include "events.h"
 #include "gem.h"
-#include "globals.h"
 #include "netmanager.h"
 #include "invitemanager.h"
 #include "usermanager.h"
+#include "globals.h"
 
 /** Questions client and Handles YesNo response of client for proposals. */
 class PendingMarriageProposal : public PendingInvite

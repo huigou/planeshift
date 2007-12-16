@@ -17,26 +17,38 @@
  *
  */
 #include <psconfig.h>
-
+//=============================================================================
+// Crystal Space Includes
+//=============================================================================
 #include <csutil/sysfunc.h>
 #include <physicallayer/entity.h>
 #include <propclass/mesh.h>
+#include <physicallayer/entity.h>
 
+//=============================================================================
+// Project Includes
+//=============================================================================
 #include "util/pserror.h"
 #include "util/sleep.h"
+#include "util/serverconsole.h"
+
 #include "net/message.h"
+#include "net/messages.h"
+#include "net/netpacket.h"
+
+#include "bulkobjects/psaccountinfo.h"
+
+//=============================================================================
+// Local Includes
+//=============================================================================
+#include "netmanager.h"
 #include "client.h"
 #include "clients.h"
 #include "playergroup.h"
-#include "netmanager.h"
-#include "net/messages.h"
-#include "net/netpacket.h"
-#include <physicallayer/entity.h>
 #include "gem.h"
-#include "util/serverconsole.h"
-#include "globals.h"
-#include "bulkobjects/psaccountinfo.h"
 #include "cachemanager.h"
+#include "globals.h"
+
 
 // Check every 3 seconds for linkdead clients
 #define LINKCHECK    3000

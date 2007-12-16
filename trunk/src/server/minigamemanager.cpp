@@ -18,20 +18,34 @@
 */
 
 #include <psconfig.h>
-#include <csutil/xmltiny.h>
 #include <ctype.h>
 
+//=============================================================================
+// Crystal Space Includes
+//=============================================================================
+#include <csutil/xmltiny.h>
+
+//=============================================================================
+// Project Includes
+//=============================================================================
 #include "util/log.h"
 #include "util/eventmanager.h"
-#include "psserver.h"
-#include "globals.h"
 #include "util/minigame.h"
-#include "minigamemanager.h"
-#include "netmanager.h"
-#include "clients.h"
-#include "bulkobjects/psactionlocationinfo.h"
 #include "util/psxmlparser.h"
+
+#include "bulkobjects/psactionlocationinfo.h"
+
+//=============================================================================
+// Local Includes
+//=============================================================================
+#include "minigamemanager.h"
+#include "psserver.h"
+#include "netmanager.h"
+#include "client.h"
+#include "clients.h"
 #include "chatmanager.h"
+#include "gem.h"
+#include "globals.h"
 
 using namespace psMiniGame;
 
