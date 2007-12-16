@@ -21,8 +21,9 @@
 
 #include <iutil/virtclk.h>
 #include <csutil/databuf.h>
-#include <ctype.h>
-
+#include <ctype.h>                    
+//#include <physicallayer/entity.h>
+#include "entitymanager.h"
 // Define this so the slot ID to string mapping is compiled into object form exactly once
 #define PSCHARACTER_CPP
 

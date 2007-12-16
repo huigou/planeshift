@@ -37,6 +37,8 @@
 #include "progressionmanager.h"
 #include "workmanager.h"
 #include "psserverchar.h"
+#include "client.h"
+#include "entitymanager.h"
 
 SlotManager::~SlotManager()
 {

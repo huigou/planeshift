@@ -27,6 +27,8 @@
 //=============================================================================
 #include "engine/celbase.h"
 
+#include "util/psconst.h"
+#include "util/singleton.h"
 //=============================================================================
 // Local Includes
 //=============================================================================
@@ -43,9 +45,11 @@ class GEMSupervisor;
 class UserManager;
 class gemObject;
 class gemNPC;
+class gemActor;
 class psActionLocation;
 class psCharacter;
 class psSectorInfo;
+class psMovementInfoMessage;
 
 struct iPcLinearMovement;
 struct iPcCharacterData;
