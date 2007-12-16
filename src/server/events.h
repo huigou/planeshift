@@ -21,7 +21,18 @@
 #ifndef EVENTS_H_Z
 #define EVENTS_H_Z
 
-#include <net/messages.h>
+//=============================================================================
+// Crystal Space Includes
+//=============================================================================
+
+//=============================================================================
+// Project Includes
+//=============================================================================
+#include "net/messages.h"
+
+//=============================================================================
+// Local Includes
+//=============================================================================
 
 
 struct TransactionEntity;
@@ -49,6 +60,7 @@ public:
     virtual csString ToString(AccessPointers * access_ptrs);
 };
 
+
 class psDeathEvent : public psMessageCracker
 {
 public:
@@ -69,6 +81,7 @@ public:
     virtual csString ToString(AccessPointers * access_ptrs);
 };
 
+
 class psTargetChangeEvent : public psMessageCracker
 {
  public:
@@ -88,6 +101,7 @@ class psTargetChangeEvent : public psMessageCracker
      */
     virtual csString ToString(AccessPointers * access_ptrs);
 };
+
 
 /** Event when a player gains some Z points.
  */
@@ -114,6 +128,7 @@ public:
     csString skillName;     /// The name of the skill points gained in.        
 };
 
+
 class psBuyEvent : public psMessageCracker
 {
 public:
@@ -133,6 +148,7 @@ public:
     TransactionEntity* trans;
 };
 
+
 class psSellEvent : public psMessageCracker
 {
 public:
@@ -151,6 +167,7 @@ public:
 
     TransactionEntity* trans;
 };
+
 
 /**
  * This message broadcasts client connect events to anyone
@@ -175,6 +192,7 @@ public:
      */
     virtual csString ToString(AccessPointers * access_ptrs);
 };
+
 
 /**
  * This message broadcasts the first movement event to anyone
