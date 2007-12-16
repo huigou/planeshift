@@ -18,13 +18,19 @@
  */
 #ifndef __MSGMANAGER_H__
 #define __MSGMANAGER_H__
-
+//=============================================================================
+// Crystal Space Includes
+//=============================================================================
 #include <csutil/ref.h>
 
-#include "net/messages.h"            // Chat Message definitions
-#include "net/msghandler.h"         // Subscriber definition
-#include "client.h"                 // Client, and ClientConnectionSet classes
-#include "net/subscriber.h"   // Subscriber class
+//=============================================================================
+// Project Includes
+//=============================================================================
+#include "net/subscriber.h"         // Subscriber class
+
+//=============================================================================
+// Local Includes
+//=============================================================================
 
 
 /// These flags define the tests that are centrally done 
@@ -36,6 +42,9 @@
 #define REQUIRE_TARGET       0x08
 #define REQUIRE_TARGETACTOR  0x10
 #define REQUIRE_TARGETNPC    0x20
+
+class Client;
+class MsgEntry;
 
 class MessageManager : public iNetSubscriber
 {

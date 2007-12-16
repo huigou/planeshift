@@ -22,6 +22,7 @@
 
 #include "csutil/csstring.h"
 #include "msgmanager.h"
+#include "net/messages.h"
 
 class psQuestionCancelEvent;
 

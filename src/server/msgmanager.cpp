@@ -18,13 +18,23 @@
  */
 
 #include <psconfig.h>
+//=============================================================================
+// Crystal Space Includes
+//=============================================================================
 
+//=============================================================================
+// Project Includes
+//=============================================================================
 #include "net/messages.h"            // Chat Message definitions
+#include "util/psdatabase.h"
+
+//=============================================================================
+// Local Includes
+//=============================================================================
 #include "msgmanager.h"
 #include "gem.h"
 #include "clients.h"
 #include "globals.h"
-#include "util/psdatabase.h"
 
 
 bool MessageManager::Verify(MsgEntry *pMsg,unsigned int flags,Client*& client)
