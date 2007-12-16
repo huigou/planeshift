@@ -53,8 +53,9 @@
 #include "groupmanager.h"
 #include "npcmanager.h"
 #include "combatmanager.h"
-#include "globals.h"
 #include "netmanager.h"
+#include "client.h"
+#include "globals.h"
 
 /// This #define determines how far away people will get detailed combat events.
 #define MAX_COMBAT_EVENT_RANGE 30

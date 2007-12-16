@@ -20,67 +20,78 @@
 #ifndef __MINIGAMEMANAGER_H
 #define __MINIGAMEMANAGER_H
 
-#include "net/messages.h"           // Message definitions
-#include "net/msghandler.h"         // Network access
-#include "msgmanager.h"             // Parent class
+//=============================================================================
+// Crystal Space Includes
+//=============================================================================
+#include <csutil/weakref.h>
 
-#include "gem.h"
+//=============================================================================
+// Project Includes
+//=============================================================================
+#include "net/messages.h"           // Message definitions
+
+//=============================================================================
+// Local Includes
+//=============================================================================
+#include "deleteobjcallback.h"
+#include "msgmanager.h"             // Parent class
 
 class Client;
 class psMiniGameManager;
+class gemActionLocation;
+class gemObject;
 
 /**
  * Wrapper class for the game board layout buffer.
  */
 class psMiniGameBoard
 {
+public:
 
-    public:
+    psMiniGameBoard();
 
-        psMiniGameBoard();
+    ~psMiniGameBoard();
 
-        ~psMiniGameBoard();
+    /// Sets up the game board layout.
+    void Setup(int8_t newCols, int8_t newRows, uint8_t *newLayout, uint8_t newNUmPieces, uint8_t *newPieces);
 
-        /// Sets up the game board layout.
-        void Setup(int8_t newCols, int8_t newRows, uint8_t *newLayout, uint8_t newNUmPieces, uint8_t *newPieces);
+    /// Returns the number of columns.
+    int8_t GetCols() const { return cols; }
+    
+    /// Returns the number of rows.
+    int8_t GetRows() const { return rows; }
 
-        /// Returns the number of columns.
-        int8_t GetCols() const { return cols; }
+    /// Returns the packed game board layout.
+    uint8_t *GetLayout() const { return layout; };
 
-        /// Returns the number of rows.
-        int8_t GetRows() const { return rows; }
+    /// Returns the number of available pieces.
+    uint8_t GetNumPieces() const { return numPieces; }
 
-        /// Returns the packed game board layout.
-        uint8_t *GetLayout() const { return layout; };
+    /// Returns the package list of available pieces.
+    uint8_t *GetPieces() const { return pieces; }
 
-        /// Returns the number of available pieces.
-        uint8_t GetNumPieces() const { return numPieces; }
+    /// Gets the tile state from the specified column and row.
+    uint8_t Get(int8_t col, int8_t row) const;
 
-        /// Returns the package list of available pieces.
-        uint8_t *GetPieces() const { return pieces; }
+    /// Sets the tile state at the specified column and row.
+    void Set(int8_t col, int8_t row, uint8_t state);
 
-        /// Gets the tile state from the specified column and row.
-        uint8_t Get(int8_t col, int8_t row) const;
+protected:
 
-        /// Sets the tile state at the specified column and row.
-        void Set(int8_t col, int8_t row, uint8_t state);
+    /// The current game board layout with tiles and pieces.
+    uint8_t *layout;
+        
+    /// The number of columns.
+    int8_t cols;
 
-    protected:
+    /// The number of rows.
+    int8_t rows;
 
-        /// The current game board layout with tiles and pieces.
-        uint8_t *layout;
+    /// The number of available pieces.
+    uint8_t numPieces;
 
-        /// The number of columns.
-        int8_t cols;
-
-        /// The number of rows.
-        int8_t rows;
-
-        /// The number of available pieces.
-        uint8_t numPieces;
-
-        /// The package list of available gane pieces.
-        uint8_t *pieces;
+    /// The package list of available gane pieces.
+    uint8_t *pieces;
 
 };
 
@@ -112,99 +123,98 @@ class psMiniGameBoard
  */
 class psMiniGameSession : public iDeleteObjectCallback
 {
+public:
 
-    public:
+    psMiniGameSession(psMiniGameManager *mng, gemActionLocation *obj, const char *name);
 
-        psMiniGameSession(psMiniGameManager *mng, gemActionLocation *obj, const char *name);
+    ~psMiniGameSession();
 
-        ~psMiniGameSession();
+    /// Returns the game session ID
+    const uint32_t GetID() const { return id; }
 
-        /// Returns the game session ID
-        const uint32_t GetID() const { return id; }
+    /// Returns the session name.
+    const csString& GetName() const { return name; }
 
-        /// Returns the session name.
-        const csString& GetName() const { return name; }
+    /// Returns the game options.
+    uint16_t GetOptions() const { return options; }
 
-        /// Returns the game options.
-        uint16_t GetOptions() const { return options; }
+    /**
+     * Loads the game.
+     * @param[in] responseString The string with minigame options and board layout.
+     * @return Returns true if the game was loaded and false if not.
+     *
+     * The Load() function loads the game from the given action location response string.
+     */
+    bool Load(csString &responseString);
 
-        /**
-         * Loads the game.
-         * @param[in] responseString The string with minigame options and board layout.
-         * @return Returns true if the game was loaded and false if not.
-         *
-         * The Load() function loads the game from the given action location response string.
-         */
-        bool Load(csString &responseString);
+    /// Restarts the game.
+    void Restart();
 
-        /// Restarts the game.
-        void Restart();
+    /// Adds a player to the session.
+    void AddPlayer(Client *client);
 
-        /// Adds a player to the session.
-        void AddPlayer(Client *client);
+    /// Removes a player from the session.
+    void RemovePlayer(Client *client);
 
-        /// Removes a player from the session.
-        void RemovePlayer(Client *client);
+    /// Returns true if it is valid for this player to update the game board.
+    bool IsValidToUpdate(Client *client) const;
 
-        /// Returns true if it is valid for this player to update the game board.
-        bool IsValidToUpdate(Client *client) const;
+    /// Updates the game board. NB! Call IsValidToUpdate() first to verify that updating is valid.
+    void Update(Client *client, psMGUpdateMessage &msg);
 
-        /// Updates the game board. NB! Call IsValidToUpdate() first to verify that updating is valid.
-        void Update(Client *client, psMGUpdateMessage &msg);
+    /**
+     * Sends the current game board to the given player.
+     * @param[in] clientID The ID of the client.
+     * @param[in] modOptions Modifier for game options.
+     */
+    void Send(uint32_t clientID, uint32_t modOptions);
 
-        /**
-         * Sends the current game board to the given player.
-         * @param[in] clientID The ID of the client.
-         * @param[in] modOptions Modifier for game options.
-         */
-        void Send(uint32_t clientID, uint32_t modOptions);
+    /// Broadcast the current game board layout to all the players/watchers.
+    void Broadcast();
+    
+    /// Handles disconnected players.
+    virtual void DeleteObjectCallback(iDeleteNotificationObject * object);
 
-        /// Broadcast the current game board layout to all the players/watchers.
-        void Broadcast();
+    /// Checks for idle players and players too far away
+    void Idle();
 
-        /// Handles disconnected players.
-        virtual void DeleteObjectCallback(iDeleteNotificationObject * object);
+protected:
 
-        /// Checks for idle players and players too far away
-        void Idle();
+    /// Game manager.
+    psMiniGameManager *manager;
 
-    protected:
+    /// The game session ID (equals to the action location ID)
+    uint32_t id;
 
-        /// Game manager.
-        psMiniGameManager *manager;
+    /// The game session name.
+    csString name;
 
-        /// The game session ID (equals to the action location ID)
-        uint32_t id;
+    /// Action location object
+    csWeakRef<gemObject> actionObject;
 
-        /// The game session name.
-        csString name;
+    /// Game options
+    uint16_t options;
 
-        /// Action location object
-        csWeakRef<gemObject> actionObject;
+    /// The player with white game pieces.
+    uint32_t whitePlayerID;
 
-        /// Game options
-        uint16_t options;
+    /// Idle counter for the player with white pieces.
+    int whiteIdleCounter;
 
-        /// The player with white game pieces.
-        uint32_t whitePlayerID;
+    /// The player with black game pieces.
+    uint32_t blackPlayerID;
 
-        /// Idle counter for the player with white pieces.
-        int whiteIdleCounter;
+    /// Idle counter for the player with black pieces.
+    int blackIdleCounter;
 
-        /// The player with black game pieces.
-        uint32_t blackPlayerID;
+    /// Watchers.
+    csArray<uint32_t> watchers;
 
-        /// Idle counter for the player with black pieces.
-        int blackIdleCounter;
+    /// Current message counter for versionin.
+    uint8_t currentCounter;
 
-        /// Watchers.
-        csArray<uint32_t> watchers;
-
-        /// Current message counter for versionin.
-        uint8_t currentCounter;
-
-        /// The current game board.
-        psMiniGameBoard gameBoard;
+    /// The current game board.
+    psMiniGameBoard gameBoard;
 };
 
 
@@ -214,32 +224,32 @@ class psMiniGameSession : public iDeleteObjectCallback
 class psMiniGameManager : public MessageManager
 {
 
-    public:
+public:
 
-        psMiniGameManager();
+    psMiniGameManager();
 
-        ~psMiniGameManager();
+    ~psMiniGameManager();
 
-        virtual void HandleMessage(MsgEntry *me, Client *client);
+    virtual void HandleMessage(MsgEntry *me, Client *client);
+    
+    psMiniGameSession *GetSessionByID(uint32_t id);
 
-        psMiniGameSession *GetSessionByID(uint32_t id);
+    /// Idle function to check for idle players and players too far away.
+    void Idle();
 
-        /// Idle function to check for idle players and players too far away.
-        void Idle();
+protected:
 
-    protected:
+    void HandleStartGameRequest(Client *client);
 
-        void HandleStartGameRequest(Client *client);
+    void HandleStopGameRequest(Client *client);
 
-        void HandleStopGameRequest(Client *client);
+    void HandleGameUpdate(Client *client, psMGUpdateMessage &msg);
 
-        void HandleGameUpdate(Client *client, psMGUpdateMessage &msg);
+    /// Game sessions.
+    csPDelArray<psMiniGameSession> sessions;
 
-        /// Game sessions.
-        csPDelArray<psMiniGameSession> sessions;
-
-        /// Maps players to game sessions for quicker access.
-        csHash<psMiniGameSession *, uint32_t> playerSessions;
+    /// Maps players to game sessions for quicker access.
+    csHash<psMiniGameSession *, uint32_t> playerSessions;
 };
 
 

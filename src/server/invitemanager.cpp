@@ -17,25 +17,34 @@
  *
  */
 
-
 #include <psconfig.h>
-#include <physicallayer/entity.h>
-#include <propclass/mesh.h>
-
 #include <string.h>
 #include <memory.h>
 
+//=============================================================================
+// Crystal Space Includes
+//=============================================================================
+#include <physicallayer/entity.h>
+#include <propclass/mesh.h>
+
+//=============================================================================
+// Project Includes
+//=============================================================================
+#include "util/serverconsole.h"
+#include "util/eventmanager.h"
+#include "util/pserror.h"
+#include "util/log.h"
+
+//=============================================================================
+// Local Includes
+//=============================================================================
 #include "invitemanager.h"
 #include "client.h"
 #include "clients.h"
 #include "psserver.h"
 #include "playergroup.h"
-#include "util/serverconsole.h"
 #include "gem.h"
-#include "util/eventmanager.h"
 #include "netmanager.h"
-#include "util/pserror.h"
-#include "util/log.h"
 #include "globals.h"
 
 
