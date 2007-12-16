@@ -17,22 +17,32 @@
  *
  */
 #include <psconfig.h>
+//=============================================================================
+// Crystal Space Includes
+//=============================================================================
 #include <physicallayer/entity.h>
 #include <propclass/mesh.h>
 
-#include "client.h"
-#include "clients.h"
-#include "invitemanager.h"
-#include "playergroup.h"
-#include "groupmanager.h"
+//=============================================================================
+// Project Includes
+//=============================================================================
 #include "util/log.h"
 #include "util/serverconsole.h"
 #include "util/psxmlparser.h"
 #include "util/eventmanager.h"
+
+//=============================================================================
+// Local Includes
+//=============================================================================
+#include "groupmanager.h"
+#include "client.h"
+#include "clients.h"
+#include "invitemanager.h"
+#include "playergroup.h"
 #include "gem.h"
 #include "psserver.h"
-#include "globals.h"
 #include "chatmanager.h"
+#include "globals.h"
 
 
 /** A structure to hold the clients that are pending on joining a group.

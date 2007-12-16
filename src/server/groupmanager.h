@@ -19,17 +19,28 @@
 #ifndef __GROUPMANAGER_H__
 #define __GROUPMANAGER_H__
 
+//=============================================================================
+// Crystal Space Includes
+//=============================================================================
 #include <csutil/ref.h>
 #include <csutil/refarr.h>
 #include <csutil/array.h>
 
-#include "net/messages.h"        // Message definitions
+//=============================================================================
+// Project Includes
+//=============================================================================
+#include "net/messages.h"
+
+//=============================================================================
+// Local Includes
+//=============================================================================
 #include "msgmanager.h"   // Subscriber class
 
 class gemActor;
 class GroupManager;
 class Client;
 class ChatManager;
+class ClientConnectionSet;
 
 //---------------------------------------------------------------------------
 
