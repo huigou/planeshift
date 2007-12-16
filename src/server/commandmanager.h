@@ -19,9 +19,20 @@
 
 #ifndef __COMMANDMANAGER_H__
 #define __COMMANDMANAGER_H__
-
+//=============================================================================
+// Crystal Space Includes
+//=============================================================================
 #include <csutil/csstring.h>
 #include <csutil/hash.h>
+
+//=============================================================================
+// Project Includes
+//=============================================================================
+
+//=============================================================================
+// Local Includes
+//=============================================================================
+
 
 /** Defines a command group. 
   */  
@@ -31,6 +42,7 @@ struct CommandGroup
     unsigned int id;        ///< Unique ID code from database. 
     csArray<csString> commands;  ///< List of all the commands in this group.
 };
+
 
 /** Defines a command listing
   */  
