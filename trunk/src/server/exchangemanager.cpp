@@ -18,17 +18,28 @@
  */
 
 #include <psconfig.h>
+//=============================================================================
+// Crystal Space Includes
+//=============================================================================
 
+//=============================================================================
+// Project Includes
+//=============================================================================
 #include "bulkobjects/pscharacterloader.h"
 #include "bulkobjects/dictionary.h"
 #include "bulkobjects/psitem.h"
 #include "bulkobjects/psglyph.h"
 #include "bulkobjects/psnpcdialog.h"
+
 #include "util/log.h"
 #include "util/psconst.h"
 #include "util/psstring.h"
 #include "util/eventmanager.h"
-#include "globals.h"
+
+//=============================================================================
+// Local Includes
+//=============================================================================
+#include "exchangemanager.h"
 #include "psserver.h"
 #include "psserverchar.h"
 #include "clients.h"
@@ -36,9 +47,8 @@
 #include "chatmanager.h"
 #include "cachemanager.h"
 #include "playergroup.h"
-
-#include "exchangemanager.h"
 #include "invitemanager.h"
+#include "globals.h"
 
 /** Question client. Handles YesNo response of client for trade request. */
 class PendingTradeInvite : public PendingInvite

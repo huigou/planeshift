@@ -18,21 +18,27 @@
  */
 #ifndef __EXCHANGEMANAGER_H__
 #define __EXCHANGEMANAGER_H__
-
+//=============================================================================
+// Crystal Space Includes
+//=============================================================================
 #include <csutil/ref.h>
 #include <csutil/refarr.h>
+#include <csutil/parray.h>
 
+//=============================================================================
+// Project Includes
+//=============================================================================
 #include "net/messages.h"           // Exchange Messages definitions
-#include "client.h"                 // Client, and ClientConnectionSet classes
+
+//=============================================================================
+// Local Includes
+//=============================================================================
 #include "msgmanager.h"             // Parent class
-#include "entitymanager.h"
-#include "gem.h"
-#include "csutil/parray.h"
 
 class psSpawnManager;
 class psServer;
 class Exchange;
-
+class psNPCDialog;
 
 /** ExchangingCharacter holds relevant information about character that is
   * participating in exchange of items with another character.
