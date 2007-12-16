@@ -35,10 +35,12 @@
 //=============================================================================
 #include "msgmanager.h"             // Parent class
 
+class ClientConnectionSet;
 class psSpawnManager;
 class psServer;
 class Exchange;
 class psNPCDialog;
+class psDatabase;
 
 /** ExchangingCharacter holds relevant information about character that is
   * participating in exchange of items with another character.

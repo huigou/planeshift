@@ -19,13 +19,25 @@
 #ifndef __QUESTMANAGER_H__
 #define __QUESTMANAGER_H__
 
+//=============================================================================
+// Crystal Space Includes
+//=============================================================================
 
-#include "msgmanager.h"   // Subscriber class
+//=============================================================================
+// Project Includes
+//=============================================================================
 #include "net/messages.h"            // Message definitions
 #include "net/msghandler.h"         // Network access
+
 #include "util/eventmanager.h"
 
 #include "bulkobjects/psquest.h"
+
+//=============================================================================
+// Local Includes
+//=============================================================================
+#include "msgmanager.h"   // Subscriber class
+
 
 class Client;
 class psItemStats;

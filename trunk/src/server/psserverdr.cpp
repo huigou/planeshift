@@ -17,41 +17,53 @@
   *
   */
 #include <psconfig.h>
-
+//=============================================================================
+// Crystal Space Includes
+//=============================================================================
 #include <iutil/databuff.h>
 #include <iengine/movable.h>
 #include <iengine/mesh.h>
 #include <iengine/region.h>
 #include <iutil/object.h>
-#include "client.h"
-#include "clients.h"
-#include "net/message.h"
-#include "net/msghandler.h"
-#include "engine/celbase.h"
-#include "engine/netpersist.h"
+
 #include <propclass/linmove.h>
 #include <propclass/colldet.h>
 
+//=============================================================================
+// Project Includes
+//=============================================================================
+#include "net/message.h"
+#include "net/msghandler.h"
+
+#include "engine/celbase.h"
+#include "engine/netpersist.h"
+
+#include "util/serverconsole.h"
+#include "util/log.h"
+#include "util/psconst.h"
+#include "util/mathscript.h"
+#include "util/eventmanager.h"
+
+
+//=============================================================================
+// Local Includes
+//=============================================================================
 #include "psserverdr.h"
+#include "client.h"
+#include "clients.h"
 #include "tutorialmanager.h"
 #include "events.h"
-
 #include "psserver.h"
 #include "cachemanager.h"
-#include "globals.h"
 #include "playergroup.h"
 #include "gem.h"
 #include "entitymanager.h"
 #include "progressionmanager.h"
 #include "adminmanager.h"
 #include "paladinjr.h"
-
-#include "util/serverconsole.h"
-#include "util/log.h"
-#include "util/psconst.h"
-#include "util/mathscript.h"
 #include "psproxlist.h"
-#include "util/eventmanager.h"
+#include "globals.h"
+
 
 
 psServerDR::psServerDR()

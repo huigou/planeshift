@@ -19,13 +19,24 @@
  
  
 #include <psconfig.h>
+//=============================================================================
+// Crystal Space Includes
+//=============================================================================
+
+//=============================================================================
+// Project Includes
+//=============================================================================
+#include "util/eventmanager.h"
+#include "util/log.h"
+#include "util/serverconsole.h"
+
+//=============================================================================
+// Local Includes
+//=============================================================================
 #include "questionmanager.h"
 #include "client.h"
 #include "clients.h"
-#include "util/eventmanager.h"
-#include "util/log.h"
 #include "globals.h"
-#include "util/serverconsole.h"
 
 
 unsigned PendingQuestion::nextID = 0;
