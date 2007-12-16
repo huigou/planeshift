@@ -31,6 +31,7 @@ class psWorkManager;
 class psItem;
 class Client;
 struct CombinationConstruction;
+class MathScriptEngine;
 
 // Define the work event types
 #define MANUFACTURE 0                   // Digging, collecting, farming

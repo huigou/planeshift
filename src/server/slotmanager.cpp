@@ -16,9 +16,13 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 #include <psconfig.h>
+//=============================================================================
+// Crystal Space Includes
+//=============================================================================
 
-#include "globals.h"
-
+//=============================================================================
+// Project Includes
+//=============================================================================
 #include "util/log.h"
 #include "util/psconst.h"
 #include "util/eventmanager.h"
@@ -29,6 +33,9 @@
 #include "bulkobjects/pscharacter.h"
 #include "bulkobjects/psitem.h"
 
+//=============================================================================
+// Local Includes
+//=============================================================================
 #include "slotmanager.h"
 #include "cachemanager.h"
 #include "exchangemanager.h"
@@ -39,6 +46,7 @@
 #include "psserverchar.h"
 #include "client.h"
 #include "entitymanager.h"
+#include "globals.h"
 
 SlotManager::~SlotManager()
 {

@@ -17,23 +17,32 @@
  *
  */
 #include <psconfig.h>
+//=============================================================================
+// Crystal Space Includes
+//=============================================================================
+#include <csutil/csstring.h>
+#include <csutil/xmltiny.h>
+#include <iutil/objreg.h>
+#include <iutil/cfgmgr.h>
 
+//=============================================================================
+// Project Includes
+//=============================================================================
+#include "util/sleep.h"
+#include "util/eventmanager.h"
+#include "util/psxmlparser.h"
+
+//=============================================================================
+// Local Includes
+//=============================================================================
 #include "serverstatus.h"
 #include "psserver.h"
 #include "playergroup.h"
 #include "netmanager.h"
-
-#include "csutil/csstring.h"
-#include "csutil/xmltiny.h"
-#include "iutil/objreg.h"
-#include "iutil/cfgmgr.h"
 #include "gem.h"
 #include "clients.h"
 #include "entitymanager.h"
-#include "util/sleep.h"
-#include "util/eventmanager.h"
 #include "globals.h"
-#include "util/psxmlparser.h"
 #include "clientstatuslogger.h"
 
 

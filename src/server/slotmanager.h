@@ -19,10 +19,18 @@
 #ifndef __SLOTMANAGER_H__
 #define __SLOTMANAGER_H__
 
+//=============================================================================
+// Crystal Space Includes
+//=============================================================================
+
+//=============================================================================
+// Project Includes
+//=============================================================================
+
+//=============================================================================
+// Local Includes
+//=============================================================================
 #include "msgmanager.h"
-#include "gem.h"
-#include "bulkobjects/pscharacter.h"
-#include "bulkobjects/psitem.h"
 
 /** Handles Drag and Drop Messages from the client.
  *  This basically figures out what item is being dragged and places it in a

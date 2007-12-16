@@ -19,19 +19,16 @@
 
 #include <psconfig.h>
 #include <ctype.h>
+//=============================================================================
+// Crystal Space Includes
+//=============================================================================
 #include <iutil/object.h>
+
+//=============================================================================
+// Project Includes
+//=============================================================================
 #include "util/serverconsole.h"
 #include "util/log.h"
-#include "questmanager.h"
-#include "gem.h"
-#include "playergroup.h"
-#include "cachemanager.h"
-#include "netmanager.h"
-#include "psserver.h"
-#include "globals.h"
-#include "client.h"
-#include "events.h"
-#include "entitymanager.h"
 #include "util/psstring.h"
 #include "util/strutil.h"
 #include "util/psxmlparser.h"
@@ -40,6 +37,21 @@
 #include "bulkobjects/pscharacterloader.h"
 #include "bulkobjects/psitem.h"
 #include "bulkobjects/dictionary.h"
+
+//=============================================================================
+// Local Includes
+//=============================================================================
+#include "questmanager.h"
+#include "gem.h"
+#include "playergroup.h"
+#include "cachemanager.h"
+#include "netmanager.h"
+#include "psserver.h"
+#include "client.h"
+#include "events.h"
+#include "entitymanager.h"
+#include "globals.h"
+
 
 
 QuestManager::QuestManager()
