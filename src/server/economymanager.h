@@ -27,13 +27,22 @@
 #ifndef ECONOMYMANAGER_HEADER
 #define ECONOMYMANAGER_HEADER
 
-#include "msgmanager.h"             // Parent class
-#include "net/messages.h"           // Message definitions
-#include "net/msghandler.h"         // Network access
-#include "util/gameevent.h"
-
+//=============================================================================
+// Crystal Space Includes
+//=============================================================================
 #include <csutil/hash.h>
 #include <csutil/sysfunc.h>
+
+//=============================================================================
+// Project Includes
+//=============================================================================
+#include "util/gameevent.h"
+
+//=============================================================================
+// Local Includes
+//=============================================================================
+#include "msgmanager.h"             // Parent class
+
 
 struct TransactionEntity
 {
@@ -79,15 +88,16 @@ protected:
     
 };
 
+
 class psEconomyDrop : public psGameEvent
 {
-protected:
-    EconomyManager* economy;
-    csTicks eachTime;
-    bool loop;
 public:
     psEconomyDrop(EconomyManager* manager,csTicks ticks,bool loop);
     void Trigger();
+protected:
+    EconomyManager* economy;
+    csTicks eachTimeTicks;
+    bool loop;    
 };
 
 #endif
