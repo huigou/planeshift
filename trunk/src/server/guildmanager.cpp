@@ -19,37 +19,46 @@
 
 
 #include <psconfig.h>
-
 #include <string.h>
 #include <memory.h>
+//=============================================================================
+// Crystal Space Includes
+//=============================================================================
 #include <csutil/xmltiny.h>
 #include <physicallayer/entity.h>
 #include <propclass/mesh.h>
 
-#include "client.h"
-#include "clients.h"
+//=============================================================================
+// Project Includes
+//=============================================================================
 #include "util/serverconsole.h"
 #include "util/psstring.h"
 #include "util/psxmlparser.h"
 #include "util/eventmanager.h"
 #include "util/psdatabase.h"        // Database
-#include "gem.h"
-#include "playergroup.h"
-#include "guildmanager.h"
-#include "cachemanager.h"
 #include "util/pserror.h"
 #include "util/log.h"
 #include "util/psconst.h"
-#include "globals.h"
 
-#include "psserver.h"
 #include "bulkobjects/pscharacter.h"
 #include "bulkobjects/pscharacterloader.h"
 #include "bulkobjects/pssectorinfo.h"
 #include "bulkobjects/psaccountinfo.h"
+
+//=============================================================================
+// Local Includes
+//=============================================================================
+#include "guildmanager.h"
+#include "client.h"
+#include "clients.h"
+#include "gem.h"
+#include "playergroup.h"
+#include "cachemanager.h"
+#include "psserver.h"
 #include "chatmanager.h"
 #include "netmanager.h"
-
+#include "invitemanager.h"
+#include "globals.h"
 
 
 class PendingGuildInvite : public PendingInvite
