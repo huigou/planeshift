@@ -21,36 +21,50 @@
 #include <ctype.h>
 #include <csutil/csmd5.h>
 
-#include "globals.h"
+//=============================================================================
+// Crystal Space Includes
+//=============================================================================
+
+//=============================================================================
+// Project Includes
+//=============================================================================
 #include "net/npcmessages.h"
+
 #include "util/eventmanager.h"
 #include "util/serverconsole.h"
+#include "util/psdatabase.h"
+#include "util/log.h"
+#include "util/psconst.h"
+#include "util/strutil.h"
+#include "util/psxmlparser.h"
+#include "util/mathscript.h"
+#include "util/serverconsole.h"
+#include "util/command.h"
+
+#include "engine/psworld.h"
+
+#include "bulkobjects/pscharacterloader.h"
+#include "bulkobjects/psaccountinfo.h"
+#include "bulkobjects/servervitals.h"
+#include "bulkobjects/psraceinfo.h"
+
+//=============================================================================
+// Local Includes
+//=============================================================================
+#include "globals.h"
 #include "events.h"
 #include "psserver.h"
 #include "cachemanager.h"
 #include "playergroup.h"
-#include "util/psdatabase.h"
 #include "gem.h"
 #include "combatmanager.h"
 #include "authentserver.h"
 #include "entitymanager.h"
 #include "spawnmanager.h"
-#include "util/log.h"
-#include "util/psconst.h"
-#include "engine/psworld.h"
-#include "bulkobjects/pscharacterloader.h"
-#include "bulkobjects/psaccountinfo.h"
 #include "clients.h"                // Client, and ClientConnectionSet classes
 #include "client.h"                 // Client, and ClientConnectionSet classes
-#include "util/strutil.h"
 #include "psserverchar.h"
 #include "creationmanager.h"
-#include "util/psxmlparser.h"
-#include "util/mathscript.h"
-#include "bulkobjects/servervitals.h"
-#include "bulkobjects/psraceinfo.h"
-#include "util/serverconsole.h"
-#include "util/command.h"
 #include "npcmanager.h"
 #include "workmanager.h"
 

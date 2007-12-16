@@ -19,11 +19,22 @@
 
 #ifndef __NPCMANAGER_H_
 #define __NPCMANAGER_H_
-
+//=============================================================================
+// Crystal Space Includes
+//=============================================================================
 #include <csutil/ref.h>
-#include "msgmanager.h"   // Subscriber class
-#include "net/netbase.h"   // PublishVector class
+
+//=============================================================================
+// Project Includes
+//=============================================================================
+#include "net/netbase.h"                // PublishVector class
 #include "bulkobjects/psskills.h"    
+
+//=============================================================================
+// Local Includes
+//=============================================================================
+#include "msgmanager.h"   // Subscriber class
+
 
 class Client;
 class psDatabase;

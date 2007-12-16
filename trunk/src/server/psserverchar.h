@@ -18,24 +18,34 @@
  */
 #ifndef PS_SERVER_CHAR_MANAGER_H
 #define PS_SERVER_CHAR_MANAGER_H
-
-#include "msgmanager.h"
-#include "bulkobjects/pscharacter.h"
-#include "bulkobjects/psitem.h"
-#include "slotmanager.h"
-#include "iutil/vfs.h"
+//=============================================================================
+// Crystal Space Includes
+//=============================================================================
+#include <iutil/vfs.h>
 #include <csutil/ref.h>
 #include <csutil/xmltiny.h>
+
+//=============================================================================
+// Project Includes
+//=============================================================================
+
+//=============================================================================
+// Local Includes
+//=============================================================================
+#include "msgmanager.h"
 
 class MsgEntry;
 class ClientConnectionSet;
 class psServer;
 class Client;
-struct psItemCategory;
 class psMerchantInfo;
 class psItem;
 class psActionLocation;
+class SlotManager;
+
 struct CraftTransInfo;
+struct psItemCategory;
+
 
 /// Manages character details over the net.
 /**
