@@ -39,6 +39,7 @@
 #include "util/mathscript.h"
 #include <csutil/xmltiny.h>
 #include "../gem.h"
+#include "../client.h"
 
 psCharacterInventory::psCharacterInventory(psCharacter *ownr)
 {

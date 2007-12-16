@@ -47,6 +47,7 @@ class psEndChatLoggingEvent;
 class NpcResponse;
 class psGuildInfo;
 class gemNPC;
+class gemActor;
 
 
 #define CHAT_SAY_RANGE 10

@@ -30,10 +30,11 @@
 //=============================================================================
 // Local Includes
 //=============================================================================
-#include "globals.h"
 #include "bankmanager.h" 
+#include "client.h"
 #include "cachemanager.h"
 #include "progressionmanager.h"
+#include "globals.h"
 
 
 enum coin
