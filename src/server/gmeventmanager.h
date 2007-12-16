@@ -18,19 +18,29 @@
 
 #ifndef __GMEVENTMANAGER_H__
 #define __GMEVENTMANAGER_H__
-
+//=============================================================================
+// Crystal Space Includes
+//=============================================================================
 #include <csutil/ref.h>
 #include <csutil/csstring.h>
 #include <csutil/array.h>
+
+//=============================================================================
+// Project Includes
+//=============================================================================
+
+//=============================================================================
+// Local Includes
+//=============================================================================
 #include "msgmanager.h"
-#include "net/msghandler.h"
-#include "bulkobjects/psitem.h"
 
 #define MAX_PLAYERS_PER_EVENT 100
 #define MAX_EVENT_NAME_LENGTH 40
 #define MAX_REGISTER_RANGE    100.0
 
 #define UNDEFINED_GMID        0
+
+class psItemStats;
 
 enum GMEventStatus
 {
