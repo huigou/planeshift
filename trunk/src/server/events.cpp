@@ -19,22 +19,31 @@
  */
 
 #include <psconfig.h>
-
 #include <stdio.h>
 #include <string.h>
 #include <memory.h>
 #include <stdlib.h>
 
+//=============================================================================
+// Crystal Space Includes
+//=============================================================================
 #include <iutil/objreg.h>
 #include <iutil/cfgmgr.h>
 #include <csutil/csstring.h>
 
-#include "globals.h"
+//=============================================================================
+// Project Includes
+//=============================================================================
+#include "util/strutil.h"
+
+//=============================================================================
+// Local Includes
+//=============================================================================
+#include "events.h"
 #include "psserver.h"
 #include "netmanager.h"
-#include "util/strutil.h"
 #include "economymanager.h"
-#include "events.h"
+#include "globals.h"
 
 PSF_IMPLEMENT_MSG_FACTORY(psDamageEvent,MSGTYPE_DAMAGE_EVENT);
 
