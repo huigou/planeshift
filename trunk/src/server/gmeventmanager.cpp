@@ -17,18 +17,30 @@
  */
 
 #include <psconfig.h>
-#include "globals.h"
-#include "gmeventmanager.h"
+//=============================================================================
+// Crystal Space Includes
+//=============================================================================
+
+//=============================================================================
+// Project Includes
+//=============================================================================
 #include "util/psdatabase.h"
 #include "util/log.h"
+#include "util/eventmanager.h"
+#include "util/strutil.h"
+
+#include "net/messages.h"
+
+//=============================================================================
+// Local Includes
+//=============================================================================
+#include "gmeventmanager.h"
 #include "clients.h"
 #include "gem.h"
-#include "net/messages.h"
-#include "util/eventmanager.h"
 #include "cachemanager.h"
 #include "entitymanager.h"
-#include "util/strutil.h"
 #include "adminmanager.h"
+#include "globals.h"
 
 GMEventManager::GMEventManager()
 {
