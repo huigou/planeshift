@@ -21,11 +21,19 @@
 #ifndef __GUILDMANAGER_H__
 #define __GUILDMANAGER_H__
 
-#include "net/messages.h"        // Message definitions
-#include "net/msghandler.h"         // Network access
-#include "msgmanager.h"             // Parent class
-#include "invitemanager.h"
+//=============================================================================
+// Crystal Space Includes
+//=============================================================================
 #include <iutil/document.h>
+
+//=============================================================================
+// Project Includes
+//=============================================================================
+
+//=============================================================================
+// Local Includes
+//=============================================================================
+#include "msgmanager.h"             // Parent class
 
 class ClientConnectionSet;
 class ChatManager;
