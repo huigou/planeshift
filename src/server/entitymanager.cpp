@@ -17,7 +17,9 @@
 *
 */
 #include <psconfig.h>
-
+//=============================================================================
+// Crystal Space Includes
+//=============================================================================
 #include <iengine/engine.h>
 #include <iengine/campos.h>
 #include <iengine/mesh.h>
@@ -26,7 +28,6 @@
 #include <iutil/objreg.h>
 #include <iutil/cfgmgr.h>
 #include <iutil/object.h>
-
 #include <csgeom/box.h>
 #include <imesh/objmodel.h>
 #include <csgeom/transfrm.h>
@@ -51,13 +52,13 @@
 #include <propclass/input.h>
 #include <propclass/linmove.h>
 
-#include "client.h"
-#include "clients.h"
-#include "psproxlist.h"
+//=============================================================================
+// Project Includes
+//=============================================================================
 #include "net/message.h"
 #include "net/msghandler.h"
+
 #include "util/pserror.h"
-#include "iserver/idal.h"
 #include "util/psdatabase.h"
 #include "util/psstring.h"
 #include "util/strutil.h"
@@ -65,30 +66,37 @@
 #include "util/eventmanager.h"
 #include "util/mathscript.h"
 #include "util/psxmlparser.h"
+#include "util/serverconsole.h"
 
-#include "globals.h"
 #include "engine/netpersist.h"
 #include "engine/psworld.h"
-#include "gem.h"
-#include "entitymanager.h"
-#include "usermanager.h"
-#include "psserverdr.h"
-#include "psserver.h"
-#include "psserverchar.h"
-#include "util/serverconsole.h"
-#include "weathermanager.h"
-#include "npcmanager.h"
-#include "progressionmanager.h"
-#include "cachemanager.h"
-#include "playergroup.h"
-
-#include "chatmanager.h"// included for say_range
 
 #include "bulkobjects/pscharacterloader.h"
 #include "bulkobjects/psraceinfo.h"
 #include "bulkobjects/psitem.h"
 #include "bulkobjects/psactionlocationinfo.h"
 #include "bulkobjects/pssectorinfo.h"
+
+//=============================================================================
+// Local Includes
+//=============================================================================
+#include "iserver/idal.h"
+#include "client.h"
+#include "clients.h"
+#include "psproxlist.h"
+#include "gem.h"
+#include "entitymanager.h"
+#include "usermanager.h"
+#include "psserverdr.h"
+#include "psserver.h"
+#include "psserverchar.h"
+#include "weathermanager.h"
+#include "npcmanager.h"
+#include "progressionmanager.h"
+#include "cachemanager.h"
+#include "playergroup.h"
+#include "chatmanager.h"// included for say_range
+#include "globals.h"
 
 EntityManager::EntityManager()
 {

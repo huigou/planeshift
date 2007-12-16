@@ -18,8 +18,18 @@
  */
 #ifndef __EntityManager_H__
 #define __EntityManager_H__
+//=============================================================================
+// Crystal Space Includes
+//=============================================================================
 
+//=============================================================================
+// Project Includes
+//=============================================================================
 #include "engine/celbase.h"
+
+//=============================================================================
+// Local Includes
+//=============================================================================
 #include "msgmanager.h"
 #include "commandmanager.h"
 
@@ -27,9 +37,6 @@ class ClientConnectionSet;
 class psServerDR;
 class psServer;
 class psDatabase;
-struct iPcLinearMovement;
-struct iPcCharacterData;
-struct iPcProximityList;
 class psWorld;
 class psItem;
 class GEMSupervisor;
@@ -38,6 +45,12 @@ class gemObject;
 class gemNPC;
 class psActionLocation;
 class psCharacter;
+class psSectorInfo;
+
+struct iPcLinearMovement;
+struct iPcCharacterData;
+struct iPcProximityList;
+
 
 struct psAffinityAttribute
 {
@@ -58,7 +71,6 @@ public:
     csString MagicalAffinity;
 };
 
-class psSectorInfo;
 
 
 /// Manages CEL entities on the server
