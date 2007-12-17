@@ -475,40 +475,6 @@ public:
      */
     iResultSet* GetAllTriggersInArea(csString data);
     
-
-    /** Fills in the position and sector vector, and returns true if the spot chosen is NOT occupied yet.
-     * Will randomly return a single spawn location from
-     * the hunt locations table. If there is already an
-     * object that has been spawned at that location then
-     * it returns false. Otherwise it returns true.
-     *
-     * @param pos: [CHANGES] Is set to the location for a spawn point from the hunt locations table.
-     * @param sector: [CHANGES] Is set to the sector name for a spawn point from the hunt locations table.
-     * @param randomgen: Is a pointer to the random generator that this function can use.
-     * @return Returns true if the spot chosen is NOT occupied yet and false if the spot chosen is occupied.
-     */
-#ifdef PS_EGGHUNT
-    bool GetHiddenCrystalSpawnLoc(csVector3& pos,csString& sector,csRandomGen *randomgen);
-#endif
-
-    /**
-     * This method is to create a crystal entry in the database.
-     * A crystal entry is just an entry in the database that 
-     * gives details on a game that was invented
-     * using the capabilities we have in MB, such as inventory 
-     * and picking up items.  This is in the form of an Easter 
-     * Egg hunt (American style) called the Crystal Hunt.
-     *
-     * @param x: Is the x poisition to create a new crystal entry.
-     * @param y: Is the y poisition to create a new crystal entry.
-     * @param z: Is the z poisition to create a new crystal entry.
-     * @praam sector: Is the sector name we want the crystal entry to be in.
-     * @return Returns the hunt_location ID of this new crystal entry.
-     */
-#ifdef PS_EGGHUNT
-    int CreateCrystalEntry(float x,float y,float z,const char *sector );
-#endif
-
     /** Return a list of NPCs (with their info) managed by a particular superclient.
      *
      * @param superclientID is the playerID of the superclient

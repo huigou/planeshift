@@ -173,11 +173,6 @@ SpawnManager::SpawnManager(psDatabase *db)
 
     PreloadDatabase();
 
-#ifdef PS_EGGHUNT
-    randomgen = psserver->rng;
-    QueueNextHiddenCrystalSpawn();
-#endif
-
     psserver->GetEventManager()->Subscribe(this,MSGTYPE_LOOTITEM,REQUIRE_READY_CLIENT|REQUIRE_ALIVE);
     psserver->GetEventManager()->Subscribe(this,MSGTYPE_DEATH_EVENT,NO_VALIDATION);
 }
@@ -777,37 +772,6 @@ void SpawnManager::Respawn(int instance,csVector3& where,float rot,csString& sec
         return;
     }
 
-
-#ifdef PS_EGGHUNT
-    // Egghunt logic first
-    if (playerID < 0)
-    {
-        uint32 itemID = (uint32)-playerID;
-        if (itemID > (uint32) SPAWN_POINT_TAKEN) // SPAWN_POINT_TAKEN is special case to skip but still queue next
-        {
-            psItemStats *crystalstats=CacheManager::GetSingleton().GetBasicItemStatsByID(itemID);
-            if (crystalstats==NULL)
-            {
-                Error2("Could not find basic stats with ID %u for crystal spawn.\n",itemID);
-            }
-            else
-            {
-                psItem *crystalitem = crystalstats->InstantiateBasicItem();
-                if (crystalitem!=NULL)
-                {
-                    crystalitem->SetLocationInWorld(spawnsector,where.x, where.y, where.z, rot);
-                    entitymanager->CreateItem(crystalitem,false);
-
-                    crystalitem->Loaded();  // Item is fully created
-                    crystalitem->Save();    // First save
-                }
-            }
-        }
-        QueueNextHiddenCrystalSpawn();
-        return;
-    }
-#endif
-
     psCharacter *chardata=psServer::CharacterLoader.LoadCharacterData(playerID,false);
     if (chardata==NULL)
     {
@@ -821,61 +785,11 @@ void SpawnManager::Respawn(int instance,csVector3& where,float rot,csString& sec
     chardata->ResetMode();
     chardata->SetLocationInWorld(instance,spawnsector,where.x,where.y,where.z,rot);
 
-
     // Now create the NPC as usual
     EntityManager::GetSingleton().CreateNPC(chardata);
 
     ServerStatus::mob_birthcount++;
 }
-
-#ifdef PS_EGGHUNT
-void SpawnManager::QueueNextHiddenCrystalSpawn()
-{
-    // Queue for respawn according to rules
-    SpawnRule key;
-    key.SetID(SPAWN_POINT_TAKEN); // hardcoded rule # for this
-
-    SpawnRule *respawn = rules.Find(&key);
-    if (!respawn)
-    {
-        Notify1(LOG_SPAWN,"Respawn rule for Hidden Crystal, rule 999 was not found! No more eggs.\n");
-        return;
-    }
-
-    csVector3 pos;
-    float angle;
-    csString sector;
-    int delay = respawn->GetRespawnDelay();
-
-    angle = 2*3.14159*randomgen->Get();
-
-    uint32 itemID = (uint32)SPAWN_BASE_ITEM;
-    int rnd = randomgen->Get(100);
-    if (rnd>=90)
-    itemID++;
-    if (rnd>98)
-    itemID++;
-
-    // special hack to skip the eggspawn but still requeue another one
-    if (!psserver->GetHiddenCrystalSpawnLoc(pos,sector,randomgen))
-    itemID = (uint32)SPAWN_POINT_TAKEN;
-
-    psSectorInfo *spawnsector = CacheManager::GetSingleton().GetSectorInfoByName(sector);
-    if (spawnsector==NULL)
-    {
-        Error2("QueueNextHiddenCrystalSpawn indicated unresolvable sector '%s'\n",(const char*)sector);
-        return;
-    }
-
-    psSheduledItem* item = new psSheduledItem(itemID,pos,spawnsector,delay);
-
-    // -itemID below is a hack to differentiate eggs from other spawns
-    psItemSpawnEvent *newevent = new psItemSpawnEvent(item);
-    psserver->GetEventManager()->Push(newevent);
-
-    Notify3(LOG_SPAWN,"Scheduled hidden crystal %u to be spawned in %1.1f seconds.\n",itemID,(float)delay/1000.0);
-}
-#endif
 
 void SpawnManager::HandleLootItem(MsgEntry *me,Client *client)
 {

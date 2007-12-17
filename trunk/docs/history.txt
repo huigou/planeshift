@@ -1,3 +1,6 @@
+*** 2007-12-17 by Kenny Graunke
+- Removed MB Crystal Hunt code.
+
 *** 2007-12-15 by Andrew Craig
 - Moved the start server time to the end of initialization. It was causing 
   some strange problems when the event was queued too early.  
