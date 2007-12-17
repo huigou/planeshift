@@ -321,6 +321,57 @@ void psNPCDialog::AddBadText(const char *text, const char *trigger)
 }
 
 
+//Check current trigger with all prior responses in quests, and in general
+NpcResponse *psNPCDialog::FindResponseWithAllPrior(const char *area,const char *trigger)
+{
+    NpcResponse *resp = NULL;
+    int lastresponse = -1;
+    bool TestedWithoutLastResponse = false;
+
+    //first try with last responses of all assigned quests
+    for (size_t q = 0; q < currentClient->GetCharacterData()->GetNumAssignedQuests(); q++)
+    {
+        lastresponse = currentClient->GetCharacterData()->GetAssignedQuestLastResponse(q);
+        if (lastresponse == -1)
+        { 
+            if (!TestedWithoutLastResponse)
+            {
+                resp = dict->FindResponse(self, area,trigger,0, lastresponse ,currentClient); 
+                TestedWithoutLastResponse = true;
+            }
+        }
+        else
+        {
+            resp = dict->FindResponse(self, area,trigger,0, lastresponse ,currentClient); 
+        }
+
+        if (resp)
+            break;
+    }
+    if (!resp) //else, try old way with general last response
+    {
+        lastresponse = currentClient->GetCharacterData()->GetLastResponse();
+        if (lastresponse == -1)
+        { 
+            if (!TestedWithoutLastResponse)
+            {
+                resp = dict->FindResponse(self, area,trigger,0,lastresponse,currentClient);
+                TestedWithoutLastResponse = true;
+            }
+        }
+        else
+        {
+            resp = dict->FindResponse(self, area,trigger,0,lastresponse,currentClient);
+        }
+    }
+    if (!resp && TestedWithoutLastResponse)
+    {
+        //set general last response to -1 so it is not tested again later on
+        currentClient->GetCharacterData()->SetLastResponse(-1);
+    }
+    return resp;
+}
+
 NpcResponse *psNPCDialog::FindResponse(csString& trigger,const char *text)
 {
     KnowledgeArea *area;
@@ -349,32 +400,10 @@ NpcResponse *psNPCDialog::FindResponse(csString& trigger,const char *text)
         Debug4(LOG_NPC, currentClient->GetClientNum(),"NPC checking %s for trigger %s , with lastResponseID %d...",
                     (const char *)area->area,(const char *)trigger,currentClient->GetCharacterData()->GetLastResponse());
 
-        //first try with last responses of all assigned quests
-        for (size_t q = 0; q < currentClient->GetCharacterData()->GetNumAssignedQuests(); q++)
-        {
-            resp = dict->FindResponse(self, area->area,trigger,0,
-                currentClient->GetCharacterData()->GetAssignedQuestLastResponse(q),currentClient); 
-            if (resp)
-                break;
-        }
-        if (!resp) //else, try old way with general last response
-        {
-            resp = dict->FindResponse(self, area->area,trigger,0,currentClient->GetCharacterData()->GetLastResponse(),currentClient);
-        }
+        resp = FindResponseWithAllPrior(area->area, trigger);
         if (!resp) // If no response found, try search for error trigger
         {
-            //first try with last responses of all assigned quests
-            for (size_t q = 0; q < currentClient->GetCharacterData()->GetNumAssignedQuests(); q++)
-            {
-                resp = dict->FindResponse(self, area->area,trigger_error,0,
-                    currentClient->GetCharacterData()->GetAssignedQuestLastResponse(q),currentClient); 
-                if (resp)
-                    break;
-            }
-            if (!resp) //else, try old way with general last response
-            {
-                resp = dict->FindResponse(self, area->area,trigger_error,0,currentClient->GetCharacterData()->GetLastResponse(),currentClient);
-            }
+            resp = FindResponseWithAllPrior(area->area, trigger_error);
             if (!resp) // If no response found, try search without last response
             {
                 if (currentClient->GetCharacterData()->GetLastResponse() == -1)
@@ -567,16 +596,19 @@ NpcResponse *psNPCDialog::Respond(const char * text,Client *client)
     if (!resp)
     {
         WordArray words(trigger.GetString());
-        for (size_t i=words.GetCount(); i>0; i--)
+        if (words.GetCount()>1) //no need to do this if there is only one word.
         {
-            csString word(words.Get(i-1));
-            Debug2(LOG_NPC, currentClient->GetClientNum(), "psNPCDialog::Respond: Trying word: '%s'\n", word.GetDataSafe());
-    
-            resp = FindResponse(word, text);
-            if (resp)
+            for (size_t i=words.GetCount(); i>0; i--)
             {
-                resp->triggerText = trigger.GetString();
-                break;
+                csString word(words.Get(i-1));
+                Debug2(LOG_NPC, currentClient->GetClientNum(), "psNPCDialog::Respond: Trying word: '%s'\n", word.GetDataSafe());
+
+                resp = FindResponse(word, text);
+                if (resp)
+                {
+                    resp->triggerText = trigger.GetString();
+                    break;
+                }
             }
         }
     }

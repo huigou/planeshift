@@ -139,6 +139,7 @@ protected:
 
     //void FindTriggerWords(const char *text,csString& trigger);
     NpcResponse* FindResponse(csString& trigger,const char *text);
+    NpcResponse *FindResponseWithAllPrior(const char *area,const char *trigger);
     bool CheckPronouns(psString& text);
     void UpdateAntecedents(NpcResponse *resp);
     void AddBadText(const char *text,const char *trigger);
@@ -410,5 +411,6 @@ public:
 };
 
 #endif 
+
 
 
