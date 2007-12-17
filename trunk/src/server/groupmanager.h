@@ -35,6 +35,7 @@
 // Local Includes
 //=============================================================================
 #include "msgmanager.h"   // Subscriber class
+#include "playergroup.h"
 
 class gemActor;
 class GroupManager;
