@@ -311,10 +311,6 @@ protected:
     csHash<LootEntrySet*>   looting;
     LootRandomizer         *lootRandomizer;
 
-#ifdef PS_EGGHUNT
-    csRandomGen            *randomgen;
-#endif 
-
     void HandleLootItem(MsgEntry *me,Client *client);
     void HandleDeathEvent(MsgEntry *me);
 
@@ -400,15 +396,6 @@ public:
      * and queues him for respawn according to the spawn rules.
      */
     void RemoveNPC(gemObject *obj);
-
-#ifdef PS_EGGHUNT
-    /**
-     * Special logic for respawning random Easter Eggs for the Crystal Hunt.
-     */
-    void QueueNextHiddenCrystalSpawn();
-#endif
-
-
 };
 
 

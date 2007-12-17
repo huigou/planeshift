@@ -866,66 +866,6 @@ bool psServer::RemoveBuddy(int self,int buddy)
     return true;
 }
 
-#ifdef PS_EGGHUNT
-bool psServer::GetHiddenCrystalSpawnLoc(csVector3& pos,csString& sector,csRandomGen *randomgen)
-{
-    int count = db->SelectSingleNumber("select count(*) from "
-                      "hunt_locations");
-
-    if (count)
-    {
-        int rule_id = randomgen->Get(count)+1;
-
-        Result result (db->Select("select x,y,z,sector "
-                                 " from hunt_locations "
-                                 " where id=%d ", rule_id));
-
-        if (!result.IsValid())
-        {
-            database->SetLastError(database->GetLastSQLError());
-            return false;
-        }
-
-        if (result.Count() != 1)
-        {
-            database->SetLastError(database->GetLastSQLError());
-            return false;
-        }
-
-        pos.x  = atof(result[0][0]);
-        pos.y  = atof(result[0][1]);
-        pos.z  = atof(result[0][2]);
-        sector = result[0][3];
-
-        csString escape;
-        db->Escape( escape, sector );
-        int check = db->SelectSingleNumber("select count(*)"
-                                        "  from objects "
-                                        " where locx=%1.2f "
-                                        "   and locy=%1.2f "
-                                        "   and locz=%1.2f "
-                                        "   and sector='%s'",
-                                        pos.x,pos.y,pos.z,escape.GetData());
-
-        return (check)?false:true;  // Skip this spawn if already here.
-    }
-    return false;
-}
-
-
-int psServer::CreateCrystalEntry(float x,float y,float z,const char *sector )
-{
-    csString escape;
-    db->Escape( escape, sector );
-    db->Command("INSERT INTO hunt_locations (x,y,z,sector)"
-           " VALUES (%1.2f, %1.2f, %1.2f, \"%s\" )",
-           x,y,z,escape.GetData());
-
-    int id = db->SelectSingleNumber("SELECT last_insert_id()" );
-    return id;
-}
-#endif // Egg hunt
-
 void psServer::UpdateDialog( const char* area, const char* trigger,
                                const char* response, int num )
 {
