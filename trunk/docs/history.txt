@@ -1,3 +1,6 @@
+*** 2007-12-17 by Sasha Levin
+- Commited fix for FS#739 by Lanarel.
+
 *** 2007-12-17 by Kenny Graunke
 - Removed MB Crystal Hunt code.
 
