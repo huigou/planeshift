@@ -1,4 +1,5 @@
 *** 2007-12-18 by Anders Reggestad
+- Added loading of diabled npc flag from npc definitions.
 - Added display of db sector id in server command sectors.
 - Update help text on message filtering.
 - Compiler warning fixes.

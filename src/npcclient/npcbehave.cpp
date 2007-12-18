@@ -398,6 +398,8 @@ Behavior *BehaviorSet::Find(const char *name)
 
 void BehaviorSet::DumpBehaviorList(NPC *npc)
 {
+    CPrintf(CON_CMDOUTPUT, "Appl. %-30s %5s %5s\n","Behavior","Curr","New");
+    
     for (size_t i=0; i<behaviors.GetSize(); i++)
     {
         char applicable = 'N';
@@ -406,7 +408,7 @@ void BehaviorSet::DumpBehaviorList(NPC *npc)
             applicable = 'Y';
         }
         
-        CPrintf(CON_CMDOUTPUT, "%c %s%-30s %5.1f %5.1f\n",applicable,
+        CPrintf(CON_CMDOUTPUT, "%c    %s%-30s %5.1f %5.1f\n",applicable,
                 (behaviors[i]->IsInterrupted()?"*":" "),
                 behaviors[i]->GetName(),behaviors[i]->CurrentNeed(),
                 behaviors[i]->NewNeed());
@@ -885,7 +887,7 @@ bool ScriptOperation::AtInterruptedAngle(NPC *npc)
     return AtInterruptedAngle(pos,sector,angle);
 }
 
-bool ScriptOperation::CheckMovedOk(NPC *npc,EventManager *eventmgr, const csVector3 & oldPos, const csVector3 & newPos, iSector* newSector, float timedelta)
+bool ScriptOperation::CheckMovedOk(NPC *npc, EventManager *eventmgr, const csVector3 & oldPos, const csVector3 & newPos, iSector* newSector, float timedelta)
 {
     csRef<iPcMesh> pcmesh = CEL_QUERY_PROPCLASS(npc->GetEntity()->GetPropertyClassList(), 
         iPcMesh);
@@ -3113,14 +3115,32 @@ void ChaseOperation::Advance(float timedelta,NPC *npc,EventManager *eventmgr)
         ScopedTimer st(250, "chase extrapolate %.2f time for EID: %u",timedelta,npc->GetEntity()->GetID());
         npc->GetLinMove()->ExtrapolatePosition(timedelta);
     }
-    npc->GetLinMove()->GetLastPosition(myNewPos,myRot,mySector);
-    if((fabs(myPos.x)> 1000 || fabs(myNewPos.x)> 1000) || (fabs(myPos.y)>1000 || fabs(myNewPos.y)>1000) || (fabs(myPos.z)>1000 || fabs(myNewPos.z)>1000))
-    {
-        npc->Printf("Moved from %f %f %f to %f %f %f, timedelta is %f, chase error!\n", myPos.x,myPos.y,myPos.z, myNewPos.x,myNewPos.y,myNewPos.z, timedelta);
-    }
+    //    npc->GetLinMove()->GetLastPosition(myNewPos,myRot,mySector);
+    bool on_ground;
+    float speed,ang_vel;
+    csVector3 bodyVel,worldVel;
+
+    npc->GetLinMove()->GetDRData(on_ground,speed,myNewPos,myRot,mySector,bodyVel,worldVel,ang_vel);
+
+    npc->Printf(5,"World position bodyVel=%s worldVel=%s",toString(bodyVel).GetDataSafe(),toString(worldVel).GetDataSafe());
+
+    //    if((fabs(myPos.x)> 1000 || fabs(myNewPos.x)> 1000) || (fabs(myPos.y)>1000 || fabs(myNewPos.y)>1000) || (fabs(myPos.z)>1000 || fabs(myNewPos.z)>1000))
+    //    {
+    //        npc->Printf("Moved from %f %f %f to %f %f %f, timedelta is %f, chase error!\n", myPos.x,myPos.y,myPos.z, myNewPos.x,myNewPos.y,myNewPos.z, timedelta);
+    //    }
+
+    // TODO: Use CheckMovedOk() istead ????
 
     // This check must be done in our original sector's space
     if ((myOldPos - myNewPos).SquaredNorm() < SMALL_EPSILON) // then stopped dead, presumably by collision
+    {
+        Perception collision("collision");
+        npc->TriggerEvent(&collision, eventmgr);
+        npc->Printf("Collided! Moving from %f %f %f to %f %f %f, timedelta is %f!\n", myPos.x,myPos.y,myPos.z, myNewPos.x,myNewPos.y,myNewPos.z, timedelta);
+    }
+
+    // Check if the slope is to steep
+    if ( (-worldVel.y)*2 > GetVelocity(npc)) // then stopped dead, presumably by collision
     {
         Perception collision("collision");
         npc->TriggerEvent(&collision, eventmgr);

@@ -119,8 +119,6 @@ public:
 
     void RemoveObject(GEMClientObject* entity);
 
-    void SendPersist();
-
     psClientDR* GetClientDR()       { return clientdr; }
     const csPDelArray<GEMClientObject>& GetEntities () const { return entities; }
     bool IsMeshSubjectToAction(const char* sector,const char* mesh);

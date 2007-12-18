@@ -129,7 +129,8 @@ public:
 
     Behavior *GetCurrentBehavior() { return brain->GetCurrentBehavior(); }
     NPCType  *GetBrain() { return brain; }
-    
+
+    void DumpState();
     void DumpBehaviorList();
     void DumpHateList();
 

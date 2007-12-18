@@ -1142,9 +1142,14 @@ void psNPCClient::ListAllNPCs(const char * pattern)
 
 void psNPCClient::DumpNPC(NPC * npc)
 {
+    npc->DumpState();
+    CPrintf(CON_CMDOUTPUT,"\n");
+    
     npc->DumpBehaviorList();
+    CPrintf(CON_CMDOUTPUT,"\n");
 
     npc->DumpHateList();            
+    CPrintf(CON_CMDOUTPUT,"\n");
 }
 
 bool psNPCClient::DumpRace(const char *pattern)
