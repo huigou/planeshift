@@ -175,15 +175,15 @@ void psServerDR::HandleMessage (MsgEntry* me,Client *client)
         return;
     }
 
-	if (client->IsFrozen())
-	{
-		actor->MoveToLastPos();
+    if (client->IsFrozen())
+    {
+        actor->MoveToLastPos();
         return;  // Ignore this DR data, and force the actor to use last.
-	}
+    }
 
     if ( !actor->IsAllowedToMove())  // Is this movement allowed?
     {
-		client->FlagExploit();  // This DR data may be an exploit but may also be valid from lag.
+	client->FlagExploit();  // This DR data may be an exploit but may also be valid from lag.
         if (drmsg.worldVel.y > 0)
         {
             actor->pcmove->AddVelocity(csVector3(0,-1,0));
