@@ -142,8 +142,9 @@
       <behavior name="do nothing" decay="0" growth="0" initial="50">
 	  <wait duration="1" anim="stand" />
       </behavior>
-      <behavior name="turn" completion_decay="100" growth="0" initial="0">
-          <rotate type="random" min="90" max="270" anim="walk" ang_vel="30" />
+      <behavior name="turn" completion_decay="-1" growth="0" initial="0">
+          <rotate type="random" min="90" max="270" anim="walk" ang_vel="30" /> 
+          <move vel="2" anim="walk" duration="1.0"/>
       </behavior>
       <behavior name="fight" decay="0" growth="0" initial="0">
 	  <locate obj="target"  range="50"/>
@@ -153,8 +154,8 @@
       <behavior name="chase" completion_decay="100" growth="0" initial="0">
           <chase type="target" anim="run" vel="5" />
       </behavior>
-      <react event="collision"           behavior="turn" delta="100" />
-      <react event="out of bounds"       behavior="turn" delta="100" />
+      <react event="collision"           behavior="turn" delta="0" />
+      <react event="out of bounds"       behavior="turn" delta="0" />
       <react event="attack"              behavior="fight" delta="0" />
       <react event="damage"              behavior="fight" delta="20" weight="1" />
       <react event="target out of range" behavior="chase" delta="0" />
@@ -164,7 +165,7 @@
   <npctype name="On Sight Fighter" parent="Fighter">
       <!-- Test use of parent to expand the parent behavior -->
 
-      <behavior name="turn to face" completion_decay="100" growth="0" initial="0">
+      <behavior name="turn to face" completion_decay="-1" growth="0" initial="0">
 	  <locate obj="perception" />
           <rotate type="locatedest" anim="walk" ang_vel="120" />
       </behavior>

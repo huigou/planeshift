@@ -825,6 +825,9 @@ CREATE TABLE `warnings` (
   PRIMARY KEY (`accountid`, `warningGM`, `timeOfWarn`)
 );
 
+#### 1171 - Anders Reggestad - Added disabled flag for NPCs, default to No.
+ALTER TABLE `sc_npc_definitions` ADD COLUMN disabled char(1) DEFAULT 'N';
+UPDATE `server_options` SET `option_value`='1171' WHERE `option_name`='db_version';
 
 #
 # Insert your upgrade before this line. Remember when you set a new db_version

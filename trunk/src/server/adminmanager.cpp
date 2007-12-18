@@ -2042,6 +2042,11 @@ int AdminManager::WaypointCreate(csString& name, csVector3& pos, csString& secto
         };
 
     psSectorInfo * si = CacheManager::GetSingleton().GetSectorInfoByName(sectorName);
+    if (!si)
+    {
+        Error2("No sector info for %s",sectorName.GetDataSafe());
+        return -1;
+    }
     
     psStringArray values;
     values.FormatPush("%s", name.GetDataSafe());
@@ -2417,7 +2422,7 @@ void AdminManager::HandleWaypoint(MsgEntry* me, psAdminCmdMessage& msg, AdminCmd
             msg.SendMessage();
         }
         client->WaypointSetIsDisplaying(true);
-        psserver->SendSystemInfo(me->clientnum, "Displaying all WP in sector");
+        psserver->SendSystemInfo(me->clientnum, "Displaying all WPs in sector %s",sectorName.GetDataSafe());
     }
     else if (data.subCmd == "hide")
     {
@@ -2441,6 +2446,11 @@ int AdminManager::PathPointCreate(int pathID, int prevPointId, csVector3& pos, c
         };
 
     psSectorInfo * si = CacheManager::GetSingleton().GetSectorInfoByName(sectorName);
+    if (!si)
+    {
+        Error2("No sector info for %s",sectorName.GetDataSafe());
+        return -1;
+    }
     
     psStringArray values;
     values.FormatPush("%u", pathID );
@@ -2579,7 +2589,7 @@ void AdminManager::HandlePath(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
         }
         
         client->PathSetIsDisplaying(true);
-        psserver->SendSystemInfo(me->clientnum, "Displaying all Path Points in sector");
+        psserver->SendSystemInfo(me->clientnum, "Displaying all Path Points in sector %s",sectorName.GetDataSafe());
     }
     else if (data.subCmd == "hide")
     {

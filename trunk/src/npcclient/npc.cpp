@@ -43,8 +43,10 @@
 #include "gem.h"
 #include "util/psdatabase.h"
 #include "util/location.h"
+#include "util/strutil.h"
 #include "engine/psworld.h"
 #include "networkmgr.h"
+#include "util/waypoint.h"
 
 extern iDataConnection *db;
 
@@ -128,6 +130,16 @@ bool NPC::Load(iResultRow& row,BinaryRBTree<NPCType>& npctypes)
     }
 
     owner_id = row.GetInt("char_id_owner");
+
+    const char *e = row["disabled"];
+    if (e && (*e=='Y' || *e=='y'))
+    {
+        disabled = true;
+    }
+    else
+    {
+        disabled = false;
+    }
 
     brain = new NPCType(*t); // deep copy constructor
 
@@ -317,6 +329,24 @@ void NPC::Disable()
     npcclient->GetNetworkMgr()->QueueDRData(this);
     npcclient->GetNetworkMgr()->QueueImperviousCommand(GetEntity(),true);
 }
+
+void NPC::DumpState()
+{
+    CPrintf(CON_CMDOUTPUT, "States for %s (PID: %u)\n",name.GetData(),pid);
+    CPrintf(CON_CMDOUTPUT, "---------------------------------------------\n");
+    CPrintf(CON_CMDOUTPUT, "DR Counter:          %d\n",DRcounter);
+    CPrintf(CON_CMDOUTPUT, "Debugging:           %d\n",debugging);
+    CPrintf(CON_CMDOUTPUT, "Alive:               %s\n",alive?"True":"False");
+    CPrintf(CON_CMDOUTPUT, "Disabled:            %s\n",disabled?"True":"False");
+    CPrintf(CON_CMDOUTPUT, "Checked:             %s\n",checked?"True":"False");
+    CPrintf(CON_CMDOUTPUT, "Active locate:       %s\n",toString(active_locate_pos,active_locate_sector).GetDataSafe());
+    CPrintf(CON_CMDOUTPUT, "Active locate WP:    %s\n",active_locate_wp?active_locate_wp->GetName():"");
+    CPrintf(CON_CMDOUTPUT, "Ang vel:             %.2f\n",ang_vel);
+    CPrintf(CON_CMDOUTPUT, "Vel:                 %.2f\n",vel);
+    CPrintf(CON_CMDOUTPUT, "Walk velocity:       %.2f\n",walkVelocity);
+    CPrintf(CON_CMDOUTPUT, "Run velocity:        %.2f\n",runVelocity);
+}
+
 
 void NPC::DumpBehaviorList()
 {
