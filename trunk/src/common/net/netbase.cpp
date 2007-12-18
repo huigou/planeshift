@@ -653,7 +653,7 @@ csString NetBase::LogMessageFilter(char *arg)
 {
     if (strlen(arg) == 0)
     {
-        return "Please specify message to be filtered.\nSyntax: filtermsg [+/-<msg_type>|invert|filterhex [no]|clear|show]";
+        return "Please specify message to be filtered.\nSyntax: filtermsg [+/-<msg_type>|invert|filterhex [no]|clear|receive|send|show]";
     }
     WordArray words(arg);
     if (words[0] == "invert")
