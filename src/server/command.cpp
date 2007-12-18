@@ -70,6 +70,7 @@
 #include "bulkobjects/psaccountinfo.h"
 #include "bulkobjects/pstrainerinfo.h"
 #include "bulkobjects/psitem.h"
+#include "bulkobjects/pssectorinfo.h"
 
 /* shut down the server and exit program */
 int com_quit(char *)
@@ -1682,12 +1683,17 @@ int com_sectors(char *)
     iRegionList* regionList = engine->GetRegions();
     for (int i = 0; i < sectorList->GetCount(); i++){
         iSector * sector = sectorList->Get(i);
-        CPrintf(CON_CMDOUTPUT ,"%4i %s",i,sector->QueryObject()->GetName());
+        csString sectorName = sector->QueryObject()->GetName();
+        psSectorInfo * si = CacheManager::GetSingleton().GetSectorInfoByName(sectorName);
+
+
+        CPrintf(CON_CMDOUTPUT ,"%4i %4u %s",i,si?si->uid:0,sectorName.GetDataSafe());
 
         for (int r = 0; r < regionList->GetCount(); r++)
         {
             if (regionList->Get(r)->FindSector(sector->QueryObject()->GetName()))
             {
+
                 CPrintf(CON_CMDOUTPUT ," %s",regionList->Get(r)->QueryObject()->GetName());
             }
 
