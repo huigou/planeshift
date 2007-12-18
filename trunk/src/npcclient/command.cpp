@@ -243,7 +243,9 @@ int com_showlogs(char *line)
 int com_print(char *line)
 {
     if(!npcclient->DumpNPC(line))
+    {
         CPrintf(CON_CMDOUTPUT, "No NPC with id '%s' found.\n", line);
+    }
 
     return 0;
 }
@@ -251,7 +253,9 @@ int com_print(char *line)
 int com_race(char *line)
 {
     if(!npcclient->DumpRace(line))
+    {
         CPrintf(CON_CMDOUTPUT, "No Race with id '%s' found.\n", line);
+    }
 
     return 0;
 }
