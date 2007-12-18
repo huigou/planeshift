@@ -1,3 +1,8 @@
+*** 2007-12-18 by Anders Reggestad
+- Added display of db sector id in server command sectors.
+- Update help text on message filtering.
+- Compiler warning fixes.
+
 *** 2007-12-17 by Sasha Levin
 - Commited fix for FS#739 by Lanarel.
 
