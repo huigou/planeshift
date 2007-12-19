@@ -1,3 +1,8 @@
+*** 2007-12-19 by Dave Bentham
+- To register players in range into an event now needs the word range in the
+  GM command: /event register [range <r> | <player>]
+  This is for consistency & clarity.
+
 *** 2007-12-19 by Kenny Graunke
 - Clean up a bunch of fixed-length buffers and sprintf...use csString.
 - Added pssetup to trunk, with a few changes:

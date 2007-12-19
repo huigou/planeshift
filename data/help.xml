@@ -382,7 +382,7 @@ To create a new event, a GM should enter:
 /event create [name] [description]
 
 To register all players in range, or a player by name, the GM should enter (note, [player] can be by name, or by target):
-/event register [0-100 | player]
+/event register [range 0-100 | player]
 
 The GM can remove a player from a current event by (note, [player] can be by name, or by target):
 /event remove [player]
