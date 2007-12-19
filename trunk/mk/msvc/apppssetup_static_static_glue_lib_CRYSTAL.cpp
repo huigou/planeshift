@@ -8,12 +8,12 @@
   { csStaticVarCleanup_csutil (p); }
   CS_DEFINE_STATIC_VARIABLE_REGISTRATION (csStaticVarCleanup_local);
 #endif
-struct CS_EXPORT_SYM _Bind_psnpcclient_static_plugins_CRYSTAL
+struct CS_EXPORT_SYM _Bind_pssetup_static_plugins_CRYSTAL
 {
-  _Bind_psnpcclient_static_plugins_CRYSTAL ();
+  _Bind_pssetup_static_plugins_CRYSTAL ();
 };
 struct _static_use_CRYSTAL { _static_use_CRYSTAL (); };
-_Bind_psnpcclient_static_plugins_CRYSTAL::_Bind_psnpcclient_static_plugins_CRYSTAL () {}
+_Bind_pssetup_static_plugins_CRYSTAL::_Bind_pssetup_static_plugins_CRYSTAL () {}
 // Needed to pull in _cs_static_use object file
 namespace { _static_use_CRYSTAL _static_use_CRYSTAL_bind; }
 
