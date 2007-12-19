@@ -129,12 +129,9 @@ void pawsPathWindow::SetPath(int i)
         while(iter.HasNext())
         {
             PathDefinition::Bonus* bonus = iter.Next();
-            int procent = (int) (bonus->value*100.0);            
-            char tempString[100];
-            sprintf(tempString, "%d%%\n", procent);
-            statString.Append(bonus->name);
-            statString.Append('\n');
-            valueString.Append(tempString);
+            int percent = (int) (bonus->value * 100.0);
+            statString.AppendFmt("%s\n", bonus->name.GetData());
+            valueString.AppendFmt("%d%%\n", percent);
         }
 
         label->SetText(statString);
@@ -153,11 +150,8 @@ void pawsPathWindow::SetPath(int i)
         while(iter.HasNext())
         {
             PathDefinition::Bonus* bonus = iter.Next();
-            char tempString[100];
-            sprintf(tempString, "%.f\n", bonus->value);
-            skillString.Append(bonus->name);
-            skillString.Append('\n');
-            valueString.Append(tempString);
+            skillString.AppendFmt("%s\n", bonus->name.GetData());
+            valueString.AppendFmt("%.f\n", bonus->value);
         }
 
         label->SetText(skillString);

@@ -251,22 +251,21 @@ void pawsPetitionWindow::SetText(size_t rowNum, int colNum, const char* fmt, ...
         return;
     }
 
-    char text[1024];
+    csString text;
     va_list args;
 
     va_start(args, fmt);
-    cs_vsnprintf(text,sizeof(text),fmt,args);
+    text.FormatV(fmt, args);
     va_end(args);
 
     // Check text overflow:
-    csString overflow = text;
-    if (overflow.Length() > MAX_PETITION_LENGTH)
+    if (text.Length() > MAX_PETITION_LENGTH)
     {
-        overflow.Truncate(MAX_PETITION_LENGTH);
-        overflow << "...";
+        text.Truncate(MAX_PETITION_LENGTH);
+        text << "...";
     }
 
-    curCol->SetText(overflow.GetData());
+    curCol->SetText(text.GetData());
 }
 
 void pawsPetitionWindow::AddPetitions(csArray<psPetitionInfo> &petitions)

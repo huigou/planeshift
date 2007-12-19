@@ -393,12 +393,9 @@ void pawsMerchantWindow::OnListAction( pawsListBox* widget, int status )
 
             pawsTextBox* nameWidget = (pawsTextBox*)(rowWidget->GetColumn(0));
 
-            char commandData[100];
-            csString escpxml = EscpXML(nameWidget->GetText());
-            sprintf( commandData, "<C ID=\"%d\" CATEGORY=\"%s\" />",
-                    merchantID,
-                    escpxml.GetData() );
-
+            csString commandData;
+            commandData.Format("<C ID=\"%d\" CATEGORY=\"%s\" />", merchantID,
+                               EscpXML(nameWidget->GetText()).GetData());
 
             psGUIMerchantMessage outgoing(psGUIMerchantMessage::CATEGORY, commandData);
             msgHandler->SendMessage( outgoing.msg );
@@ -413,9 +410,9 @@ void pawsMerchantWindow::OnListAction( pawsListBox* widget, int status )
 
 void pawsMerchantWindow::Close()
 {
-    char commandData[100];
+    csString commandData;
                            
-    sprintf(commandData, "<C ID=\"%d\"/>",  merchantID);
+    commandData.Format("<C ID=\"%d\"/>", merchantID);
     psGUIMerchantMessage outgoing(psGUIMerchantMessage::CANCEL, commandData);
     msgHandler->SendMessage(outgoing.msg);
 

@@ -175,8 +175,8 @@ void pawsIgnoreWindow::AddIgnore( csString& name )
     
     if ( chat )
     {
-        char temp[100];
-        cs_snprintf(temp, 100, PawsManager::GetSingleton().Translate("You will now ignore %s."), (const char*)name);
+        csString temp;
+        temp.Format(PawsManager::GetSingleton().Translate("You will now ignore %s."), name.GetData());
         chat->ChatOutput(temp);
     }        
             
@@ -201,8 +201,8 @@ void pawsIgnoreWindow::RemoveIgnore( csString& name )
         return;
     else
     {
-        char temp[100];
-        cs_snprintf(temp, 100,PawsManager::GetSingleton().Translate("You will no longer ignore %s."), (const char*)name);
+        csString temp;
+        temp.Format(PawsManager::GetSingleton().Translate("You will no longer ignore %s."), name.GetData());
         chat->ChatOutput(temp);
         ignoredNames.Delete(name);
 
