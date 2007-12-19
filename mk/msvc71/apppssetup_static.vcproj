@@ -2,8 +2,8 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="7.10"
-	Name="libeffects"
-	ProjectGUID="{A04BE757-E4C1-A003-8FDB-47430BC64269}"
+	Name="apppssetup_static"
+	ProjectGUID="{650C2ABF-28A9-92CD-827B-38C9B69F3B10}"
 	SccProjectName=""
 	SccLocalPath="">
 	<Platforms>
@@ -13,9 +13,11 @@
 	<Configurations>
   		<Configuration
 			Name="Release (with static libs)|Win32"
-			OutputDirectory="..\..\out\release71\build\libeffects\"
-			IntermediateDirectory="..\..\out\release71\build\libeffects\"
-			ConfigurationType="4"
+			OutputDirectory="..\..\out\release71\build\apppssetup_static\"
+			IntermediateDirectory="..\..\out\release71\build\apppssetup_static\"
+			ConfigurationType="1"
+			CharacterSet="2"
+			WholeProgramOptimization="1"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
 			<Tool
@@ -26,14 +28,14 @@
 				RuntimeLibrary="2"
 				DebugInformationFormat="3"
 				BufferSecurityCheck="FALSE"
-				ProgramDataBaseFileName="..\..\out\release71\build\libeffects\effects.pdb"
-				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;USE_CEL;WIN32"
+				ProgramDataBaseFileName="..\..\out\release71\build\apppssetup_static\pssetup_static.pdb"
+				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_WINDOWS;CS_STATIC_LINKED;USE_CEL;WIN32"
 				OptimizeForProcessor="1"
 				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32;..\..\..\cel\include;$(CEL)\include;$(CEL)\include\cel"
-				PrecompiledHeaderFile="..\..\out\release71\build\libeffects\libeffects.pch"
-				AssemblerListingLocation="..\..\out\release71\build\libeffects\"
-				ObjectFile="..\..\out\release71\build\libeffects\"
+				PrecompiledHeaderFile="..\..\out\release71\build\apppssetup_static\apppssetup_static.pch"
+				AssemblerListingLocation="..\..\out\release71\build\apppssetup_static\"
+				ObjectFile="..\..\out\release71\build\apppssetup_static\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="TRUE"
@@ -49,22 +51,24 @@
 				EnableCOMDATFolding="2"
 				GenerateDebugInformation="TRUE"
 				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD"
-				AdditionalOptions=" "
+				OutputFile="..\..\pssetup_static.exe"
+				ProgramDatabaseFile="..\..\out\release71\build\apppssetup_static\pssetup_static.pdb"
+				SubSystem="2"
+				AdditionalOptions="libpng.lib freetype2.lib libcrystalspace_staticplugins.lib libcrystalspace_windows.lib libcrystalspace_opengl.lib libcrystalspace.lib opengl32.lib zlib.lib version.lib "
 				AdditionalDependencies="libcrystalspace.lib ws2_32.lib zlib.lib libceltool.lib"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\release71\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\release71\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs;..\..\..\cel\out\release71\libs;$(CEL)\out\release71\libs;$(CEL)\libs"
 				TargetMachine="1"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\out\release71\libs\libeffects.lib"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
-				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;USE_CEL"
+				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_WINDOWS;CS_STATIC_LINKED;USE_CEL"
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\release71\build\libeffects\libeffects.tlb"/>
+				TypeLibraryName="..\..\out\release71\build\apppssetup_static\apppssetup_static.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="md ..\..\out\release71\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\release71\bin\&#x0D;&#x0A;"
@@ -75,8 +79,8 @@
 				Name="VCPreLinkEventTool"/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;USE_CEL;PROJECTGEN_VERSION=71"
-				AdditionalIncludeDirectories=".;..\..\src\common\effects;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32;..\..\..\cel\include;$(CEL)\include;$(CEL)\include\cel"
+				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_WINDOWS;CS_STATIC_LINKED;USE_CEL;PROJECTGEN_VERSION=71"
+				AdditionalIncludeDirectories=".;..\..\src\setup;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32;..\..\..\cel\include;$(CEL)\include;$(CEL)\include\cel"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -85,9 +89,11 @@
 		</Configuration>
   		<Configuration
 			Name="Release (with DLLs)|Win32"
-			OutputDirectory="..\..\out\release71\build\libeffects\"
-			IntermediateDirectory="..\..\out\release71\build\libeffects\"
-			ConfigurationType="4"
+			OutputDirectory="..\..\out\release71\build\apppssetup_static\"
+			IntermediateDirectory="..\..\out\release71\build\apppssetup_static\"
+			ConfigurationType="1"
+			CharacterSet="2"
+			WholeProgramOptimization="1"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
 			<Tool
@@ -98,14 +104,14 @@
 				RuntimeLibrary="2"
 				DebugInformationFormat="3"
 				BufferSecurityCheck="FALSE"
-				ProgramDataBaseFileName="..\..\out\release71\build\libeffects\effects.pdb"
-				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;USE_CEL;WIN32;CS_BUILD_SHARED_LIBS"
+				ProgramDataBaseFileName="..\..\out\release71\build\apppssetup_static\pssetup_static.pdb"
+				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_WINDOWS;CS_STATIC_LINKED;USE_CEL;WIN32;CS_BUILD_SHARED_LIBS"
 				OptimizeForProcessor="1"
 				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32;..\..\..\cel\include;$(CEL)\include;$(CEL)\include\cel"
-				PrecompiledHeaderFile="..\..\out\release71\build\libeffects\libeffects.pch"
-				AssemblerListingLocation="..\..\out\release71\build\libeffects\"
-				ObjectFile="..\..\out\release71\build\libeffects\"
+				PrecompiledHeaderFile="..\..\out\release71\build\apppssetup_static\apppssetup_static.pch"
+				AssemblerListingLocation="..\..\out\release71\build\apppssetup_static\"
+				ObjectFile="..\..\out\release71\build\apppssetup_static\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="TRUE"
@@ -121,22 +127,24 @@
 				EnableCOMDATFolding="2"
 				GenerateDebugInformation="TRUE"
 				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD"
-				AdditionalOptions=" "
+				OutputFile="..\..\pssetup_static.exe"
+				ProgramDatabaseFile="..\..\out\release71\build\apppssetup_static\pssetup_static.pdb"
+				SubSystem="2"
+				AdditionalOptions="libpng.lib freetype2.lib libcrystalspace_staticplugins.lib libcrystalspace_windows.lib libcrystalspace_opengl.lib libcrystalspace.lib opengl32.lib zlib.lib version.lib "
 				AdditionalDependencies="libcrystalspace.lib ws2_32.lib zlib.lib libceltool.lib"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\release71\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\release71\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs;..\..\..\cel\out\release71\libs;$(CEL)\out\release71\libs;$(CEL)\libs"
 				TargetMachine="1"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\out\release71\libs\libeffects.lib"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
-				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;USE_CEL"
+				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_WINDOWS;CS_STATIC_LINKED;USE_CEL"
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\release71\build\libeffects\libeffects.tlb"/>
+				TypeLibraryName="..\..\out\release71\build\apppssetup_static\apppssetup_static.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="md ..\..\out\release71\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\release71\bin\&#x0D;&#x0A;"
@@ -147,8 +155,8 @@
 				Name="VCPreLinkEventTool"/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;USE_CEL;PROJECTGEN_VERSION=71"
-				AdditionalIncludeDirectories=".;..\..\src\common\effects;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32;..\..\..\cel\include;$(CEL)\include;$(CEL)\include\cel"
+				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_WINDOWS;CS_STATIC_LINKED;USE_CEL;PROJECTGEN_VERSION=71"
+				AdditionalIncludeDirectories=".;..\..\src\setup;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32;..\..\..\cel\include;$(CEL)\include;$(CEL)\include\cel"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -157,9 +165,10 @@
 		</Configuration>
     		<Configuration
 			Name="Debug (with static libs)|Win32"
-			OutputDirectory="..\..\out\debug71\build\libeffects\"
-			IntermediateDirectory="..\..\out\debug71\build\libeffects\"
-			ConfigurationType="4"
+			OutputDirectory="..\..\out\debug71\build\apppssetup_static\"
+			IntermediateDirectory="..\..\out\debug71\build\apppssetup_static\"
+			ConfigurationType="1"
+			CharacterSet="2"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
 			<Tool
@@ -170,14 +179,14 @@
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
-				ProgramDataBaseFileName="..\..\out\debug71\build\libeffects\effects.pdb"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;USE_CEL;WIN32"
+				ProgramDataBaseFileName="..\..\out\debug71\build\apppssetup_static\pssetup_static.pdb"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_WINDOWS;CS_STATIC_LINKED;USE_CEL;WIN32"
 				OptimizeForProcessor="1"
 				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32;..\..\..\cel\include;$(CEL)\include;$(CEL)\include\cel"
-				PrecompiledHeaderFile="..\..\out\debug71\build\libeffects\libeffects.pch"
-				AssemblerListingLocation="..\..\out\debug71\build\libeffects\"
-				ObjectFile="..\..\out\debug71\build\libeffects\"
+				PrecompiledHeaderFile="..\..\out\debug71\build\apppssetup_static\apppssetup_static.pch"
+				AssemblerListingLocation="..\..\out\debug71\build\apppssetup_static\"
+				ObjectFile="..\..\out\debug71\build\apppssetup_static\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="TRUE"
@@ -191,22 +200,24 @@
 				LinkIncremental="2"
 				GenerateDebugInformation="TRUE"
 				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD,MSVCRT"
-				AdditionalOptions=" "
+				OutputFile="..\..\pssetup_static.exe"
+				ProgramDatabaseFile="..\..\out\debug71\build\apppssetup_static\pssetup_static.pdb"
+				SubSystem="1"
+				AdditionalOptions="libpng.lib freetype2.lib libcrystalspace_staticplugins_d.lib libcrystalspace_windows_d.lib libcrystalspace_opengl_d.lib libcrystalspace_d.lib opengl32.lib zlib.lib version.lib "
 				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib libceltool_d.lib"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\debug71\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug71\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs;..\..\..\cel\out\debug71\libs;$(CEL)\out\debug71\libs;$(CEL)\libs"
 				TargetMachine="1"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\out\debug71\libs\libeffects_d.lib"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;USE_CEL"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_WINDOWS;CS_STATIC_LINKED;USE_CEL"
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug71\build\libeffects\libeffects.tlb"/>
+				TypeLibraryName="..\..\out\debug71\build\apppssetup_static\apppssetup_static.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="md ..\..\out\debug71\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug71\bin\&#x0D;&#x0A;"
@@ -217,8 +228,8 @@
 				Name="VCPreLinkEventTool"/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;USE_CEL;PROJECTGEN_VERSION=71"
-				AdditionalIncludeDirectories=".;..\..\src\common\effects;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32;..\..\..\cel\include;$(CEL)\include;$(CEL)\include\cel"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_WINDOWS;CS_STATIC_LINKED;USE_CEL;PROJECTGEN_VERSION=71"
+				AdditionalIncludeDirectories=".;..\..\src\setup;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32;..\..\..\cel\include;$(CEL)\include;$(CEL)\include\cel"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -227,9 +238,10 @@
 		</Configuration>
   		<Configuration
 			Name="Debug (with DLLs)|Win32"
-			OutputDirectory="..\..\out\debug71\build\libeffects\"
-			IntermediateDirectory="..\..\out\debug71\build\libeffects\"
-			ConfigurationType="4"
+			OutputDirectory="..\..\out\debug71\build\apppssetup_static\"
+			IntermediateDirectory="..\..\out\debug71\build\apppssetup_static\"
+			ConfigurationType="1"
+			CharacterSet="2"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
 			<Tool
@@ -240,14 +252,14 @@
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
-				ProgramDataBaseFileName="..\..\out\debug71\build\libeffects\effects.pdb"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;USE_CEL;WIN32;CS_BUILD_SHARED_LIBS"
+				ProgramDataBaseFileName="..\..\out\debug71\build\apppssetup_static\pssetup_static.pdb"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_WINDOWS;CS_STATIC_LINKED;USE_CEL;WIN32;CS_BUILD_SHARED_LIBS"
 				OptimizeForProcessor="1"
 				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32;..\..\..\cel\include;$(CEL)\include;$(CEL)\include\cel"
-				PrecompiledHeaderFile="..\..\out\debug71\build\libeffects\libeffects.pch"
-				AssemblerListingLocation="..\..\out\debug71\build\libeffects\"
-				ObjectFile="..\..\out\debug71\build\libeffects\"
+				PrecompiledHeaderFile="..\..\out\debug71\build\apppssetup_static\apppssetup_static.pch"
+				AssemblerListingLocation="..\..\out\debug71\build\apppssetup_static\"
+				ObjectFile="..\..\out\debug71\build\apppssetup_static\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="TRUE"
@@ -261,22 +273,24 @@
 				LinkIncremental="2"
 				GenerateDebugInformation="TRUE"
 				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD,MSVCRT"
-				AdditionalOptions=" "
+				OutputFile="..\..\pssetup_static.exe"
+				ProgramDatabaseFile="..\..\out\debug71\build\apppssetup_static\pssetup_static.pdb"
+				SubSystem="1"
+				AdditionalOptions="libpng.lib freetype2.lib libcrystalspace_staticplugins_d.lib libcrystalspace_windows_d.lib libcrystalspace_opengl_d.lib libcrystalspace_d.lib opengl32.lib zlib.lib version.lib "
 				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib libceltool_d.lib"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\debug71\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug71\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs;..\..\..\cel\out\debug71\libs;$(CEL)\out\debug71\libs;$(CEL)\libs"
 				TargetMachine="1"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\out\debug71\libs\libeffects_d.lib"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;USE_CEL"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_WINDOWS;CS_STATIC_LINKED;USE_CEL"
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug71\build\libeffects\libeffects.tlb"/>
+				TypeLibraryName="..\..\out\debug71\build\apppssetup_static\apppssetup_static.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="md ..\..\out\debug71\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug71\bin\&#x0D;&#x0A;"
@@ -287,8 +301,8 @@
 				Name="VCPreLinkEventTool"/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;USE_CEL;PROJECTGEN_VERSION=71"
-				AdditionalIncludeDirectories=".;..\..\src\common\effects;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32;..\..\..\cel\include;$(CEL)\include;$(CEL)\include\cel"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_WINDOWS;CS_STATIC_LINKED;USE_CEL;PROJECTGEN_VERSION=71"
+				AdditionalIncludeDirectories=".;..\..\src\setup;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32;..\..\..\cel\include;$(CEL)\include;$(CEL)\include\cel"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -297,9 +311,10 @@
 		</Configuration>
     		<Configuration
 			Name="MemoryTracker (with static libs)|Win32"
-			OutputDirectory="..\..\out\debug71\build\libeffects\"
-			IntermediateDirectory="..\..\out\debug71\build\libeffects\"
-			ConfigurationType="4"
+			OutputDirectory="..\..\out\debug71\build\apppssetup_static\"
+			IntermediateDirectory="..\..\out\debug71\build\apppssetup_static\"
+			ConfigurationType="1"
+			CharacterSet="2"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
 			<Tool
@@ -310,14 +325,14 @@
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
-				ProgramDataBaseFileName="..\..\out\debug71\build\libeffects\effects.pdb"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;USE_CEL;WIN32"
+				ProgramDataBaseFileName="..\..\out\debug71\build\apppssetup_static\pssetup_static.pdb"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;_WINDOWS;CS_STATIC_LINKED;USE_CEL;WIN32"
 				OptimizeForProcessor="1"
 				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32;..\..\..\cel\include;$(CEL)\include;$(CEL)\include\cel"
-				PrecompiledHeaderFile="..\..\out\debug71\build\libeffects\libeffects.pch"
-				AssemblerListingLocation="..\..\out\debug71\build\libeffects\"
-				ObjectFile="..\..\out\debug71\build\libeffects\"
+				PrecompiledHeaderFile="..\..\out\debug71\build\apppssetup_static\apppssetup_static.pch"
+				AssemblerListingLocation="..\..\out\debug71\build\apppssetup_static\"
+				ObjectFile="..\..\out\debug71\build\apppssetup_static\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="TRUE"
@@ -331,22 +346,24 @@
 				LinkIncremental="2"
 				GenerateDebugInformation="TRUE"
 				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD,MSVCRT"
-				AdditionalOptions=" "
+				OutputFile="..\..\pssetup_static.exe"
+				ProgramDatabaseFile="..\..\out\debug71\build\apppssetup_static\pssetup_static.pdb"
+				SubSystem="1"
+				AdditionalOptions="libpng.lib freetype2.lib libcrystalspace_staticplugins_d.lib libcrystalspace_windows_d.lib libcrystalspace_opengl_d.lib libcrystalspace_d.lib opengl32.lib zlib.lib version.lib "
 				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib libceltool_d.lib"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\debug71\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug71\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs;..\..\..\cel\out\debug71\libs;$(CEL)\out\debug71\libs;$(CEL)\libs"
 				TargetMachine="1"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\out\debug71\libs\libeffects_d.lib"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;USE_CEL"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;_WINDOWS;CS_STATIC_LINKED;USE_CEL"
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug71\build\libeffects\libeffects.tlb"/>
+				TypeLibraryName="..\..\out\debug71\build\apppssetup_static\apppssetup_static.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="md ..\..\out\debug71\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug71\bin\&#x0D;&#x0A;"
@@ -357,8 +374,8 @@
 				Name="VCPreLinkEventTool"/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;USE_CEL;PROJECTGEN_VERSION=71"
-				AdditionalIncludeDirectories=".;..\..\src\common\effects;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32;..\..\..\cel\include;$(CEL)\include;$(CEL)\include\cel"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;_WINDOWS;CS_STATIC_LINKED;USE_CEL;PROJECTGEN_VERSION=71"
+				AdditionalIncludeDirectories=".;..\..\src\setup;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32;..\..\..\cel\include;$(CEL)\include;$(CEL)\include\cel"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -367,9 +384,10 @@
 		</Configuration>
   		<Configuration
 			Name="MemoryTracker (with DLLs)|Win32"
-			OutputDirectory="..\..\out\debug71\build\libeffects\"
-			IntermediateDirectory="..\..\out\debug71\build\libeffects\"
-			ConfigurationType="4"
+			OutputDirectory="..\..\out\debug71\build\apppssetup_static\"
+			IntermediateDirectory="..\..\out\debug71\build\apppssetup_static\"
+			ConfigurationType="1"
+			CharacterSet="2"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
 			<Tool
@@ -380,14 +398,14 @@
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
-				ProgramDataBaseFileName="..\..\out\debug71\build\libeffects\effects.pdb"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;USE_CEL;WIN32;CS_BUILD_SHARED_LIBS"
+				ProgramDataBaseFileName="..\..\out\debug71\build\apppssetup_static\pssetup_static.pdb"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;_WINDOWS;CS_STATIC_LINKED;USE_CEL;WIN32;CS_BUILD_SHARED_LIBS"
 				OptimizeForProcessor="1"
 				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32;..\..\..\cel\include;$(CEL)\include;$(CEL)\include\cel"
-				PrecompiledHeaderFile="..\..\out\debug71\build\libeffects\libeffects.pch"
-				AssemblerListingLocation="..\..\out\debug71\build\libeffects\"
-				ObjectFile="..\..\out\debug71\build\libeffects\"
+				PrecompiledHeaderFile="..\..\out\debug71\build\apppssetup_static\apppssetup_static.pch"
+				AssemblerListingLocation="..\..\out\debug71\build\apppssetup_static\"
+				ObjectFile="..\..\out\debug71\build\apppssetup_static\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="TRUE"
@@ -401,22 +419,24 @@
 				LinkIncremental="2"
 				GenerateDebugInformation="TRUE"
 				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD,MSVCRT"
-				AdditionalOptions=" "
+				OutputFile="..\..\pssetup_static.exe"
+				ProgramDatabaseFile="..\..\out\debug71\build\apppssetup_static\pssetup_static.pdb"
+				SubSystem="1"
+				AdditionalOptions="libpng.lib freetype2.lib libcrystalspace_staticplugins_d.lib libcrystalspace_windows_d.lib libcrystalspace_opengl_d.lib libcrystalspace_d.lib opengl32.lib zlib.lib version.lib "
 				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib libceltool_d.lib"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\debug71\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug71\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs;..\..\..\cel\out\debug71\libs;$(CEL)\out\debug71\libs;$(CEL)\libs"
 				TargetMachine="1"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\out\debug71\libs\libeffects_d.lib"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;USE_CEL"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;_WINDOWS;CS_STATIC_LINKED;USE_CEL"
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug71\build\libeffects\libeffects.tlb"/>
+				TypeLibraryName="..\..\out\debug71\build\apppssetup_static\apppssetup_static.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="md ..\..\out\debug71\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug71\bin\&#x0D;&#x0A;"
@@ -427,8 +447,8 @@
 				Name="VCPreLinkEventTool"/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;USE_CEL;PROJECTGEN_VERSION=71"
-				AdditionalIncludeDirectories=".;..\..\src\common\effects;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32;..\..\..\cel\include;$(CEL)\include;$(CEL)\include\cel"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;_WINDOWS;CS_STATIC_LINKED;USE_CEL;PROJECTGEN_VERSION=71"
+				AdditionalIncludeDirectories=".;..\..\src\setup;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32;..\..\..\cel\include;$(CEL)\include;$(CEL)\include\cel"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -437,9 +457,10 @@
 		</Configuration>
     		<Configuration
 			Name="RefTracker (with static libs)|Win32"
-			OutputDirectory="..\..\out\debug71\build\libeffects\"
-			IntermediateDirectory="..\..\out\debug71\build\libeffects\"
-			ConfigurationType="4"
+			OutputDirectory="..\..\out\debug71\build\apppssetup_static\"
+			IntermediateDirectory="..\..\out\debug71\build\apppssetup_static\"
+			ConfigurationType="1"
+			CharacterSet="2"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
 			<Tool
@@ -450,14 +471,14 @@
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
-				ProgramDataBaseFileName="..\..\out\debug71\build\libeffects\effects.pdb"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;USE_CEL;WIN32"
+				ProgramDataBaseFileName="..\..\out\debug71\build\apppssetup_static\pssetup_static.pdb"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;_WINDOWS;CS_STATIC_LINKED;USE_CEL;WIN32"
 				OptimizeForProcessor="1"
 				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32;..\..\..\cel\include;$(CEL)\include;$(CEL)\include\cel"
-				PrecompiledHeaderFile="..\..\out\debug71\build\libeffects\libeffects.pch"
-				AssemblerListingLocation="..\..\out\debug71\build\libeffects\"
-				ObjectFile="..\..\out\debug71\build\libeffects\"
+				PrecompiledHeaderFile="..\..\out\debug71\build\apppssetup_static\apppssetup_static.pch"
+				AssemblerListingLocation="..\..\out\debug71\build\apppssetup_static\"
+				ObjectFile="..\..\out\debug71\build\apppssetup_static\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="TRUE"
@@ -471,22 +492,24 @@
 				LinkIncremental="2"
 				GenerateDebugInformation="TRUE"
 				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD,MSVCRT"
-				AdditionalOptions=" "
+				OutputFile="..\..\pssetup_static.exe"
+				ProgramDatabaseFile="..\..\out\debug71\build\apppssetup_static\pssetup_static.pdb"
+				SubSystem="1"
+				AdditionalOptions="libpng.lib freetype2.lib libcrystalspace_staticplugins_d.lib libcrystalspace_windows_d.lib libcrystalspace_opengl_d.lib libcrystalspace_d.lib opengl32.lib zlib.lib version.lib "
 				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib libceltool_d.lib"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\debug71\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug71\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs;..\..\..\cel\out\debug71\libs;$(CEL)\out\debug71\libs;$(CEL)\libs"
 				TargetMachine="1"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\out\debug71\libs\libeffects_d.lib"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;USE_CEL"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;_WINDOWS;CS_STATIC_LINKED;USE_CEL"
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug71\build\libeffects\libeffects.tlb"/>
+				TypeLibraryName="..\..\out\debug71\build\apppssetup_static\apppssetup_static.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="md ..\..\out\debug71\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug71\bin\&#x0D;&#x0A;"
@@ -497,8 +520,8 @@
 				Name="VCPreLinkEventTool"/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;USE_CEL;PROJECTGEN_VERSION=71"
-				AdditionalIncludeDirectories=".;..\..\src\common\effects;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32;..\..\..\cel\include;$(CEL)\include;$(CEL)\include\cel"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;_WINDOWS;CS_STATIC_LINKED;USE_CEL;PROJECTGEN_VERSION=71"
+				AdditionalIncludeDirectories=".;..\..\src\setup;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32;..\..\..\cel\include;$(CEL)\include;$(CEL)\include\cel"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -507,9 +530,10 @@
 		</Configuration>
   		<Configuration
 			Name="RefTracker (with DLLs)|Win32"
-			OutputDirectory="..\..\out\debug71\build\libeffects\"
-			IntermediateDirectory="..\..\out\debug71\build\libeffects\"
-			ConfigurationType="4"
+			OutputDirectory="..\..\out\debug71\build\apppssetup_static\"
+			IntermediateDirectory="..\..\out\debug71\build\apppssetup_static\"
+			ConfigurationType="1"
+			CharacterSet="2"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
 			<Tool
@@ -520,14 +544,14 @@
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
-				ProgramDataBaseFileName="..\..\out\debug71\build\libeffects\effects.pdb"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;USE_CEL;WIN32;CS_BUILD_SHARED_LIBS"
+				ProgramDataBaseFileName="..\..\out\debug71\build\apppssetup_static\pssetup_static.pdb"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;_WINDOWS;CS_STATIC_LINKED;USE_CEL;WIN32;CS_BUILD_SHARED_LIBS"
 				OptimizeForProcessor="1"
 				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32;..\..\..\cel\include;$(CEL)\include;$(CEL)\include\cel"
-				PrecompiledHeaderFile="..\..\out\debug71\build\libeffects\libeffects.pch"
-				AssemblerListingLocation="..\..\out\debug71\build\libeffects\"
-				ObjectFile="..\..\out\debug71\build\libeffects\"
+				PrecompiledHeaderFile="..\..\out\debug71\build\apppssetup_static\apppssetup_static.pch"
+				AssemblerListingLocation="..\..\out\debug71\build\apppssetup_static\"
+				ObjectFile="..\..\out\debug71\build\apppssetup_static\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="TRUE"
@@ -541,22 +565,24 @@
 				LinkIncremental="2"
 				GenerateDebugInformation="TRUE"
 				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD,MSVCRT"
-				AdditionalOptions=" "
+				OutputFile="..\..\pssetup_static.exe"
+				ProgramDatabaseFile="..\..\out\debug71\build\apppssetup_static\pssetup_static.pdb"
+				SubSystem="1"
+				AdditionalOptions="libpng.lib freetype2.lib libcrystalspace_staticplugins_d.lib libcrystalspace_windows_d.lib libcrystalspace_opengl_d.lib libcrystalspace_d.lib opengl32.lib zlib.lib version.lib "
 				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib libceltool_d.lib"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\debug71\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug71\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs;..\..\..\cel\out\debug71\libs;$(CEL)\out\debug71\libs;$(CEL)\libs"
 				TargetMachine="1"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\out\debug71\libs\libeffects_d.lib"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;USE_CEL"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;_WINDOWS;CS_STATIC_LINKED;USE_CEL"
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug71\build\libeffects\libeffects.tlb"/>
+				TypeLibraryName="..\..\out\debug71\build\apppssetup_static\apppssetup_static.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="md ..\..\out\debug71\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug71\bin\&#x0D;&#x0A;"
@@ -567,8 +593,8 @@
 				Name="VCPreLinkEventTool"/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;USE_CEL;PROJECTGEN_VERSION=71"
-				AdditionalIncludeDirectories=".;..\..\src\common\effects;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32;..\..\..\cel\include;$(CEL)\include;$(CEL)\include\cel"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;_WINDOWS;CS_STATIC_LINKED;USE_CEL;PROJECTGEN_VERSION=71"
+				AdditionalIncludeDirectories=".;..\..\src\setup;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32;..\..\..\cel\include;$(CEL)\include;$(CEL)\include\cel"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -577,9 +603,10 @@
 		</Configuration>
     		<Configuration
 			Name="DebugPSReleaseCSCEL (with static libs)|Win32"
-			OutputDirectory="..\..\out\debug71\build\libeffects\"
-			IntermediateDirectory="..\..\out\debug71\build\libeffects\"
-			ConfigurationType="4"
+			OutputDirectory="..\..\out\debug71\build\apppssetup_static\"
+			IntermediateDirectory="..\..\out\debug71\build\apppssetup_static\"
+			ConfigurationType="1"
+			CharacterSet="2"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
 			<Tool
@@ -590,14 +617,14 @@
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
-				ProgramDataBaseFileName="..\..\out\debug71\build\libeffects\effects.pdb"
-				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;USE_CEL;WIN32"
+				ProgramDataBaseFileName="..\..\out\debug71\build\apppssetup_static\pssetup_static.pdb"
+				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_WINDOWS;CS_STATIC_LINKED;USE_CEL;WIN32"
 				OptimizeForProcessor="1"
 				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32;..\..\..\cel\include;$(CEL)\include;$(CEL)\include\cel"
-				PrecompiledHeaderFile="..\..\out\debug71\build\libeffects\libeffects.pch"
-				AssemblerListingLocation="..\..\out\debug71\build\libeffects\"
-				ObjectFile="..\..\out\debug71\build\libeffects\"
+				PrecompiledHeaderFile="..\..\out\debug71\build\apppssetup_static\apppssetup_static.pch"
+				AssemblerListingLocation="..\..\out\debug71\build\apppssetup_static\"
+				ObjectFile="..\..\out\debug71\build\apppssetup_static\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="TRUE"
@@ -611,22 +638,24 @@
 				LinkIncremental="2"
 				GenerateDebugInformation="TRUE"
 				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD,MSVCRT"
-				AdditionalOptions=" "
+				OutputFile="..\..\pssetup_static.exe"
+				ProgramDatabaseFile="..\..\out\debug71\build\apppssetup_static\pssetup_static.pdb"
+				SubSystem="1"
+				AdditionalOptions="libpng.lib freetype2.lib libcrystalspace_staticplugins_d.lib libcrystalspace_windows_d.lib libcrystalspace_opengl_d.lib libcrystalspace_d.lib opengl32.lib zlib.lib version.lib "
 				AdditionalDependencies="libcrystalspace.lib ws2_32.lib zlib.lib libceltool.lib"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\release71\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\release71\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs;..\..\..\cel\out\release71\libs;$(CEL)\out\release71\libs;$(CEL)\libs"
 				TargetMachine="1"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\out\debug71\libs\libeffects_d.lib"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
-				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;USE_CEL"
+				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_WINDOWS;CS_STATIC_LINKED;USE_CEL"
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug71\build\libeffects\libeffects.tlb"/>
+				TypeLibraryName="..\..\out\debug71\build\apppssetup_static\apppssetup_static.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="md ..\..\out\debug71\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug71\bin\&#x0D;&#x0A;"
@@ -637,8 +666,8 @@
 				Name="VCPreLinkEventTool"/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;USE_CEL;PROJECTGEN_VERSION=71"
-				AdditionalIncludeDirectories=".;..\..\src\common\effects;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32;..\..\..\cel\include;$(CEL)\include;$(CEL)\include\cel"
+				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_WINDOWS;CS_STATIC_LINKED;USE_CEL;PROJECTGEN_VERSION=71"
+				AdditionalIncludeDirectories=".;..\..\src\setup;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32;..\..\..\cel\include;$(CEL)\include;$(CEL)\include\cel"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -647,9 +676,10 @@
 		</Configuration>
   		<Configuration
 			Name="DebugPSReleaseCSCEL (with DLLs)|Win32"
-			OutputDirectory="..\..\out\debug71\build\libeffects\"
-			IntermediateDirectory="..\..\out\debug71\build\libeffects\"
-			ConfigurationType="4"
+			OutputDirectory="..\..\out\debug71\build\apppssetup_static\"
+			IntermediateDirectory="..\..\out\debug71\build\apppssetup_static\"
+			ConfigurationType="1"
+			CharacterSet="2"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
 			<Tool
@@ -660,14 +690,14 @@
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
-				ProgramDataBaseFileName="..\..\out\debug71\build\libeffects\effects.pdb"
-				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;USE_CEL;WIN32;CS_BUILD_SHARED_LIBS"
+				ProgramDataBaseFileName="..\..\out\debug71\build\apppssetup_static\pssetup_static.pdb"
+				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_WINDOWS;CS_STATIC_LINKED;USE_CEL;WIN32;CS_BUILD_SHARED_LIBS"
 				OptimizeForProcessor="1"
 				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32;..\..\..\cel\include;$(CEL)\include;$(CEL)\include\cel"
-				PrecompiledHeaderFile="..\..\out\debug71\build\libeffects\libeffects.pch"
-				AssemblerListingLocation="..\..\out\debug71\build\libeffects\"
-				ObjectFile="..\..\out\debug71\build\libeffects\"
+				PrecompiledHeaderFile="..\..\out\debug71\build\apppssetup_static\apppssetup_static.pch"
+				AssemblerListingLocation="..\..\out\debug71\build\apppssetup_static\"
+				ObjectFile="..\..\out\debug71\build\apppssetup_static\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="TRUE"
@@ -681,22 +711,24 @@
 				LinkIncremental="2"
 				GenerateDebugInformation="TRUE"
 				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD,MSVCRT"
-				AdditionalOptions=" "
+				OutputFile="..\..\pssetup_static.exe"
+				ProgramDatabaseFile="..\..\out\debug71\build\apppssetup_static\pssetup_static.pdb"
+				SubSystem="1"
+				AdditionalOptions="libpng.lib freetype2.lib libcrystalspace_staticplugins_d.lib libcrystalspace_windows_d.lib libcrystalspace_opengl_d.lib libcrystalspace_d.lib opengl32.lib zlib.lib version.lib "
 				AdditionalDependencies="libcrystalspace.lib ws2_32.lib zlib.lib libceltool.lib"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\release71\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\release71\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs;..\..\..\cel\out\release71\libs;$(CEL)\out\release71\libs;$(CEL)\libs"
 				TargetMachine="1"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\out\debug71\libs\libeffects_d.lib"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
-				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;USE_CEL"
+				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_WINDOWS;CS_STATIC_LINKED;USE_CEL"
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug71\build\libeffects\libeffects.tlb"/>
+				TypeLibraryName="..\..\out\debug71\build\apppssetup_static\apppssetup_static.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="md ..\..\out\debug71\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug71\bin\&#x0D;&#x0A;"
@@ -707,8 +739,8 @@
 				Name="VCPreLinkEventTool"/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;USE_CEL;PROJECTGEN_VERSION=71"
-				AdditionalIncludeDirectories=".;..\..\src\common\effects;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32;..\..\..\cel\include;$(CEL)\include;$(CEL)\include\cel"
+				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_WINDOWS;CS_STATIC_LINKED;USE_CEL;PROJECTGEN_VERSION=71"
+				AdditionalIncludeDirectories=".;..\..\src\setup;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32;..\..\..\cel\include;$(CEL)\include;$(CEL)\include\cel"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -721,131 +753,39 @@
 			Name="Source Files"
 			Filter="">
 			<File
-				RelativePath="..\..\src\common\effects\pseffect.cpp">
+				RelativePath="..\..\mk\msvc\apppssetup_static_static_glue_app_CRYSTAL.cpp">
 			</File>
 			<File
-				RelativePath="..\..\src\common\effects\pseffect2drenderer.cpp">
+				RelativePath="..\..\src\setup\pawssetupwindow.cpp">
 			</File>
 			<File
-				RelativePath="..\..\src\common\effects\pseffectanchor.cpp">
+				RelativePath="..\..\src\setup\pawsskinwindow.cpp">
 			</File>
 			<File
-				RelativePath="..\..\src\common\effects\pseffectanchorbasic.cpp">
-			</File>
-			<File
-				RelativePath="..\..\src\common\effects\pseffectanchorsocket.cpp">
-			</File>
-			<File
-				RelativePath="..\..\src\common\effects\pseffectanchorspline.cpp">
-			</File>
-			<File
-				RelativePath="..\..\src\common\effects\pseffectmanager.cpp">
-			</File>
-			<File
-				RelativePath="..\..\src\common\effects\pseffectobj.cpp">
-			</File>
-			<File
-				RelativePath="..\..\src\common\effects\pseffectobjdecal.cpp">
-			</File>
-			<File
-				RelativePath="..\..\src\common\effects\pseffectobjlabel.cpp">
-			</File>
-			<File
-				RelativePath="..\..\src\common\effects\pseffectobjmesh.cpp">
-			</File>
-			<File
-				RelativePath="..\..\src\common\effects\pseffectobjparticles.cpp">
-			</File>
-			<File
-				RelativePath="..\..\src\common\effects\pseffectobjquad.cpp">
-			</File>
-			<File
-				RelativePath="..\..\src\common\effects\pseffectobjsimpmesh.cpp">
-			</File>
-			<File
-				RelativePath="..\..\src\common\effects\pseffectobjsound.cpp">
-			</File>
-			<File
-				RelativePath="..\..\src\common\effects\pseffectobjspire.cpp">
-			</File>
-			<File
-				RelativePath="..\..\src\common\effects\pseffectobjstar.cpp">
-			</File>
-			<File
-				RelativePath="..\..\src\common\effects\pseffectobjtext.cpp">
-			</File>
-			<File
-				RelativePath="..\..\src\common\effects\pseffectobjtext2d.cpp">
-			</File>
-			<File
-				RelativePath="..\..\src\common\effects\pseffectobjtrail.cpp">
+				RelativePath="..\..\src\setup\pssetup.cpp">
 			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
 			Filter="">
 			<File
-				RelativePath="..\..\src\common\effects\pseffect.h">
+				RelativePath="..\..\src\setup\globals.h">
 			</File>
 			<File
-				RelativePath="..\..\src\common\effects\pseffect2drenderer.h">
+				RelativePath="..\..\src\setup\pawssetupwindow.h">
 			</File>
 			<File
-				RelativePath="..\..\src\common\effects\pseffectanchor.h">
+				RelativePath="..\..\src\setup\pawsskinwindow.h">
 			</File>
 			<File
-				RelativePath="..\..\src\common\effects\pseffectanchorbasic.h">
+				RelativePath="..\..\src\setup\pssetup.h">
 			</File>
+		</Filter>
+		<Filter
+			Name="Resource Files"
+			Filter="">
 			<File
-				RelativePath="..\..\src\common\effects\pseffectanchorsocket.h">
-			</File>
-			<File
-				RelativePath="..\..\src\common\effects\pseffectanchorspline.h">
-			</File>
-			<File
-				RelativePath="..\..\src\common\effects\pseffectmanager.h">
-			</File>
-			<File
-				RelativePath="..\..\src\common\effects\pseffectobj.h">
-			</File>
-			<File
-				RelativePath="..\..\src\common\effects\pseffectobjdecal.h">
-			</File>
-			<File
-				RelativePath="..\..\src\common\effects\pseffectobjlabel.h">
-			</File>
-			<File
-				RelativePath="..\..\src\common\effects\pseffectobjmesh.h">
-			</File>
-			<File
-				RelativePath="..\..\src\common\effects\pseffectobjparticles.h">
-			</File>
-			<File
-				RelativePath="..\..\src\common\effects\pseffectobjquad.h">
-			</File>
-			<File
-				RelativePath="..\..\src\common\effects\pseffectobjsimpmesh.h">
-			</File>
-			<File
-				RelativePath="..\..\src\common\effects\pseffectobjsound.h">
-			</File>
-			<File
-				RelativePath="..\..\src\common\effects\pseffectobjspire.h">
-			</File>
-			<File
-				RelativePath="..\..\src\common\effects\pseffectobjstar.h">
-			</File>
-			<File
-				RelativePath="..\..\src\common\effects\pseffectobjtext.h">
-			</File>
-			<File
-				RelativePath="..\..\src\common\effects\pseffectobjtext2d.h">
-			</File>
-			<File
-				RelativePath="..\..\src\common\effects\pseffectobjtextable.h">
-			</File>
-			<File
-				RelativePath="..\..\src\common\effects\pseffectobjtrail.h">
+				RelativePath="..\..\mk\msvc\apppssetup_static.rc">
 			</File>
 		</Filter>
 	</Files>
