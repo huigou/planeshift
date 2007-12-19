@@ -1,5 +1,9 @@
 *** 2007-12-19 by Kenny Graunke
 - Clean up a bunch of fixed-length buffers and sprintf...use csString.
+- Added pssetup to trunk, with a few changes:
+  - Made it edit /planeshift/userdata/planeshift.cfg, not psclient.cfg.
+  - Removed the relight panel, as it's useless with lighter2.
+  - Minor fixes to the GUI.
 
 *** 2007-12-18 by Anders Reggestad
 - Added loading of diabled npc flag from npc definitions.
