@@ -669,16 +669,17 @@ bool AdminManager::AdminCmdData::DecodeAdminCmdMessage(MsgEntry *pMsg, psAdminCm
         }
         else if (subCmd == "register")
         {
-            /// 'register' expects either a numeric range value or a player name.
-            if (strspn(words[2].GetDataSafe(), "0123456789.") == words[2].Length())
+            /// 'register' expects either 'range' numeric value or a player name.
+            if (words[2] == "range")
             {
                 player.Empty();
-                range = words.GetFloat(2);
+                range = words.GetFloat(3);
+                rangeSpecifier = IN_RANGE;
             }
             else
             {
                 player = words[2];
-                range = -1.0;
+                rangeSpecifier = INDIVIDUAL;
             }
         }
         else if (subCmd == "reward")
@@ -5993,7 +5994,7 @@ void AdminManager::HandleGMEvent(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdD
     // bit more vetting of the /event command - if in doubt, give help
     if ((data.subCmd == "create" && 
         (data.gmeventName.Length() == 0 || data.gmeventDesc.Length() == 0)) ||
-        (data.subCmd == "register" && data.player.Length() == 0 && data.range == NO_RANGE) ||
+        (data.subCmd == "register" && data.player.Length() == 0 && data.rangeSpecifier == INDIVIDUAL) ||
         (data.subCmd == "remove" && data.player.Length() == 0) ||
         (data.subCmd == "reward" && data.item.Length() == 0 && data.stackCount == 0) ||
         (data.subCmd == "control" && data.gmeventName.Length() == 0))
@@ -6006,7 +6007,7 @@ void AdminManager::HandleGMEvent(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdD
     {
         psserver->SendSystemInfo( me->clientnum, "/event help\n"
                                   "/event create <name> <description>\n"
-                                  "/event register [<range> | <player>]\n"
+                                  "/event register [range <range> | <player>]\n"
                                   "/event reward [all | range <range> | <player>] # <item>\n"
                                   "/event remove <player>\n"
                                   "/event complete [name]\n"
@@ -6026,7 +6027,7 @@ void AdminManager::HandleGMEvent(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdD
     if (data.subCmd == "register")
     {
         /// this looks odd, because the range value is in the 'player' parameter.
-        if (data.range > 0)
+        if (data.rangeSpecifier == IN_RANGE)
         {
             gmeventResult = gmeventManager->RegisterPlayersInRangeInGMEvent(client, data.range);
         }
