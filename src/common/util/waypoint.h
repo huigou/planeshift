@@ -37,14 +37,21 @@ class Waypoint
 {
 public:
     Location                   loc;            /// Id and position
-    bool                       allow_return;   /// This prevents the link back to the prior waypoint
-                                               /// from being chosen, if true.
-    csArray<bool>              prevent_wander; /// This prevents wandering NPCs from going that way. 
+
     csArray<Waypoint*>         links;          /// Links to other waypoinst connected with paths from this node.
     csArray<float>             dists;          /// Distances of each link.
     csArray<psPath*>           paths;          /// Path object for each of the links
     csArray<psPath::Direction> pathDir;        /// Forward or reverse indication for each path.
 
+    bool                       allow_return;   /// This prevents the link back to the prior waypoint
+                                               /// from being chosen, if true.
+    csArray<bool>              prevent_wander; /// This prevents wandering NPCs from going that way.
+    bool                       underground;    /// True if this waypoint is underground
+    bool                       underwater;     /// True if this waypoint is underwater
+    bool                       priv;           /// True if this waypoint is private
+    bool                       pub;            /// True if this waypoint is public
+    bool                       city;           /// True if this waypoint is in a city
+    
     Waypoint();
     Waypoint(const char*name);
     
@@ -58,7 +65,7 @@ public:
     bool Load(iResultRow& row, iEngine *engine); 
 
     /// Get the sector from the location.
-    iSector*            GetSector(iEngine * engine) { return loc.GetSector(engine); }
+    iSector*     GetSector(iEngine * engine) { return loc.GetSector(engine); }
     const char * GetName(){ return loc.name.GetDataSafe(); }
 
     bool CheckWithin(iEngine * engine, const csVector3& pos, const iSector* sector);

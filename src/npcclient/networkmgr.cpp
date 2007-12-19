@@ -328,8 +328,7 @@ void NetworkManager::HandleTimeUpdate( MsgEntry* me )
 
     if (msg.type == psWeatherMessage::DAYNIGHT)  // time update msg
     {
-        TimePerception pcpt(msg.time);
-        npcclient->TriggerEvent(NULL, &pcpt); // Broadcast
+        npcclient->UpdateTime(msg.time);
     }
 }
 

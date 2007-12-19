@@ -20,7 +20,7 @@ CREATE TABLE `sc_waypoint_links` (
 #
 # Dumping data for table 'sc_waypoint_lists'
 #
-INSERT INTO `sc_waypoint_links` VALUES (1, '', 'LINEAR' ,13, 14, '');
+INSERT INTO `sc_waypoint_links` VALUES (1, '', 'LINEAR' ,14, 13, '');
 INSERT INTO `sc_waypoint_links` VALUES (2, '', 'LINEAR' ,1, 2, '');
 INSERT INTO `sc_waypoint_links` VALUES (3, '', 'LINEAR' ,1, 6, '');
 INSERT INTO `sc_waypoint_links` VALUES (4, '', 'LINEAR' ,2, 3, '');
@@ -43,4 +43,15 @@ INSERT INTO `sc_waypoint_links` VALUES (20, '', 'LINEAR' ,18, 17, '');
 INSERT INTO `sc_waypoint_links` VALUES (21, '', 'LINEAR' ,19, 5, '');
 INSERT INTO `sc_waypoint_links` VALUES (22, '', 'LINEAR' ,2, 20, '');
 INSERT INTO `sc_waypoint_links` VALUES (23, 'Test Path 1', 'LINEAR' ,14, 14, 'ONEWAY');
+INSERT INTO `sc_waypoint_links` VALUES (24, '', 'LINEAR' ,1, 21, '');
+INSERT INTO `sc_waypoint_links` VALUES (25, '', 'LINEAR' ,21, 22, '');
+INSERT INTO `sc_waypoint_links` VALUES (26, '', 'LINEAR' ,21, 23, '');
+INSERT INTO `sc_waypoint_links` VALUES (27, '', 'LINEAR' ,22, 24, '');
+INSERT INTO `sc_waypoint_links` VALUES (28, '', 'LINEAR' ,23, 24, '');
+INSERT INTO `sc_waypoint_links` VALUES (29, '', 'LINEAR' ,24, 25, '');
+INSERT INTO `sc_waypoint_links` VALUES (30, '', 'LINEAR' ,25, 26, '');
+INSERT INTO `sc_waypoint_links` VALUES (31, '', 'LINEAR' ,26, 23, '');
+INSERT INTO `sc_waypoint_links` VALUES (32, '', 'LINEAR' ,26, 28, '');
+INSERT INTO `sc_waypoint_links` VALUES (33, '', 'LINEAR' ,28, 27, '');
+INSERT INTO `sc_waypoint_links` VALUES (34, '', 'LINEAR' ,25, 27, '');
 

@@ -37,7 +37,7 @@ public:
     psString(const csStringBase& str) : csString(str) {}
     psString(const csString& str) : csString(str) {}
 
-    int FindSubString(const char *sub, size_t start=0, bool caseInsense=XML_CASE_SENSITIVE,bool wholeWord=false);
+    int FindSubString(const char *sub, size_t start=0, bool caseInsense=XML_CASE_SENSITIVE,bool wholeWord=false) const;
     int FindSubStringReverse(psString& sub, size_t start, bool caseInsense=XML_CASE_SENSITIVE);
     void GetSubString(psString& str, size_t from, size_t to);
     bool FindNumber(unsigned int & pos, unsigned int & end);

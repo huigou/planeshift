@@ -1463,6 +1463,13 @@ void psNPCClient::PerceptProximityLocations()
     }
 }
 
+void psNPCClient::UpdateTime(int time)
+{
+    TimePerception pcpt(time);
+    TriggerEvent(NULL, &pcpt); // Broadcast
+}
+
+
 void psNPCClient::CatchCommand(const char *cmd)
 {
     printf("Caught command: %s\n",cmd);

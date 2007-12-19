@@ -61,7 +61,7 @@ bool psString::FindNumber(unsigned int & pos, unsigned int & end)
         return false;
 }
 
-int psString::FindSubString(const char *sub, size_t start, bool caseInsense, bool wholeWord)
+int psString::FindSubString(const char *sub, size_t start, bool caseInsense, bool wholeWord) const
 {
     const char *myData = this->GetData();
 

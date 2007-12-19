@@ -619,3 +619,4 @@ void DelayedQueryManager::Push(csString query)
     datacondition.NotifyOne();
 }
 #endif
+

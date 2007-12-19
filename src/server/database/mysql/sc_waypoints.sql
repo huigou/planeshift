@@ -42,4 +42,12 @@ INSERT INTO `sc_waypoints` VALUES (17, 'corr_2', '-22.00', '0.0', '-88.00', 2, '
 INSERT INTO `sc_waypoints` VALUES (18, 'p13', '-20.00', '0.0', '-55.00', 5, '', 6);
 INSERT INTO `sc_waypoints` VALUES (19, 'smith_1', '-57.56', '0.0', '-156.72', 0, '', 3);
 INSERT INTO `sc_waypoints` VALUES (20, 'smith_2', '-53.56', '0.0', '-155.46', 0, 'ALLOW_RETURN', 3);
+INSERT INTO `sc_waypoints` VALUES (21, 'ug_entrance_1', '-11.00', '0.0', '-153.00', 0, 'ALLOW_RETURN', 3);
+INSERT INTO `sc_waypoints` VALUES (22, 'ug_entrance_2', '-11.00', '0.0', '-170.00', 0, 'ALLOW_RETURN', 3);
+INSERT INTO `sc_waypoints` VALUES (23, 'ug_1', '0.00', '0.0', '-153.00', 0, 'ALLOW_RETURN, UNDERGROUND', 3);
+INSERT INTO `sc_waypoints` VALUES (24, 'ug_2', '0.00', '0.0', '-170.00', 0, 'ALLOW_RETURN, UNDERGROUND', 3);
+INSERT INTO `sc_waypoints` VALUES (25, 'ug_3', '15.00', '0.0', '-170.00', 0, 'ALLOW_RETURN, UNDERGROUND', 3);
+INSERT INTO `sc_waypoints` VALUES (26, 'ug_4', '15.00', '0.0', '-153.00', 0, 'ALLOW_RETURN, UNDERGROUND', 3);
+INSERT INTO `sc_waypoints` VALUES (27, 'ug_5', '30.00', '0.0', '-170.00', 0, 'ALLOW_RETURN, UNDERGROUND', 3);
+INSERT INTO `sc_waypoints` VALUES (28, 'ug_6', '30.00', '0.0', '-153.00', 0, 'ALLOW_RETURN, UNDERGROUND', 3);
 
