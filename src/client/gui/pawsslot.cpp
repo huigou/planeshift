@@ -105,15 +105,18 @@ void pawsSlot::SetToolTip( const char* text )
 
 void pawsSlot::StackCount( int newCount )
 {
-    if (emptyOnZeroCount  &&  newCount==0)
+    if (emptyOnZeroCount && newCount == 0)
+    {
         Clear();
+    }
     else
     {
         stackCount = newCount;
-        char buffer[10] = "";
+
+        csString countText;
         if (newCount > 0)
-            sprintf( buffer, "%d", newCount );
-        stackCountLabel->SetText( buffer );
+            countText.Format("%d", newCount);
+        stackCountLabel->SetText(countText);
     }
 }
 

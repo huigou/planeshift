@@ -152,19 +152,19 @@ void pawsPetStatWindow::HandleMessage( MsgEntry* me )
             menStaminaMax = incoming.menStaminaMax;
             
 
-            char buff[100];
+            csString text;
 
-            sprintf( buff, ": %i" , hitpointsMax );
-            hpTotal->SetText( buff );
+            text.Format(": %i", hitpointsMax);
+            hpTotal->SetText(text);
 
-            sprintf( buff, ": %i" , manaMax );
-            manaTotal->SetText( buff );
+            text.Format(": %i", manaMax);
+            manaTotal->SetText(text);
 
-            sprintf( buff, ": %i" , physStaminaMax );
-            pysStaminaTotal->SetText( buff );
+            text.Format(": %i", physStaminaMax);
+            pysStaminaTotal->SetText(text);
 
-            sprintf( buff, ": %i" , menStaminaMax );
-            menStaminaTotal->SetText( buff );
+            text.Format(": %i", menStaminaMax);
+            menStaminaTotal->SetText(text);
             
             break;
         }
@@ -491,9 +491,8 @@ void pawsPetStatWindow::HandleSkillDescription( csString& description )
 }
 void pawsPetStatWindow::BuySkill()
 {
-    char commandData[256];
-    csString escpxml = EscpXML(selectedSkill);
-    sprintf( commandData, "<B NAME=\"%s\" />", escpxml.GetData() );
+    csString commandData;
+    commandData.Format("<B NAME=\"%s\" />", EscpXML(selectedSkill).GetData());
     psPetSkillMessage outgoing( psPetSkillMessage::BUY_SKILL, commandData);
 
     msgHandler->SendMessage( outgoing.msg );
@@ -535,9 +534,8 @@ void pawsPetStatWindow::OnListAction( pawsListBox* widget, int status )
 
         selectedSkill.Replace( skillName->GetText() );
 
-        char commandData[256];
-        csString escpxml = EscpXML(selectedSkill);
-        sprintf( commandData, "<S NAME=\"%s\" />", escpxml.GetData() );
+        csString commandData;
+        commandData.Format("<S NAME=\"%s\" />", EscpXML(selectedSkill).GetData());
         psPetSkillMessage outgoing( psPetSkillMessage::SKILL_SELECTED, commandData);
 
         msgHandler->SendMessage( outgoing.msg );
@@ -556,7 +554,7 @@ void pawsPetStatWindow::Draw()
 
 void pawsPetStatWindow::SetTarget( GEMClientActor* actor ) 
 { 
-    char buff[100];
+    csString signal;
     target = actor ? actor : NULL;
     if ( target )
     {
@@ -567,21 +565,21 @@ void pawsPetStatWindow::SetTarget( GEMClientActor* actor )
         // Set control Subscriptions
         targetID.Clear();
         targetID.Append( actor->GetEntity()->GetID() );
-        sprintf( buff, "fVitalValue0:%s", targetID.GetData() );
-        PawsManager::GetSingleton().Subscribe( buff, hpBar );
-        PawsManager::GetSingleton().Subscribe( buff, hpCurrent ); 
+        signal.Format("fVitalValue0:%s", targetID.GetData());
+        PawsManager::GetSingleton().Subscribe(signal, hpBar);
+        PawsManager::GetSingleton().Subscribe(signal, hpCurrent);
 
-        sprintf( buff, "fVitalValue1:%s", targetID.GetData() );
-        PawsManager::GetSingleton().Subscribe( buff, manaBar );
-        PawsManager::GetSingleton().Subscribe( buff, manaCurrent );
+        signal.Format("fVitalValue1:%s", targetID.GetData());
+        PawsManager::GetSingleton().Subscribe(signal, manaBar);
+        PawsManager::GetSingleton().Subscribe(signal, manaCurrent);
 
-        sprintf( buff, "fVitalValue2:%s", targetID.GetData() );
-        PawsManager::GetSingleton().Subscribe( buff, pysStaminaBar );
-        PawsManager::GetSingleton().Subscribe( buff, pysStaminaCurrent );
+        signal.Format("fVitalValue2:%s", targetID.GetData());
+        PawsManager::GetSingleton().Subscribe(signal, pysStaminaBar);
+        PawsManager::GetSingleton().Subscribe(signal, pysStaminaCurrent);
 
-        sprintf( buff, "fVitalValue3:%s", targetID.GetData() );
-        PawsManager::GetSingleton().Subscribe( buff, menStaminaBar );
-        PawsManager::GetSingleton().Subscribe( buff, menStaminaCurrent );
+        signal.Format("fVitalValue3:%s", targetID.GetData());
+        PawsManager::GetSingleton().Subscribe(signal, menStaminaBar);
+        PawsManager::GetSingleton().Subscribe(signal, menStaminaCurrent);
     }
 }
 

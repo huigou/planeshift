@@ -191,65 +191,36 @@ bool pawsCharParents::OnButtonPressed( int mouseButton, int keyModifier, pawsWid
 {
     csString name = widget->GetName();
 
-    /*    
-    if ( name == "Religion0" || name == "Religion1" || name=="Religion2" )
-    {
-        char widgetName[100];                
-        for ( int x = 0; x < 3; x++ )
-        {        
-            sprintf( widgetName, "Religion%d", religionCount );
-            pawsButton* button = (pawsButton*)FindWidget( widgetName );
-            pawsTextBox* name = (pawsTextBox*)button->FindWidget( "text" );
-            name->SetColour( graphics2D->FindRGB(255,255,255) );        
-        }            
-        
-        pawsButton* activebutton = (pawsButton*)FindWidget( name );
-        pawsTextBox* activename = (pawsTextBox*)activebutton->FindWidget( "text" );
-        activename->SetColour(graphics2D->FindRGB(0,255,0) );        
-        
-        printf("Adding religious choice!\n");
-        createManager->RemoveChoice( lastReligionChoice );
-        createManager->AddChoice( widget->GetID() );
-        lastReligionChoice = widget->GetID();  
-        UpdateCP();
-                
-        return true;
-    }
-    */
-    
     if (name == "randomize")
     {
         Randomize();
         return true;
     }
-    
-    if ( name == "MNormal" )
+    else if (name == "MNormal")
     {
         HandleMotherStatus( 1 );
     }      
-    if ( name == "MFamous" )
+    else if (name == "MFamous")
     {
         HandleMotherStatus( 2 );
     }            
-    if ( name == "MExceptional" )
+    else if (name == "MExceptional")
     {
         HandleMotherStatus( 3 );
     }        
-    
-    if ( name == "FNormal" )
+    else if (name == "FNormal")
     {
         HandleFatherStatus( 1 );
     }  
-    if ( name == "FFamous" )
+    else if (name == "FFamous")
     {
         HandleFatherStatus( 2 );
     }        
-    if ( name == "FExceptional" )
+    else if (name == "FExceptional")
     {
         HandleFatherStatus( 3 );
     }        
     
-              
     switch ( widget->GetID() )
     {
         case BACK_BUTTON:
@@ -262,7 +233,8 @@ bool pawsCharParents::OnButtonPressed( int mouseButton, int keyModifier, pawsWid
         case NEXT_BUTTON:
         {
             // Validate parents names
-	    csString mName(motherNameTextBox->GetText()), fName(fatherNameTextBox->GetText());
+            csString mName(motherNameTextBox->GetText());
+            csString fName(fatherNameTextBox->GetText());
             mName = mName.Slice(0, mName.FindFirst(' '));  // only use first name
             fName = fName.Slice(0, fName.FindFirst(' '));  // if two are given
             if (mName.Length() < 3 || fName.Length() < 3 || !FilterName(mName) || !FilterName(fName))

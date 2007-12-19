@@ -202,9 +202,8 @@ bool pawsSkillWindow::SetupDoll()
 
 void pawsSkillWindow::HandleFactionMsg(MsgEntry* me)
 {
-	char buffer[16];
-				
 	psFactionMessage factMsg(me);
+    csString ratingStr;
 
 	if ( factMsg.cmd == psFactionMessage::MSG_FULL_LIST )
 	{
@@ -237,8 +236,8 @@ void pawsSkillWindow::HandleFactionMsg(MsgEntry* me)
 				return;
 			}
 
-			sprintf(buffer, "%d", fact->rating);
-			rank->SetText(buffer);			
+            ratingStr.Format("%d", fact->rating);
+            rank->SetText(ratingStr);			
 		}
 	}
 	else if (factRequest)   // ignore MSG_UPDATE if weve not had full list first
@@ -262,7 +261,7 @@ void pawsSkillWindow::HandleFactionMsg(MsgEntry* me)
 			}
 			
 			// If it was found above then we can just update it.
-			if ( found == true )
+			if (found)
 			{
 				pawsListBoxRow* row = factionList->GetRow(idx);
 				if (row)
@@ -273,11 +272,11 @@ void pawsSkillWindow::HandleFactionMsg(MsgEntry* me)
 						return;
 					}
 					
-					sprintf(buffer, "%d", factions[idx]->rating);
-					rank->SetText(buffer);			
+                    ratingStr.Format("%d", factions[idx]->rating);
+                    rank->SetText(ratingStr);			
 				}
 			}
-			else if ( !found )
+			else
 			{
 				// We don't know about this faction level yet so add it in. 
 				FactionRating *fact = new FactionRating; 
@@ -301,8 +300,9 @@ void pawsSkillWindow::HandleFactionMsg(MsgEntry* me)
 				{
 					return;
 				}
-				sprintf(buffer, "%d", fact->rating);
-				rank->SetText(buffer);			
+
+                ratingStr.Format("%d", fact->rating);
+                rank->SetText(ratingStr);			
 			}
 		}
 	}
@@ -625,31 +625,25 @@ void pawsSkillWindow::HandleSkillDescription( csString& description )
 
 void pawsSkillWindow::OnNumberEntered(const char *name,int param,int number)
 {
-    char commandData[256];
-    csString escpxml = "";
-    escpxml = EscpXML(selectedSkill);
-    if (escpxml== "")
+    csString commandData;
+    if (selectedSkill.IsEmpty())
     {
-        csString warning="You have to select a skill before.";
-        PawsManager::GetSingleton().CreateWarningBox(warning); 
+        PawsManager::GetSingleton().CreateWarningBox("You have to select a skill to buy.");
         return;
     }
 
-    sprintf( commandData, "<B NAME=\"%s\" AMOUNT=\"%d\"/>", escpxml.GetData(), number );
-    psGUISkillMessage outgoing( psGUISkillMessage::BUY_SKILL, commandData);
+    commandData.Format("<B NAME=\"%s\" AMOUNT=\"%d\"/>", EscpXML(selectedSkill).GetData(), number);
+    psGUISkillMessage outgoing(psGUISkillMessage::BUY_SKILL, commandData);
 
     msgHandler->SendMessage( outgoing.msg );
 }
 
 void pawsSkillWindow::BuyMaxSkill()
 {
-    char commandData[256];
-    csString escpxml = "";
-    escpxml = EscpXML(selectedSkill);
-    if (escpxml== "")
+    csString commandData;
+    if (selectedSkill.IsEmpty())
     {
-        csString warning="You have to select a skill before.";
-        PawsManager::GetSingleton().CreateWarningBox(warning); 
+        PawsManager::GetSingleton().CreateWarningBox("You have to select a skill to buy.");
         return;
     }
 
@@ -660,7 +654,7 @@ void pawsSkillWindow::BuyMaxSkill()
     if (skillCache.getProgressionPoints() < possibleTraining)
         possibleTraining = skillCache.getProgressionPoints();
 
-    sprintf( commandData, "<B NAME=\"%s\" AMOUNT=\"%d\"/>", escpxml.GetData(), possibleTraining );
+    commandData.Format("<B NAME=\"%s\" AMOUNT=\"%d\"/>", EscpXML(selectedSkill).GetData(), possibleTraining);
     psGUISkillMessage outgoing( psGUISkillMessage::BUY_SKILL, commandData);
 
     msgHandler->SendMessage( outgoing.msg );
@@ -668,12 +662,9 @@ void pawsSkillWindow::BuyMaxSkill()
 
 void pawsSkillWindow::BuySkill()
 {
-    csString escpxml = "";
-    escpxml = EscpXML(selectedSkill);
-    if (escpxml== "")
+    if (selectedSkill.IsEmpty())
     {
-        csString warning="You have to select a skill before.";
-        PawsManager::GetSingleton().CreateWarningBox(warning); 
+        PawsManager::GetSingleton().CreateWarningBox("You have to select a skill to buy."); 
         return;
     }
 
@@ -743,9 +734,8 @@ void pawsSkillWindow::OnListAction( pawsListBox* widget, int status )
         if (!desc)
         {
             // Request from the server
-            char commandData[256];
-            csString escpxml = EscpXML(selectedSkill);
-            sprintf( commandData, "<S NAME=\"%s\" />", escpxml.GetData() );
+            csString commandData;
+            commandData.Format("<S NAME=\"%s\" />", EscpXML(selectedSkill).GetData());
             psGUISkillMessage outgoing( psGUISkillMessage::SKILL_SELECTED, commandData);
 
             msgHandler->SendMessage( outgoing.msg );
