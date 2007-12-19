@@ -299,15 +299,15 @@
       <wait duration="1" anim="stand" />
     </behavior>
     <behavior name="Explore" completion_decay="100" growth="0" initial="0" resume="yes">
-      <debug level="0" />
+      <!--debug level="0" /-->
       <locate obj="waypoint"  static="no" />    <!-- Locate nearest waypoint -->
       <navigate anim="walk" />                  <!-- Local navigation -->
       <locate obj="waypoint" static="no" random="yes" range="80" />
-      <wander anim="walk" />        <!-- Navigate using waypoints -->
+      <wander anim="walk" />                    <!-- Navigate using waypoints -->
       <wait anim="stand" duration="5" />
       <locate obj="tribe:home"  static="no" />
-      <wander anim="walk" />        <!-- Navigate using waypoints -->
-      <navigate anim="walk" />      <!-- Local navigation -->
+      <wander anim="walk" />                    <!-- Navigate using waypoints -->
+      <navigate anim="walk" />                  <!-- Local navigation -->
     </behavior>
     <behavior name="Dig" completion_decay="100" growth="0" initial="0">
       <locate obj="waypoint"  static="no" />    <!-- Locate nearest waypoint -->
@@ -318,7 +318,7 @@
         <navigate anim="walk" />      <!-- Local navigation -->
         <equip item="Rock Pick" slot="righthand" />
         <dig resource="tribe:wealth" />
-	<wait anim="stand" duration="20" /> <!-- Temp until dig is implemented -->
+	<wait anim="stand" duration="20" />     <!-- Temp until dig is implemented -->
         <dequip slot="righthand" />
         <locate obj="tribe:resource" static="no" random="no" range="80" /> <!-- Get new random pos in field -->
       </loop>
@@ -388,7 +388,7 @@
       <navigate anim="walk" />        <!-- Local navigation -->
     </behavior>
     <behavior name="Wander waypoints" decay="0" growth="0" initial="50" loop="yes">
-      <debug level="0" />
+      <!--debug level="0" /-->
       <wander anim="walk" random="yes" />
     </behavior>
   </npctype>
@@ -396,7 +396,7 @@
   <npctype name="MoveTest2" vel="$run">
     <!-- Advanced movement using waypoints -->
     <behavior name="Move1" decay="0" growth="0" initial="80" loop="yes">
-      <debug level="0" />
+      <!--debug level="0" /-->
       <locate obj="waypoint"  static="no" />    <!-- Locate nearest waypoint -->
       <navigate anim="walk" />                  <!-- Local navigation -->
       <locate obj="waypoint:p1"  static="no" />
@@ -418,7 +418,7 @@
 
     <!-- Advanced movement using waypoints -->
     <behavior name="Move1" decay="0" growth="0" initial="80" loop="yes" resume="yes">
-      <debug level="0" />
+      <!--debug level="0" /-->
       <locate obj="waypoint"  static="no" />    <!-- Locate nearest waypoint -->
       <navigate anim="walk" />                  <!-- Local navigation -->
       <locate obj="waypoint:p1"  static="no" />
@@ -507,11 +507,27 @@
 
   </npctype>
 
+  <npctype name="MoveUnderground" vel="$walk">
+    <!-- Testing the wander operation. -->
+
+    <!-- Locate nearest waypoint -->
+    <behavior name="Locate waypoint" completion_decay="-1" initial="100">
+      <locate obj="waypoint"  static="no" />
+      <navigate anim="walk" />        <!-- Local navigation -->
+      <!-- debug level="15" /-->
+      <locate obj="waypoint:ug_1" static="no" />
+      <wander anim="walk" />          <!-- Navigate using waypoints -->
+    </behavior>
+    <behavior name="Wander waypoints" decay="0" growth="0" initial="50" loop="yes">
+      <wander anim="walk" random="yes" underground="true" />
+    </behavior>
+  </npctype>
+
   <npctype name="WinchMover">
 
     <!-- Initial behavior to locate the starting point -->
     <behavior name="Initialize" completion_decay="-1" initial="1000">
-      <debug level="0" />
+      <!--debug level="0" /-->
       <locate obj="waypoint"  static="no" />    <!-- Locate nearest waypoint -->
       <navigate anim="walk" />                  <!-- Local navigation -->
       <locate obj="winch:Mover pos 1" static="no" />
@@ -539,7 +555,7 @@
 
     <!-- Initial behavior to locate the starting point -->
     <behavior name="Initialize" completion_decay="-1" initial="1000">
-      <debug level="0" />
+      <!--debug level="0" /-->
       <locate obj="waypoint"  static="no" />    <!-- Locate nearest waypoint -->
       <navigate anim="walk" />                  <!-- Local navigation -->
       <locate obj="winch:Beast pos 1" static="no" />

@@ -359,6 +359,11 @@ public:
     NPC* FindAttachedNPC(iCelEntity *entity);
 
     NPC *ReadSingleNPC(unsigned int char_id);
+
+    /**
+     * Update with time from server in order to start timed events.
+     */
+    void UpdateTime(int time);
     
     psPFMaps * GetMaps() { return PFMaps; }
 

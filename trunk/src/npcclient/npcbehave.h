@@ -542,6 +542,11 @@ class WanderOperation : public ScriptOperation
 protected:
     csString  action;
     bool      random;
+    bool      undergroundValid,underground;
+    bool      underwaterValid,underwater;
+    bool      privValid,priv;
+    bool      pubValid,pub;
+    bool      cityValid,city;
 
     // Instance temp variables. These dosn't need to be copied.
     Waypoint *active_wp,*prior_wp,*next_wp;
@@ -573,8 +578,9 @@ public:
 
     WanderOperation(): ScriptOperation("Wander")
         { active_wp=NULL; prior_wp=NULL; next_wp=NULL;
+          dest_sector=NULL; current_sector=NULL;
           turn_queued=false;turning=false;
-          turn_angle_vel=0.0f; turn_end_angle=0.0f; anchor=NULL;
+          turn_angle_vel=0.0f; turn_end_angle=0.0f; path=NULL, anchor=NULL;
         };
     virtual ~WanderOperation() {};
 

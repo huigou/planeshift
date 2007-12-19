@@ -1393,7 +1393,15 @@ bool GEMClientActor::IsGroupedWith(GEMClientActor* actor)
 
 bool GEMClientActor::SetAnimation(const char* anim, int duration)
 {
-    float ani_duration = cal3dstate->GetCal3DModel()->getCoreModel()->getCoreAnimation(cal3dstate->FindAnim(anim))->getDuration();
+    int animation = cal3dstate->FindAnim(anim);
+    if (animation < 0)
+    {
+        Error3("Didn't find animation '%s' for '%s.",anim , GetName());
+        return false;
+    }
+    
+    float ani_duration = cal3dstate->GetCal3DModel()->getCoreModel()->getCoreAnimation(animation)->getDuration();
+
     // Check if the duration demands more than 1 playback?
     if (duration > ani_duration)
     {

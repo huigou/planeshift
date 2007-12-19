@@ -117,6 +117,10 @@ bool Waypoint::Import(iDocumentNode *node, iEngine * engine, iDataConnection *db
     return true;
 }
 
+bool isFlagSet(const psString & flagstr, const char * flag)
+{
+    return flagstr.FindSubString(flag,0,XML_CASE_INSENSITIVE)!=-1;
+}
 
 bool Waypoint::Load(iResultRow& row, iEngine *engine)
 {
@@ -131,14 +135,14 @@ bool Waypoint::Load(iResultRow& row, iEngine *engine)
     loc.rot_angle  = 0.0;
 
     psString flagstr(row["flags"]);
-    if (flagstr.FindSubString("ALLOW_RETURN",0,true)!=-1)
-    {
-        allow_return = true;
-    }
-    else
-    {
-        allow_return = false;
-    }
+
+    allow_return = isFlagSet(flagstr,"ALLOW_RETURN");
+    underground  = isFlagSet(flagstr,"UNDERGROUND");
+    underwater   = isFlagSet(flagstr,"UNDERWATER");
+    priv         = isFlagSet(flagstr,"PRIVATE");
+    pub          = isFlagSet(flagstr,"PUBLIC");
+    city         = isFlagSet(flagstr,"CITY");
+
     return true;
 }
 

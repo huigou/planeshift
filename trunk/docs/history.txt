@@ -1,3 +1,26 @@
+*** 2007-12-19 by Anders Reggestad
+- Added new flaggs to each waypoint. The new flags are as following:
+   - UNDERGROUND  - Used to indicate that the waypoint is underground. 
+   - UNDERWATER   - Used to indicate that the waypoint is underwater(Future).
+   - PRIVATE      - Used to indicate that the waypoint is private. Like
+                    the path up to the door of a priate home.
+   - PUBLIC       - Used to indicate that the waypoint is public. Like every
+                    waypoint on a public road or trail.
+   - CITY         - Used to indicate that the waypoint is inside a city.
+- Added support for wander to only wander on certen types of waypoints for
+  random movement. Examples.: <wander random="true" underground="true"/> will
+  only allow the npc to wander using waypoints marked with UNDERGROUND. Like
+  rats in a sewer. A guard wandering around might have 
+  <wander random="true" city="true" public="true">.
+- Added check in client for no animation return from FindAnim and printing
+  warning. This failed every time the NPCclient crashed, casing every client
+  to die as well.
+- Added new behavoir MoveUnderground to test the new wander operations
+- Removed commented out code for all wander operation. No need to keep its
+  in old revision in history anyway :)
+- Added some more debug code.
+- Moved handling of server time to go through npcclient.
+
 *** 2007-12-19 by Dave Bentham
 - To register players in range into an event now needs the word range in the
   GM command: /event register [range <r> | <player>]
