@@ -46,7 +46,7 @@
 #include <iclient/isoundmngr.h>
 
 psEffectObjSound::psEffectObjSound(iView *parentView, psEffect2DRenderer * renderer2d)
-: psEffectObj(parentView, renderer2d)
+    : psEffectObj(parentView, renderer2d),soundmanager(NULL)
 {
 }
 

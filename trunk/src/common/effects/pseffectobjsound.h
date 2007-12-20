@@ -58,10 +58,10 @@ private:
     float volumeMultiplier;
     bool loop;
     
-	  csRef<iSoundManager>	soundmanager;
+    csRef<iSoundManager>        soundmanager;
     csRef<SOUND_DATA_TYPE>      sndData;
-    csRef<SOUND_STREAM_TYPE>		sndStream;
-    csRef<SOUND_SOURCE3D_TYPE>		sndSource;
+    csRef<SOUND_STREAM_TYPE>    sndStream;
+    csRef<SOUND_SOURCE3D_TYPE>  sndSource;
 };
 
 #endif

@@ -289,7 +289,11 @@ void psEngine::Cleanup()
     delete mouseBinds;
     delete guiHandler;
     delete inventoryCache;
-        
+    
+
+    // Effect manager needs to be destoyed before the soundmanager
+    effectManager = NULL;
+    
     object_reg->Unregister ((iSoundManager*)soundmanager, "iSoundManager");
     delete soundmanager;
                 
@@ -542,7 +546,7 @@ bool psEngine::Initialize (int level)
         if(preloadModels)
             materialmanager->PreloadTextures();
 
-        if (!celclient->Initialize(object_reg, GetMsgHandler(), modehandler, zonehandler))
+        if (!celclient->Initialize(object_reg, GetMsgHandler(), zonehandler))
         {
             lasterror = "Couldn't init Cel Manager.";
             Error2("FATAL ERROR: %s",lasterror.GetData());

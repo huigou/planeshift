@@ -33,7 +33,6 @@
 
 struct Trait;
 class MsgHandler;
-class ModeHandler;
 class ZoneHandler;
 class psClientDR;
 class psNetPersist;
@@ -100,7 +99,7 @@ public:
     virtual ~psCelClient();
 
     bool Initialize (iObjectRegistry* object_reg, MsgHandler* msghandler,
-                 ModeHandler *modehndlr,ZoneHandler *zonehndlr);
+                     ZoneHandler *zonehndlr);
     bool Initialize(iObjectRegistry* object_reg)
     {
         return CelBase::Initialize(object_reg);
@@ -177,7 +176,6 @@ protected:
     csRef<iVFS>         vfs;
     csRef<MsgHandler>   msghandler;
     psClientDR* clientdr;
-    ModeHandler *modehandler;
     ZoneHandler *zonehandler;
 
     psEntityLabels * entityLabels;
