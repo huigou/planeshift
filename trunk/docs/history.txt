@@ -1,4 +1,11 @@
 *** 2007-12-20 by Anders Reggestad
+- Added support to only react to perception when target behavior is active. Had
+  inactive_only from before. Now with active_only to it is possible to control
+  turning on and off behaviors without steady increasing/descresing the need
+  on repetive on or offs.
+- Fixed /pet summon so that npc client get updated with summoned possition. This
+  prevent that /pet follow go back to old position before staring to follow.
+  This is part of ( FS#779 ).
 - Made NPCs have same stand upon server restart as respawn. ( FS#486 )
 - Removed dublicate code for name verification, use functions from psCharCreationManager
 - Added repetive character test to psCharCreationManager::FilterName. ( FS#776 )

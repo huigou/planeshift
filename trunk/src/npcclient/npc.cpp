@@ -54,12 +54,18 @@ extern iDataConnection *db;
 NPC::NPC(): checked(false) 
 { 
     brain=NULL; 
-    pid=0; 
+    pid=0;
+    oldID=0;
     last_update=0; 
     entity=NULL; 
+    npcActor=NULL;
+    movable=NULL;
     linmove=NULL; 
+    colldet=NULL;
     DRcounter=0; 
-
+    active_locate_sector=NULL;
+    active_locate_angle=0.0;
+    active_locate_wp = NULL;
     ang_vel=vel=999; 
     walkVelocity=runVelocity=0.0; // Will be cached
     region=NULL; 
@@ -69,7 +75,10 @@ NPC::NPC(): checked(false)
     owner_id=(uint32_t)-1;
     target_id=(uint32_t)-1;
     tribe=NULL;
+    raceInfo=NULL;
     checkedSector=NULL;
+    checked = false;
+    checkedResult = false;
     disabled = false;
 }
 
@@ -332,10 +341,19 @@ void NPC::Disable()
 
 void NPC::DumpState()
 {
+    csVector3 loc;
+    iSector* sector;
+    float rot;
+
+    psGameObject::GetPosition(entity,loc,rot,sector);
+
+
     CPrintf(CON_CMDOUTPUT, "States for %s (PID: %u)\n",name.GetData(),pid);
     CPrintf(CON_CMDOUTPUT, "---------------------------------------------\n");
-    CPrintf(CON_CMDOUTPUT, "DR Counter:          %d\n",DRcounter);
+    CPrintf(CON_CMDOUTPUT, "Position:            %s\n",toString(loc,sector).GetDataSafe());
+    CPrintf(CON_CMDOUTPUT, "Rotation:            %.2f\n",rot);
     CPrintf(CON_CMDOUTPUT, "Debugging:           %d\n",debugging);
+    CPrintf(CON_CMDOUTPUT, "DR Counter:          %d\n",DRcounter);
     CPrintf(CON_CMDOUTPUT, "Alive:               %s\n",alive?"True":"False");
     CPrintf(CON_CMDOUTPUT, "Disabled:            %s\n",disabled?"True":"False");
     CPrintf(CON_CMDOUTPUT, "Checked:             %s\n",checked?"True":"False");

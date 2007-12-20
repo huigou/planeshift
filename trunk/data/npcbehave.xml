@@ -270,8 +270,8 @@
     </behavior>
 	
     <react event="collision"        behavior="turn"     delta="100" />
-    <react event="ownercmd:stay"    behavior="follow"   delta="-100"/>
-    <react event="ownercmd:follow"  behavior="follow"   delta="100"/>
+    <react event="ownercmd:stay"    behavior="follow"   delta="-100" active_only="true" />
+    <react event="ownercmd:follow"  behavior="follow"   delta="100"  inactive_only="true" />
   </npctype>
   
   <npctype name="Blacksmith">
