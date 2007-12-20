@@ -102,6 +102,16 @@ If you are an advisor, lists all currently unanswered questions.</topic>
         <topic name="/notbuddy">/notbuddy player
 
 Removes the named player from your buddy list.  Not your friend anymore?  what a shame.</topic>
+        <topic name="/pet">/pet [petname,] 'follow'
+/pet [petname,] 'stay'
+/pet [petname,] 'dismiss'
+/pet [petname,] 'summon'
+/pet [petname,] 'attack'
+/pet [petname,] 'quard'
+/pet [petname,] 'assist'
+/pet [petname,] 'name' newname
+
+Control your pet(s).</topic>
         <topic name="/petition">/petition request
 
 Submits a petition to the GMs for a feature or bug fix.</topic>
@@ -467,6 +477,14 @@ Mutes the named player until they log back in to this server.</topic>
         <topic name="/npc">/npc [master npc name]
 
 Creates a clone of the named NPC at your current location.</topic>
+        <topic name="/path">/path 'help'
+/path 'adjust'
+/path 'create' path_id
+/path 'point'
+/path 'display'|'show'
+/path 'hide'
+
+Manage paths. Use /waypoint link to create a new path between two waypoints. Than use /path to create a nice path with several poiints between thew two waypoints.</topic>
         <topic name="/petition_manage">/petition_manage
 
 Manage petitions to help users.</topic>
@@ -541,12 +559,12 @@ Unmute the named player.</topic>
 
 Send a warning message to a player in big, red, un-ignorable text on their screen and in all chat tabs.</topic>
 
-        <topic name="/waypoint">/waypoint add radius [flags]
-/waypoint create WP radius [flags]
-/waypoint link WP1 WP2 [flags]
-/waypoint path format [first]
-/waypoint display
-/waypoint hide
+        <topic name="/waypoint">/waypoint 'add' radius [flags]
+/waypoint 'create' WP radius [flags]
+/waypoint 'link' WP1 WP2 [flags]
+/waypoint 'path' format [first]
+/waypoint 'display'|'show'
+/waypoint 'hide'
 
 Manage waypoints. Use /waypoint create WP to create a new waypoint with name WP. Use /waypoint path format to start a new path. Use /waypoint path wp%03d 10 to create waypoints with name wp010, wp011,... First waypoint will be added when /waypoint add is used. /waypoint link WP1 WP2 could be used to link two waypoints. /waypoint display will display all waypoints in sector and /waypoint hide will hide all waypoints.</topic>
         <topic name="/weather"> /weather sector [on|off]
