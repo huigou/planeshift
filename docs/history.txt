@@ -1,4 +1,5 @@
 *** 2007-12-20 by Anders Reggestad
+- Added help for "/pet" and "/path"
 - Fixed FS#754 uninitialized values is now set. Using default itemstat quality
   if no quality given by user.
 - Cleanups in client code. Moved the point where it crash at exit to somewhere
