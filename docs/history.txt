@@ -1,4 +1,5 @@
 *** 2007-12-20 by Anders Reggestad
+- Made NPCs have same stand upon server restart as respawn. ( FS#486 )
 - Removed dublicate code for name verification, use functions from psCharCreationManager
 - Added repetive character test to psCharCreationManager::FilterName. ( FS#776 )
 - Added help for "/pet" and "/path"
