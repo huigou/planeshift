@@ -1,4 +1,7 @@
 *** 2007-12-20 by Anders Reggestad
+- Fixed chase operation to work in npc's warp space. This fix problems with
+  odd behaviours when pets follow you between sectors. Like ( BT#1323 )
+- Added dump of warp space table to npc client as well. 
 - Added support to only react to perception when target behavior is active. Had
   inactive_only from before. Now with active_only to it is possible to control
   turning on and off behaviors without steady increasing/descresing the need
