@@ -1,4 +1,6 @@
 *** 2007-12-20 by Anders Reggestad
+- Removed dublicate code for name verification, use functions from psCharCreationManager
+- Added repetive character test to psCharCreationManager::FilterName. ( FS#776 )
 - Added help for "/pet" and "/path"
 - Fixed FS#754 uninitialized values is now set. Using default itemstat quality
   if no quality given by user.

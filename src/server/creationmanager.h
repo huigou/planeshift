@@ -64,13 +64,13 @@ public:
       * @param playerName The name to check to see if it is unique.
       * @return true if the name is unique.
       */
-    bool IsUnique( const char* playerName );
+    static bool IsUnique( const char* playerName );
 
     /** Check to see a lastname is unique in the characters table.
       * @param lastname The lastname to check to see if it is unique.
       * @return true if the name is unique.
       */
-    bool IsLastNameUnique( const char* lastname );
+    static bool IsLastNameUnique( const char* lastname );
 
     // Returns true if the name is ok
     static bool FilterName( const char* name );

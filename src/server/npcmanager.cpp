@@ -1534,16 +1534,11 @@ void NPCManager::HandlePetCommand( MsgEntry * me )
             return;
         }
 
-        //Querying the DB is slow, but I don't see another way to do it
+        if (!psCharCreationManager::IsUnique( firstName ))
         {
-            Result rsCheckDuplicate( db->Select("SELECT * FROM characters WHERE name='%s'", 
-                                                firstName.GetDataSafe() ) );
-            if (rsCheckDuplicate.IsValid() && rsCheckDuplicate.Count() > 0)
-            {
-                psserver->SendSystemError( me->clientnum, "The name %s is not unique!", 
-                                           firstName.GetDataSafe() );               
-                return;
-            }
+            psserver->SendSystemError( me->clientnum, "The name %s is not unique!", 
+                                       firstName.GetDataSafe() );               
+            return;
         }
 
         prevFullName = chardata->GetCharFullName();
