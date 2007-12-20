@@ -39,6 +39,7 @@
 #include "util/serverconsole.h"
 #include "util/log.h"
 #include "util/location.h"
+#include "engine/psworld.h"
 
 #include "globals.h"
 #include "npcclient.h"
@@ -336,9 +337,15 @@ int com_filtermsg(char* arg)
     return 0;
 }
 
+int com_dumpwarpspace(char *)
+{
+    npcclient->GetWorld()->DumpWarpCache();
+    return 0;
+}
 
 /* add all new commands here */
 COMMAND commands[] = {
+    { "dumpwarpspace",true,  com_dumpwarpspace,"Dump the warp space table"},
     { "charlist",     false, com_charlist,     "List all known characters"},
     { "debugnpc",     false, com_debugnpc,     "Switches the debug mode on 1 NPC"},
     { "entlist",      false, com_entlist,      "List all known entities"},

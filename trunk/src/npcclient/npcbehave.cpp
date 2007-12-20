@@ -2729,9 +2729,8 @@ void ChaseOperation::Advance(float timedelta,NPC *npc,EventManager *eventmgr)
     
     psGameObject::GetPosition(target_entity,targetPos,dummyrot,targetSector);
 
-    // We now work in the target sector's space
-    csVector3 myOldPos(myPos);
-    npcclient->GetWorld()->WarpSpace(mySector, targetSector, myPos);
+    // We work in our sector's space
+    npcclient->GetWorld()->WarpSpace(targetSector, mySector, targetPos);
 
     // This prevents NPCs from wanting to occupy the same physical space as something else
     csVector3 displacement = targetPos - myPos;
@@ -2750,9 +2749,8 @@ void ChaseOperation::Advance(float timedelta,NPC *npc,EventManager *eventmgr)
     {
         npc->Printf("turn to target..\n");
         path.SetDest(targetPos);
-        //        path.CalcLocalDest(myPos, mySector, localDest);
-        path.CalcLocalDest(myPos, targetSector, localDest);
-        StartMoveTo(npc,eventmgr,localDest, targetSector, GetVelocity(npc),action, false);
+        path.CalcLocalDest(myPos, mySector, localDest);
+        StartMoveTo(npc,eventmgr,localDest, mySector, GetVelocity(npc),action, false);
     }
     
     
@@ -2772,12 +2770,12 @@ void ChaseOperation::Advance(float timedelta,NPC *npc,EventManager *eventmgr)
         {
             npc->Printf("We are at localDest..\n");
             path.SetDest(targetPos);
-            path.CalcLocalDest(myPos, targetSector, localDest);
-            StartMoveTo(npc,eventmgr,localDest, targetSector,vel,action, false);
+            path.CalcLocalDest(myPos, mySector, localDest);
+            StartMoveTo(npc,eventmgr,localDest, mySector,vel,action, false);
         }
     }
     else
-        TurnTo(npc,localDest, targetSector,forward);
+        TurnTo(npc,localDest, mySector,forward);
 
 
     npc->Printf("advance: pos=(%f.2,%f.2,%f.2) rot=%.2f localDest=(%f.2,%f.2,%f.2) dist=%f\n", 
@@ -2798,15 +2796,10 @@ void ChaseOperation::Advance(float timedelta,NPC *npc,EventManager *eventmgr)
 
     npc->Printf(5,"World position bodyVel=%s worldVel=%s",toString(bodyVel).GetDataSafe(),toString(worldVel).GetDataSafe());
 
-    //    if((fabs(myPos.x)> 1000 || fabs(myNewPos.x)> 1000) || (fabs(myPos.y)>1000 || fabs(myNewPos.y)>1000) || (fabs(myPos.z)>1000 || fabs(myNewPos.z)>1000))
-    //    {
-    //        npc->Printf("Moved from %f %f %f to %f %f %f, timedelta is %f, chase error!\n", myPos.x,myPos.y,myPos.z, myNewPos.x,myNewPos.y,myNewPos.z, timedelta);
-    //    }
-
     // TODO: Use CheckMovedOk() istead ????
 
     // This check must be done in our original sector's space
-    if ((myOldPos - myNewPos).SquaredNorm() < SMALL_EPSILON) // then stopped dead, presumably by collision
+    if ((myPos - myNewPos).SquaredNorm() < SMALL_EPSILON) // then stopped dead, presumably by collision
     {
         Perception collision("collision");
         npc->TriggerEvent(&collision, eventmgr);
