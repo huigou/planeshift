@@ -1,9 +1,15 @@
+*** 2007-12-20 by Anders Reggestad
+- Fixed FS#754 uninitialized values is now set. Using default itemstat quality
+  if no quality given by user.
+- Cleanups in client code. Moved the point where it crash at exit to somewhere
+  else.
+
 *** 2007-12-19 by Anders Reggestad
 - Added new flaggs to each waypoint. The new flags are as following:
    - UNDERGROUND  - Used to indicate that the waypoint is underground. 
    - UNDERWATER   - Used to indicate that the waypoint is underwater(Future).
    - PRIVATE      - Used to indicate that the waypoint is private. Like
-                    the path up to the door of a priate home.
+                    the path up to the door of a private home.
    - PUBLIC       - Used to indicate that the waypoint is public. Like every
                     waypoint on a public road or trail.
    - CITY         - Used to indicate that the waypoint is inside a city.

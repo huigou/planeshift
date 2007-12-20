@@ -112,7 +112,6 @@ psCelClient::psCelClient() : ignore_others(false)
     requeststatus = 0;
     
     clientdr        = NULL;
-    modehandler     = NULL;
     zonehandler     = NULL;
     entityLabels    = NULL;
     shadowManager   = NULL;
@@ -159,7 +158,7 @@ iCelEntity* psCelClient::GetMainActor()
     
 
 bool psCelClient::Initialize(iObjectRegistry* object_reg,
-        MsgHandler* newmsghandler,ModeHandler *modehndlr,
+        MsgHandler* newmsghandler,
         ZoneHandler *zonehndlr)
 {
     if (!CelBase::Initialize(object_reg))
@@ -178,7 +177,6 @@ bool psCelClient::Initialize(iObjectRegistry* object_reg,
         return false;
     }        
 
-    modehandler = modehndlr;
     zonehandler = zonehndlr;
 
     msghandler = newmsghandler;
@@ -218,7 +216,7 @@ void psCelClient::SetMainActor(iCelEntity* entity)
         mainPlayerEntity = entity;
 
         // ModeHandler has no good way to find out the entity
-        modehandler->SetEntity(entity);
+        psengine->GetModeHandler()->SetEntity(entity);
     }        
 }
 

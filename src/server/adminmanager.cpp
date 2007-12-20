@@ -225,9 +225,13 @@ bool AdminManager::AdminCmdData::DecodeAdminCmdMessage(MsgEntry *pMsg, psAdminCm
         days   = words.GetInt(4);
 
         if (!mins && !hours && !days)
+        {
             reason = words.GetTail(2);
+        }
         else
+        {
             reason = words.GetTail(5);
+        }
 
         return true;
     }
@@ -245,10 +249,24 @@ bool AdminManager::AdminCmdData::DecodeAdminCmdMessage(MsgEntry *pMsg, psAdminCm
     else if (command == "/item")
     {
         item = words[1];
-        if (words.GetCount()>1)
-          random = (words[2]=="random"?1:0);
+        random = 0;
+        value = -1;
+        
         if (words.GetCount()>2)
-          value = words.GetInt(3);
+        {
+            if (words[2]=="random")
+            {
+                random = 1;
+            }
+            else
+            {
+                value = words.GetInt(2);
+            }
+        }
+        if (words.GetCount()>3)
+        {
+            value = words.GetInt(3);
+        }
         return true;
     }
     else if (command == "/key")
@@ -905,9 +923,13 @@ void AdminManager::HandleAdminCmdMessage(MsgEntry *me, psAdminCmdMessage &msg, A
     else if (data.command == "/item")
     {
         if (data.item.Length())  // If arg, make simple
+        {
             CreateItem(me,msg,data,client);
+        }
         else  // If no arg, load up the spawn item GUI
+        {
             SendSpawnTypes(me,msg,data,client);
+        }
     }
     else if (data.command == "/key")
     {
@@ -3127,13 +3149,22 @@ void AdminManager::CreateItem(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
     csVector3 pos;
     iSector*  sector = 0;
     float angle;
+    int instance;
 
     client->GetActor()->GetPosition(pos, angle, sector);
+    instance = client->GetActor()->GetInstance();
+
+    if (data.item == "help")
+    {
+        psserver->SendSystemError(me->clientnum, "Syntax: /item or /item <name>|[help] [random] [<quality>]");
+        return;
+    }
+
+    Debug4(LOG_ADMIN,me->clientnum,  "Created item %s %s with quality %d\n",data.item.GetDataSafe(),data.random?"random":"",data.value )
 
     // TODO: Get number of items to create from client
-    // TODO: Get instance # from client.
     int stackCount = 1;
-    if (CreateItem((const char*)data.item,pos.x,pos.y,pos.z,angle,sector->QueryObject()->GetName(),0,stackCount,data.random,data.value))
+    if (CreateItem((const char*)data.item,pos.x,pos.y,pos.z,angle,sector->QueryObject()->GetName(),instance,stackCount,data.random,data.value))
     {
         psserver->SendSystemInfo(me->clientnum, "New item %s added!",data.item.GetData());
     }
@@ -3174,14 +3205,23 @@ bool AdminManager::CreateItem(const char * name, double xPos, double yPos, doubl
         LootRandomizer* lootRandomizer = psserver->GetSpawnManager()->GetLootRandomizer();
         psItemStats *newstats = lootRandomizer->RandomizeItem( basestats, value );
         newitem = newstats->InstantiateBasicItem(true);
-        newitem->SetItemQuality(basestats->GetQuality());
     } 
     else
     {
         newitem = basestats->InstantiateBasicItem(true);
+    }
+
+    if (value > 0)
+    {
         newitem->SetItemQuality((float)value);
+        // Setting craftet quality as well if quality given by user
         newitem->SetMaxItemQuality((float)value);
     }
+    else
+    {
+        newitem->SetItemQuality(basestats->GetQuality());
+    }
+        
 
     if (newitem==NULL)
     {
