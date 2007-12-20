@@ -17,6 +17,7 @@
  *
  */
 #include <psconfig.h>
+#include <ctype.h>
 
 //=============================================================================
 // Library Includes
@@ -1143,6 +1144,7 @@ bool psCharCreationManager::IsUnique( const char* name )
     csString escape;
     db->Escape( escape, name );
     // Check to see if name already exists in character database.
+    // Querying the DB is slow, but I don't see another way to do it
     csString query;
     query.Format( "Select id from characters where name='%s'", escape.GetData() );
     Result result (db->Select( query ) );
@@ -1179,6 +1181,27 @@ bool psCharCreationManager::FilterName(const char* name)
     if (((int)strspn(((const char*)name)+1,
                      (const char*)"abcdefghijklmnopqrstuvwxyz") != (int)len - 1))
         return false;
+
+    // Check for repititive letters
+    size_t index = 1;
+    size_t equal = 0; 
+    while (index < len)
+    {
+        if (tolower(name[index-1]) == tolower(name[index]))
+        {
+            equal++;
+        }
+        else
+        {
+            equal = 0;
+        }
+        if (equal >= 2) // More than 2 characters equal to the first
+        {
+            return false;
+        }
+        index++;
+    }
+    
 
     return true;
 }

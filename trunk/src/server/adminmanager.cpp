@@ -4568,11 +4568,10 @@ void AdminManager::ChangeName(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
         }   
     }
 
-    // Querying the DB is slow, but I don't see another way to do it
+    // If the first name should be unique, check it
     if (checkFirst && type == PSCHARACTER_TYPE_PLAYER)
     {
-        Result result1(db->Select("SELECT * FROM characters WHERE name='%s'",data.newName.GetData()));
-        if (result1.IsValid() && result1.Count() > 0)
+        if (!psCharCreationManager::IsUnique(data.newName))
         {
             psserver->SendSystemError(me->clientnum,"The name %s is not unique!",data.newName.GetData());               
             return;
@@ -4582,8 +4581,7 @@ void AdminManager::ChangeName(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
     // If the last name should be unique, check it
     if (data.uniqueName && checkLast && data.newLastName.Length())
     {
-        Result result1(db->Select("SELECT * FROM characters WHERE lastname='%s'",data.newLastName.GetData()));
-        if (result1.IsValid() && result1.Count() > 0)
+        if (!psCharCreationManager::IsLastNameUnique(data.newLastName))
         {
             psserver->SendSystemError(me->clientnum,"The last name %s is not unique!",data.newLastName.GetData());               
             return;

@@ -484,7 +484,7 @@ Creates a clone of the named NPC at your current location.</topic>
 /path 'display'|'show'
 /path 'hide'
 
-Manage paths. Use /waypoint link to create a new path between two waypoints. Than use /path to create a nice path with several poiints between thew two waypoints.</topic>
+Manage paths. Use /waypoint link to create a new path between two waypoints. Then use /path to create a nice path with several points between the two waypoints.</topic>
         <topic name="/petition_manage">/petition_manage
 
 Manage petitions to help users.</topic>
