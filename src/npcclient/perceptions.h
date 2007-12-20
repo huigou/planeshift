@@ -56,6 +56,7 @@ protected:
     float     range;
     int       faction_diff;
     csString  oper;
+    bool      active_only;
     bool      inactive_only;
     bool      react_when_dead;
     bool      react_when_invisible;

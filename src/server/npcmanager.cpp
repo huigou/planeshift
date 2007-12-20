@@ -25,6 +25,8 @@
 // Crystal Space Includes
 //=============================================================================
 
+#include <iutil/object.h>
+
 //=============================================================================
 // Project Includes
 //=============================================================================
@@ -1395,6 +1397,16 @@ void NPCManager::HandlePetCommand( MsgEntry * me )
             if ( session->CheckSession() )
             {
                 session->isActive = true; // re-enable time tracking on pet.
+
+                iSector * targetSector;
+                csVector3 targetPoint;
+                float yRot = 0.0;
+                int instance;
+                owner->GetActor()->GetPosition(targetPoint,yRot,targetSector);
+                instance = owner->GetActor()->GetInstance();
+                psSectorInfo* sectorInfo = CacheManager::GetSingleton().GetSectorInfoByName(targetSector->QueryObject()->GetName());
+                petdata->SetLocationInWorld(instance,sectorInfo,targetPoint.x,targetPoint.y,targetPoint.z,yRot);
+
                 EntityManager::GetSingleton().CreateNPC( petdata );
                 pet = GEMSupervisor::GetSingleton().FindNPCEntity( familiarID );
                 if (pet == NULL)
@@ -1410,7 +1422,6 @@ void NPCManager::HandlePetCommand( MsgEntry * me )
                     return; // If all we didn't do was load the familiar 
                 }
                 
-                EntityManager::GetSingleton().Teleport( pet, owner->GetActor() );
                 owner->SetFamiliar( pet );
                 // Send OwnerActionLogon Perception
                 pet->SetOwner( owner->GetActor() );

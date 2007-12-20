@@ -47,9 +47,10 @@
 
 Reaction::Reaction()
 {
-    delta_desire = 0;
-    affected   = NULL;
-    range      = 0;
+    delta_desire  = 0;
+    affected      = NULL;
+    range         = 0;
+    active_only   = false;
     inactive_only = false;
 }
 
@@ -74,6 +75,7 @@ bool Reaction::Load(iDocumentNode *node,BehaviorSet& behaviors)
     oper                   = node->GetAttributeValue("oper");
     value                  = node->GetAttributeValueAsInt("value");
     type                   = node->GetAttributeValue("type");
+    active_only            = node->GetAttributeValueAsBool("active_only");
     inactive_only          = node->GetAttributeValueAsBool("inactive_only");
     react_when_dead        = node->GetAttributeValueAsBool("when_dead",false);
     react_when_invisible   = node->GetAttributeValueAsBool("when_invisible",false);
@@ -94,6 +96,7 @@ void Reaction::DeepCopy(Reaction& other,BehaviorSet& behaviors)
     weight                 = other.weight;
     value                  = other.value;
     type                   = other.type;
+    active_only            = other.active_only;
     inactive_only          = other.inactive_only;
     react_when_dead        = other.react_when_dead;
     react_when_invisible   = other.react_when_invisible;
@@ -105,8 +108,13 @@ void Reaction::React(NPC *who,EventManager *eventmgr,Perception *pcpt)
 {
     CS_ASSERT(who);
 
+    // When active_only flag is set we should do nothing
+    // if the affected behaviour is inactive.
+    if (active_only && !affected->GetActive() )
+        return;
+
     // When inactive_only flag is set we should do nothing
-    // if the affected behaviour is ative.
+    // if the affected behaviour is active.
     if (inactive_only && affected->GetActive() )
         return;
 
