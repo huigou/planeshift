@@ -780,7 +780,9 @@ void SpawnManager::Respawn(int instance,csVector3& where,float rot,csString& sec
     }
 
     if (instance == -1)  // keep the same as before
+    {
         instance = chardata->location.worldInstance;
+    }
 
     chardata->ResetMode();
     chardata->SetLocationInWorld(instance,spawnsector,where.x,where.y,where.z,rot);

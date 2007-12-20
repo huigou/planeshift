@@ -496,7 +496,10 @@ int psCombatManager::CalculateAttack(psCombatGameEvent *event)
 
     calc_damage->Execute();
 
-    //calc_damage->DumpAllVars();
+    if (DoLogDebug(LOG_COMBAT))
+    {
+        calc_damage->DumpAllVars();
+    }
 
     if (var_IAH->GetValue() < 0.0F)
         return ATTACK_MISSED;

@@ -197,6 +197,12 @@ void psCharacter::SetActor( gemActor* newActor )
     {
         inventory.RunEquipScripts();
         inventory.CalculateLimits();
+
+        // NPCs don't have stances yet, so reset modes
+        if (actor->GetClientID()==0)
+        {
+            ResetMode();
+        }
     }
 }
 
@@ -1165,7 +1171,9 @@ void psCharacter::SetMode(PSCHARACTER_MODE newmode, uint32_t clientnum)
         newmode = PSCHARACTER_MODE_OVERWEIGHT;
 
     if (newmode != PSCHARACTER_MODE_COMBAT)
+    {
         SetCombatStance(getStance("None"));
+    }
 
     psModeMessage msg(clientnum, actor->GetEntity()->GetID(), (uint8_t) newmode, combat_stance.stance_id);
     msg.Multicast(actor->GetMulticastClients(), 0, PROX_LIST_ANY_RANGE);
@@ -1214,6 +1222,13 @@ void psCharacter::SetMode(PSCHARACTER_MODE newmode, uint32_t clientnum)
 
     player_mode = newmode;
 }
+
+void psCharacter::ResetMode()
+{
+    player_mode = PSCHARACTER_MODE_PEACE; 
+    combat_stance = getStance("Normal");
+}
+
 
 void psCharacter::SetCombatStance(const Stance& stance)
 {

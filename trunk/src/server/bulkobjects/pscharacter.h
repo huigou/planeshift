@@ -833,7 +833,12 @@ public:
     const char* GetModeStr(); /// Return a string name of the mode
     bool CanSwitchMode(PSCHARACTER_MODE from, PSCHARACTER_MODE to);
     void SetMode(PSCHARACTER_MODE newmode, uint32_t clientnum);
-    void ResetMode() { player_mode = PSCHARACTER_MODE_PEACE; combat_stance = getStance("Normal"); }
+
+    /**
+     * Reset modes for NPCs
+     */
+    void ResetMode();
+    
 
     /** Drops an item into the world (one meter from this character's position)
       * @param Item to be dropped
