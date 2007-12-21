@@ -875,7 +875,7 @@ void psServerCharManager::BeginTrading(Client * client, gemObject * target, cons
     for ( size_t z = 0; z < merchantInfo->categories.GetSize(); z++ )
     {
         psItemCategory * category = merchantInfo->categories[z];
-    csString escpxml = EscpXML(category->name);
+        csString escpxml = EscpXML(category->name);
         buff.Format("<CATEGORY ID=\"%d\" "
                     "NAME=\"%s\" />",category->id,
                     escpxml.GetData());
