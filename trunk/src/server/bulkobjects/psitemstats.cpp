@@ -415,7 +415,15 @@ bool psItemStats::ReadItemStats(iResultRow& row)
     SetImageName(CacheManager::GetSingleton().FindCommonString(row.GetUInt32("cstr_id_gfx_icon")));
     SetPartMeshName(CacheManager::GetSingleton().FindCommonString(row.GetUInt32("cstr_id_part_mesh")));
     SetPrice(row.GetInt("base_sale_price"));
-    SetCategory(CacheManager::GetSingleton().GetItemCategoryByID(row.GetInt("category_id")));
+    int categoryId = row.GetInt("category_id");
+    psItemCategory * category = CacheManager::GetSingleton().GetItemCategoryByID(categoryId);
+    if (!category)
+    {
+        // Should not load without a category.
+        Error3("None exsisting item category '%d' for itemstat '%d'",categoryId,uid);
+        return false;
+    }
+    SetCategory(category);
 
     reqs[0].name = row["requirement_1_name"];
     reqs[0].min_value = row.GetFloat("requirement_1_value");

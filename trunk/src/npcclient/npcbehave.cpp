@@ -2563,9 +2563,7 @@ bool ChaseOperation::Load(iDocumentNode *node)
     csString typestr = node->GetAttributeValue("type");
     if (typestr == "nearest")
         type = NEAREST;
-    else if (typestr == "boss")
-        type = OWNER;
-    else if (typestr == "owner")
+    else if (typestr == "boss" || typestr== "owner")
         type = OWNER;
     else if (typestr == "target")
         type = TARGET;

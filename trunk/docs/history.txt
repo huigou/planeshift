@@ -1,4 +1,6 @@
 *** 2007-12-21 by Anders Reggestad
+- Added test on item_category to verify correct value before loading
+  item stats.
 - Some cleanups in the pet code. Added missing reactions to pet commands
   in the sample behavior.xml file.
 - Fixed setlog to accept t,y,1 instead of only "true", changed
