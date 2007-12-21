@@ -267,11 +267,24 @@
 
     <behavior name="turn" completion_decay="100" growth="0" initial="0">
       <rotate type="random" min="90" max="270" anim="walk" ang_vel="30" />
+      <move vel="2" anim="walk" duration="1.0"/>
+    </behavior>
+
+    <behavior name="attack" decay="0" growth="0" initial="0">
+      <locate obj="target"  range="50"/>
+      <rotate type="locatedest" anim="walk" ang_vel="120" />
+      <melee seek_range="50" melee_range="3" />
+    </behavior>
+    <behavior name="chase" completion_decay="100" growth="0" initial="0">
+      <chase type="target" anim="run" vel="5" />
     </behavior>
 	
-    <react event="collision"        behavior="turn"     delta="100" />
-    <react event="ownercmd:stay"    behavior="follow"   delta="-100" active_only="true" />
-    <react event="ownercmd:follow"  behavior="follow"   delta="100"  inactive_only="true" />
+    <react event="collision"            behavior="turn"     delta=  "100"                       />
+    <react event="ownercmd:stay"        behavior="follow"   delta= "-100"    active_only="true" />
+    <react event="ownercmd:follow"      behavior="follow"   delta=  "100"  inactive_only="true" />
+    <react event="ownercmd:stopattack"  behavior="attack"   delta= "-200"    active_only="true" />
+    <react event="ownercmd:attack"      behavior="attack"   delta=  "200"  inactive_only="true" weight="10" />
+    <react event="damage"               behavior="attack"   delta=  "200"  inactive_only="true" weight="1" />
   </npctype>
   
   <npctype name="Blacksmith">

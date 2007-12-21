@@ -2861,7 +2861,7 @@ bool PickupOperation::Run(NPC *npc,EventManager *eventmgr,bool interrupted)
     {
         if (!npc->GetLastPerception())
             return true;
-        if (!(item = npc->GetLastPerception()->GetEntity()))
+        if (!(item = npc->GetLastPerception()->GetTarget()))
             return true;
     } else
     {
@@ -3201,7 +3201,7 @@ bool MeleeOperation::Run(NPC *npc,EventManager *eventmgr,bool interrupted)
     else
     {
         // We know who attacked us, even if they aren't in range.
-        npc->SetTarget( npc->GetLastPerception()->GetEntity() );
+        npc->SetTarget( npc->GetLastPerception()->GetTarget() );
     }
 
     return false; // This behavior isn't done yet

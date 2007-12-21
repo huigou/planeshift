@@ -363,6 +363,7 @@ void NPC::DumpState()
     CPrintf(CON_CMDOUTPUT, "Vel:                 %.2f\n",vel);
     CPrintf(CON_CMDOUTPUT, "Walk velocity:       %.2f\n",walkVelocity);
     CPrintf(CON_CMDOUTPUT, "Run velocity:        %.2f\n",runVelocity);
+    CPrintf(CON_CMDOUTPUT, "Target:              %s\n",GetTarget()?GetTarget()->GetName():"");
 }
 
 
@@ -526,7 +527,7 @@ iCelEntity *NPC::GetTarget()
     {
         if (GetLastPerception())
         {
-            iCelEntity *target = GetLastPerception()->GetEntity();
+            iCelEntity *target = GetLastPerception()->GetTarget();
             Printf(5,"GetTarget returning last perception entity: %s\n",target ? target->GetName() : "None specified");
             return target;
         }
