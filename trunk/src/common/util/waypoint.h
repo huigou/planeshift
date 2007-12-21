@@ -51,6 +51,7 @@ public:
     bool                       priv;           /// True if this waypoint is private
     bool                       pub;            /// True if this waypoint is public
     bool                       city;           /// True if this waypoint is in a city
+    bool                       indoor;         /// True if this waypoint is indoor
     
     Waypoint();
     Waypoint(const char*name);

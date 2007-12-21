@@ -829,6 +829,10 @@ CREATE TABLE `warnings` (
 ALTER TABLE `sc_npc_definitions` ADD COLUMN disabled char(1) DEFAULT 'N';
 UPDATE `server_options` SET `option_value`='1171' WHERE `option_name`='db_version';
 
+#### 1172 - Anders Reggestad - Extedned flags part of waypoints.
+ALTER TABLE sc_waypoints MODIFY COLUMN `flags` varchar(100) DEFAULT '';
+UPDATE `server_options` SET `option_value`='1172' WHERE `option_name`='db_version';
+
 #
 # Insert your upgrade before this line. Remember when you set a new db_version
 # to update the server_options.sql file and update psserver.cpp as well.

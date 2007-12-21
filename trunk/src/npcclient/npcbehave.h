@@ -547,6 +547,7 @@ protected:
     bool      privValid,priv;
     bool      pubValid,pub;
     bool      cityValid,city;
+    bool      indoorValid,indoor;
 
     // Instance temp variables. These dosn't need to be copied.
     Waypoint *active_wp,*prior_wp,*next_wp;
