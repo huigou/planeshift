@@ -28,6 +28,7 @@
 #include <string.h>
 #include <memory.h>
 #include <stdlib.h>
+#include <ctype.h>
 
 #include <iutil/objreg.h>
 #include <iutil/cfgmgr.h>
@@ -299,20 +300,19 @@ int com_debugnpc(char*line)
 
 int com_setlog(char *line)
 {
-    WordArray words(line);
-
     if (!*line)
     {
         CPrintf(CON_CMDOUTPUT, "Please specify: <log> <true/false> <filter_id>\n");
         CPrintf(CON_CMDOUTPUT, "            or: all <true/false> \n");
         return 0;
     }
+    WordArray words(line);
     csString log(words[0]);
     csString flagword(words[1]);
     csString filter(words[2]);
     
     bool flag;
-    if (flagword == "true")
+    if (tolower(flagword.GetAt(0)) == 't' || tolower(flagword.GetAt(0)) == 'y' || flagword.GetAt(0) == '1')
         flag=true;
     else
         flag=false;

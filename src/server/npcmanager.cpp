@@ -1300,14 +1300,12 @@ void NPCManager::HandlePetCommand( MsgEntry * me )
     switch ( msg.command )
     {
     case psPETCommandMessage::CMD_FOLLOW :
-        //pet = dynamic_cast <gemNPC*>(owner->GetFamiliar());
         if ( pet != NULL )
         {
             QueueOwnerCmdFollowPerception( owner->GetActor(), pet );
         }
         break;
     case psPETCommandMessage::CMD_STAY :
-        //pet = dynamic_cast <gemNPC*>(owner->GetFamiliar());
         if ( pet != NULL )
         {
             QueueOwnerCmdStayPerception( owner->GetActor(), pet );
@@ -1574,41 +1572,39 @@ void NPCManager::HandlePetCommand( MsgEntry * me )
                                   fullName.GetData());   
         break;
     case psPETCommandMessage::CMD_TARGET :
+        if ( pet != NULL )
+        {
+            if ( words.GetCount() == 0 )
+            {
+                psserver->SendSystemInfo( me->clientnum, "You must specify a name for your pet to target." );
+                return;
+            }
+            
+            firstName = words.Get( 0 );
+            if ( words.GetCount() > 1 )
+                lastName = words.GetTail( 1 );
+            
+            firstName = NormalizeCharacterName( firstName );
+            lastName = NormalizeCharacterName( lastName );
+            
+            PS_ID target_id = psServer::CharacterLoader.FindCharacterID( firstName, false );
+            
+            if ( target_id )
+            {
+                gemObject *target = GEMSupervisor::GetSingleton().FindPlayerEntity( target_id );
+                if ( target ) 
+                {
+                    pet->SetTarget( target );
+                    psserver->SendSystemInfo( me->clientnum, "%s has successfully targeted %s." , pet->GetName(), firstName.GetData() );
+                }
+            }
+            else
+            {
+                psserver->SendSystemInfo( me->clientnum, "Cannot find '%s' to target.", firstName.GetData() );
+            }
+        }
         
-	    //pet = dynamic_cast <gemNPC*>(owner->GetFamiliar());
-	    if ( pet != NULL )
-	    {
-		    if ( words.GetCount() == 0 )
-		    {
-			    psserver->SendSystemInfo( me->clientnum, "You must specify a name for your pet to target." );
-			    return;
-		    }
-				
-		    firstName = words.Get( 0 );
-		    if ( words.GetCount() > 1 )
-			    lastName = words.GetTail( 1 );
-
-		    firstName = NormalizeCharacterName( firstName );
-		    lastName = NormalizeCharacterName( lastName );
-
-		    PS_ID target_id = psServer::CharacterLoader.FindCharacterID( firstName, false );
-
-		    if ( target_id )
-		    {
-			    gemObject *target = GEMSupervisor::GetSingleton().FindPlayerEntity( target_id );
-			    if ( target ) 
-			    {
-				    pet->SetTarget( target );
-				    psserver->SendSystemInfo( me->clientnum, "%s has successfully targeted %s." , pet->GetName(), firstName.GetData() );
-			    }
-		    }
-		    else
-		    {
-			    psserver->SendSystemInfo( me->clientnum, "Cannot find '%s' to target.", firstName.GetData() );
-		    }
-	    }
-        
-		break;
+        break;
     }
 }
 

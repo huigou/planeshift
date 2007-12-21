@@ -564,17 +564,17 @@ bool OwnerCmdPerception::ShouldReact( Reaction *reaction, NPC *npc )
 
     switch ( this->command )
     {
-    case OwnerCmdPerception::OCP_FOLLOW: event.Append( "follow" );
+    case psPETCommandMessage::CMD_FOLLOW: event.Append( "follow" );
         break;
-    case OwnerCmdPerception::OCP_STAY : event.Append( "stay" );
+    case psPETCommandMessage::CMD_STAY : event.Append( "stay" );
         break;
-    case OwnerCmdPerception::OCP_SUMMON : event.Append( "summon" );
+    case psPETCommandMessage::CMD_SUMMON : event.Append( "summon" );
         break;
-    case OwnerCmdPerception::OCP_DISMISS : event.Append( "dismiss" );
+    case psPETCommandMessage::CMD_DISMISS : event.Append( "dismiss" );
         break;
-    case OwnerCmdPerception::OCP_ATTACK : event.Append( "attack" );
+    case psPETCommandMessage::CMD_ATTACK : event.Append( "attack" );
         break;
-    case OwnerCmdPerception::OCP_STOPATTACK : event.Append( "stopattack" );
+    case psPETCommandMessage::CMD_STOPATTACK : event.Append( "stopattack" );
         break;
     default: event.Append("unknown");
         break;
@@ -582,9 +582,10 @@ bool OwnerCmdPerception::ShouldReact( Reaction *reaction, NPC *npc )
 
     if (event == reaction->GetEventType())
     {
-        npc->Printf("Matched reaction %s to perception %s...\n",reaction->GetEventType(), event.GetData() );
+        npc->Printf(5,"Matched reaction '%s' to perception '%s'.\n",reaction->GetEventType(), event.GetData() );
         return true;
     }
+    npc->Printf(6,"No matched reaction '%s' to perception '%s'.\n",reaction->GetEventType(), event.GetData() );
     return false;
 }
 
@@ -598,16 +599,23 @@ void OwnerCmdPerception::ExecutePerception( NPC *pet, float weight )
 {
     switch ( this->command )
     {
-    case OwnerCmdPerception::OCP_SUMMON : // Summon
+    case psPETCommandMessage::CMD_SUMMON : // Summon
         break;
-    case OwnerCmdPerception::OCP_DISMISS : // Dismiss
+    case psPETCommandMessage::CMD_DISMISS : // Dismiss
         break;
-    case OwnerCmdPerception::OCP_ATTACK : // Attack
+    case psPETCommandMessage::CMD_ATTACK : // Attack
+        if (pet->GetTarget())
+        {
+            pet->AddToHateList(pet->GetTarget(), 1 * weight );
+        }
+        else
+        {
+            pet->Printf("No target to add to hate list");
+        }
+        
+        break;
 
-        pet->AddToHateList(pet->GetTarget(), 1 * weight );
-        break;
-
-    case OwnerCmdPerception::OCP_STOPATTACK : // StopAttack
+    case psPETCommandMessage::CMD_STOPATTACK : // StopAttack
         break;
     }
 }

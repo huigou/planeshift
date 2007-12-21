@@ -1,3 +1,10 @@
+*** 2007-12-21 by Anders Reggestad
+- Some cleanups in the pet code. Added missing reactions to pet commands
+  in the sample behavior.xml file.
+- Fixed setlog to accept t,y,1 instead of only "true", changed
+  to accept match of substrings as well. This allow for 
+  "setlog trib t" that would lead to setting of loging for LOG_TRIBES.
+
 *** 2007-12-20 by Anders Reggestad
 - Fixed chase operation to work in npc's warp space. This fix problems with
   odd behaviours when pets follow you between sectors. Like ( BT#1323 )

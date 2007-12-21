@@ -28,6 +28,7 @@
 #include <string.h>
 #include <memory.h>
 #include <stdlib.h>
+#include <ctype.h>
 
 #include <iutil/object.h>
 #include <iutil/objreg.h>
@@ -1724,7 +1725,7 @@ int com_setlog(char *line)
     csString filter(words[2]);
 
     bool flag;
-    if (flagword == "true")
+    if (tolower(flagword.GetAt(0)) == 't' || tolower(flagword.GetAt(0)) == 'y' || flagword.GetAt(0) == '1')
         flag=true;
     else
         flag=false;

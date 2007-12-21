@@ -121,7 +121,7 @@ public:
     virtual Perception *MakeCopy();
     virtual void ExecutePerception(NPC *npc,float weight) { }
   
-    virtual iCelEntity *GetEntity() { return NULL; }
+    virtual iCelEntity *GetTarget() { return NULL; }
 
     const char* GetName() { return name; }
     const char* GetType() { return type; }
@@ -174,7 +174,7 @@ public:
     virtual bool ShouldReact(Reaction *reaction,NPC *npc);
     virtual Perception *MakeCopy();
     virtual bool GetLocation(csVector3& pos, iSector*& sector);
-    virtual iCelEntity *GetEntity() { return player; }
+    virtual iCelEntity *GetTarget() { return player; }
     virtual void ExecutePerception(NPC *npc,float weight);
 };
 
@@ -195,7 +195,7 @@ public:
     virtual bool ShouldReact(Reaction *reaction,NPC *npc);
     virtual Perception *MakeCopy();
     virtual bool GetLocation(csVector3& pos, iSector*& sector);
-    virtual iCelEntity *GetEntity() { return item; }
+    virtual iCelEntity *GetTarget() { return item; }
 };
 
 /**
@@ -239,7 +239,7 @@ public:
     virtual bool ShouldReact(Reaction *reaction,NPC *npc);
     virtual Perception *MakeCopy();
     virtual void ExecutePerception(NPC *npc,float weight);
-    virtual iCelEntity *GetEntity() { return attacker; }
+    virtual iCelEntity *GetTarget() { return attacker; }
 };
 
 /**
@@ -370,20 +370,6 @@ protected:
 
 public:
     OwnerCmdPerception(const char *n, int command, iCelEntity *owner, iCelEntity *pet );
-
-    enum 
-    {
-		OCP_FOLLOW,
-		OCP_STAY,
-		OCP_DISMISS,
-		OCP_SUMMON,
-		OCP_ATTACK,
-        OCP_STOPATTACK,
-		OCP_GUARD,
-		OCP_ASSIST,
-		OCP_NAME,
-		OCP_TARGET
-    };
 
     virtual bool ShouldReact( Reaction *reaction, NPC *pet );
     virtual Perception *MakeCopy();

@@ -560,10 +560,8 @@ const char *psUserCommands::HandleCommand(const char *cmd)
     }
     else if (  words[0] == "/pet")
     {
-        ///* Multiple Pets Code
         const char *errorMsg = "You must enter the text. e.g /pet [petname,] <follow|stay|dismiss|summon|attack|guard|assist|name|target> <options>";
-        //*/
-        //const char *errorMsg = "You must enter the text. e.g /pet <follow|stay|dismiss|summon|attack|guard|assist|name|target> <options>";
+
         if (words.GetCount() < 2)
             return errorMsg;
 
@@ -596,27 +594,33 @@ const char *psUserCommands::HandleCommand(const char *cmd)
         else if ( pCommand == "ATTACK" )    { command = psPETCommandMessage::CMD_ATTACK;      }
         else if ( pCommand == "GUARD" )     { command = psPETCommandMessage::CMD_GUARD;       }
         else if ( pCommand == "ASSIST" )    { command = psPETCommandMessage::CMD_ASSIST;      }
-        else if ( pCommand == "ATTACK" )    { command = psPETCommandMessage::CMD_STOPATTACK;  }
+        else if ( pCommand == "STOPATTACK" ){ command = psPETCommandMessage::CMD_STOPATTACK;  }
         else if ( pCommand == "NAME" )      { command = psPETCommandMessage::CMD_NAME;        }
         else if ( pCommand == "TARGET" )    { command = psPETCommandMessage::CMD_TARGET;      }
         else                                { return errorMsg; }
 
-        //target.Clear(); // for multiple pets, not currently implemented
-        //options = words.GetTail(2);
-        /* Multiple Pets Code for command line
-        pCommand = words[2];
-        target = words[1];
-        options = words.GetTail(3);
-        */
-        
-        // If we're dismissing the pet, we should close the stat window
-        if (command == psPETCommandMessage::CMD_DISMISS)
+        switch ( command )
         {
-            pawsPetStatWindow* petwindow = (pawsPetStatWindow*)PawsManager::GetSingleton().FindWidget("PetStatWindow");
-            if ( !petwindow )
-                return "Pet stat window not found!";
-            petwindow->Hide();
+        case psPETCommandMessage::CMD_DISMISS:
+            {
+                // If we're dismissing the pet, we should close the stat window
+                pawsPetStatWindow* petwindow = (pawsPetStatWindow*)PawsManager::GetSingleton().FindWidget("PetStatWindow");
+                if ( !petwindow )
+                    return "Pet stat window not found!";
+                petwindow->Hide();
+            }
+            break;
+        case psPETCommandMessage::CMD_TARGET:
+            // If no name give use target name if exists
+            if (options.Length() == 0 && psengine->GetCharManager()->GetTarget())
+            {
+                options = psengine->GetCharManager()->GetTarget()->GetName();
+            }
+        default:
+            // Most cases do nothing
+            break;
         }
+        
 
         psPETCommandMessage cmd(0, command, target.GetData(), options.GetData());
         msgqueue->SendMessage(cmd.msg);
