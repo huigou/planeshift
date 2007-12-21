@@ -1,4 +1,8 @@
 *** 2007-12-21 by Anders Reggestad
+- Extended flags in sc_waypoint table to be 100 characters.
+  - DB VER BUMP!
+- Added indoor flag to waypoints and allow for wander only 
+  using indoor waypoints.
 - Added test on item_category to verify correct value before loading
   item stats.
 - Some cleanups in the pet code. Added missing reactions to pet commands

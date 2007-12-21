@@ -2120,7 +2120,8 @@ Waypoint * WanderOperation::GetNextRandomWaypoint(NPC *npc, Waypoint * prior_wp,
              (!underwaterValid || new_wp->underwater == underwater) &&
              (!privValid || new_wp->priv == priv) &&
              (!pubValid || new_wp->pub == pub) &&
-             (!cityValid || new_wp->city == city))
+             (!cityValid || new_wp->city == city) &&
+             (!indoorValid || new_wp->indoor == indoor))
         {
             npc->Printf(10,"Possible next waypoint: %s",new_wp->GetName());
             waypoints.Push(new_wp);
@@ -2508,6 +2509,7 @@ bool WanderOperation::Load(iDocumentNode *node)
     priv = LoadAttributeBool(node,"private",false,&privValid);
     pub = LoadAttributeBool(node,"public",false,&pubValid);
     city = LoadAttributeBool(node,"city",false,&cityValid);
+    indoor = LoadAttributeBool(node,"indoor",false,&indoorValid);
 
     // Internal variables set to defaults
     path = NULL;
@@ -2533,6 +2535,8 @@ ScriptOperation *WanderOperation::MakeCopy()
     op->pub              = pub;
     op->cityValid        = cityValid;
     op->city             = city;
+    op->indoorValid      = indoorValid;
+    op->indoor           = indoor;
 
     // Internal variables set to defaults
     path = NULL;

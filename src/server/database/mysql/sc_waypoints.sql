@@ -14,7 +14,7 @@ CREATE TABLE `sc_waypoints` (
   `y` double(10,2) NOT NULL default '0.00',
   `z` double(10,2) NOT NULL default '0.00',
   `radius` int(10) NOT NULL default '0',
-  `flags` varchar(30) DEFAULT '' ,
+  `flags` varchar(100) DEFAULT '' ,
   `loc_sector_id` int(8) unsigned NOT NULL DEFAULT '0' ,
   PRIMARY KEY  (`id`)
 );

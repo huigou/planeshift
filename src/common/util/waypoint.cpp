@@ -142,6 +142,7 @@ bool Waypoint::Load(iResultRow& row, iEngine *engine)
     priv         = isFlagSet(flagstr,"PRIVATE");
     pub          = isFlagSet(flagstr,"PUBLIC");
     city         = isFlagSet(flagstr,"CITY");
+    indoor       = isFlagSet(flagstr,"INDOOR");
 
     return true;
 }
