@@ -28,6 +28,8 @@ class Waypoint;
 class psPathAnchor;
 class psWorld;
 struct iMovable;
+struct iSector;
+struct iEngine;
 class Location;
 
 class psPathPoint

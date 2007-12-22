@@ -295,10 +295,6 @@ protected:
 
     bool InitMesh(const char *name,const char *factname,const char *filename,
         const csVector3& pos,const float rotangle,iSector* room, const char *action);
-
-    float Matrix2YRot(const csMatrix3& mat);
-    float GetAngle(float x, float y);
-    
 };
 
 /*

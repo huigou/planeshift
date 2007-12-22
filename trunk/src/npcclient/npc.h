@@ -38,6 +38,7 @@ class psTribe;
 class Waypoint;
 class gemNPCActor;
 struct RaceInfo_t;
+class LocationType;
 
 /**
 * This object represents the entities which have attacked or 

@@ -19,10 +19,10 @@
  */
 #include <psconfig.h>
 
+// CS
 #include <iengine/rview.h>
 #include <iengine/portal.h>
 #include <iengine/portalcontainer.h>
-
 #include <csutil/snprintf.h>
 #include <csutil/sysfunc.h>
 #include <iengine/region.h>
@@ -37,11 +37,16 @@
 #include <imesh/thing.h>
 #include <csutil/databuf.h>
 #include <iengine/renderloop.h>
+#include <csutil/xmltiny.h>
+#include <iengine/movable.h>
 
+// CEL
 #include <iutil/objreg.h>
 #include <physicallayer/entity.h>
 #include <physicallayer/propclas.h>
+#include <propclass/mesh.h>
 
+// PS
 #include "engine/materialmanager.h"
 #include "engine/psworld.h"
 #include "util/psconst.h"
@@ -50,7 +55,6 @@
 #include "util/consoleout.h"
 #include "globals.h"
 
-#include <csutil/xmltiny.h>
 
 
 #define SHARED_REGION_NAME "SharedDataRegion"
@@ -346,6 +350,70 @@ float psWorld::Distance(const csVector3& from_pos, const iSector* from_sector, c
     }
 }
 
+float psWorld::Distance(iCelEntity * ent1, iCelEntity * ent2)
+{
+    csVector3 pos1,pos2;
+    iSector *sector1,*sector2;
+    
+
+    GetPosition(ent1,pos1,NULL,sector1);
+    GetPosition(ent2,pos2,NULL,sector2);
+    
+    return Distance(pos1,sector1,pos2,sector2);
+}
+
+void psWorld::GetPosition(iCelEntity *entity, csVector3& pos, float* yrot,iSector*& sector)
+{
+    csRef<iPcMesh> pcmesh = CEL_QUERY_PROPCLASS(entity->GetPropertyClassList(), 
+        iPcMesh);
+
+    // Position
+    if(!pcmesh->GetMesh())
+    {
+        CPrintf(CON_ERROR,"ERROR! NO MESH FOUND FOR OBJECT %s!\n",entity->GetName());
+        return;
+    }
+
+    pos = pcmesh->GetMesh()->GetMovable()->GetPosition();
+
+    // rotation
+    if (yrot)
+    {
+        csMatrix3 transf = pcmesh->GetMesh()->GetMovable()->GetTransform().GetT2O();
+        *yrot = Matrix2YRot(transf);
+    }
+
+    // Sector
+    if (pcmesh->GetMesh()->GetMovable()->GetSectors()->GetCount())
+    {
+        sector = pcmesh->GetMesh()->GetMovable()->GetSectors()->Get(0);
+    }
+    else
+    {
+        sector = NULL;
+    }
+}
+
+float psWorld::Matrix2YRot(const csMatrix3& mat)
+{
+    csVector3 vec(0,0,1);
+    vec = mat * vec;
+    vec.Normalize();
+
+    return GetAngle (vec.z, vec.x);
+}
+
+float psWorld::GetAngle(float x, float y)
+{
+    if ( x > 1.0 )  x = 1.0;
+    if ( x < -1.0 ) x = -1.0;
+
+    float angle = acos(x);
+    if (y < 0)
+        angle = 2*PI - angle;
+
+    return angle;
+}
 
 //--------------------------------------------------------------------------
 
@@ -683,3 +751,4 @@ iRegion * psRegion::GetRegion()
     csRef<iEngine> engine =  csQueryRegistry<iEngine> (object_reg);
     return engine->GetRegions()->FindByName(regionname);
 }
+
