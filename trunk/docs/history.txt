@@ -5,6 +5,9 @@
   in the event gui.
 
 *** 2007-12-22 by Anders Reggestad
+- Changed so that the server public the minute change as well. 
+  Prepared for more gametime.
+- Cleanup of some more npcoperations.
 - Added perceptions for minutes as well as hours in the npcclient.
 - Added value2 for minutes in the react statement. Added random1 and
   random2 to be random values added to value1 and value2 in order
