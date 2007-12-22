@@ -98,9 +98,10 @@ public:
      *
      * @param client: client pointer.
      * @param gmID: Game Master player ID.
+     * @param byTheControllerGM: true if it is the controlling GM
      * @return bool: true = success, false = failed.
      */
-    bool CompleteGMEvent (Client* client, unsigned int gmID);
+    bool CompleteGMEvent (Client* client, unsigned int gmID, bool byTheControllerGM = true);
 
     /** A player completes an event.
      *
