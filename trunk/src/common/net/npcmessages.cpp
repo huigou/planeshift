@@ -601,8 +601,10 @@ csString psNPCCommandsMessage::ToString(AccessPointers * access_ptrs)
                 PS_ID command = msg->GetUInt32();
                 PS_ID owner_id = msg->GetUInt32();
                 PS_ID pet_id = msg->GetUInt32();
+                PS_ID target_id = msg->GetUInt32();
 
-                msgtext.AppendFmt("Command: %u OwnerID: %u PetID: %u",command,owner_id,pet_id);
+                msgtext.AppendFmt("Command: %u OwnerID: %u PetID: %u TargetID: %u",
+                                  command,owner_id,pet_id,target_id);
                 break;
             }
             case psNPCCommandsMessage::PCPT_OWNER_ACTION:

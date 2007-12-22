@@ -285,6 +285,7 @@
     <react event="ownercmd:stopattack"  behavior="attack"   delta= "-200"    active_only="true" />
     <react event="ownercmd:attack"      behavior="attack"   delta=  "200"  inactive_only="true" weight="10" />
     <react event="damage"               behavior="attack"   delta=  "200"  inactive_only="true" weight="1" />
+    <react event="target out of range"  behavior="chase"    delta="0" />
   </npctype>
   
   <npctype name="Blacksmith">

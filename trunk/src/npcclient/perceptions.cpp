@@ -547,14 +547,16 @@ Perception *InventoryPerception::MakeCopy()
 /// NPC Pet Perceptions ===========================================================
 //---------------------------------------------------------------------------------
 
-OwnerCmdPerception::OwnerCmdPerception( const char *name  ,
+OwnerCmdPerception::OwnerCmdPerception( const char *name,
                                         int command,
-                                        iCelEntity *owner ,
-                                        iCelEntity *pet   ) : Perception(name)
+                                        iCelEntity *owner,
+                                        iCelEntity *pet,
+                                        iCelEntity *target ) : Perception(name)
 {
     this->command = command;
     this->owner = owner;
     this->pet = pet;
+    this->target = target;
 }
 
 bool OwnerCmdPerception::ShouldReact( Reaction *reaction, NPC *npc )
@@ -591,7 +593,7 @@ bool OwnerCmdPerception::ShouldReact( Reaction *reaction, NPC *npc )
 
 Perception *OwnerCmdPerception::MakeCopy()
 {
-    OwnerCmdPerception *p = new OwnerCmdPerception( name, command, owner, pet );
+    OwnerCmdPerception *p = new OwnerCmdPerception( name, command, owner, pet, target );
     return p;
 }
 

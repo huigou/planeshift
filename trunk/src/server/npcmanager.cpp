@@ -1736,6 +1736,7 @@ void NPCManager::QueueOwnerCmdStayPerception(gemActor *owner, gemNPC *pet)
     outbound->msg->Add( (uint32_t) psPETCommandMessage::CMD_STAY );
     outbound->msg->Add( (uint32_t) owner->GetEntity()->GetID() );
     outbound->msg->Add( (uint32_t) pet->GetEntity()->GetID() );
+    outbound->msg->Add( (uint32_t) pet->GetTarget() ? pet->GetTarget()->GetEntity()->GetID(): 0 );
     cmd_count++;
     Debug3(LOG_NPC, owner->GetEntity()->GetID(),"Added perception: %s has told %s to stay.\n",
         owner->GetEntity()->GetName(),
@@ -1752,6 +1753,7 @@ void NPCManager::QueueOwnerCmdFollowPerception(gemActor *owner, gemNPC *pet)
     outbound->msg->Add( (uint32_t) psPETCommandMessage::CMD_FOLLOW );
     outbound->msg->Add( (uint32_t) owner->GetEntity()->GetID() );
     outbound->msg->Add( (uint32_t) pet->GetEntity()->GetID() );
+    outbound->msg->Add( (uint32_t) pet->GetTarget() ? pet->GetTarget()->GetEntity()->GetID(): 0 );
     cmd_count++;
     Debug3(LOG_NPC, owner->GetEntity()->GetID(), "Added perception: %s has told %s to follow.\n",
         owner->GetEntity()->GetName(),
@@ -1768,6 +1770,7 @@ void NPCManager::QueueOwnerCmdAttackPerception(gemActor *owner, gemNPC *pet)
     outbound->msg->Add( (uint32_t) psPETCommandMessage::CMD_ATTACK );
     outbound->msg->Add( (uint32_t) owner->GetEntity()->GetID() );
     outbound->msg->Add( (uint32_t) pet->GetEntity()->GetID() );
+    outbound->msg->Add( (uint32_t) pet->GetTarget() ? pet->GetTarget()->GetEntity()->GetID(): 0 );
     cmd_count++;
     Debug3(LOG_NPC, owner->GetEntity()->GetID(),"Added perception: %s has told %s to attack.\n",
         owner->GetEntity()->GetName(),
@@ -1784,6 +1787,7 @@ void NPCManager::QueueOwnerCmdStopAttackPerception(gemActor *owner, gemNPC *pet)
     outbound->msg->Add( (uint32_t) psPETCommandMessage::CMD_STOPATTACK );
     outbound->msg->Add( (uint32_t) owner->GetEntity()->GetID() );
     outbound->msg->Add( (uint32_t) pet->GetEntity()->GetID() );
+    outbound->msg->Add( (uint32_t) pet->GetTarget() ? pet->GetTarget()->GetEntity()->GetID(): 0 );
     cmd_count++;
     Debug3(LOG_NPC, owner->GetEntity()->GetID(),"Added perception: %s has told %s to stop atttacking.\n",
         owner->GetEntity()->GetName(),

@@ -367,13 +367,15 @@ protected:
     int command;
     iCelEntity *owner;
     iCelEntity *pet;
+    iCelEntity *target;
 
 public:
-    OwnerCmdPerception(const char *n, int command, iCelEntity *owner, iCelEntity *pet );
+    OwnerCmdPerception(const char *n, int command, iCelEntity *owner, iCelEntity *pet, iCelEntity *target);
 
     virtual bool ShouldReact( Reaction *reaction, NPC *pet );
     virtual Perception *MakeCopy();
     virtual void ExecutePerception( NPC *pet, float weight );
+    virtual iCelEntity *GetTarget() { return target; }
 };
 
 /**

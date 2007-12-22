@@ -1,3 +1,7 @@
+*** 2007-12-22 by Anders Reggestad
+- Added sending of target information when sending owner commands to
+  npc client. Perception will than be able to tell who is the target.
+
 *** 2007-12-21 by Anders Reggestad
 - Extended flags in sc_waypoint table to be 100 characters.
   - DB VER BUMP!
