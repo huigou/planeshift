@@ -1,3 +1,9 @@
+*** 2007-12-22 by Dave Bentham
+- Further fix for FS#669: when completing an event, the GMs name is
+  immortalised in the events description. Includes bug fix to the 
+  /event complete <name> stuff to stop an unidentifiable event entry
+  in the event gui.
+
 *** 2007-12-22 by Anders Reggestad
 - Added perceptions for minutes as well as hours in the npcclient.
 - Added value2 for minutes in the react statement. Added random1 and

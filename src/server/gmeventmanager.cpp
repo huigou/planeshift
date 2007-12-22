@@ -295,11 +295,11 @@ bool GMEventManager::CompleteGMEvent (Client* client, csString eventName)
         psserver->SendSystemInfo(client->GetClientNum(), "Event %s wasn't found.", eventName.GetData());
         return false;
     }
-    return CompleteGMEvent(client, theEvent->gmID);
+    return CompleteGMEvent(client, theEvent->gmID, (theEvent->gmID == client->GetPlayerID()));
 }
 
 /// GM completes their event
-bool GMEventManager::CompleteGMEvent (Client* client, unsigned int gmID)
+bool GMEventManager::CompleteGMEvent (Client* client, unsigned int gmID, bool byTheControllerGM)
 {
     int zero = 0;
 
@@ -329,11 +329,17 @@ bool GMEventManager::CompleteGMEvent (Client* client, unsigned int gmID)
         }
     }
 
-    // GMs psCharacter    
-    client->GetActor()->GetCharacterData()->CompleteGMEvent(true);
+    // GMs psCharacter
+    if (byTheControllerGM)
+        client->GetActor()->GetCharacterData()->CompleteGMEvent(true);
 
-    // flag the event complete
-    db->Command("UPDATE gm_events SET status = %d WHERE id = %d", COMPLETED, theEvent->id);
+    // Update description & flag the event complete
+    if (theEvent->gmID == UNDEFINED_GMID)
+        theEvent->eventDescription += " (No GM)";
+    else
+        theEvent->eventDescription += " (" + csString(client->GetName()) + ")";
+    db->Command("UPDATE gm_events SET status = %d, description = '%s' WHERE id = %d",
+                COMPLETED, theEvent->eventDescription.GetDataSafe(), theEvent->id);
     theEvent->status = COMPLETED;
     
     psserver->SendSystemInfo(clientnum, "Event '%s' complete.", theEvent->eventName.GetDataSafe());
@@ -582,7 +588,7 @@ void GMEventManager::HandleMessage(MsgEntry* me, Client* client)
                         }
                     }
                 }
-                else // and name the running GM
+                else if (theEvent->status == RUNNING) // and name the running GM
                 {
                     if (theEvent->gmID == UNDEFINED_GMID)
                     {
