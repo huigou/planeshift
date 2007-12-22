@@ -538,9 +538,15 @@ iCelEntity *NPC::GetTarget()
 void NPC::SetTarget(iCelEntity *ent)
 {
     if (ent == NULL)
+    {
+        Printf(10,"Clearing target");
         target_id = (uint32_t)~0;
+    }
     else
+    {
+        Printf(10,"Setting target to: %s",ent->GetName());
         target_id = ent->GetID();
+    }
 }
 
 iCelEntity *NPC::GetOwner()

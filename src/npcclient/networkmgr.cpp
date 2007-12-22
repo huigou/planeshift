@@ -623,17 +623,21 @@ void NetworkManager::HandlePerceptions(MsgEntry *msg)
                 PS_ID command = list.msg->GetUInt32();
                 PS_ID owner_id = list.msg->GetUInt32();
                 PS_ID pet_id = list.msg->GetUInt32();
+                PS_ID target_id = list.msg->GetUInt32();
 
                 iCelEntity *owner = npcclient->FindEntity(owner_id);
                 NPC *npc = npcclient->FindNPC(pet_id);
                 
                 iCelEntity *pet = (npc) ? npc->GetEntity() : npcclient->FindEntity( pet_id );
 
+                iCelEntity *target = npcclient->FindEntity( target_id );
+
                 if (npc)
                 {
-                    npc->Printf("Got OwnerCmd %d Perception from %s for %s",
+                    npc->Printf("Got OwnerCmd %d Perception from %s for %s with target %s",
                                 command,(owner)?owner->GetName():"(unknown entity)",
-                                (pet)?pet->GetName():"(unknown entity)");
+                                (pet)?pet->GetName():"(unknown entity)",
+                                (target)?target->GetName():"(none)");
                 }
 
                 if (!owner || !pet)
@@ -644,7 +648,7 @@ void NetworkManager::HandlePerceptions(MsgEntry *msg)
                 float yrot;
                 psGameObject::GetPosition((owner)?owner:pet,pos,yrot,sector);
 
-                OwnerCmdPerception pcpt( "OwnerCmdPerception", command, owner, pet );
+                OwnerCmdPerception pcpt( "OwnerCmdPerception", command, owner, pet, target );
 
                 npcclient->TriggerEvent(npc, &pcpt);
                 break;
