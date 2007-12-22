@@ -26,7 +26,7 @@
 #include "util/gameevent.h"
 
 
-#define GAME_HOUR (10*60*1000)
+#define GAME_MINUTE (10*1000)
 
 class psWeatherGameEvent;
 class psSectorInfo;
@@ -57,18 +57,30 @@ public:
 
     void StartWeather(psSectorInfo *si);
     void HandleWeatherEvent(psWeatherGameEvent *event);
-    void SendClientCurrentTime(int cnum);
+    void SendClientGameTime(int cnum);
+    void BroadcastGameTime();
     void UpdateClient(uint32_t cnum);
-    int GetCurrentTime() {return current_daynight;}
+    int GetGameTODMinute() {return gameTimeMinute;}
+    int GetGameTODHour() {return gameTimeHour;}
+    int GetGameTODDay() { return gameTimeDay;}
+    int GetGameTODMonth() { return gameTimeMonth;} 
+    int GetGameTODYear(){ return gameTimeYear;} 
     
     /** Look into the database for the saved time.
       * This starts the event pushing for the time.
       */
-    void StartTime();
+    void StartGameTime();
+    void SaveGameTime();
+    void SetGameTime(int hour,int minute);
+    
     
 protected:
     csRandomGen* randomgen;
-    int current_daynight;
+    int gameTimeMinute;
+    int gameTimeHour;
+    int gameTimeDay;
+    int gameTimeMonth;
+    int gameTimeYear;
 
     csArray<psWeatherGameEvent*> ignored; // Used for overriding commands like /rain
     csArray<psWeatherGameEvent*> events; // Ugly, but we need a copy of our events    

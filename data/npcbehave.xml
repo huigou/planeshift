@@ -479,6 +479,7 @@
       <locate obj="waypoint:$name_home"  static="no" />
       <wander anim="walk" />        <!-- Navigate using waypoints -->
       <!-- Simulate going inside by setting invisbile -->
+      <wait duration="10" anim="stand" />
       <invisible/>
       <wait duration="30" anim="stand" />
       <visible/>
@@ -492,30 +493,30 @@
       <wander anim="walk" />        <!-- Navigate using waypoints -->
     </behavior>
 
-    <react event="time" value="0" random2="10" behavior="GoWork" delta="0" /> 
-    <react event="time" value="1" random2="10"  behavior="GoHome" delta="0" /> 
-    <react event="time" value="2" random2="10"  behavior="GoWork" delta="0" /> 
-    <react event="time" value="3" random2="10"  behavior="GoHome" delta="0" /> 
-    <react event="time" value="4" random2="10"  behavior="GoWork" delta="0" /> 
-    <react event="time" value="5" random2="10"  behavior="GoHome" delta="0" /> 
-    <react event="time" value="6" random2="10"  behavior="GoWork" delta="0" /> 
-    <react event="time" value="7" random2="10"  behavior="GoHome" delta="0" /> 
-    <react event="time" value="8" random2="10"  behavior="GoWork" delta="0" /> 
-    <react event="time" value="9" random2="10"  behavior="GoHome" delta="0" /> 
-    <react event="time" value="10" random2="10"  behavior="GoWork" delta="0" /> 
-    <react event="time" value="11" random2="10"  behavior="GoHome" delta="0" /> 
-    <react event="time" value="12" random2="10"  behavior="GoWork" delta="0" /> 
-    <react event="time" value="13" random2="10"  behavior="GoHome" delta="0" /> 
-    <react event="time" value="14" random2="10"  behavior="GoWork" delta="0" /> 
-    <react event="time" value="15" random2="10"  behavior="GoHome" delta="0" /> 
-    <react event="time" value="16" random2="10"  behavior="GoWork" delta="0" /> 
-    <react event="time" value="17" random2="10"  behavior="GoHome" delta="0" /> 
-    <react event="time" value="18" random2="10"  behavior="GoWork" delta="0" /> 
-    <react event="time" value="19" random2="10"  behavior="GoHome" delta="0" /> 
-    <react event="time" value="20" random2="10"  behavior="GoWork" delta="0" /> 
-    <react event="time" value="21" random2="10"  behavior="GoHome" delta="0" /> 
-    <react event="time" value="22" random2="10"  behavior="GoWork" delta="0" /> 
-    <react event="time" value="23" random2="10"  behavior="GoHome" delta="0" /> 
+    <react event="time" value="0" random2="5" behavior="GoWork" delta="0" /> 
+    <react event="time" value="1" random2="5"  behavior="GoHome" delta="0" /> 
+    <react event="time" value="2" random2="5"  behavior="GoWork" delta="0" /> 
+    <react event="time" value="3" random2="5"  behavior="GoHome" delta="0" /> 
+    <react event="time" value="4" random2="5"  behavior="GoWork" delta="0" /> 
+    <react event="time" value="5" random2="5"  behavior="GoHome" delta="0" /> 
+    <react event="time" value="6" random2="5"  behavior="GoWork" delta="0" /> 
+    <react event="time" value="7" random2="5"  behavior="GoHome" delta="0" /> 
+    <react event="time" value="8" random2="5"  behavior="GoWork" delta="0" /> 
+    <react event="time" value="9" random2="5"  behavior="GoHome" delta="0" /> 
+    <react event="time" value="10" random2="5"  behavior="GoWork" delta="0" /> 
+    <react event="time" value="11" random2="5"  behavior="GoHome" delta="0" /> 
+    <react event="time" value="12" random2="5"  behavior="GoWork" delta="0" /> 
+    <react event="time" value="13" random2="5"  behavior="GoHome" delta="0" /> 
+    <react event="time" value="14" random2="5"  behavior="GoWork" delta="0" /> 
+    <react event="time" value="15" random2="5"  behavior="GoHome" delta="0" /> 
+    <react event="time" value="16" random2="5"  behavior="GoWork" delta="0" /> 
+    <react event="time" value="17" random2="5"  behavior="GoHome" delta="0" /> 
+    <react event="time" value="18" random2="5"  behavior="GoWork" delta="0" /> 
+    <react event="time" value="19" random2="5"  behavior="GoHome" delta="0" /> 
+    <react event="time" value="20" random2="5"  behavior="GoWork" delta="0" /> 
+    <react event="time" value="21" random2="5"  behavior="GoHome" delta="0" /> 
+    <react event="time" value="22" random2="5"  behavior="GoWork" delta="0" /> 
+    <react event="time" value="23" random2="5"  behavior="GoHome" delta="0" /> 
 
   </npctype>
 

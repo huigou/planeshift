@@ -69,6 +69,7 @@
 #include "creationmanager.h"
 #include "npcmanager.h"
 #include "workmanager.h"
+#include "weathermanager.h"
 
 
 
@@ -582,6 +583,8 @@ void NPCManager::HandleAuthentRequest(MsgEntry *me)
 
     SendMapList(client);
     SendRaces(client);
+
+    psserver->GetWeatherManager()->SendClientGameTime(me->clientnum);
 
     delete acctinfo;
 

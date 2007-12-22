@@ -805,30 +805,30 @@ void ModeHandler::HandleWeatherMessage(MsgEntry* me)
             
         case psWeatherMessage::DAYNIGHT:
         {
-            Notify2(LOG_WEATHER, "The time is now %d o'clock.\n",msg.time);
-            clock = msg.time;
-            if ( msg.time >= 22 || msg.time <= 6 )
+            clock = msg.hour;
+            Notify2(LOG_WEATHER, "The time is now %d o'clock.\n",clock);
+            if ( clock >= 22 || clock <= 6 )
                 timeOfDay = TIME_NIGHT;
-            else if ( msg.time >=7 && msg.time <=12 )
+            else if ( clock >=7 && clock <=12 )
                 timeOfDay = TIME_MORNING;
-            else if ( msg.time >=13 && msg.time <=18 )    
+            else if ( clock >=13 && clock <=18 )    
                 timeOfDay = TIME_AFTERNOON;
-            else if ( msg.time >=19 && msg.time < 22 )
+            else if ( clock >=19 && clock < 22 )
                 timeOfDay = TIME_EVENING;    
             
-            if (abs(msg.time) > (int)lights.GetSize() )
+            if (abs(clock) > (int)lights.GetSize() )
             {
                 Bug1("Illegal value for time.\n");
                 break;
             }
 
-            PublishTime(abs(msg.time));
+            PublishTime(abs(clock));
             
             // Reset the time basis for interpolation
-            if (msg.time >= 0)
+            if (clock >= 0)
             {
                 last_interpolation_reset = csGetTicks();
-                last_lightset = msg.time;
+                last_lightset = clock;
                 interpolation_complete = false;
                 // Update lighting setup for this time period
                 UpdateLights(last_interpolation_reset);
@@ -836,7 +836,7 @@ void ModeHandler::HandleWeatherMessage(MsgEntry* me)
             else // if a negative hour is passed, just jump to it--don't interpolate.
             {
                 ClearLightFadeSettings();
-                last_lightset = -msg.time;
+                last_lightset = -clock;
                 UpdateLights( csGetTicks() );         // 100% sets the light values
             }
 

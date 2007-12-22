@@ -42,7 +42,7 @@ struct iEngine;
 
 // This holds the version number of the network code, remember to increase
 // this each time you do an update which breaks compatibility
-#define PS_NETVERSION   0x0080
+#define PS_NETVERSION   0x0081
 // Remember to bump the version in pscssetup.h, as well.
 
 // NPC Networking version is separate so we don't have to break compatibility
@@ -1388,7 +1388,7 @@ public:
     };
 
     psWeatherMessage(uint32_t client, psWeatherMessage::NetWeatherInfo info , uint clientnum = 0);
-    psWeatherMessage(uint32_t client, int time );
+    psWeatherMessage(uint32_t client, int minute, int hour, int day, int month, int year );
     psWeatherMessage(MsgEntry* message);
 
     PSF_DECLARE_MSG_FACTORY();
@@ -1404,7 +1404,14 @@ public:
 public:
     /// Holds the options that the window should display.
     int type;
-    int time;
+
+    /// For Day/Night events
+    int minute;
+    int hour;
+    int day;
+    int month;
+    int year;
+    
     NetWeatherInfo weather;
 };
 

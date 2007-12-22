@@ -30,12 +30,17 @@
 #include "gem.h"
 #include "bulkobjects/pssectorinfo.h"
 #include "util/eventmanager.h"
+#include "npcmanager.h"
 
 //#define WEATHER_DEBUG
 
 WeatherManager::WeatherManager()
 {
-    current_daynight = 0;
+    gameTimeMinute = 0;
+    gameTimeHour = 0;
+    gameTimeDay = 0;
+    gameTimeMonth = 0;
+    gameTimeYear = 0;
 
     randomgen = psserver->rng;
 }
@@ -53,17 +58,42 @@ void WeatherManager::Initialize()
         psSectorInfo *si = iter.Next();
 
         StartWeather(si);
-
     }
 }
 
-void WeatherManager::StartTime()
+void WeatherManager::StartGameTime()
 {
-    csString lastTime;
-    psserver->GetServerOption("last_time", lastTime);
+    csString lastTime,lastDate;
+
+    // Load time
+    psserver->GetServerOption("game_time", lastTime);
+    sscanf(lastTime.GetDataSafe(),"%d:%d",&gameTimeHour,&gameTimeMinute);
+
+    // Load date
+    psserver->GetServerOption("game_date", lastDate);
+    sscanf(lastDate.GetDataSafe(),"%d-%d-%d",&gameTimeYear,&gameTimeMonth,&gameTimeDay);
 
     // Start the time of day clock  
-    QueueNextEvent(0,psWeatherMessage::DAYNIGHT,atoi(lastTime.GetDataSafe()),0,0,"",NULL);
+    QueueNextEvent( 0,psWeatherMessage::DAYNIGHT,0,0,0,"",NULL);
+}
+
+void WeatherManager::SaveGameTime()
+{
+    csString currTimeStr,currDateStr;
+
+    // Save time
+    currTimeStr.Format("%d:%02d", gameTimeHour,gameTimeMinute);
+    psserver->SetServerOption("game_time", currTimeStr);
+
+    // Save date
+    currDateStr.Format("%d-%d-%d",gameTimeYear,gameTimeMonth,gameTimeDay);
+    psserver->SetServerOption("game_date", currDateStr);
+}
+
+void WeatherManager::SetGameTime(int hour,int minute)
+{
+    gameTimeHour = hour;
+    gameTimeMinute = minute;
 }
 
 void WeatherManager::StartWeather(psSectorInfo *si)
@@ -128,9 +158,7 @@ void WeatherManager::UpdateClient(uint32_t cnum)
         }
     }
 
-    // Update time
-    psWeatherMessage time(cnum,current_daynight);
-    time.SendMessage();
+    SendClientGameTime(cnum);
 
     // Send
 #ifdef WEATHER_DEBUG
@@ -174,11 +202,18 @@ void WeatherManager::QueueNextEvent(int delayticks,
     psserver->GetEventManager()->Push(event);
 }
 
-void WeatherManager::SendClientCurrentTime(int cnum)
+void WeatherManager::SendClientGameTime(int cnum)
 {
-    psWeatherMessage time(cnum,current_daynight);
+    psWeatherMessage time(cnum,gameTimeMinute,gameTimeHour,gameTimeDay,gameTimeMonth,gameTimeYear);
     time.SendMessage();    
 }
+
+void WeatherManager::BroadcastGameTime()
+{
+    psWeatherMessage time(0,gameTimeMinute,gameTimeHour,gameTimeDay,gameTimeMonth,gameTimeYear);
+    psserver->GetEventManager()->Broadcast(time.msg);
+}
+
 
 void WeatherManager::HandleWeatherEvent(psWeatherGameEvent *event)
 {
@@ -450,31 +485,31 @@ void WeatherManager::HandleWeatherEvent(psWeatherGameEvent *event)
         }
     case psWeatherMessage::DAYNIGHT:
         {
-            psWeatherMessage time(0,event->value);
-            if (time.valid)
-            {
-                psserver->GetEventManager()->Broadcast(time.msg);
-            }
-            else
-            {
-                Bug1("Could not create valid psWeatherMessage (daynight) for broadcast.\n");
-            }
-
-
-            current_daynight = event->value;
-            
-            csString currTimeStr;
-            currTimeStr.Format("%d", current_daynight);
-
-            psserver->SetServerOption("last_time", currTimeStr);
-
-            QueueNextEvent(GAME_HOUR,
+            QueueNextEvent(GAME_MINUTE,
                            psWeatherMessage::DAYNIGHT,
-                           ++(event->value) % 24,  // hourly cycle
+                           0,
                            0,
                            0,
                            NULL,
                            NULL);
+
+            gameTimeMinute++;
+            if (gameTimeMinute >= 60)
+            {
+                gameTimeMinute = 0;
+                gameTimeHour++;
+                if (gameTimeHour >= 24)
+                {
+                    gameTimeHour = 0;
+                    gameTimeDay++;
+
+                    // TODO: When duration of day,month,year is desided implement them :)
+                }
+                // Only save every game hour
+                SaveGameTime();            
+            }
+
+            BroadcastGameTime();
             break;
         }
     default:

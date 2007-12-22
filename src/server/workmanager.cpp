@@ -2731,7 +2731,7 @@ bool psWorkManager::constraintTime(psWorkManager* that,char* param)
         return false;
 
     // Get game hour in 24 hours cycle
-    int curTime = psserver->GetWeatherManager()->GetCurrentTime();
+    int curTime = psserver->GetWeatherManager()->GetGameTODHour();
     int targetTime = atoi( param );
 
     if ( curTime == targetTime )

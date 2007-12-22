@@ -1752,15 +1752,19 @@ csString psMoveLockMessage::ToString(AccessPointers * /*access_ptrs*/)
 
 PSF_IMPLEMENT_MSG_FACTORY(psWeatherMessage,MSGTYPE_WEATHER);
 
-psWeatherMessage::psWeatherMessage(uint32_t client, int time )
+psWeatherMessage::psWeatherMessage(uint32_t client, int minute, int hour, int day, int month, int year )
 {
-    msg = new MsgEntry( sizeof(uint32_t) + sizeof(uint8_t) );
+    msg = new MsgEntry( sizeof(uint32_t) + 5*sizeof(uint8_t) );
 
     msg->SetType(MSGTYPE_WEATHER);
     msg->clientnum      = client;
 
     msg->Add((uint8_t)DAYNIGHT);
-    msg->Add((uint32_t)time);
+    msg->Add((uint8_t)minute);
+    msg->Add((uint8_t)hour);
+    msg->Add((uint8_t)day);
+    msg->Add((uint8_t)month);
+    msg->Add((uint32_t)year);
 
     // Sets valid flag based on message overrun state
     valid=!(msg->overrun);
@@ -1827,7 +1831,13 @@ psWeatherMessage::psWeatherMessage(MsgEntry *message )
 
     type   = message->GetUInt8();
     if (type == DAYNIGHT)
-        time = (int)message->GetUInt32();
+    {
+        minute = (int)message->GetUInt8();
+        hour   = (int)message->GetUInt8();
+        day    = (int)message->GetUInt8();
+        month  = (int)message->GetUInt8();
+        year   = (int)message->GetUInt32();
+    }
     else
     {
         if (type & (uint8_t)SNOW)
@@ -1900,7 +1910,7 @@ csString psWeatherMessage::ToString(AccessPointers * /*access_ptrs*/)
 
     if (type == DAYNIGHT)
     {
-        msgtext.AppendFmt("Type: DAYNIGHT Time: %u",time);
+        msgtext.AppendFmt("Type: DAYNIGHT Time: %d:%2d Date: %d-%d-%d",hour,minute,year,month,day);
     }
     else
     {

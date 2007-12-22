@@ -292,6 +292,8 @@ void ScriptOperation::StopMovement(NPC *npc)
     npc->GetLinMove()->SetVelocity( csVector3(0,0,0) );
     npc->GetLinMove()->SetAngularVelocity( 0 );
 
+    npc->Printf(3,"Movement stopped.");
+
     //now persist
     npcclient->GetNetworkMgr()->QueueDRData(npc);
 }
@@ -586,7 +588,6 @@ bool MoveToOperation::Run(NPC *npc,EventManager *eventmgr,bool interrupted)
     
     // Using "true" teleports to dest location after proper time has 
     // elapsed and is therefore more tolerant of CD errors.
-    // StartMoveTo(npc,eventmgr,localDest, sector,vel,action, false);
     StartMoveTo(npc, eventmgr, localDest, sector,vel,action, true); 
     return false;
 }
@@ -1347,9 +1348,6 @@ void NavigateOperation::InterruptOperation(NPC *npc,EventManager *eventmgr)
 
 bool NavigateOperation::CompleteOperation(NPC *npc,EventManager *eventmgr)
 {
-    // Stop the movement
-    StopMovement(npc);
-
     // Set position to where it is supposed to go
     float rot=0;
     iSector *sector;
@@ -1357,8 +1355,8 @@ bool NavigateOperation::CompleteOperation(NPC *npc,EventManager *eventmgr)
     npc->GetActiveLocate(pos,sector,rot);
     npc->GetLinMove()->SetPosition(pos,rot,sector);
 
-    //now persist
-    npcclient->GetNetworkMgr()->QueueDRData(npc);
+    // Stop the movement
+    StopMovement(npc);
 
     npc->Printf("NavigateOp - Completed.\n");
     completed = true;
@@ -1622,14 +1620,8 @@ bool WanderOperation::Run(NPC *npc,EventManager *eventmgr,bool interrupted)
     if (interrupted && AtInterruptedPosition(npc))
     {
         // Restart current behavior
-        if (turning)
-        {
-            StartTurnTo(npc,eventmgr,turn_end_angle,turn_angle_vel,action);
-        }
-        else
-        {
-            StartMoveTo(npc,eventmgr,dest,dest_sector,GetVelocity(npc),action);
-        }
+        StartMoveTo(npc,eventmgr,dest,dest_sector,GetVelocity(npc),action);
+
         return false; // This behavior isn't done yet
     }
     // If interruped and not at interruped position we do the same
@@ -1682,7 +1674,7 @@ void WanderOperation::Advance(float timedelta,NPC *npc,EventManager *eventmgr)
         return;
     }
     
-    if (npc->IsDebugging())
+    if (npc->IsDebugging(10))
     {
         csVector3 pos; float rot; iSector *sec;
         psGameObject::GetPosition(npc->GetEntity(),pos,rot,sec);
@@ -1739,8 +1731,6 @@ bool WanderOperation::CompleteOperation(NPC *npc,EventManager *eventmgr)
         return false;  // Script requeues termination event so this CompleteOp is essentially an infinite loop
     }
 
-    // Stop the movement
-    StopMovement(npc);
 
     // Set position to where it is supposed to go
     npc->GetLinMove()->SetPosition(path->GetEndPos(direction),path->GetEndRot(direction),path->GetEndSector(npcclient->GetEngine(),direction));
@@ -1755,8 +1745,8 @@ bool WanderOperation::CompleteOperation(NPC *npc,EventManager *eventmgr)
     npc->GetCD()->UseCD(true);
     npc->GetLinMove()->SetHugGround(false);
 
-    //now persist
-    npcclient->GetNetworkMgr()->QueueDRData(npc);
+    // Stop the movement
+    StopMovement(npc);
 
     npc->Printf("WanderOp - Completed.");
     completed = true;
@@ -2932,8 +2922,6 @@ void MovePathOperation::InterruptOperation(NPC *npc,EventManager *eventmgr)
 
 bool MovePathOperation::CompleteOperation(NPC *npc,EventManager *eventmgr)
 {
-    StopMovement(npc);
-
     // Set position to where it is supposed to go
     npc->GetLinMove()->SetPosition(path->GetEndPos(direction),path->GetEndRot(direction),path->GetEndSector(npcclient->GetEngine(),direction));
 
@@ -2942,6 +2930,8 @@ bool MovePathOperation::CompleteOperation(NPC *npc,EventManager *eventmgr)
         delete anchor;
         anchor = NULL;
     }
+
+    StopMovement(npc);
 
     npc->Printf("MovePathOp - Completed.");
     completed = true;

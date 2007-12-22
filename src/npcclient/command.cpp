@@ -343,27 +343,37 @@ int com_dumpwarpspace(char *)
     return 0;
 }
 
+int com_showtime(char *)
+{
+    CPrintf(CON_CMDOUTPUT,"Game time is %d:%02d %d-%d-%d\n",
+            npcclient->GetGameTODHour(),npcclient->GetGameTODMinute(),
+            npcclient->GetGameTODYear(),npcclient->GetGameTODMonth(),npcclient->GetGameTODDay());
+    return 0;
+}
+
+
 /* add all new commands here */
 COMMAND commands[] = {
-    { "dumpwarpspace",true,  com_dumpwarpspace,"Dump the warp space table"},
     { "charlist",     false, com_charlist,     "List all known characters"},
     { "debugnpc",     false, com_debugnpc,     "Switches the debug mode on 1 NPC"},
+    { "dumpwarpspace",true,  com_dumpwarpspace,"Dump the warp space table"},
     { "entlist",      false, com_entlist,      "List all known entities"},
     { "filtermsg",    true,  com_filtermsg,    "Add or remove messages from the LOG_MESSAGE log"},
     { "help",         false, com_help,         "Show help information" },
     { "loclist",      false, com_locationlist, "List all known locations (loclist [pattern])"},
     { "loctest",      false, com_locationtest, "Test a location (loc sector x y z"},
     { "npclist",      false, com_list,         "List all NPCs (npclist [pattern])"},
+    { "pathlist",     false, com_pathlist,     "List all known paths (pathlist)"},
     { "print",        false, com_print,        "List all behaviors/hate of 1 NPC"},
-    { "racelist",     false, com_race,         "List all Race Info records"},
     { "quit",         false, com_quit,         "Makes the npc client exit"},
+    { "racelist",     false, com_race,         "List all Race Info records"},
     { "setlog",       false, com_setlog,       "Set server log" },
     { "setmaxfile",   false, com_setmaxfile,   "Set maximum message class for output file"},
     { "setmaxout",    false, com_setmaxout,    "Set maximum message class for standard output"},
     { "showlogs",     false, com_showlogs,     "Show server logs" },
+    { "showtime",     false, com_showtime,     "Show the current game time"},
     { "tribelist",    false, com_tribelist,    "List all known tribes (tribelist [pattern])"},
     { "waypointlist", false, com_waypointlist, "List all known waypoints (waypointlist [pattern])"},
-    { "pathlist",     false, com_pathlist,     "List all known paths (pathlist)"},
     { 0, 0, 0, 0 }
 };
 
