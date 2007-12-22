@@ -1,4 +1,12 @@
 *** 2007-12-22 by Anders Reggestad
+- Added perceptions for minutes as well as hours in the npcclient.
+- Added value2 for minutes in the react statement. Added random1 and
+  random2 to be random values added to value1 and value2 in order
+  to give a random reaction from a generic behavior script. Will
+  be usefull so not all workers go home at the same time.
+- Improved guard to prevent calling advance on operations that has
+  completed.
+- Added $owner and $target as text substitues for the locate object.
 - Cleanup of code.
   - Moved some common function up in psWorld in common.
   - Moved all npc script operations into a sepearate file.

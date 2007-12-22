@@ -450,6 +450,9 @@ bool MoveOperation::CompleteOperation(NPC *npc,EventManager *eventmgr)
 {
     StopMovement(npc);
 
+    npc->Printf("MoveOp - Completed");
+    completed = true;
+
     return true;  // Script can keep going
 }
 
@@ -653,9 +656,10 @@ bool MoveToOperation::CompleteOperation(NPC *npc,EventManager *eventmgr)
     // Stop the movement
     StopMovement(npc);
     
-    npc->Printf("MoveTo Completed. pos=(%1.2f,%1.2f,%1.2f) rot=%.2f dest set=(%1.2f,%1.2f,%1.2f)",
+    npc->Printf("MoveToOp - Completed. pos=(%1.2f,%1.2f,%1.2f) rot=%.2f dest set=(%1.2f,%1.2f,%1.2f)",
                 pos.x,pos.y,pos.z, rot,
                 dest.x,dest.y,dest.z);
+    completed = true;
 
     return true;  // Script can keep going
 }
@@ -953,6 +957,9 @@ bool RotateOperation::CompleteOperation(NPC *npc,EventManager *eventmgr)
     psGameObject::SetRotationAngle(npc->GetEntity(),target_angle);
     StopMovement(npc);
 
+    npc->Printf("RotateOp - Completed");
+    completed = true;
+    
     return true;  // Script can keep going
 }
 
@@ -1008,6 +1015,27 @@ Waypoint* LocateOperation::CalculateWaypoint(NPC *npc, csVector3 located_pos, iS
     return NULL;
 }
 
+void ReplaceVariables(csString & object,NPC *npc)
+{
+    object.ReplaceAll("$name",npc->GetName());
+    if (npc->GetRaceInfo())
+    {
+        object.ReplaceAll("$race",npc->GetRaceInfo()->GetName());
+    }
+    if (npc->GetTribe())
+    {
+        object.ReplaceAll("$tribe",npc->GetTribe()->GetName());
+    }
+    if (npc->GetOwner())
+    {
+        object.ReplaceAll("$owner",npc->GetOwner()->GetName());
+    }
+    if (npc->GetTarget())
+    {
+        object.ReplaceAll("$target",npc->GetTarget()->GetName());
+    }
+}
+
 
 bool LocateOperation::Run(NPC *npc,EventManager *eventmgr,bool interrupted)
 {
@@ -1024,23 +1052,9 @@ bool LocateOperation::Run(NPC *npc,EventManager *eventmgr,bool interrupted)
     csVector3 start_pos;
     psGameObject::GetPosition(npc->GetEntity(),start_pos,start_rot,start_sector);
 
-    csArray<csString> split_obj = psSplit(object,':');
+    ReplaceVariables(object,npc);
 
-    // Substitute variables
-    for (size_t ii = 0; ii < split_obj.GetSize(); ii++)
-    {
-        if (strcasecmp(split_obj[ii].GetDataSafe(),"$name")== 0)
-        {
-            split_obj[ii] = npc->GetName();
-        } else if (strcasecmp(split_obj[ii].GetDataSafe(),"$race")== 0)
-        {
-            split_obj[ii] = npc->GetRaceInfo()->GetName();
-        } else if (strcasecmp(split_obj[ii].GetDataSafe(),"$tribe")== 0)
-        {
-            split_obj[ii] = npc->GetTribe()->GetName();
-        }
-        
-    }
+    csArray<csString> split_obj = psSplit(object,':');
 
     if (split_obj[0] == "perception")
     {
@@ -1333,8 +1347,6 @@ void NavigateOperation::InterruptOperation(NPC *npc,EventManager *eventmgr)
 
 bool NavigateOperation::CompleteOperation(NPC *npc,EventManager *eventmgr)
 {
-    npc->Printf("Navigate completed. Stopping now.\n");
-
     // Stop the movement
     StopMovement(npc);
 
@@ -1347,6 +1359,9 @@ bool NavigateOperation::CompleteOperation(NPC *npc,EventManager *eventmgr)
 
     //now persist
     npcclient->GetNetworkMgr()->QueueDRData(npc);
+
+    npc->Printf("NavigateOp - Completed.\n");
+    completed = true;
 
     return true;  // Script can keep going
 }
@@ -1740,7 +1755,12 @@ bool WanderOperation::CompleteOperation(NPC *npc,EventManager *eventmgr)
     npc->GetCD()->UseCD(true);
     npc->GetLinMove()->SetHugGround(false);
 
+    //now persist
+    npcclient->GetNetworkMgr()->QueueDRData(npc);
+
     npc->Printf("WanderOp - Completed.");
+    completed = true;
+
     return true; // Script can keep going, no more waypoints.
 }
 
@@ -2089,9 +2109,10 @@ void ChaseOperation::InterruptOperation(NPC *npc,EventManager *eventmgr)
 
 bool ChaseOperation::CompleteOperation(NPC *npc,EventManager *eventmgr)
 {
-    npc->Printf("Chase completed. Stopping now.\n");
-
     StopMovement(npc);
+
+    npc->Printf("ChaseOp - Completed.\n");
+    completed = true;
 
     return true;  // Script can keep going
 }
@@ -2456,8 +2477,6 @@ bool MeleeOperation::Run(NPC *npc,EventManager *eventmgr,bool interrupted)
                 seek_range,(attack_invisible?" Invisible":" Visible"),
                 (attack_invincible?" Invincible":""));
 
-    completed = false;
-
     attacked_ent = npc->GetMostHated(seek_range,attack_invisible,attack_invincible);
     if (attacked_ent)
     {
@@ -2474,12 +2493,6 @@ bool MeleeOperation::Run(NPC *npc,EventManager *eventmgr,bool interrupted)
 
 void MeleeOperation::Advance(float timedelta,NPC *npc,EventManager *eventmgr)
 {
-    if (completed)
-    {
-        npc->Printf("Melee completed");
-        return;
-    }
-
     // Check hate list to make sure we are still attacking the right person
     iCelEntity *ent = npc->GetMostHated(melee_range,attack_invisible,attack_invincible);
     if (!ent)
@@ -2532,8 +2545,9 @@ void MeleeOperation::InterruptOperation(NPC *npc,EventManager *eventmgr)
 
 bool MeleeOperation::CompleteOperation(NPC *npc,EventManager *eventmgr)
 {
-    npc->Printf("Completing melee operation");
     npcclient->GetNetworkMgr()->QueueAttackCommand(npc->GetEntity(),NULL);
+
+    npc->Printf("MeleeOp - Completed");
     completed = true;
 
     return true;
@@ -2930,6 +2944,8 @@ bool MovePathOperation::CompleteOperation(NPC *npc,EventManager *eventmgr)
     }
 
     npc->Printf("MovePathOp - Completed.");
+    completed = true;
+
     return true; // Script can keep going
 }
 
@@ -2959,8 +2975,6 @@ bool WatchOperation::Run(NPC *npc,EventManager *eventmgr,bool interrupted)
                 watchRange,(watchInvisible?" Invisible":" Visible"),
                 (watchInvincible?" Invincible":""));
 
-    completed = false;
-
     watchedEnt = npc->GetLastPerception()->GetTarget();
     if (!watchedEnt)
     {
@@ -2975,12 +2989,6 @@ bool WatchOperation::Run(NPC *npc,EventManager *eventmgr,bool interrupted)
 
 void WatchOperation::Advance(float timedelta,NPC *npc,EventManager *eventmgr)
 {
-    if (completed)
-    {
-        npc->Printf("Watch completed");
-        return;
-    }
-
     if (!watchedEnt)
     {
         npc->Printf(2,"No entity to watch");
@@ -3006,7 +3014,7 @@ void WatchOperation::InterruptOperation(NPC *npc,EventManager *eventmgr)
 
 bool WatchOperation::CompleteOperation(NPC *npc,EventManager *eventmgr)
 {
-    npc->Printf("Completing Watch operation");
+    npc->Printf("WatchOp - Completed");
     completed = true;
 
     return true;

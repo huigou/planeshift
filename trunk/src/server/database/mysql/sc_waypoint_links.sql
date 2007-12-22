@@ -23,7 +23,7 @@ CREATE TABLE `sc_waypoint_links` (
 INSERT INTO `sc_waypoint_links` VALUES (1, '', 'LINEAR' ,14, 13, '');
 INSERT INTO `sc_waypoint_links` VALUES (2, '', 'LINEAR' ,1, 2, '');
 INSERT INTO `sc_waypoint_links` VALUES (3, '', 'LINEAR' ,1, 6, '');
-INSERT INTO `sc_waypoint_links` VALUES (4, '', 'LINEAR' ,2, 3, '');
+INSERT INTO `sc_waypoint_links` VALUES (4, '', 'LINEAR' ,2, 35, '');
 INSERT INTO `sc_waypoint_links` VALUES (5, '', 'LINEAR' ,20, 19, 'ONEWAY');
 INSERT INTO `sc_waypoint_links` VALUES (6, 'Behind Blacksmith', 'LINEAR' ,3, 4, '');
 INSERT INTO `sc_waypoint_links` VALUES (7, '', 'LINEAR' ,3, 11, '');
@@ -54,4 +54,16 @@ INSERT INTO `sc_waypoint_links` VALUES (31, '', 'LINEAR' ,26, 23, '');
 INSERT INTO `sc_waypoint_links` VALUES (32, '', 'LINEAR' ,26, 28, '');
 INSERT INTO `sc_waypoint_links` VALUES (33, '', 'LINEAR' ,28, 27, '');
 INSERT INTO `sc_waypoint_links` VALUES (34, '', 'LINEAR' ,25, 27, '');
+
+INSERT INTO `sc_waypoint_links` VALUES (35, '', 'LINEAR' ,13, 32, '');
+INSERT INTO `sc_waypoint_links` VALUES (36, '', 'LINEAR' ,11, 34, '');
+INSERT INTO `sc_waypoint_links` VALUES (37, '', 'LINEAR' ,13, 31, '');
+INSERT INTO `sc_waypoint_links` VALUES (38, '', 'LINEAR' ,9, 30, '');
+INSERT INTO `sc_waypoint_links` VALUES (39, '', 'LINEAR' ,12, 33, '');
+INSERT INTO `sc_waypoint_links` VALUES (40, '', 'LINEAR' ,29, 35, '');
+INSERT INTO `sc_waypoint_links` VALUES (41, '', 'LINEAR' ,35, 3, '');
+
+INSERT INTO `sc_waypoint_links` VALUES (42, '', 'LINEAR' ,11, 15, '');
+INSERT INTO `sc_waypoint_links` VALUES (43, '', 'LINEAR' ,11, 21, '');
+
 

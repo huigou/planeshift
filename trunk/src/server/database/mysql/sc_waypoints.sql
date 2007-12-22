@@ -50,4 +50,10 @@ INSERT INTO `sc_waypoints` VALUES (25, 'ug_3', '15.00', '0.0', '-170.00', 0, 'AL
 INSERT INTO `sc_waypoints` VALUES (26, 'ug_4', '15.00', '0.0', '-153.00', 0, 'ALLOW_RETURN, UNDERGROUND', 3);
 INSERT INTO `sc_waypoints` VALUES (27, 'ug_5', '30.00', '0.0', '-170.00', 0, 'ALLOW_RETURN, UNDERGROUND', 3);
 INSERT INTO `sc_waypoints` VALUES (28, 'ug_6', '30.00', '0.0', '-153.00', 0, 'ALLOW_RETURN, UNDERGROUND', 3);
-
+INSERT INTO `sc_waypoints` VALUES (29, 'MoveMaster5A_home','-56.0', '0.0', '-147.5', 1, 'ALLOW_RETURN, PRIVATE', 3);
+INSERT INTO `sc_waypoints` VALUES (30, 'MoveMaster5A_work','-61.5', '0.0', '-217.0', 1, 'ALLOW_RETURN, PRIVATE', 3);
+INSERT INTO `sc_waypoints` VALUES (31, 'MoveMaster5B_home','-40.5', '0.0', '-192.0', 1, 'ALLOW_RETURN, PRIVATE', 3);
+INSERT INTO `sc_waypoints` VALUES (32, 'MoveMaster5B_work','-40.0', '0.0', '-170.0', 1, 'ALLOW_RETURN, PRIVATE', 3);
+INSERT INTO `sc_waypoints` VALUES (33, 'MoveMaster5C_home',  '4.5', '0.0', '-239.5', 1, 'ALLOW_RETURN, PRIVATE', 3);
+INSERT INTO `sc_waypoints` VALUES (34, 'MoveMaster5C_work','-23.0', '0.0', '-125.0', 1, 'ALLOW_RETURN, PRIVATE', 3);
+INSERT INTO `sc_waypoints` VALUES (35, 'p35','-52.0', '0.0', '-146.5', 1, 'ALLOW_RETURN, PUBLIC', 3);

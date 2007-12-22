@@ -61,8 +61,8 @@ protected:
     bool      react_when_dead;
     bool      react_when_invisible;
     bool      react_when_invincible;
-    int       time;
-    int       value;
+    int       value1,value2;
+    int       random1,random2;
     csString  type;
     csString  only_interrupt;
 
@@ -88,7 +88,8 @@ public:
     const char     *GetEventType()    { return event_type;   }
     float           GetRange()        { return range;        }
     int             GetFactionDiff()  { return faction_diff; }
-    int             GetValue()        { return value;        }
+    int             GetValue1()       { return value1;       }
+    int             GetValue2()       { return value2;       }
     const csString& GetType()         { return type;         }
     char            GetOp()           { if (oper.Length()) return oper.GetAt(0); else return 0; }
 };
@@ -149,11 +150,11 @@ public:
 class TimePerception : public Perception
 {
 protected:
-    int time;
+    int gameHour,gameMinute;
 
 public:
-    TimePerception(int t)
-    : Perception("time"), time(t)  {    }
+    TimePerception(int h, int m)
+    : Perception("time"), gameHour(h),gameMinute(m)  {    }
     virtual ~TimePerception() {}
 
     virtual bool ShouldReact(Reaction *reaction,NPC *npc);
