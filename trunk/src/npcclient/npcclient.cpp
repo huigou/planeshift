@@ -792,8 +792,6 @@ void psNPCClient::Tick()
 
     if (IsReady())
     {    
-        UpdateTime();
-
         tick_counter++;
 
         ScopedTimer st_tick(250, "tick for tick_counter %d.",tick_counter);
@@ -1465,34 +1463,20 @@ void psNPCClient::PerceptProximityLocations()
     }
 }
 
-void psNPCClient::UpdateTime(int time)
+void psNPCClient::UpdateTime(int minute, int hour, int day, int month, int year)
 {
-    gameHour = time;
-    gameMinute = 0;
+    gameHour = hour;
+    gameMinute = minute;
+    gameDay = day;
+    gameMonth = month;
+    gameYear = year;
+
     gameTimeUpdated = csGetTicks();
 
-    TimePerception pcpt(time,0);
+    TimePerception pcpt(gameHour,gameMinute);
     TriggerEvent(NULL, &pcpt); // Broadcast
-}
 
-void psNPCClient::UpdateTime()
-{
-    csTicks ticksSinceUpdate = csGetTicks() - gameTimeUpdated;
-
-    int minutes = (int)floor(ticksSinceUpdate/10000.0);
-    
-    if (gameMinute != minutes)
-    {
-        gameMinute = minutes;
-        if (gameMinute >= 60)
-        {
-            gameMinute = 0;
-            gameHour++;
-        }
-
-        TimePerception pcpt(gameHour,gameMinute);
-        TriggerEvent(NULL, &pcpt); // Broadcast
-    }
+    Notify3(LOG_WEATHER,"The time is now %d:%02d o'clock.",gameHour,gameMinute);
 }
 
 void psNPCClient::CatchCommand(const char *cmd)

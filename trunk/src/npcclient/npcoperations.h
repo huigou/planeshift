@@ -360,7 +360,6 @@ protected:
     iSector  *dest_sector,*current_sector;
     csList<Waypoint*>  waypoint_list;
     bool      turn_queued;
-    bool      turning;
     float     turn_angle_vel;
     float     turn_end_angle;
     
@@ -385,7 +384,7 @@ public:
     WanderOperation(): ScriptOperation("Wander")
         { active_wp=NULL; prior_wp=NULL; next_wp=NULL;
           dest_sector=NULL; current_sector=NULL;
-          turn_queued=false;turning=false;
+          turn_queued=false;
           turn_angle_vel=0.0f; turn_end_angle=0.0f; path=NULL, anchor=NULL;
         };
     virtual ~WanderOperation() {};

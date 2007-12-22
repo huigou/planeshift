@@ -363,11 +363,7 @@ public:
     /**
      * Update with time from server in order to start timed events.
      */
-    void UpdateTime(int time);
-    /**
-     * Handles the update of game time between time updates from server
-     */
-    void UpdateTime();
+    void UpdateTime(int minute, int hour, int day, int month, int year);
     
     psPFMaps * GetMaps() { return PFMaps; }
 
@@ -376,6 +372,12 @@ public:
     iEngine * GetEngine() { return engine; }
     
     iVFS *  GetVFS() { return vfs; }
+
+    int GetGameTODMinute() { return gameMinute;}
+    int GetGameTODHour() { return gameHour; }
+    int GetGameTODDay() { return gameDay;}
+    int GetGameTODMonth() { return gameMonth;} 
+    int GetGameTODYear(){ return gameYear;} 
     
 protected:
 
@@ -443,9 +445,13 @@ protected:
     int                        current_long_range_perception_index;
 
     // Game Time
-    int     gameHour;
     int     gameMinute;
+    int     gameHour;
+    int     gameDay;
+    int     gameMonth;
+    int     gameYear;
     csTicks gameTimeUpdated;
+    
 };
 
 

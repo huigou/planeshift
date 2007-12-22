@@ -358,7 +358,7 @@ psQuestPrereqOp* psQuestPrereqOpActiveMagic::Copy()
 
 bool psQuestPrereqOpTimeOfDay::Check(psCharacter * character)
 {
-    int currTime = psserver->GetWeatherManager()->GetCurrentTime();
+    int currTime = psserver->GetWeatherManager()->GetGameTODHour();
 
     if (minTime <= maxTime) 
     {

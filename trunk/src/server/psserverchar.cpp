@@ -1806,7 +1806,7 @@ int psServerCharManager::CalculateMerchantPrice(psItem *item, Client *client, bo
         calc_item_merchant_price_item_price_sell->SetValue(basePrice);
         calc_item_merchant_price_demand_sell->SetValue(suppInfo->sold);
         calc_item_merchant_price_supply_sell->SetValue(suppInfo->bought);
-        calc_item_merchant_price_time_sell->SetValue(psserver->GetWeatherManager()->GetCurrentTime());
+        calc_item_merchant_price_time_sell->SetValue(psserver->GetWeatherManager()->GetGameTODHour());
         calc_item_merchant_price_sell->Execute();
         finalPrice = (int)calc_item_merchant_price_char_result_sell->GetValue();
     }
@@ -1816,7 +1816,7 @@ int psServerCharManager::CalculateMerchantPrice(psItem *item, Client *client, bo
         calc_item_merchant_price_item_price_buy->SetValue(basePrice);
         calc_item_merchant_price_demand_buy->SetValue(suppInfo->sold);
         calc_item_merchant_price_supply_buy->SetValue(suppInfo->bought);
-        calc_item_merchant_price_time_buy->SetValue(psserver->GetWeatherManager()->GetCurrentTime());
+        calc_item_merchant_price_time_buy->SetValue(psserver->GetWeatherManager()->GetGameTODHour());
         calc_item_merchant_price_buy->Execute();
         finalPrice = (int)calc_item_merchant_price_char_result_buy->GetValue();
     }

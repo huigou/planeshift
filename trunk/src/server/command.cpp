@@ -166,6 +166,7 @@ int com_settime( char* arg )
     }
    
     int hour = atoi( arg );
+    int minute = 0;
 
     if ( hour > 23 || hour < 0 )
     {
@@ -173,12 +174,22 @@ int com_settime( char* arg )
         return 0;
     }
     
-    psserver->GetWeatherManager()->QueueNextEvent( 0, psWeatherMessage::DAYNIGHT, hour, 0, 0, NULL, NULL );
-    CPrintf (CON_CMDOUTPUT, "Current Game Hour set to: %d\n", hour);
+    psserver->GetWeatherManager()->SetGameTime(hour,minute);
+    CPrintf (CON_CMDOUTPUT, "Current Game Hour set to: %d:%02d\n", hour,minute);
     
     return 0;
 }
 
+int com_showtime(char *)
+{
+    CPrintf(CON_CMDOUTPUT,"Game time is %d:%02d %d-%d-%d\n",
+            psserver->GetWeatherManager()->GetGameTODHour(),
+            psserver->GetWeatherManager()->GetGameTODMinute(),
+            psserver->GetWeatherManager()->GetGameTODYear(),
+            psserver->GetWeatherManager()->GetGameTODMonth(),
+            psserver->GetWeatherManager()->GetGameTODDay());
+    return 0;
+}
 
 
 int com_setmaxout(char* arg)
@@ -2262,7 +2273,8 @@ COMMAND commands[] = {
     { "setlog",    true, com_setlog,    "Set server log" },
     { "setmaxfile",false, com_setmaxfile,"Set maximum message class for output file"},
     { "setmaxout", false, com_setmaxout, "Set maximum message class for standard output"},
-    { "settime",   true, com_settime, "Sets the current server hour using a 24 hour clock" },
+    { "settime",   true, com_settime,    "Sets the current server hour using a 24 hour clock" },
+    { "showtime",  true, com_showtime,   "Show the current time" },
     { "showlogs",  true, com_showlogs,  "Show server logs" },
     { "spawn",     false, com_spawn,     "Loads a map into the server"},
     { "status",    true, com_status,    "Show server status"},
