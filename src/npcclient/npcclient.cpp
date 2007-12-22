@@ -75,7 +75,6 @@ public:
     virtual csString ToString() const;
 };
 
-
 psNPCClient::psNPCClient ()
 {
     world        = NULL;
@@ -782,6 +781,7 @@ void psNPCClient::LoadCompleted()
     // This starts the NPC AI processing loop.
     psNPCTick *tick = new psNPCTick(255,this);
     tick->QueueEvent();
+
 }
 
 void psNPCClient::Tick()
@@ -792,6 +792,8 @@ void psNPCClient::Tick()
 
     if (IsReady())
     {    
+        UpdateTime();
+
         tick_counter++;
 
         ScopedTimer st_tick(250, "tick for tick_counter %d.",tick_counter);
@@ -1465,10 +1467,33 @@ void psNPCClient::PerceptProximityLocations()
 
 void psNPCClient::UpdateTime(int time)
 {
-    TimePerception pcpt(time);
+    gameHour = time;
+    gameMinute = 0;
+    gameTimeUpdated = csGetTicks();
+
+    TimePerception pcpt(time,0);
     TriggerEvent(NULL, &pcpt); // Broadcast
 }
 
+void psNPCClient::UpdateTime()
+{
+    csTicks ticksSinceUpdate = csGetTicks() - gameTimeUpdated;
+
+    int minutes = (int)floor(ticksSinceUpdate/10000.0);
+    
+    if (gameMinute != minutes)
+    {
+        gameMinute = minutes;
+        if (gameMinute >= 60)
+        {
+            gameMinute = 0;
+            gameHour++;
+        }
+
+        TimePerception pcpt(gameHour,gameMinute);
+        TriggerEvent(NULL, &pcpt); // Broadcast
+    }
+}
 
 void psNPCClient::CatchCommand(const char *cmd)
 {
@@ -1496,4 +1521,3 @@ csString psNPCTick::ToString() const
 {
     return "NPC Client tick";
 }
-

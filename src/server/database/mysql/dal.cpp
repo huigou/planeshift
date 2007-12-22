@@ -137,7 +137,6 @@ void psMysqlConnection::Escape(csString& to, const char *from)
 unsigned long psMysqlConnection::CommandPump(const char *sql,...)
 {
 #ifdef USE_DELAY_QUERY
-    psStopWatch timer;
     csString querystr;
     va_list args;
 

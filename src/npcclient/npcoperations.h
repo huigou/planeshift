@@ -20,6 +20,7 @@
 #define __NPCOPERATIONS_H__
 
 #include <csgeom/vector3.h>
+#include <csutil/csstring.h>
 
 #include "util/pspath.h"
 #include "walkpoly.h"
@@ -104,6 +105,9 @@ public:
     void SetAnimation(NPC *npc, const char *name);
 
     const char* GetName(){ return name; };
+    bool HasCompleted() { return completed; }
+    void SetCompleted(bool c) { completed = c; }
+    
 };
 
 /**
@@ -314,7 +318,6 @@ protected:
     uint32_t  target_id;
     psAPath   path;
     csVector3 localDest;
-    bool      completed;
     
     enum
     {
@@ -411,7 +414,6 @@ class MeleeOperation : public ScriptOperation
 protected:
     float seek_range, melee_range;
     iCelEntity *attacked_ent;
-    bool  completed;
     bool  attack_invisible,attack_invincible;
 public:
 
@@ -753,7 +755,6 @@ class WatchOperation : public ScriptOperation
 protected:
     float watchRange;
     iCelEntity *watchedEnt;
-    bool  completed;
     bool  watchInvisible,watchInvincible;
 public:
 

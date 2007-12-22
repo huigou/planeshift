@@ -364,6 +364,10 @@ public:
      * Update with time from server in order to start timed events.
      */
     void UpdateTime(int time);
+    /**
+     * Handles the update of game time between time updates from server
+     */
+    void UpdateTime();
     
     psPFMaps * GetMaps() { return PFMaps; }
 
@@ -437,6 +441,11 @@ protected:
     unsigned int               tick_counter;
 
     int                        current_long_range_perception_index;
+
+    // Game Time
+    int     gameHour;
+    int     gameMinute;
+    csTicks gameTimeUpdated;
 };
 
 

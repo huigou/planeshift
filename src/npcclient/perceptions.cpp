@@ -41,6 +41,7 @@
 #include "util/log.h"
 #include "util/location.h"
 #include "util/strutil.h"
+#include "util/psutil.h"
 #include "gem.h"
 
 
@@ -73,7 +74,27 @@ bool Reaction::Load(iDocumentNode *node,BehaviorSet& behaviors)
     weight                 = node->GetAttributeValueAsFloat("weight");
     faction_diff           = node->GetAttributeValueAsInt("faction_diff");
     oper                   = node->GetAttributeValue("oper");
-    value                  = node->GetAttributeValueAsInt("value");
+
+    value1 = 0;
+
+    csRef<iDocumentAttribute> valueAttr = node->GetAttribute("value");
+    if (!valueAttr)
+    {
+        valueAttr = node->GetAttribute("value1");
+        if (valueAttr)
+        {
+            value1 = valueAttr->GetValueAsInt();
+        }
+    }
+    else
+    {
+        value1 = valueAttr->GetValueAsInt();
+    }
+
+    value2                 = node->GetAttributeValueAsInt("value2");
+    random1                = node->GetAttributeValueAsInt("random1");
+    random2                = node->GetAttributeValueAsInt("random2");
+
     type                   = node->GetAttributeValue("type");
     active_only            = node->GetAttributeValueAsBool("active_only");
     inactive_only          = node->GetAttributeValueAsBool("inactive_only");
@@ -94,7 +115,10 @@ void Reaction::DeepCopy(Reaction& other,BehaviorSet& behaviors)
     faction_diff           = other.faction_diff;
     oper                   = other.oper;
     weight                 = other.weight;
-    value                  = other.value;
+    value1                 = other.value1;
+    value2                 = other.value2;
+    random1                = other.random1;
+    random2                = other.random2;
     type                   = other.type;
     active_only            = other.active_only;
     inactive_only          = other.inactive_only;
@@ -102,6 +126,10 @@ void Reaction::DeepCopy(Reaction& other,BehaviorSet& behaviors)
     react_when_invisible   = other.react_when_invisible;
     react_when_invincible  = other.react_when_invincible;
     only_interrupt         = other.only_interrupt;
+
+    // For now depend that each npc do a deep copy to creat its instance of the reaction
+    if (random1) value1 += psGetRandom(random1);
+    if (random2) value2 += psGetRandom(random2);
 }
 
 void Reaction::React(NPC *who,EventManager *eventmgr,Perception *pcpt)
@@ -490,15 +518,17 @@ bool TimePerception::ShouldReact(Reaction *reaction,NPC *npc)
 {
     if (name == reaction->GetEventType() )
     {
-        npc->Printf("Time is now %d o'clock and I need %d o'clock.",time,reaction->GetValue() );
-        if (time == reaction->GetValue() )
+        npc->Printf(4,"Time is now %d:%02d o'clock and I need %d:%02d o'clock.",
+                    gameHour,gameMinute,reaction->GetValue1(),reaction->GetValue2() );
+
+        if (gameHour == reaction->GetValue1() && gameMinute == reaction->GetValue2())
         {
-            npc->Printf("Reacting.");
+            npc->Printf(2,"Reacting.");
             return true;
         }
         else
         {
-            npc->Printf("Skipping.");
+            npc->Printf(5,"Skipping.");
             return false;
         }
     }
@@ -507,7 +537,7 @@ bool TimePerception::ShouldReact(Reaction *reaction,NPC *npc)
 
 Perception *TimePerception::MakeCopy()
 {
-    TimePerception *p = new TimePerception(time);
+    TimePerception *p = new TimePerception(gameHour,gameMinute);
     return p;
 }
 

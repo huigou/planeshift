@@ -659,7 +659,10 @@ void Behavior::Advance(csTicks delta,NPC *npc,EventManager *eventmgr)
             npc->Printf(4,"%s - Advance active delta: %.3f Need: %.2f Decay Rate: %.2f",
                         name.GetData(),d,new_need,need_decay_rate);
 
-            sequence[current_step]->Advance(d,npc,eventmgr);
+            if (!sequence[current_step]->HasCompleted())
+            {
+                sequence[current_step]->Advance(d,npc,eventmgr);
+            }
         }
     }
     else
@@ -706,6 +709,7 @@ bool Behavior::RunScript(NPC *npc,EventManager *eventmgr,bool interrupted)
         {
             npc->Printf(2,">>>Step %d %s operation%s",current_step,sequence[current_step]->GetName(),
                         (interrupted?" Interrupted":""));
+            sequence[current_step]->SetCompleted(false);
             if (!sequence[current_step]->Run(npc,eventmgr,interrupted)) // Run returning false means that
             {                                                           // op is not finished but should 
                                                                         // relinquish
