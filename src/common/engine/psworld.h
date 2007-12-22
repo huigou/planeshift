@@ -231,8 +231,16 @@ public:
     /// Changes pos according to the warp portal between adjacent sectors from and to.
     bool WarpSpace(const iSector* from, const iSector* to, csVector3& pos);
 
-    /// Calculate the position between two to points either in same or different sectors.
+    /// Calculate the distance between two to points either in same or different sectors.
     float Distance(const csVector3& from_pos, const iSector* from_sector, csVector3 to_pos, const iSector* to_sector);
+    /// Calculate the distance between two entities either in same or different sectors.
+    float Distance(iCelEntity * ent1, iCelEntity * ent2);
+
+    /// Return an enties position
+    void GetPosition(iCelEntity *entity, csVector3& pos, float* yrot, iSector*& sector);
+
+    static float Matrix2YRot(const csMatrix3& mat);
+    static float GetAngle(float x, float y);
 
     void DumpWarpCache();
 };

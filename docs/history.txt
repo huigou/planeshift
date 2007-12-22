@@ -1,4 +1,9 @@
 *** 2007-12-22 by Anders Reggestad
+- Cleanup of code.
+  - Moved some common function up in psWorld in common.
+  - Moved all npc script operations into a sepearate file.
+- Created new operation Watch that will give a perception if the
+  watched target go outside watch range.
 - Added sending of target information when sending owner commands to
   npc client. Perception will than be able to tell who is the target.
 

@@ -37,6 +37,7 @@ struct iVFS;
 struct iSector;
 struct iRegion;
 struct iEngine;
+struct iDocumentNode;
 
 /*******************************************************************************
 * Keeps pathfinding maps for all regions.

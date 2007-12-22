@@ -65,9 +65,6 @@ protected:
     bool         firstFrame;
     csVector3    oldPos;
 
-    float Matrix2YRot(const csMatrix3& mat);
-    float GetAngle(float x, float y);
-
     /** Adds 'interestedobject' to 'objectsThatWatchMe' */
     void AddWatcher(gemObject *interestedobject, float range);
 

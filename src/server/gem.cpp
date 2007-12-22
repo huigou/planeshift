@@ -1169,7 +1169,7 @@ float gemObject::GetAngle()
 {
     // Rotation
     csMatrix3 transf = pcmesh->GetMesh()->GetMovable()->GetTransform().GetT2O();
-    return Matrix2YRot(transf);
+    return psWorld::Matrix2YRot(transf);
 }
 
 iSector* gemObject::GetSector()
@@ -1179,26 +1179,6 @@ iSector* gemObject::GetSector()
         return pcmesh->GetMesh()->GetMovable()->GetSectors()->Get(0);
     else
         return NULL;
-}
-
-float gemObject::Matrix2YRot(const csMatrix3& mat)
-{
-    csVector3 vec(0,0,1);
-    vec = mat * vec;
-
-    return GetAngle (vec.z, vec.x);
-}
-
-float gemObject::GetAngle(float x, float y)
-{
-    if ( x > 1.0 )  x = 1.0;
-    if ( x < -1.0 ) x = -1.0;
-
-    float angle = acos(x);
-    if (y < 0)
-        angle = 2*PI - angle;
-
-    return angle;
 }
 
 void gemObject::SendBehaviorMessage(const csString & str, gemObject *actor)
