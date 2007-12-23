@@ -1,3 +1,7 @@
+*** 2007-12-23 by Roland Schulz
+- Finishing tweaks on the labels and adjusted glyph table
+  and made loading it work. 
+
 *** 2007-12-23 by Anders Reggestad
 - Finaly the npc client will be able to react to any kind of timed
   event. The value string now is on the following format:
