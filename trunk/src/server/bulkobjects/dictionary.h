@@ -19,18 +19,29 @@
 #ifndef PS_DICTIONARY_
 #define PS_DICTIONARY_
 
-#include "util/prb.h"
+//=============================================================================
+// Crystal Space Includes
+//=============================================================================
 #include <csutil/csstring.h>
 #include <csutil/refcount.h>
 #include <csutil/parray.h>
 #include <csutil/hash.h>
 
+//=============================================================================
+// Project Includes
+//=============================================================================
+#include "util/prb.h"
+
 #include "rpgrules/psmoney.h"
-#include "psquest.h"
-#include "../client.h"
-#include "../server/iserver/idal.h"      // Database Abstraction Layer Interface
 
 #include "../tools/wordnet/wn.h"
+
+#include "../server/iserver/idal.h"      // Database Abstraction Layer Interface
+
+//=============================================================================
+// Local Includes
+//=============================================================================
+
 
 #define MAX_RESP 5
 
@@ -40,6 +51,13 @@ class NpcTrigger;
 class NpcResponse;
 class psSkillInfo;
 class gemNPC;
+class gemActor;
+class Client;
+class psQuest;
+class psQuestPrereqOp;
+class psCharacter;
+
+struct iDocumentNode;
 struct Faction;
 
 class NPCDialogDict : public csRefCount
@@ -249,11 +267,6 @@ public:
     bool operator<(NpcTrigger& other) const;
 };
 
-class NpcResponse;
-class gemNPC;
-class gemActor;
-class Client;
-struct iDocumentNode;
 
 /**
  * Possible actions scriptable in the quest engine all

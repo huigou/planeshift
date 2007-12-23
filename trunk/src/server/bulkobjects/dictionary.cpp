@@ -19,16 +19,24 @@
 */
 
 #include <psconfig.h>
-#include "util/strutil.h"
-#include "util/log.h"
+//=============================================================================
+// Crystal Space Includes
+//=============================================================================
 #include <iutil/document.h>
 #include <csutil/xmltiny.h>
 
-#include "../iserver/idal.h"
-#include "dictionary.h"
-#include "psnpcdialog.h"
-#include "psquestprereqops.h"
+//=============================================================================
+// Project Includes
+//=============================================================================
+#include "net/messages.h"
+
+#include "util/strutil.h"
+#include "util/log.h"
 #include "util/psdatabase.h"
+#include "util/serverconsole.h"
+#include "util/mathscript.h"
+#include "util/psxmlparser.h"
+
 #include "../playergroup.h"
 #include "../client.h"
 #include "../gem.h"
@@ -42,18 +50,26 @@
 #include "../questionmanager.h"
 #include "../npcmanager.h"
 #include "../adminmanager.h"
-#include "net/messages.h"
+#include "../introductionmanager.h"
+#include "../netmanager.h"
+
+#include "../iserver/idal.h"
+
+#include "../tools/wordnet/wn.h"
+
+#include "rpgrules/factions.h"
+
+//=============================================================================
+// Local Includes
+//=============================================================================
+#include "dictionary.h"
+#include "psnpcdialog.h"
+#include "psquestprereqops.h"
 #include "pscharacter.h"
 #include "pscharacterloader.h"
 #include "psitem.h"
 #include "psitemstats.h"
-#include "util/serverconsole.h"
-#include "util/mathscript.h"
-#include "../tools/wordnet/wn.h"
-#include "rpgrules/factions.h"
-#include "util/psxmlparser.h"
-#include "../introductionmanager.h"
-#include "../netmanager.h"
+
 
 NPCDialogDict *dict;
 
