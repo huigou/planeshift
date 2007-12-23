@@ -18,8 +18,14 @@
 */
 
 #include <psconfig.h>
+
+//=============================================================================
+// Crystal Space Includes
+//=============================================================================
 #include <csutil/csstring.h>
 #include <iutil/vfs.h>
+
+
 #include <behaviourlayer/behave.h>
 #include <propclass/linmove.h>
 

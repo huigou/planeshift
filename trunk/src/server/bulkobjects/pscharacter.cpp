@@ -52,6 +52,7 @@
 #include "util/log.h"
 #include "../playergroup.h"
 #include "../events.h"
+#include "../client.h"
 #include "servervitals.h"
 #include "../progressionmanager.h"
 #include "../chatmanager.h"

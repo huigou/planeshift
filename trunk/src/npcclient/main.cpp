@@ -1,5 +1,8 @@
 #include <psconfig.h>
 
+//=============================================================================
+// Crystal Space Includes
+//=============================================================================
 #include <iutil/objreg.h>
 #include <iutil/vfs.h>
 #include <iutil/cfgmgr.h>
