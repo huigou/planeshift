@@ -24,13 +24,22 @@
 */
 #ifndef __PSACTIONLOCATION_H__
 #define __PSACTIONLOCATION_H__
+//=============================================================================
+// Crystal Space Includes
+//=============================================================================
+#include <csutil/parray.h>
+#include <csutil/strhash.h>
 
+//=============================================================================
+// Project Includes
+//=============================================================================
+#include "util/poolallocator.h"
 
 #include "../iserver/idal.h"
 
-#include "util/poolallocator.h"
-#include <csutil/parray.h>
-#include <csutil/strhash.h>
+//=============================================================================
+// Local Includes
+//=============================================================================
 
 class CacheManager;
 class gemActionLocation;

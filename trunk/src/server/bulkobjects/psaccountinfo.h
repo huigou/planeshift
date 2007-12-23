@@ -20,10 +20,23 @@
 #ifndef __PSACCOUNTINFO_H__
 #define __PSACCOUNTINFO_H__
 
-#include "../iserver/idal.h"
+//=============================================================================
+// Crystal Space Includes
+//=============================================================================
 #include <csutil/csstring.h>
+
+//=============================================================================
+// Project Includes
+//=============================================================================
 #include "util/stringarray.h"
+
+#include "../iserver/idal.h"
 #include "../icachedobject.h"
+
+//=============================================================================
+// Local Includes
+//=============================================================================
+
 
 
 /** A data storage class to contain all information associated with an account.
