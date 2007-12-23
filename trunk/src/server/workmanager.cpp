@@ -19,20 +19,21 @@
 
 #include <psconfig.h>
 #include <math.h>
+
+//=============================================================================
+// Crystal Space Includes
+//=============================================================================
 #include <iutil/object.h>
 
-#include "gem.h"
-#include "globals.h"
-#include "netmanager.h"
-#include "util/psdatabase.h"
-#include "psserver.h"
-#include "psserverchar.h"
-#include "playergroup.h"
+//=============================================================================
+// Project Includes
+//=============================================================================
 #include "net/messages.h"
+
 #include "util/eventmanager.h"
 #include "util/serverconsole.h"
-#include "entitymanager.h"
-#include "weathermanager.h"
+#include "util/psdatabase.h"
+#include "util/mathscript.h"
 
 #include "bulkobjects/psactionlocationinfo.h"
 #include "bulkobjects/pscharacterloader.h"
@@ -43,10 +44,20 @@
 #include "bulkobjects/psraceinfo.h"
 #include "bulkobjects/pstrade.h"
 #include "bulkobjects/pssectorinfo.h"
-#include "cachemanager.h"
+
+//=============================================================================
+// Local Includes
+//=============================================================================
 #include "workmanager.h"
+#include "gem.h"
+#include "netmanager.h"
+#include "psserver.h"
+#include "psserverchar.h"
+#include "playergroup.h"
+#include "entitymanager.h"
+#include "weathermanager.h"
+#include "cachemanager.h"
 #include "globals.h"
-#include "util/mathscript.h"
 
 //#define DEBUG_WORKMANAGER         // debugging only
 //#define NO_RANDOM_QUALITY         // no not apply randomness to calculations
