@@ -97,7 +97,7 @@ bool psEffectObjLabel::Load(iDocumentNode *node)
         csReport(psCSSetup::object_reg, CS_REPORTER_SEVERITY_ERROR, "planeshift_effects", "Attempting to create an effect obj with no material.\n");
         return false;
     }
-    if (sizeFileName == "")
+    if (sizeFileName != "")
     {
         LoadGlyphs(sizeFileName);
     } 
@@ -132,11 +132,14 @@ void psEffectObjLabel::LoadGlyphs(csString filename)
 
     while ( iter->HasNext() )
     {
-        csRef<iDocumentNode> child = iter->Next();
-
-        if ( child->GetType() != CS_NODE_ELEMENT )
+        csRef<iDocumentNode> child = iter->Next(); if ( child->GetType() != CS_NODE_ELEMENT )
             continue;
-        sscanf(child->GetValue(), "glyph%d", &number);
+        if (strcmp(child->GetValue(),"glyph"))
+        {
+            printf("unknown child %s encountered\n", child->GetValue());
+            continue;
+        }
+        number = child->GetAttributeValueAsInt("id");
         if (number < 0 || number >= NUM_GLYPHS)
             continue;
         width[number] = child->GetAttributeValueAsInt("width");
@@ -282,6 +285,13 @@ void psEffectObjLabel::CloneBase(psEffectObj * newObj) const
     psEffectObjLabel * newLabelObj = dynamic_cast<psEffectObjLabel *>(newObj);
 
     newLabelObj->materialName = materialName;
+
+    for(int i=0; i<NUM_GLYPHS; i++)
+    {
+        newLabelObj->width[i] = width[i];
+        newLabelObj->xpos[i] = xpos[i];
+        newLabelObj->ypos[i] = ypos[i];
+    }
 }
 
 psEffectObj * psEffectObjLabel::Clone() const
@@ -342,7 +352,7 @@ bool psEffectObjLabel::SetText(int rows, ...)
         }
         // Positioning
         //font->GetDimensions(newElem.text, newElem.width, newElem.height);
-        newElem.height = 64;
+        newElem.height = 60;
         newElem.x = 0;
         newElem.y = y;
         elemBuffer.Push(newElem);
@@ -395,17 +405,17 @@ bool psEffectObjLabel::SetText(int rows, ...)
             fx1 = (float)x / maxWidth*3 - 1.5;
             fy1 = (float)y / maxWidth*3;
             fx2 = (float)(x+width[c]) / maxWidth*3 - 1.5;
-            fy2 = (float)(y+64) / maxWidth*3;
+            fy2 = (float)(y+60) / maxWidth*3;
             //printf("rendering char %d pos %d,%d - %f %f %f %f\n", cp/4, x, y, fx1, fy1, fx2, fy2);
             facState->GetVertices()[cp  ].Set(fx2,0,fy1); 
             facState->GetVertices()[cp+1].Set(fx1,0,fy1); 
             facState->GetVertices()[cp+2].Set(fx1,0,fy2); 
             facState->GetVertices()[cp+3].Set(fx2,0,fy2);
-            // texture is assumed to be 8x8, each cell 64x64
+            //printf("character %c: x %d y %d w %d\n", c, xpos[c], ypos[c], width[c]);
             float fracx1 = (float)xpos[c] / mw;
             float fracy1 = (float)ypos[c] / mh;
             float fracx2 = (float)(xpos[c]+width[c]) / mw;
-            float fracy2 = (float)(ypos[c]+64) / mh;
+            float fracy2 = (float)(ypos[c]+60) / mh;
             //printf("texels %c %d,%d - %f %f %f %f\n", text[j], xpos[c], ypos[c], fracx1, fracy1, fracx2, fracy2);
             facState->GetTexels()[cp  ].Set( fracx2, fracy2 );
             facState->GetTexels()[cp+1].Set( fracx1, fracy2 );
@@ -420,7 +430,7 @@ bool psEffectObjLabel::SetText(int rows, ...)
             facState->GetTriangles()[(cp/2)+1].Set( cp+2, cp  , cp+1);
             //facState->GetTriangles()[cp+3].Set( cp+2, cp  , cp+3);
             cp += 4;
-            x += 64;
+            x += width[c];
         }
         csColor color((float)((newElem.colour>>16) & 255)/255.0F,
                       (float)((newElem.colour>> 8) & 255)/255.0F,
