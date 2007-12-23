@@ -20,10 +20,21 @@
 #ifndef __WORKMANAGER_H__
 #define __WORKMANAGER_H__
 
-#include "msgmanager.h"             // Parent class
+//=============================================================================
+// Crystal Space Includes
+//=============================================================================
+#include <csutil/sysfunc.h>
+
+//=============================================================================
+// Project Includes
+//=============================================================================
 #include "net/messages.h"           // Message definitions
 #include "net/msghandler.h"         // Network access
-#include <csutil/sysfunc.h>
+
+//=============================================================================
+// Local Includes
+//=============================================================================
+#include "msgmanager.h"             // Parent class
 #include "gem.h"
 
 class psWorkGameEvent;
@@ -118,24 +129,6 @@ struct constraint
 */
 class psWorkManager : public MessageManager
 {
-protected:
-    csPDelArray<NaturalResource> resources; /// list of all natural resources in game.
-    MathScriptEngine *script_engine;        /// Scripting engine handles all RPG calculations.
-    MathScript *calc_repair_time;           /// This is the calculation for how long a repair takes.
-    MathScript *calc_repair_result;         /// This is the calculation for how many points of quality are added in a repair.
-	MathScript *calc_mining_chance;         /// This is the calculation for chance of successful mining.
-    MathScriptVar *var_time_Worker;         /// Variable representing worker in time calculation
-    MathScriptVar *var_time_Object;         /// Variable representing the repaired object in time calculation
-    MathScriptVar *var_time_Result;         /// Variable representing the answer in time calculation
-    MathScriptVar *var_result_Worker;       /// Variable representing worker in result calculation
-    MathScriptVar *var_result_Object;       /// Variable representing the repaired object in result calculation
-    MathScriptVar *var_result_Result;       /// Variable representing the answer in result calculation
-	MathScriptVar *var_mining_distance;		/// Distance from mine to the actual mining.
-	MathScriptVar *var_mining_probability;	/// Probability of successful mining
-	MathScriptVar *var_mining_quality;		/// Quality of mining equipment
-	MathScriptVar *var_mining_skill;		/// Mining skill
-	MathScriptVar *var_mining_total;		/// Final result
-
 public:
 
     psWorkManager();
@@ -220,24 +213,7 @@ public:
     static bool constraintLocation(psWorkManager* that,char* param);
     static bool constraintMode(psWorkManager* that,char* param);
     //@}
-    
-private:
 
-    csWeakRef<gemObject> worker;    ///< Current worker that the work manager is dealing with.
-    
-    uint32_t clientNum;             ///< Current client the work manager is dealing with.
-    psItem* workItem;               ///< The current work item that is in use ( example, ore furnace )
-    psItem* autoItem;               ///< The current item that is being transformed by auto-transformation container
-    psCharacter *owner;             ///< The character data of the current character being used. 
-    uint32 patternId;                  ///< Current pattern ID
-    uint32 groupPatternId;             ///< Current group pattern ID
-    float patternKFactor;            ///< Pattern factor that's part of quality calculation
-    float currentQuality;            ///< Current result item quality
-    psTradeTransformations* trans;    ///< Current work transformation
-    psTradeProcesses* process;       ///< Current work process
-    const char* preworkModeString;        ///< Mode string prior to work
-
-public:
 
     // Lockpicking
     void StartLockpick(Client* client,psItem* item);
@@ -260,8 +236,28 @@ public:
       * @return False if there is a problem sending message.
       */
     // bool SendClearUpdate( unsigned int slotID, unsigned int containerID );
-
+    
+    
+    /// Handle production events from super clients
+    void HandleProduction(gemActor *actor,const char *type,const char *reward);
+    
 protected:
+    csPDelArray<NaturalResource> resources; /// list of all natural resources in game.
+    MathScriptEngine *script_engine;        /// Scripting engine handles all RPG calculations.
+    MathScript *calc_repair_time;           /// This is the calculation for how long a repair takes.
+    MathScript *calc_repair_result;         /// This is the calculation for how many points of quality are added in a repair.
+    MathScript *calc_mining_chance;         /// This is the calculation for chance of successful mining.
+    MathScriptVar *var_time_Worker;         /// Variable representing worker in time calculation
+    MathScriptVar *var_time_Object;         /// Variable representing the repaired object in time calculation
+    MathScriptVar *var_time_Result;         /// Variable representing the answer in time calculation
+    MathScriptVar *var_result_Worker;       /// Variable representing worker in result calculation
+    MathScriptVar *var_result_Object;       /// Variable representing the repaired object in result calculation
+    MathScriptVar *var_result_Result;       /// Variable representing the answer in result calculation
+    MathScriptVar *var_mining_distance;     /// Distance from mine to the actual mining.
+    MathScriptVar *var_mining_probability;  /// Probability of successful mining
+    MathScriptVar *var_mining_quality;      /// Quality of mining equipment
+    MathScriptVar *var_mining_skill;        /// Mining skill
+    MathScriptVar *var_mining_total;        /// Final result
 
     /** Stop auto work event.  
      * This is called when a client removes an item from any container 
@@ -416,12 +412,25 @@ protected:
     void HandleRepair(Client *client, psWorkCmdMessage& msg);
     /// Handle production events from clients
     void HandleProduction(Client *client,const char *type,const char *reward);
- public:
-    /// Handle production events from super clients
-    void HandleProduction(gemActor *actor,const char *type,const char *reward);
- protected:
+    
     bool SameProductionPosition(gemActor *actor, const csVector3& startPos);
     NaturalResource *FindNearestResource(const char *reward,iSector *sector, csVector3& pos, const char *action);
+        
+private:
+
+    csWeakRef<gemObject> worker;    ///< Current worker that the work manager is dealing with.
+    
+    uint32_t clientNum;             ///< Current client the work manager is dealing with.
+    psItem* workItem;               ///< The current work item that is in use ( example, ore furnace )
+    psItem* autoItem;               ///< The current item that is being transformed by auto-transformation container
+    psCharacter *owner;             ///< The character data of the current character being used. 
+    uint32 patternId;                  ///< Current pattern ID
+    uint32 groupPatternId;             ///< Current group pattern ID
+    float patternKFactor;            ///< Pattern factor that's part of quality calculation
+    float currentQuality;            ///< Current result item quality
+    psTradeTransformations* trans;    ///< Current work transformation
+    psTradeProcesses* process;       ///< Current work process
+    const char* preworkModeString;        ///< Mode string prior to work
 };
 
 

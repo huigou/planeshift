@@ -18,18 +18,28 @@
  */
 
 #include <psconfig.h>
-
+//=============================================================================
+// Crystal Space Includes
+//=============================================================================
 #include <csgeom/vector3.h>
 
+//=============================================================================
+// Project Includes
+//=============================================================================
+#include "bulkobjects/pssectorinfo.h"
+
+#include "util/eventmanager.h"
+
+//=============================================================================
+// Local Includes
+//=============================================================================
 #include "weathermanager.h"
 #include "psserver.h"
 #include "cachemanager.h"
-#include "globals.h"
 #include "netmanager.h"
 #include "client.h"
 #include "gem.h"
-#include "bulkobjects/pssectorinfo.h"
-#include "util/eventmanager.h"
+#include "globals.h"
 #include "npcmanager.h"
 
 //#define WEATHER_DEBUG
