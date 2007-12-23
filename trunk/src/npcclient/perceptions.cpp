@@ -75,25 +75,36 @@ bool Reaction::Load(iDocumentNode *node,BehaviorSet& behaviors)
     faction_diff           = node->GetAttributeValueAsInt("faction_diff");
     oper                   = node->GetAttributeValue("oper");
 
-    value1 = 0;
-
-    csRef<iDocumentAttribute> valueAttr = node->GetAttribute("value");
-    if (!valueAttr)
+    // Decode the value field, It is in the form value="1,2,,4"
+    csString valueAttr = node->GetAttributeValue("value");
+    csArray<csString> valueStr = psSplit( valueAttr , ',');
+    for (size_t ii=0; ii < valueStr.GetSize(); ii++)
     {
-        valueAttr = node->GetAttribute("value1");
-        if (valueAttr)
+        if (valueStr[ii] != "")
         {
-            value1 = valueAttr->GetValueAsInt();
+            values.Push(atoi(valueStr[ii]));
+            valuesValid.Push(true);
+        } else
+        {
+            values.Push(0);
+            valuesValid.Push(false);
         }
     }
-    else
+    // Decode the random field, It is in the form random="1,2,,4"
+    csString randomAttr = node->GetAttributeValue("random");
+    csArray<csString> randomStr = psSplit( randomAttr, ',');
+    for (size_t ii=0; ii < randomStr.GetSize(); ii++)
     {
-        value1 = valueAttr->GetValueAsInt();
+        if (randomStr[ii] != "")
+        {
+            randoms.Push(atoi(randomStr[ii]));
+            randomsValid.Push(true);
+        } else
+        {
+            randoms.Push(0);
+            randomsValid.Push(false);
+        }
     }
-
-    value2                 = node->GetAttributeValueAsInt("value2");
-    random1                = node->GetAttributeValueAsInt("random1");
-    random2                = node->GetAttributeValueAsInt("random2");
 
     type                   = node->GetAttributeValue("type");
     active_only            = node->GetAttributeValueAsBool("active_only");
@@ -115,10 +126,10 @@ void Reaction::DeepCopy(Reaction& other,BehaviorSet& behaviors)
     faction_diff           = other.faction_diff;
     oper                   = other.oper;
     weight                 = other.weight;
-    value1                 = other.value1;
-    value2                 = other.value2;
-    random1                = other.random1;
-    random2                = other.random2;
+    values                 = other.values;
+    valuesValid            = other.valuesValid;
+    randoms                = other.randoms;
+    randomsValid           = other.randomsValid;
     type                   = other.type;
     active_only            = other.active_only;
     inactive_only          = other.inactive_only;
@@ -128,8 +139,13 @@ void Reaction::DeepCopy(Reaction& other,BehaviorSet& behaviors)
     only_interrupt         = other.only_interrupt;
 
     // For now depend that each npc do a deep copy to creat its instance of the reaction
-    if (random1) value1 += psGetRandom(random1);
-    if (random2) value2 += psGetRandom(random2);
+    for (size_t ii=0; ii < values.GetSize(); ii++)
+    {
+        if (GetRandomValid(ii))
+        {
+            values[ii] += psGetRandom(GetRandom(ii));
+        }
+    }
 }
 
 void Reaction::React(NPC *who,EventManager *eventmgr,Perception *pcpt)
@@ -221,6 +237,46 @@ bool Reaction::ShouldReact(iCelEntity* entity, Perception *pcpt)
         return false;
     }
     return true;
+}
+
+int Reaction::GetValue(int i)
+{
+    if (i < (int)values.GetSize())
+    {
+        return values[i];
+        
+    }
+    return 0;
+}
+
+bool Reaction::GetValueValid(int i)
+{
+    if (i < (int)valuesValid.GetSize())
+    {
+        return valuesValid[i];
+        
+    }
+    return false;
+}
+
+int Reaction::GetRandom(int i)
+{
+    if (i < (int)randoms.GetSize())
+    {
+        return randoms[i];
+        
+    }
+    return 0;
+}
+
+bool Reaction::GetRandomValid(int i)
+{
+    if (i < (int)randomsValid.GetSize())
+    {
+        return randomsValid[i];
+        
+    }
+    return false;
 }
 
 
@@ -518,10 +574,65 @@ bool TimePerception::ShouldReact(Reaction *reaction,NPC *npc)
 {
     if (name == reaction->GetEventType() )
     {
-        npc->Printf(4,"Time is now %d:%02d o'clock and I need %d:%02d o'clock.",
-                    gameHour,gameMinute,reaction->GetValue1(),reaction->GetValue2() );
+        if (npc->IsDebugging(4))
+        {
+            csString out;
+            out.AppendFmt("Time is now %d:%02d %d-%d-%d and I need ",
+                          gameHour,gameMinute,gameYear,gameMonth,gameDay);
+            // Hours
+            if (reaction->GetValueValid(0))
+            {
+                out.AppendFmt("%d:",reaction->GetValue(0));
+            }
+            else
+            {
+                out.Append("*:");
+            }
+            // Minutes
+            if (reaction->GetValueValid(1))
+            {
+                out.AppendFmt("%02d ",reaction->GetValue(1));
+            }
+            else
+            {
+                out.Append("* ");
+            }
+            // Year
+            if (reaction->GetValueValid(2))
+            {
+                out.AppendFmt("%d-",reaction->GetValue(2));
+            }
+            else
+            {
+                out.Append("*-");
+            }
+            // Month
+            if (reaction->GetValueValid(3))
+            {
+                out.AppendFmt("%d-",reaction->GetValue(3));
+            }
+            else
+            {
+                out.Append("*-");
+            }
+            // Day
+            if (reaction->GetValueValid(4))
+            {
+                out.AppendFmt("%d",reaction->GetValue(4));
+            }
+            else
+            {
+                out.Append("*");
+            }
 
-        if (gameHour == reaction->GetValue1() && gameMinute == reaction->GetValue2())
+            npc->Printf(4,out);
+        }
+        
+        if ((!reaction->GetValueValid(0) || reaction->GetValue(0) == gameHour) &&
+            (!reaction->GetValueValid(1) || reaction->GetValue(1) == gameMinute) &&
+            (!reaction->GetValueValid(2) || reaction->GetValue(2) == gameYear) &&
+            (!reaction->GetValueValid(3) || reaction->GetValue(3) == gameMonth) &&
+            (!reaction->GetValueValid(4) || reaction->GetValue(4) == gameDay))
         {
             npc->Printf(2,"Reacting.");
             return true;
@@ -537,7 +648,7 @@ bool TimePerception::ShouldReact(Reaction *reaction,NPC *npc)
 
 Perception *TimePerception::MakeCopy()
 {
-    TimePerception *p = new TimePerception(gameHour,gameMinute);
+    TimePerception *p = new TimePerception(gameHour,gameMinute,gameYear,gameMonth,gameDay);
     return p;
 }
 

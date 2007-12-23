@@ -239,7 +239,7 @@ csArray<csString> psSplit(csString& str, char delimer)
 {
     csArray<csString> split;
 
-    char *curr = (char*)str.GetData();
+    char *curr = (char*)str.GetDataSafe();
     char *next = curr;
     while((next = strchr(curr,delimer)))
     {
