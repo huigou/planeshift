@@ -30,6 +30,7 @@
 #include "psitem.h"
 #include "psinventorycachesvr.h"
 #include "../cachemanager.h"
+#include "psspell.h"
 
 struct iDocumentNode;
 

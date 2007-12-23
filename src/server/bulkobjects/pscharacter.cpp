@@ -18,27 +18,49 @@
 */
 
 #include <psconfig.h>
-
+//=============================================================================
+// Crystal Space Includes
+//=============================================================================
 #include <iutil/virtclk.h>
 #include <csutil/databuf.h>
 #include <ctype.h>                    
-//#include <physicallayer/entity.h>
-#include "entitymanager.h"
-// Define this so the slot ID to string mapping is compiled into object form exactly once
-#define PSCHARACTER_CPP
 
+//=============================================================================
+// Project Includes
+//=============================================================================
+#include "../entitymanager.h"
 #include "../psserver.h"
-#include "util/psdatabase.h"
 #include "../cachemanager.h"
-#include "pscharacterloader.h"
 #include "../psserverchar.h"
-#include "../globals.h"
-#include "util/log.h"
 #include "../exchangemanager.h"
 #include "../spellmanager.h"
 #include "../workmanager.h"
 #include "../marriagemanager.h"
 #include "../npcmanager.h"
+#include "../playergroup.h"
+#include "../events.h"
+#include "../progressionmanager.h"
+#include "../chatmanager.h"
+#include "../commandmanager.h"
+#include "../gmeventmanager.h"
+#include "../introductionmanager.h"
+#include "../progressionmanager.h"
+#include "../client.h"
+#include "../globals.h"
+
+#include "util/psdatabase.h"
+#include "util/log.h"
+#include "util/psxmlparser.h"
+#include "util/serverconsole.h"
+#include "util/mathscript.h"
+#include "util/log.h"
+
+#include "rpgrules/factions.h"
+
+//=============================================================================
+// Local Includes
+//=============================================================================
+#include "pscharacterloader.h"
 #include "psglyph.h"
 #include "psquest.h"
 #include "dictionary.h"
@@ -46,22 +68,11 @@
 #include "psguildinfo.h"
 #include "psmerchantinfo.h"
 #include "pstrainerinfo.h"
-#include "util/psxmlparser.h"
-#include "util/serverconsole.h"
-#include "util/mathscript.h"
-#include "util/log.h"
-#include "../playergroup.h"
-#include "../events.h"
-#include "../client.h"
 #include "servervitals.h"
-#include "../progressionmanager.h"
-#include "../chatmanager.h"
-#include "../commandmanager.h"
-#include "../gmeventmanager.h"
-#include "rpgrules/factions.h"
-#include "../introductionmanager.h"
-#include "../progressionmanager.h"
 #include "pssectorinfo.h"
+
+
+
 // The sizes and scripts need balancing.  For now, maxSize is disabled.
 #define ENABLE_MAX_CAPACITY 0
 

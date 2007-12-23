@@ -54,6 +54,7 @@ class psTradeTransformations;
 class psTradeAutoContainers;
 class psItemSet;
 class psCommandManager;
+class psSpell;
 
 struct CraftTransInfo;
 struct CombinationConstruction;
