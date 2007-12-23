@@ -25,26 +25,37 @@
 
 
 #include <psconfig.h>
-
+//=============================================================================
+// Crystal Space Includes
+//=============================================================================
 #include <csutil/randomgen.h>
-#include "imesh/object.h"
+#include <csutil/xmltiny.h>
+#include <imesh/object.h>
 #include <imesh/spritecal3d.h>
-#include "iengine/mesh.h"
+#include <iengine/mesh.h>
+#include <csgeom/math3d.h>
+
 #include <physicallayer/propclas.h>
 #include <physicallayer/entity.h>
 #include <propclass/mesh.h>
-#include <csutil/xmltiny.h>
-#include <csgeom/math3d.h>
-#include "util/psxmlparser.h"
 
+//=============================================================================
+// Project Includes
+//=============================================================================
+#include "util/psxmlparser.h"
 #include "util/log.h"
 #include "util/psstring.h"
-#include "pssectorinfo.h"
 #include "util/serverconsole.h"
+
 #include "../globals.h"
 #include "../psserver.h"
 #include "../cachemanager.h"
 #include "../gem.h"
+
+//=============================================================================
+// Local Includes
+//=============================================================================
+#include "pssectorinfo.h"
 #include "psactionlocationinfo.h"
 
 
