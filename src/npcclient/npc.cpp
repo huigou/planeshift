@@ -18,21 +18,27 @@
 */
 
 #include <psconfig.h>
+
+//=============================================================================
+// Crystal Space Includes
+//=============================================================================
 #include <csutil/csstring.h>
 #include <iutil/document.h>
 #include <iutil/vfs.h>
 #include <iutil/object.h>
 #include <csgeom/vector3.h>
 #include <iengine/movable.h>
+#include <iengine/mesh.h>
+#include <iengine/movable.h>
+#include <cstool/collider.h>
+
+
 #include <propclass/linmove.h>
 #include <propclass/colldet.h>
 #include <propclass/mesh.h>
 #include <physicallayer/entity.h>
 #include <physicallayer/propclas.h>
-#include <iengine/mesh.h>
-#include <iengine/movable.h>
 #include <ivaria/collider.h>
-#include <cstool/collider.h>
 
 #include "net/msghandler.h"
 #include "net/npcmessages.h"

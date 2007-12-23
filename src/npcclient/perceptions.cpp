@@ -18,6 +18,10 @@
 */
 
 #include <psconfig.h>
+
+//=============================================================================
+// Crystal Space Includes
+//=============================================================================
 #include <csutil/csstring.h>
 #include <csgeom/transfrm.h>
 #include <iutil/document.h>

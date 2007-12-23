@@ -18,9 +18,11 @@
 */
 #include <psconfig.h>
 #include <ctype.h>
-//#include "psstdint.h"
 
-//CS includes
+
+//=============================================================================
+// Crystal Space Includes
+//=============================================================================
 #include <csutil/randomgen.h>
 #include <csutil/sysfunc.h>
 #include <iutil/objreg.h>
@@ -39,28 +41,30 @@
 #include <ivaria/collider.h>
 
 //CEL includes
-// #include <physicallayer/pl.h>
 #include <physicallayer/entity.h>
 #include <propclass/mesh.h>
-//#include <behaviourlayer/behave.h>
 
-
-// PS Includes
+//=============================================================================
+// Project Includes
+//=============================================================================
 #include "util/strutil.h"
 #include "util/psstring.h"
 #include "util/serverconsole.h"
-
-#include "psnpcdialog.h"
 #include "util/log.h"
-#include "../iserver/idal.h"
-
-#include "dictionary.h"
-#include "../psserver.h"
 #include "util/psdatabase.h"
+#include "../iserver/idal.h"
+#include "../psserver.h"
 #include "../gem.h"
 #include "../globals.h"
 #include "../playergroup.h"
+
+//=============================================================================
+// Local Includes
+//=============================================================================
+#include "dictionary.h"
+#include "psnpcdialog.h"
 #include "psraceinfo.h"
+#include "psquest.h"
 
 //----------------------------------------------------------------------------
 

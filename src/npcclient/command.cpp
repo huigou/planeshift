@@ -30,6 +30,9 @@
 #include <stdlib.h>
 #include <ctype.h>
 
+//=============================================================================
+// Crystal Space Includes
+//=============================================================================
 #include <iutil/objreg.h>
 #include <iutil/cfgmgr.h>
 #include <iutil/vfs.h>

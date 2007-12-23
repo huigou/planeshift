@@ -18,6 +18,9 @@
 */
 #include <psconfig.h>
 
+//=============================================================================
+// Crystal Space Includes
+//=============================================================================
 #include <iutil/objreg.h>
 #include <iutil/cfgmgr.h>
 #include <iutil/cmdline.h>
@@ -31,8 +34,10 @@
 #include <cstool/collider.h>
 #include <ivaria/collider.h>
 
+//=============================================================================
+// Project Includes
+//=============================================================================
 #include "util/serverconsole.h"
-#include "pathfind.h"
 #include "util/psdatabase.h"
 #include "net/connection.h"
 #include "net/msghandler.h"
@@ -43,11 +48,13 @@
 #include "util/strutil.h"
 #include "util/psutil.h"
 #include "util/pspathnetwork.h"
-
-#include "npcclient.h"
-
 #include "engine/psworld.h"
 
+//=============================================================================
+// Local Includes
+//=============================================================================
+#include "npcclient.h"
+#include "pathfind.h"
 #include "networkmgr.h"
 #include "npcbehave.h"
 #include "npc.h"

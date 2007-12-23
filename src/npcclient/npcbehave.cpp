@@ -18,6 +18,10 @@
 */
 
 #include <psconfig.h>
+
+//=============================================================================
+// Crystal Space Includes
+//=============================================================================
 #include <csutil/csstring.h>
 #include <csgeom/transfrm.h>
 #include <iutil/document.h>
@@ -29,21 +33,28 @@
 #include <physicallayer/entity.h>
 #include <physicallayer/propclas.h>
 
-#include "globals.h"
+//=============================================================================
+// Project Includes
+//=============================================================================
 #include "net/msghandler.h"
 #include "net/npcmessages.h"
-#include "npcbehave.h"
-#include "npc.h"
-#include "perceptions.h"
-#include "npcclient.h"
-#include "networkmgr.h"
 #include "util/log.h"
 #include "util/location.h"
 #include "util/psconst.h"
 #include "util/strutil.h"
 #include "util/psutil.h"
 #include "engine/psworld.h"
+
+//=============================================================================
+// Local Includes
+//=============================================================================
+#include "globals.h"
 #include "npcoperations.h"
+#include "npcbehave.h"
+#include "npc.h"
+#include "perceptions.h"
+#include "npcclient.h"
+#include "networkmgr.h"
 
 extern bool running;
 
