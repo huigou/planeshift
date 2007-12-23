@@ -25,15 +25,25 @@
 #ifndef __USERMANAGER_H__
 #define __USERMANAGER_H__
 
-///////////////////////////////////////////////////////////////////////////////
-//  PLANESHIFT INCLUDES
-///////////////////////////////////////////////////////////////////////////////
-#include "net/messages.h"           // Message definitions
-#include "net/msghandler.h"         // Network access
-#include "client.h"                 // Client, and ClientConnectionSet classes
+//=============================================================================
+// Crystal Space Includes
+//=============================================================================
+
+//=============================================================================
+// Project Includes
+//=============================================================================
+//#include "net/messages.h"           // Message definitions
+//#include "net/msghandler.h"         // Network access
+//
+//#include "util/psdatabase.h"        // Database
+
+//#include "bulkobjects/pscharacter.h" // Stances
+
+//=============================================================================
+// Local Includes
+//=============================================================================
+//#include "client.h"                 // Client, and ClientConnectionSet classes
 #include "msgmanager.h"             // Parent class
-#include "util/psdatabase.h"        // Database
-#include "bulkobjects/pscharacter.h" // Stances
 
 ///////////////////////////////////////////////////////////////////////////////
 // FORWARD DECLARATIONS
@@ -49,6 +59,7 @@ class psCombatManager;
 class PendingDuelInvite;
 class AdviceManager;
 class StatSet;
+
 /** Used to manage incomming user commands from a client. Most commands are in
  * the format of /command param1 param2 ... paramN
  */

@@ -20,10 +20,9 @@
 #include <ctype.h>
 #include <string.h>
 #include <memory.h>
-
-///////////////////////////////////////////////////////////////////////////////
-//  CS INCLUDES
-///////////////////////////////////////////////////////////////////////////////
+//=============================================================================
+// Crystal Space Includes
+//=============================================================================
 #include <csutil/randomgen.h>
 #include <csutil/sysfunc.h>
 #include <iengine/mesh.h>
@@ -32,18 +31,32 @@
 #include <iutil/object.h>
 #include <iengine/region.h>
 
-
-///////////////////////////////////////////////////////////////////////////////
-//  PLANESHIFT INCLUDES
-///////////////////////////////////////////////////////////////////////////////
+//=============================================================================
+// Project Includes
+//=============================================================================
+#include "util/psdatabase.h"
 #include "util/serverconsole.h"
 #include "util/pserror.h"
 #include "util/psconst.h"
 #include "util/log.h"
+#include "util/eventmanager.h"
 
 #include "engine/celbase.h"
 #include "engine/netpersist.h"
 #include "engine/psworld.h"
+
+#include "bulkobjects/pscharacter.h"
+#include "bulkobjects/psraceinfo.h"
+#include "bulkobjects/psguildinfo.h"
+#include "bulkobjects/pscharacterloader.h"
+#include "bulkobjects/psactionlocationinfo.h"
+
+#include "rpgrules/factions.h"
+
+//=============================================================================
+// Local Includes
+//=============================================================================
+#include "usermanager.h"
 #include "client.h"
 #include "clients.h"
 #include "events.h"
@@ -53,29 +66,20 @@
 #include "marriagemanager.h"
 #include "combatmanager.h"
 #include "invitemanager.h"
-#include "usermanager.h"
 #include "adminmanager.h"
 #include "commandmanager.h"
 #include "psserver.h"
 #include "cachemanager.h"
 #include "playergroup.h"
-#include "globals.h"
 #include "progressionmanager.h"
-#include "util/eventmanager.h"
 #include "netmanager.h"
 #include "advicemanager.h"
 #include "actionmanager.h"
 #include "introductionmanager.h"
-
-#include "bulkobjects/pscharacter.h"
-#include "bulkobjects/psraceinfo.h"
-#include "bulkobjects/psguildinfo.h"
-#include "bulkobjects/pscharacterloader.h"
-#include "bulkobjects/psactionlocationinfo.h"
 #include "chatmanager.h"
 #include "gmeventmanager.h"
 #include "bankmanager.h"
-#include "rpgrules/factions.h"
+#include "globals.h"
 
 #define RANGE_TO_CHALLENGE 50
 

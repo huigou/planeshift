@@ -16,27 +16,36 @@
 * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 *
 */
-
-
 #include <psconfig.h>
-
 #include <string.h>
 #include <memory.h>
+
+//=============================================================================
+// Crystal Space Includes
+//=============================================================================
 #include <csutil/xmltiny.h>
 #include <physicallayer/entity.h>
 #include <propclass/mesh.h>
 
+//=============================================================================
+// Project Includes
+//=============================================================================
+#include "util/eventmanager.h"
+#include "util/psdatabase.h"
+
+#include "bulkobjects/pscharacter.h"
+#include "bulkobjects/pscharacterloader.h"
+
+//=============================================================================
+// Local Includes
+//=============================================================================
+#include "tutorialmanager.h"
 #include "client.h"
 #include "clients.h"
 #include "events.h"
-#include "globals.h"
 #include "gem.h"
-#include "tutorialmanager.h"
-#include "util/eventmanager.h"
-#include "util/psdatabase.h"
-#include "bulkobjects/pscharacter.h"
-#include "bulkobjects/pscharacterloader.h"
 #include "netmanager.h"
+#include "globals.h"
 
 
 TutorialManager::TutorialManager(ClientConnectionSet *pCCS)

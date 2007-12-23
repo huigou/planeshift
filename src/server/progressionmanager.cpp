@@ -31,6 +31,7 @@
 //=============================================================================
 // Library Includes
 //=============================================================================
+#include "util/psdatabase.h"
 #include "util/skillcache.h"
 #include "util/eventmanager.h"
 #include "util/log.h"
