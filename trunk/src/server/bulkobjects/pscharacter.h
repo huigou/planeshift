@@ -19,25 +19,36 @@
 
 #ifndef __PSCHARACTER_H__
 #define __PSCHARACTER_H__
-
+//=============================================================================
+// Crystal Space Includes
+//=============================================================================
 #include <csutil/sysfunc.h>
 #include <csutil/weakref.h>
+
+//=============================================================================
+// Project Includes
+//=============================================================================
 #include "util/poolallocator.h"
 #include "util/slots.h"
+#include "util/psconst.h"
+#include "util/scriptvar.h"
+#include "util/skillcache.h"
+
+#include "net/charmessages.h"
+
+#include "../icachedobject.h"
+#include "../playergroup.h"
+//=============================================================================
+// Local Includes
+//=============================================================================
+#include "pscharacter.h"
 #include "pstrait.h"
 #include "psitemstats.h"
 #include "psskills.h"
 #include "psguildinfo.h"
 #include "psstdint.h"
-#include "util/psconst.h"
-#include "util/scriptvar.h"
-#include "psspell.h"
-#include "net/charmessages.h"
-#include "util/skillcache.h"
-#include "../icachedobject.h"
 #include "pscharinventory.h"
 #include "psinventorycachesvr.h"
-#include "../playergroup.h"
 
 class psServerVitals;
 class MsgEntry;

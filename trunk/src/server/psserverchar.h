@@ -42,6 +42,7 @@ class psMerchantInfo;
 class psItem;
 class psActionLocation;
 class SlotManager;
+class MathScriptVar;
 
 struct CraftTransInfo;
 struct psItemCategory;
