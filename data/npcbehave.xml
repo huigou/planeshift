@@ -100,10 +100,10 @@
   <moveto x="-51.4396" y="0.0" z="-149.481" anim="walk" />
   <moveto x="-53.6185" y="0.0" z="-155.243" anim="walk" />
  </behavior> 
- <react event="time" value="8"  behavior="go_other_sector1" delta="20" /> 
- <react event="time" value="10"  behavior="go_sleep1" delta="20" /> 
- <react event="time" value="12"  behavior="go_obstacles1" delta="20" /> 
- <react event="time" value="14"  behavior="go_climbing1" delta="20" /> 
+ <react event="time" value="8,0,,,"  behavior="go_other_sector1" delta="20" /> 
+ <react event="time" value="10,0,,,"  behavior="go_sleep1" delta="20" /> 
+ <react event="time" value="12,0,,,"  behavior="go_obstacles1" delta="20" /> 
+ <react event="time" value="14,0,,,"  behavior="go_climbing1" delta="20" /> 
  </npctype> 
 
  
@@ -229,30 +229,30 @@
     <behavior name="hang out at smithy" completion_decay="0" growth="0" initial="-5">
       <moveto x="-35" y="0" z="-160" anim="walk" />
     </behavior>
-    <react event="time" value="0"  behavior="hang out at smithy" delta="0" />
-    <react event="time" value="1" behavior="march" delta="0" />
-    <react event="time" value="2"  behavior="hang out at smithy" delta="0" />
-    <react event="time" value="3" behavior="march" delta="0" />
-    <react event="time" value="4"  behavior="hang out at smithy" delta="0" />
-    <react event="time" value="5" behavior="march" delta="0" />
-    <react event="time" value="6"  behavior="hang out at smithy" delta="0" />
-    <react event="time" value="7" behavior="march" delta="0" />
-    <react event="time" value="8"  behavior="hang out at smithy" delta="0" />
-    <react event="time" value="9" behavior="march" delta="0" />
-    <react event="time" value="10"  behavior="hang out at smithy" delta="0" />
-    <react event="time" value="11" behavior="march" delta="0" />
-    <react event="time" value="12"  behavior="hang out at smithy" delta="0" />
-    <react event="time" value="13" behavior="march" delta="0" />
-    <react event="time" value="14"  behavior="hang out at smithy" delta="0" />
-    <react event="time" value="15" behavior="march" delta="0" />
-    <react event="time" value="16"  behavior="hang out at smithy" delta="0" />
-    <react event="time" value="17" behavior="march" delta="0" />
-    <react event="time" value="18"  behavior="hang out at smithy" delta="0" />
-    <react event="time" value="19" behavior="march" delta="0" />
-    <react event="time" value="20"  behavior="hang out at smithy" delta="0" />
-    <react event="time" value="21" behavior="march" delta="0" />
-    <react event="time" value="22"  behavior="hang out at smithy" delta="0" />
-    <react event="time" value="23" behavior="march" delta="0" />
+    <react event="time" value="0,0,,,"  behavior="hang out at smithy" delta="0" />
+    <react event="time" value="1,0,,," behavior="march" delta="0" />
+    <react event="time" value="2,0,,,"  behavior="hang out at smithy" delta="0" />
+    <react event="time" value="3,0,,," behavior="march" delta="0" />
+    <react event="time" value="4,0,,,"  behavior="hang out at smithy" delta="0" />
+    <react event="time" value="5,0,,," behavior="march" delta="0" />
+    <react event="time" value="6,0,,,"  behavior="hang out at smithy" delta="0" />
+    <react event="time" value="7,0,,," behavior="march" delta="0" />
+    <react event="time" value="8,0,,,"  behavior="hang out at smithy" delta="0" />
+    <react event="time" value="9,0,,," behavior="march" delta="0" />
+    <react event="time" value="10,0,,,"  behavior="hang out at smithy" delta="0" />
+    <react event="time" value="11,0,,," behavior="march" delta="0" />
+    <react event="time" value="12,0,,,"  behavior="hang out at smithy" delta="0" />
+    <react event="time" value="13,0,,," behavior="march" delta="0" />
+    <react event="time" value="14,0,,,"  behavior="hang out at smithy" delta="0" />
+    <react event="time" value="15,0,,," behavior="march" delta="0" />
+    <react event="time" value="16,0,,,"  behavior="hang out at smithy" delta="0" />
+    <react event="time" value="17,0,,," behavior="march" delta="0" />
+    <react event="time" value="18,0,,,"  behavior="hang out at smithy" delta="0" />
+    <react event="time" value="19,0,,," behavior="march" delta="0" />
+    <react event="time" value="20,0,,,"  behavior="hang out at smithy" delta="0" />
+    <react event="time" value="21,0,,," behavior="march" delta="0" />
+    <react event="time" value="22,0,,,"  behavior="hang out at smithy" delta="0" />
+    <react event="time" value="23,0,,," behavior="march" delta="0" />
   </npctype>
   
   <npctype name="Minion">
@@ -493,30 +493,30 @@
       <wander anim="walk" />        <!-- Navigate using waypoints -->
     </behavior>
 
-    <react event="time" value="0" random2="5" behavior="GoWork" delta="0" /> 
-    <react event="time" value="1" random2="5"  behavior="GoHome" delta="0" /> 
-    <react event="time" value="2" random2="5"  behavior="GoWork" delta="0" /> 
-    <react event="time" value="3" random2="5"  behavior="GoHome" delta="0" /> 
-    <react event="time" value="4" random2="5"  behavior="GoWork" delta="0" /> 
-    <react event="time" value="5" random2="5"  behavior="GoHome" delta="0" /> 
-    <react event="time" value="6" random2="5"  behavior="GoWork" delta="0" /> 
-    <react event="time" value="7" random2="5"  behavior="GoHome" delta="0" /> 
-    <react event="time" value="8" random2="5"  behavior="GoWork" delta="0" /> 
-    <react event="time" value="9" random2="5"  behavior="GoHome" delta="0" /> 
-    <react event="time" value="10" random2="5"  behavior="GoWork" delta="0" /> 
-    <react event="time" value="11" random2="5"  behavior="GoHome" delta="0" /> 
-    <react event="time" value="12" random2="5"  behavior="GoWork" delta="0" /> 
-    <react event="time" value="13" random2="5"  behavior="GoHome" delta="0" /> 
-    <react event="time" value="14" random2="5"  behavior="GoWork" delta="0" /> 
-    <react event="time" value="15" random2="5"  behavior="GoHome" delta="0" /> 
-    <react event="time" value="16" random2="5"  behavior="GoWork" delta="0" /> 
-    <react event="time" value="17" random2="5"  behavior="GoHome" delta="0" /> 
-    <react event="time" value="18" random2="5"  behavior="GoWork" delta="0" /> 
-    <react event="time" value="19" random2="5"  behavior="GoHome" delta="0" /> 
-    <react event="time" value="20" random2="5"  behavior="GoWork" delta="0" /> 
-    <react event="time" value="21" random2="5"  behavior="GoHome" delta="0" /> 
-    <react event="time" value="22" random2="5"  behavior="GoWork" delta="0" /> 
-    <react event="time" value="23" random2="5"  behavior="GoHome" delta="0" /> 
+    <react event="time" value="0,0,,," random=",5,,," behavior="GoWork" delta="0" /> 
+    <react event="time" value="1,0,,," random=",5,,,"  behavior="GoHome" delta="0" /> 
+    <react event="time" value="2,0,,," random=",5,,,"  behavior="GoWork" delta="0" /> 
+    <react event="time" value="3,0,,," random=",5,,,"  behavior="GoHome" delta="0" /> 
+    <react event="time" value="4,0,,," random=",5,,,"  behavior="GoWork" delta="0" /> 
+    <react event="time" value="5,0,,," random=",5,,,"  behavior="GoHome" delta="0" /> 
+    <react event="time" value="6,0,,," random=",5,,,"  behavior="GoWork" delta="0" /> 
+    <react event="time" value="7,0,,," random=",5,,,"  behavior="GoHome" delta="0" /> 
+    <react event="time" value="8,0,,," random=",5,,,"  behavior="GoWork" delta="0" /> 
+    <react event="time" value="9,0,,," random=",5,,,"  behavior="GoHome" delta="0" /> 
+    <react event="time" value="10,0,,," random=",5,,,"  behavior="GoWork" delta="0" /> 
+    <react event="time" value="11,0,,," random=",5,,,"  behavior="GoHome" delta="0" /> 
+    <react event="time" value="12,0,,," random=",5,,,"  behavior="GoWork" delta="0" /> 
+    <react event="time" value="13,0,,," random=",5,,,"  behavior="GoHome" delta="0" /> 
+    <react event="time" value="14,0,,," random=",5,,,"  behavior="GoWork" delta="0" /> 
+    <react event="time" value="15,0,,," random=",5,,,"  behavior="GoHome" delta="0" /> 
+    <react event="time" value="16,0,,," random=",5,,,"  behavior="GoWork" delta="0" /> 
+    <react event="time" value="17,0,,," random=",5,,,"  behavior="GoHome" delta="0" /> 
+    <react event="time" value="18,0,,," random=",5,,,"  behavior="GoWork" delta="0" /> 
+    <react event="time" value="19,0,,," random=",5,,,"  behavior="GoHome" delta="0" /> 
+    <react event="time" value="20,0,,," random=",5,,,"  behavior="GoWork" delta="0" /> 
+    <react event="time" value="21,0,,," random=",5,,,"  behavior="GoHome" delta="0" /> 
+    <react event="time" value="22,0,,," random=",5,,,"  behavior="GoWork" delta="0" /> 
+    <react event="time" value="23,0,,," random=",5,,,"  behavior="GoHome" delta="0" /> 
 
   </npctype>
 

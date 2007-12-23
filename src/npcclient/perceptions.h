@@ -61,8 +61,10 @@ protected:
     bool      react_when_dead;
     bool      react_when_invisible;
     bool      react_when_invincible;
-    int       value1,value2;
-    int       random1,random2;
+    csArray<bool> valuesValid;
+    csArray<int> values;
+    csArray<bool>randomsValid;
+    csArray<int> randoms;
     csString  type;
     csString  only_interrupt;
 
@@ -85,13 +87,15 @@ public:
     // for reaction against visibility and invincibility
     bool ShouldReact(iCelEntity* entity, Perception *pcpt);
 
-    const char     *GetEventType()    { return event_type;   }
-    float           GetRange()        { return range;        }
-    int             GetFactionDiff()  { return faction_diff; }
-    int             GetValue1()       { return value1;       }
-    int             GetValue2()       { return value2;       }
-    const csString& GetType()         { return type;         }
-    char            GetOp()           { if (oper.Length()) return oper.GetAt(0); else return 0; }
+    const char     *GetEventType()      { return event_type;   }
+    float           GetRange()          { return range;        }
+    int             GetFactionDiff()    { return faction_diff; }
+    bool            GetValueValid(int i);
+    int             GetValue(int i);
+    bool            GetRandomValid(int i);
+    int             GetRandom(int i);
+    const csString& GetType()           { return type;         }
+    char            GetOp()             { if (oper.Length()) return oper.GetAt(0); else return 0; }
 };
 
 
@@ -150,11 +154,11 @@ public:
 class TimePerception : public Perception
 {
 protected:
-    int gameHour,gameMinute;
+    int gameHour,gameMinute,gameYear,gameMonth,gameDay;
 
 public:
-    TimePerception(int h, int m)
-    : Perception("time"), gameHour(h),gameMinute(m)  {    }
+    TimePerception(int hour, int minute, int year, int month, int day)
+    : Perception("time"), gameHour(hour),gameMinute(minute),gameYear(year),gameMonth(month),gameDay(day)  {    }
     virtual ~TimePerception() {}
 
     virtual bool ShouldReact(Reaction *reaction,NPC *npc);

@@ -1,3 +1,19 @@
+*** 2007-12-23 by Anders Reggestad
+- Finaly the npc client will be able to react to any kind of timed
+  event. The value string now is on the following format:
+  "hour,min,year,month,day", for values that should not be matched
+  simply let them out. So if an event should happend 16:30 on any
+  day the value would be "16,30,,,". If it should happend 12:00 at
+  the 5th day in any month it would be "12,00,,,5". If it should
+  happen 5 minute past every houer it would be ",5,,,". This should
+  be very similar to the cron syntax. The random value has been
+  added to have the same format. If an event should happend anytime
+  between the hole hour and 15 minutes past the value would be
+  ",0,,," and the random would be ",15,,,". This is for the time
+  reaction: <react event="time" value=",,,," random=",,,," ...
+  Note: This depricate the change from 2007-12-22 where value1,value2,
+  random1,and random2 . 
+
 *** 2007-12-22 by Dave Bentham
 - Further fix for FS#669: when completing an event, the GMs name is
   immortalised in the events description. Includes bug fix to the 
@@ -5,8 +21,9 @@
   in the event gui.
 
 *** 2007-12-22 by Anders Reggestad
-- Changed so that the server public the minute change as well. 
+- Changed so that the server publsh the minute change as well. 
   Prepared for more gametime.
+  - NETVER BUMPED!
 - Cleanup of some more npcoperations.
 - Added perceptions for minutes as well as hours in the npcclient.
 - Added value2 for minutes in the react statement. Added random1 and

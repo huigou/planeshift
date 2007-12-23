@@ -1473,10 +1473,11 @@ void psNPCClient::UpdateTime(int minute, int hour, int day, int month, int year)
 
     gameTimeUpdated = csGetTicks();
 
-    TimePerception pcpt(gameHour,gameMinute);
+    TimePerception pcpt(gameHour,gameMinute,gameYear,gameMonth,gameDay);
     TriggerEvent(NULL, &pcpt); // Broadcast
 
-    Notify3(LOG_WEATHER,"The time is now %d:%02d o'clock.",gameHour,gameMinute);
+    Notify6(LOG_WEATHER,"The time is now %d:%02d %d-%d-%d.",
+            gameHour,gameMinute,gameYear,gameMonth,gameDay);
 }
 
 void psNPCClient::CatchCommand(const char *cmd)
