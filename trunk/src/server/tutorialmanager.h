@@ -16,15 +16,22 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
  */
-
-
 #ifndef __TUTORIALMANAGER_H__
 #define __TUTORIALMANAGER_H__
 
-#include "net/messages.h"        // Message definitions
-#include "net/msghandler.h"         // Network access
-#include "msgmanager.h"             // Parent class
+//=============================================================================
+// Crystal Space Includes
+//=============================================================================
 #include <iutil/document.h>
+
+//=============================================================================
+// Project Includes
+//=============================================================================
+
+//=============================================================================
+// Local Includes
+//=============================================================================
+#include "msgmanager.h"             // Parent class
 
 /**
  * This manager catches events posted by the rest of the server

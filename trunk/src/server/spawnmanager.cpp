@@ -19,7 +19,9 @@
 
 
 #include <psconfig.h>
-
+//=============================================================================
+// Crystal Space Includes
+//=============================================================================
 #include <csutil/randomgen.h>
 #include <csutil/csstring.h>
 #include <iengine/mesh.h>
@@ -29,37 +31,44 @@
 #include <csutil/xmltiny.h>
 #include <iutil/object.h>
 
-#define SPAWNDEBUG
-
-
+//=============================================================================
+// Project Includes
+//=============================================================================
 #include "bulkobjects/pscharacter.h"
 #include "bulkobjects/pscharacterloader.h"
 #include "bulkobjects/psitem.h"
 #include "bulkobjects/psitemstats.h"
 #include "bulkobjects/psraceinfo.h"
 #include "bulkobjects/pssectorinfo.h"
-#include "cachemanager.h"
-#include "client.h"
-#include "clients.h"
-#include "entitymanager.h"
-#include "events.h"
-#include "gem.h"
-#include "globals.h"
-#include "invitemanager.h"
+
 #include "net/msghandler.h"
-#include "netmanager.h"
-#include "playergroup.h"
-#include "progressionmanager.h"
-#include "psserver.h"
-#include "psserverchar.h"
-#include "serverstatus.h"
-#include "spawnmanager.h"
+
 #include "util/eventmanager.h"
 #include "util/mathscript.h"
 #include "util/psconst.h"
 #include "util/psdatabase.h"
 #include "util/psxmlparser.h"
 #include "util/serverconsole.h"
+
+//=============================================================================
+// Local Includes
+//=============================================================================
+#define SPAWNDEBUG
+#include "spawnmanager.h"
+#include "cachemanager.h"
+#include "client.h"
+#include "clients.h"
+#include "entitymanager.h"
+#include "events.h"
+#include "gem.h"
+#include "invitemanager.h"
+#include "netmanager.h"
+#include "playergroup.h"
+#include "progressionmanager.h"
+#include "psserver.h"
+#include "psserverchar.h"
+#include "serverstatus.h"
+#include "globals.h"
 
 
 /** A structure to hold the clients that are pending a group loot question.
