@@ -19,14 +19,25 @@
 
 #ifndef __PSGLYPH_H__
 #define __psglyph_h__
-
+//=============================================================================
+// Crystal Space Includes
+//=============================================================================
 #include <csutil/csstring.h>
 #include <csutil/refcount.h>
 #include <csutil/refarr.h>
 #include <csutil/array.h>
-#include "../iserver/idal.h"
-#include "psitem.h"
+
+//=============================================================================
+// Project Includes
+//=============================================================================
 #include "util/psconst.h"
+
+#include "../iserver/idal.h"
+
+//=============================================================================
+// Local Includes
+//=============================================================================
+#include "psitem.h"
 #include "psstdint.h"
 
 class psCharacter;
@@ -60,10 +71,9 @@ public:
 
     virtual psItem* Clone();
     
-public:
-
     ///  The new operator is overriden to call PoolAllocator template functions
     void *operator new(size_t);
+    
     ///  The delete operator is overriden to call PoolAllocator template functions
     void operator delete(void *);
 

@@ -21,13 +21,24 @@
 
 #ifndef __PSGUILDINFO_H__
 #define __PSGUILDINFO_H__
+//=============================================================================
+// Crystal Space Includes
+//=============================================================================
+#include <csutil/ref.h>
+#include <csutil/refarr.h>
+#include <csutil/refcount.h>
 
-#include "csutil/ref.h"
-#include "csutil/refarr.h"
-#include "csutil/refcount.h"
+//=============================================================================
+// Project Includes
+//=============================================================================
 #include "util/psconst.h"
 
 #include "rpgrules/psmoney.h"
+
+//=============================================================================
+// Local Includes
+//=============================================================================
+
 
 class psCharacter;
 class iResultRow;

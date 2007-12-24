@@ -16,25 +16,30 @@
 * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 *
 */
-
-
-
-
 #include <psconfig.h>
-
+//=============================================================================
+// Crystal Space Includes
+//=============================================================================
 #include <physicallayer/entity.h>
 #include <propclass/mesh.h>
 
-#include "../psserver.h"
+//=============================================================================
+// Project Includes
+//=============================================================================
 #include "util/psdatabase.h"
-#include "../cachemanager.h"
-#include "../globals.h"
-#include "../playergroup.h"
-#include "../guildmanager.h"
 #include "util/log.h"
 #include "util/psconst.h"
-#include "../gem.h"
 
+#include "../psserver.h"
+#include "../cachemanager.h"
+#include "../playergroup.h"
+#include "../guildmanager.h"
+#include "../gem.h"
+#include "../globals.h"
+
+//=============================================================================
+// Local Includes
+//=============================================================================
 #include "psguildinfo.h"
 #include "pscharacter.h"
 
