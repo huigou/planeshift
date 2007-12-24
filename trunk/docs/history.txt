@@ -1,3 +1,8 @@
+*** 2007-12-24 by Roland Schulz
+- changed entitylabels over to new label effect.
+- fixed problem with guild names not updating correctly
+- fixed guild over player name bug
+
 *** 2007-12-24 by Kenny Graunke
 - Removed growarray.h, a csArray like thing from five year old CS.
 - Reimplemented psStringArray as a subclass of csStringArray - the only
