@@ -19,18 +19,28 @@
 
 #ifndef __PSITEMSTATS_H__
 #define __PSITEMSTATS_H__
+//=============================================================================
+// Crystal Space Includes
+//=============================================================================
+#include <csutil/parray.h>
+#include <csutil/strhash.h>
 
-
-#include "../iserver/idal.h"
-
+//=============================================================================
+// Project Includes
+//=============================================================================
 #include "util/poolallocator.h"
-#include "psskills.h"
-#include "rpgrules/psmoney.h"
 #include "util/slots.h"
 #include "util/psxmlparser.h"
 
-#include <csutil/parray.h>
-#include <csutil/strhash.h>
+#include "rpgrules/psmoney.h"
+
+#include "../iserver/idal.h"
+
+//=============================================================================
+// Local Includes
+//=============================================================================
+#include "psskills.h"
+
 
 class CacheManager;
 class psCharacter;
