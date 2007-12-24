@@ -24,7 +24,6 @@
 #include <csutil/weakref.h>
 #include <iengine/portal.h>
 #include "net/cmdbase.h"
-#include "util/growarray.h"
 #include "util/prb.h"
 #include "net/messages.h"
 #include "weather.h"

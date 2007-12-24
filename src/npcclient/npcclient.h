@@ -28,7 +28,6 @@
 #include "engine/celbase.h"
 
 #include "util/prb.h"
-#include "util/growarray.h"
 #include "util/psconst.h"
 #include "util/serverconsole.h"
 #include "util/pspath.h"

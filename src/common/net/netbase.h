@@ -29,7 +29,6 @@
 #include <csutil/ref.h>
 #include <csutil/refcount.h>
 #include <csutil/array.h>
-#include "util/growarray.h"
 #include "netprofile.h"
 
 #define NUM_BROADCAST        0xffffffff

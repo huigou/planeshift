@@ -26,7 +26,6 @@
 #include <csutil/weakref.h>
 
 #include "util/prb.h"
-#include "util/growarray.h"
 #include "util/psdatabase.h"
 
 struct iEngine;

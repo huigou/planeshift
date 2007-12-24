@@ -846,9 +846,9 @@ void psDialogManager::AddSpecialResponse( psSpecialResponse* response )
 
 int psDialogManager::GetPriorID( int internalID )
 {
-    for (int x = 0; x < triggers.Length(); x++ )
+    for (size_t x = 0; x < triggers.GetSize(); x++ )
     {
-        for ( int z = 0; z <  triggers[x]->attitudes.Length(); z++ )
+        for (size_t z = 0; z < triggers[x]->attitudes.GetSize(); z++)
         {
             psAttitudeBlock* currAttitude = triggers[x]->attitudes[z];
 
@@ -863,7 +863,7 @@ int psDialogManager::GetPriorID( int internalID )
 
 void psDialogManager::PrintInfo()
 {
-    int totalTrigs = triggers.Length();
+    const int totalTrigs = triggers.GetSize();
     
     for ( int z = 0; z < totalTrigs; z++ )
     {
@@ -874,22 +874,20 @@ void psDialogManager::PrintInfo()
         psTriggerBlock* currTrigger = triggers[z];
    
         printf("Prior responseID: %d\n", currTrigger->priorResponseID );
-    int x;
-        for ( x = 0; x < currTrigger->phraseList.Length(); x++ )
+        for (size_t x = 0; x < currTrigger->phraseList.GetSize(); x++)
         {
-            CPrintf(CON_CMDOUTPUT,"Phrase: %s\n", currTrigger->phraseList[x]->GetData() );
+            CPrintf(CON_CMDOUTPUT,"Phrase: %s\n", currTrigger->phraseList[x]);
         }
 
-        int totalAttitudes = currTrigger->attitudes.Length();
-        for ( x = 0; x < totalAttitudes; x++ )
+        const int totalAttitudes = currTrigger->attitudes.GetSize();
+        for (int x = 0; x < totalAttitudes; x++)
         {
             int total = 
-                currTrigger->attitudes[x]->responseSet.responses.Length();
+                currTrigger->attitudes[x]->responseSet.responses.GetSize();
             for ( int res = 0; res < total; res++ )
             {
                 CPrintf(CON_CMDOUTPUT,"Response: %s\n", 
-                currTrigger->attitudes[x]->
-                responseSet.responses[res]->GetData() );
+                        currTrigger->attitudes[x]->responseSet.responses[res]);
             }
         }
     }
@@ -913,11 +911,11 @@ int psDialogManager::InsertResponse( csString& response )
 
 int psDialogManager::InsertResponseSet( psResponse &response )
 {
-    stringList responseSet = response.responses;
+    csStringArray &responseSet = response.responses;
     csString script = response.script;
     //Notify1("Inserting the response Set");
 
-    int total = responseSet.Length();
+    int total = responseSet.GetSize();
     csString buffer;
 
     csString command( "INSERT INTO npc_responses (" );
@@ -927,7 +925,7 @@ int psDialogManager::InsertResponseSet( psResponse &response )
     {
         buffer.Format(" response%d", 1 );
         command.Append( buffer );
-        buffer.Format(" \"%s\" ", responseSet[0]->GetData() );
+        buffer.Format(" \"%s\" ", responseSet[0]);
         values.Append( buffer );
     }
 
@@ -937,7 +935,7 @@ int psDialogManager::InsertResponseSet( psResponse &response )
         command.Append ( buffer );
         if (x<total)
         {
-        buffer.Format(" ,\"%s\" ", responseSet[x]->GetData());
+        buffer.Format(" ,\"%s\" ", responseSet[x]);
         values.Append( buffer );
         } else
             values.Append(" ,\"\" ");
@@ -1048,16 +1046,15 @@ int psDialogManager::InsertTrigger( const char* trigger, const char* area,
 bool psDialogManager::WriteToDatabase()
 {
     // Add in all the responses
-    int totalTriggers = triggers.Length();
+    const int totalTriggers = triggers.GetSize();
   
-    int x;
-    for ( x = 0; x < totalTriggers; x++ )
+    for (int x = 0; x < totalTriggers; x++ )
     {
         psTriggerBlock* currTrig = triggers[x];
         
         // Insert all the responses for this trigger. Each 
         // attitude block represents a different response set.
-        for ( int att = 0; att < currTrig->attitudes.Length(); att++ )
+        for (size_t att = 0; att < currTrig->attitudes.GetSize(); att++)
         {
             psAttitudeBlock* currAttitude = currTrig->attitudes[att];
             
@@ -1072,7 +1069,7 @@ bool psDialogManager::WriteToDatabase()
 
 
     // Add all the triggers
-    for ( x = 0; x < totalTriggers; x++ )
+    for (int x = 0; x < totalTriggers; x++)
     {
         psTriggerBlock* currTrig = triggers[x];
  
@@ -1085,11 +1082,11 @@ bool psDialogManager::WriteToDatabase()
 
         CS_ASSERT( goodPriorResponseID != -1 );
             
-        for ( int phi = 0; phi < currTrig->phraseList.Length(); phi++ )
+        for (size_t phi = 0; phi < currTrig->phraseList.GetSize(); phi++)
         {
-            csString phrase(currTrig->phraseList[phi]->GetData() );
+            csString phrase(currTrig->phraseList[phi]);
 
-            for ( int att = 0; att < currTrig->attitudes.Length(); att++ )
+            for (size_t att = 0; att < currTrig->attitudes.GetSize(); att++)
             {
                 int attMax = currTrig->attitudes[att]->maxAttitude;
                 int attMin = currTrig->attitudes[att]->minAttitude;
@@ -1109,7 +1106,7 @@ bool psDialogManager::WriteToDatabase()
     }
 
     // Add the special responses
-    int totalSpecial = special.Length();
+    int totalSpecial = special.GetSize();
     for ( int sp = 0; sp < totalSpecial; sp++ )
     {
         psSpecialResponse *spResp = special[sp];
@@ -1141,10 +1138,7 @@ void psTriggerBlock::Create( csRef<iDocumentNode> triggerNode, int questID )
     while ( iter->HasNext() )
     {
         csRef<iDocumentNode> phrasenode = iter->Next();
-        psString* newPhrase = new psString;
-        *newPhrase = phrasenode->GetAttributeValue("value");
-
-        phraseList.Push( newPhrase );
+        phraseList.Push(phrasenode->GetAttributeValue("value"));
     }
 
 
@@ -1192,10 +1186,8 @@ void psAttitudeBlock::Create( csRef<iDocumentNode> attitudeNode, int questID )
     csRef<iDocumentNodeIterator> iter = attitudeNode->GetNodes("response");
     while ( iter->HasNext() )
     {
-        psString* newResponse = new psString;
         csRef<iDocumentNode> responseNode = iter->Next();
-        *newResponse = responseNode->GetAttributeValue("say");
-        responseSet.responses.Push( newResponse );
+        responseSet.responses.Push(responseNode->GetAttributeValue("say"));
     }
 
     iter = attitudeNode->GetNodes("script");
