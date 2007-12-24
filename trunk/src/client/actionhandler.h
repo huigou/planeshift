@@ -29,7 +29,6 @@
 #include <csutil/ref.h>
 #include <csutil/weakref.h>
 #include "net/cmdbase.h"
-#include "util/growarray.h"
 #include "util/prb.h"
 #include "net/messages.h"
 

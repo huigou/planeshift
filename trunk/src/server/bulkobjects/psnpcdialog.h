@@ -201,20 +201,12 @@ public:
     void DumpDialog();
 };
 
-
-
-PS_TYPEDEF_GROWING_ARRAY(stringList, psString*);
-PS_TYPEDEF_GROWING_ARRAY(idList, int);
 class psDialogManager;
 
 class psTriggerBlock;
 class psAttitudeBlock;
 class psSpecialResponse;
 class psResponse;
-
-PS_TYPEDEF_GROWING_ARRAY( triggerBlockList, psTriggerBlock* );
-PS_TYPEDEF_GROWING_ARRAY( specialResponseList, psSpecialResponse* );
-PS_TYPEDEF_GROWING_ARRAY( attitudeList, psAttitudeBlock* );
 
 //! This is used to handle <specificknowledge> and <specialresponse> tags.
 class psDialogManager
@@ -234,7 +226,7 @@ public:
      * This is a simple list of the all the trigger data that needs
      * to be created. It is of type psTriggerBlock.
      */
-    triggerBlockList triggers;
+    csArray<psTriggerBlock*> triggers;
 
 
     //! A list of all the special responses.
@@ -242,7 +234,7 @@ public:
      * This is a simple list of the all the special response data that needs
      * to be created. It is of type psSpecialResponse.
      */
-    specialResponseList special;
+    csArray<psSpecialResponse*> special;
 
     //! Maps a internal ID to a database ID.
     /*! 
@@ -254,10 +246,10 @@ public:
     int GetPriorID( int internalID );
 
     //! Keep track of the database id's of the triggers.
-    idList triggerIDs;
+    csArray<int> triggerIDs;
 
     //! Keep track of the database id's of responses.
-    idList responseIDs;
+    csArray<int> responseIDs;
 
     csString    area;
 
@@ -325,12 +317,12 @@ public:
     //! A list of phrases for this trigger. 
     /*! This allows us to create many triggers to map to many responses.
      */
-    stringList phraseList;
+    csStringArray phraseList;
 
     //! The list of attitudes. 
     /*! This contain the responses based on an attitude range.
      */
-    attitudeList attitudes;
+    csArray<psAttitudeBlock*> attitudes;
    
     psTriggerBlock() { priorResponseID = 0; } 
 
@@ -367,7 +359,7 @@ public:
     /*! Each response set can have up to 5 different phrases that are 
      * randomly picked from.
      */
-    stringList responses;
+    csStringArray responses;
 
     csString script;
     csString pronoun_him,

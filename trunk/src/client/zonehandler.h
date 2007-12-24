@@ -23,7 +23,6 @@
 #include "net/cmdbase.h"
 #include "util/prb.h"
 #include "util/psxmlparser.h"
-#include "util/growarray.h"
 #include "engine/psworld.h"
 
 class MsgHandler;

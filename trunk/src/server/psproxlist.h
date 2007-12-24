@@ -26,7 +26,6 @@
 #include <cstypes.h>
 #include <iutil/comp.h>
 #include <csutil/scf.h>
-#include <util/growarray.h>
 #include <net/netbase.h>
 
 //=============================================================================

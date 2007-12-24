@@ -1,3 +1,6 @@
+*** 2007-12-24 by Kenny Graunke
+- Removed growarray.h, a csArray like thing from five year old CS.
+
 *** 2007-12-23 by Roland Schulz
 - Finishing tweaks on the labels and adjusted glyph table
   and made loading it work. 
