@@ -19,22 +19,32 @@
 
 #ifndef __PSITEM_H__
 #define __PSITEM_H__
-
+//=============================================================================
+// Crystal Space Includes
+//=============================================================================
 #include <csutil/array.h>
 #include <csgeom/vector3.h>
 #include <csutil/weakreferenced.h>
+
+//=============================================================================
+// Project Includes
+//=============================================================================
 #include "util/stringarray.h"
 #include "util/psconst.h"
+#include "util/scriptvar.h"
+#include "util/gameevent.h"
+#include "util/slots.h"
 
 #include "../iserver/idal.h"
 
 #include "util/poolallocator.h"
+
+//=============================================================================
+// Local Includes
+//=============================================================================
 #include "psskills.h"
 #include "psitemstats.h"
-#include "util/scriptvar.h"
-#include "util/gameevent.h"
 #include "deleteobjcallback.h"
-#include "util/slots.h"
 
 
 class psString;
