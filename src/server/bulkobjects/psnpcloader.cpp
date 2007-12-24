@@ -16,14 +16,30 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
  */
-
-
 #include <psconfig.h>
 
+//=============================================================================
+// Crystal Space Includes
+//=============================================================================
+#include <csutil/xmltiny.h>
+
+//=============================================================================
+// Project Includes
+//=============================================================================
 #include "util/psconst.h"
 #include "util/serverconsole.h"
-#include "psnpcloader.h"
+#include "util/psdatabase.h"
 
+#include "../clients.h"
+#include "../psserver.h"
+#include "../exchangemanager.h"
+#include "../cachemanager.h"
+#include "../globals.h"
+
+//=============================================================================
+// Local Includes
+//=============================================================================
+#include "psnpcloader.h"
 #include "pscharacter.h"
 #include "pscharacterloader.h"
 #include "psnpcdialog.h"
@@ -34,14 +50,7 @@
 #include "psguildinfo.h"
 
 
-#include "../clients.h"
-#include "util/psdatabase.h"
-#include "../psserver.h"
-#include "../globals.h"
-#include "../exchangemanager.h"
-#include "../cachemanager.h"
 
-#include <csutil/xmltiny.h>
 
 #define SUPER_CLIENT_ACCOUNT    9
 

@@ -43,8 +43,9 @@
 //=============================================================================
 #include "psskills.h"
 #include "psstdint.h"
-#include "pscharinventory.h"
+#include "pscharinventory.h"                                    
 #include "psinventorycachesvr.h"
+#include "psitemstats.h"
 
 class psServerVitals;
 class MsgEntry;

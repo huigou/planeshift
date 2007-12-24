@@ -33,7 +33,6 @@
 #include "util/psconst.h"
 
 #include "../icachedobject.h"
-#include "../cachemanager.h"
 
 //=============================================================================
 // Local Includes
