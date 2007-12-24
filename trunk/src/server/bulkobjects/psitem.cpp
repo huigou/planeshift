@@ -18,25 +18,27 @@
  */
 
 #include <psconfig.h>
-
+//=============================================================================
+// Crystal Space Includes
+//=============================================================================
 #include <csutil/stringarray.h>
+
 #include <physicallayer/entity.h>
 #include <propclass/mesh.h>
 
+//=============================================================================
+// Project Includes
+//=============================================================================
 #include "util/log.h"
 #include "util/psstring.h"
 #include "util/serverconsole.h"
 #include "util/mathscript.h"
-
-#include "psitem.h"
-#include "pscharacter.h"
-#include "pssectorinfo.h"
-#include "../playergroup.h"
-#include "../globals.h"
-#include "../psserver.h"
-#include "../entitymanager.h"
 #include "util/eventmanager.h"
 #include "util/psdatabase.h"
+
+#include "../playergroup.h"
+#include "../psserver.h"
+#include "../entitymanager.h"
 #include "../cachemanager.h"
 #include "../exchangemanager.h"
 #include "../gem.h"
@@ -44,9 +46,19 @@
 #include "../spawnmanager.h"
 #include "../psserverchar.h"
 #include "../progressionmanager.h"
+#include "../globals.h"
+
+//=============================================================================
+// Local Includes
+//=============================================================================
+#include "psitem.h"
+#include "pscharacter.h"
+#include "pssectorinfo.h"
 #include "pstrade.h"
 #include "psmerchantinfo.h"
 #include "psraceinfo.h"
+
+
 
 #if SAVE_DEBUG
 #include <typeinfo>
