@@ -31,6 +31,7 @@
 #include "psraceinfo.h"
 #include "pssectorinfo.h"
 #include "psmerchantinfo.h"
+#include "psguildinfo.h"
 
 
 #include "../clients.h"

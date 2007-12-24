@@ -53,6 +53,7 @@
 #include "bulkobjects/pssectorinfo.h"
 #include "bulkobjects/psmerchantinfo.h"
 #include "bulkobjects/psactionlocationinfo.h"
+#include "bulkobjects/psguildinfo.h"
 
 //=============================================================================
 // Local Includes
