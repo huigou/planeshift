@@ -28,6 +28,9 @@
 //=============================================================================
 // Project Includes
 //=============================================================================
+#include "net/messages.h"
+
+#include "util/slots.h"
 
 //=============================================================================
 // Local Includes
@@ -43,6 +46,9 @@ class psItem;
 class psActionLocation;
 class SlotManager;
 class MathScriptVar;
+class gemActor;
+class gemObject;
+class psCharacter;
 
 struct CraftTransInfo;
 struct psItemCategory;

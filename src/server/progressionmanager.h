@@ -30,7 +30,9 @@
 // Library Includes
 //=============================================================================
 #include "util/prb.h"                   // Red Black tree template class
-#include "bulkobjects/psskills.h"       // Red Black tree template class
+#include "util/gameevent.h"
+
+#include "bulkobjects/psskills.h"       
 
 //=============================================================================
 // Application Includes
@@ -42,6 +44,7 @@ class ProgressionOperation;
 class psGUISkillMessage;
 class MathScriptVar;
 class MathScript;
+class psCharacter;
 
 struct ProgressionEvent;
 struct Faction;

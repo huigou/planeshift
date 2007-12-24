@@ -34,6 +34,7 @@
 #include "util/gameevent.h"
 
 #include "bulkobjects/pscharacter.h"
+#include "bulkobjects/psitemstats.h"
 
 //=============================================================================
 // Local Includes
@@ -55,6 +56,10 @@ class psTradeAutoContainers;
 class psItemSet;
 class psCommandManager;
 class psSpell;
+class psItemCategory;
+class psItemStats;
+class psItemAnimation;
+class psItem;
 
 struct CraftTransInfo;
 struct CombinationConstruction;
