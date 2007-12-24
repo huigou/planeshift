@@ -40,6 +40,7 @@
 #include <csutil/xmltiny.h>
 #include "../gem.h"
 #include "../client.h"
+#include "psguildinfo.h"
 
 psCharacterInventory::psCharacterInventory(psCharacter *ownr)
 {

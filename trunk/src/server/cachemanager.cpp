@@ -40,6 +40,8 @@
 #include "bulkobjects/psmerchantinfo.h"
 #include "bulkobjects/psspell.h"
 #include "bulkobjects/psglyph.h"
+#include "bulkobjects/pstrait.h"
+
 
 #include "rpgrules/factions.h"
 

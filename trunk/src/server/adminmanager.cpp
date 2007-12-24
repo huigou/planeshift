@@ -49,6 +49,7 @@
 #include "bulkobjects/psactionlocationinfo.h"
 #include "bulkobjects/psitem.h"
 #include "bulkobjects/pssectorinfo.h"
+#include "bulkobjects/pstrait.h"
 
 #include "rpgrules/factions.h"
 
