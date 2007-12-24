@@ -44,17 +44,17 @@ public:
 
     enum TutorEventType
     {
-        CONNECT       = 0x00000001, // First welcome to the game.
-        MOVEMENT      = 0x00000002, // Sentence on arrow keys and pan up/down. Tell to find npc in front and click on him.
-        NPC_SELECT    = 0x00000004, // You found our npc.  Right-click to select any target, and it shows up in your target window.
-        NPC_TALK      = 0x00000008, // Whenever you have an intelligent npc targeted, you can talk to it and he will try to respond. Say hello to him now.
-        QUEST_ASSIGN  = 0x00000010, // You have now been assigned a task by the npc.  Click the Q button to see your list of active quests.  Now find a rat to your right.
-        DAMAGE_SELF   = 0x00000020, // You just got attacked and hit by a monster.  Your percent of health (hit points) is shown in the red bar in your info window.
-        DAMAGE_FALL   = 0x00000040, // You just fell too far and hurt yourself.  Don't take too much damage or you can die just from falling.
-        DEATH_SELF    = 0x00000080, // You have just died.  In a few seconds, you will be transported to the Death Realm and you will have to escape it to come back to Yliakum.
-        // ENEMY_SELECT  = 0x00000100, // Now that you have a monster selected, you can attack it by pressing 'A' and watching it die.
-        // ENEMY_DEATH   = 0x00000200, // When you kill a monster, it is often carrying things you can use.  Right-click and select the Hand to loot the monster.
-        // LOOT_COMPLETE = 0x00000400 // Now that you picked up your loot, check your inventory by pressing 'I' and see that you have those items now.
+        CONNECT       = 0, // First welcome to the game.
+        MOVEMENT      = 1, // Sentence on arrow keys and pan up/down. Tell to find npc in front and click on him.
+        NPC_SELECT    = 2, // You found our npc.  Right-click to select any target, and it shows up in your target window.
+        NPC_TALK      = 3, // Whenever you have an intelligent npc targeted, you can talk to it and he will try to respond. Say hello to him now.
+        QUEST_ASSIGN  = 4, // You have now been assigned a task by the npc.  Click the Q button to see your list of active quests.  Now find a rat to your right.
+        DAMAGE_SELF   = 5, // You just got attacked and hit by a monster.  Your percent of health (hit points) is shown in the red bar in your info window.
+        DAMAGE_FALL   = 6, // You just fell too far and hurt yourself.  Don't take too much damage or you can die just from falling.
+        DEATH_SELF    = 7, // You have just died.  In a few seconds, you will be transported to the Death Realm and you will have to escape it to come back to Yliakum.
+        // ENEMY_SELECT  = 8, // Now that you have a monster selected, you can attack it by pressing 'A' and watching it die.
+        // ENEMY_DEATH   = 9, // When you kill a monster, it is often carrying things you can use.  Right-click and select the Hand to loot the monster.
+        // LOOT_COMPLETE = 10 // Now that you picked up your loot, check your inventory by pressing 'I' and see that you have those items now.
     };
 
     TutorialManager(ClientConnectionSet *pCCS);
