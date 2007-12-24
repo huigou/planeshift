@@ -16,27 +16,36 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
  */
-
-
 #include <psconfig.h>
-
+//=============================================================================
+// Crystal Space Includes
+//=============================================================================
 #include <csutil/randomgen.h>
-#include "imesh/object.h"
+#include <imesh/object.h>
 #include <imesh/spritecal3d.h>
-#include "iengine/mesh.h"
+#include <iengine/mesh.h>
+
 #include <physicallayer/propclas.h>
 #include <physicallayer/entity.h>
 #include <propclass/mesh.h>
 
-#include "psglyph.h"
-#include "psitem.h"
-#include "psitemstats.h"
+//=============================================================================
+// Project Includes
+//=============================================================================
 #include "util/log.h"
 #include "util/psstring.h"
 #include "util/serverconsole.h"
-#include "../globals.h"
+
 #include "../psserver.h"
 #include "../cachemanager.h"
+#include "../globals.h"
+
+//=============================================================================
+// Local Includes
+//=============================================================================
+#include "psitemstats.h"
+#include "psglyph.h"
+#include "psitem.h"
 #include "psmerchantinfo.h"
 
 
