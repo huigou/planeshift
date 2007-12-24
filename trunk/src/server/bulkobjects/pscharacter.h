@@ -52,9 +52,10 @@ class psItemStats;
 class psItem;
 class psQuest;
 class psGuildInfo;
+class ProgressionDelay;
+
 struct Result;
 struct Faction;
-class ProgressionDelay;
 
 /** "Normalizes" name of character i.e. makes the first letter uppercase and all the rest downcase */
 csString NormalizeCharacterName(const csString & name);
