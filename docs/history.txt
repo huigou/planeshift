@@ -1,5 +1,7 @@
 *** 2007-12-24 by Kenny Graunke
 - Removed growarray.h, a csArray like thing from five year old CS.
+- Reimplemented psStringArray as a subclass of csStringArray - the only
+  extra feature it had was the handy FormatPush feature.
 
 *** 2007-12-23 by Roland Schulz
 - Finishing tweaks on the labels and adjusted glyph table

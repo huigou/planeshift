@@ -381,7 +381,7 @@ csString psActionLocation::ToXML() const
 unsigned int psActionLocation::Insert( const char *table, const char **fieldnames, psStringArray& fieldvalues )
 {
     csString command;
-    int count = fieldvalues.Length();
+    int count = fieldvalues.GetSize();
     int i;
     command = "INSERT INTO ";
     command.Append(table);
@@ -422,7 +422,7 @@ unsigned int psActionLocation::Insert( const char *table, const char **fieldname
 bool psActionLocation::UpdateByKey( const char *table, const char *idname, const char *idvalue, const char **fieldnames, psStringArray& fieldvalues )
 {
     int i;
-    int count = fieldvalues.Length();
+    int count = fieldvalues.GetSize();
     csString command;
 
     command.Append("UPDATE ");

@@ -146,12 +146,11 @@ void pawsIgnoreWindow::SaveIgnoreList()
     csRef<iDocumentSystem> xml = csPtr<iDocumentSystem>(new csTinyDocumentSystem);
 
     csRef<iDocument> doc = xml->CreateDocument();
-    int length = ignoredNames.Length();
     csRef<iDocumentNode> root = doc->CreateRoot();
     csRef<iDocumentNode> listNode = root->CreateNodeBefore(CS_NODE_ELEMENT);
     listNode->SetValue("Ignorelist");
 
-    for (int i = 0;i < length; i++)
+    for (size_t i = 0; i < ignoredNames.GetSize(); i++)
     {
         csRef<iDocumentNode> node = listNode->CreateNodeBefore(CS_NODE_ELEMENT);
         node->SetValue("Ignored");
@@ -180,7 +179,7 @@ void pawsIgnoreWindow::AddIgnore( csString& name )
         chat->ChatOutput(temp);
     }        
             
-    if ( ignoredNames.Find( name ) == -1 )
+    if (ignoredNames.FindSortedKey(name) == csArrayItemNotFound)
     {
         pawsListBoxRow* row = ignoreList->NewRow();
         pawsTextBox* textname = (pawsTextBox*)row->GetColumn(0);
@@ -214,10 +213,7 @@ void pawsIgnoreWindow::RemoveIgnore( csString& name )
 
 bool pawsIgnoreWindow::IsIgnored(csString &name)
 {
-    if (ignoredNames.FindSorted(name)==-1)
-        return false;
-    else
-        return true;
+    return (ignoredNames.FindSortedKey(name) != csArrayItemNotFound);
 }
 
 void pawsIgnoreWindow::OnStringEntered(const char *name,int param,const char *value)
