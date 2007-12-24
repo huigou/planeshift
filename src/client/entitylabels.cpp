@@ -224,7 +224,7 @@ void psEntityLabels::SetObjectText(GEMClientObject* object)
         csString guild( actor->GetGuildName() );
         csString guild2( psengine->GetGuildName() );
 
-        if ( guild2.Length() && guild.Length() == guild2.Length() )
+        if ( guild.Length() )
         {
             // If same guild, indicate with color
             if (guild == guild2)
@@ -293,17 +293,20 @@ void psEntityLabels::CreateLabelOfObject(GEMClientObject *object)
     if (!mesh || !mesh->GetMeshObject())
         return;
 
+    DeleteLabelOfObject(object); // make sure the old label is gone
+
     // Get the height of the model
     const csBox3& boundBox = mesh->GetMeshObject()->GetObjectModel()->GetObjectBoundingBox();
 
     psEffectManager* effectMgr = psengine->GetEffectManager();
 
     // Create the effect
-    unsigned int id = effectMgr->RenderEffect( "entitylabel", 
+    unsigned int id = effectMgr->RenderEffect( "label", 
                                                csVector3(0.0f,boundBox.Max(1) + 0.25f,0.0f),
                                                mesh );
 
     psEffect* effect = effectMgr->FindEffect(id);
+
     object->SetEntityLabel(effect);
 
     // Update text

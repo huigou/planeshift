@@ -53,6 +53,7 @@ psEffectObjLabel::psEffectObjLabel(iView * parentView, psEffect2DRenderer * rend
         xpos[i] = (i%16) * 64;
         ypos[i] = (i/16-2) * 64;
     }
+    //printf("new label created\n");
 }
 
 psEffectObjLabel::~psEffectObjLabel()
@@ -65,7 +66,7 @@ psEffectObjLabel::~psEffectObjLabel()
     {
         engine->RemoveObject(mesh);
     }
-
+    //printf("label destroyed\n");
 }
 
 bool psEffectObjLabel::Load(iDocumentNode *node)
@@ -159,6 +160,7 @@ bool psEffectObjLabel::PostSetup()
 
 bool psEffectObjLabel::CreateMeshFact()
 {
+    //printf("label: creating meshfact\n");
     static unsigned int uniqueID = 0;
     csString facName = "effect_label_fac_";
     facName += uniqueID++;
@@ -213,6 +215,7 @@ bool psEffectObjLabel::CreateMeshFact()
 
 bool psEffectObjLabel::Render(const csVector3 &up)
 {
+    //printf("label: render\n");
     if(!CreateMeshFact())
       return false;
 
@@ -296,6 +299,7 @@ void psEffectObjLabel::CloneBase(psEffectObj * newObj) const
 
 psEffectObj * psEffectObjLabel::Clone() const
 {
+    //printf("label: cloning\n");
     psEffectObjLabel * newObj = new psEffectObjLabel(view, renderer2d);
     CloneBase(newObj);
     
@@ -403,9 +407,9 @@ bool psEffectObjLabel::SetText(int rows, ...)
             uint c =text[j];
             float fx1, fy1, fx2, fy2;
             fx1 = (float)x / maxWidth*3 - 1.5;
-            fy1 = (float)y / maxWidth*3;
+            fy1 = (float)(maxHeight - y) / maxWidth*3;
             fx2 = (float)(x+width[c]) / maxWidth*3 - 1.5;
-            fy2 = (float)(y+60) / maxWidth*3;
+            fy2 = (float)(maxHeight - y + 60) / maxWidth*3;
             //printf("rendering char %d pos %d,%d - %f %f %f %f\n", cp/4, x, y, fx1, fy1, fx2, fy2);
             facState->GetVertices()[cp  ].Set(fx2,0,fy1); 
             facState->GetVertices()[cp+1].Set(fx1,0,fy1); 
