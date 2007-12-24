@@ -40,6 +40,7 @@
 #include "../npcmanager.h"
 #include "../gem.h"
 #include "../client.h"
+#include "../cachemanager.h"
 #include "../globals.h"
 
 //=============================================================================

@@ -19,27 +19,37 @@
  */
 #ifndef __PS_IMP_NPC_DIALOG__
 #define __PS_IMP_NPC_DIALOG__
-
-//CS Includes
-#include "cstypes.h"
-#include "iutil/comp.h"
-#include "iutil/eventh.h"
-#include "csutil/scf.h"
+//=============================================================================
+// Crystal Space Includes
+//=============================================================================
+#include <cstypes.h>
+#include <iutil/comp.h>
+#include <iutil/eventh.h>
+#include <csutil/scf.h>
 #include <cstool/collider.h>
 #include <ivaria/collider.h>
-#include "util/prb.h"
 
-//psincludes
-#include <util/psstring.h>
-#include "dictionary.h"
-#include "../client.h"
+//=============================================================================
+// Project Includes
+//=============================================================================
+#include "util/prb.h"
+#include "util/psstring.h"
+
 #include "../iserver/idal.h"
 
+
+//=============================================================================
+// Local Includes
+//=============================================================================
+#include "dictionary.h"
+
 class gemNPC;
+class NPCDialogDict;
+class NpcResponse;
+class GemActor;
+class Client;
+
 struct iObjectRegistry;
-class  NPCDialogDict;
-class  NpcResponse;
-class  GemActor;
 
 struct KnowledgeArea
 {

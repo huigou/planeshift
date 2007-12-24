@@ -52,11 +52,14 @@
 #include "util/serverconsole.h"
 #include "util/log.h"
 #include "util/psdatabase.h"
+
 #include "../iserver/idal.h"
+
 #include "../psserver.h"
 #include "../gem.h"
-#include "../globals.h"
 #include "../playergroup.h"
+#include "../client.h"
+#include "../globals.h"
 
 //=============================================================================
 // Local Includes
