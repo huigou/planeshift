@@ -20,16 +20,28 @@
 #ifndef __PSCHARINV_H__
 #define __PSCHARINV_H__
 
+//=============================================================================
+// Crystal Space Includes
+//=============================================================================
 #include <csutil/sysfunc.h>
 #include <csutil/weakref.h>
+
+//=============================================================================
+// Project Includes
+//=============================================================================
 #include "util/poolallocator.h"
+#include "util/psconst.h"
+
+#include "../icachedobject.h"
+#include "../cachemanager.h"
+
+//=============================================================================
+// Local Includes
+//=============================================================================
 #include "psitemstats.h"
 #include "psstdint.h"
-#include "util/psconst.h"
-#include "../icachedobject.h"
 #include "psitem.h"
 #include "psinventorycachesvr.h"
-#include "../cachemanager.h"
 #include "psspell.h"
 
 struct iDocumentNode;

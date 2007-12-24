@@ -18,28 +18,36 @@
 */
 
 #include <psconfig.h>
-
+//=============================================================================
+// Crystal Space Includes
+//=============================================================================
 #include <iutil/virtclk.h>
 #include <csutil/databuf.h>
+#include <csutil/xmltiny.h>
 #include <ctype.h>
 
-// Define this so the slot ID to string mapping is compiled into object form exactly once
-
-#include "../psserver.h"
+//=============================================================================
+// Project Includes
+//=============================================================================
 #include "util/psdatabase.h"
-#include "pscharacter.h"
-#include "pscharacterloader.h"
-#include "psglyph.h"
-#include "../psserverchar.h"
-#include "../progressionmanager.h"
-#include "../npcmanager.h"
-#include "../globals.h"
 #include "util/log.h"
 #include "util/psxmlparser.h"
 #include "util/mathscript.h"
-#include <csutil/xmltiny.h>
+
+#include "../psserver.h"
+#include "../psserverchar.h"
+#include "../progressionmanager.h"
+#include "../npcmanager.h"
 #include "../gem.h"
 #include "../client.h"
+#include "../globals.h"
+
+//=============================================================================
+// Local Includes
+//=============================================================================
+#include "pscharacterloader.h"
+#include "pscharacter.h"
+#include "psglyph.h"
 #include "psguildinfo.h"
 
 psCharacterInventory::psCharacterInventory(psCharacter *ownr)

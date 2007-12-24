@@ -16,40 +16,49 @@
 * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 *
 */
-
-
-
 #include <psconfig.h>
+//=============================================================================
+// Crystal Space Includes
+//=============================================================================
 #include <iutil/object.h>
 #include <csutil/threading/thread.h>
 #include <csutil/stringarray.h>
+#include <iengine/sector.h>
+
 #include <physicallayer/entity.h>
 #include <propclass/mesh.h>
 
+//=============================================================================
+// Project Includes
+//=============================================================================
 #include "util/log.h"
 #include "util/gameevent.h"
-#include "pscharacterloader.h"
-#include "../psserver.h"
-#include "../globals.h"
-#include "../playergroup.h"
-#include "../entitymanager.h"
 #include "util/eventmanager.h"
-#include "psglyph.h"
+#include "util/psdatabase.h"
+
 #include "rpgrules/factions.h"
 
+#include "../psserver.h"
+#include "../playergroup.h"
+#include "../entitymanager.h"
 #include "../gem.h"
-#include "util/psdatabase.h"
-#include "psraceinfo.h"
-#include "psitem.h"
 #include "../clients.h"
-#include "pssectorinfo.h"
-#include "pscharacter.h"
 #include "../cachemanager.h"
-#include "pscharacterlist.h"
-#include <iengine/sector.h>
-#include "gmeventmanager.h"
 #include "../introductionmanager.h"
 #include "../progressionmanager.h"
+#include "../globals.h"
+
+//=============================================================================
+// Local Includes
+//=============================================================================
+#include "pscharacterloader.h"
+#include "psglyph.h"
+#include "psraceinfo.h"
+#include "psitem.h"
+#include "pssectorinfo.h"
+#include "pscharacter.h"
+#include "pscharacterlist.h"
+#include "gmeventmanager.h"
 #include "psguildinfo.h"
 #include "pstrait.h"
 

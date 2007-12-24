@@ -28,6 +28,8 @@
 // Project Includes
 //=============================================================================
 #include "net/netbase.h"                // PublishVector class
+#include "net/npcmessages.h"
+
 #include "bulkobjects/psskills.h"    
 
 //=============================================================================
