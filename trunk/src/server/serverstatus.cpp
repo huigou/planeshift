@@ -32,6 +32,7 @@
 #include "util/eventmanager.h"
 #include "util/psxmlparser.h"
 
+#include "bulkobjects/psguildinfo.h"
 //=============================================================================
 // Local Includes
 //=============================================================================

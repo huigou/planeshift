@@ -31,7 +31,7 @@
 
 #include "csutil/xmltiny.h"
 #include "iutil/document.h"
-
+#include "bulkobjects/psguildinfo.h"
 
 /**
 *

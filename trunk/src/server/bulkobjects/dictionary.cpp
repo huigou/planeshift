@@ -69,6 +69,7 @@
 #include "pscharacterloader.h"
 #include "psitem.h"
 #include "psitemstats.h"
+#include "psguildinfo.h"
 
 
 NPCDialogDict *dict;

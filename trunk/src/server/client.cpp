@@ -31,6 +31,7 @@
 //=============================================================================
 #include "bulkobjects/pscharacter.h"
 #include "bulkobjects/psitem.h"
+#include "bulkobjects/psguildinfo.h"
 
 #include "util/psscf.h"
 #include "util/consoleout.h"

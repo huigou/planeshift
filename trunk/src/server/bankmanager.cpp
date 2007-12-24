@@ -22,6 +22,7 @@
 // Project Includes
 //=============================================================================
 #include "bulkobjects/pscharacterloader.h"
+#include "bulkobjects/psguildinfo.h"
 
 #include "util/mathscript.h"
 #include "util/eventmanager.h"

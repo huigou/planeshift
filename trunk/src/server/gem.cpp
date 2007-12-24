@@ -70,6 +70,7 @@
 #include "bulkobjects/pssectorinfo.h"
 #include "bulkobjects/psnpcdialog.h"
 #include "bulkobjects/pscharacter.h"
+#include "bulkobjects/psguildinfo.h"
 
 #include "rpgrules/factions.h"
 
