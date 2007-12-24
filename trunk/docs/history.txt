@@ -4,6 +4,7 @@
   extra feature it had was the handy FormatPush feature.
 - Removed Keith's delimited string class, as nobody uses it and it doesn't
   even have a copyright header...
+- No more crazy logarithms in TutorialManager's array subscripts.
 
 *** 2007-12-23 by Roland Schulz
 - Finishing tweaks on the labels and adjusted glyph table

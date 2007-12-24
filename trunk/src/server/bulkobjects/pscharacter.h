@@ -624,10 +624,10 @@ public:
     int     help_event_flags;
 
     /// Checks the bit field for a bit flag from the enum in TutorialManager.h
-    bool NeedsHelpEvent(int which)    { return (help_event_flags & which)==0; }
+    bool NeedsHelpEvent(int which) { return (help_event_flags & (1 << which))==0; }
 
     /// Sets a bit field complete for a specified flag from the enum in tutorialmanager.h
-    void CompleteHelpEvent(int which) { help_event_flags |= which; }
+    void CompleteHelpEvent(int which) { help_event_flags |= (1 << which); }
 
     /// Set the active guild for the character.
     void SetGuild(psGuildInfo *g) { guildinfo = g; }
