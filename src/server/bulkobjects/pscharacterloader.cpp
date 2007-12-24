@@ -50,7 +50,9 @@
 #include "gmeventmanager.h"
 #include "../introductionmanager.h"
 #include "../progressionmanager.h"
-#include "bulkobjects/psguildinfo.h"
+#include "psguildinfo.h"
+#include "pstrait.h"
+
 
 psCharacterLoader::psCharacterLoader()
 {

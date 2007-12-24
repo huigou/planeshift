@@ -70,7 +70,7 @@
 #include "pstrainerinfo.h"
 #include "servervitals.h"
 #include "pssectorinfo.h"
-
+#include "pstrait.h"
 
 
 // The sizes and scripts need balancing.  For now, maxSize is disabled.

@@ -49,6 +49,7 @@
 #include "bulkobjects/psactionlocationinfo.h"
 #include "bulkobjects/pssectorinfo.h"
 #include "bulkobjects/psguildinfo.h"
+#include "bulkobjects/pstrait.h"
 
 #include "net/messages.h"
 #include "net/npcmessages.h"
