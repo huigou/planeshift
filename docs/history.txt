@@ -2,6 +2,8 @@
 - Removed growarray.h, a csArray like thing from five year old CS.
 - Reimplemented psStringArray as a subclass of csStringArray - the only
   extra feature it had was the handy FormatPush feature.
+- Removed Keith's delimited string class, as nobody uses it and it doesn't
+  even have a copyright header...
 
 *** 2007-12-23 by Roland Schulz
 - Finishing tweaks on the labels and adjusted glyph table
