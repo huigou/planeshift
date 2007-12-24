@@ -41,8 +41,6 @@
 //=============================================================================
 // Local Includes
 //=============================================================================
-#include "pscharacter.h"
-#include "psitemstats.h"
 #include "psskills.h"
 #include "psstdint.h"
 #include "pscharinventory.h"
