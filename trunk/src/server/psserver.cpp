@@ -574,7 +574,9 @@ void psServer::RemovePlayer (uint32_t clientnum,const char *reason)
     entitymanager->DeletePlayer(client);
 
     if (client->IsSuperClient())
+    {
         npcmanager->Disconnect(client);
+    }
 
     serverthread->GetConnections()->Delete(client);
 }

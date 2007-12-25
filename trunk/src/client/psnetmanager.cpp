@@ -131,11 +131,15 @@ void psNetManager::SendDisconnect(bool final)
 
     csString reason;
     if(final)
+    {
         reason = "";
+    }
     else
-        reason = "!";
+    {
+        reason = "!"; // Not a final disconnect
+    }
         
-    psDisconnectMessage discon(0, 0,reason);
+    psDisconnectMessage discon(0, 0, reason);
     msghandler->SendMessage(discon.msg);
     msghandler->Flush(); // Flush the network
     msghandler->DispatchQueue(); // Flush inbound message queue

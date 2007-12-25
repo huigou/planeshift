@@ -302,10 +302,16 @@ void psAuthenticationServer::HandleAuthent(MsgEntry *me)
         if(existingClient->GetClientNum() != me->clientnum)
         {
             csString reason;
-            if(existingClient->zombie)
-                reason.Format("Your character(%s) was still in combat or casting a spell when you disconnected. Please wait for combat to finish and try again.", existingClient->GetName());
+            if(existingClient->IsZombie())
+            {
+                reason.Format("Your character(%s) was still in combat or casting a spell when you disconnected. "
+                              "Please wait for combat to finish and try again.", existingClient->GetName());
+            }
             else
-                reason.Format("You are already logged on to this server as %s. If you were disconnected, please wait 30 seconds and try again.", existingClient->GetName());
+            {
+                reason.Format("You are already logged on to this server as %s. If you were disconnected, "
+                              "please wait 30 seconds and try again.", existingClient->GetName());
+            }
 
             psserver->RemovePlayer(me->clientnum, reason);
             Notify2(LOG_CONNECTIONS,"User '%s' authentication request rejected: User already logged in.\n",
@@ -542,13 +548,20 @@ void psAuthenticationServer::HandleDisconnect(MsgEntry* me,const char *msg)
     
     Client *client = clients->FindAny(me->clientnum);
 
+    // Check if this client is allowed to disconnect or if the
+    // zombie state should be set
     if(!client->AllowDisconnect())
         return;
 
-    if(mesg.msgReason == "!")
+    if(mesg.msgReason == "!") // Not a final disconnect
+    {
         psserver->RemovePlayer(me->clientnum,"!");
+    }
     else
+    {
         psserver->RemovePlayer(me->clientnum,msg);
+    }
+    
 }
 
 void psAuthenticationServer::SendDisconnect(Client* client, const char *reason)
@@ -570,7 +583,9 @@ void psAuthenticationServer::SendDisconnect(Client* client, const char *reason)
     {
         psDisconnectMessage msg(client->GetClientNum(), 0, reason);
         if (msg.valid)
+        {
             psserver->GetEventManager()->Broadcast(msg.msg, NetBase::BC_FINALPACKET);
+        }
     }
 }
 
