@@ -1,3 +1,7 @@
+*** 2007-12-25 by Anders Reggestad
+- Removed some not needed calls to server internal data from the
+  network thread in the CheckLinkDead code.
+
 *** 2007-12-24 by Roland Schulz
 - changed entitylabels over to new label effect.
 - fixed problem with guild names not updating correctly

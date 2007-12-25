@@ -144,9 +144,13 @@ bool Client::AllowDisconnect()
         zombietimeout = csGetTicks() + 3 * 60 * 1000;
     }
     else if(csGetTicks() > zombietimeout)
+    {
         return true;
+    }
 
-    return !(GetActor()->GetMode() == PSCHARACTER_MODE_SPELL_CASTING || GetActor()->GetMode() == PSCHARACTER_MODE_COMBAT || GetActor()->GetMode() == PSCHARACTER_MODE_DEFEATED);
+    return !(GetActor()->GetMode() == PSCHARACTER_MODE_SPELL_CASTING || 
+             GetActor()->GetMode() == PSCHARACTER_MODE_COMBAT || 
+             GetActor()->GetMode() == PSCHARACTER_MODE_DEFEATED);
 }
 
 void Client::SetTargetObject(gemObject* newobject, bool updateClientGUI)

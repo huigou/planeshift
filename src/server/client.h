@@ -216,6 +216,12 @@ public:
     TradingStatus GetTradingStatus() { return tradingStatus; }
     int GetMerchantID() { return merchantID; }
     */
+    
+    /**
+     * A zombie client is a client that is prevented from disconnecting because
+     * of combat, spellcasting, or defeted.
+     */
+    bool IsZombie() { return zombie; }
 
     /// Allow distinguishing superclients from regular player clients
     bool IsSuperClient() { return superclient; }
@@ -328,10 +334,7 @@ public:
     void SetSpamPoints(int points) { spamPoints = points; }  // For setting on account load
     void IncrementSpamPoints() { if (spamPoints<4) spamPoints++; }
     void DecrementSpamPoints() { if (spamPoints>0) spamPoints--; }
-
-    /// Has the player disconnected from this client?
-    bool zombie;
-
+    
     /// Online edit of waypoints
     void WaypointSetPath(csString& path, int index) { waypointPathName = path; waypointPathIndex = index; waypointPathLast = -1; }
     csString& WaypointGetPathName(){ return waypointPathName; }
@@ -366,6 +369,11 @@ public:
 protected:
 
     csTicks zombietimeout;
+    /**
+     * A zombie client is a client where the player has disconnected, but
+     * still active due to not finished combat, spellcasting, or defeted.
+     */
+    bool zombie;
 
     int exchangeID;
     gemActor *actor;

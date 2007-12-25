@@ -117,7 +117,9 @@ void psAuthenticationClient::HandleMessage(MsgEntry *me)
         case MSGTYPE_DISCONNECT:
         {
             if ( psengine->GetNetManager()->IsConnected() )
+            {
                 HandleDisconnect(me);
+            }
             break;          
         }
         
@@ -154,9 +156,12 @@ void psAuthenticationClient::ShowError()
 {
     psengine->GetCelClient()->SetPlayerReady(false);
 
-    pawsLoginWindow* loginWdg = (pawsLoginWindow*)PawsManager::GetSingleton().FindWidget("LoginWindow");
-    if(rejectmsg == "!")
+    if(rejectmsg == "!") // Don't show own generated not final disconnect
+    {
         return;
+    }
+
+    pawsLoginWindow* loginWdg = (pawsLoginWindow*)PawsManager::GetSingleton().FindWidget("LoginWindow");
 
     //If we have logged in
     if ( !loginWdg || !loginWdg->IsVisible() )
@@ -164,7 +169,9 @@ void psAuthenticationClient::ShowError()
         psMainWidget* mainWdg = (psMainWidget*)PawsManager::GetSingleton().GetMainWidget();
         mainWdg->LockPlayer();
         if (psengine->GetCharControl())
+        {
             psengine->GetCharControl()->CancelMouseLook();
+        }
         psengine->FatalError(rejectmsg.GetData());
     }
     else
@@ -216,9 +223,25 @@ void psAuthenticationClient::HandleDisconnect( MsgEntry* me )
         if (rejectmsg == "")
         {
             if (dc.msgReason != "")
+            {
                 rejectmsg = dc.msgReason;
+            }
             else
-                rejectmsg = (dc.actor)?"Cannot connect to the Planeshift server.  Please double-check IP address and firewall.":"Server dropped us for an unknown reason, and is probably down.  Please contact technical support.";
+            {
+                if (dc.actor)
+                {
+                    rejectmsg = 
+                        "Cannot connect to the Planeshift server.  "
+                        "Please double-check IP address and firewall.";
+                }
+                else
+                {
+                    rejectmsg = 
+                        "Server dropped us for an unknown reason, and is probably down.  "
+                        "Please contact technical support.";
+                }
+                
+            }
         }
                 
         ShowError();
@@ -228,11 +251,17 @@ void psAuthenticationClient::HandleDisconnect( MsgEntry* me )
     
     // We are the only possible receiver
     if (dc.msgReason == "")
+    {
         rejectmsg = "Server dropped us. (Invalid error message)";
+    }
     else
+    {
         rejectmsg = dc.msgReason;
+    }
                 
     // are we expecting the disconnect message?
     if(psengine->loadstate != psEngine::LS_ERROR)
+    {
         ShowError();  
+    }
 }

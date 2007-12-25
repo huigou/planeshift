@@ -268,6 +268,8 @@ bool NetManager::SendMessage(MsgEntry* me)
     return sendresult;
 }
 
+// This function is the network thread
+// Thread: Network
 void NetManager::Run ()
 {
     csTicks currentticks    = csGetTicks();
@@ -292,6 +294,8 @@ void NetManager::Run ()
     float   kbpsInMax  = 0;
 
     size_t clientCountMax = 0;
+
+    printf("Network thread started!\n");
     
     stop_network = false;
     while ( !stop_network )
@@ -327,25 +331,34 @@ void NetManager::Run ()
         {
             kbpsin = (float)(totaltransferin - lasttotaltransferin) / (float)STATDISPLAYCHECK;
             if ( kbpsin > kbpsInMax )
+            {
                 kbpsInMax = kbpsin;
+            }
             lasttotaltransferin = totaltransferin;
 
             kbpsout = (float)(totaltransferout - lasttotaltransferout) / (float)STATDISPLAYCHECK;
             if ( kbpsout > kbpsOutMax )
+            {
                 kbpsOutMax = kbpsout;
+            }
  
             lasttotaltransferout = totaltransferout;
 
             laststatdisplay = currentticks;
        
             if ( clients.Count() > clientCountMax )
-               clientCountMax = clients.Count();
+            {
+                clientCountMax = clients.Count();
+            }
 
             if (pslog::disp_flag[LOG_LOAD])
             {
-                CPrintf(CON_DEBUG, "Currently %d (Max: %d) clients using %1.2fKbps (Max: %1.2fKbps) outbound, %1.2fkbps (Max: %1.2fKbps) inbound...\n",
-                        clients.Count(),clientCountMax, kbpsout, kbpsOutMax, kbpsin, kbpsInMax);
-                CPrintf(CON_DEBUG, "Packets inbound %ld , outbound %ld...\n",totalcountin-lasttotalcountin,totalcountout-lasttotalcountout);
+                CPrintf(CON_DEBUG, "Currently %d (Max: %d) clients using %1.2fKbps (Max: %1.2fKbps) outbound, "
+                        "%1.2fkbps (Max: %1.2fKbps) inbound...\n",
+                        clients.Count(),clientCountMax, kbpsout, kbpsOutMax,
+                        kbpsin, kbpsInMax);
+                CPrintf(CON_DEBUG, "Packets inbound %ld , outbound %ld...\n",
+                        totalcountin-lasttotalcountin,totalcountout-lasttotalcountout);
             }
         
             lasttotalcountout = totalcountout;
@@ -487,7 +500,8 @@ void NetManager::Multicast (MsgEntry* me, const csArray<PublishDestination>& mul
     }
 }
 
-
+// This function is called from the network thread, no acces to server
+// internal data should be made
 void NetManager::CheckLinkDead()
 {
     csTicks currenttime = csGetTicks();
@@ -497,14 +511,13 @@ void NetManager::CheckLinkDead()
     for (Client* pClient = i.First(); pClient; pClient = i.Next() )
     {
         // Shortcut here so zombies may immediately disconnect
-        if(pClient->zombie && pClient->AllowDisconnect())
+        if(pClient->IsZombie() && pClient->AllowDisconnect())
         {
             /* This simulates receipt of this message from the client
             ** without any network access, so that disconnection logic
             ** is all in one place.
             */
-            psDisconnectMessage discon(pClient->GetClientNum(), pClient->GetActor() && pClient->GetActor()->GetEntity() ? 
-                pClient->GetActor()->GetEntity()->GetID() : 0,"You should not see this.");
+            psDisconnectMessage discon(pClient->GetClientNum(), 0, "You should not see this.");
             if (discon.valid)
             {
                 Connection* connection = pClient->GetConnection();
@@ -512,7 +525,7 @@ void NetManager::CheckLinkDead()
             }
             else
             {
-                Bug2("Failed to create valid psDisconnectMessage for client id %u.\n",pClient->GetClientNum());
+                Bug2("Failed to create valid psDisconnectMessage for client id %u.\n", pClient->GetClientNum());
             }
         }
         else if (pClient->GetConnection()->lastRecvPacketTime+timeout < currenttime)
@@ -539,8 +552,7 @@ void NetManager::CheckLinkDead()
                 ** without any network access, so that disconnection logic
                 ** is all in one place.
                 */
-                psDisconnectMessage discon(pClient->GetClientNum(), pClient->GetActor() && pClient->GetActor()->GetEntity() ? 
-                    pClient->GetActor()->GetEntity()->GetID() : 0,"You are linkdead.");
+                psDisconnectMessage discon(pClient->GetClientNum(), 0, "You are linkdead.");
                 if (discon.valid)
                 {
                     Connection* connection = pClient->GetConnection();
@@ -548,7 +560,7 @@ void NetManager::CheckLinkDead()
                 }
                 else
                 {
-                    Bug2("Failed to create valid psDisconnectMessage for client id %u.\n",pClient->GetClientNum());
+                    Bug2("Failed to create valid psDisconnectMessage for client id %u.\n", pClient->GetClientNum());
                 }
             }
         }
