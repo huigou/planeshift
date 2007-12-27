@@ -19,12 +19,23 @@
 
 #ifndef __PSQUEST_H__
 #define __PSQUEST_H__
+//=============================================================================
+// Crystal Space Includes
+//=============================================================================
+#include <csutil/csstring.h>
+#include <csutil/weakreferenced.h>
+
+//=============================================================================
+// Project Includes
+//=============================================================================
+#include "../iserver/idal.h"
+
+//=============================================================================
+// Local Includes
+//=============================================================================
 
 using namespace CS;
 
-#include <csutil/csstring.h>
-#include <csutil/weakreferenced.h>
-#include "../iserver/idal.h"
 
 #define QUEST_OPT_SAVEONCOMPLETE 0x01
 

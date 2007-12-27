@@ -18,18 +18,26 @@
  */
 
 #include <psconfig.h>
-
+//=============================================================================
+// Crystal Space Includes
+//=============================================================================
 #include <iutil/document.h>
 #include <csutil/xmltiny.h>
 
+//=============================================================================
+// Project Includes
+//=============================================================================
 #include "util/log.h"
 #include "util/strutil.h"
 #include "util/consoleout.h"
 
-#include "../globals.h"
 #include "../psserver.h"
 #include "../cachemanager.h"
+#include "../globals.h"
 
+//=============================================================================
+// Local Includes
+//=============================================================================
 #include "psquest.h"
 #include "psquestprereqops.h"
 #include "dictionary.h"
