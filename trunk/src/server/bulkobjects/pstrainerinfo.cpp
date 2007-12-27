@@ -18,14 +18,24 @@
  */
 
 #include <psconfig.h>
+//=============================================================================
+// Crystal Space Includes
+//=============================================================================
 
+//=============================================================================
+// Project Includes
+//=============================================================================
 #include "util/log.h"
-#include "../globals.h"
-#include "../cachemanager.h"
 #include "util/psdatabase.h"
-#include "../psserver.h"
-#include "pstrainerinfo.h"
 
+#include "../cachemanager.h"
+#include "../psserver.h"
+#include "../globals.h"
+
+//=============================================================================
+// Local Includes
+//=============================================================================
+#include "pstrainerinfo.h"
 #include "psguildinfo.h"
 
 /**
