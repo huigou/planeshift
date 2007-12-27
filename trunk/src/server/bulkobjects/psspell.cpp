@@ -16,31 +16,40 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
  */
-
 #include <psconfig.h>
+//=============================================================================
+// Crystal Space Includes
+//=============================================================================
 #include <csgeom/math.h>
+
 #include <physicallayer/entity.h>
 #include <propclass/mesh.h>
 
+//=============================================================================
+// Project Includes
+//=============================================================================
 #include "util/log.h"
 #include "util/strutil.h"
 #include "util/serverconsole.h"
+#include "util/psdatabase.h"
+#include "util/psxmlparser.h"
+#include "util/mathscript.h"
 
-#include "../globals.h"
 #include "../psserver.h"
 #include "../gem.h"
 #include "../client.h"
 #include "../cachemanager.h"
 #include "../progressionmanager.h"
 #include "../npcmanager.h"
-#include "util/psdatabase.h"
 #include "../playergroup.h"
+#include "../spellmanager.h"
+#include "../globals.h"
 
+//=============================================================================
+// Local Includes
+//=============================================================================
 #include "psspell.h"
 #include "psglyph.h"
-#include "../spellmanager.h"
-#include "util/psxmlparser.h"
-#include "util/mathscript.h"
 #include "psguildinfo.h"
 
 #define SPELL_TOUCH_RANGE   3.0
