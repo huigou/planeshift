@@ -20,6 +20,8 @@
 #ifndef PS_EFFECT_OBJ_TEXTABLE_HEADER
 #define PS_EFFECT_OBJ_TEXTABLE_HEADER
 
+#include <csutil/csstring.h>
+
 enum psEffectTextAlignment
 {
     ETA_LEFT,

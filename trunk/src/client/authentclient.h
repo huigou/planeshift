@@ -25,24 +25,27 @@
 #ifndef __AUTHENTICATIONCLIENT_H__
 #define __AUTHENTICATIONCLIENT_H__
 
-
-///////////////////////////////////////////////////////////////////////////////
-// FORWARD DECLARATIONS
-///////////////////////////////////////////////////////////////////////////////
-class MsgEntry;
-class MsgHandler;
-
-
-///////////////////////////////////////////////////////////////////////////////
-//  CS INCLUDES
-///////////////////////////////////////////////////////////////////////////////
+//=============================================================================
+// Crystal Space Includes
+//=============================================================================
 #include <csutil/ref.h>
 #include <csutil/csstring.h>
 
-///////////////////////////////////////////////////////////////////////////////
-//    PS INCLUDES
-///////////////////////////////////////////////////////////////////////////////
+//=============================================================================
+// Project Includes
+//=============================================================================
 #include "net/cmdbase.h"   // Subscriber class
+
+//=============================================================================
+// Local Includes
+//=============================================================================
+
+
+//=============================================================================
+// FORWARD DECLARATIONS
+//=============================================================================
+class MsgEntry;
+class MsgHandler;
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -71,13 +74,6 @@ class MsgHandler;
  */
 class psAuthenticationClient : public psClientNetSubscriber
 {
-protected:
-    csRef<MsgHandler> msghandler;
-    csString          rejectmsg;
-    int               iClientApproved;
-    char              password[255];
-    char              username[255];    
-    
 public:    
 
     psAuthenticationClient(MsgHandler *myMsgQueue);
@@ -118,6 +114,14 @@ public:
     {
         iClientApproved = NO_RESPONSE;
     };
+
+protected:
+    csRef<MsgHandler> msghandler;
+    csString          rejectmsg;
+    int               iClientApproved;
+    char              password[255];
+    char              username[255];    
+    
     
 private:
     void ShowError();

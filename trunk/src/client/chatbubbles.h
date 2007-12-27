@@ -19,16 +19,24 @@
 
 #ifndef CHAT_BUBBLES_HEADER
 #define CHAT_BUBBLES_HEADER
-
-// CS INCLUDES
+//=============================================================================
+// Crystal Space Includes
+//=============================================================================
 #include <cstypes.h>
 #include <csutil/ref.h>
 #include <csutil/array.h>
 
-// PS INCLUDES
+//=============================================================================
+// Project Includes
+//=============================================================================
 #include "net/subscriber.h"
-#include "psengine.h"
+
 #include "effects/pseffectobjtextable.h"
+
+//=============================================================================
+// Local Includes
+//=============================================================================
+#include "psengine.h"
 
 struct BubbleChatType
 {

@@ -1,15 +1,7 @@
 #include <psconfig.h>
-
-#include "globals.h"
-#include "psengine.h"
-#include "clientcachemanager.h"
-
-#include "charapp.h"
-#include "psclientchar.h"
-#include "util/log.h"
-#include "util/psstring.h"
-#include "engine/materialmanager.h"
-
+//=============================================================================
+// Crystal Space Includes
+//=============================================================================
 #include <iengine/engine.h>
 #include <iengine/material.h>
 #include <iengine/region.h>
@@ -19,6 +11,24 @@
 #include <iutil/object.h>
 #include <ivaria/keyval.h>
 #include <ivideo/shader/shader.h>
+
+//=============================================================================
+// Project Includes
+//=============================================================================
+#include "util/log.h"
+#include "util/psstring.h"
+
+#include "engine/materialmanager.h"
+
+//=============================================================================
+// Local Includes
+//=============================================================================
+#include "charapp.h"
+#include "psengine.h"
+#include "clientcachemanager.h"
+#include "psclientchar.h"
+#include "globals.h"
+
 
 psCharAppearance::psCharAppearance(iObjectRegistry* objectReg)
 {

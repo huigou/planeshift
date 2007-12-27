@@ -17,39 +17,40 @@
  *
  */
 #include <psconfig.h>
-
-/////////////////////////////////////////////////////////////////////////////
-// CS INCLUDES
-/////////////////////////////////////////////////////////////////////////////
+//=============================================================================
+// Crystal Space Includes
+//=============================================================================
 #include <csutil/csmd5.h>
 
-
-/////////////////////////////////////////////////////////////////////////////
-// PLANESHIFT INCLUDES
-/////////////////////////////////////////////////////////////////////////////
-#include "authentclient.h"
+//=============================================================================
+// Project Includes
+//=============================================================================
 #include "net/message.h"
 #include "net/messages.h"
 #include "net/msghandler.h"
+
 #include "util/pserror.h"
 #include "util/log.h"
-#include "engine/netpersist.h"
-#include "iclient/netmanager.h"
-#include "pscelclient.h"
-#include "globals.h"
-#include "psengine.h"
 
-/////////////////////////////////////////////////////////////////////////////
-// PAWS INCLUDES
-/////////////////////////////////////////////////////////////////////////////
+#include "engine/netpersist.h"
+
+#include "iclient/netmanager.h"
+
 #include "gui/pawsinfowindow.h"
 #include "gui/pawsloginwindow.h"
 #include "gui/psmainwidget.h"
+
 #include "paws/pawsokbox.h"
 #include "paws/pawsmanager.h"
-#include "pscharcontrol.h"
-/////////////////////////////////////////////////////////////////////////////
 
+//=============================================================================
+// Local Includes
+//=============================================================================
+#include "authentclient.h"
+#include "pscelclient.h"
+#include "psengine.h"
+#include "pscharcontrol.h"
+#include "globals.h"
 
 
 psAuthenticationClient::psAuthenticationClient(MsgHandler *mymsghandler)
