@@ -16,16 +16,29 @@
 * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 *
 */
-
 #include <psconfig.h>
+//=============================================================================
+// Crystal Space Includes
+//=============================================================================
 #include <iengine/movable.h>
 #include <iengine/mesh.h>
 #include <imesh/objmodel.h>
 #include <imesh/object.h>
-#include "chatbubbles.h"
-#include "pscelclient.h"
+#include <ivideo/graph2d.h>
+
+//=============================================================================
+// Project Includes
+//=============================================================================
 #include "effects/pseffectmanager.h"
 #include "effects/pseffect.h"
+
+//=============================================================================
+// Local Includes
+//=============================================================================
+#include "chatbubbles.h"
+#include "pscelclient.h"
+
+
 
 //#define DISABLE_CHAT_BUBBLES
 

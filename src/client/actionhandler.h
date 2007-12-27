@@ -24,13 +24,23 @@
 */
 #ifndef ACTIONHANDLER_H
 #define ACTIONHANDLER_H
-
+//=============================================================================
+// Crystal Space Includes
+//=============================================================================
 #include <csutil/parray.h>
 #include <csutil/ref.h>
 #include <csutil/weakref.h>
+
+//=============================================================================
+// Project Includes
+//=============================================================================
 #include "net/cmdbase.h"
+
 #include "util/prb.h"
-#include "net/messages.h"
+
+//=============================================================================
+// Local Includes
+//=============================================================================
 
 class  MsgHandler;
 
@@ -40,11 +50,6 @@ class  MsgHandler;
  */
 class ActionHandler : public psClientNetSubscriber
 {
-protected:
-
-    iObjectRegistry*        object_reg;
-    csRef<MsgHandler>        msghandler;
-
 public:
 
     ActionHandler( MsgHandler* mh, iObjectRegistry* object_reg );
@@ -100,6 +105,11 @@ public:
 
     /** Resend the client actions back to the client. */
     void ReloadCache( );
+    
+protected:
+
+    iObjectRegistry*        object_reg;
+    csRef<MsgHandler>        msghandler;    
 };
 
 #endif

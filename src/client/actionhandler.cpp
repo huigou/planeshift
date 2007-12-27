@@ -23,24 +23,34 @@
 *
 */
 #include <psconfig.h>
-
+//=============================================================================
+// Crystal Space Includes
+//=============================================================================
 #include <csutil/objreg.h>
 
-#include "globals.h"
+//=============================================================================
+// Project Includes
+//=============================================================================
 #include "net/messages.h"
 #include "net/msghandler.h"
+
 #include "util/psxmlparser.h"
 #include "util/log.h"
-#include "actionhandler.h"
-
-#include "pscelclient.h"
 
 #include "paws/pawsmanager.h"
 #include "paws/pawscombo.h"
+
 #include "gui/pawsinfowindow.h"
 #include "gui/chatwindow.h"
 #include "gui/pawsgmgui.h"
 #include "gui/pawsgmaction.h"
+
+//=============================================================================
+// Local Includes
+//=============================================================================
+#include "actionhandler.h"
+#include "pscelclient.h"
+#include "globals.h"
 
 
 

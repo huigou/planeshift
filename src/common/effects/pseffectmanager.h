@@ -30,6 +30,7 @@
 #include <csutil/hash.h>
 #include <imap/reader.h>
 #include <ivideo/graph3d.h>
+#include <csutil/scf_implementation.h>
 
 #include "effects/pseffect2drenderer.h"
 
