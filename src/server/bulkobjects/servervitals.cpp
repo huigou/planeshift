@@ -18,12 +18,23 @@
  */
 
 #include <psconfig.h>
+//=============================================================================
+// Crystal Space Includes
+//=============================================================================
 
-#include "servervitals.h"
-#include "../gem.h"
-#include "pscharacter.h"
+//=============================================================================
+// Project Includes
+//=============================================================================
 #include "net/msghandler.h"
 #include "net/netbase.h"
+
+#include "../gem.h"
+
+//=============================================================================
+// Local Includes
+//=============================================================================
+#include "servervitals.h"
+#include "pscharacter.h"
 
 psServerVitals::psServerVitals(psCharacter * character)
 {
