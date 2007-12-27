@@ -16,22 +16,26 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
  */
-
-
-
-
 #include <psconfig.h>
-
+//=============================================================================
+// Crystal Space Includes
+//=============================================================================
 #include <iutil/vfs.h>
 #include <csutil/xmltiny.h>
+
+//=============================================================================
+// Project Includes
+//=============================================================================
+#include "util/log.h"
 
 #include "../psserver.h"
 #include "../cachemanager.h"
 #include "../globals.h"
-#include "util/log.h"
 
+//=============================================================================
+// Local Includes
+//=============================================================================
 #include "psraceinfo.h"
-
 #include "pssectorinfo.h"
 
 psRaceInfo::psRaceInfo()
