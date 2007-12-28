@@ -1,3 +1,6 @@
+*** 2007-12-29 by Anders Reggestad
+- Added alias command to the /path admin command.
+
 *** 2007-12-28 by Kenny Graunke
 - Added the ability to give multiple items and money to NPCs in a single step.
   The syntax is "Player gives Somebody 1 Milk, 5 Eggs, 1 Hexa."

@@ -278,6 +278,20 @@ int Waypoint::Create(iDataConnection *db)
     return loc.id;
 }
 
+bool Waypoint::CreateAlias(iDataConnection * db, csString alias)
+{
+    int res =db->Command("insert into sc_waypoint_aliases(wp_id,alias) values(%d,'%s')",
+                         GetID(),alias.GetDataSafe());
+    if (res != 1)
+    {
+        return false;
+    }
+    
+    AddAlias(alias);
+    return true;
+}
+
+
 bool Waypoint::Adjust(iDataConnection * db, csVector3 & pos, csString sector)
 {
     int result = db->CommandPump("UPDATE sc_waypoints SET x=%.2f,y=%.2f,z=%.2f,"

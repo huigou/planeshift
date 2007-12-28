@@ -85,6 +85,7 @@ public:
     bool CheckWithin(iEngine * engine, const csVector3& pos, const iSector* sector);
 
     int Create(iDataConnection * db);
+    bool CreateAlias(iDataConnection * db, csString alias);
     bool Adjust(iDataConnection * db, csVector3 & pos, csString sector);
     
     /// Set all flags based on the string.

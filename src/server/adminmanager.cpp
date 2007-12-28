@@ -587,6 +587,14 @@ bool AdminManager::AdminCmdData::DecodeAdminCmdMessage(MsgEntry *pMsg, psAdminCm
             radius = words.GetFloat(2);
             if (radius == 0.0) radius = 5.0;
         }
+        else if (subCmd == "alias")
+        {
+            wp1 = words[2];    // Format
+            if (wp1 == "")
+            {
+                help = true;
+            }
+        }
         else if (subCmd == "display" || subCmd == "show")
         {
             // Show is only an alias so make sure subCmd is display
@@ -2270,7 +2278,8 @@ int AdminManager::PathPointCreate(int pathID, int prevPointId, csVector3& pos, c
 
 void AdminManager::HandlePath(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data, Client *client)
 {
-    const char* usage         = "/path adjust|display|format|help|hide|info|point|start|stop [options]";
+    const char* usage         = "/path adjust|alias|display|format|help|hide|info|point|start|stop [options]";
+    const char* usage_alias   = "/path alias <alias>";
     const char* usage_adjust  = "/path adjust [<radius>]";
     const char* usage_display = "/path display|show ['points'|'waypoints']";
     const char* usage_format  = "/path format <format> [first]";
@@ -2299,14 +2308,18 @@ void AdminManager::HandlePath(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
             psserver->SendSystemInfo( me->clientnum,"Usage: %s",usage);
         } else if (data.subCmd == "")
         {
-            psserver->SendSystemInfo( me->clientnum,"Help on /point\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s",
-                                      usage_adjust,usage_display,usage_format,
+            psserver->SendSystemInfo( me->clientnum,"Help on /point\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s",
+                                      usage_adjust,usage_alias,usage_display,usage_format,
                                       usage_help,usage_hide,usage_info,usage_point,
                                       usage_split,usage_start,usage_stop);
         }
         else if (data.subCmd == "adjust")
         {
             psserver->SendSystemInfo( me->clientnum,"Usage: %s",usage_adjust);
+        }
+        else if (data.subCmd == "alias")
+        {
+            psserver->SendSystemInfo( me->clientnum,"Usage: %s",usage_alias);
         }
         else if (data.subCmd == "display")
         {
@@ -2393,6 +2406,29 @@ void AdminManager::HandlePath(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
                                          wp->GetID(),wp->GetName(),rangeWP);
             }
         }
+    }
+    else if (data.subCmd == "alias")
+    {
+        // Find waypoint to alias
+        Waypoint * wp = pathNetwork->FindNearestWaypoint(myPos,mySector,2.0);
+        if (!wp)
+        {
+            psserver->SendSystemError( me->clientnum, "No waypoint nearby.");
+            return;
+        }
+
+        // Check if alias is used before
+        Waypoint * existing = pathNetwork->FindWaypoint(data.wp1.GetDataSafe());
+        if (existing)
+        {
+            psserver->SendSystemError( me->clientnum, "Waypoint already exists with the name %s", data.wp1.GetDataSafe());
+            return;
+        }
+
+        // Create the alias in db
+        wp->CreateAlias(db,data.wp1);
+        psserver->SendSystemInfo( me->clientnum, "Added alias %s to waypoint %d(%s)",
+                                  data.wp1.GetDataSafe(),wp->GetID(),wp->GetName());
     }
     else if (data.subCmd == "format")
     {
