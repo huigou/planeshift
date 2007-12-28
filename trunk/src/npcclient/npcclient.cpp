@@ -191,6 +191,15 @@ bool psNPCClient::Initialize(iObjectRegistry* object_reg,const char *_host, cons
         exit(1);
     }
 
+    world = new psWorld();        
+    if (!world)
+    {
+        CPrintf(CON_ERROR, "could not create world\n");
+        exit(1);
+    }
+    world->Initialize( object_reg );
+
+
     if (!LoadNPCTypes("/this/data/npcbehave.xml"))
     {
         CPrintf(CON_ERROR, "Couldn't load npcbehave.xml.\n");
@@ -923,15 +932,16 @@ NPC* psNPCClient::FindAttachedNPC(iCelEntity *entity)
 
 bool psNPCClient::LoadMap(const char* mapfile)
 {
-    if (!world)
+    static bool first = true;
+
+    if (first)
     {
-        world = new psWorld();        
-        world->Initialize( object_reg );
-        world->CreateMap(mapfile, mapfile,psWorld::LOAD_NOW );
+        world->CreateMap(mapfile, mapfile, psWorld::LOAD_NOW );
+        first = false;
     }
     else
     {        
-        world->NewRegion(mapfile,psWorld::LOAD_NOW);
+        world->NewRegion(mapfile, psWorld::LOAD_NOW);
     }
     return true;
 }
@@ -1096,12 +1106,12 @@ Location *psNPCClient::FindRandomLocation(const char *loctype, csVector3& pos, i
 
 Waypoint *psNPCClient::FindNearestWaypoint(csVector3& v,iSector *sector, float range, float * found_range)
 {
-    return pathNetwork->FindNearestWaypoint(GetWorld(),engine,v,sector,range,found_range);
+    return pathNetwork->FindNearestWaypoint(v,sector,range,found_range);
 }
 
 Waypoint *psNPCClient::FindRandomWaypoint(csVector3& v,iSector *sector, float range, float * found_range)
 {
-    return pathNetwork->FindRandomWaypoint(GetWorld(),engine,v,sector,range,found_range);
+    return pathNetwork->FindRandomWaypoint(v,sector,range,found_range);
 }
 
 Waypoint *psNPCClient::FindWaypoint(int id)

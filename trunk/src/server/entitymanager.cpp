@@ -177,6 +177,9 @@ bool EntityManager::Initialize(iObjectRegistry* object_reg,
     loadFamiliarAffinityAttributes();
     loadFamiliarTypes();
 
+    gameWorld = new psWorld();        
+    gameWorld->Initialize( object_reg );
+
     return true;
 }
 
@@ -937,11 +940,12 @@ bool EntityManager::CreateActionLocation( psActionLocation *instance, bool trans
 
 bool EntityManager::CreateRoom(const char* name, const char* mapfile)
 {
-    if (!gameWorld)
+    static bool first = true;
+    
+    if (first)
     {       
-        gameWorld = new psWorld();        
-        gameWorld->Initialize( object_reg );
         gameWorld->CreateMap( name, mapfile,psWorld::LOAD_NOW, false );        
+        first = false;
     }
     else
     {        

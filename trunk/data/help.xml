@@ -477,14 +477,55 @@ Mutes the named player until they log back in to this server.</topic>
         <topic name="/npc">/npc [master npc name]
 
 Creates a clone of the named NPC at your current location.</topic>
-        <topic name="/path">/path 'help'
-/path 'adjust'
-/path 'create' path_id
-/path 'point'
-/path 'display'|'show'
-/path 'hide'
+        <branch name="/path">Online edit of paths
 
-Manage paths. Use /waypoint link to create a new path between two waypoints. Then use /path to create a nice path with several points between the two waypoints.</topic>
+/path adjust
+/path display|show
+/path format
+/path hide
+/path help
+/path info
+/path point
+/path split
+/path start
+/path stop|end
+
+To create a path you need to do the following commands:
+1) /path format &lt;format&gt;
+2) /path start
+3) /path point (Any number of times)
+4) /path stop
+           <topic name="/path adjust">/path adjust [&lt;radius&gt;]
+
+Adjust the position of the nearest path point to your current position.</topic>
+           <topic name="/path display|show">/path display|show [Points|Waypoints]
+
+Display all waypoints and points unless either points or waypoints is specefied. In that case only points or waypoints are displayed.</topic>
+           <topic name="/path format">/path format &lt;format&gt; [first]
+
+Set up the format to be used for waypoint name when creating new waypoints. Use /path format wp%03d 10 to create waypoints with name wp010, wp011,... First waypoint will be added when /path start is used in an location where there are no waypoint from before.</topic>
+           <topic name="/path help">/path help [sub command]
+
+Display a short summary of commands or detailed syntax for a sub command if given.</topic>
+           <topic name="/path hide">/path hide [Points|Waypoints]
+
+Hide all points. If waypoints or points are specified only either points or waypoints are hidden.</topic>
+           <topic name="/path info">/path info
+
+Show info about the nearest path or waypoint.</topic>
+           <topic name="/path point">/path point
+
+Add a new point to the current path at your position.</topic>
+           <topic name="/path split">/path split &lt;radius&gt; [WP flags]
+
+Split a path into two paths inserting a new waypoint with name according to whats set with /path format.</topic>
+           <topic name="/path start">/path start &lt;radius&gt; [WP flags] [Path flags]
+
+Start a new path. If there are a waypoint nearby the waypoint is used to start the path. Otherwise a new waypoint is created.</topic>
+           <topic name="/path stop|end">/path stop|end &lt;radius&gt; [WP flags]
+
+Stop the current path. If there are a waypoint nearby the waypoint is used to end the path. Otherwise a new aypoint is created.</topic>
+        </branch>
         <topic name="/petition_manage">/petition_manage
 
 Manage petitions to help users.</topic>
@@ -558,15 +599,6 @@ Unmute the named player.</topic>
         <topic name="/warn">/warn target message
 
 Send a warning message to a player in big, red, un-ignorable text on their screen and in all chat tabs.</topic>
-
-        <topic name="/waypoint">/waypoint 'add' radius [flags]
-/waypoint 'create' WP radius [flags]
-/waypoint 'link' WP1 WP2 [flags]
-/waypoint 'path' format [first]
-/waypoint 'display'|'show'
-/waypoint 'hide'
-
-Manage waypoints. Use /waypoint create WP to create a new waypoint with name WP. Use /waypoint path format to start a new path. Use /waypoint path wp%03d 10 to create waypoints with name wp010, wp011,... First waypoint will be added when /waypoint add is used. /waypoint link WP1 WP2 could be used to link two waypoints. /waypoint display will display all waypoints in sector and /waypoint hide will hide all waypoints.</topic>
         <topic name="/weather"> /weather sector [on|off]
 
 Turn on or off automatic weather for a sector. </topic>

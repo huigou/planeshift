@@ -833,6 +833,11 @@ UPDATE `server_options` SET `option_value`='1171' WHERE `option_name`='db_versio
 ALTER TABLE sc_waypoints MODIFY COLUMN `flags` varchar(100) DEFAULT '';
 UPDATE `server_options` SET `option_value`='1172' WHERE `option_name`='db_version';
 
+#### 1173 - Anders Reggestad - Added aliases for waypoints.
+source sc_waypoint_aliases.sql;
+delete from command_group_assignment where command_name="/waypoint";
+UPDATE `server_options` SET `option_value`='1173' WHERE `option_name`='db_version';
+
 #
 # Insert your upgrade before this line. Remember when you set a new db_version
 # to update the server_options.sql file and update psserver.cpp as well.

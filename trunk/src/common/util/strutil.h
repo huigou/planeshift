@@ -19,7 +19,9 @@
 #ifndef __STRUTIL_H__
 #define __STRUTIL_H__
 
-// CS INCLUDES
+//=============================================================================
+// Crystal Space Includes
+//=============================================================================
 #include <csutil/array.h>
 #include <csutil/stringarray.h>
 #include <csutil/csstring.h>
@@ -28,7 +30,7 @@
 #include <csgeom/matrix3.h>
 #include <csgeom/transfrm.h>
 
-
+class psString;
 
 void Split(const csString& str, csArray<csString> & arr);
 
@@ -100,7 +102,7 @@ bool psContain(const csString& str, const csArray<csString>& strs);
 bool psSentenceContain(const csString& sentence,const csString& word);
 const char* PS_GetFileName(const char* path);
 csArray<csString> psSplit(csString& str, char delimer);
-
+bool isFlagSet(const psString & flagstr, const char * flag);
 csString toString(const csVector3& pos);
 csString toString(const csVector3& pos, iSector* sector);
 csString toString(const csMatrix3& mat);

@@ -56,7 +56,7 @@ Client::Client ()
     : accumulatedLag(0), zombie(false), ready(false), mute(false), 
       accountID(0), playerID(0), securityLevel(0), superclient(false),
       name(""), waypointEffectID(0), waypointIsDisplaying(false),
-      pathEffectID(0), pathPathID(0), pathIsDisplaying(false),
+      pathEffectID(0), pathPath(NULL), pathIsDisplaying(false),
       locationEffectID(0), locationIsDisplaying(false)
 {
     actor           = 0;

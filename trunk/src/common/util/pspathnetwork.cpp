@@ -36,6 +36,12 @@
 
 bool psPathNetwork::Load(iEngine *engine, iDataConnection *db,psWorld * world)
 {
+    // First initialize pointers to some importent classes
+    this->engine = engine;
+    this->db = db;
+    this->world = world;
+    
+
     Result rs(db->Select("select wp.*,s.name as sector from sc_waypoints wp, sectors s where wp.loc_sector_id = s.id"));
 
     if (!rs.IsValid())
@@ -49,7 +55,13 @@ bool psPathNetwork::Load(iEngine *engine, iDataConnection *db,psWorld * world)
 
         if (wp->Load(rs[i],engine))
         {
-           waypoints.Push(wp);
+            Result rs2(db->Select("select alias from sc_waypoint_aliases where wp_id=%d",wp->GetID()));
+            for (int j=0; j<(int)rs2.Count(); j++)
+            {
+                wp->AddAlias(rs2[j][0]);
+            }
+
+            waypoints.Push(wp);
         }
         else
         {
@@ -71,11 +83,7 @@ bool psPathNetwork::Load(iEngine *engine, iDataConnection *db,psWorld * world)
     {
         Waypoint * wp1 = FindWaypoint(rs1[i].GetInt("wp1"));
         Waypoint * wp2 = FindWaypoint(rs1[i].GetInt("wp2"));
-        psString flagstr(rs1[i]["flags"]);
-
-        bool oneWay = flagstr.FindSubString("ONEWAY",0,true)!=-1;
-        bool preventWander = flagstr.FindSubString("NO_WANDER",0,true)!=-1;
-
+        psString flagStr(rs1[i]["flags"]);
 
         int pathId = rs1[i].GetInt("id");
         
@@ -84,36 +92,24 @@ bool psPathNetwork::Load(iEngine *engine, iDataConnection *db,psWorld * world)
         psPath * path;
         if (strcasecmp(pathType,"linear") == 0)
         {
-            path = new psLinearPath(pathId,rs1[i]["name"]);
+            path = new psLinearPath(pathId,rs1[i]["name"],flagStr);
         } else
         {
-            path = new psLinearPath(pathId,rs1[i]["name"]); // For now
+            path = new psLinearPath(pathId,rs1[i]["name"],flagStr); // For now
         }
 
-        path->AddPoint(&wp1->loc);
+        path->SetStart(wp1);
         path->Load(db,engine);
-        path->AddPoint(&wp2->loc);
-        path->start = wp1;
-        path->end = wp2;
+        path->SetEnd(wp2);
         paths.Push(path);
 
         float dist = path->GetLength(world,engine);
                                     
-        wp1->links.Push(wp2);
-        wp1->paths.Push(path);
-        wp1->pathDir.Push(psPath::FORWARD);
-        wp1->dists.Push(dist);
-        wp1->prevent_wander.Push(preventWander);
-        
-        if (!oneWay)
+        wp1->AddLink(path,wp2,psPath::FORWARD,dist);
+        if (!path->oneWay)
         {
-            wp2->links.Push(wp1);  // bi-directional link is implied
-            wp2->paths.Push(path);
-            wp1->pathDir.Push(psPath::REVERSE);
-            wp2->dists.Push(dist);
-            wp2->prevent_wander.Push(preventWander);
+            wp2->AddLink(path,wp1,psPath::REVERSE,dist); // bi-directional link is implied
         }
-        
     }
     
     
@@ -148,16 +144,25 @@ Waypoint *psPathNetwork::FindWaypoint(const char * name)
     {
         wp = iter.Next();
 
+        // Check name
         if (strcasecmp(wp->GetName(),name)==0)
         {
             return wp;
+        }
+        // Check for aliases
+        for (size_t i = 0; i < wp->aliases.GetSize(); i++)
+        {
+            if (strcasecmp(wp->aliases[i],name)==0)
+            {
+                return wp; // Found name in aliases
+            }
         }
     }
     
     return NULL;
 }
 
-Waypoint *psPathNetwork::FindNearestWaypoint(psWorld * world,iEngine *engine, csVector3& v,iSector *sector, float range, float * found_range)
+Waypoint *psPathNetwork::FindNearestWaypoint(csVector3& v,iSector *sector, float range, float * found_range)
 {
     csArray<Waypoint*>::Iterator iter(waypoints.GetIterator());
     Waypoint *wp;
@@ -183,7 +188,7 @@ Waypoint *psPathNetwork::FindNearestWaypoint(psWorld * world,iEngine *engine, cs
     return min_wp;
 }
 
-Waypoint *psPathNetwork::FindRandomWaypoint(psWorld *world,iEngine *engine,csVector3& v,iSector *sector, float range, float * found_range)
+Waypoint *psPathNetwork::FindRandomWaypoint(csVector3& v,iSector *sector, float range, float * found_range)
 {
     csArray<Waypoint*>::Iterator iter(waypoints.GetIterator());
     Waypoint *wp;
@@ -216,6 +221,40 @@ Waypoint *psPathNetwork::FindRandomWaypoint(psWorld *world,iEngine *engine,csVec
 
     return NULL;
 }
+
+
+psPath *psPathNetwork::FindNearestPath(csVector3& v,iSector *sector, float range, float * found_range, int * index)
+{
+    psPath * found = NULL;
+    int idx = -1;
+    int tmpIdx;
+ 
+    for (size_t p = 0; p < paths.GetSize(); p++)
+    {
+        float dist2 = paths[p]->Distance(world,engine,v,sector,&tmpIdx);
+                    
+        if (range < 0 || dist2 < range)
+        {
+            found = paths[p];
+            range = dist2;
+            idx = tmpIdx;
+        }
+    }
+    if (found)
+    {
+        if (found_range)
+        {
+            *found_range = range;
+        }
+        if (index)
+        {
+            *index = idx;
+        }
+    }
+    return found;
+}
+
+
 
 csList<Waypoint*> psPathNetwork::FindWaypointRoute(Waypoint * start, Waypoint * end)
 {
@@ -379,4 +418,66 @@ psPath   *psPathNetwork::FindPath(const Waypoint * wp1, const Waypoint * wp2, ps
     }
 
     return NULL;
+}
+
+Waypoint* psPathNetwork::CreateWaypoint(csString& name, 
+                                        csVector3& pos, csString& sectorName,
+                                        float radius, csString& flags)
+{
+
+    Waypoint *wp = new Waypoint(name,pos,sectorName,radius,flags);
+
+    if (!wp->Create(db))
+    {
+        delete wp;
+        return NULL;
+    }
+
+    waypoints.Push(wp);
+
+    return wp;
+}
+
+psPath* psPathNetwork::CreatePath(const csString& name, Waypoint* wp1, Waypoint* wp2,
+                                  const csString& flags)
+{
+    psPath * path = new psLinearPath(name,wp1,wp2,flags);
+
+    return CreatePath(path);
+}
+
+psPath* psPathNetwork::CreatePath(psPath * path)
+{
+    if (!path->Create(db))
+    {
+        delete path;
+        return NULL;
+    }
+    
+    paths.Push(path);
+
+    float dist = path->GetLength(world,engine); 
+    
+    path->start->AddLink(path,path->end,psPath::FORWARD,dist);
+    if (!path->oneWay)
+    {
+        path->end->AddLink(path,path->start,psPath::REVERSE,dist); // bi-directional link is implied
+    }
+
+    return path;
+}
+
+
+int psPathNetwork::GetNextWaypointCheck()
+{
+    static int check = 0;
+    return ++check;
+}
+
+bool psPathNetwork::Delete(psPath * path)
+{
+    db->CommandPump("delete from sc_path_points where path_id=%d",path->GetID());
+    db->CommandPump("delete from sc_waypoint_links where id=%d",path->GetID());
+
+    return true;
 }

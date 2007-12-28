@@ -50,6 +50,9 @@ class psItem;
 struct Result;
 class iResultSet;
 class Client;
+class psPathNetwork;
+class psPath;
+class Waypoint;
 
 // List of GM levels and their security level.
 enum GM_LEVEL
@@ -124,7 +127,7 @@ protected:
         int rainDrops, density, fade;
         unsigned int mins, hours, days;
         float amt, x, y, z, rot;
-        bool uniqueName;
+        bool uniqueName,help;
         float radius, range;
         unsigned short stackCount;
         int instance;
@@ -204,12 +207,6 @@ protected:
 
     /// Get the marriage info of a player.
     void ViewMarriage(MsgEntry* me, AdminCmdData& data);
-
-    /// Add new wp to DB
-    int WaypointCreate(csString& name, csVector3& pos, csString& sectorName, float radius, csString& flags);
-    
-    /// Handle online waypoint editing.
-    void HandleWaypoint( MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data, Client *client );
 
     /// Add new Path point to DB
     int PathPointCreate(int pathID, int prevPointId, csVector3& pos, csString& sectorName);
@@ -398,8 +395,6 @@ protected:
 
     ClientConnectionSet* clients;
    
-//    csRef<iCelEntity> entity;
-
     //! Holds a dummy dialog.
     /*! We may need this later on when NPC's are inserted.  This also
      * insures that the dicitonary will always exist.  There where some 
@@ -407,6 +402,10 @@ protected:
      * initial npc was added. This prevents that
      */
     psNPCDialog *npcdlg;
+
+    /** Holds the entire PathNetwork for editing of paths.
+     */
+    psPathNetwork * pathNetwork;
 };
 
 #endif

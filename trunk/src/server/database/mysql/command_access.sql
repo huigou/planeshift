@@ -49,7 +49,6 @@ INSERT INTO command_group_assignment VALUES( "/location", 30 );
 INSERT INTO command_group_assignment VALUES( "/killnpc", 30 );
 INSERT INTO command_group_assignment VALUES( "/npc", 30 );
 INSERT INTO command_group_assignment VALUES( "/path", 30 );
-INSERT INTO command_group_assignment VALUES( "/waypoint", 30 );
 INSERT INTO command_group_assignment VALUES( "/reload", 30 );
 
 # GM5 and above

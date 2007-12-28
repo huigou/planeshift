@@ -18,6 +18,9 @@
 */
 #include <psconfig.h>
 
+//=============================================================================
+// Crystal Space Includes
+//=============================================================================
 #include <iutil/objreg.h>
 #include <iutil/object.h>
 #include <csutil/csobject.h>
@@ -26,10 +29,14 @@
 #include <csutil/xmltiny.h>
 #include <iengine/engine.h>
 
+//=============================================================================
+// Project Includes
+//=============================================================================
 #include "util/waypoint.h"
 #include "util/location.h"
 #include "util/log.h"
 #include "util/psstring.h"
+#include "util/strutil.h"
 
 
 Waypoint::Waypoint()
@@ -47,6 +54,22 @@ Waypoint::Waypoint(const char* name)
     loc.name = name;
 }
 
+Waypoint::Waypoint(csString& name, 
+                   csVector3& pos, csString& sectorName,
+                   float radius, csString& flags)
+{
+    distance = 0.0;
+    pi = NULL;
+    loc.id = -1;
+    loc.name = name;
+    loc.pos = pos;
+    loc.sectorName = sectorName;
+    loc.sector = NULL;
+    loc.radius = radius;
+    loc.rot_angle = 0.0;
+    
+    SetFlags(flags);
+}
 
 bool Waypoint::Load(iDocumentNode *node, iEngine * engine)
 {
@@ -92,12 +115,7 @@ bool Waypoint::Import(iDocumentNode *node, iEngine * engine, iDataConnection *db
     values.FormatPush("%.2f",loc.pos.z);
     values.FormatPush("%d",loc.GetSectorID(db,loc.sectorName));
     values.FormatPush("%.2f",loc.radius);
-    csString flagStr;
-    if (allow_return)
-    {
-        flagStr.Append("ALLOW_RETURN");
-    }
-    values.Push(flagStr);
+    values.Push(GetFlags());
 
     if (loc.id == -1)
     {
@@ -117,11 +135,6 @@ bool Waypoint::Import(iDocumentNode *node, iEngine * engine, iDataConnection *db
     return true;
 }
 
-bool isFlagSet(const psString & flagstr, const char * flag)
-{
-    return flagstr.FindSubString(flag,0,XML_CASE_INSENSITIVE)!=-1;
-}
-
 bool Waypoint::Load(iResultRow& row, iEngine *engine)
 {
     loc.id         = row.GetInt("id");
@@ -134,8 +147,28 @@ bool Waypoint::Load(iResultRow& row, iEngine *engine)
     loc.radius     = row.GetFloat("radius");
     loc.rot_angle  = 0.0;
 
-    psString flagstr(row["flags"]);
+    SetFlags(row["flags"]);
 
+    return true;
+}
+
+void Waypoint::AddLink(psPath * path, Waypoint * wp, psPath::Direction direction, float distance)
+{
+    links.Push(wp);
+    paths.Push(path);
+    pathDir.Push(direction);
+    dists.Push(distance);
+    prevent_wander.Push(path->noWander);
+}
+
+void Waypoint::AddAlias(csString alias)
+{
+    aliases.Push(alias);
+}
+
+
+void Waypoint::SetFlags(const csString & flagstr)
+{
     allow_return = isFlagSet(flagstr,"ALLOW_RETURN");
     underground  = isFlagSet(flagstr,"UNDERGROUND");
     underwater   = isFlagSet(flagstr,"UNDERWATER");
@@ -143,8 +176,119 @@ bool Waypoint::Load(iResultRow& row, iEngine *engine)
     pub          = isFlagSet(flagstr,"PUBLIC");
     city         = isFlagSet(flagstr,"CITY");
     indoor       = isFlagSet(flagstr,"INDOOR");
+}
 
-    return true;
+csString Waypoint::GetFlags()
+{
+    csString flagStr;
+    bool added = false;
+    if (allow_return)
+    {
+        if (added) flagStr.Append(", ");
+        flagStr.Append("ALLOW_RETURN");
+        added = true;
+    }
+    if (underground)
+    {
+        if (added) flagStr.Append(", ");
+        flagStr.Append("UNDERGROUND");
+        added = true;
+    }
+    if (underwater)
+    {
+        if (added) flagStr.Append(", ");
+        flagStr.Append("UNDERWATER");
+        added = true;
+    }
+    if (priv)
+    {
+        if (added) flagStr.Append(", ");
+        flagStr.Append("PRIVATE");
+        added = true;
+    }
+    if (pub)
+    {
+        if (added) flagStr.Append(", ");
+        flagStr.Append("PUBLIC");
+        added = true;
+    }
+    if (city)
+    {
+        if (added) flagStr.Append(", ");
+        flagStr.Append("CITY");
+        added = true;
+    }
+    if (indoor)
+    {
+        if (added) flagStr.Append(", ");
+        flagStr.Append("INDOOR");
+        added = true;
+    }
+    return flagStr;
+}
+
+csString Waypoint::GetAliases()
+{
+    csString str;
+    
+    for (size_t i = 0; i < aliases.GetSize(); i++)
+    {
+        if (i != 0) str.Append(", ");
+        str.Append(aliases[i]);
+    }
+    return str;
+}
+
+
+int Waypoint::Create(iDataConnection *db)
+{
+    const char *fieldnames[]=
+        {
+            "name",
+            "x",
+            "y",
+            "z",
+            "radius",
+            "flags",
+            "loc_sector_id"
+        };
+
+    psStringArray values;
+    values.FormatPush("%s", loc.name.GetDataSafe());
+    values.FormatPush("%10.2f",loc.pos.x);
+    values.FormatPush("%10.2f",loc.pos.y);
+    values.FormatPush("%10.2f",loc.pos.z);
+    values.FormatPush("%10.2f",loc.radius);
+    values.FormatPush("%s",GetFlags().GetDataSafe());
+    values.FormatPush("0");
+
+    loc.id = db->GenericInsertWithID("sc_waypoints",fieldnames,values);
+
+    if (loc.id==0)
+    {
+        Error2("Failed to create new WP Error %s",db->GetLastError());
+        return -1;
+    }
+
+    psString cmd;
+    cmd.Format("update sc_waypoints set loc_sector_id=(select id from sectors where name='%s') where id=%d",
+               loc.sectorName.GetDataSafe(),loc.id);
+    db->Command(cmd);
+    
+    return loc.id;
+}
+
+bool Waypoint::Adjust(iDataConnection * db, csVector3 & pos, csString sector)
+{
+    int result = db->CommandPump("UPDATE sc_waypoints SET x=%.2f,y=%.2f,z=%.2f,"
+                                 "loc_sector_id=(select id from sectors where name='%s') WHERE id=%d",
+                                 pos.x,pos.y,pos.z,sector.GetDataSafe(),loc.id);
+
+    loc.pos = pos;
+    loc.sectorName = sector;
+    loc.sector = NULL;
+
+    return (result == 1);
 }
 
 bool Waypoint::CheckWithin(iEngine * engine, const csVector3& pos, const iSector* sector)
@@ -158,3 +302,4 @@ bool Waypoint::CheckWithin(iEngine * engine, const csVector3& pos, const iSector
     
     return false;
 }
+
