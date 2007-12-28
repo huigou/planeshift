@@ -480,6 +480,7 @@ Creates a clone of the named NPC at your current location.</topic>
         <branch name="/path">Online edit of paths
 
 /path adjust
+/path alias
 /path display|show
 /path format
 /path hide
@@ -498,6 +499,9 @@ To create a path you need to do the following commands:
            <topic name="/path adjust">/path adjust [&lt;radius&gt;]
 
 Adjust the position of the nearest path point to your current position.</topic>
+           <topic name="/path alias">/path alias [&lt;alias&gt;]
+
+Add a alias to the nearest waypoint.</topic>
            <topic name="/path display|show">/path display|show [Points|Waypoints]
 
 Display all waypoints and points unless either points or waypoints is specefied. In that case only points or waypoints are displayed.</topic>

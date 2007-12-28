@@ -536,7 +536,9 @@ bool psEngine::Initialize (int level)
         questionclient = new psQuestionClient(GetMsgHandler(), object_reg);
         
         if (cmdline)
+        {
             celclient->IgnoreOthers(cmdline->GetBoolOption("ignore_others"));
+        }
 
         zonehandler->SetLoadAllMaps(GetConfig()->GetBool("Planeshift.Client.Loading.AllMaps",false));
         zonehandler->SetKeepMapsLoaded(GetConfig()->GetBool("Planeshift.Client.Loading.KeepMaps",false));
@@ -544,7 +546,9 @@ bool psEngine::Initialize (int level)
         materialmanager.AttachNew(new MaterialManager(object_reg, preloadModels));
         
         if(preloadModels)
+        {
             materialmanager->PreloadTextures();
+        }
 
         if (!celclient->Initialize(object_reg, GetMsgHandler(), zonehandler))
         {
@@ -744,11 +748,15 @@ bool psEngine::HandleEvent (iEvent &ev)
     if (ev.Name == event_preprocess)
     {
         if (gameLoaded)
+        {
             modehandler->PreProcess();
+        }
 
         // If any objects or actors are enqueued to be created, create the next one this frame.
         if (celclient)
+        {
             celclient->CheckEntityQueues();
+        }
 
         // Loading the game
         if (loadstate != LS_DONE)
