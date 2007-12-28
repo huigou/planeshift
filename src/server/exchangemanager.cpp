@@ -505,43 +505,37 @@ void ExchangingCharacter::GetSimpleOffering(csString& buff, psCharacter *chr, bo
     csString moneystr = offeringMoney.ToString();
     if (exact)
     {
-        buff.Format("<L MONEY=\"%s\">", moneystr.GetData() );
+        buff.Format("<l money=\"%s\">", moneystr.GetData() );
     }
     else
     {
-        buff.Format("<L MONEY=\"0,0,0,%d\">", offeringMoney.GetTotal());        
+        buff.Format("<l money=\"0,0,0,%d\">", offeringMoney.GetTotal());        
     }
     
     
-    unsigned int z;
+    psStringArray xmlItems;
 
-    for ( z = 0; z < EXCHANGE_SLOT_COUNT; z++ )
+    for (unsigned int i = 0; i < EXCHANGE_SLOT_COUNT; i++)
     {
-        psCharacterInventory::psCharacterInventoryItem *itemInSlot = chrinv->FindExchangeSlotOffered(z);
+        psCharacterInventory::psCharacterInventoryItem *itemInSlot = chrinv->FindExchangeSlotOffered(i);
         psItem *item = (itemInSlot) ? itemInSlot->GetItem() : NULL;
         if (item)
         {
-            csString itemStr;
-//            if ((item->GetCrafterID() == 0) || (item->GetCrafterID() != chr->GetActor()->GetPlayerID()))
-//            {
-                itemStr.Format("<ITEM N=\"%s\" "
-                           "C=\"%d\" />",
-                           item->GetName(),
-                           itemInSlot->exchangeStackCount);
-//            }
-//            else
-//            {
-//                itemStr.Format("<ITEM N=\"%s\" "
-//                           "C=\"%d\" Q=\"%s\" />",
-//                           item->GetName(),
-//                           itemInSlot->exchangeStackCount,
-//                           item->GetQualityString());
-//            }
-            buff.Append(itemStr);
+            xmlItems.FormatPush("<item n=\"%s\" c=\"%d\"/>", item->GetName(),
+                                itemInSlot->exchangeStackCount);
         }
     }
 
-    buff.Append("</L>");
+    // We need to sort the items to match the same order as the triggers;
+    // QuestManager::ParseItemList also does this.
+    xmlItems.Sort();
+
+    for (size_t i = 0; i < xmlItems.GetSize(); i++)
+    {
+        buff.Append(xmlItems[i]);
+    }
+
+    buff.Append("</l>");
 }
 
 /*

@@ -74,9 +74,9 @@ protected:
     bool GetResponseText(csString& block,csString& response,csString& error,
                          csString& him, csString& her, csString& it, csString& them);
     bool BuildTriggerList(csString& block,csStringArray& list);
-    bool ParseItemList(WordArray& words,size_t startWord,csString& itemlist);
     int GetNPCFromBlock(WordArray words,csString& current_npc);
-    void FormatItem(csString& itemlist,size_t count, csString& quality_string, csString& item_name);
+    bool ParseItemList(const csString & input, csString & parsedItemList);
+    bool ParseItem(const char *text, psStringArray & xmlItems, psMoney & money);
 
     NpcResponse *AddResponse(csString& current_npc,const char *response_text,
                              int& last_response_id, psQuest * quest,

@@ -1,3 +1,9 @@
+*** 2007-12-28 by Kenny Graunke
+- Added the ability to give multiple items and money to NPCs in a single step.
+  The syntax is "Player gives Somebody 1 Milk, 5 Eggs, 1 Hexa."
+  Items can be specified in any order, and mixed with coins.
+- Added a test script for multiple items - tell MaleEnki "hungry" to start it.
+
 *** 2007-12-28 by Anders Reggestad
 - Removed the admin command /waypoint that where deprecated by
   the /path command.

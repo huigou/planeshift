@@ -36,6 +36,7 @@ INSERT INTO quests VALUES("12","Male Enki Trusted Transport","Transport the glyp
 INSERT INTO quests VALUES("13","Male Enki Lost Found","Get Key","0","0","0","0","300","60","Newbie","");
 INSERT INTO quests VALUES("14","Flying a Kite","Up up and a way on a windy day!","0","0","0","0","1","1","Newbie",'<pre><activemagic name="+DefensiveWind"/></pre>');
 INSERT INTO quests VALUES("15","Reverse Word Lookup", "Tests checking each word in a phrase as as trigger", 0, 0, 0, 0, 1, 1, "Newbie", "");
+INSERT INTO quests VALUES("16","Multiple item test", "Tests giving multiple items and money at the same time", 0, 0, 0, 0, 1, 1, "Newbie", "");
 
 #
 # Quest Test Case quests
