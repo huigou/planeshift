@@ -134,15 +134,6 @@ struct psItemCategory;
 class psScheduledItem;
 class psWorkGameEvent;
 
-enum ITEM_ORIGIN
-{
-   ITEM_DB_LOAD = 1, //loaded from DB
-   ITEM_CLONE,   //created from a Copy(), as in purchasing something
-   ITEM_CACHE,   //created by CacheManager
-   ITEM_MONEY,   //created by psserverchar::MakeMoneyItem
-   ITEM_BASIC   //created by psitemstats::instantiateBasicItem
-};
-
 #define  ITEM_DECAY_FACTOR_PARRY   0.75F  // If the target parries the blow, how much is his weapon damaged by blocking the attacker
 #define  ITEM_DECAY_FACTOR_BLOCKED 1.25F   // If the target parries the blow, how much is the attacker's weapon damaged by getting blocked
 
