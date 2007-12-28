@@ -237,7 +237,7 @@ bool QuestManager::HandlePlayerAction(csString& block, size_t& which_trigger,csS
         }
 
         csString itemlist;
-        if (ParseItemList(words,2+numwords,itemlist))
+        if (ParseItemList(words.GetTail(2+numwords), itemlist))
         {
             pending_triggers.Empty();
             pending_triggers.Push(itemlist);  // next response will use this itemlist
@@ -731,99 +731,94 @@ int QuestManager::GetNPCFromBlock(WordArray words,csString& current_npc)
     return -1;
 }
 
-void QuestManager::FormatItem(csString& itemlist,size_t count, csString& quality_string, csString& item_name)
+bool QuestManager::ParseItemList(const csString & input, csString & parsedItemList)
 {
-    item_name.Downcase();
+    // Eat the trailing period...
+    csString tidyInput(input);
+    tidyInput.RTrim();
+    if (tidyInput.Length() > 1 && tidyInput[tidyInput.Length()-1] == '.')
+        tidyInput.DeleteAt(tidyInput.Length()-1);
 
-    // Required format is like: <l money="0,0,0,0"><item n="Small Battle Axe" c="1" /></l>
-    if (item_name == "circle" || item_name == "circles")
+    // Syntax is a comma separated list... "Player gives Smith 5 Gold Ore, 4 Iron Ore."
+    csStringArray inputItems;
+    inputItems.SplitString(tidyInput, ",", csStringArray::delimIgnore);
+
+    psStringArray xmlItems;
+    psMoney money;
+
+    for (size_t i = 0; i < inputItems.GetSize(); i++)
     {
-        itemlist.Format("<l money=\"%zu,0,0,0\">", count);
+        if (!ParseItem(inputItems[i], xmlItems, money))
+            return false;
     }
-    else if (item_name == "octa" || item_name == "octas")
+
+    // We sort the list of items, and expect ExchangeManager to do the same...
+    // That way, items can be offered in any order.
+    xmlItems.Sort();
+
+    parsedItemList.Format("<l money=\"%s\">", money.ToString().GetData());
+    for (size_t i = 0; i < xmlItems.GetSize(); i++)
     {
-        itemlist.Format("<l money=\"0,%zu,0,0\">", count);
+        parsedItemList.Append(xmlItems[i]);
     }
-    else if (item_name == "hexa" || item_name == "hexas")
-    {
-        itemlist.Format("<l money=\"0,0,%zu,0\">", count);
-    }
-    else if (item_name == "tria" || item_name == "trias") 
-    {
-        itemlist.Format("<l money=\"0,0,0,%zu\">", count);
-    }
-    else
-    { 
-        if (!itemlist.Length())
-            itemlist = "<l money=\"0,0,0,0\">";
-        if (quality_string.Compare(""))
-            itemlist.AppendFmt("<item n=\"%s\" c=\"%zu\" />",item_name.GetData(),count);
-        else
-            itemlist.AppendFmt("<item n=\"%s\" c=\"%zu\" q=\"%s\" />",item_name.GetData(),count, quality_string.GetData());
-    }
+    parsedItemList.Append("</l>");
+
+    Debug2(LOG_QUESTS, 0, "Item list parsing created this: %s", parsedItemList.GetData());
+    return true;
 }
 
-bool QuestManager::ParseItemList(WordArray& words,size_t startWord,csString& itemlist)
+bool QuestManager::ParseItem(const char *text, psStringArray & xmlItems, psMoney & money)
 {
-    size_t i=startWord;
-    size_t count=1;
-    csString quality_string = "";
-    csString item_name;
+    WordArray words(text);
+    int itemCount;
+    csString itemName;
 
-    itemlist.Clear();
+    if (words.GetCount() < 1)
+        return false;
 
-    while (i<words.GetCount() )
+    // Get the number of items required, if specified...otherwise assume 1.
+    // The rest of the text is the item name.
+    if (words.GetInt(0))
     {
-        if (words.GetInt(i)) // if count is specified, get it
-        {
-            if (item_name.Length())
-                FormatItem(itemlist,count,quality_string,item_name);
-            item_name = "";
-
-            count = words.GetInt(i++);
-        }
-        else if (words[i].CompareNoCase("an") || words[i].CompareNoCase("a") || words[i].CompareNoCase("the"))
-        {
-            if (item_name.Length())
-                FormatItem(itemlist,count,quality_string,item_name);
-            item_name = "";
-
-            count = 1;
-            i++;  // skip articles
-        }
-        else if (words[i].CompareNoCase("quality"))
-        {
-            i++; // skip quality label
-            quality_string = words[i++];
-            quality_string = quality_string.Slice(0,quality_string.Find("."));
-            if (quality_string.Length())
-                FormatItem(itemlist,count,quality_string,item_name);
-            item_name = "";
-        }
-        else
-        {
-            if (item_name.Length())
-                item_name.Append(' ');
-            item_name.Append(words[i++]);
-            if (ispunct(item_name[item_name.Length()-1]))
-                item_name.DeleteAt(item_name.Length()-1);
-        }
+        itemCount = words.GetInt(0);
+        itemName = words.GetTail(1);
     }
-    if (item_name.Length())
+    else
     {
-        // check if the item exists in db
-        psItemStats* itemstat = CacheManager::GetSingleton().GetBasicItemStatsByName(item_name);
-        if (itemstat==NULL)
-        {
-            Error2("ERROR Loading quests: Item %s doesn't exist in database", item_name.GetDataSafe());
-            lastError.Format("Item %s does not exist", item_name.GetDataSafe());
-            return false;
-        }
-        FormatItem(itemlist,count,quality_string,item_name);
+        itemCount = 1;
+        itemName = words.GetTail(0);
     }
-    itemlist.Append("</l>");
+    itemName.Collapse();
 
-    Debug2( LOG_QUESTS, 0,"Item list parsing created this: %s", itemlist.GetData() );
+    // check if the item exists in db
+    if (itemName.IsEmpty() || !CacheManager::GetSingleton().GetBasicItemStatsByName(itemName))
+    {
+        Error2("ERROR Loading quests: Item %s doesn't exist in database", itemName.GetDataSafe());
+        lastError.Format("Item %s does not exist", itemName.GetDataSafe());
+        return false;
+    }
+
+    if (itemName.CompareNoCase("Circle"))
+    {
+        money.AdjustCircles(itemCount);
+    }
+    else if (itemName.CompareNoCase("Octa"))
+    {
+        money.AdjustOctas(itemCount);
+    }
+    else if (itemName.CompareNoCase("Hexa"))
+    {
+        money.AdjustHexas(itemCount);
+    }
+    else if (itemName.CompareNoCase("Tria"))
+    {
+        money.AdjustTrias(itemCount);
+    }
+    else
+    {
+        xmlItems.FormatPush("<item n=\"%s\" c=\"%zu\"/>", itemName.GetData(), itemCount);
+    }
+
     return true;
 }
 

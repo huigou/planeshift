@@ -264,6 +264,19 @@ Player gives Smith 1 Tria.
 Smith: Thanks for testing. Here's your tria back.
 Give 1 Tria.");
 
+#
+# Multiple items test.
+#
+INSERT INTO `quest_scripts` VALUES ("16","16","P: Hungry.
+
+MaleEnki: Starving, aye?  Bring me 5 eggs, 1 thing of milk and I can fix up something...for 1 hexa.
+
+Assign Quest.
+
+Player gives MaleEnki 1 Milk, 1 Hexa, 5 Egg.
+MaleEnki: Here's some freshly baked Waybread!  Enjoy...
+
+Give 1 Waybread.");
 
 #
 # Quest Test Case Quests
