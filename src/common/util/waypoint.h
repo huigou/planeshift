@@ -37,6 +37,7 @@ class Waypoint
 {
 public:
     Location                   loc;            /// Id and position
+    csArray<csString>          aliases;        /// Hold aliases for this waypoint
 
     csArray<Waypoint*>         links;          /// Links to other waypoinst connected with paths from this node.
     csArray<float>             dists;          /// Distances of each link.
@@ -52,9 +53,11 @@ public:
     bool                       pub;            /// True if this waypoint is public
     bool                       city;           /// True if this waypoint is in a city
     bool                       indoor;         /// True if this waypoint is indoor
-    
+
     Waypoint();
-    Waypoint(const char*name);
+    Waypoint(const char *name);
+    Waypoint(csString& name, csVector3& pos, csString& sectorName, float radius, csString& flags);
+    
     
     bool operator==(Waypoint& other) const
     { return loc.name==other.loc.name; }
@@ -65,11 +68,27 @@ public:
     bool Import(iDocumentNode *node, iEngine *engine, iDataConnection *db);
     bool Load(iResultRow& row, iEngine *engine); 
 
+    void AddLink(psPath * path, Waypoint * wp, psPath::Direction direction, float distance);
+    void AddAlias(csString alias);
+
+    /// Get the id of this waypoint
+    int          GetID(){ return loc.id; }
+    /// Get the name of this waypoint
+    const char * GetName(){ return loc.name.GetDataSafe(); }
+    /// Get a string with aliases for this waypoint
+    csString GetAliases();
     /// Get the sector from the location.
     iSector*     GetSector(iEngine * engine) { return loc.GetSector(engine); }
-    const char * GetName(){ return loc.name.GetDataSafe(); }
+    
+    csString     GetFlags();
 
     bool CheckWithin(iEngine * engine, const csVector3& pos, const iSector* sector);
+
+    int Create(iDataConnection * db);
+    bool Adjust(iDataConnection * db, csVector3 & pos, csString sector);
+    
+    /// Set all flags based on the string.
+    void SetFlags(const csString& flagStr);
 
     /// Data used in the dijkstra's algorithm to find waypoint path
     float distance; /// Hold current shortest distance to the start WP.

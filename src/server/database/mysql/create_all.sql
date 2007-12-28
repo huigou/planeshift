@@ -60,6 +60,7 @@ source sc_npc_definitions.sql;
 source sc_tribe_memories.sql;
 source sc_tribe_resources.sql;
 source sc_waypoints.sql;
+source sc_waypoint_aliases.sql;
 source sc_waypoint_links.sql;
 source sc_path_points.sql;
 source sectors.sql;

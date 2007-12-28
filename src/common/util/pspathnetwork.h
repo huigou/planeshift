@@ -36,10 +36,15 @@ public:
     csArray<Waypoint*> waypoints;
     csArray<psPath*> paths;
 
+    csWeakRef<iEngine> engine;
+    csWeakRef<iDataConnection> db;
+    psWorld * world;
+    
+    
     /**
      * Load all waypoins and paths from db
      */
-    bool Load(iEngine *engine, iDataConnection *db,psWorld * world);
+    bool Load(iEngine *engine, iDataConnection *db, psWorld * world);
 
     /**
      * Find waypoint by id
@@ -53,14 +58,22 @@ public:
     
     /**
      * Find waypoint nearest to a point in the world
+     * @param range Find only waypoints within range from waypoint, -1 if range dosn't matter
      */
-    Waypoint *FindNearestWaypoint(psWorld *world,iEngine *engine,csVector3& v,iSector *sector, float range, float * found_range);
+    Waypoint *FindNearestWaypoint(csVector3& v,iSector *sector, float range, float * found_range = NULL);
 
     /**
      * Find random waypoint within a given range to a point in the world
+     * @param range Find only waypoints within range from waypoint, -1 if range dosn't matter
      */
-    Waypoint *FindRandomWaypoint(psWorld *world,iEngine *engine,csVector3& v,iSector *sector, float range, float * found_range);
+    Waypoint *FindRandomWaypoint(csVector3& v, iSector *sector, float range, float * found_range = NULL);
 
+    /**
+     * Find the path nearest to a point in the world.
+     * @ param Set an maximum range for points to considere.
+     */
+    psPath *FindNearestPath(csVector3& v, iSector *sector, float range, float * found_range = NULL, int * index = NULL);
+    
     /**
      * Find the shortest route between waypoint start and stop.
      */
@@ -86,6 +99,31 @@ public:
      */
     psPath *FindPath(const Waypoint * wp1, const Waypoint * wp2, psPath::Direction & direction);
 
+
+    /**
+     * Create a new waypoint
+     */
+    Waypoint* CreateWaypoint(csString& name, csVector3& pos, csString& sectorName, float radius, csString& flags);
+
+    /**
+     * Create a new path/connection/link between two waypoints
+     */
+    psPath* CreatePath(const csString& name, Waypoint* wp1, Waypoint* wp2, const csString& flags);
+
+    /**
+     * Create a new path/connection/link between two waypoints from an external created path object
+     */
+    psPath* CreatePath(psPath * path);
+
+    /**
+     * Get next unique number for waypoint checking.
+     */
+    int GetNextWaypointCheck();
+
+    /**
+     * Delete the given path from the db.
+     */
+    bool Delete(psPath * path);
 };
 
 #endif

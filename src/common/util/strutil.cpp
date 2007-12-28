@@ -23,6 +23,10 @@
 
 #include "util/strutil.h"
 #include "util/psconst.h"
+//=============================================================================
+// Local Includes
+//=============================================================================
+#include "psstring.h"
 
 
 csString& GetWordNumber(const csString& str, int number, size_t *startpos)
@@ -250,6 +254,11 @@ csArray<csString> psSplit(csString& str, char delimer)
     }
     split.Push(csString(curr));
     return split;
+}
+
+bool isFlagSet(const psString & flagstr, const char * flag)
+{
+    return flagstr.FindSubString(flag,0,XML_CASE_INSENSITIVE)!=-1;
 }
 
 csString toString(const csVector3& pos)

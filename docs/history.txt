@@ -1,3 +1,21 @@
+*** 2007-12-28 by Anders Reggestad
+- Removed the admin command /waypoint that where deprecated by
+  the /path command.
+- Updated /path admin command to handle all the old waypoint functions.
+  To create a path follow these steps:
+  1. /path format <name_of_new_waypoints_%d> 0
+  2. /path start 1
+  3. /path point (Repeated for each point in the path)
+  4. /path end
+  See help file for detailed information.
+- Added function to psPathNetwork to handle insert of new elements
+  into the db. Refactored the HandlePath code to use the new inteface.
+- Added waypoint aliases. This so that each waypoint could be
+  identified with different names. One wp might be the work place
+  for multiple npcs and than an alias is needed to prevent creating
+  multiple waypoints at the same location.
+  - DB VER BUMP!
+
 *** 2007-12-25 by Anders Reggestad
 - Removed some not needed calls to server internal data from the
   network thread in the CheckLinkDead code.

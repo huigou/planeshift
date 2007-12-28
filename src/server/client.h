@@ -31,6 +31,7 @@
 //=============================================================================
 #include "util/prb.h"
 #include "net/netbase.h"
+#include "util/waypoint.h"
 
 //=============================================================================
 // Local Includes
@@ -44,6 +45,7 @@ class psItem;
 class gemObject;
 class gemActor;
 class gemNPC;
+class psPath;
 
 class FloodBuffRow
 {
@@ -335,27 +337,25 @@ public:
     void IncrementSpamPoints() { if (spamPoints<4) spamPoints++; }
     void DecrementSpamPoints() { if (spamPoints>0) spamPoints--; }
     
-    /// Online edit of waypoints
-    void WaypointSetPath(csString& path, int index) { waypointPathName = path; waypointPathIndex = index; waypointPathLast = -1; }
+    /// Online edit of paths
+    void WaypointSetPath(csString& path, int index) { waypointPathName = path; waypointPathIndex = index;}
     csString& WaypointGetPathName(){ return waypointPathName; }
     int WaypointGetPathIndex() { return waypointPathIndex; }
     int WaypointGetNewPathIndex() { return waypointPathIndex++; }
-    int WaypointGetLast() { return waypointPathLast; }
-    void WaypointSetLast(int last) { waypointPathLast = last; }
-    uint32_t WaypointGetEffectID();
-    void WaypointSetIsDisplaying( bool displaying ) { waypointIsDisplaying = displaying; }
-    bool WaypointIsDisplaying() { return waypointIsDisplaying; }
-    
 
-    /// Online edit of paths
     uint32_t PathGetEffectID();
-    int PathGetPathID(){return pathPathID; }
-    void PathSetPathID(int id) { pathPathID = id; }
-    int PathGetPrevPointID(){return pathPrevPointID; }
-    void PathSetPrevPointID(int id) { pathPrevPointID = id; }
+    uint32_t WaypointGetEffectID();
+
+    psPath * PathGetPath() { return pathPath; }
+    void PathSetPath(psPath * path) { pathPath = path; }
+    
     void PathSetIsDisplaying( bool displaying ) { pathIsDisplaying = displaying; }
     bool PathIsDisplaying() { return pathIsDisplaying; }
 
+    void WaypointSetIsDisplaying( bool displaying ) { waypointIsDisplaying = displaying; }
+    bool WaypointIsDisplaying() { return waypointIsDisplaying; }
+
+    
     /// Online edit of location
     uint32_t LocationGetEffectID();    
     void LocationSetIsDisplaying( bool displaying ) { locationIsDisplaying = displaying; }
@@ -419,16 +419,13 @@ protected:
     //    TradingStatus tradingStatus;
     //    int merchantID;
 
-    // Waypoint edit global vars for client
+    // Path edit global vars for client
     csString waypointPathName;
     int waypointPathIndex;
-    int waypointPathLast;
     uint32_t waypointEffectID;
     bool waypointIsDisplaying;
-    
-    // Path edit global vars for client
     uint32_t pathEffectID;
-    int pathPathID,pathPrevPointID;
+    psPath *pathPath;
     bool pathIsDisplaying;
     
     // Location edit global vars for client

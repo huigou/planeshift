@@ -31,10 +31,33 @@ struct iMovable;
 struct iSector;
 struct iEngine;
 class Location;
+class psString;
 
 class psPathPoint
 {
+    friend class psPathNetwork;
+    friend class psPath;
+    friend class psLinearPath;
+    friend class psPathAnchor;
 public:
+    psPathPoint();
+
+    /// Load the point from the db row
+    bool Load(iResultRow& row, iEngine *engine);
+    
+    /// Establish this path point in the db
+    bool Create(iDataConnection * db, int pathID);
+
+    /// Adjust the point position
+    bool Adjust(iDataConnection * db, csVector3 & pos, csString sector);
+
+    /// Set the previous point id
+    void SetPrevious(int previous) { prevPointId = previous; }
+
+    int GetID() { return id; }
+    
+    iSector * GetSector(iEngine *engine);
+private:
     int                    id;
     int                    prevPointId;
     csVector3              pos;
@@ -44,11 +67,7 @@ public:
 
     // Internal data
     csWeakRef<iSector>     sector;           /// Cached sector
-    float                  startDistance[2]; /// Start distance for FORWARD and REVERS
-
-    bool Load(iResultRow& row, iEngine *engine);
-    
-    iSector * GetSector(iEngine *engine);
+    float                  startDistance[2]; /// Start distance for FORWARD and REVERS    
 };
 
 class psPath
@@ -65,22 +84,44 @@ public:
     Waypoint              *start,*end; /// This path start and end waypoint
     csArray<psPathPoint*>  points;
 
+    /// Flags
+    bool                   oneWay;
+    bool                   noWander;
+    
     bool                   precalculationValid;
     float                  totalDistance;
     
-    psPath(int pathID, csString name);
+    psPath(csString name, Waypoint * wp1, Waypoint * wp2, psString flagStr);
+    psPath(int pathID, csString name, psString flagStr);
     
     virtual ~psPath() {}
 
     /// Load the path from the db
     bool Load(iDataConnection * db, iEngine *engine);
 
+    /// Create a path in the db
+    bool Create(iDataConnection *db);
+
+    /// Adjust a point in the path
+    bool Adjust(iDataConnection * db, int index, csVector3 & pos, csString sector);
+
     /// Add a new point to the path
-    void AddPoint(Location * loc);
+    void AddPoint(Location * loc, bool first = false);
+
+    /// Add a new point to the path
+    void AddPoint(csVector3& pos, const char * sectorName, bool first = false);
+
+    /// Set the start of the path
+    void SetStart(Waypoint * wp);
+
+    /// Set the end of the path
+    void SetEnd(Waypoint * wp);
 
     /// Precalculate values needed for anchors
     virtual void Precalculate(psWorld * world, iEngine *engine);
 
+    /// Calculate distance from point to path
+    virtual float Distance(psWorld * world, iEngine *engine,csVector3& pos, iSector * sector, int * index);
 
     /// Get the end point
     csVector3 GetEndPos(Direction direction);
@@ -98,12 +139,21 @@ public:
     /// Get name of the path
     virtual const char* GetName() { return name.GetDataSafe(); }
 
+    /// Get ID of the path
+    int GetID() { return id; }
+
     /// Get the total length of all path segments.
     virtual float GetLength(psWorld * world, iEngine *engine);
 
     /// Utility function to calcualte angle to point between to points
     float CalculateIncidentAngle(csVector3& pos, csVector3& dest);
     
+    /// Return a string of flags
+    csString GetFlags() const;
+
+    /// Set the flags from a string
+    void SetFlags(const psString & flagStr);
+
 protected:
     /// Do the actual precalculate work
     virtual void PrecalculatePath(psWorld * world, iEngine *engine) = 0;
@@ -121,7 +171,8 @@ protected:
 class psLinearPath: public psPath
 {
 public:
-    psLinearPath(int pathID, csString name);
+    psLinearPath(csString name, Waypoint * wp1, Waypoint * wp2, psString flagStr);
+    psLinearPath(int pathID, csString name, psString flagStr);
     virtual ~psLinearPath(){};
 
 protected:

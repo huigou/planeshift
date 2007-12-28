@@ -38,6 +38,9 @@
 #include "util/serverconsole.h"
 #include "util/strutil.h"
 #include "util/eventmanager.h"
+#include "util/pspathnetwork.h"
+#include "util/waypoint.h"
+#include "util/pspath.h"
 
 #include "net/msghandler.h"
 
@@ -102,6 +105,10 @@ AdminManager::AdminManager()
     // this makes sure that the player dictionary exists on start up.
     npcdlg = new psNPCDialog(NULL);
     npcdlg->Initialize( db );
+
+    pathNetwork = new psPathNetwork();
+    pathNetwork->Load(EntityManager::GetSingleton().GetEngine(),db,
+                      EntityManager::GetSingleton().GetWorld());
 }
 
 
@@ -182,6 +189,7 @@ bool AdminManager::AdminCmdData::DecodeAdminCmdMessage(MsgEntry *pMsg, psAdminCm
     WordArray words (msg.cmd, false);
 
     command = words[0];
+    help = false;
     
     if ( command == "/updaterespawn" )
     {
@@ -567,84 +575,92 @@ bool AdminManager::AdminCmdData::DecodeAdminCmdMessage(MsgEntry *pMsg, psAdminCm
         else
         {
             subCmd = "help"; //Unknown command so force help on waypoint.
-        }
-        return true;
-    }
-    else if (command == "/waypoint")
-    {
-        subCmd = words[1];
-        if (subCmd == "path")
-        {
-            wp1 = words[2];
-            value = words.GetInt(3);
-        }
-        else if (subCmd == "create")
-        {
-            wp1 = words[2];
-            radius = words.GetFloat(3);
-            attribute = words[4];
-        }
-        else if (subCmd == "adjust")
-        {
-        }
-        else if (subCmd == "add") // Add waypoint to current path
-        {
-            radius = words.GetFloat(2);
-            attribute = words[3];
-            attribute2 = words[4];
-        }
-        else if (subCmd == "link")
-        {
-            wp1 = words[2];
-            wp2 = words[3];
-            attribute = words[4];
-        }
-        else if (subCmd == "display")
-        {
-        }
-        else if (subCmd == "show") // Alias for dislay
-        {
-            subCmd = "display";
-        }
-        else if (subCmd == "hide")
-        {
-        }
-        else
-        {
-            subCmd = "help"; //Unknown command so force help on waypoint.
+            help = true;
         }
         return true;
     }
     else if (command == "/path")
     {
         subCmd = words[1];
-        if (subCmd == "create")
+        if (subCmd == "adjust")
         {
-            value = words.GetInt(2); 
+            radius = words.GetFloat(2);
+            if (radius == 0.0) radius = 5.0;
+        }
+        else if (subCmd == "display" || subCmd == "show")
+        {
+            // Show is only an alias so make sure subCmd is display
+            subCmd = "display";
+            attribute = words[2];
+            if (attribute != "" && !(toupper(attribute.GetAt(0))=='P'||toupper(attribute.GetAt(0))=='W'))
+            {
+                help = true;
+            }
+        }
+        else if (subCmd == "format")
+        {
+            attribute = words[2];    // Format
+            if (attribute == "")
+            {
+                help = true;
+            }
+            value = words.GetInt(3); // First
+        }
+        else if (subCmd == "hide")
+        {
+            attribute = words[2];
+            if (attribute != "" && !(toupper(attribute.GetAt(0))=='P'||toupper(attribute.GetAt(0))=='W'))
+            {
+                help = true;
+            }
+        }
+        else if (subCmd == "info")
+        {
+            radius = words.GetFloat(2);
+            if (radius == 0.0) radius = 5.0;
         }
         else if (subCmd == "point")
         {
             // No params
         }
-        else if (subCmd == "adjust")
+        else if (subCmd == "start")
         {
-            // No params
+            radius = words.GetFloat(2);
+            if (radius == 0.0)
+            {
+                radius = 1.0;
+            }
+            attribute = words[3]; // Waypoint flags
+            attribute2 = words[4]; // Path flags
         }
-        else if (subCmd == "display")
+        else if (subCmd == "stop" || subCmd == "end")
         {
-            // No params
+            subCmd = "stop";
+            radius = words.GetFloat(2);
+            if (radius == 0.0)
+            {
+                radius = 1.0;
+            }
+            attribute = words[3]; // Waypoint flags
         }
-        else if (subCmd == "show") // Alias for dislay
+        else if (subCmd == "split")
         {
-            subCmd = "display";
+            radius = words.GetFloat(2);
+            if (radius == 0.0)
+            {
+                radius = 1.0;
+            }
+            attribute = words[3]; // Waypoint flags
         }
-        else if (subCmd == "hide")
+        else if (subCmd == "help")
         {
-            // No params
+            help = true;
+            subCmd = words[2]; // This might be help on a specefix command
         }
         else
         {
             subCmd = "help"; //Unknown command so force help on path. 
+            help = true;
         }
         return true;
     }
@@ -675,6 +691,7 @@ bool AdminManager::AdminCmdData::DecodeAdminCmdMessage(MsgEntry *pMsg, psAdminCm
         else
         {
             subCmd = "help"; //Unknown command so force help on cmd. 
+            help = true;
         }
         return true;
     }
@@ -746,6 +763,7 @@ bool AdminManager::AdminCmdData::DecodeAdminCmdMessage(MsgEntry *pMsg, psAdminCm
                 else
                 {
                     subCmd = "help";
+                    help = true;
                     return true;
                 }
             }
@@ -772,6 +790,7 @@ bool AdminManager::AdminCmdData::DecodeAdminCmdMessage(MsgEntry *pMsg, psAdminCm
         else
         {
             subCmd = "help"; // unknown command so force help on event
+            help = true;
         }
         return true;
     }
@@ -1091,10 +1110,6 @@ void AdminManager::HandleAdminCmdMessage(MsgEntry *me, psAdminCmdMessage &msg, A
     else if (data.command == "/marriageinfo")
     {
         ViewMarriage(me, data);
-    }
-    else if (data.command == "/waypoint")
-    {
-        HandleWaypoint(me, msg, data, client);
     }
     else if (data.command == "/path")
     {
@@ -2052,48 +2067,9 @@ void AdminManager::Teleport(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& 
     }
 }
 
-int AdminManager::WaypointCreate(csString& name, csVector3& pos, csString& sectorName, float radius, csString& flags)
-{
-    const char *fieldnames[]=
-        {
-            "name",
-            "x",
-            "y",
-            "z",
-            "radius",
-            "flags",
-            "loc_sector_id"
-        };
-
-    psSectorInfo * si = CacheManager::GetSingleton().GetSectorInfoByName(sectorName);
-    if (!si)
-    {
-        Error2("No sector info for %s",sectorName.GetDataSafe());
-        return -1;
-    }
-    
-    psStringArray values;
-    values.FormatPush("%s", name.GetDataSafe());
-    values.FormatPush("%10.2f",pos.x);
-    values.FormatPush("%10.2f",pos.y);
-    values.FormatPush("%10.2f",pos.z);
-    values.FormatPush("%10.2f",radius);
-    values.FormatPush("%s",flags.GetDataSafe());
-    values.FormatPush("%u",si->uid);
-    
-    unsigned int id = db->GenericInsertWithID("sc_waypoints",fieldnames,values);
-    if (id==0)
-    {
-        Error2("Failed to create new WP Error %s",db->GetLastError());
-        return -1;
-    }
-    
-    return id;
-}
-
 void AdminManager::HandleActionLocation(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data, Client *client)
 {
-    if ( !data.subCmd.Length() || data.subCmd == "help" )
+    if ( !data.subCmd.Length() || data.subCmd == "help" || data.help )
     {
         psserver->SendSystemInfo( me->clientnum, "Usage: \"/action create_entrance sector guildname description\"");
         return;
@@ -2255,208 +2231,6 @@ void AdminManager::HandleActionLocation(MsgEntry* me, psAdminCmdMessage& msg, Ad
     }
 }
 
-void AdminManager::HandleWaypoint(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data, Client *client)
-{
-    if ( !data.subCmd.Length())
-    {
-        psserver->SendSystemInfo( me->clientnum, "Usage: \"/waypoint [add|create|link|path|help]\"");
-        return;
-    }
-    
-
-    if (data.subCmd == "help")
-    {
-        psserver->SendSystemInfo( me->clientnum, "/waypoint help\n"
-                                  "/waypoint adjust\n"
-                                  "/waypoint add radius [flags]\n"
-                                  "/waypoint create WP radius [flags]\n"
-                                  "/waypoint link WP1 WP2 [flags]\n"
-                                  "/waypoint path format [first]\n"
-                                  "/waypoint display\n"
-                                  "/waypoint hide");
-    }
-    else if (data.subCmd == "path")
-    {
-        client->WaypointSetPath(data.wp1,data.value);
-        csString wp;
-        wp.Format(client->WaypointGetPathName(),client->WaypointGetPathIndex());
-        psserver->SendSystemInfo( me->clientnum, "New waypoint path. First WP will be: '%s'",wp.GetDataSafe());
-    }
-    else if (data.subCmd == "create")
-    {
-        if ( !data.wp1.Length() || data.radius == 0.0f)
-        {
-            psserver->SendSystemInfo( me->clientnum, "Usage: \"/waypoint create WP radius [flags]\"");
-            return;
-        }
-        csVector3 myPos;
-        float myRotY;
-        iSector* mySector = 0;
-        int wp_id;
-        
-        client->GetActor()->GetPosition(myPos, myRotY, mySector);
-        csString sectorName = mySector->QueryObject()->GetName();
-        
-        wp_id = WaypointCreate(data.wp1,myPos,sectorName,data.radius,data.attribute);
-
-        client->WaypointSetLast(-1); // Restart any path started.
-
-        psserver->SendSystemInfo( me->clientnum, "Created new WP %u",wp_id);
-    }
-    else if (data.subCmd == "add")
-    {
-        if ( data.radius == 0.0f )
-        {
-            psserver->SendSystemInfo( me->clientnum, "Usage: \"/waypoint add radius [flags]\"");
-            return;
-        }
-        csVector3 myPos;
-        float myRotY;
-        iSector* mySector = 0;
-        int wp_id,wp_last;
-        
-        client->GetActor()->GetPosition(myPos, myRotY, mySector);
-        csString sectorName = mySector->QueryObject()->GetName();
-        
-        csString wp;
-        wp.Format(client->WaypointGetPathName(),client->WaypointGetNewPathIndex());
-
-        wp_id = WaypointCreate(wp,myPos,sectorName,data.radius,data.attribute);
-
-        wp_last = client->WaypointGetLast();
-        if (wp_last != -1)
-        {
-            const char *fieldnames[]=
-                {
-                    "wp1",
-                    "wp2",
-                    "flags"
-                };
-            
-            psStringArray values;
-            values.FormatPush("%d", wp_last);
-            values.FormatPush("%d", wp_id);
-            values.FormatPush("%s",data.attribute2.GetDataSafe());
-            
-            unsigned int link_id = db->GenericInsertWithID("sc_waypoint_links",fieldnames,values);
-            if (link_id==0)
-            {
-                Error2("Failed to create new WP Link Error %s",db->GetLastError());
-            }
-
-
-        }
-        client->WaypointSetLast(wp_id);
-
-        psserver->SendSystemInfo( me->clientnum, "Created new WP %s(%u)",wp.GetDataSafe(),wp_id);
-    }
-    else if (data.subCmd == "adjust")
-    {
-        csVector3 myPos;
-        float myRotY,distance=10000.0;
-        iSector* mySector = 0;
-        int wp_id = -1;
-        
-        client->GetActor()->GetPosition(myPos, myRotY, mySector);
-        csString sectorName = mySector->QueryObject()->GetName();
-        
-        Result rs(db->Select("select wp.* from sc_waypoints wp, sectors s where wp.loc_sector_id = s.id and s.name ='%s'",sectorName.GetDataSafe()));
-
-        if (!rs.IsValid())
-        {
-            Error2("Could not load path points from db: %s",db->GetLastError() );
-            return ;
-        }
-        
-        for (int i=0; i<(int)rs.Count(); i++)
-        {
-            
-            csVector3 pos(rs[i].GetFloat("x"),rs[i].GetFloat("y"),rs[i].GetFloat("z"));
-            if ((pos-myPos).SquaredNorm() < distance)
-            {
-                distance = (pos-myPos).SquaredNorm();
-                wp_id = rs[i].GetInt("id");
-            }
-        }
-        
-        if (distance >= 10.0)
-        {
-            psserver->SendSystemInfo(me->clientnum, "To far from any waypoints to adjust.");
-            return;
-        }
-        
-        db->CommandPump("UPDATE sc_waypoints SET x=%.2f,y=%.2f,z=%.2f WHERE id=%d",
-                    myPos.x,myPos.y,myPos.z,wp_id);
-        
-        if (client->WaypointIsDisplaying())
-        {
-            psEffectMessage msg(me->clientnum,"admin_waypoint",myPos,0,0,client->WaypointGetEffectID());
-            msg.SendMessage();
-        }
-        
-        psserver->SendSystemInfo(me->clientnum, "Adjusted waypoint %d",wp_id);
-    }
-    else if (data.subCmd == "link")
-    {
-        if ( !data.wp1.Length() || !data.wp2.Length())
-        {
-            psserver->SendSystemInfo( me->clientnum, "Usage: \"/waypoint link wp1 wp2 [flags]\"");
-            return;
-        }
-
-        
-        const char *fieldnames[]=
-            {
-                "wp1",
-                "wp2",
-                "flags"
-            };
-
-        psStringArray values;
-        values.FormatPush("%s", data.wp1.GetDataSafe());
-        values.FormatPush("%s", data.wp2.GetDataSafe());
-        values.FormatPush("%s",data.attribute.GetDataSafe());
-        
-        unsigned int link_id = db->GenericInsertWithID("sc_waypoint_links",fieldnames,values);
-        psserver->SendSystemInfo( me->clientnum, "Created new WP link %u",link_id);
-        client->PathSetPathID(link_id);
-     }
-    else if (data.subCmd == "display")
-    {
-        csVector3 myPos;
-        float myRotY;
-        iSector* mySector = 0;
-        
-        client->GetActor()->GetPosition(myPos, myRotY, mySector);
-        csString sectorName = mySector->QueryObject()->GetName();
-
-        Result rs(db->Select("select wp.* from sc_waypoints wp, sectors s where wp.loc_sector_id = s.id and s.name ='%s'",sectorName.GetDataSafe()));
-
-        if (!rs.IsValid())
-        {
-            Error2("Could not load waypoints from db: %s",db->GetLastError() );
-            return ;
-        }
-        
-        for (int i=0; i<(int)rs.Count(); i++)
-        {
-            
-            csVector3 pos(rs[i].GetFloat("x"),rs[i].GetFloat("y"),rs[i].GetFloat("z"));
-            psEffectMessage msg(me->clientnum,"admin_waypoint",pos,0,0,client->WaypointGetEffectID());
-            msg.SendMessage();
-        }
-        client->WaypointSetIsDisplaying(true);
-        psserver->SendSystemInfo(me->clientnum, "Displaying all WPs in sector %s",sectorName.GetDataSafe());
-    }
-    else if (data.subCmd == "hide")
-    {
-        psStopEffectMessage msg(me->clientnum,client->WaypointGetEffectID());
-        msg.SendMessage();
-        client->WaypointSetIsDisplaying(false);
-        psserver->SendSystemInfo(me->clientnum, "All WPs hidden");
-    }
-}
-
 int AdminManager::PathPointCreate(int pathID, int prevPointId, csVector3& pos, csString& sectorName)
 {
     const char *fieldnames[]=
@@ -2496,88 +2270,147 @@ int AdminManager::PathPointCreate(int pathID, int prevPointId, csVector3& pos, c
 
 void AdminManager::HandlePath(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data, Client *client)
 {
-    if ( !data.subCmd.Length())
-    {
-        psserver->SendSystemInfo( me->clientnum, "Usage: \"/path [help|display|hide|point|create <path_id>]\"");
-        return;
-    }
+    const char* usage         = "/path adjust|display|format|help|hide|info|point|start|stop [options]";
+    const char* usage_adjust  = "/path adjust [<radius>]";
+    const char* usage_display = "/path display|show ['points'|'waypoints']";
+    const char* usage_format  = "/path format <format> [first]";
+    const char* usage_help    = "/path help [sub command]";
+    const char* usage_hide    = "/path hide ['points'|'waypoints']";
+    const char* usage_info    = "/path info";
+    const char* usage_point   = "/path point";
+    const char* usage_split   = "/path split <radius> [wp flags]";
+    const char* usage_start   = "/path start <radius> [wp flags] [path flags]";
+    const char* usage_stop    = "/path stop|end <radius> [wp flags]";
+
+    // Some variables needed by most functions
+    csVector3 myPos;
+    float myRotY;
+    iSector* mySector = 0;
+    csString mySectorName;
     
-
-    if (data.subCmd == "help")
+    client->GetActor()->GetPosition(myPos, myRotY, mySector);
+    mySectorName = mySector->QueryObject()->GetName();
+    
+    // First check if some help is needed
+    if (data.help)
     {
-        psserver->SendSystemInfo( me->clientnum, "/path help\n"
-                                  "/path adjust\n"
-                                  "/path create <path_id>\n"
-                                  "/path point\n"
-                                  "/path display\n"
-                                  "/path hide");
-    }
-    else if (data.subCmd == "create")
-    {
-        client->PathSetPathID(data.value);
-        client->PathSetPrevPointID(0);
-        psserver->SendSystemInfo( me->clientnum, "Path id set to %u",client->PathGetPathID());
-
-    }
-    else if (data.subCmd == "point")
-    {
-        csVector3 myPos;
-        float myRotY;
-        iSector* mySector = 0;
-        int pp_id;
-        
-        client->GetActor()->GetPosition(myPos, myRotY, mySector);
-        csString sectorName = mySector->QueryObject()->GetName();
-        
-        pp_id = PathPointCreate(client->PathGetPathID(),client->PathGetPrevPointID(),myPos,sectorName);
-        client->PathSetPrevPointID(pp_id);
-
-        if (client->PathIsDisplaying())
+        if (data.subCmd == "help")
         {
-            psEffectMessage msg(me->clientnum,"admin_path_point",myPos,0,0,client->PathGetEffectID());
-            msg.SendMessage();
+            psserver->SendSystemInfo( me->clientnum,"Usage: %s",usage);
+        } else if (data.subCmd == "")
+        {
+            psserver->SendSystemInfo( me->clientnum,"Help on /point\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s",
+                                      usage_adjust,usage_display,usage_format,
+                                      usage_help,usage_hide,usage_info,usage_point,
+                                      usage_split,usage_start,usage_stop);
         }
-        
-        psserver->SendSystemInfo( me->clientnum, "Created new Path Point %u",pp_id);
-        
+        else if (data.subCmd == "adjust")
+        {
+            psserver->SendSystemInfo( me->clientnum,"Usage: %s",usage_adjust);
+        }
+        else if (data.subCmd == "display")
+        {
+            psserver->SendSystemInfo( me->clientnum,"Usage: %s",usage_display);
+        }
+        else if (data.subCmd == "format")
+        {
+            psserver->SendSystemInfo( me->clientnum,"Usage: %s",usage_format);
+        }
+        else if (data.subCmd == "help")
+        {
+            psserver->SendSystemInfo( me->clientnum,"Usage: %s",usage_help);
+        }
+        else if (data.subCmd == "hide")
+        {
+            psserver->SendSystemInfo( me->clientnum,"Usage: %s",usage_hide);
+        }
+        else if (data.subCmd == "info")
+        {
+            psserver->SendSystemInfo( me->clientnum,"Usage: %s",usage_info);
+        }
+        else if (data.subCmd == "point")
+        {
+            psserver->SendSystemInfo( me->clientnum,"Usage: %s",usage_point);
+        }
+        else if (data.subCmd == "split")
+        {
+            psserver->SendSystemInfo( me->clientnum,"Usage: %s",usage_split);
+        }
+        else if (data.subCmd == "start")
+        {
+            psserver->SendSystemInfo( me->clientnum,"Usage: %s",usage_start);
+        }
+        else if (data.subCmd == "stop")
+        {
+            psserver->SendSystemInfo( me->clientnum,"Usage: %s",usage_stop);
+        }
+        else
+        {
+            psserver->SendSystemInfo( me->clientnum,"Usage not implemented for %s",data.subCmd.GetDataSafe());
+        }
     }
     else if (data.subCmd == "adjust")
     {
-        csVector3 myPos;
-        float myRotY,distance=10000.0;
-        iSector* mySector = 0;
-        int pp_id = -1;
+        float rangeWP,rangePath;
+        int index;
         
-        client->GetActor()->GetPosition(myPos, myRotY, mySector);
-        csString sectorName = mySector->QueryObject()->GetName();
-        
-        Result rs(db->Select("select pp.* from sc_path_points pp, sectors s where pp.loc_sector_id = s.id and s.name ='%s'",sectorName.GetDataSafe()));
 
-        if (!rs.IsValid())
+        Waypoint * wp = pathNetwork->FindNearestWaypoint(myPos,mySector,data.radius,&rangeWP);
+        psPath * path = pathNetwork->FindNearestPath(myPos,mySector,data.radius,&rangePath,&index);
+        if (!wp && !path)
         {
-            Error2("Could not load path points from db: %s",db->GetLastError() );
-            return ;
+            psserver->SendSystemInfo(me->clientnum, "No path point or waypoint in range of %.2f.",data.radius);
+            return;
         }
-        
-        for (int i=0; i<(int)rs.Count(); i++)
+
+        if (path && (!wp || rangePath < rangeWP))
         {
-            
-            csVector3 pos(rs[i].GetFloat("x"),rs[i].GetFloat("y"),rs[i].GetFloat("z"));
-            if ((pos-myPos).SquaredNorm() < distance)
+            if (path->Adjust(db,index,myPos,mySectorName))
             {
-                distance = (pos-myPos).SquaredNorm();
-                pp_id = rs[i].GetInt("id");
+                if (client->PathIsDisplaying())
+                {
+                    psEffectMessage msg(me->clientnum,"admin_path_point",myPos,0,0,client->PathGetEffectID());
+                    msg.SendMessage();
+                }
+                
+                psserver->SendSystemInfo(me->clientnum,
+                                         "Adjusted point %d of path %d(%s) at range %.2f",
+                                         index,path->GetID(),path->GetName(),rangePath);
             }
         }
-        
-        if (distance >= 10.0)
+        else
         {
-            psserver->SendSystemInfo(me->clientnum, "To far from any points to adjust.");
+            if (wp->Adjust(db,myPos,mySectorName))
+            {
+                if (client->WaypointIsDisplaying())
+                {
+                    psEffectMessage msg(me->clientnum,"admin_waypoint",myPos,0,0,client->PathGetEffectID());
+                    msg.SendMessage();
+                }
+                
+                psserver->SendSystemInfo(me->clientnum, 
+                                         "Adjusted waypoint %d(%s) at range %.2f",
+                                         wp->GetID(),wp->GetName(),rangeWP);
+            }
+        }
+    }
+    else if (data.subCmd == "format")
+    {
+        client->WaypointSetPath(data.attribute,data.value);
+        csString wp;
+        wp.Format(client->WaypointGetPathName(),client->WaypointGetPathIndex());
+        psserver->SendSystemInfo( me->clientnum, "New path format, first new WP will be: '%s'",wp.GetDataSafe());
+    }
+    else if (data.subCmd == "point")
+    {
+        psPath * path = client->PathGetPath();
+        if (!path)
+        {
+            psserver->SendSystemError(me->clientnum, "You have no path. Please start one.");
             return;
         }
         
-        db->CommandPump("UPDATE sc_path_points SET x=%.2f,y=%.2f,z=%.2f WHERE id=%d",
-                    myPos.x,myPos.y,myPos.z,pp_id);
+        path->AddPoint(myPos,mySectorName);
         
         if (client->PathIsDisplaying())
         {
@@ -2585,42 +2418,254 @@ void AdminManager::HandlePath(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
             msg.SendMessage();
         }
         
-        psserver->SendSystemInfo(me->clientnum, "Adjusted point %d",pp_id);
+        psserver->SendSystemInfo( me->clientnum, "Added point.");
+        
+    }
+    else if (data.subCmd == "start")
+    {
+        float range;
+
+        if (client->PathGetPath())
+        {
+            psserver->SendSystemError( me->clientnum, "You already have a path started.");
+            return;
+        }
+
+        if (client->WaypointGetPathName() == "")
+        {
+            psserver->SendSystemError( me->clientnum, "No path format set yet.");
+            return;
+        }
+        
+        Waypoint * wp = pathNetwork->FindNearestWaypoint(myPos,mySector,2.0,&range);
+        if (wp)
+        {
+            psserver->SendSystemInfo( me->clientnum, "Starting path, using exsisting waypoint %d(%s) at range %.2f",
+                                      wp->GetID(),wp->GetName(),range);
+        } else
+        {
+            csString wpName;
+            wpName.Format(client->WaypointGetPathName(),client->WaypointGetNewPathIndex());
+            
+            Waypoint * existing = pathNetwork->FindWaypoint(wpName);
+            if (existing)
+            {
+                psserver->SendSystemError( me->clientnum, "Waypoint already exists with the name %s", wpName.GetDataSafe());
+                return;
+            }
+
+            wp = pathNetwork->CreateWaypoint(wpName,myPos,mySectorName,data.radius,data.attribute);
+
+            if (client->WaypointIsDisplaying())
+            {
+                psEffectMessage msg(me->clientnum,"admin_waypoint",myPos,0,0,client->WaypointGetEffectID());
+                msg.SendMessage();
+            }
+            psserver->SendSystemInfo( me->clientnum, "Starting path, using new waypoint %d(%s)",
+                                      wp->GetID(),wp->GetName());
+        }
+        psPath * path = new psLinearPath(-1,"",data.attribute2);
+        path->SetStart(wp);
+        client->PathSetPath(path);
+    }
+    else if (data.subCmd == "stop")
+    {
+        float range;
+        psPath * path = client->PathGetPath();
+        
+        if (!path)
+        {
+            psserver->SendSystemError( me->clientnum, "You have no path started.");
+            return;
+        }
+        
+        Waypoint * wp = pathNetwork->FindNearestWaypoint(myPos,mySector,2.0,&range);
+        if (wp)
+        {
+            psserver->SendSystemInfo( me->clientnum, "Stoping path using exsisting waypoint %d(%s) at range %.2f",
+                                      wp->GetID(),wp->GetName(),range);
+        } else
+        {
+            csString wpName;
+            wpName.Format(client->WaypointGetPathName(),client->WaypointGetNewPathIndex());
+            
+            Waypoint * existing = pathNetwork->FindWaypoint(wpName);
+            if (existing)
+            {
+                psserver->SendSystemError( me->clientnum, "Waypoint already exists with the name %s", wpName.GetDataSafe());
+                return;
+            }
+
+            wp = pathNetwork->CreateWaypoint(wpName,myPos,mySectorName,data.radius,data.attribute);
+
+            if (client->WaypointIsDisplaying())
+            {
+                psEffectMessage msg(me->clientnum,"admin_waypoint",myPos,0,0,client->WaypointGetEffectID());
+                msg.SendMessage();
+            }
+        }
+
+        client->PathSetPath(NULL);
+        path->SetEnd(wp);
+        path = pathNetwork->CreatePath(path);
+        if (!path)
+        {
+            psserver->SendSystemError( me->clientnum, "Failed to create path");
+        } else
+        {
+            psserver->SendSystemInfo( me->clientnum, "New path %d(%s) created between %d(%s) and %d(%s)",
+                                      path->GetID(),path->GetName(),path->start->GetID(),path->start->GetName(),
+                                      path->end->GetID(),path->end->GetName());
+        }
     }
     else if (data.subCmd == "display")
     {
-        csVector3 myPos;
-        float myRotY;
-        iSector* mySector = 0;
-        
-        client->GetActor()->GetPosition(myPos, myRotY, mySector);
-        csString sectorName = mySector->QueryObject()->GetName();
-
-        Result rs(db->Select("select pp.* from sc_path_points pp, sectors s where pp.loc_sector_id = s.id and s.name ='%s'",sectorName.GetDataSafe()));
-
-        if (!rs.IsValid())
+        if (data.attribute == "" || toupper(data.attribute.GetAt(0)) == 'P')
         {
-            Error2("Could not load path points from db: %s",db->GetLastError() );
-            return ;
-        }
-        
-        for (int i=0; i<(int)rs.Count(); i++)
-        {
+            Result rs(db->Select("select pp.* from sc_path_points pp, sectors s where pp.loc_sector_id = s.id and s.name ='%s'",mySectorName.GetDataSafe()));
             
-            csVector3 pos(rs[i].GetFloat("x"),rs[i].GetFloat("y"),rs[i].GetFloat("z"));
-            psEffectMessage msg(me->clientnum,"admin_path_point",pos,0,0,client->PathGetEffectID());
-            msg.SendMessage();
+            if (!rs.IsValid())
+            {
+                Error2("Could not load path points from db: %s",db->GetLastError() );
+                return ;
+            }
+            
+            for (int i=0; i<(int)rs.Count(); i++)
+            {
+                
+                csVector3 pos(rs[i].GetFloat("x"),rs[i].GetFloat("y"),rs[i].GetFloat("z"));
+                psEffectMessage msg(me->clientnum,"admin_path_point",pos,0,0,client->PathGetEffectID());
+                msg.SendMessage();
+            }
+            
+            client->PathSetIsDisplaying(true);
+            psserver->SendSystemInfo(me->clientnum, "Displaying all path points in sector %s",mySectorName.GetDataSafe());
         }
-        
-        client->PathSetIsDisplaying(true);
-        psserver->SendSystemInfo(me->clientnum, "Displaying all Path Points in sector %s",sectorName.GetDataSafe());
+        if (data.attribute == "" || toupper(data.attribute.GetAt(0)) == 'W')
+        {
+            Result rs(db->Select("select wp.* from sc_waypoints wp, sectors s where wp.loc_sector_id = s.id and s.name ='%s'",mySectorName.GetDataSafe()));
+
+            if (!rs.IsValid())
+            {
+                Error2("Could not load waypoints from db: %s",db->GetLastError() );
+                return ;
+            }
+            
+            for (int i=0; i<(int)rs.Count(); i++)
+            {
+                
+                csVector3 pos(rs[i].GetFloat("x"),rs[i].GetFloat("y"),rs[i].GetFloat("z"));
+                psEffectMessage msg(me->clientnum,"admin_waypoint",pos,0,0,client->WaypointGetEffectID());
+                msg.SendMessage();
+            }
+            client->WaypointSetIsDisplaying(true);
+            psserver->SendSystemInfo(me->clientnum, "Displaying all waypoints in sector %s",mySectorName.GetDataSafe());
+        }
     }
     else if (data.subCmd == "hide")
     {
-        psStopEffectMessage msg(me->clientnum,client->PathGetEffectID());
-        msg.SendMessage();
-        client->PathSetIsDisplaying(false);
-        psserver->SendSystemInfo(me->clientnum, "All Path Points hidden");
+        if (data.attribute == "" || toupper(data.attribute.GetAt(0)) == 'P')
+        {
+            psStopEffectMessage msg(me->clientnum, client->PathGetEffectID());
+            msg.SendMessage();
+            client->PathSetIsDisplaying(false);
+            psserver->SendSystemInfo(me->clientnum, "All path points hidden");
+        }
+        if (data.attribute == "" || toupper(data.attribute.GetAt(0)) == 'W')
+        {
+            psStopEffectMessage msg(me->clientnum, client->WaypointGetEffectID());
+            msg.SendMessage();
+            client->WaypointSetIsDisplaying(false);
+            psserver->SendSystemInfo(me->clientnum, "All waypoints hidden");
+        }
+        
+    }
+    else if (data.subCmd == "info")
+    {
+        float rangeWP,rangePath;
+        int index;
+        
+        Waypoint * wp = pathNetwork->FindNearestWaypoint(myPos,mySector,data.radius,&rangeWP);
+        psPath * path = pathNetwork->FindNearestPath(myPos,mySector,data.radius,&rangePath,&index);
+        if (!wp && !path)
+        {
+            psserver->SendSystemInfo(me->clientnum, "No path point or waypoint in range of %.2f.",data.radius);
+            return;
+        }
+
+        if (path && (!wp || rangePath < rangeWP))
+        {
+            psserver->SendSystemInfo(me->clientnum,
+                                     "Found path: %d(%s) at range %.2f to point %d\n"
+                                     "Start WP: %d(%s)\n"
+                                     "End WP: %d(%s)\n"
+                                     "Flags: %s",
+                                     path->GetID(),path->GetName(),rangePath,index+1,
+                                     path->start->GetID(),path->start->GetName(),
+                                     path->end->GetID(),path->end->GetName(),
+                                     path->GetFlags().GetDataSafe());
+        }
+        else
+        {
+            psserver->SendSystemInfo(me->clientnum, 
+                                     "Found waypoint %d(%s) at range %.2f\n"
+                                     "Radius: %.2f\n"
+                                     "Flags: %s\n"
+                                     "Aliases: %s",
+                                     wp->GetID(),wp->GetName(),rangeWP,
+                                     wp->loc.radius,wp->GetFlags().GetDataSafe(),
+                                     wp->GetAliases().GetDataSafe());
+        }
+        
+    }
+    else if (data.subCmd == "split")
+    {
+        float range;
+
+        psPath * path = pathNetwork->FindNearestPath(myPos,mySector,100.0,&range);
+        if (!path)
+        {
+            psserver->SendSystemError( me->clientnum, "Didn't find any path close by");
+            return;
+        }
+
+        if (client->WaypointGetPathName() == "")
+        {
+            psserver->SendSystemError( me->clientnum, "No path format set yet.");
+            return;
+        }
+
+        csString wpName;
+        wpName.Format(client->WaypointGetPathName(),client->WaypointGetNewPathIndex());
+            
+        Waypoint * existing = pathNetwork->FindWaypoint(wpName);
+        if (existing)
+        {
+            psserver->SendSystemError( me->clientnum, "Waypoint already exists with the name %s", wpName.GetDataSafe());
+            return;
+        }
+
+        Waypoint * wp = pathNetwork->CreateWaypoint(wpName,myPos,mySectorName,data.radius,data.attribute);
+        if (!wp)
+        {
+            return;
+        }
+        if (client->WaypointIsDisplaying())
+        {
+            psEffectMessage msg(me->clientnum,"admin_waypoint",myPos,0,0,client->WaypointGetEffectID());
+            msg.SendMessage();
+        }
+
+        psPath * path1 = pathNetwork->CreatePath("",path->start,wp, "" );
+        psPath * path2 = pathNetwork->CreatePath("",wp,path->end, "" );
+        
+        // Warning: This will delete all path points. So they has to be rebuild for the new segments.
+        pathNetwork->Delete(path);
+
+        psserver->SendSystemInfo( me->clientnum, "Splitted %d(%s) into %d(%s) and %d(%s)",
+                                  path->GetID(),path->GetName(),
+                                  path1->GetID(),path1->GetName(),
+                                  path2->GetID(),path2->GetName());
     }
 }
 
