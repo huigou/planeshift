@@ -17,9 +17,15 @@
  *
  */
 #include <psconfig.h>
-
+//=============================================================================
+// Crystal Space Includes
+//=============================================================================
 #include <csutil/objreg.h>
 #include <csutil/sysfunc.h>
+#include <csutil/cscolor.h>
+#include <csutil/flags.h>
+#include <csutil/randomgen.h>
+#include <csutil/scf.h>
 #include <iengine/engine.h>
 #include <iengine/sector.h>
 #include <iengine/light.h>
@@ -28,48 +34,54 @@
 #include <iengine/movable.h>
 #include <iengine/sector.h>
 #include <iengine/sharevar.h>
+#include <iengine/portal.h>
+#include <iengine/portalcontainer.h>
 #include <imesh/object.h>
 #include <imesh/partsys.h>
-#include <csutil/cscolor.h>
-#include <csutil/flags.h>
+#include <imesh/spritecal3d.h>
 #include <iutil/vfs.h>
 #include <imap/ldrctxt.h>
 #include <iutil/object.h>
 #include <ivaria/engseq.h>
-#include <csutil/randomgen.h>
-#include <imesh/spritecal3d.h>
-#include <csutil/scf.h>
 
 #include <physicallayer/pl.h>
 #include <physicallayer/entity.h>
 #include <propclass/mesh.h>
-#include <iengine/portal.h>
-#include <iengine/portalcontainer.h>
-#include "physicallayer/propclas.h"
+#include <physicallayer/propclas.h>
 
-#include "effects/pseffectmanager.h"
-#include "entitylabels.h"
-#include "modehandler.h"
-#include "globals.h"
-#include "iclient/isoundmngr.h"
+//=============================================================================
+// Project Includes
+//=============================================================================
 #include "net/messages.h"
 #include "net/msghandler.h"
+
+#include "iclient/isoundmngr.h"
+
+#include "effects/pseffectmanager.h"
+
 #include "engine/netpersist.h"
-#include "pscelclient.h"
-#include "pscharcontrol.h"
+
 #include "util/psxmlparser.h"
 #include "util/psscf.h"
 #include "util/psconst.h"
 #include "util/log.h"
 #include "util/slots.h"
-#include "psclientdr.h"
 
 #include "paws/pawsmanager.h"
+
 #include "gui/pawsinfowindow.h"
 #include "gui/chatwindow.h"
 
-/// Include weather types
+//=============================================================================
+// Local Includes
+//=============================================================================
+#include "modehandler.h"
+#include "entitylabels.h"
+#include "pscelclient.h"
+#include "pscharcontrol.h"
+#include "psclientdr.h"
 #include "weather.h"
+#include "globals.h"
 
 
 /// Callback class for the portal traversing
