@@ -49,6 +49,9 @@ MsvcDefine pslaunch_static : CS_STATIC_LINKED ;
 LinkWith pslaunch_static : xdelta3 paws psutil fparser ;
 
 STATIC.PLUGINLIST = 
+  engine
+  fontplex
+  imgplex
   vfs
   ;
   
