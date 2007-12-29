@@ -16,23 +16,29 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
  */
-
 #include <psconfig.h>
+//=============================================================================
+// Crystal Space Includes
+//=============================================================================
 #include <ctype.h>
 #include <iengine/movable.h>
 #include <iengine/mesh.h>
 #include <imesh/sprite3d.h>
 #include <csgeom/math3d.h>
 
-#include "globals.h"
-#include "cmdusers.h"
+//=============================================================================
+// Project Includes
+//=============================================================================
 #include "net/cmdhandler.h"
 #include "net/msghandler.h"
+#include "net/messages.h"
+#include "net/npcmessages.h"
 
-#include "pscelclient.h"
+#include "util/strutil.h"
+
+#include "engine/netpersist.h"
+
 #include "gui/chatwindow.h"
-#include "paws/pawsmanager.h"
-#include "paws/pawsyesnobox.h"
 #include "gui/pawsdetailwindow.h"
 #include "gui/pawsinfowindow.h"
 #include "gui/inventorywindow.h"
@@ -41,12 +47,18 @@
 #include "gui/pawscontrolwindow.h"
 #include "gui/psmainwidget.h"
 #include "gui/pawsgameboard.h"
-#include "engine/netpersist.h"
-#include "util/strutil.h"
+
+#include "paws/pawsmanager.h"
+#include "paws/pawsyesnobox.h"
+
+//=============================================================================
+// Local Includes
+//=============================================================================
+#include "cmdusers.h"
+#include "pscelclient.h"
 #include "modehandler.h"
 #include "pscharcontrol.h"
-#include "net/messages.h"
-#include "net/npcmessages.h"
+#include "globals.h"
 
 
 psUserCommands::psUserCommands(MsgHandler* mh,CmdHandler *ch,iObjectRegistry* obj)

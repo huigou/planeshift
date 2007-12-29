@@ -17,31 +17,44 @@
  *
  */
 #include <psconfig.h>
-
+//=============================================================================
+// Crystal Space Includes
+//=============================================================================
 #include <iengine/rview.h>
 #include <iengine/portal.h>
 #include <iengine/portalcontainer.h>
 #include <iengine/mesh.h>
 #include <imesh/object.h>
 #include <iutil/object.h>
-#include "iutil/cfgmgr.h"
-#include "iutil/objreg.h"
-#include "cmdutil.h"
+#include <iutil/cfgmgr.h>
+#include <iutil/objreg.h>
+#include <igraphic/imageio.h>
+
+//=============================================================================
+// Project Includes
+//=============================================================================
 #include "net/cmdhandler.h"
 #include "net/msghandler.h"
+
 #include "util/strutil.h"
-#include "globals.h"
+
+#include "gui/psmainwidget.h"
+#include "gui/chatwindow.h"
+
+#include "paws/pawsmanager.h"
+#include "paws/pawsyesnobox.h"
+
+//=============================================================================
+// Local Includes
+//=============================================================================
+#include "cmdutil.h"
 #include "pscelclient.h"
 #include "psclientchar.h"
-#include "paws/pawsmanager.h"
-#include "gui/psmainwidget.h"
-#include "paws/pawsyesnobox.h"
 #include "pscamera.h"
 #include "entitylabels.h"
 #include "pscharcontrol.h"
-#include "gui/chatwindow.h"
 #include "psengine.h"
-#include <igraphic/imageio.h>
+#include "globals.h"
 
 psUtilityCommands::psUtilityCommands(MsgHandler *mh,
                                      CmdHandler *ch,

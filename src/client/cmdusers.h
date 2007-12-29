@@ -19,8 +19,19 @@
 
 #ifndef __CMDUSERS_H__
 #define __CMDUSERS_H__
+//=============================================================================
+// Crystal Space Includes
+//=============================================================================
 
+//=============================================================================
+// Project Includes
+//=============================================================================
 #include "net/cmdbase.h"
+
+//=============================================================================
+// Local Includes
+//=============================================================================
+
 
 class MsgHandler;
 class GEMClientObject;
@@ -33,7 +44,32 @@ class GEMClientObject;
  */
 class psUserCommands : public psCmdBase
 {
-    // Types of entities.
+
+public:
+    psUserCommands(MsgHandler* mh,CmdHandler *ch,iObjectRegistry* obj);
+    virtual ~psUserCommands();
+
+    static void HandleSlay(bool answeredYes, void *data);
+
+    // Load emotes from xml.
+    bool LoadEmotes();
+
+    // iCmdSubscriber interface
+    virtual const char *HandleCommand(const char *cmd);
+
+    // iNetSubscriber interface
+    virtual void HandleMessage(MsgEntry *msg);
+
+    
+protected:
+ // Directions for a search.
+    enum SearchDirection
+    {
+        SEARCH_FORWARD,
+        SEARCH_BACK,
+        SEARCH_NONE
+    };
+        
     enum EntityTypes
     {
         PSENTITYTYPE_PLAYER_CHARACTER,
@@ -42,15 +78,8 @@ class psUserCommands : public psCmdBase
         PSENTITYTYPE_NO_TARGET
     };
 
-    // Directions for a search.
-    enum SearchDirection
-    {
-        SEARCH_FORWARD,
-        SEARCH_BACK,
-        SEARCH_NONE
-    };
 
-protected:
+    
     GEMClientObject* FindEntityWithName(const char *name);
 
     void UpdateTarget(SearchDirection searchDirection,
@@ -68,22 +97,7 @@ protected:
 
     csArray<EMOTE> emoteList;
 
-    void AskToSlayBeforeSending(psMessageCracker *msg);
-
-public:
-    psUserCommands(MsgHandler* mh,CmdHandler *ch,iObjectRegistry* obj);
-    virtual ~psUserCommands();
-
-    static void HandleSlay(bool answeredYes, void *data);
-
-    // Load emotes from xml.
-    bool LoadEmotes();
-
-    // iCmdSubscriber interface
-    virtual const char *HandleCommand(const char *cmd);
-
-    // iNetSubscriber interface
-    virtual void HandleMessage(MsgEntry *msg);
+    void AskToSlayBeforeSending(psMessageCracker *msg);    
 };
 
 #endif
