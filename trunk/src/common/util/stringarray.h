@@ -33,7 +33,7 @@ public:
      * Push a printf-style string onto the list (makes copy of string after
      * formatting).
      */
-    int FormatPush(char const * fmt, ...)
+    size_t FormatPush(char const * fmt, ...)
     {
         csString str;
         va_list args;

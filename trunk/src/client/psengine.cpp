@@ -543,6 +543,8 @@ bool psEngine::Initialize (int level)
         zonehandler->SetLoadAllMaps(GetConfig()->GetBool("Planeshift.Client.Loading.AllMaps",false));
         zonehandler->SetKeepMapsLoaded(GetConfig()->GetBool("Planeshift.Client.Loading.KeepMaps",false));
 
+        unloadLast = GetConfig()->GetBool("Planeshift.Client.Loading.UnloadLast", true);
+
         materialmanager.AttachNew(new MaterialManager(object_reg, preloadModels));
         
         if(preloadModels)

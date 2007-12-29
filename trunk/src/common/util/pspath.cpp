@@ -197,7 +197,7 @@ float psPath::Distance(psWorld * world, iEngine *engine,csVector3& pos, iSector 
         if (dist < 0 || d < dist)
         {
             dist = d;
-            idx = i;
+            idx = (int)i;
         }
     }
     if (dist >= 0.0)

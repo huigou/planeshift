@@ -72,16 +72,17 @@ bool psWorld::Initialize( iObjectRegistry* objectReg)
 {
     object_reg = objectReg;
     engine = csQueryRegistry<iEngine>(object_reg);
+    startLoading = psengine->UnloadingLast();
 
     return true;
 }
 
 bool psWorld::CreateMap( const char* name, const char* mapfile, bool load_now, bool loadMeshes)
 {    
-    if ( !NewRegion(mapfile,load_now, loadMeshes) )    
+    if (!NewRegion(mapfile,load_now, loadMeshes))
         return false;
 
-    return true;        
+    return true;
 }
 
 psRegion* psWorld::NewRegion(const char *mapfile,bool load, bool loadMeshes)
@@ -170,19 +171,22 @@ void ConnectPortalToSector(iEngine * engine, const char * portalName, const char
 
 int psWorld::ExecuteFlaggedRegions(bool transitional)
 {
-    // Load any regions on the list which are not already loaded.
-    for (uint i=0; i < regions.GetSize(); i++)
+    if(startLoading)
     {
-        psRegion *rgn = regions[i];
-        if (!rgn->IsLoaded() )
+        // Load any regions on the list which are not already loaded.
+        for (uint i=0; i < regions.GetSize(); i++)
         {
-            if(!rgn->Load())
+            psRegion *rgn = regions[i];
+            if (!rgn->IsLoaded() )
             {
-                Error2("Loading region %s failed!", rgn->GetName());
-                return 1;
+                if(!rgn->Load())
+                {
+                    Error2("Loading region %s failed!", rgn->GetName());
+                    return 1;
+                }
+                // 2 signifies that a region is loaded, and that we need to refresh the screen.
+                return 2;
             }
-            // 2 signifies that a region is loaded, and that we need to refresh the screen.
-            return 2;
         }
     }
 
@@ -211,6 +215,16 @@ int psWorld::ExecuteFlaggedRegions(bool transitional)
             MaterialManager::GetSingletonPtr()->UnloadUnusedTextures();
         }
     }
+
+    // Mark that we should start loading maps.
+    if(!startLoading)
+    {
+        startLoading = true;
+        return 2;
+    }
+
+    // Reset loading flag.
+    startLoading = psengine->UnloadingLast();
 
     return 0;
 }

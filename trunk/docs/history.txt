@@ -2,6 +2,12 @@
 - Added Update.Execs option to the updater. Set to false if you don't want to
   update executable files.
 - Updated xDelta3.
+- Some warning fixes.
+- Added Planeshift.Client.Loading.UnloadLast option to psclient.cfg which
+  alters whether unloading is done before or after map loading. Set to true
+  by default, maps are loaded before old are unloaded (faster for machines
+  with enough ram to not swap, possibly slower for those who swap). Will
+  add GUI option in future.
 
 *** 2007-12-29 by Anders Reggestad
 - Added alias command to the /path admin command.

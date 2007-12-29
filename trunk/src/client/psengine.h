@@ -350,8 +350,11 @@ public:
     /// get the inventory cache
     psInventoryCache* GetInventoryCache(void) { return inventoryCache; }
 
-    // Are we preloading models?
+    /// Are we preloading models?
     bool PreloadingModels() { return preloadModels; }
+
+    /// Unload order.
+    bool UnloadingLast() { return unloadLast; }
 
 private:
     // Load the log report settings from the config file.
@@ -464,7 +467,10 @@ private:
     bool muteSoundsOnFocusLoss;
 
     /// Define if the sound is on or off from psclient.cfg.
-    bool soundOn; 
+    bool soundOn;
+
+    /// Define what kind of loading we want to do; unload first or unload last.
+    bool unloadLast;
     
     // Event ID cache
     csEventID event_preprocess;

@@ -243,6 +243,8 @@ public:
     static float GetAngle(float x, float y);
 
     void DumpWarpCache();
+private:
+    bool startLoading;
 };
 
 
