@@ -734,6 +734,9 @@
 				RelativePath="..\..\src\tools\xdelta3\xdelta3-decode.h">
 			</File>
 			<File
+				RelativePath="..\..\src\tools\xdelta3\xdelta3-hash.h">
+			</File>
+			<File
 				RelativePath="..\..\src\tools\xdelta3\xdelta3-list.h">
 			</File>
 			<File
