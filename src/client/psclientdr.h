@@ -18,20 +18,31 @@
  */
 #ifndef __PSCLIENTPERSIST_H__
 #define __PSCLIENTPERSIST_H__
-
+//=============================================================================
+// Crystal Space Includes
+//=============================================================================
 #include <csutil/ref.h>
 #include <csutil/strhash.h>
+
+//=============================================================================
+// Project Includes
+//=============================================================================
 #include "net/cmdbase.h"
+
+//=============================================================================
+// Local Includes
+//=============================================================================
+
 
 class psCelClient;
 class MsgHandler;
 class ZoneHandler;
 class MsgEntry;
-
-struct iPcLinearMovement;
 class pawsGroupWindow;
 class pawsPetStatWindow;
 class GEMClientActor;
+
+struct iPcLinearMovement;
 
 class psClientDR : public psClientNetSubscriber
 {
