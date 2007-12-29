@@ -17,15 +17,24 @@
  *
  */
 #include <psconfig.h>
-
+//=============================================================================
+// Crystal Space Includes
+//=============================================================================
 #include <iengine/engine.h>
 #include <iengine/mesh.h>
 #include <imap/loader.h>
 
-#include "clientcachemanager.h"
-#include "engine/materialmanager.h"
+//=============================================================================
+// Project Includes
+//=============================================================================
 #include "util/psxmlparser.h"
 
+#include "engine/materialmanager.h"
+
+//=============================================================================
+// Local Includes
+//=============================================================================
+#include "clientcachemanager.h"
 #include "globals.h"
 
 ClientCacheManager::ClientCacheManager()

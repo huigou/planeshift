@@ -19,8 +19,19 @@
 
 #ifndef CLIENT_VITALS_HEADER
 #define CLIENT_VITALS_HEADER
+//=============================================================================
+// Crystal Space Includes
+//=============================================================================
 
+//=============================================================================
+// Project Includes
+//=============================================================================
 #include "rpgrules/vitals.h"
+
+//=============================================================================
+// Local Includes
+//=============================================================================
+
 
 class psStatDRMessage;
 
@@ -29,9 +40,6 @@ class psStatDRMessage;
   */
 class psClientVitals : public psVitalManager
 {
-    /// version indicator to ignore out of order packets
-    unsigned char counter;
-    bool counter_set;
 public:
     psClientVitals();
 
@@ -53,6 +61,12 @@ public:
       * @param lable The label to be appended to published values
       */     
     void Predict( csTicks now, const char *labelname );       
+    
+private:    
+    /// version indicator to ignore out of order packets
+    unsigned char counter;
+    bool counter_set;
+    
 };
 
 
