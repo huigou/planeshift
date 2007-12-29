@@ -54,6 +54,7 @@ UpdaterConfig::UpdaterConfig(csArray<csString> args, iObjectRegistry* _object_re
     }
     configFile = new csConfigFile(CONFIG_FILENAME, vfs);
     cleanUpdate = configFile->GetBool("Update.Clean", true);
+    updateExecs = configFile->GetBool("Update.Execs", true);
     proxy.host = configFile->GetStr("Updater.Proxy.Host", "");
     proxy.port = configFile->GetInt("Updater.Proxy.Port", 0);
 

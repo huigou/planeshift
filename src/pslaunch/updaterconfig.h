@@ -149,6 +149,9 @@ public:
     /* Returns true if the last update was successful */
     bool WasCleanUpdate() { return cleanUpdate; }
 
+    /* Returns true if we want the updater to update executable files. */
+    bool UpdateExecs() { return updateExecs; }
+
     /* Returns the configfile for the app */
     csRef<iConfigFile> GetConfigFile() { return configFile; }
 
@@ -157,8 +160,11 @@ private:
     /* Holds stage of self updating. */
     int selfUpdating;
 
-    /* Holds whether or not the last update was successful */
+    /* Holds whether or not the last update was successful. */
     bool cleanUpdate;
+
+    /* True if we want the updater to update executable files. */
+    bool updateExecs;
 
     /* VFS, Object Registry */
     csRef<iVFS> vfs;
