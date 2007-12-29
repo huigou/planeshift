@@ -727,9 +727,6 @@
 				RelativePath="..\..\src\common\util\dbprofile.cpp">
 			</File>
 			<File
-				RelativePath="..\..\src\common\util\delimitedstring.cpp">
-			</File>
-			<File
 				RelativePath="..\..\src\common\util\eventmanager.cpp">
 			</File>
 			<File
@@ -833,9 +830,6 @@
 				RelativePath="..\..\src\common\util\dbprofile.h">
 			</File>
 			<File
-				RelativePath="..\..\src\common\util\delimitedstring.h">
-			</File>
-			<File
 				RelativePath="..\..\src\common\util\eventmanager.h">
 			</File>
 			<File
@@ -849,9 +843,6 @@
 			</File>
 			<File
 				RelativePath="..\..\src\common\util\genqueue.h">
-			</File>
-			<File
-				RelativePath="..\..\src\common\util\growarray.h">
 			</File>
 			<File
 				RelativePath="..\..\src\common\util\heap.h">
