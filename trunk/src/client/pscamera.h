@@ -19,18 +19,25 @@
 
 #ifndef PS_CAMERA_HEADER
 #define PS_CAMERA_HEADER
-
-// CS includes
+//=============================================================================
+// Crystal Space Includes
+//=============================================================================
 #include <csutil/csstring.h>
 #include <csutil/ref.h>
 #include <iutil/virtclk.h>
 
-// cel includes
 #include <propclass/linmove.h>
 
+//=============================================================================
+// Project Includes
+//=============================================================================
 #include "net/cmdbase.h"
 
+//=============================================================================
+// Local Includes
+//=============================================================================
 #include "psoptions.h"
+
 
 struct RaceDefinition;
 struct iView;

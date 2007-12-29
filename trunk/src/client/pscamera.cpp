@@ -21,7 +21,9 @@
 */
 
 #include <psconfig.h>
-
+//=============================================================================
+// Crystal Space Includes
+//=============================================================================
 #include <iengine/movable.h>
 #include <iengine/camera.h>
 #include <cstool/csview.h>
@@ -36,16 +38,26 @@
 #include <ivaria/collider.h>
 #include <csqsqrt.h>
 #include <csgeom/plane3.h>
+
+//=============================================================================
+// Project Includes
+//=============================================================================
 #include "util/psstring.h"
-#include "globals.h"
-#include "pscamera.h"
-#include "pscelclient.h"
-#include "pscharcontrol.h"
+#include "util/strutil.h"
+
 #include "gui/psmainwidget.h"
+
 #include "net/messages.h"
 #include "net/cmdhandler.h"
 #include "net/cmdhandler.h"
-#include "util/strutil.h"
+
+//=============================================================================
+// Local Includes
+//=============================================================================
+#include "pscamera.h"
+#include "pscelclient.h"
+#include "pscharcontrol.h"
+#include "globals.h"
 
 
 psCamera::psCamera()
