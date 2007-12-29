@@ -18,22 +18,41 @@
  */
 #ifndef MODEHANDLER_H
 #define MODEHANDLER_H
-
+//=============================================================================
+// Crystal Space Includes
+//=============================================================================
 #include <csutil/parray.h>
 #include <csutil/ref.h>
 #include <csutil/weakref.h>
 #include <iengine/portal.h>
+
+//=============================================================================
+// Project Includes
+//=============================================================================
 #include "net/cmdbase.h"
-#include "util/prb.h"
 #include "net/messages.h"
-#include "weather.h"
+
+#include "util/prb.h"
+
+//=============================================================================
+// Local Includes
+//=============================================================================
 
 struct iEngineSequenceManager;
 struct iEngine;
 struct iPcMesh;
 struct iBase;
+struct iSoundManager;
+struct iSoundSource;
+struct LightingList;
+struct LightingSetting;
+struct WeatherInfo;
+
 class pawsChatWindow;
 class GEMClientActor;
+class psCelClient;
+class MsgHandler;
+class WeatherObject;
 
 /* Defines for the various times of day. Some things may need to trigger on a 
   'general' time of day. */
@@ -46,12 +65,6 @@ enum TimeOfDay
     TIME_EVENING    
 };
 
-struct iSoundManager;
-class  psCelClient;
-struct iSoundSource;
-class  MsgHandler;
-struct LightingList;
-struct LightingSetting;
 
 /// Begin of classes
 
@@ -97,6 +110,38 @@ struct WeatherPortal
  */
 class ModeHandler : public psClientNetSubscriber
 {
+public:
+    ModeHandler(iSoundManager *sm,psCelClient *cc,MsgHandler* mh,iObjectRegistry* object_reg);
+    virtual ~ModeHandler();
+    virtual void HandleMessage(MsgEntry* me);
+
+    bool Initialize();
+
+    void ClearLightFadeSettings();
+
+    void PreProcess();
+
+    void SetEntity(iCelEntity *ent);
+
+    /// Get the general time of day it is ( from enum )
+    TimeOfDay GetGeneralTime() { return timeOfDay; }
+    size_t GetTime() { return last_lightset; }
+
+    void DoneLoading(const char* sectorname); // Called when every connected sector is loaded
+
+    /// Creates and places a weather object at each portal to a {WEATHER}ing sector
+    void CreatePortalWeather(iSector* sector, csTicks delta); 
+    bool CreatePortalWeather(iPortal* portal, csTicks delta);
+    /// Remove weather from all portals
+    void RemovePortalWeather();
+    /// Remove fog and downfall from sector
+    void RemoveWeather();
+
+    void AddDownfallObject(WeatherObject* weatherobject);
+    void RemoveDownfallObject(WeatherObject* weatherobject);
+
+    void SetModeSounds(uint8_t mode);
+
 protected:
     iCelEntity *entity;
     csRef<iPcMesh> pcmesh;
@@ -177,37 +222,6 @@ protected:
 
     bool LoadLightingLevels();  // Called from Initialize
 
-public:
-    ModeHandler(iSoundManager *sm,psCelClient *cc,MsgHandler* mh,iObjectRegistry* object_reg);
-    virtual ~ModeHandler();
-    virtual void HandleMessage(MsgEntry* me);
-
-    bool Initialize();
-
-    void ClearLightFadeSettings();
-
-    void PreProcess();
-
-    void SetEntity(iCelEntity *ent);
-
-    /// Get the general time of day it is ( from enum )
-    TimeOfDay GetGeneralTime() { return timeOfDay; }
-    size_t GetTime() { return last_lightset; }
-
-    void DoneLoading(const char* sectorname); // Called when every connected sector is loaded
-
-    /// Creates and places a weather object at each portal to a {WEATHER}ing sector
-    void CreatePortalWeather(iSector* sector, csTicks delta); 
-    bool CreatePortalWeather(iPortal* portal, csTicks delta);
-    /// Remove weather from all portals
-    void RemovePortalWeather();
-    /// Remove fog and downfall from sector
-    void RemoveWeather();
-
-    void AddDownfallObject(WeatherObject* weatherobject);
-    void RemoveDownfallObject(WeatherObject* weatherobject);
-
-    void SetModeSounds(uint8_t mode);
 
 private:
     pawsChatWindow* chatWindow; ///< Used to get the current chat filtering.

@@ -21,15 +21,26 @@
 */
 #ifndef GUIHANDLER_H
 #define GUIHANDLER_H
-
+//=============================================================================
+// Crystal Space Includes
+//=============================================================================
 #include <csutil/parray.h>
 #include <csutil/ref.h>
 #include <csutil/weakref.h>
 
+//=============================================================================
+// Project Includes
+//=============================================================================
 #include "net/cmdbase.h"
 #include "net/messages.h"
 
-#include "psinventorycache.h"
+//=============================================================================
+// Local Includes
+//=============================================================================
+
+
+
+class psInventoryCache;
 
 /**
  * This class receives all network messages from the server
