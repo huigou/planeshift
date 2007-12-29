@@ -19,16 +19,25 @@
 
 #ifndef __CMDUTIL_H__
 #define __CMDUTIL_H__
+//=============================================================================
+// Crystal Space Includes
+//=============================================================================
 
+//=============================================================================
+// Project Includes
+//=============================================================================
 #include "net/cmdbase.h"
+
 #include "util/strutil.h"
+
+//=============================================================================
+// Local Includes
+//=============================================================================
+
 
 /** Class to handle general player commands. */
 class psUtilityCommands : public psCmdBase
 {
-protected:
-    csString text,yescommands,nocommands;
-
 public:
     psUtilityCommands(MsgHandler *mh,
                       CmdHandler *ch,
@@ -46,6 +55,11 @@ public:
     static void HandleQuit( bool answeredYes, void* thisPtr );
     
     csString SaveCamera();
+
+protected:
+    csString text;
+    csString yescommands;
+    csString nocommands;
     
 private:
     /// Handles the /quit command.

@@ -15,18 +15,30 @@
  *
  */
 #include <psconfig.h>
-
+//=============================================================================
+// Crystal Space Includes
+//=============================================================================
 #include <iutil/document.h>
 
-#include "globals.h"
-#include "cmdadmin.h"
+//=============================================================================
+// Project Includes
+//=============================================================================
 #include "net/cmdhandler.h"
 #include "net/msghandler.h"
 #include "net/messages.h"
-#include "paws/pawsmanager.h"
-#include "gui/chatwindow.h"
-#include "pscelclient.h"
+
 #include "util/strutil.h"
+
+#include "gui/chatwindow.h"
+
+#include "paws/pawsmanager.h"
+
+//=============================================================================
+// Local Includes
+//=============================================================================
+#include "cmdadmin.h"
+#include "pscelclient.h"
+#include "globals.h"
 
 class pawsWidget;
 
