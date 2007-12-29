@@ -44,7 +44,7 @@ int PatchFileHelper(FILE* srcFile, FILE* patchFile, FILE* outFile, int bufferSiz
     void* input_Buffer;
     int input_Buffer_Read;
 
-    if ((uint)bufferSize < XD3_ALLOCSIZE)
+    if (bufferSize < XD3_ALLOCSIZE)
         bufferSize = XD3_ALLOCSIZE;
 
     memset (&stream, 0, sizeof (stream));

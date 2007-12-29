@@ -19,6 +19,9 @@
 #ifndef _XDELTA3_DECODE_H_
 #define _XDELTA3_DECODE_H_
 
+#define SRCORTGT(x) ((((x) & VCD_SRCORTGT) == VCD_SOURCE) ? \
+                     VCD_SOURCE : ((((x) & VCD_SRCORTGT) == \
+                                    VCD_TARGET) ? VCD_TARGET : 0))
 
 /* Return true if the caller must provide a source.  Theoretically,
  * this has to be checked after every window.  It could be that the
@@ -75,7 +78,9 @@ xd3_decode_setup_buffers (xd3_stream *stream)
 	  stream->space_out = 0;
 	}
 
-      stream->dec_cpyaddrbase = stream->dec_lastwin + (usize_t) (stream->dec_cpyoff - stream->dec_laststart);
+      // TODO: VCD_TARGET mode, this is broken
+      stream->dec_cpyaddrbase = stream->dec_lastwin +
+	(usize_t) (stream->dec_cpyoff - stream->dec_laststart);
     }
 
   /* See if the current output window is large enough. */
@@ -83,9 +88,11 @@ xd3_decode_setup_buffers (xd3_stream *stream)
     {
       xd3_free (stream, stream->dec_buffer);
 
-      stream->space_out = xd3_round_blksize (stream->dec_tgtlen, XD3_ALLOCSIZE);
+      stream->space_out =
+	xd3_round_blksize (stream->dec_tgtlen, XD3_ALLOCSIZE);
 
-      if ((stream->dec_buffer = xd3_alloc (stream, stream->space_out, 1)) == NULL)
+      if ((stream->dec_buffer =
+	   (uint8_t*) xd3_alloc (stream, stream->space_out, 1)) == NULL)
 	{
 	  return ENOMEM;
 	}
@@ -118,7 +125,7 @@ xd3_decode_allocate (xd3_stream  *stream,
     {
       *buf_alloc = xd3_round_blksize (size, XD3_ALLOCSIZE);
 
-      if ((*buf_ptr = xd3_alloc (stream, *buf_alloc, 1)) == NULL)
+      if ((*buf_ptr = (uint8_t*) xd3_alloc (stream, *buf_alloc, 1)) == NULL)
 	{
 	  return ENOMEM;
 	}
@@ -165,7 +172,10 @@ xd3_decode_section (xd3_stream *stream,
 	      if ((ret = xd3_decode_allocate (stream,
 					      section->size,
 					      & section->copied1,
-					      & section->alloc1))) { return ret; }
+					      & section->alloc1)))
+		{
+		  return ret;
+		}
 
 	      section->buf = section->copied1;
 	    }
@@ -219,11 +229,12 @@ xd3_decode_parse_halfinst (xd3_stream *stream, xd3_hinst *inst)
   /* For copy instructions, read address. */
   if (inst->type >= XD3_CPY)
     {
-      IF_DEBUG1 ({
+      IF_DEBUG2 ({
 	static int cnt = 0;
 	DP(RINT "DECODE:%u: COPY at %"Q"u (winoffset %u) size %u winaddr %u\n",
 		 cnt++,
-		 stream->total_out + (stream->dec_position - stream->dec_cpylen),
+		 stream->total_out + (stream->dec_position -
+				      stream->dec_cpylen),
 		 (stream->dec_position - stream->dec_cpylen),
 		 inst->size,
 		 inst->addr);
@@ -246,9 +257,10 @@ xd3_decode_parse_halfinst (xd3_stream *stream, xd3_hinst *inst)
 	  return XD3_INVALID_INPUT;
 	}
 
-      /* Check: a VCD_TARGET or VCD_SOURCE copy cannot exceed the remaining buffer space
-       * in its own segment. */
-      if (inst->addr < stream->dec_cpylen && inst->addr + inst->size > stream->dec_cpylen)
+      /* Check: a VCD_TARGET or VCD_SOURCE copy cannot exceed the remaining
+       * buffer space in its own segment. */
+      if (inst->addr < stream->dec_cpylen &&
+	  inst->addr + inst->size > stream->dec_cpylen)
 	{
 	  stream->msg = "size too large";
 	  return XD3_INVALID_INPUT;
@@ -256,25 +268,25 @@ xd3_decode_parse_halfinst (xd3_stream *stream, xd3_hinst *inst)
     }
   else
     {
-      IF_DEBUG1 ({
+      IF_DEBUG2 ({
 	if (inst->type == XD3_ADD)
 	  {
 	    static int cnt;
 	    DP(RINT "DECODE:%d: ADD at %"Q"u (winoffset %u) size %u\n",
-		     cnt++,
-		     stream->total_out + stream->dec_position - stream->dec_cpylen,
-		     stream->dec_position - stream->dec_cpylen,
-		     inst->size);
+	       cnt++,
+	       (stream->total_out + stream->dec_position - stream->dec_cpylen),
+	       stream->dec_position - stream->dec_cpylen,
+	       inst->size);
 	  }
 	else
 	  {
 	    static int cnt;
 	    XD3_ASSERT (inst->type == XD3_RUN);
 	    DP(RINT "DECODE:%d: RUN at %"Q"u (winoffset %u) size %u\n",
-		     cnt++,
-		     stream->total_out + stream->dec_position - stream->dec_cpylen,
-		     stream->dec_position - stream->dec_cpylen,
-		     inst->size);
+	       cnt++,
+	       stream->total_out + stream->dec_position - stream->dec_cpylen,
+	       stream->dec_position - stream->dec_cpylen,
+	       inst->size);
 	  }
       });
     }
@@ -314,11 +326,13 @@ xd3_decode_instruction (xd3_stream *stream)
    * corresponding size and addresses if necessary.  Assume a
    * code-table may have NOOP in either position, although this is
    * unlikely. */
-  if (inst->type1 != XD3_NOOP && (ret = xd3_decode_parse_halfinst (stream, & stream->dec_current1)))
+  if (inst->type1 != XD3_NOOP &&
+      (ret = xd3_decode_parse_halfinst (stream, & stream->dec_current1)))
     {
       return ret;
     }
-  if (inst->type2 != XD3_NOOP && (ret = xd3_decode_parse_halfinst (stream, & stream->dec_current2)))
+  if (inst->type2 != XD3_NOOP &&
+      (ret = xd3_decode_parse_halfinst (stream, & stream->dec_current2)))
     {
       return ret;
     }
@@ -389,7 +403,10 @@ xd3_decode_output_halfinst (xd3_stream *stream, xd3_hinst *inst)
 	      {
 		/* For VCD_TARGET we know the entire range is
 		 * in-memory, as established by
-		 * decode_setup_buffers. */
+		 * decode_setup_buffers.
+                 *
+                 * TODO: this is totally bogus, VCD_TARGET won't work.
+                 */
 		src = stream->dec_cpyaddrbase + inst->addr;
 		inst->type = XD3_NOOP;
 		inst->size = 0;
@@ -431,9 +448,10 @@ xd3_decode_output_halfinst (xd3_stream *stream, xd3_hinst *inst)
 
 		src = source->curblk + blkoff;
 
-		/* This block either contains enough data or the
-		 * source file is short. */
-		if ((source->onblk != blksize) && (blkoff + take > source->onblk))
+		/* This block either contains enough data or the source file
+		 * is short. */
+		if ((source->onblk != blksize) &&
+		    (blkoff + take > source->onblk))
 		  {
 		    stream->msg = "source file too short";
 		    return XD3_INVALID_INPUT;
@@ -516,8 +534,9 @@ xd3_decode_secondary_sections (xd3_stream *secondary_stream)
   int ret;
 #define DECODE_SECONDARY_SECTION(UPPER,LOWER) \
   ((secondary_stream->dec_del_ind & VCD_ ## UPPER ## COMP) && \
-   (ret = xd3_decode_secondary (secondary_stream, & secondary_stream-> LOWER ## _sect, \
-					& xd3_sec_ ## LOWER (secondary_stream))))
+   (ret = xd3_decode_secondary (secondary_stream, \
+				& secondary_stream-> LOWER ## _sect,	\
+				& xd3_sec_ ## LOWER (secondary_stream))))
 
   if (DECODE_SECONDARY_SECTION (DATA, data) ||
       DECODE_SECONDARY_SECTION (INST, inst) ||
@@ -584,11 +603,14 @@ xd3_decode_sections (xd3_stream *stream)
       return XD3_INVALID_INPUT;
 
     case DEC_DATA:
-      if ((ret = xd3_decode_section (stream, & stream->data_sect, DEC_INST, copy))) { return ret; }
+      if ((ret = xd3_decode_section (stream, & stream->data_sect,
+				     DEC_INST, copy))) { return ret; }
     case DEC_INST:
-      if ((ret = xd3_decode_section (stream, & stream->inst_sect, DEC_ADDR, copy))) { return ret; }
+      if ((ret = xd3_decode_section (stream, & stream->inst_sect,
+				     DEC_ADDR, copy))) { return ret; }
     case DEC_ADDR:
-      if ((ret = xd3_decode_section (stream, & stream->addr_sect, DEC_EMIT, copy))) { return ret; }
+      if ((ret = xd3_decode_section (stream, & stream->addr_sect,
+				     DEC_EMIT, copy))) { return ret; }
     }
 
   XD3_ASSERT (stream->dec_winbytes == need);
@@ -720,9 +742,6 @@ xd3_decode_input (xd3_stream *stream)
       stream->dec_state = (nstate); \
       } while (0)
 
-#define SRCORTGT(x) (((x) & VCD_SRCORTGT) == VCD_SOURCE || \
-		     ((x) & VCD_SRCORTGT) == VCD_TARGET)
-
   switch (stream->dec_state)
     {
     case DEC_VCHEAD:
@@ -751,7 +770,10 @@ xd3_decode_input (xd3_stream *stream)
       }
     case DEC_HDRIND:
       {
-	if ((ret = xd3_decode_byte (stream, & stream->dec_hdr_ind))) { return ret; }
+	if ((ret = xd3_decode_byte (stream, & stream->dec_hdr_ind)))
+	  {
+	    return ret;
+	  }
 
 	if ((stream->dec_hdr_ind & VCD_INVHDR) != 0)
 	  {
@@ -782,7 +804,8 @@ xd3_decode_input (xd3_stream *stream)
 
     case DEC_TABLEN:
       /* Length of code table data: only if VCD_CODETABLE is set */
-      SIZE_CASE ((stream->dec_hdr_ind & VCD_CODETABLE) != 0, stream->dec_codetblsz, DEC_NEAR);
+      SIZE_CASE ((stream->dec_hdr_ind & VCD_CODETABLE) != 0,
+		 stream->dec_codetblsz, DEC_NEAR);
 
       /* The codetblsz counts the two NEAR/SAME bytes */
       if ((stream->dec_hdr_ind & VCD_CODETABLE) != 0) {
@@ -794,10 +817,12 @@ xd3_decode_input (xd3_stream *stream)
       }
     case DEC_NEAR:
       /* Near modes: only if VCD_CODETABLE is set */
-      BYTE_CASE((stream->dec_hdr_ind & VCD_CODETABLE) != 0, stream->acache.s_near, DEC_SAME);
+      BYTE_CASE((stream->dec_hdr_ind & VCD_CODETABLE) != 0,
+		stream->acache.s_near, DEC_SAME);
     case DEC_SAME:
       /* Same modes: only if VCD_CODETABLE is set */
-      BYTE_CASE((stream->dec_hdr_ind & VCD_CODETABLE) != 0, stream->acache.s_same, DEC_TABDAT);
+      BYTE_CASE((stream->dec_hdr_ind & VCD_CODETABLE) != 0,
+		stream->acache.s_same, DEC_TABDAT);
     case DEC_TABDAT:
       /* Compressed code table data */
 
@@ -805,14 +830,22 @@ xd3_decode_input (xd3_stream *stream)
 	{
 	  /* Get the code table data. */
 	  if ((stream->dec_codetbl == NULL) &&
-	      (stream->dec_codetbl = xd3_alloc (stream, stream->dec_codetblsz, 1)) == NULL) { return ENOMEM; }
+	      (stream->dec_codetbl =
+	       (uint8_t*) xd3_alloc (stream,
+				     stream->dec_codetblsz, 1)) == NULL)
+	    {
+	      return ENOMEM;
+	    }
 
-	  if ((ret = xd3_decode_bytes (stream, stream->dec_codetbl, & stream->dec_codetblbytes, stream->dec_codetblsz)))
+	  if ((ret = xd3_decode_bytes (stream, stream->dec_codetbl,
+				       & stream->dec_codetblbytes,
+				       stream->dec_codetblsz)))
 	    {
 	      return ret;
 	    }
 
-	  if ((ret = xd3_apply_table_encoding (stream, stream->dec_codetbl, stream->dec_codetblbytes)))
+	  if ((ret = xd3_apply_table_encoding (stream, stream->dec_codetbl,
+					       stream->dec_codetblbytes)))
 	    {
 	      return ret;
 	    }
@@ -831,7 +864,8 @@ xd3_decode_input (xd3_stream *stream)
 
     case DEC_APPLEN:
       /* Length of application data */
-      SIZE_CASE((stream->dec_hdr_ind & VCD_APPHEADER) != 0, stream->dec_appheadsz, DEC_APPDAT);
+      SIZE_CASE((stream->dec_hdr_ind & VCD_APPHEADER) != 0,
+		stream->dec_appheadsz, DEC_APPDAT);
 
     case DEC_APPDAT:
       /* Application data */
@@ -840,11 +874,18 @@ xd3_decode_input (xd3_stream *stream)
 	  /* Note: we add an additional byte for padding, to allow
 	     0-termination. */
 	  if ((stream->dec_appheader == NULL) &&
-	      (stream->dec_appheader = xd3_alloc (stream, stream->dec_appheadsz+1, 1)) == NULL) { return ENOMEM; }
+	      (stream->dec_appheader =
+	       (uint8_t*) xd3_alloc (stream,
+				     stream->dec_appheadsz+1, 1)) == NULL)
+	    {
+	      return ENOMEM;
+	    }
 
 	  stream->dec_appheader[stream->dec_appheadsz] = 0;
 
-	  if ((ret = xd3_decode_bytes (stream, stream->dec_appheader, & stream->dec_appheadbytes, stream->dec_appheadsz)))
+	  if ((ret = xd3_decode_bytes (stream, stream->dec_appheader,
+				       & stream->dec_appheadbytes,
+				       stream->dec_appheadsz)))
 	    {
 	      return ret;
 	    }
@@ -856,8 +897,10 @@ xd3_decode_input (xd3_stream *stream)
     case DEC_WININD:
       {
 	/* Start of a window: the window indicator */
-
-	if ((ret = xd3_decode_byte (stream, & stream->dec_win_ind))) { return ret; }
+	if ((ret = xd3_decode_byte (stream, & stream->dec_win_ind)))
+	  {
+	    return ret;
+	  }
 
 	stream->current_window = stream->dec_window_count;
 
@@ -879,12 +922,14 @@ xd3_decode_input (xd3_stream *stream)
 
 	stream->dec_state = DEC_CPYLEN;
 
-	IF_DEBUG1 (DP(RINT "--------- TARGET WINDOW %"Q"u ------------------\n", stream->current_window));
+	IF_DEBUG1 (DP(RINT "--------- TARGET WINDOW %"Q"u -----------\n",
+		      stream->current_window));
       }
 
     case DEC_CPYLEN:
       /* Copy window length: only if VCD_SOURCE or VCD_TARGET is set */
-      SIZE_CASE(SRCORTGT (stream->dec_win_ind), stream->dec_cpylen, DEC_CPYOFF);
+      SIZE_CASE(SRCORTGT (stream->dec_win_ind), stream->dec_cpylen,
+		DEC_CPYOFF);
 
       /* Set the initial, logical decoder position (HERE address) in
        * dec_position.  This is set to just after the source/copy
@@ -894,7 +939,8 @@ xd3_decode_input (xd3_stream *stream)
 
     case DEC_CPYOFF:
       /* Copy window offset: only if VCD_SOURCE or VCD_TARGET is set */
-      OFFSET_CASE(SRCORTGT (stream->dec_win_ind), stream->dec_cpyoff, DEC_ENCLEN);
+      OFFSET_CASE(SRCORTGT (stream->dec_win_ind), stream->dec_cpyoff,
+		  DEC_ENCLEN);
 
       /* Copy offset and copy length may not overflow. */
       if (XOFF_T_OVERFLOW (stream->dec_cpyoff, stream->dec_cpylen))
@@ -906,7 +952,8 @@ xd3_decode_input (xd3_stream *stream)
       /* Check copy window bounds: VCD_TARGET window may not exceed
 	 current position. */
       if ((stream->dec_win_ind & VCD_TARGET) &&
-	  (stream->dec_cpyoff + (xoff_t) stream->dec_cpylen > stream->dec_winstart))
+	  (stream->dec_cpyoff + (xoff_t) stream->dec_cpylen >
+	   stream->dec_winstart))
 	{
 	  stream->msg = "VCD_TARGET window out of bounds";
 	  return XD3_INVALID_INPUT;
@@ -968,11 +1015,16 @@ xd3_decode_input (xd3_stream *stream)
 	{
 	  int i;
 
-	  if ((ret = xd3_decode_bytes (stream, stream->dec_cksum, & stream->dec_cksumbytes, 4))) { return ret; }
+	  if ((ret = xd3_decode_bytes (stream, stream->dec_cksum,
+				       & stream->dec_cksumbytes, 4)))
+	    {
+	      return ret;
+	    }
 
 	  for (i = 0; i < 4; i += 1)
 	    {
-	      stream->dec_adler32 = (stream->dec_adler32 << 8) | stream->dec_cksum[i];
+	      stream->dec_adler32 =
+		(stream->dec_adler32 << 8) | stream->dec_cksum[i];
 	    }
 	}
 
@@ -980,14 +1032,15 @@ xd3_decode_input (xd3_stream *stream)
 
       /* Check dec_enclen for redundency, otherwise it is not really used. */
       {
-	usize_t enclen_check = (1 + (xd3_sizeof_size (stream->dec_tgtlen) +
-				    xd3_sizeof_size (stream->data_sect.size) +
-				    xd3_sizeof_size (stream->inst_sect.size) +
-				    xd3_sizeof_size (stream->addr_sect.size)) +
-			       stream->data_sect.size +
-			       stream->inst_sect.size +
-			       stream->addr_sect.size +
-			       ((stream->dec_win_ind & VCD_ADLER32) ? 4 : 0));
+	usize_t enclen_check =
+	  (1 + (xd3_sizeof_size (stream->dec_tgtlen) +
+		xd3_sizeof_size (stream->data_sect.size) +
+		xd3_sizeof_size (stream->inst_sect.size) +
+		xd3_sizeof_size (stream->addr_sect.size)) +
+	   stream->data_sect.size +
+	   stream->inst_sect.size +
+	   stream->addr_sect.size +
+	   ((stream->dec_win_ind & VCD_ADLER32) ? 4 : 0));
 
 	if (stream->dec_enclen != enclen_check)
 	  {
@@ -1045,8 +1098,10 @@ xd3_decode_input (xd3_stream *stream)
 	      }
 	    else
 	      {
-		xd3_swap_uint8p (& stream->dec_lastwin,   & stream->next_out);
-		xd3_swap_usize_t (& stream->dec_lastspace, & stream->space_out);
+		xd3_swap_uint8p (& stream->dec_lastwin,
+				 & stream->next_out);
+		xd3_swap_usize_t (& stream->dec_lastspace,
+				  & stream->space_out);
 	      }
 	  }
 

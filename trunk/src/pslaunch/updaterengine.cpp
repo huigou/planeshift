@@ -151,7 +151,7 @@ void UpdaterEngine::checkForUpdates()
     printOutput("Checking for updates to the updater: ");
 
 
-    if(checkUpdater())
+    if(config->UpdateExecs() && checkUpdater())
     {
         printOutput("Update Available!\n");
 
@@ -609,6 +609,7 @@ void UpdaterEngine::generalUpdate()
 
         // Parse new files xml, make a list.
         csArray<csString> newList;
+        csArray<bool> newListType;
         csRef<iDocumentNode> newrootnode = GetRootNode("/zip/newfiles.xml");
         if(newrootnode)
         {
@@ -616,13 +617,19 @@ void UpdaterEngine::generalUpdate()
             csRef<iDocumentNodeIterator> nodeItr = newnode->GetNodes();
             while(nodeItr->HasNext())
             {
-                newList.PushSmart(nodeItr->Next()->GetAttributeValue("name"));
+                csRef<iDocumentNode> node = nodeItr->Next();
+                newList.PushSmart(node->GetAttributeValue("name"));
+                newListType.PushSmart(node->GetAttributeValueAsBool("exec"));
             }
         }
 
         // Copy all those files to our real dir.
         for(uint i=0; i<newList.GetSize(); i++)
         {
+            // Skip if it's an executable and we're not updating those.
+            if(newListType.Get(i) && !config->UpdateExecs())
+                continue;
+
             fileUtil->CopyFile("/zip/" + newList.Get(i), "/this/" + newList.Get(i), true, false);
         }
 
@@ -642,6 +649,11 @@ void UpdaterEngine::generalUpdate()
             while(nodeItr->HasNext())
             {
                 csRef<iDocumentNode> next = nodeItr->Next();
+
+                // Skip if it's an executable and we're not updating those.
+                bool exec = next->GetAttributeValueAsBool("exec");
+                if(exec && !config->UpdateExecs())
+                  continue;
 
                 csString newFilePath = next->GetAttributeValue("filepath");
                 csString diff = next->GetAttributeValue("diff");
