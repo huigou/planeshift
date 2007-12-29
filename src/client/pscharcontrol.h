@@ -17,11 +17,20 @@
 
 #ifndef __PSCHARCONTROL_H__
 #define __PSCHARCONTROL_H__
-
+//=============================================================================
+// Crystal Space Includes
+//=============================================================================
 #include <csutil/hash.h>
 #include <csutil/csstring.h>
 #include <iutil/eventnames.h>
 
+//=============================================================================
+// Project Includes
+//=============================================================================
+
+//=============================================================================
+// Local Includes
+//=============================================================================
 #include "psmovement.h"
 
 class psTriggerHandler;
@@ -112,29 +121,6 @@ uint32 GetPSMouseMods(const iEvent* event);
  */
 class psControlManager
 {
-protected:
-    typedef csHash<psControl*,uint> psControlMap;  ///< Each device gets a hash map of buttons to triggers
-
-    psControlMap keyboard;   ///< List of all keyboard triggers
-    psControlMap mouse;      ///< List of all mouse triggers
-    
-    csPDelArray<psControl> triggers;  ///< Master list of all triggers
-
-    // Event ID cache
-    csEventID event_key_down;
-    csEventID event_key_up;
-    csEventID event_mouse_down;
-    csEventID event_mouse_up;
-
-    /// Gets the control from a map with the specified button and mods (if not found, finds without mods)
-    static psControl* GetFromMap( const psControlMap &ctrlmap, uint button, uint32 mods );
-
-    /// Gets the controls from a map with the specified button
-    csArray<psControl*>* GetArrayFromMap( const psControlMap &ctrlmap, uint button);
-
-    /// Handles an input event
-    void HandleButton( psControl::Device device, uint button, uint32 mods, bool newState );
-
 public:
     psControlManager(iEventNameRegistry* eventname_reg, psTriggerHandler* handler);
 
@@ -163,6 +149,31 @@ public:
 
     /// Assign 'ptr' to all psControls starting with 'name'
     bool SetTriggerData( const char* name, const void* ptr );
+
+protected:
+    typedef csHash<psControl*,uint> psControlMap;  ///< Each device gets a hash map of buttons to triggers
+
+    psControlMap keyboard;   ///< List of all keyboard triggers
+    psControlMap mouse;      ///< List of all mouse triggers
+    
+    csPDelArray<psControl> triggers;  ///< Master list of all triggers
+
+    // Event ID cache
+    csEventID event_key_down;
+    csEventID event_key_up;
+    csEventID event_mouse_down;
+    csEventID event_mouse_up;
+
+    /// Gets the control from a map with the specified button and mods (if not found, finds without mods)
+    static psControl* GetFromMap( const psControlMap &ctrlmap, uint button, uint32 mods );
+
+    /// Gets the controls from a map with the specified button
+    csArray<psControl*>* GetArrayFromMap( const psControlMap &ctrlmap, uint button);
+
+    /// Handles an input event
+    void HandleButton( psControl::Device device, uint button, uint32 mods, bool newState );
+
+    
 };
 
 
@@ -187,7 +198,7 @@ public:
     void HandleLook             (const psControl* trigger, bool value);
     void HandleZoom             (const psControl* trigger, bool value);
     void HandleMouseLook        (const psControl* trigger, bool value);
-	void HandleMouseLookToggle  (const psControl* trigger, bool value);
+    void HandleMouseLookToggle  (const psControl* trigger, bool value);
     void HandleMouseZoom        (const psControl* trigger, bool value);
     void HandleMouseRun         (const psControl* trigger, bool value);
     void HandleCameraMode       (const psControl* trigger, bool value);
@@ -210,19 +221,6 @@ protected:
  */
 class psCharController
 {
-protected:
-    psTriggerHandler handler;    ///< Trigger functions
-    psControlManager controls;   ///< Key mappings
-    psMovementManager movement;  ///< Movement system
-
-    void CreateKeys();                ///< Create all triggers
-    bool LoadKeys(const char* file);  ///< Load all trigger mappings from file
-    void SaveKeys();                  ///< Save custom trigger mappings
-
-    bool ready;  ///< Ready to process events?
-
-    csEventID event_mouseclick;
-
 public:
     psCharController(iEventNameRegistry* eventname_reg);
     ~psCharController();
@@ -252,6 +250,19 @@ public:
 
     void CenterMouse(bool value);
     void CancelMouseLook();
+
+protected:
+    psTriggerHandler handler;    ///< Trigger functions
+    psControlManager controls;   ///< Key mappings
+    psMovementManager movement;  ///< Movement system
+
+    void CreateKeys();                ///< Create all triggers
+    bool LoadKeys(const char* file);  ///< Load all trigger mappings from file
+    void SaveKeys();                  ///< Save custom trigger mappings
+
+    bool ready;  ///< Ready to process events?
+
+    csEventID event_mouseclick;
 };
 
 #endif

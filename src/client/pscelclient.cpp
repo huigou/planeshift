@@ -87,20 +87,19 @@
 //=============================================================================
 // Application Includes
 //=============================================================================
-#include "globals.h"
+#include "pscelclient.h"
 #include "charapp.h"
 #include "clientvitals.h"
 #include "modehandler.h"
 #include "zonehandler.h"
-#include "pscelclient.h"
 #include "psclientdr.h"
 #include "entitylabels.h"
 #include "shadowmanager.h"
 #include "clientcachemanager.h"
 #include "pscharcontrol.h"
 #include "psclientchar.h"
-
 #include "pscal3dcallback.h"
+#include "globals.h"
 
 
 
