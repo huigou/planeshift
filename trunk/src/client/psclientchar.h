@@ -19,15 +19,26 @@
  */
 #ifndef PS_CLIENT_CHAR_H
 #define PS_CLIENT_CHAR_H
-
+//=============================================================================
+// Crystal Space Includes
+//=============================================================================
 #include <csutil/ref.h>
 #include <iutil/document.h>
 #include <csutil/refarr.h>
 #include <imesh/spritecal3d.h>
 
+//=============================================================================
+// Project Includes
+//=============================================================================
 #include "net/cmdbase.h"
 #include "net/charmessages.h"
+
 #include "util/namegenerator.h"
+
+//=============================================================================
+// Local Includes
+//=============================================================================
+
 
 struct iCelEntity;
 struct iVFS;

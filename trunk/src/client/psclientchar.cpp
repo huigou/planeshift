@@ -22,7 +22,9 @@
  * the details involved about a player. 
  */
 #include <psconfig.h>
-
+//=============================================================================
+// Crystal Space Includes
+//=============================================================================
 #include <iutil/databuff.h>
 #include <iengine/mesh.h>
 #include <iengine/movable.h>
@@ -35,31 +37,40 @@
 #include <iutil/plugin.h>
 #include <csutil/xmltiny.h>
 
+//=============================================================================
+// Project Includes
+//=============================================================================
 #include "net/message.h"
 #include "net/messages.h"
 #include "net/msghandler.h"
 #include "net/charmessages.h"
+
+#include "util/psmeshutil.h"
+
 #include "engine/celbase.h"
 #include "engine/netpersist.h"
 
-// CLIENT INCLUDES
-#include "globals.h"
-#include "pscelclient.h"
-#include "psclientchar.h"
-#include "charapp.h"
 #include "iclient/isoundmngr.h"
 
 #include "paws/pawsmanager.h"
 #include "paws/pawstextbox.h"
 #include "paws/pawsobjectview.h"
+
 #include "gui/inventorywindow.h"
 #include "gui/pawssummary.h"
 #include "gui/pawsspellcancelwindow.h"
 #include "gui/pawsinfowindow.h"
 
 #include "effects/pseffectmanager.h"
-#include "util/psmeshutil.h"
+
+//=============================================================================
+// Local Includes
+//=============================================================================
+#include "psclientchar.h"
+#include "pscelclient.h"
+#include "charapp.h"
 #include "pscamera.h"
+#include "globals.h"
 
 //------------------------------------------------------------------------------
 

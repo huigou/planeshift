@@ -17,7 +17,9 @@
 *
 */
 #include <psconfig.h>
-
+//=============================================================================
+// Crystal Space Includes
+//=============================================================================
 #include <iutil/databuff.h>
 #include <csutil/sysfunc.h>
 #include <iengine/mesh.h>
@@ -25,21 +27,31 @@
 #include <imesh/spritecal3d.h>
 #include <iutil/object.h>
 #include <ivaria/engseq.h>
-#include "globals.h"
-#include "net/message.h"
-#include "net/msghandler.h"
-#include "engine/celbase.h"
-#include "engine/netpersist.h"
 
 #include <propclass/linmove.h>
 #include <propclass/colldet.h>
 
+//=============================================================================
+// Project Includes
+//=============================================================================
+#include "net/message.h"
+#include "net/msghandler.h"
+#include "net/connection.h"
+
+#include "engine/celbase.h"
+#include "engine/netpersist.h"
+
+//=============================================================================
+// Local Includes
+//=============================================================================
+#include "psclientdr.h"
 #include "pscelclient.h"
 #include "modehandler.h"
-#include "psclientdr.h"
 #include "clientvitals.h"
-#include "net/connection.h"
 #include "psnetmanager.h"
+#include "globals.h"
+
+
 
 #define LINMOVE_IGNORECHEATS false
 
