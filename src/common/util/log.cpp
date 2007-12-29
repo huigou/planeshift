@@ -212,7 +212,7 @@ void SetFlag(const char *name,bool flag, uint32 filter)
 
         csString str;
 
-        if (strcasestr(flagnames[i],name) || !strcmp(name,"all"))
+        if (!strcmp(flagnames[i], name) || !strcmp(name, "all"))
         {
             disp_flag[i] = flag;
 
