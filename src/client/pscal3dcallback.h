@@ -19,14 +19,22 @@
 
 #ifndef PS_CAL3D_CALLBACK_HEADER
 #define PS_CAL3D_CALLBACK_HEADER
-
-// Cal3D includes
-#include <cal3d/animcallback.h>
-
-// CS includes
+//=============================================================================
+// Crystal Space Includes
+//=============================================================================
 #include <csutil/csstring.h>
 #include <csutil/ref.h>
 #include <imap/reader.h>
+
+#include <cal3d/animcallback.h>
+
+//=============================================================================
+// Project Includes
+//=============================================================================
+
+//=============================================================================
+// Local Includes
+//=============================================================================
 
 class psCal3DCallbackLoader : public scfImplementation1<psCal3DCallbackLoader,iLoaderPlugin>
 {

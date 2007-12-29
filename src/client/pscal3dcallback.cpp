@@ -18,18 +18,28 @@
 */
 
 #include <psconfig.h>
-
+//=============================================================================
+// Crystal Space Includes
+//=============================================================================
 #include <csutil/xmltiny.h>
 #include <iengine/mesh.h>
 #include <imesh/object.h>
 #include <imesh/spritecal3d.h>
-#include <cal3d/cal3d_wrapper.h>
 #include <iutil/objreg.h>
 
-#include "globals.h"
+#include <cal3d/cal3d_wrapper.h>
+
+//=============================================================================
+// Project Includes
+//=============================================================================
+#include "effects/pseffectmanager.h"
+
+//=============================================================================
+// Local Includes
+//=============================================================================
 #include "pscal3dcallback.h"
 #include "pscelclient.h"
-#include "effects/pseffectmanager.h"
+#include "globals.h"
 
 psCal3DCallbackLoader::psCal3DCallbackLoader(iObjectRegistry * objreg)
     : scfImplementationType(this)
