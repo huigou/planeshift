@@ -18,41 +18,52 @@
  */
 #ifndef __psCelClient_H__
 #define __psCelClient_H__
-
+//=============================================================================
+// Crystal Space Includes
+//=============================================================================
 #include <csutil/parray.h>
 #include <csutil/ref.h>
 #include <csutil/list.h>
 #include <csutil/hash.h>
-#include "engine/celbase.h"
-#include "net/cmdbase.h"
+
 #include <physicallayer/pl.h>
 #include <behaviourlayer/bl.h>
 #include <physicallayer/entity.h>
 #include <physicallayer/propfact.h>
 #include <propclass/linmove.h>
 
+//=============================================================================
+// Project Includes
+//=============================================================================
+#include "engine/celbase.h"
+
+#include "net/cmdbase.h"
+
+//=============================================================================
+// Local Includes
+//=============================================================================
+
+
 struct Trait;
+struct iPcCommandInput;
+struct iVFS;
+struct iSpriteCal3DState;
+
 class MsgHandler;
 class ZoneHandler;
 class psClientDR;
 class psNetPersist;
 class psClientVitals;
 class psCharAppearance;
-struct iPcCommandInput;
-struct iVFS;
-struct iSpriteCal3DState;
-
 class psEntityLabels;
 class psShadowManager;
 class psWorld;
 class psPersistActor;
 class psPersistItem;
-
 class GEMClientObject;
 class GEMClientActor;
 class GEMClientItem;
 class GEMClientActionLocation;
-
 class psEffect;
 
 

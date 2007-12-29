@@ -16,8 +16,9 @@
  */
 
 #include <psconfig.h>
-#include "globals.h"
-
+//=============================================================================
+// Crystal Space Includes
+//=============================================================================
 #include <csutil/eventnames.h>
 #include <csutil/event.h>
 #include <csutil/inputdef.h>
@@ -27,20 +28,30 @@
 #include <iengine/camera.h>
 #include <iengine/sector.h>
 
-#include "pscharcontrol.h"
-
-#include "pscamera.h"
-
-#include "util/psutil.h"
-#include "util/psxmlparser.h"
+//=============================================================================
+// Project Includes
+//=============================================================================
 #include "net/cmdhandler.h"
 #include "net/msghandler.h"
 
+#include "util/psutil.h"
+#include "util/psxmlparser.h"
+
 #include "paws/psmousebinds.h"
 #include "paws/pawswidget.h"
+
 #include "gui/shortcutwindow.h"
 #include "gui/pawscontrolwindow.h"
 #include "gui/psmainwidget.h"
+
+//=============================================================================
+// Local Includes
+//=============================================================================
+#include "pscharcontrol.h"
+#include "pscamera.h"
+#include "globals.h"
+
+
 
 
 #define CUSTOM_CONTROLS_FILE "/planeshift/userdata/options/controls.xml"
