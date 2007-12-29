@@ -378,8 +378,8 @@ bool psEffectObjLabel::SetText(int rows, ...)
     int mw,mh;
     fact->GetMaterialWrapper()->GetMaterial()->GetTexture()->GetOriginalDimensions(mw, mh);
 
-    facState->SetVertexCount( lettercount * 4 );
-    facState->SetTriangleCount( lettercount * 2 );
+    facState->SetVertexCount( (int)lettercount * 4 );
+    facState->SetTriangleCount( (int)lettercount * 2 );
 
     size_t elementCount = elemBuffer.GetSize();
     int cp = 0;
