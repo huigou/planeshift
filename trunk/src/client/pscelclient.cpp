@@ -67,6 +67,7 @@
 #include "engine/celbase.h"
 #include "engine/netpersist.h"
 #include "engine/psworld.h"
+#include "engine/solid.h"
 
 #include "net/messages.h"
 #include "net/msghandler.h"
@@ -1600,13 +1601,13 @@ GEMClientItem::GEMClientItem( psCelClient* cel, psPersistItem& mesg )
     id = mesg.id;
     type = mesg.type;
     factname = mesg.factname;
-
+    solid = 0;
+    
     InitMesh( mesg.factname, mesg.filename, mesg.pos, mesg.yRot, mesg.sector );
 
     if (mesg.flags & psPersistItem::COLLIDE)
     {
-        cel->GetPlLayer()->CreatePropertyClass(entity, "pcsolid");
-        solid = CEL_QUERY_PROPCLASS_ENT(entity, iPcSolid); 
+        solid = new psSolid(psengine->GetObjectRegistry());
         solid->SetMesh(pcmesh);
         solid->Setup();
     }
@@ -1615,7 +1616,10 @@ GEMClientItem::GEMClientItem( psCelClient* cel, psPersistItem& mesg )
     cel->GetShadowManager()->CreateShadow(this);
 }
 
-
+GEMClientItem::~GEMClientItem()
+{
+    delete solid;
+}
 
 GEMClientActionLocation::GEMClientActionLocation( psCelClient* cel, psPersistActionLocation& mesg ) 
                : GEMClientObject( cel, mesg.id )

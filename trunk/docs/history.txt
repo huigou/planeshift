@@ -4,6 +4,9 @@
   clicks on a mesh we can then figure out what game object that mesh
   is for.  This used to be done by CEL but now handles by PS. 
 - Removed unused function   CreateProxActorList
+- Added a psSolid class in common that is used to make items
+  'solid' ie so the player will collsion detect on them. This used to 
+  be done by the CEL iPcSolid class.
 
 *** 2007-12-29 by Michael Gist
 - Added Update.Execs option to the updater. Set to false if you don't want to
