@@ -20,7 +20,9 @@
 //
 //////////////////////////////////////////////////////////////////////
 #include <psconfig.h>
-
+//=============================================================================
+// Crystal Space Includes
+//=============================================================================
 #include <iutil/vfs.h>
 #include <iutil/document.h>
 #include <iutil/evdefs.h>
@@ -33,25 +35,35 @@
 #include <iengine/mesh.h>
 #include <ivideo/fontserv.h>
 
-#include "psmainwidget.h"
-
-#include "chatwindow.h"
-#include "paws/pawsmanager.h"
-#include "inventorywindow.h"
-#include "pawsinfowindow.h"
+//=============================================================================
+// Project Includes
+//=============================================================================
 #include "util/log.h"
 #include "util/strutil.h"
 #include "util/psxmlparser.h"
+
+#include "paws/pawsmanager.h"
+#include "paws/pawsprefmanager.h"
+
+#include "effects/pseffectmanager.h"
+
+//=============================================================================
+// Local Includes
+//=============================================================================
+#include "psmainwidget.h"
+#include "chatwindow.h"
+#include "inventorywindow.h"
+#include "pawsinfowindow.h"
 #include "pscamera.h"
 #include "pscharcontrol.h"
-#include "effects/pseffectmanager.h"
 #include "actionhandler.h"
-#include "paws/pawsprefmanager.h"
 #include "pawsgameboard.h"
+
 
 #define DEFAULT_CONFIG_FILE_NAME "/planeshift/data/options/entityinter_def.xml"
 #define CONFIG_FILE_NAME         "/planeshift/userdata/options/entityinter.xml"
 #define FONT_SIZE                13  // Size for the font at 800x600
+
 
 //////////////////////////////////////////////////////////////////////
 //                  entity types
@@ -432,35 +444,23 @@ void psMainWidget::SetCamera( iCelEntity* entity )
 
 GEMClientObject* psMainWidget::FindMouseOverObject( int x, int y )
 {
+    GEMClientObject* target = NULL;
+
     if ( !cel )
     {
         cel = psengine->GetCelClient();
     }
 
-    if (!psengine->GetPSCamera())
-        return NULL;
-
-    iMeshWrapper* sel = psengine->GetPSCamera()->FindMeshUnder2D(x,y);
-
-        
-    if ( sel )
-    {
-        if (!sel->QueryObject())
-            return NULL;
-
-        csRef<iCelEntity> entity = cel->GetPlLayer()->FindAttachedEntity( sel->QueryObject() );
-        if ( entity )
+    if (psengine->GetPSCamera())
+    {        
+        iMeshWrapper* selectedMesh = psengine->GetPSCamera()->FindMeshUnder2D(x,y);        
+        if ( selectedMesh && selectedMesh->QueryObject())        
         {
-            GEMClientObject* target = cel->FindObject( entity->GetID() );
-            return target;
+            target = cel->FindAttachedObject(selectedMesh->QueryObject());
         }
-        else 
-        {
-            return NULL;
-        }            
-            
-    }
-    return NULL;
+    }        
+    
+    return target;
 }
 
 bool psMainWidget::SetupMain()

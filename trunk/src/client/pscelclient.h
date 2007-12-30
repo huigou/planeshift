@@ -173,6 +173,31 @@ public:
 
     void Update();
 
+    
+    /** Attach a client object to a Crystal Space object.
+      * In most cases the Crystal Space object is a meshwrapper.
+      *
+      * @param object The Crystal Space object we want to attach our client object to.
+      * @param clientObject The client object we want to attach.
+      */
+    void AttachObject( iObject* object, GEMClientObject* clientObject); 
+    
+    /** Unattach a client object from a Crystal Space object.
+      * In most cases the Crystal Space object is a meshwrapper.
+      *
+      * @param object The Crystal Space object we want to unattach our client object from.
+      * @param clientObject The client object we want to unattach.
+      */
+    void UnattachObject( iObject* object, GEMClientObject* clientObject); 
+
+    /** See if there is a client object attached to a given object.
+      * 
+      * @param object The Cyrstal Space object we want to see if there is a client object attached to.
+      *
+      * @return A GEMClientObject if it exists that is attached to the Crystal Space object.
+      */
+    GEMClientObject* FindAttachedObject (iObject* object);
+        
 protected:
     void ReadKeyBindings (const char* filename, iPcCommandInput* pcinp);
 
