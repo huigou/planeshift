@@ -145,10 +145,12 @@ bool ScriptOperation::AtInterruptedAngle(NPC *npc)
     return AtInterruptedAngle(pos,sector,angle);
 }
 
-bool ScriptOperation::CheckMovedOk(NPC *npc, EventManager *eventmgr, const csVector3 & oldPos, const csVector3 & newPos, iSector* newSector, float timedelta)
+bool ScriptOperation::CheckMovedOk(NPC *npc, EventManager *eventmgr, csVector3 oldPos, iSector* oldSector, const csVector3 & newPos, iSector* newSector, float timedelta)
 {
     csRef<iPcMesh> pcmesh = CEL_QUERY_PROPCLASS(npc->GetEntity()->GetPropertyClassList(), 
         iPcMesh);
+
+    npcclient->GetWorld()->WarpSpace(oldSector, newSector, oldPos);
 
     if ((oldPos - newPos).SquaredNorm() < 0.01f) // then stopped dead, presumably by collision
     {
@@ -458,7 +460,7 @@ bool MoveOperation::CompleteOperation(NPC *npc,EventManager *eventmgr)
     return true;  // Script can keep going
 }
 
-void MoveOperation::Advance(float timedelta,NPC *npc,EventManager *eventmgr)
+void MoveOperation::Advance(float timedelta, NPC *npc, EventManager *eventmgr)
 {
     remaining -= timedelta;
 
@@ -467,15 +469,15 @@ void MoveOperation::Advance(float timedelta,NPC *npc,EventManager *eventmgr)
 
     csVector3 oldPos,newPos;
     float     oldRot,newRot;
-    iSector * sector;
+    iSector  *oldSector,*newSector;
 
-    npc->GetLinMove()->GetLastPosition(oldPos,oldRot,sector);
+    npc->GetLinMove()->GetLastPosition(oldPos, oldRot, oldSector);
     npc->GetLinMove()->ExtrapolatePosition(timedelta);
-    npc->GetLinMove()->GetLastPosition(newPos,newRot,sector);
+    npc->GetLinMove()->GetLastPosition(newPos, newRot, newSector);
 
-    psGameObject::SetPosition(npc->GetEntity(), newPos, sector);
+    psGameObject::SetPosition(npc->GetEntity(), newPos, newSector);
 
-    CheckMovedOk(npc,eventmgr,oldPos,newPos,sector,timedelta);
+    CheckMovedOk(npc, eventmgr, oldPos, oldSector, newPos, newSector, timedelta);
 }
 
 //---------------------------------------------------------------------------
@@ -731,7 +733,7 @@ ScriptOperation *RotateOperation::MakeCopy()
     return op;
 }
 
-bool RotateOperation::Run(NPC *npc,EventManager *eventmgr,bool interrupted)
+bool RotateOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
 {
     float rot;
     csVector3 pos;
@@ -851,7 +853,7 @@ bool RotateOperation::Run(NPC *npc,EventManager *eventmgr,bool interrupted)
     return false;
 }
 
-void RotateOperation::Advance(float timedelta,NPC *npc,EventManager *eventmgr) 
+void RotateOperation::Advance(float timedelta, NPC *npc, EventManager *eventmgr) 
 {
     npc->Printf("RotateOp advanced\n"); 
 
@@ -945,14 +947,14 @@ float RotateOperation::SeekAngle(NPC* npc, float targetYRot)
     return targetYRot;
 }
 
-void RotateOperation::InterruptOperation(NPC *npc,EventManager *eventmgr)
+void RotateOperation::InterruptOperation(NPC *npc, EventManager *eventmgr)
 {
     ScriptOperation::InterruptOperation(npc,eventmgr);
 
     StopMovement(npc);
 }
 
-bool RotateOperation::CompleteOperation(NPC *npc,EventManager *eventmgr)
+bool RotateOperation::CompleteOperation(NPC *npc, EventManager *eventmgr)
 {
     // Set target angle and stop the turn
     psGameObject::SetRotationAngle(npc->GetEntity(),target_angle);
@@ -1839,18 +1841,30 @@ bool ChaseOperation::Load(iDocumentNode *node)
     action = node->GetAttributeValue("anim");
     csString typestr = node->GetAttributeValue("type");
     if (typestr == "nearest")
+    {
         type = NEAREST;
+    }
     else if (typestr == "boss" || typestr== "owner")
+    {
         type = OWNER;
+    }
     else if (typestr == "target")
+    {
         type = TARGET;
+    }
     else
+    {
         type = UNKNOWN;
+    }
 
     if (node->GetAttributeValue("range"))
+    {
         range = node->GetAttributeValueAsFloat("range");
+    }
     else
-        range = 2;
+    {
+        range = 2.0f;
+    }    
 
     if ( node->GetAttributeValue("offset_x") )
         offset.x = node->GetAttributeValueAsFloat("offset_x");
@@ -1906,7 +1920,10 @@ bool ChaseOperation::Run(NPC *npc,EventManager *eventmgr,bool interrupted)
             npc->GetNearestEntity(target_id,dest,name,range);
             npc->Printf("Targeting nearest entity (%s) at (%1.2f,%1.2f,%1.2f) for chase ...\n",
                         (const char *)name,dest.x,dest.y,dest.z);
-            if ( target_id != (uint32_t)-1 ) entity = npcclient->FindEntity(target_id);
+            if ( target_id != (uint32_t)-1 )
+            {
+                entity = npcclient->FindEntity(target_id);
+            }
             break;
         case OWNER:
             entity = npc->GetOwner();
@@ -1975,7 +1992,7 @@ void ChaseOperation::Advance(float timedelta,NPC *npc,EventManager *eventmgr)
 
     csVector3 myPos,myNewPos,targetPos;
     float     myRot,dummyrot;
-    iSector * mySector, *targetSector;
+    iSector * mySector, *myNewSector, *targetSector;
     csVector3 forward;
     
     npc->GetLinMove()->GetLastPosition(myPos,myRot,mySector);
@@ -2067,27 +2084,11 @@ void ChaseOperation::Advance(float timedelta,NPC *npc,EventManager *eventmgr)
     float speed,ang_vel;
     csVector3 bodyVel,worldVel;
 
-    npc->GetLinMove()->GetDRData(on_ground,speed,myNewPos,myRot,mySector,bodyVel,worldVel,ang_vel);
+    npc->GetLinMove()->GetDRData(on_ground,speed,myNewPos,myRot,myNewSector,bodyVel,worldVel,ang_vel);
 
     npc->Printf(5,"World position bodyVel=%s worldVel=%s",toString(bodyVel).GetDataSafe(),toString(worldVel).GetDataSafe());
 
-    // TODO: Use CheckMovedOk() istead ????
-
-    // This check must be done in our original sector's space
-    if ((myPos - myNewPos).SquaredNorm() < SMALL_EPSILON) // then stopped dead, presumably by collision
-    {
-        Perception collision("collision");
-        npc->TriggerEvent(&collision, eventmgr);
-        npc->Printf("Collided! Moving from %f %f %f to %f %f %f, timedelta is %f!\n", myPos.x,myPos.y,myPos.z, myNewPos.x,myNewPos.y,myNewPos.z, timedelta);
-    }
-
-    // Check if the slope is to steep
-    if ( (-worldVel.y)*2 > GetVelocity(npc)) // then stopped dead, presumably by collision
-    {
-        Perception collision("collision");
-        npc->TriggerEvent(&collision, eventmgr);
-        npc->Printf("Collided! Moving from %f %f %f to %f %f %f, timedelta is %f!\n", myPos.x,myPos.y,myPos.z, myNewPos.x,myNewPos.y,myNewPos.z, timedelta);
-    }
+    CheckMovedOk(npc, eventmgr, myPos, mySector, myNewPos, myNewSector, timedelta);
 }
 
 void ChaseOperation::InterruptOperation(NPC *npc,EventManager *eventmgr)
@@ -2941,19 +2942,51 @@ bool MovePathOperation::CompleteOperation(NPC *npc,EventManager *eventmgr)
 
 //---------------------------------------------------------------------------
 
+const char * WatchOperation::typeStr[]={"unkown","nearest","owner","target"};
+
 bool WatchOperation::Load(iDocumentNode *node)
 {
     watchRange  = node->GetAttributeValueAsFloat("range");
     watchInvisible = node->GetAttributeValueAsBool("invisible",false);
     watchInvincible= node->GetAttributeValueAsBool("invincible",false);
+
+    csString typestr = node->GetAttributeValue("type");
+    if (typestr == "nearest")
+    {
+        type = NEAREST;
+    }
+    else if (typestr == "boss" || typestr== "owner")
+    {
+        type = OWNER;
+    }
+    else if (typestr == "target")
+    {
+        type = TARGET;
+    }
+    else
+    {
+        type = UNKNOWN;
+    }
+
+    if (node->GetAttributeValue("range"))
+    {
+        range = node->GetAttributeValueAsFloat("range");
+    }
+    else
+    {
+        range = 2.0f;
+    }    
+
     return true;
 }
 
 ScriptOperation *WatchOperation::MakeCopy()
 {
     WatchOperation *op = new WatchOperation;
-    op->watchRange = watchRange;
-    op->watchInvisible = watchInvisible;
+    op->watchRange      = watchRange;
+    op->type            = type;
+    op->range           = range; // Used for watch of type NEAREST 
+    op->watchInvisible  = watchInvisible;
     op->watchInvincible = watchInvincible;
     watchedEnt = NULL;
     return op;
@@ -2965,7 +2998,47 @@ bool WatchOperation::Run(NPC *npc,EventManager *eventmgr,bool interrupted)
                 watchRange,(watchInvisible?" Invisible":" Visible"),
                 (watchInvincible?" Invincible":""));
 
-    watchedEnt = npc->GetLastPerception()->GetTarget();
+    float targetRot;
+    iSector* targetSector;
+    csVector3 targetPos;
+
+    csString name;
+    uint32_t  target_id = (uint32_t)~0;
+
+    switch (type)
+    {
+        case NEAREST:
+            npc->GetNearestEntity(target_id,targetPos,name,range);
+            npc->Printf("Targeting nearest entity (%s) at (%1.2f,%1.2f,%1.2f) for watch ...\n",
+                        (const char *)name,targetPos.x,targetPos.y,targetPos.z);
+            if ( target_id != (uint32_t)-1 )
+            {
+                watchedEnt = npcclient->FindEntity(target_id);
+            }
+            break;
+        case OWNER:
+            watchedEnt = npc->GetOwner();
+            if (watchedEnt)
+            {
+                target_id = watchedEnt->GetID();
+                psGameObject::GetPosition(watchedEnt, targetPos,targetRot,targetSector);
+                npc->Printf("Targeting owner (%s) at (%1.2f,%1.2f,%1.2f) for watch ...\n",
+                            watchedEnt->GetName(),targetPos.x,targetPos.y,targetPos.z );
+
+            }
+            break;
+        case TARGET:
+            watchedEnt = npc->GetTarget();
+            if (watchedEnt)
+            {
+                target_id = watchedEnt->GetID();
+                psGameObject::GetPosition(watchedEnt, targetPos,targetRot,targetSector);
+                npc->Printf("Targeting current target (%s) at (%1.2f,%1.2f,%1.2f) for chase ...\n",
+                            watchedEnt->GetName(),targetPos.x,targetPos.y,targetPos.z );
+            }
+            break;
+    }
+
     if (!watchedEnt)
     {
         npc->Printf(2,"No entity to watch");
@@ -2990,7 +3063,10 @@ void WatchOperation::Advance(float timedelta,NPC *npc,EventManager *eventmgr)
 
     if (npcclient->GetWorld()->Distance(npcEnt,watchedEnt) > watchRange)
     {
-        Perception range("target out of range");
+        csString str;
+        str.Append(typeStr[type]);
+        str.Append(" out of range");
+        Perception range(str);
         npc->TriggerEvent(&range, eventmgr);
         npc->ResumeScript(eventmgr, npc->GetBrain()->GetCurrentBehavior() );
         return; // Lost track of the watched entity.

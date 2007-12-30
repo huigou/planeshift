@@ -1305,6 +1305,11 @@ void NPCManager::HandlePetCommand( MsgEntry * me )
     case psPETCommandMessage::CMD_FOLLOW :
         if ( pet != NULL )
         {
+            // If no target target owner
+            if (!pet->GetTarget())
+            {
+                pet->SetTarget( owner->GetActor() );
+            }
             QueueOwnerCmdFollowPerception( owner->GetActor(), pet );
         }
         break;
@@ -1585,9 +1590,16 @@ void NPCManager::HandlePetCommand( MsgEntry * me )
             
             firstName = words.Get( 0 );
             if ( words.GetCount() > 1 )
+            {
                 lastName = words.GetTail( 1 );
+            }
             
             firstName = NormalizeCharacterName( firstName );
+
+            if (firstName == "Me")
+            {
+                firstName = owner->GetName();
+            }
             lastName = NormalizeCharacterName( lastName );
             
             PS_ID target_id = psServer::CharacterLoader.FindCharacterID( firstName, false );

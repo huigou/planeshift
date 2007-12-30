@@ -470,7 +470,9 @@ bool Client::CanTake(psItem* item)
         {
             psItem *cont = gemcont->GetItem();
             if (cont->GetIsNpcOwned())
+            {
                 return false;
+            }
         }
     }
 

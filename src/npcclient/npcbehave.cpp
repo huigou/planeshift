@@ -691,7 +691,7 @@ bool Behavior::ApplicableToNPCState(NPC *npc)
 
 
 
-bool Behavior::StartScript(NPC *npc,EventManager *eventmgr)
+bool Behavior::StartScript(NPC *npc, EventManager *eventmgr)
 {
     if (interrupted && resume_after_interrupt)
     {
@@ -712,7 +712,7 @@ Behavior* BehaviorSet::Find(Behavior *key)
     return (found = SIZET_NOT_FOUND) ? NULL : behaviors[found];
 }
      
-bool Behavior::RunScript(NPC *npc,EventManager *eventmgr,bool interrupted)
+bool Behavior::RunScript(NPC *npc, EventManager *eventmgr, bool interrupted)
 {
     while (true)
     {
@@ -729,7 +729,7 @@ bool Behavior::RunScript(NPC *npc,EventManager *eventmgr,bool interrupted)
             interrupted = false; // Only the first script operation should be interrupted.
             current_step++;
         }
-        if (current_step == sequence.GetSize())
+        if (current_step >= sequence.GetSize())
         {
             if (loop)
             {
@@ -770,9 +770,9 @@ void Behavior::InterruptScript(NPC *npc,EventManager *eventmgr)
 
 bool Behavior::ResumeScript(NPC *npc,EventManager *eventmgr)
 {
-    npc->Printf("Resuming behavior %s at step %d.",name.GetData(),current_step);
     if (current_step < sequence.GetSize())
-    {
+    { 
+        npc->Printf("Resuming behavior %s at step %d.",name.GetData(),current_step);
         if (sequence[current_step]->CompleteOperation(npc,eventmgr))
         {
             current_step++;
@@ -786,8 +786,8 @@ bool Behavior::ResumeScript(NPC *npc,EventManager *eventmgr)
     }
     else
     {
-        current_step=0;
-        return RunScript(npc,eventmgr,false);
+        Error2("No script operation to resume for behavior '%s'",GetName());
+        return true;
     }
 }
 

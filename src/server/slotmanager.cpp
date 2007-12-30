@@ -454,11 +454,11 @@ void SlotManager::MoveFromInventory(psSlotMovementMsg& msg, Client *fromClient)
                 Error2("Cannot put item into another item %s.\n", parentItem->GetName());
                 return;
             }
-			if (parentItem->GetIsNpcOwned() && fromClient->GetSecurityLevel()<30)
-			{
-				psserver->SendSystemError(fromClient->GetClientNum(), "You may not use that container.");
-				return;
-			}
+            if (parentItem->GetIsNpcOwned() && fromClient->GetSecurityLevel()<30)
+            {
+                psserver->SendSystemError(fromClient->GetClientNum(), "You may not use that container.");
+                return;
+            }
             if (fromClient->GetActor()->RangeTo(worldContainer, true) > RANGE_TO_USE)
             {
                 psserver->SendSystemError(fromClient->GetClientNum(),

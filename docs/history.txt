@@ -1,3 +1,13 @@
+*** 2007-12-30 by Anders Reggestad
+- Removed warning that paths wasn't able to assamle, that was caused
+  by paths without any points, in which is quite legal.
+- Make sure that the npc client don't start if there is indeed something
+  wrong with the data set for paths.
+- Added possible keyword Me to /pet target command to target yourself.
+- Added type="nearest,owner,target" and range for nearest for npcbehavior Watch.
+- Modified Chase operation to use the CheckMovedOk function and update that
+  function to handle the case where the new position would be in a new sector.
+
 *** 2007-12-30 by Dave Bentham
 - Added public books (FS#573). Books writeable by anyone. Requires suitable
   entry in item_stats DB: see FS#573 for details.
