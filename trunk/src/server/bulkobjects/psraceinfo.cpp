@@ -218,7 +218,7 @@ void psRaceInfo::SetBaseAttribute(PSITEMSTATS_STAT attrib, float val)
 
 void psRaceInfo::GetStartingLocation(float& x,float& y, float& z,float& rot,const char*& sectorname)
 {
-    psRaceStartingLocation selectedLoc = startingLocations[psserver->GetRandom(startingLocations.GetSize())];
+    psRaceStartingLocation selectedLoc = startingLocations[psserver->GetRandom((uint32)startingLocations.GetSize())];
     x = selectedLoc.x;
     y = selectedLoc.y;
     z = selectedLoc.z;

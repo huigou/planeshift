@@ -2385,7 +2385,7 @@ QuestAssignment *psCharacter::IsQuestAssigned(int id)
     return NULL;
 }
 
-int psCharacter::GetAssignedQuestLastResponse(int i)
+int psCharacter::GetAssignedQuestLastResponse(uint i)
 {
     if ((size_t) i<assigned_quests.GetSize())
     {

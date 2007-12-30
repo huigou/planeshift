@@ -143,11 +143,11 @@ void Reaction::DeepCopy(Reaction& other,BehaviorSet& behaviors)
     only_interrupt         = other.only_interrupt;
 
     // For now depend that each npc do a deep copy to creat its instance of the reaction
-    for (size_t ii=0; ii < values.GetSize(); ii++)
+    for (uint ii=0; ii < values.GetSize(); ii++)
     {
-        if (GetRandomValid(ii))
+        if (GetRandomValid((int)ii))
         {
-            values[ii] += psGetRandom(GetRandom(ii));
+            values[ii] += psGetRandom(GetRandom((int)ii));
         }
     }
 }
