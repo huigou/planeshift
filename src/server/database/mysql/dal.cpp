@@ -283,8 +283,8 @@ uint64 psMysqlConnection::GetLastInsertID()
 uint64 psMysqlConnection::GenericInsertWithID(const char *table,const char **fieldnames,psStringArray& fieldvalues)
 {
     csString command;
-    const int count = fieldvalues.GetSize();
-    int i;
+    const size_t count = fieldvalues.GetSize();
+    uint i;
     command = "INSERT INTO ";
     command.Append(table);
     command.Append(" (");
@@ -323,8 +323,8 @@ uint64 psMysqlConnection::GenericInsertWithID(const char *table,const char **fie
 
 bool psMysqlConnection::GenericUpdateWithID(const char *table,const char *idfield,const char *id,const char **fieldnames,psStringArray& fieldvalues)
 {
-    int i;
-    const int count = fieldvalues.GetSize();
+    uint i;
+    const size_t count = fieldvalues.GetSize();
     csString command;
 
     command.Append("UPDATE ");

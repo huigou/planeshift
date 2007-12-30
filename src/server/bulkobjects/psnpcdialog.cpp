@@ -336,7 +336,7 @@ NpcResponse *psNPCDialog::FindResponseWithAllPrior(const char *area,const char *
     bool TestedWithoutLastResponse = false;
 
     //first try with last responses of all assigned quests
-    for (size_t q = 0; q < currentClient->GetCharacterData()->GetNumAssignedQuests(); q++)
+    for (uint q = 0; q < currentClient->GetCharacterData()->GetNumAssignedQuests(); q++)
     {
         lastresponse = currentClient->GetCharacterData()->GetAssignedQuestLastResponse(q);
         if (lastresponse == -1)
@@ -863,9 +863,9 @@ int psDialogManager::GetPriorID( int internalID )
 
 void psDialogManager::PrintInfo()
 {
-    const int totalTrigs = triggers.GetSize();
+    const size_t totalTrigs = triggers.GetSize();
     
-    for ( int z = 0; z < totalTrigs; z++ )
+    for ( uint z = 0; z < totalTrigs; z++ )
     {
         CPrintf(CON_CMDOUTPUT,"*******************\n");
         CPrintf(CON_CMDOUTPUT,"Trigger Complete  :\n");
@@ -879,12 +879,12 @@ void psDialogManager::PrintInfo()
             CPrintf(CON_CMDOUTPUT,"Phrase: %s\n", currTrigger->phraseList[x]);
         }
 
-        const int totalAttitudes = currTrigger->attitudes.GetSize();
-        for (int x = 0; x < totalAttitudes; x++)
+        const size_t totalAttitudes = currTrigger->attitudes.GetSize();
+        for (uint x = 0; x < totalAttitudes; x++)
         {
-            int total = 
+            size_t total = 
                 currTrigger->attitudes[x]->responseSet.responses.GetSize();
-            for ( int res = 0; res < total; res++ )
+            for ( uint res = 0; res < total; res++ )
             {
                 CPrintf(CON_CMDOUTPUT,"Response: %s\n", 
                         currTrigger->attitudes[x]->responseSet.responses[res]);
@@ -915,7 +915,7 @@ int psDialogManager::InsertResponseSet( psResponse &response )
     csString script = response.script;
     //Notify1("Inserting the response Set");
 
-    int total = responseSet.GetSize();
+    size_t total = responseSet.GetSize();
     csString buffer;
 
     csString command( "INSERT INTO npc_responses (" );
@@ -929,14 +929,14 @@ int psDialogManager::InsertResponseSet( psResponse &response )
         values.Append( buffer );
     }
 
-    for ( int x = 1; x < 5;  x++ )
+    for ( uint x = 1; x < 5;  x++ )
     {
         buffer.Format( " , response%d ", x+1 );
         command.Append ( buffer );
         if (x<total)
         {
-        buffer.Format(" ,\"%s\" ", responseSet[x]);
-        values.Append( buffer );
+            buffer.Format(" ,\"%s\" ", responseSet[x]);
+            values.Append( buffer );
         } else
             values.Append(" ,\"\" ");
 
@@ -1046,9 +1046,9 @@ int psDialogManager::InsertTrigger( const char* trigger, const char* area,
 bool psDialogManager::WriteToDatabase()
 {
     // Add in all the responses
-    const int totalTriggers = triggers.GetSize();
+    const size_t totalTriggers = triggers.GetSize();
   
-    for (int x = 0; x < totalTriggers; x++ )
+    for (uint x = 0; x < totalTriggers; x++ )
     {
         psTriggerBlock* currTrig = triggers[x];
         
@@ -1069,7 +1069,7 @@ bool psDialogManager::WriteToDatabase()
 
 
     // Add all the triggers
-    for (int x = 0; x < totalTriggers; x++)
+    for (uint x = 0; x < totalTriggers; x++)
     {
         psTriggerBlock* currTrig = triggers[x];
  
@@ -1106,8 +1106,8 @@ bool psDialogManager::WriteToDatabase()
     }
 
     // Add the special responses
-    int totalSpecial = special.GetSize();
-    for ( int sp = 0; sp < totalSpecial; sp++ )
+    size_t totalSpecial = special.GetSize();
+    for (uint sp = 0; sp < totalSpecial; sp++)
     {
         psSpecialResponse *spResp = special[sp];
         int responseID = InsertResponse( spResp->response );
