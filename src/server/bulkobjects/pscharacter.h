@@ -777,7 +777,7 @@ public:
     void DiscardQuest(QuestAssignment *q, bool force = false);
     bool SetAssignedQuestLastResponse(psQuest *quest, int response);
     size_t GetNumAssignedQuests() { return assigned_quests.GetSize(); }
-    int GetAssignedQuestLastResponse(size_t i);
+    int GetAssignedQuestLastResponse(uint i);
     /// The last_response given by an npc to this player.
     int GetLastResponse() { return lastResponse; }
     void SetLastResponse(int response) { lastResponse=response; }
