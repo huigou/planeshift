@@ -238,11 +238,16 @@ void psItemCreativeStats::ReadStats(iResultRow& row)
         }
         else
         {
-            creatorID = atoi(creatorStr.GetData());
-            if (creatorID == 0)
-                creatorIDStatus = PSITEMSTATS_CREATOR_UNKNOWN; // creator no longer around
+            if (creatorStr == "public")
+                creatorIDStatus = PSITEMSTATS_CREATOR_PUBLIC;
             else
-                creatorIDStatus = PSITEMSTATS_CREATOR_VALID;   // valid
+            {
+                creatorID = atoi(creatorStr.GetData());
+                if (creatorID == 0)
+                    creatorIDStatus = PSITEMSTATS_CREATOR_UNKNOWN; // creator no longer around
+                else
+                    creatorIDStatus = PSITEMSTATS_CREATOR_VALID;   // valid
+            }
         }
 
         if (creativeType != PSITEMSTATS_CREATIVETYPE_NONE)
@@ -290,7 +295,11 @@ void psItemCreativeStats::FormatCreativeContent(void)
     creativeDefinitionXML.AppendFmt("\"");
 
     // add author, artist... if necessary
-    if (creatorIDStatus != PSITEMSTATS_CREATOR_UNASSIGNED)
+    if (creatorIDStatus == PSITEMSTATS_CREATOR_PUBLIC)
+    {
+        creativeDefinitionXML.AppendFmt(" creator=\"public\"");
+    }
+    else if (creatorIDStatus != PSITEMSTATS_CREATOR_UNASSIGNED)
     {
         creativeDefinitionXML.AppendFmt(" creator=\"%d\"", creatorID);
     }
@@ -857,6 +866,15 @@ bool psItemStats::GetBuyPersonalise()
     return (flags & PSITEMSTATS_FLAG_BUY_PERSONALISE) ? true : false;
 }
 
+unsigned int psItemStats::GetCreator (PSITEMSTATS_CREATORSTATUS& creatorStatus)
+{
+    creatorStatus = creativeStats.creatorIDStatus;
+    if (creativeStats.creatorIDStatus == PSITEMSTATS_CREATOR_VALID)
+        return creativeStats.creatorID;
+    else
+        return 0;
+}
+
 bool psItemStats::GetIsGlyph()
 {
     return (flags & PSITEMSTATS_FLAG_IS_GLYPH) ? true : false;
@@ -1256,10 +1274,17 @@ void psItemStats::SetSketch(const csString& xml)
 
 void psItemStats::SetCreator (unsigned int characterID, PSITEMSTATS_CREATORSTATUS creatorStatus)
 {
+    // cannot change between personal & public creator status.
+    if ((creativeStats.creatorIDStatus == PSITEMSTATS_CREATOR_PUBLIC &&
+         creatorStatus == PSITEMSTATS_CREATOR_VALID) ||
+        (creativeStats.creatorIDStatus == PSITEMSTATS_CREATOR_VALID &&
+         creatorStatus == PSITEMSTATS_CREATOR_PUBLIC))
+        return;
+
     creativeStats.creatorIDStatus = creatorStatus;
     if (creatorStatus == PSITEMSTATS_CREATOR_VALID)
         creativeStats.creatorID = characterID;
-    else if (creatorStatus == PSITEMSTATS_CREATOR_UNKNOWN)
+    else if (creatorStatus == PSITEMSTATS_CREATOR_UNKNOWN || creatorStatus == PSITEMSTATS_CREATOR_PUBLIC)
         creativeStats.creatorID = 0;
     creativeStats.FormatCreativeContent();
 }
@@ -1267,8 +1292,10 @@ void psItemStats::SetCreator (unsigned int characterID, PSITEMSTATS_CREATORSTATU
 bool psItemStats::IsThisTheCreator(unsigned int characterID)
 {
     // if characterID is creator of this item, or no creator assigned (then anyone can edit)
+    // of if the item is 'public' then any can edit it.
     if ((creativeStats.creatorIDStatus == PSITEMSTATS_CREATOR_VALID && 
          creativeStats.creatorID == characterID) ||
+        creativeStats.creatorIDStatus == PSITEMSTATS_CREATOR_PUBLIC ||
         creativeStats.creatorIDStatus == PSITEMSTATS_CREATOR_UNASSIGNED)
         return true;
 

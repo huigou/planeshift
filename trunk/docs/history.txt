@@ -1,3 +1,7 @@
+*** 2007-12-30 by Dave Bentham
+- Added public books (FS#573). Books writeable by anyone. Requires suitable
+  entry in item_stats DB: see FS#573 for details.
+
 *** 2007-12-29 by Andrew Craig
 - Added a psGemMeshAttach class that is used to attach client objects 
   ( ie players, items, etc ) to meshes.  This is used when a player 
