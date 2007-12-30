@@ -106,6 +106,7 @@ INSERT INTO `item_instances` VALUES (47,8,0,0,21,1,8,0,0,0,0,0,0,0,0,50,-1,44,0,
 INSERT INTO `item_instances` VALUES (48,8,0,0,22,1,8,0,0,0,0,0,0,0,0,50,-1,47,0,'',0,-1,'','','');
 INSERT INTO `item_instances` VALUES (49,8,0,0,35,1,0,0,0,0,0,0,0,0,0,50,-1,421,0,'',0,-1,'','','');
 INSERT INTO `item_instances` VALUES (185,8,0,0,35,1,8,0,0,0,0,0,0,0,0,50,-1,232,0,'',0,-1,'','','');
+INSERT INTO `item_instances` VALUES (186,8,0,0,35,1,8,0,0,0,0,0,0,0,0,50,-1,233,0,'',0,-1,'','','');
 
 # acraig items 
 INSERT INTO `item_instances` VALUES (50,3,0,0,16,1,5,0,0,0,0,0,0,0,0,50,-1,71,0,'',0,-1,'','','');

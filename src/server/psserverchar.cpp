@@ -1038,13 +1038,21 @@ void psServerCharManager::HandleMerchantBuy(psGUIMerchantMessage& msg, Client *c
 
             // copy 'item' item_stats to create unique item...
             // personalised name is "<item> of <purchaser>"
-            // If "<item> of <purchaser>" already exists, add " (<number>)"
-            // (being the row count+1 of item_stats)
-            // to the name to ensure uniqueness.
+            // If "<item> of <purchaser>" already exists, add " (<number>)" (being the row count+1 of item_stats)
+            // if item is 'public', then name is "<item> (<number>)"
             csString personalisedName(item->GetName());
-            personalisedName.AppendFmt(" of %s", client->GetName());
-            if (CacheManager::GetSingleton().BasicItemStatsByNameExist(personalisedName) > 0)
+            PSITEMSTATS_CREATORSTATUS creatorStatus;
+            item->GetBaseStats()->GetCreator(creatorStatus);
+            if (creatorStatus == PSITEMSTATS_CREATOR_PUBLIC)
+            {
                 personalisedName.AppendFmt(" (%zu)", CacheManager::GetSingleton().ItemStatsSize()+1);
+            }
+            else
+            {
+                personalisedName.AppendFmt(" of %s", client->GetName());
+                if (CacheManager::GetSingleton().BasicItemStatsByNameExist(personalisedName) > 0)
+                    personalisedName.AppendFmt(" (%zu)", CacheManager::GetSingleton().ItemStatsSize()+1);
+            }
 
             psItemStats* newCreation = CacheManager::GetSingleton().CopyItemStats(item->GetBaseStats()->GetUID(),
                                                                                   personalisedName);

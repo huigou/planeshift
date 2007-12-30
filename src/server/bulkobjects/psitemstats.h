@@ -126,6 +126,7 @@ enum PSITEMSTATS_CREATIVETYPE
 enum PSITEMSTATS_CREATORSTATUS
 {
     PSITEMSTATS_CREATOR_VALID = 0,
+    PSITEMSTATS_CREATOR_PUBLIC,
     PSITEMSTATS_CREATOR_UNASSIGNED,      // books writ before creator stat
     PSITEMSTATS_CREATOR_UNKNOWN          // e.g. creator player deleted
 };
@@ -482,6 +483,7 @@ public:
     bool GetIsWriteable();
     PSITEMSTATS_CREATIVETYPE GetCreative();
     bool GetBuyPersonalise();
+    unsigned int GetCreator (PSITEMSTATS_CREATORSTATUS& creatorStatus);
 
     /// @return True if the object is a money object.
     bool IsMoney();
