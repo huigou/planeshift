@@ -114,9 +114,7 @@ public:
     void RemoveEntity(gemObject *which,uint32 gemID);
     
     void RemoveClientFromLootables(int cnum);
-    
-    csPtr<iCelEntity> CreateProxActorList(uint32_t clientnum,iCelEntity *all_actors);
-
+        
     void UpdateAllDR();
     void UpdateAllStats();
 
