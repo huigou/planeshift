@@ -22,17 +22,31 @@
 
 #ifndef PS_MAIN_WIDGET_HEADER
 #define PS_MAIN_WIDGET_HEADER
-
+//=============================================================================
+// Crystal Space Includes
+//=============================================================================
 #include <iengine/camera.h>
 
-#include "../pscelclient.h"
+//=============================================================================
+// Project Includes
+//=============================================================================
+#include "net/msghandler.h"
+
+#include "engine/netpersist.h"
+
+#include "util/prb.h"
+
 #include "paws/pawswidget.h"
 #include "paws/psmousebinds.h"
 #include "paws/pawsmainwidget.h"
-#include "util/prb.h"
 
-#include "net/msghandler.h"
-#include "engine/netpersist.h"
+#include "../pscelclient.h"
+
+//=============================================================================
+// Local Includes
+//=============================================================================
+
+
 
 class pawsChatWindow;
 

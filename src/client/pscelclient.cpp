@@ -59,7 +59,7 @@
 //============================
 // Cal3D includes
 //============================
-#include <cal3d/cal3d.h>
+#include "cal3d/cal3d.h"
 
 //=============================================================================
 // Library Includes
@@ -99,6 +99,7 @@
 #include "pscharcontrol.h"
 #include "psclientchar.h"
 #include "pscal3dcallback.h"
+#include "meshattach.h"
 #include "globals.h"
 
 
@@ -911,6 +912,44 @@ void psCelClient::PruneEntities()
     }
 }
 
+
+void psCelClient::AttachObject( iObject* object, GEMClientObject* clientObject)
+{
+  csRef<psGemMeshAttach> attacher = csPtr<psGemMeshAttach> (new psGemMeshAttach(clientObject));
+  attacher->SetName (clientObject->GetName()); // @@@ For debugging mostly.
+  csRef<iObject> attacher_obj (scfQueryInterface<iObject> (attacher));
+  object->ObjAdd (attacher_obj);
+}
+
+
+void psCelClient::UnattachObject( iObject* object, GEMClientObject* clientObject)
+{
+    csRef<psGemMeshAttach> attacher (CS_GET_CHILD_OBJECT (object, psGemMeshAttach));
+    if (attacher)
+    {     
+        if ( attacher->GetObject () == clientObject )
+        { 
+            csRef<iObject> attacher_obj (scfQueryInterface<iObject> (attacher));
+            object->ObjRemove (attacher_obj);
+        }            
+    }
+}
+
+GEMClientObject* psCelClient::FindAttachedObject(iObject* object)
+{
+    GEMClientObject* found = 0;
+    
+    csRef<psGemMeshAttach> attacher (CS_GET_CHILD_OBJECT (object, psGemMeshAttach));
+    if (attacher)
+    {
+        found = attacher->GetObject();
+    }    
+  
+    return found;
+}
+
+
+
 //-------------------------------------------------------------------------------
 
 
@@ -937,7 +976,10 @@ GEMClientObject::~GEMClientObject()
 {
     iMeshWrapper* mesh = pcmesh->GetMesh();
     if(mesh)
+    {
+        cel->UnattachObject(mesh->QueryObject(), this);            
         psengine->GetEngine()->RemoveObject (mesh);
+    }        
     
     cel->GetPlLayer()->RemoveEntity( entity );        
     delete charApp;
@@ -1040,7 +1082,9 @@ bool GEMClientObject::InitMesh( const char *factname,
 
     charApp->SetMesh(mesh);
     Move(pos,rotangle,room);
-
+    
+    cel->AttachObject(mesh->QueryObject(), this);
+    
     return true;
 }
 
