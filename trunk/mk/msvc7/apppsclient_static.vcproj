@@ -798,6 +798,9 @@
 				RelativePath="..\..\src\client\guihandler.cpp">
 			</File>
 			<File
+				RelativePath="..\..\src\client\meshattach.cpp">
+			</File>
+			<File
 				RelativePath="..\..\src\client\modehandler.cpp">
 			</File>
 			<File
@@ -896,6 +899,9 @@
 			</File>
 			<File
 				RelativePath="..\..\src\client\guihandler.h">
+			</File>
+			<File
+				RelativePath="..\..\src\client\meshattach.h">
 			</File>
 			<File
 				RelativePath="..\..\src\client\modehandler.h">

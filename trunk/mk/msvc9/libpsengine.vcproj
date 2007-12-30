@@ -732,6 +732,9 @@
 			<File
 				RelativePath="..\..\src\common\engine\psworld.cpp">
 			</File>
+			<File
+				RelativePath="..\..\src\common\engine\solid.cpp">
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -747,6 +750,9 @@
 			</File>
 			<File
 				RelativePath="..\..\src\common\engine\psworld.h">
+			</File>
+			<File
+				RelativePath="..\..\src\common\engine\solid.h">
 			</File>
 		</Filter>
 	</Files>
