@@ -270,6 +270,11 @@ bool psPath::Load(iDataConnection * db, iEngine *engine)
         Error2("Could not load path points from db: %s",db->GetLastError() );
         return false;
     }
+    if (rs1.Count() == 0)
+    {
+        // No path points for this path
+        return true;
+    }
     csArray<psPathPoint*>  tempPoints;
     for (int i=0; i<(int)rs1.Count(); i++)
     {

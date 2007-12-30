@@ -102,16 +102,37 @@ If you are an advisor, lists all currently unanswered questions.</topic>
         <topic name="/notbuddy">/notbuddy player
 
 Removes the named player from your buddy list.  Not your friend anymore?  what a shame.</topic>
-        <topic name="/pet">/pet [petname,] 'follow'
-/pet [petname,] 'stay'
-/pet [petname,] 'dismiss'
-/pet [petname,] 'summon'
-/pet [petname,] 'attack'
-/pet [petname,] 'quard'
-/pet [petname,] 'assist'
-/pet [petname,] 'name' newname
+        <branch name="/pet"> Control your pet(s).
+/pet [petname,] assist
+/pet [petname,] attack
+/pet [petname,] dismiss
+/pet [petname,] follow
+/pet [petname,] name
+/pet [petname,] quard
+/pet [petname,] stay
+/pet [petname,] summon
+/pet [petname,] target
+          <topic name="/pet assist">/pet [petname,] assist
+</topic>
+          <topic name="/pet attack">/pet [petname,] attack
+</topic>
+          <topic name="/pet dismiss">/pet [petname,] dismiss
+</topic>
+          <topic name="/pet follow">/pet [petname,] follow
+</topic>
+          <topic name="/pet name">/pet [petname,] name &lt;newname&gt;
 
-Control your pet(s).</topic>
+Give your pet a new name.</topic>
+          <topic name="/pet quard">/pet [petname,] quard
+</topic>
+          <topic name="/pet stay">/pet [petname,] stay
+</topic>
+          <topic name="/pet summon">/pet [petname,] summon
+</topic>
+          <topic name="/pet target">/pet [petname,] target [&lt;Name&gt;|me]
+
+Set the target for your pet. If no target is given use your target.</topic>
+        </branch>
         <topic name="/petition">/petition request
 
 Submits a petition to the GMs for a feature or bug fix.</topic>

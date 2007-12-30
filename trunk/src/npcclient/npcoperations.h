@@ -94,7 +94,7 @@ public:
     virtual bool AtInterruptedAngle(const csVector3& pos, const iSector* sector, float angle);
     virtual bool AtInterruptedPosition(NPC *npc);
     virtual bool AtInterruptedAngle(NPC *npc);
-    virtual bool CheckMovedOk(NPC *npc, EventManager *eventmgr, const csVector3 & oldPos, const csVector3 & newPos, iSector* newSector, float timedelta);
+    virtual bool CheckMovedOk(NPC *npc, EventManager *eventmgr, csVector3 oldPos, iSector* oldSector, const csVector3 & newPos, iSector* newSector, float timedelta);
 
     virtual bool CompleteOperation(NPC *npc,EventManager *eventmgr) { completed = true; return completed; }
     virtual bool Load(iDocumentNode *node)=0;
@@ -754,9 +754,19 @@ public:
 class WatchOperation : public ScriptOperation
 {
 protected:
-    float watchRange;
+    float     watchRange;
+    int       type;
+    float     range;  //  Used for watch of type NEAREST 
+    bool      watchInvisible, watchInvincible;
+
     iCelEntity *watchedEnt;
-    bool  watchInvisible,watchInvincible;
+
+    enum
+    {
+        UNKNOWN,NEAREST,OWNER,TARGET
+    };
+    static const char * typeStr[];
+    
 public:
 
     WatchOperation(): ScriptOperation("Watch") { watchedEnt=NULL; watchRange=0; }

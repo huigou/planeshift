@@ -99,7 +99,11 @@ bool psPathNetwork::Load(iEngine *engine, iDataConnection *db,psWorld * world)
         }
 
         path->SetStart(wp1);
-        path->Load(db,engine);
+        if (!path->Load(db,engine))
+        {
+            Error1("Failed to load path");
+            return false;
+        }
         path->SetEnd(wp2);
         paths.Push(path);
 
