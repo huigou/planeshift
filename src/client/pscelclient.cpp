@@ -1438,7 +1438,6 @@ bool GEMClientActor::SetAnimation(const char* anim, int duration)
         return false;
     }
     
-    CalCoreModel* sd = cal3dstate->GetCal3DModel()->getCoreModel();
     float ani_duration = cal3dstate->GetCal3DModel()->getCoreModel()->getCoreAnimation(animation)->getDuration();
     
     // Check if the duration demands more than 1 playback?
