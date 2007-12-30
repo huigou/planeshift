@@ -102,10 +102,7 @@
 #include "meshattach.h"
 #include "globals.h"
 
-
-
 psCelClient *GEMClientObject::cel = NULL;
-
 
 psCelClient::psCelClient() : ignore_others(false)
 {
@@ -249,7 +246,7 @@ void psCelClient::HandleWorld( MsgEntry* me )
     // Tell the user that we are loading the world
     psengine->AddLoadingWindowMsg( "Loading world" );
 
-    gameWorld->Initialize( object_reg );
+    gameWorld->Initialize(object_reg, psengine->UnloadingLast());
 
     zonehandler->LoadZone(mesg.sector);
 
@@ -1441,8 +1438,9 @@ bool GEMClientActor::SetAnimation(const char* anim, int duration)
         return false;
     }
     
+    CalCoreModel* sd = cal3dstate->GetCal3DModel()->getCoreModel();
     float ani_duration = cal3dstate->GetCal3DModel()->getCoreModel()->getCoreAnimation(animation)->getDuration();
-
+    
     // Check if the duration demands more than 1 playback?
     if (duration > ani_duration)
     {

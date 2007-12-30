@@ -55,8 +55,6 @@
 #include "util/consoleout.h"
 #include "globals.h"
 
-
-
 #define SHARED_REGION_NAME "SharedDataRegion"
 
 psWorld::psWorld()
@@ -68,11 +66,11 @@ psWorld::~psWorld()
     transarray.Empty();
 }
 
-bool psWorld::Initialize( iObjectRegistry* objectReg)
+bool psWorld::Initialize(iObjectRegistry* objectReg, bool unloadingLast)
 {
     object_reg = objectReg;
     engine = csQueryRegistry<iEngine>(object_reg);
-    startLoading = psengine->UnloadingLast();
+    startLoading = unloadingLast;
 
     return true;
 }
@@ -169,7 +167,7 @@ void ConnectPortalToSector(iEngine * engine, const char * portalName, const char
     }
 }
 
-int psWorld::ExecuteFlaggedRegions(bool transitional)
+int psWorld::ExecuteFlaggedRegions(bool transitional, bool unloadingLast)
 {
     if(startLoading)
     {
@@ -224,7 +222,7 @@ int psWorld::ExecuteFlaggedRegions(bool transitional)
     }
 
     // Reset loading flag.
-    startLoading = psengine->UnloadingLast();
+    startLoading = unloadingLast;
 
     return 0;
 }
