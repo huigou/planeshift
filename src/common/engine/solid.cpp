@@ -17,11 +17,14 @@
  *
  */
 
+#include <psconfig.h>
+
 //=============================================================================
 // Crystal Space Includes
 //=============================================================================
-#include <crystalspace.h>
-
+#include "cstool/collider.h"
+#include "iutil/objreg.h"
+#include "ivaria/collider.h"
 #include "propclass/mesh.h"
 
 //=============================================================================
