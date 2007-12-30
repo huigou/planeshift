@@ -19,6 +19,8 @@
 #ifndef __NPCOPERATIONS_H__
 #define __NPCOPERATIONS_H__
 
+#include <psstdint.h>
+
 #include <csgeom/vector3.h>
 #include <csutil/csstring.h>
 
