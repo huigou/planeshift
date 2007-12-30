@@ -23,8 +23,7 @@
 //=============================================================================
 // Crystal Space Includes
 //=============================================================================
-#include <crystalspace.h>
-#include "cstypes.h"
+
 #include "csutil/scf.h"
 #include "csutil/weakref.h"
 
@@ -35,11 +34,11 @@
 //=============================================================================
 // Local Includes
 //=============================================================================
- 
 
 
-class iObjectRegistry;
-class iPcMesh;
+
+struct iObjectRegistry;
+struct iPcMesh;
 
 
 /** Collider creation class.
