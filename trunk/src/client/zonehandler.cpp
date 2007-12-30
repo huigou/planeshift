@@ -363,7 +363,7 @@ bool ZoneHandler::ExecuteFlaggedRegions(const csString & sector)
         }
 
         // Load a map.
-        int executed = world->ExecuteFlaggedRegions(found->transitional);
+        int executed = world->ExecuteFlaggedRegions(found->transitional, psengine->UnloadingLast());
         switch(executed)
         {
             case 1:

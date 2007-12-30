@@ -176,8 +176,8 @@ public:
     ~psWorld();
  
     /// Initialize psWorld
-    bool Initialize( iObjectRegistry* object_reg);
-    bool CreateMap( const char* name, const char* mapFile, bool loadNow, bool loadMeshes = true ); 
+    bool Initialize(iObjectRegistry* object_reg, bool unloadingLast = true);
+    bool CreateMap(const char* name, const char* mapFile, bool loadNow, bool loadMeshes = true); 
     enum
     {
         DEFER_LOAD = 0,
@@ -222,7 +222,7 @@ public:
 
     /// Unload all regions to be unloaded, and load any regions to be kept but
     /// which are not loaded already.
-    int ExecuteFlaggedRegions(bool transitional);
+    int ExecuteFlaggedRegions(bool transitional, bool unloadOrder = true);
 
     bool NeedsLoading(bool transitional);
 

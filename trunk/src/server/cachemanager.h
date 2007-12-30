@@ -56,15 +56,15 @@ class psTradeAutoContainers;
 class psItemSet;
 class psCommandManager;
 class psSpell;
-class psItemCategory;
 class psItemStats;
-class psItemAnimation;
 class psItem;
 
 struct CraftTransInfo;
 struct CombinationConstruction;
 struct CombinationSet;
 struct CraftComboInfo;
+struct psItemAnimation;
+struct psItemCategory;
 struct psWay;
 struct Faction;
 struct psTrait;
