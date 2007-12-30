@@ -65,6 +65,7 @@ class GEMClientActor;
 class GEMClientItem;
 class GEMClientActionLocation;
 class psEffect;
+class psSolid;
 
 
 /** This is information about an entity with unresolved position (=sector not found)
@@ -445,11 +446,13 @@ class GEMClientItem : public GEMClientObject
 {
 public:
     GEMClientItem( psCelClient* cel, psPersistItem& mesg );
+    virtual ~GEMClientItem();
 
     virtual GEMOBJECT_TYPE GetObjectType() { return GEM_ITEM; }
 
 protected:
-    csRef<iPcSolid> solid;
+    //csRef<iPcSolid> solid;
+    psSolid* solid;
 };
 
 /** An action location on the client. */
