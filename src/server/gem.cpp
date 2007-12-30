@@ -569,63 +569,6 @@ void GEMSupervisor::GetAllEntityPos(psAllEntityPosMessage& update)
     update.msg->Add((int16_t)count_actual);  // Now correct the first value, which is the count of following entities
 }
 
-csPtr<iCelEntity> GEMSupervisor::CreateProxActorList(uint32_t clientnum,iCelEntity *all_actors)
-{
-    // Make list as entity with inventory
-    csRef<iCelEntity> list = CreateEntity(NULL,0);
-    list->SetName ("actorlist");
-
-    if (!pl->CreatePropertyClass (list, "pcinventory"))
-        return NULL;
-
-    csRef<iPcInventory> listinv =
-        CEL_QUERY_PROPCLASS(list->GetPropertyClassList(), 
-        iPcInventory);
-    if (!listinv)
-        return NULL;
-
-    // Now cycle through complete actor list to find relevant entities
-    csRef<iPcInventory> pcinv =
-        CEL_QUERY_PROPCLASS(all_actors->GetPropertyClassList(), 
-        iPcInventory);
-    if (!pcinv)
-        return NULL;
-
-#ifdef PSNETPERSISTDEBUG
-    CPrintf(CON_DEBUG, "Building custom prox list for client %d\n",clientnum);
-#endif
-
-    for (size_t i=0; i<pcinv->GetEntityCount(); i++)
-    {
-        iCelEntity *candidate = pcinv->GetEntity(i);
-
-#ifdef PSNETPERSISTDEBUG
-        CPrintf(CON_DEBUG, " Checking #%d (%s)...",i,candidate->GetName() );
-#endif
-
-        // Get list of interested clients
-        gemObject *obj = FindObject(candidate->GetID());
-        if (obj)
-        {
-            if (obj->GetProxList()->FindClient(clientnum))
-            {
-                // This was subscribed, so add to temp list
-                listinv->AddEntity(candidate);
-#ifdef PSNETPERSISTDEBUG
-                CPrintf(CON_DEBUG, "Added\n");
-#endif
-            }
-#ifdef PSNETPERSISTDEBUG
-            else
-            {
-                CPrintf(CON_DEBUG, "Not added.\n");
-            }
-#endif
-        }
-    }
-    //list->IncRef ();
-    return csPtr<iCelEntity> (list);
-}
 
 
 void GEMSupervisor::Teleport( gemObject* object, float x, float y, float z, float rot, const char* sectorname )
