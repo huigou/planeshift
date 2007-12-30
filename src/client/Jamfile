@@ -8,9 +8,7 @@ if [ Property build : projgen ] = msvc
  extrafiles += [ Wildcard win32 : *.cpp *.h ] ;
 }
 Application psclient : [ Wildcard *.cpp *.h ] $(extrafiles) ;
-CFlags psclient : $(CAL3D.CFLAGS) ;
-LFlags psclient : $(CAL3D.LFLAGS) ;
-ExternalLibs psclient : CRYSTAL CEL CAL3D;
+ExternalLibs psclient : CRYSTAL CEL CAL3D ;
 CompileGroups psclient : client ;
 LinkWith psclient : gui psnet psengine psrpgrules pssound psutil paws effects fparser ;
 
