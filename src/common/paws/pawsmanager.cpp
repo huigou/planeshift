@@ -116,8 +116,7 @@ PawsManager::PawsManager(iObjectRegistry* object, const char* skin,const char* p
 
     float screenWidth = cfg->GetFloat( "Video.ScreenWidth", 800.0f );
     float screenHeight = cfg->GetFloat( "Video.ScreenHeight", 600.0f );
-    fontFactor = min( ( screenWidth  / 800.0f ) , ( screenHeight /  600.0f ) );
-    fontFactor *= (float)cfg->GetInt( "Font.ScalePercent", 100 ) / 100.0f;
+    fontFactor = min(( screenWidth  / 800.0f ), ( screenHeight /  600.0f ));
 
     RegisterFactories();
 

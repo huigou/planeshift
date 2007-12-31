@@ -697,10 +697,3 @@ bool pawsShortcutWindow::OnFingering(csString string, psControl::Device device, 
         return false;
     }
 }
-
-void pawsShortcutWindow::SetFontScaling(int value)
-{
-    pawsWidget::SetFontScaling(value);
-    RebuildMatrix();
-}
-

@@ -2157,12 +2157,6 @@ void pawsChatWindow::NpcChat()
     AutoselectChatTabIfNeeded(allowedTabs, "NPC Button");
 }
 
-void pawsChatWindow::SetFontScaling(int value)
-{
-    pawsWidget::SetFontScaling(value);
-    Resize();  // Refresh the line heights and widths
-}
-
 //------------------------------------------------------------------------------
 
 pawsChatHistory::pawsChatHistory()

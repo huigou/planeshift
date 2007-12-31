@@ -238,9 +238,6 @@ protected:
     /// The speed of the fading process.
     float fadeSpeed;
 
-    /// font scaling for text
-    int fontScaling;  // 0 for not allowed
-    
     /** Path to the file that describes context menu of our widget 
      * (invoked by mouse right-click). 
      * @remark If blank, then there is no context menu for our widget.
@@ -267,8 +264,14 @@ protected:
     /// Optional color to use when doing text dropshadows.
     int defaultFontShadowColour;
 
+    /// Default font size.
+    float defaultFontSize;
+
     /// Current font size.
     float fontSize;
+
+    /// Determines whether or not to scale font when a widget it resized.
+    bool scaleFont;
 
     /// Name of currently selected font.
     csString fontName;
@@ -1083,7 +1086,7 @@ public:
     /** Change font to new size and reload font to make it take effect.
      * @param newSize The font size to change to.
      */
-    void ChangeFontSize( int newSize );
+    void ChangeFontSize( float newSize );
 
     /** Gets the current font size.
      * @return It's own size if it has one, if not then the parent's,
@@ -1145,10 +1148,6 @@ public:
      */
     int GetFadeVal(){return (int)fadeVal;};
 
-    /** Gets the font scaling of this widget  (or 0 if not scalable)
-     */
-    int GetFontScaling(){return fontScaling;};
-    
     /** Sets the minimim alpha of this widget.
      */
     void SetMinAlpha(int value){alphaMin=value;};
@@ -1156,10 +1155,6 @@ public:
     /** Sets the maximum alpha of this widget.
      */
     void SetMaxAlpha(int value){alpha=value;};
-    
-    /** Sets the font scaling of this widget.
-     */
-    virtual void SetFontScaling(int value);
     
     /** Gets the fade status of this widget.
      */
@@ -1250,12 +1245,8 @@ public:
      */
     bool IsConfigurable() { return configurable; }
 
-    void SaveFontSettings();
-    void LoadFontSettings();
-
     virtual void OnUpdateData(const char *dataname,PAWSData& data) {}
     virtual void NewSubscription(const char *dataname) { subscribedVar = dataname; }
-
 
     /** Sets up the title bar for the widget.
      * 
