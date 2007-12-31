@@ -1,3 +1,7 @@
+*** 2007-12-31 by Kenny Graunke
+- NULL'd out prg_event_unequip column in loot_modifiers, so generated items
+  use undo_equip by default.
+
 *** 2007-12-30 by Anders Reggestad
 - Removed warning that paths wasn't able to assamle, that was caused
   by paths without any points, in which is quite legal.
