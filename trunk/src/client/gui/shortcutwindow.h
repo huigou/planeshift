@@ -64,8 +64,6 @@ public:
 
     void LoadDefaultCommands();
     
-    void SetFontScaling(int value);
-    
 protected:
     /// System text for easy access
     pawsMessageTextBox* systemText;

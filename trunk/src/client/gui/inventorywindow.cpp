@@ -118,7 +118,7 @@ bool pawsInventoryWindow::SetupSlot( const char* slotName )
 
 bool pawsInventoryWindow::PostSetup()
 {    
-    printf("Inventory setup\n");
+    //printf("Inventory setup\n");
     msgHandler = psengine->GetMsgHandler();
     if ( !msgHandler )
         return false;
@@ -172,7 +172,7 @@ bool pawsInventoryWindow::PostSetup()
             name.Format("invslot_%d", 16 + i*2+j);  // 16 equip slots come first
             slot->SetSlotName(name);
 
-            printf("Subscribing bulk slot to %s.\n",name.GetData() );
+            //printf("Subscribing bulk slot to %s.\n",name.GetData() );
             PawsManager::GetSingleton().Subscribe( name, slot );
             PawsManager::GetSingleton().Subscribe("sigClearInventorySlots", slot);
             bulkSlots[i*2+j] = slot;            
@@ -219,8 +219,8 @@ bool pawsInventoryWindow::SetupDoll()
     charApp->Clone(actor->charApp);
     charApp->SetMesh(widget->GetObject());
     
-    printf("Inventory Applying Traits: %s\n", actor->traits.GetData());
-    printf("Inventory Applying Equipment: %s\n", actor->equipment.GetData());
+    //printf("Inventory Applying Traits: %s\n", actor->traits.GetData());
+    //printf("Inventory Applying Equipment: %s\n", actor->equipment.GetData());
     
     
     charApp->ApplyTraits(actor->traits);

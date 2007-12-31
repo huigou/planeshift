@@ -110,17 +110,6 @@ bool WidgetConfigWindow::OnScroll( int direction, pawsScrollBar* widget )
         textFadeSpeedPct->SetText(pct);
         currentFadeSpeed = value;
     }
-    else if (widget == scrollBarFontScaling)
-    {
-        // update the scroll and progress bar
-        float value = scrollBarFontScaling->GetCurrentValue();
-        progressBarFontScaling->SetCurrentValue(value-50);
-        configWidget->SetFontScaling((int)value);
-
-        pct.Format("%.0f%%",value);
-        textFontScalingPct->SetText(pct);
-        currentFontScaling = value;
-    }
 
     return true;
 }
@@ -132,8 +121,7 @@ bool WidgetConfigWindow::OnButtonPressed( int mouseButton, int keyModifier, paws
     {
         // store 
         configWidget->SetMinAlpha((int)currentMinAlpha);
-        configWidget->SetMaxAlpha((int)currentMaxAlpha);    
-        configWidget->SetFontScaling((int)currentFontScaling);
+        configWidget->SetMaxAlpha((int)currentMaxAlpha);
 
         // close this window
         //PawsManager::GetSingleton().GetMainWidget()->DeleteChild(this);
@@ -147,7 +135,6 @@ bool WidgetConfigWindow::OnButtonPressed( int mouseButton, int keyModifier, paws
         configWidget->SetMaxAlpha((int)oldMaxAlpha);
         configWidget->SetFadeSpeed(oldFadeSpeed);
         configWidget->SetFade(oldFadeStatus);
-        configWidget->SetFontScaling((int)oldFontScaling);
 
         // close this window
         //PawsManager::GetSingleton().GetMainWidget()->DeleteChild(this);
@@ -173,8 +160,7 @@ bool WidgetConfigWindow::OnButtonPressed( int mouseButton, int keyModifier, paws
                                              (int)currentMinAlpha,
                                              (int)currentMaxAlpha,
                                              currentFadeSpeed,
-                                             currentFadeStatus,
-	                                         (int)currentFontScaling
+                                             currentFadeStatus
                                            );
         Hide();
         return true;
@@ -191,7 +177,6 @@ void WidgetConfigWindow::SetConfigurableWidget(pawsWidget *configWidget)
     currentMaxAlpha   = configWidget->GetMaxAlpha();
     currentFadeStatus = configWidget->isFadeEnabled();
     currentFadeSpeed  = configWidget->GetFadeSpeed();
-    currentFontScaling = configWidget->GetFontScaling();
 
     // set title "Window Settings (widgetname)"
     psString title;
@@ -210,7 +195,6 @@ void WidgetConfigWindow::SetConfigurableWidget(pawsWidget *configWidget)
     oldMaxAlpha = currentMaxAlpha;
     oldFadeStatus = currentFadeStatus;
     oldFadeSpeed  = currentFadeSpeed;
-    oldFontScaling = currentFontScaling;
 
     scrollBarMinAlpha->SetCurrentValue(currentMinAlpha);
     progressBarMinAlpha->SetCurrentValue(currentMinAlpha);
@@ -233,44 +217,6 @@ void WidgetConfigWindow::SetConfigurableWidget(pawsWidget *configWidget)
 
     buttonFade->SetState(configWidget->isFadeEnabled());
     textFadeStatus->SetText( buttonFade->GetState() ? "Enabled" : "Disabled" );
-
-    // Change the window to allow font size scaling, if allowed for this widget
-    bool canScaleFont = (configWidget->GetFontScaling() != 0);
-    if (canScaleFont)
-    {
-        scrollBarFontScaling->SetCurrentValue(currentFontScaling);
-        progressBarFontScaling->SetCurrentValue(currentFontScaling-50);
-
-        pct.Format("%.0f%%",currentFontScaling);
-        textFontScalingPct->SetText(pct);
-    }
-    SetFontSliderVisibility(canScaleFont);
-}
-
-void WidgetConfigWindow::SetFontSliderVisibility(bool visible)
-{
-    if (visible)
-    {
-        // Show all font stuff
-        textFontScalingLabel->Show();
-        textFontScalingPct->Show();
-        progressBarFontScaling->Show();
-        scrollBarFontScaling->Show();
-
-        // Change window size to fit
-        this->SetSize( this->max_width, this->max_height );
-    }
-    else
-    {
-        // Hide all font stuff
-        textFontScalingLabel->Hide();
-        textFontScalingPct->Hide();
-        progressBarFontScaling->Hide();
-        scrollBarFontScaling->Hide();
-
-        // Change window size to fit
-        this->SetSize( this->min_width, this->min_height );
-    }
 }
 
 bool WidgetConfigWindow::PostSetup()
@@ -296,14 +242,6 @@ bool WidgetConfigWindow::PostSetup()
     scrollBarFadeSpeed->EnableValueLimit(true);
     progressBarFadeSpeed->SetTotalValue(10);
 
-    if ((scrollBarFontScaling   = (pawsScrollBar*   )this->FindWidget("FontScalingScroll")) == NULL) return false;
-    if ((progressBarFontScaling = (pawsProgressBar* )this->FindWidget("FontScalingProgressBar")) == NULL) return false;
-    scrollBarFontScaling->SetMaxValue(150);
-    scrollBarFontScaling->SetMinValue(50);
-    scrollBarFontScaling->SetTickValue(1);
-    scrollBarFontScaling->EnableValueLimit(true);
-    progressBarFontScaling->SetTotalValue(100);
-
     if ((buttonOK     =(pawsButton*)this->FindWidget("OKButton")) == NULL) return false;
     if ((buttonCancel =(pawsButton*)this->FindWidget("CancelButton")) == NULL) return false;
     if ((buttonApply  =(pawsButton*)this->FindWidget("ApplyAllButton")) == NULL) return false;
@@ -313,9 +251,7 @@ bool WidgetConfigWindow::PostSetup()
     if ((textMinAlphaPct   =(pawsTextBox*)this->FindWidget("MinAlphaCurrentPct")) == NULL) return false;
     if ((textMaxAlphaPct   =(pawsTextBox*)this->FindWidget("MaxAlphaCurrentPct")) == NULL) return false;
     if ((textFadeSpeedPct  =(pawsTextBox*)this->FindWidget("FadeSpeedCurrentPct")) == NULL) return false;
-    if ((textFontScalingPct=(pawsTextBox*)this->FindWidget("FontScalingCurrentPct")) == NULL) return false;
-    if ((textFontScalingLabel=(pawsTextBox*)this->FindWidget("FontScalingText")) == NULL) return false;
-
+ 
     // place window on current mouse position
     MoveTo((int)PawsManager::GetSingleton().GetMouse()->GetPosition().x,
            (int)PawsManager::GetSingleton().GetMouse()->GetPosition().y);

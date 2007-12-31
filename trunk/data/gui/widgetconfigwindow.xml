@@ -104,32 +104,6 @@
         <text string="Fading:" />
     </widget>
 
-
-    <!-- Font scaling scrollbar -->
-    <widget name="FontScalingScroll" factory="pawsScrollBar" direction="horizontal" >
-        <frame x="140" y="90" width="100" height="15" border="no" />
-    </widget>
-
-    <!-- Font scaling progressbar-->
-    <widget name="FontScalingProgressBar" factory="pawsProgressBar" >
-        <frame x="155" y="95" width="65" height="7" border="no" />
-        <color     r="50" g="50" b="0" />
-        <fadecolor r="255" g="255" b="0" />
-    </widget>
-
-    <!-- Font scaling 100% -->
-    <widget name="FontScalingCurrentPct" factory="pawsTextBox">
-        <frame x="245" y="93" width="40" height="20" border="no"/>
-        <text string="100%" />
-    </widget>
-
-    <!-- Font scaling-->
-    <widget name="FontScalingText" factory="pawsTextBox">
-        <frame x="10" y="93" width="100" height="20" border="no"/>
-        <text string="Font Scaling:" />
-    </widget>
-
-
     <!-- OK button -->
     <widget name="OKButton" factory="pawsButton" toggle="no" shadows="yes">
         <frame x="10" y="120" width="80" height="20" border="yes" />

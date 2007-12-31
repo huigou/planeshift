@@ -47,22 +47,17 @@ public:
 
 private:
 
-    /// Shows/Hides the extra font size option and changes the window size to fit
-    void SetFontSliderVisibility(bool visible);
-
     /// old values (used to restore settings when 'cancel' is pressed)
     float    oldMinAlpha;
     float    oldMaxAlpha;
     bool     oldFadeStatus;
     float    oldFadeSpeed;
-    float    oldFontScaling;
     
     /// current values
     float   currentMinAlpha;
     float   currentMaxAlpha;
     bool    currentFadeStatus;
     float   currentFadeSpeed;
-    float   currentFontScaling;
     
     /// The scrollbar for adjusting the min Alpha of a window
     pawsScrollBar*        scrollBarMinAlpha;
@@ -75,10 +70,6 @@ private:
     /// The scrollbar for adjusting the fadespeed of a window
     pawsScrollBar*        scrollBarFadeSpeed;
     pawsProgressBar*    progressBarFadeSpeed;
-
-    // the scrollbar for font scaling in a window
-    pawsScrollBar*        scrollBarFontScaling;
-    pawsProgressBar*    progressBarFontScaling;
     
     /// OK/Cancel buttons 
     pawsButton*            buttonOK;
@@ -93,8 +84,6 @@ private:
     pawsTextBox*        textMinAlphaPct;    // min Alpha in %
     pawsTextBox*        textMaxAlphaPct;    // max Alpha in %
     pawsTextBox*        textFadeSpeedPct;   // current fade value in %
-    pawsTextBox*        textFontScalingPct; // current font scaling in %
-    pawsTextBox*        textFontScalingLabel;
 
     /// pointer to the widget that will have it's settings changed
     pawsWidget*    configWidget;  

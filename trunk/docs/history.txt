@@ -1,3 +1,9 @@
+*** 2007-12-31 by Michael Gist
+- More work on GUI with help from Kenny:
+  - Font now scales with widgets.
+  - Improved chat and info window scaling.
+  - Removed manual font scaling, it'll be replaced with a new version.
+
 *** 2007-12-31 by Kenny Graunke
 - NULL'd out prg_event_unequip column in loot_modifiers, so generated items
   use undo_equip by default.

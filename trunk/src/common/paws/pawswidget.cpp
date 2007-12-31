@@ -95,8 +95,8 @@ pawsWidget::pawsWidget( )
     close_widget = 0;
     extraData = 0;
     defaultFontColour = -1;
+    defaultFontSize = 10;
     fontSize = 10;
-    fontScaling = 0;  // none
 	titleBar = 0;
 
     size_t a;
@@ -112,9 +112,6 @@ pawsWidget::~pawsWidget()
 
     if ( configurable )
         SaveSettings();
-        
-    if ( fontScaling )
-        SaveFontSettings();
 
     while ( children.GetSize() > 0 )
     {
@@ -315,20 +312,6 @@ bool pawsWidget::LoadAttributes( iDocumentNode* node )
         if ( choice == "yes" ) configurable = true;
         if ( choice == "no"  ) configurable = false;        
     }
-
-    // Check to see if this widget's font is configurable
-    atr = node->GetAttribute("scalablefont");
-    if ( atr )
-    {
-        csString choice = csString(atr->GetValue());
-        if ( choice == "yes" ) fontScaling = 100;
-        if ( choice == "no"  ) fontScaling = 0;
-    }
-    
-    if ( fontScaling )
-    {
-        LoadFontSettings();
-    }
     
     atr = node->GetAttribute( "resizable" );
     if ( atr )
@@ -339,10 +322,12 @@ bool pawsWidget::LoadAttributes( iDocumentNode* node )
     }
 
     atr = node->GetAttribute( "resizetoscreen" );
-    if ( atr )
+    if(atr)
     {
         resizeToScreen = atr->GetValueAsBool();
-    } else if (parent) {
+    }
+    else if(parent)
+    {
         resizeToScreen = parent->resizeToScreen;
     }
     
@@ -376,14 +361,13 @@ bool pawsWidget::LoadAttributes( iDocumentNode* node )
     if ( fontAttribute )
     {
             fontName = fontAttribute->GetAttributeValue("name");
-            fontSize = fontAttribute->GetAttributeValueAsFloat("size");
+            defaultFontSize = fontAttribute->GetAttributeValueAsFloat("size");
+            fontSize = defaultFontSize;
             bool scaleToScreen = fontAttribute->GetAttributeValueAsBool("resizetoscreen", false);
+            scaleFont = fontAttribute->GetAttributeValueAsBool("scaleFont", true);
 
             if ( this->resizeToScreen && scaleToScreen )
                 fontSize *= PawsManager::GetSingleton().GetFontFactor();
-
-            if (fontScaling)
-                fontSize *= ((float)fontScaling / 100.0f);
 
             myFont = graphics2D->GetFontServer()->LoadFont( fontName , (fontSize)? fontSize:10 );
             if ( !myFont )
@@ -1264,32 +1248,6 @@ void pawsWidget::LoadSettings()
     fadeSpeed = config->GetFloat(configName, fadeSpeed);
 }
 
-void pawsWidget::SaveFontSettings()
-{
-    csRef<iConfigManager> cfgMgr;
-    cfgMgr =  csQueryRegistry<iConfigManager > ( PawsManager::GetSingleton().GetObjectRegistry());
-
-    csRef<iConfigFile> config = cfgMgr->LookupDomain(PawsManager::GetSingleton().GetConfigFile());
-
-    csString configName;
-    configName.Format("PlaneShift.GUI.%s.FontScaling", GetName());
-    config->SetInt(configName, fontScaling);
-    
-    config->Save();
-}
-
-void pawsWidget::LoadFontSettings()
-{
-    csRef<iConfigManager> cfgMgr;
-    cfgMgr =  csQueryRegistry<iConfigManager > ( PawsManager::GetSingleton().GetObjectRegistry());
-  
-    csRef<iConfigFile> config = cfgMgr->LookupDomain(PawsManager::GetSingleton().GetConfigFile());
-
-    csString configName;
-    configName.Format("PlaneShift.GUI.%s.FontScaling", GetName());
-    fontScaling = config->GetInt(configName, fontScaling);
-}
-
 void pawsWidget::CreateWidgetConfigWindow()
 {
     psString title = name + "settings";
@@ -1885,12 +1843,12 @@ void pawsWidget::Resize()
         if ( attachFlags & PROPORTIONAL_RIGHT )
         {
             int z = (parent->ScreenFrame().Width() * ( parent->DefaultFrame().Width() - defaultFrame.xmax ) ) /
-                        parent->DefaultFrame().Width();
+                parent->DefaultFrame().Width();
 
             int newMax = parent->ScreenFrame().xmax - z;
             screenFrame.xmax = newMax;
         }
-    }                 
+    }
 
     if ( attachFlags & ATTACH_RIGHT )
     {
@@ -1906,7 +1864,38 @@ void pawsWidget::Resize()
         if ( attachFlags & PROPORTIONAL_LEFT )
         {            
             int z = (parent->ScreenFrame().Width() *  defaultFrame.xmin ) /
-                        parent->DefaultFrame().Width();
+                parent->DefaultFrame().Width();
+
+            int newMin = parent->ScreenFrame().xmin + z;
+            screenFrame.xmin = newMin;            
+        }
+    }
+
+    if ( attachFlags & PROPORTIONAL_RIGHT )
+    {       
+        //Attach Proportional RIGHT Only
+        if ( ! (attachFlags & ATTACH_LEFT) && !(attachFlags & PROPORTIONAL_LEFT) )
+        {
+
+            int z = (parent->ScreenFrame().Width() * ( parent->DefaultFrame().Width() - defaultFrame.xmax ) ) /
+                parent->DefaultFrame().Width();
+
+            int newMin = parent->ScreenFrame().xmax - z - defaultFrame.Width();
+            int width = screenFrame.Width();
+            screenFrame.xmin = newMin;      
+            screenFrame.SetSize( width, screenFrame.Height() );      
+        }                                        
+        //Attach PropLeft-PropRight
+        if ( attachFlags & PROPORTIONAL_LEFT )
+        {
+            int z = (parent->ScreenFrame().Width() * ( parent->DefaultFrame().Width() - defaultFrame.xmax ) ) /
+                parent->DefaultFrame().Width();
+
+            int newMax = parent->ScreenFrame().xmax - z;
+            screenFrame.xmax = newMax;
+
+            z = (parent->ScreenFrame().Width() *  defaultFrame.xmin ) /
+                parent->DefaultFrame().Width();
 
             int newMin = parent->ScreenFrame().xmin + z;
             screenFrame.xmin = newMin;            
@@ -1919,7 +1908,7 @@ void pawsWidget::Resize()
         if ( ! (attachFlags & ATTACH_RIGHT) && !(attachFlags & PROPORTIONAL_RIGHT) )
         {
             int z = (parent->ScreenFrame().Width() * defaultFrame.xmin ) /
-                        parent->DefaultFrame().Width();
+                parent->DefaultFrame().Width();
 
             int newMin = parent->ScreenFrame().xmin + z;
             int width = screenFrame.Width();
@@ -1927,48 +1916,13 @@ void pawsWidget::Resize()
             screenFrame.SetSize( width, screenFrame.Height() );      
         }                                        
     }
-
-    if ( attachFlags & PROPORTIONAL_RIGHT )
-    {       
-        //Attach Proportional RIGHT Only
-        if ( ! (attachFlags & ATTACH_LEFT) && !(attachFlags & PROPORTIONAL_LEFT) )
-        {
-
-            int z = (parent->ScreenFrame().Width() * ( parent->DefaultFrame().Width() - defaultFrame.xmax ) ) /
-                        parent->DefaultFrame().Width();
-
-            int newMin = parent->ScreenFrame().xmax - z - defaultFrame.Width();
-            int width = screenFrame.Width();
-            screenFrame.xmin = newMin;      
-            screenFrame.SetSize( width, screenFrame.Height() );      
-        }                                        
-
-        //Attach PropLeft-PropRight
-        if ( attachFlags & PROPORTIONAL_LEFT )
-        {
-            int z = (parent->ScreenFrame().Width() * ( parent->DefaultFrame().Width() - defaultFrame.xmax ) ) /
-                        parent->DefaultFrame().Width();
-
-            int newMax = parent->ScreenFrame().xmax - z;
-            screenFrame.xmax = newMax;
-
-            z = (parent->ScreenFrame().Width() *  defaultFrame.xmin ) /
-                        parent->DefaultFrame().Width();
-
-            int newMin = parent->ScreenFrame().xmin + z;
-            screenFrame.xmin = newMin;            
-        }
-    }
-
-
-
-
-
+    //printf("Before %i\n", screenFrame.Height());
 
     if ( attachFlags & ATTACH_TOP )
     {
         int height = defaultFrame.Height();
-                  
+        //printf("Height: %i\n", height);
+
         screenFrame.ymin = parent->ScreenFrame().ymin + defaultFrame.ymin; 
         screenFrame.SetSize( screenFrame.Width(), height );
 
@@ -1977,35 +1931,35 @@ void pawsWidget::Resize()
         {            
             int newY = parent->DefaultFrame().Height() - (defaultFrame.ymin + defaultFrame.Height());        
             screenFrame.ymax = parent->ScreenFrame().ymax - newY;
-        }   
+        }
 
         //Attach TOP-BOTTOM Proportional
         if ( attachFlags & PROPORTIONAL_BOTTOM )
         {
             int z = (parent->ScreenFrame().Height() * ( parent->DefaultFrame().Height() - defaultFrame.ymax ) ) /
-                        parent->DefaultFrame().Height();
+                parent->DefaultFrame().Height();
 
             int newMax = parent->ScreenFrame().ymax - z;
             screenFrame.ymax = newMax;
         }
     }                 
-
+    //printf("After %i\n", screenFrame.Height());
     if ( attachFlags & ATTACH_BOTTOM )
     {
         // Attach BOTTOM Only
         if ( !(attachFlags & ATTACH_TOP) )
         {
-         
+
             int height = screenFrame.Height();
             screenFrame.ymin = parent->ScreenFrame().ymax - ( parent->DefaultFrame().Height() - defaultFrame.ymax + height );
             screenFrame.SetSize( screenFrame.Width(), height );
         } 
-          
+
         //Attach BOTTOM-TOP Proportional
         if ( attachFlags & PROPORTIONAL_TOP )
         {            
             int z = (parent->ScreenFrame().Height() *  defaultFrame.ymin ) /
-                        parent->DefaultFrame().Height();
+                parent->DefaultFrame().Height();
 
             int newMin = parent->ScreenFrame().ymin + z;
             screenFrame.ymin = newMin;            
@@ -2018,7 +1972,7 @@ void pawsWidget::Resize()
         if ( ! (attachFlags & ATTACH_BOTTOM) && !(attachFlags & PROPORTIONAL_BOTTOM) )
         {
             int z = (parent->ScreenFrame().Height() * defaultFrame.ymin ) /
-                        parent->DefaultFrame().Height();
+                parent->DefaultFrame().Height();
 
             int newMin = parent->ScreenFrame().ymin + z;
             int height = screenFrame.Height();
@@ -2027,16 +1981,13 @@ void pawsWidget::Resize()
         }                                        
     }
 
-
     if ( attachFlags & PROPORTIONAL_BOTTOM )
     {
         // Attach Proportional BOTTOM Only
         if ( ! (attachFlags & ATTACH_TOP) && !(attachFlags & PROPORTIONAL_TOP) )
         {
-         
-
             int z = (parent->ScreenFrame().Height() * ( parent->DefaultFrame().Height() - defaultFrame.ymax ) ) /
-                        parent->DefaultFrame().Height();
+                parent->DefaultFrame().Height();
 
             int newMin = parent->ScreenFrame().ymax - z - defaultFrame.Height();
             int height = screenFrame.Height();
@@ -2044,27 +1995,39 @@ void pawsWidget::Resize()
             screenFrame.SetSize( screenFrame.Width(), height );      
         }                                        
 
-         // Attach PropTOP-PropBOTTOM
+        // Attach PropTOP-PropBOTTOM
         if ( attachFlags & PROPORTIONAL_TOP )
         {            
             int z = (parent->ScreenFrame().Height() * ( parent->DefaultFrame().Height() - defaultFrame.ymax ) ) /
-                        parent->DefaultFrame().Height();
+                parent->DefaultFrame().Height();
 
             int newMax = parent->ScreenFrame().ymax - z;
             screenFrame.ymax = newMax;
 
             z = (parent->ScreenFrame().Height() *  defaultFrame.ymin ) /
-                        parent->DefaultFrame().Height();
+                parent->DefaultFrame().Height();
 
             int newMin = parent->ScreenFrame().ymin + z;
             screenFrame.ymin = newMin;            
         }
     }
-    OnResize();    
+
+    OnResize();
+
     for ( size_t x = children.GetSize(); x-- > 0; )
     {    
         children[x]->Resize();
-    }    
+    }   
+
+    /// Scale the font to match the change in size.
+    if (scaleFont && !resizeToScreen)
+    {
+        if (screenFrame.Width() && defaultFrame.Height())
+        {
+            float newSize = defaultFontSize * float(screenFrame.Height())/float(defaultFrame.Height());
+            ChangeFontSize(newSize);
+        }
+    } 
 }       
 
 void pawsWidget::OnResize()
@@ -2240,13 +2203,11 @@ void pawsWidget::SetFont( const char* Name , int Size)
 {
     if (Name)
     {
-        fontSize = Size;
+        defaultFontSize = Size;
+        fontSize = defaultFontSize;
 
         if (resizeToScreen)
             fontSize *= PawsManager::GetSingleton().GetFontFactor();
-
-        if (fontScaling)
-            fontSize *= ((float)fontScaling / 100.0f);
 
         fontName = Name;
         myFont = graphics2D->GetFontServer()->LoadFont( Name, fontSize );
@@ -2269,7 +2230,7 @@ void pawsWidget::SetColour( int newColour )
     }
 }
 
-void pawsWidget::ChangeFontSize(int newSize)
+void pawsWidget::ChangeFontSize(float newSize)
 {
     if (newSize == fontSize)
         return;
@@ -2278,23 +2239,6 @@ void pawsWidget::ChangeFontSize(int newSize)
 
     if (resizeToScreen)
         fontSize *= PawsManager::GetSingleton().GetFontFactor();
-
-    if (fontScaling)
-        fontSize *= ((float)fontScaling / 100.0f);
-
-    if (fontName.IsEmpty())
-        fontName = PawsManager::GetSingleton().GetPrefs()->GetDefaultFontName();
-
-    myFont = graphics2D->GetFontServer()->LoadFont( fontName, fontSize );
-}
-
-void pawsWidget::SetFontScaling(int newFontScaling)
-{
-    if (newFontScaling == fontScaling)
-        return;
-        
-    fontSize *= float(newFontScaling) / float(fontScaling);
-    fontScaling = newFontScaling;
 
     if (fontName.IsEmpty())
         fontName = PawsManager::GetSingleton().GetPrefs()->GetDefaultFontName();

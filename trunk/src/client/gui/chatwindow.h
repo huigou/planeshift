@@ -167,8 +167,6 @@ public:
     void LoadChatSettings();
     //This little function simply tab just the proper tab for chatting with NPC on selection
     void NpcChat();
-
-    void SetFontScaling(int value);
     
     void RefreshCommandList();
 
