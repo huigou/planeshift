@@ -1841,6 +1841,7 @@ unsigned int psWorkManager::IsTransformable(uint32 patternId, uint32 targetId, i
         // If no process for this transform then just continue on
         if (!procArray)
         {
+            Debug1(LOG_TRADE, 0, "transformation has no process.\n");
             continue;
         }
 
@@ -1848,24 +1849,25 @@ unsigned int psWorkManager::IsTransformable(uint32 patternId, uint32 targetId, i
         {
             procCandidate = procArray->Get(j);
 
-#ifdef DEBUG_WORKMANAGER
-            CPrintf(CON_DEBUG, "trans match attempts ID (%u):\n",transCandidate->GetId());
+            // Some debug info
+            Debug2(LOG_TRADE, 0, "trans match attempts ID (%u):\n",transCandidate->GetId());
             uint32 a = procCandidate->GetWorkItemId();
             uint32 b = workStats->GetUID();
-            CPrintf(CON_DEBUG, "\tcandidate WorkItemID (%u) == target WorkItemID (%u)\n", a,b);
-            CPrintf(CON_DEBUG, "\tcandidate Quantity (%d) == target Quantity(%d)\n",
+            Debug3(LOG_TRADE, 0, "\tcandidate WorkItemID (%u) == target WorkItemID (%u)\n", a,b);
+            Debug3(LOG_TRADE, 0, "\tcandidate Quantity (%d) == target Quantity(%d)\n",
                 transCandidate->GetItemQty(), targetQty);
             uint32 c = procCandidate->GetEquipementId();
             uint32 d = (owner->Inventory().GetInventoryItem(PSCHARACTER_SLOT_RIGHTHAND)) ?
                 owner->Inventory().GetInventoryItem(PSCHARACTER_SLOT_RIGHTHAND)->GetCurrentStats()->GetUID() : 0;
             uint32 e = (owner->Inventory().GetInventoryItem(PSCHARACTER_SLOT_LEFTHAND)) ?
                 owner->Inventory().GetInventoryItem(PSCHARACTER_SLOT_LEFTHAND)->GetCurrentStats()->GetUID() : 0;
-            CPrintf(CON_DEBUG, "\tcandidate EquipID(%u) == righthandID(%u) == lefthandID(%u)\n", c,d,e);
-#endif
+            Debug4(LOG_TRADE, 0, "\tcandidate EquipID(%u) == righthandID(%u) == lefthandID(%u)\n", c,d,e);
 
             // Check the work item does not match
             if( procCandidate->GetWorkItemId() != workStats->GetUID() )
             {
+                    Debug3(LOG_TRADE, 0, "transformation wrong item candidate id=%u workitem Id=%u.\n", 
+                        procCandidate->GetWorkItemId(), workStats->GetUID());
                     match |= TRANSFORM_MISSING_ITEM;
                     continue;
             }
@@ -1877,7 +1879,8 @@ unsigned int psWorkManager::IsTransformable(uint32 patternId, uint32 targetId, i
                 // Check if required equipment is on hand
                 if ( !IsOnHand( equipmentId ) )
                 {
-                    Debug3(LOG_TRADE, 0, "transformation bad equipment id=%u equipmentId=%u.\n", transCandidate->GetId(), equipmentId);
+                    Debug3(LOG_TRADE, 0, "transformation bad equipment id=%u equipmentId=%u.\n", 
+                        transCandidate->GetId(), equipmentId);
                     match |= TRANSFORM_MISSING_EQUIPMENT;
                     continue;
                 }
@@ -1887,6 +1890,8 @@ unsigned int psWorkManager::IsTransformable(uint32 patternId, uint32 targetId, i
             int itemQty = transCandidate->GetItemQty();
             if ( itemQty != 0 && itemQty != targetQty )
             {
+                Debug3(LOG_TRADE, 0, "transformation bad quantity candidateQty=%d itemQty=%d .\n", 
+                    transCandidate->GetItemQty(), itemQty);
                 match |= TRANSFORM_BAD_QUANTITY;
                 continue;
             }
@@ -1894,6 +1899,7 @@ unsigned int psWorkManager::IsTransformable(uint32 patternId, uint32 targetId, i
             // Check if the player has the sufficient training
             if ( !ValidateTraining(transCandidate, procCandidate) )
             {
+                Debug1(LOG_TRADE, 0, "transformation bad training.\n");
                 match |= TRANSFORM_BAD_TRAINING;
                 continue;
             }
@@ -1901,6 +1907,7 @@ unsigned int psWorkManager::IsTransformable(uint32 patternId, uint32 targetId, i
             // Check if the player has the correct skills
             if ( !ValidateSkills(transCandidate, procCandidate) )
             {
+                Debug1(LOG_TRADE, 0, "transformation bad skills.\n");
                 match |= TRANSFORM_BAD_SKILLS;
                 continue;
             }
@@ -1909,6 +1916,7 @@ unsigned int psWorkManager::IsTransformable(uint32 patternId, uint32 targetId, i
             if ( !ValidateConstraints(transCandidate, procCandidate) )
             {
                 // Player message comes from database
+                Debug1(LOG_TRADE, 0, "transformation failed constraints.\n");
                 match |= TRANSFORM_FAILED_CONSTRAINTS;
                 continue;
             }
