@@ -1,3 +1,7 @@
+*** 2007-12-31 by Andrew Craig
+- Made the common/psworld Distance function use iMeshWrapper instead of 
+  iCelEntity. This removes the dependency of CEL in this class.   
+
 *** 2007-12-31 by Michael Gist
 - More work on GUI with help from Kenny:
   - Font now scales with widgets.

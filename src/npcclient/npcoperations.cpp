@@ -3060,8 +3060,19 @@ void WatchOperation::Advance(float timedelta,NPC *npc,EventManager *eventmgr)
     }
 
     iCelEntity * npcEnt = npc->GetEntity();
+    csRef<iPcMesh> pcmesh = CEL_QUERY_PROPCLASS(npcEnt->GetPropertyClassList(), iPcMesh);
 
-    if (npcclient->GetWorld()->Distance(npcEnt,watchedEnt) > watchRange)
+    csRef<iPcMesh> watchedMesh = CEL_QUERY_PROPCLASS(watchedEnt->GetPropertyClassList(), iPcMesh);
+
+    // Position
+    if(!pcmesh->GetMesh() || !watchedMesh)
+    {
+        CPrintf(CON_ERROR,"ERROR! NO MESH FOUND FOR AN OBJECT %s %s!\n",npcEnt->GetName(), watchedEnt->GetName());
+        return;
+    }
+
+    
+    if (npcclient->GetWorld()->Distance(pcmesh->GetMesh(), watchedMesh->GetMesh()) > watchRange)
     {
         csString str;
         str.Append(typeStr[type]);

@@ -39,12 +39,7 @@
 #include <iengine/renderloop.h>
 #include <csutil/xmltiny.h>
 #include <iengine/movable.h>
-
-// CEL
 #include <iutil/objreg.h>
-#include <physicallayer/entity.h>
-#include <physicallayer/propclas.h>
-#include <propclass/mesh.h>
 
 // PS
 #include "engine/materialmanager.h"
@@ -362,7 +357,8 @@ float psWorld::Distance(const csVector3& from_pos, const iSector* from_sector, c
     }
 }
 
-float psWorld::Distance(iCelEntity * ent1, iCelEntity * ent2)
+
+float psWorld::Distance(iMeshWrapper * ent1, iMeshWrapper * ent2)
 {
     csVector3 pos1,pos2;
     iSector *sector1,*sector2;
@@ -374,37 +370,30 @@ float psWorld::Distance(iCelEntity * ent1, iCelEntity * ent2)
     return Distance(pos1,sector1,pos2,sector2);
 }
 
-void psWorld::GetPosition(iCelEntity *entity, csVector3& pos, float* yrot,iSector*& sector)
+
+
+void psWorld::GetPosition(iMeshWrapper *pcmesh, csVector3& pos, float* yrot,iSector*& sector)
 {
-    csRef<iPcMesh> pcmesh = CEL_QUERY_PROPCLASS(entity->GetPropertyClassList(), 
-        iPcMesh);
-
-    // Position
-    if(!pcmesh->GetMesh())
-    {
-        CPrintf(CON_ERROR,"ERROR! NO MESH FOUND FOR OBJECT %s!\n",entity->GetName());
-        return;
-    }
-
-    pos = pcmesh->GetMesh()->GetMovable()->GetPosition();
+    pos = pcmesh->GetMovable()->GetPosition();
 
     // rotation
     if (yrot)
     {
-        csMatrix3 transf = pcmesh->GetMesh()->GetMovable()->GetTransform().GetT2O();
+        csMatrix3 transf = pcmesh->GetMovable()->GetTransform().GetT2O();
         *yrot = Matrix2YRot(transf);
     }
 
     // Sector
-    if (pcmesh->GetMesh()->GetMovable()->GetSectors()->GetCount())
+    if (pcmesh->GetMovable()->GetSectors()->GetCount())
     {
-        sector = pcmesh->GetMesh()->GetMovable()->GetSectors()->Get(0);
+        sector = pcmesh->GetMovable()->GetSectors()->Get(0);
     }
     else
     {
         sector = NULL;
     }
 }
+
 
 float psWorld::Matrix2YRot(const csMatrix3& mat)
 {
