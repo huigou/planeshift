@@ -396,9 +396,9 @@ void psCharacterInventory::RunUnequipScript(psItem *item)
     csString equipScript = item->GetBaseStats()->GetProgressionEventEquip();
 
     item->SetActive(false);
-    if ((unequipScript.IsEmpty() || unequipScript == "undo_equip") && !equipScript.IsEmpty())
+    if (unequipScript.IsEmpty() && !equipScript.IsEmpty())
     {
-        Notify2(LOG_SCRIPT, "Item \"%s\" has no prg_evt_unequip script. Using \"undo_equip\"", item->GetName());
+        Notify2(LOG_SCRIPT, "Item \"%s\" has no prg_evt_unequip script.  Using the inverse of prg_evt_equip.", item->GetName());
         psserver->GetProgressionManager()->ProcessEvent(equipScript, actor, NULL, true);
     }
     else if (!unequipScript.IsEmpty())

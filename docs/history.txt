@@ -1,3 +1,7 @@
+*** 2007-12-31 by Kenny Graunke
+- Removed support for the "undo_equip" syntax in item_stats/prg_evt_unequip.
+  Leaving that field blank already does the same thing.
+
 *** 2007-12-31 by Andrew Craig
 - Made the common/psworld Distance function use iMeshWrapper instead of 
   iCelEntity. This removes the dependency of CEL in this class.   
