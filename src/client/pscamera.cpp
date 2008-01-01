@@ -945,7 +945,7 @@ iMeshWrapper* psCamera::FindMeshUnder2D(int x, int y, csVector3 *pos, int *poly)
         //printf("actor %f %f %f  rot %f\n", actorPos.x, actorPos.y, actorPos.z, actorYRot);
 
         float optRange = 1000000.0;
-        csRef<iPcMesh> bestMesh = 0;
+        csRef<iMeshWrapper> bestMesh = 0;
         csVector3 bestPos;
 
         float s = sin(actorYRot);
@@ -967,8 +967,8 @@ iMeshWrapper* psCamera::FindMeshUnder2D(int x, int y, csVector3 *pos, int *poly)
             if( !object )
                 continue;
 
-            csRef<iPcMesh> mesh = object->pcmesh;
-            csVector3 objPos = mesh->GetMesh()->GetMovable()->GetPosition();
+            csRef<iMeshWrapper> mesh = object->Mesh();
+            csVector3 objPos = mesh->GetMovable()->GetPosition();
 
             //printf("object %s etype %d pos %f %f %f\n", object->GetName(), eType, objPos.x, objPos.y, objPos.z);
 
@@ -1016,9 +1016,14 @@ iMeshWrapper* psCamera::FindMeshUnder2D(int x, int y, csVector3 *pos, int *poly)
                 optRange = score;
             }
         }
-        if ( pos != NULL && bestMesh ) *pos = bestPos;
-        return (bestMesh? bestMesh->GetMesh() : 0);
-    } else {
+        if ( pos != NULL && bestMesh )
+        {
+            *pos = bestPos;
+        }            
+        return (bestMesh);
+    } 
+    else 
+    {
         vo = GetICamera()->GetTransform().GetO2TTranslation();
         csVector3 end = vo + (vw-vo)*100;
         csSectorHitBeamResult result; 
