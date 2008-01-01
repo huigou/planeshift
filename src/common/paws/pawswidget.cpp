@@ -138,6 +138,15 @@ pawsWidget::~pawsWidget()
     
     if (parent)
         parent->RemoveChild(this);
+
+    for (size_t i = 0; i < PW_SCRIPT_EVENT_COUNT; i++)
+    {
+        if (scriptEvents[i])
+        {
+            delete scriptEvents[i];
+            scriptEvents[i] = NULL;
+        }
+    }
 }
 
 void pawsWidget::SetFilename(const char *name)

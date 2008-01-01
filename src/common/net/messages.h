@@ -3109,7 +3109,7 @@ class psMOTDRequestMessage : public psMessageCracker
 public:
     psMOTDRequestMessage()
     {
-        msg = new MsgEntry( 1 );
+        msg = new MsgEntry();
         msg->SetType(MSGTYPE_MOTDREQUEST);
         msg->clientnum  = 0;
     }

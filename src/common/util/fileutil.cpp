@@ -40,13 +40,14 @@ FileUtil::~FileUtil()
 {
 }
 
-FileStat* FileUtil::StatFile (const char* path)
+csRef<FileStat> FileUtil::StatFile (const char* path)
 {
     struct stat filestats;
     if (stat (path, &filestats) < 0)
         return NULL;
 
-    FileStat* filestat = new FileStat;
+    csRef<FileStat> filestat;
+    filestat.AttachNew(new FileStat);
 
 #ifdef CS_PLATFORM_WIN32
     if (filestats.st_mode & _S_IFDIR)
