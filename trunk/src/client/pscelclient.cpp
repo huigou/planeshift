@@ -207,14 +207,14 @@ GEMClientObject* psCelClient::FindObject( int id )
     return entities_hash.Get (id, NULL);
 }
 
-void psCelClient::SetMainActor(iCelEntity* entity)
+void psCelClient::SetMainActor(GEMClientActor* actor)
 {
-    if (entity)
+    if (actor)
     {
-        mainPlayerEntity = entity;
+        mainPlayerEntity = actor->GetEntity();
 
         // ModeHandler has no good way to find out the entity
-        psengine->GetModeHandler()->SetEntity(entity);
+        psengine->GetModeHandler()->SetEntity(actor);
     }        
 }
 
@@ -304,7 +304,7 @@ void psCelClient::HandleActor( MsgEntry* me )
     if ( local_player == NULL && actor->control )
     {        
         local_player = actor;
-        SetMainActor( local_player->GetEntity() );
+        SetMainActor( local_player );
 
         // This triggers the server to update our proxlist
         local_player->SendDRUpdate(PRIORITY_LOW,GetClientDR()->GetMsgStrings());
@@ -328,8 +328,8 @@ void psCelClient::HandleMainActor( psPersistActor& mesg )
     if ( local_player_defaultFactName.IsEmpty() )
     {
         local_player_defaultFactName = local_player->GetFactName();
-        local_player_defaultFact = local_player->pcmesh->GetMesh()->GetFactory();
-        local_player_defaultMesh = local_player->pcmesh->GetMesh()->GetMeshObject();
+        local_player_defaultFact = local_player->Mesh()->GetFactory();
+        local_player_defaultMesh = local_player->Mesh()->GetMeshObject();
     }
 
     // Update equipment list
@@ -365,12 +365,12 @@ void psCelClient::HandleMainActor( psPersistActor& mesg )
             csRef<iMeshObject> mesh = meshwrap->GetMeshObject();
 
             // Update
-            local_player->pcmesh->GetMesh()->SetMeshObject(mesh);
-            local_player->pcmesh->GetMesh()->SetFactory(factory);
-            local_player->charApp->SetMesh(local_player->pcmesh->GetMesh());
+            local_player->Mesh()->SetMeshObject(mesh);
+            local_player->Mesh()->SetFactory(factory);
+            local_player->charApp->SetMesh(local_player->Mesh());
             
             // Cal3d
-            csRef<iSpriteCal3DState> calstate = scfQueryInterface<iSpriteCal3DState> (local_player->pcmesh->GetMesh()->GetMeshObject());
+            csRef<iSpriteCal3DState> calstate = scfQueryInterface<iSpriteCal3DState> (local_player->Mesh()->GetMeshObject());
             if (calstate)
             {
                 calstate->SetUserData((void*)local_player);
@@ -380,9 +380,9 @@ void psCelClient::HandleMainActor( psPersistActor& mesg )
         else
         {
             // Reset
-            local_player->pcmesh->GetMesh()->SetMeshObject(local_player_defaultMesh);
-            local_player->pcmesh->GetMesh()->SetFactory(local_player_defaultFact);
-            local_player->charApp->SetMesh(local_player->pcmesh->GetMesh());            
+            local_player->Mesh()->SetMeshObject(local_player_defaultMesh);
+            local_player->Mesh()->SetFactory(local_player_defaultFact);
+            local_player->Mesh(local_player->Mesh());            
         }
 
         // Update factory
@@ -514,7 +514,7 @@ bool psCelClient::IsMeshSubjectToAction(const char* sector,const char* mesh)
     for(size_t i = 0; i < actions.GetSize();i++)
     {
         GEMClientActionLocation* action = actions[i];
-        const char* sec = action->pcmesh->GetMesh()->GetMovable()->GetSectors()->Get(0)->QueryObject()->GetName();
+        const char* sec = action->Mesh()->GetMovable()->GetSectors()->Get(0)->QueryObject()->GetName();
 
         if(!strcmp(action->GetMesh(),mesh) && !strcmp(sector,sec))
             return true;
@@ -767,10 +767,10 @@ void psCelClient::OnRegionsDeleted(csArray<iRegion*>& regions)
 
     for (entNum = 0; entNum < entities.GetSize(); entNum++)
     {
-        iPcMesh * mesh = entities[entNum]->pcmesh;
-        if (mesh != NULL  &&  mesh->GetMesh() )
+        csRef<iMeshWrapper>  mesh = entities[entNum]->Mesh();
+        if (mesh != NULL )
         {
-            iMovable* movable = mesh->GetMesh()->GetMovable();
+            iMovable* movable = mesh->GetMovable();
             iSectorList* sectors = movable->GetSectors();
             // Shortcut the lengthy region check if possible
             if(IsUnresSector(movable->GetSectors()->Get(0)))
@@ -849,10 +849,10 @@ void psCelClient::OnMapsLoaded()
         if (sector)
         {
             //Error2("Successfuly resolved %s", pos->sector.GetData());
-            if(pos->entity->pcmesh && pos->entity->pcmesh->GetMesh() && pos->entity->pcmesh->GetMesh()->GetMovable())
+            if(pos->entity->Mesh() && pos->entity->Mesh()->GetMovable())
             {
                 // If we have a mesh, no need to re set the position.
-                iMovable* movable = pos->entity->pcmesh->GetMesh()->GetMovable();
+                iMovable* movable = pos->entity->Mesh()->GetMovable();
                 // Check if entity has moved to a different sector now, so no need to move back
                 if(IsUnresSector(movable->GetSectors()->Get(0)))
                     movable->SetSector(sector);
@@ -890,8 +890,8 @@ void psCelClient::PruneEntities()
         if ((GEMClientActor*) entities[entNum] == local_player)
             continue;
 
-        iPcMesh * mesh = entities[entNum]->pcmesh;
-        if (mesh != NULL  &&  mesh->GetMesh())
+        csRef<iMeshWrapper> mesh = entities[entNum]->Mesh();
+        if (mesh != NULL)
         {
             GEMClientActor* actor = dynamic_cast<GEMClientActor*> (entities[entNum]);
             if (actor)
@@ -986,6 +986,14 @@ GEMClientObject::~GEMClientObject()
 int GEMClientObject::GetMasqueradeType(void)
 {
     return type;
+}
+
+void GEMClientObject::Mesh(iMeshWrapper* wrap )
+{
+    if ( pcmesh )
+    {
+        pcmesh->SetMesh(wrap);
+    }    
 }
 
 iMeshWrapper* GEMClientObject::Mesh()

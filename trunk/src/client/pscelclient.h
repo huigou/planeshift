@@ -125,7 +125,7 @@ public:
     iCelEntity* GetMainActor();
     GEMClientObject* FindObject( int ID  );
 
-    void SetMainActor(iCelEntity* entity);
+    void SetMainActor(GEMClientActor* object);
     void SetPlayerReady(bool flag);
 
     void RemoveObject(GEMClientObject* entity);
@@ -314,6 +314,8 @@ public:
        * @return The iMeshWrapper or 0 if no mesh.
        */
      iMeshWrapper* Mesh();
+     
+     void Mesh(iMeshWrapper* wrap);
       
 protected:
     friend class psCelClient;

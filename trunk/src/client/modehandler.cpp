@@ -254,9 +254,9 @@ bool ModeHandler::LoadLightingLevels()
     return true;
 }
 
-void ModeHandler::SetEntity(iCelEntity *ent)
+void ModeHandler::SetEntity(GEMClientActor *ent)
 {
-    entity = ent;
+    entity = ent->GetEntity();
     pcmesh = CEL_QUERY_PROPCLASS_ENT( entity, iPcMesh );
 }
 
