@@ -172,7 +172,8 @@ bool ScriptOperation::CheckMovedOk(NPC *npc, EventManager *eventmgr, csVector3 o
             diffz > EPSILON)
         {
             consec_collisions++;
-            npc->Printf(10,"Bang (%1.2f,%1.2f)...",diffx,diffz);
+            npc->Printf(10,"Bang. %d consec collisions last with diffs (%1.2f,%1.2f)...",
+                        consec_collisions,diffx,diffz);
             if (consec_collisions > 8)  // allow for hitting trees but not walls
             {
                 // after a couple seconds of sliding against something
@@ -297,7 +298,7 @@ void ScriptOperation::StopMovement(NPC *npc)
 }
 
 
-int ScriptOperation::StartMoveTo(NPC *npc,EventManager *eventmgr,csVector3& dest, iSector* sector, float vel,const char *action, bool autoresume)
+int ScriptOperation::StartMoveTo(NPC *npc,EventManager *eventmgr, csVector3& dest, iSector* sector, float vel,const char *action, bool autoresume)
 {
     csVector3 forward;
     
@@ -1902,7 +1903,7 @@ bool ChaseOperation::Run(NPC *npc,EventManager *eventmgr,bool interrupted)
     {
         case NEAREST:
             npc->GetNearestEntity(target_id,dest,name,range);
-            npc->Printf(5, "Targeting nearest entity (%s) at (%1.2f,%1.2f,%1.2f) for chase ...\n",
+            npc->Printf(6, "Targeting nearest entity (%s) at (%1.2f,%1.2f,%1.2f) for chase ...\n",
                         (const char *)name,dest.x,dest.y,dest.z);
             if ( target_id != (uint32_t)-1 )
             {
@@ -1915,7 +1916,7 @@ bool ChaseOperation::Run(NPC *npc,EventManager *eventmgr,bool interrupted)
             {
                 target_id = entity->GetID();
                 psGameObject::GetPosition(entity, dest,targetRot,targetSector);
-                npc->Printf(5, "Targeting owner (%s) at (%1.2f,%1.2f,%1.2f) for chase ...\n",
+                npc->Printf(6, "Targeting owner (%s) at (%1.2f,%1.2f,%1.2f) for chase ...\n",
                             entity->GetName(),dest.x,dest.y,dest.z );
 
             }
@@ -1926,7 +1927,7 @@ bool ChaseOperation::Run(NPC *npc,EventManager *eventmgr,bool interrupted)
             {
                 target_id = entity->GetID();
                 psGameObject::GetPosition(entity, dest,targetRot,targetSector);
-                npc->Printf(5, "Targeting current target (%s) at (%1.2f,%1.2f,%1.2f) for chase ...\n",
+                npc->Printf(6, "Targeting current target (%s) at (%1.2f,%1.2f,%1.2f) for chase ...\n",
                             entity->GetName(),dest.x,dest.y,dest.z );
             }
             break;
@@ -1937,20 +1938,21 @@ bool ChaseOperation::Run(NPC *npc,EventManager *eventmgr,bool interrupted)
         psGameObject::GetPosition(npc->GetEntity(),myPos,myRot,mySector);
     
         psGameObject::GetPosition(entity, targetPos,targetRot,targetSector);
-        npc->Printf(5, "Chasing enemy EID: %u at %f %f %f\n",entity->GetID(), targetPos.x,targetPos.y,targetPos.z);
+        npc->Printf(5, "Chasing enemy (%s) EID: %u at %s\n",entity->GetName(),entity->GetID(), 
+                    toString(targetPos,targetSector).GetDataSafe());
 
         // We need to work in the target sector space
-        npcclient->GetWorld()->WarpSpace(mySector, targetSector, myPos);
+        npcclient->GetWorld()->WarpSpace(targetSector, mySector, targetPos);
 
         // This prevents NPCs from wanting to occupy the same physical space as something else
         csVector3 displacement = targetPos - myPos;
         float factor = sqrt((offset.x * offset.x)+(offset.z * offset.z)) / displacement.Norm();
-        targetPos = displacement - factor * displacement;
+        targetPos = myPos + (1 - factor) * displacement;
 
         path.SetMaps(npcclient->GetMaps());
         path.SetDest(targetPos);
         path.CalcLocalDest(myPos, mySector, localDest);
-        if ( Calc2DDistance( myPos, targetPos ) < .1 )
+        if ( Calc2DDistance( myPos, targetPos ) < 0.5 )
         {
             return true;  // This operation is complete
         }
@@ -2051,8 +2053,9 @@ void ChaseOperation::Advance(float timedelta,NPC *npc,EventManager *eventmgr)
         }
     }
     else
-        TurnTo(npc,localDest, mySector,forward);
-
+    {
+        TurnTo(npc, localDest, mySector, forward);
+    }
 
     npc->Printf(8, "advance: pos=(%f.2,%f.2,%f.2) rot=%.2f localDest=(%f.2,%f.2,%f.2) dist=%f\n", 
                 myPos.x,myPos.y,myPos.z, myRot,

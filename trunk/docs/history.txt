@@ -1,4 +1,8 @@
 *** 2008-01-01 by Anders Reggestad
+- Changed run chase operation to work in npc coordinate space in same way
+  that the advance function where changed before.
+- Added ToString for TimePerception, other Perceptions need the same function
+  for debuging.
 - Modified npc print levels for npc client to be in
   range 1-5 for events not happening to frequent,
   6-10 for printing on advance and 11-15 for very detailed
