@@ -330,7 +330,7 @@ bool pawsWidget::LoadAttributes( iDocumentNode* node )
     {
         resizeToScreen = parent->resizeToScreen;
     }
-    
+
     atr = node->GetAttribute( "ContextMenu" );
     if ( atr )
         contextMenuFile = atr->GetValue();
@@ -356,7 +356,32 @@ bool pawsWidget::LoadAttributes( iDocumentNode* node )
         defaultToolTip =toolTip;
     }
 
-    // Get the optional font for this widget
+    bool inheritFont = true;
+    atr = node->GetAttribute( "inheritfont" );
+    if(atr)
+    {
+        csString choice = csString(atr->GetValue());
+        if ( choice == "no"  ) inheritFont = false;
+    }
+
+    // Set font to be the same as the parent widget.
+    if(inheritFont && parent)
+    {
+        fontName = parent->fontName;
+        if(!fontName.IsEmpty())
+        {
+            defaultFontSize = parent->fontSize;
+            fontSize = defaultFontSize;
+            scaleFont = parent->scaleFont;
+            fontSize = parent->fontSize;
+            myFont = parent->myFont;
+            defaultFontColour = parent->defaultFontColour;
+            defaultFontShadowColour = parent->defaultFontShadowColour;
+            fontStyle = parent->fontStyle;
+        }
+    }
+
+    // Get specific font settings for this widget, if specified.
     csRef<iDocumentNode> fontAttribute = node->GetNode("font");
     if ( fontAttribute )
     {
@@ -369,7 +394,7 @@ bool pawsWidget::LoadAttributes( iDocumentNode* node )
             if ( this->resizeToScreen && scaleToScreen )
                 fontSize *= PawsManager::GetSingleton().GetFontFactor();
 
-            myFont = graphics2D->GetFontServer()->LoadFont( fontName , (fontSize)? fontSize:10 );
+            myFont = graphics2D->GetFontServer()->LoadFont(fontName, (fontSize)?fontSize:10);
             if ( !myFont )
             {
                 Error2("Could not load font: >%s<", (const char*)fontName );
