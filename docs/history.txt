@@ -1,0 +1,3 @@
+*** 2008-01-01 by Mike Gist
+- Made widgets inherit font from their parent.
+- Improvements to infowindow and widgetconfigwindow.

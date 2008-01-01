@@ -1,19 +1,24 @@
 <widget_description>
 
 <widget name="Window Settings" factory="widgetconfigwindow" 
-        visible="yes" savepositions="no" movable="yes" 
-        resizable="no" >
+        visible="yes" savepositions="yes" movable="yes" 
+        resizable="yes" >
 
-    <frame x="200" y="200" width="300" height="155" border="yes" />
-    <minframe width="300" height="135" />  <!-- size without font option -->
-    <maxframe width="300" height="155" />  <!-- size with font option -->
-
+    <frame x="200" y="200" width="300" height="135" border="yes" />
+    <minframe width="300" height="135" />
+    <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" size="12" />
     <title resource="Blue Title" text="Window Settings" align="left" close_button="yes" />
     <bgimage resource="Standard Background" alpha="50" />
 
     <!-- Min Alpha scrollbar -->
     <widget name="MinAlphaScroll" factory="pawsScrollBar" direction="horizontal" >
         <frame x="140" y="30" width="100" height="15" border="no" />
+        <attachpoints>
+            <attach point="PROPORTIONAL_LEFT" />
+            <attach point="PROPORTIONAL_RIGHT" />
+            <attach point="PROPORTIONAL_TOP" />
+            <attach point="PROPORTIONAL_BOTTOM" />
+        </attachpoints>
     </widget>
 
     <!-- Min Alpha progressbar-->
@@ -21,23 +26,47 @@
         <frame x="155" y="35" width="65" height="7" border="no" />
         <color     r="0" g="50" b="0" />
         <fadecolor r="0" g="255" b="0" />
+        <attachpoints>
+            <attach point="PROPORTIONAL_LEFT" />
+            <attach point="PROPORTIONAL_RIGHT" />
+            <attach point="PROPORTIONAL_TOP" />
+            <attach point="PROPORTIONAL_BOTTOM" />
+        </attachpoints>
     </widget>
 
     <!-- Min Alpha Current % -->
     <widget name="MinAlphaCurrentPct" factory="pawsTextBox">
         <frame x="245" y="33" width="40" height="20" border="no"/>
         <text string="100%" />
+        <attachpoints>
+            <attach point="PROPORTIONAL_LEFT" />
+            <attach point="PROPORTIONAL_RIGHT" />
+            <attach point="PROPORTIONAL_TOP" />
+            <attach point="PROPORTIONAL_BOTTOM" />
+        </attachpoints>
     </widget>
 
     <!-- Min Alpha -->
     <widget name="MinAlphaText" factory="pawsTextBox">
         <frame x="10" y="33" width="140" height="20" border="no"/>
         <text string="Min. Transparency:" />
+        <attachpoints>
+            <attach point="PROPORTIONAL_LEFT" />
+            <attach point="PROPORTIONAL_RIGHT" />
+            <attach point="PROPORTIONAL_TOP" />
+            <attach point="PROPORTIONAL_BOTTOM" />
+        </attachpoints>
     </widget>
 
     <!-- Max Alpha scrollbar -->
     <widget name="MaxAlphaScroll" factory="pawsScrollBar" direction="horizontal" >
         <frame x="140" y="12" width="100" height="15" border="no" />
+        <attachpoints>
+            <attach point="PROPORTIONAL_LEFT" />
+            <attach point="PROPORTIONAL_RIGHT" />
+            <attach point="PROPORTIONAL_TOP" />
+            <attach point="PROPORTIONAL_BOTTOM" />
+        </attachpoints>
     </widget>
 
     <!-- Max Alpha progressbar-->
@@ -45,24 +74,48 @@
         <frame x="155" y="17" width="65" height="7" border="no"/>
         <color     r="0" g="0" b="50" />
         <fadecolor r="0" g="0" b="255" />
+        <attachpoints>
+            <attach point="PROPORTIONAL_LEFT" />
+            <attach point="PROPORTIONAL_RIGHT" />
+            <attach point="PROPORTIONAL_TOP" />
+            <attach point="PROPORTIONAL_BOTTOM" />
+        </attachpoints>
     </widget>
 
     <!-- Max Alpha 100% -->
     <widget name="MaxAlphaCurrentPct" factory="pawsTextBox">
         <frame x="245" y="15" width="40" height="20" border="no"/>
         <text string="100%" />
+        <attachpoints>
+            <attach point="PROPORTIONAL_LEFT" />
+            <attach point="PROPORTIONAL_RIGHT" />
+            <attach point="PROPORTIONAL_TOP" />
+            <attach point="PROPORTIONAL_BOTTOM" />
+        </attachpoints>
     </widget>
 
     <!-- Max Alpha -->
     <widget name="MaxAlphaText" factory="pawsTextBox">
         <frame x="10" y="13" width="140" height="20" border="no"/>
         <text string="Max. Transparency:" />
+        <attachpoints>
+            <attach point="PROPORTIONAL_LEFT" />
+            <attach point="PROPORTIONAL_RIGHT" />
+            <attach point="PROPORTIONAL_TOP" />
+            <attach point="PROPORTIONAL_BOTTOM" />
+        </attachpoints>
     </widget>
 
 
     <!-- FadeSpeed scrollbar -->
     <widget name="FadeSpeedScroll" factory="pawsScrollBar" direction="horizontal" >
         <frame x="140" y="50" width="100" height="15" border="no" />
+        <attachpoints>
+            <attach point="PROPORTIONAL_LEFT" />
+            <attach point="PROPORTIONAL_RIGHT" />
+            <attach point="PROPORTIONAL_TOP" />
+            <attach point="PROPORTIONAL_BOTTOM" />
+        </attachpoints>
     </widget>
 
     <!-- FadeSpeed progressbar-->
@@ -70,18 +123,36 @@
         <frame x="155" y="55" width="65" height="7" border="no" />
         <color     r="50" g="0" b="0" />
         <fadecolor r="255" g="0" b="0" />
+        <attachpoints>
+            <attach point="PROPORTIONAL_LEFT" />
+            <attach point="PROPORTIONAL_RIGHT" />
+            <attach point="PROPORTIONAL_TOP" />
+            <attach point="PROPORTIONAL_BOTTOM" />
+        </attachpoints>
     </widget>
 
     <!-- FadeSpeed 100% -->
     <widget name="FadeSpeedCurrentPct" factory="pawsTextBox">
         <frame x="245" y="53" width="40" height="20" border="no"/>
         <text string="100%" />
+        <attachpoints>
+            <attach point="PROPORTIONAL_LEFT" />
+            <attach point="PROPORTIONAL_RIGHT" />
+            <attach point="PROPORTIONAL_TOP" />
+            <attach point="PROPORTIONAL_BOTTOM" />
+        </attachpoints>
     </widget>
 
     <!-- FadeSpeed-->
     <widget name="FadeSpeedText" factory="pawsTextBox">
         <frame x="10" y="53" width="100" height="20" border="no"/>
         <text string="Fade Speed:" />
+        <attachpoints>
+            <attach point="PROPORTIONAL_LEFT" />
+            <attach point="PROPORTIONAL_RIGHT" />
+            <attach point="PROPORTIONAL_TOP" />
+            <attach point="PROPORTIONAL_BOTTOM" />
+        </attachpoints>
     </widget>
 
 
@@ -90,26 +161,47 @@
         <frame x="130" y="75" width="10" height="10" border="no" />
         <buttonup resource="radiooff" />
         <buttondown resource="radioon" />
+        <attachpoints>
+            <attach point="PROPORTIONAL_LEFT" />
+            <attach point="PROPORTIONAL_RIGHT" />
+            <attach point="PROPORTIONAL_TOP" />
+            <attach point="PROPORTIONAL_BOTTOM" />
+        </attachpoints>
     </widget>
 
     <!-- Fade Status -->
     <widget name="FadeStatus" factory="pawsTextBox">
         <frame x="145" y="73" width="80" height="20" border="no"/>
         <text string="Enabled" />
+        <attachpoints>
+            <attach point="PROPORTIONAL_LEFT" />
+            <attach point="PROPORTIONAL_RIGHT" />
+            <attach point="PROPORTIONAL_TOP" />
+            <attach point="PROPORTIONAL_BOTTOM" />
+        </attachpoints>
     </widget>
  
     <!-- FadeText -->
     <widget name="FadeText" factory="pawsTextBox">
         <frame x="10" y="73" width="60" height="20" border="no"/>
         <text string="Fading:" />
+        <attachpoints>
+            <attach point="PROPORTIONAL_LEFT" />
+            <attach point="PROPORTIONAL_RIGHT" />
+            <attach point="PROPORTIONAL_TOP" />
+            <attach point="PROPORTIONAL_BOTTOM" />
+        </attachpoints>
     </widget>
 
     <!-- OK button -->
     <widget name="OKButton" factory="pawsButton" toggle="no" shadows="yes">
-        <frame x="10" y="120" width="80" height="20" border="yes" />
+        <frame x="10" y="110" width="80" height="20" border="yes" />
         <buttonup resource="Blue Title"/>
         <buttondown resource="Blue Title" />
         <attachpoints>
+            <attach point="PROPORTIONAL_LEFT" />
+            <attach point="PROPORTIONAL_RIGHT" />
+            <attach point="PROPORTIONAL_TOP" />
             <attach point="ATTACH_BOTTOM" />
         </attachpoints>
         <label text="OK"/>
@@ -118,10 +210,13 @@
 
    <!-- Cancel button -->
     <widget name="CancelButton" factory="pawsButton" toggle="no" shadows="yes" >
-        <frame x="110" y="120" width="80" height="20" border="yes" />
+        <frame x="110" y="110" width="80" height="20" border="yes" />
         <buttonup resource="Blue Title" />
         <buttondown resource="Blue Title" />
         <attachpoints>
+            <attach point="PROPORTIONAL_LEFT" />
+            <attach point="PROPORTIONAL_RIGHT" />
+            <attach point="PROPORTIONAL_TOP" />
             <attach point="ATTACH_BOTTOM" />
         </attachpoints>
         <label text="Cancel"/>
@@ -129,10 +224,13 @@
    
    <!-- Apply to all button -->
     <widget name="ApplyAllButton" factory="pawsButton" toggle="no" shadows="yes" >
-        <frame x="210" y="120" width="80" height="20" border="yes" />
+        <frame x="210" y="110" width="80" height="20" border="yes" />
         <buttonup resource="Blue Title" />
         <buttondown resource="Blue Title" />
         <attachpoints>
+            <attach point="PROPORTIONAL_LEFT" />
+            <attach point="PROPORTIONAL_RIGHT" />
+            <attach point="PROPORTIONAL_TOP" />
             <attach point="ATTACH_BOTTOM" />
         </attachpoints>
         <label text="Apply to all"/>
