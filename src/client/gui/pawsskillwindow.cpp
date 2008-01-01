@@ -166,18 +166,18 @@ bool pawsSkillWindow::SetupDoll()
     pawsObjectView* widget = dynamic_cast<pawsObjectView*>(FindWidget("Doll"));
     GEMClientActor* actor = psengine->GetCelClient()->GetMainPlayer();
     if (!widget || !actor)
-	{
+    {
         return false;
-	}
+    }
 
-    csRef<iPcMesh> mesh = actor->pcmesh;
+    iMeshWrapper* mesh = actor->Mesh();
     if (!mesh)
-	{
-		return false;
-	}
+    {
+        return false;
+    }
 
     // Set the doll view
-    widget->View( mesh->GetMesh() );
+    widget->View( mesh );
     
     // Register this doll for updates
     widget->SetID( actor->GetEntity()->GetID() );
