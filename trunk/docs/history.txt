@@ -6,3 +6,4 @@
 - Made widgets inherit font from their parent.
 - Improvements to infowindow and widgetconfigwindow.
 - Enforced scaling so that the aspect ratio is preserved.
+- Added option for font scaling to the widgetconfigwindow.

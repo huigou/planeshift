@@ -158,7 +158,7 @@ bool pawsMainWidget::LoadGUIKeys( const char* guiKeyFile )
     return true;
 }
 
-void pawsMainWidget::ApplyWindowSettingsOnChildren(pawsWidget* caller, int alphaMin, int alphaMax, float fadeSpeed, bool fade)
+void pawsMainWidget::ApplyWindowSettingsOnChildren(pawsWidget* caller, int alphaMin, int alphaMax, float fadeSpeed, bool fade, bool scaleFont)
 {
     for (size_t z = 0; z < children.GetSize(); z++ )
     {
@@ -172,6 +172,7 @@ void pawsMainWidget::ApplyWindowSettingsOnChildren(pawsWidget* caller, int alpha
             wdg->SetMinAlpha(alphaMin);
             wdg->SetFadeSpeed(fadeSpeed);
             wdg->SetFade(fade);
+            wdg->SetFontScaling(scaleFont);
         }
     }
 }

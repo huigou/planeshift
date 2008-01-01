@@ -58,7 +58,7 @@ public:
     virtual bool OnMouseUp( int button, int modifiers, int x, int y );
     virtual bool OnDoubleClick( int button, int modifiers, int x, int y );
 
-    virtual void ApplyWindowSettingsOnChildren(pawsWidget* caller, int alphaMin, int alphaMax, float fadeSpeed, bool fade);
+    virtual void ApplyWindowSettingsOnChildren(pawsWidget* caller, int alphaMin, int alphaMax, float fadeSpeed, bool fade, bool scaleFont);
 
 protected:
     bool LoadGUIKeys( const char* fileName );
@@ -68,5 +68,3 @@ protected:
 };
 
 #endif
-
-

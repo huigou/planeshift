@@ -1113,6 +1113,21 @@ void pawsWidget::SetFade(bool value)
     fade = value;
 }
 
+void pawsWidget::SetFontScaling(bool value)
+{
+    scaleFont = value;
+
+    if(!scaleFont)
+        ChangeFontSize(defaultFontSize);
+    else
+        ChangeFontSize(defaultFontSize * float(screenFrame.Width())/float(defaultFrame.Width()));
+
+    for (uint i=0; i < children.GetSize(); i++)
+    {
+        children.Get(i)->SetFontScaling(value);
+    }
+}
+
 void pawsWidget::FormatToolTip( const char *fmt, ... )
 {
     char text[128];
@@ -2063,7 +2078,7 @@ void pawsWidget::Resize()
     {
         if (screenFrame.Width() && defaultFrame.Height())
         {
-            float newSize = defaultFontSize * float(screenFrame.Height())/float(defaultFrame.Height());
+            float newSize = defaultFontSize * float(screenFrame.Width())/float(defaultFrame.Width());
             ChangeFontSize(newSize);
         }
     } 

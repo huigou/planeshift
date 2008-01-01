@@ -50,14 +50,16 @@ private:
     /// old values (used to restore settings when 'cancel' is pressed)
     float    oldMinAlpha;
     float    oldMaxAlpha;
-    bool     oldFadeStatus;
     float    oldFadeSpeed;
+    bool     oldFadeStatus;
+    bool     oldFontStatus;
     
     /// current values
     float   currentMinAlpha;
     float   currentMaxAlpha;
-    bool    currentFadeStatus;
     float   currentFadeSpeed;
+    bool    currentFadeStatus;
+    bool    currentFontStatus;
     
     /// The scrollbar for adjusting the min Alpha of a window
     pawsScrollBar*        scrollBarMinAlpha;
@@ -76,11 +78,13 @@ private:
     pawsButton*            buttonCancel;
     pawsButton*            buttonApply;
 
-    /// Fade checkbox
+    /// Fade and Font checkbox
     pawsButton*            buttonFade;
+    pawsButton*            buttonFont;
 
     /// Text boxes
     pawsTextBox*        textFadeStatus;
+    pawsTextBox*        textFontStatus;
     pawsTextBox*        textMinAlphaPct;    // min Alpha in %
     pawsTextBox*        textMaxAlphaPct;    // max Alpha in %
     pawsTextBox*        textFadeSpeedPct;   // current fade value in %

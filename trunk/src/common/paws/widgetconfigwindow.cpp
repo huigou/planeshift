@@ -135,6 +135,7 @@ bool WidgetConfigWindow::OnButtonPressed( int mouseButton, int keyModifier, paws
         configWidget->SetMaxAlpha((int)oldMaxAlpha);
         configWidget->SetFadeSpeed(oldFadeSpeed);
         configWidget->SetFade(oldFadeStatus);
+        configWidget->SetFontScaling(oldFontStatus);
 
         // close this window
         //PawsManager::GetSingleton().GetMainWidget()->DeleteChild(this);
@@ -144,7 +145,7 @@ bool WidgetConfigWindow::OnButtonPressed( int mouseButton, int keyModifier, paws
     else if (widget == buttonFade)
     {
         // enables/disables fading
-        bool newFadeStatus = !configWidget->isFadeEnabled();
+        bool newFadeStatus = !currentFadeStatus;
         configWidget->SetFade(newFadeStatus);
         buttonFade->SetState(newFadeStatus);
 
@@ -153,15 +154,27 @@ bool WidgetConfigWindow::OnButtonPressed( int mouseButton, int keyModifier, paws
         currentFadeStatus = newFadeStatus;
         return true;
     }
+    else if (widget == buttonFont)
+    {
+        // enables/disables fading
+        bool newFontStatus = !currentFontStatus;
+        configWidget->SetFontScaling(newFontStatus);
+        buttonFont->SetState(newFontStatus);
+
+        textFontStatus->SetText( buttonFont->GetState() ? "Enabled" : "Disabled" );
+
+        currentFontStatus = newFontStatus;
+        return true;
+    }
     else if(widget == buttonApply)
     {
         pawsMainWidget* main = PawsManager::GetSingleton().GetMainWidget();
-        main->ApplyWindowSettingsOnChildren( configWidget,
-                                             (int)currentMinAlpha,
-                                             (int)currentMaxAlpha,
-                                             currentFadeSpeed,
-                                             currentFadeStatus
-                                           );
+        main->ApplyWindowSettingsOnChildren(configWidget,
+                                            (int)currentMinAlpha,
+                                            (int)currentMaxAlpha,
+                                            currentFadeSpeed,
+                                            currentFadeStatus,
+                                            currentFontStatus);
         Hide();
         return true;
     }
@@ -193,8 +206,8 @@ void WidgetConfigWindow::SetConfigurableWidget(pawsWidget *configWidget)
     // store old values
     oldMinAlpha = currentMinAlpha;
     oldMaxAlpha = currentMaxAlpha;
-    oldFadeStatus = currentFadeStatus;
     oldFadeSpeed  = currentFadeSpeed;
+    oldFontStatus = currentFontStatus;
 
     scrollBarMinAlpha->SetCurrentValue(currentMinAlpha);
     progressBarMinAlpha->SetCurrentValue(currentMinAlpha);
@@ -217,6 +230,9 @@ void WidgetConfigWindow::SetConfigurableWidget(pawsWidget *configWidget)
 
     buttonFade->SetState(configWidget->isFadeEnabled());
     textFadeStatus->SetText( buttonFade->GetState() ? "Enabled" : "Disabled" );
+
+    buttonFont->SetState(configWidget->isScalingFont());
+    textFontStatus->SetText( buttonFont->GetState() ? "Enabled" : "Disabled" );
 }
 
 bool WidgetConfigWindow::PostSetup()
@@ -246,8 +262,10 @@ bool WidgetConfigWindow::PostSetup()
     if ((buttonCancel =(pawsButton*)this->FindWidget("CancelButton")) == NULL) return false;
     if ((buttonApply  =(pawsButton*)this->FindWidget("ApplyAllButton")) == NULL) return false;
     if ((buttonFade   =(pawsButton*)this->FindWidget("FadeButton")) == NULL) return false;
+    if ((buttonFont   =(pawsButton*)this->FindWidget("FontButton")) == NULL) return false;
     
     if ((textFadeStatus    =(pawsTextBox*)this->FindWidget("FadeStatus")) == NULL) return false;
+    if ((textFontStatus    =(pawsTextBox*)this->FindWidget("FontStatus")) == NULL) return false;
     if ((textMinAlphaPct   =(pawsTextBox*)this->FindWidget("MinAlphaCurrentPct")) == NULL) return false;
     if ((textMaxAlphaPct   =(pawsTextBox*)this->FindWidget("MaxAlphaCurrentPct")) == NULL) return false;
     if ((textFadeSpeedPct  =(pawsTextBox*)this->FindWidget("FadeSpeedCurrentPct")) == NULL) return false;

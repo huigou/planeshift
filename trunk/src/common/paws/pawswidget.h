@@ -1004,6 +1004,11 @@ public:
      */
     void SetFade(bool value);
 
+    /** Used to control the font scaling of the widget.
+     * @param bool 
+     */
+    void SetFontScaling(bool value);
+
     /** Draw text in the widget at specified location.
      * @param text The text to draw.
      * @param x The x screen position.
@@ -1167,6 +1172,10 @@ public:
     /** Sets the fading speed.
      */
     void SetFadeSpeed(float speed){fadeSpeed=speed;};
+
+    /** Returns whether or not font is being auto-scaled.
+     */
+    bool isScalingFont() { return scaleFont; }
     
     /** Sets the border title of this widget.
      */
