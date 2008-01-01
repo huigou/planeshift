@@ -122,7 +122,7 @@ public:
     virtual ~Perception() {}
 
 
-    virtual bool ShouldReact(Reaction *reaction,NPC *npc) { return name == reaction->GetEventType(); }
+    virtual bool ShouldReact(Reaction *reaction,NPC *npc);
     virtual Perception *MakeCopy();
     virtual void ExecutePerception(NPC *npc,float weight) { }
   
@@ -149,6 +149,7 @@ public:
 
     virtual bool ShouldReact(Reaction *reaction,NPC *npc);
     virtual Perception *MakeCopy();
+    virtual csString ToString();
 };
 
 class TimePerception : public Perception
@@ -197,7 +198,6 @@ public:
     : Perception(n), item(i)  {    }
     virtual ~ItemPerception() {}
 
-    virtual bool ShouldReact(Reaction *reaction,NPC *npc);
     virtual Perception *MakeCopy();
     virtual bool GetLocation(csVector3& pos, iSector*& sector);
     virtual iCelEntity *GetTarget() { return item; }
@@ -241,7 +241,6 @@ public:
     AttackPerception(const char *n,iCelEntity *attack)
         : Perception(n), attacker(attack) { }
 
-    virtual bool ShouldReact(Reaction *reaction,NPC *npc);
     virtual Perception *MakeCopy();
     virtual void ExecutePerception(NPC *npc,float weight);
     virtual iCelEntity *GetTarget() { return attacker; }
@@ -266,7 +265,6 @@ public:
     GroupAttackPerception(const char *n,csArray<iCelEntity *> & ents, csArray<int> & slots)
         : Perception(n), attacker_ents(ents), bestSkillSlots(slots) { }
 
-    virtual bool ShouldReact(Reaction *reaction,NPC *npc);
     virtual Perception *MakeCopy();
     virtual void ExecutePerception(NPC *npc,float weight);
 };
@@ -286,7 +284,6 @@ public:
     DamagePerception(const char *n,iCelEntity *attack,float dmg)
         : Perception(n), attacker(attack), damage(dmg) { }
 
-    virtual bool ShouldReact(Reaction *reaction,NPC *npc);
     virtual Perception *MakeCopy();
     virtual void ExecutePerception(NPC *npc,float weight);
 };
@@ -330,7 +327,6 @@ public:
     DeathPerception(PS_ID ent_id)
         : Perception("death"), who(ent_id) { }
 
-    virtual bool ShouldReact(Reaction *reaction,NPC *npc);
     virtual Perception *MakeCopy();
     virtual void ExecutePerception(NPC *npc,float weight);
 };

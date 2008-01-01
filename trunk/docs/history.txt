@@ -1,3 +1,9 @@
+*** 2008-01-01 by Anders Reggestad
+- Modified npc print levels for npc client to be in
+  range 1-5 for events not happening to frequent,
+  6-10 for printing on advance and 11-15 for very detailed
+  printings.
+
 *** 2008-01-01 by Kenny Graunke
 - Various valgrind cleanups.
 - Remove old copy of fileutil from pslaunch...use the one from common/util.
