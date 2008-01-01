@@ -5,7 +5,7 @@ Application psupdater :
 ;
 
 ExternalLibs psupdater : CRYSTAL CURL ;
-LinkWith psupdater : xdelta3 ;
+LinkWith psupdater : xdelta3 psutil ;
 
 if $(HAVE_STATIC_PLUGINS) = "yes"
 {
@@ -15,7 +15,7 @@ Application psupdater_static : [ Filter [ Wildcard *.cpp *.h ] : pslaunch.cpp pa
 CFlags psupdater_static : [ FDefines CS_STATIC_LINKED ] ;
 LFlags psupdater_static : -lcrystalspace_staticplugins-1.2 ;
 MsvcDefine psupdater_static : CS_STATIC_LINKED ;
-LinkWith psupdater_static : xdelta3 ;
+LinkWith psupdater_static : xdelta3 psutil ;
 
 LinkStaticPlugins psupdater_static :
   vfs

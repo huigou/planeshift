@@ -28,7 +28,7 @@
 #include <ivideo/natwin.h>
 
 #include "download.h"
-#include "fileutil.h"
+#include "util/fileutil.h"
 #include "globals.h"
 #include "pslaunch.h"
 #include "pawslauncherwindow.h"
