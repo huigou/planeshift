@@ -988,6 +988,16 @@ int GEMClientObject::GetMasqueradeType(void)
     return type;
 }
 
+iMeshWrapper* GEMClientObject::Mesh()
+{
+    if ( pcmesh )
+    {
+        return pcmesh->GetMesh();
+    }
+    
+    return NULL;
+}
+
 bool GEMClientObject::SetPosition(const csVector3 & pos, float rot, iSector * sector)
 {
     pcmesh->MoveMesh( sector , pos );

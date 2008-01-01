@@ -309,7 +309,12 @@ public:
     int Flags() { return flags; }
     
      psCharAppearance* charApp;
-     
+    
+     /** Get the mesh that this object has.
+       * @return The iMeshWrapper or 0 if no mesh.
+       */
+     iMeshWrapper* Mesh();
+      
 protected:
     friend class psCelClient;
 
