@@ -27,10 +27,11 @@
 
 #include <psstdint.h>
 #include <iutil/vfs.h>
+#include <csutil/refcount.h>
 
 struct iVFS;
 
-class FileStat
+class FileStat : public csRefCount
 {
 public:
     enum Type
@@ -61,7 +62,7 @@ public:
     FileUtil(csRef<iVFS> vfs);
     ~FileUtil();
     /* Tests if the file exists and returns data about the file. */
-    FileStat* StatFile (const char* path);
+    csRef<FileStat> StatFile (const char* path);
 
     void RemoveFile (const char* filename);
 

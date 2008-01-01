@@ -3449,7 +3449,7 @@ psStatDRMessage::psStatDRMessage(uint32_t clientnum, PS_ID eid, csArray<float> f
 /** Send a request to the server for a full stat update. */
 psStatDRMessage::psStatDRMessage()
 {
-    msg = new MsgEntry(PRIORITY_HIGH);
+    msg = new MsgEntry(0, PRIORITY_HIGH);
 
     msg->clientnum = 0;
     msg->SetType(MSGTYPE_STATDRUPDATE);

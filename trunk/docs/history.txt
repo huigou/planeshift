@@ -1,5 +1,5 @@
 *** 2008-01-01 by Kenny Graunke
-- Initialize decal pointer in psEffectObjDecal.
+- Various valgrind cleanups.
 
 *** 2008-01-01 by Mike Gist
 - Made widgets inherit font from their parent.
