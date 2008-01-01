@@ -590,11 +590,14 @@ bool pawsPetStatWindow::SetupDoll()
     if (!widget || !actor)
         return false;
 
-    csRef<iPcMesh> mesh = actor->pcmesh;
-    if (!mesh) return false;
+    iMeshWrapper* mesh = actor->Mesh();
+    if (!mesh) 
+    {
+        return false;
+    }        
 
     // Set the doll view
-    widget->View( mesh->GetMesh() );
+    widget->View( mesh );
     
     // Register this doll for updates
     widget->SetID( actor->GetEntity()->GetID() );
