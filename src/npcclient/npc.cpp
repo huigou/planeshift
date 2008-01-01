@@ -237,7 +237,7 @@ void NPC::TriggerEvent(Perception *pcpt,EventManager *eventmgr)
 {
     if (!disabled)
     {
-        Printf(6,"Got event %s",pcpt->ToString().GetData() );
+        Printf(15,"Got event %s",pcpt->ToString().GetData() );
         brain->FirePerception(this,eventmgr,pcpt);
     }
 }

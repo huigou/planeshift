@@ -190,7 +190,7 @@ void Reaction::React(NPC *who,EventManager *eventmgr,Perception *pcpt)
     {
         if (who->IsDebugging(12))
         {
-            who->Printf(12, "Skipping perception %s",pcpt->ToString().GetDataSafe());
+            who->Printf(12, "Reaction '%s' skipping perception %s", GetEventType(), pcpt->ToString().GetDataSafe());
         }
         return;
     }
@@ -549,7 +549,7 @@ void SpellPerception::ExecutePerception(NPC *npc,float weight)
 
 //---------------------------------------------------------------------------------
 
-bool TimePerception::ShouldReact(Reaction *reaction,NPC *npc)
+bool TimePerception::ShouldReact(Reaction *reaction, NPC *npc)
 {
     if (name == reaction->GetEventType() )
     {
@@ -627,6 +627,14 @@ Perception *TimePerception::MakeCopy()
 {
     TimePerception *p = new TimePerception(gameHour,gameMinute,gameYear,gameMonth,gameDay);
     return p;
+}
+
+csString TimePerception::ToString()
+{
+    csString result;
+    result.Format("Name: '%s' : '%d:%02d %d-%d-%d'",name.GetDataSafe(),
+                  gameHour, gameMinute, gameYear, gameMonth, gameDay );
+    return result;
 }
 
 //---------------------------------------------------------------------------------

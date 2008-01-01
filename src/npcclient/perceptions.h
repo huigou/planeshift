@@ -164,6 +164,7 @@ public:
 
     virtual bool ShouldReact(Reaction *reaction,NPC *npc);
     virtual Perception *MakeCopy();
+    virtual csString ToString();
 };
 
 class FactionPerception : public Perception
