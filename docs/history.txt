@@ -1,5 +1,6 @@
 *** 2008-01-01 by Kenny Graunke
 - Various valgrind cleanups.
+- Remove old copy of fileutil from pslaunch...use the one from common/util.
 
 *** 2008-01-01 by Mike Gist
 - Made widgets inherit font from their parent.

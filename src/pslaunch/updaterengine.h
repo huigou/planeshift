@@ -29,7 +29,7 @@
 
 
 #include "download.h"
-#include "fileutil.h"
+#include "util/fileutil.h"
 
 /* To be incremented every commit */
 #define UPDATER_VERSION 2
