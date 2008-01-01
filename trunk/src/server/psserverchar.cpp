@@ -189,7 +189,7 @@ void psServerCharManager::ViewItem(Client* client, int containerID, INVENTORY_SL
         psActionLocation *action = psserver->GetActionManager()->FindAction( containerID );
         if ( !action )
         {
-            Error3( "No item/action : %d, %d", containerID, slotID );
+            //Error3("No item/action : %d, %d", containerID, slotID);
             return;
         }
         else
