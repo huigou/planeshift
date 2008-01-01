@@ -12,7 +12,7 @@
 
     <!-- Min Alpha scrollbar -->
     <widget name="MinAlphaScroll" factory="pawsScrollBar" direction="horizontal" >
-        <frame x="140" y="30" width="100" height="15" border="no" />
+        <frame x="140" y="25" width="100" height="15" border="no" />
         <attachpoints>
             <attach point="PROPORTIONAL_LEFT" />
             <attach point="PROPORTIONAL_RIGHT" />
@@ -23,7 +23,7 @@
 
     <!-- Min Alpha progressbar-->
     <widget name="MinAlphaProgressBar" factory="pawsProgressBar">
-        <frame x="155" y="35" width="65" height="7" border="no" />
+        <frame x="155" y="30" width="65" height="7" border="no" />
         <color     r="0" g="50" b="0" />
         <fadecolor r="0" g="255" b="0" />
         <attachpoints>
@@ -36,7 +36,7 @@
 
     <!-- Min Alpha Current % -->
     <widget name="MinAlphaCurrentPct" factory="pawsTextBox">
-        <frame x="245" y="33" width="40" height="20" border="no"/>
+        <frame x="245" y="28" width="40" height="20" border="no"/>
         <text string="100%" />
         <attachpoints>
             <attach point="PROPORTIONAL_LEFT" />
@@ -48,7 +48,7 @@
 
     <!-- Min Alpha -->
     <widget name="MinAlphaText" factory="pawsTextBox">
-        <frame x="10" y="33" width="140" height="20" border="no"/>
+        <frame x="10" y="28" width="140" height="20" border="no"/>
         <text string="Min. Transparency:" />
         <attachpoints>
             <attach point="PROPORTIONAL_LEFT" />
@@ -60,7 +60,7 @@
 
     <!-- Max Alpha scrollbar -->
     <widget name="MaxAlphaScroll" factory="pawsScrollBar" direction="horizontal" >
-        <frame x="140" y="12" width="100" height="15" border="no" />
+        <frame x="140" y="7" width="100" height="15" border="no" />
         <attachpoints>
             <attach point="PROPORTIONAL_LEFT" />
             <attach point="PROPORTIONAL_RIGHT" />
@@ -71,7 +71,7 @@
 
     <!-- Max Alpha progressbar-->
     <widget name="MaxAlphaProgressBar" factory="pawsProgressBar">
-        <frame x="155" y="17" width="65" height="7" border="no"/>
+        <frame x="155" y="13" width="65" height="7" border="no"/>
         <color     r="0" g="0" b="50" />
         <fadecolor r="0" g="0" b="255" />
         <attachpoints>
@@ -84,7 +84,7 @@
 
     <!-- Max Alpha 100% -->
     <widget name="MaxAlphaCurrentPct" factory="pawsTextBox">
-        <frame x="245" y="15" width="40" height="20" border="no"/>
+        <frame x="245" y="10" width="40" height="20" border="no"/>
         <text string="100%" />
         <attachpoints>
             <attach point="PROPORTIONAL_LEFT" />
@@ -96,7 +96,7 @@
 
     <!-- Max Alpha -->
     <widget name="MaxAlphaText" factory="pawsTextBox">
-        <frame x="10" y="13" width="140" height="20" border="no"/>
+        <frame x="10" y="8" width="140" height="20" border="no"/>
         <text string="Max. Transparency:" />
         <attachpoints>
             <attach point="PROPORTIONAL_LEFT" />
@@ -109,7 +109,7 @@
 
     <!-- FadeSpeed scrollbar -->
     <widget name="FadeSpeedScroll" factory="pawsScrollBar" direction="horizontal" >
-        <frame x="140" y="50" width="100" height="15" border="no" />
+        <frame x="140" y="45" width="100" height="15" border="no" />
         <attachpoints>
             <attach point="PROPORTIONAL_LEFT" />
             <attach point="PROPORTIONAL_RIGHT" />
@@ -120,7 +120,7 @@
 
     <!-- FadeSpeed progressbar-->
     <widget name="FadeSpeedProgressBar" factory="pawsProgressBar" >
-        <frame x="155" y="55" width="65" height="7" border="no" />
+        <frame x="155" y="50" width="65" height="7" border="no" />
         <color     r="50" g="0" b="0" />
         <fadecolor r="255" g="0" b="0" />
         <attachpoints>
@@ -133,7 +133,7 @@
 
     <!-- FadeSpeed 100% -->
     <widget name="FadeSpeedCurrentPct" factory="pawsTextBox">
-        <frame x="245" y="53" width="40" height="20" border="no"/>
+        <frame x="245" y="48" width="40" height="20" border="no"/>
         <text string="100%" />
         <attachpoints>
             <attach point="PROPORTIONAL_LEFT" />
@@ -145,7 +145,7 @@
 
     <!-- FadeSpeed-->
     <widget name="FadeSpeedText" factory="pawsTextBox">
-        <frame x="10" y="53" width="100" height="20" border="no"/>
+        <frame x="10" y="48" width="100" height="20" border="no"/>
         <text string="Fade Speed:" />
         <attachpoints>
             <attach point="PROPORTIONAL_LEFT" />
@@ -158,7 +158,7 @@
 
    <!-- Fade Button-->
     <widget name="FadeButton" factory="pawsButton" toggle="no"  shadows="no" toggle="no">
-        <frame x="130" y="75" width="10" height="10" border="no" />
+        <frame x="130" y="69" width="10" height="10" border="no" />
         <buttonup resource="radiooff" />
         <buttondown resource="radioon" />
         <attachpoints>
@@ -171,7 +171,7 @@
 
     <!-- Fade Status -->
     <widget name="FadeStatus" factory="pawsTextBox">
-        <frame x="145" y="73" width="80" height="20" border="no"/>
+        <frame x="145" y="67" width="80" height="20" border="no"/>
         <text string="Enabled" />
         <attachpoints>
             <attach point="PROPORTIONAL_LEFT" />
@@ -183,8 +183,45 @@
  
     <!-- FadeText -->
     <widget name="FadeText" factory="pawsTextBox">
-        <frame x="10" y="73" width="60" height="20" border="no"/>
+        <frame x="10" y="67" width="60" height="20" border="no"/>
         <text string="Fading:" />
+        <attachpoints>
+            <attach point="PROPORTIONAL_LEFT" />
+            <attach point="PROPORTIONAL_RIGHT" />
+            <attach point="PROPORTIONAL_TOP" />
+            <attach point="PROPORTIONAL_BOTTOM" />
+        </attachpoints>
+    </widget>
+
+   <!-- Font Scale Button-->
+    <widget name="FontButton" factory="pawsButton" toggle="no"  shadows="no" toggle="no">
+        <frame x="130" y="86" width="10" height="10" border="no" />
+        <buttonup resource="radiooff" />
+        <buttondown resource="radioon" />
+        <attachpoints>
+            <attach point="PROPORTIONAL_LEFT" />
+            <attach point="PROPORTIONAL_RIGHT" />
+            <attach point="PROPORTIONAL_TOP" />
+            <attach point="PROPORTIONAL_BOTTOM" />
+        </attachpoints>
+    </widget>
+
+    <!-- Font Scale Status -->
+    <widget name="FontStatus" factory="pawsTextBox">
+        <frame x="145" y="84" width="80" height="20" border="no"/>
+        <text string="Enabled" />
+        <attachpoints>
+            <attach point="PROPORTIONAL_LEFT" />
+            <attach point="PROPORTIONAL_RIGHT" />
+            <attach point="PROPORTIONAL_TOP" />
+            <attach point="PROPORTIONAL_BOTTOM" />
+        </attachpoints>
+    </widget>
+ 
+    <!-- Font Scale Text -->
+    <widget name="FontText" factory="pawsTextBox">
+        <frame x="10" y="81" width="80" height="20" border="no"/>
+        <text string="Scale Font:" />
         <attachpoints>
             <attach point="PROPORTIONAL_LEFT" />
             <attach point="PROPORTIONAL_RIGHT" />
