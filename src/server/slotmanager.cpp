@@ -396,7 +396,7 @@ void SlotManager::MoveFromInventory(psSlotMovementMsg& msg, Client *fromClient)
     psItem *itemProposed = chr->Inventory().GetItem(NULL, srcSlot);
     if (!itemProposed)
     {
-        Error2("Couldn't find item in proposed srcSlot %d.\b", srcSlot);
+        //Error2("Couldn't find item in proposed srcSlot %d.\b", srcSlot);
         return;
     }
     // printf("Proposing to move item %s\n", itemProposed->GetName());
@@ -819,7 +819,7 @@ psItem* SlotManager::FindItem(Client* client, int containerID, INVENTORY_SLOT_NU
             }
             else
             {
-                Error2("No Object %d found", containerID);
+                //Error2("No Object %d found", containerID);
                 return NULL;
             }
         }

@@ -3154,17 +3154,17 @@ int GetFreeScriptSlot(csArray<csString> & scripts)
 
 int gemActor::AttachAttackScript(const csString & scriptName)
 {
-    Error3("---attach %s %s",GetName(),scriptName.GetData());
+    Debug3(LOG_COMBAT, "---attach %s %s",GetName(),scriptName.GetData());
 
     int scriptID = GetFreeScriptSlot(onAttackScripts);
     onAttackScripts[ scriptID ] = scriptName;
-    Error2("---%i",scriptID);
+    Debug2(LOG_COMBAT, "---%i",scriptID);
     return scriptID;
 }
 
 void gemActor::DetachAttackScript(int scriptID)
 {
-    Error3("---detach %s %i",GetName(),scriptID);
+    //Error3("---detach %s %i",GetName(),scriptID);
 
     if (scriptID<0  ||  scriptID>=(int)onAttackScripts.GetSize())
     {
@@ -3176,7 +3176,7 @@ void gemActor::DetachAttackScript(int scriptID)
 
 int  gemActor::AttachDamageScript(const csString & scriptName)
 {
-    Error3("---attach dam %s %s",GetName(),scriptName.GetData());
+    Debug3(LOG_COMBAT, "---attach dam %s %s",GetName(),scriptName.GetData());
 
     int scriptID = GetFreeScriptSlot(onDamageScripts);
     onDamageScripts[ scriptID ] = scriptName;
@@ -3185,7 +3185,7 @@ int  gemActor::AttachDamageScript(const csString & scriptName)
 
 void gemActor::DetachDamageScript(int scriptID)
 {
-    Error3("---detach dam %s %i",GetName(),scriptID);
+    Debug3(LOG_COMBAT, "---detach dam %s %i",GetName(),scriptID);
     
     if (scriptID<0  ||  scriptID>=(int)onDamageScripts.GetSize())
     {
