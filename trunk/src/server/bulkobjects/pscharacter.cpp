@@ -108,8 +108,6 @@ psCharacter::psCharacter() : inventory(this),
 
     helmGroup = "";
     help_event_flags = 0;
-    situation_wum = 0.0f;
-    effect_wum = 0.0f;
     memset(advantage_bitfield,0,sizeof(advantage_bitfield));
     accountid = 0;
     characterid = 0;
