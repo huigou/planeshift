@@ -55,7 +55,7 @@ public:
     void AddHate(int entity_id,float delta);
     iCelEntity *GetMostHated(iSector *sector, csVector3& pos, float range, LocationType * region, bool include_invisible, bool include_invincible);
     bool Remove(int entity_id);
-    void DumpHateList();
+    void DumpHateList(const csVector3& myPos, iSector *mySector);
     void Clear();
     float GetHate(int ent);
 };

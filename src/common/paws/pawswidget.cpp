@@ -1846,7 +1846,7 @@ void pawsWidget::Resize( int deltaX, int deltaY, int flags )
     {
         int delta = (deltaX<deltaY) ? deltaX:deltaY;
         newFrame.ymax += delta;
-        newFrame.xmax += delta*scale;
+        newFrame.xmax += (int)(delta*scale);
     }
 
     if ( flags & RESIZE_LEFT)

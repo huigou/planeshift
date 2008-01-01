@@ -286,11 +286,10 @@ void BehaviorSet::Advance(csTicks delta,NPC *npc,EventManager *eventmgr)
                 
                 if (behaviors[i]->CurrentNeed() != behaviors[i]->NewNeed())
                 {
-                    npc->Printf(3,"Advancing %-30s:\t%1.1f ->%1.1f", 
+                    npc->Printf(4, "Advancing %-30s:\t%1.1f ->%1.1f", 
                                 behaviors[i]->GetName(),
                                 behaviors[i]->CurrentNeed(),
                                 behaviors[i]->NewNeed() );
-                    behaviours_changed = true;
                 }
                 
                 if (b->NewNeed() > max_need) // the advance causes re-ordering
@@ -299,9 +298,9 @@ void BehaviorSet::Advance(csTicks delta,NPC *npc,EventManager *eventmgr)
                     {
                         behaviors[i] = behaviors[0];
                         behaviors[0] = b;  // now highest need is elem 0
+                        behaviours_changed = true;
                     }
                     max_need = b->NewNeed();
-                    behaviours_changed = true;
                 }
                 b->CommitAdvance();   // Update key to correct value
             }
@@ -318,7 +317,7 @@ void BehaviorSet::Advance(csTicks delta,NPC *npc,EventManager *eventmgr)
         // use it only if need > 0
         if (new_behaviour->CurrentNeed()<=0 || !new_behaviour->ApplicableToNPCState(npc))
         {
-            npc->Printf(1,"NO Active applicable behavior." );
+            npc->Printf(15,"NO Active applicable behavior." );
             return;
         }
         
@@ -356,7 +355,7 @@ void BehaviorSet::Advance(csTicks delta,NPC *npc,EventManager *eventmgr)
         }
     }
     
-    npc->Printf(3,"Active behavior is '%s'", active->GetName() );
+    npc->Printf(15,"Active behavior is '%s'", active->GetName() );
 }
 
 void BehaviorSet::ResumeScript(NPC *npc,EventManager *eventmgr,Behavior *which)
@@ -667,7 +666,7 @@ void Behavior::Advance(csTicks delta,NPC *npc,EventManager *eventmgr)
         new_need = new_need - (d * need_decay_rate);
         if (current_step < sequence.GetSize())
         {
-            npc->Printf(4,"%s - Advance active delta: %.3f Need: %.2f Decay Rate: %.2f",
+            npc->Printf(10,"%s - Advance active delta: %.3f Need: %.2f Decay Rate: %.2f",
                         name.GetData(),d,new_need,need_decay_rate);
 
             if (!sequence[current_step]->HasCompleted())
@@ -679,7 +678,7 @@ void Behavior::Advance(csTicks delta,NPC *npc,EventManager *eventmgr)
     else
     {
         new_need = new_need + (d * need_growth_rate);
-        npc->Printf(4,"%s - Advance none active delta: %.3f Need: %.2f Growth Rate: %.2f",
+        npc->Printf(10,"%s - Advance none active delta: %.3f Need: %.2f Growth Rate: %.2f",
                     name.GetData(),d,new_need,need_growth_rate);
     }
 }
@@ -695,7 +694,8 @@ bool Behavior::StartScript(NPC *npc, EventManager *eventmgr)
 {
     if (interrupted && resume_after_interrupt)
     {
-        npc->Printf(1,"Resuming behavior %s after interrupt at step %d.",name.GetData(),current_step);
+        npc->Printf(3,"Resuming behavior %s after interrupt at step %d - %s.",
+                    name.GetData(), current_step, sequence[current_step]->GetName());
         interrupted = false;
         return RunScript(npc,eventmgr,true);
     }
@@ -718,12 +718,15 @@ bool Behavior::RunScript(NPC *npc, EventManager *eventmgr, bool interrupted)
     {
         while (current_step < sequence.GetSize() )
         {
-            npc->Printf(2,">>>Step %d %s operation%s",current_step,sequence[current_step]->GetName(),
+            npc->Printf(2, "Running %s step %d - %s operation%s",
+                        name.GetData(),current_step,sequence[current_step]->GetName(),
                         (interrupted?" Interrupted":""));
             sequence[current_step]->SetCompleted(false);
             if (!sequence[current_step]->Run(npc,eventmgr,interrupted)) // Run returning false means that
             {                                                           // op is not finished but should 
                                                                         // relinquish
+                npc->Printf(2, "Behavior %s step %d - %s will complete later...",
+                            name.GetData(),current_step,sequence[current_step]->GetName());
                 return false; // This behavior isn't done yet
             }
             interrupted = false; // Only the first script operation should be interrupted.
@@ -734,7 +737,7 @@ bool Behavior::RunScript(NPC *npc, EventManager *eventmgr, bool interrupted)
             if (loop)
             {
                 current_step = 0;  // behaviors automatically loop around to the top
-                npc->Printf(1,"Loop back to start of behaviour '%s'",GetName());
+                npc->Printf(1, "Loop back to start of behaviour '%s'",GetName());
             }
             else 
             {
@@ -747,10 +750,10 @@ bool Behavior::RunScript(NPC *npc, EventManager *eventmgr, bool interrupted)
                         delta_decay = current_need;
                     }
 
-                    npc->Printf("Subtracting completion decay of %1f from behavior '%s'.",delta_decay,GetName() );
+                    npc->Printf(10, "Subtracting completion decay of %.2f from behavior '%s'.",delta_decay,GetName() );
                     new_need = current_need - delta_decay;
                 }
-                npc->Printf(1,"End of non looping behaviour '%s'",GetName());
+                npc->Printf(1, "End of non looping behaviour '%s'",GetName());
                 break; // This behavior is done
             }
             
@@ -763,6 +766,9 @@ void Behavior::InterruptScript(NPC *npc,EventManager *eventmgr)
 {
     if (current_step < sequence.GetSize() )
     {
+        npc->Printf(2,"Interrupting behaviour %s at step %d - %s",
+                    name.GetData(),current_step,sequence[current_step]->GetName());
+
         sequence[current_step]->InterruptOperation(npc,eventmgr);
         interrupted = true;
     }
@@ -772,9 +778,13 @@ bool Behavior::ResumeScript(NPC *npc,EventManager *eventmgr)
 {
     if (current_step < sequence.GetSize())
     { 
-        npc->Printf("Resuming behavior %s at step %d.",name.GetData(),current_step);
+        npc->Printf(3, "Resuming behavior %s at step %d - %s.",
+                    name.GetData(),current_step,sequence[current_step]->GetName());
+
         if (sequence[current_step]->CompleteOperation(npc,eventmgr))
         {
+            npc->Printf(2,"Completed step %d - %s of behavior %s",
+                        current_step,sequence[current_step]->GetName(),name.GetData());
             current_step++;
             return RunScript(npc,eventmgr,false);
         }

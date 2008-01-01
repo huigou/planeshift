@@ -271,7 +271,7 @@ iCelEntity *NPC::GetMostHated(float range, bool include_invisible, bool include_
     return hated;
 }
 
-void NPC::AddToHateList(iCelEntity *attacker,float delta)
+void NPC::AddToHateList(iCelEntity *attacker, float delta)
 {
     Printf("Adding %1.2f to hatelist score for %s(EID: %u).\n",
            delta,attacker->GetName(),attacker->GetID() );
@@ -383,10 +383,15 @@ void NPC::DumpBehaviorList()
 
 void NPC::DumpHateList()
 {
+    iSector *sector=NULL;
+    csVector3 pos;
+    float yrot;
+    psGameObject::GetPosition(entity,pos,yrot,sector);
+
     CPrintf(CON_CMDOUTPUT, "Hate list for %s (PID: %u)\n",name.GetData(),pid );
     CPrintf(CON_CMDOUTPUT, "---------------------------------------------\n");
 
-    hatelist.DumpHateList();
+    hatelist.DumpHateList(pos,sector);
 }
 
 void NPC::ClearState()
@@ -734,9 +739,12 @@ float HateList::GetHate(int ent)
         return 0;
 }
 
-void HateList::DumpHateList()
+void HateList::DumpHateList(const csVector3& myPos, iSector *mySector)
 {
     csHash<HateListEntry*>::GlobalIterator iter = hatelist.GetIterator();
+
+    CPrintf(CON_CMDOUTPUT, "%6s %5s %-40s %5s %s\n",
+            "Entity","Hated","Pos","Range","Flags");
 
     while (iter.HasNext())
     {
@@ -756,8 +764,19 @@ void HateList::DumpHateList()
             }
 
             pos = obj->pcmesh->GetMesh()->GetMovable()->GetPosition();
-            CPrintf(CON_CMDOUTPUT, "Entity: %d Hated: %.1f\tPos: %.2f %.2f %.2f Sector: %s\n",
-                    h->entity_id,h->hate_amount,pos.x,pos.y,pos.z,sectorName.GetDataSafe());
+            CPrintf(CON_CMDOUTPUT, "%6d %5.1f %40s %5.1f",
+                    h->entity_id,h->hate_amount,toString(pos,sector).GetDataSafe(),
+                    npcclient->GetWorld()->Distance(pos,sector,myPos,mySector));
+            // Print flags
+            if (obj->IsInvisible())
+            {
+                CPrintf(CON_CMDOUTPUT," Invisible");
+            }
+            if (obj->IsInvincible())
+            {
+                CPrintf(CON_CMDOUTPUT," Invincible");
+            }
+            CPrintf(CON_CMDOUTPUT,"\n");
         }
         else
         {

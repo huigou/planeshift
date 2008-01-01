@@ -142,7 +142,7 @@ void Reaction::DeepCopy(Reaction& other,BehaviorSet& behaviors)
     react_when_invincible  = other.react_when_invincible;
     only_interrupt         = other.only_interrupt;
 
-    // For now depend that each npc do a deep copy to creat its instance of the reaction
+    // For now depend on that each npc do a deep copy to create its instance of the reaction
     for (uint ii=0; ii < values.GetSize(); ii++)
     {
         if (GetRandomValid((int)ii))
@@ -187,13 +187,19 @@ void Reaction::React(NPC *who,EventManager *eventmgr,Perception *pcpt)
     }
 
     if (!pcpt->ShouldReact(this,who))
+    {
+        if (who->IsDebugging(12))
+        {
+            who->Printf(12, "Skipping perception %s",pcpt->ToString().GetDataSafe());
+        }
         return;
+    }
 
-
-    who->Printf("Adding %1.1f need to behavior %s for npc %s(EID: %u).",
+    who->Printf(2, "Reaction '%s' reacting to perception %s", GetEventType(), pcpt->ToString().GetDataSafe());
+    who->Printf(10, "Adding %1.1f need to behavior %s for npc %s(EID: %u).",
                 delta_desire, affected->GetName(), who->GetName(),
                 (who->GetEntity()?who->GetEntity()->GetID():0));
-
+        
     if (delta_desire>0 || delta_desire<-1)
     {
         affected->ApplyNeedDelta(delta_desire);
@@ -215,11 +221,6 @@ void Reaction::React(NPC *who,EventManager *eventmgr,Perception *pcpt)
     }
     
     pcpt->ExecutePerception(who,weight);
-
-    if (who->IsDebugging(2))
-    {
-        who->DumpBehaviorList( );
-    }
 
     Perception *p = pcpt->MakeCopy();
     who->SetLastPerception(p);
@@ -284,8 +285,16 @@ bool Reaction::GetRandomValid(int i)
 }
 
 
-
 /*----------------------------------------------------------------------------*/
+
+bool Perception::ShouldReact(Reaction *reaction, NPC *npc)
+{
+    if (name == reaction->GetEventType())
+    {
+        return true;
+    }
+    return false;
+}
 
 Perception *Perception::MakeCopy()
 {
@@ -296,26 +305,36 @@ Perception *Perception::MakeCopy()
 csString Perception::ToString()
 {
     csString result;
-    result.Format("Name: '%s' Type: '%s'",name.GetDataSafe(),type.GetDataSafe());
+    result.Format("Name: '%s' Type: '%s'",name.GetDataSafe(), type.GetDataSafe());
     return result;
 }
 
 
 /*----------------------------------------------------------------------------*/
 
-bool RangePerception::ShouldReact(Reaction *reaction,NPC *npc)
+bool RangePerception::ShouldReact(Reaction *reaction, NPC *npc)
 {
-    if (name == reaction->GetEventType() &&
-        range < reaction->GetRange())
+    if (name == reaction->GetEventType() && range < reaction->GetRange())
+    {
         return true;
+    }
     else
+    {
         return false;
+    }
 }
 
 Perception *RangePerception::MakeCopy()
 {
     RangePerception *p = new RangePerception(name,range);
     return p;
+}
+
+csString RangePerception::ToString()
+{
+    csString result;
+    result.Format("Name: '%s' Range: '%.2f'",name.GetDataSafe(), range );
+    return result;
 }
 
 //---------------------------------------------------------------------------------
@@ -325,42 +344,35 @@ bool FactionPerception::ShouldReact(Reaction *reaction,NPC *npc)
 {
     if (name == reaction->GetEventType())
     {
-        npc->Printf( "FactionPerception Should react? -> ");
-
         if (player)
         {
             if (!reaction->ShouldReact(player,this))
             {
-                npc->Printf( "False\n");
                 return false;
             }
         }
         
         if (reaction->GetOp() == '>' )
         {
-            npc->Printf( "Checking %d > %d.",faction_delta,reaction->GetFactionDiff() );
+            npc->Printf(15, "Checking %d > %d.",faction_delta,reaction->GetFactionDiff() );
             if (faction_delta > reaction->GetFactionDiff() )
             {
-                npc->Printf( "True\n");
                 return true;
             }
             else
             {
-                npc->Printf( "False\n");
                 return false;
             }
         }
         else
         {
-            npc->Printf( "Checking %d < %d.",faction_delta,reaction->GetFactionDiff() );
+            npc->Printf(15, "Checking %d < %d.",faction_delta,reaction->GetFactionDiff() );
             if (faction_delta < reaction->GetFactionDiff() )
             {
-                npc->Printf( "True\n");
                 return true;
             }
             else
             {
-                npc->Printf( "False\n");
                 return false;
             }
         }
@@ -392,15 +404,6 @@ void FactionPerception::ExecutePerception(NPC *npc,float weight)
 
 //---------------------------------------------------------------------------------
 
-
-bool ItemPerception::ShouldReact(Reaction *reaction,NPC *npc)
-{
-    if (name == reaction->GetEventType())
-    {
-        return true;
-    }
-    return false;
-}
 
 bool ItemPerception::GetLocation(csVector3& pos, iSector*& sector)
 {
@@ -455,17 +458,6 @@ float LocationPerception::GetRadius() const
 
 //---------------------------------------------------------------------------------
 
-
-
-bool AttackPerception::ShouldReact(Reaction *reaction,NPC *npc)
-{
-    if (name == reaction->GetEventType())
-    {
-        return true;
-    }
-    return false;
-}
-
 Perception *AttackPerception::MakeCopy()
 {
     AttackPerception *p = new AttackPerception(name,attacker);
@@ -477,15 +469,6 @@ void AttackPerception::ExecutePerception(NPC *npc,float weight)
     npc->AddToHateList(attacker,weight);
 }
 //---------------------------------------------------------------------------------
-
-bool GroupAttackPerception::ShouldReact(Reaction *reaction,NPC *npc)
-{
-    if (name == reaction->GetEventType())
-    {
-        return true;
-    }
-    return false;
-}
 
 Perception *GroupAttackPerception::MakeCopy()
 {
@@ -500,20 +483,6 @@ void GroupAttackPerception::ExecutePerception(NPC *npc,float weight)
 }
 
 //---------------------------------------------------------------------------------
-
-bool DamagePerception::ShouldReact(Reaction *reaction,NPC *npc)
-{
-    npc->Printf("Damage of %1.1f from player %s (EID: %u).",
-                damage,attacker->GetName(),attacker->GetID() );
-
-    if (name == reaction->GetEventType())
-    {
-        npc->Printf("Reacting");
-        return true;
-    }
-    npc->Printf("Skipping");
-    return false;
-}
 
 Perception *DamagePerception::MakeCopy()
 {
@@ -545,15 +514,21 @@ bool SpellPerception::ShouldReact(Reaction *reaction,NPC *npc)
     event.Append(':');
 
     if (npc->GetEntityHate(caster) || npc->GetEntityHate(target))
+    {
         event.Append("target");
+    }
     else if (target == npc->GetEntity())
+    {
         event.Append("self");
+    }
     else
+    {
         event.Append("unknown");
+    }
 
     if (event == reaction->GetEventType())
     {
-        npc->Printf( "%s spell cast by %s on %s, severity %1.1f.\n",
+        npc->Printf(15, "%s spell cast by %s on %s, severity %1.1f.\n",
             event.GetData(), (caster)?caster->GetName():"(Null caster)", (target)?target->GetName():"(Null target)", spell_severity);
 
         return true;
@@ -578,58 +553,58 @@ bool TimePerception::ShouldReact(Reaction *reaction,NPC *npc)
 {
     if (name == reaction->GetEventType() )
     {
-        if (npc->IsDebugging(4))
+        if (npc->IsDebugging(15))
         {
-            csString out;
-            out.AppendFmt("Time is now %d:%02d %d-%d-%d and I need ",
+            csString dbgOut;
+            dbgOut.AppendFmt("Time is now %d:%02d %d-%d-%d and I need ",
                           gameHour,gameMinute,gameYear,gameMonth,gameDay);
             // Hours
             if (reaction->GetValueValid(0))
             {
-                out.AppendFmt("%d:",reaction->GetValue(0));
+                dbgOut.AppendFmt("%d:",reaction->GetValue(0));
             }
             else
             {
-                out.Append("*:");
+                dbgOut.Append("*:");
             }
             // Minutes
             if (reaction->GetValueValid(1))
             {
-                out.AppendFmt("%02d ",reaction->GetValue(1));
+                dbgOut.AppendFmt("%02d ",reaction->GetValue(1));
             }
             else
             {
-                out.Append("* ");
+                dbgOut.Append("* ");
             }
             // Year
             if (reaction->GetValueValid(2))
             {
-                out.AppendFmt("%d-",reaction->GetValue(2));
+                dbgOut.AppendFmt("%d-",reaction->GetValue(2));
             }
             else
             {
-                out.Append("*-");
+                dbgOut.Append("*-");
             }
             // Month
             if (reaction->GetValueValid(3))
             {
-                out.AppendFmt("%d-",reaction->GetValue(3));
+                dbgOut.AppendFmt("%d-",reaction->GetValue(3));
             }
             else
             {
-                out.Append("*-");
+                dbgOut.Append("*-");
             }
             // Day
             if (reaction->GetValueValid(4))
             {
-                out.AppendFmt("%d",reaction->GetValue(4));
+                dbgOut.AppendFmt("%d",reaction->GetValue(4));
             }
             else
             {
-                out.Append("*");
+                dbgOut.Append("*");
             }
 
-            npc->Printf(4,out);
+            npc->Printf(15,dbgOut);
         }
         
         if ((!reaction->GetValueValid(0) || reaction->GetValue(0) == gameHour) &&
@@ -638,12 +613,10 @@ bool TimePerception::ShouldReact(Reaction *reaction,NPC *npc)
             (!reaction->GetValueValid(3) || reaction->GetValue(3) == gameMonth) &&
             (!reaction->GetValueValid(4) || reaction->GetValue(4) == gameDay))
         {
-            npc->Printf(2,"Reacting.");
             return true;
         }
         else
         {
-            npc->Printf(5,"Skipping.");
             return false;
         }
     }
@@ -657,18 +630,6 @@ Perception *TimePerception::MakeCopy()
 }
 
 //---------------------------------------------------------------------------------
-
-
-
-bool DeathPerception::ShouldReact(Reaction *reaction,NPC *npc)
-{
-    if (name == reaction->GetEventType())
-    {
-        npc->Printf( "Reacting to death perception.\n");
-        return true;
-    }
-    return false;
-}
 
 Perception *DeathPerception::MakeCopy()
 {
@@ -711,28 +672,33 @@ bool OwnerCmdPerception::ShouldReact( Reaction *reaction, NPC *npc )
 
     switch ( this->command )
     {
-    case psPETCommandMessage::CMD_FOLLOW: event.Append( "follow" );
+    case psPETCommandMessage::CMD_FOLLOW: 
+        event.Append( "follow" );
         break;
-    case psPETCommandMessage::CMD_STAY : event.Append( "stay" );
+    case psPETCommandMessage::CMD_STAY :
+        event.Append( "stay" );
         break;
-    case psPETCommandMessage::CMD_SUMMON : event.Append( "summon" );
+    case psPETCommandMessage::CMD_SUMMON :
+        event.Append( "summon" );
         break;
-    case psPETCommandMessage::CMD_DISMISS : event.Append( "dismiss" );
+    case psPETCommandMessage::CMD_DISMISS :
+        event.Append( "dismiss" );
         break;
-    case psPETCommandMessage::CMD_ATTACK : event.Append( "attack" );
+    case psPETCommandMessage::CMD_ATTACK :
+        event.Append( "attack" );
         break;
-    case psPETCommandMessage::CMD_STOPATTACK : event.Append( "stopattack" );
+    case psPETCommandMessage::CMD_STOPATTACK :
+        event.Append( "stopattack" );
         break;
-    default: event.Append("unknown");
+    default:
+        event.Append("unknown");
         break;
     }
 
     if (event == reaction->GetEventType())
     {
-        npc->Printf(5,"Matched reaction '%s' to perception '%s'.\n",reaction->GetEventType(), event.GetData() );
         return true;
     }
-    npc->Printf(6,"No matched reaction '%s' to perception '%s'.\n",reaction->GetEventType(), event.GetData() );
     return false;
 }
 
@@ -786,21 +752,25 @@ bool OwnerActionPerception::ShouldReact( Reaction *reaction, NPC *npc )
 
     switch ( this->action )
     {
-    case 1: event.Append("attack");
+    case 1: 
+        event.Append("attack");
         break;
-    case 2: event.Append("damage");
+    case 2: 
+        event.Append("damage");
         break;
-    case 3: event.Append("logon");
+    case 3: 
+        event.Append("logon");
         break;
-    case 4: event.Append("logoff");
+    case 4: 
+        event.Append("logoff");
         break;
-    default: event.Append("unknown");
+    default:
+        event.Append("unknown");
         break;
     }
 
     if (event == reaction->GetEventType())
     {
-        npc->Printf("Matched reaction %s to perception %s...\n",reaction->GetEventType(), event.GetData() );
         return true;
     }
     return false;
@@ -842,12 +812,12 @@ bool NPCCmdPerception::ShouldReact( Reaction *reaction, NPC *npc )
 
     if (strcasecmp(global_event,reaction->GetEventType()) == 0)
     {
-        npc->Printf(5,"Matched reaction '%s' to perception '%s'.\n",reaction->GetEventType(), global_event.GetData() );
+        npc->Printf(15,"Matched reaction '%s' to perception '%s'.\n",reaction->GetEventType(), global_event.GetData() );
         return true;
     }
     else
     {
-        npc->Printf(6,"No matched reaction '%s' to perception '%s'.\n",reaction->GetEventType(), global_event.GetData() );
+        npc->Printf(16,"No matched reaction '%s' to perception '%s'.\n",reaction->GetEventType(), global_event.GetData() );
     }
     
 
@@ -856,12 +826,12 @@ bool NPCCmdPerception::ShouldReact( Reaction *reaction, NPC *npc )
 
     if (strcasecmp(self_event,reaction->GetEventType())==0 && npc == self)
     {
-        npc->Printf(5,"Matched reaction '%s' to perception '%s'.\n",reaction->GetEventType(), self_event.GetData() );
+        npc->Printf(15,"Matched reaction '%s' to perception '%s'.\n",reaction->GetEventType(), self_event.GetData() );
         return true;
     }
     else
     {
-        npc->Printf(6,"No matched reaction '%s' to perception '%s' for self(%s) with npc(%s).\n",
+        npc->Printf(16,"No matched reaction '%s' to perception '%s' for self(%s) with npc(%s).\n",
                     reaction->GetEventType(), self_event.GetData(), 
                     self->GetName(), npc->GetName() );
     }

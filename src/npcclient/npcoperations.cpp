@@ -103,8 +103,6 @@ void ScriptOperation::Advance(float timedelta,NPC *npc,EventManager *eventmgr)
 
 void ScriptOperation::InterruptOperation(NPC *npc,EventManager *eventmgr)      
 {
-    npc->Printf("Interrupting %s",name.GetDataSafe());
-
     StopResume();
 
     iCelEntity * entity = npc->GetEntity();
@@ -174,7 +172,7 @@ bool ScriptOperation::CheckMovedOk(NPC *npc, EventManager *eventmgr, csVector3 o
             diffz > EPSILON)
         {
             consec_collisions++;
-            npc->Printf("Bang (%1.2f,%1.2f)...",diffx,diffz);
+            npc->Printf(10,"Bang (%1.2f,%1.2f)...",diffx,diffz);
             if (consec_collisions > 8)  // allow for hitting trees but not walls
             {
                 // after a couple seconds of sliding against something
@@ -247,7 +245,7 @@ void ScriptOperation::StopResume()
 
 void ScriptOperation::TurnTo(NPC *npc, csVector3& dest, iSector* destsect, csVector3& forward)
 {
-    npc->Printf("TurnTo localDest=%s\n",toString(dest,destsect).GetData());
+    npc->Printf(6,"TurnTo localDest=%s\n",toString(dest,destsect).GetData());
 
     csRef<iPcMesh> pcmesh = CEL_QUERY_PROPCLASS(npc->GetEntity()->GetPropertyClassList(), iPcMesh);
 
@@ -262,7 +260,7 @@ void ScriptOperation::TurnTo(NPC *npc, csVector3& dest, iSector* destsect, csVec
 
     forward = dest-pos;
 
-    npc->Printf("Forward is %s",toString(forward).GetDataSafe());
+    npc->Printf(6,"Forward is %s",toString(forward).GetDataSafe());
 
     up.Set(0,1,0);
     
@@ -275,8 +273,6 @@ void ScriptOperation::TurnTo(NPC *npc, csVector3& dest, iSector* destsect, csVec
 
     psGameObject::GetPosition(npc->GetEntity(),pos,rot,sector);
     if (rot < 0) rot += TWO_PI;
-
-    //npc->Printf("Calculated angle is %1.4f, actual is %1.4f for npc %s\n",angle,rot,npc->GetName());
 
     // Get Going at the right velocity
     csVector3 velvector(0,0,  -GetVelocity(npc) );
@@ -294,7 +290,7 @@ void ScriptOperation::StopMovement(NPC *npc)
     npc->GetLinMove()->SetVelocity( csVector3(0,0,0) );
     npc->GetLinMove()->SetAngularVelocity( 0 );
 
-    npc->Printf(3,"Movement stopped.");
+    npc->Printf(5,"Movement stopped.");
 
     //now persist
     npcclient->GetNetworkMgr()->QueueDRData(npc);
@@ -316,15 +312,15 @@ int ScriptOperation::StartMoveTo(NPC *npc,EventManager *eventmgr,csVector3& dest
     float dist = forward.Norm();
     int msec = (int)(1000.0 * dist / GetVelocity(npc)); // Move will take this many msecs.
     
-    npc->Printf("MoveTo op should take approx %d msec.  ", msec);
+    npc->Printf(6,"MoveTo op should take approx %d msec.  ", msec);
     if (autoresume)
     {
         // wake me up when it's over
         Resume(msec,npc,eventmgr);
-        npc->Printf("Waking up in %d msec.\n", msec);
+        npc->Printf(7,"Waking up in %d msec.\n", msec);
     }
     else
-        npc->Printf("NO autoresume here.\n", msec);
+        npc->Printf(7,"NO autoresume here.\n", msec);
 
 
     return msec;
@@ -357,16 +353,16 @@ int ScriptOperation::StartTurnTo(NPC *npc, EventManager *eventmgr, float turn_en
 
     int msec = (int)(time*1000.0);
 
-    npc->Printf("TurnTo op should take approx %d msec for a turn of %.2f deg in %.2f deg/s.  ",
+    npc->Printf(6,"TurnTo op should take approx %d msec for a turn of %.2f deg in %.2f deg/s.  ",
                 msec,delta_rot*180.0/PI,angle_vel*180.0/PI);
     if (autoresume)
     {
         // wake me up when it's over
         Resume(msec,npc,eventmgr);
-        npc->Printf("Waking up in %d msec.\n", msec);
+        npc->Printf(7,"Waking up in %d msec.\n", msec);
     }
     else
-        npc->Printf("NO autoresume here.\n", msec);
+        npc->Printf(7,"NO autoresume here.\n", msec);
 
 
     return msec;
@@ -454,7 +450,6 @@ bool MoveOperation::CompleteOperation(NPC *npc,EventManager *eventmgr)
 {
     StopMovement(npc);
 
-    npc->Printf("MoveOp - Completed");
     completed = true;
 
     return true;  // Script can keep going
@@ -575,7 +570,7 @@ ScriptOperation *MoveToOperation::MakeCopy()
 
 bool MoveToOperation::Run(NPC *npc,EventManager *eventmgr,bool interrupted)
 {
-    npc->Printf("MoveToOp Start dest=(%1.2f,%1.2f,%1.2f) at %1.2f m/sec.\n",
+    npc->Printf(5,"MoveToOp Start dest=(%1.2f,%1.2f,%1.2f) at %1.2f m/sec.\n",
                 dest.x,dest.y,dest.z,GetVelocity(npc));
 
     csVector3 pos, forward, up;
@@ -603,7 +598,7 @@ void MoveToOperation::Advance(float timedelta,NPC *npc,EventManager *eventmgr)
 
     npc->GetLinMove()->GetLastPosition(pos,rot,sector);
     
-    npc->Printf("advance: pos=(%1.2f,%1.2f,%1.2f) rot=%.2f localDest=(%.2f,%.2f,%.2f) dest=(%.2f,%.2f,%.2f) dist=%f\n", 
+    npc->Printf(10,"advance: pos=(%1.2f,%1.2f,%1.2f) rot=%.2f localDest=(%.2f,%.2f,%.2f) dest=(%.2f,%.2f,%.2f) dist=%f\n", 
                 pos.x,pos.y,pos.z, rot,
                 localDest.x,localDest.y,localDest.z,
                 dest.x,dest.y,dest.z,
@@ -621,13 +616,13 @@ void MoveToOperation::Advance(float timedelta,NPC *npc,EventManager *eventmgr)
         
         if (Calc2DDistance(localDest,dest) <= 0.5) //tolerance must be according to step size, ignore y
         {
-            npc->Printf("MoveTo within minimum acceptable range...Stopping him now.");
+            npc->Printf(8,"MoveTo within minimum acceptable range...Stopping him now.");
             // npc->ResumeScript(eventmgr, npc->GetBrain()->GetCurrentBehavior() );
             CompleteOperation(npc, eventmgr);
         }
         else
         {
-            npc->Printf("we are at localDest... WHAT DOES THIS MEAN?");
+            npc->Printf(8,"we are at localDest... WHAT DOES THIS MEAN?");
             path.CalcLocalDest(pos, sector, localDest);
             StartMoveTo(npc,eventmgr,localDest, sector, vel,action, false);
         }
@@ -659,7 +654,7 @@ bool MoveToOperation::CompleteOperation(NPC *npc,EventManager *eventmgr)
     // Stop the movement
     StopMovement(npc);
     
-    npc->Printf("MoveToOp - Completed. pos=(%1.2f,%1.2f,%1.2f) rot=%.2f dest set=(%1.2f,%1.2f,%1.2f)",
+    npc->Printf(5,"MoveToOp - Completed. pos=(%1.2f,%1.2f,%1.2f) rot=%.2f dest set=(%1.2f,%1.2f,%1.2f)",
                 pos.x,pos.y,pos.z, rot,
                 dest.x,dest.y,dest.z);
     completed = true;
@@ -744,7 +739,7 @@ bool RotateOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
 
     if (interrupted)
     {
-        npc->Printf("Interrupted rotation to %.2f deg",target_angle*180.0f/PI);
+        npc->Printf(5,"Interrupted rotation to %.2f deg",target_angle*180.0f/PI);
 
         angle_delta =  target_angle - rot;
     }
@@ -800,7 +795,7 @@ bool RotateOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
 
         if(pos == dest && sector == dest_sector && rot == dest_rot)
         {
-            npc->Printf("At located destination, end rotation.");
+            npc->Printf(5,"At located destination, end rotation.");
             return true;
         }
         
@@ -811,19 +806,19 @@ bool RotateOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
         // If the angle is close enough don't worry about it and just go to next command.
         if (fabs(angle_delta) < TWO_PI/60.0)
         {
-            npc->Printf("Rotation at destination angle. Ending rotation.");
+            npc->Printf(5, "Rotation at destination angle. Ending rotation.");
             return true;
         }
     }
     else if (op_type == ROT_ABSOLUTE)
     {
-        npc->Printf("Absolute rotation to %.2f deg",target_angle*180.0f/PI);
+        npc->Printf(5, "Absolute rotation to %.2f deg",target_angle*180.0f/PI);
         
         angle_delta =  target_angle - rot;
     }
     else if (op_type == ROT_RELATIVE)
     {
-        npc->Printf("Relative rotation by %.2f deg",delta_angle*180.0f/PI);
+        npc->Printf(5, "Relative rotation by %.2f deg",delta_angle*180.0f/PI);
 
         angle_delta = delta_angle;
         target_angle = rot + angle_delta;
@@ -847,7 +842,7 @@ bool RotateOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
     int msec = (int)fabs(1000.0*angle_delta/ang_vel);
     Resume(msec,npc,eventmgr);
 
-    npc->Printf("Rotating %1.2f deg from %1.2f to %1.2f at %1.2f deg/sec in %.3f sec.\n",
+    npc->Printf(5,"Rotating %1.2f deg from %1.2f to %1.2f at %1.2f deg/sec in %.3f sec.\n",
                 angle_delta*180/PI,rot*180.0f/PI,target_angle*180.0f/PI,ang_vel*180.0f/PI,msec/1000.0f);
 
     return false;
@@ -855,8 +850,6 @@ bool RotateOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
 
 void RotateOperation::Advance(float timedelta, NPC *npc, EventManager *eventmgr) 
 {
-    npc->Printf("RotateOp advanced\n"); 
-
     npc->GetLinMove()->ExtrapolatePosition(timedelta);
 }
 
@@ -919,7 +912,7 @@ float RotateOperation::SeekAngle(NPC* npc, float targetYRot)
 
             if(dist < 0)
             {
-                npc->Printf("Turning left!\n");
+                npc->Printf(6,"Turning left!\n");
                 turn = left;
                 break;
             }
@@ -930,7 +923,7 @@ float RotateOperation::SeekAngle(NPC* npc, float targetYRot)
 
             if(dist < 0)
             {
-                npc->Printf("Turning right!\n");
+                npc->Printf(6,"Turning right!\n");
                 turn = right;
                 break;
             }
@@ -939,7 +932,7 @@ float RotateOperation::SeekAngle(NPC* npc, float targetYRot)
         }
         if (turn==0.0)
         {
-            npc->Printf("Possible ERROR: turn value was 0");
+            npc->Printf(5,"Possible ERROR: turn value was 0");
         }
         // Apply turn
         targetYRot = turn;
@@ -960,7 +953,6 @@ bool RotateOperation::CompleteOperation(NPC *npc, EventManager *eventmgr)
     psGameObject::SetRotationAngle(npc->GetEntity(),target_angle);
     StopMovement(npc);
 
-    npc->Printf("RotateOp - Completed");
     completed = true;
     
     return true;  // Script can keep going
@@ -1011,7 +1003,7 @@ Waypoint* LocateOperation::CalculateWaypoint(NPC *npc, csVector3 located_pos, iS
 
     if (end && (located_range == -1 || end_range >= located_range))
     {
-        npc->Printf("Located WP  : %30s at %s",end->GetName(),toString(end->loc.pos,end->loc.GetSector(npcclient->GetEngine())).GetDataSafe());
+        npc->Printf(5,"Located WP  : %30s at %s",end->GetName(),toString(end->loc.pos,end->loc.GetSector(npcclient->GetEngine())).GetDataSafe());
         return end;
     }
 
@@ -1061,7 +1053,7 @@ bool LocateOperation::Run(NPC *npc,EventManager *eventmgr,bool interrupted)
 
     if (split_obj[0] == "perception")
     {
-        npc->Printf(3,"LocateOp - Perception");
+        npc->Printf(5,"LocateOp - Perception");
 
         if (!npc->GetLastPerception())
             return true;
@@ -1071,7 +1063,7 @@ bool LocateOperation::Run(NPC *npc,EventManager *eventmgr,bool interrupted)
     }
     else if (split_obj[0] == "target")
     {
-        npc->Printf(3,"LocateOp - Target");
+        npc->Printf(5,"LocateOp - Target");
 
         iCelEntity *ent;
         // Since we don't have a current enemy targeted, find one!
@@ -1096,7 +1088,7 @@ bool LocateOperation::Run(NPC *npc,EventManager *eventmgr,bool interrupted)
     }
     else if (split_obj[0] == "owner")
     {
-        npc->Printf(3,"LocateOp - Owner");
+        npc->Printf(5,"LocateOp - Owner");
 
         iCelEntity *ent;
         // Since we don't have a current enemy targeted, find one!
@@ -1118,7 +1110,7 @@ bool LocateOperation::Run(NPC *npc,EventManager *eventmgr,bool interrupted)
     }
     else if (split_obj[0] == "self")
     {
-        npc->Printf(3,"LocateOp - Self");
+        npc->Printf(5,"LocateOp - Self");
 
         iCelEntity *ent;
 
@@ -1140,7 +1132,7 @@ bool LocateOperation::Run(NPC *npc,EventManager *eventmgr,bool interrupted)
     }
     else if (split_obj[0] == "tribe")
     {
-        npc->Printf(3,"LocateOp - Tribe");
+        npc->Printf(5,"LocateOp - Tribe");
 
         if (!npc->GetTribe())
             return true;
@@ -1173,7 +1165,7 @@ bool LocateOperation::Run(NPC *npc,EventManager *eventmgr,bool interrupted)
             
             if (!memory)
             {
-                npc->Printf("Couldn't locate any <%s> in npc script for <%s>.",
+                npc->Printf(5, "Couldn't locate any <%s> in npc script for <%s>.",
                             (const char *)object,npc->GetEntity()->GetName() );
                 return true;
             }
@@ -1192,7 +1184,7 @@ bool LocateOperation::Run(NPC *npc,EventManager *eventmgr,bool interrupted)
     }
     else if(split_obj[0] == "friend")
     {
-        npc->Printf(3,"LocateOp - Friend");
+        npc->Printf(5, "LocateOp - Friend");
 
         iCelEntity *ent = npc->GetNearestVisibleFriend(20);
         if(ent)
@@ -1211,7 +1203,7 @@ bool LocateOperation::Run(NPC *npc,EventManager *eventmgr,bool interrupted)
     }
     else if (split_obj[0] == "waypoint" )
     {
-        npc->Printf(3,"LocateOp - Waypoint");
+        npc->Printf(5, "LocateOp - Waypoint");
 
         float located_range=0.0;
 
@@ -1234,11 +1226,11 @@ bool LocateOperation::Run(NPC *npc,EventManager *eventmgr,bool interrupted)
 
         if (!located_wp)
         {
-            npc->Printf("Couldn't locate any <%s> in npc script for <%s>.\n",
+            npc->Printf(5, "Couldn't locate any <%s> in npc script for <%s>.\n",
                 (const char *)object,npc->GetEntity()->GetName() );
             return true;
         }
-        npc->Printf("Located waypoint: %s at %s range %.2f",located_wp->GetName(),
+        npc->Printf(5, "Located waypoint: %s at %s range %.2f",located_wp->GetName(),
                     toString(located_wp->loc.pos,located_wp->loc.GetSector(npcclient->GetEngine())).GetData(),located_range);
         located_pos = located_wp->loc.pos;
         located_angle = located_wp->loc.rot_angle;
@@ -1250,7 +1242,7 @@ bool LocateOperation::Run(NPC *npc,EventManager *eventmgr,bool interrupted)
     }
     else if (!static_loc || !located)
     {
-        npc->Printf(3,"LocateOp - Location");
+        npc->Printf(5, "LocateOp - Location");
 
         float located_range=0.0;
         Location * location;
@@ -1270,7 +1262,7 @@ bool LocateOperation::Run(NPC *npc,EventManager *eventmgr,bool interrupted)
 
         if (!location)
         {
-            npc->Printf("Couldn't locate any <%s> in npc script for <%s>.\n",
+            npc->Printf(5, "Couldn't locate any <%s> in npc script for <%s>.\n",
                 (const char *)object,npc->GetEntity()->GetName() );
             return true;
         }
@@ -1288,13 +1280,13 @@ bool LocateOperation::Run(NPC *npc,EventManager *eventmgr,bool interrupted)
     }
     else
     {
-        npc->Printf("remembered location from last time\n");
+        npc->Printf(5, "remembered location from last time\n");
     }
 
     // Save on npc so other operations can refer to value
     npc->SetActiveLocate(located_pos,located_sector,located_angle,located_wp);
 
-    npc->Printf("LocateOp - Active location: pos %s rot %.2f wp %s",
+    npc->Printf(5, "LocateOp - Active location: pos %s rot %.2f wp %s",
                 toString(located_pos,located_sector).GetData(),located_angle,
                 (located_wp?located_wp->GetName():"(NULL)"));
 
@@ -1321,14 +1313,12 @@ ScriptOperation *NavigateOperation::MakeCopy()
 
 bool NavigateOperation::Run(NPC *npc,EventManager *eventmgr,bool interrupted)
 {
-    npc->Printf(">>>NavigateOp ");
-
     csVector3 dest;
     float rot=0;
     iSector* sector;
 
     npc->GetActiveLocate(dest,sector,rot);
-    npc->Printf("Located %s at %1.2f m/sec.\n",toString(dest,sector).GetData(), GetVelocity(npc) );
+    npc->Printf(5, "Located %s at %1.2f m/sec.\n",toString(dest,sector).GetData(), GetVelocity(npc) );
 
     StartMoveTo(npc,eventmgr,dest,sector,GetVelocity(npc),action);
     return false;
@@ -1336,8 +1326,6 @@ bool NavigateOperation::Run(NPC *npc,EventManager *eventmgr,bool interrupted)
 
 void NavigateOperation::Advance(float timedelta,NPC *npc,EventManager *eventmgr) 
 {
-    npc->Printf("NavigationOp advanced\n"); 
-
     npc->GetLinMove()->ExtrapolatePosition(timedelta);
 }
 
@@ -1360,7 +1348,6 @@ bool NavigateOperation::CompleteOperation(NPC *npc,EventManager *eventmgr)
     // Stop the movement
     StopMovement(npc);
 
-    npc->Printf("NavigateOp - Completed.\n");
     completed = true;
 
     return true;  // Script can keep going
@@ -1379,7 +1366,7 @@ Waypoint * WanderOperation::GetNextRandomWaypoint(NPC *npc, Waypoint * prior_wp,
     // If there are only one way out don't bother to find if its legal
     if (active_wp->links.GetSize() == 1)
     {
-        npc->Printf(10,"Only one way out of this waypoint");
+        npc->Printf(10, "Only one way out of this waypoint");
         return active_wp->links[0];
     }
 
@@ -1390,7 +1377,7 @@ Waypoint * WanderOperation::GetNextRandomWaypoint(NPC *npc, Waypoint * prior_wp,
     {
         Waypoint *new_wp = active_wp->links[ii];
 
-        npc->Printf(11,"Considering: %s ",new_wp->GetName());
+        npc->Printf(11, "Considering: %s ",new_wp->GetName());
 
         if ( ((new_wp == prior_wp && new_wp->allow_return)||(new_wp != prior_wp)) &&
              (!active_wp->prevent_wander[ii]) &&
@@ -1401,7 +1388,7 @@ Waypoint * WanderOperation::GetNextRandomWaypoint(NPC *npc, Waypoint * prior_wp,
              (!cityValid || new_wp->city == city) &&
              (!indoorValid || new_wp->indoor == indoor))
         {
-            npc->Printf(10,"Possible next waypoint: %s",new_wp->GetName());
+            npc->Printf(10, "Possible next waypoint: %s",new_wp->GetName());
             waypoints.Push(new_wp);
         }
     }
@@ -1409,7 +1396,7 @@ Waypoint * WanderOperation::GetNextRandomWaypoint(NPC *npc, Waypoint * prior_wp,
     // If no path out of waypoint is possible to go, just return.
     if (waypoints.GetSize() == 0)
     {
-        npc->Printf(10,"No possible ways, going back");
+        npc->Printf(10, "No possible ways, going back");
         return prior_wp;
     }
     
@@ -1430,10 +1417,10 @@ bool WanderOperation::FindNextWaypoint(NPC *npc)
         if (!active_wp) active_wp = npcclient->FindNearestWaypoint(current_pos,current_sector);
         next_wp = GetNextRandomWaypoint(npc,prior_wp,active_wp);
 
-        npc->Printf("Active waypoint: %s at %s",active_wp->GetName(),
+        npc->Printf(6, "Active waypoint: %s at %s",active_wp->GetName(),
                     toString(active_wp->loc.pos,
                              active_wp->loc.GetSector(npcclient->GetEngine())).GetDataSafe());
-        npc->Printf("Next   waypoint: %s at %s",next_wp->GetName(),
+        npc->Printf(6, "Next   waypoint: %s at %s",next_wp->GetName(),
                     toString(next_wp->loc.pos,
                              next_wp->loc.GetSector(npcclient->GetEngine())).GetDataSafe());
         return true;
@@ -1456,17 +1443,17 @@ bool WanderOperation::FindNextWaypoint(NPC *npc)
                 }
                 else
                 {
-                    npc->Printf(">>>WanderOp At end of waypoint list.");
+                    npc->Printf(5, "WanderOp At end of waypoint list.");
                     return false;
                 }
             } else
             {
-                npc->Printf("Active waypoint: %s at %s",active_wp->GetName(),
+                npc->Printf(6, "Active waypoint: %s at %s",active_wp->GetName(),
                             toString(active_wp->loc.pos,
                                      active_wp->loc.GetSector(npcclient->GetEngine())).GetDataSafe());
                 if (next_wp)
                 {
-                    npc->Printf("Next   waypoint: %s at %s",next_wp->GetName(),
+                    npc->Printf(6, "Next   waypoint: %s at %s",next_wp->GetName(),
                                 toString(next_wp->loc.pos,
                                          next_wp->loc.GetSector(npcclient->GetEngine())).GetDataSafe());
                 }
@@ -1474,7 +1461,7 @@ bool WanderOperation::FindNextWaypoint(NPC *npc)
             }
         } else
         {
-            npc->Printf(">>>WanderOp At end of waypoint list.");
+            npc->Printf(5, ">>>WanderOp At end of waypoint list.");
             return false;
         }
         
@@ -1492,7 +1479,7 @@ bool WanderOperation::CalculateWaypointList(NPC *npc)
 
     if (random)
     {
-        npc->Printf(4,"Calculate waypoint list for random movement...");
+        npc->Printf(5,"Calculate waypoint list for random movement...");
         if (active_wp == NULL)
         {
             prior_wp = NULL;
@@ -1501,13 +1488,13 @@ bool WanderOperation::CalculateWaypointList(NPC *npc)
 
             if (active_wp)
             {
-                npc->Printf(5,"Active waypoint: %s at %s",active_wp->GetName(),
+                npc->Printf(6,"Active waypoint: %s at %s",active_wp->GetName(),
                             toString(active_wp->loc.pos,
                                      active_wp->loc.GetSector(npcclient->GetEngine())).GetDataSafe());
             }
             if (next_wp)
             {
-                npc->Printf(5,"Next   waypoint: %s at %s",next_wp->GetName(),
+                npc->Printf(6,"Next   waypoint: %s at %s",next_wp->GetName(),
                             toString(next_wp->loc.pos,
                                      next_wp->loc.GetSector(npcclient->GetEngine())).GetDataSafe());
             }
@@ -1530,8 +1517,8 @@ bool WanderOperation::CalculateWaypointList(NPC *npc)
         
         if (start && end)
         {
-            npc->Printf("Start WP: %30s at %s",start->GetName(),toString(start->loc.pos,start->loc.GetSector(npcclient->GetEngine())).GetDataSafe());
-            npc->Printf("End WP  : %30s at %s",end->GetName(),toString(end->loc.pos,end->loc.GetSector(npcclient->GetEngine())).GetDataSafe());
+            npc->Printf(6, "Start WP: %30s at %s",start->GetName(),toString(start->loc.pos,start->loc.GetSector(npcclient->GetEngine())).GetDataSafe());
+            npc->Printf(6, "End WP  : %30s at %s",end->GetName(),toString(end->loc.pos,end->loc.GetSector(npcclient->GetEngine())).GetDataSafe());
             
             if (start == end)
             {
@@ -1543,7 +1530,7 @@ bool WanderOperation::CalculateWaypointList(NPC *npc)
                 wps = npcclient->FindWaypointRoute(start,end);
                 if (wps.IsEmpty())
                 {
-                    npc->Printf("Can't find route...");
+                    npc->Printf(5, "Can't find route...");
                     return false;
                 }
                 
@@ -1552,11 +1539,6 @@ bool WanderOperation::CalculateWaypointList(NPC *npc)
                     WaypointListPushBack(wps.Front());
                     wps.PopFront();
                 }
-            }
-            
-            if (npc->IsDebugging(5))
-            {
-                npcclient->ListWaypoints("");
             }
             
             psString wp_str;
@@ -1573,7 +1555,7 @@ bool WanderOperation::CalculateWaypointList(NPC *npc)
                         wp_str.Append(" -> ");
                     }
                 }
-                npc->Printf("Waypoint list: %s",wp_str.GetDataSafe());
+                npc->Printf(5, "Waypoint list: %s",wp_str.GetDataSafe());
             }
         }
     }
@@ -1633,14 +1615,14 @@ bool WanderOperation::Run(NPC *npc,EventManager *eventmgr,bool interrupted)
 
     if (!CalculateWaypointList(npc))
     {
-        npc->Printf(">>>WanderOp no list to wander");
+        npc->Printf(5, ">>>WanderOp no list to wander");
         return true; // Nothing more to do for this op.
     }
     
 
     if (!FindNextWaypoint(npc))
     {
-        npc->Printf(">>>WanderOp NO waypoints, %s cannot move.",npc->GetName());
+        npc->Printf(5, ">>>WanderOp NO waypoints, %s cannot move.",npc->GetName());
         return true; // Nothing more to do for this op.
     }
 
@@ -1659,14 +1641,12 @@ bool WanderOperation::Run(NPC *npc,EventManager *eventmgr,bool interrupted)
 
 void WanderOperation::Advance(float timedelta,NPC *npc,EventManager *eventmgr)
 {
-    npc->Printf("Advance...");
-
     if (!anchor->Extrapolate(npcclient->GetWorld(),npcclient->GetEngine(),
                              timedelta*GetVelocity(npc),
                              direction,npc->GetMovable()))
     {
         // At end of path
-        npc->Printf("We are done..\n");
+        npc->Printf(5, "We are done...");
 
         // None linear movement so we have to queue DRData updates.
         npcclient->GetNetworkMgr()->QueueDRData(npc);
@@ -1681,7 +1661,7 @@ void WanderOperation::Advance(float timedelta,NPC *npc,EventManager *eventmgr)
         csVector3 pos; float rot; iSector *sec;
         psGameObject::GetPosition(npc->GetEntity(),pos,rot,sec);
 
-        npc->Printf("Wander Loc is %s Rot: %1.2f Vel: %.2f Dist: %.2f Index: %d Fraction %.2f\n",
+        npc->Printf(10, "Wander Loc is %s Rot: %1.2f Vel: %.2f Dist: %.2f Index: %d Fraction %.2f\n",
                     toString(pos).GetDataSafe(),
                     rot,
                     GetVelocity(npc),
@@ -1696,7 +1676,7 @@ void WanderOperation::Advance(float timedelta,NPC *npc,EventManager *eventmgr)
         anchor->GetInterpolatedForward(anchor_forward);
         
 
-        npc->Printf("Anchor pos: %s forward: %s up: %s",toString(anchor_pos).GetDataSafe(),
+        npc->Printf(10, "Anchor pos: %s forward: %s up: %s",toString(anchor_pos).GetDataSafe(),
                     toString(anchor_forward).GetDataSafe(),toString(anchor_up).GetDataSafe());
         
     }
@@ -1717,10 +1697,16 @@ bool WanderOperation::CompleteOperation(NPC *npc,EventManager *eventmgr)
 {
     // Wander never really completes, so this finds the next
     // waypoint and heads toward it again.
-    npc->Printf("WanderOp - Waypoint %s found.",active_wp->GetName() );
 
-    if (!next_wp)
+    if (next_wp)
     {
+        npc->Printf(5, "WanderOp - Reached waypoint %s next waypoint is %s.",
+                    active_wp->GetName(), next_wp->GetName() );
+    }
+    else
+    {
+        npc->Printf(5, "WanderOp - Reached final waypoint %s.",active_wp->GetName() );
+
         // Only set position if at a end point.
         psGameObject::SetPosition(npc->GetEntity(),dest,dest_sector);
         current_pos = dest;  // make sure waypoint is starting point of next path
@@ -1750,7 +1736,6 @@ bool WanderOperation::CompleteOperation(NPC *npc,EventManager *eventmgr)
     // Stop the movement
     StopMovement(npc);
 
-    npc->Printf("WanderOp - Completed.");
     completed = true;
 
     return true; // Script can keep going, no more waypoints.
@@ -1900,7 +1885,6 @@ ScriptOperation *ChaseOperation::MakeCopy()
 
 bool ChaseOperation::Run(NPC *npc,EventManager *eventmgr,bool interrupted)
 {
-    npc->Printf("Starting ChaseOp");
     float targetRot;
     iSector* targetSector;
     csVector3 targetPos;
@@ -1918,7 +1902,7 @@ bool ChaseOperation::Run(NPC *npc,EventManager *eventmgr,bool interrupted)
     {
         case NEAREST:
             npc->GetNearestEntity(target_id,dest,name,range);
-            npc->Printf("Targeting nearest entity (%s) at (%1.2f,%1.2f,%1.2f) for chase ...\n",
+            npc->Printf(5, "Targeting nearest entity (%s) at (%1.2f,%1.2f,%1.2f) for chase ...\n",
                         (const char *)name,dest.x,dest.y,dest.z);
             if ( target_id != (uint32_t)-1 )
             {
@@ -1931,7 +1915,7 @@ bool ChaseOperation::Run(NPC *npc,EventManager *eventmgr,bool interrupted)
             {
                 target_id = entity->GetID();
                 psGameObject::GetPosition(entity, dest,targetRot,targetSector);
-                npc->Printf("Targeting owner (%s) at (%1.2f,%1.2f,%1.2f) for chase ...\n",
+                npc->Printf(5, "Targeting owner (%s) at (%1.2f,%1.2f,%1.2f) for chase ...\n",
                             entity->GetName(),dest.x,dest.y,dest.z );
 
             }
@@ -1942,7 +1926,7 @@ bool ChaseOperation::Run(NPC *npc,EventManager *eventmgr,bool interrupted)
             {
                 target_id = entity->GetID();
                 psGameObject::GetPosition(entity, dest,targetRot,targetSector);
-                npc->Printf("Targeting current target (%s) at (%1.2f,%1.2f,%1.2f) for chase ...\n",
+                npc->Printf(5, "Targeting current target (%s) at (%1.2f,%1.2f,%1.2f) for chase ...\n",
                             entity->GetName(),dest.x,dest.y,dest.z );
             }
             break;
@@ -1953,7 +1937,7 @@ bool ChaseOperation::Run(NPC *npc,EventManager *eventmgr,bool interrupted)
         psGameObject::GetPosition(npc->GetEntity(),myPos,myRot,mySector);
     
         psGameObject::GetPosition(entity, targetPos,targetRot,targetSector);
-        npc->Printf(5,"Chasing enemy EID: %u at %f %f %f\n",entity->GetID(), targetPos.x,targetPos.y,targetPos.z);
+        npc->Printf(5, "Chasing enemy EID: %u at %f %f %f\n",entity->GetID(), targetPos.x,targetPos.y,targetPos.z);
 
         // We need to work in the target sector space
         npcclient->GetWorld()->WarpSpace(mySector, targetSector, myPos);
@@ -1980,7 +1964,7 @@ bool ChaseOperation::Run(NPC *npc,EventManager *eventmgr,bool interrupted)
     }
     else
     {
-        npc->Printf("No one found to chase!");
+        npc->Printf(5, "No one found to chase!");
         return true;  // This operation is complete
     }
 
@@ -2010,7 +1994,7 @@ void ChaseOperation::Advance(float timedelta,NPC *npc,EventManager *eventmgr)
 
     if (!target_entity) // no entity close to us
     {
-        npc->Printf("ChaseOp has no target now!");
+        npc->Printf(5, "ChaseOp has no target now!");
         return;
     }
     
@@ -2029,7 +2013,7 @@ void ChaseOperation::Advance(float timedelta,NPC *npc,EventManager *eventmgr)
     float factor = sqrt((offset.x * offset.x)+(offset.z * offset.z)) / displacement.Norm();
     targetPos = myPos + (1 - factor) * displacement;
 
-    npc->Printf("Still chasing %s at (%1.2f,%1.2f,%1.2f)...\n",(const char *)name,targetPos.x,targetPos.y,targetPos.z);
+    npc->Printf(10, "Still chasing %s at (%1.2f,%1.2f,%1.2f)...\n",(const char *)name,targetPos.x,targetPos.y,targetPos.z);
     
     float angleToTarget = psGameObject::CalculateIncidentAngle(myPos, targetPos);
     csVector3 pathDest = path.GetDest();
@@ -2039,7 +2023,7 @@ void ChaseOperation::Advance(float timedelta,NPC *npc,EventManager *eventmgr)
     // if the target diverged from the end of our path, we must calculate it again
     if ( fabs( AngleDiff(angleToTarget, angleToPath) ) > EPSILON  )
     {
-        npc->Printf("turn to target..\n");
+        npc->Printf(8, "turn to target..\n");
         path.SetDest(targetPos);
         path.CalcLocalDest(myPos, mySector, localDest);
         StartMoveTo(npc,eventmgr,localDest, mySector, GetVelocity(npc),action, false);
@@ -2054,13 +2038,13 @@ void ChaseOperation::Advance(float timedelta,NPC *npc,EventManager *eventmgr)
         
         if (Calc2DDistance(myPos,targetPos) <= 0.5)
         {
-            npc->Printf("We are done..\n");
+            npc->Printf(5, "We are done..\n");
             npc->ResumeScript(eventmgr, npc->GetBrain()->GetCurrentBehavior() );
             return;
         }
         else
         {
-            npc->Printf("We are at localDest..\n");
+            npc->Printf(6, "We are at localDest..\n");
             path.SetDest(targetPos);
             path.CalcLocalDest(myPos, mySector, localDest);
             StartMoveTo(npc,eventmgr,localDest, mySector,vel,action, false);
@@ -2070,7 +2054,7 @@ void ChaseOperation::Advance(float timedelta,NPC *npc,EventManager *eventmgr)
         TurnTo(npc,localDest, mySector,forward);
 
 
-    npc->Printf("advance: pos=(%f.2,%f.2,%f.2) rot=%.2f localDest=(%f.2,%f.2,%f.2) dist=%f\n", 
+    npc->Printf(8, "advance: pos=(%f.2,%f.2,%f.2) rot=%.2f localDest=(%f.2,%f.2,%f.2) dist=%f\n", 
                 myPos.x,myPos.y,myPos.z, myRot,
                 localDest.x,localDest.y,localDest.z,
                 Calc2DDistance(localDest, myPos));
@@ -2086,7 +2070,7 @@ void ChaseOperation::Advance(float timedelta,NPC *npc,EventManager *eventmgr)
 
     npc->GetLinMove()->GetDRData(on_ground,speed,myNewPos,myRot,myNewSector,bodyVel,worldVel,ang_vel);
 
-    npc->Printf(5,"World position bodyVel=%s worldVel=%s",toString(bodyVel).GetDataSafe(),toString(worldVel).GetDataSafe());
+    npc->Printf(8,"World position bodyVel=%s worldVel=%s",toString(bodyVel).GetDataSafe(),toString(worldVel).GetDataSafe());
 
     CheckMovedOk(npc, eventmgr, myPos, mySector, myNewPos, myNewSector, timedelta);
 }
@@ -2102,7 +2086,6 @@ bool ChaseOperation::CompleteOperation(NPC *npc,EventManager *eventmgr)
 {
     StopMovement(npc);
 
-    npc->Printf("ChaseOp - Completed.\n");
     completed = true;
 
     return true;  // Script can keep going
@@ -2130,8 +2113,6 @@ ScriptOperation *PickupOperation::MakeCopy()
 
 bool PickupOperation::Run(NPC *npc,EventManager *eventmgr,bool interrupted)
 {
-    npc->Printf("PickupOp ");
-
     iCelEntity *item = NULL;
 
     if (object == "perception")
@@ -2147,7 +2128,7 @@ bool PickupOperation::Run(NPC *npc,EventManager *eventmgr,bool interrupted)
         return true;
     }
 
-    npc->Printf("   Who: %s What: %s Count: %d",npc->GetName(),item->GetName(), count);
+    npc->Printf(5, "   Who: %s What: %s Count: %d",npc->GetName(),item->GetName(), count);
 
     npcclient->GetNetworkMgr()->QueuePickupCommand(npc->GetEntity(), item, count);
 
@@ -2176,9 +2157,7 @@ ScriptOperation *EquipOperation::MakeCopy()
 
 bool EquipOperation::Run(NPC *npc,EventManager *eventmgr,bool interrupted)
 {
-    npc->Printf("EquipOp ");
-
-    npc->Printf("   Who: %s What: %s Where: %s Count: %d",
+    npc->Printf(5, "   Who: %s What: %s Where: %s Count: %d",
                 npc->GetName(),item.GetData(), slot.GetData(), count);
 
     npcclient->GetNetworkMgr()->QueueEquipCommand(npc->GetEntity(), item, slot, count);
@@ -2203,9 +2182,7 @@ ScriptOperation *DequipOperation::MakeCopy()
 
 bool DequipOperation::Run(NPC *npc,EventManager *eventmgr,bool interrupted)
 {
-    npc->Printf("DequipOp ");
-
-    npc->Printf("   Who: %s Where: %s",
+    npc->Printf(5, "   Who: %s Where: %s",
                 npc->GetName(), slot.GetData());
 
     npcclient->GetNetworkMgr()->QueueDequipCommand(npc->GetEntity(), slot );
@@ -2317,7 +2294,6 @@ ScriptOperation *VisibleOperation::MakeCopy()
 
 bool VisibleOperation::Run(NPC *npc,EventManager *eventmgr,bool interrupted)
 {
-    npc->Printf(">>>VisibleOp\n");
     npcclient->GetNetworkMgr()->QueueVisibilityCommand(npc->GetEntity(), true);
     return true;
 }
@@ -2337,7 +2313,6 @@ ScriptOperation *InvisibleOperation::MakeCopy()
 
 bool InvisibleOperation::Run(NPC *npc,EventManager *eventmgr,bool interrupted)
 {
-    npc->Printf(">>>InvisibleOp\n");
     npcclient->GetNetworkMgr()->QueueVisibilityCommand(npc->GetEntity(), false);
     return true;
 }
@@ -2363,7 +2338,7 @@ bool ReproduceOperation::Run(NPC *npc,EventManager *eventmgr,bool interrupted)
     NPC * friendNPC = npcclient->FindAttachedNPC(npc->GetTarget());
     if(friendNPC)
     {
-        npc->Printf(">>> Reproduce");
+        npc->Printf(5, "Reproduce");
         npcclient->GetNetworkMgr()->QueueSpawnCommand(friendNPC->GetEntity(), friendNPC->GetTarget());
     }
 
@@ -2385,8 +2360,6 @@ ScriptOperation *ResurrectOperation::MakeCopy()
 
 bool ResurrectOperation::Run(NPC *npc,EventManager *eventmgr,bool interrupted)
 {
-    npc->Printf(">>> Resurrect");
-
     psTribe * tribe = npc->GetTribe();
     
     if ( !tribe ) return true;
@@ -2423,11 +2396,11 @@ bool MemorizeOperation::Run(NPC *npc,EventManager *eventmgr,bool interrupted)
     Perception * percept = npc->GetLastPerception();
     if (!percept)
     {
-        npc->Printf(">>> Memorize No Perception.");
+        npc->Printf(5, ">>> Memorize No Perception.");
         return true; // Nothing more to do for this op.
     }
     
-    npc->Printf(">>> Memorize '%s' '%s'.",percept->GetType(),percept->GetName());
+    npc->Printf(5, ">>> Memorize '%s' '%s'.",percept->GetType(),percept->GetName());
 
     psTribe * tribe = npc->GetTribe();
     
@@ -2464,7 +2437,7 @@ ScriptOperation *MeleeOperation::MakeCopy()
 
 bool MeleeOperation::Run(NPC *npc,EventManager *eventmgr,bool interrupted)
 {
-    npc->Printf("MeleeOperation starting with seek range (%.2f) will attack:%s%s.",
+    npc->Printf(5, "MeleeOperation starting with seek range (%.2f) will attack:%s%s.",
                 seek_range,(attack_invisible?" Invisible":" Visible"),
                 (attack_invincible?" Invincible":""));
 
@@ -2488,7 +2461,7 @@ void MeleeOperation::Advance(float timedelta,NPC *npc,EventManager *eventmgr)
     iCelEntity *ent = npc->GetMostHated(melee_range,attack_invisible,attack_invincible);
     if (!ent)
     {
-        npc->Printf("No Melee target in range (%2.2f), going to chase!",melee_range);
+        npc->Printf(8, "No Melee target in range (%2.2f), going to chase!",melee_range);
 
         // No enemy to whack on in melee range, search far
         ent = npc->GetMostHated(seek_range,attack_invisible,attack_invincible);
@@ -2514,14 +2487,14 @@ void MeleeOperation::Advance(float timedelta,NPC *npc,EventManager *eventmgr)
             {
                 npc->DumpHateList();
             }
-            npc->Printf("No hated target in seek range (%2.2f)!",seek_range);
+            npc->Printf(8, "No hated target in seek range (%2.2f)!",seek_range);
             npc->GetCurrentBehavior()->ApplyNeedDelta(-5); // don't want to fight as badly
         }
         return;
     }
     if (ent != attacked_ent)
     {
-        npc->Printf("Melee switching to attack %s\n",ent->GetName() );
+        npc->Printf(5, "Melee switching to attack %s\n",ent->GetName() );
         attacked_ent = ent;
         npcclient->GetNetworkMgr()->QueueAttackCommand(npc->GetEntity(),ent);
     }
@@ -2538,7 +2511,6 @@ bool MeleeOperation::CompleteOperation(NPC *npc,EventManager *eventmgr)
 {
     npcclient->GetNetworkMgr()->QueueAttackCommand(npc->GetEntity(),NULL);
 
-    npc->Printf("MeleeOp - Completed");
     completed = true;
 
     return true;
@@ -2561,7 +2533,6 @@ ScriptOperation *BeginLoopOperation::MakeCopy()
 
 bool BeginLoopOperation::Run(NPC *npc,EventManager *eventmgr,bool interrupted)
 {
-    npc->Printf("BeginLoop");
     return true;
 }
 
@@ -2587,13 +2558,13 @@ bool EndLoopOperation::Run(NPC *npc,EventManager *eventmgr,bool interrupted)
     if (current < iterations)
     {
         behavior->SetCurrentStep(loopback_op-1);
-        npc->Printf("EndLoop - Loop %d of %d",current,iterations);
+        npc->Printf(5, "EndLoop - Loop %d of %d",current,iterations);
         return true;
     }
 
     current = 0; // Make sure we will loop next time to
 
-    npc->Printf("EndLoop - Exit %d %d",current,iterations);
+    npc->Printf(5, "EndLoop - Exit %d %d",current,iterations);
     return true;
 }
 
@@ -2616,8 +2587,6 @@ ScriptOperation *WaitOperation::MakeCopy()
 
 bool WaitOperation::Run(NPC *npc,EventManager *eventmgr,bool interrupted)
 {
-    npc->Printf(">>>WaitOp\n");
-
     if (!interrupted)
     {
         remaining = duration;
@@ -2637,7 +2606,7 @@ bool WaitOperation::Run(NPC *npc,EventManager *eventmgr,bool interrupted)
 void WaitOperation::Advance(float timedelta,NPC *npc,EventManager *eventmgr)
 {
     remaining -= timedelta;
-    npc->Printf("waiting... %.2f",remaining);
+    npc->Printf(10, "waiting... %.2f",remaining);
 }
 
 //---------------------------------------------------------------------------
@@ -2657,8 +2626,6 @@ ScriptOperation *DropOperation::MakeCopy()
 
 bool DropOperation::Run(NPC *npc,EventManager *eventmgr,bool interrupted)
 {
-    npc->Printf("DropOp ");
-
     npcclient->GetNetworkMgr()->QueueDropCommand(npc->GetEntity(), slot );
 
     return true;
@@ -2689,8 +2656,6 @@ ScriptOperation *TransferOperation::MakeCopy()
 
 bool TransferOperation::Run(NPC *npc,EventManager *eventmgr,bool interrupted)
 {
-    npc->Printf("TransferOp ");
-
     csString transferItem = item;
 
     csArray<csString> splitItem = psSplit(transferItem,':');
@@ -2698,7 +2663,7 @@ bool TransferOperation::Run(NPC *npc,EventManager *eventmgr,bool interrupted)
     {
         if (!npc->GetTribe())
         {
-            npc->Printf("No tribe");
+            npc->Printf(5, "No tribe");
             return true;
         }
         
@@ -2737,8 +2702,6 @@ ScriptOperation *DigOperation::MakeCopy()
 
 bool DigOperation::Run(NPC *npc,EventManager *eventmgr,bool interrupted)
 {
-    npc->Printf("DigOp ");
-
     if (resource == "tribe:wealth")
     {
         if (npc->GetTribe())
@@ -2796,14 +2759,14 @@ bool DebugOperation::Run(NPC *npc,EventManager *eventmgr,bool interrupted)
     
     if (!level) // Print before when turning off
     {
-        npc->Printf("DebugOp Set debug %d",level);
+        npc->Printf(1, "DebugOp Set debug %d",level);
     }
     
     npc->SetDebugging(level);
     
     if (level) // Print after when turning on
     {
-        npc->Printf("DebugOp Set debug %d",level);            
+        npc->Printf(1, "DebugOp Set debug %d",level);            
     }
 
     return true; // We are done
@@ -2879,7 +2842,7 @@ void MovePathOperation::Advance(float timedelta, NPC *npc, EventManager *eventmg
                              direction,npc->GetMovable()))
     {
         // At end of path
-        npc->Printf("We are done..\n");
+        npc->Printf(5, "We are done..\n");
 
         // None linear movement so we have to queue DRData updates.
         npcclient->GetNetworkMgr()->QueueDRData(npc);
@@ -2894,7 +2857,7 @@ void MovePathOperation::Advance(float timedelta, NPC *npc, EventManager *eventmg
         csVector3 pos; float rot; iSector *sec;
         psGameObject::GetPosition(npc->GetEntity(),pos,rot,sec);
 
-        npc->Printf("MovePath Loc is %s Rot: %1.2f Vel: %.2f Dist: %.2f Index: %d Fraction %.2f\n",
+        npc->Printf(8, "MovePath Loc is %s Rot: %1.2f Vel: %.2f Dist: %.2f Index: %d Fraction %.2f\n",
                     toString(pos).GetDataSafe(),rot,GetVelocity(npc),anchor->GetDistance(),anchor->GetCurrentAtIndex(),anchor->GetCurrentAtFraction());
         
         csVector3 anchor_pos,anchor_up,anchor_forward;
@@ -2904,7 +2867,7 @@ void MovePathOperation::Advance(float timedelta, NPC *npc, EventManager *eventmg
         anchor->GetInterpolatedForward(anchor_forward);
         
 
-        npc->Printf("Anchor pos: %s forward: %s up: %s",toString(anchor_pos).GetDataSafe(),
+        npc->Printf(9, "Anchor pos: %s forward: %s up: %s",toString(anchor_pos).GetDataSafe(),
                     toString(anchor_forward).GetDataSafe(),toString(anchor_up).GetDataSafe());
         
     }
@@ -2934,7 +2897,6 @@ bool MovePathOperation::CompleteOperation(NPC *npc,EventManager *eventmgr)
 
     StopMovement(npc);
 
-    npc->Printf("MovePathOp - Completed.");
     completed = true;
 
     return true; // Script can keep going
@@ -2994,7 +2956,7 @@ ScriptOperation *WatchOperation::MakeCopy()
 
 bool WatchOperation::Run(NPC *npc,EventManager *eventmgr,bool interrupted)
 {
-    npc->Printf("WatchOperation starting with watch range (%.2f) will watch:%s%s.",
+    npc->Printf(5, "WatchOperation starting with watch range (%.2f) will watch:%s%s.",
                 watchRange,(watchInvisible?" Invisible":" Visible"),
                 (watchInvincible?" Invincible":""));
 
@@ -3009,7 +2971,7 @@ bool WatchOperation::Run(NPC *npc,EventManager *eventmgr,bool interrupted)
     {
         case NEAREST:
             npc->GetNearestEntity(target_id,targetPos,name,range);
-            npc->Printf("Targeting nearest entity (%s) at (%1.2f,%1.2f,%1.2f) for watch ...\n",
+            npc->Printf(5, "Targeting nearest entity (%s) at (%1.2f,%1.2f,%1.2f) for watch ...\n",
                         (const char *)name,targetPos.x,targetPos.y,targetPos.z);
             if ( target_id != (uint32_t)-1 )
             {
@@ -3022,7 +2984,7 @@ bool WatchOperation::Run(NPC *npc,EventManager *eventmgr,bool interrupted)
             {
                 target_id = watchedEnt->GetID();
                 psGameObject::GetPosition(watchedEnt, targetPos,targetRot,targetSector);
-                npc->Printf("Targeting owner (%s) at (%1.2f,%1.2f,%1.2f) for watch ...\n",
+                npc->Printf(5, "Targeting owner (%s) at (%1.2f,%1.2f,%1.2f) for watch ...\n",
                             watchedEnt->GetName(),targetPos.x,targetPos.y,targetPos.z );
 
             }
@@ -3033,7 +2995,7 @@ bool WatchOperation::Run(NPC *npc,EventManager *eventmgr,bool interrupted)
             {
                 target_id = watchedEnt->GetID();
                 psGameObject::GetPosition(watchedEnt, targetPos,targetRot,targetSector);
-                npc->Printf("Targeting current target (%s) at (%1.2f,%1.2f,%1.2f) for chase ...\n",
+                npc->Printf(5, "Targeting current target (%s) at (%1.2f,%1.2f,%1.2f) for chase ...\n",
                             watchedEnt->GetName(),targetPos.x,targetPos.y,targetPos.z );
             }
             break;
@@ -3041,7 +3003,7 @@ bool WatchOperation::Run(NPC *npc,EventManager *eventmgr,bool interrupted)
 
     if (!watchedEnt)
     {
-        npc->Printf(2,"No entity to watch");
+        npc->Printf(5,"No entity to watch");
         return true; // Nothing to do for this behaviour.
     }
     
@@ -3054,7 +3016,7 @@ void WatchOperation::Advance(float timedelta,NPC *npc,EventManager *eventmgr)
 {
     if (!watchedEnt)
     {
-        npc->Printf(2,"No entity to watch");
+        npc->Printf(5,"No entity to watch");
         npc->ResumeScript(eventmgr, npc->GetBrain()->GetCurrentBehavior() );
         return; // Nothing to do for this behavior.
     }
@@ -3091,7 +3053,6 @@ void WatchOperation::InterruptOperation(NPC *npc,EventManager *eventmgr)
 
 bool WatchOperation::CompleteOperation(NPC *npc,EventManager *eventmgr)
 {
-    npc->Printf("WatchOp - Completed");
     completed = true;
 
     return true;
