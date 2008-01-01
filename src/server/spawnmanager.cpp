@@ -43,6 +43,8 @@
 
 #include "net/msghandler.h"
 
+#include "rpgrules/vitals.h"
+
 #include "util/eventmanager.h"
 #include "util/mathscript.h"
 #include "util/psconst.h"
@@ -795,6 +797,8 @@ void SpawnManager::Respawn(int instance,csVector3& where,float rot,csString& sec
 
     chardata->ResetMode();
     chardata->SetLocationInWorld(instance,spawnsector,where.x,where.y,where.z,rot);
+    chardata->SetHitPointsRate(HP_REGEN_RATE);
+    chardata->SetManaRate(MANA_REGEN_RATE);
 
     // Now create the NPC as usual
     EntityManager::GetSingleton().CreateNPC(chardata);
