@@ -675,7 +675,6 @@ public:
     } location;
 
     unsigned int advantage_bitfield[PSCHARACTER_ADVANTAGE_32BIT_BITFIELDS];
-    float situation_wum,effect_wum;
 
     float KFactor;
     psSpellCastGameEvent *spellCasting; // Hold a pointer to the game event
@@ -812,11 +811,6 @@ public:
 
     void CombatDrain(int);       
     
-    float GetSituationWUM() { return situation_wum; }
-    void SetSituationWUM(float wum) { situation_wum=wum; }
-    float GetEffectWUM() { return effect_wum; }
-    void SetEffectWUM(float wum) { effect_wum=wum; }
-
     int GetExperiencePoints(); // W
     void SetExperiencePoints(int W);
     int AddExperiencePoints(int W);
