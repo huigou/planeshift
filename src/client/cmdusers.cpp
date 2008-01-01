@@ -708,16 +708,18 @@ void psUserCommands::UpdateTarget(SearchDirection searchDirection,
     psCelClient* cel = psengine->GetCelClient();
 
     GEMClientObject* myEntity = cel->GetMainPlayer();
-    csRef<iPcMesh> myMesh = myEntity->pcmesh;        
-    iMovable* myMov = myMesh->GetMesh()->GetMovable();
+    
+    
+    iMeshWrapper* myMesh = myEntity->Mesh();        
+    iMovable* myMov = myMesh->GetMovable();
     csVector3 myPos = myMov->GetPosition();
 
     float seDistance;
     csVector3 sePos;
     if (startingEntity != NULL)
     {
-        csRef<iPcMesh> seMesh = startingEntity->pcmesh;
-        sePos = seMesh->GetMesh()->GetMovable()->GetPosition();
+        iMeshWrapper* seMesh = startingEntity->Mesh();
+        sePos = seMesh->GetMovable()->GetPosition();
         seDistance = csSquaredDist::PointPoint(myPos, sePos);
     }
     else
@@ -768,8 +770,8 @@ void psUserCommands::UpdateTarget(SearchDirection searchDirection,
             || (entityType == PSENTITYTYPE_ITEM && eType != -2))
             continue;
 
-        csRef<iPcMesh> mesh = object->pcmesh;
-        csVector3 pos = mesh->GetMesh()->GetMovable()->GetPosition();
+        iMeshWrapper* mesh = object->Mesh();
+        csVector3 pos = mesh->GetMovable()->GetPosition();
 
         // Calculate the squared distance, update if we found a better one.
         float distFromMe = csSquaredDist::PointPoint(myPos, pos);
@@ -816,8 +818,8 @@ GEMClientObject* psUserCommands::FindEntityWithName(const char *name)
     psCelClient* cel = psengine->GetCelClient();
 
     GEMClientObject* myEntity = cel->GetMainPlayer();
-    csRef<iPcMesh> myMesh = myEntity->pcmesh;        
-    iMovable* myMov = myMesh->GetMesh()->GetMovable();
+    iMeshWrapper* myMesh = myEntity->Mesh();        
+    iMovable* myMov = myMesh->GetMovable();
     csVector3 myPos = myMov->GetPosition();
 
     // Find all entities within a certain radius.
