@@ -1865,6 +1865,8 @@ csPtr<PlayerGroup> gemActor::GetGroup()
 
 void gemActor::Resurrect()
 {
+    // Note that this does not handle NPCs...see SpawnManager::Respawn.
+
     Debug2(LOG_COMBAT,this->GetPlayerID(),"Resurrect event triggered for %s.\n",GetName());
 
     // Check if the current player is in npcroom or tutorial. In that case we
@@ -1897,12 +1899,10 @@ void gemActor::Resurrect()
     psChar->SetMana(psChar->GetManaMax());
     psChar->SetStamina(psChar->GetStaminaMax(true), true);
     psChar->SetStamina(psChar->GetStaminaMax(false), false);
+    psChar->SetHitPointsRate(HP_REGEN_RATE);
+    psChar->SetManaRate(MANA_REGEN_RATE);
 
-    GetCharacterData()->SetHitPointsRate(HP_REGEN_RATE);
-    GetCharacterData()->SetManaRate(MANA_REGEN_RATE);
     BroadcastTargetStatDR( psserver->GetNetManager()->GetConnections() );
-
-    // TODO: Handle Death Realm for human player
 }
 
 void InvokeScripts(csArray<csString> & scripts, gemActor * actor, gemActor * target)
