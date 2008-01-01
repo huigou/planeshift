@@ -45,6 +45,7 @@
 psEffectObjDecal::psEffectObjDecal(iView * parentView, psEffect2DRenderer * renderer2d)
                : psEffectObj(parentView, renderer2d)
 {
+    decal = NULL;
     // get the decal manager
     decalMgr = csLoadPluginCheck<iDecalManager> (psCSSetup::object_reg, "crystalspace.decal.manager");
 }
