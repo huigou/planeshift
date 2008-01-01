@@ -7,3 +7,4 @@
 - Improvements to infowindow and widgetconfigwindow.
 - Enforced scaling so that the aspect ratio is preserved.
 - Added option for font scaling to the widgetconfigwindow.
+- Improved font scaling a little.
