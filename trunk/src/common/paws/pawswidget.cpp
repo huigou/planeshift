@@ -1811,23 +1811,28 @@ void pawsWidget::StopResize()
 void pawsWidget::Resize( int deltaX, int deltaY, int flags )
 {
     csRect newFrame = screenFrame;
+
+    float scale = 0.0f;
+    if(defaultFrame.Height() && defaultFrame.Width())
+    {
+        scale = defaultFrame.Width() / defaultFrame.Height();
+    }
+
+    if(flags & RESIZE_RIGHT && flags & RESIZE_BOTTOM)
+    {
+        int delta = (deltaX<deltaY) ? deltaX:deltaY;
+        newFrame.ymax += delta;
+        newFrame.xmax += delta*scale;
+    }
+
     if ( flags & RESIZE_LEFT)
     {
         newFrame.xmin += deltaX;
-    }
-    if ( flags & RESIZE_RIGHT )
-    {
-        newFrame.xmax += deltaX;
     }
     if ( flags & RESIZE_TOP )
     {
         newFrame.ymin += deltaY;
     }
-    if ( flags & RESIZE_BOTTOM )
-    {
-        newFrame.ymax += deltaY;
-    }
-
 
     /// prevent the widget from going below its min height and width
     if (newFrame.xmax - newFrame.xmin < min_width) newFrame.xmax = newFrame.xmin + min_width;
