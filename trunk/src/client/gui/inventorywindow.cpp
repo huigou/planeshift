@@ -39,7 +39,6 @@
 #include "inventorywindow.h"
 #include "paws/pawsmanager.h"
 #include "paws/pawsbutton.h"
-#include <propclass/mesh.h>
 #include "paws/pawstexturemanager.h"
 #include "paws/pawslistbox.h"
 #include "paws/pawsnumberpromptwindow.h"
@@ -200,11 +199,14 @@ bool pawsInventoryWindow::SetupDoll()
     if (!widget || !actor)
         return false;
 
-    csRef<iPcMesh> mesh = actor->pcmesh;
-    if (!mesh) return false;
+    iMeshWrapper* mesh = actor->Mesh();
+    if (!mesh) 
+    {
+        return false;
+    }        
 
     // Set the doll view
-    widget->View( mesh->GetMesh() );
+    widget->View( mesh );
     
     // Register this doll for updates
     widget->SetID( actor->GetEntity()->GetID() );
