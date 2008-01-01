@@ -114,9 +114,10 @@ void psClientDR::CheckDeadReckoningUpdate()
     csVector3 vel;              // current  velocity of the character
     bool beganFalling;
 
-    iCelEntity* entity = celclient->GetMainActor();
-    if (!entity)
+    if ( !celclient->GetMainPlayer() )
+    {
         return;
+    }            
 
     lastupdate = csGetTicks();
 
@@ -262,9 +263,12 @@ void psClientDR::HandleStatsUpdate( MsgEntry* me )
     }
     
     // Check if this client actor was updated
-    iCelEntity* mainActor = celclient->GetMainActor();
-    if (mainActor == gemObject->GetEntity())
+    GEMClientActor* mainActor = celclient->GetMainPlayer();
+    
+    if (mainActor == gemObject)
+    {
         gemObject->GetVitalMgr()->HandleDRData(statdrmsg,"Self");
+    }        
     else 
     {   // Publish Vitals data using EntityID
         csString ID;
@@ -276,7 +280,7 @@ void psClientDR::HandleStatsUpdate( MsgEntry* me )
     if (psengine->GetCharManager()->GetTarget() == gemObject)
         gemObject->GetVitalMgr()->HandleDRData(statdrmsg,"Target"); 
     
-    if (mainActor != gemObject->GetEntity() && gemObject->IsGroupedWith(celclient->GetMainPlayer()) )
+    if (mainActor != gemObject && gemObject->IsGroupedWith(celclient->GetMainPlayer()) )
     {
         if (!groupWindow)
         {
@@ -342,9 +346,8 @@ void psClientDR::HandleSequence( MsgEntry* me )
 
 void psClientDR::HandleDeath(GEMClientActor * gemObject)
 {
-    // Check if this client actor was updated
-    iCelEntity* mainActor = celclient->GetMainActor();
-    if (mainActor == gemObject->GetEntity())
+    // Check if this client actor was updated    
+    if ( gemObject == celclient->GetMainPlayer() )
     {
         gemObject->GetVitalMgr()->HandleDeath("Self");
     }

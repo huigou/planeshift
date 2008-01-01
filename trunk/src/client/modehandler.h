@@ -143,9 +143,8 @@ public:
     void SetModeSounds(uint8_t mode);
 
 protected:
-    iCelEntity *entity;
-    csRef<iPcMesh> pcmesh;
-    
+    GEMClientObject* actorEntity;
+        
     ///Stores the 'general' time of day it is.  One of the TimeOfDay enums.
     TimeOfDay  timeOfDay;
     int clock;  ///<! Stores the actual time of day.
@@ -185,7 +184,7 @@ protected:
     bool ProcessLighting(LightingSetting *color,float pct);
     LightingSetting *FindLight(LightingSetting *light,int which);
 
-    bool CheckCurrentSector(iCelEntity *entity,
+    bool CheckCurrentSector(GEMClientObject *entity,
                 const char *sectorname,
                 csVector3& pos,
                 iSector*&  sector);
