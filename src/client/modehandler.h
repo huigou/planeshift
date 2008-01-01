@@ -121,7 +121,7 @@ public:
 
     void PreProcess();
 
-    void SetEntity(iCelEntity *ent);
+    void SetEntity(GEMClientActor *ent);
 
     /// Get the general time of day it is ( from enum )
     TimeOfDay GetGeneralTime() { return timeOfDay; }
