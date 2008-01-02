@@ -67,6 +67,7 @@ pawsWidget::pawsWidget( )
     isResizable = false;
     showResize = true;
     resizeToScreen = false;
+    keepaspect = true;
     id = -1;
     parent   = NULL;
     bgColour = -1;
@@ -340,6 +341,13 @@ bool pawsWidget::LoadAttributes( iDocumentNode* node )
         resizeToScreen = parent->resizeToScreen;
     }
 
+    atr = node->GetAttribute( "keepaspect" );
+    if(atr)
+    {
+        csString choice = csString(atr->GetValue());
+        if ( choice == "no"  ) keepaspect = false;
+    }
+
     atr = node->GetAttribute( "ContextMenu" );
     if ( atr )
         contextMenuFile = atr->GetValue();
@@ -398,7 +406,7 @@ bool pawsWidget::LoadAttributes( iDocumentNode* node )
             defaultFontSize = fontAttribute->GetAttributeValueAsFloat("size");
             fontSize = defaultFontSize;
             bool scaleToScreen = fontAttribute->GetAttributeValueAsBool("resizetoscreen", false);
-            scaleFont = fontAttribute->GetAttributeValueAsBool("scaleFont", true);
+            scaleFont = fontAttribute->GetAttributeValueAsBool("scalefont", true);
 
             if ( this->resizeToScreen && scaleToScreen )
                 fontSize *= PawsManager::GetSingleton().GetFontFactor();
@@ -1842,11 +1850,22 @@ void pawsWidget::Resize( int deltaX, int deltaY, int flags )
         scale = defaultFrame.Width() / defaultFrame.Height();
     }
 
-    if(flags & RESIZE_RIGHT && flags & RESIZE_BOTTOM)
+    if(keepaspect && flags & RESIZE_RIGHT && flags & RESIZE_BOTTOM)
     {
         int delta = (deltaX<deltaY) ? deltaX:deltaY;
         newFrame.ymax += delta;
         newFrame.xmax += (int)(delta*scale);
+    }
+    else
+    {
+        if(flags & RESIZE_RIGHT)
+        {
+            newFrame.xmax += deltaX;
+        }
+        if(flags & RESIZE_BOTTOM)
+        {
+            newFrame.ymax += deltaY;
+        }
     }
 
     if ( flags & RESIZE_LEFT)

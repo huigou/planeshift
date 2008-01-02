@@ -54,7 +54,7 @@
 #define BUTTON_PADDING       2
 #define BUTTON_SPACING       2
 #define WINDOW_PADDING       5
-#define SCROLLBAR_SIZE       16
+#define SCROLLBAR_SIZE       12
 
 #define DONE_BUTTON          1100
 #define CANCEL_BUTTON        1101
@@ -107,8 +107,8 @@ void pawsShortcutWindow::CalcButtonSize()
         maxHeight  = MAX(height, maxHeight);
     }
     
-    buttonWidth   = maxWidth  + 2*BUTTON_PADDING;
-    buttonHeight  = maxHeight + 2*BUTTON_PADDING;
+    buttonWidth   = maxWidth  + 2*BUTTON_PADDING + 8;
+    buttonHeight  = maxHeight + 2*BUTTON_PADDING + 2;
 }
 
 size_t pawsShortcutWindow::CalcTotalRowsNeeded(size_t matrixWidth)
@@ -119,7 +119,7 @@ size_t pawsShortcutWindow::CalcTotalRowsNeeded(size_t matrixWidth)
 void pawsShortcutWindow::CalcMatrixSize(size_t & matrixWidth, size_t & matrixHeight)
 {
     CalcButtonSize();
-    matrixWidth   = (screenFrame.Width()   - 2*WINDOW_PADDING - SCROLLBAR_SIZE) / (buttonWidth  + BUTTON_SPACING);
+    matrixWidth   = (screenFrame.Width()   - 2*WINDOW_PADDING - SCROLLBAR_SIZE/2) / (buttonWidth  + BUTTON_SPACING);
     matrixHeight  = (screenFrame.Height()  - 2*WINDOW_PADDING)                  / (buttonHeight + BUTTON_SPACING);
 
     matrixWidth   = MAX(matrixWidth,  1);
@@ -427,7 +427,7 @@ void pawsShortcutWindow::SetWindowSizeToFitMatrix()
     CS_ASSERT(matrix.GetSize() > 0);
     CS_ASSERT(matrix[0].GetSize() > 0);
 
-    int width  = 2*WINDOW_PADDING + (int)matrix.GetSize()    * (buttonWidth  + BUTTON_SPACING) + SCROLLBAR_SIZE +1;
+    int width  = 2*WINDOW_PADDING + (int)matrix.GetSize()    * (buttonWidth  + BUTTON_SPACING) + SCROLLBAR_SIZE/2 +1;
     int height = 2*WINDOW_PADDING + (int)matrix[0].GetSize() * (buttonHeight + BUTTON_SPACING) + 1;
 
     if (width > screenFrame.Width())
