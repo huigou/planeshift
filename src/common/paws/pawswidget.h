@@ -175,6 +175,9 @@ protected:
      * resolution.
      */
     bool resizeToScreen;
+
+    /// Enforce keeping the default aspect ratio when resizing.
+    bool keepaspect;
     
     /// Is this windows painted on top of other windows (of the same parent) ?
     bool alwaysOnTop;

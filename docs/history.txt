@@ -1,3 +1,7 @@
+*** 2008-01-02 by Mike Gist
+- Added keepaspect xml option.
+- Improvements to the shortcut and yesno widgets with help from Caarrie.
+
 *** 2008-01-01 by Anders Reggestad
 - Changed run chase operation to work in npc coordinate space in same way
   that the advance function where changed before.
