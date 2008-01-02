@@ -660,6 +660,10 @@ bool pawsListBox::OnMouseDown(int button, int modifiers, int x, int y )
             scrollBar->SetCurrentValue(scrollBar->GetCurrentValue() + LISTBOX_MOUSE_SCROLL_AMOUNT);
         return true;
     }
+    else if (!selectable)
+    {
+        return pawsWidget::OnMouseDown(button, modifiers, x, y);
+    }
     
     return true;
 }
@@ -1073,7 +1077,7 @@ bool pawsListBoxRow::OnMouseDown( int button, int modifiers, int x, int y )
     pawsListBox* parentBox = (pawsListBox*)parent;
 
     // mouse wheel
-    if (button == csmbWheelUp || button == csmbWheelDown)
+    if (button == csmbWheelUp || button == csmbWheelDown || !parentBox->IsSelectable())
     {
         return parentBox->OnMouseDown(button, modifiers, x, y);
     }

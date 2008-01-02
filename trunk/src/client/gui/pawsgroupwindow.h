@@ -31,15 +31,6 @@ class pawsTextBox;
 class pawsMessageTextBox;
 class pawsListBox;
 
-///////////////////////////////////////////////////////////////////////////
-// GUI ID's
-///////////////////////////////////////////////////////////////////////////
-#define GROUP_ACCEPT_JOIN 100
-#define GROUP_REJECT_JOIN 200
-///////////////////////////////////////////////////////////////////////////
-
-
-
 /**  This window shows the current members that are in your group.
  *  
  */
@@ -52,13 +43,9 @@ public:
 
     void HandleMessage( MsgEntry* message );
     bool PostSetup();
-    void OnListAction( pawsListBox* widget, int status );
     void OnStringEntered(const char *name,int param,const char *value);
 
-    void SetMainActor(GEMClientActor* actor)
-    { player = actor; }
-
-    bool OnButtonPressed( int mouseButton, int keyModifier, pawsWidget* widget );
+    bool OnMenuAction(pawsWidget *widget, const pawsMenuAction & action);
 
     // Set the stats of a group member.
     void SetStats( GEMClientActor * actor );

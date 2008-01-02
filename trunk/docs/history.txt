@@ -1,6 +1,9 @@
 *** 2008-01-02 by Kenny Graunke
 - Fixed crash on client quit, incorrectly deleting psSoundManager.  Fixed the
   refcounting mistake which caused it not to be deleted in the first place.
+- New group window GUI, more minimalistic and with race icons.
+- pawsListBox now passes through clicks if not selectable.
+- pawsMenu no longer adds title buttons when not supplied a label.
 
 *** 2008-01-02 by Mike Gist
 - Added keepaspect xml option.

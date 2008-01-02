@@ -239,3 +239,15 @@ csString psRaceInfo::GenderString()
     }
 }
 
+csString psRaceInfo::ReadableRaceGender()
+{
+    switch (gender)
+    {
+    case PSCHARACTER_GENDER_FEMALE:
+        return "Female " + name;
+    case PSCHARACTER_GENDER_MALE:
+        return "Male " + name;
+    default:
+        return name;
+    }
+}
