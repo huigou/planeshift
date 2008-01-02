@@ -68,6 +68,7 @@ pawsWidget::pawsWidget( )
     showResize = true;
     resizeToScreen = false;
     keepaspect = true;
+    scaleFont = true;
     id = -1;
     parent   = NULL;
     bgColour = -1;
