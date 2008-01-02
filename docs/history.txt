@@ -1,3 +1,7 @@
+*** 2008-01-02 by Kenny Graunke
+- Fixed crash on client quit, incorrectly deleting psSoundManager.  Fixed the
+  refcounting mistake which caused it not to be deleted in the first place.
+
 *** 2008-01-02 by Mike Gist
 - Added keepaspect xml option.
 - Improvements to the shortcut and yesno widgets with help from Caarrie.

@@ -295,7 +295,6 @@ void psEngine::Cleanup()
     effectManager = NULL;
     
     object_reg->Unregister ((iSoundManager*)soundmanager, "iSoundManager");
-    delete soundmanager;
                 
     delete options;
 }
@@ -390,7 +389,7 @@ bool psEngine::Initialize (int level)
             psSoundManager* pssound = new psSoundManager(0);
             
             pssound->Initialize(object_reg);
-            soundmanager = pssound;
+            soundmanager.AttachNew(pssound);
             object_reg->Register ((iSoundManager*) soundmanager, "iSoundManager");
     
             if (!soundmanager->Setup())
