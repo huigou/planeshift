@@ -1,19 +1,11 @@
 <widget_description>
-
     <widget name="GroupWindow" factory="pawsGroupWindow" 
-            visible="no" movable="yes" resizable="no" savepositions="yes" configurable="yes">
-        <frame x="0" y="200" width="110" height="270" border="yes" />
-        <title resource="Blue Title" text="Group" align="center" close_button="yes"/>
-        <bgimage resource="Group Background" alpha="200" />
-
-        <widget name="MemberCount" factory="pawsTextBox">
-            <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" size="12" />
-            <frame x="10" y="1" width="100" height="20" border="no" />
-        </widget>
-
-        <widget name="List" factory="pawsListBox" scrollbars="no">
+	    visible="no" movable="yes" resizable="no" savepositions="yes" configurable="no"
+	    ContextMenu="data/gui/groupmenu.xml">
+        <frame x="0" y="200" width="110" height="600" border="no" />
+        <widget name="List" factory="pawsListBox" selectable="0">
             <frame x="2" y="14" width="109" height="180" border="no" />
-        <highlight resource="Hightlight" alpha="128" />
+
             <attachpoints>
                 <attach point="ATTACH_LEFT" />
                 <attach point="ATTACH_RIGHT" />
@@ -22,49 +14,29 @@
             </attachpoints>
             
             <columns height="40" headings="no">
-                <column width="95">
+                <column width="125">
                     <widget name="stats" factory="pawsWidget" width="100" height="50" >
-                        <frame x="0" y="0" width="90" height="40" border="no" />
-                        <bgimage resource="Group Member" alpha="0" />
+                        <frame x="0" y="0" width="120" height="40" border="no" />
+                        <widget name="ICON" factory="pawsWidget">
+                            <frame x="0" y="3" width="36" height="36" border="no"/>
+                        </widget>
                         <widget name="NAME" factory="pawsTextBox">
-                            <frame x="10" y="3" width="300" height="20" border="no"/>
-                            <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="8" />
+                            <frame x="35" y="3" width="300" height="20" border="no"/>
+                            <font name="/planeshift/data/ttf/LiberationSerif-Regular.ttf" r="180" g="180" b="180" size="8" />
                         </widget>
                         <widget name="HP" factory="pawsProgressBar">
-                            <frame x="10" y="20" width="70" height="10" border="yes" />
+                            <frame x="27" y="20" width="90" height="10" border="yes" />
                             <color     r="50" g="0" b="0" />
                             <fadecolor r="255" g="0" b="0" />
                         </widget>
                         <widget name="MANA" factory="pawsProgressBar">
-                            <frame x="10" y="30" width="70" height="10" border="yes" />
-                            <color     r="0" g="0" b="50" />
-                            <fadecolor r="0" g="0" b="255" />
+                            <frame x="27" y="30" width="90" height="10" border="yes" />
+                            <color     r="0"   g="0" b="50"  />
+                            <fadecolor r="120" g="0" b="190" />
                         </widget>
                     </widget>
                   </column>
             </columns>
         </widget>
-
-        <widget name="Invite" factory="pawsButton" id="100">
-            <frame x="5" y="202" width="60" height="20"/>
-            <bgimage resource="Standard Button" />
-            <label text="Invite" />
-        </widget>
-
-        <widget name="Leave" factory="pawsButton" id="101">
-            <frame x="5" y="224" width="60" height="20"/>
-            <bgimage resource="Standard Button" />
-            <label text="Leave" />
-        </widget>
-
-        <widget name="Disband" factory="pawsButton" id="102">
-            <frame x="5" y="246" width="60" height="20"/>
-            <bgimage resource="Standard Button" />
-            <label text="Disband" />
-        </widget>
-
     </widget>
-
-
-
 </widget_description>

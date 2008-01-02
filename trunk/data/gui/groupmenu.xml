@@ -1,0 +1,8 @@
+<widget_description>
+<widget name="GroupMenu" factory="pawsMenu" movable="no">
+    <bgimage resource="Standard Background" alpha="50" />
+    <widget name="" action="Invite"  label="Invite"  factory="pawsMenuItem"/>
+    <widget name="" action="Leave"   label="Leave"   factory="pawsMenuItem"/>
+    <widget name="" action="Disband" label="Disband" factory="pawsMenuItem"/>
+</widget>
+</widget_description>
