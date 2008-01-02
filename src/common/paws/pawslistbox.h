@@ -231,6 +231,8 @@ public:
      */
     virtual bool SelfPopulate( iDocumentNode *node );
 
+    bool IsSelectable() { return selectable; }
+
     /**
      * Is this an autoID listbox
      */

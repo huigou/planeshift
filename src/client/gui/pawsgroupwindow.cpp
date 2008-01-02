@@ -45,12 +45,6 @@
 #include "net/messages.h"
 #include "util/log.h"
 
-#define INVITE_BUTTON       100
-#define LEAVE_BUTTON        101
-#define DISBAND_BUTTON      102
-
-
-
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
@@ -108,9 +102,6 @@ void pawsGroupWindow::HandleMessage( MsgEntry* me )
         {
             Hide();
             memberList->Clear();
-            pawsTextBox * count = dynamic_cast <pawsTextBox*> (FindWidget("MemberCount"));
-            if (count != NULL)
-                count->SetText("Members: 0");
                 
             if ( incomming.commandData.Length() > 0 )
             {
@@ -167,8 +158,12 @@ void pawsGroupWindow::HandleMembers( csString& members )
         pawsWidget* stats = box->GetColumn(0)->FindWidget("stats");
         pawsProgressBar *progress;
         pawsTextBox *text;
+        pawsWidget *icon;
   
         box->SetName ( member->GetAttributeValue("N") );
+
+        icon = stats->FindWidget("ICON");
+        icon->SetBackground(csString(member->GetAttributeValue("R")) + " Icon");
         
         chatWindow->AddAutoCompleteName( member->GetAttributeValue("N") );
         
@@ -186,14 +181,6 @@ void pawsGroupWindow::HandleMembers( csString& members )
         progress->SetTotalValue( 1 );
         progress->SetCurrentValue(member->GetAttributeValueAsFloat("M")/100);
 
-    }
-
-    pawsTextBox * count = dynamic_cast <pawsTextBox*> (FindWidget("MemberCount"));
-    if (count != NULL)
-    {
-        csString countStr;
-        countStr.Format("Members: %i", memberList->GetRowCount());
-        count->SetText(countStr);
     }
 }
 
@@ -235,55 +222,14 @@ void pawsGroupWindow::SetStats( GEMClientActor* actor )
 
 void pawsGroupWindow::Draw()
 {    
-    if (player == NULL)
-    {
-        SetMainActor(psengine->GetCelClient()->GetMainPlayer());
-    }
+    if (!player)
+        player = psengine->GetCelClient()->GetMainPlayer();
 
     player->GetVitalMgr()->Predict( csGetTicks(),"Self" );
     
     if (memberList->GetRowCount()>0)
         SetStats( player );
     pawsWidget::Draw();
-}
-
-
-bool pawsGroupWindow::OnButtonPressed( int mouseButton, int keyModifier, pawsWidget* widget )
-{
-    switch ( widget->GetID() )
-    {
-        case INVITE_BUTTON:
-            pawsStringPromptWindow::Create("Who do you want to invite ?", "",
-                                           false, 250, 20, this, "NewInvitee");
-            return true;
-        case LEAVE_BUTTON:
-            psengine->GetCmdHandler()->Execute("/leavegroup");
-            return true;
-        case DISBAND_BUTTON:
-            psengine->GetCmdHandler()->Execute("/disband");
-            return true;
-    }
-
-    return false;
-}
-
-void pawsGroupWindow::OnListAction( pawsListBox* widget, int status )
-{
-    if (status==LISTBOX_SELECTED)
-    {
-        pawsListBoxRow* row =  widget->GetSelectedRow();
-        if ( row )
-        {
-            pawsWidget* container = row->GetColumn(0)->FindWidget("stats");
-            pawsTextBox* nameTxt = (pawsTextBox*)container->FindWidget("NAME");
-            csString name(nameTxt->GetText());
-
-            csString title("Tell ");
-            title.Append( name );
-            pawsStringPromptWindow::Create(title, csString(""),
-                                           false, 220, 20, this, name );
-        }
-    }
 }
 
 void pawsGroupWindow::OnStringEntered(const char *name,int param,const char *value)
@@ -296,12 +242,25 @@ void pawsGroupWindow::OnStringEntered(const char *name,int param,const char *val
             cmd.AppendFmt("/invite %s", value);
             psengine->GetCmdHandler()->Execute(cmd);
         }
-        else
-        {
-            csString command;
-            command.Format("/tell %s %s", name, value);
-            psengine->GetCmdHandler()->Execute(command);
-        }
     }                
+}
+
+bool pawsGroupWindow::OnMenuAction(pawsWidget *widget, const pawsMenuAction & action)
+{
+    if (action.name == "Invite")
+    {
+        pawsStringPromptWindow::Create("Who do you want to invite?", "",
+                                       false, 250, 20, this, "NewInvitee");
+    }
+    else if (action.name == "Leave")
+    {
+        psengine->GetCmdHandler()->Execute("/leavegroup");
+    }
+    else if (action.name == "Disband")
+    {
+        psengine->GetCmdHandler()->Execute("/disband");
+    }
+
+    return pawsWidget::OnMenuAction(widget, action);
 }
 

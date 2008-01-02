@@ -98,6 +98,8 @@ public:
     };
 
     csString GenderString();
+
+    csString ReadableRaceGender();
 };
 
 

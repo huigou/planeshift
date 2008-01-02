@@ -456,23 +456,27 @@ bool pawsMenu::Setup(iDocumentNode * node)
     stickyButton->SetUpImage("stickyoff");
     stickyButton->SetDownImage("stickyon");
     stickyButton->SetToggle(true);
-    AddChild(stickyButton);
+    if (node->GetAttributeValue("label"))
+        AddChild(stickyButton);
 
-    closeButton = new pawsButton(
-);
+    closeButton = new pawsButton();
     closeButton->SetToggle(false);
     closeButton->SetRelativeFrameSize(GetActualWidth(BUTTON_SIZE), GetActualHeight(BUTTON_SIZE));
     closeButton->SetUpImage("quit");
-    AddChild(closeButton);
+    if (node->GetAttributeValue("label"))
+        AddChild(closeButton);
 
     SetButtonPositions();
 
     label = new pawsTextBox();
     label->SetRelativeFramePos(GetActualWidth(BORDER_SIZE), GetActualHeight(BORDER_SIZE));
-    label->SetText(PawsManager::GetSingleton().Translate(node->GetAttributeValue("label")));
-    label->SetSizeByText();
-    label->Show();
-    AddChild(label);
+    if (node->GetAttributeValue("label"))
+    {
+        label->SetText(PawsManager::GetSingleton().Translate(node->GetAttributeValue("label")));
+        label->SetSizeByText();
+        label->Show();
+        AddChild(label);
+    }
 
     attr = node->GetAttribute("align");
     if (attr != NULL)

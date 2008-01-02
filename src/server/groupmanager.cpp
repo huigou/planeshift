@@ -26,6 +26,8 @@
 //=============================================================================
 // Project Includes
 //=============================================================================
+#include "bulkobjects/psraceinfo.h"
+
 #include "util/log.h"
 #include "util/serverconsole.h"
 #include "util/psxmlparser.h"
@@ -221,9 +223,10 @@ void PlayerGroup::BroadcastMemberList()
         csString buff;
         psCharacter *charData = members[n]->GetCharacterData();
         
-    csString escpxml = EscpXML(members[n]->GetCharacterData()->GetCharName());
-        buff.Format("<M N=\"%s\" H=\"%.2f\" M=\"%.2f\" PS=\"%.2f\" MS=\"%.2f\"/>",
-                escpxml.GetData(),
+        csString name = EscpXML(members[n]->GetCharacterData()->GetCharName());
+        csString race = EscpXML(members[n]->GetCharacterData()->GetRaceInfo()->ReadableRaceGender());
+        buff.Format("<M N=\"%s\" R=\"%s\" H=\"%.2f\" M=\"%.2f\" PS=\"%.2f\" MS=\"%.2f\"/>",
+                name.GetData(), race.GetData(),
                 charData->AdjustHitPoints(0.0) / fixZero(charData->AdjustHitPointsMax(0.0)) * 100,
                 charData->AdjustMana(0.0) / fixZero(charData->AdjustManaMax(0.0)) * 100,
                 charData->GetStamina(true) / fixZero(charData->GetStaminaMax(true)) * 100,
@@ -412,7 +415,7 @@ void GroupManager::Disband(psGroupCmdMessage& msg,gemActor *client)
     
     if (!group->IsLeader(client))
     {
-        psserver->SendSystemInfo(client->GetClientID(),"Only group leader can disband group.");
+        psserver->SendSystemError(client->GetClientID(), "Only the group leader can disband a group.");
         return;
     }
 
