@@ -58,7 +58,7 @@
     
     
     <widget name="righthand" factory="pawsSlot" tooltip="Right Hand">
-        <frame x="149" y="240" width="47" height="47" />        
+        <frame x="149" y="240" width="47" height="80" />        
         <ident container="-2" id="0" />
         <subscriptions>
             <subscribe data="sigClearSlot" />
@@ -66,7 +66,7 @@
         </subscriptions>                                
     </widget>
     <widget name="lefthand" factory="pawsSlot" tooltip="Left Hand">
-        <frame x="378" y="240" width="47" height="47" />
+        <frame x="378" y="240" width="47" height="80" />
         <ident container="-2" id="1" />
         <subscriptions>
             <subscribe data="sigClearSlot" />

@@ -142,6 +142,15 @@ void pawsSlot::Draw()
     pawsWidget::Draw();
     ClipToParent();    
     csRect frame = screenFrame;
+    
+    // Deal with frames that are taller than they are high (left/right hand
+    // slots).
+    if (frame.Height() > frame.Width())
+    {
+        int excess = frame.Height() - frame.Width();
+        frame.ymin += excess/2;
+        frame.ymax -= excess/2;
+    }
 
     if (!empty)
     {
