@@ -734,11 +734,9 @@ void psUserCommands::UpdateTarget(SearchDirection searchDirection,
        max_range = RANGE_TO_SELECT;
     }
 
-    // Find all entities within a certain radius.
-    csRef<iCelEntityList> entities =
-        cel->GetPlLayer()->FindNearbyEntities(myMov->GetSectors()->Get(0),
-                                              myPos,
-                                              max_range);
+    csArray<GEMClientObject*> entities = cel->FindNearbyEntities(myMov->GetSectors()->Get(0), 
+                                                                 myPos, 
+                                                                 max_range);
 
     // Best entity is the next entity in a search.
     GEMClientObject* bestObject = startingEntity;
@@ -750,21 +748,24 @@ void psUserCommands::UpdateTarget(SearchDirection searchDirection,
     float loopDistance = (searchDirection == SEARCH_FORWARD) ? FLT_MAX : 0;
 
     // Iterate through the entity list looking for the nearest one.
-    size_t entityCount = entities->GetCount();
+    size_t entityCount = entities.GetSize();
     
     for (size_t i = 0; i < entityCount; ++i)
     {
-        // Get the next entity, skip if it's me or the starting entity.
-        iCelEntity* entity = entities->Get(i);
-        iCelEntity* other = ( startingEntity == NULL ) ? NULL : startingEntity->GetEntity();
-        if (entity == myEntity->GetEntity() || entity == other)
+        GEMClientObject* object = entities[i];
+                
+        GEMClientObject* other = ( startingEntity == NULL ) ? NULL : startingEntity;
+        
+        if (object == myEntity || object == other)
+        {
             continue;
+        }            
 
-        GEMClientObject* object = cel->FindObject( entity->GetID() );
         CS_ASSERT( object );
         
         // Skip if it's not the type of entity we're looking for.
         int eType = object->GetType();
+        
         if ((entityType == PSENTITYTYPE_PLAYER_CHARACTER && eType < 0)
             || (entityType == PSENTITYTYPE_NON_PLAYER_CHARACTER && (eType >= 0 || eType == -2))
             || (entityType == PSENTITYTYPE_ITEM && eType != -2))
@@ -800,7 +801,9 @@ void psUserCommands::UpdateTarget(SearchDirection searchDirection,
         // If dist < 0, the entity is on the wrong side of the starting
         // entity.
         if (dist < 0)
+        {
             continue;
+        }            
 
         // Update best entity.
         if (dist < bestDistance)
@@ -813,6 +816,8 @@ void psUserCommands::UpdateTarget(SearchDirection searchDirection,
     return psengine->GetCharManager()->SetTarget((bestObject == startingEntity) ? loopObject : bestObject,"select");
 }
 
+
+
 GEMClientObject* psUserCommands::FindEntityWithName(const char *name)
 {
     psCelClient* cel = psengine->GetCelClient();
@@ -822,20 +827,20 @@ GEMClientObject* psUserCommands::FindEntityWithName(const char *name)
     iMovable* myMov = myMesh->GetMovable();
     csVector3 myPos = myMov->GetPosition();
 
+    
+    
     // Find all entities within a certain radius.
-    csRef<iCelEntityList> entities =
-        cel->GetPlLayer()->FindNearbyEntities(myMov->GetSectors()->Get(0),
-                                              myPos,
-                                              NEARBY_TARGET_MAX_RANGE);
-
+    csArray<GEMClientObject*> entities = cel->FindNearbyEntities(myMov->GetSectors()->Get(0), 
+                                                                 myPos, 
+                                                                 NEARBY_TARGET_MAX_RANGE);
+        
     // Iterate through the entity list looking for one with the right name.
-    size_t entityCount = entities->GetCount();
+    size_t entityCount = entities.GetSize();
     
     for (size_t i = 0; i < entityCount; ++i)
     {
         // Get the next entity, skip if it's me or the starting entity.
-        iCelEntity* entity = entities->Get(i);
-        GEMClientObject* object = cel->FindObject( entity->GetID() );
+        GEMClientObject* object = entities[i];
         CS_ASSERT( object );
 
         if (csString(object->GetName()).StartsWith(name, true))

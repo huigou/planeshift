@@ -198,6 +198,17 @@ public:
       * @return A GEMClientObject if it exists that is attached to the Crystal Space object.
       */
     GEMClientObject* FindAttachedObject (iObject* object);
+    
+    
+    /** Create a list of all nearby GEM objects.
+      * @param sector The sector to check in.
+      * @param pos The starting position
+      * @param radius The distance around the starting point to check.
+      * @param doInvisible If true check invisible meshes otherwise ignore them.     
+      *
+      * @return A csArray<> of all the objects in the given radius.
+      */
+    csArray<GEMClientObject*> FindNearbyEntities (iSector* sector, const csVector3& pos, float radius, bool doInvisible = false);
         
 protected:
     void ReadKeyBindings (const char* filename, iPcCommandInput* pcinp);
