@@ -65,10 +65,8 @@ bool pawsObjectView::Setup(iDocumentNode* node )
     else
         distance = 4;
 
-    float width = (float)defaultFrame.Width();
-    float height = (float)defaultFrame.Height();
-
-    distance *= distance / (width/267.5 + height/393);
+    if (!resizeToScreen)
+        distance *= float(graphics2D->GetWidth())/800.0f;
 
     csRef<iDocumentNode> mapNode = node->GetNode( "map" );
     if ( mapNode )

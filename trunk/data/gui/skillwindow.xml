@@ -107,7 +107,7 @@
     <widget name="Doll" factory="pawsInventoryDollView" >
         <frame x="287" y="35" width="108" height="165" border="no"/>
         <map file="/planeshift/world/podium" sector="room" />
-        <distance value="3.2"/>
+        <distance value="7"/>
     <subscriptions>
         <subscribe data="sigActorUpdate" />
     </subscriptions>
