@@ -947,6 +947,32 @@ GEMClientObject* psCelClient::FindAttachedObject(iObject* object)
 }
 
 
+csArray<GEMClientObject*> psCelClient::FindNearbyEntities (iSector* sector, const csVector3& pos, float radius, bool doInvisible)
+{
+    csArray<GEMClientObject*> list;
+  
+    csRef<iMeshWrapperIterator> obj_it = psengine->GetEngine()->GetNearbyMeshes (sector, pos, radius);
+  
+    while (obj_it->HasNext ())
+    {
+        iMeshWrapper* m = obj_it->Next ();
+        if (!doInvisible)
+        {
+            bool invisible = m->GetFlags ().Check (CS_ENTITY_INVISIBLE);
+            if (invisible)
+                continue;
+        }
+        GEMClientObject* object = FindAttachedObject(m->QueryObject());
+        
+        if (object)
+        {
+            list.Push(object);
+        }
+    }
+    return list;
+}
+
+
 
 //-------------------------------------------------------------------------------
 

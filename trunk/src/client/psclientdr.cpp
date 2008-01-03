@@ -272,7 +272,7 @@ void psClientDR::HandleStatsUpdate( MsgEntry* me )
     else 
     {   // Publish Vitals data using EntityID
         csString ID;
-        ID.Append( gemObject->GetEntity()->GetID() ) ;
+        ID.Append( gemObject->GetID() ) ;
         gemObject->GetVitalMgr()->HandleDRData(statdrmsg, ID.GetData() );
     }
 
@@ -354,7 +354,7 @@ void psClientDR::HandleDeath(GEMClientActor * gemObject)
     else 
     {   // Publish Vitals data using EntityID
         csString ID;
-        ID.Append( gemObject->GetEntity()->GetID() ) ;
+        ID.Append( gemObject->GetID() ) ;
         gemObject->GetVitalMgr()->HandleDeath( ID.GetData() );
     }
 

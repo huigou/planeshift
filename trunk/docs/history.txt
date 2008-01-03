@@ -1,3 +1,8 @@
+*** 2008-01-03 by Andrew Craig
+- Added a psCelClient::FindNearbyEntities function that does the same
+  work that is done in CEL.  Made various client managers use this 
+  call instead of the one to CEL.
+
 *** 2008-01-03 by Dave Bentham
 - GM4s registered into a GM Event can now assist the running of that event
   by being able to register & remove players and reward participants.

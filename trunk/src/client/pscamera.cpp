@@ -929,15 +929,21 @@ iMeshWrapper* psCamera::FindMeshUnder2D(int x, int y, csVector3 *pos, int *poly)
         psengine->GetCharControl()->GetMovementManager()->MouseLook() &&
         currCameraMode != CAMERA_FIRST_PERSON )
     {
-        csVector3 actorPos, targetPos, isect;
+        csVector3 actorPos;
+        csVector3 targetPos;
+        csVector3 isect;
         float actorYRot;
         iSector* sector;
+        
         psCelClient * cel = psengine->GetCelClient();
-        if(!cel) {
+        if(!cel) 
+        {
             return 0;
         }
-        GEMClientObject* myEntity = cel->GetMainPlayer();
-        if(!myEntity) {
+        
+        GEMClientObject* myEntity = cel->GetMainPlayer();        
+        if(!myEntity) 
+        {
             return 0;
         }
 
@@ -951,23 +957,20 @@ iMeshWrapper* psCamera::FindMeshUnder2D(int x, int y, csVector3 *pos, int *poly)
         float s = sin(actorYRot);
         float c = cos(actorYRot);
 
-        // Find all entities within a certain radius.
-        csRef<iCelEntityList> entities =
-            cel->GetPlLayer()->FindNearbyEntities(sector, actorPos, RANGE_TO_SELECT * 2);
+        csArray<GEMClientObject*> entities = cel->FindNearbyEntities(sector, actorPos, RANGE_TO_SELECT*2);
 
-        size_t entityCount = entities->GetCount();
+        size_t entityCount = entities.GetSize();
 
         for (size_t i = 0; i < entityCount; ++i)
         {
-            iCelEntity* entity = entities->Get(i);
-            if (entity == myEntity->GetEntity() )
+            GEMClientObject* entity = entities[i];
+            
+            if ( (entity == myEntity) || !entity)
+            {
                 continue;
-
-            GEMClientObject* object = cel->FindObject( entity->GetID() );
-            if( !object )
-                continue;
-
-            csRef<iMeshWrapper> mesh = object->Mesh();
+            }                            
+            
+            csRef<iMeshWrapper> mesh = entity->Mesh();
             csVector3 objPos = mesh->GetMovable()->GetPosition();
 
             //printf("object %s etype %d pos %f %f %f\n", object->GetName(), eType, objPos.x, objPos.y, objPos.z);
@@ -1030,7 +1033,10 @@ iMeshWrapper* psCamera::FindMeshUnder2D(int x, int y, csVector3 *pos, int *poly)
 
         result = sector->HitBeamPortals( vo, end );
         //iMeshWrapper* sel = sector->HitBeamPortals(vo, end, isect, poly);
-        if ( pos != NULL ) *pos = result.isect;
+        if ( pos != NULL )
+        {
+            *pos = result.isect;
+        }            
         return result.mesh;
     }
     return NULL;

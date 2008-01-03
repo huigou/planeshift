@@ -39,8 +39,6 @@
 // Local Includes
 //=============================================================================
 
-
-struct iCelEntity;
 struct iVFS;
 struct iObjectRegistry;
 struct iSector;
