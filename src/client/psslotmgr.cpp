@@ -111,12 +111,12 @@ void psSlotManager::SetDragDetails( pawsSlot* slot, int count )
     draggingSlot.slotID         = slot->ID();
     draggingSlot.stackCount     = count;
     draggingSlot.slot           = slot;
-    printf("Start dragging\n  containerID=%d\n  slotID=%d\n",slot->ContainerID(), slot->ID());
+    //printf("Start dragging\n  containerID=%d\n  slotID=%d\n",slot->ContainerID(), slot->ID());
 }
 
 void psSlotManager::DropItem()
 {
-    printf("In psSlotManager::DropItem()\n");
+    //printf("In psSlotManager::DropItem()\n");
 
     psPoint p = PawsManager::GetSingleton().GetMouse()->GetPosition();
     csVector3 pt3d;
@@ -136,7 +136,7 @@ void psSlotManager::DropItem()
  
 void psSlotManager::Handle( pawsSlot* slot, bool grabOne, bool grabAll )
 {
-    printf("In psSlotManager::Handle()\n");
+    //printf("In psSlotManager::Handle()\n");
 
     if ( !isDragging )
     {
@@ -145,7 +145,7 @@ void psSlotManager::Handle( pawsSlot* slot, bool grabOne, bool grabAll )
         if (dndWidget)
             return; 
 
-        printf("Starting a drag/drop action\n");
+        //printf("Starting a drag/drop action\n");
 
         int stackCount = slot->StackCount();
         if ( stackCount > 0 )
@@ -172,7 +172,7 @@ void psSlotManager::Handle( pawsSlot* slot, bool grabOne, bool grabAll )
     }
     else
     {
-        printf("Sending slot movement message\n");
+        //printf("Sending slot movement message\n");
         psSlotMovementMsg msg( draggingSlot.containerID, draggingSlot.slotID,
                                slot->ContainerID(), slot->ID(),
                                draggingSlot.stackCount );
