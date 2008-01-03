@@ -1,3 +1,6 @@
+*** 2008-01-03 by Kenny Graunke
+- Fix pawsObjectView scaling and restore original distances.
+
 *** 2008-01-02 by Kenny Graunke
 - Fixed crash on client quit, incorrectly deleting psSoundManager.  Fixed the
   refcounting mistake which caused it not to be deleted in the first place.
