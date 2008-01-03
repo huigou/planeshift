@@ -6153,9 +6153,7 @@ void AdminManager::HandleGMEvent(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdD
         }
         else
         {
-            gmeventResult = gmeventManager->RegisterPlayerInGMEvent(me->clientnum,
-                                                                    client->GetPlayerID(),
-                                                                    target);
+            gmeventResult = gmeventManager->RegisterPlayerInGMEvent(client, target);
         }
         return;
     }
@@ -6175,8 +6173,7 @@ void AdminManager::HandleGMEvent(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdD
     //remove player
     if (data.subCmd == "remove")
     {
-        gmeventResult = gmeventManager->RemovePlayerFromGMEvent(me->clientnum,
-                                                                client->GetPlayerID(),
+        gmeventResult = gmeventManager->RemovePlayerFromGMEvent(client,
                                                                 target);
         return;
     }
