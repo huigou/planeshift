@@ -28,9 +28,6 @@
 #include <iutil/object.h>
 #include <ivaria/engseq.h>
 
-#include <propclass/linmove.h>
-#include <propclass/colldet.h>
-
 //=============================================================================
 // Project Includes
 //=============================================================================
@@ -124,7 +121,7 @@ void psClientDR::CheckDeadReckoningUpdate()
     if(celclient->IsUnresSector(celclient->GetMainPlayer()->GetSector()))
         return;                 // Main actor still in unresolved sector
 
-    vel = celclient->GetMainPlayer()->linmove->GetVelocity();
+    vel = celclient->GetMainPlayer()->GetVelocity();
 
     beganFalling = (prevVelY>=0 && vel.y<0);
     prevVelY = vel.y;
@@ -148,9 +145,9 @@ void psClientDR::CheckDeadReckoningUpdate()
     return;
 }
 
-void psClientDR::CheckSectorCrossing(iPcLinearMovement *linmove)
+void psClientDR::CheckSectorCrossing(GEMClientActor *actor)
 {
-    csString curr = linmove->GetSector()->QueryObject()->GetName();
+    csString curr = actor->GetSector()->QueryObject()->GetName();
 
     if (curr != last_sector)
     {
@@ -159,7 +156,7 @@ void psClientDR::CheckSectorCrossing(iPcLinearMovement *linmove)
         float yrot;
         iSector* sector;
 
-        linmove->GetLastPosition (pos, yrot, sector);
+        actor->GetLastPosition (pos, yrot, sector);
         psNewSectorMessage cross(last_sector, curr, pos);
         msghandler->Publish(cross.msg);  // subscribers to sector messages can process here
 

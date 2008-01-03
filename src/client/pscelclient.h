@@ -375,6 +375,12 @@ public:
       * @param sector The sector of the object is in [CHANGED]
       */
     void GetLastPosition (csVector3& pos, float& yrot, iSector*& sector);
+    
+    /** Get the object velocity.
+      *
+      * @return The velocity of the object as a vector.
+      */
+    const csVector3 GetVelocity () const;    
 
     virtual bool SetPosition(const csVector3 & pos, float rot, iSector * sector);
     
