@@ -40,6 +40,8 @@
 
 #define UNDEFINED_GMID        0
 
+#define SUPPORT_GM_LEVEL      GM_LEVEL_4
+
 class psItemStats;
 
 enum GMEventStatus
@@ -79,12 +81,11 @@ public:
 
     /** GM registers player into his/her event.
      *
-     * @param clientnum: client number of GM.
-     * @param gmID: GM player ID
+     * @param client: client pointer.
      * @param target: registeree player client.
      * @return bool: true = success, false = failed.
      */
-    bool RegisterPlayerInGMEvent (int clientnum, unsigned int gmID, Client* target);
+    bool RegisterPlayerInGMEvent (Client* client, Client* target);
    
     /** GM registers all players in range.
      *
@@ -120,12 +121,11 @@ public:
 
     /** A player is removed from a running event.
      * A player can be excused from finishing an event.
-     * @param clientnum: client number
-     * @param gmID: game master player id.
+     * @param client: client pointer.
      * @param target: registeree player client to be removed.
      * @return bool: true = success, false = failed.
      */
-    bool RemovePlayerFromGMEvent (int clientnum, unsigned int gmID, Client* target);
+    bool RemovePlayerFromGMEvent (Client* client, Client* target);
 
     /** Reward players who complete an event (NB event must be live at the time
      *  of reward).

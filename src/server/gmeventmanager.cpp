@@ -181,17 +181,23 @@ bool GMEventManager::AddNewGMEvent (Client* client, csString eventName, csString
 }
 
 /// GM registers player into his/her event
-bool GMEventManager::RegisterPlayerInGMEvent (int clientnum, unsigned int gmID, Client* target)
+bool GMEventManager::RegisterPlayerInGMEvent (Client* client, Client* target)
 {
     unsigned int playerID;
+    int clientnum = client->GetClientNum();
     int zero=0;
     GMEvent *gmEvent;
-    
-    // make sure GM is running an event, the player is valid and available. 
+    unsigned int gmID = client->GetPlayerID();
+ 
+    // make sure GM is running (or assisting) an event, the player is valid and available. 
     if ((gmEvent = GetGMEventByGM(gmID, RUNNING, zero)) == NULL)
     {
-        psserver->SendSystemInfo(clientnum, "You are not running an event.");
-        return false;
+        zero = 0;
+        if ((gmEvent = GetGMEventByPlayer(gmID, RUNNING, zero)) == NULL)
+        {
+            psserver->SendSystemInfo(clientnum, "You are not running/assisting an event.");
+            return false;
+        }
     }
     if (!target)
     {
@@ -233,6 +239,14 @@ bool GMEventManager::RegisterPlayerInGMEvent (int clientnum, unsigned int gmID, 
                              gmEvent->eventName.GetDataSafe());
     psserver->SendSystemInfo(target->GetClientNum(), "You are registered in the \'%s\' event.",
                              gmEvent->eventName.GetDataSafe());
+
+    // if the player has sufficient security level, they can help administer the event
+    if (target->GetSecurityLevel() >= SUPPORT_GM_LEVEL)
+    {
+        psserver->SendSystemInfo(clientnum, "He/she can assist with running this event.");
+        psserver->SendSystemInfo(target->GetClientNum(), "You may assist running this event.");
+    }
+
     return true;
 }
 
@@ -240,12 +254,17 @@ bool GMEventManager::RegisterPlayerInGMEvent (int clientnum, unsigned int gmID, 
 bool GMEventManager::RegisterPlayersInRangeInGMEvent (Client* client, float range)
 {
     int clientnum = client->GetClientNum(), zero = 0;
+    unsigned int gmID = client->GetPlayerID();
 
-    // make sure GM is running an event
-    if (GetGMEventByGM(client->GetPlayerID(), RUNNING, zero) == NULL)
+    // make sure GM is running (or assisting) an event
+    if (GetGMEventByGM(gmID, RUNNING, zero) == NULL)
     {
-        psserver->SendSystemInfo(clientnum, "You are not running an event.");
-        return false;
+        zero = 0;
+        if (GetGMEventByPlayer(gmID, RUNNING, zero) == NULL)
+        {
+            psserver->SendSystemInfo(clientnum, "You are not running/assisting an event.");
+            return false;
+        }
     }
     // check range is within max permissable
     if (range <= 0.0 || range > MAX_REGISTER_RANGE)
@@ -265,7 +284,7 @@ bool GMEventManager::RegisterPlayersInRangeInGMEvent (Client* client, float rang
         Client *target = psserver->GetConnections()->Find(participants[i].client);
         if (target && target != client && target->IsReady() && participants[i].dist <= range)
         {
-            regResult = RegisterPlayerInGMEvent (clientnum, client->GetPlayerID(), target);
+            regResult = RegisterPlayerInGMEvent (client, target);
         }
     }
 
@@ -348,18 +367,24 @@ bool GMEventManager::CompleteGMEvent (Client* client, unsigned int gmID, bool by
 }
 
 /// GM removes player from incomplete event
-bool GMEventManager::RemovePlayerFromGMEvent (int clientnum, unsigned int gmID, Client* target)
+bool GMEventManager::RemovePlayerFromGMEvent (Client* client, Client* target)
 {
     unsigned int playerID;
+    int clientnum = client->GetClientNum();
     int zero=0;
     GMEvent* gmEvent;
     GMEvent* playerEvent;
-    
-    // make sure GM is running an event, the player is valid and registered.
+    unsigned int gmID = client->GetPlayerID();
+     
+    // make sure GM is running (or assisting) an event, the player is valid and registered.
     if ((gmEvent = GetGMEventByGM(gmID, RUNNING, zero)) == NULL)
     {
-        psserver->SendSystemInfo(clientnum, "You are not running an event.");
-        return false;
+        zero = 0;
+        if ((gmEvent = GetGMEventByPlayer(gmID, RUNNING, zero)) == NULL)
+        {
+            psserver->SendSystemInfo(clientnum, "You are not running/assisting an event.");
+            return false;
+        }
     }
     if (!target)
     {
@@ -402,12 +427,17 @@ bool GMEventManager::RewardPlayersInGMEvent (Client* client,
     int clientnum = client->GetClientNum(), zero = 0;
     WordArray rewardDesc(itemName);
     RewardType rewardType = REWARD_ITEM;
+    unsigned int gmID = client->GetPlayerID();
 
-    // make sure GM is running an event
-    if ((gmEvent = GetGMEventByGM(client->GetPlayerID(), RUNNING, zero)) == NULL)
+    // make sure GM is running (or assisting) an event
+    if ((gmEvent = GetGMEventByGM(gmID, RUNNING, zero)) == NULL)
     {
-        psserver->SendSystemInfo(clientnum, "You are not running an event.");
-        return false;
+        zero = 0;
+        if ((gmEvent = GetGMEventByPlayer(gmID, RUNNING, zero)) == NULL)
+        {
+            psserver->SendSystemInfo(clientnum, "You are not running/assisting an event.");
+            return false;
+        }
     }
     // check range is within max permissable
     if (rewardRecipient == IN_RANGE && (range <= 0.0 || range > MAX_REGISTER_RANGE))
@@ -931,3 +961,4 @@ bool GMEventManager::RemovePlayerRefFromGMEvent(GMEvent* gmEvent, Client* client
 
     return false;
 }
+

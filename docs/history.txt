@@ -1,3 +1,7 @@
+*** 2008-01-03 by Dave Bentham
+- GM4s registered into a GM Event can now assist the running of that event
+  by being able to register & remove players and reward participants.
+
 *** 2008-01-03 by Kenny Graunke
 - Fix pawsObjectView scaling and restore original distances.
 
