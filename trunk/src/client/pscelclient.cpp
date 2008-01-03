@@ -1237,6 +1237,11 @@ int GEMClientActor::GetAnimIndex (csStringHash* msgstrings, csStringID animid)
     return idx;
 }
 
+void GEMClientActor::GetLastPosition (csVector3& pos, float& yrot, iSector*& sector)
+{
+    linmove->GetLastPosition (pos,yrot,sector);
+}
+
 csVector3 GEMClientActor::Pos()
 {
     csVector3 pos;

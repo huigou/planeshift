@@ -327,7 +327,9 @@ public:
      iMeshWrapper* Mesh();
      
      void Mesh(iMeshWrapper* wrap);
-      
+
+    
+   
 protected:
     friend class psCelClient;
 
@@ -364,6 +366,15 @@ public:
     virtual ~GEMClientActor();
 
     virtual GEMOBJECT_TYPE GetObjectType() { return GEM_ACTOR; }
+    
+    
+    /** Get the last position of this object.  
+      * 
+      * @param pos The x,y,z location of the object. [CHANGED]
+      * @param yrot The Y-Axis rotation of the object. [CHANGED]
+      * @param sector The sector of the object is in [CHANGED]
+      */
+    void GetLastPosition (csVector3& pos, float& yrot, iSector*& sector);
 
     virtual bool SetPosition(const csVector3 & pos, float rot, iSector * sector);
     

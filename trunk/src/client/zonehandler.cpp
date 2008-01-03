@@ -33,11 +33,6 @@
 #include <csutil/sysfunc.h>
 #include <ivaria/engseq.h>
 
-#include <physicallayer/pl.h>
-#include <physicallayer/entity.h>
-#include <propclass/mesh.h>
-#include "physicallayer/propclas.h"
-
 #include "globals.h"
 #include "engine/psworld.h"
 #include "zonehandler.h"
@@ -226,15 +221,14 @@ void ZoneHandler::MovePlayerTo(const csVector3 & newPos, const csString & newSec
     csVector3 pos;
     float yrot;
     iSector* sector;
-    csRef<iPcLinearMovement> pcmove;
-
-    pcmove = celclient->GetMainPlayer()->linmove;
-    pcmove->GetLastPosition (pos, yrot, sector);            // retrieve last yrot
+    
+    celclient->GetMainPlayer()->GetLastPosition (pos, yrot, sector);            // retrieve last yrot
+    
     sector = psengine->GetEngine()->FindSector(newSector);
     if (sector != NULL)
     {
         Notify5(LOG_LOAD, "Setting position of player %f %f %f in sector '%s'", newPos.x, newPos.y, newPos.z, newSector.GetData());
-        pcmove->SetPosition(newPos, yrot, sector);          // set new position
+        celclient->GetMainPlayer()->SetPosition(newPos, yrot, sector);          // set new position
     }
     else
     {
