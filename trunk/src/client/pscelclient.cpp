@@ -1242,6 +1242,11 @@ void GEMClientActor::GetLastPosition (csVector3& pos, float& yrot, iSector*& sec
     linmove->GetLastPosition (pos,yrot,sector);
 }
 
+const csVector3 GEMClientActor::GetVelocity () const
+{
+    return linmove->GetVelocity();
+}
+
 csVector3 GEMClientActor::Pos()
 {
     csVector3 pos;

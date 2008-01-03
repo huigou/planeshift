@@ -2,6 +2,8 @@
 - Added a psCelClient::FindNearbyEntities function that does the same
   work that is done in CEL.  Made various client managers use this 
   call instead of the one to CEL.
+- Fixed some calls in the client zone handler and camera to be more OO and remove 
+  direct CEL calls.   
 
 *** 2008-01-03 by Dave Bentham
 - GM4s registered into a GM Event can now assist the running of that event

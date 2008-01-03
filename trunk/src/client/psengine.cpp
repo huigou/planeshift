@@ -1040,7 +1040,7 @@ inline void psEngine::UpdatePerFrame()
 
     if (celclient->GetMainPlayer())
     {
-        celclient->GetClientDR()->CheckSectorCrossing(celclient->GetMainPlayer()->linmove);
+        celclient->GetClientDR()->CheckSectorCrossing(celclient->GetMainPlayer());
         celclient->PruneEntities();    // Prune CD-intensive entities by disabling CD
 
         // Update Stats for Player

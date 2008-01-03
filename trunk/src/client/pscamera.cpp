@@ -300,7 +300,7 @@ bool psCamera::InitializeView(GEMClientActor* entity)
     csVector3 pos;
     float yRot;
     iSector* sector;
-    actor->linmove->GetLastPosition(pos, yRot, sector);
+    actor->GetLastPosition(pos, yRot, sector);
 
     view->GetCamera()->SetSector(sector);
     view->GetCamera()->GetTransform().SetOrigin(pos);
@@ -631,7 +631,7 @@ bool psCamera::Draw()
     csVector3 actorPos;
     float actorYRot;
     iSector* actorSector;
-    actor->linmove->GetLastPosition(actorPos, actorYRot, actorSector);
+    actor->GetLastPosition(actorPos, actorYRot, actorSector);
     actorYRot = SaturateAngle(actorYRot);
 
     // decide whether the current camera is elastic or not
@@ -788,7 +788,7 @@ void psCamera::SetCameraMode(int mode)
     csVector3 actorPos;
     float actorYRot;
     iSector* actorSector;
-    actor->linmove->GetLastPosition(actorPos, actorYRot, actorSector);
+    actor->GetLastPosition(actorPos, actorYRot, actorSector);
 
     csVector3 actorEye = actorPos + csVector3(sinf(actorYRot)*firstPersonPositionOffset.z,
                                              firstPersonPositionOffset.y,
@@ -947,7 +947,7 @@ iMeshWrapper* psCamera::FindMeshUnder2D(int x, int y, csVector3 *pos, int *poly)
             return 0;
         }
 
-        actor->linmove->GetLastPosition(actorPos, actorYRot, sector);
+        actor->GetLastPosition(actorPos, actorYRot, sector);
         //printf("actor %f %f %f  rot %f\n", actorPos.x, actorPos.y, actorPos.z, actorYRot);
 
         float optRange = 1000000.0;
@@ -1326,7 +1326,7 @@ void psCamera::SetDistanceCfg(psCamera::DistanceCfg newcfg)
 void psCamera::DoCameraIdealCalcs(const csTicks elapsedTicks, const csVector3& actorPos, const csVector3& actorEye, const float actorYRot)
 {
     csVector3 velocity;
-    velocity = actor->linmove->GetVelocity();
+    velocity = actor->GetVelocity();
     float velNormSquared = velocity.SquaredNorm();
 
     switch (GetCameraMode())

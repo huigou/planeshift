@@ -59,7 +59,7 @@ public:
     csStringHash * GetMsgStrings() { return msgstrings; }
     bool GotStrings() {return gotStrings;}
 
-    void CheckSectorCrossing(iPcLinearMovement *linmove);
+    void CheckSectorCrossing(GEMClientActor* actor);
     void ResetMsgStrings();
 
     /**
