@@ -1,3 +1,6 @@
+*** 2008-01-04 by Sasha Levin
+- Fixed FS#782 - Taking items out of a locked container.
+
 *** 2008-01-03 by Andrew Craig
 - Added a psCelClient::FindNearbyEntities function that does the same
   work that is done in CEL.  Made various client managers use this 
