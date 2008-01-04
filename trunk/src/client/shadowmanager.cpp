@@ -43,8 +43,8 @@ bool psShadowManager::WithinRange(GEMClientObject * object) const
     if (!mainPlayer)
         return true;
 
-    csVector3 diff = object->pcmesh->GetMesh()->GetMovable()->GetPosition() - 
-        psengine->GetCelClient()->GetMainPlayer()->pcmesh->GetMesh()->GetMovable()->GetPosition();
+    csVector3 diff = object->Mesh()->GetMovable()->GetPosition() - 
+        psengine->GetCelClient()->GetMainPlayer()->Mesh()->GetMovable()->GetPosition();
     return (diff.SquaredNorm() <= shadowRange*shadowRange);
 }
 
@@ -70,7 +70,7 @@ void psShadowManager::CreateShadow(GEMClientObject * object)
     if (object->GetShadow())
         return;
 
-    iMeshWrapper* mesh = object->pcmesh->GetMesh();
+    iMeshWrapper* mesh = object->Mesh();
     if (!mesh || !mesh->GetMeshObject())
         return;
 

@@ -44,11 +44,6 @@
 #include <iutil/object.h>
 #include <ivaria/engseq.h>
 
-#include <physicallayer/pl.h>
-#include <physicallayer/entity.h>
-#include <propclass/mesh.h>
-#include <physicallayer/propclas.h>
-
 //=============================================================================
 // Project Includes
 //=============================================================================
@@ -327,7 +322,7 @@ void ModeHandler::HandleModeMessage(MsgEntry* me)
 
     actor->SetMode(msg.mode);
 
-    if (msg.actorID == celclient->GetMainActor()->GetID())
+    if (msg.actorID == celclient->GetMainPlayer()->GetID())
     {
         SetModeSounds(msg.mode);
         if (msg.mode == psModeMessage::OVERWEIGHT)

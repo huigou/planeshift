@@ -96,12 +96,6 @@ public:
     bool IsPlayerLocked() { return locked; }
     void UnlockPlayer() { locked = false; }
 
-    /** Set the camera that the desktop widget uses.
-     * This is needed to do things like mouse over entity.
-     * @param cam The camera that the desktop widget should use.
-     */
-    void SetCamera( iCelEntity *entity );
-
     /** Find what entity the mouse is over.
      * @param mouseX The screen X position of the mouse.
      * @param mouseY The screen Y position of the mouse.

@@ -24,9 +24,6 @@
 #include <csgeom/vector3.h>
 #include <iutil/objreg.h>
 
-// COMMON INCLUDES
-#include <propclass/linmove.h>
-
 // PAWS INCLUDES
 #include "pawsilluminationwindow.h"
 #include "paws/pawstextbox.h"

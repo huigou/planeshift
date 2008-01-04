@@ -187,7 +187,7 @@ void pawsGroupWindow::HandleMembers( csString& members )
 void pawsGroupWindow::SetStats( GEMClientActor* actor )
 {   
     
-    csString firstName(actor->GetEntity()->GetName());
+    csString firstName(actor->GetName());
     size_t pos=firstName.FindFirst(' ');
     firstName = firstName.Slice(0,pos);
 

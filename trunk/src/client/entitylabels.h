@@ -30,7 +30,6 @@
 #include <csutil/leakguard.h>
 
 // PS INCLUDES
-#include "engine/celbase.h"
 #include "pscelclient.h"
 #include "util/genericevent.h"
 
@@ -57,8 +56,6 @@ public:
     psEntityLabels();
     virtual ~psEntityLabels();
     
-    // from iCelEntityRemoveCallback:
-
     /** 
      * This is called before some entity is deleted 
      */

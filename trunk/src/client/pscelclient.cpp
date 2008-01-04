@@ -28,6 +28,7 @@
 #include <iutil/objreg.h>
 #include <iutil/vfs.h>
 #include <ivaria/collider.h>
+#include <iengine/engine.h>
 #include <iengine/mesh.h>
 #include <iengine/region.h>
 #include <iengine/movable.h>
@@ -36,25 +37,6 @@
 #include <imesh/nullmesh.h>
 #include <imesh/nullmesh.h>
 #include <csgeom/math3d.h>
-#include <physicallayer/pl.h>
-#include <behaviourlayer/bl.h>
-#include <behaviourlayer/behave.h>
-#include <physicallayer/entity.h>
-#include <physicallayer/propfact.h>
-#include <physicallayer/propclas.h>
-#include <physicallayer/persist.h>
-#include <propclass/mesh.h>
-#include <propclass/meshsel.h>
-#include <propclass/inv.h>
-#include <propclass/chars.h>
-#include <propclass/linmove.h>
-#include <propclass/tooltip.h>
-#include <propclass/camera.h>
-#include <propclass/gravity.h>
-#include <propclass/timer.h>
-#include <propclass/input.h>
-#include <propclass/colldet.h>
-#include <propclass/solid.h>
 
 //============================
 // Cal3D includes
@@ -64,10 +46,11 @@
 //=============================================================================
 // Library Includes
 //=============================================================================
-#include "engine/celbase.h"
 #include "engine/netpersist.h"
 #include "engine/psworld.h"
 #include "engine/solid.h"
+#include "engine/linmove.h"
+#include "engine/colldet.h"
 
 #include "net/messages.h"
 #include "net/msghandler.h"
@@ -121,8 +104,7 @@ psCelClient::psCelClient() : ignore_others(false)
 psCelClient::~psCelClient()
 {   
     delete gameWorld;
-    Clear();
-
+        
     if (msghandler)
     {
         msghandler->Unsubscribe( this, MSGTYPE_CELPERSIST);
@@ -149,21 +131,13 @@ psCelClient::~psCelClient()
     entities_hash.DeleteAll();    
 }
 
-iCelEntity* psCelClient::GetMainActor()
-{
-    return local_player ? local_player->GetEntity() : NULL; 
-}
     
 
 bool psCelClient::Initialize(iObjectRegistry* object_reg,
         MsgHandler* newmsghandler,
         ZoneHandler *zonehndlr)
 {
-    if (!CelBase::Initialize(object_reg))
-    {
-        return false;
-    }        
-
+    this->object_reg = object_reg;
     entityLabels = new psEntityLabels();
     entityLabels->Initialize(object_reg, this);
 
@@ -211,8 +185,7 @@ void psCelClient::SetMainActor(GEMClientActor* actor)
 {
     if (actor)
     {
-        mainPlayerEntity = actor->GetEntity();
-
+        local_player = actor;
         // ModeHandler has no good way to find out the entity
         psengine->GetModeHandler()->SetEntity(actor);
     }        
@@ -310,8 +283,7 @@ void psCelClient::HandleActor( MsgEntry* me )
         local_player->SendDRUpdate(PRIORITY_LOW,GetClientDR()->GetMsgStrings());
     }
 
-    if (actor->linmove)
-        actor->linmove->SetDeltaLimit(0.2f);
+    actor->GetMovement()->SetDeltaLimit(0.2f);
 
 //    csVector3 pos = actor->pcmesh->GetMesh()->GetMovable()->GetPosition();
 //    iSector* sector = actor->pcmesh->GetMesh()->GetMovable()->GetSectors()->Get(0);
@@ -568,7 +540,7 @@ void psCelClient::HandleNameChange( MsgEntry* me )
     object->ChangeName(msg.newObjName);
 
     // We don't have a label over our own char
-    if (psengine->GetCelClient()->GetMainActor() != object->GetEntity())
+    if (psengine->GetCelClient()->GetMainPlayer() != object)
         entityLabels->OnObjectArrived(object);
 
     // If object is targeted update the target information.
@@ -601,7 +573,7 @@ void psCelClient::HandleGuildChange( MsgEntry* me )
         actor->SetGuildName(msg.newGuildName);
 
         // we don't have a label over our own char
-        if (psengine->GetCelClient()->GetMainActor() != actor->GetEntity())
+        if (psengine->GetCelClient()->GetMainPlayer() != actor)
             entityLabels->OnObjectArrived(actor);
     }
 }
@@ -622,7 +594,7 @@ void psCelClient::HandleGroupChange(MsgEntry* me)
     actor->SetGroupID(msg.groupID);
 
     // repaint label
-    if (GetMainActor() != actor->GetEntity())
+    if (GetMainPlayer() != actor)
         entityLabels->RepaintObjectLabel(actor);
     else // If it's us, we need to repaint every label with the group = ours
     {
@@ -684,7 +656,12 @@ void psCelClient::CheckEntityQueues()
 
 void psCelClient::Update()
 {
-    shadowManager->UpdateShadows();
+    for(size_t i =0; i < entities.GetSize();i++)
+    {
+        entities[i]->Update();
+    }
+
+    shadowManager->UpdateShadows();   
 }
 
 void psCelClient::HandleMessage(MsgEntry *me)
@@ -821,10 +798,10 @@ void psCelClient::HandleUnresolvedPos(GEMClientObject * entity, const csVector3 
     }
 
     GEMClientActor* actor = dynamic_cast<GEMClientActor*> (entity);
-    if(actor && actor->colldet)
+    if(actor)
     {
         // This will disable CD algorithms temporarily
-        actor->colldet->SetOnGround(true);
+        actor->GetMovement()->SetOnGround(true);
 
         if (actor == local_player && psengine->GetCharControl())
             psengine->GetCharControl()->GetMovementManager()->StopAllMovement();
@@ -861,9 +838,9 @@ void psCelClient::OnMapsLoaded()
                 pos->entity->SetPosition(pos->pos, pos->rot, sector);
 
             GEMClientActor* actor = dynamic_cast<GEMClientActor*> (pos->entity);
-            if(actor && actor->colldet)
+            if(actor)
                 // we are now in a physical sector
-                actor->colldet->SetOnGround(false);
+                actor->GetMovement()->SetOnGround(false);
 
             delete *posIter;
             // Deleting automatically increments the iterator.
@@ -897,11 +874,11 @@ void psCelClient::PruneEntities()
             if (actor)
             {
                 csVector3 vel;
-                vel = actor->linmove->GetVelocity();
+                vel = actor->GetMovement()->GetVelocity();
                 if (vel.y < -50)            // Large speed puts too much stress on CPU
                 {
                     Debug3(LOG_ANY,0, "Disabling CD on actor(%d): %s", actor->GetID(),actor->GetName());
-                    actor->colldet->SetOnGround(false);
+                    actor->GetMovement()->SetOnGround(false);
                     // Reset velocity
                     actor->StopMoving(true);
                 }
@@ -990,7 +967,7 @@ GEMClientObject::GEMClientObject( psCelClient* cel, PS_ID id )
     if (!this->cel)
         this->cel = cel;
                                 
-    entity = cel->GetPlLayer()->CreateEntity(id);
+    //entity = cel->GetPlLayer()->CreateEntity(id);
     entitylabel = NULL;
     shadow = 0;
     charApp = new psCharAppearance(psengine->GetObjectRegistry());
@@ -998,14 +975,13 @@ GEMClientObject::GEMClientObject( psCelClient* cel, PS_ID id )
 
 GEMClientObject::~GEMClientObject()
 {
-    iMeshWrapper* mesh = pcmesh->GetMesh();
-    if(mesh)
+    if(pcmesh)
     {
-        cel->UnattachObject(mesh->QueryObject(), this);            
-        psengine->GetEngine()->RemoveObject (mesh);
+        cel->UnattachObject(pcmesh->QueryObject(), this);            
+        psengine->GetEngine()->RemoveObject (pcmesh);
     }        
     
-    cel->GetPlLayer()->RemoveEntity( entity );        
+    //cel->GetPlLayer()->RemoveEntity( entity );        
     delete charApp;
 }
 
@@ -1016,32 +992,32 @@ int GEMClientObject::GetMasqueradeType(void)
 
 void GEMClientObject::Mesh(iMeshWrapper* wrap )
 {
-    if ( pcmesh )
-    {
-        pcmesh->SetMesh(wrap);
-    }    
+    pcmesh = wrap;
 }
 
 iMeshWrapper* GEMClientObject::Mesh()
 {
-    if ( pcmesh )
-    {
-        return pcmesh->GetMesh();
-    }
-    
-    return NULL;
+    return pcmesh;
 }
 
 bool GEMClientObject::SetPosition(const csVector3 & pos, float rot, iSector * sector)
 {
-    pcmesh->MoveMesh( sector , pos );
+    if (sector)
+        pcmesh->GetMovable ()->SetSector (sector);
+
+    pcmesh->GetMovable ()->SetPosition (pos);
+    pcmesh->GetMovable ()->UpdateMove ();
 
     // Rotation
     csMatrix3 matrix = (csMatrix3) csYRotMatrix3 (rot);
-    pcmesh->GetMesh()->GetMovable()->GetTransform().SetO2T (matrix);
+    pcmesh->GetMovable()->GetTransform().SetO2T (matrix);
 
     return true;
 
+}
+
+void GEMClientObject::Update()
+{
 }
 
 void GEMClientObject::Move(const csVector3& pos,float rotangle,  const char* room)
@@ -1060,22 +1036,6 @@ bool GEMClientObject::InitMesh( const char *factname,
                                 const char* room
                               )
 {
-    csRef<iCelPropertyClass> pc;
-    
-    pc = cel->GetPlLayer()->CreatePropertyClass(entity, "pcmesh");
-    if ( !pc )
-    {
-        Error1("Could not create Item because pcmesh class couldn't be created.");
-        return false;
-    }
-
-    pcmesh =  scfQueryInterface<iPcMesh > ( pc);
-    if ( !pcmesh )
-    {
-        Error1("Could not create Item because pcmesh class doesn't implement iPcMesh.");
-        return false;
-    }
-    
     // Helm Mesh Check
     // If there is helm specific item and we don't have any race yet, fall back to 
     // the stonebreaker model
@@ -1106,35 +1066,28 @@ bool GEMClientObject::InitMesh( const char *factname,
         }
     }    
 
-    csRef<iMeshWrapper> meshWrapper = factory->CreateMeshWrapper();
-
-    pcmesh->SetMesh(meshWrapper);
+    pcmesh = factory->CreateMeshWrapper();
     
-    csRef<iSpriteCal3DState> calstate =  scfQueryInterface<iSpriteCal3DState> (pcmesh->GetMesh()->GetMeshObject());
-    if (calstate)
-        calstate->SetUserData((void *)this);
-
-
-    iMeshWrapper* mesh = pcmesh->GetMesh();
-    if ( !mesh )
+    if ( !pcmesh )
     {
         Error2("Could not create Item because could not load %s file into mesh.",factname);
         return false;
     }
+    
+    csRef<iSpriteCal3DState> calstate =  scfQueryInterface<iSpriteCal3DState> (pcmesh->GetMeshObject());
+    if (calstate)
+        calstate->SetUserData((void *)this);
 
-    charApp->SetMesh(mesh);
+    charApp->SetMesh(pcmesh);
     Move(pos,rotangle,room);
     
-    cel->AttachObject(mesh->QueryObject(), this);
+    cel->AttachObject(pcmesh->QueryObject(), this);
     
     return true;
 }
 
 void GEMClientObject::ChangeName(const char* name)
-{
-    if (entity)
-        entity->SetName(name);
-
+{    
     this->name = name;      
 }
 
@@ -1148,15 +1101,13 @@ GEMClientActor::GEMClientActor( psCelClient* cel, psPersistActor& mesg )
     name = mesg.name;
     race = mesg.race;
     helmGroup = mesg.helmGroup;
-    entity->SetName( mesg.name );
     id = mesg.entityid;
     type = mesg.type;
     masqueradeType = mesg.masqueradeType;
     guildName = mesg.guild;
     control = mesg.control;
     flags   = mesg.flags;
-    linmove = NULL;
-    colldet = NULL;
+    linmove = 0;
     groupID = mesg.groupID;
     gender = mesg.gender;
     factname = mesg.factname;
@@ -1235,6 +1186,11 @@ int GEMClientActor::GetAnimIndex (csStringHash* msgstrings, csStringID animid)
     }
 
     return idx;
+}
+
+void GEMClientActor::Update()
+{
+    linmove->TickEveryFrame();
 }
 
 void GEMClientActor::GetLastPosition (csVector3& pos, float& yrot, iSector*& sector)
@@ -1345,7 +1301,7 @@ bool GEMClientActor::NeedDRUpdate(unsigned char& priority)
 void GEMClientActor::SendDRUpdate(unsigned char priority, csStringHash* msgstrings)
 {
     // send update out
-    PS_ID mappedid = entity->GetID();  // no mapping anymore, IDs are identical
+    PS_ID mappedid = id;  // no mapping anymore, IDs are identical
     bool on_ground;
     float speed,yrot,ang_vel;
     csVector3 pos, worldVel;
@@ -1448,31 +1404,27 @@ bool GEMClientActor::InitCharData( const char* traits, const char* equipment )
     return true;    
 }
 
+psLinearMovement * GEMClientActor::GetMovement()
+{
+    return linmove;
+}
 
 bool GEMClientActor::InitLinMove(const csVector3& pos, float angle, const char* sector,
                                 csVector3 top, csVector3 bottom, csVector3 offset )
 {
-    csRef<iCelPropertyClass> pc;
-    pc = cel->GetPlLayer()->CreatePropertyClass(entity, "pclinearmovement");
-    if ( !pc )
-    {
-        Error1("Could not create property class pclinearmovement.  Actor not created.");
-        return false;
-    }
-    linmove =  scfQueryInterface<iPcLinearMovement> (pc);
+    linmove = new psLinearMovement(psengine->GetObjectRegistry());
 
     top.x *= .7f;
     top.z *= .7f;
     bottom.x *= .7f;
     bottom.z *= .7f;
-    linmove->InitCD(top, bottom,offset, NULL);
+    linmove->InitCD(top, bottom,offset, pcmesh);
     iSector * sectorObj = psengine->GetEngine()->FindSector(sector);
     if (sectorObj != NULL)
         linmove->SetPosition(pos,angle,sectorObj);
     else
         psengine->GetCelClient()->HandleUnresolvedPos(this, pos, angle, sector);
-    colldet = CEL_QUERY_PROPCLASS(GetEntity()->GetPropertyClassList(), iPcCollisionDetection);
-
+        
     return true;  // right now this func never fail, but might later.
 }
 
@@ -1503,7 +1455,7 @@ bool GEMClientActor::SetAnimation(const char* anim, int duration)
 
         csRef<iSpriteCal3DFactoryState> sprite =
             
-                                scfQueryInterface<iSpriteCal3DFactoryState> (pcmesh->GetMesh()->GetFactory()->GetMeshObjectFactory());
+                                scfQueryInterface<iSpriteCal3DFactoryState> (pcmesh->GetFactory()->GetMeshObjectFactory());
 
                                 
         vmAnimCallback* callback = new vmAnimCallback;
@@ -1623,7 +1575,7 @@ void GEMClientActor::SetIdleAnimation(const char* anim)
 
 void GEMClientActor::RefreshCal3d()
 {
-    cal3dstate =  scfQueryInterface<iSpriteCal3DState > ( pcmesh->GetMesh()->GetMeshObject());
+    cal3dstate =  scfQueryInterface<iSpriteCal3DState > ( pcmesh->GetMeshObject());
     CS_ASSERT(cal3dstate);
 }
 
@@ -1640,7 +1592,7 @@ unsigned int GEMClientActor::GetChatBubbleID() const
 const char* GEMClientActor::GetName(bool trueName)
 {
     static const char* strUnknown = "[Unknown]";
-    if (trueName || (Flags() & psPersistActor::NAMEKNOWN) || ((uint)GetID() == psengine->GetCelClient()->GetMainActor()->GetID()))
+    if (trueName || (Flags() & psPersistActor::NAMEKNOWN) || (GetID() == psengine->GetCelClient()->GetMainPlayer()->GetID()))
         return name;
     return strUnknown;
 }
@@ -1650,8 +1602,6 @@ GEMClientItem::GEMClientItem( psCelClient* cel, psPersistItem& mesg )
 {        
     name = mesg.name;
     Debug3( LOG_CELPERSIST, 0, "Item %s(%d) Received", mesg.name.GetData(), mesg.id );
-    entity->SetName( mesg.name );
-    entity->SetID( mesg.id );
     id = mesg.id;
     type = mesg.type;
     factname = mesg.factname;
@@ -1681,46 +1631,26 @@ GEMClientActionLocation::GEMClientActionLocation( psCelClient* cel, psPersistAct
     name = mesg.name;
 
     Debug3( LOG_CELPERSIST, 0, "Action %s(%d) Received", mesg.name.GetData(), mesg.id );
-    entity->SetName( mesg.name );
-    entity->SetID( mesg.id );
     id = mesg.id;
     type = mesg.type;
     meshname = mesg.mesh;
 
-    csRef<iCelPropertyClass> pc;
-
-    pc = cel->GetPlLayer()->CreatePropertyClass(entity, "pcmesh");
-    if ( !pc )
-    {
-        Error1("Could not create GEMClientActionLocation because pcmesh class couldn't be created.");
-        return ;
-    }
-
-    pcmesh =  scfQueryInterface<iPcMesh > ( pc);
-    if ( !pcmesh )
-    {
-        Error1("Could not create GEMClientActionLocation because pcmesh class doesn't implement iPcMesh.");
-        return ;
-    }
-
     csRef< iEngine > engine = psengine->GetEngine();
-    csRef< iMeshWrapper > nullmesh = engine->CreateMeshWrapper("crystalspace.mesh.object.null", "ActionLocation");
-    if ( !nullmesh )
+    pcmesh = engine->CreateMeshWrapper("crystalspace.mesh.object.null", "ActionLocation");
+    if ( !pcmesh )
     {
         Error1("Could not create GEMClientActionLocation because crystalspace.mesh.onbject.null could not be created.");
         return ;
     }
     
-    csRef<iNullMeshState> state =  scfQueryInterface<iNullMeshState> (nullmesh->GetMeshObject());
+    csRef<iNullMeshState> state =  scfQueryInterface<iNullMeshState> (pcmesh->GetMeshObject());
     if (!state)
     {
         Error1("No NullMeshState.");
         return ;
     }
     state->SetRadius(1.0);
-    pcmesh->SetMesh( nullmesh );
-
-
+    
     Move( csVector3(0,0,0), 0.0f, mesg.sector);
 
 }

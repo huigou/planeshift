@@ -47,7 +47,6 @@
 
 #include "util/psmeshutil.h"
 
-#include "engine/celbase.h"
 #include "engine/netpersist.h"
 
 #include "iclient/isoundmngr.h"
@@ -358,12 +357,12 @@ void psClientCharManager::SetTarget(GEMClientObject *newTarget, const char *acti
     if (target && target->GetObjectType() != GEM_ACTION_LOC)
     {
          // render the target effect
-         iMeshWrapper * targetMesh = target->pcmesh->GetMesh();
+         iMeshWrapper * targetMesh = target->Mesh();
          if (targetMesh)
              targetEffect = psengine->GetEffectManager()->RenderEffect("target", csVector3(0,0,0), targetMesh);
     
          // notify the server of selection
-         mappedID = target->GetEntity()->GetID();
+         mappedID = target->GetID();
     }
 
     // if it's a message sent by server, there is no need to resend back the same information
@@ -621,13 +620,13 @@ void psClientCharManager::HandleEffect( MsgEntry* me )
     else
     {
         if (gemAnchor)
-            anchor = gemAnchor->pcmesh->GetMesh();
+            anchor = gemAnchor->Mesh();
      
         // get the target
         GEMClientObject* gemTarget = cel->FindObject(effect.targetID);
         iMeshWrapper *target = anchor;
         if (gemTarget)
-            target = gemTarget->pcmesh->GetMesh();
+            target = gemTarget->Mesh();
     
         // render the actual effect
         if (psengine->GetEffectManager ())
@@ -664,7 +663,7 @@ void psClientCharManager::HandleEffect( MsgEntry* me )
         if (effect.castDuration > 0)
         {
             //and it's anchored to the main actor then the you must be casting the spell
-            if ( effect.anchorID == psengine->GetCelClient()->GetMainActor()->GetID() )
+            if ( effect.anchorID == psengine->GetCelClient()->GetMainPlayer()->GetID() )
             {
                 // show the spell cancel window
                 pawsSpellCancelWindow* widget = (pawsSpellCancelWindow *)PawsManager::GetSingleton().FindWidget( "SpellCancelWindow" );

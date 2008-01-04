@@ -82,7 +82,6 @@ protected:
     const psCharMode* defaultmode;  ///< Default actor mode
 
     GEMClientActor* actor;               ///< Actor we're moving here
-    csRef<iPcLinearMovement> linearMove; ///< Mover for actor
 
     const psCharMode* actormode;  ///< Current active mode
     bool onGround;          ///< Is actor on ground or airborne?
@@ -128,6 +127,10 @@ protected:
     const psMovement* backward;
     const psCharMode* run;
 
+    
+    psLinearMovement* linearMove;
+    
+    
 public:
     psMovementManager(iEventNameRegistry* eventname_reg, psControlManager* controls);
     ~psMovementManager();
@@ -137,8 +140,6 @@ public:
 
     void SetActor(GEMClientActor* actor=NULL);
 
-    iPcLinearMovement*  GetLinearMovement() { return linearMove; }
-    
     // Functions to find movement and mode info
     const char* GetModeIdleAnim(size_t id) const { return modes[id]->idle_anim; }
     const psCharMode* FindCharMode(size_t id) const { return modes[id]; }
@@ -185,6 +186,9 @@ public:
     
     void ToggleAutoRun();
     void ToggleRun();
+    
+    psLinearMovement* GetLinearMovement() { return linearMove; }
+
 };
 
 #endif

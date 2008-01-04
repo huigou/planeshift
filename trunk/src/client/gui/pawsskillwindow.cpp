@@ -180,7 +180,7 @@ bool pawsSkillWindow::SetupDoll()
     widget->View( mesh );
     
     // Register this doll for updates
-    widget->SetID( actor->GetEntity()->GetID() );
+    widget->SetID( actor->GetID() );
 
     csRef<iSpriteCal3DState> spstate = scfQueryInterface<iSpriteCal3DState> (widget->GetObject()->GetMeshObject());
     if (spstate)

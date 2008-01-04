@@ -136,7 +136,7 @@ void psCal3DCallbackEffect::AnimationUpdate(float anim_time, CalModel * model, v
         GEMClientObject * gemObj = (GEMClientObject *)userData;
         if (gemObj)
         {
-            effectID = psengine->GetEffectManager()->RenderEffect(effectName, csVector3(0,0,0), gemObj->pcmesh->GetMesh());
+            effectID = psengine->GetEffectManager()->RenderEffect(effectName, csVector3(0,0,0), gemObj->Mesh());
         }
 
     }

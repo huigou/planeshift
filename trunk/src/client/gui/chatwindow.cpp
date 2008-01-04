@@ -776,7 +776,7 @@ void pawsChatWindow::LogMessage(enum E_CHAT_LOG channel, const char* message)
         {
 	    csString filename;
 	    filename.Format("/planeshift/userdata/logs/%s_%s",
-                            psengine->GetCelClient()->GetMainActor()->GetName(),
+                            psengine->GetCelClient()->GetMainPlayer()->GetName(),
 			    logFileName[channel]);
             filename.ReplaceAll(" ", "_");
 
@@ -795,7 +795,7 @@ void pawsChatWindow::LogMessage(enum E_CHAT_LOG channel, const char* message)
                     "================================================\n"
                     "%s %s\n"
                     "------------------------------------------------\n",
-                    buf, psengine->GetCelClient()->GetMainActor()->GetName()
+                    buf, psengine->GetCelClient()->GetMainPlayer()->GetName()
                     );
                 logFile[channel]->Write(buffer.GetData(), buffer.Length());
             }
@@ -1159,7 +1159,7 @@ void pawsChatWindow::HandleSystemMessage(MsgEntry *me)
                      msg.type == MSG_LOOT)
                 chatType = CHAT_SYSTEM_BASE;
 
-            WordArray playerName(psengine->GetCelClient()->GetMainActor()->GetName());
+            WordArray playerName(psengine->GetCelClient()->GetMainPlayer()->GetName());
             bool hasCharName = noCaseMsg.Find(playerName[0].Downcase().GetData()) != (size_t)-1;
             ChatOutput(buff.GetData(), colour, chatType, true, hasCharName);
 
@@ -1200,7 +1200,7 @@ void pawsChatWindow::HandleMessage (MsgEntry *me)
 
     if ( !havePlayerName )  // save name for auto-complete later
     {
-        noCasePlayerName.Replace(psengine->GetCelClient()->GetMainActor()->GetName());
+        noCasePlayerName.Replace(psengine->GetCelClient()->GetMainPlayer()->GetName());
         noCasePlayerName.Downcase(); // Create lowercase string
         noCasePlayerForename = GetWordNumber(noCasePlayerName, 1);
         chatTriggers.Push(noCasePlayerForename);
@@ -1344,13 +1344,13 @@ void pawsChatWindow::HandleMessage (MsgEntry *me)
         {
             if ( msg.sText.StartsWith("/me ") )
             {
-                WordArray tName(psengine->GetCelClient()->GetMainActor()->GetName());
+                WordArray tName(psengine->GetCelClient()->GetMainPlayer()->GetName());
                 buff.Format("%s %s",tName[0].GetData(),
                             ((const char *)msg.sText)+4);
             }
             else if ( msg.sText.StartsWith("/my ") )
             {
-                WordArray tName(psengine->GetCelClient()->GetMainActor()->GetName());
+                WordArray tName(psengine->GetCelClient()->GetMainPlayer()->GetName());
                 buff.Format("%s's %s",tName[0].GetData(),
                             ((const char *)msg.sText)+4);
             }
@@ -1436,7 +1436,7 @@ void pawsChatWindow::HandleMessage (MsgEntry *me)
         }
     }
 
-    WordArray playerName(psengine->GetCelClient()->GetMainActor()->GetName());
+    WordArray playerName(psengine->GetCelClient()->GetMainPlayer()->GetName());
     bool hasCharName = msg.sText.Downcase().Find(playerName[0].Downcase().GetData()) != (size_t)-1;
 
     if (!buff.IsEmpty())
@@ -1450,9 +1450,9 @@ void pawsChatWindow::HandleMessage (MsgEntry *me)
     {
         csString autoResponse, clientmsg(awayText);
         if ( clientmsg.StartsWith("/me ") )
-            clientmsg.Format("%s %s", psengine->GetCelClient()->GetMainActor()->GetName(), ((const char *)awayText)+4);
+            clientmsg.Format("%s %s", psengine->GetCelClient()->GetMainPlayer()->GetName(), ((const char *)awayText)+4);
         else if ( clientmsg.StartsWith("/my ") )
-            clientmsg.Format("%s's %s",psengine->GetCelClient()->GetMainActor()->GetName(), ((const char *)awayText)+4);
+            clientmsg.Format("%s's %s",psengine->GetCelClient()->GetMainPlayer()->GetName(), ((const char *)awayText)+4);
  
         autoResponse.Format("/tell %s [auto-reply] %s", (const char*)msg.sPerson, clientmsg.GetData());
 		const char* errorMessage = cmdsource->Publish(autoResponse.GetData());

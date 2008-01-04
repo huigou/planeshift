@@ -24,6 +24,8 @@
 #include <imesh/object.h>
 #include <ivideo/graph2d.h>
 
+#include "engine/linmove.h"
+
 #include "net/msghandler.h"
 
 #include "psmovement.h"
@@ -116,7 +118,7 @@ void psMovementManager::SetActor(GEMClientActor* a)
 {
     actor = a ? a : psengine->GetCelClient()->GetMainPlayer() ;
     CS_ASSERT(actor);
-    linearMove = actor->linmove;
+    linearMove = actor->GetMovement();
     CS_ASSERT(linearMove);
     SetupControls();
 }
@@ -689,7 +691,7 @@ void psMovementManager::SetRunToPos(psPoint& mouse)
         runToMarkerID = 0;
 
         iSector* sector = linearMove->GetSector();
-        iMeshWrapper* actormesh = actor->pcmesh->GetMesh();
+        iMeshWrapper* actormesh = actor->Mesh();
         runToMarkerID = psengine->GetEffectManager()->RenderEffect("marker", sector, tmp, actormesh);
         runToDiff = tmpDiff;
         lastDist = tmpDiff.SquaredNorm() + 1.0f;
@@ -735,13 +737,12 @@ void psMovementManager::UpdateRunTo()
             if ( sector )
             {
                 csVector3 isect,start,end,dummy,box,legs;
-                iPcCollisionDetection* pcDummy;
                 csRef<iCollideSystem> cdsys =  csQueryRegistry<iCollideSystem> (psengine->GetObjectRegistry ());
                 // Construct the feeling broom
 
                 // Calculate the start and end poses
                 start= currPos;
-                linearMove->GetCDDimensions(box,legs,dummy,pcDummy);
+                linearMove->GetCDDimensions(box,legs,dummy);
                 
                 // We can walk over some stuff
                 start += csVector3(0,0.6f,0);

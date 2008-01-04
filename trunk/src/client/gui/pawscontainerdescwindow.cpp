@@ -23,8 +23,6 @@
 #include <csgeom/vector3.h>
 #include <iutil/objreg.h>
 
-// COMMON INCLUDES
-#include <propclass/linmove.h>
 
 // CLIENT INCLUDES
 #include "pscelclient.h"
@@ -103,7 +101,7 @@ void pawsContainerDescWindow::HandleUpdateItem( MsgEntry* me )
     // We send ownerID to multiple clients, so each client must decide if the item is owned by
     // them or not.  This is double checked on the server if someone tries to move an item,
     // so hacking this to override just breaks the display, but does not enable a cheat.
-    if (mesg.ownerID && mesg.ownerID != psengine->GetCelClient()->GetMainActor()->GetID())
+    if (mesg.ownerID && mesg.ownerID != psengine->GetCelClient()->GetMainPlayer()->GetID())
         mesg.stackCount = -1; // hardcoded signal that item is not owned by this player
 
     sigData.Format("invslot_%d", mesg.containerID * 100 + mesg.slotID + 16);
@@ -270,7 +268,7 @@ bool pawsContainerDescWindow::OnButtonPressed( int mouseButton, int keyModifier,
         int oldID = 0;
         if(oldtarget)
         {
-             oldID = oldtarget->GetEntity()->GetID();
+             oldID = oldtarget->GetID();
         }
         //printf("selecting containerID %d, oldID %d\n", containerID, oldID);
         psUserActionMessage setnewtarget(0, containerID, "select");

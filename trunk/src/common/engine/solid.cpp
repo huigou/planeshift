@@ -53,7 +53,7 @@ psSolid::~psSolid()
     }
 }
 
-void psSolid::SetMesh(iPcMesh* pcmesh)
+void psSolid::SetMesh(iMeshWrapper* pcmesh)
 {
     mesh = pcmesh;
     colliderWrap = 0;
@@ -81,11 +81,11 @@ iCollider* psSolid::GetCollider()
         return 0;
     }        
     
-    if ( mesh->GetMesh() )
+    if ( mesh )
     {
         csRef<iCollideSystem> collideSystem = csQueryRegistry<iCollideSystem>(objectReg);
         
-        colliderWrap = csColliderHelper::InitializeCollisionWrapper(collideSystem, mesh->GetMesh());
+        colliderWrap = csColliderHelper::InitializeCollisionWrapper(collideSystem, mesh);
         return colliderWrap->GetCollider();
     }
     

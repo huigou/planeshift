@@ -210,7 +210,7 @@ bool psMainWidget::OnDoubleClick( int button, int keyModifier, int x, int y )
         {
             if ( over )
             {
-                psUserActionMessage action( 0, over->GetEntity()->GetID(), "dfltBehavior", entTypes.BuildDfltBehaviors() );
+                psUserActionMessage action( 0, over->GetID(), "dfltBehavior", entTypes.BuildDfltBehaviors() );
                 action.SendMessage();
             }
         }
@@ -429,16 +429,6 @@ bool psMainWidget::OnMouseDown( int button, int keyModifier, int x, int y )
 bool psMainWidget::OnMouseUp( int button, int keyModifier, int x, int y )
 {
     return false;
-}
-
-void psMainWidget::SetCamera( iCelEntity* entity )
-{
-    /* Let the main widget know about the camera since it needs it
-     * to locate other entities using hitbeam.
-     */ 
-//    csRef<iPcCamera> pccamera = CEL_QUERY_PROPCLASS(entity->GetPropertyClassList(),
-//                                                    iPcCamera );
-//    guiCamera = pccamera->GetCamera();
 }
 
 

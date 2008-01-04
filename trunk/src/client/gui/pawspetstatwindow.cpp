@@ -564,7 +564,7 @@ void pawsPetStatWindow::SetTarget( GEMClientActor* actor )
 
         // Set control Subscriptions
         targetID.Clear();
-        targetID.Append( actor->GetEntity()->GetID() );
+        targetID.Append( actor->GetID() );
         signal.Format("fVitalValue0:%s", targetID.GetData());
         PawsManager::GetSingleton().Subscribe(signal, hpBar);
         PawsManager::GetSingleton().Subscribe(signal, hpCurrent);
@@ -600,7 +600,7 @@ bool pawsPetStatWindow::SetupDoll()
     widget->View( mesh );
     
     // Register this doll for updates
-    widget->SetID( actor->GetEntity()->GetID() );
+    widget->SetID( actor->GetID() );
 
     csRef<iSpriteCal3DState> spstate = scfQueryInterface<iSpriteCal3DState> (widget->GetObject()->GetMeshObject());
     if (spstate)

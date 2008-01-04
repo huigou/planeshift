@@ -23,7 +23,6 @@
 #include <iutil/objreg.h>
 
 // COMMON INCLUDES
-#include <propclass/linmove.h>
 #include "net/msghandler.h"
 #include "net/messages.h"
 #include "engine/netpersist.h"
