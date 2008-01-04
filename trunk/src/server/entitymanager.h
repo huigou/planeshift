@@ -51,10 +51,6 @@ class psCharacter;
 class psSectorInfo;
 class psMovementInfoMessage;
 
-struct iPcLinearMovement;
-struct iPcCharacterData;
-struct iPcProximityList;
-
 
 struct psAffinityAttribute
 {
@@ -149,8 +145,6 @@ protected:
                             int objectID,
                             int clientID);        
 
-    bool InitMesh(iPcMesh *pcmesh,const char* factname,const csVector3& pos,const iSector* sector);
-    bool InitLinMove(iPcMesh *pcmesh,iPcLinearMovement *pcmove, const csVector3& pos,float angle,const iSector* sector);
     bool SamePos(gemObject * actor, iSector * sector, const csVector3 & point);
 
     void HandleUserAction(MsgEntry* me);    
