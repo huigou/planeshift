@@ -311,10 +311,10 @@ LONG MiniDumper::TopLevelFilter( struct _EXCEPTION_POINTERS *pExceptionInfo )
                     psengine && 
                     psengine->GetCelClient() && 
                     psengine->GetCelClient()->GetMainPlayer() && 
-                    psengine->GetCelClient()->GetMainActor()->GetName()
+                    psengine->GetCelClient()->GetMainPlayer()->GetName()
                     )
                 {
-                    _tcscat( szDumpPath, psengine->GetCelClient()->GetMainActor()->GetName());
+                    _tcscat( szDumpPath, psengine->GetCelClient()->GetMainPlayer()->GetName());
                     _tcscat( szDumpPath, "_");
                 }
 
