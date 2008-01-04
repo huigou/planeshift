@@ -476,6 +476,20 @@ bool Client::CanTake(psItem* item)
         }
     }
 
+    uint32 containerId = item->GetContainerID();
+    if (containerId && GetSecurityLevel() < 22)
+    {
+        gemItem* gemitem = GEMSupervisor::GetSingleton().FindItemEntity(containerId);
+        if (gemitem)
+        {
+            if (gemitem->GetItem()->GetIsLocked())
+            {
+                psserver->SendSystemError(GetClientNum(), "You cannot take the item from a locked container");
+                return false;
+            }
+        }
+    }
+
     // Allow if the item is pickupable and either: public, guarded by the character, or the guarding character is offline
     unsigned int guard = item->GetGuardingCharacterID();
     gemActor* guardingActor = GEMSupervisor::GetSingleton().FindPlayerEntity(guard);
