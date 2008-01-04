@@ -17,7 +17,9 @@
  *
  */
 #include <psconfig.h>
-
+//=============================================================================
+// Crystal Space Includes
+//=============================================================================
 #include <csutil/objreg.h>
 #include <iutil/object.h>
 #include <iengine/engine.h>
@@ -33,24 +35,33 @@
 #include <csutil/sysfunc.h>
 #include <ivaria/engseq.h>
 
-#include "globals.h"
-#include "engine/psworld.h"
-#include "zonehandler.h"
-#include "pscamera.h"
-#include "globals.h"
-
-#include "iclient/isoundmngr.h"
+//=============================================================================
+// Project Includes
+//=============================================================================
 #include "net/messages.h"
 #include "net/msghandler.h"
-#include "pscelclient.h"
-#include "modehandler.h"
+
 #include "util/psscf.h"
 #include "util/log.h"
 
 #include "paws/pawsmanager.h"
 #include "paws/pawsprogressbar.h"
+
 #include "gui/pawsloading.h"
+
+#include "engine/psworld.h"
+
+#include "iclient/isoundmngr.h"
+
+//=============================================================================
+// Local Includes
+//=============================================================================
+#include "zonehandler.h"
+#include "pscamera.h"
+#include "pscelclient.h"
+#include "modehandler.h"
 #include "pscharcontrol.h"
+#include "globals.h"
 
 ZoneHandler::ZoneHandler(MsgHandler* mh,iObjectRegistry* obj_reg, psCelClient *cc)
 {
@@ -110,6 +121,7 @@ bool ZoneHandler::LoadZoneInfo()
     iVFS* vfs = psengine->GetVFS ();
     if (!vfs)
         return false;
+        
     iDocumentSystem* xml = psengine->GetXMLParser ();
     csRef<iDocument> doc = xml->CreateDocument();
 

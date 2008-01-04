@@ -18,13 +18,28 @@
  */
 #ifndef ZONEHANDLER_H
 #define ZONEHANDLER_H
-
+//=============================================================================
+// Crystal Space Includes
+//=============================================================================
 #include <csutil/ref.h>
+
+//=============================================================================
+// Project Includes
+//=============================================================================
 #include "net/cmdbase.h"
+
 #include "util/prb.h"
 #include "util/psxmlparser.h"
+
 #include "engine/psworld.h"
 
+//=============================================================================
+// Local Includes
+//=============================================================================
+
+//-----------------------------------------------------------------------------
+// Forward Declarations
+//-----------------------------------------------------------------------------
 class MsgHandler;
 class psWorld;
 class PawsManager;
@@ -44,9 +59,10 @@ class pawsProgressBar;
 class ZoneLoadInfo
 {
 public:
-    csString     inSector;
+    csString    inSector;
     csString    loadImage;
-    bool     transitional;
+    bool        transitional;
+    
     csPDelArray<csString> regions;
 
     ZoneLoadInfo(iDocumentNode *node);
@@ -62,6 +78,7 @@ public:
     }
 };
 
+
 /**
  *  This class listens for crossing sector boundaries
  *  and makes sure that we have all the right stuff
@@ -69,6 +86,26 @@ public:
  */
 class ZoneHandler : public psClientNetSubscriber
 {
+public:
+    ZoneHandler(MsgHandler* mh,iObjectRegistry* object_reg, psCelClient *cc);
+    virtual ~ZoneHandler();
+
+    void HandleMessage(MsgEntry* me);
+
+    void SetWorld(psWorld *psworld) { world = psworld; }
+
+    void LoadZone(const char* sector);
+
+    /** Call this after drawing on screen finished.
+        It checks if player just crossed boundary between sectors and loads/unloads needed maps */
+    void OnDrawingFinished();
+
+    /** Moves player to given location */
+    void MovePlayerTo(const csVector3 & newPos, const csString & newSector);
+
+    void SetLoadAllMaps(bool v) { loadAllMaps = v; }
+    void SetKeepMapsLoaded(bool v) { keepMapsLoaded = v; }
+    
 protected:
     BinaryRBTree<ZoneLoadInfo> zonelist;
     csArray<csString>       alllist;
@@ -97,26 +134,6 @@ protected:
 
     /** Tells "world" to (un)load flagged maps, then hides LoadingWindow */
     bool ExecuteFlaggedRegions(const csString & sector);
-
-public:
-    ZoneHandler(MsgHandler* mh,iObjectRegistry* object_reg, psCelClient *cc);
-    virtual ~ZoneHandler();
-
-    void HandleMessage(MsgEntry* me);
-
-    void SetWorld(psWorld *psworld) { world = psworld; }
-
-    void LoadZone(const char* sector);
-
-    /** Call this after drawing on screen finished.
-        It checks if player just crossed boundary between sectors and loads/unloads needed maps */
-    void OnDrawingFinished();
-
-    /** Moves player to given location */
-    void MovePlayerTo(const csVector3 & newPos, const csString & newSector);
-
-    void SetLoadAllMaps(bool v) { loadAllMaps = v; }
-    void SetKeepMapsLoaded(bool v) { keepMapsLoaded = v; }
 };
 
 
