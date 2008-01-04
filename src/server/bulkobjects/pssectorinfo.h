@@ -77,6 +77,8 @@ public:
     bool densitySaved;
     unsigned int fogFade;
     int r,g,b;
+
+    csString god_name;
 };
 
 

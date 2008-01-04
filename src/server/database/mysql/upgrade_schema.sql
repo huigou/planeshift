@@ -838,6 +838,10 @@ source sc_waypoint_aliases.sql;
 delete from command_group_assignment where command_name="/waypoint";
 UPDATE `server_options` SET `option_value`='1173' WHERE `option_name`='db_version';
 
+#### 1174 - Sasha Levin - Added 'ruling god' to each sector
+ALTER TABLE `planeshift`.`sectors` ADD COLUMN `god_name` VARCHAR(45) NOT NULL DEFAULT 'Laanx' AFTER `collide_objects`;
+
+
 #
 # Insert your upgrade before this line. Remember when you set a new db_version
 # to update the server_options.sql file and update psserver.cpp as well.

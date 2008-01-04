@@ -46,6 +46,7 @@
 #include "gem.h"
 #include "netmanager.h"
 #include "globals.h"
+#include "bulkobjects\pssectorinfo.h"
 
 
 PendingInvite::PendingInvite(
@@ -161,10 +162,11 @@ bool PendingInvite::CheckForSpam(Client *inviter, psQuestionMessage::questionTyp
             inviter->IncrementAdvisorPoints( -fine );
 
             psSystemMessage newmsg(inviter->GetClientNum(), MSG_INFO,
-                                   "The nuisance known as %s was %s by Laanx!\n"
+                                   "The nuisance known as %s was %s by %s!\n"
                                    "Let this be a lesson to all...",
                                    inviter->GetName(),
-                                   (three)?"struck down":"banished to another realm" );
+                                   (three)?"struck down":"banished to another realm",
+                                   inviter->GetCharacterData()->location.loc_sector->god_name.GetData() );
             newmsg.Multicast(inviter->GetActor()->GetMulticastClients(), 0, PROX_LIST_ANY_RANGE);
 
             inviter->GetActor()->Kill(NULL);
