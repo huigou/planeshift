@@ -46,7 +46,7 @@
 #include "gem.h"
 #include "netmanager.h"
 #include "globals.h"
-#include "bulkobjects\pssectorinfo.h"
+#include "bulkobjects/pssectorinfo.h"
 
 
 PendingInvite::PendingInvite(
