@@ -24,9 +24,6 @@
 #include <csutil/inputdef.h>
 #include <csutil/event.h>
 
-// CEL INCLUDES
-#include <propclass/input.h>
-
 #include "globals.h"
 #include "gui/shortcutwindow.h"
 

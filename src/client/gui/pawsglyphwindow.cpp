@@ -22,7 +22,6 @@
 // CS INCLUDES
 #include <csutil/util.h>
 #include <iutil/evdefs.h>
-#include <propclass/mesh.h>
 
 // COMMON INCLUDES
 #include "net/message.h"

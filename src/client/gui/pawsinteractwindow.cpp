@@ -222,7 +222,7 @@ bool pawsInteractWindow::OnButtonPressed( int mouseButton, int keyModifier, paws
                 return false;
 
             // Find entity id
-            PS_ID id = object->GetEntity()->GetID();
+            PS_ID id = object->GetID();
 
             // Send message to server
             psViewItemDescription out(id, -1);   
@@ -241,7 +241,7 @@ bool pawsInteractWindow::OnButtonPressed( int mouseButton, int keyModifier, paws
                 return false;
 
             // Find entity id
-            PS_ID id = object->GetEntity()->GetID();
+            PS_ID id = object->GetID();
             psEntranceMessage out(id);
             msgHandler->SendMessage( out.msg );                                       
            

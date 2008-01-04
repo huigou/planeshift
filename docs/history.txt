@@ -1,3 +1,6 @@
+*** 2008-01-04 by Andrew Craig
+- Some more cleanups of CEL on the client. 
+
 *** 2008-01-04 by Sasha Levin
 - Fixed FS#782 - Taking items out of a locked container.
 - Fixed FS#899 - laanx smiting people in the DR. Each sector now holds the name

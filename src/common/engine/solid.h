@@ -25,6 +25,7 @@
 //=============================================================================
 #include "csutil/scf.h"
 #include "csutil/weakref.h"
+#include <iengine/mesh.h>
 
 //=============================================================================
 // Project Includes
@@ -37,7 +38,6 @@
 
 
 struct iObjectRegistry;
-struct iPcMesh;
 
 
 /** Collider creation class.
@@ -59,7 +59,7 @@ public:
       * @param mesh The CEL pcmesh object that has the mesh we want to use as the 
       *             collding one.
       */ 
-    void SetMesh(iPcMesh* mesh);
+    void SetMesh(iMeshWrapper* mesh);
     
     /** Complete the setup of the class and create the collider wrappers.
      */
@@ -72,7 +72,7 @@ public:
     
 private:
     csRef<iObjectRegistry> objectReg;               ///< Needed to create the collider wrapper.
-    csWeakRef<iPcMesh> mesh;                        ///< The mesh we are using to collide with.
+    csWeakRef<iMeshWrapper> mesh;                        ///< The mesh we are using to collide with.
     csRef<csColliderWrapper> colliderWrap;          ///< The actual collider wrapper. 
     
     bool noCollider;                                ///< true if we have a collider wrapper, false otherwise. 

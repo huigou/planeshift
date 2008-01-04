@@ -23,6 +23,7 @@
 #include <iutil/databuff.h>
 #include <csutil/sysfunc.h>
 #include <iengine/mesh.h>
+#include <iengine/sector.h>
 #include <imesh/object.h>
 #include <imesh/spritecal3d.h>
 #include <iutil/object.h>
@@ -35,7 +36,6 @@
 #include "net/msghandler.h"
 #include "net/connection.h"
 
-#include "engine/celbase.h"
 #include "engine/netpersist.h"
 
 //=============================================================================

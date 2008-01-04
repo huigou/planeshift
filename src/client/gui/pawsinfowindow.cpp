@@ -27,7 +27,6 @@
 #include <iutil/objreg.h>
 
 // COMMON INCLUDES
-#include <propclass/linmove.h>
 #include "net/messages.h"
 #include "net/msghandler.h"
 #include "net/cmdhandler.h"
@@ -122,7 +121,7 @@ void pawsInfoWindow::HandleMessage( MsgEntry* me )
             psModeMessage msg(me);
 
             // We only want to deal with our own stance changes here...
-            if (msg.actorID == psengine->GetCelClient()->GetMainActor()->GetID())
+            if (msg.actorID == psengine->GetCelClient()->GetMainPlayer()->GetID())
             {
                 if (msg.mode != psModeMessage::COMBAT && selectedstance)
                     SetStanceHighlight(0);

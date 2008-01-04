@@ -25,17 +25,11 @@
 #include <csutil/ref.h>
 #include <csutil/list.h>
 #include <csutil/hash.h>
-
-#include <physicallayer/pl.h>
-#include <behaviourlayer/bl.h>
-#include <physicallayer/entity.h>
-#include <physicallayer/propfact.h>
-#include <propclass/linmove.h>
+#include <iengine/region.h>
 
 //=============================================================================
 // Project Includes
 //=============================================================================
-#include "engine/celbase.h"
 
 #include "net/cmdbase.h"
 
@@ -45,9 +39,9 @@
 
 
 struct Trait;
-struct iPcCommandInput;
 struct iVFS;
 struct iSpriteCal3DState;
+struct iMeshObject;
 
 class MsgHandler;
 class ZoneHandler;
@@ -67,6 +61,7 @@ class GEMClientActionLocation;
 class psEffect;
 class psSolid;
 
+class psLinearMovement;
 
 /** This is information about an entity with unresolved position (=sector not found)
   * This happens when some entity is located in map that is not currently loaded.
@@ -92,9 +87,10 @@ public:
 /**
  * Client version of the Cel Manager
  */
-class psCelClient : public CelBase, public psClientNetSubscriber
+class psCelClient : public psClientNetSubscriber
 {
 private:
+    csRef<iObjectRegistry> object_reg;
     csPDelArray<GEMClientObject> entities;
     csHash<GEMClientObject*,int> entities_hash;
     csArray<MsgEntry*> newActorQueue;
@@ -112,17 +108,10 @@ public:
 
     bool Initialize (iObjectRegistry* object_reg, MsgHandler* msghandler,
                      ZoneHandler *zonehndlr);
-    bool Initialize(iObjectRegistry* object_reg)
-    {
-        return CelBase::Initialize(object_reg);
-    }
-
-    void Clear() { mainPlayerEntity = NULL; }
-
+        
     void RequestServerWorld();
     bool IsReady();
 
-    iCelEntity* GetMainActor();
     GEMClientObject* FindObject( int ID  );
 
     void SetMainActor(GEMClientActor* object);
@@ -211,8 +200,6 @@ public:
     csArray<GEMClientObject*> FindNearbyEntities (iSector* sector, const csVector3& pos, float radius, bool doInvisible = false);
         
 protected:
-    void ReadKeyBindings (const char* filename, iPcCommandInput* pcinp);
-
     void QueueNewActor(MsgEntry *me);
     void QueueNewItem(MsgEntry *me);
 
@@ -220,7 +207,6 @@ protected:
     csList<UnresolvedPos*>::Iterator FindUnresolvedPos(GEMClientObject * entity);
 
     int requeststatus;
-    csRef<iCelEntity>   mainPlayerEntity;
     csRef<iVFS>         vfs;
     csRef<MsgHandler>   msghandler;
     psClientDR* clientdr;
@@ -279,8 +265,6 @@ public:
     virtual ~GEMClientObject();
     
     virtual GEMOBJECT_TYPE GetObjectType() { return GEM_OBJECT; }
-
-    iCelEntity* GetEntity() { return entity; }
     
     bool InitMesh(const char *factname,const char *filename,
     const csVector3& pos,const float rotangle, const char* sector );
@@ -292,7 +276,7 @@ public:
     virtual bool SetPosition(const csVector3 & pos, float rot, iSector * sector);
     
     int GetID() { return id; }
-    csRef<iPcMesh> pcmesh;
+    csRef<iMeshWrapper> pcmesh;
 
     virtual int GetMasqueradeType();
     
@@ -328,14 +312,13 @@ public:
      
      void Mesh(iMeshWrapper* wrap);
 
-    
+     virtual void Update();            
    
 protected:
     friend class psCelClient;
 
     static psCelClient *cel;
     
-    csRef<iCelEntity> entity;
     csString name;
     csString factname;
     int id;
@@ -406,8 +389,7 @@ public:
     void SetDRData(psDRMessage& drmsg);
     void StopMoving(bool worldVel = false);
 
-    csRef<iPcLinearMovement> linmove;
-    csRef<iPcCollisionDetection> colldet;
+    psLinearMovement * linmove;
     
     /// The Vital of the player with regards to his health/mana/fatigue/etc.
     psClientVitals *vitalManager;
@@ -453,6 +435,13 @@ public:
     void SetOwnerEID(unsigned int id) { ownerEID = id; }
 
     csPDelArray<Trait> traitList;
+    
+    /** Get the movment system this object is using.
+      */
+    psLinearMovement * GetMovement();
+
+    virtual void Update();
+        
 protected:
        
     unsigned int chatBubbleID;
@@ -486,7 +475,6 @@ public:
     virtual GEMOBJECT_TYPE GetObjectType() { return GEM_ITEM; }
 
 protected:
-    //csRef<iPcSolid> solid;
     psSolid* solid;
 };
 

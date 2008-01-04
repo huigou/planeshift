@@ -23,6 +23,7 @@
 //=============================================================================
 #include <csutil/parray.h>
 #include <csutil/ref.h>
+#include <csutil/cscolor.h>
 #include <csutil/weakref.h>
 #include <iengine/portal.h>
 
@@ -40,10 +41,10 @@
 
 struct iEngineSequenceManager;
 struct iEngine;
-struct iPcMesh;
 struct iBase;
 struct iSoundManager;
 struct iSoundSource;
+struct iLoaderContext;
 struct LightingList;
 struct LightingSetting;
 struct WeatherInfo;

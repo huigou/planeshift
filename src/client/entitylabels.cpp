@@ -32,10 +32,6 @@
 #include <cstool/objmodel.h>
 #include <csutil/eventnames.h>
 
-// CEL INCLUDES
-#include <physicallayer/pl.h>
-#include <behaviourlayer/behave.h>
-
 // PS INCLUDES
 #include "globals.h"
 #include "gui/psmainwidget.h"
@@ -284,10 +280,10 @@ void psEntityLabels::CreateLabelOfObject(GEMClientObject *object)
     }
 
     // Don't make labels for the player or action locations
-    if (object->GetEntity() == celClient->GetMainActor() || object->GetObjectType() == GEM_ACTION_LOC)
+    if (object == celClient->GetMainPlayer() || object->GetObjectType() == GEM_ACTION_LOC)
         return;
 
-    iMeshWrapper* mesh = object->pcmesh->GetMesh();
+    iMeshWrapper* mesh = object->Mesh();
 
     // Has it got a mesh to attach to?
     if (!mesh || !mesh->GetMeshObject())
@@ -398,7 +394,7 @@ inline void psEntityLabels::UpdateVisibility()
     {
         GEMClientObject* object = entities.Get(i);
 
-        iMeshWrapper* mesh = object->pcmesh->GetMesh();
+        iMeshWrapper* mesh = object->Mesh();
         if (!mesh)
             continue;
 
@@ -429,9 +425,9 @@ inline void psEntityLabels::UpdateMouseover()
             ShowLabelOfObject(lastUnderMouse,false);
 
         // Show new
-        if (underMouse != NULL && underMouse->GetEntity() != celClient->GetMainActor())
+        if (underMouse != NULL && underMouse != celClient->GetMainPlayer())
         {
-            iMeshWrapper* mesh = underMouse->pcmesh->GetMesh();
+            iMeshWrapper* mesh = underMouse->Mesh();
             if (mesh)
             {
                 // Only show labels within range

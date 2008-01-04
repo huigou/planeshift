@@ -26,6 +26,7 @@
 //=============================================================================
 #include <iengine/movable.h>
 #include <iengine/camera.h>
+#include <iengine/engine.h>
 #include <cstool/csview.h>
 #include <ivideo/graph2d.h>
 #include <ivideo/graph3d.h>
@@ -835,7 +836,7 @@ void psCamera::SetCameraMode(int mode)
 
     // enable transition phase
     inTransitionPhase = true;
-    actor->pcmesh->GetMesh()->SetFlagsRecursive(CS_ENTITY_INVISIBLE, 0);
+    actor->Mesh()->SetFlagsRecursive(CS_ENTITY_INVISIBLE, 0);
 }
 
 int psCamera::GetCameraMode() const
@@ -1391,16 +1392,16 @@ void psCamera::DoCameraIdealCalcs(const csTicks elapsedTicks, const csVector3& a
                 break;
 
             psClientCharManager* clientChar = psengine->GetCharManager();
-            if (npcModeTarget != clientChar->GetTarget() || npcModePosition != actor->pcmesh->GetMesh()->GetMovable()->GetFullPosition())
+            if (npcModeTarget != clientChar->GetTarget() || npcModePosition != actor->Mesh()->GetMovable()->GetFullPosition())
             {
                 SetCameraMode(lastCameraMode);
                 break;
             }
             
-            csVector3 targetPos = npcModeTarget->pcmesh->GetMesh()->GetMovable()->GetFullPosition();
-            targetPos.y += npcModeTarget->pcmesh->GetMesh()->GetWorldBoundingBox().MaxY();
+            csVector3 targetPos = npcModeTarget->Mesh()->GetMovable()->GetFullPosition();
+            targetPos.y += npcModeTarget->Mesh()->GetWorldBoundingBox().MaxY();
             csVector3 charPos = actorPos;
-            charPos.y += actor->pcmesh->GetMesh()->GetWorldBoundingBox().MaxY();
+            charPos.y += actor->Mesh()->GetWorldBoundingBox().MaxY();
             csVector3 middle = charPos + (targetPos - charPos) * 0.5f;
 
             /*
@@ -1438,7 +1439,7 @@ csVector3 psCamera::CalcCollisionPos(const csVector3& pseudoTarget, const csVect
     if (!useCameraCD)
         return pseudoPosition; // no collision detection
 
-    actor->pcmesh->GetMesh()->GetFlags().Set(CS_ENTITY_NOHITBEAM);
+    actor->Mesh()->GetFlags().Set(CS_ENTITY_NOHITBEAM);
     switch (GetCameraMode())
     {
         case CAMERA_THIRD_PERSON:
@@ -1455,14 +1456,14 @@ csVector3 psCamera::CalcCollisionPos(const csVector3& pseudoTarget, const csVect
             csColliderHelper::TraceBeam(cdsys, sector, modifiedTarget, pseudoPosition, true, closest_tri, isect, &mesh);
             if (mesh)
             {
-                actor->pcmesh->GetMesh()->GetFlags().Reset(CS_ENTITY_NOHITBEAM);
+                actor->Mesh()->GetFlags().Reset(CS_ENTITY_NOHITBEAM);
                 hasCollision = true;
                 return isect + (modifiedTarget-isect)*0.1f;
             }
 //                csRef<iSpriteCal3DState> spstate =  scfQueryInterface<iSpriteCal3DState> (mesh->GetMeshObject());
             break;
     }
-    actor->pcmesh->GetMesh()->GetFlags().Reset(CS_ENTITY_NOHITBEAM);
+    actor->Mesh()->GetFlags().Reset(CS_ENTITY_NOHITBEAM);
     return pseudoPosition;
 }
 
@@ -1532,14 +1533,14 @@ void psCamera::DoElasticPhysics(bool isElastic, const csTicks elapsedTicks, cons
 
 void psCamera::EnsureActorVisibility()
 {
-    actor->pcmesh->GetMesh()->SetFlagsRecursive(CS_ENTITY_INVISIBLE, CS_ENTITY_INVISIBLE);
+    actor->Mesh()->SetFlagsRecursive(CS_ENTITY_INVISIBLE, CS_ENTITY_INVISIBLE);
 
     // make the actor visible if the camera mode calls for it, and
     // the camera isn't too close to the player
     if (IsActorVisible() || inTransitionPhase)
     {
         if ((GetPosition(CAMERA_ACTUAL_DATA)-GetTarget(CAMERA_ACTUAL_DATA)).SquaredNorm() > 0.3f)
-            actor->pcmesh->GetMesh()->SetFlagsRecursive(CS_ENTITY_INVISIBLE, 0);
+            actor->Mesh()->SetFlagsRecursive(CS_ENTITY_INVISIBLE, 0);
     }
 }
 

@@ -1224,7 +1224,6 @@ void psEngine::LoadGame()
 
         // Init camera with controlled actor
         camera->InitializeView( celclient->GetMainPlayer() );
-        mainWidget->SetCamera( celclient->GetMainActor() );
 
         // Get stats
         psStatsMessage statmsg;

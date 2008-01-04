@@ -44,6 +44,8 @@
 #include "gui/pawscontrolwindow.h"
 #include "gui/psmainwidget.h"
 
+#include "engine/linmove.h"
+
 //=============================================================================
 // Local Includes
 //=============================================================================

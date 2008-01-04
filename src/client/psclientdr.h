@@ -42,8 +42,6 @@ class pawsGroupWindow;
 class pawsPetStatWindow;
 class GEMClientActor;
 
-struct iPcLinearMovement;
-
 class psClientDR : public psClientNetSubscriber
 {
 public:

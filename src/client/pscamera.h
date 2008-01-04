@@ -26,8 +26,6 @@
 #include <csutil/ref.h>
 #include <iutil/virtclk.h>
 
-#include <propclass/linmove.h>
-
 //=============================================================================
 // Project Includes
 //=============================================================================
@@ -44,6 +42,7 @@ struct iView;
 struct iCamera;
 struct iSector;
 struct iCollideSystem;
+struct iMeshWrapper;
 
 class GEMClientActor;
 class GEMClientObject;

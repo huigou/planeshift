@@ -35,6 +35,7 @@
 #include <csutil/flags.h>
 #include <cstool/fogmath.h>
 #include <iutil/vfs.h>
+#include <iutil/plugin.h>
 
 #include "iclient/isoundmngr.h"
 #include "engine/materialmanager.h"
