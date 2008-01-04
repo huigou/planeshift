@@ -456,6 +456,8 @@ bool CacheManager::PreloadSectors()
 
         newsector->is_colliding = (result[currentrow].GetInt("collide_objects") != 0);
 
+        newsector->god_name = result[currentrow]["god_name"];
+
         sectorinfo_by_id.Put(newsector->uid,newsector);
         sectorinfo_by_name.Put(csHashCompute(newsector->name),newsector);
 

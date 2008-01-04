@@ -1,5 +1,9 @@
 *** 2008-01-04 by Sasha Levin
 - Fixed FS#782 - Taking items out of a locked container.
+- Fixed FS#899 - laanx smiting people in the DR. Each sector now holds the name
+  of the controlling god. Currently used just for the smiting, But should be used
+  for more things.
+- DB BUMP!
 
 *** 2008-01-03 by Andrew Craig
 - Added a psCelClient::FindNearbyEntities function that does the same
