@@ -35,7 +35,7 @@ CREATE TABLE `sectors` (
   `lightning_min_gap` int(10) unsigned default '0',
   `lightning_max_gap` int(10) unsigned NOT NULL default '0',
   `collide_objects` tinyint(1) NOT NULL default '0',
-  `god_name` VARCHAR(45) NOT NULL DEFAULT 'Laanx'
+  `god_name` VARCHAR(45) NOT NULL DEFAULT 'Laanx',
   PRIMARY KEY  (`id`),
   UNIQUE KEY `name` (`name`)
 ) ENGINE=MyISAM AUTO_INCREMENT=8 DEFAULT CHARSET=latin1;
@@ -45,7 +45,7 @@ CREATE TABLE `sectors` (
 --
 
 /*!40000 ALTER TABLE `sectors` DISABLE KEYS */;
-INSERT INTO `sectors` (`id`,`name`,`rain_enabled`,`rain_min_gap`,`rain_max_gap`,`rain_min_duration`,`rain_max_duration`,`rain_min_drops`,`rain_max_drops`,`rain_min_fade_in`,`rain_max_fade_in`,`rain_min_fade_out`,`rain_max_fade_out`,`lightning_min_gap`,`lightning_max_gap`,`collide_objects`) VALUES 
+INSERT INTO `sectors` (`id`,`name`,`rain_enabled`,`rain_min_gap`,`rain_max_gap`,`rain_min_duration`,`rain_max_duration`,`rain_min_drops`,`rain_max_drops`,`rain_min_fade_in`,`rain_max_fade_in`,`rain_min_fade_out`,`rain_max_fade_out`,`lightning_min_gap`,`lightning_max_gap`,`collide_objects`,`god_name`) VALUES 
  (1,'room','N',0,0,0,0,0,0,0,0,0,0,0,0,0,'Laanx'),
  (2,'temple','N',0,0,0,0,0,0,0,0,0,0,0,0,0,'Laanx'),
  (3,'NPCroom','N',15000,15000,10000,10000,8000,8000,5000,5000,5000,5000,4000,4000,0,'Laanx'),
