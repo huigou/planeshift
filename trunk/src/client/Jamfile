@@ -8,7 +8,7 @@ if [ Property build : projgen ] = msvc
  extrafiles += [ Wildcard win32 : *.cpp *.h ] ;
 }
 Application psclient : [ Wildcard *.cpp *.h ] $(extrafiles) ;
-ExternalLibs psclient : CRYSTAL CEL CAL3D ;
+ExternalLibs psclient : CRYSTAL CAL3D ;
 CompileGroups psclient : client ;
 LinkWith psclient : gui psnet psengine psrpgrules pssound psutil paws effects fparser ;
 
@@ -22,7 +22,7 @@ if [ Property build : projgen ] = msvc
 }
 Application psclient_static : [ Wildcard *.cpp *.h ] $(extrafiles) : independent noinstall nohelp ;
 CFlags psclient_static : [ FDefines CS_STATIC_LINKED ] $(CAL3D.CFLAGS) ;
-LFlags psclient_static : -lcrystalspace_staticplugins-1.2 -lcel_staticplugins-1.2 -lcal3d ;
+LFlags psclient_static : -lcrystalspace_staticplugins-1.2 -lcal3d ;
 MsvcDefine psclient_static : CS_STATIC_LINKED ;
 LinkWith psclient_static : gui psnet psengine psrpgrules pssound psutil paws effects fparser ;
 
@@ -115,18 +115,7 @@ LinkStaticPlugins psclient_static : $(STATIC.PLUGINLIST) : $(STATIC.OPTIONALPLUG
 : CRYSTAL
 ;
 
-LinkStaticPlugins psclient_static :
-  pfdefcam
-  pfengine
-  pfinput
-  pfmesh
-  pfmove
-  stdphyslayer
-:
-: CEL
-;
-
-ExternalLibs psclient_static : CRYSTAL CEL CAL3D;
+ExternalLibs psclient_static : CRYSTAL CAL3D;
 CompileGroups psclient_static : client_static ;
 
 SubVariant ;

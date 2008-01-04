@@ -5,4 +5,4 @@ Library gui
 	: noinstall
 ;
 
-ExternalLibs gui : CRYSTAL CEL ;
+ExternalLibs gui : CRYSTAL ;
