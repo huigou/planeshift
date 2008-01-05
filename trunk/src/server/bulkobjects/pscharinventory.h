@@ -59,8 +59,6 @@ class gemContainer;
 /// Set if this slot can attack even when empty - requires that a default psItem be set in default_if_empty
 #define PSCHARACTER_EQUIPMENTFLAG_ATTACKIFEMPTY    0x00000004
 
-struct iDataBuffer;
-struct iPcCharacterData;
 
 class gemActor;
 
