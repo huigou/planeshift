@@ -43,7 +43,7 @@ FileUtil::~FileUtil()
 csRef<FileStat> FileUtil::StatFile (const char* path)
 {
     struct stat filestats;
-    if (stat (path, &filestats) < 0)
+    if (stat(path, &filestats) < 0)
         return NULL;
 
     csRef<FileStat> filestat;
@@ -54,17 +54,19 @@ csRef<FileStat> FileUtil::StatFile (const char* path)
         filestat->type = FileStat::TYPE_DIRECTORY;
     else
         filestat->type = FileStat::TYPE_FILE;
+
+    filestat->link = false;
 #else
-    if (S_ISDIR (filestats.st_mode))
+    if (S_ISDIR(filestats.st_mode))
         filestat->type = FileStat::TYPE_DIRECTORY;
     else
         filestat->type = FileStat::TYPE_FILE;
+
+    filestat->link = S_ISLNK(filestats.st_mode);
 #endif
 
-    // XXX: Need support for symbolic links and executable
-    filestat->link = false;
-    filestat->executable = false;
-    filestat->size = (uint32_t) filestats.st_size;
+    filestat->size = (uint32_t)filestats.st_size;
+    filestat->executable = (filestats.st_mode & S_IEXEC) != 0;
     filestat->readonly = !(filestats.st_mode & S_IWRITE);
 
     return filestat;
@@ -208,4 +210,10 @@ bool FileUtil::CopyFile(csString from, csString to, bool vfsPath, bool executabl
 #endif
 
     return true;
+}
+
+bool FileUtil::isExecutable(const char *path)
+{
+    csRef<FileStat> stats = StatFile(path);
+    return stats->executable;
 }
