@@ -72,24 +72,20 @@ csRef<FileStat> FileUtil::StatFile (const char* path)
     return filestat;
 }
 
-void FileUtil::RemoveFile (const char* filename)
+bool FileUtil::RemoveFile (const char* filename, bool silent)
 {
-    //If vfs deletefile fails, fall back on old variant
-    if (!vfs->DeleteFile(filename))
+    if(!vfs->DeleteFile(filename))
     {
+        // If vfs DeleteFile fails, fall back on old variant.
         int rc = remove(filename);
         if (rc < 0)
         {
-            printf("Removal of '%s' failed.\n", filename);
+            if(!silent)
+                printf("Failed to remove file %s\n", filename);
+            return false;
         }
     }
-    else
-    {
-        if (!vfs->Sync())
-        {
-            printf("Couldn't sync VFS!\n");
-        }
-    }
+    return true;
 }
 
 #ifdef CS_PLATFORM_UNIX
@@ -148,7 +144,7 @@ void FileUtil::MakeDirectory (const char* directory)
 
 #endif
 
-bool FileUtil::CopyFile(csString from, csString to, bool vfsPath, bool executable)
+bool FileUtil::CopyFile(csString from, csString to, bool vfsPath, bool executable, bool silent)
 {
     csString n1;
     csString n2;
@@ -159,7 +155,8 @@ bool FileUtil::CopyFile(csString from, csString to, bool vfsPath, bool executabl
         csRef<iDataBuffer> buff = vfs->GetRealPath(to);
         if(!buff)
         {
-            printf("Couldn't get the real filename for %s!\n",to.GetData());
+            if(!silent)
+                printf("Couldn't get the real filename for %s!\n",to.GetData());
             return false;
         }
 
@@ -169,7 +166,8 @@ bool FileUtil::CopyFile(csString from, csString to, bool vfsPath, bool executabl
     FileStat* stat = StatFile(file);
     if(stat && stat->readonly)
     {
-        printf("Won't write to %s, because it's readonly\n",file.GetData());
+        if(!silent)
+            printf("Won't write to %s, because it's readonly\n",file.GetData());
         return true; // Return true to bypass DLL checks and stuff
     }
 
@@ -188,13 +186,15 @@ bool FileUtil::CopyFile(csString from, csString to, bool vfsPath, bool executabl
 
     if (!buffer)
     {
-        printf("Couldn't read file %s!\n",n1.GetData());
+        if(!silent)
+            printf("Couldn't read file %s!\n",n1.GetData());
         return false;
     }
 
     if (!vfs->WriteFile(n2.GetData(), buffer->GetData(), buffer->GetSize() ) )
     {
-        printf("Couldn't write to %s!\n", n2.GetData());
+        if(!silent)
+            printf("Couldn't write to %s!\n", n2.GetData());
         return false;
     }
 
@@ -204,7 +204,7 @@ bool FileUtil::CopyFile(csString from, csString to, bool vfsPath, bool executabl
     {
         csString real(to);
         real.FindReplace("/this/", "./");
-        if(chmod(real.GetData(), S_IRUSR | S_IWUSR | S_IXUSR | S_IRGRP | S_IXGRP) == -1)
+        if(!silent && chmod(real.GetData(), S_IRUSR | S_IWUSR | S_IXUSR | S_IRGRP | S_IXGRP) == -1)
             printf("Failed to set permissions on file %s.\n", real.GetData());
     }
 #endif

@@ -368,6 +368,22 @@ bool UpdaterEngine::selfUpdate(int selfUpdating)
             fileUtil->RemoveFile(appName.GetData());
             fileUtil->CopyFile(tempName.GetData(), appName.GetData(), false, true);
 
+            // Copy any art work and data.
+            csString zip = appName;
+            zip.AppendFmt(config->GetCurrentConfig()->GetPlatform());
+            zip.AppendFmt(".zip");
+            vfs->Mount("/zip", zip.GetData());
+
+            csString artPath = "/art/";
+            artPath.AppendFmt("%s.zip", appName);
+            fileUtil->CopyFile("/zip" + artPath, artPath, false, false, true);
+
+            csString dataPath = "/data/gui/";
+            dataPath.AppendFmt("%s.xml", appName);
+            fileUtil->CopyFile("/zip" + dataPath, dataPath, false, false, true);
+
+            vfs->Unmount("/zip", zip.GetData());
+
             // Create a new process of the updater.
             CreateProcess(appName.GetData(), "selfUpdateSecond", 0, 0, false, CREATE_DEFAULT_ERROR_MODE, 0, 0, &siStartupInfo, &piProcessInfo);
             return true;
@@ -443,24 +459,6 @@ bool UpdaterEngine::selfUpdate(int selfUpdating)
     // Check what stage of the update we're in.
     switch(selfUpdating)
     {
-    case 1: // We've downloaded the new file and executed it.
-        {
-            printOutput("Copying new files!\n");
-
-            // Construct executable names.
-            csString appName2 = appName;
-            appName2.AppendFmt("2");
-
-
-            // Delete the old updater file and copy the new in place.
-            fileUtil->RemoveFile(appName.GetData());
-            fileUtil->CopyFile(appName2.GetData(), appName.GetData(), false, true);
-
-            // Create a new process of the updater.
-            if(fork() == 0)
-                execl(appName, appName, "selfUpdateSecond", NULL);
-            return true;
-        }
     case 2: // We're now running the new updater in the correct location.
         {
             // Clean up left over files.
@@ -473,9 +471,6 @@ bool UpdaterEngine::selfUpdate(int selfUpdating)
 
             // Remove updater zip.
             fileUtil->RemoveFile(zip); 
-
-            // Remove temp updater file.
-            fileUtil->RemoveFile(appName + "2");            
 
             return false;
         }
@@ -509,18 +504,37 @@ bool UpdaterEngine::selfUpdate(int selfUpdating)
                 return false;
             }
 
-            // md5sum is correct, mount zip and copy file.
+            // Mount zip.
             vfs->Mount("/zip", zip.GetData());
-            csString from = "zip/";
-            from.AppendFmt(appName);
-            appName.AppendFmt("2");
 
-            fileUtil->CopyFile(from, "/this/" + appName, true, true);
+            csString realName = appName;
+#if defined(CS_PLATFORM_MACOSX)
+            realName.Append(".dmg");
+#else
+            realName.Append(".bin");
+#endif
+            // Remove old updater.
+            csString cmd = "";
+            cmd.AppendFmt("rm -Rf %s", realName);
+            system(cmd.GetData());
+
+            // Copy new one into place.
+            cmd.Clear();
+            cmd.AppendFmt("cp -Rf zip/* .");
+            system(cmd.GetData());
+
+            // Unmount zip.
             vfs->Unmount("/zip", zip.GetData());
 
-            // Create a new process of the updater.
+            // Create a new process of the updater and exit.
+#if defined(CS_PLATFORM_MACOSX)
+            cmd.Clear();
+            cmd.AppendFmt("open -a ./%s selfUpdateSecond", realName);
+            system(cmd);
+#else
             if(fork() == 0)
-                execl(appName, appName, "selfUpdateFirst", NULL);
+                execl(appName, appName, "selfUpdateSecond", NULL);
+#endif
             return true;
         }
     }

@@ -160,9 +160,9 @@ bool psLauncherGUI::InitApp()
     paws->LoadSound("/planeshift/art/music/gui/ccreate/next.wav","sound.standardButtonClick");
 
     // Load widgets
-    if (!paws->LoadWidget("data/gui/launcherwindow.xml"))
+    if (!paws->LoadWidget("data/gui/pslaunch.xml"))
     {
-        printf("Warning: Loading 'data/gui/launcherwindow.xml' failed!");
+        printf("Warning: Loading 'data/gui/pslaunch.xml' failed!");
         return false;
     }
 
