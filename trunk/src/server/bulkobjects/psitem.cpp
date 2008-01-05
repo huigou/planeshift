@@ -844,7 +844,7 @@ float psItem::AddDecay(float severityFactor)
 int psItem::GetRequiredRepairTool()
 {
     if (GetCategory())
-        return GetCategory()->repair_tool_stat_id;
+        return GetCategory()->repairToolStatId;
     else
         return 0;
 }
@@ -852,7 +852,7 @@ int psItem::GetRequiredRepairTool()
 bool psItem::GetRequiredRepairToolConsumed()
 {
     if (GetCategory())
-        return GetCategory()->repair_tool_consumed;
+        return GetCategory()->repairToolConsumed;
     else
         return false;
 }
@@ -1782,8 +1782,7 @@ double psItem::GetProperty(const char *ptr)
     }
     else if (!strcasecmp(ptr,"RequiredRepairSkill"))
     {
-//        printf("%s=%d\n",ptr,base_stats->GetCategory()->repair_skill_id);
-        return base_stats->GetCategory()->repair_skill_id;
+        return base_stats->GetCategory()->repairSkillId;
     }
     else if (!strcasecmp(ptr,"SalePrice"))
     {
