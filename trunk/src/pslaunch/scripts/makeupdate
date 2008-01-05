@@ -71,7 +71,12 @@ do
   done
   if [ $new == 1 ]
   then
-    echo "    <newfile name=\""$1$i"\" />" >> $OUTPUTDIR/newfiles.xml
+    EXEC=false
+    if [ -x $NEWPATH/$1$i ]
+    then
+      EXEC=true
+    fi
+    echo "    <newfile name=\""$1$i"\" exec=\""$EXEC"\" />" >> $OUTPUTDIR/newfiles.xml
     cp $NEWPATH/$1$i $OUTPUTDIR/$1$i
   fi
 done
