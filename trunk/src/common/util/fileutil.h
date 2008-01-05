@@ -84,6 +84,9 @@ public:
         CopyFile(from, to, vfsPath, executable);
         RemoveFile(from);
     }
+
+    /* Returns true is the file at the specified path is executable. */
+    bool isExecutable(const char* path);
 };
 
 #endif // __FILEUTIL_H__

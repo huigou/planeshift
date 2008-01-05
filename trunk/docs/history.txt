@@ -1,3 +1,11 @@
+*** 2008-01-05 by Mike Gist
+- Pushed CS revision to r28403.
+- Cleaned up vfs.cfg
+- Some updater script fixes.
+- Warning fixes.
+- Added detection of executables and symlinks to fileutils.
+- Made exec detection for changed files client side.
+
 *** 2008-01-04 by Andrew Craig
 - Some more cleanups of CEL on the client. 
 

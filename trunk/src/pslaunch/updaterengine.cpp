@@ -650,12 +650,10 @@ void UpdaterEngine::generalUpdate()
             {
                 csRef<iDocumentNode> next = nodeItr->Next();
 
-                // Skip if it's an executable and we're not updating those.
-                bool exec = next->GetAttributeValueAsBool("exec");
-                if(exec && !config->UpdateExecs())
-                  continue;
-
                 csString newFilePath = next->GetAttributeValue("filepath");
+                if(!config->UpdateExecs() && fileUtil->isExecutable(newFilePath))
+                    continue;
+
                 csString diff = next->GetAttributeValue("diff");
                 csString oldFilePath = newFilePath;
                 oldFilePath.AppendFmt(".old");
