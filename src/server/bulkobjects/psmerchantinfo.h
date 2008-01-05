@@ -35,16 +35,12 @@
 
 struct psItemCategory
 {
-    /// Unique identifier for the category
-    unsigned int id;
-    /// Human readable name of category
-    csString     name;
-    /// Item_stats id of item required to do a repair on this category.
-    unsigned int repair_tool_stat_id;
-    /// Flag to tell us whether the repair tool is consumed in the repair or not.  (Kit or Tool)
-    bool         repair_tool_consumed;
-    /// ID of skill which is used to calculate result of repair
-    int          repair_skill_id;
+    
+    unsigned int id;                 ///< Unique identifier for the category
+    csString     name;               ///< Human readable name of category
+    unsigned int repairToolStatId;   ///< Item_stats id of item required to do a repair on this category.
+    bool         repairToolConsumed; ///< Flag to tell us whether the repair tool is consumed in the repair or not.  (Kit or Tool)
+    int          repairSkillId;      ///< ID of skill which is used to calculate result of repair
 };
 
 
@@ -52,11 +48,19 @@ struct psItemCategory
 class psMerchantInfo : public csRefCount
 {
 public:
+    /** A character is defined to be a merchant if there are
+    * merchant item categories for the character.
+    * 
+    * @param characterid The characterid to check.
+    * @return Return true if the character is a merchant.
+    */
     bool Load(unsigned int characterid);
-    csArray<psItemCategory*> categories;
     
     psItemCategory * FindCategory(int id);
     psItemCategory * FindCategory(const csString & name);
+    
+    csArray<psItemCategory*> categories;
+    
 };
 
 #endif

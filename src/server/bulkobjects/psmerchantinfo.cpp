@@ -38,36 +38,30 @@
 #include "psmerchantinfo.h"
 
 
-
-/**
- * A character is defined to be a merchant if there are
- * merchant item categories for the character.
- *
- * @return Return true if the character is a merchant.
- */
 bool psMerchantInfo::Load(unsigned int characterid)
 {
-    bool isMerchant = false;
+    bool is_merchant = false;
     
-    Result merchantCategories(db->Select("SELECT * from merchant_item_categories where player_id=%u",characterid));
-    if (merchantCategories.IsValid())
+    Result merchant_categories(db->Select("SELECT * from merchant_item_categories where player_id=%u",characterid));
+    if (merchant_categories.IsValid())
     {
-        int i,count=merchantCategories.Count();
+        int i;
+        int count=merchant_categories.Count();
 
         for (i=0;i<count;i++)
         {
-            psItemCategory * category = FindCategory(atoi(merchantCategories[i]["category_id"]));
+            psItemCategory * category = FindCategory(atoi(merchant_categories[i]["category_id"]));
             if (!category)
             {
                 Error1("Error! Category could not be loaded. Skipping.\n");
                 continue;
             }
             categories.Push(category);
-            isMerchant = true;
+            is_merchant = true;
         }
     }
 
-    return isMerchant;
+    return is_merchant;
 }
 
 psItemCategory * psMerchantInfo::FindCategory(int id)

@@ -1946,10 +1946,10 @@ bool CacheManager::PreloadItemCategories()
 
             category->id                   = categories[i].GetInt("category_id");
             category->name                 = categories[i]["name"];
-            category->repair_tool_stat_id  = categories[i].GetInt("item_stat_id_repair_tool");
+            category->repairToolStatId  = categories[i].GetInt("item_stat_id_repair_tool");
             const char *flag = categories[i]["is_repair_tool_consumed"];
-            category->repair_tool_consumed = (flag && flag[0]=='Y');
-            category->repair_skill_id      = categories[i].GetInt("skill_id_repair");
+            category->repairToolConsumed = (flag && flag[0]=='Y');
+            category->repairSkillId      = categories[i].GetInt("skill_id_repair");
 
             itemCategoryList.Push(category);
          }
