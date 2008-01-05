@@ -132,7 +132,7 @@ INSERT INTO common_strings VALUES("108","dermm");
 INSERT INTO common_strings VALUES("109","attack");
 INSERT INTO common_strings VALUES("110","greet");
 INSERT INTO common_strings VALUES("111","items#chest");
-INSERT INTO common_strings VALUES("112","/this/art/gui/chest.dds");
+INSERT INTO common_strings VALUES("112","/planeshift/items/chest.dds");
 INSERT INTO common_strings VALUES("113","weapons#longsword01a");
 INSERT INTO common_strings VALUES("114","/planeshift/weapons/longsword01a_icon.dds");
 INSERT INTO common_strings VALUES("115","items#circle01a");
