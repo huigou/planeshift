@@ -381,7 +381,7 @@ void psWorkManager::HandleRepair(Client *client, psWorkCmdMessage &msg)
     // if the item is low cost, allow people to try repair anyway
     if (repairTarget->GetPrice().GetTotal()<300)
         rankneeded = 0;
-    int skillid = repairTarget->GetBaseStats()->GetCategory()->repair_skill_id;
+    int skillid = repairTarget->GetBaseStats()->GetCategory()->repairSkillId;
     int repairskillrank = client->GetCharacterData()->GetSkills()->GetSkillRank(PSSKILL(skillid));
     if (repairskillrank<rankneeded)
     {
@@ -510,7 +510,7 @@ void psWorkManager::HandleRepairEvent(psWorkGameEvent* workEvent)
 //    printf("Item quality now %1.2f\n", repairTarget->GetItemQuality() );
 
   // assign practice points
-    int skillid = repairTarget->GetBaseStats()->GetCategory()->repair_skill_id;
+    int skillid = repairTarget->GetBaseStats()->GetCategory()->repairSkillId;
     psSkillInfo *skill = CacheManager::GetSingleton().GetSkillByID((PSSKILL)skillid);
     if (skill)
     {
