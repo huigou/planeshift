@@ -49,8 +49,6 @@
 #include "ivaria/mapnode.h"
 
 #include <imesh/thing.h>
-#include <csgeom/polymesh.h>
-#include <igeom/polymesh.h>
 #include <imesh/objmodel.h>
 #include <igeom/path.h>
 #include <csgeom/path.h>

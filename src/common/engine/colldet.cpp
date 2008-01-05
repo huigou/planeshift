@@ -45,8 +45,6 @@
 
 #include <imesh/thing.h>
 #include <imesh/terrain.h>
-#include <csgeom/polymesh.h>
-#include <igeom/polymesh.h>
 #include <imesh/objmodel.h>
 
 
