@@ -1,6 +1,6 @@
 <widget_description>
 
-<widget name="launcher" factory="pawsLauncherWindow" visible="yes" savepositions="no" movable="no" resizable="no">
+<widget name="launcher" factory="pawsLauncherWindow" visible="yes" savepositions="no" movable="no" resizable="no" resizetoscreen="yes" >
         
     <bgimage resource="SetupBackground" alpha="255" fade="false"/>
 

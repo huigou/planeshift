@@ -5,6 +5,7 @@
 - Warning fixes.
 - Added detection of executables and symlinks to fileutils.
 - Made exec detection for changed files client side.
+- Improvements to the updater self-update code.
 
 *** 2008-01-04 by Andrew Craig
 - Some more cleanups of CEL on the client. 

@@ -62,21 +62,20 @@ public:
     FileUtil(csRef<iVFS> vfs);
     ~FileUtil();
     /* Tests if the file exists and returns data about the file. */
-    csRef<FileStat> StatFile (const char* path);
+    csRef<FileStat> StatFile(const char* path);
 
-    void RemoveFile (const char* filename);
+    bool RemoveFile(const char* filename, bool silent = false);
 
     /* Convert path to system specific path (for example changes / into \ on
     * win32). The result has to be free with delete[]. */
-    char* ConvertToSystemPath (const char* path);
+    char* ConvertToSystemPath(const char* path);
 
     /* Creates a directory.
     * directory is interpreted as relative to /this/, i.e. not absolute. */
-    void MakeDirectory (const char* directory);
+    void MakeDirectory(const char* directory);
 
     /* Copies a file. */
-    bool CopyFile(csString from, csString to, bool vfsPath, bool executable);
-
+    bool CopyFile(csString from, csString to, bool vfsPath, bool executable, bool silent = false);
 
     /* Moves a file */
     inline void MoveFile(csString from, csString to, bool vfsPath, bool executable)
