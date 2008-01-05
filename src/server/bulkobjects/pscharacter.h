@@ -235,9 +235,6 @@ enum PSCHARACTER_WORKSTATE
 /// Set if this slot can attack even when empty - requires that a default psItem be set in default_if_empty
 #define PSCHARACTER_EQUIPMENTFLAG_ATTACKIFEMPTY    0x00000004
 
-struct iDataBuffer;
-struct iPcCharacterData;
-
 // Dirty bits for STATDRDATA
 //#define PSCHARACTER_STATDRDATA_DIRTY_HITPOINTS      0x00000001
 //#define PSCHARACTER_STATDRDATA_DIRTY_HITPOINTS_MAX  0x00000002

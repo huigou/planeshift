@@ -48,8 +48,6 @@ struct iCelPlLayer;
 struct iCelEntityList;
 struct iCelEntity;
 struct iPcLinearMovement;
-struct iPcNPCDialog;
-struct iPcCharacterData;
 struct iPcMesh;
 struct iMeshWrapper;
 
