@@ -515,7 +515,7 @@ bool UpdaterEngine::selfUpdate(int selfUpdating)
 #endif
             // Remove old updater.
             csString cmd = "";
-            cmd.AppendFmt("rm -Rf %s", realName);
+            cmd.AppendFmt("rm -Rf %s", realName.GetData());
             system(cmd.GetData());
 
             // Copy new one into place.
@@ -529,7 +529,7 @@ bool UpdaterEngine::selfUpdate(int selfUpdating)
             // Create a new process of the updater and exit.
 #if defined(CS_PLATFORM_MACOSX)
             cmd.Clear();
-            cmd.AppendFmt("open -a ./%s selfUpdateSecond", realName);
+            cmd.AppendFmt("open -a ./%s selfUpdateSecond", realName.GetData());
             system(cmd);
 #else
             if(fork() == 0)
