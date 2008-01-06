@@ -612,16 +612,45 @@ psPetitionMessage::psPetitionMessage(uint32_t clientnum, csArray<psPetitionInfo>
                      bool succeed, int type, bool gm)
 {
     size_t petitionLen = (petition != NULL ? petition->GetSize():0);
-    size_t maxPetitionTextLen = 0;
+    size_t messageSize = 0;
+    size_t errLen = 0;
+    if ( errMsg )
+    {
+        errLen = strlen(errMsg)+1;
+    }
+    psPetitionInfo *curr;
+    
     for (size_t i = 0; i < petitionLen; i++)
     {
-        size_t len = (&petition->Get(i))->petition.Length();
-        if (len > (size_t)maxPetitionTextLen)
-            maxPetitionTextLen = len;
+        curr = &petition->Get(i);
+        
+        messageSize+= sizeof(int32_t);                       // Petition ID
+        messageSize+= curr->petition.Length()+1;      // Petition String
+        messageSize+= curr->status.Length()+1;        // Petition status string
+        if ( !gm )
+        {
+            messageSize+=curr->created.Length()+1;
+            messageSize+=curr->assignedgm.Length()+1;
+            messageSize+=curr->resolution.Length()+1;
+        }            
+        else
+        {
+            messageSize+=sizeof(int32_t);
+            messageSize+=curr->created.Length()+1;
+            messageSize+=curr->player.Length()+1;            
+        }
     }
 
-    msg = new MsgEntry(sizeof(int32_t) + (maxPetitionTextLen + 250)* (petitionLen+1) + sizeof(errMsg) +
-            sizeof(succeed) + sizeof(int32_t) + sizeof(gm));
+    msg = new MsgEntry(  sizeof(int32_t)+                             // int32_t pettionLen
+                         sizeof(gm)     +                             // Space for boolean GM flag.
+                         messageSize    +                             // Space for all petitions
+                         errLen         +                             // Space for error message.
+                         sizeof(succeed)+                             // Space for success boolean
+                         sizeof(int32_t) );                           // Space for type int32_t
+                         
+                                 
+     //+ (maxPetitionTextLen + 250)* (petitionLen+1) + sizeof(errMsg) +
+     //       sizeof(succeed) + sizeof(int32_t) + sizeof(gm));
 
     msg->SetType(MSGTYPE_PETITION);
     msg->clientnum      = clientnum;
@@ -642,7 +671,7 @@ psPetitionMessage::psPetitionMessage(uint32_t clientnum, csArray<psPetitionInfo>
         {
             msg->Add(current->created.GetData());
             msg->Add(current->assignedgm.GetData());
-			msg->Add(current->resolution.GetData());
+            msg->Add(current->resolution.GetData());
         }
         else
         {
