@@ -193,7 +193,7 @@ bool psTribe::CheckAttach(NPC * npc)
     }
     for (size_t i=0; i < members.GetSize(); i++)
     {
-        if (npc->GetName() == members[i]->GetName() &&
+        if (strcmp(npc->GetName(),members[i]->GetName())==0 &&
             npc->GetPID() != members[i]->GetPID())
         {
             AttachMember(npc);

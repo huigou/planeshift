@@ -652,14 +652,14 @@ void psNPCClient::AttachNPC( gemNPCActor* actor, uint8_t DRcounter)
     if ( !npc )
     {
         CPrintf(CON_NOTIFY,"NPC %s (PID: %u) was not found in scripted npcs for this npcclient.\n",
-                actor->GetName().GetData(), actor->GetPlayerID() );
+                actor->GetName(), actor->GetPlayerID() );
         return;
     }
 
     if(npc->GetEntity() != NULL)
     {
         CPrintf(CON_NOTIFY,"NPC '%s' (PID: %u) (EID: %u) is already assigned EID: %u named '%s'.\n",
-                actor->GetName().GetData(), actor->GetPlayerID(), actor->GetEntity()->GetID(),
+                actor->GetName(), actor->GetPlayerID(), actor->GetEntity()->GetID(),
                 npc->GetEntity()->GetID(), npc->GetName() );
     }
 
@@ -672,7 +672,7 @@ void psNPCClient::AttachNPC( gemNPCActor* actor, uint8_t DRcounter)
 
     CheckAttachTribes(npc);
 
-    npc->Printf("We are now managing NPC: %s(PID: %u) EID: %u.\n", actor->GetName().GetData(),
+    npc->Printf("We are now managing NPC: %s(PID: %u) EID: %u.\n", actor->GetName(),
                 actor->GetPlayerID(), actor->GetEntity()->GetID());
 
     // Test if this actor is in a valid starting position.
@@ -846,7 +846,7 @@ void psNPCClient::Tick()
             if (timeTaken > 250)                      // This took way to long time
             {
                 CPrintf(CON_WARNING,"Used %u time to process tick for tribe: %s(ID: %u)\n",
-                        timeTaken,tribes[j]->GetName().GetDataSafe(),tribes[j]->GetID());
+                        timeTaken,tribes[j]->GetName(),tribes[j]->GetID());
                 ListTribes(tribes[j]->GetName());
             }
         }
@@ -991,7 +991,7 @@ void psNPCClient::AddRaceInfo(csString &name, float walkSpeed, float runSpeed)
     raceInfos.PutUnique(name,ri);
 }
 
-RaceInfo_t * psNPCClient::GetRaceInfo(csString &name)
+RaceInfo_t * psNPCClient::GetRaceInfo(const char *name)
 {
     return raceInfos.GetElementPointer(name); 
 }
@@ -1132,26 +1132,23 @@ csList<Waypoint*> psNPCClient::FindWaypointRoute(Waypoint * start, Waypoint * en
 
 void psNPCClient::ListAllNPCs(const char * pattern)
 {
-    CPrintf(CON_CMDOUTPUT, "%-7s %-5s %-30s %-6s %-6s %-20s %-15s %-4s %-20s %-20s %-20s %-3s %-8s\n", 
-            "NPC ID", "EID", "Name", "Entity", "Status", "Brain","Behaviour","Step","Owner","Tribe","Region","Dbg","Disabled");
+    CPrintf(CON_CMDOUTPUT, "%-7s %-5s %-30s %-6s %-6s %-20s %-20s %-4s %-3s %-8s\n", 
+            "NPC ID", "EID", "Name", "Entity", "Status", "Brain","Behaviour","Step","Dbg","Disabled");
     for (size_t i = 0; i < npcs.GetSize(); i++)
     {
         if (!pattern || strstr(npcs[i]->GetName(),pattern))
         {
-            CPrintf(CON_CMDOUTPUT, "%-7u %-5d %-30s %-6s %-6s %-20s %-15s %4d %-20s %-20s %-20s %-3s %-8s\n" ,
+            CPrintf(CON_CMDOUTPUT, "%-7u %-5d %-30s %-6s %-6s %-20s %-20s %4d %-3s %-8s\n" ,
                     npcs[i]->GetPID(),
                     (npcs[i]->GetEntity()?npcs[i]->GetEntity()->GetID():0),
                     npcs[i]->GetName(),
                     (npcs[i]->GetEntity()?"Entity":"None  "),
                     (npcs[i]->IsAlive()?"Alive":"Dead"),
-                    (npcs[i]->GetBrain()?npcs[i]->GetBrain()->GetName().GetDataSafe():"(None)"),
+                    (npcs[i]->GetBrain()?npcs[i]->GetBrain()->GetName():"(None)"),
                     (npcs[i]->GetCurrentBehavior()?npcs[i]->GetCurrentBehavior()->GetName():"(None)"),
                     (npcs[i]->GetCurrentBehavior()?npcs[i]->GetCurrentBehavior()->GetCurrentStep():0),
-                    npcs[i]->GetOwnerName().GetDataSafe(),
-                    (npcs[i]->GetTribe()?npcs[i]->GetTribe()->GetName().GetDataSafe():"(None)"),
-                    (npcs[i]->GetRegion()?npcs[i]->GetRegion()->name.GetDataSafe():"(None)"),
                     (npcs[i]->IsDebugging()?"Yes":"No"),
-                    (npcs[i]->IsDisabled()?"Disabled":"")
+                    (npcs[i]->IsDisabled()?"Disabled":"Aktive")
                     );
         }
     }
@@ -1208,13 +1205,13 @@ void psNPCClient::ListAllEntities(const char * pattern, bool onlyCharacters)
             if(!actor)
                 continue;
 
-            if (!pattern || strstr(actor->GetName().GetData(),pattern))
+            if (!pattern || strstr(actor->GetName(),pattern))
             {
                 CPrintf(CON_CMDOUTPUT, "%-9d %-5d %-10s %-30s %-3s %-3s\n",
                         actor->GetPlayerID(),
                         actor->GetEntity()->GetID(),
                         actor->GetObjectType(),
-                        actor->GetName().GetData(),
+                        actor->GetName(),
                         (actor->IsVisible()?"Yes":"No"),
                         (actor->IsInvincible()?"Yes":"No"));
             }
@@ -1233,12 +1230,12 @@ void psNPCClient::ListAllEntities(const char * pattern, bool onlyCharacters)
         iSector *sector;
         psGameObject::GetPosition(ent,pos,rot,sector);
 
-        if (!pattern || strstr(obj->GetName().GetData(),pattern))
+        if (!pattern || strstr(obj->GetName(),pattern))
         {
             CPrintf(CON_CMDOUTPUT, "%5d %-10s %-30s %-3s %-3s %-4s %s\n",
                     ent->GetID(),
                     obj->GetObjectType(),
-                    obj->GetName().GetData(),
+                    obj->GetName(),
                     (obj->IsVisible()?"Yes":"No"),
                     (obj->IsInvincible()?"Yes":"No"),
                     (obj->IsPickable()?"Yes":"No"),
@@ -1253,7 +1250,7 @@ void psNPCClient::ListTribes(const char * pattern)
     CPrintf(CON_CMDOUTPUT, "%9s %-30s %-7s %-7s %7s %7s %7s %7s %-15s \n", "Tribe id", "Name", "MCount","NPCs","x","y","z","r","sector");
     for (size_t i = 0; i < tribes.GetSize(); i++)
     {
-        if (!pattern || strstr(tribes[i]->GetName().GetData(),pattern))
+        if (!pattern || strstr(tribes[i]->GetName(),pattern))
         {
             csVector3 pos;
             iSector* sector;
@@ -1261,7 +1258,7 @@ void psNPCClient::ListTribes(const char * pattern)
             tribes[i]->GetHome(pos,radius,sector);
             CPrintf(CON_CMDOUTPUT, "%9d %-30s %-7d %-7d %7.1f %7.1f %7.1f %7.1f %-15s\n" ,
                     tribes[i]->GetID(),
-                    tribes[i]->GetName().GetDataSafe(),
+                    tribes[i]->GetName(),
                     tribes[i]->GetMemberIDCount(),
                     tribes[i]->GetMemberCount(),
                     pos.x,pos.y,pos.z,radius,(sector?sector->QueryObject()->GetName():"(null)"));
@@ -1279,10 +1276,10 @@ void psNPCClient::ListTribes(const char * pattern)
                         npc->GetName(),
                         (npc->GetEntity()?"Entity":"None  "),
                         (npc->IsAlive()?"Alive":"Dead"),
-                        (npc->GetBrain()?npc->GetBrain()->GetName().GetDataSafe():""),
+                        (npc->GetBrain()?npc->GetBrain()->GetName():""),
                         (npc->GetCurrentBehavior()?npc->GetCurrentBehavior()->GetName():""),
-                        npc->GetOwnerName().GetDataSafe(),
-                        (npc->GetTribe()?npc->GetTribe()->GetName().GetDataSafe():"")
+                        npc->GetOwnerName(),
+                        (npc->GetTribe()?npc->GetTribe()->GetName():"")
                         );
             }
             CPrintf(CON_CMDOUTPUT,"Resources:\n");

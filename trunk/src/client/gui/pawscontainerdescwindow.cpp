@@ -102,11 +102,15 @@ void pawsContainerDescWindow::HandleUpdateItem( MsgEntry* me )
     // them or not.  This is double checked on the server if someone tries to move an item,
     // so hacking this to override just breaks the display, but does not enable a cheat.
     if (mesg.ownerID && mesg.ownerID != psengine->GetCelClient()->GetMainPlayer()->GetID())
+    {
         mesg.stackCount = -1; // hardcoded signal that item is not owned by this player
+    }
 
     sigData.Format("invslot_%d", mesg.containerID * 100 + mesg.slotID + 16);
     if (!mesg.clearSlot)
+    {
         data.Format("%s %d %d %s", mesg.icon.GetData(), mesg.stackCount, 0, mesg.name.GetData());
+    }
 
     printf("Got item update for %s: %s\n", sigData.GetDataSafe(), data.GetDataSafe() );
 

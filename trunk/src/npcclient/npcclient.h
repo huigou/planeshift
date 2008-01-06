@@ -214,7 +214,7 @@ public:
     /**
      * Get pointer to a race info to the given race name.
      */
-    RaceInfo_t* GetRaceInfo(csString &name);
+    RaceInfo_t* GetRaceInfo(const char* name);
 
     /**
      * Dump all race infos

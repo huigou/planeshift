@@ -108,7 +108,7 @@ void pawsLootWindow::HandleMessage ( MsgEntry* me )
             // Get the petition message data from the server
             psLootMessage message(me);
 
-            loot_entity = message.entity_id;
+            lootEntity = message.entity_id;
 
             // Clear the list box and add the user's petitions
             lootList->Clear();
@@ -183,7 +183,7 @@ bool pawsLootWindow::OnButtonPressed( int mouseButton, int keyModifier, pawsWidg
             {
                 pawsTextBox *field = (pawsTextBox*)row->GetColumn(LCOL_ID);
                 int id = atoi(field->GetText());
-                psLootItemMessage take(0,loot_entity,id,psLootItemMessage::LOOT_SELF);
+                psLootItemMessage take(0,lootEntity,id,psLootItemMessage::LOOT_SELF);
                 msgqueue->SendMessage(take.msg);
             }
             break;
@@ -196,7 +196,7 @@ bool pawsLootWindow::OnButtonPressed( int mouseButton, int keyModifier, pawsWidg
             {
                 pawsTextBox *field = (pawsTextBox*)row->GetColumn(LCOL_ID);
                 int id = atoi(field->GetText());
-                psLootItemMessage take(0,loot_entity,id,psLootItemMessage::LOOT_ROLL);
+                psLootItemMessage take(0,lootEntity,id,psLootItemMessage::LOOT_ROLL);
                 msgqueue->SendMessage(take.msg);
             }
             break;
