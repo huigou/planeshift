@@ -4312,13 +4312,13 @@ csString psDRMessage::ToString(AccessPointers * /*access_ptrs*/)
 
 //--------------------------------------------------------------------------
 
-PSF_IMPLEMENT_MSG_FACTORY(psPersistWorldRequest,MSGTYPE_PERSIST_WORLD);
+PSF_IMPLEMENT_MSG_FACTORY(psPersistWorldRequest,MSGTYPE_PERSIST_WORLD_REQUEST);
 
 psPersistWorldRequest::psPersistWorldRequest()
 {
     msg = new MsgEntry();
 
-    msg->SetType(MSGTYPE_PERSIST_WORLD);
+    msg->SetType(MSGTYPE_PERSIST_WORLD_REQUEST);
     msg->clientnum  = 0;
 }
 

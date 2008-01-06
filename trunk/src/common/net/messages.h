@@ -42,7 +42,7 @@ struct iEngine;
 
 // This holds the version number of the network code, remember to increase
 // this each time you do an update which breaks compatibility
-#define PS_NETVERSION   0x0081
+#define PS_NETVERSION   0x0082
 // Remember to bump the version in pscssetup.h, as well.
 
 // NPC Networking version is separate so we don't have to break compatibility
@@ -187,12 +187,14 @@ enum MSG_TYPES
     MSGTYPE_CHAR_CREATE_UPLOAD,
     MSGTYPE_CHAR_CREATE_VERIFY,
     MSGTYPE_CHAR_CREATE_NAME,
+    MSGTYPE_PERSIST_WORLD_REQUEST,
     MSGTYPE_PERSIST_WORLD,
+    MSGTYPE_PERSIST_ACTOR_REQUEST,
     MSGTYPE_PERSIST_ACTOR,
     MSGTYPE_PERSIST_ITEM,
-    MSGTYPE_PERSIST_ACTIONLOCATION,
+    MSGTYPE_PERSIST_ACTIONLOCATION, // 120
     MSGTYPE_PERSIST_ALL,
-    MSGTYPE_REMOVE_OBJECT,      // 120
+    MSGTYPE_REMOVE_OBJECT,
     MSGTYPE_CHANGE_TRAIT,
 
     // Internal Server Events here
@@ -202,12 +204,12 @@ enum MSG_TYPES
     MSGTYPE_ZPOINT_EVENT,
     MSGTYPE_BUY_EVENT,
     MSGTYPE_SELL_EVENT,
-    MSGTYPE_CONNECT_EVENT,
+    MSGTYPE_CONNECT_EVENT,  // 130
     MSGTYPE_MOVEMENT_EVENT,
     MSGTYPE_GENERIC_EVENT, // catchall for many Tutorial Events
 
     // Sound Events here
-    MSGTYPE_SOUND_EVENT, // 131
+    MSGTYPE_SOUND_EVENT,
 
     // Char creation message
     MSGTYPE_CHAR_CREATE_TRAITS,
@@ -220,9 +222,8 @@ enum MSG_TYPES
 
     MSGTYPE_CRAFT_INFO,
 
-    MSGTYPE_PETITION_REQUEST,
+    MSGTYPE_PETITION_REQUEST,  // 140
     MSGTYPE_HEART_BEAT,
-    MSGTYPE_PERSIST_ACTOR_REQUEST, // 140
     MSGTYPE_NPC_COMMAND,
 
     // Minigame messages
@@ -238,9 +239,9 @@ enum MSG_TYPES
     MSGTYPE_GMEVENT_INFO,
 
     MSGTYPE_SEQUENCE,
-    MSGTYPE_NPCRACELIST,
+    MSGTYPE_NPCRACELIST,         // 150
 
-    MSGTYPE_INTRODUCTION         // 150
+    MSGTYPE_INTRODUCTION
 };
 
 class psMessageCracker;

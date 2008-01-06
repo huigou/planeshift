@@ -68,7 +68,7 @@ bool Reaction::Load(iDocumentNode *node,BehaviorSet& behaviors)
     affected = behaviors.Find(name);
     if (!affected)
     {
-        Error2("Reaction specified unknown behavior of '%s'. Error in XML.\n",(const char *)name);
+        Error2("Reaction specified unknown behavior of '%s'. Error in XML.",(const char *)name);
         return false;
     }
 
@@ -528,7 +528,7 @@ bool SpellPerception::ShouldReact(Reaction *reaction,NPC *npc)
 
     if (event == reaction->GetEventType())
     {
-        npc->Printf(15, "%s spell cast by %s on %s, severity %1.1f.\n",
+        npc->Printf(15, "%s spell cast by %s on %s, severity %1.1f.",
             event.GetData(), (caster)?caster->GetName():"(Null caster)", (target)?target->GetName():"(Null target)", spell_severity);
 
         return true;
@@ -718,6 +718,8 @@ Perception *OwnerCmdPerception::MakeCopy()
 
 void OwnerCmdPerception::ExecutePerception( NPC *pet, float weight )
 {
+    pet->SetTarget(target);
+    
     switch ( this->command )
     {
     case psPETCommandMessage::CMD_SUMMON : // Summon
@@ -820,12 +822,12 @@ bool NPCCmdPerception::ShouldReact( Reaction *reaction, NPC *npc )
 
     if (strcasecmp(global_event,reaction->GetEventType()) == 0)
     {
-        npc->Printf(15,"Matched reaction '%s' to perception '%s'.\n",reaction->GetEventType(), global_event.GetData() );
+        npc->Printf(15,"Matched reaction '%s' to perception '%s'.",reaction->GetEventType(), global_event.GetData() );
         return true;
     }
     else
     {
-        npc->Printf(16,"No matched reaction '%s' to perception '%s'.\n",reaction->GetEventType(), global_event.GetData() );
+        npc->Printf(16,"No matched reaction '%s' to perception '%s'.",reaction->GetEventType(), global_event.GetData() );
     }
     
 
@@ -834,12 +836,12 @@ bool NPCCmdPerception::ShouldReact( Reaction *reaction, NPC *npc )
 
     if (strcasecmp(self_event,reaction->GetEventType())==0 && npc == self)
     {
-        npc->Printf(15,"Matched reaction '%s' to perception '%s'.\n",reaction->GetEventType(), self_event.GetData() );
+        npc->Printf(15,"Matched reaction '%s' to perception '%s'.",reaction->GetEventType(), self_event.GetData() );
         return true;
     }
     else
     {
-        npc->Printf(16,"No matched reaction '%s' to perception '%s' for self(%s) with npc(%s).\n",
+        npc->Printf(16,"No matched reaction '%s' to perception '%s' for self(%s) with npc(%s).",
                     reaction->GetEventType(), self_event.GetData(), 
                     self->GetName(), npc->GetName() );
     }
