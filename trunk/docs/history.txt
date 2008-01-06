@@ -1,3 +1,8 @@
+*** 2008-01-05 by Andrew Craig
+- Fixed an issue when building a petition message list.  The message
+ sizes where not calculated correctly can could crash the server
+ by having invalid message.
+
 *** 2008-01-05 by Mike Gist
 - Pushed CS revision to r28403.
 - Cleaned up vfs.cfg
