@@ -114,7 +114,7 @@ do
       then
         mkdir $OUTPUTDIR"/"$1
       fi
-      $XD3PATH -e -9 -s $i $NEWPATH/$1$j $OUTPUTDIR/${path%.*}".vcdiff"
+      $XD3PATH -f -e -9 -s $i $NEWPATH/$1$j $OUTPUTDIR/${path%.*}".vcdiff"
       break;
     else
       break;
@@ -250,83 +250,103 @@ mkdir platform
 mkdir platform/new
 mkdir platform/old
 mv $NEWPATH/win32 platform/new/win32
-mv $NEWPATH/lin32 platform/new/lin32
+mv $NEWPATH/linux32 platform/new/linux32
 mv $NEWPATH/osx platform/new/osx
-mv $NEWPATH/lin64 platform/new/lin64
+mv $NEWPATH/linux64 platform/new/linux64
 mv $OLDPATH/win32 platform/old/win32
-mv $OLDPATH/lin32 platform/old/lin32
+mv $OLDPATH/linux32 platform/old/linux32
 mv $OLDPATH/osx platform/old/osx
-mv $OLDPATH/lin64 platform/old/lin64
+mv $OLDPATH/linux64 platform/old/linux64
 
 echo "Creating 32-bit Linux update."
-zip -9 $REPO/psupdaterlinux32.zip platform/new/lin32/$UPDATERNAME
-cp -R platform/old/lin32/* $OLDPATH
-cp -R platform/new/lin32/* $NEWPATH
+zip -9 $REPO/psupdaterlinux32.zip platform/new/linux32/$UPDATERNAME".bin" platform/new/linux32/$UPDATERNAME
+cp -R platform/old/linux32/* $OLDPATH
+cp -R platform/new/linux32/* $NEWPATH
+if [ -e $OLDPATH/$UPDATERNAME ]
+then
 rm $OLDPATH/$UPDATERNAME
-rm $NEWPATH/$UPDATERNAME
+fi
+if [ -e $OLDPATH/$UPDATERNAME".bin" ]
+then
+  rm $OLDPATH/$UPDATERNAME".bin"
+fi
+rm $NEWPATH/$UPDATERNAME $NEWPATH/$UPDATERNAME".bin"
 createupdate
 cd $OUTPUTDIR
 zip -r -9 $REPO/linux32-"$VERSION".zip *
 cd $OLDPATH
-rm -R $(ls $TOPDIR/platform/old/lin32/)
+rm -Rf $(ls $TOPDIR/platform/old/linux32/)
 cd $NEWPATH
-rm -R $(ls $TOPDIR/platform/new/lin32/)
+rm -Rf $(ls $TOPDIR/platform/new/linux32/)
 cd $TOPDIR
 
 echo "Creating 64-bit Linux update."
-zip -9 $REPO/psupdaterlinux64.zip platform/new/lin64/$UPDATERNAME
-cp -R platform/old/lin64/* $OLDPATH
-cp -R platform/new/lin64/* $NEWPATH
-rm $OLDPATH/$UPDATERNAME
-rm $NEWPATH/$UPDATERNAME
+zip -9 $REPO/psupdaterlinux64.zip platform/new/linux64/$UPDATERNAME".bin" platform/new/linux64/$UPDATERNAME
+cp -R platform/old/linux64/* $OLDPATH
+cp -R platform/new/linux64/* $NEWPATH
+if [ -e $OLDPATH/$UPDATERNAME ]
+then
+  rm $OLDPATH/$UPDATERNAME
+fi
+if [ -e $OLDPATH/$UPDATERNAME".bin" ]
+then
+  rm $OLDPATH/$UPDATERNAME".bin"
+fi
+rm $NEWPATH/$UPDATERNAME $NEWPATH/$UPDATERNAME".bin"
 createupdate
 cd $OUTPUTDIR
 zip -r -9 $REPO/linux64-"$VERSION".zip *
 cd $OLDPATH
-rm -R $(ls $TOPDIR/platform/old/lin64/)
+rm -Rf $(ls $TOPDIR/platform/old/linux64/)
 cd $NEWPATH
-rm -R $(ls $TOPDIR/platform/new/lin64/)
+rm -fR $(ls $TOPDIR/platform/new/linux64/)
 cd $TOPDIR
 
 echo "Creating OSX update."
 zip -r -9 $REPO/psupdatermacosx.zip platform/new/osx/$UPDATERNAME".app"
 cp -R platform/old/osx/* $OLDPATH
 cp -R platform/new/osx/* $NEWPATH
-rm $OLDPATH/$UPDATERNAME
-rm $NEWPATH/$UPDATERNAME
+if [ -d $OLDPATH/$UPDATERNAME ]
+then
+  rm -Rf $OLDPATH/$UPDATERNAME
+fi
+rm -Rf $NEWPATH/$UPDATERNAME
 createupdate
 cd $OUTPUTDIR
 zip -r -9 $REPO/macosx-"$VERSION".zip *
 cd $OLDPATH
-rm -R $(ls $TOPDIR/platform/old/osx/)
+rm -Rf $(ls $TOPDIR/platform/old/osx/)
 cd $NEWPATH
-rm -R $(ls $TOPDIR/platform/new/osx/)
+rm -Rf $(ls $TOPDIR/platform/new/osx/)
 cd $TOPDIR
 
 echo "Creating Windows update."
 zip -9 $REPO/psupdaterwin32.zip platform/new/win32/$UPDATERNAME".exe"
 cp -R platform/old/win32/* $OLDPATH
 cp -R platform/new/win32/* $NEWPATH
-rm $OLDPATH/$UPDATERNAME".exe"
+if [ -e $OLDPATH/$UPDATERNAME".exe" ]
+then
+  rm $OLDPATH/$UPDATERNAME".exe"
+fi
 rm $NEWPATH/$UPDATERNAME".exe"
 createupdate
 cd $OUTPUTDIR
 zip -r -9 $REPO/win32-"$VERSION".zip *
 cd $OLDPATH
-rm -R $(ls $TOPDIR/platform/old/win32/ | grep -v $UPDATERNAME".exe")
+rm -Rf $(ls $TOPDIR/platform/old/win32/ | grep -v $UPDATERNAME".exe")
 cd $NEWPATH
-rm -R $(ls $TOPDIR/platform/new/win32/ | grep -v $UPDATERNAME".exe")
+rm -Rf $(ls $TOPDIR/platform/new/win32/ | grep -v $UPDATERNAME".exe")
 cd $TOPDIR
 
 # Restore platform files and clean up.
 mv platform/new/win32 $NEWPATH/win32
-mv platform/new/lin32 $NEWPATH/lin32
+mv platform/new/linux32 $NEWPATH/linux32
 mv platform/new/osx $NEWPATH/osx
-mv platform/new/lin64 $NEWPATH/lin64
+mv platform/new/linux64 $NEWPATH/linux64
 mv platform/old/win32 $OLDPATH/win32
-mv platform/old/lin32 $OLDPATH/lin32
+mv platform/old/linux32 $OLDPATH/linux32
 mv platform/old/osx $OLDPATH/osx
-mv platform/old/lin64 $OLDPATH/lin64
+mv platform/old/linux64 $OLDPATH/linux64
 rm -Rf platform
 rm -Rf updatefiles
 
