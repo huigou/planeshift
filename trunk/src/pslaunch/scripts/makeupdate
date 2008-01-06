@@ -259,7 +259,9 @@ mv $OLDPATH/osx platform/old/osx
 mv $OLDPATH/linux64 platform/old/linux64
 
 echo "Creating 32-bit Linux update."
-zip -9 $REPO/psupdaterlinux32.zip platform/new/linux32/$UPDATERNAME".bin" platform/new/linux32/$UPDATERNAME
+cd platform/new/linux32
+zip -9 $REPO/psupdaterlinux32.zip $UPDATERNAME".bin" $UPDATERNAME
+cd $TOPDIR
 cp -R platform/old/linux32/* $OLDPATH
 cp -R platform/new/linux32/* $NEWPATH
 if [ -e $OLDPATH/$UPDATERNAME ]
@@ -281,7 +283,9 @@ rm -Rf $(ls $TOPDIR/platform/new/linux32/)
 cd $TOPDIR
 
 echo "Creating 64-bit Linux update."
-zip -9 $REPO/psupdaterlinux64.zip platform/new/linux64/$UPDATERNAME".bin" platform/new/linux64/$UPDATERNAME
+cd platform/new/linux64
+zip -9 $REPO/psupdaterlinux64.zip $UPDATERNAME".bin" $UPDATERNAME
+cd $TOPDIR
 cp -R platform/old/linux64/* $OLDPATH
 cp -R platform/new/linux64/* $NEWPATH
 if [ -e $OLDPATH/$UPDATERNAME ]
@@ -303,7 +307,9 @@ rm -fR $(ls $TOPDIR/platform/new/linux64/)
 cd $TOPDIR
 
 echo "Creating OSX update."
-zip -r -9 $REPO/psupdatermacosx.zip platform/new/osx/$UPDATERNAME".app"
+cd platform/new/osx
+zip -r -9 $REPO/psupdatermacosx.zip $UPDATERNAME".app"
+cd $TOPDIR
 cp -R platform/old/osx/* $OLDPATH
 cp -R platform/new/osx/* $NEWPATH
 if [ -d $OLDPATH/$UPDATERNAME ]
@@ -321,7 +327,9 @@ rm -Rf $(ls $TOPDIR/platform/new/osx/)
 cd $TOPDIR
 
 echo "Creating Windows update."
-zip -9 $REPO/psupdaterwin32.zip platform/new/win32/$UPDATERNAME".exe"
+cd platform/new/win32
+zip -9 $REPO/psupdaterwin32.zip $UPDATERNAME".exe"
+cd $TOPDIR
 cp -R platform/old/win32/* $OLDPATH
 cp -R platform/new/win32/* $NEWPATH
 if [ -e $OLDPATH/$UPDATERNAME".exe" ]
