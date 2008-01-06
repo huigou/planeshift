@@ -120,6 +120,7 @@ bool Downloader::DownloadFile (const char* file, const char* dest, bool URL)
         curl_easy_setopt(curl, CURLOPT_URL, url.GetData());
         curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_data);
         curl_easy_setopt(curl, CURLOPT_WRITEDATA, file);
+        curl_easy_setopt(curl, CURLOPT_FAILONERROR, TRUE);
 
         CURLcode result = curl_easy_perform(curl);
 
