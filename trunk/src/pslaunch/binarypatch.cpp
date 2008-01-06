@@ -34,7 +34,7 @@ extern "C"
 }
 
 /* Helper function for conversion. Not in class to avoid basic type redefinition. */
-int PatchFileHelper(FILE* srcFile, FILE* patchFile, FILE* outFile, int bufferSize)
+int PatchFileHelper(FILE* srcFile, FILE* patchFile, FILE* outFile, unsigned int bufferSize)
 {
     int r, res;
     struct stat statBuffer;
@@ -42,10 +42,12 @@ int PatchFileHelper(FILE* srcFile, FILE* patchFile, FILE* outFile, int bufferSiz
     xd3_config config;
     xd3_source source;
     void* input_Buffer;
-    int input_Buffer_Read;
+    unsigned int input_Buffer_Read;
 
     if (bufferSize < XD3_ALLOCSIZE)
+    {
         bufferSize = XD3_ALLOCSIZE;
+    }
 
     memset (&stream, 0, sizeof (stream));
     memset (&source, 0, sizeof (source));
@@ -78,7 +80,7 @@ int PatchFileHelper(FILE* srcFile, FILE* patchFile, FILE* outFile, int bufferSiz
     fseek(patchFile, 0, SEEK_SET);
     do
     {
-        input_Buffer_Read = (int)fread(input_Buffer, 1, bufferSize, patchFile);
+        input_Buffer_Read = (unsigned int)fread(input_Buffer, 1, bufferSize, patchFile);
         if (input_Buffer_Read < bufferSize)
         {
             xd3_set_flags(&stream, XD3_FLUSH);
