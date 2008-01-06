@@ -237,7 +237,7 @@ void NetworkManager::HandleActor( MsgEntry* me )
     if(obj && obj->GetPlayerID() == mesg.playerID)
     {
         // We already know this entity so just update the entity.
-        CPrintf(CON_ERROR, "Already know about gemNPCActor: %s (%s), %u.\n", mesg.name.GetData(), obj->GetName().GetData(), mesg.entityid );
+        CPrintf(CON_ERROR, "Already know about gemNPCActor: %s (%s), %u.\n", mesg.name.GetData(), obj->GetName(), mesg.entityid );
 
         obj->Move(mesg.pos, mesg.yrot, mesg.sectorName);
         obj->SetVisible( !(mesg.flags & psPersistActor::INVISIBLE) );
@@ -258,7 +258,7 @@ void NetworkManager::HandleActor( MsgEntry* me )
         // so we can only assume a RemoveObject message misorder and we will delete the existing one and recreate.
         CPrintf(CON_ERROR, "Deleting because we already know gemNPCActor: "
                 "%s (%s), EID: %u PID: %u as EID: %u PID: %u.\n", 
-                mesg.name.GetData(), obj->GetName().GetData(), mesg.entityid, mesg.playerID, 
+                mesg.name.GetData(), obj->GetName(), mesg.entityid, mesg.playerID, 
                 obj->GetEntity()->GetID(), obj->GetPlayerID() );
 
         npcclient->Remove(obj);
@@ -288,7 +288,7 @@ void NetworkManager::HandleItem( MsgEntry* me )
         // We have a player/NPC item mismatch.
         CPrintf(CON_ERROR, "Deleting because we already know gemNPCActor: "
                 "%s (%s), EID: %u as EID: %u.\n", 
-                mesg.name.GetData(), obj->GetName().GetData(), mesg.id,
+                mesg.name.GetData(), obj->GetName(), mesg.id,
                 obj->GetEntity()->GetID() );
 
         npcclient->Remove(obj);
@@ -301,7 +301,7 @@ void NetworkManager::HandleItem( MsgEntry* me )
         // We already know this item so just update the position.
         CPrintf(CON_ERROR, "Deleting because we already know "
                 "gemNPCItem: %s (%s), %u.\n", mesg.name.GetData(), 
-                obj->GetName().GetData(), mesg.id );
+                obj->GetName(), mesg.id );
         
         npcclient->Remove(obj);
         obj = NULL; // Obj isn't valid after remove

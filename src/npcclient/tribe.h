@@ -113,7 +113,7 @@ public:
     void Advance(csTicks when,EventManager *eventmgr);
 
     int GetID() { return id; }
-    csString GetName() { return name; }
+    const char* GetName() { return name.GetDataSafe(); }
     size_t GetMemberIDCount() { return members_id.GetSize(); }
     size_t GetMemberCount() { return members.GetSize(); }
     NPC * GetMember(size_t i) { return members[i]; }

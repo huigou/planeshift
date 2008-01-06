@@ -459,7 +459,9 @@ void psCelClient::RemoveObject(GEMClientObject* entity)
     shadowManager->RemoveShadow(entity);
     pawsLootWindow* loot = (pawsLootWindow*)PawsManager::GetSingleton().FindWidget("LootWindow");
     if(loot && loot->GetLootingActor() == entity->GetID())
+    {
         loot->Hide();
+    }
 
     // delete record in unresolved position list
     csList<UnresolvedPos*>::Iterator posIter = FindUnresolvedPos(entity);

@@ -2240,19 +2240,19 @@ psLootMessage::psLootMessage()
 
 psLootMessage::psLootMessage(MsgEntry* msg)
 {
-    entity_id = msg->GetInt32();
+    entity_id = msg->GetUInt32();
     lootxml = msg->GetStr();
     valid=!(msg->overrun);
 }
 
-void psLootMessage::Populate(int entity,csString& lootstr, int cnum)
+void psLootMessage::Populate(PS_ID entity,csString& lootstr, int cnum)
 {
-    msg = new MsgEntry(sizeof(int32_t) + lootstr.Length() + 1);
+    msg = new MsgEntry(sizeof(uint32_t) + lootstr.Length() + 1);
 
     msg->SetType(MSGTYPE_LOOT);
     msg->clientnum      = cnum;
 
-    msg->Add( (int32_t) entity);
+    msg->Add( (uint32_t) entity);
     msg->Add( lootstr );
     valid=!(msg->overrun);
 }
@@ -2261,7 +2261,7 @@ csString psLootMessage::ToString(AccessPointers * /*access_ptrs*/)
 {
     csString msgtext;
 
-    msgtext.AppendFmt("Entity: %d ", entity_id);
+    msgtext.AppendFmt("Entity: %u ", entity_id);
 #ifdef FULL_DEBUG_DUMP
     msgtext.AppendFmt("XML: '%s'", lootxml.GetDataSafe());
 #endif

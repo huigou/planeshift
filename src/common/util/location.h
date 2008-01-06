@@ -61,6 +61,7 @@ public:
 
     bool CheckWithinBounds(iEngine * engine,const csVector3& pos,const iSector* sector);
     static int GetSectorID(iDataConnection *db,const char* name);
+    const char* GetName() { return name.GetDataSafe(); }
 };
 
 /**
@@ -89,6 +90,7 @@ public:
     bool Load(iResultRow& row, iEngine *engine, iDataConnection *db); 
 
     bool CheckWithinBounds(iEngine * engine,const csVector3& pos,const iSector* sector);
+    const char* GetName() { return name.GetDataSafe(); }
 };
 
 #endif

@@ -1601,9 +1601,9 @@ public:
      */
     virtual csString ToString(AccessPointers * access_ptrs);
 
-    void Populate(int entity,csString& lootstr, int cnum);
+    void Populate(PS_ID entity,csString& lootstr, int cnum);
 
-    int entity_id;
+    PS_ID entity_id;
     csString lootxml;
 };
 

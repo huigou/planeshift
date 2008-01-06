@@ -108,7 +108,7 @@ public:
     void ClearState();
 
     bool Load(iDocumentNode *node);
-    csString GetName(){ return name; }
+    const char* GetName(){ return name.GetDataSafe(); }
 
     void Advance(csTicks delta,NPC *npc,EventManager *eventmgr);
     void Interrupt(NPC *npc,EventManager *eventmgr);

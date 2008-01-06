@@ -204,7 +204,7 @@ public:
 
     iCelEntity *GetOwner();
     void SetOwnerID( int owner ) { owner_id = owner; };
-    csString GetOwnerName();
+    const char* GetOwnerName();
 
     /** Set a new tribe for this npc */
     void SetTribe(psTribe * new_tribe);

@@ -369,6 +369,8 @@ void NPC::DumpState()
     CPrintf(CON_CMDOUTPUT, "Vel:                 %.2f\n",vel);
     CPrintf(CON_CMDOUTPUT, "Walk velocity:       %.2f\n",walkVelocity);
     CPrintf(CON_CMDOUTPUT, "Run velocity:        %.2f\n",runVelocity);
+    CPrintf(CON_CMDOUTPUT, "Owner:               %s\n",GetOwnerName());
+    CPrintf(CON_CMDOUTPUT, "Region:              %s\n",GetRegion()?GetRegion()->GetName():"(None)");
     CPrintf(CON_CMDOUTPUT, "Target:              %s\n",GetTarget()?GetTarget()->GetName():"");
 }
 
@@ -578,7 +580,7 @@ iCelEntity *NPC::GetOwner()
         return NULL;        
 }
 
-csString NPC::GetOwnerName()
+const char * NPC::GetOwnerName()
 {
     if (owner_id != -1)
     {

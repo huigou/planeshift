@@ -44,7 +44,7 @@ public:
     
     int GetType() { return type; }
     
-    csString& GetName() { return name; }
+    const char* GetName() { return name.GetDataSafe(); }
     virtual unsigned int GetPlayerID() { return NO_PLAYER_ID; }
 
     virtual const char* GetObjectType(){ return "Object"; }

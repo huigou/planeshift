@@ -275,7 +275,7 @@ public:
     /** Set position of entity */
     virtual bool SetPosition(const csVector3 & pos, float rot, iSector * sector);
     
-    int GetID() { return id; }
+    PS_ID GetID() { return id; }
     csRef<iMeshWrapper> pcmesh;
 
     virtual int GetMasqueradeType();
@@ -321,7 +321,7 @@ protected:
     
     csString name;
     csString factname;
-    int id;
+    PS_ID id;
     int type;
     
     int flags;                      ///< Various flags on the entity.
