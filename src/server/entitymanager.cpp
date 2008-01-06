@@ -114,7 +114,7 @@ EntityManager::~EntityManager()
     {
         psserver->GetEventManager()->Unsubscribe(this, MSGTYPE_CELPERSIST);
         psserver->GetEventManager()->Unsubscribe(this, MSGTYPE_USERACTION);
-        psserver->GetEventManager()->Unsubscribe(this, MSGTYPE_PERSIST_WORLD);
+        psserver->GetEventManager()->Unsubscribe(this, MSGTYPE_PERSIST_WORLD_REQUEST);
         psserver->GetEventManager()->Unsubscribe(this, MSGTYPE_PERSIST_ACTOR_REQUEST);
         psserver->GetEventManager()->Unsubscribe(this, MSGTYPE_PERSIST_ALL);
         psserver->GetEventManager()->Unsubscribe(this, MSGTYPE_REQUESTMOVEMENTS);
@@ -157,7 +157,7 @@ bool EntityManager::Initialize(iObjectRegistry* object_reg,
 
     psserver->GetEventManager()->Subscribe(this, MSGTYPE_CELPERSIST,REQUIRE_ANY_CLIENT);
     psserver->GetEventManager()->Subscribe(this, MSGTYPE_USERACTION,REQUIRE_READY_CLIENT|REQUIRE_ALIVE);
-    psserver->GetEventManager()->Subscribe(this, MSGTYPE_PERSIST_WORLD,REQUIRE_ANY_CLIENT );
+    psserver->GetEventManager()->Subscribe(this, MSGTYPE_PERSIST_WORLD_REQUEST,REQUIRE_ANY_CLIENT );
     psserver->GetEventManager()->Subscribe(this, MSGTYPE_PERSIST_ACTOR_REQUEST,REQUIRE_ANY_CLIENT );    
     psserver->GetEventManager()->Subscribe(this, MSGTYPE_PERSIST_ALL,REQUIRE_ANY_CLIENT);
     psserver->GetEventManager()->Subscribe(this, MSGTYPE_REQUESTMOVEMENTS,REQUIRE_ANY_CLIENT);
@@ -963,7 +963,7 @@ void EntityManager::HandleMessage(MsgEntry* me,Client *client)
         case MSGTYPE_USERACTION:
             HandleUserAction( me );
             break;
-        case MSGTYPE_PERSIST_WORLD:
+        case MSGTYPE_PERSIST_WORLD_REQUEST:
             HandleWorld( me );        
             break;
         case MSGTYPE_PERSIST_ACTOR_REQUEST:

@@ -1,4 +1,11 @@
 *** 2008-01-06 by Anders Reggestad
+- Cleand up the world_persist message that used same id and different
+  content depending on sent to or from client. Added new
+  PERSIST_WORLD_REQUEST message id. 
+  => NET VER BUMPED!!
+- Fixed a case where the pet didn't attack since there where no target
+  for the attack command. Now the target for the pet is set to the
+  last perseption if reacted to it.
 - Moved some of the info printed in the npclist ncpcclient command
   to the print function.
 - Changed some GetName functions to return const char* instead of a

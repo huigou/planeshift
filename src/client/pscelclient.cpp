@@ -691,7 +691,9 @@ void psCelClient::HandleMessage(MsgEntry *me)
         case MSGTYPE_PERSIST_ITEM:
         {
             if (!ignore_others) 
+            {
                 QueueNewItem( me );
+            }
             break;
 
         }

@@ -100,7 +100,7 @@ bool NPCType::Load(iDocumentNode *node)
         }
         else
         {
-            Error2("Specified parent npctype '%s' could not be found.\n",
+            Error2("Specified parent npctype '%s' could not be found.",
                 parent);
         }
     }

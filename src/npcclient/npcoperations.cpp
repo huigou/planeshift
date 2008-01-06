@@ -246,7 +246,7 @@ void ScriptOperation::StopResume()
 
 void ScriptOperation::TurnTo(NPC *npc, csVector3& dest, iSector* destsect, csVector3& forward)
 {
-    npc->Printf(6,"TurnTo localDest=%s\n",toString(dest,destsect).GetData());
+    npc->Printf(6,"TurnTo localDest=%s",toString(dest,destsect).GetData());
 
     csRef<iPcMesh> pcmesh = CEL_QUERY_PROPCLASS(npc->GetEntity()->GetPropertyClassList(), iPcMesh);
 
@@ -318,11 +318,12 @@ int ScriptOperation::StartMoveTo(NPC *npc,EventManager *eventmgr, csVector3& des
     {
         // wake me up when it's over
         Resume(msec,npc,eventmgr);
-        npc->Printf(7,"Waking up in %d msec.\n", msec);
+        npc->Printf(7,"Waking up in %d msec.", msec);
     }
     else
-        npc->Printf(7,"NO autoresume here.\n", msec);
-
+    {
+        npc->Printf(7,"NO autoresume here.", msec);
+    }
 
     return msec;
 }
@@ -360,12 +361,13 @@ int ScriptOperation::StartTurnTo(NPC *npc, EventManager *eventmgr, float turn_en
     {
         // wake me up when it's over
         Resume(msec,npc,eventmgr);
-        npc->Printf(7,"Waking up in %d msec.\n", msec);
+        npc->Printf(7,"Waking up in %d msec.", msec);
     }
     else
-        npc->Printf(7,"NO autoresume here.\n", msec);
-
-
+    {
+        npc->Printf(7,"NO autoresume here.", msec);
+    }
+    
     return msec;
 }
 
@@ -571,7 +573,7 @@ ScriptOperation *MoveToOperation::MakeCopy()
 
 bool MoveToOperation::Run(NPC *npc,EventManager *eventmgr,bool interrupted)
 {
-    npc->Printf(5,"MoveToOp Start dest=(%1.2f,%1.2f,%1.2f) at %1.2f m/sec.\n",
+    npc->Printf(5,"MoveToOp Start dest=(%1.2f,%1.2f,%1.2f) at %1.2f m/sec.",
                 dest.x,dest.y,dest.z,GetVelocity(npc));
 
     csVector3 pos, forward, up;
@@ -599,7 +601,7 @@ void MoveToOperation::Advance(float timedelta,NPC *npc,EventManager *eventmgr)
 
     npc->GetLinMove()->GetLastPosition(pos,rot,sector);
     
-    npc->Printf(10,"advance: pos=(%1.2f,%1.2f,%1.2f) rot=%.2f localDest=(%.2f,%.2f,%.2f) dest=(%.2f,%.2f,%.2f) dist=%f\n", 
+    npc->Printf(10,"advance: pos=(%1.2f,%1.2f,%1.2f) rot=%.2f localDest=(%.2f,%.2f,%.2f) dest=(%.2f,%.2f,%.2f) dist=%f", 
                 pos.x,pos.y,pos.z, rot,
                 localDest.x,localDest.y,localDest.z,
                 dest.x,dest.y,dest.z,
@@ -710,7 +712,7 @@ bool RotateOperation::Load(iDocumentNode *node)
     else
     {
         Error1("Rotate Op type must be 'random', 'absolute', 'relative', "
-               "'target' or 'locatedest' right now.\n");
+               "'target' or 'locatedest' right now.");
     }
     return false;
 }
@@ -843,7 +845,7 @@ bool RotateOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
     int msec = (int)fabs(1000.0*angle_delta/ang_vel);
     Resume(msec,npc,eventmgr);
 
-    npc->Printf(5,"Rotating %1.2f deg from %1.2f to %1.2f at %1.2f deg/sec in %.3f sec.\n",
+    npc->Printf(5,"Rotating %1.2f deg from %1.2f to %1.2f at %1.2f deg/sec in %.3f sec.",
                 angle_delta*180/PI,rot*180.0f/PI,target_angle*180.0f/PI,ang_vel*180.0f/PI,msec/1000.0f);
 
     return false;
@@ -913,7 +915,7 @@ float RotateOperation::SeekAngle(NPC* npc, float targetYRot)
 
             if(dist < 0)
             {
-                npc->Printf(6,"Turning left!\n");
+                npc->Printf(6,"Turning left!");
                 turn = left;
                 break;
             }
@@ -924,7 +926,7 @@ float RotateOperation::SeekAngle(NPC* npc, float targetYRot)
 
             if(dist < 0)
             {
-                npc->Printf(6,"Turning right!\n");
+                npc->Printf(6,"Turning right!");
                 turn = right;
                 break;
             }
@@ -1227,7 +1229,7 @@ bool LocateOperation::Run(NPC *npc,EventManager *eventmgr,bool interrupted)
 
         if (!located_wp)
         {
-            npc->Printf(5, "Couldn't locate any <%s> in npc script for <%s>.\n",
+            npc->Printf(5, "Couldn't locate any <%s> in npc script for <%s>.",
                 (const char *)object,npc->GetEntity()->GetName() );
             return true;
         }
@@ -1263,7 +1265,7 @@ bool LocateOperation::Run(NPC *npc,EventManager *eventmgr,bool interrupted)
 
         if (!location)
         {
-            npc->Printf(5, "Couldn't locate any <%s> in npc script for <%s>.\n",
+            npc->Printf(5, "Couldn't locate any <%s> in npc script for <%s>.",
                 (const char *)object,npc->GetEntity()->GetName() );
             return true;
         }
@@ -1281,7 +1283,7 @@ bool LocateOperation::Run(NPC *npc,EventManager *eventmgr,bool interrupted)
     }
     else
     {
-        npc->Printf(5, "remembered location from last time\n");
+        npc->Printf(5, "remembered location from last time");
     }
 
     // Save on npc so other operations can refer to value
@@ -1319,7 +1321,7 @@ bool NavigateOperation::Run(NPC *npc,EventManager *eventmgr,bool interrupted)
     iSector* sector;
 
     npc->GetActiveLocate(dest,sector,rot);
-    npc->Printf(5, "Located %s at %1.2f m/sec.\n",toString(dest,sector).GetData(), GetVelocity(npc) );
+    npc->Printf(5, "Located %s at %1.2f m/sec.",toString(dest,sector).GetData(), GetVelocity(npc) );
 
     StartMoveTo(npc,eventmgr,dest,sector,GetVelocity(npc),action);
     return false;
@@ -1662,7 +1664,7 @@ void WanderOperation::Advance(float timedelta,NPC *npc,EventManager *eventmgr)
         csVector3 pos; float rot; iSector *sec;
         psGameObject::GetPosition(npc->GetEntity(),pos,rot,sec);
 
-        npc->Printf(10, "Wander Loc is %s Rot: %1.2f Vel: %.2f Dist: %.2f Index: %d Fraction %.2f\n",
+        npc->Printf(10, "Wander Loc is %s Rot: %1.2f Vel: %.2f Dist: %.2f Index: %d Fraction %.2f",
                     toString(pos).GetDataSafe(),
                     rot,
                     GetVelocity(npc),
@@ -1903,7 +1905,7 @@ bool ChaseOperation::Run(NPC *npc,EventManager *eventmgr,bool interrupted)
     {
         case NEAREST:
             npc->GetNearestEntity(target_id,dest,name,range);
-            npc->Printf(6, "Targeting nearest entity (%s) at (%1.2f,%1.2f,%1.2f) for chase ...\n",
+            npc->Printf(6, "Targeting nearest entity (%s) at (%1.2f,%1.2f,%1.2f) for chase ...",
                         (const char *)name,dest.x,dest.y,dest.z);
             if ( target_id != (uint32_t)-1 )
             {
@@ -1916,7 +1918,7 @@ bool ChaseOperation::Run(NPC *npc,EventManager *eventmgr,bool interrupted)
             {
                 target_id = entity->GetID();
                 psGameObject::GetPosition(entity, dest,targetRot,targetSector);
-                npc->Printf(6, "Targeting owner (%s) at (%1.2f,%1.2f,%1.2f) for chase ...\n",
+                npc->Printf(6, "Targeting owner (%s) at (%1.2f,%1.2f,%1.2f) for chase ...",
                             entity->GetName(),dest.x,dest.y,dest.z );
 
             }
@@ -1927,7 +1929,7 @@ bool ChaseOperation::Run(NPC *npc,EventManager *eventmgr,bool interrupted)
             {
                 target_id = entity->GetID();
                 psGameObject::GetPosition(entity, dest,targetRot,targetSector);
-                npc->Printf(6, "Targeting current target (%s) at (%1.2f,%1.2f,%1.2f) for chase ...\n",
+                npc->Printf(6, "Targeting current target (%s) at (%1.2f,%1.2f,%1.2f) for chase ...",
                             entity->GetName(),dest.x,dest.y,dest.z );
             }
             break;
@@ -1938,7 +1940,7 @@ bool ChaseOperation::Run(NPC *npc,EventManager *eventmgr,bool interrupted)
         psGameObject::GetPosition(npc->GetEntity(),myPos,myRot,mySector);
     
         psGameObject::GetPosition(entity, targetPos,targetRot,targetSector);
-        npc->Printf(5, "Chasing enemy (%s) EID: %u at %s\n",entity->GetName(),entity->GetID(), 
+        npc->Printf(5, "Chasing enemy (%s) EID: %u at %s",entity->GetName(),entity->GetID(), 
                     toString(targetPos,targetSector).GetDataSafe());
 
         // We need to work in the target sector space
@@ -1973,7 +1975,7 @@ bool ChaseOperation::Run(NPC *npc,EventManager *eventmgr,bool interrupted)
     return true; // This operation is complete
 }
 
-void ChaseOperation::Advance(float timedelta,NPC *npc,EventManager *eventmgr)
+void ChaseOperation::Advance(float timedelta, NPC *npc, EventManager *eventmgr)
 {
 
     csVector3 myPos,myNewPos,targetPos;
@@ -2015,7 +2017,7 @@ void ChaseOperation::Advance(float timedelta,NPC *npc,EventManager *eventmgr)
     float factor = sqrt((offset.x * offset.x)+(offset.z * offset.z)) / displacement.Norm();
     targetPos = myPos + (1 - factor) * displacement;
 
-    npc->Printf(10, "Still chasing %s at (%1.2f,%1.2f,%1.2f)...\n",(const char *)name,targetPos.x,targetPos.y,targetPos.z);
+    npc->Printf(10, "Still chasing %s at %s...",(const char *)name,toString(targetPos,targetSector).GetDataSafe());
     
     float angleToTarget = psGameObject::CalculateIncidentAngle(myPos, targetPos);
     csVector3 pathDest = path.GetDest();
@@ -2025,31 +2027,33 @@ void ChaseOperation::Advance(float timedelta,NPC *npc,EventManager *eventmgr)
     // if the target diverged from the end of our path, we must calculate it again
     if ( fabs( AngleDiff(angleToTarget, angleToPath) ) > EPSILON  )
     {
-        npc->Printf(8, "turn to target..\n");
+        npc->Printf(8, "turn to target..");
         path.SetDest(targetPos);
         path.CalcLocalDest(myPos, mySector, localDest);
-        StartMoveTo(npc,eventmgr,localDest, mySector, GetVelocity(npc),action, false);
+        StartMoveTo(npc,eventmgr,localDest, mySector, GetVelocity(npc), action, false);
     }
     
+
+    float close = GetVelocity(npc)*timedelta; // Add 10 % to the distance moved in one tick.
     
-    if (Calc2DDistance(localDest, myPos) <= 0.5)
+    if (Calc2DDistance(localDest, myPos) <= close)
     {
         myPos.x = localDest.x;
         myPos.z = localDest.z;
         npc->GetLinMove()->SetPosition(myPos,myRot,mySector);
         
-        if (Calc2DDistance(myPos,targetPos) <= 0.5)
+        if (Calc2DDistance(myPos,targetPos) <= close)
         {
-            npc->Printf(5, "We are done..\n");
+            npc->Printf(5, "We are done..");
             npc->ResumeScript(eventmgr, npc->GetBrain()->GetCurrentBehavior() );
             return;
         }
         else
         {
-            npc->Printf(6, "We are at localDest..\n");
+            npc->Printf(6, "We are at localDest..");
             path.SetDest(targetPos);
             path.CalcLocalDest(myPos, mySector, localDest);
-            StartMoveTo(npc,eventmgr,localDest, mySector,vel,action, false);
+            StartMoveTo(npc, eventmgr, localDest, mySector, GetVelocity(npc), action, false);
         }
     }
     else
@@ -2057,7 +2061,7 @@ void ChaseOperation::Advance(float timedelta,NPC *npc,EventManager *eventmgr)
         TurnTo(npc, localDest, mySector, forward);
     }
 
-    npc->Printf(8, "advance: pos=(%f.2,%f.2,%f.2) rot=%.2f localDest=(%f.2,%f.2,%f.2) dist=%f\n", 
+    npc->Printf(8, "advance: pos=(%f.2,%f.2,%f.2) rot=%.2f localDest=(%f.2,%f.2,%f.2) dist=%f", 
                 myPos.x,myPos.y,myPos.z, myRot,
                 localDest.x,localDest.y,localDest.z,
                 Calc2DDistance(localDest, myPos));
@@ -2497,7 +2501,7 @@ void MeleeOperation::Advance(float timedelta,NPC *npc,EventManager *eventmgr)
     }
     if (ent != attacked_ent)
     {
-        npc->Printf(5, "Melee switching to attack %s\n",ent->GetName() );
+        npc->Printf(5, "Melee switching to attack %s",ent->GetName() );
         attacked_ent = ent;
         npcclient->GetNetworkMgr()->QueueAttackCommand(npc->GetEntity(),ent);
     }
@@ -2845,7 +2849,7 @@ void MovePathOperation::Advance(float timedelta, NPC *npc, EventManager *eventmg
                              direction,npc->GetMovable()))
     {
         // At end of path
-        npc->Printf(5, "We are done..\n");
+        npc->Printf(5, "We are done..");
 
         // None linear movement so we have to queue DRData updates.
         npcclient->GetNetworkMgr()->QueueDRData(npc);
@@ -2860,7 +2864,7 @@ void MovePathOperation::Advance(float timedelta, NPC *npc, EventManager *eventmg
         csVector3 pos; float rot; iSector *sec;
         psGameObject::GetPosition(npc->GetEntity(),pos,rot,sec);
 
-        npc->Printf(8, "MovePath Loc is %s Rot: %1.2f Vel: %.2f Dist: %.2f Index: %d Fraction %.2f\n",
+        npc->Printf(8, "MovePath Loc is %s Rot: %1.2f Vel: %.2f Dist: %.2f Index: %d Fraction %.2f",
                     toString(pos).GetDataSafe(),rot,GetVelocity(npc),anchor->GetDistance(),anchor->GetCurrentAtIndex(),anchor->GetCurrentAtFraction());
         
         csVector3 anchor_pos,anchor_up,anchor_forward;
@@ -2974,7 +2978,7 @@ bool WatchOperation::Run(NPC *npc,EventManager *eventmgr,bool interrupted)
     {
         case NEAREST:
             npc->GetNearestEntity(target_id,targetPos,name,range);
-            npc->Printf(5, "Targeting nearest entity (%s) at (%1.2f,%1.2f,%1.2f) for watch ...\n",
+            npc->Printf(5, "Targeting nearest entity (%s) at (%1.2f,%1.2f,%1.2f) for watch ...",
                         (const char *)name,targetPos.x,targetPos.y,targetPos.z);
             if ( target_id != (uint32_t)-1 )
             {
@@ -2987,7 +2991,7 @@ bool WatchOperation::Run(NPC *npc,EventManager *eventmgr,bool interrupted)
             {
                 target_id = watchedEnt->GetID();
                 psGameObject::GetPosition(watchedEnt, targetPos,targetRot,targetSector);
-                npc->Printf(5, "Targeting owner (%s) at (%1.2f,%1.2f,%1.2f) for watch ...\n",
+                npc->Printf(5, "Targeting owner (%s) at (%1.2f,%1.2f,%1.2f) for watch ...",
                             watchedEnt->GetName(),targetPos.x,targetPos.y,targetPos.z );
 
             }
@@ -2998,7 +3002,7 @@ bool WatchOperation::Run(NPC *npc,EventManager *eventmgr,bool interrupted)
             {
                 target_id = watchedEnt->GetID();
                 psGameObject::GetPosition(watchedEnt, targetPos,targetRot,targetSector);
-                npc->Printf(5, "Targeting current target (%s) at (%1.2f,%1.2f,%1.2f) for chase ...\n",
+                npc->Printf(5, "Targeting current target (%s) at (%1.2f,%1.2f,%1.2f) for chase ...",
                             watchedEnt->GetName(),targetPos.x,targetPos.y,targetPos.z );
             }
             break;

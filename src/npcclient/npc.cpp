@@ -273,7 +273,7 @@ iCelEntity *NPC::GetMostHated(float range, bool include_invisible, bool include_
 
 void NPC::AddToHateList(iCelEntity *attacker, float delta)
 {
-    Printf("Adding %1.2f to hatelist score for %s(EID: %u).\n",
+    Printf("Adding %1.2f to hatelist score for %s(EID: %u).",
            delta,attacker->GetName(),attacker->GetID() );
     hatelist.AddHate(attacker->GetID(),delta);
     if(IsDebugging(5))
@@ -286,7 +286,7 @@ void NPC::RemoveFromHateList(PS_ID who)
 {
     if (hatelist.Remove(who))
     {
-        Printf("Removed PID: %u from hate list.\n",who );
+        Printf("Removed PID: %u from hate list.",who );
     }
 }
 
@@ -541,7 +541,7 @@ iCelEntity *NPC::GetTarget()
         if (GetLastPerception())
         {
             iCelEntity *target = GetLastPerception()->GetTarget();
-            Printf(5,"GetTarget returning last perception entity: %s\n",target ? target->GetName() : "None specified");
+            Printf(5,"GetTarget returning last perception entity: %s",target ? target->GetName() : "None specified");
             return target;
         }
         return NULL;
