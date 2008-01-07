@@ -754,7 +754,7 @@ PS_ID EntityManager::CreateNPC(psCharacter *chardata, int instance, csVector3 po
 //        CPrintf(CON_NOTIFY,"------> Entity Manager Setting Imperv\n");
         psserver->npcmanager->ControlNPC( actor );
     }
-    Debug3(LOG_NPC,0,"Created NPC actor: <%s> [%u] in world\n", actor->GetEntity()->GetName(), actor->GetEntity()->GetID());
+    Debug3(LOG_NPC,0,"Created NPC actor: <%s> [%u] in world\n", actor->GetName(), actor->GetEntity()->GetID());
 
     return actor->GetEntity()->GetID();
 }

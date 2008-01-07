@@ -360,7 +360,7 @@ gemObject *GEMSupervisor::FindObject(const csString& name)
     while ( i.HasNext() )
     {
         gemObject* obj = i.Next();
-        if ( name.CompareNoCase(obj->GetEntity()->GetName()) )
+        if ( name.CompareNoCase(obj->GetName()) )
             return obj;
     }
     Error2("No object with the name of '%s' was found.", name.GetData());
