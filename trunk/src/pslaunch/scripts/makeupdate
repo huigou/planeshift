@@ -271,6 +271,7 @@ mv $OLDPATH/win32 platform/old/win32
 mv $OLDPATH/linux32 platform/old/linux32
 mv $OLDPATH/osx platform/old/osx
 mv $OLDPATH/linux64 platform/old/linux64
+find $TOPDIR/platform/ -name .svn -print | xargs rm -Rf
 
 echo "Creating 32-bit Linux update."
 cd platform/new/linux32
