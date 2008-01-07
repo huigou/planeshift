@@ -665,10 +665,10 @@ void psItem::GetFieldArray(psStringArray& fields)
     {
         if ( sectorinfo )
         {
-            fields.FormatPush("%1.2f",locx);
-            fields.FormatPush("%1.2f",locy);
-            fields.FormatPush("%1.2f",locz);
-            fields.FormatPush("%1.2f",locyrot);
+            fields.FormatPush("%1.6f",locx);
+            fields.FormatPush("%1.6f",locy);
+            fields.FormatPush("%1.6f",locz);
+            fields.FormatPush("%1.6f",locyrot);
             fields.FormatPush("%u",sectorinfo->uid);
         }
         else  //  Item is nowhere; cannot be saved
