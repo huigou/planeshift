@@ -1,4 +1,9 @@
 *** 2008-01-06 by Anders Reggestad
+- Fixed problem when loading chat bubble configuration file.  Now it 
+  will load the default one if the userdata one is not found and create
+  a copy into the /userdata/ folder.
+
+*** 2008-01-06 by Anders Reggestad
 - Cleand up the world_persist message that used same id and different
   content depending on sent to or from client. Added new
   PERSIST_WORLD_REQUEST message id. 

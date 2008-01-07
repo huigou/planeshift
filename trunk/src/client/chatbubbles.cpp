@@ -42,6 +42,10 @@
 
 //#define DISABLE_CHAT_BUBBLES
 
+// Used to set default config files if the userdata ones are not found.
+#define SAVE_USER     true
+#define DEFAULT_FILE  "/planeshift/data/options/chatbubbles.xml"
+#define USER_FILE     "/planeshift/userdata/options/chatbubbles.xml"
 
 psChatBubbles::psChatBubbles()
              : psengine(0), msgHandler(0)
@@ -60,11 +64,16 @@ bool psChatBubbles::Initialize(psEngine * psengine)
     msgHandler = psengine->GetMsgHandler();
 
     msgHandler->Subscribe(this, MSGTYPE_CHAT);
-    Load("/planeshift/userdata/options/chatbubbles.xml");
+    bool result = Load(USER_FILE);
+    if ( result == false )
+    {
+        result = Load(DEFAULT_FILE, SAVE_USER);        
+    }
+   
     return true;
 }
 
-bool psChatBubbles::Load(const char * filename)
+bool psChatBubbles::Load(const char * filename, bool saveAgain)
 {
     csRef<iDocument> doc;
     csRef<iDocumentNode> root;
@@ -77,11 +86,18 @@ bool psChatBubbles::Load(const char * filename)
     vfs = psengine->GetVFS();
     assert(vfs);
     csRef<iDataBuffer> buff = vfs->ReadFile(filename);
+      
     if (buff == NULL)
     {
         Error2("Could not find file: %s", filename);
         return false;
     }
+    
+    if ( saveAgain )
+    {
+        vfs->WriteFile(USER_FILE, buff->GetData(), buff->GetSize());
+    }
+    
     xml = psengine->GetXMLParser ();
     doc = xml->CreateDocument();
     assert(doc);
