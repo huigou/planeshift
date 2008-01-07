@@ -64,7 +64,16 @@ public:
 
     bool Initialize(psEngine * engine);
 
-    bool Load(const char * filename);
+    /** Load the chat bubble config file.
+    *   @param filename The name of the file to load.
+    *   @param saveUserData This is used to save the file loaded in the /userdata/ folder.
+    *                       This is normally done when the userdata config file has not 
+    *                       been created yet.
+    *
+    *   @return true if the file loaded correctly. false if the file was not found or could 
+    *           not be loaded.
+    */
+    bool Load(const char * filename, bool saveUserData = false);
 
     // implemented iNetSubscriber messages
     virtual bool Verify(MsgEntry * msg, unsigned int flags, Client *& client);
