@@ -11,12 +11,14 @@ MIRRORS=$TOPDIR/mirrors
 UPDATERNAME=psupdater
 
 function generatedeleted {
+local madedir=0
+if [ ! -d $NEWPATH/$1 ]
+ then
+    mkdir $NEWPATH/$1
+    madedir=1
+fi
 for i in $(ls .);
 do
-  if [ ! -d $NEWPATH/$1 ]
-  then
-    mkdir $NEWPATH/$1
-  fi
   if [ -d $i ]
   then
     cd $i
@@ -25,31 +27,37 @@ do
     continue
   fi
   removed=1
-  if [ ! -d $NEWPATH/$1 ]
-  then
-    mkdir $NEWPATH/$1
-  fi
   for j in $(ls $NEWPATH/$1);
   do
-    if [ $i == $j ]
+    if [ "$i" == "$j" ]
     then
       removed=0
     fi
   done
-  if [ $removed == 1 ]
+  if [ $removed -eq 1 ]
   then
     echo "    <deleted name=\""$1$i"\" />" >> $OUTPUTDIR/deletedfiles.xml
   fi
 done
+if [ $madedir -eq 1 ]
+then
+  rmdir $NEWPATH/$1
+fi
 }
 
 function generatenew {
+if [ ! -d $OUTPUTDIR/$1 ]
+then
+  mkdir $OUTPUTDIR/$1
+fi
+local madeoldpath=0
+if [ ! -d $OLDPATH/$1 ]
+then
+  mkdir $OLDPATH/$1
+  madeoldpath=1
+fi
 for i in $(ls .);
 do
-  if [ ! -d $OUTPUTDIR/$1 ]
-  then
-    mkdir $OUTPUTDIR/$1
-  fi
   if [ -d $i ]
   then
     cd $i
@@ -58,10 +66,6 @@ do
     continue
   fi
   new=1
-  if [ ! -d $OLDPATH/$1 ]
-  then
-    mkdir $OLDPATH/$1
-  fi
   for j in $(ls $OLDPATH/$1);
   do
     if [ $i == $j ]
@@ -80,15 +84,21 @@ do
     cp $NEWPATH/$1$i $OUTPUTDIR/$1$i
   fi
 done
+if [ $madeoldpath -eq 1 ]
+then
+  rmdir $OLDPATH/$1
+fi
 }
 
 function generatechanged {
+local madedir=0
+if [ ! -d $NEWPATH/$1 ]
+then
+  mkdir $NEWPATH/$1
+  madedir=1
+fi
 for i in $(ls .);
 do
-  if [ ! -d $NEWPATH/$1 ]
-  then
-    mkdir $NEWPATH/$1
-  fi
   if [ -d $i ]
   then
     cd $i
@@ -121,6 +131,10 @@ do
     fi
   done
 done
+if [ $madedir -eq 1 ]
+then
+  rmdir $NEWPATH/$1
+fi
 }
 
 function generateupdaterinfo {
@@ -312,11 +326,11 @@ zip -r -9 $REPO/psupdatermacosx.zip $UPDATERNAME".app"
 cd $TOPDIR
 cp -R platform/old/osx/* $OLDPATH
 cp -R platform/new/osx/* $NEWPATH
-if [ -d $OLDPATH/$UPDATERNAME ]
+if [ -d $OLDPATH/$UPDATERNAME".app" ]
 then
-  rm -Rf $OLDPATH/$UPDATERNAME
+  rm -Rf $OLDPATH/$UPDATERNAME".app"
 fi
-rm -Rf $NEWPATH/$UPDATERNAME
+rm -Rf $NEWPATH/$UPDATERNAME".app"
 createupdate
 cd $OUTPUTDIR
 zip -r -9 $REPO/macosx-"$VERSION".zip *
@@ -328,7 +342,7 @@ cd $TOPDIR
 
 echo "Creating Windows update."
 cd platform/new/win32
-zip -9 $REPO/psupdaterwin32.zip $UPDATERNAME".exe"
+zip -9 $REPO/psupdaterwin32.zip $UPDATERNAME".exe" libcurl.dll
 cd $TOPDIR
 cp -R platform/old/win32/* $OLDPATH
 cp -R platform/new/win32/* $NEWPATH
@@ -336,7 +350,8 @@ if [ -e $OLDPATH/$UPDATERNAME".exe" ]
 then
   rm $OLDPATH/$UPDATERNAME".exe"
 fi
-rm $NEWPATH/$UPDATERNAME".exe"
+rm $OLDPATH/libcurl.dll
+rm $NEWPATH/$UPDATERNAME".exe" $NEWPATH/libcurl.dll
 createupdate
 cd $OUTPUTDIR
 zip -r -9 $REPO/win32-"$VERSION".zip *
