@@ -1,6 +1,7 @@
 *** 2008-01-08 by Mike Gist
 - Made many fixes and enhancements to the update creation script and
   the updater.
+- Pushed CS revision to r28424.
 
 *** 2008-01-06 by Andrew Craig
 - Fixed problem when loading chat bubble configuration file.  Now it 
