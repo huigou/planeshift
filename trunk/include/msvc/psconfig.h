@@ -25,10 +25,10 @@
 #define DEFINE_STDINT_TYPES
 
 /* the type which defines 64 bit integer */
-#define TYPE64	  __int64
+//#define TYPE64	  __int64
 
 /* the type some socketfunctions like recvfrom require for sockaddr size */
-#define	socklen_t   int
+//#define	socklen_t   int
 
 /* define this for error output, because visualc doesn't have __PRETTY_FUNCTION
  * like gcc does.
