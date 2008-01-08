@@ -72,6 +72,9 @@ private:
     /* If true, then it's okay to perform the update. */
     bool *performUpdate;
 
+    /* True if we're using a GUI. */
+    bool hasGUI;
+
     /* Output console prints to file. */
     FILE* log;
     

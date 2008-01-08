@@ -34,14 +34,19 @@ iObjectRegistry* UpdaterEngine::object_reg = NULL;
 
 UpdaterEngine::UpdaterEngine(const csArray<csString> args, iObjectRegistry* object_reg, const char* appName)
 {
-    bool a = false, b = false, c = true;
-    csArray<csString> d;
-    Init(args, object_reg, appName, &a, &b, &c, &d, NULL);
+    bool* a = new bool;
+    bool* b = new bool;
+    bool* c = new bool;
+    *a = true, *b = false, *c = true;
+    csArray<csString>* d = new csArray<csString>;
+    hasGUI = false;
+    Init(args, object_reg, appName, a, b, c, d, NULL);
 }
 
 UpdaterEngine::UpdaterEngine(const csArray<csString> args, iObjectRegistry* _object_reg, const char* _appName,
                              bool *_performUpdate, bool *_exitGui, bool *_updateNeeded, csArray<csString> *_consoleOut,  CS::Threading::Mutex *_mutex)
 {
+    hasGUI = true;
     Init(args, _object_reg, _appName, _performUpdate, _exitGui, _updateNeeded, _consoleOut, _mutex);
 }
 
@@ -78,6 +83,13 @@ UpdaterEngine::~UpdaterEngine()
     delete config;
     fileUtil = NULL;
     config = NULL;
+    if(!hasGUI)
+    {
+        delete consoleOut;
+        delete updateNeeded;
+        delete exitGUI;
+        delete performUpdate;
+    }
 }
 
 void UpdaterEngine::printOutput(const char *string, ...)
@@ -236,7 +248,7 @@ bool UpdaterEngine::checkUpdater()
     // Backup old config, download new.
     fileUtil->CopyFile("updaterinfo.xml", "updaterinfo.xml.bak", false, false);    
     fileUtil->RemoveFile("updaterinfo.xml");
-    downloader->DownloadFile("updaterinfo.xml", "updaterinfo.xml", false);
+    downloader->DownloadFile("updaterinfo.xml", "updaterinfo.xml", false, true);
 
     // Load new config data.
     csRef<iDocumentNode> root = GetRootNode(UPDATERINFO_FILENAME);
@@ -368,21 +380,21 @@ bool UpdaterEngine::selfUpdate(int selfUpdating)
             fileUtil->RemoveFile(appName.GetData());
             fileUtil->CopyFile(tempName.GetData(), appName.GetData(), false, true);
 
-            // Copy any art work and data.
+            // Copy any art, data and dlls.
             csString zip = appName;
             zip.AppendFmt(config->GetCurrentConfig()->GetPlatform());
             zip.AppendFmt(".zip");
-            vfs->Mount("/zip", zip.GetData());
+            vfs->Mount("/zip", zip);
 
             csString artPath = "/art/";
             artPath.AppendFmt("%s.zip", appName);
-            fileUtil->CopyFile("/zip" + artPath, artPath, false, false, true);
+            fileUtil->CopyFile("/zip" + artPath, artPath, true, false, true);
 
             csString dataPath = "/data/gui/";
             dataPath.AppendFmt("%s.xml", appName);
-            fileUtil->CopyFile("/zip" + dataPath, dataPath, false, false, true);
+            fileUtil->CopyFile("/zip" + dataPath, dataPath, true, false, true);
 
-            vfs->Unmount("/zip", zip.GetData());
+             vfs->Unmount("/zip", zip);
 
             // Create a new process of the updater.
             CreateProcess(appName.GetData(), "selfUpdateSecond", 0, 0, false, CREATE_DEFAULT_ERROR_MODE, 0, 0, &siStartupInfo, &piProcessInfo);
@@ -416,7 +428,7 @@ bool UpdaterEngine::selfUpdate(int selfUpdating)
             zip.AppendFmt(".zip");
 
             // Download new updater file.
-            downloader->DownloadFile(zip, zip, false);         
+            downloader->DownloadFile(zip, zip, false, true);         
 
             // Check md5sum is correct.
             csRef<iDataBuffer> buffer = vfs->ReadFile("/this/" + zip, true);
@@ -436,14 +448,14 @@ bool UpdaterEngine::selfUpdate(int selfUpdating)
             }
 
             // md5sum is correct, mount zip and copy file.
-            vfs->Mount("/zip", zip.GetData());
+            vfs->Mount("/zip", zip);
             csString from = "zip/";
             from.AppendFmt(appName);
             from.AppendFmt(".exe");
             appName.AppendFmt("2.exe");
 
             fileUtil->CopyFile(from, "/this/" + appName, true, true);
-            vfs->Unmount("/zip", zip.GetData());
+            vfs->Unmount("/zip", zip);
 
             // Create a new process of the updater.
             CreateProcess(appName.GetData(), "selfUpdateFirst", 0, 0, false, CREATE_DEFAULT_ERROR_MODE, 0, 0, &siStartupInfo, &piProcessInfo);
@@ -484,7 +496,7 @@ bool UpdaterEngine::selfUpdate(int selfUpdating)
             zip.AppendFmt(".zip");
 
             // Download new updater file.
-            downloader->DownloadFile(zip, zip, false);         
+            downloader->DownloadFile(zip, zip, false, true);         
 
             // Check md5sum is correct.
             csRef<iDataBuffer> buffer = vfs->ReadFile("/this/" + zip, true);
@@ -505,7 +517,7 @@ bool UpdaterEngine::selfUpdate(int selfUpdating)
             }
 
             // Mount zip.
-            vfs->Mount("/zip", zip.GetData());
+            vfs->Mount("/zip", zip);
 
             csString realName = appName;
 #if defined(CS_PLATFORM_MACOSX)
@@ -524,7 +536,7 @@ bool UpdaterEngine::selfUpdate(int selfUpdating)
             system(cmd.GetData());
 
             // Unmount zip.
-            vfs->Unmount("/zip", zip.GetData());
+            vfs->Unmount("/zip", zip);
 
             // Create a new process of the updater and exit.
 #if defined(CS_PLATFORM_MACOSX)
@@ -578,7 +590,7 @@ void UpdaterEngine::generalUpdate()
         zip.AppendFmt("-%s.zip", newCv->GetName().GetData());
 
         // Download update zip.
-        downloader->DownloadFile(zip, zip, false);
+        downloader->DownloadFile(zip, zip, false, true);
 
         // Check md5sum is correct.
         csRef<iDataBuffer> buffer = vfs->ReadFile("/this/" + zip, true);
@@ -599,7 +611,7 @@ void UpdaterEngine::generalUpdate()
         }
 
         // Mount zip
-        vfs->Mount("/zip", zip.GetData());
+        vfs->Mount("/zip", zip);
 
         // Parse deleted files xml, make a list.
         csArray<csString> deletedList;
@@ -633,7 +645,7 @@ void UpdaterEngine::generalUpdate()
             {
                 csRef<iDocumentNode> node = nodeItr->Next();
                 newList.PushSmart(node->GetAttributeValue("name"));
-                newListType.PushSmart(node->GetAttributeValueAsBool("exec"));
+                newListType.Push(node->GetAttributeValueAsBool("exec"));
             }
         }
 
@@ -677,8 +689,8 @@ void UpdaterEngine::generalUpdate()
                 fileUtil->RemoveFile("/this/" + newFilePath);
 
                 // Move diff to a real location ready for input.
-                fileUtil->CopyFile("/zip/" + diff, "/this/" + newFilePath + ".vcdiff", true, false);
-                fileUtil->RemoveFile("/zip/" + diff);
+                fileUtil->CopyFile("/zip/" + diff, "/this/" + newFilePath + ".vcdiff", true, false, true);
+                fileUtil->RemoveFile("/zip/" + diff, true);
                 diff = newFilePath + ".vcdiff";
 
                 // Binary patch.
@@ -686,7 +698,7 @@ void UpdaterEngine::generalUpdate()
                 if(!PatchFile(oldFilePath, diff, newFilePath))
                 {
                     printOutput("Failed!\n");
-                    printOutput("Attempting to download full version of %s\n", newFilePath.GetData());
+                    printOutput("Attempting to download full version of %s: ", newFilePath.GetData());
 
                     // Get the 'backup' mirror, should always be the first in the list.
                     csString baseurl = config->GetNewConfig()->GetMirror(0)->GetBaseURL();
@@ -694,17 +706,21 @@ void UpdaterEngine::generalUpdate()
 
                     // Try path from base URL.
                     csString url = baseurl;
-                    if(!downloader->DownloadFile(url.Append(newFilePath.GetData()), newFilePath.GetData(), true))
+                    if(!downloader->DownloadFile(url.Append(newFilePath.GetData()), newFilePath.GetData(), true, true))
                     {
                         // Maybe it's in a platform specific subdirectory. Try that next.
                         url = baseurl;
-                        url.Append(config->GetNewConfig()->GetPlatform());
-                        if(downloader->DownloadFile(url.Append(newFilePath.GetData()), newFilePath.GetData(), true))
+                        url.AppendFmt("%s/", config->GetNewConfig()->GetPlatform());
+                        if(!downloader->DownloadFile(url.Append(newFilePath.GetData()), newFilePath.GetData(), true, true))
                         {
-                            printOutput("Unable to update file: %s. Reverting file!\n", newFilePath.GetData());
+                            printOutput("\nUnable to update file: %s. Reverting file!\n", newFilePath.GetData());
                             fileUtil->CopyFile(oldFilePath, newFilePath, false, false);
                         }
+                        else
+                            printOutput("Done!\n");
                     }
+                    else
+                        printOutput("Done!\n");
                 }
                 else
                 {
@@ -735,17 +751,22 @@ void UpdaterEngine::generalUpdate()
                         else
                             printOutput("Success!\n");
                     }
+                    // Clean up temp files.
+                    fileUtil->RemoveFile("/this/" + oldFilePath);
                 }
-
-                // Clean up temp files.
-                fileUtil->RemoveFile("/this/" + oldFilePath);
-                fileUtil->RemoveFile("/this/" + diff);
+                fileUtil->RemoveFile("/this/" + diff, true);
             }
         }       
 
         // Unmount zip and delete.
-        vfs->Unmount("/zip", zip.GetData());
-        fileUtil->RemoveFile("/this/" + zip);
+        if(vfs->Unmount("/zip", zip))
+        {
+            fileUtil->RemoveFile("/this/" + zip);
+        }
+        else
+        {
+            printf("Failed to unmount file %s\n", zip.GetData());
+        }
 
         // Add version info to updaterinfo.xml.bak and oldCvs.
         confignode->GetNode("client")->CreateNodeBefore(CS_NODE_TEXT)->SetValue("<version name=\"" + newCv->GetName() + "\" />");

@@ -1,4 +1,8 @@
-*** 2008-01-06 by Anders Reggestad
+*** 2008-01-08 by Mike Gist
+- Made many fixes and enhancements to the update creation script and
+  the updater.
+
+*** 2008-01-06 by Andrew Craig
 - Fixed problem when loading chat bubble configuration file.  Now it 
   will load the default one if the userdata one is not found and create
   a copy into the /userdata/ folder.
