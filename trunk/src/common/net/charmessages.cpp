@@ -270,51 +270,6 @@ csString psCharUploadMessage::ToString(AccessPointers * /*access_ptrs*/)
     return msgtext;
 }
 
-//--------------------------------------------------------------------------
-
-PSF_IMPLEMENT_MSG_FACTORY(psCharInfoRequestMessage,MSGTYPE_CHAR_INFO);
-
-psCharInfoRequestMessage::psCharInfoRequestMessage( uint32_t clientnum, 
-                                                    type command,
-                                                    const char* buf)
-{
-
-    if ( !buf )
-        buf = "";
-    
-    msg = new MsgEntry( sizeof(int32_t) + strlen(buf)+1, PRIORITY_HIGH );
-    msg->clientnum  = clientnum;
-    msg->SetType(MSGTYPE_CHAR_INFO);
-
-    msg->Add( (int32_t)command);
-    msg->Add( buf );
-}
-
-
-psCharInfoRequestMessage::psCharInfoRequestMessage( MsgEntry* msgEntry ) 
-{
-   if ( !msgEntry )
-       return;
-
-   command = (type)msgEntry->GetInt32();
-   data = msgEntry->GetStr();
-}
-
-
-psCharInfoRequestMessage::~psCharInfoRequestMessage()
-{
-
-}
-
-csString psCharInfoRequestMessage::ToString(AccessPointers * /*access_ptrs*/)
-{
-    csString msgtext;
-    
-    msgtext.AppendFmt("Command: %d Data: '%s'",command,data.GetDataSafe());
-
-    return msgtext;
-}
-
 //----------------------------------------------------------------------------
 /*  TODO: This class is used by: 
     - MSGTYPE_CHAR_CREATE_PARENTS

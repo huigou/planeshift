@@ -196,40 +196,6 @@ public:
     csString path;
 };
 
-
-//--------------------------------------------------------------------------
-
-
-class psCharInfoRequestMessage : public psMessageCracker
-{
-
-public:
-    enum type
-    {
-        SKILL_REQUEST,
-        SKILL_REQUEST_ALL,
-        STAT_REQUEST,
-        STAT_REQUEST_ALL
-    };
-
-    psCharInfoRequestMessage(uint32_t clientnum, type command,const char* data);
-    psCharInfoRequestMessage( MsgEntry* me );
-    ~psCharInfoRequestMessage();
-
-    PSF_DECLARE_MSG_FACTORY();
-
-    /**
-     * Convert the message into human readable string.
-     *
-     * @param access_ptrs A struct to a number of access pointers.
-     * @return Return a human readable string for the message.
-     */
-    virtual csString ToString(AccessPointers * access_ptrs);
-
-    type command;
-    csString data;
-};
-
 //--------------------------------------------------------------------------
 
 /** This is a list of all the possible choice areas.  

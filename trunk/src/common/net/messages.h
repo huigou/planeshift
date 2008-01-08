@@ -42,7 +42,7 @@ struct iEngine;
 
 // This holds the version number of the network code, remember to increase
 // this each time you do an update which breaks compatibility
-#define PS_NETVERSION   0x0082
+#define PS_NETVERSION   0x0083
 // Remember to bump the version in pscssetup.h, as well.
 
 // NPC Networking version is separate so we don't have to break compatibility
@@ -76,7 +76,6 @@ enum MSG_TYPES
     MSGTYPE_AUTHAPPROVED,
     MSGTYPE_AUTHREJECTED,
     MSGTYPE_DISCONNECT,
-    MSGTYPE_CHAR_INFO,
     MSGTYPE_CHAT,
     MSGTYPE_GUILDCMD,           // 10
     MSGTYPE_USERCMD,

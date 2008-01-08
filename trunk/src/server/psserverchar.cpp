@@ -116,7 +116,6 @@ psServerCharManager::~psServerCharManager()
 {
     if (psserver->GetEventManager())
     {
-        psserver->GetEventManager()->Unsubscribe(this, MSGTYPE_CHAR_INFO);
         psserver->GetEventManager()->Unsubscribe(this, MSGTYPE_GUIINVENTORY);
         psserver->GetEventManager()->Unsubscribe(this, MSGTYPE_GUIMERCHANT);
         psserver->GetEventManager()->Unsubscribe(this, MSGTYPE_VIEW_ITEM);
@@ -133,7 +132,6 @@ bool psServerCharManager::Initialize( ClientConnectionSet* ccs)
 {
     clients = ccs;
 
-    psserver->GetEventManager()->Subscribe(this, MSGTYPE_CHAR_INFO,REQUIRE_READY_CLIENT);
     psserver->GetEventManager()->Subscribe(this, MSGTYPE_GUIINVENTORY,NO_VALIDATION);
     psserver->GetEventManager()->Subscribe(this, MSGTYPE_GUIMERCHANT,REQUIRE_READY_CLIENT|REQUIRE_ALIVE);
     psserver->GetEventManager()->Subscribe(this, MSGTYPE_VIEW_ITEM,REQUIRE_READY_CLIENT);
@@ -452,11 +450,6 @@ void psServerCharManager::HandleMessage( MsgEntry* me, Client *client )
            break;
         }
 
-        case MSGTYPE_CHAR_INFO:
-        {
-            HandleCharInfo( me, client );
-            return;
-        }
         case MSGTYPE_GUIMERCHANT:
         {
             HandleMerchantMessage(me, client);
@@ -764,48 +757,6 @@ csString* psServerCharManager::GetTransInfoString(psCharacter* character, uint32
     }
     return transString;
 }
-
-void psServerCharManager::HandleCharInfo( MsgEntry* me, Client *client )
-{
-    psCharInfoRequestMessage irmsg(me);
-
-    psCharInfoRequestMessage::type
-    command = psCharInfoRequestMessage::SKILL_REQUEST_ALL;
-
-    if ( irmsg.command == command )
-    {
-        psCharacter *chardata=client->GetCharacterData();
-        if (chardata==NULL)
-            return;
-        int i;
-        csString outData("<SL>");
-        csString tempBuffer;
-
-        for (i=0;i<PSSKILL_COUNT;i++)
-        {
-            psSkillInfo *skillinfo=CacheManager::GetSingleton().GetSkillByID((PSSKILL)i);
-            if (skillinfo!=NULL)
-            {
-        csString escpxml = EscpXML(skillinfo->name);
-                tempBuffer.Format( "<SKILL NAME=\"%s\" VALUE=\"%iu\" />",
-                                   escpxml.GetData(),
-                                   chardata->GetSkills()->GetSkillRank((PSSKILL)i));
-                outData.Append(tempBuffer);
-            }
-        }
-        outData.Append("</SL>");
-
-         psCharInfoRequestMessage msg(me->clientnum, command, outData);
-         if (msg.valid)
-            psserver->GetEventManager()->SendMessage(msg.msg);
-        else
-        {
-            Bug2("Could not create valid psCharInfoRequestMessage for client %u.\n",me->clientnum);
-        }
-
-    }
-}
-
 
 void psServerCharManager::BeginTrading(Client * client, gemObject * target, const csString & type)
 {
