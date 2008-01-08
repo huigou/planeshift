@@ -119,12 +119,12 @@ do
       path=$1$i
       filemd5sum=${md5sum2% $NEWPATH/$1$j}
       read filemd5sum <<< "$filemd5sum"
-      echo "    <changedfile filepath=\""$1$i"\" diff=\""${path%.*}".vcdiff\" md5sum=\""$filemd5sum"\" />" >> $OUTPUTDIR/changedfiles.xml
+      echo "    <changedfile filepath=\""$1$i"\" diff=\""$path".vcdiff\" md5sum=\""$filemd5sum"\" />" >> $OUTPUTDIR/changedfiles.xml
       if [ ! -d $OUTPUTDIR"/"$1 ]
       then
         mkdir $OUTPUTDIR"/"$1
       fi
-      $XD3PATH -f -e -9 -s $i $NEWPATH/$1$j $OUTPUTDIR/${path%.*}".vcdiff"
+      $XD3PATH -f -e -9 -s $i $NEWPATH/$1$j $OUTPUTDIR/$path".vcdiff"
       break;
     else
       break;
@@ -343,7 +343,7 @@ cd $TOPDIR
 
 echo "Creating Windows update."
 cd platform/new/win32
-zip -9 $REPO/psupdaterwin32.zip $UPDATERNAME".exe" libcurl.dll
+zip -9 $REPO/psupdaterwin32.zip $UPDATERNAME".exe"
 cd $TOPDIR
 cp -R platform/old/win32/* $OLDPATH
 cp -R platform/new/win32/* $NEWPATH
@@ -351,8 +351,7 @@ if [ -e $OLDPATH/$UPDATERNAME".exe" ]
 then
   rm $OLDPATH/$UPDATERNAME".exe"
 fi
-rm $OLDPATH/libcurl.dll
-rm $NEWPATH/$UPDATERNAME".exe" $NEWPATH/libcurl.dll
+rm $NEWPATH/$UPDATERNAME".exe"
 createupdate
 cd $OUTPUTDIR
 zip -r -9 $REPO/win32-"$VERSION".zip *
