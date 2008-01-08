@@ -1,3 +1,7 @@
+*** 2008-01-08 by Sasha Levin
+- Removed MSGTYPE_CHAR_INFO.
+- NETVER BUMP.
+
 *** 2008-01-08 by Mike Gist
 - Made many fixes and enhancements to the update creation script and
   the updater.

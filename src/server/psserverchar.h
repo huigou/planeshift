@@ -140,7 +140,6 @@ protected:
     bool SendPlayerItems( Client *client, psItemCategory * category);
    
     void HandleBookWrite(MsgEntry* me, Client* client);
-    void HandleCharInfo( MsgEntry* me, Client *client );
     void HandleCraftTransInfo( MsgEntry * me, Client *client );
 
     /** Fills up the message with the details about the items in the container.
