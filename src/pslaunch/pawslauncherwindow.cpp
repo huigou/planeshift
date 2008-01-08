@@ -34,7 +34,7 @@ bool pawsLauncherWindow::PostSetup()
 
     // Get server news.
     serverNews = (pawsMultiLineTextBox*)FindWidget("ServerNews");
-    psLaunchGUI->GetDownloader()->DownloadFile(configFile->GetStr("Launcher.News.URL", ""), "servernews", true);
+    psLaunchGUI->GetDownloader()->DownloadFile(configFile->GetStr("Launcher.News.URL", ""), "servernews", true, false);
     
     ifstream newsFile("servernews", ifstream::in);
     csString buffer;

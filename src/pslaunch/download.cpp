@@ -69,7 +69,7 @@ void Downloader::SetProxy (const char* host, int port)
     //curl_easy_setopt (curl, CURLOPT_PROXYPORT, port);
 }
 
-bool Downloader::DownloadFile (const char* file, const char* dest, bool URL)
+bool Downloader::DownloadFile (const char* file, const char* dest, bool URL, bool silent)
 {
 
     // Get active url, append file to get full path.
@@ -133,7 +133,7 @@ bool Downloader::DownloadFile (const char* file, const char* dest, bool URL)
 
         csString error;
 
-        if (result != CURLE_OK)
+        if (result != CURLE_OK && !silent)
         {
             if (result == CURLE_COULDNT_CONNECT || result == CURLE_COULDNT_RESOLVE_HOST)
                 error.Format("Couldn't connect to mirror %s. \n", url.GetData());
@@ -142,12 +142,15 @@ bool Downloader::DownloadFile (const char* file, const char* dest, bool URL)
         }
 
         // Tell the user that we failed
-        if (curlhttpcode != 200 || error != "")
+        if(curlhttpcode != 200 || error != "")
         {
-            if(error == "")
-                printf ("Server error %ld (%s).\n",curlhttpcode,url.GetData());
-            else
-                printf ("Server error: %s (%ld).\n",error.GetData(),curlhttpcode);
+            if(!silent)
+            {
+                if(error == "")
+                    printf ("Server error %ld (%s).\n",curlhttpcode,url.GetData());
+                else
+                    printf ("Server error: %s (%ld).\n",error.GetData(),curlhttpcode);
+            }
 
             if(!URL)
             {
@@ -166,14 +169,15 @@ bool Downloader::DownloadFile (const char* file, const char* dest, bool URL)
         }
         return true;
     }
-    
-    
-    printf("There are no active mirrors! Please check the forums for more info and help!\n");
+
     if(URL)
     {
         delete mirror;
         mirror = NULL;
     }
+    else
+        printf("There are no active mirrors! Please check the forums for more info and help!\n");
+
     return false;
 }
 

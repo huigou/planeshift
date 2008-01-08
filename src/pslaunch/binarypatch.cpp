@@ -147,6 +147,9 @@ bool PatchFile(const char *oldFilePath, const char *vcdiff, const char *newFileP
     FILE* patchFile = fopen(vcdiff, "rb");
     FILE* outFile = fopen(newFilePath, "wb");
 
+    if(!srcFile || !patchFile || !outFile)
+        return false;
+
     int res = PatchFileHelper(srcFile, patchFile, outFile, 0x1000);
 
     fclose(outFile);
