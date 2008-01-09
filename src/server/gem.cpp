@@ -826,6 +826,11 @@ float gemObject::RangeTo(gemObject* obj, bool ignoreY)
     return proxlist->RangeTo(obj, ignoreY);
 }
 
+bool gemObject::IsUpdateReq (csVector3 const &pos,csVector3 const &oldPos)
+{
+    return (pos-oldPos).SquaredNorm() >= DEF_UPDATE_DIST*DEF_UPDATE_DIST;
+}
+
 int gemObject::FindAnimIndex(const char *name)
 {
     return CacheManager::GetSingleton().GetMsgStrings()->Request(name);
@@ -850,12 +855,11 @@ bool gemObject::InitProximityList(float radius,int clientnum)
 
 void gemObject::UpdateProxList( bool force )
 {
-    #ifdef PSPROXDEBUG
-        psString log;
-        //CPrintf(CON_DEBUG, "CheckUpdateFrequency...");
-    #endif
+#ifdef PSPROXDEBUG
+    psString log;
+#endif
 
-    if (!force && !proxlist->CheckUpdateFrequency())  // This allows updates only every 10th frame or whatever
+    if (!force && !proxlist->CheckUpdateRequired())  // This allows updates only if moved some way away
         return;
 
 #ifdef PSPROXDEBUG
@@ -1403,7 +1407,9 @@ psItem* gemItem::GetItem()
 float gemItem::GetBaseAdvertiseRange()
 {
     if (itemdata==NULL)
+    {
         return gemObject::GetBaseAdvertiseRange();
+    }
     return itemdata->GetVisibleDistance();
 }
 
@@ -1831,15 +1837,21 @@ void gemActor::SetMasqueradeLevel(int level)
 
 bool gemActor::SeesObject(gemObject * object, float range)
 {
+    bool res = (worldInstance == object->GetInstance() || object->GetInstance() == GLOBAL_INSTANCE || GetInstance() == GLOBAL_INSTANCE)
+                  &&
+               (GetBaseAdvertiseRange() >= range)
+                  &&
+               (object==this  ||  object->GetVisibility()  ||  GetViewAllObjects() );
+
 #ifdef PSPROXDEBUG
-            log.AppendFmt("Sees object: %s in Instance %d vs %s in %d.\n", name.GetData(), worldInstance, object->GetName(),object->GetInstance());
+    psString log;
+    log.AppendFmt("%s object: %s %s in Instance %d vs %s %s in %d and baseadvertise %.2f vs range %.2f\n",
+                  res?"Sees":"Dosn't see", name.GetData(), GetViewAllObjects()?"sees all":"see visible",worldInstance, 
+                  object->GetVisibility()?"Visible":"Invisible",object->GetName(), object->GetInstance(),
+                  GetBaseAdvertiseRange(),range);
+    CPrintf(CON_DEBUG, "%s\n", log.GetData());    //use CPrintf because Error1() is breaking lines
 #endif
-    return
-        (worldInstance == object->GetInstance() || object->GetInstance() == GLOBAL_INSTANCE || GetInstance() == GLOBAL_INSTANCE)
-            &&
-        (GetBaseAdvertiseRange() >= range)
-            &&
-        (object==this  ||  object->GetVisibility()  ||  GetViewAllObjects() );
+    return res;
 }
 
 void gemActor::SetViewAllObjects(bool v)

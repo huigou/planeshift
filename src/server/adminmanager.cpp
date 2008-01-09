@@ -2045,9 +2045,13 @@ void AdminManager::Teleport(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& 
 
     csString destName;
     if (data.map.Length())
+    {
         destName.Format("map %s", data.map.GetData() );
+    }
     else
+    {
         destName.Format("sector %s", targetSector->QueryObject()->GetName() );
+    }
 
     // Update ProxList on sector crossing
     if (oldsector != targetSector)
@@ -2056,7 +2060,10 @@ void AdminManager::Teleport(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& 
         psserver->SendSystemOK(subject->GetClientID(), "Welcome to " + destName);
     }
     else
+    {
         subject->UpdateProxList(false); // Update ProxList if needed
+    }
+    
 
     if ( dynamic_cast<gemActor*>(subject) ) // Record old location of actor, for undo
         ((gemActor*)subject)->UpdateValidLocation(oldpos, 0.0f, oldyrot, oldsector, true);

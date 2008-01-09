@@ -1,3 +1,6 @@
+*** 2008-01-10 by Anders Reggestad
+- Fixed update of proxy lists when teleporting between instances.
+
 *** 2008-01-09 by Kenny Graunke
 - Fix FS#907.
 

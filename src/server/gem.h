@@ -225,8 +225,7 @@ public:
 
     float RangeTo(gemObject *obj, bool ignoreY = false);
 
-    virtual bool IsUpdateReq (csVector3 const &pos,csVector3 const &oldPos)
-        { return (pos-oldPos).SquaredNorm() >= DEF_UPDATE_DIST*DEF_UPDATE_DIST; }
+    virtual bool IsUpdateReq (csVector3 const &pos,csVector3 const &oldPos);
 
     /** This value indicates the range that this entity would become visible
      *  to other entities if no other modifiers were taken into consideration. */
