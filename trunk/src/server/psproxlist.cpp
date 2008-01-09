@@ -371,18 +371,20 @@ void ProximityList::TouchObjectThatWatchesMe(gemObject *object,float newrange)
     }
 }
 
-bool ProximityList::CheckUpdateFrequency()
+bool ProximityList::CheckUpdateRequired()
 {
     csVector3 pos;
     float rot;
     iSector *sector;
 
     self->GetPosition (pos, rot, sector);
+    int instance = self->GetInstance();
 
-    if (self->IsUpdateReq (pos, oldPos) || firstFrame)
+    if (self->IsUpdateReq (pos, oldPos) || instance != oldInstance || firstFrame)
     {
         firstFrame = false;
         oldPos = pos;
+        oldInstance = instance;
         return true;
     }
     return false;

@@ -63,6 +63,7 @@ protected:
     int          clientnum;
     bool         firstFrame;
     csVector3    oldPos;
+    int          oldInstance;
 
     /** Adds 'interestedobject' to 'objectsThatWatchMe' */
     void AddWatcher(gemObject *interestedobject, float range);
@@ -110,7 +111,10 @@ public:
     bool FindClient(int cnum);
     gemObject *FindObjectName(const char *name);
 
-    bool CheckUpdateFrequency();
+    /**
+     * Check if an update is required for this object based on moved range and changed instance.
+     */
+    bool CheckUpdateRequired();
     float RangeTo( gemObject* object, bool ignoreY = false );
     void DebugDumpContents(csString& out);
 
