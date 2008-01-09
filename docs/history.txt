@@ -71,6 +71,9 @@
 
 *** 2008-01-03 by Kenny Graunke
 - Fix pawsObjectView scaling and restore original distances.
+- Fixed the rest of FS#887: left/right hand slots now take up the full height
+  as shown in the elves & default skins.
+- Made pawsSlot draw icons correctly when the height is larger than the width.
 
 *** 2008-01-02 by Kenny Graunke
 - Fixed crash on client quit, incorrectly deleting psSoundManager.  Fixed the
