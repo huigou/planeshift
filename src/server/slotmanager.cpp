@@ -873,15 +873,15 @@ void SlotManager::Consume(psItem* item, psCharacter *charData, int count)
     
     gemActor *actor = charData->GetActor();
     
-    for (int i = count; i > 0; i--)
-    {
-        psserver->GetProgressionManager()->ProcessEvent(script,  actor);
-    }
-    
     // Remove the item from inventory and destroy it
     psItem* consumedItem = charData->Inventory().RemoveItemID(item->GetUID(), count);
     if (consumedItem)
     {
+        for (unsigned short i = 0; i < consumedItem->GetStackCount(); i++)
+        {
+            psserver->GetProgressionManager()->ProcessEvent(script,  actor);
+        }
+    
         consumedItem->Destroy();
         delete consumedItem;
     }
