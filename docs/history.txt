@@ -3,6 +3,8 @@
   initializing more of the class. There were cases where Move would 
   end up calling things that have not yet been initialized.  
   Fixes: FS910
+- Fixed some memory leaks with the pslinmovement class and 
+  client GEM objects.  
   
 *** 2008-01-08 by Sasha Levin
 - Removed MSGTYPE_CHAR_INFO.

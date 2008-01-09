@@ -1164,6 +1164,7 @@ GEMClientActor::GEMClientActor( psCelClient* cel, psPersistActor& mesg )
 GEMClientActor::~GEMClientActor()
 {
     delete vitalManager;    
+    delete linmove;
 }
 
 int GEMClientActor::GetAnimIndex (csStringHash* msgstrings, csStringID animid)
