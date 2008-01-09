@@ -266,9 +266,14 @@ public:
     
     virtual GEMOBJECT_TYPE GetObjectType() { return GEM_OBJECT; }
     
-    bool InitMesh(const char *factname,const char *filename,
-    const csVector3& pos,const float rotangle, const char* sector );
-
+    /** Setup the mesh for this object.
+    *   @param factname The name of the mesh factory to use.
+    *   @param filename The name of the mesh file to load if factory not found.
+    *   
+    *   @return true if the mesh was set correctly, false if mesh failed to be set or created.
+    */
+    bool InitMesh(const char *factname,const char *filename);
+    
     /** Set position of mesh */
     void Move(const csVector3& pos,float rotangle, const char* room);
 

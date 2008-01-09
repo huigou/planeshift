@@ -1,3 +1,9 @@
+*** 2008-01-08 by Andrew Craig
+- Move the Move() in the client InitMesh() to after it has finished 
+  initializing more of the class. There were cases where Move would 
+  end up calling things that have not yet been initialized.  
+  Fixes: FS910
+  
 *** 2008-01-08 by Sasha Levin
 - Removed MSGTYPE_CHAR_INFO.
 - NETVER BUMP.

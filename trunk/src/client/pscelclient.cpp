@@ -1034,10 +1034,7 @@ void GEMClientObject::Move(const csVector3& pos,float rotangle,  const char* roo
 }
 
 bool GEMClientObject::InitMesh( const char *factname,
-                                const char *filename,
-                                const csVector3& pos,
-                                const float rotangle,
-                                const char* room
+                                const char *filename
                               )
 {
     // Helm Mesh Check
@@ -1083,7 +1080,6 @@ bool GEMClientObject::InitMesh( const char *factname,
         calstate->SetUserData((void *)this);
 
     charApp->SetMesh(pcmesh);
-    Move(pos,rotangle,room);
     
     cel->AttachObject(pcmesh->QueryObject(), this);
     
@@ -1128,7 +1124,7 @@ GEMClientActor::GEMClientActor( psCelClient* cel, psPersistActor& mesg )
     
     Debug3( LOG_CELPERSIST, 0, "Actor %s(%d) Received", mesg.name.GetData(), mesg.entityid );
 
-    if ( !InitMesh(mesg.factname, mesg.filename, mesg.pos, mesg.yrot, mesg.sectorName) )
+    if ( !InitMesh(mesg.factname, mesg.filename) )
     {
         Error3("Fatal Error: Could not create actor %s(%d)", mesg.name.GetData(), mesg.entityid );
         return;
@@ -1152,6 +1148,9 @@ GEMClientActor::GEMClientActor( psCelClient* cel, psPersistActor& mesg )
 
     SetAnimationVelocity(mesg.vel);
 
+    // Move into position
+    Move( mesg.pos, mesg.yrot, mesg.sectorName);
+    
     if (!control && (flags & psPersistActor::NAMEKNOWN))
         cel->GetEntityLabels()->OnObjectArrived(this);
     cel->GetShadowManager()->CreateShadow(this);
@@ -1611,15 +1610,17 @@ GEMClientItem::GEMClientItem( psCelClient* cel, psPersistItem& mesg )
     factname = mesg.factname;
     solid = 0;
     
-    InitMesh( mesg.factname, mesg.filename, mesg.pos, mesg.yRot, mesg.sector );
-
+    InitMesh( mesg.factname, mesg.filename);
+    Move(mesg.pos, mesg.yRot, mesg.sector);
+    
     if (mesg.flags & psPersistItem::COLLIDE)
     {
         solid = new psSolid(psengine->GetObjectRegistry());
         solid->SetMesh(pcmesh);
         solid->Setup();
     }
-
+    
+    
     cel->GetEntityLabels()->OnObjectArrived(this);
     cel->GetShadowManager()->CreateShadow(this);
 }
