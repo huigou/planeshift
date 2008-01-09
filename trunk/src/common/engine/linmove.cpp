@@ -113,63 +113,65 @@
 
 psLinearMovement::psLinearMovement (iObjectRegistry* object_reg)
 {
-
+    colldet = 0;
+    
     this->object_reg = object_reg;
-  vc = csQueryRegistry<iVirtualClock> (object_reg);
-  if (!vc)
-  {
-    return;
-  }
+    vc = csQueryRegistry<iVirtualClock> (object_reg);
+    if (!vc)
+    {
+        return;
+    }
 
-  engine = csQueryRegistry<iEngine> (object_reg);
-  if (!engine)
-  {
-    return;
-  }
+    engine = csQueryRegistry<iEngine> (object_reg);
+    if (!engine)
+    {
+        return;
+    }
 
-  velBody = angularVelocity = velWorld = 0;
-  angleToReachFlag = false;
-  angDelta = 0.0f;
-  lastDRUpdate = 0;
+    velBody = angularVelocity = velWorld = 0;
+    angleToReachFlag = false;
+    angDelta = 0.0f;
+    lastDRUpdate = 0;
 
-  xRot = 0.0f;
-  zRot = 0.0f;
-  hugGround = false;
+    xRot = 0.0f;
+    zRot = 0.0f;
+    hugGround = false;
 
-  portalDisplaced = 0.0f;
+    portalDisplaced = 0.0f;
+    
+    path = 0;
+    path_speed = 0.0f;
+    path_time  = 0.0f;
 
-  path = 0;
-  path_speed = 0.0f;
-  path_time  = 0.0f;
+    offset_err = 0;
+    offset_rate = 0;
 
-  offset_err = 0;
-  offset_rate = 0;
+    /*
+    * Speed affects all aspects of movement, including gravity.
+    * It's effectively a comparative rate of "time"
+    */
+    speed = 1.0f;
 
-  /*
-   * Speed affects all aspects of movement, including gravity.
-   * It's effectively a comparative rate of "time"
-   */
-  speed = 1.0f;
-
-  deltaLimit = 0.0f;
+    deltaLimit = 0.0f;
 
 
-  ResetGravity ();
+    ResetGravity ();
 
-  /*
-   * Initialize bouding box parameters to detect if they have been
-   * loaded or not
-   */
-  topSize.Set (0, 0, 0);
+    /*
+    * Initialize bouding box parameters to detect if they have been
+    * loaded or not
+    */
+    topSize.Set (0, 0, 0);
 }
+
 
 psLinearMovement::~psLinearMovement ()
 {
+    delete colldet;
 }
 
 
-static inline bool FindIntersection (const csCollisionPair& cd,
-	csVector3 line[2])
+static inline bool FindIntersection (const csCollisionPair& cd, csVector3 line[2])
 {
   csVector3 tri1[3]; tri1[0] = cd.a1; tri1[1] = cd.b1; tri1[2] = cd.c1;
   csVector3 tri2[3]; tri2[0] = cd.a2; tri2[1] = cd.b2; tri2[2] = cd.c2;
