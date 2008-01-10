@@ -131,6 +131,7 @@ protected:
         float radius, range;
         unsigned short stackCount;
         int instance;
+        bool instanceValid;
         RangeSpecifier rangeSpecifier;
 
         bool DecodeAdminCmdMessage(MsgEntry *pMsg, psAdminCmdMessage& msg, Client *client);        

@@ -602,9 +602,32 @@ Use /snow sector 0 or /snow sector off for ending the event.</topic>
         <topic name="/takeitem">/takeitem [target] [quantity|'all'|''] [item]
 
 Command used to transfer an item to you from another character.  Example: "/takeitem target 3 Sabre"</topic>
-	<topic name="/teleport">/teleport subject destination
+	<topic name="/teleport">/teleport &lt;subject&gt; &lt;destination&gt;
 
-Move the subject object/NPC/player to the given destination. In addition to the standard command syntax, the destination may be 'last' (last valid location; undo last teleport), 'spawn' (spawn point for that character), 'restore' (teleport offline character here), or 'map' followed by a mapname OR a sector and coordinates. Examples: "/teleport target here", "/teleport me Bob", "/teleport me map npcroom", "/teleport me map hydlaa_plaza 3 -42 10", "/teleport "Ink and Paper" map here -234.11 2.23 832"</topic>
+Move the subject to the given destination.
+
+Subject might be one of the following:
+me - Subject is you
+target - Subject is your current target
+&lt;object name&gt; - Subject is a named object
+&lt;NPC name&gt; - Subject is the named NPC
+&lt;player name&gt; - Subject is the named player
+pid:&lt;PID&gt; - Subject is the player/npc with the given pid
+eid:&lt;EID&gt; - Subject is the enity with the given eid.
+
+Destination might be one of the following:
+here [&lt;instance&gt;] - Your current position possible in another instance.
+last - Last position
+spawn - Spawn position
+restore - Teleport offline character here
+map [&lt;map name&gt;|here &lt;x&gt; &lt;y&gt; &lt;z&gt; [&lt;instance&gt;] - Map coordinates.
+
+Examples: 
+   "/teleport target here"
+   "/teleport me Bob"
+   "/teleport me map npcroom"
+   "/teleport me map hydlaa_plaza 3 -42 10"
+   "/teleport "Ink and Paper" map here -234.11 2.23 832"</topic>
         <topic name="/thaw">/thaw player
 
 Disable the effect of the /freeze command on a player.</topic>

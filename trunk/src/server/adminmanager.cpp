@@ -296,6 +296,7 @@ bool AdminManager::AdminCmdData::DecodeAdminCmdMessage(MsgEntry *pMsg, psAdminCm
         target = words[2];
 
         instance = 0;
+        instanceValid = false;
 
         if (target == "map")
         {
@@ -311,9 +312,20 @@ bool AdminManager::AdminCmdData::DecodeAdminCmdMessage(MsgEntry *pMsg, psAdminCm
                 y = words.GetFloat(5);
                 z = words.GetFloat(6);
                 if (words.GetCount() == 8)
+                {
                     instance = words.GetInt(7);
+                    instanceValid = true;
+                }
+            }
+        } else if (target == "here")
+        {
+            if (words.GetCount() >= 4)
+            {
+                instance = words.GetInt(3);
+                instanceValid = true;
             }
         }
+        
         return true;
     }
     else if (command == "/slide")
@@ -895,9 +907,13 @@ void AdminManager::HandleAdminCmdMessage(MsgEntry *me, psAdminCmdMessage &msg, A
         else
         {
             if (data.player == "me")
+            {
                 targetclient = client; // Self
+            }
             else
+            {
                 targetclient = FindPlayerClient(data.player); // Other player?
+            }
 
             if (targetclient) // Found client
             {
@@ -925,12 +941,18 @@ void AdminManager::HandleAdminCmdMessage(MsgEntry *me, psAdminCmdMessage &msg, A
     {
         iSector* here = NULL;
         if (client->GetActor())
+        {
             here = client->GetActor()->GetSector();
+        }
 
         if (here)
+        {
             data.sector = here->QueryObject()->GetName();
+        }
         else
+        {
             data.sector.Clear();  // Bad sector
+        }
     }
 
     int targetID = 0;
@@ -1972,9 +1994,9 @@ void AdminManager::Teleport(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& 
 {
     if (data.target == "")
     {
-        psserver->SendSystemInfo(client->GetClientNum(), "Use: /teleport subject destination\n"
+        psserver->SendSystemInfo(client->GetClientNum(), "Use: /teleport <subject> <destination>\n"
                                  "Subject    : me/target/<object name>/<NPC name>/<player name>/eid:<EID>/pid:<PID>\n"
-                                 "Destination: here/last/spawn/restore/map [<map name>|here] x y z instance\n");
+                                 "Destination: here [<instance>]/last/spawn/restore/map [<map name>|here] <x> <y> <z> [<instance>]\n");
         return;
     }
     
@@ -2900,7 +2922,14 @@ bool AdminManager::GetTargetOfTeleport(Client *client, psAdminCmdMessage& msg, A
                 return false;
             }
             targetPoint = csVector3(data.x, data.y, data.z);
-            instance = data.instance;
+            if (data.instanceValid)
+            {
+                instance = data.instance;
+            }
+            else
+            {
+                instance = client->GetActor()->GetInstance();
+            }
         }
         else
         {
@@ -2911,30 +2940,47 @@ bool AdminManager::GetTargetOfTeleport(Client *client, psAdminCmdMessage& msg, A
     else if (data.target == "here")
     {
         client->GetActor()->GetPosition(targetPoint, yRot, targetSector);
-        instance = client->GetActor()->GetInstance();
+        if (data.instanceValid)
+        {
+            instance = data.instance;
+        }
+        else
+        {
+            instance = client->GetActor()->GetInstance();
+        }
     }
     // Teleport to last valid location (force unstick/teleport undo)
     else if (data.target == "last")
     {
         if ( dynamic_cast<gemActor*>(subject) )
+        {
             ((gemActor*)subject)->GetValidPos(targetPoint, yRot, targetSector);
+        }
         else
+        {
             return false; // Actors only
+        }
     }
     // Teleport to spawn point
     else if (data.target == "spawn")
     {
         if ( dynamic_cast<gemActor*>(subject) )
-            ((gemActor*)subject)->GetSpawnPos(targetPoint, yRot, targetSector);
+        {
+           ((gemActor*)subject)->GetSpawnPos(targetPoint, yRot, targetSector);
+        }
         else
+        {
             return false; // Actors only
+        }
     }
     // Teleport to target
     else if (data.target == "target")
     {
         gemObject* obj = client->GetTargetObject();
         if (!obj)
+        {
             return false;
+        }
         
         obj->GetPosition(targetPoint, yRot, targetSector);
         instance = obj->GetInstance();
@@ -2952,7 +2998,9 @@ bool AdminManager::GetTargetOfTeleport(Client *client, psAdminCmdMessage& msg, A
         {
             gemObject* obj = FindObjectByString(data.target); // Find by ID or name
             if (!obj) // Didn't find
+            {
                 return false;
+            }
 
             obj->GetPosition(targetPoint, yRot, targetSector);
             instance = obj->GetInstance();
