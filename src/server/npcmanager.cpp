@@ -295,9 +295,8 @@ public:
 
         if (!maxPetTime)
         {
-            // Max Mana Script isn't loaded, so load it
+            // Max Pet Time Script isn't loaded, so load it
             maxPetTime = psserver->GetMathScriptEngine()->FindScript("CalculateMaxPetTime");
-            //CS_ASSERT(maxPetTime != NULL);
         }
         
         if ( maxPetTime )
@@ -1964,17 +1963,14 @@ void NPCManager::UpdatePetTime()
 {
     PetOwnerSession *po;
 
-	// Loop through all Sessions
+    // Loop through all Sessions
     BinaryRBIterator< PetOwnerSession > loop( &OwnerPetList );
     for ( po = loop.First(); po; po = ++loop )	    // Increase Pet Time in Game by NPC_TICK_INTERVAL
     {  
         if ( po->isActive )
         {
             po->UpdateElapsedTime( NPC_TICK_INTERVAL );
-            //if ( po->owner ) 
-            //    CPrintf(CON_NOTIFY,"updated pet time ( %s, %d, %.2f )\n", po->owner->GetName(), po->petID, po->elapsedTime);
         }
-	    // Check session for time up
     }
 }
 
