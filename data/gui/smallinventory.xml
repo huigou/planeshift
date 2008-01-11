@@ -5,7 +5,7 @@
         resizable="no" configurable="yes">
         
     <frame x="600" y="100" width="190" height="470" border="yes" />
-    <bgimage resource="SmallInventory" alpha="200" />    
+    <bgimage resource="SmallInventory" alpha="128" />    
     
     <title resource="Blue Title" text="Inventory" align="left" close_button="yes"/>    
 

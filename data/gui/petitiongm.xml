@@ -6,7 +6,7 @@
         
     <frame x="0" y="100" width="600" height="350" border="yes" />
     <title resource="Blue Title" text="Manage Petitions" align="left" close_button="yes" />
-    <bgimage resource="Petitions Background" alpha="200" />
+    <bgimage resource="Petitions Background" alpha="128" />
 
     <widget name="PetitionList" factory="pawsListBox">    
         <frame x="35" y="0" width="532" height="176" border="no"/>

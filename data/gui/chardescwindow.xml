@@ -6,7 +6,7 @@
         
         <frame x="100" y="100" width="320" height="270" border="yes" />
         <title resource="Blue Title" text="Modify description" align="left" close_button="yes" />
-        <bgimage resource="Modify Description BG" alpha="200" />
+        <bgimage resource="Modify Description BG" alpha="128" />
     
         <widget name="lbl" factory="pawsTextBox" >
             <frame x="34" y="8" width="200" height="20" border="no" />

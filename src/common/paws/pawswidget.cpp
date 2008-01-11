@@ -920,13 +920,11 @@ csString pawsWidget::GetBackground()
     return csString("");
 }
 
-
-void pawsWidget::SetBackgroundAlpha( int value )
+void pawsWidget::SetBackgroundAlpha(int value)
 {
-        alpha = value;
-        alphaMin = value;
-    }
-
+    alpha = value;
+    alphaMin = value;
+}
 
 pawsWidget* pawsWidget::FindWidget( const char* name, bool complain )
 {
@@ -1294,7 +1292,7 @@ void pawsWidget::LoadSettings()
     csString configName;
 
     configName.Format("PlaneShift.GUI.%s.MaxTransparency", GetName());
-    SetBackgroundAlpha(config->GetInt(configName, alpha));
+    alpha = config->GetInt(configName, alpha);
 
     configName.Format("PlaneShift.GUI.%s.MinTransparency", GetName());
     alphaMin = config->GetInt(configName, alphaMin);

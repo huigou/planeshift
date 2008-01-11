@@ -5,7 +5,7 @@
         resizable="no" configurable="yes" >
             
     <frame x="200" y="200" width="400" height="300" border="yes" />
-    <bgimage resource="Spellbook Background" alpha="200" />
+    <bgimage resource="Spellbook Background" alpha="128" />
     <title resource="Blue Title" text="Spell Book" align="left" close_button="yes"/>
    
     <widget name="Combine" factory="pawsButton" id="100" tooltip="Combine Glyphs" >

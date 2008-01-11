@@ -5,7 +5,7 @@
         
     <frame x="0" y="200" width="170" height="94" border="yes" />
     <title resource="Blue Title" text="Spell casting" align="left" />
-    <bgimage resource="Spell Cancel" alpha="200" />
+    <bgimage resource="Spell Cancel" alpha="128" />
 
     <!-- Spell Progress -->
     <widget name="SpellProgress" factory="pawsProgressBar">
