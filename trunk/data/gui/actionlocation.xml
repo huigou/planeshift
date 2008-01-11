@@ -5,7 +5,7 @@
         
     <frame x="0" y="200" width="367" height="338" border="yes" />
     <title resource="Blue Title" text="Examine" align="left" close_button="yes"/>
-    <bgimage resource="Quests Reward Background" alpha="200" />
+    <bgimage resource="Quests Reward Background" alpha="128" />
 
         <widget name="Name" factory="pawsTextBox" >
             <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" size="14" />

@@ -7,7 +7,7 @@
         
     <frame x="10" y="100" width="630" height="346" border="yes" />
     <title resource="Blue Title" text="Options" align="left" close_button="yes"/>    
-    <bgimage resource="Config Background"/>
+    <bgimage resource="Config Background" alpha="128"/>
 
     <widget name="ConfigTree" factory="pawsSimpleTree" colour="FFFFFF" font="/this/data/ttf/LiberationSans-Regular.ttf">
         

@@ -5,7 +5,7 @@
         resizable="no" configurable="yes">
         
     <frame x="200" y="100" width="570" height="450" border="yes" />
-    <bgimage resource="Inventory" alpha="200" />
+    <bgimage resource="Inventory" alpha="128" />
     <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="64" size="15" />
         
     <title resource="Blue Title" text="Inventory" align="left" close_button="yes"/>    

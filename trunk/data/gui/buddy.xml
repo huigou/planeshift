@@ -7,7 +7,7 @@
     <frame x="0" y="100" width="170" height="290" border="yes" />
     <minframe width="120" height="160" />
     <title resource="Blue Title" text="Buddy List" align="left" close_button="yes" />
-    <bgimage resource="Buddy Background" alpha="200" />
+    <bgimage resource="Buddy Background" alpha="128" />
 
 
     <widget name="BuddyList" factory="pawsListBox"  >

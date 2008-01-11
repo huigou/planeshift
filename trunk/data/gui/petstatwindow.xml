@@ -6,7 +6,7 @@
         
     <frame x="50" y="50" width="430" height="500" border="yes" />
     <title resource="Blue Title" text="Your Familiars Stats and Skills" align="left" close_button="yes" />
-    <bgimage resource="Skills Background" alpha="255" />
+    <bgimage resource="Skills Background" alpha="128" />
     
     <!-- Feeling stats (HP, Mana, Stamina) -->
     <widget name="HPLbl" factory="pawsTextBox" >
