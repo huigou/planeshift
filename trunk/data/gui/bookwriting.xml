@@ -10,7 +10,7 @@
         </widget>
 
         <widget name="body" factory="pawsMultilineEditTextBox"  style="textinput">
-            <frame x="38" y="100" width="380" height="280" />
+            <frame x="38" y="100" width="380" height="280" border="no"/>
             <font name="/planeshift/data/ttf/becker-m.ttf" r="20" g="10" b="0" size="12"/>
         </widget>
 

@@ -1,3 +1,7 @@
+*** 2008-01-12 by Dave Bentham
+- Improvements to the multiline edit text widget - particularly for book writing -
+  including FS#453.
+
 *** 2008-01-12 by Andrew Craig 
 - Added Lanarel's patch for:
   FS#933 You cannot set a shortcut to the key it is already set to.
