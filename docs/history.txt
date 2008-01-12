@@ -2,6 +2,14 @@
 - Added Lanarel's patch for:
   FS#933 You cannot set a shortcut to the key it is already set to.
 
+*** 2008-01-11 by Kenny Graunke
+- Work on FS#928:
+  - Fixed bug where min transparency was set equal to max by default.
+  - Made default max transparency 50% instead of 78% in most windows; fixed
+    some windows which had 0% max transparency by default.
+- Fixed the chat window so it doesn't force the aspect ratio.  Admittedly the
+  art looks better at the right ratio, but extra height can be very useful.
+
 *** 2008-01-10 by Anders Reggestad
 - Added optional instance parameter to teleport for destinaction here.
 - Fixed update of proxy lists when teleporting between instances.
