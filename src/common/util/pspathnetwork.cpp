@@ -18,17 +18,28 @@
 */
 #include <psconfig.h>
 
+//====================================================================================
+// Crystal Space Includes
+//====================================================================================
 #include <iengine/engine.h>
 #include <iengine/sector.h>
 
-#include "pspathnetwork.h"
+//====================================================================================
+// Project Includes
+//====================================================================================
 #include "util/psutil.h"
+#include "util/strutil.h"
 #include "util/log.h"
 #include "util/psdatabase.h"
 #include "util/psstring.h"
 #include "engine/psworld.h"
 #include "util/waypoint.h"
 #include "util/consoleout.h"
+
+//====================================================================================
+// Local Includes
+//====================================================================================
+#include "pspathnetwork.h"
 
 #ifndef INFINITY
 #define INFINITY 999999999.0F
@@ -62,6 +73,13 @@ bool psPathNetwork::Load(iEngine *engine, iDataConnection *db,psWorld * world)
             }
 
             waypoints.Push(wp);
+
+            // Push in groups
+            if (strcmp(wp->GetGroup(),"")!=0)
+            {
+                AddWaypointToGroup(wp->GetGroup(),wp);
+            }
+            
         }
         else
         {
@@ -118,6 +136,22 @@ bool psPathNetwork::Load(iEngine *engine, iDataConnection *db,psWorld * world)
     
     
     return true;
+}
+
+int psPathNetwork::AddWaypointToGroup(csString group, Waypoint * wp)
+{
+    size_t index;
+    
+    index = waypointGroupNames.PushSmart(group);
+    if (index >= waypointGroups.GetSize())
+    {
+        csList<Waypoint*> list;
+        waypointGroups.Push(list);
+    }
+
+    waypointGroups[index].PushBack(wp);
+    
+    return index;
 }
 
 
@@ -226,6 +260,77 @@ Waypoint *psPathNetwork::FindRandomWaypoint(csVector3& v,iSector *sector, float 
     return NULL;
 }
 
+Waypoint *psPathNetwork::FindNearestWaypoint(int group, csVector3& v,iSector *sector, float range, float * found_range)
+{
+    csList<Waypoint*>::Iterator iter(waypointGroups[group]);
+    Waypoint *wp;
+
+    float min_range = range;
+
+    Waypoint *min_wp = NULL;
+
+    while (iter.HasNext())
+    {
+        wp = iter.Next();
+
+        float dist2 = world->Distance(v,sector,wp->loc.pos,wp->GetSector(engine));
+        
+        if (min_range < 0 || dist2 < min_range)
+        {
+            min_range = dist2;
+            min_wp = wp;
+        }
+    }
+    if (min_wp && found_range) *found_range = min_range;
+
+    return min_wp;
+}
+
+Waypoint *psPathNetwork::FindRandomWaypoint(int group, csVector3& v,iSector *sector, float range, float * found_range)
+{
+    csList<Waypoint*>::Iterator iter(waypointGroups[group]);
+    Waypoint *wp;
+
+    csArray<Waypoint*> nearby;
+    csArray<float> dist;
+ 
+    while (iter.HasNext())
+    {
+        wp = iter.Next();
+
+        float dist2 = world->Distance(v,sector,wp->loc.pos,wp->GetSector(engine));
+        
+        if (range < 0 || dist2 < range)
+        {
+            nearby.Push(wp);
+            dist.Push(dist2);
+        }
+    }
+
+    if (nearby.GetSize()>0)  // found one or more closer than range
+    {
+        size_t pick = psGetRandom((uint32)nearby.GetSize());
+        
+        if (found_range) *found_range = sqrt(dist[pick]);
+        
+        return nearby[pick];
+    }
+
+
+    return NULL;
+}
+
+int psPathNetwork::FindWaypointGroup(const char * groupName)
+{
+    for (size_t i=0;i< waypointGroupNames.GetSize();i++)
+    {
+        if (strcasecmp(groupName,waypointGroupNames[i].GetDataSafe())==0)
+        {
+            return i; // Found matching group name
+        }
+    }
+    return -1;
+}
 
 psPath *psPathNetwork::FindNearestPath(csVector3& v,iSector *sector, float range, float * found_range, int * index)
 {
@@ -333,28 +438,45 @@ void psPathNetwork::ListWaypoints(const char * pattern)
 {
     csArray<Waypoint*>::Iterator iter(waypoints.GetIterator());
     Waypoint *wp;
-
-    CPrintf(CON_CMDOUTPUT, "%9s %-30s %-40s %-10s %10s %s\n", "WP id", "Name", "Position","Radius","Dist","PI");
+    CPrintf(CON_CMDOUTPUT, "Waypoints\n");
+    CPrintf(CON_CMDOUTPUT, "%9s %-30s %-45s %-6s %-6s %-30s\n", "WP", "Name", "Position","Radius","Dist","PI");
     while (iter.HasNext())
     {
         wp = iter.Next();
 
         if (!pattern || strstr(wp->GetName(),pattern))
         {
-            CPrintf(CON_CMDOUTPUT, "%9d %-30s (%9.3f,%9.3f,%9.3f, %s) %9.3f %9.3f %s" ,
-                    wp->loc.id,wp->GetName(),wp->loc.pos.x,wp->loc.pos.y,wp->loc.pos.z,
-                    wp->loc.sectorName.GetDataSafe(),wp->loc.radius,wp->distance,
+            CPrintf(CON_CMDOUTPUT, "%9d %-30s %-45s %6.2f %6.1f %-30s" ,
+                    wp->loc.id,wp->GetName(),toString(wp->loc.pos,wp->loc.sector).GetDataSafe(),
+                    wp->loc.radius,wp->distance,
                     (wp->pi?wp->pi->GetName():""));
 
             for (size_t i = 0; i < wp->links.GetSize(); i++)
             {
-                CPrintf(CON_CMDOUTPUT," %s%s(%.1f)",(wp->prevent_wander[i]?"#":""),
-                        wp->links[i]->GetName(),wp->dists[i]);
+                CPrintf(CON_CMDOUTPUT," %s%s(%d,%.1f)",(wp->prevent_wander[i]?"#":""),
+                        wp->links[i]->GetName(),wp->links[i]->GetID(),wp->dists[i]);
             }
 
             CPrintf(CON_CMDOUTPUT,"\n");
         }
     }
+
+    CPrintf(CON_CMDOUTPUT, "Waypoint groups\n");
+
+    for (size_t i = 0; i < waypointGroupNames.GetSize(); i++)
+    {
+        CPrintf(CON_CMDOUTPUT,"%s\n  ",waypointGroupNames[i].GetDataSafe());
+        csList<Waypoint*>::Iterator iter(waypointGroups[i]);
+        bool first = true;
+        while (iter.HasNext())
+        {
+           Waypoint *wp = iter.Next();
+           CPrintf(CON_CMDOUTPUT,"%s%s(%d)",first?"":", ",wp->GetName(),wp->GetID());
+           first = false;
+        }
+        CPrintf(CON_CMDOUTPUT,"\n");
+    }
+    
 }
 
 

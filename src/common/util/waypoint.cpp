@@ -146,6 +146,7 @@ bool Waypoint::Load(iResultRow& row, iEngine *engine)
     loc.sector     = engine->FindSector(loc.sectorName);
     loc.radius     = row.GetFloat("radius");
     loc.rot_angle  = 0.0;
+    group          = row["wp_group"];
 
     SetFlags(row["flags"]);
 
@@ -245,6 +246,7 @@ int Waypoint::Create(iDataConnection *db)
     const char *fieldnames[]=
         {
             "name",
+            "wp_group",
             "x",
             "y",
             "z",
@@ -255,6 +257,7 @@ int Waypoint::Create(iDataConnection *db)
 
     psStringArray values;
     values.FormatPush("%s", loc.name.GetDataSafe());
+    values.FormatPush("%s", group.GetDataSafe());
     values.FormatPush("%10.2f",loc.pos.x);
     values.FormatPush("%10.2f",loc.pos.y);
     values.FormatPush("%10.2f",loc.pos.z);
@@ -311,7 +314,9 @@ bool Waypoint::CheckWithin(iEngine * engine, const csVector3& pos, const iSector
     {
         float range = (loc.pos - pos).Norm();
         if (range <= loc.radius)
+        {
             return true;
+        }
     }
     
     return false;

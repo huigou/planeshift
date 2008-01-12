@@ -383,6 +383,14 @@ void NPC::DumpBehaviorList()
     brain->DumpBehaviorList(this);
 }
 
+void NPC::DumpReactionList()
+{
+    CPrintf(CON_CMDOUTPUT, "Reactions for %s (PID: %u)\n",name.GetData(),pid);
+    CPrintf(CON_CMDOUTPUT, "---------------------------------------------\n");
+    
+    brain->DumpReactionList(this);
+}
+
 void NPC::DumpHateList()
 {
     iSector *sector=NULL;

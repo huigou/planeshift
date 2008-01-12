@@ -1,3 +1,16 @@
+*** 2008-01-12 by Anders Reggestad
+- Added dump of reactions for npcs, for easier debuging.
+- Added group attribute to waypoints. This will allow to
+  locate "waypoint:group:plaza" to locate an waypoint in
+  the group. This is give the same function as the 
+  location type did give, but when used on waypoints the 
+  waypoint will be defined in the path network so less
+  chanse of collision when using wander.
+  => DB VERSION BUMPED!
+- Changed formating of /path info output.
+- Changed locate operation to have :name and :group subfunction 
+  when locating waypoints. Updated npcbehave.xml to reflect this.
+
 *** 2008-01-12 by Dave Bentham
 - Improvements to the multiline edit text widget - particularly for book writing -
   including FS#453.

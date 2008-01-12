@@ -2661,25 +2661,37 @@ void AdminManager::HandlePath(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
         if (path && (!wp || rangePath < rangeWP))
         {
             psserver->SendSystemInfo(me->clientnum,
-                                     "Found path: %d(%s) at range %.2f to point %d\n"
-                                     "Start WP: %d(%s)\n"
-                                     "End WP: %d(%s)\n"
+                                     "Found path: %s(%d) at range %.2f to point %d\n"
+                                     "Start WP: %s(%d)\n"
+                                     "End WP: %s(%d)\n"
                                      "Flags: %s",
-                                     path->GetID(),path->GetName(),rangePath,index+1,
-                                     path->start->GetID(),path->start->GetName(),
-                                     path->end->GetID(),path->end->GetName(),
+                                     path->GetName(),path->GetID(),rangePath,index+1,
+                                     path->start->GetName(),path->start->GetID(),
+                                     path->end->GetName(),path->end->GetID(),
                                      path->GetFlags().GetDataSafe());
         }
         else
         {
+            csString links;
+            for (size_t i = 0; i < wp->links.GetSize(); i++)
+            {
+                if (i!=0)
+                {
+                    links.Append(", ");
+                }
+                links.AppendFmt("%s(%d)",wp->links[i]->GetName(),wp->links[i]->GetID());
+            }
+            
             psserver->SendSystemInfo(me->clientnum, 
-                                     "Found waypoint %d(%s) at range %.2f\n"
+                                     "Found waypoint %s(%d) at range %.2f\n"
                                      "Radius: %.2f\n"
                                      "Flags: %s\n"
-                                     "Aliases: %s",
-                                     wp->GetID(),wp->GetName(),rangeWP,
+                                     "Aliases: %s\n"
+                                     "Links: %s",
+                                     wp->GetName(),wp->GetID(),rangeWP,
                                      wp->loc.radius,wp->GetFlags().GetDataSafe(),
-                                     wp->GetAliases().GetDataSafe());
+                                     wp->GetAliases().GetDataSafe(),
+                                     links.GetDataSafe());
         }
         
     }

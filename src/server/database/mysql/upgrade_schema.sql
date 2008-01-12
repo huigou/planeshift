@@ -841,6 +841,10 @@ UPDATE `server_options` SET `option_value`='1173' WHERE `option_name`='db_versio
 #### 1174 - Sasha Levin - Added 'ruling god' to each sector
 ALTER TABLE `planeshift`.`sectors` ADD COLUMN `god_name` VARCHAR(45) NOT NULL DEFAULT 'Laanx' AFTER `collide_objects`;
 
+#### 1175 - Anders Reggestad - Added uniq name to waypoints and type field to allow groups of waypoints with same type.
+alter table sc_waypoints add unique name (name);
+alter table sc_waypoints add column `wp_group` varchar(30) NOT NULL DEFAULT '' after name;
+UPDATE `server_options` SET `option_value`='1175' WHERE `option_name`='db_version';
 
 #
 # Insert your upgrade before this line. Remember when you set a new db_version

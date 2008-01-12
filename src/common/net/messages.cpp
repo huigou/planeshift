@@ -1939,7 +1939,7 @@ csString psWeatherMessage::ToString(AccessPointers * /*access_ptrs*/)
 
     if (type == DAYNIGHT)
     {
-        msgtext.AppendFmt("Type: DAYNIGHT Time: %d:%2d Date: %d-%d-%d",hour,minute,year,month,day);
+        msgtext.AppendFmt("Type: DAYNIGHT Time: %d:%02d Date: %d-%d-%d",hour,minute,year,month,day);
     }
     else
     {

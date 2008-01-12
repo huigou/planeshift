@@ -412,18 +412,25 @@
   </npctype>
 
   <npctype name="MoveTest2" vel="$run">
-    <!-- Advanced movement using waypoints -->
-    <behavior name="Move1" decay="0" growth="0" initial="80" loop="yes">
+    <!-- Initial behavior to locate the starting point -->
+    <behavior name="Initialize" completion_decay="-1" initial="1000">
       <!--debug level="0" /-->
       <locate obj="waypoint"  static="no" />    <!-- Locate nearest waypoint -->
       <navigate anim="walk" />                  <!-- Local navigation -->
-      <locate obj="waypoint:p1"  static="no" />
+    </behavior>
+
+    <!-- Advanced movement using waypoints -->
+    <behavior name="Move1" decay="0" growth="0" initial="80" loop="yes">
+      <!--debug level="0" /-->
+      <locate obj="waypoint:name:p1"  static="no" />
       <wander anim="walk" />        <!-- Navigate using waypoints -->
       <wait anim="stand" duration="5" />
       <rotate type="relative" value="180" ang_vel="45"/>
-      <locate obj="waypoint:tower_2"  static="no" />
+      <locate obj="waypoint:group:tower_watch"  random="yes" static="no" />
       <wander anim="walk" />        <!-- Navigate using waypoints -->
       <wait anim="stand" duration="5" />
+      <locate obj="waypoint:name:tower_2"  static="no" />
+      <wander anim="walk" />        <!-- Navigate using waypoints -->
       <movepath path="Test Path 1" direction="REVERSE" />
       <wait anim="stand" duration="5" />
     </behavior>
@@ -439,11 +446,11 @@
       <!--debug level="0" /-->
       <locate obj="waypoint"  static="no" />    <!-- Locate nearest waypoint -->
       <navigate anim="walk" />                  <!-- Local navigation -->
-      <locate obj="waypoint:p1"  static="no" />
+      <locate obj="waypoint:name:p1"  static="no" />
       <wander anim="walk" />        <!-- Navigate using waypoints -->
       <wait anim="stand" duration="5" />
       <rotate type="relative" value="180" ang_vel="45"/>
-      <locate obj="waypoint:tower_2"  static="no" />
+      <locate obj="waypoint:name:tower_2"  static="no" />
       <wander anim="walk" />        <!-- Navigate using waypoints -->
       <wait anim="stand" duration="5" />
       <rotate type="relative" value="180" ang_vel="45"/>
@@ -464,10 +471,10 @@
       <locate obj="waypoint"  static="no" />    <!-- Locate nearest waypoint -->
       <navigate anim="walk" />                  <!-- Local navigation -->
 
-      <locate obj="waypoint:p13"  static="no" />
+      <locate obj="waypoint:name:p13"  static="no" />
       <wander anim="walk" vel="$walk" />        <!-- Navigate using waypoints -->
       <wait anim="stand" duration="5" />
-      <locate obj="waypoint:p3"  static="no" />
+      <locate obj="waypoint:name:p3"  static="no" />
       <wander anim="walk" vel="$run" />        <!-- Navigate using waypoints -->
       <wait anim="stand" duration="5" />
     </behavior>
@@ -480,7 +487,7 @@
       <locate obj="waypoint"  static="no" />    <!-- Locate nearest waypoint -->
       <navigate anim="walk" />                  <!-- Local navigation -->
 
-      <locate obj="waypoint:$name_home"  static="no" />
+      <locate obj="waypoint:name:$name_home"  static="no" />
       <wander anim="walk" />        <!-- Navigate using waypoints -->
       <!-- Simulate going inside by setting invisbile -->
       <wait duration="10" anim="stand" />
@@ -493,7 +500,7 @@
       <locate obj="waypoint"  static="no" />    <!-- Locate nearest waypoint -->
       <navigate anim="walk" />                  <!-- Local navigation -->
 
-      <locate obj="waypoint:$name_work"  static="no" />
+      <locate obj="waypoint:name:$name_work"  static="no" />
       <wander anim="walk" />        <!-- Navigate using waypoints -->
     </behavior>
 
@@ -528,11 +535,11 @@
     <!-- Testing the wander operation. -->
 
     <!-- Locate nearest waypoint -->
-    <behavior name="Locate waypoint" completion_decay="-1" initial="100">
+    <behavior name="Initialize" completion_decay="-1" initial="100">
       <locate obj="waypoint"  static="no" />
       <navigate anim="walk" />        <!-- Local navigation -->
       <!-- debug level="15" /-->
-      <locate obj="waypoint:ug_1" static="no" />
+      <locate obj="waypoint:name:ug_1" static="no" />
       <wander anim="walk" />          <!-- Navigate using waypoints -->
     </behavior>
     <behavior name="Wander waypoints" decay="0" growth="0" initial="50" loop="yes">

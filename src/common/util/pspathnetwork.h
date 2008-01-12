@@ -35,6 +35,9 @@ class psPathNetwork
 public:
     csArray<Waypoint*> waypoints;
     csArray<psPath*> paths;
+    
+    csArray<csString> waypointGroupNames;
+    csArray< csList<Waypoint*> > waypointGroups;
 
     csWeakRef<iEngine> engine;
     csWeakRef<iDataConnection> db;
@@ -45,6 +48,11 @@ public:
      * Load all waypoins and paths from db
      */
     bool Load(iEngine *engine, iDataConnection *db, psWorld * world);
+
+    /**
+     *
+     */
+    int AddWaypointToGroup(csString group, Waypoint * wp);
 
     /**
      * Find waypoint by id
@@ -69,7 +77,24 @@ public:
     Waypoint *FindRandomWaypoint(csVector3& v, iSector *sector, float range, float * found_range = NULL);
 
     /**
-     * Find the path nearest to a point in the world.
+     * Find waypoint nearest to a point in the world in the given group.
+     * @param range Find only waypoints within range from waypoint, -1 if range dosn't matter
+     */
+    Waypoint *FindNearestWaypoint(int group, csVector3& v,iSector *sector, float range, float * found_range = NULL);
+
+    /**
+     * Find random waypoint within a given range to a point in the world
+     * @param range Find only waypoints within range from waypoint, -1 if range dosn't matter
+     */
+    Waypoint *FindRandomWaypoint(int group, csVector3& v, iSector *sector, float range, float * found_range = NULL);
+
+    /**
+     * Find the index for the given group name, return -1 if no group is found.
+     */
+    int FindWaypointGroup(const char * groupName);
+    
+    /**
+     * Find the path nearest to a point in the world in the given group.
      * @ param Set an maximum range for points to considere.
      */
     psPath *FindNearestPath(csVector3& v, iSector *sector, float range, float * found_range = NULL, int * index = NULL);
