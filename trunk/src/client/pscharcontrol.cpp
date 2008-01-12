@@ -183,7 +183,17 @@ bool psControlManager::MapTrigger( const char* name, psControl::Device device, u
 
     psControl* other = GetMappedTrigger(device,button,mods);
     if (other && other->mods == mods)  // Ignore default GetMappedTrigger()
-        return false;  // This combo is already in use
+    {
+        if (other!=ctrl)
+        {
+            return false; // This combo is already in use
+        }
+        else
+        {
+            return true; //already assigned to this control. Do nothing, but return success.
+        }
+    }
+    
 
     #ifdef CONTROLS_DEBUG
         printf("Mapping trigger \"%s\" to %s\n", name, ComboToString(device,button,mods).GetData() );
