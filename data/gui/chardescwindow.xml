@@ -20,7 +20,7 @@
         </widget>
         
         <widget name="Description" factory="pawsMultilineEditTextBox" >
-            <frame x="25" y="30" width="270" height="200" border="no" />
+            <frame x="25" y="30" width="270" height="185" border="no" />
         </widget>  
         <widget name="OK" factory="pawsButton" id="100">
             <frame x="38" y="238" width="85" height="30" />

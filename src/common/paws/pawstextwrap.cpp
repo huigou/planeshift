@@ -32,6 +32,8 @@
 
 #define EDIT_TEXTBOX_MOUSE_SCROLL_AMOUNT 3
 
+#define VSCROLLBAR_WIDTH 24
+
 /* 
    In order for this control to be implemented correctly, it must pass the following tests:
      1. Takes the last word after a space on the line and moves it to the next line. (wordwrap)
@@ -80,7 +82,7 @@ bool pawsMultilineEditTextBox::OnKeyDown( int code, int key, int modifiers )
     size_t position = 0;
     bool repositionCursor = false;
 
-	blink = true;
+    blink = true;
 
     switch ( key )
     {
@@ -112,8 +114,6 @@ bool pawsMultilineEditTextBox::OnKeyDown( int code, int key, int modifiers )
         else if (cursorLine > 0)
         {
             cursorLine--;
-            if (cursorLine<topLine)
-                topLine--;
             cursorLoc = lineInfo[cursorLine]->lineLength -1 ;
             break;
         }
@@ -127,8 +127,6 @@ bool pawsMultilineEditTextBox::OnKeyDown( int code, int key, int modifiers )
         {
             cursorLine++;
             cursorLoc=0;
-            if (cursorLine>topLine+canDrawLines)
-                topLine++;
         } else if (cursorLine == lineInfo.GetSize()-1 && cursorLoc == lineInfo[cursorLine]->lineLength-1) {
           //the case for the very last line, we allow to go to after the last character
            cursorLoc++; 
@@ -138,8 +136,6 @@ bool pawsMultilineEditTextBox::OnKeyDown( int code, int key, int modifiers )
     {
         if (cursorLine>0)
             cursorLine--;
-        if (cursorLine<topLine)
-            topLine--;
         if(cursorLoc > lineInfo[cursorLine]->lineLength - lineInfo[cursorLine]->lineExtra)
             cursorLoc = lineInfo[cursorLine]->lineLength - lineInfo[cursorLine]->lineExtra;
         break;
@@ -148,8 +144,6 @@ bool pawsMultilineEditTextBox::OnKeyDown( int code, int key, int modifiers )
     {
         if (cursorLine < lineInfo.GetSize()-1)
             cursorLine++;
-        if (cursorLine>topLine+canDrawLines)
-            topLine++;
         if(cursorLoc > lineInfo[cursorLine]->lineLength - lineInfo[cursorLine]->lineExtra)
             cursorLoc = lineInfo[cursorLine]->lineLength - lineInfo[cursorLine]->lineExtra;
         break;
@@ -191,21 +185,13 @@ bool pawsMultilineEditTextBox::OnKeyDown( int code, int key, int modifiers )
             position++;
         }
         
-        //Used to increase vertical scrollbar range if:
-        //    a. wordwrap fills the screen 
-        //    b. Enter is pressed.
-        //    c. breakline fills the screen
-        if (lineInfo.GetSize()>=topLine+canDrawLines)
-            topLine++;
-
         changed = true;
     }
-    
+
     if (changed)
     {
         //Re-flow the text
         LayoutText();
-        SetupScrollBar();
         
         if (repositionCursor)
            GetCursorLocation(position,cursorLine,cursorLoc);
@@ -214,6 +200,12 @@ bool pawsMultilineEditTextBox::OnKeyDown( int code, int key, int modifiers )
             PawsManager::GetSingleton().Publish(subscribedVar, text);
         parent->OnChange(this);
     }
+
+    if (cursorLine > topLine+canDrawLines)
+        topLine = cursorLine - canDrawLines;
+    else if (cursorLine < topLine)
+        topLine = cursorLine;
+    SetupScrollBar();
 
     if ( isprint((unsigned char)key)  )       
         return true;
@@ -228,7 +220,7 @@ bool pawsMultilineEditTextBox::OnKeyDown( int code, int key, int modifiers )
 
 void pawsMultilineEditTextBox::OnResize()
 {
-        canDrawLines = (screenFrame.Height()-lineHeight) / lineHeight;
+    canDrawLines = (screenFrame.Height()-lineHeight) / lineHeight;
 }
 
 void pawsMultilineEditTextBox::SetupScrollBar()
@@ -237,7 +229,8 @@ void pawsMultilineEditTextBox::SetupScrollBar()
     {
         vScrollBar = new pawsScrollBar;
         vScrollBar->SetParent( this );
-        vScrollBar->SetRelativeFrame( screenFrame.Width() - 24, 0, 24, screenFrame.Height() - 12 );
+        vScrollBar->SetRelativeFrame( screenFrame.Width() - VSCROLLBAR_WIDTH,
+                                      0, VSCROLLBAR_WIDTH, screenFrame.Height() - 12 );
         vScrollBar->SetAttachFlags(ATTACH_TOP | ATTACH_BOTTOM | ATTACH_RIGHT);
         vScrollBar->PostSetup();
         vScrollBar->SetTickValue( 1.0 );
@@ -365,7 +358,7 @@ void pawsMultilineEditTextBox::PushLineInfo(size_t lineLength, size_t lineBreak,
 void pawsMultilineEditTextBox::LayoutText()
 {
     csRef<iFont> font = GetFont();
-    int screenWidth = screenFrame.Width();
+    int screenWidth = screenFrame.Width()-VSCROLLBAR_WIDTH;
     int width = 0;
     int height = 0;
     csString tempString = "";
@@ -460,7 +453,7 @@ void pawsMultilineEditTextBox::Draw()
     pawsWidget::Draw();
     pawsWidget::ClipToParent();
     
-    for (size_t line = topLine; line < (topLine+canDrawLines); line++ )
+    for (size_t line = topLine; line <= (topLine+canDrawLines); line++ )
     {
         if ( line >= lineInfo.GetSize())
             break;
@@ -468,7 +461,7 @@ void pawsMultilineEditTextBox::Draw()
         if (lineInfo[line]->lineLength >0) 
         {
             tmp = GetLine(line).Slice(0,lineInfo[line]->lineLength - lineInfo[line]->lineExtra);
-			DrawWidgetText(tmp,(int) screenFrame.xmin, (int) (screenFrame.ymin+yPos*lineHeight),-1,GetFontColour());
+            DrawWidgetText(tmp,(int) screenFrame.xmin, (int) (screenFrame.ymin+yPos*lineHeight),-1,GetFontColour());
             yPos++;
         }
      }
@@ -494,8 +487,8 @@ void pawsMultilineEditTextBox::DrawWidgetText(const char *text, size_t x, size_t
     if (style==-1)
         style = GetFontStyle();
 
-	if (fg == -1)
-		fg = GetFontColour();
+    if (fg == -1)
+        fg = GetFontColour();
 
     if (parent && !parent->GetBackground().IsEmpty() && parent->isFadeEnabled() && parent->GetMaxAlpha() != parent->GetMinAlpha())
     {
@@ -513,9 +506,9 @@ void pawsMultilineEditTextBox::DrawWidgetText(const char *text, size_t x, size_t
     else
     {
         if (style & FONT_DROPSHADOW)
-        graphics2D->Write( font, (int) x+2, (int) y+2, GetFontShadowColour(), -1, text );
+            graphics2D->Write( font, (int) x+2, (int) y+2, GetFontShadowColour(), -1, text );
 
-    graphics2D->Write( font, (int) x, (int) y, fg, -1, text);    
+        graphics2D->Write( font, (int) x, (int) y, fg, -1, text);    
     }
 }
 
@@ -579,10 +572,12 @@ void pawsMultilineEditTextBox::GetLinePos(size_t lineNumber, size_t &start, size
     }
     end = start + lineInfo[lineNumber]->lineLength;
 }
+
 const char pawsMultilineEditTextBox::GetAt(size_t destLine, size_t destCursor)
 {
     return GetLine(destLine).GetAt(destCursor);
 }
+
 void pawsMultilineEditTextBox::GetLineRelative(size_t pos, size_t &start, size_t &end)
 {
     size_t count = 0;
@@ -607,10 +602,12 @@ int pawsMultilineEditTextBox::GetLineWidth(int lineNumber)
     GetFont()->GetDimensions(line,width,height);
     return width;
 }
+
 bool pawsMultilineEditTextBox::EndsWithNewLine(int lineNumber)
 {
     return GetLine(cursorLine).GetAt(lineInfo[lineNumber]->lineLength-1) == '\n' ? true : false;
 }
+
 //Get specified line in text
 csString pawsMultilineEditTextBox::GetLine(size_t lineNumber)
 {
@@ -619,6 +616,7 @@ csString pawsMultilineEditTextBox::GetLine(size_t lineNumber)
     GetLinePos(lineNumber, start, end);
     return text.Slice(start, end - start);
 }
+
 //Get cursor position relative to entire text.
 size_t pawsMultilineEditTextBox::GetCursorPosition()
 {
@@ -631,6 +629,7 @@ size_t pawsMultilineEditTextBox::GetCursorPosition()
     count = count + cursorLoc;
     return count;
 }
+
 size_t pawsMultilineEditTextBox::GetCursorPosition(size_t destLine, size_t destCursor)
 {
     if (destLine >0)
