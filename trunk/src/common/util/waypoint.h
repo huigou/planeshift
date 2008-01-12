@@ -37,6 +37,7 @@ class Waypoint
 {
 public:
     Location                   loc;            /// Id and position
+    csString                   group;          /// Hold group name for this waypoint if any.
     csArray<csString>          aliases;        /// Hold aliases for this waypoint
 
     csArray<Waypoint*>         links;          /// Links to other waypoinst connected with paths from this node.
@@ -73,10 +74,16 @@ public:
 
     /// Get the id of this waypoint
     int          GetID(){ return loc.id; }
+    
     /// Get the name of this waypoint
     const char * GetName(){ return loc.name.GetDataSafe(); }
+
+    /// Get the group name of this waypoint
+    const char* GetGroup(){ return group.GetDataSafe(); }
+    
     /// Get a string with aliases for this waypoint
     csString GetAliases();
+    
     /// Get the sector from the location.
     iSector*     GetSector(iEngine * engine) { return loc.GetSector(engine); }
     

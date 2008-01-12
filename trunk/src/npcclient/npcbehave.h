@@ -116,6 +116,7 @@ public:
     void FirePerception(NPC *npc,EventManager *eventmgr,Perception *pcpt);
 
     void DumpBehaviorList(NPC *npc) { behaviors.DumpBehaviorList(npc); }
+    void DumpReactionList(NPC *npc);
 
     Behavior *GetCurrentBehavior()
     {

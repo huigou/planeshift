@@ -131,8 +131,21 @@ public:
     Behavior *GetCurrentBehavior() { return brain->GetCurrentBehavior(); }
     NPCType  *GetBrain() { return brain; }
 
+    /**
+     * Dump all state information for npc.
+     */
     void DumpState();
+    /**
+     * Dump all behaviors for npc.
+     */
     void DumpBehaviorList();
+    /**
+     * Dump all reactions for npc.
+     */
+    void DumpReactionList();
+    /**
+     * Dump all hated entities for npc.
+     */
     void DumpHateList();
 
     void ClearState();

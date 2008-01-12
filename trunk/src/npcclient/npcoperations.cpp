@@ -1212,10 +1212,23 @@ bool LocateOperation::Run(NPC *npc,EventManager *eventmgr,bool interrupted)
 
         if (split_obj.GetSize() >= 2)
         {
-            located_wp = npcclient->FindWaypoint(split_obj[1]);
-            if (located_wp)
+            if (split_obj[1] == "group")
             {
-                located_range = npcclient->GetWorld()->Distance(start_pos,start_sector,located_wp->loc.pos,located_wp->GetSector(npcclient->GetEngine()));
+                if (random)
+                {
+                    located_wp = npcclient->FindRandomWaypoint(split_obj[2],start_pos,start_sector,range,&located_range);
+                }
+                else
+                {
+                    located_wp = npcclient->FindNearestWaypoint(split_obj[2],start_pos,start_sector,range,&located_range);
+                }
+            } else if (split_obj[1] == "name")
+            {
+                located_wp = npcclient->FindWaypoint(split_obj[2]);
+                if (located_wp)
+                {
+                    located_range = npcclient->GetWorld()->Distance(start_pos,start_sector,located_wp->loc.pos,located_wp->GetSector(npcclient->GetEngine()));
+                }
             }
         }
         else if (random)
@@ -1235,12 +1248,11 @@ bool LocateOperation::Run(NPC *npc,EventManager *eventmgr,bool interrupted)
         }
         npc->Printf(5, "Located waypoint: %s at %s range %.2f",located_wp->GetName(),
                     toString(located_wp->loc.pos,located_wp->loc.GetSector(npcclient->GetEngine())).GetData(),located_range);
+
         located_pos = located_wp->loc.pos;
         located_angle = located_wp->loc.rot_angle;
         located_sector = located_wp->loc.GetSector(npcclient->GetEngine());
 
-        AddRandomRange(located_pos,located_wp->loc.radius);
-        
         located_wp = CalculateWaypoint(npc,located_pos,located_sector,-1);
     }
     else if (!static_loc || !located)

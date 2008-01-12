@@ -184,6 +184,18 @@ public:
     Waypoint *FindRandomWaypoint(csVector3& v, iSector* sector, float range = -1, float * found_range = NULL);
     
     /**
+     * This iterates over all waypoints and finds the nearest one with the given group.
+     * There is probably a more efficient structure to accomplish this.
+     */
+    Waypoint *FindNearestWaypoint(const char *group, csVector3& v, iSector* sector, float range = -1, float * found_range = NULL);
+
+    /**
+     * This iterates over all waypoints and finds the nearest one with the given group.
+     * There is probably a more efficient structure to accomplish this.
+     */
+    Waypoint *FindRandomWaypoint(const char *group, csVector3& v, iSector* sector, float range = -1, float * found_range = NULL);
+    
+    /**
      * This iterates over all waypoints and finds the one with the given id.
      * There is probably a more efficient structure to accomplish this.
      */

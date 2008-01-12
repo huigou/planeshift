@@ -191,11 +191,22 @@ bool NPCType::Load(iDocumentNode *node)
     return true; // success
 }
 
-void NPCType::FirePerception(NPC *npc,EventManager *eventmgr,Perception *pcpt)
+void NPCType::FirePerception(NPC *npc, EventManager *eventmgr, Perception *pcpt)
 {
     for (size_t x=0; x<reactions.GetSize(); x++)
     {
         reactions[x]->React(npc,eventmgr,pcpt);
+    }
+}
+
+void NPCType::DumpReactionList(NPC *npc)
+{
+    CPrintf(CON_CMDOUTPUT, "%-30s %-20s %-5s\n","Reaction","Type","Range");
+    for (size_t i=0; i<reactions.GetSize(); i++)
+    {
+        CPrintf(CON_CMDOUTPUT, "%-30s %-20s %5.1f\n",
+                reactions[i]->GetEventType(),reactions[i]->GetType().GetDataSafe(),
+                reactions[i]->GetRange());
     }
 }
 
@@ -204,27 +215,31 @@ void NPCType::ClearState()
     behaviors.ClearState();
 }
 
-void NPCType::Advance(csTicks delta,NPC *npc,EventManager *eventmgr)
+void NPCType::Advance(csTicks delta, NPC *npc, EventManager *eventmgr)
 {
     behaviors.Advance(delta,npc,eventmgr);
 }
 
-void NPCType::ResumeScript(NPC *npc,EventManager *eventmgr,Behavior *which)
+void NPCType::ResumeScript(NPC *npc, EventManager *eventmgr, Behavior *which)
 {
-    behaviors.ResumeScript(npc,eventmgr,which);
+    behaviors.ResumeScript(npc, eventmgr, which);
 }
 
-void NPCType::Interrupt(NPC *npc,EventManager *eventmgr)
+void NPCType::Interrupt(NPC *npc, EventManager *eventmgr)
 {
-    behaviors.Interrupt(npc,eventmgr);
+    behaviors.Interrupt(npc, eventmgr);
 }
 
 float NPCType::GetAngularVelocity(NPC * /*npc*/)
 {
     if (ang_vel != 999)
+    {
         return ang_vel;
+    }
     else
+    {
         return 90*TWO_PI/360;
+    }
 }
 
 float NPCType::GetVelocity(NPC *npc)

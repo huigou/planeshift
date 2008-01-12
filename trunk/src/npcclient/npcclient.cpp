@@ -1106,12 +1106,32 @@ Location *psNPCClient::FindRandomLocation(const char *loctype, csVector3& pos, i
 
 Waypoint *psNPCClient::FindNearestWaypoint(csVector3& v,iSector *sector, float range, float * found_range)
 {
-    return pathNetwork->FindNearestWaypoint(v,sector,range,found_range);
+    return pathNetwork->FindNearestWaypoint(v, sector, range, found_range);
 }
 
 Waypoint *psNPCClient::FindRandomWaypoint(csVector3& v,iSector *sector, float range, float * found_range)
 {
-    return pathNetwork->FindRandomWaypoint(v,sector,range,found_range);
+    return pathNetwork->FindRandomWaypoint(v, sector, range, found_range);
+}
+
+Waypoint *psNPCClient::FindNearestWaypoint(const char* group, csVector3& v,iSector *sector, float range, float * found_range)
+{
+    int groupIndex = pathNetwork->FindWaypointGroup(group);
+    if (groupIndex == -1)
+    {
+        return NULL;
+    }
+    return pathNetwork->FindNearestWaypoint(groupIndex, v, sector, range, found_range);
+}
+
+Waypoint *psNPCClient::FindRandomWaypoint(const char* group, csVector3& v,iSector *sector, float range, float * found_range)
+{
+    int groupIndex = pathNetwork->FindWaypointGroup(group);
+    if (groupIndex == -1)
+    {
+        return NULL;
+    }
+    return pathNetwork->FindRandomWaypoint(groupIndex, v, sector, range, found_range);
 }
 
 Waypoint *psNPCClient::FindWaypoint(int id)
@@ -1160,6 +1180,9 @@ void psNPCClient::DumpNPC(NPC * npc)
     CPrintf(CON_CMDOUTPUT,"\n");
     
     npc->DumpBehaviorList();
+    CPrintf(CON_CMDOUTPUT,"\n");
+
+    npc->DumpReactionList();
     CPrintf(CON_CMDOUTPUT,"\n");
 
     npc->DumpHateList();            
