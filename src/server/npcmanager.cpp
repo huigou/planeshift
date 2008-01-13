@@ -1918,8 +1918,9 @@ void NPCManager::ControlNPC( gemNPC* npc )
         npc->GetCharacterData()->SetImperviousToAttack(npc->GetCharacterData()->GetImperviousToAttack() & ~TEMPORARILY_IMPERVIOUS);  // may switch this to 'hide' later
     }
     else
+    {
         npc->GetCharacterData()->SetImperviousToAttack(npc->GetCharacterData()->GetImperviousToAttack() | TEMPORARILY_IMPERVIOUS);  // may switch this to 'hide' later
-
+    }
 }
  
 void NPCManager::SetNPCOwner(gemNPC *npc,int owner_id)
