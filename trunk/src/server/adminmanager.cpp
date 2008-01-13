@@ -2076,7 +2076,14 @@ void AdminManager::Teleport(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& 
         psserver->SendSystemError(client->GetClientNum(), "What's the point?");
         return;
     }
-    
+
+    Client* superclient = clients->FindAccount( subject->GetSuperclientID() );
+    if(superclient)
+    {
+        psserver->SendSystemError(client->GetClientNum(), "This enity is controlled by superclient and can't be teleported.");        
+        return;
+    }
+
     if ( !MoveObject(client,subject,targetPoint,yRot,targetSector,targetInstance) )
         return;
 

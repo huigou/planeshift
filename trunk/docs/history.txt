@@ -1,3 +1,6 @@
+*** 2008-01-13 by Anders Reggestad
+- Adding warning that npc's controlled by superclients can't be teleported (BT#1395)
+
 *** 2008-01-12 by Anders Reggestad
 - Added /path select command to select a path to add points.
 - Modified /path point to add the point to the db if 
