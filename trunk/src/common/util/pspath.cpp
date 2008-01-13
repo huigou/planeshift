@@ -25,6 +25,7 @@
 #include <iengine/sector.h>
 #include <iengine/movable.h>
 #include <iutil/object.h>
+#include <csgeom/math3d.h>
 
 //=============================================================================
 // Project Includes
@@ -133,7 +134,16 @@ void psPath::AddPoint(Location * loc, bool first)
     AddPoint(loc->pos,loc->sectorName,first);
 }
 
-void psPath::AddPoint(csVector3& pos, const char * sectorName, bool first)
+void psPath::AddPoint(iDataConnection * db, const csVector3& pos, const char * sectorName, bool first)
+{
+    psPathPoint * pp = AddPoint(pos,sectorName,first);
+    if (id != -1)
+    {
+        pp->Create(db,id);
+    }
+}
+
+psPathPoint* psPath::AddPoint(const csVector3& pos, const char * sectorName, bool first)
 {
     psPathPoint * pp = new psPathPoint();
 
@@ -163,6 +173,13 @@ void psPath::AddPoint(csVector3& pos, const char * sectorName, bool first)
             points.Push(pp);
         }
     }
+    // Update points
+    for (size_t i = 2; i < points.GetSize()-1; i++)
+    {
+        points[i]->prevPointId = points[i-1]->GetID();
+    }
+    
+    return pp;
 }
 
 void psPath::SetStart(Waypoint * wp)
@@ -187,6 +204,44 @@ void psPath::Precalculate(psWorld * world, iEngine *engine)
     precalculationValid = true;
 }
 
+float DistancePointLine(const csVector3 &p, const csVector3 &l1, const csVector3 &l2, float & t)
+{
+    t = - (l1-p)*(l2-l1)/ csSquaredDist::PointPoint(l2,l1);
+    return sqrt(csSquaredDist::PointLine(p,l1,l2));
+}
+
+float psPath::Distance(psWorld * world, iEngine *engine,csVector3& pos, iSector * sector, int * index)
+{
+    float dist = -1.0;
+    int idx = -1;
+    for (size_t i = 0; i < points.GetSize()-1; i++)
+    {
+        csVector3 l1(points[i]->pos);
+        csVector3 l2(points[i+1]->pos);
+        
+        world->WarpSpace(points[i]->GetSector(engine),sector,l1);
+        world->WarpSpace(points[i+1]->GetSector(engine),sector,l2);
+
+        float t = 0.0;
+        float d = DistancePointLine(pos,l1,l2,t);
+        
+        if ((t >= 0.0 && t <= 1.0) && (dist < 0 || d < dist))
+        {
+            dist = d;
+            idx = (int)i;
+        }
+    }
+    if (dist >= 0.0)
+    {
+        if (index)
+        {
+            *index = idx;
+        }
+    }
+    return dist;
+}
+
+/* Old simple version only using dist from pathpoints.
 float psPath::Distance(psWorld * world, iEngine *engine,csVector3& pos, iSector * sector, int * index)
 {
     float dist = -1.0;
@@ -209,9 +264,7 @@ float psPath::Distance(psWorld * world, iEngine *engine,csVector3& pos, iSector 
     }
     return dist;
 }
-
-
-
+*/
                                
 csVector3 psPath::GetEndPos(Direction direction)
 {

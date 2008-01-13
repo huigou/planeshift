@@ -1,4 +1,8 @@
 *** 2008-01-12 by Anders Reggestad
+- Added /path select command to select a path to add points.
+- Modified /path point to add the point to the db if 
+  path already in db.
+- Changed default radius to use for /path admin commands to 2.0.
 - Added dump of reactions for npcs, for easier debuging.
 - Added group attribute to waypoints. This will allow to
   locate "waypoint:group:plaza" to locate an waypoint in

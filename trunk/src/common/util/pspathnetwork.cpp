@@ -332,17 +332,18 @@ int psPathNetwork::FindWaypointGroup(const char * groupName)
     return -1;
 }
 
+
 psPath *psPathNetwork::FindNearestPath(csVector3& v,iSector *sector, float range, float * found_range, int * index)
 {
     psPath * found = NULL;
     int idx = -1;
     int tmpIdx;
  
-    for (size_t p = 0; p < paths.GetSize(); p++)
+    for (size_t p = 0; p < paths.GetSize()-1; p++)
     {
         float dist2 = paths[p]->Distance(world,engine,v,sector,&tmpIdx);
                     
-        if (range < 0 || dist2 < range)
+        if (dist2 >= 0.0 && (range < 0 || dist2 < range))
         {
             found = paths[p];
             range = dist2;

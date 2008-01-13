@@ -508,6 +508,7 @@ Creates a clone of the named NPC at your current location.</topic>
 /path help
 /path info
 /path point
+/path select
 /path split
 /path start
 /path stop|end
@@ -540,7 +541,10 @@ Hide all points. If waypoints or points are specified only either points or wayp
 Show info about the nearest path or waypoint.</topic>
            <topic name="/path point">/path point
 
-Add a new point to the current path at your position.</topic>
+Add a new point to the current selected path at your position. A path will be automaticaly be selected on the /path start command. You could use the /path select command as well to select a new path.</topic>
+           <topic name="/path select">/path select &lt;radius&gt;
+
+Select the nearest path to be your current path. You need a select path to use /path point.</topic>
            <topic name="/path split">/path split &lt;radius&gt; [WP flags]
 
 Split a path into two paths inserting a new waypoint with name according to whats set with /path format.</topic>

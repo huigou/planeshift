@@ -108,8 +108,11 @@ public:
     /// Add a new point to the path
     void AddPoint(Location * loc, bool first = false);
 
+    /// Add a new point to the path and update db
+    void AddPoint(iDataConnection *db, const csVector3& pos, const char * sectorName, bool first = false);
+    
     /// Add a new point to the path
-    void AddPoint(csVector3& pos, const char * sectorName, bool first = false);
+    psPathPoint* AddPoint(const csVector3& pos, const char * sectorName, bool first = false);
 
     /// Set the start of the path
     void SetStart(Waypoint * wp);
