@@ -1,80 +1,81 @@
 <widget_description>
     <widget name="GMSpawnWindow" factory="pawsGMSpawnWindow" visible="no" savepositions="yes" movable="yes"
         resizable="no" configurable="yes">
-        <frame x="100" y="100" width="500" height="400" border="yes" />
-        <bgimage resource="Blue Background" alpha="0" />
+        <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="12" />
+        <frame x="150" y="100" width="700" height="500" border="yes" />
+<bgimage resource="Blue Background" alpha="0" />
         <title resource="Blue Title" text="GM Spawn interface" align="left" close_button="yes"/>
         <widget name="ItemView" factory="pawsObjectView">
-            <frame x="210" y="10" width="200" height="200" border="yes" />
+            <frame x="300" y="10" width="200" height="200" border="yes" />
             <map file="/planeshift/world/podium" sector="room" />
             <distance value="3"/>
         </widget>
     
         <widget name="ItemImage" factory="pawsWidget" visible="yes" >
-            <frame x="432" y="115" width="45" height="45" border="yes"/>
+            <frame x="550" y="160" width="48" height="48" border="yes" />
         </widget>
 
         <widget name="Rotate" factory="pawsButton" id ="2001">
-            <frame x="420" y="85" width="70" height="20" border="no" />
+            <frame x="550" y="100" width="70" height="20" border="no" />
             <bgimage resource="Blue Title" alpha="0" fade="no" />
             <label text="Rotate"/>
         </widget>  
 
         <widget name="Up" factory="pawsButton" id ="2002">
-            <frame x="440" y="25" width="20" height="20" border="no" />
+            <frame x="550" y="25" width="20" height="20" border="no" />
             <bgimage resource="Up Arrow" />
         </widget>
         <widget name="Down" factory="pawsButton" id="2003">
-            <frame x="440" y="52" width="20" height="20" border="no" />
+            <frame x="550" y="72" width="20" height="20" border="no" />
             <bgimage resource="Down Arrow" />
         </widget>
     
         <widget name="ItemName" factory="pawsTextBox">
-            <frame x="210" y="210" width="200" height="20" border="no" />
+            <frame x="310" y="220" width="200" height="20" border="no" />
         </widget>
         
         <widget name="" factory="pawsTextBox">
-            <frame x="210" y="243" width="50" height="20" border="no" />
+            <frame x="310" y="243" width="50" height="20" border="no" />
             <text string="Count:"/>
         </widget>
         
         <widget name="Count" factory="pawsEditTextBox" visible="no">
-            <frame x="264" y="240" width="50" height="20" border="yes" />
+            <frame x="364" y="243" width="50" height="20" border="yes" />
             <text string="1"/>
         </widget>
 
+        <widget name="Pickupable" factory="pawsCheckBox" visible="no">
+                <frame x="450" y="244" width="100" height="20" border="no" />
+                <text string="Pickupable"/>
+        </widget>
+
         <widget name="Lockable" factory="pawsCheckBox" visible="no">
-            <frame x="210" y="265" width="100" height="20" border="no" />
+            <frame x="310" y="265" width="100" height="20" border="no" />
             <text string="Lockable"/>
         </widget>
 
         <widget name="Locked" factory="pawsCheckBox" visible="no">
-            <frame x="310" y="265" width="300" height="20" border="no" />
+            <frame x="310" y="320" width="300" height="20" border="no" />
             <text string="Locked"/>
         </widget>        
     
         <widget name="LockSkill" factory="pawsEditTextBox" visible="no" tooltip="Skill to unlock / lock">
-            <frame x="210" y="290" width="200" height="20" border="yes" />
+            <frame x="310" y="360" width="200" height="20" border="yes" />
             <text string="Lockpicking"/>
         </widget>
 
         <widget name="LockStr" factory="pawsEditTextBox" visible="no" tooltip="Strength on the lock">
-            <frame x="420" y="290" width="50" height="20" border="yes" />
+            <frame x="520" y="360" width="50" height="20" border="yes" />
             <text string="5"/>
         </widget>
         
-        <widget name="Pickupable" factory="pawsCheckBox" visible="no">
-            <frame x="210" y="315" width="100" height="20" border="no" />
-            <text string="Pickupable"/>
-        </widget>    
-    
         <widget name="Force" factory="pawsCheckBox">
-            <frame x="210" y="340" width="300" height="20" border="no" />
+            <frame x="310" y="400" width="320" height="20" border="no" />
             <text string="Allow spawning item with missing mesh"/>
         </widget>
         
         <widget name="Spawn" factory="pawsButton" id ="1000" visible="no">
-            <frame x="210" y="370" width="150" height="20" border="no" />
+            <frame x="310" y="450" width="150" height="20" border="no" />
             <bgimage resource="Blue Title" alpha="0" fade="no" />
             <label text="Spawn item"/>
         </widget>

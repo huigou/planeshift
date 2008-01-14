@@ -275,6 +275,23 @@ bool EEditApp::Init()
     CreateShortcuts();
 
     HideToolbox(EEditToolbox::T_EDIT_EFFECT);
+
+    // Set the default camera height around the character's eye level
+    csVector3 eyeLevel = csVector3(0,1,0); // Default eye level height
+
+    csVector3 actorPos = csVector3(0,0,0);
+    if (pos_anchor->GetMovable())
+    actorPos = pos_anchor->GetMovable()->GetPosition();
+
+    iCamera *camera = editWindow->GetView()->GetCamera();
+    csVector3 cameraPos = camera->GetTransform().This2Other(csVector3(0,0,0));
+
+    cameraPos.x=0;
+    cameraPos.y=actorPos.y-cameraPos.y;
+    cameraPos.z=0;
+
+    camera->Move(cameraPos + eyeLevel);
+
     return true;
 }
 

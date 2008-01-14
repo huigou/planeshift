@@ -1,3 +1,6 @@
+*** 2008-01-13 by Roland Schulz
+- gui fixes by Carrie (FS#643, FS#929, FS#930)
+
 *** 2008-01-13 by Anders Reggestad
 - Adding warning that npc's controlled by superclients can't be teleported (BT#1395)
 

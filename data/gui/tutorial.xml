@@ -20,7 +20,7 @@
     </widget>
   
     <widget name="TutorialNotify" factory="pawsTutorialNotifyWindow" resizeable = "no" visible="no" movable="yes">
-        <frame x="375" y="480" width="45" height="65" border="no"/>
+        <frame x="475" y="480" width="45" height="65" border="no"/>
 
       <widget name="Notify" factory="pawsButton" id="100" tooltip="Click to see Instructions">
         <frame x="0" y="0" width="45" height="60" />

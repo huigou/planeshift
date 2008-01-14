@@ -78,7 +78,7 @@ bool pawsGMSpawnWindow::PostSetup()
     
     AddChild(itemTree);    
     itemTree->SetDefaultColor( graphics2D->FindRGB( 0,255,0 ) );
-    itemTree->SetRelativeFrame(0,0,GetActualWidth(200),GetActualHeight(400));
+    itemTree->SetRelativeFrame(0,0,GetActualWidth(250),GetActualHeight(500));
     itemTree->SetNotify(this);
     itemTree->SetAttachFlags(ATTACH_TOP | ATTACH_BOTTOM | ATTACH_LEFT);
     itemTree->SetScrollBars(false, true);
