@@ -24,6 +24,7 @@
 #include "paws/pawsmanager.h"
 #include "paws/pawswidget.h"
 #include "rpgrules/psmoney.h"
+#include "gui/pawscontrolwindow.h"
 
 class MsgHandler;
 
@@ -49,6 +50,9 @@ private:
         
     MsgHandler* msgHandler;
     pawsMoney * money;
+
+    bool OnMouseDown( int button, int keyModifier, int x, int y );
+    bool OnButtonPressed( int mouseButton, int keyModifer, pawsWidget* widget );
 
 };
 

@@ -97,3 +97,18 @@ bool pawsSmallInventoryWindow::PostSetup()
     return true;    
 }
 
+bool pawsSmallInventoryWindow::OnMouseDown( int button, int keyModifier, int x, int y )
+{
+    // Check to see if we are dropping an item
+    if ( psengine->GetSlotManager() && psengine->GetSlotManager()->IsDragging() )
+    {
+        psengine->GetSlotManager()->CancelDrag();
+        return true;
+    }
+    return pawsWidget::OnMouseDown(  button, keyModifier, x, y );
+}
+
+bool pawsSmallInventoryWindow::OnButtonPressed( int mouseButton, int keyModifer, pawsWidget* widget )
+{
+    return true;
+}
