@@ -351,7 +351,7 @@ bool pawsExchangeWindow::OnButtonPressed( int mouseButton, int keyModifier, paws
         }
     }
 
-    return false;
+    return true;
 }
 
 void pawsExchangeWindow::HandleMoney( MsgEntry* me )

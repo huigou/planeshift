@@ -1,5 +1,6 @@
 *** 2008-01-14 by Roland Schulz
 - fix part of FS#778. Labels weren't updated in mouseover mode. 
+- fix remaining items on FS#403 (hopefully).
 
 *** 2008-01-13 by Roland Schulz
 - gui fixes by Carrie (FS#643, FS#929, FS#930)
