@@ -326,10 +326,24 @@ void psEntityLabels::OnObjectArrived( GEMClientObject* object )
 {
     CS_ASSERT_MSG("Effects Manager must exist before loading entity labels!", psengine->GetEffectManager() );
 
-    if (visibility == LABEL_NEVER || visibility == LABEL_ONMOUSE)
+    if (visibility == LABEL_NEVER)
         return;
 
-    CreateLabelOfObject( object );
+    if(object->GetEntityLabel())
+    {
+        RepaintObjectLabel( object );
+    } else {
+        CreateLabelOfObject( object );
+        if (visibility == LABEL_ONMOUSE)
+        {
+            psPoint mouse = PawsManager::GetSingleton().GetMouse()->GetPosition();
+            GEMClientObject *um = psengine->GetMainWidget()->FindMouseOverObject(mouse.x, mouse.y);
+            if( um != object )
+            {
+                ShowLabelOfObject(object, false);
+            }
+        }
+    }
 }
 
 
