@@ -79,7 +79,7 @@ INSERT INTO progression_events VALUES("equip_sword_negativity","<evt><str attrib
 INSERT INTO progression_events VALUES("drink_speed_potion","<evt><move duration=\"10\" type=\"mod\" x=\"2.0\" y=\"2.0\" z=\"2.0\" /><msg text=\"You drink an speed potion and feel very fast.\"/></evt>");
 INSERT INTO progression_events VALUES("drink_strange_potion","<evt><move duration=\"10\" type=\"mod\" x=\"-0.8\" z=\"-1.1\" yrot=\"5.0\" /><move type=\"push\" y=\"6.0\" yrot=\"10.0\" /><msg text=\"You feel very dizzy\"/></evt>");
 INSERT INTO progression_events VALUES('failed_fly', '<evt><hp attribute="adjust" base="no" value="-45" /><msg text="You failed horribly to fly and injured yourself badly"/></evt>');
-INSERT INTO progression_events VALUES('create_familiar','<evt><createfamiliar /><msg text="Your new familiar appears nearby."/></evt>');
+INSERT INTO progression_events VALUES('create_familiar','<evt><charge charges=\"1\"><createfamiliar /><msg text="Your new familiar appears nearby."/></charge></evt>');
 INSERT INTO progression_events VALUES('kick_you','<evt><hp aim=\"actor\" value=\"20\" save=\"Result\" /><msg aim=\"target\" text=\"You lost $Param0 hitpoints\"/><msg aim=\"actor\" text=\"Target kicked for $Param0 hitpoints\"/></evt>');
 INSERT INTO progression_events VALUES('fire_damage','<evt><hp aim=\"actor\" value=\"-6\" /><msg text=\"You touch the ingots and your hand is burned!\"/></evt>');
 INSERT INTO progression_events VALUES('healing_tree','<evt><hp aim=\"actor\" value=\"6\" /><msg text=\"Walking near the tree you feel refreshed!\"/></evt>');

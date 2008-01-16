@@ -43,6 +43,7 @@
 
 class CacheManager;
 class gemActionLocation;
+class gemItem;
 
 /**
  * This huge class stores all the properties of any object
@@ -66,6 +67,8 @@ public:
 
     void SetGemObject( gemActionLocation *gemAction );
     gemActionLocation *GetGemObject( void );
+
+    gemItem * GetRealItem();
 
     void GetLocationInWorld(const char **sectorname, float &loc_x, float &loc_y, float &loc_z, float &loc_yrot);
     //void SetLocationInWorld(psSectorInfo *sectorinfo,float loc_x,float loc_y,float loc_z,float loc_yrot);

@@ -457,6 +457,8 @@ bool psItemStats::ReadItemStats(iResultRow& row)
     spell_feature_charges    = row.GetInt("spell_feature_charges");
     spell_feature_timing     = row.GetInt("spell_feature_timing");
 
+    SetMaxCharges(row.GetInt("max_charges"));
+
     SetSound(row["sound"]);
 
     int anim_list_id = row.GetInt("item_anim_id");
@@ -1158,7 +1160,10 @@ psItem *psItemStats::InstantiateBasicItem(bool transient)
     newitem->SetCurrentStats(this);
 
     if (transient)
+    {
         newitem->ScheduleRemoval();  // Remove from world in a few hrs if no one picks it up
+    }
+
     return newitem;  // MUST do newitem->Loaded() when it is safe to save!
 }
 
@@ -1300,5 +1305,20 @@ bool psItemStats::IsThisTheCreator(unsigned int characterID)
         return true;
 
     return false;
+}
+
+bool psItemStats::HasCharges() const
+{
+    return maxCharges != -1;
+}
+
+void psItemStats::SetMaxCharges(int charges)
+{
+    maxCharges = charges;
+}
+
+int psItemStats::GetMaxCharges() const
+{
+    return maxCharges;
 }
 

@@ -333,6 +333,25 @@ gemActionLocation *psActionLocation::GetGemObject( void )
    return this->gemAction;
 }
 
+gemItem *psActionLocation::GetRealItem()
+{
+    // Check if the actionlocation is linked to real item
+    uint32_t instance_id = GetInstanceID();
+    if (instance_id==(uint32_t)-1) 
+    {
+        if (GetGemObject()->GetItem())
+        {
+            instance_id = (int)GetGemObject()->GetItem()->GetUID();
+        }
+    }
+    // id 0 is not valid
+    if (instance_id == 0)
+        return NULL;
+
+    return GEMSupervisor::GetSingleton().FindItemEntity( instance_id );
+}
+
+
 void psActionLocation::GetLocationInWorld(const char **sectorname, float &loc_x, float &loc_y, float &loc_z, float &loc_yrot)
 {
     *sectorname = this->sectorname.GetData();

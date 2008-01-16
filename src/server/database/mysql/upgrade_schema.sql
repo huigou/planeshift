@@ -846,6 +846,11 @@ alter table sc_waypoints add unique name (name);
 alter table sc_waypoints add column `wp_group` varchar(30) NOT NULL DEFAULT '' after name;
 UPDATE `server_options` SET `option_value`='1175' WHERE `option_name`='db_version';
 
+#### 1176 - Anders Reggestad - Added charges to items
+ALTER TABLE item_stats ADD COLUMN `max_charges` int(3) NOT NULL default '-1' AFTER creative_definition;
+ALTER TABLE item_instances ADD COLUMN `charges` int(3) NOT NULL default '0' AFTER item_description;
+UPDATE `server_options` SET `option_value`='1176' WHERE `option_name`='db_version';
+
 #
 # Insert your upgrade before this line. Remember when you set a new db_version
 # to update the server_options.sql file and update psserver.cpp as well.

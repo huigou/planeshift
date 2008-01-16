@@ -565,10 +565,10 @@ void psCombatManager::ApplyCombatEvent(psCombatGameEvent *event, int attack_resu
                 gemTarget->DoDamage(gemAttacker,event->FinalDamage);
                 
                 if (gemAttacker)
-                    gemAttacker->InvokeAttackScripts(gemTarget);
+                    gemAttacker->InvokeAttackScripts(gemTarget,weapon);
 
                 if (gemTarget)
-                    gemTarget->InvokeDamageScripts(gemAttacker);
+                    gemTarget->InvokeDamageScripts(gemAttacker,weapon);
 
                 if (gemTarget->GetClientID() == 0 && !gemTarget->GetCharacterData()->IsPet())
                 {

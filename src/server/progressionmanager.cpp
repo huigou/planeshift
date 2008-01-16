@@ -87,6 +87,7 @@ public:
                       ProgressionEvent * script,
                       gemActor *actor,
                       gemObject *target,
+                      psItem *item,
                       int persistentID);
     ~psScriptGameEvent();
 
@@ -100,6 +101,7 @@ protected:
     int persistentID;
     csWeakRef<gemActor> actor;
     csWeakRef<gemObject> target;
+    csWeakRef<psItem> item;
     bool disconnected;
     csArray<MathScriptVar *> state;
 };
@@ -131,7 +133,7 @@ public:
     ProgressionOperation() { my_script=NULL; valuevar=targetvar=actorvar=NULL; value_script=delay_script=NULL; result =  0.0F;}
     virtual ~ProgressionOperation() {if (value_script) delete value_script; if (delay_script) delete delay_script; }
     void SetTicksElapsed(int ticks) { ticksElapsed = ticks; }
-    virtual bool Run(gemActor *actor, gemObject *target, bool inverse)=0;
+    virtual bool Run(gemActor *actor, gemObject *target, psItem * item, bool inverse)=0;
     virtual bool Load(iDocumentNode *node, ProgressionEvent *script)=0;
     virtual csString ToString()=0;
     MathScript *GetMathScript() { return value_script; }
@@ -280,7 +282,7 @@ public:
         return xml;
     }
 
-    bool Run(gemActor *actor, gemObject* target, bool inverse)
+    bool Run(gemActor *actor, gemObject* target, psItem * item, bool inverse)
     {
         // Remove this when adding support for the inverse operation
         if (inverse)
@@ -339,7 +341,7 @@ public:
         return xml;
     }
 
-    bool Run(gemActor *actor, gemObject* target, bool inverse)
+    bool Run(gemActor *actor, gemObject* target, psItem * item, bool inverse)
     {
         // Remove this when adding support for the inverse operation
         if (inverse)
@@ -517,7 +519,7 @@ public:
         return 0.0f;
     }
 
-    bool Run(gemActor *actor, gemObject *target, bool inverse)
+    bool Run(gemActor *actor, gemObject *target, psItem * item, bool inverse)
     {
         // Remove this when adding support for the inverse operation
         if (inverse)
@@ -598,7 +600,7 @@ public:
     }
     
     
-    bool Run(gemActor *actor, gemObject *target, bool inverse)
+    bool Run(gemActor *actor, gemObject *target, psItem * item, bool inverse)
     {        
         if (!aimIsActor && !target)
         {
@@ -992,7 +994,7 @@ public:
         return script;                      
     }
     
-    bool Run(gemActor *actor, gemObject *target, bool inverse)
+    bool Run(gemActor *actor, gemObject *target, psItem * item, bool inverse)
     {
         psCharacter * targetChar;
         gemActor * object;
@@ -1051,7 +1053,7 @@ public:
             csString undoScript = CreateUndoScript(oldValue, finalValue);
 
             int persistentID = targetChar->RegisterProgressionEvent(ToString(), ticksElapsed);
-            psserver->GetProgressionManager()->QueueUndoScript(undoScript.GetData(), delay, actor, object, persistentID);
+            psserver->GetProgressionManager()->QueueUndoScript(undoScript.GetData(), delay, actor, object, item, persistentID);
         }
         return true;
     }
@@ -1193,7 +1195,7 @@ public:
         return xml;
     }
 
-    bool Run(gemActor *actor, gemObject *target, bool inverse)
+    bool Run(gemActor *actor, gemObject *target, psItem * item, bool inverse)
     {
         bool e;
         if (e = setValue && isBuff)
@@ -1246,7 +1248,7 @@ public:
             {
                 gemActor *object = dynamic_cast <gemActor*> (aimIsActor ? actor : target);
                 int persistentID = character->RegisterProgressionEvent(ToString(), ticksElapsed);
-                psserver->GetProgressionManager()->QueueUndoScript(undoScript.GetData(), delay, actor, object, persistentID);
+                psserver->GetProgressionManager()->QueueUndoScript(undoScript.GetData(), delay, actor, object, item, persistentID);
             }
         }
         
@@ -1312,7 +1314,7 @@ public:
         return xml;
     }
 
-    bool Run(gemActor *actor, gemObject *target, bool inverse)
+    bool Run(gemActor *actor, gemObject *target, psItem * item, bool inverse)
     {
         // Remove this when adding support for the inverse operation
         if (inverse)
@@ -1458,7 +1460,7 @@ public:
         return xml;
     }
 
-    bool Run(gemActor *actor, gemObject *target, bool inverse)
+    bool Run(gemActor *actor, gemObject *target, psItem * item, bool inverse)
     {
         // Remove this when adding support for the inverse operation
         if ( inverse )
@@ -1504,7 +1506,7 @@ public:
                     {
                         int persistentID = targetActor->GetCharacterData() ? targetActor->GetCharacterData()->RegisterProgressionEvent(ToString(), ticksElapsed) : 0;
                         psString undoscript = CreateUndoScript();
-                        psserver->GetProgressionManager()->QueueUndoScript(undoscript.GetData(), delay, actor, target, persistentID);
+                        psserver->GetProgressionManager()->QueueUndoScript(undoscript.GetData(), delay, actor, target, item, persistentID);
                     }                        
                 }
                 else
@@ -1601,7 +1603,7 @@ public:
         return xml;
     }
 
-    bool Run(gemActor *actor, gemObject *target, bool inverse)
+    bool Run(gemActor *actor, gemObject *target, psItem * item, bool inverse)
     {
         // Remove this when adding support for the inverse operation
         if (inverse)
@@ -1639,7 +1641,7 @@ public:
             undoScript += "</evt>";
 
             int persistentID = object->GetCharacterData() ? object->GetCharacterData()->RegisterProgressionEvent(ToString(), ticksElapsed) : 0;
-            psserver->GetProgressionManager()->QueueUndoScript(undoScript.GetData(), delay, actor, object, persistentID);
+            psserver->GetProgressionManager()->QueueUndoScript(undoScript.GetData(), delay, actor, object, item, persistentID);
         }
         
         return true;
@@ -1696,7 +1698,7 @@ public:
         return xml;
     }
 
-    bool Run(gemActor *actor, gemObject *target, bool inverse)
+    bool Run(gemActor *actor, gemObject *target, psItem * item, bool inverse)
     {
         // Remove this when adding support for the inverse operation
         if (inverse)
@@ -1757,13 +1759,13 @@ public:
         return xml;
     }
 
-    bool Run(gemActor *actor, gemObject *target, bool inverse)
+    bool Run(gemActor *actor, gemObject *target, psItem * item, bool inverse)
     {
         // Remove this when adding support for the inverse operation
         if (inverse)
             return true;
 
-        gemItem * item;
+        gemItem * gItem;
         int clientnum;
         
         if (!actor)
@@ -1779,19 +1781,24 @@ public:
             return true;
         }
         
-        item = dynamic_cast <gemItem*> (target);
-        if (!item)
+        gItem = dynamic_cast <gemItem*> (target);
+        if (!gItem)
         {
             psserver->SendSystemError(clientnum,"You must have an item selected");
             return true;
         }
         
-        psItemStats * stats = item->GetItem()->GetBaseStats();
+        psItemStats * stats = gItem->GetItem()->GetBaseStats();
         // this is really bad.. should have specific flag?
         if (stats->GetProgressionEventEquip().Length() > 0 || stats->GetProgressionEventUnEquip().Length() > 0)
+        {
             psserver->SendSystemInfo(clientnum,"You found magical properties in this item !");
+        }
         else
+        {
             psserver->SendSystemInfo(clientnum,"This is an ordinary item without any magical powers.");
+        }
+        
         return true;
     }
 };
@@ -1825,6 +1832,7 @@ public:
             persistent = !strcmp(node->GetAttributeValue("persistent"),"yes");
         }
         else persistent = false;
+
         script.name = *eventName;
         script.LoadScript(node);
         return true;
@@ -1840,7 +1848,7 @@ public:
         return xml;
     }
 
-    bool Run(gemActor *actor, gemObject *target, bool inverse)
+    bool Run(gemActor *actor, gemObject *target, psItem * item, bool inverse)
     {
         // Remove this when adding support for the inverse operation
         if (inverse)
@@ -1848,8 +1856,11 @@ public:
 
         int persistentID = 0;
         if (persistent && target && target->GetCharacterData())
+        {
             persistentID = target->GetCharacterData()->RegisterProgressionEvent(ToString(), ticksElapsed);
-        psserver->GetProgressionManager()->QueueEvent(new psScriptGameEvent(delay, &script, actor, target, persistentID));
+        }
+        
+        psserver->GetProgressionManager()->QueueEvent(new psScriptGameEvent(delay, &script, actor, target, item, persistentID));
 
         return true;
     }
@@ -1967,7 +1978,7 @@ public:
         return xml;
     }
 
-    bool Run(gemActor *actor, gemObject *target, bool inverse)
+    bool Run(gemActor *actor, gemObject *target, psItem * item, bool inverse)
     {
         if (inverse)  // No inverse
             return true;
@@ -2103,7 +2114,7 @@ public:
             }
 
             // Queue an event for each intended object
-            psserver->GetProgressionManager()->QueueEvent( new psScriptGameEvent(delaybetween*n++, &script, actor, nearobj, true) );
+            psserver->GetProgressionManager()->QueueEvent( new psScriptGameEvent(delaybetween*n++, &script, actor, nearobj, item, true) );
         }
 
         return true;
@@ -2118,6 +2129,70 @@ protected:
     bool includetarget;       /// Apply to target, or just area around?
     ProgressionEvent script;  /// Script to apply to each
 };
+
+/*-------------------------------------------------------------*/
+
+/**
+ * ChargeOp
+ * Applies a script if charges left.
+ *
+ * Syntax:
+ *    <charge charges="#" > %s </charge>
+ *        charges = "#" number of charges to use
+ *        %s script to apply if charged
+ * Examples:
+ *    Ring of summon should only work once, item has 1 charge
+ *        <charge charges="1"><createpet masterids="10000"/></charge>
+ *
+ */
+class ChargeOp : public ProgressionOperation
+{
+public:
+    ChargeOp() : ProgressionOperation() { };
+    virtual ~ChargeOp(){};
+    
+    bool Load(iDocumentNode *node, ProgressionEvent *prg_script)
+    {
+        charges = node->GetAttributeValueAsInt("charges");
+
+        script.name = *eventName;
+        script.LoadScript(node);
+
+        return true;
+    }
+    
+    virtual csString ToString()
+    {
+        csString xml;
+        csString script_str = script.ToString(false);
+        xml.Format("<charge ");
+        xml.AppendFmt("charges=\"%d\" ", charges );
+        xml.Append(">");
+        xml.Append(script_str);
+        xml.Append("</charges>");
+        return xml;
+    }
+
+    bool Run(gemActor *actor, gemObject *target, psItem * item, bool inverse)
+    {
+        if (inverse)  // No inverse
+            return true;
+
+        if (item && item->HasCharges() && item->GetCharges() >= charges)
+        {
+            item->SetCharges(item->GetCharges()-charges);
+        
+            script.Run(actor, target, item, inverse);
+        }
+
+        return true;
+    }
+
+protected:
+    int charges;              /// Number of charges needed to perform this operation.
+    ProgressionEvent script;  /// Script to apply if charged
+};
+
 
 /*-------------------------------------------------------------*/
 
@@ -2180,7 +2255,7 @@ public:
         return xml;
     }
 
-    bool Run(gemActor *actor, gemObject *target, bool inverse)
+    bool Run(gemActor *actor, gemObject *target, psItem * item, bool inverse)
     {    
         // Remove this when adding support for the inverse operation
         if (inverse)
@@ -2329,7 +2404,7 @@ public:
         return xml;
     }
 
-    bool Run(gemActor *actor, gemObject *target, bool inverse)
+    bool Run(gemActor *actor, gemObject *target, psItem * item, bool inverse)
     {
         // Remove this when adding support for the inverse operation
         if (inverse)
@@ -2384,7 +2459,7 @@ public:
         return xml;
     }
 
-    bool Run(gemActor *actor, gemObject *target, bool inverse)
+    bool Run(gemActor *actor, gemObject *target, psItem * item, bool inverse)
     {
         if (!actor || !target)
             return false;
@@ -2437,7 +2512,7 @@ public:
         return xml;
     }
 
-    bool Run(gemActor *actor, gemObject *target, bool inverse)
+    bool Run(gemActor *actor, gemObject *target, psItem * item, bool inverse)
     {
         if (!actor)
         {
@@ -2454,7 +2529,7 @@ public:
         {
             int persistentID = actor->GetCharacterData() ? actor->GetCharacterData()->RegisterProgressionEvent(ToString(), ticksElapsed) : 0;
             // Queue undo script
-            psserver->GetProgressionManager()->QueueUndoScript("<evt><morph mesh=\"reset\" /></evt>", duration*1000, actor, actor, persistentID);
+            psserver->GetProgressionManager()->QueueUndoScript("<evt><morph mesh=\"reset\" /></evt>", duration*1000, actor, actor, item, persistentID);
         }
 
         return true;
@@ -2541,7 +2616,7 @@ public:
         return xml;
     }
 
-    bool Run(gemActor *actor, gemObject *target, bool inverse)
+    bool Run(gemActor *actor, gemObject *target, psItem * item, bool inverse)
     {
         // There is no inverse to this operation
         if (inverse)
@@ -2659,7 +2734,7 @@ public:
         return xml;
     }
 
-    bool Run(gemActor *actor, gemObject *target, bool inverse)
+    bool Run(gemActor *actor, gemObject *target, psItem * item, bool inverse)
     {
         // There is no inverse to this operation
         if (inverse)
@@ -2785,7 +2860,7 @@ public:
         return xml;
     }
 
-    bool Run(gemActor *actor, gemObject *target, bool inverse)
+    bool Run(gemActor *actor, gemObject *target, psItem * item, bool inverse)
     {
         // There is no inverse to this operation
         if (inverse)
@@ -3012,7 +3087,7 @@ public:
         return xml;
     }
 
-    bool Run(gemActor *actor, gemObject *target, bool inverse)
+    bool Run(gemActor *actor, gemObject *target, psItem * item, bool inverse)
     {
         // There is no inverse to this operation
         if (inverse)
@@ -3196,7 +3271,7 @@ public:
         return xml;
     }
 
-    bool Run(gemActor *actor, gemObject *target, bool inverse)
+    bool Run(gemActor *actor, gemObject *target, psItem * item, bool inverse)
     {
         iCelEntity* entity;
         psCharacter* character;
@@ -3352,7 +3427,7 @@ public:
         return xml;
     }
 
-    bool Run(gemActor *actor, gemObject *target, bool inverse)
+    bool Run(gemActor *actor, gemObject *target, psItem * item, bool inverse)
     {
         if (!actor)
         {
@@ -3390,7 +3465,7 @@ public:
         {
             int persistentID = actor->GetCharacterData() ? actor->GetCharacterData()->RegisterProgressionEvent(ToString(), ticksElapsed) : 0;
             // Queue undo script
-            psserver->GetProgressionManager()->QueueUndoScript(undo, duration*1000, actor, actor, persistentID);
+            psserver->GetProgressionManager()->QueueUndoScript(undo, duration*1000, actor, actor, item, persistentID);
         }
 
         return true;
@@ -3593,7 +3668,7 @@ public:
         return xml;
     }
 
-    bool Run(gemActor *actor, gemObject *target, bool inverse)
+    bool Run(gemActor *actor, gemObject *target, psItem * item, bool inverse)
     {
         if (inverse)
             enable = !enable;
@@ -3690,7 +3765,7 @@ class CreatePetOp : public ProgressionOperation
 {
 public:
 
-    virtual bool Run(gemActor *actor, gemObject *target, bool inverse)
+    virtual bool Run(gemActor *actor, gemObject *target, psItem * item, bool inverse)
     {
         // Remove this when adding support for the inverse operation
         if (inverse)
@@ -3784,7 +3859,7 @@ class CreateFamiliarOp : public ProgressionOperation
 {
 public:
 
-    virtual bool Run(gemActor *actor, gemObject *target, bool inverse)
+    virtual bool Run(gemActor *actor, gemObject *target, psItem * item, bool inverse)
     {
         if (inverse)
             return true;
@@ -3856,7 +3931,7 @@ public:
 
     typedef enum { adjust_add, adjust_set } adjust_t;
 
-    virtual bool Run(gemActor *actor, gemObject *target, bool inverse)
+    virtual bool Run(gemActor *actor, gemObject *target, psItem * item, bool inverse)
 	{
         /// Pointer to the Crystal Space iDocumentSystem. 
         //csRef<iDocumentSystem>  xml = csPtr<iDocumentSystem>(new csTinyDocumentSystem);
@@ -4019,7 +4094,7 @@ class ShowDetailsOp : public ProgressionOperation
 {
 public:
     csString * eventName;
-    virtual bool Run(gemActor *actor, gemObject *target, bool inverse)
+    virtual bool Run(gemActor *actor, gemObject *target, psItem * item, bool inverse)
     {
         // Remove this when adding support for the inverse operation
         if (inverse)
@@ -4156,7 +4231,7 @@ public:
         return xml;
     }
 
-    bool Run(gemActor *actor, gemObject *target, bool inverse)
+    bool Run(gemActor *actor, gemObject *target, psItem * item, bool inverse)
     {
         if (!actor)
         {
@@ -4179,7 +4254,7 @@ public:
         {
             int persistentID = actor->GetCharacterData() ? actor->GetCharacterData()->RegisterProgressionEvent(ToString(), ticksElapsed) : 0;
             // Queue undo script
-            psserver->GetProgressionManager()->QueueUndoScript("<evt><move type=\"reset\" /></evt>", duration*1000, actor, actor, persistentID);
+            psserver->GetProgressionManager()->QueueUndoScript("<evt><move type=\"reset\" /></evt>", duration*1000, actor, actor, item, persistentID);
         }
 
         return true;
@@ -4200,12 +4275,14 @@ psScriptGameEvent::psScriptGameEvent(csTicks offsetticks,
                                      ProgressionEvent * script,
                                      gemActor *actor,
                                      gemObject *target,
+                                     psItem *item,
                                      int persistentID)
     : psGEMEvent(0,offsetticks,target,"psScriptGameEvent"), persistentID(persistentID)
 {
     this->script   = script;
     this->actor    = actor;
     this->target   = target;
+    this->item     = item;
 
     actor->RegisterCallback( dynamic_cast<iDeathCallback *>(this) );
     gemActor *targetActor = dynamic_cast<gemActor *>( target );
@@ -4251,9 +4328,11 @@ void psScriptGameEvent::Trigger()
         if (target.IsValid())
         {
             gemActor* act = (actor.IsValid()) ? dynamic_cast<gemActor*>((gemObject *) actor) : NULL ;
-            script->Run(act, target);
+            script->Run(act, target, item);
             if (target->GetCharacterData())
+            {
                 target->GetCharacterData()->UnregisterProgressionEvent(persistentID);
+            }
         }
     }
 }
@@ -4270,8 +4349,6 @@ ProgressionManager::ProgressionManager(ClientConnectionSet *ccs)
     
     psserver->GetEventManager()->Subscribe(this,MSGTYPE_DEATH_EVENT,NO_VALIDATION);
     psserver->GetEventManager()->Subscribe(this,MSGTYPE_ZPOINT_EVENT,NO_VALIDATION);
-
-    Initialize();  // Load from db.
 }
 
 
@@ -4282,7 +4359,7 @@ ProgressionManager::~ProgressionManager()
     psserver->GetEventManager()->Unsubscribe(this,MSGTYPE_ZPOINT_EVENT);    
 }
 
-void ProgressionManager::QueueUndoScript(const char *scriptText, int delay, gemActor *actor, gemObject *target, int persistentID)
+void ProgressionManager::QueueUndoScript(const char *scriptText, int delay, gemActor *actor, gemObject *target, psItem * item, int persistentID)
 {
     csRef<iDocument> doc = ParseString(scriptText);
     if (doc == NULL)
@@ -4297,11 +4374,11 @@ void ProgressionManager::QueueUndoScript(const char *scriptText, int delay, gemA
         return;
     }
     psScriptGameEvent * event =
-            new psScriptGameEvent(delay, script, actor, target, persistentID);
+            new psScriptGameEvent(delay, script, actor, target, item, persistentID);
     psserver->GetEventManager()->Push(event);
 }
 
-void ProgressionManager::Initialize()
+bool ProgressionManager::Initialize()
 {
     Result result_events(db->Select("SELECT * from progression_events"));
 
@@ -4323,7 +4400,7 @@ void ProgressionManager::Initialize()
                 Error2("Could not parse the event named %s. Reason: ", ev->name.GetData() );               
                 Error3("%s\n%s",error,result_events[x]["event_script"]);
                 delete ev;
-                continue;
+                return false;
             }
             if (ev->LoadScript(doc))
             {
@@ -4333,6 +4410,7 @@ void ProgressionManager::Initialize()
             {
                 Error2("Couldn't load script %s\n",ev->name.GetData());
                 delete ev;
+                return false;
             }
         }    
     }
@@ -4346,6 +4424,8 @@ void ProgressionManager::Initialize()
             affinitycategories.Put( csString( result_affinitycategories[(unsigned long)x]["category"]).Downcase() , csString( result_affinitycategories[(unsigned long)x]["attribute"]).Downcase() );            
         }    
     }
+
+    return true;
 }
 
 void ProgressionManager::HandleMessage(MsgEntry *me,Client *client)
@@ -4807,12 +4887,12 @@ void ProgressionManager::StartTraining(Client * client, psCharacter * trainer)
 }
 
 
-float ProgressionManager::ProcessEvent(const char *event, gemActor * actor, gemObject *target, bool inverse)
+float ProgressionManager::ProcessEvent(const char *event, gemActor * actor, gemObject *target, psItem *item, bool inverse)
 {
     ProgressionEvent * ev = FindEvent(event);
     if (ev)
     {
-        return ProcessEvent(ev, actor, target, inverse);
+        return ProcessEvent(ev, actor, target, item, inverse);
     }
 
     csString actorName = "N/A";
@@ -4828,13 +4908,13 @@ float ProgressionManager::ProcessEvent(const char *event, gemActor * actor, gemO
     return 0.0;
 }
 
-float ProgressionManager::ProcessEvent(ProgressionEvent * ev, gemActor * actor, gemObject *target, bool inverse)
+float ProgressionManager::ProcessEvent(ProgressionEvent * ev, gemActor * actor, gemObject *target, psItem *item, bool inverse)
 {
     Debug5(LOG_SPELLS, actor?actor->GetClientID():0,"Process %s event %s on %s with target %s.\n",
       inverse ? "inverse" : "", ev->name.GetData(),(actor?actor->GetName():"(null)"),
             (target?target->GetName():"(null)"));
             
-    return ev->Run(actor, target, inverse);
+    return ev->Run(actor, target, item, inverse);
 }
 
 ProgressionEvent * ProgressionManager::CreateEvent(const char *name, const char *script)
@@ -4877,12 +4957,14 @@ ProgressionEvent * ProgressionManager::CreateEvent(const char *name, const char 
 }
 
 
-float ProgressionManager::ProcessScript(const char *script, gemActor * actor, gemObject *target)
+float ProgressionManager::ProcessScript(const char *script, gemActor * actor, gemObject *target, psItem *item)
 {    
     ProgressionEvent * ev = CreateEvent((actor?actor->GetName():"Unknown"),script);
     
     if (ev)
-        return ProcessEvent(ev->name,actor,target);
+    {
+        return ProcessEvent(ev->name,actor,target,item);
+    }
 
     return 0.0;
 }
@@ -5108,9 +5190,21 @@ bool ProgressionEvent::LoadScript(iDocumentNode *topNode)
         {
             op = new StatsOp(StatsOp::AGI);
         } 
+        else if ( strcmp( node->GetValue(), "area" ) == 0 )
+        {
+            op = new AreaOp();
+        }
         else if ( strcmp( node->GetValue(), "cha" ) == 0 )
         {
             op = new StatsOp(StatsOp::CHA);
+        } 
+        else if ( strcmp( node->GetValue(), "con" ) == 0 )
+        {
+            op = new StatsOp(StatsOp::CON);
+        } 
+        else if ( strcmp( node->GetValue(), "charge" ) == 0 )
+        {
+            op = new ChargeOp();
         } 
         else if ( strcmp( node->GetValue(), "end" ) == 0 )
         {
@@ -5164,10 +5258,6 @@ bool ProgressionEvent::LoadScript(iDocumentNode *topNode)
         {
             op = new ScriptOp();
         } 
-        else if ( strcmp( node->GetValue(), "area" ) == 0 )
-        {
-            op = new AreaOp();
-        }
         else if ( strcmp( node->GetValue(), "str" ) == 0 )
         {
             op = new StatsOp(StatsOp::STR);
@@ -5175,10 +5265,6 @@ bool ProgressionEvent::LoadScript(iDocumentNode *topNode)
         else if ( strcmp( node->GetValue(), "wil" ) == 0 )
         {
             op = new StatsOp(StatsOp::WIL);
-        } 
-        else if ( strcmp( node->GetValue(), "con" ) == 0 )
-        {
-            op = new StatsOp(StatsOp::CON);
         } 
         else if ( strcmp( node->GetValue(), "sta" ) == 0 )
         {
@@ -5425,7 +5511,7 @@ float ProgressionEvent::ForceRun()
         ProgressionOperation * po = seq.Next();
         po->LoadVariables(variables);       
         
-        if (!po->Run(runParamActor, runParamTarget, runParamInverse))
+        if (!po->Run(runParamActor, runParamTarget, runParamItem, runParamInverse))
         {
             break;
         }
@@ -5497,11 +5583,12 @@ float ProgressionEvent::ForceRun()
     return result;
 }
 
-float ProgressionEvent::Run(gemActor * actor, gemObject *target, bool inverse)
+float ProgressionEvent::Run(gemActor * actor, gemObject *target, psItem * item, bool inverse)
 {
     runParamActor = actor;
     runParamTarget = target;
     runParamInverse = inverse;
+    runParamItem = item;
 
     // calculate delay if there is one
     csTicks delay = 0;
@@ -5519,7 +5606,9 @@ float ProgressionEvent::Run(gemActor * actor, gemObject *target, bool inverse)
     }
 
     if (delay <= 0)
+    {
         return ForceRun();
+    }
 
     // schedule a delay
     progDelay = new ProgressionDelay(this, delay, actor->GetClientID());

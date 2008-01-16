@@ -404,6 +404,11 @@ private:
     int spell_id_feature;  
     int spell_feature_charges;   
     int spell_feature_timing;
+
+    /// The maximum number of charges an item of this type
+    /// can ever hold. -1 Indicate that this is an item without
+    /// the possiblity to be charged.
+    int maxCharges;
     
     /// Tracks if this item can be consumed, can be potions/scrolls/etc
     bool isConsumable;
@@ -615,6 +620,11 @@ public:
     /// creator (i.e. author, artist, etc) of creative things
     void SetCreator (unsigned int, PSITEMSTATS_CREATORSTATUS);
     bool IsThisTheCreator(unsigned int);
+
+    /// Return true if this item was equipted with charges.
+    bool HasCharges() const;
+    void SetMaxCharges(int charges);
+    int GetMaxCharges() const;
 
 public:
 
