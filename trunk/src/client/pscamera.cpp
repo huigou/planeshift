@@ -791,9 +791,6 @@ void psCamera::SetCameraMode(int mode)
     iSector* actorSector;
     actor->GetLastPosition(actorPos, actorYRot, actorSector);
 
-    csVector3 actorEye = actorPos + csVector3(sinf(actorYRot)*firstPersonPositionOffset.z,
-                                             firstPersonPositionOffset.y,
-                                             cosf(actorYRot)*firstPersonPositionOffset.z);
     PawsManager::GetSingleton().GetMouse()->WantCrosshair(false);
     switch (mode)
     {
