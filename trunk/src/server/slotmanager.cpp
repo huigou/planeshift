@@ -553,7 +553,8 @@ void SlotManager::MoveFromInventory(psSlotMovementMsg& msg, Client *fromClient)
             {
                 if (itemProposed->GetBaseStats()->GetIsConsumable())
                 {
-                    Consume(itemProposed, chr, msg.stackCount);
+                    int stackCount = MIN(msg.stackCount, itemProposed->GetStackCount());
+                    Consume(itemProposed, chr, stackCount);
                     return;
                 }
                 else
