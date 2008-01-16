@@ -356,6 +356,8 @@ bool psItem::Load(iResultRow& row)
     {
         SetItemQuality(GetMaxItemQuality());
     }
+
+    SetCharges(row.GetInt("charges"));
     
     // Set the crafted quality for this item. 
     crafted_quality = row.GetFloat("crafted_quality");
@@ -502,7 +504,8 @@ void psItem::Commit(bool children)
         "openable_locks",
         "loc_instance",
         "item_name",
-        "item_description"
+        "item_description",
+        "charges"
     };
 
     GetFieldArray(fields);
@@ -702,6 +705,8 @@ void psItem::GetFieldArray(psStringArray& fields)
 
     fields.Push(item_name);
     fields.Push(item_description);
+
+    fields.FormatPush("%d",GetCharges());
 }
 
 void psItem::ForceSaveIfNew()
@@ -984,6 +989,8 @@ void psItem::SetBaseStats(psItemStats *statptr)
 
     weight_delta+=GetWeight();
 
+    SetCharges(statptr->GetMaxCharges());
+
 //    if (weight_delta!=0.0f)
 //        AdjustSumWeight(weight_delta);
 }
@@ -1251,6 +1258,7 @@ void psItem::Copy(psItem * target)
 
     // The location in world is the same
     target->SetLocationInWorld(location.worldInstance,location.loc_sectorinfo,location.loc_x,location.loc_y,location.loc_z,location.loc_yrot);
+
     // Base stats are the same
     target->SetBaseStats(GetBaseStats());
     
@@ -1286,6 +1294,7 @@ void psItem::Copy(psItem * target)
             target->AddModifier(modifiers[i]);
     }
     target->SetOwningCharacter( owning_character);
+
 }
 
 psItem *psItem::SplitStack(unsigned short newstackcount)
@@ -1327,6 +1336,10 @@ void psItem::CombineStack(psItem *& stackme)
     float newMaxQuality = ((GetMaxItemQuality()*GetStackCount())+(stackme->GetMaxItemQuality()*stackme->GetStackCount()))/newStackCount;
     SetMaxItemQuality(newMaxQuality);
     SetStackCount(newStackCount);
+
+    // Average charges
+    int newCharges = (GetCharges()*GetStackCount() + stackme->GetCharges()*stackme->GetStackCount())/newStackCount;
+    SetCharges(newCharges);
     
     CacheManager::GetSingleton().RemoveInstance(stackme);
 
@@ -1685,6 +1698,25 @@ float psItem::GetArmorVSWeaponResistance(psItemStats* armor)
     return CacheManager::GetSingleton().GetArmorVSWeaponResistance(armor, current_stats);
 }
 
+bool psItem::HasCharges() const
+{
+    return base_stats->HasCharges();
+}
+
+void psItem::SetCharges(int charges)
+{
+    this->charges = charges;
+}
+
+int psItem::GetCharges() const
+{
+    return charges;
+}
+
+int psItem::GetMaxCharges() const
+{
+    return base_stats->GetMaxCharges();
+}
 
 double psItem::GetProperty(const char *ptr)
 {
@@ -1786,8 +1818,15 @@ double psItem::GetProperty(const char *ptr)
     }
     else if (!strcasecmp(ptr,"SalePrice"))
     {
-//        printf("%s=%d\n",ptr,base_stats->GetPrice().GetTotal());
         return base_stats->GetPrice().GetTotal();
+    }
+    else if (!strcasecmp(ptr,"Charges"))
+    {
+        return (double)GetCharges();
+    }
+    else if (!strcasecmp(ptr,"MaxCharges"))
+    {
+        return (double)GetMaxCharges();
     }
     else
     {

@@ -249,6 +249,9 @@ private:
     /// The number of items in this stack if this is a stackable item.
     unsigned short stack_count;
 
+    /// This is the number of charges currently held in the item
+    int charges;
+
     /// Whether or not to use natural armour for quality.
     bool useNat;
 
@@ -781,6 +784,11 @@ public:
     /// Sets the book text, should only be used if this is a book.
     void SetBookText(const csString& newText){ GetBaseStats()->SetLiteratureText(newText); }
 
+    bool HasCharges() const;
+    void SetCharges(int charges);
+    int GetCharges() const;
+    int GetMaxCharges() const;
+    
     /** Called when an item is completely destroyed from the persistant world
      *
      *  Persistant refers to the item existing through a reset of the server.  This definition can affect when an item

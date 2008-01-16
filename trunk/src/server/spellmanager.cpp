@@ -234,7 +234,7 @@ void psSpellManager::HandleAssembler( Client* client, MsgEntry* me )
     if(progEvent)
     {
         progEvent->CopyVariables( researchSpellScript );
-        result = progEvent->Run(client->GetActor(), client->GetActor());
+        result = progEvent->Run(client->GetActor(), client->GetActor(), NULL);
     }
     else
     {

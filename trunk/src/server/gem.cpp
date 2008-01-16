@@ -1917,7 +1917,7 @@ void gemActor::Resurrect()
     BroadcastTargetStatDR( psserver->GetNetManager()->GetConnections() );
 }
 
-void InvokeScripts(csArray<csString> & scripts, gemActor * actor, gemActor * target)
+void InvokeScripts(csArray<csString> & scripts, gemActor * actor, gemActor * target, psItem * item)
 {
     unsigned int scriptID;
     
@@ -1929,20 +1929,20 @@ void InvokeScripts(csArray<csString> & scripts, gemActor * actor, gemActor * tar
             if (scripts[scriptID].Length() > 0)
             {
                 Debug2(LOG_COMBAT,actor->GetPlayerID(),"-----InvokeScripts script %s",scripts[scriptID].GetData());
-                psserver->GetProgressionManager()->ProcessEvent(scripts[scriptID], actor, target);
+                psserver->GetProgressionManager()->ProcessEvent(scripts[scriptID], actor, target, item);
             }
         }
     }
 }
 
-void gemActor::InvokeAttackScripts(gemActor * target)
+void gemActor::InvokeAttackScripts(gemActor * target, psItem * item)
 {
-    InvokeScripts(onAttackScripts, this, target);
+    InvokeScripts(onAttackScripts, this, target, item);
 }
 
-void gemActor::InvokeDamageScripts(gemActor * attacker)
+void gemActor::InvokeDamageScripts(gemActor * attacker, psItem * item)
 {
-    InvokeScripts(onDamageScripts, this, attacker);
+    InvokeScripts(onDamageScripts, this, attacker, item);
 }
 
 void gemActor::DoDamage(gemActor * attacker, float damage, float damageRate, csTicks duration)

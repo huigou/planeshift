@@ -1395,7 +1395,7 @@ bool psServerCharManager::SendItemDescription( Client *client, psItem *item)
         return false;
 
     unsigned int stackCount = item->GetStackCount();
-    csString itemInfo, weight, size, itemQuality, itemCategory, itemName;
+    csString itemInfo, weight, size, itemQuality, itemCategory, itemName, itemCharges;
 
     psItemStats* itemStats = item->GetCurrentStats();
 
@@ -1418,9 +1418,14 @@ bool psServerCharManager::SendItemDescription( Client *client, psItem *item)
     {
         itemQuality.Format("\nQuality: %.0f/%.0f", item->GetItemQuality(),item->GetMaxItemQuality() );
     }
+
+    if (item->HasCharges())
+    {
+        itemCharges.Format("\nCharges: %d",item->GetCharges());
+    }
         
 
-    itemInfo += itemCategory+weight+size+itemQuality;
+    itemInfo += itemCategory+weight+size+itemQuality+itemCharges;
     itemName = item->GetName();
 
     // Item was crafted

@@ -92,7 +92,7 @@
 #include "introductionmanager.h"
 
 // Remember to bump this in server_options.sql and add to upgrade_schema.sql!
-#define DATABASE_VERSION_STR "1175"
+#define DATABASE_VERSION_STR "1176"
 
 
 psCharacterLoader psServer::CharacterLoader;
@@ -465,6 +465,12 @@ bool psServer::Initialize(iObjectRegistry* object_reg)
     Debug1(LOG_STARTUP,0,"Started NPC Superclient Manager\n");
 
     progression = new ProgressionManager(serverthread->GetConnections());
+    if ( !progression->Initialize())
+    {
+        Error1("Failed to start progression manager!");
+        return false;
+    }
+    
     Debug1(LOG_STARTUP,0,"Started Progression Manager\n");
 
     // Start work manager

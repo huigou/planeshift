@@ -1,3 +1,17 @@
+*** 2008-01-16 by Anders Reggestad
+- Added charges to the item_instances and max_charges to the item_stats
+  table. 
+    => DB VERSION BUMPED!
+  Added progression script operation <charge charges="#">script</charge>
+  that will only run once for the item in question. To do this the
+  progression manager where extended to now work on the actor, target, and an item.
+  Item is given to the progression operations for equip and unequip and for attacks,
+  so that should make it possible to create some interessting combinations. 
+  This fixed BT#1271. Items now have the possibility for charges so the
+  summon familiare script could be updated to use the new function
+  to set number of charges to 1 for the ring of familiar and than
+  only charge/run one time.
+
 *** 2008-01-14 by Roland Schulz
 - fix part of FS#778. Labels weren't updated in mouseover mode. 
 - fix remaining items on FS#403 (hopefully).

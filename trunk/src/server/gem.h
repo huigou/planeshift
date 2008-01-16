@@ -697,8 +697,8 @@ public:
     void DetachAttackScript(int scriptID);
     int  AttachDamageScript(const csString & scriptName);
     void DetachDamageScript(int scriptID);
-    void InvokeAttackScripts(gemActor *target);
-    void InvokeDamageScripts(gemActor *attacker);
+    void InvokeAttackScripts(gemActor *target, psItem *item);
+    void InvokeDamageScripts(gemActor *attacker, psItem *item);
 
     bool AddActiveMagicCategory(const csString & category);
     bool RemoveActiveMagicCategory(const csString & category);

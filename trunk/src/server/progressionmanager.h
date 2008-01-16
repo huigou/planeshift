@@ -23,6 +23,7 @@
 // Crystal Space Includes
 //=============================================================================
 #include <csutil/array.h>
+#include <csutil/weakref.h>
 #include <csutil/hash.h>
 #include <iutil/document.h>
 
@@ -69,12 +70,12 @@ public:
 
     void StartTraining(Client * client, psCharacter * trainer);
     
-    float ProcessEvent(ProgressionEvent *event, gemActor * actor = NULL, gemObject *target = NULL, bool inverse = false);
-    float ProcessEvent(const char *event, gemActor * actor = NULL, gemObject *target = NULL, bool inverse = false);
-    float ProcessScript(const char *script, gemActor * actor = NULL, gemObject *target = NULL);
+    float ProcessEvent(ProgressionEvent *event, gemActor * actor = NULL, gemObject *target = NULL, psItem *item = NULL, bool inverse = false);
+    float ProcessEvent(const char *event, gemActor * actor = NULL, gemObject *target = NULL, psItem *item = NULL, bool inverse = false);
+    float ProcessScript(const char *script, gemActor * actor = NULL, gemObject *target = NULL, psItem *item = NULL);
 
     bool AddScript(const char *name, const char *script);
-    void QueueUndoScript(const char *script, int delay, gemActor * actor = NULL, gemObject *target = NULL, int persistentID = 0);
+    void QueueUndoScript(const char *script, int delay, gemActor * actor = NULL, gemObject *target = NULL, psItem *item = NULL, int persistentID = 0);
 
     Faction *FindFaction(const char *name);
     Faction *FindFaction(int id);
@@ -96,10 +97,14 @@ public:
      *             until a uniq name is found that dosn't exist in the store.
      */
     ProgressionEvent *CreateEvent(const char *name, const char *script);
-     
+
+    /**
+     * Load progression script from db
+     */
+    bool Initialize();
+    
 protected:
     
-    void Initialize();
     void HandleDeathEvent(MsgEntry *me);
 
     csHash<csString, csString> affinitycategories;
@@ -131,8 +136,9 @@ public:
 struct ProgressionEvent
 {
     // saved parameters given to Run() so that we can use callbacks for delayed events
-    gemActor * runParamActor;
-    gemObject * runParamTarget;
+    csWeakRef<gemActor> runParamActor;
+    csWeakRef<gemObject> runParamTarget;
+    csWeakRef<psItem> runParamItem;
     bool runParamInverse;
 
     csString name;
@@ -157,7 +163,7 @@ struct ProgressionEvent
     
     virtual csString ToString(bool topLevel) const;
     float ForceRun();
-    float Run(gemActor *actor, gemObject *target, bool inverse = false);
+    float Run(gemActor *actor, gemObject *target, psItem * item, bool inverse = false);
     void LoadVariables(MathScript *script);
     void CopyVariables(MathScript *from);
     void AddVariable(MathScriptVar *pv);

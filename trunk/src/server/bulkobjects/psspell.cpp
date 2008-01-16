@@ -660,15 +660,20 @@ bool psSpell::PerformResult(gemActor *caster, gemObject *target, float max_range
             //         by someone else that have casted this spell.
             // Set input variables before executing script
             if (saved)
+            {
                 varUseSaveThrow->SetValue(1.0);
+            }
             else
+            {
                 varUseSaveThrow->SetValue(0.0);
+            }
+
             varPowerLevel->SetValue(powerLevel);
             mathScript->Execute();
 
             progEvent->CopyVariables(mathScript);
 
-            result = progEvent->Run(caster, target, inverse);
+            result = progEvent->Run(caster, target, NULL, inverse);
             if ( !result )
             {
                 Notify2(LOG_SCRIPT, "Couldn't run the progression event \"%s\"", eventName.GetData());

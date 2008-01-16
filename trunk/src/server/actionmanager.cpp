@@ -696,6 +696,9 @@ void ActionManager::HandleExamineOperation( psActionLocation* action, Client *cl
     // Set as the target
     client->SetTargetObject( action->GetGemObject(), true );
 
+    // Find the real item if there exist
+    gemItem* realItem = action->GetRealItem();
+
     // If no enter check is specified, do nothing
     if ( action->GetEnterScript().Length() > 0)
     {
@@ -703,7 +706,7 @@ void ActionManager::HandleExamineOperation( psActionLocation* action, Client *cl
         ProgressionEvent *progEvent = psserver->GetProgressionManager()->FindEvent( action->GetEnterScript() );
         if (progEvent)
         {
-            float ret = progEvent->Run(client->GetActor(), NULL);
+            float ret = progEvent->Run(client->GetActor(), NULL, realItem?realItem->GetItem():NULL);
             if ( ret > 1.0 )
             {
                 allowedEntry = true;
@@ -715,19 +718,6 @@ void ActionManager::HandleExamineOperation( psActionLocation* action, Client *cl
             return;
         }
     }
-
-    // Check if the actionlocation is linked to real item
-    uint32_t instance_id = action->GetInstanceID();
-    if (instance_id==(uint32_t)-1) 
-    {
-        if (action->GetGemObject()->GetItem())
-          instance_id = (int)action->GetGemObject()->GetItem()->GetUID();
-    }
-    gemItem* realItem = GEMSupervisor::GetSingleton().FindItemEntity( instance_id );
-
-    // id 0 is not valid
-    if (instance_id==0)
-        realItem = NULL;
 
     // Invoke Interaction menu
     uint32_t options = psGUIInteractMessage::EXAMINE;
@@ -794,7 +784,11 @@ void ActionManager::HandleScriptOperation( psActionLocation* action, Client *cli
             Error2("Failed to find progression event \"%s\"", action->response.GetData());
             return;
         }
-        progEvent->Run(client->GetActor(), NULL);
+
+        // Find the real item if there exist
+        gemItem* realItem = action->GetRealItem();
+
+        progEvent->Run(client->GetActor(), NULL, realItem?realItem->GetItem():NULL);
     }
 }
 
