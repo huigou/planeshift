@@ -23,10 +23,6 @@
 
 #include "download.h"
 
-#ifndef CURLINFO_RESPONSE_CODE
-#define CURLINFO_RESPONSE_CODE CURLINFO_HTTP_CODE
-#endif
-
 size_t write_data(void *ptr, size_t size, size_t nmemb, void *stream)
 {
     size_t written = fwrite(ptr, size, nmemb, (FILE *)stream);
@@ -133,7 +129,7 @@ bool Downloader::DownloadFile (const char* file, const char* dest, bool URL, boo
         destpath = 0;
 
         long curlhttpcode;
-        curl_easy_getinfo (curl, CURLINFO_RESPONSE_CODE, &curlhttpcode);
+        curl_easy_getinfo (curl, CURLINFO_HTTP_CODE, &curlhttpcode);
 
         csString error;
 
