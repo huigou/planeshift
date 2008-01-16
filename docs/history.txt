@@ -1,5 +1,7 @@
 *** 2008-01-16 by Sasha Levin
 - Removed pointless calculation from pscamera.
+- Another fix for FS#907 - Trying to consume as many items as possible
+  instead of failing.
 
 *** 2008-01-16 by Anders Reggestad
 - Added charges to the item_instances and max_charges to the item_stats
