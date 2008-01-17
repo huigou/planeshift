@@ -1,3 +1,7 @@
+*** 2008-01-16 by Anders Reggestad
+- Fixed setting of charges when exchanging items.
+- Save item when charges are changed.
+
 *** 2008-01-16 by Sasha Levin
 - Removed pointless calculation from pscamera.
 - Another fix for FS#907 - Trying to consume as many items as possible

@@ -392,8 +392,6 @@ void ExchangingCharacter::TransferOffer(int targetClientNum)
 
             if (item != NULL)
             {
-                printf("  Handling item %s now.\n",item->GetName() );
-                // printf("    Moving item to inventory for %s.\n", target->GetCharName() );
                 psItem *newItem = item->CreateNew();
                 item->Copy(newItem);
                 newItem->SetStackCount(itemInSlot->exchangeStackCount);
