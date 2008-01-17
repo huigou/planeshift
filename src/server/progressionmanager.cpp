@@ -2181,6 +2181,7 @@ public:
         if (item && item->HasCharges() && item->GetCharges() >= charges)
         {
             item->SetCharges(item->GetCharges()-charges);
+            item->Save(false);
         
             script.Run(actor, target, item, inverse);
         }

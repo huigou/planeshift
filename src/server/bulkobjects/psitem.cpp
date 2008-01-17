@@ -435,37 +435,37 @@ void psItem::Save(bool children)
 
     if (loaded && !pendingsave)
     {
-        #if SAVE_TRACER
-            csCallStack* stack = csCallStackHelper::CreateCallStack(0,true);
-            if (stack)
-            {
-                /// Store the function that queued this save (check this with a debugger if Commit() fails)
-                last_save_queued_from = stack->GetEntryAll(1,true);
+#if SAVE_TRACER
+        csCallStack* stack = csCallStackHelper::CreateCallStack(0,true);
+        if (stack)
+        {
+            /// Store the function that queued this save (check this with a debugger if Commit() fails)
+            last_save_queued_from = stack->GetEntryAll(1,true);
                 
-                #if SAVE_DEBUG
-                    printf("\n%s::Save() for '%s', queued from stack:\n", typeid(*(item)).name(), GetName() );
-                    stack->Print();
-                    printf("\n");
-                #endif
+#if SAVE_DEBUG
+            printf("\n%s::Save() for '%s', queued from stack:\n", typeid(*(item)).name(), GetName() );
+            stack->Print();
+            printf("\n");
+#endif
 
-                stack->Free();
-            }
-            else
-            {
-                Bug2("Could not get call stack for %p!",this);
-                last_save_queued_from = "ERROR:  csCallStackHelper::CreateCallStack(0,true) returned NULL!";
-            }
-        #elif SAVE_DEBUG
-            printf("%s::Save() for '%s' queued\n", typeid(*(item)).name(), GetName() );
-        #endif
-
-	    pendingsave = true;
+            stack->Free();
+        }
+        else
+        {
+            Bug2("Could not get call stack for %p!",this);
+            last_save_queued_from = "ERROR:  csCallStackHelper::CreateCallStack(0,true) returned NULL!";
+        }
+#elif SAVE_DEBUG
+        printf("%s::Save() for '%s' queued\n", typeid(*(item)).name(), GetName() );
+#endif
+        
+        pendingsave = true;
         Commit(children);
     }
-
-    #if SAVE_DEBUG
-        else if (loaded) printf("%s::Save() for '%s' skipped\n", typeid(*(GetSafeReference()->item)).name(), GetName() );
-    #endif
+    
+#if SAVE_DEBUG
+    else if (loaded) printf("%s::Save() for '%s' skipped\n", typeid(*(GetSafeReference()->item)).name(), GetName() );
+#endif
 }
 
 void psItem::Commit(bool children)
@@ -1268,6 +1268,9 @@ void psItem::Copy(psItem * target)
     // The qualities are the same.
     target->SetItemQuality(item_quality);
     target->SetMaxItemQuality(crafted_quality);
+
+    // The charges is the same
+    target->SetCharges(GetCharges());
 
     // The flags are the same
     target->flags = flags;
