@@ -38,13 +38,13 @@ class Mirror
 {
 public:
     /* Return mirror ID */
-    unsigned int GetID() { return id; }
+    unsigned int GetID() const { return id; }
 
     /* Return mirror name */
-    csString GetName() { return name; }
+    csString GetName() const { return name; }
 
     /* Return mirror URL */
-    csString GetBaseURL() { return baseURL; }
+    csString GetBaseURL() const { return baseURL; }
 
     /* Set mirror URL */
     void SetBaseURL(csString url) { baseURL = url; }
@@ -65,10 +65,10 @@ class ClientVersion
 {
 public:
     /* Get client update file name */
-    csString GetName() { return name; }
+    csString GetName() const { return name; }
 
     /* Get client update file md5sum */
-    csString GetMD5Sum() { return md5sum; }
+    csString GetMD5Sum() const { return md5sum; }
 protected:
     friend class Config;
     /* Client update file name */
@@ -105,13 +105,13 @@ public:
     bool Initialize(csRef<iDocumentNode> node);
 
     /* Get our platform string. */
-    const char* GetPlatform();
+    const char* GetPlatform() const;
 
     /* Get latest updater version */
-    int GetUpdaterVersionLatest() { return updaterVersionLatest; }
+    int GetUpdaterVersionLatest() const { return updaterVersionLatest; }
 
     /* Get latest updater version md5sum */
-    const char* GetUpdaterVersionLatestMD5() { return updaterVersionLatestMD5; }
+    const char* GetUpdaterVersionLatestMD5() const { return updaterVersionLatestMD5; }
 
 
 private:
@@ -141,19 +141,19 @@ public:
     Proxy GetProxy() { return proxy; }
 
     /* Returns the current/old config from updaterinfo.xml */
-    Config* GetCurrentConfig() { return currentCon; }
+    Config* GetCurrentConfig() const { return currentCon; }
 
     /* Returns the new/downloaded config from updaterinfo.xml */
-    Config* GetNewConfig() { return newCon; }
+    Config* GetNewConfig() const { return newCon; }
 
     /* Returns true if the last update was successful */
-    bool WasCleanUpdate() { return cleanUpdate; }
+    bool WasCleanUpdate() const { return cleanUpdate; }
 
     /* Returns true if we want the updater to update executable files. */
-    bool UpdateExecs() { return updateExecs; }
+    bool UpdateExecs() const { return updateExecs; }
 
     /* Returns the configfile for the app */
-    csRef<iConfigFile> GetConfigFile() { return configFile; }
+    csRef<iConfigFile> GetConfigFile() const { return configFile; }
 
 
 private:

@@ -49,7 +49,7 @@ psUpdater::~psUpdater()
     csInitializer::DestroyApplication(object_reg);
 }
 
-void psUpdater::RunUpdate(UpdaterEngine* engine)
+void psUpdater::RunUpdate(UpdaterEngine* engine) const
 {
     // Check if we're already in the middle of a self-update.
     if(engine->GetConfig()->IsSelfUpdating())

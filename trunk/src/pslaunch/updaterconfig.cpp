@@ -71,7 +71,7 @@ UpdaterConfig::~UpdaterConfig()
     newCon = NULL;
 }
 
-const char* Config::GetPlatform()
+const char* Config::GetPlatform() const
 {
 #if defined(CS_PLATFORM_WIN32)
     return "win32";
