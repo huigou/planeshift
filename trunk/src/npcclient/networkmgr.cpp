@@ -239,9 +239,9 @@ void NetworkManager::HandleActor( MsgEntry* me )
         // We already know this entity so just update the entity.
         CPrintf(CON_ERROR, "Already know about gemNPCActor: %s (%s), %u.\n", mesg.name.GetData(), obj->GetName(), mesg.entityid );
 
-        obj->Move(mesg.pos, mesg.yrot, mesg.sectorName);
+        obj->Move(mesg.pos, mesg.yrot, mesg.sectorName, mesg.instance );
         obj->SetVisible( !(mesg.flags & psPersistActor::INVISIBLE) );
-		obj->SetInvincible((mesg.flags & psPersistActor::INVINCIBLE)? true : false );
+        obj->SetInvincible( (mesg.flags & psPersistActor::INVINCIBLE) );
         
         return;
     }
@@ -390,9 +390,10 @@ void NetworkManager::HandlePositionUpdates(MsgEntry *msg)
         csVector3 pos;
         PS_ID id;
         iSector* sector;
+        int instance;
 
-        updates.Get(id,pos, sector, npcclient->GetNetworkMgr()->GetMsgStrings(), engine);
-        npcclient->SetEntityPos(id,pos, sector);
+        updates.Get(id,pos, sector, instance, npcclient->GetNetworkMgr()->GetMsgStrings(), engine);
+        npcclient->SetEntityPos(id, pos, sector, instance);
     }
 }
 

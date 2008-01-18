@@ -765,7 +765,7 @@ void psNPCClient::TriggerEvent(NPC *npc,Perception *pcpt,float max_range,
     }
 }
 
-void psNPCClient::SetEntityPos(PS_ID EID, csVector3& pos, iSector* sector)
+void psNPCClient::SetEntityPos(PS_ID EID, csVector3& pos, iSector* sector, int instance)
 {
     
     gemNPCObject * obj = FindEntityID(EID);
@@ -777,7 +777,7 @@ void psNPCClient::SetEntityPos(PS_ID EID, csVector3& pos, iSector* sector)
             return;
         }
 
-        psGameObject::SetPosition(obj->GetEntity(),pos,sector);
+        obj->SetPosition(pos,sector,&instance);
     }
     else
     {
@@ -1255,14 +1255,15 @@ void psNPCClient::ListAllEntities(const char * pattern, bool onlyCharacters)
 
         if (!pattern || strstr(obj->GetName(),pattern))
         {
-            CPrintf(CON_CMDOUTPUT, "%5d %-10s %-30s %-3s %-3s %-4s %s\n",
+            CPrintf(CON_CMDOUTPUT, "%5d %-10s %-30s %-3s %-3s %-4s %s %d\n",
                     ent->GetID(),
                     obj->GetObjectType(),
                     obj->GetName(),
                     (obj->IsVisible()?"Yes":"No"),
                     (obj->IsInvincible()?"Yes":"No"),
                     (obj->IsPickable()?"Yes":"No"),
-                    toString(pos,sector).GetData());
+                    toString(pos,sector).GetData(),
+                    obj->GetInstance());
         }
     }
         

@@ -4469,6 +4469,8 @@ psPersistActor::psPersistActor( uint32_t clientNum,
     msg->Add( playerID );
     msg->Add( groupID );
     msg->Add( (uint32_t)ownerEID );
+    posInstance = (int) msg->current;
+    msg->Add( (int32_t)0 );
     if (flags) // No point sending 0, has to be at the end
     {
         msg->Add( flags );
@@ -4506,6 +4508,8 @@ psPersistActor::psPersistActor( MsgEntry* me, csStringHash* msgstrings, iEngine 
     playerID   = me->GetUInt32();
     groupID    = me->GetUInt32();
     ownerEID   = me->GetUInt32();
+    instance   = me->GetInt32();
+
     if (!me->IsEmpty())
     {
         flags   = me->GetUInt32();
@@ -4537,6 +4541,7 @@ csString psPersistActor::ToString(AccessPointers * access_ptrs)
     msgtext.AppendFmt(" PlayerID: %d",playerID);
     msgtext.AppendFmt(" GroupID: %d",groupID);
     msgtext.AppendFmt(" OwnerEID: %d",ownerEID);
+    msgtext.AppendFmt(" Instance: %d",instance);
     msgtext.AppendFmt(" Flags:");
     if (flags & INVISIBLE) msgtext.AppendFmt(" INVISIBLE");
     if (flags & INVINCIBLE) msgtext.AppendFmt(" INVINCIBLE");
@@ -4549,6 +4554,12 @@ void psPersistActor::SetPlayerID(uint32_t playerID)
 {
     msg->Reset(posPlayerID);
     msg->Add(playerID);
+}
+
+void psPersistActor::SetInstance(int instance)
+{
+    msg->Reset(posInstance);
+    msg->Add(instance);
 }
 
 //------------------------------------------------------------------------------
