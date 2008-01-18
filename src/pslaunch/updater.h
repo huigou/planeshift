@@ -34,8 +34,8 @@ class psUpdater
 public:
     psUpdater(int argc, char* argv[]);
     ~psUpdater();
-    iObjectRegistry* GetObjectRegistry(){ return object_reg; }
-    void RunUpdate(UpdaterEngine* engine);
+    iObjectRegistry* GetObjectRegistry() const { return object_reg; }
+    void RunUpdate(UpdaterEngine* engine) const;
 private:
     static iObjectRegistry* object_reg;
 };

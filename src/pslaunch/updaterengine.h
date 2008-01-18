@@ -93,10 +93,10 @@ public:
     ~UpdaterEngine();
 
     /* Return the config object */
-    UpdaterConfig* GetConfig() { return config; }
+    UpdaterConfig* GetConfig() const { return config; }
 
     /* Return VFS */
-    csRef<iVFS> GetVFS() { return vfs; }
+    csRef<iVFS> GetVFS() const { return vfs; }
 
     // Find the config node given an xml file name.
     csRef<iDocumentNode> GetRootNode(csString fileName);
