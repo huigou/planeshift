@@ -203,36 +203,73 @@ void Initialize(iObjectRegistry* object_reg)
     disp_flag[LOG_NEWCHAR]     = true;
 }
 
-void SetFlag(const char *name,bool flag, uint32 filter)
+void SetFlag(int index, bool flag, uint32 filter)
 {
+    csString str;
+
+    disp_flag[index] = flag;
+    
+    str.AppendFmt("%s flag %s ",flagnames[index],flag?"activated":"deactivated");
+    if (filter!=0 && filter!=(uint32)-1)
+    {
+        filters_id[index]=filter;
+        str.AppendFmt("with filter %d.\n",filter);
+    } else
+    {
+        filters_id[index]=0;
+        str.AppendFmt("with no filter.\n");
+    }
+    CPrintf(CON_CMDOUTPUT,str.GetDataSafe());
+}
+
+
+void SetFlag(const char *name, bool flag, uint32 filter)
+{
+    bool all = !strcasecmp(name, "all");
+    bool unique = true;
+    int index = -1;
+    
     for (int i=0; i<MAX_FLAGS; i++)
     {
         if (!flagnames[i])
             continue;
 
-        csString str;
-
-        if (!strcmp(flagnames[i], name) || !strcmp(name, "all"))
+        if (all)
         {
-            disp_flag[i] = flag;
+            SetFlag(i, flag, filter);
+        }
 
-            str.AppendFmt("%s flag %s ",flagnames[i],flag?"activated":"deactivated");
-            if (filter!=0 && filter!=(uint32)-1) {
-              filters_id[i]=filter;
-              str.AppendFmt("with filter %d \n",filter);
-            } else {
-              filters_id[i]=0;
-              str.AppendFmt("with no filter.\n");
+        if (!all && strcasestr(flagnames[i], name))
+        {
+            if (unique && index != -1)
+            {
+                // We have found another  match already.
+                CPrintf(CON_CMDOUTPUT, "'%s' isn't an unique flag name!\n",name);
+                unique = false;
+                CPrintf(CON_CMDOUTPUT, "%s\n", flagnames[index]);
             }
-            CPrintf(CON_CMDOUTPUT,str.GetDataSafe());
-            if (strcmp(name,"all"))
-                return;
+            index = i;
+            if (!unique)
+            {
+                CPrintf(CON_CMDOUTPUT, "%s\n", flagnames[index]);
+            }
         }
 
     }
-    if (strcmp(name,"all"))
+    if (all)
+    {
+        return;
+    }
+    
+    if (index == -1)
     {
         CPrintf(CON_CMDOUTPUT, "No flag found with the name '%s'!\n",name);
+        return;
+    }
+
+    if (unique)
+    {
+        SetFlag(index, flag, filter);
     }
 }
 
