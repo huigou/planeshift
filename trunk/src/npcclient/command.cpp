@@ -316,18 +316,21 @@ int com_setlog(char *line)
     
     bool flag;
     if (tolower(flagword.GetAt(0)) == 't' || tolower(flagword.GetAt(0)) == 'y' || flagword.GetAt(0) == '1')
+    {
         flag=true;
+    }
     else
+    {
         flag=false;
+    }
 
     uint32 filter_id=0;
     if(filter && !filter.IsEmpty())
-      filter_id=atoi(filter.GetDataSafe());
+    {
+        filter_id=atoi(filter.GetDataSafe());
+    }
 
-            
-    pslog::SetFlag(log,flag,filter_id);
-    if (!flag)
-        CPrintf(CON_CMDOUTPUT,"%s flag deactivated.\n", log.GetData());
+    pslog::SetFlag(log, flag, filter_id);
     
     return 0;
 }
