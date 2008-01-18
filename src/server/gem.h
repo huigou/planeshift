@@ -252,8 +252,8 @@ public:
     virtual void BroadcastTargetStatDR(ClientConnectionSet *clients) { }
     virtual void SendTargetStatDR(Client *client) { }
     virtual psNPCDialog *GetNPCDialogPtr() { return 0; }
-    virtual void GetLastSuperclientPos(csVector3& pos) { }
-    virtual void SetLastSuperclientPos(csVector3& pos) { }
+    virtual void GetLastSuperclientPos(csVector3& pos, int& instance) const { }
+    virtual void SetLastSuperclientPos(const csVector3& pos, int instance) { }
     virtual void AddLootableClient(int cnum) { }
     virtual void RemoveLootableClient(int cnum) { }
     virtual bool IsLootableClient(int cnum) { return false; }
@@ -476,7 +476,8 @@ protected:
     /** Production Start Pos is used to record the place where people started digging. */
     csVector3 productionStartPos;
 
-    csVector3 last_sent_superclient_pos;
+    csVector3 lastSentSuperclientPos;
+    int lastSentSuperclientInstance;
 
     csArray<iDeathCallback*> deathReceivers;  // List of objects which are to be notified when this actor dies.
 
@@ -626,8 +627,8 @@ public:
     void Resurrect();
 
     virtual bool UpdateDR();
-    virtual void GetLastSuperclientPos(csVector3& pos) { pos = last_sent_superclient_pos; }
-    virtual void SetLastSuperclientPos(csVector3& pos) { last_sent_superclient_pos = pos; }
+    virtual void GetLastSuperclientPos(csVector3& pos, int& instance) const;
+    virtual void SetLastSuperclientPos(const csVector3& pos, int instance);
 
     virtual void BroadcastTargetStatDR(ClientConnectionSet *clients);
     virtual void SendTargetStatDR(Client *client);

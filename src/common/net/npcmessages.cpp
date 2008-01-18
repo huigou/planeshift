@@ -705,7 +705,7 @@ void psAllEntityPosMessage::SetLength(int elems, int client)
     msg->Add((int16_t)elems);
 }
 
-void psAllEntityPosMessage::Add(PS_ID id, csVector3& pos, iSector*& sector, csStringHash* msgstrings)
+void psAllEntityPosMessage::Add(PS_ID id, csVector3& pos, iSector*& sector, int instance, csStringHash* msgstrings)
 {
     msg->Add((uint32_t)id);
     msg->Add(pos.x);
@@ -718,10 +718,13 @@ void psAllEntityPosMessage::Add(PS_ID id, csVector3& pos, iSector*& sector, csSt
     msg->Add( (uint32_t) sectorNameStrId );
 
     if (sectorNameStrId == csInvalidStringID)
+    {
         msg->Add(sectorName);
+    }
+    msg->Add( (int32_t)instance );
 }
 
-void psAllEntityPosMessage::Get(PS_ID& id, csVector3& pos, iSector*& sector, csStringHash* msgstrings, iEngine *engine)
+void psAllEntityPosMessage::Get(PS_ID& id, csVector3& pos, iSector*& sector, int& instance, csStringHash* msgstrings, iEngine *engine)
 {
     id = msg->GetUInt32();
     pos.x = msg->GetFloat();
@@ -740,10 +743,14 @@ void psAllEntityPosMessage::Get(PS_ID& id, csVector3& pos, iSector*& sector, csS
         sectorName = msg->GetStr();
     }
     if(!sectorName.IsEmpty())
+    {
         sector = engine->GetSectors ()->FindByName (sectorName);
+    }
     else
+    {
         sector = NULL;
-
+    }
+    instance = msg->GetInt32();
 }
 
 csString psAllEntityPosMessage::ToString(AccessPointers * access_ptrs)
@@ -756,10 +763,11 @@ csString psAllEntityPosMessage::ToString(AccessPointers * access_ptrs)
         PS_ID id;
         csVector3 pos;
         iSector* sector;
+        int instance;
         
-        Get(id,pos,sector,access_ptrs->msgstrings,access_ptrs->engine);
+        Get(id, pos, sector, instance, access_ptrs->msgstrings, access_ptrs->engine);
 
-        msgtext.AppendFmt(" ID: %u Pos: %s",id,toString(pos,sector).GetDataSafe());
+        msgtext.AppendFmt(" ID: %u Pos: %s Inst: %d", id, toString(pos,sector).GetDataSafe(), instance);
     }
 
     return msgtext;

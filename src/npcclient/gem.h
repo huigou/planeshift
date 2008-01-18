@@ -37,7 +37,9 @@ public:
     
     bool InitMesh(const char *factname,const char *filename,
                   const csVector3& pos,const float rotangle, const char* sector );
-    void Move(const csVector3& pos,float rotangle, const char* room);
+    
+    void Move(const csVector3& pos, float rotangle, const char* room);
+    void Move(const csVector3& pos, float rotangle, const char* room, int instance);
     
     int GetID() { return id; }
     csRef<iPcMesh> pcmesh;   
@@ -58,7 +60,11 @@ public:
     virtual bool IsInvincible() { return invincible; }
     virtual void SetInvincible(bool inv) { invincible = inv; }
 
-    virtual NPC *GetNPC() { return NULL; }    
+    virtual NPC *GetNPC() { return NULL; }
+
+    virtual void SetPosition(csVector3& pos, iSector* sector = NULL, int* instance = NULL);
+    virtual void SetInstance(int instance ) { this->instance = instance; }
+    virtual int GetInstance(){ return instance; };
 
 protected:
     static psNPCClient *cel;
@@ -66,10 +72,11 @@ protected:
     csRef<iCelEntity> entity;
 
     csString name;
-    int id;
-    int type;
+    int  id;
+    int  type;
     bool visible;
     bool invincible;
+    int  instance;
 };
 
 

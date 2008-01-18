@@ -42,13 +42,13 @@ struct iEngine;
 
 // This holds the version number of the network code, remember to increase
 // this each time you do an update which breaks compatibility
-#define PS_NETVERSION   0x0083
+#define PS_NETVERSION   0x0084
 // Remember to bump the version in pscssetup.h, as well.
 
 // NPC Networking version is separate so we don't have to break compatibility
 // with clients to enhance the superclients.  Made it a large number to ensure
 // no inadvertent overlaps.
-#define PS_NPCNETVERSION 0x100F
+#define PS_NPCNETVERSION 0x1010
 
 enum Slot_Containers
 {
@@ -2882,6 +2882,11 @@ public:
      */
     void SetPlayerID(uint32_t playerID);
 
+    /**
+     * Used to insert instance into the message buffer after creation.
+     */
+    void SetInstance(int instance);
+
     csString name;
     csString guild;
     csString factname;
@@ -2900,7 +2905,10 @@ public:
     PS_ID ownerEID;
     bool control;
     uint32_t flags;
-    int posPlayerID; // Remeber the position the playerID in the generated message
+    int instance;
+    
+    int posPlayerID; // Remember the position the playerID in the generated message
+    int posInstance; // Remember the position of the instance field in the generated message
 };
 
 

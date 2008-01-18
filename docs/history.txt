@@ -1,4 +1,8 @@
 *** 2008-01-18 by Anders Reggestad
+- Added sending of instance in the all entity message to the npc client and
+  actor perseption message.
+  => NPC NET VERSION BUMPED!
+  => NET VERSION BUMPED!
 - Improved server command setlog <log> <flag> <filter> to match
   any unique substrings for the log argument. So now
   "setlog mes true" will enable log for LOG_MESSAGES.

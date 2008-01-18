@@ -225,9 +225,14 @@ void SetFlag(int index, bool flag, uint32 filter)
 
 void SetFlag(const char *name, bool flag, uint32 filter)
 {
-    bool all = !strcasecmp(name, "all");
     bool unique = true;
     int index = -1;
+
+    csString logStr(name);
+    logStr.Upcase();
+    name = logStr.GetDataSafe();
+    bool all = !strcmp(name, "ALL");
+    
     
     for (int i=0; i<MAX_FLAGS; i++)
     {
@@ -239,7 +244,7 @@ void SetFlag(const char *name, bool flag, uint32 filter)
             SetFlag(i, flag, filter);
         }
 
-        if (!all && strcasestr(flagnames[i], name))
+        if (!all && strstr(flagnames[i], name))
         {
             if (unique && index != -1)
             {

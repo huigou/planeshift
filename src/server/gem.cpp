@@ -541,26 +541,28 @@ void GEMSupervisor::GetAllEntityPos(psAllEntityPosMessage& update)
         gemObject *obj = iter.Next();
         if (obj->GetPlayerID())
         {
-			gemActor *actor = dynamic_cast<gemActor *>(obj);
-			if (actor) 
-			{
-				csVector3 pos,pos2;
-				float yrot;
-				iSector *sector;
-				obj->GetPosition(pos,yrot,sector);
-				obj->GetLastSuperclientPos(pos2);
-
-				float dist2 = (pos.x - pos2.x) * (pos.x - pos2.x) +
-					(pos.y - pos2.y) * (pos.y - pos2.y) +
-					(pos.z - pos2.z) * (pos.z - pos2.z);
-
-				if (dist2 > .04)
-				{
-					count_actual++;
-					update.Add(obj->GetEntity()->GetID(),pos, sector,
-						CacheManager::GetSingleton().GetMsgStrings());
-					obj->SetLastSuperclientPos(pos);
-				}
+            gemActor *actor = dynamic_cast<gemActor *>(obj);
+            if (actor) 
+            {
+                csVector3 pos,pos2;
+                float yrot;
+                int instance,oldInstance;
+                iSector *sector;
+                obj->GetPosition(pos,yrot,sector);
+                instance = obj->GetInstance();
+                obj->GetLastSuperclientPos(pos2,oldInstance);
+                
+                float dist2 = (pos.x - pos2.x) * (pos.x - pos2.x) +
+                    (pos.y - pos2.y) * (pos.y - pos2.y) +
+                    (pos.z - pos2.z) * (pos.z - pos2.z);
+                
+                if (dist2 > .04 || instance != oldInstance)
+                {
+                    count_actual++;
+                    update.Add(obj->GetEntity()->GetID(), pos, sector, obj->GetInstance(),
+                               CacheManager::GetSingleton().GetMsgStrings());
+                    obj->SetLastSuperclientPos(pos,instance);
+                }
             }
         }
     }
@@ -1634,7 +1636,8 @@ gemActor::gemActor( psCharacter *chardata,
 
     meshcache = factname;
 
-    last_sent_superclient_pos.Set(0,0,0);
+    lastSentSuperclientPos.Set(0,0,0);
+    lastSentSuperclientInstance = -1;
 
     psChar = chardata;
 
@@ -2211,6 +2214,7 @@ void gemActor::Send( int clientnum, bool control, bool to_superclient  )
     if (to_superclient)
     {
         mesg.SetPlayerID(playerID); // Insert player id before sending to super client.
+        mesg.SetInstance(GetInstance());
         if (clientnum == 0) // Send to all superclients
         {
             Debug1(LOG_SUPERCLIENT, clientnum, "Sending gemActor to superclients.\n");
@@ -2857,6 +2861,19 @@ bool gemActor::UpdateDR()
     pcmove->SetOnGround(on_ground);
     return true;
 }
+
+void gemActor::GetLastSuperclientPos(csVector3& pos, int& instance) const
+{
+    pos = lastSentSuperclientPos; 
+    instance = lastSentSuperclientInstance;
+}
+
+void gemActor::SetLastSuperclientPos(const csVector3& pos, int instance)
+{
+    lastSentSuperclientPos = pos;
+    lastSentSuperclientInstance = instance;
+}
+
 
 float gemActor::GetRelativeFaction(gemActor *speaker)
 {
@@ -3749,6 +3766,7 @@ void gemNPC::Send( int clientnum, bool control, bool to_superclient )
     if (to_superclient)
     {
         mesg.SetPlayerID(playerID); // Insert player id before sending to super client.
+        mesg.SetInstance(GetInstance());
         if (clientnum == 0) // Send to all superclients
         {
             CPrintf(CON_DEBUG, "Sending gemNPC to superclients.\n");

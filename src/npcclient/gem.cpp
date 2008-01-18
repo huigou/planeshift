@@ -36,7 +36,7 @@
 psNPCClient *gemNPCObject::cel = NULL;
 
 gemNPCObject::gemNPCObject( psNPCClient* cel, PS_ID id )
-    :visible(true),invincible(false)
+    :visible(true),invincible(false),instance(0)
 {
     if (!this->cel)
         this->cel = cel;
@@ -49,7 +49,14 @@ gemNPCObject::~gemNPCObject()
     cel->GetPlLayer()->RemoveEntity( entity );    
 }
 
-void gemNPCObject::Move(const csVector3& pos,float rotangle,  const char* room)
+void gemNPCObject::Move(const csVector3& pos, float rotangle,  const char* room, int instance)
+{
+    SetInstance(instance);
+    Move(pos,rotangle,room);
+}
+
+
+void gemNPCObject::Move(const csVector3& pos, float rotangle,  const char* room)
 {
     csRef<iEngine> engine =  csQueryRegistry<iEngine> (cel->GetObjectReg());
 
@@ -113,8 +120,18 @@ bool gemNPCObject::InitMesh(
     return true;
 }
 
+void gemNPCObject::SetPosition(csVector3& pos, iSector* sector, int* instance)
+{
+    psGameObject::SetPosition(GetEntity(), pos, sector);
+
+    if (instance)
+    {
+        SetInstance(*instance);
+    }
+}
 
 
+//-------------------------------------------------------------------------------
  
 
 gemNPCActor::gemNPCActor( psNPCClient* cel, psPersistActor& mesg) 
@@ -130,7 +147,7 @@ gemNPCActor::gemNPCActor( psNPCClient* cel, psPersistActor& mesg)
 
     SetVisible( ! (mesg.flags & psPersistActor::INVISIBLE)?  true : false );
     SetInvincible( (mesg.flags & psPersistActor::INVINCIBLE) ?  true : false );
-    
+    SetInstance( mesg.instance );
 
     Debug3( LOG_CELPERSIST, id, "Actor %s(%u) Received\n", mesg.name.GetData(), mesg.entityid );
     InitMesh(  mesg.factname, mesg.filename, mesg.pos, mesg.yrot, mesg.sectorName );
