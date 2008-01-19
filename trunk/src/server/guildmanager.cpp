@@ -1340,7 +1340,7 @@ void GuildManager::Invite(psGuildCmdMessage& msg,Client *client)
     PendingInvite *pnew;
     csString invitation;
 
-    invitation.Format("You have been invited to join the %s.  Click Accept to join this guild.",client->GetActor()->GetGuild()->name.GetData() );
+    invitation.Format("You have been invited to join the %s.  Click Yes to join this guild.",client->GetActor()->GetGuild()->name.GetData() );
     if (inviteeIsAlreadyInSecretGuild)
         pnew = new PendingSecretGuildMemberInvite(client,invitee,invitation,guild->id);
     else
