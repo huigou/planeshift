@@ -5,7 +5,7 @@
         movable="yes">
     <frame x="100" y="100" width="290" height="308" border="yes" />
     <title resource="Blue Title" text="Loot" align="left" close_button="yes" />
-    <bgimage resource="Loot Background" alpha="128" />
+    <bgimage resource="Loot Background" />
 
 
     <widget name="Roll" factory="pawsButton" id="100" tooltip="Group loot">

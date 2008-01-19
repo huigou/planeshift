@@ -5,7 +5,7 @@
         movable="yes">
     <frame x="100" y="100" width="300" height="350" border="yes" />
     <title resource="Blue Title" text="Exchange" align="left" close_button="yes"/>    
-    <bgimage resource="Standard Background" alpha="128" />
+    <bgimage resource="Standard Background" />
 
     <!-- Accept, Open Inventory BUTTONS -->
     <widget name="Accept" factory="pawsButton" id="100" tooltip="Accept trade">

@@ -7,7 +7,7 @@
     <frame x="0" y="100" width="200" height="240" border="yes" />
     <minframe width="200" height="160" />
     <title resource="Blue Title" text="Ignore List" align="left" close_button="yes"/>
-    <bgimage resource="Standard Background" alpha="128" />
+    <bgimage resource="Standard Background" />
 
     
     <widget name="IgnoreList" factory="pawsListBox"  >
@@ -41,7 +41,7 @@
     <widget name="add" factory="pawsButton" toggle="no" id="3000" shadows="yes">
         <frame x="140" y="210" width="50" height="16" border="yes" />
         <buttonup resource="Blue Title" />
-        <buttondown resource="Blue Title" /> 
+        <buttondown resource="Blue Title" />
         <label text="Add" />
         <attachpoints>  
             <attach point="ATTACH_LEFT" />
