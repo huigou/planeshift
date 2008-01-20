@@ -932,9 +932,13 @@ void NetworkManager::QueueAttackCommand(iCelEntity *attacker, iCelEntity *target
     outbound->msg->Add( (uint32_t) attacker->GetID() );
     
     if (target)
+    {
         outbound->msg->Add( (uint32_t) target->GetID() );
+    }
     else
+    {
         outbound->msg->Add( (uint32_t) 0 );  // 0 target means stop attack
+    }
 
     if ( outbound->msg->overrun )
     {

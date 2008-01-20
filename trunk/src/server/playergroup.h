@@ -35,12 +35,12 @@ class MsgEntry;
  */
 class PlayerGroup : public csRefCount
 {
-public:
+private:
     /// The main server group manager.
     GroupManager      *manager;
 
     /// The online client that is the current leader of the group.
-    gemActor        *leader;
+    gemActor          *leader;
     int                id;
     static int         next_id;
 
@@ -48,9 +48,13 @@ public:
     // be ref counted.
     csArray<gemActor*> members;
 
+public:
     PlayerGroup();
     PlayerGroup(GroupManager * mgr, gemActor * leader);
     ~PlayerGroup();
+
+    /// Return the ID of this group
+    int GetGroupID() { return id; }
 
     /// Add a new client to the existing group.
     void Add(gemActor * new_member);

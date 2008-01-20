@@ -2570,13 +2570,15 @@ ScriptOperation *MeleeOperation::MakeCopy()
 
 bool MeleeOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
 {
-    npc->Printf(5, "MeleeOperation starting with seek range (%.2f) will attack:%s%s.",
-                seek_range,(attack_invisible?" Invisible":" Visible"),
+    npc->Printf(5, "MeleeOperation starting with meele range %.2f seek range %.2f will attack:%s%s.",
+                melee_range, seek_range,(attack_invisible?" Invisible":" Visible"),
                 (attack_invincible?" Invincible":""));
 
-    attacked_ent = npc->GetMostHated(seek_range,attack_invisible,attack_invincible);
+    attacked_ent = npc->GetMostHated(melee_range,attack_invisible,attack_invincible);
     if (attacked_ent)
     {
+        npc->Printf(5, "Melee starting to attack %s(%d)",attacked_ent->GetName(),attacked_ent->GetID());
+
         npcclient->GetNetworkMgr()->QueueAttackCommand(npc->GetEntity(),attacked_ent);
     }
     else
@@ -2588,16 +2590,16 @@ bool MeleeOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
     return false; // This behavior isn't done yet
 }
 
-void MeleeOperation::Advance(float timedelta,NPC *npc,EventManager *eventmgr)
+void MeleeOperation::Advance(float timedelta, NPC *npc, EventManager *eventmgr)
 {
     // Check hate list to make sure we are still attacking the right person
-    iCelEntity *ent = npc->GetMostHated(melee_range,attack_invisible,attack_invincible);
+    iCelEntity *ent = npc->GetMostHated(melee_range, attack_invisible, attack_invincible);
     if (!ent)
     {
-        npc->Printf(8, "No Melee target in range (%2.2f), going to chase!",melee_range);
+        npc->Printf(8, "No Melee target in range (%2.2f), going to chase!", melee_range);
 
         // No enemy to whack on in melee range, search far
-        ent = npc->GetMostHated(seek_range,attack_invisible,attack_invincible);
+        ent = npc->GetMostHated(seek_range, attack_invisible, attack_invincible);
 
         // The idea here is to save the next best target and chase
         // him if out of range.
@@ -2620,16 +2622,16 @@ void MeleeOperation::Advance(float timedelta,NPC *npc,EventManager *eventmgr)
             {
                 npc->DumpHateList();
             }
-            npc->Printf(8, "No hated target in seek range (%2.2f)!",seek_range);
+            npc->Printf(8, "No hated target in seek range (%2.2f)!", seek_range);
             npc->GetCurrentBehavior()->ApplyNeedDelta(-5); // don't want to fight as badly
         }
         return;
     }
     if (ent != attacked_ent)
     {
-        npc->Printf(5, "Melee switching to attack %s",ent->GetName() );
+        npc->Printf(5, "Melee switching to attack %s(%d)", attacked_ent->GetName(), attacked_ent->GetID());
         attacked_ent = ent;
-        npcclient->GetNetworkMgr()->QueueAttackCommand(npc->GetEntity(),ent);
+        npcclient->GetNetworkMgr()->QueueAttackCommand(npc->GetEntity(), ent);
     }
 }
 

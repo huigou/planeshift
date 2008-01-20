@@ -137,8 +137,8 @@ public:
      *  @param sector The sector name to move to.
      */
     void Teleport( gemObject* object, float x, float y, float z, float rot, const char* sectorname );
-
-    void HandleMessage(MsgEntry *me,Client *client);
+ 
+    void HandleMessage(MsgEntry *me, Client *client);
 
 protected:
     csHash<gemObject *> entities_by_cel_id;
