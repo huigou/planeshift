@@ -77,7 +77,7 @@ public:
     void UpdateWorldPositions();
 
     /// Let the superclient know that a player has said something to one of its npcs.
-    void QueueTalkPerception(gemActor *speaker,gemNPC *target);
+    void QueueTalkPerception(gemActor *speaker, gemNPC *target);
 
     /// Let the superclient know that a player has attacked one of its npcs.
     void QueueAttackPerception(gemActor *attacker,gemNPC *target);
@@ -95,16 +95,7 @@ public:
     void QueueEnemyPerception(psNPCCommandsMessage::PerceptionType type, gemActor *npc, gemActor *player, float relative_faction);
 
     /// Let the superclient know that one of its npcs has been commanded to stay.
-    void QueueOwnerCmdStayPerception(gemActor *owner, gemNPC *pet);
-
-    /// Let the superclient know that one of its npcs has been commanded to follow.
-    void QueueOwnerCmdFollowPerception(gemActor *owner, gemNPC *pet);
-
-    /// Let the superclient know that one of its npcs has been commanded to attack.
-    void QueueOwnerCmdAttackPerception(gemActor *owner, gemNPC *pet);
-
-    /// Let the superclient know that one of its npcs has been commanded to stop attacking.
-    void QueueOwnerCmdStopAttackPerception(gemActor *owner, gemNPC *pet);
+    void QueueOwnerCmdPerception(gemActor *owner, gemNPC *pet, psPETCommandMessage::PetCommand_t command);
 
     /// Let the superclient know that one of its npcs has a change in inventory.
     void QueueInventoryPerception(gemActor *owner, psItem * itemdata, bool inserted);
@@ -161,6 +152,9 @@ protected:
 
     /// Send the list of races for the superclient to load on startup.
     void SendRaces(Client *client);
+
+    /// Check if a pet is within range to react to commands
+    bool CanPetHereYou(int clientnum, Client * owner, gemNPC * pet, const char * type);
 
     /// Handle network message with pet directives
     void HandlePetCommand( MsgEntry *me );

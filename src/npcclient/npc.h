@@ -36,6 +36,7 @@ struct iMovable;
 class iResultRow;
 class psTribe;
 class Waypoint;
+class gemNPCObject;
 class gemNPCActor;
 struct RaceInfo_t;
 class LocationType;
@@ -122,6 +123,7 @@ public:
     bool InsertCopy(int use_char_id,int ownerPID);
 
     void SetActor(gemNPCActor * actor);
+    gemNPCActor * GetActor() { return npcActor; }
     const char* GetName() {return name.GetDataSafe();}
     void SetAlive(bool a) { alive = a; }
     bool IsAlive() const { return alive; }
@@ -212,10 +214,11 @@ public:
     void Printf(int debug, const char *msg,...);
     void VPrintf(int debug, const char *msg,va_list arg);
 
-    iCelEntity *GetTarget();
-    void SetTarget(iCelEntity *ent);
+    gemNPCObject *GetTarget();
+    void SetTarget(iCelEntity *t);
+    void SetTarget(gemNPCObject *t);
 
-    iCelEntity *GetOwner();
+    gemNPCObject *GetOwner();
     void SetOwnerID( int owner ) { owner_id = owner; };
     const char* GetOwnerName();
 

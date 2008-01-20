@@ -316,7 +316,7 @@ class psPETCommandMessage : public psMessageCracker
 {
 public:
 
-    enum 
+    typedef enum 
     {
         CMD_FOLLOW,
         CMD_STAY,
@@ -328,7 +328,7 @@ public:
         CMD_STOPATTACK,
         CMD_NAME,
         CMD_TARGET
-    };
+    } PetCommand_t;
 
     int command;
     psString target;

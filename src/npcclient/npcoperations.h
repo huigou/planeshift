@@ -30,6 +30,7 @@
 class psResumeScriptEvent;
 class EventManager;
 class NPC;
+class gemNPCObject;
 struct iDocumentNode;
 struct iSector;
 struct iCelEntity;
@@ -63,6 +64,9 @@ protected:
     csVector3            interrupted_position;
     iSector             *interrupted_sector;
     float                interrupted_angle;
+    csString             collision;
+    csString             outOfBounds;
+    csString             inBounds;
 
     // Instance temp variables. These dosn't need to be copied.
     int                  consec_collisions; // Shared by move functions
@@ -103,6 +107,8 @@ public:
     float GetVelocity(NPC *npc);
     float GetAngularVelocity(NPC *npc);
     bool LoadVelocity(iDocumentNode *node);
+    bool LoadCheckMoveOk(iDocumentNode *node);
+    
     void AddRandomRange(csVector3& dest,float radius);
     void SetAnimation(NPC *npc, const char *name);
 
@@ -315,7 +321,8 @@ class ChaseOperation : public ScriptOperation
 protected:
     csString  action;
     int       type;
-    float     range;
+    float     searchRange;
+    float     chaseRange;
     csVector3 offset;
     uint32_t  target_id;
     psAPath   path;
@@ -325,9 +332,10 @@ protected:
     {
         UNKNOWN,NEAREST,OWNER,TARGET
     };
+    static const char * typeStr[];
 public:
 
-    ChaseOperation(): ScriptOperation("Chase") { target_id=(uint32_t)-1; type = UNKNOWN; range=0; ang_vel = 0; vel=0; };
+    ChaseOperation(): ScriptOperation("Chase") { target_id=(uint32_t)-1; type = UNKNOWN; searchRange=2.0; chaseRange=-1.0; ang_vel = 0; vel=0; };
     virtual ~ChaseOperation() {};
 
     virtual bool Run(NPC *npc,EventManager *eventmgr,bool interrupted);
@@ -759,7 +767,7 @@ protected:
     float     range;  //  Used for watch of type NEAREST 
     bool      watchInvisible, watchInvincible;
 
-    iCelEntity *watchedEnt;
+    gemNPCObject *watchedEnt;
 
     enum
     {
@@ -779,6 +787,9 @@ public:
     virtual void Advance(float timedelta,NPC *npc,EventManager *eventmgr);
     virtual void InterruptOperation(NPC *npc,EventManager *eventmgr);
     virtual bool CompleteOperation(NPC *npc,EventManager *eventmgr);
+
+ private:
+    bool OutOfRange(NPC *npc);
 };
 
 #endif

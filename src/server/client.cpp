@@ -178,9 +178,13 @@ void Client::SetTargetObject(gemObject* newobject, bool updateClientGUI)
 void Client::SetFamiliar( gemActor *familiar ) 
 { 
     if ( familiar )
+    {
         pets[0] = familiar->GetGemID(); 
+    }
     else
+    {
         pets[0] = (uint32)-1;
+    }
 }
 
 gemActor* Client::GetFamiliar() 
@@ -193,7 +197,9 @@ gemActor* Client::GetFamiliar()
         return GEMSupervisor::GetSingleton().FindNPCEntity( id );
     }
     else
+    {
         return NULL;
+    }
 }
 
 void Client::AddPet( gemActor *pet ) 

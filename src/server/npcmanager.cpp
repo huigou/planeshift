@@ -1250,6 +1250,20 @@ void NPCManager::UpdateWorldPositions()
     }
 }
 
+bool NPCManager::CanPetHereYou(int clientnum, Client * owner, gemNPC * pet, const char * type)
+{
+    //TODO: Add a range check
+
+    if (pet->GetInstance() != owner->GetActor()->GetInstance())
+    {
+        psserver->SendSystemInfo(clientnum, "Your %s is too far away to hear you", type);
+        return false;
+    }
+
+    return true;
+}
+
+
 void NPCManager::HandlePetCommand( MsgEntry * me )
 {
     psPETCommandMessage msg( me );
@@ -1258,8 +1272,9 @@ void NPCManager::HandlePetCommand( MsgEntry * me )
     csString firstName, lastName;
     csString prevFirstName, prevLastName;
     csString fullName, prevFullName;
-
-    int familiarID = 0;
+    const char * petType = "pet";
+    const char * familiarType = "familiar";
+    const char * type = familiarType;
     
     Client* owner = clients->FindAny(me->clientnum);
     if (!owner)
@@ -1267,6 +1282,8 @@ void NPCManager::HandlePetCommand( MsgEntry * me )
         Error2("invalid client object from psPETCommandMessage from client %u.\n",me->clientnum);
         return;
     }
+
+    int familiarID = owner->GetCharacterData()->familiar_id;
     
     if ( !msg.valid )
     {
@@ -1276,6 +1293,7 @@ void NPCManager::HandlePetCommand( MsgEntry * me )
 
     WordArray words( msg.options );
 
+    // Operator did give a name, lets see if we find the named pet
     if ( msg.target.Length() != 0 )
     {
         size_t numPets = owner->GetNumPets();
@@ -1283,39 +1301,72 @@ void NPCManager::HandlePetCommand( MsgEntry * me )
         {
             pet = dynamic_cast <gemNPC*>( owner->GetPet( i ) );
             if ( pet && msg.target.CompareNoCase( pet->GetCharacterData()->GetCharName() ) )
+            {
+                if (i)
+                {
+                    type = petType;
+                }
                 break;
+            }
             else
+            {
                 pet = NULL;
+            }
+        }
+
+        if ( !pet )
+        {
+            psserver->SendSystemInfo( me->clientnum, "You do not have a pet named '%s'.", msg.target.Slice(0, msg.target.Length() - 1 ).GetData() );
+            return;
         }
     }
     else
     {
-        pet = dynamic_cast <gemNPC*>(owner->GetFamiliar());
+        if (familiarID <= 0)
+        {
+            psserver->SendSystemInfo(me->clientnum,"You have no familiar to command.");
+            return;
+        }
+        else
+        {
+            pet = dynamic_cast <gemNPC*>(owner->GetFamiliar());
+        }
     }
 
-    if ( ( pet == NULL ) && ( msg.target.Length() != 0 ) )
-    {
-        psserver->SendSystemInfo( me->clientnum, "You do not have a pet named '%s'.", msg.target.Slice(0, msg.target.Length() - 1 ).GetData() );
-        return;
-    }
 
     switch ( msg.command )
     {
     case psPETCommandMessage::CMD_FOLLOW :
         if ( pet != NULL )
         {
-            // If no target target owner
-            if (!pet->GetTarget())
+            if (CanPetHereYou(me->clientnum, owner, pet, type))
             {
-                pet->SetTarget( owner->GetActor() );
-            }
-            QueueOwnerCmdFollowPerception( owner->GetActor(), pet );
+                // If no target target owner
+                if (!pet->GetTarget())
+                {
+                    pet->SetTarget( owner->GetActor() );
+                }
+                QueueOwnerCmdPerception( owner->GetActor(), pet, psPETCommandMessage::CMD_FOLLOW );
+            }        
+        }
+        else
+        {
+            psserver->SendSystemInfo(me->clientnum, "You have no %s to command", type);
+            return;
         }
         break;
     case psPETCommandMessage::CMD_STAY :
         if ( pet != NULL )
         {
-            QueueOwnerCmdStayPerception( owner->GetActor(), pet );
+            if (CanPetHereYou(me->clientnum, owner, pet, type))
+            {
+                QueueOwnerCmdPerception( owner->GetActor(), pet, psPETCommandMessage::CMD_STAY );
+            }
+        }
+        else
+        {
+            psserver->SendSystemInfo(me->clientnum, "You have no %s to command", type);
+            return;
         }
         break;
     case psPETCommandMessage::CMD_DISMISS :
@@ -1356,8 +1407,8 @@ void NPCManager::HandlePetCommand( MsgEntry * me )
             }
             return;
         }
-            
-            
+        
+        
         break;
     case psPETCommandMessage::CMD_SUMMON :
 
@@ -1446,181 +1497,215 @@ void NPCManager::HandlePetCommand( MsgEntry * me )
     case psPETCommandMessage::CMD_ATTACK :
         if ( pet != NULL )
         {
-            if ( pet->GetTarget() != NULL )
+            if ( CanPetHereYou(me->clientnum, owner, pet, type) )
             {
-                Stance stance = pet->GetCharacterData()->getStance("Aggressive");
-                if ( words.GetCount() != 0 )
+                if ( pet->GetTarget() != NULL )
                 {
-                    stance.stance_id = words.GetInt( 0 );
+                    Stance stance = pet->GetCharacterData()->getStance("Aggressive");
+                    if ( words.GetCount() != 0 )
+                    {
+                        stance.stance_id = words.GetInt( 0 );
+                    }
+                    QueueOwnerCmdPerception( owner->GetActor(), pet, psPETCommandMessage::CMD_ATTACK );
                 }
-                QueueOwnerCmdAttackPerception( owner->GetActor(), pet );
+                else
+                {
+                    psserver->SendSystemInfo(me->clientnum,"Your % needs a target to attack.",type);
+                }
             }
-            else
-            {
-                psserver->SendSystemInfo(me->clientnum,"Your pet needs a target to attack.");
-            }
+        }
+        else
+        {
+            psserver->SendSystemInfo(me->clientnum,"You have no %s to command",type);
+            return;
         }
         break;
     case psPETCommandMessage::CMD_STOPATTACK :
         if ( pet != NULL )
         {
-            QueueOwnerCmdStopAttackPerception( owner->GetActor(), pet );
+            if ( CanPetHereYou(me->clientnum, owner, pet, type) )
+            {
+                QueueOwnerCmdPerception( owner->GetActor(), pet, psPETCommandMessage::CMD_STOPATTACK );
+            }
+        }
+        else
+        {
+            psserver->SendSystemInfo(me->clientnum,"You have no %s to command",type);
+            return;
         }
         break;
     case psPETCommandMessage::CMD_ASSIST :
-        break;
-    case psPETCommandMessage::CMD_GUARD :
-        break;
-    case psPETCommandMessage::CMD_NAME :
-        // apply name change to pet.
-        familiarID = owner->GetCharacterData()->familiar_id;
-        if ( !familiarID ) 
-        {
-            psserver->SendSystemInfo(me->clientnum,"You have no familiar to command.");
-            return;
-        }
-            
-        if ( owner->GetFamiliar() )
-        {
-            pet = dynamic_cast <gemNPC*> (owner->GetFamiliar());
-        }
-        else
-        {
-            // TODO : Remove this code after fixing exploit
-            psserver->SendSystemInfo( me->clientnum, "You must summon your pet to give it a new name." );
-            return;
-
-            EntityManager::GetSingleton().CreateNPC( familiarID );
-            pet = GEMSupervisor::GetSingleton().FindNPCEntity( familiarID );
-        }
-        
-        if (pet == NULL)
-        {
-            Error2("Error while finding Familiar NPC for Character '%s'\n", owner->GetCharacterData()->GetCharName());
-            psserver->SendSystemError( me->clientnum, "Could not find Familiar GEM.");
-            return;
-        }
-            
-        if ( words.GetCount() == 0 )
-        {
-            psserver->SendSystemInfo( me->clientnum, "You must specify a new name for your pet." );
-            return;
-        }
-            
-        firstName = words.Get( 0 );
-        firstName = NormalizeCharacterName( firstName );
-        if ( !psCharCreationManager::FilterName( firstName ) )   
-        {   
-            psserver->SendSystemError( me->clientnum, "The name %s is invalid!", firstName.GetData() );   
-            return;   
-        }   
-        if ( words.GetCount() > 1 )
-        {
-            lastName = words.GetTail( 1 );
-            lastName = NormalizeCharacterName( lastName );
-            if ( !psCharCreationManager::FilterName( lastName ) )   
-            {   
-                psserver->SendSystemError( me->clientnum, "The last name %s is invalid!", lastName.GetData() );   
-                return;   
-            }   
-        }
-        else
-        {
-            lastName = "";
-        }
-        
-        if (psserver->GetCharManager()->IsBanned(firstName))
-        { 
-            psserver->SendSystemError( me->clientnum, "The name %s is invalid!", firstName.GetData() );           
-            return;
-        }
-        
-        if (psserver->GetCharManager()->IsBanned(lastName))
-        {
-            psserver->SendSystemError( me->clientnum, "The last name %s is invalid!", lastName.GetData() );           
-            return;
-        }
-        
-        chardata = pet->GetCharacterData();
-        prevFirstName = chardata->GetCharName();
-        prevLastName = chardata->GetCharLastName();
-        if ( firstName == prevFirstName && lastName == prevLastName )
-        {
-            // no changes needed
-            return;
-        }
-
-        if (!psCharCreationManager::IsUnique( firstName ))
-        {
-            psserver->SendSystemError( me->clientnum, "The name %s is not unique!", 
-                                       firstName.GetDataSafe() );               
-            return;
-        }
-
-        prevFullName = chardata->GetCharFullName();
-        chardata->SetFullName( firstName, lastName );
-        fullName = chardata->GetCharFullName();
-            
-        psServer::CharacterLoader.SaveCharacterData( chardata, pet, true );
-            
-        if ( owner->GetFamiliar() )
-        {
-            psUpdateObjectNameMessage newNameMsg(0,pet->GetEntity()->GetID(),pet->GetCharacterData()->GetCharFullName());
-            psserver->GetEventManager()->Broadcast(newNameMsg.msg,NetBase::BC_EVERYONE);
-        }
-        else
-        {
-            EntityManager::GetSingleton().RemoveActor( pet );
-        }
-            
-        psserver->SendSystemInfo( me->clientnum, 
-                                  "Your pet %s is now known as %s",
-                                  prevFullName.GetData(), 
-                                  fullName.GetData());   
-        break;
-    case psPETCommandMessage::CMD_TARGET :
         if ( pet != NULL )
         {
+            if ( CanPetHereYou(me->clientnum, owner, pet, type) )
+            {
+                QueueOwnerCmdPerception( owner->GetActor(), pet, psPETCommandMessage::CMD_ASSIST );
+            }
+        }
+        else
+        {
+            psserver->SendSystemInfo(me->clientnum,"You have no %s to command",type);
+            return;
+        }
+        break;
+    case psPETCommandMessage::CMD_GUARD :
+        if ( pet != NULL )
+        {
+            if ( CanPetHereYou(me->clientnum, owner, pet, type) )
+            {
+                QueueOwnerCmdPerception( owner->GetActor(), pet, psPETCommandMessage::CMD_GUARD );
+            }
+        }
+        else
+        {
+            psserver->SendSystemInfo(me->clientnum,"You have no %s to command",type);
+            return;
+        }
+        break;
+    case psPETCommandMessage::CMD_NAME :
+        if ( pet != NULL )
+        {
+            
+            if ( !CanPetHereYou(me->clientnum, owner, pet, type) )
+            {
+                return;
+            }
+            
             if ( words.GetCount() == 0 )
             {
-                psserver->SendSystemInfo( me->clientnum, "You must specify a name for your pet to target." );
+                psserver->SendSystemInfo( me->clientnum, "You must specify a new name for your pet." );
                 return;
             }
             
             firstName = words.Get( 0 );
+            firstName = NormalizeCharacterName( firstName );
+            if ( !psCharCreationManager::FilterName( firstName ) )   
+            {   
+                psserver->SendSystemError( me->clientnum, "The name %s is invalid!", firstName.GetData() );   
+                return;   
+            }   
             if ( words.GetCount() > 1 )
             {
                 lastName = words.GetTail( 1 );
-            }
-            
-            firstName = NormalizeCharacterName( firstName );
-
-            if (firstName == "Me")
-            {
-                firstName = owner->GetName();
-            }
-            lastName = NormalizeCharacterName( lastName );
-            
-            PS_ID target_id = psServer::CharacterLoader.FindCharacterID( firstName, false );
-            
-            if ( target_id )
-            {
-                gemObject *target = GEMSupervisor::GetSingleton().FindPlayerEntity( target_id );
-                if ( target ) 
-                {
-                    pet->SetTarget( target );
-                    psserver->SendSystemInfo( me->clientnum, "%s has successfully targeted %s." , pet->GetName(), firstName.GetData() );
-                }
+                lastName = NormalizeCharacterName( lastName );
+                if ( !psCharCreationManager::FilterName( lastName ) )   
+                {   
+                    psserver->SendSystemError( me->clientnum, "The last name %s is invalid!", lastName.GetData() );   
+                    return;   
+                }   
             }
             else
             {
-                psserver->SendSystemInfo( me->clientnum, "Cannot find '%s' to target.", firstName.GetData() );
+                lastName = "";
+            }
+            
+            if (psserver->GetCharManager()->IsBanned(firstName))
+            { 
+                psserver->SendSystemError( me->clientnum, "The name %s is invalid!", firstName.GetData() );           
+                return;
+            }
+            
+            if (psserver->GetCharManager()->IsBanned(lastName))
+            {
+                psserver->SendSystemError( me->clientnum, "The last name %s is invalid!", lastName.GetData() );           
+                return;
+            }
+            
+            chardata = pet->GetCharacterData();
+            prevFirstName = chardata->GetCharName();
+            prevLastName = chardata->GetCharLastName();
+            if ( firstName == prevFirstName && lastName == prevLastName )
+            {
+                // no changes needed
+                psserver->SendSystemError( me->clientnum, "Your %s is already known with that that name!", type );
+                return;
+            }
+            
+            if (!psCharCreationManager::IsUnique( firstName ))
+            {
+                psserver->SendSystemError( me->clientnum, "The name %s is not unique!", 
+                                           firstName.GetDataSafe() );               
+                return;
+            }
+            
+            prevFullName = chardata->GetCharFullName();
+            chardata->SetFullName( firstName, lastName );
+            fullName = chardata->GetCharFullName();
+            
+            psServer::CharacterLoader.SaveCharacterData( chardata, pet, true );
+            
+            if ( owner->GetFamiliar() )
+            {
+                psUpdateObjectNameMessage newNameMsg(0,pet->GetEntity()->GetID(),pet->GetCharacterData()->GetCharFullName());
+                psserver->GetEventManager()->Broadcast(newNameMsg.msg,NetBase::BC_EVERYONE);
+            }
+            else
+            {
+                EntityManager::GetSingleton().RemoveActor( pet );
+            }
+            
+            psserver->SendSystemInfo( me->clientnum, 
+                                      "Your pet %s is now known as %s",
+                                      prevFullName.GetData(), 
+                                      fullName.GetData());   
+        }
+        else
+        {
+            psserver->SendSystemInfo(me->clientnum,"You have no %s to command",type);
+            return;
+        }
+        break;
+    case psPETCommandMessage::CMD_TARGET :
+        if ( pet != NULL )
+        {
+            if ( CanPetHereYou(me->clientnum, owner, pet, type) )
+            {
+                if ( words.GetCount() == 0 )
+                {
+                    psserver->SendSystemInfo( me->clientnum, "You must specify a name for your pet to target." );
+                    return;
+                }
+                
+                firstName = words.Get( 0 );
+                if ( words.GetCount() > 1 )
+                {
+                    lastName = words.GetTail( 1 );
+                }
+                
+                firstName = NormalizeCharacterName( firstName );
+                
+                if (firstName == "Me")
+                {
+                    firstName = owner->GetName();
+                }
+                lastName = NormalizeCharacterName( lastName );
+                
+                PS_ID target_id = psServer::CharacterLoader.FindCharacterID( firstName, false );
+                
+                if ( target_id )
+                {
+                    gemObject *target = GEMSupervisor::GetSingleton().FindPlayerEntity( target_id );
+                    if ( target ) 
+                    {
+                        pet->SetTarget( target );
+                        psserver->SendSystemInfo( me->clientnum, "%s has successfully targeted %s." , pet->GetName(), firstName.GetData() );
+                    }
+                }
+                else
+                {
+                    psserver->SendSystemInfo( me->clientnum, "Cannot find '%s' to target.", firstName.GetData() );
+                }
             }
         }
-        
+        else
+        {
+            psserver->SendSystemInfo(me->clientnum,"You have no %s to command",type);
+            return;
+        }
         break;
     }
 }
+
 
 void NPCManager::PrepareMessage()
 {
@@ -1741,71 +1826,20 @@ void NPCManager::QueueEnemyPerception(psNPCCommandsMessage::PerceptionType type,
 }
 
 /**
- * The client /pet stay command cause the OwnerCmdStay perception to be sent to 
+ * The client /pet stay command cause the OwnerCmd perception to be sent to 
  * the superclient.
  */
-void NPCManager::QueueOwnerCmdStayPerception(gemActor *owner, gemNPC *pet)
+void NPCManager::QueueOwnerCmdPerception(gemActor *owner, gemNPC *pet, psPETCommandMessage::PetCommand_t command)
 {
     outbound->msg->Add( (int8_t) psNPCCommandsMessage::PCPT_OWNER_CMD );
-    outbound->msg->Add( (uint32_t) psPETCommandMessage::CMD_STAY );
+    outbound->msg->Add( (uint32_t) command ); 
     outbound->msg->Add( (uint32_t) owner->GetEntity()->GetID() );
     outbound->msg->Add( (uint32_t) pet->GetEntity()->GetID() );
     outbound->msg->Add( (uint32_t) (pet->GetTarget() ? pet->GetTarget()->GetEntity()->GetID(): 0) );
     cmd_count++;
-    Debug3(LOG_NPC, owner->GetEntity()->GetID(),"Added perception: %s has told %s to stay.\n",
+    Debug4(LOG_NPC, owner->GetEntity()->GetID(),"Added perception: %s has told %s to %d.\n",
         owner->GetEntity()->GetName(),
-        pet->GetEntity()->GetName() );
-}
-
-/**
- * The client /pet follow command cause the OwnerCmdFollow perception to be sent to 
- * the superclient.
- */
-void NPCManager::QueueOwnerCmdFollowPerception(gemActor *owner, gemNPC *pet)
-{
-    outbound->msg->Add( (int8_t) psNPCCommandsMessage::PCPT_OWNER_CMD );
-    outbound->msg->Add( (uint32_t) psPETCommandMessage::CMD_FOLLOW );
-    outbound->msg->Add( (uint32_t) owner->GetEntity()->GetID() );
-    outbound->msg->Add( (uint32_t) pet->GetEntity()->GetID() );
-    outbound->msg->Add( (uint32_t) (pet->GetTarget() ? pet->GetTarget()->GetEntity()->GetID(): 0) );
-    cmd_count++;
-    Debug3(LOG_NPC, owner->GetEntity()->GetID(), "Added perception: %s has told %s to follow.\n",
-        owner->GetEntity()->GetName(),
-        pet->GetEntity()->GetName() );
-}
-
-/**
- * The client /pet attack command cause the OwnerCmdAttack perception to be sent to 
- * the superclient.
- */
-void NPCManager::QueueOwnerCmdAttackPerception(gemActor *owner, gemNPC *pet)
-{
-    outbound->msg->Add( (int8_t) psNPCCommandsMessage::PCPT_OWNER_CMD );
-    outbound->msg->Add( (uint32_t) psPETCommandMessage::CMD_ATTACK );
-    outbound->msg->Add( (uint32_t) owner->GetEntity()->GetID() );
-    outbound->msg->Add( (uint32_t) pet->GetEntity()->GetID() );
-    outbound->msg->Add( (uint32_t) (pet->GetTarget() ? pet->GetTarget()->GetEntity()->GetID(): 0) );
-    cmd_count++;
-    Debug3(LOG_NPC, owner->GetEntity()->GetID(),"Added perception: %s has told %s to attack.\n",
-        owner->GetEntity()->GetName(),
-        pet->GetEntity()->GetName() );
-}
-
-/**
- * The client /pet follow command cause the OwnerCmdStopAttack perception to be sent to 
- * the superclient.
- */
-void NPCManager::QueueOwnerCmdStopAttackPerception(gemActor *owner, gemNPC *pet)
-{
-    outbound->msg->Add( (int8_t) psNPCCommandsMessage::PCPT_OWNER_CMD );
-    outbound->msg->Add( (uint32_t) psPETCommandMessage::CMD_STOPATTACK );
-    outbound->msg->Add( (uint32_t) owner->GetEntity()->GetID() );
-    outbound->msg->Add( (uint32_t) pet->GetEntity()->GetID() );
-    outbound->msg->Add( (uint32_t) (pet->GetTarget() ? pet->GetTarget()->GetEntity()->GetID(): 0) );
-    cmd_count++;
-    Debug3(LOG_NPC, owner->GetEntity()->GetID(),"Added perception: %s has told %s to stop atttacking.\n",
-        owner->GetEntity()->GetName(),
-        pet->GetEntity()->GetName() );
+        pet->GetEntity()->GetName(), (int)command);
 }
 
 void NPCManager::QueueInventoryPerception(gemActor *owner, psItem * itemdata, bool inserted)
