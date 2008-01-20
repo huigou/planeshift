@@ -761,19 +761,26 @@ void NPCManager::HandleCommandList(MsgEntry *me)
                     {
                         attacker->SetTarget(target);
                         if (attacker->GetCharacterData()->GetMode() == PSCHARACTER_MODE_COMBAT)
+                        {
                             psserver->combatmanager->StopAttack(attacker);
+                        }
+                        
                         if(target_id==0)
                         {
                             Debug2(LOG_SUPERCLIENT, attacker_id,"%s has stopped attacking.\n",attacker->GetName() );
                         }
                         else      // entity may have been removed since this msg was queued
-                            Debug2(LOG_SUPERCLIENT, attacker_id, "Couldn't find entity %d to attack them.\n",target_id);
+                        {
+                            Debug2(LOG_SUPERCLIENT, attacker_id, "Couldn't find entity %d to attack.\n",target_id);
+                        }
                     }
-                    else if(attacker->GetTarget() != target)
+                    else
                     {
                         attacker->SetTarget(target);
                         if (attacker->GetCharacterData()->GetMode() == PSCHARACTER_MODE_COMBAT)
+                        {
                             psserver->combatmanager->StopAttack(attacker);
+                        }
 
                         if ( !target->GetClient() || !target->GetActorPtr()->GetInvincibility() )
                         {
@@ -787,6 +794,10 @@ void NPCManager::HandleCommandList(MsgEntry *me)
                         }
                     }
 
+                }
+                else
+                {
+                    Debug2(LOG_SUPERCLIENT, attacker_id, "No entity %d or not alive", attacker_id);
                 }
                 break;
             }
@@ -1272,9 +1283,7 @@ void NPCManager::HandlePetCommand( MsgEntry * me )
     csString firstName, lastName;
     csString prevFirstName, prevLastName;
     csString fullName, prevFullName;
-    const char * petType = "pet";
-    const char * familiarType = "familiar";
-    const char * type = familiarType;
+    const char * typeStr = "familiar";
     
     Client* owner = clients->FindAny(me->clientnum);
     if (!owner)
@@ -1304,7 +1313,7 @@ void NPCManager::HandlePetCommand( MsgEntry * me )
             {
                 if (i)
                 {
-                    type = petType;
+                    typeStr = "pet";
                 }
                 break;
             }
@@ -1339,7 +1348,7 @@ void NPCManager::HandlePetCommand( MsgEntry * me )
     case psPETCommandMessage::CMD_FOLLOW :
         if ( pet != NULL )
         {
-            if (CanPetHereYou(me->clientnum, owner, pet, type))
+            if (CanPetHereYou(me->clientnum, owner, pet, typeStr))
             {
                 // If no target target owner
                 if (!pet->GetTarget())
@@ -1351,21 +1360,21 @@ void NPCManager::HandlePetCommand( MsgEntry * me )
         }
         else
         {
-            psserver->SendSystemInfo(me->clientnum, "You have no %s to command", type);
+            psserver->SendSystemInfo(me->clientnum, "You have no %s to command", typeStr);
             return;
         }
         break;
     case psPETCommandMessage::CMD_STAY :
         if ( pet != NULL )
         {
-            if (CanPetHereYou(me->clientnum, owner, pet, type))
+            if (CanPetHereYou(me->clientnum, owner, pet, typeStr))
             {
                 QueueOwnerCmdPerception( owner->GetActor(), pet, psPETCommandMessage::CMD_STAY );
             }
         }
         else
         {
-            psserver->SendSystemInfo(me->clientnum, "You have no %s to command", type);
+            psserver->SendSystemInfo(me->clientnum, "You have no %s to command", typeStr);
             return;
         }
         break;
@@ -1497,7 +1506,7 @@ void NPCManager::HandlePetCommand( MsgEntry * me )
     case psPETCommandMessage::CMD_ATTACK :
         if ( pet != NULL )
         {
-            if ( CanPetHereYou(me->clientnum, owner, pet, type) )
+            if ( CanPetHereYou(me->clientnum, owner, pet, typeStr) )
             {
                 if ( pet->GetTarget() != NULL )
                 {
@@ -1510,55 +1519,55 @@ void NPCManager::HandlePetCommand( MsgEntry * me )
                 }
                 else
                 {
-                    psserver->SendSystemInfo(me->clientnum,"Your % needs a target to attack.",type);
+                    psserver->SendSystemInfo(me->clientnum,"Your %s needs a target to attack.", typeStr);
                 }
             }
         }
         else
         {
-            psserver->SendSystemInfo(me->clientnum,"You have no %s to command",type);
+            psserver->SendSystemInfo(me->clientnum,"You have no %s to command", typeStr);
             return;
         }
         break;
     case psPETCommandMessage::CMD_STOPATTACK :
         if ( pet != NULL )
         {
-            if ( CanPetHereYou(me->clientnum, owner, pet, type) )
+            if ( CanPetHereYou(me->clientnum, owner, pet, typeStr) )
             {
                 QueueOwnerCmdPerception( owner->GetActor(), pet, psPETCommandMessage::CMD_STOPATTACK );
             }
         }
         else
         {
-            psserver->SendSystemInfo(me->clientnum,"You have no %s to command",type);
+            psserver->SendSystemInfo(me->clientnum,"You have no %s to command", typeStr);
             return;
         }
         break;
     case psPETCommandMessage::CMD_ASSIST :
         if ( pet != NULL )
         {
-            if ( CanPetHereYou(me->clientnum, owner, pet, type) )
+            if ( CanPetHereYou(me->clientnum, owner, pet, typeStr) )
             {
                 QueueOwnerCmdPerception( owner->GetActor(), pet, psPETCommandMessage::CMD_ASSIST );
             }
         }
         else
         {
-            psserver->SendSystemInfo(me->clientnum,"You have no %s to command",type);
+            psserver->SendSystemInfo(me->clientnum,"You have no %s to command",typeStr);
             return;
         }
         break;
     case psPETCommandMessage::CMD_GUARD :
         if ( pet != NULL )
         {
-            if ( CanPetHereYou(me->clientnum, owner, pet, type) )
+            if ( CanPetHereYou(me->clientnum, owner, pet, typeStr) )
             {
                 QueueOwnerCmdPerception( owner->GetActor(), pet, psPETCommandMessage::CMD_GUARD );
             }
         }
         else
         {
-            psserver->SendSystemInfo(me->clientnum,"You have no %s to command",type);
+            psserver->SendSystemInfo(me->clientnum,"You have no %s to command",typeStr);
             return;
         }
         break;
@@ -1566,7 +1575,7 @@ void NPCManager::HandlePetCommand( MsgEntry * me )
         if ( pet != NULL )
         {
             
-            if ( !CanPetHereYou(me->clientnum, owner, pet, type) )
+            if ( !CanPetHereYou(me->clientnum, owner, pet, typeStr) )
             {
                 return;
             }
@@ -1617,7 +1626,7 @@ void NPCManager::HandlePetCommand( MsgEntry * me )
             if ( firstName == prevFirstName && lastName == prevLastName )
             {
                 // no changes needed
-                psserver->SendSystemError( me->clientnum, "Your %s is already known with that that name!", type );
+                psserver->SendSystemError( me->clientnum, "Your %s is already known with that that name!", typeStr );
                 return;
             }
             
@@ -1651,14 +1660,14 @@ void NPCManager::HandlePetCommand( MsgEntry * me )
         }
         else
         {
-            psserver->SendSystemInfo(me->clientnum,"You have no %s to command",type);
+            psserver->SendSystemInfo(me->clientnum,"You have no %s to command",typeStr);
             return;
         }
         break;
     case psPETCommandMessage::CMD_TARGET :
         if ( pet != NULL )
         {
-            if ( CanPetHereYou(me->clientnum, owner, pet, type) )
+            if ( CanPetHereYou(me->clientnum, owner, pet, typeStr) )
             {
                 if ( words.GetCount() == 0 )
                 {
@@ -1699,7 +1708,7 @@ void NPCManager::HandlePetCommand( MsgEntry * me )
         }
         else
         {
-            psserver->SendSystemInfo(me->clientnum,"You have no %s to command",type);
+            psserver->SendSystemInfo(me->clientnum,"You have no %s to command",typeStr);
             return;
         }
         break;

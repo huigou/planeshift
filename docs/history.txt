@@ -1,3 +1,30 @@
+*** 2008-01-20 by Anders Reggestad
+- Made all variables private to the PlayerGroup class.
+- Added access function GetGroupID to get the id.
+- Fixed attack not working when PET is standing next to the target FS#944.
+
+*** 2008-01-19 by Anders Reggestad
+- Changed some of npcclient to use gemNPCObjects instead of iCelEntities
+  basicaly because I needed the Instance that is saved in gemNPCObject.
+- Added possiblity for user to define the name of the collision,
+  out of bounds, and in bounds perceptions for chase.
+- Added an chase_range that is a maximum distance a chase is allowed
+  to chase before an "<type> out of chase" perception is given
+  and the operation terminate.
+- Watch operation will no give "<type> out of range" perception also
+  when target/owner change instance.
+- Modified an reaction to have delta, absoulte, guarantied and none as
+  possible type of desire modifications.
+- Added the possiblity for one reaction to target multiple behaviors.
+  The react xml tag accept a ',' separated list of behaviors.
+- Improved the preformance of the only_interrupt by spliting the list
+  in the load, not every time the reaction is matched.
+- Modified handling of /pet commands to only do them if the pet
+  can here you. Inn same instance.
+- Merged all the server side QeueuOwnerCmdXXXXPerception into one function
+  with the pet command as the input.
+- Fixes FS#779,
+
 *** 2008-01-18 by Roland Schulz
 - Interface patches FS#961, FS#828, thanks Caarrie
 - transparency changes by Caarrie

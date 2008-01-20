@@ -330,6 +330,8 @@ public:
         CMD_TARGET
     } PetCommand_t;
 
+    static const char *petCommandString[];
+
     int command;
     psString target;
     psString options;

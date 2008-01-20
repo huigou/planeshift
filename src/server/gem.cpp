@@ -2125,7 +2125,9 @@ void gemActor::HandleDeath()
 void gemActor::SendGroupStats()
 {
     if (InGroup() || GetClientID())
+    {
         psChar->SendStatDRMessage(GetClientID(), GetEntity()->GetID(), 0, InGroup() ? GetGroup() : NULL);
+    }
         
     gemNPC* npc = dynamic_cast<gemNPC*>(this);
     if (npc && npc->GetCharacterData()->IsPet())
@@ -2133,7 +2135,9 @@ void gemActor::SendGroupStats()
         // Get Client ID of Owner
         gemObject *owner = npc->GetOwner();
         if (owner && owner->GetClientID())
+        {
             psChar->SendStatDRMessage(owner->GetClientID(), GetEntity()->GetID(), 0);
+        }
     }
 }
 
@@ -2161,7 +2165,7 @@ void gemActor::Send( int clientnum, bool control, bool to_superclient  )
     uint32_t groupID = 0;
     if(group)
     {
-        groupID = group->id;
+        groupID = group->GetGroupID();
     }
 
     uint32_t flags = 0;
@@ -2885,10 +2889,12 @@ void gemActor::SetGroup(PlayerGroup * group)
     PlayerGroup* oldGroup = this->group;
     this->group = group; 
 
-    int id = 0;
+    int groupID = 0;
     bool self = false;
     if(group)
-        id = group->id;
+    {
+        groupID = group->GetGroupID();
+    }
 
     // Update group clients for group removal
     if(oldGroup != NULL)
@@ -2905,7 +2911,7 @@ void gemActor::SetGroup(PlayerGroup * group)
             // Send group update
             psUpdatePlayerGroupMessage update(memb->GetClientID(),
                                               GetEntity()->GetID(),
-                                              id);
+                                              groupID);
 
             // CPrintf(CON_DEBUG,"Sending oldgroup update to client %d (%s)\n",memb->GetClientID(),memb->GetName());
 
@@ -2928,12 +2934,12 @@ void gemActor::SetGroup(PlayerGroup * group)
             // Send us to the rest of the group
             psUpdatePlayerGroupMessage update1(memb->GetClientID(),
                                                GetEntity()->GetID(),
-                                               id);
+                                               groupID);
 
             // Send the rest of the group to us (To make sure we got all the actors)
             psUpdatePlayerGroupMessage update2(GetClientID(),
                                                memb->GetEntity()->GetID(),
-                                               id);
+                                               groupID);
 
             // CPrintf(CON_DEBUG,"Sending group update to client %d (%s)\n",memb->GetClientID(),memb->GetName());
             update1.SendMessage();
@@ -2946,7 +2952,7 @@ void gemActor::SetGroup(PlayerGroup * group)
     {
         psUpdatePlayerGroupMessage update(GetClientID(),
                                           GetEntity()->GetID(),
-                                          id);
+                                          groupID);
         update.SendMessage();
     }
 }
@@ -2955,9 +2961,11 @@ int gemActor::GetGroupID()
 {
     csRef<PlayerGroup> group = GetGroup();
     if(group)
-        return group->id;
-    else
-        return 0;
+    {
+        return group->GetGroupID();
+    }
+
+    return 0;
 }
 
 bool gemActor::InGroup() const
@@ -2973,15 +2981,21 @@ bool gemActor::IsGroupedWith(gemActor *other) const
 void gemActor::RemoveFromGroup()
 {
     if (group.IsValid())
+    {
         group->Remove(this);
+    }
 }
 
 void gemActor::SendGroupMessage(MsgEntry *me)
 {
     if (group.IsValid())
+    {
         group->Broadcast(me);
+    }
     else
+    {
         psserver->GetEventManager()->SendMessage(me);
+    }
 }
 
 

@@ -265,7 +265,7 @@ csString psNPCCommandsMessage::ToString(AccessPointers * access_ptrs)
                     break;
                 }
 
-                msgtext.AppendFmt("Attacker: %u Target: %u",attacker_id, target_id);
+                msgtext.AppendFmt("Attacker: %u Target: %u ",attacker_id, target_id);
                 break;
             }
             case psNPCCommandsMessage::CMD_SPAWN:
@@ -283,7 +283,7 @@ csString psNPCCommandsMessage::ToString(AccessPointers * access_ptrs)
                     break;
                 }
                 
-                msgtext.AppendFmt("Spawner: %u Spawned: %d",spawner_id,spawned_id);
+                msgtext.AppendFmt("Spawner: %u Spawned: %d ",spawner_id,spawned_id);
                 break;
             }
             case psNPCCommandsMessage::CMD_TALK:
@@ -301,7 +301,7 @@ csString psNPCCommandsMessage::ToString(AccessPointers * access_ptrs)
                     break;
                 }
 
-                msgtext.AppendFmt("Speaker: %u Text: %s",speaker_id,text);
+                msgtext.AppendFmt("Speaker: %u Text: %s ",speaker_id,text);
                 break;
             }
             case psNPCCommandsMessage::CMD_VISIBILITY:
@@ -319,7 +319,7 @@ csString psNPCCommandsMessage::ToString(AccessPointers * access_ptrs)
                     break;
                 }
 
-                msgtext.AppendFmt("EID: %u Status: %s",entity_id,(status?"true":"false"));
+                msgtext.AppendFmt("EID: %u Status: %s ",entity_id,(status?"true":"false"));
                 break;
             }
             case psNPCCommandsMessage::CMD_PICKUP:
@@ -338,7 +338,7 @@ csString psNPCCommandsMessage::ToString(AccessPointers * access_ptrs)
                     break;
                 }
 
-                msgtext.AppendFmt("EID: %u Item: %u Count: %d",entity_id,item_id,count);
+                msgtext.AppendFmt("EID: %u Item: %u Count: %d ",entity_id,item_id,count);
                 break;
             }
 
@@ -360,7 +360,7 @@ csString psNPCCommandsMessage::ToString(AccessPointers * access_ptrs)
                     break;
                 }
 
-                msgtext.AppendFmt("EID: %u Item: %s Slot: %s Count: %d",entity_id,item.GetData(),slot.GetData(),count);
+                msgtext.AppendFmt("EID: %u Item: %s Slot: %s Count: %d ",entity_id,item.GetData(),slot.GetData(),count);
                 break;
             }
 
@@ -379,7 +379,7 @@ csString psNPCCommandsMessage::ToString(AccessPointers * access_ptrs)
                     break;
                 }
 
-                msgtext.AppendFmt("EID: %u Slot: %s",entity_id,slot.GetData());
+                msgtext.AppendFmt("EID: %u Slot: %s ",entity_id,slot.GetData());
                 break;
             }
 
@@ -398,7 +398,7 @@ csString psNPCCommandsMessage::ToString(AccessPointers * access_ptrs)
                     break;
                 }
 
-                msgtext.AppendFmt("EID: %u Resource: %s",entity_id,resource.GetData());
+                msgtext.AppendFmt("EID: %u Resource: %s ",entity_id,resource.GetData());
                 break;
             }
 
@@ -417,7 +417,7 @@ csString psNPCCommandsMessage::ToString(AccessPointers * access_ptrs)
                     break;
                 }
 
-                msgtext.AppendFmt("EID: %u Slot: %s",entity_id,slot.GetData());
+                msgtext.AppendFmt("EID: %u Slot: %s ",entity_id,slot.GetData());
                 break;
             }
 
@@ -438,7 +438,7 @@ csString psNPCCommandsMessage::ToString(AccessPointers * access_ptrs)
                     break;
                 }
 
-                msgtext.AppendFmt("EID: %u Item: %s Count: %d Target: %s",entity_id, item.GetDataSafe(), count, target.GetDataSafe());
+                msgtext.AppendFmt("EID: %u Item: %s Count: %d Target: %s ",entity_id, item.GetDataSafe(), count, target.GetDataSafe());
                 break;
             }
 
@@ -465,7 +465,7 @@ csString psNPCCommandsMessage::ToString(AccessPointers * access_ptrs)
                     break;
                 }
 
-                msgtext.AppendFmt("ID: %u Rot: %.2f Where: (%.2f,%.2f,%.2f) Sector: %s",
+                msgtext.AppendFmt("ID: %u Rot: %.2f Where: (%.2f,%.2f,%.2f) Sector: %s ",
                                   character_id,rot,where.x,where.y,where.z,sector.GetDataSafe());
                 break;
             }
@@ -485,7 +485,7 @@ csString psNPCCommandsMessage::ToString(AccessPointers * access_ptrs)
                     break;
                 }
 
-                msgtext.AppendFmt("Name: %s Cmd: %d Count: %d",
+                msgtext.AppendFmt("Name: %s Cmd: %d Count: %d ",
                                   name.GetDataSafe(),cmd,count);
                 break;
             }
@@ -504,7 +504,7 @@ csString psNPCCommandsMessage::ToString(AccessPointers * access_ptrs)
                     break;
                 }
 
-                msgtext.AppendFmt("EID: %u Impervious: %s",
+                msgtext.AppendFmt("EID: %u Impervious: %s ",
                                   entity_id,impervious?"true":"false");
                 break;
             }
@@ -518,7 +518,7 @@ csString psNPCCommandsMessage::ToString(AccessPointers * access_ptrs)
                 PS_ID target  = msg->GetUInt32();
                 int faction   = msg->GetInt16();
 
-                msgtext.AppendFmt("Speaker: %u Target: %u Faction: %d",speaker,target,faction);
+                msgtext.AppendFmt("Speaker: %u Target: %u Faction: %d ",speaker,target,faction);
                 break;
             }
             case psNPCCommandsMessage::PCPT_ATTACK:
@@ -527,7 +527,7 @@ csString psNPCCommandsMessage::ToString(AccessPointers * access_ptrs)
                 PS_ID target   = msg->GetUInt32();
                 PS_ID attacker = msg->GetUInt32();
 
-                msgtext.AppendFmt("Target: %u Attacker: %u",target,attacker);
+                msgtext.AppendFmt("Target: %u Attacker: %u ",target,attacker);
                 break;
             }
             case psNPCCommandsMessage::PCPT_GROUPATTACK:
@@ -540,7 +540,7 @@ csString psNPCCommandsMessage::ToString(AccessPointers * access_ptrs)
                 {
                     PS_ID attacker = msg->GetUInt32();
                     int bestSkillSlot = msg->GetInt8();
-                    msgtext.AppendFmt("Attacker(%i): %u, BestSkillSlot: %d",i,attacker,bestSkillSlot);
+                    msgtext.AppendFmt("Attacker(%i): %u, BestSkillSlot: %d ",i,attacker,bestSkillSlot);
                 }
 
                 break;
@@ -552,7 +552,7 @@ csString psNPCCommandsMessage::ToString(AccessPointers * access_ptrs)
                 PS_ID target   = msg->GetUInt32();
                 float dmg      = msg->GetFloat();
 
-                msgtext.AppendFmt("Attacker: %u Target: %u Dmg: %.1f",attacker,target,dmg);
+                msgtext.AppendFmt("Attacker: %u Target: %u Dmg: %.1f ",attacker,target,dmg);
                 break;
             }
             case psNPCCommandsMessage::PCPT_SPELL:
@@ -564,7 +564,7 @@ csString psNPCCommandsMessage::ToString(AccessPointers * access_ptrs)
                 float    severity = msg->GetInt8() / 10;
                 csString type = access_ptrs->msgstrings->Request(strhash);
 
-                msgtext.AppendFmt("Caster: %u Target: %u Type: \"%s\"(%u) Severity: %f",caster,target,type.GetData(),strhash,severity);
+                msgtext.AppendFmt("Caster: %u Target: %u Type: \"%s\"(%u) Severity: %f ",caster,target,type.GetData(),strhash,severity);
                 break;
             }
             case psNPCCommandsMessage::PCPT_DEATH:
@@ -572,7 +572,7 @@ csString psNPCCommandsMessage::ToString(AccessPointers * access_ptrs)
                 msgtext.Append("PCPT_DEATH: ");
                 PS_ID who = msg->GetUInt32();
 
-                msgtext.AppendFmt("Who: %u",who);
+                msgtext.AppendFmt("Who: %u ",who);
                 break;
             }
             case psNPCCommandsMessage::PCPT_LONGRANGEPLAYER:
@@ -592,7 +592,7 @@ csString psNPCCommandsMessage::ToString(AccessPointers * access_ptrs)
                 PS_ID player  = msg->GetUInt32();
                 float faction = msg->GetFloat();
 
-                msgtext.AppendFmt("NPCID: %u Player: %u Faction: %.0f",npcid,player,faction);
+                msgtext.AppendFmt("NPCID: %u Player: %u Faction: %.0f ",npcid,player,faction);
                 break;
             }
             case psNPCCommandsMessage::PCPT_OWNER_CMD:
@@ -603,8 +603,8 @@ csString psNPCCommandsMessage::ToString(AccessPointers * access_ptrs)
                 PS_ID pet_id = msg->GetUInt32();
                 PS_ID target_id = msg->GetUInt32();
 
-                msgtext.AppendFmt("Command: %u OwnerID: %u PetID: %u TargetID: %u",
-                                  command,owner_id,pet_id,target_id);
+                msgtext.AppendFmt("Command: %s OwnerID: %u PetID: %u TargetID: %u ",
+                                  psPETCommandMessage::petCommandString[command],owner_id,pet_id,target_id);
                 break;
             }
             case psNPCCommandsMessage::PCPT_OWNER_ACTION:
@@ -614,7 +614,7 @@ csString psNPCCommandsMessage::ToString(AccessPointers * access_ptrs)
                 PS_ID owner_id = msg->GetUInt32();
                 PS_ID pet_id = msg->GetUInt32();
 
-                msgtext.AppendFmt("Action: %u OwnerID: %u PetID: %u",action,owner_id,pet_id);
+                msgtext.AppendFmt("Action: %u OwnerID: %u PetID: %u ",action,owner_id,pet_id);
                 break;
             }
             case psNPCCommandsMessage::PCPT_INVENTORY:
@@ -625,7 +625,7 @@ csString psNPCCommandsMessage::ToString(AccessPointers * access_ptrs)
                 bool inserted = msg->GetBool();
                 int count = msg->GetInt16();
 
-                msgtext.AppendFmt("OwnerID: %u ItemName: %s Inserted: %s Count: %d",owner_id,item_name.GetData(),(inserted?"true":"false"),count);
+                msgtext.AppendFmt("OwnerID: %u ItemName: %s Inserted: %s Count: %d ",owner_id,item_name.GetData(),(inserted?"true":"false"),count);
                 break;
             }
             case psNPCCommandsMessage::PCPT_FLAG:
@@ -637,7 +637,7 @@ csString psNPCCommandsMessage::ToString(AccessPointers * access_ptrs)
                 if (flags & INVISIBLE)  str.Append(" INVISIBLE");
                 if (flags & INVINCIBLE) str.Append(" INVINCIBLE");
 
-                msgtext.AppendFmt("OwnerID: %u Flags: %s",owner_id,str.GetDataSafe());
+                msgtext.AppendFmt("OwnerID: %u Flags: %s ",owner_id,str.GetDataSafe());
                 break;
             }
             case psNPCCommandsMessage::PCPT_NPCCMD:
@@ -646,7 +646,7 @@ csString psNPCCommandsMessage::ToString(AccessPointers * access_ptrs)
                 PS_ID owner_id = msg->GetUInt32();
                 csString cmd   = msg->GetStr();
 
-                msgtext.AppendFmt("OwnerID: %u Cmd: %s",owner_id,cmd.GetDataSafe());
+                msgtext.AppendFmt("OwnerID: %u Cmd: %s ",owner_id,cmd.GetDataSafe());
                 break;
             }
 
@@ -667,7 +667,7 @@ csString psNPCCommandsMessage::ToString(AccessPointers * access_ptrs)
                     break;
                 }
 
-                msgtext.AppendFmt("EID: %u Item: %s Count: %d Target: %s",entity_id, item.GetDataSafe(), count, target.GetDataSafe());
+                msgtext.AppendFmt("EID: %u Item: %s Count: %d Target: %s ",entity_id, item.GetDataSafe(), count, target.GetDataSafe());
                 break;
             }
 
@@ -850,6 +850,10 @@ csString psNPCSetOwnerMessage::ToString(AccessPointers * /*access_ptrs*/)
 
 PSF_IMPLEMENT_MSG_FACTORY(psPETCommandMessage,MSGTYPE_PET_COMMAND);
 
+const char * psPETCommandMessage::petCommandString[]=
+    {"CMD_FOLLOW","CMD_STAY","CMD_DISMISS","CMD_SUMMON","CMD_ATTACK",
+     "CMD_GUARD","CMD_ASSIST","CMD_STOPATTACK","CMD_NAME","CMD_TARGET"};
+
 psPETCommandMessage::psPETCommandMessage(uint32_t clientToken, int cmd, const char * target, const char * options )
 {
     size_t targetlen = 0;
@@ -883,9 +887,9 @@ csString psPETCommandMessage::ToString(AccessPointers * /*access_ptrs*/)
 {
     csString msgtext;
     
-    msgtext.AppendFmt("Command: %d",command);
-    msgtext.AppendFmt("Target: '%s'",target.GetDataSafe());
-    msgtext.AppendFmt("Options: '%s'",options.GetDataSafe());
+    msgtext.AppendFmt("Command: %s",petCommandString[command]);
+    msgtext.AppendFmt(" Target: '%s'",target.GetDataSafe());
+    msgtext.AppendFmt(" Options: '%s'",options.GetDataSafe());
 
     return msgtext;
 }

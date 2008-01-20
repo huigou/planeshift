@@ -68,7 +68,7 @@ public:
                         "You have declined %s's invitation.",
                         psQuestionMessage::generalConfirm)
     {
-        groupID   = g->id;
+        groupID   = g->GetGroupID();
     }
 
     virtual ~PendingGroupInvite() {}
@@ -249,8 +249,12 @@ void PlayerGroup::BroadcastMemberList()
 bool PlayerGroup::HasMember(gemActor *member)
 {
     for (size_t i = 0; i < members.GetSize(); i++)
+    {
         if (members[i] == member)
+        {
             return true;
+        }
+    }
     return false;
 }
 
@@ -429,7 +433,7 @@ PlayerGroup * GroupManager::FindGroup(int id)
 {
     // TODO: Change to hashmap
     for (size_t grpNum=0; grpNum < groups.GetSize(); grpNum++)
-        if (groups[grpNum]->id == id)
+        if (groups[grpNum]->GetGroupID() == id)
             return groups[grpNum];
     return NULL;
 }
@@ -486,7 +490,7 @@ void GroupManager::SendGroup(gemActor * client)
 {
     csRef<PlayerGroup> group = client->GetGroup();
     csString buff;
-    buff.Format("<GROUP ID=\"%d\" />",group->id);
+    buff.Format("<GROUP ID=\"%d\" />",group->GetGroupID());
     psGUIGroupMessage msg(client->GetClientID(),psGUIGroupMessage::GROUP,buff);
     msg.SendMessage();
 }
@@ -555,7 +559,7 @@ void GroupManager::RemovePlayerFromGroup(psGroupCmdMessage& msg,gemActor *client
  
     targetClientActor = targetClient->GetActor();
     csRef<PlayerGroup> targetGroup = targetClientActor->GetGroup();
-    if (!targetGroup || targetGroup->id != group->id)
+    if (!targetGroup || targetGroup->GetGroupID() != group->GetGroupID())
     {
         psserver->SendSystemInfo(client->GetClientID(), "Player %s is not a member of your group.", msg.player.GetData());
         return;
