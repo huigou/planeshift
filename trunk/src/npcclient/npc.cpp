@@ -537,7 +537,7 @@ void NPC::VPrintf(int debug, const char *msg, va_list args)
     CPrintf(CON_CMDOUTPUT, "%s (%u)> %s\n",GetName(),pid,str);
 }
 
-iCelEntity *NPC::GetTarget()
+gemNPCObject *NPC::GetTarget()
 {
     // If something is targeted, use it.
     if (target_id != (uint32_t)-1 && target_id != 0)
@@ -546,14 +546,18 @@ iCelEntity *NPC::GetTarget()
         gemNPCObject * obj = npcclient->FindEntityID(target_id);
         if (obj && !obj->IsVisible()) return NULL;
 
-        iCelEntity *target = npcclient->FindEntity(target_id);
-        return target;
+        return obj;
     }
     else  // if not, try the last perception entity
     {
         if (GetLastPerception())
         {
-            iCelEntity *target = GetLastPerception()->GetTarget();
+            gemNPCObject * target = NULL;
+            iCelEntity *entity = GetLastPerception()->GetTarget();
+            if (entity)
+            {
+                target = npcclient->FindEntityID(entity->GetID());
+            }
             Printf(5,"GetTarget returning last perception entity: %s",target ? target->GetName() : "None specified");
             return target;
         }
@@ -561,33 +565,40 @@ iCelEntity *NPC::GetTarget()
     }
 }
 
-void NPC::SetTarget(iCelEntity *ent)
+void NPC::SetTarget(iCelEntity *t)
 {
-    if (ent == NULL)
+    if (t == NULL)
     {
         Printf(10,"Clearing target");
         target_id = (uint32_t)~0;
     }
     else
     {
-        Printf(10,"Setting target to: %s",ent->GetName());
-        target_id = ent->GetID();
+        Printf(10,"Setting target to: %s",t->GetName());
+        target_id = t->GetID();
     }
 }
 
-iCelEntity *NPC::GetOwner()
+void NPC::SetTarget(gemNPCObject *t)
+{
+    if (t == NULL)
+    {
+        Printf(10,"Clearing target");
+        target_id = (uint32_t)~0;
+    }
+    else
+    {
+        Printf(10,"Setting target to: %s",t->GetName());
+        target_id = t->GetID();
+    }
+}
+
+
+gemNPCObject *NPC::GetOwner()
 {
     if (owner_id != -1)
     {
-        gemNPCObject *obj = npcclient->FindCharacterID( owner_id );
-        if (obj)
-        {
-            return obj->GetEntity();
-        }
-        else
-        {
-            return NULL;
-        }
+        return npcclient->FindCharacterID( owner_id );
     }        
     else
         return NULL;        

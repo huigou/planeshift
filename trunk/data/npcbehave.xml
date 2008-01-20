@@ -134,7 +134,7 @@
       <react event="out of bounds"       behavior="turnregion"  delta="100" />
       <react event="attack"              behavior="fight" delta="150" />
       <react event="damage"              behavior="fight" delta="20" weight="1" />
-      <react event="target out of range" behavior="chase" delta="0" />
+      <react event="target out of range" behavior="chase" />
       <react event="death"               behavior="fight" delta="-1" />
   </npctype>
 
@@ -154,11 +154,11 @@
       <behavior name="chase" completion_decay="100" growth="0" initial="0">
           <chase type="target" anim="run" vel="5" />
       </behavior>
-      <react event="collision"           behavior="turn" delta="0" />
-      <react event="out of bounds"       behavior="turn" delta="0" />
-      <react event="attack"              behavior="fight" delta="0" />
+      <react event="collision"           behavior="turn" />
+      <react event="out of bounds"       behavior="turn" />
+      <react event="attack"              behavior="fight" />
       <react event="damage"              behavior="fight" delta="20" weight="1" />
-      <react event="target out of range" behavior="chase" delta="0" />
+      <react event="target out of range" behavior="chase" />
       <react event="death"               behavior="fight" delta="-1" />
   </npctype>
 
@@ -229,30 +229,30 @@
     <behavior name="hang out at smithy" completion_decay="0" growth="0" initial="-5">
       <moveto x="-35" y="0" z="-160" anim="walk" />
     </behavior>
-    <react event="time" value="0,0,,,"  behavior="hang out at smithy" delta="0" />
-    <react event="time" value="1,0,,," behavior="march" delta="0" />
-    <react event="time" value="2,0,,,"  behavior="hang out at smithy" delta="0" />
-    <react event="time" value="3,0,,," behavior="march" delta="0" />
-    <react event="time" value="4,0,,,"  behavior="hang out at smithy" delta="0" />
-    <react event="time" value="5,0,,," behavior="march" delta="0" />
-    <react event="time" value="6,0,,,"  behavior="hang out at smithy" delta="0" />
-    <react event="time" value="7,0,,," behavior="march" delta="0" />
-    <react event="time" value="8,0,,,"  behavior="hang out at smithy" delta="0" />
-    <react event="time" value="9,0,,," behavior="march" delta="0" />
-    <react event="time" value="10,0,,,"  behavior="hang out at smithy" delta="0" />
-    <react event="time" value="11,0,,," behavior="march" delta="0" />
-    <react event="time" value="12,0,,,"  behavior="hang out at smithy" delta="0" />
-    <react event="time" value="13,0,,," behavior="march" delta="0" />
-    <react event="time" value="14,0,,,"  behavior="hang out at smithy" delta="0" />
-    <react event="time" value="15,0,,," behavior="march" delta="0" />
-    <react event="time" value="16,0,,,"  behavior="hang out at smithy" delta="0" />
-    <react event="time" value="17,0,,," behavior="march" delta="0" />
-    <react event="time" value="18,0,,,"  behavior="hang out at smithy" delta="0" />
-    <react event="time" value="19,0,,," behavior="march" delta="0" />
-    <react event="time" value="20,0,,,"  behavior="hang out at smithy" delta="0" />
-    <react event="time" value="21,0,,," behavior="march" delta="0" />
-    <react event="time" value="22,0,,,"  behavior="hang out at smithy" delta="0" />
-    <react event="time" value="23,0,,," behavior="march" delta="0" />
+    <react event="time" value="0,0,,,"  behavior="hang out at smithy" />
+    <react event="time" value="1,0,,," behavior="march" />
+    <react event="time" value="2,0,,,"  behavior="hang out at smithy" />
+    <react event="time" value="3,0,,," behavior="march" />
+    <react event="time" value="4,0,,,"  behavior="hang out at smithy" />
+    <react event="time" value="5,0,,," behavior="march" />
+    <react event="time" value="6,0,,,"  behavior="hang out at smithy" />
+    <react event="time" value="7,0,,," behavior="march" />
+    <react event="time" value="8,0,,,"  behavior="hang out at smithy" />
+    <react event="time" value="9,0,,," behavior="march" />
+    <react event="time" value="10,0,,,"  behavior="hang out at smithy" />
+    <react event="time" value="11,0,,," behavior="march" />
+    <react event="time" value="12,0,,,"  behavior="hang out at smithy" />
+    <react event="time" value="13,0,,," behavior="march" />
+    <react event="time" value="14,0,,,"  behavior="hang out at smithy" />
+    <react event="time" value="15,0,,," behavior="march" />
+    <react event="time" value="16,0,,,"  behavior="hang out at smithy" />
+    <react event="time" value="17,0,,," behavior="march" />
+    <react event="time" value="18,0,,,"  behavior="hang out at smithy" />
+    <react event="time" value="19,0,,," behavior="march" />
+    <react event="time" value="20,0,,,"  behavior="hang out at smithy" />
+    <react event="time" value="21,0,,," behavior="march" />
+    <react event="time" value="22,0,,,"  behavior="hang out at smithy" />
+    <react event="time" value="23,0,,," behavior="march" />
   </npctype>
   
   <npctype name="Minion">
@@ -261,35 +261,43 @@
       <wait duration="1" anim="stand" />
     </behavior>
 
+    <!-- Follow, start on /pet follow and stop on /pet stay -->
     <behavior name="follow" completion_decay="100" decay="0" growth="0" initial="0" loop="yes">
       <watch type="owner" range="3.0" />
     </behavior>
     <behavior name="follow_chase" completion_decay="100" growth="0" initial="0">
-      <chase type="owner" anim="walk" offset_x="2.0" offset_z="2.0" />
+      <chase type="owner" anim="walk" collision="follow_collided" offset_x="2.0" offset_z="2.0" />
     </behavior>
-
-    <behavior name="turn" completion_decay="100" growth="0" initial="0">
+    <behavior name="follow_turn" completion_decay="100" growth="0" initial="0">
       <rotate type="random" min="90" max="270" anim="walk" ang_vel="30" />
       <move vel="2" anim="walk" duration="1.0"/>
     </behavior>
 
+    <!-- Attack, start on /pet attack and stop on /pet stopattack -->
     <behavior name="attack" decay="0" growth="0" initial="0">
       <locate obj="target"  range="50"/>
       <rotate type="locatedest" anim="walk" ang_vel="120" />
       <melee seek_range="50" melee_range="3" />
     </behavior>
-    <behavior name="chase" completion_decay="100" growth="0" initial="0">
+    <behavior name="attack_chase" completion_decay="100" growth="0" initial="0">
       <chase type="target" anim="run" vel="5" />
     </behavior>
+    <behavior name="attack_turn" completion_decay="100" growth="0" initial="0">
+      <rotate type="random" min="90" max="270" anim="walk" ang_vel="30" />
+      <move vel="2" anim="walk" duration="1.0"/>
+    </behavior>
 	
-    <react event="collision"            behavior="turn"         delta=  "100"                       />
-    <react event="ownercmd:stay"        behavior="follow"       delta= "-100"    active_only="true" />
+    <react event="ownercmd:stay"        behavior="follow,follow_chase,follow_turn"       absolute="0"   only_interrupt="follow,follow_chase,follow_turn" />
+    <react event="owner out of chase"   behavior="follow,follow_chase,follow_turn"       absolute="0"   only_interrupt="follow,follow_chase,follow_turn" />
     <react event="ownercmd:follow"      behavior="follow"       delta=  "100"  inactive_only="true" />
+    <react event="follow_collided"      behavior="follow_turn"  delta=  "100" />
+    <react event="owner out of range"   behavior="follow_chase"  />
+
     <react event="ownercmd:stopattack"  behavior="attack"       delta= "-200"    active_only="true" />
     <react event="ownercmd:attack"      behavior="attack"       delta=  "200"  inactive_only="true" weight="10" />
+    <react event="collision"            behavior="attack_turn"  delta=  "100" />
     <react event="damage"               behavior="attack"       delta=  "200"  inactive_only="true" weight="1" />
-    <react event="target out of range"  behavior="chase"        delta=    "0" />
-    <react event="owner out of range"   behavior="follow_chase" delta=    "0" />
+    <react event="target out of range"  behavior="attack_chase"  />
   </npctype>
   
   <npctype name="Blacksmith">
@@ -387,13 +395,13 @@
     </behavior>
 
     <react event="tribe:explore"      behavior="Explore"     delta="100" />
-    <react event="location sensed"    behavior="ExploreLoc"  delta="0"   type="mine" only_interrupt="Explore" />
+    <react event="location sensed"    behavior="ExploreLoc"    type="mine" only_interrupt="Explore" />
     <react event="tribe:dig"          behavior="Dig"         delta="100" />
     <react event="tribe:path1"        behavior="Path1"       delta="100" />
     <react event="tribe:path2"        behavior="Path2"       delta="100" />
-    <react event="tribe:reproduce"    behavior="Reproduce"   delta="0"   inactive_only="yes" />
-    <react event="tribe:resurrect"    behavior="Resurrect"   delta="0"   inactive_only="yes" when_dead="yes" />
-    <react event="inventory:added"    behavior="RememberLoc" delta="0"   type="Gold Ore"/>
+    <react event="tribe:reproduce"    behavior="Reproduce"     inactive_only="yes" />
+    <react event="tribe:resurrect"    behavior="Resurrect"     inactive_only="yes" when_dead="yes" />
+    <react event="inventory:added"    behavior="RememberLoc"   type="Gold Ore"/>
   </npctype>
 
 
@@ -460,7 +468,7 @@
       <!-- Use this as a null operation. -->
       <memorize obj="perception" />
     </behavior>
-    <react event="location sensed"    behavior="Interrupt"  delta="0"/>
+    <react event="location sensed"    behavior="Interrupt" />
   </npctype>
 
   <npctype name="MoveTest4">
@@ -504,30 +512,30 @@
       <wander anim="walk" />        <!-- Navigate using waypoints -->
     </behavior>
 
-    <react event="time" value="0,0,,," random=",5,,," behavior="GoWork" delta="0" /> 
-    <react event="time" value="1,0,,," random=",5,,,"  behavior="GoHome" delta="0" /> 
-    <react event="time" value="2,0,,," random=",5,,,"  behavior="GoWork" delta="0" /> 
-    <react event="time" value="3,0,,," random=",5,,,"  behavior="GoHome" delta="0" /> 
-    <react event="time" value="4,0,,," random=",5,,,"  behavior="GoWork" delta="0" /> 
-    <react event="time" value="5,0,,," random=",5,,,"  behavior="GoHome" delta="0" /> 
-    <react event="time" value="6,0,,," random=",5,,,"  behavior="GoWork" delta="0" /> 
-    <react event="time" value="7,0,,," random=",5,,,"  behavior="GoHome" delta="0" /> 
-    <react event="time" value="8,0,,," random=",5,,,"  behavior="GoWork" delta="0" /> 
-    <react event="time" value="9,0,,," random=",5,,,"  behavior="GoHome" delta="0" /> 
-    <react event="time" value="10,0,,," random=",5,,,"  behavior="GoWork" delta="0" /> 
-    <react event="time" value="11,0,,," random=",5,,,"  behavior="GoHome" delta="0" /> 
-    <react event="time" value="12,0,,," random=",5,,,"  behavior="GoWork" delta="0" /> 
-    <react event="time" value="13,0,,," random=",5,,,"  behavior="GoHome" delta="0" /> 
-    <react event="time" value="14,0,,," random=",5,,,"  behavior="GoWork" delta="0" /> 
-    <react event="time" value="15,0,,," random=",5,,,"  behavior="GoHome" delta="0" /> 
-    <react event="time" value="16,0,,," random=",5,,,"  behavior="GoWork" delta="0" /> 
-    <react event="time" value="17,0,,," random=",5,,,"  behavior="GoHome" delta="0" /> 
-    <react event="time" value="18,0,,," random=",5,,,"  behavior="GoWork" delta="0" /> 
-    <react event="time" value="19,0,,," random=",5,,,"  behavior="GoHome" delta="0" /> 
-    <react event="time" value="20,0,,," random=",5,,,"  behavior="GoWork" delta="0" /> 
-    <react event="time" value="21,0,,," random=",5,,,"  behavior="GoHome" delta="0" /> 
-    <react event="time" value="22,0,,," random=",5,,,"  behavior="GoWork" delta="0" /> 
-    <react event="time" value="23,0,,," random=",5,,,"  behavior="GoHome" delta="0" /> 
+    <react event="time" value="0,0,,," random=",5,,," behavior="GoWork" /> 
+    <react event="time" value="1,0,,," random=",5,,,"  behavior="GoHome" /> 
+    <react event="time" value="2,0,,," random=",5,,,"  behavior="GoWork" /> 
+    <react event="time" value="3,0,,," random=",5,,,"  behavior="GoHome" /> 
+    <react event="time" value="4,0,,," random=",5,,,"  behavior="GoWork" /> 
+    <react event="time" value="5,0,,," random=",5,,,"  behavior="GoHome" /> 
+    <react event="time" value="6,0,,," random=",5,,,"  behavior="GoWork" /> 
+    <react event="time" value="7,0,,," random=",5,,,"  behavior="GoHome" /> 
+    <react event="time" value="8,0,,," random=",5,,,"  behavior="GoWork" /> 
+    <react event="time" value="9,0,,," random=",5,,,"  behavior="GoHome" /> 
+    <react event="time" value="10,0,,," random=",5,,,"  behavior="GoWork" /> 
+    <react event="time" value="11,0,,," random=",5,,,"  behavior="GoHome" /> 
+    <react event="time" value="12,0,,," random=",5,,,"  behavior="GoWork" /> 
+    <react event="time" value="13,0,,," random=",5,,,"  behavior="GoHome" /> 
+    <react event="time" value="14,0,,," random=",5,,,"  behavior="GoWork" /> 
+    <react event="time" value="15,0,,," random=",5,,,"  behavior="GoHome" /> 
+    <react event="time" value="16,0,,," random=",5,,,"  behavior="GoWork" /> 
+    <react event="time" value="17,0,,," random=",5,,,"  behavior="GoHome" /> 
+    <react event="time" value="18,0,,," random=",5,,,"  behavior="GoWork" /> 
+    <react event="time" value="19,0,,," random=",5,,,"  behavior="GoHome" /> 
+    <react event="time" value="20,0,,," random=",5,,,"  behavior="GoWork" /> 
+    <react event="time" value="21,0,,," random=",5,,,"  behavior="GoHome" /> 
+    <react event="time" value="22,0,,," random=",5,,,"  behavior="GoWork" /> 
+    <react event="time" value="23,0,,," random=",5,,,"  behavior="GoHome" /> 
 
   </npctype>
 

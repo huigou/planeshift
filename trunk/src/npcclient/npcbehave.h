@@ -194,6 +194,10 @@ public:
         }
         new_need += delta_desire;
     }
+    void ApplyNeedAbsolute(float absolute_desire)
+    {
+        new_need = absolute_desire;
+    }
     void SetActive(bool flag)
     { is_active = flag; }
     bool GetActive()

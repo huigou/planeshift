@@ -583,28 +583,28 @@ void NetworkManager::HandlePerceptions(MsgEntry *msg)
             case psNPCCommandsMessage::PCPT_SHORTRANGEPLAYER:
             case psNPCCommandsMessage::PCPT_VERYSHORTRANGEPLAYER:
             {
-                PS_ID npcid   = list.msg->GetUInt32();
-                PS_ID player  = list.msg->GetUInt32();
-                float faction = list.msg->GetFloat();
+                PS_ID npcEID    = list.msg->GetUInt32();
+                PS_ID playerEID = list.msg->GetUInt32();
+                float faction   = list.msg->GetFloat();
 
-                NPC *npc = npcclient->FindNPC(npcid);
+                NPC *npc = npcclient->FindNPC(npcEID);
                 if (!npc)
                     break;  // This perception is not our problem
 
                 npc->Printf("Range perception npc: %d, player: %d, faction:%.0f\n",
-                            npcid, player, faction);
+                            npcEID, playerEID, faction);
 
-                iCelEntity *npc_ent = (npc) ? npc->GetEntity() : npcclient->FindEntity(npcid);
-                iCelEntity *player_ent = npcclient->FindEntity(player);
+                iCelEntity *npc_ent = (npc) ? npc->GetEntity() : npcclient->FindEntity(npcEID);
+                gemNPCObject * player = npcclient->FindEntityID(playerEID);
 
-                if (!player_ent || !npc_ent)
+                if (!player || !npc_ent)
                     break;
 
                 npc->Printf("Got Player %s in Range of %s Perception, with faction %.0f\n",
-                            player_ent->GetName(), npc_ent->GetName(), faction);
+                            player->GetName(), npc_ent->GetName(), faction);
 
                 csString pcpt_name;
-                if ( npc->GetOwner() == player_ent )
+                if ( npc->GetOwner() == player )
                 {
                     pcpt_name.Append("owner ");
                 }
@@ -620,14 +620,14 @@ void NetworkManager::HandlePerceptions(MsgEntry *msg)
                     pcpt_name.Append("adjacent");
 
         // @@@ Jorrit: cast to in ok below?
-                FactionPerception pcpt(pcpt_name, int (faction), player_ent);
+                FactionPerception pcpt(pcpt_name, int (faction), player->GetEntity());
 
                 npcclient->TriggerEvent(npc, &pcpt);
                 break;
             }
             case psNPCCommandsMessage::PCPT_OWNER_CMD:
             {
-                PS_ID command = list.msg->GetUInt32();
+                psPETCommandMessage::PetCommand_t command = (psPETCommandMessage::PetCommand_t)list.msg->GetUInt32();
                 PS_ID owner_id = list.msg->GetUInt32();
                 PS_ID pet_id = list.msg->GetUInt32();
                 PS_ID target_id = list.msg->GetUInt32();

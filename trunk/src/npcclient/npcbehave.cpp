@@ -729,9 +729,10 @@ Behavior* BehaviorSet::Find(Behavior *key)
      
 bool Behavior::RunScript(NPC *npc, EventManager *eventmgr, bool interrupted)
 {
+    unsigned int start_step = current_step;
     while (true)
     {
-        while (current_step < sequence.GetSize() )
+        if (current_step < sequence.GetSize() )
         {
             npc->Printf(2, "Running %s step %d - %s operation%s",
                         name.GetData(),current_step,sequence[current_step]->GetName(),
@@ -747,11 +748,13 @@ bool Behavior::RunScript(NPC *npc, EventManager *eventmgr, bool interrupted)
             interrupted = false; // Only the first script operation should be interrupted.
             current_step++;
         }
+        
         if (current_step >= sequence.GetSize())
         {
+            current_step = 0; // behaviors automatically loop around to the top
+
             if (loop)
             {
-                current_step = 0;  // behaviors automatically loop around to the top
                 npc->Printf(1, "Loop back to start of behaviour '%s'",GetName());
             }
             else 
@@ -771,8 +774,15 @@ bool Behavior::RunScript(NPC *npc, EventManager *eventmgr, bool interrupted)
                 npc->Printf(1, "End of non looping behaviour '%s'",GetName());
                 break; // This behavior is done
             }
-            
         }
+
+        // Only loop once per run
+        if (start_step == current_step)
+        {
+            npc->Printf(3,"Terminating behavior '%s' since it has looped all once.",GetName());
+            return true; // This behavior is done
+        }
+        
     }
     return true; // This behavior is done
 }
@@ -801,7 +811,7 @@ bool Behavior::ResumeScript(NPC *npc,EventManager *eventmgr)
             npc->Printf(2,"Completed step %d - %s of behavior %s",
                         current_step,sequence[current_step]->GetName(),name.GetData());
             current_step++;
-            return RunScript(npc,eventmgr,false);
+            return RunScript(npc, eventmgr, false);
         }
         else
         {

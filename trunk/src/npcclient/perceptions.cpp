@@ -52,8 +52,8 @@
 
 Reaction::Reaction()
 {
-    delta_desire  = 0;
-    affected      = NULL;
+    desireValue   = 0.0f;
+    desireType    = DESIRE_GUARANTIED;
     range         = 0;
     active_only   = false;
     inactive_only = false;
@@ -61,15 +61,62 @@ Reaction::Reaction()
 
 bool Reaction::Load(iDocumentNode *node,BehaviorSet& behaviors)
 {
-    delta_desire = node->GetAttributeValueAsFloat("delta");
+    // Default to guarantied
+    desireType = DESIRE_GUARANTIED;
+    desireValue = 0.0f;
+    
+    if (node->GetAttribute("delta"))
+    {
+        desireValue = node->GetAttributeValueAsFloat("delta");
+        desireType = DESIRE_DELTA;
+
+        // Handle some deprecated styles, that will change the desired
+        // type.
+        // Keep first for 1 release and 2. for two releases
+        if (fabs(desireValue)<SMALL_EPSILON)  // 0 means "guarantied"
+        {
+            desireType = DESIRE_GUARANTIED;
+            // When removed uncomment next deprecated style
+            Error1("DEPRECATED: Use of 0 delta for guarantied. Remove delta.");
+        }
+        if (fabs(desireValue+1)<SMALL_EPSILON) // -1 in delta means "don't react"
+        {
+            desireType = DESIRE_NONE;
+            desireValue = 0.0;
+            // Remove comments on next line when the previous deprecated style is removed.
+            // Error1("DEPRECATED: Use of -1 delta for don't react. Set 0 delta.");
+        }
+        // When deprecated style for 0 is removed uncomment this
+        // if (fabs(desireValue)<SMALL_EPSILON)  // 0 means no change
+        // {
+        //    desireType = DESIRE_NONE;
+        // }
+
+    }
+
+    if (node->GetAttribute("absolute"))
+    {
+        if (desireType == DESIRE_NONE || desireType == DESIRE_DELTA)
+        {
+            Error1("Reaction can't be both absolute and delta reaction");
+            return false;
+        }
+        desireValue = node->GetAttributeValueAsFloat("absolute");
+        desireType = DESIRE_ABSOLUTE;
+    }
 
     // Handle hooking up to the right behavior
     csString name = node->GetAttributeValue("behavior");
-    affected = behaviors.Find(name);
-    if (!affected)
+    csArray<csString> names = psSplit(name,',');
+    for (size_t i = 0; i < names.GetSize(); i++)
     {
-        Error2("Reaction specified unknown behavior of '%s'. Error in XML.",(const char *)name);
-        return false;
+        Behavior * behavior = behaviors.Find(names[i]);
+        if (!behavior)
+        {
+            Error2("Reaction specified unknown behavior of '%s'. Error in XML.",(const char *)names[i]);
+            return false;
+        }
+        affected.Push(behavior);
     }
 
     // Handle hooking up to the perception
@@ -116,15 +163,24 @@ bool Reaction::Load(iDocumentNode *node,BehaviorSet& behaviors)
     react_when_dead        = node->GetAttributeValueAsBool("when_dead",false);
     react_when_invisible   = node->GetAttributeValueAsBool("when_invisible",false);
     react_when_invincible  = node->GetAttributeValueAsBool("when_invincible",false);
-    only_interrupt         = node->GetAttributeValue("only_interrupt");
+    csString tmp           = node->GetAttributeValue("only_interrupt");
+    if (tmp.Length())
+    {
+        only_interrupt = psSplit(tmp,',');
+    }
 
     return true;
 }
 
 void Reaction::DeepCopy(Reaction& other,BehaviorSet& behaviors)
 {
-    delta_desire           = other.delta_desire;
-    affected               = behaviors.Find(other.affected->GetName());
+    desireValue            = other.desireValue;
+    desireType             = other.desireType;
+    for (size_t i = 0; i < other.affected.GetSize(); i++)
+    {
+        Behavior * behavior = behaviors.Find(other.affected[i]->GetName());
+        affected.Push(behavior);
+    }
     event_type             = other.event_type;
     range                  = other.range;
     faction_diff           = other.faction_diff;
@@ -152,31 +208,21 @@ void Reaction::DeepCopy(Reaction& other,BehaviorSet& behaviors)
     }
 }
 
-void Reaction::React(NPC *who,EventManager *eventmgr,Perception *pcpt)
+void Reaction::React(NPC *who, EventManager *eventmgr, Perception *pcpt)
 {
     CS_ASSERT(who);
-
-    // When active_only flag is set we should do nothing
-    // if the affected behaviour is inactive.
-    if (active_only && !affected->GetActive() )
-        return;
-
-    // When inactive_only flag is set we should do nothing
-    // if the affected behaviour is active.
-    if (inactive_only && affected->GetActive() )
-        return;
 
     // If dead we should not react unless react_when_dead is set
     if (!(who->IsAlive() || react_when_dead))
         return;
 
-    if (only_interrupt)
+    // Check if this reaction is limited to only interrupt some given behaviors.
+    if (only_interrupt.GetSize())
     {
         bool found = false;
-        csArray<csString> strarr = psSplit( only_interrupt, ':');
-        for (size_t i = 0; i < strarr.GetSize(); i++)
+        for (size_t i = 0; i < only_interrupt.GetSize(); i++)
         {
-            if (who->GetCurrentBehavior() && strarr[i] == who->GetCurrentBehavior()->GetName())
+            if (who->GetCurrentBehavior() && only_interrupt[i] == who->GetCurrentBehavior()->GetName())
             {
                 found = true;
                 break;
@@ -195,30 +241,49 @@ void Reaction::React(NPC *who,EventManager *eventmgr,Perception *pcpt)
         return;
     }
 
-    who->Printf(2, "Reaction '%s' reacting to perception %s", GetEventType(), pcpt->ToString().GetDataSafe());
-    who->Printf(10, "Adding %1.1f need to behavior %s for npc %s(EID: %u).",
-                delta_desire, affected->GetName(), who->GetName(),
-                (who->GetEntity()?who->GetEntity()->GetID():0));
+    for (size_t i = 0; i < affected.GetSize(); i++)
+    {
+
+        // When active_only flag is set we should do nothing
+        // if the affected behaviour is inactive.
+        if (active_only && !affected[i]->GetActive() )
+            break;
         
-    if (delta_desire>0 || delta_desire<-1)
-    {
-        affected->ApplyNeedDelta(delta_desire);
-    }
-    else if (fabs(delta_desire+1)>SMALL_EPSILON)  // -1 in delta means "don't react"
-    {
-        // zero delta means guarantee that this affected
-        // need becomes the highest (and thus active) one.
+        // When inactive_only flag is set we should do nothing
+        // if the affected behaviour is active.
+        if (inactive_only && affected[i]->GetActive() )
+            break;
 
-        float highest = 0;
 
-        if (who->GetCurrentBehavior())
+        who->Printf(2, "Reaction '%s' reacting to perception %s", GetEventType(), pcpt->ToString().GetDataSafe());
+        switch (desireType)
         {
-            highest = who->GetCurrentBehavior()->CurrentNeed();
+        case DESIRE_NONE:
+            who->Printf(10, "No change to need for behavior %s.", affected[i]->GetName());
+            break;
+        case DESIRE_ABSOLUTE:
+            who->Printf(10, "Setting %1.1f need to behavior %s", desireValue, affected[i]->GetName());
+            affected[i]->ApplyNeedAbsolute(desireValue);
+            break;
+        case DESIRE_DELTA:
+            who->Printf(10, "Adding %1.1f need to behavior %s", desireValue, affected[i]->GetName());
+            affected[i]->ApplyNeedDelta(desireValue);
+            break;
+        case DESIRE_GUARANTIED:
+            who->Printf(10, "Guarantied need to behavior %s", affected[i]->GetName());
+            
+            float highest = 0;
+            if (who->GetCurrentBehavior())
+            {
+                highest = who->GetCurrentBehavior()->CurrentNeed();
+            }
+            
+            affected[i]->ApplyNeedAbsolute( highest + 25);
+            affected[i]->SetCompletionDecay(-1);
+            break;
         }
-        
-        affected->ApplyNeedDelta( highest - affected->CurrentNeed() + 25);
-        affected->SetCompletionDecay(-1);
     }
+    
     
     pcpt->ExecutePerception(who,weight);
 
@@ -662,10 +727,10 @@ Perception *InventoryPerception::MakeCopy()
 //---------------------------------------------------------------------------------
 
 OwnerCmdPerception::OwnerCmdPerception( const char *name,
-                                        int command,
+                                        psPETCommandMessage::PetCommand_t command,
                                         iCelEntity *owner,
                                         iCelEntity *pet,
-                                        iCelEntity *target ) : Perception(name)
+                                        iCelEntity *target ) : Perception(BuildName(command))
 {
     this->command = command;
     this->owner = owner;
@@ -675,10 +740,69 @@ OwnerCmdPerception::OwnerCmdPerception( const char *name,
 
 bool OwnerCmdPerception::ShouldReact( Reaction *reaction, NPC *npc )
 {
+    if (name == reaction->GetEventType())
+    {
+        return true;
+    }
+    return false;
+}
+
+Perception *OwnerCmdPerception::MakeCopy()
+{
+    OwnerCmdPerception *p = new OwnerCmdPerception( name, command, owner, pet, target );
+    return p;
+}
+
+void OwnerCmdPerception::ExecutePerception( NPC *pet, float weight )
+{
+    gemNPCObject * t = NULL;
+    if (target)
+    {
+        t = npcclient->FindEntityID(target->GetID());
+    }
+    pet->SetTarget(t);
+    
+    switch ( this->command )
+    {
+    case psPETCommandMessage::CMD_FOLLOW : // Follow
+        break;
+    case psPETCommandMessage::CMD_STAY : // Stay
+        break;
+    case psPETCommandMessage::CMD_GUARD : // Guard
+        break;
+    case psPETCommandMessage::CMD_ASSIST : // Assist
+        break;
+    case psPETCommandMessage::CMD_NAME : // Name
+        break; 
+    case psPETCommandMessage::CMD_TARGET : // Target
+        break;
+    case psPETCommandMessage::CMD_SUMMON : // Summon
+        break;
+    case psPETCommandMessage::CMD_DISMISS : // Dismiss
+        break;
+    case psPETCommandMessage::CMD_ATTACK : // Attack
+        if (pet->GetTarget())
+        {
+            pet->AddToHateList(target, 1 * weight );
+        }
+        else
+        {
+            pet->Printf("No target to add to hate list");
+        }
+        
+        break;
+
+    case psPETCommandMessage::CMD_STOPATTACK : // StopAttack
+        break;
+    }
+}
+
+csString OwnerCmdPerception::BuildName(psPETCommandMessage::PetCommand_t command)
+{
     csString event("ownercmd");
     event.Append(':');
 
-    switch ( this->command )
+    switch ( command )
     {
     case psPETCommandMessage::CMD_FOLLOW: 
         event.Append( "follow" );
@@ -698,50 +822,22 @@ bool OwnerCmdPerception::ShouldReact( Reaction *reaction, NPC *npc )
     case psPETCommandMessage::CMD_STOPATTACK :
         event.Append( "stopattack" );
         break;
-    default:
-        event.Append("unknown");
+    case psPETCommandMessage::CMD_GUARD :
+        event.Append( "guard" );
+        break;
+    case psPETCommandMessage::CMD_ASSIST :
+        event.Append( "assist" );
+        break;
+    case psPETCommandMessage::CMD_NAME :
+        event.Append( "name" );
+        break; 
+    case psPETCommandMessage::CMD_TARGET :
+        event.Append( "target" );
         break;
     }
-
-    if (event == reaction->GetEventType())
-    {
-        return true;
-    }
-    return false;
+    return event;
 }
 
-Perception *OwnerCmdPerception::MakeCopy()
-{
-    OwnerCmdPerception *p = new OwnerCmdPerception( name, command, owner, pet, target );
-    return p;
-}
-
-void OwnerCmdPerception::ExecutePerception( NPC *pet, float weight )
-{
-    pet->SetTarget(target);
-    
-    switch ( this->command )
-    {
-    case psPETCommandMessage::CMD_SUMMON : // Summon
-        break;
-    case psPETCommandMessage::CMD_DISMISS : // Dismiss
-        break;
-    case psPETCommandMessage::CMD_ATTACK : // Attack
-        if (pet->GetTarget())
-        {
-            pet->AddToHateList(pet->GetTarget(), 1 * weight );
-        }
-        else
-        {
-            pet->Printf("No target to add to hate list");
-        }
-        
-        break;
-
-    case psPETCommandMessage::CMD_STOPATTACK : // StopAttack
-        break;
-    }
-}
 
 //---------------------------------------------------------------------------------
 

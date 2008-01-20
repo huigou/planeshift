@@ -25,14 +25,15 @@
 
 #include <csgeom/matrix3.h>
 #include <csutil/weakref.h>
+#include <iutil/document.h>
+#include <csutil/array.h>
 
 #include <physicallayer/entity.h>
 
-#include <util/prb.h>
-#include <csutil/array.h>
-#include <iutil/document.h>
+#include "util/prb.h"
 #include "util/eventmanager.h"
 #include "util/psconst.h"
+#include "net/npcmessages.h"
 
 class ScriptOperation;
 class Perception;
@@ -66,12 +67,22 @@ protected:
     csArray<bool>randomsValid;
     csArray<int> randoms;
     csString  type;
-    csString  only_interrupt;
+    csArray<csString> only_interrupt;
 
     // members making up the "then statement"
-    Behavior *affected;
-    float delta_desire;
-    float weight;
+    csArray<Behavior*> affected;
+
+    enum Desire_Type
+    {
+        DESIRE_NONE,
+        DESIRE_DELTA,
+        DESIRE_ABSOLUTE,
+        DESIRE_GUARANTIED
+    };
+    
+    Desire_Type desireType; // Indicate the type of desire change this reaction has.
+    float desireValue;        // The value to use for the desire type.
+    float weight;             // The weight to apply to deltas.
 
 public:
     Reaction();
@@ -366,18 +377,19 @@ public:
 class OwnerCmdPerception : public Perception
 {
 protected:
-    int command;
+    psPETCommandMessage::PetCommand_t command;
     iCelEntity *owner;
     iCelEntity *pet;
     iCelEntity *target;
 
 public:
-    OwnerCmdPerception(const char *n, int command, iCelEntity *owner, iCelEntity *pet, iCelEntity *target);
+    OwnerCmdPerception(const char *n, psPETCommandMessage::PetCommand_t command, iCelEntity *owner, iCelEntity *pet, iCelEntity *target);
 
     virtual bool ShouldReact( Reaction *reaction, NPC *pet );
     virtual Perception *MakeCopy();
     virtual void ExecutePerception( NPC *pet, float weight );
     virtual iCelEntity *GetTarget() { return target; }
+    static csString BuildName(psPETCommandMessage::PetCommand_t command);
 };
 
 /**
