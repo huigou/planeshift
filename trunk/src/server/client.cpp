@@ -238,6 +238,19 @@ size_t Client::GetNumPets()
     return pets.GetSize();
 }
 
+bool Client::IsMyPet(gemActor * other) const
+{
+    for (size_t i = 0; i < pets.GetSize(); i++)
+    {
+        if (GEMSupervisor::GetSingleton().FindNPCEntity( pets[i] ) == other)
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
+
 psCharacter *Client::GetCharacterData()
 {
     return (actor?actor->GetCharacterData():NULL);
@@ -370,7 +383,7 @@ FloodBuffRow::FloodBuffRow(uint8_t chtType, csString txt, csString rcpt, unsigne
     ticks = newticks;
 }
 
-bool Client::IsAllowedToAttack(gemObject * target,bool inform)
+bool Client::IsAllowedToAttack(gemObject * target, bool inform)
 {
     csString tmp;
     const char *sMsg = NULL;
@@ -421,9 +434,13 @@ bool Client::IsAllowedToAttack(gemObject * target,bool inform)
                     DamageHistory *lasthit = foe->GetDamageHistory(i-1);
 
                     if (lasttime - lasthit->timestamp > 15000)
+                    {
                         break;  // any 15 second gap is enough to make us stop looking
+                    }
                     else
+                    {
                         lasttime = lasthit->timestamp;
+                    }
 
                     if (!lasthit->attacker_ref.IsValid())
                         continue;  // ignore disconnects
@@ -433,7 +450,8 @@ bool Client::IsAllowedToAttack(gemObject * target,bool inform)
                         continue;  // shouldn't happen
 
                     // If someone else hit first and I'm not grouped with them, I'm locked out
-                    if (lastAttacker != me && !me->IsGroupedWith(lastAttacker))
+                    if (lastAttacker != me && !me->IsGroupedWith(lastAttacker) &&
+                        !me->IsMyPet(lastAttacker))
                     {
                         canAttack = false;
                         break;
@@ -442,9 +460,14 @@ bool Client::IsAllowedToAttack(gemObject * target,bool inform)
                 if (!canAttack)
                 {
                     if (lastAttacker && foe)
-                        tmp.Format("You must be grouped with %s to attack %s.", lastAttacker->GetName(), foe->GetName());
+                    {
+                        tmp.Format("You must be grouped with %s to attack %s.", 
+                                   lastAttacker->GetName(), foe->GetName());
+                    }
                     else
+                    {
                         tmp.Format("You are not allowed to attack right now.");
+                    }
                     sMsg = tmp.GetData();
                 }
             }

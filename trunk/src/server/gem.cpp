@@ -1715,7 +1715,7 @@ gemActor::~gemActor()
         logging_chat_file = 0;  //This should close the file.
 }
 
-Client* gemActor::GetClient()
+Client* gemActor::GetClient() const
 {
     return clientRef.IsValid() ? clientRef : NULL ;
 }
@@ -2985,6 +2985,13 @@ void gemActor::RemoveFromGroup()
         group->Remove(this);
     }
 }
+
+bool gemActor::IsMyPet(gemActor *other) const
+{
+    return GetClient()->IsMyPet(other);
+}
+
+
 
 void gemActor::SendGroupMessage(MsgEntry *me)
 {

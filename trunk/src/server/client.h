@@ -124,6 +124,9 @@ public:
     gemActor *GetPet( size_t index );
     size_t GetNumPets();
 
+    /// Return if other is one of my pets.
+    bool IsMyPet(gemActor * other) const;
+        
     /// Returns whether the client's character is alive.
     bool IsAlive() const;
 
