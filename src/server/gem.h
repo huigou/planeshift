@@ -191,7 +191,7 @@ public:
     virtual gemActor* GetActorPtr() { return NULL; }
     virtual gemNPC* GetNPCPtr()  { return NULL; }
     virtual psCharacter *GetCharacterData() { return NULL; }
-    virtual Client* GetClient() { return NULL; }
+    virtual Client* GetClient() const { return NULL; }
 
     const char *GetName();
     void SetName(const char* n);
@@ -544,7 +544,7 @@ public:
     virtual const char* GetObjectType() { return "Actor"; }
     virtual gemActor* GetActorPtr() { return this; }
     virtual psCharacter *GetCharacterData() { return psChar; }
-    virtual Client* GetClient();
+    virtual Client* GetClient() const;
     
     virtual int GetPlayerID() { return playerID; }
 
@@ -615,6 +615,8 @@ public:
     bool IsGroupedWith(gemActor *other) const;
     int GetGroupID();
     void RemoveFromGroup();
+
+    bool IsMyPet(gemActor *other) const;
 
     const char *GetGuildName();
     psGuildInfo *GetGuild() { return psChar->GetGuild(); }
@@ -762,7 +764,7 @@ public:
     virtual const char* GetObjectType()    { return "NPC";     }
     virtual gemNPC* GetNPCPtr()            { return this;      }
     virtual psNPCDialog *GetNPCDialogPtr() { return npcdialog; }
-    virtual Client* GetClient()            { return NULL;      }
+    virtual Client* GetClient() const      { return NULL;      }
 
     virtual int GetSuperclientID()         { return superClientID; }
     virtual void SetSuperclientID(int id)  { superClientID=id; }
