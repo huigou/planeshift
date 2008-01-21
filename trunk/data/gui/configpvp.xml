@@ -3,10 +3,11 @@
 <widget name="ConfigPvPTree" factory="pawsConfigPvP"
         visible="no" savepositions="no" movable="no" 
         resizable="no" >
-        
+	<frame x="225" y="10" width="400" height="300" border="no" />
+	<font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="200" g="200" b="200" size="10" scalefont="no" />
 
             <widget name="confirm" factory="pawsRadioButtonGroup">
-            <frame x="100" y="100" width="190" height="120" />
+            <frame x="180" y="100" width="190" height="120" />
             <widget factory="pawsTextBox" name="">
                 <frame x="0" y="0" width="180" height="20" border="no" />
                 <text string="Confirmation upon PvP duel:"/>

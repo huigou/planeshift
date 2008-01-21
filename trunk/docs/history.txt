@@ -1,3 +1,6 @@
+*** 2008-01-20 by Sasha Levin
+- Fix for FS#957 by Caarrie.
+
 *** 2008-01-20 by Roland Schulz
 - add feature request FS#718, remaining ban time is now shown for /info.
   Thanks peeg.

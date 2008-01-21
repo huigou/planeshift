@@ -2,7 +2,8 @@
 <widget name="ConfigChatTree" factory="pawsConfigChat"
         visible="no" savepositions="no" movable="no"
         resizable="no" >
-
+	<frame x="225" y="10" width="400" height="300" border="no" />
+	<font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="200" g="200" b="200" size="10" scalefont="no" />
         <!-- Messages that's aimed to the player -->
         <widget name="cmlbl" factory="pawsTextBox">
                 <frame x="60" y="10" width="230" height="20" />

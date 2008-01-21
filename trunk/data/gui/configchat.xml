@@ -2,9 +2,10 @@
 <widget name="ConfigChatTree" factory="pawsConfigChat"
         visible="no" savepositions="no" movable="no"
         resizable="no" >
-
+	<frame x="225" y="10" width="400" height="300" border="no" />
+	<font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="200" g="200" b="200" size="10" scalefont="no" />
             <widget name="loosefocus" factory="pawsCheckBox">
-                <frame x="10" y="10" width="350" height="20" />
+                <frame x="10" y="10" width="350" height="20"/>
                 <text string="Lose focus when sending message" />
 
             </widget>
@@ -99,47 +100,47 @@
             <widget name="helptextb" factory="pawsEditTextBox"><frame border="yes" x="220" y="230" width="30" height="20" /></widget>
 
             <widget name="logAllChat" factory="pawsCheckBox">
-                <frame x="10" y="250" width="160" height="20" />
+                <frame x="10" y="250" width="180" height="20" />
                 <text string="Log the chat messages" />
             </widget>
 
             <widget name="logSystemChat" factory="pawsCheckBox">
-                <frame x="170" y="250" width="160" height="20" />
+                <frame x="200" y="250" width="200" height="20" />
                 <text string="Log the system messages" />
             </widget>
 
             <widget name="badwordsincoming" factory="pawsCheckBox">
-                <frame x="10" y="270" width="160" height="20" />
+                <frame x="10" y="270" width="180" height="20" />
                 <text string="Filter incoming bad words" />    
             </widget>
 
             <widget name="badwordsoutgoing" factory="pawsCheckBox">
-                <frame x="170" y="270" width="160" height="20" />
+                <frame x="200" y="270" width="180" height="20" />
                 <text string="Filter outgoing bad words" />    
             </widget>
 
             <widget name="selecttabstyle" factory="pawsRadioButtonGroup">
                 <frame x="255" y="30" width="150" height="120" />
                 <widget factory="pawsTextBox" name="">
-                <frame x="0" y="0" width="180" height="20" border="no" />
+                <frame x="10" y="0" width="180" height="20" border="no" />
                 <text string="Auto Tab selection:"/>
                 </widget>
                 <widget name="none" factory="pawsRadioButton" id="0" >
-                <frame x="0" y="20" width="180" height="20" />
+                <frame x="10" y="20" width="180" height="20" />
                 <text string="Don't autoselect" position="right" />
                 </widget>
                 <widget name="fitting" factory="pawsRadioButton" id="1" >
-                <frame x="0" y="50" width="180" height="20" />
+                <frame x="10" y="50" width="180" height="20" />
                 <text string="Select fitting Tab" position="right" />
                 </widget>
                 <widget name="alltext" factory="pawsRadioButton" id="2" >
-                <frame x="0" y="80" width="180" height="20" />
+                <frame x="10" y="80" width="180" height="20" />
                 <text string="Select Main Tab" position="right" />
                 </widget>
             </widget>
                             
             <widget name="echoscreeninsystem" factory="pawsCheckBox">
-                <frame x="255" y="160" width="160" height="20" />
+                <frame x="265" y="160" width="160" height="20" />
                 <text string="Echo screen text" />    
             </widget>
 

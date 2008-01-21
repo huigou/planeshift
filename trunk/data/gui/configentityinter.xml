@@ -3,14 +3,15 @@
 <widget name="ConfigEntityInter" factory="pawsConfigEntityInteract"
         visible="no" savepositions="no" movable="no" 
         resizable="no">
-
+	<frame x="225" y="10" width="400" height="300" border="no" />
+	<font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="200" g="200" b="200" size="10" scalefont="no" />
     <widget name="items_label" factory="pawsTextBox">
         <text string="" horizAdjust="LEFT" />
         <frame x="20" y="20" width="100" height="25" border="no" />
     </widget>
     <widget name="items" factory="pawsComboBox" >
-        <listbox rows="5" height="20" text="Day" alpha="100"/>
-        <frame x="150" y="20" width="200" height="25" border="yes" />
+        <listbox rows="5" height="20" text="Day" />
+        <frame x="150" y="20" width="200" height="25" border="no" />
     </widget>
     
     <widget name="players_label" factory="pawsTextBox">
@@ -19,7 +20,7 @@
     </widget>
     <widget name="players" factory="pawsComboBox">
         <listbox rows="3" height="20" text="Day" alpha="100"/>
-        <frame x="150" y="55" width="200" height="25" border="yes" />
+        <frame x="150" y="55" width="200" height="25" border="no" />
     </widget>
     
     <widget name="merchants_label" factory="pawsTextBox">
@@ -28,7 +29,7 @@
     </widget>
     <widget name="merchants" factory="pawsComboBox">
         <listbox rows="4" height="20" text="Day" alpha="100"/>
-        <frame x="150" y="90" width="200" height="25" border="yes" />
+        <frame x="150" y="90" width="200" height="25" border="no" />
     </widget>
     
     <widget name="aliveNPCs_label" factory="pawsTextBox">
@@ -37,7 +38,7 @@
     </widget>
     <widget name="aliveNPCs" factory="pawsComboBox">
         <listbox rows="4" height="20" text="Day" alpha="100"/>
-        <frame x="150" y="125" width="200" height="25" border="yes" />
+        <frame x="150" y="125" width="200" height="25" border="no" />
     </widget>
     
     <widget name="deadNPCs_label" factory="pawsTextBox">
@@ -46,7 +47,7 @@
     </widget>
     <widget name="deadNPCs" factory="pawsComboBox">
         <listbox rows="2" height="20" text="Day" alpha="100"/>
-        <frame x="150" y="160" width="200" height="25" border="yes" />
+        <frame x="150" y="160" width="200" height="25" border="no" />
     </widget>
 
      <widget name="petNPCs_label" factory="pawsTextBox">
@@ -55,7 +56,7 @@
     </widget>
     <widget name="petNPCs" factory="pawsComboBox">
         <listbox rows="1" height="20" text="Day" alpha="100"/>
-        <frame x="150" y="190" width="200" height="25" border="yes" />
+        <frame x="150" y="190" width="200" height="25" border="no" />
     </widget>
 
 
