@@ -1,6 +1,8 @@
 <widget_description>
 <widget name="ConfigKeysTree" factory="pawsTreeNode"
-    visible="yes" savepositions="no" movable="yes" resizable="no" >
+    visible="yes" savepositions="no" movable="no" resizable="no" >
+	<frame x="0" y="0" width="400" height="300" border="no" />
+	<font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="200" g="200" b="200" size="10" scalefont="no" />
     <widget factory="pawsSeqTreeNode">
         <widget factory="pawsWidgetTreeNode" name="Movement">
             <nodewidget>
@@ -38,7 +40,6 @@
                 </widget>
             </nodewidget>
             <widget factory="pawsSeqTreeNode" name="Run"/>
-            <widget factory="pawsSeqTreeNode" name="ToggleRun"/>
             <widget factory="pawsSeqTreeNode" name="Autorun"/>
             <widget factory="pawsSeqTreeNode" name="Sneak"/>
         </widget>

@@ -5,17 +5,18 @@
         resizable="no"
         configurable="yes" >
         
-    <frame x="10" y="100" width="630" height="346" border="yes" />
+    <frame x="10" y="100" width="680" height="346" border="yes" />
     <title resource="Blue Title" text="Options" align="left" close_button="yes"/>    
     <bgimage resource="Config Background" alpha="128"/>
 
-    <widget name="ConfigTree" factory="pawsSimpleTree" colour="FFFFFF" font="/this/data/ttf/LiberationSans-Regular.ttf">
+    <widget name="ConfigTree" factory="pawsSimpleTree" >
+    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="200" g="200" b="200" size="10" scalefont="no" />
         
-        <frame x="10" y="10" width="200" height="300" border="yes" />
-        <title resource="Blue Title" text="Options" align="left" close_button="yes"/>    
+        <frame x="10" y="10" width="200" height="300" border="no" />
         <bgimage resource="Options Background"  />
 
         <widget factory="pawsSimpleTreeNode">
+	    <frame x="225" y="10" width="400" height="300" border="yes" />
 
             <widget factory="pawsSimpleTreeNode" label="Controls">
                 <widget factory="pawsSimpleTreeNode" label="Keys">

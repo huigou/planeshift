@@ -4,6 +4,8 @@
         visible="no" savepositions="no" movable="no" 
         resizable="no" >
 
+    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="200" g="200" b="200" size="10" scalefont="no" />
+
     <widget name="AdaptCheck" factory="pawsCheckBox">
         <frame x="100" y="10" width="190" height="20" />
         <text string="Adaptive distance" position="right"/>
