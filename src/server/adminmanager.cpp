@@ -1546,6 +1546,10 @@ void AdminManager::GetInfo(MsgEntry* me,psAdminCmdMessage& msg, AdminCmdData& da
     csString name, ipAddress, securityLevel;
     int playerId = 0, accountId = 0;
     float timeConnected = 0.0f;
+
+    bool banned = false;
+    time_t banTimeLeft;
+    int daysLeft = 0, hoursLeft = 0, minsLeft = 0;
     
     if (target) // Online
     {
@@ -1608,7 +1612,24 @@ void AdminManager::GetInfo(MsgEntry* me,psAdminCmdMessage& msg, AdminCmdData& da
              securityLevel.Format("%d",GetTrueSecurityLevel(accountId));
         }
     }
-    
+    BanEntry* ban = psserver->GetAuthServer()->GetBanManager()->GetBanByAccount(accountId);
+    if(ban)
+    {
+        time_t now = time(0);
+        if(ban->end > now)
+        {
+            banTimeLeft = ban->end - now;
+            banned = true;
+    		
+            banTimeLeft = banTimeLeft / 60; // don't care about seconds
+            minsLeft = banTimeLeft % 60;
+            banTimeLeft = banTimeLeft / 60;
+            hoursLeft = banTimeLeft % 24;
+            banTimeLeft = banTimeLeft / 24;
+            daysLeft = banTimeLeft;
+        }
+    }
+
     if (playerId != 0)
     {
         csString info;
@@ -1626,7 +1647,12 @@ void AdminManager::GetInfo(MsgEntry* me,psAdminCmdMessage& msg, AdminCmdData& da
             
         info.AppendFmt("total time connected is %1.1f hours", timeConnected );
 
-        info.AppendFmt(" has had %d exploits flagged", client->GetFlagCount());
+        info.AppendFmt(" has had %d exploits flagged.", client->GetFlagCount());
+
+        if(banned)
+        {
+            info.AppendFmt(" The player's account is banned! Time left: %d days, %d hours, %d minutes.", daysLeft, hoursLeft, minsLeft);
+        }
 
         psserver->SendSystemInfo(client->GetClientNum(),info);
     }

@@ -1,3 +1,7 @@
+*** 2008-01-20 by Roland Schulz
+- add feature request FS#718, remaining ban time is now shown for /info.
+  Thanks peeg.
+
 *** 2008-01-20 by Anders Reggestad
 - Added test to check if the last attacker on a target where a one of your
   pets to allow you to attack. This should fix FS#946.
