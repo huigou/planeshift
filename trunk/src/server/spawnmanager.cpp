@@ -595,9 +595,20 @@ void SpawnManager::RepopulateItems(psSectorInfo *sectorinfo)
     Debug2(LOG_SPAWN,0,"Spawned %d items.\n",spawned);
 }
 
-void SpawnManager::KillNPC(gemObject *obj,int killer_cnum)
+void SpawnManager::KillNPC(gemObject *obj, gemActor* killer)
 {
-    Debug2(LOG_SPAWN,0,"KillNPC:%s",obj->GetName() );
+    int killer_cnum = 0;
+
+    if (killer)
+    {
+        killer_cnum = killer->GetClientID();
+        Debug3(LOG_SPAWN, 0, "Killer '%s' killed '%s'", killer->GetName(), obj->GetName() );
+    }
+    else
+    {
+        Debug2(LOG_SPAWN, 0, "Killed NPC:%s", obj->GetName() );
+    }
+
 
     if (!obj->IsAlive())
         return;
@@ -630,7 +641,9 @@ void SpawnManager::KillNPC(gemObject *obj,int killer_cnum)
     if (respawn)
     {
         if (respawn->GetLootRules())
+        {
             respawn->GetLootRules()->CreateLoot( obj->GetCharacterData() );
+        }
     }
 
     int loot_id = obj->GetCharacterData()->GetLootCategory();
@@ -639,7 +652,7 @@ void SpawnManager::KillNPC(gemObject *obj,int killer_cnum)
         LootEntrySet *loot = looting.Get(loot_id,0);
         if (loot)
         {
-            Debug2(LOG_LOOT, 0, "Creating loot %d.\n", loot_id);
+            Debug2(LOG_LOOT, 0, "Creating loot %d.", loot_id);
             loot->CreateLoot( obj->GetCharacterData() );
         }
         else
@@ -648,30 +661,53 @@ void SpawnManager::KillNPC(gemObject *obj,int killer_cnum)
         }
     }
 
-    Client *killer = psserver->GetNetManager()->GetClient(killer_cnum);
     if (killer)
     {
-        csRef<PlayerGroup> grp = killer->GetActor()->GetGroup();
+        csRef<PlayerGroup> grp = killer->GetGroup();
+        if (!grp)
+        {
+            // Check if the killer is owned (pet/familiar)
+            gemActor * owner = dynamic_cast<gemActor*>(killer->GetOwner());
+            if (owner)
+            {
+                // Is the owner part of a group? The group code below will add the
+                // group and the owner.
+                grp = owner->GetGroup();
+                if (!grp)
+                {
+                    // Not part of group so add the owner
+                    Debug3(LOG_LOOT, killer_cnum, "Adding owner %d as able to loot %s.", 
+                           owner->GetClientID(), obj->GetName() );
+                    obj->AddLootableClient(owner->GetClientID());
+                }
+                else
+                {
+                    Debug2(LOG_LOOT, killer_cnum, "Adding from owners %s group.", owner->GetName());
+                }
+            }
+        }
+        
         if (grp)
         {
             for (size_t i=0; i<grp->GetMemberCount(); i++)
             {
-				if (grp->GetMember(i)->RangeTo(obj) < RANGE_TO_RECV_LOOT)
-				{
-					Debug3(LOG_LOOT, 0,"Adding %s as able to loot %s.\n",grp->GetMember(i)->GetName(),obj->GetName() );
-					obj->AddLootableClient(grp->GetMember(i)->GetClientID() );
-				}
+                if (grp->GetMember(i)->RangeTo(obj) < RANGE_TO_RECV_LOOT)
+                {
+                    Debug3(LOG_LOOT, 0,"Adding %s as able to loot %s.",grp->GetMember(i)->GetName(),obj->GetName() );
+                    obj->AddLootableClient(grp->GetMember(i)->GetClientID() );
+                }
                 else
                 {
-                    Debug3(LOG_LOOT, 0,"Not adding %s as able to loot %s, because out of range.\n",grp->GetMember(i)->GetName(),obj->GetName() );
+                    Debug3(LOG_LOOT, 0,"Not adding %s as able to loot %s, because out of range.",grp->GetMember(i)->GetName(),obj->GetName() );
                 }
             }
         }
         else
         {
-            Debug3(LOG_LOOT, killer_cnum, "Adding client %d as able to loot %s.\n",killer_cnum,obj->GetName() );
+            Debug3(LOG_LOOT, killer_cnum, "Adding client %d as able to loot %s.", killer_cnum, obj->GetName() );
             obj->AddLootableClient(killer_cnum);
         }
+
     }
 
     obj->GetCharacterData()->ResetStats();
@@ -955,7 +991,7 @@ void SpawnManager::HandleDeathEvent(MsgEntry *me)
     psDeathEvent death(me);
 
     // Respawning is handled with ResurrectEvents for players and by SpawnManager for NPCs
-    if (death.deadActor->GetClientID() )   // Handle Human Player dying
+    if ( death.deadActor->GetClientID() )   // Handle Human Player dying
     {
         ServerStatus::player_deathcount++;
         psResurrectEvent *event = new psResurrectEvent(0,20000,death.deadActor);
@@ -966,8 +1002,7 @@ void SpawnManager::HandleDeathEvent(MsgEntry *me)
     {
         Debug1(LOG_NPC, 0,"Killing npc in spawnmanager.\n");
         // Remove NPC and queue for respawn
-        int killerClient = death.killer ? death.killer->GetClientID() : 0;
-        KillNPC(death.deadActor, killerClient);
+        KillNPC(death.deadActor, death.killer);
     }
 
     // Allow Actor to notify listeners of death

@@ -1,3 +1,6 @@
+*** 2008-01-22 by Anders Reggestad
+- FS#946 fixed for allowing owner and owners group to loot a killed NPC.
+ 
 *** 2008-01-21 by Roland Schulz
 - FS#981-986 & 990 by Caarrie ... small gui changes
 - fix FS#975 - Pets can attack impervious NPCs
