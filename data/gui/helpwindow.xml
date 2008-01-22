@@ -1,7 +1,8 @@
 <widget_description>
     <widget name="HelpWindow" factory="pawsHelp" visible="no" savepositions="yes" movable="yes" resizable="no" configurable="yes">
         <frame x="100" y="90" width="630" height="285" border="yes"/>
-        <bgimage resource="Help Background" alpha="0"/>
+       <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="200" g="200" b="200" size="10" scalefont="no" />
+       <bgimage resource="Help Background" alpha="0"/>
         <title resource="Blue Title" text="Help" align="left" close_button="yes"/>
         <widget name="HelpText" factory="pawsMultiLineTextBox">
             <frame x="294" y="29" width="300" height="224" border="no"/>

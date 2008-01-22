@@ -1,3 +1,6 @@
+*** 2008-01-21 by Roland Schulz
+- FS#981-986 & 990 by Caarrie ... small gui changes
+
 *** 2008-01-20 by Sasha Levin
 - Fix for FS#957 by Caarrie.
 

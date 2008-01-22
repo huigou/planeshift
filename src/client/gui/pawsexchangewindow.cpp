@@ -173,9 +173,9 @@ void pawsExchangeWindow::StartExchange( csString& player, bool withPlayer )
         textBox->SetText( text );
 
     if (withPlayer)
-        width = 300;
+        width = 350;
     else
-        width = 150;
+        width = 175;
     SetRelativeFrameSize(GetActualWidth(width), defaultFrame.Height());
 
     // Autoshow the inventory

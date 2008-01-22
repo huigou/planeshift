@@ -5,6 +5,7 @@
         resizable="no" configurable="yes">
         
     <frame x="50" y="30" width="645" height="555" border="yes" />
+    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="200" g="200" b="200" size="10" scalefont="no" />
     <bgimage resource="Glyphs Background" alpha="128" />
     <title resource="Blue Title" text="Glyphs" align="left" close_button="yes" />
 

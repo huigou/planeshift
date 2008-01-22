@@ -11,12 +11,13 @@
         </form>
     
     <widget name="Message Box" factory="pawsMultiLineTextBox">
-        <frame x="100" y="57" width="330" height="107" border="no" />
+        <frame x="100" y="57" width="330" height="120" border="no" />
+       <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="200" g="200" b="200" size="12" />
     </widget>
 
     <widget name="OkButton" factory="pawsButton" id="-30">
         <frame x="210" y="170" width="80" height="40" border="no"/>
-        <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" size="30" />
+        <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" size="25" />
     <label text="Ok" />
     </widget>
 
