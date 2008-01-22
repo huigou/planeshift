@@ -290,7 +290,7 @@ psSpellCastGameEvent *psSpell::Cast(psSpellManager * mgr, Client * client, csStr
                                     // as part of the effect.
     mathScript->Execute();
 
-    powerLevel - varPowerLevel->GetValue();
+    powerLevel = varPowerLevel->GetValue();
     float max_range = varRange->GetValue();
     csTicks duration = (csTicks)varDuration->GetValue();
 
@@ -600,6 +600,7 @@ bool psSpell::AffectTarget(psSpellCastGameEvent * event, csString &effectName, c
         varUseSaveThrow->SetValue(0);
     varPowerLevel->SetValue(event->powerLevel);
     mathScript->Execute();
+    event->powerLevel = varPowerLevel->GetValue();
 
     csTicks progression_delay = (csTicks)varProgressionDelay->GetValue();
 
