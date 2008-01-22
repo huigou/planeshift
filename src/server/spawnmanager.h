@@ -389,7 +389,7 @@ public:
      * Sets the NPC as dead, plays the death animation and triggers the
      * loot generator.  Also queues the removal of the corpse.
      */
-    void KillNPC(gemObject *npc,int killer_cnum);
+    void KillNPC(gemObject *npc, gemActor * killer);
 
     /**
      * Kills the specified NPC, updates the database that he is "dead"

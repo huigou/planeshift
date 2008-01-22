@@ -70,6 +70,7 @@ class MathScript;
 class gemItem;
 class gemActor;
 class gemNPC;
+class gemPet;
 class ClientConnectionSet;
 class PublishVector;
 
@@ -190,6 +191,8 @@ public:
     virtual psItem *GetItem() { return NULL; }
     virtual gemActor* GetActorPtr() { return NULL; }
     virtual gemNPC* GetNPCPtr()  { return NULL; }
+    virtual gemPet* GetPetPtr() { return NULL; }
+    
     virtual psCharacter *GetCharacterData() { return NULL; }
     virtual Client* GetClient() const { return NULL; }
 
@@ -263,6 +266,8 @@ public:
 
     virtual bool GetVisibility() { return true; }
     virtual bool SeesObject(gemObject * object, float range) { return false; }
+
+    virtual gemObject* GetOwner() { return NULL; }
     
 protected:
     bool valid;                             // Is object fully loaded
@@ -829,6 +834,8 @@ public:
     };
 
     virtual const char* GetObjectType() { return "PET"; }
+    virtual gemPet* GetPetPtr()  { return this; }
+    
 
     void SetPersistanceLevel( const char *level )   { this->persistanceLevel = level; };
     const char* SetPersistanceLevel( void )         { return persistanceLevel.GetData(); };
