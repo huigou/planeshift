@@ -1508,14 +1508,23 @@ void NPCManager::HandlePetCommand( MsgEntry * me )
         {
             if ( CanPetHereYou(me->clientnum, owner, pet, typeStr) )
             {
-                if ( pet->GetTarget() != NULL )
+                gemObject * trg = pet->GetTarget();
+                if ( trg != NULL )
                 {
-                    Stance stance = pet->GetCharacterData()->getStance("Aggressive");
-                    if ( words.GetCount() != 0 )
+                    if( trg->GetCharacterData()->impervious_to_attack ||
+                        ( trg->GetClient() && trg->GetActorPtr()->GetInvincibility() ) )
                     {
-                        stance.stance_id = words.GetInt( 0 );
+                        psserver->SendSystemInfo(me->clientnum,"Your familiar refuses.");
                     }
-                    QueueOwnerCmdPerception( owner->GetActor(), pet, psPETCommandMessage::CMD_ATTACK );
+                    else
+                    {
+                        Stance stance = pet->GetCharacterData()->getStance("Aggressive");
+                        if ( words.GetCount() != 0 )
+                        {
+                            stance.stance_id = words.GetInt( 0 );
+                        }
+                        QueueOwnerCmdPerception( owner->GetActor(), pet, psPETCommandMessage::CMD_ATTACK );
+                    }
                 }
                 else
                 {

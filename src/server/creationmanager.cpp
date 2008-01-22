@@ -838,14 +838,26 @@ void psCharCreationManager::HandleUploadMessage( MsgEntry* me, Client *client )
     chardata->SetHitPointsMax(0.0);
     chardata->SetHitPointsMaxModifier(0.0);
 
-    // Try tutorial level first.
-    const char* sectorname = "tutorial";
-    float x = -232.00f;
-    float y = 21.31f;
-    float z = 31.50f;
-    float yrot = 4.0f;
+    float x,y,z,yrot;
+    const char *sectorname;
+    uint32 newinstance;
+    sectorname = "tutorial";
 
     psSectorInfo *sectorinfo = CacheManager::GetSingleton().GetSectorInfoByName(sectorname);
+
+    if( !sectorinfo || PlayerHasFinishedTutorial(acctID, sectorinfo->uid) )
+    {
+        raceinfo->GetStartingLocation(x,y,z,yrot,sectorname);
+        sectorinfo = CacheManager::GetSingleton().GetSectorInfoByName(sectorname);
+        newinstance = 0;
+    } else {
+        // Try tutorial level first.
+        x = -232.00f;
+        y = 21.31f;
+        z = 31.50f;
+        yrot = 4.0f;
+        newinstance = psserver->GetRandom(INT_MAX-1)+1; // Chars will start on random instance
+    }
     
     bool sectorFound = true;
     
@@ -887,10 +899,7 @@ void psCharCreationManager::HandleUploadMessage( MsgEntry* me, Client *client )
         return;    
     }
     
-    
-
-    uint32 newinstance = psserver->GetRandom(INT_MAX-1)+1;
-    chardata->SetLocationInWorld(newinstance, sectorinfo, x, y, z, yrot);  // Chars will start on random instance
+    chardata->SetLocationInWorld(newinstance, sectorinfo, x, y, z, yrot);
 
     psTrait * trait;
 //    CPrintf(CON_DEBUG, "Trait: %d\n", upload.selectedFace );    
@@ -1089,6 +1098,18 @@ void psCharCreationManager::HandleUploadMessage( MsgEntry* me, Client *client )
         }
     }
 }
+
+bool psCharCreationManager::PlayerHasFinishedTutorial(uint32 acctID, uint32 tutorialsecid)
+{
+    // if there are characters associated with this account that are outside the tutorial assume the tutorial was passed...
+    Result result(db->Select("SELECT id FROM characters WHERE account_id = %u AND loc_sector_id != %u", acctID, tutorialsecid));
+    if (result.IsValid() && result.Count())
+    {
+        return true;
+    }
+    return false;
+}
+
 
 void psCharCreationManager::AssignScript( psCharacter* character )
 {
