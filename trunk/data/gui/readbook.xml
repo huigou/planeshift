@@ -2,7 +2,7 @@
 
     <widget name="BookReadingWindow" factory="pawsBookReadingWindow" 
             visible="no" movable="yes">
-        <frame x="100" y="100" width="447" height="370" border="yes"/>
+        <frame x="100" y="100" width="447" height="450" border="yes"/>
         <bgimage resource="ReadBook Background" />
         <title resource="Blue Title" text="Read Book" align="left" close_button="yes"/>
         
@@ -14,7 +14,7 @@
       
 
     <widget name="ItemDescription" factory="pawsMultiLineTextBox" >
-        <frame x="38" y="80" width="385" height="272" border="no"/>
+        <frame x="38" y="90" width="385" height="272" border="no"/>
         <font name="/planeshift/data/ttf/becker-m.ttf" r="0" g="0" b="0" size="12"/>
     </widget>
 

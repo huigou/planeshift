@@ -9,7 +9,7 @@
 
         <widget name="Name" factory="pawsTextBox" >
             <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" size="14" />
-            <frame x="50" y="20" width="140" height="25" border="no"/>
+            <frame x="50" y="20" width="300" height="25" border="no"/>
         </widget>
 
         <!-- Description -->
