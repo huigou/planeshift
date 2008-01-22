@@ -184,6 +184,7 @@ protected:
     MathScript *manaScript;
     MathScript *castSuccessScript;
     MathScriptVar *varPowerLevel;
+    MathScriptVar *varAntiMagic;
     MathScriptVar *varRange;
     MathScriptVar *varDuration;
     MathScriptVar *varCastingDuration;
