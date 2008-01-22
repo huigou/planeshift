@@ -147,7 +147,7 @@ protected:
       *          </UL>
       */
     int IsReserved( const char* playerName, int acctID );
-
+    bool PlayerHasFinishedTutorial(uint32 acctID, uint32 tutorialsecid);
         
 private:
     // Structure to hold the initial CP race values.

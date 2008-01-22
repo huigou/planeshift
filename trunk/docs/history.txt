@@ -1,5 +1,8 @@
 *** 2008-01-21 by Roland Schulz
 - FS#981-986 & 990 by Caarrie ... small gui changes
+- fix FS#975 - Pets can attack impervious NPCs
+- add check to let new characters skip the tutorial when another character
+  in the account already finished it.
 
 *** 2008-01-20 by Sasha Levin
 - Fix for FS#957 by Caarrie.
