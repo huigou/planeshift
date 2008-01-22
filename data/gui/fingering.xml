@@ -17,6 +17,7 @@
     
     <widget name="SetButton" factory="pawsButton" id="-30" toggle="no">
         <frame x="90" y="70" width="60" height="20" border="no"/>
+	<font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="10" />
         <buttonup resource="Blue Title"/>
 	<buttondown resource="Blue Title"/>
         <label text="Set"/>
@@ -24,6 +25,7 @@
 
     <widget name="NoneButton" factory="pawsButton" id="-20" toggle="no">
         <frame x="160" y="70" width="60" height="20" border="no"/>
+	<font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="10" />
         <buttonup resource="Blue Title"/>
 	<buttondown resource="Blue Title"/>
         <label text="None"/>
@@ -31,6 +33,7 @@
 
     <widget name="CancelButton" factory="pawsButton" id="-10" toggle="no">
         <frame x="230" y="70" width="60" height="20" border="no"/>
+	<font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="10" />
         <buttonup resource="Blue Title"/>
 	<buttondown resource="Blue Title"/>
         <label text="Cancel"/>

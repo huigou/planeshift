@@ -15,22 +15,22 @@
         <columns height="20" headings="yes">
             <column width="110" >
                 <widget name="GM" factory="pawsTextBox">
-                    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="8" />
+                    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="10" />
                 </widget>
             </column>                                               
             <column width="80" >
                 <widget name="Status" factory="pawsTextBox">
-                    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="8" />
+                    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="10" />
                 </widget>
             </column>                                               
             <column width="115" >
                 <widget name="Created Date" factory="pawsTextBox">
-                    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="8" />
+                    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="10" />
                 </widget>
             </column>                                               
             <column width="210" >
                 <widget name="Petition" factory="pawsTextBox">
-                    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="8" />
+                    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="10" />
                 </widget>
             </column>                                               
         </columns>
@@ -51,11 +51,12 @@
 
     <widget name="PetitionText" factory="pawsMessageTextBox" >
         <frame x="32" y="227" width="540" height="94" border="no" />
-        <font name="/planeshift/data/ttf/LiberationMono-Regular.ttf" r="255" g="255" b="255" size="8" />
+        <font name="/planeshift/data/ttf/LiberationMono-Regular.ttf" r="255" g="255" b="255" size="10" />
     </widget>
 
     <widget name="Delete Button" factory="pawsButton" toggle="no" id="1" shadows="yes" >
         <frame x="35" y="324" width="94" height="22" border="no" />
+	<font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="10" />
         <bgimage resource="Standard Button"/>
         <label text="Delete" />
 
@@ -67,6 +68,7 @@
     
     <widget name="New Button" factory="pawsButton" toggle="no" id="2" shadows="yes" >
         <frame x="150" y="324" width="94" height="22" border="no" />
+	<font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="10" />
         <bgimage resource="Standard Button"/>
         <label text="New" />
 
