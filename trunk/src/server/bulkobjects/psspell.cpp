@@ -115,6 +115,7 @@ bool psSpell::Load(iResultRow& row)
     varDuration         = mathScript->GetOrCreateVar("Duration");
     varCastingDuration  = mathScript->GetOrCreateVar("CastingDuration");
     varPowerLevel       = mathScript->GetOrCreateVar("PowerLevel");
+    varPowerLevel       = mathScript->GetOrCreateVar("AntiMagic");
     varAffectRange      = mathScript->GetOrCreateVar("AffectRange");
     varAffectAngle      = mathScript->GetOrCreateVar("AffectAngle");
     varAffectTypes      = mathScript->GetOrCreateVar("AffectTypes");
@@ -280,10 +281,16 @@ psSpellCastGameEvent *psSpell::Cast(psSpellManager * mgr, Client * client, csStr
     // Set Input variables to script
     varWaySkill->SetValue(waySkill);
     varPowerLevel->SetValue(powerLevel);
+    if (target)
+        varAntiMagic->SetValue(target->GetCharacterData()->GetSkillRank(PSSKILL_ANTIMAGIC));
+    else
+        varAntiMagic->SetValue(0);
+
     varUseSaveThrow->SetValue(0.0); // Unknown at this point. Will be set when script is executed
                                     // as part of the effect.
     mathScript->Execute();
 
+    powerLevel - varPowerLevel->GetValue();
     float max_range = varRange->GetValue();
     csTicks duration = (csTicks)varDuration->GetValue();
 
