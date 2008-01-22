@@ -12,12 +12,12 @@
 
         <widget name="ItemName" factory="pawsTextBox" >
             <frame x="10" y="10" width="300" height="20"/>
-	    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="8" />
+	    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="10" />
         </widget>
 
         <widget name="ItemDescription" factory="pawsMultiLineTextBox" >
             <frame x="117" y="65" width="181" height="120" border="no"/>
-	    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="8" />
+	    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="10" />
         </widget>
         
 	<!-- Study button --> 

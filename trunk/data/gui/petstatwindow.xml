@@ -11,94 +11,94 @@
     <!-- Feeling stats (HP, Mana, Stamina) -->
     <widget name="HPLbl" factory="pawsTextBox" >
         <frame x="25" y="30" width="120" height="20" border="no" />
-        <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="8" />
+        <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="9" />
         <text string="HP" />
     </widget>
     <widget name="ManaLbl" factory="pawsTextBox" >
         <frame x="25" y="50" width="120" height="20" border="no" />
-        <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="8" />
+        <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="9" />
         <text string="Mana" />
     </widget>
     <widget name="PysStaminaLbl" factory="pawsTextBox" >
         <frame x="25" y="70" width="120" height="20" border="no" />
-        <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="8" />
+        <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="9" />
         <text string="Phys Stam." />
     </widget>
     <widget name="MenStaminaLbl" factory="pawsTextBox" >
         <frame x="25" y="90" width="120" height="20" border="no" />
-        <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="8" />
+        <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="9" />
         <text string="Men Stam." />
     </widget>
     <!-- Feeling stats Perc -->
     <widget name="HPCurrent" factory="pawsTextBox" >
-        <frame x="195" y="30" width="40" height="20" border="no" />
-        <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="8" />
+        <frame x="195" y="30" width="43" height="20" border="no" />
+        <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="9" />
         <text string="0" />
         <subscriptions format="percent" />        
     </widget>
     <widget name="HPTotal" factory="pawsTextBox" >
-        <frame x="235" y="30" width="40" height="20" border="no" />
-        <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="8" />
+        <frame x="240" y="30" width="40" height="20" border="no" />
+        <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="9" />
         <text string="/ 100" />
     </widget>
     
     <widget name="ManaCurrent" factory="pawsTextBox" >
-        <frame x="195" y="50" width="40" height="20" border="no" />
-        <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="8" />
+        <frame x="195" y="50" width="43" height="20" border="no" />
+        <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="9" />
         <text string="0" />
         <subscriptions format="percent" />        
     </widget>
     <widget name="ManaTotal" factory="pawsTextBox" >
-        <frame x="235" y="50" width="40" height="20" border="no" />
-        <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="8" />
+        <frame x="240" y="50" width="40" height="20" border="no" />
+        <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="9" />
         <text string="/ 100" />
     </widget>
     
     <widget name="PysStaminaCurrent" factory="pawsTextBox" >
-        <frame x="195" y="70" width="40" height="20" border="no" />
-        <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="8" />
+        <frame x="195" y="70" width="43" height="20" border="no" />
+        <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="9" />
         <text string="0" />
         <subscriptions format="percent" />        
     </widget>
     <widget name="PysStaminaTotal" factory="pawsTextBox" >
-        <frame x="235" y="70" width="40" height="20" border="no" />
-        <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="8" />
+        <frame x="240" y="70" width="40" height="20" border="no" />
+        <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="9" />
         <text string="/ 100" />
     </widget>
 
     <widget name="MenStaminaCurrent" factory="pawsTextBox">
-        <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="8" />
-        <frame x="195" y="90" width="40" height="20" border="no"/>
+        <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="9" />
+        <frame x="195" y="90" width="43" height="20" border="no"/>
         <text string="0" />
         <subscriptions format="percent" />        
     </widget>
     <widget name="MenStaminaTotal" factory="pawsTextBox">
-        <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="8" />
-        <frame x="235" y="90" width="40" height="20" border="no"/>
+        <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="9" />
+        <frame x="240" y="90" width="40" height="20" border="no"/>
         <text string="/ 100" />
     </widget>
 
     <!-- Feeling Stats Bars -->
       <widget name="HPBar" factory="pawsProgressBar">
-        <frame x="90" y="33" width="100" height="6" border="yes" />
+        <frame x="90" y="33" width="100" height="6" border="no" />
         <!--bgimage resource="Vitals ProgressBar" alpha="255" /-->
         <color     r="50" g="0" b="0" />
         <fadecolor r="255" g="0" b="0" />
     </widget>
     <widget name="ManaBar" factory="pawsProgressBar">
-        <frame x="90" y="53" width="100" height="6" border="yes" />
+        <frame x="90" y="53" width="100" height="6" border="no" />
         <!--bgimage resource="Vitals ProgressBar" alpha="255" /-->
         <color     r="0"  g="0" b="50" />
         <fadecolor r="120" g="0" b="190" />
     </widget>
     <widget name="PysStaminaBar" factory="pawsProgressBar">
-        <frame x="90" y="73" width="100" height="6" border="yes" />
+        <frame x="90" y="73" width="100" height="6" border="no" />
         <!--bgimage resource="Vitals ProgressBar" alpha="255" /-->
         <color     r="0" g="50"  b="0" />
         <fadecolor r="0" g="255" b="0" />
     </widget>
     <widget name="MenStaminaBar" factory="pawsProgressBar">
-        <frame x="90" y="93" height="6" width="100" border="yes" />
+        <frame x="90" y="93" height="6" width="100" border="no" />
         <!--bgimage resource="Vitals ProgressBar" alpha="255" /-->
         <color     r="0" g="0"  b="0" />
         <fadecolor r="120" g="130" b="140" />
@@ -108,7 +108,7 @@
     <widget name="Doll" factory="pawsObjectView" >
         <frame x="285" y="31" width="113" height="171" border="no"/>
         <map file="/planeshift/world/podium" sector="room" />
-        <distance value="5"/>
+        <distance value="7"/>
         <subscriptions>
             <subscribe data="sigActorUpdate" />
         </subscriptions>
@@ -191,21 +191,21 @@
                 </attachpoints>
                  <widget name="" factory="pawsTextBox" >
                     <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" size="12" />
-                    <frame x="30" y="20" width="150" height="20" border="no"/>
+                    <frame x="30" y="5" width="150" height="20" border="no"/>
                     <text string="Stats:" />
                 </widget>
                 
                 <widget name="StatsSkillList" factory="pawsListBox"  >
-                    <frame x="28" y="35" width="379" height="85" border="no" />
+                    <frame x="28" y="20" width="379" height="85" border="no" />
                     <columns height="17" headings="no" >
                         <column width="230" >
                             <widget name="StatsSkill" factory="pawsTextBox">
-                                <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="8" />
+                                <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="9" />
                             </widget>
                         </column>                                               
                          <column width="30" >
                             <widget name="StatsRank" factory="pawsTextBox">
-                                <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="8" />
+                                <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="9" />
                             </widget>
                         </column>
                         <column width="90" >
@@ -225,7 +225,7 @@
 
                 <widget name="StatsDescription" factory="pawsMultiLineTextBox" >
                     <frame x="28" y="145" width="385" height="90" border="no" />
-                    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="8" />
+                    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="9" />
                 </widget>
 
             </widget>
@@ -241,21 +241,21 @@
                 </attachpoints>
                 <widget name="" factory="pawsTextBox" >
                     <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" size="12" />
-                    <frame x="30" y="20" width="150" height="20" border="no"/>
+                    <frame x="30" y="5" width="150" height="20" border="no"/>
                     <text string="Combat Skills List:" />
                 </widget>
 
                 <widget name="CombatSkillList" factory="pawsListBox"  >
-                    <frame x="28" y="35" width="379" height="85" border="no" />
+                    <frame x="28" y="20" width="379" height="85" border="no" />
                     <columns height="17" headings="no" >
                         <column width="230" >
                             <widget name="CombatSkill" factory="pawsTextBox">
-                                <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="8" />
+                                <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="9" />
                             </widget>
                         </column>                                               
                          <column width="30" >
                             <widget name="CombatRank" factory="pawsTextBox">
-                                <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="8" />
+                                <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="9" />
                             </widget>
                         </column>
                         <column width="90" >
@@ -276,7 +276,7 @@
 
                 <widget name="CombatDescription" factory="pawsMultiLineTextBox" >
                     <frame x="28" y="145" width="385" height="90" border="no" />
-                    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="8" />
+                    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="9" />
                 </widget>
             </widget>
             
@@ -292,21 +292,21 @@
                 </attachpoints>
                 <widget name="" factory="pawsTextBox" >
                     <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" size="12" />
-                    <frame x="30" y="20" width="150" height="20" border="no"/>
+                    <frame x="30" y="5" width="150" height="20" border="no"/>
                     <text string="Magic Skills List:" />
                 </widget>
 
                 <widget name="MagicSkillList" factory="pawsListBox"  >
-                    <frame x="28" y="35" width="379" height="85" border="no" />
+                    <frame x="28" y="20" width="379" height="85" border="no" />
                     <columns height="17" headings="no" >
                         <column width="230" >
                             <widget name="MagicSkill" factory="pawsTextBox">
-                                <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="8" />
+                                <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="9" />
                             </widget>
                         </column>                                               
                         <column width="30" >
                             <widget name="MagicRank" factory="pawsTextBox">
-                                <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="8" />
+                                <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="9" />
                             </widget>
                         </column>
                         <column width="90" >
@@ -327,7 +327,7 @@
 
                 <widget name="MagicDescription" factory="pawsMultiLineTextBox" >
                     <frame x="28" y="145" width="385" height="90" border="no" />
-                    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="8" />
+                    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="9" />
                 </widget>
             </widget>
         
@@ -341,21 +341,21 @@
                 </attachpoints>
                 <widget name="" factory="pawsTextBox" >
                     <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" size="12" />
-                    <frame x="30" y="20" width="150" height="20" border="no"/>
+                    <frame x="30" y="5" width="150" height="20" border="no"/>
                     <text string="Various Skills List:" />
                 </widget>
 
                 <widget name="VariousSkillList" factory="pawsListBox"  >
-                    <frame x="28" y="35" width="379" height="85" border="no" />
+                    <frame x="28" y="20" width="379" height="85" border="no" />
                     <columns height="17" headings="no" >
                         <column width="230" >
                             <widget name="VariousSkill" factory="pawsTextBox">
-                                <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="8" />
+                                <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="9" />
                             </widget>
                         </column>                                               
                          <column width="30" >
                             <widget name="VariousRank" factory="pawsTextBox">
-                                <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="8" />
+                                <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="9" />
                             </widget>
                         </column>
                         <column width="90" >
@@ -376,7 +376,7 @@
 
                 <widget name="VariousDescription" factory="pawsMultiLineTextBox" >
                     <frame x="28" y="145" width="385" height="90" border="no" />
-                    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="8" />
+                    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="9" />
                 </widget>
             </widget>
 
@@ -390,21 +390,21 @@
                 </attachpoints>
                 <widget name="" factory="pawsTextBox" >
                     <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" size="12" />
-                    <frame x="30" y="20" width="150" height="20" border="no"/>
+                    <frame x="30" y="10" width="150" height="20" border="no"/>
                     <text string="Spell List:" />
                 </widget>
 
                 <widget name="KnownSpellList" factory="pawsListBox"  >
-                    <frame x="28" y="35" width="379" height="85" border="no" />
+                    <frame x="28" y="25" width="379" height="85" border="no" />
                     <columns height="17" headings="no" >
                         <column width="230" >
                             <widget name="SpellName" factory="pawsTextBox">
-                                <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="8" />
+                                <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="9" />
                             </widget>
                         </column>                                               
                          <column width="30" >
                             <widget name="JobsRank" factory="pawsTextBox">
-                                <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="8" />
+                                <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="9" />
                             </widget>
                         </column>
                         <column width="90" >
@@ -425,7 +425,7 @@
 
                 <widget name="KnownSpellDescription" factory="pawsMultiLineTextBox" >
                     <frame x="28" y="145" width="385" height="90" border="no" />
-                    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="8" />
+                    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="9" />
                 </widget>
             </widget>
             

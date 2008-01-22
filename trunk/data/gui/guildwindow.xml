@@ -8,7 +8,7 @@
 
         <frame x="100" y="200" width="630" height="385" border="yes"/>
 
-        <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="8" />       
+        <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="10" />       
 
         <bgimage resource="Guild Main Background" alpha="128" />
 
@@ -116,7 +116,8 @@
 
             <widget name="" factory="pawsTextBox" vertical="yes" >
 
-                <!-- 135--><frame x="151" y="15" width="25" height="130" />
+                <frame x="151" y="15" width="25" height="130" />
+		<font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="9" />
 
                 <text string="View chat" vertAdjust="BOTTOM"/>
 
@@ -125,6 +126,7 @@
             <widget name="" factory="pawsTextBox" vertical="yes" >
 
                 <frame x="174" y="15" width="25" height="130" />
+		<font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="9" />
 
                 <text string="Chat" vertAdjust="BOTTOM"/>
 
@@ -133,6 +135,7 @@
             <widget name="" factory="pawsTextBox" vertical="yes" >
 
                 <frame x="199" y="15" width="25" height="130" />
+		<font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="9" />
 
                 <text string="Invite" vertAdjust="BOTTOM"/>
 
@@ -141,6 +144,7 @@
             <widget name="" factory="pawsTextBox" vertical="yes" >
 
                 <frame x="219" y="15" width="25" height="130" />
+		<font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="9" />
 
                 <text string="Remove" vertAdjust="BOTTOM"/>
 
@@ -149,6 +153,7 @@
             <widget name="" factory="pawsTextBox" vertical="yes" >
 
                 <frame x="243" y="15" width="25" height="130" />
+		<font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="9" />
 
                 <text string="Promote" vertAdjust="BOTTOM"/>
 
@@ -157,6 +162,7 @@
             <widget name="" factory="pawsTextBox" vertical="yes" >
 
                 <frame x="268" y="15" width="25" height="130" />
+		<font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="9" />
 
                 <text string="Privil." vertAdjust="BOTTOM"/>
 
@@ -165,6 +171,7 @@
             <widget name="" factory="pawsTextBox" vertical="yes" >
 
                 <frame x="292" y="15" width="25" height="130" />
+		<font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="9" />
 
                 <text string="Points" vertAdjust="BOTTOM"/>
 
@@ -173,6 +180,7 @@
             <widget name="" factory="pawsTextBox" vertical="yes" >
 
                 <frame x="316" y="15" width="25" height="130" />
+		<font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="9" />
 
                 <text string="Edit" vertAdjust="BOTTOM"/>
 
@@ -181,6 +189,7 @@
             <widget name="" factory="pawsTextBox" vertical="yes" >
 
                 <frame x="338" y="17" width="25" height="130" />
+		<font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="9" />
 
                 <text string="Pub. notes" vertAdjust="BOTTOM"/>
 
@@ -189,6 +198,7 @@
             <widget name="" factory="pawsTextBox" vertical="yes" >
 
                 <frame x="361" y="17" width="25" height="130" />
+		<font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="9" />
 
                 <text string="Prv. notes" vertAdjust="BOTTOM"/>
 
@@ -201,6 +211,7 @@
             <widget name="LevelList" factory="pawsListBox" xmlbinding="levellist" id="1100" autoid="yes"  selectable="0">
 
                 <frame x="25" y="156" width="610" height="195" border="no"/>
+		<font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="9" />
 
         <highlight resource="Hightlight" alpha="128" />
 
@@ -360,7 +371,7 @@
 
         <highlight resource="Hightlight" alpha="128" />
 
-                <columns height="20" headings="yes" xmlbinding="m" sortBy="0" sortOrder="asc">
+                <columns height="25" headings="yes" xmlbinding="m" sortBy="0" sortOrder="asc">
 
                     <column width="95" xmlbinding="name" >
 
@@ -539,11 +550,11 @@
 
             <widget name="AllianceMemberList" factory="pawsListBox">
 
-                <frame x="37" y="41" width="547" height="215" border="no"/>
+                <frame x="40" y="41" width="547" height="215" border="no"/>
 
         <highlight resource="Hightlight" alpha="128" />
 
-                <columns height="20" sortBy="0" sortOrder="asc" headings="yes">
+                <columns height="30" sortBy="0" sortOrder="asc" headings="yes">
 
                     <column width="180" xmlbinding="name" >
 

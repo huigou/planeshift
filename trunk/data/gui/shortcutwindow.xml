@@ -2,7 +2,7 @@
 
     <widget name="ShortcutWindow" factory="pawsShortcutWindow" visible="yes" configurable="yes"
         savepositions="yes" movable="yes" resizable="yes" keepaspect="no" >
-	    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="200" g="200" b="200" size="8" scalefont="no" />
+	    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="200" g="200" b="200" size="10" scalefont="no" />
         <frame x="526" y="545" width="280" height="55" border="no" />
         <bgimage resource="Shortcut Background" alpha="128" />
 	<minframe width="92" height="30" />

@@ -14,27 +14,27 @@
         <columns height="20" headings="yes">
             <column width="30" >            
                 <widget name="Lvl" factory="pawsTextBox">
-                    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="8" />
+                    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="10" />
                 </widget>
             </column>                                               
             <column width="100" >            
                 <widget name="Player Name" factory="pawsTextBox">
-                    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="8" />
+                    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="10" />
                 </widget>
             </column>                                               
             <column width="80" >
                 <widget name="Status" factory="pawsTextBox">
-                    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="8" />
+                    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="10" />
                 </widget>
             </column>                                               
             <column width="115" >
                 <widget name="Created Date" factory="pawsTextBox">
-                    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="8" />
+                    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="10" />
                 </widget>
             </column>                                               
             <column width="207">
                 <widget name="Petition" factory="pawsTextBox">
-                    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="8" />
+                    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="10" />
                 </widget>
             </column>                                               
 
@@ -57,12 +57,13 @@
 
     <widget name="PetitionText" factory="pawsMessageTextBox" >
         <frame x="32" y="227" width="540" height="94" border="no" />
-        <font name="/planeshift/data/ttf/LiberationMono-Regular.ttf" r="255" g="255" b="255" size="8" />
+        <font name="/planeshift/data/ttf/LiberationMono-Regular.ttf" r="255" g="255" b="255" size="10" />
     </widget>
 
     <widget name="Admin Petition" factory="pawsButton" toggle="no" id="7" shadows="yes" >
         <frame x="20" y="324" width="90" height="22" border="no" />
         <bgimage resource="Standard Button"/>
+	<font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="10" />
         <label text="Admin" />
 
         <attachpoints>
@@ -74,6 +75,7 @@
     <widget name="Assign Button" factory="pawsButton" toggle="no" id="2" shadows="yes" >
         <frame x="115" y="324" width="90" height="22" border="no" />
         <bgimage resource="Standard Button"/>
+	<font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="10" />
         <label text="Claim" />
 
         <attachpoints>
@@ -85,6 +87,7 @@
     <widget name="Escalate Button" factory="pawsButton" toggle="no" id="3" shadows="yes" >
         <frame x="210" y="324" width="90" height="22" border="no" />
         <bgimage resource="Standard Button"/>
+	<font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="10" />
         <label text="Escalate" />
 
         <attachpoints>
@@ -96,6 +99,7 @@
     <widget name="Descalate Button" factory="pawsButton" toggle="no" id="4" shadows="yes" >
         <frame x="305" y="324" width="90" height="22" border="no" />
         <bgimage resource="Standard Button"/>
+	<font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="10" />
         <label text="Descalate" />
 
         <attachpoints>
@@ -107,6 +111,7 @@
     <widget name="Close Button" factory="pawsButton" toggle="no" id="5" shadows="yes" >
         <frame x="400" y="324" width="90" height="22" border="no" />
         <bgimage resource="Standard Button"/>
+	<font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="10" />
         <label text="Close" />
 
         <attachpoints>
@@ -118,6 +123,7 @@
     <widget name="Cancel Button" factory="pawsButton" toggle="no" id="6" shadows="yes" >
         <frame x="495" y="324" width="81" height="22" border="no" />
         <bgimage resource="Standard Button"/>
+	<font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="10" />
         <label text="Delete" />
 
         <attachpoints>

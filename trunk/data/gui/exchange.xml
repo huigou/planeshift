@@ -5,8 +5,13 @@
         movable="yes">
     <frame x="100" y="100" width="300" height="350" border="yes" />
     <title resource="Blue Title" text="Exchange" align="left" close_button="yes"/>    
+<<<<<<< .mine
+    <bgimage resource="Standard Background"/>
+    
+=======
     <bgimage resource="Standard Background"/>
 
+>>>>>>> .r686
     <!-- Accept, Open Inventory BUTTONS -->
     <widget name="Accept" factory="pawsButton" id="100" tooltip="Accept trade">
         <frame x="10" y="10" width="32" height="32" />
@@ -20,12 +25,20 @@
     <!-- OTHER PLAYER NAME -->
     <widget name="other_player" factory="pawsTextBox" >
         <frame x="10" y="50" width="250" height="20" />
+<<<<<<< .mine
+	<font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="10" />
+=======
        <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="10" />
+>>>>>>> .r686
     </widget>
 
     <widget name="offeringlbl" factory="pawsTextBox" >
         <frame x="10" y="70" width="135" height="20" />
+<<<<<<< .mine
+	<font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="10" />
+=======
        <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="10" />
+>>>>>>> .r686
         <text string="You're offering" horizAdjust="CENTRE" />    
     </widget>
     
@@ -61,15 +74,25 @@
     </widget>
     
     <widget name="TotalTriasOffer" factory="pawsTextBox">
+<<<<<<< .mine
+        <frame x="15" y="320" width="135" height="25" />
+	<font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="10" />
+=======
         <frame x="15" y="320" width="135" height="25" />
        <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="10" />
+>>>>>>> .r686
     </widget>
     
    
 
     <widget name="receivinglbl" factory="pawsTextBox" >
+<<<<<<< .mine
+        <frame x="185" y="70" width="135" height="20" />
+	<font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="10" />
+=======
         <frame x="185" y="70" width="135" height="20" />
        <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="10" />
+>>>>>>> .r686
         <text string="You're offered" horizAdjust="CENTRE" />    
     </widget>
 
@@ -105,8 +128,13 @@
     </widget>
     
     <widget name="TotalTriasRec" factory="pawsTextBox">
+<<<<<<< .mine
+        <frame x="190" y="320" width="135" height="25" />   
+	<font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="10" />
+=======
         <frame x="190" y="320" width="135" height="25" />
        <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="10" />
+>>>>>>> .r686
     </widget>  
 
 </widget>

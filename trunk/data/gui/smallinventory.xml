@@ -8,7 +8,19 @@
     <bgimage resource="SmallInventory" alpha="128" />    
     
     <title resource="Blue Title" text="Inventory" align="left" close_button="yes"/>    
-
+    <widget name="TotalTrias" factory="pawsTextBox">
+	    <frame x="80" y="5" width="90" height="30" />
+	    <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" size="12" />    
+	    <text string="0" />
+	    <subscriptions>
+		    <subscribe data="sigInvMoneyTotal" />
+	    </subscriptions>
+    </widget>
+    <widget name="TotalTriasLabel" factory="pawsTextBox">
+	    <frame x="40" y="5" width="50" height="30" />
+	    <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" size="12" />    
+	    <text string="Trias:" />
+    </widget>
         
     <widget name="BulkList" factory="pawsListBox" selectable="0">
         <frame x="69" y="23" width="116" height="344" border="no"/>
@@ -33,9 +45,8 @@
             </column>
         </columns>
     </widget>
-
 <widget name="Money" factory="pawsMoney" border="yes" >
-        <frame x="69" y="367" width="0" height="0"/> 
+        <frame x="69" y="363" width="0" height="0"/> 
         <subscriptions>
             <subscribe data="sigInvMoney" />
         </subscriptions> 
