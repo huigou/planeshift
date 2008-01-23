@@ -6,12 +6,12 @@
 
         <widget name="label_name" factory="pawsTextBox">
             <frame x="300" y="65" width="200" height="35" border="no"/>
-            <font name="/planeshift/data/ttf/cupandtalon.ttf" r="-1" g="-1" b="-1" size="22" resizetoscreen="yes" />
+            <font name="/planeshift/data/ttf/cupandtalon.ttf" r="180" g="180" b="180" size="22" resizetoscreen="yes" />
         </widget>
 
         <widget name="label_birth" factory="pawsTextBox">
             <frame x="205" y="105" width="156" height="25" border="no"/>
-            <font name="/planeshift/data/ttf/cupandtalon.ttf" r="-1" g="-1" b="-1" size="16" resizetoscreen="yes" />
+            <font name="/planeshift/data/ttf/cupandtalon.ttf" r="180" g="180" b="180" size="16" resizetoscreen="yes" />
             <text string="Birth"/>
         </widget>
         <widget name="text_birth" factory="pawsMultiLineTextBox">
@@ -21,7 +21,7 @@
 
         <widget name="label_life" factory="pawsTextBox">
             <frame x="477" y="105" width="156" height="25" border="no"/>
-            <font name="/planeshift/data/ttf/cupandtalon.ttf" r="-1" g="-1" b="-1" size="16" resizetoscreen="yes" />
+            <font name="/planeshift/data/ttf/cupandtalon.ttf" r="180" g="180" b="180" size="16" resizetoscreen="yes" />
             <text string="Life"/>
         </widget>
         <widget name="text_life" factory="pawsMultiLineTextBox">
@@ -37,22 +37,22 @@
         <!-- Header labels -->
         <widget name="label_stat_header" factory="pawsTextBox">
             <frame x="210" y="354" width="40" height="16" border="no" />
-            <font name="/planeshift/data/ttf/cupandtalon.ttf" r="-1" g="-1" b="-1" size="13" shadow="yes" resizetoscreen="yes" />  
+            <font name="/planeshift/data/ttf/cupandtalon.ttf" r="180" g="180" b="180" size="13" shadow="yes" resizetoscreen="yes" />  
             <text string="Stat" />
         </widget>
         <widget name="values_stat_header" factory="pawsTextBox">
             <frame x="297" y="354" width="40" height="16" border="no" />
-            <font name="/planeshift/data/ttf/cupandtalon.ttf" r="-1" g="-1" b="-1" size="13" shadow="yes" resizetoscreen="yes" />
+            <font name="/planeshift/data/ttf/cupandtalon.ttf" r="180" g="180" b="180" size="13" shadow="yes" resizetoscreen="yes" />
             <text string="Rank" />
         </widget>            
         <widget name="label_skill_header" factory="pawsTextBox">
             <frame x="467" y="354" width="40" height="16" border="no" />
-            <font name="/planeshift/data/ttf/cupandtalon.ttf" r="-1" g="-1" b="-1" size="13" shadow="yes" resizetoscreen="yes" />  
+            <font name="/planeshift/data/ttf/cupandtalon.ttf" r="180" g="180" b="180" size="13" shadow="yes" resizetoscreen="yes" />  
             <text string="Skill" />
         </widget>
         <widget name="values_skill_header" factory="pawsTextBox">
             <frame x="554" y="354" width="40" height="16" border="no" />
-            <font name="/planeshift/data/ttf/cupandtalon.ttf" r="-1" g="-1" b="-1" size="13" shadow="yes" resizetoscreen="yes" />  
+            <font name="/planeshift/data/ttf/cupandtalon.ttf" r="180" g="180" b="180" size="13" shadow="yes" resizetoscreen="yes" />  
             <text string="Rank" />
         </widget>
         

@@ -9,7 +9,7 @@
         <!-- Title -->
         <widget name="label_birth" factory="pawsTextBox">
             <frame x="230" y="10" width="350" height="40" border="no"/>
-            <font name="/planeshift/data/ttf/cupandtalon.ttf" r="-1" g="-1" b="-1" size="26" sr="0" sg="0" sb="0" shadow="yes" resizetoscreen="yes" />
+            <font name="/planeshift/data/ttf/cupandtalon.ttf" r="180" g="180" b="180" size="26" sr="0" sg="0" sb="0" shadow="yes" resizetoscreen="yes" />
             <text string="BIRTH" horizAdjust="CENTRE" />
         </widget>
         
@@ -29,7 +29,7 @@
 
        <widget name="label" factory="pawsTextBox">
             <frame x="210" y="95" width="70" height="30" border="no" />
-            <font name="/planeshift/data/ttf/cupandtalon.ttf" r="-1" g="-1" b="-1" size="16" shadow="yes" resizetoscreen="yes" />
+            <font name="/planeshift/data/ttf/cupandtalon.ttf" r="180" g="180" b="180" size="16" shadow="yes" resizetoscreen="yes" />
             <text string="Day:" horizAdjust="CENTRE" />
         </widget>
         <!-- Date of birth -->
@@ -41,7 +41,7 @@
 
        <widget name="label" factory="pawsTextBox">
             <frame x="350" y="95" width="70" height="30" border="no" />
-            <font name="/planeshift/data/ttf/cupandtalon.ttf" r="-1" g="-1" b="-1" size="16" shadow="yes" resizetoscreen="yes" />
+            <font name="/planeshift/data/ttf/cupandtalon.ttf" r="180" g="180" b="180" size="16" shadow="yes" resizetoscreen="yes" />
             <text string="Month:" horizAdjust="CENTRE" />
         </widget>
                   
@@ -53,13 +53,13 @@
         
         <widget name="label" factory="pawsTextBox">
             <frame x="475" y="95" width="70" height="30" border="no" />
-            <font name="/planeshift/data/ttf/cupandtalon.ttf" r="-1" g="-1" b="-1" size="16" shadow="yes" resizetoscreen="yes" />
+            <font name="/planeshift/data/ttf/cupandtalon.ttf" r="180" g="180" b="180" size="16" shadow="yes" resizetoscreen="yes" />
             <text string="Year:" horizAdjust="CENTRE" />
         </widget>
            
         <widget name="year" factory="pawsTextBox">
             <frame x="496" y="118" width="70" height="30" border="no" />
-            <font name="/planeshift/data/ttf/cupandtalon.ttf" r="-1" g="-1" b="-1" size="13" shadow="yes" resizetoscreen="yes" />
+            <font name="/planeshift/data/ttf/cupandtalon.ttf" r="180" g="180" b="180" size="13" shadow="yes" resizetoscreen="yes" />
             <text string="750" horizAdjust="CENTRE" />
         </widget>
 
@@ -69,20 +69,20 @@
 
         <widget name="zodiac" factory="pawsTextBox">
             <frame x="270" y="222" width="210" height="25" border="no"/>
-            <font name="/planeshift/data/ttf/cupandtalon.ttf" r="-1" g="-1" b="-1" size="18" resizetoscreen="yes" />
+            <font name="/planeshift/data/ttf/cupandtalon.ttf" r="180" g="180" b="180" size="18" resizetoscreen="yes" />
             <text string=""/>
         </widget>
         
         <widget name="zodiac_description" factory="pawsMultiLineTextBox">
             <frame x="275" y="242" width="400" height="100" border="no"/>
-            <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="-1" g="-1" b="-1" size="11"  />
+            <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="11"  />
             <text string="Choose a month of birth"/>
         </widget>
 
         <!-- Siblings -->
         <widget name="text" factory="pawsTextBox" >
             <frame x="202" y="354" width="80" height="30" />
-            <font name="/planeshift/data/ttf/cupandtalon.ttf"  r="-1" g="-1" b="-1" size="18" resizetoscreen="yes" />
+            <font name="/planeshift/data/ttf/cupandtalon.ttf"  r="180" g="180" b="180" size="18" resizetoscreen="yes" />
             <text string="Siblings" />
         </widget>
 
@@ -114,7 +114,7 @@
 
         <widget name="sibling_desc" factory="pawsMultiLineTextBox"  >
             <frame x="395" y="377" width="260" height="115" border="no" />
-            <font name="/planeshift/data/ttf/cupandtalon.ttf" r="-1" g="-1" b="-1" size="16" />
+            <font name="/planeshift/data/ttf/cupandtalon.ttf" r="180" g="180" b="180" size="16" />
             <text string="Select your sibling count" />
         </widget>
         

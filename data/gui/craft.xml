@@ -7,7 +7,7 @@
         <title resource="Blue Title" text="Study notes:" align="left" close_button="yes"/>
 	<widget name="HelpText" factory="pawsMultiLineTextBox">
 	    <frame x="10" y="10" width="655" height="270" border="no"/>
-	    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="-1" g="-1" b="-1" size="11" resizetoscreen="no" />
+	    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="11" resizetoscreen="no" />
 	</widget>
     </widget>
 </widget_description>
