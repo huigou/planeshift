@@ -115,7 +115,7 @@ bool psSpell::Load(iResultRow& row)
     varDuration         = mathScript->GetOrCreateVar("Duration");
     varCastingDuration  = mathScript->GetOrCreateVar("CastingDuration");
     varPowerLevel       = mathScript->GetOrCreateVar("PowerLevel");
-    varPowerLevel       = mathScript->GetOrCreateVar("AntiMagic");
+    varAntiMagic        = mathScript->GetOrCreateVar("AntiMagic");
     varAffectRange      = mathScript->GetOrCreateVar("AffectRange");
     varAffectAngle      = mathScript->GetOrCreateVar("AffectAngle");
     varAffectTypes      = mathScript->GetOrCreateVar("AffectTypes");
