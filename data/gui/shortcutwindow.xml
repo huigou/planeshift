@@ -4,6 +4,7 @@
         savepositions="yes" movable="yes" resizable="yes" keepaspect="no" >
 	    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="200" g="200" b="200" size="10" scalefont="no" />
         <frame x="526" y="545" width="280" height="55" border="no" />
+		<minframe width="105" height="150" />
         <bgimage resource="Shortcut Background" alpha="128" />
 	<minframe width="92" height="30" />
     </widget>

@@ -2,7 +2,8 @@
 - Moved stamina calculation script initialisation out of the message loop
   and into the constructor, should improve performance a bit.
 - Fix for FS#1009-1011 and some gui color fixes by Caarrie.
-- Fixed FS#1016
+- Fixed FS#1016.
+- More GUI fixes by ThomPhoenix.
 
 *** 2008-01-22 by Sasha Levin
 - Added support for use of anti-magic in spell cast calculations.
