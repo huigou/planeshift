@@ -207,6 +207,12 @@ psCombatManager::psCombatManager() : pvp_region(NULL)
         targetLocations.Push(PSCHARACTER_SLOT_BOOTS);
     } 
 
+    staminacombat = psserver->GetMathScriptEngine()->FindScript("StaminaCombat");
+    PhyDrain   = staminacombat->GetVar("PhyDrain");
+    MntDrain   = staminacombat->GetVar("MntDrain");
+    actorVar    = staminacombat->GetOrCreateVar("Actor");
+    weaponVar   = staminacombat->GetOrCreateVar("Weapon");
+
     psserver->GetEventManager()->Subscribe(this,MSGTYPE_DEATH_EVENT,NO_VALIDATION);
 }
 
@@ -749,24 +755,7 @@ void psCombatManager::HandleCombatEvent(psCombatGameEvent *event)
     Client * attacker_client = psserver->GetNetManager()->GetClient(event->AttackerCID);
     if (attacker_client)
     {
-        // if the player is too tired, stop fighting. We stop if we don't have enough stamina to make an attack with the current stance.
-        MathScript* staminacombat = psserver->GetMathScriptEngine()->FindScript("StaminaCombat");
-
-        // Output
-        MathScriptVar* PhyDrain   = staminacombat->GetVar("PhyDrain");
-        MathScriptVar* MntDrain   = staminacombat->GetVar("MntDrain");
-
-        // Input
-        MathScriptVar* actorVar    = staminacombat->GetOrCreateVar("Actor");
-        MathScriptVar* weaponVar   = staminacombat->GetOrCreateVar("Weapon");
-
-        if(!PhyDrain || !MntDrain)
-        {
-            Error1("Couldn't find the PhyDrain output var in StaminaCombat script!");
-            return;
-        }
-
-        // Input the data
+        // Input the stamina data
         actorVar->SetObject(gemAttacker->GetCharacterData());
         weaponVar->SetObject(weapon);
 
