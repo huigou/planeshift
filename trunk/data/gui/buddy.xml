@@ -1,11 +1,11 @@
 <widget_description>
 
 <widget name="BuddyWindow" factory="pawsBuddyWindow" 
-        visible="no" savepositions="yes" movable="yes" configurable="yes"
-        resizable="yes">
+        visible="no" savepositions="yes" movable="yes" keepaspect="no" configurable="yes" resizable="yes">
         
     <frame x="0" y="100" width="170" height="290" border="yes" />
-    <minframe width="120" height="160" />
+    <minframe width="165" height="230" />
+	<maxframe width="355" height="860" />
     <title resource="Blue Title" text="Buddy List" align="left" close_button="yes" />
     <bgimage resource="Buddy Background" alpha="128" />
 
@@ -16,14 +16,14 @@
         <columns height="16">
             <column width="250" >
                 <widget name="Name" factory="pawsTextBox">
-                    <font name="/planeshift/data/ttf/LiberationMono-Regular.ttf" size="10"/>
+                    <font name="/planeshift/data/ttf/LiberationMono-Regular.ttf" size="10" scalefont="no" />
                 </widget>
             </column>
         </columns>
         <attachpoints>
-            <attach point="ATTACH_RIGHT" />
+            <attach point="PROPORTIONAL_RIGHT" />
             <attach point="PROPORTIONAL_TOP" />
-            <attach point="ATTACH_LEFT" />
+            <attach point="PROPORTIONAL_LEFT" />
             <attach point="PROPORTIONAL_BOTTOM" />
         </attachpoints>
     </widget>

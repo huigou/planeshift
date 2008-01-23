@@ -3,7 +3,7 @@
 <widget name="InfoWindow" factory="pawsInfoWindow"
     visible="yes" savepositions="yes" movable="yes" resizable="yes" configurable="yes" >
     <frame x="0" y="50" width="180" height="90" border="no" />
-    <minframe width="180" height="90" />
+    <minframe width="222" height="111" />
     <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="200" g="200" b="200" size="4" />
     <bgimage resource="Info Background" alpha="100" />
 
@@ -11,7 +11,7 @@
 <!-- Personal Info (HP, Mana, Fatigue) -->
 
 <widget name="My HP" factory="pawsProgressBar" tooltip="Health">
-    <frame x="5" y="6" width="170" height="6" border="no" />
+    <frame x="5" y="6" width="170" height="7" border="no" />
         <color r="50" g="0" b="0" />
         <fadecolor r="255" g="0" b="0" />
     <subscriptions>
@@ -26,7 +26,7 @@
 
     <widget name="My HP Pct" factory="pawsTextBox" tooltip="Health">
         <frame x="5" y="0" width="170" height="6" border="no"/>
-        <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="200" g="200" b="200" size="4" />
+        <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="200" g="200" b="200" size="5" />
         <subscriptions format="percent">
             <subscribe data="fVitalValue0:Self" />
         </subscriptions>
@@ -40,7 +40,7 @@
 </widget>
 
 <widget name="My PysStamina" factory="pawsProgressBar" tooltip="Physical Stamina">
-    <frame x="5" y="14" width="170" height="6" border="no" />
+    <frame x="5" y="14" width="170" height="7" border="no" />
         <color r="0" g="50" b="0" />
         <fadecolor r="0" g="255" b="0" />
     <subscriptions>
@@ -55,7 +55,7 @@
 
     <widget name="My PysStamina Pct" factory="pawsTextBox" tooltip="Physical Stamina">
         <frame x="5" y="0" width="169" height="6" border="no"/>
-        <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="200" g="200" b="200" size="4" />
+        <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="200" g="200" b="200" size="5" />
         <subscriptions format="percent">
             <subscribe data="fVitalValue2:Self" />
         </subscriptions>
@@ -69,7 +69,7 @@
 </widget>
 
 <widget name="My Mana" factory="pawsProgressBar" tooltip="Mana">
-    <frame x="5" y="22" width="170" height="6" border="no" />
+    <frame x="5" y="22" width="170" height="7" border="no" />
         <color r="0" g="0" b="50" />
         <fadecolor r="120" g="0" b="190" />
     <subscriptions>
@@ -84,7 +84,7 @@
 
     <widget name="My Mana Pct" factory="pawsTextBox" tooltip="Mana">
         <frame x="5" y="0" width="169" height="6" border="no"/>
-        <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="200" g="200" b="200" size="4" />
+        <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="200" g="200" b="200" size="5" />
         <subscriptions format="percent">
             <subscribe data="fVitalValue1:Self" />
         </subscriptions>
@@ -98,7 +98,7 @@
 </widget>
 
 <widget name="My MenStamina" factory="pawsProgressBar" tooltip="Mental Stamina">
-    <frame x="5" y="30" width="170" height="6" border="no" />
+    <frame x="5" y="30" width="170" height="7" border="no" />
         <color r="0" g="0"  b="0" />
         <fadecolor r="120" g="130" b="140" />
     <subscriptions>
@@ -113,7 +113,7 @@
 
     <widget name="My MenStamina Pct" factory="pawsTextBox" tooltip="Mental Stamina">
         <frame x="5" y="0" width="169" height="6" border="no"/>
-        <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="200" g="200" b="200" size="4" />
+        <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="200" g="200" b="200" size="5" />
         <subscriptions format="percent">
             <subscribe data="fVitalValue3:Self" />
         </subscriptions>
