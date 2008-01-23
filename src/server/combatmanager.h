@@ -131,6 +131,15 @@ protected:
     MathScriptVar *var_Attacker;
     MathScriptVar *var_AttackLocationItem;
 
+    // if the player is too tired, stop fighting. We stop if we don't have enough stamina to make an attack with the current stance.
+    MathScript* staminacombat;
+    // Output
+    MathScriptVar* PhyDrain;
+    MathScriptVar* MntDrain;
+    // Input
+    MathScriptVar* actorVar;
+    MathScriptVar* weaponVar;
+
     void HandleDeathEvent(MsgEntry *me);
 
     
