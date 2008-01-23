@@ -59,7 +59,7 @@
         <buttonup resource="Standard Button" />
 	<buttondown resource="Standard Button" />
         <attachpoints>
-            <attach point="ATTACH_RIGHT" />
+            <attach point="PROPORTIONAL_RIGHT" />
             <attach point="PROPORTIONAL_LEFT" />
             <attach point="PROPORTIONAL_TOP" />
             <attach point="ATTACH_BOTTOM" />
