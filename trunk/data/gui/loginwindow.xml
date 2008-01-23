@@ -3,7 +3,7 @@
     <widget name="LoginWindow" factory="pawsLoginWindow" 
             visible="yes" movable="no" resizable="no" resizetoscreen="yes" scalablefont="yes" >
         <frame x="0" y="0" width="800" height="600" border="no" />
-        <font name="/planeshift/data/ttf/cupandtalon.ttf" r="-1" g="-1" b="-1" size="18" resizetoscreen="yes" />
+        <font name="/planeshift/data/ttf/cupandtalon.ttf" r="180" g="180" b="180" size="18" resizetoscreen="yes" />
         <bgimage resource="Login Background" />
    
         <form>
@@ -18,7 +18,7 @@
 
         <widget name="version" factory="pawsTextBox">
             <frame x="5" y="5" width="240" height="20" border="no"/>
-            <font name="/planeshift/data/ttf/cupandtalon.ttf" r="-1" g="-1" b="-1" size="12" sr="0" sg="0" sb="0" shadow="yes" resizetoscreen="yes" /> 
+            <font name="/planeshift/data/ttf/cupandtalon.ttf" r="180" g="180" b="180" size="12" sr="0" sg="0" sb="0" shadow="yes" resizetoscreen="yes" /> 
             <bgimage resource="Standard Background" alpha="120" />
             <text string="" vertAdjust="CENTRE" />
         </widget>
@@ -26,14 +26,14 @@
         <!-- Title -->
         <widget name="label_login" factory="pawsTextBox">
             <frame x="230" y="10" width="330" height="40" border="no"/>
-            <font name="/planeshift/data/ttf/cupandtalon.ttf" r="-1" g="-1" b="-1" size="26" sr="0" sg="0" sb="0" shadow="yes" resizetoscreen="yes" />
+            <font name="/planeshift/data/ttf/cupandtalon.ttf" r="180" g="180" b="180" size="26" sr="0" sg="0" sb="0" shadow="yes" resizetoscreen="yes" />
             <text string="LOGIN"  horizAdjust="CENTRE" />
         </widget>
         
         <!-- Username -->
         <widget name="label_account" factory="pawsTextBox">	
             <frame x="320" y="210" width="140" height="30" border="no"/>
-            <font name="/planeshift/data/ttf/cupandtalon.ttf" r="-1" g="-1" b="-1" size="18" sr="0" sg="0" sb="0" shadow="yes" resizetoscreen="yes" />
+            <font name="/planeshift/data/ttf/cupandtalon.ttf" r="180" g="180" b="180" size="18" sr="0" sg="0" sb="0" shadow="yes" resizetoscreen="yes" />
             <text string="Account:" />    
         </widget>
 
@@ -45,7 +45,7 @@
         <!-- Password -->
         <widget name="label_password" factory="pawsTextBox">
             <frame x="320" y="318" width="140" height="30" border="no"/>
-            <font name="/planeshift/data/ttf/cupandtalon.ttf" r="-1" g="-1" b="-1" size="18" sr="0" sg="0" sb="0" shadow="yes" resizetoscreen="yes" />
+            <font name="/planeshift/data/ttf/cupandtalon.ttf" r="180" g="180" b="180" size="18" sr="0" sg="0" sb="0" shadow="yes" resizetoscreen="yes" />
             <text string="Password:"/>
         </widget>
 
@@ -63,7 +63,7 @@
         <!-- Connecting -->
         <widget name="connecting" factory="pawsTextBox" visible="yes">
             <frame x="130" y="545" width="540" height="30" border="no"/>
-            <font name="/planeshift/data/ttf/cupandtalon.ttf" size="16" r="-1" g="-1" b="-1" shadow="yes" resizetoscreen="yes" />
+            <font name="/planeshift/data/ttf/cupandtalon.ttf" size="16" r="180" g="180" b="180" shadow="yes" resizetoscreen="yes" />
             <bgimage resource="Standard Background" alpha="120" />
             <text string="New User? Register at http://laanx.fragnetics.com/register" horizAdjust="CENTRE" vertAdjust="CENTRE" />
         </widget>
@@ -71,7 +71,7 @@
          <!-- Server List -->
         <widget name="label" factory="pawsTextBox">
             <frame x="565" y="245" width="140" height="25" border="no"/>
-            <font name="/planeshift/data/ttf/cupandtalon.ttf" r="-1" g="-1" b="-1" size="18" shadow="yes" resizetoscreen="yes" />
+            <font name="/planeshift/data/ttf/cupandtalon.ttf" r="180" g="180" b="180" size="18" shadow="yes" resizetoscreen="yes" />
             <text string="Servers:" vertAdjust="CENTRE" />    
         </widget>
            
@@ -90,7 +90,7 @@
                 </column>
                 <column width="70" >
                     <widget name="ping" factory="pawsTextBox">
-                    <font name="/planeshift/data/ttf/cupandtalon.ttf" r="-1" g="-1" b="-1" size="12" resizetoscreen="yes" />
+                    <font name="/planeshift/data/ttf/cupandtalon.ttf" r="180" g="180" b="180" size="12" resizetoscreen="yes" />
                     <text string="" horizAdjust="RIGHT" vertAdjust="CENTRE" /> 
                     </widget>
                 </column>

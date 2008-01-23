@@ -14,14 +14,14 @@
     <!-- Title -->
     <widget name="label_login" factory="pawsTextBox">
         <frame x="200" y="10" width="400" height="40" border="no"/>
-        <font name="/planeshift/data/ttf/cupandtalon.ttf" r="-1" g="-1" b="-1" size="26" sr="0" sg="0" sb="0" shadow="yes" resizetoscreen="yes" />
+        <font name="/planeshift/data/ttf/cupandtalon.ttf" r="180" g="180" b="180" size="26" sr="0" sg="0" sb="0" shadow="yes" resizetoscreen="yes" />
         <text string="CHARACTER SELECT" horizAdjust="CENTRE"/>
     </widget>
 
     <!-- Server wait -->
     <widget name="wait_label" factory="pawsTextBox">
         <frame x="0" y="55" width="800" height="30" border="no"/>
-        <font name="/planeshift/data/ttf/cupandtalon.ttf" r="-1" g="-1" b="-1" size="16" sr="0" sg="0" sb="0" shadow="yes" resizetoscreen="yes" />
+        <font name="/planeshift/data/ttf/cupandtalon.ttf" r="180" g="180" b="180" size="16" sr="0" sg="0" sb="0" shadow="yes" resizetoscreen="yes" />
         <text string="Waiting on server data.." horizAdjust="CENTRE"/>
         </widget>
 
@@ -74,7 +74,7 @@
         <frame x="290" y="120" width="223" height="398" border="no"/>
         <mask resource="charborder"/>
         <map file="/planeshift/world/podium" sector="room"/>
-        <distance value="4"/>
+        <distance value="3.5"/>
     </widget>
 
     <!-- Join Game Button -->

@@ -10,7 +10,7 @@
         <!-- Title -->
         <widget name="label_charcreate" factory="pawsTextBox">	
             <frame x="175" y="10" width="450" height="40" border="no"/>
-			<font name="/planeshift/data/ttf/cupandtalon.ttf" r="-1" g="-1" b="-1" size="26" sr="0" sg="0" sb="0" shadow="yes" resizetoscreen="yes" />
+			<font name="/planeshift/data/ttf/cupandtalon.ttf" r="180" g="180" b="180" size="26" sr="0" sg="0" sb="0" shadow="yes" resizetoscreen="yes" />
             <text string="CHARACTER CREATION" horizAdjust="CENTRE" />    
         </widget>       
         
@@ -18,7 +18,7 @@
         <!-- Gender Label -->
         <widget name="label_gender" factory="pawsTextBox">
             <frame x="370" y="53" width="70" height="20" />
-	    <font name="/planeshift/data/ttf/cupandtalon.ttf" r="-1" g="-1" b="-1" size="17" shadow="yes" resizetoscreen="yes" />   
+	    <font name="/planeshift/data/ttf/cupandtalon.ttf" r="180" g="180" b="180" size="17" shadow="yes" resizetoscreen="yes" />   
             <text string="Gender:" />
         </widget>
         
@@ -42,7 +42,7 @@
         <!-- Race selection -->
         <widget name="RaceBox" factory="pawsRadioButtonGroup">
             <frame x ="50" y="116" width="200" height="340" border="no" />
-		<font name="/planeshift/data/ttf/cupandtalon.ttf" r="-1" g="-1" b="-1" size="15" resizetoscreen="yes" />
+		<font name="/planeshift/data/ttf/cupandtalon.ttf" r="180" g="180" b="180" size="15" resizetoscreen="yes" />
             <radio on="radioon2" off="radiooff2"/>
             
             <widget name="race3" factory="pawsRadioButton" id="3">
@@ -120,7 +120,7 @@
         <!-- Name entry -->
         <widget name="charname" factory="pawsTextBox">
             <frame x="518" y="156" width="180" height="30"/>
-	    <font name="/planeshift/data/ttf/cupandtalon.ttf" r="-1" g="-1" b="-1" size="17" shadow="yes" resizetoscreen="yes" />  
+	    <font name="/planeshift/data/ttf/cupandtalon.ttf" r="180" g="180" b="180" size="17" shadow="yes" resizetoscreen="yes" />  
             <text string="Character Name:" />
         </widget>
         
@@ -136,7 +136,7 @@
 
         <widget name="randomNameLabel" factory="pawsTextBox">
             <frame x="717" y="239" width="70" height="32"/>
-            <font name="/planeshift/data/ttf/cupandtalon.ttf" r="-1" g="-1" b="-1" size="12"  shadow="yes" resizetoscreen="yes" />  
+            <font name="/planeshift/data/ttf/cupandtalon.ttf" r="180" g="180" b="180" size="12"  shadow="yes" resizetoscreen="yes" />  
             <text string="<- Random"/>
         </widget>
        <widget name="randomName" factory="pawsButton" tooltip="Random name">

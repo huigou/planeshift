@@ -9,7 +9,7 @@
         <!-- Title -->
         <widget name="label_events" factory="pawsTextBox">	
             <frame x="230" y="10" width="350" height="40" border="no"/>
-            <font name="/planeshift/data/ttf/cupandtalon.ttf"r="-1" g="-1" b="-1" size="26" shadow="yes" resizetoscreen="yes" />
+            <font name="/planeshift/data/ttf/cupandtalon.ttf"r="180" g="180" b="180" size="26" shadow="yes" resizetoscreen="yes" />
             <text string="LIFE EVENTS" horizAdjust="CENTRE" />
         </widget>
         
@@ -38,13 +38,13 @@
         
         <widget name="EventDesc" factory="pawsMultiLineTextBox">
             <frame x="162" y="390" width="193" height="90" border="no" />
-            <font name="/planeshift/data/ttf/cupandtalon.ttf" r="-1" g="-1" b="-1" size="15" />
+            <font name="/planeshift/data/ttf/cupandtalon.ttf" r="180" g="180" b="180" size="15" />
             <text string="Description" />
         </widget>
         
         <widget name="SelEventDesc" factory="pawsMultiLineTextBox">
             <frame x="437" y="390" width="193" height="90" border="no" />
-            <font name="/planeshift/data/ttf/cupandtalon.ttf" r="-1" g="-1" b="-1" size="15" />
+            <font name="/planeshift/data/ttf/cupandtalon.ttf" r="180" g="180" b="180" size="15" />
             <text string="Description" />
         </widget>
         

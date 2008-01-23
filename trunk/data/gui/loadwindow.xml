@@ -3,12 +3,12 @@
     <widget name="LoadWindow" factory="pawsLoadWindow" 
             visible="yes" movable="no" resizable="no" resizetoscreen="yes" >
         <frame x="0" y="0" width="800" height="600" border="no" />
-        <font name="/planeshift/data/ttf/cupandtalon.ttf" r="-1" g="-1" b="-1" size="12" shadow="yes" resizetoscreen="yes" />
+        <font name="/planeshift/data/ttf/cupandtalon.ttf" r="180" g="180" b="180" size="12" shadow="yes" resizetoscreen="yes" />
         <bgimage resource="Loading Background" />
         
         <widget name="loadtext" factory="pawsMessageTextBox" >
             <frame x="30" y="160" width="295" height="120" border="no" />
-            <font name="/planeshift/data/ttf/cupandtalon.ttf" r="-1" g="-1" b="-1" size="10" shadow="yes" resizetoscreen="yes" />
+            <font name="/planeshift/data/ttf/cupandtalon.ttf" r="180" g="180" b="180" size="10" shadow="yes" resizetoscreen="yes" />
         </widget>
         <widget name="motd" factory="pawsMultiLineTextBox" >
             <frame x="30" y="280" width="295" height="80" border="no" />
