@@ -25,7 +25,7 @@
         </widget>
 
         <widget name="Chat Tabs" factory="pawsTabWindow">
-		<font name="/planeshift/data/ttf/LiberationMono-Regular.ttf" r="180" g="180" b="180" size="10" scalefont="no" />
+		<font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="10" scalefont="no" />
             <frame x="6" y="2" width="330" height="100" border="no" />
             <attachpoints>
                 <attach point="ATTACH_RIGHT" />
