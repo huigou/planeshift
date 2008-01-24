@@ -204,8 +204,6 @@ INSERT INTO common_strings VALUES("181","$F_head");
 INSERT INTO common_strings VALUES("182", "/planeshift/models/$F/$F_head.dds");
 INSERT INTO common_strings VALUES("183","$F_head_2");
 INSERT INTO common_strings VALUES("184", "/planeshift/models/$F/$F_head_2.dds");
-INSERT INTO common_strings VALUES("185","/this/art/things/item_01.dds");
-INSERT INTO common_strings VALUES("186","/this/art/things/rubycrystal");
 INSERT INTO common_strings VALUES("187","rogue");
 INSERT INTO common_strings VALUES("2701","Torso");
 INSERT INTO common_strings VALUES("2702","Arm");

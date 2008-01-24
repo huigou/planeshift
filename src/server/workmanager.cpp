@@ -3443,7 +3443,7 @@ void psWorkManager::StartLockpick(Client* client,psItem* item)
 
     if (item->GetIsUnpickable())
     {
-        psserver->SendSystemInfo(client->GetClientNum(),"This lock is impossible to open by lockpicking.");
+        psserver->SendSystemInfo(client->GetClientNum(),"This lock is impossible to %s by lockpicking.", item->GetIsLocked() ? "open" : "close");
         return;
     }
 
@@ -3485,18 +3485,30 @@ void psWorkManager::LockpickComplete(psWorkGameEvent* workEvent)
     psCharacter* character = workEvent->client->GetCharacterData();
     PSSKILL skill = workEvent->object->GetLockpickSkill();
 
-    // Check if the user has the right skills
-    if(character->GetSkills()->GetSkillRank(skill) >= workEvent->object->GetLockStrength())
+    // Check if not moved too far away from lock
+    // First check if lock (object such as box) is in not inventory
+    // For now, that is never the case, but I can imagine that changing
+    if ( (PSCHARACTER_SLOT_NONE == workEvent->object->GetLocInParent()) &&
+         (workEvent->client->GetActor()->RangeTo(workEvent->object->GetGemObject()) > RANGE_TO_USE) )
     {
-        bool locked = workEvent->object->GetIsLocked();
-        psserver->SendSystemInfo(workEvent->client->GetClientNum(),locked ? "You unlocked %s!" : "You locked %s!", workEvent->object->GetName());
-        workEvent->object->SetIsLocked(!locked);
-        workEvent->object->Save(false);
+        // Send denied message
+        psserver->SendSystemInfo(workEvent->client->GetClientNum(),"You failed your lockpicking attempt, because you moved away.");
     }
     else
     {
-        // Send denied message
-        psserver->SendSystemInfo(workEvent->client->GetClientNum(),"You failed your lockpicking attempt.");
+        // Check if the user has the right skills
+        if(character->GetSkills()->GetSkillRank(skill) >= workEvent->object->GetLockStrength())
+        {
+            bool locked = workEvent->object->GetIsLocked();
+            psserver->SendSystemInfo(workEvent->client->GetClientNum(),locked ? "You unlocked %s!" : "You locked %s!", workEvent->object->GetName());
+            workEvent->object->SetIsLocked(!locked);
+            workEvent->object->Save(false);
+        }
+        else
+        {
+            // Send denied message
+            psserver->SendSystemInfo(workEvent->client->GetClientNum(),"You failed your lockpicking attempt.");
+        }
     }
     workEvent->client->GetActor()->SetMode(PSCHARACTER_MODE_PEACE);
 }

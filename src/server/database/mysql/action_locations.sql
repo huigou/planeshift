@@ -32,3 +32,5 @@ INSERT INTO `action_locations` VALUES (8,0,'Test Game','NPCroom','Box10',0,4.2,0
 INSERT INTO `action_locations` VALUES (9,0,'The wall home','NPCroom1','_s_npcroom02',0,-64,0,-116,10,'SELECT','EXAMINE','<Examine><Entrance Type=\'ExitActionID\' /><Description>Way back home</Description></Examine>','Y');
 INSERT INTO `action_locations` VALUES (10,0,'ownedbox','NPCroom','smith_woodplank',0,0,0,0,5,'SELECT','EXAMINE','<Examine>\n<Container ID=\'82\'/>\n<Description>A Box owned by the merchant</Description>\n</Examine>','Y');
 INSERT INTO `action_locations` VALUES (11,0,'The door out','room','_s_sigil_02',0,-4,0.2,3.5,10,'SELECT','EXAMINE','<Examine><Entrance Type=\'ExitActionID\' /><Description>Way back home</Description></Examine>','Y');
+INSERT INTO `action_locations` VALUES (12,0,'Teleport to spawn','tutorial','house_tutorial06',0,0,0,0,50,'SELECT','SCRIPT','teleport_spawn','Y');
+
