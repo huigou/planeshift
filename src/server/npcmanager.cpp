@@ -1634,14 +1634,14 @@ void NPCManager::HandlePetCommand( MsgEntry * me )
             chardata = pet->GetCharacterData();
             prevFirstName = chardata->GetCharName();
             prevLastName = chardata->GetCharLastName();
-            if (firstName != prevFirstName && !psCharCreationManager::IsUnique( firstName ))
+            if ( firstName == prevFirstName && lastName == prevLastName )
             {
                 // no changes needed
                 psserver->SendSystemError( me->clientnum, "Your %s is already known with that that name!", typeStr );
                 return;
             }
             
-            if (!psCharCreationManager::IsUnique( firstName ))
+            if (firstName != prevFirstName && !psCharCreationManager::IsUnique( firstName ))
             {
                 psserver->SendSystemError( me->clientnum, "The name %s is not unique!", 
                                            firstName.GetDataSafe() );               
