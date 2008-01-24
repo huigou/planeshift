@@ -146,6 +146,19 @@ void pawsGmGUIWindow::HandleMessage ( MsgEntry* me )
 
         if (message.type == psGMGuiMessage::TYPE_PLAYERLIST)
             FillPlayerList( message );
+
+        if (message.type == psGMGuiMessage::TYPE_GETGMSETTINGS)
+        {
+            int gmSets = message.gmSettings;
+            bool isVisible = gmSets & 1;
+            bool isInvincible = gmSets & (1 << 1);
+            bool isViewAllObjects = gmSets & (1 << 2);
+            bool isNeverTired = gmSets & (1 << 3);
+            bool isQuestTester = gmSets & (1 << 4);
+            bool isInfiniteMana = gmSets & (1 << 5);
+            bool isFiniteInv = gmSets & (1 << 6);
+            bool isSafeFall = gmSets & (1 << 7);
+        }
         }
         break;
     case MSGTYPE_MAPACTION:
@@ -575,6 +588,9 @@ void pawsGmGUIWindow::QueryServer()
         {
             psGMGuiMessage queryMsg(0, NULL, psGMGuiMessage::TYPE_QUERYPLAYERLIST);
             msgqueue->SendMessage( queryMsg.msg );
+
+            psGMGuiMessage queryMsgSets(0, NULL, psGMGuiMessage::TYPE_GETGMSETTINGS);
+            msgqueue->SendMessage( queryMsgSets.msg );
 
             QueryActionLocations();
         }

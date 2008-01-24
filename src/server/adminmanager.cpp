@@ -1691,6 +1691,29 @@ void AdminManager::HandleGMGuiMessage(MsgEntry *me, psGMGuiMessage& msg,Client *
         else
             psserver->SendSystemError(me->clientnum, "You are not a GM.");
     }
+    else if (msg.type == psGMGuiMessage::TYPE_GETGMSETTINGS)
+    {
+        int gmSettings = 0;
+        if (client->GetActor()->GetVisibility())
+            gmSettings |= 1;
+        if (client->GetActor()->GetInvincibility())
+            gmSettings |= (1 << 1);
+        if (client->GetActor()->GetViewAllObjects())
+            gmSettings |= (1 << 2);
+        if (client->GetActor()->nevertired)
+            gmSettings |= (1 << 3);
+        if (client->GetActor()->questtester)
+            gmSettings |= (1 << 4);
+        if (client->GetActor()->infinitemana)
+            gmSettings |= (1 << 5);
+        if (client->GetActor()->GetFiniteInventory())
+            gmSettings |= (1 << 6);
+        if (client->GetActor()->safefall)
+            gmSettings |= (1 << 7);
+
+        psGMGuiMessage gmMsg(client->GetClientNum(), gmSettings);
+        gmMsg.SendMessage();
+    }
 }
 
 void AdminManager::CreateHuntLocation(MsgEntry* me,psAdminCmdMessage& msg, AdminCmdData& data,Client *client)

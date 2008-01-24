@@ -815,6 +815,22 @@ csString psPetitionRequestMessage::ToString(AccessPointers * /*access_ptrs*/)
 
 PSF_IMPLEMENT_MSG_FACTORY(psGMGuiMessage,MSGTYPE_GMGUI);
 
+psGMGuiMessage::psGMGuiMessage(uint32_t clientnum, int gmSets)
+{
+    msg = new MsgEntry(sizeof(gmSettings) + sizeof(type) + 1);
+    gmSettings = gmSets;
+
+    msg->SetType(MSGTYPE_GMGUI);
+    msg->clientnum = clientnum;
+
+    msg->Add(TYPE_GETGMSETTINGS);    
+    msg->Add(gmSettings);
+
+    valid=!(msg->overrun);
+    if (valid)
+        msg->ClipToCurrentSize();
+}
+
 psGMGuiMessage::psGMGuiMessage(uint32_t clientnum, csArray<PlayerInfo> *playerArray, int type)
 {
     size_t playerCount = (playerArray == NULL ? 0 : playerArray->GetSize());
@@ -823,6 +839,7 @@ psGMGuiMessage::psGMGuiMessage(uint32_t clientnum, csArray<PlayerInfo> *playerAr
     msg->SetType(MSGTYPE_GMGUI);
     msg->clientnum = clientnum;
 
+    msg->Add((int32_t)type);
     msg->Add((uint32_t)playerCount);
     for (size_t i=0; i<playerCount; i++)
     {
@@ -834,7 +851,6 @@ psGMGuiMessage::psGMGuiMessage(uint32_t clientnum, csArray<PlayerInfo> *playerAr
         msg->Add(playerInfo.guild.GetData());
         msg->Add(playerInfo.sector.GetData());
     }
-    msg->Add((int32_t)type);
 
     // Sets valid flag based on message overrun state
     valid=!(msg->overrun);
@@ -845,19 +861,25 @@ psGMGuiMessage::psGMGuiMessage(uint32_t clientnum, csArray<PlayerInfo> *playerAr
 
 psGMGuiMessage::psGMGuiMessage(MsgEntry *message)
 {
-    size_t playerCount = message->GetUInt32();
-    for (size_t i=0; i<playerCount; i++)
-    {
-        PlayerInfo playerInfo;
-        playerInfo.name = message->GetStr();
-        playerInfo.lastName = message->GetStr();
-        playerInfo.gender = message->GetInt32();
-        playerInfo.guild = message->GetStr();
-        playerInfo.sector = message->GetStr();
-
-        players.Push(playerInfo);
-    }
     type = message->GetInt32();
+
+    if (type == TYPE_GETGMSETTINGS)
+        gmSettings = message->GetInt32();
+    else
+    {
+        size_t playerCount = message->GetUInt32();
+        for (size_t i=0; i<playerCount; i++)
+        {
+            PlayerInfo playerInfo;
+            playerInfo.name = message->GetStr();
+            playerInfo.lastName = message->GetStr();
+            playerInfo.gender = message->GetInt32();
+            playerInfo.guild = message->GetStr();
+            playerInfo.sector = message->GetStr();
+
+            players.Push(playerInfo);
+        }
+    }
 
     // Sets valid flag based on message overrun state
     valid=!(message->overrun);
