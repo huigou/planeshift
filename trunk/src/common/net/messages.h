@@ -42,7 +42,7 @@ struct iEngine;
 
 // This holds the version number of the network code, remember to increase
 // this each time you do an update which breaks compatibility
-#define PS_NETVERSION   0x0084
+#define PS_NETVERSION   0x0085
 // Remember to bump the version in pscssetup.h, as well.
 
 // NPC Networking version is separate so we don't have to break compatibility
@@ -952,14 +952,17 @@ public:
       csString sector;
     };
 
+    int gmSettings;
     csArray<PlayerInfo> players;
     int type;
 
     enum {
         TYPE_QUERYPLAYERLIST,
-        TYPE_PLAYERLIST
+        TYPE_PLAYERLIST,
+        TYPE_GETGMSETTINGS
     };
 
+    psGMGuiMessage(uint32_t clientnum, int gmSets);
     psGMGuiMessage(uint32_t clientnum, csArray<PlayerInfo> *playerArray, int type);
     psGMGuiMessage(MsgEntry *message);
 
