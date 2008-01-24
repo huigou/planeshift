@@ -1,5 +1,6 @@
 *** 2008-01-23 by Roland Schulz
 - Even more GUI fixes by ThomPhoenix.
+- And another small help fix
 
 *** 2008-01-22 by Sasha Levin
 - Moved stamina calculation script initialisation out of the message loop

@@ -182,7 +182,7 @@ Uses the targeted item.</topic>
 
 Lists players currently online matching filter.  If no filter is specified, then all online players are listed.</topic>
     </branch>
-    <branch name="Combat &amp; Targeting Commands">
+    <branch name="Combat&amp;Target Commands">
 Commands used to manually control combat and the targeting system.  Attacking is normally done via the context menu or the info window's stance buttons.  Some commands like /cast and /target are useful for creating shortcuts to more easily perform certain actions.
         <topic name="/assist">/assist player
 
