@@ -2,21 +2,22 @@
 
 <widget name="OkWindow" factory="pawsOkBox" 
         visible="no" savepositions="no" movable="yes" 
-        resizable="no" >        
-    <frame x="0" y="0" width="512" height="240" border="no" />
+        resizable="no" >
+       
+    <frame x="0" y="0" width="644" height="300" border="no" />
     <bgimage resource="YesNo" alpha="0" />
     
         <form>
             <enter name="OkButton" />
         </form>
-    
+
     <widget name="Message Box" factory="pawsMultiLineTextBox">
-        <frame x="100" y="57" width="330" height="120" border="no" />
-       <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="200" g="200" b="200" size="12" />
+        <frame x="130" y="55" width="430" height="170" border="no" />
+       <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="200" g="200" b="200" size="10" />
     </widget>
 
     <widget name="OkButton" factory="pawsButton" id="-30">
-        <frame x="210" y="170" width="80" height="40" border="no"/>
+        <frame x="270" y="220" width="80" height="40" border="no"/>
         <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" size="25" />
     <label text="Ok" />
     </widget>

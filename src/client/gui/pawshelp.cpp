@@ -62,7 +62,7 @@ bool pawsHelp::PostSetup(void)
         return false;
     }
     AddChild(helpTree);
-    helpTree->SetRelativeFrame(37,29,GetActualWidth(198),GetActualHeight(224));
+    helpTree->SetRelativeFrame(27,29,GetActualWidth(198),GetActualHeight(224));
     helpTree->SetNotify(this);
     helpTree->SetAttachFlags(ATTACH_TOP | ATTACH_BOTTOM | ATTACH_LEFT);
     helpTree->SetScrollBars(false, true);
