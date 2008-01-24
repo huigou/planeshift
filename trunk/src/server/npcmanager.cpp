@@ -1637,7 +1637,7 @@ void NPCManager::HandlePetCommand( MsgEntry * me )
             if ( firstName == prevFirstName && lastName == prevLastName )
             {
                 // no changes needed
-                psserver->SendSystemError( me->clientnum, "Your %s is already known with that that name!", typeStr );
+                psserver->SendSystemError( me->clientnum, "Your %s is already known with that name!", typeStr );
                 return;
             }
             
