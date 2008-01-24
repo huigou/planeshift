@@ -1512,7 +1512,9 @@ void NPCManager::HandlePetCommand( MsgEntry * me )
                 if ( trg != NULL )
                 {
                     if( trg->GetCharacterData()->impervious_to_attack ||
-                        ( trg->GetClient() && trg->GetActorPtr()->GetInvincibility() ) )
+                      ( trg->GetClient() && trg->GetActorPtr()->GetInvincibility() ) ||
+                      ( trg == pet ) )
+
                     {
                         psserver->SendSystemInfo(me->clientnum,"Your familiar refuses.");
                     }
@@ -1632,7 +1634,7 @@ void NPCManager::HandlePetCommand( MsgEntry * me )
             chardata = pet->GetCharacterData();
             prevFirstName = chardata->GetCharName();
             prevLastName = chardata->GetCharLastName();
-            if ( firstName == prevFirstName && lastName == prevLastName )
+            if (firstName != prevFirstName && !psCharCreationManager::IsUnique( firstName ))
             {
                 // no changes needed
                 psserver->SendSystemError( me->clientnum, "Your %s is already known with that that name!", typeStr );
