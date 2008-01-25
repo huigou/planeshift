@@ -1,5 +1,5 @@
 *** 2008-01-24 by Roland Schulz
-- Fix for FS#840,790,787 and 834 by Vornne
+- Fix for FS#840,790,787,247 and 834 by Vornne
 
 *** 2008-01-24
 - Fix for FS#971, FS#972 by peeg.

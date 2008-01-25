@@ -471,7 +471,7 @@ Add to the key in hand the ability to lock targeted item:
 Remove from the key in hand the ability to lock targeted item:
 /key removelock
 
-Take the key in hand and make or unmake it into a skeleton key that will open any lock:
+Take the key in hand and make or unmake it into a skeleton key that will open any lock, if you have a security level greater than 'player':
 /key skel</topic>
         <topic name="/kick">/kick name reason
 
