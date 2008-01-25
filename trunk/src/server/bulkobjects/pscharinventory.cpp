@@ -943,10 +943,14 @@ psItem *psCharacterInventory::FindItemID(uint32 itemID)
 
 bool psCharacterInventory::HaveKeyForLock(uint32 lock)
 {
+    // Only let clients with a security level of GM_TESTER or greater use skeleton keys
+    bool isGM = (owner->GetActor() && owner->GetActor()->GetClient() &&
+                 owner->GetActor()->GetClient()->GetSecurityLevel() >= 10);
+
     // Inventory indexes start at 1.  0 is reserved for the "NULL" item.
     for (size_t i=1; i<inventory.GetSize(); i++)
     {
-        if (inventory[i].item->CanOpenLock(lock, false))
+        if (inventory[i].item->CanOpenLock(lock, isGM))
             return true;
     }
     return false;
