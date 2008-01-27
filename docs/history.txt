@@ -1,3 +1,7 @@
+*** 2008-01-27 by Anders Reggestad
+- Added posibility to set filter for chats. Using the client number.
+- Fixed npcclient printouts that path could not be found(FS#931) 
+
 *** 2008-01-24 by Roland Schulz
 - Fix for FS#840,790,787,247 and 834 by Vornne
 
