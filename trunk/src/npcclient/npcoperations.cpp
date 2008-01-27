@@ -1501,6 +1501,8 @@ bool WanderOperation::FindNextWaypoint(NPC *npc)
             // Check if we are on the waypoint, in that case find next
             if (active_wp->CheckWithin(npcclient->GetEngine(),current_pos,current_sector))
             {
+                npc->Printf(6, "Within waypoint %s",active_wp->GetName());
+                
                 if (FindNextWaypoint(npc))
                 {
                     return true;
@@ -1512,6 +1514,14 @@ bool WanderOperation::FindNextWaypoint(NPC *npc)
                 }
             } else
             {
+                if (!prior_wp)
+                {
+                    npc->Printf(7, "Make sure we have a previous wp.");
+                    prior_wp = active_wp;
+                    active_wp = next_wp;
+                    next_wp = NULL;
+                }
+
                 npc->Printf(6, "Active waypoint: %s at %s",active_wp->GetName(),
                             toString(active_wp->loc.pos,
                                      active_wp->loc.GetSector(npcclient->GetEngine())).GetDataSafe());
@@ -1627,7 +1637,7 @@ bool WanderOperation::CalculateWaypointList(NPC *npc)
     return true;
 }
 
-bool WanderOperation::StartMoveToWaypoint(NPC *npc,EventManager *eventmgr)
+bool WanderOperation::StartMoveToWaypoint(NPC *npc, EventManager *eventmgr)
 {
     // now calculate new destination from new active wp
     CalculateTargetPos(dest,dest_sector);
@@ -1637,8 +1647,8 @@ bool WanderOperation::StartMoveToWaypoint(NPC *npc,EventManager *eventmgr)
     
     if (!path)
     {
-        Error4("%s Could not find path between '%s' and '%s'",
-               npc->GetName(),
+        Error5("%s(%d) Could not find path between '%s' and '%s'",
+               npc->GetName(),npc->GetEntity()->GetID(),
                (prior_wp?prior_wp->GetName():""),
                (active_wp?active_wp->GetName():""));
         return false;
@@ -1675,7 +1685,9 @@ bool WanderOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
     // If interruped and not at interruped position we do the same
     // as we do when started.
 
+    prior_wp = NULL;
     active_wp = NULL;
+    next_wp = NULL;
 
     if (!CalculateWaypointList(npc))
     {

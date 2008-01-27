@@ -65,7 +65,7 @@ ChatManager::~ChatManager()
     psserver->GetEventManager()->Unsubscribe(this,MSGTYPE_CHAT);
 }
 
-void ChatManager::HandleMessage(MsgEntry *me,Client *client)
+void ChatManager::HandleMessage(MsgEntry *me, Client *client)
 {
     psChatMessage msg(me);
 
@@ -80,13 +80,15 @@ void ChatManager::HandleMessage(MsgEntry *me,Client *client)
 
     if (msg.iChatType != CHAT_TELL)
     {
-        Notify4(LOG_CHAT,
+        Debug4(LOG_CHAT, client->GetClientNum(),
                 "%s %s: %s\n", client->GetName(),
                 pType, (const char *) msg.sText);
     }
     else
-        Notify5(LOG_CHAT,"%s %s %s: %s\n", client->GetName(),
-                pType, (const char *)msg.sPerson,(const char *)msg.sText);
+    {
+        Debug5(LOG_CHAT,client->GetClientNum(), "%s %s %s: %s\n", client->GetName(),
+               pType, (const char *)msg.sPerson,(const char *)msg.sText);
+    }
 
     bool saveFlood = true;
 
@@ -376,14 +378,14 @@ void ChatManager::SendGroup(Client * client, psChatMessage& msg)
 
 void ChatManager::SendTell(psChatMessage& msg, const char* who,Client *client,Client *p)
 {
-    Debug1(LOG_CHAT,client->GetClientNum(),"SendTell!\n");
+    Debug2(LOG_CHAT, client->GetClientNum(), "SendTell: %s!", msg.sText.GetDataSafe());
 
     // Sanity check that we are sending to correct clientnum!
     csString targetName = msg.sPerson;
     NormalizeCharacterName(targetName);
     CS_ASSERT(strcasecmp(p->GetName(), targetName) == 0);
 
-      // Create a new message and send it to that person if found
+    // Create a new message and send it to that person if found
     psChatMessage cmsg(p->GetClientNum(), who, 0, msg.sText, msg.iChatType, msg.translate);
     cmsg.SendMessage();
 

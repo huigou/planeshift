@@ -413,7 +413,9 @@ void NPCManager::HandleDamageEvent(MsgEntry *me)
 
     // NPC's need to know they were hit using a Perception
     if (evt.attacker!=NULL  &&  evt.target->GetNPCPtr()) // if npc damaged
-        QueueDamagePerception(evt.attacker,evt.target->GetNPCPtr(),evt.damage);
+    {
+        QueueDamagePerception(evt.attacker, evt.target->GetNPCPtr(), evt.damage);
+    }
 }
 
 void NPCManager::HandleDeathEvent(MsgEntry *me)
@@ -1391,7 +1393,7 @@ void NPCManager::HandlePetCommand( MsgEntry * me )
             // Check for an existing session
             if ( !session )
             {
-                CPrintf(CON_NOTIFY,"Cannot locate PetSession for owner %s.\n",pet->GetName(),owner->GetName() );
+                CPrintf(CON_NOTIFY, "Cannot locate PetSession for owner %s.\n", pet->GetName(), owner->GetName() );
             }
             else
             {
@@ -1400,7 +1402,7 @@ void NPCManager::HandlePetCommand( MsgEntry * me )
 
             psserver->CharacterLoader.SaveCharacterData( pet->GetCharacterData(), pet, true );
 
-            CPrintf(CON_NOTIFY,"NPCManager Removing familiar %s from owner %s.\n",pet->GetName(),owner->GetName() );
+            CPrintf(CON_NOTIFY, "NPCManager Removing familiar %s from owner %s.\n", pet->GetName(), owner->GetName() );
             owner->SetFamiliar( NULL );
             EntityManager::GetSingleton().RemoveActor( pet );
         }
@@ -1408,11 +1410,11 @@ void NPCManager::HandlePetCommand( MsgEntry * me )
         {
             if ( owner->GetCharacterData()->familiar_id )
             {
-                psserver->SendSystemInfo(me->clientnum,"Your pet has already returned to the netherworld.");
+                psserver->SendSystemInfo(me->clientnum, "Your pet has already returned to the netherworld.");
             }
             else
             {
-                psserver->SendSystemInfo(me->clientnum,"You have no familiar to command.");
+                psserver->SendSystemInfo(me->clientnum, "You have no familiar to command.");
             }
             return;
         }
@@ -1426,7 +1428,7 @@ void NPCManager::HandlePetCommand( MsgEntry * me )
             
         if ( owner->GetFamiliar() )
         {
-            psserver->SendSystemInfo(me->clientnum,"Your familiar has already been summoned.");
+            psserver->SendSystemInfo(me->clientnum, "Your familiar has already been summoned.");
             return;
         }
 
@@ -1530,13 +1532,13 @@ void NPCManager::HandlePetCommand( MsgEntry * me )
                 }
                 else
                 {
-                    psserver->SendSystemInfo(me->clientnum,"Your %s needs a target to attack.", typeStr);
+                    psserver->SendSystemInfo(me->clientnum, "Your %s needs a target to attack.", typeStr);
                 }
             }
         }
         else
         {
-            psserver->SendSystemInfo(me->clientnum,"You have no %s to command", typeStr);
+            psserver->SendSystemInfo(me->clientnum, "You have no %s to command", typeStr);
             return;
         }
         break;
@@ -1550,7 +1552,7 @@ void NPCManager::HandlePetCommand( MsgEntry * me )
         }
         else
         {
-            psserver->SendSystemInfo(me->clientnum,"You have no %s to command", typeStr);
+            psserver->SendSystemInfo(me->clientnum, "You have no %s to command", typeStr);
             return;
         }
         break;
@@ -1564,7 +1566,7 @@ void NPCManager::HandlePetCommand( MsgEntry * me )
         }
         else
         {
-            psserver->SendSystemInfo(me->clientnum,"You have no %s to command",typeStr);
+            psserver->SendSystemInfo(me->clientnum, "You have no %s to command",typeStr);
             return;
         }
         break;
@@ -1578,7 +1580,7 @@ void NPCManager::HandlePetCommand( MsgEntry * me )
         }
         else
         {
-            psserver->SendSystemInfo(me->clientnum,"You have no %s to command",typeStr);
+            psserver->SendSystemInfo(me->clientnum, "You have no %s to command",typeStr);
             return;
         }
         break;
