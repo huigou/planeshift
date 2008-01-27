@@ -2100,7 +2100,7 @@ bool psWorkManager::LoadLocalVars(Client* client)
 
 
     // Setup security check
-    secure = (client->GetSecurityLevel() > 29 ) ? true : false;
+    secure = (client->GetSecurityLevel() > 20 ) ? true : false;
 
     // Setup mode string pointer
     preworkModeString = owner->GetModeStr();
