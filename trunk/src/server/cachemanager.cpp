@@ -848,6 +848,8 @@ bool CacheManager::PreloadTradeTransformations()
         else
             delete tran;
     }
+
+    Notify2( LOG_STARTUP, "%lu Trade Transformations Loaded", result.Count() );
     return true;
 }
 
@@ -910,6 +912,8 @@ bool CacheManager::PreloadUniqueTradeTransformations()
         // Add hash
         tradeTransUnique_IDHash.Put(currentID,newArray);
     }
+
+    Notify2( LOG_STARTUP, "%lu Unique Trade Transformations Loaded", result.Count() );
     return true;
 }
 
@@ -983,6 +987,8 @@ bool CacheManager::PreloadTradePatterns()
         }
         tradePatterns_IDHash.Put(newPattern->GetDesignItemId(),newPattern);
     }
+
+    Notify2( LOG_STARTUP, "%lu Trade Patterns Loaded", result.Count() );
     return true;
 }
 
@@ -1009,8 +1015,9 @@ bool CacheManager::PreloadCraftMessages()
         // Get the design item that goes with the pattern
         int currentID = result[currentPattern].GetInt("id");
         uint32 designItemID = result[currentPattern].GetInt("designitem_id");
+        int currentGroupID = result[currentPattern].GetInt("group_id");
 
-        // Preload the combination craft string
+        // Preload the combination craft string for current pattern
         csPDelArray<CombinationConstruction>* combArray = FindCombinationsList(currentID);
         if (combArray)
         {
@@ -1024,6 +1031,53 @@ bool CacheManager::PreloadCraftMessages()
             for (size_t i=0; i<combArray->GetSize(); i++)
             {
                 uint32 resultID = combArray->Get(i)->resultItem;
+                csPDelArray<psTradeTransformations>* transArray = FindTransformationsList(currentID, resultID);
+                if (!transArray) {
+                    Error3("Can not find any trasformation data for pattern %d and result %u ",currentID, resultID);
+                    return false;
+                }
+                for (size_t j=0; j<transArray->GetSize(); j++)
+                {
+                    psTradeTransformations* trans = transArray->Get(j);
+                    csArray<psTradeProcesses*>* procArray = GetTradeProcessesByID(trans->GetProcessId());
+
+                    // If no process array just continue on
+                    if (!procArray)
+                    {
+                        continue;
+                    }
+
+                    // Get the process array
+                    for (size_t i=0; i<procArray->GetSize(); i++)
+                    {
+                        psTradeProcesses* proc = procArray->Get(i);
+                        CraftSkills* craftSkill = new CraftSkills;
+
+                        craftSkill->priSkillId = proc->GetPrimarySkillId();
+                        craftSkill->minPriSkill = proc->GetMinPrimarySkill();
+                        craftSkill->secSkillId = proc->GetSecondarySkillId();
+                        craftSkill->minSecSkill = proc->GetMinSecondarySkill();
+                        craftArray->Push(craftSkill);
+                    }
+                }
+            }
+            tradeCraftComboInfo_IDHash.Put(designItemID,combInfo);
+        }
+
+        // Preload the combination craft string for current group pattern
+        csPDelArray<CombinationConstruction>* combGroupArray = FindCombinationsList(currentGroupID);
+        if (combGroupArray)
+        {
+            // Get the combination craft info string
+            CraftComboInfo* combInfo = new CraftComboInfo;
+            csArray<CraftSkills*>* craftArray = new csArray<CraftSkills*>;
+            combInfo->skillArray = craftArray;
+            combInfo->craftCombDescription = CreateComboCraftDescription(combGroupArray);
+
+            // Get the skills array from the transformations
+            for (size_t i=0; i<combGroupArray->GetSize(); i++)
+            {
+                uint32 resultID = combGroupArray->Get(i)->resultItem;
                 csPDelArray<psTradeTransformations>* transArray = FindTransformationsList(currentID, resultID);
                 if (!transArray) {
                     Error3("Can't find any data for trasformation %d and result %d ",currentID, resultID);
@@ -1066,7 +1120,7 @@ bool CacheManager::PreloadCraftMessages()
         }
 
         // Get all the transforms for that pattern
-        query.Format( "select * from trade_transformations where pattern_id =%d order by item_id", currentID );
+        query.Format( "select * from trade_transformations where pattern_id=%d order by process_id", currentID );
         Result result (db->Select( query ) );
         if (!result.IsValid())
         {
@@ -1081,7 +1135,7 @@ bool CacheManager::PreloadCraftMessages()
             // Load the transformation
             if (!tran->Load(result[transrow]))
             {
-                Error2("No data in trade_transformations for pattern %d", currentID);
+                Error2("Error loading trade_transformations for pattern %d", currentID);
                 delete tran;
                 return false;
             }
@@ -1089,6 +1143,53 @@ bool CacheManager::PreloadCraftMessages()
             // Load processes that goes with transformation
             uint32 pid = result[transrow].GetUInt32("process_id");
             csArray<psTradeProcesses*>* procArray = GetTradeProcessesByID(pid);
+
+            // If no process array just continue on
+            if (!procArray)
+            {
+                continue;
+            }
+
+            // Get the process array
+            for (size_t i=0; i<procArray->GetSize(); i++)
+            {
+                psTradeProcesses* proc = procArray->Get(i);
+                craftInfo = new CraftTransInfo;
+
+                // Load up process information
+                craftInfo->priSkillId = proc->GetPrimarySkillId();
+                craftInfo->minPriSkill = proc->GetMinPrimarySkill();
+                craftInfo->secSkillId = proc->GetSecondarySkillId();
+                craftInfo->minSecSkill = proc->GetMinSecondarySkill();
+                craftInfo->craftStepDescription = CreateTransCraftDescription(tran,proc);
+                newArray->Push(craftInfo);
+            }
+        }
+
+        // Get all the transforms for that group pattern
+        query.Format( "select * from trade_transformations where pattern_id=%d order by process_id", currentGroupID );
+        Result groupResult (db->Select( query ) );
+        if (!groupResult.IsValid())
+        {
+            Error2("No data in trade_transformations for group pattern %d", currentGroupID);
+            delete tran;
+            return false;
+        }
+
+        // Create craft info for each transform
+        for (int transrow=0; transrow<(int)groupResult.Count(); transrow++)
+        {
+            // Load the transformation
+            if (!tran->Load(groupResult[transrow]))
+            {
+                Error2("Error loading trade_transformations for group pattern %d", currentGroupID);
+                delete tran;
+                return false;
+            }
+
+            // Load processes that goes with transformation
+            int32 pid = groupResult[transrow].GetUInt32("process_id");
+             csArray<psTradeProcesses*>* procArray = GetTradeProcessesByID(pid);
 
             // If no process array just continue on
             if (!procArray)
@@ -1180,10 +1281,13 @@ csString CacheManager::CreateTransCraftDescription(psTradeTransformations* tran,
             return desc;
         }
         csString temp;
-        temp.Format(" with a %s", toolStats->GetName());
+        temp.Format(" with a %s.\n", toolStats->GetName());
         desc.Append(temp);
     }
-
+    else
+    {
+        desc.Append(".\n");
+    }
     return desc;
 }
 
