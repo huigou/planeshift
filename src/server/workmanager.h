@@ -424,13 +424,14 @@ private:
     psItem* workItem;               ///< The current work item that is in use ( example, ore furnace )
     psItem* autoItem;               ///< The current item that is being transformed by auto-transformation container
     psCharacter *owner;             ///< The character data of the current character being used. 
-    uint32 patternId;                  ///< Current pattern ID
-    uint32 groupPatternId;             ///< Current group pattern ID
-    float patternKFactor;            ///< Pattern factor that's part of quality calculation
-    float currentQuality;            ///< Current result item quality
-    psTradeTransformations* trans;    ///< Current work transformation
-    psTradeProcesses* process;       ///< Current work process
-    const char* preworkModeString;        ///< Mode string prior to work
+    uint32 patternId;               ///< Current pattern ID
+    uint32 groupPatternId;          ///< Current group pattern ID
+    float patternKFactor;           ///< Pattern factor that's part of quality calculation
+    float currentQuality;           ///< Current result item quality
+    psTradeTransformations* trans;  ///< Current work transformation
+    psTradeProcesses* process;      ///< Current work process
+    const char* preworkModeString;  ///< Mode string prior to work
+    bool secure;                    ///< Cleint reached required security level
 };
 
 
