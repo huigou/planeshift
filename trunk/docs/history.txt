@@ -1,3 +1,10 @@
+*** 2008-01-27 by Thomas Towey
+- Added craft group trasforms to craft books.
+- Added crafting messages to allow better identification of data problems.
+- Fixed problem where sometimes when items are comsumed by auto transformation container user is not notified.
+- Fixed problem where garbage items are not considered in a pattern group.
+- Added additional bonus quality points for craft steps with secondary skills.
+
 *** 2008-01-27 by Anders Reggestad
 - Added posibility to set filter for chats. Using the client number.
 - Fixed npcclient printouts that path could not be found(FS#931) 
