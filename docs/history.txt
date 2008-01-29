@@ -1,5 +1,6 @@
 *** 2008-01-28 by Roland Schulz
 - gui fixes by Caarrie and ThomPhoenix
+- add gm flags to pawsGmGUIWindow so they can be displayed
 
 *** 2008-01-27 by Thomas Towey
 - Added craft group trasforms to craft books.
