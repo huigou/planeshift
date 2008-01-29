@@ -3,33 +3,33 @@
     <widget name="Childhood" factory="pawsChildhoodWindow" 
             visible="no" movable="no" resizable="no" resizetoscreen="yes" >
         <frame x="0" y="0" width="800" height="600" border="no" />
-        <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" size="15" resizetoscreen="yes" />
+	<font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" sr="0" sg="0" sb="0" shadow="yes" size="15" resizetoscreen="yes" />
         <bgimage resource="Childhood Background" />
                                
         <!-- Title -->
         <widget name="label_childhood" factory="pawsTextBox">	
             <frame x="230" y="10" width="350" height="40" border="no"/>
-            <font name="/planeshift/data/ttf/cupandtalon.ttf" r="180" g="180" b="180" size="26" shadow="yes" resizetoscreen="yes" />
+	    <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" sr="0" sg="0" sb="0" shadow="yes" size="26" resizetoscreen="yes" />
             <text string="CHILDHOOD" horizAdjust="CENTRE" />    
         </widget>       
         
         <!-- CP -->
         <widget name="CP" factory="pawsTextBox">
             <frame x="695" y="133" width="70" height="30" border="no" />
-            <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" size="15" sr="0" sg="0" sb="0" shadow="yes" resizetoscreen="yes" />
+	    <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" sr="0" sg="0" sb="0" shadow="yes" size="15" resizetoscreen="yes" />
             <text string="CP: 0" horizAdjust="CENTRE" />
         </widget> 
               
         <!-- Birth Event -->
         <widget name="text" factory="pawsTextBox" >
             <frame x="204" y="122" width="110" height="30" />
-            <font name="/planeshift/data/ttf/cupandtalon.ttf" r="180" g="180" b="180" size="15" shadow="yes" resizetoscreen="yes" />
+	    <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" sr="0" sg="0" sb="0" shadow="yes" size="15" resizetoscreen="yes" />
             <text string="Birth Event:" horizAdjust="CENTRE" />
         </widget>
         
         <widget name="bevent" factory="pawsListBox" id="1" >
             <frame x="180" y="138" width="162" height="96" border="no" />
-            <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" size="12" resizetoscreen="yes" />
+	    <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" sr="0" sg="0" sb="0" shadow="yes" size="10" resizetoscreen="yes" />
             <scrollbar arrowup="Up Arrow" arrowdown="Down Arrow" arrowsize="8" width="15"  border="no"/>
             <columns height="19">
                 <column width="148" >
@@ -40,20 +40,20 @@
 
         <widget name="bdesc" factory="pawsMultiLineTextBox"  >
             <frame x="380" y="135" width="290" height="100" border="no" />
-            <font name="/planeshift/data/ttf/cupandtalon.ttf" r="180" g="180" b="180" size="16" />
+	    <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" sr="0" sg="0" sb="0" shadow="yes" size="16" />
             <text string="Select event that happend on your birthday" />
         </widget>
 
         <!-- For Childhood activity -->    
         <widget name="text" factory="pawsTextBox" >
             <frame x="204" y="244" width="110" height="30" />
-            <font name="/planeshift/data/ttf/cupandtalon.ttf" r="180" g="180" b="180" size="15" shadow="yes" resizetoscreen="yes" />
+	    <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" sr="0" sg="0" sb="0" shadow="yes" size="15" resizetoscreen="yes" />
             <text string="Activity:" horizAdjust="CENTRE" />
         </widget>
                              
         <widget name="activity" factory="pawsListBox" id="2" >
             <frame x="181" y="263" width="165" height="91" border="no" />
-            <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" size="10" resizetoscreen="yes" />
+	    <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" sr="0" sg="0" sb="0" shadow="yes" size="10" resizetoscreen="yes" />
             <scrollbar arrowup="Up Arrow" arrowdown="Down Arrow" arrowsize="8" width="15"  border="no"/>
             <columns height="15">
                 <column width="151" >
@@ -63,20 +63,20 @@
         </widget>
         <widget name="adesc" factory="pawsMultiLineTextBox"  >
             <frame x="380" y="259" width="290" height="100" border="no" />
-            <font name="/planeshift/data/ttf/cupandtalon.ttf" r="180" g="180" b="180" size="16" />
+	    <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" sr="0" sg="0" sb="0" shadow="yes" size="16" />
             <text string="Select your childhood game" />
         </widget>
 
         <!-- For house -->
         <widget name="text" factory="pawsTextBox" >
             <frame x="204" y="373" width="110" height="30" />
-            <font name="/planeshift/data/ttf/cupandtalon.ttf" r="180" g="180" b="180" size="15" shadow="yes" resizetoscreen="yes" />
+	    <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" sr="0" sg="0" sb="0" shadow="yes" size="15" resizetoscreen="yes" />
             <text string="House:" horizAdjust="CENTRE" />
         </widget>
 
         <widget name="house" factory="pawsListBox" id="3">
             <frame x="182" y="392" width="167" height="91" border="no" />
-            <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" size="10" resizetoscreen="yes" />
+	    <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" sr="0" sg="0" sb="0" shadow="yes" size="10" resizetoscreen="yes" />
             <scrollbar arrowup="Up Arrow" arrowdown="Down Arrow" arrowsize="8" width="15"  border="no"/>
             <columns height="15">
                 <column width="153" >
@@ -87,27 +87,27 @@
         
         <widget name="hdesc" factory="pawsMultiLineTextBox"  >
             <frame x="380" y="388" width="290" height="100" border="no" />
-            <font name="/planeshift/data/ttf/cupandtalon.ttf" r="180" g="180" b="180" size="16" />
+	    <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" sr="0" sg="0" sb="0" shadow="yes" size="16" />
             <text string="Select your childhood home" />
         </widget> 
 
         <!-- Randomize button -->   
         <widget name="randomize" factory="pawsButton">
             <frame x="693" y="210" width="75" height="30" border="no" />
-            <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" size="13" sr="0" sg="0" sb="0" shadow="yes" resizetoscreen="yes" />
+	    <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" sr="0" sg="0" sb="0" shadow="yes" size="13"  resizetoscreen="yes" />
             <label text="Randomize"/>
         </widget>
         
         <!-- Navigation Buttons -->
         <widget name="BackButton" factory="pawsButton" id="6000">
             <frame x="30" y="503" width="80" height="50" border="no" />
-            <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" size="28" sr="0" sg="0" sb="0" shadow="yes" resizetoscreen="yes" />
+	    <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" sr="0" sg="0" sb="0" shadow="yes" size="28" resizetoscreen="yes" />
             <label text="Prev"/>
         </widget>
 
         <widget name="NextButton" factory="pawsButton" id="5000">
             <frame x="699" y="516" width="80" height="55" border="no" />
-            <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" size="28" sr="0" sg="0" sb="0" shadow="yes" resizetoscreen="yes" />
+	    <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" sr="0" sg="0" sb="0" shadow="yes" size="28" resizetoscreen="yes" />
             <label text="Next"/>
         </widget>
         
