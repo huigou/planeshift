@@ -29,6 +29,15 @@
 
 class pawsGmGUIWindow : public pawsWidget, public psCmdBase, public iOnStringEnteredAction
 {
+    bool isVisible;
+    bool isInvincible;
+    bool isViewAllObjects;
+    bool isNeverTired;
+    bool isQuestTester;
+    bool isInfiniteMana;
+    bool isFiniteInv;
+    bool isSafeFall;
+
 public:
     pawsGmGUIWindow();
 

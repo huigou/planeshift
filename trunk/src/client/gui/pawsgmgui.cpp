@@ -73,6 +73,14 @@ pawsGmGUIWindow::pawsGmGUIWindow()
     cmdsource = psengine->GetCmdHandler();
     systemText = (pawsMessageTextBox*)PawsManager::GetSingleton().FindWidget("SystemText");
     actionXML = "";
+    isVisible = true;
+    isInvincible = false;
+    isViewAllObjects = false;
+    isNeverTired = false;
+    isQuestTester = false;
+    isInfiniteMana = false;
+    isFiniteInv = true;
+    isSafeFall = false;
 }
 
 pawsGmGUIWindow::~pawsGmGUIWindow()
@@ -150,14 +158,14 @@ void pawsGmGUIWindow::HandleMessage ( MsgEntry* me )
         if (message.type == psGMGuiMessage::TYPE_GETGMSETTINGS)
         {
             int gmSets = message.gmSettings;
-            bool isVisible = gmSets & 1;
-            bool isInvincible = gmSets & (1 << 1);
-            bool isViewAllObjects = gmSets & (1 << 2);
-            bool isNeverTired = gmSets & (1 << 3);
-            bool isQuestTester = gmSets & (1 << 4);
-            bool isInfiniteMana = gmSets & (1 << 5);
-            bool isFiniteInv = gmSets & (1 << 6);
-            bool isSafeFall = gmSets & (1 << 7);
+            isVisible = gmSets & 1;
+            isInvincible = gmSets & (1 << 1);
+            isViewAllObjects = gmSets & (1 << 2);
+            isNeverTired = gmSets & (1 << 3);
+            isQuestTester = gmSets & (1 << 4);
+            isInfiniteMana = gmSets & (1 << 5);
+            isFiniteInv = gmSets & (1 << 6);
+            isSafeFall = gmSets & (1 << 7);
         }
         }
         break;
