@@ -157,7 +157,7 @@
 
 
    <!-- Fade Button-->
-    <widget name="FadeButton" factory="pawsButton" toggle="no"  shadows="no" toggle="no">
+    <widget name="FadeButton" factory="pawsButton" shadows="no" toggle="no">
         <frame x="130" y="69" width="10" height="10" border="no" />
         <buttonup resource="radiooff" />
         <buttondown resource="radioon" />
@@ -194,7 +194,7 @@
     </widget>
 
    <!-- Font Scale Button-->
-    <widget name="FontButton" factory="pawsButton" toggle="no"  shadows="no" toggle="no">
+    <widget name="FontButton" factory="pawsButton" shadows="no" toggle="no">
         <frame x="130" y="86" width="10" height="10" border="no" />
         <buttonup resource="radiooff" />
         <buttondown resource="radioon" />
