@@ -1,3 +1,6 @@
+*** 2008-01-28 by Roland Schulz
+- gui fixes by Caarrie and ThomPhoenix
+
 *** 2008-01-27 by Thomas Towey
 - Added craft group trasforms to craft books.
 - Added crafting messages to allow better identification of data problems.

@@ -3,33 +3,33 @@
     <widget name="LifeEvents" factory="pawsLifeEventWindow" 
             visible="no" movable="no" resizable="no" resizetoscreen="yes" >
         <frame x="0" y="0" width="800" height="600" border="no" />
-        <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" size="15" resizetoscreen="yes" />
+	<font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" sr="0" sg="0" sb="0" shadow="yes" size="15" resizetoscreen="yes" />
         <bgimage resource="Lifeevent Background" />
         
         <!-- Title -->
         <widget name="label_events" factory="pawsTextBox">	
             <frame x="230" y="10" width="350" height="40" border="no"/>
-            <font name="/planeshift/data/ttf/cupandtalon.ttf"r="180" g="180" b="180" size="26" shadow="yes" resizetoscreen="yes" />
+	    <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" sr="0" sg="0" sb="0" shadow="yes" size="26"  resizetoscreen="yes" />
             <text string="LIFE EVENTS" horizAdjust="CENTRE" />
         </widget>
         
         <!-- CP -->
         <widget name="CP" factory="pawsTextBox">
             <frame x="695" y="133" width="70" height="30" border="no" />
-            <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" size="15" sr="0" sg="0" sb="0" shadow="yes" resizetoscreen="yes" />
+	    <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" sr="0" sg="0" sb="0" shadow="yes" size="15"  resizetoscreen="yes" />
             <text string="CP: 0" horizAdjust="CENTRE" />
         </widget> 
         
         <!-- Randomize button -->
         <widget name="randomize" factory="pawsButton">
             <frame x="693" y="210" width="75" height="30" border="no" />
-            <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" size="13" sr="0" sg="0" sb="0" shadow="yes" resizetoscreen="yes" />
+	    <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" sr="0" sg="0" sb="0" shadow="yes" size="13" resizetoscreen="yes" />
             <label text="Randomize"/>
         </widget>
         
         <widget name="Life Event" factory="pawsSelectorBox" >
             <frame x="160" y="127" width="466" height="210" border="no" />
-            <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" size="10" resizetoscreen="yes" />
+	    <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" sr="0" sg="0" sb="0" shadow="yes" size="10" resizetoscreen="yes" />
             <available width="200" rowheight="14" />
             <selected width="210" rowheight="14" />
             <addbutton x="220" y="85" />
@@ -38,26 +38,26 @@
         
         <widget name="EventDesc" factory="pawsMultiLineTextBox">
             <frame x="162" y="390" width="193" height="90" border="no" />
-            <font name="/planeshift/data/ttf/cupandtalon.ttf" r="180" g="180" b="180" size="15" />
+	    <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" sr="0" sg="0" sb="0" shadow="yes" size="15" />
             <text string="Description" />
         </widget>
         
         <widget name="SelEventDesc" factory="pawsMultiLineTextBox">
             <frame x="437" y="390" width="193" height="90" border="no" />
-            <font name="/planeshift/data/ttf/cupandtalon.ttf" r="180" g="180" b="180" size="15" />
+	    <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" sr="0" sg="0" sb="0" shadow="yes" size="15" />
             <text string="Description" />
         </widget>
         
         <!-- Navigation Buttons -->
         <widget name="BackButton" factory="pawsButton" id="6000">
             <frame x="30" y="503" width="80" height="50" border="no" />
-            <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" size="28" sr="0" sg="0" sb="0" shadow="yes" resizetoscreen="yes" />
+	    <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" sr="0" sg="0" sb="0" shadow="yes" size="28" resizetoscreen="yes" />
             <label text="Prev"/>
         </widget>
 
         <widget name="NextButton" factory="pawsButton" id="5000">
             <frame x="699" y="516" width="80" height="55" border="no" />
-            <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" size="28" sr="0" sg="0" sb="0" shadow="yes" resizetoscreen="yes" />
+	    <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" sr="0" sg="0" sb="0" shadow="yes" size="28" resizetoscreen="yes" />
             <label text="Next"/>
         </widget>
 

@@ -1,9 +1,10 @@
 <widget_description>
-    <widget name="ChatWindow" factory="pawsChatWindow" visible="yes" savepositions="yes" movable="yes" resizable="yes" keepaspect="no" configurable="yes">
+    <widget name="ChatWindow" factory="pawsChatWindow" visible="yes" savepositions="yes" movable="yes" resizable="yes" keepaspect="yes" configurable="yes">
             <!-- ContextMenu="data/gui/chatmenu.xml" disabled until its finished -->
         <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="8" />
         <frame x="360" y="300" width="330" height="122" border="no" />
         <minframe width="475" height="190" />
+	<maxframe width="660" height="240" />
         <bgimage resource="Chat Background" alpha="128" />
         <title resource="Nanaki Title Bar" text="Communication" align="left" close_button="yes"/>
         <childborders>
