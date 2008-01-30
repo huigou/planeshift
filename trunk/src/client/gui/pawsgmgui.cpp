@@ -159,13 +159,13 @@ void pawsGmGUIWindow::HandleMessage ( MsgEntry* me )
         {
             int gmSets = message.gmSettings;
             isVisible = gmSets & 1;
-            isInvincible = gmSets & (1 << 1);
-            isViewAllObjects = gmSets & (1 << 2);
-            isNeverTired = gmSets & (1 << 3);
-            isQuestTester = gmSets & (1 << 4);
-            isInfiniteMana = gmSets & (1 << 5);
-            isFiniteInv = gmSets & (1 << 6);
-            isSafeFall = gmSets & (1 << 7);
+            isInvincible = ( gmSets & (1 << 1) ? true : false);
+	     isViewAllObjects = ( gmSets & (1 << 2) ? true : false);
+            isNeverTired = ( gmSets & (1 << 3) ? true : false);
+            isQuestTester = ( gmSets & (1 << 4) ? true : false);
+            isInfiniteMana = ( gmSets & (1 << 5) ? true : false);
+            isFiniteInv = ( gmSets & (1 << 6) ? true : false);
+            isSafeFall = ( gmSets & (1 << 7) ? true : false);
         }
         }
         break;
@@ -971,4 +971,5 @@ void pawsGmGUIWindow::OnStringEntered(const char *name,int param,const char *val
         QueryServer();
     }
 }
+
 
