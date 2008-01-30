@@ -1223,10 +1223,10 @@ void UserManager::HandleUnstick(psUserCmdMessage& msg, Client *client,
     else
     {
         int timeRemaining = (UNSTICK_TIME - int(csGetTicks() - actor->GetFallStartTime())) / 1000;
-        if (timeRemaining < 1)
-            timeRemaining = 1;
-
-        psserver->SendSystemError(clientnum, "You cannot /unstick yet - please wait %d %s and try again.", timeRemaining, timeRemaining == 1 ? "second" : "seconds");
+        if (actor->IsFalling() && timeRemaining > 0)
+            psserver->SendSystemError(clientnum, "You cannot /unstick yet - please wait %d %s and try again.", timeRemaining, timeRemaining == 1 ? "second" : "seconds");
+        else
+            psserver->SendSystemError(clientnum, "You cannot /unstick at this time.");
     }
 }
 

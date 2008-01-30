@@ -1783,7 +1783,7 @@ bool gemActor::MoveToValidPos(bool force)
 {
     // Don't allow /unstick within 15 seconds of starting a fall...that way,
     // people can't jump off a cliff and use it to save themselves.
-    if (!force && isFalling && csGetTicks() - fallStartTime < UNSTICK_TIME)
+    if (!force && (!isFalling || (csGetTicks() - fallStartTime < UNSTICK_TIME)))
         return false;
 
     isFalling = false;
