@@ -183,9 +183,9 @@ void psServerDR::HandleMessage (MsgEntry* me,Client *client)
 
     if ( !actor->IsAllowedToMove())  // Is this movement allowed?
     {
-	client->FlagExploit();  // This DR data may be an exploit but may also be valid from lag.
         if (drmsg.worldVel.y > 0)
         {
+            client->FlagExploit();  // This DR data may be an exploit but may also be valid from lag.
             actor->pcmove->AddVelocity(csVector3(0,-1,0));
             actor->UpdateDR();
             actor->MulticastDRUpdate();
