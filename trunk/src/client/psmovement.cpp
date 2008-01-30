@@ -149,7 +149,7 @@ void psMovementManager::LockMoves(bool v)
 	}
     if (v)
     {
-        StopABllMovement();
+        StopAllMovement();
     }
     else
         linearMove->ResetGravity();
