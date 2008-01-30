@@ -192,14 +192,27 @@ bool pawsSketchWindow::OnKeyDown( int keyCode, int key, int modifiers )
                 objlist[selectedIndex]->Select(false); // turn off flashing
                 selectedIndex = SIZET_NOT_FOUND;
             }
-            editMode = editMode ? false : true;
-			isResizable = editMode; // only resizable in edit mode
-			dirty=true; // always set this for now to make sure resizes get saved.
+
+	    editMode = editMode ? false : true; // toggle edit mode
+	    isResizable = editMode; // only resizable in edit mode
+	    dirty=true; // always set this for now to make sure resizes get saved.
+
+            // notify the user that we are entering/leaving edit mode
+            if (editMode)
+            {
+                psSystemMessage sysMsg( 0, MSG_OK, PawsManager::GetSingleton().Translate("You have entered edit mode.") );
+                sysMsg.FireEvent();
+            }
+            else
+            {
+                psSystemMessage sysMsg( 0, MSG_OK, PawsManager::GetSingleton().Translate("Edit mode has been disabled.") );
+                sysMsg.FireEvent();
+            }
         }
         else
         {
-            psSystemMessage sysMsg( 0, MSG_ERROR, "You will only hurt the illustration if you try to edit it." );
-            psengine->GetMsgHandler()->Publish(sysMsg.msg);
+            psSystemMessage sysMsg( 0, MSG_ERROR, PawsManager::GetSingleton().Translate("You will only hurt the illustration if you try to edit it.") );
+            sysMsg.FireEvent();
             editMode = false; // just to be safe
         }
         return true;
@@ -249,8 +262,8 @@ void pawsSketchWindow::AddSketchText()
 {
     if ((int)objlist.GetSize() >= primCount)
     {
-        psSystemMessage sysMsg( 0, MSG_ERROR, "Your sketch is too complex for you to add more." );
-        psengine->GetMsgHandler()->Publish(sysMsg.msg);
+        psSystemMessage sysMsg( 0, MSG_ERROR, PawsManager::GetSingleton().Translate("Your sketch is too complex for you to add more.") );
+	sysMsg.FireEvent();
         return;
     }
 
@@ -282,8 +295,8 @@ void pawsSketchWindow::AddSketchLine()
 {
     if ((int)objlist.GetSize() >= primCount)
     {
-        psSystemMessage sysMsg( 0, MSG_ERROR, "Your sketch is too complex for you to add more." );
-        psengine->GetMsgHandler()->Publish(sysMsg.msg);
+        psSystemMessage sysMsg( 0, MSG_ERROR, PawsManager::GetSingleton().Translate("Your sketch is too complex for you to add more.") );
+	sysMsg.FireEvent();
         return;
     }
 
@@ -303,9 +316,9 @@ void pawsSketchWindow::AddSketchIcon()
 
     if ((int)objlist.GetSize() >= primCount)
     {
-         psSystemMessage sysMsg( 0, MSG_ERROR, "Your sketch is too complex for you to add more." );
-         psengine->GetMsgHandler()->Publish(sysMsg.msg);
-         return;
+        psSystemMessage sysMsg( 0, MSG_ERROR, PawsManager::GetSingleton().Translate("Your sketch is too complex for you to add more.") );
+	sysMsg.FireEvent();
+        return;
     }
 
     // printf("Adding sketch icon now.\n");
@@ -784,5 +797,4 @@ void pawsSketchWindow::SketchLine::UpdatePosition(int _x, int _y)
     offsetX = 0;
     offsetY = 0;
 }
-
 
