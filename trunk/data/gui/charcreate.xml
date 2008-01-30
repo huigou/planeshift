@@ -144,14 +144,14 @@
         </widget>
 
         <!-- Face customization area -->
-        <widget name="Custom Choice Set 1" factory="pawsButton" >
+        <widget name="Custom Choice Set 1 <" factory="pawsButton" >
             <frame x="540" y="240" width="40" height="25"/>
             <buttonup resource="Left Arrow"/>
 	    <buttondown resource="Left Arrow"/>
             <text string="" position="right"/>   
         </widget>
         
-        <widget name="Custom Choice Set 1" factory="pawsButton" >
+        <widget name="Custom Choice Set 1 >" factory="pawsButton" >
             <frame x="575" y="240" width="40" height="25"/>
             <buttonup resource="Right Arrow"/>
 	    <buttondown resource="Right Arrow"/>
@@ -166,13 +166,13 @@
         
         
         <!-- Hair Style customization area -->
-        <widget name="Custom Choice Set 2" factory="pawsButton" >
+        <widget name="Custom Choice Set 2 <" factory="pawsButton" >
             <frame x="540" y="275" width="40" height="25"/>
             <buttonup resource="Left Arrow"/>
 	    <buttondown resource="Left Arrow"/>
         </widget>
         
-        <widget name="Custom Choice Set 2" factory="pawsButton" >
+        <widget name="Custom Choice Set 2 >" factory="pawsButton" >
             <frame x="575" y="275" width="40" height="25"/>
             <buttonup resource="Right Arrow"/>
 	    <buttondown resource="Right Arrow"/>
@@ -186,13 +186,13 @@
         
         
         <!-- Beard Style customization area -->
-        <widget name="Custom Choice Set 3" factory="pawsButton" >
+        <widget name="Custom Choice Set 3 <" factory="pawsButton" >
             <frame x="540" y="305" width="40" height="25"/>
             <buttonup resource="Left Arrow"/>
 	    <buttondown resource="Left Arrow"/>
         </widget>
         
-        <widget name="Custom Choice Set 3 " factory="pawsButton" >
+        <widget name="Custom Choice Set 3 >" factory="pawsButton" >
             <frame x="575" y="305" width="40" height="25"/>
             <buttonup resource="Right Arrow"/>
 	    <buttondown resource="Right Arrow"/>
@@ -205,13 +205,13 @@
         <!-- END Beard customization area -->
 
         <!-- Hair Colour customization area -->
-        <widget name="Custom Choice Set 4" factory="pawsButton" >
+        <widget name="Custom Choice Set 4 <" factory="pawsButton" >
             <frame x="540" y="340" width="40" height="25"/>
             <buttonup resource="Left Arrow"/>
 	    <buttondown resource="Left Arrow"/>
         </widget>
         
-        <widget name="Custom Choice Set 4" factory="pawsButton" >
+        <widget name="Custom Choice Set 4 >" factory="pawsButton" >
             <frame x="575" y="340" width="40" height="25"/>
             <buttonup resource="Right Arrow"/>
 	    <buttondown resource="Right Arrow"/>
@@ -224,13 +224,13 @@
         <!-- END Hair Colour customization area -->
       
         <!-- Skin Colour customization area -->
-        <widget name="Custom Choice Set 5" factory="pawsButton" >
+        <widget name="Custom Choice Set 5 <" factory="pawsButton" >
             <frame x="540" y="380" width="40" height="25"/>
             <buttonup resource="Left Arrow"/>
 	    <buttondown resource="Left Arrow"/>
         </widget>
         
-        <widget name="Custom Choice Set 5" factory="pawsButton" >
+        <widget name="Custom Choice Set 5 >" factory="pawsButton" >
             <frame x="575" y="380" width="40" height="25"/>
             <buttonup resource="Right Arrow"/>
 	    <buttondown resource="Right Arrow"/>
