@@ -6038,16 +6038,19 @@ psGMSpawnItem::psGMSpawnItem(const char* item,
                              bool locked,
                              const char* lskill,
                              int lstr,
-                             bool pickupable
+                             bool pickupable,
+                             bool collidable
                              )
 {
     msg = new MsgEntry(
-                        strlen(item) +1
-                        + sizeof(uint32_t)
-                        + (sizeof(bool) *2)
-                        + strlen(lskill)+1
-                        + sizeof(int32_t)
-                        + sizeof(bool)
+                        strlen(item) +1 // item
+                        + sizeof(uint32_t) // count
+                        + sizeof(bool) // locked
+                        + sizeof(bool) // lockable
+                        + strlen(lskill)+1 // lskill
+                        + sizeof(int32_t) // lstr
+                        + sizeof(bool) // pickupable
+                        + sizeof(bool) // collidable
                       );
 
     msg->SetType(MSGTYPE_GMSPAWNITEM);
@@ -6059,6 +6062,7 @@ psGMSpawnItem::psGMSpawnItem(const char* item,
     msg->Add( lskill );
     msg->Add( (int32_t)lstr );
     msg->Add( pickupable );
+    msg->Add( collidable );
 }
 
 psGMSpawnItem::psGMSpawnItem(MsgEntry *me)
@@ -6070,20 +6074,22 @@ psGMSpawnItem::psGMSpawnItem(MsgEntry *me)
     lskill = me->GetStr();
     lstr = me->GetInt32();
     pickupable = me->GetBool();
+    collidable = me->GetBool();
 }
 
 csString psGMSpawnItem::ToString(AccessPointers * /*access_ptrs*/)
 {
     csString msgtext;
 
-    msgtext.AppendFmt("Item: '%s' Count: %d Lockable: %s, Is %s, Skill: '%s' Str: %d Pickupable: %s",
-            item.GetDataSafe(),
+    msgtext.AppendFmt("Item: '%s' Count: %d Lockable: %s, Is %s, Skill: '%s' Str: %d Pickupable: %s Collidable: %s",
+        item.GetDataSafe(),
         count,
         (lockable ? "True" : "False"),
         (locked ? "Locked" : "Unlocked"),
         lskill.GetDataSafe(),
         lstr,
-        (pickupable ? "True" : "False"));
+        (pickupable ? "True" : "False"),
+        (collidable ? "True" : "False"));
 
     return msgtext;
 }

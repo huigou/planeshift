@@ -2,6 +2,8 @@
 - Fixed FS#689 - People can fly.
 - Can't unstick if not falling.
 - Fix for FS#955 - Provide more feedback of when in Edit Mode when making maps. By coreyo.
+- Added collision detection option for items in GM item spawn, By coreyo.
+- NETVER BUMP!
 
 *** 2008-01-28 by Roland Schulz
 - gui fixes by Caarrie and ThomPhoenix

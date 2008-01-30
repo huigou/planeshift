@@ -49,6 +49,7 @@ private:
     pawsCheckBox*                   cbLockable;
     pawsCheckBox*                   cbLocked;
     pawsCheckBox*                   cbPickupable;
+    pawsCheckBox*                   cbCollidable;
     pawsEditTextBox*                itemCount;
     pawsEditTextBox*                lockSkill;
     pawsEditTextBox*                lockStr;

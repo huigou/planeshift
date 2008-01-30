@@ -42,7 +42,7 @@ struct iEngine;
 
 // This holds the version number of the network code, remember to increase
 // this each time you do an update which breaks compatibility
-#define PS_NETVERSION   0x0085
+#define PS_NETVERSION   0x0086
 // Remember to bump the version in pscssetup.h, as well.
 
 // NPC Networking version is separate so we don't have to break compatibility
@@ -4267,7 +4267,8 @@ public:
         bool locked,
         const char* lskill,
         int lstr,
-        bool pickupable);
+        bool pickupable,
+	bool collidable);
 
     psGMSpawnItem( MsgEntry* me );
 
@@ -4283,7 +4284,7 @@ public:
 
     csString item;
     unsigned int count;
-    bool lockable,locked,pickupable;
+    bool lockable,locked,pickupable,collidable;
 
     csString lskill;
     int lstr;

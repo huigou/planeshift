@@ -49,33 +49,38 @@
                 <text string="Pickupable"/>
         </widget>
 
-        <widget name="Lockable" factory="pawsCheckBox" visible="no">
-            <frame x="310" y="265" width="100" height="20" border="no" />
-            <text string="Lockable"/>
+	<widget name="Collidable" factory="pawsCheckBox" visible="no">
+		<frame x="450" y="265" width="170" height="20" border="no" />
+		<text string="Collision Detection"/>
+        </widget>
+	
+        <widget name="Locked" factory="pawsCheckBox" visible="no">
+            <frame x="450" y="285" width="100" height="20" border="no" />
+            <text string="Locked"/>
         </widget>
 
-        <widget name="Locked" factory="pawsCheckBox" visible="no">
-            <frame x="310" y="320" width="300" height="20" border="no" />
-            <text string="Locked"/>
+        <widget name="Lockable" factory="pawsCheckBox" visible="no">
+            <frame x="450" y="305" width="300" height="20" border="no" />
+            <text string="Lockable"/>
         </widget>        
     
         <widget name="LockSkill" factory="pawsEditTextBox" visible="no" tooltip="Skill to unlock / lock">
-            <frame x="310" y="360" width="200" height="20" border="yes" />
+            <frame x="310" y="310" width="140" height="20" border="yes" />
             <text string="Lockpicking"/>
         </widget>
 
         <widget name="LockStr" factory="pawsEditTextBox" visible="no" tooltip="Strength on the lock">
-            <frame x="520" y="360" width="50" height="20" border="yes" />
+            <frame x="310" y="340" width="50" height="20" border="yes" />
             <text string="5"/>
         </widget>
         
         <widget name="Force" factory="pawsCheckBox">
-            <frame x="310" y="400" width="320" height="20" border="no" />
+            <frame x="310" y="380" width="320" height="30" border="no" />
             <text string="Allow spawning item with missing mesh"/>
         </widget>
         
         <widget name="Spawn" factory="pawsButton" id ="1000" visible="no">
-            <frame x="310" y="450" width="150" height="20" border="no" />
+            <frame x="310" y="430" width="150" height="20" border="no" />
             <bgimage resource="Blue Title" alpha="0" fade="no" />
             <label text="Spawn item"/>
         </widget>

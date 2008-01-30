@@ -44,6 +44,7 @@ pawsGMSpawnWindow::pawsGMSpawnWindow()
     cbLockable = NULL;
     cbLocked = NULL;
     cbPickupable = NULL;
+    cbCollidable = NULL;
     lockSkill = NULL;
     lockStr = NULL;
 }                 
@@ -65,6 +66,7 @@ bool pawsGMSpawnWindow::PostSetup()
     cbLockable = (pawsCheckBox*)FindWidget("Lockable");
     cbLocked = (pawsCheckBox*)FindWidget("Locked");
     cbPickupable = (pawsCheckBox*)FindWidget("Pickupable");
+    cbCollidable = (pawsCheckBox*)FindWidget("Collidable");
     lockSkill = (pawsEditTextBox*)FindWidget("LockSkill");
     lockStr = (pawsEditTextBox*)FindWidget("LockStr");
 
@@ -186,6 +188,7 @@ bool pawsGMSpawnWindow::OnSelected(pawsWidget* widget)
                         lockStr->Hide();
                         lockSkill->Hide();
                         cbPickupable->Hide();
+                        cbCollidable->Hide();
 
                         pawsWidget* spawnBtn = FindWidget("Spawn");
                         spawnBtn->Hide();
@@ -218,13 +221,14 @@ bool pawsGMSpawnWindow::OnSelected(pawsWidget* widget)
         cbLockable->SetState(false);
         cbLocked->SetState(false);
         cbPickupable->SetState(true);
-
+        cbCollidable->SetState(false);
         lockSkill->SetText("Lockpicking");
         lockStr->SetText("5");
 
         cbLockable->Show();
         cbLocked->Show();
         cbPickupable->Show();
+        cbCollidable->Show();
         lockStr->Hide();
         lockSkill->Hide();
 
@@ -268,7 +272,8 @@ bool pawsGMSpawnWindow::OnButtonPressed(int button,int keyModifier,pawsWidget* w
             cbLocked->GetState(),
             lockSkill->GetText(),
             atoi(lockStr->GetText()),
-            cbPickupable->GetState()
+            cbPickupable->GetState(),
+            cbCollidable->GetState()
             );
         
         // Send spawn message
