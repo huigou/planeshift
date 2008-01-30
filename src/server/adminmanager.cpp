@@ -5296,6 +5296,7 @@ void AdminManager::SpawnItemInv(MsgEntry* me, psGMSpawnItem& msg,Client *client)
     item->SetIsLockable(msg.lockable);
     item->SetIsLocked(msg.locked);
     item->SetIsPickupable(msg.pickupable);
+    item->SetIsCD(msg.collidable);
 
     if (msg.lockable)
     {        
