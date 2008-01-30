@@ -1,5 +1,6 @@
 *** 2008-01-30 by Sasha Levin
 - Fixed FS#689 - People can fly.
+- Can't unstick if not falling.
 
 *** 2008-01-28 by Roland Schulz
 - gui fixes by Caarrie and ThomPhoenix
