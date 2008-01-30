@@ -1,3 +1,6 @@
+*** 2008-01-30 by Sasha Levin
+- Fixed FS#689 - People can fly.
+
 *** 2008-01-28 by Roland Schulz
 - gui fixes by Caarrie and ThomPhoenix
 - add gm flags to pawsGmGUIWindow so they can be displayed

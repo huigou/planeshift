@@ -147,13 +147,9 @@ void psMovementManager::LockMoves(bool v)
 	{
         return;
 	}
-    // We need to temporarily stop gravity here because otherwise the client
-    // and server play DR wars - the client tries to send DR packets indicating
-    // it's falling, and the server doesn't allow the movement.
     if (v)
     {
-        StopAllMovement();
-        linearMove->SetGravity(0);
+        StopABllMovement();
     }
     else
         linearMove->ResetGravity();
@@ -489,6 +485,7 @@ void psMovementManager::StopAllMovement()
     // Halt actor
     linearMove->SetVelocity(0);
     linearMove->SetAngularVelocity(0);
+    linearMove->ClearWorldVelocity();
     actor->SetAnimationVelocity(0);
 
     // Remove run-to effect
