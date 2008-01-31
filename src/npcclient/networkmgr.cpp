@@ -240,8 +240,8 @@ void NetworkManager::HandleActor( MsgEntry* me )
         CPrintf(CON_ERROR, "Already know about gemNPCActor: %s (%s), %u.\n", mesg.name.GetData(), obj->GetName(), mesg.entityid );
 
         obj->Move(mesg.pos, mesg.yrot, mesg.sectorName, mesg.instance );
-        obj->SetVisible( !(mesg.flags & psPersistActor::INVISIBLE) );
-        obj->SetInvincible( (mesg.flags & psPersistActor::INVINCIBLE) );
+        obj->SetVisible( (mesg.flags & psPersistActor::INVISIBLE) ? false : true );
+        obj->SetInvincible( (mesg.flags & psPersistActor::INVINCIBLE) ? true : false );
         
         return;
     }
