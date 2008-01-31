@@ -1,3 +1,6 @@
+*** 2008-01-31 by Sasha Levin
+- Fixed FS#1046 - Performance warning in networkmgr.cpp.
+
 *** 2008-01-30 by Sasha Levin
 - Fixed FS#689 - People can fly.
 - Can't unstick if not falling.
