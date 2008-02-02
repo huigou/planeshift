@@ -48,6 +48,7 @@ psEffectObjLabel::psEffectObjLabel(iView * parentView, psEffect2DRenderer * rend
     xpos.SetSize(NUM_GLYPHS,0);
     ypos.SetSize(NUM_GLYPHS,0);
     width.SetSize(NUM_GLYPHS,64);
+    height.SetSize(NUM_GLYPHS,64);
     for(int i=0; i<256; i++)
     {
         xpos[i] = (i%16) * 64;
@@ -74,6 +75,7 @@ bool psEffectObjLabel::Load(iDocumentNode *node)
     // get the attributes
     name = "";
     materialName = "";
+    sizeFileName = "";
     csRef<iDocumentAttributeIterator> attribIter = node->GetAttributes();
     while (attribIter->HasNext())
     {
@@ -100,6 +102,7 @@ bool psEffectObjLabel::Load(iDocumentNode *node)
     }
     if (sizeFileName != "")
     {
+        printf("loading glyphs %s\n", sizeFileName.GetData());
         LoadGlyphs(sizeFileName);
     } 
     
@@ -144,8 +147,10 @@ void psEffectObjLabel::LoadGlyphs(csString filename)
         if (number < 0 || number >= NUM_GLYPHS)
             continue;
         width[number] = child->GetAttributeValueAsInt("width");
+        height[number] = child->GetAttributeValueAsInt("height");
         xpos[number] = child->GetAttributeValueAsInt("x");
         ypos[number] = child->GetAttributeValueAsInt("y");
+        //printf("loaded %d - %d %d %d %d\n", number, width[number], height[number], xpos[number], ypos[number]);
     }
 }
 
@@ -292,6 +297,7 @@ void psEffectObjLabel::CloneBase(psEffectObj * newObj) const
     for(int i=0; i<NUM_GLYPHS; i++)
     {
         newLabelObj->width[i] = width[i];
+        newLabelObj->height[i] = height[i];
         newLabelObj->xpos[i] = xpos[i];
         newLabelObj->ypos[i] = ypos[i];
     }
@@ -350,13 +356,17 @@ bool psEffectObjLabel::SetText(int rows, ...)
         newElem.text = row->text;
         newElem.align = row->align;
         newElem.width = 0;
+        newElem.height = 0;
         for(uint b=0; b<newElem.text.Length(); b++)
         {
             newElem.width += width[newElem.text[b]];
+            if( newElem.height < height[newElem.text[b]] )
+            {
+                newElem.height = height[newElem.text[b]];
+            }
         }
         // Positioning
         //font->GetDimensions(newElem.text, newElem.width, newElem.height);
-        newElem.height = 60;
         newElem.x = 0;
         newElem.y = y;
         elemBuffer.Push(newElem);
@@ -409,8 +419,8 @@ bool psEffectObjLabel::SetText(int rows, ...)
             fx1 = (float)x / maxWidth*3 - 1.5;
             fy1 = (float)(maxHeight - y) / maxWidth*3;
             fx2 = (float)(x+width[c]) / maxWidth*3 - 1.5;
-            fy2 = (float)(maxHeight - y + 60) / maxWidth*3;
-            //printf("rendering char %d pos %d,%d - %f %f %f %f\n", cp/4, x, y, fx1, fy1, fx2, fy2);
+            fy2 = (float)(maxHeight - y + height[c]) / maxWidth*3;
+            //printf("rendering char %d pos %d,%d w/h %d,%d xp/yp %d,%d - %f %f %f %f\n", cp/4, x, y, width[c], height[c], xpos[c], ypos[c], fx1, fy1, fx2, fy2);
             facState->GetVertices()[cp  ].Set(fx2,0,fy1); 
             facState->GetVertices()[cp+1].Set(fx1,0,fy1); 
             facState->GetVertices()[cp+2].Set(fx1,0,fy2); 
@@ -419,7 +429,7 @@ bool psEffectObjLabel::SetText(int rows, ...)
             float fracx1 = (float)xpos[c] / mw;
             float fracy1 = (float)ypos[c] / mh;
             float fracx2 = (float)(xpos[c]+width[c]) / mw;
-            float fracy2 = (float)(ypos[c]+60) / mh;
+            float fracy2 = (float)(ypos[c]+height[c]) / mh;
             //printf("texels %c %d,%d - %f %f %f %f\n", text[j], xpos[c], ypos[c], fracx1, fracy1, fracx2, fracy2);
             facState->GetTexels()[cp  ].Set( fracx2, fracy2 );
             facState->GetTexels()[cp+1].Set( fracx1, fracy2 );
@@ -441,7 +451,7 @@ bool psEffectObjLabel::SetText(int rows, ...)
                       (float)((newElem.colour    ) & 255)/255.0F);
         mesh->GetMeshObject()->SetColor(color);
     }
-//    facState->CalculateNormals();
+    facState->CalculateNormals();
 //    facState->SetColor(csColor(1.0,1.0,1.0));
 //    facState->SetLighting(false);
 //    fact->SetMixMode(CS_FX_ADD);
