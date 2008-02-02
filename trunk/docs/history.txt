@@ -1,3 +1,7 @@
+*** 2008-02-02 by Roland Schulz
+- added height to label font table
+- introduce new font for labels
+
 *** 2008-01-31 by Sasha Levin
 - Fixed FS#1046 - Performance warning in networkmgr.cpp.
 

@@ -2,8 +2,8 @@
 <library>
     <textures>
         <texture name="labelfonttable">
-            <file>/this/art/effects/character_set_myriad.dds</file>
-            <alpha><binary/></alpha>
+            <file>/this/art/effects/character_set_baar_sophia.dds</file>
+            <alpha><binary /></alpha>
         </texture>
     </textures>
     <materials>
@@ -17,7 +17,7 @@
                 <dir>none</dir>
             </anchor>
             <obj type="label" name="label" material="mat_labelfonttable"
-             sizefile="/this/data/effects/misc/labelfontglyphs.xml">
+             sizefile="/this/data/effects/misc/glyphs_baar_sophia.xml">
                 <mixmode>alpha</mixmode>
                 <attach>pos</attach>
                 <death>none</death>
