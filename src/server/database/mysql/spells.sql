@@ -41,3 +41,4 @@ INSERT INTO spells VALUES("4","Defensive Wind","1","1","casting","puff","","Buff
 INSERT INTO spells VALUES("5","Summon Creature","5","1","casting","clear","","The caster summons a creature as it's familiar.","0","cast Summon Creature","","0","-1","50","24","166","1.500");
 INSERT INTO spells VALUES("6","Fire Warts","3","1","casting","fire","","DoT Example. This spell will cause burning sores appear all over your enemies body, searing their flesh.","0","cast Fire Warts","","0","-1","20","288","165","1.500");
 INSERT INTO spells VALUES("7","Gem of Clarity","1","1","casting","clear","","Block Example. The caster will feel very clear minded.","0","GemOfClarity","","0","-1","20","8","165","1.500");
+INSERT INTO spells VALUES("8","Recharge","1","1","casting","clear","","Test the recharge operation.","0","Recharge","","0","-1","20","8","165","1.500");

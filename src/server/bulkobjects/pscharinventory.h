@@ -198,17 +198,21 @@ public:
     bool AddOrDrop(psItem *&item, bool stack = true);
 
     /** Get an item that is in the bulk inventory.
-    * @param container The container of the slot, if any. NULL if normal bulk.
-    * @param slot The slot in which we want to retrive the item ( if any ).
-      * @return The item in the given slot. NULL if no item was found.
-      */
-    psItem* GetItem(psItem *container,INVENTORY_SLOT_NUMBER slot);
+     * @param container The container of the slot, if any. NULL if normal bulk.
+     * @param slot The slot in which we want to retrive the item ( if any ).
+     * @return The item in the given slot. NULL if no item was found.
+     */
+    psItem* GetItem(psItem *container, INVENTORY_SLOT_NUMBER slot);
     
     /** Get an item that is in the equipment inventory.    
       * @param slot The slot in which we want to retrive the item ( if any ).
       * @return The item in the given slot. NULL if no item was found.
       */
     psItem* GetInventoryItem(INVENTORY_SLOT_NUMBER slot);
+
+    /** Get item held, either in right or left hand
+     */
+    psItem* GetItemHeld();
 
     psCharacterInventoryItem* GetCharInventoryItem(INVENTORY_SLOT_NUMBER slot);
 

@@ -120,6 +120,8 @@ CacheManager::CacheManager()
     // and the resulting stack will have the new average.
     statflag.Set("AVERAGEQUALITY", PSITEMSTATS_FLAG_AVERAGEQUALITY);
     ItemStatFlagArray.Push(statflag);
+    statflag.Set( "RECHARGEABLE", PSITEMSTATS_FLAG_IS_RECHARGEABLE );
+    ItemStatFlagArray.Push(statflag);
 
     statflag.Set( "END",0 );
     ItemStatFlagArray.Push(statflag);

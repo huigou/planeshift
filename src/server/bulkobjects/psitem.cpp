@@ -1706,6 +1706,11 @@ bool psItem::HasCharges() const
     return base_stats->HasCharges();
 }
 
+bool psItem::IsRechargeable() const
+{
+    return base_stats->IsRechargeable();
+}
+
 void psItem::SetCharges(int charges)
 {
     this->charges = charges;

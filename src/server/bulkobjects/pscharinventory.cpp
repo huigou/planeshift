@@ -797,6 +797,19 @@ psItem *psCharacterInventory::GetInventoryItem(INVENTORY_SLOT_NUMBER slot)
     return NULL;
 }
 
+psItem *psCharacterInventory::GetItemHeld()
+{
+    psItem * item = GetInventoryItem(PSCHARACTER_SLOT_RIGHTHAND);
+    if (!item)
+    {
+        item = GetInventoryItem(PSCHARACTER_SLOT_LEFTHAND);
+        
+    }
+
+    return item;
+}
+
+
 psCharacterInventory::psCharacterInventoryItem *psCharacterInventory::GetCharInventoryItem(INVENTORY_SLOT_NUMBER slot)
 {
     if (slot < 0 || slot >= 10000)
