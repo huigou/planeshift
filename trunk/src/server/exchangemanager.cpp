@@ -1233,6 +1233,8 @@ bool PlayerToNPCExchange::HandleAccept(Client * client)
     // We must set the exchange ID to 0 so that the items will now save
     starterClient->SetExchangeID(0);
 
+    bool exchange_accepted = true;
+
     // Send to the npc as an event trigger
     psNPCDialog *dlg = target->GetNPCDialogPtr();
     if (dlg)
@@ -1249,34 +1251,43 @@ bool PlayerToNPCExchange::HandleAccept(Client * client)
             {
                 psserver->SendSystemError(client->GetClientNum(), "%s does not need that.", target->GetName());
                 psserver->SendSystemOK(client->GetClientNum(),"Trade Declined");
-				client->GetCharacterData()->Inventory().RollbackExchange();
-                psserver->GetCharManager()->SendInventory(player);
-                SendEnd(player);
-                return false;
+
+                exchange_accepted = false;
             }
         }
     }
     else
     {
         psserver->SendSystemError(client->GetClientNum(), "%s does not respond to gifts.", target->GetName());
+
+        exchange_accepted = false;
+    }
+
+    if (exchange_accepted)
+    {
+        // This is redundant but harmless.  CheckXMLResponse also does this but it's easy to miss so
+        // leaving here incase someone removes it.
+        client->GetCharacterData()->Inventory().PurgeOffered();
+        
+        psserver->SendSystemOK(client->GetClientNum(),"Trade complete");
+        
+        psserver->GetCharManager()->SendInventory(player);
+        SendEnd(player);
+        
+        // Not committing will cause rollback to do bad things instead of being harmless.
+        starterClient->GetCharacterData()->Inventory().CommitExchange();
+        
+        return true;
+    }
+    else
+    {
+        // NPC didn't accept the exchange so rollback and return.
         client->GetCharacterData()->Inventory().RollbackExchange();
         psserver->GetCharManager()->SendInventory(player);
         SendEnd(player);
+
         return false;
     }
-
-	// This is redundant but harmless.  CheckXMLResponse also does this but it's easy to miss so leaving here incase someone removes it.
-    client->GetCharacterData()->Inventory().PurgeOffered();
-
-    psserver->SendSystemOK(client->GetClientNum(),"Trade complete");
-
-    psserver->GetCharManager()->SendInventory(player);
-    SendEnd(player);
-
-	// Not committing will cause rollback to do bad things instead of being harmless.
-	starterClient->GetCharacterData()->Inventory().CommitExchange();
-
-    return true;
 }
 
 void PlayerToNPCExchange::DeleteObjectCallback(iDeleteNotificationObject * object)

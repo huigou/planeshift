@@ -1,3 +1,6 @@
+*** 2008-02-02 by Anders Reggestad
+- Added a recharge progression operation to recharge items.
+
 *** 2008-02-02 by Roland Schulz
 - added height to label font table
 - introduce new font for labels
@@ -25,6 +28,7 @@
 - Added additional bonus quality points for craft steps with secondary skills.
 
 *** 2008-01-27 by Anders Reggestad
+- Added a recharge progression operation to recharge items.
 - Added posibility to set filter for chats. Using the client number.
 - Fixed npcclient printouts that path could not be found(FS#931) 
 

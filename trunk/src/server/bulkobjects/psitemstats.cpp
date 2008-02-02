@@ -627,13 +627,14 @@ bool psItemStats::Save()
 
     // Existing Item, update
     const char *fieldnames[]= {
-      "name", "weight", "visible_distance", "size", "container_max_size", "decay_rate", //"valid_slots",  "flags",
-            "category_id", "base_sale_price", "item_type_id_ammo", "item_anim_id", "description",
-            "weapon_block_targeted", "weapon_block_untargeted", "weapon_counterblock", "weapon_speed",
-            "dmg_slash", "dmg_blunt", "dmg_pierce", 
-            "cstr_id_gfx_mesh", 
-            "requirement_1_name", "requirement_1_value", "requirement_2_name", "requirement_2_value", "requirement_3_name", "requirement_3_value",
-            "prg_evt_equip", "prg_evt_unequip", "prg_evt_consume", "creative_definition"
+        "name", "weight", "visible_distance", "size", "container_max_size", "decay_rate",
+        "category_id", "base_sale_price", "item_type_id_ammo", "item_anim_id", "description",
+        "weapon_block_targeted", "weapon_block_untargeted", "weapon_counterblock", "weapon_speed",
+        "dmg_slash", "dmg_blunt", "dmg_pierce", 
+        "cstr_id_gfx_mesh", 
+        "requirement_1_name", "requirement_1_value", "requirement_2_name", "requirement_2_value",
+        "requirement_3_name", "requirement_3_value",
+        "prg_evt_equip", "prg_evt_unequip", "prg_evt_consume", "creative_definition"
     };
 
     // Owning character ID
@@ -647,8 +648,6 @@ bool psItemStats::Save()
     fields.FormatPush( "%u", this->size );                  // size
     fields.FormatPush( "%u", this->container_max_size );    // contianer_max_size
     fields.FormatPush( "%1.2f", this->decay_rate );            // decay_rate
-    //fields.FormatPush( "%u", this->valid_slots );         // valid_slots
-    //fields.FormatPush( "%u", this->flags );               // flags
     fields.FormatPush( "%u", this->category->id );          // category_id
     fields.FormatPush( "%u", this->price.GetTotal() );      // base_sales_price
     fields.FormatPush( "%u", this->ammo_item_type_id );     // item_type_id_ammo
@@ -1311,6 +1310,12 @@ bool psItemStats::HasCharges() const
 {
     return maxCharges != -1;
 }
+
+bool psItemStats::IsRechargeable() const
+{
+    return (flags & PSITEMSTATS_FLAG_IS_RECHARGEABLE) ? true : false;
+}
+
 
 void psItemStats::SetMaxCharges(int charges)
 {

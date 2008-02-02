@@ -785,6 +785,7 @@ public:
     void SetBookText(const csString& newText){ GetBaseStats()->SetLiteratureText(newText); }
 
     bool HasCharges() const;
+    bool IsRechargeable() const;
     void SetCharges(int charges);
     int GetCharges() const;
     int GetMaxCharges() const;

@@ -2198,6 +2198,93 @@ protected:
 /*-------------------------------------------------------------*/
 
 /**
+ * RechargeOp
+ * Change number of charges in an item.
+ *
+ * Syntax:
+ *    <recharge charges="#" success="text" failure="text" />
+ *        charges = "#" number of charges to recharge
+ *        success = "text" Display this text if success
+ *        failure = "text" Display this text if failure
+ * Examples:
+ *        <recharge charges="1" />
+ *
+ */
+class RechargeOp : public ProgressionOperation
+{
+public:
+    RechargeOp() : ProgressionOperation() { };
+    virtual ~RechargeOp(){};
+    
+    bool Load(iDocumentNode *node, ProgressionEvent *prg_script)
+    {
+        charges = node->GetAttributeValueAsInt("charges");
+        successText = node->GetAttributeValue("success");
+        failureText = node->GetAttributeValue("failure");
+        return true;
+    }
+    
+    virtual csString ToString()
+    {
+        csString xml;
+        xml.Format("<recharge ");
+        xml.AppendFmt("charges=\"%d\" ", charges );
+        if (successText.Length())
+        {
+            xml.AppendFmt("success=\"%s\" ", successText.GetDataSafe() );
+        }
+        if (failureText.Length())
+        {
+            xml.AppendFmt("failure=\"%s\" ", failureText.GetDataSafe() );
+        }
+        xml.Append("/>");
+        return xml;
+    }
+
+    bool Run(gemActor *actor, gemObject *target, psItem * item, bool inverse)
+    {
+        if (inverse)  // No inverse
+            return true;
+
+        if (item && item->HasCharges() && item->IsRechargeable())
+        {
+            int new_charges = item->GetCharges() + charges;
+
+            // Item should not be charged more than max charges.
+            if (new_charges > item->GetMaxCharges())
+            {
+                new_charges = item->GetMaxCharges();
+            }
+            
+            item->SetCharges(new_charges);
+            item->Save(false);
+
+            if (successText.Length())
+            {
+                psserver->SendSystemInfo(actor->GetClientID(), successText.GetDataSafe());
+            }
+        }
+        else
+        {
+            if (failureText.Length())
+            {
+                psserver->SendSystemInfo(actor->GetClientID(), failureText.GetDataSafe());
+            }
+        }
+
+        return true;
+    }
+
+protected:
+    int charges;              /// Number of charges to apply
+    csString successText;
+    csString failureText;
+};
+
+
+/*-------------------------------------------------------------*/
+
+/**
  * ItemOp
  * Create item or money
  *
@@ -5206,6 +5293,10 @@ bool ProgressionEvent::LoadScript(iDocumentNode *topNode)
         else if ( strcmp( node->GetValue(), "charge" ) == 0 )
         {
             op = new ChargeOp();
+        } 
+        else if ( strcmp( node->GetValue(), "recharge" ) == 0 )
+        {
+            op = new RechargeOp();
         } 
         else if ( strcmp( node->GetValue(), "end" ) == 0 )
         {

@@ -681,7 +681,7 @@ bool psSpell::PerformResult(gemActor *caster, gemObject *target, float max_range
 
             progEvent->CopyVariables(mathScript);
 
-            result = progEvent->Run(caster, target, NULL, inverse);
+            result = progEvent->Run(caster, target, caster->GetCharacterData()->Inventory().GetItemHeld(), inverse);
             if ( !result )
             {
                 Notify2(LOG_SCRIPT, "Couldn't run the progression event \"%s\"", eventName.GetData());

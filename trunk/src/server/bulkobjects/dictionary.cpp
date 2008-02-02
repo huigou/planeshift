@@ -2124,7 +2124,7 @@ bool RunScriptResponseOp::Run(gemNPC *who, Client *target, NpcResponse *owner, c
     if (var)
         var->SetValue(p2);
     
-    event->Run(target->GetActor(), who, NULL);
+    event->Run(target->GetActor(), who, target->GetCharacterData()->Inventory().GetItemHeld());
 
     return true;
 }

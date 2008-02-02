@@ -183,6 +183,7 @@ typedef unsigned int PSITEMSTATS_SLOTLIST;
 #define PSITEMSTATS_FLAG_AVERAGEQUALITY      0x00080000		//< Flag if the item can stack and average out quality.
 #define PSITEMSTATS_FLAG_CREATIVE            0x00100000         // A creative thing, eg book, sketch
 #define PSITEMSTATS_FLAG_BUY_PERSONALISE     0x00200000         // duplicate & personalise at purchase
+#define PSITEMSTATS_FLAG_IS_RECHARGEABLE     0x00400000
 
 typedef unsigned int PSITEMSTATS_FLAGS;
 
@@ -623,6 +624,7 @@ public:
 
     /// Return true if this item was equipted with charges.
     bool HasCharges() const;
+    bool IsRechargeable() const;
     void SetMaxCharges(int charges);
     int GetMaxCharges() const;
 
