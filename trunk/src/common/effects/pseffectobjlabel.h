@@ -46,6 +46,7 @@ private:
     csArray<uint16> xpos;
     csArray<uint16> ypos;
     csArray<uint16> width;
+    csArray<uint16> height;
 
 public:
     psEffectObjLabel(iView *parentView, psEffect2DRenderer * renderer2d);
