@@ -1,3 +1,6 @@
+*** 2008-02-03 by Mike Gist
+- Bumped CS revision to r28603, to get the many bug fixes recently merged.
+
 *** 2008-02-02 by Anders Reggestad
 - Added a recharge progression operation to recharge items.
 
