@@ -501,6 +501,9 @@ GEMClientActor * psCelClient::GetActorByName(const char * name, bool trueName) c
 {
     size_t len = entities.GetSize();
     csString testName, firstName;
+    csString csName(name);
+    csName = csName.Downcase();
+
     for (size_t a=0; a<len; ++a)
     {
         GEMClientActor * actor = dynamic_cast<GEMClientActor*>(entities[a]);
@@ -508,7 +511,7 @@ GEMClientActor * psCelClient::GetActorByName(const char * name, bool trueName) c
             continue;
 
         testName = actor->GetName(trueName);
-        firstName = testName.Slice(0, testName.FindFirst(' '));
+        firstName = testName.Slice(0, testName.FindFirst(' ')).Downcase();
         if (firstName == name)
             return actor;
     }
