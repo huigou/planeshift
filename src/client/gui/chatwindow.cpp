@@ -1188,7 +1188,8 @@ void pawsChatWindow::HandleMessage (MsgEntry *me)
 
     psChatMessage msg(me);
 
-    if (psengine->GetCelClient()->GetActorByName(msg.sPerson, false) == NULL)
+    if ((msg.iChatType != CHAT_TELLSELF) && (psengine->GetCelClient()->GetActorByName(msg.sPerson, false) == NULL) &&
+        (psengine->GetCelClient()->GetActorByName(msg.sPerson, true)))
         msg.sPerson = "Someone";
 
     if (msg.translate)
