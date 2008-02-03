@@ -200,7 +200,6 @@ bool pawsGmGUIWindow::OnButtonPressed( int mouseButton, int keyModifier, pawsWid
         if ( errorMessage )
             systemText->AddMessage( errorMessage );
     case 1000: // Players tab
-    case 1001: // Tournament Tab
     case 1002: // Action Tab
     case 1003: // Attributes Tab
         //SelectTab(widget->GetID());
@@ -478,7 +477,6 @@ void pawsGmGUIWindow::SetSecurity()
 
     // hide all controls
     HideWidget("Players Button");
-    HideWidget("Tournament Button");
     HideWidget("Action Button");
     HideWidget("Attributes Button");
 
@@ -509,8 +507,6 @@ void pawsGmGUIWindow::SetSecurity()
     HideWidget("BanMinlbl");
     HideWidget("BanHrslbl");
     HideWidget("BanDayslbl");
-
-    //Tournament
 
     //Attribute buttons
     HideWidget("listattributes");
