@@ -127,10 +127,10 @@ AC_ARG_ENABLE([cpu-specific-optimizations],
 	one processor will not work with earlier processors (for example, Intel
 	686-specific code will not work with a 586)])],
     [case $enable_cpu_specific_optimizations in
-	yes|min) enable_cpu_specific_optimizations=minimum ;;
-	max) enable_cpu_specific_optimizations=maximum ;;
+	min) enable_cpu_specific_optimizations=minimum ;;
+	yes|max) enable_cpu_specific_optimizations=maximum ;;
     esac],
-    [enable_cpu_specific_optimizations=minimum])
+    [enable_cpu_specific_optimizations=maximum])
 AC_MSG_RESULT([$enable_cpu_specific_optimizations])
 
 case $enable_cpu_specific_optimizations in
