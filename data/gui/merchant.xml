@@ -4,6 +4,7 @@
         movable="yes">
 
     <frame x="100" y="100" width="600" height="250" border="yes" />
+    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="10" />
     <title resource="Blue Title" text="Merchant" align="left" close_button="yes"/>    
     <bgimage resource="Merchant Background" alpha="0" />
     

@@ -16,7 +16,7 @@
         </widget>
         <widget name="text_birth" factory="pawsMultiLineTextBox">
             <frame x="187" y="136" width="165" height="156" border="no"/>
-	    <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" sr="0" sg="0" sb="0" shadow="yes" size="13" resizetoscreen="yes" />
+	    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" sr="0" sg="0" sb="0" shadow="yes" size="10" resizetoscreen="yes" />
         </widget>
 
         <widget name="label_life" factory="pawsTextBox">
@@ -26,12 +26,12 @@
         </widget>
         <widget name="text_life" factory="pawsMultiLineTextBox">
             <frame x="459" y="136" width="165" height="156" border="no"/>
-	    <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" sr="0" sg="0" sb="0" shadow="yes" size="13" resizetoscreen="yes" />
+	    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" sr="0" sg="0" sb="0" shadow="yes" size="10" resizetoscreen="yes" />
         </widget>
         
         <widget name="server_status" factory="pawsTextBox">
             <frame x="190" y="333" width="400" height="30" border="no"/>
-	    <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" sr="0" sg="0" sb="0" shadow="yes" size="10" resizetoscreen="yes" />  
+	    <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" sr="0" sg="0" sb="0" shadow="yes" size="12" resizetoscreen="yes" />  
             <text string="Please wait for verification from server"/>
         </widget>
                 
@@ -63,12 +63,12 @@
             <columns height="18" headings="no">
                 <column width="115" >
                     <widget name="" factory="pawsTextBox">
-			    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" sr="0" sg="0" sb="0" shadow="yes" size="8" resizetoscreen="yes" />
+			    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" sr="0" sg="0" sb="0" shadow="yes" size="13" resizetoscreen="yes" />
                     </widget>
                 </column>
                 <column width="30" >
                     <widget name="" factory="pawsTextBox">
-			    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" sr="0" sg="0" sb="0" shadow="yes" size="8" resizetoscreen="yes" />
+			    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" sr="0" sg="0" sb="0" shadow="yes" size="12" resizetoscreen="yes" />
                     </widget>
                 </column> 
             </columns>
@@ -80,12 +80,12 @@
             <columns height="18" headings="no">
                 <column width="123" >
                     <widget name="" factory="pawsTextBox">
-			    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" sr="0" sg="0" sb="0" shadow="yes" size="8" resizetoscreen="yes" />
+			    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" sr="0" sg="0" sb="0" shadow="yes" size="12" resizetoscreen="yes" />
                     </widget>
                 </column>
                 <column width="30" >
                     <widget name="" factory="pawsTextBox">
-			    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" sr="0" sg="0" sb="0" shadow="yes" size="8" resizetoscreen="yes" />
+			    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" sr="0" sg="0" sb="0" shadow="yes" size="12" resizetoscreen="yes" />
                     </widget>
                 </column> 
             </columns>     

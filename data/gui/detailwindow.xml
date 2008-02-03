@@ -79,13 +79,13 @@
         <!-- You see a {gender} {race} in front of you named {name}. -->
         <widget name="intro" factory="pawsMultiLineTextBox">
             <frame x="33" y="28" width="262" height="57" border="no" />
-            <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="8" />
+            <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="10" />
         </widget>
         
         <!-- Description -->
         <widget name="Description" factory="pawsMultiLineTextBox">
             <frame x="33" y="85" width="262" height="98" border="no" />
-            <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="8" />
+            <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="10" />
         </widget>  
         
     </widget>

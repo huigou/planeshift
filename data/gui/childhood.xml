@@ -29,9 +29,9 @@
         
         <widget name="bevent" factory="pawsListBox" id="1" >
             <frame x="180" y="138" width="162" height="96" border="no" />
-	    <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" sr="0" sg="0" sb="0" shadow="yes" size="10" resizetoscreen="yes" />
+	    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" sr="0" sg="0" sb="0" shadow="yes" size="13" resizetoscreen="yes" />
             <scrollbar arrowup="Up Arrow" arrowdown="Down Arrow" arrowsize="8" width="15"  border="no"/>
-            <columns height="19">
+            <columns height="20">
                 <column width="148" >
                     <widget name="" factory="pawsTextBox"></widget>
                 </column>
@@ -40,7 +40,7 @@
 
         <widget name="bdesc" factory="pawsMultiLineTextBox"  >
             <frame x="380" y="135" width="290" height="100" border="no" />
-	    <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" sr="0" sg="0" sb="0" shadow="yes" size="16" />
+	    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" sr="0" sg="0" sb="0" shadow="yes" size="13" />
             <text string="Select event that happend on your birthday" />
         </widget>
 
@@ -53,9 +53,9 @@
                              
         <widget name="activity" factory="pawsListBox" id="2" >
             <frame x="181" y="263" width="165" height="91" border="no" />
-	    <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" sr="0" sg="0" sb="0" shadow="yes" size="10" resizetoscreen="yes" />
+	    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" sr="0" sg="0" sb="0" shadow="yes" size="13" resizetoscreen="yes" />
             <scrollbar arrowup="Up Arrow" arrowdown="Down Arrow" arrowsize="8" width="15"  border="no"/>
-            <columns height="15">
+            <columns height="20">
                 <column width="151" >
                     <widget name="" factory="pawsTextBox"></widget>
                 </column>
@@ -63,7 +63,7 @@
         </widget>
         <widget name="adesc" factory="pawsMultiLineTextBox"  >
             <frame x="380" y="259" width="290" height="100" border="no" />
-	    <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" sr="0" sg="0" sb="0" shadow="yes" size="16" />
+	    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" sr="0" sg="0" sb="0" shadow="yes" size="13" />
             <text string="Select your childhood game" />
         </widget>
 
@@ -76,9 +76,9 @@
 
         <widget name="house" factory="pawsListBox" id="3">
             <frame x="182" y="392" width="167" height="91" border="no" />
-	    <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" sr="0" sg="0" sb="0" shadow="yes" size="10" resizetoscreen="yes" />
+	    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" sr="0" sg="0" sb="0" shadow="yes" size="13" resizetoscreen="yes" />
             <scrollbar arrowup="Up Arrow" arrowdown="Down Arrow" arrowsize="8" width="15"  border="no"/>
-            <columns height="15">
+            <columns height="20">
                 <column width="153" >
                     <widget name="" factory="pawsTextBox"></widget>
                 </column>
@@ -87,7 +87,7 @@
         
         <widget name="hdesc" factory="pawsMultiLineTextBox"  >
             <frame x="380" y="388" width="290" height="100" border="no" />
-	    <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" sr="0" sg="0" sb="0" shadow="yes" size="16" />
+	    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" sr="0" sg="0" sb="0" shadow="yes" size="13" />
             <text string="Select your childhood home" />
         </widget> 
 

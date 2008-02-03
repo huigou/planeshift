@@ -16,7 +16,7 @@
         <!-- CP -->
         <widget name="CP" factory="pawsTextBox">
             <frame x="695" y="133" width="70" height="30" border="no" />
-	    <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" size="15" sr="0" sg="0" sb="0" shadow="yes" resizetoscreen="yes" />
+	    <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" size="14" sr="0" sg="0" sb="0" shadow="yes" resizetoscreen="yes" />
             <text string="CP: 0" horizAdjust="CENTRE" />
         </widget>
      
@@ -75,7 +75,7 @@
         
         <widget name="zodiac_description" factory="pawsMultiLineTextBox">
             <frame x="275" y="242" width="400" height="100" border="no"/>
-	    <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" size="11" sr="0" sg="0" sb="0" shadow="yes" resizetoscreen="yes" />
+	    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="11" sr="0" sg="0" sb="0" shadow="yes" resizetoscreen="yes" />
             <text string="Choose a month of birth"/>
         </widget>
 
@@ -114,7 +114,7 @@
 
         <widget name="sibling_desc" factory="pawsMultiLineTextBox"  >
             <frame x="395" y="377" width="260" height="115" border="no" />
-	    <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" size="16" sr="0" sg="0" sb="0" shadow="yes" resizetoscreen="yes" />
+	    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="11" sr="0" sg="0" sb="0" shadow="yes" resizetoscreen="yes" />
             <text string="Select your sibling count" />
         </widget>
         
