@@ -412,6 +412,9 @@ inline void psEntityLabels::UpdateVisibility()
         if (!mesh)
             continue;
 
+        if (object->GetObjectType() == GEM_ACTOR && !(object->Flags() & psPersistActor::NAMEKNOWN))
+            continue;
+
         // Only show labels within range
         csVector3 there = mesh->GetMovable()->GetPosition();
         int range = (object->GetObjectType() == GEM_ITEM) ? RANGE_TO_SEE_ITEM_LABELS : RANGE_TO_SEE_ACTOR_LABELS ;
