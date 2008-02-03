@@ -45,10 +45,12 @@ psEffectObjLabel::psEffectObjLabel(iView * parentView, psEffect2DRenderer * rend
                : psEffectObj(parentView, renderer2d)
 {
     meshFact = 0;
+    mesh = 0;
     xpos.SetSize(NUM_GLYPHS,0);
     ypos.SetSize(NUM_GLYPHS,0);
     width.SetSize(NUM_GLYPHS,64);
     height.SetSize(NUM_GLYPHS,64);
+    labelwidth = 3.0;
     for(int i=0; i<256; i++)
     {
         xpos[i] = (i%16) * 64;
@@ -89,6 +91,8 @@ bool psEffectObjLabel::Load(iDocumentNode *node)
             materialName = attr->GetValue();
         else if (attrName == "sizefile")
             sizeFileName = attr->GetValue();
+        else if (attrName == "labelwidth")
+            labelwidth = attr->GetValueAsFloat();
     }
     if (name == "")
     {
@@ -293,6 +297,7 @@ void psEffectObjLabel::CloneBase(psEffectObj * newObj) const
     psEffectObjLabel * newLabelObj = dynamic_cast<psEffectObjLabel *>(newObj);
 
     newLabelObj->materialName = materialName;
+    newLabelObj->labelwidth = labelwidth;
 
     for(int i=0; i<NUM_GLYPHS; i++)
     {
@@ -365,8 +370,6 @@ bool psEffectObjLabel::SetText(int rows, ...)
                 newElem.height = height[newElem.text[b]];
             }
         }
-        // Positioning
-        //font->GetDimensions(newElem.text, newElem.width, newElem.height);
         newElem.x = 0;
         newElem.y = y;
         elemBuffer.Push(newElem);
@@ -412,14 +415,16 @@ bool psEffectObjLabel::SetText(int rows, ...)
         }
         int y = elemBuffer[i].y;
         const char * text = elemBuffer[i].text;
+        float scalefactor = labelwidth / (float)maxWidth;
         for(size_t j=0; j<strlen(text); j++)
         {
             uint c =text[j];
             float fx1, fy1, fx2, fy2;
-            fx1 = (float)x / maxWidth*3 - 1.5;
-            fy1 = (float)(maxHeight - y) / maxWidth*3;
-            fx2 = (float)(x+width[c]) / maxWidth*3 - 1.5;
-            fy2 = (float)(maxHeight - y + height[c]) / maxWidth*3;
+
+            fx1 = (float)x * scalefactor - labelwidth/2.0;
+            fy1 = (float)(maxHeight/2 - y) * scalefactor;
+            fx2 = (float)(x+width[c]) * scalefactor - labelwidth/2.0;
+            fy2 = (float)(maxHeight/2 - y + height[c]) * scalefactor;
             //printf("rendering char %d pos %d,%d w/h %d,%d xp/yp %d,%d - %f %f %f %f\n", cp/4, x, y, width[c], height[c], xpos[c], ypos[c], fx1, fy1, fx2, fy2);
             facState->GetVertices()[cp  ].Set(fx2,0,fy1); 
             facState->GetVertices()[cp+1].Set(fx1,0,fy1); 
@@ -439,10 +444,8 @@ bool psEffectObjLabel::SetText(int rows, ...)
             facState->GetNormals()[1].Set(0,1,0);
             facState->GetNormals()[2].Set(0,1,0);
             facState->GetNormals()[3].Set(0,1,0);
-            //facState->GetTriangles()[(cp/2)  ].Set( cp  , cp+2, cp+1);
             facState->GetTriangles()[(cp/2)  ].Set( cp  , cp+2, cp+3);
             facState->GetTriangles()[(cp/2)+1].Set( cp+2, cp  , cp+1);
-            //facState->GetTriangles()[cp+3].Set( cp+2, cp  , cp+3);
             cp += 4;
             x += width[c];
         }
@@ -452,9 +455,7 @@ bool psEffectObjLabel::SetText(int rows, ...)
         mesh->GetMeshObject()->SetColor(color);
     }
     facState->CalculateNormals();
-//    facState->SetColor(csColor(1.0,1.0,1.0));
 //    facState->SetLighting(false);
 //    fact->SetMixMode(CS_FX_ADD);
-//    Render2(objUp);
     return true;
 }

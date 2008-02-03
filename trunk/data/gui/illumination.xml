@@ -2,6 +2,7 @@
 
     <widget name="SketchWindow" factory="pawsSketchWindow" resizable="no" visible="no" movable="yes">
         <frame x="100" y="100" width="400" height="300" border="Leather Sketch Border"/>
+	<minframe height="20" />
         <title resource="Blue Title" text="Sketch Viewer" align="left" close_button="yes"/>
         <title text="Sketch Viewer" align="left" close_button="yes"/>
 	<bgimage resource="MiddleAreaMap" alpha="128" />  

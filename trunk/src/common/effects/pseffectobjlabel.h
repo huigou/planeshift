@@ -43,6 +43,7 @@ private:
 
     // font
     csString       sizeFileName;
+    float          labelwidth;
     csArray<uint16> xpos;
     csArray<uint16> ypos;
     csArray<uint16> width;

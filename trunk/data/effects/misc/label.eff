@@ -16,7 +16,7 @@
             <anchor type="basic" name="pos">
                 <dir>none</dir>
             </anchor>
-            <obj type="label" name="label" material="mat_labelfonttable"
+            <obj type="label" name="label" labelwidth="2.0" material="mat_labelfonttable"
              sizefile="/this/data/effects/misc/glyphs_baar_sophia.xml">
                 <mixmode>alpha</mixmode>
                 <attach>pos</attach>

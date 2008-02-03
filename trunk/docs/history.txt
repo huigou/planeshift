@@ -5,6 +5,10 @@
 - added height to label font table
 - introduce new font for labels
 - paths window font changes by Caarrie
+- make width of labels configurable
+- more font changes by Caarrie
+- remove frame in configkeys.xml, for some reason it was
+  eating up the scrollbar
 
 *** 2008-01-31 by Sasha Levin
 - Fixed FS#1046 - Performance warning in networkmgr.cpp.

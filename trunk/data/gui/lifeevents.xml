@@ -29,22 +29,22 @@
         
         <widget name="Life Event" factory="pawsSelectorBox" >
             <frame x="160" y="127" width="466" height="210" border="no" />
-	    <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" sr="0" sg="0" sb="0" shadow="yes" size="10" resizetoscreen="yes" />
-            <available width="200" rowheight="14" />
-            <selected width="210" rowheight="14" />
+	    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" sr="0" sg="0" sb="0" shadow="yes" size="13" resizetoscreen="yes" />
+            <available width="200" rowheight="20" />
+            <selected width="210" rowheight="20" />
             <addbutton x="220" y="85" />
             <removebutton x="220" y="123" />
         </widget>
         
         <widget name="EventDesc" factory="pawsMultiLineTextBox">
             <frame x="162" y="390" width="193" height="90" border="no" />
-	    <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" sr="0" sg="0" sb="0" shadow="yes" size="15" />
+	    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" sr="0" sg="0" sb="0" shadow="yes" size="13" />
             <text string="Description" />
         </widget>
         
         <widget name="SelEventDesc" factory="pawsMultiLineTextBox">
             <frame x="437" y="390" width="193" height="90" border="no" />
-	    <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" sr="0" sg="0" sb="0" shadow="yes" size="15" />
+	    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" sr="0" sg="0" sb="0" shadow="yes" size="13" />
             <text string="Description" />
         </widget>
         
