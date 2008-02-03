@@ -5,6 +5,7 @@
 - Minor fix for fonts not fitting by Caarrie.
 - Fixed labels visible for non-introduced chars.
 - Made GetActorByName case insensitive, Should solve a bunch of locating problems.
+- Removed references to the Tournament Button from the code.
 
 *** 2008-02-03 by Mike Gist
 - Bumped CS revision to r28603, to get the many bug fixes recently merged.
