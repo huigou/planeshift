@@ -1,3 +1,8 @@
+*** 2008-02-03 by Sasha Levin
+- Commented out NPC introduction code, Everybody knows all NPCs at the moment.
+- Everybody are introduced to a GM who's in a guild. So event GMs are still
+  unintroduced.
+
 *** 2008-02-03 by Mike Gist
 - Bumped CS revision to r28603, to get the many bug fixes recently merged.
 

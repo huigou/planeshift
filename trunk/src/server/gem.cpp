@@ -2177,7 +2177,9 @@ void gemActor::Send( int clientnum, bool control, bool to_superclient  )
     Client* targetClient = psserver->GetConnections()->Find(clientnum);
     if (targetClient && targetClient->GetCharacterData())
     {
-        if ((targetClient->GetSecurityLevel() >= GM_LEVEL_0) ||
+        if (((GetClient()->GetSecurityLevel() >= GM_LEVEL_0) && 
+            GetCharacterData()->GetGuild()) ||
+            (targetClient->GetSecurityLevel() >= GM_LEVEL_0) ||
             psserver->GetIntroductionManager()->IsIntroduced(targetClient->GetCharacterData()->GetCharacterID(),
                                                                 psChar->GetCharacterID()))
                                                              flags |= psPersistActor::NAMEKNOWN;
@@ -3744,10 +3746,13 @@ void gemNPC::Send( int clientnum, bool control, bool to_superclient )
     Client* targetClient = psserver->GetConnections()->Find(clientnum);
     if (targetClient && targetClient->GetCharacterData())
     {
-        if ((targetClient->GetSecurityLevel() >= GM_LEVEL_0) ||
+        flags |= psPersistActor::NAMEKNOWN;
+
+        // Enable to enable introductions between player and NPCs
+        /*if ((targetClient->GetSecurityLevel() >= GM_LEVEL_0) ||
             psserver->GetIntroductionManager()->IsIntroduced(targetClient->GetCharacterData()->GetCharacterID(),
                                                                 psChar->GetCharacterID()))
-                                                             flags |= psPersistActor::NAMEKNOWN;
+                                                             flags |= psPersistActor::NAMEKNOWN;*/
     }
 
     csString helmGroup = psChar->GetHelmGroup();
