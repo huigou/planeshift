@@ -127,10 +127,10 @@ AC_ARG_ENABLE([cpu-specific-optimizations],
 	one processor will not work with earlier processors (for example, Intel
 	686-specific code will not work with a 586)])],
     [case $enable_cpu_specific_optimizations in
-	min) enable_cpu_specific_optimizations=minimum ;;
-	yes|max) enable_cpu_specific_optimizations=maximum ;;
+	yes|min) enable_cpu_specific_optimizations=minimum ;;
+	max) enable_cpu_specific_optimizations=maximum ;;
     esac],
-    [enable_cpu_specific_optimizations=maximum])
+    [enable_cpu_specific_optimizations=minimum])
 AC_MSG_RESULT([$enable_cpu_specific_optimizations])
 
 case $enable_cpu_specific_optimizations in
@@ -259,150 +259,27 @@ AC_DEFUN([CS_CHECK_OPTIMIZE_FLAGS],
 CS_CHECK_OPTIMIZE_FLAGS
 
 #------------------------------------------------------------------------------
-# Check if "hidden" visibilty for inline functions is supported.
-#
-# IMPLEMENTATION NOTES
-#
-# There is an obscure bug in gcc 3.4.x and 4.0.x where
-# -fvisibility-inlines-hidden on AMD64 in combination with -fPIC and -shared
-# flags causes the linker to fail with a bogus error stating that the target
-# library needs to be built with -fPIC even when it has been built using that
-# option. On such installations, if Crystal Space is built with
-# -fvisibility-inlines-hidden, then clients liking against Crystal Space
-# experience this bogus error.  Normally, we would test for this anomaly by
-# manipulating a std::basic_string<> in a test program, and avoid
-# -fvisibility-inlines-hidden if the test program fails to link, however,
-# practical experience has shown that this test is not 100% reliable for all
-# such installations. Instead, for simplicity, we disable this flag presently
-# for gcc below version 4.1 on AMD64.  References:
-#
-#     http://dev.gentoo.org/~kugelfang/pappy-visibility.txt
-#     http://www.gnu.org/software/gcc/gcc-4.0/changes.html#visibility
-#     http://www.nedprod.com/programs/gccvisibility.html
-#     http://bugs.gentoo.org/show_bug.cgi?id=78720
-#
-# Furthermore, there seems to be a bug on MacOS/X with gcc 4.0.x where use of
-# -fvisibility-inlines-hidden causes link problems with external clients which
-# do not specify this flag.  For this reason, we also disable this flag on
-# MacOS/X.  In particular, clients receive errors of this sort:
-#
-#    /usr/bin/ld: libcrystalspace.a(scf.o) malformed object, illegal
-#        reference for -dynamic code (reference to a coalesced section
-#        (__TEXT,__textcoal_nt) from section (__TEXT,__text) relocation
-#        entry (1))
+# Check how to declare symbol visibility.
 #------------------------------------------------------------------------------
-CS_CHECK_BUILD_FLAGS([for inline visibility flag],
-    [cs_cv_prog_cxx_visibility_inlines_hidden],
-    [CS_CREATE_TUPLE([-fvisibility-inlines-hidden])],[C++])
-
-AS_IF([test -n "$cs_cv_prog_cxx_visibility_inlines_hidden"],
-    [CS_CHECK_PROG_VERSION([g++], [$CXX --version], [4.1], [9.9|.9],
-	[cs_cv_gxx_version_4_1=yes],
-	[cs_cv_gxx_version_4_1=no])
-    AC_CACHE_CHECK([if $cs_cv_prog_cxx_visibility_inlines_hidden is buggy],
-	[cs_cv_prog_cxx_visibility_inlines_hidden_buggy],
-	[AS_IF([test $ac_compiler_gnu = yes],
-	    [AS_IF([test \( $host_cpu = x86_64 -a cs_cv_gxx_version_4_1 = no \) \
-		    || test x$cs_host_macosx = xyes],
-		[cs_cv_prog_cxx_visibility_inlines_hidden_buggy=yes],
-		[cs_cv_prog_cxx_visibility_inlines_hidden_buggy=no])],
-	    [cs_cv_prog_cxx_visibility_inlines_hidden_buggy=no])])],
-    [cs_cv_prog_cxx_visibility_inlines_hidden_buggy=no])
-
-AS_IF([test $cs_cv_prog_cxx_visibility_inlines_hidden_buggy != yes],
+CS_VISIBILITY_FLAG_INLINES_HIDDEN(
     [CS_EMIT_BUILD_PROPERTY([COMPILER.C++FLAGS],
-	[$cs_cv_prog_cxx_visibility_inlines_hidden], [+])])
+	[$cs_prog_cxx_visibility_inlines_hidden], [+])])
 
+CS_VISIBILITY_FLAG_HIDDEN([C], [],
+    [CS_EMIT_BUILD_PROPERTY([COMPILER.CFLAGS], 
+	[$cs_cv_prog_c_visibility_hidden], [+])])
 
-#------------------------------------------------------------------------------
-# Check how to set default symbol visibility, and how to override the setting
-# in code.
-#------------------------------------------------------------------------------
-CS_CHECK_BUILD_FLAGS([for symbol visibility flag],
-    [cs_cv_prog_cxx_visibility_hidden],
-    [CS_CREATE_TUPLE([-fvisibility=hidden])], [C++])
+CS_VISIBILITY_FLAG_DEFAULT([C], [],
+    [CS_EMIT_BUILD_PROPERTY([COMPILER.CFLAGS.VISIBILITY_DEFAULT], 
+	[$cs_cv_prog_c_visibility_default])])
 
-CS_SYMBOL_QUALIFIER([how to declare default visibility],
-    [cs_cv_prog_cxx_declare_visible_def],
-    [__attribute__((visibility("default")))], [], [C++])
+CS_VISIBILITY_DECLARE_HIDDEN([C++], [],
+    [CS_HEADER_PROPERTY([CS_VISIBILITY_HIDDEN],
+	[$cs_cv_prog_cxx_declare_visibility_hidden])])
 
-AS_IF([test $cs_cv_prog_cxx_declare_visible_def != no && \
-    test -n "$cs_cv_prog_cxx_visibility_hidden"],
-    [CS_EMIT_BUILD_PROPERTY([COMPILER.C++FLAGS], 
-	[$cs_cv_prog_cxx_visibility_hidden], [+])
-    CS_HEADER_PROPERTY([CS_VISIBILITY_DEFAULT],
-	[$cs_cv_prog_cxx_declare_visible_def])])
-
-#------------------------------------------------------------------------------
-# Check for X-Windows.  If the X-Windows implementation is XFree86, then also
-# enable the `VideoMode' extension.
-#------------------------------------------------------------------------------
-AC_DEFUN([CS_X_CHECK_PREPARE],
-    [AC_REQUIRE([AC_CANONICAL_HOST])
-    AC_REQUIRE([CS_CHECK_HOST])
-
-    # Explicitly disable X checking on Windows to avoid discovering XFree86 in
-    # case Cygwin is installed.  Doing so allows us to avoid Mesa's OpenGL
-    # headers during the OpenGL check, and prefer Microsoft's OpenGL headers.
-    # The Mesa OpenGL headers cause link errors because they do not employ
-    # __stdcall.
-    case $host_os in
-	mingw*|cygwin*) with_x=no ;;
-    esac
-
-    # Explicitly disable X checking on MacOS/X in case the optional XFree86 is
-    # installed since we want to avoid an undesirable dependency upon XFree86
-    # in the CS executables and plugins.  If the user is actually
-    # cross-building for Darwin on MacOS/X, then the --with-x option will
-    # override this test (by setting cs_host_macosx to "no").
-    AS_IF([test x$cs_host_macosx = xyes], [with_x=no])])
-
-CS_X_CHECK_PREPARE
-AC_PATH_X
-AC_PATH_XTRA
-
-AS_IF([test "$no_x" != yes],
-    [# We must be especially careful to instruct CS_EMIT_BUILD_PROPERTY() to
-    # emit the following properties even if their values are empty.  This is
-    # necessary because of the way that Jam performs "product-wise" variable
-    # expansion.  For example, if X is "x" and Y is undefined, Jam will expand
-    # "$(X) $(Y)" to "", whereas every other tool in the world will expand it
-    # to "x ".  Since the emitted X11.CFLAGS, X11.LFLAGS, XFREE86VM.CFLAGS, and
-    # XFREE86VM.LFLAGS properties reference the other variables by name, we
-    # must ensure that those other variables are defined (even if only with an
-    # empty string).
-    CS_EMIT_BUILD_PROPERTY([X11.AVAILABLE], [yes])
-    CS_EMIT_BUILD_PROPERTY([X_CFLAGS], [$X_CFLAGS], [], [Y])
-    CS_EMIT_BUILD_PROPERTY([X_LIBS], [$X_LIBS], [], [Y])
-    CS_EMIT_BUILD_PROPERTY([X_PRE_LIBS], [$X_PRE_LIBS], [], [Y])
-    CS_EMIT_BUILD_PROPERTY([X_EXTRA_LIBS], [$X_EXTRA_LIBS], [], [Y])
-    CS_EMIT_BUILD_PROPERTY([X11.CFLAGS], [AS_ESCAPE([$(X_CFLAGS)])])
-    CS_EMIT_BUILD_PROPERTY([X11.LFLAGS],
-      [AS_ESCAPE([$(X_PRE_LIBS) $(X_LIBS) -lXext -lX11 $(X_EXTRA_LIBS)])])
-
-    CS_CHECK_LIB_WITH([Xxf86vm],
-	[AC_LANG_PROGRAM(
-	    [[#define XK_MISCELLANY 1
-	    #include <X11/Xlib.h>
-	    #include <X11/Xutil.h>
-	    #include <X11/Xatom.h>
-	    #include <X11/extensions/xf86vmode.h>]],
-	    [XF86VidModeLockModeSwitch(0, 0, 0)])], [], [],
-	[CS_EMIT_BUILD_PROPERTY([XFREE86VM.AVAILABLE], [yes])
-	CS_EMIT_BUILD_PROPERTY([XFREE86VM.CFLAGS], [AS_ESCAPE([$(X_CFLAGS)])])
-	CS_EMIT_BUILD_PROPERTY([XFREE86VM.LFLAGS],
-	    [AS_ESCAPE([$(X_PRE_LIBS) $(X_LIBS) -lXxf86vm -lXext -lX11
-	    $(X_EXTRA_LIBS)])])], [],
-	[$X_CFLAGS], [], [$X_PRE_LIBS $X_LIBS -lX11 -lXext $X_EXTRA_LIBS])
-
-    CS_CHECK_LIB_WITH([Xaw],
-	[AC_LANG_PROGRAM(
-	    [[#include <X11/Shell.h>
-	    #include <X11/Xaw/Form.h>]],
-	    [XtVaGetValues(0,0,0,0)])],
-	[], [],	[CS_EMIT_BUILD_RESULT([cs_cv_libXaw], [XAW])], [],
-	[$X_CFLAGS], [], [$X_PRE_LIBS $X_LIBS -lX11 $X_EXTRA_LIBS])])
-
+CS_VISIBILITY_DECLARE_DEFAULT([C++], [],
+    [CS_HEADER_PROPERTY([CS_VISIBILITY_DEFAULT],
+	[$cs_cv_prog_cxx_declare_visibility_default])])
 
 #----------------------------------------------------------------------------
 # Check for Crystal Space (CS)
