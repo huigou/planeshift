@@ -3,6 +3,7 @@
 - Everybody are introduced to a GM who's in a guild. So event GMs are still
   unintroduced.
 - Minor fix for fonts not fitting by Caarrie.
+- Fixed labels visible for non-introduced chars.
 
 *** 2008-02-03 by Mike Gist
 - Bumped CS revision to r28603, to get the many bug fixes recently merged.
