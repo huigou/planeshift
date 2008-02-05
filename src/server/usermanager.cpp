@@ -628,7 +628,7 @@ void UserManager::SendCharacterDescription(Client * client, psCharacter * charDa
     }
 
     if (!psserver->GetIntroductionManager()->IsIntroduced(client->GetCharacterData()->GetCharacterID(),
-                                                         charData->GetCharacterID()))
+                                                         charData->GetCharacterID()) && !isSelf)
     {
         charName = "[Unknown]";
     }
