@@ -1,3 +1,7 @@
+*** 2008-02-05 by Dave Bentham
+- Fix bug FS#857: player can only read a book if they have it in their possession.
+  Others just get the description, which is updated when the book gets written.
+
 *** 2008-02-03 by Sasha Levin
 - Commented out NPC introduction code, Everybody knows all NPCs at the moment.
 - Everybody are introduced to a GM who's in a guild. So event GMs are still

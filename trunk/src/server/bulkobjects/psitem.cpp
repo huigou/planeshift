@@ -2231,4 +2231,8 @@ void psItem::SetGemObject(gemItem *object)
         gItem->RegisterCallback(this);
 }
 
+void psItem::SetBookText(const csString& newText)
+{
+    GetBaseStats()->SetLiteratureText(newText, owning_character ? owning_character->GetCharFullName():"Unknown");
+}
 
