@@ -422,7 +422,7 @@ class MeleeOperation : public ScriptOperation
 {
 protected:
     float seek_range, melee_range;
-    iCelEntity *attacked_ent;
+    csWeakRef<iCelEntity> attacked_ent;
     bool  attack_invisible,attack_invincible;
 public:
 
