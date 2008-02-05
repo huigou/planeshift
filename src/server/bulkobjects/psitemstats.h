@@ -327,6 +327,9 @@ private:
     /** Save creation in database */
     void SaveCreation(uint32);
 
+    /** Update the description of the item */
+    csString UpdateDescription(PSITEMSTATS_CREATIVETYPE, csString, csString);
+
     PSITEMSTATS_CREATIVETYPE creativeType;
 
     psXMLString creativeDefinitionXML;
@@ -498,6 +501,7 @@ public:
     const char *GetUIDStr();
     const char *GetDescription() const;
     void SetDescription(const char *v);
+    void SaveDescription(void);
     PSITEMSTATS_AMMOTYPE GetAmmoType();
     float GetQuality() const { return item_quality; }
     void SetQuality(float f){ item_quality = f; }
@@ -616,7 +620,7 @@ public:
     const csString& GetLiteratureText(void) { return creativeStats.content; }
 
     /// Write lit text (eg book)
-    void SetLiteratureText (const csString&);
+    void SetLiteratureText (const csString&, csString);
 
     /// creator (i.e. author, artist, etc) of creative things
     void SetCreator (unsigned int, PSITEMSTATS_CREATORSTATUS);

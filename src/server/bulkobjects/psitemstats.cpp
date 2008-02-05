@@ -324,6 +324,30 @@ void psItemCreativeStats::SaveCreation(uint32 uid)
 
 }
 
+/// Update the description of the book, etc.
+csString psItemCreativeStats::UpdateDescription(PSITEMSTATS_CREATIVETYPE creativeType,
+                                                csString title, csString author)
+{
+    csString newDescription = "No description yet";
+
+    // only works on books for now.
+    if (creativeType == PSITEMSTATS_CREATIVETYPE_LITERATURE)
+    {
+        newDescription = "A book, titled \"" + title + "\"";
+
+        if (creatorIDStatus == PSITEMSTATS_CREATOR_VALID)
+            newDescription.AppendFmt(" written by %s.", author.GetDataSafe());
+        else if (creatorIDStatus == PSITEMSTATS_CREATOR_PUBLIC)
+            newDescription.Append(". Anyone can write in this book.");
+        else
+            newDescription.Append(". Unknown author.");
+
+        newDescription.AppendFmt(" The book is %d characters long.", (int)content.Length());
+    }
+
+    return newDescription;
+}
+
 //-----------------------------------------------------------------------------
 
 // Definition of the itempool for psItemStats
@@ -946,6 +970,22 @@ void psItemStats::SetDescription(const char *v)
     description = v;
 }
 
+void psItemStats::SaveDescription(void)
+{
+    // save to database
+    psStringArray values;
+    const char *fieldnames[] = {"description"};
+    csString itemStatsID;
+
+    itemStatsID.Format("%u", uid);
+    values.Push(this->description);
+
+    if ( !db->GenericUpdateWithID("item_stats", "id", itemStatsID, fieldnames, values) )
+    {
+        Error2("Failed to save description for item %u!", uid );
+    }
+
+}
 
 float psItemStats::GetWeight()
 {
@@ -1266,9 +1306,15 @@ bool psItemStats::SetAttribute( csString* op, csString* attrName, float modifier
     return true;
 }
 
-void psItemStats::SetLiteratureText (const csString& newText)
+void psItemStats::SetLiteratureText (const csString& newText, csString author)
 {
+    csString newDescription;
+
     creativeStats.SetCreativeContent(PSITEMSTATS_CREATIVETYPE_LITERATURE, newText, uid);
+
+    newDescription = creativeStats.UpdateDescription(PSITEMSTATS_CREATIVETYPE_LITERATURE, name, author);
+    SetDescription(newDescription.GetDataSafe());
+    SaveDescription();
 }
 
 void psItemStats::SetSketch(const csString& xml)
