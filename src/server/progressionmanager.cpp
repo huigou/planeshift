@@ -75,6 +75,7 @@
 #include "npcmanager.h"
 #include "usermanager.h"
 #include "introductionmanager.h"
+#include "adminmanager.h"
 
 
 class ScriptOp;
@@ -2726,7 +2727,7 @@ public:
                 if (!quest)
                 {
                     Error3("Error: ProgressionEvent(%s) QuestOp can not find quest %s\n",eventName->GetData(), questName.GetData());
-                    if (actor->GetClient()->GetSecurityLevel() > 20)
+                    if (actor->GetClient()->GetSecurityLevel() > GM_LEVEL_0)
                     {
                         psserver->SendSystemError(actor->GetClientID(),"Error: ProgressionEvent(%s) QuestOp can not find quest %s\n",eventName->GetData(), questName.GetData());
                     }

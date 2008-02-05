@@ -70,6 +70,7 @@
 #include "npcmanager.h"
 #include "workmanager.h"
 #include "weathermanager.h"
+#include "adminmanager.h"
 
 
 
@@ -276,7 +277,7 @@ public:
             elapsedTime = 0;
         }
 
-        if ( elapsedTime >= maxTime && owner->GetClient()->GetSecurityLevel() < 29 )
+        if ( elapsedTime >= maxTime && owner->GetClient()->GetSecurityLevel() < GM_LEVEL_9 )
         {
             CPrintf(CON_NOTIFY,"PetSession marked invalid ( %s, %d )\n", owner->GetName(), petID );
 

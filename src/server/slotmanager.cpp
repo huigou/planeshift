@@ -47,6 +47,7 @@
 #include "client.h"
 #include "entitymanager.h"
 #include "globals.h"
+#include "adminmanager.h"
 
 SlotManager::~SlotManager()
 {
@@ -454,7 +455,7 @@ void SlotManager::MoveFromInventory(psSlotMovementMsg& msg, Client *fromClient)
                 Error2("Cannot put item into another item %s.\n", parentItem->GetName());
                 return;
             }
-            if (parentItem->GetIsNpcOwned() && fromClient->GetSecurityLevel()<30)
+            if (parentItem->GetIsNpcOwned() && fromClient->GetSecurityLevel() < GM_DEVELOPER)
             {
                 psserver->SendSystemError(fromClient->GetClientNum(), "You may not use that container.");
                 return;
