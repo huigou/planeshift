@@ -1456,7 +1456,7 @@ bool pawsWidget::OnMouseDown( int button, int modifiers, int x, int y )
 
     if ( !PawsManager::GetSingleton().GetDragDropWidget() )
     {
-        if (button == csmbLeft)
+        if (button == csmbLeft && !(modifiers & CSMASK_CTRL))
         {
             if ( isResizable && showResize )
             {
@@ -1477,7 +1477,7 @@ bool pawsWidget::OnMouseDown( int button, int modifiers, int x, int y )
                 return true;
             }
         }
-        else if (button == csmbRight)
+        else if ((button == csmbRight) || (button == csmbLeft && modifiers & CSMASK_CTRL))
         {
             if (!contextMenu && contextMenuFile != "")
             {
