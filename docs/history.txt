@@ -1,3 +1,6 @@
+*** 2008-02-05 by Anders Reggestad
+- Fixed FS#1001 - Using a WeakRef for a pointer to prevent using of deleted object.
+
 *** 2008-02-05 by Sasha Levin
 - Fixed FS#914 - Mac users cant right click on the group window [lack of right click].
 
