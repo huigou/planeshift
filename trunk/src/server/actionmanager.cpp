@@ -217,7 +217,7 @@ void ActionManager::HandleQueryMessage( csString xml, Client *client )
         }            
 
         // evk: Sending to clients with security level 30+ only.
-        if ( !handled && client->GetSecurityLevel() => GM_DEVELOPER )
+        if ( !handled && client->GetSecurityLevel() > GM_DEVELOPER )
         {
             // Set target for later use
             client->SetMesh(meshName);
