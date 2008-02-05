@@ -59,6 +59,7 @@
 #include "weathermanager.h"
 #include "cachemanager.h"
 #include "globals.h"
+#include "adminmanager.h"
 
 //#define DEBUG_WORKMANAGER         // debugging only
 //#define NO_RANDOM_QUALITY         // no not apply randomness to calculations
@@ -2100,7 +2101,7 @@ bool psWorkManager::LoadLocalVars(Client* client)
 
 
     // Setup security check
-    secure = (client->GetSecurityLevel() > 20 ) ? true : false;
+    secure = (client->GetSecurityLevel() > GM_LEVEL_0 ) ? true : false;
 
     // Setup mode string pointer
     preworkModeString = owner->GetModeStr();

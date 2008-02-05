@@ -62,6 +62,7 @@
 #include "psserverchar.h"
 #include "entitymanager.h"
 #include "progressionmanager.h"
+#include "adminmanager.h"
 
 
 psActionTimeoutGameEvent::psActionTimeoutGameEvent( ActionManager *mgr, const psActionLocation * actionLocation, size_t clientnum)
@@ -216,7 +217,7 @@ void ActionManager::HandleQueryMessage( csString xml, Client *client )
         }            
 
         // evk: Sending to clients with security level 30+ only.
-        if ( !handled && client->GetSecurityLevel() > 29 )
+        if ( !handled && client->GetSecurityLevel() => GM_DEVELOPER )
         {
             // Set target for later use
             client->SetMesh(meshName);
@@ -456,7 +457,7 @@ bool ActionManager::ProcessMatches( csArray<psActionLocation *> matches, Client*
 
 void ActionManager::HandleListMessage( csString xml, Client *client )
 {
-    if ( client->GetSecurityLevel() <= 29)
+    if ( client->GetSecurityLevel() <= GM_LEVEL_9)
     {
         psserver->SendSystemError(client->GetAccountID(), "Access is denied. Only Admin level 9 can manage Actions.");
         return;
@@ -500,7 +501,7 @@ void ActionManager::HandleListMessage( csString xml, Client *client )
 
 void ActionManager::HandleSaveMessage( csString xml, Client *client )
 {
-    if ( client->GetSecurityLevel() <= 29)
+    if ( client->GetSecurityLevel() <= GM_LEVEL_9)
     {
         psserver->SendSystemError(client->GetClientNum(), "Access is denied. Only Admin level 9 can manage Actions.");
         return;
@@ -602,7 +603,7 @@ void ActionManager::HandleSaveMessage( csString xml, Client *client )
 
 void ActionManager::HandleDeleteMessage( csString xml, Client *client )
 {
-    if ( client->GetSecurityLevel() <= 29)
+    if ( client->GetSecurityLevel() <= GM_LEVEL_9)
     {
         psserver->SendSystemError(client->GetClientNum(), "Access is denied. Only Admin level 9 can manage Actions.");
         return;
@@ -664,7 +665,7 @@ void ActionManager::HandleDeleteMessage( csString xml, Client *client )
 
 void ActionManager::HandleReloadMessage(Client * client)
 {
-    if ( client->GetSecurityLevel() <= 29)
+    if ( client->GetSecurityLevel() <= GM_LEVEL_9)
     {
         psserver->SendSystemError(client->GetClientNum(), "Access is denied. Only Admin level 9 can manage Actions.");
         return;

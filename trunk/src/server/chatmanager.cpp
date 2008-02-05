@@ -53,6 +53,7 @@
 #include "globals.h"
 #include "psserver.h"
 #include "npcmanager.h"
+#include "adminmanager.h"
 
 
 ChatManager::ChatManager()
@@ -284,7 +285,7 @@ void ChatManager::SendShout(Client *c, psChatMessage& msg)
 {
     psChatMessage newMsg(c->GetClientNum(), c->GetName(), 0, msg.sText, msg.iChatType, msg.translate);
 
-    if (c->GetActor()->GetCharacterData()->GetTotalOnlineTime() > 3600)
+    if (c->GetActor()->GetCharacterData()->GetTotalOnlineTime() > 3600 || c->GetActor()->GetSecurityLevel() >= GM_LEVEL_0)
     {
         csArray<PublishDestination>& clients = c->GetActor()->GetMulticastClients();
         newMsg.Multicast(clients, 0, PROX_LIST_ANY_RANGE );
