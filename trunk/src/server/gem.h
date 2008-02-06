@@ -630,6 +630,7 @@ public:
     void DoDamage(gemActor *attacker, float damage, float damageRate = 0.0f, csTicks duration=0);
     void AddAttackerHistory(gemActor * attacker, float damage, float damageRate = 0.0f, csTicks duration = 0 );
     void RemoveAttackerHistory(gemActor * attacker);
+    bool CanBeAttackBy(gemActor *attacker, gemActor ** lastAttacker) const;
     void Kill(gemActor *attacker) { DoDamage(attacker, psChar->GetHP() ); }
     void Resurrect();
 
@@ -697,8 +698,9 @@ public:
     void GetLastLocation(csVector3& pos, float& vel_y, float& yrot, iSector*& sector);
     void MoveToLastPos(); 
 
+    const DamageHistory* GetDamageHistory(int pos) const { return dmgHistory.Get(pos); }
     DamageHistory* GetDamageHistory(int pos) { return dmgHistory.Get(pos); }
-    size_t GetDamageHistoryCount() { return dmgHistory.GetSize(); }
+    size_t GetDamageHistoryCount() const { return dmgHistory.GetSize(); }
     void ClearDamageHistory() { dmgHistory.Empty(); }
 
     int  AttachAttackScript(const csString & scriptName);

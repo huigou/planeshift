@@ -449,8 +449,10 @@ public:
             {
                 csTicks duration = -(int)(history->damage/history->damageRate);
                 if (duration > timeOfDeath - history->timestamp)
+                {
                     // Since damageRate should always be negative:
                     history->damage = -(history->damageRate * (timeOfDeath - history->timestamp));
+                }
             }
 
             totalDamage += history->damage;
@@ -489,7 +491,7 @@ public:
 
             for (int x = (int)targetAct->GetDamageHistoryCount();x > lastHistory; x--)
             {
-                DamageHistory* history = targetAct->GetDamageHistory(x-1);
+                const DamageHistory* history = targetAct->GetDamageHistory(x-1);
                 if(history->attacker_ref == attacker)
                 {
                     dmgMade += history->damage;
