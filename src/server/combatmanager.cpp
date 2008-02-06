@@ -303,21 +303,24 @@ void psCombatManager::AttackSomeone(gemActor *attacker,gemObject *target,Stance 
             csString response;
             if (weapon!=NULL && weapon->CheckRequirements(attacker_character,response) )
             {
-              haveWeapon = true;
-              Debug5(LOG_COMBAT,attacker->GetClientID(),"%s tries to attack with %s weapon %s at %.2f range",
-                attacker->GetName(),(weapon->GetIsRangeWeapon()?"range":"melee"),weapon->GetName(),attacker->RangeTo(target,false));
-              Debug3(LOG_COMBAT,attacker->GetClientID(),"%s started attacking with %s",attacker->GetName(),weapon->GetName())
-
+                haveWeapon = true;
+                Debug5(LOG_COMBAT,attacker->GetClientID(),"%s tries to attack with %s weapon %s at %.2f range",
+                       attacker->GetName(),(weapon->GetIsRangeWeapon()?"range":"melee"),weapon->GetName(),
+                       attacker->RangeTo(target,false));
+                Debug3(LOG_COMBAT,attacker->GetClientID(),"%s started attacking with %s",attacker->GetName(),
+                       weapon->GetName());
+                
                 // start the ball rolling
                 QueueNextEvent(attacker,weaponSlot,target,attacker->GetClientID(),target->GetClientID());  
-
-              startedAttacking=true;
+                
+                startedAttacking=true;
             }
             else
             {
                 if( weapon  && attacker_character->GetActor())
                 {
-                    Debug3(LOG_COMBAT,attacker->GetClientID(),"%s tried attacking with %s but can't use it.",attacker->GetName(),weapon->GetName())
+                    Debug3(LOG_COMBAT,attacker->GetClientID(),"%s tried attacking with %s but can't use it.",
+                           attacker->GetName(),weapon->GetName());
                     psserver->SendSystemError(attacker_character->GetActor()->GetClientID(), response);
                 } 
             }

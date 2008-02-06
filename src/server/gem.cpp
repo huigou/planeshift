@@ -2077,6 +2077,51 @@ void gemActor::RemoveAttackerHistory(gemActor * attacker)
     }
 }
 
+bool gemActor::CanBeAttackBy(gemActor *attacker, gemActor ** lastAttacker) const
+{
+    *lastAttacker = NULL;
+
+    if (GetDamageHistoryCount() == 0)
+    {
+        return true;
+    }
+
+    csTicks lasttime = csGetTicks();
+
+    for (int i = (int)GetDamageHistoryCount(); i>0; i--)
+    {
+        const DamageHistory *lasthit = GetDamageHistory(i-1);
+
+        // any 15 second gap is enough to make us stop looking
+        if (lasttime - lasthit->timestamp > 15000)
+        {
+            return true;
+        }
+        else
+        {
+            lasttime = lasthit->timestamp;
+        }
+
+        if (!lasthit->attacker_ref.IsValid())
+            continue;  // ignore disconnects
+        
+        *lastAttacker = dynamic_cast<gemActor*>((gemObject*) lasthit->attacker_ref);
+        if (*lastAttacker == NULL)
+            continue;  // shouldn't happen
+
+        // If someone else, except for attacker pet, hit first and attacker not grouped with them, 
+        // attacker locked out
+        if ( *lastAttacker != attacker && !attacker->IsGroupedWith(*lastAttacker) && 
+             !attacker->IsMyPet(*lastAttacker) )
+        {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+
 void gemActor::UpdateStats()
 {
     if (psChar)

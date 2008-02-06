@@ -1,3 +1,7 @@
+*** 2008-02-06 by Anders Reggestad
+- Moved code to check if its ok to attack someone around in order to make this function
+  accessable from other parts of the server.
+
 *** 2008-02-05 by Roland Schulz
 - patch by Vornne to substitute appropriate GM_* defines for numerical constants
 - fix for FS#1057 and FS#1058 by peeg

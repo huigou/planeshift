@@ -392,7 +392,9 @@ bool Client::IsAllowedToAttack(gemObject * target, bool inform)
     {
         sMsg = "The target selected is no more valid.";
         if (inform)
+        {
             psserver->SendSystemError(clientnum, sMsg );
+        }
 
         return false;
     }
@@ -419,47 +421,14 @@ bool Client::IsAllowedToAttack(gemObject * target, bool inform)
             break;
         case TARGET_FOE: /* Foe */
             {
-                bool canAttack = true;
-                gemActor *foe = dynamic_cast<gemActor*>(target);
-                gemActor *me = GetActor();
-
-                if (foe == NULL || foe->GetDamageHistoryCount() == 0)
-                    break;
-
-                csTicks lasttime = csGetTicks();
+                gemActor *foe = target->GetActorPtr();
+                CS_ASSERT( foe != NULL ); // Since this is a foe it should have a actor.
+                gemActor *attacker = GetActor();
 
                 gemActor *lastAttacker=NULL;
-                for (int i = (int)foe->GetDamageHistoryCount(); i>0; i--)
+                if (!foe->CanBeAttackBy(attacker,&lastAttacker))
                 {
-                    DamageHistory *lasthit = foe->GetDamageHistory(i-1);
-
-                    if (lasttime - lasthit->timestamp > 15000)
-                    {
-                        break;  // any 15 second gap is enough to make us stop looking
-                    }
-                    else
-                    {
-                        lasttime = lasthit->timestamp;
-                    }
-
-                    if (!lasthit->attacker_ref.IsValid())
-                        continue;  // ignore disconnects
-
-                    lastAttacker = dynamic_cast<gemActor*>((gemObject*) lasthit->attacker_ref);
-                    if (lastAttacker == NULL)
-                        continue;  // shouldn't happen
-
-                    // If someone else hit first and I'm not grouped with them, I'm locked out
-                    if (lastAttacker != me && !me->IsGroupedWith(lastAttacker) &&
-                        !me->IsMyPet(lastAttacker))
-                    {
-                        canAttack = false;
-                        break;
-                    }
-                }
-                if (!canAttack)
-                {
-                    if (lastAttacker && foe)
+                    if (lastAttacker)
                     {
                         tmp.Format("You must be grouped with %s to attack %s.", 
                                    lastAttacker->GetName(), foe->GetName());
@@ -479,7 +448,9 @@ bool Client::IsAllowedToAttack(gemObject * target, bool inform)
     if ( sMsg != NULL )
     {
         if(inform)
+        {
             psserver->SendSystemError(clientnum, sMsg, target->GetName() );
+        }
 
         return false;
     }
@@ -623,7 +594,7 @@ int Client::GetTargetType(gemObject* target)
     // Is this a player who has hit you and run out of a PVP area?
     for (size_t i=0; i< GetActor()->GetDamageHistoryCount(); i++)
     {
-        DamageHistory *dh = GetActor()->GetDamageHistory((int)i);
+        const DamageHistory *dh = GetActor()->GetDamageHistory((int)i);
         // If the target has ever hit you, you can attack them back.  Logging out clears this.
         if (dh->attacker_ref.IsValid() && dh->attacker_ref->GetActorPtr() == target)
             return TARGET_PVP;
