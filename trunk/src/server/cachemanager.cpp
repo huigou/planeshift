@@ -1035,7 +1035,7 @@ bool CacheManager::PreloadCraftMessages()
                 uint32 resultID = combArray->Get(i)->resultItem;
                 csPDelArray<psTradeTransformations>* transArray = FindTransformationsList(currentID, resultID);
                 if (!transArray) {
-                    Error3("Can not find any trasformation data for pattern %d and result %u ",currentID, resultID);
+                    Error3("Can not find any transformation data for pattern %d and result %u ",currentID, resultID);
                     return false;
                 }
                 for (size_t j=0; j<transArray->GetSize(); j++)
