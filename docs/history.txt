@@ -1,6 +1,7 @@
 *** 2008-02-05 by Roland Schulz
 - patch by Vornne to substitute appropriate GM_* defines for numerical constants
 - fix for FS#1057 and FS#1058 by peeg
+- group window changes by Caarrie
 
 *** 2008-02-05 by Anders Reggestad
 - Fixed FS#1001 - Using a WeakRef for a pointer to prevent using of deleted object.
