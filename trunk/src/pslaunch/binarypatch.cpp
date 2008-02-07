@@ -144,11 +144,28 @@ process:
 bool PatchFile(const char *oldFilePath, const char *vcdiff, const char *newFilePath)
 {
     FILE* srcFile = fopen(oldFilePath, "rb");
+
+    if(!srcFile)
+    {
+        return false;
+    }
+
     FILE* patchFile = fopen(vcdiff, "rb");
+
+    if(!patchFile)
+    {
+        fclose(srcFile);
+        return false;
+    }
+
     FILE* outFile = fopen(newFilePath, "wb");
 
-    if(!srcFile || !patchFile || !outFile)
+    if(!outFile)
+    {
+        fclose(patchFile);
+        fclose(srcFile);
         return false;
+    }
 
     int res = PatchFileHelper(srcFile, patchFile, outFile, 0x1000);
 

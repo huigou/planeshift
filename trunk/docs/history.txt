@@ -1,3 +1,6 @@
+*** 2008-02-07 by Mike Gist
+- Updater fixes.
+
 *** 2008-02-07 by Anders Reggestad
 - Use same function to create new npc's from both adminmanager and entitymanager instad
   of having two function doing the same stuff.

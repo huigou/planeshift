@@ -78,10 +78,10 @@ public:
     bool CopyFile(csString from, csString to, bool vfsPath, bool executable, bool silent = false);
 
     /* Moves a file */
-    inline void MoveFile(csString from, csString to, bool vfsPath, bool executable)
+    inline void MoveFile(csString from, csString to, bool vfsPath, bool executable, bool silent = false)
     {
-        CopyFile(from, to, vfsPath, executable);
-        RemoveFile(from);
+        CopyFile(from, to, vfsPath, executable, silent);
+        RemoveFile(from, silent);
     }
 
     /* Returns true is the file at the specified path is executable. */
