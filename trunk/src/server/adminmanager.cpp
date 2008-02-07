@@ -936,7 +936,9 @@ void AdminManager::HandleAdminCmdMessage(MsgEntry *me, psAdminCmdMessage &msg, A
                 targetobject = (gemObject*)targetactor;
             }
             else // Not found yet
+            {
                 targetobject = FindObjectByString(data.player); // Find by ID or name
+            }
         }
     }
     else // Only command specified; just get the target
@@ -3325,11 +3327,13 @@ void AdminManager::CreateNPC(MsgEntry* me,psAdminCmdMessage& msg, AdminCmdData& 
     float angle;
     psSectorInfo* sectorInfo = NULL;
     int instance;
-    client->GetActor()->GetCharacterData()->GetLocationInWorld(instance,sectorInfo, pos.x, pos.y, pos.z, angle );
+    client->GetActor()->GetCharacterData()->GetLocationInWorld(instance, sectorInfo, pos.x, pos.y, pos.z, angle );
 
     iSector* sector = NULL;
     if (sectorInfo != NULL)
+    {
         sector = EntityManager::GetSingleton().FindSector(sectorInfo->name);
+    }
     if (sector == NULL)
     {
         psserver->SendSystemError(me->clientnum, "Invalid sector");
@@ -3337,14 +3341,15 @@ void AdminManager::CreateNPC(MsgEntry* me,psAdminCmdMessage& msg, AdminCmdData& 
     }
 
     // Copy the master NPC into a new player record, with all child tables also
-    unsigned int newNPCID = CopyNPCFromDatabase(masterNPCID, pos.x, pos.y, pos.z, angle, sectorInfo->name, instance );
+    unsigned int newNPCID = EntityManager::GetSingleton().CopyNPCFromDatabase(masterNPCID, pos.x, pos.y, pos.z, angle, 
+                                                                              sectorInfo->name, instance, NULL, NULL );
     if (newNPCID == 0)
     {
         psserver->SendSystemError(me->clientnum, "Could not copy the master NPC");
         return;
     }
 
-    psserver->npcmanager->NewNPCNotify(newNPCID, masterNPCID,-1);
+    psserver->npcmanager->NewNPCNotify(newNPCID, masterNPCID, -1);
 
     // Make new entity
     PS_ID eid = EntityManager::GetSingleton().CreateNPC(newNPCID, false);
@@ -3357,7 +3362,7 @@ void AdminManager::CreateNPC(MsgEntry* me,psAdminCmdMessage& msg, AdminCmdData& 
         return;
     }
 
-    npc->GetCharacterData()->SetLocationInWorld(instance,sectorInfo, pos.x, pos.y, pos.z, angle);
+    npc->GetCharacterData()->SetLocationInWorld(instance, sectorInfo, pos.x, pos.y, pos.z, angle);
     npc->SetPosition(pos, angle, sector);
 
     psserver->npcmanager->ControlNPC(npc);
@@ -3368,33 +3373,6 @@ void AdminManager::CreateNPC(MsgEntry* me,psAdminCmdMessage& msg, AdminCmdData& 
                                             npc->GetName(), newNPCID, eid,
                                             pos.x, pos.y, pos.z, sectorInfo->name.GetData() );
     psserver->SendSystemOK(me->clientnum, "New NPC created!");
-}
-
-
-int AdminManager::CopyNPCFromDatabase(int master_id, float x, float y, float z, float angle, const csString & sector, int instance)
-{
-    psCharacter* npc = NULL;
-    int new_id;
-
-    npc = psServer::CharacterLoader.LoadCharacterData(master_id,false);
-    if (npc == NULL)
-        return 0;
-
-    psSectorInfo* sectorInfo = CacheManager::GetSingleton().GetSectorInfoByName( sector );
-    if (sectorInfo != NULL)
-        npc->SetLocationInWorld(instance,sectorInfo,x,y,z,angle);
-
-    if (psServer::CharacterLoader.NewNPCCharacterData(0, npc))
-    {
-        new_id = npc->GetCharacterID();
-        db->CommandPump("update characters set npc_master_id=%i where id=%i", master_id, new_id);
-    }
-    else
-        new_id = 0;
-
-    delete npc;
-
-    return new_id;
 }
 
 void AdminManager::CreateItem(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data,Client *client)
