@@ -179,7 +179,6 @@ public:
     
         // Delete entries of both character's from DB
         marriageMgr->DeleteMarriageInfo( divorcerCharData );
-        marriageMgr->DeleteMarriageInfo( divorcedCharData );
 
         // Inform divorcer and divorced of successfull divorce
         psserver->SendSystemResult( divorcerClient->GetClientNum(), "You are now divorced." );
@@ -472,7 +471,7 @@ void psMarriageManager::DeleteMarriageInfo(  psCharacter* charData )
 
     //We remove the data about the marriage now.
     csString query;
-    query.Format( "DELETE FROM character_relationships WHERE character_id='%d' and relationship_type='spouse'", charData->GetCharacterID() );
+    query.Format( "DELETE FROM character_relationships WHERE (character_id='%d' OR related_id='%d') and relationship_type='spouse'", charData->GetCharacterID(), charData->GetCharacterID() );
     if ( !db->Command( query.GetData() ) )
     {
         Error2( "DeleteMarriageInfo(): DB Error: %s", db->GetLastError() ); 
