@@ -474,7 +474,7 @@ UPDATE `server_options` SET `option_value`='1135' WHERE `option_name`='db_versio
 
 ### 1135 to 1136 - Keith Fulton - Add instances to characters and items.
 
-ALTER TABLE `planeshift`.`item_stats`
+ALTER TABLE item_stats
   CHANGE COLUMN `illum_definition` `sketch_definition` text NULL COMMENT 'This is used for map/sketch xml';
 UPDATE `server_options` SET `option_value`='1136' WHERE `option_name`='db_version';
 
@@ -541,7 +541,7 @@ INSERT INTO command_group_assignment VALUES( "/action", 30 );
 
 
 # Item inventory updates -- THIS IS NOT COMPLETE YET AND WILL NOT PRESERVE DATA YET
-ALTER TABLE `planeshift`.`item_instances`
+ALTER TABLE `item_instances`
   CHANGE COLUMN `location_in_parent` `location_in_parent` smallint(4) NULL 
   DEFAULT 0 COMMENT 'Slot number in inventory, container or -1 in world.';
 
@@ -680,7 +680,7 @@ update characters set creation_time=0;
 # There is set of data conversion scripts (mysql & awk) to convert item_stats table
 # in situ, if recreating item_stats from source is not desired. It is available
 # from Acissej and Talad.
-ALTER TABLE `planeshift`.`item_stats`
+ALTER TABLE `item_stats`
   CHANGE COLUMN `sketch_definition` `creative_definition` text NULL COMMENT 'This is used for creative things xml, such as sketches/maps, books';
 # otherwise, recreate item_stats from scratch:
 DROP TABLE item_stats;
@@ -694,7 +694,7 @@ ALTER TABLE characters DROP COLUMN duel_points;
 UPDATE server_options SET option_value='1152' WHERE option_name='db_version';
 
 ### 1153 - Sasha Levin - Remove hardcoded race info
-ALTER TABLE `planeshift`.`race_info` CHANGE COLUMN `race_id` `id` INT(10) NOT NULL DEFAULT 0,
+ALTER TABLE `race_info` CHANGE COLUMN `race_id` `id` INT(10) NOT NULL DEFAULT 0,
  ADD COLUMN `race` INT(5) UNSIGNED NOT NULL AFTER `helm`,
  DROP PRIMARY KEY,
  ADD PRIMARY KEY  USING BTREE(`id`);
@@ -839,7 +839,7 @@ delete from command_group_assignment where command_name="/waypoint";
 UPDATE `server_options` SET `option_value`='1173' WHERE `option_name`='db_version';
 
 #### 1174 - Sasha Levin - Added 'ruling god' to each sector
-ALTER TABLE `planeshift`.`sectors` ADD COLUMN `god_name` VARCHAR(45) NOT NULL DEFAULT 'Laanx' AFTER `collide_objects`;
+ALTER TABLE `sectors` ADD COLUMN `god_name` VARCHAR(45) NOT NULL DEFAULT 'Laanx' AFTER `collide_objects`;
 
 #### 1175 - Anders Reggestad - Added uniq name to waypoints and type field to allow groups of waypoints with same type.
 alter table sc_waypoints add unique name (name);
