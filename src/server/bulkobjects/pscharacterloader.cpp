@@ -267,7 +267,7 @@ psCharacter *psCharacterLoader::QuickLoadCharacterData(unsigned int uid, bool no
 }
 
 
-bool psCharacterLoader::NewNPCCharacterData(unsigned int accountid,psCharacter *chardata)
+bool psCharacterLoader::NewNPCCharacterData(unsigned int accountid, psCharacter *chardata)
 {
     const char *fieldnames[]= {
             "account_id",
@@ -374,30 +374,42 @@ bool psCharacterLoader::NewNPCCharacterData(unsigned int accountid,psCharacter *
     return true;
 }
 
-bool psCharacterLoader::NewCharacterData(unsigned int accountid,psCharacter *chardata)
+bool psCharacterLoader::NewCharacterData(unsigned int accountid, psCharacter *chardata)
 {
     chardata->npc_spawnruleid = 0;
     chardata->npc_masterid    = 0;
 
-    if (!NewNPCCharacterData(accountid,chardata))
+    if (!NewNPCCharacterData(accountid, chardata))
+    {
         return false;
+    }
 
     int i;
 
     // traits
     if (!ClearCharacterTraits(chardata->GetCharacterID()))
-        Error3("Failed to clear traits for character id %u.  Error %s.",chardata->GetCharacterID(),db->GetLastError());
+    {
+        Error3("Failed to clear traits for character id %u.  Error %s.",
+               chardata->GetCharacterID(), db->GetLastError());
+    }
+    
     for (i=0;i<PSTRAIT_LOCATION_COUNT;i++)
     {
         psTrait *trait=chardata->GetTraitForLocation((PSTRAIT_LOCATION)i);
         if (trait!=NULL)
+        {
             SaveCharacterTrait(chardata->GetCharacterID(),trait->uid);
+        }
     }
 
 
     // skills
     if (!ClearCharacterSkills(chardata->GetCharacterID()))
-        Error3("Failed to clear skills for character id %u.  Error %s.",chardata->GetCharacterID(),db->GetLastError());
+    {
+        Error3("Failed to clear skills for character id %u.  Error %s.",
+               chardata->GetCharacterID(), db->GetLastError());
+    }
+    
     for (i=0;i<PSSKILL_COUNT;i++)
     {
         unsigned int skillRank=chardata->GetSkills()->GetSkillRank((PSSKILL)i, false);

@@ -665,16 +665,20 @@ bool EntityManager::DeletePlayer(Client * client)
 
 PS_ID EntityManager::CopyNPCFromDatabase(int master_id, float x, float y, float z, float angle, const csString & sector, int instance, const char *firstName, const char *lastName)
 {
-    psCharacter * npc;
+    psCharacter * npc = NULL;
     int new_id;
 
-    npc = psServer::CharacterLoader.LoadCharacterData(master_id,false);
+    npc = psServer::CharacterLoader.LoadCharacterData(master_id, false);
     if (npc == NULL)
+    {
         return 0;
+    }
 
     psSectorInfo* sectorInfo = CacheManager::GetSingleton().GetSectorInfoByName( sector );
     if (sectorInfo != NULL)
+    {
         npc->SetLocationInWorld(instance,sectorInfo,x,y,z,angle);
+    }
 
     if ( firstName && lastName )
     {
@@ -687,7 +691,9 @@ PS_ID EntityManager::CopyNPCFromDatabase(int master_id, float x, float y, float 
         db->Command("update characters set npc_master_id=%i where id=%i", master_id, new_id);
     }
     else
+    {
         new_id = 0;
+    }
 
     delete npc;
 

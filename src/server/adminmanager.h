@@ -151,7 +151,6 @@ protected:
     void GetSiblingChars(MsgEntry* me,psAdminCmdMessage& msg, AdminCmdData& data,Client *client);
     void GetInfo(MsgEntry* me,psAdminCmdMessage& msg, AdminCmdData& data,Client *client, gemObject* target);
     void CreateNPC(MsgEntry *me,psAdminCmdMessage& msg, AdminCmdData& data, Client *client, gemActor* basis);
-    int  CopyNPCFromDatabase(int master_id, float x, float y, float z, float angle, const csString & sector, int instance);
     void KillNPC(MsgEntry *me, psAdminCmdMessage& msg, AdminCmdData& data, Client *client);
     void CreateItem(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data, Client *client);
     bool CreateItem(const char * name, double xPos, double yPos, double zPos, float angle, const char * sector, int instance,int stackCount, int random, int value);

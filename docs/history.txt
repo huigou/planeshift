@@ -1,3 +1,7 @@
+*** 2008-02-07 by Anders Reggestad
+- Use same function to create new npc's from both adminmanager and entitymanager instad
+  of having two function doing the same stuff.
+
 *** 2008-02-06 by Sasha Levin
 - Fixed a bug with /divorce only clearing the marriage status only for one of the parties.
 
