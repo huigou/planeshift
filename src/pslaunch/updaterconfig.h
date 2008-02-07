@@ -22,8 +22,6 @@
 
 #include <csutil/csstring.h>
 #include <cstool/initapp.h>
-#include <csutil/array.h>
-#include <csutil/parray.h>
 #include <csutil/cfgmgr.h>
 #include <csutil/cfgfile.h>
 #include <iutil/document.h>
@@ -32,25 +30,29 @@
 #define UPDATERINFO_FILENAME "/this/updaterinfo.xml"
 #define UPDATERINFO_OLD_FILENAME "/this/updaterinfo.xml.bak"
 
-class UpdaterConfig;
-
-class Mirror
+class Mirror : public csRefCount
 {
 public:
+    Mirror() {}
+    ~Mirror() {}
+
     /* Return mirror ID */
     unsigned int GetID() const { return id; }
 
     /* Return mirror name */
-    csString GetName() const { return name; }
+    const char* GetName() const { return name; }
 
     /* Return mirror URL */
-    csString GetBaseURL() const { return baseURL; }
+    const char* GetBaseURL() const { return baseURL; }
 
     /* Set mirror URL */
     void SetBaseURL(csString url) { baseURL = url; }
 
+    void SetID(uint id) { this->id = id; }
+    void SetName(const char* name) { this->name = name; }
+    void SetBaseURL(const char* baseURL) { this->baseURL = baseURL; }
+
 protected:
-    friend class Config;
     /* Mirror ID */
     uint id;
 
@@ -61,16 +63,22 @@ protected:
     csString baseURL;
 };
 
-class ClientVersion
+class ClientVersion : public csRefCount
 {
 public:
+    ClientVersion() {}
+    ~ClientVersion() {}
+
     /* Get client update file name */
-    csString GetName() const { return name; }
+    const char* GetName() const { return name; }
 
     /* Get client update file md5sum */
-    csString GetMD5Sum() const { return md5sum; }
-protected:
-    friend class Config;
+    const char* GetMD5Sum() const { return md5sum; }
+
+    void SetName(const char* name) { this->name = name; }
+    void SetMD5Sum(const char* md5sum) { this->md5sum = md5sum; }
+
+private:
     /* Client update file name */
     csString name;
 
@@ -92,14 +100,13 @@ class Config
 {
 public:
     Config();
-    
+
     Mirror* GetMirror(uint mirrorNumber);
 
     /* Get mirrors. */
-    csPDelArray<Mirror>* GetMirrors();
-
+    csRefArray<Mirror>& GetMirrors() { return mirrors; }
     /* Get clientVersions list. */
-    csPDelArray<ClientVersion>* GetClientVersions();
+    csRefArray<ClientVersion>& GetClientVersions() { return clientVersions; }
 
     /* Init a xml config file. */
     bool Initialize(csRef<iDocumentNode> node);
@@ -122,10 +129,10 @@ private:
     const char* updaterVersionLatestMD5;
 
     /* List of mirrors */
-    csPDelArray<Mirror> mirrors;
+    csRefArray<Mirror> mirrors;
 
     /* List of client versions */
-    csPDelArray<ClientVersion> clientVersions;
+    csRefArray<ClientVersion> clientVersions;
 };
 
 class UpdaterConfig

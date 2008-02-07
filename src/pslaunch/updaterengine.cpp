@@ -284,19 +284,20 @@ bool UpdaterEngine::checkGeneral()
     */
 
     // Start by fetching the configs.
-    csPDelArray<ClientVersion>* oldCvs = config->GetCurrentConfig()->GetClientVersions();
-    csPDelArray<ClientVersion>* newCvs = config->GetNewConfig()->GetClientVersions();
+    const csRefArray<ClientVersion>& oldCvs = config->GetCurrentConfig()->GetClientVersions();
+    const csRefArray<ClientVersion>& newCvs = config->GetNewConfig()->GetClientVersions();
 
     // Same size.
-    if(oldCvs->GetSize() == newCvs->GetSize())
+    if(oldCvs.GetSize() == newCvs.GetSize())
     {
         // If both are empty then skip the extra name check!
-        if(newCvs->GetSize() != 0)
+        if(newCvs.GetSize() != 0)
         {
-            ClientVersion* oldCv = oldCvs->Get(oldCvs->GetSize()-1);
-            ClientVersion* newCv = newCvs->Get(newCvs->GetSize()-1);
+            ClientVersion* oldCv = oldCvs.Get(oldCvs.GetSize()-1);
+            ClientVersion* newCv = newCvs.Get(newCvs.GetSize()-1);
 
-            if(!newCv->GetName().Compare(oldCv->GetName()))
+            csString name(newCv->GetName());
+            if(!name.Compare(oldCv->GetName()))
             {
                 // There's a problem and we can't continue. Throw a boo boo and clean up.
                 printOutput("Local config and server config are incompatible!\n");
@@ -315,7 +316,7 @@ bool UpdaterEngine::checkGeneral()
     return true;
 }
 
-csRef<iDocumentNode> UpdaterEngine::GetRootNode(csString nodeName)
+csRef<iDocumentNode> UpdaterEngine::GetRootNode(const char* nodeName)
 {
     // Load xml.
     csRef<iDocumentSystem> xml = csPtr<iDocumentSystem> (new csTinyDocumentSystem);
@@ -326,10 +327,10 @@ csRef<iDocumentNode> UpdaterEngine::GetRootNode(csString nodeName)
     }
 
     //Try to read file
-    csRef<iDataBuffer> buf = vfs->ReadFile (nodeName.GetData());
+    csRef<iDataBuffer> buf = vfs->ReadFile(nodeName);
     if (!buf || !buf->GetSize())
     {
-        printOutput("Couldn't open config file '%s'!\n", nodeName.GetData());
+        printOutput("Couldn't open xml file '%s'!\n", nodeName);
         return NULL;
     }
 
@@ -338,7 +339,7 @@ csRef<iDocumentNode> UpdaterEngine::GetRootNode(csString nodeName)
     const char* error = configdoc->Parse(buf);
     if (error)
     {
-        printOutput("XML Parsing error in file '%s': %s.\n", nodeName.GetData(), error);
+        printOutput("XML Parsing error in file '%s': %s.\n", nodeName, error);
         return NULL;
     }
 
@@ -380,21 +381,24 @@ bool UpdaterEngine::selfUpdate(int selfUpdating)
             fileUtil->RemoveFile(appName.GetData());
             fileUtil->CopyFile(tempName.GetData(), appName.GetData(), false, true);
 
-            // Copy any art, data and dlls.
-            csString zip = appName;
-            zip.AppendFmt(config->GetCurrentConfig()->GetPlatform());
-            zip.AppendFmt(".zip");
-            vfs->Mount("/zip", zip);
+            // Copy any art and data.
+            if(appName.Compare("pslaunch"))
+            {
+              csString zip = appName;
+              zip.AppendFmt(config->GetCurrentConfig()->GetPlatform());
+              zip.AppendFmt(".zip");
+              vfs->Mount("/zip", zip);
 
-            csString artPath = "/art/";
-            artPath.AppendFmt("%s.zip", appName);
-            fileUtil->CopyFile("/zip" + artPath, artPath, true, false, true);
+              csString artPath = "/art/";
+              artPath.AppendFmt("%s.zip", appName);
+              fileUtil->CopyFile("/zip" + artPath, artPath, true, false, true);
 
-            csString dataPath = "/data/gui/";
-            dataPath.AppendFmt("%s.xml", appName);
-            fileUtil->CopyFile("/zip" + dataPath, dataPath, true, false, true);
+              csString dataPath = "/data/gui/";
+              dataPath.AppendFmt("%s.xml", appName);
+              fileUtil->CopyFile("/zip" + dataPath, dataPath, true, false, true);
 
-             vfs->Unmount("/zip", zip);
+              vfs->Unmount("/zip", zip);
+            }
 
             // Create a new process of the updater.
             CreateProcess(appName.GetData(), "selfUpdateSecond", 0, 0, false, CREATE_DEFAULT_ERROR_MODE, 0, 0, &siStartupInfo, &piProcessInfo);
@@ -565,8 +569,8 @@ void UpdaterEngine::generalUpdate()
     */
 
     // Start by fetching the configs.
-    csPDelArray<ClientVersion>* oldCvs = config->GetCurrentConfig()->GetClientVersions();
-    csPDelArray<ClientVersion>* newCvs = config->GetNewConfig()->GetClientVersions();
+    csRefArray<ClientVersion>& oldCvs = config->GetCurrentConfig()->GetClientVersions();
+    const csRefArray<ClientVersion>& newCvs = config->GetNewConfig()->GetClientVersions();
     csRef<iDocumentNode> rootnode = GetRootNode(UPDATERINFO_OLD_FILENAME);
     csRef<iDocumentNode> confignode = rootnode->GetNode("config");
 
@@ -580,16 +584,17 @@ void UpdaterEngine::generalUpdate()
     while(checkGeneral())
     {
         // Find starting point in newCvs from oldCvs.
-        size_t index = oldCvs->GetSize();
+        size_t index = oldCvs.GetSize();
 
         // Use index to find the first update version in newCvs.
-        ClientVersion* newCv = newCvs->Get(index);
+        ClientVersion* newCv = newCvs.Get(index);
 
         // Construct zip name.
         csString zip = config->GetCurrentConfig()->GetPlatform();
-        zip.AppendFmt("-%s.zip", newCv->GetName().GetData());
+        zip.AppendFmt("-%s.zip", newCv->GetName());
 
         // Download update zip.
+        printOutput("Downloading update file..\n");
         downloader->DownloadFile(zip, zip, false, true);
 
         // Check md5sum is correct.
@@ -632,7 +637,6 @@ void UpdaterEngine::generalUpdate()
             fileUtil->RemoveFile("/this/" + deletedList.Get(i));
         }
 
-
         // Parse new files xml, make a list.
         csArray<csString> newList;
         csArray<bool> newListType;
@@ -659,13 +663,6 @@ void UpdaterEngine::generalUpdate()
             fileUtil->CopyFile("/zip/" + newList.Get(i), "/this/" + newList.Get(i), true, false);
         }
 
-
-        // Remove new files from virtual dir.
-        for(uint i=0; i<newList.GetSize(); i++)
-        {
-            fileUtil->RemoveFile("/zip/" + newList.Get(i));
-        }
-
         // Parse changed files xml, binary patch each file.
         csRef<iDocumentNode> changedrootnode = GetRootNode("/zip/changedfiles.xml");
         if(changedrootnode)
@@ -685,12 +682,10 @@ void UpdaterEngine::generalUpdate()
                 oldFilePath.AppendFmt(".old");
 
                 // Move old file to a temp location ready for input.
-                fileUtil->CopyFile(newFilePath, oldFilePath, false, false);
-                fileUtil->RemoveFile("/this/" + newFilePath);
+                fileUtil->MoveFile("/this/" + newFilePath, "/this/" + oldFilePath, true, false, true);
 
                 // Move diff to a real location ready for input.
                 fileUtil->CopyFile("/zip/" + diff, "/this/" + newFilePath + ".vcdiff", true, false, true);
-                fileUtil->RemoveFile("/zip/" + diff, true);
                 diff = newFilePath + ".vcdiff";
 
                 // Binary patch.
@@ -754,13 +749,14 @@ void UpdaterEngine::generalUpdate()
                     // Clean up temp files.
                     fileUtil->RemoveFile("/this/" + oldFilePath);
                 }
-                fileUtil->RemoveFile("/this/" + diff, true);
+                fileUtil->RemoveFile("/this/" + diff, false);
             }
-        }       
+        }
 
         // Unmount zip and delete.
         if(vfs->Unmount("/zip", zip))
         {
+            vfs->Sync();
             fileUtil->RemoveFile("/this/" + zip);
         }
         else
@@ -769,7 +765,9 @@ void UpdaterEngine::generalUpdate()
         }
 
         // Add version info to updaterinfo.xml.bak and oldCvs.
-        confignode->GetNode("client")->CreateNodeBefore(CS_NODE_TEXT)->SetValue("<version name=\"" + newCv->GetName() + "\" />");
-        oldCvs->Push(newCv);
-    }
+        csString value("<version name=\"");
+        value.AppendFmt("%s\" />", newCv->GetName());
+        confignode->GetNode("client")->CreateNodeBefore(CS_NODE_TEXT)->SetValue(value);
+        oldCvs.PushSmart(newCv);
+     }
 }

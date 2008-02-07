@@ -41,7 +41,7 @@ Downloader::Downloader(csRef<iVFS> _vfs, UpdaterConfig* _config)
     vfs = _vfs;
     config = _config;
     csRandomGen random = csRandomGen();
-    startingMirrorID = random.Get((uint32)config->GetCurrentConfig()->GetMirrors()->GetSize());
+    startingMirrorID = random.Get((uint32)config->GetCurrentConfig()->GetMirrors().GetSize());
     activeMirrorID = startingMirrorID;    
 }
 
@@ -81,7 +81,7 @@ bool Downloader::DownloadFile (const char* file, const char* dest, bool URL, boo
     }
     else
     {
-        mirror = config->GetCurrentConfig()->GetMirrors()->Get(activeMirrorID);
+        mirror = config->GetCurrentConfig()->GetMirrors().Get(activeMirrorID);
     }
     
     while(mirror)
@@ -186,11 +186,11 @@ uint Downloader::CycleActiveMirror()
 {
     activeMirrorID++;
     // If we've reached the end, go back to the beginning of the list.
-    if(activeMirrorID == config->GetCurrentConfig()->GetMirrors()->GetSize())
+    if(activeMirrorID == config->GetCurrentConfig()->GetMirrors().GetSize())
         activeMirrorID = 0;
     // If true, we've reached our start point. Break the loop.
     if(activeMirrorID == startingMirrorID)
-        activeMirrorID = (uint32)config->GetCurrentConfig()->GetMirrors()->GetSize();
+        activeMirrorID = (uint32)config->GetCurrentConfig()->GetMirrors().GetSize();
 
     return activeMirrorID;
 }

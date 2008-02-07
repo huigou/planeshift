@@ -59,8 +59,8 @@ UpdaterConfig::UpdaterConfig(csArray<csString> args, iObjectRegistry* _object_re
     proxy.port = configFile->GetInt("Updater.Proxy.Port", 0);
 
     // Init xml config objects.
-    currentCon = new Config;
-    newCon = new Config;
+    currentCon = new Config();
+    newCon = new Config();
 }
 
 UpdaterConfig::~UpdaterConfig()
@@ -120,10 +120,11 @@ bool Config::Initialize(csRef<iDocumentNode> node)
 
             if (!strcmp(mNode->GetValue(),"mirror"))
             {
-                Mirror* mirror = new Mirror;
-                mirror->id               = mNode->GetAttributeValueAsInt("id");
-                mirror->name             = mNode->GetAttributeValue("name");
-                mirror->baseURL          = mNode->GetAttributeValue("url");
+                csRef<Mirror> mirror;
+                mirror.AttachNew(new Mirror);
+                mirror->SetID(mNode->GetAttributeValueAsInt("id"));
+                mirror->SetName(mNode->GetAttributeValue("name"));
+                mirror->SetBaseURL(mNode->GetAttributeValue("url"));
                 mirrors.Push(mirror);
             }
         }
@@ -144,11 +145,12 @@ bool Config::Initialize(csRef<iDocumentNode> node)
             csRef<iDocumentNode> cNode = nodeItr->Next();
             if(!strcmp(cNode->GetValue(),"version"))
             {
-                ClientVersion* cVersion = new ClientVersion;
-                cVersion->name = cNode->GetAttributeValue("name");
+                csRef<ClientVersion> cVersion;
+                cVersion.AttachNew(new ClientVersion());
+                cVersion->SetName(cNode->GetAttributeValue("name"));
                 csString md5 = "md5";
-                cVersion->md5sum = cNode->GetAttributeValue(md5.Append(GetPlatform()));
-                clientVersions.Push(cVersion);
+                cVersion->SetMD5Sum(cNode->GetAttributeValue(md5.Append(GetPlatform())));
+                clientVersions.PushSmart(cVersion);
             }
         }
     }
@@ -171,18 +173,4 @@ Mirror* Config::GetMirror(uint x)
     }
     
     return mirror;
-}
-
-csPDelArray<Mirror>* Config::GetMirrors()
-{
-    csPDelArray<Mirror>* a;
-    a = &mirrors;
-    return a;
-}
-
-csPDelArray<ClientVersion>* Config::GetClientVersions()
-{
-    csPDelArray<ClientVersion>* a;
-    a = &clientVersions;
-    return a;
 }
