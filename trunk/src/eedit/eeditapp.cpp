@@ -76,7 +76,7 @@
 
 const char * EEditApp::CONFIG_FILENAME = "/this/eedit.cfg";
 const char * EEditApp::APP_NAME        = "planeshift.eedit.application";
-const char * EEditApp::WINDOW_CAPTION  = "Planeshift Effect Editor";
+const char * EEditApp::WINDOW_CAPTION  = "PlaneShift Effect Editor";
 const char * EEditApp::KEY_DEFS_FILENAME = "/this/data/eedit/keys_def.xml";
 
 CS_IMPLEMENT_APPLICATION

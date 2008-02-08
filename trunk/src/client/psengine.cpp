@@ -337,7 +337,7 @@ bool psEngine::Initialize (int level)
         // Check for configuration values for crash dump action and mode
         #ifdef USE_WIN32_MINIDUMP
             PS_CRASHACTION_TYPE crashaction=PSCrashActionPrompt;
-            csString CrashActionStr(cfgmgr->GetStr("Planeshift.Crash.Action","prompt"));
+            csString CrashActionStr(cfgmgr->GetStr("PlaneShift.Crash.Action","prompt"));
             if (CrashActionStr.CompareNoCase("off"))
                 crashaction=PSCrashActionOff;
             if (CrashActionStr.CompareNoCase("prompt"))
@@ -348,7 +348,7 @@ bool psEngine::Initialize (int level)
             minidumper.SetCrashAction(crashaction);
 
             PS_MINIDUMP_TYPE dumptype=PSMiniDumpNormal;
-            csString DumpTypeStr(cfgmgr->GetStr("Planeshift.Crash.DumpType","normal"));
+            csString DumpTypeStr(cfgmgr->GetStr("PlaneShift.Crash.DumpType","normal"));
             if (DumpTypeStr.CompareNoCase("normal")) // The normal stack and back information with no data
                 dumptype=PSMiniDumpNormal;
             if (DumpTypeStr.CompareNoCase("detailed")) // This includes data segments associated with modules - global variables and static members
@@ -403,8 +403,8 @@ bool psEngine::Initialize (int level)
 
         // Mount the selected gui first to allow overwriting of certain elements
         csString skinPath;
-        skinPath += cfgmgr->GetStr("Planeshift.GUI.Skin.Dir","/planeshift/art/skins/");
-        skinPath += cfgmgr->GetStr("Planeshift.GUI.Skin.Selected","default");
+        skinPath += cfgmgr->GetStr("PlaneShift.GUI.Skin.Dir","/planeshift/art/skins/");
+        skinPath += cfgmgr->GetStr("PlaneShift.GUI.Skin.Selected","default");
         skinPath += ".zip";
 
         // This .zip could be a file or a dir
@@ -425,7 +425,7 @@ bool psEngine::Initialize (int level)
         frameLimit = cfgmgr->GetInt("Video.FrameLimit", 14);
 
         // Mount base skin to satisfy unskined elements
-        skinPath = cfgmgr->GetStr("Planeshift.GUI.Skin.Base","/planeshift/art/skins/base/client_base.zip");
+        skinPath = cfgmgr->GetStr("PlaneShift.GUI.Skin.Base","/planeshift/art/skins/base/client_base.zip");
         if(!paws->LoadAdditionalSkin(skinPath))
         {
             Error2("Couldn't load base skin '%s'!\n",skinPath.GetData());
@@ -539,10 +539,10 @@ bool psEngine::Initialize (int level)
             celclient->IgnoreOthers(cmdline->GetBoolOption("ignore_others"));
         }
 
-        zonehandler->SetLoadAllMaps(GetConfig()->GetBool("Planeshift.Client.Loading.AllMaps",false));
-        zonehandler->SetKeepMapsLoaded(GetConfig()->GetBool("Planeshift.Client.Loading.KeepMaps",false));
+        zonehandler->SetLoadAllMaps(GetConfig()->GetBool("PlaneShift.Client.Loading.AllMaps",false));
+        zonehandler->SetKeepMapsLoaded(GetConfig()->GetBool("PlaneShift.Client.Loading.KeepMaps",false));
 
-        unloadLast = GetConfig()->GetBool("Planeshift.Client.Loading.UnloadLast", true);
+        unloadLast = GetConfig()->GetBool("PlaneShift.Client.Loading.UnloadLast", true);
 
         materialmanager.AttachNew(new MaterialManager(object_reg, preloadModels));
         
@@ -1185,7 +1185,7 @@ void psEngine::LoadGame()
 
         celclient->RequestServerWorld();
 
-        loadtimeout = csGetTicks () + cfgmgr->GetInt("Planeshift.Client.User.Persisttimeout", 60) * 1000;
+        loadtimeout = csGetTicks () + cfgmgr->GetInt("PlaneShift.Client.User.Persisttimeout", 60) * 1000;
 
         if (GetSoundStatus())
         {

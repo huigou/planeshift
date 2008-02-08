@@ -5,7 +5,7 @@
     <bgimage resource="SetupBackground" alpha="255" fade="false"/>
 
     <frame x="0" y="0" width="850" height="600" border="no"/>
-    <title resource="Blue Title" text="Planeshift Launcher" align="left"/>
+    <title resource="Blue Title" text="PlaneShift Launcher" align="left"/>
     <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="12"/>
 
     <!-- Server news -->

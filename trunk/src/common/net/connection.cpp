@@ -258,7 +258,7 @@ void psNetConnection::CheckLinkDead (csTicks currenttime)
         else
         {
             // Simulate message to self to inform user of quitting.
-            psSystemMessage quit(0,MSG_INFO,"Server is not responding, try again in 5 minutes. Exiting Planeshift...");
+            psSystemMessage quit(0,MSG_INFO,"Server is not responding, try again in 5 minutes. Exiting PlaneShift...");
             HandleCompletedMessage(quit.msg, server, &server->addr,NULL);
             
             psSleep(1000);

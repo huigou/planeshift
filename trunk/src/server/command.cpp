@@ -388,7 +388,7 @@ int com_set(char *args)
     {
         CPrintf (CON_CMDOUTPUT ,"Please give the name of the var you want to change:\n");
 
-        csRef<iConfigIterator> ci = cfgmgr->Enumerate("Planeshift.Server.User.");
+        csRef<iConfigIterator> ci = cfgmgr->Enumerate("PlaneShift.Server.User.");
         if (!ci)
         {
             return 0;
@@ -413,7 +413,7 @@ int com_set(char *args)
     else
     {
         WordArray words(args);
-        csString a1 = "Planeshift.Server.User.";
+        csString a1 = "PlaneShift.Server.User.";
         a1 += words[0];
         csString a2 = words[1];
         if (a2.IsEmpty())

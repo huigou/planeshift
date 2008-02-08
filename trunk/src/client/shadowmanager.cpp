@@ -51,7 +51,7 @@ bool psShadowManager::WithinRange(GEMClientObject * object) const
 psShadowManager::psShadowManager()
 {
     cfgmgr = psengine->GetConfig();
-    shadowRange = cfgmgr->GetFloat("Planeshift.Visuals.ShadowRange", -1.0f);
+    shadowRange = cfgmgr->GetFloat("PlaneShift.Visuals.ShadowRange", -1.0f);
 
     RecreateAllShadows();
 }
@@ -132,7 +132,7 @@ float psShadowManager::GetShadowRange() const
 void psShadowManager::SetShadowRange(float shadowRange)
 {
     this->shadowRange = shadowRange;
-    cfgmgr->SetFloat("Planeshift.Visuals.ShadowRange", shadowRange);
+    cfgmgr->SetFloat("PlaneShift.Visuals.ShadowRange", shadowRange);
 }
 
 void psShadowManager::UpdateShadows()

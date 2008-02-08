@@ -57,7 +57,7 @@ bool pawsSkinWindow::PostSetup()
 
     // Fill the skins
     csConfigFile configPSC("/planeshift/psclient.cfg", vfs);
-    skinPath = configPSC.GetStr("Planeshift.GUI.Skin.Dir");
+    skinPath = configPSC.GetStr("PlaneShift.GUI.Skin.Dir");
     csRef<iStringArray> files = vfs->FindFiles(skinPath);
     for (size_t i = 0; i < files->GetSize(); i++)
     {
@@ -73,7 +73,7 @@ bool pawsSkinWindow::PostSetup()
     }
 
     // Load the current skin
-    csString skin = config->GetStr("Planeshift.GUI.Skin.Selected");	
+    csString skin = config->GetStr("PlaneShift.GUI.Skin.Selected");	
     if(!strcmp(skin,""))
         return true; // Stop here, but it's ok
 
@@ -308,7 +308,7 @@ bool pawsSkinWindow::OnButtonPressed( int mouseButton, int keyModifier, pawsWidg
     {
      csString zip;
      zip = currentSkin;
-     config->SetStr("Planeshift.GUI.Skin.Selected", zip);
+     config->SetStr("PlaneShift.GUI.Skin.Selected", zip);
         config->Save();
         this->Hide();
         return true;

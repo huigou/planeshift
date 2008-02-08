@@ -67,14 +67,14 @@ bool NPCStatus::Initialize (iObjectRegistry* objreg)
         return false;
     }
     
-    bool reportOn = configmanager->GetInt ("Planeshift.NPCClient.Status.Report", 0) ? true : false;  
+    bool reportOn = configmanager->GetInt ("PlaneShift.NPCClient.Status.Report", 0) ? true : false;  
     if(!reportOn)
     {
         return true;
     }        
     
-    reportRate = configmanager->GetInt ("Planeshift.NPCClient.Status.Rate", 1000);
-    reportFile = configmanager->GetStr ("Planeshift.NPCClient.Status.LogFile", "/this/npcfile");
+    reportRate = configmanager->GetInt ("PlaneShift.NPCClient.Status.Rate", 1000);
+    reportFile = configmanager->GetStr ("PlaneShift.NPCClient.Status.LogFile", "/this/npcfile");
        
     ScheduleNextRun();
     return true;

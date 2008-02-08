@@ -1078,7 +1078,7 @@ void UserManager::NotifyBuddies(Client * client, bool logged_in)
 
             if (logged_in)
             {
-                psserver->SendSystemInfo(buddy->GetClientNum(),"%s just joined Planeshift",client->GetName());
+                psserver->SendSystemInfo(buddy->GetClientNum(),"%s just joined PlaneShift",client->GetName());
             }
             else
             {

@@ -8,7 +8,7 @@
 
     <!-- size of window and title -->
     <frame x="0" y="0" width="800" height="600" border="no" />
-    <title resource="Blue Title" text="Planeshift Effect Editor" align="left" />
+    <title resource="Blue Title" text="PlaneShift Effect Editor" align="left" />
     
     <!-- preview window -->
     <widget name="preview" factory="pawsGenericView">
@@ -81,4 +81,5 @@
 
 </widget>
 </widget_description>
+
 

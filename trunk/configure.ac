@@ -3,7 +3,7 @@
 #
 # Script taken from the Crystal Space SDK project.
 #
-# Autoconf input script for Planeshift. Start the ./autogen.sh script which
+# Autoconf input script for PlaneShift. Start the ./autogen.sh script which
 # calls autoconf to produce a configure script.
 #----------------------------------------------------------------------------
 AC_PREREQ([2.56])

@@ -21,7 +21,7 @@
 #define MDUMP_H
 
 
-/* Planeshift enums for minidump types.
+/* PlaneShift enums for minidump types.
  *  Redefined and translated so the caller doesn't have to find/include the real dbghelp.h header
  */
 typedef enum _PS_MINIDUMP_TYPE {
@@ -63,4 +63,5 @@ public:
 
 
 #endif // #ifndef MDUMP_H
+
 

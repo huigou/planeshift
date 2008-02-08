@@ -229,9 +229,9 @@ void pawsSetupWindow::LoadSettings()
     cbSound->SetState(config->KeyExists("System.PlugIns.iSndSysRenderer"));
 
     // all maps
-    cbAllMaps->SetState(config->GetBool("Planeshift.Client.Loading.AllMaps",false));
+    cbAllMaps->SetState(config->GetBool("PlaneShift.Client.Loading.AllMaps",false));
     // keep maps
-    cbKeepMaps->SetState(config->GetBool("Planeshift.Client.Loading.KeepMaps",false));
+    cbKeepMaps->SetState(config->GetBool("PlaneShift.Client.Loading.KeepMaps",false));
     // preload models
     cbPreloadModels->SetState(config->GetBool("PlaneShift.Client.Loading.PreloadModels",false));
 
@@ -395,9 +395,9 @@ void pawsSetupWindow::SaveSettings()
     }
 
     // all maps
-    config->SetBool("Planeshift.Client.Loading.AllMaps",cbAllMaps->GetState());
+    config->SetBool("PlaneShift.Client.Loading.AllMaps",cbAllMaps->GetState());
     // keep maps
-    config->SetBool("Planeshift.Client.Loading.KeepMaps",cbKeepMaps->GetState());
+    config->SetBool("PlaneShift.Client.Loading.KeepMaps",cbKeepMaps->GetState());
     // preload models
     config->SetBool("PlaneShift.Client.Loading.PreloadModels",cbPreloadModels->GetState());
 

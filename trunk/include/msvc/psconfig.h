@@ -56,7 +56,7 @@
 #include <conio.h> // needed for getch();
 
 #define PS_PAUSEEXIT(x) \
-  { printf("Exiting Planeshift.  Press Enter..."); getch(); exit(x); }
+  { printf("Exiting PlaneShift.  Press Enter..."); getch(); exit(x); }
 
 // function has different name in Windows
 #define snprintf _snprintf

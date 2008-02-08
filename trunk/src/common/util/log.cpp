@@ -71,40 +71,40 @@ const char *flagnames[] = {
 }; // End of flagnames
 
 const char *flagsetting[] = {
-                        "Planeshift.Log.Any",
-                        "Planeshift.Log.Weather",
-                        "Planeshift.Log.Spawn",
-                        "Planeshift.Log.Cel",
-                        "Planeshift.Log.PAWS",
-                        "Planeshift.Log.Group",
-                        "Planeshift.Log.Cheat",
-                        "Planeshift.Log.Linmove",
-                        "Planeshift.Log.Spells",
-                        "Planeshift.Log.Newchar",
-                        "Planeshift.Log.Superclient",
-                        "Planeshift.Log.Exchanges",
-                        "Planeshift.Log.Admin",
-                        "Planeshift.Log.Startup",
-                        "Planeshift.Log.Character",
-                        "Planeshift.Log.Connections",
-                        "Planeshift.Log.Chat",
-                        "Planeshift.Log.Net",
-                        "Planeshift.Log.Load",
-                        "Planeshift.Log.NPC",
-                        "Planeshift.Log.Trade",
-                        "Planeshift.Log.Sound",
-                        "Planeshift.Log.Combat",
-                        "Planeshift.Log.SkillXP",
-                        "Planeshift.Log.Quests",
-                        "Planeshift.Log.Script",
-                        "Planeshift.Log.Marriage",
-                        "Planeshift.Log.Messages",
-                        "Planeshift.Log.Cache",
-                        "Planeshift.Log.Pets",
-                        "Planeshift.Log.User",
-                        "Planeshift.Log.Loot",
-                        "Planeshift.Log.Duels",
-                        "Planeshift.Log.Tribes"
+                        "PlaneShift.Log.Any",
+                        "PlaneShift.Log.Weather",
+                        "PlaneShift.Log.Spawn",
+                        "PlaneShift.Log.Cel",
+                        "PlaneShift.Log.PAWS",
+                        "PlaneShift.Log.Group",
+                        "PlaneShift.Log.Cheat",
+                        "PlaneShift.Log.Linmove",
+                        "PlaneShift.Log.Spells",
+                        "PlaneShift.Log.Newchar",
+                        "PlaneShift.Log.Superclient",
+                        "PlaneShift.Log.Exchanges",
+                        "PlaneShift.Log.Admin",
+                        "PlaneShift.Log.Startup",
+                        "PlaneShift.Log.Character",
+                        "PlaneShift.Log.Connections",
+                        "PlaneShift.Log.Chat",
+                        "PlaneShift.Log.Net",
+                        "PlaneShift.Log.Load",
+                        "PlaneShift.Log.NPC",
+                        "PlaneShift.Log.Trade",
+                        "PlaneShift.Log.Sound",
+                        "PlaneShift.Log.Combat",
+                        "PlaneShift.Log.SkillXP",
+                        "PlaneShift.Log.Quests",
+                        "PlaneShift.Log.Script",
+                        "PlaneShift.Log.Marriage",
+                        "PlaneShift.Log.Messages",
+                        "PlaneShift.Log.Cache",
+                        "PlaneShift.Log.Pets",
+                        "PlaneShift.Log.User",
+                        "PlaneShift.Log.Loot",
+                        "PlaneShift.Log.Duels",
+                        "PlaneShift.Log.Tribes"
 }; // End of flagsettings
 
 bool DoLog(int severity, LOG_TYPES type, uint32 filter_id)
@@ -329,14 +329,14 @@ LogCSV::LogCSV(iConfigManager* configmanager, iVFS* vfs)
     csString filename[MAX_CSV];
     csString header;
 
-    size_t maxSize = configmanager->GetInt("Planeshift.LogCSV.MaxSize", 10*1024*1024);
-    filename[CSV_PALADIN] = configmanager->GetStr("Planeshift.LogCSV.File.Paladin");
-    filename[CSV_EXCHANGES] = configmanager->GetStr("Planeshift.LogCSV.File.Exchanges");
-    filename[CSV_AUTHENT] = configmanager->GetStr("Planeshift.LogCSV.File.Authent");
-    filename[CSV_STATUS] = configmanager->GetStr("Planeshift.LogCSV.File.Status");
-    filename[CSV_ADVICE] = configmanager->GetStr("Planeshift.LogCSV.File.Advice");
-    filename[CSV_ECONOMY] = configmanager->GetStr("Planeshift.LogCSV.File.Economy");
-    filename[CSV_STUCK] = configmanager->GetStr("Planeshift.LogCSV.File.Stuck");
+    size_t maxSize = configmanager->GetInt("PlaneShift.LogCSV.MaxSize", 10*1024*1024);
+    filename[CSV_PALADIN] = configmanager->GetStr("PlaneShift.LogCSV.File.Paladin");
+    filename[CSV_EXCHANGES] = configmanager->GetStr("PlaneShift.LogCSV.File.Exchanges");
+    filename[CSV_AUTHENT] = configmanager->GetStr("PlaneShift.LogCSV.File.Authent");
+    filename[CSV_STATUS] = configmanager->GetStr("PlaneShift.LogCSV.File.Status");
+    filename[CSV_ADVICE] = configmanager->GetStr("PlaneShift.LogCSV.File.Advice");
+    filename[CSV_ECONOMY] = configmanager->GetStr("PlaneShift.LogCSV.File.Economy");
+    filename[CSV_STUCK] = configmanager->GetStr("PlaneShift.LogCSV.File.Stuck");
 
     for(int i = 0;i < MAX_CSV;i++)
     {

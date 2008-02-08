@@ -41,7 +41,7 @@
 
 const char* psSetupApp::CONFIG_FILENAME = "/this/pssetup.cfg";
 const char* psSetupApp::APP_NAME        = "planeshift.setup.application";
-const char* psSetupApp::WINDOW_CAPTION  = "Planeshift Setup Application";
+const char* psSetupApp::WINDOW_CAPTION  = "PlaneShift Setup Application";
 
 psSetupApp *setupApp;
 
@@ -129,7 +129,7 @@ bool psSetupApp::Init()
 
     // paws initialization
     csString skinPath;
-    skinPath = cfgmgr->GetStr("Planeshift.GUI.Skin", "/planeshift/art/apps.zip");
+    skinPath = cfgmgr->GetStr("PlaneShift.GUI.Skin", "/planeshift/art/apps.zip");
     paws = new PawsManager(object_reg, skinPath);
     if (!paws)
     {

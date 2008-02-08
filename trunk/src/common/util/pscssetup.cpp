@@ -246,13 +246,13 @@ char* psCSSetup::PS_GetFileName(char* path)
  * 3) The icon image for the inventory screen.
  *
  * It is mounted into /planeshift/<mount_point> and the location to mount
- * is defined in the psclient.cfg/psserver.cfg file under Planeshift.Mount.<thing>.
+ * is defined in the psclient.cfg/psserver.cfg file under PlaneShift.Mount.<thing>.
  */
 void psCSSetup::MountThings(const char *zip, const char *mount_point)
 {
     csString cfg_mount;
     csString mount;
-    cfg_mount.Format("Planeshift.Mount.%s", zip);
+    cfg_mount.Format("PlaneShift.Mount.%s", zip);
     mount.Format("/planeshift/%s/", mount_point);
     
     csRef<iConfigIterator> i = configManager->Enumerate(cfg_mount);
@@ -269,7 +269,7 @@ void psCSSetup::MountThings(const char *zip, const char *mount_point)
     }
     
     // Check for development versions.
-    cfg_mount.Format("Planeshift.Dev.%s", zip);
+    cfg_mount.Format("PlaneShift.Dev.%s", zip);
     csRef<iConfigIterator> i2 = configManager->Enumerate(cfg_mount);
     if (i2)
     {
@@ -286,7 +286,7 @@ void psCSSetup::MountThings(const char *zip, const char *mount_point)
 
 void psCSSetup::MountMaps()
 {
-    csRef<iConfigIterator> it = configManager->Enumerate("Planeshift.Mount.zipmapdir");
+    csRef<iConfigIterator> it = configManager->Enumerate("PlaneShift.Mount.zipmapdir");
     if (!it) 
         return;
 
@@ -322,7 +322,7 @@ void psCSSetup::MountMaps()
         }
     } 
 
-    it = configManager->Enumerate("Planeshift.Mount.zipmapdir");
+    it = configManager->Enumerate("PlaneShift.Mount.zipmapdir");
     if (!it) return;
 
     while ( it->HasNext() )
@@ -341,14 +341,14 @@ void psCSSetup::MountMaps()
 void psCSSetup::MountModels ()
 {
     // Check for the mount point using a VFS directory.
-    MountModelsZip("Planeshift.Mount.modelzip",true);
-    MountModelsZip("Planeshift.Mount.characterszip",true);
-    MountModelsZip("Planeshift.Mount.npcszip",true);
+    MountModelsZip("PlaneShift.Mount.modelzip",true);
+    MountModelsZip("PlaneShift.Mount.characterszip",true);
+    MountModelsZip("PlaneShift.Mount.npcszip",true);
 
     // Check using the dev ( absolute real path ) directory.
-    MountModelsZip("Planeshift.Dev.modelzip",false);
-    MountModelsZip("Planeshift.Dev.characterszip",false);
-    MountModelsZip("Planeshift.Dev.npcszip",false);
+    MountModelsZip("PlaneShift.Dev.modelzip",false);
+    MountModelsZip("PlaneShift.Dev.characterszip",false);
+    MountModelsZip("PlaneShift.Dev.npcszip",false);
 }
 
 void psCSSetup::MountModelsZip(const char* key, bool vfspath)

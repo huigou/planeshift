@@ -256,11 +256,11 @@ bool psServer::Initialize(iObjectRegistry* object_reg)
     csString db_host, db_user, db_pass, db_name;
     unsigned int db_port;
 
-    db_host = configmanager->GetStr("Planeshift.Database.host", "localhost");
-    db_user = configmanager->GetStr("Planeshift.Database.userid", "planeshift");
-    db_pass = configmanager->GetStr("Planeshift.Database.password", "planeshift");
-    db_name = configmanager->GetStr("Planeshift.Database.name", "planeshift");
-    db_port = configmanager->GetInt("Planeshift.Database.port");
+    db_host = configmanager->GetStr("PlaneShift.Database.host", "localhost");
+    db_user = configmanager->GetStr("PlaneShift.Database.userid", "planeshift");
+    db_pass = configmanager->GetStr("PlaneShift.Database.password", "planeshift");
+    db_name = configmanager->GetStr("PlaneShift.Database.name", "planeshift");
+    db_port = configmanager->GetInt("PlaneShift.Database.port");
 
     Debug4(LOG_STARTUP,0,COL_BLUE "Database Host: '%s' User: '%s' Databasename: '%s'\n" COL_NORMAL,
       (const char*) db_host, (const char*) db_user, (const char*) db_name);
@@ -338,9 +338,9 @@ bool psServer::Initialize(iObjectRegistry* object_reg)
     }
 
     csString serveraddr =
-        configmanager->GetStr("Planeshift.Server.Addr", "0.0.0.0");
+        configmanager->GetStr("PlaneShift.Server.Addr", "0.0.0.0");
     int port =
-    configmanager->GetInt("Planeshift.Server.Port", 1243);
+    configmanager->GetInt("PlaneShift.Server.Port", 1243);
     Debug3(LOG_STARTUP,0,COL_BLUE "Listening on '%s' Port %d.\n" COL_NORMAL,
             (const char*) serveraddr, port);
     if (!serverthread->Bind (serveraddr, port))
@@ -648,7 +648,7 @@ bool psServer::HasBeenReady()
 
 bool psServer::IsFull(size_t numclients, Client * client)
 {
-    unsigned int maxclients = GetConfig()->GetInt("Planeshift.Server.User.connectionlimit", 20);
+    unsigned int maxclients = GetConfig()->GetInt("PlaneShift.Server.User.connectionlimit", 20);
 
     if (client)
     {

@@ -126,8 +126,8 @@ PawsManager::PawsManager(iObjectRegistry* object, const char* skin,const char* p
 
     prefs = new pawsPrefManager();
 
-    csString prefsFile = cfg->GetStr("Planeshift.GUI.PrefsFile", "/this/data/prefs.xml");
-    csString borderFile = cfg->GetStr("Planeshift.GUI.BorderFile", "/this/data/gui/borderlist.xml");
+    csString prefsFile = cfg->GetStr("PlaneShift.GUI.PrefsFile", "/this/data/prefs.xml");
+    csString borderFile = cfg->GetStr("PlaneShift.GUI.BorderFile", "/this/data/gui/borderlist.xml");
 
     styles = new pawsStyles( objectReg );
     if (!styles->LoadStyles("/this/data/gui/styles.xml"))
@@ -165,12 +165,12 @@ PawsManager::PawsManager(iObjectRegistry* object, const char* skin,const char* p
     lastfadeWidget = 0;
 
     assert(cfg);
-    csString lang = cfg->GetStr("Planeshift.GUI.Language", "");
+    csString lang = cfg->GetStr("PlaneShift.GUI.Language", "");
     localization = new psLocalization();
     localization->Initialize(objectReg);
     localization->SetLanguage(lang);
 
-    tipDelay = cfg->GetInt("Planeshift.GUI.ToolTipDelay", 250);
+    tipDelay = cfg->GetInt("PlaneShift.GUI.ToolTipDelay", 250);
     
     hadKeyDown = false;
     dragDropWidget = NULL;

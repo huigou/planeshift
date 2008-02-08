@@ -364,7 +364,7 @@ LONG MiniDumper::TopLevelFilter( struct _EXCEPTION_POINTERS *pExceptionInfo )
                     BOOL bOK = pDump( GetCurrentProcess(), GetCurrentProcessId(), hFile, (MINIDUMP_TYPE)DumpType, &ExInfo, NULL, NULL );
                     if (bOK)
                     {
-                        sprintf( szScratch, "Saved dump file to '%s'.\nPlease consult the Planeshift forums for more details.\nIf you have concerns about privacy, see http://watson.microsoft.com/dw/1033/dcp.asp", szDumpPath );
+                        sprintf( szScratch, "Saved dump file to '%s'.\nPlease consult the PlaneShift forums for more details.\nIf you have concerns about privacy, see http://watson.microsoft.com/dw/1033/dcp.asp", szDumpPath );
                         szResult = szScratch;
                         retval = EXCEPTION_EXECUTE_HANDLER;
                     }

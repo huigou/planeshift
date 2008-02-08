@@ -232,7 +232,7 @@ void psAuthenticationClient::HandleDisconnect( MsgEntry* me )
                 if (dc.actor)
                 {
                     rejectmsg = 
-                        "Cannot connect to the Planeshift server.  "
+                        "Cannot connect to the PlaneShift server.  "
                         "Please double-check IP address and firewall.";
                 }
                 else

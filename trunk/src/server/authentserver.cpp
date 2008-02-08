@@ -198,7 +198,7 @@ bool psAuthenticationServer::CheckAuthenticationPreCondition(int clientnum, bool
      */
     if (!netversionok)
     {
-        psserver->RemovePlayer (clientnum, "You are not running the correct version of Planeshift. Please launch the updater.");
+        psserver->RemovePlayer (clientnum, "You are not running the correct version of PlaneShift. Please launch the updater.");
         return false;
     }
 

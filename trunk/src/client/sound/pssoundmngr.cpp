@@ -128,7 +128,7 @@ bool psSoundManager::Initialize(iObjectRegistry* objectReg)
         return false;
     }
 
-    soundLib = cfg->GetStr("Planeshift.Sound.SoundLib", "/planeshift/art/soundlib.xml");
+    soundLib = cfg->GetStr("PlaneShift.Sound.SoundLib", "/planeshift/art/soundlib.xml");
     return true;
 }
 

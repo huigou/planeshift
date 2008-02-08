@@ -477,8 +477,8 @@ void NPCManager::HandleAuthentRequest(MsgEntry *me)
     // CHECK 1: Networking versions match
     if (!msg.NetVersionOk())
     {
-        //psserver->RemovePlayer (me->clientnum, "You are not running the correct version of Planeshift for this server.");
-        Error2("Superclient '%s' is not running the correct version of Planeshift for this server.",
+        //psserver->RemovePlayer (me->clientnum, "You are not running the correct version of PlaneShift for this server.");
+        Error2("Superclient '%s' is not running the correct version of PlaneShift for this server.",
             (const char *)msg.sUser);
         return;
     }

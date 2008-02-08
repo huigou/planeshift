@@ -142,7 +142,7 @@ bool psLauncherGUI::InitApp()
 
     // paws initialization
     csString skinPath;
-    skinPath = configManager->GetStr("Planeshift.GUI.Skin", "/planeshift/art/apps.zip");
+    skinPath = configManager->GetStr("PlaneShift.GUI.Skin", "/planeshift/art/apps.zip");
     paws = new PawsManager(object_reg, skinPath);
     if (!paws)
     {

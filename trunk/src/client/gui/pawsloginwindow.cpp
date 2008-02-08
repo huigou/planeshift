@@ -44,10 +44,10 @@
 #define SERVER_LIST_FILE     "/planeshift/data/servers.xml"
 #define ASTERISKS            "********"
 
-#define CNF_REMEMBER_SERVER   "Planeshift.Connection.RememberServer"
-#define CNF_REMEMBER_PASS     "Planeshift.Connection.RememberPass"
-#define CNF_USER              "Planeshift.Connection.%s.User"
-#define CNF_PASSWORD          "Planeshift.Connection.%s.Password"
+#define CNF_REMEMBER_SERVER   "PlaneShift.Connection.RememberServer"
+#define CNF_REMEMBER_PASS     "PlaneShift.Connection.RememberPass"
+#define CNF_USER              "PlaneShift.Connection.%s.User"
+#define CNF_PASSWORD          "PlaneShift.Connection.%s.Password"
 
 pawsLoginWindow::pawsLoginWindow()
 {
@@ -158,10 +158,10 @@ void pawsLoginWindow::UpdateUserPasswdFromConfig()
     cfg_name.Format(CNF_USER,servers[listBox->GetSelectedRowNum()]->GetName().GetData());
     user = cfg->GetStr(cfg_name, "");
 
-    // For backward compability, if not found check Planeshift.Connection.User
+    // For backward compability, if not found check PlaneShift.Connection.User
     if (user.IsEmpty())
     {
-        cfg_name = "Planeshift.Connection.User";
+        cfg_name = "PlaneShift.Connection.User";
         user = cfg->GetStr(cfg_name, "");
     }
         
@@ -170,10 +170,10 @@ void pawsLoginWindow::UpdateUserPasswdFromConfig()
     cfg_name.Format(CNF_PASSWORD,servers[listBox->GetSelectedRowNum()]->GetName().GetData());
     storedPasswd = cfg->GetStr(cfg_name, "");
 
-    // For backward compability, if not found check Planeshift.Connection.Password
+    // For backward compability, if not found check PlaneShift.Connection.Password
     if (storedPasswd.IsEmpty())
     {
-        cfg_name = "Planeshift.Connection.Password";
+        cfg_name = "PlaneShift.Connection.Password";
         storedPasswd = cfg->GetStr(cfg_name, "");
     }
     
@@ -305,7 +305,7 @@ void pawsLoginWindow::ConnectToServer()
     csRef<iConfigManager> cfg =  csQueryRegistry<iConfigManager> (PawsManager::GetSingleton().GetObjectRegistry());
 
     // Set the time out to connect to server
-    timeout = csGetTicks() + cfg->GetInt("Planeshift.Client.User.Connecttimeout", 60) * 1000;
+    timeout = csGetTicks() + cfg->GetInt("PlaneShift.Client.User.Connecttimeout", 60) * 1000;
     
     connectingLabel->SetText("Connecting to server... Please wait");
 
@@ -380,7 +380,7 @@ void pawsLoginWindow::SaveLoginInformation()
     }
     else
     {
-        cfg->DeleteKey("Planeshift.Connection.Password");
+        cfg->DeleteKey("PlaneShift.Connection.Password");
         // TODO: Loop through all servers and delete password key 
         cnf_name.Format(CNF_PASSWORD,servers[listBox->GetSelectedRowNum()]->GetName().GetData());
         cfg->DeleteKey(cnf_name);
