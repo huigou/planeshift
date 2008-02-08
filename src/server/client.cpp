@@ -51,6 +51,7 @@
 #include "advicemanager.h"
 #include "entitymanager.h"
 #include "cachemanager.h"
+#include "adminmanager.h"
 
 Client::Client ()
     : accumulatedLag(0), zombie(false), ready(false), mute(false), 
@@ -605,6 +606,12 @@ int Client::GetTargetType(gemObject* target)
     psGuildInfo* targetguild = targetclient->GetActor()->GetGuild();
     if (attackguild && targetguild &&
         targetguild->IsGuildWarActive(attackguild))
+    {
+        return TARGET_PVP; /* Attackable player */
+    }
+
+    // Am I a GM?
+    if (GetSecurityLevel() >= GM_LEVEL_0)
     {
         return TARGET_PVP; /* Attackable player */
     }
