@@ -2,6 +2,7 @@
 - Updater log file now uses VFS interface too.
 - Fixed a couple of POD errors.
 - Made log output windows friendly.
+- GMs can attack anyone anywhere.
 
 *** 2008-02-08 by Sasha Levin
 - Fixed FS#1033 - Please change all instances of Planeshift to PlaneShift.
