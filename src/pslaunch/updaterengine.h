@@ -76,7 +76,7 @@ private:
     bool hasGUI;
 
     /* Output console prints to file. */
-    FILE* log;
+    csRef<iFile> log;
     
     CS::Threading::Mutex *mutex;
 
