@@ -1,3 +1,8 @@
+*** 2008-02-09 by Sasha Levin
+- Updater log file now uses VFS interface too.
+- Fixed a couple of POD errors.
+- Made log output windows friendly.
+
 *** 2008-02-08 by Sasha Levin
 - Fixed FS#1033 - Please change all instances of Planeshift to PlaneShift.
 - Fix for paths.xml messed up at 800x600 by Caarrie.
