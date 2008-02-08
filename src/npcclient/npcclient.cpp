@@ -131,11 +131,11 @@ bool psNPCClient::Initialize(iObjectRegistry* object_reg,const char *_host, cons
     csString db_host, db_user, db_pass, db_name;
 	unsigned int db_port;
 
-    db_host = configmanager->GetStr("Planeshift.Database.npchost", "localhost");
-    db_user = configmanager->GetStr("Planeshift.Database.npcuserid", "planeshift");
-    db_pass = configmanager->GetStr("Planeshift.Database.npcpassword", "planeshift");
-    db_name = configmanager->GetStr("Planeshift.Database.npcname", "planeshift");
-	db_port = configmanager->GetInt("Planeshift.Database.npcport", 0);
+    db_host = configmanager->GetStr("PlaneShift.Database.npchost", "localhost");
+    db_user = configmanager->GetStr("PlaneShift.Database.npcuserid", "planeshift");
+    db_pass = configmanager->GetStr("PlaneShift.Database.npcpassword", "planeshift");
+    db_name = configmanager->GetStr("PlaneShift.Database.npcname", "planeshift");
+	db_port = configmanager->GetInt("PlaneShift.Database.npcport", 0);
 
     Debug4(LOG_STARTUP,0,COL_BLUE "Database Host: '%s' User: '%s' Databasename: '%s'\n" COL_NORMAL,
       (const char*) db_host, (const char*) db_user, (const char*) db_name);
@@ -150,10 +150,10 @@ bool psNPCClient::Initialize(iObjectRegistry* object_reg,const char *_host, cons
     csString user,pass,host;
     int port;
 
-    host = _host ? _host : configmanager->GetStr("Planeshift.NPCClient.host", "localhost");
-    user = _user ? _user : configmanager->GetStr("Planeshift.NPCClient.userid", "superclient");
-    pass = _pass ? _pass : configmanager->GetStr("Planeshift.NPCClient.password", "planeshift");
-    port = _port ? _port : configmanager->GetInt("Planeshift.NPCClient.port", 13331);
+    host = _host ? _host : configmanager->GetStr("PlaneShift.NPCClient.host", "localhost");
+    user = _user ? _user : configmanager->GetStr("PlaneShift.NPCClient.userid", "superclient");
+    pass = _pass ? _pass : configmanager->GetStr("PlaneShift.NPCClient.password", "planeshift");
+    port = _port ? _port : configmanager->GetInt("PlaneShift.NPCClient.port", 13331);
 
     CPrintf(CON_DEBUG, "Connecting to Host: '%s' User: '%s' Password: '%s' Port %d...\n",
         (const char*) host, (const char*) user, (const char*) pass, port);

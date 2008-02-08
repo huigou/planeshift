@@ -3234,7 +3234,7 @@ void AdminManager::Slide(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& dat
     else
     {
         psserver->SendSystemError(me->clientnum,
-            "Invalid sector; cannot slide.  Please contact Planeshift support.");
+            "Invalid sector; cannot slide.  Please contact PlaneShift support.");
     }
 }
 

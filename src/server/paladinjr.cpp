@@ -41,17 +41,17 @@
 void PaladinJr::Initialize(EntityManager* celbase)
 {
     iConfigManager* configmanager = psserver->GetConfig();
-    enabled = configmanager->GetBool("Planeshift.Paladin.Enabled");
+    enabled = configmanager->GetBool("PlaneShift.Paladin.Enabled");
 
-    maxVelocity.x = configmanager->GetFloat("Planeshift.Paladin.MaxXVelocity", 2.0f);
-    maxVelocity.y = configmanager->GetFloat("Planeshift.Paladin.MaxYVelocity", 3.5f);
-    maxVelocity.z = configmanager->GetFloat("Planeshift.Paladin.MaxZVelocity", 4.0f);
+    maxVelocity.x = configmanager->GetFloat("PlaneShift.Paladin.MaxXVelocity", 2.0f);
+    maxVelocity.y = configmanager->GetFloat("PlaneShift.Paladin.MaxYVelocity", 3.5f);
+    maxVelocity.z = configmanager->GetFloat("PlaneShift.Paladin.MaxZVelocity", 4.0f);
 
     // Running forward while strafing
     maxSpeed = sqrt(pow(maxVelocity.z, 2.0f) + pow((maxVelocity.z/2.0f), 2.0f));
 
 
-    watchTime = configmanager->GetInt("Planeshift.Paladin.WatchTime", 30000);
+    watchTime = configmanager->GetInt("PlaneShift.Paladin.WatchTime", 30000);
    
     target = NULL;
     entitymanager = celbase;

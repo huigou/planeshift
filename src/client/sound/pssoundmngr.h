@@ -60,7 +60,7 @@ enum SoundEvent
 
 /*  Notes on class structure:
  *
- *  psSoundManager is the top level interface from Planeshift.
+ *  psSoundManager is the top level interface from PlaneShift.
  *  psMapSoundSystem handles only sounds dealing with maps and sectors.  It contains a list of active Songs, Ambients and Emitters 
  *    and performs the high level logic for updates related to all active sounds.
  *  psSectorSoundManager handles sound logic for a single sector.  It contains logic for working with sounds for an entire sector.
@@ -624,5 +624,6 @@ struct ps3DFactorySound
 
 
 #endif // PS_SOUND_MANAGER_H
+
 
 

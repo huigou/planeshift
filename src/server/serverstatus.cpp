@@ -175,12 +175,12 @@ bool ServerStatus::Initialize (iObjectRegistry* objreg)
     if (!configmanager)
         return false;
     
-    bool reportOn = configmanager->GetInt ("Planeshift.Server.Status.Report", 0) ? true : false;  
+    bool reportOn = configmanager->GetInt ("PlaneShift.Server.Status.Report", 0) ? true : false;  
     if(!reportOn)
         return true;
     
-    reportRate = configmanager->GetInt ("Planeshift.Server.Status.Rate", 1000);
-    reportFile = configmanager->GetStr ("Planeshift.Server.Status.LogFile", "/this/serverfile");
+    reportRate = configmanager->GetInt ("PlaneShift.Server.Status.Rate", 1000);
+    reportFile = configmanager->GetStr ("PlaneShift.Server.Status.LogFile", "/this/serverfile");
        
     ScheduleNextRun();
     return true;

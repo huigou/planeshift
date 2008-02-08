@@ -5,7 +5,7 @@
     <bgimage resource="SetupBackground" alpha="255" fade="false"/>
 
     <frame x="0" y="0" width="850" height="600" border="no"/>
-    <title resource="Blue Title" text="Planeshift Setup" align="left"/>
+    <title resource="Blue Title" text="PlaneShift Setup" align="left"/>
 
     <widget name="res" factory="pawsTextBox">
         <frame x="50" y="30" width="250" height="30"/>
