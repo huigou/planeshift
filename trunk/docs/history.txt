@@ -1,5 +1,9 @@
 *** 2008-02-09 by Kenny Graunke
-- Fixed bug where pssetup would no longer enable/disable sound.
+- Fixed pssetup bugs:
+  - It wouldn't enable/disable sound.
+  - It wrote invalid an screen depth and resolution when not provided default
+    values in planeshift.cfg...which _aren't_ provided since we don't ship a
+    default file anymore.  This made psclient fail to start.
 
 *** 2008-02-09 by Sasha Levin
 - Updater log file now uses VFS interface too.

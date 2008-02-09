@@ -186,7 +186,7 @@ void pawsSetupWindow::LoadSettings()
     // video settings
     int      width  = config->GetInt("Video.ScreenWidth");
     int      height = config->GetInt("Video.ScreenHeight");
-    
+
     csString res;
     res.Format("%ix%i", width, height);
 
@@ -203,7 +203,7 @@ void pawsSetupWindow::LoadSettings()
     edtCustomHeight->SetText(res);
 
     cbFullScreen->SetState(config->GetBool("Video.Fullscreen"));
-    rbgDepth->SetActive(config->GetStr("Video.ScreenDepth"));
+    rbgDepth->SetActive(config->GetStr("Video.ScreenDepth", "32"));
     
     // Stencil
     int stencil = config->GetInt("Video.OpenGL.StencilThreshold",50);
@@ -383,8 +383,12 @@ void pawsSetupWindow::SaveSettings()
         width=atoi(edtCustomWidth->GetText());
         height=atoi(edtCustomHeight->GetText());
     }       
-    config->SetInt("Video.ScreenWidth",width);
-    config->SetInt("Video.ScreenHeight",height);
+
+    if (width > 0 && height > 0)
+    {
+        config->SetInt("Video.ScreenWidth", width);
+        config->SetInt("Video.ScreenHeight", height);
+    }
 
     // sound enabled/disabled
     if (cbSound->GetState())
