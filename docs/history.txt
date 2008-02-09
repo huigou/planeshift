@@ -1,3 +1,6 @@
+*** 2008-02-09 by Kenny Graunke
+- Fixed bug where pssetup would no longer enable/disable sound.
+
 *** 2008-02-09 by Sasha Levin
 - Updater log file now uses VFS interface too.
 - Fixed a couple of POD errors.

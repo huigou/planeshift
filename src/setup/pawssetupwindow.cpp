@@ -226,7 +226,9 @@ void pawsSetupWindow::LoadSettings()
     }
 
     // sound
-    cbSound->SetState(config->KeyExists("System.PlugIns.iSndSysRenderer"));
+    const bool nullSound = strcmp(config->GetStr("SndSys.Driver"),
+                             "crystalspace.sndsys.software.driver.null") == 0;
+    cbSound->SetState(!nullSound);
 
     // all maps
     cbAllMaps->SetState(config->GetBool("PlaneShift.Client.Loading.AllMaps",false));
@@ -387,11 +389,15 @@ void pawsSetupWindow::SaveSettings()
     // sound enabled/disabled
     if (cbSound->GetState())
     {
-        config->SetStr("System.PlugIns.iSndSysRenderer","crystalspace.sndsys.renderer.software");
+        // Only delete sound driver line if it's "null"...
+        if (strcmp(config->GetStr("SndSys.Driver"), "crystalspace.sndsys.software.driver.null") == 0)
+        {
+            config->DeleteKey("SndSys.Driver");
+        }
     }
     else
     {
-        config->DeleteKey("System.PlugIns.iSndSysRenderer");
+        config->SetStr("SndSys.Driver", "crystalspace.sndsys.renderer.software.driver.null");
     }
 
     // all maps
