@@ -349,40 +349,25 @@ void psSpellManager::CancelSpellCasting(gemActor * caster)
 
 void psSpellManager::SendSpellBook(Client * client)
 {
-    psSpellBookMessage mesg( client->GetClientNum() );
+    psSpellBookMessage mesg(client->GetClientNum());
     csArray<psSpell*> spells = client->GetCharacterData()->GetSpellList();
     
-    for ( size_t i = 0; i < spells.GetSize(); i++ )
+    for (size_t i = 0; i < spells.GetSize(); i++)
     {
-        csString glyph0("");
-        csString glyph1("");
-        csString glyph2("");
-        csString glyph3("");
-        csString name( spells[i]->GetName() );
-        csString description( spells[i]->GetDescription() );
-        csString way(spells[i]->GetWay()->name);
-        int realm = spells[i]->GetRealm();
         csArray<psItemStats*> glyphs = spells[i]->GetGlyphList();
-        
-        if ( glyphs.GetSize() > 0 )
+
+        csString glyphImages[4];
+        CS_ASSERT(glyphs.GetSize() <= 4);
+
+        for (size_t j = 0; j < glyphs.GetSize(); j++)
         {
-            glyph0 = glyphs[0]->GetImageName();
-        }            
-        if ( glyphs.GetSize() > 1 )
-        {
-            glyph1 = glyphs[1]->GetImageName();
-        }                    
-        if ( glyphs.GetSize() > 2 )
-        {
-            glyph1 = glyphs[2]->GetImageName();
-        }            
-        if ( glyphs.GetSize() > 3 )
-        {
-            glyph1 = glyphs[3]->GetImageName();
-        }            
+            glyphImages[j] = glyphs[j]->GetImageName();
+        }
             
-        mesg.AddSpell(name,description,way,realm,
-                 glyph0,glyph1,glyph2,glyph3 );
+        mesg.AddSpell(spells[i]->GetName(), spells[i]->GetDescription(),
+                      spells[i]->GetWay()->name, spells[i]->GetRealm(),
+                      glyphImages[0], glyphImages[1],
+                      glyphImages[2], glyphImages[3]);
     }
 
     mesg.Construct();
@@ -656,9 +641,11 @@ void psSpellManager::HandleSpellCastEvent(psSpellCastGameEvent *event)
 
 void psSpellManager::HandleSpellAffectEvent( psSpellAffectGameEvent *event )
 { 
+    printf("KAYDEN: psSpellManager::HandleSpellAffectEvent\n");
     // Since we just came in from an event, make sure target is still alive.
     if ( event->target->IsAlive() || event->inverse )
     {
+        printf("KAYDEN: SpellMan::HdlSplAftEvt calling perform result with inverse = %s\n", event->inverse ? "yes" : "no");
         event->spell->PerformResult( event->caster->GetActor(), event->target, event->max_range, event->saved, event->powerLevel, event->inverse);
     }
 

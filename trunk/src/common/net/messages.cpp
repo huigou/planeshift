@@ -2678,8 +2678,7 @@ psSpellBookMessage::psSpellBookMessage( MsgEntry* me )
 
 }
 
-void psSpellBookMessage::AddSpell( csString& name, csString& description, csString& way, int realm,
-                                   csString& glyph0, csString& glyph1, csString& glyph2, csString& glyph3 )
+void psSpellBookMessage::AddSpell(const csString& name, const csString& description, const csString& way, int realm, const csString& glyph0, const csString& glyph1, const csString& glyph2, const csString& glyph3)
 {
     size+=(uint32_t)(name.Length() + description.Length() + way.Length()+ sizeof(int)+7 +
     glyph0.Length()+glyph1.Length()+glyph2.Length()+glyph3.Length());

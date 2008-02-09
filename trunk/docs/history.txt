@@ -4,6 +4,9 @@
   - It wrote invalid an screen depth and resolution when not provided default
     values in planeshift.cfg...which _aren't_ provided since we don't ship a
     default file anymore.  This made psclient fail to start.
+- Fixed a bug where the spellbook would show the wrong glyphs - if a spell
+  required more than two glyphs, the third and fourth would show the first's
+  image.
 
 *** 2008-02-09 by Sasha Levin
 - Updater log file now uses VFS interface too.
