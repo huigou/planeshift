@@ -1,3 +1,6 @@
+*** 2008-02-09 by Sasha Levin
+- Added sorting to spell book window.
+
 *** 2008-02-09 by Kenny Graunke
 - Fixed pssetup bugs:
   - It wouldn't enable/disable sound.
