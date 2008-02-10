@@ -59,6 +59,11 @@ bool pawsSpellBookWindow::PostSetup()
     spellList        = (pawsListBox*)FindWidget("SpellList");
     spellDescription = (pawsMessageTextBox*)FindWidget("Description");
 
+    spellList->SetSortingFunc(0, textBoxSortFunc);
+    spellList->SetSortingFunc(5, textBoxSortFunc);
+    spellList->SetSortingFunc(6, textBoxSortFunc);
+    spellList->SetSortedColumn(0);
+
     return true;
 }
 
