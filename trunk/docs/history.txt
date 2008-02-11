@@ -1,3 +1,6 @@
+*** 2008-02-10 by Roland Schulz
+- group and gm window background changes by ThomPhoenix
+
 *** 2008-02-09 by Sasha Levin
 - Added sorting to spell book window.
 
