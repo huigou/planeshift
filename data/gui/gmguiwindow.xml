@@ -3,7 +3,7 @@
 
         <frame x="0" y="0" width="630" height="425" />
         <title text="Game Master Options" />
-        <bgimage resource="Shortcut Background" alpha="0" />
+        <bgimage resource="GM Background" alpha="0" />
 
         <widget name="GM Tabs" factory="pawsTabWindow" style="tabwindow">
             <frame y="0" width="630" height="425" />

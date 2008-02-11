@@ -21,9 +21,9 @@
                             <frame x="0" y="3" width="36" height="36" border="no"/>
                         </widget>
                         <widget name="NAME" factory="pawsTextBox">
-				<bgimage resource="Shortcut Button" alpha="100" />
+					<bgimage resource="Groupmember Background" alpha="100" />
 		             <frame x="35" y="3" width="80" height="15" border="no" /> 
-			     <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="8"/>
+					<font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="8"/>
                         </widget>
                         <widget name="HP" factory="pawsProgressBar">
                             <frame x="27" y="20" width="90" height="10" border="yes" />
