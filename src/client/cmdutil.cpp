@@ -339,12 +339,12 @@ void psUtilityCommands::HandleTestAnim( WordArray& words, csString& output )
 
 void psUtilityCommands::HandleConfirm( WordArray& words, csString& error )
 {
-    error = "";
+    error.Clear();
     text         = words[1];
     yescommands  = words[2];
     nocommands   = words[3];
 
-    if (text == "")
+    if (text.IsEmpty())
     {
         error = "No text for confirm box is specified.";
         return; 

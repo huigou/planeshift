@@ -368,7 +368,7 @@ void psItemStats::operator delete(void *releasePtr)
 psItemStats::psItemStats()
 {
     uid=0;
-    name = "";
+    name.Clear();
     description="";
     weight=0.0f;
     size=0;

@@ -273,7 +273,7 @@ bool psEffectObjText2D::Load(iDocumentNode * node)
         return false;
 
     // default text attributes
-    name = "";
+    name.Clear();
     fontName = "/this/data/ttf/LiberationSans-Regular.ttf";
     fontSize = 20;
 
@@ -301,7 +301,7 @@ bool psEffectObjText2D::Load(iDocumentNode * node)
     else
         backgroundAlign = EA_CENTER;
 
-    if (name == "")
+    if (name.IsEmpty())
     {
         csReport(psCSSetup::object_reg, CS_REPORTER_SEVERITY_ERROR, "planeshift_effects", "Attempting to create an effect obj with no name.\n");
         return false;

@@ -329,7 +329,7 @@ void psWorkManager::HandleRepair(Client *client, psWorkCmdMessage &msg)
 
     // Check for repairable item in right hand slot
     int slotTarget;
-    if ( msg.repairSlotName == "" )
+    if ( msg.repairSlotName.IsEmpty() )
         slotTarget = PSCHARACTER_SLOT_RIGHTHAND;
     else
         slotTarget = CacheManager::GetSingleton().slotNameHash.GetID(msg.repairSlotName);
@@ -341,7 +341,7 @@ void psWorkManager::HandleRepair(Client *client, psWorkCmdMessage &msg)
         {
             psserver->SendSystemError(client->GetClientNum(),"The Slot %s doesn't exists.", msg.repairSlotName.GetData() );
         }
-        else if(msg.repairSlotName == "")
+        else if(msg.repairSlotName.IsEmpty())
         {
             psserver->SendSystemError(client->GetClientNum(),"The Default Slot (Right Hand) is empty.", msg.repairSlotName.GetData() );
         }
@@ -2049,7 +2049,7 @@ void psWorkManager::StartTransformationEvent(int transType, INVENTORY_SLOT_NUMBE
     if( transType != TRANSFORMTYPE_AUTO_CONTAINER)
     {
         // Send anim and confirmation message to client and nearby people
-        if( process && process->GetAnimation() != "")
+        if( process && !process->GetAnimation().IsEmpty())
         {
             psOverrideActionMessage msg(clientNum, worker->GetEntity()->GetID(), process->GetAnimation(), delay);
             psserver->GetEventManager()->Multicast(msg.msg, worker->GetMulticastClients(), 0, PROX_LIST_ANY_RANGE);

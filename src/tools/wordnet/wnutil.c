@@ -642,7 +642,7 @@ char *GetOffsetForKey(unsigned int key)
 {
     unsigned int rkey;
     char ckey[7];
-    static char loc[11] = "";
+    static char loc[11] = {0};
     char *line;
     char searchdir[256], tmpbuf[256];
 
@@ -667,7 +667,7 @@ char *GetOffsetForKey(unsigned int key)
 unsigned int GetKeyForOffset(char *loc)
 {
     unsigned int key;
-    char rloc[11] = "";
+    char rloc[11] = {0};
     char *line;
     char searchdir[256], tmpbuf[256];
 

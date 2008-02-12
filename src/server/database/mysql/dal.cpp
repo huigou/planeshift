@@ -371,7 +371,7 @@ bool psMysqlConnection::GenericUpdateWithID(const char *table,const char *idfiel
 
 const char *psMysqlConnection::uint64tostring(uint64 value,csString& recv)
 {
-    recv = "";
+    recv.Clear();
 
     while (value>0)
     {

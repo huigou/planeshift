@@ -162,7 +162,7 @@ bool pawsFileNavigation::FillFileList()
 {
     csRef<iStringArray> filelist;
     csString currpathname = GetCurrentPath();
-    csString filetype = "";
+    csString filetype;
     size_t i;
     
     pawsComboBox *filetypetb=(pawsComboBox *)FindWidget("filetype");
@@ -186,7 +186,7 @@ bool pawsFileNavigation::FillFileList()
     while (ZipTestPath.Length()>1)
     {
         csString ZipTestValue = ZipTestPath;
-        csString ZipFileType = "";
+        csString ZipFileType;
         ZipTestPath.Truncate(ZipTestPath.FindLast('/'));
         ZipTestPath.SubString(ZipTestValue,ZipTestPath.FindLast('/')+1,ZipTestPath.Length()-ZipTestPath.FindLast('/'));
         ZipTestValue.SubString(ZipFileType,ZipTestValue.FindLast('.'),ZipTestValue.Length()-ZipTestValue.FindLast('/'));
@@ -571,7 +571,7 @@ bool pawsFileNavigation::SetFileFilters(const char *filetype)
     filetypetb->Clear();
 
     csString Filter = filetype;
-    csString FilterValue = "";
+    csString FilterValue;
 
     if (Filter.FindFirst('|') == (size_t)-1)
     {

@@ -158,7 +158,7 @@ bool pawsExchangeWindow::PostSetup()
 void pawsExchangeWindow::StartExchange( csString& player, bool withPlayer )
 {
     csString text;
-    if(player != "")
+    if(!player.IsEmpty())
     {
         text.Format("Trading with %s",player.GetData());
     }

@@ -98,7 +98,7 @@ const char* NpcTriggerSentence::GeneralizeTerm(NPCDialogDict *dict,size_t which,
     if (which >= terms.GetSize())
         return false;
     
-    str = "";
+    str.Clear();
 
     return terms[which]->GetInterleavedHypernym(depth);
 }

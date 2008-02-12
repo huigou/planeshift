@@ -325,7 +325,7 @@ bool LoadPrerequisiteXML(iDocumentNode * topNode, psQuest * self, psQuestPrereqO
     else if ( strcmp( topNode->GetValue(), "faction" ) == 0 )
     {
         csString name = topNode->GetAttributeValue("name");
-        if (name == "")
+        if (name.IsEmpty())
         {
             Error1("No name given for faction prerequisite operation");
             return false;
@@ -348,7 +348,7 @@ bool LoadPrerequisiteXML(iDocumentNode * topNode, psQuest * self, psQuestPrereqO
     else if ( strcmp( topNode->GetValue(), "activemagic" ) == 0 )
     {
         csString name = topNode->GetAttributeValue("name");
-        if (name == "")
+        if (name.IsEmpty())
         {
             Error1("No name given for activemagic prerequisite operation");
             return false;
@@ -433,7 +433,7 @@ bool LoadPrerequisiteXML(psQuestPrereqOp*&prerequisite, psQuest * self, csString
 bool psQuest::PostLoad()
 {
     // Parse the prerequisite string
-    if (prerequisiteStr != "")
+    if (!prerequisiteStr.IsEmpty())
     {
         Debug2(LOG_QUESTS,0, "Loading prereq  : %s", prerequisiteStr.GetDataSafe());
 

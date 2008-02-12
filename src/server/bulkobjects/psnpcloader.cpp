@@ -59,7 +59,7 @@
 //-----------------------------------------------------------------------------
 bool psNPCLoader::LoadFromFile(csString &filename)
 {
-    area = "";
+    area.Clear();
 
     CPrintf(CON_DEBUG, "Importing NPC from file: %s\n",filename.GetData());
 
@@ -150,7 +150,7 @@ bool psNPCLoader::LoadDialogsFromFile(csString &filename)
     //   <queststep>
     //   .. 
     // </quest>
-    area = "";
+    area.Clear();
     dialogManager = new psDialogManager;
 
     CPrintf(CON_DEBUG, "Importing NPC dialogs from file: %s\n",filename.GetData());
@@ -889,7 +889,7 @@ bool psNPCLoader::SaveDialogsToFile(csString &area, csString &filename, int ques
 
     if(quest)
     {
-        this->area = "";
+        this->area.Clear();
 
         csRef<iDocumentNode> questNode = root->CreateNodeBefore(CS_NODE_ELEMENT);
         questNode->SetValue("quest");
@@ -943,7 +943,7 @@ bool psNPCLoader::SaveDialogsToFile(csString &area, csString &filename, int ques
             this->area = area;
         }
         else
-            this->area = "";
+            this->area.Clear();
 
         if (!WriteSpecificKnowledge(questid))
         {

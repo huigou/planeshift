@@ -96,7 +96,7 @@ bool pawsDetailWindow::PostSetup()
     skills.SetSize(6);
     for(int i=0; i<6; i++)
     {
-        skills[i] = "";
+        skills[i].Clear();
     }
     return true;
 }
@@ -157,7 +157,7 @@ void pawsDetailWindow::HandleMessage( MsgEntry* me )
 
         for(int i=0; i<6; i++)
         {
-            skills[i] = "";
+            skills[i].Clear();
         }
         if(msg.skills.GetSize() != 0 ) {
             pawsButton* button = (pawsButton*)FindWidget( "ShowDescr" );

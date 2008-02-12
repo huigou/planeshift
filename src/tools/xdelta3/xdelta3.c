@@ -1284,7 +1284,7 @@ int xd3_compute_code_table_encoding (xd3_stream *in_stream,
   source.size     = CODE_TABLE_STRING_SIZE;
   source.blksize  = CODE_TABLE_STRING_SIZE;
   source.onblk    = CODE_TABLE_STRING_SIZE;
-  source.name     = "";
+  source.name    .Clear();
   source.curblk   = dflt_string;
   source.curblkno = 0;
 

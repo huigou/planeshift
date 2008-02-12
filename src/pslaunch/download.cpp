@@ -142,11 +142,11 @@ bool Downloader::DownloadFile (const char* file, const char* dest, bool URL, boo
         }
 
         // Tell the user that we failed
-        if(curlhttpcode != 200 || error != "")
+        if(curlhttpcode != 200 || !error.IsEmpty())
         {
             if(!silent)
             {
-                if(error == "")
+                if(error.IsEmpty())
                     printf ("Server error %ld (%s).\n",curlhttpcode,url.GetData());
                 else
                     printf ("Server error: %s (%ld).\n",error.GetData(),curlhttpcode);

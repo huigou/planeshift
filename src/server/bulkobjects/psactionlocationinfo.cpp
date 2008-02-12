@@ -78,34 +78,34 @@ psActionLocation::psActionLocation() : gemAction( NULL )
 {
     id = 0;
     master_id = 0;
-    name = "";
-    sectorname = "";
-    meshname = "";
+    name.Clear();
+    sectorname.Clear();
+    meshname.Clear();
     polygon.Format("%d", 0);
     position = csVector3(0.0F);
     radius = 0.0F;
-    triggertype  = "";
-    responsetype = "";
-    response = "";
+    triggertype .Clear();
+    responsetype.Clear();
+    response.Clear();
     isContainer = false;
     isGameBoard = false;
     isEntrance = false;
     isLockable = false;
     isReturn = false;
-    enterScript = "";
-    entranceType = "";
+    enterScript.Clear();
+    entranceType.Clear();
     instanceID = 0;
     entrancePosition.x = 0;
     entrancePosition.y = 0;
     entrancePosition.z = 0;
     entranceRot = 0.0;
-    returnSector = "";
+    returnSector.Clear();
     returnPosition.x = 0;
     returnPosition.y = 0;
     returnPosition.z = 0;
     returnRot = 0.0;
-    returnSector = "";
-    description = "";
+    returnSector.Clear();
+    description.Clear();
     isActive = true;
 }
 

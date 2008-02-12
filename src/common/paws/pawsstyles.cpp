@@ -92,7 +92,7 @@ void pawsStyles::InheritFromParent(csRef <iDocumentNode> & style, STRING_HASH(bo
     csString name = style->GetAttributeValue("name");
     csString inherit = style->GetAttributeValue("inherit");
     
-    if (inherit == "")  // nothing to inherit from
+    if (inherit.IsEmpty())  // nothing to inherit from
         return;
 
     if (beingInh.In(csString(name)))

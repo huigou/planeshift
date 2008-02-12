@@ -301,7 +301,7 @@ bool psServer::Initialize(iObjectRegistry* object_reg)
     if (result.IsValid()  &&  result.Count()>0)
         motd = result[0][0];
     else
-        motd = "";
+        motd.Clear();
 
     
     // MathScript Engine

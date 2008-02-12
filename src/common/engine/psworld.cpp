@@ -101,7 +101,7 @@ psRegion* psWorld::NewRegion(const char *mapfile,bool load, bool loadMeshes)
 
 void psWorld::GetAllRegionNames(csString& str)
 {
-    str = "";
+    str.Clear();
     for (unsigned i=0; i < regions.GetSize(); i++)
     {
         str.Append( regions[i]->GetName() );

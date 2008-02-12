@@ -388,7 +388,7 @@ void GuildManager::HandleMOTDSet(psGuildMOTDSetMessage& msg,Client *client)
                        "New guild message of the day: %s", gi->GetMOTD());
         psserver->GetEventManager()->Broadcast(newmsg.msg,NetBase::BC_GUILD,gi->id);
         // Refresh MOTD for all guild members
-        csString tip = "";
+        csString tip;
         if (CacheManager::GetSingleton().GetTipLength() > 0)
             CacheManager::GetSingleton().GetTipByID(psserver->GetRandom(CacheManager::GetSingleton().GetTipLength()), tip);
         psMOTDMessage motd(client->GetClientNum(), tip, psserver->GetMOTD(), gi->GetMOTD(), gi->GetName());
@@ -919,7 +919,7 @@ void GuildManager::SendMemberData(Client *client,bool onlineOnly)
         }
         else
         {
-            escpxml_privatenotes = "";
+            escpxml_privatenotes.Clear();
         }
 
         open.AppendFmt("<m char_id=\"%i\" name=\"%s\" public=\"%s\" private=\"%s\" points=\"%i\" level=\"%i\"/>",
@@ -947,7 +947,7 @@ csString GuildManager::MakeAllianceMemberXML(psGuildInfo * member, bool alliance
     if (allianceLeader)
         isLeader = "leader";
     else
-        isLeader = "";
+        isLeader.Clear();
 
     leader = member->FindLeader();
     if (leader != NULL)
@@ -1688,7 +1688,7 @@ void GuildManager::Secret(psGuildCmdMessage &msg, Client *client)
 
     // If the player doesn't provide an argument, just report the current
     // status of the secrecy flag.
-    if (msg.secret == "")
+    if (msg.secret.IsEmpty())
     {
         psserver->SendSystemInfo(clientnum,
                                  "Your guild's secrecy setting is: %s",
@@ -1816,7 +1816,7 @@ void GuildManager::MOTD(psGuildCmdMessage &msg, Client *client)
         return;
     }
 
-    if (msg.motd == "")
+    if (msg.motd.IsEmpty())
     {
         psserver->SendSystemInfo(clientnum,
             "Guild Message Of The Day: %s",

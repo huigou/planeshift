@@ -51,9 +51,9 @@ bool psEffectObjSimpMesh::Load(iDocumentNode *node)
 {
 
     // get the attributes
-    name = "";
-    materialName = "";
-    fileName = "";
+    name.Clear();
+    materialName.Clear();
+    fileName.Clear();
     csRef<iDocumentAttributeIterator> attribIter = node->GetAttributes();
     while (attribIter->HasNext())
     {
@@ -69,7 +69,7 @@ bool psEffectObjSimpMesh::Load(iDocumentNode *node)
         else if (attrName == "mesh")
             meshName = attr->GetValue();
     }
-    if (name == "")
+    if (name.IsEmpty())
     {
         csReport(psCSSetup::object_reg, CS_REPORTER_SEVERITY_ERROR, "planeshift_effects", "Attempting to create an effect obj with no name.\n");
         return false;
@@ -161,8 +161,6 @@ psEffectObj *psEffectObjSimpMesh::Clone() const
 
 bool psEffectObjSimpMesh::PostSetup()
 {
-    CS_ASSERT("THIS COULDN'T POSSIBLY WORK!" || true);
-    
     csRef<iLoader> loader =  csQueryRegistry<iLoader> (psCSSetup::object_reg);
 
     loader->LoadLibraryFile(fileName, region);

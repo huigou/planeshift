@@ -171,7 +171,7 @@ void UserManager::HandleMOTDRequest(MsgEntry *me,Client *client)
             guildID =0;
     }
 
-    csString tip = "";
+    csString tip;
     if (CacheManager::GetSingleton().GetTipLength() > 0)
         CacheManager::GetSingleton().GetTipByID(psserver->GetRandom(CacheManager::GetSingleton().GetTipLength()), tip );
 
@@ -1165,7 +1165,7 @@ void UserManager::ReportPosition(psUserCmdMessage& msg,Client *client,int client
         csString name,range;
         if (self){
             name = "Your";
-            range = "";
+            range.Clear();
         }
         else
         {
@@ -1308,7 +1308,7 @@ void UserManager::Assist( psUserCmdMessage& msg, Client* client, int clientnum )
 
     // If the player doesn't provide an argument, use the players current
     // target instead.
-    if ( msg.player == "" )
+    if ( msg.player.IsEmpty() )
     {
         int currentTarget = client->GetTargetClientID();
         if ( currentTarget == -1 )

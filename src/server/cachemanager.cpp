@@ -1953,7 +1953,7 @@ void CacheManager::GetTipByID(int id, csString& tip)
 {
     if ((size_t)id>=tips_list.GetSize())
     {
-        tip = "";
+        tip.Clear();
         return;
     }
 

@@ -81,7 +81,7 @@ pawsChatWindow::pawsChatWindow()
     replyCount = 0;
 
     chatHistory = new pawsChatHistory();
-    awayText = "";
+    awayText.Clear();
     soundmgr = NULL;
 
     settings.meFilters = 0;
@@ -474,7 +474,7 @@ const char* pawsChatWindow::HandleCommand( const char* cmd )
 
     if (words[0].GetAt(0) != '/')
     {
-        pPerson = "";
+        pPerson.Clear();
         words.GetTail(0,text);
         chattype = CHAT_SAY;
     }
@@ -485,7 +485,7 @@ const char* pawsChatWindow::HandleCommand( const char* cmd )
 
         if (words[0] == "/say")
         {
-            pPerson = "";            
+            pPerson.Clear();            
             words.GetTail(1, text);
             chattype = CHAT_SAY;
             csArray<csString> allowedTabs;
@@ -502,7 +502,7 @@ const char* pawsChatWindow::HandleCommand( const char* cmd )
         }
         else if (words[0] == "/tellnpc")
         {
-            pPerson = "";
+            pPerson.Clear();
             words.GetTail(1, text);
             chattype = CHAT_NPC;
             csArray<csString> allowedTabs;
@@ -524,7 +524,7 @@ const char* pawsChatWindow::HandleCommand( const char* cmd )
         }
         else if (words[0] == "/report")
         {
-            pPerson = "";
+            pPerson.Clear();
             words.GetTail(1,text);
             chattype = CHAT_REPORT;
             csArray<csString> allowedTabs;
@@ -546,7 +546,7 @@ const char* pawsChatWindow::HandleCommand( const char* cmd )
         }
         else if (words[0] == "/guild")
         {
-            pPerson = "";
+            pPerson.Clear();
             words.GetTail(1,text);
             chattype = CHAT_GUILD;
             csArray<csString> allowedTabs;
@@ -568,7 +568,7 @@ const char* pawsChatWindow::HandleCommand( const char* cmd )
         }
         else if (words[0] == "/shout")
         {
-            pPerson = "";
+            pPerson.Clear();
             words.GetTail(1,text);
             chattype = CHAT_SHOUT;
             csArray<csString> allowedTabs;
@@ -585,7 +585,7 @@ const char* pawsChatWindow::HandleCommand( const char* cmd )
         }
         else if (words[0] == "/group")
         {
-            pPerson = "";
+            pPerson.Clear();
             words.GetTail(1,text);
             chattype = CHAT_GROUP;
             csArray<csString> allowedTabs;
@@ -631,7 +631,7 @@ const char* pawsChatWindow::HandleCommand( const char* cmd )
         }
         else if (words[0] == "/auction")
         {
-            pPerson = "";
+            pPerson.Clear();
             words.GetTail(1,text);
             chattype = CHAT_AUCTION;
             csArray<csString> allowedTabs;
@@ -653,7 +653,7 @@ const char* pawsChatWindow::HandleCommand( const char* cmd )
         }
         else if (words[0] == "/mypet")
         {
-            pPerson = "";
+            pPerson.Clear();
             chattype = CHAT_PET_ACTION;
             words.GetTail(1,text);
             csArray<csString> allowedTabs;
@@ -670,7 +670,7 @@ const char* pawsChatWindow::HandleCommand( const char* cmd )
         }
         else if (words[0] == "/me" || words[0] == "/my")
         {
-            pPerson = "";
+            pPerson.Clear();
             csString chatType = tabs->GetActiveTab()->GetName();
 
             csArray<csString> allowedTabs;
@@ -746,7 +746,7 @@ const char* pawsChatWindow::HandleCommand( const char* cmd )
                 words.GetTail(1,text);
                 allowedTabs.Push("MainText");
             }
-            //pPerson = "";
+            //pPerson.Clear();
             switch (settings.selectTabStyle)
             {
                 case 1:
@@ -1935,7 +1935,7 @@ void pawsChatWindow::SetAway(const char* text)
 {
 	if ( !strcmp(text, "off") || strlen(text) == 0)
 	{
-        awayText = "";
+        awayText.Clear();
         ChatOutput( "Auto-reply has been turned OFF" );
     }
     else

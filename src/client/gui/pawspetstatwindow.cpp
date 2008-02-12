@@ -197,7 +197,7 @@ bool pawsPetStatWindow::OnButtonPressed( int mouseButton, int keyModifier, pawsW
         case BTN_FILTER:
         {
             filter = !filter;
-            if (skillString != "") HandleSkillList( skillString );
+            if (!skillString.IsEmpty()) HandleSkillList( skillString );
             return true;
         }
         

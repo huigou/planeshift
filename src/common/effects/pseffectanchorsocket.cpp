@@ -52,7 +52,7 @@ bool psEffectAnchorSocket::Load(iDocumentNode *node)
 {
 
     // get the attributes
-    name = "";
+    name.Clear();
     csRef<iDocumentAttributeIterator> attribIter = node->GetAttributes();
     while (attribIter->HasNext())
     {
@@ -64,12 +64,12 @@ bool psEffectAnchorSocket::Load(iDocumentNode *node)
         if (attrName == "socket")
             socketName = attr->GetValue();
     }
-    if (name == "")
+    if (name.IsEmpty())
     {
         csReport(psCSSetup::object_reg, CS_REPORTER_SEVERITY_ERROR, "planeshift_effects", "Attempting to create an effect socket anchor with no name.\n");
         return false;
     }
-    if (socketName == "")
+    if (socketName.IsEmpty())
     {
         csReport(psCSSetup::object_reg, CS_REPORTER_SEVERITY_ERROR, "planeshift_effects", "Attempting to create an effect socket anchor without specifying a socket.\n");
         return false;

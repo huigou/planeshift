@@ -53,7 +53,7 @@ void psSlotManager::CancelDrag()
     if(dragging->Image())
         res = dragging->Image()->GetName();
     else
-        res = "";
+        res.Clear();
 
     draggingSlot.slot->PlaceItem(res,oldStack);    
     PawsManager::GetSingleton().SetDragDropWidget( NULL );

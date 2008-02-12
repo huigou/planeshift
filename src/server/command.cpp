@@ -855,7 +855,7 @@ int com_exportdialogs(char *args)
     if (quest)
     {
         questid = atoi(areaname.GetData());
-        areaname = "";
+        areaname.Clear();
         Result masterQuest(db->Select("SELECT master_quest_id FROM quests WHERE id = '%i'", questid));
         if (masterQuest.Count() < 1)
         {
@@ -1139,7 +1139,7 @@ csString get_item_modifiers(psItem *item)
         modifiers += stats->GetName ();
     }
     }
-    if (!use_comma) modifiers = "";
+    if (!use_comma) modifiers.Clear();
     else modifiers += ")";
     return modifiers;
 }
@@ -1170,7 +1170,7 @@ void show_itemstat_stats(const char* prefix,psItemStats *itemstats,int depth)
     csString progun = itemstats->GetProgressionEventUnEquip();
     CPrintf(CON_CMDOUTPUT ,"%s Progression Event Equip:%s Progression Event UnEquip:%s\n", prefix, prog.GetData(), progun.GetData());
     PSITEM_FLAGS flags = itemstats->GetFlags();
-    csString flags_string = "";
+    csString flags_string;
     if (flags & PSITEMSTATS_FLAG_IS_A_MELEE_WEAPON) flags_string += "MELEE ";
     if (flags & PSITEMSTATS_FLAG_IS_A_RANGED_WEAPON) flags_string += "RANGED ";
     if (flags & PSITEMSTATS_FLAG_IS_A_SHIELD) flags_string += "SHIELD ";

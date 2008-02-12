@@ -457,7 +457,7 @@ const char *psUserCommands::HandleCommand(const char *cmd)
     }
     else if (words[0] == "/target")
     {
-        if (words[1] == "") {
+        if (words[1].IsEmpty()) {
             return "You can use /target [self|clear] or /target [prev|next] [item|npc|player|any].";
         } else if (words[1] == "self")
             psengine->GetCharManager()->SetTarget(psengine->GetCelClient()->GetMainPlayer(),"select");
@@ -489,7 +489,7 @@ const char *psUserCommands::HandleCommand(const char *cmd)
     {
         GEMClientObject *object = NULL;
 
-        if (words[1] == "")
+        if (words[1].IsEmpty())
             object = psengine->GetCharManager()->GetTarget();
         else
             object = FindEntityWithName(words[1]);
@@ -519,8 +519,8 @@ const char *psUserCommands::HandleCommand(const char *cmd)
     }
     else if (words[0] == "/advisormode" )
     {
-        csString pPerson = "";
-        csString pText = "";
+        csString pPerson;
+        csString pText;
 
         if ( words.GetCount() > 1 )
              pText = words.GetTail( 1 );
@@ -531,8 +531,8 @@ const char *psUserCommands::HandleCommand(const char *cmd)
     }
     else if (words[0] == "/list_advice_requests" )
     {
-        csString pPerson = "";
-        csString pText = "";
+        csString pPerson;
+        csString pText;
 
         psAdviceMessage advice(0,words[0],pPerson, pText);
         msgqueue->SendMessage(advice.msg);
@@ -540,7 +540,7 @@ const char *psUserCommands::HandleCommand(const char *cmd)
     }
     else if (words[0] == "/advisor" )
     {
-        csString pPerson = "";
+        csString pPerson;
         csString pText( words.GetTail( 1 ) );
 
         if (pText.IsEmpty())
@@ -643,7 +643,7 @@ const char *psUserCommands::HandleCommand(const char *cmd)
     {
          GEMClientObject *object = NULL;
 
-         if (words[1] == "")
+         if (words[1].IsEmpty())
              object = psengine->GetCharManager()->GetTarget();
          else
              object = FindEntityWithName(words[1]);

@@ -81,7 +81,7 @@ size_t psXMLString::GetTagSection(int start, const char* tagName,
     size_t end = FindMatchingEndTag(start, tagName);
     
     if ( end == (size_t)-1 )
-        tagSection = "";
+        tagSection.Clear();
     else
         GetSubString(tagSection, start, end+strlen(tagName)+3);
     
@@ -327,7 +327,7 @@ csString EscpXML(const char * str)
     csString ret;
     size_t strLen;
 
-    ret = "";
+    ret.Clear();
     if (str != NULL)
     {
         strLen = strlen(str);

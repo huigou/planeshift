@@ -132,7 +132,7 @@ void psNetManager::SendDisconnect(bool final)
     csString reason;
     if(final)
     {
-        reason = "";
+        reason.Clear();
     }
     else
     {

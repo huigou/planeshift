@@ -652,7 +652,7 @@ void pawsGameTile::SetState(uint8_t state)
         if (state != EmptyTile && state != DisabledTile)
         {
             csString art = board->PieceArtName(state);
-            if (art == "")
+            if (art.IsEmpty())
             {
                 Error2("Invalid minigame state %u", state);
                 return;

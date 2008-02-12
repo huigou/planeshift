@@ -59,7 +59,7 @@ void pawsKeySelectBox::SetKey(int _key, int _modifiers)
     modifiers = _modifiers;
     key = _key;
 
-    text = "";
+    text.Clear();
     if (modifiers != 0)
     {
         if (modifiers & CSMASK_CTRL)
@@ -85,7 +85,7 @@ const char * pawsKeySelectBox::GetText() const
 void pawsKeySelectBox::SetText(const char * keyText)
 {
     text = keyText;
-    if (text == "")
+    if (text.IsEmpty())
     {
         SetKey(0,0);
         return;

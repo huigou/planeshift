@@ -123,11 +123,11 @@ psTradeProcesses::psTradeProcesses()
 {
     processId       = 0;
     subprocess      = 0;
-    name            = "";
-    animation       = "";
+    name           .Clear();
+    animation      .Clear();
     workItemId      = 0;
     equipmentId     = 0;    
-    constraints     = "";
+    constraints    .Clear();
     garbageId       = 0;
     garbageQty       = 0;
     priSkillId      = 0;
@@ -140,7 +140,7 @@ psTradeProcesses::psTradeProcesses()
     maxSecSkill     = 0;
     secPracticePts  = 0;
     secQualFactor   = 0;
-    renderEffect = "";
+    renderEffect.Clear();
 }
 
 
@@ -178,7 +178,7 @@ bool psTradeProcesses::Load(iResultRow& row)
 psTradePatterns::psTradePatterns()
 {
     id              = 0;
-    patternName     = "";
+    patternName    .Clear();
     groupPatternId   = 0;
     designItemId    = 0;
     KFactor         = 0.0;

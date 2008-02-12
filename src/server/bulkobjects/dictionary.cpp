@@ -695,7 +695,7 @@ NpcResponse *NPCDialogDict::AddResponse(const char *response_text,
         opStr.Append("</response>");
     }
     else
-        opStr = "";
+        opStr.Clear();
     newresp->ParseResponseScript(opStr.GetDataSafe() );
     
     if (responses.Insert(newresp,TREE_OWNS_DATA))
@@ -797,7 +797,7 @@ void PrintResponse(NpcResponse * resp)
     if (resp->prerequisite)
     {
         csString prereq = resp->prerequisite->GetScript();
-        if (prereq != "")
+        if (!prereq.IsEmpty())
         {
             CPrintf(CON_CMDOUTPUT ,"                    Prereq : %s\n",prereq.GetDataSafe());
         }
@@ -1647,7 +1647,7 @@ csString VerifyQuestCompletedResponseOp::GetResponseScript()
 {
     psString resp = GetName();
     resp.AppendFmt(" quest=\"%s\"",quest->GetName());
-    if (error_msg != "")
+    if (!error_msg.IsEmpty())
     {
         resp.AppendFmt(" error_msg=\"%s\"",error_msg.GetDataSafe());
     }
@@ -1697,7 +1697,7 @@ csString VerifyQuestAssignedResponseOp::GetResponseScript()
 {
     psString resp = GetName();
     resp.AppendFmt(" quest=\"%s\"",quest->GetName());
-    if (error_msg != "")
+    if (!error_msg.IsEmpty())
     {
         resp.AppendFmt(" error_msg=\"%s\"",error_msg.GetDataSafe());
     }
@@ -1751,7 +1751,7 @@ csString VerifyQuestNotAssignedResponseOp::GetResponseScript()
 {
     psString resp = GetName();
     resp.AppendFmt(" quest=\"%s\"",quest->GetName());
-    if (error_msg != "")
+    if (!error_msg.IsEmpty())
     {
         resp.AppendFmt(" error_msg=\"%s\"",error_msg.GetDataSafe());
     }
@@ -1818,7 +1818,7 @@ csString AssignQuestResponseOp::GetResponseScript()
         }
         
     }
-    if (timeout_msg != "")
+    if (!timeout_msg.IsEmpty())
     {
         resp.AppendFmt(" timeout_msg=\"%s\"",timeout_msg.GetDataSafe());
     }
@@ -1937,7 +1937,7 @@ csString CompleteQuestResponseOp::GetResponseScript()
 {
     psString resp = GetName();
     resp.AppendFmt(" quest_id=\"%s\"", quest->GetName());
-    if (error_msg != "")
+    if (!error_msg.IsEmpty())
     {
         resp.AppendFmt(" error_msg=\"%s\"",error_msg.GetDataSafe());
     }

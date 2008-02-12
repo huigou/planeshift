@@ -245,7 +245,7 @@ void pawsBuddyWindow::OnStringEntered(const char *name,int param,const char *val
         command.Format("/notbuddy %s", value);
         psengine->GetCmdHandler()->Execute(command);
         
-        currentBuddy = "";
+        currentBuddy.Clear();
 
         if (editBuddy.Compare(value))
         {
@@ -426,7 +426,7 @@ void pawsBuddyWindow::ChangeAlias(const csString & name, const csString &oldAlia
 void pawsBuddyWindow::FillBuddyList()
 {
     buddyList->Clear();
-    currentBuddy = "";
+    currentBuddy.Clear();
 
     onlineBuddies.Sort();
     offlineBuddies.Sort();

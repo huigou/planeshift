@@ -78,7 +78,7 @@ void pawsLoadWindow::HandleMessage(MsgEntry *me)
 
         motdMsg.Format("Server MOTD: %s",tipmsg.motd.GetData());
 
-        if (tipmsg.guildmotd != "")
+        if (!tipmsg.guildmotd.IsEmpty())
             guildmotdMsg.Format("%s's MOTD: %s",tipmsg.guild.GetData(),tipmsg.guildmotd.GetData());
 
         //Set the text

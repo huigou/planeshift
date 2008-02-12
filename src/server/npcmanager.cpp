@@ -159,7 +159,7 @@ public:
             }
             else
             {
-                curDate = "";
+                curDate.Clear();
             }
         }
 
@@ -1619,7 +1619,7 @@ void NPCManager::HandlePetCommand( MsgEntry * me )
             }
             else
             {
-                lastName = "";
+                lastName.Clear();
             }
             
             if (psserver->GetCharManager()->IsBanned(firstName))

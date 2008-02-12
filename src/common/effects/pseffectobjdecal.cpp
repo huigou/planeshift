@@ -65,8 +65,8 @@ bool psEffectObjDecal::Load(iDocumentNode *node)
     }
     
     // get the attributes
-    name = "";
-    materialName = "";
+    name.Clear();
+    materialName.Clear();
     float polygonNormalThreshold = -0.05f;
     float decalOffset = 0.02f;
     csVector2 minTexCoord(0,0);
@@ -122,7 +122,7 @@ bool psEffectObjDecal::Load(iDocumentNode *node)
         perpendicularFaceOffset = dataNode->GetAttributeValueAsFloat("offset");
     }
     
-    if (name == "")
+    if (name.IsEmpty())
     {
         csReport(psCSSetup::object_reg, CS_REPORTER_SEVERITY_ERROR, "planeshift_effects", "Attempting to create an effect obj with no name.\n");
         return false;

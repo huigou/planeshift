@@ -55,8 +55,8 @@ psEffectObjQuad::~psEffectObjQuad()
 bool psEffectObjQuad::Load(iDocumentNode *node)
 {
     // get the attributes
-    name = "";
-    materialName = "";
+    name.Clear();
+    materialName.Clear();
     csRef<iDocumentAttributeIterator> attribIter = node->GetAttributes();
     while (attribIter->HasNext())
     {
@@ -68,7 +68,7 @@ bool psEffectObjQuad::Load(iDocumentNode *node)
         else if (attrName == "material")
             materialName = attr->GetValue();
     }
-    if (name == "")
+    if (name.IsEmpty())
     {
         csReport(psCSSetup::object_reg, CS_REPORTER_SEVERITY_ERROR, "planeshift_effects", "Attempting to create an effect obj with no name.\n");
         return false;

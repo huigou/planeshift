@@ -171,7 +171,7 @@ void MathScriptLine::ParseVariables(MathScript *myScript)
                     word.Append(',');
                     scriptLine.Insert(start+extend.Length()+1,word);
                     */
-                    word = "";
+                    word.Clear();
                 }
                 else
                 {
@@ -203,7 +203,7 @@ void MathScriptLine::ParseVariables(MathScript *myScript)
 void MathScriptLine::ParseFormula(MathScript *myScript)
 {
     csString varlist;
-    varlist = "";
+    varlist.Clear();
     if (variables.GetSize())
     {
         varlist = variables[0]->name;

@@ -68,17 +68,17 @@ pawsScrollBar::pawsScrollBar()
     thumb = NULL;
     mouseIsDraggingThumb = false;
 
-	upGrey = "";
-	upUnpressed = "";
-	upPressed = "";
+	upGrey.Clear();
+	upUnpressed.Clear();
+	upPressed.Clear();
 	upOffsetx = 0;
 	upOffsety = 0;
 	upWidth = 0;
 	upHeight = 0;
 
-	downGrey = "";
-	downUnpressed = "";
-	downPressed = "";
+	downGrey.Clear();
+	downUnpressed.Clear();
+	downPressed.Clear();
 	downOffsetx = 0;
 	downOffsety = 0;
 	downWidth = 0;
@@ -263,23 +263,23 @@ bool pawsScrollBar::PostSetup()
     if (!horizontal)
     {
         flags = ATTACH_TOP | ATTACH_RIGHT;
-		if (upUnpressed == "")
+		if (upUnpressed.IsEmpty())
 			upUnpressed = "Up Arrow";
-		if (upPressed == "")
+		if (upPressed.IsEmpty())
 			upPressed = "Up Arrow";
     }
     else
     {
         flags = ATTACH_LEFT | ATTACH_BOTTOM;
-		if (upUnpressed == "")
+		if (upUnpressed.IsEmpty())
 			upUnpressed = "Left Arrow";
-		if (upPressed == "")
+		if (upPressed.IsEmpty())
 			upPressed = "Left Arrow";
     }
 
 	upButton->SetUpImage(upUnpressed);
 	upButton->SetDownImage(upPressed);
-	if (upGrey != "")
+	if (!upGrey.IsEmpty())
 	{
 		upButton->SetGreyUpImage(upGrey);
 		upButton->SetGreyDownImage(upGrey);
@@ -298,22 +298,22 @@ bool pawsScrollBar::PostSetup()
     if (!horizontal)
     {
         flags = ATTACH_BOTTOM | ATTACH_RIGHT;
-		if (downUnpressed == "")
+		if (downUnpressed.IsEmpty())
 			downUnpressed = "Down Arrow";
-		if (downPressed == "")
+		if (downPressed.IsEmpty())
 			downPressed = "Down Arrow";
     }
     else
     {
         flags = ATTACH_RIGHT | ATTACH_BOTTOM;
-		if (downUnpressed == "")
+		if (downUnpressed.IsEmpty())
 			downUnpressed = "Right Arrow";
-		if (downPressed == "")
+		if (downPressed.IsEmpty())
 			downPressed = "Right Arrow";
     }
 	downButton->SetUpImage(downUnpressed);
 	downButton->SetDownImage(downPressed);
-	if (downGrey != "")
+	if (!downGrey.IsEmpty())
 	{
 		downButton->SetGreyUpImage(downGrey);
 		downButton->SetGreyDownImage(downGrey);

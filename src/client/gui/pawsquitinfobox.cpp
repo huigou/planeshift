@@ -53,7 +53,7 @@ bool pawsQuitInfoBox::PostSetup()
     if ( !okButton )
         return false;
 
-    text = "";
+    text.Clear();
 
     return true;
 }

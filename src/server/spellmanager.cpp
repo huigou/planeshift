@@ -321,7 +321,7 @@ void psSpellManager::Cast(Client * client, csString spellName, float kFactor)
         event->QueueEvent();
     
         //targetID = event->target->GetEntity()->GetID();
-        if (effectName && effectName != "")
+        if (effectName && !effectName.IsEmpty())
         {
             psEffectMessage newmsg(0, effectName, offset, anchorID, targetID, castingDuration, 0);
             if (newmsg.valid)
@@ -336,7 +336,7 @@ void psSpellManager::Cast(Client * client, csString spellName, float kFactor)
     }
 
     // Inform player
-    if (castingText != "")
+    if (!castingText.IsEmpty())
     {
         psserver->SendSystemInfo(client->GetClientNum(),castingText.GetData());
     }
@@ -614,7 +614,7 @@ void psSpellManager::HandleSpellCastEvent(psSpellCastGameEvent *event)
         }
 
         // If there is some sort of visual/particle/audio effect for the target then fire it out.
-        if (responseEffectName && responseEffectName != "")
+        if (responseEffectName && !responseEffectName.IsEmpty())
         {
             psEffectMessage newmsg( 0, responseEffectName, offset, anchorID, targetID, 0, 0 );
             if ( newmsg.valid )
@@ -633,7 +633,7 @@ void psSpellManager::HandleSpellCastEvent(psSpellCastGameEvent *event)
     event->caster->GetCharacterData()->SetSpellCasting( NULL );
 
     // Inform player
-    if ( affectText != "" )
+    if ( !affectText.IsEmpty() )
     {
         psserver->SendSystemInfo( event->caster->GetActor()->GetClientID(), affectText.GetData() );
     }
