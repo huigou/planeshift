@@ -1,3 +1,7 @@
+*** 2008-02-12 by Roland Schulz
+- changes to compiling.html by Caarrie
+- GM window layout and font changes also by Caarrie
+
 *** 2008-02-12 by Sasha Levin
 - Changed bunch of code to use csString::IsEmpty and csString::Clear.
 
