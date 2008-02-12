@@ -202,8 +202,8 @@ void MathScriptLine::ParseVariables(MathScript *myScript)
 
 void MathScriptLine::ParseFormula(MathScript *myScript)
 {
-    csString varlist;
-    varlist.Clear();
+    csString varlist("");
+
     if (variables.GetSize())
     {
         varlist = variables[0]->name;
