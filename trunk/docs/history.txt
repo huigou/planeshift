@@ -1,6 +1,9 @@
 *** 2008-02-12 by Roland Schulz
 - changes to compiling.html by Caarrie
 - GM window layout and font changes also by Caarrie
+- fixed FS#1075: recent change to csString::Clear resulted in
+  GetData of string being NULL, which prevents making a std::string
+  out of it in mathscript.cpp. TODO: make fparser.cpp use csString.
 
 *** 2008-02-12 by Sasha Levin
 - Changed bunch of code to use csString::IsEmpty and csString::Clear.
