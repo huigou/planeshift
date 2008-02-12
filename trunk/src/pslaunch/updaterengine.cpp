@@ -530,7 +530,7 @@ bool UpdaterEngine::selfUpdate(int selfUpdating)
             realName.Append(".bin");
 #endif
             // Remove old updater.
-            csString cmd.Clear();
+            csString cmd;
             cmd.AppendFmt("rm -Rf %s", realName.GetData());
             system(cmd.GetData());
 
