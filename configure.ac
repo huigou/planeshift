@@ -11,7 +11,7 @@ AC_PREREQ([2.56])
 #----------------------------------------------------------------------------
 # Initialize autoconf
 #----------------------------------------------------------------------------
-AC_INIT([PlaneShift], [0.3.020], [planeshift-develop@lists.sourceforge.net])
+AC_INIT([PlaneShift], [0.4.00], [planeshift-develop@lists.sourceforge.net])
 CS_PACKAGEINFO([PlaneShift a 3d MMORPG],
 	[Copyright (C)2007 by Atomic Blue],
 	[http://www.planeshift.it])
