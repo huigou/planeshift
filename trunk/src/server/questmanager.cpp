@@ -598,7 +598,7 @@ int QuestManager::ParseQuestScript(int quest_id, const char *script)
             }
 
             // Add response for error condition.
-            if (error_text != "")
+            if (!error_text.IsEmpty())
             {
                 int error_response_id = 0;
                 error_response = AddResponse(current_npc,error_text,error_response_id,quest,him,her,it,them);
@@ -893,7 +893,7 @@ bool QuestManager::GetResponseText(csString& block,csString& response,csString& 
 
     CutOutParenthesis(response,error,'(',')');
     CutOutParenthesis(response,pron,'{','}');
-    him = ""; her = ""; it = ""; them = "";
+    him.Clear(); her.Clear(); it.Clear(); them.Clear();
     if (pron.Length())
     {
         csArray<csString> prons = psSplit(pron,',');

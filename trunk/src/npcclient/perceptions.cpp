@@ -131,7 +131,7 @@ bool Reaction::Load(iDocumentNode *node,BehaviorSet& behaviors)
     csArray<csString> valueStr = psSplit( valueAttr , ',');
     for (size_t ii=0; ii < valueStr.GetSize(); ii++)
     {
-        if (valueStr[ii] != "")
+        if (!valueStr[ii].IsEmpty())
         {
             values.Push(atoi(valueStr[ii]));
             valuesValid.Push(true);
@@ -146,7 +146,7 @@ bool Reaction::Load(iDocumentNode *node,BehaviorSet& behaviors)
     csArray<csString> randomStr = psSplit( randomAttr, ',');
     for (size_t ii=0; ii < randomStr.GetSize(); ii++)
     {
-        if (randomStr[ii] != "")
+        if (!randomStr[ii].IsEmpty())
         {
             randoms.Push(atoi(randomStr[ii]));
             randomsValid.Push(true);
@@ -492,7 +492,7 @@ Perception *ItemPerception::MakeCopy()
 
 bool LocationPerception::ShouldReact(Reaction *reaction,NPC *npc)
 {
-    if (name == reaction->GetEventType() && (reaction->GetType() == "" || type == reaction->GetType()))
+    if (name == reaction->GetEventType() && (reaction->GetType().IsEmpty() || type == reaction->GetType()))
     {
         return true;
     }

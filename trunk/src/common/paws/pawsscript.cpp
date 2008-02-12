@@ -110,7 +110,7 @@ bool pawsScript::Parse(const char * script)
     char n = 0;
     size_t currIndex = 0;
     bool openQuotes = false;
-    csString currToken = "";
+    csString currToken;
     csArray<csString> tokens;
 
     // SCANNER: creates a list of tokens
@@ -123,7 +123,7 @@ bool pawsScript::Parse(const char * script)
             if (!openQuotes)
             {
                 tokens.Push(currToken);
-                currToken = "";
+                currToken.Clear();
             }
             continue;
         }
@@ -138,10 +138,10 @@ bool pawsScript::Parse(const char * script)
         // whitespace breaks a token, but doesn't get added to a token
         if (c == ' ' || c == '\t' || c == '\n' || c == '\r')
         {
-            if (currToken != "")
+            if (!currToken.IsEmpty())
             {
                 tokens.Push(currToken);
-                currToken = "";
+                currToken.Clear();
             }
             continue;
         }
@@ -154,11 +154,11 @@ bool pawsScript::Parse(const char * script)
         }
 
         // everything else breaks the token and is considered a token by itself
-        if (currToken != "")
+        if (!currToken.IsEmpty())
             tokens.Push(currToken);
         currToken = c;
         tokens.Push(currToken);
-        currToken = "";
+        currToken.Clear();
     }
 
     // PARSER: simple parsing that grabs key tokens
@@ -223,8 +223,8 @@ bool pawsScript::Parse(const char * script)
                     lhsResults.Push(result);
 
                     // rename variable to something mathscript can set
-                    tokens[startToken] = "";
-                    tokens[startToken+1] = "";
+                    tokens[startToken].Clear();
+                    tokens[startToken+1].Clear();
                     tokens[startToken+2] = "R";
                     tokens[startToken+2] += (unsigned int)lhsResults.GetSize()-1;
                 }
@@ -259,7 +259,7 @@ bool pawsScript::Parse(const char * script)
         }
     }
 
-    csString augmentedScript = "";
+    csString augmentedScript;
     len = tokens.GetSize();
     for (a=0; a<len; ++a)
         augmentedScript += tokens[a];
@@ -295,10 +295,10 @@ pawsScript::~pawsScript()
 
 void pawsScript::Execute()
 {
-	if (scriptText != "")
+	if (!scriptText.IsEmpty())
 	{
 		Parse(scriptText);
-		scriptText = "";
+		scriptText.Clear();
 	}
 
 	if (statement)

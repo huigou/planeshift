@@ -72,7 +72,7 @@ pawsGmGUIWindow::pawsGmGUIWindow()
 
     cmdsource = psengine->GetCmdHandler();
     systemText = (pawsMessageTextBox*)PawsManager::GetSingleton().FindWidget("SystemText");
-    actionXML = "";
+    actionXML.Clear();
     isVisible = true;
     isInvincible = false;
     isViewAllObjects = false;

@@ -305,7 +305,7 @@ csString GetActionOfButton(pawsWidget * widget)
 bool pawsConfigMouse::OnButtonPressed( int mouseButton, int keyModifier, pawsWidget* widget )
 {
     csString editedAction = GetActionOfButton(widget);
-    if (editedAction == "")
+    if (editedAction.IsEmpty())
         return false;
 
     pawsSeqTreeNode * buttonNode;

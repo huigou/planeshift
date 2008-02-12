@@ -428,7 +428,7 @@ bool psMouseBinds::GetInt(const csString& option, csString& value)
     iter = FindInt(option);
     if (iter)
     {
-        value = "";
+        value.Clear();
         value += iter->value;
         return true;
     }

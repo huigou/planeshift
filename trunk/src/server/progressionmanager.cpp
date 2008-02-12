@@ -2320,7 +2320,7 @@ public:
         name = node->GetAttributeValue("name");
         location = node->GetAttributeValue("location");
         stackCount = node->GetAttributeValueAsInt("count");
-        if (location != "" && location != "inventory" && 
+        if (!location.IsEmpty() && location != "inventory" && 
             location != "wallet" && location != "ground" )
         {
             Error3("Error:ProgressionEvent(%s) ItemOp Location %s not legal\n",eventName->GetData(), location.GetData());
@@ -2333,7 +2333,7 @@ public:
         psString xml;
         csString escpxml = EscpXML(name);
         xml.Format("<item name=\"%s\" ",escpxml.GetData());
-        if (location != "") 
+        if (!location.IsEmpty()) 
         {
             escpxml = EscpXML(location);
             xml.AppendFmt("location=\"%s\" ",escpxml.GetData());
@@ -3133,7 +3133,7 @@ public:
             lockID = node->GetAttributeValueAsInt("lockID");
             keyStat = node->GetAttributeValue("stat");
             location = node->GetAttributeValue("location");
-            if (location != "" && location != "inventory" && location != "ground" )
+            if (!location.IsEmpty() && location != "inventory" && location != "ground" )
             {
                 Error3("Error:ProgressionEvent(%s) KeyOp Location %s not legal\n",eventName->GetData(), location.GetData());
             }
@@ -5250,7 +5250,7 @@ bool ProgressionEvent::LoadScript(iDocumentNode *topNode)
     
     // get the delay between the call to Run() and actually executing the script
     csString delayText = topNode->GetAttributeValue("delay");
-    if (delayText != "")
+    if (!delayText.IsEmpty())
     {
         csString triggerDelayScript = "TriggerDelay = ";
         triggerDelayScript += delayText;

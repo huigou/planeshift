@@ -120,7 +120,7 @@ bool NPCType::Load(iDocumentNode *node)
     csString velStr = node->GetAttributeValue("vel");
     velStr.Upcase();
     
-    if (velStr == "")
+    if (velStr.IsEmpty())
     {
         velSource = VEL_DEFAULT;
     } else if (velStr == "$WALK")

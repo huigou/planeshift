@@ -495,9 +495,9 @@ void pawsShortcutWindow::LoadCommands(const char * fileName)
     
     // the 0th entry must exist to correctly make the matrix
     if (names[0].IsEmpty())
-        names[0] = "";
+        names[0].Clear();
     if (cmds[0].IsEmpty())
-        cmds[0] = "";
+        cmds[0].Clear();
 }
 
 void pawsShortcutWindow::SaveCommands(void)

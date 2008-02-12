@@ -75,9 +75,9 @@ psEffectObjLabel::~psEffectObjLabel()
 bool psEffectObjLabel::Load(iDocumentNode *node)
 {
     // get the attributes
-    name = "";
-    materialName = "";
-    sizeFileName = "";
+    name.Clear();
+    materialName.Clear();
+    sizeFileName.Clear();
     csRef<iDocumentAttributeIterator> attribIter = node->GetAttributes();
     while (attribIter->HasNext())
     {
@@ -94,17 +94,17 @@ bool psEffectObjLabel::Load(iDocumentNode *node)
         else if (attrName == "labelwidth")
             labelwidth = attr->GetValueAsFloat();
     }
-    if (name == "")
+    if (name.IsEmpty())
     {
         csReport(psCSSetup::object_reg, CS_REPORTER_SEVERITY_ERROR, "planeshift_effects", "Attempting to create an effect obj with no name.\n");
         return false;
     }
-    if (materialName == "")
+    if (materialName.IsEmpty())
     {
         csReport(psCSSetup::object_reg, CS_REPORTER_SEVERITY_ERROR, "planeshift_effects", "Attempting to create an effect obj with no material.\n");
         return false;
     }
-    if (sizeFileName != "")
+    if (!sizeFileName.IsEmpty())
     {
         printf("loading glyphs %s\n", sizeFileName.GetData());
         LoadGlyphs(sizeFileName);

@@ -92,7 +92,7 @@ void Trait::Load( iDocumentNode* node )
     material = psengine->FindCommonString(cstr_id_material);
     mesh = psengine->FindCommonString(cstr_id_mesh);
 
-    if (genderStr == "") 
+    if (genderStr.IsEmpty()) 
         genderStr = "N";
     if (genderStr != "F" && genderStr != "M" && genderStr != "N")
     {
@@ -1094,10 +1094,10 @@ void psCreationManager::LoadPathInfo()
         
         PathDefinition* path = new PathDefinition();
         path->name = node->GetAttributeValue("name");
-        if ( path->name == "" )
+        if ( path->name.IsEmpty() )
             path->name = "None";
         path->info = node->GetAttributeValue("info");
-        if ( path->info == "" )
+        if ( path->info.IsEmpty() )
             path->info = "None";
 
         //Load in all of the stat bonuses
@@ -1260,7 +1260,7 @@ void psCreationManager::UploadChar( bool verify )
     if (selectedName.FindFirst(' ') != SIZET_NOT_FOUND)
         lastname = selectedName.Slice(selectedName.FindFirst(' ')+1,selectedName.Length());
     else
-        lastname = "";
+        lastname.Clear();
 
     // Make BIO
     pawsSummaryWindow* summary = (pawsSummaryWindow*)PawsManager::GetSingleton().FindWidget("Summary");

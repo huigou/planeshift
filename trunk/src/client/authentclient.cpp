@@ -56,7 +56,7 @@
 psAuthenticationClient::psAuthenticationClient(MsgHandler *mymsghandler)
 {
     msghandler = mymsghandler;
-    rejectmsg = "";
+    rejectmsg.Clear();
 
     msghandler->Subscribe(this,MSGTYPE_AUTHAPPROVED);
     msghandler->Subscribe(this,MSGTYPE_PREAUTHAPPROVED);
@@ -141,7 +141,7 @@ bool psAuthenticationClient::Authenticate (const char* user, const char* pwd )
     strcpy(username, user );
     strcpy(password, pwd );   
     
-    rejectmsg = "";
+    rejectmsg.Clear();
 
     return true;
 }
@@ -221,9 +221,9 @@ void psAuthenticationClient::HandleDisconnect( MsgEntry* me )
     // Special case to drop login failure reply from server immediately after we have already logged in.
     if (dc.actor == 0 || dc.actor == (uint32_t)-1)
     {
-        if (rejectmsg == "")
+        if (rejectmsg.IsEmpty())
         {
-            if (dc.msgReason != "")
+            if (!dc.msgReason.IsEmpty())
             {
                 rejectmsg = dc.msgReason;
             }
@@ -251,7 +251,7 @@ void psAuthenticationClient::HandleDisconnect( MsgEntry* me )
     }
     
     // We are the only possible receiver
-    if (dc.msgReason == "")
+    if (dc.msgReason.IsEmpty())
     {
         rejectmsg = "Server dropped us. (Invalid error message)";
     }

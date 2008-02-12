@@ -480,7 +480,7 @@ bool EEditApp::CancelEffect()
 
 csPtr<iMeshWrapper> EEditApp::LoadCustomMesh(const csString & meshFile, const csString & name, csVector3 pos)
 {
-    if (meshFile == "")
+    if (meshFile.IsEmpty())
     {
         return engine->CreateMeshWrapper("crystalspace.mesh.object.null",
                   name, editWindow->GetView()->GetCamera()->GetSector(), pos);
@@ -610,7 +610,7 @@ void EEditApp::SetTargetData(const csVector3 & pos, float rot)
 bool EEditApp::SetCurrEffect(const csString & name)
 {
     // figure out where this effect is located
-    currEffectLoc = "";
+    currEffectLoc.Clear();
     for (size_t a=0; a<effectPaths.GetSize(); ++a)
     {
         if (effectPaths[a].name == name)

@@ -71,8 +71,8 @@ bool psEffectObjSound::Load(iDocumentNode *node)
         return false;
 
     // get the attributes
-    name = "";
-    soundName = "";
+    name.Clear();
+    soundName.Clear();
     minDistSquared = 25.0f;
     maxDistSquared = 100000.0f;
     loop = true;
@@ -114,7 +114,7 @@ bool psEffectObjSound::Load(iDocumentNode *node)
         maxDistSquared *= maxDistSquared;
     }
 
-    if (name == "")
+    if (name.IsEmpty())
     {
         csReport(psCSSetup::object_reg, CS_REPORTER_SEVERITY_ERROR, "planeshift_effects", "Attempting to create an effect obj with no name.\n");
         return false;

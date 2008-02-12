@@ -90,7 +90,7 @@ pawsWidget::pawsWidget( )
     max_width = graphics2D->GetWidth();
     hasBorderColours = false;
     contextMenu = NULL;
-    xmlbinding = "";
+    xmlbinding.Clear();
     ignore = false;
     onEnter = NULL;
     margin = 0;
@@ -571,7 +571,7 @@ bool pawsWidget::LoadAttributes( iDocumentNode* node )
     if ( maskImageNode )
     {
         csString imageStr = maskImageNode->GetAttributeValue("resource");
-        if (imageStr != "")
+        if (!imageStr.IsEmpty())
             SetMaskingImage(imageStr);
     }
 
@@ -598,7 +598,7 @@ bool pawsWidget::LoadAttributes( iDocumentNode* node )
     {
         csRef<iDocumentNode> publishNode = publishNodes->Next();
         csString data = publishNode->GetAttributeValue("data");
-        if (data != "")
+        if (!data.IsEmpty())
             publishList.Push(data);
     }   
 
@@ -972,7 +972,7 @@ pawsWidget* pawsWidget::FindWidgetXMLBinding( const char* xmlbinding )
 {
     csString temp(xmlbinding);
     if ( (this->xmlbinding == temp) || 
-         (this->xmlbinding == "" && name == temp ))
+         (this->xmlbinding.IsEmpty() && name == temp ))
         return this;
 
     for ( size_t z = 0; z < children.GetSize(); z++ )
@@ -1479,12 +1479,12 @@ bool pawsWidget::OnMouseDown( int button, int modifiers, int x, int y )
         }
         else if ((button == csmbRight) || (button == csmbLeft && modifiers & CSMASK_CTRL))
         {
-            if (!contextMenu && contextMenuFile != "")
+            if (!contextMenu && !contextMenuFile.IsEmpty())
             {
                 CreateContextMenu();
                 return true;
             }                
-            else if (contextMenuFile == "" && configurable)
+            else if (contextMenuFile.IsEmpty() && configurable)
             {
                 CreateWidgetConfigWindow();
                 return true;

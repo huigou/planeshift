@@ -42,7 +42,7 @@ csString& GetWordNumber(const csString& str, int number, size_t *startpos)
 
     if (pos>=str.Length())
     {
-        erg = "";
+        erg.Clear();
         return erg;
     }
 
@@ -217,7 +217,7 @@ bool psSentenceContain(const csString& sentence,const csString& word)
 
     do {
         currentWord = words[n-1];
-        if (currentWord == "")
+        if (currentWord.IsEmpty())
         {
             return false;
         }

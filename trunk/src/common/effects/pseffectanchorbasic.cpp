@@ -44,7 +44,7 @@ psEffectAnchorBasic::~psEffectAnchorBasic()
 bool psEffectAnchorBasic::Load(iDocumentNode * node)
 {
     // get the attributes
-    name = "";
+    name.Clear();
     csRef<iDocumentAttributeIterator> attribIter = node->GetAttributes();
     while (attribIter->HasNext())
     {
@@ -54,7 +54,7 @@ bool psEffectAnchorBasic::Load(iDocumentNode * node)
         if (attrName == "name")
             name = attr->GetValue();
     }
-    if (name == "")
+    if (name.IsEmpty())
     {
         csReport(psCSSetup::object_reg, CS_REPORTER_SEVERITY_ERROR, "planeshift_effects", "Attempting to create an effect relative anchor with no name.\n");
         return false;

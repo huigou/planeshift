@@ -500,7 +500,7 @@ void pawsLoginWindow::Draw()
         switch (servers[i]->GetStatus())
         {
         case psServerPinger::INIT:
-            pingStr = "";
+            pingStr.Clear();
             break;
         case psServerPinger::FAILED:
             pingStr = "Failed";

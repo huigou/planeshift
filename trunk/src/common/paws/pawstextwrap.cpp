@@ -361,8 +361,8 @@ void pawsMultilineEditTextBox::LayoutText()
     int screenWidth = screenFrame.Width()-VSCROLLBAR_WIDTH;
     int width = 0;
     int height = 0;
-    csString tempString = "";
-    csString word = "";
+    csString tempString;
+    csString word;
     size_t  srcPos = 0; //the first char that hasn't yet been grabbed.
     lineInfo.Empty();
     size_t totalCount = 0;
@@ -405,7 +405,7 @@ void pawsMultilineEditTextBox::LayoutText()
             // push linebreak to next line
             totalCount += tempString.Length();
             PushLineInfo(tempString.Length(),totalCount,1);
-            tempString = "";
+            tempString.Clear();
             word = "a"; //set position holder (never actually drawn)
             font->GetDimensions(tempString,tailWidth,height);
             //Note: srcPos is not set.
@@ -429,7 +429,7 @@ void pawsMultilineEditTextBox::LayoutText()
             //standard 'create a new destination line' procedure
             totalCount += tempString.Length();
             PushLineInfo(tempString.Length(),totalCount,1);
-            tempString = "";
+            tempString.Clear();
             font->GetDimensions(tempString,tailWidth,height);
         }
     }

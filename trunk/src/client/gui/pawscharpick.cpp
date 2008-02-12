@@ -457,7 +457,7 @@ void pawsCharacterPickerWindow::SelectCharacter(int character)
             return;
         }
 
-        if (entry->factname != "")
+        if (!entry->factname.IsEmpty())
             view->View( entry->factname, entry->filename );
         else
             view->View(entry->factory);
@@ -537,7 +537,7 @@ void pawsCharacterPickerWindow::SelectCharacter(int character, pawsWidget* widge
             return;
         }
 
-        if (entry->factname != "")
+        if (!entry->factname.IsEmpty())
             view->View( entry->factname, entry->filename );
         else
             view->View(entry->factory);

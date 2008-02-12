@@ -3102,7 +3102,7 @@ void gemActor::SendBehaviorMessage(const csString & msg_id, gemObject *actor)
             int options = 0;
 
             csString desc = this->GetCharacterData()->GetDescription();
-            if( desc != "" )
+            if( !desc.IsEmpty() )
                 options |= psGUIInteractMessage::PLAYERDESC;
 
             // Get the actor who is targetting. The target is *this.
@@ -3268,7 +3268,7 @@ void gemActor::DetachAttackScript(int scriptID)
         Error3("Invalid attack script scriptID %i for actor %s", scriptID, name.GetData());
         return;
     }
-    onAttackScripts[scriptID] = "";
+    onAttackScripts[scriptID].Clear();
 }
 
 int  gemActor::AttachDamageScript(const csString & scriptName)
@@ -3289,7 +3289,7 @@ void gemActor::DetachDamageScript(int scriptID)
         Error3("Invalid damage script scriptID %i for actor %s", scriptID, name.GetData());
         return;
     }
-    onDamageScripts[scriptID] = "";
+    onDamageScripts[scriptID].Clear();
 }
 
 bool gemActor::AddActiveMagicCategory(const csString & category)

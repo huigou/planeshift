@@ -49,9 +49,9 @@ psEffectObjMesh::~psEffectObjMesh()
 bool psEffectObjMesh::Load(iDocumentNode *node)
 {
     // get the attributes
-    name = "";
-    materialName = "";
-    factName = "";
+    name.Clear();
+    materialName.Clear();
+    factName.Clear();
     csRef<iDocumentAttributeIterator> attribIter = node->GetAttributes();
     while (attribIter->HasNext())
     {
@@ -65,7 +65,7 @@ bool psEffectObjMesh::Load(iDocumentNode *node)
         else if (attrName == "fact")
             factName = attr->GetValue();
     }
-    if (name == "")
+    if (name.IsEmpty())
     {
         csReport(psCSSetup::object_reg, CS_REPORTER_SEVERITY_ERROR, "planeshift_effects", "Attempting to create an effect obj with no name.\n");
         return false;
@@ -105,7 +105,7 @@ bool psEffectObjMesh::Render(const csVector3 &up)
     mesh->GetMeshObject()->GetObjectModel()->SetTriangleData(viscull_id, 0);
 
     // add the custom material if set
-    if (materialName != "")
+    if (!materialName.IsEmpty())
     {
         csRef<iMaterialWrapper> mat = region->FindMaterial(materialName);
         if (mat != 0)

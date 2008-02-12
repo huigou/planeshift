@@ -1505,7 +1505,7 @@ void psWalkPoly::Cut(const csVector3 & cut1, const csVector3 & cut2)
 void psWalkPoly::ClearInfo()
 {
     for (size_t vertNum = 0; vertNum < verts.GetSize(); vertNum++)
-        verts[vertNum].info = "";
+        verts[vertNum].info.Clear();
 }
 
 void psWalkPoly::Dump(const char * name)

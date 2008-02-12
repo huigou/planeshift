@@ -262,7 +262,7 @@ bool pawsGMSpawnWindow::OnButtonPressed(int button,int keyModifier,pawsWidget* w
     }
     else if(widget && !strcmp(widget->GetName(),"Spawn"))
     {
-        if(currentItem == "")
+        if(currentItem.IsEmpty())
             return true;
 
         psGMSpawnItem msg(

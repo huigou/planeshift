@@ -864,7 +864,7 @@ gemObject *EntityManager::CreateItem( psItem *& iteminstance, bool transient )
         meshfile.Format("/planeshift/%s.spr", dbMeshName.GetData() );
     }        
     else
-        meshfile = "";
+        meshfile.Clear();
 
     gemItem *obj;
     
@@ -1139,7 +1139,7 @@ void EntityManager::HandleUserAction(MsgEntry* me)
     if (action == "dfltBehavior")
     {
         action = object->GetDefaultBehavior(actionMsg.dfltBehaviors);
-        if (action == "")
+        if (action.IsEmpty())
         {
             return;
         }

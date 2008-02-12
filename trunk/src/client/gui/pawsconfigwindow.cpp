@@ -152,7 +152,7 @@ bool pawsConfigWindow::OnSelected(pawsWidget* widget)
     }
 
     sectName = node->GetAttr("SectionName");
-    if (sectName == "")
+    if (sectName.IsEmpty())
         return false;    // .... this tree node does not invoke any configuration section
     
     newCurrSectWnd = FindSectionWindow(sectName);

@@ -427,7 +427,7 @@ bool AdminManager::AdminCmdData::DecodeAdminCmdMessage(MsgEntry *pMsg, psAdminCm
             }
             else
             {
-                sector = "";
+                sector.Clear();
             }
         }
         return true;
@@ -452,7 +452,7 @@ bool AdminManager::AdminCmdData::DecodeAdminCmdMessage(MsgEntry *pMsg, psAdminCm
             }
             else
             {
-                sector = "";
+                sector.Clear();
                 return true;
             }
         }
@@ -468,7 +468,7 @@ bool AdminManager::AdminCmdData::DecodeAdminCmdMessage(MsgEntry *pMsg, psAdminCm
               then the sector is reset, so that adminmanager will show the syntax of the command.*/
             if (interval > -1 && words.GetCount() != 2)
             {
-               sector = "";
+               sector.Clear();
             }
         }
 
@@ -494,7 +494,7 @@ bool AdminManager::AdminCmdData::DecodeAdminCmdMessage(MsgEntry *pMsg, psAdminCm
             }
             else
             {
-                sector = "";
+                sector.Clear();
                 return true;
             }
         }
@@ -512,7 +512,7 @@ bool AdminManager::AdminCmdData::DecodeAdminCmdMessage(MsgEntry *pMsg, psAdminCm
               then the sector is reset, so that adminmanager will show the syntax of the command.*/
             if ( words.GetCount() != 2 )
             {
-               sector = "";
+               sector.Clear();
             }
         }
         return true;
@@ -606,7 +606,7 @@ bool AdminManager::AdminCmdData::DecodeAdminCmdMessage(MsgEntry *pMsg, psAdminCm
         else if (subCmd == "alias")
         {
             wp1 = words[2];    // Format
-            if (wp1 == "")
+            if (wp1.IsEmpty())
             {
                 help = true;
             }
@@ -616,7 +616,7 @@ bool AdminManager::AdminCmdData::DecodeAdminCmdMessage(MsgEntry *pMsg, psAdminCm
             // Show is only an alias so make sure subCmd is display
             subCmd = "display";
             attribute = words[2];
-            if (attribute != "" && !(toupper(attribute.GetAt(0))=='P'||toupper(attribute.GetAt(0))=='W'))
+            if (!attribute.IsEmpty() && !(toupper(attribute.GetAt(0))=='P'||toupper(attribute.GetAt(0))=='W'))
             {
                 help = true;
             }
@@ -624,7 +624,7 @@ bool AdminManager::AdminCmdData::DecodeAdminCmdMessage(MsgEntry *pMsg, psAdminCm
         else if (subCmd == "format")
         {
             attribute = words[2];    // Format
-            if (attribute == "")
+            if (attribute.IsEmpty())
             {
                 help = true;
             }
@@ -633,7 +633,7 @@ bool AdminManager::AdminCmdData::DecodeAdminCmdMessage(MsgEntry *pMsg, psAdminCm
         else if (subCmd == "hide")
         {
             attribute = words[2];
-            if (attribute != "" && !(toupper(attribute.GetAt(0))=='P'||toupper(attribute.GetAt(0))=='W'))
+            if (!attribute.IsEmpty() && !(toupper(attribute.GetAt(0))=='P'||toupper(attribute.GetAt(0))=='W'))
             {
                 help = true;
             }
@@ -2058,7 +2058,7 @@ void AdminManager::ViewMarriage(MsgEntry* me, AdminCmdData& data)
 
 void AdminManager::Teleport(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data, Client *client, gemObject* subject)
 {
-    if (data.target == "")
+    if (data.target.IsEmpty())
     {
         psserver->SendSystemInfo(client->GetClientNum(), "Use: /teleport <subject> <destination>\n"
                                  "Subject    : me/target/<object name>/<NPC name>/<player name>/eid:<EID>/pid:<PID>\n"
@@ -2409,7 +2409,7 @@ void AdminManager::HandlePath(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
         if (data.subCmd == "help")
         {
             psserver->SendSystemInfo( me->clientnum,"Usage: %s",usage);
-        } else if (data.subCmd == "")
+        } else if (data.subCmd.IsEmpty())
         {
             psserver->SendSystemInfo( me->clientnum,"Help on /point\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s",
                                       usage_adjust,usage_alias,usage_display,usage_format,
@@ -2584,7 +2584,7 @@ void AdminManager::HandlePath(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
             }
         }
 
-        if (client->WaypointGetPathName() == "")
+        if (client->WaypointGetPathName().IsEmpty())
         {
             psserver->SendSystemError( me->clientnum, "No path format set yet.");
             return;
@@ -2673,7 +2673,7 @@ void AdminManager::HandlePath(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
     }
     else if (data.subCmd == "display")
     {
-        if (data.attribute == "" || toupper(data.attribute.GetAt(0)) == 'P')
+        if (data.attribute.IsEmpty() || toupper(data.attribute.GetAt(0)) == 'P')
         {
             Result rs(db->Select("select pp.* from sc_path_points pp, sectors s where pp.loc_sector_id = s.id and s.name ='%s'",mySectorName.GetDataSafe()));
             
@@ -2694,7 +2694,7 @@ void AdminManager::HandlePath(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
             client->PathSetIsDisplaying(true);
             psserver->SendSystemInfo(me->clientnum, "Displaying all path points in sector %s",mySectorName.GetDataSafe());
         }
-        if (data.attribute == "" || toupper(data.attribute.GetAt(0)) == 'W')
+        if (data.attribute.IsEmpty() || toupper(data.attribute.GetAt(0)) == 'W')
         {
             Result rs(db->Select("select wp.* from sc_waypoints wp, sectors s where wp.loc_sector_id = s.id and s.name ='%s'",mySectorName.GetDataSafe()));
 
@@ -2717,14 +2717,14 @@ void AdminManager::HandlePath(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
     }
     else if (data.subCmd == "hide")
     {
-        if (data.attribute == "" || toupper(data.attribute.GetAt(0)) == 'P')
+        if (data.attribute.IsEmpty() || toupper(data.attribute.GetAt(0)) == 'P')
         {
             psStopEffectMessage msg(me->clientnum, client->PathGetEffectID());
             msg.SendMessage();
             client->PathSetIsDisplaying(false);
             psserver->SendSystemInfo(me->clientnum, "All path points hidden");
         }
-        if (data.attribute == "" || toupper(data.attribute.GetAt(0)) == 'W')
+        if (data.attribute.IsEmpty() || toupper(data.attribute.GetAt(0)) == 'W')
         {
             psStopEffectMessage msg(me->clientnum, client->WaypointGetEffectID());
             msg.SendMessage();
@@ -2812,7 +2812,7 @@ void AdminManager::HandlePath(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
             return;
         }
 
-        if (client->WaypointGetPathName() == "")
+        if (client->WaypointGetPathName().IsEmpty())
         {
             psserver->SendSystemError( me->clientnum, "No path format set yet.");
             return;
@@ -3878,7 +3878,7 @@ void AdminManager::ChangeLock(MsgEntry *me, psAdminCmdMessage& msg, AdminCmdData
         {
             // load openableLocks except for specific lock
             psString word;
-            psString lstr = "";
+            psString lstr;
             uint32 keyID = items[i].GetUInt32("id");
             psString olstr(items[i]["openable_locks"]);
             olstr.GetWordNumber(1, word);
@@ -3888,7 +3888,7 @@ void AdminManager::ChangeLock(MsgEntry *me, psAdminCmdMessage& msg, AdminCmdData
                 if (word != buff)
                 {
                     // add space to sparate since GetWordNumber is used to decode
-                    if (lstr != "")
+                    if (!lstr.IsEmpty())
                         lstr.Append(" "); 
                     lstr.Append(word);
 
@@ -4399,7 +4399,7 @@ void AdminManager::SendGMPlayerList(MsgEntry* me, psGMGuiMessage& msg,Client *cl
         if (guild)
             playerInfo.guild = guild->GetName();
         else
-            playerInfo.guild = "";
+            playerInfo.guild.Clear();
 
         //Get sector name
         csVector3 vpos;
@@ -4591,7 +4591,7 @@ void AdminManager::DeleteCharacter(MsgEntry* me, psAdminCmdMessage& msg, AdminCm
 
     if (zombieID == 0)  // Deleting by name; verify the petitioner gave us one of their characters
     {
-        if (data.zombie == "" || data.requestor == "")
+        if (data.zombie.IsEmpty() || data.requestor.IsEmpty())
         {
             psserver->SendSystemInfo(me->clientnum,"Syntax: \"/deletechar CharacterName RequestorName\" OR \"/deletechar pid:[id]\"");
             return;
@@ -4767,7 +4767,7 @@ void AdminManager::ChangeName(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
 
     if(data.newLastName.CompareNoCase("no"))
     {
-        data.newLastName = "";
+        data.newLastName.Clear();
         checkLast = false;
     }
     else if (data.newLastName.Length() == 0 || data.newLastName == prevLastName)
@@ -6311,7 +6311,7 @@ void AdminManager::HandleGMEvent(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdD
     // player completed event
     if (data.subCmd == "complete")
     {
-        if (data.name == "")
+        if (data.name.IsEmpty())
             gmeventResult = gmeventManager->CompleteGMEvent(client,
                                                             client->GetPlayerID());
         else
@@ -6516,7 +6516,7 @@ void AdminManager::HandleSetItemName(psAdminCmdMessage& msg, AdminCmdData& data,
     }
 
     item->SetName(data.name);
-    if (data.description != "")
+    if (!data.description.IsEmpty())
         item->SetDescription(data.description);
 
     item->Save(false);
@@ -6563,7 +6563,7 @@ void AdminManager::HandleReload(psAdminCmdMessage& msg, AdminCmdData& data, Clie
 void AdminManager::HandleListWarnings(psAdminCmdMessage& msg, AdminCmdData& data, Client *client, gemObject* object )
 {
     Client* target = NULL;
-    if (data.target != "" && data.target != "target")
+    if (!data.target.IsEmpty() && data.target != "target")
     {
         target = psserver->GetCharManager()->FindPlayerClient(data.target);
     }

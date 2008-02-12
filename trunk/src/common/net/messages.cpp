@@ -2339,7 +2339,7 @@ psQuestInfoMessage::psQuestInfoMessage(int cnum, int cmd, int id, const char *na
         xml.Format("<QuestNotebook><Description text=\"%s\"/></QuestNotebook>",escpxml_info.GetData());
     }
     else
-        xml = "";
+        xml.Clear();
 
     msg = new MsgEntry(sizeof(int32_t) + sizeof(uint8_t) + xml.Length() + 1);
 
@@ -6627,7 +6627,7 @@ psGMEventInfoMessage::psGMEventInfoMessage(int cnum, int cmd, int id, const char
         xml.Format("<QuestNotebook><Description text=\"%s\"/></QuestNotebook>",escpxml_info.GetData());
     }
     else
-        xml = "";
+        xml.Clear();
 
     msg = new MsgEntry(sizeof(int32_t) + sizeof(uint8_t) + xml.Length() + 1);
 

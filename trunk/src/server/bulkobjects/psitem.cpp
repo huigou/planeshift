@@ -568,68 +568,68 @@ void psItem::GetFieldArray(psStringArray& fields)
         fields.Push(NULL);
 
     // Flags
-    csString flagString = "";
+    csString flagString;
 
     // Thise two are actualy glyhs things and should be moved to psGlyph
     // if a generic way of updating flags are implemented.
     if (flags & PSITEM_FLAG_PURIFIED)
     {
-        if (flagString != "") flagString.Append(",");
+        if (!flagString.IsEmpty()) flagString.Append(",");
         flagString.Append("PURIFIED");
     }
     if (flags & PSITEM_FLAG_PURIFYING)
     {
-        if (flagString != "") flagString.Append(",");
+        if (!flagString.IsEmpty()) flagString.Append(",");
         flagString.Append("PURIFYING");
     }
     if (flags & PSITEM_FLAG_LOCKED)
     {
-        if (flagString != "") flagString.Append(",");
+        if (!flagString.IsEmpty()) flagString.Append(",");
         flagString.Append("LOCKED");
     }
     if (flags & PSITEM_FLAG_LOCKABLE)
     {
-        if (flagString != "") flagString.Append(",");
+        if (!flagString.IsEmpty()) flagString.Append(",");
         flagString.Append("LOCKABLE");
     }
     if (flags & PSITEM_FLAG_SECURITYLOCK)
     {
-        if (flagString != "") flagString.Append(",");
+        if (!flagString.IsEmpty()) flagString.Append(",");
         flagString.Append("SECURITYLOCK");
     }
     if (flags & PSITEM_FLAG_UNPICKABLE)
     {
-        if (flagString != "") flagString.Append(",");
+        if (!flagString.IsEmpty()) flagString.Append(",");
         flagString.Append("UNPICKABLE");
     }
     if (flags & PSITEM_FLAG_KEY)
     {
-        if (flagString != "") flagString.Append(",");
+        if (!flagString.IsEmpty()) flagString.Append(",");
         flagString.Append("KEY");
     }
     if (flags & PSITEM_FLAG_MASTERKEY)
     {
-        if (flagString != "") flagString.Append(",");
+        if (!flagString.IsEmpty()) flagString.Append(",");
         flagString.Append("MASTERKEY");
     }
     if (flags & PSITEM_FLAG_NOPICKUP)
     {
-        if (flagString != "") flagString.Append(",");
+        if (!flagString.IsEmpty()) flagString.Append(",");
         flagString.Append("NOPICKUP");
     }
     if (flags & PSITEM_FLAG_TRANSIENT)
     {
-        if (flagString != "") flagString.Append(",");
+        if (!flagString.IsEmpty()) flagString.Append(",");
         flagString.Append("TRANSIENT");
     }
     if (flags & PSITEM_FLAG_NPCOWNED)
     {
-        if (flagString != "") flagString.Append(",");
+        if (!flagString.IsEmpty()) flagString.Append(",");
         flagString.Append("NPCOWNED");
     }
     if (flags & PSITEM_FLAG_USE_CD)
     {
-        if (flagString != "") flagString.Append(",");
+        if (!flagString.IsEmpty()) flagString.Append(",");
         flagString.Append("USECD");
     }
 
@@ -685,13 +685,13 @@ void psItem::GetFieldArray(psStringArray& fields)
     fields.FormatPush("%d",(int)GetLockpickSkill());
 
     // push openableLocks
-    csString openableLocksString = "";
+    csString openableLocksString;
     csArray<unsigned int>::Iterator iter = openableLocks.GetIterator();
     while(iter.HasNext())
     {
         csString tmp;
         unsigned int n = iter.Next();
-        if (openableLocksString != "") openableLocksString.Append(" "); // Space to sparate since GetWordNumber is used to decode
+        if (!openableLocksString.IsEmpty()) openableLocksString.Append(" "); // Space to sparate since GetWordNumber is used to decode
         if (n == KEY_SKELETON)
             openableLocksString.Append("SKEL");
         else 
@@ -1418,14 +1418,14 @@ bool psItem::GetBuyPersonalise()
 
 const char *psItem::GetName() const
 {
-    if (item_name != "")
+    if (!item_name.IsEmpty())
         return item_name;
     return current_stats->GetName();
 }
 
 const char *psItem::GetDescription() const
 {
-    if (item_description != "")
+    if (!item_description.IsEmpty())
         return item_description;
     return current_stats->GetDescription();
 }
@@ -1981,12 +1981,12 @@ void psItem::ClearOpenableLocks()
 
 csString psItem::GetOpenableLockNames()
 {
-    csString openableLocksString = "";
+    csString openableLocksString;
     csArray<unsigned int>::Iterator iter = openableLocks.GetIterator();
     while(iter.HasNext())
     {
         uint32 idNum = iter.Next();
-        if (openableLocksString != "") openableLocksString.Append(", ");
+        if (!openableLocksString.IsEmpty()) openableLocksString.Append(", ");
         if (idNum == KEY_SKELETON)
             openableLocksString.Append("All locks");
         else 

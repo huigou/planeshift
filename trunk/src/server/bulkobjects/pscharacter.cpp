@@ -106,7 +106,7 @@ psCharacter::psCharacter() : inventory(this),
 {
     characterType = PSCHARACTER_TYPE_UNKNOWN;
 
-    helmGroup = "";
+    helmGroup.Clear();
     help_event_flags = 0;
     memset(advantage_bitfield,0,sizeof(advantage_bitfield));
     accountid = 0;
@@ -114,7 +114,7 @@ psCharacter::psCharacter() : inventory(this),
     familiar_id = 0;
     owner_id = 0;
 
-    animal_affinity = "";
+    animal_affinity.Clear();
 
     override_max_hp = 0.0f;
     override_max_mana = 0.0f;
@@ -163,7 +163,7 @@ psCharacter::psCharacter() : inventory(this),
     kill_exp = 0;
     impervious_to_attack = 0;
 
-    faction_standings = "";
+    faction_standings.Clear();
     nextProgressionEventID = 1;
 
     attackValueModifier = 1;
@@ -3657,7 +3657,7 @@ int SkillSet::AddSkillPractice(PSSKILL skill, unsigned int val)
 {
     unsigned int added;
     bool rankUp;
-    csString name = "";
+    csString name;
 
     rankUp = AddToSkillPractice(skill,val, added);
 

@@ -115,7 +115,7 @@ void psAdminCommands::HandleMessage(MsgEntry *me)
         {
             csRef<iDocumentNodeIterator> cmdIter = doc->GetRoot()->GetNodes("command");
         
-            csString commands = "";
+            csString commands;
             while ( cmdIter->HasNext() )
             {
                 csRef<iDocumentNode> commandNode = cmdIter->Next();

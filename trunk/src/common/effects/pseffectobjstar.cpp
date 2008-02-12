@@ -60,8 +60,8 @@ psEffectObjStar::~psEffectObjStar()
 bool psEffectObjStar::Load(iDocumentNode *node)
 {
     // get the attributes
-    name = "";
-    materialName = "";
+    name.Clear();
+    materialName.Clear();
     segments = 10;
     csRef<iDocumentAttributeIterator> attribIter = node->GetAttributes();
     while (attribIter->HasNext())
@@ -76,12 +76,12 @@ bool psEffectObjStar::Load(iDocumentNode *node)
         else if (attrName == "segments")
             segments = attr->GetValueAsInt();
     }
-    if (name == "")
+    if (name.IsEmpty())
     {
         csReport(psCSSetup::object_reg, CS_REPORTER_SEVERITY_ERROR, "planeshift_effects", "Attempting to create an effect obj with no name.\n");
         return false;
     }
-    if (materialName == "")
+    if (materialName.IsEmpty())
     {
         csReport(psCSSetup::object_reg, CS_REPORTER_SEVERITY_ERROR, "planeshift_effects", "Attempting to create an effect obj without a material.\n");
         return false;

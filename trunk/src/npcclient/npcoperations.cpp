@@ -84,7 +84,7 @@ bool ScriptOperation::LoadVelocity(iDocumentNode *node)
     csString velStr = node->GetAttributeValue("vel");
     velStr.Upcase();
     
-    if (velStr == "")
+    if (velStr.IsEmpty())
     {
         velSource = VEL_DEFAULT;
     } else if (velStr == "$WALK")
@@ -2843,7 +2843,7 @@ bool TransferOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
 bool DigOperation::Load(iDocumentNode *node)
 {
     resource = node->GetAttributeValue("resource");
-    if (resource == "") return false;
+    if (resource.IsEmpty()) return false;
     return true;
 }
 

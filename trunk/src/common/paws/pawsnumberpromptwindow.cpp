@@ -65,7 +65,7 @@ pawsNumberPromptWindow::pawsNumberPromptWindow()
     action         = NULL;
 
     SetBoundaries(0, 0);
-    lastValidText = "";
+    lastValidText.Clear();
     
     SetSpacing(5);
 }

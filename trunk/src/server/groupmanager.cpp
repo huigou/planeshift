@@ -538,7 +538,7 @@ void GroupManager::RemovePlayerFromGroup(psGroupCmdMessage& msg,gemActor *client
         return;
     }
  
-    if (!msg.player || msg.player == "")
+    if (!msg.player || msg.player.IsEmpty())
     {
         psserver->SendSystemInfo(client->GetClientID(), "You must specify the name of the member you want to remove.");
         return;

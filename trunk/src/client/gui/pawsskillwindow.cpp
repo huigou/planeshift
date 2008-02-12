@@ -826,7 +826,7 @@ void pawsSkillWindow::HandleSkillCategory(pawsListBox* tabNameSkillList,
 
     // Get the skill name string from common strings
     csString skillName = psengine->FindCommonString(skillInfo->getNameId());
-    if (skillName == "")
+    if (skillName.IsEmpty())
     {
         Error2("Invalid skill name with Id %d", skillInfo->getNameId());
         return;

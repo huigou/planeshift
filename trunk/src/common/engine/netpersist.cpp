@@ -38,7 +38,7 @@ psCelPersistMessage::psCelPersistMessage(uint32_t clientnum, uint16_t cmd, int p
     uint32_t id, csMemFile* memfile, const char *extra_str) : memfile(NULL)
 {
     if (!extra_str)
-    extra_str = "";
+    extra_str.Clear();
 
     size_t size = sizeof(cmd) + sizeof(id) + (extra_str!=NULL ? strlen(extra_str)+1 : 1)
     + sizeof(uint32_t) + (memfile ? memfile->GetSize() : 0);
