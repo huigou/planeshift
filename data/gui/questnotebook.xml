@@ -3,6 +3,7 @@
     <widget name="QuestNotebook" factory="pawsQuestListWindow" style="topwindow" visible="no">
 
     <frame x="100" y="100" width="550" height="400" />
+    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="10" />
     <title text="Quest & Events Notebook"/>
     <bgimage resource="Quests Background" alpha="128" />
 
@@ -31,12 +32,6 @@
             <frame x="16" y="27" width="186" height="161"/>
             <highlight resource="Hightlight" alpha="128" />
             <columns height="30" headings="no" xmlbinding="q" >
-            <column width="40" xmlbinding="image" >
-                <widget name="Icon" factory="pawsSlot">
-                <frame x="0" y="0" width="40" height="40" />
-                <offset left="0" top="0" />
-                </widget>
-            </column>
             <column width="130" xmlbinding="desc" >
                 <widget name="Name" factory="pawsTextBox" style="label">
                 </widget>
@@ -54,12 +49,6 @@
             <frame x="16" y="27" width="186" height="161" />
             <highlight resource="Hightlight" alpha="128" />
             <columns height="30" headings="no" xmlbinding="q" >
-            <column width="40" xmlbinding="image" >
-                <widget name="Icon" factory="pawsSlot">
-                <frame x="0" y="0" width="40" height="40" />
-                <offset left="0" top="0" />
-                </widget>
-            </column>
             <column width="130" xmlbinding="desc" >
                 <widget name="Name" factory="pawsTextBox" style="label">
                 </widget>
@@ -132,6 +121,7 @@
     <widget name="Discard" factory="pawsButton" id="1201"  style="button" >
         <frame x="300" y="195" width="80"/>
         <label text="Discard"/>
+	<font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="10" />
     </widget>
 
 
@@ -149,14 +139,17 @@
     </widget>
     <widget name="Notes" factory="pawsMultilineEditTextBox" style="textinput">
         <frame x="30" y="255" width="490" height="100" />
+	<font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="10" />
     </widget>
 
     <widget name="SaveButton" factory="pawsButton"  style="button" id="1203">
         <frame x="22" y="370"/>
+	<font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="10" />
         <label text="Save" />
     </widget>
     <widget name="CancelButton" factory="pawsButton" style="button" id="1204">
         <frame x="111" y="370"/>
+	<font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="10" />
         <label text="Reload" />
     </widget>
 
