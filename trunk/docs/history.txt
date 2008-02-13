@@ -1,3 +1,7 @@
+*** 2008-02-13 by Mike Gist
+- Pushed CS and CEL revisions to 28657 and 3178 to get the last lot of fixes
+  merged.
+
 *** 2008-02-12 by Roland Schulz
 - changes to compiling.html by Caarrie
 - GM window layout and font changes also by Caarrie
