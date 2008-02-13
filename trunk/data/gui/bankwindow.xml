@@ -3,7 +3,7 @@
     <widget name="BankWindow" factory="pawsBankWindow"
             visible="no" savepositions="no" movable="yes" configurable="no"
             resizable="no">
-
+	    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="10" />
         <frame x="50" y="50" width="200" height="500" border="yes" />
         <title resource="Blue Title" text="Banking" align="left" close_button="yes" />
         <bgimage resource="Buddy Background" />
@@ -30,217 +30,288 @@
 
             <widget name="Money" factory="pawsTextBox" >
                 <frame x="0" y="5" width="200" height="20" border="no" />
+		<font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="10" />
                 <text string="Withdraw and Deposit" horizAdjust="CENTRE" />
             </widget>
 
-            <widget name="AvailableToWithdraw" factory="pawsTextBox" >
-                <frame x="0" y="35" width="200" height="20" border="no" />
-                <text string="Amount available to withdraw" horizAdjust="CENTRE" />
-                <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="8" />
-            </widget>
-
-            <widget name="CirclesCanWithdraw" factory="pawsTextBox" >
-                <frame x="30" y="55" width="30" height="15" border="no" />
-            </widget>
-
-            <widget name="OctasCanWithdraw" factory="pawsTextBox" >
-                <frame x="70" y="55" width="30" height="15" border="no" />
-            </widget>
-
-            <widget name="HexasCanWithdraw" factory="pawsTextBox" >
-                <frame x="110" y="55" width="30" height="15" border="no" />
-            </widget>
-
-            <widget name="TriasCanWithdraw" factory="pawsTextBox" >
-                <frame x="150" y="55" width="30" height="15" border="no" />
-            </widget>
-
-	    <widget name="CirclesImage" factory="pawsWidget" tooltip="Circles available to withdraw." >
-		<frame x="30" y="60" width="30" height="30" border="no" />
-		<bgimage resource="MoneyCircles" />
+	    <widget name="AvailableToWithdraw" factory="pawsTextBox" >
+		    <frame x="0" y="35" width="200" height="20" border="no" />
+		    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="8" />
+		    <text string="Amount available to withdraw" horizAdjust="CENTRE" />
+		    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="8" />
 	    </widget>
-
-	    <widget name="OctasImage" factory="pawsWidget" tooltip="Octas available to withdraw." >
-		<frame x="71" y="60" width="28" height="28" border="no" />
-		<bgimage resource="MoneyOctas" />
-	    </widget>
-
-	    <widget name="HexasImage" factory="pawsWidget" tooltip="Hexas available to withdraw." >
-		<frame x="110" y="60" width="30" height="30" border="no" />
-		<bgimage resource="MoneyHexas" />
-	    </widget>
-
-	    <widget name="TraisImage" factory="pawsWidget" tooltip="Trias available to withdraw." >
-		<frame x="150" y="60" width="30" height="30" border="no" />
-		<bgimage resource="MoneyTrias" />
-	    </widget>
-
-	    <widget name="WantToWithdraw" factory="pawsTextBox" >
-		<frame x="0" y="105" width="200" height="20" border="no" />
-		<text string="Amount to withdraw" horizAdjust="CENTRE" />
-		<font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="8" />
-	    </widget>
-
-	    <widget name="CirclesToWithdraw" factory="pawsEditTextBox" tooltip="The number of circles you wish to withdraw." >
-                <frame x="30" y="125" width="30" height="15" border="no" />
-            </widget>
-
-            <widget name="OctasToWithdraw" factory="pawsEditTextBox" tooltip="The number of octas you wish to withdraw." >
-                <frame x="70" y="125" width="30" height="15" border="no" />
-            </widget>
-
-            <widget name="HexasToWithdraw" factory="pawsEditTextBox" tooltip="The number of hexas you wish to withdraw." >
-                <frame x="110" y="125" width="30" height="15" border="no" />
-            </widget>
-
-            <widget name="TriasToWithdraw" factory="pawsEditTextBox" tooltip="The number of trias you wish to withdraw." >
-                <frame x="150" y="125" width="30" height="15" border="no" />
-            </widget>
-
-            <widget name="Withdraw" factory="pawsButton" style="nicebutton" id="1101" tooltip="Withdraw" >
-                <frame x="75" y="145" width="50" height="15"  />
-                <label text="Withdraw" />
-                <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="6" />
-            </widget>
 	    
-	    <widget name="WantToDeposit" factory="pawsTextBox" >
-		<frame x="0" y="175" width="200" height="20" border="no"/>
-		<text string="Amount to deposit" horizAdjust="CENTRE" />
-		<font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="8" />
+	    <widget name="CirclesCanWithdraw" factory="pawsTextBox" >
+		    <frame x="30" y="55" width="30" height="15" border="no" />
+		    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="10" />
 	    </widget>
-
-            <widget name="CirclesToDeposit" factory="pawsEditTextBox" tooltip="The number of circles you wish to deposit." >
-                <frame x="30" y="195" width="30" height="15" border="no" />
-            </widget>
-
-            <widget name="OctasToDeposit" factory="pawsEditTextBox" tooltip="The number of octas you wish to deposit." >
-                <frame x="70" y="195" width="30" height="15" border="no" />
-            </widget>
-
-            <widget name="HexasToDeposit" factory="pawsEditTextBox" tooltip="The number of hexas you wish to deposit." >
-                <frame x="110" y="195" width="30" height="15" border="no" />
-            </widget>
-
-            <widget name="TriasToDeposit" factory="pawsEditTextBox" tooltip="The number of trias you wish to deposit." >
-                <frame x="150" y="195" width="30" height="15" border="no" />
-            </widget>
-
-            <widget name="Deposit" factory="pawsButton" style="nicebutton" id="1102" tooltip="Deposit" >
-                <frame x="75" y="215" width="50" height="15" />
-                <label text="Deposit" />
-                <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="6" />
-            </widget>
-
-            <widget name="AvailableToDeposit" factory="pawsTextBox" >
-                <frame x="0" y="245" width="200" height="20" border="no" />
-                <text string="Amount available to deposit" horizAdjust="CENTRE" />
-                <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="8" />
-            </widget>
-
-            <widget name="CirclesCanDeposit" factory="pawsTextBox" >
-                <frame x="30" y="265" width="30" height="15" border="no" />
-            </widget>
-
-            <widget name="OctasCanDeposit" factory="pawsTextBox" >
-                <frame x="70" y="265" width="30" height="15" border="no" />
-            </widget>
-
-            <widget name="HexasCanDeposit" factory="pawsTextBox" >
-                <frame x="110" y="265" width="30" height="15" border="no" />
-            </widget>
-
-            <widget name="TriasCanDeposit" factory="pawsTextBox" >
-                <frame x="150" y="265" width="30" height="15" border="no" />
-            </widget>
-
-	    <widget name="CirclesImage" factory="pawsWidget" tooltip="Circles available to deposit." >
-		    <frame x="30" y="270" width="30" height="30" border="no" />
+	    
+	    <widget name="OctasCanWithdraw" factory="pawsTextBox" >
+		    <frame x="70" y="55" width="30" height="15" border="no" />
+		    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="10" />
+	    </widget>
+	    
+	    <widget name="HexasCanWithdraw" factory="pawsTextBox" >
+		    <frame x="110" y="55" width="30" height="15" border="no" />
+		    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="10" />
+	    </widget>
+	    
+	    <widget name="TriasCanWithdraw" factory="pawsTextBox" >
+		    <frame x="150" y="55" width="30" height="15" border="no" />
+		    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="10" />
+	    </widget>
+	    
+	    <widget name="CirclesImage" factory="pawsWidget" tooltip="Circles available to withdraw." >
+		    <frame x="30" y="60" width="30" height="30" border="no" />
 		    <bgimage resource="MoneyCircles" />
 	    </widget>
 	    
-	    <widget name="CirclesImage" factory="pawsWidget" tooltip="Octas available to deposit." >
-		    <frame x="71" y="270" width="28" height="28" border="no" />
+	    <widget name="OctasImage" factory="pawsWidget" tooltip="Octas available to withdraw." >
+		    <frame x="71" y="60" width="28" height="28" border="no" />
 		    <bgimage resource="MoneyOctas" />
 	    </widget>
 	    
-	    <widget name="CirclesImage" factory="pawsWidget" tooltip="Hexas available to deposit." >
-		    <frame x="110" y="270" width="30" height="30" border="no" />
+	    <widget name="HexasImage" factory="pawsWidget" tooltip="Hexas available to withdraw." >
+		    <frame x="110" y="60" width="30" height="30" border="no" />
 		    <bgimage resource="MoneyHexas" />
 	    </widget>
 	    
-	    <widget name="CirclesImage" factory="pawsWidget" tooltip="Trias available to deposit." >
-		    <frame x="150" y="270" width="30" height="30" border="no" />
+	    <widget name="TraisImage" factory="pawsWidget" tooltip="Trias available to withdraw." >
+		    <frame x="150" y="60" width="30" height="30" border="no" />
+		    <bgimage resource="MoneyTrias" />
+	    </widget>
+	    
+	    <widget name="WantToWithdraw" factory="pawsTextBox" >
+		    <frame x="0" y="95" width="200" height="20" border="no" />
+		    <text string="Amount to withdraw" horizAdjust="CENTRE" />
+		    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="8" />
+	    </widget>
+	    
+	    <widget name="CirclesToWithdraw" factory="pawsEditTextBox" tooltip="The number of circles you wish to withdraw." >
+		    <frame x="30" y="110" width="30" height="15" border="no" />
+		    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="10" />
+	    </widget>
+	    <widget name="CirclesImage" factory="pawsWidget" >
+		    <frame x="30" y="115" width="30" height="30" border="no" />
+		    <bgimage resource="MoneyCircles" />
+	    </widget>
+	    <widget name="OctasToWithdraw" factory="pawsEditTextBox" tooltip="The number of octas you wish to withdraw." >
+		    <frame x="70" y="110" width="30" height="15" border="no" />
+		    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="10" />
+	    </widget>
+	    <widget name="OctasImage" factory="pawsWidget" >
+		    <frame x="70" y="115" width="30" height="30" border="no" />
+		    <bgimage resource="MoneyOctas" />
+	    </widget>
+	    
+	    <widget name="HexasToWithdraw" factory="pawsEditTextBox" tooltip="The number of hexas you wish to withdraw." >
+		    <frame x="110" y="110" width="30" height="15" border="no" />
+		    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="10" />
+	    </widget>
+	    <widget name="HexasImage" factory="pawsWidget" >
+		    <frame x="110" y="115" width="30" height="30" border="no" />
+		    <bgimage resource="MoneyHexas" />
+	    </widget>
+	    
+	    <widget name="TriasToWithdraw" factory="pawsEditTextBox" tooltip="The number of trias you wish to withdraw." >
+		    <frame x="150" y="110" width="30" height="15" border="no" />
+		    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="10" />
+	    </widget>
+	    <widget name="TriasImage" factory="pawsWidget" >
+		    <frame x="150" y="115" width="30" height="30" border="no" />
+		    <bgimage resource="MoneyTrias" />
+	    </widget>
+	    
+	    <widget name="Withdraw" factory="pawsButton" style="nicebutton" id="1101" tooltip="Withdraw" >
+		    <frame x="75" y="150" width="60" height="15"  />
+		    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="10" />
+		    <label text="Withdraw" />
+	    </widget>
+	    
+	    <widget name="AvailableToDeposit" factory="pawsTextBox" >
+		<frame x="0" y="170" width="200" height="20" border="no"/>
+		<text string="Amount available to deposit" horizAdjust="CENTRE" />
+		<font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="8" />
+	    </widget>
+
+	    <widget name="CirclesCanDeposit" factory="pawsTextBox" >
+                <frame x="30" y="185" width="30" height="15" border="no" />
+		<font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="10" />
+            </widget>
+	    <widget name="CircleImage" factory="pawsWidget" >
+		    <frame x="30" y="190" width="30" height="30" border="no" />
+		    <bgimage resource="MoneyCircles" />
+	    </widget>
+
+	    <widget name="OctasCanDeposit" factory="pawsTextBox" >
+                <frame x="70" y="185" width="30" height="15" border="no" />
+		<font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="10" />
+            </widget>
+	    <widget name="OctasImage" factory="pawsWidget" >
+		    <frame x="70" y="190" width="30" height="30" border="no" />
+		    <bgimage resource="MoneyOctas" />
+	    </widget>
+
+	    <widget name="HexasCanDeposit" factory="pawsTextBox" >
+                <frame x="110" y="185" width="30" height="15" border="no" />
+		<font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="10" />
+            </widget>
+	    <widget name="HexasImage" factory="pawsWidget" >
+		    <frame x="110" y="190" width="30" height="30" border="no" />
+		    <bgimage resource="MoneyHexas" />
+	    </widget>
+	    
+	    <widget name="TriasCanDeposit" factory="pawsTextBox" >
+                <frame x="150" y="185" width="30" height="15" border="no" />
+		<font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="10" />
+            </widget>
+	    <widget name="TriasImage" factory="pawsWidget" >
+		    <frame x="150" y="190" width="30" height="30" border="no" />
 		    <bgimage resource="MoneyTrias" />
 	    </widget>
 
+
+	    <widget name="WantToDeposit" factory="pawsTextBox" >
+                <frame x="0" y="230" width="200" height="20" border="no" />
+		<text string="Amount to deposit" horizAdjust="CENTRE" />
+                <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="8" />
+            </widget>
+
+	    <widget name="CirclesToDeposit" factory="pawsEditTextBox" tooltip="The number of circles you wish to deposit." >
+                <frame x="30" y="245" width="30" height="15" border="no" />
+		<font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="10" />
+            </widget>
+
+	    <widget name="OctasToDeposit" factory="pawsEditTextBox" tooltip="The number of octas you wish to deposit." >
+                <frame x="70" y="245" width="30" height="15" border="no" />
+		<font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="10" />
+            </widget>
+
+	    <widget name="HexasToDeposit" factory="pawsEditTextBox" tooltip="The number of hexas you wish to deposit." >
+                <frame x="110" y="245" width="30" height="15" border="no" />
+		<font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="10" />
+            </widget>
+
+	    <widget name="TriasToDeposit" factory="pawsEditTextBox" tooltip="The number of trias you wish to deposit." >
+                <frame x="150" y="245" width="30" height="15" border="no" />
+		<font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="10" />
+            </widget>
+
+	    <widget name="CirclesImage" factory="pawsWidget" tooltip="Circles available to deposit." >
+		    <frame x="30" y="250" width="30" height="30" border="no" />
+		    <bgimage resource="MoneyCircles" />
+	    </widget>
+	    
+	    <widget name="OctasImage" factory="pawsWidget" >
+		    <frame x="71" y="250" width="28" height="28" border="no" />
+		    <bgimage resource="MoneyOctas" />
+	    </widget>
+	    
+	    <widget name="HexasImage" factory="pawsWidget" >
+		    <frame x="110" y="250" width="30" height="30" border="no" />
+		    <bgimage resource="MoneyHexas" />
+	    </widget>
+	    
+	    <widget name="TriasImage" factory="pawsWidget" >
+		    <frame x="150" y="250" width="30" height="30" border="no" />
+		    <bgimage resource="MoneyTrias" />
+	    </widget>
+	    
+	    <widget name="Deposit" factory="pawsButton" style="nicebutton" id="1102" tooltip="Deposit" >
+		    <frame x="75" y="290" width="60" height="15" />
+		    <label text="Deposit" />
+		    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="10" />
+            </widget>
             <widget name="MoneyExchange" factory="pawsTextBox" >
                <frame x="0" y="315" width="200" height="20" border="no" />
+	       <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="10" />
                <text string="Exchange coins" horizAdjust="CENTRE" />
             </widget>
 
             <widget name="MoneyExchangeInfo" factory="pawsTextBox" >
-               <frame x="40" y="335" width="200" height="12" border="no" />
-               <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="5" />
+               <frame x="20" y="335" width="200" height="12" border="no" />
+               <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="6" />
             </widget>
 
             <widget name="CirclesCanExchange" factory="pawsTextBox" tooltip="The number of circles that you may exchange." >
                 <frame x="30" y="355" width="30" height="15" border="no" />
+		<font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="10" />
             </widget>
 
             <widget name="OctasCanExchange" factory="pawsTextBox" tooltip="The number of octas that you may exchange." >
                 <frame x="70" y="355" width="30" height="15" border="no" />
+		<font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="10" />
             </widget>
 
             <widget name="HexasCanExchange" factory="pawsTextBox" tooltip="The number of hexas that you may exchange." >
                 <frame x="110" y="355" width="30" height="15" border="no" />
+		<font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="10" />
             </widget>
 
             <widget name="TriasCanExchange" factory="pawsTextBox" tooltip="The number of trias that you may exchange." >
                 <frame x="150" y="355" width="30" height="15" border="no" />
+		<font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="10" />
             </widget>
 
             <widget name="Circles" factory="pawsRadioButton" id="1104">
-                <frame x="25" y="370" width="45" height="11" />
-                <text string="Circles" position="right"/>
-                <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="5" />
-                <radio size="8" on="radioon2" off="radiooff2"/>
+                <frame x="20" y="370" width="45" height="15" />
+                <text string="    " position="right"/>
+		<font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="6" />
+                <radio size="10" on="radioon2" off="radiooff2"/>
             </widget>
+	    <widget name="CirclesImage" factory="pawsWidget" >
+		    <frame x="35" y="366" width="30" height="30" border="no" />
+		    <bgimage resource="MoneyCircles" />
+	    </widget>
 
             <widget name="Octas" factory="pawsRadioButton" id="1105">
-                <frame x="65" y="370" width="45" height="11" />
-                <text string="Octas" position="right"/>
-                <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="5" />
-                <radio size="8" on="radioon2" off="radiooff2"/>
+                <frame x="60" y="370" width="45" height="15" />
+                <text string="     " position="right"/>
+                <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="6" />
+                <radio size="10" on="radioon2" off="radiooff2"/>
             </widget>
+	    <widget name="OctasImage" factory="pawsWidget" >
+		    <frame x="75" y="366" width="30" height="30" border="no" />
+		    <bgimage resource="MoneyOctas" />
+	    </widget>
 
            <widget name="Hexas" factory="pawsRadioButton" id="1106">
-                <frame x="105" y="370" width="45" height="11" />
-                <text string="Hexas" position="right"/>
-                <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="5" />
-                <radio size="8" on="radioon2" off="radiooff2"/>
+                <frame x="100" y="370" width="45" height="15" />
+                <text string="     " position="right"/>
+                <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="6" />
+                <radio size="10" on="radioon2" off="radiooff2"/>
             </widget>
+	    <widget name="HexasImage" factory="pawsWidget" >
+		    <frame x="115" y="366" width="30" height="30" border="no" />
+		    <bgimage resource="MoneyHexas" />
+	    </widget>
 
             <widget name="Trias" factory="pawsRadioButton" id="1107">
-                <frame x="145" y="370" width="45" height="11" />
-                <text string="Trias" position="right"/>
-                <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="5" />
-                <radio size="8" on="radioon2" off="radiooff2"/>
+                <frame x="140" y="370" width="45" height="15" />
+                <text string="     " position="right"/>
+                <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="6" />
+                <radio size="10" on="radioon2" off="radiooff2"/>
+	    </widget>
+	    <widget name="TriasImage" factory="pawsWidget" >
+		    <frame x="155" y="366" width="30" height="30" border="no" />
+		    <bgimage resource="MoneyTrias" />
 	    </widget>
 	
-	    <widget name="CoinNumber" factory="pawsTextBox" >
-		<frame x="27" y="398" width="70" height="15" border="no" />
+	    <widget name="CoinNumber" factory="pawsMultiLineTextBox" >
+		<frame x="30" y="395" width="50" height="50" border="no" />
 		<text string="Coins to exchange:" />
-		<font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="6" />	
+		<font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="7" />	
 	    </widget>
 	
 	    <widget name="CoinsToExchange" factory="pawsEditTextBox" tooltip="The number of coins you wish to exchange." >
-		<frame x="98" y="395" width="25" height="15" border="no" />
+		<frame x="80" y="395" width="25" height="15" border="no" />
+		<font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="8" />
 	    </widget>
 	
 	    <widget name="Exchange" factory="pawsButton" style="nicebutton" id="1103" tooltip="Exchange" >
 		<frame x="120" y="395" width="50" height="15" />
 		<label text="Exchange" />
-		<font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="6" />
+		<font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="7" />
 	    </widget>
 
 
@@ -248,11 +319,13 @@
 
         <widget name="ItemWindow" factory="pawsWidget" id="1200" visible="no" savepositions="no" movable="no" configurable="no" resizable="no">
             <frame x="1" y="21" width="197" height="475" />
+	    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="8" />
             <bgimage resource="Buddy Background" />
         </widget>
 
         <widget name="AdminWindow" factory="pawsWidget" id="1300" visible="no" savepositions="no" movable="no" configurable="no" resizable="no">
             <frame x="1" y="21" width="197" height="475" />
+	    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="8" />
             <bgimage resource="Buddy Background" />
         </widget>
 

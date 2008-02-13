@@ -1,3 +1,6 @@
+*** 2008-02-13 by Roland Schulz
+- layout changes to bankwindow.xml by Caarrie. TODO: better background art
+
 *** 2008-02-13 by Sasha Levin
 - Fixed crash on /say.
 
