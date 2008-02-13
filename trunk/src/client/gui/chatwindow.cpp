@@ -762,7 +762,7 @@ const char* pawsChatWindow::HandleCommand( const char* cmd )
     if (settings.enableBadWordsFilterOutgoing)
         BadWordsFilter(text);
 
-    psChatMessage chat(0, pPerson, 0, text, chattype, false);
+    psChatMessage chat(0, pPerson.GetDataSafe(), 0, text.GetDataSafe(), chattype, false);
     msgqueue->SendMessage(chat.msg);
 
     return NULL;
