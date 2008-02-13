@@ -1,3 +1,6 @@
+*** 2008-02-13 by Sasha Levin
+- Fixed crash on /say.
+
 *** 2008-02-13 by Mike Gist
 - Pushed CS and CEL revisions to 28657 and 3178 to get the last lot of fixes
   merged.
