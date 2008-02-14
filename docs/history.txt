@@ -1,7 +1,7 @@
 *** 2008-02-14 by Dave Bentham
 - Fixed bug FS#373 - book & map descriptions during pickups/drops & trades.
 
-*** 2008-02-13 by Roland Schulz
+*** 2008-02-14 by Roland Schulz
 - add tooltips showing the value of the coins to money.xml by Caarrie
 - fix spelling mistake in adminmanager.cpp for frozen message
 
@@ -19,6 +19,7 @@
 - Re-added ToggleRun to config window, looks like it was removed by accident.
 - Improved movement controls so they don't conflict.
 - Renamed *Run to *Move, as those controls aren't exclusive to run.
+- Fixed typo in pssetup, fixes FS#1099.
 
 *** 2008-02-13 by Roland Schulz
 - layout changes to bankwindow.xml by Caarrie. TODO: better background art
