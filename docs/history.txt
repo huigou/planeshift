@@ -20,6 +20,7 @@
 - Improved movement controls so they don't conflict.
 - Renamed *Run to *Move, as those controls aren't exclusive to run.
 - Fixed typo in pssetup, fixes FS#1099.
+- Fixed death causing unfreeze, FS#1097.
 
 *** 2008-02-13 by Roland Schulz
 - layout changes to bankwindow.xml by Caarrie. TODO: better background art
