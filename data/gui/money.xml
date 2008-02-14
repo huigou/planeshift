@@ -1,7 +1,7 @@
 <widget_description>
     <widget factory="pawsMoney">
-        <widget name="Circles" factory="pawsSlot">
-            <frame x="0" y="0" width="48" height="48" />
+	    <widget name="Circles" factory="pawsSlot" tooltip="250 trias" >
+		<frame x="0" y="0" width="48" height="48" />
             <attachpoints>
               <attach point="ATTACH_TOP" /> 
               <attach point="ATTACH_LEFT" /> 
@@ -9,7 +9,7 @@
               <attach point="PROPORTIONAL_BOTTOM" /> 
             </attachpoints>
         </widget>
-        <widget name="Octas" factory="pawsSlot">
+	<widget name="Octas" factory="pawsSlot" tooltip="50 trias" >
             <frame x="48" y="0" width="48" height="48" />
             <attachpoints>
               <attach point="ATTACH_TOP" /> 
@@ -19,7 +19,7 @@
             </attachpoints>
         </widget>
         <widget name="Hexas" factory="pawsSlot">
-            <frame x="0" y="48" width="48" height="48" />
+		<frame x="0" y="48" width="48" height="48" tooltip="10 trias" />
             <attachpoints>
               <attach point="PROPORTIONAL_TOP" /> 
               <attach point="ATTACH_LEFT" /> 
@@ -28,7 +28,7 @@
             </attachpoints>
         </widget>
         <widget name="Trias" factory="pawsSlot">
-            <frame x="48" y="48" width="48" height="48" />
+		<frame x="48" y="48" width="48" height="48" tooltip="1 trias" />
             <attachpoints>
               <attach point="PROPORTIONAL_TOP" /> 
               <attach point="PROPORTIONAL_LEFT" /> 
