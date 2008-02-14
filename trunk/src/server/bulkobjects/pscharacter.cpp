@@ -1192,7 +1192,8 @@ void psCharacter::SetMode(PSCHARACTER_MODE newmode, uint32_t clientnum)
                             newmode != PSCHARACTER_MODE_DEFEATED &&
                             newmode != PSCHARACTER_MODE_SIT &&
                             newmode != PSCHARACTER_MODE_EXHAUSTED &&
-                            newmode != PSCHARACTER_MODE_OVERWEIGHT);
+                            newmode != PSCHARACTER_MODE_OVERWEIGHT &&
+                            !actor->GetClient()->IsFrozen());
 
     actor->SetAlive(newmode != PSCHARACTER_MODE_DEAD);
 
