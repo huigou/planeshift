@@ -403,7 +403,7 @@ void pawsSetupWindow::SaveSettings()
     }
     else
     {
-        config->SetStr("SndSys.Driver", "crystalspace.sndsys.renderer.software.driver.null");
+        config->SetStr("SndSys.Driver", "crystalspace.sndsys.software.driver.null");
     }
 
     // all maps
