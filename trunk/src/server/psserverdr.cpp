@@ -175,13 +175,7 @@ void psServerDR::HandleMessage (MsgEntry* me,Client *client)
         return;
     }
 
-    if (client->IsFrozen())
-    {
-        actor->MoveToLastPos();
-        return;  // Ignore this DR data, and force the actor to use last.
-    }
-
-    if ( !actor->IsAllowedToMove())  // Is this movement allowed?
+    if ( client->IsFrozen() || !actor->IsAllowedToMove())  // Is this movement allowed?
     {
         if (drmsg.worldVel.y > 0)
         {
