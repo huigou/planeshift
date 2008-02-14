@@ -885,16 +885,48 @@ void psItem::SetLocationInWorld(int instance,psSectorInfo *sectorinfo,float loc_
 
 csString psItem::GetQuantityName()
 {
-    return GetQuantityName(GetName(),stack_count);
+    return GetQuantityName(GetName(),stack_count, GetCreative());
 }
 
-csString psItem::GetQuantityName(const char *namePtr, int stack_count)
+csString psItem::GetQuantityName(const char *namePtr, int stack_count, PSITEMSTATS_CREATIVETYPE creativeType, bool giveDetail)
 {
     psString name(namePtr);
     if (name.IsEmpty())
         return "???";
 
     csString list;
+    // sort out name for creative items like books & maps
+    if (creativeType != PSITEMSTATS_CREATIVETYPE_NONE)
+    {
+        psString creativeDesc;
+
+        if (creativeType == PSITEMSTATS_CREATIVETYPE_LITERATURE)
+            creativeDesc = "book";
+        else if (creativeType == PSITEMSTATS_CREATIVETYPE_SKETCH)
+            creativeDesc = "map";
+        else
+            creativeDesc = "???";
+
+        if (giveDetail)
+        {
+            if (stack_count == 1)
+            {
+                list.Format("%s ", (creativeDesc.IsVowel(0))?"an":"a");
+            }
+            else
+            {
+                creativeDesc.Plural();
+                list.Format("%d ", stack_count);
+            }
+
+            list.AppendFmt("%s called \"%s\"", creativeDesc.GetData(), name.GetData());
+            return list;
+        }
+        else
+            name = creativeDesc;
+    }
+
+    // normal items like swords, etc etc
     if (stack_count == 1)
     {
         list.Format("%s %s", (name.IsVowel(0))?"an":"a", name.GetData() );

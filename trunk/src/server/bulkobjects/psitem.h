@@ -618,7 +618,6 @@ public:
     bool GetIsEquipStackable() const;
     PSITEMSTATS_CREATIVETYPE GetCreative();
     bool GetBuyPersonalise();
-
     const char *GetName() const;
     const char *GetDescription() const;
     void SetName(const char* newName);
@@ -698,7 +697,7 @@ public:
     const char *GetImageName();
 
     csString GetQuantityName(); // returns the quantity and plural name in a string
-    static csString GetQuantityName(const char *namePtr, int stack_count);
+    static csString GetQuantityName(const char *namePtr, int stack_count, PSITEMSTATS_CREATIVETYPE creativeType, bool giveDetail = false);
 
     // For future use, see notes for mesh_index variables, etc.
     /*
