@@ -1,3 +1,6 @@
+*** 2008-02-13 by Roland Schulz
+- add tooltips showing the value of the coins to money.xml by Caarrie
+
 *** 2008-02-14 by Sasha Levin
 - Changed the way freeze is handled on the server, Should prevent DR wars
   between server and client, and allow GMs to freeze players in mid air.
