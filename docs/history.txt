@@ -1,3 +1,7 @@
+*** 2008-02-14 by Sasha Levin
+- Changed the way freeze is handled on the server, Should prevent DR wars
+  between server and client, and allow GMs to freeze players in mid air.
+
 *** 2008-02-14 by Mike Gist
 - Some pssetup fixes:
 - Fixed default skin display.
