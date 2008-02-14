@@ -38,6 +38,7 @@
 #include <iutil/databuff.h>
 // PAWS INCLUDES
 #include "pawssetupwindow.h"
+#include "pawsskinwindow.h"
 #include "paws/pawsmanager.h"
 #include "paws/pawsradio.h"
 #include "paws/pawscheckbox.h"
@@ -168,9 +169,10 @@ bool pawsSetupWindow::OnButtonPressed( int mouseButton, int keyModifier, pawsWid
     }
     else if(!strcmp(widget->GetName(),"Skins"))
     {
-        pawsWidget* skin = PawsManager::GetSingleton().FindWidget("skin");
+        pawsSkinWindow* skin = static_cast<pawsSkinWindow*>(PawsManager::GetSingleton().FindWidget("skin"));
         if(skin)
         {
+            skin->SetConfig(config);
             skin->SetFade(false);
             skin->SetMaxAlpha(1);
             skin->Show();
@@ -184,8 +186,8 @@ bool pawsSetupWindow::OnButtonPressed( int mouseButton, int keyModifier, pawsWid
 void pawsSetupWindow::LoadSettings()
 {
     // video settings
-    int      width  = config->GetInt("Video.ScreenWidth");
-    int      height = config->GetInt("Video.ScreenHeight");
+    uint width  = config->GetInt("Video.ScreenWidth", 1024);
+    uint height = config->GetInt("Video.ScreenHeight", 768);
 
     csString res;
     res.Format("%ix%i", width, height);
@@ -202,11 +204,11 @@ void pawsSetupWindow::LoadSettings()
     res.Format("%i", customHeight);
     edtCustomHeight->SetText(res);
 
-    cbFullScreen->SetState(config->GetBool("Video.Fullscreen"));
+    cbFullScreen->SetState(config->GetBool("Video.Fullscreen", false));
     rbgDepth->SetActive(config->GetStr("Video.ScreenDepth", "32"));
     
     // Stencil
-    int stencil = config->GetInt("Video.OpenGL.StencilThreshold",50);
+    int stencil = config->GetInt("Video.OpenGL.StencilThreshold", 50);
     csString stenstr;
     stenstr.Format("%d",stencil);
     edtStencil->SetText(stenstr);

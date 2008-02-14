@@ -1,3 +1,9 @@
+*** 2008-02-14 by Mike Gist
+- Some pssetup fixes:
+- Fixed default skin display.
+- Fixed default window size display.
+- Fixed a bug when saving skin.
+
 *** 2008-02-13 by Roland Schulz
 - layout changes to bankwindow.xml by Caarrie. TODO: better background art
 - minor layout changes to guildwindow.xml by Caarrie.

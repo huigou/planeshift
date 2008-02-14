@@ -75,7 +75,15 @@ bool pawsSkinWindow::PostSetup()
     // Load the current skin
     csString skin = config->GetStr("PlaneShift.GUI.Skin.Selected");	
     if(!strcmp(skin,""))
-        return true; // Stop here, but it's ok
+    {
+        // Try loading the default skin.
+        skin = configPSC.GetStr("PlaneShift.GUI.Skin.Selected");
+        if(!strcmp(skin,""))
+        {
+            // No skin selected.. shouldn't happen but it's not fatal.
+            return true;
+        }
+    }
 
     LoadSkin(skin);
 
@@ -306,12 +314,12 @@ bool pawsSkinWindow::OnButtonPressed( int mouseButton, int keyModifier, pawsWidg
 
     if(!strcmp(widget->GetName(),"OKButton"))
     {
-     csString zip;
-     zip = currentSkin;
-     config->SetStr("PlaneShift.GUI.Skin.Selected", zip);
-        config->Save();
-        this->Hide();
-        return true;
+       csString zip;
+       zip = currentSkin;
+       config->SetStr("PlaneShift.GUI.Skin.Selected", zip);
+       config->Save();
+       this->Hide();
+       return true;
     }
 
     return false;
