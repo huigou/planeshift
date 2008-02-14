@@ -45,6 +45,8 @@ public:
 
     void LoadSkin(const char* name);
 
+    void SetConfig(csRef<iConfigFile> cfg) { config = cfg; }
+
 private:
 
     csString mountedPath;
