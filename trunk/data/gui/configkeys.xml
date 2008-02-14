@@ -39,7 +39,8 @@
                 </widget>
             </nodewidget>
             <widget factory="pawsSeqTreeNode" name="Run"/>
-            <widget factory="pawsSeqTreeNode" name="Autorun"/>
+            <widget factory="pawsSeqTreeNode" name="ToggleRun"/>
+            <widget factory="pawsSeqTreeNode" name="AutoMove"/>
             <widget factory="pawsSeqTreeNode" name="Sneak"/>
         </widget>
         <widget factory="pawsWidgetTreeNode" name="Actions">
@@ -59,7 +60,7 @@
                     <text string="Camera"/>
                 </widget>
             </nodewidget>
-            <widget factory="pawsSeqTreeNode" name="MouseRun"/>
+            <widget factory="pawsSeqTreeNode" name="MouseMove"/>
             <widget factory="pawsSeqTreeNode" name="Camera mode"/>
             <widget factory="pawsSeqTreeNode" name="Look up"/>
             <widget factory="pawsSeqTreeNode" name="Look down"/>

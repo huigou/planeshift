@@ -194,19 +194,20 @@ public:
     void HandleMovement         (const psControl* trigger, bool value);
     void HandleMovementJump     (const psControl* trigger, bool value);
     void HandleMode             (const psControl* trigger, bool value);
-    void HandleAutoRun          (const psControl* trigger, bool value);
+    void HandleAutoMove         (const psControl* trigger, bool value);
     void HandleLook             (const psControl* trigger, bool value);
     void HandleZoom             (const psControl* trigger, bool value);
     void HandleMouseLook        (const psControl* trigger, bool value);
     void HandleMouseLookToggle  (const psControl* trigger, bool value);
     void HandleMouseZoom        (const psControl* trigger, bool value);
-    void HandleMouseRun         (const psControl* trigger, bool value);
+    void HandleMouseMove        (const psControl* trigger, bool value);
     void HandleCameraMode       (const psControl* trigger, bool value);
     void HandleCenterCamera     (const psControl* trigger, bool value);
     void HandleMovementAction   (const psControl* trigger, bool value);
     void HandleShortcut         (const psControl* trigger, bool value);
     void HandleWindow           (const psControl* trigger, bool value);
-    void HandleToggleRun        (const psControl* trigger, bool value);
+    void HandleModeRun          (const psControl* trigger, bool value);
+    void HandleModeSneak        (const psControl* trigger, bool value);
 
 protected:
     psCharController* charcontrol;

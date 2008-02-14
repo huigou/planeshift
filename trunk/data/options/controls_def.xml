@@ -12,8 +12,9 @@
     <bind action="Strafe left (sec)" key="" />
     <bind action="Strafe right (sec)" key="" />
     <bind action="Run" key="LShift" />
-    <bind action="Autorun" key="r" />
-    <bind action="MouseRun" key="LeftClick" />
+    <bind action="ToggleRun" key="LCtrl" />
+    <bind action="AutoMove" key="r" />
+    <bind action="MouseMove" key="LeftClick" />
     <bind action="Sneak" key="RShift" />
     <bind action="Jump" key="Space" />
     <bind action="Sit" key="z" />

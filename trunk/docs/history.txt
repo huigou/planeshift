@@ -3,6 +3,11 @@
 - Fixed default skin display.
 - Fixed default window size display.
 - Fixed a bug when saving skin.
+- Fixed the problem with mouserun when selecting an object.
+  Now mouserun won't start or change because of such a selection.
+- Re-added ToggleRun to config window, looks like it was removed by accident.
+- Improved movement controls so they don't conflict.
+- Renamed *Run to *Move, as those controls aren't exclusive to run.
 
 *** 2008-02-13 by Roland Schulz
 - layout changes to bankwindow.xml by Caarrie. TODO: better background art

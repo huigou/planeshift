@@ -457,16 +457,29 @@ void psTriggerHandler::HandleMode(const psControl* trigger, bool value)
     }
 }
 
-void psTriggerHandler::HandleToggleRun(const psControl* trigger, bool value)
+void psTriggerHandler::HandleModeRun(const psControl* trigger, bool value)
 {
-    if( movement && value ) {
+    if(movement && !movement->Sneaking())
+    { 
         movement->ToggleRun();
     }
 }
 
-void psTriggerHandler::HandleAutoRun(const psControl* trigger, bool value)
+void psTriggerHandler::HandleModeSneak(const psControl* trigger, bool value)
 {
-    movement->ToggleAutoRun();
+    HandleMode(trigger, value);
+    if(movement)
+    {
+        movement->SetSneaking(value);
+    }
+}
+
+void psTriggerHandler::HandleAutoMove(const psControl* trigger, bool value)
+{
+    if(movement)
+    {
+        movement->ToggleAutoMove();
+    }
 }
 
 void psTriggerHandler::HandleLook(const psControl* trigger, bool value)
@@ -555,15 +568,18 @@ void psTriggerHandler::HandleMouseZoom(const psControl* trigger, bool value)
 }
 
 
-void psTriggerHandler::HandleMouseRun(const psControl* trigger, bool value)
+void psTriggerHandler::HandleMouseMove(const psControl* trigger, bool value)
 {
     if (value && psengine->GetCelClient()
      && psengine->GetCelClient()->GetMainPlayer()
      && psengine->GetCelClient()->GetMainPlayer()->IsAlive())
     {
-        movement->MouseRun(value);
-        psPoint pos = PawsManager::GetSingleton().GetMouse()->GetPosition();
-        movement->SetRunToPos(pos);
+        if(movement->MouseMove())
+        {
+            psPoint pos = PawsManager::GetSingleton().GetMouse()->GetPosition();
+            movement->SetRunToPos(pos);
+        }
+        movement->SetMouseMove(value);
     }
 }
 
@@ -694,11 +710,11 @@ void psCharController::CreateKeys()
     controls.NewTrigger("Strafe left (sec)"  , psControl::NORMAL, &psTriggerHandler::HandleMovement);
     controls.NewTrigger("Strafe right (sec)" , psControl::NORMAL, &psTriggerHandler::HandleMovement);
 
-    controls.NewTrigger("Run"     , psControl::NORMAL, &psTriggerHandler::HandleMode);
-    controls.NewTrigger("Autorun" , psControl::TOGGLE, &psTriggerHandler::HandleAutoRun);
-    controls.NewTrigger("MouseRun", psControl::NORMAL, &psTriggerHandler::HandleMouseRun);
-    controls.NewTrigger("Sneak"   , psControl::NORMAL, &psTriggerHandler::HandleMode);
-    controls.NewTrigger("ToggleRun" , psControl::NORMAL, &psTriggerHandler::HandleToggleRun);
+    controls.NewTrigger("Run"     , psControl::NORMAL, &psTriggerHandler::HandleModeRun);
+    controls.NewTrigger("AutoMove" , psControl::TOGGLE, &psTriggerHandler::HandleAutoMove);
+    controls.NewTrigger("MouseMove", psControl::NORMAL, &psTriggerHandler::HandleMouseMove);
+    controls.NewTrigger("Sneak"   , psControl::NORMAL, &psTriggerHandler::HandleModeSneak);
+    controls.NewTrigger("ToggleRun" , psControl::TOGGLE, &psTriggerHandler::HandleModeRun);
 
     controls.NewTrigger("Jump", psControl::NORMAL, &psTriggerHandler::HandleMovementJump);
     controls.NewTrigger("Sit" , psControl::TOGGLE, &psTriggerHandler::HandleMovementAction);
