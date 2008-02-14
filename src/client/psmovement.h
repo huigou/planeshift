@@ -79,7 +79,7 @@ protected:
     csPDelArray<psCharMode> modes;  ///< All available character modes
     csPDelArray<psMovement> moves;  ///< All available movement types
     
-    const psCharMode* defaultmode;  ///< Default actor mode
+    psCharMode* defaultmode;  ///< Default actor mode
 
     GEMClientActor* actor;               ///< Actor we're moving here
 
@@ -105,12 +105,13 @@ protected:
     psMoveModMsg::ModType activeModType;
     psVelocity activeMod;
 
-    bool autoRun;
+    bool autoMove;
     bool toggleRun;
     bool mouseLook;
     bool mouseZoom;
-    bool mouseRun;
-    int mouseAutorun;
+    bool mouseMove;
+    bool sneaking;
+    int mouseAutoMove;
     int runToMarkerID;
     float lastDist;
     csVector3 runToDiff;
@@ -126,6 +127,7 @@ protected:
     const psMovement* forward;
     const psMovement* backward;
     const psCharMode* run;
+    const psCharMode* walk;
 
     
     psLinearMovement* linearMove;
@@ -157,10 +159,10 @@ public:
     void Stop(const psMovement* move);   ///< Stop an existing movement
     void Push(const psMovement* move);   ///< Use a movement once
 
-    /// Stops all movements, resets mode, cancels mouserun, and halts the actor
+    /// Stops all movements, resets mode, cancels mousemove, and halts the actor
     void StopAllMovement();
 
-    /// Stops all user applied movements/modes (does not halt actor if falling or mouserun)
+    /// Stops all user applied movements/modes (does not halt actor if falling or mousemove)
     void StopControlledMovement();
 
     // Mouse settings
@@ -178,14 +180,17 @@ public:
     bool MouseZoom() { return mouseZoom; }
     void MouseZoom(iEvent& ev);
 
-    void MouseRun(bool v) { mouseRun = v; }
-    bool MouseRun() { return mouseRun; }
+    void SetMouseMove(bool v) { mouseMove = v; }
+    bool MouseMove() { return mouseMove; }
     void SetRunToPos(psPoint& mouse);
     void CancelRunTo();
     void UpdateRunTo();
     
-    void ToggleAutoRun();
+    void ToggleAutoMove();
     void ToggleRun();
+
+    void SetSneaking(bool v) { sneaking = v; }
+    bool Sneaking() { return sneaking; }
     
     psLinearMovement* GetLinearMovement() { return linearMove; }
 

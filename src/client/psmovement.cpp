@@ -37,7 +37,7 @@
 //#define MOVE_DEBUG
 
 #define RUNTO_EPSILON   0.75f
-#define USE_EXPERIMENTAL_AUTORUN 0
+#define USE_EXPERIMENTAL_AUTOMOVE 0
 
 //----------------------------------------------------------------------------------------------------
 
@@ -85,12 +85,12 @@ psMovementManager::psMovementManager(iEventNameRegistry* eventname_reg, psContro
     locked = false;
     activeMoves = 0;
 
-    autoRun = false;
+    autoMove = false;
     toggleRun = false;
-    mouseAutorun = false;
+    mouseAutoMove = false;
     mouseLook = false;
     mouseZoom = false;
-    mouseRun = false;
+    mouseMove = false;
     runToMarkerID = 0;
     lastDist = 0.0f;
     runToDiff = csVector3(0.0f);
@@ -104,6 +104,7 @@ psMovementManager::psMovementManager(iEventNameRegistry* eventname_reg, psContro
     forward = NULL;
     backward = NULL;
     run = NULL;
+    walk = NULL;
 }
 
 psMovementManager::~psMovementManager()
@@ -200,7 +201,7 @@ bool psMovementManager::HandleEvent( iEvent &event )
         if (!onGround && linearMove->IsOnGround())
             UpdateVelocity();
 
-        if (mouseRun)
+        if (mouseMove)
             UpdateRunTo();
     }
     else if (event.Name == event_mousemove)
@@ -353,6 +354,7 @@ void psMovementManager::SetupMovements(psMovementInfoMessage& movemsg)
     forward = FindMovement("forward");
     backward = FindMovement("backward");
     run = FindCharMode("run");
+    walk = FindCharMode("normal");
 
     ready = true;
 }
@@ -422,9 +424,9 @@ void psMovementManager::Start(const psMovement* move)
         printf("Starting move %s\n", move->name.GetData() );
     #endif
 
-    // Cancel autorun if starting to move forward on own
-    if ((move == forward || move == backward ) && autoRun)
-        ToggleAutoRun();
+    // Cancel automove if starting to move forward on own
+    if ((move == forward || move == backward ) && autoMove)
+        ToggleAutoMove();
 
     uint bit = (1 << move->id);
     if (activeMoves & bit)
@@ -441,8 +443,8 @@ void psMovementManager::Stop(const psMovement* move)
         printf("Stopping move %s\n", move->name.GetData() );
     #endif
 
-    // Don't cancel autorun
-    if (move == forward && autoRun)
+    // Don't cancel automove
+    if (move == forward && autoMove)
         return;
 
     uint bit = (1 << move->id);
@@ -494,23 +496,23 @@ void psMovementManager::StopAllMovement()
         psengine->GetEffectManager()->DeleteEffect(runToMarkerID);
         runToMarkerID = 0;
     }
-    autoRun = false;
+    autoMove = false;
 }
 
 void psMovementManager::StopControlledMovement()
 {
-    // Don't stop if not fully loaded yet, run-to or autorun is active, or character is already stopped
-    if (!ready || !actor || runToMarkerID != 0 || autoRun || activeMoves == 0)
+    // Don't stop if not fully loaded yet, run-to or automove is active, or character is already stopped
+    if (!ready || !actor || runToMarkerID != 0 || autoMove || activeMoves == 0)
         return;
 
     // Cancel all active
     activeMoves = 0;
     move_total = psVelocity(0.0f,0.0f);
 
-    if (autoRun)  // Don't stop autorun
+    if (autoMove)  // Don't stop automove
     {
         Start(forward);
-        autoRun = true;
+        autoMove = true;
     }
     else
     {
@@ -704,7 +706,7 @@ void psMovementManager::CancelRunTo()
 {
     if (runToMarkerID != 0)
         StopAllMovement();
-    MouseRun(false);
+    SetMouseMove(false);
 }
 
 void psMovementManager::UpdateRunTo()
@@ -727,7 +729,7 @@ void psMovementManager::UpdateRunTo()
             float targetYRot = atan2(-diff.x,-diff.z);
             lastDist = diff.SquaredNorm();
 
-#if USE_EXPERIMENTAL_AUTORUN
+#if USE_EXPERIMENTAL_AUTOMOVE
 
             // Try to avoid big ugly stuff in our path
             iSector* sector = movePropClass->GetSector();
@@ -822,8 +824,8 @@ void psMovementManager::UpdateRunTo()
                 {
                     if (lastDist < 0.05)
                     {
-                        if (mouseAutorun > 1)
-                            mouseAutorun -= 2;
+                        if (mouseAutoMove > 1)
+                            mouseAutoMove -= 2;
                         CancelRunTo();
                     }
                     else if (lastDist < 1.0f)
@@ -833,7 +835,7 @@ void psMovementManager::UpdateRunTo()
                     }
                     else
                     {
-                        if (mouseAutorun == 1)
+                        if (mouseAutoMove == 1)
                             Start(run);
                         Start(forward);
                     }
@@ -842,13 +844,13 @@ void psMovementManager::UpdateRunTo()
                 {
                     Stop(forward);
                     Stop(run);
-                    if (mouseAutorun < 2)
-                        mouseAutorun+=2;
+                    if (mouseAutoMove < 2)
+                        mouseAutoMove+=2;
                 }
             }
             else
             {
-                if (mouseAutorun)
+                if (mouseAutoMove)
                     Start(run);
                 Start(forward);
             }
@@ -858,39 +860,26 @@ void psMovementManager::UpdateRunTo()
         }
         else
         {
-            if (mouseAutorun > 1)
-                mouseAutorun -= 2;
+            if (mouseAutoMove > 1)
+                mouseAutoMove -= 2;
             CancelRunTo();
         }
     }
 }
 
-void psMovementManager::ToggleAutoRun()
+void psMovementManager::ToggleAutoMove()
 {
-    #ifdef MOVE_DEBUG
-    printf("Toggling auto run.\n");
-    #endif
     if (run && forward && !locked)
     {
-        // If we're mouserunning, make sure that autorun is off so player won't need
-        // 2 clicks to start it again
-        if (mouseRun)
+        if(!mouseMove)
         {
-            mouseAutorun = !mouseAutorun;
-            if (!mouseAutorun && !toggleRun)
-                Stop(run);
-            autoRun = false;
-        }
-        else
-        {
-            const bool nextAutoRun = !autoRun;
+            const bool nextAutoMove = !autoMove;
             StopAllMovement();
-            if (nextAutoRun)
+            if(nextAutoMove)
             {
-                Start(run);
                 Start(forward);
             }
-            autoRun = nextAutoRun;
+            autoMove = nextAutoMove;
         }
     }
 }
@@ -899,11 +888,13 @@ void psMovementManager::ToggleRun()
 {
     if(toggleRun)
     {
+        defaultmode = const_cast<psCharMode*>(walk);
         Stop(run);
         toggleRun = false;
     }
     else
     {
+        defaultmode = const_cast<psCharMode*>(run);
         Start(run);
         toggleRun = true;
     }

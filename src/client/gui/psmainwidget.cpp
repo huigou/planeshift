@@ -357,9 +357,9 @@ bool psMainWidget::OnMouseDown( int button, int keyModifier, int x, int y )
 
         if (psengine->GetMouseBinds()->CheckBind("EntitySelect", button, keyModifier))
         {
-        
             if ( over )
             {
+                psengine->GetCharControl()->GetMovementManager()->SetMouseMove(false);
                 psengine->GetCharManager()->SetTarget(over,"select"); 
             }
             else 
