@@ -91,6 +91,7 @@ psMovementManager::psMovementManager(iEventNameRegistry* eventname_reg, psContro
     mouseLook = false;
     mouseZoom = false;
     mouseMove = false;
+    sneaking = false;
     runToMarkerID = 0;
     lastDist = 0.0f;
     runToDiff = csVector3(0.0f);
@@ -311,9 +312,6 @@ void psMovementManager::SetupMovements(psMovementInfoMessage& movemsg)
         newmode->idle_anim = idle_anim;
 
         modes.Put(id,newmode);
-
-        if (defaultmode == NULL)
-            actormode = defaultmode = newmode;  // Use first mode as default
     }
     if (movemsg.modes == 0)
     {
@@ -356,6 +354,8 @@ void psMovementManager::SetupMovements(psMovementInfoMessage& movemsg)
     run = FindCharMode("run");
     walk = FindCharMode("normal");
 
+    actormode = defaultmode = walk;
+
     ready = true;
 }
 
@@ -383,13 +383,14 @@ void psMovementManager::SetupControls()
 
 void psMovementManager::SetActorMode(const psCharMode* mode)
 {
-	if (!actor)
-	{
-		return;
-	}
-    actormode = mode;
-    if (actor->GetMode() == psModeMessage::PEACE)
-        actor->SetIdleAnimation(actormode->idle_anim);
+	  if(actor)
+	  {
+        actormode = mode;
+        if (actor->GetMode() == psModeMessage::PEACE)
+        {
+            actor->SetIdleAnimation(actormode->idle_anim);
+        }
+    }
 }
 
 void psMovementManager::Start(const psCharMode* mode)
@@ -888,13 +889,13 @@ void psMovementManager::ToggleRun()
 {
     if(toggleRun)
     {
-        defaultmode = const_cast<psCharMode*>(walk);
+        defaultmode = walk;
         Stop(run);
         toggleRun = false;
     }
     else
     {
-        defaultmode = const_cast<psCharMode*>(run);
+        defaultmode = run;
         Start(run);
         toggleRun = true;
     }
