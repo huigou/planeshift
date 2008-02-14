@@ -5485,7 +5485,7 @@ void AdminManager::FreezeClient(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdDa
     
     if (target->IsFrozen())
     {
-        psserver->SendSystemError(me->clientnum,"The player is alreday frozen");
+        psserver->SendSystemError(me->clientnum,"The player is already frozen");
         return;
     }
 
