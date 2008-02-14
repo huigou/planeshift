@@ -79,7 +79,7 @@ protected:
     csPDelArray<psCharMode> modes;  ///< All available character modes
     csPDelArray<psMovement> moves;  ///< All available movement types
     
-    psCharMode* defaultmode;  ///< Default actor mode
+    const psCharMode* defaultmode;  ///< Default actor mode
 
     GEMClientActor* actor;               ///< Actor we're moving here
 
