@@ -597,7 +597,7 @@ bool ExchangingCharacter::GetExchangedItems(csString& text)
         psItem *item = (itemInSlot) ? itemInSlot->GetItem() : NULL;
         if (item != NULL)
         {
-            text += item->GetQuantityName(item->GetName(),itemInSlot->exchangeStackCount);
+            text += item->GetQuantityName(item->GetName(),itemInSlot->exchangeStackCount, item->GetCreative(), true);
             text += ", ";
         }
     }
