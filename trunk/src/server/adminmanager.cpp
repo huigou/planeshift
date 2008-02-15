@@ -4948,7 +4948,7 @@ void AdminManager::BanName(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& d
 
     if(data.player == client->GetName())
     {
-        psserver->SendSystemError(me->clientnum, "You can't ban yourself!");
+        psserver->SendSystemError(me->clientnum, "You can't ban your own name!");
         return;
     }
 
@@ -4990,6 +4990,12 @@ void AdminManager::BanClient(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData&
     if (data.player.Length() == 0)
     {
         psserver->SendSystemError(me->clientnum, "You must specify a player name or an account name or number.");
+        return;
+    }
+
+    if(data.player == client->GetName())
+    {
+        psserver->SendSystemError(me->clientnum, "You can't ban yourself!");
         return;
     }
     
