@@ -495,6 +495,8 @@ bool psItemStats::ReadItemStats(iResultRow& row)
     else
         anim_list = NULL;
 
+    weaponRange = row.GetFloat("weapon_range");
+
     return true;
 }
 
@@ -889,6 +891,11 @@ PSITEMSTATS_CREATIVETYPE psItemStats::GetCreative()
 bool psItemStats::GetBuyPersonalise()
 {
     return (flags & PSITEMSTATS_FLAG_BUY_PERSONALISE) ? true : false;
+}
+
+float psItemStats::GetRange() const
+{
+    return weaponRange;
 }
 
 unsigned int psItemStats::GetCreator (PSITEMSTATS_CREATORSTATUS& creatorStatus)
