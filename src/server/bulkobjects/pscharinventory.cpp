@@ -996,7 +996,7 @@ bool psCharacterInventory::CanItemAttack(INVENTORY_SLOT_NUMBER slot)
 
         if (inventory[equipment[slot].itemIndexEquipped].item->GetIsRangeWeapon())
         {
-            // range weapons not implemented
+            return true;
         }
     }
 

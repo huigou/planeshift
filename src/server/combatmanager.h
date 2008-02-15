@@ -49,7 +49,8 @@ enum COMBATMANAGER_ATTACKTYPE
     ATTACK_BLOCKED,
     ATTACK_MISSED,
     ATTACK_OUTOFRANGE,
-    ATTACK_BADANGLE
+    ATTACK_BADANGLE,
+    ATTACK_OUTOFAMMO
 };
 
 class psSpawnManager;
@@ -98,7 +99,7 @@ public:
     void  HandleCombatEvent(psCombatGameEvent *event);
     void ApplyCombatEvent(psCombatGameEvent *event, int attack_result);
     void  DebugOutput(psCombatGameEvent *event);
-    int  CalculateAttack(psCombatGameEvent *event);
+    int  CalculateAttack(psCombatGameEvent *event, psItem* subWeapon = NULL);
 
 
     /***********************
@@ -124,7 +125,7 @@ protected:
     MathScriptVar *var_QOH;          /// QOH == Quality Of Hit
     MathScriptVar *var_FinalDmg;     /// Actual Damage done, if any
     MathScriptVar *var_AttackWeapon;
-    //MathScriptVar *var_AttackWeaponSecondary; TODO
+    MathScriptVar *var_AttackWeaponSecondary;
     MathScriptVar *var_TargetAttackWeapon;
     //MathScriptVar *var_TargetAttackWeaponSecondary; TODO
     MathScriptVar *var_Target;

@@ -56,6 +56,7 @@
 #include "netmanager.h"
 #include "client.h"
 #include "globals.h"
+#include "cachemanager.h"
 
 /// This #define determines how far away people will get detailed combat events.
 #define MAX_COMBAT_EVENT_RANGE 30
@@ -192,7 +193,7 @@ psCombatManager::psCombatManager() : pvp_region(NULL)
 
         // Input var bindings here
         var_AttackWeapon       = calc_damage->GetVar("AttackWeapon");
-        //var_AttackWeaponSecondary  = calc_damage->GetVar("AttackWeaponSecondary"); TODO
+        var_AttackWeaponSecondary  = calc_damage->GetVar("AttackWeaponSecondary");
         var_TargetAttackWeapon      = calc_damage->GetVar("TargetAttackWeapon");
         //var_DefenseWeaponSecondary = calc_damage->GetVar("DefenseWeaponSecondary"); TODO
         var_Target                 = calc_damage->GetVar("Target");
@@ -484,13 +485,16 @@ int psCombatManager::GetDefaultModeAction(gemActor *attacker)
 /**
  * This is the meat and potatoes of the combat engine here.
  */
-int psCombatManager::CalculateAttack(psCombatGameEvent *event)
+int psCombatManager::CalculateAttack(psCombatGameEvent *event, psItem* subWeapon)
 {
     var_Attacker->SetObject(event->GetAttackerData() );
     var_Target->SetObject(event->GetTargetData() );
 
     if (var_AttackWeapon)
         var_AttackWeapon->SetObject(event->GetAttackerData()->Inventory().GetEffectiveWeaponInSlot(event->GetWeaponSlot() ) );
+
+    if (var_AttackWeaponSecondary && subWeapon)
+        var_AttackWeaponSecondary->SetObject(subWeapon);
 
     if (var_TargetAttackWeapon)
         var_TargetAttackWeapon->SetObject(event->GetTargetData()->Inventory().GetEffectiveWeaponInSlot(event->GetWeaponSlot() ) );
@@ -704,6 +708,10 @@ void psCombatManager::ApplyCombatEvent(psCombatGameEvent *event, int attack_resu
             }
             break;
         }
+        case ATTACK_OUTOFAMMO:
+            {
+                psserver->SendSystemError(event->AttackerCID, "You ran out of ammo!");
+            }
     }
 
     // Notify that the attack took place
@@ -821,7 +829,28 @@ void psCombatManager::HandleCombatEvent(psCombatGameEvent *event)
                event->PreviousAttackResult == ATTACK_BADANGLE)
                 NotifyTarget(gemAttacker,gemTarget);
 
-            attack_result=CalculateAttack(event);
+            if (weapon->GetIsRangeWeapon() && weapon->GetUsesAmmo())
+            {
+                psItemStats* ammoStats = CacheManager::GetSingleton().GetBasicItemStatsByID(weapon->GetAmmoTypeID());
+                CS_ASSERT(ammoStats);
+
+                size_t ammoItemIndex = attacker_data->Inventory().FindItemStatIndex(ammoStats);
+                if (ammoItemIndex == SIZET_NOT_FOUND)
+                    attack_result = ATTACK_OUTOFAMMO;
+                else
+                {
+                    psItem* usedAmmo = attacker_data->Inventory().RemoveItemIndex(ammoItemIndex, 1);
+                    if (usedAmmo)
+                    {
+                        attack_result=CalculateAttack(event, usedAmmo);
+                        usedAmmo->Destroy();
+                    }
+                    else
+                        attack_result=CalculateAttack(event);
+                }
+            }
+            else
+                attack_result=CalculateAttack(event);
         }
 
         event->AttackResult=attack_result;
@@ -866,20 +895,13 @@ bool psCombatManager::ValidDistance(gemObject *attacker,gemObject *target,psItem
     if (Weapon==NULL)
         return false;
 
-    if (Weapon->GetIsRangeWeapon())
+    if(!attacker->GetNPCPtr())
     {
-        return false; // TODO: Range weapons to be added later
+        return attacker->IsNear(target,Weapon->GetRange());
     }
     else
     {
-        if(!attacker->GetNPCPtr())
-        {
-            return attacker->IsNear(target,2.0F);  // within 2.0m for melee - for PCs
-        }
-        else
-        {
-            return attacker->IsNear(target,3.0F);  // within 3.0m for melee - for NPCs
-        }
+        return attacker->IsNear(target,Weapon->GetRange()+1); 
     }
 }
 

@@ -492,7 +492,11 @@ public:
     bool GetIsWriteable();
     PSITEMSTATS_CREATIVETYPE GetCreative();
     bool GetBuyPersonalise();
+    float GetRange() const;
     unsigned int GetCreator (PSITEMSTATS_CREATORSTATUS& creatorStatus);
+    unsigned int GetAmmoTypeID() const { return ammo_item_type_id; }
+
+    float weaponRange;
 
     /// @return True if the object is a money object.
     bool IsMoney();
