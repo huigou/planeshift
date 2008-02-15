@@ -930,7 +930,7 @@ void gemObject::UpdateProxList( bool force )
 #endif
         }
         
-        if (nearobj->SeesObject(this, range))
+        if ((!nearobj->GetClient() || (nearobj->GetClient() && nearobj->GetClient()->IsReady())) && nearobj->SeesObject(this, range))
         {
 #ifdef PSPROXDEBUG
             log.AppendFmt("-%s can see %s\n",nearobj->GetName(),GetName());

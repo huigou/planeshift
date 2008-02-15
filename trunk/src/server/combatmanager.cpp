@@ -897,11 +897,11 @@ bool psCombatManager::ValidDistance(gemObject *attacker,gemObject *target,psItem
 
     if(!attacker->GetNPCPtr())
     {
-        return attacker->IsNear(target,Weapon->GetRange());
+        return attacker->IsNear(target,Weapon->GetRange()+(Weapon->GetRange()*0.1));
     }
     else
     {
-        return attacker->IsNear(target,Weapon->GetRange()+1); 
+        return attacker->IsNear(target,Weapon->GetRange()+(Weapon->GetRange()*0.1)+1); 
     }
 }
 
