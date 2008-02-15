@@ -4942,18 +4942,24 @@ void AdminManager::BanName(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& d
 {
     if (!data.player.Length())
     {
-        psserver->SendSystemError(me->clientnum,"You have to specify a name to ban");
+        psserver->SendSystemError(me->clientnum, "You have to specify a name to ban");
+        return;
+    }
+
+    if(data.player == client->GetName())
+    {
+        psserver->SendSystemError(me->clientnum, "You can't ban yourself!");
         return;
     }
 
     if (psserver->GetCharManager()->IsBanned(data.player))
     {
-        psserver->SendSystemError(me->clientnum,"That name is already banned");
+        psserver->SendSystemError(me->clientnum, "That name is already banned");
         return;
     }
     
     CacheManager::GetSingleton().AddBadName(data.player);
-    psserver->SendSystemInfo(me->clientnum,"You banned the name '%s'",data.player.GetDataSafe());
+    psserver->SendSystemInfo(me->clientnum, "You banned the name '%s'", data.player.GetDataSafe());
 }
 
 void AdminManager::UnBanName(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data, Client *client)
