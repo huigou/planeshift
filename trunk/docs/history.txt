@@ -1,3 +1,6 @@
+*** 2008-02-15 by Mike Gist
+- Added check when banning so an npc can't be banned.
+
 *** 2008-02-15 by Sasha Levin
 - Fixed info window for NPCs and pets.
 - Added support for ranged weapons. Test using the bow and arrow.
