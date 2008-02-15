@@ -1185,6 +1185,12 @@ void psCharacter::SetMode(PSCHARACTER_MODE newmode, uint32_t clientnum)
         SetCombatStance(getStance("None"));
     }
 
+    bool isFrozen = false;
+    if(clientnum)
+    {
+        isFrozen = actor->GetClient()->IsFrozen();
+    }
+
     psModeMessage msg(clientnum, actor->GetEntity()->GetID(), (uint8_t) newmode, combat_stance.stance_id);
     msg.Multicast(actor->GetMulticastClients(), 0, PROX_LIST_ANY_RANGE);
 
@@ -1193,7 +1199,7 @@ void psCharacter::SetMode(PSCHARACTER_MODE newmode, uint32_t clientnum)
                             newmode != PSCHARACTER_MODE_SIT &&
                             newmode != PSCHARACTER_MODE_EXHAUSTED &&
                             newmode != PSCHARACTER_MODE_OVERWEIGHT &&
-                            !actor->GetClient()->IsFrozen());
+                            !isFrozen);
 
     actor->SetAlive(newmode != PSCHARACTER_MODE_DEAD);
 
