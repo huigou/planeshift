@@ -1868,6 +1868,10 @@ double psItem::GetProperty(const char *ptr)
     {
         return (double)GetMaxCharges();
     }
+    else if (!strcasecmp(ptr,"Range"))
+    {
+        return (double)GetRange();
+    }
     else
     {
         CPrintf(CON_ERROR, "psItem::GetProperty(%s) failed\n",ptr);

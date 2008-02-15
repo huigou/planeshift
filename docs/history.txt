@@ -7,6 +7,9 @@
 - Added support for rangeness for regular weapons. The claymore can hit
   further than the fists.
 - DB VER BUMP!
+- Added passing of weapon range to scripts.
+- Fixed pushing of gem objects to unready clients.
+- Softened up range checks for weapons.
 
 *** 2008-02-14 by Dave Bentham
 - Fixed bug FS#373 - book & map descriptions during pickups/drops & trades.
