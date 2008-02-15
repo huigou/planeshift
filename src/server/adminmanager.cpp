@@ -4993,7 +4993,6 @@ void AdminManager::BanClient(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData&
         return;
     }
 
-    printf("%s, %s\n", data.player.GetDataSafe(), client->GetName());
     if(data.player.CompareNoCase(client->GetName()))
     {
         psserver->SendSystemError(me->clientnum, "You can't ban yourself!");
