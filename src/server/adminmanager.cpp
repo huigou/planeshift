@@ -4993,7 +4993,8 @@ void AdminManager::BanClient(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData&
         return;
     }
 
-    Client* target = FindPlayerClient(data.player);
+    // Find client to get target
+    Client *target = clients->Find(NormalizeCharacterName(data.player));
     if(target && !target->GetClientNum())
     {
         psserver->SendSystemError(me->clientnum, "You can only ban a player!");
@@ -5046,9 +5047,6 @@ void AdminManager::BanClient(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData&
         psserver->SendSystemError(me->clientnum, "%s is already banned", user.GetData() );
         return;
     }
-
-    // Find client to get target
-    Client *targetClient = clients->Find(NormalizeCharacterName(data.player));
 
     // Now we have a valid player target, so remove from server
     if(target)
