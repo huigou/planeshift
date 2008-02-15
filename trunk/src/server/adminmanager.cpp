@@ -5495,7 +5495,7 @@ void AdminManager::FreezeClient(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdDa
         return;
     }
 
-	  target->GetActor()->SetAllowedToMove(false);
+    target->GetActor()->SetAllowedToMove(false);
     target->SetFrozen(true);
     target->GetActor()->SetMode(PSCHARACTER_MODE_SIT);
     psserver->SendSystemError(target->GetClientNum(), "You have been frozen in place by a GM.");
@@ -5516,7 +5516,7 @@ void AdminManager::ThawClient(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
         return;
     }   
     
-	  target->GetActor()->SetAllowedToMove(true);
+    target->GetActor()->SetAllowedToMove(true);
     target->SetFrozen(false);
     target->GetActor()->SetMode(PSCHARACTER_MODE_PEACE);
     psserver->SendSystemOK(target->GetClientNum(), "You have been released by a GM.");

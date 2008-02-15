@@ -383,12 +383,12 @@ void psMovementManager::SetupControls()
 
 void psMovementManager::SetActorMode(const psCharMode* mode)
 {
-	  if(actor)
-	  {
+    if(actor)
+    {
         actormode = mode;
         if (actor->GetMode() == psModeMessage::PEACE)
         {
-            actor->SetIdleAnimation(actormode->idle_anim);
+            actor->SetIdleAnimation(actormode->idle_anim); 
         }
     }
 }
