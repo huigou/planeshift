@@ -21,6 +21,7 @@
 - Renamed *Run to *Move, as those controls aren't exclusive to run.
 - Fixed typo in pssetup, fixes FS#1099.
 - Fixed death causing unfreeze, FS#1097.
+- Fixed FS#1038, you can't ban yourself now.
 
 *** 2008-02-13 by Roland Schulz
 - layout changes to bankwindow.xml by Caarrie. TODO: better background art
