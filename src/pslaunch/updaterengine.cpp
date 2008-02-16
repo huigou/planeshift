@@ -60,6 +60,7 @@ void UpdaterEngine::Init(const csArray<csString> args, iObjectRegistry* _object_
         printf("No VFS!\r\n");
         exit(1);
     }
+    vfs->ChDir("/this/");
     config = new UpdaterConfig(args, object_reg, vfs);
     fileUtil = new FileUtil(vfs);
     appName = _appName;
@@ -71,7 +72,7 @@ void UpdaterEngine::Init(const csArray<csString> args, iObjectRegistry* _object_
 
     if(vfs->Exists("/this/updater.log"))
     {
-        fileUtil->RemoveFile("updater.log");
+        fileUtil->RemoveFile("/this/updater.log");
     }
     log = vfs->Open("/this/log.txt", VFS_FILE_APPEND);
 }
@@ -125,9 +126,8 @@ void UpdaterEngine::checkForUpdates()
     if(!config->WasCleanUpdate())
     {
         // Restore config file which gives us the last updated position.
-        fileUtil->RemoveFile("updaterinfo.xml");
-        fileUtil->CopyFile("updaterinfo.xml.bak", "updaterinfo.xml", false, false);
-        fileUtil->RemoveFile("updaterinfo.xml.bak");
+        fileUtil->RemoveFile("/this/updaterinfo.xml");
+        fileUtil->MoveFile("/this/updaterinfo.xml.bak", "/this/updaterinfo.xml", true, false);
     }
 
 
@@ -191,9 +191,8 @@ void UpdaterEngine::checkForUpdates()
         // Begin the self update process.
         selfUpdate(false);
         // Restore config files before terminate.
-        fileUtil->RemoveFile("updaterinfo.xml");
-        fileUtil->CopyFile("updaterinfo.xml.bak", "updaterinfo.xml", false, false);
-        fileUtil->RemoveFile("updaterinfo.xml.bak");
+        fileUtil->RemoveFile("/this/updaterinfo.xml");
+        fileUtil->MoveFile("/this/updaterinfo.xml.bak", "/this/updaterinfo.xml", true, false);
 
         return;
     }
@@ -246,8 +245,7 @@ void UpdaterEngine::checkForUpdates()
 bool UpdaterEngine::checkUpdater()
 {
     // Backup old config, download new.
-    fileUtil->CopyFile("updaterinfo.xml", "updaterinfo.xml.bak", false, false);    
-    fileUtil->RemoveFile("updaterinfo.xml");
+    fileUtil->MoveFile("/this/updaterinfo.xml", "/this/updaterinfo.xml.bak", true, false);
     downloader->DownloadFile("updaterinfo.xml", "updaterinfo.xml", false, true);
 
     // Load new config data.
@@ -301,14 +299,13 @@ bool UpdaterEngine::checkGeneral()
             {
                 // There's a problem and we can't continue. Throw a boo boo and clean up.
                 printOutput("Local config and server config are incompatible!\r\r\n");
-                fileUtil->RemoveFile("updaterinfo.xml");
-                fileUtil->CopyFile("updaterinfo.xml.bak", "updaterinfo.xml", false, false);
-                fileUtil->RemoveFile("updaterinfo.xml.bak");
+                fileUtil->RemoveFile("/this/updaterinfo.xml");
+                fileUtil->MoveFile("/this/updaterinfo.xml.bak", "/this/updaterinfo.xml", true, false);
                 return false;
             }
         }
         // Remove the backup of the xml (they're the same).
-        fileUtil->RemoveFile("updaterinfo.xml.bak");
+        fileUtil->RemoveFile("/this/updaterinfo.xml.bak");
         return false;
     }
 
@@ -378,8 +375,8 @@ bool UpdaterEngine::selfUpdate(int selfUpdating)
             tempName.AppendFmt("2.exe");
 
             // Delete the old updater file and copy the new in place.
-            fileUtil->RemoveFile(appName.GetData());
-            fileUtil->CopyFile(tempName.GetData(), appName.GetData(), false, true);
+            fileUtil->RemoveFile("/this/" + appName);
+            fileUtil->CopyFile("/this/" + tempName, "/this/" + appName, true, true);
 
             // Copy any art and data.
             if(appName.Compare("pslaunch"))
@@ -415,10 +412,10 @@ bool UpdaterEngine::selfUpdate(int selfUpdating)
             zip.AppendFmt(".zip");
 
             // Remove updater zip.
-            fileUtil->RemoveFile(zip); 
+            fileUtil->RemoveFile("/this/" + zip); 
 
             // Remove temp updater file.
-            fileUtil->RemoveFile(appName + "2.exe");            
+            fileUtil->RemoveFile("/this/" + appName + "2.exe");            
 
             return false;
         }
@@ -453,7 +450,7 @@ bool UpdaterEngine::selfUpdate(int selfUpdating)
 
             // md5sum is correct, mount zip and copy file.
             vfs->Mount("/zip", zip);
-            csString from = "zip/";
+            csString from = "/zip/";
             from.AppendFmt(appName);
             from.AppendFmt(".exe");
             appName.AppendFmt("2.exe");
@@ -486,7 +483,7 @@ bool UpdaterEngine::selfUpdate(int selfUpdating)
             zip.AppendFmt(".zip");
 
             // Remove updater zip.
-            fileUtil->RemoveFile(zip); 
+            fileUtil->RemoveFile("/this/" + zip); 
 
             return false;
         }
@@ -709,7 +706,7 @@ void UpdaterEngine::generalUpdate()
                         if(!downloader->DownloadFile(url.Append(newFilePath.GetData()), newFilePath.GetData(), true, true))
                         {
                             printOutput("\r\nUnable to update file: %s. Reverting file!\r\n", newFilePath.GetData());
-                            fileUtil->CopyFile(oldFilePath, newFilePath, false, false);
+                            fileUtil->CopyFile("/this/" + oldFilePath, "/this/" + newFilePath, true, false);
                         }
                         else
                             printOutput("Done!\r\n");
@@ -728,7 +725,7 @@ void UpdaterEngine::generalUpdate()
                     {
                         printOutput("Could not get MD5 of patched file %s! Reverting file!\r\n", newFilePath.GetData());
                         fileUtil->RemoveFile("/this/" + newFilePath);
-                        fileUtil->CopyFile(oldFilePath, newFilePath, false, false);
+                        fileUtil->CopyFile("/this/" + oldFilePath, "/this/" + newFilePath, true, false);
                     }
                     else
                     {
@@ -741,7 +738,7 @@ void UpdaterEngine::generalUpdate()
                         {
                             printOutput("md5sum of file %s does not match correct md5sum! Reverting file!\r\n", newFilePath.GetData());
                             fileUtil->RemoveFile("/this/" + newFilePath);
-                            fileUtil->CopyFile(oldFilePath, newFilePath, false, false);
+                            fileUtil->CopyFile("/this/" + oldFilePath, "/this/" + newFilePath, true, false);
                         }
                         else
                             printOutput("Success!\r\n");
