@@ -199,13 +199,13 @@ bool FileUtil::CopyFile(csString from, csString to, bool vfsPath, bool executabl
 
     FileStat* statFrom = StatFile(fileFrom);
 
-    if(statFrom->TYPE_DIRECTORY)
+    if(statFrom->type == statFrom->TYPE_DIRECTORY)
     {
         if(!vfs->Exists(n2))
         {
             MakeDirectory(n2);
         }
-        else if(statTo->TYPE_FILE)
+        else if(statTo->type == statTo->TYPE_FILE)
         {
             if(!silent)
                 printf("Can't write a file where a directory already exists.\n", fileTo.GetData());
