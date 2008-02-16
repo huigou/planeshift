@@ -534,13 +534,13 @@ bool UpdaterEngine::selfUpdate(int selfUpdating)
 
             csString cmd;
             csRef<iDataBuffer> thisPath = vfs->GetRealPath("/this/");
-            cmd.Format("cd %s; unzip -o %s", thisPath->GetData(), zip.GetData());
+            cmd.Format("cd %s; unzip -oqq %s", thisPath->GetData(), zip.GetData());
             system(cmd);
 
             // Create a new process of the updater and exit.
             csRef<iDataBuffer> realPath = vfs->GetRealPath("/this/" + realName);
             cmd.Clear();
-            cmd.Format("open -a ./%s selfUpdateSecond", realPath->GetData());
+            cmd.Format("open -a %s 'selfUpdateSecond'", realPath->GetData());
             system(cmd);
 #else
             realName.Append(".bin");
