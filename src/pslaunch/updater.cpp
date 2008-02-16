@@ -89,5 +89,8 @@ int main(int argc, char* argv[])
     engine = NULL;
     updater = NULL;
 
+    printf("Updater finished, press any key to exit.\n");
+    getch();
+
     return 0;
 }
