@@ -534,7 +534,7 @@ bool UpdaterEngine::selfUpdate(int selfUpdating)
 
             csString cmd;
             csRef<iDataBuffer> thisPath = vfs->GetRealPath("/this/");
-            cmd.Format("cd %s; unzip -o %s", thisPath->GetData(), zip);
+            cmd.Format("cd %s; unzip -o %s", thisPath->GetData(), zip.GetData());
             system(cmd);
 
             // Create a new process of the updater and exit.
@@ -585,7 +585,7 @@ void UpdaterEngine::generalUpdate()
     * After each iteration we need to update updaterinfo.xml.bak as well as the array.
     */
 
-  // Start by fetching the configs.
+    // Start by fetching the configs.
     csRefArray<ClientVersion>& oldCvs = config->GetCurrentConfig()->GetClientVersions();
     const csRefArray<ClientVersion>& newCvs = config->GetNewConfig()->GetClientVersions();
     csRef<iDocumentNode> rootnode = GetRootNode(UPDATERINFO_OLD_FILENAME);
