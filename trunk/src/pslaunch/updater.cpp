@@ -28,6 +28,7 @@
 #include "updaterengine.h"
 #include "updater.h"
 
+
 CS_IMPLEMENT_APPLICATION
 
 iObjectRegistry* psUpdater::object_reg = NULL;
@@ -89,8 +90,8 @@ int main(int argc, char* argv[])
     engine = NULL;
     updater = NULL;
 
-    printf("Updater finished, press any key to exit.\n");
-    getch();
+    printf("Updater finished, press enter to exit.\n");
+    getchar();
 
     return 0;
 }
