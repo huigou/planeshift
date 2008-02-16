@@ -197,31 +197,28 @@ bool FileUtil::CopyFile(csString from, csString to, bool vfsPath, bool executabl
         n2= to;
     }
 
-    if(statTo->TYPE_DIRECTORY)
+    FileStat* statFrom = StatFile(fileFrom);
+
+    if(statFrom->TYPE_DIRECTORY)
     {
         if(!vfs->Exists(n2))
         {
             MakeDirectory(n2);
         }
-
-        FileStat* statFrom = StatFile(fileFrom);
-
-        if(statFrom->TYPE_DIRECTORY)
-        {
-            csRef<iStringArray> fileList = vfs->FindFiles(n1);
-            for(uint i=0; i<fileList->GetSize(); i++)
-            {
-                csString file = fileList->Get(i);
-                csString currentTo = n2;
-                currentTo.AppendFmt("/%s", file.Slice(file.FindLast('/')).GetData());
-                CopyFile(file, currentTo, true, isExecutable(file));
-            }
-        }
-        else
+        else if(statTo->TYPE_FILE)
         {
             if(!silent)
                 printf("Can't write a file where a directory already exists.\n", fileTo.GetData());
             return false;
+        }
+
+        csRef<iStringArray> fileList = vfs->FindFiles(n1);
+        for(uint i=0; i<fileList->GetSize(); i++)
+        {
+            csString file = fileList->Get(i);
+            csString currentTo = n2;
+            currentTo.AppendFmt("/%s", file.Slice(file.FindLast('/')).GetData());
+            CopyFile(file, currentTo, true, isExecutable(file));
         }
     }
     else
