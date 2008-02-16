@@ -163,7 +163,7 @@ void UpdaterEngine::checkForUpdates()
     printOutput("Checking for updates to the updater: ");
 
 
-    if(config->UpdateExecs() && checkUpdater())
+    if(checkUpdater() && config->UpdateExecs())
     {
         printOutput("Update Available!\n");
 
@@ -275,7 +275,7 @@ bool UpdaterEngine::checkUpdater()
     }
 
     // Compare Versions.
-    return(config->GetNewConfig()->GetUpdaterVersionLatest() > UPDATER_VERSION);        
+    return(!config->UpdateExecs() && config->GetNewConfig()->GetUpdaterVersionLatest() > UPDATER_VERSION);        
 }
 
 bool UpdaterEngine::checkGeneral()
