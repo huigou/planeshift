@@ -380,8 +380,8 @@ MathScriptEngine::MathScriptEngine()
             MathScript *scr = new MathScript(result_events[x]["name"], result_events[x]["math_script"]);
             unsigned int key = csHashCompute(scr->name);
             scripts.Put(key,scr);
-		}
-	}
+        }
+    }
 }
 
 MathScriptEngine::~MathScriptEngine()

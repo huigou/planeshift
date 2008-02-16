@@ -855,7 +855,16 @@ UPDATE `server_options` SET `option_value`='1176' WHERE `option_name`='db_versio
 ALTER TABLE item_stats ADD COLUMN `weapon_range` FLOAT UNSIGNED NOT NULL DEFAULT 2 AFTER `max_charges`;
 UPDATE `server_options` SET `option_value`='1177' WHERE `option_name`='db_version';
 
-#
+#### 1178 - Anders Reggestad - Make sure NPCs based on master npc id point to the real master.
+# Does not change the DB but is needed with the correspoinding code change.
+UPDATE `server_options` SET `option_value`='1178' WHERE `option_name`='db_version';
+# Used to move npc_master_id from a child of a npc_master to the master itself. To be applyed
+# multiple times until number of changed records are null.
+update characters c1, characters c2, characters c3 set c3.npc_master_id=c1.id where  (c1.npc_master_id=c1.id || c1.npc_master_id=0) && c2.npc_master_id=c1.id && c2.id != c2.npc_master_id && c3.npc_master_id=c2.id;
+# List the NPCs that does not point to a true master.
+# select c1.id,c1.name,c1.npc_master_id,c2.id,c2.name,c2.npc_master_id,c3.id,c3.name,c3.npc_master_id from characters c1, characters c2, characters c3 where (c1.npc_master_id=c1.id || c1.npc_master_id=0) && c2.npc_master_id=c1.id && c2.id != c2.npc_master_id && c3.npc_master_id=c2.id;
+
+
 # Insert your upgrade before this line. Remember when you set a new db_version
 # to update the server_options.sql file and update psserver.cpp as well.
 # This to ensure that everything is working if you use the create_all.sql to

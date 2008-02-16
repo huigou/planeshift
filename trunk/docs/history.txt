@@ -1,3 +1,12 @@
+*** 2008-02-16 by Anders Reggestad
+- Fixed so that NPCs created with the in game "/npc" command will be children
+  of the master npc if the npc pointet to has a master npc. This so that stats
+  and look will be copied correctrly from that npc at spawn. Included a sql
+  script in the updater file to fix any npc in a db that dosn't have a 
+  correct master npc. This is beleewed to fix some cases where where mobs
+  looking the same seams to have different stats. 
+  => DB VER BUMP!
+
 *** 2008-02-16 by Mike Gist
 - A few updater changes to try and make sure everything is done on the VFS.
 - Updater self-update improvements.
