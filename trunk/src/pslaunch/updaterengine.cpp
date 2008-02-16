@@ -234,10 +234,15 @@ void UpdaterEngine::checkForUpdates()
     else
         printOutput("No updates needed!\n");
 
-
     delete downloader;
     downloader = NULL;
     *updateNeeded = false;
+
+    if(appName.Compare("psupdater"))
+    {
+        printf("Updater finished, press enter to exit.\n");
+        getchar();
+    }
 
     return;
 }
