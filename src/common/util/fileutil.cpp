@@ -1,21 +1,21 @@
 /*
-* fileutil.cpp by Matthias Braun <matze@braunis.de>
-*
-* Copyright (C) 2002 Atomic Blue (info@planeshift.it, http://www.atomicblue.org) 
-*
-*
-* This program is free software; you can redistribute it and/or
-* modify it under the terms of the GNU General Public License
-* as published by the Free Software Foundation (version 2 of the License)
-* This program is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-* GNU General Public License for more details.
-* You should have received a copy of the GNU General Public License
-* along with this program; if not, write to the Free Software
-* Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
-*
-*/
+ * fileutil.cpp by Matthias Braun <matze@braunis.de>
+ *
+ * Copyright (C) 2002 Atomic Blue (info@planeshift.it, http://www.atomicblue.org) 
+ *
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation (version 2 of the License)
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ */
 
 // All OS specific stuff should be in this file
 #define CS_SYSDEF_PROVIDE_DIR
@@ -164,20 +164,6 @@ bool FileUtil::CopyFile(csString from, csString to, bool vfsPath, bool executabl
         fileTo = buff->GetData();
     }
 
-    csString fileFrom = from;
-    if(vfsPath)
-    {
-        csRef<iDataBuffer> buff = vfs->GetRealPath(from);
-        if(!buff)
-        {
-            if(!silent)
-                printf("Couldn't get the real filename for %s!\n",from.GetData());
-            return false;
-        }
-
-        fileFrom = buff->GetData();
-    }
-
     FileStat* statTo = StatFile(fileTo);
     if(statTo && statTo->readonly)
     {
@@ -197,59 +183,32 @@ bool FileUtil::CopyFile(csString from, csString to, bool vfsPath, bool executabl
         n2= to;
     }
 
-    FileStat* statFrom = StatFile(fileFrom);
+    csRef<iDataBuffer> buffer = vfs->ReadFile(n1.GetData(),true);
 
-    if(statFrom->type == statFrom->TYPE_DIRECTORY)
+    if (!buffer)
     {
-        if(!vfs->Exists(n2))
-        {
-            MakeDirectory(n2);
-        }
-        else if(statTo->type == statTo->TYPE_FILE)
-        {
-            if(!silent)
-                printf("Can't write a file where a directory already exists.\n", fileTo.GetData());
-            return false;
-        }
-
-        csRef<iStringArray> fileList = vfs->FindFiles(n1);
-        for(uint i=0; i<fileList->GetSize(); i++)
-        {
-            csString file = fileList->Get(i);
-            csString currentTo = n2;
-            currentTo.AppendFmt("/%s", file.Slice(file.FindLast('/')).GetData());
-            CopyFile(file, currentTo, true, isExecutable(file));
-        }
+        if(!silent)
+            printf("Couldn't read file %s!\n",n1.GetData());
+        return false;
     }
-    else
+
+    if (!vfs->WriteFile(n2.GetData(), buffer->GetData(), buffer->GetSize() ) )
     {
-        csRef<iDataBuffer> buffer = vfs->ReadFile(n1.GetData(),true);
-
-        if (!buffer)
-        {
-            if(!silent)
-                printf("Couldn't read file %s!\n",n1.GetData());
-            return false;
-        }
-
-        if (!vfs->WriteFile(n2.GetData(), buffer->GetData(), buffer->GetSize() ) )
-        {
-            if(!silent)
-                printf("Couldn't write to %s!\n", n2.GetData());
-            return false;
-        }
+        if(!silent)
+            printf("Couldn't write to %s!\n", n2.GetData());
+        return false;
+    }
 
 #ifdef CS_PLATFORM_UNIX
-        // On unix type systems we might need to set permissions after copy.
-        if(executable)
-        {
-            csString real(to);
-            real.FindReplace("/this/", "./");
-            if(!silent && chmod(real.GetData(), S_IRUSR | S_IWUSR | S_IXUSR | S_IRGRP | S_IXGRP) == -1)
-                printf("Failed to set permissions on file %s.\n", real.GetData());
-        }
-#endif
+    // On unix type systems we might need to set permissions after copy.
+    if(executable)
+    {
+        csString real(to);
+        real.FindReplace("/this/", "./");
+        if(!silent && chmod(real.GetData(), S_IRUSR | S_IWUSR | S_IXUSR | S_IRGRP | S_IXGRP) == -1)
+            printf("Failed to set permissions on file %s.\n", real.GetData());
     }
+#endif
 
     return true;
 }

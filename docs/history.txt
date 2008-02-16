@@ -1,7 +1,6 @@
 *** 2008-02-16 by Mike Gist
 - A few updater changes to try and make sure everything is done on the VFS.
 - Updater self-update improvements.
-- Augmented FileUtil::CopyFile to support copying directories.
 
 *** 2008-02-15 by Mike Gist
 - Added check when banning so an npc can't be banned.
