@@ -522,16 +522,28 @@ bool UpdaterEngine::selfUpdate(int selfUpdating)
                 return false;
             }
 
+           csString realName = appName;
+
+#if defined(CS_PLATFORM_MACOSX)
+            realName.Append(".app");
+
+            csString cmd;
+            csRef<iDataBuffer> thisPath = vfs->GetRealPath("/this/");
+            cmd.Format("cd %s; unzip -o %s", thisPath->GetData(), zip);
+            system(cmd);
+
+            // Create a new process of the updater and exit.
+            csRef<iDataBuffer> realPath = vfs->GetRealPath("/this/" + realName);
+            cmd.Clear();
+            cmd.Format("open -a ./%s selfUpdateSecond", realPath->GetData());
+            system(cmd);
+#else
+            realName.Append(".bin");
+
             // Mount zip
             csRef<iDataBuffer> realZipPath = vfs->GetRealPath("/this/" + zip);
             vfs->Mount("/zip", realZipPath->GetData());
 
-            csString realName = appName;
-#if defined(CS_PLATFORM_MACOSX)
-            realName.Append(".app");
-#else
-            realName.Append(".bin");
-#endif
             // Copy new files into place.
             fileUtil->CopyFile("/zip/" + realName, "/this/" + realName, true, true);
 
@@ -548,14 +560,6 @@ bool UpdaterEngine::selfUpdate(int selfUpdating)
 
             // Unmount zip.
             vfs->Unmount("/zip", realZipPath->GetData());
-
-            // Create a new process of the updater and exit.
-#if defined(CS_PLATFORM_MACOSX)
-            csRef<iDataBuffer> realPath = vfs->GetRealPath("/this/" + realName);
-            csString cmd;
-            cmd.Format("open -a ./%s selfUpdateSecond", realPath->GetData());
-            system(cmd);
-#else
             if(fork() == 0)
                 execl(appName, appName, "selfUpdateSecond", NULL);
 #endif
