@@ -517,12 +517,14 @@ bool UpdaterEngine::selfUpdate(int selfUpdating)
                 return false;
             }
 
-            // Mount zip.
-            vfs->Mount("/zip", zip);
+            csRef<iDataBuffer> realZipPath = vfs->GetRealPath("/this/" + zip);
+
+            // Mount zip
+            vfs->Mount("/zip", realZipPath->GetData());
 
             csString realName = appName;
 #if defined(CS_PLATFORM_MACOSX)
-            realName.Append(".dmg");
+            realName.Append(".app");
 #else
             realName.Append(".bin");
 #endif
@@ -537,7 +539,7 @@ bool UpdaterEngine::selfUpdate(int selfUpdating)
             system(cmd.GetData());
 
             // Unmount zip.
-            vfs->Unmount("/zip", zip);
+            vfs->Unmount("/zip", realZipPath->GetData())
 
             // Create a new process of the updater and exit.
 #if defined(CS_PLATFORM_MACOSX)
