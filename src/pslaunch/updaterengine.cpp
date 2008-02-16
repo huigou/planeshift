@@ -694,9 +694,12 @@ void UpdaterEngine::generalUpdate()
 
                 // Binary patch.
                 printOutput("Patching file %s: ", newFilePath.GetData());
-                if(!PatchFile(oldFilePath, diff, newFilePath))
+                csRef<iDataBuffer> oldFP = vfs->GetRealPath("/this/" + oldFilePath);
+                csRef<iDataBuffer> diffFP = vfs->GetRealPath("/this/" + diff);
+                csRef<iDataBuffer> newFP = vfs->GetRealPath("/this/" + newFilePath);
+                if(!PatchFile(oldFP->GetData(), diffFP->GetData(), newFP->GetData()))
                 {
-                    printOutput("Failed!\r\n");
+                    printOutput("Failed!\n");
                     printOutput("Attempting to download full version of %s: ", newFilePath.GetData());
 
                     // Get the 'backup' mirror, should always be the first in the list.
@@ -750,9 +753,9 @@ void UpdaterEngine::generalUpdate()
                         else
                             printOutput("Success!\r\n");
                     }
-                    // Clean up temp files.
-                    fileUtil->RemoveFile("/this/" + oldFilePath);
-                }
+                 }
+                // Clean up temp files.
+                fileUtil->RemoveFile("/this/" + oldFilePath);
                 fileUtil->RemoveFile("/this/" + diff, false);
             }
         }
