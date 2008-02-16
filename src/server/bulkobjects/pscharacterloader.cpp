@@ -970,14 +970,22 @@ unsigned int psCharacterLoader::FindCharacterID(const char *character_name, bool
     unsigned long result;
 
     if ( !excludeNPCs )
+    {
         result = db->SelectSingleNumber("SELECT id from characters where name='%s'",escape.GetData());
+    }
     else
+    {
         result = db->SelectSingleNumber("SELECT id from characters where name='%s' AND npc_master_id=0",escape.GetData());        
+    }
 
     if(result == QUERY_FAILED)
+    {
         return 0;
+    }
     else
+    {
         return result;
+    }
 }
 
 unsigned int psCharacterLoader::FindCharacterID(unsigned int accountID, const char *character_name )

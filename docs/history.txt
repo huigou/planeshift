@@ -6,6 +6,7 @@
   correct master npc. This is beleewed to fix some cases where where mobs
   looking the same seams to have different stats. 
   => DB VER BUMP!
+- Fixed loading of items for npc's with master.
 
 *** 2008-02-16 by Mike Gist
 - A few updater changes to try and make sure everything is done on the VFS.

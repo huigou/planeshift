@@ -357,10 +357,11 @@ bool psCharacter::Load(iResultRow& row)
 
     }
 
-    if (npc_masterid && use_id != (uint)npc_masterid )
+    if (use_id != characterid )
     {
-        // also load character specific items
-        if (!inventory.Load(characterid))
+        // This has a master npc template, so load character specific items
+        // from the master npc.
+        if (!inventory.Load(use_id))
         {
             Error2("Cannot load character specific items for Character ID %u.",characterid);
             return false;
