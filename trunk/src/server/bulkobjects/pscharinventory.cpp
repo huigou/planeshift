@@ -202,7 +202,9 @@ bool psCharacterInventory::Load(unsigned int use_id)
 
     // Players get restrictions but GMs do not
     if (owner->GetActor() && owner->GetActor()->GetClient() && owner->GetActor()->GetClient()->GetSecurityLevel() > 30)
+    {
         doRestrictions = false;
+    }
         
     Result items(db->Select("SELECT * from item_instances where char_id_owner=%u and location_in_parent!=-1",use_id));
     if ( items.IsValid() )
