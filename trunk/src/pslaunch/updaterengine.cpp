@@ -527,10 +527,7 @@ bool UpdaterEngine::selfUpdate(int selfUpdating)
                 return false;
             }
 
-           csString realName = appName;
-
 #if defined(CS_PLATFORM_MACOSX)
-            realName.Append(".app");
 
             csString cmd;
             csRef<iDataBuffer> thisPath = vfs->GetRealPath("/this/");
@@ -538,12 +535,11 @@ bool UpdaterEngine::selfUpdate(int selfUpdating)
             system(cmd);
 
             // Create a new process of the updater and exit.
-            csRef<iDataBuffer> realPath = vfs->GetRealPath("/this/" + realName);
             cmd.Clear();
-            cmd.Format("open -a %s 'selfUpdateSecond'", realPath->GetData());
+            cmd.Format("%s%s.app/Contents/MacOS/%s_static selfUpdateSecond", realPath->GetData(), appName.GetData(), appName.GetData());
             system(cmd);
 #else
-            realName.Append(".bin");
+            appName.Append(".bin");
 
             // Mount zip
             csRef<iDataBuffer> realZipPath = vfs->GetRealPath("/this/" + zip);
@@ -767,9 +763,9 @@ void UpdaterEngine::generalUpdate()
                         else
                             printOutput("Success!\n");
                     }
+                    fileUtil->RemoveFile("/this/" + oldFilePath);
                  }
                 // Clean up temp files.
-                fileUtil->RemoveFile("/this/" + oldFilePath);
                 fileUtil->RemoveFile("/this/" + diff, false);
             }
         }
