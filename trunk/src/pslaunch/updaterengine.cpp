@@ -553,7 +553,7 @@ bool UpdaterEngine::selfUpdate(int selfUpdating)
 #if defined(CS_PLATFORM_MACOSX)
             csRef<iDataBuffer> realPath = vfs->GetRealPath("/this/" + realName);
             csString cmd;
-            cmd.Format("open -a ./%s selfUpdateSecond", realPath.GetData());
+            cmd.Format("open -a ./%s selfUpdateSecond", realPath->GetData());
             system(cmd);
 #else
             if(fork() == 0)
