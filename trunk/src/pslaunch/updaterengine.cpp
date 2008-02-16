@@ -536,7 +536,7 @@ bool UpdaterEngine::selfUpdate(int selfUpdating)
 
             // Create a new process of the updater and exit.
             cmd.Clear();
-            cmd.Format("%s%s.app/Contents/MacOS/%s_static selfUpdateSecond", realPath->GetData(), appName.GetData(), appName.GetData());
+            cmd.Format("%s%s.app/Contents/MacOS/%s_static selfUpdateSecond", thisPath->GetData(), appName.GetData(), appName.GetData());
             system(cmd);
 #else
             appName.Append(".bin");
