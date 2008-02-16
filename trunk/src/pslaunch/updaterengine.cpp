@@ -57,7 +57,7 @@ void UpdaterEngine::Init(const csArray<csString> args, iObjectRegistry* _object_
     vfs = csQueryRegistry<iVFS> (object_reg);
     if(!vfs)
     {
-        printf("No VFS!\r\n");
+        printf("No VFS!\n");
         exit(1);
     }
     vfs->ChDir("/this/");
@@ -135,21 +135,21 @@ void UpdaterEngine::checkForUpdates()
     csRef<iDocumentNode> root = GetRootNode(UPDATERINFO_FILENAME);
     if(!root)
     {
-        printOutput("Unable to get root node\r\r\n");
+        printOutput("Unable to get root node\n");
         return;
     }
 
     csRef<iDocumentNode> confignode = root->GetNode("config");
     if (!confignode)
     {
-        printOutput("Couldn't find config node in configfile!\r\r\n");
+        printOutput("Couldn't find config node in configfile!\n");
         return;
     }
 
     // Load updater config
     if (!config->GetCurrentConfig()->Initialize(confignode))
     {
-        printOutput("Failed to Initialize mirror config current!\r\r\n");
+        printOutput("Failed to Initialize mirror config current!\n");
         return;
     }
 
@@ -165,7 +165,7 @@ void UpdaterEngine::checkForUpdates()
 
     if(config->UpdateExecs() && checkUpdater())
     {
-        printOutput("Update Available!\r\r\n");
+        printOutput("Update Available!\n");
 
         // If using a GUI, prompt user whether or not to update.
         if(!appName.Compare("psupdater"))
@@ -197,12 +197,12 @@ void UpdaterEngine::checkForUpdates()
         return;
     }
 
-    printOutput("No updates needed!\r\r\nChecking for updates to all files: ");
+    printOutput("No updates needed!\nChecking for updates to all files: ");
 
     // Check for normal updates.
     if(checkGeneral())
     {
-        printOutput("Updates Available!\r\r\n");
+        printOutput("Updates Available!\n");
         // Mark update as incomplete.
         config->GetConfigFile()->SetBool("Update.Clean", false);
         config->GetConfigFile()->Save();
@@ -229,10 +229,10 @@ void UpdaterEngine::checkForUpdates()
         // Mark update as complete and clean up.
         config->GetConfigFile()->SetBool("Update.Clean", true);
         config->GetConfigFile()->Save();
-        printOutput("Update finished!\r\r\n");
+        printOutput("Update finished!\n");
     }
     else
-        printOutput("No updates needed!\r\r\n");
+        printOutput("No updates needed!\n");
 
 
     delete downloader;
@@ -252,20 +252,20 @@ bool UpdaterEngine::checkUpdater()
     csRef<iDocumentNode> root = GetRootNode(UPDATERINFO_FILENAME);
     if(!root)
     {
-        printOutput("Unable to get root node\r\r\n");
+        printOutput("Unable to get root node\n");
         return false;
     }
 
     csRef<iDocumentNode> confignode = root->GetNode("config");
     if (!confignode)
     {
-        printOutput("Couldn't find config node in configfile!\r\r\n");
+        printOutput("Couldn't find config node in configfile!\n");
         return false;
     }
 
     if (!config->GetNewConfig()->Initialize(confignode))
     {
-        printOutput("Failed to Initialize mirror config new!\r\r\n");
+        printOutput("Failed to Initialize mirror config new!\n");
         return false;
     }
 
@@ -298,7 +298,7 @@ bool UpdaterEngine::checkGeneral()
             if(!name.Compare(oldCv->GetName()))
             {
                 // There's a problem and we can't continue. Throw a boo boo and clean up.
-                printOutput("Local config and server config are incompatible!\r\r\n");
+                printOutput("Local config and server config are incompatible!\n");
                 fileUtil->RemoveFile("/this/updaterinfo.xml");
                 fileUtil->MoveFile("/this/updaterinfo.xml.bak", "/this/updaterinfo.xml", true, false);
                 return false;
@@ -319,7 +319,7 @@ csRef<iDocumentNode> UpdaterEngine::GetRootNode(const char* nodeName)
     csRef<iDocumentSystem> xml = csPtr<iDocumentSystem> (new csTinyDocumentSystem);
     if (!xml)
     {
-        printOutput("Could not load the XML Document System\r\r\n");
+        printOutput("Could not load the XML Document System\n");
         return NULL;
     }
 
@@ -327,7 +327,7 @@ csRef<iDocumentNode> UpdaterEngine::GetRootNode(const char* nodeName)
     csRef<iDataBuffer> buf = vfs->ReadFile(nodeName);
     if (!buf || !buf->GetSize())
     {
-        printOutput("Couldn't open xml file '%s'!\r\n", nodeName);
+        printOutput("Couldn't open xml file '%s'!\n", nodeName);
         return NULL;
     }
 
@@ -336,7 +336,7 @@ csRef<iDocumentNode> UpdaterEngine::GetRootNode(const char* nodeName)
     const char* error = configdoc->Parse(buf);
     if (error)
     {
-        printOutput("XML Parsing error in file '%s': %s.\r\n", nodeName, error);
+        printOutput("XML Parsing error in file '%s': %s.\n", nodeName, error);
         return NULL;
     }
 
@@ -367,7 +367,7 @@ bool UpdaterEngine::selfUpdate(int selfUpdating)
     {
     case 1: // We've downloaded the new file and executed it.
         {
-            printOutput("Copying new files!\r\n");
+            printOutput("Copying new files!\n");
 
             // Construct executable names.
             csString tempName = appName;
@@ -407,7 +407,7 @@ bool UpdaterEngine::selfUpdate(int selfUpdating)
     case 2: // We're now running the new updater in the correct location.
         {
             // Clean up left over files.
-            printOutput("\r\nCleaning up!\r\n");
+            printOutput("\nCleaning up!\n");
 
             // Construct zip name.
             csString zip = appName;
@@ -424,7 +424,7 @@ bool UpdaterEngine::selfUpdate(int selfUpdating)
         }
     default: // We need to extract the new updater and execute it.
         {
-            printOutput("Beginning self update!\r\n");
+            printOutput("Beginning self update!\n");
 
             // Construct zip name.
             csString zip = appName;
@@ -438,7 +438,7 @@ bool UpdaterEngine::selfUpdate(int selfUpdating)
             csRef<iDataBuffer> buffer = vfs->ReadFile("/this/" + zip, true);
             if (!buffer)
             {
-                printOutput("Could not get MD5 of updater zip!!\r\n");
+                printOutput("Could not get MD5 of updater zip!!\n");
                 return false;
             }
 
@@ -447,7 +447,7 @@ bool UpdaterEngine::selfUpdate(int selfUpdating)
 
             if(!md5sum.Compare(config->GetNewConfig()->GetUpdaterVersionLatestMD5()))
             {
-                printOutput("md5sum of updater zip does not match correct md5sum!!\r\n");
+                printOutput("md5sum of updater zip does not match correct md5sum!!\n");
                 return false;
             }
 
@@ -480,7 +480,7 @@ bool UpdaterEngine::selfUpdate(int selfUpdating)
     case 2: // We're now running the new updater in the correct location.
         {
             // Clean up left over files.
-            printOutput("\r\nCleaning up!\r\n");
+            printOutput("\nCleaning up!\n");
 
             // Construct zip name.
             csString zip = appName;
@@ -494,7 +494,7 @@ bool UpdaterEngine::selfUpdate(int selfUpdating)
         }
     default: // We need to extract the new updater and execute it.
         {
-            printOutput("Beginning self update!\r\n");
+            printOutput("Beginning self update!\n");
 
             // Construct zip name.
             csString zip = appName;
@@ -508,7 +508,7 @@ bool UpdaterEngine::selfUpdate(int selfUpdating)
             csRef<iDataBuffer> buffer = vfs->ReadFile("/this/" + zip, true);
             if (!buffer)
             {
-                printOutput("Could not get MD5 of updater zip!!\r\n");
+                printOutput("Could not get MD5 of updater zip!!\n");
                 return false;
             }
 
@@ -518,7 +518,7 @@ bool UpdaterEngine::selfUpdate(int selfUpdating)
 
             if(!md5sum.Compare(config->GetNewConfig()->GetUpdaterVersionLatestMD5()))
             {
-                printOutput("md5sum of updater zip does not match correct md5sum!!\r\n");
+                printOutput("md5sum of updater zip does not match correct md5sum!!\n");
                 return false;
             }
 
@@ -579,7 +579,7 @@ void UpdaterEngine::generalUpdate()
 
     if (!confignode)
     {
-        printOutput("Couldn't find config node in configfile!\r\n");
+        printOutput("Couldn't find config node in configfile!\n");
         return;
     }
 
@@ -597,14 +597,14 @@ void UpdaterEngine::generalUpdate()
         zip.AppendFmt("-%s.zip", newCv->GetName());
 
         // Download update zip.
-        printOutput("Downloading update file..\r\n");
+        printOutput("Downloading update file..\n");
         downloader->DownloadFile(zip, zip, false, true);
 
         // Check md5sum is correct.
         csRef<iDataBuffer> buffer = vfs->ReadFile("/this/" + zip, true);
         if (!buffer)
         {
-            printOutput("Could not get MD5 of updater zip!!\r\n");
+            printOutput("Could not get MD5 of updater zip!!\n");
             return;
         }
 
@@ -614,7 +614,7 @@ void UpdaterEngine::generalUpdate()
 
         if(!md5sum.Compare(newCv->GetMD5Sum()))
         {
-            printOutput("md5sum of client zip does not match correct md5sum!!\r\n");
+            printOutput("md5sum of client zip does not match correct md5sum!!\n");
             return;
         }
 
@@ -715,25 +715,25 @@ void UpdaterEngine::generalUpdate()
                         url.AppendFmt("%s/", config->GetNewConfig()->GetPlatform());
                         if(!downloader->DownloadFile(url.Append(newFilePath.GetData()), newFilePath.GetData(), true, true))
                         {
-                            printOutput("\r\nUnable to update file: %s. Reverting file!\r\n", newFilePath.GetData());
+                            printOutput("\nUnable to update file: %s. Reverting file!\n", newFilePath.GetData());
                             fileUtil->CopyFile("/this/" + oldFilePath, "/this/" + newFilePath, true, false);
                         }
                         else
-                            printOutput("Done!\r\n");
+                            printOutput("Done!\n");
                     }
                     else
-                        printOutput("Done!\r\n");
+                        printOutput("Done!\n");
                 }
                 else
                 {
-                    printOutput("Done!\r\n");
+                    printOutput("Done!\n");
 
                     // Check md5sum is correct.
                     printOutput("Checking for correct md5sum: ");
                     csRef<iDataBuffer> buffer = vfs->ReadFile("/this/" + newFilePath, true);
                     if(!buffer)
                     {
-                        printOutput("Could not get MD5 of patched file %s! Reverting file!\r\n", newFilePath.GetData());
+                        printOutput("Could not get MD5 of patched file %s! Reverting file!\n", newFilePath.GetData());
                         fileUtil->RemoveFile("/this/" + newFilePath);
                         fileUtil->CopyFile("/this/" + oldFilePath, "/this/" + newFilePath, true, false);
                     }
@@ -746,12 +746,12 @@ void UpdaterEngine::generalUpdate()
 
                         if(!md5sum.Compare(fileMD5))
                         {
-                            printOutput("md5sum of file %s does not match correct md5sum! Reverting file!\r\n", newFilePath.GetData());
+                            printOutput("md5sum of file %s does not match correct md5sum! Reverting file!\n", newFilePath.GetData());
                             fileUtil->RemoveFile("/this/" + newFilePath);
                             fileUtil->CopyFile("/this/" + oldFilePath, "/this/" + newFilePath, true, false);
                         }
                         else
-                            printOutput("Success!\r\n");
+                            printOutput("Success!\n");
                     }
                  }
                 // Clean up temp files.
@@ -768,7 +768,7 @@ void UpdaterEngine::generalUpdate()
         }
         else
         {
-            printf("Failed to unmount file %s\r\n", zip.GetData());
+            printf("Failed to unmount file %s\n", zip.GetData());
         }
 
         // Add version info to updaterinfo.xml.bak and oldCvs.
