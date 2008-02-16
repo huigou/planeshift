@@ -3309,7 +3309,10 @@ void AdminManager::CreateNPC(MsgEntry* me,psAdminCmdMessage& msg, AdminCmdData& 
     gemNPC *masternpc = basis->GetNPCPtr();
     if (masternpc)
     {
-        masterNPCID = masternpc->GetCharacterData()->GetCharacterID();
+        // Return the master npc's id for this npc. If this npc isn't from a master
+        // template this function will return the character id. In this way we 
+        // will copy all the attributes of the master later.
+        masterNPCID = masternpc->GetCharacterData()->GetMasterNPCID();
     }
     if (masterNPCID == 0)
     {
