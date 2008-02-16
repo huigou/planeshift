@@ -612,8 +612,10 @@ void UpdaterEngine::generalUpdate()
             return;
         }
 
+        csRef<iDataBuffer> realZipPath = vfs->GetRealPath("/this/" + zip);
+
         // Mount zip
-        vfs->Mount("/zip", zip);
+        vfs->Mount("/zip", realZipPath->GetData());
 
         // Parse deleted files xml, make a list.
         csArray<csString> deletedList;
@@ -751,7 +753,7 @@ void UpdaterEngine::generalUpdate()
         }
 
         // Unmount zip and delete.
-        if(vfs->Unmount("/zip", zip))
+        if(vfs->Unmount("/zip", realZipPath->GetData()))
         {
             vfs->Sync();
             fileUtil->RemoveFile("/this/" + zip);
