@@ -384,7 +384,10 @@ bool UpdaterEngine::selfUpdate(int selfUpdating)
               csString zip = appName;
               zip.AppendFmt(config->GetCurrentConfig()->GetPlatform());
               zip.AppendFmt(".zip");
-              vfs->Mount("/zip", zip);
+
+              // Mount zip
+              csRef<iDataBuffer> realZipPath = vfs->GetRealPath("/this/" + zip);
+              vfs->Mount("/zip", realZipPath->GetData());
 
               csString artPath = "/art/";
               artPath.AppendFmt("%s.zip", appName.GetData());
@@ -394,7 +397,7 @@ bool UpdaterEngine::selfUpdate(int selfUpdating)
               dataPath.AppendFmt("%s.xml", appName.GetData());
               fileUtil->CopyFile("/zip" + dataPath, dataPath, true, false, true);
 
-              vfs->Unmount("/zip", zip);
+              vfs->Unmount("/zip", realZipPath->GetData());
             }
 
             // Create a new process of the updater.
@@ -449,14 +452,16 @@ bool UpdaterEngine::selfUpdate(int selfUpdating)
             }
 
             // md5sum is correct, mount zip and copy file.
-            vfs->Mount("/zip", zip);
+            csRef<iDataBuffer> realZipPath = vfs->GetRealPath("/this/" + zip);
+            vfs->Mount("/zip", realZipPath->GetData());
+
             csString from = "/zip/";
             from.AppendFmt(appName);
             from.AppendFmt(".exe");
             appName.AppendFmt("2.exe");
 
             fileUtil->CopyFile(from, "/this/" + appName, true, true);
-            vfs->Unmount("/zip", zip);
+            vfs->Mount("/zip", realZipPath->GetData());;
 
             // Create a new process of the updater.
             CreateProcess(appName.GetData(), "selfUpdateFirst", 0, 0, false, CREATE_DEFAULT_ERROR_MODE, 0, 0, &siStartupInfo, &piProcessInfo);
@@ -517,9 +522,8 @@ bool UpdaterEngine::selfUpdate(int selfUpdating)
                 return false;
             }
 
-            csRef<iDataBuffer> realZipPath = vfs->GetRealPath("/this/" + zip);
-
             // Mount zip
+            csRef<iDataBuffer> realZipPath = vfs->GetRealPath("/this/" + zip);
             vfs->Mount("/zip", realZipPath->GetData());
 
             csString realName = appName;
@@ -614,9 +618,8 @@ void UpdaterEngine::generalUpdate()
             return;
         }
 
+         // Mount zip
         csRef<iDataBuffer> realZipPath = vfs->GetRealPath("/this/" + zip);
-
-        // Mount zip
         vfs->Mount("/zip", realZipPath->GetData());
 
         // Parse deleted files xml, make a list.
