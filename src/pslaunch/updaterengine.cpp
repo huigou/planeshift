@@ -539,7 +539,7 @@ bool UpdaterEngine::selfUpdate(int selfUpdating)
             system(cmd.GetData());
 
             // Unmount zip.
-            vfs->Unmount("/zip", realZipPath->GetData())
+            vfs->Unmount("/zip", realZipPath->GetData());
 
             // Create a new process of the updater and exit.
 #if defined(CS_PLATFORM_MACOSX)
