@@ -28,6 +28,7 @@
 #include <csutil/util.h>
 #include <iutil/databuff.h> 
 #include <csutil/csstring.h>
+#include <iutil/stringarray.h>
 
 #include "fileutil.h"
 
@@ -149,7 +150,7 @@ bool FileUtil::CopyFile(csString from, csString to, bool vfsPath, bool executabl
     csString n1;
     csString n2;
 
-    csString file = to;
+    csString fileTo = to;
     if(vfsPath)
     {
         csRef<iDataBuffer> buff = vfs->GetRealPath(to);
@@ -160,14 +161,28 @@ bool FileUtil::CopyFile(csString from, csString to, bool vfsPath, bool executabl
             return false;
         }
 
-        file = buff->GetData();
+        fileTo = buff->GetData();
     }
 
-    FileStat* stat = StatFile(file);
-    if(stat && stat->readonly)
+    csString fileFrom = from;
+    if(vfsPath)
+    {
+        csRef<iDataBuffer> buff = vfs->GetRealPath(from);
+        if(!buff)
+        {
+            if(!silent)
+                printf("Couldn't get the real filename for %s!\n",from.GetData());
+            return false;
+        }
+
+        fileFrom = buff->GetData();
+    }
+
+    FileStat* statTo = StatFile(fileTo);
+    if(statTo && statTo->readonly)
     {
         if(!silent)
-            printf("Won't write to %s, because it's readonly\n",file.GetData());
+            printf("Won't write to %s, because it's readonly\n", fileTo.GetData());
         return true; // Return true to bypass DLL checks and stuff
     }
 
@@ -182,32 +197,62 @@ bool FileUtil::CopyFile(csString from, csString to, bool vfsPath, bool executabl
         n2= to;
     }
 
-    csRef<iDataBuffer> buffer = vfs->ReadFile(n1.GetData(),true);
-
-    if (!buffer)
+    if(statTo->TYPE_DIRECTORY)
     {
-        if(!silent)
-            printf("Couldn't read file %s!\n",n1.GetData());
-        return false;
-    }
+        if(!vfs->Exists(n2))
+        {
+            MakeDirectory(n2);
+        }
 
-    if (!vfs->WriteFile(n2.GetData(), buffer->GetData(), buffer->GetSize() ) )
-    {
-        if(!silent)
-            printf("Couldn't write to %s!\n", n2.GetData());
-        return false;
+        FileStat* statFrom = StatFile(fileFrom);
+
+        if(statFrom->TYPE_DIRECTORY)
+        {
+            csRef<iStringArray> fileList = vfs->FindFiles(n1);
+            for(uint i=0; i<fileList->GetSize(); i++)
+            {
+                csString file = fileList->Get(i);
+                csString currentTo = n2;
+                currentTo.AppendFmt("/%s", file.Slice(file.FindLast('/')).GetData());
+                CopyFile(file, currentTo, true, isExecutable(file));
+            }
+        }
+        else
+        {
+            if(!silent)
+                printf("Can't write a file where a directory already exists.\n", fileTo.GetData());
+            return false;
+        }
     }
+    else
+    {
+        csRef<iDataBuffer> buffer = vfs->ReadFile(n1.GetData(),true);
+
+        if (!buffer)
+        {
+            if(!silent)
+                printf("Couldn't read file %s!\n",n1.GetData());
+            return false;
+        }
+
+        if (!vfs->WriteFile(n2.GetData(), buffer->GetData(), buffer->GetSize() ) )
+        {
+            if(!silent)
+                printf("Couldn't write to %s!\n", n2.GetData());
+            return false;
+        }
 
 #ifdef CS_PLATFORM_UNIX
-    // On unix type systems we might need to set permissions after copy.
-    if(executable)
-    {
-        csString real(to);
-        real.FindReplace("/this/", "./");
-        if(!silent && chmod(real.GetData(), S_IRUSR | S_IWUSR | S_IXUSR | S_IRGRP | S_IXGRP) == -1)
-            printf("Failed to set permissions on file %s.\n", real.GetData());
-    }
+        // On unix type systems we might need to set permissions after copy.
+        if(executable)
+        {
+            csString real(to);
+            real.FindReplace("/this/", "./");
+            if(!silent && chmod(real.GetData(), S_IRUSR | S_IWUSR | S_IXUSR | S_IRGRP | S_IXGRP) == -1)
+                printf("Failed to set permissions on file %s.\n", real.GetData());
+        }
 #endif
+    }
 
     return true;
 }
