@@ -532,23 +532,28 @@ bool UpdaterEngine::selfUpdate(int selfUpdating)
 #else
             realName.Append(".bin");
 #endif
-            // Remove old updater.
-            csString cmd;
-            cmd.AppendFmt("rm -Rf %s", realName.GetData());
-            system(cmd.GetData());
+            // Copy new files into place.
+            fileUtil->CopyFile("/zip/" + realName, "/this/" + realName, true, true);
 
-            // Copy new one into place.
-            cmd.Clear();
-            cmd.AppendFmt("cp -Rf zip/* .");
-            system(cmd.GetData());
+            if(appName.Compare("pslaunch"))
+            {
+              csString artPath = "/art/";
+              artPath.AppendFmt("%s.zip", appName.GetData());
+              fileUtil->CopyFile("/zip" + artPath, artPath, true, false, true);
+
+              csString dataPath = "/data/gui/";
+              dataPath.AppendFmt("%s.xml", appName.GetData());
+              fileUtil->CopyFile("/zip" + dataPath, dataPath, true, false, true);
+            }
 
             // Unmount zip.
             vfs->Unmount("/zip", realZipPath->GetData());
 
             // Create a new process of the updater and exit.
 #if defined(CS_PLATFORM_MACOSX)
-            cmd.Clear();
-            cmd.AppendFmt("open -a ./%s selfUpdateSecond", realName.GetData());
+            csRef<iDataBuffer> realPath = vfs->GetRealPath("/this/" + realName);
+            csString cmd;
+            cmd.Format("open -a ./%s selfUpdateSecond", realPath.GetData());
             system(cmd);
 #else
             if(fork() == 0)
@@ -571,7 +576,7 @@ void UpdaterEngine::generalUpdate()
     * After each iteration we need to update updaterinfo.xml.bak as well as the array.
     */
 
-    // Start by fetching the configs.
+  // Start by fetching the configs.
     csRefArray<ClientVersion>& oldCvs = config->GetCurrentConfig()->GetClientVersions();
     const csRefArray<ClientVersion>& newCvs = config->GetNewConfig()->GetClientVersions();
     csRef<iDocumentNode> rootnode = GetRootNode(UPDATERINFO_OLD_FILENAME);
