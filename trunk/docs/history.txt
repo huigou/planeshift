@@ -1,3 +1,6 @@
+*** 2008-02-17 by Roland Schulz
+- Fix for FS#1103 - Armor worn does not show due to faulty xml parsing, thanks Vornne.
+
 *** 2008-02-17 by Mike Gist
 - Work on the banking window/popup and introduce popup by FayVanMering and Caarrie.
 
