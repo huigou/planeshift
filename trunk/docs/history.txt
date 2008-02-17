@@ -1,3 +1,6 @@
+*** 2008-02-17 by Mike Gist
+- Work on the banking window/popup and introduce popup by FayVanMering and Caarrie.
+
 *** 2008-02-17 by Anders Reggestad
 - Fixed FX#868 - Moved some CON_SPAM into Debug LOG_NPC to remove spamming output from
   npc client
