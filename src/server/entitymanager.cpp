@@ -1213,17 +1213,6 @@ bool EntityManager::RemoveActor(gemObject *actor)
     return true;
 }
 
-#if 0  // obsolete and not used
-csPtr<iCelEntity> EntityManager::CreateEntity( const char* propclass )
-{
-    csRef<iCelEntity> entity = gem->CreateEntity(NULL,0);
-
-    pl->CreatePropertyClass (entity, propclass);
-
-    return csPtr<iCelEntity> (entity);
-}
-#endif
-
 void EntityManager::SetReady(bool flag)
 {
     ready = flag; 
