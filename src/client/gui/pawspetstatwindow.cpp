@@ -613,7 +613,6 @@ bool pawsPetStatWindow::SetupDoll()
     charApp->ApplyTraits(actor->traits);
     charApp->ApplyEquipment(actor->equipment);
 
-    widget->Rotate(10,0.01f);
     widget->EnableMouseControl(true);
 
     return (true);
