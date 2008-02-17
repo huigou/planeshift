@@ -139,40 +139,40 @@
                 <attach point="PROPORTIONAL_BOTTOM" />
             </attachpoints>
             <!-- Tabs -->
-            <widget name="Stats Button" factory="pawsButton" style="tabbutton" id="1000" shadows="yes">
-                <frame x="20" y="2" width="40" />
+            <widget name="Stats Button" factory="pawsButton" style="tabbuttonskills" id="1000" shadows="yes">
+                <frame x="20" y="2" width="40" height="20"/>
                 <label text="Stats" />
                 <attachpoints>
                     <attach point="PROPORTIONAL_RIGHT" />
                     <attach point="ATTACH_LEFT" />
                 </attachpoints>
             </widget>
-            <widget name="Combat Button" factory="pawsButton" style="tabbutton" id="1001" >
-                <frame x="70" y="2" width="80" />
+            <widget name="Combat Button" factory="pawsButton" style="tabbuttonskills" id="1001" >
+		<frame x="70" y="2" width="80" height="20"/>
                 <label text="Combat Skills" />
                 <attachpoints>
                     <attach point="PROPORTIONAL_RIGHT" />
                     <attach point="PROPORTIONAL_LEFT" />
                 </attachpoints>
             </widget>
-            <widget name="Magic Button" factory="pawsButton" style="tabbutton" id="1002">
-                <frame x="160" y="2" width="75"  />
+            <widget name="Magic Button" factory="pawsButton" style="tabbuttonskills" id="1002">
+		<frame x="160" y="2" width="75" height="20" />
                 <label text="Magic Skills" />
                 <attachpoints>
                     <attach point="PROPORTIONAL_RIGHT" />
                     <attach point="PROPORTIONAL_LEFT" />
                 </attachpoints>
             </widget>
-            <widget name="Various Button" factory="pawsButton" style="tabbutton" id="1004" >
-                <frame x="240" y="2" width="80" />
+            <widget name="Various Button" factory="pawsButton" style="tabbuttonskills" id="1004" >
+		<frame x="240" y="2" width="80" height="20"/>
                 <label text="Various Skills" />
                 <attachpoints>
                     <attach point="ATTACH_RIGHT" />
                     <attach point="PROPORTIONAL_RIGHT" />
                 </attachpoints>
             </widget>            
-            <widget name="Spells Button" factory="pawsButton" style="tabbutton" id="1003" >
-                <frame x="320" y="2" width="70" />
+            <widget name="Spells Button" factory="pawsButton" style="tabbuttonskills" id="1003" >
+		<frame x="330" y="2" width="50" height="20"/>
                 <label text="Spells" />
                 <attachpoints>
                     <attach point="ATTACH_RIGHT" />
@@ -390,7 +390,7 @@
                 </attachpoints>
                 <widget name="" factory="pawsTextBox" >
                     <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" size="12" />
-                    <frame x="30" y="10" width="150" height="20" border="no"/>
+		    <frame x="30" y="5" width="150" height="20" border="no"/> 
                     <text string="Spell List:" />
                 </widget>
 
