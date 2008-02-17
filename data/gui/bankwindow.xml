@@ -5,7 +5,6 @@
             resizable="no">
 	    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="10" />
         <frame x="50" y="50" width="200" height="495" border="yes" />
-<!--	<bgimage resource="Banking Tab Button Up" />-->
         <title resource="Blue Title" text="Banking" align="left" close_button="yes" />
 
         <widget name="MoneyButton" factory="pawsButton" style="tabbuttonbanking" id="1000" tooltip="Money depositing and withdrawal." >
