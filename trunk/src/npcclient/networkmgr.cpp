@@ -415,8 +415,8 @@ void NetworkManager::HandlePerceptions(MsgEntry *msg)
                 NPC *npc = npcclient->FindNPC(targetEID);
                 if (!npc)
                 {
-                    CPrintf(CON_SPAM, "Got talk perception for unknown NPC(EID: %u) from %u!\n",
-                            targetEID,speakerEID);
+                    Debug3(LOG_NPC, targetEID, "Got talk perception for unknown NPC(EID: %u) from %u!\n",
+                           targetEID,speakerEID);
                     break;
                 }
                 iCelEntity *speaker_ent = npcclient->FindEntity(speakerEID);
@@ -443,8 +443,8 @@ void NetworkManager::HandlePerceptions(MsgEntry *msg)
                 
                 if (!npc)
                 {
-                    CPrintf(CON_SPAM, "Got attack perception for unknown NPC(EID: %u)!\n",
-                            targetEID);
+                    Debug2(LOG_NPC, targetEID, "Got attack perception for unknown NPC(EID: %u)!\n",
+                           targetEID);
                     break;
                 }
                 if (!attacker_ent)
@@ -488,7 +488,8 @@ void NetworkManager::HandlePerceptions(MsgEntry *msg)
 
                 if (!npc)
                 {
-                    CPrintf(CON_SPAM, "Got group attack perception for unknown NPC!\n");
+                    Debug2(LOG_NPC, targetEID, "Got group attack perception for unknown NPC(EID: %u)!",
+                           targetEID);
                     break;
                 }
 
@@ -516,7 +517,7 @@ void NetworkManager::HandlePerceptions(MsgEntry *msg)
                 NPC *npc = npcclient->FindNPC(targetEID);
                 if (!npc)
                 {
-                    CPrintf(CON_SPAM, "Attack on unknown npc(EID: %u).\n",targetEID);
+                    Debug2(LOG_NPC, targetEID, "Attack on unknown npc(EID: %u).",targetEID);
                     break;
                 }
                 iCelEntity *attacker_ent = npcclient->FindEntity(attackerEID);
