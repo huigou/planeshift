@@ -55,6 +55,7 @@ void psUpdater::RunUpdate(UpdaterEngine* engine) const
     // Check if we're already in the middle of a self-update.
     if(engine->GetConfig()->IsSelfUpdating())
     {
+        csSleep(2000);
         // Continue the self update, passing the update stage.
         if(engine->selfUpdate(engine->GetConfig()->IsSelfUpdating()))
             return;

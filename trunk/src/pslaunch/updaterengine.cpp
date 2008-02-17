@@ -303,7 +303,7 @@ bool UpdaterEngine::checkGeneral()
             if(!name.Compare(oldCv->GetName()))
             {
                 // There's a problem and we can't continue. Throw a boo boo and clean up.
-                printOutput("Local config and server config are incompatible!\n");
+                printOutput("\nLocal config and server config are incompatible!\n");
                 fileUtil->RemoveFile("/this/updaterinfo.xml");
                 fileUtil->MoveFile("/this/updaterinfo.xml.bak", "/this/updaterinfo.xml", true, false);
                 return false;
