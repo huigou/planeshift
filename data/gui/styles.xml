@@ -48,6 +48,13 @@
         <buttondown resource="Chat Tab Button Down" />
         <buttonup resource="Chat Tab Button Up" />
     </style>
+    
+    <style name="tabbuttonbanking" toggle="yes" >
+	    <frame width="80" height="22" border="no" />
+	    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="240" g="240" b="200" size="10" />
+	    <buttondown resource="Banking Tab Button Down" />
+	    <buttonup resource="Banking Tab Button Up" />
+    </style>
 
     <style name="tabpanel" >
         <frame border="no" />
@@ -69,6 +76,12 @@
         <buttondown resource="Chat Tab Button Down" />
     </style>
     
+    <style name="bankingbutton" toggle="no" >
+	    <frame width="80" height="22" border="no" />
+	    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="240" g="240" b="200" size="8" />
+	    <buttonup resource="Shortcut Button" />
+	    <buttondown resource="Shortcut Button" />
+    </style>
 
     <style name="checkbox" shadows="yes" >
         <frame width="120" height="20" />

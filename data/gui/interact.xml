@@ -123,13 +123,13 @@
 
         <widget name="ButtonBank" factory="pawsButton" id="2400" tooltip="Start Personal Banking">
              <frame x="0" y="128" width="64" height="64" />
-             <bgimage resource="ButtonGive" />
+             <bgimage resource="ButtonBanking" />
         </widget>
 
 
         <widget name="ButtonIntroduce" factory="pawsButton" id="2500" tooltip="Introduce yourself">
              <frame x="128" y="128" width="64" height="64" />
-             <bgimage resource="ButtonMarriage" />
+             <bgimage resource="ButtonIntroduce" />
         </widget>
      
     </widget>
