@@ -22,12 +22,7 @@
 //=============================================================================
 #include <csutil/randomgen.h>
 #include <imesh/object.h>
-#include <imesh/spritecal3d.h>
 #include <iengine/mesh.h>
-
-#include <physicallayer/propclas.h>
-#include <physicallayer/entity.h>
-#include <propclass/mesh.h>
 
 //=============================================================================
 // Project Includes
