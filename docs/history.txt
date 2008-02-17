@@ -1,3 +1,7 @@
+*** 2008-02-17 by Anders Reggestad
+- Fixed FX#868 - Moved some CON_SPAM into Debug LOG_NPC to remove spamming output from
+  npc client
+
 *** 2008-02-16 by Andrew Craig
 - Added gemObject::GetEntityID() to replace gem->GetEntity()->GetID() calls. 
   This will limit some of the dependecy of items on the iCelEntity class. 
