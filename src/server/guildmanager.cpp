@@ -25,8 +25,6 @@
 // Crystal Space Includes
 //=============================================================================
 #include <csutil/xmltiny.h>
-#include <physicallayer/entity.h>
-#include <propclass/mesh.h>
 
 //=============================================================================
 // Project Includes
