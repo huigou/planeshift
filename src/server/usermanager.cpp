@@ -279,7 +279,7 @@ void UserManager::HandleUserCommand(MsgEntry *me,Client *client)
         if (client->GetActor()->GetMode() == PSCHARACTER_MODE_SIT)
         {
             client->GetActor()->SetMode(PSCHARACTER_MODE_PEACE);
-            psUserActionMessage anim(me->clientnum, client->GetActor()->GetEntity()->GetID(), "stand up");
+            psUserActionMessage anim(me->clientnum, client->GetActor()->GetEntityID(), "stand up");
             anim.Multicast( client->GetActor()->GetMulticastClients(),0,PROX_LIST_ANY_RANGE );
             Emote("%s stands up.", "%s stands up.", "stand", me, client);
         }
@@ -410,7 +410,7 @@ void UserManager::Emote(csString general, csString specific, csString animation,
 
     if (animation != "noanim")
     {
-        psUserActionMessage anim(me->clientnum, client->GetActor()->GetEntity()->GetID(), animation);
+        psUserActionMessage anim(me->clientnum, client->GetActor()->GetEntityID(), animation);
         anim.Multicast(client->GetActor()->GetMulticastClients(), 0, PROX_LIST_ANY_RANGE);
     }
 }
@@ -1441,7 +1441,7 @@ void UserManager::HandleLoot(Client *client)
         // Send items to looting player
         psLootMessage loot;
         size_t count = chr->GetLootItems(loot,
-            target->GetEntity()->GetID(),
+            target->GetEntityID(),
             client->GetClientNum() );
         if (count)
         {

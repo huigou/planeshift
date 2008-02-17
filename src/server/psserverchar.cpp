@@ -1341,7 +1341,7 @@ void psServerCharManager::SendOutEquipmentMessages( gemActor* actor,
                                                     psItem* item,
                                                     int equipped )
 {
-    PS_ID eid = actor->GetEntity()->GetID();
+    PS_ID eid = actor->GetEntityID();
 
     csString mesh = item->GetMeshName();
     csString part = item->GetPartName();
@@ -1573,7 +1573,7 @@ bool psServerCharManager::SendContainerContents(Client *client, psItem *item, in
                                     IS_CONTAINER );
                                           
     if (item->GetGemObject() != NULL )
-        outgoing.containerID = item->GetGemObject()->GetEntity()->GetID();
+        outgoing.containerID = item->GetGemObject()->GetEntityID();
     else
         outgoing.containerID = containerID;        
 
@@ -1624,7 +1624,7 @@ bool psServerCharManager::SendActionContents(Client *client, psActionLocation *a
         outgoing.containerID = containerID;
     */
 
-    outgoing.containerID = item->GetGemObject()->GetEntity()->GetID();
+    outgoing.containerID = item->GetGemObject()->GetEntityID();
 
     if ( isContainer )
     {           
