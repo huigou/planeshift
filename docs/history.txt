@@ -1,3 +1,7 @@
+*** 2008-02-16 by Andrew Craig
+- Added gemObject::GetEntityID() to replace gem->GetEntity()->GetID() calls. 
+  This will limit some of the dependecy of items on the iCelEntity class. 
+ 
 *** 2008-02-16 by Anders Reggestad
 - Fixed so that NPCs created with the in game "/npc" command will be children
   of the master npc if the npc pointet to has a master npc. This so that stats

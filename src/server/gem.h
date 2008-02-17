@@ -187,6 +187,11 @@ public:
 
     virtual const char* GetObjectType() { return "Object"; }
     iCelEntity *GetEntity() { return entity; }
+    
+    /** Get the ID of the entity 
+    *   @return The ID of the entity this object has. 
+    */
+    uint GetEntityID();
 
     virtual psItem *GetItem() { return NULL; }
     virtual gemActor* GetActorPtr() { return NULL; }

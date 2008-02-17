@@ -615,7 +615,7 @@ void psWorkManager::HandleProduction(Client *client,const char *type,const char 
     int time_req = nr->anim_duration_seconds;
 
     // Send anim and confirmation message to client and nearby people
-    psOverrideActionMessage msg(client->GetClientNum(),client->GetActor()->GetEntity()->GetID(),nr->anim,nr->anim_duration_seconds);
+    psOverrideActionMessage msg(client->GetClientNum(),client->GetActor()->GetEntityID(),nr->anim,nr->anim_duration_seconds);
     psserver->GetEventManager()->Multicast(msg.msg, client->GetActor()->GetMulticastClients(),0,PROX_LIST_ANY_RANGE);
     client->GetActor()->SetMode(PSCHARACTER_MODE_WORK);
 
@@ -680,7 +680,7 @@ void psWorkManager::HandleProduction(gemActor *actor,const char *type,const char
     {
         //psserver->SendSystemInfo(client->GetClientNum(),"You don't have the skill to %s for %s.",type,reward);
         Warning6(LOG_SUPERCLIENT,"%s(%d) don't have the skill(%d) to %s for %s.",
-                 actor->GetName(),actor->GetEntity()->GetID(),nr->skill->id,type,reward);
+                 actor->GetName(),actor->GetEntityID(),nr->skill->id,type,reward);
         return;
     }
 
@@ -697,7 +697,7 @@ void psWorkManager::HandleProduction(gemActor *actor,const char *type,const char
     int time_req = nr->anim_duration_seconds;
 
     // Send anim and confirmation message to client and nearby people
-    psOverrideActionMessage msg(0,actor->GetEntity()->GetID(),nr->anim,nr->anim_duration_seconds);
+    psOverrideActionMessage msg(0,actor->GetEntityID(),nr->anim,nr->anim_duration_seconds);
     psserver->GetEventManager()->Multicast(msg.msg, actor->GetMulticastClients(),0,PROX_LIST_ANY_RANGE);
 
     actor->SetMode(PSCHARACTER_MODE_WORK);
@@ -881,7 +881,7 @@ void psWorkManager::HandleProductionEvent(psWorkGameEvent* workEvent)
                 else
                 {
                     Debug5(LOG_SUPERCLIENT,0,"%s(EID: %u) found %s, but dropped it: %s",workEvent->worker->GetName(),
-                           workEvent->worker->GetEntity()->GetID(), newitem->GetName(), worke->Inventory().lastError.GetDataSafe() );
+                           workEvent->worker->GetEntityID(), newitem->GetName(), worke->Inventory().lastError.GetDataSafe() );
                 }
 
 
@@ -898,7 +898,7 @@ void psWorkManager::HandleProductionEvent(psWorkGameEvent* workEvent)
                 else
                 {
                     Debug4(LOG_SUPERCLIENT,0,"%s(EID: %u) got some %s.",workEvent->worker->GetName(),
-                           workEvent->worker->GetEntity()->GetID(),newitem->GetName() );
+                           workEvent->worker->GetEntityID(),newitem->GetName() );
                 }
             }
 
@@ -2041,7 +2041,7 @@ void psWorkManager::StartTransformationEvent(int transType, INVENTORY_SLOT_NUMBE
     {
         csVector3 offset(0,0,0);
         workEvent->effectID =  CacheManager::GetSingleton().NextEffectUID();
-        psEffectMessage newmsg( 0, process->GetRenderEffect(), offset, owner->GetActor()->GetEntity()->GetID(),0 ,workEvent->effectID );
+        psEffectMessage newmsg( 0, process->GetRenderEffect(), offset, owner->GetActor()->GetEntityID(),0 ,workEvent->effectID );
         newmsg.Multicast(workEvent->multi,0,PROX_LIST_ANY_RANGE);
     }
 
@@ -2051,7 +2051,7 @@ void psWorkManager::StartTransformationEvent(int transType, INVENTORY_SLOT_NUMBE
         // Send anim and confirmation message to client and nearby people
         if( process && !process->GetAnimation().IsEmpty())
         {
-            psOverrideActionMessage msg(clientNum, worker->GetEntity()->GetID(), process->GetAnimation(), delay);
+            psOverrideActionMessage msg(clientNum, worker->GetEntityID(), process->GetAnimation(), delay);
             psserver->GetEventManager()->Multicast(msg.msg, worker->GetMulticastClients(), 0, PROX_LIST_ANY_RANGE);
         }
 
@@ -2181,7 +2181,7 @@ bool psWorkManager::ValidateTarget(Client* client)
       uint32 instance_id = action->GetInstanceID();
       if (instance_id==(uint32)-1)
       {
-          instance_id = action->GetGemObject()->GetEntity()->GetID();
+          instance_id = action->GetGemObject()->GetEntityID();
       }
       target = GEMSupervisor::GetSingleton().FindItemEntity( instance_id );
     }

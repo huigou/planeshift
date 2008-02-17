@@ -680,6 +680,11 @@ gemObject::~gemObject()
     proxlist = NULL;
 }
 
+uint gemObject::GetEntityID()
+{
+    return entity->GetID();
+}
+
 const char *gemObject::GetName()
 {
     return entity->GetName();
