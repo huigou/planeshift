@@ -35,9 +35,6 @@
 #include <iengine/mesh.h>
 #include <csgeom/math3d.h>
 
-#include <physicallayer/propclas.h>
-#include <physicallayer/entity.h>
-#include <propclass/mesh.h>
 
 //=============================================================================
 // Project Includes
