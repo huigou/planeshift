@@ -539,7 +539,8 @@ bool UpdaterEngine::selfUpdate(int selfUpdating)
             cmd.Format("%s%s.app/Contents/MacOS/%s_static selfUpdateSecond", thisPath->GetData(), appName.GetData(), appName.GetData());
             system(cmd);
 #else
-            appName.Append(".bin");
+            csString realName = appName;
+            realName.Append(".bin");
 
             // Mount zip
             csRef<iDataBuffer> realZipPath = vfs->GetRealPath("/this/" + zip);
