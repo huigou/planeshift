@@ -1102,7 +1102,7 @@ csArray< gemObject* > *gemObject::GetObjectsInRange( float range )
 void gemObject::GetPosition(csVector3& pos, float& yrot,iSector*& sector)
 {
     // Position
-    pos = pcmesh->GetMesh()->GetMovable()->GetPosition();
+    pos = GetMeshWrapper()->GetMovable()->GetPosition();
 
     // Rotation
     yrot = GetAngle();
@@ -1114,7 +1114,7 @@ void gemObject::GetPosition(csVector3& pos, float& yrot,iSector*& sector)
 void gemObject::GetPosition(csVector3& pos, iSector*& sector)
 {
     // Position
-    pos = pcmesh->GetMesh()->GetMovable()->GetPosition();
+    pos = GetMeshWrapper()->GetMovable()->GetPosition();
 
     // Sector
     sector = GetSector();
@@ -1123,15 +1123,15 @@ void gemObject::GetPosition(csVector3& pos, iSector*& sector)
 float gemObject::GetAngle()
 {
     // Rotation
-    csMatrix3 transf = pcmesh->GetMesh()->GetMovable()->GetTransform().GetT2O();
+    csMatrix3 transf = GetMeshWrapper()->GetMovable()->GetTransform().GetT2O();
     return psWorld::Matrix2YRot(transf);
 }
 
 iSector* gemObject::GetSector()
 {
     // Sector
-    if (pcmesh->GetMesh()->GetMovable()->GetSectors()->GetCount())
-        return pcmesh->GetMesh()->GetMovable()->GetSectors()->Get(0);
+    if (GetMeshWrapper()->GetMovable()->GetSectors()->GetCount())
+        return GetMeshWrapper()->GetMovable()->GetSectors()->Get(0);
     else
         return NULL;
 }
@@ -2471,12 +2471,12 @@ bool gemActor::InitLinMove (const csVector3& pos,
 
     // Now Determine CD bounding boxes for upper and lower colliders
     csRef<iSpriteCal3DState> cal3d;
-    cal3d = scfQueryInterface<iSpriteCal3DState> ( pcmesh->GetMesh ()->GetMeshObject ());
+    cal3d = scfQueryInterface<iSpriteCal3DState> ( GetMeshWrapper()->GetMeshObject ());
     if (cal3d)
     {
         cal3d->SetAnimCycle("stand",1);
     }
-    const csBox3& box = pcmesh->GetMesh()->GetMeshObject()->GetObjectModel()->GetObjectBoundingBox();
+    const csBox3& box = GetMeshWrapper()->GetMeshObject()->GetObjectModel()->GetObjectBoundingBox();
 
     float width  = box.MaxX() - box.MinX();
     float height = box.MaxY() - box.MinY();
@@ -3181,7 +3181,7 @@ void gemActor::SetAction(const char *anim,csTicks& timeDelay)
     if (!anim)
         return;
 
-    csRef<iSpriteCal3DState> spstate = scfQueryInterface<iSpriteCal3DState> (pcmesh->GetMesh()->GetMeshObject());
+    csRef<iSpriteCal3DState> spstate = scfQueryInterface<iSpriteCal3DState> (GetMeshWrapper()->GetMeshObject());
                     
     // Player must be standing for anim to happen
     spstate->SetAnimAction(anim,.25,.25);
