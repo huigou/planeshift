@@ -760,9 +760,9 @@ PS_ID EntityManager::CreateNPC(psCharacter *chardata, int instance, csVector3 po
 //        CPrintf(CON_NOTIFY,"------> Entity Manager Setting Imperv\n");
         psserver->npcmanager->ControlNPC( actor );
     }
-    Debug3(LOG_NPC,0,"Created NPC actor: <%s> [%u] in world\n", actor->GetName(), actor->GetEntity()->GetID());
+    Debug3(LOG_NPC,0,"Created NPC actor: <%s> [%u] in world\n", actor->GetName(), actor->GetEntityID());
 
-    return actor->GetEntity()->GetID();
+    return actor->GetEntityID();
 }
 
 
@@ -940,7 +940,7 @@ bool EntityManager::CreateActionLocation( psActionLocation *instance, bool trans
     psserver->npcmanager->AddEntity(obj);
 
     Debug3(LOG_STARTUP ,0, "Action Location ID %u : Created successfully(EID: %u)!\n", 
-           instance->id,obj->GetEntity()->GetID());
+           instance->id,obj->GetEntityID());
     return true;
 }
 
@@ -1030,7 +1030,7 @@ void EntityManager::HandleActor(MsgEntry* me)
 
     // Then send stuff like HP and mana to player, flags=-1 force a update of all stats
     psCharacter * chardata = client->GetCharacterData();
-    chardata->SendStatDRMessage(me->clientnum, actor->GetEntity()->GetID(), -1);
+    chardata->SendStatDRMessage(me->clientnum, actor->GetEntityID(), -1);
 
     //Store info about the character login
     chardata->SetLastLoginTime();
@@ -1191,7 +1191,7 @@ bool EntityManager::SendActorList(Client *client)
 bool EntityManager::RemoveActor(gemObject *actor)
 {
     // Do network commmand to remove entity from all clients
-    psRemoveObject msg( 0, actor->GetEntity()->GetID() );
+    psRemoveObject msg( 0, actor->GetEntityID() );
     
     // Send to human clients in range
     psserver->GetEventManager()->Multicast(msg.msg, 
