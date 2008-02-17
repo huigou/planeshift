@@ -208,7 +208,7 @@ void GEMSupervisor::HandleMessage(MsgEntry *me,Client *client)
             gemActor *actor = client->GetActor();
             psCharacter *psChar = actor->GetCharacterData();
                         
-            psChar->SendStatDRMessage(client->GetClientNum(), actor->GetEntity()->GetID(), DIRTY_VITAL_ALL);
+            psChar->SendStatDRMessage(client->GetClientNum(), actor->GetEntityID(), DIRTY_VITAL_ALL);
             break;
         }
     }
@@ -255,7 +255,7 @@ csPtr<iCelEntity> GEMSupervisor::CreateEntity(gemObject *obj, uint32 gemID)
 
 void GEMSupervisor::RemoveEntity(gemObject *which,uint32 gemID)
 {
-    PS_ID eid = which->GetEntity()->GetID();
+    PS_ID eid = which->GetEntityID();
     
     Debug3(LOG_CELPERSIST,0,"GEM removing entity id %d EID: %u.", 
            gemID,eid);
@@ -291,7 +291,7 @@ gemObject *GEMSupervisor::FindObject(PS_ID id)
     while ( i.HasNext() )
     {
         obj = i.Next();
-        if ( obj->GetEntity()->GetID() == id)
+        if ( obj->GetEntityID() == id)
         {
             return obj;
         }            
@@ -346,7 +346,7 @@ PS_ID GEMSupervisor::FindItemID(psItem *item)
     {
         gemObject* obj = i.Next();
         if ( obj->GetItem() == item)
-            return obj->GetEntity()->GetID();
+            return obj->GetEntityID();
     }
     Error1("No ID was found.");
     return 0;
@@ -444,7 +444,7 @@ void GEMSupervisor::FillNPCList(MsgEntry *msg,int superclientID)
         if (obj->GetSuperclientID() == superclientID)
         {
             msg->Add( (uint32_t) obj->GetPlayerID() );
-            msg->Add( (uint32_t) obj->GetEntity()->GetID() );
+            msg->Add( (uint32_t) obj->GetEntityID() );
 
             // Turn off any npcs about to be managed from being temporarily impervious
             // CPrintf(CON_NOTIFY,"---------> GemSuperVisor Setting imperv\n");
@@ -559,7 +559,7 @@ void GEMSupervisor::GetAllEntityPos(psAllEntityPosMessage& update)
                 if (dist2 > .04 || instance != oldInstance)
                 {
                     count_actual++;
-                    update.Add(obj->GetEntity()->GetID(), pos, sector, obj->GetInstance(),
+                    update.Add(obj->GetEntityID(), pos, sector, obj->GetInstance(),
                                CacheManager::GetSingleton().GetMsgStrings());
                     obj->SetLastSuperclientPos(pos,instance);
                 }
@@ -1008,7 +1008,7 @@ void gemObject::UpdateProxList( bool force )
             //               obj->GetPosition(pos,yrot,sector);
             //                CPrintf(CON_SPAM, "Removing %s at (%1.2f, %1.2f, %1.2f) in sector %s.\n",obj->GetName(),pos.x,pos.y,pos.z,sector->QueryObject()->GetName() );
             
-            psRemoveObject remove( GetClientID(), obj->GetEntity()->GetID() );
+            psRemoveObject remove( GetClientID(), obj->GetEntityID() );
             remove.SendMessage();
             proxlist->EndWatching(obj);
         }
@@ -1030,7 +1030,7 @@ void gemObject::UpdateProxList( bool force )
             log.AppendFmt("-removing %s from client %s\n",GetName(),obj->GetName());
 #endif
             CS_ASSERT(obj != this);
-            psRemoveObject msg( obj->GetClientID(), GetEntity()->GetID() );
+            psRemoveObject msg( obj->GetClientID(), GetEntityID() );
             msg.SendMessage();
             obj->GetProxList()->EndWatching(this);
         }
@@ -1150,7 +1150,7 @@ csString gemObject::GetDefaultBehavior(const csString & dfltBehaviors)
 void gemObject::Dump()
 {
     CPrintf(CON_CMDOUTPUT ,"Entity %d is %s with refCount %d:\n",
-            GetEntity()->GetID(),GetName(),GetEntity()->GetRefCount() );
+            GetEntityID(),GetName(),GetEntity()->GetRefCount() );
     csString out;
     CPrintf(CON_CMDOUTPUT ,"ProxList:\n");
     CPrintf(CON_CMDOUTPUT ,"Distance: %.2f <= Desired: %.2f \n",
@@ -2176,7 +2176,7 @@ void gemActor::SendGroupStats()
 {
     if (InGroup() || GetClientID())
     {
-        psChar->SendStatDRMessage(GetClientID(), GetEntity()->GetID(), 0, InGroup() ? GetGroup() : NULL);
+        psChar->SendStatDRMessage(GetClientID(), GetEntityID(), 0, InGroup() ? GetGroup() : NULL);
     }
         
     gemNPC* npc = dynamic_cast<gemNPC*>(this);
@@ -2186,7 +2186,7 @@ void gemActor::SendGroupStats()
         gemObject *owner = npc->GetOwner();
         if (owner && owner->GetClientID())
         {
-            psChar->SendStatDRMessage(owner->GetClientID(), GetEntity()->GetID(), 0);
+            psChar->SendStatDRMessage(owner->GetClientID(), GetEntityID(), 0);
         }
     }
 }
@@ -2962,7 +2962,7 @@ void gemActor::SetGroup(PlayerGroup * group)
 
             // Send group update
             psUpdatePlayerGroupMessage update(memb->GetClientID(),
-                                              GetEntity()->GetID(),
+                                              GetEntityID(),
                                               groupID);
 
             // CPrintf(CON_DEBUG,"Sending oldgroup update to client %d (%s)\n",memb->GetClientID(),memb->GetName());
@@ -2985,12 +2985,12 @@ void gemActor::SetGroup(PlayerGroup * group)
 
             // Send us to the rest of the group
             psUpdatePlayerGroupMessage update1(memb->GetClientID(),
-                                               GetEntity()->GetID(),
+                                               GetEntityID(),
                                                groupID);
 
             // Send the rest of the group to us (To make sure we got all the actors)
             psUpdatePlayerGroupMessage update2(GetClientID(),
-                                               memb->GetEntity()->GetID(),
+                                               memb->GetEntityID(),
                                                groupID);
 
             // CPrintf(CON_DEBUG,"Sending group update to client %d (%s)\n",memb->GetClientID(),memb->GetName());
@@ -3003,7 +3003,7 @@ void gemActor::SetGroup(PlayerGroup * group)
     if(!self)
     {
         psUpdatePlayerGroupMessage update(GetClientID(),
-                                          GetEntity()->GetID(),
+                                          GetEntityID(),
                                           groupID);
         update.SendMessage();
     }
@@ -3060,7 +3060,7 @@ void gemActor::SendGroupMessage(MsgEntry *me)
 
 void gemActor::SendTargetStatDR(Client *client)
 {
-    psChar->SendStatDRMessage(client->GetClientNum(), GetEntity()->GetID(), DIRTY_VITAL_ALL);
+    psChar->SendStatDRMessage(client->GetClientNum(), GetEntityID(), DIRTY_VITAL_ALL);
 }
 
 void gemActor::BroadcastTargetStatDR(ClientConnectionSet *clients)
@@ -3083,7 +3083,7 @@ void gemActor::BroadcastTargetStatDR(ClientConnectionSet *clients)
     Client * actorClient = clients->FindPlayer(playerID);
     if (actorClient != NULL)
     {
-        psChar->SendStatDRMessage(actorClient->GetClientNum(), GetEntity()->GetID(), 0);
+        psChar->SendStatDRMessage(actorClient->GetClientNum(), GetEntityID(), 0);
     }
 }
 
@@ -3785,7 +3785,7 @@ void gemNPC::Send( int clientnum, bool control, bool to_superclient )
 
     if ( this->owner.IsValid())
     {
-        ownerEID = this->owner->GetEntity()->GetID();
+        ownerEID = this->owner->GetEntityID();
     }
 
     uint32_t flags = psPersistActor::NPC;
@@ -3971,13 +3971,13 @@ bool gemContainer::AddToContainer(psItem *item, Client *fromClient, int slot, bo
 
         // Update client(s)
         psViewItemUpdate mesg(fromClient->GetClientNum(), 
-                              GetEntity()->GetID(),
+                              GetEntityID(),
                               slot,
                               false,
                               item->GetName(),
                               item->GetImageName(),
                               item->GetStackCount(),
-                              guardian ? guardian->GetEntity()->GetID() : 0);
+                              guardian ? guardian->GetEntityID() : 0);
 
         mesg.Multicast(fromClient->GetActor()->GetMulticastClients(),0,5);
     }
@@ -3996,7 +3996,7 @@ bool gemContainer::RemoveFromContainer(psItem *item,Client *fromClient)
             // printf("Multicasting removal update to nearby clients of %s.\n\n", fromClient->GetName() );
             // Update client(s)
             psViewItemUpdate mesg(fromClient->GetClientNum(), 
-                                  GetEntity()->GetID(),
+                                  GetEntityID(),
                                   slot,
                                   true,
                                   item->GetName(),
@@ -4041,7 +4041,7 @@ psItem* gemContainer::RemoveFromContainer(psItem *itemStack, int fromSlot, Clien
         // printf("Multicasting removal update to nearby clients of %s.\n\n", fromClient->GetName() );
         // Update client(s)
         psViewItemUpdate mesg(fromClient->GetClientNum(), 
-                              GetEntity()->GetID(),
+                              GetEntityID(),
                               slot,
                               clear,
                               itemStack->GetName(),
