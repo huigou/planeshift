@@ -137,13 +137,6 @@ protected:
     csHash<psFamiliarType*, PS_ID> familiarTypeList;
 
     bool CreateRoom (const char* name, const char* mapfile);
-    csPtr<iCelEntity> CreateActor(const char* factname, 
-                            const csVector3& pos, 
-                            float angle,
-                            iSector* sector, 
-                            int playerID,
-                            int objectID,
-                            int clientID);        
 
     bool SamePos(gemObject * actor, iSector * sector, const csVector3 & point);
 
