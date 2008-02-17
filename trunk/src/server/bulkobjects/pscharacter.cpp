@@ -1192,7 +1192,7 @@ void psCharacter::SetMode(PSCHARACTER_MODE newmode, uint32_t clientnum)
         isFrozen = actor->GetClient()->IsFrozen();
     }
 
-    psModeMessage msg(clientnum, actor->GetEntity()->GetID(), (uint8_t) newmode, combat_stance.stance_id);
+    psModeMessage msg(clientnum, actor->GetEntityID(), (uint8_t) newmode, combat_stance.stance_id);
     msg.Multicast(actor->GetMulticastClients(), 0, PROX_LIST_ANY_RANGE);
 
     actor->SetAllowedToMove(newmode != PSCHARACTER_MODE_DEAD &&
