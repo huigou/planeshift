@@ -25,8 +25,6 @@
 //=============================================================================
 #include <iutil/document.h>
 #include <csutil/xmltiny.h>
-#include <physicallayer/entity.h>
-#include <propclass/mesh.h>
 
 //=============================================================================
 // Library Includes
