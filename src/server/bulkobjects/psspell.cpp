@@ -329,8 +329,8 @@ psSpellCastGameEvent *psSpell::Cast(psSpellManager * mgr, Client * client, csStr
 
         effectName = caster_effect;
         offset = csVector3(0,0,0);
-        anchorID = caster->GetEntity()->GetID();
-        targetID = target->GetEntity()->GetID();
+        anchorID = caster->GetEntityID();
+        targetID = target->GetEntityID();
         castingDuration = (int)varCastingDuration->GetValue();
 
         return new psSpellCastGameEvent( mgr, this, client, target, castingDuration, max_range, powerLevel, duration);
@@ -492,7 +492,7 @@ bool psSpell::AffectTargets(psSpellManager * mgr, psSpellCastGameEvent * event, 
 
             if ( ( target_type & spell_target) != 0 )
             {
-                PS_ID affectedTargetID = affectedTarget->GetEntity()->GetID();
+                PS_ID affectedTargetID = affectedTarget->GetEntityID();
                 event->target = affectedTarget;
                 if (offensive)
                 {
@@ -638,8 +638,8 @@ bool psSpell::AffectTarget(psSpellCastGameEvent * event, csString &effectName, c
 
     effectName = target_effect;
     offset = csVector3(0,0,0);
-    anchorID = caster->GetEntity()->GetID();
-    targetID = target->GetEntity()->GetID();
+    anchorID = caster->GetEntityID();
+    targetID = target->GetEntityID();
 
     // Spell hit successfully.  Now let npcclient's know about it.
     psserver->GetNPCManager()->QueueSpellPerception(caster,target,npcSpellCategory,npcSpellCategoryID,npcSpellRelativePower);
