@@ -1345,7 +1345,7 @@ void AdminManager::CommandArea(MsgEntry *me, psAdminCmdMessage& msg, AdminCmdDat
                 {
                     if (nearobj->GetItem())
                     {
-                        data.player.Format("eid:%u",nearobj->GetEntity()->GetID());
+                        data.player.Format("eid:%u",nearobj->GetEntityID());
                         break;
                     }
                     else
@@ -1363,7 +1363,7 @@ void AdminManager::CommandArea(MsgEntry *me, psAdminCmdMessage& msg, AdminCmdDat
                 }
                 case 4:  // Target everything
                 {
-                    data.player.Format("eid:%u",nearobj->GetEntity()->GetID());
+                    data.player.Format("eid:%u",nearobj->GetEntityID());
                     break;
                 }
             }
@@ -1458,7 +1458,7 @@ void AdminManager::GetInfo(MsgEntry* me,psAdminCmdMessage& msg, AdminCmdData& da
 {    
     PS_ID entityId = 0;
     if ( target && target->GetEntity() )
-        entityId = target->GetEntity()->GetID();
+        entityId = target->GetEntityID();
 
     if (target && strcmp(target->GetObjectType(), "ActionLocation") == 0) // Action location
     {
@@ -2172,7 +2172,7 @@ void AdminManager::Teleport(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& 
     
     if (data.player == "me"  &&  data.target != "map"  &&  data.target != "here")
     {
-        psGUITargetUpdateMessage updateMessage( client->GetClientNum(), subject->GetEntity()->GetID() );
+        psGUITargetUpdateMessage updateMessage( client->GetClientNum(), subject->GetEntityID() );
         updateMessage.SendMessage();
     }
 }
@@ -3654,7 +3654,7 @@ void AdminManager::MakeUnlockable(MsgEntry *me, psAdminCmdMessage& msg, AdminCmd
         uint32 instance_id = action->GetInstanceID();
         if (instance_id== (uint32)-1)
         {
-            instance_id = action->GetGemObject()->GetEntity()->GetID();
+            instance_id = action->GetGemObject()->GetEntityID();
         }
         target = GEMSupervisor::GetSingleton().FindItemEntity( instance_id );
         if (!target)
@@ -3704,7 +3704,7 @@ void AdminManager::MakeSecurity(MsgEntry *me, psAdminCmdMessage& msg, AdminCmdDa
         uint32 instance_id = action->GetInstanceID();
         if (instance_id== (uint32)-1)
         {
-            instance_id = action->GetGemObject()->GetEntity()->GetID();
+            instance_id = action->GetGemObject()->GetEntityID();
         }
         target = GEMSupervisor::GetSingleton().FindItemEntity( instance_id );
         if (!target)
@@ -3791,7 +3791,7 @@ void AdminManager::AddRemoveLock(MsgEntry *me, psAdminCmdMessage& msg, AdminCmdD
         uint32 instance_id = action->GetInstanceID();
         if (instance_id == (uint32)-1)
         {
-            instance_id = action->GetGemObject()->GetEntity()->GetID();
+            instance_id = action->GetGemObject()->GetEntityID();
         }
         target = GEMSupervisor::GetSingleton().FindItemEntity( instance_id );
         if (!target)
@@ -3849,7 +3849,7 @@ void AdminManager::ChangeLock(MsgEntry *me, psAdminCmdMessage& msg, AdminCmdData
         uint32 instance_id = action->GetInstanceID();
         if (instance_id == (uint32)-1)
         {
-            instance_id = action->GetGemObject()->GetEntity()->GetID();
+            instance_id = action->GetGemObject()->GetEntityID();
         }
         target = GEMSupervisor::GetSingleton().FindItemEntity( instance_id );
         if (!target)
@@ -4831,7 +4831,7 @@ void AdminManager::ChangeName(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
         fullName = target->GetCharacterData()->GetCharFullName();
         target->SetName(data.newName);
         target->GetActor()->SetName(fullName);
-        actorId = target->GetActor()->GetEntity()->GetID();
+        actorId = target->GetActor()->GetEntityID();
 
     }
     else if (type == PSCHARACTER_TYPE_NPC || type == PSCHARACTER_TYPE_PET)
@@ -4845,7 +4845,7 @@ void AdminManager::ChangeName(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
         }
         npc->GetCharacterData()->SetFullName(data.newName, data.newLastName);
         fullName = npc->GetCharacterData()->GetCharFullName();
-        actorId = npc->GetEntity()->GetID();
+        actorId = npc->GetEntityID();
     }
 
     // Inform
@@ -5730,7 +5730,7 @@ void AdminManager::RenameGuild(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdDat
     {
         psGuildMember* member = guild->members[i];
         if(member->actor)
-            array.Push(member->actor->GetActor()->GetEntity()->GetID());
+            array.Push(member->actor->GetActor()->GetEntityID());
     }   
 
     // Update the labels
@@ -5792,7 +5792,7 @@ void AdminManager::Thunder(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& d
     // Queue thunder
     psserver->GetWeatherManager()->QueueNextEvent(0, psWeatherMessage::LIGHTNING, 0, 0, 0, 
                                                   sectorinfo->name, sectorinfo, 
-                                                  client->GetActor()->GetEntity()->GetID());
+                                                  client->GetActor()->GetEntityID());
 
 }
 
@@ -6511,7 +6511,7 @@ void AdminManager::HandleSetTrait(psAdminCmdMessage& msg, AdminCmdData& data, Cl
             csString str( "<traits>" );
             str.Append(currTrait->ToXML() );
             str.Append("</traits>");        
-            psTraitChangeMessage message( client->GetClientNum(), (uint32_t)target->GetActor()->GetEntity()->GetID(), str );
+            psTraitChangeMessage message( client->GetClientNum(), (uint32_t)target->GetActor()->GetEntityID(), str );
             message.Multicast( target->GetActor()->GetMulticastClients(), 0, PROX_LIST_ANY_RANGE );     
             psserver->SendSystemOK(client->GetClientNum(), "Trait successfully changed");
             return;

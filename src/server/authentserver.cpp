@@ -568,7 +568,7 @@ void psAuthenticationServer::SendDisconnect(Client* client, const char *reason)
 {
     if (client->GetActor())
     {
-        psDisconnectMessage msg(client->GetClientNum(), client->GetActor()->GetEntity()->GetID(),reason);
+        psDisconnectMessage msg(client->GetClientNum(), client->GetActor()->GetEntityID(),reason);
         if (msg.valid)
         {
             msg.msg->priority = PRIORITY_LOW;
