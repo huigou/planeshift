@@ -116,9 +116,7 @@ public:
     virtual void HandleMessage(MsgEntry* me,Client *client);
 
     bool RemoveActor(gemObject *actor);
-
-    csPtr<iCelEntity> CreateEntity( const char* propclass );
-
+    
     void SetReady(bool flag);
     bool IsReady() { return ready; }
     bool HasBeenReady() { return hasBeenReady; }
