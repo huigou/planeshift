@@ -517,7 +517,7 @@ void GuildManager::SendNotifications(int guild, int msg)
             }
             
             psUpdatePlayerGuildMessage update( client->GetClientNum(),
-                                               client->GetActor()->GetEntity()->GetID(),
+                                               client->GetActor()->GetEntityID(),
                                                guild->GetName() );
 
             if (guild->IsSecret())  // If this is a secret guild, we should only broadcast to members
@@ -1135,7 +1135,7 @@ void GuildManager::CreateGuild(psGuildCmdMessage& msg,Client *client)
 
     // Update the player's label
     psUpdatePlayerGuildMessage update(client->GetClientNum(),
-                                      client->GetActor()->GetEntity()->GetID(),
+                                      client->GetActor()->GetEntityID(),
                                       guild->GetName());
 
     update.Multicast(client->GetActor()->GetMulticastClients(),0,0 );
@@ -1195,7 +1195,7 @@ void GuildManager::EndGuild(psGuildInfo *guild,int clientnum)
         if (p->GetActor() && (p->GetActor()->GetGuild() == guild))
         {
             psUpdatePlayerGuildMessage update(p->GetClientNum(),
-                                              p->GetActor()->GetEntity()->GetID(),
+                                              p->GetActor()->GetEntityID(),
                                               "");
 
             update.Multicast(p->GetActor()->GetMulticastClients(),0,0 );
@@ -1390,7 +1390,7 @@ void GuildManager::HandleJoinGuild(PendingGuildInvite *invite)
     {
         psUpdatePlayerGuildMessage update(
                 inviteeClient->GetClientNum(),
-                inviteeClient->GetActor()->GetEntity()->GetID(),
+                inviteeClient->GetActor()->GetEntityID(),
                 guild->GetName() );
         psserver->GetEventManager()->Broadcast(update.msg,NetBase::BC_EVERYONE);  
     }    
@@ -1738,14 +1738,14 @@ void GuildManager::Secret(psGuildCmdMessage &msg, Client *client)
         // Turn label off for everybody
         psUpdatePlayerGuildMessage update(
                 clientnum,
-                client->GetActor()->GetEntity()->GetID(),
+                client->GetActor()->GetEntityID(),
                 "");
         psserver->GetEventManager()->Broadcast(update.msg,NetBase::BC_EVERYONE);
         
         // Update guild members with the label 
         psUpdatePlayerGuildMessage update2(
                 clientnum,
-                client->GetActor()->GetEntity()->GetID(),
+                client->GetActor()->GetEntityID(),
                 guild->GetName() );
         psserver->GetEventManager()->Broadcast(update2.msg,NetBase::BC_GUILD,guild->id);                  
     }                        
@@ -1754,7 +1754,7 @@ void GuildManager::Secret(psGuildCmdMessage &msg, Client *client)
         // turn label on for everybody
         psUpdatePlayerGuildMessage update(
                 clientnum,
-                client->GetActor()->GetEntity()->GetID(),
+                client->GetActor()->GetEntityID(),
                 guild->GetName() );
         psserver->GetEventManager()->Broadcast(update.msg,NetBase::BC_EVERYONE);          
     }
