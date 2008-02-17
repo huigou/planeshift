@@ -374,7 +374,7 @@ public:
         csString str( "<traits>" );
         str.Append(trait->ToXML() );
         str.Append("</traits>");        
-        psTraitChangeMessage message( (uint32_t)clientID, (uint32_t)actor->GetEntity()->GetID(), str );
+        psTraitChangeMessage message( (uint32_t)clientID, (uint32_t)actor->GetEntityID(), str );
         message.Multicast( actor->GetMulticastClients(), 0, PROX_LIST_ANY_RANGE );                           
         return true;
     }
@@ -3058,7 +3058,7 @@ public:
                 float yrot;
                 const char* sector = NULL;
                 actionLocation->GetLocationInWorld( &sector, newpos.x, newpos.y, newpos.z, yrot );
-                uint32 meshID = actionLocation->GetGemObject()->GetEntity()->GetID();
+                uint32 meshID = actionLocation->GetGemObject()->GetEntityID();
 
                 // Send message to attach effect 1/2 m above action location
                 newpos.y += 0.5f;

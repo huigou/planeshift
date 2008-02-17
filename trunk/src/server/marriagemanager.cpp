@@ -499,7 +499,7 @@ void psMarriageManager::UpdateName ( psCharacter* charData )
      actor->SetName( charData->GetCharFullName() );       
 
     //Update label
-    psUpdateObjectNameMessage newNameMsg( 0, actor->GetEntity()->GetID(), charData->GetCharFullName() );
+    psUpdateObjectNameMessage newNameMsg( 0, actor->GetEntityID(), charData->GetCharFullName() );
     psserver->GetEventManager()->Broadcast( newNameMsg.msg, NetBase::BC_EVERYONE );
     
  }
