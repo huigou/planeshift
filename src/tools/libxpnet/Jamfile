@@ -2,4 +2,8 @@ SubDir TOP src tools libxpnet ;
 
 Library xpnet :
 	[ Wildcard *.cpp *.h ]
+	: noinstall
 ;
+
+ExternalLibs xpnet : CRYSTAL ;
+
