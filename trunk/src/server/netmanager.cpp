@@ -21,9 +21,6 @@
 // Crystal Space Includes
 //=============================================================================
 #include <csutil/sysfunc.h>
-#include <physicallayer/entity.h>
-#include <propclass/mesh.h>
-#include <physicallayer/entity.h>
 
 //=============================================================================
 // Project Includes

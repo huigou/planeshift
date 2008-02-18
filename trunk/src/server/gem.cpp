@@ -49,15 +49,6 @@
 #include <physicallayer/persist.h>
 #include <propclass/mesh.h>
 #include <propclass/meshsel.h>
-#include <propclass/inv.h>
-#include <propclass/chars.h>
-#include <propclass/move.h>
-#include <propclass/tooltip.h>
-#include <propclass/camera.h>
-#include <propclass/gravity.h>
-#include <propclass/timer.h>
-#include <propclass/region.h>
-#include <propclass/input.h>
 #include <propclass/linmove.h>
 #include <propclass/colldet.h>
 
