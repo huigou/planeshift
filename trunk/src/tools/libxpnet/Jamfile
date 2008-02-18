@@ -1,0 +1,5 @@
+SubDir TOP src tools libxpnet ;
+
+Library libxpnet :
+	[ Wildcard *.c *.h ]
+;
