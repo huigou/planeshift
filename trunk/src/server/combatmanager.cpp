@@ -564,7 +564,7 @@ void psCombatManager::ApplyCombatEvent(psCombatGameEvent *event, int attack_resu
                 gemTarget->GetEntityID(),
                 event->AttackLocation,
                 event->FinalDamage,
-                weapon->GetAttackAnimID(gemAttacker->GetCharacterData(),gemAttacker->GetEntity() ),
+                weapon->GetAttackAnimID(gemAttacker->GetCharacterData()),
                 gemTarget->FindAnimIndex("hit"));
 
             ev.Multicast(gemTarget->GetMulticastClients(),0,MAX_COMBAT_EVENT_RANGE);
@@ -620,7 +620,7 @@ void psCombatManager::ApplyCombatEvent(psCombatGameEvent *event, int attack_resu
                 gemTarget->GetEntityID(),
                 event->AttackLocation,
                 0, // no dmg on a dodge
-                weapon->GetAttackAnimID( gemAttacker->GetCharacterData(),gemAttacker->GetEntity() ),
+                weapon->GetAttackAnimID(gemAttacker->GetCharacterData()),
                 (unsigned int)-1); // no defense anims yet
 
             ev.Multicast(gemTarget->GetMulticastClients(),0,MAX_COMBAT_EVENT_RANGE);
@@ -642,7 +642,7 @@ void psCombatManager::ApplyCombatEvent(psCombatGameEvent *event, int attack_resu
                 gemTarget->GetEntityID(),
                 event->AttackLocation,
                 0, // no dmg on a block
-                weapon->GetAttackAnimID( gemAttacker->GetCharacterData(),gemAttacker->GetEntity() ),
+                weapon->GetAttackAnimID( gemAttacker->GetCharacterData() ),
                 (unsigned int)-1); // no defense anims yet
 
             ev.Multicast(gemTarget->GetMulticastClients(),0,MAX_COMBAT_EVENT_RANGE);
@@ -674,7 +674,7 @@ void psCombatManager::ApplyCombatEvent(psCombatGameEvent *event, int attack_resu
                 gemTarget->GetEntityID(),
                 event->AttackLocation,
                 0, // no dmg on a miss
-                weapon->GetAttackAnimID( gemAttacker->GetCharacterData(),gemAttacker->GetEntity() ),
+                weapon->GetAttackAnimID( gemAttacker->GetCharacterData() ),
                 (unsigned int)-1); // no defense anims yet
 
             ev.Multicast(gemTarget->GetMulticastClients(),0,MAX_COMBAT_EVENT_RANGE);

@@ -767,7 +767,7 @@ void psItemStats::GetArmorVsWeaponType(csString& buff)
     buff.Clear ();
 }
 
-int psItemStats::GetAttackAnimID(unsigned int skill_level, iCelEntity *entity)
+int psItemStats::GetAttackAnimID(unsigned int skill_level)
 {
     if (anim_list)
     {

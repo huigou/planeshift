@@ -1381,12 +1381,12 @@ void psItem::CombineStack(psItem *& stackme)
 
 // Functions that call into the appropriate psItemStats object
 
-int psItem::GetAttackAnimID(psCharacter *pschar,iCelEntity *entity)
+int psItem::GetAttackAnimID(psCharacter *pschar)
 {
     PSSKILL skill = current_stats->Weapon().Skill(PSITEMSTATS_WEAPONSKILL_INDEX_0);
     unsigned int curr_level = pschar->GetSkills()->GetSkillRank(skill);
 
-    return current_stats->GetAttackAnimID(curr_level,entity);
+    return current_stats->GetAttackAnimID(curr_level);
 }
 
 

@@ -521,7 +521,7 @@ public:
     bool FitsInSlots(PSITEMSTATS_SLOTLIST slotmask);
     float GetDecayRate();
     
-    int GetAttackAnimID(unsigned int skill_level, iCelEntity *ent);
+    int GetAttackAnimID(unsigned int skill_level);
 
     const char *GetName() const;
     const csString GetDownCaseName();
