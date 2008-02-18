@@ -313,7 +313,7 @@ void SlotManager::MoveFromWorldContainer(psSlotMovementMsg& msg, Client *fromCli
 
             // Update client(s)
             psViewItemUpdate mesg(fromClient->GetClientNum(), 
-                                  worldContainer->GetEntity()->GetID(),
+                                  worldContainer->GetEntityID(),
                                   msg.fromSlot,
                                   true,
                                   itemProposed->GetName(),
