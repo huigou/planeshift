@@ -169,7 +169,7 @@ void Client::SetTargetObject(gemObject* newobject, bool updateClientGUI)
 
     if (updateClientGUI)
     {
-        psGUITargetUpdateMessage updateMessage( GetClientNum(), newobject->GetEntity()->GetID() );
+        psGUITargetUpdateMessage updateMessage( GetClientNum(), newobject->GetEntityID() );
         updateMessage.SendMessage();
     }
 }
