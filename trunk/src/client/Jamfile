@@ -52,7 +52,9 @@ STATIC.PLUGINLIST =
   frustvis
   genmesh
   gl3d
+  glshader_cg
   glshader_fixed
+  glshader_ps1
   gmeshanim
   gmeshanimpdl
   gmeshldr
