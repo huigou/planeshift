@@ -2,8 +2,8 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="8.00"
-	Name="liblibxpnet"
-	ProjectGUID="{1881EAB6-01AA-075A-2FA6-2358BBC5BDEC}"
+	Name="libxpnet"
+	ProjectGUID="{9A00C04D-B432-07C4-0C79-25933213DCD5}"
 	SccProjectName=""
 	SccLocalPath="">
 	<Platforms>
@@ -13,8 +13,8 @@
 	<Configurations>
   		<Configuration
 			Name="Release (with static libs)|Win32"
-			OutputDirectory="..\..\out\release8\build\liblibxpnet\"
-			IntermediateDirectory="..\..\out\release8\build\liblibxpnet\"
+			OutputDirectory="..\..\out\release8\build\libxpnet\"
+			IntermediateDirectory="..\..\out\release8\build\libxpnet\"
 			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
@@ -26,14 +26,14 @@
 				RuntimeLibrary="2"
 				DebugInformationFormat="3"
 				BufferSecurityCheck="FALSE"
-				ProgramDataBaseFileName="..\..\out\release8\build\liblibxpnet\libxpnet.pdb"
+				ProgramDataBaseFileName="..\..\out\release8\build\libxpnet\xpnet.pdb"
 				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;WIN32"
 				OptimizeForProcessor="1"
 				AdditionalOptions=" "
-				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
-				PrecompiledHeaderFile="..\..\out\release8\build\liblibxpnet\liblibxpnet.pch"
-				AssemblerListingLocation="..\..\out\release8\build\liblibxpnet\"
-				ObjectFile="..\..\out\release8\build\liblibxpnet\"
+				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
+				PrecompiledHeaderFile="..\..\out\release8\build\libxpnet\libxpnet.pch"
+				AssemblerListingLocation="..\..\out\release8\build\libxpnet\"
+				ObjectFile="..\..\out\release8\build\libxpnet\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="TRUE"
@@ -50,13 +50,13 @@
 				GenerateDebugInformation="TRUE"
 				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD"
 				AdditionalOptions=" "
-				AdditionalDependencies=""
+				AdditionalDependencies="libcrystalspace.lib ws2_32.lib zlib.lib"
 				SuppressStartupBanner="TRUE"
-				AdditionalLibraryDirectories=""
+				AdditionalLibraryDirectories="..\..\..\CS\out\release8\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\release8\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
 				TargetMachine="1"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\out\release8\libs\liblibxpnet.lib"
+				OutputFile="..\..\out\release8\libs\libxpnet.lib"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
@@ -64,7 +64,7 @@
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\release8\build\liblibxpnet\liblibxpnet.tlb"/>
+				TypeLibraryName="..\..\out\release8\build\libxpnet\libxpnet.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="md ..\..\out\release8\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\release8\bin\&#x0D;&#x0A;"
@@ -76,7 +76,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;PROJECTGEN_VERSION=8"
-				AdditionalIncludeDirectories=".;..\..\src\tools\libxpnet;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
+				AdditionalIncludeDirectories=".;..\..\src\tools\libxpnet;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -85,8 +85,8 @@
 		</Configuration>
   		<Configuration
 			Name="Release (with DLLs)|Win32"
-			OutputDirectory="..\..\out\release8\build\liblibxpnet\"
-			IntermediateDirectory="..\..\out\release8\build\liblibxpnet\"
+			OutputDirectory="..\..\out\release8\build\libxpnet\"
+			IntermediateDirectory="..\..\out\release8\build\libxpnet\"
 			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
@@ -98,14 +98,14 @@
 				RuntimeLibrary="2"
 				DebugInformationFormat="3"
 				BufferSecurityCheck="FALSE"
-				ProgramDataBaseFileName="..\..\out\release8\build\liblibxpnet\libxpnet.pdb"
+				ProgramDataBaseFileName="..\..\out\release8\build\libxpnet\xpnet.pdb"
 				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;WIN32;CS_BUILD_SHARED_LIBS"
 				OptimizeForProcessor="1"
 				AdditionalOptions=" "
-				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
-				PrecompiledHeaderFile="..\..\out\release8\build\liblibxpnet\liblibxpnet.pch"
-				AssemblerListingLocation="..\..\out\release8\build\liblibxpnet\"
-				ObjectFile="..\..\out\release8\build\liblibxpnet\"
+				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
+				PrecompiledHeaderFile="..\..\out\release8\build\libxpnet\libxpnet.pch"
+				AssemblerListingLocation="..\..\out\release8\build\libxpnet\"
+				ObjectFile="..\..\out\release8\build\libxpnet\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="TRUE"
@@ -122,13 +122,13 @@
 				GenerateDebugInformation="TRUE"
 				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD"
 				AdditionalOptions=" "
-				AdditionalDependencies=""
+				AdditionalDependencies="libcrystalspace.lib ws2_32.lib zlib.lib"
 				SuppressStartupBanner="TRUE"
-				AdditionalLibraryDirectories=""
+				AdditionalLibraryDirectories="..\..\..\CS\out\release8\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\release8\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
 				TargetMachine="1"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\out\release8\libs\liblibxpnet.lib"
+				OutputFile="..\..\out\release8\libs\libxpnet.lib"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
@@ -136,7 +136,7 @@
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\release8\build\liblibxpnet\liblibxpnet.tlb"/>
+				TypeLibraryName="..\..\out\release8\build\libxpnet\libxpnet.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="md ..\..\out\release8\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\release8\bin\&#x0D;&#x0A;"
@@ -148,7 +148,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;PROJECTGEN_VERSION=8"
-				AdditionalIncludeDirectories=".;..\..\src\tools\libxpnet;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
+				AdditionalIncludeDirectories=".;..\..\src\tools\libxpnet;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -157,8 +157,8 @@
 		</Configuration>
     		<Configuration
 			Name="Debug (with static libs)|Win32"
-			OutputDirectory="..\..\out\debug8\build\liblibxpnet\"
-			IntermediateDirectory="..\..\out\debug8\build\liblibxpnet\"
+			OutputDirectory="..\..\out\debug8\build\libxpnet\"
+			IntermediateDirectory="..\..\out\debug8\build\libxpnet\"
 			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
@@ -170,14 +170,14 @@
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
-				ProgramDataBaseFileName="..\..\out\debug8\build\liblibxpnet\libxpnet.pdb"
+				ProgramDataBaseFileName="..\..\out\debug8\build\libxpnet\xpnet.pdb"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;WIN32"
 				OptimizeForProcessor="1"
 				AdditionalOptions=" "
-				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
-				PrecompiledHeaderFile="..\..\out\debug8\build\liblibxpnet\liblibxpnet.pch"
-				AssemblerListingLocation="..\..\out\debug8\build\liblibxpnet\"
-				ObjectFile="..\..\out\debug8\build\liblibxpnet\"
+				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
+				PrecompiledHeaderFile="..\..\out\debug8\build\libxpnet\libxpnet.pch"
+				AssemblerListingLocation="..\..\out\debug8\build\libxpnet\"
+				ObjectFile="..\..\out\debug8\build\libxpnet\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="TRUE"
@@ -192,13 +192,13 @@
 				GenerateDebugInformation="TRUE"
 				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD,MSVCRT"
 				AdditionalOptions=" "
-				AdditionalDependencies=""
+				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib"
 				SuppressStartupBanner="TRUE"
-				AdditionalLibraryDirectories=""
+				AdditionalLibraryDirectories="..\..\..\CS\out\debug8\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug8\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
 				TargetMachine="1"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\out\debug8\libs\liblibxpnet_d.lib"
+				OutputFile="..\..\out\debug8\libs\libxpnet_d.lib"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
@@ -206,7 +206,7 @@
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug8\build\liblibxpnet\liblibxpnet.tlb"/>
+				TypeLibraryName="..\..\out\debug8\build\libxpnet\libxpnet.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="md ..\..\out\debug8\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug8\bin\&#x0D;&#x0A;"
@@ -218,7 +218,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;PROJECTGEN_VERSION=8"
-				AdditionalIncludeDirectories=".;..\..\src\tools\libxpnet;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
+				AdditionalIncludeDirectories=".;..\..\src\tools\libxpnet;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -227,8 +227,8 @@
 		</Configuration>
   		<Configuration
 			Name="Debug (with DLLs)|Win32"
-			OutputDirectory="..\..\out\debug8\build\liblibxpnet\"
-			IntermediateDirectory="..\..\out\debug8\build\liblibxpnet\"
+			OutputDirectory="..\..\out\debug8\build\libxpnet\"
+			IntermediateDirectory="..\..\out\debug8\build\libxpnet\"
 			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
@@ -240,14 +240,14 @@
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
-				ProgramDataBaseFileName="..\..\out\debug8\build\liblibxpnet\libxpnet.pdb"
+				ProgramDataBaseFileName="..\..\out\debug8\build\libxpnet\xpnet.pdb"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;WIN32;CS_BUILD_SHARED_LIBS"
 				OptimizeForProcessor="1"
 				AdditionalOptions=" "
-				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
-				PrecompiledHeaderFile="..\..\out\debug8\build\liblibxpnet\liblibxpnet.pch"
-				AssemblerListingLocation="..\..\out\debug8\build\liblibxpnet\"
-				ObjectFile="..\..\out\debug8\build\liblibxpnet\"
+				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
+				PrecompiledHeaderFile="..\..\out\debug8\build\libxpnet\libxpnet.pch"
+				AssemblerListingLocation="..\..\out\debug8\build\libxpnet\"
+				ObjectFile="..\..\out\debug8\build\libxpnet\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="TRUE"
@@ -262,13 +262,13 @@
 				GenerateDebugInformation="TRUE"
 				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD,MSVCRT"
 				AdditionalOptions=" "
-				AdditionalDependencies=""
+				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib"
 				SuppressStartupBanner="TRUE"
-				AdditionalLibraryDirectories=""
+				AdditionalLibraryDirectories="..\..\..\CS\out\debug8\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug8\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
 				TargetMachine="1"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\out\debug8\libs\liblibxpnet_d.lib"
+				OutputFile="..\..\out\debug8\libs\libxpnet_d.lib"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
@@ -276,7 +276,7 @@
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug8\build\liblibxpnet\liblibxpnet.tlb"/>
+				TypeLibraryName="..\..\out\debug8\build\libxpnet\libxpnet.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="md ..\..\out\debug8\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug8\bin\&#x0D;&#x0A;"
@@ -288,7 +288,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;PROJECTGEN_VERSION=8"
-				AdditionalIncludeDirectories=".;..\..\src\tools\libxpnet;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
+				AdditionalIncludeDirectories=".;..\..\src\tools\libxpnet;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -297,8 +297,8 @@
 		</Configuration>
     		<Configuration
 			Name="MemoryTracker (with static libs)|Win32"
-			OutputDirectory="..\..\out\debug8\build\liblibxpnet\"
-			IntermediateDirectory="..\..\out\debug8\build\liblibxpnet\"
+			OutputDirectory="..\..\out\debug8\build\libxpnet\"
+			IntermediateDirectory="..\..\out\debug8\build\libxpnet\"
 			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
@@ -310,14 +310,14 @@
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
-				ProgramDataBaseFileName="..\..\out\debug8\build\liblibxpnet\libxpnet.pdb"
+				ProgramDataBaseFileName="..\..\out\debug8\build\libxpnet\xpnet.pdb"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;WIN32"
 				OptimizeForProcessor="1"
 				AdditionalOptions=" "
-				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
-				PrecompiledHeaderFile="..\..\out\debug8\build\liblibxpnet\liblibxpnet.pch"
-				AssemblerListingLocation="..\..\out\debug8\build\liblibxpnet\"
-				ObjectFile="..\..\out\debug8\build\liblibxpnet\"
+				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
+				PrecompiledHeaderFile="..\..\out\debug8\build\libxpnet\libxpnet.pch"
+				AssemblerListingLocation="..\..\out\debug8\build\libxpnet\"
+				ObjectFile="..\..\out\debug8\build\libxpnet\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="TRUE"
@@ -332,13 +332,13 @@
 				GenerateDebugInformation="TRUE"
 				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD,MSVCRT"
 				AdditionalOptions=" "
-				AdditionalDependencies=""
+				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib"
 				SuppressStartupBanner="TRUE"
-				AdditionalLibraryDirectories=""
+				AdditionalLibraryDirectories="..\..\..\CS\out\debug8\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug8\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
 				TargetMachine="1"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\out\debug8\libs\liblibxpnet_d.lib"
+				OutputFile="..\..\out\debug8\libs\libxpnet_d.lib"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
@@ -346,7 +346,7 @@
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug8\build\liblibxpnet\liblibxpnet.tlb"/>
+				TypeLibraryName="..\..\out\debug8\build\libxpnet\libxpnet.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="md ..\..\out\debug8\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug8\bin\&#x0D;&#x0A;"
@@ -358,7 +358,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;PROJECTGEN_VERSION=8"
-				AdditionalIncludeDirectories=".;..\..\src\tools\libxpnet;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
+				AdditionalIncludeDirectories=".;..\..\src\tools\libxpnet;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -367,8 +367,8 @@
 		</Configuration>
   		<Configuration
 			Name="MemoryTracker (with DLLs)|Win32"
-			OutputDirectory="..\..\out\debug8\build\liblibxpnet\"
-			IntermediateDirectory="..\..\out\debug8\build\liblibxpnet\"
+			OutputDirectory="..\..\out\debug8\build\libxpnet\"
+			IntermediateDirectory="..\..\out\debug8\build\libxpnet\"
 			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
@@ -380,14 +380,14 @@
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
-				ProgramDataBaseFileName="..\..\out\debug8\build\liblibxpnet\libxpnet.pdb"
+				ProgramDataBaseFileName="..\..\out\debug8\build\libxpnet\xpnet.pdb"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;WIN32;CS_BUILD_SHARED_LIBS"
 				OptimizeForProcessor="1"
 				AdditionalOptions=" "
-				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
-				PrecompiledHeaderFile="..\..\out\debug8\build\liblibxpnet\liblibxpnet.pch"
-				AssemblerListingLocation="..\..\out\debug8\build\liblibxpnet\"
-				ObjectFile="..\..\out\debug8\build\liblibxpnet\"
+				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
+				PrecompiledHeaderFile="..\..\out\debug8\build\libxpnet\libxpnet.pch"
+				AssemblerListingLocation="..\..\out\debug8\build\libxpnet\"
+				ObjectFile="..\..\out\debug8\build\libxpnet\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="TRUE"
@@ -402,13 +402,13 @@
 				GenerateDebugInformation="TRUE"
 				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD,MSVCRT"
 				AdditionalOptions=" "
-				AdditionalDependencies=""
+				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib"
 				SuppressStartupBanner="TRUE"
-				AdditionalLibraryDirectories=""
+				AdditionalLibraryDirectories="..\..\..\CS\out\debug8\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug8\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
 				TargetMachine="1"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\out\debug8\libs\liblibxpnet_d.lib"
+				OutputFile="..\..\out\debug8\libs\libxpnet_d.lib"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
@@ -416,7 +416,7 @@
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug8\build\liblibxpnet\liblibxpnet.tlb"/>
+				TypeLibraryName="..\..\out\debug8\build\libxpnet\libxpnet.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="md ..\..\out\debug8\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug8\bin\&#x0D;&#x0A;"
@@ -428,7 +428,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;PROJECTGEN_VERSION=8"
-				AdditionalIncludeDirectories=".;..\..\src\tools\libxpnet;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
+				AdditionalIncludeDirectories=".;..\..\src\tools\libxpnet;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -437,8 +437,8 @@
 		</Configuration>
     		<Configuration
 			Name="RefTracker (with static libs)|Win32"
-			OutputDirectory="..\..\out\debug8\build\liblibxpnet\"
-			IntermediateDirectory="..\..\out\debug8\build\liblibxpnet\"
+			OutputDirectory="..\..\out\debug8\build\libxpnet\"
+			IntermediateDirectory="..\..\out\debug8\build\libxpnet\"
 			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
@@ -450,14 +450,14 @@
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
-				ProgramDataBaseFileName="..\..\out\debug8\build\liblibxpnet\libxpnet.pdb"
+				ProgramDataBaseFileName="..\..\out\debug8\build\libxpnet\xpnet.pdb"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;WIN32"
 				OptimizeForProcessor="1"
 				AdditionalOptions=" "
-				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
-				PrecompiledHeaderFile="..\..\out\debug8\build\liblibxpnet\liblibxpnet.pch"
-				AssemblerListingLocation="..\..\out\debug8\build\liblibxpnet\"
-				ObjectFile="..\..\out\debug8\build\liblibxpnet\"
+				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
+				PrecompiledHeaderFile="..\..\out\debug8\build\libxpnet\libxpnet.pch"
+				AssemblerListingLocation="..\..\out\debug8\build\libxpnet\"
+				ObjectFile="..\..\out\debug8\build\libxpnet\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="TRUE"
@@ -472,13 +472,13 @@
 				GenerateDebugInformation="TRUE"
 				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD,MSVCRT"
 				AdditionalOptions=" "
-				AdditionalDependencies=""
+				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib"
 				SuppressStartupBanner="TRUE"
-				AdditionalLibraryDirectories=""
+				AdditionalLibraryDirectories="..\..\..\CS\out\debug8\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug8\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
 				TargetMachine="1"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\out\debug8\libs\liblibxpnet_d.lib"
+				OutputFile="..\..\out\debug8\libs\libxpnet_d.lib"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
@@ -486,7 +486,7 @@
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug8\build\liblibxpnet\liblibxpnet.tlb"/>
+				TypeLibraryName="..\..\out\debug8\build\libxpnet\libxpnet.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="md ..\..\out\debug8\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug8\bin\&#x0D;&#x0A;"
@@ -498,7 +498,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;PROJECTGEN_VERSION=8"
-				AdditionalIncludeDirectories=".;..\..\src\tools\libxpnet;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
+				AdditionalIncludeDirectories=".;..\..\src\tools\libxpnet;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -507,8 +507,8 @@
 		</Configuration>
   		<Configuration
 			Name="RefTracker (with DLLs)|Win32"
-			OutputDirectory="..\..\out\debug8\build\liblibxpnet\"
-			IntermediateDirectory="..\..\out\debug8\build\liblibxpnet\"
+			OutputDirectory="..\..\out\debug8\build\libxpnet\"
+			IntermediateDirectory="..\..\out\debug8\build\libxpnet\"
 			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
@@ -520,14 +520,14 @@
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
-				ProgramDataBaseFileName="..\..\out\debug8\build\liblibxpnet\libxpnet.pdb"
+				ProgramDataBaseFileName="..\..\out\debug8\build\libxpnet\xpnet.pdb"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;WIN32;CS_BUILD_SHARED_LIBS"
 				OptimizeForProcessor="1"
 				AdditionalOptions=" "
-				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
-				PrecompiledHeaderFile="..\..\out\debug8\build\liblibxpnet\liblibxpnet.pch"
-				AssemblerListingLocation="..\..\out\debug8\build\liblibxpnet\"
-				ObjectFile="..\..\out\debug8\build\liblibxpnet\"
+				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
+				PrecompiledHeaderFile="..\..\out\debug8\build\libxpnet\libxpnet.pch"
+				AssemblerListingLocation="..\..\out\debug8\build\libxpnet\"
+				ObjectFile="..\..\out\debug8\build\libxpnet\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="TRUE"
@@ -542,13 +542,13 @@
 				GenerateDebugInformation="TRUE"
 				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD,MSVCRT"
 				AdditionalOptions=" "
-				AdditionalDependencies=""
+				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib"
 				SuppressStartupBanner="TRUE"
-				AdditionalLibraryDirectories=""
+				AdditionalLibraryDirectories="..\..\..\CS\out\debug8\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug8\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
 				TargetMachine="1"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\out\debug8\libs\liblibxpnet_d.lib"
+				OutputFile="..\..\out\debug8\libs\libxpnet_d.lib"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
@@ -556,7 +556,7 @@
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug8\build\liblibxpnet\liblibxpnet.tlb"/>
+				TypeLibraryName="..\..\out\debug8\build\libxpnet\libxpnet.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="md ..\..\out\debug8\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug8\bin\&#x0D;&#x0A;"
@@ -568,7 +568,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;PROJECTGEN_VERSION=8"
-				AdditionalIncludeDirectories=".;..\..\src\tools\libxpnet;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
+				AdditionalIncludeDirectories=".;..\..\src\tools\libxpnet;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -577,8 +577,8 @@
 		</Configuration>
     		<Configuration
 			Name="DebugPSReleaseCSCEL (with static libs)|Win32"
-			OutputDirectory="..\..\out\debug8\build\liblibxpnet\"
-			IntermediateDirectory="..\..\out\debug8\build\liblibxpnet\"
+			OutputDirectory="..\..\out\debug8\build\libxpnet\"
+			IntermediateDirectory="..\..\out\debug8\build\libxpnet\"
 			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
@@ -590,14 +590,14 @@
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
-				ProgramDataBaseFileName="..\..\out\debug8\build\liblibxpnet\libxpnet.pdb"
+				ProgramDataBaseFileName="..\..\out\debug8\build\libxpnet\xpnet.pdb"
 				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;WIN32"
 				OptimizeForProcessor="1"
 				AdditionalOptions=" "
-				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
-				PrecompiledHeaderFile="..\..\out\debug8\build\liblibxpnet\liblibxpnet.pch"
-				AssemblerListingLocation="..\..\out\debug8\build\liblibxpnet\"
-				ObjectFile="..\..\out\debug8\build\liblibxpnet\"
+				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
+				PrecompiledHeaderFile="..\..\out\debug8\build\libxpnet\libxpnet.pch"
+				AssemblerListingLocation="..\..\out\debug8\build\libxpnet\"
+				ObjectFile="..\..\out\debug8\build\libxpnet\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="TRUE"
@@ -612,13 +612,13 @@
 				GenerateDebugInformation="TRUE"
 				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD,MSVCRT"
 				AdditionalOptions=" "
-				AdditionalDependencies=""
+				AdditionalDependencies="libcrystalspace.lib ws2_32.lib zlib.lib"
 				SuppressStartupBanner="TRUE"
-				AdditionalLibraryDirectories=""
+				AdditionalLibraryDirectories="..\..\..\CS\out\release8\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\release8\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
 				TargetMachine="1"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\out\debug8\libs\liblibxpnet_d.lib"
+				OutputFile="..\..\out\debug8\libs\libxpnet_d.lib"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
@@ -626,7 +626,7 @@
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug8\build\liblibxpnet\liblibxpnet.tlb"/>
+				TypeLibraryName="..\..\out\debug8\build\libxpnet\libxpnet.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="md ..\..\out\debug8\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug8\bin\&#x0D;&#x0A;"
@@ -638,7 +638,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;PROJECTGEN_VERSION=8"
-				AdditionalIncludeDirectories=".;..\..\src\tools\libxpnet;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
+				AdditionalIncludeDirectories=".;..\..\src\tools\libxpnet;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -647,8 +647,8 @@
 		</Configuration>
   		<Configuration
 			Name="DebugPSReleaseCSCEL (with DLLs)|Win32"
-			OutputDirectory="..\..\out\debug8\build\liblibxpnet\"
-			IntermediateDirectory="..\..\out\debug8\build\liblibxpnet\"
+			OutputDirectory="..\..\out\debug8\build\libxpnet\"
+			IntermediateDirectory="..\..\out\debug8\build\libxpnet\"
 			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
@@ -660,14 +660,14 @@
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
-				ProgramDataBaseFileName="..\..\out\debug8\build\liblibxpnet\libxpnet.pdb"
+				ProgramDataBaseFileName="..\..\out\debug8\build\libxpnet\xpnet.pdb"
 				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;WIN32;CS_BUILD_SHARED_LIBS"
 				OptimizeForProcessor="1"
 				AdditionalOptions=" "
-				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
-				PrecompiledHeaderFile="..\..\out\debug8\build\liblibxpnet\liblibxpnet.pch"
-				AssemblerListingLocation="..\..\out\debug8\build\liblibxpnet\"
-				ObjectFile="..\..\out\debug8\build\liblibxpnet\"
+				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
+				PrecompiledHeaderFile="..\..\out\debug8\build\libxpnet\libxpnet.pch"
+				AssemblerListingLocation="..\..\out\debug8\build\libxpnet\"
+				ObjectFile="..\..\out\debug8\build\libxpnet\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="TRUE"
@@ -682,13 +682,13 @@
 				GenerateDebugInformation="TRUE"
 				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD,MSVCRT"
 				AdditionalOptions=" "
-				AdditionalDependencies=""
+				AdditionalDependencies="libcrystalspace.lib ws2_32.lib zlib.lib"
 				SuppressStartupBanner="TRUE"
-				AdditionalLibraryDirectories=""
+				AdditionalLibraryDirectories="..\..\..\CS\out\release8\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\release8\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
 				TargetMachine="1"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\out\debug8\libs\liblibxpnet_d.lib"
+				OutputFile="..\..\out\debug8\libs\libxpnet_d.lib"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
@@ -696,7 +696,7 @@
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug8\build\liblibxpnet\liblibxpnet.tlb"/>
+				TypeLibraryName="..\..\out\debug8\build\libxpnet\libxpnet.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="md ..\..\out\debug8\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug8\bin\&#x0D;&#x0A;"
@@ -708,7 +708,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;PROJECTGEN_VERSION=8"
-				AdditionalIncludeDirectories=".;..\..\src\tools\libxpnet;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
+				AdditionalIncludeDirectories=".;..\..\src\tools\libxpnet;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
