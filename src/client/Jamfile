@@ -92,25 +92,12 @@ STATIC.PLUGINLIST =
   xmlshader
   ;
 
-#
-# The plugins that are nice to have if pressent
-#
-STATIC.OPTIONALPLUGINLIST =
-  glshader_cg
-  glshader_ps1
-  ;
-
-if $(TARGET.OS) != "WIN32"
-{
-if $(X11.AVAILABLE) = "yes" { STATIC.PLUGINLIST += xwin ; }
-if $(XFREE86VM.AVAILABLE) = "yes" { STATIC.PLUGINLIST += xext86vm ; }
-STATIC.OPTIONALPLUGINLIST += glx2d sndsysalsa sndsysoss ;
-}
+if $(TARGET.OS) != "WIN32" { STATIC.PLUGINLIST += xwin xext86vm glx2d sndsysalsa sndsysoss ; }
 if $(TARGET.OS) = "WIN32" { STATIC.PLUGINLIST += glwin32 sndsyswin ; }
 if $(TARGET.OS) = "MACOS_X" { STATIC.PLUGINLIST += glosx2d sndsyscoreaudio ; }
 
-
-LinkStaticPlugins psclient_static : $(STATIC.PLUGINLIST) : $(STATIC.OPTIONALPLUGINLIST)
+LinkStaticPlugins psclient_static : $(STATIC.PLUGINLIST)
+:
 : CRYSTAL
 ;
 
@@ -119,3 +106,4 @@ CompileGroups psclient_static : client_static ;
 
 SubVariant ;
 }
+
