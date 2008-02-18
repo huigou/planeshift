@@ -26,8 +26,6 @@
 #include <iengine/region.h>
 #include <iutil/object.h>
 
-#include <propclass/linmove.h>
-#include <propclass/colldet.h>
 
 //=============================================================================
 // Project Includes
@@ -37,6 +35,7 @@
 
 #include "engine/celbase.h"
 #include "engine/netpersist.h"
+#include "engine/linmove.h"
 
 #include "util/serverconsole.h"
 #include "util/log.h"

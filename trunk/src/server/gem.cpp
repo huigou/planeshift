@@ -49,8 +49,6 @@
 #include <physicallayer/persist.h>
 #include <propclass/mesh.h>
 #include <propclass/meshsel.h>
-#include <propclass/linmove.h>
-#include <propclass/colldet.h>
 
 //=============================================================================
 // Project Space Includes
@@ -79,6 +77,7 @@
 
 #include "engine/psworld.h"
 #include "engine/netpersist.h"
+#include "engine/linmove.h"
 
 //=============================================================================
 // Local Space Includes
@@ -460,9 +459,7 @@ void GEMSupervisor::StopAllNPCs(int superclientID)
             gemActor *actor = obj->GetActorPtr();
             actor->pcmove->SetVelocity(csVector3(0,0,0));
             actor->pcmove->SetAngularVelocity(csVector3(0,0,0));
-            csRef<iPcCollisionDetection> colldet = CEL_QUERY_PROPCLASS(actor->GetEntity()->GetPropertyClassList(), iPcCollisionDetection);
-            // Force on_ground to stop clients performing CD on this npc.
-            colldet->SetOnGround(true);
+            actor->pcmove->SetOnGround(true);
 
             csTicks timeDelay=0;
             actor->SetAction("idle",timeDelay);
@@ -1629,6 +1626,7 @@ gemActor::gemActor( psCharacter *chardata,
     safefall = false;
     nevertired = false;
     infinitemana = false;
+    pcmove = NULL;
 
     meshcache = factname;
 
@@ -1709,6 +1707,8 @@ gemActor::~gemActor()
 
     if (numReports > 0)
         logging_chat_file = 0;  //This should close the file.
+
+    delete pcmove;
 }
 
 Client* gemActor::GetClient() const
@@ -2444,21 +2444,7 @@ bool gemActor::LogMessage(const char *who, const psChatMessage &msg)
 bool gemActor::InitLinMove (const csVector3& pos,
                               float angle, iSector* sector)
 {
-    csRef<iCelPropertyClass> pc;
-
-    if ( !entity )
-    {
-        Error1("No entity!  Actor not created.");
-        return false;
-    }
-
-    pc = cel->pl->CreatePropertyClass(entity, "pclinearmovement");
-    if ( !pc )
-    {
-        Error1("Could not create property class pclinearmovement.  Actor not created.");
-        return false;
-    }
-    pcmove =  scfQueryInterface<iPcLinearMovement> (pc);
+    pcmove = new psLinearMovement(psserver->GetObjectReg());
 
     // Now Determine CD bounding boxes for upper and lower colliders
     csRef<iSpriteCal3DState> cal3d;
@@ -2526,10 +2512,9 @@ bool gemActor::InitLinMove (const csVector3& pos,
     bottom.x *= .7f;
     bottom.z *= .7f;
 
-    pcmove->InitCD(top, bottom,offset, NULL); 
-    csRef<iPcCollisionDetection> colldet = CEL_QUERY_PROPCLASS(GetEntity()->GetPropertyClassList(), iPcCollisionDetection);
+    pcmove->InitCD(top, bottom,offset, GetMeshWrapper()); 
     // Disable CD checking because server does not need it.
-    colldet->UseCD(false);
+    pcmove->UseCD(false);
 
 
     SetPosition(pos,angle,sector);
@@ -3386,9 +3371,7 @@ gemNPC::gemNPC( psCharacter *chardata,
         return;
     }
 
-    csRef<iPcCollisionDetection> colldet = CEL_QUERY_PROPCLASS(GetEntity()->GetPropertyClassList(), iPcCollisionDetection);
-    // Force on_ground to stop clients performing CD on this npc on creation.
-    colldet->SetOnGround(true);
+    pcmove->SetOnGround(true);
 
     if ( chardata->GetOwnerID() )
     {

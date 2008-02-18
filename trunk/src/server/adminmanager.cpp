@@ -26,7 +26,6 @@
 #include <iutil/stringarray.h>
 #include <iengine/campos.h>
 #include <iengine/region.h>
-#include <propclass/linmove.h>
 #include <iengine/mesh.h>
 #include <iengine/movable.h>
 
@@ -55,6 +54,8 @@
 #include "bulkobjects/pstrait.h"
 
 #include "rpgrules/factions.h"
+
+#include "engine/linmove.h"
 
 //=============================================================================
 // Application Includes

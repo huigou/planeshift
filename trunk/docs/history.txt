@@ -1,3 +1,6 @@
+*** 2008-02-17 by Andrew Craig
+- Changed server to use psLinearMovement from the CEL class iPcLinearMovement.  
+
 *** 2008-02-17 by Roland Schulz
 - Fix for FS#1103 - Armor worn does not show due to faulty xml parsing, thanks Vornne.
 - stop the pet from rotating in the pet stat window (to make it consistent with the

@@ -1103,3 +1103,10 @@ void psLinearMovement::ClearPortalDisplacement ()
     portalDisplaced = 0.0f; 
 }
 
+void psLinearMovement::UseCD(bool cd)
+{
+    if ( colldet )
+    {
+        colldet->UseCD(cd);
+    }
+}

@@ -230,7 +230,9 @@ public:
   
   /// Clear the total displacement caused by space warping portals.
   virtual void ClearPortalDisplacement ();
-  
+
+
+    void UseCD(bool cd);  
 protected:
 
     // Move local entity
