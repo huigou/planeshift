@@ -40,7 +40,7 @@ MiniDumper minidumper;
 
 //////////////////////////////////////////////////////////////////////////////
 
-#define APPNAME              "PlaneShift Crystal Blue"
+#define APPNAME              "PlaneShift Steel Blue (0.4.00)"
 #define CONFIGFILENAME       "/planeshift/userdata/planeshift.cfg"
 #define PSAPP                "planeshift.application.client"
 
