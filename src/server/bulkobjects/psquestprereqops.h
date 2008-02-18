@@ -734,4 +734,65 @@ class psQuestPrereqOpXor: public psQuestPrereqOpList
     virtual psQuestPrereqOp* Copy();
 };
 
+/**
+ * Skill prerequisite operator.
+ *
+ * The given skill level is required to be between min and max for this operator
+ * to be true.
+ */
+class psQuestPrereqOpSkill: public psQuestPrereqOp
+{
+ protected:
+    /**
+     * The skill name that is to be checked.
+     */
+    psSkillInfo *skill;
+
+    /**
+     * The skill level range
+     */
+    unsigned int min;
+    unsigned int max;
+ public:
+
+    /**
+     * Construct a faction operator
+     *
+     * @param faction The quest that need to be assigned.
+     */
+    psQuestPrereqOpSkill(psSkillInfo *skill, unsigned int min, unsigned int max):skill(skill),min(min),max(max){};
+
+    /**
+     */
+    virtual ~psQuestPrereqOpSkill() {}
+
+    /**
+     * Check if the skill is in the range.
+     *
+     * @param  character The character that are checking for a prerequisite
+     * @return True if min <= skill <= max.
+     */
+    virtual bool Check(psCharacter * character);
+
+    /**
+     * Convert the prerequisite operator to a xml string
+     *
+     * Convert the operator into the xml string: 
+     * <skill name="skill name" min="0" max="0"/>
+     *
+     * @return XML string for the prerequisite operator.
+     */
+    virtual csString GetScriptOp();
+
+    /**
+     * Copy the prerequisite operator
+     *
+     * Override this function to return a copy of the prerequisite
+     * operator.
+     *
+     * @return Copy of the prerequisite operator.
+     */
+    virtual psQuestPrereqOp* Copy();
+};
+
 #endif

@@ -429,3 +429,43 @@ psQuestPrereqOp* psQuestPrereqOpXor::Copy()
     }    
     return copy;
 }
+///////////////////////////////////////////////////////////////////////////////////////////
+
+bool psQuestPrereqOpSkill::Check(psCharacter * character)
+{
+    unsigned int skill_val = character->GetSkills()->GetSkillRank(skill->id);
+
+    if(max && skill_val > max)
+    { 
+        return false;
+    }        
+    if(min && skill_val < min)
+    { 
+        return false;
+    }        
+    return true;
+}
+
+csString psQuestPrereqOpSkill::GetScriptOp()
+{
+    csString script;
+    
+    script.AppendFmt("<skill name=\"%s\"", skill->name.GetData());
+    if(min)
+    {
+        script.AppendFmt(" min=\"%d\"", min);
+    }
+    if(max)
+    {
+        script.AppendFmt(" max=\"%d\"", max);
+    }
+    script.Append(" />");
+
+    return script;
+}
+
+psQuestPrereqOp* psQuestPrereqOpSkill::Copy()
+{
+    psQuestPrereqOpSkill* copy = new psQuestPrereqOpSkill(skill,min,max);
+    return copy;
+}
