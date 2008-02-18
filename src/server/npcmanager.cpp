@@ -1749,8 +1749,8 @@ void NPCManager::QueueTalkPerception(gemActor *speaker,gemNPC *target)
     outbound->msg->Add( (int16_t) faction );
     cmd_count++;
     Debug4(LOG_NPC, speaker->GetEntityID(),"Added perception: %s spoke to %s with %1.1f faction standing.\n",
-        speaker->GetEntity()->GetName(),
-        target->GetEntity()->GetName(),
+        speaker->GetName(),
+        target->GetName(),
         faction);
 }
 
@@ -1778,8 +1778,8 @@ void NPCManager::QueueAttackPerception(gemActor *attacker,gemNPC *target)
 
         cmd_count++;
         Debug3(LOG_NPC, attacker->GetEntityID(),"Added perception: %s's group is attacking %s.\n",
-                attacker->GetEntity()->GetName(),
-                target->GetEntity()->GetName() );
+                attacker->GetName(),
+                target->GetName() );
     }
     else // lone gunman
     {
@@ -1788,8 +1788,8 @@ void NPCManager::QueueAttackPerception(gemActor *attacker,gemNPC *target)
         outbound->msg->Add( (uint32_t) attacker->GetEntityID() );
         cmd_count++;
         Debug3(LOG_NPC, attacker->GetEntityID(),"Added perception: %s is attacking %s.\n",
-                attacker->GetEntity()->GetName(),
-                target->GetEntity()->GetName() );
+                attacker->GetName(),
+                target->GetName() );
     }
 }
 
@@ -1805,8 +1805,8 @@ void NPCManager::QueueDamagePerception(gemActor *attacker,gemNPC *target,float d
     outbound->msg->Add( (float) dmg );
     cmd_count++;
     Debug4(LOG_NPC, attacker->GetEntityID(),"Added perception: %s hit %s for %1.1f dmg.\n",
-        attacker->GetEntity()->GetName(),
-        target->GetEntity()->GetName(),
+        attacker->GetName(),
+        target->GetName(),
         dmg);
 }
 
@@ -1861,8 +1861,8 @@ void NPCManager::QueueOwnerCmdPerception(gemActor *owner, gemNPC *pet, psPETComm
     outbound->msg->Add( (uint32_t) (pet->GetTarget() ? pet->GetTarget()->GetEntityID(): 0) );
     cmd_count++;
     Debug4(LOG_NPC, owner->GetEntityID(),"Added perception: %s has told %s to %d.\n",
-        owner->GetEntity()->GetName(),
-        pet->GetEntity()->GetName(), (int)command);
+        owner->GetName(),
+        pet->GetName(), (int)command);
 }
 
 void NPCManager::QueueInventoryPerception(gemActor *owner, psItem * itemdata, bool inserted)
@@ -1874,7 +1874,7 @@ void NPCManager::QueueInventoryPerception(gemActor *owner, psItem * itemdata, bo
     outbound->msg->Add( (int16_t) itemdata->GetStackCount() );
     cmd_count++;
     Debug7(LOG_NPC, owner->GetEntityID(),"Added perception: %s(EID: %u) has %s %d %s %s inventory.\n",
-           owner->GetEntity()->GetName(),
+           owner->GetName(),
            owner->GetEntityID(),
            (inserted?"added":"removed"),
            itemdata->GetStackCount(),
@@ -1895,7 +1895,7 @@ void NPCManager::QueueFlagPerception(gemActor *owner)
     outbound->msg->Add( flags );
     cmd_count++;
     Debug4(LOG_NPC, owner->GetEntityID(),"Added perception: %s(EID: %u) flags 0x%X.\n",
-           owner->GetEntity()->GetName(),
+           owner->GetName(),
            owner->GetEntityID(),
            flags);
     
@@ -1909,7 +1909,7 @@ void NPCManager::QueueNPCCmdPerception(gemActor *owner, const csString& cmd)
 
     cmd_count++;
     Debug4(LOG_NPC, owner->GetEntityID(),"Added perception: %s(EID: %u) npc cmd %s.\n",
-           owner->GetEntity()->GetName(),
+           owner->GetName(),
            owner->GetEntityID(),
            cmd.GetData());
     
@@ -1924,7 +1924,7 @@ void NPCManager::QueueTransferPerception(gemActor *owner, psItem * itemdata, csS
     outbound->msg->Add( (char*) target.GetDataSafe() );
     cmd_count++;
     Debug6(LOG_NPC, owner->GetEntityID(),"Added perception: %s(EID: %u) has transfered %d %s to %s.\n",
-           owner->GetEntity()->GetName(),
+           owner->GetName(),
            owner->GetEntityID(),
            itemdata->GetStackCount(),
            itemdata->GetName(),
