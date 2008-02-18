@@ -26,17 +26,21 @@
 
 // Cel
 #include <propclass/mesh.h>
-#include <propclass/linmove.h>
-#include <propclass/colldet.h>
 
-// PS
+//=============================================================================
+// Project Space Includes
+//=============================================================================
 #include "globals.h"
+
+#include "engine/linmove.h"
 #include "engine/psworld.h"
+
 #include "util/waypoint.h"
 #include "util/pspath.h"
 #include "util/strutil.h"
 #include "util/psutil.h"
 #include "util/psstring.h"
+
 #include "npcoperations.h"
 #include "npcclient.h"
 #include "networkmgr.h"
@@ -888,13 +892,12 @@ float RotateOperation::SeekAngle(NPC* npc, float targetYRot)
     psGameObject::GetPosition(npc->GetEntity(),pos,rot,sector);
 
     csVector3 isect,start,end,dummy,box,legs;
-    iPcCollisionDetection* pcDummy;
 
     // Construct the feeling broom
 
     // Calculate the start and end poses
     start = pos;
-    npc->GetLinMove()->GetCDDimensions(box,legs,dummy,pcDummy);
+    npc->GetLinMove()->GetCDDimensions(box,legs,dummy);
 
     // We can walk over some stuff
     start += csVector3(0,0.6f,0);
@@ -1703,8 +1706,8 @@ bool WanderOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
     }
 
     // Turn of CD and hug the ground
-    npc->GetCD()->UseCD(false);
-    npc->GetCD()->SetOnGround(true); // Wander is ALWAYS on_ground.  This ensures correct animation on the client.
+    npc->GetLinMove()->UseCD(false);
+    npc->GetLinMove()->SetOnGround(true); // Wander is ALWAYS on_ground.  This ensures correct animation on the client.
     npc->GetLinMove()->SetHugGround(true);
 
     if (StartMoveToWaypoint(npc, eventmgr))
@@ -1806,7 +1809,7 @@ bool WanderOperation::CompleteOperation(NPC *npc,EventManager *eventmgr)
     }
 
     // Turn on CD again
-    npc->GetCD()->UseCD(true);
+    npc->GetLinMove()->UseCD(true);
     npc->GetLinMove()->SetHugGround(false);
 
     // Stop the movement

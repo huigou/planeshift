@@ -58,6 +58,9 @@ public:
 
     virtual ~NPCManager();
 
+    /// Initialize the npc manager.
+    bool Initialize();
+
     /// Handle incoming messages from the superclients.
     virtual void HandleMessage(MsgEntry *pMsg,Client *client);
 
@@ -156,6 +159,9 @@ protected:
     /// Check if a pet is within range to react to commands
     bool CanPetHereYou(int clientnum, Client * owner, gemNPC * pet, const char * type);
 
+    /// Check if your pet will reacto to your command based on skills
+    bool WillPetReact(int clientnum, Client * owner, gemNPC * pet, const char * type, int level);
+    
     /// Handle network message with pet directives
     void HandlePetCommand( MsgEntry *me );
 
@@ -179,6 +185,17 @@ protected:
     int cmd_count;
 
     BinaryRBTree<PetOwnerSession> OwnerPetList;
+
+    /* Math script setup for pet range check */
+    MathScript *petRangeScript;
+    MathScriptVar *varRangeEmpathySkill;
+    MathScriptVar *varMaxRange;
+
+    /* Math script setup for pet should react check */
+    MathScript *petReactScript;
+    MathScriptVar *varReactEmpathySkill;
+    MathScriptVar *varReactLevel;
+    MathScriptVar *varReact;
 };
 
 #endif

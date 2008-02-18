@@ -38,6 +38,7 @@ public:
     bool InitMesh(const char *factname,const char *filename,
                   const csVector3& pos,const float rotangle, const char* sector );
     
+    iMeshWrapper *GetMeshWrapper();
     void Move(const csVector3& pos, float rotangle, const char* room);
     void Move(const csVector3& pos, float rotangle, const char* room, int instance);
     
@@ -87,7 +88,7 @@ public:
     gemNPCActor( psNPCClient* cel, psPersistActor& mesg);
     virtual ~gemNPCActor();
     
-    csRef<iPcLinearMovement> pcmove;
+    psLinearMovement* pcmove;
     
     virtual unsigned int GetPlayerID() { return playerID; }
     virtual PS_ID GetOwnerEID() { return ownerEID; }

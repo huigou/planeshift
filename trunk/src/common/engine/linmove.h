@@ -232,7 +232,7 @@ public:
   virtual void ClearPortalDisplacement ();
 
 
-    void UseCD(bool cd);  
+  void UseCD(bool cd);  
 protected:
 
     // Move local entity

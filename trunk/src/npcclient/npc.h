@@ -77,8 +77,6 @@ protected:
     iCelEntity        *entity;
     gemNPCActor       *npcActor;
     iMovable          *movable;
-    iPcLinearMovement *linmove;
-    iPcCollisionDetection *colldet;
     uint8_t            DRcounter;
 
     csVector3          active_locate_pos;
@@ -114,8 +112,7 @@ public:
     unsigned int          GetPID()       { return pid; }
     iCelEntity           *GetEntity()    { return entity; }
     iMovable             *GetMovable()   { return movable; }
-    iPcLinearMovement    *GetLinMove()   { return linmove; }
-    iPcCollisionDetection *GetCD()       { return colldet; }
+    psLinearMovement     *GetLinMove();
     uint8_t               GetDRCounter() { return ++DRcounter;}
     void                  SetDRCounter(uint8_t counter) { DRcounter = counter;}
 

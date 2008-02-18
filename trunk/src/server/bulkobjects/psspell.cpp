@@ -593,9 +593,13 @@ bool psSpell::AffectTarget(psSpellCastGameEvent * event, csString &effectName, c
     //         by someone else that may have cast this spell.
     // Set input variables before executing script
     if ( saved )
+    {
         varUseSaveThrow->SetValue(1);
+    }
     else
+    {
         varUseSaveThrow->SetValue(0);
+    }
     varPowerLevel->SetValue(event->powerLevel);
     mathScript->Execute();
     event->powerLevel = varPowerLevel->GetValue();

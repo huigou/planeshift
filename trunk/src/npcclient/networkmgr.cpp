@@ -27,8 +27,10 @@
 
 
 #include <behaviourlayer/behave.h>
-#include <propclass/linmove.h>
 
+//=============================================================================
+// Project Space Includes
+//=============================================================================
 #include "util/sleep.h"
 #include "util/log.h"
 #include "net/connection.h"
@@ -37,6 +39,10 @@
 #include "net/npcmessages.h"
 #include "engine/netpersist.h"
 #include "util/eventmanager.h"
+
+//=============================================================================
+// Local Space Includes
+//=============================================================================
 #include "networkmgr.h"
 #include "globals.h"
 #include "npcclient.h"
@@ -899,7 +905,7 @@ void NetworkManager::QueueDRData(NPC * npc )
     cmd_dr_outbound.PutUnique( npc->GetPID(), npc );
 }
 
-void NetworkManager::QueueDRData(iCelEntity *entity,iPcLinearMovement *linmove,uint8_t counter)
+void NetworkManager::QueueDRData(iCelEntity *entity, psLinearMovement *linmove, uint8_t counter)
 {
     if ( outbound->msg->current > ( outbound->msg->bytes->GetSize() - 100 ) )
     {

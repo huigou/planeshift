@@ -32,27 +32,34 @@
 #include <iengine/movable.h>
 #include <cstool/collider.h>
 
-
-#include <propclass/linmove.h>
-#include <propclass/colldet.h>
 #include <propclass/mesh.h>
 #include <physicallayer/entity.h>
 #include <physicallayer/propclas.h>
 #include <ivaria/collider.h>
 
-#include "net/msghandler.h"
-#include "net/npcmessages.h"
-#include "npc.h"
+//=============================================================================
+// Project Space Includes
+//=============================================================================
+#include "engine/linmove.h"
+#include "engine/psworld.h"
+
 #include "util/log.h"
-#include "npcclient.h"
-#include "globals.h"
-#include "gem.h"
 #include "util/psdatabase.h"
 #include "util/location.h"
 #include "util/strutil.h"
-#include "engine/psworld.h"
-#include "networkmgr.h"
 #include "util/waypoint.h"
+
+#include "net/msghandler.h"
+#include "net/npcmessages.h"
+
+//=============================================================================
+// Local Space Includes
+//=============================================================================
+#include "networkmgr.h"
+#include "npc.h"
+#include "npcclient.h"
+#include "globals.h"
+#include "gem.h"
 
 extern iDataConnection *db;
 
@@ -66,8 +73,6 @@ NPC::NPC(): checked(false)
     entity=NULL; 
     npcActor=NULL;
     movable=NULL;
-    linmove=NULL; 
-    colldet=NULL;
     DRcounter=0; 
     active_locate_sector=NULL;
     active_locate_angle=0.0;
@@ -96,6 +101,10 @@ NPC::~NPC()
     }
 }
 
+psLinearMovement* NPC::GetLinMove()
+{ 
+    return npcActor->pcmove; 
+}
 
 bool NPC::Load(iResultRow& row,BinaryRBTree<NPCType>& npctypes)
 {
@@ -191,16 +200,6 @@ void NPC::SetActor(gemNPCActor * actor)
         iSector *sector;
         psGameObject::GetPosition(entity,active_locate_pos,active_locate_angle,sector);
 
-        // Cache some pointers
-        csRef<iPcLinearMovement> lm = CEL_QUERY_PROPCLASS(entity->GetPropertyClassList(), 
-                                                          iPcLinearMovement);
-        linmove = lm;
-
-
-        csRef<iPcCollisionDetection> cd = CEL_QUERY_PROPCLASS(entity->GetPropertyClassList(), 
-                                                              iPcCollisionDetection);
-        colldet = cd;
-
         csRef<iPcMesh> pcmesh = CEL_QUERY_PROPCLASS(entity->GetPropertyClassList(), 
                                                     iPcMesh);
         movable = pcmesh->GetMesh()->GetMovable();
@@ -208,8 +207,6 @@ void NPC::SetActor(gemNPCActor * actor)
     else
     {
         entity = NULL;
-        linmove = NULL;
-        colldet = NULL;
         movable = NULL;
     }
 }
@@ -655,23 +652,23 @@ void NPC::CheckPosition()
             return;
         }
     }
-    if(!alive || linmove->IsPath())
+    if(!alive || GetLinMove()->IsPath())
         return;
 
     // Give the npc a jump start to make sure gravity will be applied.
     csVector3 startVel(0.0f,1.0f,0.0f);
     csVector3 vel;
 
-    linmove->AddVelocity(startVel);
-    linmove->SetOnGround(false);
+    GetLinMove()->AddVelocity(startVel);
+    GetLinMove()->SetOnGround(false);
     csVector3 pos(pcmesh->GetMesh()->GetMovable()->GetPosition());
     // See what happens in the next 10 seconds
     int count = 100;
     while (count--)
     {
-        linmove->ExtrapolatePosition(0.1f);
+        GetLinMove()->ExtrapolatePosition(0.1f);
     }
-    vel = linmove->GetVelocity();
+    vel = GetLinMove()->GetVelocity();
     // Bad starting position - npc is falling at high speed, server should automatically kill it
     if(vel.y < -50)
     {
@@ -683,7 +680,7 @@ void NPC::CheckPosition()
     if(vel == startVel)
     {
         // Collision detection is not being applied!
-        linmove->SetVelocity(csVector3(0.0f, 0.0f, 0.0f));
+        GetLinMove()->SetVelocity(csVector3(0.0f, 0.0f, 0.0f));
         psGameObject::SetPosition(entity, pos);
     }
     checked = true;

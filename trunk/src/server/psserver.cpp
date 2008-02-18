@@ -462,6 +462,12 @@ bool psServer::Initialize(iObjectRegistry* object_reg)
     npcmanager = new NPCManager(serverthread->GetConnections(),
                                 database,
                                 eventmanager);
+    if ( !npcmanager->Initialize())
+    {
+        Error1("Failed to start npc manager!");
+        return false;
+
+    }
     Debug1(LOG_STARTUP,0,"Started NPC Superclient Manager\n");
 
     progression = new ProgressionManager(serverthread->GetConnections());
