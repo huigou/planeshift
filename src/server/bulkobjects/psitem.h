@@ -510,7 +510,7 @@ public:
     /** TODO:  Comment me with something more than "Gets the attack animation ID"
      *
      */
-    int GetAttackAnimID(psCharacter *pschar,iCelEntity *entity);
+    int GetAttackAnimID(psCharacter *pschar);
 
     /// Returns the decay value of the item.  See the decay member for a description of what this is.
     float GetDecay();
