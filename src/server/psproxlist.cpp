@@ -501,7 +501,7 @@ void ProximityList::DebugDumpContents(csString& out)
         {
             gemObject * obj = objectsThatIWatch[x];
             
-            temp.AppendFmt("\t%-3d %s\n",obj->GetEntity()->GetID(),obj->GetName() );
+            temp.AppendFmt("\t%-3d %s\n",obj->GetEntityID(),obj->GetName() );
         }
     }
     else
