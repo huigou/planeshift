@@ -16,7 +16,6 @@ struct _static_use_CRYSTAL { _static_use_CRYSTAL (); };
 _static_use_CRYSTAL::_static_use_CRYSTAL () {}
 SCF_USE_STATIC_PLUGIN(bindoc)
 SCF_USE_STATIC_PLUGIN(bruteblock)
-SCF_USE_STATIC_PLUGIN(cpersist)
 SCF_USE_STATIC_PLUGIN(csddsimg)
 SCF_USE_STATIC_PLUGIN(csfont)
 SCF_USE_STATIC_PLUGIN(csjpgimg)
@@ -77,6 +76,4 @@ SCF_USE_STATIC_PLUGIN(xmlread)
 SCF_USE_STATIC_PLUGIN(xmlshader)
 SCF_USE_STATIC_PLUGIN(glwin32)
 SCF_USE_STATIC_PLUGIN(sndsyswin)
-SCF_USE_STATIC_PLUGIN(glshader_cg)
-SCF_USE_STATIC_PLUGIN(glshader_ps1)
 
