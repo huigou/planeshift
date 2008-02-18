@@ -23,6 +23,7 @@ STATIC.PLUGINLIST =
   cspngimg
   csfont
   cssynldr
+  dsplex
   engine
   fontplex
   freefnt2
@@ -36,21 +37,13 @@ STATIC.PLUGINLIST =
   xmlshader
   xmltiny
   ;
-  
-STATIC.OPTIONALPLUGINLIST =
-  ;
-  
-if $(TARGET.OS) != "WIN32"
-{
-if $(X11.AVAILABLE) = "yes" { STATIC.PLUGINLIST += xwin ; }
-if $(XFREE86VM.AVAILABLE) = "yes" { STATIC.PLUGINLIST += xext86vm ; }
-STATIC.OPTIONALPLUGINLIST += glx2d ;
-}
+
+if $(TARGET.OS) != "WIN32" { STATIC.PLUGINLIST += xwin xext86vm glx2d ; }
 if $(TARGET.OS) = "WIN32" { STATIC.PLUGINLIST += glwin32 ; }
 if $(TARGET.OS) = "MACOS_X" { STATIC.PLUGINLIST += glosx2d ; }
-  	
+
 LinkStaticPlugins pssetup_static : $(STATIC.PLUGINLIST)
-: $(STATIC.OPTIONALPLUGINLIST)
+:
 : CRYSTAL
 ;
 ExternalLibs pssetup_static : CRYSTAL ;
