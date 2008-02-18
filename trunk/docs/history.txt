@@ -5,6 +5,7 @@
 - Fix for FS#1103 - Armor worn does not show due to faulty xml parsing, thanks Vornne.
 - stop the pet from rotating in the pet stat window (to make it consistent with the
   character view) by Caarrie
+- add quest prereq operator to check if a skill is in the given range
 
 *** 2008-02-17 by Mike Gist
 - Work on the banking window/popup and introduce popup by FayVanMering and Caarrie.

@@ -387,6 +387,28 @@ bool LoadPrerequisiteXML(iDocumentNode * topNode, psQuest * self, psQuestPrereqO
             break;
         }
     } 
+    else if ( strcmp( topNode->GetValue(), "skill" ) == 0 )
+    {
+        csString name = topNode->GetAttributeValue("name");
+        if (name.IsEmpty())
+        {
+            Error1("No name given for skill prerequisite operation");
+            return false;
+        }
+        
+        psSkillInfo * skill = CacheManager::GetSingleton().GetSkillByName( name );
+        if (!skill)
+        {
+            Error2("Can't find skill '%s' for skill prerequisite operation",name.GetDataSafe());
+            return false;
+        }
+
+        unsigned int min = topNode->GetAttributeValueAsInt("min");
+
+        unsigned int max = topNode->GetAttributeValueAsInt("max");
+
+        prerequisite = new psQuestPrereqOpSkill(skill,min,max);
+    }
     else
     {
         Error2("Node \"%s\" isn't supported in  prerequisite scripts",topNode->GetValue());

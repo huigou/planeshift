@@ -29,7 +29,7 @@ CREATE TABLE quests (
 
 INSERT INTO quests VALUES("1","Rescue the Princess","Princess Leia is being held by the Empire on the Death Star.  You must rescue her before she is compelled to give up the wherabouts of the rebel base!","0","0","0","0","0","0","Newbie","");
 INSERT INTO quests VALUES("2","Sandwich Quest","Bring the merchant a freakin' sandwich!","0","0","0","0","30","0","Newbie","");
-INSERT INTO quests VALUES("3","Falchion Quest","Bring the merchant a steel falchion","0","0","0","0","120","60","Newbie","");
+INSERT INTO quests VALUES("3","Falchion Quest","Bring the merchant a steel falchion","0","0","0","0","120","60","Newbie","<pre><skill name=\"Sword\" min=\"10\" max=\"20\"/></pre>");
 INSERT INTO quests VALUES("10","Male Enki Alina Quest","Find Smith and ask him if he loves the daugther.","0","0","0","0","240","60","Newbie","<pre><completed quest=\"Male Enki Gold\"/></pre>");
 INSERT INTO quests VALUES("11","Male Enki Gold","Mine gold ore for the MaleEnki npc.","0","0","0","0","240","60","Newbie","");
 INSERT INTO quests VALUES("12","Male Enki Trusted Transport","Transport the glyph to the merchant.","0","0","0","0","300","60","Newbie","<pre><or><completed quest=\"Male Enki Gold\"/><completed quest=\"Male Enki Alina Quest\"/></or></pre>");
