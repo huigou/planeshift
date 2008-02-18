@@ -25,9 +25,6 @@
 #include <csutil/stringarray.h>
 #include <iengine/sector.h>
 
-#include <physicallayer/entity.h>
-#include <propclass/mesh.h>
-
 //=============================================================================
 // Project Includes
 //=============================================================================

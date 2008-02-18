@@ -40,10 +40,6 @@
 #include <cstool/collider.h>
 #include <ivaria/collider.h>
 
-//CEL includes
-#include <physicallayer/entity.h>
-#include <propclass/mesh.h>
-
 //=============================================================================
 // Project Includes
 //=============================================================================
@@ -249,7 +245,7 @@ void psNPCDialog::CleanPunctuation(psString& str, bool cleanQMark)
     // we also use this function to remove the NPC's own name from the dialog
     psString wordInName,npc_name;
     wordInName = "bla";
-    npc_name = self->GetEntity()->GetName();
+    npc_name = self->GetName();
     int num = 1;
     while (wordInName.Length())
     {
@@ -310,7 +306,7 @@ void psNPCDialog::AddBadText(const char *text, const char *trigger)
     
     db->Escape( escText, text );
     db->Escape( escName, currentClient->GetName() );
-    db->Escape( escSelfName, self->GetEntity()->GetName() );
+    db->Escape( escSelfName, self->GetName() );
     db->Escape( escTrigger, trigger);
     int ret = db->Command("insert into npc_bad_text "
                           "(badtext,triggertext,player,npc,occurred) "
