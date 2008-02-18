@@ -24,6 +24,7 @@
 //=============================================================================
 #include <csutil/parray.h>
 #include <csutil/strhash.h>
+#include <csutil/set.h>
 
 //=============================================================================
 // Project Includes
@@ -401,8 +402,9 @@ private:
      */
     float visible_distance;
 
+    csSet<unsigned int> ammo_types;
+
     ItemRequirement reqs[3];
-    int ammo_item_type_id;
     int spell_id_on_hit; 
     float spell_on_hit_probability;
     int spell_id_feature;  
@@ -494,7 +496,7 @@ public:
     bool GetBuyPersonalise();
     float GetRange() const;
     unsigned int GetCreator (PSITEMSTATS_CREATORSTATUS& creatorStatus);
-    unsigned int GetAmmoTypeID() const { return ammo_item_type_id; }
+    csSet<unsigned int> GetAmmoTypeID() const { return ammo_types; }
 
     float weaponRange;
 

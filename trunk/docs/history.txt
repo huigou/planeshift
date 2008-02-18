@@ -1,3 +1,8 @@
+*** 2008-02-18 by Sasha Levin
+- Made it possible to use several ammo types in one weapon.
+- Changed the way ammo is used, You have to hold it in your other hand.
+- DB bump.
+
 *** 2008-02-18 by Mike Gist
 - Removed usage of CURL, replaced with libxpnet.
 - Added download progress bar to the updater.

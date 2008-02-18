@@ -864,6 +864,9 @@ update characters c1, characters c2, characters c3 set c3.npc_master_id=c1.id wh
 # List the NPCs that does not point to a true master.
 # select c1.id,c1.name,c1.npc_master_id,c2.id,c2.name,c2.npc_master_id,c3.id,c3.name,c3.npc_master_id from characters c1, characters c2, characters c3 where (c1.npc_master_id=c1.id || c1.npc_master_id=0) && c2.npc_master_id=c1.id && c2.id != c2.npc_master_id && c3.npc_master_id=c2.id;
 
+#### 1179 - Sasha Levin
+ALTER TABLE item_stats MODIFY COLUMN `item_type_id_ammo` VARCHAR(30) DEFAULT '';
+
 
 # Insert your upgrade before this line. Remember when you set a new db_version
 # to update the server_options.sql file and update psserver.cpp as well.
