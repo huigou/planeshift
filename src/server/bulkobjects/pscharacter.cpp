@@ -968,7 +968,9 @@ int psCharacter::AddExperiencePoints(int W)
 
     vitals->SetExp(exp);
     if(updatedPP)
+    {
         SetProgressionPoints(progP,true);
+    }
 
     return pp;
 }
@@ -1019,7 +1021,9 @@ void psCharacter::UseProgressionPoints(unsigned int X)
 void psCharacter::InterruptSpellCasting()
 {
     if (spellCasting != NULL)
+    {
         spellCasting->Interrupt();
+    }
     SetSpellCasting(NULL);
 }
 

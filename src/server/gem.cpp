@@ -2442,7 +2442,7 @@ bool gemActor::LogMessage(const char *who, const psChatMessage &msg)
 * and sets the actual position of the sprite.
 */
 bool gemActor::InitLinMove (const csVector3& pos,
-                              float angle, iSector* sector)
+                            float angle, iSector* sector)
 {
     pcmove = new psLinearMovement(psserver->GetObjectReg());
 

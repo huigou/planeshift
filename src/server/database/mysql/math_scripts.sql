@@ -217,7 +217,9 @@ INSERT INTO math_scripts VALUES( "Calculate Repair Result",
 
 INSERT INTO math_scripts VALUES( "CalculateFamiliarAffinity", "Affinity = Type + Lifecycle + AttackTool + AttackType;");
 
-INSERT INTO math_scripts VALUES( "CalculateMaxPetTime", "MaxTime = 5 * 60 * 1000;");
+INSERT INTO math_scripts VALUES( "CalculateMaxPetTime", "MaxTime = 5 * 60 * 1000 * if(Skill,Skill,1);");
+INSERT INTO math_scripts VALUES( "CalculateMaxPetRange", "MaxRange = 10 + Skill*10;" );
+INSERT INTO math_scripts VALUES( "CalculatePetReact"," React = if(1+Skill>=Level,1,0);");
 
 INSERT INTO math_scripts VALUES( "Calc Player Sketch Limits",
 "
@@ -240,3 +242,4 @@ INSERT INTO math_scripts VALUES( "Calculate Mining Odds", "Total = Distance * Pr
 INSERT INTO math_scripts VALUES( "Calc Item Merchant Price Buy", "Result = ItemPrice - CharData:getSkillValue(47)/10;");
 
 INSERT INTO math_scripts VALUES( "Calc Item Merchant Price Sell", "Result = ItemPrice + CharData:getSkillValue(47)/10;");
+

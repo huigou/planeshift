@@ -24,10 +24,10 @@
 #include "engine/netpersist.h"
 #include "net/cmdbase.h"   // Subscriber class
 #include "util/serverconsole.h"  // iCommandCatcher
-class  MsgHandler;
-class  EventManager;
-class  psNPCCommandsMessage;
-struct iPcLinearMovement;
+class MsgHandler;
+class EventManager;
+class psNPCCommandsMessage;
+class psLinearMovement;
 class psNetConnection;
 class psGameEvent;
 class NPC;
@@ -80,7 +80,7 @@ public:
     void Authenticate(csString& host,int port,csString& user,csString& pass);
     bool IsReady() { return ready; }
     void Disconnect();
-    void QueueDRData(iCelEntity *entity,iPcLinearMovement *linmove,uint8_t counter);
+    void QueueDRData(iCelEntity *entity,psLinearMovement *linmove,uint8_t counter);
     void QueueDRData(NPC * npc );
     void QueueAttackCommand(iCelEntity *attacker, iCelEntity *target);
     void QueueSpawnCommand(iCelEntity *mother, iCelEntity *father);

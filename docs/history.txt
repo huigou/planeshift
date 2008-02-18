@@ -1,3 +1,11 @@
+*** 2008-02-18 by Anders Reggestad
+- Modified npcclient to use the new psLinearMovement class.
+- Added math script to calcualte the range a pet could be controlled from.
+- Added math script to calcualte if the pet would react to a command.
+- Added practice of empathy when commanding a pet.
+- Modified character data db entries to be uniq npc's not templates to not
+  break the test, thanks to Vornne.
+
 *** 2008-02-18 by Sasha Levin
 - Made it possible to use several ammo types in one weapon.
 - Changed the way ammo is used, You have to hold it in your other hand.

@@ -23,7 +23,10 @@
 #include <iengine/mesh.h>
 #include <iengine/movable.h>
 
-#include <propclass/linmove.h>
+//=============================================================================
+// Project Space Includes
+//=============================================================================
+#include "engine/linmove.h"
 
 #include "gem.h"
 #include "npc.h"
@@ -130,6 +133,10 @@ void gemNPCObject::SetPosition(csVector3& pos, iSector* sector, int* instance)
     }
 }
 
+iMeshWrapper *gemNPCObject::GetMeshWrapper()
+{
+    return pcmesh->GetMesh();
+}
 
 //-------------------------------------------------------------------------------
  
@@ -181,7 +188,7 @@ bool gemNPCActor::InitCharData( const char* textParts, const char* equipment )
 }    
 
 bool gemNPCActor::InitLinMove(const csVector3& pos, float angle, const char* sector,
-                                csVector3 top, csVector3 bottom, csVector3 offset )
+                              csVector3 top, csVector3 bottom, csVector3 offset )
 {
     csRef<iCelPropertyClass> pc;
     pc = cel->GetPlLayer()->CreatePropertyClass(entity, "pclinearmovement");
@@ -190,11 +197,11 @@ bool gemNPCActor::InitLinMove(const csVector3& pos, float angle, const char* sec
         Error1("Could not create property class pclinearmovement.  Actor not created.");
         return false;
     }
-    pcmove =  scfQueryInterface<iPcLinearMovement> (pc);
+    pcmove =  new psLinearMovement(cel->GetObjectReg());
 
     csRef<iEngine> engine =  csQueryRegistry<iEngine> (cel->GetObjectReg());
 
-    pcmove->InitCD(top, bottom,offset, NULL); 
+    pcmove->InitCD(top, bottom, offset, GetMeshWrapper()); 
     pcmove->SetPosition(pos,angle,engine->FindSector(sector));
     
     return true;  // right now this func never fail, but might later.

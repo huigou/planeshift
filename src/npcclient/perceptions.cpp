@@ -32,7 +32,6 @@
 #include <propclass/mesh.h>
 #include <physicallayer/entity.h>
 #include <physicallayer/propclas.h>
-#include <propclass/linmove.h>
 
 #include "net/msghandler.h"
 #include "net/npcmessages.h"

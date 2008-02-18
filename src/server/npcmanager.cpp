@@ -303,10 +303,12 @@ public:
         if ( maxPetTime )
         {
             MathScriptVar* actorvar  = maxPetTime->GetOrCreateVar("Actor");
+            MathScriptVar* skill = maxPetTime->GetOrCreateVar("Skill");
             if ( owner )
             {
                 actorvar->SetObject( this->owner->GetCharacterData() );
-            
+                skill->SetValue( owner->GetCharacterData()->GetSkills()->GetSkillRank(PSSKILL_EMPATHY) );
+
                 maxPetTime->Execute();
                 MathScriptVar* timeValue =  maxPetTime->GetVar("MaxTime");
                 maxTime = timeValue->GetValue();
@@ -352,7 +354,41 @@ NPCManager::NPCManager(ClientConnectionSet *pCCS,
 
     psNPCManagerTick *tick = new psNPCManagerTick(NPC_TICK_INTERVAL,this);
     eventmanager->Push(tick);
+
+    petRangeScript = psserver->GetMathScriptEngine()->FindScript("CalculateMaxPetRange");
+    varRangeEmpathySkill = petRangeScript->GetOrCreateVar("Skill");
+    varMaxRange          = petRangeScript->GetOrCreateVar("MaxRange");
+
+    petReactScript = psserver->GetMathScriptEngine()->FindScript("CalculatePetReact");;
+    varReactEmpathySkill = petReactScript->GetOrCreateVar("Skill");
+    varReactLevel        = petReactScript->GetOrCreateVar("Level");
+    varReact             = petReactScript->GetOrCreateVar("React");
 }
+
+bool NPCManager::Initialize()
+{
+    petRangeScript = psserver->GetMathScriptEngine()->FindScript("CalculateMaxPetRange");
+    if (!petRangeScript)
+    {
+        Error1("No CalculateMaxPetRange script!");
+        return false;
+    }    
+    varRangeEmpathySkill = petRangeScript->GetOrCreateVar("Skill");
+    varMaxRange          = petRangeScript->GetOrCreateVar("MaxRange");
+
+    petReactScript = psserver->GetMathScriptEngine()->FindScript("CalculatePetReact");;
+    if (!petReactScript)
+    {
+        Error1("No CalculatePetReact script!");
+        return false;
+    }
+    varReactEmpathySkill = petReactScript->GetOrCreateVar("Skill");
+    varReactLevel        = petReactScript->GetOrCreateVar("Level");
+    varReact             = petReactScript->GetOrCreateVar("React");
+
+    return true;
+}
+
 
 NPCManager::~NPCManager()
 {
@@ -1268,7 +1304,17 @@ bool NPCManager::CanPetHereYou(int clientnum, Client * owner, gemNPC * pet, cons
 {
     //TODO: Add a range check
 
-    if (pet->GetInstance() != owner->GetActor()->GetInstance())
+    varRangeEmpathySkill->SetValue(owner->GetCharacterData()->GetSkillRank(PSSKILL_EMPATHY));
+    petRangeScript->Execute();
+    float max_range = varMaxRange->GetValue();
+
+    if (DoLogDebug(LOG_NPC))
+    {
+        petRangeScript->DumpAllVars();
+    }
+
+    if (pet->GetInstance() != owner->GetActor()->GetInstance() || 
+        owner->GetActor()->RangeTo(pet, false) >= max_range )
     {
         psserver->SendSystemInfo(clientnum, "Your %s is too far away to hear you", type);
         return false;
@@ -1277,6 +1323,26 @@ bool NPCManager::CanPetHereYou(int clientnum, Client * owner, gemNPC * pet, cons
     return true;
 }
 
+bool NPCManager::WillPetReact(int clientnum, Client * owner, gemNPC * pet, const char * type, int level)
+{
+    varReactEmpathySkill->SetValue(owner->GetCharacterData()->GetSkillRank(PSSKILL_EMPATHY));
+    varReactLevel->SetValue(level);
+    petReactScript->Execute();
+    float react = varReact->GetValue();
+
+    if (DoLogDebug(LOG_NPC))
+    {
+        petReactScript->DumpAllVars();
+    }
+
+    if ( react > 0.0)
+    {
+        return true;
+    }
+
+    psserver->SendSystemInfo(clientnum, "Your %s do not react to your command", type);
+    return false;
+}
 
 void NPCManager::HandlePetCommand( MsgEntry * me )
 {
@@ -1351,7 +1417,7 @@ void NPCManager::HandlePetCommand( MsgEntry * me )
     case psPETCommandMessage::CMD_FOLLOW :
         if ( pet != NULL )
         {
-            if (CanPetHereYou(me->clientnum, owner, pet, typeStr))
+            if (CanPetHereYou(me->clientnum, owner, pet, typeStr) && WillPetReact(me->clientnum, owner, pet, typeStr, 1))
             {
                 // If no target target owner
                 if (!pet->GetTarget())
@@ -1359,6 +1425,7 @@ void NPCManager::HandlePetCommand( MsgEntry * me )
                     pet->SetTarget( owner->GetActor() );
                 }
                 QueueOwnerCmdPerception( owner->GetActor(), pet, psPETCommandMessage::CMD_FOLLOW );
+                owner->GetCharacterData()->GetSkills()->AddSkillPractice(PSSKILL_EMPATHY, 1);
             }        
         }
         else
@@ -1370,9 +1437,10 @@ void NPCManager::HandlePetCommand( MsgEntry * me )
     case psPETCommandMessage::CMD_STAY :
         if ( pet != NULL )
         {
-            if (CanPetHereYou(me->clientnum, owner, pet, typeStr))
+            if (CanPetHereYou(me->clientnum, owner, pet, typeStr) && WillPetReact(me->clientnum, owner, pet, typeStr, 1))
             {
                 QueueOwnerCmdPerception( owner->GetActor(), pet, psPETCommandMessage::CMD_STAY );
+                owner->GetCharacterData()->GetSkills()->AddSkillPractice(PSSKILL_EMPATHY, 1);
             }
         }
         else
@@ -1493,6 +1561,7 @@ void NPCManager::HandlePetCommand( MsgEntry * me )
                 owner->SetFamiliar( pet );
                 // Send OwnerActionLogon Perception
                 pet->SetOwner( owner->GetActor() );
+                owner->GetCharacterData()->GetSkills()->AddSkillPractice(PSSKILL_EMPATHY, 1);
             }
             else
             {
@@ -1509,7 +1578,7 @@ void NPCManager::HandlePetCommand( MsgEntry * me )
     case psPETCommandMessage::CMD_ATTACK :
         if ( pet != NULL )
         {
-            if ( CanPetHereYou(me->clientnum, owner, pet, typeStr) )
+            if ( CanPetHereYou(me->clientnum, owner, pet, typeStr) && WillPetReact(me->clientnum, owner, pet, typeStr, 4))
             {
                 gemObject * trg = pet->GetTarget();
                 if ( trg != NULL )
@@ -1529,6 +1598,7 @@ void NPCManager::HandlePetCommand( MsgEntry * me )
                             stance.stance_id = words.GetInt( 0 );
                         }
                         QueueOwnerCmdPerception( owner->GetActor(), pet, psPETCommandMessage::CMD_ATTACK );
+                        owner->GetCharacterData()->GetSkills()->AddSkillPractice(PSSKILL_EMPATHY, 1);
                     }
                 }
                 else
@@ -1546,9 +1616,10 @@ void NPCManager::HandlePetCommand( MsgEntry * me )
     case psPETCommandMessage::CMD_STOPATTACK :
         if ( pet != NULL )
         {
-            if ( CanPetHereYou(me->clientnum, owner, pet, typeStr) )
+            if ( CanPetHereYou(me->clientnum, owner, pet, typeStr) && WillPetReact(me->clientnum, owner, pet, typeStr, 4))
             {
                 QueueOwnerCmdPerception( owner->GetActor(), pet, psPETCommandMessage::CMD_STOPATTACK );
+                owner->GetCharacterData()->GetSkills()->AddSkillPractice(PSSKILL_EMPATHY, 1);
             }
         }
         else
@@ -1560,7 +1631,7 @@ void NPCManager::HandlePetCommand( MsgEntry * me )
     case psPETCommandMessage::CMD_ASSIST :
         if ( pet != NULL )
         {
-            if ( CanPetHereYou(me->clientnum, owner, pet, typeStr) )
+            if ( CanPetHereYou(me->clientnum, owner, pet, typeStr) && WillPetReact(me->clientnum, owner, pet, typeStr, 3) )
             {
                 QueueOwnerCmdPerception( owner->GetActor(), pet, psPETCommandMessage::CMD_ASSIST );
             }
@@ -1574,7 +1645,7 @@ void NPCManager::HandlePetCommand( MsgEntry * me )
     case psPETCommandMessage::CMD_GUARD :
         if ( pet != NULL )
         {
-            if ( CanPetHereYou(me->clientnum, owner, pet, typeStr) )
+            if ( CanPetHereYou(me->clientnum, owner, pet, typeStr) && WillPetReact(me->clientnum, owner, pet, typeStr, 2))
             {
                 QueueOwnerCmdPerception( owner->GetActor(), pet, psPETCommandMessage::CMD_GUARD );
             }
