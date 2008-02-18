@@ -71,7 +71,7 @@ pawsSetupWindow::pawsSetupWindow()
 
 bool pawsSetupWindow::PostSetup()
 {
-    csRef<iVFS> vfs =  csQueryRegistry<iVFS> (PawsManager::GetSingleton().GetObjectRegistry());
+    vfs =  csQueryRegistry<iVFS> (PawsManager::GetSingleton().GetObjectRegistry());
    
     config = new csConfigFile("/planeshift/userdata/planeshift.cfg", vfs);
 
