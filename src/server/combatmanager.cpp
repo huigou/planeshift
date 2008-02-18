@@ -828,15 +828,22 @@ void psCombatManager::HandleCombatEvent(psCombatGameEvent *event)
 
             if (weapon->GetIsRangeWeapon() && weapon->GetUsesAmmo())
             {
-                psItemStats* ammoStats = CacheManager::GetSingleton().GetBasicItemStatsByID(weapon->GetAmmoTypeID());
-                CS_ASSERT(ammoStats);
+                INVENTORY_SLOT_NUMBER otherHand = event->GetWeaponSlot() == PSCHARACTER_SLOT_RIGHTHAND ?
+                                                                            PSCHARACTER_SLOT_LEFTHAND:
+                                                                            PSCHARACTER_SLOT_RIGHTHAND;
 
-                size_t ammoItemIndex = attacker_data->Inventory().FindItemStatIndex(ammoStats);
-                if (ammoItemIndex == SIZET_NOT_FOUND)
+                psItem* otherItem = attacker_data->Inventory().GetInventoryItem(otherHand);
+                if (otherItem == NULL)
+                {
                     attack_result = ATTACK_OUTOFAMMO;
+                }
+                else if (!weapon->GetAmmoTypeID().In(otherItem->GetBaseStats()->GetUID()))
+                {
+                    attack_result = ATTACK_OUTOFAMMO;
+                }
                 else
                 {
-                    psItem* usedAmmo = attacker_data->Inventory().RemoveItemIndex(ammoItemIndex, 1);
+                    psItem* usedAmmo = attacker_data->Inventory().RemoveItemID(otherItem->GetUID(), 1);
                     if (usedAmmo)
                     {
                         attack_result=CalculateAttack(event, usedAmmo);

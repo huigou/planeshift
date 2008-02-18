@@ -469,7 +469,19 @@ bool psItemStats::ReadItemStats(iResultRow& row)
     reqs[2].name = row["requirement_3_name"];
     reqs[2].min_value = row.GetFloat("requirement_3_value");
 
-    ammo_item_type_id        = row.GetInt("item_type_id_ammo");
+    psString strTmpAmmoList = row["item_type_id_ammo"];
+    csStringArray strTmpAmmoListArray;
+    strTmpAmmoList.Split(strTmpAmmoListArray, ',');
+    while (!strTmpAmmoListArray.IsEmpty())
+    {
+        char* currAmmo = strTmpAmmoListArray.Pop();
+        unsigned int ammoID = atoi(currAmmo);
+        if (ammoID != 0)
+            ammo_types.Add(ammoID);
+        delete[] currAmmo;
+    }
+
+
     spell_id_on_hit          = row.GetInt("spell_id_on_hit");
     spell_on_hit_probability = row.GetFloat("spell_on_hit_prob");
     spell_id_feature         = row.GetInt("spell_id_feature");
@@ -671,7 +683,9 @@ bool psItemStats::Save()
     fields.FormatPush( "%1.2f", this->decay_rate );            // decay_rate
     fields.FormatPush( "%u", this->category->id );          // category_id
     fields.FormatPush( "%u", this->price.GetTotal() );      // base_sales_price
-    fields.FormatPush( "%u", this->ammo_item_type_id );     // item_type_id_ammo
+    csString strAmmoTypes;
+    //ammo_types
+    //fields.FormatPush( "%u", this->ammo_item_type_id );     // item_type_id_ammo
     if (this->anim_list)
         fields.FormatPush( "%u", this->anim_list->Get(0)->id ); // item_anim_id
     else

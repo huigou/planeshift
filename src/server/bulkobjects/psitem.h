@@ -625,7 +625,7 @@ public:
     const char *GetStandardName();
     const char *GetStandardDescription();
     float GetRange() const { return current_stats->GetRange(); }
-    unsigned int GetAmmoTypeID() const { return current_stats->GetAmmoTypeID(); }
+    csSet<unsigned int> GetAmmoTypeID() const { return current_stats->GetAmmoTypeID(); }
 
     PSITEMSTATS_WEAPONTYPE GetWeaponType();
     PSSKILL GetWeaponSkill(PSITEMSTATS_WEAPONSKILL_INDEX index);
