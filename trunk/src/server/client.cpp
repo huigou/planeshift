@@ -23,8 +23,6 @@
 //=============================================================================
 #include <csutil/util.h>
 
-#include <physicallayer/entity.h>
-#include <propclass/mesh.h>
 
 //=============================================================================
 // Project Space Includes

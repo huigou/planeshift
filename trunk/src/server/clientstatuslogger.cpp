@@ -20,8 +20,6 @@
 /** @author Dewitt Colclough */
 
 #include <psconfig.h>
-#include <physicallayer/entity.h>
-#include <propclass/mesh.h>
 
 
 #include "clientstatuslogger.h"
