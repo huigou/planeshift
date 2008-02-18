@@ -32,7 +32,6 @@
 #include <iutil/object.h>
 #include <iengine/campos.h>
 #include <iengine/region.h>
-#include <propclass/linmove.h>
 
 //=============================================================================
 // Project Includes
