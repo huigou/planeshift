@@ -50,7 +50,6 @@
 #include <propclass/timer.h>
 #include <propclass/region.h>
 #include <propclass/input.h>
-#include <propclass/linmove.h>
 
 //=============================================================================
 // Project Includes
@@ -70,6 +69,7 @@
 
 #include "engine/netpersist.h"
 #include "engine/psworld.h"
+#include "engine/linmove.h"
 
 #include "bulkobjects/pscharacterloader.h"
 #include "bulkobjects/psraceinfo.h"

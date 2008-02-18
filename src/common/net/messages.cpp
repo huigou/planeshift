@@ -27,7 +27,6 @@
 #include <iengine/engine.h>
 #include <iengine/sector.h>
 #include <imesh/spritecal3d.h>
-#include <propclass/linmove.h>
 #include <iutil/object.h>
 
 #include "util/psconst.h"
@@ -41,6 +40,7 @@
 #include "net/msghandler.h"
 #include "util/slots.h"
 #include "rpgrules/vitals.h"
+#include "engine/linmove.h"
 
 // uncomment this to produce full debug dumping in <class>::ToString functions
 #define FULL_DEBUG_DUMP
@@ -4127,7 +4127,7 @@ void psDRMessage::CreateMsgEntry(uint32_t client, csStringHash* msgstrings, iSec
 }
 
 psDRMessage::psDRMessage(uint32_t client, PS_ID mappedid, uint8_t counter,
-                         csStringHash* msgstrings, iPcLinearMovement *linmove, uint8_t mode)
+                         csStringHash* msgstrings, psLinearMovement *linmove, uint8_t mode)
 {
     float speed;
     linmove->GetDRData(on_ground,speed,pos,yrot,sector,vel,worldVel,ang_vel);
@@ -4447,7 +4447,7 @@ psPersistActor::psPersistActor( uint32_t clientNum,
                                 const char* texParts,
                                 const char* equipmentParts,
                                 uint8_t counter,
-                                PS_ID mappedid,csStringHash* msgstrings, iPcLinearMovement *linmove,
+                                PS_ID mappedid,csStringHash* msgstrings, psLinearMovement *linmove,
                                 uint8_t movementMode,
                                 uint8_t serverMode,
                                 uint32_t playerID,

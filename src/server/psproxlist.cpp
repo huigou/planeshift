@@ -39,7 +39,6 @@
 
 #include <physicallayer/entity.h>
 #include <propclass/mesh.h>
-#include <propclass/linmove.h>
 
 //=============================================================================
 // Project Includes

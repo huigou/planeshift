@@ -20,8 +20,6 @@
 #include <iengine/movable.h>
 
 #include "engine/celbase.h"
-#include <propclass/linmove.h>
-#include <propclass/colldet.h>
 #include <iutil/object.h>
 #include "util/serverconsole.h"
 #include "gem.h"
@@ -30,6 +28,7 @@
 #include "globals.h"
 #include "psserver.h"
 #include "playergroup.h"
+#include "engine/linmove.h"
 
 #include "paladinjr.h"
 
@@ -119,11 +118,8 @@ void PaladinJr::PredictClient(Client* client, psDRMessage& currUpdate)
     //    vel.x = vel.z = -1;
     //}
 
-    csRef<iPcCollisionDetection> colldet = CEL_QUERY_PROPCLASS(client->GetActor()->GetEntity()->GetPropertyClassList(), iPcCollisionDetection);
-
     // Paladin Jr needs CD enabled on the entity.
-    colldet->UseCD(true);
-
+    client->GetActor()->pcmove->UseCD(true);
     client->GetActor()->pcmove->SetVelocity(vel);
 
     // TODO: Assuming maximum lag, need to add some kind of lag prediction here.
@@ -143,7 +139,7 @@ void PaladinJr::PredictClient(Client* client, psDRMessage& currUpdate)
     maxmove = predictedPos-origPos;
 
     // No longer need CD checking
-    colldet->UseCD(false);
+    client->GetActor()->pcmove->UseCD(false);
 
     lastUpdate = currUpdate;
     checkClient = true;
@@ -160,7 +156,6 @@ void PaladinJr::CheckClient(Client* client)
     iSector* sector;
     csVector3 posChange;
 
-    csRef<iPcCollisionDetection> colldet = CEL_QUERY_PROPCLASS(client->GetActor()->GetEntity()->GetPropertyClassList(), iPcCollisionDetection);
 
     client->GetActor()->GetPosition(pos,yrot,sector);
     posChange = pos-origPos;

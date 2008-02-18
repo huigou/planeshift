@@ -39,6 +39,7 @@
 
 struct iSpriteCal3DState;
 struct iEngine;
+class psLinearMovement;
 
 // This holds the version number of the network code, remember to increase
 // this each time you do an update which breaks compatibility
@@ -2681,7 +2682,6 @@ private:
 
 //-----------------------------------------------------------------------------
 
-struct iPcLinearMovement;
 
 class psDRMessage : public psMessageCracker
 {
@@ -2728,7 +2728,7 @@ public:
 
     psDRMessage() { }
     psDRMessage(uint32_t client, PS_ID mappedid, uint8_t counter,
-                csStringHash* msgstrings, iPcLinearMovement *linmove, uint8_t mode=0);
+                csStringHash* msgstrings, psLinearMovement *linmove, uint8_t mode=0);
     psDRMessage(uint32_t client, PS_ID mappedid,
                 bool on_ground, uint8_t mode, uint8_t counter,
                 const csVector3& pos, float yrot, iSector *sector,
@@ -2861,7 +2861,7 @@ public:
                     const char* texParts,
                     const char* equipmentParts,
                     uint8_t counter,
-                    PS_ID mappedid,csStringHash* msgstrings, iPcLinearMovement *linmove,
+                    PS_ID mappedid,csStringHash* msgstrings, psLinearMovement *linmove,
                     uint8_t movementMode,
                     uint8_t serverMode,
                     uint32_t playerID = 0, uint32_t groupID = 0, PS_ID ownerEID = 0,

@@ -47,7 +47,6 @@
 struct iCelPlLayer;
 struct iCelEntityList;
 struct iCelEntity;
-struct iPcLinearMovement;
 struct iPcMesh;
 struct iMeshWrapper;
 
@@ -73,6 +72,7 @@ class gemNPC;
 class gemPet;
 class ClientConnectionSet;
 class PublishVector;
+class psLinearMovement;
 
 #define BUFF_INDICATOR          "+"
 #define DEBUFF_INDICATOR        "-"
@@ -544,7 +544,7 @@ protected:
     bool atRest;          ///< Is this character stationary or moving?
 
 public:
-    csRef<iPcLinearMovement> pcmove;
+    psLinearMovement* pcmove;
 
     gemActor(psCharacter *chardata, const char* factname,const char* filename,
         int myInstance,iSector* room,const csVector3& pos,float rotangle,int clientnum,uint32 id);
