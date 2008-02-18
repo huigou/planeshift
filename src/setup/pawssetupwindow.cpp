@@ -145,11 +145,13 @@ bool pawsSetupWindow::OnButtonPressed( int mouseButton, int keyModifier, pawsWid
             &si,                // Pointer to STARTUPINFO structure.
             &pi );              // Pointer to PROCESS_INFORMATION structure.
 
+    #elif defined(CS_PLATFORM_MACOSX)
+        csRef<iDataBuffer> realPath = vfs->GetRealPath("/this/");
+        csString cmd;
+        cmd.Format("open -a %spsclient.app", realPath->GetData());
+        system(cmd);
     #elif defined(CS_PLATFORM_UNIX)
-        // *NIX have a quite easier way to do that :)
         system("./psclient &");
-    #elif defined(CS_PLATFORM_MACOSX) //is this the right define?
-        //system("open ./psclient.app &");
     #else
     #error "Bad platform for launch"
     #endif

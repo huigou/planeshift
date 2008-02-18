@@ -150,7 +150,7 @@ bool FileUtil::CopyFile(csString from, csString to, bool vfsPath, bool executabl
     csString n1;
     csString n2;
 
-    csString fileTo = to;
+    csString file = to;
     if(vfsPath)
     {
         csRef<iDataBuffer> buff = vfs->GetRealPath(to);
@@ -161,14 +161,14 @@ bool FileUtil::CopyFile(csString from, csString to, bool vfsPath, bool executabl
             return false;
         }
 
-        fileTo = buff->GetData();
+        file = buff->GetData();
     }
 
-    FileStat* statTo = StatFile(fileTo);
-    if(statTo && statTo->readonly)
+    FileStat* stat = StatFile(file);
+    if(stat && stat->readonly)
     {
         if(!silent)
-            printf("Won't write to %s, because it's readonly\n", fileTo.GetData());
+            printf("Won't write to %s, because it's readonly\n",file.GetData());
         return true; // Return true to bypass DLL checks and stuff
     }
 

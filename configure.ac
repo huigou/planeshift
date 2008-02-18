@@ -329,12 +329,6 @@ CS_CHECK_LIB_WITH([mysqlclient],
 		[USED_MEM check; check.left = 0;])], [/usr /usr/include/mysql|/usr/lib /usr/local/mysql /usr/include/mysql|/usr/lib/mysql /usr/local/include/mysql|/usr/local/lib/mysql /usr/lib /usr/local/mysql], [],
 		[CS_EMIT_BUILD_RESULT([cs_cv_libmysqlclient], [LIBMYSQLCLIENT])], [], [], [], [], [])
 
-#----------------------------------------------------------------------------
-# Check for Curl
-#----------------------------------------------------------------------------
-
-PS_CHECK_LIBCURL
-
 #------------------------------------------------------------------------------
 # Check if TemplateToolkit2 is installed (needed for MSVC project generation).
 #------------------------------------------------------------------------------
