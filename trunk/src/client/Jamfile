@@ -32,7 +32,6 @@ LinkWith psclient_static : gui psnet psengine psrpgrules pssound psutil paws eff
 STATIC.PLUGINLIST =
   bindoc
   bruteblock
-  cpersist
   csddsimg
   csfont
   csjpgimg
