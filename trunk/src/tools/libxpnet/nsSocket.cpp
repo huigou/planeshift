@@ -52,36 +52,22 @@
 #include "nsSocket.h"
 
 /* Platform-specific headers for socket functionality */
-#if defined(__unix) || defined(__unix__) || defined(macintosh) || \
-    defined(_AIX) || defined(__OS2__)
+#if defined(CS_PLATFORM_WIN32)
+#define read(_socket, _buf, _len) \
+        recv(_socket, (char *) _buf, _len, 0);
+#define write(_socket, _buf, _len) \
+        send(_socket, (char *) _buf, _len, 0);
+#include <winsock2.h>
+#else
 #include <unistd.h>
 #include <netdb.h>
 #include <sys/socket.h>
 #include <arpa/inet.h>
 #endif
 
-#if defined(_WINDOWS)
-#define read(_socket, _buf, _len) \
-        recv(_socket, (char *) _buf, _len, 0);
-#define write(_socket, _buf, _len) \
-        send(_socket, (char *) _buf, _len, 0);
-#include <winsock2.h>
-#endif
-
-#if defined(__OS2__)
-#define read(_socket, _buf, _len) \
-        recv(_socket, (char *) _buf, _len, 0);
-#define write(_socket, _buf, _len) \
-        send(_socket, (char *) _buf, _len, 0);
-#define close(_socket) \
-        soclose(_socket);
-#define select(_socket, _readfd, _writefd, _exceptfd, _timeout) \
-        bsdselect(_socket, _readfd, _writefd, _exceptfd, _timeout);
-#endif
-
 #define MAXSOCKADDR 128
 
-#if (defined(SOLARIS) && !defined(_SOCKLEN_T)) || defined(_WINDOWS) || defined(IRIX) || defined(__OS2__)
+#if (defined(SOLARIS) && !defined(_SOCKLEN_T)) || defined(CS_PLATFORM_WIN32) || defined(IRIX) || defined(__OS2__)
 #define socklen_t int
 #endif
 
@@ -103,7 +89,7 @@ const int kKilobyte = 1024;
 const int kUsecsPerKBFactor = (kUsecsPerSec/kKilobyte);
 const int kReadBufSize = 1024;
 
-#ifdef _WINDOWS
+#ifdef CS_PLATFORM_WIN32
 static int sbWinSockInited = FALSE;
 #endif
 
@@ -133,7 +119,7 @@ nsSocket::~nsSocket()
 int
 nsSocket::Open()
 {
-#ifdef _WINDOWS
+#ifdef CS_PLATFORM_WIN32
     /* funky windows initialization of winsock */
 
     int err;
@@ -175,7 +161,7 @@ nsSocket::Open()
     struct hostent *hptr = NULL;
 
     mFd = socket(AF_INET, SOCK_STREAM, 0);
-#ifdef _WINDOWS
+#ifdef CS_PLATFORM_WIN32
 	if (mFd == INVALID_SOCKET) {
 			printf("Last error: %d\n", WSAGetLastError());
     }
@@ -450,7 +436,7 @@ nsSocket::Close()
     int rv = OK, rv1 = OK, rv2 = OK;
 
 /* funky windows shutdown of winsock */
-#ifdef _WINDOWS
+#ifdef CS_PLATFORM_WIN32
     closesocket(mFd);
     if (mListenFd > 0)
         closesocket(mListenFd);
@@ -478,7 +464,7 @@ nsSocket::GetHostPortString(char **aHostPort)
     int rv = OK;
     socklen_t salen;
     struct sockaddr_in servaddr;
-    int hpsLen; // host-port string length
+    size_t hpsLen; // host-port string length
 
     if (!aHostPort)
         return E_PARAM;

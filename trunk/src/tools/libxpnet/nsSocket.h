@@ -40,9 +40,9 @@
 #ifndef _NS_SOCKET_H_
 #define _NS_SOCKET_H_
 
-#define _WINDOWS CS_PLATFORM_WIN32
+#include <cssysdef.h>
 
-#ifndef _WINDOWS
+#ifndef CS_PLATFORM_WIN32
 #include <sys/time.h>
 #endif
 
