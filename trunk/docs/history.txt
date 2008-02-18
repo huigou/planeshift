@@ -1,3 +1,8 @@
+*** 2008-02-18 by Mike Gist
+- Removed usage of CURL, replaced with libxpnet.
+- Added download progress bar to the updater.
+- Attempted a fix for client launching from pssetup on OSX.
+
 *** 2008-02-17 by Andrew Craig
 - Changed server to use psLinearMovement from the CEL class iPcLinearMovement.  
 

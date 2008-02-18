@@ -21,8 +21,11 @@
 #ifndef __DOWNLOAD_H__
 #define __DOWNLOAD_H__
 
-#include <curl/curl.h>
 #include "updaterconfig.h"
+
+#include "../tools/libxpnet/nsSocket.h"
+#include "../tools/libxpnet/nsHTTPConn.h"
+
 
 class Downloader
 {
@@ -49,12 +52,6 @@ private:
 
     /* Cycle our currently active mirror to the next */
     uint CycleActiveMirror();
-
-    /* Curl object! */
-    CURL* curl;
-
-    /* curl error string */
-    char* curlerror;
 
     /* VFS */
     csRef<iVFS> vfs;

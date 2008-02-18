@@ -143,18 +143,6 @@ MsvcGenConfig LIBMYSQLCLIENT.INCDIRS ;
 MsvcGenConfig LIBMYSQLCLIENT.LIBDIRS ;
 MsvcGenConfig LIBMYSQLCLIENT.LIBDIRS.DEBUG ;
 
-# CURL
-
-MsvcGenConfig CURL.AVAILABLE : yes ;
-MsvcGenConfig CURL.DEFINES ;
-MsvcGenConfig CURL.CFLAGS ;
-MsvcGenConfig CURL.LFLAGS ;
-MsvcGenConfig CURL.LIBS : "libcurl.lib Wldap32.lib Winmm.lib" ;
-MsvcGenConfig CURL.LIBS.DEBUG : "libcurl.lib Wldap32.lib Winmm.lib "  ;
-MsvcGenConfig CURL.INCDIRS ;
-MsvcGenConfig CURL.LIBDIRS ;
-MsvcGenConfig CURL.LIBDIRS.DEBUG ;
-
 # Cal3D
 
 MsvcGenConfig CAL3D.AVAILABLE : yes ;

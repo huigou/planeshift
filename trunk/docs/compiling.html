@@ -602,9 +602,6 @@ continue as indicated.<br></p>
     <h3>Jam</h3>
     <p>You will need a tool called Jam. Jam is a replacement for make. It's a bit easier to maintain and create
     custom builds. If you do not already have Jam, you can find it at <a href="ftp://ftp.perforce.com/pub/jam/">ftp://ftp.perforce.com/pub/jam/</a> - install it system wide. You can also use your distro's package manager to install it.</p>
-    <h3>cURL</h3>
-    <p>To build the updater, you need the libcURL library. This is library that is used for HTTP protocol. It is what the updater
-    application uses to update the client. It can be obtained at <a href="http://curl.haxx.se/">http://curl.haxx.se/</a>. You can also use your distro's package manager to install it.</p>
     <h3>SVN</h3>
     <p>CS, CEL and PlaneShift use SVN for their source repositories, so you'll need that too.<br>
        You can find the software at: <a href="http://subversion.tigris.org/">http://subversion.tigris.org/</a><br>
@@ -612,66 +609,13 @@ continue as indicated.<br></p>
 </div>
 
 <div class="Windows">
-    <div class="MINGW">
-        <h3>cURL</h3>
-        <p>If you want to download the updates from the server, this is required.<br>
-        To build the updater, you will need to build cURL first, as MinGW does not have a compatible libcURL library available for download. 
-        This is the library that is used for the HTTP protocol. It is what the updater application uses to update the client.
-        It can be obtained at <a href="http://curl.haxx.se/">http://curl.haxx.se/</a>.
-         Since you are building cURL, go ahead and get the latest version available. 
-         Do not get a binary. For this example, we will be using curl-7.15.5.tar.bz2. Place the file in /usr/src.<br>
-         Make sure to read all the available support options available for cURL.
-         The updater only uses a small subset of them, but feel free to install 
-         more if you have other uses for it.<br>
-         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;curl version:    7.15.5<br>
-         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Host setup:      i686-pc-mingw32<br>
-         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Install prefix:  /usr/local<br>
-         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Compiler:        gcc<br>
-         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SSL support:     no      (--with-ssl / --with-gnutls)<br>
-         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;zlib support:    enabled<br>
-         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;krb4 support:    no      (--with-krb4*)<br>
-         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GSSAPI support:  no      (--with-gssapi)<br>
-         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SPNEGO support:  no      (--with-spnego)<br>
-         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;c-ares support:  no      (--enable-ares)<br>
-         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ipv6 support:    no      (--enable-ipv6)<br>
-         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IDN support:     no      (--with-libidn)<br>
-         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Build libcurl:   Shared=yes, Static=yes<br>
-         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Built-in manual: no      (--enable-manual)<br>
-         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Verbose errors:  enabled (--disable-verbose)<br>
-         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SSPI support:    no      (--enable-sspi)<br>
-         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ca cert path:    no<br>
-         <p><div class="commandBox">
-            $ tar -jxvf curl-7.15.5.tar.bz2<br>
-            $ cd curl-7.15.5<br>
-            $ ./configure<br>
-            $ make<br>
-            $ make install<br>
-         </div></p>
-    </p>
-    </div>
-    <div class="MSVC">
-        <h3>cURL</h3>
-        <p>To build the updater, you need the libcURL library. This is the library that is used for the HTTP protocol which the updater
-        application uses to connect to a repository for updating the client. 
-        You can download the cURL devel package (which contains the library and header files as well)
-        at <a href="http://curl.haxx.se/">http://curl.haxx.se/</a>.
-        In the download section, scroll down the list until you reach the Win32- MSVC area. It doesn't matter if you 
-        pick the devel package with or without ssl. Choose the latest version of the package. 
-        Unzip this into C:\development\curl.
-     </div>
     <h3>SVN client</h3>
     <p>PS, CS and CEL use SVN for their source repositories, so you will need an SVN client.<br>
        The SVN client for Windows is <a href="http://tortoisesvn.tigris.org/">TortoiseSVN</a>.</p>
 </div>
-<div class="MacOSX">
-    <h3>cURL</h3>
-    <p>To build the updater, you need the libcURL library. This is library that is used for HTTP protocol. It is what the updater
-    application uses to update the client. It can be obtained at <a href="http://curl.haxx.se/">http://curl.haxx.se/</a>.</p>
-</div>
 <div class="Linux-Gentoo">
     <p>Note: This section is incomplete and untested, but contains the Gentoo specific build information that was previously in the manual.</p>
     <p>Due to the number of dependencies needed, if you wish to read the homepage listing, or dependency description please select Linux's generic dropdown selection.</p>
-    <p>via portage: <i class="command">#emerge curl</i></p>
     <p>via portage: <i class="command">#emerge jam</i></p>
 </div>
 <div class="Linux-Slackware">
@@ -708,10 +652,10 @@ continue as indicated.<br></p>
 After that we need to refresh our sources.list file like so:<br>
     <p><i class="command"># sudo apt-get update</i></p>
     Once that is complete, we can fetch all the required packages using the following command:<br>
-    <p><i class="commandBox"># sudo apt-get --assume-yes install libjpeg62-dev x11proto-gl-dev autoconf libcurl3-dev jam bison flex-old automake1.9 libcurl3-dev libmng-dev libmikmod2-dev libogg-dev libvorbis-dev zlib1g-dev libpng12-dev build-essential libtool libglu1-mesa-dev xserver-xorg-dev libxt-dev libopenal0a libopenal-dev subversion zlibc libttf2 libfreetype6-dev libfreetype6 libasound2-dev alsa-oss libxxf86vm-dev libxext-dev x11proto-xext-dev
+    <p><i class="commandBox"># sudo apt-get --assume-yes install libjpeg62-dev x11proto-gl-dev autoconf jam bison flex-old automake1.9 libmng-dev libmikmod2-dev libogg-dev libvorbis-dev zlib1g-dev libpng12-dev build-essential libtool libglu1-mesa-dev xserver-xorg-dev libxt-dev libopenal0a libopenal-dev subversion zlibc libttf2 libfreetype6-dev libfreetype6 libasound2-dev alsa-oss libxxf86vm-dev libxext-dev x11proto-xext-dev
 </i></p>
 <p>If you are on Gutsy use this command</p>
-<p><i class="commandBox"># sudo apt-get --assume-yes install libjpeg62-dev x11proto-gl-dev autoconf jam bison flex-old automake1.9 libcurl4-openssl-dev libmng-dev libmikmod2-dev libogg-dev libvorbis-dev zlib1g-dev libpng12-dev build-essential libtool libglu1-mesa-dev libglu1-xorg-dev xserver-xorg-dev libxt-dev libopenal0a libopenal-dev subversion zlibc libttf2 libfreetype6-dev libfreetype6 libasound2-dev alsa-oss libxxf86vm-dev libxext-dev x11proto-xext-dev
+<p><i class="commandBox"># sudo apt-get --assume-yes install libjpeg62-dev x11proto-gl-dev autoconf jam bison flex-old automake1.9 libmng-dev libmikmod2-dev libogg-dev libvorbis-dev zlib1g-dev libpng12-dev build-essential libtool libglu1-mesa-dev libglu1-xorg-dev xserver-xorg-dev libxt-dev libopenal0a libopenal-dev subversion zlibc libttf2 libfreetype6-dev libfreetype6 libasound2-dev alsa-oss libxxf86vm-dev libxext-dev x11proto-xext-dev
 </i></p>
 
 <strong> BOTH of these above commands are assuming you do not need a server if you do please follow directions in the <a href="#mysql">mysql</a> section for installing other required packages</strong>
@@ -721,7 +665,6 @@ After that we need to refresh our sources.list file like so:<br>
     <p>Note: This section is incomplete and untested, but contains the Debian specific build information that was previously in the manual.</p>
     <p>Due to the number of dependencies needed, if you wish to read the homepage listing, or dependency description please select Linux's generic dropdown selection.</p>
 
-    <p>via apt-get: <i class="command">#apt-get install libcurl3-dev</i></p>    
     <p>via apt-get: <i class="command">#apt-get install jam svn build-essentials libfreetype6-dev libasound2-dev</i></p>
 
     <p>If you are using Debian testing (which uses X.Org), then you need xlibmesa-gl-dev instead of xlibmesa-glu-dev.</p>
@@ -1292,7 +1235,6 @@ then just copy it back to the file.<br></p>
         C:\development\CS\include<br>
         C:\development\CS\include\csutil\win32<br>
         C:\development\cel\include<br>
-        C:\development\curl\include<br>
         C:\mysql\include
     </p>
 
@@ -1300,7 +1242,6 @@ then just copy it back to the file.<br></p>
     to add the following directories:</p>
     <p>
         C:\mysql\lib\opt<br>
-        C:\development\curl\<br>
     </p>
 
     <h3>Crystal Space (CS)</h3>
@@ -1378,7 +1319,7 @@ and select Properties, 'read only' is one of the attributes in the General tab) 
 </div>
 <div class="Windows">
     <p>Note: You might have to copy a few DLL files from other build directories to your
-    PlaneShift directory if you get problems. You usually need to move libz-cs.dll, libcurl.dll (or similar), and libmySQL.dll.</p>
+    PlaneShift directory if you get problems. You usually need to move libz-cs.dll, and libmySQL.dll.</p>
 <div class="MINGW">
 <p>For Mingw you need to copy also these files to the
 PlaneShift directory:<br>
