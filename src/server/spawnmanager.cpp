@@ -728,7 +728,7 @@ void SpawnManager::RemoveNPC(gemObject *obj)
 
     int pid = obj->GetPlayerID();
 
-    Notify3(LOG_SPAWN,"Sending NPC %u disconnect msg to %zu clients.\n",obj->GetEntity()->GetID(),obj->GetMulticastClients().GetSize());
+    Notify3(LOG_SPAWN,"Sending NPC %u disconnect msg to %zu clients.\n",obj->GetEntityID(),obj->GetMulticastClients().GetSize());
 
     if (obj->GetCharacterData()==NULL)
     {
@@ -1223,7 +1223,7 @@ psDespawnGameEvent::psDespawnGameEvent(SpawnManager *mgr,
     : psGameEvent(0,delayticks,"psDespawnGameEvent")
 {
     spawnmanager = mgr;
-    entity       = obj->GetEntity()->GetID();
+    entity       = obj->GetEntityID();
 }
 
 void psDespawnGameEvent::Trigger()
