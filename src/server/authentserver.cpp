@@ -23,8 +23,6 @@
 #include <iutil/cfgmgr.h>
 #include <csutil/csmd5.h>
 
-#include <physicallayer/entity.h>
-#include <propclass/mesh.h>
 
 //=============================================================================
 // Project Includes
