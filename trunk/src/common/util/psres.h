@@ -1,33 +1,24 @@
 #ifndef __PSRES_H__
 #define __PSRES_H__
 
+#include <csutil/refcount.h>
 #include <csutil/scf.h>
 #include <csutil/csstring.h>
 
 class psTemplateResMngr;
 
-class psTemplateRes
+class psTemplateRes : public csRefCount
 {
 public:
     psTemplateRes();
     virtual ~psTemplateRes();
 
-    void Init (psTemplateResMngr* mngr, const char* name);
+    void Init(psTemplateResMngr* mngr, const char* name);
 
-    virtual void IncRef();
-    virtual void DecRef();
-
-    virtual void AddRefOwner( void** ref_owner ) {}
-    virtual void RemoveRefOwner( void** ref_owner ) {}
-
-    virtual int GetRefCount() { return refcount; }
-    virtual void* QueryInterface(scfInterfaceID, int) { return NULL; }    
-
-    const char* GetName() { return (const char*) name; }
+    const char* GetName() { return name.GetData(); }
     
 protected:
     psTemplateResMngr* mngr;
-    int refcount;
     csString name;
 };
 
