@@ -42,3 +42,6 @@ INSERT INTO trade_combinations VALUES(15,1,79,1,64,1,2,'Nuts in waybread superb 
 INSERT INTO trade_combinations VALUES(16,1,79,1,63,1,1,'Honey in waybread superb batter');
 INSERT INTO trade_combinations VALUES(17,1,77,1,80,1,1,'Nuts and waybread');
 INSERT INTO trade_combinations VALUES(18,1,77,1,64,1,1,'Nuts and waybread');
+INSERT INTO trade_combinations VALUES(19,6,76,1,60,1,2,'Egg in waybread batter');
+INSERT INTO trade_combinations VALUES(20,6,76,1,61,2,5,'Milk in waybread batter');
+INSERT INTO trade_combinations VALUES(21,6,76,1,62,7,12,'Flour in waybread batter');
