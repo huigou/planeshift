@@ -10,35 +10,14 @@ psTemplateRes::psTemplateRes()
 {
 }
 
-void psTemplateRes::Init (psTemplateResMngr* nmngr, const char* nname)
+void psTemplateRes::Init (psTemplateResMngr* mngr, const char* name)
 {
-    mngr = nmngr;
-    refcount = 1;
-    name = nname;
+    this->mngr = mngr;
+    this->name = name;
 }
 
 psTemplateRes::~psTemplateRes()
 {
-}
-
-void psTemplateRes::IncRef()
-{
-    refcount++;
-}
-
-void psTemplateRes::DecRef()
-{
-    CS_ASSERT(refcount>=0);
-    refcount--;
-    if (refcount<=1)
-    {
-    if (refcount==0)
-    {
-      delete this;
-    }
-    else
-      mngr->UnregisterResource(this);
-    }
 }
 
 #endif

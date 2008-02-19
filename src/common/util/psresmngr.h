@@ -5,7 +5,7 @@
 
 #include <csutil/hash.h>
 
-typedef csHash<psTemplateRes*,csString> psTemplateResourceHash;
+typedef csHash<csRef<psTemplateRes>, csString> psTemplateResourceHash;
 
 class psTemplateResMngr
 {
@@ -13,7 +13,7 @@ public:
     psTemplateResMngr();
     virtual ~psTemplateResMngr();
 
-    csRef<psTemplateRes> CreateResource (const char* name);
+    csPtr<psTemplateRes> CreateResource (const char* name);
     /** Releases any resource where the resource manager holds the last reference.
      *
      *  This causes a new csHashMap to be created and assigned to p_resources
