@@ -2196,12 +2196,18 @@ void AdminManager::HandleActionLocation(MsgEntry* me, psAdminCmdMessage& msg, Ad
     if (data.subCmd == "create_entrance")
     {
         // Create sign
-        csString doorLock = "Claymore";
+        csString doorLock = "Signpost01";
         psItemStats *itemstats=CacheManager::GetSingleton().GetBasicItemStatsByName(doorLock.GetData());
         if (!itemstats)
         {
-            Error2("Error: Action entrance failed to get item stats for item %s.\n",doorLock.GetData());
-            return;
+            // Try some SVN art
+            doorLock = "Claymore";
+            itemstats=CacheManager::GetSingleton().GetBasicItemStatsByName(doorLock.GetData());
+            if (!itemstats)
+            {
+                Error2("Error: Action entrance failed to get item stats for item %s.\n",doorLock.GetData());
+                return;
+            }
         }
 
         // Make item

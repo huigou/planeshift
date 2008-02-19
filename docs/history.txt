@@ -2,6 +2,7 @@
 - Added GM attributes refresh to the client when using /set.
 - Added SetText() and GetText() functionality to the checkboxes by coreyo.
 - Refreshing the GM attributes window on new attributes message by coreyo.
+- Matched guildhouse sign name with real item name.
 
 *** 2008-02-19 by Mike Gist
 - Changed csSyncRefCount to use atomic operations instead of a mutex.
