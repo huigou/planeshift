@@ -1,3 +1,7 @@
+*** 2008-02-18 by Andrew Craig
+- Fixed problem in psCelClient::GetActorByName() where it was not correctly doing
+  a case insensitive compare on the names. 
+
 *** 2008-02-18 by Anders Reggestad
 - Modified npcclient to use the new psLinearMovement class.
 - Added math script to calcualte the range a pet could be controlled from.
