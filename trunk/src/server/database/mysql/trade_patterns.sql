@@ -23,7 +23,9 @@ CREATE TABLE trade_patterns (
 #
 
 INSERT INTO trade_patterns VALUES(1,'waybread',2,71,8.00,'Baking Waybread');
-INSERT INTO trade_patterns VALUES(2,'BAKING',0,71,8.00,'Baking Group Stuff');
+INSERT INTO trade_patterns VALUES(2,'BAKING',0,0,8.00,'Baking Group Stuff');
 INSERT INTO trade_patterns VALUES(3,'fishing reel',0,120,4.00,'Casting a Fishing Reel');
 INSERT INTO trade_patterns VALUES(4,'hammer head',0,125,4.00,'Casting a Hammer Head');
 INSERT INTO trade_patterns VALUES(5,'avil',0,127,4.00,'Casting an Anvil');
+INSERT INTO trade_patterns VALUES(6,'wayoutbread',0,0,8.00,'Baking Wayoutbread');
+INSERT INTO trade_patterns VALUES(7,'flame weapon',0,0,8.00,'Flaming weapon');
