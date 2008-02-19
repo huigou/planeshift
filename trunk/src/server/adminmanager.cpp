@@ -1696,27 +1696,32 @@ void AdminManager::HandleGMGuiMessage(MsgEntry *me, psGMGuiMessage& msg,Client *
     }
     else if (msg.type == psGMGuiMessage::TYPE_GETGMSETTINGS)
     {
-        int gmSettings = 0;
-        if (client->GetActor()->GetVisibility())
-            gmSettings |= 1;
-        if (client->GetActor()->GetInvincibility())
-            gmSettings |= (1 << 1);
-        if (client->GetActor()->GetViewAllObjects())
-            gmSettings |= (1 << 2);
-        if (client->GetActor()->nevertired)
-            gmSettings |= (1 << 3);
-        if (client->GetActor()->questtester)
-            gmSettings |= (1 << 4);
-        if (client->GetActor()->infinitemana)
-            gmSettings |= (1 << 5);
-        if (client->GetActor()->GetFiniteInventory())
-            gmSettings |= (1 << 6);
-        if (client->GetActor()->safefall)
-            gmSettings |= (1 << 7);
-
-        psGMGuiMessage gmMsg(client->GetClientNum(), gmSettings);
-        gmMsg.SendMessage();
+        SendGMAttribs(client);
     }
+}
+
+void AdminManager::SendGMAttribs(Client* client)
+{
+    int gmSettings = 0;
+    if (client->GetActor()->GetVisibility())
+        gmSettings |= 1;
+    if (client->GetActor()->GetInvincibility())
+        gmSettings |= (1 << 1);
+    if (client->GetActor()->GetViewAllObjects())
+        gmSettings |= (1 << 2);
+    if (client->GetActor()->nevertired)
+        gmSettings |= (1 << 3);
+    if (client->GetActor()->questtester)
+        gmSettings |= (1 << 4);
+    if (client->GetActor()->infinitemana)
+        gmSettings |= (1 << 5);
+    if (client->GetActor()->GetFiniteInventory())
+        gmSettings |= (1 << 6);
+    if (client->GetActor()->safefall)
+        gmSettings |= (1 << 7);
+
+    psGMGuiMessage gmMsg(client->GetClientNum(), gmSettings);
+    gmMsg.SendMessage();
 }
 
 void AdminManager::CreateHuntLocation(MsgEntry* me,psAdminCmdMessage& msg, AdminCmdData& data,Client *client)
@@ -1932,6 +1937,8 @@ void AdminManager::SetAttrib(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData&
                                             data.attribute.GetData(),
                                             (already)?"is already":"has been",
                                             (onoff)?"enabled":"disabled" );
+
+    SendGMAttribs(client);
 }
 
 void AdminManager::SetLabelColor(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data, Client *client, gemActor * subject)

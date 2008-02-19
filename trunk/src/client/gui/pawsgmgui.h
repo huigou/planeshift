@@ -23,6 +23,7 @@
 #include "paws/pawswidget.h"
 #include "paws/pawsbutton.h"
 #include "paws/pawstextbox.h"
+#include "paws/pawscheckbox.h"
 #include "paws/pawslistbox.h"
 #include "paws/pawsstringpromptwindow.h"
 #include "net/cmdbase.h"
@@ -87,6 +88,16 @@ protected:
     pawsListBox* actionList;
 
     pawsTextBox* playerCount;
+
+    // Widgets in the Attributes tab
+    pawsCheckBox* cbInvincible;
+    pawsCheckBox* cbInvisible;
+    pawsCheckBox* cbViewAll;
+    pawsCheckBox* cbNeverTired;
+    pawsCheckBox* cbNoFallDamage;
+    pawsCheckBox* cbInfiniteInventory;
+    pawsCheckBox* cbQuestTester;
+    pawsCheckBox* cbInfiniteMana;
 
     int currentTab;
     csString cmdToExectute;

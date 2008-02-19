@@ -1,5 +1,5 @@
-/*
- * pawscheckbox.h
+/**
+ * @file pawscheckbox.h
  *
  * Copyright (C) 2003 Atomic Blue (info@planeshift.it, http://www.atomicblue.org)
  *
@@ -44,23 +44,119 @@ class pawsTextBox;
 class pawsCheckBox: public pawsWidget
 {
 public:
+   /**
+    * @fn pawsCheckBox()
+    * @brief This function is not yet documented.
+    */
     pawsCheckBox();
+
+   /**
+    * @fn ~pawsCheckBox()
+    * @brief This function is not yet documented.
+    */
     virtual ~pawsCheckBox();
     
+   /**
+    * @fn virtual bool Setup( iDocumentNode* node )
+    * @brief This function is not yet documented.
+    *
+    * @param *node TODO.
+    */
     virtual bool Setup( iDocumentNode* node );
+
+   /**
+    * @fn bool SelfPopulate( iDocumentNode *node);
+    * @brief This function is not yet documented.
+    *
+    * @param *node TODO.
+    */
     bool SelfPopulate( iDocumentNode *node);
+
+   /**
+    * @fn bool OnButtonPressed( int mouseButton, int keyModifier, pawsWidget* widget )
+    * @brief This function is not yet documented.
+    *
+    * @param mouseButton TODO.
+    * @param keyModifier TODO.
+    * @param *widget TODO.
+    */
     bool OnButtonPressed( int mouseButton, int keyModifier, pawsWidget* widget );
 
+   /**
+    * @fn virtual void SetState( bool state )
+    * @brief Set whether the checkbox is "checked" or "unchecked".
+    *
+    * @param state The desired value: True = checked, False = unchecked.
+    */
     virtual void SetState( bool state );
+
+   /**
+    * @fn virtual bool GetState()
+    * @brief Return whether the checkbox is "checked" or "unchecked".
+    *
+    * Return the value of the value of the checkbox in boolean form.
+    * True = "checked"
+    * False = "unchecked"
+    */
     virtual bool GetState();
 
+   /**
+    * @fn virtual void SetText( const char* string )
+    * @brief Set the text contained in the checkbox.
+    *
+    * @param string The text to which checkbox should be set.
+    */
+    virtual void SetText( const char* string );
+
+   /**
+    * @fn virtual const char* GetText()
+    * @brief Return the text contained within the checkbox.
+    */
+    virtual const char* GetText();
+
+   /**
+    * @fn virtual void OnUpdateData(const char *dataname,PAWSData& data)
+    * @brief This function is not yet documented.
+    *
+    * @param *dataname TODO.
+    * @param data TODO.
+    */
     virtual void OnUpdateData(const char *dataname,PAWSData& data);
 
+   /**
+    * @fn virtual void SetImages(const char* up, const char* down)
+    * @brief This function is not yet documented.
+    *
+    * @param *up TODO.
+    * @param *down TODO.
+    */
     virtual void SetImages(const char* up, const char* down);
         
-	virtual double GetProperty(const char * ptr);
-	virtual double CalcFunction(const char * functionName, const double * params);
-	virtual void SetProperty(const char * ptr, double value);
+   /**
+    * @fn virtual double GetProperty(const char * ptr)
+    * @brief Get the value of the specified property.
+    *
+    * @param *ptr The name of the property to get.
+    */
+    virtual double GetProperty(const char * ptr);
+
+   /**
+    * @fn virtual void SetProperty(const char * ptr, double value)
+    * @brief Set the value of the specified property.
+    *
+    * @param *ptr The name of the property to set.
+    * @param value The new value of the property to be set.
+    */
+    virtual void SetProperty(const char * ptr, double value);
+
+   /**
+    * @fn virtual double CalcFunction(const char * functionName, const double * params);
+    * @brief This function is not yet documented.
+    *
+    * @param *functionName TODO.
+    * @param *params TODO.
+    */
+    virtual double CalcFunction(const char * functionName, const double * params);
 
 private:
     pawsButton* checkBox;

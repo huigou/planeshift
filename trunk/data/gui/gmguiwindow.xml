@@ -291,51 +291,102 @@
                     <attach point="PROPORTIONAL_BOTTOM" />
                 </attachpoints>
 
+
                 <widget name="listattributes" factory="pawsButton" toggle="no" id="1250" style="button">
                     <frame x="30" y="20" width="160" height="20" border="no" />
 		    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="10" />
                     <label text="List Attributes" />
                 </widget>
-                <widget name="invincible" factory="pawsButton" toggle="no" id="1251" style="button">
+
+
+                <widget name="invincible" factory="pawsTextBox" id="1251" visible="no">
                     <frame x="30" y="44" width="160" height="20" border="no" />
 		    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="10" />
-                    <label text="Toggle Invinciblity" />
+                    <text string="Invincibility" />
                 </widget>
-                <widget name="invisible" factory="pawsButton" toggle="no" id="1252" style="button">
+                <widget name="toggleInvincible" factory="pawsCheckBox" id="1251" visible="no">
+                    <frame x="200" y ="44" width="100" height="20" border="no"/>
+                    <text string="disabled" />
+                </widget>
+
+
+                <widget name="invisible" factory="pawsTextBox" visible="no">
                     <frame x="30" y="68" width="160" height="20" border="no" />
 		    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="10" />
-                    <label text="Toggle Invisiblity" />
+                    <text string="Visibility" />
                 </widget>
-                <widget name="viewall" factory="pawsButton" toggle="no" id="1253" style="button">
+                <widget name="toggleInvisible" factory="pawsCheckBox" id="1252" visible="no">
+                    <frame x="200" y ="68" width="100" height="20" border="no"/>
+                    <text string="disabled" />
+                </widget>
+
+
+                <widget name="viewall" factory="pawsTextBox" visible="no">
                     <frame x="30" y="92" width="160" height="20" border="no" />
 		    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="10" />
-                    <label text="Toggle Seeing Invisibles" />
+                    <text string="See Invisibles" />
                 </widget>
-                <widget name="nevertired" factory="pawsButton" toggle="no" id="1254" style="button">
+                <widget name="toggleViewAll" factory="pawsCheckBox" id="1253" visible="no">
+                    <frame x="200" y ="92" width="100" height="20" border="no"/>
+                    <text string="disabled" />
+                </widget>
+
+
+                <widget name="nevertired" factory="pawsTextBox" visible="no">
                     <frame x="30" y="116" width="160" height="20" border="no" />
 		    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="10" />
-                    <label text="Toggle Stamina" />
+                    <text string="Infinite Stamina" />
                 </widget>
-                <widget name="nofalldamage" factory="pawsButton" toggle="no" id="1255" style="button">
+                <widget name="toggleNeverTired" factory="pawsCheckBox" id="1254" visible="no">
+                    <frame x="200" y ="116" width="100" height="20" border="no"/>
+                    <text string="disabled" />
+                </widget>
+
+
+                <widget name="nofalldamage" factory="pawsTextBox" visible="no">
                     <frame x="30" y="140" width="160" height="20" border="no" />
 		    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="10" />
-                    <label text="Toggle Fall Damage" />
+                    <text string="No Fall Damage" />
                 </widget>
-                <widget name="infiniteinventory" factory="pawsButton" toggle="no" id="1256" style="button">
+                <widget name="toggleNoFallDamage" factory="pawsCheckBox" id="1255" visible="no">
+                    <frame x="200" y ="140" width="100" height="20" border="no"/>
+                    <text string="disabled" />
+                </widget>
+
+
+                <widget name="infiniteinventory" factory="pawsTextBox" visible="no">
                     <frame x="30" y="164" width="160" height="20" border="no" />
 		    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="10" />
-                    <label text="Toggle Infinite Inventory" />
+                    <text string="Infinite Inventory" />
                 </widget>
-                <widget name="questtester" factory="pawsButton" toggle="no" id="1257" style="button">
+                <widget name="toggleInfiniteInventory" factory="pawsCheckBox" id="1256" visible="no">
+                    <frame x="200" y ="164" width="100" height="20" border="no"/>
+                    <text string="disabled" />
+                </widget>
+
+
+                <widget name="questtester" factory="pawsTextBox" visible="no">
                     <frame x="30" y="188" width="160" height="20" border="no" />
 		    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="10" />
-                    <label text="Toggle Quest Test Mode" />
+                    <text string="Quest Test Mode" />
                 </widget>
-                <widget name="infinitemana" factory="pawsButton" toggle="no" id="1258" style="button">
+                <widget name="toggleQuestTester" factory="pawsCheckBox" id="1257" visible="no">
+                    <frame x="200" y ="188" width="100" height="20" border="no"/>
+                    <text string="disabled" />
+                </widget>
+
+
+                <widget name="infinitemana" factory="pawsTextBox" visible="no">
                     <frame x="30" y="212" width="160" height="20" border="no" />
 		    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="10" />
-                    <label text="Toggle Infinite Mana" />
+                    <text string="Infinite Mana" />
                 </widget>
+                <widget name="toggleInfiniteMana" factory="pawsCheckBox" id="1258" visible="no">
+                    <frame x="200" y ="212" width="100" height="20" border="no"/>
+                    <text string="disabled" />
+                </widget>
+
+
             </widget>
         </widget>
     </widget>

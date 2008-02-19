@@ -395,6 +395,8 @@ protected:
 
     ClientConnectionSet* clients;
    
+    void SendGMAttribs(Client* client);
+
     //! Holds a dummy dialog.
     /*! We may need this later on when NPC's are inserted.  This also
      * insures that the dicitonary will always exist.  There where some 
