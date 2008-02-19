@@ -47,4 +47,7 @@ INSERT INTO trade_processes VALUES(6,0,"Bake","greet","",74,0,'',75,1,0,0,0,0,0,
 INSERT INTO trade_processes VALUES(7,0,"Blast","greet","",4815,0,'',0,0,0,0,0,0,0,0,0,0,0,0,'Blast in forge.');
 INSERT INTO trade_processes VALUES(8,0,"Hammer","greet","",4811,4816,'',0,0,0,0,0,0,0,0,0,0,0,0,'Hammer on anvil.');
 INSERT INTO trade_processes VALUES(9,0,"Mold cast","greet","",119,0,'',0,0,0,0,0,0,0,0,0,0,0,0,'Use a casting mold.');
+INSERT INTO trade_processes VALUES(10,0,"Wayout Mix","greet","",70,65,'',75,1,39,0,10,4,15,38,0,20,2,30,'Do wayout mixing in mixing bowl.');
+INSERT INTO trade_processes VALUES(11,0,"Wayout Baking","","",0,0,'',75,1,39,0,10,4,15,38,0,20,2,30,'Do wayout baking.');
+INSERT INTO trade_processes VALUES(12,0,"Flaming weapon","","",0,0,'',75,1,0,0,0,0,0,0,0,0,0,0,'Flame on.');
 
