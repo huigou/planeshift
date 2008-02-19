@@ -333,7 +333,7 @@ nsHTTPConn::Request(int aResumePos)
         memset(usrPsdEncoded, 0, 128);
 
         DUMP(("Unencoded string: %s\n", usrPsd));
-        rv = Base64Encode((const unsigned char *)usrPsd, strlen(usrPsd),
+        rv = Base64Encode((const unsigned char *)usrPsd, (int)strlen(usrPsd),
                           usrPsdEncoded, 128);
         DUMP(("Encoded string: %s\n", usrPsdEncoded));
         DUMP(("Base64Encode returned: %d\n", rv));
@@ -362,7 +362,7 @@ nsHTTPConn::Request(int aResumePos)
     strcat(req, kCRLF);
 
     // send header buf over socket
-    int bufSize = strlen(req);
+    int bufSize = (int)strlen(req);
     rv = mSocket->Send((unsigned char *) req, &bufSize);
     DUMP(("\n\n%s", req));
 
@@ -457,7 +457,7 @@ nsHTTPConn::Response(HTTPGetCB aCallback, const char *aDestFile, int aResumePos)
             fwriteLen = bufSize;
         }
 
-        fwrote = fwrite(fwritePos, sizeof(char), fwriteLen, destFd);
+        fwrote = (int)fwrite(fwritePos, sizeof(char), fwriteLen, destFd);
         assert(fwrote == fwriteLen);
 
         if (fwriteLen > 0)
@@ -491,7 +491,7 @@ nsHTTPConn::ParseURL(const char *aProto, const char *aURL, char **aHost,
                      int *aPort, char **aPath)
 {
     const char *pos, *nextSlash, *nextColon, *end, *hostEnd;
-    int protoLen = strlen(aProto);
+    int protoLen = (int)strlen(aProto);
 
     if (!aURL || !aHost || !aPort || !aPath || !aProto)
         return E_PARAM;
@@ -512,7 +512,7 @@ nsHTTPConn::ParseURL(const char *aProto, const char *aURL, char **aHost,
         if (nextSlash)
             portStrLen = nextSlash - nextColon;
         else
-            portStrLen = strlen(nextColon);
+            portStrLen = (int)strlen(nextColon);
 
         char *portStr = (char *) malloc(portStrLen + 1);
         if (!portStr)
@@ -533,7 +533,7 @@ nsHTTPConn::ParseURL(const char *aProto, const char *aURL, char **aHost,
         if (nextColon)
             copyLen = nextColon - pos;
         else
-            copyLen = strlen(pos);
+            copyLen = (int)strlen(pos);
 
         *aHost = (char *) malloc(copyLen + 1); // to NULL terminate
         if (!aHost)

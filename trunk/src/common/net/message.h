@@ -24,6 +24,7 @@
 #ifndef __MSGQUEUE_H__
 #define __MSGQUEUE_H__
 
+#include <csutil/threading/atomicops.h>
 #include <csutil/refcount.h>
 #include <csutil/csendian.h>
 #include <csgeom/vector3.h>
@@ -33,51 +34,56 @@
 #include "net/pstypes.h"
 #include "util/genqueue.h"
 
+using namespace CS::Threading;
 
+/*
+ * csSyncRefCount is safe in most cases. A case where it isn't is when the
+ * read to check for null is done just as something tries to inc (and the
+ * read is done first).
+ */
 class csSyncRefCount
 {
 protected:
-  static CS::Threading::RecursiveMutex mutex;
-
-  int ref_count;
+  int32 ref_count;
 
   // To avoid a problem with MSVC and multiple DLLs (with separate memory
   // space) we have to use a virtual destructor.
   // @@@ Another alternative is to force this function to be non-inline, as
   // doing so will most likely achieve the same result.
-  virtual void Delete ()
+  virtual void Delete()
   {
-    CS::Threading::RecursiveMutexScopedLock lock(mutex);
-    delete this;
+      delete this;
   }
 
   virtual ~csSyncRefCount () {}
 
 public:
   /// Initialize object and set reference to 1.
-  csSyncRefCount () : ref_count(1)
+  csSyncRefCount()
   {
+      AtomicOperations::Set(&ref_count, 1);
   }
 
   /// Increase the number of references to this object.
   void IncRef () 
   {
-      CS::Threading::RecursiveMutexScopedLock lock(mutex);
-      ref_count++; 
+      AtomicOperations::Increment(&ref_count);
   }
+
   /// Decrease the number of references to this object.
   void DecRef ()
   {
-    CS::Threading::RecursiveMutexScopedLock lock(mutex);
-    ref_count--;
-    if (ref_count <= 0)
-      Delete ();
+    AtomicOperations::Decrement(&ref_count);
+    if(AtomicOperations::Read(&ref_count) == 0)
+    {
+        Delete();
+    }
   }
+
   /// Get the reference count (only for debugging).
-  int GetRefCount () const
+  int32 GetRefCount()
   {
-      CS::Threading::RecursiveMutexScopedLock lock(mutex);
-      return ref_count;
+      return AtomicOperations::Read(&ref_count);
   }
 };
 
