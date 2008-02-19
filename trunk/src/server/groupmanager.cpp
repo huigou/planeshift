@@ -25,7 +25,6 @@
 // Project Includes
 //=============================================================================
 #include "bulkobjects/psraceinfo.h"
-
 #include "util/log.h"
 #include "util/serverconsole.h"
 #include "util/psxmlparser.h"
@@ -43,6 +42,7 @@
 #include "psserver.h"
 #include "chatmanager.h"
 #include "globals.h"
+#include "netmanager.h"
 
 
 /** A structure to hold the clients that are pending on joining a group.
@@ -155,15 +155,15 @@ void PlayerGroup::ListMembers(gemActor * client)
 void PlayerGroup::Broadcast(MsgEntry *me)
 {
     // Copy message to send out to everyone
-    MsgEntry *newmsg = new MsgEntry(me);
+    csRef<MsgEntry> newmsg;
+    newmsg.AttachNew(new MsgEntry(me));
     if (newmsg->overrun)
     {
         Bug1("Could not copy MsgEntry for PlayerGroup::Broadcast.\n");
-        newmsg->DecRef();
         return;
     }
 
-    newmsg->msgid = (uintptr_t) newmsg;
+    newmsg->msgid = psserver->GetNetManager()->GetRandomID();
     
     for (size_t n = 0; n < members.GetSize(); n++)
     {
@@ -172,7 +172,6 @@ void PlayerGroup::Broadcast(MsgEntry *me)
     }
     
     CHECK_FINAL_DECREF(newmsg,"GroupMsg");
-    newmsg->DecRef();
 }
 
 

@@ -222,17 +222,15 @@ void EventManager::Run ()
 class psDelayedMessageEvent : public psGameEvent
 {
 public:
-    psDelayedMessageEvent(csTicks msecDelay, MsgEntry *me,EventManager *myparent)
+    psDelayedMessageEvent(csTicks msecDelay, MsgEntry *me, EventManager *myparent)
         : psGameEvent(0,msecDelay,"psDelayedMessageEvent")
     {
         myMsg = me;
-        me->IncRef();
         myParent = myparent;
     }
     virtual void Trigger()
     {
         myParent->SendMessage(myMsg);
-        myMsg->DecRef();
     }
     virtual csString ToString() const
     {

@@ -5,6 +5,15 @@
 
 *** 2008-02-19 by Mike Gist
 - Changed csSyncRefCount to use atomic operations instead of a mutex.
+- Renamed GenericQueue to GenericRefQueue: GenericRefQueue is now a fully
+  functional queue of smart pointers. i.e. it both IncRef and DecRef correctly
+  unlike GenericQueue did.
+- Changed all allocations of MsgEntry so that they're initially held by smart
+  pointers, and removed all the manual calls to IncRef and DecRef. Everything is
+  handled by csRef now.
+- Removed all other manual calls to IncRef and DecRef. This and the above changes
+  should fix some potential leaks and crashes and also makes the code a bit more
+  future proof.
 
 *** 2008-02-19 by Kenny Graunke
 - Made ProgressionEvents officially a class, not a struct...made the minimal

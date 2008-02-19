@@ -403,7 +403,7 @@ bool psEntityLabels::LoadFromFile()
 inline void psEntityLabels::UpdateVisibility()
 {
     csVector3 here = celClient->GetMainPlayer()->Pos();
-    const csPDelArray<GEMClientObject>& entities = celClient->GetEntities();
+    const csRefArray<GEMClientObject>& entities = celClient->GetEntities();
     for (size_t i=1; i < entities.GetSize(); i++)  // Skip first entity, which is the main actor
     {
         GEMClientObject* object = entities.Get(i);
@@ -504,21 +504,21 @@ inline void psEntityLabels::ShowLabelOfObject(GEMClientObject* object, bool show
 
 void psEntityLabels::RepaintAllLabels()
 {
-    const csPDelArray<GEMClientObject>& entities = celClient->GetEntities();
+    const csRefArray<GEMClientObject>& entities = celClient->GetEntities();
     for (size_t i=1; i < entities.GetSize(); i++)  // Skip first entity, which is the main actor
         RepaintObjectLabel( entities.Get(i) );
 }
 
 void psEntityLabels::HideAllLabels()
 {
-    const csPDelArray<GEMClientObject>& entities = celClient->GetEntities();
+    const csRefArray<GEMClientObject>& entities = celClient->GetEntities();
     for (size_t i=1; i < entities.GetSize(); i++)  // Skip first entity, which is the main actor
         ShowLabelOfObject( entities.Get(i), false );
 }
 
 void psEntityLabels::RefreshGuildLabels()
 {
-    const csPDelArray<GEMClientObject>& entities = celClient->GetEntities();
+    const csRefArray<GEMClientObject>& entities = celClient->GetEntities();
     for (size_t i=1; i < entities.GetSize(); i++)  // Skip first entity, which is the main actor
     {
         GEMClientActor* actor = dynamic_cast<GEMClientActor*>(entities.Get(i));
@@ -535,7 +535,7 @@ void psEntityLabels::RepaintObjectLabel(GEMClientObject* object)
 
 void psEntityLabels::LoadAllEntityLabels()
 {
-    const csPDelArray<GEMClientObject>& entities = celClient->GetEntities();
+    const csRefArray<GEMClientObject>& entities = celClient->GetEntities();
     for (size_t i=0; i<entities.GetSize(); i++)
         OnObjectArrived( entities.Get(i) );
 }

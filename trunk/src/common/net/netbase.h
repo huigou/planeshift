@@ -25,7 +25,7 @@
 #include "net/pstypes.h"
 #include "net/netinfos.h"
 #include "util/prb.h"
-#include "util/genqueue.h"
+#include "util/genrefqueue.h"
 #include <csutil/ref.h>
 #include <csutil/refcount.h>
 #include <csutil/array.h>
@@ -61,8 +61,8 @@ class NetPacketQueueRefCount;
 class csRandomGen;
 class csStringHash;
 struct iEngine;
-typedef GenericQueue <MsgEntry> MsgQueue;
-typedef GenericQueue <psNetPacketEntry> NetPacketQueue;
+typedef GenericRefQueue <MsgEntry> MsgQueue;
+typedef GenericRefQueue <psNetPacketEntry> NetPacketQueue;
 
 struct PublishDestination
 {
@@ -245,6 +245,9 @@ public:
      * Dump the current filter settings.
      */
     void LogMessageFilterDump();
+
+    /** return a random ID that can be used for messages */
+    uint32_t GetRandomID();
     
 protected:
     /**
@@ -477,10 +480,10 @@ protected:
     bool SendFinalPacket(psNetPacketEntry* pkt, LPSOCKADDR_IN addr);
 
     /** Outgoing message queue */
-    NetPacketQueueRefCount *NetworkQueue;
+    csRef<NetPacketQueueRefCount> NetworkQueue;
 
     /** list of outbound queues with waiting data */
-    GenericQueue<NetPacketQueueRefCount> senders;
+    GenericRefQueue<NetPacketQueueRefCount> senders;
 
     /** Incoming message queue vector */
     csArray<MsgQueue*> inqueues;
@@ -498,9 +501,6 @@ protected:
     int totaltransferin, totaltransferout;
     /** total packages transferred by this object */
     int totalcountin, totalcountout;
-
-    /** return a random ID that can be used for messages */
-    uint32_t GetRandomID();
     
     psNetMsgProfiles * profs;
 

@@ -32,7 +32,7 @@
 #include "util/log.h"
 #include "net/packing.h"
 #include "net/pstypes.h"
-#include "util/genqueue.h"
+#include "util/genrefqueue.h"
 
 using namespace CS::Threading;
 
@@ -731,7 +731,7 @@ public:
         return *p;
     }
 
-    /// Get a signed 8bit Integer from teh current psMessageBytes buffer
+    /// Get a signed 8bit Integer from the current psMessageBytes buffer
     int8_t GetInt8()
     {
         // If the message is in overrun state, we know we can't read anymore

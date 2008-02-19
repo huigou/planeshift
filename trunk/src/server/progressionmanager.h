@@ -47,7 +47,7 @@ class MathScriptVar;
 class MathScript;
 class psCharacter;
 
-struct ProgressionEvent;
+class ProgressionEvent;
 struct Faction;
 
 

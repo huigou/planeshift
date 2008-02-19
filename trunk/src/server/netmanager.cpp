@@ -187,7 +187,6 @@ void NetManager::CheckResendPkts()
         * to check every single connection each time through.
         */
 
-        //client->outqueue->IncRef();
         if (!senders.Add (client->outqueue))
             Error1("Senderlist Full!");
 
@@ -254,11 +253,8 @@ bool NetManager::SendMessage(MsgEntry* me)
     /*  The senders queue does not hold a reference itself, so we have to manually add one before pushing
      *  this queue on.  The queue is decref'd in the network thread when it's taken out of the senders queue.
      */
-    //client->outqueue->IncRef();
-    if (!senders.Add (client->outqueue))
+    if (!senders.Add(client->outqueue))
     {
-        // The add failed, remove the extra reference.
-        //client->outqueue->DecRef();
         Error1("Senderlist Full!");
     }
 
@@ -378,7 +374,8 @@ void NetManager::Broadcast(MsgEntry *me, int scope, int guildID)
             Client* p;
 
             // Copy message to send out to everyone
-            MsgEntry *newmsg = new MsgEntry(me);
+            csRef<MsgEntry> newmsg;
+            newmsg.AttachNew(new MsgEntry(me));
             newmsg->msgid = GetRandomID();
 
             // Message is copied again into packet sections, so we can reuse same one.
@@ -406,8 +403,7 @@ void NetManager::Broadcast(MsgEntry *me, int scope, int guildID)
                 SendMessage (newmsg);
             }
 
-            CHECK_FINAL_DECREF(newmsg,"BroadcastMsg");
-            newmsg->DecRef();
+            CHECK_FINAL_DECREF(newmsg, "BroadcastMsg");
             break;
         }
         // TODO: NetBase::BC_GROUP
@@ -421,8 +417,9 @@ void NetManager::Broadcast(MsgEntry *me, int scope, int guildID)
             Client* p;
 
             // Copy message to send out to everyone
-            MsgEntry *newmsg = new MsgEntry(me);
-            newmsg->msgid = (uintptr_t) newmsg;
+            csRef<MsgEntry> newmsg;
+            newmsg.AttachNew(new MsgEntry(me));
+            newmsg->msgid = GetRandomID();
             
             // Message is copied again into packet sections, so we can reuse same one.
             ClientIterator i(clients);
@@ -436,13 +433,13 @@ void NetManager::Broadcast(MsgEntry *me, int scope, int guildID)
                 }
             }
 
-        CHECK_FINAL_DECREF(newmsg,"GuildMsg");
-            newmsg->DecRef();
+            CHECK_FINAL_DECREF(newmsg, "GuildMsg");
             break;
         }
     case NetBase::BC_FINALPACKET:
     {
-        MsgEntry* newmsg = new MsgEntry(me);
+        csRef<MsgEntry> newmsg;
+        newmsg.AttachNew(new MsgEntry(me));
         newmsg->msgid = GetRandomID();
 
         LogMessages('F',newmsg);
@@ -457,8 +454,7 @@ void NetManager::Broadcast(MsgEntry *me, int scope, int guildID)
         SendFinalPacket(pkt);
         delete pkt;
 
-        CHECK_FINAL_DECREF(newmsg,"FinalPacket");
-        newmsg->DecRef();
+        CHECK_FINAL_DECREF(newmsg, "FinalPacket");
         break;
     }
     default:

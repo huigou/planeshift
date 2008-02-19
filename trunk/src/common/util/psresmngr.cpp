@@ -61,7 +61,6 @@ csRef<psTemplateRes> psTemplateResMngr::CreateResource(const char* name)
     }
 
     newres->Init(this, name);
-    newres->IncRef();
     p_resources->Put(name, newres);
 
     return newres;

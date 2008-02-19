@@ -419,9 +419,9 @@ bool ModeHandler::CreatePortalWeather(iPortal* portal, csTicks delta)
         if(!subbed) // Not a psPortalCallback class, subscribe
         {       
             // Set the new callback
-            psPortalCallback* psCall = new psPortalCallback();
+            csRef<psPortalCallback> psCall;
+            psCall.AttachNew(new psPortalCallback());
             portal->SetPortalCallback(psCall);
-            psCall->DecRef();
         }
 
         return true;

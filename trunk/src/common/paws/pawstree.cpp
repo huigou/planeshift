@@ -1141,7 +1141,7 @@ bool pawsTree::OnMouseDown(int button, int modifiers, int x, int y)
     }
     else
     {
-        pawsTreeNode *node;
+        pawsTreeNode *node = NULL;
 
         if (root != NULL)
         {

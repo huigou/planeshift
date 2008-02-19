@@ -49,7 +49,7 @@ PSF_IMPLEMENT_MSG_FACTORY(psDamageEvent,MSGTYPE_DAMAGE_EVENT);
 
 psDamageEvent::psDamageEvent(gemActor *attack,gemActor *victim,float dmg)
 {
-    msg  = new MsgEntry(sizeof(gemActor*)*2 + sizeof(float) ,PRIORITY_LOW );
+    msg.AttachNew(new MsgEntry(sizeof(gemActor*)*2 + sizeof(float) ,PRIORITY_LOW ));
 
     msg->SetType(MSGTYPE_DAMAGE_EVENT);
     msg->clientnum      = 0; 
@@ -85,10 +85,10 @@ PSF_IMPLEMENT_MSG_FACTORY(psDeathEvent,MSGTYPE_DEATH_EVENT);
 
 psDeathEvent::psDeathEvent(gemActor *dead,gemActor *killer)
 {
-    msg  = new MsgEntry(sizeof(gemActor*)*2 ,PRIORITY_LOW );
+    msg.AttachNew(new MsgEntry(sizeof(gemActor*)*2 ,PRIORITY_LOW ));
 
     msg->SetType(MSGTYPE_DEATH_EVENT);
-    msg->clientnum      = 0;
+    msg->clientnum = 0;
     msg->AddPointer( (uintptr_t) dead );
     msg->AddPointer( (uintptr_t) killer );
 
@@ -120,10 +120,10 @@ PSF_IMPLEMENT_MSG_FACTORY(psTargetChangeEvent,MSGTYPE_TARGET_EVENT);
 
 psTargetChangeEvent::psTargetChangeEvent(gemActor *targeter, gemObject *targeted)
 {
-    msg = new MsgEntry(sizeof(gemActor*) + sizeof(gemObject*), PRIORITY_LOW);
+    msg.AttachNew(new MsgEntry(sizeof(gemActor*) + sizeof(gemObject*), PRIORITY_LOW));
 
     msg->SetType(MSGTYPE_TARGET_EVENT);
-    msg->clientnum      = 0;
+    msg->clientnum = 0;
     msg->AddPointer( (uintptr_t) targeter );
     msg->AddPointer( (uintptr_t) targeted );    
     
@@ -154,10 +154,10 @@ PSF_IMPLEMENT_MSG_FACTORY(psZPointsGainedEvent,MSGTYPE_ZPOINT_EVENT);
 
 psZPointsGainedEvent::psZPointsGainedEvent( gemActor* actor, const char *name, int gained, bool rankup )
 {
-    msg = new MsgEntry(sizeof(gemActor*) + 
+    msg.AttachNew(new MsgEntry(sizeof(gemActor*) + 
                        sizeof(int) + 
                        sizeof(bool) +
-                       strlen(name)+1, PRIORITY_LOW);
+                       strlen(name)+1, PRIORITY_LOW));
                        
     msg->SetType(MSGTYPE_ZPOINT_EVENT);                   
     msg->clientnum = 0;
@@ -196,8 +196,8 @@ psBuyEvent::psBuyEvent( int from, int to, unsigned int item, int stack, int qual
 {
     // Merchant => Player
 
-    msg = new MsgEntry( (sizeof(int) * 4) + sizeof(unsigned int)+
-                       sizeof(item), PRIORITY_LOW);
+    msg.AttachNew(new MsgEntry( (sizeof(int) * 4) + sizeof(unsigned int)+
+                       sizeof(item), PRIORITY_LOW));
                        
     msg->SetType(MSGTYPE_BUY_EVENT);                   
     msg->clientnum = 0;  
@@ -244,8 +244,8 @@ psSellEvent::psSellEvent( int from, int to, unsigned int item, int stack, int qu
 {
     // Player => Merchant
 
-    msg = new MsgEntry( (sizeof(int) * 4) + sizeof(unsigned int)+
-                       sizeof(item), PRIORITY_LOW);
+    msg.AttachNew(new MsgEntry( (sizeof(int) * 4) + sizeof(unsigned int)+
+                       sizeof(item), PRIORITY_LOW));
                        
     msg->SetType(MSGTYPE_SELL_EVENT);                   
     msg->clientnum = 0;  
@@ -292,7 +292,7 @@ psConnectEvent::psConnectEvent( int clientID )
 {
     // Player => Merchant
 
-    msg = new MsgEntry( sizeof(int), PRIORITY_LOW);
+    msg.AttachNew(new MsgEntry( sizeof(int), PRIORITY_LOW));
                        
     msg->SetType(MSGTYPE_CONNECT_EVENT);                   
     msg->clientnum = clientID;  
@@ -322,7 +322,7 @@ PSF_IMPLEMENT_MSG_FACTORY(psMovementEvent,MSGTYPE_MOVEMENT_EVENT);
 
 psMovementEvent::psMovementEvent( int clientID )
 {
-    msg = new MsgEntry( sizeof(int), PRIORITY_LOW);
+    msg.AttachNew(new MsgEntry( sizeof(int), PRIORITY_LOW));
                        
     msg->SetType(MSGTYPE_MOVEMENT_EVENT);                   
     msg->clientnum = clientID;  
@@ -354,7 +354,7 @@ PSF_IMPLEMENT_MSG_FACTORY(psGenericEvent,MSGTYPE_GENERIC_EVENT);
 
 psGenericEvent::psGenericEvent( int clientID, psGenericEvent::Type type )
 {
-    msg = new MsgEntry( sizeof(int)*2, PRIORITY_LOW);
+    msg.AttachNew(new MsgEntry( sizeof(int)*2, PRIORITY_LOW));
                        
     msg->SetType(MSGTYPE_GENERIC_EVENT);                   
     msg->clientnum = clientID;  

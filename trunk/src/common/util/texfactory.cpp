@@ -243,7 +243,6 @@ csPtr<iImage> psTextureFactory::GetImage(const char *race,const char *filename)
     if (image && image->GetWidth()!=32) // Save in cache
     {
         imagecache.Push(image);
-        image->IncRef();
     }
     else
     {

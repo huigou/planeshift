@@ -98,14 +98,6 @@ NetBase::~NetBase()
     Notify2(LOG_ANY,"Total bytes sent out was %d.\n",totaltransferout);
     Notify2(LOG_ANY,"Total bytes received was %d.\n", totaltransferin);
 
-    csRef<NetPacketQueueRefCount> q;
-    while ( (q=senders.Get()) )
-    {
-       // q->DecRef();  // this happens automatically now
-    }
-
-    NetworkQueue->DecRef();
-
     socklibrefcount--;
     if (socklibrefcount==0) {
         exitSocket();
@@ -422,7 +414,7 @@ void NetBase::CheckResendPkts()
 bool NetBase::SendMergedPackets(NetPacketQueue *q)
 {
     csRef<psNetPacketEntry> queueget;
-    psNetPacketEntry * candidate,*final;
+    psNetPacketEntry *candidate, *final;
 
     queueget = q->Get(); // csRef required for q->Get()
     final = queueget;
@@ -432,23 +424,21 @@ bool NetBase::SendMergedPackets(NetPacketQueue *q)
         return false;
 
     // Try to merge additional packets into a single send.
-    while ((queueget=q->Get())!=NULL)
+    while ((queueget=q->Get()))
     {
         candidate = queueget;  // get out of csRef here
-        if (final->Append(candidate))
-        {
-            delete candidate;
-        }
-        else
+        if(!final->Append(candidate))
         {
             // A failed append means that the packet can't fit.
             // Set a random ID for the new merged packet
-            if (final->packet->pktid == 0)
+            if(final->packet->pktid == 0)
+            {
                 final->packet->pktid = GetRandomID();
+            }
             SendSinglePacket(final);
             
             // Start the process again with the packet that wouldn't fit
-            final=candidate;
+            final = candidate;
         }
     }
 

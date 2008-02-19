@@ -631,13 +631,11 @@ void psCelClient::HandleStats( MsgEntry* me )
 
 void psCelClient::QueueNewActor(MsgEntry *me)
 {
-    me->IncRef();
     newActorQueue.Push(me);
 }
 
 void psCelClient::QueueNewItem(MsgEntry *me)
 {
-    me->IncRef();
     newItemQueue.Push(me);
 }
 
@@ -645,16 +643,14 @@ void psCelClient::CheckEntityQueues()
 {
     if (newActorQueue.GetSize())
     {
-        MsgEntry *me = newActorQueue.Pop();
+        csRef<MsgEntry> me = newActorQueue.Pop();
         HandleActor(me);
-        me->DecRef();
         return;
     }
     if (newItemQueue.GetSize())
     {
-        MsgEntry *me = newItemQueue.Pop();
+        csRef<MsgEntry> me = newItemQueue.Pop();
         HandleItem(me);
-        me->DecRef();
         return;
     }
 }

@@ -8,7 +8,7 @@ PSF_IMPLEMENT_MSG_FACTORY(psCharApprovedMessage,MSGTYPE_CHAR_CREATE_UPLOAD);
 
 psCharApprovedMessage::psCharApprovedMessage(uint32_t clientnum)
 {
-    msg = new MsgEntry();
+    msg.AttachNew(new MsgEntry());
 
     msg->SetType(MSGTYPE_CHAR_CREATE_UPLOAD);
     msg->clientnum = clientnum;
@@ -36,7 +36,7 @@ psCharRejectedMessage::psCharRejectedMessage( uint32_t clientnum,
                                               int type,
                                               const char* mesg )
 {
-    msg = new MsgEntry( sizeof(int) + strlen(mesg)+1, PRIORITY_HIGH );
+    msg.AttachNew(new MsgEntry(sizeof(int) + strlen(mesg)+1, PRIORITY_HIGH));
 
     msg->SetType(MSGTYPE_CHARREJECT);
     msg->clientnum = clientnum;
@@ -96,7 +96,7 @@ void psCharVerificationMesg::AddSkill( int value, const char* attributeName )
   
 void psCharVerificationMesg::Construct()
 {
-    msg = new MsgEntry( runningSize+sizeof(int)*2 );
+    msg.AttachNew(new MsgEntry( runningSize+sizeof(int)*2 ));
     msg->clientnum  = clientnum;                        
     msg->SetType(MSGTYPE_CHAR_CREATE_VERIFY);
     msg->Add( (uint32_t)stats.GetSize() );
@@ -168,14 +168,14 @@ psCharUploadMessage::psCharUploadMessage(bool verify,  const char* name, const c
                          int selectedFace, int selectedHairStyle, int selectedBeardStyle, 
                          int selectedHairColour, int selectedSkinColour, const char* bio, const char* path )
 {
-    msg = new MsgEntry( sizeof(bool) +
+    msg.AttachNew(new MsgEntry( sizeof(bool) +
                         strlen(name) * sizeof(char) + 1 +
                         strlen(lastname) * sizeof(char) + 1 +
                         sizeof(int32_t) * 11 +
                         sizeof(int32_t) * choices.GetSize() + 
                         sizeof(int32_t) * lifeEvents.GetSize() +
                         strlen(bio) * sizeof(char) + 1 +
-                        strlen(path) * sizeof(char) + 1);
+                        strlen(path) * sizeof(char) + 1));
 
 
     msg->SetType(MSGTYPE_CHAR_CREATE_UPLOAD);
@@ -281,7 +281,7 @@ PSF_IMPLEMENT_MSG_FACTORY(psCreationChoiceMsg,MSGTYPE_CHAR_CREATE_PARENTS);
 
 psCreationChoiceMsg::psCreationChoiceMsg( int listener )
 {
-    msg = new MsgEntry( sizeof(int32_t) );
+    msg.AttachNew(new MsgEntry( sizeof(int32_t) ));
 
     msg->clientnum  = 0;
     msg->bytes->type = listener;
@@ -317,7 +317,7 @@ psCreationChoiceMsg::psCreationChoiceMsg( MsgEntry* me )
 psCreationChoiceMsg::psCreationChoiceMsg( int clientTo, int totalChoices, int listener )
 {
     // can be a big message!
-    msg = new MsgEntry( 30000 );
+    msg.AttachNew(new MsgEntry( 30000 ));
 
     msg->clientnum  = clientTo;
     msg->bytes->type = listener;
@@ -364,7 +364,7 @@ PSF_IMPLEMENT_MSG_FACTORY(psLifeEventMsg,MSGTYPE_CHAR_CREATE_LIFEEVENTS);
 
 psLifeEventMsg::psLifeEventMsg()
 {
-    msg = new MsgEntry( sizeof ( int32_t) );
+    msg.AttachNew(new MsgEntry( sizeof ( int32_t) ));
     msg->clientnum  = 0;
     msg->SetType(MSGTYPE_CHAR_CREATE_LIFEEVENTS);   
     
@@ -410,7 +410,7 @@ void psLifeEventMsg::AddEvent( LifeEventChoice* event )
 
 void psLifeEventMsg::ConstructMessage()
 {
-    msg = new MsgEntry( runningSize+sizeof(int) );    
+    msg.AttachNew(new MsgEntry( runningSize+sizeof(int) ));    
     msg->clientnum  = toclient;
     msg->SetType(MSGTYPE_CHAR_CREATE_LIFEEVENTS);       
     

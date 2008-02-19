@@ -300,28 +300,21 @@ public:
      * Collect all in one struct instead of creating multiple arguments that
      * would be hard to maintain.
      */
-    typedef struct {
+    struct AccessPointers
+    {
         csStringHash* msgstrings;
         iEngine *engine;
-    }AccessPointers;
+    };
 
 
-    MsgEntry *msg;
+    csRef<MsgEntry> msg;
     bool valid;
 
     psMessageCracker()
     : msg(NULL),valid(true)
-    { }
+    {}
 
-    virtual ~psMessageCracker()
-    {
-        if (msg)
-        {
-            // disabled because it's wrong in some cases
-            //CHECK_FINAL_DECREF(msg,"psMessageCracker");
-            msg->DecRef();
-        }
-    };
+    virtual ~psMessageCracker() {}
 
     /**
      * Send the message to the client/server.
@@ -1867,7 +1860,7 @@ class psSpellCancelMessage : public psMessageCracker
 public:
     psSpellCancelMessage()
     {
-        msg = new MsgEntry();
+        msg.AttachNew(new MsgEntry());
         msg->SetType(MSGTYPE_SPELL_CANCEL);
         msg->clientnum = 0;
     }
@@ -2049,7 +2042,7 @@ private:
  public:
     psStopEffectMessage( uint32_t clientNum, uint32_t uid )
     {
-        msg = new MsgEntry( sizeof(uint32_t) );
+        msg.AttachNew(new MsgEntry(sizeof(uint32_t)));
 
         msg->SetType(MSGTYPE_EFFECT_STOP);
         msg->clientnum = clientNum;
@@ -2059,7 +2052,7 @@ private:
 
     psStopEffectMessage( uint32_t uid )
     {
-        msg = new MsgEntry( sizeof(uint32_t) );
+        msg.AttachNew(new MsgEntry(sizeof(uint32_t)));
 
         msg->SetType(MSGTYPE_EFFECT_STOP);
         msg->clientnum = 0;
@@ -2814,7 +2807,7 @@ class psPersistActorRequest : public psMessageCracker
 public:
     psPersistActorRequest()
     {
-        msg = new MsgEntry();
+        msg.AttachNew(new MsgEntry());
         msg->SetType(MSGTYPE_PERSIST_ACTOR_REQUEST);
         msg->clientnum  = 0;
     }
@@ -3045,7 +3038,7 @@ class psBuddyStatus : public psMessageCracker
 public:
     psBuddyStatus( uint32_t clientNum, csString& buddyName, bool online )
     {
-        msg = new MsgEntry( buddyName.Length()+1 + sizeof(bool) );
+        msg.AttachNew(new MsgEntry( buddyName.Length()+1 + sizeof(bool) ));
 
         msg->SetType(MSGTYPE_BUDDY_STATUS);
         msg->clientnum = clientNum;
@@ -3079,7 +3072,7 @@ class psMOTDMessage : public psMessageCracker
 public:
     psMOTDMessage(uint32_t clientNum, const csString& tipMsg, const csString& motdMsg, const csString& guildMsg, const csString& guild)
     {
-        msg = new MsgEntry( tipMsg.Length()+1 + motdMsg.Length()+1 + guildMsg.Length()+1 + guild.Length() +1 );
+        msg.AttachNew(new MsgEntry( tipMsg.Length()+1 + motdMsg.Length()+1 + guildMsg.Length()+1 + guild.Length() +1 ));
 
         msg->SetType(MSGTYPE_MOTD);
         msg->clientnum = clientNum;
@@ -3119,7 +3112,7 @@ class psMOTDRequestMessage : public psMessageCracker
 public:
     psMOTDRequestMessage()
     {
-        msg = new MsgEntry();
+        msg.AttachNew(new MsgEntry());
         msg->SetType(MSGTYPE_MOTDREQUEST);
         msg->clientnum  = 0;
     }
@@ -3145,7 +3138,7 @@ public:
 
     psQuestionResponseMsg(int clientnum,uint32_t questionID,const csString & answer)
     {
-        msg = new MsgEntry( sizeof(questionID)+answer.Length()+1 );
+        msg.AttachNew(new MsgEntry( sizeof(questionID)+answer.Length()+1 ));
         msg->SetType(MSGTYPE_QUESTIONRESPONSE);
         msg->clientnum  = clientnum;
         msg->Add(questionID);
@@ -3188,7 +3181,7 @@ public:
                       const char *question,
                       questionType_t type)
     {
-        msg = new MsgEntry( sizeof(questionID) +strlen(question)+1 +2 );
+        msg.AttachNew(new MsgEntry( sizeof(questionID) +strlen(question)+1 +2 ));
         msg->SetType(MSGTYPE_QUESTION);
         msg->clientnum  = clientnum;
 
@@ -3229,7 +3222,7 @@ public:
 
         if ( message ) msgSize = strlen( message );
 
-        msg = new MsgEntry( strlen( command ) + strlen( target ) + msgSize + 3);
+        msg.AttachNew(new MsgEntry( strlen( command ) + strlen( target ) + msgSize + 3));
         msg->SetType(MSGTYPE_ADVICE);
         msg->clientnum  = clientNum;
         msg->Add( command );
@@ -3285,7 +3278,7 @@ public:
             }
         }
 
-        msg = new MsgEntry( sizeof(bool) + sizeof(uint8_t) + sizeof(int32_t) + sizeCategories );
+        msg.AttachNew(new MsgEntry( sizeof(bool) + sizeof(uint8_t) + sizeof(int32_t) + sizeCategories ));
         msg->SetType(MSGTYPE_ACTIVEMAGIC);
         msg->clientnum = clientNum;
         msg->Add( open );
@@ -3309,7 +3302,7 @@ public:
         size_t sizeCategories = category.Length() + 1;
         int numCategories = 1;
 
-        msg = new MsgEntry( sizeof(bool) + +sizeof(uint8_t) + sizeof(int32_t) + sizeCategories );
+        msg.AttachNew(new MsgEntry( sizeof(bool) + +sizeof(uint8_t) + sizeof(int32_t) + sizeCategories ));
         msg->SetType(MSGTYPE_ACTIVEMAGIC);
         msg->clientnum = clientNum;
         msg->Add( open );
@@ -3360,7 +3353,7 @@ public:
                        int stackCount,
                        csVector3 *pt3d=NULL)
     {
-        msg = new MsgEntry( sizeof( int32_t ) * 5 + 3 * sizeof(float) );
+        msg.AttachNew(new MsgEntry( sizeof( int32_t ) * 5 + 3 * sizeof(float) ));
 
         msg->SetType(MSGTYPE_SLOT_MOVEMENT);
         msg->clientnum  = 0;
@@ -3414,7 +3407,7 @@ public:
 
     psQuestionCancelMessage(int clientnum, uint32_t id)
     {
-        msg = new MsgEntry( sizeof(id) );
+        msg.AttachNew(new MsgEntry( sizeof(id) ));
         msg->SetType(MSGTYPE_QUESTIONCANCEL);
         msg->clientnum  = clientnum;
 
@@ -3442,7 +3435,7 @@ class psGuildMOTDSetMessage : public psMessageCracker
 public:
     psGuildMOTDSetMessage( csString& guildMsg,csString& guild)
     {
-        msg = new MsgEntry( guildMsg.Length()+1 + guild.Length() +1 );
+        msg.AttachNew(new MsgEntry( guildMsg.Length()+1 + guild.Length() +1 ));
 
         msg->SetType(MSGTYPE_GUILDMOTDSET);
         msg->clientnum = 0;
@@ -3514,7 +3507,7 @@ public:
         //If myself = true, the server sends the information about the player
         //If myself = false, the server sends the information about the target
 
-        msg = new MsgEntry( sizeof(myself) + sizeof(simple) + requestor.Length() + 1 );
+        msg.AttachNew(new MsgEntry( sizeof(myself) + sizeof(simple) + requestor.Length() + 1 ));
         msg->SetType(MSGTYPE_CHARDETAILSREQUEST);
         msg->clientnum  = 0;
         msg->Add(myself);
@@ -3550,7 +3543,7 @@ public:
     psCharacterDescriptionUpdateMessage(csString& newValue)
     {
 
-        msg = new MsgEntry( newValue.Length() +1 );
+        msg.AttachNew(new MsgEntry( newValue.Length() +1 ));
         msg->SetType(MSGTYPE_CHARDESCUPDATE);
         msg->clientnum  = 0;
         msg->Add(newValue);
@@ -3834,7 +3827,7 @@ public:
 
     psQuestRewardMessage(uint32_t clientnum, csString& newValue, uint8_t type)
     {
-        msg = new MsgEntry( newValue.Length() + 1 + sizeof(uint8_t) );
+        msg.AttachNew(new MsgEntry( newValue.Length() + 1 + sizeof(uint8_t) ));
         msg->SetType(MSGTYPE_QUESTREWARD);
         msg->clientnum  = clientnum;
         msg->Add(newValue);
@@ -4313,7 +4306,7 @@ class psCharCreateTraitsMessage : public psMessageCracker
 public:
     psCharCreateTraitsMessage( uint32_t client, csString& string)
     {
-        msg = new MsgEntry( string.Length()+1 );
+        msg.AttachNew(new MsgEntry( string.Length()+1 ));
 
         msg->SetType(MSGTYPE_CHAR_CREATE_TRAITS);
         msg->clientnum = client;
@@ -4322,7 +4315,7 @@ public:
 
     psCharCreateTraitsMessage( csString& string)
     {
-        msg = new MsgEntry( string.Length()+1 );
+        msg.AttachNew(new MsgEntry( string.Length()+1 ));
 
         msg->SetType(MSGTYPE_CHAR_CREATE_TRAITS);
         msg->clientnum = 0;
@@ -4464,13 +4457,13 @@ class psMsgCraftingInfo : public psMessageCracker
 public:
     psMsgCraftingInfo()
     {
-        msg = new MsgEntry( 1 );
+        msg.AttachNew(new MsgEntry( 1 ));
         msg->SetType(MSGTYPE_CRAFT_INFO);
     }
 
     psMsgCraftingInfo( uint32_t client, csString craftinfo )
     {
-        msg = new MsgEntry( craftinfo.Length()+1 );
+        msg.AttachNew(new MsgEntry( craftinfo.Length()+1 ));
 
         msg->SetType(MSGTYPE_CRAFT_INFO);
         msg->clientnum = client;
@@ -4507,7 +4500,7 @@ class psTraitChangeMessage : public psMessageCracker
 public:
     psTraitChangeMessage( uint32_t client, uint32_t targetID, csString& string)
     {
-        msg = new MsgEntry( string.Length()+1 + sizeof(uint32_t) );
+        msg.AttachNew(new MsgEntry( string.Length()+1 + sizeof(uint32_t) ));
 
         msg->SetType(MSGTYPE_CHANGE_TRAIT);
         msg->clientnum = client;
@@ -4547,7 +4540,7 @@ class psTutorialMessage : public psMessageCracker
 public:
     psTutorialMessage( uint32_t client, uint32_t which, const char *instructions)
     {
-        msg = new MsgEntry( sizeof(uint32_t) + strlen(instructions)+1 );
+        msg.AttachNew(new MsgEntry( sizeof(uint32_t) + strlen(instructions)+1 ));
 
         msg->SetType(MSGTYPE_TUTORIAL);
         msg->clientnum = client;
@@ -4583,7 +4576,7 @@ class psSketchMessage : public psMessageCracker
 public:
     psSketchMessage( uint32_t client, uint32_t itemID, uint8_t flags, const char *limitxml,const char *sketch_def, bool rightToEditFlag)
     {
-        msg = new MsgEntry( sizeof(uint32_t)+1+strlen(limitxml)+1+strlen(sketch_def)+1+sizeof(bool) );
+        msg.AttachNew(new MsgEntry( sizeof(uint32_t)+1+strlen(limitxml)+1+strlen(sketch_def)+1+sizeof(bool) ));
 
         msg->SetType(MSGTYPE_VIEW_SKETCH);
         msg->clientnum = client;

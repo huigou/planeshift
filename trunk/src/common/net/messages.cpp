@@ -79,7 +79,7 @@ psCharDeleteMessage::psCharDeleteMessage( const char* name, uint32_t client )
     if(!name)
         return;
 
-    msg = new MsgEntry( strlen(name) + 1 );
+    msg.AttachNew(new MsgEntry( strlen(name) + 1 ));
 
     msg->SetType( MSGTYPE_CHAR_DELETE );
     msg->clientnum = client;
@@ -112,7 +112,7 @@ PSF_IMPLEMENT_MSG_FACTORY(psPreAuthenticationMessage,MSGTYPE_PREAUTHENTICATE);
 psPreAuthenticationMessage::psPreAuthenticationMessage(uint32_t clientnum,
     uint32_t version)
 {
-    msg  = new MsgEntry(sizeof(uint32_t));
+    msg.AttachNew(new MsgEntry(sizeof(uint32_t)));
 
     msg->SetType(MSGTYPE_PREAUTHENTICATE);
     msg->clientnum      = clientnum;
@@ -163,7 +163,7 @@ psAuthenticationMessage::psAuthenticationMessage(uint32_t clientnum,
     }
 
 
-    msg  = new MsgEntry(strlen(userid)+1+strlen(password)+1+sizeof(uint32_t),PRIORITY_LOW);
+    msg.AttachNew(new MsgEntry(strlen(userid)+1+strlen(password)+1+sizeof(uint32_t),PRIORITY_LOW));
 
     msg->SetType(MSGTYPE_AUTHENTICATE);
     msg->clientnum      = clientnum;
@@ -256,7 +256,7 @@ void psAuthApprovedMessage::ConstructMsg()
     for (size_t i = 0; i < contents.GetSize(); ++i)
         msgSize += strlen(contents[i]) + 1;
 
-    msg = new MsgEntry(msgSize);
+    msg.AttachNew(new MsgEntry(msgSize));
 
     msg->SetType(MSGTYPE_AUTHAPPROVED);
     msg->clientnum      = msgClientValidToken;
@@ -285,7 +285,7 @@ PSF_IMPLEMENT_MSG_FACTORY(psPreAuthApprovedMessage,MSGTYPE_PREAUTHAPPROVED);
 
 psPreAuthApprovedMessage::psPreAuthApprovedMessage (uint32_t clientnum)
 {
-    msg  = new MsgEntry(sizeof(uint32_t));
+    msg.AttachNew(new MsgEntry(sizeof(uint32_t)));
 
     msg->SetType(MSGTYPE_PREAUTHAPPROVED);
     msg->clientnum      = clientnum;
@@ -326,7 +326,7 @@ psAuthRejectedMessage::psAuthRejectedMessage(uint32_t clientnum,
     if (!reason)
         return;
 
-    msg = new MsgEntry( strlen(reason)+1 );
+    msg.AttachNew(new MsgEntry( strlen(reason)+1 ));
 
     msg->SetType(MSGTYPE_AUTHREJECTED);
     msg->clientnum      = clientnum;
@@ -363,7 +363,7 @@ PSF_IMPLEMENT_MSG_FACTORY(psCharacterPickerMessage,MSGTYPE_AUTHCHARACTER);
 
 psCharacterPickerMessage::psCharacterPickerMessage( const char* characterName )
 {
-    msg = new MsgEntry( strlen(characterName)+1 );
+    msg.AttachNew(new MsgEntry( strlen(characterName)+1 ));
 
     msg->SetType(MSGTYPE_AUTHCHARACTER);
     msg->clientnum      = 0;
@@ -398,10 +398,10 @@ PSF_IMPLEMENT_MSG_FACTORY(psCharacterApprovedMessage,MSGTYPE_AUTHCHARACTERAPPROV
 
 psCharacterApprovedMessage::psCharacterApprovedMessage(uint32_t clientnum)
 {
-    msg = new MsgEntry( );
+    msg.AttachNew(new MsgEntry());
 
     msg->SetType(MSGTYPE_AUTHCHARACTERAPPROVED);
-    msg->clientnum      = clientnum;
+    msg->clientnum = clientnum;
 
     // Sets valid flag based on message overrun state
     valid=!(msg->overrun);
@@ -444,10 +444,10 @@ psChatMessage::psChatMessage(uint32_t cnum, const char *person, const char * oth
     if (includeOther)
         sz += strlen(other) + 1;
 
-    msg = new MsgEntry(sz);
+    msg.AttachNew(new MsgEntry(sz));
 
     msg->SetType(MSGTYPE_CHAT);
-    msg->clientnum      = cnum;
+    msg->clientnum = cnum;
 
     msg->Add(iChatType);
     msg->Add(person);
@@ -523,7 +523,7 @@ psSystemMessageSafe::psSystemMessageSafe(uint32_t clientnum, uint32_t msgtype,
     strncpy(str, text, 1023);
     str[1023]=0x00;
 
-    msg = new MsgEntry( strlen(str) + 1 + sizeof(uint32_t) );
+    msg.AttachNew(new MsgEntry(strlen(str) + 1 + sizeof(uint32_t)));
 
     msg->SetType(MSGTYPE_SYSTEM);
     msg->clientnum      = clientnum;
@@ -554,7 +554,7 @@ psSystemMessage::psSystemMessage(uint32_t clientnum, uint32_t msgtype, const cha
     str[1023]=0x00;
     va_end(args);
 
-    msg = new MsgEntry( strlen(str) + 1 + sizeof(uint32_t) );
+    msg.AttachNew(new MsgEntry(strlen(str) + 1 + sizeof(uint32_t)));
 
     msg->SetType(MSGTYPE_SYSTEM);
     msg->clientnum      = clientnum;
@@ -573,7 +573,7 @@ psSystemMessage::psSystemMessage(uint32_t clientnum, uint32_t msgtype, const cha
     vsnprintf(str,1023, fmt, args);
     str[1023]=0x00;
 
-    msg = new MsgEntry( strlen(str) + 1 + sizeof(uint32_t) );
+    msg.AttachNew(new MsgEntry(strlen(str) + 1 + sizeof(uint32_t)));
 
     msg->SetType(MSGTYPE_SYSTEM);
     msg->clientnum      = clientnum;
@@ -623,7 +623,7 @@ psPetitionMessage::psPetitionMessage(uint32_t clientnum, csArray<psPetitionInfo>
     {
         curr = &petition->Get(i);
         
-        messageSize+= sizeof(int32_t);                       // Petition ID
+        messageSize+= sizeof(int32_t);                // Petition ID
         messageSize+= curr->petition.Length()+1;      // Petition String
         messageSize+= curr->status.Length()+1;        // Petition status string
         if ( !gm )
@@ -640,12 +640,12 @@ psPetitionMessage::psPetitionMessage(uint32_t clientnum, csArray<psPetitionInfo>
         }
     }
 
-    msg = new MsgEntry(  sizeof(int32_t)+                             // int32_t pettionLen
-                         sizeof(gm)     +                             // Space for boolean GM flag.
-                         messageSize    +                             // Space for all petitions
-                         errLen         +                             // Space for error message.
-                         sizeof(succeed)+                             // Space for success boolean
-                         sizeof(int32_t) );                           // Space for type int32_t
+    msg.AttachNew(new MsgEntry(sizeof(int32_t) +    // int32_t pettionLen
+                               sizeof(gm)      +    // Space for boolean GM flag.
+                               messageSize     +    // Space for all petitions
+                               errLen          +    // Space for error message.
+                               sizeof(succeed) +    // Space for success boolean
+                               sizeof(int32_t)));    // Space for type int32_t
                          
                                  
      //+ (maxPetitionTextLen + 250)* (petitionLen+1) + sizeof(errMsg) +
@@ -771,7 +771,7 @@ PSF_IMPLEMENT_MSG_FACTORY(psPetitionRequestMessage,MSGTYPE_PETITION_REQUEST);
 
 psPetitionRequestMessage::psPetitionRequestMessage(bool gm, const char* requestCmd, int petitionID, const char* petDesc)
 {
-    msg = new MsgEntry((strlen(requestCmd) + 1) + (strlen(petDesc)+1) + sizeof(gm) + sizeof(int32_t));
+    msg.AttachNew(new MsgEntry((strlen(requestCmd) + 1) + (strlen(petDesc)+1) + sizeof(gm) + sizeof(int32_t)));
 
     msg->SetType(MSGTYPE_PETITION_REQUEST);
     msg->clientnum      = 0;
@@ -816,7 +816,7 @@ PSF_IMPLEMENT_MSG_FACTORY(psGMGuiMessage,MSGTYPE_GMGUI);
 
 psGMGuiMessage::psGMGuiMessage(uint32_t clientnum, int gmSets)
 {
-    msg = new MsgEntry(sizeof(gmSettings) + sizeof(type) + 1);
+    msg.AttachNew(new MsgEntry(sizeof(gmSettings) + sizeof(type) + 1));
     gmSettings = gmSets;
 
     msg->SetType(MSGTYPE_GMGUI);
@@ -833,7 +833,7 @@ psGMGuiMessage::psGMGuiMessage(uint32_t clientnum, int gmSets)
 psGMGuiMessage::psGMGuiMessage(uint32_t clientnum, csArray<PlayerInfo> *playerArray, int type)
 {
     size_t playerCount = (playerArray == NULL ? 0 : playerArray->GetSize());
-    msg = new MsgEntry(sizeof(playerCount) + 250 * (playerCount+1) + sizeof(type));
+    msg.AttachNew(new MsgEntry(sizeof(playerCount) + 250 * (playerCount+1) + sizeof(type)));
 
     msg->SetType(MSGTYPE_GMGUI);
     msg->clientnum = clientnum;
@@ -910,7 +910,7 @@ PSF_IMPLEMENT_MSG_FACTORY(psGuildCmdMessage,MSGTYPE_GUILDCMD);
 
 psGuildCmdMessage::psGuildCmdMessage(const char *cmd)
 {
-    msg = new MsgEntry(strlen(cmd) + 1);
+    msg.AttachNew(new MsgEntry(strlen(cmd) + 1));
 
     msg->SetType(MSGTYPE_GUILDCMD);
     msg->clientnum      = 0;
@@ -1071,9 +1071,9 @@ PSF_IMPLEMENT_MSG_FACTORY(psGUIGuildMessage,MSGTYPE_GUIGUILD);
 psGUIGuildMessage::psGUIGuildMessage( uint32_t command,
                                       csString commandData)
 {
-    msg = new MsgEntry( sizeof(command) +
-                        commandData.Length() +
-                        1);
+    msg.AttachNew(new MsgEntry(sizeof(command)      +
+                               commandData.Length() +
+                               1));
 
     msg->SetType(MSGTYPE_GUIGUILD);
     msg->clientnum  = 0;
@@ -1089,9 +1089,9 @@ psGUIGuildMessage::psGUIGuildMessage( uint32_t clientNum,
                                       uint32_t command,
                                       csString commandData)
 {
-    msg = new MsgEntry( sizeof(command) +
-                        commandData.Length() +
-                        1);
+    msg.AttachNew(new MsgEntry(sizeof(command)      +
+                               commandData.Length() +
+                               1));
 
     msg->SetType(MSGTYPE_GUIGUILD);
     msg->clientnum  = clientNum;
@@ -1131,7 +1131,7 @@ PSF_IMPLEMENT_MSG_FACTORY(psGroupCmdMessage,MSGTYPE_GROUPCMD);
 
 psGroupCmdMessage::psGroupCmdMessage(const char *cmd)
 {
-    msg = new MsgEntry(strlen(cmd) + 1);
+    msg.AttachNew(new MsgEntry(strlen(cmd) + 1));
 
     msg->SetType(MSGTYPE_GROUPCMD);
     msg->clientnum      = 0;
@@ -1144,7 +1144,7 @@ psGroupCmdMessage::psGroupCmdMessage(const char *cmd)
 
 psGroupCmdMessage::psGroupCmdMessage(uint32_t clientnum,const char *cmd)
 {
-    msg = new MsgEntry( strlen(cmd) + 1);
+    msg.AttachNew(new MsgEntry(strlen(cmd) + 1));
 
     msg->SetType(MSGTYPE_GROUPCMD);
     msg->clientnum      = clientnum;
@@ -1217,7 +1217,7 @@ PSF_IMPLEMENT_MSG_FACTORY(psUserCmdMessage,MSGTYPE_USERCMD);
 
 psUserCmdMessage::psUserCmdMessage(const char *cmd)
 {
-    msg = new MsgEntry(strlen(cmd) + 1);
+    msg.AttachNew(new MsgEntry(strlen(cmd) + 1));
 
     msg->SetType(MSGTYPE_USERCMD);
     msg->clientnum      = 0;
@@ -1393,7 +1393,7 @@ PSF_IMPLEMENT_MSG_FACTORY(psWorkCmdMessage,MSGTYPE_WORKCMD);
 
 psWorkCmdMessage::psWorkCmdMessage(const char *cmd)
 {
-    msg = new MsgEntry(strlen(cmd) + 1);
+    msg.AttachNew(new MsgEntry(strlen(cmd) + 1));
 
     msg->SetType(MSGTYPE_WORKCMD);
     msg->clientnum      = 0;
@@ -1457,7 +1457,7 @@ PSF_IMPLEMENT_MSG_FACTORY(psAdminCmdMessage,MSGTYPE_ADMINCMD);
 
 psAdminCmdMessage::psAdminCmdMessage(const char *cmd)
 {
-    msg = new MsgEntry(strlen(cmd) + 1);
+    msg.AttachNew(new MsgEntry(strlen(cmd) + 1));
 
     msg->SetType(MSGTYPE_ADMINCMD);
     msg->clientnum      = 0;
@@ -1471,7 +1471,7 @@ psAdminCmdMessage::psAdminCmdMessage(const char *cmd)
 
 psAdminCmdMessage::psAdminCmdMessage(const char *cmd, uint32_t client)
 {
-    msg = new MsgEntry(strlen(cmd) + 1);
+    msg.AttachNew(new MsgEntry(strlen(cmd) + 1));
 
     msg->SetType(MSGTYPE_ADMINCMD);
     msg->clientnum      = client;
@@ -1505,7 +1505,7 @@ PSF_IMPLEMENT_MSG_FACTORY(psDisconnectMessage,MSGTYPE_DISCONNECT);
 
 psDisconnectMessage::psDisconnectMessage(uint32_t clientnum,PS_ID actorid, const char *reason)
 {
-    msg = new MsgEntry( sizeof(PS_ID) + strlen(reason) + 1 );
+    msg.AttachNew(new MsgEntry( sizeof(PS_ID) + strlen(reason) + 1 ));
 
     msg->SetType(MSGTYPE_DISCONNECT);
     msg->clientnum      = clientnum;
@@ -1546,7 +1546,7 @@ PSF_IMPLEMENT_MSG_FACTORY(psUserActionMessage,MSGTYPE_USERACTION);
 
 psUserActionMessage::psUserActionMessage(uint32_t clientnum,PS_ID target,const char *action, const char *dfltBehaviors)
 {
-    msg = new MsgEntry( strlen(action) + 1 + strlen(dfltBehaviors) + 1 + sizeof(PS_ID) );
+    msg.AttachNew(new MsgEntry( strlen(action) + 1 + strlen(dfltBehaviors) + 1 + sizeof(PS_ID) ));
 
     msg->SetType(MSGTYPE_USERACTION);
     msg->clientnum      = clientnum;
@@ -1588,7 +1588,7 @@ PSF_IMPLEMENT_MSG_FACTORY(psGUIInteractMessage,MSGTYPE_GUIINTERACT);
 
 psGUIInteractMessage::psGUIInteractMessage (uint32_t client, uint32_t options)
 {
-    msg = new MsgEntry(sizeof(uint32_t));
+    msg.AttachNew(new MsgEntry(sizeof(uint32_t)));
 
     msg->SetType(MSGTYPE_GUIINTERACT);
     msg->clientnum      = client;
@@ -1671,7 +1671,7 @@ PSF_IMPLEMENT_MSG_FACTORY(psMapActionMessage,MSGTYPE_MAPACTION);
 
 psMapActionMessage::psMapActionMessage( uint32_t clientnum, uint32_t cmd, const char *xml )
 {
-    msg = new MsgEntry(sizeof(uint32_t) + strlen( xml ) + 1);
+    msg.AttachNew(new MsgEntry(sizeof(uint32_t) + strlen( xml ) + 1));
 
     msg->SetType( MSGTYPE_MAPACTION );
     msg->clientnum      = clientnum;
@@ -1722,7 +1722,7 @@ PSF_IMPLEMENT_MSG_FACTORY(psModeMessage,MSGTYPE_MODE);
 
 psModeMessage::psModeMessage (uint32_t client, uint32_t actorID, uint8_t mode, uint8_t stance)
 {
-    msg = new MsgEntry(sizeof(uint32_t) + 2*sizeof(uint8_t));
+    msg.AttachNew(new MsgEntry(sizeof(uint32_t) + 2*sizeof(uint8_t)));
 
     msg->SetType(MSGTYPE_MODE);
     msg->clientnum      = client;
@@ -1765,7 +1765,7 @@ PSF_IMPLEMENT_MSG_FACTORY(psMoveLockMessage,MSGTYPE_MOVELOCK);
 
 psMoveLockMessage::psMoveLockMessage (uint32_t client, bool lock)
 {
-    msg = new MsgEntry(sizeof(uint8_t));
+    msg.AttachNew(new MsgEntry(sizeof(uint8_t)));
 
     msg->SetType(MSGTYPE_MOVELOCK);
     msg->clientnum      = client;
@@ -1804,7 +1804,7 @@ PSF_IMPLEMENT_MSG_FACTORY(psWeatherMessage,MSGTYPE_WEATHER);
 
 psWeatherMessage::psWeatherMessage(uint32_t client, int minute, int hour, int day, int month, int year )
 {
-    msg = new MsgEntry( sizeof(uint32_t) + 5*sizeof(uint8_t) );
+    msg.AttachNew(new MsgEntry( sizeof(uint32_t) + 5*sizeof(uint8_t) ));
 
     msg->SetType(MSGTYPE_WEATHER);
     msg->clientnum      = client;
@@ -1849,7 +1849,7 @@ psWeatherMessage::psWeatherMessage(uint32_t client, psWeatherMessage::NetWeather
         type |= (uint8_t)LIGHTNING;
     }
 
-    msg = new MsgEntry( size );
+    msg.AttachNew(new MsgEntry( size ));
 
     msg->SetType(MSGTYPE_WEATHER);
     msg->clientnum      = client;
@@ -2007,7 +2007,7 @@ PSF_IMPLEMENT_MSG_FACTORY(psGUIInventoryMessage,MSGTYPE_GUIINVENTORY);
 
 psGUIInventoryMessage::psGUIInventoryMessage(uint8_t command, uint32_t size )
 {
-    msg = new MsgEntry( sizeof(uint8_t)  + size );
+    msg.AttachNew(new MsgEntry( sizeof(uint8_t)  + size ));
 
     msg->SetType(MSGTYPE_GUIINVENTORY);
     msg->clientnum      = 0;
@@ -2074,7 +2074,7 @@ psGUIInventoryMessage::psGUIInventoryMessage(uint32_t clientnum,
                                              uint32_t totalEmptiedSlots,
                                              float maxWeight  )
 {
-    msg = new MsgEntry( 10000 );
+    msg.AttachNew(new MsgEntry( 10000 ));
     msg->SetType(MSGTYPE_GUIINVENTORY);
     msg->clientnum      = clientnum;
 
@@ -2177,7 +2177,7 @@ PSF_IMPLEMENT_MSG_FACTORY(psNewSectorMessage,MSGTYPE_NEWSECTOR);
 // the network.
 psNewSectorMessage::psNewSectorMessage(const csString & oldSector, const csString & newSector, csVector3 pos)
 {
-    msg = new MsgEntry( 1024 );
+    msg.AttachNew(new MsgEntry( 1024 ));
 
     msg->SetType(MSGTYPE_NEWSECTOR);
     msg->clientnum      = 0; // msg never sent on network. client only
@@ -2222,7 +2222,7 @@ PSF_IMPLEMENT_MSG_FACTORY(psLootItemMessage,MSGTYPE_LOOTITEM);
 
 psLootItemMessage::psLootItemMessage(int client,int entity,int item,int action)
 {
-    msg = new MsgEntry(2*sizeof(int32_t) + sizeof(uint8_t) );
+    msg.AttachNew(new MsgEntry(2*sizeof(int32_t) + sizeof(uint8_t) ));
 
     msg->SetType(MSGTYPE_LOOTITEM);
     msg->clientnum      = client;
@@ -2268,7 +2268,7 @@ psLootMessage::psLootMessage(MsgEntry* msg)
 
 void psLootMessage::Populate(PS_ID entity,csString& lootstr, int cnum)
 {
-    msg = new MsgEntry(sizeof(uint32_t) + lootstr.Length() + 1);
+    msg.AttachNew(new MsgEntry(sizeof(uint32_t) + lootstr.Length() + 1));
 
     msg->SetType(MSGTYPE_LOOT);
     msg->clientnum      = cnum;
@@ -2308,7 +2308,7 @@ psQuestListMessage::psQuestListMessage(MsgEntry* msg)
 
 void psQuestListMessage::Populate(csString& queststr, int cnum)
 {
-    msg = new MsgEntry(sizeof(int) + queststr.Length() + 1);
+    msg.AttachNew(new MsgEntry(sizeof(int) + queststr.Length() + 1));
 
     msg->SetType(MSGTYPE_QUESTLIST);
     msg->clientnum      = cnum;
@@ -2340,7 +2340,7 @@ psQuestInfoMessage::psQuestInfoMessage(int cnum, int cmd, int id, const char *na
     else
         xml.Clear();
 
-    msg = new MsgEntry(sizeof(int32_t) + sizeof(uint8_t) + xml.Length() + 1);
+    msg.AttachNew(new MsgEntry(sizeof(int32_t) + sizeof(uint8_t) + xml.Length() + 1));
 
     msg->SetType(MSGTYPE_QUESTINFO);
     msg->clientnum = cnum;
@@ -2394,9 +2394,9 @@ psOverrideActionMessage::psOverrideActionMessage(int client,int entity,const cha
     if (action)
         strlength = strlen(action) + 1;
 
-    msg = new MsgEntry( sizeof(entity) +
+    msg.AttachNew(new MsgEntry( sizeof(entity) +
                         strlength +
-                        sizeof(duration) );
+                        sizeof(duration) ));
 
     msg->SetType(MSGTYPE_OVERRIDEACTION);
     msg->clientnum  = client;
@@ -2444,12 +2444,12 @@ psEquipmentMessage::psEquipmentMessage( uint32_t clientNum,
                                         csString& texture,
                                         csString& partMesh)
 {
-    msg = new MsgEntry( sizeof(uint32_t)*2 +
+    msg.AttachNew(new MsgEntry( sizeof(uint32_t)*2 +
                         sizeof(uint8_t) +
                         meshName.Length()+1 +
                         part.Length()+1 +
                         texture.Length()+1 +
-                        partMesh.Length()+1);
+                        partMesh.Length()+1));
 
     msg->SetType(MSGTYPE_EQUIPMENT);
     msg->clientnum  = clientNum;
@@ -2505,9 +2505,9 @@ PSF_IMPLEMENT_MSG_FACTORY(psGUIMerchantMessage,MSGTYPE_GUIMERCHANT);
 psGUIMerchantMessage::psGUIMerchantMessage( uint8_t command,
                                             csString commandData)
 {
-    msg = new MsgEntry( sizeof(uint8_t) +
+    msg.AttachNew(new MsgEntry( sizeof(uint8_t) +
                         commandData.Length() +
-                        1);
+                        1));
 
     msg->SetType(MSGTYPE_GUIMERCHANT);
     msg->clientnum  = 0;
@@ -2523,9 +2523,9 @@ psGUIMerchantMessage::psGUIMerchantMessage( uint32_t clientNum,
                                             uint8_t command,
                                             csString commandData)
 {
-    msg = new MsgEntry( sizeof(uint8_t) +
+    msg.AttachNew(new MsgEntry( sizeof(uint8_t) +
                         commandData.Length() +
-                        1);
+                        1));
 
     msg->SetType(MSGTYPE_GUIMERCHANT);
     msg->clientnum  = clientNum;
@@ -2569,9 +2569,9 @@ PSF_IMPLEMENT_MSG_FACTORY(psGUIGroupMessage,MSGTYPE_GUIGROUP);
 psGUIGroupMessage::psGUIGroupMessage( uint8_t command,
                                       csString commandData)
 {
-    msg = new MsgEntry( sizeof(uint8_t) +
+    msg.AttachNew(new MsgEntry( sizeof(uint8_t) +
                         commandData.Length() +
-                        1);
+                        1));
 
     msg->SetType(MSGTYPE_GUIGROUP);
     msg->clientnum  = 0;
@@ -2587,9 +2587,9 @@ psGUIGroupMessage::psGUIGroupMessage( uint32_t clientNum,
                                       uint8_t command,
                                       csString commandData)
 {
-    msg = new MsgEntry( sizeof(uint8_t) +
+    msg.AttachNew(new MsgEntry( sizeof(uint8_t) +
                         commandData.Length() +
-                        1);
+                        1));
 
     msg->SetType(MSGTYPE_GUIGROUP);
     msg->clientnum  = clientNum;
@@ -2644,7 +2644,7 @@ PSF_IMPLEMENT_MSG_FACTORY(psSpellBookMessage,MSGTYPE_SPELL_BOOK);
 
 psSpellBookMessage::psSpellBookMessage()
 {
-    msg = new MsgEntry();
+    msg.AttachNew(new MsgEntry());
     msg->clientnum = 0;
     msg->SetType(MSGTYPE_SPELL_BOOK);
     size = 0;
@@ -2697,7 +2697,7 @@ void psSpellBookMessage::AddSpell(const csString& name, const csString& descript
 
 void psSpellBookMessage::Construct()
 {
-    msg = new MsgEntry( size + sizeof(int) );
+    msg.AttachNew(new MsgEntry( size + sizeof(int) ));
     msg->SetType(MSGTYPE_SPELL_BOOK);
     msg->clientnum = client;
 
@@ -2747,7 +2747,7 @@ PSF_IMPLEMENT_MSG_FACTORY(psPurifyGlyphMessage,MSGTYPE_PURIFY_GLYPH);
 
 psPurifyGlyphMessage::psPurifyGlyphMessage( uint32_t glyphID )
 {
-    msg = new MsgEntry( sizeof(uint32_t) );
+    msg.AttachNew(new MsgEntry( sizeof(uint32_t) ));
     msg->clientnum = 0;
     msg->SetType(MSGTYPE_PURIFY_GLYPH);
     msg->Add( glyphID );
@@ -2773,7 +2773,7 @@ PSF_IMPLEMENT_MSG_FACTORY(psSpellCastMessage,MSGTYPE_SPELL_CAST);
 
 psSpellCastMessage::psSpellCastMessage( csString &spellName, float kFactor )
 {
-    msg = new MsgEntry( spellName.Length() + 1 + sizeof(float) );
+    msg.AttachNew(new MsgEntry( spellName.Length() + 1 + sizeof(float) ));
     msg->clientnum = 0;
     msg->SetType(MSGTYPE_SPELL_CAST);
     msg->Add( spellName );
@@ -2801,7 +2801,7 @@ PSF_IMPLEMENT_MSG_FACTORY(psGlyphAssembleMessage,MSGTYPE_GLYPH_ASSEMBLE);
 
 psGlyphAssembleMessage::psGlyphAssembleMessage(  int slot0, int slot1, int slot2, int slot3, bool info)
 {
-    msg = new MsgEntry( sizeof(uint32_t) * 4 + sizeof(uint8_t) );
+    msg.AttachNew(new MsgEntry( sizeof(uint32_t) * 4 + sizeof(uint8_t) ));
     msg->SetType(MSGTYPE_GLYPH_ASSEMBLE);
     msg->clientnum = 0;
     msg->Add( (uint32_t)slot0 );
@@ -2816,7 +2816,7 @@ psGlyphAssembleMessage::psGlyphAssembleMessage( uint32_t client,
                                                 csString image,
                                                 csString description )
 {
-    msg = new MsgEntry( name.Length() + description.Length() + image.Length() + 3 );
+    msg.AttachNew(new MsgEntry( name.Length() + description.Length() + image.Length() + 3 ));
     msg->SetType(MSGTYPE_GLYPH_ASSEMBLE);
     msg->clientnum = client;
     msg->Add( name );
@@ -2882,7 +2882,7 @@ psRequestGlyphsMessage::psRequestGlyphsMessage( uint32_t client )
     size = 0;
     if ( client == 0 )
     {
-        msg = new MsgEntry();
+        msg.AttachNew(new MsgEntry());
         msg->SetType(MSGTYPE_GLPYH_REQUEST);
         msg->clientnum = client;
     }
@@ -2910,7 +2910,7 @@ void psRequestGlyphsMessage::AddGlyph( csString name, csString image, int purifi
 
 void psRequestGlyphsMessage::Construct()
 {
-    msg = new MsgEntry( size + sizeof(int) );
+    msg.AttachNew(new MsgEntry( size + sizeof(int) ));
     msg->SetType(MSGTYPE_GLPYH_REQUEST);
     msg->clientnum = client;
 
@@ -2968,8 +2968,8 @@ psEffectMessage::psEffectMessage(uint32_t clientNum, const csString &effectName,
                                  const csVector3 &effectOffset, uint32_t anchorID,
                                  uint32_t targetID, uint32_t uid)
 {
-    msg = new MsgEntry(effectName.Length() + sizeof(csVector3)
-                + sizeof(uint32_t) + sizeof(uint32_t) + sizeof(uint32_t) + sizeof(uint32_t) + 1);
+    msg.AttachNew(new MsgEntry(effectName.Length() + sizeof(csVector3)
+                + sizeof(uint32_t) + sizeof(uint32_t) + sizeof(uint32_t) + sizeof(uint32_t) + 1));
 
     msg->SetType(MSGTYPE_EFFECT);
     msg->clientnum = clientNum;
@@ -2990,8 +2990,8 @@ psEffectMessage::psEffectMessage(uint32_t clientNum, const csString &effectName,
                                  const csVector3 &effectOffset, uint32_t anchorID,
                                  uint32_t targetID, uint32_t castDuration,uint32_t uid)
 {
-    msg = new MsgEntry(effectName.Length() + sizeof(csVector3)
-                + sizeof(uint32_t) + sizeof(uint32_t) + sizeof(uint32_t) + sizeof(uint32_t) + 1);
+    msg.AttachNew(new MsgEntry(effectName.Length() + sizeof(csVector3)
+                + sizeof(uint32_t) + sizeof(uint32_t) + sizeof(uint32_t) + sizeof(uint32_t) + 1));
 
     msg->SetType(MSGTYPE_EFFECT);
     msg->clientnum = clientNum;
@@ -3012,8 +3012,8 @@ psEffectMessage::psEffectMessage(uint32_t clientNum, const csString &effectName,
                                  const csVector3 &effectOffset, uint32_t anchorID,
                                  uint32_t targetID, csString &effectText, uint32_t uid)
 {
-    msg = new MsgEntry(effectName.Length() + sizeof(csVector3)
-                + sizeof(uint32_t) + sizeof(uint32_t) + sizeof(effectText) + sizeof(uint32_t) + 1);
+    msg.AttachNew(new MsgEntry(effectName.Length() + sizeof(csVector3)
+                + sizeof(uint32_t) + sizeof(uint32_t) + sizeof(effectText) + sizeof(uint32_t) + 1));
 
     msg->SetType(MSGTYPE_EFFECT);
     msg->clientnum = clientNum;
@@ -3069,7 +3069,7 @@ PSF_IMPLEMENT_MSG_FACTORY(psGUITargetUpdateMessage,MSGTYPE_GUITARGETUPDATE);
 psGUITargetUpdateMessage::psGUITargetUpdateMessage(uint32_t client_num,
                                                    PS_ID target_id)
 {
-    msg = new MsgEntry(sizeof(uint32_t) + sizeof(PS_ID));
+    msg.AttachNew(new MsgEntry(sizeof(uint32_t) + sizeof(PS_ID)));
 
     msg->SetType(MSGTYPE_GUITARGETUPDATE);
     msg->clientnum      = client_num;
@@ -3111,7 +3111,7 @@ psMsgStringsMessage::psMsgStringsMessage(uint32_t clientnum, csStringHash *strin
 {
     msgstrings = 0;
 
-    msg = new MsgEntry(MAX_MESSAGE_SIZE);
+    msg.AttachNew(new MsgEntry(MAX_MESSAGE_SIZE));
 
     char buff1[PACKING_BUFFSIZE];      // Holds packed strings
     char buff2[COMPRESSION_BUFFSIZE];  // Holds compressed data
@@ -3293,7 +3293,7 @@ psCharacterDataMessage::psCharacterDataMessage(uint32_t clientnum,
                                                csString traits,
                                                csString equipment)
 {
-    msg = new MsgEntry(fullname.Length() + race_name.Length()
+    msg.AttachNew(new MsgEntry(fullname.Length() + race_name.Length()
                        + mesh_name.Length() + traits.Length()
                        + equipment.Length() + 5 );
 
@@ -3356,7 +3356,7 @@ psCombatEventMessage::psCombatEventMessage(uint32_t clientnum,
         case COMBAT_MISS:
         case COMBAT_DEATH:
 
-            msg = new MsgEntry(sizeof(uint8_t) + 4 * sizeof(uint32_t) + sizeof(int8_t) );
+            msg.AttachNew(new MsgEntry(sizeof(uint8_t) + 4 * sizeof(uint32_t) + sizeof(int8_t) ));
 
             msg->SetType(MSGTYPE_COMBATEVENT);
             msg->clientnum      = clientnum;
@@ -3376,7 +3376,7 @@ psCombatEventMessage::psCombatEventMessage(uint32_t clientnum,
         case COMBAT_DAMAGE:
         case COMBAT_DAMAGE_NEARLY_DEAD:
 
-            msg = new MsgEntry(sizeof(uint8_t) + 4 * sizeof(uint32_t) + sizeof(int8_t) + sizeof(float) );
+            msg.AttachNew(new MsgEntry(sizeof(uint8_t) + 4 * sizeof(uint32_t) + sizeof(int8_t) + sizeof(float) ));
 
             msg->SetType(MSGTYPE_COMBATEVENT);
             msg->clientnum      = clientnum;
@@ -3447,7 +3447,7 @@ PSF_IMPLEMENT_MSG_FACTORY(psSoundEventMessage,MSGTYPE_SOUND_EVENT);
 
 psSoundEventMessage::psSoundEventMessage(uint32_t clientnum, uint32_t type)
 {
-    msg = new MsgEntry(1 * sizeof(int) );
+    msg.AttachNew(new MsgEntry(1 * sizeof(int) ));
     msg->SetType(MSGTYPE_SOUND_EVENT);
     msg->clientnum = clientnum;
     msg->Add((uint32_t)type);
@@ -3475,7 +3475,7 @@ PSF_IMPLEMENT_MSG_FACTORY(psStatDRMessage,MSGTYPE_STATDRUPDATE);
 
 psStatDRMessage::psStatDRMessage(uint32_t clientnum, PS_ID eid, csArray<float> fVitals, csArray<int32_t> iVitals, uint8_t version, int flags)
 {
-    msg = new MsgEntry(2*sizeof(uint32_t) + sizeof(float) * fVitals.GetSize() + sizeof(int32_t) * iVitals.GetSize() + sizeof(uint8_t), PRIORITY_LOW); 
+    msg.AttachNew(new MsgEntry(2*sizeof(uint32_t) + sizeof(float) * fVitals.GetSize() + sizeof(int32_t) * iVitals.GetSize() + sizeof(uint8_t), PRIORITY_LOW)); 
 
     msg->clientnum = clientnum;
     msg->SetType(MSGTYPE_STATDRUPDATE);
@@ -3498,7 +3498,7 @@ psStatDRMessage::psStatDRMessage(uint32_t clientnum, PS_ID eid, csArray<float> f
 /** Send a request to the server for a full stat update. */
 psStatDRMessage::psStatDRMessage()
 {
-    msg = new MsgEntry(0, PRIORITY_HIGH);
+    msg.AttachNew(new MsgEntry(0, PRIORITY_HIGH));
 
     msg->clientnum = 0;
     msg->SetType(MSGTYPE_STATDRUPDATE);
@@ -3599,7 +3599,7 @@ PSF_IMPLEMENT_MSG_FACTORY(psStatsMessage,MSGTYPE_STATS);
 
 psStatsMessage::psStatsMessage( uint32_t client, float maxHP, float maxMana, float maxWeight, float maxCapacity )
 {
-    msg = new MsgEntry( sizeof(float)*4 );
+    msg.AttachNew(new MsgEntry( sizeof(float)*4 ));
     msg->Add( maxHP );
     msg->Add( maxMana );
     msg->Add( maxWeight );
@@ -3612,7 +3612,7 @@ psStatsMessage::psStatsMessage( uint32_t client, float maxHP, float maxMana, flo
 
 psStatsMessage::psStatsMessage()
 {
-    msg = new MsgEntry();
+    msg.AttachNew(new MsgEntry());
     msg->SetType( MSGTYPE_STATS );
     msg->clientnum = 0;
     valid=!(msg->overrun);
@@ -3648,9 +3648,9 @@ PSF_IMPLEMENT_MSG_FACTORY(psGUISkillMessage, MSGTYPE_GUISKILL);
 psGUISkillMessage::psGUISkillMessage( uint8_t command,
                                       csString commandData)
 {
-    msg = new MsgEntry( sizeof(bool) + sizeof(uint8_t) +
+    msg.AttachNew(new MsgEntry( sizeof(bool) + sizeof(uint8_t) +
                         commandData.Length() + 1 +
-                        skillCache.size());
+                        skillCache.size()));
 
     msg->SetType(MSGTYPE_GUISKILL);
     msg->clientnum  = 0;
@@ -3688,7 +3688,7 @@ psGUISkillMessage::psGUISkillMessage( uint32_t clientNum,
                                       bool isTraining)
 {
     //Function begins
-    msg = new MsgEntry( sizeof(bool) + sizeof(uint8_t) +
+    msg.AttachNew(new MsgEntry( sizeof(bool) + sizeof(uint8_t) +
                         commandData.Length() + 1+
                         (skills ? skills->size() : skillCache.size()) +
                         sizeof(str)+
@@ -3709,7 +3709,7 @@ psGUISkillMessage::psGUISkillMessage( uint32_t clientNum,
                         sizeof(focus)+
                         sizeof(selSkillCat)+
                         sizeof(bool)
-                        );
+                        ));
 
     msg->SetType(MSGTYPE_GUISKILL);
     msg->clientnum  = clientNum;
@@ -3813,7 +3813,7 @@ psGUIBankingMessage::psGUIBankingMessage(uint32_t clientNum, uint8_t command, bo
                                          int triasBanked, int maxCircles, int maxOctas, int maxHexas,
                                          int maxTrias, float exchangeFee, bool forceOpen)
 {
-    msg = new MsgEntry(sizeof(bool) +
+    msg.AttachNew(new MsgEntry(sizeof(bool) +
                        sizeof(bool) +
                        sizeof(uint8_t) +
                        sizeof(bool) +
@@ -3830,7 +3830,7 @@ psGUIBankingMessage::psGUIBankingMessage(uint32_t clientNum, uint8_t command, bo
                        sizeof(int) +
                        sizeof(int) +
                        sizeof(float) +
-                       sizeof(bool));
+                       sizeof(bool)));
         
     msg->SetType(MSGTYPE_BANKING);
     msg->clientnum  = clientNum;
@@ -3860,14 +3860,14 @@ psGUIBankingMessage::psGUIBankingMessage(uint32_t clientNum, uint8_t command, bo
 psGUIBankingMessage::psGUIBankingMessage(uint8_t command, bool guild,
                                          int circles, int octas, int hexas,int trias)
 {
-    msg = new MsgEntry(sizeof(bool) +
+    msg.AttachNew(new MsgEntry(sizeof(bool) +
                        sizeof(bool) +
                        sizeof(uint8_t) +
                        sizeof(bool) +
                        sizeof(int) +
                        sizeof(int) +
                        sizeof(int) +
-                       sizeof(int));
+                       sizeof(int)));
      
     msg->clientnum = 0;
     msg->SetType(MSGTYPE_BANKING);
@@ -3887,12 +3887,12 @@ psGUIBankingMessage::psGUIBankingMessage(uint8_t command, bool guild,
 psGUIBankingMessage::psGUIBankingMessage(uint8_t command, bool guild,
                                          int coins, int coin)
 {
-    msg = new MsgEntry(sizeof(bool) +
+    msg.AttachNew(new MsgEntry(sizeof(bool) +
                        sizeof(bool) +
                        sizeof(uint8_t) +
                        sizeof(bool) +
                        sizeof(int) +
-                       sizeof(int));
+                       sizeof(int)));
      
     msg->clientnum = 0;
     msg->SetType(MSGTYPE_BANKING);
@@ -3970,9 +3970,9 @@ PSF_IMPLEMENT_MSG_FACTORY(psPetSkillMessage,MSGTYPE_PET_SKILL);
 psPetSkillMessage::psPetSkillMessage( uint8_t command,
                                       csString commandData)
 {
-    msg = new MsgEntry( sizeof(bool) + sizeof(uint8_t) +
+    msg.AttachNew(new MsgEntry( sizeof(bool) + sizeof(uint8_t) +
                         commandData.Length() +
-                        1);
+                        1));
 
     msg->SetType(MSGTYPE_PET_SKILL);
     msg->clientnum  = 0;
@@ -4006,7 +4006,7 @@ psPetSkillMessage::psPetSkillMessage( uint32_t clientNum,
                                       int32_t focus)
 {
     //Function begins
-    msg = new MsgEntry( sizeof(bool) + sizeof(uint8_t) +
+    msg.AttachNew(new MsgEntry( sizeof(bool) + sizeof(uint8_t) +
                         commandData.Length() + 1+
                         sizeof(str)+
                         sizeof(end)+
@@ -4024,7 +4024,7 @@ psPetSkillMessage::psPetSkillMessage( uint32_t clientNum,
                         sizeof(menStaMax)+
                         sizeof(bool) +
                         sizeof(focus)
-                        );
+                        ));
 
     msg->SetType(MSGTYPE_PET_SKILL);
     msg->clientnum  = clientNum;
@@ -4119,7 +4119,7 @@ void psDRMessage::CreateMsgEntry(uint32_t client, csStringHash* msgstrings, iSec
     csStringID sectorNameStrId = msgstrings ? msgstrings->Request(sectorName) : csInvalidStringID;
     int sectorNameLen = (sectorNameStrId == csInvalidStringID) ? (int) strlen (sectorName) : 0;
 
-    msg = new MsgEntry( sizeof(uint32)*12 + sizeof(uint8)*4 + (sectorNameLen?sectorNameLen+1:0) );
+    msg.AttachNew(new MsgEntry( sizeof(uint32)*12 + sizeof(uint8)*4 + (sectorNameLen?sectorNameLen+1:0) ));
 
     msg->SetType(MSGTYPE_DEAD_RECKONING);
     msg->clientnum = client;
@@ -4234,7 +4234,7 @@ void psDRMessage::WriteDRInfo(uint32_t client,PS_ID mappedid,
 
 psDRMessage::psDRMessage( void *data, int size,csStringHash* msgstrings, iEngine *engine)
 {
-    msg = new MsgEntry(size,PRIORITY_HIGH);
+    msg.AttachNew(new MsgEntry(size,PRIORITY_HIGH));
     memcpy(msg->bytes->payload,data,size);
     ReadDRInfo(msg,msgstrings,engine);
 }
@@ -4336,7 +4336,7 @@ PSF_IMPLEMENT_MSG_FACTORY(psPersistWorldRequest,MSGTYPE_PERSIST_WORLD_REQUEST);
 
 psPersistWorldRequest::psPersistWorldRequest()
 {
-    msg = new MsgEntry();
+    msg.AttachNew(new MsgEntry());
 
     msg->SetType(MSGTYPE_PERSIST_WORLD_REQUEST);
     msg->clientnum  = 0;
@@ -4361,7 +4361,7 @@ PSF_IMPLEMENT_MSG_FACTORY(psRequestAllObjects,MSGTYPE_PERSIST_ALL);
 
 psRequestAllObjects::psRequestAllObjects()
 {
-    msg = new MsgEntry( );
+    msg.AttachNew(new MsgEntry());
 
     msg->SetType(MSGTYPE_PERSIST_ALL);
     msg->clientnum  = 0;
@@ -4388,7 +4388,7 @@ PSF_IMPLEMENT_MSG_FACTORY(psPersistWorld,MSGTYPE_PERSIST_WORLD);
 
 psPersistWorld::psPersistWorld( uint32_t clientNum, const char* sector )
 {
-    msg = new MsgEntry( strlen( sector ) + 1 );
+    msg.AttachNew(new MsgEntry( strlen( sector ) + 1 ));
 
     msg->SetType(MSGTYPE_PERSIST_WORLD);
     msg->clientnum  = clientNum;
@@ -4454,7 +4454,7 @@ psPersistActor::psPersistActor( uint32_t clientNum,
                                 PS_ID ownerEID,
                                 uint32_t flags)
 {
-    msg = new MsgEntry( 5000 );
+    msg.AttachNew(new MsgEntry( 5000 ));
 
     msg->SetType(MSGTYPE_PERSIST_ACTOR);
     msg->clientnum  = clientNum;
@@ -4597,7 +4597,7 @@ psPersistItem::psPersistItem( uint32_t clientNum,
                               float yRot,
                               uint32_t flags)
 {
-    msg = new MsgEntry( 5000 );
+    msg.AttachNew(new MsgEntry( 5000 ));
 
     msg->SetType(MSGTYPE_PERSIST_ITEM);
     msg->clientnum  = clientNum;
@@ -4664,7 +4664,7 @@ psPersistActionLocation::psPersistActionLocation( uint32_t clientNum,
                                 const char* mesh
                                )
 {
-    msg = new MsgEntry( 5000 );
+    msg.AttachNew(new MsgEntry( 5000 ));
 
     msg->SetType(MSGTYPE_PERSIST_ACTIONLOCATION);
     msg->clientnum  = clientNum;
@@ -4704,7 +4704,7 @@ PSF_IMPLEMENT_MSG_FACTORY(psRemoveObject,MSGTYPE_REMOVE_OBJECT);
 
 psRemoveObject::psRemoveObject( uint32_t clientNum, uint32_t objectEID )
 {
-    msg = new MsgEntry( sizeof( uint32_t) );
+    msg.AttachNew(new MsgEntry( sizeof( uint32_t) ));
 
     msg->SetType(MSGTYPE_REMOVE_OBJECT);
     msg->clientnum  = clientNum;
@@ -4734,7 +4734,7 @@ PSF_IMPLEMENT_MSG_FACTORY(psBuddyListMsg,MSGTYPE_BUDDY_LIST);
 psBuddyListMsg::psBuddyListMsg( uint32_t client, int totalBuddies )
 {
     // Possible overflow here!
-    msg = new MsgEntry( totalBuddies*100+10 );
+    msg.AttachNew(new MsgEntry( totalBuddies*100+10 ));
     msg->SetType(MSGTYPE_BUDDY_LIST);
     msg->clientnum = client;
 
@@ -4944,7 +4944,7 @@ psCharacterDetailsMessage::psCharacterDetailsMessage( int clientnum,
         size += sizeof(uint32_t) + skills2s[x].text.Length()+1;
     }
 
-    msg = new MsgEntry( desc2s.Length()+1 + sizeof(gender2s) + name2s.Length() +1 + race2s.Length() +1  +requestor.Length()+1 + size);
+    msg.AttachNew(new MsgEntry( desc2s.Length()+1 + sizeof(gender2s) + name2s.Length() +1 + race2s.Length() +1  +requestor.Length()+1 + size));
 
     msg->SetType(MSGTYPE_CHARACTERDETAILS);
     msg->clientnum = clientnum;
@@ -5029,7 +5029,7 @@ PSF_IMPLEMENT_MSG_FACTORY(psViewActionLocationMessage,MSGTYPE_VIEW_ACTION_LOCATI
 
 psViewActionLocationMessage::psViewActionLocationMessage(uint32_t clientnum, const char* name, const char* description)
 {
-    msg = new MsgEntry(strlen(name)+1 + strlen(description)+1);
+    msg.AttachNew(new MsgEntry(strlen(name)+1 + strlen(description)+1));
 
     msg->SetType(MSGTYPE_VIEW_ACTION_LOCATION);
     msg->clientnum = clientnum;
@@ -5059,7 +5059,7 @@ PSF_IMPLEMENT_MSG_FACTORY(psViewItemDescription,MSGTYPE_VIEW_ITEM);
 
 psViewItemDescription::psViewItemDescription(int containerID, int slotID)
 {
-    msg = new MsgEntry( sizeof(int32_t)*2 + sizeof(uint8_t));
+    msg.AttachNew(new MsgEntry( sizeof(int32_t)*2 + sizeof(uint8_t)));
     msg->SetType(MSGTYPE_VIEW_ITEM);
     msg->clientnum = 0;
 
@@ -5077,7 +5077,7 @@ psViewItemDescription::psViewItemDescription(uint32_t to, const char *itemName, 
 
     if ( !isContainer )
     {
-        msg = new MsgEntry(sizeof(uint8_t) + sizeof(bool) + name.Length() + desc.Length() + iconName.Length() + 3 + sizeof(uint32_t));
+        msg.AttachNew(new MsgEntry(sizeof(uint8_t) + sizeof(bool) + name.Length() + desc.Length() + iconName.Length() + 3 + sizeof(uint32_t)));
         msg->SetType(MSGTYPE_VIEW_ITEM);
         msg->clientnum = to;
 
@@ -5115,7 +5115,7 @@ void psViewItemDescription::AddContents( const char *name, const char *icon, int
 
 void psViewItemDescription::ConstructMsg()
 {
-    msg = new MsgEntry( msgSize );
+    msg.AttachNew(new MsgEntry( msgSize ));
     msg->SetType(MSGTYPE_VIEW_CONTAINER);
     msg->clientnum = to;
 
@@ -5222,7 +5222,7 @@ PSF_IMPLEMENT_MSG_FACTORY(psViewItemUpdate,MSGTYPE_UPDATE_ITEM);
 psViewItemUpdate::psViewItemUpdate( uint32_t to,  uint32_t containerID, uint32_t slotID, bool clearSlot, 
                                     const char *itemName, const char *icon, uint32_t stackCount, uint32_t ownerID)
 {
-    msg = new MsgEntry( sizeof(containerID)+1 + sizeof(slotID) + sizeof(clearSlot) + strlen(itemName)+1 + strlen(icon)+1 + sizeof(stackCount) + sizeof(ownerID) );
+    msg.AttachNew(new MsgEntry( sizeof(containerID)+1 + sizeof(slotID) + sizeof(clearSlot) + strlen(itemName)+1 + strlen(icon)+1 + sizeof(stackCount) + sizeof(ownerID) ));
     msg->SetType(MSGTYPE_UPDATE_ITEM);
     msg->clientnum = to;
     msg->Add(containerID);
@@ -5236,7 +5236,7 @@ psViewItemUpdate::psViewItemUpdate( uint32_t to,  uint32_t containerID, uint32_t
 
 //void psViewItemUpdate::ConstructMsg()
 //{
-//    msg = new MsgEntry( sizeof(containerID) + itemName.Length() + description.Length() + icon.Length() + sizeof(stackCount) );
+//    msg.AttachNew(new MsgEntry( sizeof(containerID) + itemName.Length() + description.Length() + icon.Length() + sizeof(stackCount) );
 //    msg->data->type = MSGTYPE_UPDATE_ITEM;
 //    msg->clientnum = to;
 
@@ -5279,7 +5279,7 @@ PSF_IMPLEMENT_MSG_FACTORY(psReadBookTextMessage,MSGTYPE_READ_BOOK);
 
 psReadBookTextMessage::psReadBookTextMessage(uint32_t clientNum, csString& itemName, csString& bookText, bool canWrite, int slotID, int containerID)
 {
-    msg = new MsgEntry(itemName.Length()+1 + bookText.Length()+1+1+3*sizeof(uint32_t));
+    msg.AttachNew(new MsgEntry(itemName.Length()+1 + bookText.Length()+1+1+3*sizeof(uint32_t)));
     msg->SetType(MSGTYPE_READ_BOOK);
     msg->clientnum = clientNum;
     msg->Add(itemName);
@@ -5312,7 +5312,7 @@ PSF_IMPLEMENT_MSG_FACTORY(psWriteBookMessage, MSGTYPE_WRITE_BOOK);
 psWriteBookMessage::psWriteBookMessage(uint32_t clientNum, csString& title, csString& content, bool success, int slotID, int containerID)
 {
   //uint8_t for the flag, a bool, 2 uints for the item reference, content length + 1 for the content
-   msg = new MsgEntry(sizeof(uint8_t)+sizeof(bool)+2*sizeof(uint32_t)+title.Length()+1+content.Length()+1);
+   msg.AttachNew(new MsgEntry(sizeof(uint8_t)+sizeof(bool)+2*sizeof(uint32_t)+title.Length()+1+content.Length()+1));
    msg->SetType(MSGTYPE_WRITE_BOOK);
    msg->clientnum = clientNum;
    msg->Add((uint8_t)RESPONSE);
@@ -5326,7 +5326,7 @@ psWriteBookMessage::psWriteBookMessage(uint32_t clientNum, csString& title, csSt
 //Request to write on this book
 psWriteBookMessage::psWriteBookMessage(int slotID, int containerID)
 {
-    msg = new MsgEntry(sizeof(uint8_t)+2*sizeof(uint32_t));
+    msg.AttachNew(new MsgEntry(sizeof(uint8_t)+2*sizeof(uint32_t)));
     msg->SetType(MSGTYPE_WRITE_BOOK);
     msg->clientnum = 0;
     msg->Add((uint8_t)REQUEST);
@@ -5336,7 +5336,7 @@ psWriteBookMessage::psWriteBookMessage(int slotID, int containerID)
 
 psWriteBookMessage::psWriteBookMessage(int slotID, int containerID, csString& title, csString& content)
 {
-    msg = new MsgEntry(sizeof(uint8_t)+2*sizeof(uint32_t)+title.Length()+1+content.Length()+1);
+    msg.AttachNew(new MsgEntry(sizeof(uint8_t)+2*sizeof(uint32_t)+title.Length()+1+content.Length()+1));
     msg->SetType(MSGTYPE_WRITE_BOOK);
     msg->clientnum = 0;
     msg->Add((uint8_t)SAVE);
@@ -5411,7 +5411,7 @@ PSF_IMPLEMENT_MSG_FACTORY(psExchangeMoneyMsg,MSGTYPE_EXCHANGE_MONEY);
 psExchangeMoneyMsg::psExchangeMoneyMsg( uint32_t client, int container,
                         int trias, int hexas, int circles,int octas )
 {
-    msg = new MsgEntry( sizeof(int) * 5 );
+    msg.AttachNew(new MsgEntry( sizeof(int) * 5 ));
     msg->SetType(MSGTYPE_EXCHANGE_MONEY);
     msg->clientnum = client;
 
@@ -5448,7 +5448,7 @@ PSF_IMPLEMENT_MSG_FACTORY(psExchangeRequestMsg,MSGTYPE_EXCHANGE_REQUEST);
 
 psExchangeRequestMsg::psExchangeRequestMsg( bool withPlayer )
 {
-    msg = new MsgEntry(1 + 1);
+    msg.AttachNew(new MsgEntry(1 + 1));
     msg->SetType(MSGTYPE_EXCHANGE_REQUEST);
     msg->clientnum = 0;
 
@@ -5458,7 +5458,7 @@ psExchangeRequestMsg::psExchangeRequestMsg( bool withPlayer )
 
 psExchangeRequestMsg::psExchangeRequestMsg(uint32_t client, csString& playerName, bool withPlayer)
 {
-    msg = new MsgEntry( playerName.Length() + 1 + 1);
+    msg.AttachNew(new MsgEntry( playerName.Length() + 1 + 1));
     msg->SetType(MSGTYPE_EXCHANGE_REQUEST);
     msg->clientnum = client;
 
@@ -5493,7 +5493,7 @@ psExchangeAddItemMsg::psExchangeAddItemMsg( uint32_t clientNum,
                                             int stackcount,
                                             const csString& icon )
 {
-    msg = new MsgEntry(1000);
+    msg.AttachNew(new MsgEntry(1000));
     msg->SetType(MSGTYPE_EXCHANGE_ADD_ITEM);
     msg->clientnum = clientNum;
 
@@ -5530,7 +5530,7 @@ PSF_IMPLEMENT_MSG_FACTORY(psExchangeRemoveItemMsg,MSGTYPE_EXCHANGE_REMOVE_ITEM);
 
 psExchangeRemoveItemMsg::psExchangeRemoveItemMsg( uint32_t client, int container, int slot, int newStack )
 {
-    msg = new MsgEntry( sizeof( int ) * 3 );
+    msg.AttachNew(new MsgEntry( sizeof( int ) * 3 ));
     msg->SetType(MSGTYPE_EXCHANGE_REMOVE_ITEM);
     msg->clientnum = client;
 
@@ -5562,7 +5562,7 @@ PSF_IMPLEMENT_MSG_FACTORY(psExchangeAcceptMsg,MSGTYPE_EXCHANGE_ACCEPT);
 
 psExchangeAcceptMsg::psExchangeAcceptMsg( uint32_t client )
 {
-    msg = new MsgEntry();
+    msg.AttachNew(new MsgEntry());
     msg->SetType(MSGTYPE_EXCHANGE_ACCEPT);
     msg->clientnum = client;
 }
@@ -5586,7 +5586,7 @@ PSF_IMPLEMENT_MSG_FACTORY(psExchangeStatusMsg,MSGTYPE_EXCHANGE_STATUS);
 
 psExchangeStatusMsg::psExchangeStatusMsg( uint32_t client, bool playerAccept, bool targetAccept )
 {
-    msg = new MsgEntry( sizeof(bool)*2 );
+    msg.AttachNew(new MsgEntry( sizeof(bool)*2 ));
     msg->SetType(MSGTYPE_EXCHANGE_STATUS);
     msg->clientnum = client;
     msg->Add( playerAccept );
@@ -5617,7 +5617,7 @@ PSF_IMPLEMENT_MSG_FACTORY(psExchangeEndMsg,MSGTYPE_EXCHANGE_END);
 
 psExchangeEndMsg::psExchangeEndMsg( uint32_t client )
 {
-    msg = new MsgEntry();
+    msg.AttachNew(new MsgEntry());
     msg->SetType(MSGTYPE_EXCHANGE_END);
     msg->clientnum = client;
 }
@@ -5641,7 +5641,7 @@ PSF_IMPLEMENT_MSG_FACTORY(psUpdateObjectNameMessage,MSGTYPE_NAMECHANGE);
 
 psUpdateObjectNameMessage::psUpdateObjectNameMessage( uint32_t client,uint32_t ID, const char* newName )
 {
-    msg = new MsgEntry( strlen(newName)+1 + sizeof(uint32_t));
+    msg.AttachNew(new MsgEntry( strlen(newName)+1 + sizeof(uint32_t)));
 
     msg->SetType(MSGTYPE_NAMECHANGE);
     msg->clientnum = client;
@@ -5678,7 +5678,7 @@ psUpdatePlayerGuildMessage::psUpdatePlayerGuildMessage( uint32_t client,int tot,
     if(!totalIsClient)
         total = tot;
 
-    msg = new MsgEntry( strlen(newGuild)+1 + (sizeof(uint32_t) * (total+1) ));
+    msg.AttachNew(new MsgEntry( strlen(newGuild)+1 + (sizeof(uint32_t) * (total+1) )));
 
     msg->SetType(MSGTYPE_GUILDCHANGE);
     msg->clientnum = client;
@@ -5729,7 +5729,7 @@ PSF_IMPLEMENT_MSG_FACTORY(psUpdatePlayerGroupMessage,MSGTYPE_GROUPCHANGE);
 
 psUpdatePlayerGroupMessage::psUpdatePlayerGroupMessage( int clientnum, uint32_t objectID, uint32_t groupID)
 {
-    msg = new MsgEntry(sizeof(uint32_t)*2);
+    msg.AttachNew(new MsgEntry(sizeof(uint32_t)*2));
 
     msg->SetType(MSGTYPE_GROUPCHANGE);
     msg->clientnum = clientnum;
@@ -5763,7 +5763,7 @@ PSF_IMPLEMENT_MSG_FACTORY(psNameCheckMessage,MSGTYPE_CHAR_CREATE_NAME);
 psNameCheckMessage::psNameCheckMessage( const char* newname )
 {
     csString name(newname);
-    msg = new MsgEntry( strlen(newname)+2);
+    msg.AttachNew(new MsgEntry( strlen(newname)+2));
 
     msg->SetType(MSGTYPE_CHAR_CREATE_NAME);
 
@@ -5778,7 +5778,7 @@ psNameCheckMessage::psNameCheckMessage( const char* newname )
 
 psNameCheckMessage::psNameCheckMessage( uint32_t client, bool accept, const char* reason )
 {
-    msg = new MsgEntry( sizeof(bool) + strlen(reason)+1 );
+    msg.AttachNew(new MsgEntry( sizeof(bool) + strlen(reason)+1 ));
 
     msg->SetType(MSGTYPE_CHAR_CREATE_NAME);
     msg->clientnum = client;
@@ -5843,7 +5843,7 @@ psPingMsg::psPingMsg( MsgEntry* me )
 
 psPingMsg::psPingMsg( uint32_t client, uint32_t id, uint8_t flags )
 {
-    msg = new MsgEntry( sizeof(uint32_t) + sizeof(uint8_t) ,PRIORITY_LOW );
+    msg.AttachNew(new MsgEntry( sizeof(uint32_t) + sizeof(uint8_t) ,PRIORITY_LOW ));
 
     msg->SetType(MSGTYPE_PING);
     msg->clientnum = client;
@@ -5878,7 +5878,7 @@ psHeartBeatMsg::psHeartBeatMsg( MsgEntry* me )
 
 psHeartBeatMsg::psHeartBeatMsg( uint32_t client )
 {
-    msg = new MsgEntry( 0 ,PRIORITY_HIGH );
+    msg.AttachNew(new MsgEntry( 0 ,PRIORITY_HIGH ));
 
     msg->SetType(MSGTYPE_HEART_BEAT);
     msg->clientnum = client;
@@ -5899,7 +5899,7 @@ PSF_IMPLEMENT_MSG_FACTORY(psLockpickMessage,MSGTYPE_LOCKPICK);
 
 psLockpickMessage::psLockpickMessage(const char* password)
 {
-    msg = new MsgEntry( strlen(password) +1 );
+    msg.AttachNew(new MsgEntry( strlen(password) +1 ));
 
     msg->SetType(MSGTYPE_LOCKPICK);
     msg->clientnum = 0;
@@ -5926,10 +5926,10 @@ PSF_IMPLEMENT_MSG_FACTORY(psGMSpawnItems,MSGTYPE_GMSPAWNITEMS);
 
 psGMSpawnItems::psGMSpawnItems(uint32_t client,const char* type,unsigned int size)
 {
-    msg = new MsgEntry(
+    msg.AttachNew(new MsgEntry(
                         strlen(type) +1 +
                         sizeof(bool) + size + sizeof(uint32_t)
-                        );
+                        ));
 
     msg->SetType(MSGTYPE_GMSPAWNITEMS);
     msg->clientnum = client;
@@ -5939,10 +5939,10 @@ psGMSpawnItems::psGMSpawnItems(uint32_t client,const char* type,unsigned int siz
 
 psGMSpawnItems::psGMSpawnItems(const char* type)
 {
-    msg = new MsgEntry(
+    msg.AttachNew(new MsgEntry(
                         strlen(type) +1 +
                         sizeof(bool)
-                        );
+                        ));
 
     msg->SetType(MSGTYPE_GMSPAWNITEMS);
     msg->clientnum = 0;
@@ -5997,7 +5997,7 @@ PSF_IMPLEMENT_MSG_FACTORY(psGMSpawnTypes,MSGTYPE_GMSPAWNTYPES);
 
 psGMSpawnTypes::psGMSpawnTypes(uint32_t client,unsigned int size)
 {
-    msg = new MsgEntry(size + sizeof(uint32_t));
+    msg.AttachNew(new MsgEntry(size + sizeof(uint32_t)));
 
     msg->SetType(MSGTYPE_GMSPAWNTYPES);
     msg->clientnum = client;
@@ -6040,7 +6040,7 @@ psGMSpawnItem::psGMSpawnItem(const char* item,
                              bool collidable
                              )
 {
-    msg = new MsgEntry(
+    msg.AttachNew(new MsgEntry(
                         strlen(item) +1 // item
                         + sizeof(uint32_t) // count
                         + sizeof(bool) // locked
@@ -6049,7 +6049,7 @@ psGMSpawnItem::psGMSpawnItem(const char* item,
                         + sizeof(int32_t) // lstr
                         + sizeof(bool) // pickupable
                         + sizeof(bool) // collidable
-                      );
+                      ));
 
     msg->SetType(MSGTYPE_GMSPAWNITEM);
     msg->clientnum = 0;
@@ -6098,9 +6098,9 @@ PSF_IMPLEMENT_MSG_FACTORY(psLootRemoveMessage,MSGTYPE_LOOTREMOVE);
 
 psLootRemoveMessage::psLootRemoveMessage( uint32_t client,int item )
 {
-    msg = new MsgEntry(
+    msg.AttachNew(new MsgEntry(
                         sizeof(int)
-                        );
+                        ));
 
     msg->SetType(MSGTYPE_LOOTREMOVE);
     msg->clientnum = client;
@@ -6140,7 +6140,7 @@ PSF_IMPLEMENT_MSG_FACTORY(psClientStatusMessage,MSGTYPE_CLIENTSTATUS);
 
 psClientStatusMessage::psClientStatusMessage(bool ready)
 {
-    msg  = new MsgEntry(sizeof(uint8_t));
+    msg.AttachNew(new MsgEntry(sizeof(uint8_t)));
 
     msg->SetType(MSGTYPE_CLIENTSTATUS);
     msg->clientnum      = 0; // To server only
@@ -6175,7 +6175,7 @@ PSF_IMPLEMENT_MSG_FACTORY(psMoveModMsg,MSGTYPE_MOVEMOD);
 
 psMoveModMsg::psMoveModMsg(uint32_t client, ModType type, const csVector3& move, float Yrot)
 {
-    msg = new MsgEntry(1 + 4*sizeof(uint32));
+    msg.AttachNew(new MsgEntry(1 + 4*sizeof(uint32)));
     msg->SetType(MSGTYPE_MOVEMOD);
     msg->clientnum = client;
 
@@ -6228,7 +6228,7 @@ PSF_IMPLEMENT_MSG_FACTORY(psMsgRequestMovement,MSGTYPE_REQUESTMOVEMENTS);
 
 psMsgRequestMovement::psMsgRequestMovement()
 {
-    msg = new MsgEntry(10);
+    msg.AttachNew(new MsgEntry(10));
     msg->SetType(MSGTYPE_REQUESTMOVEMENTS);
     msg->clientnum = 0;
     msg->ClipToCurrentSize();
@@ -6251,7 +6251,7 @@ PSF_IMPLEMENT_MSG_FACTORY(psMovementInfoMessage,MSGTYPE_MOVEINFO);
 
 psMovementInfoMessage::psMovementInfoMessage(size_t modes, size_t moves)
 {
-    msg = new MsgEntry(10000);
+    msg.AttachNew(new MsgEntry(10000));
     msg->SetType(MSGTYPE_MOVEINFO);
     msg->clientnum = 0;
 
@@ -6265,7 +6265,6 @@ psMovementInfoMessage::psMovementInfoMessage(size_t modes, size_t moves)
 psMovementInfoMessage::psMovementInfoMessage(MsgEntry * me)
 {
     msg = me;
-    msg->IncRef();
 
     modes = msg->GetUInt32();
     moves = msg->GetUInt32();
@@ -6361,7 +6360,7 @@ PSF_IMPLEMENT_MSG_FACTORY(psMGStartStopMessage, MSGTYPE_MINIGAME_STARTSTOP);
 
 psMGStartStopMessage::psMGStartStopMessage(uint32_t client, bool start)
 {
-    msg = new MsgEntry(sizeof(bool));
+    msg.AttachNew(new MsgEntry(sizeof(bool)));
 
     msg->SetType(MSGTYPE_MINIGAME_STARTSTOP);
     msg->clientnum = client;
@@ -6399,7 +6398,7 @@ psMGBoardMessage::psMGBoardMessage(uint32_t client, uint8_t counter,
     if (numOfPieces % 2 != 0)
         piecesSize++;
 
-    msg = new MsgEntry(
+    msg.AttachNew(new MsgEntry(
             sizeof(uint8_t) +       // counter
             sizeof(uint32_t) +      // game ID
             sizeof(uint16_t) +      // options
@@ -6409,7 +6408,7 @@ psMGBoardMessage::psMGBoardMessage(uint32_t client, uint8_t counter,
             layoutSize +            // layout
             sizeof(uint8_t) +       // number of available pieces
             sizeof(uint32_t) +      // number of bytes in the pieces array
-            piecesSize);            // available pieces
+            piecesSize));            // available pieces
 
     msg->SetType(MSGTYPE_MINIGAME_BOARD);
     msg->clientnum = client;
@@ -6429,8 +6428,7 @@ psMGBoardMessage::psMGBoardMessage(MsgEntry *me)
     : msgLayout(0)
 {
     msg = me;
-    msg->IncRef();
-
+ 
     msgCounter = msg->GetUInt8();
     msgGameID = msg->GetUInt32();
     msgOptions = msg->GetUInt16();
@@ -6489,7 +6487,7 @@ PSF_IMPLEMENT_MSG_FACTORY(psEntranceMessage, MSGTYPE_ENTRANCE);
 
 psEntranceMessage::psEntranceMessage(uint32_t entranceID)
 {
-    msg = new MsgEntry( sizeof(int32_t));
+    msg.AttachNew(new MsgEntry( sizeof(int32_t)));
     msg->SetType(MSGTYPE_ENTRANCE);
     msg->clientnum = 0;
 
@@ -6517,12 +6515,12 @@ psMGUpdateMessage::psMGUpdateMessage(uint32_t client, uint8_t counter,
                                      uint32_t gameID, uint8_t numUpdates, uint8_t *updates)
     : msgUpdates(0)
 {
-    msg = new MsgEntry(
+    msg.AttachNew(new MsgEntry(
             sizeof(uint8_t) +       // counter
             sizeof(uint32_t) +      // game iD
             sizeof(uint8_t) +       // numUpdates
             sizeof(uint32_t) +      // number of bytes in updates
-            2*numUpdates);          // updates
+            2*numUpdates));          // updates
 
     msg->SetType(MSGTYPE_MINIGAME_UPDATE);
     msg->clientnum = client;
@@ -6538,7 +6536,6 @@ psMGUpdateMessage::psMGUpdateMessage(MsgEntry *me)
     : msgUpdates(0)
 {
     msg = me;
-    msg->IncRef();
 
     msgCounter = msg->GetUInt8();
     msgGameID = msg->GetUInt32();
@@ -6596,7 +6593,7 @@ psGMEventListMessage::psGMEventListMessage(MsgEntry* msg)
 
 void psGMEventListMessage::Populate(csString& gmeventStr, int clientnum)
 {
-    msg = new MsgEntry(sizeof(int)+gmeventStr.Length()+1);
+    msg.AttachNew(new MsgEntry(sizeof(int)+gmeventStr.Length()+1));
 
     msg->SetType(MSGTYPE_GMEVENT_LIST);
     msg->clientnum = clientnum;
@@ -6628,7 +6625,7 @@ psGMEventInfoMessage::psGMEventInfoMessage(int cnum, int cmd, int id, const char
     else
         xml.Clear();
 
-    msg = new MsgEntry(sizeof(int32_t) + sizeof(uint8_t) + xml.Length() + 1);
+    msg.AttachNew(new MsgEntry(sizeof(int32_t) + sizeof(uint8_t) + xml.Length() + 1));
 
     msg->SetType(MSGTYPE_GMEVENT_INFO);
     msg->clientnum = cnum;
@@ -6719,7 +6716,7 @@ void psFactionMessage::BuildMsg()
 		size += sizeof(int32_t);
 	}
 
-	msg = new MsgEntry(size);
+	msg.AttachNew(new MsgEntry(size));
     msg->SetType(MSGTYPE_FACTION_INFO);
     msg->clientnum = client;
 
@@ -6919,7 +6916,7 @@ PSF_IMPLEMENT_MSG_FACTORY(psSequenceMessage,MSGTYPE_SEQUENCE);
 
 psSequenceMessage::psSequenceMessage(int cnum, const char *name, int cmd, int count)
 {
-    msg = new MsgEntry(strlen(name) + 1 + sizeof(uint8_t) + sizeof(int32_t));
+    msg.AttachNew(new MsgEntry(strlen(name) + 1 + sizeof(uint8_t) + sizeof(int32_t)));
 
     msg->SetType(MSGTYPE_SEQUENCE);
     msg->clientnum = cnum;
@@ -6958,7 +6955,7 @@ PSF_IMPLEMENT_MSG_FACTORY(psPlaySoundMessage, MSGTYPE_PLAYSOUND);
 
 psPlaySoundMessage::psPlaySoundMessage(uint32_t clientnum, csString snd)
 {
-    msg = new MsgEntry(sound.Length()+1);
+    msg.AttachNew(new MsgEntry(sound.Length()+1));
     msg->SetType(MSGTYPE_PLAYSOUND);
     msg->clientnum = clientnum;
     msg->Add(sound);
@@ -6983,7 +6980,7 @@ PSF_IMPLEMENT_MSG_FACTORY(psCharCreateCPMessage,MSGTYPE_CHAR_CREATE_CP);
 
 psCharCreateCPMessage::psCharCreateCPMessage( uint32_t client, int32_t rID, int32_t CPVal )
 {
-    msg = new MsgEntry( 100);
+    msg.AttachNew(new MsgEntry(100));
     msg->SetType(MSGTYPE_CHAR_CREATE_CP );
     msg->clientnum = client;
     msg->Add(rID);
@@ -7013,7 +7010,7 @@ PSF_IMPLEMENT_MSG_FACTORY(psCharIntroduction,MSGTYPE_INTRODUCTION);
 
 psCharIntroduction::psCharIntroduction( )
 {
-    msg = new MsgEntry(100);
+    msg.AttachNew(new MsgEntry(100));
     msg->SetType(MSGTYPE_INTRODUCTION);
     msg->clientnum = 0;
     msg->ClipToCurrentSize();

@@ -121,7 +121,6 @@ bool pawsHelp::OnSelected(pawsWidget *widget)
     }
 
     // xmlnode contains the root
-    root->IncRef();
     csRef<iDocumentNode> xmlnode = RetrieveHelp(node,root);
     if (!xmlnode)
         return false;
@@ -133,17 +132,20 @@ bool pawsHelp::OnSelected(pawsWidget *widget)
     return true;
 }
 
-iDocumentNode* pawsHelp::RetrieveHelp(pawsTreeNode* node, iDocumentNode* helpRoot)
+csPtr<iDocumentNode> pawsHelp::RetrieveHelp(pawsTreeNode* node, iDocumentNode* helpRoot)
 {
     if (!strcmp(node->GetName(),"RootTopic"))
+    {
         return helpRoot;
-    csRef<iDocumentNode> parentnode = RetrieveHelp(node->GetParent(),helpRoot);
+    }
+
+    csRef<iDocumentNode> parentnode = RetrieveHelp(node->GetParent(), helpRoot);
     if (!parentnode)
     {
         Error2("Can not find '%s' in help tree!", node->GetName());
         return NULL;
     }
-    parentnode->DecRef();
+
     csRef<iDocumentNodeIterator> iter = parentnode->GetNodes();
     while (iter->HasNext())
     {
@@ -153,10 +155,9 @@ iDocumentNode* pawsHelp::RetrieveHelp(pawsTreeNode* node, iDocumentNode* helpRoo
         // (no names or values) if text is in the body of the branch
         if (xmlnode->GetAttributeValue("name"))
         {
-            if (!strcmp(node->GetName(),xmlnode->GetAttributeValue("name")))
+            if (!strcmp(node->GetName(), xmlnode->GetAttributeValue("name")))
             {
-                xmlnode->IncRef();
-                return xmlnode;
+                return csPtr<iDocumentNode>(xmlnode);
             }
         }
     }
