@@ -736,9 +736,6 @@
 				RelativePath="..\..\src\common\util\gameevent.cpp">
 			</File>
 			<File
-				RelativePath="..\..\src\common\util\genqueue.cpp">
-			</File>
-			<File
 				RelativePath="..\..\src\common\util\localization.cpp">
 			</File>
 			<File
@@ -842,7 +839,7 @@
 				RelativePath="..\..\src\common\util\genericevent.h">
 			</File>
 			<File
-				RelativePath="..\..\src\common\util\genqueue.h">
+				RelativePath="..\..\src\common\util\genrefqueue.h">
 			</File>
 			<File
 				RelativePath="..\..\src\common\util\heap.h">
