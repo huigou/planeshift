@@ -48,21 +48,21 @@ class nsHTTPConn
 {
 public:
     nsHTTPConn(char *aHost, int aPort, char *aPath);
-    nsHTTPConn(char *aURL);
+    nsHTTPConn(const char *aURL);
     nsHTTPConn(char *aHost, int aPort, char *aPath, int (*aEventPumpCB)(void));
     nsHTTPConn(char *aURL, int (*aEventPumpCB)(void));
     ~nsHTTPConn();
 
     int Open();
-    int ResumeOrGet(HTTPGetCB aCallback, char *aDestFile);
+    int ResumeOrGet(HTTPGetCB aCallback, const char *aDestFile);
     int Get(HTTPGetCB aCallback, char *aDestFile);
-    int Get(HTTPGetCB aCallback, char *aDestFile, int aResumePos);
+    int Get(HTTPGetCB aCallback, const char *aDestFile, int aResumePos);
     int GetResponseCode() { return mResponseCode; }
     int Close();
 
     void SetProxyInfo(char *aProxiedURL, char *aProxyUser, 
                                          char *aProxyPswd);
-    static int ParseURL(const char *aProto, char *aURL, char **aHost, 
+    static int ParseURL(const char *aProto, const char *aURL, char **aHost, 
                         int *aPort, char **aPath);
 
     enum 
@@ -81,7 +81,7 @@ public:
 
 private:
     int Request(int aResumePos);
-    int Response(HTTPGetCB aCallback, char *aDestFile, int aResumePos);
+    int Response(HTTPGetCB aCallback, const char *aDestFile, int aResumePos);
     void ParseContentLength(const char *aBuf, int *aLength);
     void ParseResponseCode(const char *aBuf, int *aCode);
     int Base64Encode(const unsigned char *in_str, int in_len,

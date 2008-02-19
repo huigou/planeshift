@@ -122,9 +122,9 @@ bool Downloader::DownloadFile(const char *file, const char *dest, bool URL, bool
             return false;
         }
 
-        nsHTTPConn *conn = new nsHTTPConn(const_cast<char*>(url.GetData()));
+        nsHTTPConn *conn = new nsHTTPConn(url.GetData());
         int result = conn->Open();
-        result = conn->ResumeOrGet(ProgressCallback, const_cast<char*>(destpath.GetData()));
+        result = conn->ResumeOrGet(ProgressCallback, destpath.GetData());
         int httpCode = conn->GetResponseCode();
         conn->Close();
         delete conn;
