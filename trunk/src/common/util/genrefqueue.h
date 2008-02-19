@@ -35,7 +35,7 @@ template <class queuetype>
 class GenericRefQueue
 {
 public:
-    GenericRefQueue<queuetype>::GenericRefQueue(unsigned int maxsize = 500)
+    GenericRefQueue<queuetype>(unsigned int maxsize = 500)
     {
         /* we make the buffer 1 typ bigger, so we can avoid one check and one
         variable when testing if buffer is full */
@@ -47,13 +47,13 @@ public:
         qsize = maxsize;
     }
 
-    GenericRefQueue<queuetype>::~GenericRefQueue()
+    ~GenericRefQueue()
     {
         delete []qbuffer;
     }
 
     /** This adds a message to the queue */
-    bool GenericRefQueue<queuetype>::Add(queuetype* msg)
+    bool Add(queuetype* msg)
     {
         unsigned int tqend;
 
@@ -86,7 +86,7 @@ public:
     * the queue. Note: It returns a pointer to the message, so a null
     * pointer indicates an error
     */
-    csPtr<queuetype> GenericRefQueue<queuetype>::Get()
+    csPtr<queuetype> Get()
     {
         CS::Threading::RecursiveMutexScopedLock lock(mutex);
 
@@ -106,7 +106,7 @@ public:
     }
 
     /** like above, but waits for the next message, if the queue is empty */
-    csPtr<queuetype> GenericRefQueue<queuetype>::GetWait(csTicks timeout)
+    csPtr<queuetype> GetWait(csTicks timeout)
     {
         // is there's a message in the queue left just return it
         CS::Threading::RecursiveMutexScopedLock lock(mutex);
@@ -142,7 +142,7 @@ public:
     /**
     * This function interrupt the queue if it is waiting.
     */
-    void GenericRefQueue<queuetype>::Interrupt()
+    void Interrupt()
     {
         datacondition.NotifyOne();
     }
