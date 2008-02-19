@@ -93,7 +93,7 @@ void psServerPinger::DoYourWork()
     if (waiting)
     {
         csRef<MsgEntry> incoming = queue->Get();
-        if (incoming != NULL   &&   incoming->GetType() == MSGTYPE_PING)
+        if (incoming != NULL && incoming->GetType() == MSGTYPE_PING)
         {
             connection->LogMessages('R',incoming);
 

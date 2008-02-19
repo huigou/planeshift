@@ -30,10 +30,14 @@
 #include "net/messages.h"
 #include "util/psconst.h"
 
-// Define for debugging printfs.  You probably want this on for development, off for server.
-#define PSNETPERSISTDEBUG
+/*
+ * DOES THIS STILL WORK?!
+ */
 
-#if 0
+// Define for debugging printfs.  You probably want this on for development, off for server.
+//#define PSNETPERSISTDEBUG
+
+#ifdef PSNETPERSISTDEBUG
 psCelPersistMessage::psCelPersistMessage(uint32_t clientnum, uint16_t cmd, int prty,
     uint32_t id, csMemFile* memfile, const char *extra_str) : memfile(NULL)
 {
@@ -43,7 +47,7 @@ psCelPersistMessage::psCelPersistMessage(uint32_t clientnum, uint16_t cmd, int p
     size_t size = sizeof(cmd) + sizeof(id) + (extra_str!=NULL ? strlen(extra_str)+1 : 1)
     + sizeof(uint32_t) + (memfile ? memfile->GetSize() : 0);
 
-    msg = new MsgEntry(size);
+    msg.AttachNew(new MsgEntry(size));
 
     msg->data->type = MSGTYPE_CELPERSIST;
     msg->clientnum  = clientnum;
@@ -69,7 +73,6 @@ psCelPersistMessage::psCelPersistMessage(uint32_t clientnum, uint16_t cmd, int p
 psCelPersistMessage::psCelPersistMessage(MsgEntry* message)
 {   
     valid=true;
-    message->IncRef();
 
     cmd = message->GetInt16();
     id =  message->GetInt32();
@@ -90,11 +93,6 @@ psCelPersistMessage::psCelPersistMessage(MsgEntry* message)
 
 psCelPersistMessage::~psCelPersistMessage()
 {
-    if (memfile)
-    {
-    // No CHECK_FINAL_DECREF here because psNetPersist has a ref to the memfile until cleared.
-    memfile->DecRef();
-    }
 }
 
 #endif

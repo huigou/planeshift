@@ -50,7 +50,7 @@ class ClientConnectionSet;
 class EntityManager;
 class psSpell;
 class psGlyph;
-struct ProgressionEvent;
+class ProgressionEvent;
 class MathScript;
 class MathScriptVar;
 

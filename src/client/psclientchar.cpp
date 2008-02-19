@@ -757,7 +757,8 @@ int psCreationManager::GetRaceCP( int race )
     {
         // This is a simple message so don't need a seperate class for it.
         // We can just create the message our selves.        
-        MsgEntry *msg = new MsgEntry( 100 );
+        csRef<MsgEntry> msg;
+        msg.AttachNew(new MsgEntry( 100 ));
         msg->SetType(MSGTYPE_CHAR_CREATE_CP);   
         msg->Add( (int32_t) race );
         msg->ClipToCurrentSize();

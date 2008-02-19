@@ -37,10 +37,11 @@ psClientMsgHandler::~psClientMsgHandler()
 {
     if (scfiEventHandler)
     {
-        csRef<iEventQueue> queue =  csQueryRegistry<iEventQueue> (object_reg);
+        csRef<iEventQueue> queue = csQueryRegistry<iEventQueue> (object_reg);
         if (queue)
+        {
             queue->RemoveListener(scfiEventHandler);
-        scfiEventHandler->DecRef();
+        }
     }    
 }
 
@@ -78,12 +79,12 @@ bool psClientMsgHandler::HandleEvent(iEvent &ev)
 bool psClientMsgHandler::DispatchQueue()
 {
     /* 
-     * If called, it publishes (and therefore handles
+     * If called, it publishes (and therefore handles)
      * all the messages in the inbound queue before returning.
      */
     csRef<MsgEntry> msg;
 
-    while( (msg = queue->Get()) )
+    while((msg = queue->Get()))
     {
         Publish(msg);
         /* Destroy this message.  Note that Msghandler normally does this in the 

@@ -143,17 +143,13 @@ bool psNPCDialog::Initialize(iDataConnection *db,int NPCID)
     // Initialize base dictionary
     if (!dict)
     {
-        dict = new NPCDialogDict;
+        dict.AttachNew(new NPCDialogDict());
 
         if (!dict->Initialize(db))
         {
-            delete dict;
-            dict=NULL;
             return false;
         }
     }
-    else
-        dict->IncRef();
 
     return LoadKnowledgeAreas(NPCID);
 }

@@ -71,9 +71,7 @@
 #include "psitemstats.h"
 #include "psguildinfo.h"
 
-
-NPCDialogDict *dict;
-
+csRef<NPCDialogDict> dict;
 
 NPCDialogDict::NPCDialogDict()
 {

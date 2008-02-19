@@ -60,7 +60,7 @@ PSF_IMPLEMENT_MSG_FACTORY(psNPCListMessage,MSGTYPE_NPCLIST);
 
 psNPCListMessage::psNPCListMessage(uint32_t clientToken,int size)
 {
-    msg  = new MsgEntry(size);
+    msg.AttachNew(new MsgEntry(size));
 
     msg->SetType(MSGTYPE_NPCLIST);
     msg->clientnum      = clientToken;
@@ -74,7 +74,6 @@ psNPCListMessage::psNPCListMessage(MsgEntry *message)
         return;
     
     msg = message;
-    msg->IncRef();
 }
 
 csString psNPCListMessage::ToString(AccessPointers * /*access_ptrs*/)
@@ -93,7 +92,7 @@ PSF_IMPLEMENT_MSG_FACTORY(psMapListMessage,MSGTYPE_MAPLIST);
 
 psMapListMessage::psMapListMessage(uint32_t clientToken,csString& regions)
 {
-    msg  = new MsgEntry(regions.Length() + 1);
+    msg.AttachNew(new MsgEntry(regions.Length() + 1));
 
     msg->SetType(MSGTYPE_MAPLIST);
     msg->clientnum      = clientToken;
@@ -144,7 +143,7 @@ PSF_IMPLEMENT_MSG_FACTORY(psNPCRaceListMessage,MSGTYPE_NPCRACELIST);
 
 psNPCRaceListMessage::psNPCRaceListMessage(uint32_t clientToken, int count)
 {
-    msg  = new MsgEntry(sizeof(int16) + count*(100+2*sizeof(float)));
+    msg.AttachNew(new MsgEntry(sizeof(int16) + count*(100+2*sizeof(float))));
 
     msg->SetType(MSGTYPE_NPCRACELIST);
     msg->clientnum      = clientToken;
@@ -195,7 +194,7 @@ PSF_IMPLEMENT_MSG_FACTORY(psNPCCommandsMessage,MSGTYPE_NPCOMMANDLIST);
 
 psNPCCommandsMessage::psNPCCommandsMessage(uint32_t clientToken,int size)
 {
-    msg  = new MsgEntry(size);
+    msg.AttachNew(new MsgEntry(size));
 
     msg->SetType(MSGTYPE_NPCOMMANDLIST);
     msg->clientnum      = clientToken;
@@ -209,7 +208,6 @@ psNPCCommandsMessage::psNPCCommandsMessage(MsgEntry *message)
         return;
     
     msg = message;
-    msg->IncRef();
 }
 
 csString psNPCCommandsMessage::ToString(AccessPointers * access_ptrs)
@@ -691,14 +689,13 @@ PSF_IMPLEMENT_MSG_FACTORY(psAllEntityPosMessage,MSGTYPE_ALLENTITYPOS);
 psAllEntityPosMessage::psAllEntityPosMessage(MsgEntry *message)
 {
     msg = message;
-    msg->IncRef();
 
     count = msg->GetInt16();
 }
 
 void psAllEntityPosMessage::SetLength(int elems, int client)
 {
-    msg = new MsgEntry(2 + elems * (4 * sizeof(float) + sizeof(uint32_t) + 100*sizeof(char)) );
+    msg.AttachNew(new MsgEntry(2 + elems * (4 * sizeof(float) + sizeof(uint32_t) + 100*sizeof(char)) ));
     msg->SetType(MSGTYPE_ALLENTITYPOS);
     msg->clientnum      = client;
 
@@ -780,7 +777,7 @@ PSF_IMPLEMENT_MSG_FACTORY(psNewNPCCreatedMessage,MSGTYPE_NEW_NPC);
 
 psNewNPCCreatedMessage::psNewNPCCreatedMessage(uint32_t clientToken,int new_npc_id,int master_id,int owner_id)
 {
-    msg  = new MsgEntry( 3*sizeof(int) );
+    msg.AttachNew(new MsgEntry( 3*sizeof(int) ));
 
     msg->SetType(MSGTYPE_NEW_NPC);
     msg->clientnum = clientToken;
@@ -818,7 +815,7 @@ PSF_IMPLEMENT_MSG_FACTORY(psNPCSetOwnerMessage,MSGTYPE_NPC_SETOWNER);
 
 psNPCSetOwnerMessage::psNPCSetOwnerMessage(uint32_t clientToken,int npc_id,int master_id)
 {
-    msg  = new MsgEntry( 2*sizeof(int) );
+    msg.AttachNew(new MsgEntry( 2*sizeof(int) ));
 
     msg->SetType(MSGTYPE_NPC_SETOWNER);
     msg->clientnum = clientToken;
@@ -863,7 +860,7 @@ psPETCommandMessage::psPETCommandMessage(uint32_t clientToken, int cmd, const ch
     if (options!=NULL)
         optionslen = strlen( options);
 
-    msg  = new MsgEntry( sizeof(int) + targetlen + optionslen + 2);
+    msg.AttachNew(new MsgEntry( sizeof(int) + targetlen + optionslen + 2));
 
     msg->SetType(MSGTYPE_PET_COMMAND);
     msg->clientnum = clientToken;
@@ -906,7 +903,7 @@ psServerCommandMessage::psServerCommandMessage( uint32_t clientnum,
     if ( !buf )
         buf = "";
     
-    msg = new MsgEntry( strlen(buf)+1, PRIORITY_HIGH );
+    msg.AttachNew(new MsgEntry( strlen(buf)+1, PRIORITY_HIGH ));
     msg->clientnum  = clientnum;
     msg->SetType(MSGTYPE_NPC_COMMAND);
 

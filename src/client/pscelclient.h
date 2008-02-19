@@ -22,7 +22,7 @@
 // Crystal Space Includes
 //=============================================================================
 #include <csutil/parray.h>
-#include <csutil/ref.h>
+#include <csutil/refarr.h>
 #include <csutil/list.h>
 #include <csutil/hash.h>
 #include <iengine/region.h>
@@ -91,10 +91,10 @@ class psCelClient : public psClientNetSubscriber
 {
 private:
     csRef<iObjectRegistry> object_reg;
-    csPDelArray<GEMClientObject> entities;
+    csRefArray<GEMClientObject> entities;
     csHash<GEMClientObject*,int> entities_hash;
-    csArray<MsgEntry*> newActorQueue;
-    csArray<MsgEntry*> newItemQueue;
+    csRefArray<MsgEntry> newActorQueue;
+    csRefArray<MsgEntry> newItemQueue;
 
     // Keep seperate for speedups
     csArray<GEMClientActionLocation*> actions;
@@ -120,7 +120,7 @@ public:
     void RemoveObject(GEMClientObject* entity);
 
     psClientDR* GetClientDR()       { return clientdr; }
-    const csPDelArray<GEMClientObject>& GetEntities () const { return entities; }
+    const csRefArray<GEMClientObject>& GetEntities () const { return entities; }
     bool IsMeshSubjectToAction(const char* sector,const char* mesh);
     GEMClientActor * GetActorByName(const char * name, bool trueName = true) const;
 
@@ -257,7 +257,7 @@ enum GEMOBJECT_TYPE
 /** An object that the client knows about. This is the base object for any 
   * 'entity' that the client can be sent.
   */
-class GEMClientObject
+class GEMClientObject : public csRefCount
 {
 public:
     GEMClientObject();
