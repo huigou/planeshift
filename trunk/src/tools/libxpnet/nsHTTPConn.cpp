@@ -125,7 +125,7 @@ nsHTTPConn::nsHTTPConn(char *aURL, int (*aEventPumpCB)(void)) :
     DUMP(("mPath = %s\n", mPath));
 }
 
-nsHTTPConn::nsHTTPConn(char *aURL) :
+nsHTTPConn::nsHTTPConn(const char *aURL) :
     mEventPumpCB(NULL),
     mPort(kHTTPPort),
     mProxiedURL(NULL),
@@ -178,7 +178,7 @@ nsHTTPConn::Open()
 }
 
 int
-nsHTTPConn::ResumeOrGet(HTTPGetCB aCallback, char *aDestFile)
+nsHTTPConn::ResumeOrGet(HTTPGetCB aCallback, const char *aDestFile)
 {
     struct stat stbuf;
     int rv = 0;
@@ -207,7 +207,7 @@ nsHTTPConn::Get(HTTPGetCB aCallback, char *aDestFile)
 }
 
 int
-nsHTTPConn::Get(HTTPGetCB aCallback, char *aDestFile, int aResumePos)
+nsHTTPConn::Get(HTTPGetCB aCallback, const char *aDestFile, int aResumePos)
 {
     int rv;
     char *pathToUse;
@@ -225,7 +225,7 @@ nsHTTPConn::Get(HTTPGetCB aCallback, char *aDestFile, int aResumePos)
 
         // no leaf: assume default file 'index.html'
         if (*(pathToUse + strlen(pathToUse) - 1) == '/')
-            aDestFile = (char *) kDefaultDestFile;
+            aDestFile = kDefaultDestFile;
         else
             aDestFile = strrchr(pathToUse, '/') + 1;
     }
@@ -373,7 +373,7 @@ nsHTTPConn::Request(int aResumePos)
 }
 
 int 
-nsHTTPConn::Response(HTTPGetCB aCallback, char *aDestFile, int aResumePos)
+nsHTTPConn::Response(HTTPGetCB aCallback, const char *aDestFile, int aResumePos)
 {
     // NOTE: overwrites dest file if it already exists
 
@@ -487,10 +487,10 @@ nsHTTPConn::Response(HTTPGetCB aCallback, char *aDestFile, int aResumePos)
 }
 
 int
-nsHTTPConn::ParseURL(const char *aProto, char *aURL, char **aHost, 
+nsHTTPConn::ParseURL(const char *aProto, const char *aURL, char **aHost, 
                      int *aPort, char **aPath)
 {
-    char *pos, *nextSlash, *nextColon, *end, *hostEnd;
+    const char *pos, *nextSlash, *nextColon, *end, *hostEnd;
     int protoLen = strlen(aProto);
 
     if (!aURL || !aHost || !aPort || !aPath || !aProto)
