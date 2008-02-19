@@ -47,7 +47,6 @@
 //
 
 MsgHandler *psMessageCracker::msghandler;
-CS::Threading::RecursiveMutex csSyncRefCount::mutex;
 
 void psMessageCracker::SendMessage()
 {

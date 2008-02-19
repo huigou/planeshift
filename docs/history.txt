@@ -1,3 +1,6 @@
+*** 2008-02-19 by Mike Gist
+- Changed csSyncRefCount to use atomic operations instead of a mutex.
+
 *** 2008-02-19 by Kenny Graunke
 - Made ProgressionEvents officially a class, not a struct...made the minimal
   set of things public for now.

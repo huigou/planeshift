@@ -1087,21 +1087,8 @@ csPtr<MsgEntry> NetBase::CheckCompleteMessage(uint32_t client, uint32_t id)
 
 void NetBase::QueueMessage(MsgEntry *me)
 {
-    /* FIXME:  The refcount on MsgEntry objects is not threadsafe.  This means the method below is 
-     *   asking for trouble, since as soon as we add the MsgEntry to the first queue we are in a race
-     *   condition.  The caller of this function also holds a ref.
-     *   If two threads access the ref count at the same time, one of the requests may end up doing
-     *   nothing, which in a not-so-bad case would leak memory as the message will never be deleted.
-     *   In a bad case it could prematurely reach a refcount of 0 and cause a crash on the next access.
-     *
-     *  I don't see a way around this without:
-     *  A) duplicating the message for each queue (including the first)
-     *  B) implementing a threadsafe refcount
-     */
-    for (size_t i=0;i<inqueues.GetSize();i++)
+    for (size_t i=0; i<inqueues.GetSize(); i++)
     {
-        // Messages in the queue are increffed automatically.
-        // me->IncRef();
         if (!inqueues[i]->Add(me))
         {
             Error4("*** Input Buffer Full! Yielding for packet, client %u, type %s, input queue %zu!",
@@ -1115,7 +1102,6 @@ void NetBase::QueueMessage(MsgEntry *me)
                 Error4("*** Input Buffer Full! Yielding for packet, client %u, type %s, input queue %zu!",
                     me->clientnum,GetMsgTypeName(me->GetType()).GetData(),i);
             }
-            // me->DecRef();
         }
     }
 }
