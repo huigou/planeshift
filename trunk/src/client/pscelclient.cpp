@@ -512,7 +512,7 @@ GEMClientActor * psCelClient::GetActorByName(const char * name, bool trueName) c
 
         testName = actor->GetName(trueName);
         firstName = testName.Slice(0, testName.FindFirst(' ')).Downcase();
-        if (firstName == name)
+        if (firstName == csName)
             return actor;
     }
     return 0;
