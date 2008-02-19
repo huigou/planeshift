@@ -133,15 +133,39 @@ public:
 
 //-----------------------------------------------------------------------------
 
-struct ProgressionEvent
+class ProgressionEvent
 {
+public:
+    ProgressionEvent();
+    virtual ~ProgressionEvent();
+
+    bool LoadScript(iDocument *doc);
+    bool LoadScript(iDocumentNode *topNode);
+
+    float ForceRun();
+    float Run(gemActor *actor, gemObject *target, psItem *item, bool inverse = false);
+    void CopyVariables(MathScript *from);
+    virtual csString ToString(bool topLevel) const;
+
+    void AddVariable(MathScriptVar *pv);
+    MathScriptVar *FindVariable(const char *name);
+    MathScriptVar *FindOrCreateVariable(const char *name);
+    void SetValue(const char* name, double val);
+
+    bool operator==(ProgressionEvent& other) const
+    { return name == other.name; }
+    bool operator<(ProgressionEvent& other) const
+    { return strcmp(name,other.name)<0; }
+
+    csString name;
+
+protected:
     // saved parameters given to Run() so that we can use callbacks for delayed events
     csWeakRef<gemActor> runParamActor;
     csWeakRef<gemObject> runParamTarget;
     csWeakRef<psItem> runParamItem;
     bool runParamInverse;
 
-    csString name;
     csString savedName;
     
     csArray<ProgressionOperation*> sequence;
@@ -154,26 +178,9 @@ struct ProgressionEvent
    
     ProgressionDelay * progDelay;
 
-    ProgressionEvent();
-    virtual ~ProgressionEvent();
-
-    bool LoadScript(iDocument *doc);
-    bool LoadScript(iDocumentNode *topNode);
     bool LoadScript(const char* str);
     
-    virtual csString ToString(bool topLevel) const;
-    float ForceRun();
-    float Run(gemActor *actor, gemObject *target, psItem * item, bool inverse = false);
     void LoadVariables(MathScript *script);
-    void CopyVariables(MathScript *from);
-    void AddVariable(MathScriptVar *pv);
-    MathScriptVar *FindVariable(const char *name);
-    MathScriptVar *FindOrCreateVariable(const char *name);
-    void SetValue( const char* name, double val );
-    bool operator==(ProgressionEvent& other) const
-    { return name == other.name; }
-    bool operator<(ProgressionEvent& other) const
-    { return strcmp(name,other.name)<0; }
     
     csString Dump() const;
 };
