@@ -1,5 +1,5 @@
-/*
- * pawscheckbox.cpp
+/**
+ * @file pawscheckbox.cpp
  *
  * Copyright (C) 2003 Atomic Blue (info@planeshift.it, http://www.atomicblue.org)
  *
@@ -16,6 +16,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
  */
+
 #include <psconfig.h>
 
 #include "pawscheckbox.h"
@@ -33,13 +34,18 @@ pawsCheckBox::pawsCheckBox()
     checkBox = 0;
 }
 
+pawsCheckBox::~pawsCheckBox()
+{
+}
+
 void pawsCheckBox::SetState( bool state )
 {    
     checkBox->SetState( state );
 }
 
-pawsCheckBox::~pawsCheckBox()
+void pawsCheckBox::SetText( const char* string )
 {
+    text->SetText(string);
 }
 
 bool pawsCheckBox::Setup( iDocumentNode* node )
@@ -172,6 +178,14 @@ bool pawsCheckBox::GetState()
         return false;
 }
 
+const char* pawsCheckBox::GetText()
+{
+    if (text != NULL)
+        return text->GetText();
+    else
+        return NULL;
+}
+
 void pawsCheckBox::SetImages(const char* up, const char* down)
 {
     checkBox->SetUpImage( up );
@@ -210,4 +224,5 @@ void pawsCheckBox::SetProperty(const char * ptr, double value)
     else
         pawsWidget::SetProperty(ptr, value);
 }
+
 

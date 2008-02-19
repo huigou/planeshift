@@ -126,6 +126,16 @@ bool pawsGmGUIWindow::PostSetup()
     
     currentTab = 0;
 
+    // get a handle on the widgets in our Attributes tab
+    cbInvincible = (pawsCheckBox*)FindWidget("toggleInvincible");
+    cbInvisible = (pawsCheckBox*)FindWidget("toggleInvisible");
+    cbViewAll = (pawsCheckBox*)FindWidget("toggleViewAll");
+    cbNeverTired = (pawsCheckBox*)FindWidget("toggleNeverTired");
+    cbNoFallDamage = (pawsCheckBox*)FindWidget("toggleNoFallDamage");
+    cbInfiniteInventory = (pawsCheckBox*)FindWidget("toggleInfiniteInventory");
+    cbQuestTester = (pawsCheckBox*)FindWidget("toggleQuestTester");
+    cbInfiniteMana = (pawsCheckBox*)FindWidget("toggleInfiniteMana");
+
     return true;
 }
 
@@ -158,14 +168,46 @@ void pawsGmGUIWindow::HandleMessage ( MsgEntry* me )
         if (message.type == psGMGuiMessage::TYPE_GETGMSETTINGS)
         {
             int gmSets = message.gmSettings;
+
+            // invisibility
             isVisible = gmSets & 1;
-            isInvincible = ( gmSets & (1 << 1) ? true : false);
-	     isViewAllObjects = ( gmSets & (1 << 2) ? true : false);
+            cbInvisible->SetState(isVisible);
+            cbInvisible->SetText( isVisible ? "enabled" : "disabled" );
+
+            // invincibility
+            isInvincible = ( (gmSets & (1 << 1)) ? true : false);
+            cbInvincible->SetState(isInvincible);
+            cbInvincible->SetText( isInvincible ? "enabled" : "disabled" );
+
+            // view invisible objects
+            isViewAllObjects = ( gmSets & (1 << 2) ? true : false);
+            cbViewAll->SetState(isViewAllObjects);
+            cbViewAll->SetText( isViewAllObjects ? "enabled" : "disabled" );
+
+            // infinite stamina
             isNeverTired = ( gmSets & (1 << 3) ? true : false);
+            cbNeverTired->SetState(isNeverTired);
+            cbNeverTired->SetText( isNeverTired ? "enabled" : "disabled" );
+
+            // Quest Tester Mode
             isQuestTester = ( gmSets & (1 << 4) ? true : false);
+            cbQuestTester->SetState(isQuestTester);
+            cbQuestTester->SetText( isQuestTester ? "enabled" : "disabled" );
+
+            // infinite mana
             isInfiniteMana = ( gmSets & (1 << 5) ? true : false);
+            cbInfiniteMana->SetState(isInfiniteMana);
+            cbInfiniteMana->SetText( isInfiniteMana ? "enabled" : "disabled" );
+
+            // infinite inventory
             isFiniteInv = ( gmSets & (1 << 6) ? true : false);
+            cbInfiniteInventory->SetState(isFiniteInv);
+            cbInfiniteInventory->SetText( isFiniteInv ? "enabled" : "disabled" );
+
+            // no fall damage
             isSafeFall = ( gmSets & (1 << 7) ? true : false);
+            cbNoFallDamage->SetState(isSafeFall);
+            cbNoFallDamage->SetText( isSafeFall ? "enabled" : "disabled" );
         }
         }
         break;
@@ -511,13 +553,21 @@ void pawsGmGUIWindow::SetSecurity()
     //Attribute buttons
     HideWidget("listattributes");
     HideWidget("invincible");
+    HideWidget("toggleInvincible");
     HideWidget("invisible");
+    HideWidget("toggleInvisible");
     HideWidget("viewall");
+    HideWidget("toggleViewAll");
     HideWidget("nevertired");
+    HideWidget("toggleNeverTired");
     HideWidget("nofalldamage");
+    HideWidget("toggleNoFallDamage");
     HideWidget("infiniteinventory");
+    HideWidget("toggleInfiniteInventory");
     HideWidget("questtester");
+    HideWidget("toggleQuestTester");
     HideWidget("infinitemana");
+    HideWidget("toggleInfiniteMana");
 
     // int to hold the access level
     int level = psengine->GetCelClient()->GetMainPlayer()->GetType();
@@ -566,13 +616,21 @@ void pawsGmGUIWindow::SetSecurity()
         ShowWidget("Attributes Button");
         ShowWidget("listattributes");
         ShowWidget("invincible");
+        ShowWidget("toggleInvincible");
         ShowWidget("invisible");
+        ShowWidget("toggleInvisible");
         ShowWidget("viewall");
+        ShowWidget("toggleViewAll");
         ShowWidget("nevertired");
+        ShowWidget("toggleNeverTired");
         ShowWidget("nofalldamage");
+        ShowWidget("toggleNoFallDamage");
         ShowWidget("infiniteinventory");
+        ShowWidget("toggleInfiniteInventory");
         ShowWidget("questtester");
+        ShowWidget("toggleQuestTester");
         ShowWidget("infinitemana");
+        ShowWidget("toggleInfiniteMana");
     case 0:
         break;
     }
@@ -967,5 +1025,6 @@ void pawsGmGUIWindow::OnStringEntered(const char *name,int param,const char *val
         QueryServer();
     }
 }
+
 
 

@@ -26,6 +26,7 @@
 
 class pawsProgressBar;
 class pawsButton;
+class pawsCheckBox;
 class pawsTextBox;
 class pawsScrollBar;
 
@@ -79,8 +80,8 @@ private:
     pawsButton*            buttonApply;
 
     /// Fade and Font checkbox
-    pawsButton*            buttonFade;
-    pawsButton*            buttonFont;
+    pawsCheckBox*            checkboxFade;
+    pawsCheckBox*            checkboxFont;
 
     /// Text boxes
     pawsTextBox*        textFadeStatus;

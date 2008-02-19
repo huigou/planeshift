@@ -1124,10 +1124,10 @@ void pawsWidget::SetFontScaling(bool value)
 {
     scaleFont = value;
 
-    if(!scaleFont)
-        ChangeFontSize(defaultFontSize);
-    else
+    if(value)
         ChangeFontSize(defaultFontSize * float(screenFrame.Width())/float(defaultFrame.Width()));
+    else
+        ChangeFontSize(defaultFontSize);
 
     for (uint i=0; i < children.GetSize(); i++)
     {
@@ -2606,4 +2606,5 @@ void pawsWidget::SetProperty(const char * ptr, double value)
     else
         Error2("pawsWidget::SetProperty(%s) failed\n", ptr);
 }
+
 
