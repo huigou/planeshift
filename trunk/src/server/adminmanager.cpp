@@ -122,6 +122,7 @@ AdminManager::~AdminManager()
     psserver->GetEventManager()->Unsubscribe(this,MSGTYPE_GMSPAWNITEM);
 
     delete npcdlg;
+    delete pathNetwork;
 }
 
 
