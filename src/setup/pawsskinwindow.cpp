@@ -295,7 +295,8 @@ bool pawsSkinWindow::LoadResource(const char* resource,const char* resname, cons
         return false;
     }
 
-    csRef<iPAWSDrawable> img = new pawsImageDrawable(filename.GetData(), resname, false, csRect(), 0, 0, 0, 0);
+    csRef<iPAWSDrawable> img;
+    img.AttachNew(new pawsImageDrawable(filename.GetData(), resname, false, csRect(), 0, 0, 0, 0));
     PawsManager::GetSingleton().GetTextureManager()->AddDrawable(img);
 
     return true;

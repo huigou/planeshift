@@ -1,3 +1,6 @@
+*** 2008-02-20 by Kenny Graunke
+- Fix reference counting bug in pssetup's skin window.
+
 *** 2008-02-20 by Dave Bentham
 - Fix for FS#193: book text protection between server & client.
 
