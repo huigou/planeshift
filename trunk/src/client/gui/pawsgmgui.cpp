@@ -171,8 +171,8 @@ void pawsGmGUIWindow::HandleMessage ( MsgEntry* me )
 
             // invisibility
             isVisible = gmSets & 1;
-            cbInvisible->SetState(isVisible);
-            cbInvisible->SetText( isVisible ? "enabled" : "disabled" );
+            cbInvisible->SetState(!isVisible);
+            cbInvisible->SetText( !isVisible ? "enabled" : "disabled" );
 
             // invincibility
             isInvincible = ( (gmSets & (1 << 1)) ? true : false);
@@ -201,8 +201,8 @@ void pawsGmGUIWindow::HandleMessage ( MsgEntry* me )
 
             // infinite inventory
             isFiniteInv = ( gmSets & (1 << 6) ? true : false);
-            cbInfiniteInventory->SetState(isFiniteInv);
-            cbInfiniteInventory->SetText( isFiniteInv ? "enabled" : "disabled" );
+            cbInfiniteInventory->SetState(!isFiniteInv);
+            cbInfiniteInventory->SetText( !isFiniteInv ? "enabled" : "disabled" );
 
             // no fall damage
             isSafeFall = ( gmSets & (1 << 7) ? true : false);

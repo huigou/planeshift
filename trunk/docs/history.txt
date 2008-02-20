@@ -6,6 +6,8 @@
   possible to have to have a prereq of a step in a different quest.
 - Passing the defenders secondary weapon to the combat mathscript. Allowing
   the calculation of shields.
+- Modified names of attributes in GM screen and matched behaviours, Thanks
+  Caarrie.
 
 *** 2008-02-20 by Kenny Graunke
 - Plugged some memory leaks.
