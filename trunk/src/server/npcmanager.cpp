@@ -1340,7 +1340,7 @@ bool NPCManager::WillPetReact(int clientnum, Client * owner, gemNPC * pet, const
         return true;
     }
 
-    psserver->SendSystemInfo(clientnum, "Your %s do not react to your command", type);
+    psserver->SendSystemInfo(clientnum, "Your %s does not react to your command", type);
     return false;
 }
 

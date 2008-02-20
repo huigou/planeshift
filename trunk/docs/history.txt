@@ -1,3 +1,10 @@
+*** 2008-02-19 by Roland Schulz
+- fix FS#1019 - make illumination.xml keepaspect="no" by Vornne
+- fix FS#1108 - typo when attempting to attack player with pet by Caarrie
+- fix FS#1102 - make bow attack stop when out of ammo by Vornne
+- remove explicit db name from item_stats.sql - no need to have it there
+- add paragraph about changing db name/user/pass to compiling.html
+
 *** 2008-02-19 by Sasha Levin
 - Added GM attributes refresh to the client when using /set.
 - Added SetText() and GetText() functionality to the checkboxes by coreyo.

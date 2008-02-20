@@ -707,7 +707,10 @@ void psCombatManager::ApplyCombatEvent(psCombatGameEvent *event, int attack_resu
         }
         case ATTACK_OUTOFAMMO:
             {
-                psserver->SendSystemError(event->AttackerCID, "You ran out of ammo!");
+                psserver->SendSystemError(event->AttackerCID, "You are out of ammo!");
+
+                if (event->attacker && event->attacker.IsValid())
+                    StopAttack(dynamic_cast<gemActor*>((gemObject *) event->attacker));  // if you run out of ammo, you exit attack mode
             }
     }
 
