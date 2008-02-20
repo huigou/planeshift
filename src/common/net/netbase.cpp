@@ -63,7 +63,7 @@ NetBase::NetBase(int outqueuesize)
         ERRORHALT ("couldn't init socket library!");
     socklibrefcount++;
 
-    NetworkQueue = new NetPacketQueueRefCount(MAXQUEUESIZE);
+    NetworkQueue.AttachNew(new NetPacketQueueRefCount(MAXQUEUESIZE));
     if (!NetworkQueue)
         ERRORHALT("No Memory!");
 
