@@ -33,8 +33,8 @@ class psPath;
 class psPathNetwork
 {
 public:
-    csArray<Waypoint*> waypoints;
-    csArray<psPath*> paths;
+    csPDelArray<Waypoint> waypoints;
+    csPDelArray<psPath> paths;
     
     csArray<csString> waypointGroupNames;
     csArray< csList<Waypoint*> > waypointGroups;

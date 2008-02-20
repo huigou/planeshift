@@ -157,7 +157,7 @@ int psPathNetwork::AddWaypointToGroup(csString group, Waypoint * wp)
 
 Waypoint *psPathNetwork::FindWaypoint(int id)
 {
-    csArray<Waypoint*>::Iterator iter(waypoints.GetIterator());
+    csPDelArray<Waypoint>::Iterator iter(waypoints.GetIterator());
     Waypoint *wp;
 
     while (iter.HasNext())
@@ -175,7 +175,7 @@ Waypoint *psPathNetwork::FindWaypoint(int id)
 
 Waypoint *psPathNetwork::FindWaypoint(const char * name)
 {
-    csArray<Waypoint*>::Iterator iter(waypoints.GetIterator());
+    csPDelArray<Waypoint>::Iterator iter(waypoints.GetIterator());
     Waypoint *wp;
 
     while (iter.HasNext())
@@ -202,7 +202,7 @@ Waypoint *psPathNetwork::FindWaypoint(const char * name)
 
 Waypoint *psPathNetwork::FindNearestWaypoint(csVector3& v,iSector *sector, float range, float * found_range)
 {
-    csArray<Waypoint*>::Iterator iter(waypoints.GetIterator());
+    csPDelArray<Waypoint>::Iterator iter(waypoints.GetIterator());
     Waypoint *wp;
 
     float min_range = range;
@@ -228,7 +228,7 @@ Waypoint *psPathNetwork::FindNearestWaypoint(csVector3& v,iSector *sector, float
 
 Waypoint *psPathNetwork::FindRandomWaypoint(csVector3& v,iSector *sector, float range, float * found_range)
 {
-    csArray<Waypoint*>::Iterator iter(waypoints.GetIterator());
+    csPDelArray<Waypoint>::Iterator iter(waypoints.GetIterator());
     Waypoint *wp;
 
     csArray<Waypoint*> nearby;
@@ -370,7 +370,7 @@ csList<Waypoint*> psPathNetwork::FindWaypointRoute(Waypoint * start, Waypoint * 
 {
     csList<Waypoint*> waypoint_list;
     csList<Waypoint*> priority; // Should have been a priority queue
-    csArray<Waypoint*>::Iterator iter(waypoints.GetIterator());
+    csPDelArray<Waypoint>::Iterator iter(waypoints.GetIterator());
     Waypoint *wp;
     
     // Using Dijkstra's algorithm to find shortest way
@@ -437,7 +437,7 @@ csList<Waypoint*> psPathNetwork::FindWaypointRoute(Waypoint * start, Waypoint * 
 
 void psPathNetwork::ListWaypoints(const char * pattern)
 {
-    csArray<Waypoint*>::Iterator iter(waypoints.GetIterator());
+    csPDelArray<Waypoint>::Iterator iter(waypoints.GetIterator());
     Waypoint *wp;
     CPrintf(CON_CMDOUTPUT, "Waypoints\n");
     CPrintf(CON_CMDOUTPUT, "%9s %-30s %-45s %-6s %-6s %-30s\n", "WP", "Name", "Position","Radius","Dist","PI");
@@ -483,7 +483,7 @@ void psPathNetwork::ListWaypoints(const char * pattern)
 
 void psPathNetwork::ListPaths(const char *name)
 {
-    csArray<psPath*>::Iterator iter(paths.GetIterator());
+    csPDelArray<psPath>::Iterator iter(paths.GetIterator());
     psPath *path;
 
     while (iter.HasNext())
@@ -505,7 +505,7 @@ void psPathNetwork::ListPaths(const char *name)
 
 psPath   *psPathNetwork::FindPath(const char *name)
 {
-    csArray<psPath*>::Iterator iter(paths.GetIterator());
+    csPDelArray<psPath>::Iterator iter(paths.GetIterator());
     psPath *path;
 
     while (iter.HasNext())
@@ -522,7 +522,7 @@ psPath   *psPathNetwork::FindPath(const char *name)
 
 psPath   *psPathNetwork::FindPath(const Waypoint * wp1, const Waypoint * wp2, psPath::Direction & direction)
 {
-    csArray<psPath*>::Iterator iter(paths.GetIterator());
+    csPDelArray<psPath>::Iterator iter(paths.GetIterator());
     psPath *path;
 
     while (iter.HasNext())
