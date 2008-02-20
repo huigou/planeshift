@@ -20,6 +20,7 @@
 #define __PSPATH_H__
 
 #include <csutil/weakref.h>
+#include <csutil/parray.h>
 #include <igeom/path.h>
 
 #include "iserver/idal.h"
@@ -82,7 +83,7 @@ public:
     int                    id;
     csString               name;
     Waypoint              *start,*end; /// This path start and end waypoint
-    csArray<psPathPoint*>  points;
+    csPDelArray<psPathPoint> points;
 
     /// Flags
     bool                   oneWay;

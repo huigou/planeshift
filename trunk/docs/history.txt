@@ -1,3 +1,6 @@
+*** 2008-02-20 by Kenny Graunke
+- Plugged some memory leaks.
+
 *** 2008-02-19 by Roland Schulz
 - fix FS#1019 - make illumination.xml keepaspect="no" by Vornne
 - fix FS#1108 - typo when attempting to attack player with pet by Caarrie

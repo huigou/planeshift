@@ -22,12 +22,12 @@
 #include <csutil/array.h>
 #include <csutil/list.h>
 #include <csgeom/vector3.h>
+#include <iengine/sector.h>
 
 class iResultRow;
 class EventManager;
 class NPC;
 class psTribeNeedSet;
-struct iSector;
 class Perception;
 
 #define TRIBE_UNLIMITED_SIZE   100
