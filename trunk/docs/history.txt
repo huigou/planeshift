@@ -1,5 +1,6 @@
 *** 2008-02-20 by Kenny Graunke
 - Plugged some memory leaks.
+- Fix reference counting bug in psDelayedMessageEvent.
 
 *** 2008-02-19 by Roland Schulz
 - fix FS#1019 - make illumination.xml keepaspect="no" by Vornne
