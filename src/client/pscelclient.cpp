@@ -440,11 +440,6 @@ void psCelClient::RemoveObject(GEMClientObject* entity)
         return;
     }
     
-
-//    csVector3 pos = entity->pcmesh->GetMesh()->GetMovable()->GetPosition();
-//    iSector* sector = entity->pcmesh->GetMesh()->GetMovable()->GetSectors()->Get(0);
-//    printf("Removing entity(%d) '%s' Pos (%.2f,%.2f,%.2f) sector '%s'\n", entity->GetID(),entity->GetName(), pos.x,pos.y,pos.z, sector->QueryObject()->GetName() );
-
     if ( psengine->GetCharManager()->GetTarget() == entity )
     {
         pawsWidget* widget = PawsManager::GetSingleton().FindWidget("InteractWindow");
@@ -476,7 +471,7 @@ void psCelClient::RemoveObject(GEMClientObject* entity)
     if(dynamic_cast<GEMClientActionLocation*>(entity))
         actions.Delete( static_cast<GEMClientActionLocation*>(entity) );
 
-    entities_hash.Delete (entity->GetID (), entity);
+    entities_hash.Delete (entity->GetID(), entity);
     entities.Delete(entity);
 }
 
