@@ -37,6 +37,7 @@
 #include "pscharacter.h"
 #include "psquest.h"
 #include "weathermanager.h"
+#include "cachemanager.h"
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 
@@ -231,8 +232,16 @@ psQuestPrereqOp* psQuestPrereqOpNot::Copy()
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 
+psQuestPrereqOpQuestCompleted::psQuestPrereqOpQuestCompleted(csString questName)
+{
+    quest = NULL;
+    name = questName;
+}
+
 bool psQuestPrereqOpQuestCompleted::Check(psCharacter * character)
 {
+    if (quest == NULL)
+        quest = CacheManager::GetSingleton().GetQuestByName(name);
     return character->CheckQuestCompleted(quest);
 }
 
@@ -247,7 +256,12 @@ csString psQuestPrereqOpQuestCompleted::GetScriptOp()
 
 psQuestPrereqOp* psQuestPrereqOpQuestCompleted::Copy()
 {
-    psQuestPrereqOpQuestCompleted* copy = new psQuestPrereqOpQuestCompleted(quest);
+    psQuestPrereqOpQuestCompleted* copy;
+
+    if (quest==NULL)
+        copy = new psQuestPrereqOpQuestCompleted(name);
+    else
+        copy = new psQuestPrereqOpQuestCompleted(quest);
     return copy;
 }
 

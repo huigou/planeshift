@@ -97,19 +97,19 @@ bool QuestManager::LoadQuestScripts()
 
         for (i=0; i<count; i++)
         {
+            psQuest* currQuest = CacheManager::GetSingleton().GetQuestByID(quests[i].GetInt("quest_id"));
+            if (!currQuest || !currQuest->PostLoad())
+            {
+                Error2("ERROR Loading quest prerequisites for quest %s!  ",quests[i]["quest_id"] );
+            }
+        }
+        for (i=0; i<count; i++)
+        {
             int line = ParseQuestScript(quests[i].GetInt("quest_id"),quests[i]["script"]);
             if (line)
             {
                 Error3("ERROR Parsing quest script %s, line %d!  ",quests[i]["quest_id"], line );
                 //return false;
-            }
-        }
-        for (i=0; i<count; i++)
-        {
-            psQuest* currQuest = CacheManager::GetSingleton().GetQuestByID(quests[i].GetInt("quest_id"));
-            if (!currQuest || !currQuest->PostLoad())
-            {
-                Error2("ERROR Loading quest prerequisites for quest %s!  ",quests[i]["quest_id"] );
             }
         }
         return true;
