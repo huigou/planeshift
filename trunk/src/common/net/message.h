@@ -41,12 +41,13 @@ using namespace CS::Threading;
  * read to check for null is done just as something tries to inc (and the
  * read is done first).
  */
+template<typename RealType>
 class csSyncRefCount
 {
 protected:
     int32 ref_count;
 
-    virtual ~csSyncRefCount () {}
+    ~csSyncRefCount () {}
 
 public:
     /// Initialize object and set reference to 1.
@@ -66,7 +67,7 @@ public:
     {
         if(AtomicOperations::Decrement(&ref_count) == 0)
         {
-            delete this;
+            delete static_cast<RealType*>(this);
         }
     }
 
@@ -120,7 +121,7 @@ struct psMessageBytes
 /**
  * The structure of 1 queue entry (pointer to a message)
  */
-class MsgEntry : public csSyncRefCount
+class MsgEntry : public csSyncRefCount<MsgEntry>
 {
 public:
     MsgEntry (size_t datasize = 0, uint8_t msgpriority=PRIORITY_HIGH)
