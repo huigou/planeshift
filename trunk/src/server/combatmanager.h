@@ -127,7 +127,7 @@ protected:
     MathScriptVar *var_AttackWeapon;
     MathScriptVar *var_AttackWeaponSecondary;
     MathScriptVar *var_TargetAttackWeapon;
-    //MathScriptVar *var_TargetAttackWeaponSecondary; TODO
+    MathScriptVar *var_DefenseWeaponSecondary;
     MathScriptVar *var_Target;
     MathScriptVar *var_Attacker;
     MathScriptVar *var_AttackLocationItem;
