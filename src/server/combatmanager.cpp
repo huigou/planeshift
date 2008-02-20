@@ -193,7 +193,7 @@ psCombatManager::psCombatManager() : pvp_region(NULL)
         var_AttackWeapon       = calc_damage->GetVar("AttackWeapon");
         var_AttackWeaponSecondary  = calc_damage->GetVar("AttackWeaponSecondary");
         var_TargetAttackWeapon      = calc_damage->GetVar("TargetAttackWeapon");
-        //var_DefenseWeaponSecondary = calc_damage->GetVar("DefenseWeaponSecondary"); TODO
+        var_DefenseWeaponSecondary = calc_damage->GetVar("DefenseWeaponSecondary");
         var_Target                 = calc_damage->GetVar("Target");
         var_Attacker               = calc_damage->GetVar("Attacker");
         var_AttackLocationItem     = calc_damage->GetVar("AttackLocationItem");
@@ -496,6 +496,12 @@ int psCombatManager::CalculateAttack(psCombatGameEvent *event, psItem* subWeapon
 
     if (var_TargetAttackWeapon)
         var_TargetAttackWeapon->SetObject(event->GetTargetData()->Inventory().GetEffectiveWeaponInSlot(event->GetWeaponSlot() ) );
+
+    if (var_TargetAttackWeapon)
+    {
+        INVENTORY_SLOT_NUMBER otherHand = event->GetWeaponSlot() == PSCHARACTER_SLOT_LEFTHAND ? PSCHARACTER_SLOT_RIGHTHAND : PSCHARACTER_SLOT_LEFTHAND;
+        var_TargetAttackWeapon->SetObject(event->GetTargetData()->Inventory().GetEffectiveWeaponInSlot(otherHand) );
+    }
 
     if (var_AttackLocationItem)
     {

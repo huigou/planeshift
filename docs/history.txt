@@ -4,6 +4,8 @@
 - Sending GUI updates to client when using an ammo item.
 - Moved quest prereq loading to after the parsing of quest scripts, It's now
   possible to have to have a prereq of a step in a different quest.
+- Passing the defenders secondary weapon to the combat mathscript. Allowing
+  the calculation of shields.
 
 *** 2008-02-20 by Kenny Graunke
 - Plugged some memory leaks.
