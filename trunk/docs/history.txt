@@ -1,3 +1,10 @@
+*** 2008-02-20 by Sasha Levin
+- Made it possible to shoot ammo out of a container - enabling the use of
+  a quiver.
+- Sending GUI updates to client when using an ammo item.
+- Moved quest prereq loading to after the parsing of quest scripts, It's now
+  possible to have to have a prereq of a step in a different quest.
+
 *** 2008-02-20 by Kenny Graunke
 - Plugged some memory leaks.
 - Fix reference counting bug in psDelayedMessageEvent.

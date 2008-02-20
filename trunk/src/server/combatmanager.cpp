@@ -54,6 +54,7 @@
 #include "client.h"
 #include "globals.h"
 #include "cachemanager.h"
+#include "psserverchar.h"
 
 /// This #define determines how far away people will get detailed combat events.
 #define MAX_COMBAT_EVENT_RANGE 30
@@ -840,17 +841,39 @@ void psCombatManager::HandleCombatEvent(psCombatGameEvent *event)
                 {
                     attack_result = ATTACK_OUTOFAMMO;
                 }
+                else if (otherItem->GetIsContainer()) // Is it a quiver?
+                {
+                    // Pick the first ammo we can shoot from the container
+                    // And set it as the active ammo
+                    bool bFound = false;
+                    unsigned short containerSize = weapon->GetContainerMaxSize();
+                    for (size_t i=1; i<attacker_data->Inventory().GetInventoryIndexCount() && !bFound; i++)
+                    {
+                        psItem* currItem = attacker_data->Inventory().GetInventoryIndexItem(i);
+                        if (currItem && 
+                            currItem->GetContainerID() == otherItem->GetUID() &&
+                            weapon->GetAmmoTypeID().In(currItem->GetBaseStats()->GetUID()))
+                        {
+                            otherItem = currItem;
+                            bFound = true;
+                        }
+                    }
+                    if (!bFound)
+                        attack_result = ATTACK_OUTOFAMMO;
+                }
                 else if (!weapon->GetAmmoTypeID().In(otherItem->GetBaseStats()->GetUID()))
                 {
                     attack_result = ATTACK_OUTOFAMMO;
                 }
-                else
+
+                if (attack_result != ATTACK_OUTOFAMMO)
                 {
                     psItem* usedAmmo = attacker_data->Inventory().RemoveItemID(otherItem->GetUID(), 1);
                     if (usedAmmo)
                     {
                         attack_result=CalculateAttack(event, usedAmmo);
                         usedAmmo->Destroy();
+                        psserver->GetCharManager()->UpdateItemViews(attacker_client->GetClientNum());
                     }
                     else
                         attack_result=CalculateAttack(event);

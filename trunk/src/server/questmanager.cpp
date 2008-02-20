@@ -104,8 +104,17 @@ bool QuestManager::LoadQuestScripts()
                 //return false;
             }
         }
+        for (i=0; i<count; i++)
+        {
+            psQuest* currQuest = CacheManager::GetSingleton().GetQuestByID(quests[i].GetInt("quest_id"));
+            if (!currQuest || !currQuest->PostLoad())
+            {
+                Error2("ERROR Loading quest prerequisites for quest %s!  ",quests[i]["quest_id"] );
+            }
+        }
         return true;
     }
+
     return false;
 }
 
