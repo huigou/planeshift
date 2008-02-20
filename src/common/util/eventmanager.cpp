@@ -241,7 +241,7 @@ public:
     
 
 private:
-    MsgEntry *myMsg;
+    csRef<MsgEntry> myMsg;
     EventManager *myParent;
 };
 
