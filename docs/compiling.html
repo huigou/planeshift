@@ -1458,13 +1458,16 @@ How to create a new PS database:
 </div>
 
 <p><div class="commandBox">
-    mysql> use planeshift;<br>
     mysql> source create_all.sql;<br>
     mysql> quit
 </div></p>
 
-
 The database PlaneShift has now been created for PlaneShift to use.<p>
+
+Sometimes it is convenient to use another database name, user or password for development.
+In this case the file psserver.cfg has to be updated with the changed values. To change the database
+name the file create_all.sql also has to be modified.<p>
+
 NOTE: If you have upgraded MySQL server to 4.1 or superior (while the client is still 4.0) please write this in your MySQL console:
 <p><i class="command">UPDATE planeshift@localhost SET Password = OLD_PASSWORD('planeshift');</i></p>
 
