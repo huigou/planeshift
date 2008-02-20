@@ -164,10 +164,12 @@ void psServerCharManager::UpdateSketch( MsgEntry* me )
         if (item)
         {
             // TODO: Probably need to validate the xml here somehow
-            item->GetBaseStats()->SetSketch(csString(sketchMsg.Sketch));
-            printf("Updated sketch for item %u to: %s\n", sketchMsg.ItemID, sketchMsg.Sketch.GetDataSafe());
-            psserver->SendSystemInfo(me->clientnum, "Your drawing has been updated.");
-            item->GetBaseStats()->Save();
+            if (item->GetBaseStats()->SetSketch(csString(sketchMsg.Sketch)))
+            {
+                printf("Updated sketch for item %u to: %s\n", sketchMsg.ItemID, sketchMsg.Sketch.GetDataSafe());
+                psserver->SendSystemInfo(me->clientnum, "Your drawing has been updated.");
+                item->GetBaseStats()->Save();
+            }
         }
         else
         {
@@ -391,8 +393,9 @@ void psServerCharManager::HandleBookWrite(MsgEntry* me, Client* client)
             }
 
             // or psItem* item = (find the player)->GetCurrentWritingItem();
-            item->SetBookText(mesg.content);
-            psserver->SendSystemInfo(me->clientnum, "You have written in \'%s\'.", currentTitle.GetDataSafe());
+            bool saveOK = item->SetBookText(mesg.content);
+            psWriteBookMessage saveresp(client->GetClientNum(), currentTitle, saveOK);
+            saveresp.SendMessage();
         }
         // clear current writing item
         

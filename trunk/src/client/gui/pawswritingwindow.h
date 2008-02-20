@@ -24,6 +24,7 @@
  #include "paws/pawstextbox.h"
  
  #define MAX_TITLE_LEN 50
+ #define MAX_CONTENT_LEN 65450
 
  class pawsEditTextBox;
  /**

@@ -186,6 +186,8 @@ typedef unsigned int PSITEMSTATS_SLOTLIST;
 #define PSITEMSTATS_FLAG_BUY_PERSONALISE     0x00200000         // duplicate & personalise at purchase
 #define PSITEMSTATS_FLAG_IS_RECHARGEABLE     0x00400000
 
+#define CREATIVEDEF_MAX  65535  // Max length for 'text' field in MySQL db.
+
 typedef unsigned int PSITEMSTATS_FLAGS;
 
 struct st_attribute_bonus {
@@ -320,10 +322,10 @@ private:
     void ReadStats( iResultRow& row);
 
     /** general write creative content */
-    void SetCreativeContent(PSITEMSTATS_CREATIVETYPE, const csString&, uint32);
+    bool SetCreativeContent(PSITEMSTATS_CREATIVETYPE, const csString&, uint32);
 
     /** Format content for database */
-    void FormatCreativeContent(void);
+    bool FormatCreativeContent(void);
 
     /** Save creation in database */
     void SaveCreation(uint32);
@@ -619,14 +621,14 @@ public:
     bool SetAttribute( csString* op, csString* attrName, float modifier);
 
     /// Currently the Sketch definition is just a big string, passed to the client.  Server doesn't use it.
-    void SetSketch(const csString&);
+    bool SetSketch(const csString&);
 
     /// return creative contents
     const csString& GetSketch(void) { return creativeStats.content; }
     const csString& GetLiteratureText(void) { return creativeStats.content; }
 
     /// Write lit text (eg book)
-    void SetLiteratureText (const csString&, csString);
+    bool SetLiteratureText (const csString&, csString);
 
     /// creator (i.e. author, artist, etc) of creative things
     void SetCreator (unsigned int, PSITEMSTATS_CREATORSTATUS);

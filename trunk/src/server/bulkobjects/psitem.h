@@ -783,7 +783,7 @@ public:
     /// Gets the book text, should only be used if this is a book.
     csString GetBookText() { return GetBaseStats()->GetLiteratureText(); }
     /// Sets the book text, should only be used if this is a book.
-    void SetBookText(const csString& newText);
+    bool SetBookText(const csString& newText);
 
     bool HasCharges() const;
     bool IsRechargeable() const;

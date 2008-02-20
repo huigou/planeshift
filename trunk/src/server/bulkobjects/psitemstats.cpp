@@ -268,17 +268,22 @@ void psItemCreativeStats::ReadStats(iResultRow& row)
     Error2("XML error in CREATIVE item %lu", row.GetUInt32("id"));
 }
 
-void psItemCreativeStats::SetCreativeContent(PSITEMSTATS_CREATIVETYPE updatedCreativeType, const csString& updatedCreative, uint32 uid)
+bool psItemCreativeStats::SetCreativeContent(PSITEMSTATS_CREATIVETYPE updatedCreativeType, const csString& updatedCreative, uint32 uid)
 {
     if (creativeType == updatedCreativeType)
     {
         content = updatedCreative;
-        FormatCreativeContent();
-        SaveCreation(uid);
+        if (FormatCreativeContent())
+        {
+            SaveCreation(uid);
+            return true;
+        }
     }
+
+    return false;
 }
 
-void psItemCreativeStats::FormatCreativeContent(void)
+bool psItemCreativeStats::FormatCreativeContent(void)
 {
     creativeDefinitionXML = "<creative type=\"";
 
@@ -300,6 +305,11 @@ void psItemCreativeStats::FormatCreativeContent(void)
     }
 
     creativeDefinitionXML.AppendFmt("><content>%s</content></creative>", content.GetDataSafe());
+
+    if (creativeDefinitionXML.Length() <= CREATIVEDEF_MAX)
+        return true;
+
+    return false;
 }
 
 void psItemCreativeStats::SaveCreation(uint32 uid)
@@ -1322,20 +1332,24 @@ bool psItemStats::SetAttribute( csString* op, csString* attrName, float modifier
     return true;
 }
 
-void psItemStats::SetLiteratureText (const csString& newText, csString author)
+bool psItemStats::SetLiteratureText (const csString& newText, csString author)
 {
     csString newDescription;
 
-    creativeStats.SetCreativeContent(PSITEMSTATS_CREATIVETYPE_LITERATURE, newText, uid);
+    if (creativeStats.SetCreativeContent(PSITEMSTATS_CREATIVETYPE_LITERATURE, newText, uid))
+    {
+        newDescription = creativeStats.UpdateDescription(PSITEMSTATS_CREATIVETYPE_LITERATURE, name, author);
+        SetDescription(newDescription.GetDataSafe());
+        SaveDescription();
+        return true;
+    }
 
-    newDescription = creativeStats.UpdateDescription(PSITEMSTATS_CREATIVETYPE_LITERATURE, name, author);
-    SetDescription(newDescription.GetDataSafe());
-    SaveDescription();
+    return false;
 }
 
-void psItemStats::SetSketch(const csString& xml)
+bool psItemStats::SetSketch(const csString& xml)
 {
-    creativeStats.SetCreativeContent(PSITEMSTATS_CREATIVETYPE_SKETCH, xml, uid);
+    return creativeStats.SetCreativeContent(PSITEMSTATS_CREATIVETYPE_SKETCH, xml, uid);
 }
 
 void psItemStats::SetCreator (unsigned int characterID, PSITEMSTATS_CREATORSTATUS creatorStatus)
@@ -1352,7 +1366,7 @@ void psItemStats::SetCreator (unsigned int characterID, PSITEMSTATS_CREATORSTATU
         creativeStats.creatorID = characterID;
     else if (creatorStatus == PSITEMSTATS_CREATOR_UNKNOWN || creatorStatus == PSITEMSTATS_CREATOR_PUBLIC)
         creativeStats.creatorID = 0;
-    creativeStats.FormatCreativeContent();
+    bool b = creativeStats.FormatCreativeContent();   // result is n/a to setting creator.
 }
 
 bool psItemStats::IsThisTheCreator(unsigned int characterID)

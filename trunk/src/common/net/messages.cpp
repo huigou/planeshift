@@ -5279,7 +5279,7 @@ PSF_IMPLEMENT_MSG_FACTORY(psReadBookTextMessage,MSGTYPE_READ_BOOK);
 
 psReadBookTextMessage::psReadBookTextMessage(uint32_t clientNum, csString& itemName, csString& bookText, bool canWrite, int slotID, int containerID)
 {
-    msg.AttachNew(new MsgEntry(itemName.Length()+1 + bookText.Length()+1+1+3*sizeof(uint32_t)));
+    msg.AttachNew(new MsgEntry(itemName.Length()+1 + bookText.Length()+1+1+2*sizeof(uint32_t)));
     msg->SetType(MSGTYPE_READ_BOOK);
     msg->clientnum = clientNum;
     msg->Add(itemName);
@@ -5291,11 +5291,11 @@ psReadBookTextMessage::psReadBookTextMessage(uint32_t clientNum, csString& itemN
 
 psReadBookTextMessage::psReadBookTextMessage(MsgEntry* me )
 {
-  name=me->GetStr();
-  text=me->GetStr();
-  canWrite = me->GetUInt8() ? true : false;
-  slotID = me->GetUInt32();
-  containerID = me->GetUInt32();
+    name=me->GetStr();
+    text=me->GetStr();
+    canWrite = me->GetUInt8() ? true : false;
+    slotID = me->GetUInt32();
+    containerID = me->GetUInt32();
 }
 
 csString psReadBookTextMessage::ToString(AccessPointers * /*access_ptrs*/)
@@ -5311,16 +5311,16 @@ csString psReadBookTextMessage::ToString(AccessPointers * /*access_ptrs*/)
 PSF_IMPLEMENT_MSG_FACTORY(psWriteBookMessage, MSGTYPE_WRITE_BOOK);
 psWriteBookMessage::psWriteBookMessage(uint32_t clientNum, csString& title, csString& content, bool success, int slotID, int containerID)
 {
-  //uint8_t for the flag, a bool, 2 uints for the item reference, content length + 1 for the content
-   msg.AttachNew(new MsgEntry(sizeof(uint8_t)+sizeof(bool)+2*sizeof(uint32_t)+title.Length()+1+content.Length()+1));
-   msg->SetType(MSGTYPE_WRITE_BOOK);
-   msg->clientnum = clientNum;
-   msg->Add((uint8_t)RESPONSE);
-   msg->Add(success);
-   msg->Add(slotID);
-   msg->Add(containerID);
-   msg->Add(title);
-   msg->Add(content);
+    //uint8_t for the flag, a bool, 2 uints for the item reference, content length + 1 for the content
+    msg.AttachNew(new MsgEntry(sizeof(uint8_t)+sizeof(bool)+2*sizeof(uint32_t)+title.Length()+1+content.Length()+1));
+    msg->SetType(MSGTYPE_WRITE_BOOK);
+    msg->clientnum = clientNum;
+    msg->Add((uint8_t)RESPONSE);
+    msg->Add(success);
+    msg->Add(slotID);
+    msg->Add(containerID);
+    msg->Add(title);
+    msg->Add(content);
 }
 
 //Request to write on this book
@@ -5346,6 +5346,16 @@ psWriteBookMessage::psWriteBookMessage(int slotID, int containerID, csString& ti
     msg->Add(content);
 }
 
+psWriteBookMessage::psWriteBookMessage(uint32_t clientNum, csString& title, bool success)
+{
+    msg = new MsgEntry(sizeof(uint8_t)+title.Length()+1+sizeof(bool));
+    msg->SetType(MSGTYPE_WRITE_BOOK);
+    msg->clientnum = clientNum;
+    msg->Add((uint8_t)SAVERESPONSE);
+    msg->Add(title);
+    msg->Add(success);
+}
+
 psWriteBookMessage::psWriteBookMessage(MsgEntry* me)
 {
   messagetype = me->GetUInt8();
@@ -5368,6 +5378,10 @@ psWriteBookMessage::psWriteBookMessage(MsgEntry* me)
           title = me->GetStr();
           content = me->GetStr();
           break;
+      case SAVERESPONSE:
+          title = me->GetStr();
+          success = me->GetBool();
+          break;
   }
 }
 
@@ -5377,17 +5391,20 @@ csString psWriteBookMessage::ToString(AccessPointers * /*access_ptrs*/)
     switch(messagetype)
     {
        case REQUEST: 
-            msgtext.AppendFmt("Write Book REQUEST for slot %d, container %d ", slotID, containerID);
+            msgtext.AppendFmt("Write Book REQUEST for slot %d, container %d", slotID, containerID);
             break;
        case RESPONSE:
-            msgtext.AppendFmt("Write Book RESPONSE for slot %d, container %d.  Successful? %s  Title: \"%s\" Content: \"%s\" \n ", 
+            msgtext.AppendFmt("Write Book RESPONSE for slot %d, container %d.  Successful? %s  Title: \"%s\" Content: \"%s\"\n", 
                               slotID, containerID, success?"true":"false", title.GetDataSafe(), content.GetDataSafe());
             break;
        case SAVE:
-            msgtext.AppendFmt("Write Book SAVE for slot %d, container %d. Title: \"%s\" Content: \"%s\" \n ", 
+            msgtext.AppendFmt("Write Book SAVE for slot %d, container %d. Title: \"%s\" Content: \"%s\"\n", 
                               slotID, containerID, title.GetDataSafe(), content.GetDataSafe());
             break;
-    }
+       case SAVERESPONSE:
+            msgtext.AppendFmt("Write Book SAVERESPONSE Successful? %s  Title: \"%s\"\n", 
+                              success?"true":"false", title.GetDataSafe());
+            break;    }
 
     return msgtext;
 }
