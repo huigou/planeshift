@@ -44,47 +44,37 @@ using namespace CS::Threading;
 class csSyncRefCount
 {
 protected:
-  int32 ref_count;
+    int32 ref_count;
 
-  // To avoid a problem with MSVC and multiple DLLs (with separate memory
-  // space) we have to use a virtual destructor.
-  // @@@ Another alternative is to force this function to be non-inline, as
-  // doing so will most likely achieve the same result.
-  virtual void Delete()
-  {
-      delete this;
-  }
-
-  virtual ~csSyncRefCount () {}
+    ~csSyncRefCount () {}
 
 public:
-  /// Initialize object and set reference to 1.
-  csSyncRefCount()
-  {
-      AtomicOperations::Set(&ref_count, 1);
-  }
-
-  /// Increase the number of references to this object.
-  void IncRef () 
-  {
-      AtomicOperations::Increment(&ref_count);
-  }
-
-  /// Decrease the number of references to this object.
-  void DecRef ()
-  {
-    AtomicOperations::Decrement(&ref_count);
-    if(AtomicOperations::Read(&ref_count) == 0)
+    /// Initialize object and set reference to 1.
+    csSyncRefCount()
     {
-        Delete();
+        AtomicOperations::Set(&ref_count, 1);
     }
-  }
 
-  /// Get the reference count (only for debugging).
-  int32 GetRefCount()
-  {
-      return AtomicOperations::Read(&ref_count);
-  }
+    /// Increase the number of references to this object.
+    void IncRef () 
+    {
+        AtomicOperations::Increment(&ref_count);
+    }
+
+    /// Decrease the number of references to this object.
+    void DecRef ()
+    {
+        if(AtomicOperations::Decrement(&ref_count) == 0)
+        {
+            delete this;
+        }
+    }
+
+    /// Get the reference count (only for debugging).
+    int32 GetRefCount()
+    {
+        return AtomicOperations::Read(&ref_count);
+    }
 };
 
 
