@@ -46,7 +46,7 @@ class csSyncRefCount
 protected:
     int32 ref_count;
 
-    ~csSyncRefCount () {}
+    virtual ~csSyncRefCount () {}
 
 public:
     /// Initialize object and set reference to 1.
