@@ -3753,35 +3753,41 @@ public:
 class psWriteBookMessage : public psMessageCracker
 {
 public:
-  /**
-   * 'Request to Write' message, from client to server.
-   * 
-   */
-   psWriteBookMessage( int slotID, int containerID);
-   /**
-    * 'Request to Save' message, from client to server
-    */
-   psWriteBookMessage( int slotID, int containerID, csString& title, csString& content);
-   /**
-    * Response from server, if success is false then content is the error message
-    */
-   psWriteBookMessage( uint32_t clientNum, csString& title, csString& content, bool success,  int slotID, int containerID);
-   psWriteBookMessage( MsgEntry *me);
-   
-   PSF_DECLARE_MSG_FACTORY();
+    /**
+     * 'Request to Write' message, from client to server.
+     * 
+     */
+    psWriteBookMessage( int slotID, int containerID);
+    /**
+     * 'Request to Save' message, from client to server
+     */
+    psWriteBookMessage( int slotID, int containerID, csString& title, csString& content);
+    /**
+     * Response from server, if success is false then content is the error message
+     */
+    psWriteBookMessage( uint32_t clientNum, csString& title, csString& content, bool success,  int slotID, int containerID);
+    /**
+     * Response to Save from server to client.
+     */
+    psWriteBookMessage( uint32_t clientNum, csString& title, bool success);
 
-   virtual csString ToString(AccessPointers * access_ptrs);
+    psWriteBookMessage( MsgEntry *me);
    
-   uint8_t messagetype;
-   csString title, content;
-   int slotID;
-   int containerID;
-   bool success;
+    PSF_DECLARE_MSG_FACTORY();
+
+    virtual csString ToString(AccessPointers * access_ptrs);
+   
+    uint8_t messagetype;
+    csString title, content;
+    int slotID;
+    int containerID;
+    bool success;
    
     enum {
        REQUEST,
        RESPONSE,
-       SAVE
+       SAVE,
+       SAVERESPONSE
     };
 };
 

@@ -56,20 +56,44 @@ bool pawsWritingWindow::PostSetup()
 void pawsWritingWindow::HandleMessage( MsgEntry* me )
 {   
     psWriteBookMessage mesg(me);
-     if(mesg.messagetype == mesg.RESPONSE){
+    if (mesg.messagetype == mesg.RESPONSE)
+    {
         slotID = mesg.slotID;
         containerID = mesg.containerID;
         //if I wasn't retarded I"d just keep mesg around instead
-        if(mesg.success){
+        if (mesg.success)
+        {
             name->SetText(mesg.title);
             lefttext->SetText(mesg.content);
             Show();
-        } else {
+        }
+        else
+        {
             //this is bogus of course
             name->SetText(mesg.title);
             lefttext->SetText(mesg.content);
             Show();
         }
+    }
+    else if (mesg.messagetype == mesg.SAVERESPONSE)
+    {
+        csString saveReportStr;
+        uint32_t msgType;
+        if (mesg.success)
+        {
+            saveReportStr.Format("You have written in \"%s\"", mesg.title.GetDataSafe());
+            msgType = MSG_INFO;
+            Hide();
+            PawsManager::GetSingleton().SetCurrentFocusedWidget( NULL );
+        }
+        else
+        {
+            // currently, only fails here if text is too long for the database
+            saveReportStr.Format("You failed to write in \"%s\". It is too long.", mesg.title.GetDataSafe());
+            msgType = MSG_ERROR;
+        }
+        psSystemMessage saveReport(0, msgType, saveReportStr);
+        saveReport.FireEvent();
     }
 }
 
@@ -92,11 +116,18 @@ bool pawsWritingWindow::OnButtonPressed( int mouseButton, int keyModifier, pawsW
                 return false;
             }
             csString contents = lefttext->GetText();
+            size_t totalBookLength = contents.Length() + titleLength + 15; // still too big to store in DB it seems
+            if (totalBookLength > MAX_MESSAGE_SIZE)
+            {
+                csString contentError;
+                contentError.Format("Book text is too long");
+                psSystemMessage error(0, MSG_ERROR, contentError);
+                error.FireEvent();
+                return false;
+            }
+
             psWriteBookMessage mesg(slotID, containerID, title, contents);
             mesg.SendMessage();
-            // close the write window
-            Hide();
-            PawsManager::GetSingleton().SetCurrentFocusedWidget( NULL );
             return true;
         }
 
