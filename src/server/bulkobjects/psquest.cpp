@@ -465,9 +465,9 @@ bool psQuest::PostLoad()
             return false;
         }
         
-        prerequisiteStr.Empty();
         if (prerequisite)
         {
+            prerequisiteStr.Empty();
             Debug2(LOG_QUESTS, 0, "Resulting prereq: %s\n", prerequisite->GetScript().GetDataSafe());
         }
         else

@@ -651,19 +651,6 @@ bool CacheManager::PreloadQuests()
         }
     }
 
-    // Process loaded quests
-    csHash<psQuest *>::GlobalIterator it (quests_by_id.GetIterator ());
-    while (it.HasNext ())
-    {
-        psQuest* quest = it.Next ();
-        if(!quest->PostLoad())
-        {
-            CPrintf(CON_ERROR, "Could not load quest prerequisites for quest id %d", quest->GetID());
-            quests_by_id.DeleteElement(it);
-            delete quest;
-        }
-    }
-
     Notify2( LOG_STARTUP, "%lu Quests Loaded", result.Count() );
     return true;
 }
