@@ -348,6 +348,8 @@ class psQuestPrereqOpQuestCompleted: public psQuestPrereqOp
      * The quest that need to be completed.
      */
     psQuest * quest;
+    csString name;
+
  public:
 
     /**
@@ -356,6 +358,13 @@ class psQuestPrereqOpQuestCompleted: public psQuestPrereqOp
      * @param quest The quest that need to be completed
      */
     psQuestPrereqOpQuestCompleted(psQuest * quest):quest(quest){};
+
+   /**
+     * Construct a quest completed operator
+     *
+     * @param questName The quest that need to be completed
+     */
+    psQuestPrereqOpQuestCompleted(csString questName);
 
     /**
      * Destructor for the quest completed prerequisite operator.
