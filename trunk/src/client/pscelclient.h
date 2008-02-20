@@ -91,7 +91,7 @@ class psCelClient : public psClientNetSubscriber
 {
 private:
     csRef<iObjectRegistry> object_reg;
-    csRefArray<GEMClientObject> entities;
+    csPDelArray<GEMClientObject> entities;
     csHash<GEMClientObject*,int> entities_hash;
     csRefArray<MsgEntry> newActorQueue;
     csRefArray<MsgEntry> newItemQueue;
@@ -120,7 +120,7 @@ public:
     void RemoveObject(GEMClientObject* entity);
 
     psClientDR* GetClientDR()       { return clientdr; }
-    const csRefArray<GEMClientObject>& GetEntities () const { return entities; }
+    const csPDelArray<GEMClientObject>& GetEntities () const { return entities; }
     bool IsMeshSubjectToAction(const char* sector,const char* mesh);
     GEMClientActor * GetActorByName(const char * name, bool trueName = true) const;
 
@@ -257,7 +257,7 @@ enum GEMOBJECT_TYPE
 /** An object that the client knows about. This is the base object for any 
   * 'entity' that the client can be sent.
   */
-class GEMClientObject : public csRefCount
+class GEMClientObject
 {
 public:
     GEMClientObject();

@@ -78,6 +78,7 @@ csPtr<iBase> psEffectLoader::Parse(iDocumentNode * node, iStreamSource * istream
         }
     }
 #endif
+    context->IncRef();
     return context;
 }
 
