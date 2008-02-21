@@ -189,7 +189,7 @@ psCharacter::~psCharacter()
 
     // First force and update of the DB of all QuestAssignments before deleting
     // every assignment.
-    UpdateQuestAssignments(false);
+    UpdateQuestAssignments(true);
     assigned_quests.DeleteAll();
 
     delete vitals;
@@ -2578,11 +2578,15 @@ bool psCharacter::CompleteQuest(psQuest *quest)
             csHash<psQuest*>::GlobalIterator it = CacheManager::GetSingleton().GetQuestIterator();
             while (it.HasNext())
             {
-                psQuest * q = it.Next();
-                if (q->GetParentQuest())
+                psQuest * currQuest = it.Next();
+                if (currQuest->GetParentQuest())
                 {
-                    if (q->GetParentQuest()->GetID() == quest->GetID())
-                        CompleteQuest(q);
+                    if (currQuest->GetParentQuest()->GetID() == quest->GetID())
+                    {
+                        QuestAssignment* currAssignment = IsQuestAssigned(currQuest->GetID());
+                        if (currAssignment && currAssignment->status == PSQUEST_ASSIGNED)
+                            DiscardQuest(currAssignment, true);
+                    }
                 }
             }
         }
@@ -2792,10 +2796,12 @@ bool psCharacter::UpdateQuestAssignments(bool force_update)
             int r;
 
             // will delete the quest only after the expiration time, so the player cannot get it again immediately
+            // If it's a step, We can delete it even though it has inf lockout
             if (q->status == PSQUEST_DELETE &&
-                !q->GetQuest()->HasInfinitePlayerLockout() &&
+                ((!q->GetQuest()->HasInfinitePlayerLockout() &&
                 (!q->GetQuest()->GetPlayerLockoutTime() || !q->lockout_end ||
-                 (q->lockout_end < GetTotalOnlineTime()))) // delete
+                 (q->lockout_end < GetTotalOnlineTime()))) ||
+                 q->GetQuest()->GetParentQuest()))   // delete
             {
                 r = db->CommandPump("delete from character_quests"
                                 " where player_id=%d"

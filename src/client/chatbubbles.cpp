@@ -223,7 +223,12 @@ void psChatBubbles::HandleMessage(MsgEntry * msg, Client * client)
     psChatMessage chatMsg(msg);
     
     // Check to see if the person talking is on the ignore list. 
-    pawsChatWindow* chatWindow = (pawsChatWindow*)PawsManager::GetSingleton().FindWidget("ChatWindow");
+    pawsChatWindow* chatWindow = dynamic_cast<pawsChatWindow*>(PawsManager::GetSingleton().FindWidget("ChatWindow"));
+    if (!chatWindow)
+    {
+        // Chat window isn't loaded yet, GUI is still loading
+        return;
+    }
     if (chatWindow->GetIgnoredList()->IsIgnored(chatMsg.sPerson) && chatMsg.iChatType != CHAT_TELLSELF && chatMsg.iChatType != CHAT_ADVISOR && chatMsg.iChatType != CHAT_ADVICE)
     {
         return;

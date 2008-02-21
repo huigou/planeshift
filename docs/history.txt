@@ -2,6 +2,9 @@
 - Masked some debug output on the client.
 - Fixed bug with locating the proper ammo type for weapons.
 - Added a quiver to the svn db.
+- Fixed crash in chat bubbles.
+- Quest steps that weren't completed when quest was completed are discarded
+  instead of being marked as completed too.
 
 *** 2008-02-20 by Andrew Craig
 - Fixed problem with removing people from ignore list not actually
