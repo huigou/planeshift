@@ -55,7 +55,6 @@
 #include "net/messages.h"
 #include "net/msghandler.h"
 
-#include "util/psxmlparser.h"
 #include "util/psconst.h"
 #include "util/psmeshutil.h"
 
