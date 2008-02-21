@@ -56,7 +56,6 @@
 
 #include "engine/netpersist.h"
 
-#include "util/psxmlparser.h"
 #include "util/psscf.h"
 #include "util/psconst.h"
 #include "util/log.h"
