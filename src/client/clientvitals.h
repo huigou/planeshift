@@ -65,7 +65,7 @@ public:
 private:    
     /// version indicator to ignore out of order packets
     unsigned char counter;
-    bool counter_set;
+    bool counterSet;
     
 };
 
