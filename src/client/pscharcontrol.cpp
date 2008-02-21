@@ -35,7 +35,6 @@
 #include "net/msghandler.h"
 
 #include "util/psutil.h"
-#include "util/psxmlparser.h"
 
 #include "paws/psmousebinds.h"
 #include "paws/pawswidget.h"
