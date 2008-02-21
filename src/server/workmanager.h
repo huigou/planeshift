@@ -87,7 +87,9 @@ enum TradeTransfomType
     TRANSFORMTYPE_AUTO_CONTAINER,   ///< Transforming an item by putting it into auto-transform container
     TRANSFORMTYPE_SLOT,             ///< Transforming an item in an equipped slot
     TRANSFORMTYPE_CONTAINER,        ///< Transforming an item that is in a container
-    TRANSFORMTYPE_SLOT_CONTAINER    ///< Transforming an item that is in a container in an equipped slot
+    TRANSFORMTYPE_SLOT_CONTAINER,   ///< Transforming an item that is in a container in an equipped slot
+    TRANSFORMTYPE_TARGETSLOT,       ///< Transforming an item that is in a targetted actors equipped slot
+    TRANSFORMTYPE_TARGET            ///< Transforming an item that is targeted
 };
 
 //-----------------------------------------------------------------------------
@@ -165,6 +167,15 @@ public:
       */
     void StartAutoWork(Client *client, gemContainer* container, psItem *autoItem, int count);
     
+    /** Checks to see if the progression script generated craft work can be done.
+      *
+      * @param client  The client for the actor that initiates that progressions script
+      * @param target  Targetted item
+      * @param client  Pattern name passed in progressions cript
+      * @return False if there is a problem doing the craft.
+      */
+    bool StartScriptWork(Client* client, gemObject *target, csString pattern);
+
     /** Stop work event.  
      * This is called when a client removes an item from a container. 
      *  
@@ -223,10 +234,11 @@ public:
       * This sets many variables of the workmanager to work with a single user at a time. 
       *
       * @param client The client that is the current one to use. 
+      * @param target The object for which the client is targetting.
       *
       * @return False if there is a problem loading stuff.
       */
-    bool LoadLocalVars(Client* client);
+    bool LoadLocalVars(Client* client, gemObject *target=NULL);
 
     /** Send clear client view message to remove items from autocontainers.
       *
@@ -381,12 +393,22 @@ protected:
       *
       * @return An indicator of pattern match status.
       */
+
     unsigned int IsTransformable(uint32 patternId, uint32 targetId, int targetQty);
+
+    bool ScriptNoTarget();
+    bool ScriptActor(gemActor* gemAct);
+    bool ScriptItem(gemItem* gemItm);
+    bool ScriptAction(gemActionLocation* gemAction);
+
+    bool CombineWork();
     bool IsIngredient(uint32 patternId, uint32 groupPatternId, uint32 targetId);
 
     psItem* TransformContainedItem(psItem* oldItem, uint32 newId, int newQty, float itemQuality);
     psItem* CombineContainedItem(uint32 newId, int newQty, float itemQuality, psItem* containerItem);
     psItem* TransformSlotItem(INVENTORY_SLOT_NUMBER slot, uint32 newId, int newQty, float itemQuality);
+    psItem* TransformTargetSlotItem(INVENTORY_SLOT_NUMBER slot, uint32 newId, int newQty, float itemQuality);
+    psItem* TransformTargetItem(psItem* oldItem, uint32 newId, int newQty, float itemQuality);
 //    bool TransformHandItem(uint32 newId, int newQty, float itemQuality);
     //bool SendItemUpdate( INVENTORY_SLOT_NUMBER slotID, psItem *newItem );
 
@@ -399,7 +421,7 @@ protected:
     bool ValidateMind();
     bool ValidateStamina(Client* client);
     bool IsOnHand(uint32 equipId);
-    psItem* CreateTradeItem(uint32 newId, int newQty, float itemQuality, psItem* parent, INVENTORY_SLOT_NUMBER slot);
+    psItem* CreateTradeItem(uint32 newId, int newQty, float itemQuality);
     bool ValidateTraining(psTradeTransformations* transCandidate, psTradeProcesses* processCandidate);
     bool ValidateSkills(psTradeTransformations* transCandidate, psTradeProcesses* processCandidate);
     bool ValidateNotOverSkilled(psTradeTransformations* transCandidate, psTradeProcesses* processCandidate);
@@ -423,7 +445,8 @@ private:
     uint32_t clientNum;             ///< Current client the work manager is dealing with.
     psItem* workItem;               ///< The current work item that is in use ( example, ore furnace )
     psItem* autoItem;               ///< The current item that is being transformed by auto-transformation container
-    psCharacter *owner;             ///< The character data of the current character being used. 
+    psCharacter *owner;             ///< The character pointer of the current character being used. 
+    gemObject *gemTarget;           ///< The object being targeted by the player. 
     uint32 patternId;               ///< Current pattern ID
     uint32 groupPatternId;          ///< Current group pattern ID
     float patternKFactor;           ///< Pattern factor that's part of quality calculation
@@ -493,6 +516,9 @@ public:
     psItem* GetWorkItem() { return workItem; }
     void SetWorkItem(psItem* w) { workItem = w; }
 
+    gemObject* GetTargetGem() { return gemTarget; }
+    void SetTargetGem(gemObject* g) { gemTarget = g; }
+
     // transformation type
     int GetTransformationType() { return transType; }
     void SetTransformationType(int t) { transType = t; }
@@ -501,6 +527,7 @@ public:
     csWeakRef<gemObject> worker;
     NaturalResource* nr;
     Client* client;
+    gemObject* gemTarget;
     int category;
     csVector3 position;
     psItem*    object;
