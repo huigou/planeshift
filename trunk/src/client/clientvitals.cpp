@@ -39,7 +39,7 @@
 psClientVitals::psClientVitals()
 {
     counter = 0;
-    counter_set = false;
+    counterSet = false;
 }
 
 void psClientVitals::HandleDRData(psStatDRMessage& msg, const char *labelname )
@@ -47,7 +47,7 @@ void psClientVitals::HandleDRData(psStatDRMessage& msg, const char *labelname )
     char buff[100];
 
     // Skip out of date stat dr updates
-    if (counter_set && (unsigned char)(msg.counter - counter) > 127)
+    if (counterSet && (unsigned char)(msg.counter - counter) > 127)
     {
         Error4("Skipping out of date StatDR packet for '%s', version %d not %d.", labelname, msg.counter, counter);
         return;
@@ -55,7 +55,7 @@ void psClientVitals::HandleDRData(psStatDRMessage& msg, const char *labelname )
     else
     {
         counter = msg.counter;  // update for next time.
-        counter_set = true;     // accept the first counter and drop anything out of date compared to that
+        counterSet = true;     // accept the first counter and drop anything out of date compared to that
     }
 
     if (msg.statsDirty & DIRTY_VITAL_HP)       
