@@ -72,6 +72,7 @@
 #include "combatmanager.h"
 #include "weathermanager.h"
 #include "actionmanager.h"
+#include "workmanager.h"
 #include "npcmanager.h"
 #include "usermanager.h"
 #include "introductionmanager.h"
@@ -2634,6 +2635,66 @@ protected:
 /*-------------------------------------------------------------*/
 
 /**
+ * CraftOp
+ * Craft an item into another item.
+ *
+ * Syntax:
+ *    <craft pattern="%s" />
+ *        pattern = "%s" pattern name
+ * Examples:
+ *    Perform magical transmutation crafting on item:
+ *          <craft pattern="Transmutation" />
+ *
+ * Function sets result = 1 if craft is started
+ */
+class CraftOp : public ProgressionOperation
+{
+public:
+    CraftOp() : ProgressionOperation() { };
+    virtual ~CraftOp() {};
+
+    bool Load(iDocumentNode *node, ProgressionEvent *script)
+    {
+        pattern = node->GetAttributeValue("pattern");
+        return true;
+    }
+    
+    virtual csString ToString()
+    {
+        psString xml;
+        csString escpxml = EscpXML(pattern);
+        xml.Format("<craft pattern=\"%s\" />",escpxml.GetData());
+        return xml;
+    }
+
+    bool Run(gemActor *actor, gemObject *target, psItem * item, bool inverse)
+    {    
+        // Remove this when adding support for the inverse operation
+        if (inverse)
+            return true;
+
+        result = 0;
+        if (!actor->GetClient())
+        {
+            Error3("Error: ProgressionEvent(%s) ItemOp No client data was found for actor %s.\n",
+                    eventName->GetData(),actor->GetName());
+            return true;
+        }
+
+        // Do script crafting
+        if (psserver->GetWorkManager()->StartScriptWork(actor->GetClient(),target,pattern))
+            result = 1;
+        return true;
+    }
+
+    
+protected:
+    csString pattern;           // Craft pattern name
+};
+
+/*-------------------------------------------------------------*/
+
+/**
  * QuestOp
  * The quest operator only has one function at the moment
  * The complete function checks for quest completion
@@ -3037,6 +3098,7 @@ public:
                 keyItem->SetLoaded();
                 character->Inventory().AddOrDrop(keyItem, false);
 
+/*
                 // Get client info for sign
                 Client* client = actor->GetClient();
                 if (!client)
@@ -3069,6 +3131,7 @@ public:
                     return true;
                 }
                 newmsg.Multicast(actor->GetMulticastClients(),0,PROX_LIST_ANY_RANGE);
+*/
                 break;
             }
             default:
@@ -3943,7 +4006,7 @@ protected:
  * Syntax:
  *    <createfamiliar/>
  * Examples:
- *    Create and familiar near actor and send message:
+ *    Create a familiar near actor and send message:
  *        <createfamiliar /><msg text="Your new familiar appears nearby."/>
  */
 class CreateFamiliarOp : public ProgressionOperation
@@ -4002,7 +4065,7 @@ public:
 
 /**
  * AnimalAffinityOp
- * Change anilma affinity.
+ * Change animal affinity.
  *
  * Syntax:
  *    <animalaffinity name="%s" attribute="adjust|set" value="#" />
@@ -5436,6 +5499,10 @@ bool ProgressionEvent::LoadScript(iDocumentNode *topNode)
         else if ( strcmp( node->GetValue(), "morph" ) == 0 )
         {
             op = new MorphOp();
+        }
+        else if ( strcmp( node->GetValue(), "craft" ) == 0 )
+        {
+            op = new CraftOp();
         }
         else if ( strcmp( node->GetValue(), "set" ) == 0 )
         {
