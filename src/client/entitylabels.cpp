@@ -33,17 +33,19 @@
 #include <csutil/eventnames.h>
 
 // PS INCLUDES
-#include "globals.h"
-#include "gui/psmainwidget.h"
-#include "paws/pawsmanager.h"
-#include "util/psxmlparser.h"
 #include "util/log.h"
-#include "util/psxmlparser.h"
-#include "entitylabels.h"
+
+#include "gui/psmainwidget.h"
+
+#include "paws/pawsmanager.h"
+
 #include "effects/pseffectmanager.h"
 #include "effects/pseffect.h"
 #include "effects/pseffectobj.h"
 #include "effects/pseffectobjtextable.h"
+
+#include "globals.h"
+#include "entitylabels.h"
 
 
 #define LABEL_FONT             "/this/data/ttf/LiberationSans-Regular.ttf"
