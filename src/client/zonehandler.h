@@ -29,7 +29,6 @@
 #include "net/cmdbase.h"
 
 #include "util/prb.h"
-#include "util/psxmlparser.h"
 
 #include "engine/psworld.h"
 
@@ -128,7 +127,6 @@ protected:
     bool FindLoadWindow();
 
     bool LoadZoneInfo();
-    void LoadRegions(psXMLString& zonesection,ZoneLoadInfo *zone);
     void FlagRegions(ZoneLoadInfo* zone);
     ZoneLoadInfo * FindZone(const char* sector);
 
