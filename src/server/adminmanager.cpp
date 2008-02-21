@@ -285,6 +285,11 @@ bool AdminManager::AdminCmdData::DecodeAdminCmdMessage(MsgEntry *pMsg, psAdminCm
         subCmd = words[1];
         return true;
     }
+    else if (command == "/runscript")
+    {
+        script = words[1];
+        return true;
+    }
     else if (command == "/crystal")
     {
         interval = words.GetInt(1);
@@ -1003,6 +1008,10 @@ void AdminManager::HandleAdminCmdMessage(MsgEntry *me, psAdminCmdMessage &msg, A
     else if (data.command == "/key")
     {
         ModifyKey(me,msg,data,client);
+    }
+    else if (data.command == "/runscript")
+    {
+        RunScript(me,msg,data,client);
     }
     else if (data.command == "/weather")
     {
@@ -3493,10 +3502,37 @@ bool AdminManager::CreateItem(const char * name, double xPos, double yPos, doubl
     return true;
 }
 
+void AdminManager::RunScript(MsgEntry *me, psAdminCmdMessage& msg, AdminCmdData& data,Client *client)
+{
+    // Give syntax
+    if((data.script.Length() == 0) || (data.script == "help"))
+    {
+        psserver->SendSystemError(me->clientnum, "Syntax: /runscript script_name");
+        return;
+    }
+
+    // Find script event
+    ProgressionEvent *progEvent = psserver->GetProgressionManager()->FindEvent(data.script.GetData());
+    if (!progEvent)
+    {
+        psserver->SendSystemError(me->clientnum, "Progression script \"%s\" not found.",data.script.GetData());
+        return;
+    }
+
+    // Run script
+    float result = progEvent->Run(client->GetActor(), client->GetTargetObject(),NULL);
+    if ( !result )
+    {
+        psserver->SendSystemError(me->clientnum, "Progression script \"%s\" failed to run.",data.script.GetData());
+        return;
+    }
+    psserver->SendSystemError(me->clientnum, "Progression script \"%s\" returned value=%f.",data.script.GetData(),result);
+}
+
 void AdminManager::ModifyKey(MsgEntry *me, psAdminCmdMessage& msg, AdminCmdData& data,Client *client)
 {
     // Give syntax
-    if(data.subCmd.Length() == 0)
+    if((data.subCmd.Length() == 0) || (data.subCmd == "help"))
     {
         psserver->SendSystemError(me->clientnum, "Syntax: /key [changelock|makeunlockable|securitylockable|make|makemaster|copy|clearlocks|addlock|removelock|skel]");
         return;
