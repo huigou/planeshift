@@ -18,28 +18,35 @@
 */
 //////////////////////////////////////////////////////////////////////
 
-// STANDARD INCLUDE
 #include <psconfig.h>
+//=============================================================================
+// Crystal Space Includes
+//=============================================================================
 #include <csutil/xmltiny.h>
-#include "globals.h"
+#include <ivideo/fontserv.h>
 
-// COMMON/NET INCLUDES
+//=============================================================================
+// Project Includes
+//=============================================================================
+#include "gui/pawscontrolwindow.h"
+
+#include "paws/pawsprefmanager.h"
+#include "paws/pawstextbox.h"
+#include "paws/pawsyesnobox.h"
+
+#include "util/strutil.h"
+
 #include "net/messages.h"
 #include "net/msghandler.h"
 #include "net/cmdhandler.h"
-#include "util/strutil.h"
-#include "util/psxmlparser.h"
-#include <ivideo/fontserv.h>
 
-#include "pscelclient.h"
-
-// PAWS INCLUDES
+//=============================================================================
+// Local Includes
+//=============================================================================
 #include "pawsquestwindow.h"
-#include "paws/pawsprefmanager.h"
 #include "inventorywindow.h"
-#include "gui/pawscontrolwindow.h"
-#include "paws/pawstextbox.h"
-#include "paws/pawsyesnobox.h"
+#include "pscelclient.h"
+#include "globals.h"
 
 #define DISCARD_BUTTON                    1201
 #define VIEW_BUTTON                       1200
