@@ -106,6 +106,8 @@ psMovementManager::psMovementManager(iEventNameRegistry* eventname_reg, psContro
     backward = NULL;
     run = NULL;
     walk = NULL;
+
+    linearMove = NULL;
 }
 
 psMovementManager::~psMovementManager()
