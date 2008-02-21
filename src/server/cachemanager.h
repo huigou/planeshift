@@ -276,6 +276,7 @@ public:
     csArray<psTradeProcesses*>* GetTradeProcessesByID(uint32 id);
     bool PreloadTradePatterns();
     psTradePatterns* GetTradePatternByItemID(uint32 id);
+    psTradePatterns* GetTradePatternByName(csString name);
     csString CreateTransCraftDescription(psTradeTransformations* tran, psTradeProcesses* proc);
     csString CreateComboCraftDescription(csPDelArray<CombinationConstruction>* combArray);
     csArray<CraftTransInfo*>* GetTradeTransInfoByItemID(uint32 id);
@@ -443,6 +444,7 @@ protected:
     csHash<psGuildAlliance*> alliance_by_id;
     csHash<psQuest *> quests_by_id;
     csHash<psTradePatterns *,uint32> tradePatterns_IDHash;
+    csHash<psTradePatterns *,csString> tradePatterns_NameHash;
     csHash<csArray<psTradeProcesses*> *,uint32> tradeProcesses_IDHash;
     csHash<csPDelArray<CombinationConstruction> *,uint32> tradeCombinations_IDHash;
     csHash<csHash<csPDelArray<psTradeTransformations> *,uint32> *,uint32> tradeTransformations_IDHash;
