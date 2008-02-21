@@ -117,7 +117,7 @@ protected:
         csString text, petition, reason;
         csString newName, newLastName;
         csString item, mesh;
-        csString description;
+        csString description, script;
         csString wp1, wp2;
         csString gmeventName, gmeventDesc;
         csString zombie, requestor;
@@ -161,6 +161,8 @@ protected:
     void MakeKey(MsgEntry *me, psAdminCmdMessage& msg, AdminCmdData& data, Client *client, bool masterkey);
     void CopyKey(MsgEntry *me, psAdminCmdMessage& msg, AdminCmdData& data, Client *client, psItem* key);
     void AddRemoveLock(MsgEntry *me, psAdminCmdMessage& msg, AdminCmdData& data, Client *client,psItem* key);
+
+    void RunScript(MsgEntry *me, psAdminCmdMessage& msg, AdminCmdData& data, Client *client);
 
     void CreateHuntLocation(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data, Client *client);
     void ModifyHuntLocation(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data, Client* client, gemObject* object);
