@@ -20,22 +20,29 @@
 
 // STANDARD INCLUDE
 #include <psconfig.h>
+//=============================================================================
+// Crystal Space Includes
+//=============================================================================
 #include <csutil/xmltiny.h>
-#include "globals.h"
+#include <ivideo/fontserv.h>
 
-// COMMON/NET INCLUDES
+//=============================================================================
+// Project Includes
+//=============================================================================
 #include "net/messages.h"
 #include "net/msghandler.h"
 #include "net/cmdhandler.h"
+
 #include "util/strutil.h"
-#include "util/psxmlparser.h"
-#include <ivideo/fontserv.h>
 
-#include "pscelclient.h"
-
-// PAWS INCLUDES
-#include "pawstutorialwindow.h"
 #include "gui/psmainwidget.h"
+
+//=============================================================================
+// Local Includes
+//=============================================================================
+#include "pscelclient.h"
+#include "pawstutorialwindow.h"
+#include "globals.h"
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
