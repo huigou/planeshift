@@ -21,39 +21,49 @@
 //
 //////////////////////////////////////////////////////////////////////
 #include <psconfig.h>
-#include <csutil/util.h>
-#include <iutil/evdefs.h>
-#include <csutil/xmltiny.h>
-#include <iutil/databuff.h>
-
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
 #include <ctype.h>
+#include <time.h>
 
+//=============================================================================
+// Crystal Space Includes
+//=============================================================================
+#include <csutil/util.h>
+#include <csutil/xmltiny.h>
+
+#include <iutil/evdefs.h>
+#include <iutil/databuff.h>
+
+//=============================================================================
+// Project Includes
+//=============================================================================
 #include "iclient/isoundmngr.h"
 
-#include "net/message.h"
-#include "net/msghandler.h"
-#include "net/cmdhandler.h"
-#include "util/strutil.h"
-#include "util/psxmlparser.h"
-#include "util/fileutil.h"
-#include "util/log.h"
-
-#include "pscelclient.h"
-
-#include "util/localization.h"
 #include "paws/pawstextbox.h"
 #include "paws/pawsprefmanager.h"
-#include "chatwindow.h"
 #include "paws/pawsmanager.h"
 #include "paws/pawsbutton.h"
 #include "paws/pawsborder.h"
 #include "paws/pawstabwindow.h"
+
 #include "gui/pawscontrolwindow.h"
 
-#include "time.h"
+#include "net/message.h"
+#include "net/msghandler.h"
+#include "net/cmdhandler.h"
+
+#include "util/strutil.h"
+#include "util/fileutil.h"
+#include "util/log.h"
+#include "util/localization.h"
+
+//=============================================================================
+// Local Includes
+//=============================================================================
+#include "pscelclient.h"
+#include "chatwindow.h"
 
 const char *logWidgetName[CHAT_NLOG] = {
     "logAllChat",
