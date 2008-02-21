@@ -40,7 +40,6 @@
 //=============================================================================
 #include "util/log.h"
 #include "util/strutil.h"
-#include "util/psxmlparser.h"
 
 #include "paws/pawsmanager.h"
 #include "paws/pawsprefmanager.h"
