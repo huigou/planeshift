@@ -141,7 +141,7 @@ void pawsContainerDescWindow::HandleViewItem( MsgEntry* me )
     {
         if (newContainer)
         {
-            printf("Setting up container %d.\n",mesg.containerID);
+            Debug2(LOG_CHARACTER, 0, "Setting up container %d.\n", mesg.containerID);
 
             contents->Clear();
             containerSlots = PSITEM_MAX_CONTAINER_SLOTS;
@@ -169,7 +169,7 @@ void pawsContainerDescWindow::HandleViewItem( MsgEntry* me )
                     csString slotName;
                     slotName.Format("invslot_%d", mesg.containerID * 100 + i*cols+j + 16); // container slot + next two digit slot number
                     slot->SetSlotName(slotName);
-                    printf("Container slot %d subscribing to %s.\n", i*cols+j, slotName.GetData());
+                    Debug3(LOG_CHARACTER, 0, "Container slot %d subscribing to %s.\n", i*cols+j, slotName.GetData());
                     // New slots must subscribe to sigClear* -before-
                     // invslot_n, or else the cached clear signal will override
                     // the signal with the cached slot data, resulting in an

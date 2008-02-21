@@ -842,6 +842,8 @@ void psCombatManager::HandleCombatEvent(psCombatGameEvent *event)
                                                                             PSCHARACTER_SLOT_LEFTHAND:
                                                                             PSCHARACTER_SLOT_RIGHTHAND;
 
+                attack_result = ATTACK_NOTCALCULATED;
+
                 psItem* otherItem = attacker_data->Inventory().GetInventoryItem(otherHand);
                 if (otherItem == NULL)
                 {

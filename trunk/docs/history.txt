@@ -1,3 +1,8 @@
+*** 2008-02-21 by Sasha Levin
+- Masked some debug output on the client.
+- Fixed bug with locating the proper ammo type for weapons.
+- Added a quiver to the svn db.
+
 *** 2008-02-20 by Andrew Craig
 - Fixed problem with removing people from ignore list not actually
   removing them correctly.
