@@ -757,7 +757,6 @@ csString* psServerCharManager::GetTransInfoString(psCharacter* character, uint32
 
         // Otherwise tack on trasnformation step description to message
         transString->Append(craftArray->Get(count)->craftStepDescription.GetData());
-        transString->Append("\n");
     }
     return transString;
 }
