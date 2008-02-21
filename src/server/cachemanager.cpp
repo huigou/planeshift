@@ -961,8 +961,8 @@ bool CacheManager::PreloadTradePatterns()
     unsigned int currentrow;
     psTradePatterns* newPattern;
 
-    // Get a list of the trade patterns ignoring the group and dummy ones
-    Result result(db->Select("select * from trade_patterns where designitem_id != 0 order by designitem_id"));
+    // Get a list of the trade patterns ignoring the dummy ones
+    Result result(db->Select("select * from trade_patterns order by designitem_id"));
     if (!result.IsValid())
         return false;
 
@@ -974,7 +974,9 @@ bool CacheManager::PreloadTradePatterns()
             delete newPattern;
             return false;
         }
+        csString newName = newPattern->GetPatternString();
         tradePatterns_IDHash.Put(newPattern->GetDesignItemId(),newPattern);
+        tradePatterns_NameHash.Put(newName, newPattern);
     }
 
     Notify2( LOG_STARTUP, "%lu Trade Patterns Loaded", result.Count() );
@@ -984,6 +986,11 @@ bool CacheManager::PreloadTradePatterns()
 psTradePatterns *CacheManager::GetTradePatternByItemID(uint32 id)
 {
     return tradePatterns_IDHash.Get(id,NULL);
+}
+
+psTradePatterns *CacheManager::GetTradePatternByName(csString name)
+{
+    return tradePatterns_NameHash.Get(name,NULL);
 }
 
 // Trade Info Message
