@@ -203,8 +203,11 @@ void pawsIgnoreWindow::RemoveIgnore( csString& name )
         csString temp;
         temp.Format(PawsManager::GetSingleton().Translate("You will no longer ignore %s."), name.GetData());
         chat->ChatOutput(temp);
-        ignoredNames.Delete(name);
-
+        size_t idx = ignoredNames.FindSortedKey(name);
+        if ( idx != csArrayItemNotFound )
+        {
+            ignoredNames.DeleteIndex(idx);
+        }
         pawsListBoxRow* row = (pawsListBoxRow*)ignoreList->FindWidget( name );
         ignoreList->Select( row );
         ignoreList->RemoveSelected();
@@ -213,7 +216,8 @@ void pawsIgnoreWindow::RemoveIgnore( csString& name )
 
 bool pawsIgnoreWindow::IsIgnored(csString &name)
 {
-    return (ignoredNames.FindSortedKey(name) != csArrayItemNotFound);
+    bool result = (ignoredNames.FindSortedKey(name) != csArrayItemNotFound);
+    return result;
 }
 
 void pawsIgnoreWindow::OnStringEntered(const char *name,int param,const char *value)

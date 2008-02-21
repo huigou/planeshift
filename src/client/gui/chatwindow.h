@@ -170,6 +170,8 @@ public:
     
     void RefreshCommandList();
 
+    pawsIgnoreWindow*  GetIgnoredList() { return IgnoredList; }
+    
 protected:
 
     void HandleSystemMessage( MsgEntry* message );

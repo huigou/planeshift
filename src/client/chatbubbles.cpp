@@ -29,6 +29,8 @@
 //=============================================================================
 // Project Includes
 //=============================================================================
+#include "gui/chatwindow.h"
+
 #include "effects/pseffectmanager.h"
 #include "effects/pseffect.h"
 
@@ -219,6 +221,14 @@ void psChatBubbles::HandleMessage(MsgEntry * msg, Client * client)
         return;
 
     psChatMessage chatMsg(msg);
+    
+    // Check to see if the person talking is on the ignore list. 
+    pawsChatWindow* chatWindow = (pawsChatWindow*)PawsManager::GetSingleton().FindWidget("ChatWindow");
+    if (chatWindow->GetIgnoredList()->IsIgnored(chatMsg.sPerson) && chatMsg.iChatType != CHAT_TELLSELF && chatMsg.iChatType != CHAT_ADVISOR && chatMsg.iChatType != CHAT_ADVICE)
+    {
+        return;
+    }
+
 
     // Get the first name of the person (needed for NPCs with both the first and the last name)
     csString firstName;

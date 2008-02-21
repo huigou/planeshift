@@ -304,10 +304,6 @@ bool pawsShortcutWindow::OnButtonPressed( int mouseButton, int keyModifier, paws
             subWidget->Hide();
 
             pawsWidget * configKeyAsWidget = PawsManager::GetSingleton().FindWidget("ConfigKeys");
-            if (!configKeyAsWidget)
-            {
-                printf("Did not find config key widget\n");
-            }                
         
             pawsConfigKeys * configKey = dynamic_cast<pawsConfigKeys*>
                 (configKeyAsWidget);
@@ -315,10 +311,6 @@ bool pawsShortcutWindow::OnButtonPressed( int mouseButton, int keyModifier, paws
             if (configKey)
             {
                 configKey->UpdateNicks();
-            }                
-            else
-            {
-                printf("Widget isn't a pawsConfigKeys\n");
             }                
 
             SaveCommands();

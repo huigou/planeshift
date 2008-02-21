@@ -1,3 +1,8 @@
+*** 2008-02-20 by Andrew Craig
+- Fixed problem with removing people from ignore list not actually
+  removing them correctly.
+- Chat bubbles will no longer show for people on ignore list.
+
 *** 2008-02-20 by Kenny Graunke
 - Fix reference counting bug in pssetup's skin window.
 
