@@ -2755,7 +2755,6 @@ psItem* psWorkManager::TransformContainedItem(psItem* oldItem, uint32 newId, int
     }
 
     // Remove items from container and destroy it
-    unsigned int transformSlot = oldItem->GetLocInParent();
     container->RemoveFromContainer(oldItem,owner->GetActor()->GetClient() );
     if (!oldItem->Destroy())
     {
