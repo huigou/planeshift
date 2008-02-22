@@ -39,6 +39,30 @@ class MathScript;
 class MathScriptVar;
 class PaladinJr;
 class EntityManager;
+class psServerDR;
+
+#define USE_THREADED_DR
+
+#ifdef USE_THREADED_DR
+class DelayedDRManager : public CS::Threading::Runnable
+{
+public:
+    DelayedDRManager(psServerDR* pDR);
+
+    virtual void Run ();
+    void Push(MsgEntry* msg, Client* c);
+    void Stop();
+private:
+    csArray<MsgEntry*>arr;
+    csArray<Client*>arrClients;
+    size_t start, end;
+    CS::Threading::Mutex mutex;
+    CS::Threading::RecursiveMutex mutexArray;
+    CS::Threading::Condition datacondition;
+    bool m_Close;
+    psServerDR* serverdr;
+};
+#endif
 
 class psServerDR : public MessageManager
 {
@@ -52,6 +76,7 @@ public:
     void SendPersist();
 
     virtual void HandleMessage(MsgEntry* me,Client *client);
+    virtual void WorkOnMessage(MsgEntry* me,Client *client);
 
 protected:
 
@@ -67,6 +92,12 @@ protected:
     EntityManager       *entitymanager;
     ClientConnectionSet *clients;
     PaladinJr           *paladin;
+
+#ifdef USE_THREADED_DR    
+    csRef<DelayedDRManager> dm;
+    csRef<Thread> dmThread;
+#endif  
+
 };
 
 #endif
