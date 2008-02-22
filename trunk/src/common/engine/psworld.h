@@ -47,6 +47,7 @@ class psRegion
 protected:
     iObjectRegistry* object_reg;
     csString worlddir;
+    csString colldetworlddir;
     csString worldfile;
     csString regionname;
     bool loaded;
