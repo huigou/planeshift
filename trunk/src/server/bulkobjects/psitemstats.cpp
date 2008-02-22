@@ -1359,14 +1359,21 @@ void psItemStats::SetCreator (unsigned int characterID, PSITEMSTATS_CREATORSTATU
          creatorStatus == PSITEMSTATS_CREATOR_VALID) ||
         (creativeStats.creatorIDStatus == PSITEMSTATS_CREATOR_VALID &&
          creatorStatus == PSITEMSTATS_CREATOR_PUBLIC))
+    {
         return;
+    }
 
     creativeStats.creatorIDStatus = creatorStatus;
     if (creatorStatus == PSITEMSTATS_CREATOR_VALID)
+    {
         creativeStats.creatorID = characterID;
+    }
     else if (creatorStatus == PSITEMSTATS_CREATOR_UNKNOWN || creatorStatus == PSITEMSTATS_CREATOR_PUBLIC)
+    {
         creativeStats.creatorID = 0;
-    bool b = creativeStats.FormatCreativeContent();   // result is n/a to setting creator.
+    }
+
+    creativeStats.FormatCreativeContent();   // result is n/a to setting creator.
 }
 
 bool psItemStats::IsThisTheCreator(unsigned int characterID)
