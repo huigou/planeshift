@@ -1,3 +1,7 @@
+*** 2008-02-22 by Anders Reggestad
+- Fixed FS#989 preventing the user to issue the /pet attack command
+  on a target if its allready attacked by another person or group.
+
 *** 2008-02-22 by Sasha Levin
 - Added an experimental threaded DR manager.
 
