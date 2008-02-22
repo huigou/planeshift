@@ -95,7 +95,7 @@ public:
     
     void AdminCreateNewNPC(csString& data);
 
-    gemObject* FindObjectByString(const csString& str);
+    gemObject* FindObjectByString(const csString& str, gemActor * me) const;
 
     void AwardExperienceToTarget(int gmClientnum, Client* target, csString recipient, int ppAward);
     void AdjustFactionStandingOfTarget(int gmClientnum, Client* target, csString factionName, int standingDelta);

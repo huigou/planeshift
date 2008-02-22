@@ -1782,25 +1782,20 @@ void NPCManager::HandlePetCommand( MsgEntry * me )
                 {
                     lastName = words.GetTail( 1 );
                 }
-                
+                gemObject *target = psserver->GetAdminManager()->FindObjectByString(firstName,owner->GetActor());
+
                 firstName = NormalizeCharacterName( firstName );
-                
+                    
                 if (firstName == "Me")
                 {
                     firstName = owner->GetName();
                 }
                 lastName = NormalizeCharacterName( lastName );
                 
-                PS_ID target_id = psServer::CharacterLoader.FindCharacterID( firstName, false );
-                
-                if ( target_id )
+                if ( target ) 
                 {
-                    gemObject *target = GEMSupervisor::GetSingleton().FindPlayerEntity( target_id );
-                    if ( target ) 
-                    {
-                        pet->SetTarget( target );
-                        psserver->SendSystemInfo( me->clientnum, "%s has successfully targeted %s." , pet->GetName(), firstName.GetData() );
-                    }
+                    pet->SetTarget( target );
+                    psserver->SendSystemInfo( me->clientnum, "%s has successfully targeted %s." , pet->GetName(), target->GetName() );
                 }
                 else
                 {

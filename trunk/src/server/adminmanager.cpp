@@ -944,7 +944,7 @@ void AdminManager::HandleAdminCmdMessage(MsgEntry *me, psAdminCmdMessage &msg, A
             }
             else // Not found yet
             {
-                targetobject = FindObjectByString(data.player); // Find by ID or name
+                targetobject = FindObjectByString(data.player,client->GetActor()); // Find by ID or name
             }
         }
     }
@@ -1251,7 +1251,7 @@ void AdminManager::HandleLoadQuest(psAdminCmdMessage& msg, AdminCmdData& data, C
 }
 
 
-gemObject* AdminManager::FindObjectByString(const csString& str)
+gemObject* AdminManager::FindObjectByString(const csString& str, gemActor * me) const
 {
     gemObject* found = NULL;
     GEMSupervisor *gem = GEMSupervisor::GetSingletonPtr();
@@ -1273,6 +1273,10 @@ gemObject* AdminManager::FindObjectByString(const csString& str)
         PS_ID eID = (PS_ID)atoi( eid_str.GetDataSafe() );
         if (eID)
             found = gem->FindObject( eID );
+    }
+    else if ( me != NULL && str.CompareNoCase("me") ) // Return me
+    {
+        found = me;
     }
     else // Try finding an entity by name
     {
@@ -3138,7 +3142,7 @@ bool AdminManager::GetTargetOfTeleport(Client *client, psAdminCmdMessage& msg, A
         }
         else
         {
-            gemObject* obj = FindObjectByString(data.target); // Find by ID or name
+            gemObject* obj = FindObjectByString(data.target,player->GetActor()); // Find by ID or name
             if (!obj) // Didn't find
             {
                 return false;
