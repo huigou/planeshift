@@ -74,10 +74,9 @@ void SlotManager::HandleMessage(MsgEntry* me, Client *fromClient)
     // printf("--> To   container %d, slot %d\n", mesg.toContainer, mesg.toSlot);
 
     // If stacks are less than 1 then we should not do anything server wise.
-    // In fact, we should probably log as some client is doing something wrong.
+    // This means the player does not own the item.
     if (mesg.stackCount < 1)
     {
-        Error2("Got a slot movement message with stack count 0 from client %s.", fromClient->GetName());
         return;
     }
 
