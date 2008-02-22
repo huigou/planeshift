@@ -53,7 +53,7 @@ public:
     void Push(MsgEntry* msg, Client* c);
     void Stop();
 private:
-    csArray<MsgEntry*>arr;
+    csRefArray<MsgEntry>arr;
     csArray<Client*>arrClients;
     size_t start, end;
     CS::Threading::Mutex mutex;

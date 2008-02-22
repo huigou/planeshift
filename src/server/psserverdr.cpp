@@ -72,8 +72,8 @@ psServerDR::psServerDR()
 #ifdef USE_THREADED_DR
     dm.AttachNew(new DelayedDRManager(this));
     dmThread.AttachNew(new Thread(dm));
-    dmThread->SetPriority(CS::Threading::THREAD_PRIO_HIGH);
     dmThread->Start();
+    dmThread->SetPriority(CS::Threading::THREAD_PRIO_HIGH);
 #endif
 }
 
