@@ -424,6 +424,7 @@ psRegion::psRegion(iObjectRegistry *obj_reg, psWorld * world, const char *file)
     this->world = world;
 
     worlddir.Format("/planeshift/world/%s", file);
+    colldetworlddir.Format("/planeshift/world/colldet_%s", file);
     worldfile  = "world";
     regionname = file;
     loaded     = false;
@@ -526,7 +527,49 @@ bool psRegion::Load(bool loadMeshes)
 
     if (loadMeshes)
     {
-        SetupWorldColliders(engine,cur_region);
+        csRef<iCollideSystem> cdsys = csQueryRegistry<iCollideSystem> (object_reg);
+
+        csString target;
+        target.Format("%s/%s", colldetworlddir.GetData(), worldfile.GetData());
+
+        csRef<iDataBuffer> buf = vfs->ReadFile(target.GetData());
+        if (!buf || !buf->GetSize())
+        {
+            SetupWorldColliders(engine, cur_region);
+        }
+        else
+        {
+            const char* error = doc->Parse(buf);
+            if(error)
+            {
+                Error3("Error %s while loading colldet world file: %s.\nFalling back to normal colldet, please report this error.\n", error, target.GetData());
+                SetupWorldColliders(engine, cur_region);
+            }
+            else
+            {
+
+                csRef<iDocumentNode> worldNode = doc->GetRoot()->GetNode("world");
+
+                iRegion* colldetRegion = engine->CreateRegion("colldetPS");
+                colldetRegion->DeleteAll ();
+
+                vfs->ChDir(colldetworlddir);
+
+                if(!loader->LoadMap(worldNode, CS_LOADER_KEEP_WORLD, colldetRegion, true))
+                {
+                    Error3("LoadMap failed: %s, %s.\n", colldetworlddir.GetData(), worldfile.GetData() );
+                    Error2("Region name was: %s\nFalling back to normal colldet, please report this error.\n", regionname.GetData());
+                    SetupWorldColliders(engine, cur_region);
+                }
+                else
+                {
+                    SetupWorldColliders(engine, colldetRegion);
+                }
+
+                colldetRegion->DeleteAll();
+                engine->GetRegions()->Remove(colldetRegion);
+            }
+        }
         Debug2(LOG_LOAD, 0,"After SetupWorldColliders, %dms elapsed\n", csGetTicks()-start);
     }
 
@@ -720,6 +763,8 @@ void psRegion::Unload()
         if(rls.Get(i)->GetRefCount() == 2)
             engine->GetRenderLoopManager()->Unregister(rls.Get(i));
     }
+
+    engine->GetRegions()->Remove(cur_region);
 }
 
 void psRegion::SetupWorldColliders(iEngine *engine,iRegion* cur_region)
