@@ -1147,7 +1147,7 @@ void UserManager::ReportPosition(psUserCmdMessage& msg,Client *client,int client
         self = false;
         Client* c = psserver->GetAdminManager()->FindPlayerClient(msg.player);
         if (c) object = (gemObject*)c->GetActor();
-        if (!object) object = psserver->GetAdminManager()->FindObjectByString(msg.player);
+        if (!object) object = psserver->GetAdminManager()->FindObjectByString(msg.player,client->GetActor());
     }
     else
         object = client->GetActor();

@@ -626,7 +626,7 @@ const char *psUserCommands::HandleCommand(const char *cmd)
             // If no name give use target name if exists
             if (options.Length() == 0 && psengine->GetCharManager()->GetTarget())
             {
-                options = psengine->GetCharManager()->GetTarget()->GetName();
+                options.Format("eid:%d",psengine->GetCharManager()->GetTarget()->GetID());
             }
         default:
             // Most cases do nothing

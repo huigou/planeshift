@@ -130,9 +130,10 @@ Give your pet a new name.</topic>
 </topic>
           <topic name="/pet summon">/pet [petname,] summon
 </topic>
-          <topic name="/pet target">/pet [petname,] target [&lt;Name&gt;|me]
+          <topic name="/pet target">/pet [petname,] target [&lt;Name&gt;|me|pid:&lt;PID&gt;|eid:&lt;EID&gt;]
 
-Set the target for your pet. If no target is given use your target.</topic>
+Set the target for your pet. If no target is given use your target. You will be the target for option me. pid: will target
+the actor with the given pid.</topic>
         </branch>
         <topic name="/petition">/petition request
 

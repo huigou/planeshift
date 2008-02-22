@@ -2299,7 +2299,7 @@ bool IntroduceResponseOp::Run(gemNPC *who, Client *target,NpcResponse *owner,csT
 
     if (targetName != "Me")
     {
-        gemObject* obj = psserver->GetAdminManager()->FindObjectByString(targetName);
+        gemObject* obj = psserver->GetAdminManager()->FindObjectByString(targetName,who);
         if (obj)
         {
             psserver->GetIntroductionManager()->Introduce(character->GetCharacterID(), ((gemNPC*)obj)->GetCharacterData()->GetCharacterID());
