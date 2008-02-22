@@ -854,7 +854,6 @@ void psCombatManager::HandleCombatEvent(psCombatGameEvent *event)
                     // Pick the first ammo we can shoot from the container
                     // And set it as the active ammo
                     bool bFound = false;
-                    unsigned short containerSize = weapon->GetContainerMaxSize();
                     for (size_t i=1; i<attacker_data->Inventory().GetInventoryIndexCount() && !bFound; i++)
                     {
                         psItem* currItem = attacker_data->Inventory().GetInventoryIndexItem(i);

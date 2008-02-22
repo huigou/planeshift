@@ -425,7 +425,7 @@ bool Client::IsAllowedToAttack(gemObject * target, bool inform)
                 gemActor *attacker = GetActor();
 
                 gemActor *lastAttacker=NULL;
-                if (!foe->CanBeAttackBy(attacker,&lastAttacker))
+                if (!foe->CanBeAttackedBy(attacker,&lastAttacker))
                 {
                     if (lastAttacker)
                     {

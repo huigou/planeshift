@@ -635,7 +635,7 @@ public:
     void DoDamage(gemActor *attacker, float damage, float damageRate = 0.0f, csTicks duration=0);
     void AddAttackerHistory(gemActor * attacker, float damage, float damageRate = 0.0f, csTicks duration = 0 );
     void RemoveAttackerHistory(gemActor * attacker);
-    bool CanBeAttackBy(gemActor *attacker, gemActor ** lastAttacker) const;
+    bool CanBeAttackedBy(gemActor *attacker, gemActor ** lastAttacker) const;
     void Kill(gemActor *attacker) { DoDamage(attacker, psChar->GetHP() ); }
     void Resurrect();
 

@@ -1580,15 +1580,32 @@ void NPCManager::HandlePetCommand( MsgEntry * me )
         {
             if ( CanPetHereYou(me->clientnum, owner, pet, typeStr) && WillPetReact(me->clientnum, owner, pet, typeStr, 4))
             {
+                gemActor *lastAttacker = NULL;
                 gemObject * trg = pet->GetTarget();
                 if ( trg != NULL )
                 {
+                    gemActor * targetActor = trg->GetActorPtr();
+                    
                     if( trg->GetCharacterData()->impervious_to_attack ||
                       ( trg->GetClient() && trg->GetActorPtr()->GetInvincibility() ) ||
                       ( trg == pet ) )
 
                     {
                         psserver->SendSystemInfo(me->clientnum,"Your familiar refuses.");
+                    }
+                    else if (targetActor && !targetActor->CanBeAttackedBy(pet,&lastAttacker))
+                    {
+                        csString tmp;
+                        if (lastAttacker)
+                        {
+                            tmp.Format("You must be grouped with %s for your pet to attack %s.", 
+                                       lastAttacker->GetName(), trg->GetName());
+                        }
+                        else
+                        {
+                            tmp.Format("Your pet are not allowed to attack right now.");
+                        }
+                        psserver->SendSystemInfo(me->clientnum,tmp.GetDataSafe());
                     }
                     else
                     {

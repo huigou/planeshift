@@ -2073,7 +2073,7 @@ void gemActor::RemoveAttackerHistory(gemActor * attacker)
     }
 }
 
-bool gemActor::CanBeAttackBy(gemActor *attacker, gemActor ** lastAttacker) const
+bool gemActor::CanBeAttackedBy(gemActor *attacker, gemActor ** lastAttacker) const
 {
     *lastAttacker = NULL;
 
@@ -3016,6 +3016,10 @@ void gemActor::RemoveFromGroup()
 
 bool gemActor::IsMyPet(gemActor *other) const
 {
+    Client * client = GetClient();
+
+    if (!client) return false; // Can't own a pet if no client
+    
     return GetClient()->IsMyPet(other);
 }
 
