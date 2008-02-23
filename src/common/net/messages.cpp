@@ -4188,7 +4188,6 @@ void psDRMessage::WriteDRInfo(uint32_t client,PS_ID mappedid,
                         csStringHash* msgstrings, bool donewriting)
 {
     const char* sectorName = sector->QueryObject()->GetName();
-    csStringID sectorNameStrId = msgstrings ? msgstrings->Request(sectorName) : csInvalidStringID;
 
     msg->Add( (uint32_t) mappedid );
     msg->Add( counter );
@@ -4223,10 +4222,7 @@ void psDRMessage::WriteDRInfo(uint32_t client,PS_ID mappedid,
 
     msg->Add( (uint8_t) (yrot * 256 / TWO_PI) ); // Quantize radians to 0-255
 
-    msg->Add( (uint32_t) sectorNameStrId );
-
-    if (sectorNameStrId == csInvalidStringID)
-        msg->Add(sectorName);
+    msg->Add(sectorName);
 
     if (donewriting)  // If we're not writing anymore data after this, shrink to fit
         msg->ClipToCurrentSize();
@@ -4255,7 +4251,7 @@ void psDRMessage::operator=(psDRMessage& other)
     on_ground  = other.on_ground;
     yrot       = other.yrot;
     sector     = other.sector;
-    sectorName = other.sectorName;
+//    sectorName = other.sectorName;
 }
 
 void psDRMessage::ReadDRInfo(MsgEntry* me, csStringHash* msgstrings, iEngine *engine)
@@ -4293,8 +4289,7 @@ void psDRMessage::ReadDRInfo(MsgEntry* me, csStringHash* msgstrings, iEngine *en
     yrot = me->GetInt8();
     yrot *= TWO_PI/256;
 
-    csStringID sectorNameStrId = (csStringID)me->GetUInt32();
-    sectorName = (sectorNameStrId != csInvalidStringID) ? msgstrings->Request(sectorNameStrId) : me->GetStr() ;
+    sectorName = me->GetStr();
     sector = (sectorName.Length()) ? engine->GetSectors()->FindByName(sectorName) : NULL ;
 }
 

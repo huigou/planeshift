@@ -1,3 +1,8 @@
+*** 2008-02-23 by Sasha Levin
+- Removed hash lookups of sector name from DR message handling, instead
+  just sending the name over the net. Should improve client cpu usage.
+- NETVER BUMP!
+
 *** 2008-02-23 by Mike Gist
 - Added a workaround for FS#483 from Vornne.
 
