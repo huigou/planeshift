@@ -43,7 +43,7 @@ CREATE TABLE `item_instances` (
   `lock_skill` int(2) NOT NULL default '-1',
   `openable_locks` varchar(100) default '0',
   `item_name` varchar(100) default '',
-  `item_description` varchar(100) default '',
+  `item_description` varchar(600) default '',
   `charges` int(3) NOT NULL default '0',
   PRIMARY KEY  (`id`),
   KEY `char_id_owner` (`char_id_owner`)
