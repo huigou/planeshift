@@ -1,3 +1,6 @@
+*** 2008-02-23 by Mike Gist
+- Added a workaround for FS#483 from Vornne.
+
 *** 2008-02-22 by Mike Gist
 - Added support for loading colldet from reduced maps.
 

@@ -507,6 +507,40 @@ void pawsShortcutWindow::SaveCommands(void)
     if (!found) // Don't save if no commands have been defined
         return ;
 
+#if(CS_PROCESSOR_SIZE == 64) // Workaround pending CS trac #423
+    csString xml;
+    xml += "<shortcuts>\n";
+    csString nodeName, temp;
+    for (i=0;i < NUM_SHORTCUTS; i++)
+    {
+        if (cmds[i].IsEmpty())
+            continue;
+
+        nodeName.Format("shortcut%d", i + 1);
+        if (names[i].IsEmpty())
+        {
+            temp.Format("%d", i);
+        }
+        else
+        {
+            temp = names[i];
+        }
+        xml += "    <"; xml += nodeName; xml +=" name=\""; xml += temp; xml += "\">";
+
+        if ( (strchr (cmds[i], '\r') != 0)
+            || (strchr (cmds[i], '\n') != 0) )
+        {
+            temp.Format("<![CDATA[%s]]>", cmds[i].GetData() );
+        }
+        else
+        {
+            temp = cmds[i];
+        }
+        xml += temp; xml += "</"; xml += nodeName; xml += ">\n";
+    }
+    xml += "</shortcuts>\n";
+    vfs->WriteFile(COMMAND_FILE, xml.GetData(), xml.Length());
+#else
     // Save the commands with their labels
     csRef<iDocumentSystem> xml = csPtr<iDocumentSystem>(new csTinyDocumentSystem);
     csRef<iDocument> doc = xml->CreateDocument();
@@ -538,6 +572,7 @@ void pawsShortcutWindow::SaveCommands(void)
         text->SetValue(cmds[i].GetData());
     }
     doc->Write(vfs, COMMAND_FILE);
+#endif
 }
 
         
