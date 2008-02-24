@@ -1,3 +1,6 @@
+*** 2008-02-24 by Frank Barton
+- Set loot_rules.sql to have a unique key 'name' - preventing duplicate named loot rules
+
 *** 2008-02-24 by Anders Reggestad
 - Fixed FS#1121 where teleport crashed the server. Null pointer used
   in another fix. Now using the real and correct client pointer.
