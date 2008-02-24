@@ -167,6 +167,10 @@ void UpdaterEngine::checkForUpdates()
     {
         printOutput("Update Available!\n");
 
+        // Restore config files.
+        fileUtil->RemoveFile("/this/updaterinfo.xml");
+        fileUtil->MoveFile("/this/updaterinfo.xml.bak", "/this/updaterinfo.xml", true, false);
+
         // If using a GUI, prompt user whether or not to update.
         if(!appName.Compare("psupdater"))
         {
@@ -190,10 +194,6 @@ void UpdaterEngine::checkForUpdates()
 
         // Begin the self update process.
         selfUpdate(false);
-        // Restore config files before terminate.
-        fileUtil->RemoveFile("/this/updaterinfo.xml");
-        fileUtil->MoveFile("/this/updaterinfo.xml.bak", "/this/updaterinfo.xml", true, false);
-
         return;
     }
 
