@@ -424,7 +424,7 @@ psRegion::psRegion(iObjectRegistry *obj_reg, psWorld * world, const char *file)
     this->world = world;
 
     worlddir.Format("/planeshift/world/%s", file);
-    colldetworlddir.Format("/planeshift/world/colldet_%s", file);
+    colldetworlddir.Format("/planeshift/world/cd_%s", file);
     worldfile  = "world";
     regionname = file;
     loaded     = false;
@@ -548,14 +548,14 @@ bool psRegion::Load(bool loadMeshes)
             else
             {
 
-                csRef<iDocumentNode> worldNode = doc->GetRoot()->GetNode("world");
+                csRef<iDocumentNode> worldNodeCD = doc->GetRoot()->GetNode("world");
 
                 iRegion* colldetRegion = engine->CreateRegion("colldetPS");
                 colldetRegion->DeleteAll ();
 
                 vfs->ChDir(colldetworlddir);
 
-                if(!loader->LoadMap(worldNode, CS_LOADER_KEEP_WORLD, colldetRegion, true))
+                if(!loader->LoadMap(worldNodeCD, CS_LOADER_KEEP_WORLD, colldetRegion, CS_LOADER_ACROSS_REGIONS, true))
                 {
                     Error3("LoadMap failed: %s, %s.\n", colldetworlddir.GetData(), worldfile.GetData() );
                     Error2("Region name was: %s\nFalling back to normal colldet, please report this error.\n", regionname.GetData());
@@ -563,10 +563,9 @@ bool psRegion::Load(bool loadMeshes)
                 }
                 else
                 {
-                    SetupWorldColliders(engine, colldetRegion);
+                    SetupWorldCollidersCD(engine, cur_region, colldetRegion);
                 }
 
-                colldetRegion->DeleteAll();
                 engine->GetRegions()->Remove(colldetRegion);
             }
         }
@@ -771,10 +770,8 @@ void psRegion::SetupWorldColliders(iEngine *engine,iRegion* cur_region)
 {
     csRef<iCollideSystem> cdsys =
         csQueryRegistry<iCollideSystem> (object_reg);
-
     csRef<iObjectIterator> iter = cur_region->QueryObject()->GetIterator();
-    //return;
-    csRef<iTriangleMesh> mesh;
+
     iObject *curr;
     while ( iter->HasNext() )
     {
@@ -784,6 +781,42 @@ void psRegion::SetupWorldColliders(iEngine *engine,iRegion* cur_region)
         if (sp && sp->GetMeshObject() )
         {
             csColliderHelper::InitializeCollisionWrapper(cdsys, sp);
+
+            csRef<iThingState> thing = scfQueryInterface<iThingState> (sp->GetMeshObject());
+            if (thing)
+                thing->Prepare ();
+        }
+    }
+}
+
+void psRegion::SetupWorldCollidersCD(iEngine *engine, iRegion *cur_region, iRegion *cd_region)
+{
+    csRef<iCollideSystem> cdsys =
+        csQueryRegistry<iCollideSystem> (object_reg);
+    csRef<iObjectIterator> iter = cd_region->QueryObject()->GetIterator();
+
+    iObject *curr;
+    while (iter->HasNext())
+    {
+        curr = iter->Next();
+        // regions hold many objects, but only meshes are collide-able
+        csRef<iMeshWrapper> sp = scfQueryInterface<iMeshWrapper> (curr);
+        if (sp && sp->GetMeshObject())
+        {
+            csRef<csColliderWrapper> cw = csColliderHelper::InitializeCollisionWrapper(cdsys, sp);
+            if(cw)
+            {
+              csRef<iMeshWrapper> mw = cur_region->FindMeshObject(cw->GetObjectParent()->GetName());
+              if(mw)
+              {
+                  mw->QueryObject()->ObjAdd(cw);
+                  cw->SetObjectParent(mw->QueryObject());
+              }
+              else
+              {
+                  printf("Mesh Wrapper %s doesn't exist for collision!!\n", cw->GetObjectParent()->GetName());
+              }
+            }
 
             csRef<iThingState> thing = scfQueryInterface<iThingState> (sp->GetMeshObject());
             if (thing)

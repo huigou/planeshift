@@ -89,7 +89,8 @@ public:
      * Sets up the collision detection blockers for all meshes in
      * the region.
      */
-    void SetupWorldColliders(iEngine *engine,iRegion *cur_region);
+    void SetupWorldColliders(iEngine *engine, iRegion *cur_region);
+    void SetupWorldCollidersCD(iEngine *engine, iRegion *cur_region, iRegion *cd_region);
 
     /**
      * The retain flag is used by psWorld owner to manage the list
