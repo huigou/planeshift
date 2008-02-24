@@ -1,3 +1,7 @@
+*** 2008-02-24 by Anders Reggestad
+- Fixed FS#1121 where teleport crashed the server. Null pointer used
+  in another fix. Now using the real and correct client pointer.
+
 *** 2008-02-23 by Sasha Levin
 - Removed hash lookups of sector name from DR message handling, instead
   just sending the name over the net. Should improve client cpu usage.
