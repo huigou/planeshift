@@ -10,7 +10,8 @@
 CREATE TABLE loot_rules (
   id int(10) unsigned NOT NULL auto_increment,
   name varchar(30) ,
-  PRIMARY KEY (id)
+  PRIMARY KEY (id) ,
+  UNIQUE KEY `name` (`name`)
 );
 
 
