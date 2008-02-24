@@ -97,10 +97,21 @@ bool QuestManager::LoadQuestScripts()
 
         for (i=0; i<count; i++)
         {
-            psQuest* currQuest = CacheManager::GetSingleton().GetQuestByID(quests[i].GetInt("quest_id"));
-            if (!currQuest || !currQuest->PostLoad())
+            int quest_id = quests[i].GetInt("quest_id");
+
+            if (quest_id == -1) continue; // -1 for quest id, than it is a KAs so don't load quest.
+
+            psQuest* currQuest = CacheManager::GetSingleton().GetQuestByID(quest_id);
+            if (!currQuest) 
+            {
+                Error3("ERROR quest %s not found for quest script %s!  ",quests[i]["quest_id"], quests[i]["id"]); 
+                return false;
+            }
+            
+            if (!currQuest->PostLoad())
             {
                 Error2("ERROR Loading quest prerequisites for quest %s!  ",quests[i]["quest_id"] );
+                return false;
             }
         }
         for (i=0; i<count; i++)
@@ -109,7 +120,7 @@ bool QuestManager::LoadQuestScripts()
             if (line)
             {
                 Error3("ERROR Parsing quest script %s, line %d!  ",quests[i]["quest_id"], line );
-                //return false;
+                return false;
             }
         }
         return true;

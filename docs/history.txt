@@ -4,6 +4,8 @@
 *** 2008-02-24 by Anders Reggestad
 - Fixed FS#1121 where teleport crashed the server. Null pointer used
   in another fix. Now using the real and correct client pointer.
+- Improved error messages when loading quest_scripts. Make sure
+  server dosn't start if there are something wrong in the input data.
 
 *** 2008-02-23 by Sasha Levin
 - Removed hash lookups of sector name from DR message handling, instead
