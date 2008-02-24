@@ -324,7 +324,7 @@ bool AdminManager::AdminCmdData::DecodeAdminCmdMessage(MsgEntry *pMsg, psAdminCm
                     instanceValid = true;
                 }
             }
-        } else if (target == "here")
+        } else 
         {
             if (words.GetCount() >= 4)
             {
@@ -2084,7 +2084,8 @@ void AdminManager::Teleport(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& 
     {
         psserver->SendSystemInfo(client->GetClientNum(), "Use: /teleport <subject> <destination>\n"
                                  "Subject    : me/target/<object name>/<NPC name>/<player name>/eid:<EID>/pid:<PID>\n"
-                                 "Destination: here [<instance>]/last/spawn/restore/map [<map name>|here] <x> <y> <z> [<instance>]\n");
+                                 "Destination: me [<instance>]/target/<object name>/<NPC name>/<player name>/eid:<EID>/pid:<PID>/\n"
+                                 "             here [<instance>]/last/spawn/restore/map [<map name>|here] <x> <y> <z> [<instance>]\n");
         return;
     }
     
@@ -2099,7 +2100,9 @@ void AdminManager::Teleport(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& 
 
         psSectorInfo * mysectorinfo = NULL;
         if (mySector != NULL)
+        {
             mysectorinfo = CacheManager::GetSingleton().GetSectorInfoByName(mySector->QueryObject()->GetName());
+        }
         if (mysectorinfo == NULL)
         {
             psserver->SendSystemError(client->GetClientNum(), "Sector not found!");
@@ -2142,9 +2145,11 @@ void AdminManager::Teleport(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& 
     csVector3 oldpos;
     float oldyrot;
     iSector *oldsector;
+    int oldInstance;
     subject->GetPosition(oldpos,oldyrot,oldsector);
+    oldInstance = subject->GetInstance();
 
-    if ( (oldsector == targetSector) && (oldpos == targetPoint) && (subject->GetInstance() == targetInstance) )
+    if ( (oldsector == targetSector) && (oldpos == targetPoint) && (oldInstance == targetInstance) )
     {
         psserver->SendSystemError(client->GetClientNum(), "What's the point?");
         return;
@@ -2188,7 +2193,13 @@ void AdminManager::Teleport(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& 
     // Send explanations
     if (subject->GetClientID() != client->GetClientNum())
     {
-        psserver->SendSystemResult(client->GetClientNum(), "Teleported %s to %s", subject->GetName(), ((data.target=="map")?destName:data.target).GetData() );
+        bool instance_changed = oldInstance != targetInstance;
+        csString instance_str;
+        instance_str.Format(" in instance %d",targetInstance);
+
+        psserver->SendSystemResult(client->GetClientNum(), "Teleported %s to %s%s", subject->GetName(), 
+                                   ((data.target=="map")?destName:data.target).GetData(),
+                                   instance_changed?instance_str.GetData():"");
         psserver->SendSystemResult(subject->GetClientID(), "You were moved by a GM");
     }
     
@@ -3138,18 +3149,32 @@ bool AdminManager::GetTargetOfTeleport(Client *client, psAdminCmdMessage& msg, A
         if (player)
         {
             player->GetActor()->GetPosition(targetPoint, yRot, targetSector);
-            instance = player->GetActor()->GetInstance();
+            if (data.instanceValid)
+            {
+                instance = data.instance;
+            }
+            else
+            {
+                instance = player->GetActor()->GetInstance();
+            }
         }
         else
         {
-            gemObject* obj = FindObjectByString(data.target,player->GetActor()); // Find by ID or name
+            gemObject* obj = FindObjectByString(data.target,client->GetActor()); // Find by ID or name
             if (!obj) // Didn't find
             {
                 return false;
             }
 
             obj->GetPosition(targetPoint, yRot, targetSector);
-            instance = obj->GetInstance();
+            if (data.instanceValid)
+            {
+                instance = data.instance;
+            }
+            else
+            {
+                instance = obj->GetInstance();
+            }
         }
     }
     return true;
