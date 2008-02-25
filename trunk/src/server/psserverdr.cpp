@@ -83,8 +83,8 @@ psServerDR::~psServerDR()
         psserver->GetEventManager()->Unsubscribe(this,MSGTYPE_DEAD_RECKONING);
     //delete paladin;
 #ifdef USE_THREADED_DR
-    dmThread->Stop();
     dm->Stop();
+    dmThread->Stop();
 #endif
 }
 
