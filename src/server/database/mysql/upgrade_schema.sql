@@ -867,6 +867,10 @@ update characters c1, characters c2, characters c3 set c3.npc_master_id=c1.id wh
 #### 1179 - Sasha Levin
 ALTER TABLE item_stats MODIFY COLUMN `item_type_id_ammo` VARCHAR(30) DEFAULT '';
 
+INSERT INTO math_scripts VALUES( "CalculateMaxPetRange", "MaxRange = 10 + Skill*10;" );
+INSERT INTO math_scripts VALUES( "CalculatePetReact"," React = if(1+Skill>=Level,1,0);");
+
+UPDATE `server_options` SET `option_value`='1179' WHERE `option_name`='db_version';
 
 # Insert your upgrade before this line. Remember when you set a new db_version
 # to update the server_options.sql file and update psserver.cpp as well.
