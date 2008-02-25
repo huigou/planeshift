@@ -1145,9 +1145,22 @@ void UserManager::ReportPosition(psUserCmdMessage& msg,Client *client,int client
     if (extras && msg.player.Length())
     {
         self = false;
-        Client* c = psserver->GetAdminManager()->FindPlayerClient(msg.player);
-        if (c) object = (gemObject*)c->GetActor();
-        if (!object) object = psserver->GetAdminManager()->FindObjectByString(msg.player,client->GetActor());
+
+        if (msg.player == "target")
+        {
+            object = client->GetTargetObject();
+            if (!object)
+            {
+                psserver->SendSystemError(client->GetClientNum(), "You must have a target selected.");
+                return;
+            }
+        }
+        else
+        {
+            Client* c = psserver->GetAdminManager()->FindPlayerClient(msg.player);
+            if (c) object = (gemObject*)c->GetActor();
+            if (!object) object = psserver->GetAdminManager()->FindObjectByString(msg.player,client->GetActor());
+        }
     }
     else
         object = client->GetActor();
