@@ -249,6 +249,8 @@ void psServerCharManager::ViewItem(Client* client, int containerID, INVENTORY_SL
     }
     else // we're inspecting an item here
     {
+        psCharacter *owningCharacter = item->GetOwningCharacter();
+
         if ( item->GetIsContainer() )
         {
             SendContainerContents(client, item, slotID);
@@ -267,8 +269,8 @@ void psServerCharManager::ViewItem(Client* client, int containerID, INVENTORY_SL
         //e.g. "This book is bound in a leathery Pterosaur hide and branded with the insignia of the Sunshine Squadron"
         //NOTE that this logic is sensitive to ordering; Books currently have a nonzero "sketch" length since that's where they 
         //store their content.         
-        else if( item->GetBaseStats()->GetIsReadable() &&
-                 client->GetCharacterData() == item->GetOwningCharacter()) 
+        else if ( item->GetBaseStats()->GetIsReadable() &&
+                 (client->GetCharacterData() == owningCharacter || !owningCharacter))
         {
             //We pass through container, slot & parent IDs so that we can pass them back and forth when writing books.
             SendBookText(client, item, containerID, slotID);
