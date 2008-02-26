@@ -119,7 +119,7 @@
 #define CHAT_HISTORY_SIZE 50
 
 // Special instance to hold actors that are visible in all instances
-#define GLOBAL_INSTANCE (-1)
+#define GLOBAL_INSTANCE ((unsigned int)(-1))
 
 GEMSupervisor *gemObject::cel = NULL;
 
