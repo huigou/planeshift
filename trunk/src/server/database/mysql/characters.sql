@@ -45,7 +45,7 @@ CREATE TABLE `characters` (
   `bank_money_octas` int(10) unsigned NOT NULL default '0',
   `bank_money_hexas` int(10) unsigned NOT NULL default '0',
   `bank_money_trias` int(10) unsigned NOT NULL default '0',
-  `loc_instance` int(11) default '0',
+  `loc_instance` int(11) unsigned default '0',
   `loc_sector_id` int(10) unsigned NOT NULL default '0',
   `loc_x` float(10,2) NOT NULL default '0.00',
   `loc_y` float(10,2) NOT NULL default '0.00',
