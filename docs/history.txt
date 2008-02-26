@@ -1,6 +1,7 @@
 *** 2008-08-26 by Sasha Levin
 - Added instance support to npc spawn rules.
 - DBVER BUMP!
+- Fixed char name in description window when GMs viewing other players.
 
 *** 2008-02-24 by Sasha Levin
 - Added targeting to /pos.

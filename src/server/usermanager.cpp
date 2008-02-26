@@ -627,7 +627,7 @@ void UserManager::SendCharacterDescription(Client * client, psCharacter * charDa
         }
     }
 
-    if (!(charData->IsNPC() || charData->IsPet()) &&
+    if (!(charData->IsNPC() || charData->IsPet()) && client->GetSecurityLevel() < GM_LEVEL_0 &&
         !psserver->GetIntroductionManager()->IsIntroduced(client->GetCharacterData()->GetCharacterID(),
                                                          charData->GetCharacterID()) && !isSelf)
     {
