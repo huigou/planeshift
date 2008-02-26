@@ -133,6 +133,7 @@ protected:
     float    fixedspawnz;
     float    fixedspawnrot;
     csString fixedspawnsector;
+    unsigned int fixedinstance;
 
     /// Spawn ranges for the current rule
     BinaryRBTree<SpawnRange> ranges;
@@ -156,7 +157,8 @@ public:
                     float x,float y,float z,float angle,
                     const char *sector,
                     LootEntrySet *loot_id,
-                    int dead_time);
+                    int dead_time,
+                    unsigned int instance);
 
     int  GetID() { return id; };
     void SetID(int idval) { id = idval; };
@@ -168,7 +170,7 @@ public:
     int CheckSubstitution(int originalplayer);
 
     /// Pick a spot for the entity to respawn
-    void DetermineSpawnLoc(psCharacter *ch, csVector3& pos, float& angle, csString& sectorname);
+    void DetermineSpawnLoc(psCharacter *ch, csVector3& pos, float& angle, csString& sectorname, unsigned int& instance);
 
     /// Add a spawn range to current rule
     void AddRange(SpawnRange *range);
@@ -413,6 +415,7 @@ protected:
     float     rot;
     csString  sector;
     int       playerID;
+    unsigned int instance;
 
 public:
     psRespawnGameEvent(SpawnManager *mgr,
@@ -420,7 +423,8 @@ public:
                csVector3& pos,
                float angle,
                csString& sector,
-               int newplayer);
+               int newplayer,
+               unsigned int newinstance);
 
     virtual void Trigger();  // Abstract event processing function
 };

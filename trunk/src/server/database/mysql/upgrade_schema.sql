@@ -872,6 +872,10 @@ INSERT INTO math_scripts VALUES( "CalculatePetReact"," React = if(1+Skill>=Level
 
 UPDATE `server_options` SET `option_value`='1179' WHERE `option_name`='db_version';
 
+#### 1180 - Sasha Levin - Added instance support to npc respawn rules
+ALTER TABLE npc_spawn_rules ADD COLUMN fixed_spawn_instance INTEGER UNSIGNED NOT NULL DEFAULT 0 AFTER `fixed_spawn_sector`;
+UPDATE `server_options` SET `option_value`='1180' WHERE `option_name`='db_version';
+
 # Insert your upgrade before this line. Remember when you set a new db_version
 # to update the server_options.sql file and update psserver.cpp as well.
 # This to ensure that everything is working if you use the create_all.sql to
