@@ -473,7 +473,7 @@ void SpawnManager::PreloadDatabase()
                  "       substitute_spawn_odds,substitute_player,"
                  "       fixed_spawn_x,fixed_spawn_y,fixed_spawn_z,"
                  "       fixed_spawn_rot,fixed_spawn_sector,loot_category_id,"
-                 "       dead_remain_time"
+                 "       dead_remain_time,fixed_spawn_instance"
                  "  from npc_spawn_rules"));
     if (!result.IsValid() )
     {
@@ -499,7 +499,8 @@ void SpawnManager::PreloadDatabase()
                             result[i].GetFloat("fixed_spawn_rot"),
                             result[i]["fixed_spawn_sector"],
                             loot_set,
-                            result[i].GetInt("dead_remain_time"));
+                            result[i].GetInt("dead_remain_time"),
+                            result[i].GetUInt32("fixed_spawn_instance"));
 
         LoadSpawnRanges(newrule);
 
@@ -773,15 +774,16 @@ void SpawnManager::RemoveNPC(gemObject *obj)
     float angle;
     csString sector;
     int delay = respawn->GetRespawnDelay();
+    unsigned int instance;
 
-    respawn->DetermineSpawnLoc(obj->GetCharacterData(),pos,angle,sector);
+    respawn->DetermineSpawnLoc(obj->GetCharacterData(),pos,angle,sector,instance);
 
     // Remove mesh, etc from engine
     EntityManager::GetSingleton().RemoveActor(obj);
 
     int newplayer = respawn->CheckSubstitution(pid);
 
-    psRespawnGameEvent *newevent = new psRespawnGameEvent(this,delay,pos,angle,sector,newplayer);
+    psRespawnGameEvent *newevent = new psRespawnGameEvent(this,delay,pos,angle,sector,newplayer,instance);
     psserver->GetEventManager()->Push(newevent);
     
     csString msg;
@@ -824,11 +826,6 @@ void SpawnManager::Respawn(int instance,csVector3& where,float rot,csString& sec
     {
         Error2("Character %u to be respawned does not have character data to be loaded!\n",playerID);
         return;
-    }
-
-    if (instance == -1)  // keep the same as before
-    {
-        instance = chardata->location.worldInstance;
     }
 
     chardata->ResetMode();
@@ -1028,7 +1025,8 @@ void SpawnRule::Initialize(int idval,
                            float x,float y,float z,float angle,
                            const char *sector,
                            LootEntrySet *loot_id,
-                           int dead_time)
+                           int dead_time,
+                           unsigned int instance)
 {
     id = idval;
     minspawntime = minspawn;
@@ -1042,6 +1040,7 @@ void SpawnRule::Initialize(int idval,
     fixedspawnsector = sector;
     loot = loot_id;
     dead_remain_time = dead_time;
+    fixedinstance = instance;
 }
 
 
@@ -1063,7 +1062,7 @@ int SpawnRule::CheckSubstitution(int originalplayer)
         return originalplayer;
 }
 
-void SpawnRule::DetermineSpawnLoc(psCharacter *ch, csVector3& pos, float& angle, csString& sectorname)
+void SpawnRule::DetermineSpawnLoc(psCharacter *ch, csVector3& pos, float& angle, csString& sectorname, unsigned int& instance)
 {
     // ignore fixed point if there are ranges in this rule
 
@@ -1112,6 +1111,7 @@ void SpawnRule::DetermineSpawnLoc(psCharacter *ch, csVector3& pos, float& angle,
         pos.z = ch->spawn_loc.loc_z;
         angle = ch->spawn_loc.loc_yrot;
         sectorname = ch->spawn_loc.loc_sector->name;
+        instance = ch->spawn_loc.worldInstance;
     }
     else
     {
@@ -1121,6 +1121,7 @@ void SpawnRule::DetermineSpawnLoc(psCharacter *ch, csVector3& pos, float& angle,
         pos.z = fixedspawnz;
         angle = fixedspawnrot;
         sectorname = fixedspawnsector;
+        instance = fixedinstance;
     }
 }
 
@@ -1198,7 +1199,8 @@ psRespawnGameEvent::psRespawnGameEvent(SpawnManager *mgr,
                                        csVector3& pos,
                                        float angle,
                                        csString& sectorname,
-                                       int newplayer)
+                                       int newplayer,
+                                       unsigned int newinstance)
     : psGameEvent(0,delayticks,"psRespawnGameEvent")
 {
     spawnmanager=mgr;
@@ -1208,12 +1210,13 @@ psRespawnGameEvent::psRespawnGameEvent(SpawnManager *mgr,
     rot=angle;
     sector=sectorname;
     playerID=newplayer;
+    instance = newinstance;
 }
 
 
 void psRespawnGameEvent::Trigger()
 {
-    spawnmanager->Respawn(-1,where,rot,sector,playerID);
+    spawnmanager->Respawn(instance,where,rot,sector,playerID);
 }
 
 
