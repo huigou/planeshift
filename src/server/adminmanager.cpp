@@ -2176,7 +2176,7 @@ void AdminManager::Teleport(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& 
     }
 
     // Update ProxList on sector crossing
-    if (oldsector != targetSector)
+    if (oldsector != targetSector || oldInstance != targetInstance)
     {
         subject->UpdateProxList(true);
         psserver->SendSystemOK(subject->GetClientID(), "Welcome to " + destName);

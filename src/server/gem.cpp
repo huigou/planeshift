@@ -534,7 +534,7 @@ void GEMSupervisor::GetAllEntityPos(psAllEntityPosMessage& update)
             {
                 csVector3 pos,pos2;
                 float yrot;
-                int instance,oldInstance;
+                unsigned int instance,oldInstance;
                 iSector *sector;
                 obj->GetPosition(pos,yrot,sector);
                 instance = obj->GetInstance();
@@ -613,7 +613,7 @@ gemObject::gemObject(const char *name)
 gemObject::gemObject(const char* name, 
                      const char* factname,
                      const char* filename,
-                     int myInstance,
+                     unsigned int myInstance,
                      iSector* room,
                      const csVector3& pos,
                      float rotangle,
@@ -1157,7 +1157,7 @@ gemActiveObject::gemActiveObject( const char* name )
 gemActiveObject::gemActiveObject( const char* name,
                                      const char* factname,
                                      const char* filename,
-                                     int myInstance,
+                                     unsigned int myInstance,
                                      iSector* room,
                                      const csVector3& pos,
                                      float rotangle,
@@ -1340,7 +1340,7 @@ void gemActiveObject::SendBehaviorMessage(const csString & msg_id, gemObject *ac
 gemItem::gemItem(csWeakRef<psItem> item,
                      const char* factname,
                      const char* filename,
-                     int instance,
+                     unsigned int instance,
                      iSector* room,
                      const csVector3& pos,
                      float rotangle,
@@ -1376,7 +1376,7 @@ void gemItem::Broadcast(int clientnum, bool control )
 
 }
 
-void gemItem::SetPosition(const csVector3& pos,float angle, iSector* sector, int instance)
+void gemItem::SetPosition(const csVector3& pos,float angle, iSector* sector, unsigned int instance)
 {
     this->pos = pos;
     this->yRot = angle;
@@ -1612,7 +1612,7 @@ void gemActionLocation::Send( int clientnum, bool , bool to_superclient )
 gemActor::gemActor( psCharacter *chardata, 
                        const char* factname,
                        const char* filename,
-                       int myInstance,
+                       unsigned int myInstance,
                        iSector* room,
                        const csVector3& pos,
                        float rotangle,
@@ -2586,7 +2586,7 @@ void gemActor::SetGMDefaults()
     questtester = false;  // Always off by default
 }
 
-void gemActor::SetInstance(int worldInstance)
+void gemActor::SetInstance(unsigned int worldInstance)
 {
     this->worldInstance = worldInstance;
 }
@@ -2894,13 +2894,13 @@ bool gemActor::UpdateDR()
     return true;
 }
 
-void gemActor::GetLastSuperclientPos(csVector3& pos, int& instance) const
+void gemActor::GetLastSuperclientPos(csVector3& pos, unsigned int& instance) const
 {
     pos = lastSentSuperclientPos; 
     instance = lastSentSuperclientInstance;
 }
 
-void gemActor::SetLastSuperclientPos(const csVector3& pos, int instance)
+void gemActor::SetLastSuperclientPos(const csVector3& pos, unsigned int instance)
 {
     lastSentSuperclientPos = pos;
     lastSentSuperclientInstance = instance;
@@ -3356,7 +3356,7 @@ bool gemActor::SetMesh(const char* meshname)
 gemNPC::gemNPC( psCharacter *chardata,
                    const char* factname,
                    const char* filename,
-                   int instance,
+                   unsigned int instance,
                    iSector* room,
                    const csVector3& pos,
                    float rotangle,
@@ -3863,7 +3863,7 @@ void gemNPC::NPCTalk(const csString & text)
 gemContainer::gemContainer(csWeakRef<psItem> item,
              const char* factname,
              const char* filename,
-             int myInstance,
+             unsigned int myInstance,
              iSector* room,
              const csVector3& pos,
              float rotangle,

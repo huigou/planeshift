@@ -1,5 +1,8 @@
 *** 2008-02-24 by Sasha Levin
 - Added targeting to /pos.
+- Changed signess of instance field in DB.
+- Unsigned a bunch of instances vars.
+- Added some instance handling on teleport.
 
 *** 2008-02-25 by Dave Bentham
 - Fixed bug FS#1123: read books in containers.
