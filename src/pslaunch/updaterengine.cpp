@@ -547,6 +547,7 @@ bool UpdaterEngine::selfUpdate(int selfUpdating)
             vfs->Mount("/zip", realZipPath->GetData());
 
             // Copy new files into place.
+            fileUtil->CopyFile("/zip/" + appName, "/this/" + appName, true, true);
             fileUtil->CopyFile("/zip/" + realName, "/this/" + realName, true, true);
 
             if(appName.Compare("pslaunch"))
