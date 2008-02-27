@@ -88,3 +88,5 @@ DROP TABLE trade_transformations;
 DROP TABLE trade_processes;
 DROP TABLE trade_processes;
 DROP TABLE ways;
+DROP TABLE introductions;
+DROP TABLE guild_wars;

@@ -876,6 +876,16 @@ UPDATE `server_options` SET `option_value`='1179' WHERE `option_name`='db_versio
 ALTER TABLE npc_spawn_rules ADD COLUMN fixed_spawn_instance INTEGER UNSIGNED NOT NULL DEFAULT 0 AFTER `fixed_spawn_sector`;
 UPDATE `server_options` SET `option_value`='1180' WHERE `option_name`='db_version';
 
+#### 1181 - Sasha Levin - Added persistency to guild wars.
+CREATE TABLE `planeshift`.`guild_wars` (
+  `guild_a` INTEGER UNSIGNED NOT NULL,
+  `guild_b` INTEGER UNSIGNED NOT NULL,
+  PRIMARY KEY (`guild_a`, `guild_b`)
+)
+ENGINE = MyISAM;
+source guild_wars.sql;
+UPDATE `server_options` SET `option_value`='1181' WHERE `option_name`='db_version';
+
 # Insert your upgrade before this line. Remember when you set a new db_version
 # to update the server_options.sql file and update psserver.cpp as well.
 # This to ensure that everything is working if you use the create_all.sql to

@@ -1362,6 +1362,14 @@ void ExchangeManager::StartExchange( Client* client, bool withPlayer )
             return;
         }
 
+        // Check range
+        if( client->GetActor()->RangeTo(target) > RANGE_TO_SELECT )
+        {
+            psserver->SendSystemError(client->GetClientNum(), "%s is too far away to trade.",
+                                      target->GetName());
+            return;
+        }
+
         Exchange* exchange = new PlayerToNPCExchange(client, target, this);
         client->SetExchangeID( exchange->GetID() );
         exchanges.Push (exchange);
