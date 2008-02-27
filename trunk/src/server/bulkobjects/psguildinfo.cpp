@@ -365,13 +365,8 @@ bool psGuildInfo::RemoveGuild()
             Error2("Couldn't find guild alliance in cachemanager %i", alliance);
     }
     
-    if (db->Command("delete from guild_wars where guild_a=%d or guild_b=%d",id,id) != 1)
-    {
-        Error3("Couldn't remove guild.\nCommand was <%s>.\nError "
-            "returned was <%s>\n",
-            db->GetLastQuery(),db->GetLastError());
-        return false;
-    }
+    // No check - Might not delete anything
+    db->Command("delete from guild_wars where guild_a=%d or guild_b=%d",id,id);
 
     if (db->Command("delete from guilds where id=%d",id) != 1)
     {
