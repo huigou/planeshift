@@ -3318,6 +3318,13 @@ bool gemActor::SetMesh(const char* meshname)
 
         if ( pcmesh->SetMesh(meshname,newmesh) )
         {
+            if (pcmove)
+            {
+                delete pcmove;
+                pcmove = NULL;
+            }
+            InitLinMove(pos, angle, sector);
+
             SetPosition(pos,angle,sector);
             MulticastDRUpdate();
 
