@@ -18,6 +18,9 @@
  */
  
 #include <psconfig.h>
+
+#include <iutil/databuff.h>
+
 #include "globals.h"
 
 #include "pawswritingwindow.h"
@@ -28,9 +31,9 @@
 #include "net/msghandler.h"
 #include "util/log.h"
 
-
 #define CANCEL 101
 #define SAVE   103
+#define LOAD   104
 
 pawsWritingWindow::pawsWritingWindow(){
 
@@ -139,8 +142,41 @@ bool pawsWritingWindow::OnButtonPressed( int mouseButton, int keyModifier, pawsW
 
             return true;
         }
+        case LOAD:
+        {
+            pawsStringPromptWindow::Create("Enter local filename", "", false, 220, 20, this, "FileNameBox", 0, true);
+        }
     }
 
     return false;
+}
+
+void pawsWritingWindow::OnStringEntered(const char *name, int param,const char *value)
+{
+    const unsigned int MAX_BOOK_FILE_SIZE = 3000;
+
+    csString fileName;
+    csRef<iVFS> vfs = psengine->GetVFS();
+    if (!value)
+        return;
+
+    fileName.Format("/this/%s", value);
+    if (!vfs->Exists(fileName))
+    {
+        psSystemMessage msg(0, MSG_ERROR, "File not found!" );
+        msg.FireEvent();
+        return;
+    }    
+    csRef<iDataBuffer> data = vfs->ReadFile(fileName);
+    if (data->GetSize() > MAX_BOOK_FILE_SIZE)
+    {
+        psSystemMessage msg(0, MSG_ERROR, "File too big, data trimmed to %d chars.", MAX_BOOK_FILE_SIZE );
+        msg.FireEvent();
+    }        
+    csString book(data->GetData(), MIN(data->GetSize(), MAX_BOOK_FILE_SIZE));
+    lefttext->SetText(book, true);
+    
+    psSystemMessage msg(0, MSG_ACK, "Book Loaded Successfully!" );
+    msg.FireEvent();
 }
 

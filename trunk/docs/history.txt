@@ -3,6 +3,7 @@
 - Added persistency to guild wars.
 - Fixed FS#1129 - /give command anomaly - Thanks Vornne.
 - DBVER BUMP!
+- Added book loading and saving from/to local files.
 
 *** 2008-08-26 by Sasha Levin
 - Added instance support to npc spawn rules.

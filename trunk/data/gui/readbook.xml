@@ -22,6 +22,11 @@
         <frame x="5" y="5" width="22" height="22" />
         <bgimage resource="Scribe" />
     </widget>
+
+    <widget name="SaveButton" factory="pawsButton" id="1002" tooltip="Save this book">
+        <frame x="35" y="5" width="22" height="22" />
+        <bgimage resource="Scribe" />
+    </widget>
         
     </widget>
 
