@@ -76,6 +76,7 @@ STATIC.PLUGINLIST =
   simpleformerldr
   sndmanager
   sndsysloader
+  sndsysnull
   sndsysogg
   sndsyssoft
   sndsyswav
