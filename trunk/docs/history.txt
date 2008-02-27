@@ -1,5 +1,8 @@
 *** 2008-08-27 by Sasha Levin
 - Fixed crash on /morph.
+- Added persistency to guild wars.
+- Fixed FS#1129 - /give command anomaly - Thanks Vornne.
+- DBVER BUMP!
 
 *** 2008-08-26 by Sasha Levin
 - Added instance support to npc spawn rules.

@@ -152,6 +152,13 @@ bool psGuildInfo::Load(iResultRow& row)
     // Load bank money.
     bankMoney.Set(row.GetInt("bank_money_circles"), row.GetInt("bank_money_octas"), row.GetInt("bank_money_hexas"), row.GetInt("bank_money_trias"));
 
+    Result wars(db->Select("SELECT * FROM guild_wars WHERE guild_a = %d", id));
+    if (wars.IsValid())
+    {
+        for (unsigned int i = 0 ; i < wars.Count() ; i++)
+            guild_war_with_id.Push(wars[i].GetInt("guild_b"));
+    }
+
     psserver->GetGuildManager()->CheckMinimumRequirements(this,NULL);
     
     return true;
@@ -358,6 +365,14 @@ bool psGuildInfo::RemoveGuild()
             Error2("Couldn't find guild alliance in cachemanager %i", alliance);
     }
     
+    if (db->Command("delete from guild_wars where guild_a=%d or guild_b=%d",id,id) != 1)
+    {
+        Error3("Couldn't remove guild.\nCommand was <%s>.\nError "
+            "returned was <%s>\n",
+            db->GetLastQuery(),db->GetLastError());
+        return false;
+    }
+
     if (db->Command("delete from guilds where id=%d",id) != 1)
     {
         Error3("Couldn't remove guild.\nCommand was <%s>.\nError "
@@ -635,6 +650,7 @@ bool psGuildInfo::SetWebPage(const csString & web_page)
 void psGuildInfo::AddGuildWar(psGuildInfo *other)
 {
     guild_war_with_id.Push( other->id );
+    db->CommandPump("INSERT INTO guild_wars VALUES(%d, %d)", id, other->id);
 }
 
 bool psGuildInfo::IsGuildWarActive(psGuildInfo *other)
@@ -650,6 +666,7 @@ bool psGuildInfo::IsGuildWarActive(psGuildInfo *other)
 void psGuildInfo::RemoveGuildWar(psGuildInfo *other)
 {
     guild_war_with_id.Delete(other->id);
+    db->CommandPump("DELETE FROM guild_wars WHERE guild_a = %d and guild_b = %d", id, other->id);
 }
 
 
