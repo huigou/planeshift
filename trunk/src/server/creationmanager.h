@@ -33,6 +33,8 @@
 //=============================================================================
 #include "msgmanager.h"
 
+#define MAX_PLAYER_NAME_LENGTH 27
+
 enum ReservedNames {NAME_RESERVED_FOR_YOU, NAME_RESERVED, NAME_AVAILABLE};
 
 /** Server manager for character creation.

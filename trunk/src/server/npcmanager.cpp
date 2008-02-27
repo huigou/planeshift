@@ -1689,6 +1689,11 @@ void NPCManager::HandlePetCommand( MsgEntry * me )
             }
             
             firstName = words.Get( 0 );
+            if (firstName.Length() > MAX_PLAYER_NAME_LENGTH)
+            {   
+                psserver->SendSystemError( me->clientnum, "First name is too long!");   
+                return;   
+            }
             firstName = NormalizeCharacterName( firstName );
             if ( !psCharCreationManager::FilterName( firstName ) )   
             {   
@@ -1698,6 +1703,12 @@ void NPCManager::HandlePetCommand( MsgEntry * me )
             if ( words.GetCount() > 1 )
             {
                 lastName = words.GetTail( 1 );
+                if (lastName.Length() > MAX_PLAYER_NAME_LENGTH)
+                {   
+                    psserver->SendSystemError( me->clientnum, "Last name is too long!");   
+                    return;   
+                }
+
                 lastName = NormalizeCharacterName( lastName );
                 if ( !psCharCreationManager::FilterName( lastName ) )   
                 {   

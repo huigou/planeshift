@@ -364,14 +364,14 @@ void psCharCreationManager::HandleName( MsgEntry* me, Client *client )
         return;
     }
 
-    if (name.firstName.Length() > 27)
+    if (name.firstName.Length() > MAX_PLAYER_NAME_LENGTH)
     {
         psNameCheckMessage response(me->clientnum, false, "First name is too long!");
         response.SendMessage();
         return;
     }
 
-    if (name.lastName.Length() > 27)
+    if (name.lastName.Length() > MAX_PLAYER_NAME_LENGTH)
     {
         psNameCheckMessage response(me->clientnum, false, "Last name is too long!");
         response.SendMessage();
