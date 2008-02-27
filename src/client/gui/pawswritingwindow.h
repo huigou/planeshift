@@ -22,7 +22,8 @@
  
  #include "paws/pawswidget.h"
  #include "paws/pawstextbox.h"
- 
+ #include "paws/pawsstringpromptwindow.h"
+
  #define MAX_TITLE_LEN 50
  #define MAX_CONTENT_LEN 65450
 
@@ -31,7 +32,7 @@
  lalalala
  */
  
- class pawsWritingWindow: public pawsWidget, public psClientNetSubscriber
+ class pawsWritingWindow: public pawsWidget, public psClientNetSubscriber, public iOnStringEnteredAction
  /* la? */
  {
  /* la. */
@@ -40,7 +41,8 @@ public:
     //the inks & pens that the server sends us
     pawsWritingWindow();
     virtual ~pawsWritingWindow();
-     
+
+    void OnStringEntered(const char *name, int param,const char *value);
     bool OnButtonPressed(int mouseButton, int keyModifier, pawsWidget* widget);
     bool PostSetup();
     void RequestDetails();

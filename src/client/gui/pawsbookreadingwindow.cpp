@@ -37,6 +37,7 @@
 #include "pawsbookreadingwindow.h"
 
 #define EDIT 1001
+#define SAVE 1002
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
@@ -101,6 +102,26 @@ bool pawsBookReadingWindow::OnButtonPressed( int mouseButton, int keyModifier, p
         // attempt to write on this book
         psWriteBookMessage msg(slotID, containerID);
         msg.SendMessage();
+    }
+
+    if (widget->GetID() == SAVE)
+    {
+        csRef<iVFS> vfs = psengine->GetVFS();
+        unsigned int tempNumber = 0;
+        csString tempFileNameTemplate = "/this/book%d.txt", tempFileName;
+        csString bookFormat;
+        do
+        {
+            tempFileName.Format(tempFileNameTemplate, tempNumber);
+            tempNumber++;
+        } while (vfs->Exists(tempFileName));
+        bookFormat.Format("%s\r\n--------------------------------------------\r\n%s", 
+                            name->GetText(), description->GetText());
+
+        vfs->WriteFile(tempFileName, bookFormat, bookFormat.Length());
+        psSystemMessage msg(0, MSG_ACK, "Book saved to %s", tempFileName.GetData()+6 );
+        msg.FireEvent();
+        return true;
     }
 
     // close the Read window

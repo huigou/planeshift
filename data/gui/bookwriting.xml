@@ -20,6 +20,12 @@
             <label text="OK"/>
         </widget>
 
+        <widget name="load" factory="pawsButton" id="104"  style="button" >
+            <frame x="170" y="400" width="50" height="30"/>
+           <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="12"/>
+            <label text="Load"/>
+        </widget>
+
         <widget name="cancel" factory="pawsButton" id="101"  style="button" >
             <frame x="290" y="400" width="70" height="30"/>
            <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="12"/>
