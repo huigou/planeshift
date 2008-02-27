@@ -1,3 +1,6 @@
+*** 2008-08-27 by Dave Bentham
+- Fixed bug FS#1086: long pet names
+
 *** 2008-08-27 by Sasha Levin
 - Fixed crash on /morph.
 - Added persistency to guild wars.
