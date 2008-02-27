@@ -1,3 +1,6 @@
+*** 2008-08-27 by Sasha Levin
+- Fixed crash on /morph.
+
 *** 2008-08-26 by Sasha Levin
 - Added instance support to npc spawn rules.
 - DBVER BUMP!
