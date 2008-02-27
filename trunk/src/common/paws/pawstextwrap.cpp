@@ -390,7 +390,7 @@ void pawsMultilineEditTextBox::LayoutText()
             font->GetDimensions(tempString,tailWidth,height);
             srcPos += word.Length();
         } 
-        else if(width < screenWidth) 
+        else if(width > screenWidth) 
         {
             //Wordwrap 
             totalCount += tempString.Length();
