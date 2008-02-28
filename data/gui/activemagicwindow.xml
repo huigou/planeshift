@@ -4,8 +4,8 @@
         visible="yes" savepositions="yes" movable="yes" resizable="no" configurable="yes">
         
     <frame x="0" y="200" width="340" height="150" border="yes" />
-    <title resource="Blue Title" text="Active Magics" align="left" close_button="yes" />
-	<bgimage resource="Detail Background" alpha="128" />
+    <title resource="Blue Title" text="Active Magic" align="left" close_button="yes" />
+	<bgimage resource="Standard Background" alpha="128" />
 	
     <widget name="lblBuffCategories" factory="pawsTextBox">
         <frame x="17" y="12" width="136" height="20" border="no" />
