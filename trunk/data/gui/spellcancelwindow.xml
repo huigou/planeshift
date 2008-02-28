@@ -4,7 +4,7 @@
         visible="yes" savepositions="yes" movable="yes" resizable="no" >
         
     <frame x="0" y="200" width="170" height="94" border="yes" />
-    <title resource="Blue Title" text="Spell casting" align="left" />
+    <title resource="Blue Title" text="Spell Casting" align="left" />
     <bgimage resource="Spell Cancel" alpha="128" />
 
     <!-- Spell Progress -->
@@ -16,7 +16,7 @@
 
     <!-- Cancel button -->
     <widget name="Cancel" factory="pawsButton" id="100">
-        <frame x="55" y="60" width="60" height="24" border="no"/>
+        <frame x="45" y="60" width="80" height="24" border="no"/>
         <bgimage resource="Standard Button" />
         <label text="Cancel" />
     </widget>

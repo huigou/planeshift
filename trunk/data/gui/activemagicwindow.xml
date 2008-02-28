@@ -4,19 +4,19 @@
         visible="yes" savepositions="yes" movable="yes" resizable="no" configurable="yes">
         
     <frame x="0" y="200" width="340" height="150" border="yes" />
-    <bgimage resource="Standard Background" />
     <title resource="Blue Title" text="Active Magics" align="left" close_button="yes" />
-
+	<bgimage resource="Detail Background" alpha="128" />
+	
     <widget name="lblBuffCategories" factory="pawsTextBox">
-        <frame x="17" y="2" width="136" height="20" border="no" />
+        <frame x="17" y="12" width="136" height="20" border="no" />
         <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="64" g="255" b="64" size="10" />
         <text string="Buffs" horizAdjust="CENTRE" />    
     </widget>
     <widget name="BuffCategories" factory="pawsListBox">
-        <frame x="17" y="23" width="136" height="100" margin="5" border="no" />
+        <frame x="20" y="23" width="145" height="110" margin="5" border="no" />
         <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="12" />
         <columns height="15" headings="no">
-            <column width="110" >
+            <column width="125" >
                 <widget name="BuffName" factory="pawsTextBox">
                     <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="0" g="255" b="0" size="8" />
                 </widget>
@@ -25,15 +25,15 @@
     </widget>
 
     <widget name="lblDebuffCategories" factory="pawsTextBox">
-        <frame x="159" y="2" width="136" height="20" border="no" />
+        <frame x="159" y="12" width="145" height="20" border="no" />
         <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="64" b="64" size="10" />
         <text string="Debuffs" horizAdjust="CENTRE" />    
     </widget>
     <widget name="DebuffCategories" factory="pawsListBox">
-        <frame x="159" y="23" width="136" height="100" margin="5" border="no" />
+        <frame x="175" y="23" width="145" height="110" margin="5" border="no" />
         <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="12" />
         <columns height="15" headings="no">
-            <column width="110" >
+            <column width="125" >
                 <widget name="DebuffName" factory="pawsTextBox">
                     <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="0" b="0" size="8" />
                 </widget>
