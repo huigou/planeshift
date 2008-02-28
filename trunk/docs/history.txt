@@ -1,7 +1,7 @@
-*** 2008-08-27 by Dave Bentham
+*** 2008-02-27 by Dave Bentham
 - Fixed bug FS#1086: long pet names
 
-*** 2008-08-27 by Sasha Levin
+*** 2008-02-27 by Sasha Levin
 - Fixed crash on /morph.
 - Added persistency to guild wars.
 - Fixed FS#1129 - /give command anomaly - Thanks Vornne.
@@ -9,7 +9,7 @@
 - Added book loading and saving from/to local files.
 - Fixed crash in pawsMultilineEditTextBox caused due to bad text wrapping.
 
-*** 2008-08-26 by Sasha Levin
+*** 2008-02-26 by Sasha Levin
 - Added instance support to npc spawn rules.
 - DBVER BUMP!
 - Fixed char name in description window when GMs viewing other players.
