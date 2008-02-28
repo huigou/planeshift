@@ -26,13 +26,17 @@ Michael "Borrillis" Cummings, for Pets system, char creation affinity.
 
 Andrew "Khaki" Dai, for client/server synchronization, anti-cheat modules, improved collision detection.
 
-Michael "Xordan" Gist, for banking system, many bug fixes, and new distributions.
+Michael "Xordan" Gist, for new updater, banking system, many bug fixes, and new distributions.
 
 Kenny "Kayden" Graunke, for bug fixing, code clean up, inventory, containers and non mortal duels.
+
+Sasha "Kemedes" Levin, for commands improvements, char deletion and lot of bug fixing.
 
 Anders "Magodra" Reggestad, for magic system implementation, NPC AI, tribes and a lot more.
 
 Andrew "aarobber" Robberts, for camera movement, particles, shadows, chat bubbles.
+
+Roland "Ragnarin" Schulz, for improving the char labels and endless other fixes.
 
 Thomas "TomT" Towey, for weapon and armor craft systems, server maintenance and many bug fixes.
 
