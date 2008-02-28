@@ -1,5 +1,6 @@
 *** 2008-02-28 by Roland Schulz
 - small spell window changes by ThomPhoenix
+- also fix typo and revert background change - doesn't look good on default skin
 
 *** 2008-02-27 by Dave Bentham
 - Fixed bug FS#1086: long pet names
