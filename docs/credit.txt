@@ -1,4 +1,4 @@
-@PlaneShift Team at Crystal Blue 020 Release (released Oct-2007)
+﻿@PlaneShift Team at Steel Blue 0.4.00 Release (released February-2008)
 
 &Project Leader, Director and Overall Camp Counselor
 
@@ -7,47 +7,46 @@ Luca "Talad" Pancallo, for building a great team to make a dream come true.
 
 &The pillars
 
-Andrew "Acraig" Craig, for client gui foundation, char creation screens, equipment, inventory, ...
+Andrew "Acraig" Craig, for client gui foundation, char creation screens, equipment, inventory, overall coordination ...
 
-Keith "Vengeance" Fulton, for lights, animations management, char customization, client/server connections, ...
+Brian Lee "Xillix" Bonfonti, Setting department leader, for quests, npcs dialogues, books, prospect management, hard work and lot of passion
 
 
 &Client and Server engine
 
 Andrew "Acraig" Craig, client side department leader.
 
-Keith "Vengeance" Fulton, server side department leader.
+Keith "Vengeance" Fulton, for lights, animations management, char customization, client/server connections, ...
 
-Arianna "AryHann" Benigno, for marriage system, weather and many bug fixes.
+Arianna "AryHann" Benigno, for marriage system, weather, running the testing team and many bug fixes.
+
+Dave "Acissej" Bentham, for maps/book uniqueness, spells, active magic window, events commands.
 
 Michael "Borrillis" Cummings, for Pets system, char creation affinity.
 
 Andrew "Khaki" Dai, for client/server synchronization, anti-cheat modules, improved collision detection.
 
-Daniel "dfryer" Fryer, for the MacOSX distribution of PlaneShift.
+Michael "Xordan" Gist, for banking system, many bug fixes, and new distributions.
 
-Andrew "Rhad" Mann, for new sound plugin and advanced networking.
+Kenny "Kayden" Graunke, for bug fixing, code clean up, inventory, containers and non mortal duels.
 
 Anders "Magodra" Reggestad, for magic system implementation, NPC AI, tribes and a lot more.
 
 Andrew "aarobber" Robberts, for camera movement, particles, shadows, chat bubbles.
 
-Thomas "TomT" Towey, for weapon and armor craft systems.
+Thomas "TomT" Towey, for weapon and armor craft systems, server maintenance and many bug fixes.
 
-Dave "Acissej" Bentham, for maps/book uniqueness, spells, active magic window, events commands.
+Enar "Bereror" Väikene, for minigames and bug fixing.
 
-Enar "Bereror" Väikene, for minigames and many bug fixes.
-
-Kenny "Kayden" Graunke, for contributing to the debug and fix of version 019, inventory and containers.
 
 
 &Settings
 
 Brian Lee "Xillix" Bonfonti, Setting department leader, for quests, npcs dialogues, books.
 
-Steve "Darkmoon" Scott, for maps, npcs dialogues, quests and knowledge areas.
+Desmond "Jeraphon", for quests, npc dialogues, kas and books.
 
-Desmond "Jeraphon", for quests and npc dialogues.
+Steve "Darkmoon" Scott, for maps, npcs dialogues, quests and knowledge areas.
 
 Stacy "Venae Rell" Davis, for uncompromising editing, written and artistic contributions, and superior prospect management.
 
@@ -56,40 +55,32 @@ Fred "Steuben" Prentice, for npc paths, and engine liason duties.
 
 &2D Art
 
+Rob "Ulf" Walker, for gugrontid level, lot of good textures and his motivation
+
+Kelvin "Gluonite" Mason for gugrontid textures, derghir tools, houses and textures, items.
+
 Elina "Karyuu" Eganova, for player and monsters skins, icons, new web site, armor skins and more.
 
 Jan "Ghrynn" Horak, for new character skeleton and new animations for player races.
-
-Vicky "Moogie" Hoskin, for player skins, face customization and additional 2d art.
 
 Alexei "Inca" Popov, for great architectural sketches on player races and other concept art.
 
 Ethan "Gentar" Scheu, for bronze doors texturing, and armor textures.
 
-Christina "Nanaki" Stadlmann, for player character skins and splashscreen.
-
 
 &3D Art
+
+Ville "Cherppow" Rantapuska, for many item models, stone and elves client skins, deathrealm expansion and more.
+
+Rob "Ulf" Walker, for gugrontid level, lot of good textures and his motivation
+
+Stacy "Venae Rell" Davis, for blackflame and xiosia altars and other textures.
 
 Creath "Artician" Carter, for his impressive hard work and focus on critical assets like arena, ojaveda, roads.
 
 Ben "Djaggernaut" Chavigner, for carkarass and consumer monster, plus amazing additions to death realm.
 
 Erik "Erik" Bakker, for Trepor model, Klyros model, sewers level, player animations.
-
-Niklas "Niber" Bergström for shields, items models, and magic shop.
-
-Mattew "TorQ" Carter, for the dwarf model, magic shop outside model.
-
-Aaron "Storm" Gardiner, for animations of player characters.
-
-Natalia "Nata3D" Mitrofanova, for the ulbenault monster.
-
-Stefano "Boonet" Oggeri, for his contribution of models, renderings, textures and style.
-
-Ville "Cherppow" Rantapuska, for many item models, stone and elves client skins, deathrealm expansion and more.
-
-Harry "Massie" Vermeulen, for models and animations of many monsters.
 
 
 &Rules
@@ -104,11 +95,6 @@ Ruslan "Ellarion" Perezhilo, for travel songs, death jingles and lot of nice sou
 Jiri "GeorgeD" Ptacek, for death realm song, victory jingles and lot of nice sounds
 
 Bruno "CyberMozart" Largarde, for the main theme, intro songs and battle theme
-
-
-&PR
-
-Luca "Talad" Pancallo, for managing PR activities with no members!
 
 
 @Special Thanks to
@@ -128,3 +114,5 @@ Fragnetics Team (www.fragnetics.com) for providing the necessary hardware and ba
 All the former developers for their work and contributions to PlaneShift.
 
 .... and to all our players, fans and supporters!
+
+@Be sure to read the other credits files in docs directory to have a full list of developers of previous releases.
