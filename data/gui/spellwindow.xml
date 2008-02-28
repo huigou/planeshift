@@ -1,13 +1,13 @@
 <widget_description>
 
-<widget name="SpellBookWindow" factory="pawsSpellBookWindow" 
-        visible="no" savepositions="yes" movable="yes" 
+<widget name="SpellBookWindow" factory="pawsSpellBookWindow"
+        visible="no" savepositions="yes" movable="yes"
         resizable="no" configurable="yes" >
-            
+
     <frame x="200" y="200" width="400" height="300" border="yes" />
     <bgimage resource="Spellbook Background" alpha="128" />
     <title resource="Blue Title" text="Spell Book" align="left" close_button="yes"/>
-   
+
     <widget name="Combine" factory="pawsButton" id="100" tooltip="Combine Glyphs" >
         <frame x="148" y="5" width="32" height="32" />
         <bgimage resource="PurifyGlyphButton" />
@@ -33,43 +33,42 @@
     </widget>
 
     <widget name="SpellList" factory="pawsListBox"  >
-        <frame x="22" y="128" width="358" height="146" margin="5" border="no" />
+        <frame x="22" y="128" width="356" height="146" margin="5" border="no" />
         <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" size="12" />
         <columns height="32" headings="yes">
-            <column width="110" >
+            <column width="120" >
                 <widget name="Name" factory="pawsTextBox">
                     <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="8" />
                 </widget>
-            </column>                                               
+            </column>
             <column width="40" >
                 <widget name="Glyph" factory="pawsWidget">
                     <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="8" />
                 </widget>
-            </column>                                               
-            <column width="25" >            
+            </column>
+            <column width="25" >
                 <widget name="" factory="pawsWidget"></widget>
-            </column>                                               
-            <column width="25" >            
+            </column>
+            <column width="25" >
                 <widget name="" factory="pawsWidget"></widget>
-            </column>                                               
-            <column width="25" >            
+            </column>
+            <column width="25" >
                 <widget name="" factory="pawsWidget"></widget>
-            </column>                                               
-            <column width="75" >
+            </column>
+            <column width="45" >
                 <widget name="Way" factory="pawsTextBox">
                     <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="8" />
                 </widget>
-            </column>                                               
+            </column>
             <column width="45" >
                 <widget name="Realm" factory="pawsTextBox">
                     <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="8" />
                     <frame x="15" y="0" width="20" height="20"/>
                 </widget>
-            </column>                                               
+            </column>
         </columns>
     </widget>
 
 </widget>
 
 </widget_description>
-
