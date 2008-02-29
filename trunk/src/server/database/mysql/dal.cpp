@@ -84,7 +84,10 @@ bool psMysqlConnection::Initialize(const char *host, unsigned int port, const ch
     // errors if this call fails.
     MYSQL *conn_check = mysql_real_connect(conn,host,user,pwd,database,port,NULL,CLIENT_FOUND_ROWS);
     my_bool my_true = true;
+
+#if MYSQL_VERSION_ID >= 50000
     mysql_options(conn_check, MYSQL_OPT_RECONNECT, &my_true);
+#endif
 
 #ifdef USE_DELAY_QUERY
     dqm.AttachNew(new DelayedQueryManager(host,port,user,pwd,database));
@@ -579,7 +582,10 @@ void DelayedQueryManager::Run()
     MYSQL *conn=mysql_init(NULL);
     m_conn = mysql_real_connect(conn,m_host,m_user,m_pwd,m_db,m_port,NULL,CLIENT_FOUND_ROWS);
     my_bool my_true = true;
+
+#if MYSQL_VERSION_ID >= 50000
     mysql_options(m_conn, MYSQL_OPT_RECONNECT, &my_true);    
+#endif
 
     psStopWatch timer;
     while(!m_Close)
