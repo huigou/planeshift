@@ -1,4 +1,4 @@
-@PlaneShift Team at Steel Blue 0.4.00 Release (released February-2008)
+﻿@PlaneShift Team at Steel Blue 0.4.00 Release (released February-2008)
 
 &Project Leader, Director and Overall Camp Counselor
 
@@ -60,7 +60,7 @@ Frank "Eriroley" Barton, for quests, editing, and for work on the WebConsole
 
 Sherry "Rizin" Heidkamp, for quests, books, NPCs, and exceptional editing
 
-Melissa "Ellille" barton for her aid in furthering settings and making the world make sense
+Melissa "Ellille" Barton for her aid in furthering settings and making the world make sense
 
 Angela "Jyoshka" Miller, for quests, books and KAs
 
