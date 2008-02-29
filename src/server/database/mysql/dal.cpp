@@ -580,7 +580,14 @@ void DelayedQueryManager::Run()
 {
     mysql_thread_init();
     MYSQL *conn=mysql_init(NULL);
+    printf("Starting secondary connection with params: %s %s %s %d", m_host.GetData(), m_user.GetData(), m_db.GetData(), m_port);
     m_conn = mysql_real_connect(conn,m_host,m_user,m_pwd,m_db,m_port,NULL,CLIENT_FOUND_ROWS);
+    if (!m_conn)
+    {
+        printf("Failed to connect to database: Error: %s\n", mysql_error(conn));
+        return;
+    }
+
     my_bool my_true = true;
 
 #if MYSQL_VERSION_ID >= 50000
