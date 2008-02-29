@@ -1,4 +1,4 @@
-﻿@PlaneShift Team at Steel Blue 0.4.00 Release (released February-2008)
+@PlaneShift Team at Steel Blue 0.4.00 Release (released February-2008)
 
 &Project Leader, Director and Overall Camp Counselor
 
@@ -26,7 +26,7 @@ Michael "Borrillis" Cummings, for Pets system, char creation affinity.
 
 Andrew "Khaki" Dai, for client/server synchronization, anti-cheat modules, improved collision detection.
 
-Michael "Xordan" Gist, for new updater, banking system, many bug fixes, and new distributions.
+Michael "Xordan" Gist, for a new updater, banking system, many bug fixes and optimisations, and cross-platform maintenance.
 
 Kenny "Kayden" Graunke, for bug fixing, code clean up, inventory, containers and non mortal duels.
 
@@ -40,7 +40,7 @@ Roland "Ragnarin" Schulz, for improving the char labels and endless other fixes.
 
 Thomas "TomT" Towey, for weapon and armor craft systems, server maintenance and many bug fixes.
 
-Enar "Bereror" Väikene, for minigames and bug fixing.
+Enar "Bereror" V�ikene, for minigames and bug fixing.
 
 
 
@@ -89,6 +89,8 @@ Rob "Ulf" Walker, for gugrontid level, lot of good textures and his motivation
 
 Stacy "Venae Rell" Davis, for blackflame and xiosia altars and other textures.
 
+Elina "Karyuu" Eganova, for Tlo-ke, Kikiri and female Dermf models, Klyros male and Dermorian female animations.
+
 Creath "Artician" Carter, for his impressive hard work and focus on critical assets like arena, ojaveda, roads.
 
 Ben "Djaggernaut" Chavigner, for carkarass and consumer monster, plus amazing additions to death realm.
@@ -99,6 +101,8 @@ Erik "Erik" Bakker, for Trepor model, Klyros model, sewers level, player animati
 &Rules
 
 Michael "Xordan" Gist, for balancing progression system and new stamina rules.
+
+Scott "Starg" Gibson, for adding new crafting, repairing old crafting, and many other small fixes.
 
 
 &Music and sounds
