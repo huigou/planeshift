@@ -546,7 +546,7 @@ const char *psUserCommands::HandleCommand(const char *cmd)
         if (pText.IsEmpty())
             return "You must enter the text. e.g /Advisor [text]";
 
-        psAdviceMessage advice(0,words[0],pPerson, pText);
+        psAdviceMessage advice(0,words[0].GetDataSafe(),pPerson.GetDataSafe(), pText.GetDataSafe());
         msgqueue->SendMessage(advice.msg);
         return NULL;
     }
