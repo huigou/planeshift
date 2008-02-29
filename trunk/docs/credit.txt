@@ -104,6 +104,7 @@ Michael "Xordan" Gist, for balancing progression system and new stamina rules.
 
 Scott "Starg" Gibson, for adding new crafting, repairing old crafting, and many other small fixes.
 
+
 &Music and sounds
 
 Ruslan "Ellarion" Perezhilo, for travel songs, death jingles and lot of nice sounds
