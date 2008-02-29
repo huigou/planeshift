@@ -525,7 +525,7 @@ const char *psUserCommands::HandleCommand(const char *cmd)
         if ( words.GetCount() > 1 )
              pText = words.GetTail( 1 );
 
-        psAdviceMessage advice(0,words[0],pPerson, pText);
+        psAdviceMessage advice(0,words[0].GetDataSafe(),pPerson.GetDataSafe(), pText.GetDataSafe());
         msgqueue->SendMessage(advice.msg);
         return NULL;
     }
