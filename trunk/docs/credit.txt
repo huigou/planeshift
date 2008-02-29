@@ -1,4 +1,4 @@
-@PlaneShift Team at Steel Blue 0.4.00 Release (released February-2008)
+﻿@PlaneShift Team at Steel Blue 0.4.00 Release (released February-2008)
 
 &Project Leader, Director and Overall Camp Counselor
 
@@ -40,7 +40,7 @@ Roland "Ragnarin" Schulz, for improving the char labels and endless other fixes.
 
 Thomas "TomT" Towey, for weapon and armor craft systems, server maintenance and many bug fixes.
 
-Enar "Bereror" V�ikene, for minigames and bug fixing.
+Enar "Bereror" Väikene, for minigames and bug fixing.
 
 
 
@@ -103,7 +103,6 @@ Erik "Erik" Bakker, for Trepor model, Klyros model, sewers level, player animati
 Michael "Xordan" Gist, for balancing progression system and new stamina rules.
 
 Scott "Starg" Gibson, for adding new crafting, repairing old crafting, and many other small fixes.
-
 
 &Music and sounds
 
