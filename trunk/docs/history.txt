@@ -1,3 +1,6 @@
+*** 2008-02-28 by Sasha Levin
+- Fixed crash on advisor more.
+
 *** 2008-02-28 by Roland Schulz
 - small spell window changes by ThomPhoenix
 - also fix typo and revert background change - doesn't look good on default skin
