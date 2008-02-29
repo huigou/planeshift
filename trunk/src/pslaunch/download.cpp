@@ -60,6 +60,8 @@ int ProgressCallback(int progress, int finalSize)
         printf("-");
         lastSize = progress;
     }
+
+    fflush(stdout);
     
     return 0;
 }
