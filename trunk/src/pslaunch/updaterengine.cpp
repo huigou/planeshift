@@ -527,42 +527,18 @@ bool UpdaterEngine::selfUpdate(int selfUpdating)
                 return false;
             }
 
-#if defined(CS_PLATFORM_MACOSX)
-
             csString cmd;
             csRef<iDataBuffer> thisPath = vfs->GetRealPath("/this/");
             cmd.Format("cd %s; unzip -oqq %s", thisPath->GetData(), zip.GetData());
             system(cmd);
+
+#if defined(CSPLATFORM_MACOSX)
 
             // Create a new process of the updater and exit.
             cmd.Clear();
             cmd.Format("%s%s.app/Contents/MacOS/%s_static selfUpdateSecond", thisPath->GetData(), appName.GetData(), appName.GetData());
             system(cmd);
 #else
-            csString realName = appName;
-            realName.Append(".bin");
-
-            // Mount zip
-            csRef<iDataBuffer> realZipPath = vfs->GetRealPath("/this/" + zip);
-            vfs->Mount("/zip", realZipPath->GetData());
-
-            // Copy new files into place.
-            fileUtil->CopyFile("/zip/" + appName, "/this/" + appName, true, true);
-            fileUtil->CopyFile("/zip/" + realName, "/this/" + realName, true, true);
-
-            if(appName.Compare("pslaunch"))
-            {
-              csString artPath = "/art/";
-              artPath.AppendFmt("%s.zip", appName.GetData());
-              fileUtil->CopyFile("/zip" + artPath, artPath, true, false, true);
-
-              csString dataPath = "/data/gui/";
-              dataPath.AppendFmt("%s.xml", appName.GetData());
-              fileUtil->CopyFile("/zip" + dataPath, dataPath, true, false, true);
-            }
-
-            // Unmount zip.
-            vfs->Unmount("/zip", realZipPath->GetData());
             if(fork() == 0)
                 execl(appName, appName, "selfUpdateSecond", NULL);
 #endif
