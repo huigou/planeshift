@@ -1203,6 +1203,7 @@ void pawsChatWindow::HandleMessage (MsgEntry *me)
         case CHAT_TELL:
         case CHAT_SERVER_TELL:
         case CHAT_TELLSELF:
+        case CHAT_GUILD:
         case CHAT_ADVISOR:
         case CHAT_ADVICE:
         case CHAT_ADVICE_LIST:
