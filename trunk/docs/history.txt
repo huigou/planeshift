@@ -3,6 +3,7 @@
 - Font change for spell cancel window
 - /tell is also OOC and therefore no 'Someone' translation
 - guild chat should also be OOC (?)
+- and fixed the inverted condition :P
 
 *** 2008-02-28 by Sasha Levin
 - Fixed crash on advisor more.
