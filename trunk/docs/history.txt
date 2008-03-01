@@ -1,6 +1,7 @@
 *** 2008-02-29 by Roland Schulz
 - Hopefully fixed 'Someone asks' message in advisor mode.
 - Font change for spell cancel window
+- /tell is also OOC and therefore no 'Someone' translation
 
 *** 2008-02-28 by Sasha Levin
 - Fixed crash on advisor more.
