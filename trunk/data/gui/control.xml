@@ -1,7 +1,7 @@
 <widget_description>
 
     <widget name="ControlWindow" factory="pawsControlWindow" 
-            visible="yes" savepositions="yes" movable="yes" resizable="yes">
+            visible="yes" savepositions="yes" movable="yes" resizable="yes" keepaspect="no">
         <frame x="10" y="10" width="497" height="36" border="no" />
         <minframe width="360" height="30" />
 
