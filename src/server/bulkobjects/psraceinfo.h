@@ -66,6 +66,7 @@ public:
     unsigned int uid;
     unsigned int race;
     csString name;
+    csString sex;
 
     PSCHARACTER_GENDER gender;
     
@@ -100,6 +101,9 @@ public:
     csString GenderString();
 
     csString ReadableRaceGender();
+
+    csString GetGender() { return sex; }
+    csString GetRace() { return name; }
 };
 
 
