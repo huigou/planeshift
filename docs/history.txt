@@ -9,6 +9,8 @@
 - edited skills enum to match laanx
 - added keepaspect="no" to control window, resize messes up otherwise.
   (and it really doesn't make too much sense to force this to keep aspect)
+- changed 64 bit system quest comment saving to also work with xml tags
+  when the comment is just a single line
 
 *** 2008-02-28 by Sasha Levin
 - Fixed crash on advisor more.
