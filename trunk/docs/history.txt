@@ -6,6 +6,7 @@
 - and fixed the inverted condition :P
 - fixed crash on quest note save on x86-64 systems (thanks Vornne)
 - fixed questid always being 0 due to column change
+- edited skills enum to match laanx
 
 *** 2008-02-28 by Sasha Levin
 - Fixed crash on advisor more.
