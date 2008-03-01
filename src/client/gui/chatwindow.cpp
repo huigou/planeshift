@@ -1207,13 +1207,13 @@ void pawsChatWindow::HandleMessage (MsgEntry *me)
         case CHAT_ADVISOR:
         case CHAT_ADVICE:
         case CHAT_ADVICE_LIST:
+            break;
+        default:
             if( (psengine->GetCelClient()->GetActorByName(msg.sPerson, false) == NULL) &&
                 (psengine->GetCelClient()->GetActorByName(msg.sPerson, true)))
             {
                 msg.sPerson = "Someone";
             }
-            break;
-        default:
             break;
     }            
 
