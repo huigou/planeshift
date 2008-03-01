@@ -324,7 +324,7 @@ DelayedDRManager::DelayedDRManager(psServerDR* pDR)
     m_Close = false;
     start=end=0;
     arr.SetSize(100);
-    arrClients.SetSize(100);
+    arrClients.SetSize(3000);
     serverdr = pDR;
 }
 
@@ -364,10 +364,9 @@ void DelayedDRManager::Push(MsgEntry* msg, Client* c)
     {
         CS::Threading::RecursiveMutexScopedLock lock(mutexArray);
         size_t tstart = (start+1) % arr.GetSize();
-        if (tstart == end)
+        while (tstart == end)
         {
-            Error1("DR Queue if full!");
-            return;
+            csSleep(100);
         }
         arr[start] = msg;
         arrClients[start] = c;
