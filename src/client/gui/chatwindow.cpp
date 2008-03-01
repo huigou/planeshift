@@ -1198,7 +1198,9 @@ void pawsChatWindow::HandleMessage (MsgEntry *me)
 
     psChatMessage msg(me);
 
-    if ((msg.iChatType != CHAT_TELLSELF) && (psengine->GetCelClient()->GetActorByName(msg.sPerson, false) == NULL) &&
+    if ((msg.iChatType != CHAT_TELLSELF && msg.iChatType != CHAT_ADVISOR
+          && msg.iChatType != CHAT_ADVICE && msg.iChatType != CHAT_ADVICE_LIST )
+     && (psengine->GetCelClient()->GetActorByName(msg.sPerson, false) == NULL) &&
         (psengine->GetCelClient()->GetActorByName(msg.sPerson, true)))
         msg.sPerson = "Someone";
 
