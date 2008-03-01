@@ -7,6 +7,8 @@
 - fixed crash on quest note save on x86-64 systems (thanks Vornne)
 - fixed questid always being 0 due to column change
 - edited skills enum to match laanx
+- added keepaspect="no" to control window, resize messes up otherwise.
+  (and it really doesn't make too much sense to force this to keep aspect)
 
 *** 2008-02-28 by Sasha Levin
 - Fixed crash on advisor more.
