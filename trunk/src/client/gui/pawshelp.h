@@ -41,7 +41,7 @@ public:
     
 protected:
     void LoadHelps(iDocumentNode* node, csString parent);
-    csPtr<iDocumentNode> RetrieveHelp(pawsTreeNode* node, iDocumentNode* helpRoot);
+    csRef<iDocumentNode> RetrieveHelp(pawsTreeNode* node, csRef<iDocumentNode> helpRoot);
 
     csRef<iVFS> vfs;
     csRef<iDocumentSystem> xml;
