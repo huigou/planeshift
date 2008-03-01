@@ -877,7 +877,7 @@ ALTER TABLE npc_spawn_rules ADD COLUMN fixed_spawn_instance INTEGER UNSIGNED NOT
 UPDATE `server_options` SET `option_value`='1180' WHERE `option_name`='db_version';
 
 #### 1181 - Sasha Levin - Added persistency to guild wars.
-CREATE TABLE `planeshift`.`guild_wars` (
+CREATE TABLE guild_wars (
   `guild_a` INTEGER UNSIGNED NOT NULL,
   `guild_b` INTEGER UNSIGNED NOT NULL,
   PRIMARY KEY (`guild_a`, `guild_b`)
