@@ -476,6 +476,12 @@ void psMarriageManager::DeleteMarriageInfo(  psCharacter* charData )
     }
 
     // Update cached spouse name
+    Client* otherClient = psserver->GetCharManager()->FindPlayerClient(charData->GetSpouseName());
+    if (otherClient && otherClient->GetCharacterData())
+    {
+        otherClient->GetCharacterData()->SetSpouseName("");
+    }
+
     charData->SetSpouseName( "" );
 }
 
