@@ -42,6 +42,7 @@ Thomas "TomT" Towey, for weapon and armor craft systems, server maintenance and 
 
 Enar "Bereror" Väikene, for minigames and bug fixing.
 
+Trond "Trymm" Varslot, for MacOSX support.
 
 
 &Settings
@@ -90,6 +91,8 @@ Rob "Ulf" Walker, for gugrontid level, lot of good textures and his motivation
 Stacy "Venae Rell" Davis, for blackflame and xiosia altars and other textures.
 
 Elina "Karyuu" Eganova, for Tlo-ke, Kikiri and female Dermf models, Klyros male and Dermorian female animations.
+
+Trond "Trymm" Varslot, improvement to characters animations, velnishi and kikiri animations.
 
 Creath "Artician" Carter, for his impressive hard work and focus on critical assets like arena, ojaveda, roads.
 
