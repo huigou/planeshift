@@ -44,6 +44,9 @@
 
 //#define WEATHER_DEBUG
 
+#define MONTH_COUNT 10
+const int monthLengths[MONTH_COUNT] = {32,32,32,32,32,32,32,32,32,32};
+
 WeatherManager::WeatherManager()
 {
     gameTimeMinute = 0;
@@ -512,8 +515,17 @@ void WeatherManager::HandleWeatherEvent(psWeatherGameEvent *event)
                 {
                     gameTimeHour = 0;
                     gameTimeDay++;
+                    if (gameTimeDay >= monthLengths[gameTimeMonth-1]+1)
+                    {
+                        gameTimeDay = 1;
+                        gameTimeMonth++;
+                        if (gameTimeMonth >= MONTH_COUNT+1)
+                        {
+                            gameTimeMonth = 1;
+                            gameTimeYear++;
+                        }
+                    }
 
-                    // TODO: When duration of day,month,year is desided implement them :)
                 }
                 // Only save every game hour
                 SaveGameTime();            
