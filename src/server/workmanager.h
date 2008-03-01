@@ -223,6 +223,8 @@ public:
     static bool constraintFriends(psWorkManager* that,char* param);
     static bool constraintLocation(psWorkManager* that,char* param);
     static bool constraintMode(psWorkManager* that,char* param);
+    static bool constraintGender(psWorkManager* that,char* param);
+    static bool constraintRace(psWorkManager* that,char* param);
     //@}
 
 
