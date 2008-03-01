@@ -101,10 +101,18 @@ const constraint constraints[] =
     // Example: MODE(sitting) is player needs to be sitting as work is started.
     {psWorkManager::constraintMode, "MODE","You are not in the right position to complete this work!"},
 
+    // Player gender.
+    // Parameter: gender; where gender is psCharacter's gender.
+    // Example: GENDER(F) is player needs to be female as work is completed.
+    {psWorkManager::constraintGender, "GENDER","You are not in the right gender to complete this work!"},
+
+    // Player race.
+    // Parameter: race; where race is psCharacter's race.
+    // Example: RACE(ylianm) is player needs to be ylianm as work is completed.
+    {psWorkManager::constraintRace, "RACE","You do not have right racial background to complete this work!"},
+
     // Array end.
     {NULL, "", ""}
-    
-
 };
 
 //-----------------------------------------------------------------------------
@@ -1132,7 +1140,8 @@ void psWorkManager::StartUseWork(Client* client)
         {
             // Only check the stuff that player owns
             psItem* item = it.Next();
-            if (item->GetGuardingCharacterID() == owner->GetCharacterID())
+            if ((item->GetGuardingCharacterID() == owner->GetCharacterID())
+                || (item->GetGuardingCharacterID() == 0))
             {
                 itemArray.Push(item);
             }
@@ -1773,9 +1782,10 @@ bool psWorkManager::IsContainerCombinable(uint32 &resultId, int &resultQty)
     currentQuality = 1.00;
     while (it.HasNext())
     {
-        // Only check the stuff that player owns
+        // Only check the stuff that player owns or is public
         psItem* item = it.Next();
-        if (item->GetGuardingCharacterID() == owner->GetCharacterID())
+        if ((item->GetGuardingCharacterID() == owner->GetCharacterID())
+            || (item->GetGuardingCharacterID() == 0))
         { 
             itemArray.Push(item);
 
@@ -1834,6 +1844,7 @@ bool psWorkManager::ValidateCombination(csArray<psItem*> itemArray, uint32 &resu
                 {
                     resultId = current->resultItem;
                     resultQty = current->resultQuantity;
+                    if (secure) psserver->SendSystemInfo(clientNum,"Found mathcing combination.");
                     return true;
                 }
             }
@@ -1852,10 +1863,16 @@ bool psWorkManager::ValidateCombination(csArray<psItem*> itemArray, uint32 &resu
                 {
                     resultId = current->resultItem;
                     resultQty = current->resultQuantity;
+                    if (secure) psserver->SendSystemInfo(clientNum,"Found mathcing group combination.");
                     return true;
                 }
             }
         }
+    }
+    else
+    {
+        if (secure) psserver->SendSystemInfo(clientNum,"Failed to find any items you own in container.");
+        return false;
     }
     return false;
 }
@@ -2669,7 +2686,8 @@ psItem* psWorkManager::CombineContainedItem(uint32 newId, int newQty, float item
     {
         // Remove all items from container that player owns
         psItem* item = it.Next();
-        if (item->GetGuardingCharacterID() == owner->GetCharacterID() )
+        if ((item->GetGuardingCharacterID() == owner->GetCharacterID())
+            || (item->GetGuardingCharacterID() == 0) )
         {
             // Kill any trade work started
             psWorkGameEvent* workEvent = item->GetTransformationEvent();
@@ -3237,6 +3255,34 @@ bool psWorkManager::constraintMode(psWorkManager* that, char* param)
 
     // Check constraint mode to mode before work started
     if ( strcmp( that->preworkModeString, param) != 0 )
+        return false;
+
+    return true;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Constraint function to check client gender
+bool psWorkManager::constraintGender(psWorkManager* that, char* param)
+{
+    // Get race info
+    psRaceInfo* race = that->owner->GetRaceInfo();
+
+    // Check constraint gender to player gender
+    if ( strcmp( race->GetGender().GetData(), param) != 0 )
+        return false;
+
+    return true;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Constraint function to check client race
+bool psWorkManager::constraintRace(psWorkManager* that, char* param)
+{
+    // Get race info
+    psRaceInfo* race = that->owner->GetRaceInfo();
+
+    // Check constraint race to player race
+    if ( strcmp( race->GetRace().GetData(), param) != 0 )
         return false;
 
     return true;
