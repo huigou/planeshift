@@ -132,7 +132,7 @@ bool pawsHelp::OnSelected(pawsWidget *widget)
     return true;
 }
 
-csPtr<iDocumentNode> pawsHelp::RetrieveHelp(pawsTreeNode* node, iDocumentNode* helpRoot)
+csRef<iDocumentNode> pawsHelp::RetrieveHelp(pawsTreeNode* node, csRef<iDocumentNode> helpRoot)
 {
     if (!strcmp(node->GetName(),"RootTopic"))
     {
@@ -157,7 +157,7 @@ csPtr<iDocumentNode> pawsHelp::RetrieveHelp(pawsTreeNode* node, iDocumentNode* h
         {
             if (!strcmp(node->GetName(), xmlnode->GetAttributeValue("name")))
             {
-                return csPtr<iDocumentNode>(xmlnode);
+                return xmlnode;
             }
         }
     }

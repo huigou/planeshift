@@ -11,6 +11,8 @@
   (and it really doesn't make too much sense to force this to keep aspect)
 - changed 64 bit system quest comment saving to also work with xml tags
   when the comment is just a single line
+- changed some csPtr in pawshelp to csRef to avoid crash when clicking in
+  help window
 
 *** 2008-02-28 by Sasha Levin
 - Fixed crash on advisor more.
