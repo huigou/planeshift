@@ -1198,11 +1198,23 @@ void pawsChatWindow::HandleMessage (MsgEntry *me)
 
     psChatMessage msg(me);
 
-    if ((msg.iChatType != CHAT_TELLSELF && msg.iChatType != CHAT_ADVISOR
-          && msg.iChatType != CHAT_ADVICE && msg.iChatType != CHAT_ADVICE_LIST )
-     && (psengine->GetCelClient()->GetActorByName(msg.sPerson, false) == NULL) &&
-        (psengine->GetCelClient()->GetActorByName(msg.sPerson, true)))
-        msg.sPerson = "Someone";
+    switch( msg.iChatType )
+    {
+        case CHAT_TELL:
+        case CHAT_SERVER_TELL:
+        case CHAT_TELLSELF:
+        case CHAT_ADVISOR:
+        case CHAT_ADVICE:
+        case CHAT_ADVICE_LIST:
+            if( (psengine->GetCelClient()->GetActorByName(msg.sPerson, false) == NULL) &&
+                (psengine->GetCelClient()->GetActorByName(msg.sPerson, true)))
+            {
+                msg.sPerson = "Someone";
+            }
+            break;
+        default:
+            break;
+    }            
 
     if (msg.translate)
         msg.sText = PawsManager::GetSingleton().Translate(msg.sText);
