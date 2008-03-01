@@ -461,11 +461,10 @@ bool psCharacter::QuickLoad(iResultRow& row, bool noInventory)
     return true;
 }
 
-bool psCharacter::LoadRelationshipInfo( unsigned int characterid )
+bool psCharacter::LoadRelationshipInfo( unsigned int characterid)
 {
-
-    Result has_a( db->Select( "SELECT a.*, b.name AS 'buddy_name' FROM character_relationships a, characters b WHERE a.related_id = b.id AND a.character_id = %u", characterid ) );
-    Result of_a( db->Select( "SELECT a.*, b.name AS 'buddy_name' FROM character_relationships a, characters b WHERE a.character_id = b.id AND a.related_id = %u", characterid ) );
+    Result has_a( db->Select( "SELECT a.*, b.name AS 'buddy_name' FROM character_relationships a, characters b WHERE a.character_id = %u AND a.related_id = b.id", characterid ) );
+    Result of_a( db->Select( "SELECT a.*, b.name AS 'buddy_name' FROM character_relationships a, characters b WHERE a.related_id = %u AND a.character_id = b.id ", characterid ) );
 
     if ( !LoadFamiliar( has_a, of_a ) )
     {
@@ -479,7 +478,7 @@ bool psCharacter::LoadRelationshipInfo( unsigned int characterid )
       return false;
     }
 
-    if ( !LoadBuddies( has_a, of_a ) )
+    if ( !LoadBuddies( has_a, of_a) )
     {
         Error2("Cannot load buddies for Character ID %u.",characterid);
         return false;
