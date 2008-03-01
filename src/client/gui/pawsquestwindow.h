@@ -29,9 +29,9 @@
 /// Enum of the columns for the quest listbox:
 enum 
 {
-    QCOL_ICON = 0,
-    QCOL_NAME = 1,
-    QCOL_ID   = 2
+    QCOL_NAME = 0,
+    QCOL_ID   = 1,
+    QCOL_STATUS = 2 // A for Active, C for completed
 };
 
 struct QuestNote
