@@ -17,6 +17,7 @@
     <!-- Cancel button -->
     <widget name="Cancel" factory="pawsButton" id="100">
         <frame x="45" y="60" width="80" height="24" border="no"/>
+        <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="10" />
         <bgimage resource="Standard Button" />
         <label text="Cancel" />
     </widget>
