@@ -523,15 +523,8 @@ void pawsQuestListWindow::SaveNotes(const char * fileName)
 
         xml += "    <"; xml += nodeName; xml += ">";
 
-        if ( (strchr (qn->notes, '\r') != 0)
-            || (strchr (qn->notes, '\n') != 0) )
-        {
-            noteString.Format("<![CDATA[%s]]>", qn->notes.GetData() );
-        }
-        else
-        {
-            noteString = qn->notes;
-        }
+        noteString.Format("<![CDATA[%s]]>", qn->notes.GetData() );
+
         xml += noteString; xml += "</"; xml += nodeName; xml += ">\n";
     }
     xml += "</questnotes>\n";
