@@ -222,7 +222,7 @@ bool FileUtil::isExecutable(const char *path)
 void FileUtil::SetExecutable(const char *path)
 {
 #ifdef CS_PLATFORM_UNIX
-    if(chmod(real.GetData(), S_IRUSR | S_IWUSR | S_IXUSR | S_IRGRP | S_IWGRP | S_IXGRP) == -1)
-    printf("Failed to set permissions on file %s.\n", real.GetData());
+    if(chmod(path, S_IRUSR | S_IWUSR | S_IXUSR | S_IRGRP | S_IWGRP | S_IXGRP) == -1)
+    printf("Failed to set permissions on file %s.\n", path);
 #endif
 }
