@@ -86,6 +86,9 @@ public:
 
     /* Returns true is the file at the specified path is executable. */
     bool isExecutable(const char* path);
+
+    /* Sets a file as executable in UNIX. */
+    void SetExecutable(const char* path);
 };
 
 #endif // __FILEUTIL_H__
