@@ -121,126 +121,147 @@ void UpdaterEngine::printOutput(const char *string, ...)
 
 void UpdaterEngine::checkForUpdates()
 {
-
-    // Make sure the old instance had time to terminate (self-update).
-    if(config->IsSelfUpdating())
-        csSleep(500);
-
-    // Check if the last attempt at a general updated ended in failure.
-    if(!config->WasCleanUpdate())
+    if(!log.IsValid())
     {
-        // Restore config file which gives us the last updated position.
-        fileUtil->RemoveFile("/this/updaterinfo.xml");
-        fileUtil->MoveFile("/this/updaterinfo.xml.bak", "/this/updaterinfo.xml", true, false);
-    }
-
-
-    // Load current config data.
-    csRef<iDocumentNode> root = GetRootNode(UPDATERINFO_FILENAME);
-    if(!root)
-    {
-        printOutput("Unable to get root node\n");
-        return;
-    }
-
-    csRef<iDocumentNode> confignode = root->GetNode("config");
-    if (!confignode)
-    {
-        printOutput("Couldn't find config node in configfile!\n");
-        return;
-    }
-
-    // Load updater config
-    if (!config->GetCurrentConfig()->Initialize(confignode))
-    {
-        printOutput("Failed to Initialize mirror config current!\n");
-        return;
-    }
-
-    // Initialise downloader.
-    downloader = new Downloader(GetVFS(), config);
-
-    //Set proxy
-    downloader->SetProxy(GetConfig()->GetProxy().host.GetData(),
-        GetConfig()->GetProxy().port);
-
-    printOutput("Checking for updates to the updater: ");
-
-
-    if(checkUpdater())
-    {
-        printOutput("Update Available!\n");
-
-        // Restore config files.
-        fileUtil->RemoveFile("/this/updaterinfo.xml");
-        fileUtil->MoveFile("/this/updaterinfo.xml.bak", "/this/updaterinfo.xml", true, false);
-
-        // If using a GUI, prompt user whether or not to update.
-        if(!appName.Compare("psupdater"))
+        if(appName.Compare("psupdater"))
         {
-            *updateNeeded = true;            
-            while(*performUpdate == false || *exitGUI == false)
-            {
-                csSleep(500);
-                // Make sure we die if we exit the gui as well.
-                if(*updateNeeded == false || *exitGUI == true )
-                {
-                    delete downloader;
-                    downloader = NULL;
-                    return;
-                }
-
-                // If we're going to self-update, close the GUI.
-                if(*performUpdate)
-                    *exitGUI = true;
-            }
+            printf("This program requires admin/root or write privileges to run. Please restart the program with these.\n");
+            printf("In windows, this means right clicking the Updater shortcut and selecting \"Run as administrator\".\n");
+            printf("For everyone else, login as the root user. If you don't have root access, contact someone who does and ask them nicely to run the updater!\n");
         }
-
-        // Begin the self update process.
-        selfUpdate(false);
-        return;
-    }
-
-    printOutput("No updates needed!\nChecking for updates to all files: ");
-
-    // Check for normal updates.
-    if(checkGeneral())
-    {
-        printOutput("Updates Available!\n");
-        // Mark update as incomplete.
-        config->GetConfigFile()->SetBool("Update.Clean", false);
-        config->GetConfigFile()->Save();
-
-        // If using a GUI, prompt user whether or not to update.
-        if(!appName.Compare("psupdater"))
+        else
         {
-            *updateNeeded = true;
-            while(!*performUpdate)
-            {
-                csSleep(500);
-                if(!*updateNeeded)
-                {
-                    delete downloader;
-                    downloader = NULL;
-                    return;
-                }
-            }
+            /*
+             * This will need fixing for pslaunch somehow. We don't want to need admin rights until we know we need to update...
+             * Maybe write updaterinfo.xml to the userdata path instead of the install path, then execute a new thread which
+             * needs admin if we don't have it.. for UAC anyway. For linux, we can think of something else (maybe just print a message in the pslaunch
+             * window like we do to the console in psupdater.
+             */
         }
-
-        // Begin general update.
-        generalUpdate();
-
-        // Mark update as complete and clean up.
-        config->GetConfigFile()->SetBool("Update.Clean", true);
-        config->GetConfigFile()->Save();
-        printOutput("Update finished!\n");
     }
     else
-        printOutput("No updates needed!\n");
+    {
 
-    delete downloader;
-    downloader = NULL;
-    *updateNeeded = false;
+        // Make sure the old instance had time to terminate (self-update).
+        if(config->IsSelfUpdating())
+            csSleep(500);
+
+        // Check if the last attempt at a general updated ended in failure.
+        if(!config->WasCleanUpdate())
+        {
+            // Restore config file which gives us the last updated position.
+            fileUtil->RemoveFile("/this/updaterinfo.xml");
+            fileUtil->MoveFile("/this/updaterinfo.xml.bak", "/this/updaterinfo.xml", true, false);
+        }
+
+
+        // Load current config data.
+        csRef<iDocumentNode> root = GetRootNode(UPDATERINFO_FILENAME);
+        if(!root)
+        {
+            printOutput("Unable to get root node\n");
+            return;
+        }
+
+        csRef<iDocumentNode> confignode = root->GetNode("config");
+        if (!confignode)
+        {
+            printOutput("Couldn't find config node in configfile!\n");
+            return;
+        }
+
+        // Load updater config
+        if (!config->GetCurrentConfig()->Initialize(confignode))
+        {
+            printOutput("Failed to Initialize mirror config current!\n");
+            return;
+        }
+
+        // Initialise downloader.
+        downloader = new Downloader(GetVFS(), config);
+
+        //Set proxy
+        downloader->SetProxy(GetConfig()->GetProxy().host.GetData(),
+            GetConfig()->GetProxy().port);
+
+        printOutput("Checking for updates to the updater: ");
+
+
+        if(checkUpdater())
+        {
+            printOutput("Update Available!\n");
+
+            // Restore config files.
+            fileUtil->RemoveFile("/this/updaterinfo.xml");
+            fileUtil->MoveFile("/this/updaterinfo.xml.bak", "/this/updaterinfo.xml", true, false);
+
+            // If using a GUI, prompt user whether or not to update.
+            if(!appName.Compare("psupdater"))
+            {
+                *updateNeeded = true;            
+                while(*performUpdate == false || *exitGUI == false)
+                {
+                    csSleep(500);
+                    // Make sure we die if we exit the gui as well.
+                    if(*updateNeeded == false || *exitGUI == true )
+                    {
+                        delete downloader;
+                        downloader = NULL;
+                        return;
+                    }
+
+                    // If we're going to self-update, close the GUI.
+                    if(*performUpdate)
+                        *exitGUI = true;
+                }
+            }
+
+            // Begin the self update process.
+            selfUpdate(false);
+            return;
+        }
+
+        printOutput("No updates needed!\nChecking for updates to all files: ");
+
+        // Check for normal updates.
+        if(checkGeneral())
+        {
+            printOutput("Updates Available!\n");
+            // Mark update as incomplete.
+            config->GetConfigFile()->SetBool("Update.Clean", false);
+            config->GetConfigFile()->Save();
+
+            // If using a GUI, prompt user whether or not to update.
+            if(!appName.Compare("psupdater"))
+            {
+                *updateNeeded = true;
+                while(!*performUpdate)
+                {
+                    csSleep(500);
+                    if(!*updateNeeded)
+                    {
+                        delete downloader;
+                        downloader = NULL;
+                        return;
+                    }
+                }
+            }
+
+            // Begin general update.
+            generalUpdate();
+
+            // Mark update as complete and clean up.
+            config->GetConfigFile()->SetBool("Update.Clean", true);
+            config->GetConfigFile()->Save();
+            printOutput("Update finished!\n");
+        }
+        else
+            printOutput("No updates needed!\n");
+
+        delete downloader;
+        downloader = NULL;
+        *updateNeeded = false;
+    }
 
     if(appName.Compare("psupdater"))
     {
