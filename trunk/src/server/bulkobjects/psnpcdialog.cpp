@@ -231,7 +231,7 @@ void psNPCDialog::CleanPunctuation(psString& str, bool cleanQMark)
 {
     for (unsigned int i=0; i<str.Length(); i++)
     {
-      if (ispunct(str.GetAt(i)) && str.GetAt(i)!='\'' && (str.GetAt(i)!='?' || !cleanQMark))
+      if (ispunct(str.GetAt(i)) && str.GetAt(i)!='\'' && (str.GetAt(i)!='?' || cleanQMark))
         {
             str.DeleteAt(i);
             i--;
