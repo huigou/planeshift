@@ -200,8 +200,12 @@ void ConsoleOut::Intern_VPrintf (ConsoleOutMsgClass con, const char* string, va_
         {
             errorLog = fopen("errorlog.txt","w");
         }
-        fprintf(errorLog,output.GetDataSafe());
-        fflush(errorLog);
+
+        if(errorLog)
+        {
+            fprintf(errorLog, output.GetDataSafe());
+            fflush(errorLog);
+        }
     }
 
 
