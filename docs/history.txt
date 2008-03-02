@@ -1,3 +1,6 @@
+*** 2008-03-02 by Mike Gist
+- Fixed crashing bugs in psclient and psupdater. FS#1141
+
 *** 2008-03-01 by Sasha Levin
 - Fixed marriage data being cached even after divorce.
 

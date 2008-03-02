@@ -74,7 +74,7 @@ void UpdaterEngine::Init(const csArray<csString> args, iObjectRegistry* _object_
     {
         fileUtil->RemoveFile("/this/updater.log");
     }
-    log = vfs->Open("/this/log.txt", VFS_FILE_APPEND);
+    log = vfs->Open("/this/log.txt", VFS_FILE_WRITE);
 }
 
 UpdaterEngine::~UpdaterEngine()
@@ -107,7 +107,11 @@ void UpdaterEngine::printOutput(const char *string, ...)
     va_end (args);
     consoleOut->Push(outputString);
     printf("%s", outputString.GetData());
-    log->Write(outputString.GetData(), outputString.Length());
+
+    if(log.IsValid())
+    {
+        log->Write(outputString.GetData(), outputString.Length());
+    }
 
     if ( mutex )
     {
