@@ -279,7 +279,7 @@ psSpellCastGameEvent *psSpell::Cast(psSpellManager * mgr, Client * client, csStr
     // Set Input variables to script
     varWaySkill->SetValue(waySkill);
     varPowerLevel->SetValue(powerLevel);
-    if (target)
+    if (target && target->GetCharacterData())
         varAntiMagic->SetValue(target->GetCharacterData()->GetSkillRank(PSSKILL_ANTIMAGIC));
     else
         varAntiMagic->SetValue(0);
