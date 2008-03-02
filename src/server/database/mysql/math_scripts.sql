@@ -231,11 +231,11 @@ INSERT INTO math_scripts VALUES( "Calc Item Price", "FinalPrice = Price + Qualit
 
 INSERT INTO math_scripts VALUES( "Calc Item Sell Price", "FinalPrice = Price * 0.8;");
 
-INSERT INTO math_scripts VALUES( "Calc Guild Account Level", "accountLevel = 1 + log(log(totalTrias));");
+INSERT INTO math_scripts VALUES( "Calc Guild Account Level", "AccountLevel = 1 + log(log(TotalTrias));");
 
-INSERT INTO math_scripts VALUES( "Calc Char Account Level", "accountLevel = log(log(totalTrias));");
+INSERT INTO math_scripts VALUES( "Calc Char Account Level", "AccountLevel = log(log(TotalTrias));");
 
-INSERT INTO math_scripts VALUES( "Calc Bank Fee", "bankFee = 5.25 - (accountLevel * 0.25);");
+INSERT INTO math_scripts VALUES( "Calc Bank Fee", "BankFee = 5.25 - (AccountLevel * 0.25);");
 
 INSERT INTO math_scripts VALUES( "Calculate Mining Odds", "Total = Distance * Probability * Quality * Skill + 0.1");
 
