@@ -704,7 +704,14 @@ void UpdaterEngine::generalUpdate()
             if(newListType.Get(i) && !config->UpdateExecs())
                 continue;
 
-            fileUtil->CopyFile("/zip/" + newList.Get(i), "/this/" + newList.Get(i), true, false);
+            if(newListType.Get(i))
+            {
+                fileUtil->CopyFile("/zip/" + newList.Get(i), "/this/" + newList.Get(i), true, true);
+            }
+            else
+            {
+                fileUtil->CopyFile("/zip/" + newList.Get(i), "/this/" + newList.Get(i), true, false);
+            }
         }
 
         // Parse changed files xml, binary patch each file.
@@ -718,7 +725,8 @@ void UpdaterEngine::generalUpdate()
                 csRef<iDocumentNode> next = nodeItr->Next();
 
                 csString newFilePath = next->GetAttributeValue("filepath");
-                if(!config->UpdateExecs() && fileUtil->isExecutable(newFilePath))
+                bool isExec = fileUtil->isExecutable(newFilePath);
+                if(!config->UpdateExecs() && isExec)
                     continue;
 
                 csString diff = next->GetAttributeValue("diff");
@@ -797,6 +805,10 @@ void UpdaterEngine::generalUpdate()
                  }
                 // Clean up temp files.
                 fileUtil->RemoveFile("/this/" + diff, false);
+
+                // Set Executable if needed.
+                if(isExec)
+                    fileUtil->SetExecutable(newFP->GetData());
             }
         }
 

@@ -205,7 +205,7 @@ bool FileUtil::CopyFile(csString from, csString to, bool vfsPath, bool executabl
     {
         csString real(to);
         real.FindReplace("/this/", "./");
-        if(!silent && chmod(real.GetData(), S_IRUSR | S_IWUSR | S_IXUSR | S_IRGRP | S_IXGRP) == -1)
+        if(chmod(real.GetData(), S_IRUSR | S_IWUSR | S_IXUSR | S_IRGRP | S_IWGRP | S_IXGRP) == -1)
             printf("Failed to set permissions on file %s.\n", real.GetData());
     }
 #endif
@@ -217,4 +217,12 @@ bool FileUtil::isExecutable(const char *path)
 {
     csRef<FileStat> stats = StatFile(path);
     return stats->executable;
+}
+
+void FileUtil::SetExecutable(const char *path)
+{
+#ifdef CS_PLATFORM_UNIX
+    if(chmod(real.GetData(), S_IRUSR | S_IWUSR | S_IXUSR | S_IRGRP | S_IWGRP | S_IXGRP) == -1)
+    printf("Failed to set permissions on file %s.\n", real.GetData());
+#endif
 }
