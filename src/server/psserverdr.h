@@ -41,7 +41,7 @@ class PaladinJr;
 class EntityManager;
 class psServerDR;
 
-#define USE_THREADED_DR
+//#define USE_THREADED_DR
 
 #ifdef USE_THREADED_DR
 class DelayedDRManager : public CS::Threading::Runnable
