@@ -461,7 +461,7 @@ bool UpdaterEngine::selfUpdate(int selfUpdating)
             zip.AppendFmt(config->GetCurrentConfig()->GetPlatform());
             zip.AppendFmt(".zip");
 
-            if(vfs->Exists("/this/" + zip);
+            if(vfs->Exists("/this/" + zip))
             {
                 fileUtil->RemoveFile("/this/" + zip);
             }
@@ -536,7 +536,7 @@ bool UpdaterEngine::selfUpdate(int selfUpdating)
             zip.AppendFmt(config->GetCurrentConfig()->GetPlatform());
             zip.AppendFmt(".zip");
 
-            if(vfs->Exists("/this/" + zip);
+            if(vfs->Exists("/this/" + zip))
             {
                 fileUtil->RemoveFile("/this/" + zip);
             }
@@ -619,7 +619,7 @@ void UpdaterEngine::generalUpdate()
         csString zip = config->GetCurrentConfig()->GetPlatform();
         zip.AppendFmt("-%s.zip", newCv->GetName());
 
-        if(vfs->Exists("/this/" + zip);
+        if(vfs->Exists("/this/" + zip))
         {
             fileUtil->RemoveFile("/this/" + zip);
         }
