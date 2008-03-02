@@ -586,8 +586,7 @@ bool UpdaterEngine::selfUpdate(int selfUpdating)
             cmd.Format("%s%s.app/Contents/MacOS/%s_static selfUpdateSecond", thisPath->GetData(), appName.GetData(), appName.GetData());
             system(cmd);
 #else
-            if(fork() == 0)
-                execl(appName, appName, "selfUpdateSecond", NULL);
+            execl(appName, appName, "selfUpdateSecond", NULL);
 #endif
             return true;
         }
