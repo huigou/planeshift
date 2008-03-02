@@ -74,7 +74,7 @@ void UpdaterEngine::Init(const csArray<csString> args, iObjectRegistry* _object_
     {
         fileUtil->RemoveFile("/this/updater.log");
     }
-    log = vfs->Open("/this/log.txt", VFS_FILE_WRITE);
+    log = vfs->Open("/this/updater.log", VFS_FILE_WRITE);
 }
 
 UpdaterEngine::~UpdaterEngine()
