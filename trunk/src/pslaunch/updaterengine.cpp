@@ -461,6 +461,11 @@ bool UpdaterEngine::selfUpdate(int selfUpdating)
             zip.AppendFmt(config->GetCurrentConfig()->GetPlatform());
             zip.AppendFmt(".zip");
 
+            if(vfs->Exists("/this/" + zip);
+            {
+                fileUtil->RemoveFile("/this/" + zip);
+            }
+
             // Download new updater file.
             downloader->DownloadFile(zip, zip, false, true);         
 
@@ -530,6 +535,11 @@ bool UpdaterEngine::selfUpdate(int selfUpdating)
             csString zip = appName;
             zip.AppendFmt(config->GetCurrentConfig()->GetPlatform());
             zip.AppendFmt(".zip");
+
+            if(vfs->Exists("/this/" + zip);
+            {
+                fileUtil->RemoveFile("/this/" + zip);
+            }
 
             // Download new updater file.
             downloader->DownloadFile(zip, zip, false, true);         
@@ -608,6 +618,11 @@ void UpdaterEngine::generalUpdate()
         // Construct zip name.
         csString zip = config->GetCurrentConfig()->GetPlatform();
         zip.AppendFmt("-%s.zip", newCv->GetName());
+
+        if(vfs->Exists("/this/" + zip);
+        {
+            fileUtil->RemoveFile("/this/" + zip);
+        }
 
         // Download update zip.
         printOutput("Downloading update file..\n");
