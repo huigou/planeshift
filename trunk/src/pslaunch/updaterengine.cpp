@@ -144,14 +144,23 @@ void UpdaterEngine::checkForUpdates()
 
         // Make sure the old instance had time to terminate (self-update).
         if(config->IsSelfUpdating())
-            csSleep(500);
+            csSleep(1000);
 
         // Check if the last attempt at a general updated ended in failure.
         if(!config->WasCleanUpdate())
         {
-            // Restore config file which gives us the last updated position.
-            fileUtil->RemoveFile("/this/updaterinfo.xml");
-            fileUtil->MoveFile("/this/updaterinfo.xml.bak", "/this/updaterinfo.xml", true, false);
+            // Safety check.
+            if(!vfs->Exists("/this/updaterinfo.xml.bak"))
+            {
+                config->GetConfigFile()->SetBool("Update.Clean", true);
+                config->GetConfigFile()->Save();
+            }
+            else
+            {
+                // Restore config file which gives us the last updated position.
+                fileUtil->RemoveFile("/this/updaterinfo.xml");
+                fileUtil->MoveFile("/this/updaterinfo.xml.bak", "/this/updaterinfo.xml", true, false);
+            }
         }
 
 
@@ -249,6 +258,9 @@ void UpdaterEngine::checkForUpdates()
 
             // Begin general update.
             generalUpdate();
+
+            // Maybe this fixes a bug.
+            fflush(stdout);
 
             // Mark update as complete and clean up.
             config->GetConfigFile()->SetBool("Update.Clean", true);

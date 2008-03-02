@@ -84,6 +84,9 @@ int main(int argc, char* argv[])
     // Run the update process!
     updater->RunUpdate(engine);
 
+    // Maybe this fixes a bug.
+    fflush(stdout);
+
     // Terminate updater!
     delete engine;
     delete updater;
