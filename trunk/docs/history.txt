@@ -1,3 +1,6 @@
+*** 2008-03-02 by Sasha Levin
+- Fixed some broken mathscripts.
+
 *** 2008-03-02 by Mike Gist
 - Fixed crashing bugs in psclient and psupdater. FS#1141
 - Added some better permissions checking in psupdater.

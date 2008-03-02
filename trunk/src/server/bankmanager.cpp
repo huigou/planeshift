@@ -805,8 +805,8 @@ int BankManager::CalculateAccountLevel(psCharacter *pschar, bool guild)
         accountLevelScript = accountCharLvlScript;
     }
 
-    MathScriptVar* totalTrias = accountLevelScript->GetOrCreateVar("totalTrias");
-    MathScriptVar* accountLevel = accountLevelScript->GetOrCreateVar("accountLevel");
+    MathScriptVar* totalTrias = accountLevelScript->GetOrCreateVar("TotalTrias");
+    MathScriptVar* accountLevel = accountLevelScript->GetOrCreateVar("AccountLevel");
 
     if (guild)
     {
@@ -829,8 +829,8 @@ int BankManager::CalculateAccountLevel(psCharacter *pschar, bool guild)
 
 float BankManager::CalculateFee(psCharacter* pschar, bool guild)
 { 
-    MathScriptVar* accountLevel = CalcBankFeeScript->GetOrCreateVar("accountLevel");
-    MathScriptVar* bankFee = CalcBankFeeScript->GetOrCreateVar("bankFee");
+    MathScriptVar* accountLevel = CalcBankFeeScript->GetOrCreateVar("AccountLevel");
+    MathScriptVar* bankFee = CalcBankFeeScript->GetOrCreateVar("BankFee");
 
     accountLevel->SetValue(CalculateAccountLevel(pschar, guild));
 
