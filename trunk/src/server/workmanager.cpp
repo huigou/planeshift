@@ -1389,7 +1389,7 @@ void psWorkManager::StopCombineWork(Client* client)
 // Check if possible to do some automatic work
 void psWorkManager::StartAutoWork(Client* client, gemContainer* container, psItem* droppedItem, int count)
 {
-    // Assign the memeber vars
+    // Assign the member vars
     if ( !LoadLocalVars(client) )
     {
         return;
@@ -2800,6 +2800,7 @@ psItem* psWorkManager::TransformContainedItem(psItem* oldItem, uint32 newId, int
         return NULL;
     }
     newItem->SetOwningCharacter(owner);
+    newItem->SetGuardingCharacterID(owner->GetCharacterID());
     workItem->Save(true);
 
     // Zero out x,y,z location because it is in container
