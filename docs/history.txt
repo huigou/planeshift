@@ -1,3 +1,7 @@
+*** 2008-03-02 by Roland Schulz
+- Taking a stab at preventing crafting container stealing:
+  Setting guarding character for newly fabricated items in container.
+
 *** 2008-03-02 by Sasha Levin
 - Fixed some broken mathscripts.
 
