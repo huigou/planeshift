@@ -875,6 +875,11 @@ void psWorkManager::HandleProductionEvent(psWorkGameEvent* workEvent)
         else
         {
             psItem *item = newitem->InstantiateBasicItem();
+            if (!item)
+            {
+                Bug2("Failed instantizing reward item #%d!\n",workEvent->nr->reward);
+                return;
+            }
 
             if (!worke->Inventory().AddOrDrop(item))
             {
