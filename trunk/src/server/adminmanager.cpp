@@ -2156,7 +2156,7 @@ void AdminManager::Teleport(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& 
     }
 
     Client* superclient = clients->FindAccount( subject->GetSuperclientID() );
-    if(superclient)
+    if(superclient && subject->GetSuperclientID()!=0)
     {
         psserver->SendSystemError(client->GetClientNum(), "This entity %s is controlled by superclient %u and can't be teleported.",subject->GetName(), subject->GetSuperclientID());
         return;
