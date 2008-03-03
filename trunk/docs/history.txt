@@ -1,3 +1,7 @@
+*** 2008-03-02 by Sasha Levin
+- An attempt to fix crash on production handling.
+- Fixed crash on /list_advice_request.
+
 *** 2008-03-02 by Roland Schulz
 - Taking a stab at preventing crafting container stealing:
   Setting guarding character for newly fabricated items in container.
