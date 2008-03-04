@@ -742,24 +742,28 @@ bool gemObject::InitMesh(const char *name,
     factory.ReplaceAllSubString("$H","stonebm");     
     file.ReplaceAllSubString("$H","stonebm");     
     
-                    
     if (!pcmesh->SetMesh(factory.GetData(), file.GetData()))
     {
         Error3("Could not set mesh with factname=%s and filename=%s. Trying dummy model",factname,filename);                
+    }
+
+    // Couldn't set a mesh (invalid mesh or no mesh at all)
+    if (!pcmesh->GetMesh())
+    {
         factname = "stonebm";
         filename = "/planeshift/models/stonebm/stonebm.cal3d";
         
         this->filename = filename;
         this->factname = factname;
         
-        if ( !pcmesh->SetMesh(factname, filename) )
+        if (!pcmesh->SetMesh(factname, filename))
         {
             Error3("Could not use dummy CVS mesh with factname=%s and filename=%s",factname,filename);        
             return false;
         }            
     }
 
-    if ( !pcmesh->GetMesh() )
+    if (!pcmesh->GetMesh())
     {
         Error2("Could not create Item because could not load %s file into mesh.",factname);
         return false;
