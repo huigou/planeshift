@@ -414,6 +414,7 @@ inline void psEntityLabels::UpdateVisibility()
         if (!mesh)
             continue;
 
+        // Don't show other player names unless introduced.
         if (object->GetObjectType() == GEM_ACTOR && !(object->Flags() & psPersistActor::NAMEKNOWN))
             continue;
 
@@ -446,6 +447,10 @@ inline void psEntityLabels::UpdateMouseover()
         // Show new
         if (underMouse != NULL && underMouse != celClient->GetMainPlayer())
         {
+            // Don't show other player names unless introduced.
+            if (underMouse->GetObjectType() == GEM_ACTOR && !(underMouse->Flags() & psPersistActor::NAMEKNOWN))
+                return;
+
             iMeshWrapper* mesh = underMouse->Mesh();
             if (mesh)
             {

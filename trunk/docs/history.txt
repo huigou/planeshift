@@ -1,3 +1,7 @@
+*** 2008-03-03 by Kenny Graunke
+- Fixed FS#1147: players could see labels of non-introduced characters by
+  using "Visible on mouse" mode.
+
 *** 2008-03-02 by Sasha Levin
 - An attempt to fix crash on production handling.
 - Fixed crash on /list_advice_request.
