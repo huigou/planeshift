@@ -1,3 +1,8 @@
+*** 2008-03-04 by Kenny Graunke
+- Fixed crash when creating items with cstr_id_gfx_mesh = 0.
+  Apparently in CEL, SetMesh("", "") succeeds...and we weren't trying a
+  dummy mesh in this case.
+
 *** 2008-03-03 by Kenny Graunke
 - Fixed FS#1147: players could see labels of non-introduced characters by
   using "Visible on mouse" mode.

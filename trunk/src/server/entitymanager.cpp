@@ -813,7 +813,6 @@ gemObject *EntityManager::MoveItemToWorld(psItem       *chrItem,
 gemObject *EntityManager::CreateItem( psItem *& iteminstance, bool transient )
 {
     const char *meshname;
-    csString meshfile;
     psSectorInfo *sectorinfo;
     csVector3 newpos;
     float yrot;
@@ -849,22 +848,12 @@ gemObject *EntityManager::CreateItem( psItem *& iteminstance, bool transient )
     // Cannot stack, so make a new one
     // Get the mesh for this object
     meshname = iteminstance->GetMeshName();
-    if (meshname!=NULL)
+    csString meshfile(meshname);
+    if (!meshfile.IsEmpty())
     {
-        csString dbMeshName( meshname );
-        size_t found = 0;
-        do 
-        {
-            found = dbMeshName.FindFirst( '#', found );
-            
-            if ( found != (size_t)-1 )
-                dbMeshName[found] = '/';
-
-        } while ( found != (size_t)-1 );        
-        meshfile.Format("/planeshift/%s.spr", dbMeshName.GetData() );
-    }        
-    else
-        meshfile.Clear();
+        meshfile.ReplaceAll("#", "/");
+        meshfile.Format("/planeshift/%s.spr", meshfile.GetData());
+    }
 
     gemItem *obj;
     
