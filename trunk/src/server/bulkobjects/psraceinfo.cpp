@@ -232,7 +232,7 @@ csString psRaceInfo::GenderString()
     switch (gender)
     {
     case PSCHARACTER_GENDER_FEMALE:
-        return "Maddam";
+        return "Madam";
     case PSCHARACTER_GENDER_MALE:
         return "Sir";
     default:
