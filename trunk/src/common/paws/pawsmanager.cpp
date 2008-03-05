@@ -140,13 +140,16 @@ PawsManager::PawsManager(iObjectRegistry* object, const char* skin, const char* 
 
     if(!LoadAdditionalSkin(skin))
     {
-        Error1("Failed to load skin %s!", skin);
+        Error2("Failed to load skin %s!", skin);
     }
 
     // Mount base skin to satisfy unskined elements
-    if(!LoadAdditionalSkin(skinBase))
+    if(skinBase)
     {
-        Error2("Couldn't load base skin '%s'!\n", skinBase);
+        if(!LoadAdditionalSkin(skinBase))
+        {
+            Error2("Couldn't load base skin '%s'!\n", skinBase);
+        }
     }
 
     if ( !prefs->LoadPrefFile( prefsFile ) )
