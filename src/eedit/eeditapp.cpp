@@ -202,7 +202,7 @@ bool EEditApp::Init()
         nw->SetTitle(WINDOW_CAPTION);
 
     // paws initialization
-    paws = new PawsManager(object_reg, "/this/art/eedit.zip", "/this/eedit.cfg");
+    paws = new PawsManager(object_reg, "/this/art/eedit.zip", NULL, "/this/eedit.cfg");
     if (!paws)
     {
         SevereError("Could not initialize PAWS!");
