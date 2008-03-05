@@ -852,7 +852,9 @@ gemObject *EntityManager::CreateItem( psItem *& iteminstance, bool transient )
     if (!meshfile.IsEmpty())
     {
         meshfile.ReplaceAll("#", "/");
-        meshfile.Format("/planeshift/%s.spr", meshfile.GetData());
+        csString tmp;
+        tmp.Format("/planeshift/%s.spr", meshfile.GetData());
+        meshfile = tmp;
     }
 
     gemItem *obj;
