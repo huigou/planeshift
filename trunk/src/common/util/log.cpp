@@ -444,7 +444,7 @@ void LogCSV::Write(int type, csString& text)
     {
         // Unfair flushing mechanism for the time being.
         count++;
-        if(count % 5 == 0)
+        if(count % 16 == 0)
         {
             count = 0;
             csvFile[type]->Flush();
