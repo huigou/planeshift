@@ -416,20 +416,14 @@ bool psEngine::Initialize (int level)
 
         
         // Create the PAWS window manager
-        paws = new PawsManager( object_reg, skinPath );
+        csString skinPathBase = cfgmgr->GetStr("PlaneShift.GUI.Skin.Base","/planeshift/art/skins/base/client_base.zip");
+        paws = new PawsManager( object_reg, skinPath, skinPathBase );
         
         options = new psOptions("/planeshift/userdata/options.cfg", vfs);
         
         // Default to maximum 1000/(14)fps (71.4 fps)
         // Actual fps get be up to 10 fps less so set a reasonably high limit
         frameLimit = cfgmgr->GetInt("Video.FrameLimit", 14);
-
-        // Mount base skin to satisfy unskined elements
-        skinPath = cfgmgr->GetStr("PlaneShift.GUI.Skin.Base","/planeshift/art/skins/base/client_base.zip");
-        if(!paws->LoadAdditionalSkin(skinPath))
-        {
-            Error2("Couldn't load base skin '%s'!\n",skinPath.GetData());
-        }            
         
         paws->SetSoundStatus(soundOn);
         mainWidget = new psMainWidget();

@@ -91,7 +91,8 @@
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
-PawsManager::PawsManager(iObjectRegistry* object, const char* skin,const char* pawsConfigFile)
+PawsManager::PawsManager(iObjectRegistry* object, const char* skin, const char* skinBase, 
+                         const char* pawsConfigFile)
 {
     objectReg = object;
     pawsConfig = pawsConfigFile;
@@ -138,7 +139,15 @@ PawsManager::PawsManager(iObjectRegistry* object, const char* skin,const char* p
     }
 
     if(!LoadAdditionalSkin(skin))
-        Error1("Failed to load base skin!");
+    {
+        Error1("Failed to load skin %s!", skin);
+    }
+
+    // Mount base skin to satisfy unskined elements
+    if(!LoadAdditionalSkin(skinBase))
+    {
+        Error2("Couldn't load base skin '%s'!\n", skinBase);
+    }
 
     if ( !prefs->LoadPrefFile( prefsFile ) )
         Error2("Failed to load prefsFile '%s'", prefsFile.GetData());

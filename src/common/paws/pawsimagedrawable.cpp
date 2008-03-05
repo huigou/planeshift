@@ -51,7 +51,7 @@ bool pawsImageDrawable::PreparePixmap()
     csRef<iImage> ifile;
     csRef<iDataBuffer> buf( vfs->ReadFile( imageFileLocation, false ) );
 
-    if ( buf == NULL || buf->GetSize() == 0 )
+    if (!buf.IsValid())
     {
         Error2( "Could not open image: >%s<", (const char*)imageFileLocation );
         return false;
