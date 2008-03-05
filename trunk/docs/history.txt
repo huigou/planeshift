@@ -1,3 +1,7 @@
+*** 2008-03-04 by Roland Schulz
+- Fixed last fix which was using str.Format(...,str), which isn't very
+  likely to work as expected :)
+
 *** 2008-03-04 by Kenny Graunke
 - Fixed crash when creating items with cstr_id_gfx_mesh = 0.
   Apparently in CEL, SetMesh("", "") succeeds...and we weren't trying a
