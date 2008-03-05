@@ -1,34 +1,5 @@
 <borderlist>
 
-
-<border name="default">
-    <topleft>
-        <image file="/this/art/gui/border/topleft.png" resource="TopLeft"></image>
-     </topleft>
-     <topright>
-        <image file="/this/art/gui/border/topright.png" resource="TopRight"></image>
-     </topright>        
-     <bottomleft>
-        <image file="/this/art/gui/border/bottomleft.png" resource="BottomLeft"></image>
-     </bottomleft>
-     <bottomright>
-        <image file="/this/art/gui/border/bottomright.png" resource="BottomRight"></image>
-     </bottomright>        
-
-    <leftmiddle>
-        <image file="/this/art/gui/border/leftmiddle.png" resource="LeftMiddle"></image>
-     </leftmiddle>
-     <rightmiddle>
-        <image file="/this/art/gui/border/rightmiddle.png" resource="RightMiddle"></image>
-     </rightmiddle>        
-     <bottommiddle>
-        <image file="/this/art/gui/border/bottommiddle.png" resource="BottomMiddle"></image>
-     </bottommiddle>
-     <topmiddle>
-        <image file="/this/art/gui/border/topmiddle.png" resource="TopMiddle"></image>
-     </topmiddle>                  
-</border>
-
 <border name="Leather Sketch Border">
     <topleft>
 	<image file="/paws/base/maps/leather/top_left_1.png" resource="UpperLeftMap" /> 
