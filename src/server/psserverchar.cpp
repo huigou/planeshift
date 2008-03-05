@@ -672,12 +672,11 @@ void psServerCharManager::SendCraftTransInfo(Client *client, psItem *item)
     // Get craft combo info string based on skill levels
     csString* combString = GetComboInfoString(character,mindStats->GetUID());
     mess.Append(combString->GetData());
-    mess.Append("\n\n");
+    mess.Append("\n");
 
     // Get transformation info string based on skill levels
     csString* transString = GetTransInfoString(character,mindStats->GetUID());
     mess.Append(transString->GetData());
-    mess.Append(".\n");
 
     // Send info to cleint
     psMsgCraftingInfo msg(client->GetClientNum(),mess);
