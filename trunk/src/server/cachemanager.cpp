@@ -751,43 +751,44 @@ bool CacheManager::PreloadTradeCombinations()
     if (!result.IsValid())
     {
         Error1("No data in trade_combinations could be found");    
-        return false;
     }        
-
-    // Loop through all the combinations
-    for (currentrow=0; currentrow<result.Count(); currentrow++)
+    else 
     {
-        // If it is a new pattern start a new combination set for them
-        uint32 id = result[currentrow].GetUInt32("pattern_id");
-        if ( id != lastarrayid )
+        // Loop through all the combinations
+        for (currentrow=0; currentrow<result.Count(); currentrow++)
         {
-            newArray = new csPDelArray<CombinationConstruction>;
-            tradeCombinations_IDHash.Put(id,newArray);
-            lastarrayid = id;
+            // If it is a new pattern start a new combination set for them
+            uint32 id = result[currentrow].GetUInt32("pattern_id");
+            if ( id != lastarrayid )
+            {
+                newArray = new csPDelArray<CombinationConstruction>;
+                tradeCombinations_IDHash.Put(id,newArray);
+                lastarrayid = id;
+            }
+
+            // If it is a new item or quantity start a new combination construction for it.
+            uint32 resultItem = result[currentrow].GetUInt32("result_id");
+            int resultQty = result[currentrow].GetInt("result_qty");
+            if (( resultItem != lastitemid ) || ( resultQty != lastitemqty ))
+            {
+                ctr = new CombinationConstruction;
+                ctr->resultItem = resultItem;
+                ctr->resultQuantity = resultQty;
+                newArray->Push(ctr);
+                lastitemid = resultItem;
+                lastitemqty = resultQty;
+            }
+
+            // Load the combination and push it into it's construction set.
+            psTradeCombinations* comb = new psTradeCombinations;
+            if (comb->Load(result[currentrow]))
+                ctr->combinations.Push(comb);
+            else
+                delete comb;
         }
 
-        // If it is a new item or quantity start a new combination construction for it.
-        uint32 resultItem = result[currentrow].GetUInt32("result_id");
-        int resultQty = result[currentrow].GetInt("result_qty");
-        if (( resultItem != lastitemid ) || ( resultQty != lastitemqty ))
-        {
-            ctr = new CombinationConstruction;
-            ctr->resultItem = resultItem;
-            ctr->resultQuantity = resultQty;
-            newArray->Push(ctr);
-            lastitemid = resultItem;
-            lastitemqty = resultQty;
-        }
-
-        // Load the combination and push it into it's construction set.
-        psTradeCombinations* comb = new psTradeCombinations;
-        if (comb->Load(result[currentrow]))
-            ctr->combinations.Push(comb);
-        else
-            delete comb;
+        Notify2( LOG_STARTUP, "%lu Trade Combinations Loaded", result.Count() );
     }
-
-    Notify2( LOG_STARTUP, "%lu Trade Combinations Loaded", result.Count() );
     return true;
 }
 
@@ -808,37 +809,41 @@ bool CacheManager::PreloadTradeTransformations()
 
     Result result(db->Select("select * from trade_transformations order by pattern_id, item_id"));
     if (!result.IsValid())
-        return false;
-
-    for (currentrow=0; currentrow<result.Count(); currentrow++)
     {
-        // For new patterns create a new transformation hash and push it onto IDHash table
-        uint32 pid = result[currentrow].GetUInt32("pattern_id");
-        if ( pid != lastpid )
+        Error1("No data in trade_transformations could be found");    
+    }        
+    else 
+    {
+        for (currentrow=0; currentrow<result.Count(); currentrow++)
         {
-            transHash = new csHash<csPDelArray<psTradeTransformations> *,uint32>;
-            tradeTransformations_IDHash.Put(pid,transHash);
-            lastpid = pid;
+            // For new patterns create a new transformation hash and push it onto IDHash table
+            uint32 pid = result[currentrow].GetUInt32("pattern_id");
+            if ( pid != lastpid )
+            {
+                transHash = new csHash<csPDelArray<psTradeTransformations> *,uint32>;
+                tradeTransformations_IDHash.Put(pid,transHash);
+                lastpid = pid;
+            }
+
+            // For new items create new transformation array
+            uint32 iid = result[currentrow].GetUInt32("item_id");
+            if ( iid != lastiid )
+            {
+                newArray = new csPDelArray<psTradeTransformations>;
+                transHash->Put(iid,newArray);
+                lastiid = iid;
+            }
+
+            // Finnaly just load the transformation into existing array
+            psTradeTransformations* tran = new psTradeTransformations;
+            if (tran->Load(result[currentrow]))
+                newArray->Push(tran);
+            else
+                delete tran;
         }
 
-        // For new items create new transformation array
-        uint32 iid = result[currentrow].GetUInt32("item_id");
-        if ( iid != lastiid )
-        {
-            newArray = new csPDelArray<psTradeTransformations>;
-            transHash->Put(iid,newArray);
-            lastiid = iid;
-        }
-
-        // Finnaly just load the transformation into existing array
-        psTradeTransformations* tran = new psTradeTransformations;
-        if (tran->Load(result[currentrow]))
-            newArray->Push(tran);
-        else
-            delete tran;
+        Notify2( LOG_STARTUP, "%lu Trade Transformations Loaded", result.Count() );
     }
-
-    Notify2( LOG_STARTUP, "%lu Trade Transformations Loaded", result.Count() );
     return true;
 }
 
@@ -868,41 +873,54 @@ bool CacheManager::PreloadUniqueTradeTransformations()
     // Get a list of the trade patterns ids
     Result result(db->Select("select id from trade_patterns order by id"));
     if (!result.IsValid())
-        return false;
-    for (int currentrow=0; currentrow<(int)result.Count(); currentrow++)
     {
-        newArray = new csArray<uint32>;
-        currentID = result[currentrow].GetUInt32("id");
-
-        // Now get a list of unique transformation items for each pattern
-        query.Format( "select distinct item_id from trade_transformations where pattern_id =%d order by item_id", currentID );
-        Result result (db->Select( query ) );
-        if (!result.IsValid())
-            return false;
-
-        // Push each result item ID into array
-        for (int transrow=0; transrow<(int)result.Count(); transrow++)
+        Error1("No data in trade_patterns could be found");    
+    }        
+    else 
+    {
+        for (int currentrow=0; currentrow<(int)result.Count(); currentrow++)
         {
-            newArray->Push(result[transrow].GetUInt32("item_id"));
+            newArray = new csArray<uint32>;
+            currentID = result[currentrow].GetUInt32("id");
+
+            // Now get a list of unique transformation items for each pattern
+            query.Format( "select distinct item_id from trade_transformations where pattern_id =%d order by item_id", currentID );
+            Result result (db->Select( query ) );
+            if (!result.IsValid())
+            {
+                Error1("No distinct item ids found in trade_transformations");    
+            }        
+            else 
+            {
+                // Push each result item ID into array
+                for (int transrow=0; transrow<(int)result.Count(); transrow++)
+                {
+                    newArray->Push(result[transrow].GetUInt32("item_id"));
+                }
+
+                // Now get a list of unique combination items for each pattern
+                query.Format( "select distinct item_id from trade_combinations where pattern_id =%d order by item_id", currentID );
+                Result result2 (db->Select( query ) );
+                if (!result2.IsValid())
+                {
+                    Error1("No distinct item ids found in trade_combinations");    
+                }        
+                else 
+                {
+                    // Push each result item ID into array
+                    for (int combsrow=0; combsrow<(int)result2.Count(); combsrow++)
+                    {
+                        newArray->Push(result2[combsrow].GetUInt32("item_id"));
+                    }
+
+                    // Add hash
+                    tradeTransUnique_IDHash.Put(currentID,newArray);
+                }
+            }
         }
 
-        // Now get a list of unique combination items for each pattern
-        query.Format( "select distinct item_id from trade_combinations where pattern_id =%d order by item_id", currentID );
-        Result result2 (db->Select( query ) );
-        if (!result2.IsValid())
-            return false;
-
-        // Push each result item ID into array
-        for (int combsrow=0; combsrow<(int)result2.Count(); combsrow++)
-        {
-            newArray->Push(result2[combsrow].GetUInt32("item_id"));
-        }
-
-        // Add hash
-        tradeTransUnique_IDHash.Put(currentID,newArray);
+        Notify2( LOG_STARTUP, "%lu Unique Trade Transformations Loaded", result.Count() );
     }
-
-    Notify2( LOG_STARTUP, "%lu Unique Trade Transformations Loaded", result.Count() );
     return true;
 }
 
@@ -922,31 +940,36 @@ bool CacheManager::PreloadTradeProcesses()
     // Get a list of the trade processes
     Result result(db->Select("select * from trade_processes order by process_id, subprocess_number"));
     if (!result.IsValid())
-        return false;
-
-    for (currentrow=0; currentrow<result.Count(); currentrow++)
     {
-        // For a new process_id create a new process array and hash it
-        uint32 pid = result[currentrow].GetUInt32("process_id");
-        if ( pid != lastpid )
+        Error1("No data in trade_processes could be found");    
+    }        
+    else 
+    {
+        for (currentrow=0; currentrow<result.Count(); currentrow++)
         {
-            newArray = new csArray<psTradeProcesses*>;
-            tradeProcesses_IDHash.Put(pid,newArray);
-            lastpid = pid;
-        }
+            // For a new process_id create a new process array and hash it
+            uint32 pid = result[currentrow].GetUInt32("process_id");
+            if ( pid != lastpid )
+            {
+                newArray = new csArray<psTradeProcesses*>;
+                tradeProcesses_IDHash.Put(pid,newArray);
+                lastpid = pid;
+            }
 
-        // For each row create a new processes class to store it
-        newProcess = new psTradeProcesses;
-        if (!newProcess->Load(result[currentrow]))
-        {
-            delete newProcess;
-            return false;
-        }
+            // For each row create a new processes class to store it
+            newProcess = new psTradeProcesses;
+            if (!newProcess->Load(result[currentrow]))
+            {
+                Error1("Failure to load processes");    
+                delete newProcess;
+                continue;
+            }
 
-        // Put process into array
-        newArray->Push(newProcess);
+            // Put process into array
+            newArray->Push(newProcess);
+        }
+        Notify2( LOG_STARTUP, "%lu Trade Processes Loaded", result.Count() );
     }
-    Notify2( LOG_STARTUP, "%lu Trade Processes Loaded", result.Count() );
     return true;
 }
 
@@ -964,22 +987,27 @@ bool CacheManager::PreloadTradePatterns()
     // Get a list of the trade patterns ignoring the dummy ones
     Result result(db->Select("select * from trade_patterns order by designitem_id"));
     if (!result.IsValid())
-        return false;
-
-    for (currentrow=0; currentrow<result.Count(); currentrow++)
     {
-        newPattern = new psTradePatterns;
-        if (!newPattern->Load(result[currentrow]))
-        {
-            delete newPattern;
-            return false;
-        }
-        csString newName = newPattern->GetPatternString();
-        tradePatterns_IDHash.Put(newPattern->GetDesignItemId(),newPattern);
-        tradePatterns_NameHash.Put(newName, newPattern);
+        Error1("Invalid select from trade patterns.");
     }
+    else
+    {
+        for (currentrow=0; currentrow<result.Count(); currentrow++)
+        {
+            newPattern = new psTradePatterns;
+            if (!newPattern->Load(result[currentrow]))
+            {
+                delete newPattern;
+                Error1("Unable to load new pattern.");
+                continue;
+            }
+            csString newName = newPattern->GetPatternString();
+            tradePatterns_IDHash.Put(newPattern->GetDesignItemId(),newPattern);
+            tradePatterns_NameHash.Put(newName, newPattern);
+        }
 
-    Notify2( LOG_STARTUP, "%lu Trade Patterns Loaded", result.Count() );
+        Notify2( LOG_STARTUP, "%lu Trade Patterns Loaded", result.Count() );
+    }
     return true;
 }
 
@@ -1013,6 +1041,12 @@ bool CacheManager::PreloadCraftMessages()
         uint32 designItemID = result[currentPattern].GetInt("designitem_id");
         int currentGroupID = result[currentPattern].GetInt("group_id");
 
+        // Skip the patterns with no design item
+        if (designItemID == 0)
+        {
+            continue;
+        }
+
         // Preload the combination craft string for current pattern
         csPDelArray<CombinationConstruction>* combArray = FindCombinationsList(currentID);
         if (combArray)
@@ -1030,7 +1064,7 @@ bool CacheManager::PreloadCraftMessages()
                 csPDelArray<psTradeTransformations>* transArray = FindTransformationsList(currentID, resultID);
                 if (!transArray) {
                     Error3("Can not find any transformation data for pattern %d and result %u ",currentID, resultID);
-                    return false;
+                    continue;
                 }
                 for (size_t j=0; j<transArray->GetSize(); j++)
                 {
@@ -1074,10 +1108,10 @@ bool CacheManager::PreloadCraftMessages()
             for (size_t i=0; i<combGroupArray->GetSize(); i++)
             {
                 uint32 resultID = combGroupArray->Get(i)->resultItem;
-                csPDelArray<psTradeTransformations>* transArray = FindTransformationsList(currentID, resultID);
+                csPDelArray<psTradeTransformations>* transArray = FindTransformationsList(currentGroupID, resultID);
                 if (!transArray) {
-                    Error3("Can't find any data for trasformation %d and result %d ",currentID, resultID);
-                    return false;
+                    Error3("Can not find any transformation data for group pattern %d and result %u ",currentGroupID, resultID);
+                    continue;
                 }
                 for (size_t j=0; j<transArray->GetSize(); j++)
                 {
@@ -1121,44 +1155,43 @@ bool CacheManager::PreloadCraftMessages()
         if (!result.IsValid())
         {
             Error2("No data in trade_transformations for pattern %d", currentID);
-            delete tran;
-            return false;
         }
-
-        // Create craft info for each transform
-        for (int transrow=0; transrow<(int)result.Count(); transrow++)
+        else
         {
-            // Load the transformation
-            if (!tran->Load(result[transrow]))
+            // Create craft info for each transform
+            for (int transrow=0; transrow<(int)result.Count(); transrow++)
             {
-                Error2("Error loading trade_transformations for pattern %d", currentID);
-                delete tran;
-                return false;
-            }
+                // Load the transformation
+                if (!tran->Load(result[transrow]))
+                {
+                    Error2("Error loading trade_transformations for pattern %d", currentID);
+                    continue;
+                }
 
-            // Load processes that goes with transformation
-            uint32 pid = result[transrow].GetUInt32("process_id");
-            csArray<psTradeProcesses*>* procArray = GetTradeProcessesByID(pid);
+                // Load processes that goes with transformation
+                uint32 pid = result[transrow].GetUInt32("process_id");
+                csArray<psTradeProcesses*>* procArray = GetTradeProcessesByID(pid);
 
-            // If no process array just continue on
-            if (!procArray)
-            {
-                continue;
-            }
+                // If no process array just continue on
+                if (!procArray)
+                {
+                    continue;
+                }
 
-            // Get the process array
-            for (size_t i=0; i<procArray->GetSize(); i++)
-            {
-                psTradeProcesses* proc = procArray->Get(i);
-                craftInfo = new CraftTransInfo;
+                // Get the process array
+                for (size_t i=0; i<procArray->GetSize(); i++)
+                {
+                    psTradeProcesses* proc = procArray->Get(i);
+                    craftInfo = new CraftTransInfo;
 
-                // Load up process information
-                craftInfo->priSkillId = proc->GetPrimarySkillId();
-                craftInfo->minPriSkill = proc->GetMinPrimarySkill();
-                craftInfo->secSkillId = proc->GetSecondarySkillId();
-                craftInfo->minSecSkill = proc->GetMinSecondarySkill();
-                craftInfo->craftStepDescription = CreateTransCraftDescription(tran,proc);
-                newArray->Push(craftInfo);
+                    // Load up process information
+                    craftInfo->priSkillId = proc->GetPrimarySkillId();
+                    craftInfo->minPriSkill = proc->GetMinPrimarySkill();
+                    craftInfo->secSkillId = proc->GetSecondarySkillId();
+                    craftInfo->minSecSkill = proc->GetMinSecondarySkill();
+                    craftInfo->craftStepDescription = CreateTransCraftDescription(tran,proc);
+                    newArray->Push(craftInfo);
+                }
             }
         }
 
@@ -1168,44 +1201,43 @@ bool CacheManager::PreloadCraftMessages()
         if (!groupResult.IsValid())
         {
             Error2("No data in trade_transformations for group pattern %d", currentGroupID);
-            delete tran;
-            return false;
         }
-
-        // Create craft info for each transform
-        for (int transrow=0; transrow<(int)groupResult.Count(); transrow++)
+        else
         {
-            // Load the transformation
-            if (!tran->Load(groupResult[transrow]))
+            // Create craft info for each transform
+            for (int transrow=0; transrow<(int)groupResult.Count(); transrow++)
             {
-                Error2("Error loading trade_transformations for group pattern %d", currentGroupID);
-                delete tran;
-                return false;
-            }
+                // Load the transformation
+                if (!tran->Load(groupResult[transrow]))
+                {
+                    Error2("Error loading trade_transformations for group pattern %d", currentGroupID);
+                    continue;
+                }
 
-            // Load processes that goes with transformation
-            int32 pid = groupResult[transrow].GetUInt32("process_id");
-             csArray<psTradeProcesses*>* procArray = GetTradeProcessesByID(pid);
+                // Load processes that goes with transformation
+                int32 pid = groupResult[transrow].GetUInt32("process_id");
+                 csArray<psTradeProcesses*>* procArray = GetTradeProcessesByID(pid);
 
-            // If no process array just continue on
-            if (!procArray)
-            {
-                continue;
-            }
+                // If no process array just continue on
+                if (!procArray)
+                {
+                    continue;
+                }
 
-            // Get the process array
-            for (size_t i=0; i<procArray->GetSize(); i++)
-            {
-                psTradeProcesses* proc = procArray->Get(i);
-                craftInfo = new CraftTransInfo;
+                // Get the process array
+                for (size_t i=0; i<procArray->GetSize(); i++)
+                {
+                    psTradeProcesses* proc = procArray->Get(i);
+                    craftInfo = new CraftTransInfo;
 
-                // Load up process information
-                craftInfo->priSkillId = proc->GetPrimarySkillId();
-                craftInfo->minPriSkill = proc->GetMinPrimarySkill();
-                craftInfo->secSkillId = proc->GetSecondarySkillId();
-                craftInfo->minSecSkill = proc->GetMinSecondarySkill();
-                craftInfo->craftStepDescription = CreateTransCraftDescription(tran,proc);
-                newArray->Push(craftInfo);
+                    // Load up process information
+                    craftInfo->priSkillId = proc->GetPrimarySkillId();
+                    craftInfo->minPriSkill = proc->GetMinPrimarySkill();
+                    craftInfo->secSkillId = proc->GetSecondarySkillId();
+                    craftInfo->minSecSkill = proc->GetMinSecondarySkill();
+                    craftInfo->craftStepDescription = CreateTransCraftDescription(tran,proc);
+                    newArray->Push(craftInfo);
+                }
             }
         }
     }
