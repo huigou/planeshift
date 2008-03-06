@@ -227,7 +227,7 @@ void psRaceInfo::GetStartingLocation(float& x,float& y, float& z,float& rot,cons
     sectorname = selectedLoc.sector_name;
 };
 
-csString psRaceInfo::GenderString()
+const char* psRaceInfo::Sir()
 {
     switch (gender)
     {
@@ -237,6 +237,32 @@ csString psRaceInfo::GenderString()
         return "Sir";
     default:
         return "Gemma";
+    }
+}
+
+const char* psRaceInfo::Him()
+{
+    switch (gender)
+    {
+    case PSCHARACTER_GENDER_MALE:
+        return "him";
+    case PSCHARACTER_GENDER_FEMALE:
+        return "her";
+    default:
+        return "kra";
+    }
+}
+
+const char* psRaceInfo::His()
+{
+    switch (gender)
+    {
+    case PSCHARACTER_GENDER_MALE:
+        return "his";
+    case PSCHARACTER_GENDER_FEMALE:
+        return "her";
+    default:
+        return "kras";
     }
 }
 
