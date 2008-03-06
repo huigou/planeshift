@@ -36,6 +36,7 @@
 // Local Includes
 //=============================================================================
 #include "introductionmanager.h"
+#include "chatmanager.h"
 #include "client.h"
 #include "clients.h"
 #include "gem.h"
@@ -129,23 +130,43 @@ bool IntroductionManager::IsIntroduced(unsigned int charid, unsigned int targetc
     return targetSet->Contains(targetcharid);
 }
 
-void IntroductionManager::HandleMessage(MsgEntry *pMsg,Client *client)
+void IntroductionManager::HandleMessage(MsgEntry *pMsg, Client *client)
 {
     psCharIntroduction msg(pMsg);
     if (!msg.valid)
         return;
-    if (!(client->GetTargetObject()) || !(client->GetTargetObject()->GetActorPtr()))
+
+    gemActor *target = client->GetTargetObject() ? client->GetTargetObject()->GetActorPtr() : NULL;
+
+    // If player targeted another character...introduce only to him/her
+    if (target)
     {
-        psserver->SendSystemError(client->GetClientNum(), "You must target another player");
-        return;
+        Introduce(target->GetCharacterData()->GetCharacterID(), client->GetCharacterData()->GetCharacterID());
+        
+        psserver->SendSystemOK(client->GetClientNum(), "You have successfully introduced yourself.");
+        psserver->SendSystemOK(client->GetTargetClientID(), "%s was introduced to you", client->GetName());
+        
+        client->GetActor()->Send(client->GetTargetClientID(), false, false);
     }
-
-    Introduce(client->GetTargetObject()->GetActorPtr()->GetCharacterData()->GetCharacterID(), 
-                client->GetCharacterData()->GetCharacterID());
-    
-    psserver->SendSystemOK(client->GetClientNum(), "You have successfully introduced yourself");
-    psserver->SendSystemOK(client->GetTargetObject()->GetClientID(), "%s was introduced to you", client->GetName());
-
-    client->GetActor()->Send(client->GetTargetClientID(), false, false);
+    else // introduce to everyone in /say range (except self)
+    {
+        csArray<PublishDestination>& dest = client->GetActor()->GetMulticastClients();
+        for (size_t i = 0; i < dest.GetSize(); i++)
+        {
+            if (dest[i].dist < CHAT_SAY_RANGE && client->GetClientNum() != dest[i].client)
+            {
+                gemObject *obj = (gemObject*) dest[i].object;
+                gemActor *destActor = obj->GetActorPtr();
+                if (destActor)
+                {
+                    Introduce(destActor->GetCharacterData()->GetCharacterID(), client->GetCharacterData()->GetCharacterID());
+                    psserver->SendSystemOK(dest[i].client, "%s was introduced to you", client->GetName());
+                    client->GetActor()->Send(dest[i].client, false, false);
+                }
+            }
+        }
+        psserver->SendSystemOK(client->GetClientNum(), dest.IsEmpty() ? "There is noone to introduce yourself to."
+                                                                      : "You introduced yourself to everyone around you.");
+    }
 }
 
