@@ -1,3 +1,6 @@
+*** 2008-03-06 by Kenny Graunke
+- /introduce without a target now introduces you to everyone in /say range.
+
 *** 2008-03-05 by Mike Gist
 - Fixed skin and borderlist.xml load order. FS#326
 
