@@ -3,10 +3,9 @@
     <widget name="SketchWindow" factory="pawsSketchWindow" resizable="no" visible="no" movable="yes" keepaspect="no">
         <frame x="100" y="100" width="400" height="300" border="Leather Sketch Border"/>
 	<minframe height="20" />
-        <title resource="Blue Title" text="Sketch Viewer" align="left" close_button="yes"/>
-        <title text="Sketch Viewer" align="left" close_button="yes"/>
-	<bgimage resource="MiddleAreaMap" alpha="128" />  
-	<font name="/planeshift/data/ttf/cupandtalon.ttf" r="0" g="0" b="0" size="14" />
+        <title resource="MiddleAreaMap" text=" " align="left" close_button="yes"/>
+	<bgimage resource="MiddleAreaMap" />  
+	<font name="/planeshift/data/ttf/cupandtalon.ttf" r="0" g="0" b="0" size="14" shadow="no"/>
       
       <widget name="FeatherTool" factory="pawsButton" id="102" tooltip="Edit Mode (F2)">
           <frame x="0" y="0" width="16" height="16" /> 
