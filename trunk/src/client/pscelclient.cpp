@@ -756,7 +756,7 @@ void psCelClient::OnRegionsDeleted(csArray<iRegion*>& regions)
             for(int i = 0;i<sectors->GetCount();i++)
             {
                 // Get the iRegion this sector belongs to
-                csRef<iRegion> region =  scfQueryInterface<iRegion> (sectors->Get(i)->QueryObject()->GetObjectParent());
+                csRef<iRegion> region =  scfQueryInterfaceSafe<iRegion> (sectors->Get(i)->QueryObject()->GetObjectParent());
                 if(regions.Find(region)==csArrayItemNotFound)
                 {
                     // We've found a sector that won't be unloaded so the mesh won't need to be moved
