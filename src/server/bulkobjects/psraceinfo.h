@@ -98,7 +98,9 @@ public:
         size = this->size;
     };
 
-    csString GenderString();
+    const char* Sir();
+    const char* Him();
+    const char* His();
 
     csString ReadableRaceGender();
 

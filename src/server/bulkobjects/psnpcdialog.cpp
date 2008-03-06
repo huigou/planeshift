@@ -470,7 +470,7 @@ void psNPCDialog::SubstituteKeywords(Client * player, csString& resp) const
         }
         else if (word == "$sir")
         {
-            csString sir = player->GetCharacterData()->raceinfo->GenderString();
+            csString sir(player->GetCharacterData()->GetRaceInfo()->Sir());
                 
             if (!response.ReplaceSubString(word,sir))
             {
