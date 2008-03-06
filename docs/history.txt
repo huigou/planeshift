@@ -1,6 +1,7 @@
 *** 2008-03-06 by Kenny Graunke
 - /introduce without a target now introduces you to everyone in /say range.
 - Added Him() and His() to psRaceInfo, and renamed GenderString() to Sir().
+- Disallow marriages until both parties know each other's name.
 
 *** 2008-03-05 by Mike Gist
 - Fixed skin and borderlist.xml load order. FS#326
