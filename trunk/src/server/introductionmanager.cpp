@@ -153,7 +153,7 @@ void IntroductionManager::HandleMessage(MsgEntry *pMsg, Client *client)
         csArray<PublishDestination>& dest = client->GetActor()->GetMulticastClients();
         for (size_t i = 0; i < dest.GetSize(); i++)
         {
-            if (dest[i].dist < CHAT_SAY_RANGE && client->GetClientNum() != dest[i].client)
+            if (dest[i].dist < CHAT_SAY_RANGE && client->GetClientNum() != (uint32_t) dest[i].client)
             {
                 gemObject *obj = (gemObject*) dest[i].object;
                 gemActor *destActor = obj->GetActorPtr();
@@ -165,8 +165,7 @@ void IntroductionManager::HandleMessage(MsgEntry *pMsg, Client *client)
                 }
             }
         }
-        psserver->SendSystemOK(client->GetClientNum(), dest.IsEmpty() ? "There is noone to introduce yourself to."
-                                                                      : "You introduced yourself to everyone around you.");
+        psserver->SendSystemOK(client->GetClientNum(), "You introduced yourself to everyone around you.");
     }
 }
 
