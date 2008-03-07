@@ -2,6 +2,10 @@
 - /introduce without a target now introduces you to everyone in /say range.
 - Added Him() and His() to psRaceInfo, and renamed GenderString() to Sir().
 - Disallow marriages until both parties know each other's name.
+- Downcase words when trying to add them to the dictionary...this is critical
+  because the check for disallowed words is case sensitive. (The concrete bug
+  was that "I" was appearing in trigger groups, which didn't match the
+  disallowed "i", so FilterKnownWords discarded neither from players' text.)
 
 *** 2008-03-05 by Mike Gist
 - Fixed skin and borderlist.xml load order. FS#326
