@@ -772,6 +772,19 @@ const char* pawsChatWindow::HandleCommand( const char* cmd )
     if (settings.enableBadWordsFilterOutgoing)
         BadWordsFilter(text);
 
+    // If a character says his/her own name, presume it's an introduction
+    csString name(psengine->GetCelClient()->GetMainPlayer()->GetName());
+    name.Truncate(name.FindFirst(' '));
+    name.Downcase();
+
+    csString downtext(text);
+    downtext.Downcase();
+    if (chattype == CHAT_SAY && downtext.Find(name) != SIZET_NOT_FOUND)
+    {
+        psCharIntroduction introduce;
+        msgqueue->SendMessage(introduce.msg);
+    }
+
     psChatMessage chat(0, pPerson.GetDataSafe(), 0, text.GetDataSafe(), chattype, false);
     msgqueue->SendMessage(chat.msg);
 

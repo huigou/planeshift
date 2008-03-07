@@ -121,6 +121,7 @@ bool IntroductionManager::UnIntroduce(unsigned int charid, unsigned int targetch
     return true;
 }
 
+// IsIntroduced(A,B) iff A knows B
 bool IntroductionManager::IsIntroduced(unsigned int charid, unsigned int targetcharid)
 {
     csSet<unsigned int> *targetSet = introMap.Get(charid, NULL);
@@ -165,7 +166,7 @@ void IntroductionManager::HandleMessage(MsgEntry *pMsg, Client *client)
                 }
             }
         }
-        psserver->SendSystemOK(client->GetClientNum(), "You introduced yourself to everyone around you.");
+        //psserver->SendSystemOK(client->GetClientNum(), "You introduced yourself to everyone around you.");
     }
 }
 
