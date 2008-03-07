@@ -380,6 +380,9 @@ void psCSSetup::MountUserData()
     csString configPath = csGetPlatformConfigPath("PlaneShift");
     configPath.ReplaceAll("/.crystalspace/", "/.");
 
+    // Alternatively, you can set it in psclient.cfg.
+    configPath = configManager->LookupDomain(engineConfigfile)->GetStr("PlaneShift.UserConfigPath", configPath);
+
     printf("Your configuration files are in... %s\n", configPath.GetData());
 
     // Create the mount point if it doesn't exist...die if we can't.
