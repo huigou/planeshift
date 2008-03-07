@@ -204,6 +204,7 @@ void NPCDialogDict::AddWords(csString& trigger)
     {        
         size_t pos = 0;
         word = GetWordNumber(trigger,wordnum++,&pos);
+        word.Downcase();
         if (word.Length()==0)
             continue;
 
