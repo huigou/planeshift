@@ -1,3 +1,6 @@
+*** 2008-03-07 by Kenny Graunke
+- Made characters automatically introduce themselves by saying their name.
+
 *** 2008-03-06 by Kenny Graunke
 - /introduce without a target now introduces you to everyone in /say range.
 - Added Him() and His() to psRaceInfo, and renamed GenderString() to Sir().
