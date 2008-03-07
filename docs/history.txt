@@ -1,5 +1,7 @@
 *** 2008-03-07 by Kenny Graunke
 - Made characters automatically introduce themselves by saying their name.
+- Patch from Vornne for FS#1142 - you can now set the /planeshift/userdata
+  mountpoint by specifying PlaneShift.UserConfigPath=/foo in psclient.cfg.
 
 *** 2008-03-06 by Kenny Graunke
 - /introduce without a target now introduces you to everyone in /say range.
