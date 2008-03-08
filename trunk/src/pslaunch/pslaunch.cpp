@@ -38,18 +38,11 @@
 CS_IMPLEMENT_APPLICATION
 
 psLauncherGUI* psLaunchGUI;
-CS::Threading::Mutex mutex;
-
     
-psLauncherGUI::psLauncherGUI(iObjectRegistry* _object_reg, bool *_exitGUI, bool *_updateNeeded, bool *_performUpdate, bool *_execPSClient, csArray<csString> *_consoleOut,  CS::Threading::Mutex *_mutex)
+psLauncherGUI::psLauncherGUI(iObjectRegistry* _object_reg, InfoShare *_infoShare, bool *_execPSClient)
 {
-    exitGUI = _exitGUI;
-    updateNeeded = _updateNeeded;
-    performUpdate = _performUpdate;
+    infoShare = _infoShare;
     execPSClient = _execPSClient;
-    consoleOut = _consoleOut;
-    object_reg = _object_reg;
-    mutex = _mutex;
     
     psLaunchGUI = this;
     paws = NULL;
@@ -189,55 +182,32 @@ bool psLauncherGUI::InitApp()
     return true;
 }
 
-void psLauncherGUI::HandleData()
-{
-    mutex->Lock();
-    for ( size_t z = 0; z < consoleOut->GetSize(); z++ )
-    {
-        //textBox->AddMessage( consoleOut->Get(z).GetData());   
-    }
-    consoleOut->DeleteAll();
-    
-    mutex->Unlock();
-}
-
 bool psLauncherGUI::HandleEvent (iEvent &ev)
 {
-    if(*exitGUI)
+    if(infoShare->GetExitGUI())
         Quit();
 
     if(!updateTold)
     {
-        if(*updateNeeded)
+        if(infoShare->GetUpdateNeeded())
         {
             paws->FindWidget("UpdateAvailable")->Show();
             updateTold = true;
         }
     }
-    else if(*performUpdate)
+    else if(infoShare->GetPerformUpdate())
     {
         pawsWidget* updateProgress = paws->FindWidget("UpdateProgress");
-        if(*updateNeeded)
+        if(infoShare->GetUpdateNeeded())
         {
             pawsMultiLineTextBox* updateProgressOutput = (pawsMultiLineTextBox*)updateProgress->FindWidget("UpdaterOutput");
             updateProgress->Show();
             paws->FindWidget("launcher")->Hide();
 
-            if(mutex)
-            {
-                mutex->Lock();
-            }
-
-            for(uint i=0; i<consoleOut->GetSize(); i++)
+            while(!infoShare->ConsoleIsEmpty())
             {
                 csString currentText = updateProgressOutput->GetText();
-                updateProgressOutput->SetText(currentText.Append(consoleOut->Get(i)));
-            }
-            consoleOut->DeleteAll();
-
-            if(mutex)
-            {
-                mutex->Unlock();
+                updateProgressOutput->SetText(currentText.Append(infoShare->ConsolePop()));
             }
         }
         else
@@ -245,7 +215,7 @@ bool psLauncherGUI::HandleEvent (iEvent &ev)
             csSleep(3000);
             paws->FindWidget("launcher")->Show();
             updateProgress->Hide();
-            *performUpdate = false;
+            infoShare->SetPerformUpdate(false);
         }
     }
 
@@ -264,7 +234,6 @@ bool psLauncherGUI::HandleEvent (iEvent &ev)
     {    
         if (drawScreen)
         {
-            HandleData();
             FrameLimit();
             g3d->BeginDraw(engine->GetBeginDrawFlags() | CSDRAW_2DGRAPHICS);
             paws->Draw();
@@ -304,7 +273,7 @@ void psLauncherGUI::FrameLimit()
 void psLauncherGUI::Quit()
 {
     queue->GetEventOutlet()->Broadcast(csevQuit (object_reg));
-    *exitGUI = true;
+    infoShare->SetExitGUI(true);
 }
 
 int main(int argc, char* argv[])
@@ -333,20 +302,12 @@ int main(int argc, char* argv[])
             args.Push(argv[i]);
         }
 
-        // Set to true to tell the GUI to exit.
-        bool exitGUI = false;
-        
-        // Set to true to tell the GUI that an update is required.
-        bool updateNeeded = false;
-        
-        // Set to true to tell the updater that it's okay to perform the update.
-        bool performUpdate = false;
-        
-        // Console output.
-        csArray<csString> consoleOut;
+        InfoShare *infoShare = new InfoShare();
+        infoShare->SetPerformUpdate(false);
+        infoShare->SetUpdateNeeded(false);
 
         // Initialize updater engine.
-        UpdaterEngine* engine = new UpdaterEngine(args, object_reg, "pslaunch", &performUpdate, &exitGUI, &updateNeeded,  &consoleOut, &mutex);
+        UpdaterEngine* engine = new UpdaterEngine(args, object_reg, "pslaunch", infoShare);
 
         // If we're self updating, continue self update.
         if(engine->GetConfig()->IsSelfUpdating())
@@ -367,7 +328,7 @@ int main(int argc, char* argv[])
 
             // Start up GUI.
             csRef<Runnable> gui;
-            gui.AttachNew(new psLauncherGUI(object_reg, &exitGUI, &updateNeeded, &performUpdate, &execPSClient, &consoleOut, &mutex));
+            gui.AttachNew(new psLauncherGUI(object_reg, infoShare, &execPSClient));
             csRef<Thread> guiThread;
             guiThread.AttachNew(new Thread(gui));
             guiThread->Start();
@@ -394,6 +355,8 @@ int main(int argc, char* argv[])
             // Clean up everything else.
             csInitializer::DestroyApplication(object_reg);
             object_reg = NULL;
+            delete infoShare;
+            infoShare = NULL;
             
             if(execPSClient == true)
             {

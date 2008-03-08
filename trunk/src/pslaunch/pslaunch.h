@@ -55,22 +55,11 @@ private:
     PawsManager*    paws;
     pawsMainWidget* mainWidget;
 
-    /* Array to store console output. */
-    csArray<csString> *consoleOut;
-
-    /* Set to true if we want the GUI to exit. */
-    bool *exitGUI;
-
-    /* Set to true if we need to tell the GUI that an update is pending. */
-    bool *updateNeeded;
-
-    /* If true, then it's okay to perform the update. */
-    bool *performUpdate;
+    /* Info shared with other threads. */
+    InfoShare *infoShare;
 
     /* Set to true to launch the client. */
     bool *execPSClient;
-
-    CS::Threading::Mutex *mutex;
     
     /* keeps track of whether the window is visible or not. */
     bool drawScreen;
@@ -87,8 +76,6 @@ private:
     /* Handles an event from the event handler */
     bool HandleEvent (iEvent &ev);
 
-    void HandleData();
-
     /* Downloads server news */
     Downloader* downloader;
 
@@ -104,13 +91,13 @@ public:
 
     void ExecClient(bool value) { *execPSClient = value; }
 
-    psLauncherGUI(iObjectRegistry* _object_reg, bool *_exitGUI, bool *_updateNeeded, bool *_performUpdate, bool *_execPSClient, csArray<csString> *_consoleOut,  CS::Threading::Mutex *_mutex);
+    psLauncherGUI(iObjectRegistry* _object_reg, InfoShare *_infoShare, bool *_execPSClient);
 
     Downloader* GetDownloader() { return downloader; }
 
     iVFS* GetVFS() { return vfs; }
 
-    void PerformUpdate(bool update) { if(update) *performUpdate = true; else *updateNeeded = false; }
+    void PerformUpdate(bool update) { if(update) infoShare->SetPerformUpdate(true); else infoShare->SetUpdateNeeded(false); }
 
     // Run thread.
     void Run();
