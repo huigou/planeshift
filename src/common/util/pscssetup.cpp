@@ -145,7 +145,7 @@ iObjectRegistry* psCSSetup::InitCS(iReporterListener * customReporter)
   
     if (userConfigfile != NULL)
     {
-        cfg = configManager->AddDomain(userConfigfile,vfs,iConfigManager::ConfigPriorityApplication+1);
+        cfg = configManager->AddDomain(userConfigfile,vfs,iConfigManager::ConfigPriorityUserApp);
         configManager->SetDynamicDomain(cfg);
     }
 
@@ -332,7 +332,7 @@ void psCSSetup::MountMaps()
         const char* dir = configManager->GetStr(it->GetKey(), "");
         if (!vfs->Mount(dir, "/planeshift/world/"))
         {
-            Error2 ("Couldn't mount user specified dir: %s.", dir);
+            printf("Couldn't mount user specified dir: %s.\n", dir);
         }
     }
 }
@@ -381,7 +381,7 @@ void psCSSetup::MountUserData()
     configPath.ReplaceAll("/.crystalspace/", "/.");
 
     // Alternatively, you can set it in psclient.cfg.
-    configPath = configManager->LookupDomain(engineConfigfile)->GetStr("PlaneShift.UserConfigPath", configPath);
+    configPath = configManager->GetStr("PlaneShift.UserConfigPath", configPath);
 
     printf("Your configuration files are in... %s\n", configPath.GetData());
 
@@ -389,13 +389,13 @@ void psCSSetup::MountUserData()
     FileUtil fileUtil(vfs);
     if (!fileUtil.StatFile(configPath) && CS_MKDIR(configPath) < 0)
     {
-        Error2("Could not create required %s directory!", configPath.GetData());
+        printf("Could not create required %s directory!\n", configPath.GetData());
         PS_PAUSEEXIT(1);
     }
 
     if (!vfs->Mount("/planeshift/userdata", configPath + "$/"))
     {
-        Error2("Could not mount %s as /planeshift/userdata!", configPath.GetData());
+        printf("Could not mount %s as /planeshift/userdata!\n", configPath.GetData());
         PS_PAUSEEXIT(1);
     }
 }
@@ -404,7 +404,7 @@ void psCSSetup::MountEarly()
 {
     if (!vfs->Mount("/planeshift/", "$^"))
     {
-        Error1("Could not mount /planeshift!");
+        printf("Could not mount /planeshift!");
         PS_PAUSEEXIT(1);
     }
     

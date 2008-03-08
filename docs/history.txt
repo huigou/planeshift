@@ -1,3 +1,8 @@
+*** 2008-03-08 by Kenny Graunke
+- Improved patch from Vornne for FS#1142: the -cfgset option on the
+  commandline now works as well, allowing one to easily use the same
+  installation of PS with different userdata directories, if one so desires.
+
 *** 2008-03-08 by Mike Gist
 - Some refactors of the updater<->GUI communication code. Now uses a shared object
   rather than passing and altering everything individually.
