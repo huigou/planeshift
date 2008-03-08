@@ -182,7 +182,10 @@ INSERT INTO math_scripts VALUES( "CalculateStatCosts",
         ZCost = 0;
 ");
 
-INSERT INTO math_scripts VALUES( "StaminaMove", "Drain = Speed;");
+INSERT INTO math_scripts VALUES( "StaminaMove",
+"
+        Drain = (Speed/10) + ((Weight/MaxWeight)/10);
+");
 
 INSERT INTO math_scripts VALUES( "StaminaCombat",
 "
