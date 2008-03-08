@@ -34,24 +34,20 @@ iObjectRegistry* UpdaterEngine::object_reg = NULL;
 
 UpdaterEngine::UpdaterEngine(const csArray<csString> args, iObjectRegistry* object_reg, const char* appName)
 {
-    bool* a = new bool;
-    bool* b = new bool;
-    bool* c = new bool;
-    *a = true, *b = false, *c = true;
-    csArray<csString>* d = new csArray<csString>;
+    InfoShare *is = new InfoShare();
     hasGUI = false;
-    Init(args, object_reg, appName, a, b, c, d, NULL);
+    Init(args, object_reg, appName, is);
 }
 
-UpdaterEngine::UpdaterEngine(const csArray<csString> args, iObjectRegistry* _object_reg, const char* _appName,
-                             bool *_performUpdate, bool *_exitGui, bool *_updateNeeded, csArray<csString> *_consoleOut,  CS::Threading::Mutex *_mutex)
+UpdaterEngine::UpdaterEngine(const csArray<csString> args, iObjectRegistry* object_reg, const char* appName,
+                             InfoShare *infoshare)
 {
     hasGUI = true;
-    Init(args, _object_reg, _appName, _performUpdate, _exitGui, _updateNeeded, _consoleOut, _mutex);
+    Init(args, object_reg, appName, infoshare);
 }
 
 void UpdaterEngine::Init(const csArray<csString> args, iObjectRegistry* _object_reg, const char* _appName,
-                         bool *_performUpdate, bool *_exitGui, bool *_updateNeeded, csArray<csString> *_consoleOut,  CS::Threading::Mutex *_mutex)
+                         InfoShare* _infoShare)
 {
     object_reg = _object_reg;
     vfs = csQueryRegistry<iVFS> (object_reg);
@@ -64,11 +60,7 @@ void UpdaterEngine::Init(const csArray<csString> args, iObjectRegistry* _object_
     config = new UpdaterConfig(args, object_reg, vfs);
     fileUtil = new FileUtil(vfs);
     appName = _appName;
-    exitGUI = _exitGui;
-    updateNeeded = _updateNeeded;
-    consoleOut = _consoleOut;
-    performUpdate = _performUpdate;
-    mutex = _mutex;
+    infoShare = _infoShare;
 
     if(vfs->Exists("/this/updater.log"))
     {
@@ -86,37 +78,24 @@ UpdaterEngine::~UpdaterEngine()
     config = NULL;
     if(!hasGUI)
     {
-        delete consoleOut;
-        delete updateNeeded;
-        delete exitGUI;
-        delete performUpdate;
+        delete infoShare;
     }
 }
 
 void UpdaterEngine::printOutput(const char *string, ...)
 {
-    if ( mutex )
-    {
-        mutex->Lock();
-    }
-
     csString outputString;
     va_list args;
     va_start (args, string);
     outputString.FormatV (string, args);
     va_end (args);
-    consoleOut->Push(outputString);
+    infoShare->ConsolePush(outputString);
     printf("%s", outputString.GetData());
 
     if(log.IsValid())
     {
         log->Write(outputString.GetData(), outputString.Length());
-    }
-
-    if ( mutex )
-    {
-        mutex->Unlock();
-    }        
+    }    
 }
 
 void UpdaterEngine::checkForUpdates()
@@ -207,12 +186,12 @@ void UpdaterEngine::checkForUpdates()
             // If using a GUI, prompt user whether or not to update.
             if(!appName.Compare("psupdater"))
             {
-                *updateNeeded = true;            
-                while(*performUpdate == false || *exitGUI == false)
+                infoShare->SetUpdateNeeded(true);         
+                while(!infoShare->GetPerformUpdate() || !infoShare->GetExitGUI())
                 {
                     csSleep(500);
                     // Make sure we die if we exit the gui as well.
-                    if(*updateNeeded == false || *exitGUI == true )
+                    if(!infoShare->GetUpdateNeeded() || infoShare->GetExitGUI())
                     {
                         delete downloader;
                         downloader = NULL;
@@ -220,8 +199,10 @@ void UpdaterEngine::checkForUpdates()
                     }
 
                     // If we're going to self-update, close the GUI.
-                    if(*performUpdate)
-                        *exitGUI = true;
+                    if(infoShare->GetPerformUpdate())
+                    {
+                        infoShare->SetExitGUI(true);
+                    }
                 }
             }
 
@@ -243,11 +224,11 @@ void UpdaterEngine::checkForUpdates()
             // If using a GUI, prompt user whether or not to update.
             if(!appName.Compare("psupdater"))
             {
-                *updateNeeded = true;
-                while(!*performUpdate)
+                infoShare->SetUpdateNeeded(true);
+                while(!infoShare->GetPerformUpdate())
                 {
                     csSleep(500);
-                    if(!*updateNeeded)
+                    if(!infoShare->GetUpdateNeeded())
                     {
                         delete downloader;
                         downloader = NULL;
@@ -272,7 +253,7 @@ void UpdaterEngine::checkForUpdates()
 
         delete downloader;
         downloader = NULL;
-        *updateNeeded = false;
+        infoShare->SetUpdateNeeded(false);
     }
 
     if(appName.Compare("psupdater"))

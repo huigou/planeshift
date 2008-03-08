@@ -26,6 +26,7 @@
 #include <csutil/csstring.h>
 #include <iutil/document.h>
 #include <csutil/threading/thread.h>
+#include <csutil/list.h>
 
 
 #include "download.h"
@@ -36,6 +37,63 @@
 
 struct iConfigManager;
 struct iVFS;
+
+class InfoShare
+{
+private:
+    /* Set to true if we want the GUI to exit. */
+    bool exitGUI;
+
+    /* Set to true if we need to tell the GUI that an update is pending. */
+    bool updateNeeded;
+
+    /* If true, then it's okay to perform the update. */
+    bool performUpdate;
+
+    /* Safety. */
+    CS::Threading::Mutex mutex;
+
+    /* Array to store console output. */
+    csList<csString> consoleOut;
+public:
+
+    InfoShare()
+    {
+        exitGUI = false;
+        performUpdate = true;
+        updateNeeded = true;
+        mutex.Initialize();
+    }
+
+    void SetExitGUI(bool v) { exitGUI = v; }
+    void SetUpdateNeeded(bool v) { updateNeeded = v; }
+    void SetPerformUpdate(bool v) { performUpdate = v; }
+
+    bool GetExitGUI() { return exitGUI; }
+    bool GetUpdateNeeded() { return updateNeeded; }
+    bool GetPerformUpdate() { return performUpdate; }
+
+    void ConsolePush(csString str)
+    {
+        mutex.Lock();
+        consoleOut.PushBack(str);
+        mutex.Unlock();
+    }
+
+    csString ConsolePop()
+    {
+        mutex.Lock();
+        csString ret = consoleOut.Front();
+        consoleOut.PopFront();
+        mutex.Unlock();
+        return ret;
+    }
+
+    bool ConsoleIsEmpty()
+    {
+        return consoleOut.IsEmpty();
+    }
+};
 
 class UpdaterEngine
 {
@@ -60,36 +118,23 @@ private:
     /* XML doc; reading from xml files in the update zip. */
     csRef<iDocument> configdoc;
 
-    /* Array to store console output. */
-    csArray<csString> *consoleOut;
-
-    /* Set to true if we want the GUI to exit. */
-    bool *exitGUI;
-
-    /* Set to true if we need to tell the GUI that an update is pending. */
-    bool *updateNeeded;
-
-    /* If true, then it's okay to perform the update. */
-    bool *performUpdate;
+    /* Info shared with other threads. */
+    InfoShare *infoShare;
 
     /* True if we're using a GUI. */
     bool hasGUI;
 
     /* Output console prints to file. */
     csRef<iFile> log;
-    
-    CS::Threading::Mutex *mutex;
 
     /* Function shared by ctors */
     void Init(const csArray<csString> args, iObjectRegistry* _object_reg, const char* _appName,
-         bool *_performUpdate, bool *_exitGui, bool *_updateNeeded, csArray<csString> *_consoleOut,
-         CS::Threading::Mutex *_mutex);
+              InfoShare *infoshare);
     
 public:
     UpdaterEngine(const csArray<csString> args, iObjectRegistry* _object_reg, const char* _appName);
     UpdaterEngine(const csArray<csString> args, iObjectRegistry* _object_reg, const char* _appName,
-                  bool *_performUpdate, bool *_exitGui, bool *_updateNeeded, csArray<csString> *_consoleOut,
-                  CS::Threading::Mutex *_mutex);
+                  InfoShare *infoshare);
     ~UpdaterEngine();
 
     /* Return the config object */
