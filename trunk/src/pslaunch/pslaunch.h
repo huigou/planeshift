@@ -33,6 +33,8 @@ class pawsMessageTextBox;
 
 #define APPNAME "PlaneShift Launcher"
 
+#define LAUNCHER_CONFIG_FILENAME "/this/pslaunch.cfg"
+
 struct iObjectRegistry;
 
 using namespace CS::Threading;
@@ -96,6 +98,8 @@ public:
     Downloader* GetDownloader() { return downloader; }
 
     iVFS* GetVFS() { return vfs; }
+
+    FileUtil* GetFileUtil() { return fileUtil; }
 
     void PerformUpdate(bool update) { if(update) infoShare->SetPerformUpdate(true); else infoShare->SetUpdateNeeded(false); }
 
