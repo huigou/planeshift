@@ -897,9 +897,6 @@ void psWorkManager::HandleProductionEvent(psWorkGameEvent* workEvent)
                            workEvent->worker->GetEntityID(), newitem->GetName(), worke->Inventory().lastError.GetDataSafe() );
                 }
 
-
-                worke->DropItem( item );
-
             }
             else
             {
