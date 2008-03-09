@@ -28,7 +28,6 @@
 #include <ivideo/natwin.h>
 
 #include "download.h"
-#include "util/fileutil.h"
 #include "globals.h"
 #include "pslaunch.h"
 #include "pawslauncherwindow.h"
@@ -41,6 +40,7 @@ psLauncherGUI* psLaunchGUI;
     
 psLauncherGUI::psLauncherGUI(iObjectRegistry* _object_reg, InfoShare *_infoShare, bool *_execPSClient)
 {
+    object_reg = _object_reg;
     infoShare = _infoShare;
     execPSClient = _execPSClient;
     
@@ -341,7 +341,6 @@ int main(int argc, char* argv[])
             while(guiThread->IsRunning())
             {
                 csSleep(1000);
-                // Update Ping.
             }
 
             // Free updater.

@@ -27,7 +27,7 @@ using namespace std;
 
 bool pawsLauncherWindow::PostSetup()
 {
-    configFile = new csConfigFile(CONFIG_FILENAME, psLaunchGUI->GetVFS());
+    configFile = new csConfigFile(LAUNCHER_CONFIG_FILENAME, psLaunchGUI->GetVFS());
     quit = (pawsButton*)FindWidget("Quit");
     launchClient = (pawsButton*)FindWidget("LaunchButton");
     settings = (pawsButton*)FindWidget("SettingsButton");
@@ -44,6 +44,8 @@ bool pawsLauncherWindow::PostSetup()
     }
     buffer.Truncate(buffer.Length()-1);
     serverNews->SetText(buffer.GetDataSafe());
+    newsFile.close();
+    psLaunchGUI->GetFileUtil()->RemoveFile("servernews");
 
     // Setup update available window.
     updateAvailable = (pawsYesNoBox*)FindWidget("UpdateAvailable");

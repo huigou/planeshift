@@ -26,7 +26,7 @@
 #include <csutil/cfgfile.h>
 #include <iutil/document.h>
 
-#define CONFIG_FILENAME "/this/pslaunch.cfg"
+#define CONFIG_FILENAME "/this/psupdater.cfg"
 #define UPDATERINFO_FILENAME "/this/updaterinfo.xml"
 #define UPDATERINFO_OLD_FILENAME "/this/updaterinfo.xml.bak"
 
