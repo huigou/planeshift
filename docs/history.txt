@@ -1,3 +1,7 @@
+*** 2008-03-10 by Roland Schulz
+- Fix for resizing of windows working weirdly when window was aspect locked
+  by coreyo ... Thanks :) (FS#900)
+
 *** 2008-03-09 by Mike Gist
 - A few pslaunch fixes.
 

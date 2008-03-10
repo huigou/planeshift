@@ -1839,6 +1839,71 @@ void pawsWidget::StopResize()
     }
 }
 
+void pawsWidget::Resize( int flags )
+{
+    psPoint mousePos = PawsManager::GetSingleton().GetMouse()->GetPosition();
+    csRect newFrame = screenFrame;
+
+    float scale = 1.0f;
+    if(defaultFrame.Height() && defaultFrame.Width())
+    {
+        scale = defaultFrame.Width() / defaultFrame.Height();
+    }
+
+    if(keepaspect && flags & RESIZE_RIGHT && flags & RESIZE_BOTTOM)
+    {
+        int deltaX = (mousePos.x - screenFrame.xmin);
+        int deltaY = (mousePos.y - screenFrame.ymin);
+        if ( deltaX < (deltaY * scale) )
+        {
+            newFrame.ymax = mousePos.y;
+            newFrame.xmax = screenFrame.xmin + (int)(deltaY * scale);
+        }
+        else
+        {
+            newFrame.xmax = mousePos.x;
+            newFrame.ymax = screenFrame.ymin + (int)(deltaX / scale);
+        }
+    }
+    else
+    {
+        if(flags & RESIZE_RIGHT)
+        {
+            newFrame.xmax = mousePos.x;
+        }
+        if(flags & RESIZE_BOTTOM)
+        {
+            newFrame.ymax = mousePos.y;
+        }
+    }
+
+    if ( flags & RESIZE_LEFT)
+    {
+        newFrame.xmin = mousePos.x;
+    }
+    if ( flags & RESIZE_TOP )
+    {
+        newFrame.ymin = mousePos.y;
+    }
+
+    /// prevent the widget from going below its min height and width
+    if (newFrame.xmax - newFrame.xmin < min_width) newFrame.xmax = newFrame.xmin + min_width;
+    if (newFrame.ymax - newFrame.ymin < min_height) newFrame.ymax = newFrame.ymin + min_height;
+
+    /// prevent the widget from going beyond its max height and width
+    if (newFrame.xmax - newFrame.xmin > max_width) newFrame.xmax = max_width + newFrame.xmin;
+    if (newFrame.ymax - newFrame.ymin > max_height) newFrame.ymax = max_height + newFrame.ymin;
+
+    screenFrame = newFrame;
+    
+    OnResize();
+
+    for ( size_t x = children.GetSize(); x-- > 0; )
+    {
+        children[x]->Resize();
+    }    
+}
+
 void pawsWidget::Resize( int deltaX, int deltaY, int flags )
 {
     csRect newFrame = screenFrame;

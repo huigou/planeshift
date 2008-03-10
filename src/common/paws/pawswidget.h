@@ -745,8 +745,14 @@ public:
      */
     virtual void CenterToMouse();
 
+    /** Resize a widget based on the current mouse position.
+     * This will recurse through all the children calling Resize() on each.
+     * @param flags  The resize direction.
+     */    
+    virtual void Resize( int flags );
+
     /** Resize a widget by a delta amount.
-     * This will recurse through all the children calling MoveDelta on each.
+     * This will recurse through all the children calling Resize() on each.
      * @param dx Delta x
      * @param dy Delta y
      * @param flags  The resize direction.
