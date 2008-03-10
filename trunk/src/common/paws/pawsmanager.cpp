@@ -557,9 +557,7 @@ bool PawsManager::HandleMouseMove( iEvent &ev )
     
     if ( resizingWidget )
     {
-        resizingWidget->Resize( mouse->GetDeltas().x, 
-                                mouse->GetDeltas().y,
-                                resizingFlags );
+        resizingWidget->Resize( resizingFlags );
         return true;
     }
 
