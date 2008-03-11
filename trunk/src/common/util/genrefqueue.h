@@ -74,6 +74,9 @@ public:
 
             msg->SetPending(true);
 
+            // check are we having a refcount race (in which msg would already be destroyed)
+			CS_ASSERT(msg->GetRefCount() > 0);
+			
             msg->IncRef(); 
 
             Interrupt();
