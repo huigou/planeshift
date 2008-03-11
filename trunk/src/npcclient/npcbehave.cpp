@@ -356,7 +356,7 @@ void BehaviorSet::Advance(csTicks delta,NPC *npc,EventManager *eventmgr)
             if (active->StartScript(npc,eventmgr))
             {
                 // This behavior is done so set it inactive
-                active->SetActive(true);
+                active->SetActive(false);
             }
             else
             {
