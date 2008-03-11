@@ -1,3 +1,6 @@
+*** 2008-03-11 by Anders Reggestad
+- Fixed a crash where a csString returned null, when server receive a remote command.
+
 *** 2008-03-11 by Andrew Dai
 - Added an assertion to detect race conditions when incrementing a refcount
   in the threaded queue.
@@ -7,6 +10,9 @@
 *** 2008-03-10 by Roland Schulz
 - Fix for resizing of windows working weirdly when window was aspect locked
   by coreyo ... Thanks :) (FS#900)
+
+*** 2008-03-09 by Anders Reggestad
+- Removed dublicate call to DropItem when handling production events.
 
 *** 2008-03-09 by Mike Gist
 - A few pslaunch fixes.
