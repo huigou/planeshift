@@ -1,3 +1,9 @@
+*** 2008-03-11 by Andrew Dai
+- Added an assertion to detect race conditions when incrementing a refcount
+  in the threaded queue.
+- Fixed a bug where behaviours were not being deactivated after Run had failed.
+  This was causing npcclient to crash when wandering in an area with no waypoints.
+
 *** 2008-03-10 by Roland Schulz
 - Fix for resizing of windows working weirdly when window was aspect locked
   by coreyo ... Thanks :) (FS#900)
