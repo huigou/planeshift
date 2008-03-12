@@ -2718,13 +2718,16 @@ psItem* psWorkManager::CombineContainedItem(uint32 newId, int newQty, float item
         return NULL;
     }
 
+    newItem->SetOwningCharacter(owner);
+    // this is done by AddToContainer, as long as SetOwningCharacter is set _before_
+    // newItem->SetGuardingCharacterID(owner->GetCharacterID());
+
     // Locate item in container and save container
     if (!container->AddToContainer(newItem,owner->GetActor()->GetClient()))
     {
         Error3("Bad container slot %i when trying to add item instance #%u.", PSCHARACTER_SLOT_NONE, newItem->GetUID());
         return NULL;
     }
-    newItem->SetOwningCharacter(owner);
     workItem->Save(true);
 
     // Zero out x,y,z location because it is in container
@@ -2774,6 +2777,8 @@ psItem* psWorkManager::TransformContainedItem(psItem* oldItem, uint32 newId, int
         return NULL;
     }
 
+    INVENTORY_SLOT_NUMBER oldslot = oldItem->GetLocInParent(false);
+
     // Remove items from container and destroy it
     container->RemoveFromContainer(oldItem,owner->GetActor()->GetClient() );
     if (!oldItem->Destroy())
@@ -2795,14 +2800,16 @@ psItem* psWorkManager::TransformContainedItem(psItem* oldItem, uint32 newId, int
         return NULL;
     }
 
+    newItem->SetOwningCharacter(owner);
+    // this is done by AddToContainer, as long as SetOwningCharacter is set _before_
+    // newItem->SetGuardingCharacterID(owner->GetCharacterID());
+
     // Locate item in container and save container
-    if (!container->AddToContainer(newItem,owner->GetActor()->GetClient()))
+    if (!container->AddToContainer(newItem,owner->GetActor()->GetClient(),oldslot))
     {
         Error3("Bad container slot %i when trying to add item instance #%u.", PSCHARACTER_SLOT_NONE, newItem->GetUID());
         return NULL;
     }
-    newItem->SetOwningCharacter(owner);
-    newItem->SetGuardingCharacterID(owner->GetCharacterID());
     workItem->Save(true);
 
     // Zero out x,y,z location because it is in container

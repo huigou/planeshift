@@ -7,6 +7,8 @@
 - add partial fix for FS#1182 as suggested in the comments. Not sure about the
   cause of the overtraining. 
 - some more INSTANCE_IDs.
+- Fix workmanager to set owner id before AddToContainer, which should do the
+  right thing then regarding to guarding and updates to clients.
 
 *** 2008-03-11 by Roland Schulz
 - fix to book reading window to display craft description in a different font
