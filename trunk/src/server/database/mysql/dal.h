@@ -27,6 +27,7 @@ using namespace CS::Threading;
 struct iObjectRegistry;
 
 #ifdef USE_DELAY_QUERY
+#define THREADED_BUFFER_SIZE 300
 class DelayedQueryManager : public CS::Threading::Runnable
 {
 public:
@@ -38,7 +39,7 @@ public:
     void Stop();
 private:
     MYSQL* m_conn;
-    csArray<csString> arr;
+    csString arr[THREADED_BUFFER_SIZE];
     size_t start, end;
     CS::Threading::Mutex mutex;
     CS::Threading::RecursiveMutex mutexArray;

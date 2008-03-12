@@ -26,8 +26,6 @@
 #define USE_DELAY_QUERY
 #include "dal.h"
 
-#define THREADED_BUFFER_SIZE 300
-
 /**
  *
  * Standard SCF stuff to make plugin work
@@ -560,7 +558,6 @@ DelayedQueryManager::DelayedQueryManager(const char *host, unsigned int port, co
                               const char *user, const char *pwd)
 {
     start=end=0;
-    arr.SetSize(THREADED_BUFFER_SIZE);
     m_Close = false;
     m_host = csString(host);
     m_port = port;
@@ -605,7 +602,7 @@ void DelayedQueryManager::Run()
             {
                 CS::Threading::RecursiveMutexScopedLock lock(mutexArray);
                 currQuery = arr[end];
-                end = (end+1) % arr.GetSize();
+                end = (end+1) % THREADED_BUFFER_SIZE;
             }
             timer.Start();
             if (!mysql_query(m_conn, currQuery))
@@ -620,7 +617,7 @@ void DelayedQueryManager::Push(csString query)
 { 
     {
         CS::Threading::RecursiveMutexScopedLock lock(mutexArray);
-        size_t tstart = (start+1) % arr.GetSize();
+        size_t tstart = (start+1) % THREADED_BUFFER_SIZE;
         if (tstart == end)
         {
             return;
