@@ -50,7 +50,6 @@
 #include "../questionmanager.h"
 #include "../npcmanager.h"
 #include "../adminmanager.h"
-#include "../introductionmanager.h"
 #include "../netmanager.h"
 
 #include "../iserver/idal.h"
@@ -2304,14 +2303,14 @@ bool IntroduceResponseOp::Run(gemNPC *who, Client *target,NpcResponse *owner,csT
         gemObject* obj = psserver->GetAdminManager()->FindObjectByString(targetName,who);
         if (obj)
         {
-            psserver->GetIntroductionManager()->Introduce(character->GetCharacterID(), ((gemNPC*)obj)->GetCharacterData()->GetCharacterID());
+            character->Introduce(((gemNPC*)obj)->GetCharacterData());
             obj->Send(target->GetClientNum(), false, false);
             psserver->SendSystemInfo(target->GetClientNum(), "You now know %s",((gemNPC*)obj)->GetName());
         }            
     }
     else
     {
-        psserver->GetIntroductionManager()->Introduce(character->GetCharacterID(), npcChar->GetCharacterID());
+        character->Introduce(npcChar);
         who->Send(target->GetClientNum(), false, false);
         psserver->SendSystemInfo(target->GetClientNum(), "You now know %s",who->GetName());
     }

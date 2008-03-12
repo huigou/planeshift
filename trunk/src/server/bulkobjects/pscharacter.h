@@ -605,6 +605,8 @@ public:
 
     csArray<Buddy> buddyList;    
     csArray<int> buddyOfList;
+    csSet<unsigned int> acquaintances;
+
     psRaceInfo *raceinfo;
     PSCHARACTER_MODE player_mode;
     static const char * player_mode_to_str[];
@@ -703,6 +705,8 @@ public:
     /// Load the bare minimum to know what this character is looks like
     bool QuickLoad(iResultRow& row, bool noInventory);
 
+    void LoadIntroductions();
+
     void LoadSavedProgressionEvents();
     int RegisterProgressionEvent(const csString & script, csTicks elapsedTicks);
     void UnregisterProgressionEvent(int id);
@@ -728,6 +732,15 @@ public:
     const char *GetCharFullName() { return fullname.GetData(); }
     const char *GetOldLastName() { return oldlastname.GetData(); }
     
+    // Introductions
+    /// Answers whether this character knows the given character or not.
+    bool Knows(unsigned int charid);
+    bool Knows(psCharacter *c) { return (c ? Knows(c->characterid) : false); }
+    /// Introduces this character to the given character; answers false if already introduced.
+    bool Introduce(psCharacter *c);
+    /// Unintroduces this character to the given character; answers false if not introduced.
+    bool Unintroduce(psCharacter *c);
+
     unsigned int GetCharType() { return characterType; }
     void SetCharType(unsigned int v) { CS_ASSERT(v < PSCHARACTER_TYPE_COUNT); characterType = v; }
     const char *GetCharTypeName() { return psCharacter::characterTypeName[ characterType ]; }

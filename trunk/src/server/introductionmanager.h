@@ -1,7 +1,7 @@
 /*
  * introductionmanager.h
  *
- * Copyright (C) 2003 Atomic Blue (info@planeshift.it, http://www.atomicblue.org) 
+ * Copyright (C) 2007 Atomic Blue (info@planeshift.it, http://www.atomicblue.org) 
  *
  *
  * This program is free software; you can redistribute it and/or
@@ -40,17 +40,7 @@ public:
     IntroductionManager();
     ~IntroductionManager();
 
-    bool Introduce(unsigned int charid, unsigned int targetcharid);
-    bool UnIntroduce(unsigned int charid, unsigned int targetcharid);
-    bool IsIntroduced(unsigned int charid, unsigned int targetcharid);
-
-    bool LoadCharIntroductions(unsigned int charid);
-    bool UnloadCharIntroductions(unsigned int charid);
-
     virtual void HandleMessage(MsgEntry *pMsg,Client *client);
-
-protected:
-    csHash< csSet<unsigned int>* > introMap;
 };
 
 #endif

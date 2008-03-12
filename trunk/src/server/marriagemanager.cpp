@@ -36,7 +36,6 @@
 // Local Includes
 //=============================================================================
 #include "marriagemanager.h"
-#include "introductionmanager.h"
 #include "chatmanager.h"
 #include "psserver.h"
 #include "psserverchar.h"
@@ -239,12 +238,12 @@ void psMarriageManager::Propose( Client* client, csString proposedCharName, csSt
     if (proposedClient && !proposedClient->IsSuperClient())
     {
         // Make sure both parties know each other
-        if (!psserver->GetIntroductionManager()->IsIntroduced(client->GetCharacterData()->GetCharacterID(), proposedClient->GetCharacterData()->GetCharacterID()))
+        if (!client->GetCharacterData()->Knows(proposedClient->GetCharacterData()))
         {
             psserver->SendSystemResult(client->GetClientNum(), "You haven't asked %s name yet!", proposedClient->GetCharacterData()->GetRaceInfo()->His());
             return;
         }
-        if (!psserver->GetIntroductionManager()->IsIntroduced(proposedClient->GetCharacterData()->GetCharacterID(), client->GetCharacterData()->GetCharacterID()))
+        if (!proposedClient->GetCharacterData()->Knows(client->GetCharacterData()))
         {
             psserver->SendSystemResult(client->GetClientNum(), "You haven't told %s your name yet!", proposedClient->GetCharacterData()->GetRaceInfo()->Him());
             return;

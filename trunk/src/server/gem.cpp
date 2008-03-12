@@ -109,7 +109,6 @@
 #include "adminmanager.h"
 #include "commandmanager.h"
 #include "combatmanager.h"
-#include "introductionmanager.h"
 
 // #define PSPROXDEBUG
 
@@ -2222,9 +2221,10 @@ void gemActor::Send( int clientnum, bool control, bool to_superclient  )
         if (((GetClient()->GetSecurityLevel() >= GM_LEVEL_0) && 
             GetCharacterData()->GetGuild()) ||
             (targetClient->GetSecurityLevel() >= GM_LEVEL_0) ||
-            psserver->GetIntroductionManager()->IsIntroduced(targetClient->GetCharacterData()->GetCharacterID(),
-                                                                psChar->GetCharacterID()))
-                                                             flags |= psPersistActor::NAMEKNOWN;
+            targetClient->GetCharacterData()->Knows(psChar))
+        {
+            flags |= psPersistActor::NAMEKNOWN;
+        }
     }
 
     psPersistActor mesg( clientnum,
@@ -3127,13 +3127,9 @@ void gemActor::SendBehaviorMessage(const csString & msg_id, gemObject *actor)
                 }
 
                 // Introduce yourself
-                if (IsAlive())
+                if (IsAlive() && GetCharacterData()->Knows(activeActor->GetCharacterData()))
                 {
-                    unsigned int myCharId = GetCharacterData()->GetCharacterID();
-                    unsigned int targetCharId = activeActor->GetCharacterData()->GetCharacterID();
-                    bool areIntroduced = psserver->GetIntroductionManager()->IsIntroduced(myCharId, targetCharId);
-                    if (!areIntroduced)
-                        options |= psGUIInteractMessage::INTRODUCE;
+                    options |= psGUIInteractMessage::INTRODUCE;
                 }
             }
 
@@ -3786,8 +3782,7 @@ void gemNPC::Send( int clientnum, bool control, bool to_superclient )
 
         // Enable to enable introductions between player and NPCs
         /*if ((targetClient->GetSecurityLevel() >= GM_LEVEL_0) ||
-            psserver->GetIntroductionManager()->IsIntroduced(targetClient->GetCharacterData()->GetCharacterID(),
-                                                                psChar->GetCharacterID()))
+              targetClient->GetCharacterData()->Knows(psChar))
                                                              flags |= psPersistActor::NAMEKNOWN;*/
     }
 

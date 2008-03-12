@@ -2561,11 +2561,11 @@ public:
 
         if (inverse)
         {
-            psserver->GetIntroductionManager()->UnIntroduce(actorChar->GetCharacterID(), targetChar->GetCharacterID());
+            actorChar->Unintroduce(targetChar);
             return true;
         }
 
-        psserver->GetIntroductionManager()->Introduce(actorChar->GetCharacterID(), targetChar->GetCharacterID());
+        actorChar->Introduce(targetChar);
 
         target->Send(actor->GetClientID(), false, actor->GetClient()->IsSuperClient());
 
