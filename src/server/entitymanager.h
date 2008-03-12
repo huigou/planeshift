@@ -91,10 +91,10 @@ public:
     bool CreatePlayer(Client* client);
     bool DeletePlayer(Client* client);
 
-    PS_ID CopyNPCFromDatabase(int master_id, float x, float y, float z, float angle, const csString & sector, int instance, const char *firstName = NULL, const char *lastName = NULL);
+    PS_ID CopyNPCFromDatabase(int master_id, float x, float y, float z, float angle, const csString & sector, INSTANCE_ID instance, const char *firstName = NULL, const char *lastName = NULL);
     PS_ID CreateNPC(int NPCID, bool updateProxList = true);
     PS_ID CreateNPC(psCharacter *chardata, bool updateProxList = true);
-    PS_ID CreateNPC(psCharacter *chardata, int instance, csVector3 pos, iSector* sector, float yrot, bool updateProxList = true);
+    PS_ID CreateNPC(psCharacter *chardata, INSTANCE_ID instance, csVector3 pos, iSector* sector, float yrot, bool updateProxList = true);
 
     gemNPC *CreateFamiliar(gemActor *owner);
     gemNPC *CreatePet( Client* client, int familiarid );
@@ -104,7 +104,7 @@ public:
 
     gemObject *CreateItem(psItem *& iteminstance, bool transient);
     gemObject *MoveItemToWorld(psItem       *keyItem,
-                               int           instance,
+                               INSTANCE_ID  instance,
                                psSectorInfo *sectorinfo,
                                float         loc_x,
                                float         loc_y,

@@ -261,7 +261,7 @@ gemNPC* EntityManager::CreateFamiliar (gemActor *owner)
 
     // Adjust Position of Familiar from owners pos
     owner->GetPosition( pos, yrot, sector );
-    int instance = owner->GetInstance();
+    INSTANCE_ID instance = owner->GetInstance();
 
     familiarID = this->CopyNPCFromDatabase( masterFamiliarID, pos.x + 1.5, pos.y, pos.z + 1.5, yrot, sector->QueryObject()->GetName(), instance, familiarname, "Familiar" );
     if ( familiarID == 0 )
@@ -583,7 +583,7 @@ bool EntityManager::CreatePlayer (Client* client)
     float yrot;
     psSectorInfo *sectorinfo;
     iSector *sector;
-    int instance;
+    INSTANCE_ID instance;
     chardata->GetLocationInWorld(instance,sectorinfo,pos.x,pos.y,pos.z,yrot);
     sector=FindSector(sectorinfo->name);
     if (sector==NULL)
@@ -663,7 +663,7 @@ bool EntityManager::DeletePlayer(Client * client)
     return true;
 }
 
-PS_ID EntityManager::CopyNPCFromDatabase(int master_id, float x, float y, float z, float angle, const csString & sector, int instance, const char *firstName, const char *lastName)
+PS_ID EntityManager::CopyNPCFromDatabase(int master_id, float x, float y, float z, float angle, const csString & sector, INSTANCE_ID instance, const char *firstName, const char *lastName)
 {
     psCharacter * npc = NULL;
     int new_id;
@@ -706,7 +706,7 @@ PS_ID EntityManager::CreateNPC(psCharacter *chardata, bool updateProxList)
     float yrot;
     psSectorInfo *sectorinfo;
     iSector *sector;
-    int instance;
+    INSTANCE_ID instance;
 
     chardata->GetLocationInWorld(instance, sectorinfo,pos.x,pos.y,pos.z,yrot);
     sector = FindSector(sectorinfo->name);
@@ -721,7 +721,7 @@ PS_ID EntityManager::CreateNPC(psCharacter *chardata, bool updateProxList)
     return CreateNPC(chardata, instance, pos, sector, yrot, updateProxList);
 }
 
-PS_ID EntityManager::CreateNPC(psCharacter *chardata, int instance, csVector3 pos, iSector* sector, float yrot, bool updateProxList)
+PS_ID EntityManager::CreateNPC(psCharacter *chardata, INSTANCE_ID instance, csVector3 pos, iSector* sector, float yrot, bool updateProxList)
 {
     if (chardata==NULL)
         return false;
@@ -788,7 +788,7 @@ bool EntityManager::LoadMap (const char* mapname)
 }
 
 gemObject *EntityManager::MoveItemToWorld(psItem       *chrItem,
-                                          int           instance,
+                                          INSTANCE_ID   instance,
                                           psSectorInfo *sectorinfo,
                                           float         loc_x,
                                           float         loc_y,
@@ -817,7 +817,7 @@ gemObject *EntityManager::CreateItem( psItem *& iteminstance, bool transient )
     csVector3 newpos;
     float yrot;
     iSector *isec;
-    int instance;
+    INSTANCE_ID instance;
 
     iteminstance->GetLocationInWorld(instance, &sectorinfo,newpos.x,newpos.y,newpos.z,yrot);
     if (sectorinfo==NULL)
@@ -906,7 +906,7 @@ bool EntityManager::CreateActionLocation( psActionLocation *instance, bool trans
         return false;
     }
 
-    gemActionLocation *obj = new gemActionLocation( gem, instance, isec, 0, (uint32) instance->id );    
+    gemActionLocation *obj = new gemActionLocation( gem, instance, isec, 0, instance->id );    
     
     //won't create item if gemItem entity was not created
     if ( obj->GetEntity() == NULL ) 
@@ -1219,7 +1219,7 @@ void EntityManager::Teleport( gemObject *source, gemObject *dest)
     iSector * targetSector;
     csVector3 targetPoint;
     float yRot = 0.0;
-    int instance;
+    INSTANCE_ID instance;
 
     gemActor *subject = dynamic_cast< gemActor * > (source);
 

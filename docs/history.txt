@@ -1,4 +1,13 @@
 *** 2008-03-11 by Roland Schulz
+- Big cleanup: replace the interspersed unsigned int and int instance types with
+  own type INSTANCE_ID typedef'ed to uint32. 
+  Fellow coders, please, make sure never to use atoi to read uint32 values.
+  This includes GetInt from db row (use GetUInt32) and GetAttributeAsInt.
+  atoi("4294967295") = 2147483647 on 32 bit systems!
+- add partial fix for FS#1182 as suggested in the comments. Not sure about the
+  cause of the overtraining. 
+
+*** 2008-03-11 by Roland Schulz
 - fix to book reading window to display craft description in a different font
   and disable save/write by Caarrie.
 - More fixes to movement when interacting with windows by Vornne

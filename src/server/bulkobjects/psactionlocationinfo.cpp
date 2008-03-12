@@ -333,8 +333,8 @@ gemActionLocation *psActionLocation::GetGemObject( void )
 gemItem *psActionLocation::GetRealItem()
 {
     // Check if the actionlocation is linked to real item
-    uint32_t instance_id = GetInstanceID();
-    if (instance_id==(uint32_t)-1) 
+    INSTANCE_ID instance_id = GetInstanceID();
+    if (instance_id==INSTANCE_ALL) 
     {
         if (GetGemObject()->GetItem())
         {
@@ -593,7 +593,12 @@ void psActionLocation::SetupEntrance(csRef<iDocumentNode> entranceNode)
     SetEntranceType(entranceNode->GetAttributeValue( "Type" ));
 
     // Set lock instance ID if any 
-    uint32 instance_id = (uint32)entranceNode->GetAttributeValueAsInt( "LockID" );
+    // cannot use GetAttributeValueAsInt since it uses atoi, which will barf on values > 0x7fffffff
+    INSTANCE_ID instance_id = 0;
+    const char * lockid_str = entranceNode->GetAttributeValue( "LockID" );
+    if( lockid_str ) {
+        instance_id = strtoul(lockid_str,NULL,10);
+    }
     SetInstanceID(instance_id);
     if ( instance_id  != 0 )
     {
@@ -649,7 +654,7 @@ void psActionLocation::SetupContainer(csRef<iDocumentNode> containerNode)
     isContainer = true;
 
     // Set container instance ID if any 
-    SetInstanceID((uint32)containerNode->GetAttributeValueAsInt( "ID" ));
+    SetInstanceID(containerNode->GetAttributeValueAsInt( "ID" ));
 }
 
 // Setup game tag

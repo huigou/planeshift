@@ -133,7 +133,7 @@ protected:
     float    fixedspawnz;
     float    fixedspawnrot;
     csString fixedspawnsector;
-    unsigned int fixedinstance;
+    INSTANCE_ID fixedinstance;
 
     /// Spawn ranges for the current rule
     BinaryRBTree<SpawnRange> ranges;
@@ -158,7 +158,7 @@ public:
                     const char *sector,
                     LootEntrySet *loot_id,
                     int dead_time,
-                    unsigned int instance);
+                    INSTANCE_ID instance);
 
     int  GetID() { return id; };
     void SetID(int idval) { id = idval; };
@@ -170,7 +170,7 @@ public:
     int CheckSubstitution(int originalplayer);
 
     /// Pick a spot for the entity to respawn
-    void DetermineSpawnLoc(psCharacter *ch, csVector3& pos, float& angle, csString& sectorname, unsigned int& instance);
+    void DetermineSpawnLoc(psCharacter *ch, csVector3& pos, float& angle, csString& sectorname, INSTANCE_ID& instance);
 
     /// Add a spawn range to current rule
     void AddRange(SpawnRange *range);
@@ -378,7 +378,7 @@ public:
      * This function is called periodically by the server and will respawn
      * NPCs as appropriate.
      */
-    void Respawn(int instance,csVector3& where,float rot,csString& sector,int playerID);
+    void Respawn(INSTANCE_ID instance,csVector3& where,float rot,csString& sector,int playerID);
     
     /// Adds all items to the world.
     /** Called at the server startup to add all the items to the game. 
@@ -415,7 +415,7 @@ protected:
     float     rot;
     csString  sector;
     int       playerID;
-    unsigned int instance;
+    INSTANCE_ID instance;
 
 public:
     psRespawnGameEvent(SpawnManager *mgr,
@@ -424,7 +424,7 @@ public:
                float angle,
                csString& sector,
                int newplayer,
-               unsigned int newinstance);
+               INSTANCE_ID newinstance);
 
     virtual void Trigger();  // Abstract event processing function
 };

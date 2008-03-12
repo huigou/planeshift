@@ -1772,7 +1772,7 @@ void AdminManager::CreateHuntLocation(MsgEntry* me,psAdminCmdMessage& msg, Admin
     csVector3 pos;
     float angle;
     iSector* sector = 0;
-    int instance;
+    INSTANCE_ID instance;
 
     client->GetActor()->GetPosition(pos, angle, sector);
     instance = client->GetActor()->GetInstance();
@@ -2133,7 +2133,7 @@ void AdminManager::Teleport(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& 
     csVector3 targetPoint;
     float yRot = 0.0;
     iSector *targetSector;
-    int targetInstance;
+    INSTANCE_ID targetInstance;
     if ( !GetTargetOfTeleport(client, msg, data, targetSector, targetPoint, yRot, subject, targetInstance) )
     {
         psserver->SendSystemError(client->GetClientNum(), "Cannot teleport %s to %s", data.player.GetData(), data.target.GetData() );
@@ -2145,7 +2145,7 @@ void AdminManager::Teleport(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& 
     csVector3 oldpos;
     float oldyrot;
     iSector *oldsector;
-    int oldInstance;
+    INSTANCE_ID oldInstance;
     subject->GetPosition(oldpos,oldyrot,oldsector);
     oldInstance = subject->GetInstance();
 
@@ -2195,7 +2195,7 @@ void AdminManager::Teleport(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& 
     {
         bool instance_changed = oldInstance != targetInstance;
         csString instance_str;
-        instance_str.Format(" in instance %d",targetInstance);
+        instance_str.Format(" in instance %u",targetInstance);
 
         psserver->SendSystemResult(client->GetClientNum(), "Teleported %s to %s%s", subject->GetName(), 
                                    ((data.target=="map")?destName:data.target).GetData(),
@@ -3056,7 +3056,7 @@ void AdminManager::HandleLocation(MsgEntry* me, psAdminCmdMessage& msg, AdminCmd
 }
 
 
-bool AdminManager::GetTargetOfTeleport(Client *client, psAdminCmdMessage& msg, AdminCmdData& data, iSector * & targetSector,  csVector3 & targetPoint, float &yRot, gemObject *subject, int &instance)
+bool AdminManager::GetTargetOfTeleport(Client *client, psAdminCmdMessage& msg, AdminCmdData& data, iSector * & targetSector,  csVector3 & targetPoint, float &yRot, gemObject *subject, INSTANCE_ID &instance)
 {
     instance = 0;
 
@@ -3291,7 +3291,7 @@ void AdminManager::Slide(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& dat
     }
 }
 
-bool AdminManager::MoveObject(Client *client, gemObject *target, csVector3& pos, float yrot, iSector* sector, int instance)
+bool AdminManager::MoveObject(Client *client, gemObject *target, csVector3& pos, float yrot, iSector* sector, INSTANCE_ID instance)
 {
     // This is a powerful feature; not everyone is allowed to use all of it
     csString response;
@@ -3382,7 +3382,7 @@ void AdminManager::CreateNPC(MsgEntry* me,psAdminCmdMessage& msg, AdminCmdData& 
     csVector3 pos;
     float angle;
     psSectorInfo* sectorInfo = NULL;
-    int instance;
+    INSTANCE_ID instance;
     client->GetActor()->GetCharacterData()->GetLocationInWorld(instance, sectorInfo, pos.x, pos.y, pos.z, angle );
 
     iSector* sector = NULL;
@@ -3436,7 +3436,7 @@ void AdminManager::CreateItem(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
     csVector3 pos;
     iSector*  sector = 0;
     float angle;
-    int instance;
+    INSTANCE_ID instance;
 
     client->GetActor()->GetPosition(pos, angle, sector);
     instance = client->GetActor()->GetInstance();
@@ -3461,7 +3461,7 @@ void AdminManager::CreateItem(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
     }
 }
 
-bool AdminManager::CreateItem(const char * name, double xPos, double yPos, double zPos, float angle, const char * sector, int instance, int stackCount, int random, int value)
+bool AdminManager::CreateItem(const char * name, double xPos, double yPos, double zPos, float angle, const char * sector, unsigned int instance, int stackCount, int random, int value)
 {
     psSectorInfo *sectorinfo = CacheManager::GetSingleton().GetSectorInfoByName(sector);
     if (sectorinfo==NULL)
@@ -3731,8 +3731,8 @@ void AdminManager::MakeUnlockable(MsgEntry *me, psAdminCmdMessage& msg, AdminCmd
         psActionLocation *action = gemAction->GetAction();
 
         // check if the actionlocation is linked to real item
-        uint32 instance_id = action->GetInstanceID();
-        if (instance_id== (uint32)-1)
+        INSTANCE_ID instance_id = action->GetInstanceID();
+        if (instance_id == INSTANCE_ALL)
         {
             instance_id = action->GetGemObject()->GetEntityID();
         }
@@ -3781,8 +3781,8 @@ void AdminManager::MakeSecurity(MsgEntry *me, psAdminCmdMessage& msg, AdminCmdDa
         psActionLocation *action = gemAction->GetAction();
 
         // check if the actionlocation is linked to real item
-        uint32 instance_id = action->GetInstanceID();
-        if (instance_id== (uint32)-1)
+        INSTANCE_ID instance_id = action->GetInstanceID();
+        if (instance_id == INSTANCE_ALL)
         {
             instance_id = action->GetGemObject()->GetEntityID();
         }
@@ -3868,8 +3868,8 @@ void AdminManager::AddRemoveLock(MsgEntry *me, psAdminCmdMessage& msg, AdminCmdD
         psActionLocation *action = gemAction->GetAction();
 
         // check if the actionlocation is linked to real item
-        uint32 instance_id = action->GetInstanceID();
-        if (instance_id == (uint32)-1)
+        INSTANCE_ID instance_id = action->GetInstanceID();
+        if (instance_id == INSTANCE_ALL)
         {
             instance_id = action->GetGemObject()->GetEntityID();
         }
@@ -3926,8 +3926,8 @@ void AdminManager::ChangeLock(MsgEntry *me, psAdminCmdMessage& msg, AdminCmdData
         psActionLocation *action = gemAction->GetAction();
 
         // check if the actionlocation is linked to real item
-        uint32 instance_id = action->GetInstanceID();
-        if (instance_id == (uint32)-1)
+        INSTANCE_ID instance_id = action->GetInstanceID();
+        if (instance_id == INSTANCE_ALL)
         {
             instance_id = action->GetGemObject()->GetEntityID();
         }
@@ -6120,7 +6120,7 @@ void AdminManager::ModifyHuntLocation(MsgEntry* me, psAdminCmdMessage& msg, Admi
         gemItem* gItem = dynamic_cast<gemItem*>(object);
         if (gItem)
         {
-            int instance = object->GetInstance();
+            INSTANCE_ID instance = object->GetInstance();
             iSector* sector = object->GetSector();
 
             csVector3 pos(data.x, data.y, data.z);

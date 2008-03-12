@@ -77,7 +77,7 @@ BankManager::BankManager()
         monEvt.latePayment = row.GetInt("latePayment") == 0 ? false : true;
         monEvt.lateBy = row.GetInt("lateBy");
         monEvt.updateDate = true;
-        monEvt.instance = row.GetInt("instance");
+        monEvt.instance = row.GetUInt32("instance");
         monEvts.Push(monEvt);
     }
 

@@ -668,7 +668,7 @@ public:
         psSectorInfo *loc_sector;
         float loc_x,loc_y,loc_z;
         float loc_yrot;
-        int worldInstance;
+        INSTANCE_ID worldInstance;
     } location;
 
     unsigned int advantage_bitfield[PSCHARACTER_ADVANTAGE_32BIT_BITFIELDS];
@@ -989,8 +989,8 @@ public:
     void SetTraitForLocation(PSTRAIT_LOCATION location,psTrait *trait);
     psTrait *GetTraitForLocation(PSTRAIT_LOCATION location);
 
-    void GetLocationInWorld(int &instance,psSectorInfo *&sectorinfo,float &loc_x,float &loc_y,float &loc_z,float &loc_yrot);
-    void SetLocationInWorld(int instance,psSectorInfo *sectorinfo,float loc_x,float loc_y,float loc_z,float loc_yrot);
+    void GetLocationInWorld(INSTANCE_ID &instance,psSectorInfo *&sectorinfo,float &loc_x,float &loc_y,float &loc_z,float &loc_yrot);
+    void SetLocationInWorld(INSTANCE_ID instance,psSectorInfo *sectorinfo,float loc_x,float loc_y,float loc_z,float loc_yrot);
     void SaveLocationInWorld();
 
     /// Construct an XML format string of the player's texture choices.

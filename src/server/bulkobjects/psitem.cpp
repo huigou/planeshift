@@ -366,9 +366,9 @@ bool psItem::Load(iResultRow& row)
         (row.GetInt("location_in_parent") == 0 && row.GetInt("char_id_owner") == 0)) // No owner and no slot
     {
         float x,y,z,yrot;
-        int instance;
+        INSTANCE_ID instance;
 
-        instance = row.GetInt("loc_instance");
+        instance = row.GetUInt32("loc_instance");
         //        printf("KWF: Item instance=%d\n", instance);
 
         psSectorInfo *itemsector=CacheManager::GetSingleton().GetSectorInfoByID(row.GetInt("loc_sector_id"));
@@ -649,7 +649,7 @@ void psItem::GetFieldArray(psStringArray& fields)
 
     float locx,locy,locz,locyrot;
     psSectorInfo *sectorinfo;
-    int instance;
+    INSTANCE_ID instance;
 
     GetLocationInWorld(instance,&sectorinfo,locx,locy,locz,locyrot);
 
@@ -698,7 +698,7 @@ void psItem::GetFieldArray(psStringArray& fields)
         }
     }
     fields.Push(openableLocksString);
-    fields.FormatPush("%d", instance);
+    fields.FormatPush("%u", instance);
 
     fields.Push(item_name);
     fields.Push(item_description);
@@ -860,7 +860,7 @@ bool psItem::GetRequiredRepairToolConsumed()
 }
 
 
-void psItem::GetLocationInWorld(int &instance,psSectorInfo **sectorinfo,float &loc_x,float &loc_y,float &loc_z,float &loc_yrot) const
+void psItem::GetLocationInWorld(INSTANCE_ID &instance,psSectorInfo **sectorinfo,float &loc_x,float &loc_y,float &loc_z,float &loc_yrot) const
 {
     instance    = location.worldInstance;
     *sectorinfo = location.loc_sectorinfo;
@@ -870,7 +870,7 @@ void psItem::GetLocationInWorld(int &instance,psSectorInfo **sectorinfo,float &l
     loc_yrot    = location.loc_yrot;
 }
 
-void psItem::SetLocationInWorld(int instance,psSectorInfo *sectorinfo,float loc_x,float loc_y,float loc_z,float loc_yrot)
+void psItem::SetLocationInWorld(INSTANCE_ID instance,psSectorInfo *sectorinfo,float loc_x,float loc_y,float loc_z,float loc_yrot)
 {
     location.worldInstance  = instance;
     location.loc_sectorinfo = sectorinfo;
@@ -2120,7 +2120,7 @@ void psItem::ScheduleRespawn()
     schedule = NULL;
 }
 
-psScheduledItem::psScheduledItem(int id,uint32 itemID,csVector3& position, psSectorInfo* sector,int instance, int interval,int maxrnd)
+psScheduledItem::psScheduledItem(int id,uint32 itemID,csVector3& position, psSectorInfo* sector,INSTANCE_ID instance, int interval,int maxrnd)
 {
     spawnID = id;
     this->itemID = itemID;
@@ -2137,7 +2137,7 @@ psItem* psScheduledItem::CreateItem() // Spawns the item
     if(wantToDie)
         return NULL;
 
-    Notify3(LOG_SPAWN,"Spawning item (%u) in instance %d.\n",itemID,worldInstance);
+    Notify3(LOG_SPAWN,"Spawning item (%u) in instance %u.\n",itemID,worldInstance);
 
     psItemStats *stats = CacheManager::GetSingleton().GetBasicItemStatsByID(itemID);
     if (stats==NULL)

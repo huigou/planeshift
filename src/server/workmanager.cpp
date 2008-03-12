@@ -272,8 +272,8 @@ void psWorkManager::HandleMessage(MsgEntry* me,Client *client)
                 psActionLocation *action = gemAction->GetAction();
 
                 // Check if the actionlocation is linked to real item
-                uint32 instance_id = action->GetInstanceID();
-                if (instance_id!=(uint32)-1)
+                INSTANCE_ID instance_id = action->GetInstanceID();
+                if( instance_id!= INSTANCE_ALL )
                 {
                     target = GEMSupervisor::GetSingleton().FindItemEntity( instance_id );
                 }
@@ -1752,8 +1752,8 @@ bool psWorkManager::ScriptAction(gemActionLocation* gemAction)
     psActionLocation *action = gemAction->GetAction();
 
     // check if the actionlocation is linked to real item
-    uint32 instance_id = action->GetInstanceID();
-    if (instance_id==(uint32)-1)
+    INSTANCE_ID instance_id = action->GetInstanceID();
+    if (instance_id==INSTANCE_ALL)
     {
         instance_id = action->GetGemObject()->GetEntity()->GetID();
     }
@@ -2396,8 +2396,8 @@ bool psWorkManager::ValidateTarget(Client* client)
         psActionLocation *action = gemAction->GetAction();
 
       // check if the actionlocation is linked to real item
-      uint32 instance_id = action->GetInstanceID();
-      if (instance_id==(uint32)-1)
+      INSTANCE_ID instance_id = action->GetInstanceID();
+      if (instance_id==INSTANCE_ALL)
       {
           instance_id = action->GetGemObject()->GetEntityID();
       }
@@ -2730,7 +2730,7 @@ psItem* psWorkManager::CombineContainedItem(uint32 newId, int newQty, float item
     // Zero out x,y,z location because it is in container
     float xpos,ypos,zpos,yrot;
     psSectorInfo* sectorinfo;
-    int instance;
+    INSTANCE_ID instance;
     workItem->GetLocationInWorld(instance, &sectorinfo, xpos, ypos, zpos, yrot );
     newItem->SetLocationInWorld(instance,sectorinfo, 0.00, 0.00, 0.00, 0.00 );
 
@@ -2808,7 +2808,7 @@ psItem* psWorkManager::TransformContainedItem(psItem* oldItem, uint32 newId, int
     // Zero out x,y,z location because it is in container
     float xpos,ypos,zpos,yrot;
     psSectorInfo* sectorinfo;
-    int instance;
+    INSTANCE_ID instance;
     workItem->GetLocationInWorld(instance, &sectorinfo, xpos, ypos, zpos, yrot );
     newItem->SetLocationInWorld(instance,sectorinfo, 0.00, 0.00, 0.00, 0.00 );
 
@@ -2997,7 +2997,7 @@ psItem* psWorkManager::TransformTargetItem(psItem* oldItem, uint32 newId, int ne
 #endif
 
     // Get the location of what will be replaced
-    int instance;
+    INSTANCE_ID instance;
     psSectorInfo* sectorinfo;
     float xpos,ypos,zpos,yrot;
     oldItem->GetLocationInWorld(instance, &sectorinfo, xpos, ypos, zpos, yrot );
