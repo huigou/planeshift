@@ -283,7 +283,7 @@ private:
      *
      */
     /// Points to the object that contains this object, or NULL if there is none.
-    unsigned int parent_item_instance_id;
+    INSTANCE_ID parent_item_instance_id;
 
 
     /** Dual use.  Indicates either the slot within the parent item if contained, or the slot in the player's inventory/equipment/bulk if appropriate.
@@ -660,8 +660,8 @@ public:
 
     float GetVisibleDistance();
 
-    void GetLocationInWorld(int &instance,psSectorInfo **sectorinfo,float &loc_x,float &loc_y,float &loc_z,float &loc_yrot) const;
-    void SetLocationInWorld(int instance,psSectorInfo *sectorinfo,float loc_x,float loc_y,float loc_z,float loc_yrot);
+    void GetLocationInWorld(INSTANCE_ID &instance,psSectorInfo **sectorinfo,float &loc_x,float &loc_y,float &loc_z,float &loc_yrot) const;
+    void SetLocationInWorld(INSTANCE_ID instance,psSectorInfo *sectorinfo,float loc_x,float loc_y,float loc_z,float loc_yrot);
 
     psSectorInfo* GetSector() const { return location.loc_sectorinfo; }
 
@@ -842,7 +842,7 @@ private:
 class psScheduledItem
 {
 public:
-    psScheduledItem(int spawnID,uint32 itemID,csVector3& position, psSectorInfo* sector,int instance, int interval,int maxrnd);
+    psScheduledItem(int spawnID,uint32 itemID,csVector3& position, psSectorInfo* sector,INSTANCE_ID instance, int interval,int maxrnd);
 
     psItem* CreateItem();
     uint32 GetItemID() { return itemID;}

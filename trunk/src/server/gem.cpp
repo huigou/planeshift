@@ -118,9 +118,6 @@
 /// Number of messages in the chat history buffer
 #define CHAT_HISTORY_SIZE 50
 
-// Special instance to hold actors that are visible in all instances
-#define GLOBAL_INSTANCE ((unsigned int)(-1))
-
 GEMSupervisor *gemObject::cel = NULL;
 
 GEMSupervisor::GEMSupervisor(iObjectRegistry *objreg,
@@ -534,7 +531,7 @@ void GEMSupervisor::GetAllEntityPos(psAllEntityPosMessage& update)
             {
                 csVector3 pos,pos2;
                 float yrot;
-                unsigned int instance,oldInstance;
+                INSTANCE_ID instance,oldInstance;
                 iSector *sector;
                 obj->GetPosition(pos,yrot,sector);
                 instance = obj->GetInstance();
@@ -1344,7 +1341,7 @@ void gemActiveObject::SendBehaviorMessage(const csString & msg_id, gemObject *ac
 gemItem::gemItem(csWeakRef<psItem> item,
                      const char* factname,
                      const char* filename,
-                     unsigned int instance,
+                     INSTANCE_ID instance,
                      iSector* room,
                      const csVector3& pos,
                      float rotangle,
@@ -1380,7 +1377,7 @@ void gemItem::Broadcast(int clientnum, bool control )
 
 }
 
-void gemItem::SetPosition(const csVector3& pos,float angle, iSector* sector, unsigned int instance)
+void gemItem::SetPosition(const csVector3& pos,float angle, iSector* sector, INSTANCE_ID instance)
 {
     this->pos = pos;
     this->yRot = angle;
@@ -1840,7 +1837,7 @@ void gemActor::SetMasqueradeLevel(int level)
 
 bool gemActor::SeesObject(gemObject * object, float range)
 {
-    bool res = (worldInstance == object->GetInstance() || object->GetInstance() == GLOBAL_INSTANCE || GetInstance() == GLOBAL_INSTANCE)
+    bool res = (worldInstance == object->GetInstance() || object->GetInstance() == INSTANCE_ALL || GetInstance() == INSTANCE_ALL)
                   &&
                (GetBaseAdvertiseRange() >= range)
                   &&
@@ -2898,13 +2895,13 @@ bool gemActor::UpdateDR()
     return true;
 }
 
-void gemActor::GetLastSuperclientPos(csVector3& pos, unsigned int& instance) const
+void gemActor::GetLastSuperclientPos(csVector3& pos, INSTANCE_ID& instance) const
 {
     pos = lastSentSuperclientPos; 
     instance = lastSentSuperclientInstance;
 }
 
-void gemActor::SetLastSuperclientPos(const csVector3& pos, unsigned int instance)
+void gemActor::SetLastSuperclientPos(const csVector3& pos, INSTANCE_ID instance)
 {
     lastSentSuperclientPos = pos;
     lastSentSuperclientInstance = instance;
@@ -3367,7 +3364,7 @@ bool gemActor::SetMesh(const char* meshname)
 gemNPC::gemNPC( psCharacter *chardata,
                    const char* factname,
                    const char* filename,
-                   unsigned int instance,
+                   INSTANCE_ID instance,
                    iSector* room,
                    const csVector3& pos,
                    float rotangle,

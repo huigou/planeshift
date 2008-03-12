@@ -57,7 +57,10 @@
 #define PROX_LIST_SHRINK_THRESHOLD  50   // 50 players in range - start radius shrink
 #define PROX_LIST_REGROW_THRESHOLD  30   // 30 players in range - start radius grow
 #define PROX_LIST_STEP_SIZE         10   // grow by this much each attempt
+
 #define DEFAULT_INSTANCE             0   // Instance 0 is where 99% of things happen
+typedef uint32 INSTANCE_ID;
+#define INSTANCE_ALL 0xffffffff
 
 #define ASSIST_MAX_DIST 25   // Maximum distance that the /assist command will work
 
@@ -98,6 +101,7 @@
 //Changed from unsigned long to uint32 since we assert the size of PS_ID is equal to uint32_t
 //uint32 is defined by CS to magically be like uint32_t on systems that don't have it by default
 typedef uint32 PS_ID;
+
 
 // This is needed to 64bit code, some functions break on 32bit Linux, but we need them on 32bit windows
 #ifdef _WIN32

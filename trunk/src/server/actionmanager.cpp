@@ -90,7 +90,7 @@ void psActionTimeoutGameEvent::Trigger()
 {
     psSectorInfo *sector;
     float pos_x, pos_y, pos_z, yrot;
-    int instance;
+    INSTANCE_ID instance;
     Client *clientPtr = psserver->GetNetManager()->GetClient( (int)client );   
     if ( clientPtr && info )
     {

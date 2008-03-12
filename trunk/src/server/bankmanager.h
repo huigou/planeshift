@@ -56,7 +56,7 @@ protected:
         bool latePayment;
         int lateBy;
         bool updateDate;
-        int instance;
+        INSTANCE_ID instance;
     };
 
 

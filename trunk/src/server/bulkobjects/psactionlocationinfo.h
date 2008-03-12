@@ -34,6 +34,7 @@
 // Project Includes
 //=============================================================================
 #include "util/poolallocator.h"
+#include "util/psconst.h"
 
 #include "../iserver/idal.h"
 
@@ -80,8 +81,8 @@ public:
 
     /// Returns instance ID of referenced in action location response string
     ///  This is either a container ID or a lock ID
-    uint32 GetInstanceID() const { return instanceID; }
-    void SetInstanceID(uint32 newID) { instanceID = newID; }
+    INSTANCE_ID GetInstanceID() const { return instanceID; }
+    void SetInstanceID(INSTANCE_ID newID) { instanceID = newID; }
 
     /// Returns the enter script in entrance action location response string
     csString GetEnterScript() const { return enterScript; }
@@ -195,7 +196,7 @@ private:
     bool isReturn;
 
     ///  This is either a container ID or a lock ID
-    uint32 instanceID;
+    INSTANCE_ID instanceID;
 
     /// String containing the entrance type
     csString entranceType;

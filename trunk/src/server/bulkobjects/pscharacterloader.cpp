@@ -337,14 +337,14 @@ bool psCharacterLoader::NewNPCCharacterData(unsigned int accountid, psCharacter 
     values.FormatPush("%u",chardata->BankMoney().GetOctas());
     float x,y,z,yrot;
     psSectorInfo *sectorinfo;
-    int instance;
+    INSTANCE_ID instance;
     chardata->GetLocationInWorld(instance,sectorinfo,x,y,z,yrot);
     values.FormatPush("%10.2f",x);
     values.FormatPush("%10.2f",y);
     values.FormatPush("%10.2f",z);
     values.FormatPush("%10.2f",yrot);
     values.FormatPush("%u",sectorinfo->uid);
-    values.FormatPush("%d",instance);
+    values.FormatPush("%u",instance);
     csString csv;
     if (chardata->GetActor())
         chardata->GetActor()->GetFactions()->GetFactionListCSV(csv);

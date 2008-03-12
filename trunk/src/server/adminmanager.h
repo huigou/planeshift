@@ -28,6 +28,7 @@
 // Project Includes
 //=============================================================================
 #include "net/messages.h"            // Chat Message definitions
+#include "util/psconst.h"
 
 //=============================================================================
 // Local Includes
@@ -130,7 +131,7 @@ protected:
         bool uniqueName,help;
         float radius, range;
         unsigned short stackCount;
-        int instance;
+        INSTANCE_ID instance;
         bool instanceValid;
         RangeSpecifier rangeSpecifier;
 
@@ -153,7 +154,7 @@ protected:
     void CreateNPC(MsgEntry *me,psAdminCmdMessage& msg, AdminCmdData& data, Client *client, gemActor* basis);
     void KillNPC(MsgEntry *me, psAdminCmdMessage& msg, AdminCmdData& data, Client *client);
     void CreateItem(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data, Client *client);
-    bool CreateItem(const char * name, double xPos, double yPos, double zPos, float angle, const char * sector, int instance,int stackCount, int random, int value);
+    bool CreateItem(const char * name, double xPos, double yPos, double zPos, float angle, const char * sector, INSTANCE_ID instance,int stackCount, int random, int value);
     void ModifyKey(MsgEntry *me, psAdminCmdMessage& msg, AdminCmdData& data, Client *client);
     void ChangeLock(MsgEntry *me, psAdminCmdMessage& msg, AdminCmdData& data, Client *client);
     void MakeUnlockable(MsgEntry *me, psAdminCmdMessage& msg, AdminCmdData& data, Client *client);
@@ -172,10 +173,10 @@ protected:
     void Teleport(MsgEntry* me,psAdminCmdMessage& msg, AdminCmdData& data, Client *client, gemObject *subject);
     /** Get sector and coordinates of target of teleportation described by 'msg'.
         Return success */
-    bool GetTargetOfTeleport(Client *client, psAdminCmdMessage& msg, AdminCmdData& data, iSector * & targetSector,  csVector3 & targetPoint, float &yRot, gemObject *subject, int &instance);
+    bool GetTargetOfTeleport(Client *client, psAdminCmdMessage& msg, AdminCmdData& data, iSector * & targetSector,  csVector3 & targetPoint, float &yRot, gemObject *subject, INSTANCE_ID &instance);
 
     /** Handles movement of objects for teleport and slide. */
-    bool MoveObject(Client *client, gemObject *target, csVector3& pos, float yrot, iSector* sector, int instance);
+    bool MoveObject(Client *client, gemObject *target, csVector3& pos, float yrot, iSector* sector, INSTANCE_ID instance);
 
     /** This function sends a warning message from a GM to a player, and displays it in
      *  big, red, un-ignorable text on the screen and in the chat window.

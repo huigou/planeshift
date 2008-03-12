@@ -305,7 +305,7 @@ bool psCharacter::Load(iResultRow& row)
         return false;
     }
 
-    SetLocationInWorld(row.GetInt("loc_instance"),
+    SetLocationInWorld(row.GetUInt32("loc_instance"),
                        sectorinfo,
                        row.GetFloat("loc_x"),
                        row.GetFloat("loc_y"),
@@ -2221,7 +2221,7 @@ psTrait *psCharacter::GetTraitForLocation(PSTRAIT_LOCATION location)
 }
 
 
-void psCharacter::GetLocationInWorld(int &instance,psSectorInfo *&sectorinfo,float &loc_x,float &loc_y,float &loc_z,float &loc_yrot)
+void psCharacter::GetLocationInWorld(INSTANCE_ID &instance,psSectorInfo *&sectorinfo,float &loc_x,float &loc_y,float &loc_z,float &loc_yrot)
 {
     sectorinfo=location.loc_sector;
     loc_x=location.loc_x;
@@ -2231,7 +2231,7 @@ void psCharacter::GetLocationInWorld(int &instance,psSectorInfo *&sectorinfo,flo
     instance = location.worldInstance;
 }
 
-void psCharacter::SetLocationInWorld(int instance, psSectorInfo *sectorinfo,float loc_x,float loc_y,float loc_z,float loc_yrot)
+void psCharacter::SetLocationInWorld(INSTANCE_ID instance, psSectorInfo *sectorinfo,float loc_x,float loc_y,float loc_z,float loc_yrot)
 {
     psSectorInfo *oldsector = location.loc_sector;
 
@@ -3319,7 +3319,7 @@ bool Skill::Practice( unsigned int amount, unsigned int& actuallyAdded,psCharact
 {
     bool rankup = false;
     // Practice can take place
-    if ( yCost == y )
+    if ( y >= yCost )
     {
         z+=amount;
         if ( z >= zCost )

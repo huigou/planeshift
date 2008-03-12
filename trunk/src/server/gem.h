@@ -164,7 +164,7 @@ class gemObject : public iDeleteNotificationObject, public CS::Utility::WeakRefe
 {
 
 public:
-    gemObject(const char* name, const char* factname,const char* filename,unsigned int myinstance,iSector* room,
+    gemObject(const char* name, const char* factname,const char* filename,INSTANCE_ID myinstance,iSector* room,
         const csVector3& pos,float rotangle,int clientnum,uint32 id);
 
     /// This ctor is only for use in making keys for the BinaryTree
@@ -204,8 +204,8 @@ public:
     const char *GetName();
     void SetName(const char* n);
 
-    void SetInstance(unsigned int newInstance) { worldInstance = newInstance; }
-    unsigned int  GetInstance()                { return worldInstance; }
+    void SetInstance(INSTANCE_ID newInstance) { worldInstance = newInstance; }
+    INSTANCE_ID  GetInstance()                { return worldInstance; }
 
     void RegisterCallback(iDeleteObjectCallback * receiver) { receivers.Push(receiver); }
     void UnregisterCallback(iDeleteObjectCallback * receiver) { receivers.Delete(receiver); }
@@ -260,8 +260,8 @@ public:
     virtual void BroadcastTargetStatDR(ClientConnectionSet *clients) { }
     virtual void SendTargetStatDR(Client *client) { }
     virtual psNPCDialog *GetNPCDialogPtr() { return 0; }
-    virtual void GetLastSuperclientPos(csVector3& pos, unsigned int& instance) const { }
-    virtual void SetLastSuperclientPos(const csVector3& pos, unsigned int instance) { }
+    virtual void GetLastSuperclientPos(csVector3& pos, INSTANCE_ID& instance) const { }
+    virtual void SetLastSuperclientPos(const csVector3& pos, INSTANCE_ID instance) { }
     virtual void AddLootableClient(int cnum) { }
     virtual void RemoveLootableClient(int cnum) { }
     virtual bool IsLootableClient(int cnum) { return false; }
@@ -282,7 +282,7 @@ protected:
     ProximityList *proxlist;                // Proximity List for this object
     csString name;                          // Name of this object, used mostly for debugging
     static GEMSupervisor *cel;              // Static ptr back to main collection of all objects
-    unsigned int worldInstance;             // Only objects which match instances can see each other
+    INSTANCE_ID worldInstance;              // Only objects which match instances can see each other
     csVector3 pos;                          // Position in 3d space
     float yRot;                             // Left-Right rotation, in radians
     iSector *sector;                        // Ptr to the CS sector inhabited
@@ -359,7 +359,7 @@ public:
     virtual void Broadcast(int clientnum, bool control);
     virtual void Send( int clientnum, bool control, bool super_clients);
 
-    virtual void SetPosition(const csVector3& pos,float angle, iSector* sector, unsigned int instance);
+    virtual void SetPosition(const csVector3& pos,float angle, iSector* sector, INSTANCE_ID instance);
 
     virtual bool IsPickable();
     virtual bool IsLockable();
@@ -603,7 +603,7 @@ public:
     virtual float DrainMana(float adjust, bool absolute);
 
     void SetPosition(const csVector3& pos,float angle, iSector* sector);
-    void SetInstance(unsigned int worldInstance);
+    void SetInstance(INSTANCE_ID worldInstance);
 
     void UpdateValidLocation(const csVector3& pos, float vel_y, float yrot, iSector* sector, bool force = false);
 
@@ -640,8 +640,8 @@ public:
     void Resurrect();
 
     virtual bool UpdateDR();
-    virtual void GetLastSuperclientPos(csVector3& pos, unsigned int& instance) const;
-    virtual void SetLastSuperclientPos(const csVector3& pos, unsigned int instance);
+    virtual void GetLastSuperclientPos(csVector3& pos, INSTANCE_ID& instance) const;
+    virtual void SetLastSuperclientPos(const csVector3& pos, INSTANCE_ID instance);
 
     virtual void BroadcastTargetStatDR(ClientConnectionSet *clients);
     virtual void SendTargetStatDR(Client *client);
@@ -834,7 +834,7 @@ class gemPet : public gemNPC
 {
 public:
 
-    gemPet(psCharacter *chardata, const char* factname,const char* filename,unsigned int instance,iSector* room,
+    gemPet(psCharacter *chardata, const char* factname,const char* filename,INSTANCE_ID instance,iSector* room,
         const csVector3& pos,float rotangle,int clientnum,uint32 id) : gemNPC(chardata,factname,filename,instance,room,pos,rotangle,clientnum,id) 
     {
         this->persistanceLevel = "Temporary";

@@ -347,9 +347,13 @@ bool psNPCLoader::ReadLocation()
 
     csVector3 pos, rot;
     csString  sector;
-    int instance;
+    INSTANCE_ID instance;
 
-    instance = xmlnode->GetAttributeValueAsInt("instance");
+    instance = 0;
+    const char * inst_str = xmlnode->GetAttributeValue("instance");
+    if( inst_str ) {
+        instance = strtoul(inst_str,NULL,10);
+    }
     pos.x = xmlnode->GetAttributeValueAsFloat("x");
     pos.y = xmlnode->GetAttributeValueAsFloat("y");
     pos.z = xmlnode->GetAttributeValueAsFloat("z");
