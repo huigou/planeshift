@@ -1,3 +1,7 @@
+*** 2008-03-12 by Kenny Graunke
+- Ditch csArray in delayed query manager, since its size is statically
+  determined anyway.
+
 *** 2008-03-11 by Roland Schulz
 - Big cleanup: replace the interspersed unsigned int and int instance types with
   own type INSTANCE_ID typedef'ed to uint32. 
