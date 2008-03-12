@@ -70,6 +70,7 @@
 #include "psitem.h"
 #include "psitemstats.h"
 #include "psguildinfo.h"
+#include "adminmanager.h"
 
 csRef<NPCDialogDict> dict;
 
@@ -1566,7 +1567,7 @@ bool SayResponseOp::Run(gemNPC *who, Client *target,NpcResponse *owner,csTicks& 
     
     who->GetNPCDialogPtr()->SubstituteKeywords(target,response); 
 
-    if (target->GetSecurityLevel() >= 30)
+    if (target->GetSecurityLevel() >= GM_DEVELOPER)
         response.AppendFmt(" (%s)",owner->triggerText.GetDataSafe() );
 
     who->Say(response,target,saypublic,timeDelay);

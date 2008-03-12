@@ -44,7 +44,9 @@ private:
 
     pawsTextBox*            name;
     pawsMultiLineTextBox*   description;
+    pawsMultiLineTextBox*   descriptionCraft;
     pawsWidget*             writeButton;
+    pawsWidget*             saveButton;
     
     bool shouldWrite;
     int slotID;

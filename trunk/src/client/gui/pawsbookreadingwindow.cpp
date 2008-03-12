@@ -57,11 +57,16 @@ bool pawsBookReadingWindow::PostSetup()
 
     description = dynamic_cast<pawsMultiLineTextBox*> (FindWidget("ItemDescription"));
     if ( !description ) return false;
+
+    descriptionCraft = dynamic_cast<pawsMultiLineTextBox*> (FindWidget("ItemDescriptionCraft"));
+    //if ( !descriptionCraft ) return false;
     
     writeButton = dynamic_cast<pawsWidget*> (FindWidget("WriteButton"));
     //if ( !writeButton ) return false;
-
-    return true;
+	
+	saveButton= dynamic_cast<pawsWidget*> (FindWidget("SaveButton"));
+    //if ( !saveButton ) return false;
+	return true;
 }
 
 void pawsBookReadingWindow::HandleMessage( MsgEntry* me )
@@ -76,20 +81,46 @@ void pawsBookReadingWindow::HandleMessage( MsgEntry* me )
             name->SetText( mesg.name );       
             slotID = mesg.slotID;
             containerID = mesg.containerID;
-            if( writeButton ){
-               if( mesg.canWrite ) writeButton->Show();
-               else writeButton->Hide();
+            if( writeButton )
+            {
+                if( mesg.canWrite ) {
+                    writeButton->Show();
+                } else {
+                    writeButton->Hide();
+                }
+            }
+            if( saveButton )
+            {
+                if( mesg.canWrite ) {
+                    saveButton->Show();
+                } else {
+                    saveButton->Hide();
+                }
+            }
+            if( descriptionCraft )
+            {
+                descriptionCraft->Hide();
             }
             break;
         }
         case MSGTYPE_CRAFT_INFO:
         {
             Show();
-            writeButton->Hide();
+            if( writeButton ) {
+                writeButton->Hide();
+            }
+            if( saveButton ) {
+                saveButton->Hide();
+            }
+            if( description ) {
+                description->Hide();
+            }
             psMsgCraftingInfo mesg(me);
             csString text(mesg.craftInfo);
-            if (text)
-                description->SetText(text.GetData());
+            if (text && descriptionCraft)
+            {
+                descriptionCraft->SetText(text.GetData());
+            }
             name->SetText( "You discover you can do the following:" );
             break;
         }

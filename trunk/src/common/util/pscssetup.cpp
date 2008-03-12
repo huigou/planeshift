@@ -199,6 +199,9 @@ iObjectRegistry* psCSSetup::InitCS(iReporterListener * customReporter)
         PS_PAUSEEXIT(1);
     }
 
+    // Reset the window name because with Xwindows OpenApplication changes it
+    InitCSWindow(APPNAME);
+
     // tweak reporter plugin to report everything...
     // is there a command line switch or something to do this which I've missed?
     if (customReporter == 0)

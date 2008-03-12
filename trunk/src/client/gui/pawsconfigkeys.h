@@ -146,6 +146,8 @@ public:
     /// Sets widget that should be notified the result
     void SetNotify( pawsFingeringReceiver* widget );
         
+    virtual const bool GetFocusOverridesControls() const { return true; }
+
 private:
 
     void RefreshCombo();

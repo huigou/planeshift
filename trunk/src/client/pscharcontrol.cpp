@@ -303,11 +303,12 @@ csArray<psControl*>* psControlManager::GetArrayFromMap( const psControlMap &ctrl
 
 void psControlManager::HandleButton( psControl::Device device, uint button, uint32 mods, bool newState )
 {
-    psControl* ctrl = GetMappedTrigger(device,button,mods); //First trigger
-    if (ctrl == NULL)
+    psControl* ctrlPressed = GetMappedTrigger(device,button,mods); //First trigger
+    if (ctrlPressed == NULL)
         return;  // Not mapped
-    
+
     csArray<psControl*>* ctrls = GetMappedTriggers(device,button); //All triggers (for stopping triggers with mods that may not exist now)
+    psControl* ctrl = ctrlPressed;
     uint i = 0;
     do
     {
@@ -317,9 +318,10 @@ void psControlManager::HandleButton( psControl::Device device, uint button, uint
         {
             case psControl::NORMAL:
             {
-                if (ctrl->state == newState)
-                    break;  // Nothing changed
-            
+                // Clear other triggers of the button if they have changed
+                if (ctrl->state == newState && ctrl->name != ctrlPressed->name)
+                    break;
+
                 #ifdef CONTROLS_DEBUG
                     printf("Handling normal map: \"%s\" for %s\n", ctrl->name.GetData(), ctrl->ToString().GetData() );
                 #endif

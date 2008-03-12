@@ -17,6 +17,10 @@
         <frame x="38" y="90" width="385" height="272" border="no"/>
         <font name="/planeshift/data/ttf/becker-m.ttf" r="0" g="0" b="0" size="12"/>
     </widget>
+	    <widget name="ItemDescriptionCraft" factory="pawsMultiLineTextBox" >
+        <frame x="38" y="90" width="385" height="272" border="no"/>
+        <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="0" g="0" b="0" size="12"/>
+    </widget>
 
     <widget name="WriteButton" factory="pawsButton" id="1001" tooltip="Write in this book">
         <frame x="5" y="5" width="22" height="22" />
