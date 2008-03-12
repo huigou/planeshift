@@ -41,7 +41,6 @@
 #include "../gem.h"
 #include "../clients.h"
 #include "../cachemanager.h"
-#include "../introductionmanager.h"
 #include "../progressionmanager.h"
 #include "../globals.h"
 
@@ -235,7 +234,7 @@ psCharacter *psCharacterLoader::LoadCharacterData(unsigned int uid, bool forceRe
         psserver->GetLogCSV()->Write(CSV_STATUS, status);
     }
 
-    psserver->GetIntroductionManager()->LoadCharIntroductions(chardata->GetCharacterID());
+    chardata->LoadIntroductions();
 
     return chardata;
 }

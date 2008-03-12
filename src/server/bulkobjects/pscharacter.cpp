@@ -43,7 +43,6 @@
 #include "../chatmanager.h"
 #include "../commandmanager.h"
 #include "../gmeventmanager.h"
-#include "../introductionmanager.h"
 #include "../progressionmanager.h"
 #include "../client.h"
 #include "../globals.h"
@@ -102,7 +101,7 @@ void psCharacter::operator delete(void *releasePtr)
 
 psCharacter::psCharacter() : inventory(this),
     guildinfo(NULL), attributes(this), modifiers(this),
-    skills(this), npc_masterid(0), loaded(false)
+    skills(this), acquaintances(101, 10, 101), npc_masterid(0), loaded(false)
 {
     characterType = PSCHARACTER_TYPE_UNKNOWN;
 
@@ -194,8 +193,6 @@ psCharacter::~psCharacter()
 
     delete vitals;
     vitals = NULL;
-
-    psserver->GetIntroductionManager()->UnloadCharIntroductions(characterid);
 
 //    delete workInfo;
 }
@@ -485,6 +482,21 @@ bool psCharacter::LoadRelationshipInfo( unsigned int characterid)
     }
     return true;
 }
+
+void psCharacter::LoadIntroductions()
+{
+    Result r = db->Select("SELECT * FROM introductions WHERE charid=%d", characterid);
+    if (r.IsValid())
+    {
+        for (unsigned long i = 0; i < r.Count(); i++)
+        {
+            unsigned int charID = r[i].GetUInt32("introcharid");
+            // Safe to skip test because the DB disallows duplicate rows
+            acquaintances.AddNoTest(charID);
+        }
+    }
+}
+
 
 bool psCharacter::LoadBuddies( Result& myBuddies, Result& buddyOf )
 {
@@ -2894,6 +2906,39 @@ psGuildLevel * psCharacter::GetGuildLevel()
         return 0;
 
     return membership->guildlevel;
+}
+
+bool psCharacter::Knows(unsigned int charID)
+{
+    return acquaintances.Contains(charID);
+}
+
+bool psCharacter::Introduce(psCharacter *c)
+{
+    if (!c) return false;
+    unsigned int theirID = c->GetCharacterID();
+
+    if (!acquaintances.Contains(theirID))
+    {
+        acquaintances.AddNoTest(theirID);
+        db->CommandPump("insert into introductions values(%d, %d)", this->characterid, theirID);
+        return true;
+    }
+    return false;
+}
+
+bool psCharacter::Unintroduce(psCharacter *c)
+{
+    if (!c) return false;
+    unsigned int theirID = c->GetCharacterID();
+
+    if (acquaintances.Contains(theirID))
+    {
+        acquaintances.Delete(theirID);
+        db->CommandPump("delete from introductions where charid=%d and introcharid=%d", this->characterid, theirID);
+        return true;
+    }
+    return false;
 }
 
 void psCharacter::RemoveBuddy( unsigned int buddyID )
