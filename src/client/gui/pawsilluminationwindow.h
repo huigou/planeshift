@@ -150,6 +150,8 @@ public:
     iGraphics2D *GetG2D();
     void DrawBlackBox(int x, int y);
     bool IsMouseDown() { return mouseDown; }
+
+    virtual const bool GetFocusOverridesControls() const { return true; }
 };
 
 CREATE_PAWS_FACTORY( pawsSketchWindow );

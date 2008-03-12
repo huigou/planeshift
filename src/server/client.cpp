@@ -476,7 +476,7 @@ bool Client::CanTake(psItem* item)
     }
 
     uint32 containerId = item->GetContainerID();
-    if (containerId && GetSecurityLevel() < 22)
+    if (containerId && GetSecurityLevel() < GM_LEVEL_2)
     {
         gemItem* gemitem = GEMSupervisor::GetSingleton().FindItemEntity(containerId);
         if (gemitem)
@@ -514,11 +514,11 @@ bool Client::CanTake(psItem* item)
     }
 
     // Allow GM2s to take any PC-owned stuff
-    if (GetSecurityLevel() >= 22 && !item->GetIsNpcOwned() && !item->GetIsNoPickup())
+    if (GetSecurityLevel() >= GM_LEVEL_2 && !item->GetIsNpcOwned() && !item->GetIsNoPickup())
         return true;
 
     // Allow developers to take anything
-    if (GetSecurityLevel() >= 30)
+    if (GetSecurityLevel() >= GM_DEVELOPER)
         return true;
 
     return false;

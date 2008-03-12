@@ -726,16 +726,22 @@ bool psEngine::HandleEvent (iEvent &ev)
  
     if ( paws->HandleEvent( ev ) )
     {
-        if (charController)
+        if (charController && paws->GetFocusOverridesControls())
+        {
             charController->GetMovementManager()->StopControlledMovement();
+        }
 
         return true;
     }
-     
-    if ( charController && ( !paws->GetFocusOverridesControls() || ev.Name == event_frame ))
+    
+    if ( charController && charController->HandleEvent( ev ) )
     {
-        if ( charController->HandleEvent( ev ) )
-            return true;
+        if (paws->GetFocusOverridesControls())
+        {
+            charController->GetMovementManager()->StopControlledMovement();
+        }
+
+        return true;
     }
     
     static bool drawFrame;

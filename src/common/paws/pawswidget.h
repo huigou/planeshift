@@ -690,6 +690,8 @@ public:
      * @param key The key pressed.
      * @param modifiers Used to modify tab behavior.
      * @return bool TRUE for success FALSE if no action.
+     * @remark If you override this, be sure to also override 
+     * GetFocusOverridesControls() as returning true
      */
     virtual bool OnKeyDown( int keyCode, int keyChar, int modifiers );
 
@@ -697,6 +699,11 @@ public:
      * @return hasFocus Current status of the widget.
      */
     virtual bool HasFocus() { return hasFocus; }
+
+    /** Test if the widget should intercept all key presses.
+     * @remark False by default, should be true for text entry widgets
+     */
+    virtual const bool GetFocusOverridesControls() const { return false; }
 
     /** Move this widget up the z order to the top
      * If the widget is alwaysOnTop, it will be placed in position 0.

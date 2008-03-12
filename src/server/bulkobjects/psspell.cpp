@@ -49,6 +49,7 @@
 #include "psspell.h"
 #include "psglyph.h"
 #include "psguildinfo.h"
+#include "adminmanager.h"
 
 #define SPELL_TOUCH_RANGE   3.0
 
@@ -254,7 +255,7 @@ psSpellCastGameEvent *psSpell::Cast(psSpellManager * mgr, Client * client, csStr
     }
 
     // Check if needed glyphs are available (skip for developers to allow easier testing)
-    if (!caster->GetCharacterData()->Inventory().HasPurifiedGlyphs(glyphList) && client->GetSecurityLevel() < 30)
+    if (!caster->GetCharacterData()->Inventory().HasPurifiedGlyphs(glyphList) && client->GetSecurityLevel() < GM_DEVELOPER)
     {
         castingText->Format("You don't have the purified glyphs to cast %s.",name.GetData());
         return NULL;

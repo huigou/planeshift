@@ -421,7 +421,6 @@ bool PawsManager::HandleKeyDown( iEvent& event )
 
 bool PawsManager::HandleMouseDown( iEvent &ev )
 {
-
     pawsWidget* widget = 0;
     psPoint event = MouseLocation(ev);
 
@@ -816,6 +815,7 @@ void PawsManager::SetCurrentFocusedWidget ( pawsWidget* widget )
         // Allow widget to be focused if it is a child of the modal widget
         pawsWidget* check = modalWidget->FindWidget( widget->GetName(), false );
         if (check)
+        {
             if ( currentFocusedWidget != widget )
             {
                 // Check if widget CAN be focused, if it can't, pass it to the parent
@@ -825,11 +825,17 @@ void PawsManager::SetCurrentFocusedWidget ( pawsWidget* widget )
                 widget->OnGainFocus();
                 if (currentFocusedWidget) currentFocusedWidget->OnLostFocus();
             }
-            currentFocusedWidget = widget; 
+
+            currentFocusedWidget = widget;
+        }
     }
 
-    // If this is an edit text box, we need the full focus of the controls now
-    focusOverridesControls = (dynamic_cast<pawsEditTextBox*>(currentFocusedWidget)!=NULL);
+    // Check if the focused widget or any of it's parents grab the keyboard input
+    for (focusOverridesControls = false ; widget != NULL; widget = widget->GetParent())
+    {
+        if (focusOverridesControls = widget->GetFocusOverridesControls())
+            break;
+    }
 }
 
 

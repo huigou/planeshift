@@ -1,3 +1,14 @@
+*** 2008-03-11 by Roland Schulz
+- fix to book reading window to display craft description in a different font
+  and disable save/write by Caarrie.
+- More fixes to movement when interacting with windows by Vornne
+- Also fix to main widget not getting key-release when another window was selected
+  while holding a key, also thanks to Vornne.
+- Vornne also provided a small patch to set the window title again after application
+  loads so the right window title is displayed on linux (not 'Crystal Space Application').
+- Also a fix to turn some forgotten numeric constant dev levels into the appropriate
+  defines, again by Vornne... good work :)
+
 *** 2008-03-11 by Anders Reggestad
 - Fixed a crash where a csString returned null, when server receive a remote command.
 

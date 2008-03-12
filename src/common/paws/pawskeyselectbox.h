@@ -56,6 +56,8 @@ public:
 
     int GetBorderStyle();
 
+    virtual const bool GetFocusOverridesControls() const { return true; }
+
 protected:
     
     /** Calculates the position of the text after centering.

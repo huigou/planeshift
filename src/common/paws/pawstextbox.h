@@ -253,6 +253,8 @@ public:
     
     void SetCursorPosition(size_t pos) { cursorPosition = pos; }
 
+    virtual const bool GetFocusOverridesControls() const { return true; }
+
 protected:
 
     bool password;
@@ -369,6 +371,8 @@ public:
     virtual bool OnKeyDown( int code, int key, int modifiers );
     virtual void CalcMouseClick( int x, int y, size_t &cursorLine, size_t &cursorChar);
     
+    virtual const bool GetFocusOverridesControls() const { return true; }
+
     void PushLineInfo( size_t lineLength, size_t lineBreak, int lineExtra);
 
     int GetBorderStyle() { return BORDER_SUNKEN; }    

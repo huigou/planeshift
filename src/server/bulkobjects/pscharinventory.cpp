@@ -50,6 +50,7 @@
 #include "pscharacter.h"
 #include "psglyph.h"
 #include "psguildinfo.h"
+#include "adminmanager.h"
 
 psCharacterInventory::psCharacterInventory(psCharacter *ownr)
 {
@@ -201,7 +202,7 @@ bool psCharacterInventory::Load(unsigned int use_id)
     doRestrictions = (owner->GetCharType() == PSCHARACTER_TYPE_PLAYER);
 
     // Players get restrictions but GMs do not
-    if (owner->GetActor() && owner->GetActor()->GetClient() && owner->GetActor()->GetClient()->GetSecurityLevel() > 30)
+    if (owner->GetActor() && owner->GetActor()->GetClient() && owner->GetActor()->GetClient()->GetSecurityLevel() > GM_DEVELOPER)
     {
         doRestrictions = false;
     }
@@ -960,7 +961,7 @@ bool psCharacterInventory::HaveKeyForLock(uint32 lock)
 {
     // Only let clients with a security level of GM_TESTER or greater use skeleton keys
     bool isGM = (owner->GetActor() && owner->GetActor()->GetClient() &&
-                 owner->GetActor()->GetClient()->GetSecurityLevel() >= 10);
+                 owner->GetActor()->GetClient()->GetSecurityLevel() >= GM_TESTER);
 
     // Inventory indexes start at 1.  0 is reserved for the "NULL" item.
     for (size_t i=1; i<inventory.GetSize(); i++)
