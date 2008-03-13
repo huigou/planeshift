@@ -57,7 +57,11 @@
           <bgimage resource="DeleteTool" /> 
 	    <eventMouseDown>Ret = SketchWindow:ClickDeleteTool()</eventMouseDown>
       </widget>
-
+      <widget name="NameTool" factory="pawsButton" id="110" tooltip="Name (n)">
+          <frame x="140" y="0" width="16" height="16" /> 
+          <bgimage resource="TextTool" /> 
+	    <eventMouseDown>Ret = SketchWindow:ClickNameTool()</eventMouseDown>
+      </widget>
     </widget>
 
 </widget_description>

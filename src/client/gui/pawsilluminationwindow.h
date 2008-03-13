@@ -124,6 +124,9 @@ protected:
     void RemoveSelected();
     void NextPrevIcon(int delta);
     void MoveObject(int dx, int dy);
+    void ChangeSketchName();
+
+    csString sketchName;
 
 public:
     pawsSketchWindow();
@@ -133,11 +136,11 @@ public:
 
     void HandleMessage( MsgEntry* message );
 
-	// inherited from iOnStringEnteredAction
+    // inherited from iOnStringEnteredAction
     void OnStringEntered(const char *name,int param,const char *value);
 
-	// inherited from iScriptableVar from pawsWidget
-	double CalcFunction(const char * functionName, const double * params);
+    // inherited from iScriptableVar from pawsWidget
+    double CalcFunction(const char * functionName, const double * params);
 
 
     virtual bool OnMouseDown( int button, int modifiers, int x, int y );
