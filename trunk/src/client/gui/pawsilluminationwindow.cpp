@@ -81,6 +81,8 @@ void pawsSketchWindow::HandleMessage( MsgEntry* me )
     if (!msg.rightToEdit)
         readOnly = true;
 
+    sketchName = msg.name;
+
     if (!blackBox)
         blackBox = PawsManager::GetSingleton().GetTextureManager()->GetDrawable("blackbox");
     Show();
@@ -93,11 +95,11 @@ void pawsSketchWindow::Hide()
         csString xml;
 
         xml = "<pages><page ";
-		xml.AppendFmt("l=\"%d\" t=\"%d\" w=\"%d\" h=\"%d\">",
-					  GetLogicalWidth(screenFrame.xmin),
-					  GetLogicalHeight(screenFrame.ymin),
-					  GetLogicalWidth(screenFrame.xmax-screenFrame.xmin),
-					  GetLogicalHeight(screenFrame.ymax-screenFrame.ymin));
+        xml.AppendFmt("l=\"%d\" t=\"%d\" w=\"%d\" h=\"%d\">",
+                      GetLogicalWidth(screenFrame.xmin),
+                      GetLogicalHeight(screenFrame.ymin),
+                      GetLogicalWidth(screenFrame.xmax-screenFrame.xmin),
+                      GetLogicalHeight(screenFrame.ymax-screenFrame.ymin));
 
         // Add background and size stuff here
 
@@ -108,7 +110,7 @@ void pawsSketchWindow::Hide()
 
         // printf("Saving sketch as: %s\n",xml.GetDataSafe());
 
-        psSketchMessage sketch(0, currentItemID,0,"", xml, true);
+        psSketchMessage sketch(0, currentItemID,0,"", xml, true, sketchName);
         sketch.SendMessage();
     }
     pawsWidget::Hide();
@@ -139,44 +141,49 @@ void pawsSketchWindow::DrawBlackBox(int x, int y)
 
 double pawsSketchWindow::CalcFunction(const char * functionName, const double * params)
 {
-	if (!strcasecmp(functionName,"ClickTextTool"))
-	{
-		OnKeyDown(0,'t',0);
-		return 0.0;
-	}
-	else if (!strcasecmp(functionName,"ClickEditMode"))
-	{
-		OnKeyDown(CSKEY_F2,0,0);
-		return 0.0;
-	}
-	else if (!strcasecmp(functionName,"ClickLineTool"))
-	{
-		OnKeyDown(0,'\\',0);
-		return 0.0;
-	}
-	else if (!strcasecmp(functionName,"ClickIconTool"))
-	{
-		OnKeyDown(0,'+',0);
-		return 0.0;
-	}
-	else if (!strcasecmp(functionName,"ClickPrevIcon"))
-	{
-		OnKeyDown(CSKEY_PGUP,0,0);
-		return 0.0;
-	}
-	else if (!strcasecmp(functionName,"ClickNextIcon"))
-	{
-		OnKeyDown(CSKEY_PGDN,0,0);
-		return 0.0;
-	}
-	else if (!strcasecmp(functionName,"ClickDeleteTool"))
-	{
-		OnKeyDown(CSKEY_DEL,0,0);
-		return 0.0;
-	}
+    if (!strcasecmp(functionName,"ClickTextTool"))
+    {
+        OnKeyDown(0,'t',0);
+        return 0.0;
+    }
+    else if (!strcasecmp(functionName,"ClickEditMode"))
+    {
+        OnKeyDown(CSKEY_F2,0,0);
+        return 0.0;
+    }
+    else if (!strcasecmp(functionName,"ClickLineTool"))
+    {
+        OnKeyDown(0,'\\',0);
+        return 0.0;
+    }
+    else if (!strcasecmp(functionName,"ClickIconTool"))
+    {
+        OnKeyDown(0,'+',0);
+        return 0.0;
+    }
+    else if (!strcasecmp(functionName,"ClickPrevIcon"))
+    {
+        OnKeyDown(CSKEY_PGUP,0,0);
+        return 0.0;
+    }
+    else if (!strcasecmp(functionName,"ClickNextIcon"))
+    {
+        OnKeyDown(CSKEY_PGDN,0,0);
+        return 0.0;
+    }
+    else if (!strcasecmp(functionName,"ClickDeleteTool"))
+    {
+        OnKeyDown(CSKEY_DEL,0,0);
+        return 0.0;
+    }
+    else if (!strcasecmp(functionName,"ClickNameTool"))
+    {
+        OnKeyDown(0,'n',0);
+        return 0.0;
+    }
 
-	// else call parent version to inherit other functions
-	return pawsWidget::CalcFunction(functionName,params);
+    // else call parent version to inherit other functions
+    return pawsWidget::CalcFunction(functionName,params);
 }
 
 bool pawsSketchWindow::OnKeyDown( int keyCode, int key, int modifiers )
@@ -193,9 +200,9 @@ bool pawsSketchWindow::OnKeyDown( int keyCode, int key, int modifiers )
                 selectedIndex = SIZET_NOT_FOUND;
             }
 
-	    editMode = editMode ? false : true; // toggle edit mode
-	    isResizable = editMode; // only resizable in edit mode
-	    dirty=true; // always set this for now to make sure resizes get saved.
+            editMode = editMode ? false : true; // toggle edit mode
+            isResizable = editMode; // only resizable in edit mode
+            dirty=true; // always set this for now to make sure resizes get saved.
 
             // notify the user that we are entering/leaving edit mode
             if (editMode)
@@ -234,6 +241,11 @@ bool pawsSketchWindow::OnKeyDown( int keyCode, int key, int modifiers )
             AddSketchText();
             return true;
         }
+        else if (key == 'n')
+        {
+            ChangeSketchName();
+            return true;
+        }
         switch (keyCode)
         {
             case CSKEY_DEL:     RemoveSelected();    
@@ -263,7 +275,7 @@ void pawsSketchWindow::AddSketchText()
     if ((int)objlist.GetSize() >= primCount)
     {
         psSystemMessage sysMsg( 0, MSG_ERROR, PawsManager::GetSingleton().Translate("Your sketch is too complex for you to add more.") );
-	sysMsg.FireEvent();
+        sysMsg.FireEvent();
         return;
     }
 
@@ -282,11 +294,18 @@ void pawsSketchWindow::OnStringEntered(const char *name,int param,const char *va
     if (!value || !strlen(value))
         return;
 
-    int x = (ScreenFrame().xmax + ScreenFrame().xmin)/2 - ScreenFrame().xmin;
-    int y = (ScreenFrame().ymax + ScreenFrame().ymin)/2 - ScreenFrame().ymin;
+    if (!strcasecmp(name,"AddText"))
+    {
+        int x = (ScreenFrame().xmax + ScreenFrame().xmin)/2 - ScreenFrame().xmin;
+        int y = (ScreenFrame().ymax + ScreenFrame().ymin)/2 - ScreenFrame().ymin;
 
-    SketchText *text = new SketchText(x,y,value,this);
-    objlist.Push(text);
+        SketchText *text = new SketchText(x,y,value,this);
+        objlist.Push(text);
+    }
+    else if (!strcasecmp(name,"ChangeName"))
+    {
+        sketchName = value;
+    }
 
     stringPending = false;
 }
@@ -296,7 +315,7 @@ void pawsSketchWindow::AddSketchLine()
     if ((int)objlist.GetSize() >= primCount)
     {
         psSystemMessage sysMsg( 0, MSG_ERROR, PawsManager::GetSingleton().Translate("Your sketch is too complex for you to add more.") );
-	sysMsg.FireEvent();
+        sysMsg.FireEvent();
         return;
     }
 
@@ -317,7 +336,7 @@ void pawsSketchWindow::AddSketchIcon()
     if ((int)objlist.GetSize() >= primCount)
     {
         psSystemMessage sysMsg( 0, MSG_ERROR, PawsManager::GetSingleton().Translate("Your sketch is too complex for you to add more.") );
-	sysMsg.FireEvent();
+        sysMsg.FireEvent();
         return;
     }
 
@@ -367,10 +386,22 @@ void pawsSketchWindow::RemoveSelected()
     }
 }
 
+void pawsSketchWindow::ChangeSketchName()
+{
+    if (!stringPending)
+    {
+        stringPending = true;
+
+        // This window calls OnStringEntered when Ok is pressed.
+        pawsStringPromptWindow::Create("Sketch Name", sketchName,
+            false, 220, 20, this, "ChangeName");
+    }
+}
+
 bool pawsSketchWindow::OnMouseDown( int button, int modifiers, int x, int y )
 {
     if (!editMode)
-		return pawsWidget::OnMouseDown(button, modifiers,x,y);
+        return pawsWidget::OnMouseDown(button, modifiers,x,y);
 
     mouseDown = true;
 
@@ -401,13 +432,13 @@ bool pawsSketchWindow::OnMouseDown( int button, int modifiers, int x, int y )
         objlist[selectedIndex]->Select(false);
         selectedIndex = SIZET_NOT_FOUND;
     }
-	return pawsWidget::OnMouseDown(button, modifiers,x,y);
+    return pawsWidget::OnMouseDown(button, modifiers,x,y);
 }
 
 bool pawsSketchWindow::OnMouseUp( int button, int modifiers, int x, int y )
 {
     if (!editMode)
-		return pawsWidget::OnMouseUp(button, modifiers,x,y);
+        return pawsWidget::OnMouseUp(button, modifiers,x,y);
 
     mouseDown = false;
 
@@ -418,7 +449,7 @@ bool pawsSketchWindow::OnMouseUp( int button, int modifiers, int x, int y )
         dirty = true;
         return true;
     }
-	return pawsWidget::OnMouseUp(button, modifiers,x,y);
+    return pawsWidget::OnMouseUp(button, modifiers,x,y);
 }
 
 bool pawsSketchWindow::ParseLimits(const char *xmlstr)
@@ -507,8 +538,8 @@ bool pawsSketchWindow::ParseSketch(const char *xmlstr)
     while ( iter->HasNext() )
     {
         csRef<iDocumentNode> node = iter->Next();
-		MoveTo(GetActualWidth(node->GetAttributeValueAsInt("l")),GetActualHeight(node->GetAttributeValueAsInt("t")));
-		screenFrame.SetSize(GetActualWidth(node->GetAttributeValueAsInt("w")),GetActualHeight(node->GetAttributeValueAsInt("h")));
+        MoveTo(GetActualWidth(node->GetAttributeValueAsInt("l")),GetActualHeight(node->GetAttributeValueAsInt("t")));
+        screenFrame.SetSize(GetActualWidth(node->GetAttributeValueAsInt("w")),GetActualHeight(node->GetAttributeValueAsInt("h")));
         
         defaultFrame.xmin = GetActualWidth(node->GetAttributeValueAsInt("l"));
         defaultFrame.ymin = GetActualHeight(node->GetAttributeValueAsInt("y"));
@@ -610,8 +641,8 @@ void pawsSketchWindow::SketchIcon::Draw()
         if (!parent->IsMouseDown() || !selected)
             iconImage->Draw(parent->GetActualWidth(x) + parent->ScreenFrame().xmin,
                             parent->GetActualHeight(y) + parent->ScreenFrame().ymin,
-							parent->GetActualWidth(iconImage->GetWidth()),
-							parent->GetActualHeight(iconImage->GetHeight()));
+                            parent->GetActualWidth(iconImage->GetWidth()),
+                            parent->GetActualHeight(iconImage->GetHeight()));
     }
     if (selected)
         frame = (frame > 29) ? 0 : frame+1;
@@ -729,9 +760,9 @@ bool pawsSketchWindow::SketchLine::IsHit(int mouseX, int mouseY)
     csRect rect = parent->ScreenFrame();
     mouseX -= rect.xmin;
     mouseY -= rect.ymin;
-	
-	mouseX = parent->GetLogicalWidth(mouseX);
-	mouseY = parent->GetLogicalHeight(mouseY);
+
+    mouseX = parent->GetLogicalWidth(mouseX);
+    mouseY = parent->GetLogicalHeight(mouseY);
 
     dragMode = 0;
 

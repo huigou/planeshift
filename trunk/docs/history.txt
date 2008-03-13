@@ -1,3 +1,9 @@
+*** 2008-03-13 by Dave Bentham
+- Fix for bug FS#1074: can give maps names; but requires a couple of art
+  issues: 1) a place on the Sketch Viewer to display the name; 2) a new
+  icon for the naming tool (currently same as Text Entry).
+- NETVER BUMP!
+
 *** 2008-03-12 by Kenny Graunke
 - Ditch csArray in delayed query manager, since its size is statically
   determined anyway.

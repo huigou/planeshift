@@ -163,6 +163,22 @@ void psServerCharManager::UpdateSketch( MsgEntry* me )
         psItem *item   = client->GetCharacterData()->Inventory().FindItemID(sketchMsg.ItemID);
         if (item)
         {
+            // check title is still unique
+            csString currentTitle = item->GetName();
+            if (sketchMsg.name.Length() > 0)
+            {
+                uint32 existingItemID = CacheManager::GetSingleton().BasicItemStatsByNameExist(sketchMsg.name);
+                if (existingItemID != 0 && existingItemID != item->GetBaseStats()->GetUID())
+                {
+                    psserver->SendSystemError(me->clientnum, "The title is not unique");
+                }
+                else if (sketchMsg.name != currentTitle)
+                {
+                    currentTitle = sketchMsg.name;
+                    item->GetBaseStats()->SetName(sketchMsg.name);
+                }
+            }
+
             // TODO: Probably need to validate the xml here somehow
             if (item->GetBaseStats()->SetSketch(csString(sketchMsg.Sketch)))
             {
@@ -336,7 +352,7 @@ void psServerCharManager::SendSketchDefinition(psItem *item, Client *client)
     xml += "</limits>";
 
     // Now send all this
-    psSketchMessage msg( client->GetClientNum(), item->GetUID(), 0, xml, item->GetBaseStats()->GetSketch(), item->GetBaseStats()->IsThisTheCreator(client->GetCharacterData()->GetCharacterID()) );
+    psSketchMessage msg( client->GetClientNum(), item->GetUID(), 0, xml, item->GetBaseStats()->GetSketch(), item->GetBaseStats()->IsThisTheCreator(client->GetCharacterData()->GetCharacterID()), item->GetName() );
     msg.SendMessage();
 }
 

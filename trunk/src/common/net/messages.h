@@ -43,7 +43,7 @@ class psLinearMovement;
 
 // This holds the version number of the network code, remember to increase
 // this each time you do an update which breaks compatibility
-#define PS_NETVERSION   0x0087
+#define PS_NETVERSION   0x0088
 // Remember to bump the version in pscssetup.h, as well.
 
 // NPC Networking version is separate so we don't have to break compatibility
@@ -4580,9 +4580,9 @@ public:
 class psSketchMessage : public psMessageCracker
 {
 public:
-    psSketchMessage( uint32_t client, uint32_t itemID, uint8_t flags, const char *limitxml,const char *sketch_def, bool rightToEditFlag)
+    psSketchMessage( uint32_t client, uint32_t itemID, uint8_t flags, const char *limitxml,const char *sketch_def, bool rightToEditFlag, const char *sketch_name)
     {
-        msg.AttachNew(new MsgEntry( sizeof(uint32_t)+1+strlen(limitxml)+1+strlen(sketch_def)+1+sizeof(bool) ));
+        msg.AttachNew(new MsgEntry( sizeof(uint32_t)+1+strlen(limitxml)+1+strlen(sketch_def)+1+sizeof(bool)+strlen(sketch_name)+1 ));
 
         msg->SetType(MSGTYPE_VIEW_SKETCH);
         msg->clientnum = client;
@@ -4591,6 +4591,7 @@ public:
         msg->Add(limitxml);
         msg->Add( sketch_def );
         msg->Add(rightToEditFlag);
+        msg->Add(sketch_name);
     }
 
     psSketchMessage( MsgEntry* me )
@@ -4600,6 +4601,7 @@ public:
         limits = me->GetStr();
         Sketch = me->GetStr();
         rightToEdit = me->GetBool();
+        name = me->GetStr();
     }
 
     PSF_DECLARE_MSG_FACTORY();
@@ -4620,6 +4622,7 @@ public:
     csString Sketch;
     csString limits;
     bool rightToEdit;
+    csString name;
 };
 
 /**
