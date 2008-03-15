@@ -82,6 +82,7 @@ void pawsSketchWindow::HandleMessage( MsgEntry* me )
         readOnly = true;
 
     sketchName = msg.name;
+    SetTitle(sketchName);
 
     if (!blackBox)
         blackBox = PawsManager::GetSingleton().GetTextureManager()->GetDrawable("blackbox");
@@ -305,6 +306,7 @@ void pawsSketchWindow::OnStringEntered(const char *name,int param,const char *va
     else if (!strcasecmp(name,"ChangeName"))
     {
         sketchName = value;
+        SetTitle(sketchName);
     }
 
     stringPending = false;
