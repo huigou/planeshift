@@ -92,8 +92,8 @@ const constraint constraints[] =
     {psWorkManager::constraintFriends, "FRIENDS", "You need more people for this work!"},
 
     // Location of player.
-    // Parameter: x,y,z,r; where x is x-coord, y is y-coord, z is z-coord, and r is rotation.
-    // Example: LOCATION(-10.53,176.36,,) is at [-10.53,176.36] any hight and any direction.
+    // Parameter: s,x,y,z,r; where s is sector, x is x-coord, y is y-coord, z is z-coord, and r is rotation.
+    // Example: LOCATION(3,-10.53,176.36,,) is at [-10.53,176.36] any hight and any direction in sector 3.
     {psWorkManager::constraintLocation, "LOCATION","You can not do this work here!"},
 
     // Player mode.
@@ -670,7 +670,7 @@ void psWorkManager::HandleProduction(gemActor *actor,const char *type,const char
     if (!nr)
     {
         // psserver->SendSystemInfo(client->GetClientNum(),"You don't see a good place to %s.",type);
-        Warning4(LOG_SUPERCLIENT,"%s don't see a good place to %s for %s.",actor->GetName(),type,reward);
+        Warning4(LOG_SUPERCLIENT,"%s doesn't see a good place to %s for %s.",actor->GetName(),type,reward);
         return;
     }
 
@@ -1125,7 +1125,7 @@ void psWorkManager::StartUseWork(Client* client)
     }
 
     // Check if the target is container
-    if ( workItem->GetIsContainer() )
+    if ( workItem && workItem->GetIsContainer() )
     {
         // cast a gem container to iterate thru
         gemContainer *container = dynamic_cast<gemContainer*> (workItem->GetGemObject());
@@ -2458,12 +2458,8 @@ bool psWorkManager::ValidateTarget(Client* client)
                 return true;
             }
         }
-
-        // Nothing to do it to
-        SendTransformError( clientNum, TRANSFORM_UNKNOWN_WORKITEM );
-        return false;
     }
-    return false;
+    return true;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -2616,7 +2612,7 @@ bool psWorkManager::ValidateNotOverSkilled(psTradeTransformations* transCandidat
 bool psWorkManager::ValidateConstraints(psTradeTransformations* transCandidate, psTradeProcesses* processCandidate)
 {
     // Set up to go through the constraint string picking out the functions and parameters
-    const char constraintSeperators[] = " \t(),";
+    const char constraintSeperators[] = "\t(),";
     char constraintPtr[256];
     char* param;
 
@@ -3145,7 +3141,7 @@ bool psWorkManager::constraintTime(psWorkManager* that,char* param)
 
 #define FRIEND_RANGE 5
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// Constraint function to check if players are near worker
+// Constraint function to check if players are near worker (including worker)
 //  Note: Constraint distance is limited to proximiy list.
 bool psWorkManager::constraintFriends(psWorkManager* that, char* param)
 {
@@ -3171,6 +3167,9 @@ bool psWorkManager::constraintFriends(psWorkManager* that, char* param)
 // Constraint function to check location
 bool psWorkManager::constraintLocation(psWorkManager* that, char* param)
 {
+    int ch = ',';
+    char* pdest;
+
     // Get the current position of client
     csVector3 pos;
     float yrot;
@@ -3178,8 +3177,12 @@ bool psWorkManager::constraintLocation(psWorkManager* that, char* param)
     that->worker->GetPosition( pos, yrot, sect );
 
     // Parse through the constraint parameters
-    char* pdest;
-    int ch = ',';
+    pdest = strchr( param, ch );
+    *pdest = '\0';
+    char* sector = param;
+
+    // go to the next parameter
+    param = pdest + 1;
     pdest = strchr( param, ch );
     *pdest = '\0';
     char* xloc = param;
@@ -3202,11 +3205,13 @@ bool psWorkManager::constraintLocation(psWorkManager* that, char* param)
     *pdest = '\0';
     char* yrotation = param;
 
-    // go to the next parameter
-    param = pdest + 1;
-    pdest = strchr( param, ch );
-    *pdest = '\0';
-    char* sector = param;
+    // Skip if no sector constraint name specified
+    if ( strlen(sector) != 0 )
+    {
+        // Check sector
+        if ( strcmp( sector, sect->QueryObject()->GetName()) != 0)
+            return false;
+    }
 
     // Skip if no X constraint co-ord specified
     if ( strlen(xloc) != 0 )
@@ -3241,14 +3246,6 @@ bool psWorkManager::constraintLocation(psWorkManager* that, char* param)
         // Check Y rotation
         float r = atof( yrotation );
         if ( PSABS(yrot - r) > MAXANGLE )
-            return false;
-    }
-
-    // Skip if no sector constraint name specified
-    if ( strlen(sector) != 0 )
-    {
-        // Check sector
-        if ( strcmp( sector, sect->QueryObject()->GetName()) != 0)
             return false;
     }
 
