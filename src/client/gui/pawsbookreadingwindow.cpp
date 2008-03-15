@@ -101,6 +101,7 @@ void pawsBookReadingWindow::HandleMessage( MsgEntry* me )
             {
                 descriptionCraft->Hide();
             }
+            description->Show();
             break;
         }
         case MSGTYPE_CRAFT_INFO:
@@ -120,6 +121,7 @@ void pawsBookReadingWindow::HandleMessage( MsgEntry* me )
             if (text && descriptionCraft)
             {
                 descriptionCraft->SetText(text.GetData());
+                descriptionCraft->Show();
             }
             name->SetText( "You discover you can do the following:" );
             break;

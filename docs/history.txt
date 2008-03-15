@@ -1,3 +1,7 @@
+*** 2008-03-15 by Roland Schulz
+- small fix for 2008-03-11 commit, make sure the description/crafting
+  is actually displayed, not just hidden ;)
+
 *** 2008-03-13 by Dave Bentham
 - Fix for bug FS#1074: can give maps names; but requires a couple of art
   issues: 1) a place on the Sketch Viewer to display the name; 2) a new
