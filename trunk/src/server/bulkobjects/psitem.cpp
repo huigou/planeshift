@@ -728,7 +728,7 @@ INVENTORY_SLOT_NUMBER psItem::GetLocInParent(bool adjustSlot)
         psItem *container = owning_character->Inventory().FindItemID(parent_item_instance_id);
         if (!container)
         {
-            Error3("Bad container id %d in item %d.",parent_item_instance_id,uid);
+//            Error3("Bad container id %d in item %d.",parent_item_instance_id,uid);
             return loc_in_parent;
         }
         int slot = container->GetLocInParent(false);
