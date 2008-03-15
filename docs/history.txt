@@ -1,3 +1,6 @@
+*** 2008-03-15 by Dave Bentham
+- Addition to bug FS#1074 fix: map name shows in Sketch Viewer border.
+
 *** 2008-03-15 by Roland Schulz
 - small fix for 2008-03-11 commit, make sure the description/crafting
   is actually displayed, not just hidden ;)
