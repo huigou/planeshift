@@ -1,3 +1,8 @@
+*** 2008-03-16 by Dave Bentham
+- Addition 2 to bug FS#1074 fix: allow a widget's border title font to be un-shadowed by 
+  configuring shadow="no" to the 'title' node in the XML. Default is shadowed; but on 
+  Sketch Viewer its not legible as it is black colour (illumination.xml).
+
 *** 2008-03-15 by Roland Schulz
 - changed loc_instance in item_instances to unsigned to avoid 0x7fffffff instance bug.
 - DBVER BUMP!

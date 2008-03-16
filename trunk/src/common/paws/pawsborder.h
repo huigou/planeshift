@@ -94,7 +94,7 @@ public:
     void Show() { draw = true; }
     csRect GetRect();
 
-    void SetTitle(const char *t) {  title=t; }
+    void SetTitle(const char *t, bool shadow = true);
     void SetTitleImage(csRef<iPAWSDrawable> drawable) { titleImage = drawable; } // This will take delete responsibility
     void SetTitleAlign(int al)        { align = al; }
 
@@ -122,6 +122,7 @@ protected:
     bool draw;       
     bool justTitle;
     int style;
+    bool shadowFont;
 };
 
 #endif 

@@ -34,6 +34,7 @@ pawsBorder::pawsBorder(const char* name )
     UseBorder( name );
     draw = true;
     justTitle = false;
+    shadowFont = true;
 }
 
 void pawsBorder::UseBorder( const char* name )
@@ -87,10 +88,10 @@ csRect pawsBorder::GetRect()
 
     if ( usingGraphics )
     {
-		frame.xmin-=borderImages[PAWS_BORDER_TOPLEFT]->GetWidth();
-		frame.ymin-=borderImages[PAWS_BORDER_TOPLEFT]->GetHeight();
-		frame.xmax+=borderImages[PAWS_BORDER_BOTTOMRIGHT]->GetWidth();
-	    frame.ymax+=borderImages[PAWS_BORDER_BOTTOMRIGHT]->GetHeight();
+        frame.xmin-=borderImages[PAWS_BORDER_TOPLEFT]->GetWidth();
+        frame.ymin-=borderImages[PAWS_BORDER_TOPLEFT]->GetHeight();
+        frame.xmax+=borderImages[PAWS_BORDER_BOTTOMRIGHT]->GetWidth();
+        frame.ymax+=borderImages[PAWS_BORDER_BOTTOMRIGHT]->GetHeight();
     }
 
     if (title.Length())
@@ -129,9 +130,9 @@ void pawsBorder::Draw()
     /////////////////////////////
     // Draw tiles across the top and bottom
     /////////////////////////////    
-	borderImages[PAWS_BORDER_TOPLEFT]->Draw( frame.xmin - borderImages[PAWS_BORDER_TOPLEFT]->GetWidth(), 
-			                                     frame.ymin - borderImages[PAWS_BORDER_TOPLEFT]->GetHeight() );
-	borderImages[PAWS_BORDER_BOTTOMLEFT]->Draw( frame.xmin - borderImages[PAWS_BORDER_BOTTOMLEFT]->GetWidth(), 
+    borderImages[PAWS_BORDER_TOPLEFT]->Draw( frame.xmin - borderImages[PAWS_BORDER_TOPLEFT]->GetWidth(), 
+                                                 frame.ymin - borderImages[PAWS_BORDER_TOPLEFT]->GetHeight() );
+    borderImages[PAWS_BORDER_BOTTOMLEFT]->Draw( frame.xmin - borderImages[PAWS_BORDER_BOTTOMLEFT]->GetWidth(), 
                                                 frame.ymax );
 
     int locX, locY = frame.ymin - borderImages[PAWS_BORDER_TOPMIDDLE]->GetHeight();
@@ -191,7 +192,7 @@ void pawsBorder::DrawTitle(csRect& frame)
         drawX = r.xmin + midX - width/2;
         drawY = r.ymin + midY - height/2;
 
-        parent->DrawWidgetText(title,drawX,drawY, titleImage ? 1 : 0 );
+        parent->DrawWidgetText(title,drawX,drawY, (titleImage && shadowFont) ? 1 : 0 );
     }
 }
 
@@ -350,5 +351,11 @@ void DrawBumpFrame( iGraphics2D * graphics2D, pawsWidget * widget, csRect frame,
                             frame.ymax - 4,
                             hi2 );
     }
+}
+
+void pawsBorder::SetTitle(const char *t, bool shadow)
+{
+    title = t;
+    shadowFont = shadow;
 }
 
