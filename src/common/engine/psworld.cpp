@@ -61,12 +61,12 @@ psWorld::~psWorld()
     transarray.Empty();
 }
 
-bool psWorld::Initialize(iObjectRegistry* objectReg, bool unloadingLast, bool filter)
+bool psWorld::Initialize(iObjectRegistry* objectReg, bool unloadingLast, uint _gfxFeatures)
 {
     object_reg = objectReg;
     engine = csQueryRegistry<iEngine>(object_reg);
     startLoading = unloadingLast;
-    needToFilter = filter;
+    gfxFeatures = _gfxFeatures;
 
     return true;
 }
@@ -88,7 +88,7 @@ psRegion* psWorld::NewRegion(const char *mapfile,bool load, bool loadMeshes)
             return rgn;
     }
 
-    psRegion *newregion = new psRegion(object_reg, this, mapfile, needToFilter);
+    psRegion *newregion = new psRegion(object_reg, this, mapfile, gfxFeatures);
     if (load && !newregion->Load(loadMeshes))
     {
         delete newregion;
@@ -419,7 +419,7 @@ float psWorld::GetAngle(float x, float y)
 
 //--------------------------------------------------------------------------
 
-psRegion::psRegion(iObjectRegistry *obj_reg, psWorld * world, const char *file, bool filter)
+psRegion::psRegion(iObjectRegistry *obj_reg, psWorld * world, const char *file, uint _gfxFeatures)
 {
     object_reg = obj_reg;
     this->world = world;
@@ -429,7 +429,8 @@ psRegion::psRegion(iObjectRegistry *obj_reg, psWorld * world, const char *file, 
     worldfile  = "world";
     regionname = file;
     loaded     = false;
-    needToFilter = filter;
+    gfxFeatures = _gfxFeatures;
+    needToFilter = !(gfxFeatures & useNormalMaps);
 }
 
 psRegion::~psRegion()
@@ -657,17 +658,20 @@ csRef<iDocumentNode> psRegion::Clean(csRef<iDocumentNode> world)
 csRef<iDocumentNode> psRegion::Filter(csRef<iDocumentNode> world)
 {
     // Filter the various features.
-    csRef<iDocumentNodeIterator> sectors = world->GetNodes("sector");
-    while(sectors->HasNext())
+    if(!(gfxFeatures & useNormalMaps))
     {
-        csRef<iDocumentNode> sector = sectors->Next();
-        csRef<iDocumentNode> rloop = sector->GetNode("renderloop");
-        if(rloop.IsValid())
+        csRef<iDocumentNodeIterator> sectors = world->GetNodes("sector");
+        while(sectors->HasNext())
         {
-            csString value = rloop->GetContentsValue();
-            if(value.Compare("std_rloop_diffuse"))
+            csRef<iDocumentNode> sector = sectors->Next();
+            csRef<iDocumentNode> rloop = sector->GetNode("renderloop");
+            if(rloop.IsValid())
             {
-                sector->RemoveNode(rloop);
+                csString value = rloop->GetContentsValue();
+                if(value.Compare("std_rloop_diffuse"))
+                {
+                    sector->RemoveNode(rloop);
+                }
             }
         }
     }

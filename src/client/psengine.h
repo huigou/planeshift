@@ -357,7 +357,7 @@ public:
     bool UnloadingLast() { return unloadLast; }
 
     /// Using post proc effects?
-    bool UsingPostProc() { return usePostProc; }
+    uint GetGFXFeatures() { return gfxFeatures; }
 
 private:
     // Load the log report settings from the config file.
@@ -434,7 +434,7 @@ private:
     void PreloadItemsDir();
     void PreloadSubDir(const char* dirname);
     bool preloadModels;
-    bool usePostProc;
+    uint gfxFeatures;
     bool modelsLoaded;  ///< Tells if the models are finished loading yet.
     size_t modelToLoad; ///< Keeps a count of the models loaded so far.
     csStringArray modelnames;
