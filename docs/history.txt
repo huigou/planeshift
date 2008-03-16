@@ -1,3 +1,6 @@
+*** 2008-03-16 by Thomas Towey
+- Fixed server crash from allowing transformations to be done in hand without containers.for combine.
+
 *** 2008-03-16 by Mike Gist
 - Made sound loading not try cd maps.
 - Added support for enabling/disabling features such as normal mapping. Use --use_normal_maps
