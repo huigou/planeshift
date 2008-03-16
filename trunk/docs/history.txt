@@ -1,7 +1,7 @@
 *** 2008-03-16 by Mike Gist
 - Made sound loading not try cd maps.
-- Added optional support for post proc effects like normal mapping. Use --use_post_proc=true
-  cmdline option to enable them on maps supporting those effects. Updated npcroom will be committed
+- Added support for enabling/disabling features such as normal mapping. Use --use_normal_maps=true
+  cmdline option to enable normal mapping on maps supporting them. Updated npcroom will be committed
   soon as an example.
 
 *** 2008-03-15 by Thomas Towey
