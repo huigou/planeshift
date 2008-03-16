@@ -257,6 +257,7 @@ psEngine::psEngine (iObjectRegistry *objectreg)
 
     chatBubbles = 0;
     options = 0;
+    gfxFeatures = 0;
 }
 
 // ----------------------------------------------------------------------------
@@ -380,7 +381,10 @@ bool psEngine::Initialize (int level)
         preloadModels = (cmdline->GetBoolOption("preload_models", false) || GetConfig()->GetBool("PlaneShift.Client.Loading.PreloadModels", false));
 
         // Check if we're using post proc effects of any kind.
-        usePostProc = cmdline->GetBoolOption("use_normal_maps", false);
+        if(cmdline->GetBoolOption("use_normal_maps", false))
+        {
+            gfxFeatures |= useNormalMaps;
+        }
 
         //Check if sound is on or off in psclient.cfg
         csString soundPlugin;

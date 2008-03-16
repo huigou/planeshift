@@ -37,6 +37,9 @@ struct iEngine;
 struct iRegion;
 class psWorld;
 
+// Feature defines.
+#define useNormalMaps 0x01
+
 /**
  * Replacement class for iPcRegion from CEL.
  * This is more versatile for dynamic loading
@@ -61,7 +64,7 @@ public:
      * Creates an entry representing a single region
      * but does not load it.
      */
-    psRegion(iObjectRegistry *obj_reg, psWorld * world, const char *file, bool filter = false);
+    psRegion(iObjectRegistry *obj_reg, psWorld * world, const char *file, uint gfxFeatures = useNormalMaps);
 
     /**
      * Dtor unloads region if loaded
@@ -118,6 +121,9 @@ public:
      * True if we need to filter the world file.
      */
     bool needToFilter;
+
+    // Graphics features we want to use.
+    uint gfxFeatures;
 };
 
 struct iObject;
@@ -186,7 +192,7 @@ public:
     ~psWorld();
  
     /// Initialize psWorld
-    bool Initialize(iObjectRegistry* object_reg, bool unloadingLast = true, bool filter = false);
+    bool Initialize(iObjectRegistry* object_reg, bool unloadingLast = true, uint gfxFeatures = 0);
     bool CreateMap(const char* name, const char* mapFile, bool loadNow, bool loadMeshes = true); 
     enum
     {
@@ -256,7 +262,7 @@ public:
     void DumpWarpCache();
 private:
     bool startLoading;
-    bool needToFilter;
+    uint gfxFeatures;
 };
 
 
