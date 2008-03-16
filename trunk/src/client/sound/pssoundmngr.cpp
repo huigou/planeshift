@@ -900,8 +900,8 @@ bool psMapSoundSystem::Initialize()
 
     for (size_t i=0; i < files->GetSize(); i++)
     {
-	    // Skip server's "cleaned" files, to suppress warnings
-	    if ( strstr(files->Get(i),"_cleaned") )
+	    // Skip server's "cleaned" files and cd files, to suppress warnings
+        if ( strstr(files->Get(i),"_cleaned") || strstr(files->Get(i), "cd_"))
             continue;
 
         csString name( files->Get(i) );
