@@ -84,7 +84,7 @@ enum PAWS_WIDGET_SCRIPT_EVENTS
     PW_SCRIPT_EVENT_SHOW = 0,
     PW_SCRIPT_EVENT_HIDE,
     PW_SCRIPT_EVENT_MOUSEDOWN,
-	PW_SCRIPT_EVENT_VALUECHANGED,
+    PW_SCRIPT_EVENT_VALUECHANGED,
 
     PW_SCRIPT_EVENT_COUNT
 };
@@ -113,7 +113,7 @@ protected:
     /// factory name
     csString factory;
 
-	pawsTitle * titleBar;
+    pawsTitle * titleBar;
 
     /// filename to load from or save to. 
     csString filename;
@@ -216,6 +216,9 @@ protected:
     
     /// border created by GetBorder().
     pawsBorder* border;
+
+    /// whether the title in the border should be shadow font
+    bool borderTitleShadow;
 
     /// The attachpoints for when a resize takes place.
     int attachFlags;
@@ -987,26 +990,26 @@ public:
         return ( (int)ret );
     }
 
-	int GetLogicalWidth(int myValue )
-	{
-		if (!resizeToScreen)
-			return myValue;
+    int GetLogicalWidth(int myValue )
+    {
+        if (!resizeToScreen)
+            return myValue;
 
-		int desktop = graphics2D->GetWidth();
-		myValue *= 800;
-		myValue /= desktop;
-		return myValue;
-	}
-	int GetLogicalHeight(int myValue )
-	{
-		if (!resizeToScreen)
-			return myValue;
+        int desktop = graphics2D->GetWidth();
+        myValue *= 800;
+        myValue /= desktop;
+        return myValue;
+    }
+    int GetLogicalHeight(int myValue )
+    {
+        if (!resizeToScreen)
+            return myValue;
 
-		int desktop = graphics2D->GetHeight();
-		myValue *= 600;
-		myValue /= desktop;
-		return myValue;
-	}
+        int desktop = graphics2D->GetHeight();
+        myValue *= 600;
+        myValue /= desktop;
+        return myValue;
+    }
 
     /** Sets hasMouseFocus.
      * @param value TRUE causes widget to react to mouse focus.
@@ -1282,7 +1285,7 @@ public:
      *
      *  @return true if all was successful.
      */
-    bool SetTitle( const char* text, const char* image, const char* align, const char* close_button );
+    bool SetTitle( const char* text, const char* image, const char* align, const char* close_button, const bool shadowTitle = true);
 
     void RemoveTitle();
 

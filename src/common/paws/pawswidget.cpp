@@ -99,7 +99,7 @@ pawsWidget::pawsWidget( )
     defaultFontColour = -1;
     defaultFontSize = 10;
     fontSize = 10;
-	titleBar = 0;
+    titleBar = 0;
 
     size_t a;
     for (a=0; a<PW_SCRIPT_EVENT_COUNT; ++a)
@@ -201,10 +201,10 @@ pawsWidget* pawsWidget::WidgetAt( int x, int y )
 
 bool pawsWidget::Contains( int x, int y )
 {
-	if (titleBar)
-	{
-		return titleBar->screenFrame.Contains(x,y) || screenFrame.Contains(x,y);
-	}
+    if (titleBar)
+    {
+        return titleBar->screenFrame.Contains(x,y) || screenFrame.Contains(x,y);
+    }
     else if ( border )
     {
         return border->GetRect().Contains(x,y);
@@ -268,12 +268,12 @@ bool pawsWidget::LoadAttributes( iDocumentNode* node )
     // Get the name for this widget.
     csRef<iDocumentAttribute> atr = node->GetAttribute("name");
     if (atr)
-		SetName(csString( atr->GetValue() ));
+        SetName(csString( atr->GetValue() ));
 /*    {
         Error1("Widget has not defined a name. Error in XML");
         return false;
     }
-	*/
+    */
         
     atr = node->GetAttribute("style");
     if (atr)
@@ -509,14 +509,15 @@ bool pawsWidget::LoadAttributes( iDocumentNode* node )
         csString image = titleNode->GetAttributeValue("resource");               
         csString align = titleNode->GetAttributeValue("align");        
         csString close = titleNode->GetAttributeValue( "close_button" );
-        
-        SetTitle( title, image, align, close ); 
+        bool shadowTitle = titleNode->GetAttributeValueAsBool("shadow", true);
+
+        SetTitle( title, image, align, close, shadowTitle ); 
     }
 
-	// new title bar
-	csRef<iDocumentNode> newTitleNode = node->GetNode("newtitle");
-	if (newTitleNode)
-		titleBar = new pawsTitle(this, newTitleNode);
+    // new title bar
+    csRef<iDocumentNode> newTitleNode = node->GetNode("newtitle");
+    if (newTitleNode)
+        titleBar = new pawsTitle(this, newTitleNode);
 
     csRef<iDocumentNode> borderNode = node->GetNode( "childborders" );    
     if (borderNode)
@@ -656,10 +657,10 @@ bool pawsWidget::LoadEventScripts(iDocumentNode * node)
     if (mousedownEvent)
         scriptEvents[PW_SCRIPT_EVENT_MOUSEDOWN] = new pawsScript(this, mousedownEvent->GetContentsValue());
 
-	// load value changed event
-	csRef<iDocumentNode> valueChangedEvent = node->GetNode("eventValueChanged");
-	if (valueChangedEvent)
-		scriptEvents[PW_SCRIPT_EVENT_VALUECHANGED] = new pawsScript(this, valueChangedEvent->GetContentsValue());
+    // load value changed event
+    csRef<iDocumentNode> valueChangedEvent = node->GetNode("eventValueChanged");
+    if (valueChangedEvent)
+        scriptEvents[PW_SCRIPT_EVENT_VALUECHANGED] = new pawsScript(this, valueChangedEvent->GetContentsValue());
 
     return true;
 }
@@ -986,7 +987,7 @@ pawsWidget* pawsWidget::FindWidgetXMLBinding( const char* xmlbinding )
 
 void pawsWidget::DrawBackground()
 {
-	int drawAlpha;
+    int drawAlpha;
 
     if ( bgColour != -1 )
     {        
@@ -1072,8 +1073,8 @@ void pawsWidget::Draw()
         maskImage->Draw(screenFrame.xmin, screenFrame.ymin, screenFrame.Width(), screenFrame.Height(), drawAlpha);  
     }
 
-	if (titleBar)
-		titleBar->Draw();
+    if (titleBar)
+        titleBar->Draw();
 }
 
 
@@ -1252,7 +1253,7 @@ void pawsWidget::SetTitle(const char *title)
 {
     if (border!=NULL)
     {
-        border->SetTitle(title);
+        border->SetTitle(title, borderTitleShadow);
         border->Draw();
     }
 }
@@ -1642,8 +1643,8 @@ void pawsWidget::MoveDelta( int deltaX, int deltaY )
     screenFrame.ymin += deltaY;
     screenFrame.xmax += deltaX;
     screenFrame.ymax += deltaY;
-	if (titleBar)
-		titleBar->SetWindowRect(screenFrame);
+    if (titleBar)
+        titleBar->SetWindowRect(screenFrame);
 
     for ( size_t x = children.GetSize(); x-- > 0; )
     {
@@ -1663,8 +1664,8 @@ void pawsWidget::MoveTo( int x, int y )
     screenFrame.xmin = x;
     screenFrame.ymin = y;
     screenFrame.SetSize( width, height );
-	if (titleBar)
-		titleBar->SetWindowRect(screenFrame);
+    if (titleBar)
+        titleBar->SetWindowRect(screenFrame);
 
     for ( size_t z = children.GetSize(); z-- > 0; )
     {
@@ -2170,8 +2171,8 @@ void pawsWidget::Resize()
 void pawsWidget::OnResize()
 {
     SetCloseButtonPos();
-	if (titleBar)
-		titleBar->SetWindowRect(screenFrame);
+    if (titleBar)
+        titleBar->SetWindowRect(screenFrame);
 }
 
 void pawsWidget::SetModalState( bool isModal )
@@ -2283,11 +2284,11 @@ void pawsWidget::ClipToParent()
         // Otherwise we should clip to the overlap of our parent frame and either our frame or our border frame
 
         // If we have a border, start with that, otherwise use our widget frame
-		if (titleBar)
-		{
-			clipRect = screenFrame;
-			clipRect.ymin = titleBar->screenFrame.ymin;
-		}
+        if (titleBar)
+        {
+            clipRect = screenFrame;
+            clipRect.ymin = titleBar->screenFrame.ymin;
+        }
         else if ( border && border->GetTitleImage())
             clipRect = border->GetRect();
         else
@@ -2545,7 +2546,7 @@ void pawsWidget::RemoveTitle()
         close_widget->DeleteYourself();
 }
     
-bool pawsWidget::SetTitle( const char* text, const char* image, const char* align, const char* close_button )
+bool pawsWidget::SetTitle( const char* text, const char* image, const char* align, const char* close_button, const bool shadowTitle )
 {
     if ( !border )
     {
@@ -2553,7 +2554,8 @@ bool pawsWidget::SetTitle( const char* text, const char* image, const char* alig
     }        
     else
     {
-        border->SetTitle( text );
+        borderTitleShadow = shadowTitle;
+        border->SetTitle( text, borderTitleShadow );
         csRef<iPAWSDrawable> titleImage = PawsManager::GetSingleton().GetTextureManager()->GetDrawable(image);
         border->SetTitleImage(titleImage);
 
@@ -2646,14 +2648,14 @@ double pawsWidget::GetProperty(const char * ptr)
 
 double pawsWidget::CalcFunction(const char * functionName, const double * params)
 {
-	if (!strcasecmp(functionName, "closeparent"))
-	{
-		pawsWidget * w = this;
-		for (size_t a=0; a<(size_t)(params[0] + 0.5f) && w->parent; ++a)
-			w = w->parent;
-		w->Close();
-		return 0.0;
-	}
+    if (!strcasecmp(functionName, "closeparent"))
+    {
+        pawsWidget * w = this;
+        for (size_t a=0; a<(size_t)(params[0] + 0.5f) && w->parent; ++a)
+            w = w->parent;
+        w->Close();
+        return 0.0;
+    }
 
     Error2("pawsWidget::CalcFunction(%s) failed\n", functionName);
     return 0.0;
