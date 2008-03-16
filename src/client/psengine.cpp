@@ -386,6 +386,11 @@ bool psEngine::Initialize (int level)
             gfxFeatures |= useNormalMaps;
         }
 
+        if(cmdline->GetBoolOption("use_meshgen", true))
+        {
+            gfxFeatures |= useMeshGen;
+        }
+
         //Check if sound is on or off in psclient.cfg
         csString soundPlugin;
       
