@@ -1309,7 +1309,7 @@ void psWorkManager::StartCombineWork(Client* client)
     }
 
     // Check if targeted item is container
-    if ( workItem->GetIsContainer() )
+    if (  workItem && workItem->GetIsContainer() )
     {
         // Combine anything can be combined in container
         CombineWork();
