@@ -886,6 +886,9 @@ ENGINE = MyISAM;
 source guild_wars.sql;
 UPDATE `server_options` SET `option_value`='1181' WHERE `option_name`='db_version';
 
+#### 1182 - Roland Schulz - switch loc_instance in item_instances to unsigned
+ALTER TABLE item_instances MODIFY COLUMN `loc_instance` int(11) unsigned default '0';
+
 # Insert your upgrade before this line. Remember when you set a new db_version
 # to update the server_options.sql file and update psserver.cpp as well.
 # This to ensure that everything is working if you use the create_all.sql to

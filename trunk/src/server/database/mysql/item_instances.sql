@@ -27,7 +27,7 @@ CREATE TABLE `item_instances` (
   `stack_count` int(10) unsigned NOT NULL default '0',
   `creator_mark_id` int(10) unsigned default '0',
   `guild_mark_id` int(10) unsigned default '0',
-  `loc_instance` int(11) default '0',
+  `loc_instance` int(11) unsigned default '0',
   `loc_sector_id` smallint(4) unsigned default '0',
   `loc_x` float(14,6) default '0.00',
   `loc_y` float(14,6) default '0.00',
