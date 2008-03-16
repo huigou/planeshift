@@ -39,6 +39,8 @@ class psWorld;
 
 // Feature defines.
 #define useNormalMaps 0x01
+#define useMeshGen 0x02
+#define useAll (useNormalMaps | useMeshGen)
 
 /**
  * Replacement class for iPcRegion from CEL.
@@ -64,7 +66,7 @@ public:
      * Creates an entry representing a single region
      * but does not load it.
      */
-    psRegion(iObjectRegistry *obj_reg, psWorld * world, const char *file, uint gfxFeatures = useNormalMaps);
+    psRegion(iObjectRegistry *obj_reg, psWorld * world, const char *file, uint gfxFeatures = useAll);
 
     /**
      * Dtor unloads region if loaded

@@ -1,8 +1,10 @@
 *** 2008-03-16 by Mike Gist
 - Made sound loading not try cd maps.
-- Added support for enabling/disabling features such as normal mapping. Use --use_normal_maps=true
-  cmdline option to enable normal mapping on maps supporting them. Updated npcroom will be committed
-  soon as an example.
+- Added support for enabling/disabling features such as normal mapping. Use --use_normal_maps
+  cmdline option to enable normal mapping on maps supporting them. Updated npcroom will be
+  committed soon as an example.
+- Added (experimental) cmdline option to enable/disable meshgen. Use --nouse_meshgen to
+  disable, it's enabled by default.
 
 *** 2008-03-15 by Thomas Towey
 - Fixed some error messages in workmanager.cpp.

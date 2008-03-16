@@ -430,7 +430,7 @@ psRegion::psRegion(iObjectRegistry *obj_reg, psWorld * world, const char *file, 
     regionname = file;
     loaded     = false;
     gfxFeatures = _gfxFeatures;
-    needToFilter = !(gfxFeatures & useNormalMaps);
+    needToFilter = gfxFeatures != useAll;
 }
 
 psRegion::~psRegion()
@@ -657,7 +657,6 @@ csRef<iDocumentNode> psRegion::Clean(csRef<iDocumentNode> world)
 
 csRef<iDocumentNode> psRegion::Filter(csRef<iDocumentNode> world)
 {
-    // Filter the various features.
     if(!(gfxFeatures & useNormalMaps))
     {
         csRef<iDocumentNodeIterator> sectors = world->GetNodes("sector");
@@ -673,6 +672,17 @@ csRef<iDocumentNode> psRegion::Filter(csRef<iDocumentNode> world)
                     sector->RemoveNode(rloop);
                 }
             }
+        }
+    }
+
+    if(!(gfxFeatures & useMeshGen))
+    {
+        csRef<iDocumentNodeIterator> sectors = world->GetNodes("sector");
+        while(sectors->HasNext())
+        {
+            csRef<iDocumentNode> sector = sectors->Next();
+            csRef<iDocumentNodeIterator> meshgen = sector->GetNodes("meshgen");
+            sector->RemoveNodes(meshgen);
         }
     }
 
