@@ -1,3 +1,7 @@
+*** 2008-03-15 by Roland Schulz
+- changed loc_instance in item_instances to unsigned to avoid 0x7fffffff instance bug.
+- DBVER BUMP!
+
 *** 2008-03-16 by Thomas Towey
 - Fixed server crash from allowing transformations to be done in hand without containers.for combine.
 
