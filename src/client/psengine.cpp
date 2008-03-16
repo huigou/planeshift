@@ -379,6 +379,9 @@ bool psEngine::Initialize (int level)
         // Check if we're preloading models.
         preloadModels = (cmdline->GetBoolOption("preload_models", false) || GetConfig()->GetBool("PlaneShift.Client.Loading.PreloadModels", false));
 
+        // Check if we're using post proc effects of any kind.
+        usePostProc = cmdline->GetBoolOption("use_post_proc", false);
+
         //Check if sound is on or off in psclient.cfg
         csString soundPlugin;
       

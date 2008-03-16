@@ -356,6 +356,9 @@ public:
     /// Unload order.
     bool UnloadingLast() { return unloadLast; }
 
+    /// Using post proc effects?
+    bool UsingPostProc() { return usePostProc; }
+
 private:
     // Load the log report settings from the config file.
     void LoadLogSettings();
@@ -431,6 +434,7 @@ private:
     void PreloadItemsDir();
     void PreloadSubDir(const char* dirname);
     bool preloadModels;
+    bool usePostProc;
     bool modelsLoaded;  ///< Tells if the models are finished loading yet.
     size_t modelToLoad; ///< Keeps a count of the models loaded so far.
     csStringArray modelnames;

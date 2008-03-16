@@ -1,3 +1,9 @@
+*** 2008-03-16 by Mike Gist
+- Made sound loading not try cd maps.
+- Added optional support for post proc effects like normal mapping. Use --use_post_proc=true
+  cmdline option to enable them on maps supporting those effects. Updated npcroom will be committed
+  soon as an example.
+
 *** 2008-03-15 by Thomas Towey
 - Fixed some error messages in workmanager.cpp.
 - Changed location constraint to start with sector number.

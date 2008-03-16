@@ -219,7 +219,7 @@ void psCelClient::HandleWorld( MsgEntry* me )
     // Tell the user that we are loading the world
     psengine->AddLoadingWindowMsg( "Loading world" );
 
-    gameWorld->Initialize(object_reg, psengine->UnloadingLast());
+    gameWorld->Initialize(object_reg, psengine->UnloadingLast(), !psengine->UsingPostProc());
 
     zonehandler->LoadZone(mesg.sector);
 

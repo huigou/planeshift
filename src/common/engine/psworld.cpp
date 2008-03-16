@@ -61,11 +61,12 @@ psWorld::~psWorld()
     transarray.Empty();
 }
 
-bool psWorld::Initialize(iObjectRegistry* objectReg, bool unloadingLast)
+bool psWorld::Initialize(iObjectRegistry* objectReg, bool unloadingLast, bool filter)
 {
     object_reg = objectReg;
     engine = csQueryRegistry<iEngine>(object_reg);
     startLoading = unloadingLast;
+    needToFilter = filter;
 
     return true;
 }
@@ -87,7 +88,7 @@ psRegion* psWorld::NewRegion(const char *mapfile,bool load, bool loadMeshes)
             return rgn;
     }
 
-    psRegion *newregion = new psRegion(object_reg, this, mapfile);
+    psRegion *newregion = new psRegion(object_reg, this, mapfile, needToFilter);
     if (load && !newregion->Load(loadMeshes))
     {
         delete newregion;
@@ -418,7 +419,7 @@ float psWorld::GetAngle(float x, float y)
 
 //--------------------------------------------------------------------------
 
-psRegion::psRegion(iObjectRegistry *obj_reg, psWorld * world, const char *file)
+psRegion::psRegion(iObjectRegistry *obj_reg, psWorld * world, const char *file, bool filter)
 {
     object_reg = obj_reg;
     this->world = world;
@@ -428,6 +429,7 @@ psRegion::psRegion(iObjectRegistry *obj_reg, psWorld * world, const char *file)
     worldfile  = "world";
     regionname = file;
     loaded     = false;
+    needToFilter = filter;
 }
 
 psRegion::~psRegion()
@@ -485,6 +487,11 @@ bool psRegion::Load(bool loadMeshes)
         // Clean the world file to remove all textures/meshes/models
         Debug1(LOG_LOAD, 0,"Cleaning map file.");
         worldNode = Clean(worldNode);
+    }
+    else if(needToFilter)
+    {
+        // Filter the world file to get the correct settings.
+        worldNode = Filter(worldNode);
     }
 
     // Create a new region with the given name, or select it if already there
@@ -645,6 +652,27 @@ csRef<iDocumentNode> psRegion::Clean(csRef<iDocumentNode> world)
     }
 
     return cleanedWorld;
+}
+
+csRef<iDocumentNode> psRegion::Filter(csRef<iDocumentNode> world)
+{
+    // Filter the various features.
+    csRef<iDocumentNodeIterator> sectors = world->GetNodes("sector");
+    while(sectors->HasNext())
+    {
+        csRef<iDocumentNode> sector = sectors->Next();
+        csRef<iDocumentNode> rloop = sector->GetNode("renderloop");
+        if(rloop.IsValid())
+        {
+            csString value = rloop->GetContentsValue();
+            if(value.Compare("std_rloop_diffuse"))
+            {
+                sector->RemoveNode(rloop);
+            }
+        }
+    }
+
+    return world;
 }
 
 void psRegion::CloneNode (iDocumentNode* from, iDocumentNode* to)

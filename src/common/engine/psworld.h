@@ -61,7 +61,7 @@ public:
      * Creates an entry representing a single region
      * but does not load it.
      */
-    psRegion(iObjectRegistry *obj_reg, psWorld * world, const char *file);
+    psRegion(iObjectRegistry *obj_reg, psWorld * world, const char *file, bool filter = false);
 
     /**
      * Dtor unloads region if loaded
@@ -108,7 +108,16 @@ public:
     /// Cleans the given file and removes all meshes, lights, etc. not needed on the server.
     csRef<iDocumentNode> Clean(csRef<iDocumentNode> worldNode);
 
-    
+    /**
+     * Filters the world file to remove features which have been marked
+     * as disabled by the user (post proc effects for example).
+     */
+    csRef<iDocumentNode> Filter(csRef<iDocumentNode> worldNode);
+
+    /**
+     * True if we need to filter the world file.
+     */
+    bool needToFilter;
 };
 
 struct iObject;
@@ -177,7 +186,7 @@ public:
     ~psWorld();
  
     /// Initialize psWorld
-    bool Initialize(iObjectRegistry* object_reg, bool unloadingLast = true);
+    bool Initialize(iObjectRegistry* object_reg, bool unloadingLast = true, bool filter = false);
     bool CreateMap(const char* name, const char* mapFile, bool loadNow, bool loadMeshes = true); 
     enum
     {
@@ -247,6 +256,7 @@ public:
     void DumpWarpCache();
 private:
     bool startLoading;
+    bool needToFilter;
 };
 
 
