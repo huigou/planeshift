@@ -33,22 +33,24 @@ class psNetInfos
 {
     public:
         /// Constructor
-        psNetInfos();
+        psNetInfos() { SetupTickArray(); }
         /// Destructor
         ~psNetInfos();
     
         /// Add a tick value to the global queue
-    static void    AddPingTicks(csTicks t);
+    void    AddPingTicks(csTicks t);
     /// Compute the average ticks a ping uses
-    static csTicks GetAveragePingTicks();
+    csTicks GetAveragePingTicks();
+
+	int		droppedPackets;
 
     private:
     /// Fill the tick array
-    static void    SetupTickArray();
+    void    SetupTickArray();
     /// holds the tick values needed to compute the average ping ticks
-    static csTicks tickArray[NETINFOS_TICKARRAYSIZE];
+    csTicks tickArray[NETINFOS_TICKARRAYSIZE];
     /// current location in the array
-    static int     tickArrayLoc;
+    int     tickArrayLoc;
 };
 
 #endif

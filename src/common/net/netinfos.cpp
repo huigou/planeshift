@@ -24,13 +24,6 @@
 
 #include "netinfos.h"
 
-int     psNetInfos::tickArrayLoc = -1;
-csTicks psNetInfos::tickArray[NETINFOS_TICKARRAYSIZE];
-
-psNetInfos::psNetInfos()
-{
-}
-
 psNetInfos::~psNetInfos()
 {
 }
@@ -45,9 +38,6 @@ void psNetInfos::SetupTickArray()
 
 void psNetInfos::AddPingTicks(csTicks t)
 {
-    if (tickArrayLoc == -1)
-    SetupTickArray();
-
     // implemention of a "ring array"
     tickArrayLoc = (tickArrayLoc + 1) % NETINFOS_TICKARRAYSIZE;
     tickArray[tickArrayLoc] = t;
@@ -55,8 +45,6 @@ void psNetInfos::AddPingTicks(csTicks t)
 
 csTicks psNetInfos::GetAveragePingTicks()
 {
-    if (tickArrayLoc == -1)
-    SetupTickArray();
     
     csTicks sum  = 0;
     csTicks tmp  = 0;

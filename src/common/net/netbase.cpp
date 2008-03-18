@@ -1091,6 +1091,7 @@ void NetBase::QueueMessage(MsgEntry *me)
             {
                 Error4("*** Input Buffer Full! Yielding for packet, client %u, type %s, input queue %zu!",
                     me->clientnum,GetMsgTypeName(me->GetType()).GetData(),i);
+				netInfos.droppedPackets++;
             }
         }
     }
