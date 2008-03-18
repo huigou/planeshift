@@ -1,3 +1,10 @@
+*** 2008-03-18 by Andrew Dai
+- Fixed the problem of the npcclient's network input queue being flooded while initially
+  loading the maps. This should make npcs more responsive due to fewer out-of-order missed
+  persistence messages.
+- Added a count to Netbase to record the number of dropped messages due to a full queue.
+- Cleaned up NetInfos.
+
 *** 2008-03-16 by Dave Bentham
 - Addition 2 to bug FS#1074 fix: allow a widget's border title font to be un-shadowed by 
   configuring shadow="no" to the 'title' node in the XML. Default is shadowed; but on 

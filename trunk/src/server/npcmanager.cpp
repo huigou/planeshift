@@ -615,8 +615,6 @@ void NPCManager::HandleAuthentRequest(MsgEntry *me)
     client->GetIPAddress(addr);
     //TODO:    database->UpdateLoginDate(cid,addr);
 
-    superclients.Push(PublishDestination(me->clientnum, client, 0, 0));
-
     psserver->GetAuthServer()->SendMsgStrings(me->clientnum);
 
     SendMapList(client);
@@ -690,8 +688,9 @@ void NPCManager::SendNPCList(Client *client)
     {
         newmsg.SendMessage();
 
-        // NPC Client is now ready
+        // NPC Client is now ready so add onto superclients list
         client->SetReady(true);
+		superclients.Push(PublishDestination(client->GetClientNum(), client, 0, 0));
     }
     else
     {
