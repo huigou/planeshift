@@ -1,3 +1,6 @@
+*** 2008-03-18 by Mike Gist
+- Money.xml fix from electricsheep.
+
 *** 2008-03-18 by Andrew Dai
 - Fixed the problem of the npcclient's network input queue being flooded while initially
   loading the maps. This should make npcs more responsive due to fewer out-of-order missed
