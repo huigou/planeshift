@@ -280,9 +280,10 @@ void ServerConsole::InputRun()
         }
 #endif
 
-        while (fgets(line,319,stdin) == NULL)
+        if (fgets(line,319,stdin) == NULL)
         {
             // TODO: Yield timeslice here maybe?
+			continue;
         }
 
         ConsoleOut::atStartOfLine = true;
