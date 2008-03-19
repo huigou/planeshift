@@ -109,6 +109,13 @@ public:
     unsigned int GetID() { return ID; }
 
 private:
+
+    /**
+     * Filters the world file to remove features which have been marked
+     * as disabled by the user (post proc effects for example).
+     */
+    csRef<iDocumentNode> Filter(csRef<iDocumentNode> worldNode);
+
     bool doRotate;
     bool mouseDownUnlock;   ///< Checks to see if a mouse down will break camera lock.
     csVector3 cameraPosition;
@@ -150,6 +157,7 @@ private:
     bool loadedMap;
     
     unsigned int ID;
+    bool needToFilter;
 };
 CREATE_PAWS_FACTORY( pawsObjectView );
 

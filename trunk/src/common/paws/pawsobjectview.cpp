@@ -18,6 +18,9 @@
  */
 
 #include <psconfig.h>
+
+#include <csutil/weakref.h>
+
 #include <iutil/object.h>
 #include <iutil/objreg.h>
 #include <imap/loader.h>
@@ -26,6 +29,7 @@
 #include <csutil/cscolor.h>
 #include "pawsobjectview.h"
 #include "pawsmanager.h"
+#include "engine/psworld.h"
 #include "util/log.h"
 #include "util/psconst.h"
 
@@ -50,6 +54,8 @@ pawsObjectView::pawsObjectView()
     mouseControlled = false;
     doRotate = true;
     mouseDownUnlock = false;
+
+    needToFilter = PawsManager::GetSingleton().GetGFXFeatures() != useAll;
 }   
 
 pawsObjectView::~pawsObjectView()
@@ -82,6 +88,29 @@ bool pawsObjectView::Setup(iDocumentNode* node )
     }
 }
 
+csRef<iDocumentNode> pawsObjectView::Filter(csRef<iDocumentNode> world)
+{
+    if(!(PawsManager::GetSingleton().GetGFXFeatures() & useNormalMaps))
+    {
+        csRef<iDocumentNodeIterator> sectors = world->GetNodes("sector");
+        while(sectors->HasNext())
+        {
+            csRef<iDocumentNode> sector = sectors->Next();
+            csRef<iDocumentNode> rloop = sector->GetNode("renderloop");
+            if(rloop.IsValid())
+            {
+                csString value = rloop->GetContentsValue();
+                if(value.Compare("std_rloop_diffuse"))
+                {
+                    sector->RemoveNode(rloop);
+                }
+            }
+        }
+    }
+
+    return world;
+}
+
 bool pawsObjectView::LoadMap( const char* map, const char* sector )
 {
     csRef<iEngine> engine =  csQueryRegistry<iEngine > ( PawsManager::GetSingleton().GetObjectRegistry());
@@ -92,9 +121,24 @@ bool pawsObjectView::LoadMap( const char* map, const char* sector )
     sprintf(newName, "NAME%d\n", idName );
 
     stage = engine->FindSector( sector );
+    iRegion* cur_region = engine->CreateRegion (newName);
     if ( !stage )
     {
-        iRegion* cur_region = engine->CreateRegion (newName);
+        csRef<iDocumentSystem> xml (
+            csQueryRegistry<iDocumentSystem> (PawsManager::GetSingleton().GetObjectRegistry()));
+
+        csRef<iDocument> doc = xml->CreateDocument();
+        csString filename = map;
+        filename.Append("/world");
+        csRef<iDataBuffer> buf (VFS->ReadFile (filename));
+        doc->Parse(buf);
+        csRef<iDocumentNode> worldNode = doc->GetRoot()->GetNode("world");
+
+        if(needToFilter)
+        {
+            // Filter the world file to get the correct settings.
+            worldNode = Filter(worldNode);
+        }
 
         // Clear it out if it already existed
         cur_region->DeleteAll ();
@@ -102,7 +146,7 @@ bool pawsObjectView::LoadMap( const char* map, const char* sector )
         // Now load the map into the selected region
         VFS->ChDir (map);
         engine->SetCacheManager(NULL);
-        if ( !loader->LoadMapFile("world", CS_LOADER_KEEP_WORLD, cur_region, CS_LOADER_ACROSS_REGIONS) )
+        if ( !loader->LoadMap(worldNode, CS_LOADER_KEEP_WORLD, cur_region, CS_LOADER_ACROSS_REGIONS, true) )
             return false;
 
         stage = engine->FindSector( sector );
@@ -115,12 +159,6 @@ bool pawsObjectView::LoadMap( const char* map, const char* sector )
     }
 
     meshSector = engine->CreateSector( newName );
-
-    iLightList* lightList = meshSector->GetLights();
-    csRef<iLight> light = engine->CreateLight(NULL, csVector3(-3,4,-3),10,
-                                      csColor(0.86F,0.87F,0.6F), CS_LIGHT_STATIC);
-    light->SetAttenuationMode( CS_ATTN_NONE );
-    lightList->Add( light );
 
     meshSector->ShineLights();
 

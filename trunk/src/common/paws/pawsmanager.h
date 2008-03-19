@@ -39,6 +39,8 @@
 #include "isndsys/ss_source.h"
 #include "isndsys/ss_renderer.h"
 
+#include "engine/psworld.h"
+
 #include "util/scriptvar.h"
 #include "util/log.h"
 
@@ -74,7 +76,7 @@ class PawsManager : public Singleton<PawsManager>
 public:
 
     PawsManager(iObjectRegistry* objectReg, const char* skin, const char* skinBase = NULL, 
-                const char* pawsConfigFile = "/planeshift/userdata/planeshift.cfg");
+                const char* pawsConfigFile = "/planeshift/userdata/planeshift.cfg", uint _gfxFeatures = useAll);
 
     virtual ~PawsManager();
 
@@ -104,6 +106,8 @@ public:
 
     /// Returns the texture manager.
     pawsTextureManager* GetTextureManager() { return textureManager; }
+
+    inline uint GetGFXFeatures() { return gfxFeatures; }
 
     /// Loads a skin and loades unregistered resources
     bool LoadAdditionalSkin(const char* zip);
@@ -483,6 +487,9 @@ protected:
 
     /// The font resizing factor for all widgets
     float fontFactor;
+
+    // Graphics features we want to use.
+    uint gfxFeatures;
 
 
     /*                      Sound Member Variables
