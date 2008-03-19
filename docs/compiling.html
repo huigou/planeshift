@@ -1050,27 +1050,7 @@ trim down the length of the CEL linker flag list.</div>
            <div class="Static"><i class="command">
             /home/user/development/cs$ jam -aq libs staticplugins cs-config walktest_static</i></div><br>
 	   </div></div>
-	   
-	   
- 	We should add the CRYSTAL environment variable to the .bashrc file so applications outside the Crystal Space
-        tree know where to find the .so's.
-        <p><i class="command">export CRYSTAL=/home/user/development/cs</i></p>
-
-        <h3>Crystal Entity Layer (CEL)</h3>
-        <p><div class="commandBox">
-            /home/user/development/cel$ ./configure --without-python<br>
-           <div class="Normal">
-            /home/user/development/cel$ jam -aq libs plugins cel-config
-           </div>
-           <div class="Static">
-            /home/user/development/cel$ jam -aq libs staticplugins cel-config
-           </div>
-        </div></p>
-
-        We should add the CEL environment variable to the .bashrc file so applications outside the CEL
-        tree know where to find the .so's.
-        <p><i class="command">export CEL=/home/user/development/cel</i></p>
-
+<div class="Linux">	   
         <h3>PlaneShift</h3>
         <p><div class="commandBox">
             /home/user/development/planeshift$ ./autogen.sh<br>
@@ -1087,7 +1067,6 @@ trim down the length of the CEL linker flag list.</div>
             /home/user/development/planeshift$ jam -aq client_static
            </div>
         </div></p>
-
         If you also want to build the server, do this as well:
         <div class="Normal">
            <p><i class="command">/home/user/development/planeshift$ jam -aq server</i></p>
@@ -1097,6 +1076,7 @@ trim down the length of the CEL linker flag list.</div>
         </div>
         If you want to build the extra tools, just do "jam -a".
     </div>
+</div>
 <div class="MacOSX">
         No guide yet.  Try the Linux version for now.
     </div>
