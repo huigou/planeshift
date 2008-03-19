@@ -160,6 +160,12 @@ bool pawsObjectView::LoadMap( const char* map, const char* sector )
 
     meshSector = engine->CreateSector( newName );
 
+    iLightList* lightList = meshSector->GetLights();
+    csRef<iLight> light = engine->CreateLight(NULL, csVector3(-3,4,-3),10,
+                                      csColor(0.86F,0.87F,0.6F), CS_LIGHT_STATIC);
+    light->SetAttenuationMode( CS_ATTN_NONE );
+    lightList->Add( light );
+
     meshSector->ShineLights();
 
     meshView = csPtr<iView> (new csView( engine, PawsManager::GetSingleton().GetGraphics3D() ));
