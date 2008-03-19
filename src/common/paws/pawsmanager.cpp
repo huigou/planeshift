@@ -92,7 +92,7 @@
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 PawsManager::PawsManager(iObjectRegistry* object, const char* skin, const char* skinBase, 
-                         const char* pawsConfigFile)
+                         const char* pawsConfigFile, uint _gfxFeatures)
 {
     objectReg = object;
     pawsConfig = pawsConfigFile;
@@ -191,6 +191,8 @@ PawsManager::PawsManager(iObjectRegistry* object, const char* skin, const char* 
 
     soundStatus = false;
     timeOver = 0;
+
+    gfxFeatures = _gfxFeatures;
 }
 
 PawsManager::~PawsManager()

@@ -429,7 +429,7 @@ bool psEngine::Initialize (int level)
         
         // Create the PAWS window manager
         csString skinPathBase = cfgmgr->GetStr("PlaneShift.GUI.Skin.Base","/planeshift/art/skins/base/client_base.zip");
-        paws = new PawsManager( object_reg, skinPath, skinPathBase );
+        paws = new PawsManager( object_reg, skinPath, skinPathBase, "/planeshift/userdata/planeshift.cfg", gfxFeatures );
         
         options = new psOptions("/planeshift/userdata/options.cfg", vfs);
         

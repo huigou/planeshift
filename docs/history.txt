@@ -3,6 +3,7 @@
 
 *** 2008-03-18 by Mike Gist
 - Money.xml fix from electricsheep.
+- Added normal map filter to podium.
 
 *** 2008-03-18 by Andrew Dai
 - Fixed the problem of the npcclient's network input queue being flooded while initially
