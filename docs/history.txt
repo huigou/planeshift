@@ -1,3 +1,6 @@
+*** 2008-03-20 by Mike Gist
+- Ownership checking fix on book writing from Ares.
+
 *** 2008-03-19 by Thomas Towey
 - Added math script for quality affect for consuming scripts.
 

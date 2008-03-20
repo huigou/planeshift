@@ -1716,7 +1716,11 @@ bool psServerCharManager::SendBookText(Client *client, psItem *item, int contain
     //determine whether to display the 'write' button
     //and send the appropriate information if so
 
-    bool shouldWrite = item->GetBaseStats()->GetIsWriteable();
+	//is it a writable book?  In our inventory? Are we the author?
+	bool shouldWrite = (item->GetBaseStats()->GetIsWriteable() && 
+		item->GetOwningCharacter() == client->GetCharacterData() &&
+		item->GetBaseStats()->IsThisTheCreator(client->GetCharacterData()->GetCharacterID()))
+	
   //  CPrintf(CON_DEBUG,"Sent text for book %u %u\n",slotID, containerID);
     psReadBookTextMessage outgoing(client->GetClientNum(), name, text, shouldWrite, slotID, containerID);
 
