@@ -339,7 +339,7 @@ bool psPath::Load(iDataConnection * db, iEngine *engine)
     }
 
     int currPoint = 0, prevPoint=0;
-    size_t limit = tempPoints.GetSize()*tempPoints.GetSize();
+    size_t limit = tempPoints.GetSize()*tempPoints.GetSize()+2;  // Just add 2 to make it work for 1 point paths to
     while (tempPoints.GetSize() && limit)
     {
         if (tempPoints[currPoint]->prevPointId == prevPoint)

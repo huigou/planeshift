@@ -2533,7 +2533,7 @@ void AdminManager::HandlePath(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
                 }
                 
                 psserver->SendSystemInfo(me->clientnum,
-                                         "Adjusted point %d of path %s(%s) at range %.2f",
+                                         "Adjusted point %d of path %s(%d) at range %.2f",
                                          index,path->GetName(),path->GetID(),rangePath);
             }
         }
