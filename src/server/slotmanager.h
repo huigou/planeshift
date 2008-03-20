@@ -32,6 +32,9 @@
 //=============================================================================
 #include "msgmanager.h"
 
+class MathScript;
+class MathScriptVar;
+
 /** Handles Drag and Drop Messages from the client.
  *  This basically figures out what item is being dragged and places it in a
  *  holding slot.  It then looks for the destination slot and sees if it can be placed
