@@ -1,3 +1,6 @@
+*** 2008-03-19 by Thomas Towey
+- Added math script for quality affect for consuming scripts.
+
 *** 2008-03-19 by Andrew Dai
 - Fixed potential cause of high cpu usage due to looping in fgets.
 
