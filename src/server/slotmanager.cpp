@@ -26,6 +26,7 @@
 #include "util/log.h"
 #include "util/psconst.h"
 #include "util/eventmanager.h"
+#include "util/mathscript.h"
 
 #include "net/messages.h"
 #include "net/msghandler.h"
@@ -48,6 +49,8 @@
 #include "entitymanager.h"
 #include "globals.h"
 #include "adminmanager.h"
+
+
 
 SlotManager::~SlotManager()
 {
@@ -861,17 +864,41 @@ psItem* SlotManager::MakeMoneyItem(INVENTORY_SLOT_NUMBER slot, int stackCount)
 
 void SlotManager::Consume(psItem* item, psCharacter *charData, int count)
 {
+
     if (!item)
         return;
 
+    // Use math function to determine effect of quality
+    MathScript* qualityScript = psserver->GetMathScriptEngine()->FindScript("CalculateConsumeQuality");
+    if (!qualityScript)
+    {
+        Error1("Can't find quality script CalculateConsumeQuality");
+        return;
+    }
+
+    MathScriptVar *varQuality = qualityScript->GetOrCreateVar("Quality");
+    MathScriptVar *varQualityLevel = qualityScript->GetOrCreateVar("QualityLevel");
+
+    float quality = item->GetMaxItemQuality();
+    varQuality->SetValue(quality);
+    qualityScript->Execute();
+    float qualityLevel = varQualityLevel->GetValue();
+
     csString script = item->GetBaseStats()->GetProgressionEventConsume();
-            
     if (script.IsEmpty())
     {
         Error2("No consume script for consumable item %s",item->GetName());
         return;
     }
-    
+   
+    ProgressionEvent* progEvent = psserver->GetProgressionManager()->FindEvent(script);
+    if (!progEvent)
+    {
+        Error2("No event found for consume script %s",script.GetData());
+        return;
+    }
+
+    progEvent->CopyVariables(qualityScript);
     gemActor *actor = charData->GetActor();
     
     // Remove the item from inventory and destroy it
@@ -880,7 +907,7 @@ void SlotManager::Consume(psItem* item, psCharacter *charData, int count)
     {
         for (unsigned short i = 0; i < consumedItem->GetStackCount(); i++)
         {
-            psserver->GetProgressionManager()->ProcessEvent(script,  actor);
+            psserver->GetProgressionManager()->ProcessEvent(progEvent, actor);
         }
     
         consumedItem->Destroy();
