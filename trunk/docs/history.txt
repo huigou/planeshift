@@ -3,6 +3,10 @@
   data for the network thread and the server thread. Now the network thread
   check a boolean flag instead of reading the actor struct that should be
   only accessed from the server thread.
+- Fixed a wrong %s that should have been %d that caused the server to crash
+  when adjusting path points.
+- Fixed a limit in a path loading algorithm to work with path with only
+  one path point as well.
 
 *** 2008-03-20 by Mike Gist
 - Ownership checking fix on book writing from Ares.
