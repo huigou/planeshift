@@ -79,8 +79,8 @@
     <style name="bankingbutton" toggle="no" >
 	    <frame width="80" height="22" border="no" />
 	    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="240" g="240" b="200" size="8" />
-	    <buttonup resource="Shortcut Button" />
-	    <buttondown resource="Shortcut Button" />
+	    <buttonup resource="Banking Tab Button Up" />
+	    <buttondown resource="Banking Tab Button Down" />
     </style>
 
     <style name="checkbox" shadows="yes" >
