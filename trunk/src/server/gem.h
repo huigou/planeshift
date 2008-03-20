@@ -568,6 +568,8 @@ public:
     bool IsAllowedToMove() { return isAllowedToMove; }  ///< Covers sitting, death, and out-of-stamina
     void SetAllowedToMove(bool newvalue);
 
+    bool SetAllowedToDisconnect(bool allowed);
+
     void SetSecurityLevel(int level);
     void SetMasqueradeLevel(int level);
     int GetSecurityLevel() { return(securityLevel); }

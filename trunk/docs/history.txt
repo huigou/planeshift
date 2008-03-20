@@ -1,3 +1,9 @@
+*** 2008-03-20 by Anders Reggestad
+- Fix for the AllowDisconnect server crash. Separating the access to client
+  data for the network thread and the server thread. Now the network thread
+  check a boolean flag instead of reading the actor struct that should be
+  only accessed from the server thread.
+
 *** 2008-03-20 by Mike Gist
 - Ownership checking fix on book writing from Ares.
 
