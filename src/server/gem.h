@@ -568,7 +568,10 @@ public:
     bool IsAllowedToMove() { return isAllowedToMove; }  ///< Covers sitting, death, and out-of-stamina
     void SetAllowedToMove(bool newvalue);
 
-    bool SetAllowedToDisconnect(bool allowed);
+    /**
+     * Call this to ask the actor to set allowed to disconnect in the connected client.
+     */
+    void SetAllowedToDisconnect(bool allowed);
 
     void SetSecurityLevel(int level);
     void SetMasqueradeLevel(int level);

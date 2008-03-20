@@ -1775,7 +1775,7 @@ void gemActor::SetAllowedToMove(bool newvalue)
     msg.SendMessage();
 }
 
-bool gemActor::SetAllowedToDisconnect(bool allowed)
+void gemActor::SetAllowedToDisconnect(bool allowed)
 {
     Client * client = GetClient();
     if (client)
