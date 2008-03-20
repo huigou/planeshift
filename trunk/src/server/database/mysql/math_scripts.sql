@@ -80,6 +80,8 @@ INSERT INTO math_scripts VALUES( "CalculateMaxCarryAmount", "MaxAmount =  750;")
 
 INSERT INTO math_scripts VALUES( "MaxRealm", "MaxRealm = 1 + floor(WaySkill / 20);");
 
+INSERT INTO math_scripts VALUES( "CalculateConsumeQuality", "QualityLevel = Quality/300;");
+
 INSERT INTO math_scripts VALUES( "Summon Missile",
 "
 	Range = 40.0 * PowerLevel;
