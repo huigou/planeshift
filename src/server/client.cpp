@@ -52,7 +52,7 @@
 #include "adminmanager.h"
 
 Client::Client ()
-    : accumulatedLag(0), zombie(false), ready(false), mute(false), 
+    : accumulatedLag(0), zombie(false), allowedToDisconnect(true), ready(false), mute(false), 
       accountID(0), playerID(0), securityLevel(0), superclient(false),
       name(""), waypointEffectID(0), waypointIsDisplaying(false),
       pathEffectID(0), pathPath(NULL), pathIsDisplaying(false),
@@ -128,6 +128,11 @@ bool Client::Disconnect()
     return true;
 }
 
+void Client::SetAllowedToDisconnect( bool allowed )
+{
+    allowedToDisconnect = allowed;
+}
+
 bool Client::AllowDisconnect()
 {
     if(!GetActor() || !GetCharacterData())
@@ -147,9 +152,19 @@ bool Client::AllowDisconnect()
         return true;
     }
 
-    return !(GetActor()->GetMode() == PSCHARACTER_MODE_SPELL_CASTING || 
-             GetActor()->GetMode() == PSCHARACTER_MODE_COMBAT || 
-             GetActor()->GetMode() == PSCHARACTER_MODE_DEFEATED);
+    return allowedToDisconnect;
+}
+
+// Called from network thread, no access to server
+// internal data should be made
+bool Client::ZombieAllowDisconnect()
+{
+    if(csGetTicks() > zombietimeout)
+    {
+        return true;
+    }
+ 
+    return allowedToDisconnect;
 }
 
 void Client::SetTargetObject(gemObject* newobject, bool updateClientGUI)
@@ -249,6 +264,14 @@ bool Client::IsMyPet(gemActor * other) const
     return false;
 }
 
+void Client::SetActor(gemActor* myactor)
+{
+    actor = myactor;
+    if (actor == NULL)
+    {
+        allowedToDisconnect = true;
+    }
+}
 
 psCharacter *Client::GetCharacterData()
 {

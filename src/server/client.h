@@ -98,10 +98,21 @@ public:
     bool Initialize(LPSOCKADDR_IN addr, uint32_t clientnum);
     bool Disconnect();
 
+    /**
+     * Called from server side to set the allowedToDisconnect flag.
+     * This flagg will be read by the network thread to
+     * see if the client could be disconnected.
+     */
+    void SetAllowedToDisconnect(bool allowed);
+
     /// Permit the player to disconnect? Players cannot quit while in combat (includes spell casting).
     /// Also causes the client to be set as a zombie indicating that the server knows the connection has been broken.
     bool AllowDisconnect();
 
+    /// Check if a zombie is allowed to disconnect. Called from the network thread
+    /// so no access to server internal data should be made.
+    bool ZombieAllowDisconnect();
+    
     /// SetMute is the function that toggles the muted flag
     void SetMute(bool flag) { mute = flag; }
     bool IsMute() { return mute; }
@@ -110,7 +121,7 @@ public:
     const char* GetName() { return name; }
 
     // Additional Entity information
-    void SetActor(gemActor* myactor) { actor = myactor; }
+    void SetActor(gemActor* myactor);
     gemActor* GetActor() const { return actor; }
     psCharacter *GetCharacterData();
 
@@ -227,7 +238,7 @@ public:
      * of combat, spellcasting, or defeted.
      */
     bool IsZombie() { return zombie; }
-
+    
     /// Allow distinguishing superclients from regular player clients
     bool IsSuperClient() { return superclient; }
     void SetSuperClient(bool flag) { superclient = flag; }
@@ -371,13 +382,20 @@ public:
 
 protected:
 
-    csTicks zombietimeout;
     /**
      * A zombie client is a client where the player has disconnected, but
      * still active due to not finished combat, spellcasting, or defeted.
      */
     bool zombie;
+    csTicks zombietimeout;
 
+    /**
+     * Server set this flag when the player isn't casting spells,
+     * fighting or doing anythinge else that should prevent the player
+     * from disconnecting.
+     */
+    bool allowedToDisconnect;
+    
     int exchangeID;
     gemActor *actor;
     csArray<uint32> pets;

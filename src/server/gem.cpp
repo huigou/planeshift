@@ -1775,6 +1775,17 @@ void gemActor::SetAllowedToMove(bool newvalue)
     msg.SendMessage();
 }
 
+bool gemActor::SetAllowedToDisconnect(bool allowed)
+{
+    Client * client = GetClient();
+    if (client)
+    {
+        client->SetAllowedToDisconnect(allowed);
+    }
+}
+
+
+
 bool gemActor::MoveToValidPos(bool force)
 {
     // Don't allow /unstick within 15 seconds of starting a fall...that way,

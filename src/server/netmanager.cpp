@@ -504,7 +504,7 @@ void NetManager::CheckLinkDead()
     for (Client* pClient = i.First(); pClient; pClient = i.Next() )
     {
         // Shortcut here so zombies may immediately disconnect
-        if(pClient->IsZombie() && pClient->AllowDisconnect())
+        if(pClient->IsZombie() && pClient->ZombieAllowDisconnect())
         {
             /* This simulates receipt of this message from the client
             ** without any network access, so that disconnection logic

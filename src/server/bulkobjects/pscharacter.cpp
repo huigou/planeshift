@@ -1219,6 +1219,10 @@ void psCharacter::SetMode(PSCHARACTER_MODE newmode, uint32_t clientnum)
 
     actor->SetAlive(newmode != PSCHARACTER_MODE_DEAD);
 
+    actor->SetAllowedToDisconnect(newmode != PSCHARACTER_MODE_SPELL_CASTING &&
+                                  newmode != PSCHARACTER_MODE_COMBAT && 
+                                  newmode != PSCHARACTER_MODE_DEFEATED);
+
     //cancel ongoing work
     if (player_mode == PSCHARACTER_MODE_WORK && workEvent)
     {
