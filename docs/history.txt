@@ -1,3 +1,6 @@
+*** 2008-03-21 by Mike Gist
+- Fixed a few future bugs.
+
 *** 2008-03-21 by Anders Reggestad
 - Removed some deprected warnings since the server has been updated.
 - Modified npcbehaviour.xml to remove next level of deprected syntax.

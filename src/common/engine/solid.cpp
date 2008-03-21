@@ -86,7 +86,10 @@ iCollider* psSolid::GetCollider()
         csRef<iCollideSystem> collideSystem = csQueryRegistry<iCollideSystem>(objectReg);
         
         colliderWrap = csColliderHelper::InitializeCollisionWrapper(collideSystem, mesh);
-        return colliderWrap->GetCollider();
+        if(colliderWrap)
+        {
+            return colliderWrap->GetCollider();
+        }
     }
     
     noCollider = true;
