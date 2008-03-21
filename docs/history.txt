@@ -1,3 +1,8 @@
+*** 2008-03-21 by Andrew Dai
+- Fixed crash FS#22 which occurred due to thread contention as psNetConnection
+  assumed only one instance of itself, whereas psServerPinger instantiates
+  multiple instances.
+
 *** 2008-03-20 by Anders Reggestad
 - Fix for the AllowDisconnect server crash. Separating the access to client
   data for the network thread and the server thread. Now the network thread
