@@ -102,8 +102,12 @@ NPC::~NPC()
 }
 
 psLinearMovement* NPC::GetLinMove()
-{ 
-    return npcActor->pcmove; 
+{
+    if (npcActor)
+    {
+        return npcActor->pcmove;
+    }
+    return NULL;
 }
 
 bool NPC::Load(iResultRow& row,BinaryRBTree<NPCType>& npctypes)

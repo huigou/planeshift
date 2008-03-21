@@ -82,6 +82,8 @@ public:
     void Disconnect();
     void QueueDRData(iCelEntity *entity,psLinearMovement *linmove,uint8_t counter);
     void QueueDRData(NPC * npc );
+    /// Call to remove queued dr updates when entities are removed/deleted.
+    void DequeueDRData(NPC * npc );
     void QueueAttackCommand(iCelEntity *attacker, iCelEntity *target);
     void QueueSpawnCommand(iCelEntity *mother, iCelEntity *father);
     void QueueTalkCommand(iCelEntity *speaker, const char* text);
