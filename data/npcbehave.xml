@@ -135,7 +135,7 @@
       <react event="attack"              behavior="fight" delta="150" />
       <react event="damage"              behavior="fight" delta="20" weight="1" />
       <react event="target out of range" behavior="chase" />
-      <react event="death"               behavior="fight" delta="-1" />
+      <react event="death"               behavior="fight" delta="0" />
   </npctype>
 
   <npctype name="Fighter">
@@ -159,7 +159,7 @@
       <react event="attack"              behavior="fight" />
       <react event="damage"              behavior="fight" delta="20" weight="1" />
       <react event="target out of range" behavior="chase" />
-      <react event="death"               behavior="fight" delta="-1" />
+      <react event="death"               behavior="fight" delta="0" />
   </npctype>
 
   <npctype name="On Sight Fighter" parent="Fighter">

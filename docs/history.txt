@@ -1,3 +1,7 @@
+*** 2008-03-21 by Anders Reggestad
+- Removed some deprected warnings since the server has been updated.
+- Modified npcbehaviour.xml to remove next level of deprected syntax.
+
 *** 2008-03-21 by Andrew Dai
 - Fixed crash FS#22 which occurred due to thread contention as psNetConnection
   assumed only one instance of itself, whereas psServerPinger instantiates
