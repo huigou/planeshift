@@ -70,27 +70,18 @@ bool Reaction::Load(iDocumentNode *node,BehaviorSet& behaviors)
         desireType = DESIRE_DELTA;
 
         // Handle some deprecated styles, that will change the desired
-        // type.
-        // Keep first for 1 release and 2. for two releases
-        if (fabs(desireValue)<SMALL_EPSILON)  // 0 means "guarantied"
-        {
-            desireType = DESIRE_GUARANTIED;
-            // When removed uncomment next deprecated style
-            Error1("DEPRECATED: Use of 0 delta for guarantied. Remove delta.");
-        }
+        // type. In next release remove this.
         if (fabs(desireValue+1)<SMALL_EPSILON) // -1 in delta means "don't react"
         {
             desireType = DESIRE_NONE;
             desireValue = 0.0;
-            // Remove comments on next line when the previous deprecated style is removed.
-            // Error1("DEPRECATED: Use of -1 delta for don't react. Set 0 delta.");
+            Error1("DEPRECATED: Use of -1 delta for don't react. Set 0 delta.");
         }
-        // When deprecated style for 0 is removed uncomment this
-        // if (fabs(desireValue)<SMALL_EPSILON)  // 0 means no change
-        // {
-        //    desireType = DESIRE_NONE;
-        // }
 
+        if (fabs(desireValue)<SMALL_EPSILON)  // 0 means no change
+        {
+            desireType = DESIRE_NONE;
+        }
     }
 
     if (node->GetAttribute("absolute"))
