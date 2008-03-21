@@ -331,6 +331,13 @@ void NetworkManager::HandleObjectRemoval( MsgEntry* me )
         return;
     }
 
+    // If this is a NPC remove any queued dr updates before removing the entity.
+    NPC * npc = object->GetNPC();
+    if (npc)
+    {
+        DequeueDRData( npc );
+    }
+
     npcclient->Remove( object ); // Object isn't valid after remove
 }
 
@@ -904,6 +911,13 @@ void NetworkManager::QueueDRData(NPC * npc )
 {
     cmd_dr_outbound.PutUnique( npc->GetPID(), npc );
 }
+
+void NetworkManager::DequeueDRData(NPC * npc )
+{
+    npc->Printf(15, "Dequeuing DR Data...");
+    cmd_dr_outbound.DeleteAll( npc->GetPID() );    
+}
+
 
 void NetworkManager::QueueDRData(iCelEntity *entity, psLinearMovement *linmove, uint8_t counter)
 {

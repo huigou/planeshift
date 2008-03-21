@@ -1,6 +1,8 @@
 *** 2008-03-21 by Anders Reggestad
 - Removed some deprected warnings since the server has been updated.
 - Modified npcbehaviour.xml to remove next level of deprected syntax.
+- Added dequeue of any queued dr data updates from the npc client if the
+  entity is removed. Should prevent some of the NPCclient crashes we se.
 
 *** 2008-03-21 by Andrew Dai
 - Fixed crash FS#22 which occurred due to thread contention as psNetConnection
