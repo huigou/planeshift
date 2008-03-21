@@ -253,7 +253,7 @@ void psNetConnection::CheckLinkDead (csTicks currenttime)
         {
             server->heartbeat++;
             psHeartBeatMsg heart((uint32_t)0);
-            heart.SendMessage(); // This should cause an ack to update the timestamp
+			SendMessage(heart.msg);  // This should cause an ack to update the timestamp
         }
         else
         {
