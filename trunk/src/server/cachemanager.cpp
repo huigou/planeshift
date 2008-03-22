@@ -334,7 +334,9 @@ void CacheManager::RemoveInstance( psItem * & item )
 {
     Notify2(LOG_CACHE, "Removing Instance of item: %u", item->GetUID());
     if (item->GetUID() != 0)
+    {
         db->Command("DELETE from item_instances where id='%u'", item->GetUID());
+    }
     delete item;
     item = NULL;
 }
@@ -346,7 +348,9 @@ bool CacheManager::PreloadSkills()
     Result result(db->Select("SELECT * from skills") );
 
     if (!result.IsValid())
-    return false;
+    {
+        return false;
+    }
 
     for (currentrow=0; currentrow<result.Count(); currentrow++)
     {
@@ -390,7 +394,9 @@ bool CacheManager::PreloadLimitations()
     Result result(db->Select("SELECT * from character_limitations") );
 
     if (!result.IsValid())
+    {
         return false;
+    }
 
     for (currentrow=0; currentrow< result.Count(); currentrow++)
     {
@@ -409,9 +415,13 @@ bool CacheManager::PreloadLimitations()
 const psCharacterLimitation *CacheManager::GetLimitation(size_t index)
 {
     if (index >= limits.GetSize() )
+    {
         return NULL;
+    }
     else
+    {
         return limits[index];
+    }
 }
 
 bool CacheManager::PreloadSectors()
@@ -421,7 +431,9 @@ bool CacheManager::PreloadSectors()
     Result result(db->Select("SELECT * from sectors") );
 
     if (!result.IsValid())
+    {
         return false;
+    }
 
     for (currentrow=0; currentrow< result.Count(); currentrow++)
     {
@@ -466,6 +478,7 @@ bool CacheManager::PreloadSectors()
         maxCommonStrID++;
         msg_strings.Register(newsector->name,(csStringID)maxCommonStrID);
     }
+
     Notify2( LOG_STARTUP, "%lu Sectors Loaded", result.Count() );
     return true;
 }
@@ -473,8 +486,15 @@ bool CacheManager::PreloadSectors()
 bool CacheManager::PreloadMovement()
 {
     Result modes(db->Select("SELECT * FROM movement_modes"));
-    if ( !modes.IsValid() || !modes.Count() )
+    if ( !modes.IsValid() )
+    {
         return false;
+    }
+    if ( !modes.Count() )
+    {
+        Error1("No movement modes to load.");
+        return false;
+    }
 
     for (unsigned int i=0; i<modes.Count(); i++)
     {
@@ -500,11 +520,20 @@ bool CacheManager::PreloadMovement()
 
         char_modes.Put(newmode->id,newmode);
     }
+    Notify2( LOG_STARTUP, "%lu Movement Modes Loaded", modes.Count() );
 
     Result types(db->Select("SELECT * FROM movement_types"));
-    if ( !types.IsValid() || !types.Count() )
+    if ( !types.IsValid() )
+    {
         return false;
-
+    }
+    
+    if ( !types.Count() )
+    {
+        Error1("No movement types to load.");
+        return false;
+    }
+    
     for (unsigned int i=0; i<types.Count(); i++)
     {
         psMovement* newmove = new psMovement;
@@ -529,22 +558,31 @@ bool CacheManager::PreloadMovement()
         movements.Put(newmove->id,newmove);
     }
 
+    Notify2( LOG_STARTUP, "%lu Movement Types Loaded", types.Count() );
     return true;
 }
 
 uint8_t CacheManager::GetCharModeID(const char* name)
 {
     for (size_t i=0; i<char_modes.GetSize(); i++)
+    {
         if (char_modes[i]->name == name)
+        {
             return (uint8_t)i;
+        }
+    }
     return (uint8_t)-1;
 }
 
 uint8_t CacheManager::GetMovementID(const char* name)
 {
     for (size_t i=0; i<movements.GetSize(); i++)
+    {
         if (movements[i]->name == name)
+        {
             return (uint8_t)i;
+        }
+    }
     return (uint8_t)-1;
 }
 
@@ -554,7 +592,9 @@ bool CacheManager::PreloadArmorVsWeapon()
     Result result(db->Select("select * from armor_vs_weapon"));
 
     if (!result.IsValid())
+    {
         return false;
+    }
 
     for (currentrow=0; currentrow<result.Count(); currentrow++)
     {
@@ -583,6 +623,8 @@ bool CacheManager::PreloadArmorVsWeapon()
     Notify2(LOG_COMBAT,"Testing Armor VS Weapon table ('1d','Claymore'): %f\n",GetArmorVSWeaponResistance("1d","Claymore"));
     Notify2(LOG_COMBAT,"Testing Armor VS Weapon table ('2b','Sabre'): %f\n",GetArmorVSWeaponResistance("2b","Sabre"));
 
+    
+    Notify2( LOG_STARTUP, "%lu Armor vs Weapon Loaded", result.Count() );
     return true;
 }
 
@@ -592,10 +634,14 @@ bool CacheManager::PreloadCommonStrings()
     Result result(db->Select("select id,string from common_strings"));
 
     if (!result.IsValid())
+    {
         return false;
+    }
 
     for (currentrow=0; currentrow<result.Count(); currentrow++)
+    {
         msg_strings.Register(result[currentrow]["string"],(csStringID)result[currentrow].GetUInt32("id"));
+    }
 
     Notify2( LOG_STARTUP, "%zu Common Strings Loaded", msg_strings.GetSize() );
     return true;
@@ -603,27 +649,30 @@ bool CacheManager::PreloadCommonStrings()
 
 bool CacheManager::PreloadStances()
 {
-        Result result(db->Select("select * from stances order by id"));
+    Result result(db->Select("select * from stances order by id"));
 
-        if(!result.IsValid())
-            return false;
-
-        for(unsigned int currentRow = 0; currentRow < result.Count(); currentRow++)
-        {
-            iResultRow& row = result[currentRow];
-            Stance temp;
-            temp.stance_id = row.GetInt("id")-1;
-            temp.stance_name = row["name"];
-            temp.stamina_drain_P = row.GetFloat("stamina_drain_P");
-            temp.stamina_drain_M = row.GetFloat("stamina_drain_M");
-            temp.attack_speed_mod = row.GetFloat("attack_speed_mod");
-            temp.attack_damage_mod = row.GetFloat("attack_damage_mod");
-            temp.defense_avoid_mod = row.GetFloat("defense_avoid_mod");
-            temp.defense_absorb_mod = row.GetFloat("defense_absorb_mod");
-            stances.Push(temp);
-            stanceID.Push(temp.stance_name);
-        }
-        return true;
+    if(!result.IsValid())
+    {
+        return false;
+    }
+    
+    for(unsigned int currentRow = 0; currentRow < result.Count(); currentRow++)
+    {
+        iResultRow& row = result[currentRow];
+        Stance temp;
+        temp.stance_id = row.GetInt("id")-1;
+        temp.stance_name = row["name"];
+        temp.stamina_drain_P = row.GetFloat("stamina_drain_P");
+        temp.stamina_drain_M = row.GetFloat("stamina_drain_M");
+        temp.attack_speed_mod = row.GetFloat("attack_speed_mod");
+        temp.attack_damage_mod = row.GetFloat("attack_damage_mod");
+        temp.defense_avoid_mod = row.GetFloat("defense_avoid_mod");
+        temp.defense_absorb_mod = row.GetFloat("defense_absorb_mod");
+        stances.Push(temp);
+        stanceID.Push(temp.stance_name);
+    }
+    Notify2( LOG_STARTUP, "%lu Stances Loaded", result.Count() );
+    return true;
 }
 
 bool CacheManager::PreloadQuests()
@@ -635,7 +684,9 @@ bool CacheManager::PreloadQuests()
     Result result(db->Select("select * from quests order by id"));
 
     if (!result.IsValid())
+    {
         return false;
+    }
 
     for (currentrow=0; currentrow<result.Count(); currentrow++)
     {
@@ -672,7 +723,9 @@ bool CacheManager::UnloadQuest(int id)
         ret = true;
     }
     else
+    {
         CPrintf(CON_ERROR, "Cannot find quest %d to remove.\n", id);
+    }
 
     return ret;
 }
@@ -854,7 +907,7 @@ csPDelArray<psTradeTransformations> *CacheManager::FindTransformationsList(uint3
     csHash<csPDelArray<psTradeTransformations> *,uint32>* transHash;
     transHash = tradeTransformations_IDHash.Get(patternid,NULL);
     if (!transHash) 
-	{
+    {
         // Error2("No data in trade_transformations for pattern %d", patternid);
         return NULL;
     }
@@ -1242,6 +1295,7 @@ bool CacheManager::PreloadCraftMessages()
         }
     }
     delete tran;
+    Notify2( LOG_STARTUP, "%lu Trade Patterns Loaded", result.Count() );
     return true;
 }
 
@@ -1412,7 +1466,9 @@ bool CacheManager::PreloadTips()
     // Id<1000 means we are excluding Tutorial tips
     Result result(db->Select("select tip from tips where id<1000"));
     if (!result.IsValid())
+    {
         return false;
+    }
 
     for (currentrow=0; currentrow<result.Count(); currentrow++)
     {
@@ -1428,13 +1484,17 @@ bool CacheManager::PreloadTips()
 const char *CacheManager::FindCommonString(unsigned int id)
 {
     if (id==0)
-      return "";
+    {
+        return "";
+    }
     return msg_strings.Request(id);
 }
 unsigned int CacheManager::FindCommonStringID(const char *name)
 {
     if ( name == NULL )
-    return 0;
+    {
+        return 0;
+    }
 
     csStringID id = (csStringID) msg_strings.Request(name);
     return (id == csInvalidStringID) ? 0 : id;
@@ -1464,7 +1524,9 @@ psQuest *CacheManager::GetQuestByName(const char *name)
 psQuest *CacheManager::AddDynamicQuest(const char *name, psQuest *parentQuest, int step)
 {
     if (!name)
+    {
         return NULL;
+    }
 
     psQuest *ptr;
     //  subquests need a fixed id to be loaded at next restart
@@ -1492,8 +1554,10 @@ psSkillInfo *CacheManager::GetSkillByID(unsigned int id)
     for (i=0;i<skillinfolist.GetSize();i++)
     {
         currentskill=skillinfolist.Get(i);
-    if (currentskill && (unsigned int)currentskill->id==id)
+        if (currentskill && (unsigned int)currentskill->id==id)
+        {
             return currentskill;
+        }
     }
     return NULL;
 
@@ -1509,7 +1573,9 @@ psSkillInfo *CacheManager::GetSkillByName(const char *name)
     {
         currentskill=skillinfolist.Get(i);
         if (currentskill && currentskill->name.CompareNoCase(name) )
+        {
             return currentskill;
+        }
     }
     return NULL;
 }
@@ -1521,7 +1587,9 @@ void CacheManager::GetSkillsListbyCategory(csArray <psSkillInfo>& listskill,int 
     {
         currentskill=skillinfolist.Get(i);
         if(currentskill && currentskill->category == category)
+        {
             listskill.Push(*currentskill);
+        }
     }
 }
 
@@ -1539,7 +1607,9 @@ psSectorInfo *CacheManager::GetSectorInfoByID(unsigned int id)
 psSectorInfo *CacheManager::GetSectorInfoByName(const char *name)
 {
     if (name == NULL || strlen(name) == 0)
+    {
         return NULL;
+    }
 
     return sectorinfo_by_name.Get(csHashCompute(name), NULL);
 }
@@ -1549,7 +1619,9 @@ PSTRAIT_LOCATION CacheManager::ConvertTraitLocationString(const char *locationst
 {
 
     if (locationstring==NULL)
+    {
         return PSTRAIT_LOCATION_NONE;
+    }
 
     for (int i = 0; i < PSTRAIT_LOCATION_COUNT; i++)
     {
@@ -1567,7 +1639,9 @@ bool CacheManager::PreloadTraits()
     Result result(db->Select("SELECT * from traits order by id"));
 
     if (!result.IsValid())
+    {
         return false;
+    }
 
     for (currentrow=0; currentrow<result.Count(); currentrow++)
     {
@@ -1617,7 +1691,6 @@ bool CacheManager::PreloadTraits()
     }
 
 
-
     Notify2( LOG_STARTUP, "%zu Traits Loaded", traitlist.GetSize() );
     return true;
 }
@@ -1632,7 +1705,9 @@ psTrait *CacheManager::GetTraitByID(unsigned int id)
     {
         currenttrait=traitlist.Get(i);
         if (currenttrait!=NULL && currenttrait->uid==id)
+        {
             return currenttrait;
+        }
     }
     return NULL;
 }
@@ -1689,7 +1764,9 @@ bool CacheManager::PreloadRaceInfo()
     Result result(db->Select("SELECT * from race_info"));
 
     if (!result.IsValid())
+    {
         return false;
+    }
 
 
     for (currentrow=0; currentrow<result.Count(); currentrow++)
@@ -1706,6 +1783,7 @@ bool CacheManager::PreloadRaceInfo()
         delete newraceinfo;
     }
     }
+
     Notify2( LOG_STARTUP, "%lu Races Loaded", result.Count() );
     return true;
 }
@@ -1718,7 +1796,9 @@ size_t CacheManager::GetRaceInfoCount()
 psRaceInfo *CacheManager::GetRaceInfoByIndex(int idx)
 {
     if (idx<0 || (size_t)idx>=raceinfolist.GetSize())
+    {
         return NULL;
+    }
 
     return raceinfolist.Get(idx);
 }
@@ -1734,7 +1814,9 @@ psRaceInfo *CacheManager::GetRaceInfoByID(unsigned int id)
     {
         currentri=raceinfolist.Get(i);
         if (currentri && currentri->uid==id)
+        {
             return currentri;
+        }
     }
     return NULL;
 }
@@ -1749,7 +1831,9 @@ psRaceInfo *CacheManager::GetRaceInfoByNameGender(const char *name,PSCHARACTER_G
     {
         currentri=raceinfolist.Get(i);
         if (currentri!=NULL && currentri->gender==gender && currentri->name ==name)
+        {
             return currentri;
+        }
     }
     return NULL;
 }
@@ -1768,7 +1852,9 @@ psRaceInfo *CacheManager::GetRaceInfoByNameGender( unsigned int id, PSCHARACTER_
         if (currentri!=NULL &&
             currentri->race==id &&
             (currentri->gender == PSCHARACTER_GENDER_NONE || currentri->gender==gender))
+        {
             return currentri;
+        }
     }
     return NULL;
 }
@@ -1781,7 +1867,9 @@ psItemCategory *CacheManager::GetItemCategoryByID(unsigned int id)
         psItemCategory *currentCategory;
         currentCategory=itemCategoryList.Get(i);
         if (currentCategory && id==currentCategory->id)
-            return currentCategory;
+        {
+             return currentCategory;
+        }
     }
     return NULL;
 
@@ -1795,7 +1883,9 @@ psItemCategory *CacheManager::GetItemCategoryByName(const csString & name)
         psItemCategory *currentCategory;
         currentCategory=itemCategoryList.Get(i);
         if (currentCategory && name==currentCategory->name)
+        {
             return currentCategory;
+        }
     }
     return NULL;
 
@@ -1810,7 +1900,9 @@ psWay *CacheManager::GetWayByID(unsigned int id)
         psWay *currentWay;
         currentWay=wayList.Get(i);
         if (currentWay && id==currentWay->id)
+        {
             return currentWay;
+        }
     }
     return NULL;
 }
@@ -1824,7 +1916,9 @@ psWay *CacheManager::GetWayByName(const csString & name)
         psWay *currentWay;
         currentWay=wayList.Get(i);
         if (currentWay && name==currentWay->name)
+        {
             return currentWay;
+        }
     }
     return NULL;
 }
@@ -1881,8 +1975,11 @@ psItemStats *CacheManager::GetBasicItemStatsByName(csString name)
 {
     psItemStats *itemstats = itemStats_NameHash.Get(name.Downcase(),NULL);
     if(itemstats)
+    {
         return itemstats;
+    }
 
+    // Not found in cache so look it up in DB.
     bool loaded;
     csString escape;
     db->Escape( escape, name );
@@ -1890,15 +1987,21 @@ psItemStats *CacheManager::GetBasicItemStatsByName(csString name)
     Result result(db->Select("SELECT * from item_stats where stat_type='B' and name='%s'", (const char *) name));
 
     if (!result.IsValid() || result.Count() == 0)
+    {
         return NULL;
+    }
 
     itemstats = new psItemStats;
     loaded = itemstats->ReadItemStats(result[0]);
 
     // Prevent id conflicts
-    if (!loaded|| itemStats_IDHash.Get(itemstats->GetUID(),NULL)) {
+    if (!loaded|| itemStats_IDHash.Get(itemstats->GetUID(),NULL))
+    {
         if(loaded)
+        {
             CPrintf(CON_ERROR, "Duplicate item_stats ID where id='%u' found.\n", itemstats->GetUID());
+        }
+        
         delete itemstats;
         return NULL;
     } else
@@ -1916,7 +2019,9 @@ uint32 CacheManager::BasicItemStatsByNameExist(csString name)
 {
     psItemStats *itemstats = itemStats_NameHash.Get(name.Downcase(), NULL);
     if (itemstats)
+    {
         return itemstats->GetUID();
+    }
 
     return 0;
 }
@@ -1925,23 +2030,32 @@ uint32 CacheManager::BasicItemStatsByNameExist(csString name)
 psItemStats *CacheManager::GetBasicItemStatsByID(uint32 id)
 {
     if ( id == 0 )
+    {
         return NULL;
-        
+    }
+    
     psItemStats *itemstats = itemStats_IDHash.Get(id,NULL);
     if(itemstats)
+    {
         return itemstats;
-
+    }
+    
     Result result(db->Select("SELECT * from item_stats where stat_type='B' and id='%u'", id));
 
     if (!result.IsValid() || result.Count() == 0)
+    {
         return NULL;
-
+    }
+    
     itemstats = new psItemStats;
     bool loaded = itemstats->ReadItemStats(result[0]);
     // Prevent name conflicts
-    if (!loaded || itemStats_NameHash.Get(itemstats->GetDownCaseName(),NULL)) {
+    if (!loaded || itemStats_NameHash.Get(itemstats->GetDownCaseName(),NULL))
+    {
         if(loaded)
+        {
             CPrintf(CON_ERROR, "Duplicate item_stats name where name='%s' found.\n", itemstats->GetName());
+        }
         delete itemstats;
         return NULL;
     } else
@@ -1969,10 +2083,14 @@ void CacheManager::CacheNameChange(csString oldName, csString newName)
             itemStats_NameHash.Put(newName.Downcase(), itemstats);
         }
         else
+        {
             Error2("CacheNameChange error: no item stats for \"%s\".", oldName.GetDataSafe());
+        }
     }
     else
+    {
         Error1("CacheNameChange error: old or new name zero length.");
+    }
 }
 
 void CacheManager::GetTipByID(int id, csString& tip)
@@ -1990,15 +2108,6 @@ unsigned int CacheManager::GetTipLength()
 {
     return (unsigned int)tips_list.GetSize();
 }
-
-/*
-psItemStats *CacheManager::GetBasicItemStatsByIndex(unsigned int idx)
-{
-    if (idx>(unsigned int)basicitemstatslist.GetSize())
-        return NULL;
-    return basicitemstatslist.Get(idx);
-}
-*/
 
 const char* CacheManager::Attribute2String( PSITEMSTATS_STAT s )
 {
@@ -2145,6 +2254,8 @@ bool CacheManager::PreloadWays()
             wayList.Push(way);
         }
     }
+
+    Notify2( LOG_STARTUP, "%lu Ways Loaded", ways.Count() );
     return true;
 }
 
@@ -2184,9 +2295,13 @@ bool CacheManager::PreloadSpells()
         {
             psSpell *spell = new psSpell;
             if (spell->Load(spells[i]))
+            {
                 spellList.Push(spell);
+            }
             else
+            {
                 delete spell;
+            }
         }
     }
     Notify2( LOG_STARTUP, "%lu Spells Loaded", spells.Count() );
@@ -2198,7 +2313,9 @@ csPDelArray<psItemAnimation> *CacheManager::FindAnimationList(int id)
     for (size_t x=0; x<item_anim_list.GetSize(); x++)
     {
         if (item_anim_list[x]->Get(0)->id == id)
+        {
             return item_anim_list[x];
+        }
     }
     return NULL;
 }
@@ -2212,7 +2329,9 @@ bool CacheManager::PreloadItemAnimList()
     Result result(db->Select("SELECT * from item_animations order by id, min_use_level"));
 
     if (!result.IsValid())
+    {
         return false;
+    }
 
     for (currentrow=0; currentrow<result.Count(); currentrow++)
     {
@@ -2233,6 +2352,7 @@ bool CacheManager::PreloadItemAnimList()
         newarray->Push(newitem);
     }
 
+    Notify2( LOG_STARTUP, "%lu Item Animations Loaded", result.Count() );
     return true;
 }
 
@@ -2324,8 +2444,12 @@ psItemSet *CacheManager::LoadWorldItems(psSectorInfo *sector,int &loadeditems)
     }
 
     for (size_t i=0; i < itemset->GetSize(); i++)
+    {
         if (itemset->Get(i))
+        {
             itemset->Get(i)->SetLoaded();
+        }
+    }
 
     return itemset;
 }
@@ -2343,17 +2467,27 @@ bool CacheManager::PreloadItemStatsDatabase()
     Result result(db->Select("SELECT * from item_stats where stat_type='B'"));
 
     if (!result.IsValid())
+    {
         return false;
+    }
 
     for (currentrow=0; currentrow<result.Count(); currentrow++)
     {
         newitem = new psItemStats;
         bool loaded = newitem->ReadItemStats(result[currentrow]);
         // Prevent name conflicts
-        if (!loaded || itemStats_NameHash.Get(newitem->GetDownCaseName(), NULL)) {
+        if (!loaded || itemStats_NameHash.Get(newitem->GetDownCaseName(), NULL))
+        {
             if(loaded)
+            {
                 CPrintf(CON_ERROR, "Duplicate item_stats name where name='%s' found.\n", newitem->GetName());
-
+            }
+            else
+            {
+                CPrintf(CON_ERROR, "Failed to load item_stats with id='%s' and name='%s'\n",
+                        result[currentrow]["id"],result[currentrow]["name"]);
+            }
+            
             delete newitem;
             return false;
         } else
@@ -2399,11 +2533,15 @@ psItemStats* CacheManager::CopyItemStats(uint32 id, csString newName)
     Result result( db->Select( "SELECT * from item_stats where id='%u'", id ) );
 
     if ( !result.IsValid() )
+    {
         return NULL;
-
+    }
+    
     if ( result.Count() != 1 )
+    {
         return NULL;
-
+    }
+    
     newItem = new psItemStats;
     if ( !newItem->ReadItemStats( result[0] ) )
     {
@@ -2437,13 +2575,17 @@ bool CacheManager::PreloadBadNames()
         bad_names.Push(name);
     }
 
+    Notify2( LOG_STARTUP, "%lu Bad Names Loaded", result.Count() );
     return true;
 }
 
 void CacheManager::AddBadName(const char* name)
 {
     if(!name)
+    {
         return;
+    }
+
     csString* newname = new csString();
     *newname = NormalizeCharacterName(name);
 
@@ -2489,11 +2631,13 @@ psAccountInfo *CacheManager::GetAccountInfoByID(unsigned int accountid)
     }
     psAccountInfo *accountinfo=new psAccountInfo;
     if (accountinfo->Load(result[0]))
-    return accountinfo;
+    {
+        return accountinfo;
+    }
     else
     {
-    delete accountinfo;
-    return NULL;
+        delete accountinfo;
+        return NULL;
     }
 }
 
@@ -2523,7 +2667,9 @@ psAccountInfo *CacheManager::GetAccountInfoByUsername(const char *username)
     }
     psAccountInfo *accountinfo=new psAccountInfo;
     if (accountinfo->Load(result[0]))
+    {
         return accountinfo;
+    }
     else
     {
         delete accountinfo;
@@ -2591,7 +2737,9 @@ psGuildInfo *CacheManager::FindGuild(unsigned int id)
 {
     psGuildInfo *g = guildinfo_by_id.Get(id, 0);
     if (g)
+    {
         return g;
+    }
 
     // Load on demand if not found
     g = new psGuildInfo;
@@ -2611,10 +2759,14 @@ psGuildInfo * CacheManager::FindGuild(const csString & name)
     db->Escape( escape, name );
     Result result(db->Select("select id from guilds where name=\"%s\"", escape.GetData()) );
     if (!result.IsValid())
+    {
         return NULL;
+    }
 
     if (result.Count() == 0)
+    {
         return NULL;
+    }
 
     id = result[0].GetInt("id");
 
@@ -2652,8 +2804,11 @@ psGuildAlliance * CacheManager::FindAlliance(unsigned int id)
 {
     psGuildAlliance *a = alliance_by_id.Get(id, 0);
     if (a)
+    {
         return a;
-
+    }
+    
+    // Load on demand if not found
     a = new psGuildAlliance();
     if (a->Load(id))
     {

@@ -1,3 +1,10 @@
+*** 2008-03-22 by Anders Reggestad
+- Updated cache manager to print complete at every preload function. So
+  that it is easier to track if someone fails to report an error and
+  stil return false from one of the preload functions.
+- Fixed preload function to print error at one of the server crashes
+  where item animations was incorrect without giving any hint.
+
 *** 2008-03-22 by Andrew Dai
 - Fixed crash when server started without mysql running.
 

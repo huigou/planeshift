@@ -447,7 +447,9 @@ bool psItemStats::ReadItemStats(iResultRow& row)
         return false;
     } 
     else
+    {
         SetMeshName(meshname);
+    }
 
     const char *texturename = CacheManager::GetSingleton().FindCommonString(row.GetUInt32("cstr_id_gfx_texture"));
     if (row.GetUInt32("cstr_id_gfx_texture")!=0 && !texturename) 
@@ -456,7 +458,9 @@ bool psItemStats::ReadItemStats(iResultRow& row)
         return false;
     }
     else
+    {
         SetTextureName(texturename);
+    }
 
     SetPartName(CacheManager::GetSingleton().FindCommonString(row.GetUInt32("cstr_id_part")));
     SetImageName(CacheManager::GetSingleton().FindCommonString(row.GetUInt32("cstr_id_gfx_icon")));
@@ -487,7 +491,9 @@ bool psItemStats::ReadItemStats(iResultRow& row)
         char* currAmmo = strTmpAmmoListArray.Pop();
         unsigned int ammoID = atoi(currAmmo);
         if (ammoID != 0)
+        {
             ammo_types.Add(ammoID);
+        }
         delete[] currAmmo;
     }
 
@@ -507,10 +513,16 @@ bool psItemStats::ReadItemStats(iResultRow& row)
     {
         anim_list = CacheManager::GetSingleton().FindAnimationList(anim_list_id);
         if (!anim_list)
+        {
+            Error3("Failed to find Item Animation '%d' for itemstat '%d'",
+                   anim_list_id,uid);
             return false;
+        }
     }
     else
+    {
         anim_list = NULL;
+    }
 
     weaponRange = row.GetFloat("weapon_range");
 
