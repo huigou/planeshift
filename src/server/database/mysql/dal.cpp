@@ -81,6 +81,8 @@ bool psMysqlConnection::Initialize(const char *host, unsigned int port, const ch
     // Conn is the valid connection to be used for mydb. Have to store the mydb to get
     // errors if this call fails.
     MYSQL *conn_check = mysql_real_connect(conn,host,user,pwd,database,port,NULL,CLIENT_FOUND_ROWS);
+	if(!conn_check)
+		return false;
     my_bool my_true = true;
 
 #if MYSQL_VERSION_ID >= 50000
