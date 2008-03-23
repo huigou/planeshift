@@ -102,7 +102,10 @@ const char *psDatabase::GetLastQuery()
 
 void psDatabase::Close()
 {
-    if (db) db->Close();
+    if (db)
+    {
+        db->Close();
+    }
     
     db = NULL;
 }

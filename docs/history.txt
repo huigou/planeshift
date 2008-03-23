@@ -1,3 +1,8 @@
+*** 2008-03-23 by Anders Reggestad
+- Fixed crash when servers fails to Preload database items. Make sure
+  that deleted database is set to NULL so that it will not be deleted
+  twice.
+
 *** 2008-03-22 by Anders Reggestad
 - Updated cache manager to print complete at every preload function. So
   that it is easier to track if someone fails to report an error and

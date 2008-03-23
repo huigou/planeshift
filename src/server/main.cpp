@@ -71,6 +71,12 @@ int main(int argc, char **argv)
     if (!psserver->Initialize(object_reg))
     {
         CPrintf (CON_ERROR, COL_RED "error while initializing server!\n" COL_NORMAL);
+
+        // Cleanup before exit
+        delete psserver;
+        delete CSSetup;
+        csInitializer::DestroyApplication(object_reg);
+
         PS_PAUSEEXIT(1);
     }
 
@@ -82,7 +88,10 @@ int main(int argc, char **argv)
     // Save Configuration
     csRef<iConfigManager> cfgmgr= csQueryRegistry<iConfigManager> (object_reg);
     if (cfgmgr)
+    {
         cfgmgr->Save();
+    }
+    
     cfgmgr = NULL;
 
     delete CSSetup;

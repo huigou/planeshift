@@ -269,6 +269,7 @@ bool psServer::Initialize(iObjectRegistry* object_reg)
     {
         Error2("Could not create database or connect to it: %s",database->GetLastError());
         delete database;
+        database = NULL;
         return false;
     }
 
@@ -299,9 +300,13 @@ bool psServer::Initialize(iObjectRegistry* object_reg)
     //Loads the standard motd message from db
     Result result(db->Select("SELECT option_value FROM server_options WHERE option_name = 'standard_motd'"));
     if (result.IsValid()  &&  result.Count()>0)
+    {
         motd = result[0][0];
+    }
     else
+    {
         motd.Clear();
+    }
 
     
     // MathScript Engine
@@ -313,6 +318,7 @@ bool psServer::Initialize(iObjectRegistry* object_reg)
     {
         CPrintf(CON_ERROR, "Could not initialize database cache.\n");
         delete database;
+        database = NULL;
         return false;
     }
 
@@ -323,6 +329,7 @@ bool psServer::Initialize(iObjectRegistry* object_reg)
         CPrintf(CON_ERROR, "Could not initialize Character Loader.\n");
         cachemanager->UnloadAll();
         delete database;
+        database = NULL;
         return false;
     }
 
@@ -334,6 +341,7 @@ bool psServer::Initialize(iObjectRegistry* object_reg)
         Error1 ("Network thread initialization failed!\n");
         Error1 ("Is there already a server running?\n");
         delete serverthread;
+        serverthread = NULL;
         return false;
     }
 
@@ -346,6 +354,7 @@ bool psServer::Initialize(iObjectRegistry* object_reg)
     if (!serverthread->Bind (serveraddr, port))
     {
         delete serverthread;
+        serverthread = NULL;
         return false;
     }
     Debug1(LOG_STARTUP,0,"Started Network Thread\n");
@@ -387,6 +396,7 @@ bool psServer::Initialize(iObjectRegistry* object_reg)
     {
         Error1("Failed to initialise CEL!\n");
         delete entitymanager;
+        entitymanager = NULL;
         return false;
     }
     entitymanager->SetReady(false);
