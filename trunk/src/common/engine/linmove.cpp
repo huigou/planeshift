@@ -758,7 +758,7 @@ bool psLinearMovement::InitCD (const csVector3& body, const csVector3& legs,
   topSize = body;
   bottomSize = legs;
 
-  if (bottomSize.z > 1.0f)
+  if (bottomSize.x * bottomSize.y > (0.8f * 1.4f + 0.1f))
     hugGround = true;
 
   intervalSize.x = MIN(topSize.x, bottomSize.x);
