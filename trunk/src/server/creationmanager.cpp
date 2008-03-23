@@ -923,7 +923,7 @@ void psCharCreationManager::HandleUploadMessage( MsgEntry* me, Client *client )
     if ( trait )
         chardata->SetTraitForLocation( trait->location, trait );
     
-    printf("Uploaded Skin Colour: %d\n", upload.selectedSkinColour );
+//    printf("Uploaded Skin Colour: %d\n", upload.selectedSkinColour );
             
                         
     csString filename;
