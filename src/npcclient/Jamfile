@@ -1,7 +1,7 @@
 SubDir TOP src npcclient ;
 
 Application psnpcclient :
-	[ Wildcard *.cpp *.h ]
+	[ Wildcard *.cpp *.h ] : console
 ;
 
 CompileGroups psnpcclient : server ;
