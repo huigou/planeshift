@@ -1,3 +1,7 @@
+*** 2008-03-23 by Andrew Dai
+- Fixed the hug ground problem where player models were hugging by changing
+  the limits.
+
 *** 2008-03-32 by Thomas Towey
 - Added some runtime dev debug info on entrance failures.
 - Check if identification category skill before displaying quality details.
