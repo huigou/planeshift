@@ -693,10 +693,12 @@ void UserManager::HandleTargetEvent(MsgEntry *me)
 
 void UserManager::HandleEntranceMessage( MsgEntry* me, Client *client )
 {
+    bool secure = (client->GetSecurityLevel() > GM_LEVEL_0 ) ? true : false;
     psEntranceMessage mesg(me);
     psActionLocation *action = psserver->GetActionManager()->FindAction( mesg.entranceID );
     if ( !action )
     {
+        if (secure) psserver->SendSystemInfo(client->GetClientNum(),"No item/action : %d", mesg.entranceID );
         Error2( "No item/action : %d", mesg.entranceID );
         return;
     }
@@ -713,6 +715,7 @@ void UserManager::HandleEntranceMessage( MsgEntry* me, Client *client )
     // Check for entrance
     if ( !action->IsEntrance() ) 
     {
+        if (secure) psserver->SendSystemInfo(client->GetClientNum(),"No <Entrance> tag in action response");
         Error1("No <Entrance> tag in action response");
         return;
     }
@@ -726,6 +729,7 @@ void UserManager::HandleEntranceMessage( MsgEntry* me, Client *client )
         gemItem* realItem = GEMSupervisor::GetSingleton().FindItemEntity( instance_id );
         if (!realItem)
         {
+            if (secure) psserver->SendSystemInfo(client->GetClientNum(),"Invalid instance ID %u in action location %s", instance_id, action->name.GetDataSafe());
             Error3("Invalid instance ID %u in action location %s", instance_id, action->name.GetDataSafe());
             return;
         }
@@ -734,6 +738,7 @@ void UserManager::HandleEntranceMessage( MsgEntry* me, Client *client )
         psItem* item = realItem->GetItem();
         if ( !item )
         {
+            if (secure) psserver->SendSystemInfo(client->GetClientNum(),"Invalid ItemID in Action Location Response.\n");
             Error1("Invalid ItemID in Action Location Response.\n");
             return;
         }
@@ -760,6 +765,7 @@ void UserManager::HandleEntranceMessage( MsgEntry* me, Client *client )
     // Send player to main game instance
     if (entranceType == "Prime")
     {
+        if (secure) psserver->SendSystemInfo(client->GetClientNum(),"Teleporting to sector %s", sectorName.GetData());
         Teleport( client, pos.x, pos.y, pos.z, 0, rot, sectorName );
     }
 
@@ -767,6 +773,7 @@ void UserManager::HandleEntranceMessage( MsgEntry* me, Client *client )
     else if (entranceType == "ActionID")
     {
         int instance = (int)action->id;
+        if (secure) psserver->SendSystemInfo(client->GetClientNum(),"Teleporting to sector %s", sectorName.GetData());
         Teleport( client, pos.x, pos.y, pos.z, instance, rot, sectorName );
     }
 
@@ -777,13 +784,15 @@ void UserManager::HandleEntranceMessage( MsgEntry* me, Client *client )
         psActionLocation *retAction = psserver->GetActionManager()->FindActionByID( client->GetActor()->GetInstance() );
         if ( !retAction )
         {
-            Error2( "No item/action : %i", client->GetActor()->GetInstance() );
+            if (secure) psserver->SendSystemInfo(client->GetClientNum(),"No exit item/action : %i", client->GetActor()->GetInstance() );
+            Error2( "No exit item/action : %i", client->GetActor()->GetInstance() );
             return;
         }
 
         // Check for return entrance
         if ( !retAction->IsReturn() ) 
         {
+            if (secure) psserver->SendSystemInfo(client->GetClientNum(),"No <Return tag in action response %s",retAction->response.GetData());
             Error2("No <Return tag in action response %s",retAction->response.GetData());
             return;
         }
@@ -794,10 +803,12 @@ void UserManager::HandleEntranceMessage( MsgEntry* me, Client *client )
         csString retSectorName = retAction->GetReturnSector();
 
         // Send player back to return point
+        if (secure) psserver->SendSystemInfo(client->GetClientNum(),"Teleporting to sector %s", sectorName.GetData());
         Teleport( client, retPos.x, retPos.y, retPos.z, 0, retRot, retSectorName );
     }
     else
     {
+        if (secure) psserver->SendSystemInfo(client->GetClientNum(),"Unknown type in entrance action location");
         Error1("Unknown type in entrance action location");
     }
 }
