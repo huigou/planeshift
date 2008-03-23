@@ -649,19 +649,19 @@ public:
  * Adjust the specified stat of the target.
  *
  * Syntax:
- *    <HP|MANA|PSTAMINA|MSTAMINA|STR|AGI|END|INT|WIL|CHA|CON|STA|ATTACK|DEFENSE|HPRATE|MRATE|PSTAMRATE|MSTAMRATE
- *      [aim="target"] adjust="set|add|mul|pct" base="yes" delay="#" undomsg="%s" value="#"/>
- *        HP = hit points, MANA = mana points, PSTAMINA = physical stamina, MSTAMINA = magical stamina,
- *          STR = strength, AGI = agility, END = endurance, INT = intelligence, WIL = will, CHA = charisma,
- *          CON = constitution, STA = stanima, ATTACK = attack modifier, DEFENSE = defense modifier,
- *          HPRATE = hit point recovery rate, MRATE = Mana recovery rate, PSTAMRATE = Physical Stamina recovery rate,
- *          MSTAMRATE = Mental Stamina recovery rate.
+ *    <hp|mana|pstamina|mstamina|str|agi|end|int|wil|cha|con|sta|attack|defense|hprate|mrate|pstamrate|mstamrate
+ *      [aim="target"] [adjust="add"] adjust="set|mul|pct" base="yes" delay="#" undomsg="%s" value="#"/>
+ *        hp = hit points, mana = mana points, pstamina = physical stamina, mstamina = mental stamina,
+ *          str = strength, agi = agility, end = endurance, int = intelligence, wil = will, cha = charisma,
+ *          con = constitution, sta = stanima, attack = attack modifier, defense = defense modifier,
+ *          hprate = hit point recovery rate, mrate = mana recovery rate, pstamrate = physical stamina recovery rate,
+ *          mstamrate = mental stamina recovery rate.
  *        aim = "target" adjust target instead of default actor
+ *        adjust = "add" add given value to this attribute (default)
  *        adjust = "set" set this attribute to the given value
- *        adjust = "add" add given value to this attribute
  *        adjust = "mul" mutliply attibute by given value
  *        adjust = "pct" adjust by a percentage of the base stats (unlike mul which uses overall stats)
- *        base = "yes" apply to base value
+ *        base = "yes" apply to base value (change to max value)
  *        delay = "#" ammount of time before attibute returns to normal
  *        undomsg = "%s" message player gets when attibute returns to normal
  *        value = "#" the ammount used to adjust attribute
