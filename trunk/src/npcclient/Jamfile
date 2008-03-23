@@ -13,7 +13,7 @@ if $(HAVE_STATIC_PLUGINS) = "yes"
 {
 
 SubVariant static ;
-Application psnpcclient_static : [ Wildcard *.cpp *.h ] $(extrafiles) : independent noinstall nohelp ;
+Application psnpcclient_static : [ Wildcard *.cpp *.h ] $(extrafiles) : console independent noinstall nohelp ;
 CFlags psnpcclient_static : [ FDefines CS_STATIC_LINKED ] ;
 LFlags psnpcclient_static : -lcrystalspace_staticplugins-1.2 -lcel_staticplugins-1.2 ;
 MsvcDefine psnpcclient_static : CS_STATIC_LINKED ;

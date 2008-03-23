@@ -2,6 +2,7 @@
 - Fixed the hug ground problem where player models were hugging by changing
   the limits.
 - Fixed some crashes when start up fails.
+- Psnpcclient is now compiled as a console app.
 
 *** 2008-03-32 by Thomas Towey
 - Added some runtime dev debug info on entrance failures.
