@@ -115,8 +115,22 @@ psServer::psServer ()
     advicemanager       = NULL;
     actionmanager       = NULL;
     minigamemanager     = NULL;
+	economymanager      = NULL;
+    exchangemanager     = NULL;
+    spawnmanager        = NULL;
+    adminmanager        = NULL;
+    combatmanager       = NULL;
+    weathermanager      = NULL;
+    progression         = NULL;
+    npcmanager          = NULL;
+    spellmanager        = NULL;
+    questmanager        = NULL;
+    gmeventManager      = NULL;
+    bankmanager         = NULL;
+    intromanager        = NULL;
     logcsv              = NULL;
     vfs                 = NULL;
+    
     // Initialize the RNG using current time() as the seed value
     randomGen.Initialize();
 }
