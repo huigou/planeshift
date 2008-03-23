@@ -892,6 +892,11 @@ ALTER TABLE item_instances MODIFY COLUMN `loc_instance` int(11) unsigned default
 update item_instances set loc_instance=0xffffffff where loc_instance=0x7fffffff;
 UPDATE `server_options` SET `option_value`='1182' WHERE `option_name`='db_version';
 
+#### 1183 - Thomas Towey - added identify skill and minimum skill level for item categories
+ALTER TABLE item_categories ADD COLUMN identify_skill_id int(10);
+ALTER TABLE item_categories ADD COLUMN identify_min_skill int(8) unsigned;
+UPDATE `server_options` SET `option_value`='1183' WHERE `option_name`='db_version';
+
 # Insert your upgrade before this line. Remember when you set a new db_version
 # to update the server_options.sql file and update psserver.cpp as well.
 # This to ensure that everything is working if you use the create_all.sql to
