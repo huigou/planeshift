@@ -439,6 +439,11 @@ public:
     /// Returns the is_consumed flag of repair tool required to fix this item.
     bool GetRequiredRepairToolConsumed();
 
+    /// Returns skill id of skill needed to identify examined items.
+    int GetIdentifySkill();
+    /// Returns minimum skill level to identify certain examined items.
+    int GetIdentifyMinSkill();
+
     /// Set the decay resistance percentage for the item
     void SetDecayResistance(float v);
     /// Set the item decay factor
