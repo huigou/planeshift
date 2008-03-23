@@ -1,3 +1,10 @@
+*** 2008-03-32 by Thomas Towey
+- Added some runtime dev debug info on entrance failures.
+- Check if identification category skill before displaying quality details.
+- Added item identification helper functions.
+- Cleaned up some comments and old database data.
+- DBVER bump.
+
 *** 2008-03-23 by Anders Reggestad
 - Fixed crash when servers fails to Preload database items. Make sure
   that deleted database is set to NULL so that it will not be deleted
