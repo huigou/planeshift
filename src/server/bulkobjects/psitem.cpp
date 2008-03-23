@@ -859,6 +859,21 @@ bool psItem::GetRequiredRepairToolConsumed()
         return false;
 }
 
+int psItem::GetIdentifySkill()
+{
+    if (GetCategory())
+        return GetCategory()->identifySkillId;
+    else
+        return 0;
+}
+
+int psItem::GetIdentifyMinSkill()
+{
+    if (GetCategory())
+        return GetCategory()->identifyMinSkill;
+    else
+        return 0;
+}
 
 void psItem::GetLocationInWorld(INSTANCE_ID &instance,psSectorInfo **sectorinfo,float &loc_x,float &loc_y,float &loc_z,float &loc_yrot) const
 {
