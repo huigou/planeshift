@@ -1428,22 +1428,28 @@ bool psServerCharManager::SendItemDescription( Client *client, psItem *item)
     weight.Format("\nWeight: %.1f", item->GetWeight() );
     size.Format("\nSize: %hu", item->GetItemSize() );
 
-    // If the item is an average stackable type object it has no max quality so don't 
-    // send that information to the client since it is not applicable.
-    if ( itemStats->GetFlags() & PSITEMSTATS_FLAG_AVERAGEQUALITY )
+    // Check identify skill before sending quality detail
+    itemQuality = "";
+    int idSkill = item->GetIdentifySkill();
+    int idMin = item->GetIdentifyMinSkill();
+    if (!idSkill || (idMin < client->GetCharacterData()->GetSkills()->GetSkillRank((PSSKILL)idSkill)))
     {
-        itemQuality.Format("\nAverage Quality: %.0f", item->GetItemQuality() );
-    }
-    else
-    {
-        itemQuality.Format("\nQuality: %.0f/%.0f", item->GetItemQuality(),item->GetMaxItemQuality() );
+        // If the item is an average stackable type object it has no max quality so don't 
+        // send that information to the client since it is not applicable.
+        if ( itemStats->GetFlags() & PSITEMSTATS_FLAG_AVERAGEQUALITY )
+        {
+            itemQuality.Format("\nAverage Quality: %.0f", item->GetItemQuality() );
+        }
+        else
+        {
+            itemQuality.Format("\nQuality: %.0f/%.0f", item->GetItemQuality(),item->GetMaxItemQuality() );
+        }
     }
 
     if (item->HasCharges())
     {
         itemCharges.Format("\nCharges: %d",item->GetCharges());
     }
-        
 
     itemInfo += itemCategory+weight+size+itemQuality+itemCharges;
     itemName = item->GetName();
