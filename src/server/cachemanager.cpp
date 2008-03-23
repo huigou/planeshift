@@ -2191,6 +2191,8 @@ bool CacheManager::PreloadItemCategories()
             const char *flag = categories[i]["is_repair_tool_consumed"];
             category->repairToolConsumed = (flag && flag[0]=='Y');
             category->repairSkillId      = categories[i].GetInt("skill_id_repair");
+            category->identifySkillId    = categories[i].GetInt("identify_skill_id");
+            category->identifyMinSkill   = categories[i].GetInt("identify_min_skill");
 
             itemCategoryList.Push(category);
          }
