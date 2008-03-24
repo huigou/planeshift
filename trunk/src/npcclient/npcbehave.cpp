@@ -122,7 +122,8 @@ bool NPCType::Load(iDocumentNode *node)
     
     if (velStr.IsEmpty())
     {
-        velSource = VEL_DEFAULT;
+        // Do nothing. Use velSource from constructor default value
+        // or as inherited from superclass.
     } else if (velStr == "$WALK")
     {
         velSource = VEL_WALK;
