@@ -110,6 +110,10 @@ public:
     ~NPC();
 
     unsigned int          GetPID()       { return pid; }
+    /**
+     * Return the entity ID if an entity exist else 0.
+     */
+    PS_ID                 GetEID();
     iCelEntity           *GetEntity()    { return entity; }
     iMovable             *GetMovable()   { return movable; }
     psLinearMovement     *GetLinMove();

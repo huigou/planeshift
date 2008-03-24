@@ -1,3 +1,7 @@
+*** 2008-03-24 by Anders Reggestad
+- Fixed a npc client crash where a null entity pointer could be used
+  when printing info while disabling the npc.
+
 *** 2008-03-23 by Andrew Dai
 - Fixed the hug ground problem where player models were hugging by changing
   the limits.
