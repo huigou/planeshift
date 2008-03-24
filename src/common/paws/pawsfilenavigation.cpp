@@ -673,7 +673,7 @@ void pawsFileNavigation::Show()
 
 bool pawsFileNavigation::OnKeyDown( int keyCode, int key, int modifiers )
 {
-    if (keyCode==CSKEY_ENTER)
+    if (key==CSKEY_ENTER)
     {
         const char *filetext;
         pawsEditTextBox *filenametb=(pawsEditTextBox *)FindWidget("fileedit");

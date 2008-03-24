@@ -1543,7 +1543,7 @@ bool pawsWidget::OnDoubleClick( int button, int modifiers, int x, int y )
 
 bool pawsWidget::OnKeyDown( int keyCode, int key, int modifiers )
 {
-    if (keyCode == CSKEY_ENTER)
+    if (key == CSKEY_ENTER)
     {
         if (!onEnter && parent)
             return parent->OnKeyDown(keyCode,key,modifiers);
