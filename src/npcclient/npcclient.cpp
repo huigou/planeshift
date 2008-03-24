@@ -826,7 +826,7 @@ void psNPCClient::Tick()
             if (timeTaken > 250)                      // This took way to long time
             {
                 CPrintf(CON_WARNING,"Used %u time to process tick for npc: %s(EID: %u)\n",
-                        timeTaken,npcs[i]->GetName(),npcs[i]->GetEntity()->GetID());
+                        timeTaken, npcs[i]->GetName(), npcs[i]->GetEID());
                 DumpNPC(npcs[i]);
                 npcs[i]->Disable();
 

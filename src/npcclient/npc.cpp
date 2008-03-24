@@ -101,6 +101,16 @@ NPC::~NPC()
     }
 }
 
+PS_ID NPC::GetEID()
+{
+    if (entity)
+    {
+        return entity->GetID();
+    } else {
+        return 0;
+    }
+}
+
 psLinearMovement* NPC::GetLinMove()
 {
     if (npcActor)
