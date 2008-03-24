@@ -677,72 +677,66 @@ void psItemStats::LoadSlots( iResultRow& row )
 // Saves current Item Stat values back to the DB.
 bool psItemStats::Save()
 {
-    psStringArray fields;
+    static iRecord* update;
+    
+    if(update == NULL)
+        update = db->NewPreparedStatement("item_stats", "id", 29); // 28 parameters plus 1 id
+    
+    update->Reset();
+    
     bool update_ok=true;
 
     // Existing Item, update
-    const char *fieldnames[]= {
-        "name", "weight", "visible_distance", "size", "container_max_size", "decay_rate",
-        "category_id", "base_sale_price", /*"item_type_id_ammo", */ "item_anim_id", "description",
-        "weapon_speed", "weapon_block_targeted", "weapon_block_untargeted", "weapon_counterblock", 
-        "dmg_slash", "dmg_blunt", "dmg_pierce", 
-        "cstr_id_gfx_mesh", 
-        "requirement_1_name", "requirement_1_value", "requirement_2_name", "requirement_2_value",
-        "requirement_3_name", "requirement_3_value",
-        "prg_evt_equip", "prg_evt_unequip", "prg_evt_consume", "creative_definition"
-    };
 
     // Owning character ID
     // INT        fields.FormatPush("%u",
     // FLOAT    fields.FormatPush("%1.2f",
     // STRING    fields.Push(
 
-    fields.Push( this->name );                              // name
-    fields.FormatPush( "%1.2f", this->weight );             // weight
-    fields.FormatPush( "%1.2f", this->visible_distance );   // visible_distance
-    fields.FormatPush( "%u", this->size );                  // size
-    fields.FormatPush( "%u", this->container_max_size );    // contianer_max_size
-    fields.FormatPush( "%1.2f", this->decay_rate );            // decay_rate
-    fields.FormatPush( "%u", this->category->id );          // category_id
-    fields.FormatPush( "%u", this->price.GetTotal() );      // base_sales_price
-    csString strAmmoTypes;
-    //ammo_types
-    //fields.FormatPush( "%u", this->ammo_item_type_id );     // item_type_id_ammo
+    update->AddField("name", name);
+    update->AddField("weight", weight);
+    update->AddField("visible_distance", visible_distance);
+    update->AddField("size", size);
+    update->AddField("container_max_size", container_max_size);
+    update->AddField("decay_rate", decay_rate);
+    update->AddField("category_id", category->id);
+    update->AddField("base_sale_price", price.GetTotal());
+    // update->AddField("item_type_id_ammo", ammo_item_type_id);
     if (this->anim_list)
-        fields.FormatPush( "%u", this->anim_list->Get(0)->id ); // item_anim_id
+        update->AddField("item_anim_id", anim_list->Get(0)->id ); // item_anim_id
     else
-        fields.FormatPush( "%u", 0); // No anims
+        update->AddField("item_anim_id", 0); // No anims
 
-    fields.Push( this->description );                       // description
-    fields.FormatPush ("%1.2f",this->weaponStats.Latency()); // weapon_speed
-    fields.FormatPush ("%1.2f",this->weaponStats.TargetedBlockValue()); //weapon_block_targeted
-    fields.FormatPush ("%1.2f",this->weaponStats.UntargetedBlockValue()); //weapon_block_untargeted
-    fields.FormatPush ("%1.2f",this->weaponStats.CounterBlockValue()); //weapon_counterblock
+    update->AddField("description", description );                       // description
+    update->AddField("weapon_speed", weaponStats.Latency()); // weapon_speed
+    update->AddField("weapon_block_targeted", weaponStats.TargetedBlockValue()); //weapon_block_targeted
+    update->AddField("weapon_block_untargeted", weaponStats.UntargetedBlockValue()); //weapon_block_untargeted
+    update->AddField("weapon_counterblock", weaponStats.CounterBlockValue()); //weapon_counterblock
 
     // Note that these are the same as armorStats.damage_protection - weaponStats is populated
     // for all kinds of items, and both are filled from the same DB columns.  So it doesn't matter.
-    fields.FormatPush("%1.2f", this->weaponStats.damages[PSITEMSTATS_DAMAGETYPE_SLASH] );            
-    fields.FormatPush("%1.2f", this->weaponStats.damages[PSITEMSTATS_DAMAGETYPE_BLUNT] );            
-    fields.FormatPush("%1.2f", this->weaponStats.damages[PSITEMSTATS_DAMAGETYPE_PIERCE] );            
+    update->AddField("dmg_slash", weaponStats.damages[PSITEMSTATS_DAMAGETYPE_SLASH] );            
+    update->AddField("dmg_blunt", weaponStats.damages[PSITEMSTATS_DAMAGETYPE_BLUNT] );            
+    update->AddField("dmg_pierce", weaponStats.damages[PSITEMSTATS_DAMAGETYPE_PIERCE] );            
 
-    fields.FormatPush("%u", CacheManager::GetSingleton().FindCommonStringID( this->mesh_name ) );    //Mesh   
+    update->AddField("cstr_id_gfx_mesh", CacheManager::GetSingleton().FindCommonStringID( this->mesh_name ) );    //Mesh   
 
     // stat requirements
-    fields.Push( this->reqs[0].name);
-    fields.FormatPush( "%1.2f", this->reqs[0].min_value);            
-    fields.Push( this->reqs[1].name);
-    fields.FormatPush( "%1.2f", this->reqs[1].min_value);            
-    fields.Push( this->reqs[2].name);
-    fields.FormatPush( "%1.2f", this->reqs[2].min_value);
+    update->AddField("requirement_1_name", reqs[0].name);
+    update->AddField("requirement_1_value", reqs[0].min_value);            
+    update->AddField("requirement_2_name", reqs[1].name);
+    update->AddField("requirement_2_value", reqs[1].min_value);            
+    update->AddField("requirement_3_name", reqs[2].name);
+    update->AddField("requirement_3_value", reqs[2].min_value);
 
     // equip/unequip events
-    fields.Push( this->progressionEventEquip );
-    fields.Push( this->progressionEventUnEquip );
-    fields.Push( this->progressionEventConsume );
-    fields.Push( this->creativeStats.creativeDefinitionXML );
+    update->AddField("prg_evt_equip", this->progressionEventEquip );
+    update->AddField("prg_evt_unequip", this->progressionEventUnEquip );
+    update->AddField("prg_evt_consume", this->progressionEventConsume );
+    update->AddField("creative_definition", this->creativeStats.creativeDefinitionXML );
 
     // Save this entry
-    update_ok &= db->GenericUpdateWithID("item_stats", "id", GetUIDStr(), fieldnames, fields );
+    update_ok &= update->Execute(GetUID());
 
     return update_ok;
 }
