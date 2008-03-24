@@ -20,6 +20,7 @@ SCF_VERSION (iDataConnection, 0, 0, 1);
 // Forward decls
 class iResultSet;
 class iResultRow;
+class iRecord;
 class psDBProfiles;
 
 struct iDataConnection : public virtual iBase
@@ -101,6 +102,8 @@ public:
     
     virtual const char* DumpProfile()=0;
     virtual void ResetProfile()=0;
+    
+    virtual iRecord* NewPreparedStatement(const char* table, const char* idfield, unsigned int count) =0;
 };
 
 
@@ -118,7 +121,7 @@ public:
      * We don't know in the Interface what types that native db ptr will be, but
      * it can be set here.  This should be called by the iResultSet ctor.
      */
-    virtual void SetResultSet(long resultsettoken)=0;
+    virtual void SetResultSet(void * resultsettoken)=0;
     
     /**
      * This command should tell the row to populate itself with data from the
@@ -183,6 +186,24 @@ public:
     virtual void Release(void)=0;
 
     virtual ~iResultSet() {}
+};
+
+// A class that encapsulates the facilities for prepared statements
+class iRecord
+{
+public:
+    
+    virtual void AddField(const char* fname, float fValue)=0;
+    virtual void AddField(const char* fname, int iValue)=0;
+    virtual void AddField(const char* fname, unsigned int uiValue)=0;
+    virtual void AddField(const char* fname, unsigned short usValue)=0;
+    virtual void AddField(const char* fname, const char* sValue)=0;
+
+    virtual bool Execute(uint32 uid)=0;
+    
+    virtual void Reset()=0;
+    
+    virtual ~iRecord() {}
 };
 
 #endif

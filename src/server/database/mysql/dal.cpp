@@ -324,6 +324,41 @@ uint64 psMysqlConnection::GenericInsertWithID(const char *table,const char **fie
     return GetLastInsertID();
 }
 
+bool psMysqlConnection::GenericUpdateWithID(const char *table,const char *idfield,const char *id,psStringArray& fields)
+{
+    uint i;
+    const size_t count = fields.GetSize();
+    csString command;
+    
+    command.Append("UPDATE ");
+    command.Append(table);
+    command.Append(" SET ");
+    
+    for (i=0;i<count;i++)
+    {
+        if (i>0)
+            command.Append(",");
+        command.Append(fields[i]);
+    }
+    
+    command.Append(" where ");
+    command.Append(idfield);
+    command.Append("='");
+    csString escape;
+    Escape( escape, id );
+    command.Append(escape);
+    command.Append("'");
+    
+    //printf("%s\n",command.GetData());
+    
+    if (CommandPump(command)==QUERY_FAILED)
+    {
+        return false;
+    }
+    
+    return true;
+}
+
 bool psMysqlConnection::GenericUpdateWithID(const char *table,const char *idfield,const char *id,const char **fieldnames,psStringArray& fieldvalues)
 {
     uint i;
@@ -396,6 +431,12 @@ void psMysqlConnection::ResetProfile()
     profileDump.Empty();
 }
 
+iRecord* psMysqlConnection::NewPreparedStatement(const char* table, const char* idfield, unsigned int count)
+{
+    return new dbRecord(conn, table, idfield, count);
+}
+
+
 psResultSet::psResultSet(MYSQL *conn)
 {
     rs = mysql_store_result(conn);
@@ -404,7 +445,7 @@ psResultSet::psResultSet(MYSQL *conn)
         rows    = (unsigned long) mysql_num_rows(rs);
         fields  = mysql_num_fields(rs);
         row.SetMaxFields(fields);
-        row.SetResultSet((intptr_t)rs);
+        row.SetResultSet(rs);
 
         current = (unsigned long) -1;
     }
@@ -427,7 +468,7 @@ iResultRow& psResultSet::operator[](unsigned long whichrow)
     return row;
 }
 
-void psResultRow::SetResultSet(long resultsettoken)
+void psResultRow::SetResultSet(void * resultsettoken)
 {
     rs = (MYSQL_RES *)resultsettoken;
 }
