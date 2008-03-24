@@ -824,7 +824,7 @@ void pawsListBox::MoveSelectBar(bool direction)
 
 bool pawsListBox::OnKeyDown(int keyCode, int keyChar, int modifiers)
 {
-    switch (keyCode)
+    switch (keyChar)
     {
         case CSKEY_UP:
             MoveSelectBar(true);

@@ -347,7 +347,7 @@ bool pawsButton::OnMouseUp( int button, int modifiers, int x, int y )
 
 bool pawsButton::OnKeyDown( int keyCode, int key, int modifiers )
 {
-    if (enabled && keyCode == CSKEY_ENTER)
+    if (enabled && key == CSKEY_ENTER)
     {
         OnMouseDown(csmbLeft,modifiers,screenFrame.xmin,screenFrame.ymin);
         return true;
