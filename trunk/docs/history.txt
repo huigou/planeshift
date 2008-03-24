@@ -2,6 +2,8 @@
 - Fixed the enter key not responding on Mac OS.
 - Fixed bug where item_stats was being updated wrongly due to a missing
   item_type_id_ammo field.
+- Fixed bug where item_stats was being updated wrongly due to a switched
+  weapon_speed field.
 
 *** 2008-03-24 by Anders Reggestad
 - Fixed so that velSource for npctypes with parent superclass isn't
