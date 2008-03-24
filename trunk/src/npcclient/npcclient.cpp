@@ -176,10 +176,16 @@ bool psNPCClient::Initialize(iObjectRegistry* object_reg,const char *_host, cons
     msghandler   = eventmanager;
     psMessageCracker::msghandler = eventmanager;
 
-    if (!msghandler->Initialize(connection, 1000))
+    // Start up network, need a large queue in order to handle all
+    // the persist messages received from server at startup.
+    if (!msghandler->Initialize(connection, 10000))
+    {
         return false;                // Attach to incoming messages.
+    }
     if (!msghandler->StartThread() )
+    {
         return false;
+    }
 
     CPrintf(CON_DEBUG, "Initialising CEL...\n");
 

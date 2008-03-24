@@ -1,4 +1,6 @@
 *** 2008-03-24 by Anders Reggestad
+- Increased the message queue at the npc client to be able to handle
+  the large number of messages received at startup.
 - Fixed a npc client crash where a null entity pointer could be used
   when printing info while disabling the npc.
 
