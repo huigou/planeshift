@@ -683,7 +683,7 @@ bool psItemStats::Save()
     // Existing Item, update
     const char *fieldnames[]= {
         "name", "weight", "visible_distance", "size", "container_max_size", "decay_rate",
-        "category_id", "base_sale_price", "item_type_id_ammo", "item_anim_id", "description",
+        "category_id", "base_sale_price", /*"item_type_id_ammo", */ "item_anim_id", "description",
         "weapon_block_targeted", "weapon_block_untargeted", "weapon_counterblock", "weapon_speed",
         "dmg_slash", "dmg_blunt", "dmg_pierce", 
         "cstr_id_gfx_mesh", 
