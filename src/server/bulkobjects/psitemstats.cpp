@@ -684,7 +684,7 @@ bool psItemStats::Save()
     const char *fieldnames[]= {
         "name", "weight", "visible_distance", "size", "container_max_size", "decay_rate",
         "category_id", "base_sale_price", /*"item_type_id_ammo", */ "item_anim_id", "description",
-        "weapon_block_targeted", "weapon_block_untargeted", "weapon_counterblock", "weapon_speed",
+        "weapon_speed", "weapon_block_targeted", "weapon_block_untargeted", "weapon_counterblock", 
         "dmg_slash", "dmg_blunt", "dmg_pierce", 
         "cstr_id_gfx_mesh", 
         "requirement_1_name", "requirement_1_value", "requirement_2_name", "requirement_2_value",
