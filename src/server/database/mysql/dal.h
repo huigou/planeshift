@@ -215,7 +215,7 @@ public:
         table = Table;
         idfield = Idfield;
         bind = new MYSQL_BIND[count];
-        memset(bind, 0, sizeof(bind) * count);
+        memset(bind, 0, sizeof(MYSQL_BIND) * count);
         temp = new dataType[count];
         index = 0;
         this->count = count;
@@ -234,7 +234,7 @@ public:
     void Reset()
     {
         index = 0;
-        memset(bind, 0, sizeof(bind));
+        memset(bind, 0, sizeof(MYSQL_BIND) * count);
     }
 
     
@@ -334,8 +334,9 @@ public:
             Prepare();
         
         CS_ASSERT(count == mysql_stmt_param_count(stmt));
-        mysql_stmt_bind_param(stmt, bind);
-        return (mysql_stmt_execute(stmt) == 0);
+        CS_ASSERT(mysql_stmt_bind_param(stmt, bind) == 0);
+        CS_ASSERT (mysql_stmt_execute(stmt) == 0);
+        return true;
     }
 };
 
