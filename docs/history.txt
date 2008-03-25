@@ -4,6 +4,10 @@
   item_type_id_ammo field.
 - Fixed bug where item_stats was being updated wrongly due to a switched
   weapon_speed field.
+- Added a framework for prepared statements which improves security and
+  performance.
+- Refactored psItemStats::Save to use prepared statements for fewer bugs
+  introduced by fieldname/value mismatches.
 
 *** 2008-03-24 by Anders Reggestad
 - Fixed so that velSource for npctypes with parent superclass isn't

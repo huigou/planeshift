@@ -334,9 +334,11 @@ public:
             Prepare();
         
         CS_ASSERT(count == mysql_stmt_param_count(stmt));
-        CS_ASSERT(mysql_stmt_bind_param(stmt, bind) == 0);
-        CS_ASSERT (mysql_stmt_execute(stmt) == 0);
-        return true;
+        
+        if(mysql_stmt_bind_param(stmt, bind) != 0)
+            return false;
+        
+        return (mysql_stmt_execute(stmt) == 0);
     }
 };
 
