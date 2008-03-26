@@ -1,5 +1,7 @@
 *** 2008-03-26 by Andrew Dai
 - Fixed various crashes on server startup and shutdown.
+- Changed the /slide command so it no longer affects NPC spawn points.
+- Added logging support to DB queries.
 
 *** 2008-03-25 by Mike Gist
 - Bumped CS revision to 29094 to get various bug fixes merged from CS trunk.

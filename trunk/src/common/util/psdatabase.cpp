@@ -64,7 +64,7 @@ bool psDatabase::Initialize(const char* host, unsigned int port, const char* use
     PS_QUERY_PLUGIN(mysql, iDataConnection, "iDataConnection");
     db = mysql;
 
-    bool ret = db->Initialize(host,port,database,user,password);
+    bool ret = db->Initialize(host,port,database,user,password, LogCSV::GetSingletonPtr());
 
     if (!ret || !db->IsValid())
     {

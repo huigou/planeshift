@@ -22,6 +22,7 @@ class iResultSet;
 class iResultRow;
 class iRecord;
 class psDBProfiles;
+class LogCSV;
 
 struct iDataConnection : public virtual iBase
 {
@@ -32,7 +33,7 @@ public:
 
     /// Connects to the database and logs in.  Sets IsValid=true if successful.
     virtual bool Initialize(const char *host, unsigned int port, const char *database,
-                            const char *user, const char *pwd)=0;
+                            const char *user, const char *pwd, LogCSV* logcsv)=0;
 
     /// Disconnect from the database
     virtual bool Close()=0;
