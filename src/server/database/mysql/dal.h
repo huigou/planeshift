@@ -227,8 +227,8 @@ public:
     ~dbRecord()
     {
         mysql_stmt_close(stmt);
-        delete bind;
-        delete temp;
+        delete[] bind;
+        delete[] temp;
     }
     
     void Reset()
