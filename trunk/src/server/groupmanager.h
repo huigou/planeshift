@@ -84,6 +84,7 @@ protected:
     
     ChatManager* chatserver;
     ClientConnectionSet* clients;
+    csRef<EventManager> eventmanager;
     csRefArray<PlayerGroup> groups;
 };
 

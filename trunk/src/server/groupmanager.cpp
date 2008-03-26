@@ -265,6 +265,7 @@ GroupManager::GroupManager(ClientConnectionSet *cs, ChatManager *chat)
     clients    = cs;
     chatserver = chat;  // Needed to GROUPSAY things.
 
+    eventmanager = psserver->GetEventManager();
     psserver->GetEventManager()->Subscribe(this,MSGTYPE_GROUPCMD,REQUIRE_READY_CLIENT|REQUIRE_ALIVE);
 }
 

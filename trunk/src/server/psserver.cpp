@@ -128,6 +128,8 @@ psServer::psServer ()
     gmeventManager      = NULL;
     bankmanager         = NULL;
     intromanager        = NULL;
+    mathscriptengine    = NULL;
+    cachemanager        = NULL;
     logcsv              = NULL;
     vfs                 = NULL;
     
@@ -204,15 +206,6 @@ psServer::~psServer()
     PS_CHECK_REF_COUNT(advicemanager);
     PS_CHECK_REF_COUNT(actionmanager);
     */
-
-    guildmanager    = NULL;
-    questionmanager = NULL;
-    groupmanager    = NULL;
-    authserver      = NULL;
-    chatmanager     = NULL;
-    advicemanager   = NULL;
-    actionmanager   = NULL;
-    minigamemanager = NULL;
 }
 
 bool psServer::Initialize(iObjectRegistry* object_reg)
