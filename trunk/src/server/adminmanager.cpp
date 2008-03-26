@@ -3338,7 +3338,6 @@ bool AdminManager::MoveObject(Client *client, gemObject *target, csVector3& pos,
         actor->pcmove->SetVelocity(csVector3(0.0f,0.0f,0.0f)); // Halt actor
         actor->SetInstance(instance);
         actor->SetPosition(pos,yrot,sector);
-        actor->GetCharacterData()->SaveLocationInWorld(); // force save the pos
         actor->MulticastDRUpdate();
     }
     else
