@@ -25,6 +25,8 @@
 #include "util/log.h"
 #include <iutil/cfgmgr.h>
 
+// Using tuples here
+#include <utility>
 
 namespace pslog
 {
@@ -326,48 +328,59 @@ const char* GetSettingName(int id)
 
 LogCSV::LogCSV(iConfigManager* configmanager, iVFS* vfs)
 {
-    csString filename[MAX_CSV];
-    csString header;
-
+    std::pair<csString, const char*> logs[MAX_CSV];
     size_t maxSize = configmanager->GetInt("PlaneShift.LogCSV.MaxSize", 10*1024*1024);
-    filename[CSV_PALADIN] = configmanager->GetStr("PlaneShift.LogCSV.File.Paladin");
-    filename[CSV_EXCHANGES] = configmanager->GetStr("PlaneShift.LogCSV.File.Exchanges");
-    filename[CSV_AUTHENT] = configmanager->GetStr("PlaneShift.LogCSV.File.Authent");
-    filename[CSV_STATUS] = configmanager->GetStr("PlaneShift.LogCSV.File.Status");
-    filename[CSV_ADVICE] = configmanager->GetStr("PlaneShift.LogCSV.File.Advice");
-    filename[CSV_ECONOMY] = configmanager->GetStr("PlaneShift.LogCSV.File.Economy");
-    filename[CSV_STUCK] = configmanager->GetStr("PlaneShift.LogCSV.File.Stuck");
+    
+    logs[CSV_PALADIN] = std::make_pair(configmanager->GetStr("PlaneShift.LogCSV.File.Paladin"),
+                                                         "Date/Time, Client, Type, Sector, Start pos (xyz), Maximum displacement, Real displacement, Start velocity, Angular velocity, Paladin version\n");
+    logs[CSV_EXCHANGES] = std::make_pair(configmanager->GetStr("PlaneShift.LogCSV.File.Exchanges"),
+                                                                                 "Date/Time, Source Client, Target Client, Type, Item, Quantity, Cost\n");
+    logs[CSV_AUTHENT] = std::make_pair(configmanager->GetStr("PlaneShift.LogCSV.File.Authent"),
+                                       "Date/Time, Client, Client ID, Details\n");
+    logs[CSV_STATUS] = std::make_pair(configmanager->GetStr("PlaneShift.LogCSV.File.Status"),
+                                                        "Date/Time, Status\n");
+    logs[CSV_ADVICE] = std::make_pair(configmanager->GetStr("PlaneShift.LogCSV.File.Advice"),
+                                                        "Date/Time, Source Client, Target Client, Message\n");
+    logs[CSV_ECONOMY] = std::make_pair(configmanager->GetStr("PlaneShift.LogCSV.File.Economy"),
+                                                         "Action, Count, Item, Quality, From, To, Price, Time\n");
+    logs[CSV_STUCK] = std::make_pair(configmanager->GetStr("PlaneShift.LogCSV.File.Stuck"),
+                                                                             "Date/Time, Client, Race, Gender, Sector, PosX, PosY,"
+                                                                             " PosZ, Direction\n");
+    logs[CSV_SQL] = std::make_pair(configmanager->GetStr("PlaneShift.LogCSV.File.SQL"),
+                                     "Date/Time, Query, Time taken");
 
     for(int i = 0;i < MAX_CSV;i++)
     {
+
+        StartLog(logs[i].first, vfs, logs[i].second, maxSize, csvFile[i]);
+    }
+}
+             
+void LogCSV::StartLog(const char* logfile, iVFS* vfs, const char* header, size_t maxSize, csRef<iFile>& csvFile)
+{
 		bool writeHeader = false;
-        if(filename[i].IsEmpty())
+        if (!(vfs->Exists(logfile)))
         {
-            csvFile[i] = NULL;
-            continue;
-        }
-        if (!(vfs->Exists(filename[i])))
-        {
-            csvFile[i] = vfs->Open(filename[i],VFS_FILE_WRITE);
+            csvFile = vfs->Open(logfile,VFS_FILE_WRITE);
 			writeHeader = true;
             
         }
         else
         {
-
-            csvFile[i] = vfs->Open(filename[i],VFS_FILE_APPEND);
-
+            
+            csvFile = vfs->Open(logfile,VFS_FILE_APPEND);
+            
 			// Need to rotate log
-            if (csvFile[i] && csvFile[i]->GetSize() > maxSize)
+            if (csvFile && csvFile->GetSize() > maxSize)
             {
-                CPrintf(CON_ERROR, "Log File %s is too big! Current size is: %u. Rotating log.", filename[i].GetData(), csvFile[i]->GetSize());
-
-				csvFile[i] = NULL;
-
+                CPrintf(CON_ERROR, "Log File %s is too big! Current size is: %u. Rotating log.", logfile, csvFile->GetSize());
+                
+				csvFile = NULL;
+                
 				// Rolling history
 				for (int index = 4; index > 0; index--)
 				{
-                    csString src(filename[i]), dst(filename[i]);
+                    csString src(logfile), dst(logfile);
                     src.Append(index);
                     dst.Append(index + 1);
 					// Rotate the files (move file[index] to file[index+1])
@@ -377,45 +390,21 @@ LogCSV::LogCSV(iConfigManager* configmanager, iVFS* vfs)
 						vfs->WriteFile(dst, existingData->GetData(), existingData->GetSize());
 					}
 				}
-
-				csRef<iDataBuffer> existingData = vfs->ReadFile(filename[i], false);
-				vfs->WriteFile(filename[i] + "1", existingData->GetData(), existingData->GetSize());
-                csvFile[i] = vfs->Open(filename[i],VFS_FILE_WRITE);
-
+                
+				csRef<iDataBuffer> existingData = vfs->ReadFile(logfile, false);
+                
+                csString temp(logfile);
+				vfs->WriteFile(temp + "1", existingData->GetData(), existingData->GetSize());
+                csvFile = vfs->Open(logfile,VFS_FILE_WRITE);
+                
 				writeHeader = true;
             }
         }
 		if(writeHeader)
 		{
-			switch(i)
-            {
-            case CSV_PALADIN: 
-                header = "Date/Time, Client, Type, Sector, Start pos (xyz), Maximum displacement, Real displacement, Start velocity, Angular velocity, Paladin version\n";
-                break;
-            case CSV_EXCHANGES:
-                header = "Date/Time, Source Client, Target Client, Type, Item, Quantity, Cost\n";
-                break;
-            case CSV_AUTHENT:
-                header = "Date/Time, Client, Client ID, Details\n";
-                break;
-            case CSV_STATUS:
-                header = "Date/Time, Status\n";
-                break;
-            case CSV_ADVICE:
-                header = "Date/Time, Source Client, Target Client, Message\n";
-                break;
-            case CSV_ECONOMY:
-                header = "Action, Count, Item, Quality, From, To, Price, Time\n";
-                break;
-            case CSV_STUCK:
-                header = "Date/Time, Client, Race, Gender, Sector, PosX, PosY,"
-                         " PosZ, Direction\n";
-                break;
-            }
-            csvFile[i]->Write(header.GetData(), header.Length());
-            csvFile[i]->Flush();
+            csvFile->Write(header, strlen(header));
+            csvFile->Flush();
 		}
-    }
 }
 
 void LogCSV::Write(int type, csString& text)

@@ -63,6 +63,7 @@ protected:
     iObjectRegistry *objectReg;
     psDBProfiles profs;
     csString profileDump;
+    LogCSV* logcsv;
 
 public:
 
@@ -73,7 +74,7 @@ public:
 
     bool Initialize (iObjectRegistry *objectreg);
     bool Initialize(const char *host, unsigned int port, const char *database, 
-                    const char *user, const char *pwd);
+                    const char *user, const char *pwd, LogCSV* logcsv);
     virtual bool Close();
 
     int IsValid(void);

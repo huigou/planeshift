@@ -23,7 +23,6 @@
 #include "util/log.h"
 #include "util/consoleout.h"
 
-#define USE_DELAY_QUERY
 #include "dal.h"
 
 /**
@@ -71,9 +70,9 @@ bool psMysqlConnection::Initialize (iObjectRegistry *objectreg)
 }
 
 bool psMysqlConnection::Initialize(const char *host, unsigned int port, const char *database,
-                              const char *user, const char *pwd)
+                              const char *user, const char *pwd, LogCSV* logcsv)
 {    
-
+    this->logcsv = logcsv;
     // Create a mydb
     mysql_library_init(0, NULL, NULL);
     mysql_thread_init();
@@ -159,6 +158,7 @@ unsigned long psMysqlConnection::CommandPump(const char *sql,...)
     va_end(args);
 
     lastquery = querystr;
+    
 
     timer.Start();
     if (!mysql_query(conn, querystr))
@@ -167,9 +167,11 @@ unsigned long psMysqlConnection::CommandPump(const char *sql,...)
         {
             csString status;
             status.Format("SQL query %s, has taken %u time to process.\n", querystr.GetData(), timer.Stop());
-            if(LogCSV::GetSingletonPtr())
-                LogCSV::GetSingleton().Write(CSV_STATUS, status);
+            logcsv->Write(CSV_STATUS, status);
         }
+        //csString status;
+        //status.Format("%s, %d", querystr.GetData(), timer.Stop());
+        //logcsv->Write(CSV_SQL, status);
         profs.AddSQLTime(querystr, timer.Stop());
         return (unsigned long) mysql_affected_rows(conn);
     }
@@ -198,8 +200,7 @@ unsigned long psMysqlConnection::Command(const char *sql,...)
         {
             csString status;
             status.Format("SQL query %s, has taken %u time to process.\n", querystr.GetData(), timer.Stop());
-            if(LogCSV::GetSingletonPtr())
-                LogCSV::GetSingleton().Write(CSV_STATUS, status);
+            logcsv->Write(CSV_STATUS, status);
         }
         profs.AddSQLTime(querystr, timer.Stop());
         return (unsigned long) mysql_affected_rows(conn);
@@ -227,8 +228,7 @@ iResultSet *psMysqlConnection::Select(const char *sql, ...)
         {
             csString status;
             status.Format("SQL query %s, has taken %u time to process.\n", querystr.GetData(), timer.Stop());
-            if(LogCSV::GetSingletonPtr())
-                LogCSV::GetSingleton().Write(CSV_STATUS, status);
+            logcsv->Write(CSV_STATUS, status);
         }
         profs.AddSQLTime(querystr, timer.Stop());
         iResultSet *rs = new psResultSet(conn);
@@ -257,8 +257,7 @@ int psMysqlConnection::SelectSingleNumber(const char *sql, ...)
         {
             csString status;
             status.Format("SQL query %s, has taken %u time to process.\n", querystr.GetData(), timer.Stop());
-            if(LogCSV::GetSingletonPtr())
-                LogCSV::GetSingleton().Write(CSV_STATUS, status);
+            logcsv->Write(CSV_STATUS, status);
         }
         profs.AddSQLTime(querystr, timer.Stop());
         psResultSet *rs = new psResultSet(conn);

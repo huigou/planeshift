@@ -206,6 +206,14 @@ psServer::~psServer()
     PS_CHECK_REF_COUNT(advicemanager);
     PS_CHECK_REF_COUNT(actionmanager);
     */
+    guildmanager    = NULL;	 
+    questionmanager = NULL;	 
+    groupmanager    = NULL;	 
+    authserver      = NULL;	 
+    chatmanager     = NULL;	 
+    advicemanager   = NULL;	 
+    actionmanager   = NULL;	 
+    minigamemanager = NULL;
 }
 
 bool psServer::Initialize(iObjectRegistry* object_reg)
@@ -255,6 +263,9 @@ bool psServer::Initialize(iObjectRegistry* object_reg)
 
     // Load the log settings
     LoadLogSettings();
+    
+    // Initialise the CSV logger
+    logcsv = new LogCSV(configmanager, vfs);
 
     // Start Database
 
@@ -297,9 +308,6 @@ bool psServer::Initialize(iObjectRegistry* object_reg)
 
 
     Debug1(LOG_STARTUP,0,"Started Database\n");
-
-    // Initialise the CSV logger
-    logcsv = new LogCSV(configmanager, vfs);
 
     
     cachemanager = new CacheManager();

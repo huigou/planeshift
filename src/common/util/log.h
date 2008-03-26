@@ -76,6 +76,7 @@ enum
     CSV_ADVICE,
     CSV_ECONOMY,
     CSV_STUCK,
+    CSV_SQL,
     MAX_CSV
 };
 
@@ -213,9 +214,11 @@ const char* GetSettingName(int id);
 class LogCSV : public Singleton<LogCSV>
 {
     csRef<iFile> csvFile[MAX_CSV];
+    void StartLog(const char* logfile, iVFS* vfs, const char* header, size_t maxSize, csRef<iFile>& csvFile);
 
 public:
     LogCSV(iConfigManager* configmanager, iVFS* vfs);
     void Write(int type, csString& text);
 };
+
 #endif
