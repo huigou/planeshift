@@ -351,8 +351,8 @@ LogCSV::LogCSV(iConfigManager* configmanager, iVFS* vfs)
 
     for(int i = 0;i < MAX_CSV;i++)
     {
-
-        StartLog(logs[i].first, vfs, logs[i].second, maxSize, csvFile[i]);
+        if(logs[i].first.IsEmpty())
+            StartLog(logs[i].first, vfs, logs[i].second, maxSize, csvFile[i]);
     }
 }
              
