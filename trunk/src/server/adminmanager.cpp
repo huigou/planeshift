@@ -87,8 +87,6 @@
 #include "progressionmanager.h"
 
 
-// Show only items up to this ID when using the item spawn GUI (hide randomly generated items with IDs set above this)
-#define SPAWN_ITEM_ID_CEILING 10000
 // Define maximum value for awarded experience
 #define MAXIMUM_EXP_CHANGE 100
 //-----------------------------------------------------------------------------
@@ -5283,7 +5281,7 @@ void AdminManager::SendSpawnItems (MsgEntry* me, psGMSpawnItems& msg,Client *cli
     // Database hit.  
     // Justification:  This is a rare event and it is quicker than us doing a sort.  
     //                 Is also a read only event.     
-    Result result(db->Select("SELECT id FROM item_stats WHERE category_id=%d AND flags NOT LIKE '%%BUY_PERSONALISE%%' AND id < %d ORDER BY Name ", category->id, SPAWN_ITEM_ID_CEILING));
+    Result result(db->Select("SELECT id FROM item_stats WHERE category_id=%d AND stat_type not in ('U','R') ORDER BY Name ", category->id));
     if (!result.IsValid() || result.Count() == 0)
     {
         psserver->SendSystemError(me->clientnum, "Could not query database for category %s.", msg.type.GetData() );
