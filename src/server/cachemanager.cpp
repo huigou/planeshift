@@ -1984,7 +1984,7 @@ psItemStats *CacheManager::GetBasicItemStatsByName(csString name)
     csString escape;
     db->Escape( escape, name );
 
-    Result result(db->Select("SELECT * from item_stats where stat_type='B' and name='%s'", (const char *) name));
+    Result result(db->Select("SELECT * from item_stats where stat_type in ('B','U','R') and name='%s'", (const char *) name));
 
     if (!result.IsValid() || result.Count() == 0)
     {
@@ -2040,7 +2040,7 @@ psItemStats *CacheManager::GetBasicItemStatsByID(uint32 id)
         return itemstats;
     }
     
-    Result result(db->Select("SELECT * from item_stats where stat_type='B' and id='%u'", id));
+    Result result(db->Select("SELECT * from item_stats where stat_type in ('B','U','R')  and id='%u'", id));
 
     if (!result.IsValid() || result.Count() == 0)
     {
@@ -2466,7 +2466,7 @@ bool CacheManager::PreloadItemStatsDatabase()
 {
     uint32 currentrow;
     psItemStats *newitem;
-    Result result(db->Select("SELECT * from item_stats where stat_type='B'"));
+    Result result(db->Select("SELECT * from item_stats where stat_type in ('B','U','R') "));
 
     if (!result.IsValid())
     {

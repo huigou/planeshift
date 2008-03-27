@@ -1,3 +1,7 @@
+*** 2008-03-27 by Eriroley
+- Updated cachemanager to allow it to load items with stat_type of B, U, or R (expansion from just 'B')
+- updated adminmanager to only display items in the /item windows where stat_type == B
+
 *** 2008-03-26 by Andrew Dai
 - Fixed various crashes on server startup and shutdown.
 - Changed the /slide command so it no longer affects NPC spawn points.
