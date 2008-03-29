@@ -30,6 +30,7 @@
 #include "util/psxmlparser.h"
 
 #include "engine/materialmanager.h"
+#include "engine/psworld.h"
 
 //=============================================================================
 // Local Includes
@@ -94,11 +95,41 @@ void ClientCacheManager::LoadNewFactory(const char* filename)
         if (meshW) 
             indexEntry->factory = meshW;
     }
-    
+
+    if(file.Find(".cal3d") != (size_t)-1)
+    {
+        if(!(psengine->GetGFXFeatures() & useNormalMaps))
+        {
+            csRef<iDocumentNode> texNode = libNode->GetNode("textures");
+            csRef<iDocumentNodeIterator> textures = texNode->GetNodes();
+            while(textures->HasNext())
+            {
+                csRef<iDocumentNode> texture = textures->Next();
+                csRef<iDocumentNode> classNode = texture->GetNode("class");
+                if(classNode)
+                {
+                    csString texClass(classNode->GetContentsValue());
+                    if(texClass.Compare("normalmap"))
+                    {
+                        texNode->RemoveNode(texture);
+                    }
+                }
+            }
+            csRef<iDocumentNode> matNode = libNode->GetNode("materials");
+            csRef<iDocumentNodeIterator> materials = matNode->GetNodes();
+            while(materials->HasNext())
+            {
+                csRef<iDocumentNode> material = materials->Next();
+                material->RemoveNodes(material->GetNodes("shader"));
+                material->RemoveNodes(material->GetNodes("shadervar"));
+            }
+        }
+    }
+
     if (indexEntry->factory == NULL)
     {
         iBase* result = NULL;
-        psengine->GetLoader()->Load (file, result, 0, true, false, 0, 0, MaterialManager::GetSingletonPtr());
+        psengine->GetLoader()->Load (root, result);
         iMeshFactoryWrapper* meshW = psengine->GetEngine()->GetMeshFactories()->FindByName(name);
         indexEntry->factory = meshW;
     }

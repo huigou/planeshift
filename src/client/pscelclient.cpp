@@ -32,6 +32,7 @@
 #include <iengine/mesh.h>
 #include <iengine/region.h>
 #include <iengine/movable.h>
+#include <iengine/scenenode.h>
 #include <imesh/object.h>
 #include <imesh/spritecal3d.h>
 #include <imesh/nullmesh.h>
@@ -46,6 +47,9 @@
 //=============================================================================
 // Library Includes
 //=============================================================================
+#include "effects/pseffect.h"
+#include "effects/pseffectmanager.h"
+
 #include "engine/netpersist.h"
 #include "engine/psworld.h"
 #include "engine/solid.h"
@@ -171,6 +175,8 @@ bool psCelClient::Initialize(iObjectRegistry* object_reg,
     }
 
     unresSector = psengine->GetEngine()->CreateSector("SectorWhereWeKeepEntitiesResidingInUnloadedMaps");
+
+    LoadEffectItems();
     
     return true;
 }
@@ -299,8 +305,8 @@ void psCelClient::HandleMainActor( psPersistActor& mesg )
     if ( local_player_defaultFactName.IsEmpty() )
     {
         local_player_defaultFactName = local_player->GetFactName();
-        local_player_defaultFact = local_player->Mesh()->GetFactory();
-        local_player_defaultMesh = local_player->Mesh()->GetMeshObject();
+        local_player_defaultFact = local_player->GetMesh()->GetFactory();
+        local_player_defaultMesh = local_player->GetMesh()->GetMeshObject();
     }
 
     // Update equipment list
@@ -336,12 +342,12 @@ void psCelClient::HandleMainActor( psPersistActor& mesg )
             csRef<iMeshObject> mesh = meshwrap->GetMeshObject();
 
             // Update
-            local_player->Mesh()->SetMeshObject(mesh);
-            local_player->Mesh()->SetFactory(factory);
-            local_player->charApp->SetMesh(local_player->Mesh());
+            local_player->GetMesh()->SetMeshObject(mesh);
+            local_player->GetMesh()->SetFactory(factory);
+            local_player->charApp->SetMesh(local_player->GetMesh());
             
             // Cal3d
-            csRef<iSpriteCal3DState> calstate = scfQueryInterface<iSpriteCal3DState> (local_player->Mesh()->GetMeshObject());
+            csRef<iSpriteCal3DState> calstate = scfQueryInterface<iSpriteCal3DState> (local_player->GetMesh()->GetMeshObject());
             if (calstate)
             {
                 calstate->SetUserData((void*)local_player);
@@ -351,9 +357,8 @@ void psCelClient::HandleMainActor( psPersistActor& mesg )
         else
         {
             // Reset
-            local_player->Mesh()->SetMeshObject(local_player_defaultMesh);
-            local_player->Mesh()->SetFactory(local_player_defaultFact);
-            local_player->Mesh(local_player->Mesh());            
+            local_player->GetMesh()->SetMeshObject(local_player_defaultMesh);
+            local_player->GetMesh()->SetFactory(local_player_defaultFact);         
         }
 
         // Update factory
@@ -380,7 +385,10 @@ void psCelClient::HandleItem( MsgEntry* me )
         RemoveObject(found);
     }
 
-    GEMClientItem * newItem = new GEMClientItem( this, mesg );
+    GEMClientItem* newItem = new GEMClientItem( this, mesg );
+    
+    // Handle item effect if there is one.
+    HandleItemEffect(newItem->GetFactName(), newItem->GetMesh());
 
     entities.Push(newItem);    
     entities_hash.Put(newItem->GetID(), newItem);
@@ -416,7 +424,105 @@ void psCelClient::HandleObjectRemoval( MsgEntry* me )
     if (entity != NULL)
     {
         RemoveObject(entity);
-    }        
+    }
+}
+
+void psCelClient::LoadEffectItems()
+{
+    if(vfs->Exists("/planeshift/art/itemeffects.xml"))
+    {
+        csRef<iDocument> doc = ParseFile(psengine->GetObjectRegistry(), "/planeshift/art/itemeffects.xml");
+        if (!doc)
+        {
+            Error2("Couldn't parse file %s", "/planeshift/art/itemeffects.xml");
+            return;
+        }
+
+        csRef<iDocumentNode> root = doc->GetRoot();
+        if (!root)
+        {
+            Error2("The file(%s) doesn't have a root", "/planeshift/art/itemeffects.xml");
+            return;
+        }
+
+        csRef<iDocumentNodeIterator> itemeffects = root->GetNodes("itemeffect");
+        while(itemeffects->HasNext())
+        {
+            csRef<iDocumentNode> itemeffect = itemeffects->Next();
+            csRef<iDocumentNodeIterator> effects = itemeffect->GetNodes("pseffect");
+            csRef<iDocumentNodeIterator> lights = itemeffect->GetNodes("light");
+            if(effects->HasNext() || lights->HasNext())
+            {
+                ItemEffect* ie = new ItemEffect();
+                while(effects->HasNext())
+                {
+                    csRef<iDocumentNode> effect = effects->Next();
+                    Effect* eff = new Effect();
+                    eff->effectname = csString(effect->GetNode("effectname")->GetContentsValue());
+                    eff->effectoffset = csVector3(effect->GetNode("offset")->GetAttributeValueAsFloat("x"),
+                        effect->GetNode("offset")->GetAttributeValueAsFloat("y"),
+                        effect->GetNode("offset")->GetAttributeValueAsFloat("z"));
+                    ie->effects.PushSmart(eff);
+                }
+                while(lights->HasNext())
+                {
+                    csRef<iDocumentNode> light = lights->Next();
+                    Light* li = new Light();
+                    li->colour = csColor(light->GetNode("colour")->GetAttributeValueAsFloat("x"),
+                        light->GetNode("colour")->GetAttributeValueAsFloat("y"),
+                        light->GetNode("colour")->GetAttributeValueAsFloat("z"));
+                    li->lightoffset = csVector3(light->GetNode("offset")->GetAttributeValueAsFloat("x"),
+                        light->GetNode("offset")->GetAttributeValueAsFloat("y"),
+                        light->GetNode("offset")->GetAttributeValueAsFloat("z"));
+                    li->radius = light->GetNode("radius")->GetContentsValueAsFloat();
+                    ie->lights.PushSmart(li);
+                }
+                ie->activeOnGround = itemeffect->GetAttributeValueAsBool("activeonground");
+                effectItems.PutUnique(csString(itemeffect->GetAttributeValue("meshname")), ie);
+            }
+        }
+    }
+    else
+    {
+        printf("Could not load itemeffects.xml!\n");
+    }
+}
+
+void psCelClient::HandleItemEffect( const char* factName, csRef<iMeshWrapper> mw, bool onGround )
+{
+    ItemEffect* ie = effectItems.Get(factName, 0);
+    if(ie)
+    {
+        if(onGround && !ie->activeOnGround)
+        {
+            return;
+        }
+
+        if(!mw)
+        {
+            Error2("Error loading effect for item %s. iMeshWrapper is null.\n", factName);
+        }
+
+        for(int i=0; i<ie->lights.GetSize(); i++)
+        {
+            Light* l = ie->lights.Get(i);
+            csRef<iLight> light = psengine->GetEngine()->CreateLight(factName,
+                                                                     l->lightoffset, l->radius,
+                                                                     l->colour, CS_LIGHT_DYNAMICTYPE_DYNAMIC);
+            light->QuerySceneNode()->SetParent(mw->QuerySceneNode());
+            light->Setup();
+        }
+
+        for(int i=0; i<ie->effects.GetSize(); i++)
+        {
+            Effect* e = ie->effects.Get(i);
+            int id = psengine->GetEffectManager()->RenderEffect(e->effectname, e->effectoffset, mw);
+            if(!id)
+            {
+              printf("Failed to load effect %s on item %s!\n", e->effectname, factName);
+            }
+        }
+    }
 }
 
 csList<UnresolvedPos*>::Iterator psCelClient::FindUnresolvedPos(GEMClientObject * entity)
@@ -482,9 +588,9 @@ bool psCelClient::IsMeshSubjectToAction(const char* sector,const char* mesh)
     for(size_t i = 0; i < actions.GetSize();i++)
     {
         GEMClientActionLocation* action = actions[i];
-        const char* sec = action->Mesh()->GetMovable()->GetSectors()->Get(0)->QueryObject()->GetName();
+        const char* sec = action->GetMesh()->GetMovable()->GetSectors()->Get(0)->QueryObject()->GetName();
 
-        if(!strcmp(action->GetMesh(),mesh) && !strcmp(sector,sec))
+        if(!strcmp(action->GetMeshName(),mesh) && !strcmp(sector,sec))
             return true;
     }
 
@@ -741,8 +847,8 @@ void psCelClient::OnRegionsDeleted(csArray<iRegion*>& regions)
 
     for (entNum = 0; entNum < entities.GetSize(); entNum++)
     {
-        csRef<iMeshWrapper>  mesh = entities[entNum]->Mesh();
-        if (mesh != NULL )
+        csRef<iMeshWrapper> mesh = entities[entNum]->GetMesh();
+        if (mesh)
         {
             iMovable* movable = mesh->GetMovable();
             iSectorList* sectors = movable->GetSectors();
@@ -823,10 +929,10 @@ void psCelClient::OnMapsLoaded()
         if (sector)
         {
             //Error2("Successfuly resolved %s", pos->sector.GetData());
-            if(pos->entity->Mesh() && pos->entity->Mesh()->GetMovable())
+            if(pos->entity->GetMesh() && pos->entity->GetMesh()->GetMovable())
             {
                 // If we have a mesh, no need to re set the position.
-                iMovable* movable = pos->entity->Mesh()->GetMovable();
+                iMovable* movable = pos->entity->GetMesh()->GetMovable();
                 // Check if entity has moved to a different sector now, so no need to move back
                 if(IsUnresSector(movable->GetSectors()->Get(0)))
                     movable->SetSector(sector);
@@ -864,7 +970,7 @@ void psCelClient::PruneEntities()
         if ((GEMClientActor*) entities[entNum] == local_player)
             continue;
 
-        csRef<iMeshWrapper> mesh = entities[entNum]->Mesh();
+        csRef<iMeshWrapper> mesh = entities[entNum]->GetMesh();
         if (mesh != NULL)
         {
             GEMClientActor* actor = dynamic_cast<GEMClientActor*> (entities[entNum]);
@@ -987,12 +1093,12 @@ int GEMClientObject::GetMasqueradeType(void)
     return type;
 }
 
-void GEMClientObject::Mesh(iMeshWrapper* wrap )
+void GEMClientObject::SetMesh(iMeshWrapper* wrap )
 {
     pcmesh = wrap;
 }
 
-iMeshWrapper* GEMClientObject::Mesh()
+csRef<iMeshWrapper> GEMClientObject::GetMesh()
 {
     return pcmesh;
 }
@@ -1061,6 +1167,7 @@ bool GEMClientObject::InitMesh( const char *factname,
     }    
 
     pcmesh = factory->CreateMeshWrapper();
+    psengine->GetEngine()->GetMeshes()->Add(pcmesh);
     
     if ( !pcmesh )
     {

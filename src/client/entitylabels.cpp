@@ -285,7 +285,7 @@ void psEntityLabels::CreateLabelOfObject(GEMClientObject *object)
     if (object == celClient->GetMainPlayer() || object->GetObjectType() == GEM_ACTION_LOC)
         return;
 
-    iMeshWrapper* mesh = object->Mesh();
+    csRef<iMeshWrapper> mesh = object->GetMesh();
 
     // Has it got a mesh to attach to?
     if (!mesh || !mesh->GetMeshObject())
@@ -410,7 +410,7 @@ inline void psEntityLabels::UpdateVisibility()
     {
         GEMClientObject* object = entities.Get(i);
 
-        iMeshWrapper* mesh = object->Mesh();
+        csRef<iMeshWrapper> mesh = object->GetMesh();
         if (!mesh)
             continue;
 
@@ -451,7 +451,7 @@ inline void psEntityLabels::UpdateMouseover()
             if (underMouse->GetObjectType() == GEM_ACTOR && !(underMouse->Flags() & psPersistActor::NAMEKNOWN))
                 return;
 
-            iMeshWrapper* mesh = underMouse->Mesh();
+            csRef<iMeshWrapper> mesh = underMouse->GetMesh();
             if (mesh)
             {
                 // Only show labels within range
