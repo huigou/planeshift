@@ -1610,7 +1610,11 @@ GEMClientItem::GEMClientItem( psCelClient* cel, psPersistItem& mesg )
     factname = mesg.factname;
     solid = 0;
     
-    InitMesh( mesg.factname, mesg.filename);
+    if ( !InitMesh(mesg.factname, mesg.filename) )
+    {
+        Error3("Fatal Error: Could not create item %s(%d)", mesg.name.GetData(), mesg.id );
+        return;
+    }
     Move(mesg.pos, mesg.yRot, mesg.sector);
     
     if (mesg.flags & psPersistItem::COLLIDE)
