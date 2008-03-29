@@ -355,7 +355,10 @@ void psCharAppearance::Equip( csString& slotname,
     }
 
     // Set up item effect if there is one.
-    psengine->GetCelClient()->HandleItemEffect(mesh, state->FindSocket(slotname)->GetMeshWrapper(), false);
+    if(state->FindSocket(slotname))
+    {
+        psengine->GetCelClient()->HandleItemEffect(mesh, state->FindSocket(slotname)->GetMeshWrapper(), false);
+    }
     
     // This is a subMesh on the model change so change the mesh for that part.
     if ( subMesh.Length() )
