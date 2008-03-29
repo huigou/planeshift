@@ -890,6 +890,9 @@ UPDATE `server_options` SET `option_value`='1181' WHERE `option_name`='db_versio
 update item_instances set loc_instance=0x7fffffff where loc_instance=-1;
 ALTER TABLE item_instances MODIFY COLUMN `loc_instance` int(11) unsigned default '0';
 update item_instances set loc_instance=0xffffffff where loc_instance=0x7fffffff;
+
+alter table item_instances modify   `item_description` varchar(255) default '';
+
 UPDATE `server_options` SET `option_value`='1182' WHERE `option_name`='db_version';
 
 #### 1183 - Thomas Towey - added identify skill and minimum skill level for item categories
