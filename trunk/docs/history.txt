@@ -1,5 +1,6 @@
 *** 2008-03-29 by Andrew Dai
 - Fixed bug #1373, patch by Caarrie.
+- Fixed bug #1214, patch by Steven Schwartfeger.
 
 
 *** 2008-03-27 by Eriroley
