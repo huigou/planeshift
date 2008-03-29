@@ -1,7 +1,8 @@
 *** 2008-03-29 by Andrew Dai
 - Fixed bug #1373, patch by Caarrie.
 - Fixed bug #1214, patch by Steven Schwartfeger.
-
+- Fixed bug #1327, patch by Steven Schwartfeger.
+- Fixed bug #1364, patch by Caarrie.
 
 *** 2008-03-27 by Eriroley
 - Updated cachemanager to allow it to load items with stat_type of B, U, or R (expansion from just 'B')
