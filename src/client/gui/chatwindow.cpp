@@ -1569,6 +1569,17 @@ void pawsChatWindow::OnLostFocus()
 
 bool pawsChatWindow::OnKeyDown(int keyCode, int key, int modifiers )
 {
+    // Do not handle key presses if the text box is not focused. This can occur if the chat tabs are clicked,
+    // since they handle the mouse click the input text box is not focused,
+    // which allows different tabs to be checked without interrupting movement
+    if (!InputActive())
+    {
+        if (parent)
+            return parent->OnKeyDown( keyCode, key, modifiers );
+        else
+            return false;
+    }
+
     switch ( key )
     {
         case CSKEY_ENTER:
@@ -1657,6 +1668,8 @@ bool pawsChatWindow::OnKeyDown(int keyCode, int key, int modifiers )
                 // Tab complete the name
                 TabCompleteName(cmd);
             }
+
+            break;
         }
 
         default:
