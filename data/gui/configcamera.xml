@@ -99,7 +99,7 @@
         <widget factory="pawsWidgetTreeNode">
             <nodewidget>
                 <widget factory="pawsTextBox" name="Third Person Follow">
-                    <frame x="0" y="0" width="100" height="20" border="no" />
+                    <frame x="0" y="0" width="150" height="20" border="no" />
             <text string="Third Person Follow"/>
                 </widget>
             </nodewidget>
@@ -141,7 +141,7 @@
         <widget factory="pawsWidgetTreeNode">
             <nodewidget>
                 <widget factory="pawsTextBox" name="Third Person M64">
-                    <frame x="0" y="0" width="100" height="20" border="no" />
+                    <frame x="0" y="0" width="150" height="20" border="no" />
             <text string="Third Person M64"/>
                 </widget>
             </nodewidget>
@@ -198,7 +198,7 @@
         <widget factory="pawsWidgetTreeNode">
             <nodewidget>
                 <widget factory="pawsTextBox" name="Third Person Lara">
-                    <frame x="0" y="0" width="100" height="20" border="no" />
+                    <frame x="0" y="0" width="150" height="20" border="no" />
             <text string="Third Person Lara"/>
                 </widget>
             </nodewidget>
