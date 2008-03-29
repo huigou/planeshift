@@ -2,7 +2,7 @@
 
     <widget name="ContainerDescWindow" factory="pawsContainerDescWindow" 
             visible="no" movable="yes">
-        <frame x="100" y="100" width="418" height="250" border="yes"/>
+        <frame x="100" y="100" width="310" height="280" border="yes"/>
         <bgimage resource="Container Desc Background" />
         <title resource="Blue Title" text="Examine" align="left" close_button="yes"/>        
         
@@ -29,7 +29,7 @@
 
         <widget name="ItemImage" factory="pawsWidget" 
             visible="yes" >
-            <frame x="17" y="31" width="61" height="61" border="no"/>
+            <frame x="17" y="41" width="43.57" height="43.57" border="no"/>
         </widget>
 
         <widget name="ItemName" factory="pawsTextBox" >
@@ -39,45 +39,45 @@
 
 
         <widget name="ItemDescription" factory="pawsMultiLineTextBox" >
-            <frame x="107" y="27" width="263" height="73" border="no"/>
+            <frame x="107" y="27" width="215" height="73" border="no"/>
 	    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="225" g="255" b="225" size="10" />
         </widget>
         
         <widget name="BulkList" factory="pawsListBox" selectable="0">
-            <frame x="26" y="125" width="383" height="133" border="no"/>
+            <frame x="26" y="145" width="260" height="133" border="no"/>
             <scrollbar heightmod="-1" />
-            <columns height="61" headings="no" >
-                <column width="61" >
+            <columns height="43.57" headings="no" >
+                <column width="43.57" >
                     <widget name="Bulk0" factory="pawsSlot">
-                        <frame x="0" y="0" width="61" height="61" />
+                        <frame x="0" y="0" width="43.57" height="43.57" />
                         <bgimage resource="ContainerBulk" alpha="0"/>
                     </widget>
                 </column>
-                <column width="61" >
+                <column width="43.57" >
                     <widget name="Bulk1" factory="pawsSlot">
-                        <frame x="0" y="0" width="61" height="61" />
+                        <frame x="0" y="0" width="43.57" height="43.57" />
                         <bgimage resource="ContainerBulk" alpha="0"/>
                     </widget>
                 </column>
-                <column width="61" >
+                <column width="43.57" >
                     <widget name="Bulk2" factory="pawsSlot">
-                        <frame x="0" y="0" width="61" height="61" />
+                        <frame x="0" y="0" width="43.57" height="43.57" />
                         <bgimage resource="ContainerBulk" alpha="0"/>
                     </widget>
                 </column>
-                <column width="61" >
+                <column width="43.57" >
                     <widget name="Bulk3" factory="pawsSlot">
-                        <frame x="0" y="0" width="61" height="61" />
+                        <frame x="0" y="0" width="43.57" height="43.57" />
                         <bgimage resource="ContainerBulk" alpha="0"/>
                     </widget>
                 </column>
-                <column width="61" >
+                <column width="43.57" >
                     <widget name="Bulk4" factory="pawsSlot">
-                        <frame x="0" y="0" width="61" height="61" />
+                        <frame x="0" y="0" width="43.57" height="43.57" />
                         <bgimage resource="ContainerBulk" alpha="0"/>
                     </widget>
                 </column>
-                <column width="61" >
+                <column width="43.57" >
                     <widget name="Bulk5" factory="pawsSlot">
                         <frame x="0" y="0" width="61" height="61" />
                         <bgimage resource="ContainerBulk" alpha="0"/>
