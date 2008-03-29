@@ -1413,11 +1413,11 @@ void UserManager::Ready()
 */
 void UserManager::HandleLoot(Client *client)
 {
-    int clientnum = client->GetClientNum();
+    uint32_t clientnum = client->GetClientNum();
 
     if (!client->IsAlive())
     {
-        psserver->SendSystemError(client->GetClientNum(),"You are dead, you cannot loot now");
+        psserver->SendSystemError(client->GetClientNum(),"You are dead, you cannot loot now.");
         return;
     }
 
@@ -1427,18 +1427,32 @@ void UserManager::HandleLoot(Client *client)
         psserver->SendSystemError(clientnum,"You don't have a target selected.");
         return;
     }
-
-    if (target->IsAlive())
+    
+    gemNPC *npc = target->GetNPCPtr();
+    
+    if(!npc && clientnum == target->GetClient()->GetClientNum())
     {
-        psserver->SendSystemError(clientnum, "You can't loot person that is alive");
+        psserver->SendSystemError(clientnum, "You can't loot yourself.");
+        return;
+    }
+    
+    if (target->IsAlive() && !npc)
+    {
+        psserver->SendSystemError(clientnum, "You can't loot a person that is alive.");
         return;
     }
 
+    if (target->IsAlive() && npc)
+    {
+        psserver->SendSystemError(clientnum, "You can't loot a creature that is alive.");
+        return;
+    }
+
+
     // Check target lootable by this client
-    gemNPC *npc = target->GetNPCPtr();
     if (!npc)
     {
-        psserver->SendSystemError(clientnum, "You can loot NPCs only");
+        psserver->SendSystemError(clientnum, "You can only loot NPCs.");
         return;
     }
 
