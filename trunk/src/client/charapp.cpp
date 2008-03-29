@@ -17,7 +17,8 @@
 //=============================================================================
 #include "util/log.h"
 #include "util/psstring.h"
-
+#include "effects/pseffect.h"
+#include "effects/pseffectmanager.h"
 #include "engine/materialmanager.h"
 
 //=============================================================================
@@ -26,6 +27,7 @@
 #include "charapp.h"
 #include "psengine.h"
 #include "clientcachemanager.h"
+#include "pscelclient.h"
 #include "psclientchar.h"
 #include "globals.h"
 
@@ -59,7 +61,7 @@ void psCharAppearance::SetMesh(iMeshWrapper* mesh)
     state = scfQueryInterface<iSpriteCal3DState>(mesh->GetMeshObject());
     stateFactory = scfQueryInterface<iSpriteCal3DFactoryState>(mesh->GetMeshObject()->GetFactory());
     
-    this->mesh = mesh;
+    baseMesh = mesh;
 }
 
 
@@ -67,7 +69,7 @@ csString psCharAppearance::ParseStrings(const char* part, const char* str) const
 {
     psString result(str);
     
-    const char* factname = mesh->GetFactory()->QueryObject()->GetName();
+    const char* factname = baseMesh->GetFactory()->QueryObject()->GetName();
     
     result.ReplaceAllSubString("$F", factname);
     result.ReplaceAllSubString("$P", part);
@@ -244,7 +246,7 @@ void psCharAppearance::ShowHair(bool show)
 
 void psCharAppearance::SetSkinTone(csString& part, csString& material, csString& texture)
 {
-    if (!mesh || !part || !material || !texture)
+    if (!baseMesh || !part || !material || !texture)
     {
         return;
     }        
@@ -305,7 +307,7 @@ void psCharAppearance::ApplyEquipment(csString& equipment)
     csRef<iDocumentNode> helmNode = doc->GetRoot()->GetNode("equiplist")->GetNode("helm");    
     csString helmGroup(helmNode->GetContentsValue());
     if ( helmGroup.Length() == 0 )
-        helmGroup = mesh->GetFactory()->QueryObject()->GetName();;
+        helmGroup = baseMesh->GetFactory()->QueryObject()->GetName();
     
     csRef<iDocumentNodeIterator> equipIter = doc->GetRoot()->GetNode("equiplist")->GetNodes("equip");
           
@@ -352,6 +354,8 @@ void psCharAppearance::Equip( csString& slotname,
         Attach(slotname, mesh);
     }
 
+    // Set up item effect if there is one.
+    psengine->GetCelClient()->HandleItemEffect(mesh, state->FindSocket(slotname)->GetMeshWrapper(), false);
     
     // This is a subMesh on the model change so change the mesh for that part.
     if ( subMesh.Length() )
@@ -555,7 +559,7 @@ bool psCharAppearance::Attach(const char* socketName, const char* meshFactName )
     free(keyName);
     keyName = NULL;
 
-    meshWrap->QuerySceneNode()->SetParent( mesh->QuerySceneNode ());
+    meshWrap->QuerySceneNode()->SetParent( baseMesh->QuerySceneNode ());
     socket->SetMeshWrapper( meshWrap );
     socket->SetTransform( csTransform(csZRotMatrix3(rot_z)*csYRotMatrix3(rot_y)*csXRotMatrix3(rot_x), csVector3(trans_x,trans_y,trans_z)) );
 

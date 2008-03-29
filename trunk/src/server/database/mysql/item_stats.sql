@@ -262,6 +262,9 @@ INSERT INTO `item_stats` VALUES  (4085,'B','Heated Iron Stock',3.00,100.00,5,0,'
  (4815,'B','Forge',99999.00,100.00,1,50,'BULK','CONTAINER CANTRANSFORM',0.10,4,-1,-1,'0','0','0',0.00,0.00,0.00,0.00,1.00,0.00,2.10,1.00,0.20,0.20,0.20,0.00,111,112,0,0,0,'0',6,5000.00,'TOOL','',0.00,'',0.00,'',0.00,'0',0,0.0000,0,0,0,1,'A standard smith forge used to heat metal so it is malleable.','nosound',50,'','',NULL,NULL,-1,2);
 INSERT INTO `item_stats` VALUES  (4816,'B','Hammer',3.00,100.00,3,50,'BULK LEFTHAND RIGHTHAND','STACKABLE',0.10,4,-1,-1,'0','0','0',0.00,0.00,0.00,0.00,1.00,0.00,2.10,1.00,0.20,0.20,0.20,0.00,28,29,0,0,0,'Hammer',6,50.00,'TOOL','',0.00,'',0.00,'',0.00,'0',0,0.0000,0,0,0,1,'A simple smith hammer.','nosound',50,'','',NULL,NULL,-1,2),
  (236,'B','Quiver',1.00,100.00,1,20,'BULK LEFTHAND RIGHTHAND','CONTAINER',0.10,-1,-1,-1,'0','0','0',0.00,0.00,0.00,0.00,1.00,0.00,2.10,1.00,0.20,0.20,0.20,0.00,131,151,0,0,0,'0',3,4.00,'GENERIC','',0.00,'',0.00,'',0.00,'0',0,0.0000,0,0,0,1,'A Quiver','nosound',50,'','','','',-1,2);
+INSERT INTO `item_stats` VALUES  (7331,'B','Torch',8.00,5.00,80,0,'BULK LEFTHAND RIGHTHAND','STACKABLE',0.10,0,-1,-1,'0','0','0',0.00,0.00,0.00,9.00,0.00,0.00,4.00,2.00,0.20,0.20,0.20,0.00,222,223,0,0,0,'Torch',1,550.00,'TOOL','',0.00,'',0.00,'0',0.00,'0',0,0.0000,0,0,0,1,'A torch to light your way.','env.fire_small',50,'','',NULL,NULL,-1,2);
+INSERT INTO `item_stats` VALUES  (7332,'B','Campfire',8.00,5.00,80,0,'BULK','STACKABLE',0.10,0,-1,-1,'0','0','0',0.00,0.00,0.00,9.00,0.00,0.00,4.00,2.00,0.20,0.20,0.20,0.00,224,225,0,0,0,'Campfire',1,550.00,'TOOL','',0.00,'',0.00,'0',0.00,'0',0,0.0000,0,0,0,1,'A camp fire to keep you warm at night.','env.fire_medium',50,'','',NULL,NULL,-1,2);
+
 /*!40000 ALTER TABLE `item_stats` ENABLE KEYS */;
 
 

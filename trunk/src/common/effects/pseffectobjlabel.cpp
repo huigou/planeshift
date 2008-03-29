@@ -106,7 +106,6 @@ bool psEffectObjLabel::Load(iDocumentNode *node)
     }
     if (!sizeFileName.IsEmpty())
     {
-        printf("loading glyphs %s\n", sizeFileName.GetData());
         LoadGlyphs(sizeFileName);
     } 
     

@@ -21,6 +21,7 @@
 //=============================================================================
 // Crystal Space Includes
 //=============================================================================
+#include <csutil/cscolor.h>
 #include <csutil/parray.h>
 #include <csutil/refarr.h>
 #include <csutil/list.h>
@@ -99,6 +100,31 @@ private:
     // Keep seperate for speedups
     csArray<GEMClientActionLocation*> actions;
 
+    struct Effect
+    {
+        csString effectname;
+        csVector3 effectoffset;
+    };
+
+    struct Light
+    {
+        csColor colour;
+        csVector3 lightoffset;
+        float radius;
+    };
+
+    struct ItemEffect
+    {
+        bool activeOnGround;
+        csPDelArray<Effect> effects;
+        csPDelArray<Light> lights;
+    };
+
+    csHash<ItemEffect*, csString> effectItems;
+
+    // Load items that have effects attached to them into the effectItems array.
+    void LoadEffectItems();
+
     bool ignore_others;
 
 public:
@@ -132,6 +158,9 @@ public:
     psShadowManager * GetShadowManager() { return shadowManager; }
 
     GEMClientActor* GetMainPlayer() { return local_player; }
+
+    /* Check if the item has an effect attached to it and process it if so. */
+    void HandleItemEffect( const char* factName, csRef<iMeshWrapper> mw, bool onGround = true );
 
     /** Caled when new world maps were loaded
         CelClient looks for GEM Objects which have sectors with unknown name and checks if this name is known now */
@@ -313,9 +342,9 @@ public:
      /** Get the mesh that this object has.
        * @return The iMeshWrapper or 0 if no mesh.
        */
-     iMeshWrapper* Mesh();
+     csRef<iMeshWrapper> GetMesh();
      
-     void Mesh(iMeshWrapper* wrap);
+     void SetMesh(iMeshWrapper* wrap);
 
      virtual void Update();            
    
@@ -491,7 +520,7 @@ public:
     
     virtual GEMOBJECT_TYPE GetObjectType() { return GEM_ACTION_LOC; }
 
-    const char* GetMesh() { return meshname; }
+    const char* GetMeshName() { return meshname; }
 
 protected:
     csString meshname;

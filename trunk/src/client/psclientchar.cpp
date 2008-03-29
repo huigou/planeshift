@@ -357,7 +357,7 @@ void psClientCharManager::SetTarget(GEMClientObject *newTarget, const char *acti
     if (target && target->GetObjectType() != GEM_ACTION_LOC)
     {
          // render the target effect
-         iMeshWrapper * targetMesh = target->Mesh();
+         csRef<iMeshWrapper> targetMesh = target->GetMesh();
          if (targetMesh)
              targetEffect = psengine->GetEffectManager()->RenderEffect("target", csVector3(0,0,0), targetMesh);
     
@@ -620,13 +620,13 @@ void psClientCharManager::HandleEffect( MsgEntry* me )
     else
     {
         if (gemAnchor)
-            anchor = gemAnchor->Mesh();
+            anchor = gemAnchor->GetMesh();
      
         // get the target
         GEMClientObject* gemTarget = cel->FindObject(effect.targetID);
         iMeshWrapper *target = anchor;
         if (gemTarget)
-            target = gemTarget->Mesh();
+            target = gemTarget->GetMesh();
     
         // render the actual effect
         if (psengine->GetEffectManager ())

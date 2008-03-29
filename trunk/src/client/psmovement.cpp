@@ -693,7 +693,7 @@ void psMovementManager::SetRunToPos(psPoint& mouse)
         runToMarkerID = 0;
 
         iSector* sector = linearMove->GetSector();
-        iMeshWrapper* actormesh = actor->Mesh();
+        csRef<iMeshWrapper> actormesh = actor->GetMesh();
         runToMarkerID = psengine->GetEffectManager()->RenderEffect("marker", sector, tmp, actormesh);
         runToDiff = tmpDiff;
         lastDist = tmpDiff.SquaredNorm() + 1.0f;

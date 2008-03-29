@@ -226,3 +226,7 @@ INSERT INTO common_strings VALUES("218","/planeshift/models/$F/$F_foot_plate.dds
 INSERT INTO common_strings VALUES("219","/planeshift/models/$F/$F_hand_plate.dds");
 INSERT INTO common_strings VALUES("220","/planeshift/models/$F/$F_legs_plate.dds");
 INSERT INTO common_strings VALUES("221","$P_Plate");
+INSERT INTO common_strings VALUES("222","items#torch");
+INSERT INTO common_strings VALUES("223","/planeshift/items/torch.png");
+INSERT INTO common_strings VALUES("224","items#campfire01a");
+INSERT INTO common_strings VALUES("225","/planeshift/items/campfire01a.dds");

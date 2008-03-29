@@ -1,3 +1,21 @@
+*** 2008-03-29 by Mike Gist
+- Renamed mesh to baseMesh in psCharAppearance.
+- Changed overloaded Mesh() function in GEMClientObject to be GetMesh() and
+  SetMesh().
+- Changed effects to load much earlier, at client startup.
+  This is so effects attached to equipped items show in char selection.
+- Added filter for character shaders to make them optional.
+- Added torch and campfire items to svn database for testing purposes.
+- Added a system to attach PS effects and lights to iMeshWrappers (items).
+  These are specified in art/itemeffects.xml with the following features;
+  - Specify by meshname (e.g. items#campfire01a).
+  - Set whether or not the light and effect should show when the item is
+    on the ground. 
+  - Set any number of effects to attach to the mesh, along with the offset
+    of each effect.
+  - Set any number of lights to attach to the mesh, along with the offset,
+    colour, intensity and radius of each light.
+
 *** 2008-03-29 by Andrew Dai
 - Fixed bug #1373, patch by Caarrie.
 - Fixed bug #1214, patch by Steven Schwartfeger.

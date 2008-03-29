@@ -1385,13 +1385,13 @@ bool ModeHandler::CheckCurrentSector(GEMClientObject* entity,
                                      csVector3& pos,
                                      iSector*&  sector)
 {
-    if (entity && !entity->Mesh())
+    if (entity && !entity->GetMesh())
     {
         Bug1("No Mesh found on entity!\n");
         return false;
     }
     
-    iMovable* movable = entity->Mesh()->GetMovable();
+    iMovable* movable = entity->GetMesh()->GetMovable();
 
     sector = movable->GetSectors()->Get(0);
 
@@ -1627,7 +1627,7 @@ void ModeHandler::HandleCombatEvent(MsgEntry* me)
 
 void ModeHandler::AttackBlock(GEMClientActor* atObject, GEMClientActor* tarObject, csString& location )
 {
-    psengine->GetEffectManager()->RenderEffect("combatBlock", csVector3(0, 0, 0), tarObject->Mesh(), atObject->Mesh());
+    psengine->GetEffectManager()->RenderEffect("combatBlock", csVector3(0, 0, 0), tarObject->GetMesh(), atObject->GetMesh());
     if(!(chatWindow->GetSettings().meFilters & COMBAT_BLOCKED))
         return;
 
@@ -1639,7 +1639,7 @@ void ModeHandler::AttackDamage(float damage, GEMClientActor* atObject, GEMClient
 {
     if (damage)
     {
-        psengine->GetEffectManager()->RenderEffect("combatYourHit", csVector3(0, 0, 0), tarObject->Mesh(), atObject->Mesh());
+        psengine->GetEffectManager()->RenderEffect("combatYourHit", csVector3(0, 0, 0), tarObject->GetMesh(), atObject->GetMesh());
 
         if(!(chatWindow->GetSettings().meFilters & COMBAT_SUCCEEDED))
             return;
@@ -1649,7 +1649,7 @@ void ModeHandler::AttackDamage(float damage, GEMClientActor* atObject, GEMClient
     }
     else
     {
-        psengine->GetEffectManager()->RenderEffect("combatYourHitFail", csVector3(0, 0, 0), tarObject->Mesh(), atObject->Mesh());
+        psengine->GetEffectManager()->RenderEffect("combatYourHitFail", csVector3(0, 0, 0), tarObject->GetMesh(), atObject->GetMesh());
         if(!(chatWindow->GetSettings().meFilters & COMBAT_FAILED))
             return;
             
@@ -1664,7 +1664,7 @@ void ModeHandler::AttackDeath( GEMClientActor* atObject, GEMClientActor* tarObje
     if (atObject != tarObject) //not killing self
     {
         if (psengine->GetSoundStatus() && soundmanager->PlayingCombatMusic())
-            psengine->GetEffectManager()->RenderEffect("combatVictory", csVector3(0, 0, 0), atObject->Mesh());
+            psengine->GetEffectManager()->RenderEffect("combatVictory", csVector3(0, 0, 0), atObject->GetMesh());
 
         psSystemMessage ev(0,MSG_COMBAT_VICTORY,"You have killed %s!", tarObject->GetName() );
         msghandler->Publish(ev.msg);
@@ -1678,7 +1678,7 @@ void ModeHandler::AttackDeath( GEMClientActor* atObject, GEMClientActor* tarObje
 
 void ModeHandler::AttackDodge(GEMClientActor* atObject, GEMClientActor* tarObject )
 {
-    psengine->GetEffectManager()->RenderEffect("combatDodge", csVector3(0, 0, 0), tarObject->Mesh(), atObject->Mesh());
+    psengine->GetEffectManager()->RenderEffect("combatDodge", csVector3(0, 0, 0), tarObject->GetMesh(), atObject->GetMesh());
     if(!(chatWindow->GetSettings().meFilters & COMBAT_DODGED))
         return;
         
@@ -1689,7 +1689,7 @@ void ModeHandler::AttackDodge(GEMClientActor* atObject, GEMClientActor* tarObjec
 
 void ModeHandler::AttackMiss(GEMClientActor* atObject, GEMClientActor* tarObject, csString& location )
 {
-    psengine->GetEffectManager()->RenderEffect("combatMiss", csVector3(0, 0, 0), atObject->Mesh(), tarObject->Mesh());
+    psengine->GetEffectManager()->RenderEffect("combatMiss", csVector3(0, 0, 0), atObject->GetMesh(), tarObject->GetMesh());
     if(!(chatWindow->GetSettings().meFilters & COMBAT_MISSED))
         return;
         
@@ -1699,7 +1699,7 @@ void ModeHandler::AttackMiss(GEMClientActor* atObject, GEMClientActor* tarObject
 
 void ModeHandler::AttackOutOfRange( GEMClientActor* atObject, GEMClientActor* tarObject )
 {
-    psengine->GetEffectManager()->RenderEffect("combatMiss", csVector3(0, 0, 0), atObject->Mesh(), tarObject->Mesh());
+    psengine->GetEffectManager()->RenderEffect("combatMiss", csVector3(0, 0, 0), atObject->GetMesh(), tarObject->GetMesh());
     psSystemMessage ev(0,MSG_COMBAT_MISS,"You are too far away to attack %s.", tarObject->GetName() );
     msghandler->Publish(ev.msg);
 }
@@ -1751,7 +1751,7 @@ void ModeHandler::Attack( int type, float damage, GEMClientActor* atObject, GEMC
 
 void ModeHandler::DefendBlock(GEMClientActor* atObject, GEMClientActor* tarObject, csString& location )
 {
-    psengine->GetEffectManager()->RenderEffect("combatBlock", csVector3(0, 0, 0), tarObject->Mesh(), atObject->Mesh());
+    psengine->GetEffectManager()->RenderEffect("combatBlock", csVector3(0, 0, 0), tarObject->GetMesh(), atObject->GetMesh());
 
     if(!(chatWindow->GetSettings().meFilters & COMBAT_BLOCKED))
         return;
@@ -1764,7 +1764,7 @@ void ModeHandler::DefendDamage( float damage, GEMClientActor* atObject, GEMClien
 {
     if(damage)
     {
-        psengine->GetEffectManager()->RenderEffect("combatHitYou", csVector3(0, 0, 0), tarObject->Mesh(), atObject->Mesh());
+        psengine->GetEffectManager()->RenderEffect("combatHitYou", csVector3(0, 0, 0), tarObject->GetMesh(), atObject->GetMesh());
         if(!(chatWindow->GetSettings().meFilters & COMBAT_SUCCEEDED))
             return;
             
@@ -1773,7 +1773,7 @@ void ModeHandler::DefendDamage( float damage, GEMClientActor* atObject, GEMClien
     }
     else
     {
-        psengine->GetEffectManager()->RenderEffect("combatHitYouFail", csVector3(0, 0, 0), tarObject->Mesh(), atObject->Mesh());
+        psengine->GetEffectManager()->RenderEffect("combatHitYouFail", csVector3(0, 0, 0), tarObject->GetMesh(), atObject->GetMesh());
         if(!(chatWindow->GetSettings().meFilters & COMBAT_FAILED))
             return;
             
@@ -1786,14 +1786,14 @@ void ModeHandler::DefendDamage( float damage, GEMClientActor* atObject, GEMClien
 void ModeHandler::DefendDeath( GEMClientActor* atObject )
 {
     //atObject->
-    psengine->GetEffectManager()->RenderEffect("combatDeath", csVector3(0,0,0), atObject->Mesh());
+    psengine->GetEffectManager()->RenderEffect("combatDeath", csVector3(0,0,0), atObject->GetMesh());
     psSystemMessage ev(0,MSG_COMBAT_OWN_DEATH,"You have been killed by %s!", atObject->GetName() );
     msghandler->Publish(ev.msg);
 }
 
 void ModeHandler::DefendDodge( GEMClientActor* atObject, GEMClientActor* tarObject )
 {
-    psengine->GetEffectManager()->RenderEffect("combatDodge", csVector3(0, 0, 0), tarObject->Mesh(), atObject->Mesh());
+    psengine->GetEffectManager()->RenderEffect("combatDodge", csVector3(0, 0, 0), tarObject->GetMesh(), atObject->GetMesh());
     if(!(chatWindow->GetSettings().meFilters & COMBAT_DODGED))
         return;
         
@@ -1803,7 +1803,7 @@ void ModeHandler::DefendDodge( GEMClientActor* atObject, GEMClientActor* tarObje
 
 void ModeHandler::DefendMiss( GEMClientActor* atObject, GEMClientActor* tarObject )
 {
-    psengine->GetEffectManager()->RenderEffect("combatMiss", csVector3(0, 0, 0), atObject->Mesh(), tarObject->Mesh());
+    psengine->GetEffectManager()->RenderEffect("combatMiss", csVector3(0, 0, 0), atObject->GetMesh(), tarObject->GetMesh());
     if(!(chatWindow->GetSettings().meFilters & COMBAT_MISSED))
         return;
         
@@ -1813,7 +1813,7 @@ void ModeHandler::DefendMiss( GEMClientActor* atObject, GEMClientActor* tarObjec
 
 void ModeHandler::DefendOutOfRange( GEMClientActor* atObject, GEMClientActor* tarObject )
 {
-    psengine->GetEffectManager()->RenderEffect("combatMiss", csVector3(0, 0, 0), atObject->Mesh(), tarObject->Mesh());
+    psengine->GetEffectManager()->RenderEffect("combatMiss", csVector3(0, 0, 0), atObject->GetMesh(), tarObject->GetMesh());
     psSystemMessage ev(0,MSG_COMBAT_MISS,"%s attacks but is too far away to reach you.", atObject->GetName() );
     msghandler->Publish(ev.msg);
 }    
@@ -1879,7 +1879,7 @@ void ModeHandler::OtherBlock( GEMClientActor* atObject, GEMClientActor* tarObjec
             celclient->GetMainPlayer()->IsGroupedWith(tarObject);
     int level = celclient->GetMainPlayer()->GetType();
 
-    psengine->GetEffectManager()->RenderEffect("combatBlock", csVector3(0, 0, 0), tarObject->Mesh(), atObject->Mesh());
+    psengine->GetEffectManager()->RenderEffect("combatBlock", csVector3(0, 0, 0), tarObject->GetMesh(), atObject->GetMesh());
 
     if(!((level > 0 || isGrouped) && (chatWindow->GetSettings().vicinityFilters & COMBAT_BLOCKED)))
         return;
@@ -1896,7 +1896,7 @@ void ModeHandler::OtherDamage( float damage, GEMClientActor* atObject, GEMClient
 
     if(damage)
     {
-        psengine->GetEffectManager()->RenderEffect("combatHitOther", csVector3(0, 0, 0), tarObject->Mesh(), atObject->Mesh());
+        psengine->GetEffectManager()->RenderEffect("combatHitOther", csVector3(0, 0, 0), tarObject->GetMesh(), atObject->GetMesh());
         if(!((level > 0 || isGrouped) && (chatWindow->GetSettings().vicinityFilters & COMBAT_SUCCEEDED)))
             return;
             
@@ -1905,7 +1905,7 @@ void ModeHandler::OtherDamage( float damage, GEMClientActor* atObject, GEMClient
     }
     else
     {
-        psengine->GetEffectManager()->RenderEffect("combatHitOtherFail", csVector3(0, 0, 0), tarObject->Mesh(), atObject->Mesh());
+        psengine->GetEffectManager()->RenderEffect("combatHitOtherFail", csVector3(0, 0, 0), tarObject->GetMesh(), atObject->GetMesh());
         if(!((level > 0 || isGrouped) && (chatWindow->GetSettings().vicinityFilters & COMBAT_FAILED)))
             return;
         psSystemMessage ev(0,MSG_COMBAT_HITOTHER,"%s hits %s, but fails to do any damage!", atObject->GetName(), tarObject->GetName());
@@ -1934,7 +1934,7 @@ void ModeHandler::OtherDodge( GEMClientActor* atObject, GEMClientActor* tarObjec
             celclient->GetMainPlayer()->IsGroupedWith(tarObject);
     int level = celclient->GetMainPlayer()->GetType();
 
-    psengine->GetEffectManager()->RenderEffect("combatDodge", csVector3(0, 0, 0), tarObject->Mesh(), atObject->Mesh());
+    psengine->GetEffectManager()->RenderEffect("combatDodge", csVector3(0, 0, 0), tarObject->GetMesh(), atObject->GetMesh());
     if(!((level > 0 || isGrouped) && (chatWindow->GetSettings().vicinityFilters & COMBAT_DODGED)))
         return;
     psSystemMessage ev(0,MSG_COMBAT_DODGE,"%s attacks %s but %s dodges.", atObject->GetName(),tarObject->GetName(),tarObject->GetName() );
@@ -1947,7 +1947,7 @@ void ModeHandler::OtherMiss( GEMClientActor* atObject, GEMClientActor* tarObject
             celclient->GetMainPlayer()->IsGroupedWith(tarObject);
     int level = celclient->GetMainPlayer()->GetType();
 
-    psengine->GetEffectManager()->RenderEffect("combatMiss", csVector3(0, 0, 0), atObject->Mesh(), tarObject->Mesh());
+    psengine->GetEffectManager()->RenderEffect("combatMiss", csVector3(0, 0, 0), atObject->GetMesh(), tarObject->GetMesh());
     if(!((level > 0 || isGrouped) && (chatWindow->GetSettings().vicinityFilters & COMBAT_MISSED)))
         return;
     psSystemMessage ev(0,MSG_COMBAT_MISS,"%s attacks %s but misses.", atObject->GetName(),tarObject->GetName() );
@@ -1956,7 +1956,7 @@ void ModeHandler::OtherMiss( GEMClientActor* atObject, GEMClientActor* tarObject
 
 void ModeHandler::OtherOutOfRange( GEMClientActor* atObject, GEMClientActor* tarObject ) 
 {
-    psengine->GetEffectManager()->RenderEffect("combatMiss", csVector3(0, 0, 0), atObject->Mesh(), tarObject->Mesh());
+    psengine->GetEffectManager()->RenderEffect("combatMiss", csVector3(0, 0, 0), atObject->GetMesh(), tarObject->GetMesh());
     psSystemMessage ev(0,MSG_COMBAT_MISS,"%s attacks but is too far away to reach %s.", atObject->GetName(), tarObject->GetName() );
     msghandler->Publish(ev.msg);
 }    

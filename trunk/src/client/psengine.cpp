@@ -578,7 +578,7 @@ bool psEngine::Initialize (int level)
         if (!camera)
         {
             camera = new psCamera();            
-        }            
+        }          
 
         if (!charmanager)
         {
@@ -595,6 +595,18 @@ bool psEngine::Initialize (int level)
         // This widget requires NetManager to exist so must be in this stage
         if ( ! paws->LoadWidget("data/gui/charpick.xml") )
             return false;
+
+        // Load effects now, before we have actors
+        if (!effectManager)
+        {
+            effectManager.AttachNew(new psEffectManager());
+        }
+
+        if (!effectManager->LoadFromDirectory("/this/data/effects", true, camera->GetView()))
+        {
+            FatalError("Failed to load effects!");
+            return 1;
+        }
         
         okToLoadModels = true;
         
@@ -1164,20 +1176,7 @@ void psEngine::LoadGame()
                 FatalError("Couldn't initialize the character controller!");
                 return;
             }
-        }
-
-        // Load camera and effects now, before we have actors
-        if (!effectManager)
-        {
-            effectManager.AttachNew(new psEffectManager());
-        }
-
-        if (!effectManager->LoadFromDirectory("/this/data/effects", true, camera->GetView()))
-        {
-            FatalError("Failed to load effects!");
-            return;
-        }
-        
+        } 
 
         // load chat bubbles
         if (!chatBubbles)

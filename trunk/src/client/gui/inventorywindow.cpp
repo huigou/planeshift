@@ -199,7 +199,7 @@ bool pawsInventoryWindow::SetupDoll()
     if (!widget || !actor)
         return false;
 
-    iMeshWrapper* mesh = actor->Mesh();
+    csRef<iMeshWrapper> mesh = actor->GetMesh();
     if (!mesh) 
     {
         return false;

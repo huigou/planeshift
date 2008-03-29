@@ -192,7 +192,7 @@ private:
     void DefaultMesh(const char* part);
 
                
-    csRef<iMeshWrapper> mesh;                           // The mesh that is our base model.
+    csRef<iMeshWrapper> baseMesh;                           // The mesh that is our base model.
 
     csRef<iSpriteCal3DFactoryState>  stateFactory;      // The Cal3D factory object
     csRef<iSpriteCal3DState>    state;                  // The Cal3D sprite state

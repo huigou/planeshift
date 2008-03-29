@@ -710,7 +710,7 @@ void psUserCommands::UpdateTarget(SearchDirection searchDirection,
     GEMClientObject* myEntity = cel->GetMainPlayer();
     
     
-    iMeshWrapper* myMesh = myEntity->Mesh();        
+    csRef<iMeshWrapper> myMesh = myEntity->GetMesh();        
     iMovable* myMov = myMesh->GetMovable();
     csVector3 myPos = myMov->GetPosition();
 
@@ -718,7 +718,7 @@ void psUserCommands::UpdateTarget(SearchDirection searchDirection,
     csVector3 sePos;
     if (startingEntity != NULL)
     {
-        iMeshWrapper* seMesh = startingEntity->Mesh();
+        csRef<iMeshWrapper> seMesh = startingEntity->GetMesh();
         sePos = seMesh->GetMovable()->GetPosition();
         seDistance = csSquaredDist::PointPoint(myPos, sePos);
     }
@@ -771,7 +771,7 @@ void psUserCommands::UpdateTarget(SearchDirection searchDirection,
             || (entityType == PSENTITYTYPE_ITEM && eType != -2))
             continue;
 
-        iMeshWrapper* mesh = object->Mesh();
+        csRef<iMeshWrapper> mesh = object->GetMesh();
         csVector3 pos = mesh->GetMovable()->GetPosition();
 
         // Calculate the squared distance, update if we found a better one.
@@ -823,7 +823,7 @@ GEMClientObject* psUserCommands::FindEntityWithName(const char *name)
     psCelClient* cel = psengine->GetCelClient();
 
     GEMClientObject* myEntity = cel->GetMainPlayer();
-    iMeshWrapper* myMesh = myEntity->Mesh();        
+    csRef<iMeshWrapper> myMesh = myEntity->GetMesh();        
     iMovable* myMov = myMesh->GetMovable();
     csVector3 myPos = myMov->GetPosition();
 
