@@ -1,3 +1,6 @@
+*** 2008-03-30 by Andrew Dai
+- Fixed crash when attempting to buy a faction skill.
+
 *** 2008-03-29 by Mike Gist
 - Renamed mesh to baseMesh in psCharAppearance.
 - Changed overloaded Mesh() function in GEMClientObject to be GetMesh() and

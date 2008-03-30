@@ -648,6 +648,12 @@ void pawsSkillWindow::BuyMaxSkill()
     }
 
     uint skillId = psengine->FindCommonStringId(selectedSkill);
+    if (skillId == csInvalidStringID)
+    {
+        PawsManager::GetSingleton().CreateWarningBox("You have to select a skill to buy."); 
+        return;
+    }
+    
     psSkillCacheItem* currSkill = skillCache.getItemBySkillId(skillId);
     unsigned short possibleTraining = currSkill->getKnowledgeCost() - currSkill->getKnowledge();
 
@@ -669,6 +675,11 @@ void pawsSkillWindow::BuySkill()
     }
 
     uint skillId = psengine->FindCommonStringId(selectedSkill);
+    if (skillId == csInvalidStringID)
+    {
+        PawsManager::GetSingleton().CreateWarningBox("You have to select a skill to buy."); 
+        return;
+    }
     psSkillCacheItem* currSkill = skillCache.getItemBySkillId(skillId);
     unsigned short possibleTraining = currSkill->getKnowledgeCost() - currSkill->getKnowledge();
 
