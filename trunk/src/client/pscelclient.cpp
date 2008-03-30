@@ -503,7 +503,7 @@ void psCelClient::HandleItemEffect( const char* factName, csRef<iMeshWrapper> mw
             Error2("Error loading effect for item %s. iMeshWrapper is null.\n", factName);
         }
 
-        for(int i=0; i<ie->lights.GetSize(); i++)
+        for(size_t i=0; i<ie->lights.GetSize(); i++)
         {
             Light* l = ie->lights.Get(i);
             csRef<iLight> light = psengine->GetEngine()->CreateLight(factName,
@@ -513,13 +513,13 @@ void psCelClient::HandleItemEffect( const char* factName, csRef<iMeshWrapper> mw
             light->Setup();
         }
 
-        for(int i=0; i<ie->effects.GetSize(); i++)
+        for(size_t i=0; i<ie->effects.GetSize(); i++)
         {
             Effect* e = ie->effects.Get(i);
             int id = psengine->GetEffectManager()->RenderEffect(e->effectname, e->effectoffset, mw);
             if(!id)
             {
-              printf("Failed to load effect %s on item %s!\n", e->effectname, factName);
+              printf("Failed to load effect %s on item %s!\n", e->effectname.GetData(), factName);
             }
         }
     }
