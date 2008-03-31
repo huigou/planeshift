@@ -1,3 +1,6 @@
+*** 2008-03-31 by Mike Gist
+- Fixed effects on equipped items not being removed with those items.
+
 *** 2008-03-31 by Andrew Dai
 - Fixed #1337, patch by Steven Schwartfeger.
 - Fixed the autorun bug.

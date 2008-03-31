@@ -468,6 +468,7 @@ void pawsCharacterPickerWindow::SelectCharacter(int character)
             PawsManager::GetSingleton().CreateWarningBox("Couldn't find mesh! Please run the updater");
             return;
         }
+        charApp->ClearEquipment();
         charApp->SetMesh(mesh);
 
         csRef<iSpriteCal3DState> spstate =
@@ -552,6 +553,7 @@ void pawsCharacterPickerWindow::SelectCharacter(int character, pawsWidget* widge
         csString traits(models[selectedCharacter].traits);
         csString equipment( models[selectedCharacter].equipment );
         
+        charApp->ClearEquipment();
         charApp->SetMesh(view->GetObject());                    
         charApp->ApplyTraits(traits);            
         charApp->ApplyEquipment(equipment);

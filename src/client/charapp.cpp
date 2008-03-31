@@ -357,7 +357,7 @@ void psCharAppearance::Equip( csString& slotname,
     // Set up item effect if there is one.
     if(state->FindSocket(slotname))
     {
-        psengine->GetCelClient()->HandleItemEffect(mesh, state->FindSocket(slotname)->GetMeshWrapper(), false);
+        psengine->GetCelClient()->HandleItemEffect(mesh, state->FindSocket(slotname)->GetMeshWrapper(), false, slotname, &effectids);
     }
     
     // This is a subMesh on the model change so change the mesh for that part.
@@ -405,7 +405,6 @@ bool psCharAppearance::Dequip(csString& slotname,
         DefaultMesh(part); 
     }
 
-    
     if ( part.Length() )
     {
         if ( texture.Length() )
@@ -418,6 +417,8 @@ bool psCharAppearance::Dequip(csString& slotname,
         }            
         DefaultMaterial(part);
     }
+
+    ClearEquipment(slotname);
 
     return true;
 }
@@ -719,13 +720,26 @@ void psCharAppearance::DefaultMaterial(csString& part)
 }
 
 
-void psCharAppearance::ClearEquipment()
+void psCharAppearance::ClearEquipment(const char* slot)
 {
+    if(slot)
+    {
+        psengine->GetEffectManager()->DeleteEffect(effectids.Get(slot, 0));
+        return;
+    }
+
     csArray<csString> deleteList = usedSlots;
     
     for ( size_t z = 0; z < deleteList.GetSize(); z++ )    
     {
         Detach(deleteList[z]);
+    }
+
+    csHash<int, csString>::GlobalIterator itr = effectids.GetIterator();
+    while(itr.HasNext())
+    {
+        psengine->GetEffectManager()->DeleteEffect(itr.Next());
+        //effectids.DeleteElement(itr); -- Bugged in CS! :x
     }
 }
 
@@ -772,4 +786,5 @@ void psCharAppearance::Clone(psCharAppearance* clone)
     this->skinToneSet   = clone->skinToneSet;   
     this->hairAttached  = clone->hairAttached;
     this->colorSet      = clone->colorSet;
+    this->effectids     = clone->effectids;
 }
