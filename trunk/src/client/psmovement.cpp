@@ -490,7 +490,6 @@ void psMovementManager::StopAllMovement()
     // Halt actor
     linearMove->SetVelocity(0);
     linearMove->SetAngularVelocity(0);
-    linearMove->ClearWorldVelocity();
     actor->SetAnimationVelocity(0);
 
     // Remove run-to effect
