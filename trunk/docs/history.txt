@@ -1,3 +1,6 @@
+*** 2008-03-31 by Andrew Dai
+- Fixed #1337, patch by Steven Schwartfeger.
+
 *** 2008-03-30 by Andrew Dai
 - Fixed crash when attempting to buy a faction skill.
 

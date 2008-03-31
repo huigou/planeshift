@@ -34,6 +34,8 @@
 #include "util/mathscript.h"
 #include "util/serverconsole.h"
 
+#include "engine/psworld.h"
+
 #include "bulkobjects/psitem.h"
 
 //=============================================================================
@@ -945,13 +947,15 @@ bool psCombatManager::ValidDistance(gemObject *attacker,gemObject *target,psItem
 bool psCombatManager::ValidCombatAngle(gemObject *attacker,gemObject *target,psItem *Weapon)
 {
     csVector3 attackPos, targetPos;
-    iSector *sector;
+    iSector *attackSector, *targetSector;
 
     if (attacker->GetNPCPtr())
         return true;  // We don't check this for npc's because they are too stupid
 
-    attacker->GetPosition(attackPos,sector);
-    target->GetPosition(targetPos,sector);
+    attacker->GetPosition(attackPos, attackSector);
+    target->GetPosition(targetPos, targetSector);
+
+    EntityManager::GetSingleton().GetWorld()->WarpSpace(targetSector, attackSector, targetPos);
 
     csVector3 diff = targetPos - attackPos;
     if (!diff.x)
