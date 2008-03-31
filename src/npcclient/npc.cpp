@@ -363,7 +363,10 @@ void NPC::DumpState()
     float rot;
     int instance = -1;
 
-    psGameObject::GetPosition(entity,loc,rot,sector);
+    if (entity)
+    {
+        psGameObject::GetPosition(entity,loc,rot,sector);
+    }
     if (npcActor)
     {
         instance = npcActor->GetInstance();
@@ -371,7 +374,7 @@ void NPC::DumpState()
 
     CPrintf(CON_CMDOUTPUT, "States for %s (PID: %u)\n",name.GetData(),pid);
     CPrintf(CON_CMDOUTPUT, "---------------------------------------------\n");
-    CPrintf(CON_CMDOUTPUT, "Position:            %s\n",toString(loc,sector).GetDataSafe());
+    CPrintf(CON_CMDOUTPUT, "Position:            %s\n",entity?toString(loc,sector).GetDataSafe():"(none)");
     CPrintf(CON_CMDOUTPUT, "Rotation:            %.2f\n",rot);
     CPrintf(CON_CMDOUTPUT, "Instance:            %d\n",instance);
     CPrintf(CON_CMDOUTPUT, "Debugging:           %d\n",debugging);

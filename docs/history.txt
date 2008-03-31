@@ -1,3 +1,7 @@
+*** 2008-03-31 by Anders Reggestad
+- Fixed a crash case where a null pointer where used in DumpNPC if no
+  entity where connected.
+
 *** 2008-03-31 by Mike Gist
 - Fixed effects on equipped items not being removed with those items.
 
