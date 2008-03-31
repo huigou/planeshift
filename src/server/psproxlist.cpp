@@ -439,7 +439,6 @@ float ProximityList::RangeTo( gemObject* object, bool ignoreY )
     csVector3 pos1;
     csVector3 pos2;
     iSector *sector1,*sector2;
-    int offset = 0;
 
     object->GetPosition(pos1,sector1);
 
@@ -457,22 +456,16 @@ float ProximityList::RangeTo( gemObject* object, bool ignoreY )
     csRef<iRegion> region = scfQueryInterface<iRegion> (sector1->QueryObject ()->GetObjectParent ());
     csRef<iRegion> region2 = scfQueryInterface<iRegion> (sector2->QueryObject ()->GetObjectParent ());
 
-    // Penalty for being in different regions
-    if(region != region2)
-    {
-        offset = 50;
-    }
-
     if ( ignoreY )
     {
         return ( sqrt(  (pos1.x - pos2.x)*(pos1.x - pos2.x)+
-                    (pos1.z - pos2.z)*(pos1.z - pos2.z)) + offset);
+                    (pos1.z - pos2.z)*(pos1.z - pos2.z)));
     }
     else
     {
         return ( sqrt(  (pos1.x - pos2.x)*(pos1.x - pos2.x)+
                     (pos1.y - pos2.y)*(pos1.y - pos2.y)+
-                    (pos1.z - pos2.z)*(pos1.z - pos2.z)) + offset);
+                    (pos1.z - pos2.z)*(pos1.z - pos2.z)));
     }
 }
 
