@@ -647,7 +647,7 @@ void pawsSkillWindow::BuyMaxSkill()
         return;
     }
 
-    uint skillId = psengine->FindCommonStringId(selectedSkill);
+    csStringID skillId = psengine->FindCommonStringId(selectedSkill);
     if (skillId == csInvalidStringID)
     {
         PawsManager::GetSingleton().CreateWarningBox("You have to select a skill to buy."); 
@@ -674,7 +674,7 @@ void pawsSkillWindow::BuySkill()
         return;
     }
 
-    uint skillId = psengine->FindCommonStringId(selectedSkill);
+    csStringID skillId = psengine->FindCommonStringId(selectedSkill);
     if (skillId == csInvalidStringID)
     {
         PawsManager::GetSingleton().CreateWarningBox("You have to select a skill to buy."); 
