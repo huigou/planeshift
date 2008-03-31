@@ -160,7 +160,7 @@ public:
     GEMClientActor* GetMainPlayer() { return local_player; }
 
     /* Check if the item has an effect attached to it and process it if so. */
-    void HandleItemEffect( const char* factName, csRef<iMeshWrapper> mw, bool onGround = true );
+    void HandleItemEffect( const char* factName, csRef<iMeshWrapper> mw, bool onGround = true, const char* slot = 0, csHash<int, csString> *effectids = 0 );
 
     /** Caled when new world maps were loaded
         CelClient looks for GEM Objects which have sectors with unknown name and checks if this name is known now */

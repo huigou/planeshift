@@ -639,11 +639,9 @@ void psSpellManager::HandleSpellCastEvent(psSpellCastGameEvent *event)
 
 void psSpellManager::HandleSpellAffectEvent( psSpellAffectGameEvent *event )
 { 
-//    printf("KAYDEN: psSpellManager::HandleSpellAffectEvent\n");
     // Since we just came in from an event, make sure target is still alive.
     if ( event->target->IsAlive() || event->inverse )
     {
-//        printf("KAYDEN: SpellMan::HdlSplAftEvt calling perform result with inverse = %s\n", event->inverse ? "yes" : "no");
         event->spell->PerformResult( event->caster->GetActor(), event->target, event->max_range, event->saved, event->powerLevel, event->inverse);
     }
 

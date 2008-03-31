@@ -488,7 +488,7 @@ void psCelClient::LoadEffectItems()
     }
 }
 
-void psCelClient::HandleItemEffect( const char* factName, csRef<iMeshWrapper> mw, bool onGround )
+void psCelClient::HandleItemEffect( const char* factName, csRef<iMeshWrapper> mw, bool onGround, const char* slot, csHash<int, csString> *effectids )
 {
     ItemEffect* ie = effectItems.Get(factName, 0);
     if(ie)
@@ -520,6 +520,10 @@ void psCelClient::HandleItemEffect( const char* factName, csRef<iMeshWrapper> mw
             if(!id)
             {
               printf("Failed to load effect %s on item %s!\n", e->effectname.GetData(), factName);
+            }
+            else if(slot && effectids)
+            {
+                effectids->PutUnique(slot, id);
             }
         }
     }

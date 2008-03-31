@@ -127,7 +127,7 @@ public:
     
     
     /** Clears the equipment on a mesh. */
-    void ClearEquipment();
+    void ClearEquipment(const char* slot = NULL);
     
 private:
     /** Parse a string from it's parts into a proper string.
@@ -221,7 +221,8 @@ private:
     csString faceMaterial;                              // Default face materail.
     csArray<SkinToneSet> skinToneSet;                   // Default skin colours. 
     
-    csArray<csString> usedSlots;                        // Slots that have been used. 
+    csArray<csString> usedSlots;                        // Slots that have been used.
+    csHash<int, csString> effectids;                    // Array of effects that are in use.
 };
 
 #endif
