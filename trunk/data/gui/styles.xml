@@ -95,7 +95,6 @@
 
     <style name="listbox">
         <frame border="no" margin="5"/>
-        <bgimage resource="Standard Background" alpha="128" />
         <highlight resource="Grey Background" alpha="128" />
         <childborders>
             <colour r="0" g="0" b="0" />
