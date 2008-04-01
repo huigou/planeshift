@@ -415,12 +415,15 @@ void NPC::DumpHateList()
     iSector *sector=NULL;
     csVector3 pos;
     float yrot;
-    psGameObject::GetPosition(entity,pos,yrot,sector);
 
     CPrintf(CON_CMDOUTPUT, "Hate list for %s (PID: %u)\n",name.GetData(),pid );
     CPrintf(CON_CMDOUTPUT, "---------------------------------------------\n");
 
-    hatelist.DumpHateList(pos,sector);
+    if (entity)
+    {
+        psGameObject::GetPosition(entity,pos,yrot,sector);
+        hatelist.DumpHateList(pos,sector);
+    }
 }
 
 void NPC::ClearState()
