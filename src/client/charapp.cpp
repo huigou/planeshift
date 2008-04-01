@@ -725,6 +725,7 @@ void psCharAppearance::ClearEquipment(const char* slot)
     if(slot)
     {
         psengine->GetEffectManager()->DeleteEffect(effectids.Get(slot, 0));
+        effectids.DeleteAll(slot);
         return;
     }
 
@@ -739,8 +740,8 @@ void psCharAppearance::ClearEquipment(const char* slot)
     while(itr.HasNext())
     {
         psengine->GetEffectManager()->DeleteEffect(itr.Next());
-        //effectids.DeleteElement(itr); -- Bugged in CS! :x
     }
+    effectids.Empty();
 }
 
 
