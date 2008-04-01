@@ -1,3 +1,6 @@
+*** 2008-04-01 by Anders Reggestad
+- Another crash candidate fixed by Vornne
+
 *** 2008-03-31 by Anders Reggestad
 - Fixed a crash case where a null pointer where used in DumpNPC if no
   entity where connected.
