@@ -282,6 +282,10 @@ void UserManager::HandleUserCommand(MsgEntry *me,Client *client)
             anim.Multicast( client->GetActor()->GetMulticastClients(),0,PROX_LIST_ANY_RANGE );
             Emote("%s stands up.", "%s stands up.", "stand", me, client);
         }
+        else if (client->GetActor()->GetMode() == PSCHARACTER_MODE_OVERWEIGHT)
+        {
+        	psserver->SendSystemError(client->GetClientNum(), "You can't stand up because you're overloaded!");
+        }
     }
     else if (msg.command == "/starttrading")
     {
