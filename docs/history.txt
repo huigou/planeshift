@@ -1,5 +1,7 @@
 *** 2008-04-02 by Andrew Dai
 - Fixed #1372, patch by peeg.
+- Removed the requirement for the /admin command, patch by Steve
+  Schwartfeger for #724.
 
 *** 2008-04-01 by Anders Reggestad
 - Another crash candidate fixed by Vornne

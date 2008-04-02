@@ -92,16 +92,24 @@ void psAdminCommands::HandleMessage(MsgEntry *me)
     {        
         psAdminCmdMessage msg(me);
 
-        if( !msg.cmd)
+        pawsChatWindow* chat = static_cast<pawsChatWindow*>(PawsManager::GetSingleton().FindWidget("ChatWindow"));
+
+        if( !msg.cmd )
         {
-            psSystemMessage sysMsg( 0, MSG_INFO, "You lack administrator access" );
-            msgqueue->Publish( sysMsg.msg );
+            if ( chat )
+            {
+                psSystemMessage sysMsg( 0, MSG_INFO, "You lack administrator access" );
+                msgqueue->Publish( sysMsg.msg );
+            }
+
             return;
         }
 
-        psSystemMessage sysMsg( 0, MSG_INFO, "You now have the following admin commands available:" );
-        msgqueue->Publish( sysMsg.msg );
-
+        if ( chat )
+        {
+            psSystemMessage sysMsg( 0, MSG_INFO, "You now have the following admin commands available:" );
+            msgqueue->Publish( sysMsg.msg );
+        }
         
         iDocumentSystem* xml = psengine->GetXMLParser ();
         csRef<iDocument> doc = xml->CreateDocument();
@@ -125,12 +133,14 @@ void psAdminCommands::HandleMessage(MsgEntry *me)
                 cmdsource->Subscribe( cmdString, this );
             }
             
-            psSystemMessage commandMsg( 0, MSG_INFO, commands.GetData() );
-            msgqueue->Publish( commandMsg.msg );
+            if ( chat )
+            {
+                psSystemMessage commandMsg( 0, MSG_INFO, commands.GetData() );
+                msgqueue->Publish( commandMsg.msg );
 
-            // Update the auto-complete list
-            pawsChatWindow* chat = static_cast<pawsChatWindow*>(PawsManager::GetSingleton().FindWidget("ChatWindow"));
-            chat->RefreshCommandList();
+                // Update the auto-complete list
+                chat->RefreshCommandList();
+            }
         }            
     }
 }

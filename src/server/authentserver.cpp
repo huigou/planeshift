@@ -526,6 +526,11 @@ void psAuthenticationServer::HandleAuthent(MsgEntry *me)
     client->SetAdvisorPoints(acctinfo->advisorPoints);
     client->SetSecurityLevel(acctinfo->securitylevel);
 
+    if (acctinfo->securitylevel >= GM_TESTER)
+    {
+        psserver->GetAdminManager()->Admin(client->GetPlayerID(), me->clientnum, client);
+    }
+
     psserver->GetWeatherManager()->SendClientGameTime(me->clientnum);
 
     if(csGetTicks() - start > 500)
