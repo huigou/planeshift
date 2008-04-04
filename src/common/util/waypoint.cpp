@@ -162,11 +162,37 @@ void Waypoint::AddLink(psPath * path, Waypoint * wp, psPath::Direction direction
     prevent_wander.Push(path->noWander);
 }
 
+void Waypoint::RemoveLink(psPath * path)
+{
+    size_t index = paths.Find(path);
+    if (index != csArrayItemNotFound)
+    {
+        links.DeleteIndexFast(index);
+        paths.DeleteIndexFast(index);
+        pathDir.DeleteIndexFast(index);
+        dists.DeleteIndexFast(index);
+        prevent_wander.DeleteIndexFast(index);
+    }
+}
+
+
 void Waypoint::AddAlias(csString alias)
 {
     aliases.Push(alias);
 }
 
+void Waypoint::RemoveAlias(csString alias)
+{
+    // Check for aliases
+    for (size_t i = 0; i < aliases.GetSize(); i++)
+    {
+        if (strcasecmp(aliases[i],alias)==0)
+        {
+            aliases.DeleteIndexFast(i);
+            return;
+        }
+    }
+}
 
 void Waypoint::SetFlags(const csString & flagstr)
 {
@@ -226,6 +252,25 @@ csString Waypoint::GetFlags()
         added = true;
     }
     return flagStr;
+}
+
+bool Waypoint::Rename(iDataConnection * db,const char* name)
+{
+    int res =db->Command("update sc_waypoints set name='%s' where id=%d",
+                         name,GetID());
+    if (res != 1)
+    {
+        return false;
+    } 
+   
+    Rename(name);
+
+    return true;
+}
+
+void Waypoint::Rename(const char* name)
+{
+    loc.name = name;
 }
 
 csString Waypoint::GetAliases()
@@ -294,6 +339,18 @@ bool Waypoint::CreateAlias(iDataConnection * db, csString alias)
     return true;
 }
 
+bool Waypoint::RemoveAlias(iDataConnection * db, csString alias)
+{
+    int res =db->Command("delete from sc_waypoint_aliases where wp_id='%d' and alias='%s'",
+                         GetID(),alias.GetDataSafe());
+    if (res != 1)
+    {
+        return false;
+    }
+    
+    RemoveAlias(alias);
+    return true;
+}
 
 bool Waypoint::Adjust(iDataConnection * db, csVector3 & pos, csString sector)
 {
@@ -304,6 +361,12 @@ bool Waypoint::Adjust(iDataConnection * db, csVector3 & pos, csString sector)
     loc.pos = pos;
     loc.sectorName = sector;
     loc.sector = NULL;
+
+    for (size_t i=0; i<paths.GetSize(); i++)
+    {
+        psPathPoint * pp = paths[i]->GetStartPoint(pathDir[i]);
+        pp->Adjust(pos,sector);
+    }
 
     return (result == 1);
 }

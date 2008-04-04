@@ -66,7 +66,10 @@ void gemNPCObject::Move(const csVector3& pos, float rotangle,  const char* room)
     // Position and sector
     iSector* sector = engine->FindSector(room);
     if ( sector == NULL )
-        CPrintf(CON_DEBUG, "Sector %s not found!\n", room);
+    {
+        CPrintf(CON_DEBUG, "Can't move npc object %d. Sector %s not found!\n", GetID(),room);
+        return;
+    }
     pcmesh->MoveMesh( sector , pos );
 
     // Rotation

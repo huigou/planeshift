@@ -112,6 +112,15 @@ bool psPathPoint::Adjust(iDataConnection * db, csVector3 & pos, csString sector)
 
 }
 
+bool psPathPoint::Adjust(csVector3 & pos, csString sector)
+{
+    this->pos = pos;
+    this->sectorName = sector;
+    this->sector = NULL;
+
+    return true;
+}
+
 
 //---------------------------------------------------------------------------
 
@@ -127,6 +136,27 @@ psPath::psPath(int pathID, csString name, psString flagStr)
     :id(pathID),name(name),start(NULL),end(NULL),oneWay(false),noWander(false),precalculationValid(false)
 {
     SetFlags(flagStr);
+}
+
+psPath::~psPath()
+{
+    if (start)
+    {
+        start->RemoveLink(this);
+        start = NULL;
+    }
+    if (end)
+    {
+        end->RemoveLink(this);
+        end = NULL;
+    }
+    for (size_t i = 0; i < points.GetSize(); i++)
+    {
+        psPathPoint * pp = points[i];
+        points[i] = NULL;
+        delete pp;
+    }
+    points.DeleteAll();
 }
 
 void psPath::AddPoint(Location * loc, bool first)
@@ -210,10 +240,11 @@ float DistancePointLine(const csVector3 &p, const csVector3 &l1, const csVector3
     return sqrt(csSquaredDist::PointLine(p,l1,l2));
 }
 
-float psPath::Distance(psWorld * world, iEngine *engine,csVector3& pos, iSector * sector, int * index)
+float psPath::Distance(psWorld * world, iEngine *engine,csVector3& pos, iSector * sector, int * index, float * fraction)
 {
     float dist = -1.0;
     int idx = -1;
+    float fract = 0.0;
     for (size_t i = 0; i < points.GetSize()-1; i++)
     {
         csVector3 l1(points[i]->pos);
@@ -229,6 +260,7 @@ float psPath::Distance(psWorld * world, iEngine *engine,csVector3& pos, iSector 
         {
             dist = d;
             idx = (int)i;
+            fract = t;
         }
     }
     if (dist >= 0.0)
@@ -237,18 +269,30 @@ float psPath::Distance(psWorld * world, iEngine *engine,csVector3& pos, iSector 
         {
             *index = idx;
         }
+        if (fraction)
+        {
+            *fraction = fract;
+        }
     }
     return dist;
 }
 
-/* Old simple version only using dist from pathpoints.
-float psPath::Distance(psWorld * world, iEngine *engine,csVector3& pos, iSector * sector, int * index)
+float psPath::DistancePoint(psWorld * world, iEngine *engine,csVector3& pos, iSector * sector, int * index, bool include_ends)
 {
     float dist = -1.0;
     int idx = -1;
-    for (size_t i = 0; i < points.GetSize(); i++)
+    size_t start = 0;
+    size_t end = points.GetSize();
+    if (!include_ends)
     {
-        float d = world->Distance(pos,sector,points[i]->pos,points[i]->GetSector(engine));
+        start++;
+        if (end > 0) end--;
+    }
+    
+    for (size_t i = start; i < end; i++)
+    {
+        float d = world->Distance(pos, sector, points[i]->pos, points[i]->GetSector(engine));
+        
         if (dist < 0 || d < dist)
         {
             dist = d;
@@ -264,18 +308,34 @@ float psPath::Distance(psWorld * world, iEngine *engine,csVector3& pos, iSector 
     }
     return dist;
 }
-*/
-                               
-csVector3 psPath::GetEndPos(Direction direction)
+
+psPathPoint* psPath::GetStartPoint(Direction direction)
 {
     if (direction == FORWARD)
     {
-        return points[points.GetSize()-1]->pos;
+        return points[0];
     }
     else
     {
-        return points[0]->pos;
+        return points[points.GetSize()-1];
     }
+}
+
+psPathPoint* psPath::GetEndPoint(Direction direction)
+{
+    if (direction == FORWARD)
+    {
+        return points[points.GetSize()-1];
+    }
+    else
+    {
+        return points[0];
+    }
+}
+
+csVector3 psPath::GetEndPos(Direction direction)
+{
+    return GetEndPoint(direction)->pos;
 }
 
 float psPath::GetEndRot(Direction direction)
@@ -292,14 +352,7 @@ float psPath::GetEndRot(Direction direction)
 
 iSector* psPath::GetEndSector(iEngine * engine, Direction direction)
 {
-    if (direction == FORWARD)
-    {
-        return points[points.GetSize()-1]->GetSector(engine);
-    }
-    else
-    {
-        return points[0]->GetSector(engine);
-    }
+    return GetEndPoint(direction)->GetSector(engine);
 }
 
 psPathAnchor* psPath::CreatePathAnchor()
@@ -307,10 +360,36 @@ psPathAnchor* psPath::CreatePathAnchor()
     return new psPathAnchor(this);
 }
 
+bool psPath::Rename(iDataConnection * db,const char* name)
+{
+    int res =db->Command("update sc_waypoint_links set name='%s' where id=%d",
+                         name,GetID());
+    if (res != 1)
+    {
+        return false;
+    } 
+   
+    Rename(name);
+
+    return true;
+}
+
+void psPath::Rename(const char* name)
+{
+    this->name = name;
+}
+
 float psPath::GetLength(psWorld * world, iEngine *engine)
 { 
     Precalculate(world,engine);
     return totalDistance;
+}
+
+float psPath::GetLength(psWorld * world, iEngine *engine, int index)
+{ 
+    Precalculate(world,engine);
+
+    return points[index+1]->startDistance[FORWARD] - points[index]->startDistance[FORWARD];
 }
 
 
@@ -411,6 +490,12 @@ bool psPath::Create(iDataConnection * db)
 
 bool psPath::Adjust(iDataConnection * db, int index, csVector3 & pos, csString sector)
 {
+    // First and last point is a placeholder for the waypoint only update the position.
+    if (index == 0 || index == (int)points.GetSize()-1)
+    {
+        return points[index]->Adjust(pos,sector);
+    }
+    
     return points[index]->Adjust(db,pos,sector);
 }
 

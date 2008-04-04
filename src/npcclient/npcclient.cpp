@@ -942,12 +942,18 @@ bool psNPCClient::LoadMap(const char* mapfile)
 
     if (first)
     {
-        world->CreateMap(mapfile, mapfile, psWorld::LOAD_NOW );
+        if (!world->CreateMap(mapfile, mapfile, psWorld::LOAD_NOW ))
+        {
+            return false;
+        }
         first = false;
     }
     else
     {        
-        world->NewRegion(mapfile, psWorld::LOAD_NOW);
+        if (!world->NewRegion(mapfile, psWorld::LOAD_NOW))
+        {
+            return false;
+        }
     }
     return true;
 }

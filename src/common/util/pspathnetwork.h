@@ -94,10 +94,16 @@ public:
     int FindWaypointGroup(const char * groupName);
     
     /**
-     * Find the path nearest to a point in the world in the given group.
+     * Find the path nearest to a point in the world.
      * @ param Set an maximum range for points to considere.
      */
-    psPath *FindNearestPath(csVector3& v, iSector *sector, float range, float * found_range = NULL, int * index = NULL);
+    psPath *FindNearestPath(csVector3& v, iSector *sector, float range, float * found_range = NULL, int * index = NULL, float * fraction = NULL);
+    
+    /**
+     * Find the point nearest to a point in the world
+     * @ param Set an maximum range for points to considere.
+     */
+    psPath *FindNearestPoint(csVector3& v, iSector *sector, float range, float * found_range = NULL, int * index = NULL);
     
     /**
      * Find the shortest route between waypoint start and stop.

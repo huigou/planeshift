@@ -128,7 +128,7 @@ protected:
         int rainDrops, density, fade;
         unsigned int mins, hours, days;
         float amt, x, y, z, rot;
-        bool uniqueName,help;
+        bool uniqueName,help,insert;
         float radius, range;
         unsigned short stackCount;
         INSTANCE_ID instance;
@@ -213,6 +213,12 @@ protected:
 
     /// Add new Path point to DB
     int PathPointCreate(int pathID, int prevPointId, csVector3& pos, csString& sectorName);
+
+    /// Lookup path information close to a point
+    void FindPath(csVector3 & pos, iSector * sector, float radius, 
+                  Waypoint** wp, float *rangeWP,
+                  psPath ** path, float *rangePath, int *indexPath, float *fraction,
+                  psPath ** pointPath, float *rangePoint, int *indexPoint);
     
     /// Handle online path editing.
     void HandlePath( MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data, Client *client );

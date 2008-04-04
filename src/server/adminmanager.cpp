@@ -610,7 +610,21 @@ bool AdminManager::AdminCmdData::DecodeAdminCmdMessage(MsgEntry *pMsg, psAdminCm
         }
         else if (subCmd == "alias")
         {
-            wp1 = words[2];    // Format
+            if (words[2] == "add")
+            {
+                insert = true;
+                wp1 = words[3]; // Alias name
+            } else if (words[2] == "remove")
+            {
+                insert = false;
+                wp1 = words[3]; // Alias name
+            }
+            else
+            {
+                insert = true;
+                wp1 = words[2]; // Alias name
+            }
+            
             if (wp1.IsEmpty())
             {
                 help = true;
@@ -654,6 +668,33 @@ bool AdminManager::AdminCmdData::DecodeAdminCmdMessage(MsgEntry *pMsg, psAdminCm
         else if (subCmd == "point")
         {
             // No params
+        }
+        else if (subCmd == "remove")
+        {
+            radius = words.GetFloat(2);
+            if (radius == 0.0)
+            {
+                radius = defaultRadius;
+            }
+        }
+        else if (subCmd == "rename")
+        {
+            radius = words.GetFloat(2);
+            if (radius == 0)
+            {
+                radius = defaultRadius;
+                // Assumre no radius if 0, so the rest is the new name
+                wp1 = words[2];
+            }
+            else
+            {
+                wp1 = words[3];
+            }
+            
+            if (wp1.IsEmpty())
+            {
+                help = true;
+            }
         }
         else if (subCmd == "start")
         {
@@ -2415,10 +2456,42 @@ int AdminManager::PathPointCreate(int pathID, int prevPointId, csVector3& pos, c
     return id;
 }
 
+void AdminManager::FindPath(csVector3 & pos, iSector * sector, float radius, 
+                            Waypoint** wp, float *rangeWP,
+                            psPath ** path, float *rangePath, int *indexPath, float *fraction,
+                            psPath ** pointPath, float *rangePoint, int *indexPoint)
+{
+
+    if (wp)
+    {
+        *wp = pathNetwork->FindNearestWaypoint(pos,sector,radius,rangeWP);
+    }
+    if (path)
+    {
+        *path = pathNetwork->FindNearestPath(pos,sector,radius,rangePath,indexPath,fraction);        
+    }
+    if (pointPath)
+    {
+        *pointPath = pathNetwork->FindNearestPoint(pos,sector,radius,rangePoint,indexPoint);
+    }
+    // If both wp and point only return the one the nearest
+    if (wp && pointPath && *wp && *pointPath)
+    {
+        if (*rangeWP < *rangePoint)
+        {
+            *pointPath = NULL;
+        }
+        else
+        {
+            *wp = NULL;
+        }
+    }
+}
+                            
 void AdminManager::HandlePath(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data, Client *client)
 {
     const char* usage         = "/path adjust|alias|display|format|help|hide|info|point|start|stop [options]";
-    const char* usage_alias   = "/path alias <alias>";
+    const char* usage_alias   = "/path alias [*add|remove]<alias>";
     const char* usage_adjust  = "/path adjust [<radius>]";
     const char* usage_display = "/path display|show ['points'|'waypoints']";
     const char* usage_format  = "/path format <format> [first]";
@@ -2426,6 +2499,8 @@ void AdminManager::HandlePath(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
     const char* usage_hide    = "/path hide ['points'|'waypoints']";
     const char* usage_info    = "/path info";
     const char* usage_point   = "/path point";
+    const char* usage_remove  = "/path remove [<radius>]";
+    const char* usage_rename  = "/path rename [<radius>] <name>";
     const char* usage_select  = "/path select <radius>";
     const char* usage_split   = "/path split <radius> [wp flags]";
     const char* usage_start   = "/path start <radius> [wp flags] [path flags]";
@@ -2448,9 +2523,10 @@ void AdminManager::HandlePath(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
             psserver->SendSystemInfo( me->clientnum,"Usage: %s",usage);
         } else if (data.subCmd.IsEmpty())
         {
-            psserver->SendSystemInfo( me->clientnum,"Help on /point\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s",
+            psserver->SendSystemInfo( me->clientnum,"Help on /point\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n"
+                                      "%s\n%s\n%s\n%s\n%s",
                                       usage_adjust,usage_alias,usage_display,usage_format,
-                                      usage_help,usage_hide,usage_info,usage_point,
+                                      usage_help,usage_hide,usage_info,usage_point,usage_remove,usage_rename,
                                       usage_select,usage_split,usage_start,usage_stop);
         }
         else if (data.subCmd == "adjust")
@@ -2485,6 +2561,14 @@ void AdminManager::HandlePath(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
         {
             psserver->SendSystemInfo( me->clientnum,"Usage: %s",usage_point);
         }
+        else if (data.subCmd == "remove")
+        {
+            psserver->SendSystemInfo( me->clientnum,"Usage: %s",usage_remove);
+        }
+        else if (data.subCmd == "rename")
+        {
+            psserver->SendSystemInfo( me->clientnum,"Usage: %s",usage_rename);
+        }
         else if (data.subCmd == "split")
         {
             psserver->SendSystemInfo( me->clientnum,"Usage: %s",usage_split);
@@ -2508,34 +2592,31 @@ void AdminManager::HandlePath(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
     }
     else if (data.subCmd == "adjust")
     {
-        float rangeWP,rangePath;
-        int index;
+        float rangeWP,rangePath,rangePoint,fraction;
+        int index,indexPoint;
         
+        Waypoint * wp = NULL;
+        psPath * path = NULL;
+        psPath * pathPoint = NULL;
 
-        Waypoint * wp = pathNetwork->FindNearestWaypoint(myPos,mySector,data.radius,&rangeWP);
-        psPath * path = pathNetwork->FindNearestPath(myPos,mySector,data.radius,&rangePath,&index);
-        if (!wp && !path)
+        FindPath(myPos,mySector,data.radius,
+                 &wp,&rangeWP,
+                 &path,&rangePath,&index,&fraction,
+                 &pathPoint,&rangePoint,&indexPoint);
+
+        psPathPoint * point = NULL;
+        if (pathPoint)
+        {
+            point = pathPoint->points[indexPoint];
+        }
+            
+        if (!wp && !pathPoint)
         {
             psserver->SendSystemInfo(me->clientnum, "No path point or waypoint in range of %.2f.",data.radius);
             return;
         }
 
-        if (path && (!wp || rangePath < rangeWP))
-        {
-            if (path->Adjust(db,index,myPos,mySectorName))
-            {
-                if (client->PathIsDisplaying())
-                {
-                    psEffectMessage msg(me->clientnum,"admin_path_point",myPos,0,0,client->PathGetEffectID());
-                    msg.SendMessage();
-                }
-                
-                psserver->SendSystemInfo(me->clientnum,
-                                         "Adjusted point %d of path %s(%d) at range %.2f",
-                                         index,path->GetName(),path->GetID(),rangePath);
-            }
-        }
-        else
+        if (wp)
         {
             if (wp->Adjust(db,myPos,mySectorName))
             {
@@ -2550,29 +2631,78 @@ void AdminManager::HandlePath(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
                                          wp->GetName(), wp->GetID(), rangeWP);
             }
         }
+        if (point)
+        {
+            if (pathPoint->Adjust(db,indexPoint,myPos,mySectorName))
+            {
+                if (client->PathIsDisplaying())
+                {
+                    psEffectMessage msg(me->clientnum,"admin_path_point",myPos,0,0,client->PathGetEffectID());
+                    msg.SendMessage();
+                }
+                
+                psserver->SendSystemInfo(me->clientnum,
+                                         "Adjusted point(%d) %d of path %s(%d) at range %.2f",
+                                         point->GetID(),indexPoint,path->GetName(),path->GetID(),rangePoint);
+            }
+        }
     }
     else if (data.subCmd == "alias")
     {
-        // Find waypoint to alias
-        Waypoint * wp = pathNetwork->FindNearestWaypoint(myPos,mySector,2.0);
-        if (!wp)
-        {
-            psserver->SendSystemError( me->clientnum, "No waypoint nearby.");
-            return;
-        }
+        float rangeWP,rangePoint;
+        int indexPoint;
+        
+        Waypoint * wp = NULL;
+        psPath * pathPoint = NULL;
 
-        // Check if alias is used before
-        Waypoint * existing = pathNetwork->FindWaypoint(data.wp1.GetDataSafe());
-        if (existing)
-        {
-            psserver->SendSystemError( me->clientnum, "Waypoint already exists with the name %s", data.wp1.GetDataSafe());
-            return;
-        }
+        FindPath(myPos,mySector,data.radius,
+                 &wp,&rangeWP,
+                 NULL,NULL,NULL,NULL,
+                 &pathPoint,&rangePoint,&indexPoint);
 
-        // Create the alias in db
-        wp->CreateAlias(db, data.wp1);
-        psserver->SendSystemInfo( me->clientnum, "Added alias %s to waypoint %s(%d)",
-                                  data.wp1.GetDataSafe(),wp->GetName(),wp->GetID());
+        if (data.insert)
+        {
+            if (!wp)
+            {
+                psserver->SendSystemError( me->clientnum, "No waypoint nearby.");
+                return;
+            }
+            
+            // Check if alias is used before
+            Waypoint * existing = pathNetwork->FindWaypoint(data.wp1.GetDataSafe());
+            if (existing)
+            {
+                psserver->SendSystemError( me->clientnum, "Waypoint already exists with the name %s", data.wp1.GetDataSafe());
+                return;
+            }
+            
+            // Create the alias in db
+            wp->CreateAlias(db, data.wp1);
+            psserver->SendSystemInfo( me->clientnum, "Added alias %s to waypoint %s(%d)",
+                                      data.wp1.GetDataSafe(),wp->GetName(),wp->GetID());
+        }
+        else
+        {
+            // Check if alias is used before
+            Waypoint * wp = pathNetwork->FindWaypoint(data.wp1.GetDataSafe());
+            if (!wp)
+            {
+                psserver->SendSystemError( me->clientnum, "No waypoint with %s as alias", data.wp1.GetDataSafe());
+                return;
+            }
+
+            if (strcasecmp(wp->GetName(), data.wp1.GetDataSafe())==0)
+            {
+                psserver->SendSystemError( me->clientnum, "Can't remove the name of the waypoint", data.wp1.GetDataSafe());
+                return;
+            }
+            
+            
+            // Remove the alias from db
+            wp->RemoveAlias(db, data.wp1);
+            psserver->SendSystemInfo( me->clientnum, "Removed alias %s from waypoint %s(%d)",
+                                      data.wp1.GetDataSafe(),wp->GetName(),wp->GetID());
+        }
     }
     else if (data.subCmd == "format")
     {
@@ -2672,6 +2802,25 @@ void AdminManager::HandlePath(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
         Waypoint * wp = pathNetwork->FindNearestWaypoint(myPos,mySector,2.0,&range);
         if (wp)
         {
+            // A path from a waypoint can't be used to anything unless it has a name
+            if (wp == path->start && path->GetName() == "")
+            {
+                psserver->SendSystemInfo( me->clientnum, "Can't create a path back to same waypoint %s(%d) at "
+                                          "range %.2f without name.",
+                                          wp->GetName(), wp->GetID(), range);
+                return;
+            }
+            
+            // A path returning to the same point dosn't seams to make any sence unless there is a serten
+            // number of path points.
+            if (wp == path->start &&  path->GetNumPoints() < 3)
+            {
+                psserver->SendSystemInfo( me->clientnum, "Can't create a path back to same waypoint %s(%d) at "
+                                          "range %.2f without more path points.",
+                                          wp->GetName(), wp->GetID(), range);
+                return;
+            }
+            
             psserver->SendSystemInfo( me->clientnum, "Stoping path using exsisting waypoint %s(%d) at range %.2f",
                                       wp->GetName(), wp->GetID(), range);
         } else
@@ -2772,19 +2921,30 @@ void AdminManager::HandlePath(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
     }
     else if (data.subCmd == "info")
     {
-        float rangeWP,rangePath;
-        int index;
+        float rangeWP,rangePath,rangePoint,fraction;
+        int index,indexPoint;
         
-        Waypoint * wp = pathNetwork->FindNearestWaypoint(myPos,mySector,data.radius,&rangeWP);
-        psPath * path = pathNetwork->FindNearestPath(myPos,mySector,data.radius,&rangePath,&index);
-        if (!wp && !path)
+        Waypoint * wp = NULL;
+        psPath * path = NULL;
+        psPath * pathPoint = NULL;
+
+        FindPath(myPos,mySector,data.radius,
+                 &wp,&rangeWP,
+                 &path,&rangePath,&index,&fraction,
+                 &pathPoint,&rangePoint,&indexPoint);
+
+        psPathPoint * point = NULL;
+        if (pathPoint)
         {
-            psserver->SendSystemInfo(me->clientnum, "No path point or waypoint in range of %.2f.",data.radius);
+            point = pathPoint->points[indexPoint];
+        }
+            
+        if (!wp && !path && !point)
+        {
+            psserver->SendSystemInfo(me->clientnum, "No point, path or waypoint in range of %.2f.",data.radius);
             return;
         }
 
-        // Faviorize waypoints, since it would be difficult to find them if we should use the distance
-        // since you in most cases is standing closer to a path than the wp.
         if (wp)
         {
             csString links;
@@ -2808,14 +2968,31 @@ void AdminManager::HandlePath(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
                                      wp->GetAliases().GetDataSafe(),
                                      links.GetDataSafe());
         }
-        else
+        if (point)
         {
             psserver->SendSystemInfo(me->clientnum,
-                                     "Found path: %s(%d) at range %.2f to point %d\n"
-                                     "Start WP: %s(%d)\n"
-                                     "End WP: %s(%d)\n"
+                                     "Found point(%d) %d of path: %s(%d) at range %.2f\n"
+                                     "Start WP: %s(%d) End WP: %s(%d)\n"
                                      "Flags: %s",
-                                     path->GetName(),path->GetID(),rangePath,index+1,
+                                     pathPoint->GetID(),indexPoint,pathPoint->GetName(),
+                                     pathPoint->GetID(),rangePoint,
+                                     pathPoint->start->GetName(),pathPoint->start->GetID(),
+                                     pathPoint->end->GetName(),pathPoint->end->GetID(),
+                                     pathPoint->GetFlags().GetDataSafe());
+            
+        }
+        if (path)
+        {
+            float length = path->GetLength(EntityManager::GetSingleton().GetWorld(),EntityManager::GetSingleton().GetEngine(),index);
+            
+            psserver->SendSystemInfo(me->clientnum,
+                                     "Found path: %s(%d) at range %.2f\n"
+                                     "%.2f from point %d%s and %.2f from point %d%s\n"
+                                     "Start WP: %s(%d) End WP: %s(%d)\n"
+                                     "Flags: %s",
+                                     path->GetName(),path->GetID(),rangePath,
+                                     fraction*length,index,(fraction < 0.5?"*":""),
+                                     (1.0-fraction)*length,index+1,(fraction >= 0.5?"*":""),
                                      path->start->GetName(),path->start->GetID(),
                                      path->end->GetName(),path->end->GetID(),
                                      path->GetFlags().GetDataSafe());
@@ -2879,13 +3056,81 @@ void AdminManager::HandlePath(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
         psPath * path1 = pathNetwork->CreatePath("",path->start,wp, "" );
         psPath * path2 = pathNetwork->CreatePath("",wp,path->end, "" );
         
-        // Warning: This will delete all path points. So they has to be rebuild for the new segments.
-        pathNetwork->Delete(path);
-
         psserver->SendSystemInfo( me->clientnum, "Splitted %s(%d) into %s(%d) and %s(%d)",
                                   path->GetName(),path->GetID(),
                                   path1->GetName(),path1->GetID(),
                                   path2->GetName(),path2->GetID());
+
+        // Warning: This will delete all path points. So they has to be rebuild for the new segments.
+        pathNetwork->Delete(path);
+    }
+    else if (data.subCmd == "remove")
+    {
+        float range;
+
+        psPath * path = pathNetwork->FindNearestPath(myPos,mySector,data.range,&range);
+        if (!path)
+        {
+            psserver->SendSystemError( me->clientnum, "Didn't find any path close by");
+            return;
+        }
+
+        psserver->SendSystemInfo( me->clientnum, "Deleted path %s(%d) between %s(%d) and %s(%d)",
+                                  path->GetName(),path->GetID(),
+                                  path->start->GetName(),path->start->GetID(),
+                                  path->end->GetName(),path->end->GetID());
+
+        // Warning: This will delete all path points. So they has to be rebuild for the new segments.
+        pathNetwork->Delete(path);
+    }
+    else if (data.subCmd == "rename")
+    {
+        float rangeWP,rangePath,rangePoint,fraction;
+        int index,indexPoint;
+        
+        Waypoint * wp = NULL;
+        psPath * path = NULL;
+        psPath * pathPoint = NULL;
+
+        FindPath(myPos,mySector,data.radius,
+                 &wp,&rangeWP,
+                 &path,&rangePath,&index,&fraction,
+                 &pathPoint,&rangePoint,&indexPoint);
+
+        if (!wp && !path)
+        {
+            psserver->SendSystemInfo(me->clientnum, "No point or path in range of %.2f.",data.radius);
+            return;
+        }
+
+        if (wp)
+        {
+            Waypoint * existing = pathNetwork->FindWaypoint(data.wp1);
+            if (existing)
+            {
+                psserver->SendSystemError( me->clientnum, "Waypoint already exists with the name %s", data.wp1.GetDataSafe());
+                return;
+            }
+
+            csString oldName = wp->GetName();
+            wp->Rename(db, data.wp1);
+            psserver->SendSystemInfo( me->clientnum, "Renamed waypoint %s(%d) to %s",
+                                      oldName.GetDataSafe(),wp->GetID(),wp->GetName());
+        }
+        else if (path)
+        {
+            psPath * existing = pathNetwork->FindPath(data.wp1);
+            if (existing)
+            {
+                psserver->SendSystemError( me->clientnum, "Path already exists with the name %s", data.wp1.GetDataSafe());
+                return;
+            }
+
+            csString oldName = path->GetName();
+            path->Rename(db, data.wp1);
+            psserver->SendSystemInfo( me->clientnum, "Renamed path %s(%d) to %s",
+                                      oldName.GetDataSafe(),path->GetID(),path->GetName());
+        }
     }
 }
 

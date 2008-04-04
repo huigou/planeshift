@@ -333,7 +333,45 @@ int psPathNetwork::FindWaypointGroup(const char * groupName)
 }
 
 
-psPath *psPathNetwork::FindNearestPath(csVector3& v,iSector *sector, float range, float * found_range, int * index)
+psPath *psPathNetwork::FindNearestPath(csVector3& v,iSector *sector, float range, float * found_range, int * index, float * fraction)
+{
+    psPath * found = NULL;
+    int idx = -1;
+    int tmpIdx;
+    float fract = 0.0, tmpFract;
+ 
+    for (size_t p = 0; p < paths.GetSize()-1; p++)
+    {
+        float dist2 = paths[p]->Distance(world,engine,v,sector,&tmpIdx,&tmpFract);
+                    
+        if (dist2 >= 0.0 && (range < 0 || dist2 < range))
+        {
+            found = paths[p];
+            range = dist2;
+            idx = tmpIdx;
+            fract = tmpFract;
+        }
+    }
+    if (found)
+    {
+        if (found_range)
+        {
+            *found_range = range;
+        }
+        if (index)
+        {
+            *index = idx;
+        }
+        if (fraction)
+        {
+            *fraction = fract;
+        }
+    }
+    return found;
+}
+
+
+psPath *psPathNetwork::FindNearestPoint(csVector3& v,iSector *sector, float range, float * found_range, int * index)
 {
     psPath * found = NULL;
     int idx = -1;
@@ -341,7 +379,7 @@ psPath *psPathNetwork::FindNearestPath(csVector3& v,iSector *sector, float range
  
     for (size_t p = 0; p < paths.GetSize()-1; p++)
     {
-        float dist2 = paths[p]->Distance(world,engine,v,sector,&tmpIdx);
+        float dist2 = paths[p]->DistancePoint(world,engine,v,sector,&tmpIdx);
                     
         if (dist2 >= 0.0 && (range < 0 || dist2 < range))
         {
@@ -363,8 +401,6 @@ psPath *psPathNetwork::FindNearestPath(csVector3& v,iSector *sector, float range
     }
     return found;
 }
-
-
 
 csList<Waypoint*> psPathNetwork::FindWaypointRoute(Waypoint * start, Waypoint * end)
 {
@@ -603,8 +639,41 @@ int psPathNetwork::GetNextWaypointCheck()
 
 bool psPathNetwork::Delete(psPath * path)
 {
+    // First remove from db.
     db->CommandPump("delete from sc_path_points where path_id=%d",path->GetID());
     db->CommandPump("delete from sc_waypoint_links where id=%d",path->GetID());
+
+    // Delete the object
+    Waypoint * start = path->start;
+    Waypoint * end = path->end;
+
+    delete path;
+
+    // Now delete any waypoints that dosn't have any links anymore.
+    if (start->links.GetSize() == 0)
+    {
+        db->CommandPump("delete from sc_waypoints where id=%d",start->GetID());
+
+        size_t index = waypoints.Find(start);
+        if (index != csArrayItemNotFound)
+        {
+            waypoints.DeleteIndexFast(index);
+        }
+        delete start;
+    }
+
+    if (end->links.GetSize() == 0)
+    {
+        db->CommandPump("delete from sc_waypoints where id=%d",end->GetID());
+
+        size_t index = waypoints.Find(end);
+        if (index != csArrayItemNotFound)
+        {
+            waypoints.DeleteIndexFast(index);
+        }
+        delete end;
+    }
+    
 
     return true;
 }
