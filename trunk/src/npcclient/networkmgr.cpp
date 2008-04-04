@@ -140,6 +140,11 @@ void NetworkManager::HandleMessage(MsgEntry *me)
             {
                 RequestAllObjects();    
             }
+            else
+            {
+                npcclient->Disconnect();
+            }
+            
             break;
         }
         case MSGTYPE_NPCRACELIST:
@@ -370,7 +375,10 @@ bool NetworkManager::ReceiveMapList(MsgEntry *msg)
         CPrintf(CON_CMDOUTPUT,"Loading world '%s'\n",list.map[i].GetDataSafe());
         
         if (!npcclient->LoadMap(list.map[i]))
+        {
+            CPrintf(CON_ERROR,"Failed to load world '%s'\n",list.map[i].GetDataSafe());
             return false;
+        }
     }
     return true;
 }

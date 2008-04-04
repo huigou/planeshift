@@ -1,3 +1,17 @@
+*** 2008-04-04 by Anders Reggestad
+- NPC client will try to disconnect from the server if it fails to load a map.
+- Added more error output when a map fails to load. Implemented return value
+  according to load status so that the npcclient can disconnect if load fails.
+- Added add and remove options to the /path alias command.
+- Added new /path remove to delete a waypoint or a path.
+- Added new /path rename to change name of waypoints and paths.
+- Fixed a problem where /path adjust would try to move the start and
+  end point instead of the closed path point.
+- Fixed /path info and /path adjust to be aligned in the information that where
+  printed and the entity in witch it the command works.
+- Added check to prevent the user from creating a path back to the same waypoint
+  unless there is a number of path points and the path have a name.
+
 *** 2008-04-02 by Andrew Dai
 - Fixed #1372, patch by peeg.
 - Removed the requirement for the /admin command, patch by Steve

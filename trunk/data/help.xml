@@ -516,6 +516,8 @@ Creates a clone of the named NPC at your current location.</topic>
 /path help
 /path info
 /path point
+/path remove
+/path rename
 /path select
 /path split
 /path start
@@ -529,9 +531,9 @@ To create a path you need to do the following commands:
            <topic name="/path adjust">/path adjust [&lt;radius&gt;]
 
 Adjust the position of the nearest path point to your current position.</topic>
-           <topic name="/path alias">/path alias [&lt;alias&gt;]
+           <topic name="/path alias">/path alias [*add|remove] [&lt;alias&gt;]
 
-Add a alias to the nearest waypoint.</topic>
+Add or remove a alias to/from the nearest waypoint. The default is add if neither add or remove is specified.</topic>
            <topic name="/path display|show">/path display|show [Points|Waypoints]
 
 Display all waypoints and points unless either points or waypoints is specefied. In that case only points or waypoints are displayed.</topic>
@@ -550,6 +552,12 @@ Show info about the nearest path or waypoint.</topic>
            <topic name="/path point">/path point
 
 Add a new point to the current selected path at your position. A path will be automaticaly be selected on the /path start command. You could use the /path select command as well to select a new path.</topic>
+           <topic name="/path remove">/path remove [&lt;radius&gt;]
+
+Remove the nearest path. Use /path info to view information about the path that will be deleted.</topic>
+           <topic name="/path rename">/path rename [&lt;radius&gt;] &lt;name&gt;
+
+Rename the nearest waypoint or path. Use /path info to view information about the path that will be renamed. If both a path and a waypoint is inn range the waypoint will be the target.</topic>
            <topic name="/path select">/path select &lt;radius&gt;
 
 Select the nearest path to be your current path. You need a select path to use /path point.</topic>

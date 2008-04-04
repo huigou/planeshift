@@ -70,13 +70,22 @@ public:
     bool Load(iResultRow& row, iEngine *engine); 
 
     void AddLink(psPath * path, Waypoint * wp, psPath::Direction direction, float distance);
+    void RemoveLink(psPath * path);
+    /// Add a new alias to this waypoint
     void AddAlias(csString alias);
+    /// Remove a alias from this waypoint
+    void RemoveAlias(csString alias);
 
     /// Get the id of this waypoint
     int          GetID(){ return loc.id; }
     
     /// Get the name of this waypoint
     const char * GetName(){ return loc.name.GetDataSafe(); }
+
+    /// Rename the waypoint and update the db
+    bool Rename(iDataConnection * db,const char* name);
+    /// Rename the waypoint
+    void Rename(const char* name);
 
     /// Get the group name of this waypoint
     const char* GetGroup(){ return group.GetDataSafe(); }
@@ -93,6 +102,7 @@ public:
 
     int Create(iDataConnection * db);
     bool CreateAlias(iDataConnection * db, csString alias);
+    bool RemoveAlias(iDataConnection * db, csString alias);
     bool Adjust(iDataConnection * db, csVector3 & pos, csString sector);
     
     /// Set all flags based on the string.

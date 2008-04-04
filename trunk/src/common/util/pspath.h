@@ -51,6 +51,7 @@ public:
 
     /// Adjust the point position
     bool Adjust(iDataConnection * db, csVector3 & pos, csString sector);
+    bool Adjust(csVector3 & pos, csString sector);
 
     /// Set the previous point id
     void SetPrevious(int previous) { prevPointId = previous; }
@@ -95,7 +96,7 @@ public:
     psPath(csString name, Waypoint * wp1, Waypoint * wp2, psString flagStr);
     psPath(int pathID, csString name, psString flagStr);
     
-    virtual ~psPath() {}
+    virtual ~psPath();
 
     /// Load the path from the db
     bool Load(iDataConnection * db, iEngine *engine);
@@ -125,12 +126,23 @@ public:
     virtual void Precalculate(psWorld * world, iEngine *engine);
 
     /// Calculate distance from point to path
-    virtual float Distance(psWorld * world, iEngine *engine,csVector3& pos, iSector * sector, int * index);
+    virtual float Distance(psWorld * world, iEngine *engine,csVector3& pos, iSector * sector, int * index = NULL, float * fraction = NULL);
 
+    /// Calculate distance from point to path points
+    virtual float DistancePoint(psWorld * world, iEngine *engine,csVector3& pos, iSector * sector, int * index = NULL, bool include_ends = false);
+
+    /// Get the start point
+    psPathPoint* GetStartPoint(Direction direction);
+    
     /// Get the end point
+    psPathPoint* GetEndPoint(Direction direction);
+    
+    /// Get the end point position
     csVector3 GetEndPos(Direction direction);
+    
     /// Get the end rotation
     float GetEndRot(Direction direction);
+    
     /// Get the end sector
     iSector* GetEndSector(iEngine * engine, Direction direction);
     
@@ -145,6 +157,15 @@ public:
 
     /// Get ID of the path
     int GetID() { return id; }
+
+    /// Rename the path and update the db
+    bool Rename(iDataConnection * db,const char* name);
+    
+    /// Rename the path
+    void Rename(const char* name);
+
+    /// Get the length of one segment of the path.
+    virtual float GetLength(psWorld * world, iEngine *engine, int index);
 
     /// Get the total length of all path segments.
     virtual float GetLength(psWorld * world, iEngine *engine);
