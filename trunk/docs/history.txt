@@ -1,3 +1,6 @@
+*** 2008-04-05 by Dave Bentham
+- Fixed #1072: handle % in book text.
+
 *** 2008-04-04 by Anders Reggestad
 - NPC client will try to disconnect from the server if it fails to load a map.
 - Added more error output when a map fails to load. Implemented return value
