@@ -285,11 +285,16 @@ bool psItemCreativeStats::SetCreativeContent(PSITEMSTATS_CREATIVETYPE updatedCre
 
 bool psItemCreativeStats::FormatCreativeContent(void)
 {
+    csString contentForXML(content);
+    
     creativeDefinitionXML = "<creative type=\"";
 
     // start of creative data xml
     if (creativeType == PSITEMSTATS_CREATIVETYPE_LITERATURE)
+    {
+        contentForXML.ReplaceAll("%", "%%");
         creativeDefinitionXML.Append("literature");
+    }
     else if (creativeType == PSITEMSTATS_CREATIVETYPE_SKETCH)
         creativeDefinitionXML.Append("sketch");
     creativeDefinitionXML.AppendFmt("\"");
@@ -304,7 +309,7 @@ bool psItemCreativeStats::FormatCreativeContent(void)
         creativeDefinitionXML.AppendFmt(" creator=\"%d\"", creatorID);
     }
 
-    creativeDefinitionXML.AppendFmt("><content>%s</content></creative>", content.GetDataSafe());
+    creativeDefinitionXML.AppendFmt("><content>%s</content></creative>", contentForXML.GetDataSafe());
 
     if (creativeDefinitionXML.Length() <= CREATIVEDEF_MAX)
         return true;

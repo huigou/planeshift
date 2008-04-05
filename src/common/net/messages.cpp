@@ -5297,8 +5297,12 @@ csString psReadBookTextMessage::ToString(AccessPointers * /*access_ptrs*/)
 {
     csString msgtext;
 
-    msgtext.AppendFmt("Name: '%s' Text: '%s'", name.GetDataSafe(), text.GetDataSafe());
-
+    msgtext.AppendFmt("Name: '%s'", name.GetDataSafe());
+#ifdef FULL_DEBUG_DUMP
+    csString textForDebug(text);
+    textForDebug.ReplaceAll("%", "[pc]");
+    msgtext.AppendFmt(" Text:\n%s\n*the end*", textForDebug.GetDataSafe());
+#endif
     return msgtext;
 }
 
@@ -5383,21 +5387,29 @@ psWriteBookMessage::psWriteBookMessage(MsgEntry* me)
 csString psWriteBookMessage::ToString(AccessPointers * /*access_ptrs*/)
 {
     csString msgtext;
+#ifdef FULL_DEBUG_DUMP
+    csString textForDebug(content);
+#endif
+
     switch(messagetype)
     {
        case REQUEST: 
             msgtext.AppendFmt("Write Book REQUEST for slot %d, container %d", slotID, containerID);
             break;
        case RESPONSE:
-            msgtext.AppendFmt("Write Book RESPONSE for slot %d, container %d.  Successful? %s  Title: \"%s\" Content: \"%s\"\n", 
-                              slotID, containerID, success?"true":"false", title.GetDataSafe(), content.GetDataSafe());
+            msgtext.AppendFmt("Write Book RESPONSE for slot %d, container %d.  Successful? %s  Title: \"%s\"", 
+                              slotID, containerID, success?"true":"false", title.GetDataSafe());
             break;
        case SAVE:
-            msgtext.AppendFmt("Write Book SAVE for slot %d, container %d. Title: \"%s\" Content: \"%s\"\n", 
-                              slotID, containerID, title.GetDataSafe(), content.GetDataSafe());
+            msgtext.AppendFmt("Write Book SAVE for slot %d, container %d. Title: \"%s\"", 
+                              slotID, containerID, title.GetDataSafe());
+#ifdef FULL_DEBUG_DUMP
+            textForDebug.ReplaceAll("%", "[pc]");
+            msgtext.AppendFmt(" Text:\n%s\n*the end*", textForDebug.GetDataSafe());
+#endif
             break;
        case SAVERESPONSE:
-            msgtext.AppendFmt("Write Book SAVERESPONSE Successful? %s  Title: \"%s\"\n", 
+            msgtext.AppendFmt("Write Book SAVERESPONSE Successful? %s  Title: \"%s\"", 
                               success?"true":"false", title.GetDataSafe());
             break;    }
 
