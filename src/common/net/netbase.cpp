@@ -828,9 +828,9 @@ bool NetBase::SendMessage(MsgEntry* me,NetPacketQueueRefCount *queue)
         if (!queue->Add(pNewPkt))
         {
             if(queue == NetworkQueue)
-                Error1("NetworkQueue full. Could not add packet.\n");
+                Error1("NetworkQueue full. Could not add packet.\n")
             else
-                Error2("Target full. Could not add packet with clientnum %d.\n", me->clientnum);
+                Error2("Target full. Could not add packet with clientnum %d.\n", me->clientnum)
             return false;
         }
 
