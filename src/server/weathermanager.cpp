@@ -109,10 +109,10 @@ void WeatherManager::SetGameTime(int hour,int minute)
     gameTimeMinute = minute;
 }
 
-void WeatherManager::StartWeather(psSectorInfo *si)
+bool WeatherManager::StartWeather(psSectorInfo *si)
 {
     // Is rain/snow enabled for this sector
-    if (si->rain_enabled)
+    if (si->rain_enabled && si->rain_min_drops > 0 && si->rain_min_gap > 0)
     {
         // Queue event to start rain/snow
         QueueNextEvent(si->GetRandomRainGap(),
@@ -122,7 +122,9 @@ void WeatherManager::StartWeather(psSectorInfo *si)
                        0, // Fade is calculated when sending weather event
                        si->name,
                        si);
+        return true;
     }
+    return false;
 }
 
 void WeatherManager::UpdateClient(uint32_t cnum)
