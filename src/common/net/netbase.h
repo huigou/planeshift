@@ -575,7 +575,7 @@ public:
     { return valid; }
 };
 
-class NetPacketQueueRefCount : public NetPacketQueue, public csSyncRefCount
+class NetPacketQueueRefCount : public NetPacketQueue, public csSyncRefCount<NetPacketQueueRefCount>
 {
 private:
     bool pending;
