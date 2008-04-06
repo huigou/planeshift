@@ -162,8 +162,8 @@ void NetManager::CheckResendPkts()
         pkt->timestamp = currenttime;   // update stamp on packet
 
         // re-add to send queue
-        Client *client = clients.FindAny(pkt->clientnum);
-        if (!client)
+        csRef<NetPacketQueueRefCount> outqueue = clients.FindQueueAny(pkt->clientnum);
+        if (!outqueue)
         {
             awaitingack.Delete(pkt);
             continue;
@@ -178,7 +178,7 @@ void NetManager::CheckResendPkts()
         *  In actuality a false response does not actually mean no data was added to the queue, just that
         *  not all of the data could be added.
         */
-        if (!client->outqueue->Add(pkt))
+        if (!outqueue->Add(pkt))
             Error1("Queue full. Could not add packet.\n");
 
         /**
@@ -187,7 +187,7 @@ void NetManager::CheckResendPkts()
         * to check every single connection each time through.
         */
 
-        if (!senders.Add (client->outqueue))
+        if (!senders.Add (outqueue))
             Error1("Senderlist Full!");
 
         //printf("pkt=%p, pkt->packet=%p\n",pkt,pkt->packet);
@@ -229,8 +229,8 @@ NetManager::Connection *NetManager::GetConnByNum (uint32_t clientnum)
 bool NetManager::SendMessage(MsgEntry* me)
 {
     bool sendresult;
-    Client *client = clients.FindAny(me->clientnum);
-    if (!client)
+    csRef<NetPacketQueueRefCount> outqueue = clients.FindQueueAny(me->clientnum);
+    if (!outqueue)
         return false;
 
     /*  The proper way to send a message is to add it to the queue, and then add the queue to the senders.
@@ -242,7 +242,7 @@ bool NetManager::SendMessage(MsgEntry* me)
      *  In actuality a false response does not actually mean no data was added to the queue, just that
      *  not all of the data could be added.
      */
-    sendresult=NetBase::SendMessage(me,client->outqueue);
+    sendresult=NetBase::SendMessage(me,outqueue);
 
     /**
      * The senders list is a list of busy queues.  The SendOut() function
@@ -253,7 +253,7 @@ bool NetManager::SendMessage(MsgEntry* me)
     /*  The senders queue does not hold a reference itself, so we have to manually add one before pushing
      *  this queue on.  The queue is decref'd in the network thread when it's taken out of the senders queue.
      */
-    if (!senders.Add(client->outqueue))
+    if (!senders.Add(outqueue))
     {
         Error1("Senderlist Full!");
     }
