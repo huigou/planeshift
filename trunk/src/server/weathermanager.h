@@ -68,7 +68,7 @@ public:
                         int g = 0,
                         int b = 0);
 
-    void StartWeather(psSectorInfo *si);
+    bool StartWeather(psSectorInfo *si);
     void HandleWeatherEvent(psWeatherGameEvent *event);
     void SendClientGameTime(int cnum);
     void BroadcastGameTime();
