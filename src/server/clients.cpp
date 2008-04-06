@@ -181,6 +181,19 @@ Client *ClientConnectionSet::Find(LPSOCKADDR_IN addr)
     return tree.Find(&temp);
 }
 
+csRef<NetPacketQueueRefCount> ClientConnectionSet::FindQueueAny(uint32_t clientnum)
+{
+    if (clientnum==0)
+        return NULL;
+    
+    CS::Threading::RecursiveMutexScopedLock lock(mutex);
+    Client *client = hash.Get(clientnum, 0);
+    if(client)
+        return client->outqueue;
+    else
+        return NULL;
+}
+
 /**
  * Any client who has an entity targeted is potentially preventing
  * that entity from being removed from the world.  For example, a group
