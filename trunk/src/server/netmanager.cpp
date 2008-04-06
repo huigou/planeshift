@@ -179,7 +179,7 @@ void NetManager::CheckResendPkts()
         *  not all of the data could be added.
         */
         if (!outqueue->Add(pkt))
-            Error1("Queue full. Could not add packet.\n");
+            Error2("Queue full. Could not add packet with clientnum %d.\n", pkt->clientnum);
 
         /**
         * The senders list is a list of busy queues.  The SendOut() function
