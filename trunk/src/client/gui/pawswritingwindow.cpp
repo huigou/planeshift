@@ -160,7 +160,8 @@ void pawsWritingWindow::OnStringEntered(const char *name, int param,const char *
     if (!value)
         return;
 
-    fileName.Format("/this/%s", value);
+    fileName.Format("/planeshift/userdata/books/%s", value);
+	Error1(fileName.GetData());
     if (!vfs->Exists(fileName))
     {
         psSystemMessage msg(0, MSG_ERROR, "File not found!" );
