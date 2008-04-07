@@ -5,6 +5,7 @@
   min rain drops.
 - Fixed #1317, patch by Aresilek.
 - Fixed #1268, patch by Aresilek.
+- Reverted patch by Caarrie for bug #1373.
 
 *** 2008-04-05 by Dave Bentham
 - Fixed #1072: handle % in book text.
