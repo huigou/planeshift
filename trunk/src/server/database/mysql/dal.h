@@ -345,16 +345,16 @@ public:
     {
         csString statement;
         
-        // count - 1 fields to update
+        // count fields to update
         statement.Format("INSERT INTO %s (", table);
-        for (unsigned int i=0;i<(count-1);i++)
+        for (unsigned int i=0;i<count;i++)
         {
             if (i>0)
                 statement.Append(", ");
             statement.Append(command[i]);
         }
         statement.Append(") VALUES (");
-        for (unsigned int i=0;i<(count-1);i++)
+        for (unsigned int i=0;i<count;i++)
         {
             if (i>0)
                 statement.Append(", ");
