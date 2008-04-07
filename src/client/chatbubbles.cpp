@@ -46,7 +46,7 @@
 
 // Used to set default config files if the userdata ones are not found.
 #define SAVE_USER     true
-#define DEFAULT_FILE  "/planeshift/data/options/chatbubbles.xml"
+#define DEFAULT_FILE  "/planeshift/data/options/chatbubbles_def.xml"
 #define USER_FILE     "/planeshift/userdata/options/chatbubbles.xml"
 
 psChatBubbles::psChatBubbles()
@@ -129,6 +129,11 @@ bool psChatBubbles::Load(const char * filename, bool saveAgain)
     bubbleMaxLineLen = chatBubblesNode->GetAttributeValueAsInt("maxLineLen");
     bubbleShortPhraseCharCount = chatBubblesNode->GetAttributeValueAsInt("shortPhraseCharCount");
     bubbleLongPhraseLineCount = chatBubblesNode->GetAttributeValueAsInt("longPhraseLineCount");
+	
+	if ((csString) chatBubblesNode->GetAttributeValue("enabled") == "no")
+		bubblesEnabled = false;
+	else
+		bubblesEnabled = true;
 
     csRef<iDocumentNodeIterator> nodes = chatBubblesNode->GetNodes("chat");
     while (nodes->HasNext())
@@ -168,9 +173,9 @@ bool psChatBubbles::Load(const char * filename, bool saveAgain)
             chat.chatType = CHAT_NPC_NARRATE;
 
         // color
-        r = chatNode->GetAttributeValueAsInt("colorR");
-        g = chatNode->GetAttributeValueAsInt("colorG");
-        b = chatNode->GetAttributeValueAsInt("colorB");
+        r = chatNode->GetAttributeValueAsInt("colourR");
+        g = chatNode->GetAttributeValueAsInt("colourG");
+        b = chatNode->GetAttributeValueAsInt("colourB");
         chat.textSettings.colour = psengine->GetG2D()->FindRGB(r, g, b);
 
         // shadow
@@ -199,6 +204,12 @@ bool psChatBubbles::Load(const char * filename, bool saveAgain)
 
         // prefix
         strcpy(chat.effectPrefix, chatNode->GetAttributeValue("effectPrefix"));
+		
+		//enabled
+		if ((csString) chatNode->GetAttributeValue("enabled") == "no")
+			chat.enabled = false;
+		else
+			chat.enabled = true;
 
         chatTypes.Push(chat);
     }
@@ -215,7 +226,10 @@ void psChatBubbles::HandleMessage(MsgEntry * msg, Client * client)
 #ifdef DISABLE_CHAT_BUBBLES
     return;
 #endif
-    
+
+    if (!bubblesEnabled)
+		return;
+	
     size_t a;
     if (msg->GetType() != MSGTYPE_CHAT)
         return;
@@ -259,6 +273,9 @@ void psChatBubbles::HandleMessage(MsgEntry * msg, Client * client)
     }
     if (!type)
         return;
+		
+	if (!(type->enabled))
+		return;
 
     static csArray<psEffectTextRow> rowBuffer;
     rowBuffer.Empty();

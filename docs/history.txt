@@ -3,6 +3,7 @@
   is being sent to it.
 - Fixed an infinite event loop when weather is started on a sector with 0
   min rain drops.
+- Fixed #1317, patch by Aresilek.
 
 *** 2008-04-05 by Dave Bentham
 - Fixed #1072: handle % in book text.
