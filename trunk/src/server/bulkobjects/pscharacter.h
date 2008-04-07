@@ -620,7 +620,7 @@ public:
     int nextProgressionEventID;
     int     impervious_to_attack;
     /// Bitfield for which help events a character has already encountered.
-    int     help_event_flags;
+    unsigned int     help_event_flags;
 
     /// Checks the bit field for a bit flag from the enum in TutorialManager.h
     bool NeedsHelpEvent(int which) { return (help_event_flags & (1 << which))==0; }

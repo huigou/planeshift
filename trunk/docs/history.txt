@@ -1,3 +1,7 @@
+*** 2008-04-07 by Andrew Dai
+- Added INSERT query support to prepared statements.
+- Moved the characters and item_instances table to use prepared statements.
+
 *** 2008-04-06 by Andrew Dai
 - Fixed a race condition that occurs when a client is destructed while a packet 
   is being sent to it.

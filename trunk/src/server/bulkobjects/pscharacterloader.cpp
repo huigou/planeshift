@@ -649,121 +649,51 @@ bool psCharacterLoader::SaveCharacterData(psCharacter *chardata,gemActor *actor,
                        chardata->GetCharType() == PSCHARACTER_TYPE_PET;
 
     int i;
-    const char *player_fieldnames[]= {
-        "name",
-        "lastname",
-        "old_lastname",
-        "racegender_id",
-        "character_type",
-        "base_strength",
-        "base_agility",
-        "base_endurance",
-        "base_intelligence",
-        "base_will",
-        "base_charisma",
-        "mod_hitpoints",
-//        "base_hitpoints_max",
-        "mod_mana",
-//        "base_mana_max",
-        "stamina_physical",
-        "stamina_mental",
-        "money_circles",
-        "money_trias",
-        "money_hexas",
-        "money_octas",        
-        "bank_money_circles",
-        "bank_money_trias",
-        "bank_money_hexas",
-        "bank_money_octas",
-        "loc_x",
-        "loc_y",
-        "loc_z",
-        "loc_yrot",
-        "loc_sector_id",
-        "last_login",
-        "faction_standings",
-        "progression_script",
-        "time_connected_sec",
-        "experience_points",
-        "animal_affinity",
-        "help_event_flags",
-        "description"
-    };
-
-    const char *npc_fieldnames[]= {
-        "name",
-        "lastname",
-        "old_lastname",
-        "racegender_id",
-        "character_type",
-        "base_strength",
-        "base_agility",
-        "base_endurance",
-        "base_intelligence",
-        "base_will",
-        "base_charisma",
-        "mod_hitpoints",
-//        "base_hitpoints_max",
-        "mod_mana",
-//        "base_mana_max",
-        "stamina_physical",
-        "stamina_mental",
-        "money_circles",
-        "money_trias",
-        "money_hexas",
-        "money_octas",
-        "bank_money_circles",
-        "bank_money_trias",
-        "bank_money_hexas",
-        "bank_money_octas",
-        "last_login",
-        "faction_standings",
-        "progression_script",
-        "time_connected_sec",
-        "experience_points",
-        "animal_affinity",
-        "help_event_flags",
-        "description"
-    };
-    psStringArray fields;
-
+    static iRecord* updatePlayer;
+    static iRecord* updateNpc;
+    if(playerORpet && updatePlayer == NULL)
+        updatePlayer = db->NewUpdatePreparedStatement("characters", "id", 37); // 36 fields + 1 id field
+    if(!playerORpet && updateNpc == NULL)
+        updateNpc = db->NewUpdatePreparedStatement("characters", "id", 32); // 31 fields + 1 id field
+    
     // Give 100% hp if the char is dead
     if(!actor->IsAlive())
         chardata->SetHitPoints( chardata->GetHitPointsMax() );
-
-    fields.FormatPush("%s",chardata->GetCharName());
-    fields.FormatPush("%s",chardata->GetCharLastName());
-    fields.FormatPush("%s",chardata->GetOldLastName()); // old_lastname
-    fields.FormatPush("%u",chardata->GetRaceInfo()->uid);
-    fields.FormatPush("%u",chardata->GetCharType() );
-    fields.FormatPush("%d",chardata->GetAttributes()->GetStat(PSITEMSTATS_STAT_STRENGTH, false));
-    fields.FormatPush("%d",chardata->GetAttributes()->GetStat(PSITEMSTATS_STAT_AGILITY, false));
-    fields.FormatPush("%d",chardata->GetAttributes()->GetStat(PSITEMSTATS_STAT_ENDURANCE, false));
-    fields.FormatPush("%d",chardata->GetAttributes()->GetStat(PSITEMSTATS_STAT_INTELLIGENCE, false));
-    fields.FormatPush("%d",chardata->GetAttributes()->GetStat(PSITEMSTATS_STAT_WILL, false));
-    fields.FormatPush("%d",chardata->GetAttributes()->GetStat(PSITEMSTATS_STAT_CHARISMA, false));
-    fields.FormatPush("%1.2f", (playerORpet)?chardata->GetHP():chardata->GetHitPointsMax() );
-//    fields.FormatPush("%1.2f",chardata->GetHitPointsMax());
-    fields.FormatPush("%1.2f", (playerORpet)?chardata->GetMana():chardata->GetManaMax() );
-//    fields.FormatPush("%1.2f",chardata->GetManaMax());
-    fields.FormatPush("%1.2f",chardata->GetStamina(true) );
-    fields.FormatPush("%1.2f",chardata->GetStamina(false));
-    fields.FormatPush("%u",chardata->Money().GetCircles());
-    fields.FormatPush("%u",chardata->Money().GetTrias());
-    fields.FormatPush("%u",chardata->Money().GetHexas());
-    fields.FormatPush("%u",chardata->Money().GetOctas());
-    fields.FormatPush("%u",chardata->BankMoney().GetCircles());
-    fields.FormatPush("%u",chardata->BankMoney().GetTrias());
-    fields.FormatPush("%u",chardata->BankMoney().GetHexas());
-    fields.FormatPush("%u",chardata->BankMoney().GetOctas());
-
-    float yrot;
-    csVector3 pos(0,0,0);
-    psSectorInfo *sectorinfo;
-    csString sector;
+    
+    iRecord* targetUpdate = (playerORpet) ? updatePlayer : updateNpc;
+    
+    targetUpdate->Reset();
+    
+    targetUpdate->AddField("name", chardata->GetCharName());
+    targetUpdate->AddField("lastname", chardata->GetCharLastName());
+    targetUpdate->AddField("old_lastname", chardata->GetOldLastName());
+    targetUpdate->AddField("racegender_id", chardata->GetRaceInfo()->uid);
+    targetUpdate->AddField("character_type", chardata->GetCharType());
+    targetUpdate->AddField("base_strength", chardata->GetAttributes()->GetStat(PSITEMSTATS_STAT_STRENGTH, false));
+    targetUpdate->AddField("base_agility", chardata->GetAttributes()->GetStat(PSITEMSTATS_STAT_AGILITY, false));
+    targetUpdate->AddField("base_endurance", chardata->GetAttributes()->GetStat(PSITEMSTATS_STAT_ENDURANCE, false));
+    targetUpdate->AddField("base_intelligence", chardata->GetAttributes()->GetStat(PSITEMSTATS_STAT_INTELLIGENCE, false));
+    targetUpdate->AddField("base_will", chardata->GetAttributes()->GetStat(PSITEMSTATS_STAT_WILL, false));
+    targetUpdate->AddField("base_charisma", chardata->GetAttributes()->GetStat(PSITEMSTATS_STAT_CHARISMA, false));
+    targetUpdate->AddField("mod_hitpoints", (playerORpet)? chardata->GetHP():chardata->GetHitPointsMax());
+    targetUpdate->AddField("mod_mana", (playerORpet)?chardata->GetMana():chardata->GetManaMax());
+    targetUpdate->AddField("stamina_physical", chardata->GetStamina(true));
+    targetUpdate->AddField("stamina_mental", chardata->GetStamina(false));
+    targetUpdate->AddField("money_circles", chardata->Money().GetCircles());
+    targetUpdate->AddField("money_trias", chardata->Money().GetTrias());
+    targetUpdate->AddField("money_hexas", chardata->Money().GetHexas());
+    targetUpdate->AddField("money_octas", chardata->Money().GetOctas());
+    targetUpdate->AddField("bank_money_circles", chardata->BankMoney().GetCircles());
+    targetUpdate->AddField("bank_money_trias", chardata->BankMoney().GetTrias());
+    targetUpdate->AddField("bank_money_hexas", chardata->BankMoney().GetHexas());
+    targetUpdate->AddField("bank_money_octas", chardata->BankMoney().GetOctas());
     
     if ( playerORpet ) // Only Pets and Players save location info
     {
+        float yrot;
+        csVector3 pos(0,0,0);
+        psSectorInfo *sectorinfo;
+        csString sector;
         if ( actor->IsAlive() )       
         {
             float vel_y;
@@ -771,7 +701,7 @@ bool psCharacterLoader::SaveCharacterData(psCharacter *chardata,gemActor *actor,
             // We want to save the last reported location
             actor->GetLastLocation(pos, vel_y, yrot, sec);
             sector = sec->QueryObject()->GetName();
-
+            
             sectorinfo = CacheManager::GetSingleton().GetSectorInfoByName(sector);
         }
         else
@@ -795,29 +725,28 @@ bool psCharacterLoader::SaveCharacterData(psCharacter *chardata,gemActor *actor,
                 yrot = 0.0f;
                 sector = "DR01";
             }
-
+            
             // Update actor's position for cached objects
             sec = EntityManager::GetSingleton().GetEngine()->FindSector(sector);
             if (sec)
             {
                 actor->SetPosition(pos, yrot, sec);
             }
-
+            
             sectorinfo =  CacheManager::GetSingleton().GetSectorInfoByName(sector);
         }      
-            
+        
         if(!sectorinfo)
         {
             Error3("ERROR: Sector %s could not be found in the database! Character %s could not be saved!",sector.GetData(),chardata->GetCharName());
             return false;
         }
-
-          
-        fields.FormatPush("%1.2f",pos.x);
-        fields.FormatPush("%1.2f",pos.y);
-        fields.FormatPush("%1.2f",pos.z);
-        fields.FormatPush("%1.2f",yrot);
-        fields.FormatPush("%u",sectorinfo->uid);
+        
+        targetUpdate->AddField("loc_x", pos.x);
+        targetUpdate->AddField("loc_y", pos.y);
+        targetUpdate->AddField("loc_z", pos.z);
+        targetUpdate->AddField("loc_yrot", yrot);
+        targetUpdate->AddField("loc_sector_id", sectorinfo->uid);
     }
 
     if(!chardata->GetLastLoginTime().GetData())
@@ -825,23 +754,23 @@ bool psCharacterLoader::SaveCharacterData(psCharacter *chardata,gemActor *actor,
         time_t curr=time(0);
         tm* gmtm = gmtime(&curr);
         csString timeStr;
-
+        
         timeStr.Format("%d-%02d-%02d %02d:%02d:%02d",
-                        gmtm->tm_year+1900,
-                        gmtm->tm_mon+1,
-                        gmtm->tm_mday,
-                        gmtm->tm_hour,
-                        gmtm->tm_min,
-                        gmtm->tm_sec);
-        fields.FormatPush("%s", timeStr.GetData() );
+                       gmtm->tm_year+1900,
+                       gmtm->tm_mon+1,
+                       gmtm->tm_mday,
+                       gmtm->tm_hour,
+                       gmtm->tm_min,
+                       gmtm->tm_sec);
+        targetUpdate->AddField("last_login", timeStr.GetData() );
     }
     else
-        fields.FormatPush("%s", chardata->GetLastLoginTime().GetData() );
-
+        targetUpdate->AddField("last_login", chardata->GetLastLoginTime().GetData() );
+    
     csString csv;
     actor->GetFactions()->GetFactionListCSV(csv);   
-    fields.FormatPush("%s",csv.GetData());
-
+    targetUpdate->AddField("faction_standings", csv.GetData());
+    
     csString progressionEvents;
     
     while (chardata->progressionEvents.GetSize() > 0)
@@ -861,37 +790,25 @@ bool psCharacterLoader::SaveCharacterData(psCharacter *chardata,gemActor *actor,
     }
     
     
+    csString scriptStr;
+    scriptStr.Format("<evts>%s%s</evts>", progressionEvents.GetData(), durationEventStr.GetData());
+    targetUpdate->AddField("progression_script", scriptStr);
     
-    fields.FormatPush("<evts>%s%s</evts>", progressionEvents.GetData(), durationEventStr.GetData());
-  
-    fields.FormatPush("%u", chardata->GetTotalOnlineTime());
-    fields.FormatPush("%d", chardata->GetExperiencePoints()); // Save W
+    targetUpdate->AddField("time_connected_sec", chardata->GetTotalOnlineTime());
+    targetUpdate->AddField("experience_points", chardata->GetExperiencePoints()); // Save W
     // X is saved when changed
-    fields.FormatPush("%s", chardata->animal_affinity.GetData() );
+    targetUpdate->AddField("animal_affinity", chardata->animal_affinity.GetData() );
     //fields.FormatPush("%u", chardata->owner_id );
-    fields.FormatPush("%u", chardata->help_event_flags );
-    fields.FormatPush("%s",chardata->GetDescription());
+    targetUpdate->AddField("help_event_flags", chardata->help_event_flags );
+    targetUpdate->AddField("description",chardata->GetDescription());
 
     // Done building the fields struct, now
     // SAVE it to the DB.
-    char characteridstring[25];
-    sprintf(characteridstring,"%u",chardata->GetCharacterID());
-
-    if ( playerORpet )  // Player or Pet
+    if(!targetUpdate->Execute(chardata->GetCharacterID()))
     {
-        if (!UpdateCharacterData(characteridstring,player_fieldnames,fields))
-        {
-            Error3("Failed to save character %s. Error %s",characteridstring,db->GetLastError());
-            return false;
-        }    
-    }
-    else // an NPC
-    {
-        if (!UpdateCharacterData(characteridstring,npc_fieldnames,fields))
-        {
-            Error3("Failed to save character %s. Error %s",characteridstring,db->GetLastError());
-            return false;
-        }    
+        char characteridstring[25];
+        sprintf(characteridstring,"%u",chardata->GetCharacterID());
+        Error3("Failed to save character %s. Error %s",characteridstring,db->GetLastError());
     }
 
     if (charRecordOnly)
@@ -943,13 +860,6 @@ unsigned int psCharacterLoader::InsertNewCharacterData(const char **fieldnames, 
 {
     return db->GenericInsertWithID("characters",fieldnames,fieldvalues);
 }
-
-bool psCharacterLoader::UpdateCharacterData(const char *id,const char **fieldnames, psStringArray& fieldvalues)
-{
-    return db->GenericUpdateWithID("characters","id",id,fieldnames,fieldvalues);
-}
-
-
 
 unsigned int psCharacterLoader::FindCharacterID(const char *character_name, bool excludeNPCs )
 {

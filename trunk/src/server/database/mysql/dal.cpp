@@ -430,11 +430,15 @@ void psMysqlConnection::ResetProfile()
     profileDump.Empty();
 }
 
-iRecord* psMysqlConnection::NewPreparedStatement(const char* table, const char* idfield, unsigned int count)
+iRecord* psMysqlConnection::NewUpdatePreparedStatement(const char* table, const char* idfield, unsigned int count)
 {
-    return new dbRecord(conn, table, idfield, count);
+    return new dbUpdate(conn, table, idfield, count);
 }
 
+iRecord* psMysqlConnection::NewInsertPreparedStatement(const char* table, unsigned int count)
+{
+    return new dbInsert(conn, table, count);
+}
 
 psResultSet::psResultSet(MYSQL *conn)
 {

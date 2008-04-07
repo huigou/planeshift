@@ -106,7 +106,8 @@ public:
     virtual const char* DumpProfile();
     virtual void ResetProfile();
     
-    iRecord* NewPreparedStatement(const char* table, const char* idfield, unsigned int count);
+    iRecord* NewUpdatePreparedStatement(const char* table, const char* idfield, unsigned int count);
+    iRecord* NewInsertPreparedStatement(const char* table, unsigned int count);
 
 #ifdef USE_DELAY_QUERY    
     csRef<DelayedQueryManager> dqm;
@@ -175,6 +176,7 @@ public:
 
 class dbRecord : public iRecord
 {
+protected:
     const char* table;
     const char* idfield;
     
@@ -203,11 +205,9 @@ class dbRecord : public iRecord
     
     dataType* temp;
     
-    void AddToStatement(const char* fname)
-    {
-        if(!prepared)
-            command.FormatPush("%s = ?", fname);
-    }
+    virtual void AddToStatement(const char* fname) = 0;
+    
+    virtual void SetID(uint32 uid) = 0;
     
 public:
     dbRecord(MYSQL* db, const char* Table, const char* Idfield, unsigned int count)
@@ -225,7 +225,7 @@ public:
         prepared = false;
     }
     
-    ~dbRecord()
+    virtual ~dbRecord()
     {
         mysql_stmt_close(stmt);
         delete[] bind;
@@ -300,7 +300,96 @@ public:
         index++;
     }
     
-    bool Prepare()
+    void AddFieldNull(const char* fname)
+    {
+        AddToStatement(fname);
+        bind[index].buffer_type = MYSQL_TYPE_NULL;
+        index++;
+    }
+    
+    virtual bool Prepare() = 0;
+
+    
+    virtual bool Execute(uint32 uid)
+    {
+        SetID(uid);
+        CS_ASSERT_MSG("Error: wrong number of expected fields", index == count);
+        
+        if(!prepared)
+            Prepare();
+        
+        CS_ASSERT(count == mysql_stmt_param_count(stmt));
+        
+        if(mysql_stmt_bind_param(stmt, bind) != 0)
+            return false;
+        
+        return (mysql_stmt_execute(stmt) == 0);
+    }
+};
+
+class dbInsert : public dbRecord
+{
+    virtual void AddToStatement(const char* fname)
+    {
+        if(!prepared)
+            command.Push(fname);
+    }
+    
+    virtual void SetID(uint32 uid)  {  };
+    
+public:
+    dbInsert(MYSQL* db, const char* Table, unsigned int count)
+    : dbRecord(db, Table, "", count) { }
+    
+    virtual bool Prepare()
+    {
+        csString statement;
+        
+        // count - 1 fields to update
+        statement.Format("INSERT INTO %s (", table);
+        for (unsigned int i=0;i<(count-1);i++)
+        {
+            if (i>0)
+                statement.Append(", ");
+            statement.Append(command[i]);
+        }
+        statement.Append(") VALUES (");
+        for (unsigned int i=0;i<(count-1);i++)
+        {
+            if (i>0)
+                statement.Append(", ");
+            statement.Append("?");
+        }
+        
+        statement.Append(")");
+        
+        prepared = (mysql_stmt_prepare(stmt, statement, statement.Length()) == 0);
+        
+        return prepared;
+    }
+};
+
+class dbUpdate : public dbRecord
+{
+    virtual void AddToStatement(const char* fname)
+    {
+        if(!prepared)
+            command.FormatPush("%s = ?", fname);
+    }
+    
+    virtual void SetID(uint32 uid) 
+    {
+        temp[index].uiValue = uid;
+        bind[index].buffer_type = MYSQL_TYPE_LONG;
+        bind[index].buffer = &(temp[index].uiValue);
+        bind[index].is_unsigned = true;
+        index++;
+    }
+public:
+    dbUpdate(MYSQL* db, const char* Table, const char* Idfield, unsigned int count)
+    : dbRecord(db, Table, Idfield, count) { }
+    
+    virtual bool Prepare()
     {
         csString statement;
         
@@ -321,27 +410,8 @@ public:
         
         return prepared;
     }
-    
-    bool Execute(uint32 uid)
-    {
-        temp[index].uiValue = uid;
-        bind[index].buffer_type = MYSQL_TYPE_LONG;
-        bind[index].buffer = &(temp[index].uiValue);
-        bind[index].is_unsigned = true;
-        index++;
-        CS_ASSERT(index == count);
-        
-        if(!prepared)
-            Prepare();
-        
-        CS_ASSERT(count == mysql_stmt_param_count(stmt));
-        
-        if(mysql_stmt_bind_param(stmt, bind) != 0)
-            return false;
-        
-        return (mysql_stmt_execute(stmt) == 0);
-    }
-};
 
+};
+    
 #endif
 
