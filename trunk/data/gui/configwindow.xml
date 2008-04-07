@@ -1,3 +1,4 @@
+<?xml version="1.0"?>
 <widget_description>
 
 <widget name="ConfigWindow" factory="pawsConfigWindow"
@@ -75,6 +76,10 @@
                     <attr name="SectionName" value="chattabs" />
                     <attr name="factory" value="pawsConfigChatTabs" />
                 </widget>
+                <widget factory="pawsSimpleTreeNode" label="Chat - Bubbles">
+                    <attr name="SectionName" value="chatbubbles"/>
+                    <attr name="factory" value="pawsConfigChatBubbles"/>
+                </widget>       
             </widget>
             
         </widget>

@@ -43,6 +43,7 @@ struct BubbleChatType
     int                 chatType;           // the chat type this settings will apply to
     psEffectTextRow     textSettings;       // the settings
     char                effectPrefix[64];   // the prefix of the effect name to apply, effects of name <prefix>longphrase, <prefix>normal, and <prefix>shortphrase should exist
+	bool				enabled;
 };
 
 
@@ -58,6 +59,7 @@ private:
     size_t bubbleShortPhraseCharCount;  // messages with fewer than this many characters get small bubble
     size_t bubbleLongPhraseLineCount;   // messages with more than this many lines get large bubble
 
+	bool bubblesEnabled;						// enable all chat bubbles
 public:
     psChatBubbles();
     virtual ~psChatBubbles();
@@ -74,7 +76,17 @@ public:
     *           not be loaded.
     */
     bool Load(const char * filename, bool saveUserData = false);
+	
+	csArray<BubbleChatType> GetBubbleChatTypes() { return chatTypes; }
+	void SetBubbleChatTypes(csArray<BubbleChatType> chatTypes) { this->chatTypes = chatTypes; }
+	
+	bool isEnabled() { return bubblesEnabled; }
+	void setEnabled(bool enable) { bubblesEnabled = enable; }
 
+    size_t GetBubbleMaxLineLen() { return bubbleMaxLineLen; }
+    size_t GetBubbleShortPhraseCharCount() { return bubbleShortPhraseCharCount; }
+    size_t GetBubbleLongPhraseLineCount() { return bubbleLongPhraseLineCount; }
+	
     // implemented iNetSubscriber messages
     virtual bool Verify(MsgEntry * msg, unsigned int flags, Client *& client);
     virtual void HandleMessage(MsgEntry * msg, Client * client);
