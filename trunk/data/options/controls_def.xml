@@ -11,8 +11,8 @@
     <bind action="Rotate right (sec)" key="Right" />
     <bind action="Strafe left (sec)" key="" />
     <bind action="Strafe right (sec)" key="" />
-    <bind action="Run" key="LShift" />
-    <bind action="ToggleRun" key="LCtrl" />
+    <bind action="Run" key="Shift" />
+    <bind action="ToggleRun" key="Ctrl" />
     <bind action="AutoMove" key="r" />
     <bind action="MouseMove" key="LeftClick" />
     <bind action="Sneak" key="RShift" />
