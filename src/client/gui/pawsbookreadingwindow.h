@@ -51,6 +51,9 @@ private:
     bool shouldWrite;
     int slotID;
     int containerID;
+	
+	csString filenameSafe(const csString &original);
+	bool isBadChar(char c);
 };
 
 CREATE_PAWS_FACTORY( pawsBookReadingWindow );

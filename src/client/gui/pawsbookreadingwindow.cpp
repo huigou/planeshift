@@ -140,19 +140,26 @@ bool pawsBookReadingWindow::OnButtonPressed( int mouseButton, int keyModifier, p
     if (widget->GetID() == SAVE)
     {
         csRef<iVFS> vfs = psengine->GetVFS();
-        unsigned int tempNumber = 0;
-        csString tempFileNameTemplate = "/this/book%d.txt", tempFileName;
+        csString tempFileNameTemplate = "/planeshift/userdata/books/%s.txt", tempFileName;
         csString bookFormat;
-        do
-        {
-            tempFileName.Format(tempFileNameTemplate, tempNumber);
-            tempNumber++;
-        } while (vfs->Exists(tempFileName));
-        bookFormat.Format("%s\r\n--------------------------------------------\r\n%s", 
-                            name->GetText(), description->GetText());
-
+		if (filenameSafe(name->GetText()).Length()) {
+			tempFileName.Format(tempFileNameTemplate, filenameSafe(name->GetText()).GetData());
+		}
+		else { //The title is made up of Only special chars :-(
+			tempFileNameTemplate = "/planeshift/userdata/books/book%d.txt";
+			unsigned int tempNumber = 0;
+			do
+	        {
+	           tempFileName.Format(tempFileNameTemplate, tempNumber);
+	           tempNumber++;
+	        } while (vfs->Exists(tempFileName));
+		}
+        
+        bookFormat = description->GetText();
+		
         vfs->WriteFile(tempFileName, bookFormat, bookFormat.Length());
-        psSystemMessage msg(0, MSG_ACK, "Book saved to %s", tempFileName.GetData()+6 );
+		
+        psSystemMessage msg(0, MSG_ACK, "Book saved to %s", tempFileName.GetData()+27 );
         msg.FireEvent();
         return true;
     }
@@ -161,5 +168,25 @@ bool pawsBookReadingWindow::OnButtonPressed( int mouseButton, int keyModifier, p
     Hide();
     PawsManager::GetSingleton().SetCurrentFocusedWidget( NULL );
     return true;
+}
+
+bool pawsBookReadingWindow::isBadChar(char c)
+{
+	csString badChars = "/\\?%*:|\"<>";
+	if (badChars.FindFirst(c) == (size_t) -1)
+		return false;
+	else
+		return true;
+}
+
+csString pawsBookReadingWindow::filenameSafe(const csString &original)
+{
+	csString safe;
+	size_t len = original.Length();
+	for (size_t c = 0; c < len; ++c) {
+		if (!isBadChar(original[c]))
+			safe += original[c];
+	}
+	return safe;
 }
 
