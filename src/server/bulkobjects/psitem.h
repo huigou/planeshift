@@ -386,11 +386,6 @@ public:
      */
     bool CheckRequirements( psCharacter* character, csString& resp );
 
-    /** Database assist function.  Fills the passed psStringArray with values for the fields in the database.
-     * Helper function for saving and updating.
-     */
-    void GetFieldArray(psStringArray& fields);
-
     /** Returns the UID of this item instance.
      * 0 is reserved for no UID assigned yet.
      * Items are initially created with a UID of 0.  Save() generates a unique item id.

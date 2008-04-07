@@ -104,7 +104,8 @@ public:
     virtual const char* DumpProfile()=0;
     virtual void ResetProfile()=0;
     
-    virtual iRecord* NewPreparedStatement(const char* table, const char* idfield, unsigned int count) =0;
+    virtual iRecord* NewUpdatePreparedStatement(const char* table, const char* idfield, unsigned int count) =0;
+    virtual iRecord* NewInsertPreparedStatement(const char* table, unsigned int count) = 0;
 };
 
 
@@ -199,6 +200,7 @@ public:
     virtual void AddField(const char* fname, unsigned int uiValue)=0;
     virtual void AddField(const char* fname, unsigned short usValue)=0;
     virtual void AddField(const char* fname, const char* sValue)=0;
+    virtual void AddFieldNull(const char* fname)=0;
 
     virtual bool Execute(uint32 uid)=0;
     

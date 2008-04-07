@@ -475,98 +475,48 @@ void psItem::Commit(bool children)
     if (!loaded)
         return;
 
-    psStringArray fields;
-
-    // New Item, need a UID
-    const char *fieldnames[]= {
-        "char_id_owner",
-        "char_id_guardian",
-        "stack_count",
-        "item_quality",
-        "crafted_quality",
-        "decay_resistance",
-        "creator_mark_id",
-        "guild_mark_id",
-        "flags",
-        "item_stats_id_standard",
-        "parent_item_id",
-        "location_in_parent",
-        "loc_x",
-        "loc_y",
-        "loc_z",
-        "loc_yrot",
-        "loc_sector_id",
-        "lock_str",
-        "lock_skill",
-        "openable_locks",
-        "loc_instance",
-        "item_name",
-        "item_description",
-        "charges"
-    };
-
-    GetFieldArray(fields);
-
+    static iRecord* updateQuery;
+    static iRecord* insertQuery;
+    
+    iRecord* targetQuery;
+    
     if (GetUID()==0)
     {
-        //printf("Saving item %s through SQL Insert\n",GetName() );
-
-        // Insert to item_instances and set the ID to the new ID that the db gives us
-        SetUID(db->GenericInsertWithID("item_instances",fieldnames,fields));
-
-        item_quality_original = item_quality;
+        if(insertQuery == NULL)
+            insertQuery = db->NewInsertPreparedStatement("item_instances", 24); // 24 fields
+        targetQuery = insertQuery;
     }
     else
     {
-        // Existing Item, update
-		//printf("Saving item %d (%s owned by %s) through SQL Update\n", GetUID(), GetName(), owning_character? owning_character->GetCharName():"no one" );
-
-        // Save this entry
-        csString uid;
-        uid.Format("%u",GetUID());
-        if ( !db->GenericUpdateWithID("item_instances","id",uid,fieldnames,fields) )
-        {
-            Error4("Failed to save item instance %u!\nError: %s\nCommand: %s", GetUID(), db->GetLastError(),db->GetLastQuery() );
-        }
-        else
-            item_quality_original = item_quality;
+        if(updateQuery == NULL)
+            updateQuery = db->NewUpdatePreparedStatement("item_instances", "id", 25); // 24 fields + 1 id field
+        targetQuery = updateQuery;
     }
-}
-
-void psItem::GetFieldArray(psStringArray& fields)
-{
-    // Owning character ID
-    fields.FormatPush("%u",owning_character?owning_character->GetCharacterID():0);
-
-    // Guarding character ID
-    fields.FormatPush("%u",guardingCharacterID);
-
-    // Stack count
-    fields.FormatPush("%u",GetStackCount());
-
-    // Item quality
-    fields.FormatPush("%1.2f",GetItemQuality());
     
-    // Crafted Quality
-    fields.FormatPush("%1.2f", GetMaxItemQuality());
-
-    fields.FormatPush("%1.2f",GetDecayResistance());
-
+    targetQuery->Reset();
+    
+    targetQuery->AddField("char_id_owner",owning_character?owning_character->GetCharacterID():0);
+    targetQuery->AddField("char_id_guardian", guardingCharacterID);
+    targetQuery->AddField("stack_count",GetStackCount());
+    targetQuery->AddField("item_quality",GetItemQuality());
+    targetQuery->AddField("crafted_quality",GetMaxItemQuality());
+    targetQuery->AddField("decay_resistance",GetDecayResistance());
+    
     // Crafter ID
     if (GetIsCrafterIDValid())
-        fields.FormatPush("%u",GetCrafterID());
+        targetQuery->AddField("creator_mark_id",GetCrafterID());
     else
-        fields.Push(NULL);
-
+        targetQuery->AddFieldNull("creator_mark_id");
+    
     // Guild ID
     if (GetIsGuildIDValid())
-        fields.FormatPush("%u",GetGuildID());
+        targetQuery->AddField("guild_mark_id",GetGuildID());
     else
-        fields.Push(NULL);
-
+        targetQuery->AddFieldNull("guild_mark_id");
+    
     // Flags
     csString flagString;
-
+    
     // Thise two are actualy glyhs things and should be moved to psGlyph
     // if a generic way of updating flags are implemented.
     if (flags & PSITEM_FLAG_PURIFIED)
@@ -629,47 +579,48 @@ void psItem::GetFieldArray(psStringArray& fields)
         if (!flagString.IsEmpty()) flagString.Append(",");
         flagString.Append("USECD");
     }
-
-    fields.Push(flagString);
-
+    
+    targetQuery->AddField("flags",flagString);
+    
     // item_stats_id_standard - base stats if non unique, unique stats if unique
-    fields.FormatPush("%u",GetBaseStats()->GetUID());
-
+    targetQuery->AddField("item_stats_id_standard",GetBaseStats()->GetUID());
+    
     // Container stuff
     if (!parent_item_instance_id)  // if not in container
     {
-        fields.Push(NULL);  // id of object containing this one        
-        fields.FormatPush("%d",loc_in_parent);  // slot number, or -1 if out in the world
+        targetQuery->AddFieldNull("parent_item_id");  // id of object containing this one        
+        targetQuery->AddField("location_in_parent",loc_in_parent);  // slot number, or -1 if out in the world
     }
     else // in container
     {
-        fields.FormatPush("%d",parent_item_instance_id);
-        fields.FormatPush("%d",loc_in_parent);
+        targetQuery->AddField("parent_item_id",parent_item_instance_id);
+        targetQuery->AddField("location_in_parent",loc_in_parent);
     }
-
+    
+    
     float locx,locy,locz,locyrot;
     psSectorInfo *sectorinfo;
     INSTANCE_ID instance;
-
+    
     GetLocationInWorld(instance,&sectorinfo,locx,locy,locz,locyrot);
-
+    
     if (!sectorinfo || parent_item_instance_id)
     {
-        fields.Push(NULL);
-        fields.Push(NULL);
-        fields.Push(NULL);
-        fields.Push(NULL);
-        fields.Push(NULL);
+        targetQuery->AddFieldNull("loc_x");
+        targetQuery->AddFieldNull("loc_y");
+        targetQuery->AddFieldNull("loc_z");
+        targetQuery->AddFieldNull("loc_yrot");
+        targetQuery->AddFieldNull("loc_sector_id");
     }
     else  // Item is not held or in something; must be in the world
     {
         if ( sectorinfo )
         {
-            fields.FormatPush("%1.6f",locx);
-            fields.FormatPush("%1.6f",locy);
-            fields.FormatPush("%1.6f",locz);
-            fields.FormatPush("%1.6f",locyrot);
-            fields.FormatPush("%u",sectorinfo->uid);
+            targetQuery->AddField("loc_x",locx);
+            targetQuery->AddField("loc_y",locy);
+            targetQuery->AddField("loc_z",locz);
+            targetQuery->AddField("loc_yrot",locyrot);
+            targetQuery->AddField("loc_sector_id",sectorinfo->uid);
         }
         else  //  Item is nowhere; cannot be saved
         {
@@ -677,10 +628,10 @@ void psItem::GetFieldArray(psStringArray& fields)
             CS_ASSERT(!"Attempt to save item without a parent in a NULL position");
         }
     }
-
-    fields.FormatPush("%d",GetLockStrength());
-    fields.FormatPush("%d",(int)GetLockpickSkill());
-
+    
+    targetQuery->AddField("lock_str",GetLockStrength());
+    targetQuery->AddField("lock_skill",GetLockpickSkill());
+    
     // push openableLocks
     csString openableLocksString;
     csArray<unsigned int>::Iterator iter = openableLocks.GetIterator();
@@ -697,13 +648,43 @@ void psItem::GetFieldArray(psStringArray& fields)
             openableLocksString.Append(tmp);
         }
     }
-    fields.Push(openableLocksString);
-    fields.FormatPush("%u", instance);
+    targetQuery->AddField("openable_locks", openableLocksString);
+    targetQuery->AddField("loc_instance", instance);
 
-    fields.Push(item_name);
-    fields.Push(item_description);
+    targetQuery->AddField("item_name", item_name);
+    targetQuery->AddField("item_description", item_description);
+    
+    targetQuery->AddField("charges",GetCharges());
 
-    fields.FormatPush("%d",GetCharges());
+    if (GetUID()==0)
+    {
+        //printf("Saving item %s through SQL Insert\n",GetName() );
+
+        // Insert to item_instances and set the ID to the new ID that the db gives us
+        if(targetQuery->Execute(0))
+        {
+            item_quality_original = item_quality;
+            SetUID(db->GetLastInsertID());
+        }
+        else
+            Error2("Failed to insert item instance!\nError: %s", db->GetLastError());
+
+
+    }
+    else
+    {
+        // Existing Item, update
+		//printf("Saving item %d (%s owned by %s) through SQL Update\n", GetUID(), GetName(), owning_character? owning_character->GetCharName():"no one" );
+
+        // Save this entry
+        
+        if ( !targetQuery->Execute(GetUID()) )
+        {
+            Error3("Failed to save item instance %u!\nError: %s", GetUID(), db->GetLastError());
+        }
+        else
+            item_quality_original = item_quality;
+    }
 }
 
 void psItem::ForceSaveIfNew()

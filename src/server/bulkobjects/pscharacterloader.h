@@ -138,7 +138,6 @@ public:
      *  @return true - Save progressing.   false - Could not save.
      */
     bool SaveCharacterData(psCharacter *chardata,gemActor *actor,bool charRecordOnly=false);
-    bool UpdateCharacterData(const char *id,const char **fieldnames, psStringArray& fieldvalues);
     
     /** Deletes character data to the database.
      *
