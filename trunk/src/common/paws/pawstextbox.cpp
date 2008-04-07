@@ -990,19 +990,11 @@ bool pawsEditTextBox::OnMouseDown( int button, int modifiers, int x, int y )
 //////////////////////////////////////////////////////////////////////
 pawsMultiLineTextBox::pawsMultiLineTextBox()
 {
-      // Create the optional scroll bar here as well but hidden.
-    scrollBar = new pawsScrollBar;
-    scrollBar->SetParent( this );
-    scrollBar->SetRelativeFrame( defaultFrame.Width() - 24, 6, 24, defaultFrame.Height() - 12 );
-    int attach = ATTACH_TOP | ATTACH_BOTTOM | ATTACH_RIGHT;
-    scrollBar->SetAttachFlags( attach );
-    scrollBar->PostSetup();
-    scrollBar->SetTickValue( 1.0 );
-    scrollBar->SetMaxValue(0.0);
-    AddChild( scrollBar );
-
-    OnResize();
-
+    scrollBar = 0;
+    startLine = 0;
+    canDrawLines = 0;
+    maxHeight = 0;
+    maxWidth = 0;
 }
 
 pawsMultiLineTextBox::~pawsMultiLineTextBox()
