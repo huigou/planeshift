@@ -107,9 +107,8 @@ public:
     void ReloadCache( );
     
 protected:
-
-    iObjectRegistry*        object_reg;
-    csRef<MsgHandler>        msghandler;    
+    iObjectRegistry*         objectReg;
+    csRef<MsgHandler>        msgHandler;    
 };
 
 #endif

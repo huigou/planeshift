@@ -34,7 +34,6 @@
 #include "net/messages.h"
 #include "net/msghandler.h"
 
-#include "util/psxmlparser.h"
 #include "util/log.h"
 
 #include "paws/pawsmanager.h"
@@ -56,32 +55,31 @@
 
 ActionHandler::ActionHandler( MsgHandler* mh, iObjectRegistry* obj_reg )
 {
-    msghandler   = mh;
-    object_reg   = obj_reg;
+    msgHandler   = mh;
+    objectReg   = obj_reg;
 
-    if ( msghandler )
+    if ( msgHandler )
     {
-        msghandler->Subscribe( this, MSGTYPE_MAPACTION );
+        msgHandler->Subscribe( this, MSGTYPE_MAPACTION );
     }
 }
 
 
 ActionHandler::~ActionHandler()
 {
-    if ( msghandler )
+    if ( msgHandler )
     {
-        msghandler->Unsubscribe( this, MSGTYPE_MAPACTION );
+        msgHandler->Unsubscribe( this, MSGTYPE_MAPACTION );
     }
 }
-
-
 
 
 void ActionHandler::HandleMessage(MsgEntry* me)
 {
     psMapActionMessage msg( me );
 
-    if ( !msg.valid ) return;
+    if ( !msg.valid ) 
+        return;
 
     switch ( msg.command )
     {
@@ -93,6 +91,7 @@ void ActionHandler::HandleMessage(MsgEntry* me)
 
             // Must have GM Window Open
             pawsGmGUIWindow * gm = (pawsGmGUIWindow *) PawsManager::GetSingleton().FindWidget( "GmGUI" );
+
             if (gm != NULL)
             {
                 if ( !gm->IsVisible() ) 
@@ -116,8 +115,11 @@ void ActionHandler::HandleMessage(MsgEntry* me)
 
 void ActionHandler::Query( const char* trigger, const char* sector, const char* mesh, int32_t poly, csVector3 pos )
 {
-    csString polyStr; polyStr.Format( "%d", poly );
-    csString posStr;  posStr.Format( "<x>%f</x><y>%f</y><z>%f</z>", pos.x, pos.y, pos.z );
+    csString poly_str; 
+    poly_str.Format( "%d", poly );
+    
+    csString pos_str;  
+    pos_str.Format( "<x>%f</x><y>%f</y><z>%f</z>", pos.x, pos.y, pos.z );
     
     csString xml;
     xml.Append( "<location>" );
@@ -128,10 +130,10 @@ void ActionHandler::Query( const char* trigger, const char* sector, const char* 
             xml.Append( mesh ); 
         xml.Append( "</mesh>" ); 
         xml.Append( "<polygon>" ); 
-            xml.Append( polyStr ); 
+            xml.Append( poly_str ); 
         xml.Append( "</polygon>" ); 
         xml.Append( "<position>" ); 
-            xml.Append( posStr );
+            xml.Append( pos_str );
         xml.Append( "</position>" ); 
         xml.Append( "<triggertype>" );
             xml.Append( trigger );
@@ -139,11 +141,12 @@ void ActionHandler::Query( const char* trigger, const char* sector, const char* 
     xml.Append( "</location>" );
     // Create Message
 
-    psMapActionMessage queryMsg( 0, psMapActionMessage::QUERY, xml.GetData() );
+    psMapActionMessage query_msg( 0, psMapActionMessage::QUERY, xml.GetData() );
 
     // Send Message
-    queryMsg.SendMessage();
+    query_msg.SendMessage();
 }
+
 
 void ActionHandler::Save( const char* id, const char* masterid, const char* name, const char* sector, 
                          const char* mesh, const char* poly, const char* posx, const char* posy, 
@@ -201,11 +204,12 @@ void ActionHandler::Save( const char* id, const char* masterid, const char* name
     xml.Append( "</location>" );
     // Create Message
 
-    psMapActionMessage queryMsg( 0, psMapActionMessage::SAVE, xml.GetData() );
+    psMapActionMessage query_msg( 0, psMapActionMessage::SAVE, xml.GetData() );
 
     // Send Message
-    queryMsg.SendMessage();
+    query_msg.SendMessage();
 }
+
 
 void ActionHandler::DeleteAction( const char* id )
 {
@@ -217,13 +221,14 @@ void ActionHandler::DeleteAction( const char* id )
     xml.Append( "</location>" );
 
     // Create Message
-    psMapActionMessage queryMsg( 0, psMapActionMessage::DELETE_ACTION, xml.GetData() );
+    psMapActionMessage query_msg( 0, psMapActionMessage::DELETE_ACTION, xml.GetData() );
 
-    queryMsg.SendMessage();
+    query_msg.SendMessage();
 }
+
 
 void ActionHandler::ReloadCache( )
 {
-    psMapActionMessage queryMsg( 0, psMapActionMessage::RELOAD_CACHE, "" );
-    queryMsg.SendMessage();
+    psMapActionMessage query_msg( 0, psMapActionMessage::RELOAD_CACHE, "" );
+    query_msg.SendMessage();
 }
