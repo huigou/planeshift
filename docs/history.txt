@@ -1,5 +1,8 @@
 *** 2008-04-08 by Andrew Dai
 - Added more profiling to character loading.
+- Changed the way Client::outqueue is processed so that only a weak reference
+  will be held to it in the netcode and so disconnected players will not
+  receive 'ghost' packets.
 
 *** 2008-04-07 by Andrew Dai
 - Added INSERT query support to prepared statements.

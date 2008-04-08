@@ -24,9 +24,12 @@
 
 #include "net/pstypes.h"
 #include "net/netinfos.h"
+#include "net/netpacket.h"
 #include "util/prb.h"
 #include "util/genrefqueue.h"
 #include <csutil/ref.h>
+#include <csutil/weakref.h>
+#include <csutil/weakreferenced.h>
 #include <csutil/refcount.h>
 #include <csutil/array.h>
 #include "netprofile.h"
@@ -55,7 +58,6 @@
 #undef SendMessage
 #endif
 
-class psNetPacketEntry;
 class MsgEntry;
 class NetPacketQueueRefCount;
 class csRandomGen;
@@ -482,8 +484,8 @@ protected:
     /** Outgoing message queue */
     csRef<NetPacketQueueRefCount> NetworkQueue;
 
-    /** list of outbound queues with waiting data */
-    GenericRefQueue<NetPacketQueueRefCount> senders;
+    /** weak referenced list of outbound queues with waiting data so disconnected clients won't receive packets*/
+    GenericRefQueue<NetPacketQueueRefCount, csWeakRef > senders;
 
     /** Incoming message queue vector */
     csArray<MsgQueue*> inqueues;
@@ -575,7 +577,7 @@ public:
     { return valid; }
 };
 
-class NetPacketQueueRefCount : public NetPacketQueue, public csSyncRefCount<NetPacketQueueRefCount>
+class NetPacketQueueRefCount : public NetPacketQueue, public csSyncRefCount, public CS::Utility::WeakReferenced
 {
 private:
     bool pending;
