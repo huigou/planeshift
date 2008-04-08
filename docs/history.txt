@@ -1,3 +1,6 @@
+*** 2008-04-08 by Andrew Dai
+- Added more profiling to character loading.
+
 *** 2008-04-07 by Andrew Dai
 - Added INSERT query support to prepared statements.
 - Moved the characters and item_instances table to use prepared statements.

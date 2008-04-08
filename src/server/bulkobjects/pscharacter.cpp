@@ -216,6 +216,7 @@ void psCharacter::SetActor( gemActor* newActor )
 bool psCharacter::Load(iResultRow& row)
 {
     // TODO:  Link in account ID?
+    csTicks start = csGetTicks();
     SetCharacterID(row.GetInt("id"));
     SetAccount(row.GetInt("account_id"));
     SetCharType( row.GetUInt32("character_type") );
@@ -234,6 +235,14 @@ bool psCharacter::Load(iResultRow& row)
 
     //Assign the Helm Group
     Result helmResult(db->Select("SELECT helm FROM race_info WHERE id=%d", raceid));
+    
+    if(csGetTicks() - start > 500)
+    {
+        csString status;
+        status.Format("Warning: Spent %u time loading character ID %u %s:%d", 
+                      csGetTicks() - start, characterid, __FILE__, __LINE__);
+        psserver->GetLogCSV()->Write(CSV_STATUS, status);
+    }
     helmGroup = helmResult[0]["helm"];
 
     SetDescription(row["description"]);
@@ -262,6 +271,14 @@ bool psCharacter::Load(iResultRow& row)
     {
         Error2("Cannot load skills for Character ID %u.",characterid);
         return false;
+    }
+    
+    if(csGetTicks() - start > 500)
+    {
+        csString status;
+        status.Format("Warning: Spent %u time loading character ID %u %s:%d", 
+                      csGetTicks() - start, characterid, __FILE__, __LINE__);
+        psserver->GetLogCSV()->Write(CSV_STATUS, status);
     }
 
     RecalculateStats();
@@ -308,6 +325,13 @@ bool psCharacter::Load(iResultRow& row)
                        row.GetFloat("loc_y"),
                        row.GetFloat("loc_z"),
                        row.GetFloat("loc_yrot") );
+    if(csGetTicks() - start > 500)
+    {
+        csString status;
+        status.Format("Warning: Spent %u time loading character ID %u %s:%d", 
+                      csGetTicks() - start, characterid, __FILE__, __LINE__);
+        psserver->GetLogCSV()->Write(CSV_STATUS, status);
+    }
     spawn_loc = location;
 
     // Guild fields here
@@ -331,12 +355,26 @@ bool psCharacter::Load(iResultRow& row)
         return false;
     }
 
+    if(csGetTicks() - start > 500)
+    {
+        csString status;
+        status.Format("Warning: Spent %u time loading character ID %u %s:%d", 
+                      csGetTicks() - start, characterid, __FILE__, __LINE__);
+        psserver->GetLogCSV()->Write(CSV_STATUS, status);
+    }
     if (!LoadAdvantages(use_id))
     {
         Error2("Cannot load advantages for Character ID %u.",characterid);
         return false;
     }
 
+    if(csGetTicks() - start > 500)
+    {
+        csString status;
+        status.Format("Warning: Spent %u time loading character ID %u %s:%d", 
+                      csGetTicks() - start, characterid, __FILE__, __LINE__);
+        psserver->GetLogCSV()->Write(CSV_STATUS, status);
+    }
     // This data is loaded only if it's a player, not an NPC
     if ( !IsNPC() && !IsPet() )
     {
@@ -354,6 +392,13 @@ bool psCharacter::Load(iResultRow& row)
 
     }
 
+    if(csGetTicks() - start > 500)
+    {
+        csString status;
+        status.Format("Warning: Spent %u time loading character ID %u %s:%d", 
+                      csGetTicks() - start, characterid, __FILE__, __LINE__);
+        psserver->GetLogCSV()->Write(CSV_STATUS, status);
+    }
     if (use_id != characterid )
     {
         // This has a master npc template, so load character specific items
@@ -369,11 +414,25 @@ bool psCharacter::Load(iResultRow& row)
         inventory.Load();
     }
 
+    if(csGetTicks() - start > 500)
+    {
+        csString status;
+        status.Format("Warning: Spent %u time loading character ID %u %s:%d", 
+                      csGetTicks() - start, characterid, __FILE__, __LINE__);
+        psserver->GetLogCSV()->Write(CSV_STATUS, status);
+    }
     if ( !LoadRelationshipInfo( characterid ) ) // Buddies, Marriage Info, Familiars
     {
         return false;
     }
 
+    if(csGetTicks() - start > 500)
+    {
+        csString status;
+        status.Format("Warning: Spent %u time loading character ID %u %s:%d", 
+                      csGetTicks() - start, characterid, __FILE__, __LINE__);
+        psserver->GetLogCSV()->Write(CSV_STATUS, status);
+    }
     // Load merchant info
     csRef<psMerchantInfo> merchant = csPtr<psMerchantInfo>(new psMerchantInfo());
     if (merchant->Load(use_id))
@@ -381,6 +440,13 @@ bool psCharacter::Load(iResultRow& row)
         merchantInfo = merchant;
     }
 
+    if(csGetTicks() - start > 500)
+    {
+        csString status;
+        status.Format("Warning: Spent %u time loading character ID %u %s:%d", 
+                      csGetTicks() - start, characterid, __FILE__, __LINE__);
+        psserver->GetLogCSV()->Write(CSV_STATUS, status);
+    }
     // Load trainer info
     csRef<psTrainerInfo> trainer = csPtr<psTrainerInfo>(new psTrainerInfo());
     if (trainer->Load(use_id))
@@ -388,12 +454,26 @@ bool psCharacter::Load(iResultRow& row)
         trainerInfo = trainer;
     }
 
+    if(csGetTicks() - start > 500)
+    {
+        csString status;
+        status.Format("Warning: Spent %u time loading character ID %u %s:%d", 
+                      csGetTicks() - start, characterid, __FILE__, __LINE__);
+        psserver->GetLogCSV()->Write(CSV_STATUS, status);
+    }
     if (!LoadSpells(use_id))
     {
         Error2("Cannot load spells for Character ID %u.",characterid);
         return false;
     }
 
+    if(csGetTicks() - start > 500)
+    {
+        csString status;
+        status.Format("Warning: Spent %u time loading character ID %u %s:%d", 
+                      csGetTicks() - start, characterid, __FILE__, __LINE__);
+        psserver->GetLogCSV()->Write(CSV_STATUS, status);
+    }
     timeconnected        = row.GetUInt32("time_connected_sec");
     startTimeThisSession = csGetTicks();
 

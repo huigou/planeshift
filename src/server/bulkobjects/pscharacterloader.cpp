@@ -210,7 +210,13 @@ psCharacter *psCharacterLoader::LoadCharacterData(unsigned int uid, bool forceRe
     psCharacter *chardata = new psCharacter();
 
     Debug2(LOG_CACHE,uid,"New character data ptr is %p.",chardata);
-
+    if(csGetTicks() - start > 500)
+    {
+        csString status;
+        status.Format("Warning: Spent %u time loading character ID %u %s:%d", 
+                      csGetTicks() - start, uid, __FILE__, __LINE__);
+        psserver->GetLogCSV()->Write(CSV_STATUS, status);
+    }
     // Read basic stats
     if (!chardata->Load(result[0]))
     {
@@ -229,8 +235,8 @@ psCharacter *psCharacterLoader::LoadCharacterData(unsigned int uid, bool forceRe
     if(csGetTicks() - start > 500)
     {
         csString status;
-        status.Format("Warning: Spent %u time loading character ID %u", 
-            csGetTicks() - start, uid);
+        status.Format("Warning: Spent %u time loading character ID %u %s:%d", 
+            csGetTicks() - start, uid, __FILE__, __LINE__);
         psserver->GetLogCSV()->Write(CSV_STATUS, status);
     }
 
