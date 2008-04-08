@@ -392,7 +392,7 @@ psActionLocation *ActionManager::FindAction( uint id )
     {
         actionLocation = iter.Next();
 
-        if ( actionLocation->GetGemObject()->GetEntity()->GetID() == id )
+        if ( actionLocation->GetGemObject()->GetEntityID() == id )
         {
             return actionLocation;
         }
