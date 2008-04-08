@@ -3,6 +3,10 @@
 - Changed the way Client::outqueue is processed so that only a weak reference
   will be held to it in the netcode and so disconnected players will not
   receive 'ghost' packets.
+- Patch by ThomPhoenix for some small fixes to the shortcut window and the
+  shortcutedit window. Some alignment fixes by Nikodemus.
+  And a new minframe that allows you to have a horizontally stretched shortcut
+  window with the height of one button.
 
 *** 2008-04-07 by Andrew Dai
 - Added INSERT query support to prepared statements.
