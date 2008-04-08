@@ -31,25 +31,22 @@
 * for multi-threading. The objects in the queue must
 * implement reference counting.
 */
-template <class queuetype>
+template <class queuetype, template <class T> class refType = csRef >
 class GenericRefQueue
 {
 public:
-    GenericRefQueue<queuetype>(unsigned int maxsize = 500)
+    GenericRefQueue(unsigned int maxsize = 500)
     {
         /* we make the buffer 1 typ bigger, so we can avoid one check and one
-        variable when testing if buffer is full */
-        maxsize++;
-        qbuffer = new queuetype* [maxsize];
-        if (!qbuffer)
-            ERRORHALT ("No Memory");
-        qstart = qend = 0;
+         variable when testing if buffer is full */
         qsize = maxsize;
+        qbuffer = new refType<queuetype>[qsize + 1]();
+        qstart = qend = 0;
     }
 
     ~GenericRefQueue()
     {
-        delete []qbuffer;
+        delete[] qbuffer;
     }
 
     /** This adds a message to the queue */
@@ -67,17 +64,13 @@ public:
             {
                 return false;
             }
-
+            // check are we having a refcount race (in which msg would already be destroyed)
+			CS_ASSERT(msg->GetRefCount() > 0);
             // add Message to queue
             qbuffer[qend]=msg;
             qend=tqend;
 
             msg->SetPending(true);
-
-            // check are we having a refcount race (in which msg would already be destroyed)
-			CS_ASSERT(msg->GetRefCount() > 0);
-			
-            msg->IncRef(); 
 
             Interrupt();
         }
@@ -93,17 +86,23 @@ public:
     {
         CS::Threading::RecursiveMutexScopedLock lock(mutex);
 
-        // check if queue is empty
-        if (qstart == qend)
-            return 0;
+        csRef<queuetype> ptr;
+        
+        // if this is a weakref queue we should skip over null entries
+        while(!ptr.IsValid())
+        {
+            // check if queue is empty
+            if (qstart == qend)
+                return 0;
 
-        // removes Message from queue
-        csRef<queuetype> ptr = *(qbuffer + qstart);
-        qstart = (qstart + 1) % qsize;
+            // removes Message from queue
+            ptr = qbuffer[qstart];
+            qbuffer[qstart] = 0;
+            
+            qstart = (qstart + 1) % qsize;
+        }
 
         ptr->SetPending(false);
-
-        ptr->DecRef();
 
         return csPtr<queuetype>(ptr);
     }
@@ -127,17 +126,22 @@ public:
             return 0;
         }
 
-        // check if queue is empty
-        if (qstart == qend)
-            return 0;
+        csRef<queuetype> ptr;
+        // if this is a weakref queue we should skip over null entries
+        while(!ptr.IsValid())
+        {
+            // check if queue is empty
+            if (qstart == qend)
+                return 0;
 
-        // removes Message from queue
-        csRef<queuetype> ptr = *(qbuffer + qstart);
-        qstart = (qstart + 1) % qsize;
+            // removes Message from queue
+            ptr = qbuffer[qstart];
+            qbuffer[qstart] = 0;
+            
+            qstart = (qstart + 1) % qsize;
+        }
 
         ptr->SetPending(false);
-
-        ptr->DecRef();
 
         return csPtr<queuetype>(ptr);
     }
@@ -151,9 +155,9 @@ public:
     }
 
 protected:
-    queuetype **qbuffer;
-    unsigned int qstart, qend;
-    unsigned int qsize;
+
+    refType<queuetype>* qbuffer;
+    unsigned int qstart, qend, qsize;
     CS::Threading::RecursiveMutex mutex;
     CS::Threading::Condition datacondition;
 };

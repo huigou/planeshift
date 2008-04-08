@@ -40,14 +40,15 @@ using namespace CS::Threading;
  * csSyncRefCount is safe in most cases. A case where it isn't is when the
  * read to check for null is done just as something tries to inc (and the
  * read is done first).
+ * If the code is written correctly, this should never happen as otherwise
+ * the thread that is trying to inc would be reading deleted data.
  */
-template<typename RealType>
 class csSyncRefCount
 {
 protected:
     int32 ref_count;
 
-    ~csSyncRefCount () {}
+    virtual ~csSyncRefCount () {}
 
 public:
     /// Initialize object and set reference to 1.
@@ -67,7 +68,8 @@ public:
     {
         if(AtomicOperations::Decrement(&ref_count) == 0)
         {
-            delete static_cast<RealType*>(this);
+            CS_ASSERT_MSG("Race condition on destroying csSyncRef pointer", ref_count == 0);
+            delete this;
         }
     }
 
@@ -121,7 +123,7 @@ struct psMessageBytes
 /**
  * The structure of 1 queue entry (pointer to a message)
  */
-class MsgEntry : public csSyncRefCount<MsgEntry>
+class MsgEntry : public csSyncRefCount
 {
 public:
     MsgEntry (size_t datasize = 0, uint8_t msgpriority=PRIORITY_HIGH)
