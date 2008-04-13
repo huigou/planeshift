@@ -1,3 +1,7 @@
+*** 2008-04-13 by Andrew Dai
+- Added assertion to prove that a stack overflow bug in the mathscriptengine
+  exists.
+
 *** 2008-04-08 by Andrew Dai
 - Added more profiling to character loading.
 - Changed the way Client::outqueue is processed so that only a weak reference

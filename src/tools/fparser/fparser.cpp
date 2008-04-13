@@ -1018,6 +1018,7 @@ double FunctionParser::Eval(const double* Vars)
 
     for(IP=0; IP<ByteCodeSize; ++IP)
     {
+        assert(SP < static_cast<int>(data->StackSize));
         switch(ByteCode[IP])
         {
 // Functions:
