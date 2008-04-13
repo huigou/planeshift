@@ -766,6 +766,9 @@
 				RelativePath="..\..\src\client\gui\pawsconfigchat.cpp">
 			</File>
 			<File
+				RelativePath="..\..\src\client\gui\pawsconfigchatbubbles.cpp">
+			</File>
+			<File
 				RelativePath="..\..\src\client\gui\pawsconfigchatfilter.cpp">
 			</File>
 			<File
@@ -975,6 +978,9 @@
 			</File>
 			<File
 				RelativePath="..\..\src\client\gui\pawsconfigchat.h">
+			</File>
+			<File
+				RelativePath="..\..\src\client\gui\pawsconfigchatbubbles.h">
 			</File>
 			<File
 				RelativePath="..\..\src\client\gui\pawsconfigchatfilter.h">
