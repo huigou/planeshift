@@ -129,7 +129,7 @@ void ClientCacheManager::LoadNewFactory(const char* filename)
     if (indexEntry->factory == NULL)
     {
         iBase* result = NULL;
-        psengine->GetLoader()->Load (root, result);
+        psengine->GetLoader()->Load (root, result, false, true);
         iMeshFactoryWrapper* meshW = psengine->GetEngine()->GetMeshFactories()->FindByName(name);
         indexEntry->factory = meshW;
     }
