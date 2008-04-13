@@ -11,6 +11,7 @@ using namespace FUNCTIONPARSERTYPES;
 #include <cstring>
 #include <cctype>
 #include <cmath>
+#include <cassert>
 
 using namespace std;
 
