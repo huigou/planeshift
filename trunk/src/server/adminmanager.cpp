@@ -4255,9 +4255,9 @@ void AdminManager::KillNPC (MsgEntry *me, psAdminCmdMessage& msg, AdminCmdData& 
     if (data.target.IsEmpty())
         obj = client->GetTargetObject();
     else if (data.target.StartsWith("pid:"))
-        obj = GEMSupervisor::GetSingleton().FindNPCEntity(atoi(data.target.Slice(4).GetData()));
+        obj = GEMSupervisor::GetSingleton().FindNPCEntity(atoi(data.target.Slice(4).GetDataSafe()));
     else if (data.target.StartsWith("eid:"))
-        obj = GEMSupervisor::GetSingleton().FindObject(atoi(data.target.Slice(4).GetData()));
+        obj = GEMSupervisor::GetSingleton().FindObject(atoi(data.target.Slice(4).GetDataSafe()));
     else // try and use it as a name
         obj = GEMSupervisor::GetSingleton().FindObject(data.target);
 
