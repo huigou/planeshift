@@ -2810,7 +2810,7 @@ void AdminManager::HandlePath(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
         if (wp)
         {
             // A path from a waypoint can't be used to anything unless it has a name
-            if (wp == path->start && path->GetName() == "")
+            if (wp == path->start && path->GetName() == csString(""))
             {
                 psserver->SendSystemInfo( me->clientnum, "Can't create a path back to same waypoint %s(%d) at "
                                           "range %.2f without name.",

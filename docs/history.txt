@@ -2,6 +2,8 @@
 - Fix FS#1421. /killnpc now works with pid:N, eid:N, or NPC name.  In the case
   of duplicates it will grab the first NPC with that name, similar to teleport;
   presumably in those cases you will target it or get the EID or PID.
+- Fix pointer comparison vs. string comparison in adminmanager which would
+  probably cause it to fail most of the time.  There's probably a better fix.
 
 *** 2008-04-13 by Mike Gist
 - Changed the factory loader to reuse already loaded data if existing, instead
