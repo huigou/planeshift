@@ -1,3 +1,6 @@
+*** 2008-04-14 by Kenny Graunke
+- Fix crash in /killnpc fix when given bad syntax.
+
 *** 2008-04-13 by Kenny Graunke
 - Fix FS#1421. /killnpc now works with pid:N, eid:N, or NPC name.  In the case
   of duplicates it will grab the first NPC with that name, similar to teleport;
