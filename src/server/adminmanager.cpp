@@ -246,8 +246,15 @@ bool AdminManager::AdminCmdData::DecodeAdminCmdMessage(MsgEntry *pMsg, psAdminCm
     }
     else if (command == "/killnpc")
     {
-        target = (words[1]=="reload")?"":words[1];
-        action = words[words.GetCount()-1];
+        if (words[words.GetCount()-1] == "reload")
+        {
+            action = "reload";
+            target = words.GetWords(1, words.GetCount()-2);
+        }
+        else
+        {
+            target = words.GetWords(1, words.GetCount()-1);
+        }
         return true;
     }
     else if (command == "/loadquest")
@@ -4245,33 +4252,33 @@ void AdminManager::KillNPC (MsgEntry *me, psAdminCmdMessage& msg, AdminCmdData& 
 {
     gemObject* obj = NULL;
 
-    if(data.target.Length() != 0)
-        if (data.target.FindFirst(':')!=(size_t)-1) 
-            obj = GEMSupervisor::GetSingleton().FindNPCEntity(atoi(data.target.Slice(3).GetData()));
-
-    if ( !obj )
+    if (data.target.IsEmpty())
         obj = client->GetTargetObject();
+    else if (data.target.StartsWith("pid:"))
+        obj = GEMSupervisor::GetSingleton().FindNPCEntity(atoi(data.target.Slice(4).GetData()));
+    else if (data.target.StartsWith("eid:"))
+        obj = GEMSupervisor::GetSingleton().FindObject(atoi(data.target.Slice(4).GetData()));
+    else // try and use it as a name
+        obj = GEMSupervisor::GetSingleton().FindObject(data.target);
 
-    if ( obj )
+    gemNPC *target = dynamic_cast<gemNPC*>(obj);
+    if (target && target->GetClientID() == 0)
     {
-        gemActor *target = obj->GetActorPtr();
-        if (target && target->GetClientID() == 0)
+        if (data.action != "reload")
         {
-            if (data.action != "reload")
-                target->Kill(client->GetActor());
-            else
-            {
-                unsigned int npcid = target->GetCharacterData()->GetCharacterID();
-                
-                psCharacter * npcdata = psServer::CharacterLoader.LoadCharacterData(npcid,true);
-                EntityManager::GetSingleton().RemoveActor(obj);
-                EntityManager::GetSingleton().CreateNPC(npcdata);
-                psserver->SendSystemResult(me->clientnum, "NPC (id %d) has been reloaded.",npcid);
-            }
-            return;
+            target->Kill(client->GetActor());
         }
+        else
+        {
+            unsigned int npcid = target->GetCharacterData()->GetCharacterID();
+            psCharacter *npcdata = psServer::CharacterLoader.LoadCharacterData(npcid,true);
+            EntityManager::GetSingleton().RemoveActor(obj);
+            EntityManager::GetSingleton().CreateNPC(npcdata);
+            psserver->SendSystemResult(me->clientnum, "NPC (id %d) has been reloaded.",npcid);
+        }
+        return;
     }
-    psserver->SendSystemError(me->clientnum, "No NPC was targeted.");
+    psserver->SendSystemError(me->clientnum, "No NPC found to kill.");
 }
 
 
