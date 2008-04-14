@@ -12,6 +12,8 @@
 *** 2008-04-13 by Andrew Dai
 - Added assertion to prove that a stack overflow bug in the mathscriptengine
   exists.
+- Fixed buffer overrun issue with CalculateMaxHP script by disabling optimization
+  on all scripts.
 
 *** 2008-04-08 by Andrew Dai
 - Added more profiling to character loading.
