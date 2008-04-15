@@ -1,3 +1,10 @@
+*** 2008-04-15 by Jorrit Tyberghein
+- Removed several calls to engine->GetBeginDrawFlags(). This call should
+  *only* be used right before you plan to render the main 3D view. It should
+  not be used before rendering 2D stuff or additional 3D views on top of
+  the main 3D view. By fixing this PS can now safely use maps that
+  have the <clearscreen> property set.
+
 *** 2008-04-14 by Kenny Graunke
 - Fix crash in /killnpc fix when given bad syntax.
 

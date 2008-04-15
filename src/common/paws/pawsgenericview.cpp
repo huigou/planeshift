@@ -123,7 +123,7 @@ void pawsGenericView::Draw()
 {
     graphics2D->SetClipRect( 0,0, graphics2D->GetWidth(), graphics2D->GetHeight());
     // tell CS to render the scene
-    if (!PawsManager::GetSingleton().GetGraphics3D()->BeginDraw( engine->GetBeginDrawFlags() | CSDRAW_3DGRAPHICS))
+    if (!PawsManager::GetSingleton().GetGraphics3D()->BeginDraw(CSDRAW_3DGRAPHICS))
         return;
 
     view->SetRectangle( screenFrame.xmin, 

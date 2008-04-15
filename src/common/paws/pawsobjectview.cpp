@@ -364,7 +364,7 @@ void pawsObjectView::DrawNoRotate()
          return;
 
     graphics2D->SetClipRect( 0,0, graphics2D->GetWidth(), graphics2D->GetHeight());
-    if ( !PawsManager::GetSingleton().GetGraphics3D()->BeginDraw( engine->GetBeginDrawFlags() | CSDRAW_3DGRAPHICS) )
+    if ( !PawsManager::GetSingleton().GetGraphics3D()->BeginDraw(CSDRAW_3DGRAPHICS) )
         return;
 
     if ( !view )
@@ -483,7 +483,7 @@ void pawsObjectView::DrawRotate()
          return;
 
     graphics2D->SetClipRect( 0,0, graphics2D->GetWidth(), graphics2D->GetHeight());
-    if ( !PawsManager::GetSingleton().GetGraphics3D()->BeginDraw( engine->GetBeginDrawFlags() | CSDRAW_3DGRAPHICS) )
+    if ( !PawsManager::GetSingleton().GetGraphics3D()->BeginDraw(CSDRAW_3DGRAPHICS) )
         return;
 
     if ( !view )

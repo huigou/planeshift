@@ -844,7 +844,7 @@ bool psEngine::HandleEvent (iEvent &ev)
                 if (camera)
                     camera->Draw();
 
-                g3d->BeginDraw(engine->GetBeginDrawFlags() | CSDRAW_2DGRAPHICS);
+                g3d->BeginDraw(CSDRAW_2DGRAPHICS);
                 if (effectManager)
                     effectManager->Render2D(g3d, g2d);
                 paws->Draw();
