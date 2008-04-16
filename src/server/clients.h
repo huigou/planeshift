@@ -40,6 +40,8 @@ public:
     {
         if(addr < other.addr)
             return true;
+        else if(addr > other.addr)
+            return false;
         return port < other.port;
     }
 };
