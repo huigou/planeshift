@@ -884,8 +884,9 @@ void UserManager::Who(psUserCmdMessage& msg, Client* client, int clientnum)
 
     // Guild rank, guild and title should come from acraig's player prop class.
     ClientIterator i(*clients);     
-    for (Client* curr = i.First(); curr && count<30; curr = i.Next()) 
-    {  
+    while(count < 30 && i.HasNext())
+    {
+        Client *curr = i.Next();
         csString playerName(curr->GetName());
         csString guildTitle;
         csString guildName;

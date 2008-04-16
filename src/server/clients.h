@@ -27,6 +27,26 @@
 class ClientIterator;
 class iResultRow;
 
+class SockAddress{
+public:
+    u_int32_t port;
+    u_int32_t addr;
+    SockAddress(const SOCKADDR_IN &sock)
+    {
+        port = sock.sin_port;
+        addr = sock.sin_addr.s_addr;
+    }
+    bool operator< (const SockAddress& other) const
+    {
+        if(addr < other.addr)
+            return true;
+        return port < other.port;
+    }
+};
+
+template<> class csHashComputer<SockAddress> :
+public csHashComputerStruct<SockAddress> {};
+
 /**
  * This class is a list of several CLient objects, it's designed for finding
  * clients very fast based on their clientnum or their IP address.
@@ -34,10 +54,12 @@ class iResultRow;
  */
 class ClientConnectionSet
 {
+public:
+    typedef csHash<Client*, SockAddress> AddressHash;
 protected:
     friend class ClientIterator;
     
-    BinaryRBTree<Client> tree;
+    AddressHash addrHash;
     csHash<Client*> hash;
     CS::Threading::RecursiveMutex mutex;
 
@@ -70,7 +92,7 @@ public:
     void ClearAllTargets(gemObject *obj);
 };
 
-class ClientIterator : public BinaryRBIterator<Client>
+class ClientIterator : public ClientConnectionSet::AddressHash::GlobalIterator
 {
 public:
     ClientIterator (ClientConnectionSet& clients);

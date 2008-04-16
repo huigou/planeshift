@@ -275,8 +275,9 @@ int com_status(char *)
     }
 
     ClientIterator i(*clients);
-    for (Client *client = i.First(); client; client = i.Next())
+    while(i.HasNext())
     {
+        Client *client = i.Next();
         int eid = 0;
         if (client->GetActor() && client->GetActor()->GetEntity() )
         {

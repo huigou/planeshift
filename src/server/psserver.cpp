@@ -146,13 +146,13 @@ psServer::~psServer()
     {
         ClientConnectionSet* clients = serverthread->GetConnections();
 
-        Client* p;
+        Client* p = NULL;
         do
         {       
             // this is needed to not block the RemovePlayer later...
             {
                 ClientIterator i(*clients);
-                p = i.First();
+                p = i.HasNext() ? i.Next() : NULL;
             }
 
             if (p)
@@ -280,8 +280,8 @@ bool psServer::Initialize(iObjectRegistry* object_reg)
     db_name = configmanager->GetStr("PlaneShift.Database.name", "planeshift");
     db_port = configmanager->GetInt("PlaneShift.Database.port");
 
-    Debug4(LOG_STARTUP,0,COL_BLUE "Database Host: '%s' User: '%s' Databasename: '%s'\n" COL_NORMAL,
-      (const char*) db_host, (const char*) db_user, (const char*) db_name);
+    Debug5(LOG_STARTUP,0,COL_BLUE "Database Host: '%s' User: '%s' Databasename: '%s' Port: %d\n" COL_NORMAL,
+      (const char*) db_host, (const char*) db_user, (const char*) db_name, db_port);
 
     if (!database->Initialize(db_host, db_port, db_user, db_pass, db_name))
     {

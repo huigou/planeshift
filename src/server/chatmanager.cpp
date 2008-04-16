@@ -343,11 +343,11 @@ void ChatManager::SendGuild(Client *client, psChatMessage& msg)
 void ChatManager::SendGuild(const csString & sender, psGuildInfo * guild, psChatMessage& msg)
 {
     ClientIterator iter(*psserver->GetConnections() );
-    Client * client;
     psGuildLevel * level;
 
-    for (client = iter.First(); client != NULL; client = iter.Next())
+    while(iter.HasNext())
     {
+        Client *client = iter.Next();
         if (client->GetGuildID() == guild->id)
         {
             level = client->GetCharacterData()->GetGuildLevel();

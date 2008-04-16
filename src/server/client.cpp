@@ -80,14 +80,6 @@ Client::Client ()
     pets.Insert( 0, (uint32)-1 );
 }
 
-// Constructor for key search of bin tree
-Client::Client(LPSOCKADDR_IN addr)
-{
-    Client::addr=*addr;
-    valid=true;  // necessary for key search of bin tree
-
-}
-
 Client::~Client()
 {
 }
@@ -95,6 +87,7 @@ Client::~Client()
 bool Client::Initialize(LPSOCKADDR_IN addr, uint32_t clientnum)
 {
     Client::addr=*addr;
+    CS_ASSERT_MSG("Unexpected size for IP address structure!", sizeof(addr->sin_addr.s_addr) + sizeof(addr->sin_port) == 6);
     Client::clientnum=clientnum;
     Client::valid=true;
 

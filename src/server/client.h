@@ -86,11 +86,6 @@ public:
     * handleUnknownClient
     */
     Client();
-    
-    /**
-     * This ctor below is ONLY for constructing search keys in BinaryTree.
-     */
-    Client(LPSOCKADDR_IN addr);
 
 
     ~Client();
@@ -293,25 +288,7 @@ public:
 
     //    bool ReadyToExchange();
 
-    // These operators are required for all BinaryTree<> classes.
-    bool operator < (const Client& other) const
-    {
-        if (isValid() != other.isValid())
-            return isValid() < other.isValid();
-        if (addr.sin_addr.s_addr != other.addr.sin_addr.s_addr)
-            return addr.sin_addr.s_addr < other.addr.sin_addr.s_addr;
-        if (addr.sin_port != other.addr.sin_port)
-            return addr.sin_port < other.addr.sin_port;
-        
-        return false;
-    }
-    
-    bool operator == (const Client& other) const
-    {
-        return (isValid() &&
-            addr.sin_port == other.addr.sin_port &&
-            addr.sin_addr.s_addr == other.addr.sin_addr.s_addr);
-    }
+    const SOCKADDR_IN& GetAddress() const { return addr; }
 
     csRef<NetPacketQueueRefCount> outqueue;
 
