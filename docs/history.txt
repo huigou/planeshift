@@ -1,3 +1,6 @@
+*** 2008-04-16 by Mike Gist
+- Updated autoconf and jam files from CS.
+
 *** 2008-04-15 by Jorrit Tyberghein
 - Removed several calls to engine->GetBeginDrawFlags(). This call should
   *only* be used right before you plan to render the main 3D view. It should
