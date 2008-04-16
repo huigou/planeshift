@@ -1,5 +1,7 @@
 *** 2008-04-16 by Mike Gist
 - Updated autoconf and jam files from CS.
+
+*** 2008-04-16 by Andrew Dai
 - Optimised the ClientConnectionSet by using a hash instead of a tree to hold
   clients.
 
