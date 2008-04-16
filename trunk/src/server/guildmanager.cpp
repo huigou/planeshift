@@ -1185,11 +1185,11 @@ void GuildManager::EndGuild(psGuildInfo *guild,int clientnum)
 
     UnsubscribeWholeGuild(guild);
 
-    Client *p;
     ClientIterator i(*clients);
 
-    for (p = i.First(); p; p = i.Next())
-    {    
+    while(i.HasNext())
+    {
+        Client *p = i.Next();
         if (p->GetActor() && (p->GetActor()->GetGuild() == guild))
         {
             psUpdatePlayerGuildMessage update(p->GetClientNum(),

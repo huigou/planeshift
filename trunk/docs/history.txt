@@ -1,5 +1,7 @@
 *** 2008-04-16 by Mike Gist
 - Updated autoconf and jam files from CS.
+- Optimised the ClientConnectionSet by using a hash instead of a tree to hold
+  clients.
 
 *** 2008-04-15 by Jorrit Tyberghein
 - Removed several calls to engine->GetBeginDrawFlags(). This call should

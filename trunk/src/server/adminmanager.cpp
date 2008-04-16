@@ -4715,10 +4715,10 @@ void AdminManager::SendGMPlayerList(MsgEntry* me, psGMGuiMessage& msg,Client *cl
     csArray<psGMGuiMessage::PlayerInfo> playerList;
 
     // build the list of players
-    Client *curr;
     ClientIterator i(*clients);
-    for (curr = i.First(); curr; curr = i.Next())
+    while(i.HasNext())
     {
+        Client *curr = i.Next();
         if (curr->IsSuperClient() || !curr->GetActor()) continue;
 
         psGMGuiMessage::PlayerInfo playerInfo;

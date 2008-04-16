@@ -371,8 +371,6 @@ void NetManager::Broadcast(MsgEntry *me, int scope, int guildID)
             // send the message to each client (except perhaps the client that originated it)
             uint32_t originalclient = me->clientnum;
 
-            Client* p;
-
             // Copy message to send out to everyone
             csRef<MsgEntry> newmsg;
             newmsg.AttachNew(new MsgEntry(me));
@@ -381,8 +379,9 @@ void NetManager::Broadcast(MsgEntry *me, int scope, int guildID)
             // Message is copied again into packet sections, so we can reuse same one.
             ClientIterator i(clients);
 
-            for (p = i.First(); p; p = i.Next())
-            {    
+            while(i.HasNext())
+            {
+                Client *p = i.Next();
                 if (scope==NetBase::BC_EVERYONEBUTSELF
                     && p->GetClientNum() == originalclient)
                     continue;
@@ -414,7 +413,6 @@ void NetManager::Broadcast(MsgEntry *me, int scope, int guildID)
             /** 
              * Send the message to each client with the same guildID 
              */
-            Client* p;
 
             // Copy message to send out to everyone
             csRef<MsgEntry> newmsg;
@@ -424,8 +422,9 @@ void NetManager::Broadcast(MsgEntry *me, int scope, int guildID)
             // Message is copied again into packet sections, so we can reuse same one.
             ClientIterator i(clients);
 
-            for (p = i.First(); p; p = i.Next())
-            {    
+            while(i.HasNext())
+            {
+                Client *p = i.Next();
                 if (p->GetGuildID() == guildID)
                 {
                     newmsg->clientnum = p->GetClientNum();
@@ -501,8 +500,9 @@ void NetManager::CheckLinkDead()
 
     ClientIterator i(clients);
 
-    for (Client* pClient = i.First(); pClient; pClient = i.Next() )
+    while(i.HasNext())
     {
+        Client *pClient = i.Next();
         // Shortcut here so zombies may immediately disconnect
         if(pClient->IsZombie() && pClient->ZombieAllowDisconnect())
         {

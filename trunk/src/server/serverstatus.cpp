@@ -88,9 +88,11 @@ void psServerStatusRunEvent::Trigger ()
     reportString.Format("<server_report time=\"%s\" now=\"%ld\" number=\"%u\" client_count=\"%zu\" mob_births=\"%u\" mob_deaths=\"%u\" player_deaths=\"%u\" sold_items=\"%u\" sold_value=\"%u\">\n",
         timeString.GetData(), now, ServerStatus::count, clients->Count(), ServerStatus::mob_birthcount, ServerStatus::mob_deathcount, ServerStatus::player_deathcount, ServerStatus::sold_items, ServerStatus::sold_value );
     ClientIterator i(*clients);
-    Client* curr;
-    for (curr = i.First(); curr; curr = i.Next())
+    while(i.HasNext())
+    {
+        Client *curr = i.Next();
         ReportClient(curr, clientLogger, reportString);
+    }
     reportString.Append( "</server_report>" );
     
     csRef<iFile> logFile = psserver->vfs->Open( ServerStatus::reportFile, VFS_FILE_WRITE );            

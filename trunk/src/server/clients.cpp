@@ -28,14 +28,19 @@
 
 //static int compareClientsByName(Client * const &, Client * const &);
 
-ClientConnectionSet::ClientConnectionSet()
+ClientConnectionSet::ClientConnectionSet():addrHash(307)
 {
 }
 
 ClientConnectionSet::~ClientConnectionSet()
 {
-    hash.DeleteAll();
-    tree.Clear();
+    AddressHash::GlobalIterator it (addrHash.GetIterator ());
+    Client *p = NULL;
+    while(it.HasNext())
+    {
+        p = it.Next();
+        delete p;
+    }
 }
 
 bool ClientConnectionSet::Initialize()
@@ -65,8 +70,7 @@ Client *ClientConnectionSet::Add(LPSOCKADDR_IN addr)
     }
 
     CS::Threading::RecursiveMutexScopedLock lock(mutex);
-    if (tree.Insert(client, true) != NULL)
-        CS_ASSERT(false);
+    addrHash.PutUnique(SockAddress(client->GetAddress()), client);
     hash.Put(client->GetClientNum(), client);
     return client;
 }
@@ -83,14 +87,15 @@ void ClientConnectionSet::Delete(Client *client)
 	CS::Threading::RecursiveMutexScopedLock lock (mutex);
     
     uint32_t clientid = client->GetClientNum();
-    if (tree.Delete(client) == 0)
+    if (!addrHash.DeleteAll(client->GetAddress()))
         Bug2("Couldn't delete client %d, it was never added!", clientid);
     hash.DeleteAll(clientid);
+    delete client;
 }
 
 size_t ClientConnectionSet::Count() const
 {
-    return tree.Count();
+    return addrHash.GetSize();
 }
 
 Client *ClientConnectionSet::FindAny(uint32_t clientnum)
@@ -125,10 +130,11 @@ Client *ClientConnectionSet::Find(const char* name)
     }
 
     CS::Threading::RecursiveMutexScopedLock lock(mutex);
-    BinaryRBIterator<Client> loop(&tree);
+    AddressHash::GlobalIterator it (addrHash.GetIterator ());
     Client *p = NULL;
-    for (p = loop.First(); p; p = ++loop)
+    while(it.HasNext())
     {
+        p = it.Next();
         if (!p->GetName())
             continue;
 
@@ -145,11 +151,12 @@ Client *ClientConnectionSet::Find(const char* name)
 Client *ClientConnectionSet::FindPlayer(unsigned int playerID)
 {
     CS::Threading::RecursiveMutexScopedLock lock(mutex);
-    BinaryRBIterator<Client> loop(&tree);
-    Client *p;
+    AddressHash::GlobalIterator it (addrHash.GetIterator ());
+    Client *p = NULL;
 
-    for (p = loop.First(); p; p = ++loop)
+    while (it.HasNext())
     {
+        p = it.Next();
         if (p->GetPlayerID() == playerID)
             break;
     }
@@ -160,11 +167,12 @@ Client *ClientConnectionSet::FindPlayer(unsigned int playerID)
 Client *ClientConnectionSet::FindAccount(int accountID)
 {
     CS::Threading::RecursiveMutexScopedLock lock(mutex);
-    BinaryRBIterator<Client> loop(&tree);
-    Client *p;
+    AddressHash::GlobalIterator it (addrHash.GetIterator ());
+    Client *p = NULL;
 
-    for (p = loop.First(); p; p = ++loop)
+    while (it.HasNext())
     {
+        p = it.Next();
         if (p->GetAccountID() == accountID)
             break;
     }
@@ -174,11 +182,9 @@ Client *ClientConnectionSet::FindAccount(int accountID)
 
 Client *ClientConnectionSet::Find(LPSOCKADDR_IN addr)
 {
-    Client temp(addr);
-   
     CS::Threading::RecursiveMutexScopedLock lock(mutex);
 
-    return tree.Find(&temp);
+    return addrHash.Get(SockAddress(*addr), NULL);
 }
 
 csRef<NetPacketQueueRefCount> ClientConnectionSet::FindQueueAny(uint32_t clientnum)
@@ -207,11 +213,11 @@ csRef<NetPacketQueueRefCount> ClientConnectionSet::FindQueueAny(uint32_t clientn
 void ClientConnectionSet::ClearAllTargets(gemObject *obj)
 {
     CS::Threading::RecursiveMutexScopedLock lock(mutex);
-    BinaryRBIterator<Client> loop(&tree);
-    Client *p;
+    AddressHash::GlobalIterator it (addrHash.GetIterator());
 
-    for (p = loop.First(); p; p = ++loop)
+    while(it.HasNext())
     {
+        Client *p = it.Next();
         if (p->GetTargetObject() == obj)
         {
             p->SetTargetObject(NULL);  // This fixes DecRef problems also.
@@ -220,7 +226,7 @@ void ClientConnectionSet::ClearAllTargets(gemObject *obj)
 }
 
 ClientIterator::ClientIterator (ClientConnectionSet& clients)
-    : BinaryRBIterator<Client> (&clients.tree), mutex(clients.mutex)
+: ClientConnectionSet::AddressHash::GlobalIterator (clients.addrHash.GetIterator()), mutex(clients.mutex)
 {
     mutex.Lock();
 }
