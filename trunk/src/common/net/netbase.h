@@ -25,9 +25,9 @@
 #include "net/pstypes.h"
 #include "net/netinfos.h"
 #include "net/netpacket.h"
-#include "util/prb.h"
 #include "util/genrefqueue.h"
 #include <csutil/ref.h>
+#include <csutil/hash.h>
 #include <csutil/weakref.h>
 #include <csutil/weakreferenced.h>
 #include <csutil/refcount.h>
@@ -127,7 +127,7 @@ public:
     /**
      * This adds a completed message to any queues that are signed up.
      */
-    void QueueMessage(MsgEntry *me);
+    bool QueueMessage(MsgEntry *me);
 
     /**
      * This function is the heart of NetBase - it look for new incoming packets
@@ -414,7 +414,6 @@ protected:
     /**
      * This takes incoming packets and examines them for priority.
      * If pkt is ACK, it finds the awaiting ack pkt and removes it.
-     * If pkt is HIGH priority, it creates an ack pkt and queues it to send back.
      */
     bool HandleAck(psNetPacketEntry* pkt, Connection* connection, LPSOCKADDR_IN addr);
 
@@ -444,16 +443,17 @@ protected:
      * This adds the incoming packet to the pending packets tree, and builds
      * the psMessageBytes struct and MsgEntry struct if complete.
      */
-    csPtr<MsgEntry> CheckCompleteMessage(uint32_t client,uint32_t id);
+    csPtr<MsgEntry> CheckCompleteMessage(uint32_t client,uint32_t id, csArray<psNetPacketEntry *>& toAck);
     
     /**
      * This receives only fully reassembled messages and adds to appropriate
      * queues.
+     * If pkt is HIGH priority, it creates relevant ack pkts and queues it to send back.
      */
     void HandleCompletedMessage(MsgEntry *me,
                 Connection* &connection,
                 LPSOCKADDR_IN addr,
-                psNetPacketEntry* pkt);
+                psNetPacketEntry* pkt, csArray<psNetPacketEntry *>& toAck);
 
     /**
      * This tries to drop packets that received doubled
@@ -491,7 +491,7 @@ protected:
     csArray<MsgQueue*> inqueues;
 
     /** Packets Awaiting Ack pool */
-    BinaryRBTree<psNetPacketEntry> awaitingack;
+    csHash<psNetPacketEntry *, PacketKey> awaitingack;
 
     /** System Socket lib initialized? */
     static int socklibrefcount;
@@ -511,7 +511,7 @@ private:
     SOCKET mysocket;
 
     /** tree holding the outgoing packets */
-    BinaryRBTree<psNetPacketEntry> packets;
+    csHash<psNetPacketEntry *, PacketKey> packets;
 
     /** for generating random values (unfortunately the msvc rand() function
      * is not good at all

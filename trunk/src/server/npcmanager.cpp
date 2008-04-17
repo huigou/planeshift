@@ -552,23 +552,25 @@ void NPCManager::HandleAuthentRequest(MsgEntry *me)
     msg.sUser.Downcase();
     msg.sUser.SetAt(0,toupper(msg.sUser.GetAt(0)));
 
-    if (clients->Find(msg.sUser))  // username already logged in
-    {
-        // invalid
-        // psserver->RemovePlayer(me->clientnum,"You are already logged on to this server. If you were disconnected, please wait 30 seconds and try again.");
-        psDisconnectMessage disconnectMsg(client->GetClientNum(), 0, "Already logged in.");
-        psserver->GetEventManager()->Broadcast(disconnectMsg.msg, NetBase::BC_FINALPACKET);
 
-        Error2("User '%s' authentication request rejected: User already logged in.\n",
-            (const char *)msg.sUser);
-
-        return;
-    }
 
     // CHECK 4: Check to see if the login is correct.
 
     Error2("Check Superclient Login for: '%s'\n", (const char*)msg.sUser);
     psAccountInfo *acctinfo=CacheManager::GetSingleton().GetAccountInfoByUsername((const char *)msg.sUser);
+    
+    if (clients->FindAccount(acctinfo->accountid, client->GetClientNum()))  // username already logged in
+    {
+        // invalid
+        // psserver->RemovePlayer(me->clientnum,"You are already logged on to this server. If you were disconnected, please wait 30 seconds and try again.");
+        psDisconnectMessage disconnectMsg(client->GetClientNum(), 0, "Already logged in.");
+        psserver->GetEventManager()->Broadcast(disconnectMsg.msg, NetBase::BC_FINALPACKET);
+        
+        Error2("User '%s' authentication request rejected: User already logged in.\n",
+               (const char *)msg.sUser);
+        
+        return;
+    }
 
     csString password = csMD5::Encode(msg.sPassword).HexString();
     

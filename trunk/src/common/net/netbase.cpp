@@ -303,7 +303,16 @@ bool NetBase::HandleAck(psNetPacketEntry *pkt, Connection* connection,
             connection->pcknumin++;
         }
 
-        psNetPacketEntry *ack = awaitingack.Find(pkt);
+        psNetPacketEntry * ack;
+        
+        // The hash only keys on the clientnum and pktid so we need to go looking for the offset
+        csArray<psNetPacketEntry *> acks = awaitingack.GetAll(PacketKey(pkt->clientnum, pkt->packet->pktid));
+        for(size_t i = 0;i < acks.GetSize(); i++)
+        {
+            if(acks[i]->packet->offset == pkt->packet->offset)
+                ack = acks[i];
+        }
+                
 
         if (ack) // if acked pkt is found, simply remove it.  We're done.
         {
@@ -315,7 +324,7 @@ bool NetBase::HandleAck(psNetPacketEntry *pkt, Connection* connection,
 
 
 
-            if (awaitingack.Delete(ack) == 0 )
+            if (!awaitingack.Delete(PacketKey(pkt->clientnum, pkt->packet->pktid), ack))
             {
 #ifdef PACKETDEBUG
                 Debug2(LOG_NET,0,"No packet in ack queue :%d\n", ack->packet->pktid);
@@ -334,27 +343,6 @@ bool NetBase::HandleAck(psNetPacketEntry *pkt, Connection* connection,
         }
 
         return true;   // eat the packet
-    }
-    else if (packet->GetPriority() == PRIORITY_HIGH) // a HIGH_PRIORITY packet -> ack
-    {
-
-#ifdef PACKETDEBUG
-        Debug1(LOG_NET,0,"High priority packet received.\n");
-#endif
-
-        if (connection)
-        {
-            psNetPacketEntry *ack = new psNetPacketEntry(PRIORITY_LOW,
-                pkt->clientnum,
-                packet->pktid,
-                packet->offset,
-                packet->msgsize,
-                PKTSIZE_ACK,(char *)NULL);
-
-            SendFinalPacket(ack,addr);
-            
-            delete ack;
-        }
     }
 
     return false;
@@ -377,14 +365,15 @@ bool NetBase::CheckDoublePackets(Connection* connection, psNetPacketEntry* pkt)
 
 void NetBase::CheckResendPkts()
 {
-    BinaryRBIterator<psNetPacketEntry> loop(&awaitingack);
-    psNetPacketEntry *pkt;
+    csHash<psNetPacketEntry *, PacketKey>::GlobalIterator it(awaitingack.GetIterator());
+    psNetPacketEntry *pkt = NULL;
     csArray<psNetPacketEntry *> pkts;
 
     csTicks currenttime = csGetTicks();
 
-    for (pkt = loop.First(); pkt; pkt = ++loop)
+    while(it.HasNext())
     {
+        pkt = it.Next();
         if (pkt->timestamp + PKTMAXLATENCY < currenttime)
             pkts.Push(pkt);
     }
@@ -401,7 +390,7 @@ void NetBase::CheckResendPkts()
         //printf("pkt=%p, pkt->packet=%p\n",pkt,pkt->packet);
         // take out of awaiting ack pool.
         // This does NOT delete the pkt mem block itself.
-        if (awaitingack.Delete(pkt) == 0 )
+        if (!awaitingack.Delete(PacketKey(pkt->clientnum, pkt->packet->pktid), pkt))
         {
 #ifdef PACKETDEBUG
             Debug2(LOG_NET,0,"No packet in ack queue :%d\n", pkt->packet->pktid);
@@ -471,7 +460,7 @@ bool NetBase::SendSinglePacket(psNetPacketEntry* pkt)
         Debug3(LOG_NET,0,"Sent HIGH pkt id %d to client %d.\n", 
             pkt->packet->pktid, pkt->clientnum);
 #endif
-        awaitingack.Insert(pkt);
+        awaitingack.Put(PacketKey(pkt->clientnum, pkt->packet->pktid), pkt);
         // queue holds ref now -> don't delete pkt
     }
     else
@@ -843,7 +832,7 @@ bool NetBase::SendMessage(MsgEntry* me,NetPacketQueueRefCount *queue)
 
 void NetBase::CheckFragmentTimeouts(void)
 {
-    psNetPacketEntry *pkt;
+    psNetPacketEntry *pkt = NULL;
 
     // A set of packet ids that should NOT be discarded
     csSet<unsigned> newids;
@@ -859,9 +848,10 @@ void NetBase::CheckFragmentTimeouts(void)
         return;
 
     // Iterate through all packets in the list searching for old packets
-    BinaryRBIterator<psNetPacketEntry> loop(&packets);
-    for (pkt = loop.First(); pkt; pkt = ++loop)
+    csHash<psNetPacketEntry *, PacketKey>::GlobalIterator it(packets.GetIterator());
+    while(it.HasNext())
     {
+        pkt = it.Next();
         // If this id is already known to be new then go to the next one
         if(newids.In(pkt->packet->pktid))
             continue;
@@ -886,7 +876,7 @@ void NetBase::CheckFragmentTimeouts(void)
         /* Drop refcount until the packet is removed from the list.
          *  If we don't do this all at once we'll do this again the very next check since the time wont be altered.
          */
-        while (packets.Delete(oldpackets[index])>0);
+        while (packets.Delete(PacketKey(oldpackets[index]->clientnum, oldpackets[index]->packet->pktid), oldpackets[index]));
             delete oldpackets[index];
     }
 }
@@ -903,6 +893,8 @@ bool NetBase::BuildMessage(psNetPacketEntry* pkt, Connection* &connection,
     }
 
     psNetPacket* packet = pkt->packet;
+    // This is necessary to ACK the message when spread across multiple packets
+    csArray<psNetPacketEntry *> toAck;
 
 
     // already received the whole packet?
@@ -926,39 +918,58 @@ bool NetBase::BuildMessage(psNetPacketEntry* pkt, Connection* &connection,
         }
         else
         {
+            if (packet->GetPriority() == PRIORITY_HIGH) // a HIGH_PRIORITY packet -> ack
+            {
+                
+#ifdef PACKETDEBUG
+                Debug1(LOG_NET,0,"High priority packet received.\n");
+#endif
+                
+                if (connection)
+                {
+                    psNetPacketEntry *ack = new psNetPacketEntry(PRIORITY_LOW,
+                                                                 pkt->clientnum,
+                                                                 packet->pktid,
+                                                                 packet->offset,
+                                                                 packet->msgsize,
+                                                                 PKTSIZE_ACK,(char *)NULL);
+                    
+                    toAck.Push(ack);
+                    
+                }
+            }
+            
             csRef<MsgEntry> me;
             me.AttachNew(new MsgEntry(msg));
             me->priority = packet->GetPriority();
-            HandleCompletedMessage(me, connection, addr,pkt);
+            HandleCompletedMessage(me, connection, addr,pkt, toAck);
         }
         return false;
     }
 
 
     // This is a fragment. Add to the waiting packet list.  It may be removed ahead.
-    packets.Insert(pkt);
+    packets.Put(PacketKey(pkt->clientnum, pkt->packet->pktid), pkt);
 
     // Build message from packet or add packet to existing partial message
     csRef<MsgEntry> me = 
-        CheckCompleteMessage(pkt->clientnum,pkt->packet->pktid);
+        CheckCompleteMessage(pkt->clientnum,pkt->packet->pktid, toAck);
     if (me)
     {
-        HandleCompletedMessage(me, connection, addr, pkt);
+        HandleCompletedMessage(me, connection, addr, pkt, toAck);
     }
+                            
     return true;
 }
 
-csPtr<MsgEntry> NetBase::CheckCompleteMessage(uint32_t client, uint32_t id)
+csPtr<MsgEntry> NetBase::CheckCompleteMessage(uint32_t client, uint32_t id, csArray<psNetPacketEntry *>& toAck)
 {
-    psNetPacketEntry *first, *pkt;
-
-    first = new psNetPacketEntry(PRIORITY_LOW, client, id,
-        0, 0, 0, (char *)NULL);
+    csArray<psNetPacketEntry *> pkts;
+    psNetPacketEntry *pkt;
 
     // This search is FAST, and without the first packet, you can't build the message.
-    pkt = packets.Find(first);
-    delete first;
-    if (!pkt)
+    pkts = packets.GetAll(PacketKey(client, id));
+    if (pkts.IsEmpty())
     {
 #ifdef PACKETDEBUG
         Debug1(LOG_NET,0,"No First Packet found!?! Packets out of order, but should be no problem.\n");
@@ -966,64 +977,63 @@ csPtr<MsgEntry> NetBase::CheckCompleteMessage(uint32_t client, uint32_t id)
 #endif
         return NULL;
     }
+    
+    // Sort the packets on offsets
+    pkts.Sort();
+    
+    pkt = pkts[0];
 
     unsigned int length=0, totallength = pkt->packet->msgsize;
     // Invalidated is set to true if something nasty is detected with the packets in this message and the whole message should be discarded
     bool invalidated=false;
 
     csRef<MsgEntry> me;
-    me.AttachNew(new MsgEntry(totallength, pkt->packet->GetPriority()));
-
-
-    // The tree is sorted on: clientnum ascending, packetid ascending, offset ascending
-    BinaryRBIterator<psNetPacketEntry> loop(&packets);
-    for (pkt = loop.First(); pkt; pkt = ++loop)
+    me.AttachNew(new MsgEntry(totallength, pkt->packet->GetPriority()));    
+    
+    for (size_t i = 0; i < pkts.GetSize(); i++)
     {
-        // Skip packets until we reach packets from the desired client
-        if (pkt->clientnum<client)
-            continue;
-        // Examine packets from this client in more detail
-        if (pkt->clientnum==client)
+        pkt = pkts[i];
+
+        // Verify that all pieces have the same msgsize as the first piece
+        if (totallength != pkt->packet->msgsize)
         {
-            // Skip packets until we reach partials with this packetid
-            if (pkt->packet->pktid < id)
-                continue;
-
-            // Found a piece
-            if (pkt->packet->pktid == id)
-            {
-                // Verify that all pieces have the same msgsize as the first piece
-                if (totallength != pkt->packet->msgsize)
-                {
-                    Warning3(LOG_NET,"Discarding invalid message.  Message fragments have inconsistant total message size.  First fragment reports %u. Later fragment reports %u.\n",
-                                      totallength,pkt->packet->msgsize);
-                    invalidated=true;
-                    break;
-                }
-
-                // Verify that no packet can overflow the message buffer
-                if (pkt->packet->offset + pkt->packet->pktsize > totallength)
-                {
-                    Warning4(LOG_NET,"Discarding MALICIOUS message.  Message fragment attempted to overflow message buffer.  Message size %u. Fragment offset %u.  Fragment length %u.\n",
-                                      totallength,pkt->packet->offset,pkt->packet->pktsize);
-                    invalidated=true;
-                    break;
-                }
-
-
-                // Copy the contents into the total message data in the right location
-                memcpy( ((char *)(me->bytes)) + pkt->packet->offset, pkt->packet->data,
-                    pkt->packet->pktsize);
-                // Add to our length count
-                length += pkt->packet->pktsize;
-            }
-            else if (pkt->packet->pktid > id) // We're past our packet
-                break;
-        }
-        else
-        {
-            // We're past our client
+            Warning3(LOG_NET,"Discarding invalid message.  Message fragments have inconsistant total message size.  First fragment reports %u. Later fragment reports %u.\n",
+                              totallength,pkt->packet->msgsize);
+            invalidated=true;
             break;
+        }
+
+        // Verify that no packet can overflow the message buffer
+        if (pkt->packet->offset + pkt->packet->pktsize > totallength)
+        {
+            Warning4(LOG_NET,"Discarding MALICIOUS message.  Message fragment attempted to overflow message buffer.  Message size %u. Fragment offset %u.  Fragment length %u.\n",
+                              totallength,pkt->packet->offset,pkt->packet->pktsize);
+            invalidated=true;
+            break;
+        }
+
+
+        // Copy the contents into the total message data in the right location
+        memcpy( ((char *)(me->bytes)) + pkt->packet->offset, pkt->packet->data,
+            pkt->packet->pktsize);
+        // Add to our length count
+        length += pkt->packet->pktsize;
+        
+        if (pkt->packet->GetPriority() == PRIORITY_HIGH) // a HIGH_PRIORITY packet -> ack
+        {
+            
+#ifdef PACKETDEBUG
+            Debug1(LOG_NET,0,"High priority packet received.\n");
+#endif
+            psNetPacketEntry *ack = new psNetPacketEntry(PRIORITY_LOW,
+                                                             pkt->clientnum,
+                                                             pkt->packet->pktid,
+                                                             pkt->packet->offset,
+                                                             pkt->packet->msgsize,
+                                                             PKTSIZE_ACK,(char *)NULL);
+                
+            toAck.Push(ack);
+
         }
     }
 
@@ -1045,14 +1055,13 @@ csPtr<MsgEntry> NetBase::CheckCompleteMessage(uint32_t client, uint32_t id)
     *   or we don't find any more (the later should not happen).
     *
     */
-    psNetPacketEntry *search = new psNetPacketEntry(PRIORITY_LOW, client, id,
-        0, 0, 0, (char *)NULL);
-    while ((search->packet->offset < totallength) && (pkt = packets.Find(search)))
+    uint32_t offset = 0;
+    while ((offset < totallength) && (pkt = packets.Get(PacketKey(client, id), NULL)))
     {
-        search->packet->offset+=pkt->packet->pktsize;
+        offset+=pkt->packet->pktsize;
 
         // We don't care how many times it's in the queue, there's a mistake if it's over 1. Let's fix it now.
-        while (packets.Delete(pkt)>0); 
+        packets.Delete(PacketKey(client, id), pkt); 
         // And delete the packet entry object
         delete pkt;
     }
@@ -1060,15 +1069,12 @@ csPtr<MsgEntry> NetBase::CheckCompleteMessage(uint32_t client, uint32_t id)
      * someone is trying to play games, and we should ignore the message, and 
      * TODO:  disconnect the connection (if connected) and blacklist the IP for a short period (5 minutes?)
      */
-    if (!invalidated && search->packet->offset != totallength)
+    if (!invalidated && offset != totallength)
     {
         Warning2(LOG_NET,"Discarding MALICIOUS message.  Gaps in fragments attempt to capture data from uninitialized memory.  Missing packet with offset %u. (but total length of remaining fragments equals total message length).\n",
-                            search->packet->offset);
+                            offset);
         invalidated=true;
     }
-
-    // Delete the object used for searching
-    delete search;
 
     // Something nasty was detected.  The message is invalid.
     if (invalidated)
@@ -1078,8 +1084,9 @@ csPtr<MsgEntry> NetBase::CheckCompleteMessage(uint32_t client, uint32_t id)
     return csPtr<MsgEntry> (me);
 }
 
-void NetBase::QueueMessage(MsgEntry *me)
+bool NetBase::QueueMessage(MsgEntry *me)
 {
+    bool success = true;
     for (size_t i=0; i<inqueues.GetSize(); i++)
     {
         if (!inqueues[i]->Add(me))
@@ -1095,13 +1102,15 @@ void NetBase::QueueMessage(MsgEntry *me)
                 Error4("*** Input Buffer Full! Yielding for packet, client %u, type %s, input queue %zu!",
                     me->clientnum,GetMsgTypeName(me->GetType()).GetData(),i);
 				netInfos.droppedPackets++;
+                success = false;
             }
         }
     }
+    return success;
 }
 
 void NetBase::HandleCompletedMessage(MsgEntry *me, Connection* &connection,
-                                     LPSOCKADDR_IN addr,psNetPacketEntry* pkt)
+                                     LPSOCKADDR_IN addr,psNetPacketEntry* pkt, csArray<psNetPacketEntry *>& toAck)
 {
     profs->AddReceivedMsg(me);
     
@@ -1127,6 +1136,27 @@ void NetBase::HandleCompletedMessage(MsgEntry *me, Connection* &connection,
         // so the packet wasn't acked.  The initial connection
         // packet must be acked here.
         HandleAck(pkt, connection, addr);
+        
+        if (pkt->packet->GetPriority() == PRIORITY_HIGH) // a HIGH_PRIORITY packet -> ack
+        {
+            
+#ifdef PACKETDEBUG
+            Debug1(LOG_NET,0,"High priority packet received.\n");
+#endif
+            
+            if (connection)
+            {
+                psNetPacketEntry *ack = new psNetPacketEntry(PRIORITY_LOW,
+                                                             pkt->clientnum,
+                                                             pkt->packet->pktid,
+                                                             pkt->packet->offset,
+                                                             pkt->packet->msgsize,
+                                                             PKTSIZE_ACK,(char *)NULL);
+                
+                toAck.Push(ack);
+                
+            }
+        }
 
         // Update last packet time in connection
         // (Mostly handled in packet, but must be handled here for very first message)
@@ -1136,7 +1166,16 @@ void NetBase::HandleCompletedMessage(MsgEntry *me, Connection* &connection,
 
     // put the message in the queue
     me->clientnum = connection->clientnum;
-    QueueMessage(me);
+    if(QueueMessage(me))
+    {
+        // Iff all the steps are successful then we finally ack the whole packet here
+        for(size_t i = 0; i < toAck.GetSize(); i++)
+        {
+            SendFinalPacket(toAck[i], addr);
+            delete toAck[i];
+        }
+        toAck.Empty();
+    }
 }
 
 uint32_t NetBase::GetRandomID()

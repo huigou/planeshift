@@ -29,6 +29,7 @@
 //=============================================================================
 #include "net/netbase.h"                // PublishVector class
 #include "net/npcmessages.h"
+#include "util/prb.h"
 
 #include "bulkobjects/psskills.h"    
 

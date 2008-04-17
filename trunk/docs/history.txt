@@ -1,3 +1,16 @@
+*** 2008-04-17 by Andrew Dai
+- Optimised the network code by replacing all uses of binary trees with hashes
+  of the packets.
+- Fixed bug where the npcclient would get stuck if it was already partially
+  logged in.
+- Moved the location of the flags byte in psNetPacket to improve data alignment
+  and network performance.
+- Improved high priority packets so that they are only acked if the message
+  queue is not full.
+- Fixed bug where the server would accept a logon even if the player is already
+  logged in.
+- NETVER BUMP!
+
 *** 2008-04-16 by Mike Gist
 - Updated autoconf and jam files from CS.
 

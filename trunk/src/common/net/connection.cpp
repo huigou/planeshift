@@ -129,19 +129,19 @@ void psNetConnection::DisConnect()
     }
 
     // Clear awaitingack queue
-    BinaryRBIterator<psNetPacketEntry> loop(&awaitingack);
+    csHash<psNetPacketEntry*, PacketKey>::GlobalIterator it (awaitingack.GetIterator());
     csArray<psNetPacketEntry *> pkts;
-    psNetPacketEntry *next =loop.First();
-    while (next)
+    psNetPacketEntry *next =NULL;
+    while (it.HasNext())
     {
+        next = it.Next();
         pkts.Push(next);
-        next = ++loop;
     }
 
     for(size_t i = 0;i < pkts.GetSize(); i++)
         delete pkts.Get(i);
 
-    awaitingack.Clear();
+    awaitingack.Empty();
 }
 
 
@@ -196,7 +196,7 @@ void psNetConnection::Run ()
 
     while ( shouldRun )
     {
-        if (!ready || !server)
+        if (!ready)
         {
             psSleep(100);
             continue;
@@ -259,7 +259,8 @@ void psNetConnection::CheckLinkDead (csTicks currenttime)
         {
             // Simulate message to self to inform user of quitting.
             psSystemMessage quit(0,MSG_INFO,"Server is not responding, try again in 5 minutes. Exiting PlaneShift...");
-            HandleCompletedMessage(quit.msg, server, &server->addr,NULL);
+            csArray<psNetPacketEntry *> toAck;
+            HandleCompletedMessage(quit.msg, server, &server->addr,NULL, toAck);
             
             psSleep(1000);
             
@@ -270,7 +271,7 @@ void psNetConnection::CheckLinkDead (csTicks currenttime)
                                      "Check http://laanx.fragnetics.com/ for status.":
                                      "The server is not running or is not reachable.  "
                                      "Please check http://laanx.fragnetics.com/ or forums for more info.");
-            HandleCompletedMessage(msgb.msg, server, &server->addr,NULL);
+            HandleCompletedMessage(msgb.msg, server, &server->addr,NULL, toAck);
         }
     }
     else

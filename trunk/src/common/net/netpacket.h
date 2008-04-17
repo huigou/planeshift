@@ -21,6 +21,7 @@
 
 #include <csutil/csendian.h>
 #include <csutil/refcount.h>
+#include <csutil/hash.h>
 
 #include "net/packing.h"
 #include "net/message.h"
@@ -48,8 +49,6 @@ enum
 #pragma pack(1)
 struct psNetPacket
 {
-    /** Each packet needs to know its own priority */
-    uint8_t    flags;
     /** each packet must know what message it's a part of */
     uint32_t    pktid;
 
@@ -60,6 +59,10 @@ struct psNetPacket
     uint32_t    msgsize;
     uint16_t    pktsize;
     
+    /** Each packet needs to know its own priority. This is stuck on the end
+        to minimize alignment penalties */
+    uint8_t    flags;
+        
     /** this can be used as a pointer to the data */
     char    data[0];
 
@@ -125,6 +128,27 @@ struct psNetPacket
 };
 #pragma pack()
 
+class PacketKey
+{
+    uint32_t clientnum;
+    uint32_t pktid;
+public:
+    PacketKey(uint32_t Clientnum, uint32_t Pktid):clientnum(Clientnum), pktid(Pktid) { };
+    
+    bool operator < (const PacketKey& other) const
+    {
+        if (clientnum < other.clientnum)
+            return true;
+        if (clientnum > other.clientnum)
+            return false;
+        
+        return (pktid < other.pktid);
+    };
+};
+
+template<> class csHashComputer<PacketKey> :
+public csHashComputerStruct<PacketKey> {};
+
 class psNetPacketEntry : public csRefCount
 {
 public:
@@ -169,13 +193,6 @@ public:
         return packet;
     }
 
-    bool operator == (const psNetPacketEntry& other) const
-    {
-        return (clientnum == other.clientnum &&
-                packet->pktid  == other.packet->pktid &&
-                packet->offset == other.packet->offset);
-    };
-
     bool operator < (const psNetPacketEntry& other) const
     {
         if (clientnum < other.clientnum)
@@ -203,6 +220,16 @@ public:
     { return false; }
     void IncRef() {};
     void DecRef() {};
+};
+
+template<>
+class csComparator<psNetPacketEntry *, psNetPacketEntry *>
+{
+public:
+    static int Compare(psNetPacketEntry* const &r1, psNetPacketEntry* const &r2)
+    {
+        return csComparator<psNetPacketEntry, psNetPacketEntry>::Compare(*r1, *r2);
+    }
 };
 
 #endif
