@@ -141,7 +141,7 @@ bool NetBase::CheckIn()
     // check for incoming packets
     SOCKADDR_IN addr;
     memset (&addr, 0, sizeof(SOCKADDR_IN));
-    socklen_t len;
+    socklen_t len = sizeof(SOCKADDR_IN);
 
     if (!input_buffer)
     {
@@ -153,13 +153,11 @@ bool NetBase::CheckIn()
             return false;
         }
     }
-    int packetlen;
 
     // Connection must be initialized!
     CS_ASSERT(ready);
-
-    len = sizeof(SOCKADDR_IN);
-    packetlen = RecvFrom (&addr, &len, (void*) input_buffer, MAXPACKETSIZE);
+    
+    int packetlen = RecvFrom (&addr, &len, (void*) input_buffer, MAXPACKETSIZE);
 
     if (packetlen <= 0)
     {
@@ -201,7 +199,7 @@ bool NetBase::CheckIn()
     bufpacket->UnmarshallEndian();
 
     // Check for too-big packets - no harm in processing them, but probably a bug somewhere
-    if (bufpacket->GetPacketSize() < (unsigned int)packetlen)
+    if (bufpacket->GetPacketSize() < static_cast<unsigned int>(packetlen))
     {
         unsigned int a1,a2,a3,a4;
 #ifdef WIN32
@@ -224,7 +222,7 @@ bool NetBase::CheckIn()
         {
             
             pslog::LogMessage (__FILE__, __LINE__, __FUNCTION__,CS_REPORTER_SEVERITY_DEBUG, LOG_NET,
-                connection->clientnum,"Too long packet received from IP address %d.%d.%d.%d. (%d bytes received, header reports %zu bytes) No existing connection from this IP.\n",
+                0,"Too long packet received from IP address %d.%d.%d.%d. (%d bytes received, header reports %zu bytes) No existing connection from this IP.\n",
                 a1, a2, a3, a4 ,packetlen,bufpacket->GetPacketSize());
         }
     }
