@@ -325,7 +325,7 @@ bool NetBase::HandleAck(psNetPacketEntry *pkt, Connection* connection,
             connection->pcknumin++;
         }
 
-        psNetPacketEntry * ack;
+        psNetPacketEntry * ack = NULL;
         
         // The hash only keys on the clientnum and pktid so we need to go looking for the offset
         csArray<psNetPacketEntry *> acks = awaitingack.GetAll(PacketKey(pkt->clientnum, pkt->packet->pktid));
