@@ -9,6 +9,7 @@
   queue is not full.
 - Fixed bug where the server would accept a logon even if the player is already
   logged in.
+- Fixed crash in ip address parsing when printing errors.
 - NETVER BUMP!
 
 *** 2008-04-16 by Mike Gist

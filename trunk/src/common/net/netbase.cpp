@@ -172,6 +172,17 @@ bool NetBase::CheckIn()
     psNetPacket *bufpacket = psNetPacket::NetPacketFromBuffer(input_buffer,packetlen);
     if (bufpacket==NULL)
     {
+        unsigned int a1,a2,a3,a4;
+#ifdef WIN32
+        unsigned long a = addr.sin_addr.S_un.S_addr;
+#else
+        unsigned long a = addr.sin_addr.s_addr;
+#endif
+        
+        a1 = a&0x000000FF;
+        a2 = (a&0x0000FF00)>>8;
+        a3 = (a&0x00FF0000)>>16;
+        a4 = (a&0xFF000000)>>24;
         // The data received was too small to make a full packet.
         if (connection)
         {
@@ -179,9 +190,8 @@ bool NetBase::CheckIn()
         }
         else
         {
-            unsigned char *ip_bytes=(unsigned char *)(&(addr.sin_addr));
             Debug6(LOG_NET,0,"Too short packet received from IP address %d.%d.%d.%d. (%d bytes) No existing connection from this IP.\n",
-                (int)ip_bytes[0],(int)ip_bytes[1],(int)ip_bytes[2],(int)ip_bytes[3],packetlen);
+                a1, a2, a3, a4,packetlen);
         }
         return true; // Continue processing more packets if available
     }
@@ -193,6 +203,18 @@ bool NetBase::CheckIn()
     // Check for too-big packets - no harm in processing them, but probably a bug somewhere
     if (bufpacket->GetPacketSize() < (unsigned int)packetlen)
     {
+        unsigned int a1,a2,a3,a4;
+#ifdef WIN32
+        unsigned long a = addr.sin_addr.S_un.S_addr;
+#else
+        unsigned long a = addr.sin_addr.s_addr;
+#endif
+        
+        a1 = a&0x000000FF;
+        a2 = (a&0x0000FF00)>>8;
+        a3 = (a&0x00FF0000)>>16;
+        a4 = (a&0xFF000000)>>24;
+
         if (connection)
         {
             Debug4(LOG_NET,connection->clientnum,"Too long packet received from client %d (%d bytes received, header reports %zu bytes)\n",
@@ -200,10 +222,10 @@ bool NetBase::CheckIn()
         }
         else
         {
-            unsigned char *ip_bytes=(unsigned char *)(&(addr.sin_addr));
+            
             pslog::LogMessage (__FILE__, __LINE__, __FUNCTION__,CS_REPORTER_SEVERITY_DEBUG, LOG_NET,
                 connection->clientnum,"Too long packet received from IP address %d.%d.%d.%d. (%d bytes received, header reports %zu bytes) No existing connection from this IP.\n",
-                (int)ip_bytes[0],(int)ip_bytes[1],(int)ip_bytes[2],(int)ip_bytes[3],packetlen,bufpacket->GetPacketSize());
+                a1, a2, a3, a4 ,packetlen,bufpacket->GetPacketSize());
         }
     }
 
