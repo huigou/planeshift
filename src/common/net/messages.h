@@ -43,13 +43,13 @@ class psLinearMovement;
 
 // This holds the version number of the network code, remember to increase
 // this each time you do an update which breaks compatibility
-#define PS_NETVERSION   0x0088
+#define PS_NETVERSION   0x0089
 // Remember to bump the version in pscssetup.h, as well.
 
 // NPC Networking version is separate so we don't have to break compatibility
 // with clients to enhance the superclients.  Made it a large number to ensure
 // no inadvertent overlaps.
-#define PS_NPCNETVERSION 0x1010
+#define PS_NPCNETVERSION 0x1011
 
 enum Slot_Containers
 {
