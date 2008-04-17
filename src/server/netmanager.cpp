@@ -142,14 +142,15 @@ bool NetManager::HandleUnknownClient (LPSOCKADDR_IN addr, MsgEntry* me)
 
 void NetManager::CheckResendPkts()
 {
-    BinaryRBIterator<psNetPacketEntry> loop(&awaitingack);
-    psNetPacketEntry *pkt;
+    csHash<psNetPacketEntry*, PacketKey>::GlobalIterator it (awaitingack.GetIterator());
+    psNetPacketEntry *pkt = NULL;
     csArray<psNetPacketEntry *> pkts;
 
     csTicks currenttime = csGetTicks();
 
-    for (pkt = loop.First(); pkt; pkt = ++loop)
+    while(it.HasNext())
     {
+        pkt = it.Next();
         if (pkt->timestamp + PKTMAXLATENCY < currenttime)
             pkts.Push(pkt);
     }
@@ -165,7 +166,7 @@ void NetManager::CheckResendPkts()
         csRef<NetPacketQueueRefCount> outqueue = clients.FindQueueAny(pkt->clientnum);
         if (!outqueue)
         {
-            awaitingack.Delete(pkt);
+            awaitingack.Delete(PacketKey(pkt->clientnum, pkt->packet->pktid), pkt);
             continue;
         }
 
@@ -193,7 +194,7 @@ void NetManager::CheckResendPkts()
         //printf("pkt=%p, pkt->packet=%p\n",pkt,pkt->packet);
         // take out of awaiting ack pool.
         // This does NOT delete the pkt mem block itself.
-        if (awaitingack.Delete(pkt) == 0 )
+        if (!awaitingack.Delete(PacketKey(pkt->clientnum, pkt->packet->pktid), pkt))
         {
 #ifdef PACKETDEBUG
             Debug2(LOG_NET,"No packet in ack queue :%d\n", pkt->packet->pktid);
@@ -514,7 +515,8 @@ void NetManager::CheckLinkDead()
             if (discon.valid)
             {
                 Connection* connection = pClient->GetConnection();
-                HandleCompletedMessage(discon.msg, connection, NULL,NULL);
+                csArray<psNetPacketEntry *> toAck;
+                HandleCompletedMessage(discon.msg, connection, NULL,NULL, toAck);
             }
             else
             {
@@ -549,7 +551,8 @@ void NetManager::CheckLinkDead()
                 if (discon.valid)
                 {
                     Connection* connection = pClient->GetConnection();
-                    HandleCompletedMessage(discon.msg, connection, NULL,NULL);
+                    csArray<psNetPacketEntry *> toAck;
+                    HandleCompletedMessage(discon.msg, connection, NULL,NULL, toAck);
                 }
                 else
                 {

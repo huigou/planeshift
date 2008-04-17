@@ -32,6 +32,7 @@
 //=============================================================================
 #include "util/slots.h"
 #include "util/gameevent.h"
+#include "util/prb.h"
 
 #include "bulkobjects/pscharacter.h"
 #include "bulkobjects/psitemstats.h"

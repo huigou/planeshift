@@ -28,7 +28,7 @@
 
 //static int compareClientsByName(Client * const &, Client * const &);
 
-ClientConnectionSet::ClientConnectionSet():addrHash(307)
+ClientConnectionSet::ClientConnectionSet():addrHash(307),hash(307)
 {
 }
 
@@ -140,6 +140,7 @@ Client *ClientConnectionSet::Find(const char* name)
 
         if (!strcasecmp(p->GetName(), name))
             break;
+        p = NULL;
     }
 
     if (p && p->IsReady())
@@ -152,32 +153,30 @@ Client *ClientConnectionSet::FindPlayer(unsigned int playerID)
 {
     CS::Threading::RecursiveMutexScopedLock lock(mutex);
     AddressHash::GlobalIterator it (addrHash.GetIterator ());
-    Client *p = NULL;
 
     while (it.HasNext())
     {
-        p = it.Next();
+        Client *p = it.Next();
         if (p->GetPlayerID() == playerID)
-            break;
+            return p;
     }
 
-    return p;
+    return NULL;
 }
 
-Client *ClientConnectionSet::FindAccount(int accountID)
+Client *ClientConnectionSet::FindAccount(int accountID, uint32_t excludeClient)
 {
     CS::Threading::RecursiveMutexScopedLock lock(mutex);
     AddressHash::GlobalIterator it (addrHash.GetIterator ());
-    Client *p = NULL;
 
     while (it.HasNext())
     {
-        p = it.Next();
-        if (p->GetAccountID() == accountID)
-            break;
+        Client *p = it.Next();
+        if (p->GetAccountID() == accountID && p->GetClientNum() != excludeClient)
+            return p;
     }
 
-    return p;
+    return NULL;
 }
 
 Client *ClientConnectionSet::Find(LPSOCKADDR_IN addr)

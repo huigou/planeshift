@@ -293,28 +293,25 @@ void psAuthenticationServer::HandleAuthent(MsgEntry *me)
     /**
      * Check if the client is already logged in
      */
-    Client* existingClient = clients->FindAccount(acctinfo->accountid);
+    Client* existingClient = clients->FindAccount(acctinfo->accountid, me->clientnum);
     if (existingClient)  // account already logged in
     {
         // invalid authent message from a different client
-        if(existingClient->GetClientNum() != me->clientnum)
+        csString reason;
+        if(existingClient->IsZombie())
         {
-            csString reason;
-            if(existingClient->IsZombie())
-            {
-                reason.Format("Your character(%s) was still in combat or casting a spell when you disconnected. "
-                              "Please wait for combat to finish and try again.", existingClient->GetName());
-            }
-            else
-            {
-                reason.Format("You are already logged on to this server as %s. If you were disconnected, "
-                              "please wait 30 seconds and try again.", existingClient->GetName());
-            }
-
-            psserver->RemovePlayer(me->clientnum, reason);
-            Notify2(LOG_CONNECTIONS,"User '%s' authentication request rejected: User already logged in.\n",
-                (const char *)msg.sUser);
+            reason.Format("Your character(%s) was still in combat or casting a spell when you disconnected. "
+                          "Please wait for combat to finish and try again.", existingClient->GetName());
         }
+        else
+        {
+            reason.Format("You are already logged on to this server as %s. If you were disconnected, "
+                          "please wait 30 seconds and try again.", existingClient->GetName());
+        }
+
+        psserver->RemovePlayer(me->clientnum, reason);
+        Notify2(LOG_CONNECTIONS,"User '%s' authentication request rejected: User already logged in.\n",
+            (const char *)msg.sUser);
 
         // No delete necessary because AddToCache will auto-delete
         // delete acctinfo;
