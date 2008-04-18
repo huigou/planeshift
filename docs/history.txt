@@ -1,3 +1,6 @@
+*** 2008-04-18 by Frank Barton(Eriroley)
+- completed work started in r1281 - personalized items now auto set to stat_type of "U" when purchased
+
 *** 2008-04-18 by Andrew Dai
 - Fixed network address type definitions.
 

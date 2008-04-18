@@ -406,6 +406,8 @@ private:
 
     csSet<unsigned int> ammo_types;
 
+    const char *stat_type;
+
     ItemRequirement reqs[3];
     int spell_id_on_hit; 
     float spell_on_hit_probability;
@@ -529,6 +531,7 @@ public:
 
     const char *GetName() const;
     const csString GetDownCaseName();
+    void SetUnique();
     void SetName(const char *v);
     void SaveName(void);
 

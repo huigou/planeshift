@@ -1031,6 +1031,8 @@ void psServerCharManager::HandleMerchantBuy(psGUIMerchantMessage& msg, Client *c
             if (!newCreation)
                return;
 
+            newCreation->SetUnique();
+
             newCreation->SetCreator(character->GetCharacterID(), PSITEMSTATS_CREATOR_VALID);
             newCreation->Save();
 
