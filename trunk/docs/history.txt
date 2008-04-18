@@ -1,3 +1,6 @@
+*** 2008-04-18 by Andrew Dai
+- Fixed network address type definitions.
+
 *** 2008-04-17 by Andrew Dai
 - Optimised the network code by replacing all uses of binary trees with hashes
   of the packets.
