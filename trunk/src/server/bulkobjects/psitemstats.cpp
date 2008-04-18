@@ -404,7 +404,7 @@ bool psItemStats::ReadItemStats(iResultRow& row)
 {
     uid = row.GetUInt32("id");
     name = row["name"];
-
+    stat_type = row["stat_type"];
     SetDescription(row["description"]);
 
     SetProgressionEventEquip( row["prg_evt_equip"] );
@@ -685,7 +685,7 @@ bool psItemStats::Save()
     static iRecord* update;
     
     if(update == NULL)
-        update = db->NewUpdatePreparedStatement("item_stats", "id", 29); // 28 parameters plus 1 id
+        update = db->NewUpdatePreparedStatement("item_stats", "id", 30); // 28 parameters plus 1 id
     
     update->Reset();
     
@@ -699,6 +699,9 @@ bool psItemStats::Save()
     // STRING    fields.Push(
 
     update->AddField("name", name);
+  
+    update->AddField("stat_type", stat_type);
+
     update->AddField("weight", weight);
     update->AddField("visible_distance", visible_distance);
     update->AddField("size", size);
@@ -1104,6 +1107,11 @@ const char *psItemStats::GetImageName()
 void psItemStats::SetImageName(const char *v)
 {
     image_name=v;
+}
+
+void psItemStats::SetUnique()
+{
+    stat_type="U";
 }
 
 void psItemStats::SetPrice(int trias)
