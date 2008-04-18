@@ -29,8 +29,8 @@ class iResultRow;
 
 class SockAddress{
 public:
-    u_int32_t port;
-    u_int32_t addr;
+    uint32_t port;
+    uint32_t addr;
     SockAddress(const SOCKADDR_IN &sock)
     {
         port = sock.sin_port;
