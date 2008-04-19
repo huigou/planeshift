@@ -91,7 +91,7 @@ public:
 
     void HandleMessage(MsgEntry* me);
 
-    void SetWorld(psWorld *psworld) { world = psworld; }
+    void SetWorld(psWorld *psworld) { CS_ASSERT_MSG("World already set!", world == NULL); world = psworld; }
 
     void LoadZone(const char* sector);
 
