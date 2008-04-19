@@ -1,3 +1,13 @@
+*** 2008-04-19 by Andrew Dai
+- Added an assertion to prevent mysterious crashes if 2 psPersistWorld
+  messages are received. This is an assertion because if it triggers it
+  may represent a bug in network code.
+- Duplicate packets are now acked correctly.
+- Fixed a very old bug in the netcode where resent packets may be sent
+  as a merged packet, meaning it would skip the duplicate packet detection.
+- Added the self-pipe trick to allow lag-free network code on *nix systems.
+  This doesn't support win32 yet as select on pipes does not work on win32. 
+
 *** 2008-08-14 by Frank Barton(Eriroley)
 - Removed "use planeshift" lines from all .sql files in src/server/database/mysql except create_all.sql
 - This removed an effective 'hard-code' of the database, now only one place to modify database name when creating db

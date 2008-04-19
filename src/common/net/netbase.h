@@ -366,17 +366,32 @@ protected:
         /* Initialize the file descriptor set. */
         FD_ZERO (&set);
         FD_SET (mysocket, &set);
-
+#ifndef CS_PLATFORM_WIN32
+        FD_SET (pipe_fd[0], &set);
+#endif
+        
         // Backup the timeval struct in case select changes it as on Linux
         struct timeval prevTimeout = timeout;
 
         /* select returns 0 if timeout, 1 if input available, -1 if error. */
-        if (SOCK_SELECT(FD_SETSIZE, &set, NULL, NULL, &timeout) != 1)
+        if (SOCK_SELECT(MAX(mysocket, pipe_fd[0]) + 1, &set, NULL, NULL, &timeout) < 1)
         {
             timeout = prevTimeout;
             return 0;
         }
+        
+#ifndef CS_PLATFORM_WIN32
+        if(FD_ISSET(pipe_fd[0], &set))
+        {
+            char throwaway[32];
+            read(pipe_fd[0], throwaway, 32);
+        }
+#endif
+        
         timeout = prevTimeout;
+        
+        if(!FD_ISSET(mysocket, &set))
+            return 0;
 
         int err = SOCK_RECVFROM (mysocket, buf, maxsize, 0,
             (LPSOCKADDR) addr, socklen);
@@ -509,6 +524,9 @@ protected:
 private:
     /** my socket */
     SOCKET mysocket;
+    
+    /** a pipe to wake up from the select call when data is ready to be written */
+    int pipe_fd[2];
 
     /** tree holding the outgoing packets */
     csHash<psNetPacketEntry *, PacketKey> packets;
