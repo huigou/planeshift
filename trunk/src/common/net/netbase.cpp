@@ -250,23 +250,6 @@ bool NetBase::CheckIn()
 #ifdef PACKETDEBUG
             Debug2(LOG_NET,0,"Droping doubled packet (ID %d)\n", pkt->packet->pktid);
 #endif
-            if (pkt->packet->GetPriority() == PRIORITY_HIGH) // a HIGH_PRIORITY packet -> ack
-            {
-                
-#ifdef PACKETDEBUG
-                Debug1(LOG_NET,0,"High priority packet received.\n");
-#endif
-                psNetPacketEntry ack(PRIORITY_LOW,
-                                                             pkt->clientnum,
-                                                             pkt->packet->pktid,
-                                                             pkt->packet->offset,
-                                                             pkt->packet->msgsize,
-                                                             PKTSIZE_ACK,(char *)NULL);
-                
-                SendFinalPacket(&ack, &addr);
-                
-            }
-            delete pkt;
             return true;
         }
     }
@@ -384,6 +367,27 @@ bool NetBase::HandleAck(psNetPacketEntry *pkt, Connection* connection,
 
         return true;   // eat the packet
     }
+    if (pkt->packet->GetPriority() == PRIORITY_HIGH) // a HIGH_PRIORITY packet -> ack
+    {
+        
+#ifdef PACKETDEBUG
+        Debug1(LOG_NET,0,"High priority packet received.\n");
+#endif
+        
+        if (connection)
+        {
+            psNetPacketEntry *ack = new psNetPacketEntry(PRIORITY_LOW,
+                                                         pkt->clientnum,
+                                                         pkt->packet->pktid,
+                                                         pkt->packet->offset,
+                                                         pkt->packet->msgsize,
+                                                         PKTSIZE_ACK,(char *)NULL);
+            
+            SendFinalPacket(ack, addr);
+            delete ack;
+
+        }
+    }
 
     return false;
 }
@@ -428,15 +432,17 @@ void NetBase::CheckResendPkts()
         pkt->packet->Resend();
 
         // re-add to send queue
-        NetworkQueue->Add(pkt);
-        //printf("pkt=%p, pkt->packet=%p\n",pkt,pkt->packet);
-        // take out of awaiting ack pool.
-        // This does NOT delete the pkt mem block itself.
-        if (!awaitingack.Delete(PacketKey(pkt->clientnum, pkt->packet->pktid), pkt))
+        if(NetworkQueue->Add(pkt))
         {
+            //printf("pkt=%p, pkt->packet=%p\n",pkt,pkt->packet);
+            // take out of awaiting ack pool.
+            // This does NOT delete the pkt mem block itself.
+            if (!awaitingack.Delete(PacketKey(pkt->clientnum, pkt->packet->pktid), pkt))
+            {
 #ifdef PACKETDEBUG
-            Debug2(LOG_NET,0,"No packet in ack queue :%d\n", pkt->packet->pktid);
+                Debug2(LOG_NET,0,"No packet in ack queue :%d\n", pkt->packet->pktid);
 #endif
+            }
         }
     }
 }
@@ -949,8 +955,6 @@ bool NetBase::BuildMessage(psNetPacketEntry* pkt, Connection* &connection,
     }
 
     psNetPacket* packet = pkt->packet;
-    // This is necessary to ACK the message when spread across multiple packets
-    csArray<psNetPacketEntry *> toAck;
 
 
     // already received the whole packet?
@@ -974,31 +978,10 @@ bool NetBase::BuildMessage(psNetPacketEntry* pkt, Connection* &connection,
         }
         else
         {
-            if (packet->GetPriority() == PRIORITY_HIGH) // a HIGH_PRIORITY packet -> ack
-            {
-                
-#ifdef PACKETDEBUG
-                Debug1(LOG_NET,0,"High priority packet received.\n");
-#endif
-                
-                if (connection)
-                {
-                    psNetPacketEntry *ack = new psNetPacketEntry(PRIORITY_LOW,
-                                                                 pkt->clientnum,
-                                                                 packet->pktid,
-                                                                 packet->offset,
-                                                                 packet->msgsize,
-                                                                 PKTSIZE_ACK,(char *)NULL);
-                    
-                    toAck.Push(ack);
-                    
-                }
-            }
-            
             csRef<MsgEntry> me;
             me.AttachNew(new MsgEntry(msg));
             me->priority = packet->GetPriority();
-            HandleCompletedMessage(me, connection, addr,pkt, toAck);
+            HandleCompletedMessage(me, connection, addr,pkt);
         }
         return false;
     }
@@ -1009,16 +992,16 @@ bool NetBase::BuildMessage(psNetPacketEntry* pkt, Connection* &connection,
 
     // Build message from packet or add packet to existing partial message
     csRef<MsgEntry> me = 
-        CheckCompleteMessage(pkt->clientnum,pkt->packet->pktid, toAck);
+        CheckCompleteMessage(pkt->clientnum,pkt->packet->pktid);
     if (me)
     {
-        HandleCompletedMessage(me, connection, addr, pkt, toAck);
+        HandleCompletedMessage(me, connection, addr, pkt);
     }
                             
     return true;
 }
 
-csPtr<MsgEntry> NetBase::CheckCompleteMessage(uint32_t client, uint32_t id, csArray<psNetPacketEntry *>& toAck)
+csPtr<MsgEntry> NetBase::CheckCompleteMessage(uint32_t client, uint32_t id)
 {
     csArray<psNetPacketEntry *> pkts;
     psNetPacketEntry *pkt;
@@ -1075,22 +1058,6 @@ csPtr<MsgEntry> NetBase::CheckCompleteMessage(uint32_t client, uint32_t id, csAr
         // Add to our length count
         length += pkt->packet->pktsize;
         
-        if (pkt->packet->GetPriority() == PRIORITY_HIGH) // a HIGH_PRIORITY packet -> ack
-        {
-            
-#ifdef PACKETDEBUG
-            Debug1(LOG_NET,0,"High priority packet received.\n");
-#endif
-            psNetPacketEntry *ack = new psNetPacketEntry(PRIORITY_LOW,
-                                                             pkt->clientnum,
-                                                             pkt->packet->pktid,
-                                                             pkt->packet->offset,
-                                                             pkt->packet->msgsize,
-                                                             PKTSIZE_ACK,(char *)NULL);
-                
-            toAck.Push(ack);
-
-        }
     }
 
     /*  Early exit.
@@ -1153,20 +1120,15 @@ bool NetBase::QueueMessage(MsgEntry *me)
            // Input queue is full. Yield CPU and check back  if it still is full
             CS::Threading::Thread::Yield();
 
-            if (!inqueues[i]->Add(me))
-            {
-                Error4("*** Input Buffer Full! Yielding for packet, client %u, type %s, input queue %zu!",
-                    me->clientnum,GetMsgTypeName(me->GetType()).GetData(),i);
-				netInfos.droppedPackets++;
-                success = false;
-            }
+            // Block permanently on the full queue so we don't have a problem with fake acks
+            CS_ASSERT(inqueues[i]->AddWait(me));
         }
     }
     return success;
 }
 
 void NetBase::HandleCompletedMessage(MsgEntry *me, Connection* &connection,
-                                     LPSOCKADDR_IN addr,psNetPacketEntry* pkt, csArray<psNetPacketEntry *>& toAck)
+                                     LPSOCKADDR_IN addr,psNetPacketEntry* pkt)
 {
     profs->AddReceivedMsg(me);
     
@@ -1193,26 +1155,6 @@ void NetBase::HandleCompletedMessage(MsgEntry *me, Connection* &connection,
         // packet must be acked here.
         HandleAck(pkt, connection, addr);
         
-        if (pkt->packet->GetPriority() == PRIORITY_HIGH) // a HIGH_PRIORITY packet -> ack
-        {
-            
-#ifdef PACKETDEBUG
-            Debug1(LOG_NET,0,"High priority packet received.\n");
-#endif
-            
-            if (connection)
-            {
-                psNetPacketEntry *ack = new psNetPacketEntry(PRIORITY_LOW,
-                                                             pkt->clientnum,
-                                                             pkt->packet->pktid,
-                                                             pkt->packet->offset,
-                                                             pkt->packet->msgsize,
-                                                             PKTSIZE_ACK,(char *)NULL);
-                
-                toAck.Push(ack);
-                
-            }
-        }
 
         // Update last packet time in connection
         // (Mostly handled in packet, but must be handled here for very first message)
@@ -1223,16 +1165,7 @@ void NetBase::HandleCompletedMessage(MsgEntry *me, Connection* &connection,
     // put the message in the queue
     me->clientnum = connection->clientnum;
 
-    if(QueueMessage(me))
-    {
-        // Iff all the steps are successful then we finally ack the whole packet here
-        for(size_t i = 0; i < toAck.GetSize(); i++)
-        {
-            SendFinalPacket(toAck[i], addr);
-            delete toAck[i];
-        }
-        toAck.Empty();
-    }
+    QueueMessage(me);
 }
 
 uint32_t NetBase::GetRandomID()

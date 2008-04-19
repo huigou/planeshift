@@ -259,8 +259,7 @@ void psNetConnection::CheckLinkDead (csTicks currenttime)
         {
             // Simulate message to self to inform user of quitting.
             psSystemMessage quit(0,MSG_INFO,"Server is not responding, try again in 5 minutes. Exiting PlaneShift...");
-            csArray<psNetPacketEntry *> toAck;
-            HandleCompletedMessage(quit.msg, server, &server->addr,NULL, toAck);
+            HandleCompletedMessage(quit.msg, server, &server->addr,NULL);
             
             psSleep(1000);
             
@@ -271,7 +270,7 @@ void psNetConnection::CheckLinkDead (csTicks currenttime)
                                      "Check http://laanx.fragnetics.com/ for status.":
                                      "The server is not running or is not reachable.  "
                                      "Please check http://laanx.fragnetics.com/ or forums for more info.");
-            HandleCompletedMessage(msgb.msg, server, &server->addr,NULL, toAck);
+            HandleCompletedMessage(msgb.msg, server, &server->addr,NULL);
         }
     }
     else

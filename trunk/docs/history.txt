@@ -8,6 +8,10 @@
 - Added the self-pipe trick to allow lag-free network code on *nix systems.
   This doesn't support win32 yet as select on pipes does not work on win32. 
 - Reduced the maximum message size limit because it was overflowing 16bits.
+- Rethought and reverted approach to full message queue as old implementation
+  had bugs in acking. The network thread now blocks on a full queue, the most
+  elegant solution. Not dealing with acks reduces potential bugs and reduces
+  cpu spinning.
 
 *** 2008-08-14 by Frank Barton(Eriroley)
 - Removed "use planeshift" lines from all .sql files in src/server/database/mysql except create_all.sql
