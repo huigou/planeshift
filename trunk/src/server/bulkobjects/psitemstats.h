@@ -529,6 +529,9 @@ public:
     
     int GetAttackAnimID(unsigned int skill_level);
 
+    csString FlagsToText();
+
+
     const char *GetName() const;
     const csString GetDownCaseName();
     void SetUnique();

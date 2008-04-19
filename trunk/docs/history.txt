@@ -1,3 +1,7 @@
+*** 2008-08-19 by Frank Barton(Eriroley)
+- fixed date in my last entry
+- Fixed FS#1340 - now the "BUY_PERSONALISE" flag is removed from personalised items when being purchased
+
 *** 2008-04-19 by Kenny Graunke
 - Commit patch from Vornne (with small changes by me) for FS#724, adding
   "instantcast" flag for GMs.  Also fixes "infinitemana" flag.
@@ -18,7 +22,7 @@
   elegant solution. Not dealing with acks reduces potential bugs and reduces
   cpu spinning.
 
-*** 2008-08-14 by Frank Barton(Eriroley)
+*** 2008-08-18 by Frank Barton(Eriroley)
 - Removed "use planeshift" lines from all .sql files in src/server/database/mysql except create_all.sql
 - This removed an effective 'hard-code' of the database, now only one place to modify database name when creating db
 

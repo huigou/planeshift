@@ -685,7 +685,7 @@ bool psItemStats::Save()
     static iRecord* update;
     
     if(update == NULL)
-        update = db->NewUpdatePreparedStatement("item_stats", "id", 30); // 28 parameters plus 1 id
+        update = db->NewUpdatePreparedStatement("item_stats", "id", 31); // 30 parameters plus 1 id
     
     update->Reset();
     
@@ -714,6 +714,8 @@ bool psItemStats::Save()
         update->AddField("item_anim_id", anim_list->Get(0)->id ); // item_anim_id
     else
         update->AddField("item_anim_id", 0); // No anims
+
+    update->AddField("flags", FlagsToText().GetDataSafe()); // save flags
 
     update->AddField("description", description );                       // description
     update->AddField("weapon_speed", weaponStats.Latency()); // weapon_speed
@@ -964,6 +966,58 @@ const char *psItemStats::GetName() const
     return name.GetData();
 }
 
+csString psItemStats::FlagsToText()
+{
+    csString TempString = csString();
+    if (flags & PSITEMSTATS_FLAG_IS_A_MELEE_WEAPON)
+        TempString.Append("MELEEWEAPON ");
+    if (flags & PSITEMSTATS_FLAG_IS_A_RANGED_WEAPON)
+        TempString.Append("RANGEDWEAPON ");
+    if (flags & PSITEMSTATS_FLAG_IS_A_SHIELD)
+        TempString.Append("SHIELD ");
+    if (flags & PSITEMSTATS_FLAG_IS_AMMO)
+        TempString.Append("AMMO ");
+    if (flags & PSITEMSTATS_FLAG_IS_A_CONTAINER)
+        TempString.Append("CONTAINER ");
+    if (flags & PSITEMSTATS_FLAG_USES_AMMO)
+        TempString.Append("USESAMMO ");
+    if (flags & PSITEMSTATS_FLAG_IS_STACKABLE)
+        TempString.Append("STACKABLE ");
+    if (flags & PSITEMSTATS_FLAG_IS_GLYPH)
+        TempString.Append("GLYPH ");
+    if (flags & PSITEMSTATS_FLAG_CAN_TRANSFORM)
+        TempString.Append("CANTRANSFORM ");
+    if (flags & PSITEMSTATS_FLAG_TRIA)
+        TempString.Append("TRIA ");
+    if (flags & PSITEMSTATS_FLAG_HEXA)
+        TempString.Append("HEXA ");
+    if (flags & PSITEMSTATS_FLAG_OCTA)
+        TempString.Append("OCTA ");
+    if (flags & PSITEMSTATS_FLAG_CIRCLE)
+        TempString.Append("CIRCLE ");
+    if (flags & PSITEMSTATS_FLAG_CONSUMABLE)
+        TempString.Append("CONSUMABLE ");
+    if (flags & PSITEMSTATS_FLAG_IS_READABLE)
+        TempString.Append("READABLE ");
+    if (flags & PSITEMSTATS_FLAG_IS_ARMOR)
+        TempString.Append("ARMOR ");
+    if (flags & PSITEMSTATS_FLAG_IS_EQUIP_STACKABLE)
+        TempString.Append("EQUIP_STACKABLE ");
+    if (flags & PSITEMSTATS_FLAG_IS_WRITEABLE)
+        TempString.Append("WRITEABLE ");
+    if (flags & PSITEMSTATS_FLAG_NOPICKUP)
+        TempString.Append("NOPICKUP ");
+    if (flags & PSITEMSTATS_FLAG_AVERAGEQUALITY)
+        TempString.Append("AVERAGEQUALITY ");
+    if (flags & PSITEMSTATS_FLAG_CREATIVE)
+        TempString.Append("CREATIVE ");
+    if (flags & PSITEMSTATS_FLAG_BUY_PERSONALISE)
+        TempString.Append("BUY_PERSONALISE ");
+    if (flags & PSITEMSTATS_FLAG_IS_RECHARGEABLE)
+        TempString.Append("RECHARGEABLE ");
+    return(TempString);
+}
+
 const csString psItemStats::GetDownCaseName()
 {
     csString downcaseName(name);
@@ -1112,6 +1166,7 @@ void psItemStats::SetImageName(const char *v)
 void psItemStats::SetUnique()
 {
     stat_type="U";
+    flags &= ~PSITEMSTATS_FLAG_BUY_PERSONALISE;
 }
 
 void psItemStats::SetPrice(int trias)
