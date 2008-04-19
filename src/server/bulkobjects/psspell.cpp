@@ -49,7 +49,7 @@
 #include "psspell.h"
 #include "psglyph.h"
 #include "psguildinfo.h"
-#include "adminmanager.h"
+#include "commandmanager.h"
 
 #define SPELL_TOUCH_RANGE   3.0
 
@@ -225,7 +225,7 @@ psSpellCastGameEvent *psSpell::Cast(psSpellManager * mgr, Client * client, csStr
     gemActor *caster = client->GetActor();
     gemObject *target = client->GetTargetObject();
     int mode = caster->GetCharacterData()->GetMode();
-   
+
     if (!target)
     {
         if ( spell_target & TARGET_SELF )
@@ -235,11 +235,6 @@ psSpellCastGameEvent *psSpell::Cast(psSpellManager * mgr, Client * client, csStr
             castingText->Format( "You must select a target for %s", name.GetData() );
             return NULL;
         }            
-    }
-    if (! caster->GetCharacterData()->CheckMagicKnowledge(GetSkill(), realm))
-    {
-        *castingText = "You have insufficient knowledge of this magic way to cast this spell.";
-        return NULL;
     }
 
     if (mode != PSCHARACTER_MODE_PEACE  &&  mode != PSCHARACTER_MODE_COMBAT)
@@ -254,26 +249,40 @@ psSpellCastGameEvent *psSpell::Cast(psSpellManager * mgr, Client * client, csStr
         return NULL;
     }
 
-    // Check if needed glyphs are available (skip for developers to allow easier testing)
-    if (!caster->GetCharacterData()->Inventory().HasPurifiedGlyphs(glyphList) && client->GetSecurityLevel() < GM_DEVELOPER)
+    // Skip testing some conditions for developers and game masters
+    const bool gameMaster = CacheManager::GetSingleton().GetCommandManager()->Validate(client->GetSecurityLevel(), "cast all spells");
+    if (!gameMaster)
     {
-        castingText->Format("You don't have the purified glyphs to cast %s.",name.GetData());
-        return NULL;
+        if (! caster->GetCharacterData()->CheckMagicKnowledge(GetSkill(), realm))
+        {
+            *castingText = "You have insufficient knowledge of this magic way to cast this spell.";
+            return NULL;
+        }
+
+        // Check if needed glyphs are available
+        if (!caster->GetCharacterData()->Inventory().HasPurifiedGlyphs(glyphList))
+        {
+            castingText->Format("You don't have the purified glyphs to cast %s.",name.GetData());
+            return NULL;
+        }
     }
 
-    // Check for available Mana
-    if (caster->GetCharacterData()->GetMana() < ManaCost(caster->GetCharacterData()->GetKFactor()))
+    if (!client->GetActor()->infinitemana)
     {
-        castingText->Format("You don't have the mana to cast %s.",name.GetData());
-        return NULL;
+        // Check for available Mana
+        if (caster->GetCharacterData()->GetMana() < ManaCost(caster->GetCharacterData()->GetKFactor()))
+        {
+            castingText->Format("You don't have the mana to cast %s.",name.GetData());
+            return NULL;
+        }
+
+        if (caster->GetCharacterData()->GetStamina(false) < ManaCost(caster->GetCharacterData()->GetKFactor()))
+        {
+            castingText->Format("You are too tired to cast %s.",name.GetData());
+            return NULL;
+        }
     }
 
-    if (caster->GetCharacterData()->GetStamina(false) < ManaCost(caster->GetCharacterData()->GetKFactor()))
-    {
-        castingText->Format("You are too tired to cast %s.",name.GetData());
-        return NULL;
-    }
-    
     float powerLevel = MIN(max_power, caster->GetCharacterData()->GetPowerLevel(way->skill) );
     float waySkill = caster->GetCharacterData()->GetSkillRank(way->skill);
 
@@ -330,7 +339,16 @@ psSpellCastGameEvent *psSpell::Cast(psSpellManager * mgr, Client * client, csStr
         offset = csVector3(0,0,0);
         anchorID = caster->GetEntityID();
         targetID = target->GetEntityID();
-        castingDuration = (int)varCastingDuration->GetValue();
+
+        // Allow developers and game masters to cast a spell immediately
+        if (client->GetActor()->instantcast)
+        {
+            castingDuration = 0;
+        }
+        else
+        {
+            castingDuration = (int)varCastingDuration->GetValue();
+        }
 
         return new psSpellCastGameEvent( mgr, this, client, target, castingDuration, max_range, powerLevel, duration);
     }
