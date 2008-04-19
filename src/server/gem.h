@@ -728,6 +728,7 @@ public:
     /** These flags are for GM/debug abilities */
     bool nevertired;        // infinite stamina
     bool infinitemana;      // infinite mana
+    bool instantcast;       // cast spells instantly
     bool safefall;          // no fall damage
     bool questtester;       // no quest lockouts
 

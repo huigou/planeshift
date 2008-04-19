@@ -212,7 +212,8 @@ void psSpellManager::HandleAssembler( Client* client, MsgEntry* me )
     }
 
     // If the spell exists and the player has high enough skill, determine if the player successfully researches the spell.
-    if ( researchSpellScript && spell && client->GetCharacterData()->CheckMagicKnowledge( spell->GetSkill(), spell->GetRealm() ))
+    bool gameMaster = CacheManager::GetSingleton().GetCommandManager()->Validate(client->GetSecurityLevel(), "cast all spells");
+    if ( researchSpellScript && spell && ( gameMaster || client->GetCharacterData()->CheckMagicKnowledge(spell->GetSkill(), spell->GetRealm()) ) )
     {
         varCaster->SetObject( client->GetCharacterData() );
         varSpell->SetObject( spell );
@@ -221,7 +222,7 @@ void psSpellManager::HandleAssembler( Client* client, MsgEntry* me )
 
         // If success, set to nice progression script
         float dieRoll = psserver->GetRandom() * 100.0;
-        if (  dieRoll < chanceOfSuccess )
+        if (dieRoll < chanceOfSuccess || gameMaster)
         {
             eventName = "ResearchSpellSuccess";
         }

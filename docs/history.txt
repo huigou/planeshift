@@ -1,3 +1,7 @@
+*** 2008-04-19 by Kenny Graunke
+- Commit patch from Vornne (with small changes by me), adding "instantcast"
+  flag for GMs.  Also fixes "infinitemana" flag.
+
 *** 2008-04-19 by Andrew Dai
 - Added an assertion to prevent mysterious crashes if 2 psPersistWorld
   messages are received. This is an assertion because if it triggers it
