@@ -458,7 +458,7 @@ protected:
      * This adds the incoming packet to the pending packets tree, and builds
      * the psMessageBytes struct and MsgEntry struct if complete.
      */
-    csPtr<MsgEntry> CheckCompleteMessage(uint32_t client,uint32_t id, csArray<psNetPacketEntry *>& toAck);
+    csPtr<MsgEntry> CheckCompleteMessage(uint32_t client,uint32_t id);
     
     /**
      * This receives only fully reassembled messages and adds to appropriate
@@ -468,7 +468,7 @@ protected:
     void HandleCompletedMessage(MsgEntry *me,
                 Connection* &connection,
                 LPSOCKADDR_IN addr,
-                psNetPacketEntry* pkt, csArray<psNetPacketEntry *>& toAck);
+                psNetPacketEntry* pkt);
 
     /**
      * This tries to drop packets that received doubled

@@ -515,8 +515,7 @@ void NetManager::CheckLinkDead()
             if (discon.valid)
             {
                 Connection* connection = pClient->GetConnection();
-                csArray<psNetPacketEntry *> toAck;
-                HandleCompletedMessage(discon.msg, connection, NULL,NULL, toAck);
+                HandleCompletedMessage(discon.msg, connection, NULL,NULL);
             }
             else
             {
@@ -551,8 +550,7 @@ void NetManager::CheckLinkDead()
                 if (discon.valid)
                 {
                     Connection* connection = pClient->GetConnection();
-                    csArray<psNetPacketEntry *> toAck;
-                    HandleCompletedMessage(discon.msg, connection, NULL,NULL, toAck);
+                    HandleCompletedMessage(discon.msg, connection, NULL,NULL);
                 }
                 else
                 {
