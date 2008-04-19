@@ -3560,7 +3560,8 @@ public:
         duration = node->GetAttributeValueAsInt("duration");
         value = node->GetAttributeValueAsBool("value",true);
         
-        if (attrib != "invincible" && attrib != "invisible" && attrib != "nofalldamage" && attrib != "nevertired")
+        if (attrib != "invincible" && attrib != "invisible" && attrib != "nofalldamage" &&
+            attrib != "nevertired" && attrib != "infintemana" && attrib != "instantcast")
         {
             Error3("Invalid attribute for ProgressionEvent(%s) AttributeOp: %s\n", eventName->GetData(), attrib.GetData() );
             return true;
@@ -3613,6 +3614,18 @@ public:
             setvalue = (actor->nevertired != value);
             if (setvalue)
                 actor->nevertired = value;
+        }
+        else if (attrib == "infinitemana")
+        {
+            setvalue = (actor->infinitemana != value);
+            if (setvalue)
+                actor->infinitemana = value;
+        }
+        else if (attrib == "instantcast")
+        {
+            setvalue = (actor->instantcast != value);
+            if (setvalue)
+                actor->instantcast = value;
         }
 
         if (duration != 0 && setvalue)

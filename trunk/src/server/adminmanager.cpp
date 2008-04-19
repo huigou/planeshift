@@ -1779,6 +1779,8 @@ void AdminManager::SendGMAttribs(Client* client)
         gmSettings |= (1 << 6);
     if (client->GetActor()->safefall)
         gmSettings |= (1 << 7);
+    if (client->GetActor()->instantcast)
+        gmSettings |= (1 << 8);
 
     psGMGuiMessage gmMsg(client->GetClientNum(), gmSettings);
     gmMsg.SendMessage();
@@ -1875,7 +1877,8 @@ void AdminManager::SetAttrib(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData&
                                                 "nofalldamage = %s\n"
                                                 "infiniteinventory = %s\n"
                                                 "questtester = %s\n"
-                                                "infinitemana = %s",
+                                                "infinitemana = %s\n"
+                                                "instantcast = %s",
                                                 (actor->GetInvincibility())?"on":"off",
                                                 (!actor->GetVisibility())?"on":"off",
                                                 (actor->GetViewAllObjects())?"on":"off",
@@ -1883,7 +1886,8 @@ void AdminManager::SetAttrib(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData&
                                                 (actor->safefall)?"on":"off",
                                                 (!actor->GetFiniteInventory())?"on":"off",
                                                 (actor->questtester)?"on":"off",
-                                                actor->infinitemana?"on":"off");
+                                                (actor->infinitemana)?"on":"off",
+                                                (actor->instantcast)?"on":"off");
         return;
     }
     else if (data.attribute == "invinciblity" || data.attribute == "invincible")
@@ -1945,6 +1949,18 @@ void AdminManager::SetAttrib(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData&
             already = true;
         else
             actor->infinitemana = onoff;
+    }
+    else if (data.attribute == "instantcast")
+    {
+        if (toggle)
+        {
+            actor->instantcast = !actor->instantcast;
+            onoff = actor->instantcast;
+        }
+        else if (actor->instantcast == onoff)
+            already = true;
+        else
+            actor->instantcast = onoff;
     }
     else if (data.attribute == "nofalldamage")
     {

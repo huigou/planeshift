@@ -81,6 +81,7 @@ pawsGmGUIWindow::pawsGmGUIWindow()
     isInfiniteMana = false;
     isFiniteInv = true;
     isSafeFall = false;
+    isInstantCast = false;
 }
 
 pawsGmGUIWindow::~pawsGmGUIWindow()
@@ -135,6 +136,7 @@ bool pawsGmGUIWindow::PostSetup()
     cbInfiniteInventory = (pawsCheckBox*)FindWidget("toggleInfiniteInventory");
     cbQuestTester = (pawsCheckBox*)FindWidget("toggleQuestTester");
     cbInfiniteMana = (pawsCheckBox*)FindWidget("toggleInfiniteMana");
+    cbInstantCast = (pawsCheckBox*)FindWidget("toggleInstantCast");
 
     return true;
 }
@@ -208,6 +210,11 @@ void pawsGmGUIWindow::HandleMessage ( MsgEntry* me )
             isSafeFall = ( gmSets & (1 << 7) ? true : false);
             cbNoFallDamage->SetState(isSafeFall);
             cbNoFallDamage->SetText( isSafeFall ? "enabled" : "disabled" );
+
+            // instant spell cast
+            isInstantCast = ( gmSets & (1 << 8) ? true : false);
+            cbInstantCast->SetState(isInstantCast);
+            cbInstantCast->SetText( isInstantCast ? "enabled" : "disabled" );
         }
         }
         break;
@@ -377,9 +384,15 @@ bool pawsGmGUIWindow::OnButtonPressed( int mouseButton, int keyModifier, pawsWid
         confirm = false;
         break;
     }
-    case 1258:// questtester
+    case 1258:// infinitemana
     {
         cmd.Format("/set infinitemana"); // Toggle
+        confirm = false;
+        break;
+    }
+    case 1259:// instantcast
+    {
+        cmd.Format("/set instantcast"); // Toggle
         confirm = false;
         break;
     }
@@ -568,6 +581,8 @@ void pawsGmGUIWindow::SetSecurity()
     HideWidget("toggleQuestTester");
     HideWidget("infinitemana");
     HideWidget("toggleInfiniteMana");
+    HideWidget("instantcast");
+    HideWidget("toggleInstantCast");
 
     // int to hold the access level
     int level = psengine->GetCelClient()->GetMainPlayer()->GetType();
@@ -631,6 +646,8 @@ void pawsGmGUIWindow::SetSecurity()
         ShowWidget("toggleQuestTester");
         ShowWidget("infinitemana");
         ShowWidget("toggleInfiniteMana");
+        ShowWidget("instantcast");
+        ShowWidget("toggleInstantCast");
     case 0:
         break;
     }

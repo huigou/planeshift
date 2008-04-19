@@ -38,6 +38,7 @@ class pawsGmGUIWindow : public pawsWidget, public psCmdBase, public iOnStringEnt
     bool isInfiniteMana;
     bool isFiniteInv;
     bool isSafeFall;
+    bool isInstantCast;
 
 public:
     pawsGmGUIWindow();
@@ -98,6 +99,7 @@ protected:
     pawsCheckBox* cbInfiniteInventory;
     pawsCheckBox* cbQuestTester;
     pawsCheckBox* cbInfiniteMana;
+    pawsCheckBox* cbInstantCast;
 
     int currentTab;
     csString cmdToExectute;

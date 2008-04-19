@@ -1626,6 +1626,7 @@ gemActor::gemActor( psCharacter *chardata,
     safefall = false;
     nevertired = false;
     infinitemana = false;
+    instantcast = false;
     pcmove = NULL;
 
     meshcache = factname;
