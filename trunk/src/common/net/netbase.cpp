@@ -35,6 +35,7 @@
 
 #include <ctype.h> 
 
+#include <fcntl.h>
 #include "util/pserror.h"
 #include "net/netbase.h"
 #include "net/netpacket.h"
@@ -58,6 +59,9 @@ NetBase::NetBase(int outqueuesize)
 : senders(outqueuesize)
 {
     randomgen = new csRandomGen;
+    
+    pipe_fd[0] = 0;
+    pipe_fd[1] = 0;
 
     if (socklibrefcount==0 && initSocket())
         ERRORHALT ("couldn't init socket library!");
@@ -246,11 +250,27 @@ bool NetBase::CheckIn()
 #ifdef PACKETDEBUG
             Debug2(LOG_NET,0,"Droping doubled packet (ID %d)\n", pkt->packet->pktid);
 #endif
+            if (pkt->packet->GetPriority() == PRIORITY_HIGH) // a HIGH_PRIORITY packet -> ack
+            {
+                
+#ifdef PACKETDEBUG
+                Debug1(LOG_NET,0,"High priority packet received.\n");
+#endif
+                psNetPacketEntry ack(PRIORITY_LOW,
+                                                             pkt->clientnum,
+                                                             pkt->packet->pktid,
+                                                             pkt->packet->offset,
+                                                             pkt->packet->msgsize,
+                                                             PKTSIZE_ACK,(char *)NULL);
+                
+                SendFinalPacket(&ack, &addr);
+                
+            }
             delete pkt;
             return true;
         }
     }
-
+    
 #ifdef PACKETDEBUG
     Debug7(LOG_NET,0,"Recveived Pkt, ID: %d, offset %d, from %d size %d (actual %d) flags %d\n", 
         pkt->packet->pktid, pkt->packet->offset, pkt->clientnum, pkt->packet->pktsize,packetlen, pkt->packet->flags);
@@ -371,6 +391,7 @@ bool NetBase::HandleAck(psNetPacketEntry *pkt, Connection* connection,
 bool NetBase::CheckDoublePackets(Connection* connection, psNetPacketEntry* pkt)
 {
     int i;
+
     for (i=0; i<MAXPACKETHISTORY; i++)
         if (connection->packethistoryid[i] == pkt->packet->pktid
             && connection->packethistoryoffset[i] == pkt->packet->offset)
@@ -404,6 +425,7 @@ void NetBase::CheckResendPkts()
         Debug2(LOG_NET,0,"Resending nonacked HIGH packet (ID %d).\n", pkt->packet->pktid);
 #endif
         pkt->timestamp = currenttime;   // update stamp on packet
+        pkt->packet->Resend();
 
         // re-add to send queue
         NetworkQueue->Add(pkt);
@@ -436,9 +458,11 @@ bool NetBase::SendMergedPackets(NetPacketQueue *q)
     while ((queueget=q->Get()))
     {
         candidate = queueget;  // get out of csRef here
-        if(!final->Append(candidate))
+        if(final->packet->IsResent() || candidate->packet->IsResent() || !final->Append(candidate))
         {
-            // A failed append means that the packet can't fit.
+            // A failed append means that the packet can't fit or is a resent packet.
+            // Resent packets MUST NOT be merged because it circumvents clientside packet dup
+            // detection
             // Set a random ID for the new merged packet
             if(final->packet->pktid == 0)
             {
@@ -565,7 +589,13 @@ bool NetBase::Init(bool autobind)
 
     if (ready)
         Close();
-
+    
+#ifndef CS_PLATFORM_WIN32 
+    // win32 doesn't support select on pipes so we don't support lag-free communication yet
+    if(pipe(pipe_fd) != 0)
+        Error1("Error creating self pipe");
+#endif
+    
     mysocket = socket (AF_INET, SOCK_DGRAM, IPPROTO_UDP);
 
     /* set to non blocking operation */
@@ -825,6 +855,7 @@ bool NetBase::SendMessage(MsgEntry* me,NetPacketQueueRefCount *queue)
     {
         // The pktlen does not include the length of the headers, but the MAXPACKETSIZE does
         size_t pktlen = PSMIN(MAXPACKETSIZE-sizeof(struct psNetPacket), bytesleft);
+        char notify = '!';
 
         psNetPacketEntry *pNewPkt = new psNetPacketEntry(me->priority, 
             me->clientnum, 
@@ -842,7 +873,12 @@ bool NetBase::SendMessage(MsgEntry* me,NetPacketQueueRefCount *queue)
                 Error2("Target full. Could not add packet with clientnum %d.\n", me->clientnum)
             return false;
         }
-
+        
+#ifndef CS_PLATFORM_WIN32
+        // tell the network code there is a transmission waiting, this minimises lag time for sending network messages
+        write(pipe_fd[1], &notify, 1);
+#endif
+        
         bytesleft -= pktlen;
         offset    += pktlen;
     }
@@ -1186,6 +1222,7 @@ void NetBase::HandleCompletedMessage(MsgEntry *me, Connection* &connection,
 
     // put the message in the queue
     me->clientnum = connection->clientnum;
+
     if(QueueMessage(me))
     {
         // Iff all the steps are successful then we finally ack the whole packet here

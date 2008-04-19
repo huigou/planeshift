@@ -30,7 +30,7 @@ enum
 {
   PKTSIZE_ACK    = 0,        // 0 pktsize means ACK pkt
   PKTMAXLATENCY    = 3000,        // 500 mseconds till packet resent
-  
+  FLAG_RESEND      = 0x04,  // this is a resent packet, so must not be merged
   FLAG_MULTIPACKET = 0x08,  // priority bit 8 is multipacket 
   /// MAXPACKETSIZE includes header length ( sizeof(struct psNetPacket) )
   MAXPACKETSIZE       = 515    // 515 bytes is max size of network packet
@@ -79,6 +79,16 @@ struct psNetPacket
     bool IsMultiPacket() const
     {
         return (flags & FLAG_MULTIPACKET)? true: false;
+    }
+    bool IsResent() const
+    {
+        return (flags & FLAG_RESEND)? true: false;
+    }
+    
+    /** Prevent anything happening to this packet that may interfere with acks */
+    void Resend()
+    {
+        flags = flags | FLAG_RESEND;
     }
     uint8_t GetPriority() const
     {
