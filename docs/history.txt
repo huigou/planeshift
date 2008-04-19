@@ -1,3 +1,7 @@
+*** 2008-08-14 by Frank Barton(Eriroley)
+- Removed "use planeshift" lines from all .sql files in src/server/database/mysql except create_all.sql
+- This removed an effective 'hard-code' of the database, now only one place to modify database name when creating db
+
 *** 2008-04-18 by Frank Barton(Eriroley)
 - completed work started in r1281 - personalized items now auto set to stat_type of "U" when purchased
 
