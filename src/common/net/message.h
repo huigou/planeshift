@@ -96,7 +96,7 @@ typedef uint8_t msgtype;
  *  memory to reassemble, messages beyond this size will be dropped.
  *  Changing this value requires a NETVERSION change in messages.h.
  */
-#define MAX_MESSAGE_SIZE 65535  // Current max
+#define MAX_MESSAGE_SIZE 65535 - 4  // Current max, -4 for sizeof(psMessageBytes)
 
 /**
  * this struct represents the data that is sent out through the network (all
