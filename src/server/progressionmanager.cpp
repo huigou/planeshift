@@ -1201,16 +1201,26 @@ public:
 
     bool Run(gemActor *actor, gemObject *target, psItem * item, bool inverse)
     {
-        bool e;
-        if (e = setValue && isBuff)
+        if (setValue && isBuff)
+        {
             Error2("Error: ProgressionEvent(%s) SkillOp  set and buff are incompatible\n",eventName->GetData());
-        if (e = setValue && inverse)
+            return true;
+        }
+        if (setValue && inverse)
+        {
             Error2("Error: ProgressionEvent(%s) SkillOp  set and inverse are incompatible\n",eventName->GetData());
-        if (e = aimIsActor && !actor)
+            return true;
+        }
+        if (aimIsActor && !actor)
+        {
             Error2("Error: ProgressionEvent(%s) SkillOp  need an actor\n",eventName->GetData());
-        if (e = !aimIsActor && !target)
+            return true;
+        }
+        if (!aimIsActor && !target)
+        {
             Error2("Error: ProgressionEvent(%s) SkillOp  need a target\n",eventName->GetData());
-        if (e) return true;
+            return true;
+        }
 
         psCharacter * character;
 

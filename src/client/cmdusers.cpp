@@ -302,7 +302,7 @@ const char *psUserCommands::HandleCommand(const char *cmd)
             
         return NULL;                    
     }
-    else if (words[0] == "/equip" || words[0] == "/use" && words.GetCount() > 1)
+    else if (words[0] == "/equip" || (words[0] == "/use" && words.GetCount() > 1))
     {
         if ( words.GetCount() < 2 )
             return "Usage: /equip  [stack count] [item name]";

@@ -547,7 +547,8 @@ void pawsTreeStruct::InsertChild(const csString & parent, pawsTreeNode * node, c
 
     parentNode = FindNodeByName(parent);
     // Allows a root to be added automatically.
-    if (parentNode == NULL)
+    if (!parentNode)
+    {
         if (!root)
         {
             SetRoot(node);
@@ -555,7 +556,10 @@ void pawsTreeStruct::InsertChild(const csString & parent, pawsTreeNode * node, c
             return;
         }
         else
+        {
             parentNode = root;
+        }
+    }
     nextSiblingNode = FindNodeByName(nextSibling);
     parentNode->InsertChild(node, nextSiblingNode);
 }
