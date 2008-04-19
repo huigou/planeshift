@@ -110,7 +110,7 @@ protected:
     bool IsReseting(const csString& command);
 
     
-    typedef struct AdminCmdData
+    struct AdminCmdData
     {
         csString player, target, command, subCmd, commandMod;
         csString action, setting, attribute, attribute2, skill;

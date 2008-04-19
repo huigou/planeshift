@@ -833,10 +833,9 @@ void PawsManager::SetCurrentFocusedWidget ( pawsWidget* widget )
     }
 
     // Check if the focused widget or any of it's parents grab the keyboard input
-    for (focusOverridesControls = false ; widget != NULL; widget = widget->GetParent())
+    for (focusOverridesControls = false; widget != NULL && !focusOverridesControls; widget = widget->GetParent())
     {
-        if (focusOverridesControls = widget->GetFocusOverridesControls())
-            break;
+        focusOverridesControls = widget->GetFocusOverridesControls();
     }
 }
 

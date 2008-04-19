@@ -75,7 +75,7 @@ class psNPCClient : public CelBase, public iCommandCatcher
 {
 public:
 
-    typedef struct DeferredNPC
+    struct DeferredNPC
     {
         unsigned int id;
         csString     name;

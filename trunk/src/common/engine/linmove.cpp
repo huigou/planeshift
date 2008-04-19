@@ -451,6 +451,7 @@ int psLinearMovement::MoveV (float delta)
 
   // Check for collisions and adjust position
   if (colldet)
+  {
     if (!colldet->AdjustForCollisions (oldpos, newpos, worldVel,
     	delta, movable))
     {
@@ -465,6 +466,7 @@ int psLinearMovement::MoveV (float delta)
         ret = PS_MOVE_PARTIAL;
       }
     }
+  }
 
   csVector3 origNewpos = newpos;
   bool mirror = false;

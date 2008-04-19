@@ -82,7 +82,7 @@ public:
 
 
 
-typedef enum
+enum
 {
     PRIORITY_LOW  = 0x00,
     PRIORITY_HIGH = 0x01,

@@ -2842,7 +2842,7 @@ bool gemActor::SetDRData(psDRMessage& drmsg)
 void gemActor::UpdateValidLocation(const csVector3& pos, float vel_y, float yrot, iSector* sector, bool force)
 {
     // 10m hops
-    if (force || !isFalling && (pos - newvalid_location.pos).SquaredNorm() > 100.0f)
+    if (force || (!isFalling && (pos - newvalid_location.pos).SquaredNorm() > 100.0f))
     {
         valid_location = newvalid_location;
         newvalid_location.pos = pos;

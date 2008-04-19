@@ -35,14 +35,14 @@ class Perception;
 class psTribe
 {
 public:
-    typedef struct Resource
+    struct Resource
     {
         int      id;           /// Database id
         csString name;
         int      amount;
     };
 
-    typedef struct Memory
+    struct Memory
     {
         int       id;          /// Database id
         csString  name;
