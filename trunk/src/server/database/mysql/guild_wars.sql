@@ -15,13 +15,6 @@
 
 
 --
--- Create schema planeshift
---
-
-CREATE DATABASE IF NOT EXISTS planeshift;
-USE planeshift;
-
---
 -- Definition of table `guild_wars`
 --
 
