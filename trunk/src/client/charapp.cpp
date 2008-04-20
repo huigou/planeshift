@@ -357,7 +357,7 @@ void psCharAppearance::Equip( csString& slotname,
     // Set up item effect if there is one.
     if(state->FindSocket(slotname))
     {
-        psengine->GetCelClient()->HandleItemEffect(mesh, state->FindSocket(slotname)->GetMeshWrapper(), false, slotname, &effectids);
+        psengine->GetCelClient()->HandleItemEffect(mesh, state->FindSocket(slotname)->GetMeshWrapper(), false, slotname, &effectids, &lightids);
     }
     
     // This is a subMesh on the model change so change the mesh for that part.
@@ -725,7 +725,9 @@ void psCharAppearance::ClearEquipment(const char* slot)
     if(slot)
     {
         psengine->GetEffectManager()->DeleteEffect(effectids.Get(slot, 0));
+        psengine->GetEffectManager()->DetachLight(lightids.Get(slot, 0));
         effectids.DeleteAll(slot);
+        lightids.DeleteAll(slot);
         return;
     }
 
@@ -736,12 +738,19 @@ void psCharAppearance::ClearEquipment(const char* slot)
         Detach(deleteList[z]);
     }
 
-    csHash<int, csString>::GlobalIterator itr = effectids.GetIterator();
-    while(itr.HasNext())
+    csHash<int, csString>::GlobalIterator effectItr = effectids.GetIterator();
+    while(effectItr.HasNext())
     {
-        psengine->GetEffectManager()->DeleteEffect(itr.Next());
+        psengine->GetEffectManager()->DeleteEffect(effectItr.Next());
     }
     effectids.Empty();
+
+    csHash<int, csString>::GlobalIterator lightItr = lightids.GetIterator();
+    while(lightItr.HasNext())
+    {
+        psengine->GetEffectManager()->DeleteEffect(lightItr.Next());
+    }
+    lightids.Empty();
 }
 
 

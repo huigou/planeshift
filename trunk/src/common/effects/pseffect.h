@@ -83,7 +83,8 @@ public:
      *   @return 0 on failure, a unique ID on success
      */
     unsigned int Render(iSectorList * sectors, const csVector3 & offset, iMeshWrapper * attachPos, 
-                        iMeshWrapper * attachTarget, const csVector3 & up, const unsigned int uniqueIDOverride = 0);
+                        iMeshWrapper * attachTarget, const csVector3 & up, const unsigned int uniqueIDOverride = 0,
+                        bool rotateWithMesh = false);
  
     /** renders the effect
      *   @param parentView the CS viewport that is viewing the effect
@@ -198,9 +199,9 @@ private:
          */
         virtual void MovableChanged(iMovable * movable)
         {
-            movePos = movable->GetPosition();
+            movePos = movable->GetFullPosition();
             moveSectors = movable->GetSectors();
-            transf = movable->GetTransform().GetT2O();
+            transf = movable->GetFullTransform().GetT2O();
         }
 
         /** Implementation of the iMovableListener function, allows us to detect if the movable was destroyed

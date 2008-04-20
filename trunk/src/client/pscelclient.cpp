@@ -458,6 +458,7 @@ void psCelClient::LoadEffectItems()
                 {
                     csRef<iDocumentNode> effect = effects->Next();
                     Effect* eff = new Effect();
+                    eff->rotateWithMesh = effect->GetAttributeValueAsBool("rotatewithmesh", false);
                     eff->effectname = csString(effect->GetNode("effectname")->GetContentsValue());
                     eff->effectoffset = csVector3(effect->GetNode("offset")->GetAttributeValueAsFloat("x"),
                         effect->GetNode("offset")->GetAttributeValueAsFloat("y"),
@@ -468,9 +469,9 @@ void psCelClient::LoadEffectItems()
                 {
                     csRef<iDocumentNode> light = lights->Next();
                     Light* li = new Light();
-                    li->colour = csColor(light->GetNode("colour")->GetAttributeValueAsFloat("x"),
-                        light->GetNode("colour")->GetAttributeValueAsFloat("y"),
-                        light->GetNode("colour")->GetAttributeValueAsFloat("z"));
+                    li->colour = csColor(light->GetNode("colour")->GetAttributeValueAsFloat("r"),
+                        light->GetNode("colour")->GetAttributeValueAsFloat("g"),
+                        light->GetNode("colour")->GetAttributeValueAsFloat("b"));
                     li->lightoffset = csVector3(light->GetNode("offset")->GetAttributeValueAsFloat("x"),
                         light->GetNode("offset")->GetAttributeValueAsFloat("y"),
                         light->GetNode("offset")->GetAttributeValueAsFloat("z"));
@@ -488,7 +489,8 @@ void psCelClient::LoadEffectItems()
     }
 }
 
-void psCelClient::HandleItemEffect( const char* factName, csRef<iMeshWrapper> mw, bool onGround, const char* slot, csHash<int, csString> *effectids )
+void psCelClient::HandleItemEffect( const char* factName, csRef<iMeshWrapper> mw, bool onGround, const char* slot,
+                                    csHash<int, csString> *effectids, csHash<int, csString> *lightids )
 {
     ItemEffect* ie = effectItems.Get(factName, 0);
     if(ie)
@@ -509,14 +511,22 @@ void psCelClient::HandleItemEffect( const char* factName, csRef<iMeshWrapper> mw
             csRef<iLight> light = psengine->GetEngine()->CreateLight(factName,
                                                                      l->lightoffset, l->radius,
                                                                      l->colour, CS_LIGHT_DYNAMICTYPE_DYNAMIC);
-            light->QuerySceneNode()->SetParent(mw->QuerySceneNode());
-            light->Setup();
+            unsigned int id = psengine->GetEffectManager()->AttachLight(light, mw);
+            if(!id)
+            {
+              printf("Failed to create light on item %s!\n", factName);
+            }
+            else if(slot && lightids)
+            {
+                lightids->PutUnique(slot, id);
+            }
         }
 
         for(size_t i=0; i<ie->effects.GetSize(); i++)
         {
             Effect* e = ie->effects.Get(i);
-            int id = psengine->GetEffectManager()->RenderEffect(e->effectname, e->effectoffset, mw);
+            unsigned int id = psengine->GetEffectManager()->RenderEffect(e->effectname, e->effectoffset, mw, 0,
+                                                                         csVector3(0,1,0), 0, e->rotateWithMesh);
             if(!id)
             {
               printf("Failed to load effect %s on item %s!\n", e->effectname.GetData(), factName);

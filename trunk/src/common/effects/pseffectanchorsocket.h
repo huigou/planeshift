@@ -34,7 +34,7 @@ public:
 
     // inheritted function overloads
     bool Load(iDocumentNode * node);
-    bool Create(const csVector3 & offset, iMeshWrapper * posAttach);
+    bool Create(const csVector3 & offset, iMeshWrapper * posAttach, bool rotateWithMesh = false);
     bool Update(csTicks elapsed);
     psEffectAnchor * Clone() const;
 

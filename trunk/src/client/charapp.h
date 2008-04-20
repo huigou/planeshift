@@ -223,6 +223,7 @@ private:
     
     csArray<csString> usedSlots;                        // Slots that have been used.
     csHash<int, csString> effectids;                    // Array of effects that are in use.
+    csHash<int, csString> lightids;                    // Array of lights that are in use.
 };
 
 #endif

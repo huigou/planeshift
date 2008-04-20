@@ -68,7 +68,7 @@ bool psEffectAnchorSpline::Load(iDocumentNode * node)
     return PostSetup();
 }
 
-bool psEffectAnchorSpline::Create(const csVector3 & offset, iMeshWrapper * posAttach)
+bool psEffectAnchorSpline::Create(const csVector3 & offset, iMeshWrapper * posAttach, bool rotateWithMesh)
 {
     static unsigned long nextUniqueID = 0;
     csString anchorID = "effect_anchor_spline";
@@ -76,6 +76,7 @@ bool psEffectAnchorSpline::Create(const csVector3 & offset, iMeshWrapper * posAt
 
     objBasePos = offset;
     objOffset = csVector3(0,0,0);
+    this->rotateWithMesh = rotateWithMesh;
 
     mesh = engine->CreateMeshWrapper("crystalspace.mesh.object.null", anchorID);
 	csRef<iNullMeshState> state =  scfQueryInterface<iNullMeshState> (mesh->GetMeshObject());

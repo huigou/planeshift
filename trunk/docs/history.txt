@@ -1,3 +1,11 @@
+*** 2008-08-20 by Mike Gist
+- Changed the updating of effects to occur during the preprocessing event, so they no longer render a frame
+  behind.
+- Fixed effects to get the full position and transform of target meshes, instead of the relative.
+- Added support in effects for rotation, so if a mesh rotates then the effect rotates with it.
+- Fixed effects to move correctly with a target mesh.
+- Added support in effects for attachable lights and converted the item effects code to use it.
+
 *** 2008-08-19 by Frank Barton(Eriroley)
 - fixed date in my last entry
 - Fixed FS#1340 - now the "BUY_PERSONALISE" flag is removed from personalised items when being purchased

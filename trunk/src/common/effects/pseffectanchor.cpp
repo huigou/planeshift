@@ -218,7 +218,7 @@ bool psEffectAnchor::Load(iDocumentNode *node)
     return true;
 }
 
-bool psEffectAnchor::Create(const csVector3 & offset, iMeshWrapper * posAttach)
+bool psEffectAnchor::Create(const csVector3 & offset, iMeshWrapper * posAttach, bool rotateWithMesh)
 {
     return false;
 }
@@ -302,7 +302,11 @@ void psEffectAnchor::SetPosition(const csVector3 & basePos, iSector * sector, co
     {
         objEffectPos = basePos;
         posTransf = transf;
-        mesh->GetMovable()->SetPosition(objEffectPos + objBasePos + objTargetOffset + objOffset);
+        if(rotateWithMesh)
+        {
+            mesh->GetMovable()->SetTransform(transf);
+        }
+        mesh->GetMovable()->SetPosition(objEffectPos + posTransf*objBasePos + objTargetOffset + objOffset);
         mesh->GetMovable()->SetSector(sector);
     }
 }
@@ -313,7 +317,12 @@ void psEffectAnchor::SetPosition(const csVector3 & basePos, iSectorList * sector
     {
         objEffectPos = basePos;
         posTransf = transf;
-        mesh->GetMovable()->SetPosition(objEffectPos + objBasePos + objTargetOffset + objOffset);
+        if(rotateWithMesh)
+        {
+            mesh->GetMovable()->SetTransform(transf);
+        }
+        mesh->GetMovable()->SetPosition(objEffectPos + posTransf*objBasePos + objTargetOffset + objOffset);
+        mesh->GetMovable()->GetSectors()->RemoveAll();
         mesh->GetMovable()->SetSector(sectors->Get(0));
         for (int a=1; a<sectors->GetCount(); ++a)
             mesh->GetMovable()->GetSectors()->Add(sectors->Get(a));

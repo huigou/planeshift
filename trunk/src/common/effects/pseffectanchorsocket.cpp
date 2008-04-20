@@ -81,7 +81,7 @@ bool psEffectAnchorSocket::Load(iDocumentNode *node)
     return true;
 }
 
-bool psEffectAnchorSocket::Create(const csVector3 & offset, iMeshWrapper * posAttach)
+bool psEffectAnchorSocket::Create(const csVector3 & offset, iMeshWrapper * posAttach, bool rotateWithMesh)
 {
     static unsigned long nextUniqueID = 0;
     csString anchorID = "effect_anchor_socket_";
@@ -89,6 +89,7 @@ bool psEffectAnchorSocket::Create(const csVector3 & offset, iMeshWrapper * posAt
 
     objBasePos = offset;
     objOffset = csVector3(0,0,0);
+    this->rotateWithMesh = rotateWithMesh;
 
     if (!posAttach)
     {
