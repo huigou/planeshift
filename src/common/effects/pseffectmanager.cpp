@@ -31,6 +31,7 @@
 
 #include "pseffectmanager.h"
 #include "pseffect.h"
+#include "pseffectlight.h"
 #include "pseffectobj.h"
 
 #include "pscelclient.h"
@@ -283,7 +284,7 @@ bool psEffectManager::DeleteEffect(unsigned int effectID)
 
 unsigned int psEffectManager::RenderEffect(const csString & effectName, const csVector3 & offset, 
                                            iMeshWrapper * attachPos, iMeshWrapper * attachTarget, const csVector3 & up, 
-                                           const unsigned int uniqueIDOverride)
+                                           const unsigned int uniqueIDOverride, bool rotateWithMesh)
 {
 #ifndef DONT_DO_EFFECTS
     if (!attachPos)
@@ -296,7 +297,7 @@ unsigned int psEffectManager::RenderEffect(const csString & effectName, const cs
         currEffect = currEffect->Clone();
 
         const unsigned int uniqueID = currEffect->Render(attachPos->GetMovable()->GetSectors(), offset, attachPos, 
-                                                         attachTarget, up.Unit(), uniqueIDOverride);
+                                                         attachTarget, up.Unit(), uniqueIDOverride, rotateWithMesh);
         
         actualEffects.Put(uniqueID, currEffect);
         return uniqueID;
@@ -345,6 +346,30 @@ unsigned int psEffectManager::RenderEffect(const csString & effectName, iSectorL
    
 }
 
+unsigned int psEffectManager::AttachLight(csRef<iLight> light, csRef<iMeshWrapper> mw)
+{
+    psLight* pslight = new psLight();
+    unsigned int uniqueID = pslight->AttachLight(light, mw);
+    lightList.Put(uniqueID, pslight);
+    return uniqueID;
+}
+
+void psEffectManager::DetachLight(unsigned int lightID)
+{
+    if (lightID == 0)
+        return;
+   
+    csArray<psLight *> lights;
+
+    lights = lightList.GetAll(lightID);
+    while (lights.GetSize())
+    {
+        delete lights.Pop();
+    }
+
+    lightList.DeleteAll(lightID);
+}
+
 void psEffectManager::Update(csTicks elapsed)
 {
 #ifndef DONT_DO_EFFECTS
@@ -352,7 +377,7 @@ void psEffectManager::Update(csTicks elapsed)
     if (elapsed == 0)
         elapsed = vc->GetElapsedTicks();
    
-    csHash<psEffect *>::GlobalIterator it = actualEffects.GetIterator();
+    csHash<psEffect *, unsigned int>::GlobalIterator it = actualEffects.GetIterator();
     csList<unsigned int> ids_to_delete;
     csList<psEffect *> effects_to_delete;
     while (it.HasNext())
@@ -379,16 +404,33 @@ void psEffectManager::Update(csTicks elapsed)
         effects_to_delete.PopFront();
         ids_to_delete.PopFront();
     }
-#endif
-}
 
-bool psEffectManager::Prepare()
-{
-#ifndef DONT_DO_EFFECTS
-    if (!region)
-        return false;
- 
-    return region->Prepare();
+    csList<psLight *> lights_to_delete;
+    csHash<psLight *, unsigned int>::GlobalIterator itr = lightList.GetIterator();
+    while(itr.HasNext())
+    {
+        unsigned int id = 0;
+        psLight * light = itr.Next(id);
+
+        if (!light)
+            continue;
+
+        // update the effect itself
+        if (!light->Update())
+        {
+            ids_to_delete.PushBack(id);
+            lights_to_delete.PushBack(light);
+        }
+    }
+
+    while (!lights_to_delete.IsEmpty())
+    {
+        psLight * light = lights_to_delete.Front();
+        lightList.Delete(ids_to_delete.Front(),light);
+        delete light;
+        lights_to_delete.PopFront();
+        ids_to_delete.PopFront();
+    }
 #endif
 }
 

@@ -235,7 +235,8 @@ bool psEffect::Load(iDocumentNode * node, iView * parentView, psEffect2DRenderer
 }
 
 unsigned int psEffect::Render(iSectorList * sectors, const csVector3 & offset, iMeshWrapper * attachPos, 
-                              iMeshWrapper * attachTarget, const csVector3 & up, const unsigned int uniqueIDOverride)
+                              iMeshWrapper * attachTarget, const csVector3 & up, const unsigned int uniqueIDOverride,
+                              bool rotateWithMesh)
 {
     bool hasSuccess = false;
 
@@ -266,7 +267,7 @@ unsigned int psEffect::Render(iSectorList * sectors, const csVector3 & offset, i
     if (attachPos && attachTarget)
     {
         // make the base angle point towards the target
-        csVector3 diff = attachPos->GetMovable()->GetPosition() - attachTarget->GetMovable()->GetPosition();
+        csVector3 diff = attachPos->GetMovable()->GetFullPosition() - attachTarget->GetMovable()->GetFullPosition();
         csReversibleTransform transf;
         transf.LookAt(diff, csVector3(0,1,0));
         rotBase = transf.GetT2O();
@@ -284,18 +285,18 @@ unsigned int psEffect::Render(iSectorList * sectors, const csVector3 & offset, i
     csMatrix3 posTransf; posTransf.Identity();
     if (attachPos)
     {
-        newPos = attachPos->GetMovable()->GetPosition();
-        posTransf = attachPos->GetMovable()->GetTransform().GetT2O();
+        newPos = attachPos->GetMovable()->GetFullPosition();
+        posTransf = attachPos->GetMovable()->GetFullTransform().GetT2O();
     }
     
     csMatrix3 targetTransf = posTransf;
     if (attachTarget)
-        targetTransf = attachTarget->GetMovable()->GetTransform().GetT2O();
+        targetTransf = attachTarget->GetMovable()->GetFullTransform().GetT2O();
     
     // effect anchors
     for (size_t i=0; i<effectAnchors.GetSize(); ++i)
     {
-        if (effectAnchors[i]->Create(usedOffset, attachPos))
+        if (effectAnchors[i]->Create(usedOffset, attachPos, rotateWithMesh))
         {
             hasSuccess = true;
 
@@ -303,7 +304,7 @@ unsigned int psEffect::Render(iSectorList * sectors, const csVector3 & offset, i
             
             // target of the anchor is either the given target if it exists or the position
             if (attachTarget)
-                effectAnchors[i]->SetTarget(attachTarget->GetMovable()->GetPosition(), targetTransf);
+                effectAnchors[i]->SetTarget(attachTarget->GetMovable()->GetFullPosition(), targetTransf);
             else
                 effectAnchors[i]->SetTarget(newPos, posTransf);
 
@@ -391,7 +392,7 @@ unsigned int psEffect::Render(iSector * sector, const csVector3 & offset, iMeshW
     if (attachPos && attachTarget)
     {
         // make the base angle point towards the target
-        csVector3 diff = attachPos->GetMovable()->GetPosition() - attachTarget->GetMovable()->GetPosition();
+        csVector3 diff = attachPos->GetMovable()->GetFullPosition() - attachTarget->GetMovable()->GetFullPosition();
         csReversibleTransform transf;
         transf.LookAt(diff, csVector3(0,1,0));
         rotBase = transf.GetT2O();
@@ -409,13 +410,13 @@ unsigned int psEffect::Render(iSector * sector, const csVector3 & offset, iMeshW
     csMatrix3 posTransf; posTransf.Identity();
     if (attachPos)
     {
-        newPos = attachPos->GetMovable()->GetPosition();
-        posTransf = attachPos->GetMovable()->GetTransform().GetT2O();
+        newPos = attachPos->GetMovable()->GetFullPosition();
+        posTransf = attachPos->GetMovable()->GetFullTransform().GetT2O();
     }
     
     csMatrix3 targetTransf = posTransf;
     if (attachTarget)
-        targetTransf = attachTarget->GetMovable()->GetTransform().GetT2O();
+        targetTransf = attachTarget->GetMovable()->GetFullTransform().GetT2O();
     
     // effect anchors
     for (size_t i=0; i<effectAnchors.GetSize(); ++i)
@@ -428,7 +429,7 @@ unsigned int psEffect::Render(iSector * sector, const csVector3 & offset, iMeshW
             
             // target of the anchor is either the given target if it exists or the position
             if (attachTarget)
-                effectAnchors[i]->SetTarget(attachTarget->GetMovable()->GetPosition(),
+                effectAnchors[i]->SetTarget(attachTarget->GetMovable()->GetFullPosition(),
                                             targetTransf);
             else
                 effectAnchors[i]->SetTarget(newPos, posTransf);
@@ -542,7 +543,8 @@ bool psEffect::Update(csTicks elapsed)
     // effect anchors
     for ( size_t a = effectAnchors.GetSize(); a-- > 0; )
     {
-        if (!effectAnchors[a])
+        psEffectAnchor* anchor = effectAnchors[a];
+        if (!anchor)
             continue;
 
         // update the position of this anchor
@@ -550,19 +552,19 @@ bool psEffect::Update(csTicks elapsed)
         {
             effectAnchors[a]->SetPosition(newPos, newSectors, newPosTransf);
             if (!targetListener)
-                effectAnchors[a]->SetTarget(newPos, newPosTransf);
+                anchor->SetTarget(newPos, newPosTransf);
         }
 
         // update the target of this anchor
         if (updateTarget)
-            effectAnchors[a]->SetTarget(newTarget, newTargetTransf);
+            anchor->SetTarget(newTarget, newTargetTransf);
 
         // update the direction/orientation of this anchor
         if (updatePos || updateTarget)
-            effectAnchors[a]->SetRotBase(rotBase);
+            anchor->SetRotBase(rotBase);
 
         // update the actual anchor
-        if (!effectAnchors[a]->Update(elapsed))
+        if (!anchor->Update(elapsed))
             effectAnchors.DeleteIndex(a); // anchor has told us it doesn't want to live anymore
     }
     

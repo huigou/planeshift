@@ -831,6 +831,9 @@ bool psEngine::HandleEvent (iEvent &ev)
 
         if (celclient)
             celclient->Update();
+
+        if (effectManager)
+            effectManager->Update();
     }
     else if (ev.Name == event_process)
     {
@@ -1054,9 +1057,6 @@ csStringID psEngine::FindCommonStringId(const char *str)
 
 inline void psEngine::UpdatePerFrame()
 {
-    if (effectManager)
-        effectManager->Update();
-
     if (!celclient)
         return;
 

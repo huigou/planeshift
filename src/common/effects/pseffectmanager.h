@@ -41,6 +41,7 @@ struct iRegion;
 struct iView;
 struct iMovable;
 class psEffect;
+class psLight;
 
 class psEffectManager;
 
@@ -117,7 +118,7 @@ public:
      */
     unsigned int RenderEffect(const csString & effectName, const csVector3 & offset, iMeshWrapper * attachPos, 
                               iMeshWrapper * attachTarget=0, const csVector3 & up=csVector3(0,1,0), 
-                              const unsigned int uniqueIDOverride = 0);
+                              const unsigned int uniqueIDOverride = 0, bool rotateWithMesh = false);
 
     /** begins rendering an effect that isn't attached to anything
      *   @param effectName the name of the effect to render
@@ -144,6 +145,9 @@ public:
     unsigned int RenderEffect(const csString & effectName, iSectorList * sectors, const csVector3 & pos, 
                               iMeshWrapper * attachTarget=0, const csVector3 & up=csVector3(0,1,0), 
                               const unsigned int uniqueIDOverride = 0);
+
+    unsigned int AttachLight(csRef<iLight> light, csRef<iMeshWrapper> mw);
+    void DetachLight(unsigned int lightID);
 
     /** updates the spell effects (should be called every frame)
      *   @param elapsed the time in ms that has elapsed
@@ -189,7 +193,7 @@ public:
 
     void Render2D(iGraphics3D * g3d, iGraphics2D * g2d);
 
-	psEffect2DRenderer * Get2DRenderer() const { return effect2DRenderer; }
+  	psEffect2DRenderer * Get2DRenderer() const { return effect2DRenderer; }
 
 private:
 
@@ -203,7 +207,7 @@ private:
     csHash<psEffect *, csString> effectFactories;
 
     /// the actual effects that are seen
-    csHash<psEffect *> actualEffects;
+    csHash<psEffect *, unsigned int> actualEffects;
 //    csPDelArray<psEffect> actualEffects;
 
     /// effects have their own region to make them easier to manage
@@ -215,6 +219,8 @@ private:
     csRef<psEffectLoader> effectLoader;
 
     psEffect2DRenderer * effect2DRenderer;
+
+    csHash<psLight *, unsigned int> lightList;
 };
 
 #endif

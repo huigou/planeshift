@@ -169,7 +169,7 @@ public:
      *   @param posAttach the mesh to attach this anchor to.
      *   @return true on success.
      */
-    virtual bool Create(const csVector3 &offset, iMeshWrapper * posAttach);
+    virtual bool Create(const csVector3 &offset, iMeshWrapper * posAttach, bool rotateWithMesh = false);
 
     /** Updates the effect anchor -- called every frame.
      *   @param elapsed the ticks elapsed since last update.
@@ -341,6 +341,9 @@ protected:
 
     /// What type of direction does this movable have
     int dir;
+
+    /// Whether the anchor should rotate with the mesh. This is so effects can stay aligned, e.g. flame sword.
+    bool rotateWithMesh;
     
     size_t currKeyFrame; /// The current keyframe the anchor is on.
     size_t nextKeyFrame; /// The next keyframe the anchor will be on.
