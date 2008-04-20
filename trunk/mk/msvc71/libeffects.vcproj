@@ -739,6 +739,9 @@
 				RelativePath="..\..\src\common\effects\pseffectanchorspline.cpp">
 			</File>
 			<File
+				RelativePath="..\..\src\common\effects\pseffectlight.cpp">
+			</File>
+			<File
 				RelativePath="..\..\src\common\effects\pseffectmanager.cpp">
 			</File>
 			<File
@@ -801,6 +804,9 @@
 			</File>
 			<File
 				RelativePath="..\..\src\common\effects\pseffectanchorspline.h">
+			</File>
+			<File
+				RelativePath="..\..\src\common\effects\pseffectlight.h">
 			</File>
 			<File
 				RelativePath="..\..\src\common\effects\pseffectmanager.h">
