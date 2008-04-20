@@ -434,6 +434,16 @@ void psEffectManager::Update(csTicks elapsed)
 #endif
 }
 
+bool psEffectManager::Prepare()
+{
+#ifndef DONT_DO_EFFECTS
+    if (!region)
+        return false;
+ 
+    return region->Prepare();
+#endif
+}
+
 void psEffectManager::Clear()
 {
 #ifndef DONT_DO_EFFECTS
