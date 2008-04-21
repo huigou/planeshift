@@ -326,7 +326,7 @@ int psPathNetwork::FindWaypointGroup(const char * groupName)
     {
         if (strcasecmp(groupName,waypointGroupNames[i].GetDataSafe())==0)
         {
-            return i; // Found matching group name
+            return (int)i; // Found matching group name
         }
     }
     return -1;
