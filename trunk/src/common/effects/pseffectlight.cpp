@@ -24,6 +24,7 @@
 #include <iengine/halo.h>
 #include <iengine/mesh.h>
 #include <iengine/scenenode.h>
+#include <iutil/object.h>
 
 #include "pseffectlight.h"
 
@@ -55,18 +56,25 @@ bool psLight::Update()
 {
     if(movable.IsValid())
     {
-        csVector3 newPos(movable->GetFullTransform().GetT2O()*lightBasePos);
-        newPos += movable->GetFullPosition();
         iSectorList* sectors = movable->GetSectors();
-
-        if(light->GetCenter() != newPos)
+        if(sectors->GetCount())
         {
-            if(sectors && sectors->GetCount())
+            csString sector(sectors->Get(0)->QueryObject()->GetName());
+            if(sector.Compare("SectorWhereWeKeepEntitiesResidingInUnloadedMaps"))
+                return true;
+
+            csVector3 newPos(movable->GetFullTransform().GetT2O()*lightBasePos);
+            newPos += movable->GetFullPosition();
+
+            if(light->GetCenter() != newPos)
             {
-                light->GetMovable()->SetSector(sectors->Get(0));
+                if(sectors)
+                {
+                    light->GetMovable()->SetSector(sectors->Get(0));
+                }
+                light->SetCenter(newPos);
+                light->Setup(); 
             }
-            light->SetCenter(newPos);
-            light->Setup(); 
         }
         return true;
     }
