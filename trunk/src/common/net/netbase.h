@@ -374,7 +374,7 @@ protected:
         struct timeval prevTimeout = timeout;
 
         /* select returns 0 if timeout, 1 if input available, -1 if error. */
-        if (SOCK_SELECT(MAX(mysocket, (uint)pipe_fd[0]) + 1, &set, NULL, NULL, &timeout) < 1)
+        if (SOCK_SELECT(MAX(mysocket, pipe_fd[0]) + 1, &set, NULL, NULL, &timeout) < 1)
         {
             timeout = prevTimeout;
             return 0;
@@ -475,6 +475,7 @@ protected:
      */
     bool CheckDoublePackets (Connection* connection, psNetPacketEntry* pkt);
 
+
     /**
      * This attempts to merge as many packets as possible into one before
      * sending.  It empties the passed queue.
@@ -526,7 +527,7 @@ private:
     SOCKET mysocket;
     
     /** a pipe to wake up from the select call when data is ready to be written */
-    int pipe_fd[2];
+    SOCKET pipe_fd[2];
 
     /** tree holding the outgoing packets */
     csHash<psNetPacketEntry *, PacketKey> packets;
