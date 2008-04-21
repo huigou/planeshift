@@ -1,3 +1,7 @@
+*** 2008-04-21 by Andrew Dai
+- Changed error message logging to log the real time/date to be much
+  more useful.
+
 *** 2008-08-20 by Mike Gist
 - Changed the updating of effects to occur during the preprocessing event, so they no longer render a frame
   behind.
