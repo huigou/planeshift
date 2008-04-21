@@ -875,6 +875,10 @@ bool AdminManager::AdminCmdData::DecodeAdminCmdMessage(MsgEntry *pMsg, psAdminCm
         {
             gmeventName = words[2];
         }
+        else if (subCmd == "discard")
+        {
+            gmeventName = words[2];
+        }
         else
         {
             subCmd = "help"; // unknown command so force help on event
@@ -6632,7 +6636,8 @@ void AdminManager::HandleGMEvent(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdD
         (data.subCmd == "register" && data.player.Length() == 0 && data.rangeSpecifier == INDIVIDUAL) ||
         (data.subCmd == "remove" && data.player.Length() == 0) ||
         (data.subCmd == "reward" && data.item.Length() == 0 && data.stackCount == 0) ||
-        (data.subCmd == "control" && data.gmeventName.Length() == 0))
+        (data.subCmd == "control" && data.gmeventName.Length() == 0) ||
+        (data.subCmd == "discard" && data.gmeventName.Length() == 0))
     {
         data.subCmd = "help";
     }
@@ -6645,9 +6650,10 @@ void AdminManager::HandleGMEvent(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdD
                                   "/event register [range <range> | <player>]\n"
                                   "/event reward [all | range <range> | <player>] # <item>\n"
                                   "/event remove <player>\n"
-                                  "/event complete [name]\n"
+                                  "/event complete [<name>]\n"
                                   "/event list\n"
-                                  "/event control <name>\n");
+                                  "/event control <name>\n"
+                                  "/event discard <name>\n");
         return;
     }
 
@@ -6714,6 +6720,12 @@ void AdminManager::HandleGMEvent(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdD
     if (data.subCmd == "control")
     {
         gmeventResult = gmeventManager->AssumeControlOfGMEvent(client, data.gmeventName);
+        return;
+    }
+
+    if (data.subCmd == "discard")
+    {
+        gmeventResult = gmeventManager->EraseGMEvent(client, data.gmeventName);
         return;
     }
 }

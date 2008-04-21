@@ -186,6 +186,14 @@ public:
      */
     bool AssumeControlOfGMEvent(Client* client, csString eventName);
 
+    /** GM discards an event of theirs by name; participants are removed, and it is wiped from the DB.
+     * 
+     * @param client: client pointer.
+     * @param eventName: event name.
+     * @return bool: true = success, false = failed.
+     */
+    bool EraseGMEvent(Client* client, csString eventName);
+
 private:
 
     int nextEventID;
@@ -267,6 +275,14 @@ private:
      * @return bool: true/false success.
      */
     bool RemovePlayerRefFromGMEvent(GMEvent* gmEvent, Client* client, unsigned int playerID);
+
+    /** GM discards an event of theirs, by GMEvent*; participants are removed, and it is wiped from the DB.
+     * 
+     * @param client: client pointer.
+     * @param gmEvent: the event.
+     * @return bool: true = success, false = failed.
+     */
+    bool EraseGMEvent(Client* client, GMEvent* gmEvent);
 };
 
 #endif

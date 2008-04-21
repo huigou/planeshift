@@ -792,6 +792,27 @@ bool GMEventManager::AssumeControlOfGMEvent(Client* client, csString eventName)
     return true;
 }
 
+bool GMEventManager::EraseGMEvent(Client* client, csString eventName)
+{
+    GMEvent* gmEvent;
+    int zero=0;
+
+    // cannot discard your running event
+    if (GetGMEventByName(eventName, RUNNING, zero))
+    {
+        psserver->SendSystemError(client->GetClientNum(), "You cannot discard an ongoing event");
+        return false;
+    }
+
+    // look for completed event to discard
+    zero = 0;
+    if ((gmEvent = GetGMEventByName(eventName, COMPLETED, zero)))
+        return EraseGMEvent(client, gmEvent);
+
+    psserver->SendSystemError(client->GetClientNum(), "Cannot find this event...");
+    return false;
+}
+
 /// returns details of an event
 GMEventStatus GMEventManager::GetGMEventDetailsByID (int id, 
                                                      csString& name,
@@ -926,16 +947,24 @@ void GMEventManager::DiscardGMEvent(Client* client, int eventID)
                                              runningEventIDAsGM,
                                              completedEventIDsAsGM);
 
-    // cannot discard an event if the player was/is the GM of it
-    if (runningEventIDAsGM == eventID || completedEventIDsAsGM.Find(eventID) != csArrayItemNotFound)
+    // cannot discard an ongoing event if the player is the GM of it
+    if (runningEventIDAsGM == eventID)
     {
-        psserver->SendSystemError(client->GetClientNum(), "You cannot discard an event for which you are/were the GM");
+        psserver->SendSystemError(client->GetClientNum(), "You cannot discard an ongoing event for which you are the GM");
+        return;
+    }
+
+    gmEvent = GetGMEventByID(eventID);
+
+    // GM discarding an old event - all traces shall be removed.
+    if (completedEventIDsAsGM.Find(eventID) != csArrayItemNotFound && gmEvent)
+    {
+        EraseGMEvent(client, gmEvent);
         return;
     }
 
     // attempt to remove player from event...
-    if ((runningEventID == eventID || completedEventIDs.Find(eventID) != csArrayItemNotFound) &&
-        (gmEvent = GetGMEventByID(eventID)))
+    if ((runningEventID == eventID || completedEventIDs.Find(eventID) != csArrayItemNotFound) && gmEvent)
     {
         RemovePlayerRefFromGMEvent(gmEvent, client, playerID);
     }
@@ -960,5 +989,62 @@ bool GMEventManager::RemovePlayerRefFromGMEvent(GMEvent* gmEvent, Client* client
     }
 
     return false;
+}
+
+bool GMEventManager::EraseGMEvent(Client* client, GMEvent* gmEvent)
+{
+    unsigned int discarderGMID = client->GetPlayerID();
+    int clientnum = client->GetClientNum();
+
+    // If event belongs to another GM, only proceed if that GM not online.
+    ClientConnectionSet* clientConnections = psserver->GetConnections();
+    Client* target;
+    if (discarderGMID != gmEvent->gmID && gmEvent->gmID != UNDEFINED_GMID)
+    {
+        if ((target = clientConnections->FindPlayer(gmEvent->gmID)))
+        {
+            psserver->SendSystemInfo(clientnum, 
+                                     "The \'%s\' event's GM, %s, is online: you cannot discard their event.",
+                                     gmEvent->eventName.GetDataSafe(),
+                                     target->GetName());
+            return false;
+        }
+    }
+
+    // Remove players.
+    size_t noPlayers = gmEvent->playerID.GetSize();
+    for (size_t p = 0; p < noPlayers; p++)
+    {
+        unsigned int playerID = gmEvent->playerID[p];
+        if ((target = clientConnections->FindPlayer(playerID)))
+        {
+            // psCharacter
+            target->GetActor()->GetCharacterData()->RemoveGMEvent(gmEvent->id);
+
+            psserver->SendSystemInfo(target->GetClientNum(),
+                                     "Event '%s' has been discarded.",
+                                     gmEvent->eventName.GetDataSafe());
+        }
+    }   
+    gmEvent->playerID.DeleteAll();
+
+    // remove GM
+    if (discarderGMID == gmEvent->gmID  && gmEvent->gmID != UNDEFINED_GMID)
+    {
+        client->GetActor()->GetCharacterData()->RemoveGMEvent(gmEvent->id, true);
+    }
+
+    // remove from DB
+    db->Command("DELETE FROM character_events WHERE event_id = %d", gmEvent->id);
+    db->Command("DELETE FROM gm_events WHERE id = %d", gmEvent->id);
+
+    psserver->SendSystemInfo(client->GetClientNum(),
+                             "Event '%s' has been discarded.",
+                             gmEvent->eventName.GetDataSafe());
+
+    // remove gmEvent ref
+    gmEvents.Delete(gmEvent);
+
+    return true;
 }
 
