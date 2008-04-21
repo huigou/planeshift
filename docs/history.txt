@@ -5,6 +5,7 @@
 - Added support in effects for rotation, so if a mesh rotates then the effect rotates with it.
 - Fixed effects to move correctly with a target mesh.
 - Added support in effects for attachable lights and converted the item effects code to use it.
+- Altered effects to not update when they're attached to objects which are in an unloaded sector.
 
 *** 2008-08-19 by Frank Barton(Eriroley)
 - fixed date in my last entry

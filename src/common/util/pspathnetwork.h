@@ -52,7 +52,7 @@ public:
     /**
      *
      */
-    int AddWaypointToGroup(csString group, Waypoint * wp);
+    size_t AddWaypointToGroup(csString group, Waypoint * wp);
 
     /**
      * Find waypoint by id
