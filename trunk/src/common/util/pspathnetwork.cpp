@@ -138,7 +138,7 @@ bool psPathNetwork::Load(iEngine *engine, iDataConnection *db,psWorld * world)
     return true;
 }
 
-int psPathNetwork::AddWaypointToGroup(csString group, Waypoint * wp)
+size_t psPathNetwork::AddWaypointToGroup(csString group, Waypoint * wp)
 {
     size_t index;
     
