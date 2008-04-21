@@ -1,3 +1,8 @@
+*** 2008-04-21 by Dave Bentham
+- Discard button on Quest/Event window now handles GM's events & new command "/event discard
+  <name>" does same thing. A GM-discarded event removes all traces of the event, including
+  participants' Event logs & the DB. Only works on 'completed' events.
+
 *** 2008-04-21 by Andrew Dai
 - Changed error message logging to log the real time/date to be much
   more useful.
