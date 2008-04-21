@@ -435,7 +435,10 @@ To reward the participants (all of them, those within a specified range or an in
 [item name] can be "faction [faction name]" to adjust the faction standing.
 
 If a GM wants to assume control of an ongoing event, because the original GM character has been deleted, or has abandoned it and is offline, the GM can enter:
-/event control [name]</topic>
+/event control [name]
+
+A completed event can be totally discarded by a GM; either by using the 'Discard' button in the Quest/Event Notebook, or by the following command. A GM can discard a completed event of another GM as long as that GM is offline at the time. NOTE: the event will be totally erased from the game and cannot be undone.
+/event discard [name]</topic>
         <topic name="/freeze">/freeze player
 
 Prevents a player from moving or using any commands until they quit/relog.</topic>
