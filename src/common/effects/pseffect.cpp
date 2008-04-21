@@ -19,12 +19,13 @@
 
 #include <psconfig.h>
 
-#include <csutil/xmltiny.h>
 #include <csgeom/vector3.h>
+#include <csutil/xmltiny.h>
 #include <iengine/movable.h>
 #include <iengine/sector.h>
 #include <iengine/mesh.h>
-#include "isndsys/ss_renderer.h"
+#include <isndsys/ss_renderer.h>
+#include <iutil/object.h>
 
 #include "pseffect.h"
 
@@ -514,6 +515,10 @@ bool psEffect::Update(csTicks elapsed)
 
             if (newSectors->GetCount() == 0)
                 return false; // not in any sector
+
+            csString sector(newSectors->Get(0)->QueryObject()->GetName());
+            if (sector.Compare("SectorWhereWeKeepEntitiesResidingInUnloadedMaps"))
+                return true; // in a sector not loaded
             
             updatePos = true;
         }
