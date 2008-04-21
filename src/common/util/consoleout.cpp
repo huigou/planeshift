@@ -144,7 +144,16 @@ void ConsoleOut::Intern_VPrintf (ConsoleOutMsgClass con, const char* string, va_
         if (atStartOfLine)
         {
             // Append timestamp
-            output.AppendFmt("%8u) ", csGetTicks());
+            time_t curtime = time(NULL);
+            struct tm *loctime;
+            loctime = localtime (&curtime);
+            output.Append(asctime(loctime));
+            
+            output.Truncate(output.Length()-1);
+            
+            output.Append(", ");
+
+
             
             // Append any shift
             for (int i=0; i < shift; i++)
