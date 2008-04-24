@@ -1,3 +1,6 @@
+*** 2008-04-24 by Andrew Dai
+- Added info about parallel make to the compiling guide.
+
 *** 2008-04-23 by Frank Barton
 - fixed upgrade schema for previous update
 
