@@ -902,6 +902,7 @@ UPDATE `server_options` SET `option_value`='1183' WHERE `option_name`='db_versio
 
 #### 1184 - Frank Barton - Added wc_accessrules table in prep for updated WC
 CREATE TABLE `wc_accessrules` (`id` int(10) NOT NULL auto_increment, `security_level` tinyint(3) NOT NULL, `objecttype` varchar(50) NOT NULL, `access` tinyint(3) default NULL, UNIQUE KEY `id` (`id`))
+UPDATE `server_options` SET `option_value`='1184' WHERE `option_name`='db_version';
 
 # Insert your upgrade before this line. Remember when you set a new db_version
 # to update the server_options.sql file and update psserver.cpp as well.
