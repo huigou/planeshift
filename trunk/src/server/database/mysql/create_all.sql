@@ -89,5 +89,6 @@ source character_events.sql;
 source introductions.sql;
 source warnings.sql;
 source guild_wars.sql;
+source wc_accessrules.sql;
 
 source create_indexes.sql;
