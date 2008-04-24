@@ -1,3 +1,7 @@
+*** 2008-04-23 by Frank Barton
+- Added table wc_accessrules in preparation for updated WC
+- DB VER BUMP
+
 *** 2008-04-21 by Dave Bentham
 - Discard button on Quest/Event window now handles GM's events & new command "/event discard
   <name>" does same thing. A GM-discarded event removes all traces of the event, including
