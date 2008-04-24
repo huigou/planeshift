@@ -1,4 +1,7 @@
 *** 2008-04-23 by Frank Barton
+- fixed upgrade schema for previous update
+
+*** 2008-04-23 by Frank Barton
 - Added table wc_accessrules in preparation for updated WC
 - DB VER BUMP
 
