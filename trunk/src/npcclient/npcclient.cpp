@@ -1166,6 +1166,29 @@ void psNPCClient::ListAllNPCs(const char * pattern)
 {
     CPrintf(CON_CMDOUTPUT, "%-7s %-5s %-30s %-6s %-6s %-20s %-20s %-4s %-3s %-8s\n", 
             "NPC ID", "EID", "Name", "Entity", "Status", "Brain","Behaviour","Step","Dbg","Disabled");
+    if(strcmp(pattern, "summary"))
+    {
+        int disabled = 0;
+        int alive = 0;
+        int entity = 0;
+        int behaviour = 0;
+        int brain = 0;
+        for (size_t i = 0; i < npcs.GetSize(); i++)
+        {
+            if(npcs[i]->IsAlive())
+                alive++;
+            if(npcs[i]->IsDisabled())
+                disabled++;
+            if(npcs[i]->GetEntity())
+                entity++;
+            if(npcs[i]->GetCurrentBehavior())
+                behaviour++;
+            if(npcs[i]->GetBrain())
+                brain++;
+        }
+        CPrintf(CON_CMDOUTPUT, "NPC summary for %d NPCs: %d disabled, %d alive, %d with entities, %d with current behaviour, %d with brain", 
+                npcs.GetSize(), disabled, alive, entity, behaviour, brain);
+    }
     for (size_t i = 0; i < npcs.GetSize(); i++)
     {
         if (!pattern || strstr(npcs[i]->GetName(),pattern))
