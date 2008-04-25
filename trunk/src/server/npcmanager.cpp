@@ -513,6 +513,8 @@ void NPCManager::HandleAuthentRequest(MsgEntry *me)
     // CHECK 1: Networking versions match
     if (!msg.NetVersionOk())
     {
+        psDisconnectMessage disconnectMsg(client->GetClientNum(), 0, "Version mismatch.");
+        psserver->GetEventManager()->Broadcast(disconnectMsg.msg, NetBase::BC_FINALPACKET);
         //psserver->RemovePlayer (me->clientnum, "You are not running the correct version of PlaneShift for this server.");
         Error2("Superclient '%s' is not running the correct version of PlaneShift for this server.",
             (const char *)msg.sUser);
@@ -545,6 +547,8 @@ void NPCManager::HandleAuthentRequest(MsgEntry *me)
     // CHECK 3: Is the client is already logged in?
     if (msg.sUser.Length() == 0)
     {
+        psDisconnectMessage disconnectMsg(client->GetClientNum(), 0, "Empty username.");
+        psserver->GetEventManager()->Broadcast(disconnectMsg.msg, NetBase::BC_FINALPACKET);
         Error1("No username specified.\n");
         return;   
     }
@@ -578,10 +582,16 @@ void NPCManager::HandleAuthentRequest(MsgEntry *me)
     {
         if (acctinfo==NULL)
         {
+            psDisconnectMessage disconnectMsg(client->GetClientNum(), 0, "Username not found.");
+            psserver->GetEventManager()->Broadcast(disconnectMsg.msg, NetBase::BC_FINALPACKET);
             Notify2(LOG_CONNECTIONS,"User '%s' authentication request rejected (Username not found).\n",(const char *)msg.sUser);
         }
         else
+        {
+            psDisconnectMessage disconnectMsg(client->GetClientNum(), 0, "Bad password.");
+            psserver->GetEventManager()->Broadcast(disconnectMsg.msg, NetBase::BC_FINALPACKET);
             Notify2(LOG_CONNECTIONS,"User '%s' authentication request rejected (Bad password).\n",(const char *)msg.sUser);
+        }
         delete acctinfo;
         return;
     }
@@ -591,6 +601,8 @@ void NPCManager::HandleAuthentRequest(MsgEntry *me)
 
     if (acctinfo->securitylevel!= 99)
     {
+        psDisconnectMessage disconnectMsg(client->GetClientNum(), 0, "Wrong security level.");
+        psserver->GetEventManager()->Broadcast(disconnectMsg.msg, NetBase::BC_FINALPACKET);
         // psserver->RemovePlayer(me->clientnum, "Login id does not have superclient security rights.");
 
         Error3("User '%s' authentication request rejected (security level was %d).\n",
