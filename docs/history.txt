@@ -1,3 +1,6 @@
+*** 2008-04-25 by Andrew Dai
+- Made npcclient db connection errors more informative.
+
 *** 2008-04-24 by Andrew Dai
 - Added info about parallel make to the compiling guide.
 

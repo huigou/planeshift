@@ -142,7 +142,7 @@ bool psNPCClient::Initialize(iObjectRegistry* object_reg,const char *_host, cons
 
 	if (!database->Initialize(db_host, db_port, db_user, db_pass, db_name))
 	{
-        Error1("Could not create database or connect to it.\n");
+        Error2("Could not create database or connect to it: %s\n", database->GetLastError());
         delete database;
         return false;
     }
