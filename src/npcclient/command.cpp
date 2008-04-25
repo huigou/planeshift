@@ -368,7 +368,7 @@ COMMAND commands[] = {
     { "help",         false, com_help,         "Show help information" },
     { "loclist",      false, com_locationlist, "List all known locations (loclist [pattern])"},
     { "loctest",      false, com_locationtest, "Test a location (loc sector x y z"},
-    { "npclist",      false, com_list,         "List all NPCs (npclist [pattern])"},
+    { "npclist",      false, com_list,         "List all NPCs (npclist [{pattern | summary}])"},
     { "pathlist",     false, com_pathlist,     "List all known paths (pathlist)"},
     { "print",        false, com_print,        "List all behaviors/hate of 1 NPC"},
     { "quit",         false, com_quit,         "Makes the npc client exit"},
