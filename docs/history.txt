@@ -5,6 +5,7 @@
 *** 2008-04-26 by Andrew Dai
 - Added the dumpallocations command to dump all memory allocations.
   Only useful when CS is configured with extensive mem debug.
+- Fixed #687, patch by Aresilek Besolez
 
 *** 2008-04-25 by Andrew Dai
 - Made npcclient db connection errors more informative.

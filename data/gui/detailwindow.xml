@@ -1,3 +1,4 @@
+<?xml version="1.0"?>
 <widget_description>
 
     <widget name="DetailWindow" factory="pawsDetailWindow" 
@@ -14,8 +15,8 @@
          </widget>
  
         <widget name="ShowDescr" factory="pawsButton" style="tabbuttonskills" id="999" >
-            <frame x="170" y="3" width="18" />
-            <label text="De" />
+            <frame x="33" y="65" width="30" />
+            <label text="Desc" />
             <attachpoints>
                 <attach point="PROPORTIONAL_RIGHT" />
                 <attach point="ATTACH_LEFT" />
@@ -23,8 +24,8 @@
         </widget>
        
         <widget name="ShowStats" factory="pawsButton" style="tabbuttonskills" id="1000" >
-            <frame x="188" y="3" width="18" />
-            <label text="St" />
+            <frame x="65" y="65" width="30" />
+            <label text="Stats" />
             <attachpoints>
                 <attach point="PROPORTIONAL_RIGHT" />
                 <attach point="PROPORTIONAL_LEFT" />
@@ -32,8 +33,8 @@
         </widget>
 
         <widget name="ShowFaction" factory="pawsButton" style="tabbuttonskills" id="1005" >
-            <frame x="206" y="3" width="18" />
-            <label text="Fa" />
+            <frame x="95" y="65" width="40" />
+            <label text="Faction" />
             <attachpoints>
                 <attach point="PROPORTIONAL_RIGHT" />
                 <attach point="PROPORTIONAL_LEFT" />
@@ -41,8 +42,8 @@
         </widget>
 
         <widget name="ShowCombat" factory="pawsButton" style="tabbuttonskills" id="1001" >
-            <frame x="224" y="3" width="18" />
-            <label text="Co" />
+            <frame x="140" y="65" width="30" />
+            <label text="Comat" />
             <attachpoints>
                 <attach point="PROPORTIONAL_RIGHT" />
                 <attach point="PROPORTIONAL_LEFT" />
@@ -50,8 +51,8 @@
         </widget>
 
         <widget name="ShowMagic" factory="pawsButton" style="tabbuttonskills" id="1002">
-            <frame x="242" y="3" width="18"  />
-            <label text="Ma" />
+            <frame x="180" y="65" width="30"  />
+            <label text="Magic" />
             <attachpoints>
                 <attach point="PROPORTIONAL_RIGHT" />
                 <attach point="PROPORTIONAL_LEFT" />
@@ -59,8 +60,8 @@
         </widget>
 
         <widget name="ShowCraft" factory="pawsButton" style="tabbuttonskills" id="1003">
-            <frame x="260" y="3" width="18"  />
-            <label text="Cr" />
+            <frame x="210" y="65" width="30"  />
+            <label text="Jobs" />
             <attachpoints>
                 <attach point="PROPORTIONAL_RIGHT" />
                 <attach point="PROPORTIONAL_LEFT" />
@@ -68,8 +69,8 @@
         </widget>
 
         <widget name="ShowMisc" factory="pawsButton" style="tabbuttonskills" id="1004">
-            <frame x="278" y="3" width="18"  />
-            <label text="Mi" />
+            <frame x="250" y="65" width="40"  />
+            <label text="Various" />
             <attachpoints>
                <attach point="ATTACH_RIGHT" />
                <attach point="PROPORTIONAL_LEFT" />
@@ -78,7 +79,7 @@
 
         <!-- You see a {gender} {race} in front of you named {name}. -->
         <widget name="intro" factory="pawsMultiLineTextBox">
-            <frame x="33" y="28" width="262" height="57" border="no" />
+            <frame x="33" y="28" width="262" height="40" border="no" />
             <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="10" />
         </widget>
         
