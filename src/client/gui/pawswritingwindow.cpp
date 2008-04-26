@@ -153,7 +153,7 @@ bool pawsWritingWindow::OnButtonPressed( int mouseButton, int keyModifier, pawsW
 
 void pawsWritingWindow::OnStringEntered(const char *name, int param,const char *value)
 {
-    const unsigned int MAX_BOOK_FILE_SIZE = 3000;
+    const unsigned int MAX_BOOK_FILE_SIZE = 60000;
 
     csString fileName;
     csRef<iVFS> vfs = psengine->GetVFS();
