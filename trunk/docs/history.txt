@@ -1,6 +1,9 @@
 *** 2008-04-25 by Andrew Dai
 - Made npcclient db connection errors more informative.
 - Added npclist summary command.
+- Disabled NPC disabling for long processing times. As this eventually causes
+  all NPCs to be disabled, the reason for the long tick times in most cases
+  seem to be a result of memory swapping.
 
 *** 2008-04-24 by Andrew Dai
 - Added info about parallel make to the compiling guide.

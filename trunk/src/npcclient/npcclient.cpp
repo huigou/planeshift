@@ -834,9 +834,6 @@ void psNPCClient::Tick()
                 CPrintf(CON_WARNING,"Used %u time to process tick for npc: %s(EID: %u)\n",
                         timeTaken, npcs[i]->GetName(), npcs[i]->GetEID());
                 DumpNPC(npcs[i]);
-                npcs[i]->Disable();
-
-                CPrintf(CON_WARNING,"Disabled NPC\n");
             }
         }
 
