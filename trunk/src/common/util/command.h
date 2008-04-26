@@ -39,6 +39,6 @@ struct COMMAND {
     const char *doc;
 };
 
-extern COMMAND commands[];
+extern const COMMAND commands[];
 
 #endif

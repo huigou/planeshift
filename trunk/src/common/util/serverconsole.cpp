@@ -103,7 +103,7 @@ void ServerConsole::Init(const char *name, const char *command_prompt)
 }
 
 // command execution time
-COMMAND *find_command(const char *name)
+const COMMAND *find_command(const char *name)
 {
     for (int i=0; commands[i].name; i++)
         if (strcmp (name, commands[i].name) == 0)
@@ -119,7 +119,7 @@ int execute_line(const char *cmd,csString *buffer)
     strcpy (line, cmd);
 
     int i;
-    COMMAND *command;
+    const COMMAND *command;
     char *word;
 
     i = 0;
