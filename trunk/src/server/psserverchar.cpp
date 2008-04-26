@@ -184,6 +184,8 @@ void psServerCharManager::UpdateSketch( MsgEntry* me )
             {
                 printf("Updated sketch for item %u to: %s\n", sketchMsg.ItemID, sketchMsg.Sketch.GetDataSafe());
                 psserver->SendSystemInfo(me->clientnum, "Your drawing has been updated.");
+                // for first sketcher, sets authorship.
+                item->GetBaseStats()->SetCreator(client->GetCharacterData()->GetCharacterID(), PSITEMSTATS_CREATOR_VALID);
                 item->GetBaseStats()->Save();
             }
         }
@@ -378,6 +380,8 @@ void psServerCharManager::HandleBookWrite(MsgEntry* me, Client* client)
               csString theTitle(item->GetName());
               psWriteBookMessage resp(client->GetClientNum(), theTitle, theText, true,  (INVENTORY_SLOT_NUMBER)mesg.slotID, mesg.containerID);
               resp.SendMessage();
+              // this only does set the creator for first write to book
+              item->GetBaseStats()->SetCreator(client->GetCharacterData()->GetCharacterID(), PSITEMSTATS_CREATOR_VALID);
             //  CPrintf(CON_DEBUG, "Sent: %s\n",resp.ToString(NULL).GetDataSafe());
          } 
          else 
@@ -1033,7 +1037,6 @@ void psServerCharManager::HandleMerchantBuy(psGUIMerchantMessage& msg, Client *c
 
             newCreation->SetUnique();
 
-            newCreation->SetCreator(character->GetCharacterID(), PSITEMSTATS_CREATOR_VALID);
             newCreation->Save();
 
             // instantiate it

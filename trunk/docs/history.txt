@@ -1,3 +1,7 @@
+*** 2008-04-26 by Dave Bentham
+- FS#1325: The valid author of a personalised book or map is set by the first
+  player who edits it, not the buyer.
+
 *** 2008-04-26 by Andrew Dai
 - Added the dumpallocations command to dump all memory allocations.
   Only useful when CS is configured with extensive mem debug.
