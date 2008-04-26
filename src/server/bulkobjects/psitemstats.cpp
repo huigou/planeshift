@@ -1428,11 +1428,9 @@ bool psItemStats::SetSketch(const csString& xml)
 
 void psItemStats::SetCreator (unsigned int characterID, PSITEMSTATS_CREATORSTATUS creatorStatus)
 {
-    // cannot change between personal & public creator status.
-    if ((creativeStats.creatorIDStatus == PSITEMSTATS_CREATOR_PUBLIC &&
-         creatorStatus == PSITEMSTATS_CREATOR_VALID) ||
-        (creativeStats.creatorIDStatus == PSITEMSTATS_CREATOR_VALID &&
-         creatorStatus == PSITEMSTATS_CREATOR_PUBLIC))
+    // if creator already set (i.e. valid or public) it cant be changed so return straightaway.
+    if (creativeStats.creatorIDStatus == PSITEMSTATS_CREATOR_PUBLIC ||
+        creativeStats.creatorIDStatus == PSITEMSTATS_CREATOR_VALID)
     {
         return;
     }
@@ -1442,7 +1440,7 @@ void psItemStats::SetCreator (unsigned int characterID, PSITEMSTATS_CREATORSTATU
     {
         creativeStats.creatorID = characterID;
     }
-    else if (creatorStatus == PSITEMSTATS_CREATOR_UNKNOWN || creatorStatus == PSITEMSTATS_CREATOR_PUBLIC)
+    else
     {
         creativeStats.creatorID = 0;
     }
