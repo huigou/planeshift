@@ -474,7 +474,7 @@ void NPCManager::HandleConsoleCommand(MsgEntry *me)
     size_t i = msg.command.FindFirst(' ');
     csString word;
     msg.command.SubString(word,0,i);
-    COMMAND *cmd = find_command(word.GetDataSafe());
+    const COMMAND *cmd = find_command(word.GetDataSafe());
 
     if (cmd && cmd->allowRemote)
     {
