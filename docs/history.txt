@@ -10,6 +10,7 @@
 - Fixed #845, patch by Aresilek Besolez
 - Fixed #1051, patch by Aresilek Besolez
 - Fixed #1324, patch by Aresilek Besolez
+- Fixed #1443, patch by Aresilek Besolez
 
 *** 2008-04-25 by Andrew Dai
 - Made npcclient db connection errors more informative.
