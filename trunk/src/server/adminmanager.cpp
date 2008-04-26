@@ -1610,9 +1610,9 @@ void AdminManager::GetInfo(MsgEntry* me,psAdminCmdMessage& msg, AdminCmdData& da
     }
 
     char ipaddr[20] = {0};
-    csString name, ipAddress, securityLevel;
-    int playerId = 0, accountId = 0;
-    float timeConnected = 0.0f;
+    csString name, ipAddress, securityLevel, sectorName;
+    int playerId = 0, accountId = 0, instance = 0;
+    float timeConnected = 0.0f, loc_x = 0.0f, loc_y = 0.0f, loc_z = 0.0f, loc_yrot = 0.0f;
 
     bool banned = false;
     time_t banTimeLeft;
@@ -1620,7 +1620,19 @@ void AdminManager::GetInfo(MsgEntry* me,psAdminCmdMessage& msg, AdminCmdData& da
     
     if (target) // Online
     {
-        Client* targetclient = target->GetClient();
+		csVector3 pos;
+		iSector* sector = 0;
+			
+		target->GetPosition(pos, loc_yrot, sector);
+		loc_x = pos.x;
+		loc_y = pos.y;
+		loc_z = pos.z;
+		
+		instance = target->GetInstance();
+		
+		sectorName = (sector) ? sector->QueryObject()->GetName() : "(null)";
+
+		Client* targetclient = target->GetClient();
 
         playerId = target->GetPlayerID();
         if (target->GetCharacterData())
@@ -1645,18 +1657,28 @@ void AdminManager::GetInfo(MsgEntry* me,psAdminCmdMessage& msg, AdminCmdData& da
         else // NPC
         {
             name = target->GetName();
+			int degrees = (int)(loc_yrot * 180 / PI );
             psserver->SendSystemInfo(client->GetClientNum(),
-                "NPC: %s has a player ID %d, entity ID %u, and has been active for %1.1f hours",
+                "NPC: %s has a player ID %d, entity ID %u, at position %1.2f, %1.2f, %1.2f "
+				"angle: %d in sector: %s, instance: %d, and has been active for %1.1f hours.", 
                 name.GetData(),
                 playerId,
                 entityId,
-                timeConnected );
+				loc_x, 
+				loc_y, 
+				loc_z, 
+				degrees, 
+				sectorName.GetData(), 
+				instance,
+				timeConnected );
             return; // Done
         }
     }
     else // Offline
     {
-        Result result(db->Select("SELECT id, name, lastname, account_id, time_connected_sec from characters where name='%s'", data.player.GetData()));
+        Result result(db->Select("SELECT c.id as 'id', c.name as 'name', lastname, account_id, time_connected_sec, loc_instance, "
+				"s.name as 'sector', loc_x, loc_y, loc_z, loc_yrot from characters c join sectors s on s.id = loc_sector_id "
+				"where c.name='%s'", data.player.GetData()));
 
         if (!result.IsValid() || result.Count() == 0)
         {
@@ -1677,6 +1699,12 @@ void AdminManager::GetInfo(MsgEntry* me,psAdminCmdMessage& msg, AdminCmdData& da
              ipAddress = "(offline)";
              timeConnected = row.GetFloat("time_connected_sec") / 3600;
              securityLevel.Format("%d",GetTrueSecurityLevel(accountId));
+			 sectorName = row["sector"];
+			 instance = row.GetUInt32("loc_instance");
+			 loc_x = row.GetFloat("loc_x");
+			 loc_y = row.GetFloat("loc_y");
+			 loc_z = row.GetFloat("loc_z");
+			 loc_yrot = row.GetFloat("loc_yrot");
         }
     }
     BanEntry* ban = psserver->GetAuthServer()->GetBanManager()->GetBanByAccount(accountId);
@@ -1711,6 +1739,10 @@ void AdminManager::GetInfo(MsgEntry* me,psAdminCmdMessage& msg, AdminCmdData& da
             info.AppendFmt("entity ID %u, IP is %s, ", entityId, ipAddress.GetData() );
         else
             info.Append("is offline, ");
+		
+		int degrees = (int)(loc_yrot * 180 / PI );
+		info.AppendFmt("at position %1.2f, %1.2f, %1.2f angle: %d in sector: %s, instance: %d, ",
+				loc_x, loc_y, loc_z, degrees, sectorName.GetData(), instance);
             
         info.AppendFmt("total time connected is %1.1f hours", timeConnected );
 
