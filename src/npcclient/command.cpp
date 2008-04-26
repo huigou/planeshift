@@ -359,7 +359,7 @@ int com_showtime(char *)
 
 
 /* add all new commands here */
-COMMAND commands[] = {
+const COMMAND commands[] = {
     { "charlist",     false, com_charlist,     "List all known characters"},
     { "debugnpc",     false, com_debugnpc,     "Switches the debug mode on 1 NPC"},
     { "dumpwarpspace",true,  com_dumpwarpspace,"Dump the warp space table"},

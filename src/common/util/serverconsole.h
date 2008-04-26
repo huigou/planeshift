@@ -40,7 +40,7 @@
 
 struct COMMAND;
 
-COMMAND *find_command(const char *name);
+const COMMAND *find_command(const char *name);
 int execute_line(const char *line,csString *buffer);
 
 

@@ -2206,6 +2206,14 @@ int com_transactions(char* str)
     return 0;
 }
 
+int com_allocations(char* str)
+{
+    CS::Debug::DumpAllocateMemoryBlocks();
+    CPrintf(CON_CMDOUTPUT,"Dumped.\n");
+    
+    return 0;
+}
+
 int com_randomloot( char* loot )
 {
     if (strlen(loot) == 0)
@@ -2261,7 +2269,7 @@ int com_randomloot( char* loot )
 }
 
 /* add all new commands here */
-COMMAND commands[] = {
+const COMMAND commands[] = {
 
   // Server commands
     { "-- Server commands",  true, NULL, "------------------------------------------------" },
@@ -2287,6 +2295,7 @@ COMMAND commands[] = {
     { "spawn",     false, com_spawn,     "Loads a map into the server"},
     { "status",    true, com_status,    "Show server status"},
     { "transactions", false, com_transactions, "Performs an action on the transaction history (run without parameters for options)" },
+    { "dumpallocations", true, com_allocations, "Dump all allocations to allocations.txt if CS extensive memdebug is enabled" },
 
     // npc commands
     { "-- NPC commands",  true, NULL, "------------------------------------------------" },
