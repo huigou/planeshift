@@ -235,22 +235,51 @@ bool pawsCharParents::OnButtonPressed( int mouseButton, int keyModifier, pawsWid
             // Validate parents names
             csString mName(motherNameTextBox->GetText());
             csString fName(fatherNameTextBox->GetText());
-            mName = mName.Slice(0, mName.FindFirst(' '));  // only use first name
-            fName = fName.Slice(0, fName.FindFirst(' '));  // if two are given
-            if (mName.Length() < 3 || fName.Length() < 3 || !FilterName(mName) || !FilterName(fName))
+			
+            csString mFirstName = mName.Slice(0, mName.FindFirst(' '));
+			csString mLastName;
+			if (mName.FindFirst(' ') != SIZET_NOT_FOUND)
+				mLastName = mName.Slice(mName.FindFirst(' ') + 1, mName.Length());
+			else
+            {
+                psSystemMessage error(0,MSG_ERROR,"Please enter a full name for mother");
+                error.FireEvent();
+                return true;
+            }
+			
+            csString fFirstName = fName.Slice(0, fName.FindFirst(' '));
+			csString fLastName;
+			if (fName.FindFirst(' ') != SIZET_NOT_FOUND)
+				fLastName = fName.Slice(fName.FindFirst(' ') + 1, fName.Length());
+			else
+            {
+                psSystemMessage error(0,MSG_ERROR,"Please enter a full name for father");
+                error.FireEvent();
+                return true;
+            }
+
+            if (fFirstName.Length() < 3 || fLastName.Length() < 3 || !FilterName(fFirstName) || !FilterName(fLastName) ||
+				mFirstName.Length() < 3 || mLastName.Length() < 3 || !FilterName(mFirstName) || !FilterName(mLastName))
             {
                 psSystemMessage error(0,MSG_ERROR,"Please enter valid names for both parents");
                 error.FireEvent();
                 return true;
             }
-            if (!CheckNameForRepeatingLetters(mName) || !CheckNameForRepeatingLetters(fName))
+			
+            if (!CheckNameForRepeatingLetters(fFirstName) || !CheckNameForRepeatingLetters(fLastName) ||
+				!CheckNameForRepeatingLetters(mFirstName) || !CheckNameForRepeatingLetters(mLastName))
             {
                 psSystemMessage error(0,MSG_ERROR,"No more than 2 letters in a row allowed for parents' names");
                 error.FireEvent();
                 return true;
             }
-            motherNameTextBox->SetText(NormalizeCharacterName(mName));
-            fatherNameTextBox->SetText(NormalizeCharacterName(fName));
+			
+			mFirstName = NormalizeCharacterName(mFirstName);
+			mLastName = NormalizeCharacterName(mLastName);
+			fFirstName = NormalizeCharacterName(fFirstName);
+			fLastName = NormalizeCharacterName(fLastName);
+            motherNameTextBox->SetText(mFirstName + " " + mLastName);
+            fatherNameTextBox->SetText(fFirstName + " " + fLastName);
 
             // check other parental data
             if (lastFatherChoice == -1 || lastMotherChoice == -1 )
@@ -357,16 +386,28 @@ void pawsCharParents::Randomize()
     pawsListBox* religionBox = (pawsListBox*)FindWidget("Religions");
 
     // randomize names
+	csString lastName;
+	createManager->GenerateName(NAMEGENERATOR_FAMILY_NAME, lastName,4,7);
+	
+    // make uppper case
+    csString upper( lastName );
+    upper.Upcase();
+    lastName.SetAt(0, upper.GetAt(0) );
+
     csString randomName;
     createManager->GenerateName(NAMEGENERATOR_MALE_FIRST_NAME,
                                 randomName,3,5);
 
     // make uppper case
-    csString upper( randomName );
+    upper = randomName;
     upper.Upcase();
     randomName.SetAt(0, upper.GetAt(0) );
 
-    fatherNameTextBox->SetText( randomName );
+	// join first and last name
+	csString fullName;
+	fullName.Format("%s %s", randomName.GetData(), lastName.GetData());
+	
+    fatherNameTextBox->SetText( fullName );
     
     createManager->GenerateName(NAMEGENERATOR_FEMALE_FIRST_NAME,
                                 randomName,5,7);
@@ -376,7 +417,10 @@ void pawsCharParents::Randomize()
     upper.Upcase();
     randomName.SetAt(0, upper.GetAt(0) );
 
-    motherNameTextBox->SetText( randomName );
+	// join first and last name
+	fullName.Format("%s %s", randomName.GetData(), lastName.GetData());
+	
+    motherNameTextBox->SetText( fullName );
 
     //randomize jobs
     fatherBox->Select(fatherBox->GetRow(psengine->GetRandomGen().Get(fatherBox->GetRowCount())));
