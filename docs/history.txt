@@ -7,6 +7,7 @@
   Only useful when CS is configured with extensive mem debug.
 - Fixed #687, patch by Aresilek Besolez
 - Fixed #775, patch by Aresilek Besolez
+- Fixed #845, patch by Aresilek Besolez
 
 *** 2008-04-25 by Andrew Dai
 - Made npcclient db connection errors more informative.
