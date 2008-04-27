@@ -1,3 +1,6 @@
+*** 2008-04-27 by Mike Gist
+- Bumped CS and CEL revisions to 29388 and 3331 (1.2.1).
+
 *** 2008-04-26 by Dave Bentham
 - FS#1325: The valid author of a personalised book or map is set by the first
   player who edits it, not the buyer.
