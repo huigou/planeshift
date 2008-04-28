@@ -174,8 +174,8 @@ bool EntityManager::Initialize(iObjectRegistry* object_reg,
         return false;
     }
 
-    loadFamiliarAffinityAttributes();
-    loadFamiliarTypes();
+    LoadFamiliarAffinityAttributes();
+    LoadFamiliarTypes();
 
     gameWorld = new psWorld();        
     gameWorld->Initialize( object_reg );
@@ -183,7 +183,7 @@ bool EntityManager::Initialize(iObjectRegistry* object_reg,
     return true;
 }
 
-void EntityManager::loadFamiliarAffinityAttributes()
+void EntityManager::LoadFamiliarAffinityAttributes()
 {
     csString sql = "SELECT * FROM char_create_affinity";
     
@@ -201,7 +201,7 @@ void EntityManager::loadFamiliarAffinityAttributes()
     }
 }
 
-void EntityManager::loadFamiliarTypes()
+void EntityManager::LoadFamiliarTypes()
 {
     csString sql = "SELECT * FROM familiar_types";
 
@@ -246,7 +246,7 @@ gemNPC* EntityManager::CreateFamiliar (gemActor *owner)
         return NULL;
     }
     
-    masterFamiliarID = getMasterFamiliarID( chardata );
+    masterFamiliarID = GetMasterFamiliarID( chardata );
 
     // Change Familiar's Name
     const char *charname = chardata->GetCharName();
@@ -358,7 +358,7 @@ gemNPC* EntityManager::CloneNPC ( psCharacter *chardata )
     return npc;
 }
 
-PS_ID EntityManager::getMasterFamiliarID( psCharacter *charData )
+PS_ID EntityManager::GetMasterFamiliarID( psCharacter *charData )
 {
     csHash< csHash< size_t, csString > *, csString  > charAttributes;
     csHash< size_t, csString > *charAttributeList;
@@ -448,7 +448,7 @@ PS_ID EntityManager::getMasterFamiliarID( psCharacter *charData )
             attacktypeValue = attribute->Get( ft->AttackType, 0 );
         }
 
-        rank = calculateFamiliarAffinity( charData, typeValue, lifecycleValue, attacktoolValue, attacktypeValue );
+        rank = CalculateFamiliarAffinity( charData, typeValue, lifecycleValue, attacktoolValue, attacktypeValue );
         if ( rank > currentRank )
         {
             currentRank = rank;
@@ -464,7 +464,7 @@ PS_ID EntityManager::getMasterFamiliarID( psCharacter *charData )
         return 0;
 }
 
-int EntityManager::calculateFamiliarAffinity( psCharacter * chardata, size_t type, size_t lifecycle, size_t attacktool, size_t attacktype )
+int EntityManager::CalculateFamiliarAffinity( psCharacter * chardata, size_t type, size_t lifecycle, size_t attacktool, size_t attacktype )
 {
     static MathScript *msAffinity;
     int affinityValue = 0;
