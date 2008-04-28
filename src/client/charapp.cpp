@@ -695,28 +695,24 @@ bool psCharAppearance::SetTrait(Trait * trait)
     return true;
 }
 
-
 void psCharAppearance::DefaultMaterial(csString& part)
-{    
-    bool torsoFound = false;
-    
+{
+    bool skinToneSetFound = false;
+
     for ( size_t z = 0; z < skinToneSet.GetSize(); z++ )
     {
-        if ( skinToneSet[z].part == "Torso" )
-        {
-            torsoFound = true;
-        }
-        
         if ( part == skinToneSet[z].part )
         {
+            skinToneSetFound = true;
             ChangeMaterial(part, skinToneSet[z].material, skinToneSet[z].texture);
         }
     }
-        
-    if ( part == "Torso" && torsoFound == false)
-    {                                
+
+    // Set stateFactory defaults if no skinToneSet found.
+    if ( !skinToneSetFound )
+    {
         ChangeMaterial(part, stateFactory->GetDefaultMaterial(part), stateFactory->GetDefaultMaterial(part));
-    }        
+    }
 }
 
 

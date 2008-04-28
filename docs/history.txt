@@ -1,3 +1,9 @@
+*** 2008-04-28 by Mike Gist
+- Updated the mount paths and fixed the null canvas entry in npcclient.cfg
+- Switched the iDocumentSystem priority around in psserver.cfg
+- Disabled wordnet init as wordnet currently isn't used.
+- Fixed #466, patch by Oskar Aul.
+
 *** 2008-04-28 by Andrew Dai
 - Fixed a bug which may have allowed NPCs to go through walls.
 - Added printf checks to aid in collision algorithm debugging.
