@@ -146,10 +146,10 @@ protected:
     
     bool SendActorList(Client *client);
 
-    void loadFamiliarTypes();
-    void loadFamiliarAffinityAttributes();
-    PS_ID getMasterFamiliarID( psCharacter *charData );
-    int calculateFamiliarAffinity(  psCharacter * chardata, size_t type, size_t lifecycle, size_t attacktool, size_t attacktype  );
+    void LoadFamiliarTypes();
+    void LoadFamiliarAffinityAttributes();
+    PS_ID GetMasterFamiliarID( psCharacter *charData );
+    int CalculateFamiliarAffinity(  psCharacter * chardata, size_t type, size_t lifecycle, size_t attacktool, size_t attacktype  );
 
 
     bool ready;
