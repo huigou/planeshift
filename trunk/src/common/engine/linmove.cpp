@@ -320,13 +320,13 @@ int psLinearMovement::MoveSprite (float delta)
   csVector3 bodyVel (fulltransf.Other2ThisRelative (velWorld) + velBody);
 
   float local_max_interval =
-  	MAX (MIN (MIN ((bodyVel.y==0.0f)
+  	MIN (MIN ((bodyVel.y==0.0f)
   	? MAX_CD_INTERVAL
   	: ABS (intervalSize.y/bodyVel.y), (bodyVel.x==0.0f)
   	? MAX_CD_INTERVAL
   	: ABS (intervalSize.x/bodyVel.x)), (bodyVel.z==0.0f)
   	? MAX_CD_INTERVAL
-  	: ABS (intervalSize.z/bodyVel.z)), MIN_CD_INTERVAL);
+  	: ABS (intervalSize.z/bodyVel.z));
 
   // Compensate for speed
   local_max_interval /= speed;
@@ -337,20 +337,23 @@ int psLinearMovement::MoveSprite (float delta)
   {
     while (delta > local_max_interval)
     {
+        csVector3 oldpos(mesh->GetMovable ()->GetFullTransform ().GetOrigin());
+
       ret = MoveV (local_max_interval);
 
-      if (colldet->QueryRevert ())
-      {
-        // Revert Rotation for safety
-        //@@@ This need to be revised! You can't change the full transform!
-        //@@@csMatrix3 matrix = (csMatrix3) csYRotMatrix3 (yrot);
-        //@@@pcmesh->GetMesh ()->GetMovable ()->GetFullTransform ().SetO2T (matrix);
-      }
-      else
-      {
+        csVector3 newpos(mesh->GetMovable ()->GetFullTransform ().GetOrigin());
+        
+        
+        // Check the invariants still hold otherwise we may jump walls
+        if(!(fabs((newpos - oldpos).x <= intervalSize.x)))
+            printf("X out of bounds!\n");
+        if(!(fabs((newpos - oldpos).z <= intervalSize.z)))
+            printf("Z out of bounds!\n");
+        if(!(fabs((newpos - oldpos).y <= intervalSize.y)))
+            printf("Y out of bounds!\n");
+
         RotateV (local_max_interval);
         yrot = Matrix2YRot (transf);
-      }
 
       if (ret == PS_MOVE_FAIL)
           return ret;
@@ -359,13 +362,13 @@ int psLinearMovement::MoveSprite (float delta)
       bodyVel = fulltransf.Other2ThisRelative(velWorld) + velBody;
 
       delta -= local_max_interval;
-      local_max_interval = MAX (MIN (MIN ((bodyVel.y==0.0f)
+      local_max_interval = MIN (MIN ((bodyVel.y==0.0f)
       	? MAX_CD_INTERVAL
       	: ABS (intervalSize.y/bodyVel.y), (bodyVel.x==0.0f)
       	? MAX_CD_INTERVAL
       	: ABS (intervalSize.x/bodyVel.x)), (bodyVel.z==0.0f)
       	? MAX_CD_INTERVAL
-      	: ABS (intervalSize.z/bodyVel.z)), MIN_CD_INTERVAL);
+      	: ABS (intervalSize.z/bodyVel.z));
       // Compensate for speed
       local_max_interval /= speed;
       // Err on the side of safety
