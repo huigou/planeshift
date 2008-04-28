@@ -341,19 +341,23 @@ int psLinearMovement::MoveSprite (float delta)
 
       ret = MoveV (local_max_interval);
 
-        csVector3 newpos(mesh->GetMovable ()->GetFullTransform ().GetOrigin());
+        csVector3 displacement(fulltransf.GetOrigin() - oldpos);
         
+        displacement = fulltransf.Other2ThisRelative(displacement);
         
         // Check the invariants still hold otherwise we may jump walls
-        if(!(fabs((newpos - oldpos).x) <= intervalSize.x))
+        if(!(fabs((fulltransf.Other2ThisRelative(displacement)).x) <= intervalSize.x))
             printf("X out of bounds!\n");
-        if(!(fabs((newpos - oldpos).z) <= intervalSize.z))
+        if(!(fabs(fulltransf.Other2ThisRelative(displacement).z) <= intervalSize.z))
             printf("Z out of bounds!\n");
-        if(!(fabs((newpos - oldpos).y) <= intervalSize.y))
+        if(!(fabs(fulltransf.Other2ThisRelative(displacement).y) <= intervalSize.y))
             printf("Y out of bounds!\n");
 
         RotateV (local_max_interval);
         yrot = Matrix2YRot (transf);
+        
+        // We must update the transform after every rotation!
+            fulltransf = mesh->GetMovable ()->GetFullTransform ();
 
       if (ret == PS_MOVE_FAIL)
           return ret;

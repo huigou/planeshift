@@ -8,6 +8,9 @@
 - Fixed a bug which may have allowed NPCs to go through walls.
 - Added printf checks to aid in collision algorithm debugging.
   These will probably be changed to asserts in the future.
+- Fixed a bug which almost certainly allows actors to move through walls.
+  The problem is that movement intervals were calculated assuming the actor
+  does not rotate while moving.
 
 *** 2008-04-27 by Mike Gist
 - Bumped CS and CEL revisions to 29388 and 3331 (1.2.1).
