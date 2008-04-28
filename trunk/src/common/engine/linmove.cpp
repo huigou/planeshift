@@ -345,11 +345,11 @@ int psLinearMovement::MoveSprite (float delta)
         
         
         // Check the invariants still hold otherwise we may jump walls
-        if(!(fabs((newpos - oldpos).x <= intervalSize.x)))
+        if(!(fabs((newpos - oldpos).x) <= intervalSize.x))
             printf("X out of bounds!\n");
-        if(!(fabs((newpos - oldpos).z <= intervalSize.z)))
+        if(!(fabs((newpos - oldpos).z) <= intervalSize.z))
             printf("Z out of bounds!\n");
-        if(!(fabs((newpos - oldpos).y <= intervalSize.y)))
+        if(!(fabs((newpos - oldpos).y) <= intervalSize.y))
             printf("Y out of bounds!\n");
 
         RotateV (local_max_interval);
