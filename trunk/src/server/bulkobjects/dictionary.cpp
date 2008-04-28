@@ -86,12 +86,12 @@ NPCDialogDict::~NPCDialogDict()
 
 bool NPCDialogDict::Initialize(iDataConnection *db)
 {
-    // Initialise WordNet
+    /* Initialise WordNet
     if (wninit() != 0)
     {
         Error1("*****************************\nWordNet failed to initialize.\n"
                "******************************\n");
-    }
+    }*/
 
     if (LoadDisallowedWords(db))
     {
