@@ -339,10 +339,9 @@ int psLinearMovement::MoveSprite (float delta)
     {
 
         csVector3 oldpos(mesh->GetMovable ()->GetFullTransform ().GetOrigin());
-        csVector3 worldVel (fulltransf.This2OtherRelative (velBody) + velWorld);
         
-        // Perform brutal optimisation here for high speeds with no obstacles
-        if(worldVel.SquaredNorm() > 400.0f && mesh->GetMovable()->GetSectors()->GetCount() > 0)
+        // Perform brutal optimisation here for falling with no obstacles
+        if(velWorld.y < -20.0f && mesh->GetMovable()->GetSectors()->GetCount() > 0)
         {
             bool hit = false;
             
