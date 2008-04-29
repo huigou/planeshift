@@ -2,6 +2,7 @@
 - Fixed a performance bug in movement interval calculation where the 
   interval was being reduced for safety in absolute instead of relative 
   terms.
+- Fixed a mistake in ref queue locking when full.
 
 *** 2008-04-29 by Mike Gist
 - Made a small optimisation to gemActor::InitLinMove.
