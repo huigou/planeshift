@@ -39,6 +39,7 @@ pawsSlot::pawsSlot()
     AddChild(purifySign);
     purifySign->SetRelativeFrame(GetActualWidth(5), GetActualHeight(5), GetActualWidth(37), GetActualHeight(37));
     purifySign->Hide();
+    purifySign->Ignore(true);
     SetPurifyStatus(0);
 
     stackCountLabel = new pawsTextBox;
@@ -48,6 +49,7 @@ pawsSlot::pawsSlot()
     stackCountLabel->SetFont(NULL,8);
     stackCountLabel->SetColour( graphics2D->FindRGB(255,255,255) );
     stackCountLabel->Hide();
+    stackCountLabel->Ignore(true);
     dragDrop = true;
     StackCount(0); 
 

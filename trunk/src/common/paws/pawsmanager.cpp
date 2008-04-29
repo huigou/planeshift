@@ -280,6 +280,7 @@ bool PawsManager::HandleDoubleClick( iEvent& ev )
     ev.Retrieve( "keyModifiers", modifiers );
 
     widget = mainWidget->WidgetAt( event.x, event.y );
+    
     if ( widget != NULL )
     {
         if ( modalWidget != NULL )
@@ -432,6 +433,7 @@ bool PawsManager::HandleMouseDown( iEvent &ev )
     ev.Retrieve("keyModifiers", modifiers);
 
     widget = mainWidget->WidgetAt(event.x, event.y);
+   
     if ( widget != NULL ) 
     {        
         if ( modalWidget != NULL )
@@ -615,7 +617,9 @@ void PawsManager::Draw()
 
     // Draw the tooltip above all other windows after 250 csTicks
     if (timeOver < csGetTicks() - tipDelay && mouseoverWidget)
+    {
         mouseoverWidget->DrawToolTip(mouse->GetPosition().x, mouse->GetPosition().y);
+    }
 
     if (dragDropWidget == NULL)
         mouse->Draw();
