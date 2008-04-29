@@ -731,37 +731,101 @@ bool gemObject::InitMesh(const char *name,
         return false;
     }
     
-    // If this was a helm group then use the stonebm default mesh. 
-
-    psString factory(factname);
-    psString file(filename);    
-    factory.ReplaceAllSubString("$H","stonebm");     
-    file.ReplaceAllSubString("$H","stonebm");     
-    
-    if (!pcmesh->SetMesh(factory.GetData(), file.GetData()))
+    csRef<iEngine> engine = csQueryRegistry<iEngine> (psserver->GetObjectReg());
+    csRef<iVFS> vfs = csQueryRegistry<iVFS> (psserver->GetObjectReg());
+    csRef<iMeshWrapper> mesh = engine->GetMeshes()->FindByName(factname);
+    if(!mesh)
     {
-        Error3("Could not set mesh with factname=%s and filename=%s. Trying dummy model",factname,filename);                
-    }
-
-    // Couldn't set a mesh (invalid mesh or no mesh at all)
-    if (!pcmesh->GetMesh())
-    {
-        factname = "stonebm";
-        filename = "/planeshift/models/stonebm/stonebm.cal3d";
-        
-        this->filename = filename;
-        this->factname = factname;
-        
-        if (!pcmesh->SetMesh(factname, filename))
+        bool failed = false;
+        if(vfs->Exists(filename))
         {
-            Error3("Could not use dummy CVS mesh with factname=%s and filename=%s",factname,filename);        
-            return false;
-        }            
+            while(!failed)
+            {
+                csRef<iDocument> doc = ParseFile(psserver->GetObjectReg(), filename);
+                if (!doc)
+                {
+                    Error2("Couldn't parse file %s", filename);
+                    failed = true;
+                    break;
+                }
+
+                csRef<iDocumentNode> root = doc->GetRoot();
+                if (!root)
+                {
+                    Error2("The file(%s) doesn't have a root", filename);
+                    failed = true;
+                    break;
+                }
+
+                csRef<iDocumentNode> meshNode;
+                csRef<iDocumentNode> libNode = root->GetNode("library");
+                if (libNode)
+                {
+                    meshNode = libNode->GetNode("meshfact");
+
+                    if(libNode->GetNode("shaders"))
+                        libNode->RemoveNode(libNode->GetNode("shaders"));
+
+                    if(libNode->GetNode("textures"))
+                        libNode->RemoveNode(libNode->GetNode("textures"));
+
+                    if(libNode->GetNode("materials"))
+                        libNode->RemoveNode(libNode->GetNode("materials"));
+                }
+                else
+                    meshNode = root->GetNode("meshfact");
+                if (!meshNode)
+                {
+                    Error2("The file(%s) doesn't have a meshfact node", filename);
+                    failed = true;
+                    break;
+                }
+
+                csRef<iDocumentNode> params = meshNode->GetNode("params");
+                if(meshNode->GetNode("params"))
+                {
+                    if(params->GetNode("material"))
+                        params->RemoveNode(params->GetNode("material"));
+
+                    params->RemoveNodes(params->GetNodes("animation"));
+
+                    csRef<iDocumentNodeIterator> meshes = params->GetNodes("mesh");
+                    while(meshes->HasNext())
+                    {
+                        csRef<iDocumentNode> mesh = meshes->Next();
+                        csRef<iDocumentAttribute> att = mesh->GetAttribute("material");
+                        mesh->RemoveAttribute(mesh->GetAttribute("material"));
+                    }
+                }
+
+                csRef<iLoader> loader (csQueryRegistry<iLoader> (psserver->GetObjectReg()));
+                iBase* result;
+                loader->Load(root, result);
+                mesh = engine->GetMeshFactories()->FindByName(factname)->CreateMeshWrapper();
+                failed = !mesh;
+                break;
+            }
+        }
+
+        if(failed)
+        {
+            Error3("Could not set mesh with factname=%s and filename=%s. Trying dummy model",factname,filename);                
+            factname = "stonebm";
+            filename = "/planeshift/models/stonebm/stonebm.cal3d";
+            if ( !pcmesh->SetMesh(factname, filename) )
+            {
+                Error3("Could not use dummy CVS mesh with factname=%s and filename=%s",factname,filename);        
+                return false;
+            }
+            mesh = pcmesh->GetMesh();
+        }
+        else
+            pcmesh->SetMesh(mesh);
     }
 
-    if (!pcmesh->GetMesh())
+    if ( !mesh )
     {
-        Error2("Could not create Item because could not load %s file into mesh.",factname);
+        Error1("Could not create Item because pcmesh didn't have iMeshWrapper.");
         return false;
     }
 
