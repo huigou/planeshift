@@ -2459,23 +2459,27 @@ bool gemActor::InitLinMove (const csVector3& pos,
 {
     pcmove = new psLinearMovement(psserver->GetObjectReg());
 
-    // Now Determine CD bounding boxes for upper and lower colliders
-    csRef<iSpriteCal3DState> cal3d;
-    cal3d = scfQueryInterface<iSpriteCal3DState> ( GetMeshWrapper()->GetMeshObject ());
-    if (cal3d)
-    {
-        cal3d->SetAnimCycle("stand",1);
-    }
-    const csBox3& box = GetMeshWrapper()->GetMeshObject()->GetObjectModel()->GetObjectBoundingBox();
-
-    float width  = box.MaxX() - box.MinX();
-    float height = box.MaxY() - box.MinY();
-    float depth  = box.MaxZ() - box.MinZ();
-
-    // Check if we need to override with sizes from db
+    // Check if we're using sizes from the db.
     csVector3 size;
-    psRaceInfo *raceinfo=psChar->GetRaceInfo();
+    psRaceInfo *raceinfo = psChar->GetRaceInfo();
     raceinfo->GetSize(size);
+    float width, height, depth;
+
+    if(!(size.x && size.y && size.z))
+    {
+        // Now Determine CD bounding boxes for upper and lower colliders
+        csRef<iSpriteCal3DState> cal3d;
+        cal3d = scfQueryInterface<iSpriteCal3DState> ( GetMeshWrapper()->GetMeshObject ());
+        if (cal3d)
+        {
+            cal3d->SetAnimCycle("stand",1);
+        }
+        const csBox3& box = GetMeshWrapper()->GetMeshObject()->GetObjectModel()->GetObjectBoundingBox();
+
+        width  = box.MaxX() - box.MinX();
+        height = box.MaxY() - box.MinY();
+        depth  = box.MaxZ() - box.MinZ();
+    }
 
     if(size.x != 0)
         width = size.x;
@@ -2525,10 +2529,9 @@ bool gemActor::InitLinMove (const csVector3& pos,
     bottom.x *= .7f;
     bottom.z *= .7f;
 
-    pcmove->InitCD(top, bottom,offset, GetMeshWrapper()); 
+    pcmove->InitCD(top, bottom,offset, GetMeshWrapper());
     // Disable CD checking because server does not need it.
     pcmove->UseCD(false);
-
 
     SetPosition(pos,angle,sector);
 

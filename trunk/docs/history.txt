@@ -1,3 +1,6 @@
+*** 2008-04-29 by Mike Gist
+- Made a small optimisation to gemActor::InitLinMove.
+
 *** 2008-04-28 by Andrew Craig
 - Fixed FS#1282 - Tooltips in inventory window 
   http://www.hydlaa.com/flyspray_upgrade/index.php?do=details&task_id=1282
