@@ -17,6 +17,7 @@
 - Fixed a bug which almost certainly allows actors to move through walls.
   The problem is that movement intervals were calculated assuming the actor
   does not rotate while moving.
+- Fixed checking starting position of NPC which was causing huge CPU.
 
 *** 2008-04-27 by Mike Gist
 - Bumped CS and CEL revisions to 29388 and 3331 (1.2.1).
