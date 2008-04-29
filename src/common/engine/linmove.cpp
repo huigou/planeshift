@@ -339,11 +339,11 @@ int psLinearMovement::MoveSprite (float delta)
     {
 
         csVector3 oldpos(mesh->GetMovable ()->GetFullTransform ().GetOrigin());
+        csVector3 worldVel (fulltransf.This2OtherRelative (velBody) + velWorld);
         
         // Perform brutal optimisation here for high speeds with no obstacles
-        if((velWorld * delta).SquaredNorm() > 400.0f && mesh->GetMovable()->GetSectors()->GetCount() > 0)
+        if(worldVel.SquaredNorm() > 400.0f && mesh->GetMovable()->GetSectors()->GetCount() > 0)
         {
-            csVector3 worldVel (fulltransf.This2OtherRelative (velBody) + velWorld);
             bool hit = false;
             
             // We check for other meshes at the start and end of the box with radius * 2 to be on the safe side
