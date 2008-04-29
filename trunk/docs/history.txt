@@ -1,5 +1,6 @@
 *** 2008-04-29 by Mike Gist
 - Made a small optimisation to gemActor::InitLinMove.
+- Reduced psserver and npcclient memory usage.
 
 *** 2008-04-28 by Andrew Craig
 - Fixed FS#1282 - Tooltips in inventory window 

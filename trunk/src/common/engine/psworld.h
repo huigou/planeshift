@@ -117,7 +117,7 @@ public:
      * Filters the world file to remove features which have been marked
      * as disabled by the user (post proc effects for example).
      */
-    csRef<iDocumentNode> Filter(csRef<iDocumentNode> worldNode);
+    csRef<iDocumentNode> Filter(csRef<iDocumentNode> worldNode, bool using3D);
 
     /**
      * True if we need to filter the world file.

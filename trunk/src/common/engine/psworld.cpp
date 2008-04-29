@@ -492,7 +492,7 @@ bool psRegion::Load(bool loadMeshes)
     else if(needToFilter)
     {
         // Filter the world file to get the correct settings.
-        worldNode = Filter(worldNode);
+        worldNode = Filter(worldNode, using3D);
     }
 
     // Create a new region with the given name, or select it if already there
@@ -655,34 +655,101 @@ csRef<iDocumentNode> psRegion::Clean(csRef<iDocumentNode> world)
     return cleanedWorld;
 }
 
-csRef<iDocumentNode> psRegion::Filter(csRef<iDocumentNode> world)
+csRef<iDocumentNode> psRegion::Filter(csRef<iDocumentNode> world, bool using3D)
 {
-    if(!(gfxFeatures & useNormalMaps))
+    if(!using3D)
     {
+        if(world->GetNode("shaders"))
+            world->RemoveNode(world->GetNode("shaders"));
+
+        if(world->GetNode("textures"))
+            world->RemoveNode(world->GetNode("textures"));
+
+        if(world->GetNode("materials"))
+            world->RemoveNode(world->GetNode("materials"));
+
+        csRef<iDocumentNodeIterator> meshfacts = world->GetNodes("meshfact");
+        while(meshfacts->HasNext())
+        {
+            csRef<iDocumentNode> meshfact = meshfacts->Next();
+            csRef<iDocumentNode> params = meshfact->GetNode("params");
+            if(params)
+            {
+                params->RemoveNodes(params->GetNodes("n"));
+                csRef<iDocumentNodeIterator> submeshes = params->GetNodes("submesh");
+                while(submeshes->HasNext())
+                {
+                    csRef<iDocumentNode> submesh = submeshes->Next();
+                    if(submesh->GetNode("material"))
+                    {
+                        submesh->RemoveNode(submesh->GetNode("material"));
+                    }
+                }
+            }
+        }
+
         csRef<iDocumentNodeIterator> sectors = world->GetNodes("sector");
         while(sectors->HasNext())
         {
             csRef<iDocumentNode> sector = sectors->Next();
-            csRef<iDocumentNode> rloop = sector->GetNode("renderloop");
-            if(rloop.IsValid())
+            csRef<iDocumentNodeIterator> meshobjs = sector->GetNodes("meshobj");
+            while(meshobjs->HasNext())
             {
-                csString value = rloop->GetContentsValue();
-                if(value.Compare("std_rloop_diffuse"))
+                csRef<iDocumentNode> meshobj = meshobjs->Next();
+                csRef<iDocumentNode> params = meshobj->GetNode("params");
+                if(params)
                 {
-                    sector->RemoveNode(rloop);
+                    if(params->GetNode("material"))
+                    {
+                        params->RemoveNode(params->GetNode("material"));
+                    }
+                    if(params->GetNode("materialpalette"))
+                    {
+                        params->RemoveNode(params->GetNode("materialpalette"));
+                    }
+                    csRef<iDocumentNodeIterator> submeshes = params->GetNodes("submesh");
+                    while(submeshes->HasNext())
+                    {
+                        csRef<iDocumentNode> submesh = submeshes->Next();
+                        if(submesh->GetNode("material"))
+                        {
+                            submesh->RemoveNode(submesh->GetNode("material"));
+                        }
+
+                    }
                 }
             }
         }
     }
-
-    if(!(gfxFeatures & useMeshGen))
+    else
     {
-        csRef<iDocumentNodeIterator> sectors = world->GetNodes("sector");
-        while(sectors->HasNext())
+        if(!(gfxFeatures & useNormalMaps))
         {
-            csRef<iDocumentNode> sector = sectors->Next();
-            csRef<iDocumentNodeIterator> meshgen = sector->GetNodes("meshgen");
-            sector->RemoveNodes(meshgen);
+            csRef<iDocumentNodeIterator> sectors = world->GetNodes("sector");
+            while(sectors->HasNext())
+            {
+                csRef<iDocumentNode> sector = sectors->Next();
+                csRef<iDocumentNode> rloop = sector->GetNode("renderloop");
+                if(rloop.IsValid())
+                {
+                    csString value = rloop->GetContentsValue();
+                    if(value.Compare("std_rloop_diffuse"))
+                    {
+                        sector->RemoveNode(rloop);
+                    }
+                }
+            }
+        }
+
+        if(!(gfxFeatures & useMeshGen))
+        {
+            csRef<iDocumentNodeIterator> sectors = world->GetNodes("sector");
+            while(sectors->HasNext())
+            {
+                csRef<iDocumentNode> sector = sectors->Next();
+                csRef<iDocumentNodeIterator> meshgen = sector->GetNodes("meshgen");
+                sector->RemoveNodes(meshgen);
+            }
         }
     }
 
