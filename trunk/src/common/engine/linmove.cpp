@@ -346,11 +346,11 @@ int psLinearMovement::MoveSprite (float delta)
         displacement = fulltransf.Other2ThisRelative(displacement);
         
         // Check the invariants still hold otherwise we may jump walls
-        if(!(fabs((fulltransf.Other2ThisRelative(displacement)).x) <= intervalSize.x))
+        if(!(fabs(displacement.x) <= intervalSize.x))
             printf("X out of bounds!\n");
-        if(!(fabs(fulltransf.Other2ThisRelative(displacement).z) <= intervalSize.z))
+        if(!(fabs(displacement.z) <= intervalSize.z))
             printf("Z out of bounds!\n");
-        if(!(fabs(fulltransf.Other2ThisRelative(displacement).y) <= intervalSize.y))
+        if(!(fabs(displacement.y) <= intervalSize.y))
             printf("Y out of bounds!\n");
 
         RotateV (local_max_interval);
