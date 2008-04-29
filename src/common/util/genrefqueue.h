@@ -87,6 +87,7 @@ public:
             // check if queue is full
             if (tqend == qstart)
             {
+                Interrupt();
                 return false;
             }
             // check are we having a refcount race (in which msg would already be destroyed)
@@ -118,7 +119,10 @@ public:
         {
             // check if queue is empty
             if (qstart == qend)
+            {
+                Interrupt();
                 return 0;
+            }
 
             // removes Message from queue
             ptr = qbuffer[qstart];
