@@ -295,6 +295,8 @@ protected:
   csVector3 topSize;
 
   csVector3 bottomSize;
+    
+    csBox3 boundingBox;
 
   /// The total change in displacement caused by space warping portals.
   csVector3 portalDisplaced;

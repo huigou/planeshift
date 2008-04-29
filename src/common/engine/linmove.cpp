@@ -337,7 +337,44 @@ int psLinearMovement::MoveSprite (float delta)
   {
     while (delta > local_max_interval)
     {
+
         csVector3 oldpos(mesh->GetMovable ()->GetFullTransform ().GetOrigin());
+        
+        // Perform brutal optimisation here for high speeds with no obstacles
+        if((velWorld * delta).SquaredNorm() > 400.0f && mesh->GetMovable()->GetSectors()->GetCount() > 0)
+        {
+            csVector3 worldVel (fulltransf.This2OtherRelative (velBody) + velWorld);
+            bool hit = false;
+            
+            // We check for other meshes at the start and end of the box with radius * 2 to be on the safe side
+            {
+                csRef<iMeshWrapperIterator> objectIter = engine->GetNearbyMeshes(mesh->GetMovable()->GetSectors()->Get(0), 
+                                                                             oldpos + boundingBox.GetCenter(), boundingBox.GetSize().Norm() * 2);
+                if(objectIter->HasNext())
+                    hit = true;
+            }
+            if(!hit)
+            {
+                csRef<iMeshWrapperIterator> objectIter = engine->GetNearbyMeshes(mesh->GetMovable()->GetSectors()->Get(0), 
+                                                                                 oldpos + worldVel * delta + boundingBox.GetCenter(), boundingBox.GetSize().Norm() * 2);
+                if(objectIter->HasNext())
+                    hit = true;
+            }
+            if(!hit)
+            {
+                csOrthoTransform transform_newpos(csMatrix3(), oldpos + worldVel * delta);
+                csBox3 fullBox(fulltransf.This2OtherRelative(boundingBox.Min()), fulltransf.This2OtherRelative(boundingBox.Max()));
+                csBox3 newBox( transform_newpos.This2OtherRelative(boundingBox.Min()), transform_newpos.This2OtherRelative(boundingBox.Max()));
+
+                
+                fullBox.AddBoundingBox(newBox);
+                csRef<iMeshWrapperIterator> objectIter = engine->GetNearbyMeshes(mesh->GetMovable()->GetSectors()->Get(0), fullBox);
+                if(objectIter->HasNext())
+                    hit = true;
+            }
+            if(!hit)
+                local_max_interval = delta;
+        }
 
       ret = MoveV (local_max_interval);
 
@@ -773,6 +810,27 @@ bool psLinearMovement::InitCD (const csVector3& body, const csVector3& legs,
   intervalSize.x = MIN(topSize.x, bottomSize.x);
   intervalSize.y = MIN(topSize.y, bottomSize.y);
   intervalSize.z = MIN(topSize.z, bottomSize.z);
+    
+    float maxX = MAX(body.x, legs.x)+shift.x;
+    float maxZ = MAX(body.z, legs.z)+shift.z;
+    
+
+    float bX2 = body.x / 2.0f;
+    float bZ2 = body.z / 2.0f;
+    float bYbottom = legs.y;
+    float bYtop = legs.y + body.y;
+    
+    csBox3 top (csVector3 (-bX2, bYbottom, -bZ2) + shift,
+                csVector3 (bX2, bYtop, bZ2) + shift);
+    
+    float lX2 = legs.x / 2.0f;
+    float lZ2 = legs.z / 2.0f;
+    
+    csBox3 bot (csVector3 (-lX2, 0, -lZ2) + shift,
+                csVector3 (lX2, 0 + legs.y, lZ2) + shift);
+    
+    boundingBox.Set(csVector3(-maxX / 2.0f, 0, -maxZ / 2.0f) + shift,
+                    csVector3(maxX / 2.0f, bYtop, maxZ / 2.0f) + shift);
 
   psLinearMovement::shift = shift;
 
