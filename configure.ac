@@ -1,5 +1,5 @@
 #----------------------------------------------------------------------------
-# Copyright (C)2003-2005 by Atomic Blue.
+# Copyright (C)2003-2008 by Atomic Blue.
 #
 # Script taken from the Crystal Space SDK project.
 #
@@ -11,9 +11,9 @@ AC_PREREQ([2.56])
 #----------------------------------------------------------------------------
 # Initialize autoconf
 #----------------------------------------------------------------------------
-AC_INIT([PlaneShift], [0.4.00], [planeshift-develop@lists.sourceforge.net])
+AC_INIT([PlaneShift], [0.4.01], [planeshift-develop@lists.sourceforge.net])
 CS_PACKAGEINFO([PlaneShift a 3d MMORPG],
-	[Copyright (C)2007 by Atomic Blue],
+	[Copyright (C)2008 by Atomic Blue],
 	[http://www.planeshift.it])
 AC_CONFIG_SRCDIR([mk/jam/build.jam])
 AC_CONFIG_AUX_DIR([mk/autoconf])
