@@ -330,8 +330,8 @@ int psLinearMovement::MoveSprite (float delta)
 
   // Compensate for speed
   local_max_interval /= speed;
-  // Err on the side of safety
-  local_max_interval -= 0.005f;
+  // Err on the side of safety (95% error margin)
+  local_max_interval *= 0.95f;
 
   if (colldet)
   {
@@ -412,8 +412,8 @@ int psLinearMovement::MoveSprite (float delta)
       	: ABS (intervalSize.z/bodyVel.z));
       // Compensate for speed
       local_max_interval /= speed;
-      // Err on the side of safety
-      local_max_interval -= 0.005f;
+      // Err on the side of safety (95% error margin)
+      local_max_interval *= 0.95f;
     }
   }
 
