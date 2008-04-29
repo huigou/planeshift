@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # Special SVN wrapper to ease operations against SF.
 # Pass through all options to normal SVN, however when doing a 
