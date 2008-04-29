@@ -343,6 +343,7 @@ int psLinearMovement::MoveSprite (float delta)
         // Perform brutal optimisation here for falling with no obstacles
         if(velWorld.y < -20.0f && mesh->GetMovable()->GetSectors()->GetCount() > 0)
         {
+            csVector3 worldVel (fulltransf.This2OtherRelative (velBody) + velWorld);
             bool hit = false;
             
             // We check for other meshes at the start and end of the box with radius * 2 to be on the safe side
