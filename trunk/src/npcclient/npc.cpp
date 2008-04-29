@@ -687,15 +687,17 @@ void NPC::CheckPosition()
     while (count--)
     {
         GetLinMove()->ExtrapolatePosition(0.1f);
+        vel = GetLinMove()->GetVelocity();
+        // Bad starting position - npc is falling at high speed, server should automatically kill it
+        if(vel.y < -50)
+        {
+            CPrintf(CON_ERROR,"Got bad starting location %f %f %f, killing %s (PID: %u/EID: %u).\n",
+                    pos.x,pos.y,pos.z,name.GetData(),pid,entity->GetID());
+            SetAlive(false);
+            break;
+        }
     }
-    vel = GetLinMove()->GetVelocity();
-    // Bad starting position - npc is falling at high speed, server should automatically kill it
-    if(vel.y < -50)
-    {
-        CPrintf(CON_ERROR,"Got bad starting location %f %f %f, killing %s (PID: %u/EID: %u).\n",
-                pos.x,pos.y,pos.z,name.GetData(),pid,entity->GetID());
-        SetAlive(false);
-    }
+
 
     if(vel == startVel)
     {
