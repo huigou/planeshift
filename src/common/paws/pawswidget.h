@@ -339,6 +339,8 @@ public:
      */
     virtual pawsWidget* WidgetAt( int x, int y );
 
+    virtual void Ignore(bool ig) { ignore = ig; }
+
     /** Does an action based on this string.
      */
     virtual void PerformAction( const char* action );

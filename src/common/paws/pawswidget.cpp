@@ -178,8 +178,10 @@ bool pawsWidget::CheckButtonPressed( int button, int modifiers, pawsWidget* pres
  * Return this widget if no children contain the coords.
  */
 pawsWidget* pawsWidget::WidgetAt( int x, int y )
-{      
-    if ( ignore ) return NULL;
+{
+    if ( ignore ) 
+        return NULL;
+
     if ( Contains( x, y ) == false )
     {
         return NULL;
@@ -194,23 +196,29 @@ pawsWidget* pawsWidget::WidgetAt( int x, int y )
                 return children[z]->WidgetAt( x , y );
         }
     }
-        
+    
     //Return this widget if no children contain the coords.
     return this;
 }
 
 bool pawsWidget::Contains( int x, int y )
-{
+{   
+    bool val = false; 
+
     if (titleBar)
-    {
-        return titleBar->screenFrame.Contains(x,y) || screenFrame.Contains(x,y);
+    {        
+        val = titleBar->screenFrame.Contains(x,y) || screenFrame.Contains(x,y);
     }
     else if ( border )
     {
-        return border->GetRect().Contains(x,y);
+        val = border->GetRect().Contains(x,y);
     }           
     else
-        return screenFrame.Contains(x,y);       
+    {
+        val = screenFrame.Contains(x,y);       
+    }
+
+    return val;
 }
 
 void pawsWidget::SetParent( pawsWidget* newParent )
