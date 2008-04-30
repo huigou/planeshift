@@ -3,6 +3,8 @@
   interval was being reduced for safety in absolute instead of relative 
   terms.
 - Fixed a mistake in ref queue locking when full.
+- Fixed the biggest memory leak in the server/client due to not deleting
+  net packets after sending in the netcode.
 
 *** 2008-04-29 by Mike Gist
 - Made a small optimisation to gemActor::InitLinMove.

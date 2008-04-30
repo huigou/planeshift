@@ -451,19 +451,20 @@ void NetBase::CheckResendPkts()
 bool NetBase::SendMergedPackets(NetPacketQueue *q)
 {
     csRef<psNetPacketEntry> queueget;
-    psNetPacketEntry *candidate, *final;
+    csRef<psNetPacketEntry> candidate, final;
 
     queueget = q->Get(); // csRef required for q->Get()
-    final = queueget;
 
     // If there's not at least one packet in the queue, we're done.
-    if (!final)
+    if (!queueget)
         return false;
+    
+    final = queueget;
 
     // Try to merge additional packets into a single send.
     while ((queueget=q->Get()))
     {
-        candidate = queueget;  // get out of csRef here
+        candidate = queueget;
         if(final->packet->IsResent() || candidate->packet->IsResent() || !final->Append(candidate))
         {
             // A failed append means that the packet can't fit or is a resent packet.
@@ -494,7 +495,6 @@ bool NetBase::SendSinglePacket(psNetPacketEntry* pkt)
 {
     if (!SendFinalPacket (pkt))
     {
-        delete pkt;
         return false;
     }
 
@@ -512,10 +512,8 @@ bool NetBase::SendSinglePacket(psNetPacketEntry* pkt)
 #endif
         awaitingack.Put(PacketKey(pkt->clientnum, pkt->packet->pktid), pkt);
         // queue holds ref now -> don't delete pkt
-    }
-    else
-    {
-        delete pkt;
+        pkt->IncRef();
+
     }
 
     return true;
