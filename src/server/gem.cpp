@@ -1681,25 +1681,12 @@ gemActor::gemActor( psCharacter *chardata,
                        const csVector3& pos,
                        float rotangle,
                        int clientnum,uint32 id) :
-  gemObject(chardata->GetCharFullName(),factname,filename,myInstance,room,pos,rotangle,clientnum,id)
+  gemObject(chardata->GetCharFullName(),factname,filename,myInstance,room,pos,rotangle,clientnum,id),
+psChar(chardata), factions(NULL), DRcounter(0), lastDR(0), lastSentSuperclientPos(0, 0, 0),
+lastSentSuperclientInstance(-1), numReports(0), reportTargetId(0), isFalling(false), invincible(false), visible(true), viewAllObjects(false), meshcache(factname), 
+movementMode(0), isAllowedToMove(true), atRest(true), pcmove(NULL),
+nevertired(false), infinitemana(false), instantcast(false), safefall(false)
 {
-    factions = NULL;
-    visible = true;
-    viewAllObjects = false;
-    invincible = false;
-    safefall = false;
-    nevertired = false;
-    infinitemana = false;
-    instantcast = false;
-    pcmove = NULL;
-
-    meshcache = factname;
-
-    lastSentSuperclientPos.Set(0,0,0);
-    lastSentSuperclientInstance = -1;
-
-    psChar = chardata;
-
     playerID = chardata->GetCharacterID();
 
     // Store a safe reference to the client
@@ -1711,6 +1698,8 @@ gemActor::gemActor( psCharacter *chardata,
         entity = NULL;
         return;
     }
+    
+    SetAlive(true);
 
     chardata->SetActor(this);
 
@@ -1730,17 +1719,6 @@ gemActor::gemActor( psCharacter *chardata,
 
     Debug6(LOG_NPC,0,"Successfully created actor %s at %1.2f,%1.2f,%1.2f in sector %s.\n",
         factname,pos.x,pos.y,pos.z,sector->QueryObject()->GetName() );
-
-    is_alive = true;
-    numReports = 0;
-    reportTargetId = 0;
-    isFalling = false;
-    movementMode = 0;
-    isAllowedToMove = true;
-    atRest = true;
-
-    lastDR    = 0;
-    DRcounter = 0;
 
     // Set the initial valid location to be the spot the actor was created at.
     UpdateValidLocation(pos, 0.0f, rotangle, sector, true);

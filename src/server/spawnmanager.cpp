@@ -986,6 +986,10 @@ void SpawnManager::HandleDeathEvent(MsgEntry *me)
 {
     Debug1(LOG_SPAWN,0, "Spawn Manager handling Death Event\n");
     psDeathEvent death(me);
+    
+    death.deadActor->GetCharacterData()->KilledBy(death.killer ? death.killer->GetCharacterData() : NULL);
+    if(death.killer)
+        death.killer->GetCharacterData()->Kills(death.deadActor->GetCharacterData());
 
     // Respawning is handled with ResurrectEvents for players and by SpawnManager for NPCs
     if ( death.deadActor->GetClientID() )   // Handle Human Player dying
@@ -1106,9 +1110,7 @@ void SpawnRule::DetermineSpawnLoc(psCharacter *ch, csVector3& pos, float& angle,
     }
     else if (ch && fixedspawnsector == "startlocation")
     {
-        pos.x = ch->spawn_loc.loc_x;
-        pos.y = ch->spawn_loc.loc_y;
-        pos.z = ch->spawn_loc.loc_z;
+        pos = ch->spawn_loc.loc;
         angle = ch->spawn_loc.loc_yrot;
         sectorname = ch->spawn_loc.loc_sector->name;
         instance = ch->spawn_loc.worldInstance;

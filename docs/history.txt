@@ -1,3 +1,9 @@
+*** 2008-04-30 by Andrew Dai
+- Added reporting of NPCs and player positions and sector locations as well
+  as number of kills, deaths and suicides to report.xml. This report is
+  the definitive summary state of the server so should be run
+  occasionally.
+
 *** 2008-04-29 by Andrew Dai
 - Fixed a performance bug in movement interval calculation where the 
   interval was being reduced for safety in absolute instead of relative 

@@ -285,7 +285,7 @@ bool psServer::Initialize(iObjectRegistry* object_reg)
 
     if (!database->Initialize(db_host, db_port, db_user, db_pass, db_name))
     {
-        Error2("Could not create database or connect to it: %s",database->GetLastError());
+        Error2("Could not create database or connect to it: %s",(const char *) database->GetLastError());
         delete database;
         database = NULL;
         return false;

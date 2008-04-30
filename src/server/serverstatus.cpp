@@ -45,6 +45,7 @@
 #include "entitymanager.h"
 #include "globals.h"
 #include "clientstatuslogger.h"
+#include "bulkobjects/pssectorinfo.h"
 
 
 /*****************************************************************
@@ -57,6 +58,7 @@ public:
     psServerStatusRunEvent(csTicks interval);
     void Trigger();
     void ReportClient(Client * curr, ClientStatusLogger & clientLogger, csString & reportString);
+    void ReportNPC(psCharacter * chardata, csString & reportString);
 };
 
 psServerStatusRunEvent::psServerStatusRunEvent(csTicks interval)
@@ -93,6 +95,17 @@ void psServerStatusRunEvent::Trigger ()
         Client *curr = i.Next();
         ReportClient(curr, clientLogger, reportString);
     }
+    // Record npc data
+    csHash<gemObject *>& gems = EntityManager::GetSingleton().GetGEM()->GetAllGEMS();
+    csHash<gemObject *>::GlobalIterator gemi(gems.GetIterator());
+    gemObject* obj;
+    
+    while ( gemi.HasNext() )
+    {
+        obj = gemi.Next();       
+        if(!obj->GetClient())
+            ReportNPC(obj->GetCharacterData(), reportString);
+    }
     reportString.Append( "</server_report>" );
     
     csRef<iFile> logFile = psserver->vfs->Open( ServerStatus::reportFile, VFS_FILE_WRITE );            
@@ -118,6 +131,7 @@ void psServerStatusRunEvent::ReportClient(Client * curr, ClientStatusLogger & cl
     if (curr->IsSuperClient() || !curr->GetActor()) 
         return;
 
+    psCharacter *chardata = curr->GetActor()->GetCharacterData();
     // log this client's info with the clientLogger
     clientLogger.LogClientInfo(curr);
 
@@ -151,9 +165,21 @@ void psServerStatusRunEvent::ReportClient(Client * curr, ClientStatusLogger & cl
         escpxml_guildname = EscpXML("");
         escpxml_guildtitle = EscpXML("");
     }                    
-    player.Format("<player name=\"%s\" guild=\"%s\" title=\"%s\" security=\"%d\"  />\n", 
-                    escpxml_name.GetData(), escpxml_guildname.GetData(), escpxml_guildtitle.GetData(),
-                    curr->GetSecurityLevel());
+    player.Format("<player name=\"%s\" characterID=\"%u\" guild=\"%s\" title=\"%s\" security=\"%d\" kills=\"%u\" deaths=\"%u\" suicides=\"%u\" pos=\"%s\" sector=\"%s\" />\n", 
+                    escpxml_name.GetData(), chardata->GetCharacterID(), escpxml_guildname.GetData(), escpxml_guildtitle.GetData(),
+                    curr->GetSecurityLevel(), chardata->GetKills(), chardata->GetDeaths(), chardata->GetSuicides(), (const char*) chardata->location.loc.Description(), (const char*) EscpXML(chardata->location.loc_sector->name));
+    
+    reportString.Append( player ); 
+}
+
+void psServerStatusRunEvent::ReportNPC(psCharacter* chardata, csString & reportString)
+{
+    csString escpxml_name = EscpXML(chardata->GetCharFullName());
+    csString player;
+               
+    player.Format("<npc name=\"%s\" characterID=\"%u\" kills=\"%u\" deaths=\"%u\" suicides=\"%u\" pos=\"%s\" sector=\"%s\" />\n", 
+                  escpxml_name.GetData(), chardata->GetCharacterID(),
+                  chardata->GetKills(), chardata->GetDeaths(), chardata->GetSuicides(), (const char*) chardata->location.loc.Description(), (const char*) EscpXML(chardata->location.loc_sector->name));
     
     reportString.Append( player ); 
 }
