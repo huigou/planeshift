@@ -668,7 +668,7 @@ public:
     struct st_location
     {
         psSectorInfo *loc_sector;
-        float loc_x,loc_y,loc_z;
+        csVector3 loc;
         float loc_yrot;
         INSTANCE_ID worldInstance;
     } location;
@@ -852,6 +852,12 @@ public:
      */
     void ResetMode();
     
+    void KilledBy(psCharacter* attacker) { deaths++; if(!attacker) suicides++; }
+    void Kills(psCharacter* target) { kills++; }
+    
+    unsigned int GetKills() const { return kills; }
+    unsigned int GetDeaths() const { return deaths; }
+    unsigned int GetSuicides() const { return suicides; }
 
     /** Drops an item into the world (one meter from this character's position)
       * @param Item to be dropped
@@ -1125,10 +1131,16 @@ public:
 
     // The stamina calc script
     MathScript* staminaCalc;
+    
 
 protected:
     // String value copied from the database containing the last login time
     csString lastlogintime;
+    
+    //Stats for this character
+    unsigned int deaths;
+    unsigned int kills;
+    unsigned int suicides;
 
      
 public:

@@ -1006,9 +1006,9 @@ void psNPCLoader::WriteLocation()
 
     posNode->SetValue("pos");
     posNode->SetAttribute("sct", npc->location.loc_sector->name.GetData());
-    posNode->SetAttributeAsFloat("x", npc->location.loc_x);
-    posNode->SetAttributeAsFloat("y", npc->location.loc_y);
-    posNode->SetAttributeAsFloat("z", npc->location.loc_z);
+    posNode->SetAttributeAsFloat("x", npc->location.loc.x);
+    posNode->SetAttributeAsFloat("y", npc->location.loc.y);
+    posNode->SetAttributeAsFloat("z", npc->location.loc.z);
     posNode->SetAttributeAsFloat("xr", 0.0f);
     posNode->SetAttributeAsFloat("yr", npc->location.loc_yrot);
     posNode->SetAttributeAsFloat("zr", 0.0f);

@@ -101,7 +101,7 @@ void psCharacter::operator delete(void *releasePtr)
 
 psCharacter::psCharacter() : inventory(this),
     guildinfo(NULL), attributes(this), modifiers(this),
-    skills(this), acquaintances(101, 10, 101), npc_masterid(0), loaded(false)
+    skills(this), acquaintances(101, 10, 101), npc_masterid(0), deaths(0), kills(0), suicides(0), loaded(false)
 {
     characterType = PSCHARACTER_TYPE_UNKNOWN;
 
@@ -131,9 +131,7 @@ psCharacter::psCharacter() : inventory(this),
     loot_money = 0;
 
     location.loc_sector = NULL;
-    location.loc_x = 0.0f;
-    location.loc_y = 0.0f;
-    location.loc_z = 0.0f;
+    location.loc.Set(0.0f);
     location.loc_yrot = 0.0f;
     spawn_loc = location;
 
@@ -976,9 +974,7 @@ void psCharacter::UnregisterProgressionEvent(int id)
 void psCharacter::UpdateRespawn(csVector3 pos, float yrot, psSectorInfo* sector)
 {
     spawn_loc.loc_sector = sector;
-    spawn_loc.loc_x      = pos.x;
-    spawn_loc.loc_y      = pos.y;
-    spawn_loc.loc_z      = pos.z;
+    spawn_loc.loc = pos;
     spawn_loc.loc_yrot   = yrot;
 }
 
@@ -1391,10 +1387,7 @@ void psCharacter::DropItem(psItem *&item, csVector3 suggestedPos, bool transient
         // User-specified position...check if it's close enough to the character.
 
         csVector3 delta;
-        delta.x = location.loc_x - suggestedPos.x;
-        delta.y = location.loc_y - suggestedPos.y;
-        delta.z = location.loc_z - suggestedPos.z;
-
+        delta = location.loc - suggestedPos;
         float dist = delta.Norm();
 
         // Future: Could make it drop in the direction specified, if not at the
@@ -1406,9 +1399,9 @@ void psCharacter::DropItem(psItem *&item, csVector3 suggestedPos, bool transient
     if (suggestedPos == 0)
     {
         // No position specified or it was invalid.
-        suggestedPos.x = location.loc_x - (DROP_DISTANCE * sinf(location.loc_yrot));
-        suggestedPos.y = location.loc_y;
-        suggestedPos.z = location.loc_z - (DROP_DISTANCE * cosf(location.loc_yrot));
+        suggestedPos.x = location.loc.x - (DROP_DISTANCE * sinf(location.loc_yrot));
+        suggestedPos.y = location.loc.y;
+        suggestedPos.z = location.loc.z - (DROP_DISTANCE * cosf(location.loc_yrot));
     }
 
     // Play the drop item sound for this item
@@ -2320,9 +2313,9 @@ psTrait *psCharacter::GetTraitForLocation(PSTRAIT_LOCATION location)
 void psCharacter::GetLocationInWorld(INSTANCE_ID &instance,psSectorInfo *&sectorinfo,float &loc_x,float &loc_y,float &loc_z,float &loc_yrot)
 {
     sectorinfo=location.loc_sector;
-    loc_x=location.loc_x;
-    loc_y=location.loc_y;
-    loc_z=location.loc_z;
+    loc_x=location.loc.x;
+    loc_y=location.loc.y;
+    loc_z=location.loc.z;
     loc_yrot=location.loc_yrot;
     instance = location.worldInstance;
 }
@@ -2332,9 +2325,9 @@ void psCharacter::SetLocationInWorld(INSTANCE_ID instance, psSectorInfo *sectori
     psSectorInfo *oldsector = location.loc_sector;
 
     location.loc_sector=sectorinfo;
-    location.loc_x=loc_x;
-    location.loc_y=loc_y;
-    location.loc_z=loc_z;
+    location.loc.x=loc_x;
+    location.loc.y=loc_y;
+    location.loc.z=loc_z;
     location.loc_yrot=loc_yrot;
     location.worldInstance = instance;
 
@@ -2354,7 +2347,7 @@ void psCharacter::SaveLocationInWorld()
     psString sql;
 
     sql.AppendFmt("update characters set loc_x=%10.2f, loc_y=%10.2f, loc_z=%10.2f, loc_yrot=%10.2f, loc_sector_id=%u, loc_instance=%u where id=%u",
-                     l.loc_x, l.loc_y, l.loc_z, l.loc_yrot, l.loc_sector->uid, l.worldInstance, characterid);
+                     l.loc.x, l.loc.y, l.loc.z, l.loc_yrot, l.loc_sector->uid, l.worldInstance, characterid);
     if (db->CommandPump(sql) != 1)
     {
         Error3 ("Couldn't save character's position to database.\nCommand was "
