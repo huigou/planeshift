@@ -1169,6 +1169,11 @@ void psItemStats::SetUnique()
     flags &= ~PSITEMSTATS_FLAG_BUY_PERSONALISE;
 }
 
+bool  psItemStats::GetUnique()
+{
+    return ((stat_type=="U")?true:false);
+}
+
 void psItemStats::SetPrice(int trias)
 {
     price = psMoney(trias);

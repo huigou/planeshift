@@ -471,6 +471,14 @@ bool GMEventManager::RewardPlayersInGMEvent (Client* client,
                                 "You must reward at least 1 item to participant(s).");
            return false;
         }
+
+        // cant reward personalised or unique items
+        if (basestats->GetBuyPersonalise() || basestats->GetUnique())
+        {
+           psserver->SendSystemInfo(clientnum,
+                                "You cannot reward personalised / unique items.");
+           return false;
+        }
     }
     else
         basestats = NULL;

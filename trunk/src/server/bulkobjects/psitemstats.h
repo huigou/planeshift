@@ -406,7 +406,7 @@ private:
 
     csSet<unsigned int> ammo_types;
 
-    const char *stat_type;
+    csString stat_type;
 
     ItemRequirement reqs[3];
     int spell_id_on_hit; 
@@ -535,6 +535,7 @@ public:
     const char *GetName() const;
     const csString GetDownCaseName();
     void SetUnique();
+    bool GetUnique();
     void SetName(const char *v);
     void SaveName(void);
 
