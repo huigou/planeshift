@@ -103,7 +103,7 @@ void psServerStatusRunEvent::Trigger ()
     while ( gemi.HasNext() )
     {
         obj = gemi.Next();       
-        if(!obj->GetClient())
+        if(!obj->GetClient() && obj->GetCharacterData())
             ReportNPC(obj->GetCharacterData(), reportString);
     }
     reportString.Append( "</server_report>" );
