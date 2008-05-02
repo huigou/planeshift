@@ -35,11 +35,12 @@
 
 #include "effects/pseffect2drenderer.h"
 
+struct iLight;
+struct iMeshWrapper;
+struct iMovable;
 struct iSector;
 struct iSectorList;
-struct iMeshWrapper;
 struct iView;
-struct iMovable;
 class psEffect;
 class psLight;
 

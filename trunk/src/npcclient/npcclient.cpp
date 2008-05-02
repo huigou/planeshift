@@ -913,7 +913,7 @@ void psNPCClient::AttachNPC(iCelEntity *entity, NPC *npc)
 void psNPCClient::UnattachNPC(iCelEntity *entity, NPC *npc)
 {
     csRef<iObject> object ( scfQueryInterface<iObject> (entity));
-    csRef<NPCFinder> cef (CS_GET_CHILD_OBJECT (object, NPCFinder));
+    csRef<NPCFinder> cef (CS::GetChildObject<NPCFinder>(object));
     if (cef)
     {
         if (cef->GetNPC () != npc)
@@ -926,7 +926,7 @@ void psNPCClient::UnattachNPC(iCelEntity *entity, NPC *npc)
 NPC* psNPCClient::FindAttachedNPC(iCelEntity *entity)
 {
     csRef<iObject> object ( scfQueryInterface<iObject> (entity));
-    csRef<NPCFinder> cef (CS_GET_CHILD_OBJECT (object, NPCFinder));
+    csRef<NPCFinder> cef (CS::GetChildObject<NPCFinder>(object));
     if (cef)
         return cef->GetNPC();
     return 0;

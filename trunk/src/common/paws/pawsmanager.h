@@ -39,7 +39,7 @@
 #include "isndsys/ss_source.h"
 #include "isndsys/ss_renderer.h"
 
-#include "engine/psworld.h"
+#include "engine/psregion.h"
 
 #include "util/scriptvar.h"
 #include "util/log.h"

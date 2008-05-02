@@ -32,6 +32,7 @@
 #include <iengine/mesh.h>
 #include <iengine/region.h>
 #include <iengine/movable.h>
+#include <iengine/sector.h>
 #include <iengine/scenenode.h>
 #include <imesh/object.h>
 #include <imesh/spritecal3d.h>

@@ -730,7 +730,7 @@ Behavior* BehaviorSet::Find(Behavior *key)
      
 bool Behavior::RunScript(NPC *npc, EventManager *eventmgr, bool interrupted)
 {
-    unsigned int start_step = current_step;
+    size_t start_step = current_step;
     while (true)
     {
         if (current_step < sequence.GetSize() )
