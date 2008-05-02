@@ -2208,7 +2208,7 @@ int com_transactions(char* str)
 
 int com_allocations(char* str)
 {
-    //CS::Debug::DumpAllocateMemoryBlocks();
+    CS::Debug::DumpAllocateMemoryBlocks();
     CPrintf(CON_CMDOUTPUT,"Dumped.\n");
     
     return 0;
