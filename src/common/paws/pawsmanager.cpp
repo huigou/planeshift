@@ -274,10 +274,8 @@ bool PawsManager::HandleDoubleClick( iEvent& ev )
 {
     pawsWidget* widget = NULL;
     psPoint event = MouseLocation(ev);
-    int button;
-    int modifiers;
-    ev.Retrieve( "mButton", button );
-    ev.Retrieve( "keyModifiers", modifiers );
+    uint button = csMouseEventHelper::GetButton(&ev);
+    uint32 modifiers = csMouseEventHelper::GetModifiers(&ev);
 
     widget = mainWidget->WidgetAt( event.x, event.y );
     
@@ -427,10 +425,8 @@ bool PawsManager::HandleMouseDown( iEvent &ev )
     pawsWidget* widget = 0;
     psPoint event = MouseLocation(ev);
 
-    int button;
-    int modifiers;
-    ev.Retrieve("mButton", button);
-    ev.Retrieve("keyModifiers", modifiers);
+    uint button = csMouseEventHelper::GetButton(&ev);
+    uint32 modifiers = csMouseEventHelper::GetModifiers(&ev);
 
     widget = mainWidget->WidgetAt(event.x, event.y);
    
@@ -472,11 +468,8 @@ bool PawsManager::HandleMouseUp( iEvent &ev )
 {
     psPoint event = MouseLocation(ev);
 
-    int button;
-    int modifiers;
-    ev.Retrieve("mButton", button);
-    ev.Retrieve("keyModifiers", modifiers);
-
+    uint button = csMouseEventHelper::GetButton(&ev);
+    uint32 modifiers = csMouseEventHelper::GetModifiers(&ev);
 
     // Check to see if we are moving a widget.
     if ( movingWidget )

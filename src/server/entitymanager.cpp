@@ -48,7 +48,6 @@
 #include <propclass/camera.h>
 #include <propclass/gravity.h>
 #include <propclass/timer.h>
-#include <propclass/region.h>
 #include <propclass/input.h>
 
 //=============================================================================

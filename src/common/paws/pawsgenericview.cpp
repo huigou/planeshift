@@ -18,11 +18,13 @@
  */
 
 #include <psconfig.h>
+
+#include <iengine/campos.h>
+#include <iengine/collection.h>
+#include <imap/loader.h>
 #include <iutil/object.h>
 #include <iutil/objreg.h>
-#include <imap/loader.h>
 #include <iutil/vfs.h>
-#include <iengine/campos.h>
 
 #include "pawsgenericview.h"
 #include "pawsmanager.h"
@@ -38,7 +40,7 @@ pawsGenericView::pawsGenericView()
 
     char newName[10];
     sprintf(newName, "NAME%d\n", idName );
-    region = engine->CreateRegion (newName);
+    collection = engine->CreateCollection(newName);
 
     loadedMap = false;
 }   
@@ -72,13 +74,14 @@ bool pawsGenericView::LoadMap( const char* map, const char* sector )
     mapName = map;
 
     csString sectorName;
-    // Clear it out if it already existed
-    region->DeleteAll ();
+
+    // Clear out the collection.
+    collection->ReleaseAllObjects();
 
     // Now load the map into the selected region
     VFS->ChDir (map);
     engine->SetCacheManager(NULL);
-    if ( !loader->LoadMapFile("world", CS_LOADER_KEEP_WORLD, region, CS_LOADER_ACROSS_REGIONS) )
+    if ( !loader->LoadMapFile("world", CS_LOADER_KEEP_WORLD, collection, CS_LOADER_ACROSS_REGIONS, true) )
         return false;
 
     if (sector)
@@ -90,11 +93,9 @@ bool pawsGenericView::LoadMap( const char* map, const char* sector )
 
     stage = engine->FindSector(sectorName);
     CS_ASSERT( stage );
-    region->Add( stage->QueryObject() );
+    collection->Add( stage->QueryObject() );
     if ( !stage )
             return false;
-        
-    region->Prepare();
 
     view = csPtr<iView> (new csView( engine, PawsManager::GetSingleton().GetGraphics3D() ));
 

@@ -20,12 +20,13 @@
 #define PAWS_GENERIC_VIEW_HEADER
 
 #include <iengine/camera.h>
+#include <csutil/deprecated_warn_off.h>
 #include <iengine/engine.h>
+#include <csutil/deprecated_warn_on.h>
 #include <iengine/light.h>
 #include <iengine/material.h>
 #include <iengine/mesh.h>
 #include <iengine/movable.h>
-#include <iengine/region.h>
 #include <iengine/sector.h>
 
 #include <imesh/lighting.h>
@@ -37,6 +38,8 @@
 #include <csutil/leakguard.h>
 
 #include "pawswidget.h"
+
+struct iCollection;
 
 /** This widget is used to view a mesh in it's own seperate world.
  */
@@ -68,7 +71,7 @@ private:
     csRef<iSector> stage;
     csRef<iView>   view;
     csRef<iEngine> engine;
-    csRef<iRegion> region;
+    csRef<iCollection> collection;
 
     csVector3 objectPos;
     static int idName;

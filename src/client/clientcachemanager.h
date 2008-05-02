@@ -17,6 +17,9 @@
  *
  */
 
+#ifndef CLIENT_CACHE_MANAGER_HEADER
+#define CLIENT_CACHE_MANAGER_HEADER
+
 //=============================================================================
 // Crystal Space Includes
 //=============================================================================
@@ -32,9 +35,7 @@
 //=============================================================================
 #include "globals.h"
 
-
-#ifndef CLIENT_CACHE_MANAGER_HEADER
-#define CLIENT_CACHE_MANAGER_HEADER
+struct iCollection;
 
 /** Holds details on a mesh factory. */
 struct FactoryIndexEntry
@@ -69,6 +70,7 @@ public:
     FactoryIndexEntry* GetFactoryEntry(const char* filename);
 
 private:
+    csRef<iCollection> cache;
     csPDelArray<FactoryIndexEntry> factIndex;
 };
 

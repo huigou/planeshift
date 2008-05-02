@@ -470,6 +470,7 @@ void pawsCharacterPickerWindow::SelectCharacter(int character)
         }
         charApp->ClearEquipment();
         charApp->SetMesh(mesh);
+        psengine->GetCelClient()->UpdateShader(mesh);
 
         csRef<iSpriteCal3DState> spstate =
             
@@ -557,6 +558,7 @@ void pawsCharacterPickerWindow::SelectCharacter(int character, pawsWidget* widge
         charApp->SetMesh(view->GetObject());                    
         charApp->ApplyTraits(traits);            
         charApp->ApplyEquipment(equipment);
+        psengine->GetCelClient()->UpdateShader(mesh);
         
         csRef<iSpriteCal3DState> spstate =            
                                         scfQueryInterface<iSpriteCal3DState> (mesh->GetMeshObject());

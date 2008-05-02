@@ -23,7 +23,6 @@
 #include <iutil/databuff.h>
 #include <iengine/movable.h>
 #include <iengine/mesh.h>
-#include <iengine/region.h>
 #include <iutil/object.h>
 
 
@@ -154,9 +153,9 @@ void psServerDR::ResetPos(gemActor* actor)
     csString targetSectorName;
     float yRot = 0;
     actor->GetPosition(targetPoint, yRot, targetSector);
-    csRef<iRegion> region =  scfQueryInterface<iRegion> (targetSector->QueryObject()->GetObjectParent());
-    if (region)
-        targetSectorName = region->QueryObject()->GetName();
+    csRef<iCollection> psRegion =  scfQueryInterface<iCollection> (targetSector->QueryObject()->GetObjectParent());
+    if (psRegion)
+        targetSectorName = psRegion->QueryObject()->GetName();
     else
         targetSectorName = targetSector->QueryObject()->GetName();
     psserver->GetAdminManager()->GetStartOfMap(actor->GetClient(), targetSectorName, targetSector, targetPoint);

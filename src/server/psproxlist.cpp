@@ -34,7 +34,6 @@
 #include <cstool/collider.h>
 #include <iengine/movable.h>
 #include <iengine/engine.h>
-#include <iengine/region.h>
 #include <ivaria/collider.h>
 
 #include <physicallayer/entity.h>
@@ -453,8 +452,6 @@ float ProximityList::RangeTo( gemObject* object, bool ignoreY )
 #endif
 
     EntityManager::GetSingleton().GetWorld()->WarpSpace(sector2, sector1, pos2);
-    csRef<iRegion> region = scfQueryInterface<iRegion> (sector1->QueryObject ()->GetObjectParent ());
-    csRef<iRegion> region2 = scfQueryInterface<iRegion> (sector2->QueryObject ()->GetObjectParent ());
 
     if ( ignoreY )
     {

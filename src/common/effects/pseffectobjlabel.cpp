@@ -174,7 +174,7 @@ bool psEffectObjLabel::CreateMeshFact()
     facName += uniqueID++;
     
     meshFact = engine->CreateMeshFactory ("crystalspace.mesh.object.genmesh", facName.GetData());
-    region->Add(meshFact->QueryObject());
+    effectsCollection->Add(meshFact->QueryObject());
     
     iMeshObjectFactory * fact = meshFact->GetMeshObjectFactory();
     facState =  scfQueryInterface<iGeneralFactoryState> (fact);
@@ -185,7 +185,7 @@ bool psEffectObjLabel::CreateMeshFact()
     }
 
     // setup the material
-    csRef<iMaterialWrapper> mat = region->FindMaterial(materialName);
+    csRef<iMaterialWrapper> mat = effectsCollection->FindMaterial(materialName);
     if (mat)
     {
         fact->SetMaterialWrapper(mat);

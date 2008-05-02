@@ -71,7 +71,6 @@ class psAuthenticationClient;
 class psNetManager;
 class psSlotManager;
 
-class psMeshUtil;
 class GEMClientObject;
 class GEMClientActor;
 class GUIHandler;
@@ -182,7 +181,6 @@ public:
     psEffectManager*       GetEffectManager()  { return effectManager; }
     psChatBubbles*         GetChatBubbles()    { return chatBubbles; }
     psOptions*             GetOptions()        { return options; }
-    psMeshUtil*            GetMeshUtil()       { return meshUtil; }
     ModeHandler*           GetModeHandler()    { return modehandler; }
     ActionHandler*         GetActionHandler()  { return actionhandler; }
     psCharController*      GetCharControl()    { return charController; }
@@ -356,7 +354,7 @@ public:
     /// Unload order.
     bool UnloadingLast() { return unloadLast; }
 
-    /// Using post proc effects?
+    /// The graphics features that are enabled/disabled.
     uint GetGFXFeatures() { return gfxFeatures; }
 
 private:
@@ -401,7 +399,6 @@ private:
     csRef<psCal3DCallbackLoader> cal3DCallbackLoader;
     csRef<MaterialManager>    materialmanager; ///< Handles loading of materials/textures.
     psClientCharManager*      charmanager;  ///< Holds the charactermanager
-    psMeshUtil*               meshUtil;
     GUIHandler*               guiHandler;
     psCharController*         charController;
     psMouseBinds*             mouseBinds;

@@ -163,7 +163,7 @@ bool psEffectObjSimpMesh::PostSetup()
 {
     csRef<iLoader> loader =  csQueryRegistry<iLoader> (psCSSetup::object_reg);
 
-    loader->LoadLibraryFile(fileName, region);
+    loader->LoadLibraryFile(fileName, effectsCollection, false, true);
 
     /*
     // setup the material

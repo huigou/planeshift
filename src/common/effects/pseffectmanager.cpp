@@ -26,7 +26,6 @@
 #include <iengine/movable.h>
 #include <imesh/object.h>
 #include <imesh/sprite3d.h>
-#include <iengine/region.h>
 #include <csutil/syspath.h>
 
 #include "pseffectmanager.h"
@@ -97,7 +96,7 @@ psEffectManager::psEffectManager()
 
 #ifndef DONT_DO_EFFECTS
     csRef<iEngine> engine =  csQueryRegistry<iEngine> (psCSSetup::object_reg);
-    region = engine->CreateRegion("effects");
+    effectsCollection = engine->CreateCollection("effects");
 #endif
 }
 
@@ -120,7 +119,7 @@ psEffectManager::~psEffectManager()
         delete tmpEffect;
     }
     actualEffects.DeleteAll();
-    region->DeleteAll();
+    effectsCollection->ReleaseAllObjects();
 #endif
     effectLoader->SetManager(NULL);
     psCSSetup::object_reg->Unregister((psEffectLoader *)effectLoader, "PSEffects");
@@ -134,7 +133,7 @@ bool psEffectManager::LoadEffects(const csString & fileName, iView * parentView)
     view = parentView;
 
     csRef<iLoader> loader =  csQueryRegistry<iLoader> (psCSSetup::object_reg);
-    if (!loader->LoadLibraryFile(fileName, region, true, true))
+    if (!loader->LoadLibraryFile(fileName, effectsCollection, true, true))
     {
         Error2("Failed to load %s",fileName.GetDataSafe());
         return false;
@@ -434,16 +433,6 @@ void psEffectManager::Update(csTicks elapsed)
 #endif
 }
 
-bool psEffectManager::Prepare()
-{
-#ifndef DONT_DO_EFFECTS
-    if (!region)
-        return false;
- 
-    return region->Prepare();
-#endif
-}
-
 void psEffectManager::Clear()
 {
 #ifndef DONT_DO_EFFECTS
@@ -456,9 +445,8 @@ void psEffectManager::Clear()
     while (itActual.HasNext())
         delete itActual.Next();
     actualEffects.DeleteAll();
-    
-    region->DeleteAll();    
-    region->Clear();
+        
+    effectsCollection->ReleaseAllObjects();
 
 #endif
 }

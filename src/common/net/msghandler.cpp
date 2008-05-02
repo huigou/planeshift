@@ -22,7 +22,7 @@
 #include "net/messages.h"
 #include "net/netbase.h"
 #include "net/msghandler.h"
-#include "csutil/scopedmutexlock.h"
+#include "csutil/scopedlock.h"
 
 #include "net/subscriber.h"
 #include "util/psconst.h"

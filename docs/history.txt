@@ -1,3 +1,11 @@
+*** 2008-05-02 by Mike Gist
+- Bumped CS and CEL version to v1.3 (trunk). Revisions 29523 and 3337.
+- Fixed a few bugs (patch from Vornne) triggered by this bump.
+- Changed our sound to use the OpenAL renderer.
+- Replaced regions with collections.
+- Added initial (currently expensive) support for character shaders.
+- Some code cleanups and warning fixes.
+
 *** 2008-05-01 by Dave Bentham
 - Fixed FS#1425 - cannot reward personalised items in events.
 

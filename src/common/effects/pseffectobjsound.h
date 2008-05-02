@@ -61,7 +61,8 @@ private:
     csRef<iSoundManager>        soundmanager;
     csRef<SOUND_DATA_TYPE>      sndData;
     csRef<SOUND_STREAM_TYPE>    sndStream;
-    csRef<SOUND_SOURCE3D_TYPE>  sndSource;
+    csRef<SOUND_SOURCE_TYPE>    sndSource;
+    csRef<SOUND_SOURCE3D_TYPE>  sndSource3d;
 };
 
 #endif

@@ -129,7 +129,7 @@ bool psEffectObjParticles::Render(const csVector3 &up)
     // add the custom material if set
     if (!materialName.IsEmpty())
     {
-        csRef<iMaterialWrapper> mat = region->FindMaterial(materialName);
+        csRef<iMaterialWrapper> mat = effectsCollection->FindMaterial(materialName);
         if (mat != 0)
             mesh->GetMeshObject()->SetMaterialWrapper(mat);
     }
@@ -186,7 +186,7 @@ bool psEffectObjParticles::PostSetup()
     csString facName = "effect_particles_fac_";
     facName += uniqueID++;
 
-    meshFact = region->FindMeshFactory(factName);
+    meshFact = effectsCollection->FindMeshFactory(factName);
     if (!meshFact)
     {
         csReport(psCSSetup::object_reg, CS_REPORTER_SEVERITY_ERROR, "planeshift_effects",

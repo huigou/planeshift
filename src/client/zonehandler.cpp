@@ -323,7 +323,7 @@ void ZoneHandler::FlagRegions(ZoneLoadInfo* zone)
         }
         else
         {
-            csArray<iRegion*> deletedRegions;
+            csArray<iCollection*> deletedRegions;
             world->GetNotNeededRegions(deletedRegions);
             loadProgressBar->SetTotalValue(zone->regions.GetSize() + deletedRegions.GetSize());
         }
@@ -356,7 +356,7 @@ bool ZoneHandler::ExecuteFlaggedRegions(const csString & sector)
 
         if(!found->transitional)
         {
-            csArray<iRegion*> deletedRegions;
+            csArray<iCollection*> deletedRegions;
             world->GetNotNeededRegions(deletedRegions);
             celclient->OnRegionsDeleted(deletedRegions);
         }

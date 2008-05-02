@@ -26,7 +26,6 @@
 #include <iengine/material.h>
 #include <iengine/mesh.h>
 #include <iengine/movable.h>
-#include <iengine/region.h>
 #include <iengine/sector.h>
 
 #include <imesh/lighting.h>
@@ -34,6 +33,7 @@
 #include <imesh/thing.h>
 
 #include <cstool/csview.h>
+#include <csutil/csstring.h>
 #include <csutil/leakguard.h>
 
 #include "pawswidget.h"
@@ -141,6 +141,7 @@ private:
     csVector3 objectPos;
     csVector3 cameraMod;
     static int idName;
+    csString realName;
     
     csRef<iSector> meshSector;
     csRef<iView>   meshView;

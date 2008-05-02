@@ -29,7 +29,6 @@
 #include <iengine/movable.h>
 #include <iengine/sector.h>
 #include <iutil/object.h>
-#include <iengine/region.h>
 
 //=============================================================================
 // Project Includes
@@ -1210,9 +1209,9 @@ void UserManager::ReportPosition(psUserCmdMessage& msg,Client *client,int client
         // Report extra info to GMs (players will use skills to determine correct direction)
         if (extras)
         {
-            // Get the iRegion this sector belongs to
-            csRef<iRegion> region =  scfQueryInterface<iRegion> (sector->QueryObject()->GetObjectParent());
-            csString region_name = (region) ? region->QueryObject()->GetName() : "(null)";
+            // Get the region this sector belongs to
+            csRef<iCollection> psRegion =  scfQueryInterface<iCollection> (sector->QueryObject()->GetObjectParent());
+            csString region_name = (psRegion) ? psRegion->QueryObject()->GetName() : "(null)";
 
             int degrees = (int)(angle*180.0/PI);
             psserver->SendSystemInfo(clientnum,

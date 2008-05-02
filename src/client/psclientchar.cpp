@@ -45,8 +45,6 @@
 #include "net/msghandler.h"
 #include "net/charmessages.h"
 
-#include "util/psmeshutil.h"
-
 #include "engine/netpersist.h"
 
 #include "iclient/isoundmngr.h"
@@ -404,102 +402,6 @@ void psClientCharManager::HandleTargetUpdate( MsgEntry* me )
     else
         Error1("Received TagetUpdateMessage with invalid target.");
 }
-
-
-void psClientCharManager::Equip( iMeshWrapper* object,
-                                 csString& slotname,
-                                 csString& mesh,
-                                 csString& part,
-                                 csString& partMesh,
-                                 csString& texture
-                               )
-{
-    psMeshUtil * meshutil = psengine->GetMeshUtil();
-
-
-    if ( mesh.Length() )
-    {
-        meshutil->Attach( object, slotname, mesh );
-    }
-
-    // This is a part mesh (ie Mesh) change so change the mesh for that part.
-    if ( partMesh.Length() )
-    {
-        meshutil->ChangeMesh( object, part, partMesh );
-        if ( texture.Length() )
-        {
-            meshutil->ChangeMaterial( object, 
-                                      meshutil->ParseStrings(object,part,partMesh),
-                                      texture, texture );
-        }
-    }
-    else
-    {
-        if ( part.Length() )
-        {
-            meshutil->ChangeMaterial( object, part, texture, texture );
-        }
-    }
-}
-
-void psClientCharManager::Dequip( iMeshWrapper* object,
-                                  csString& slotname,
-                                  csString& mesh,
-                                  csString& part,
-                                  csString& partMesh,
-                                  csString& mat,
-                                  csString& txt
-                                )
-{
-    psMeshUtil * meshutil = psengine->GetMeshUtil();
-
-    if ( mesh.Length() )
-    {
-        meshutil->Detach( object, slotname );
-    }
-
-    // This is a part mesh (ie Mesh) set default mesh for that part.
-    if ( partMesh.Length() )
-    {
-        meshutil->DefaultMesh( object, part );
-    }
-
-    if ( part.Length() )
-    {
-        if ( mat.Length() )
-        {
-            meshutil->ChangeMaterial( object, part, mat, txt);
-        }
-        else
-        {
-            meshutil->DefaultMaterial( object, part );
-        }            
-    }
-}
-
-
-void psClientCharManager::Equip( iMeshWrapper * object, psEquipmentMessage * equip, csString slotname, csPDelArray<Trait>& list)
-{
-    if ( equip->type == psEquipmentMessage::EQUIP )
-    {
-        Equip(object,slotname,equip->mesh,equip->part,equip->partMesh,equip->texture);
-    }
-    else
-    {
-        csString mat("");
-        csString txt("");
-        for (size_t z = 0; z < list.GetSize(); z++ )
-        {
-            if ( list[z]->mesh == equip->part )
-            {
-                mat = list[z]->material;
-                txt = list[z]->texture;
-            }                   
-        }
-        Dequip(object,slotname,equip->mesh,equip->part,equip->partMesh,mat,txt);       
-    }
-}
-
 
 void psClientCharManager::HandleEquipment( MsgEntry* me )
 {

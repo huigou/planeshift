@@ -227,14 +227,14 @@ bool psEffectObjStar::PostSetup()
     csString facName = "effect_star_fac_";
     facName += uniqueID++;
     meshFact = engine->CreateMeshFactory ("crystalspace.mesh.object.genmesh", facName.GetData());
-    region->Add(meshFact->QueryObject());
+    effectsCollection->Add(meshFact->QueryObject());
 
     // create the actual sprite3d data
     iMeshObjectFactory* fact = meshFact->GetMeshObjectFactory();
     csRef<iGeneralFactoryState> facState =  scfQueryInterface<iGeneralFactoryState> (fact);
 
     // setup the material
-    csRef<iMaterialWrapper> mat = region->FindMaterial(materialName);
+    csRef<iMaterialWrapper> mat = effectsCollection->FindMaterial(materialName);
     if (!mat)
     {
         csReport(psCSSetup::object_reg, CS_REPORTER_SEVERITY_ERROR, "planeshift_effects", "Couldn't find effect material: %s\n", materialName.GetData());

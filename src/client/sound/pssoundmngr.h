@@ -337,7 +337,7 @@ public:
 
     void SetVolume(float volume);
     
-    csRef<iSndSysSourceSoftware3D> GetSource3D();
+    csRef<SOUND_SOURCE3D_TYPE> GetSource3D();
     
     bool IsValid() { return soundSource.IsValid(); }
 };
@@ -439,7 +439,7 @@ protected:
     void UpdateWeather(int weather);
 
     psSndStreamHandle stream;
-    csRef<iSndSysSourceSoftware3D> soundSource3D;
+    csRef<SOUND_SOURCE3D_TYPE> soundSource3D;
     
     csString resourceName;
     csString attachedMesh;

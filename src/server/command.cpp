@@ -36,7 +36,7 @@
 #include <csutil/csstring.h>
 #include <csutil/csmd5.h>
 #include <iutil/stringarray.h>
-#include <iengine/region.h>
+#include <iengine/collection.h>
 #include "util/command.h"
 #include "util/serverconsole.h"
 #include "net/messages.h"
@@ -1693,7 +1693,7 @@ int com_sectors(char *)
 {
     csRef<iEngine> engine = csQueryRegistry<iEngine> (psserver->GetObjectReg());
     csRef<iSectorList> sectorList = engine->GetSectors();
-    iRegionList* regionList = engine->GetRegions();
+    csRef<iCollectionArray> collections = engine->GetCollections();
     for (int i = 0; i < sectorList->GetCount(); i++){
         iSector * sector = sectorList->Get(i);
         csString sectorName = sector->QueryObject()->GetName();
@@ -1702,12 +1702,12 @@ int com_sectors(char *)
 
         CPrintf(CON_CMDOUTPUT ,"%4i %4u %s",i,si?si->uid:0,sectorName.GetDataSafe());
 
-        for (int r = 0; r < regionList->GetCount(); r++)
+        for (size_t r = 0; r < collections->GetSize(); r++)
         {
-            if (regionList->Get(r)->FindSector(sector->QueryObject()->GetName()))
+            if (collections->Get(r)->FindSector(sector->QueryObject()->GetName()))
             {
 
-                CPrintf(CON_CMDOUTPUT ," %s",regionList->Get(r)->QueryObject()->GetName());
+                CPrintf(CON_CMDOUTPUT ," %s", collections->Get(r)->QueryObject()->GetName());
             }
 
         }
