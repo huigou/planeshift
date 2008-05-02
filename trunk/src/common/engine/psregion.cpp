@@ -388,7 +388,7 @@ void psRegion::Unload()
 
         // Remove all objects from the region.
 #ifndef CS_DEBUG
-        GetRegion()->ReleaseAllObjects();
+        engine->RemoveCollection(collection);
 #else
         printf("Unloading %s\n", regionName.GetData());
         engine->RemoveCollection(collection);
