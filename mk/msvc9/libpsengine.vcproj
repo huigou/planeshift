@@ -736,6 +736,9 @@
 				RelativePath="..\..\src\common\engine\netpersist.cpp">
 			</File>
 			<File
+				RelativePath="..\..\src\common\engine\psregion.cpp">
+			</File>
+			<File
 				RelativePath="..\..\src\common\engine\psworld.cpp">
 			</File>
 			<File
@@ -759,6 +762,9 @@
 			</File>
 			<File
 				RelativePath="..\..\src\common\engine\netpersist.h">
+			</File>
+			<File
+				RelativePath="..\..\src\common\engine\psregion.h">
 			</File>
 			<File
 				RelativePath="..\..\src\common\engine\psworld.h">
