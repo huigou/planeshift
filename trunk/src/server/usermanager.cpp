@@ -419,7 +419,8 @@ void UserManager::Emote(csString general, csString specific, csString animation,
 
 bool UserManager::LoadEmotes(const char *xmlfile, iVFS *vfs)
 {
-    csRef<iDocumentSystem> xml = csPtr<iDocumentSystem>(new csTinyDocumentSystem);
+    csRef<iDocumentSystem> xml;
+    xml.AttachNew(new csTinyDocumentSystem);
 
     csRef<iDataBuffer> buff = vfs->ReadFile( xmlfile );
 
