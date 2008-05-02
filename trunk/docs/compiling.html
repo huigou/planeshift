@@ -839,7 +839,12 @@ If you update a repository, you will need to recompile that repository and each 
     <p>Crystal Space is the 3D Software Development Kit (SDK) that is used in PlaneShift mainly for rendering and sound.</p>
     <p>
         Right-click on the development directory and select "SVN Checkout". Specify the URL as:
-        <p><i class="command">https://crystal.svn.sourceforge.net/svnroot/crystal/CS/branches/release/V1.2</i></p>
+    <div class="User">
+    <p><i class="command">/home/user/development$ svn co -r CS_SOURCE_REV https://crystal.svn.sourceforge.net/svnroot/crystal/CS/branches/release/V1.2 cs</i></p>
+    </div>
+    <div class="Developer">
+    <p><i class="command">/home/user/development$ svn co -r CS_SOURCE_REV_HEAD https://crystal.svn.sourceforge.net/svnroot/crystal/CS/trunk cs</i></p>
+    </div>
         Specify the checkout directory as "C:\development\CS", select "Revision", and paste the current
         CS revision number: CS_SOURCE_REV_HEAD
     </p>
@@ -904,7 +909,12 @@ trim down the length of the CEL linker flag list.</div>
     <p>CEL is a layer on top of Crystal Space that is used for entity and behaviour control.</p>
     <p>
         Right-click on the development directory and select "SVN Checkout". Specify the URL as:
-        <p><i class="command">https://cel.svn.sourceforge.net/svnroot/cel/cel/branches/release/V1.2</i></p>
+    <div class="User">
+    <p><i class="command">/home/user/development$ svn co -r CEL_SOURCE_REV https://cel.svn.sourceforge.net/svnroot/cel/cel/branches/release/V1.2 cel</i></p>
+    </div>
+    <div class="Developer">
+    <p><i class="command">/home/user/development$ svn co -r CEL_SOURCE_REV_HEAD https://cel.svn.sourceforge.net/svnroot/cel/cel/trunk cel</i></p>
+    </div>
         Specify the checkout directory as "C:\development\cel", select "Revision", and paste the current
         CEL revision number: CEL_SOURCE_REV_HEAD
     </p>
