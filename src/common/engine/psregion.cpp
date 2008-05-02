@@ -135,6 +135,7 @@ bool psRegion::Load(bool loadMeshes)
     // Successfully loaded.  Now get textures ready, etc. and return.
     if (using3D)
     {
+        engine->ShineLights(collection);
         engine->PrecacheDraw (collection);
         Debug2(LOG_LOAD, 0,"After Precache, %dms elapsed", csGetTicks()-start);
     }
