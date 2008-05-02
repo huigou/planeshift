@@ -388,8 +388,8 @@ public:
     /**
      * Set & Get top line funcs
      */
-    unsigned int GetTopLine() { return topLine; }
-    void SetTopLine(unsigned int newTopLine) { topLine = newTopLine; }
+    size_t GetTopLine() { return topLine; }
+    void SetTopLine(size_t newTopLine) { topLine = newTopLine; }
     size_t GetCursorPosition();
     size_t GetCursorPosition(size_t destLine, size_t destCursor);
     void SetCursorPosition(size_t pos) { cursorPosition = pos; }
@@ -425,7 +425,7 @@ protected:
     int lineHeight;
     size_t canDrawLines;
     
-    unsigned int topLine;
+    size_t topLine;
     pawsScrollBar* vScrollBar;
         
     void ReflowText();

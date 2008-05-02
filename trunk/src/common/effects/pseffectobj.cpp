@@ -288,7 +288,7 @@ psEffectObj::psEffectObj(iView *parentView, psEffect2DRenderer * renderer2d)
     scale = 1.0f;
     aspect = 1.0f;
 
-    region = engine->GetRegions()->FindByName("effects");
+    effectsCollection = engine->GetCollection("effects");
     keyFrames.AttachNew(new psEffectObjKeyFrameGroup);
 
     baseScale = 1.0f;
@@ -445,7 +445,7 @@ bool psEffectObj::SetScaling(float scale, float aspect)
 
 bool psEffectObj::Update(csTicks elapsed)
 {
-    if (!anchor || !anchor->IsReady()) // wait for anchor to be ready
+    if (!anchor || !anchor->IsReady() || !anchorMesh->GetMovable()->GetSectors()->GetCount()) // wait for anchor to be ready
         return true;
 
     const static csMatrix3 UP_FIX(1,0,0,   0,0,1,  0,1,0);

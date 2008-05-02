@@ -109,30 +109,12 @@ public:
      */
     GEMClientObject * GetTarget() { return target; }
 
-    /** Used to build up an equipment on a object.
-      * This should only be used for initial construction and is only for putting things on.
-      * 
-      * @param object  The mesh we want to build the item onto.
-      * @param slotname Where we want to put the equipment
-      * @param mesh The mesh we want to attach in that slot
-      * @param part The part on the model we want to change
-      * @param partMesh The new mesh we want to change on the model.    
-      * @param texture The texture for the equipment we want to use.
-      */
-    void Equip( iMeshWrapper* object, csString& slotname, csString& mesh, csString& part, csString& partMesh, csString& texture);
-
-    /// Opposite of Equip()
-    void Dequip( iMeshWrapper* object, csString& slotname, csString& mesh, csString& part, csString& partMesh, csString& mat, csString& txt);
-    
 protected:
     /// Change a trait on a character.
     void ChangeTrait( MsgEntry* me );
     
     /// Handle animation changes for things from the server.
     void HandleAction( MsgEntry* me );
-
-    /// Equip a object from the equip message.
-    void Equip( iMeshWrapper * object, psEquipmentMessage * equip, csString slotname, csPDelArray<Trait>& list);
 
     /// Handle the equipment messages comming from the server. 
     void HandleEquipment( MsgEntry* me );

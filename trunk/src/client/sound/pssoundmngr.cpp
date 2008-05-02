@@ -2084,7 +2084,7 @@ void psSndStreamHandle::SetVolume(float volume)
         soundStream->Unpause();
 }
 
-csRef<iSndSysSourceSoftware3D> psSndStreamHandle::GetSource3D()
+csRef<SOUND_SOURCE3D_TYPE> psSndStreamHandle::GetSource3D()
 {
     return scfQueryInterface<SOUND_SOURCE3D_TYPE> (soundSource);
 }

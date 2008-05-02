@@ -25,7 +25,6 @@
 #include <iutil/object.h>
 #include <iutil/stringarray.h>
 #include <iengine/campos.h>
-#include <iengine/region.h>
 #include <iengine/mesh.h>
 #include <iengine/movable.h>
 
@@ -3485,9 +3484,6 @@ bool AdminManager::GetTargetOfTeleport(Client *client, psAdminCmdMessage& msg, A
 bool AdminManager::GetStartOfMap(Client * client, const csString & map, iSector * & targetSector,  csVector3 & targetPoint)
 {
     iEngine* engine = EntityManager::GetSingleton().GetEngine();
-    iRegionList* regions = engine->GetRegions();
-
-    assert(regions);
 
     if ( map.Length() == 0 )
     {
@@ -3495,14 +3491,14 @@ bool AdminManager::GetStartOfMap(Client * client, const csString & map, iSector 
         return false;
     }
 
-    iRegion* region = regions->FindByName(map.GetData());
-    if (region == NULL)
+    iCollection* psRegion = engine->GetCollection(map.GetData());
+    if (psRegion == NULL)
     {
         psserver->SendSystemError(client->GetClientNum(), "Map not found.");
         return false;
     }
 
-    iCameraPosition* loc = region->FindCameraPosition("Camera01");
+    iCameraPosition* loc = psRegion->FindCameraPosition("Camera01");
     if (loc == NULL)
     {
         psserver->SendSystemError(client->GetClientNum(), "Starting location not found in map.");

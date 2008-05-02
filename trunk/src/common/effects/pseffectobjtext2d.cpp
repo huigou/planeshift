@@ -309,7 +309,7 @@ bool psEffectObjText2D::Load(iDocumentNode * node)
 
     csRef<iDocumentNode> dataNode = node->GetNode("background");
 
-    backgroundMat = region->FindMaterial(dataNode->GetAttributeValue("material"));
+    backgroundMat = effectsCollection->FindMaterial(dataNode->GetAttributeValue("material"));
     if (!backgroundMat)
     {
         csReport(psCSSetup::object_reg, CS_REPORTER_SEVERITY_ERROR, "planeshift_effects",

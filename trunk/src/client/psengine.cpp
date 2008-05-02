@@ -114,7 +114,6 @@ if (!myref) {                                                   \
 #include "engine/psworld.h"
 #include "engine/materialmanager.h"
 #include "util/psutil.h"
-#include "util/psmeshutil.h"
 #include "util/consoleout.h"
 #include "entitylabels.h"
 #include "chatbubbles.h"
@@ -219,7 +218,6 @@ psEngine::psEngine (iObjectRegistry *objectreg)
 
     cachemanager = NULL;
     charmanager = NULL;
-    meshUtil = NULL;
     guiHandler = NULL;
     charController = NULL;
     mouseBinds = NULL;
@@ -287,7 +285,6 @@ void psEngine::Cleanup()
     delete questionclient;
     delete cachemanager;
     delete slotManager;
-    delete meshUtil;
     delete mouseBinds;
     delete guiHandler;
     delete inventoryCache;
@@ -532,7 +529,6 @@ bool psEngine::Initialize (int level)
 
         inventoryCache = new psInventoryCache();
         guiHandler = new GUIHandler();
-        meshUtil = new psMeshUtil(object_reg);
         celclient = csPtr<psCelClient> (new psCelClient());
         slotManager = new psSlotManager();
         modehandler = csPtr<ModeHandler> (new ModeHandler (soundmanager, celclient,netmanager->GetMsgHandler(),object_reg));

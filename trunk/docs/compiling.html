@@ -12,12 +12,13 @@
     var CSrev = "29388";  // CS_SOURCE_REV
     var CELrev = "3331";  // CEL_SOURCE_REV
     var CAL3Drev = "493"; // CAL3D_SOURCE_REV
-    var CSrev_HEAD = "29388";  // CS_SOURCE_REV_HEAD
-    var CELrev_HEAD = "3331";  // CEL_SOURCE_REV_HEAD
+    var CSrev_HEAD = "29523";  // CS_SOURCE_REV_HEAD
+    var CELrev_HEAD = "3337";  // CEL_SOURCE_REV_HEAD
     var CAL3Drev_HEAD = "493"; // CAL3D_SOURCE_REV_HEAD
-    var csWinLibsVersion = "1.2_002"; // cs win32 libs version.
+    var csWinLibsVersionStab = "1.2_002"; // cs win32 libs version.
+    var csWinLibsVersion = "1.3_003"; // cs win32 libs version.
     //Update date and author, to be changed everytime and updates occurred
-    var UpdateDate = "27 April 2008"; //Date when the update occurred
+    var UpdateDate = "2 May 2008"; //Date when the update occurred
     var UpdateAuthor = "Mike Gist"; //Author of the update
 -->
 </script>
@@ -226,6 +227,7 @@ function Initialize()
                               replace(/CS_SOURCE_REV/g, CSrev).
                               replace(/CEL_SOURCE_REV/g, CELrev).
 					replace(/UPDATE_DATE/g, UpdateDate).
+                              replace(/LIBS_VER_STAB/g, csWinLibsVersionStab).
                               replace(/LIBS_VER/g, csWinLibsVersion).
 			            replace(/UPDATE_AUTHOR/g, UpdateAuthor);
 
@@ -358,17 +360,10 @@ function Initialize()
     <p>
         Currently compatible with trunk of PS:<br>
         <b>CAL3D SVN revision:</b> CAL3D_SOURCE_REV_HEAD <br>
-        <b>CS 1.2 SVN revision:</b> CS_SOURCE_REV_HEAD <br>
-        <b>CEL 1.2 SVN revision:</b> CEL_SOURCE_REV_HEAD <br>
+        <b>CS SVN revision:</b> CS_SOURCE_REV_HEAD <br>
+        <b>CEL SVN revision:</b> CEL_SOURCE_REV_HEAD <br>
     </p>
     </div>
-
-    <p><div ID="forked"> <!-- only shown if the CS dates are different -->
-        If you want to use latest PS (HEAD) for testing or developing purposes:<br>
-        <b><i>CS V1.2 SVN revision for latest PS:</i></b> CS_SOURCE_REV_HEAD <br>
-        <b><i>CEL V1.2 SVN revision for latest PS:</i></b> CEL_SOURCE_REV_HEAD <br>
-        Note that this version of PS is <b>NOT</b> compatible with Laanx, yet.
-    </div></p>
 </p>
 
 <!---------------------------------------------------------------------------------------------------->
@@ -789,7 +784,7 @@ After that we need to refresh our sources.list file like so:<br>
     <p><i class="command">/home/user/development$ svn co -r CS_SOURCE_REV https://crystal.svn.sourceforge.net/svnroot/crystal/CS/branches/release/V1.2 cs</i></p>
     </div>
     <div class="Developer">
-    <p><i class="command">/home/user/development$ svn co -r CS_SOURCE_REV_HEAD https://crystal.svn.sourceforge.net/svnroot/crystal/CS/branches/release/V1.2 cs</i></p>
+    <p><i class="command">/home/user/development$ svn co -r CS_SOURCE_REV_HEAD https://crystal.svn.sourceforge.net/svnroot/crystal/CS/trunk cs</i></p>
     </div>
 
     <h3>Crystal Entity Layer (CEL)</h3>
@@ -798,7 +793,7 @@ After that we need to refresh our sources.list file like so:<br>
     <p><i class="command">/home/user/development$ svn co -r CEL_SOURCE_REV https://cel.svn.sourceforge.net/svnroot/cel/cel/branches/release/V1.2 cel</i></p>
     </div>
     <div class="Developer">
-    <p><i class="command">/home/user/development$ svn co -r CEL_SOURCE_REV_HEAD https://cel.svn.sourceforge.net/svnroot/cel/cel/branches/release/V1.2 cel</i></p>
+    <p><i class="command">/home/user/development$ svn co -r CEL_SOURCE_REV_HEAD https://cel.svn.sourceforge.net/svnroot/cel/cel/trunk cel</i></p>
     </div>
 
     <h3>PlaneShift</h3>
@@ -862,7 +857,12 @@ If you update a repository, you will need to recompile that repository and each 
     <div class="Static">
     <a href="http://www.crystalspace3d.org/downloads/cs-win32libs/static/">http://www.crystalspace3d.org/downloads/cs-win32libs/static/</a><br/>
     </div>
-    The currently used CS revision needs version <b>LIBS_VER</b>. Don't mix up with other versions!</p> 
+    <div class="User">
+    The currently used CS revision needs version <b>LIBS_VER_STAB</b>. Don't mix up with other versions!
+    </div>
+    <div class="Developer">
+    The currently used CS revision needs version <b>LIBS_VER</b>. Don't mix up with other versions!
+    </div></p>
    <div class="MSVC">
  <p>Run the program and install the libraries. The Default name is fine. </p></div>
 <div class="MINGW">

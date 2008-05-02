@@ -37,7 +37,7 @@ enum
 struct QuestNote
 {
     int id;
-    unsigned int topLine;
+    size_t topLine;
     csString notes;
 };
 

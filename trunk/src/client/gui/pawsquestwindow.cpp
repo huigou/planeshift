@@ -453,7 +453,7 @@ void pawsQuestListWindow::OnListAction( pawsListBox* selected, int status )
 {
     int previousQuestID = questID;
     size_t numOfQuests;
-    unsigned int topLine = 0;
+    size_t topLine = 0;
     int idColumn;
 
     if (topTab == questTab)

@@ -34,7 +34,7 @@ class CelBase;
 struct iSector;
 struct iObjectRegistry;
 struct iEngine;
-struct iRegion;
+struct iCollection;
 class psWorld;
 
 // Feature defines.
@@ -88,14 +88,14 @@ public:
     bool IsLoaded()
     { return loaded; }
 
-    iRegion * GetRegion();
+    iCollection * GetRegion();
 
     /**
      * Sets up the collision detection blockers for all meshes in
      * the region.
      */
-    void SetupWorldColliders(iEngine *engine, iRegion *cur_region);
-    void SetupWorldCollidersCD(iEngine *engine, iRegion *cur_region, iRegion *cd_region);
+    void SetupWorldColliders(iEngine *engine, iCollection *cur_col);
+    void SetupWorldCollidersCD(iEngine *engine, iCollection *cur_col, iCollection *cd_col);
 
     /**
      * The retain flag is used by psWorld owner to manage the list
@@ -236,7 +236,7 @@ public:
      */
     void FlagRegionAsNeeded(const char *map);
 
-    void GetNotNeededRegions(csArray<iRegion*> & regions);
+    void GetNotNeededRegions(csArray<iCollection*> & regions);
 
     /// Unload all regions to be unloaded, and load any regions to be kept but
     /// which are not loaded already.

@@ -975,8 +975,7 @@ void psLinearMovement::SetFullPosition (const csVector3& pos, float yrot,
 void psLinearMovement::SetFullPosition (const char* center_name, float yrot,
 	iSector* sector)
 {
-  csRef<iMapNode> mapnode = CS_GET_NAMED_CHILD_OBJECT (
-  	sector->QueryObject (), iMapNode, center_name);
+  csRef<iMapNode> mapnode = CS::GetNamedChildObject<iMapNode>(sector->QueryObject(), center_name);
   if (mapnode)
   {
     SetFullPosition (mapnode->GetPosition (), yrot, sector);
@@ -1000,8 +999,7 @@ void psLinearMovement::SetPosition (const csVector3& pos, float yrot,
 void psLinearMovement::SetPosition (const char* center_name, float yrot,
 	iSector* sector)
 {
-  csRef<iMapNode> mapnode = CS_GET_NAMED_CHILD_OBJECT (
-  	sector->QueryObject (), iMapNode, center_name);
+  csRef<iMapNode> mapnode = CS::GetNamedChildObject<iMapNode>(sector->QueryObject(), center_name);
   if (mapnode)
   {
     SetPosition (mapnode->GetPosition (), yrot, sector);

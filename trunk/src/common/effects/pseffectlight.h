@@ -44,6 +44,7 @@ private:
     csRef<iLight> light;
     csVector3 lightBasePos;
     csWeakRef<iMovable> movable;
+    csWeakRef<iSector> sector;
 };
 
 #endif

@@ -212,7 +212,7 @@ bool psEffectObjQuad::CreateMeshFact()
     facName += uniqueID++;
     
     meshFact = engine->CreateMeshFactory ("crystalspace.mesh.object.genmesh", facName.GetData());
-    region->Add(meshFact->QueryObject());
+    effectsCollection->Add(meshFact->QueryObject());
     
     // create the actual sprite3d data
     iMeshObjectFactory * fact = meshFact->GetMeshObjectFactory();
@@ -224,7 +224,7 @@ bool psEffectObjQuad::CreateMeshFact()
     }
 
     // setup the material
-    mat = region->FindMaterial(materialName);
+    mat = effectsCollection->FindMaterial(materialName);
     if (mat)
         fact->SetMaterialWrapper(mat);
 

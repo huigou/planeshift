@@ -37,7 +37,7 @@ struct iEngine;
 struct iView;
 struct iMeshFactoryWrapper;
 struct iSector;
-struct iRegion;
+struct iCollection;
 class psEffect2DRenderer;
 
 class psEffectAnchor;
@@ -353,7 +353,7 @@ protected:
     csRef<iView> view;
     
     /// region to store the CS objects
-    csRef<iRegion> region;
+    csRef<iCollection> effectsCollection;
 
     float scale;
     float aspect;

@@ -38,14 +38,21 @@ psLight::psLight()
 
 psLight::~psLight()
 {
+    if(sector)
+    {
+        sector->GetLights()->Remove(light);
+    }
 }
 
 unsigned int psLight::AttachLight(csRef<iLight> newLight, csRef<iMeshWrapper> mw)
 {
     light = newLight;
+    //light->QuerySceneNode()->SetParent(mw->QuerySceneNode());
     movable = mw->GetMovable();
     lightBasePos = light->GetCenter();
-    light->GetMovable()->SetSector(movable->GetSectors()->Get(0));
+    sector = movable->GetSectors()->Get(0);
+    light->GetMovable()->SetSector(sector);
+    sector->GetLights()->Add(light);
     light->SetCenter(lightBasePos+movable->GetFullPosition());
     light->Setup(); 
 
@@ -59,8 +66,8 @@ bool psLight::Update()
         iSectorList* sectors = movable->GetSectors();
         if(sectors->GetCount())
         {
-            csString sector(sectors->Get(0)->QueryObject()->GetName());
-            if(sector.Compare("SectorWhereWeKeepEntitiesResidingInUnloadedMaps"))
+            csString sectorname(sectors->Get(0)->QueryObject()->GetName());
+            if(sectorname.Compare("SectorWhereWeKeepEntitiesResidingInUnloadedMaps"))
                 return true;
 
             csVector3 newPos(movable->GetFullTransform().GetT2O()*lightBasePos);
@@ -68,8 +75,12 @@ bool psLight::Update()
 
             if(light->GetCenter() != newPos)
             {
-                if(sectors)
+                if(sectors && (!sector || sector != sectors->Get(0)))
                 {
+                    if(sector)
+                    {
+                        sector->GetLights()->Remove(light);
+                    }
                     light->GetMovable()->SetSector(sectors->Get(0));
                 }
                 light->SetCenter(newPos);

@@ -149,13 +149,13 @@ bool psEffectObjSound::Render(const csVector3 &up)
                 return false;
             }
 
-            csRef<SOUND_SOURCE_TYPE> src = soundmanager->GetSoundSystem()->CreateSource(sndStream);
-            if (!src.IsValid())
+            sndSource = soundmanager->GetSoundSystem()->CreateSource(sndStream);
+            if (!sndSource.IsValid())
             {
                 csReport(psCSSetup::object_reg, CS_REPORTER_SEVERITY_ERROR, "planeshift_effects", "Could not create %s effect obj sound source.\n", name.GetData());
                 return false;
             }
-            sndSource= scfQueryInterface<SOUND_SOURCE3D_TYPE> (src);
+            sndSource3d= scfQueryInterface<SOUND_SOURCE3D_TYPE> (sndSource);
             if (!sndSource.IsValid())
             {
                 csReport(psCSSetup::object_reg, CS_REPORTER_SEVERITY_ERROR, "planeshift_effects", "Could not create %s effect obj sound 3D source.\n", name.GetData());
@@ -172,10 +172,10 @@ bool psEffectObjSound::Render(const csVector3 &up)
         volumeMultiplier = soundmanager->GetActionsVolume();
 
         sndSource->SetVolume(volumeMultiplier);
-        sndSource->SetPosition(csVector3(0,0,0));
+        sndSource3d->SetPosition(csVector3(0,0,0));
 
-        sndSource->SetMinimumDistance(sqrt(minDistSquared));
-        sndSource->SetMaximumDistance(sqrt(maxDistSquared));
+        sndSource3d->SetMinimumDistance(sqrt(minDistSquared));
+        sndSource3d->SetMaximumDistance(sqrt(maxDistSquared));
 
         isAlive = false;
 
@@ -226,7 +226,7 @@ bool psEffectObjSound::Update(csTicks elapsed)
         sndSource->SetVolume(LERP_KEY(KA_SCALE) * volumeMultiplier);
     }
 
-    sndSource->SetPosition(view->GetCamera()->GetTransform().Other2This(soundPos));
+    sndSource3d->SetPosition(view->GetCamera()->GetTransform().Other2This(soundPos));
 
     if (killTime <= 0)
         return true;

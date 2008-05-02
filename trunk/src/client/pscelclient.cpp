@@ -60,7 +60,6 @@
 #include "net/msghandler.h"
 
 #include "util/psconst.h"
-#include "util/psmeshutil.h"
 
 #include "gui/pawsinfowindow.h"
 #include "gui/pawsconfigkeys.h"
@@ -296,6 +295,8 @@ void psCelClient::HandleActor( MsgEntry* me )
 
     entities.Push(actor);
     entities_hash.Put(actor->GetID(), actor);
+
+    UpdateShader(actor);
 }
 
 void psCelClient::HandleMainActor( psPersistActor& mesg )
@@ -389,6 +390,7 @@ void psCelClient::HandleItem( MsgEntry* me )
     
     // Handle item effect if there is one.
     HandleItemEffect(newItem->GetFactName(), newItem->GetMesh());
+    UpdateShader(newItem->GetMesh());
 
     entities.Push(newItem);    
     entities_hash.Put(newItem->GetID(), newItem);
@@ -774,9 +776,88 @@ void psCelClient::Update()
     for(size_t i =0; i < entities.GetSize();i++)
     {
         entities[i]->Update();
+        GEMClientActor* actor = dynamic_cast<GEMClientActor*>(entities[i]);
+        UpdateShader(actor);
     }
 
     shadowManager->UpdateShadows();   
+}
+
+void psCelClient::UpdateShader(GEMClientActor* actor)
+{
+    if(actor)
+    {
+        UpdateShader(actor->GetMesh());           
+    }
+}
+
+void psCelClient::UpdateShader(iMeshWrapper* mesh)
+{
+    if(psengine->GetGFXFeatures() & useNormalMaps)
+    {
+        csRef<iStringSet> strings = csQueryRegistryTagInterface<iStringSet>
+            (object_reg, "crystalspace.shared.stringset");
+
+        iSector* sector = mesh->GetMovable()->GetSectors()->Get(0);
+        csVector3 pos = mesh->GetMovable()->GetFullPosition();
+        iLightList* list = sector->GetLights();
+        bool remove = true;
+        if(list->GetCount())
+        {
+            remove = false;
+            iLight* firstLight = list->Get(0);
+            csVector3 closest = firstLight->GetFullCenter();
+            csColor colour = firstLight->GetColor();
+            size_t outOfRangeCount = 0;
+            float cutoff = 1.0f;
+            for(int i=0; i<list->GetCount(); i++)
+            {
+                iLight* light = list->Get(i);
+                csVector3 center = list->Get(i)->GetFullCenter();
+                csVector3 mag = center - pos;
+
+                if(list->Get(i)->GetCutoffDistance() < mag.Norm())
+                {
+                    outOfRangeCount++;
+                    continue;
+                }
+
+                csVector3 mag2 = closest - pos;
+                if(mag.Norm() <= mag2.Norm())
+                {
+                    closest = center;
+                    cutoff = list->Get(i)->GetCutoffDistance();
+                    colour = list->Get(i)->GetColor();
+                }
+            }
+
+            if(outOfRangeCount == list->GetCount())
+                remove = true;
+
+            csShaderVariable* shadvar = new csShaderVariable();
+            shadvar->SetName(strings->Request("LightPos"));
+            shadvar->SetValue(closest);
+            //printf("Light Pos: %f, %f, %f\n", closest.x, closest.y, closest.z);
+            mesh->GetFactory()->GetSVContext()->AddVariable(shadvar);
+
+            shadvar = new csShaderVariable();
+            shadvar->SetName(strings->Request("LightColour"));
+            shadvar->SetValue(colour);
+            printf("Light Colour: %f, %f, %f\n", colour.red, colour.green, colour.blue);
+            mesh->GetFactory()->GetSVContext()->AddVariable(shadvar);
+
+            closest -= pos;
+            shadvar = new csShaderVariable();
+            shadvar->SetName(strings->Request("LightAtten"));
+            shadvar->SetValue((cutoff-closest.Norm())/closest.Norm());
+            mesh->GetFactory()->GetSVContext()->AddVariable(shadvar);
+        }
+
+        if(remove)
+        {
+            mesh->GetFactory()->GetSVContext()->RemoveVariable(strings->Request("LightPos"));
+        }
+    }
 }
 
 void psCelClient::HandleMessage(MsgEntry *me)
@@ -855,7 +936,7 @@ void psCelClient::SetPlayerReady(bool flag)
         local_player->ready = flag;
 }
 
-void psCelClient::OnRegionsDeleted(csArray<iRegion*>& regions)
+void psCelClient::OnRegionsDeleted(csArray<iCollection*>& regions)
 {
     size_t entNum;
 
@@ -876,7 +957,7 @@ void psCelClient::OnRegionsDeleted(csArray<iRegion*>& regions)
             for(int i = 0;i<sectors->GetCount();i++)
             {
                 // Get the iRegion this sector belongs to
-                csRef<iRegion> region =  scfQueryInterfaceSafe<iRegion> (sectors->Get(i)->QueryObject()->GetObjectParent());
+                csRef<iCollection> region =  scfQueryInterfaceSafe<iCollection> (sectors->Get(i)->QueryObject()->GetObjectParent());
                 if(regions.Find(region)==csArrayItemNotFound)
                 {
                     // We've found a sector that won't be unloaded so the mesh won't need to be moved
@@ -1016,7 +1097,7 @@ void psCelClient::AttachObject( iObject* object, GEMClientObject* clientObject)
 
 void psCelClient::UnattachObject( iObject* object, GEMClientObject* clientObject)
 {
-    csRef<psGemMeshAttach> attacher (CS_GET_CHILD_OBJECT (object, psGemMeshAttach));
+    csRef<psGemMeshAttach> attacher (CS::GetChildObject<psGemMeshAttach>(object));
     if (attacher)
     {     
         if ( attacher->GetObject () == clientObject )
@@ -1031,7 +1112,7 @@ GEMClientObject* psCelClient::FindAttachedObject(iObject* object)
 {
     GEMClientObject* found = 0;
     
-    csRef<psGemMeshAttach> attacher (CS_GET_CHILD_OBJECT (object, psGemMeshAttach));
+    csRef<psGemMeshAttach> attacher (CS::GetChildObject<psGemMeshAttach>(object));
     if (attacher)
     {
         found = attacher->GetObject();
@@ -1131,6 +1212,20 @@ bool GEMClientObject::SetPosition(const csVector3 & pos, float rot, iSector * se
 
     return true;
 
+}
+
+csVector3 GEMClientObject::GetPosition()
+{
+    return pcmesh->GetMovable ()->GetFullPosition();
+}
+
+iSector* GEMClientObject::GetSector()
+{
+    if(pcmesh->GetMovable()->InSector())
+    {
+        return pcmesh->GetMovable()->GetSectors()->Get(0);
+    }
+    return NULL;
 }
 
 void GEMClientObject::Update()

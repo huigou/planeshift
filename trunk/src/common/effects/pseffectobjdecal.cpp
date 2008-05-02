@@ -129,7 +129,7 @@ bool psEffectObjDecal::Load(iDocumentNode *node)
     }
 
     // load material
-    csRef<iMaterialWrapper> mat = region->FindMaterial(materialName);
+    csRef<iMaterialWrapper> mat = effectsCollection->FindMaterial(materialName);
     if (!mat)
     {
         csReport(psCSSetup::object_reg, CS_REPORTER_SEVERITY_ERROR, "planeshift_effects", "Attempting to create an effect obj with no name.\n");

@@ -42,6 +42,7 @@ pawsObjectView::pawsObjectView()
     ID = 0;
 
     idName++;
+    realName.Format("NAME%d", idName);
 
     rotateTime = orgTime = 0;
     rotateRadians = orgRadians = 0;
@@ -60,6 +61,7 @@ pawsObjectView::pawsObjectView()
 
 pawsObjectView::~pawsObjectView()
 {
+    engine->RemoveCollection(realName);
     idName--;
 }
 
@@ -84,7 +86,8 @@ bool pawsObjectView::Setup(iDocumentNode* node )
     }
     else
     {
-        return CreateMap();
+        Error1("pawsObjectView map failed to load because the mapNode doesn't exist!\n");
+        return false;
     }
 }
 
@@ -117,11 +120,11 @@ bool pawsObjectView::LoadMap( const char* map, const char* sector )
     csRef<iLoader> loader =  csQueryRegistry<iLoader > ( PawsManager::GetSingleton().GetObjectRegistry());
     csRef<iVFS> VFS =  csQueryRegistry<iVFS> ( PawsManager::GetSingleton().GetObjectRegistry());
 
-    char newName[10];
-    sprintf(newName, "NAME%d\n", idName );
-
     stage = engine->FindSector( sector );
-    iRegion* cur_region = engine->CreateRegion (newName);
+
+    // Create/Get collection and clear it in case it already existed.
+    iCollection* col = engine->CreateCollection(realName);
+
     if ( !stage )
     {
         csRef<iDocumentSystem> xml (
@@ -140,25 +143,20 @@ bool pawsObjectView::LoadMap( const char* map, const char* sector )
             worldNode = Filter(worldNode);
         }
 
-        // Clear it out if it already existed
-        cur_region->DeleteAll ();
-
         // Now load the map into the selected region
         VFS->ChDir (map);
         engine->SetCacheManager(NULL);
-        if ( !loader->LoadMap(worldNode, CS_LOADER_KEEP_WORLD, cur_region, CS_LOADER_ACROSS_REGIONS, true) )
+        if ( !loader->LoadMap(worldNode, CS_LOADER_KEEP_WORLD, col, CS_LOADER_ACROSS_REGIONS, true) )
             return false;
 
         stage = engine->FindSector( sector );
         CS_ASSERT( stage );
-        cur_region->Add( stage->QueryObject() );
+        col->Add( stage->QueryObject() );
         if ( !stage )
              return false;
-
-        cur_region->Prepare();
     }
 
-    meshSector = engine->CreateSector( newName );
+    meshSector = engine->CreateSector( realName );
 
     iLightList* lightList = meshSector->GetLights();
     csRef<iLight> light = engine->CreateLight(NULL, csVector3(-3,4,-3),10,
@@ -184,80 +182,6 @@ bool pawsObjectView::LoadMap( const char* map, const char* sector )
                        screenFrame.Width(),screenFrame.Height());
 
     loadedMap = true;
-    return true;
-}
-
-bool pawsObjectView::CreateMap()
-{
-    csRef<iEngine> engine =  csQueryRegistry<iEngine > ( PawsManager::GetSingleton().GetObjectRegistry());
-    csRef<iLoader> loader =  csQueryRegistry<iLoader > ( PawsManager::GetSingleton().GetObjectRegistry());
-    csRef<iVFS> VFS =  csQueryRegistry<iVFS> ( PawsManager::GetSingleton().GetObjectRegistry());
-
-    char newName[10];
-    sprintf(newName, "NAME%d\n", idName );
-    iRegion* cur_region = engine->CreateRegion (newName);
-
-    // Clear it out if it already existed
-    cur_region->DeleteAll ();
-       iTextureWrapper* txt = loader->LoadTexture("stone", "/lib/std/stone4.gif");
-
-    if ( !txt )
-    {
-         Error1("Error loading the object view texture");
-        return false;
-    }
-    cur_region->Add( txt->QueryObject () );
-
-    iMaterialWrapper * matWrap;
-    matWrap = engine->GetMaterialList()->FindByName( "stone" );
-
-    cur_region->Add( matWrap->QueryObject() );
-
-    stage = engine->CreateSector( "stage" );
-    cur_region->Add( stage->QueryObject() );
-
-
-    csRef<iMeshWrapper> walls = engine->CreateSectorWallsMesh( stage, "stagewalls" );
-    cur_region->Add( walls->QueryObject() );
-
-    csRef<iThingFactoryState> walls_state = scfQueryInterface<iThingFactoryState> (walls->GetMeshObject ()->GetFactory()); 
-    walls_state->AddInsideBox(csVector3 (-5, 0, -5), csVector3 (5, 10, 5));
-    walls_state->SetPolygonMaterial(CS_POLYRANGE_LAST, matWrap);
-    walls_state->SetPolygonTextureMapping (CS_POLYRANGE_LAST, 3);
-
-    // Create some lights. Later this can be added using the .def file or
-    // a world file.
-    iLightList* lightList = stage->GetLights();
-    csRef<iLight> light = engine->CreateLight(NULL, csVector3(-3,4,-3),10,
-                                      csColor(0.86F,0.87F,0.6F), CS_LIGHT_STATIC);
-    light->SetAttenuationMode( CS_ATTN_NONE );
-    lightList->Add( light );
-    cur_region->Add( light->QueryObject() );
-
-    light = engine->CreateLight(NULL, csVector3 (3, 4, 2), 10,
-                                csColor (0, .125F, .85F), CS_LIGHT_STATIC);
-    lightList->Add (light);
-    cur_region->Add( light->QueryObject() );
-
-    light = engine->CreateLight(NULL, csVector3(3,1,-3),10,
-                                csColor(0.45F,0.45F,0.45F), CS_LIGHT_STATIC);
-    lightList->Add( light );
-    cur_region->Add( light->QueryObject() );
-
-    // Cannot Prepare() entire engine more than once
-    cur_region->Add( stage->QueryObject() );
-    cur_region->Prepare();
-    cur_region->ShineLights();
-
-    view = csPtr<iView> (new csView( engine, PawsManager::GetSingleton().GetGraphics3D() ));
-    view->GetCamera()->SetSector(stage);
-    view->GetCamera()->GetTransform().SetOrigin(csVector3(0,1,-distance));
-
-    view->SetRectangle(screenFrame.xmin, screenFrame.ymin,
-                       screenFrame.Width(),screenFrame.Height());
-
-    view->GetCamera()->GetTransform().SetOrigin(csVector3(0,1,-distance));
-
     return true;
 }
 

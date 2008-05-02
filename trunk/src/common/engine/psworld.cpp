@@ -25,7 +25,7 @@
 #include <iengine/portalcontainer.h>
 #include <csutil/snprintf.h>
 #include <csutil/sysfunc.h>
-#include <iengine/region.h>
+#include <iengine/collection.h>
 #include <iutil/vfs.h>
 #include <csutil/csstring.h>
 #include <cstool/collider.h>
@@ -40,6 +40,8 @@
 #include <csutil/xmltiny.h>
 #include <iengine/movable.h>
 #include <iutil/objreg.h>
+#include <iengine/collection.h>
+#include <csutil/csobject.h>
 
 // PS
 #include "engine/materialmanager.h"
@@ -202,12 +204,12 @@ int psWorld::ExecuteFlaggedRegions(bool transitional, bool unloadingLast)
             }
         }
         // Check if any factories, materials or textures can be freed.
-        if(!MaterialManager::GetSingletonPtr()->KeepModels())
-        {
-            MaterialManager::GetSingletonPtr()->UnloadUnusedFactories();
-            MaterialManager::GetSingletonPtr()->UnloadUnusedMaterials();
-            MaterialManager::GetSingletonPtr()->UnloadUnusedTextures();
-        }
+        //if(!MaterialManager::GetSingletonPtr()->KeepModels())
+        //{
+            //MaterialManager::GetSingletonPtr()->UnloadUnusedFactories();
+            //MaterialManager::GetSingletonPtr()->UnloadUnusedMaterials();
+            //MaterialManager::GetSingletonPtr()->UnloadUnusedTextures();
+        //}
     }
 
     // Mark that we should start loading maps.
@@ -254,7 +256,7 @@ bool psWorld::IsAllLoaded()
     return true;
 }
 
-void psWorld::GetNotNeededRegions(csArray<iRegion*> & regs)
+void psWorld::GetNotNeededRegions(csArray<iCollection*> & regs)
 {
     for (unsigned i=0; i < regions.GetSize(); i++)
         if (!regions[i]->IsNeeded() )
@@ -435,8 +437,7 @@ psRegion::psRegion(iObjectRegistry *obj_reg, psWorld * world, const char *file, 
 
 psRegion::~psRegion()
 {
-    if (loaded)
-        Unload();
+    Unload();
 }
 
 
@@ -496,10 +497,7 @@ bool psRegion::Load(bool loadMeshes)
     }
 
     // Create a new region with the given name, or select it if already there
-    iRegion* cur_region = engine->CreateRegion (regionname);
-
-    // Clear it out if it already existed
-    cur_region->DeleteAll ();
+    iCollection* col = engine->CreateCollection (regionname);
 
     // Now load the map into the selected region
     csRef<iLoader> loader ( csQueryRegistry<iLoader> (object_reg));
@@ -512,7 +510,7 @@ bool psRegion::Load(bool loadMeshes)
     csTicks start = csGetTicks();
     Debug2(LOG_LOAD, 0,"Loading map file %s", worlddir.GetData());
 
-    if (!loader->LoadMap(worldNode, CS_LOADER_KEEP_WORLD,cur_region, CS_LOADER_ACROSS_REGIONS, true, 0, MaterialManager::GetSingletonPtr()))
+    if (!loader->LoadMap(worldNode, CS_LOADER_KEEP_WORLD, col, CS_LOADER_ACROSS_REGIONS, true, 0, 0, KEEP_USED))
     {
         Error3("loader->LoadMapFile(%s,%s) failed.",worlddir.GetData(),worldfile.GetData() );
         Error2("Region name was: %s", regionname.GetData() );
@@ -523,13 +521,9 @@ bool psRegion::Load(bool loadMeshes)
     // Successfully loaded.  Now get textures ready, etc. and return.
     if (using3D)
     {
-        cur_region->Prepare ();
-        Debug2(LOG_LOAD, 0,"After Prepare, %dms elapsed", csGetTicks()-start);
-    }
-
-    if (using3D)
-    {
-        engine->PrecacheDraw (cur_region);
+        engine->ShineLights(col);
+        Debug2(LOG_LOAD, 0,"After ShineLights, %dms elapsed", csGetTicks()-start);
+        engine->PrecacheDraw (col);
         Debug2(LOG_LOAD, 0,"After Precache, %dms elapsed", csGetTicks()-start);
     }
 
@@ -543,7 +537,7 @@ bool psRegion::Load(bool loadMeshes)
         csRef<iDataBuffer> buf = vfs->ReadFile(target.GetData());
         if (!buf || !buf->GetSize())
         {
-            SetupWorldColliders(engine, cur_region);
+            SetupWorldColliders(engine, col);
         }
         else
         {
@@ -551,30 +545,29 @@ bool psRegion::Load(bool loadMeshes)
             if(error)
             {
                 Error3("Error %s while loading colldet world file: %s.\nFalling back to normal colldet, please report this error.\n", error, target.GetData());
-                SetupWorldColliders(engine, cur_region);
+                SetupWorldColliders(engine, col);
             }
             else
             {
 
                 csRef<iDocumentNode> worldNodeCD = doc->GetRoot()->GetNode("world");
 
-                iRegion* colldetRegion = engine->CreateRegion("colldetPS");
-                colldetRegion->DeleteAll ();
+                iCollection* colldetCol = engine->CreateCollection("colldetPS");
 
                 vfs->ChDir(colldetworlddir);
 
-                if(!loader->LoadMap(worldNodeCD, CS_LOADER_KEEP_WORLD, colldetRegion, CS_LOADER_ACROSS_REGIONS, true))
+                if(!loader->LoadMap(worldNodeCD, CS_LOADER_KEEP_WORLD, colldetCol, CS_LOADER_ACROSS_REGIONS, false))
                 {
                     Error3("LoadMap failed: %s, %s.\n", colldetworlddir.GetData(), worldfile.GetData() );
                     Error2("Region name was: %s\nFalling back to normal colldet, please report this error.\n", regionname.GetData());
-                    SetupWorldColliders(engine, cur_region);
+                    SetupWorldColliders(engine, col);
                 }
                 else
                 {
-                    SetupWorldCollidersCD(engine, cur_region, colldetRegion);
+                    SetupWorldCollidersCD(engine, col, colldetCol);
                 }
 
-                engine->GetRegions()->Remove(colldetRegion);
+                engine->RemoveCollection("colldetPS");
             }
         }
         Debug2(LOG_LOAD, 0,"After SetupWorldColliders, %dms elapsed\n", csGetTicks()-start);
@@ -777,109 +770,25 @@ void psRegion::CloneNode (iDocumentNode* from, iDocumentNode* to)
 
 void psRegion::Unload()
 {
-    if (!loaded)
-        return;
-    loaded = false;
-
-    // The engine needs to not be in the region when it is unloaded!
-
-    csRef<iEngine> engine =  csQueryRegistry<iEngine> (object_reg);
-
-    iRegion* cur_region = engine->CreateRegion (regionname);
-
-    // Array to point to RL objects.
-    csWeakRefArray<iRenderLoop> rls;
-
-    // Copy pointers to objects into a vector.
-    csWeakRefArray<iObject> copy (1024, 256);
-    csRef<iObjectIterator> iter = cur_region->QueryObject()->GetIterator ();
-    while (iter->HasNext ())
+    if(loaded)
     {
-        csWeakRef<iObject> o = iter->Next ();
-        csWeakRef<iSector> sec = scfQueryInterface<iSector>(o);
-        csWeakRef<iLight> light = scfQueryInterface<iLight>(o);
-        // If the object is a sector then remove it now, else copy the object.
-        if(sec)
-        {
-            // If the sector uses a non-default renderloop, make note of it for later.
-            csWeakRef<iRenderLoop> rl = sec->GetRenderLoop();
-            if(rl)
-                rls.PushSmart(rl);
+        loaded = false;
 
-            // Remove any mesh generators and meshes.
-            sec->RemoveMeshGenerators();
-
-            // Remove sector.
-            engine->RemoveObject(o);
-        }
-        else if(!light)
-            copy.Push (o);
+        // Remove all objects from the region.
+#ifndef CS_DEBUG
+        GetRegion()->ReleaseAllObjects();
+#else
+        printf("Unloading %s\n", regionname.GetData());
+        GetRegion()->ReleaseAllObjects(true);
+#endif
     }
-
-    size_t i;
-
-    struct rcStruct { csString n; csWeakRef<iBase> weakb; };
-    rcStruct* rc = new rcStruct[copy.GetSize()];
-
-    // Remove all objects from the region.
-    cur_region->QueryObject()->ObjRemoveAll();
-
-    // Go through all objects and remove them if they're not being used.
-    // Loop because references will be removed as objects are deleted,
-    // so we need to check multiple times.
-    bool doClean;
-    do
-    {
-        doClean = false;
-        i = 0;
-        while (i < copy.GetSize ())
-        {
-            if(!copy[i]) 
-            {
-                printf("Removing null object!\n");
-                copy.DeleteIndex (i);
-                continue;
-            }
-
-            csWeakRef<iBase> b = scfQueryInterface<iBase>(copy[i]);
-            if(b->GetRefCount() == 1)
-            {
-                if (engine->RemoveObject (b))
-                {
-                    copy.DeleteIndex (i);
-                    doClean = true;
-                    continue;
-                }
-            }
-            i++;
-        }
-    }
-    while (doClean);
-
-    // Check for any objects that weren't deleted.
-    for (i = 0 ; i < copy.GetSize () ; i++)
-        if (rc[i].weakb != 0)
-            printf ("Not Deleted %p '%s' ref=%d\n",
-            (iBase*)rc[i].weakb, (const char*)rc[i].n,
-            rc[i].weakb->GetRefCount ());
-    fflush (stdout);
-    delete[] rc;
-
-    // Check all the renderloops that were being used by sectors to see if they can be removed.
-    for(uint i=0; i<rls.GetSize(); i++)
-    {
-        if(rls.Get(i)->GetRefCount() == 2)
-            engine->GetRenderLoopManager()->Unregister(rls.Get(i));
-    }
-
-    engine->GetRegions()->Remove(cur_region);
 }
 
-void psRegion::SetupWorldColliders(iEngine *engine,iRegion* cur_region)
+void psRegion::SetupWorldColliders(iEngine *engine, iCollection* col)
 {
     csRef<iCollideSystem> cdsys =
         csQueryRegistry<iCollideSystem> (object_reg);
-    csRef<iObjectIterator> iter = cur_region->QueryObject()->GetIterator();
+    csRef<iObjectIterator> iter = col->QueryObject()->GetIterator();
 
     iObject *curr;
     while ( iter->HasNext() )
@@ -890,19 +799,15 @@ void psRegion::SetupWorldColliders(iEngine *engine,iRegion* cur_region)
         if (sp && sp->GetMeshObject() )
         {
             csColliderHelper::InitializeCollisionWrapper(cdsys, sp);
-
-            csRef<iThingState> thing = scfQueryInterface<iThingState> (sp->GetMeshObject());
-            if (thing)
-                thing->Prepare ();
         }
     }
 }
 
-void psRegion::SetupWorldCollidersCD(iEngine *engine, iRegion *cur_region, iRegion *cd_region)
+void psRegion::SetupWorldCollidersCD(iEngine *engine, iCollection *cur_col, iCollection *cd_col)
 {
     csRef<iCollideSystem> cdsys =
         csQueryRegistry<iCollideSystem> (object_reg);
-    csRef<iObjectIterator> iter = cd_region->QueryObject()->GetIterator();
+    csRef<iObjectIterator> iter = cd_col->QueryObject()->GetIterator();
 
     iObject *curr;
     while (iter->HasNext())
@@ -915,7 +820,7 @@ void psRegion::SetupWorldCollidersCD(iEngine *engine, iRegion *cur_region, iRegi
             csRef<csColliderWrapper> cw = csColliderHelper::InitializeCollisionWrapper(cdsys, sp);
             if(cw)
             {
-              csRef<iMeshWrapper> mw = cur_region->FindMeshObject(cw->GetObjectParent()->GetName());
+              csRef<iMeshWrapper> mw = cur_col->FindMeshObject(cw->GetObjectParent()->GetName());
               if(mw)
               {
                   mw->QueryObject()->ObjAdd(cw);
@@ -926,17 +831,12 @@ void psRegion::SetupWorldCollidersCD(iEngine *engine, iRegion *cur_region, iRegi
                   printf("Mesh Wrapper %s doesn't exist for collision!!\n", cw->GetObjectParent()->GetName());
               }
             }
-
-            csRef<iThingState> thing = scfQueryInterface<iThingState> (sp->GetMeshObject());
-            if (thing)
-                thing->Prepare ();
         }
     }
 }
 
-iRegion * psRegion::GetRegion()
+iCollection * psRegion::GetRegion()
 {
     csRef<iEngine> engine =  csQueryRegistry<iEngine> (object_reg);
-    return engine->GetRegions()->FindByName(regionname);
+    return engine->GetCollection(regionname);
 }
-

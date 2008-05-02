@@ -39,7 +39,7 @@
 //  these can all be migrated out of source code and then undefined as convenient
 #define SOUND_STREAM_TYPE iSndSysStream
 #define SOUND_SOURCE_TYPE iSndSysSource
-#define SOUND_SOURCE3D_TYPE iSndSysSourceSoftware3D
+#define SOUND_SOURCE3D_TYPE iSndSysSource3D
 #define SOUND_LOADER_TYPE iSndSysLoader
 #define SOUND_RENDER_TYPE iSndSysRenderer
 #define SOUND_LISTENER_TYPE iSndSysListener

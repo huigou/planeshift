@@ -358,6 +358,7 @@ void psCharAppearance::Equip( csString& slotname,
     if(state->FindSocket(slotname))
     {
         psengine->GetCelClient()->HandleItemEffect(mesh, state->FindSocket(slotname)->GetMeshWrapper(), false, slotname, &effectids, &lightids);
+        psengine->GetCelClient()->UpdateShader(baseMesh);
     }
     
     // This is a subMesh on the model change so change the mesh for that part.

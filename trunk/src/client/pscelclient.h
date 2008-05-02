@@ -26,7 +26,7 @@
 #include <csutil/refarr.h>
 #include <csutil/list.h>
 #include <csutil/hash.h>
-#include <iengine/region.h>
+#include <iengine/collection.h>
 
 //=============================================================================
 // Project Includes
@@ -170,7 +170,7 @@ public:
 
     /** Called when a region of the world is deleted from the client (because we don't need it loaded now)
         CelClient removes all GEMClientObjects that are in this region */
-    void OnRegionsDeleted(csArray<iRegion *>& regions);
+    void OnRegionsDeleted(csArray<iCollection *>& regions);
 
     psWorld* GetWorld() { return gameWorld; }
 
@@ -229,6 +229,9 @@ public:
       * @return A csArray<> of all the objects in the given radius.
       */
     csArray<GEMClientObject*> FindNearbyEntities (iSector* sector, const csVector3& pos, float radius, bool doInvisible = false);
+
+    void UpdateShader(GEMClientActor* actor);
+    void UpdateShader(iMeshWrapper* mesh);
         
 protected:
     void QueueNewActor(MsgEntry *me);
@@ -310,6 +313,12 @@ public:
 
     /** Set position of entity */
     virtual bool SetPosition(const csVector3 & pos, float rot, iSector * sector);
+
+    /** Get position of entity */
+    virtual csVector3 GetPosition();
+
+    /** Get sector of entity */
+    virtual iSector* GetSector();
     
     PS_ID GetID() { return id; }
     csRef<iMeshWrapper> pcmesh;

@@ -20,6 +20,7 @@
 //=============================================================================
 // Crystal Space Includes
 //=============================================================================
+#include <iengine/collection.h>
 #include <iengine/engine.h>
 #include <iengine/mesh.h>
 #include <imap/loader.h>
@@ -40,10 +41,12 @@
 
 ClientCacheManager::ClientCacheManager()
 {
+    cache = psengine->GetEngine()->CreateCollection("psclientcache");
 }
 
 ClientCacheManager::~ClientCacheManager()
 {
+    psengine->GetEngine()->RemoveCollection(cache);
 }
 
 void ClientCacheManager::LoadNewFactory(const char* filename)
@@ -128,8 +131,7 @@ void ClientCacheManager::LoadNewFactory(const char* filename)
 
     if (indexEntry->factory == NULL)
     {
-        iBase* result = NULL;
-        psengine->GetLoader()->Load (root, result, false, true);
+        psengine->GetLoader()->Load (root, cache, false);
         iMeshFactoryWrapper* meshW = psengine->GetEngine()->GetMeshFactories()->FindByName(name);
         indexEntry->factory = meshW;
     }

@@ -26,6 +26,7 @@
 #include <csutil/array.h>
 #include <csutil/parray.h>
 #include <csutil/ref.h>
+#include <iengine/collection.h>
 #include <iutil/virtclk.h>
 #include <csutil/hash.h>
 #include <imap/reader.h>
@@ -37,7 +38,6 @@
 struct iSector;
 struct iSectorList;
 struct iMeshWrapper;
-struct iRegion;
 struct iView;
 struct iMovable;
 class psEffect;
@@ -154,11 +154,6 @@ public:
      */
     void Update(csTicks elapsed = 0);
     
-    /** Prepares the effects -- do this once after load, but before render loop.
-     *   @return true if effects are successfully prepared, false otherwise
-     */
-    bool Prepare();
-
     /** Clears all effects.
      */
     void Clear();
@@ -210,8 +205,8 @@ private:
     csHash<psEffect *, unsigned int> actualEffects;
 //    csPDelArray<psEffect> actualEffects;
 
-    /// effects have their own region to make them easier to manage
-    csRef<iRegion> region;
+    /// Effects are stored in a collection to make them easier to manage.
+    csRef<iCollection> effectsCollection;
 
     iView * view;
 
