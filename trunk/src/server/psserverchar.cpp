@@ -1437,7 +1437,7 @@ bool psServerCharManager::SendItemDescription( Client *client, psItem *item)
     itemQuality = "";
     int idSkill = item->GetIdentifySkill();
     int idMin = item->GetIdentifyMinSkill();
-    if (!idSkill || (idMin < client->GetCharacterData()->GetSkills()->GetSkillRank((PSSKILL)idSkill)))
+    if (!idSkill || ((uint)idMin < client->GetCharacterData()->GetSkills()->GetSkillRank((PSSKILL)idSkill)))
     {
         // If the item is an average stackable type object it has no max quality so don't 
         // send that information to the client since it is not applicable.

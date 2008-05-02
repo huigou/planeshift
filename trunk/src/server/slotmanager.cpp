@@ -882,7 +882,6 @@ void SlotManager::Consume(psItem* item, psCharacter *charData, int count)
     float quality = item->GetMaxItemQuality();
     varQuality->SetValue(quality);
     qualityScript->Execute();
-    float qualityLevel = varQualityLevel->GetValue();
 
     csString script = item->GetBaseStats()->GetProgressionEventConsume();
     if (script.IsEmpty())

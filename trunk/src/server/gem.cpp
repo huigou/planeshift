@@ -2504,7 +2504,9 @@ bool gemActor::InitLinMove (const csVector3& pos,
     csVector3 size;
     psRaceInfo *raceinfo = psChar->GetRaceInfo();
     raceinfo->GetSize(size);
-    float width, height, depth;
+    float width = 0.0f;
+    float height = 0.0f;
+    float depth = 0.0f;
 
     if(!(size.x && size.y && size.z))
     {
