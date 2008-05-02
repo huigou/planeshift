@@ -19,7 +19,6 @@
 
 #include <psconfig.h>
 #include <math.h>
-#include <iengine/region.h>
 #include <csutil/databuf.h>
 #include <iutil/object.h>
 
@@ -1040,12 +1039,12 @@ psPFMaps::psPFMaps(iObjectRegistry * objReg)
     engine =  csQueryRegistry<iEngine> (objReg);
 }
 
-iRegion * psPFMaps::GetCSRegionOfSector(const csString & sectorName)
+iCollection * psPFMaps::GetCSRegionOfSector(const csString & sectorName)
 {
-    iRegionList * list = engine->GetRegions();
-    for (int regionNum = 0; regionNum < list->GetCount(); regionNum++)
+    csRef<iCollectionArray> list = engine->GetCollections();
+    for (size_t regionNum = 0; regionNum < list->GetSize(); regionNum++)
     {
-        iRegion * r = list->Get(regionNum);
+        iCollection * r = list->Get(regionNum);
         if (r->FindSector(sectorName) != NULL)
             return r;
     }
@@ -1073,7 +1072,7 @@ psPFMap * psPFMaps::GetRegionBySector(iSector * sector)
 psPFMap * psPFMaps::GetRegionBySector(const csString & sectorName)
 {
     psPFMap * region;
-    iRegion * CSregion;
+    iCollection * CSregion;
     csString regionName;
     const bool dbg = false;
     

@@ -169,8 +169,7 @@ bool gemNPCObject::InitMesh(
                 }
 
                 csRef<iLoader> loader (csQueryRegistry<iLoader> (npcclient->GetObjectReg()));
-                iBase* result;
-                loader->Load(root, result);
+                loader->Load(root);
                 mesh = npcclient->GetEngine()->GetMeshFactories()->FindByName(factname)->CreateMeshWrapper();
                 failed = !mesh;
                 break;

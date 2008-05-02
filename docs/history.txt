@@ -5,6 +5,7 @@
 - Replaced regions with collections.
 - Added initial (currently expensive) support for character shaders.
 - Some code cleanups and warning fixes.
+- Refactored parts of psRegion.
 
 *** 2008-05-01 by Dave Bentham
 - Fixed FS#1425 - cannot reward personalised items in events.

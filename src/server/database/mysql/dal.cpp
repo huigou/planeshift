@@ -649,7 +649,7 @@ void dbRecord::AddField(const char* fname, const char* sValue)
     //command.FormatPush("%s='%s'", fname, escape.GetData());
     AddToStatement(fname);
     temp[index].string = sValue;
-    temp[index].length = temp[index].string.Length();
+    temp[index].length = (unsigned long)temp[index].string.Length();
     
     bind[index].buffer_type = MYSQL_TYPE_STRING;
     bind[index].buffer = const_cast<char *> (temp[index].string.GetData());
@@ -704,7 +704,7 @@ bool dbInsert::Prepare()
     
     statement.Append(")");
     
-    prepared = (mysql_stmt_prepare(stmt, statement, statement.Length()) == 0);
+    prepared = (mysql_stmt_prepare(stmt, statement, (unsigned long)statement.Length()) == 0);
     
     return prepared;
 }
@@ -726,7 +726,7 @@ bool dbUpdate::Prepare()
     // field count is the idfield
     statement.Append("= ?");
     
-    prepared = (mysql_stmt_prepare(stmt, statement, statement.Length()) == 0);
+    prepared = (mysql_stmt_prepare(stmt, statement, (unsigned long)statement.Length()) == 0);
     
     return prepared;
 }

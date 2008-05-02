@@ -453,12 +453,6 @@ bool EEditApp::ReloadCurrentEffect()
    ((EEditErrorToolbox *)toolboxManager->GetToolbox(EEditToolbox::T_ERROR))->SetLoadingEffects(true);
     effectManager->Clear();
     effectManager->LoadEffects(currEffectLoc, editWindow->GetView());
-    if (!effectManager->Prepare())
-    {
-        csReport (object_reg, CS_REPORTER_SEVERITY_NOTIFY, APP_NAME,
-            "Warning: Could not successfully prepare effects!");
-        return false;
-    }
     ((EEditErrorToolbox *)toolboxManager->GetToolbox(EEditToolbox::T_ERROR))->SetLoadingEffects(false);
 
 

@@ -35,7 +35,7 @@ class psWalkPolyMap;
 class psAMap;
 struct iVFS;
 struct iSector;
-struct iRegion;
+struct iCollection;
 struct iEngine;
 struct iDocumentNode;
 
@@ -46,7 +46,7 @@ class psPFMap
 {
 public:
     csString name;
-    iRegion * region;
+    iCollection * region;
     psWalkPolyMap * wpMap;
     psAMap * aMap;
 };
@@ -60,7 +60,7 @@ public:
     psPFMap * FindRegionByName(const csString & regionName);
     
 protected:
-    iRegion * GetCSRegionOfSector(const csString & sectorName);
+    iCollection * GetCSRegionOfSector(const csString & sectorName);
     
     csList<psPFMap*> regions;
     

@@ -799,8 +799,7 @@ bool gemObject::InitMesh(const char *name,
                 }
 
                 csRef<iLoader> loader (csQueryRegistry<iLoader> (psserver->GetObjectReg()));
-                iBase* result;
-                loader->Load(root, result);
+                loader->Load(root);
                 mesh = engine->GetMeshFactories()->FindByName(factname)->CreateMeshWrapper();
                 failed = !mesh;
                 break;
