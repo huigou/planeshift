@@ -766,9 +766,6 @@
 				RelativePath="..\..\src\common\util\pserror.cpp">
 			</File>
 			<File
-				RelativePath="..\..\src\common\util\psmeshutil.cpp">
-			</File>
-			<File
 				RelativePath="..\..\src\common\util\pspath.cpp">
 			</File>
 			<File
@@ -882,9 +879,6 @@
 			</File>
 			<File
 				RelativePath="..\..\src\common\util\pserror.h">
-			</File>
-			<File
-				RelativePath="..\..\src\common\util\psmeshutil.h">
 			</File>
 			<File
 				RelativePath="..\..\src\common\util\pspath.h">
