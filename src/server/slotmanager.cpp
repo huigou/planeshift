@@ -877,7 +877,6 @@ void SlotManager::Consume(psItem* item, psCharacter *charData, int count)
     }
 
     MathScriptVar *varQuality = qualityScript->GetOrCreateVar("Quality");
-    MathScriptVar *varQualityLevel = qualityScript->GetOrCreateVar("QualityLevel");
 
     float quality = item->GetMaxItemQuality();
     varQuality->SetValue(quality);
