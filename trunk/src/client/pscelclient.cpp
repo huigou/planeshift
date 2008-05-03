@@ -835,16 +835,15 @@ void psCelClient::UpdateShader(iMeshWrapper* mesh)
             if(outOfRangeCount == list->GetCount())
                 remove = true;
 
+            csReversibleTransform trans = mesh->GetMovable()->GetFullTransform();
             csShaderVariable* shadvar = new csShaderVariable();
             shadvar->SetName(strings->Request("LightPos"));
-            shadvar->SetValue(closest);
-            //printf("Light Pos: %f, %f, %f\n", closest.x, closest.y, closest.z);
+            shadvar->SetValue(trans.Other2This(closest));
             mesh->GetFactory()->GetSVContext()->AddVariable(shadvar);
 
             shadvar = new csShaderVariable();
             shadvar->SetName(strings->Request("LightColour"));
             shadvar->SetValue(colour);
-            printf("Light Colour: %f, %f, %f\n", colour.red, colour.green, colour.blue);
             mesh->GetFactory()->GetSVContext()->AddVariable(shadvar);
 
             closest -= pos;
