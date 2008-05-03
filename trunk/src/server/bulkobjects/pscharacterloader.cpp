@@ -797,7 +797,7 @@ bool psCharacterLoader::SaveCharacterData(psCharacter *chardata,gemActor *actor,
     
     
     csString scriptStr;
-    scriptStr.Format("<evts>%s%s</evts>", progressionEvents.GetData(), durationEventStr.GetData());
+    scriptStr.Format("<evts>%s%s</evts>", progressionEvents.GetDataSafe(), durationEventStr.GetDataSafe());
     targetUpdate->AddField("progression_script", scriptStr);
     
     targetUpdate->AddField("time_connected_sec", chardata->GetTotalOnlineTime());
