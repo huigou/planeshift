@@ -31,6 +31,7 @@ psNetPacketEntry::psNetPacketEntry (psNetPacket* packet, uint32_t cnum,
 {
     packet->pktsize = sz - sizeof(psNetPacket);
     timestamp = csGetTicks();
+    printf("Constructed1 %p\n", this);
 }
 
 /** construct a new PacketEntry for a single or partial message */
@@ -50,6 +51,7 @@ psNetPacketEntry::psNetPacketEntry (uint8_t pri, uint32_t cnum,
     timestamp = csGetTicks();
     if (msg && sz && sz != PKTSIZE_ACK)
         memcpy(packet->data, ((char *)msg) + off, sz);
+    printf("Constructed2 %p\n", this);
 }
 
 psNetPacketEntry::psNetPacketEntry (uint8_t pri, uint32_t cnum,
@@ -67,12 +69,14 @@ psNetPacketEntry::psNetPacketEntry (uint8_t pri, uint32_t cnum,
     timestamp = csGetTicks();
     if (bytes && sz && sz != PKTSIZE_ACK)
     memcpy(packet->data, bytes, sz);
+    printf("Constructed3 %p\n", this);
 }
 
 psNetPacketEntry::~psNetPacketEntry()
 {
     if (packet)
         cs_free(packet);
+    printf("Destructed %p\n", this);
 }
 
 bool psNetPacketEntry::Append(psNetPacketEntry *next)
