@@ -170,6 +170,17 @@ public:
         datacondition.NotifyOne();
     }
 
+    /**
+     * Number of items in the queue.
+     */
+    unsigned int Count()
+    {
+        CS::Threading::RecursiveMutexScopedLock lock(mutex);
+        if(qend < qstart)
+            return qend + qsize - qstart;
+        else
+            return qend - qstart;
+    }
 protected:
 
     refType<queuetype>* qbuffer;

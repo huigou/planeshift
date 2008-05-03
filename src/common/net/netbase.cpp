@@ -564,6 +564,7 @@ bool NetBase::SendFinalPacket(psNetPacketEntry *pkt, LPSOCKADDR_IN addr)
 bool NetBase::SendOut()
 {
     bool sent_anything = false;
+    csTicks begin = csGetTicks();
 
     CS_ASSERT(ready);
 
@@ -574,13 +575,25 @@ bool NetBase::SendOut()
     }
 
     // Part2: Server (only used when we're the server)
+    unsigned int senderCount = senders.Count();
+    unsigned int sentCount = 0;
     csRef<NetPacketQueueRefCount> q; 
     while (q = csPtr<NetPacketQueueRefCount> (senders.Get()))
     {
+        sentCount += q->Count();
         if (SendMergedPackets(q))
         {
             sent_anything = true;
         }
+    }
+    
+    if(senderCount > 10 || sentCount > 15 || csGetTicks() - begin > 50)
+    {
+        csString status;
+        status.Format("Sending network messages has taken %u time to process, for %u senders and %u messages", csGetTicks() - begin, senderCount, sentCount);
+        CPrintf(CON_WARNING, "%s\n", status.GetData());
+        if(LogCSV::GetSingletonPtr())
+            LogCSV::GetSingleton().Write(CSV_STATUS, status);
     }
 
     return sent_anything;
