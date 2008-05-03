@@ -94,9 +94,10 @@ NetBase::NetBase(int outqueuesize)
     input_buffer = NULL;
     for(int i=0;i < NETAVGCOUNT;i++)
     {
-        sendStats[i].senders = sendStats[i].messagespersender = sendStats[i].time = 0;
-        resends[i] = 0;
+        sendStats[i].senders = sendStats[i].messages = sendStats[i].time = 0;
     }
+    for(int i =0;i < RESENDAVGCOUNT;i++)
+        resends[i] = 0;
     avgIndex = resendIndex = 0;
 }
 
@@ -454,22 +455,24 @@ void NetBase::CheckResendPkts()
     if(pkts.GetSize() > 0)
     {
         resends[resendIndex] = pkts.GetSize();
-        resendIndex++;
+        resendIndex = (resendIndex + 1) % RESENDAVGCOUNT;
         
         csTicks timeTaken = csGetTicks() - currenttime;
-        if(pkts.GetSize() > 500 || resendIndex == 1 || timeTaken > 50)
+        if(pkts.GetSize() > 300 || resendIndex == 1 || timeTaken > 50)
         {
+            unsigned int peakResend = 0;
             float resendAvg = 0.0f;
             // Calculate averages data here
-            for(int i = 0; i < NETAVGCOUNT; i++)
+            for(int i = 0; i < RESENDAVGCOUNT; i++)
             {
                 resendAvg += resends[i];
+                peakResend = MAX(peakResend, resends[i]);
             }
-            resendAvg /= NETAVGCOUNT;
+            resendAvg /= RESENDAVGCOUNT;
             csString status;
             if(timeTaken > 50)
                 status.Format("Resending high priority packets has taken %u time to process, for %u packets.", timeTaken, (unsigned int) pkts.GetSize());
-            status.AppendFmt("Resending non-acked packet statistics: %f resends", resendAvg);
+            status.AppendFmt("Resending non-acked packet statistics: %f average resends, peak of %u resent packets", resendAvg, peakResend);
             CPrintf(CON_WARNING, "%s\n", (const char *) status.GetData());
             if(LogCSV::GetSingletonPtr())
                 LogCSV::GetSingleton().Write(CSV_STATUS, status);
@@ -621,19 +624,24 @@ bool NetBase::SendOut()
     // Statistics updating
     csTicks timeTaken = csGetTicks() - begin;
     sendStats[avgIndex].senders = senderCount;
-    sendStats[avgIndex].messagespersender = sentCount;
+    sendStats[avgIndex].messages = sentCount;
     sendStats[avgIndex].time = timeTaken;
     
-    if(avgIndex == 1 || (senderCount > 0 && (timeTaken > 50 ||  ((float)sentCount / (float) senderCount) > 30)))
+    if(avgIndex == 1 || (senderCount > 0 && timeTaken > 50))
     {
+        unsigned int peakSenders = 0;
+        float peakMessagesPerSender = 0.0f;
+        
         float sendAvg = 0.0f;
         float messagesAvg = 0.0f;
         float timeAvg = 0.0f;
-        // Calculate averages data here
+        // Calculate averages/peak data here
         for(int i = 0; i < NETAVGCOUNT; i++)
         {
+            peakSenders = MAX(peakSenders, sendStats[i].senders);
             sendAvg += sendStats[i].senders;
-            messagesAvg += sendStats[i].messagespersender;
+            peakMessagesPerSender = MAX(peakMessagesPerSender, (float) sendStats[i].messages / (float) sendStats[i].senders);
+            messagesAvg += sendStats[i].messages;
             timeAvg += sendStats[i].time;
         }
         sendAvg /= NETAVGCOUNT;
@@ -642,7 +650,7 @@ bool NetBase::SendOut()
         csString status;
         if(timeTaken > 50)
             status.Format("Sending network messages has taken %u time to process, for %u senders and %u messages.", timeTaken, senderCount, sentCount);
-        status.AppendFmt("Network average statistics: %f senders, %f messages per sender, %f time per message.", sendAvg, messagesAvg, timeAvg);
+        status.AppendFmt("Network average statistics: %f senders, %f messages per sender, %f time per message. Peak %u senders, %f messages/sender", sendAvg, messagesAvg, timeAvg, peakSenders, peakMessagesPerSender);
         CPrintf(CON_WARNING, "%s\n", (const char *) status.GetData());
         if(LogCSV::GetSingletonPtr())
             LogCSV::GetSingleton().Write(CSV_STATUS, status);
