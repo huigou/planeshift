@@ -92,6 +92,11 @@ NetBase::NetBase(int outqueuesize)
     logmsgfiltersetting.send = false;
 
     input_buffer = NULL;
+    for(int i=0;i < NETAVGCOUNT;i++)
+    {
+        sendStats[i].senders = sendStats[i].messagespersender = sendStats[i].time = 0;
+    }
+    avgIndex = 0;
 }
 
 NetBase::~NetBase()
@@ -587,14 +592,38 @@ bool NetBase::SendOut()
         }
     }
     
-    if(senderCount > 10 || sentCount > 15 || csGetTicks() - begin > 50)
+    // Statistics updating
+    csTicks timeTaken = csGetTicks() - begin;
+    sendStats[avgIndex].senders = senderCount;
+    sendStats[avgIndex].messagespersender = sentCount;
+    sendStats[avgIndex].time = timeTaken;
+    
+    if(timeTaken > 50 || avgIndex == 1)
     {
+        float sendAvg = 0.0f;
+        float messagesAvg = 0.0f;
+        float timeAvg = 0.0f;
+        // Calculate averages data here
+        for(int i = 0; i < NETAVGCOUNT; i++)
+        {
+            sendAvg += sendStats[i].senders;
+            messagesAvg += sendStats[i].messagespersender;
+            timeAvg += sendStats[i].time;
+        }
+        sendAvg /= NETAVGCOUNT;
+        messagesAvg /= NETAVGCOUNT;
+        timeAvg /= NETAVGCOUNT;
         csString status;
-        status.Format("Sending network messages has taken %u time to process, for %u senders and %u messages", csGetTicks() - begin, senderCount, sentCount);
-        CPrintf(CON_WARNING, "%s\n", status.GetData());
+        if(csGetTicks() - begin > 50)
+            status.Format("Sending network messages has taken %u time to process, for %u senders and %u messages.", timeTaken, senderCount, sentCount);
+        status.AppendFmt("Network average statistics: %f senders, %f messages per sender, %f time per message.", sendAvg, messagesAvg, timeAvg);
+        CPrintf(CON_WARNING, "%s\n", (const char *) status.GetData());
         if(LogCSV::GetSingletonPtr())
             LogCSV::GetSingleton().Write(CSV_STATUS, status);
     }
+    
+    if(senderCount > 0)
+        avgIndex = (avgIndex + 1) % NETAVGCOUNT;
 
     return sent_anything;
 }

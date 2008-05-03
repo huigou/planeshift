@@ -37,6 +37,7 @@
 #define NUM_BROADCAST        0xffffffff
 #define MAXQUEUESIZE        20000
 #define MAXPACKETHISTORY    200
+#define NETAVGCOUNT 200
 
 // The number of times the SendTo function will retry on a EAGAIN or EWOULDBLOCK
 #define SENDTO_MAX_RETRIES   200
@@ -551,6 +552,16 @@ private:
 
     /** LogMessage filter setting */
     csArray<int> logmessagefilter;
+    
+    /** Moving averages */
+    typedef struct {
+        unsigned int senders;
+        unsigned int messagespersender;
+        csTicks time;
+    } SendQueueStats_t;
+    
+    SendQueueStats_t sendStats[NETAVGCOUNT];
+    unsigned int avgIndex;
 
     typedef struct {
         bool invert;
