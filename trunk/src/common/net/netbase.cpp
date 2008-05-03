@@ -95,8 +95,9 @@ NetBase::NetBase(int outqueuesize)
     for(int i=0;i < NETAVGCOUNT;i++)
     {
         sendStats[i].senders = sendStats[i].messagespersender = sendStats[i].time = 0;
+        resends[i] = 0;
     }
-    avgIndex = 0;
+    avgIndex = resendIndex = 0;
 }
 
 NetBase::~NetBase()
@@ -450,6 +451,31 @@ void NetBase::CheckResendPkts()
             }
         }
     }
+    if(pkts.GetSize() > 0)
+    {
+        resends[resendIndex] = pkts.GetSize();
+        resendIndex++;
+        
+        csTicks timeTaken = csGetTicks() - currenttime;
+        if(pkts.GetSize() > 500 || resendIndex == 1 || timeTaken > 50)
+        {
+            float resendAvg = 0.0f;
+            // Calculate averages data here
+            for(int i = 0; i < NETAVGCOUNT; i++)
+            {
+                resendAvg += resends[i];
+            }
+            resendAvg /= NETAVGCOUNT;
+            csString status;
+            if(timeTaken > 50)
+                status.Format("Resending high priority packets has taken %u time to process, for %u packets.", timeTaken, (unsigned int) pkts.GetSize());
+            status.AppendFmt("Resending non-acked packet statistics: %f resends", resendAvg);
+            CPrintf(CON_WARNING, "%s\n", (const char *) status.GetData());
+            if(LogCSV::GetSingletonPtr())
+                LogCSV::GetSingleton().Write(CSV_STATUS, status);
+        }
+        
+    }
 }
     
 
@@ -598,7 +624,7 @@ bool NetBase::SendOut()
     sendStats[avgIndex].messagespersender = sentCount;
     sendStats[avgIndex].time = timeTaken;
     
-    if(avgIndex == 1 || senderCount > 0 && (timeTaken > 50 ||  ((float)sentCount / (float) senderCount) > 30))
+    if(avgIndex == 1 || (senderCount > 0 && (timeTaken > 50 ||  ((float)sentCount / (float) senderCount) > 30)))
     {
         float sendAvg = 0.0f;
         float messagesAvg = 0.0f;
@@ -614,7 +640,7 @@ bool NetBase::SendOut()
         messagesAvg /= NETAVGCOUNT;
         timeAvg /= NETAVGCOUNT;
         csString status;
-        if(csGetTicks() - begin > 50)
+        if(timeTaken > 50)
             status.Format("Sending network messages has taken %u time to process, for %u senders and %u messages.", timeTaken, senderCount, sentCount);
         status.AppendFmt("Network average statistics: %f senders, %f messages per sender, %f time per message.", sendAvg, messagesAvg, timeAvg);
         CPrintf(CON_WARNING, "%s\n", (const char *) status.GetData());

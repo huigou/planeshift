@@ -562,6 +562,8 @@ private:
     
     SendQueueStats_t sendStats[NETAVGCOUNT];
     unsigned int avgIndex;
+    unsigned int resends[NETAVGCOUNT];
+    unsigned int resendIndex;
 
     typedef struct {
         bool invert;
