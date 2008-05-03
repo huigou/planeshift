@@ -7,7 +7,7 @@
 DB VER BUMP
 
 *** 2008-05-02 by Mike Gist
-- Bumped CS and CEL version to v1.3 (trunk). Revisions 29523 and 3337.
+- Bumped CS and CEL version to v1.3 (trunk). Revisions 29533 and 3337.
 - Fixed a few bugs (patch from Vornne) triggered by this bump.
 - Changed our sound to use the OpenAL renderer.
 - Replaced regions with collections.
