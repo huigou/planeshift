@@ -627,7 +627,7 @@ bool NetBase::SendOut()
     sendStats[avgIndex].messages = sentCount;
     sendStats[avgIndex].time = timeTaken;
     
-    if(avgIndex == 1 || (senderCount > 0 && timeTaken > 50))
+    if(senderCount > 0 && (avgIndex == 1 || timeTaken > 50))
     {
         unsigned int peakSenders = 0;
         float peakMessagesPerSender = 0.0f;
