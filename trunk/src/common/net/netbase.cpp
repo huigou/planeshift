@@ -631,6 +631,7 @@ bool NetBase::SendOut()
     {
         unsigned int peakSenders = 0;
         float peakMessagesPerSender = 0.0f;
+        csTicks peakTime = 0;
         
         float sendAvg = 0.0f;
         float messagesAvg = 0.0f;
@@ -643,6 +644,7 @@ bool NetBase::SendOut()
             peakMessagesPerSender = MAX(peakMessagesPerSender, (float) sendStats[i].messages / (float) sendStats[i].senders);
             messagesAvg += sendStats[i].messages;
             timeAvg += sendStats[i].time;
+            peakTime = MAX(peakTime, sendStats[i].time);
         }
         sendAvg /= NETAVGCOUNT;
         messagesAvg /= NETAVGCOUNT;
@@ -650,7 +652,7 @@ bool NetBase::SendOut()
         csString status;
         if(timeTaken > 50)
             status.Format("Sending network messages has taken %u time to process, for %u senders and %u messages.", timeTaken, senderCount, sentCount);
-        status.AppendFmt("Network average statistics: %f senders, %f messages per sender, %f time per message. Peak %u senders, %f messages/sender", sendAvg, messagesAvg, timeAvg, peakSenders, peakMessagesPerSender);
+        status.AppendFmt("Network average statistics: %f senders, %f messages per sender, %f time per message. Peak %u senders, %f messages/sender %u time", sendAvg, messagesAvg, timeAvg, peakSenders, peakMessagesPerSender, peakTime);
         CPrintf(CON_WARNING, "%s\n", (const char *) status.GetData());
         if(LogCSV::GetSingletonPtr())
             LogCSV::GetSingleton().Write(CSV_STATUS, status);
