@@ -1,3 +1,6 @@
+*** 2008-05-03 by Mike Gist
+- Added a transform to convert lightPos into model space.
+
 *** 2008-05-03 by Kenny Graunke
 - Fixed bug in persistent progression event saving where (null) was being
   written to the database.
