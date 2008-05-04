@@ -37,7 +37,7 @@
 #define NUM_BROADCAST        0xffffffff
 #define MAXQUEUESIZE        20000
 #define MAXPACKETHISTORY    200
-#define NETAVGCOUNT 200
+#define NETAVGCOUNT 400
 #define RESENDAVGCOUNT 200
 
 // The number of times the SendTo function will retry on a EAGAIN or EWOULDBLOCK
@@ -522,6 +522,20 @@ protected:
     /** total packages transferred by this object */
     int totalcountin, totalcountout;
     
+    /** Moving averages */
+    typedef struct {
+        unsigned int senders;
+        unsigned int messages;
+        csTicks time;
+    } SendQueueStats_t;
+    
+    SendQueueStats_t sendStats[NETAVGCOUNT];
+    csTicks lastSendReport;
+    unsigned int avgIndex;
+    
+    unsigned int resends[RESENDAVGCOUNT];
+    unsigned int resendIndex;
+    
     psNetMsgProfiles * profs;
 
 private:
@@ -553,18 +567,8 @@ private:
 
     /** LogMessage filter setting */
     csArray<int> logmessagefilter;
-    
-    /** Moving averages */
-    typedef struct {
-        unsigned int senders;
-        unsigned int messages;
-        csTicks time;
-    } SendQueueStats_t;
-    
-    SendQueueStats_t sendStats[NETAVGCOUNT];
-    unsigned int avgIndex;
-    unsigned int resends[RESENDAVGCOUNT];
-    unsigned int resendIndex;
+
+
 
     typedef struct {
         bool invert;
