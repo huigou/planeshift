@@ -167,6 +167,7 @@ void NetManager::CheckResendPkts()
         if (!outqueue)
         {
             awaitingack.Delete(PacketKey(pkt->clientnum, pkt->packet->pktid), pkt);
+            pkt->DecRef();
             continue;
         }
 
@@ -200,8 +201,41 @@ void NetManager::CheckResendPkts()
             Debug2(LOG_NET,"No packet in ack queue :%d\n", pkt->packet->pktid);
 #endif
         }
+        else
+            pkt->DecRef();
 
     }
+    if(pkts.GetSize() > 0)
+    {
+        resends[resendIndex] = pkts.GetSize();
+        resendIndex = (resendIndex + 1) % RESENDAVGCOUNT;
+        
+        csTicks timeTaken = csGetTicks() - currenttime;
+        if(pkts.GetSize() > 300 || resendIndex == 1 || timeTaken > 50)
+        {
+            unsigned int peakResend = 0;
+            float resendAvg = 0.0f;
+            // Calculate averages data here
+            for(int i = 0; i < RESENDAVGCOUNT; i++)
+            {
+                resendAvg += resends[i];
+                peakResend = MAX(peakResend, resends[i]);
+            }
+            resendAvg /= RESENDAVGCOUNT;
+            csString status;
+            if(timeTaken > 50)
+            {
+                status.Format("Resending high priority packets has taken %u time to process, for %u packets.", timeTaken, (unsigned int) pkts.GetSize());
+                CPrintf(CON_WARNING, "%s\n", (const char *) status.GetData());
+            }
+            status.AppendFmt("Resending non-acked packet statistics: %f average resends, peak of %u resent packets", resendAvg, peakResend);
+            
+            if(LogCSV::GetSingletonPtr())
+                LogCSV::GetSingleton().Write(CSV_STATUS, status);
+        }
+        
+    }
+    
 }
 
 NetManager::Connection *NetManager::GetConnByIP (LPSOCKADDR_IN addr)
