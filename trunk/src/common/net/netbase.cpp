@@ -99,6 +99,7 @@ NetBase::NetBase(int outqueuesize)
     for(int i =0;i < RESENDAVGCOUNT;i++)
         resends[i] = 0;
     avgIndex = resendIndex = 0;
+    lastSendReport = csGetTicks();
 }
 
 NetBase::~NetBase()
@@ -450,6 +451,8 @@ void NetBase::CheckResendPkts()
                 Debug2(LOG_NET,0,"No packet in ack queue :%d\n", pkt->packet->pktid);
 #endif
             }
+            else
+                pkt->DecRef();
         }
     }
     if(pkts.GetSize() > 0)
@@ -658,10 +661,11 @@ bool NetBase::SendOut()
             status.Format("Sending network messages has taken %u time to process, for %u senders and %u messages.", timeTaken, senderCount, sentCount);
             CPrintf(CON_WARNING, "%s\n", (const char *) status.GetData());
         }
-        status.AppendFmt("Network average statistics: %f senders, %f messages per sender, %f time per message. Peak %u senders, %f messages/sender %u time", sendAvg, messagesAvg, timeAvg, peakSenders, peakMessagesPerSender, peakTime);
+        status.AppendFmt("Network average statistics for last %u ticks: %f senders, %f messages per sender, %f time per message. Peak %u senders, %f messages/sender %u time", csGetTicks() - lastSendReport, sendAvg, messagesAvg, timeAvg, peakSenders, peakMessagesPerSender, peakTime);
         
         if(LogCSV::GetSingletonPtr())
             LogCSV::GetSingleton().Write(CSV_STATUS, status);
+        lastSendReport = csGetTicks();
     }
     
     if(senderCount > 0)
