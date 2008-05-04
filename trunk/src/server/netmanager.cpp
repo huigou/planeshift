@@ -228,7 +228,7 @@ void NetManager::CheckResendPkts()
                 status.Format("Resending high priority packets has taken %u time to process, for %u packets.", timeTaken, (unsigned int) pkts.GetSize());
                 CPrintf(CON_WARNING, "%s\n", (const char *) status.GetData());
             }
-            status.AppendFmt("Resending non-acked packet statistics: %f average resends, peak of %u resent packets", resendAvg, peakResend);
+            status.AppendFmt("Resending non-acked packet statistics: %g average resends, peak of %u resent packets", resendAvg, peakResend);
             
             if(LogCSV::GetSingletonPtr())
                 LogCSV::GetSingleton().Write(CSV_STATUS, status);
