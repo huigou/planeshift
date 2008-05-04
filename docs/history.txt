@@ -1,5 +1,6 @@
 *** 2008-05-03 by Andrew Dai
 - Added basic support for reporting when netcode has a long queue.
+- Fixed a memory leak that happened when resending non-acked packets.
 
 *** 2008-05-03 by Mike Gist
 - Added a transform to convert lightPos into model space.
