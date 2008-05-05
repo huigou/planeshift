@@ -1403,11 +1403,11 @@ public:
     int type;
 
     /// For Day/Night events
-    int minute;
-    int hour;
-    int day;
-    int month;
-    int year;
+    uint minute;
+    uint hour;
+    uint day;
+    uint month;
+    uint year;
     
     NetWeatherInfo weather;
 };

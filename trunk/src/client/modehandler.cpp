@@ -77,6 +77,8 @@
 #include "weather.h"
 #include "globals.h"
 
+#define LIGHTING_STEPS 20
+
 
 /// Callback class for the portal traversing
 psPortalCallback::psPortalCallback()
@@ -114,9 +116,11 @@ ModeHandler::ModeHandler(iSoundManager *sm,
     downfall     = NULL;
     fog          = NULL;
 
-    interpolation_time = 40*1000;
-    last_interpolation_ticks = 0;
-    last_lightset = 0;
+    clockHour = 0;
+    interpolation_time = 600000; // One game hour.
+    interpolation_step = 0;
+    stepStage = 0;
+    last_interpolation_reset = 0;
     randomgen     = new csRandomGen();
     interpolation_complete = true;  // don't attempt to update lights until you get a net msg to do so
     
@@ -735,23 +739,30 @@ void ModeHandler::SetSectorMusic(const char *sectorname)
     csString sector(sectorname);
     if(psengine->GetSoundStatus())
     {
-        soundmanager->EnterSector( sector, clock, (int)sound , pos );
+        soundmanager->EnterSector( sector, clockHour, (int)sound , pos );
     }
 }
 
 void ModeHandler::ClearLightFadeSettings()
 {
-    //Error1("*********************\nCLEARING LIGHT SETTINGS\n******************************\n");
-    csTicks current_ticks;
-    current_ticks = csGetTicks();
-
-    if (current_ticks >= (interpolation_time + 1000))
-        last_interpolation_reset = csGetTicks() - interpolation_time - 1000;
-    else
-        last_interpolation_reset = 0;
-
+    // Set interpolation to 0% completed.
+    last_interpolation_reset = csGetTicks();
     interpolation_complete = false;
-    UpdateLights(last_interpolation_reset);  // 0% sets up everything
+    interpolation_step = 0;
+    stepStage = 0;
+
+    // Set up lights at 0%.
+    UpdateLights(last_interpolation_reset, true);
+}
+
+void ModeHandler::FinishLightFade()
+{
+    // Force lights to go to 100%
+    ClearLightFadeSettings();
+    interpolation_complete = false;
+    interpolation_step = LIGHTING_STEPS-1;
+
+    UpdateLights(csGetTicks()+interpolation_time, true);
 }
 
 void ModeHandler::PublishTime( int newTime )
@@ -763,9 +774,8 @@ void ModeHandler::PublishTime( int newTime )
     }
 
     // Publish raw time first
-    PawsManager::GetSingleton().Publish("TimeOfDay",newTime);
+    PawsManager::GetSingleton().Publish("TimeOfDay", newTime);
 
-    char buf[100];
     char time[3];
     time[0] = 'A'; time[1]='M'; time[2]='\0';
     
@@ -778,9 +788,9 @@ void ModeHandler::PublishTime( int newTime )
     if (newTime == 0)
       newTime = 12;
     
-    csString translation = PawsManager::GetSingleton().Translate("o'clock");
-    sprintf(buf, "%d %s(%s)", newTime, translation.GetData(), time );
-    PawsManager::GetSingleton().Publish("TimeOfDayStr",buf);    
+    csString timeString;
+    timeString.Format("%d %s(%s)", newTime, PawsManager::GetSingleton().Translate("o'clock").GetData(), time);
+    PawsManager::GetSingleton().Publish("TimeOfDayStr", timeString);    
 }
 
 
@@ -810,53 +820,43 @@ void ModeHandler::HandleWeatherMessage(MsgEntry* me)
             
         case psWeatherMessage::DAYNIGHT:
         {
-            clock = msg.hour;
-            Notify2(LOG_WEATHER, "The time is now %d o'clock.\n",clock);
-            if ( clock >= 22 || clock <= 6 )
+            uint lastClockHour = clockHour;
+            clockHour = msg.hour;
+
+            if(clockHour == lastClockHour)
+                break;
+
+            Notify2(LOG_WEATHER, "The time is now %d o'clock.\n", clockHour);
+
+            if ( clockHour >= 22 || clockHour <= 6 )
                 timeOfDay = TIME_NIGHT;
-            else if ( clock >=7 && clock <=12 )
+            else if ( clockHour >=7 && clockHour <=12 )
                 timeOfDay = TIME_MORNING;
-            else if ( clock >=13 && clock <=18 )    
+            else if ( clockHour >=13 && clockHour <=18 )    
                 timeOfDay = TIME_AFTERNOON;
-            else if ( clock >=19 && clock < 22 )
+            else if ( clockHour >=19 && clockHour < 22 )
                 timeOfDay = TIME_EVENING;    
             
-            if (abs(clock) > (int)lights.GetSize() )
-            {
-                Bug1("Illegal value for time.\n");
-                break;
-            }
-
-            PublishTime(abs(clock));
+            PublishTime(clockHour);
             
             // Reset the time basis for interpolation
-            if (clock >= 0)
+            if (clockHour == lastClockHour+1 || lastClockHour == 23 && clockHour == 0)
             {
                 last_interpolation_reset = csGetTicks();
-                last_lightset = clock;
+                interpolation_step = 0;
                 interpolation_complete = false;
+                stepStage = 0;
                 // Update lighting setup for this time period
                 UpdateLights(last_interpolation_reset);
             }
-            else // if a negative hour is passed, just jump to it--don't interpolate.
+            else // If we've skipped back, or forwards more than one hour, just jump to it.
             {
-                ClearLightFadeSettings();
-                last_lightset = -clock;
-                UpdateLights( csGetTicks() );         // 100% sets the light values
+                FinishLightFade();
             }
 
             break;
         }
     }
-}
-
-void ModeHandler::UpdateLights()
-{
-    last_interpolation_reset = csGetTicks();
-    interpolation_complete = false;
-
-    // Update lighting setup for this time period
-    UpdateLights(last_interpolation_reset);
 }
 
 float ModeHandler::GetDensity(WeatherInfo* wi)
@@ -1045,8 +1045,23 @@ void ModeHandler::ProcessDownfall(psWeatherMessage::NetWeatherInfo& info)
 
 void ModeHandler::PreProcess()
 {
-    UpdateLights(csGetTicks());
-    UpdateWeather(csGetTicks());
+    csTicks now = csGetTicks();
+
+    // Check if we need to update sound.
+    if (sound_queued)
+    {
+        if (now >= sound_when)
+        {
+            if(psengine->GetSoundStatus())
+            {
+                csRef<iSndSysSource> toPlay = soundmanager->StartAmbientSound(sound_name, iSoundManager::NO_LOOP);
+            }
+            sound_queued = false;
+        }
+    }
+
+    UpdateLights(now);
+    UpdateWeather(now);
 }
 
 /**
@@ -1056,66 +1071,81 @@ void ModeHandler::PreProcess()
  * goes through all the light settings of the current time
  * to update them.
  */
-void ModeHandler::UpdateLights(csTicks when)
+void ModeHandler::UpdateLights(csTicks now, bool force)
 {
-    if (sound_queued)
-    {
-        if (when >= sound_when)
-        {
-            if(psengine->GetSoundStatus())
-            {
-                csRef<iSndSysSource> toPlay = soundmanager->StartAmbientSound(sound_name,iSoundManager::NO_LOOP);
-            }
-            sound_queued = false;
-        }
-    }
-
-    if (interpolation_complete)
+    if (interpolation_complete || clockHour >= lights.GetSize())
     {
         return;
     }
 
     // Calculate how close to stated values we should be by now
-    float pct = when-last_interpolation_reset;
+    float pct = (now-last_interpolation_reset);
     pct /= interpolation_time;
 
-    // This keeps the interpolation from happening every single frame
-    // because that is too slow.  Now it will divide up the interpolation
-    // into a maximum of 20 steps.
-    if ((when!=last_interpolation_reset) && (when - last_interpolation_ticks < interpolation_time/20))
+    if(pct > 1.0f)
+        pct = 1.0f;
+
+    // Divide the interpolation over a number of steps.
+    if ((100*pct) / (100/LIGHTING_STEPS) < interpolation_step)
     {
         return;
     }
 
-    if (when > last_interpolation_reset + interpolation_time)
-    {
-        pct = 1;
-        interpolation_complete = true;  // do 1 past the end, but then skip in the future
-    }
+    LightingList *list = lights[clockHour];
 
-    if (last_lightset >= lights.GetSize())
+    if(list)
     {
-        return;
-    }
-    LightingList *list = lights[last_lightset];
-
-    int count = 0;
-    if (list)
-    {
-        for (size_t i=0; i<list->colors.GetSize(); i++)
+        if(force)
         {
-            if (ProcessLighting(list->colors[i],pct))
-                count++;
+            // Process all the lights.
+            for(uint i=0; i<list->colors.GetSize(); i++)
+            {
+                ProcessLighting(list->colors[i], pct);
+                stepStage++;
+            }
+        }
+        else
+        {
+            if(pct == 0.0f)
+            {
+                // Initialise all lights once.
+                for(uint i=0; i<list->colors.GetSize(); i++)
+                {
+                    ProcessLighting(list->colors[i], pct);
+                    stepStage++;
+                }
+            }
+            else
+            {
+                // Process the lights, 1 a frame.
+                ProcessLighting(list->colors[stepStage], pct);
+                stepStage++;
+            }
         }
     }
-    
-    last_interpolation_ticks = when;
+
+    if (stepStage == list->colors.GetSize())
+    {
+        // Set next step.
+        if(interpolation_step+1 == LIGHTING_STEPS)
+        {
+            interpolation_step = 0;
+            interpolation_complete = true;
+            last_interpolation_reset = now;
+        }
+        else
+        {
+            interpolation_step++;
+        }
+
+        stepStage = 0;
+    }
 }
 
 /**
  * This updates 1 light
  */
-bool ModeHandler::ProcessLighting(LightingSetting *setting,float pct)
+bool ModeHandler::ProcessLighting(LightingSetting *setting, float pct)
 {
     csColor interpolate_color;
     csColor target_color;
@@ -1225,7 +1255,7 @@ bool ModeHandler::ProcessLighting(LightingSetting *setting,float pct)
         }
         else
         {
-//            Warning3( LOG_WEATHER, "Sector '%s' for ambient light was not found in lighting setup %d.\n", (const char *)setting->object, setting->value);
+            // Warning3( LOG_WEATHER, "Sector '%s' for ambient light was not found in lighting setup %d.\n", (const char *)setting->object, setting->value);
             setting->error = true;
             
             return false;

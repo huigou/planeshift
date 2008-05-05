@@ -87,7 +87,7 @@ void WeatherManager::StartGameTime()
     sscanf(lastDate.GetDataSafe(),"%d-%d-%d",&gameTimeYear,&gameTimeMonth,&gameTimeDay);
 
     // Start the time of day clock  
-    QueueNextEvent( 0,psWeatherMessage::DAYNIGHT,0,0,0,"",NULL);
+    QueueNextEvent(0, psWeatherMessage::DAYNIGHT, 0, 0, 0, "", NULL);
 }
 
 void WeatherManager::SaveGameTime()
@@ -107,6 +107,7 @@ void WeatherManager::SetGameTime(int hour,int minute)
 {
     gameTimeHour = hour;
     gameTimeMinute = minute;
+    BroadcastGameTime();
 }
 
 bool WeatherManager::StartWeather(psSectorInfo *si)
@@ -529,11 +530,10 @@ void WeatherManager::HandleWeatherEvent(psWeatherGameEvent *event)
                     }
 
                 }
-                // Only save every game hour
-                SaveGameTime();            
+                // Only save and broadcast every game hour.
+                SaveGameTime();
+                BroadcastGameTime();
             }
-
-            BroadcastGameTime();
             break;
         }
     default:
