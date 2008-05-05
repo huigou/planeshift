@@ -119,14 +119,17 @@ public:
     bool Initialize();
 
     void ClearLightFadeSettings();
+    void FinishLightFade();
 
     void PreProcess();
 
     void SetEntity(GEMClientActor *ent);
 
-    /// Get the general time of day it is ( from enum )
+    // Get the general time of day it is ( from enum )
     TimeOfDay GetGeneralTime() { return timeOfDay; }
-    size_t GetTime() { return last_lightset; }
+
+    // Get the hour of the day.
+    size_t GetTime() { return clockHour; }
 
     void DoneLoading(const char* sectorname); // Called when every connected sector is loaded
 
@@ -148,18 +151,22 @@ protected:
         
     ///Stores the 'general' time of day it is.  One of the TimeOfDay enums.
     TimeOfDay  timeOfDay;
-    int clock;  ///<! Stores the actual time of day.
+
+    /// Stores the time of day in hours.
+    uint clockHour;
      
     iObjectRegistry*        object_reg;
     csRef<iSoundManager>    soundmanager;
     csRef<psCelClient>      celclient;
     csRef<MsgHandler>       msghandler;
     csRef<iEngine>          engine;
+    // Each element represents an hour of the day.
     csPDelArray<LightingList> lights;
+    // Track the stage of the current step.
+    uint                    stepStage;
     csTicks                 interpolation_time;
-    size_t                  last_lightset;
+    uint                    interpolation_step;
     csTicks                 last_interpolation_reset;
-    csTicks                 last_interpolation_ticks;
     bool                    interpolation_complete;
     csRandomGen            *randomgen;
     bool                    sound_queued;
@@ -182,7 +189,7 @@ protected:
     void HandleNewSectorMessage(MsgEntry* me);
     void HandleCombatEvent(MsgEntry* me);
 
-    bool ProcessLighting(LightingSetting *color,float pct);
+    bool ProcessLighting(LightingSetting *color, float pct);
     LightingSetting *FindLight(LightingSetting *light,int which);
 
     bool CheckCurrentSector(GEMClientObject *entity,
@@ -193,8 +200,7 @@ protected:
     void SetSectorMusic(const char *sectorname);
     void PublishTime( int newTime );
 
-    void UpdateLights();
-    void UpdateLights(csTicks when);
+    void UpdateLights(csTicks when, bool force = false);
 
     /* WEATHER FUNCTIONS */
     // Controls the weather.

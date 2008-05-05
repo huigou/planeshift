@@ -352,7 +352,7 @@ void NetworkManager::HandleTimeUpdate( MsgEntry* me )
 
     if (msg.type == psWeatherMessage::DAYNIGHT)  // time update msg
     {
-        npcclient->UpdateTime(msg.minute,msg.hour,msg.day,msg.month,msg.year);
+        npcclient->UpdateTime(msg.minute, msg.hour, msg.day, msg.month, msg.year);
     }
 }
 

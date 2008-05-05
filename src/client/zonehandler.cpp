@@ -260,7 +260,7 @@ void ZoneHandler::OnDrawingFinished()
             needsToLoadMaps = false;
 
             psengine->SetLoadedMap(true);
-            psengine->GetModeHandler()->ClearLightFadeSettings();  // make sure new map gets relit for time of day
+            psengine->GetModeHandler()->FinishLightFade();  // make sure new map gets relit for time of day
 
             if (haveNewPos) 
             {
