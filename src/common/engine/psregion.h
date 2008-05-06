@@ -38,6 +38,7 @@ struct iDocumentNode;
 struct iDocumentSystem;
 struct iEngine;
 struct iLoader;
+struct iObjectRegistry;
 struct iVFS;
 
 // Feature defines.
