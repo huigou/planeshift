@@ -1,3 +1,6 @@
+*** 2008-05-06 by Frank Barton (Eriroley)
+- Fix for portions of FS#1471 /setitemname not remaining when item traded
+
 *** 2008-05-05 by Mike Gist
 - Made some big optimisations to the day/night cycle code.
 - Fixed several bugs in the day/night cycle code causing bad lighting.
