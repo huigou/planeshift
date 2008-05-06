@@ -114,7 +114,7 @@ bool psQuest::Load(iResultRow& row)
     return true;
 }
 
-bool LoadPrerequisiteXML(iDocumentNode * topNode, psQuest * self, psQuestPrereqOp*&prerequisite)
+bool LoadPrerequisiteXML(iDocumentNode * topNode, psQuest * self, csRef<psQuestPrereqOp>& prerequisite)
 {
     // Recursively decode the xml document and generate prerequisite operators.
 
@@ -148,13 +148,15 @@ bool LoadPrerequisiteXML(iDocumentNode * topNode, psQuest * self, psQuestPrereqO
             if (name == "self")
             {
                 quest = self;
-            } else
+            }
+            else
             {
                 quest = CacheManager::GetSingleton().GetQuestByName( name );
             }
+
             if (quest)
             {
-                prerequisite = new psQuestPrereqOpQuestCompleted(quest);
+                prerequisite.AttachNew(new psQuestPrereqOpQuestCompleted(quest));
             }
             else
             {
@@ -173,7 +175,7 @@ bool LoadPrerequisiteXML(iDocumentNode * topNode, psQuest * self, psQuestPrereqO
                 Error1("Both min and max is -1, seting min to 1");
                 min = 1;
             }
-            prerequisite = new psQuestPrereqOpQuestCompletedCategory(category,min,max);
+            prerequisite.AttachNew(new psQuestPrereqOpQuestCompletedCategory(category,min,max));
         }
         else
         {
@@ -194,7 +196,7 @@ bool LoadPrerequisiteXML(iDocumentNode * topNode, psQuest * self, psQuestPrereqO
         }
         if (quest)
         {
-            prerequisite = new psQuestPrereqOpQuestAssigned(quest);
+            prerequisite.AttachNew(new psQuestPrereqOpQuestAssigned(quest));
         }
         else
         {
@@ -205,7 +207,8 @@ bool LoadPrerequisiteXML(iDocumentNode * topNode, psQuest * self, psQuestPrereqO
     } 
     else if ( strcmp( topNode->GetValue(), "and" ) == 0 )
     {
-        psQuestPrereqOpList * list = new psQuestPrereqOpAnd();
+        csRef<psQuestPrereqOpList> list;
+        list.AttachNew(new psQuestPrereqOpAnd());
         prerequisite = list;
         
         csRef<iDocumentNodeIterator> iter = topNode->GetNodes();
@@ -217,7 +220,7 @@ bool LoadPrerequisiteXML(iDocumentNode * topNode, psQuest * self, psQuestPrereqO
             if (node->GetType() != CS_NODE_ELEMENT)
                 continue;
 
-            psQuestPrereqOp * op = NULL;
+            csRef<psQuestPrereqOp> op;
             
             if (!LoadPrerequisiteXML(node, self, op))
             {
@@ -234,7 +237,8 @@ bool LoadPrerequisiteXML(iDocumentNode * topNode, psQuest * self, psQuestPrereqO
     }
     else if ( strcmp( topNode->GetValue(), "or" ) == 0 )
     {
-        psQuestPrereqOpList * list = new psQuestPrereqOpOr();
+        csRef<psQuestPrereqOpList> list;
+        list.AttachNew(new psQuestPrereqOpOr());
         prerequisite = list;
         
         csRef<iDocumentNodeIterator> iter = topNode->GetNodes();
@@ -246,7 +250,7 @@ bool LoadPrerequisiteXML(iDocumentNode * topNode, psQuest * self, psQuestPrereqO
             if ( node->GetType() != CS_NODE_ELEMENT )
                 continue;
 
-            psQuestPrereqOp * op = NULL;
+            csRef<psQuestPrereqOp> op;
             
             if (!LoadPrerequisiteXML(node, self, op))
             {
@@ -263,7 +267,8 @@ bool LoadPrerequisiteXML(iDocumentNode * topNode, psQuest * self, psQuestPrereqO
     }
     else if ( strcmp( topNode->GetValue(), "xor" ) == 0 )
     {
-        psQuestPrereqOpList * list = new psQuestPrereqOpXor();
+        csRef<psQuestPrereqOpList> list;
+        list.AttachNew(new psQuestPrereqOpXor());
         prerequisite = list;
         
         csRef<iDocumentNodeIterator> iter = topNode->GetNodes();
@@ -275,7 +280,7 @@ bool LoadPrerequisiteXML(iDocumentNode * topNode, psQuest * self, psQuestPrereqO
             if ( node->GetType() != CS_NODE_ELEMENT )
                 continue;
 
-            psQuestPrereqOp * op = NULL;
+            csRef<psQuestPrereqOp> op;
             
             if (!LoadPrerequisiteXML(node, self, op))
             {
@@ -298,7 +303,8 @@ bool LoadPrerequisiteXML(iDocumentNode * topNode, psQuest * self, psQuestPrereqO
         if (topNode->GetAttributeValue("max")) 
             max = topNode->GetAttributeValueAsInt("max");
 
-        psQuestPrereqOpList * list = new psQuestPrereqOpRequire(min,max);
+        csRef<psQuestPrereqOpList> list;
+        list.AttachNew(new psQuestPrereqOpRequire(min,max));
         prerequisite = list;
         
         csRef<iDocumentNodeIterator> iter = topNode->GetNodes();
@@ -310,7 +316,7 @@ bool LoadPrerequisiteXML(iDocumentNode * topNode, psQuest * self, psQuestPrereqO
             if ( node->GetType() != CS_NODE_ELEMENT )
             continue;
 
-            psQuestPrereqOp * op = NULL;
+            csRef<psQuestPrereqOp> op;
             
             if (!LoadPrerequisiteXML(node, self, op))
             {
@@ -342,7 +348,7 @@ bool LoadPrerequisiteXML(iDocumentNode * topNode, psQuest * self, psQuestPrereqO
 
         int max = topNode->GetAttributeValueAsInt("max");
 
-        prerequisite = new psQuestPrereqOpFaction(faction,value,max!=0);
+        prerequisite.AttachNew(new psQuestPrereqOpFaction(faction,value,max!=0));
 
     }
     else if ( strcmp( topNode->GetValue(), "activemagic" ) == 0 )
@@ -354,7 +360,7 @@ bool LoadPrerequisiteXML(iDocumentNode * topNode, psQuest * self, psQuestPrereqO
             return false;
         }
         
-        prerequisite = new psQuestPrereqOpActiveMagic(name);
+        prerequisite.AttachNew(new psQuestPrereqOpActiveMagic(name));
     }
     else if ( strcmp( topNode->GetValue(), "timeofday" ) == 0 )
     {
@@ -362,7 +368,7 @@ bool LoadPrerequisiteXML(iDocumentNode * topNode, psQuest * self, psQuestPrereqO
 
         int max = topNode->GetAttributeValueAsInt("max");
 
-        prerequisite = new psQuestPrereqOpTimeOfDay(min,max);
+        prerequisite.AttachNew(new psQuestPrereqOpTimeOfDay(min,max));
 
     }
     else if ( strcmp( topNode->GetValue(), "not" ) == 0 )
@@ -376,12 +382,13 @@ bool LoadPrerequisiteXML(iDocumentNode * topNode, psQuest * self, psQuestPrereqO
             if ( node->GetType() != CS_NODE_ELEMENT )
             continue;
 
-            psQuestPrereqOp * op;
+            csRef<psQuestPrereqOp> op;
             if (!LoadPrerequisiteXML(node, self, op))
             {
                 return false;
             }
-            psQuestPrereqOpList* list = new psQuestPrereqOpNot();
+            csRef<psQuestPrereqOpList> list;
+            list.AttachNew(new psQuestPrereqOpNot());
             list->Push(op);
             prerequisite = list;
             break;
@@ -407,7 +414,7 @@ bool LoadPrerequisiteXML(iDocumentNode * topNode, psQuest * self, psQuestPrereqO
 
         unsigned int max = topNode->GetAttributeValueAsInt("max");
 
-        prerequisite = new psQuestPrereqOpSkill(skill,min,max);
+        prerequisite.AttachNew(new psQuestPrereqOpSkill(skill,min,max));
     }
     else
     {
@@ -418,7 +425,7 @@ bool LoadPrerequisiteXML(iDocumentNode * topNode, psQuest * self, psQuestPrereqO
 }
 
 
-bool LoadPrerequisiteXML(psQuestPrereqOp*&prerequisite, psQuest * self, csString script)
+bool LoadPrerequisiteXML(csRef<psQuestPrereqOp>& prerequisite, psQuest * self, csString script)
 {
     csRef<iDocumentSystem> xml = csPtr<iDocumentSystem>(new csTinyDocumentSystem);
     csRef<iDocument> doc = xml->CreateDocument();
@@ -461,7 +468,7 @@ bool psQuest::PostLoad()
 
         if (!LoadPrerequisiteXML(prerequisite,this,prerequisiteStr))
         {
-            Error1("Failed to load prerequistie XML");
+            Error1("Failed to load prerequisite XML!");
             return false;
         }
         
@@ -479,7 +486,7 @@ bool psQuest::PostLoad()
 
 bool psQuest::AddPrerequisite(csString prerequisitescript)
 {
-    psQuestPrereqOp * op;
+    csRef<psQuestPrereqOp> op;
     if (!LoadPrerequisiteXML(op,this,prerequisitescript))
     {
         return false;
@@ -494,18 +501,19 @@ bool psQuest::AddPrerequisite(csString prerequisitescript)
 }
 
 
-bool psQuest::AddPrerequisite(psQuestPrereqOp * op)
+bool psQuest::AddPrerequisite(csRef<psQuestPrereqOp> op)
 {
     // Make sure that the first op is an AND list if there are an
     // prerequisite from before.
     if (prerequisite)
     {
         // Check if first op is an and list.
-        psQuestPrereqOpAnd * list = dynamic_cast<psQuestPrereqOpAnd*>(prerequisite);
+        psQuestPrereqOp* cast = prerequisite;
+        csRef<psQuestPrereqOpAnd> list = dynamic_cast<psQuestPrereqOpAnd*>(cast);
         if (list == NULL)
         {
             // If not insert an and list.
-            list = new psQuestPrereqOpAnd();
+            list.AttachNew(new psQuestPrereqOpAnd());
             list->Push(prerequisite);
             prerequisite = list;
         }

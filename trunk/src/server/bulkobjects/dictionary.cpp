@@ -1095,15 +1095,7 @@ bool NpcTrigger::operator<(NpcTrigger& other) const
 NpcResponse::NpcResponse()
 {
     quest = NULL;
-    prerequisite = NULL;
     active_quest = -1;
-}
-
-NpcResponse::~NpcResponse()
-{
-    if (prerequisite)
-        delete prerequisite;
-    prerequisite = NULL;
 }
 
 bool NpcResponse::Load(iResultRow& row)
@@ -1390,7 +1382,7 @@ bool NpcResponse::ParsePrerequisiteScript(const char *xmlstr,bool insertBeginnin
         return true;
     }
 
-    psQuestPrereqOp * op;
+    csRef<psQuestPrereqOp> op;
     if (!LoadPrerequisiteXML(op,NULL,xmlstr))
     {
         return false;
@@ -1404,18 +1396,19 @@ bool NpcResponse::ParsePrerequisiteScript(const char *xmlstr,bool insertBeginnin
     return false;
 }
 
-bool NpcResponse::AddPrerequisite(psQuestPrereqOp * op, bool insertBeginning)
+bool NpcResponse::AddPrerequisite(csRef<psQuestPrereqOp> op, bool insertBeginning)
 {
     // Make sure that the first op is an AND list if there are an
     // prerequisite from before.
     if (prerequisite)
     {
         // Check if first op is an and list.
-        psQuestPrereqOpAnd * list = dynamic_cast<psQuestPrereqOpAnd*>(prerequisite);
+        psQuestPrereqOp* cast = prerequisite;
+        csRef<psQuestPrereqOpAnd> list = dynamic_cast<psQuestPrereqOpAnd*>(cast);
         if (list == NULL)
         {
             // If not insert an and list.
-            list = new psQuestPrereqOpAnd();
+            list.AttachNew(new psQuestPrereqOpAnd());
             list->Push(prerequisite);
             prerequisite = list;
         }

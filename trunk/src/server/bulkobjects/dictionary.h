@@ -41,7 +41,7 @@
 //=============================================================================
 // Local Includes
 //=============================================================================
-
+#include "psquestprereqops.h"
 
 #define MAX_RESP 5
 
@@ -54,7 +54,6 @@ class gemNPC;
 class gemActor;
 class Client;
 class psQuest;
-class psQuestPrereqOp;
 class psCharacter;
 
 struct iDocumentNode;
@@ -299,7 +298,7 @@ class NpcResponse
     int type;                  /// record the type of response
     csPDelArray<ResponseOperation> script;  /// list of ops in script to execute when triggered
     psQuest * quest;           /// Quest that this respons is part of
-    psQuestPrereqOp * prerequisite; /// prerequisite for this Response to be available
+    csRef<psQuestPrereqOp> prerequisite; /// prerequisite for this Response to be available
     int active_quest;          /// which one should be run.  this is actually set by check quest avail op
     csTicks timeDelay;          /// This tracks the current time delay for chat msgs in the responses, so a single script can have a sequence of things that take a while
 
@@ -310,7 +309,7 @@ class NpcResponse
     };
 
     NpcResponse();
-    virtual ~NpcResponse();
+    virtual ~NpcResponse() {}
     
     bool Load(iResultRow& row);
 
@@ -339,7 +338,7 @@ class NpcResponse
      * @insertBeginning Insert at beginning or at end (Default at end).
      * @return True if successfully added.
      */
-    bool AddPrerequisite(psQuestPrereqOp * op, bool insertBeginning = false);
+    bool AddPrerequisite(csRef<psQuestPrereqOp> op, bool insertBeginning = false);
     
     /**
      * Check if the prerequisite for this response is valid

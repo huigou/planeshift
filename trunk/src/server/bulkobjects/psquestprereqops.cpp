@@ -53,21 +53,12 @@ csString psQuestPrereqOp::GetScript()
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 
-psQuestPrereqOpList::~psQuestPrereqOpList()
-{
-    while (prereqlist.GetSize())
-    {
-        delete prereqlist.Pop();
-    }        
-}
-
-
-void psQuestPrereqOpList::Push(psQuestPrereqOp* prereqOp)
+void psQuestPrereqOpList::Push(csRef<psQuestPrereqOp> prereqOp)
 {
     prereqlist.Push(prereqOp);
 }
 
-void psQuestPrereqOpList::Insert(size_t n, psQuestPrereqOp* prereqOp)
+void psQuestPrereqOpList::Insert(size_t n, csRef<psQuestPrereqOp> prereqOp)
 {
     prereqlist.Insert(n,prereqOp);
 }
@@ -100,14 +91,15 @@ csString psQuestPrereqOpAnd::GetScriptOp()
     return script;
 }
 
-psQuestPrereqOp* psQuestPrereqOpAnd::Copy()
+csPtr<psQuestPrereqOp> psQuestPrereqOpAnd::Copy()
 {
-    psQuestPrereqOpAnd* copy = new psQuestPrereqOpAnd();
+    csRef<psQuestPrereqOpAnd> copy;
+    copy.AttachNew(new psQuestPrereqOpAnd());
     for (size_t i = 0; i < prereqlist.GetSize(); i++)
     {
         copy->Push(prereqlist[i]->Copy());
     }    
-    return copy;
+    return csPtr<psQuestPrereqOp>(copy);
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////
@@ -138,14 +130,15 @@ csString psQuestPrereqOpOr::GetScriptOp()
     return script;
 }
 
-psQuestPrereqOp* psQuestPrereqOpOr::Copy()
+csPtr<psQuestPrereqOp> psQuestPrereqOpOr::Copy()
 {
-    psQuestPrereqOpOr* copy = new psQuestPrereqOpOr();
+    csRef<psQuestPrereqOpOr> copy;
+    copy.AttachNew(new psQuestPrereqOpOr());
     for (size_t i = 0; i < prereqlist.GetSize(); i++)
     {
         copy->Push(prereqlist[i]->Copy());
     }    
-    return copy;
+    return csPtr<psQuestPrereqOp>(copy);
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////
@@ -194,14 +187,15 @@ csString psQuestPrereqOpRequire::GetScriptOp()
     return script;
 }
 
-psQuestPrereqOp* psQuestPrereqOpRequire::Copy()
+csPtr<psQuestPrereqOp> psQuestPrereqOpRequire::Copy()
 {
-    psQuestPrereqOpRequire* copy = new psQuestPrereqOpRequire(min,max);
+    csRef<psQuestPrereqOpRequire> copy;
+    copy.AttachNew(new psQuestPrereqOpRequire(min,max));
     for (size_t i = 0; i < prereqlist.GetSize(); i++)
     {
         copy->Push(prereqlist[i]->Copy());
     }    
-    return copy;
+    return csPtr<psQuestPrereqOp>(copy);
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////
@@ -223,11 +217,12 @@ csString psQuestPrereqOpNot::GetScriptOp()
     return script;
 }
 
-psQuestPrereqOp* psQuestPrereqOpNot::Copy()
+csPtr<psQuestPrereqOp> psQuestPrereqOpNot::Copy()
 {
-    psQuestPrereqOpNot* copy = new psQuestPrereqOpNot();
+    csRef<psQuestPrereqOpNot> copy;
+    copy.AttachNew(new psQuestPrereqOpNot());
     copy->Push(prereqlist[0]->Copy());
-    return copy;
+    return csPtr<psQuestPrereqOp>(copy);
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////
@@ -254,15 +249,15 @@ csString psQuestPrereqOpQuestCompleted::GetScriptOp()
     return script;
 }
 
-psQuestPrereqOp* psQuestPrereqOpQuestCompleted::Copy()
+csPtr<psQuestPrereqOp> psQuestPrereqOpQuestCompleted::Copy()
 {
-    psQuestPrereqOpQuestCompleted* copy;
+    csRef<psQuestPrereqOpQuestCompleted> copy;
 
     if (quest==NULL)
-        copy = new psQuestPrereqOpQuestCompleted(name);
+        copy.AttachNew(new psQuestPrereqOpQuestCompleted(name));
     else
-        copy = new psQuestPrereqOpQuestCompleted(quest);
-    return copy;
+        copy.AttachNew(new psQuestPrereqOpQuestCompleted(quest));
+    return csPtr<psQuestPrereqOp>(copy);
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////
@@ -281,10 +276,11 @@ csString psQuestPrereqOpQuestAssigned::GetScriptOp()
     return script;
 }
 
-psQuestPrereqOp* psQuestPrereqOpQuestAssigned::Copy()
+csPtr<psQuestPrereqOp> psQuestPrereqOpQuestAssigned::Copy()
 {
-    psQuestPrereqOpQuestAssigned* copy = new psQuestPrereqOpQuestAssigned(quest);
-    return copy;
+    csRef<psQuestPrereqOpQuestAssigned> copy;
+    copy.AttachNew(new psQuestPrereqOpQuestAssigned(quest));
+    return csPtr<psQuestPrereqOp>(copy);
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////
@@ -319,11 +315,11 @@ csString psQuestPrereqOpQuestCompletedCategory::GetScriptOp()
     return script;
 }
 
-psQuestPrereqOp* psQuestPrereqOpQuestCompletedCategory::Copy()
+csPtr<psQuestPrereqOp> psQuestPrereqOpQuestCompletedCategory::Copy()
 {
-    psQuestPrereqOpQuestCompletedCategory* copy = 
-        new psQuestPrereqOpQuestCompletedCategory(category,min,max);
-    return copy;
+    csRef<psQuestPrereqOpQuestCompletedCategory> copy;
+    copy.AttachNew(new psQuestPrereqOpQuestCompletedCategory(category,min,max));
+    return csPtr<psQuestPrereqOp>(copy);
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////
@@ -347,10 +343,11 @@ csString psQuestPrereqOpFaction::GetScriptOp()
     return script;
 }
 
-psQuestPrereqOp* psQuestPrereqOpFaction::Copy()
+csPtr<psQuestPrereqOp> psQuestPrereqOpFaction::Copy()
 {
-    psQuestPrereqOpFaction* copy = new psQuestPrereqOpFaction(faction,value,max);
-    return copy;
+    csRef<psQuestPrereqOpFaction> copy;
+    copy.AttachNew(new psQuestPrereqOpFaction(faction,value,max));
+    return csPtr<psQuestPrereqOp>(copy);
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////
@@ -373,10 +370,11 @@ csString psQuestPrereqOpActiveMagic::GetScriptOp()
     return script;
 }
 
-psQuestPrereqOp* psQuestPrereqOpActiveMagic::Copy()
+csPtr<psQuestPrereqOp> psQuestPrereqOpActiveMagic::Copy()
 {
-    psQuestPrereqOpActiveMagic* copy = new psQuestPrereqOpActiveMagic(activeMagic);
-    return copy;
+    csRef<psQuestPrereqOpActiveMagic> copy;
+    copy.AttachNew(new psQuestPrereqOpActiveMagic(activeMagic));
+    return csPtr<psQuestPrereqOp>(copy);
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////
@@ -402,10 +400,11 @@ csString psQuestPrereqOpTimeOfDay::GetScriptOp()
     return script;
 }
 
-psQuestPrereqOp* psQuestPrereqOpTimeOfDay::Copy()
+csPtr<psQuestPrereqOp> psQuestPrereqOpTimeOfDay::Copy()
 {
-    psQuestPrereqOpTimeOfDay* copy = new psQuestPrereqOpTimeOfDay(minTime, maxTime);
-    return copy;
+    csRef<psQuestPrereqOpTimeOfDay> copy;
+    copy.AttachNew(new psQuestPrereqOpTimeOfDay(minTime, maxTime));
+    return csPtr<psQuestPrereqOp>(copy);
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////
@@ -434,14 +433,15 @@ csString psQuestPrereqOpXor::GetScriptOp()
     return script;
 }
 
-psQuestPrereqOp* psQuestPrereqOpXor::Copy()
+csPtr<psQuestPrereqOp> psQuestPrereqOpXor::Copy()
 {
-    psQuestPrereqOpXor* copy = new psQuestPrereqOpXor();
+    csRef<psQuestPrereqOpXor> copy;
+    copy.AttachNew(new psQuestPrereqOpXor());
     for (size_t i = 0; i < prereqlist.GetSize(); i++)
     {
         copy->Push(prereqlist[i]->Copy());
     }    
-    return copy;
+    return csPtr<psQuestPrereqOp>(copy);
 }
 ///////////////////////////////////////////////////////////////////////////////////////////
 
@@ -478,8 +478,9 @@ csString psQuestPrereqOpSkill::GetScriptOp()
     return script;
 }
 
-psQuestPrereqOp* psQuestPrereqOpSkill::Copy()
+csPtr<psQuestPrereqOp> psQuestPrereqOpSkill::Copy()
 {
-    psQuestPrereqOpSkill* copy = new psQuestPrereqOpSkill(skill,min,max);
-    return copy;
+    csRef<psQuestPrereqOpSkill> copy;
+    copy.AttachNew(new psQuestPrereqOpSkill(skill,min,max));
+    return csPtr<psQuestPrereqOp>(copy);
 }

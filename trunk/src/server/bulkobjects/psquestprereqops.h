@@ -23,7 +23,8 @@
 //=============================================================================
 // Crystal Space Includes
 //=============================================================================
-#include <csutil/array.h>
+#include <csutil/refarr.h>
+#include <csutil/refcount.h>
 
 //=============================================================================
 // Project Includes
@@ -33,6 +34,10 @@
 // Local Includes
 //=============================================================================
 
+class psCharacter;
+class psQuest;
+class psSkillInfo;
+struct Faction;
 
 /**
  * Pure virtual base quest prerequisite operator class
@@ -40,7 +45,7 @@
  * This base class define the needed functions for every 
  * prerequisite operator.
  */
-class psQuestPrereqOp 
+class psQuestPrereqOp : public csRefCount
 {
  public:
     /**
@@ -87,7 +92,7 @@ class psQuestPrereqOp
      *
      * @return Copy of the prerequisite operator.
      */
-    virtual psQuestPrereqOp* Copy() = 0;
+    virtual csPtr<psQuestPrereqOp> Copy() = 0;
 };
 
 /**
@@ -103,7 +108,7 @@ class psQuestPrereqOpList: public psQuestPrereqOp
     /**
      * The list of child prerequisite operators for this list operator.
      */
-    csArray<psQuestPrereqOp*> prereqlist;
+    csRefArray<psQuestPrereqOp> prereqlist;
  public:
 
     /**
@@ -112,7 +117,7 @@ class psQuestPrereqOpList: public psQuestPrereqOp
      * Will delete any prerequisite pushed on to the list 
      * of child prerequisites.
      */
-    virtual ~psQuestPrereqOpList();
+     virtual ~psQuestPrereqOpList() {}
 
     /**
      * Push a new child prerequisite onto the child list.
@@ -122,7 +127,7 @@ class psQuestPrereqOpList: public psQuestPrereqOp
      *
      * @param  prereqOp The prerequisite operator to be appended to the list.
      */
-    virtual void Push(psQuestPrereqOp* prereqOp);
+    virtual void Push(csRef<psQuestPrereqOp> prereqOp);
 
     /**
      * Insert a new child prerequisite onto the child list.
@@ -133,7 +138,7 @@ class psQuestPrereqOpList: public psQuestPrereqOp
      * @param  n Insert the \c prereqOp before prerequisite \c n
      * @param  prereqOp The prerequisite operator to be inserted to the list.
      */
-    virtual void Insert(size_t n, psQuestPrereqOp* prereqOp);    
+    virtual void Insert(size_t n, csRef<psQuestPrereqOp> prereqOp);    
 
 };
 
@@ -180,7 +185,7 @@ class psQuestPrereqOpAnd: public psQuestPrereqOpList
      *
      * @return Copy of the prerequisite operator.
      */
-    virtual psQuestPrereqOp* Copy();
+    virtual csPtr<psQuestPrereqOp> Copy();
 };
 
 
@@ -227,7 +232,7 @@ class psQuestPrereqOpOr: public psQuestPrereqOpList
      *
      * @return Copy of the prerequisite operator.
      */
-    virtual psQuestPrereqOp* Copy();
+    virtual csPtr<psQuestPrereqOp> Copy();
 };
 
 /**
@@ -287,7 +292,7 @@ class psQuestPrereqOpRequire: public psQuestPrereqOpList
      *
      * @return Copy of the prerequisite operator.
      */
-    virtual psQuestPrereqOp* Copy();
+    virtual csPtr<psQuestPrereqOp> Copy();
 };
 
 /**
@@ -332,7 +337,7 @@ class psQuestPrereqOpNot: public psQuestPrereqOpList
      *
      * @return Copy of the prerequisite operator.
      */
-    virtual psQuestPrereqOp* Copy();
+    virtual csPtr<psQuestPrereqOp> Copy();
 };
 
 /**
@@ -399,7 +404,7 @@ class psQuestPrereqOpQuestCompleted: public psQuestPrereqOp
      *
      * @return Copy of the prerequisite operator.
      */
-    virtual psQuestPrereqOp* Copy();
+    virtual csPtr<psQuestPrereqOp> Copy();
 };
 
 /**
@@ -456,7 +461,7 @@ class psQuestPrereqOpQuestAssigned: public psQuestPrereqOp
      *
      * @return Copy of the prerequisite operator.
      */
-    virtual psQuestPrereqOp* Copy();
+    virtual csPtr<psQuestPrereqOp> Copy();
 };
 
 /**
@@ -530,7 +535,7 @@ class psQuestPrereqOpQuestCompletedCategory: public psQuestPrereqOp
      *
      * @return Copy of the prerequisite operator.
      */
-    virtual psQuestPrereqOp* Copy();
+    virtual csPtr<psQuestPrereqOp> Copy();
 };
 
 /**
@@ -593,7 +598,7 @@ class psQuestPrereqOpFaction: public psQuestPrereqOp
      *
      * @return Copy of the prerequisite operator.
      */
-    virtual psQuestPrereqOp* Copy();
+    virtual csPtr<psQuestPrereqOp> Copy();
 };
 
 /**
@@ -643,7 +648,7 @@ class psQuestPrereqOpActiveMagic : public psQuestPrereqOp
      *
      * @return Copy of the prerequisite operator.
      */
-    virtual psQuestPrereqOp* Copy();
+    virtual csPtr<psQuestPrereqOp> Copy();
 };
 
 /**
@@ -694,7 +699,7 @@ class psQuestPrereqOpTimeOfDay : public psQuestPrereqOp
      *
      * @return Copy of the prerequisite operator.
      */
-    virtual psQuestPrereqOp* Copy();
+    virtual csPtr<psQuestPrereqOp> Copy();
 };
 
 /**
@@ -740,7 +745,7 @@ class psQuestPrereqOpXor: public psQuestPrereqOpList
      *
      * @return Copy of the prerequisite operator.
      */
-    virtual psQuestPrereqOp* Copy();
+    virtual csPtr<psQuestPrereqOp> Copy();
 };
 
 /**
@@ -801,7 +806,7 @@ class psQuestPrereqOpSkill: public psQuestPrereqOp
      *
      * @return Copy of the prerequisite operator.
      */
-    virtual psQuestPrereqOp* Copy();
+    virtual csPtr<psQuestPrereqOp> Copy();
 };
 
 #endif
