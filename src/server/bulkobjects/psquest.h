@@ -53,7 +53,7 @@ class psQuest;
  * @param scripts The prerequisite to parse <pre>...</pre>.
  * @return True if successfully parsed.
  */
-bool LoadPrerequisiteXML(psQuestPrereqOp*&prerequisite, psQuest* self, csString script);
+bool LoadPrerequisiteXML(csRef<psQuestPrereqOp>& prerequisite, psQuest* self, csString script);
 
 /**
  * This class holds the master list of all quests available in the game.
@@ -83,7 +83,7 @@ class psQuest : public CS::Utility::WeakReferenced
     void SetQuestLastActivatedTime(unsigned int when) { quest_last_activated=when; }
     // csString QuestToXML() const;
     bool AddPrerequisite(csString prerequisitescript);
-    bool AddPrerequisite(psQuestPrereqOp * op);
+    bool AddPrerequisite(csRef<psQuestPrereqOp> op);
     void AddTriggerResponse(NpcTrigger * trigger, int responseID);
     void AddSubQuest(int id) { subquests.Push(id); }
     
@@ -91,7 +91,7 @@ class psQuest : public CS::Utility::WeakReferenced
      * Return the prerequisite for this quest.
      * @return The prerequisite for this quest.
      */
-    psQuestPrereqOp *GetPrerequisite() { return prerequisite; }
+    psQuestPrereqOp* GetPrerequisite() { return prerequisite; }
     csString GetPrerequisiteStr();
     const csString& GetCategory() const { return category; }
     
@@ -106,7 +106,7 @@ class psQuest : public CS::Utility::WeakReferenced
     int flags;
     psQuest *parent_quest;
     int step_id;
-    psQuestPrereqOp * prerequisite;
+    csRef<psQuestPrereqOp> prerequisite;
     csString category;
     csString prerequisiteStr;
     bool infinitePlayerLockout;

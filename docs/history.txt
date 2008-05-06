@@ -1,3 +1,7 @@
+*** 2008-05-06 by Mike Gist
+- Made psQuestPrereqOp ref countable, solving some annoying to debug crashes
+  caused by errors in memory management.
+
 *** 2008-05-06 by Frank Barton (Eriroley)
 - Fix for portions of FS#1471 /setitemname not remaining when item traded
 
