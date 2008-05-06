@@ -1,3 +1,6 @@
+*** 2008-05-06 by Frank Barton (Eriroley)
+- added to create_all.sql a file previously forgotten - already included in upgrade_schema
+
 *** 2008-05-06 by Mike Gist
 - Made psQuestPrereqOp ref countable, solving some annoying to debug crashes
   caused by errors in memory management.
