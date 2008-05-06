@@ -1312,6 +1312,10 @@ void psItem::Copy(psItem * target)
     // Make sure a cloned key can open same things
     target->openableLocks = openableLocks;
 
+    //unique name & description are the same
+    target->item_name = item_name;
+    target->item_description = item_description;
+
     target->SetGuardingCharacterID(GetGuardingCharacterID());
 
     // Current stats are rebuilt;
