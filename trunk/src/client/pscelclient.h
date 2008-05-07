@@ -430,7 +430,7 @@ public:
     void SetGuildName(const char* guild) { guildName = guild; }
 
     bool NeedDRUpdate(unsigned char& priority);
-    void SendDRUpdate(unsigned char priority,csStringHash* msgstrings);
+    void SendDRUpdate(unsigned char priority,csStringHashReversible* msgstrings);
     void SetDRData(psDRMessage& drmsg);
     void StopMoving(bool worldVel = false);
 
@@ -456,7 +456,7 @@ public:
      * This optimal routine tries to get the animation index given an
      * animation csStringID.
      */
-    int GetAnimIndex (csStringHash* msgstrings, csStringID animid);
+    int GetAnimIndex (csStringHashReversible* msgstrings, csStringID animid);
 
     // The following hash is used by GetAnimIndex().
     csHash<int,csStringID> anim_hash;

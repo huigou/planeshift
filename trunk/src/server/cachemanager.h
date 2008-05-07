@@ -178,7 +178,7 @@ public:
      *
      * @return Returns a reference to the message strings hash table.
      */
-    csStringHash *GetMsgStrings() { return &msg_strings; }
+    csStringHashReversible *GetMsgStrings() { return &msg_strings; }
 
     // Guilds
     psGuildInfo *FindGuild(unsigned int id);
@@ -426,7 +426,7 @@ protected:
      */
     csHash<CachedObject *, csString> generic_object_cache;
 
-    csStringHash msg_strings;
+    csStringHashReversible msg_strings;
     csHash<psSectorInfo *> sectorinfo_by_id;   /// Sector info list hashed by sector id
     csHash<psSectorInfo *> sectorinfo_by_name; /// Sector info list hashed by sector name
     csPDelArray<psTrait > traitlist;

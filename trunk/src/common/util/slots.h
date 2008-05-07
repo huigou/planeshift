@@ -20,7 +20,7 @@
 #define PS_HEADER_SLOTS
 
 #include <csutil/csstring.h>
-#include <csutil/strhash.h>
+#include <csutil/strhashr.h>
 #include <csutil/parray.h>
 
 /** Holds a list of the possible socket identifiers that items can be attached to.
@@ -104,7 +104,7 @@ private:
         csString primary,secondary;
     };
 
-    csStringHash slotNames;
+    csStringHashReversible slotNames;
     csPDelArray<PrimaryToSecondary> secondaryNames;
 };
 #endif

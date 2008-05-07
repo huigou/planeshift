@@ -3107,7 +3107,7 @@ PSF_IMPLEMENT_MSG_FACTORY(psMsgStringsMessage,MSGTYPE_MSGSTRINGS);
 #define COMPRESSION_BUFFSIZE  MAX_MESSAGE_SIZE/2
 #define PACKING_BUFFSIZE  COMPRESSION_BUFFSIZE*3
 
-psMsgStringsMessage::psMsgStringsMessage(uint32_t clientnum, csStringHash *strings)
+psMsgStringsMessage::psMsgStringsMessage(uint32_t clientnum, csStringHashReversible *strings)
 {
     msgstrings = 0;
 
@@ -3122,7 +3122,7 @@ psMsgStringsMessage::psMsgStringsMessage(uint32_t clientnum, csStringHash *strin
 
     msg->Add((uint32_t)strings->GetSize());
 
-    csStringHash::GlobalIterator it = strings->GetIterator();
+    csStringHashReversible::GlobalIterator it = strings->GetIterator();
     while (it.HasNext())
     {
         const char* string;
@@ -3233,7 +3233,7 @@ psMsgStringsMessage::psMsgStringsMessage(MsgEntry *message)
     }
 
     size_t pos = 0;
-    msgstrings = new csStringHash(nstrings);
+    msgstrings = new csStringHashReversible(nstrings);
     for (uint32_t i=0; i<nstrings; i++)
     {
         // Unpack ID
@@ -3245,7 +3245,7 @@ psMsgStringsMessage::psMsgStringsMessage(MsgEntry *message)
         const char* string = buff+pos;
         pos += strlen(string)+1;
 
-        // csStringHash::Register() cannot handle NULL pointers
+        // csStringHashReversible::Register() cannot handle NULL pointers
         if (string[0] == '\0')
             msgstrings->Register("",id);
         else
@@ -3270,7 +3270,7 @@ csString psMsgStringsMessage::ToString(AccessPointers * /*access_ptrs*/)
 #ifdef FULL_DEBUG_DUMP
     uint32_t s = 1;
 
-    csStringHash::GlobalIterator it = msgstrings->GetIterator();
+    csStringHashReversible::GlobalIterator it = msgstrings->GetIterator();
     while (it.HasNext())
     {
         const char* string;
@@ -4113,7 +4113,7 @@ csString psPetSkillMessage::ToString(AccessPointers * /*access_ptrs*/)
 
 PSF_IMPLEMENT_MSG_FACTORY2(psDRMessage,MSGTYPE_DEAD_RECKONING);
 
-void psDRMessage::CreateMsgEntry(uint32_t client, csStringHash* msgstrings, iSector *sector)
+void psDRMessage::CreateMsgEntry(uint32_t client, csStringHashReversible* msgstrings, iSector *sector)
 {
     const char* sectorName = sector->QueryObject()->GetName();
     csStringID sectorNameStrId = msgstrings ? msgstrings->Request(sectorName) : csInvalidStringID;
@@ -4126,7 +4126,7 @@ void psDRMessage::CreateMsgEntry(uint32_t client, csStringHash* msgstrings, iSec
 }
 
 psDRMessage::psDRMessage(uint32_t client, PS_ID mappedid, uint8_t counter,
-                         csStringHash* msgstrings, psLinearMovement *linmove, uint8_t mode)
+                         csStringHashReversible* msgstrings, psLinearMovement *linmove, uint8_t mode)
 {
     float speed;
     linmove->GetDRData(on_ground,speed,pos,yrot,sector,vel,worldVel,ang_vel);
@@ -4145,7 +4145,7 @@ psDRMessage::psDRMessage(uint32_t client,PS_ID mappedid,
                          bool on_ground, uint8_t mode, uint8_t counter,
                          const csVector3& pos, float yrot,iSector *sector,
                          const csVector3& vel, csVector3& worldVel, float ang_vel,
-                         csStringHash* msgstrings)
+                         csStringHashReversible* msgstrings)
 {
     CreateMsgEntry(client, msgstrings, sector);
 
@@ -4185,9 +4185,10 @@ void psDRMessage::WriteDRInfo(uint32_t client,PS_ID mappedid,
                         bool on_ground, uint8_t mode, uint8_t counter,
                         const csVector3& pos, float yrot, iSector *sector,
                         const csVector3& vel, csVector3& worldVel, float ang_vel,
-                        csStringHash* msgstrings, bool donewriting)
+                        csStringHashReversible* msgstrings, bool donewriting)
 {
-    const char* sectorName = sector->QueryObject()->GetName();
+    sectorName = sector->QueryObject()->GetName();
+    csStringID sectorNameStrId = msgstrings ? msgstrings->Request(sectorName) : csInvalidStringID;
 
     msg->Add( (uint32_t) mappedid );
     msg->Add( counter );
@@ -4222,20 +4223,23 @@ void psDRMessage::WriteDRInfo(uint32_t client,PS_ID mappedid,
 
     msg->Add( (uint8_t) (yrot * 256 / TWO_PI) ); // Quantize radians to 0-255
 
-    msg->Add(sectorName);
+    msg->Add( (uint32_t) sectorNameStrId );
+
+    if (sectorNameStrId == csInvalidStringID)
+        msg->Add(sectorName);
 
     if (donewriting)  // If we're not writing anymore data after this, shrink to fit
         msg->ClipToCurrentSize();
 }
 
-psDRMessage::psDRMessage( void *data, int size,csStringHash* msgstrings, iEngine *engine)
+psDRMessage::psDRMessage( void *data, int size, csStringHashReversible* msgstrings, iEngine *engine)
 {
     msg.AttachNew(new MsgEntry(size,PRIORITY_HIGH));
     memcpy(msg->bytes->payload,data,size);
     ReadDRInfo(msg,msgstrings,engine);
 }
 
-psDRMessage::psDRMessage( MsgEntry* me, csStringHash* msgstrings, iEngine *engine)
+psDRMessage::psDRMessage(MsgEntry* me, csStringHashReversible* msgstrings, iEngine *engine)
 {
     msg = NULL;
     ReadDRInfo(me,msgstrings,engine);
@@ -4254,7 +4258,7 @@ void psDRMessage::operator=(psDRMessage& other)
 //    sectorName = other.sectorName;
 }
 
-void psDRMessage::ReadDRInfo(MsgEntry* me, csStringHash* msgstrings, iEngine *engine)
+void psDRMessage::ReadDRInfo(MsgEntry* me, csStringHashReversible* msgstrings, iEngine *engine)
 {
     entityid = me->GetUInt32();
     counter  = me->GetUInt8();
@@ -4289,7 +4293,8 @@ void psDRMessage::ReadDRInfo(MsgEntry* me, csStringHash* msgstrings, iEngine *en
     yrot = me->GetInt8();
     yrot *= TWO_PI/256;
 
-    sectorName = me->GetStr();
+    csStringID sectorNameStrId = (csStringID)me->GetUInt32();
+    sectorName = (sectorNameStrId != csInvalidStringID) ? msgstrings->Request(sectorNameStrId) : me->GetStr() ;
     sector = (sectorName.Length()) ? engine->GetSectors()->FindByName(sectorName) : NULL ;
 }
 
@@ -4441,7 +4446,7 @@ psPersistActor::psPersistActor( uint32_t clientNum,
                                 const char* texParts,
                                 const char* equipmentParts,
                                 uint8_t counter,
-                                PS_ID mappedid,csStringHash* msgstrings, psLinearMovement *linmove,
+                                PS_ID mappedid,csStringHashReversible* msgstrings, psLinearMovement *linmove,
                                 uint8_t movementMode,
                                 uint8_t serverMode,
                                 uint32_t playerID,
@@ -4494,7 +4499,7 @@ psPersistActor::psPersistActor( uint32_t clientNum,
     msg->ClipToCurrentSize();
 }
 
-psPersistActor::psPersistActor( MsgEntry* me, csStringHash* msgstrings, iEngine *engine )
+psPersistActor::psPersistActor( MsgEntry* me, csStringHashReversible* msgstrings, iEngine *engine )
 {
     ReadDRInfo(me, msgstrings, engine);
 
@@ -6783,7 +6788,7 @@ csString GetMsgTypeName(int msgType)
     return psfMsgTypeName(msgType);
 }
 
-csString GetDecodedMessage(MsgEntry* me,csStringHash* msgstrings, iEngine *engine, bool filterhex)
+csString GetDecodedMessage(MsgEntry* me, csStringHashReversible* msgstrings, iEngine *engine, bool filterhex)
 {
     csString msgtext;
     MsgEntry msg(me); // Take a copy to make sure we dont destroy the message.

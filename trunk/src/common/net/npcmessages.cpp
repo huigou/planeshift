@@ -702,7 +702,7 @@ void psAllEntityPosMessage::SetLength(int elems, int client)
     msg->Add((int16_t)elems);
 }
 
-void psAllEntityPosMessage::Add(PS_ID id, csVector3& pos, iSector*& sector, int instance, csStringHash* msgstrings)
+void psAllEntityPosMessage::Add(PS_ID id, csVector3& pos, iSector*& sector, int instance, csStringHashReversible* msgstrings)
 {
     msg->Add((uint32_t)id);
     msg->Add(pos.x);
@@ -721,7 +721,7 @@ void psAllEntityPosMessage::Add(PS_ID id, csVector3& pos, iSector*& sector, int 
     msg->Add( (int32_t)instance );
 }
 
-void psAllEntityPosMessage::Get(PS_ID& id, csVector3& pos, iSector*& sector, int& instance, csStringHash* msgstrings, iEngine *engine)
+void psAllEntityPosMessage::Get(PS_ID& id, csVector3& pos, iSector*& sector, int& instance, csStringHashReversible* msgstrings, iEngine *engine)
 {
     id = msg->GetUInt32();
     pos.x = msg->GetFloat();

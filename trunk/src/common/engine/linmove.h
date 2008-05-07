@@ -32,7 +32,6 @@
 #include "iutil/eventh.h"
 #include "csutil/scf.h"
 #include "csutil/weakref.h"
-#include "csutil/strhash.h"
 #include "csutil/stringarray.h"
 #include "cstool/collider.h"
 #include "ivaria/collider.h"
@@ -310,12 +309,6 @@ protected:
   // Variables for 'Soft Update' of position
   csVector3 offset_err;    // Error in terms of absolute position
   csVector3 offset_rate;   // Speed to bring error to ZERO within 1s
-
-  
-  
-  
-  
-  
 };
 
 #endif

@@ -27,7 +27,6 @@
 #include "net/netpacket.h"
 #include "util/genrefqueue.h"
 #include <csutil/ref.h>
-#include <csutil/hash.h>
 #include <csutil/weakref.h>
 #include <csutil/weakreferenced.h>
 #include <csutil/refcount.h>
@@ -63,7 +62,7 @@
 class MsgEntry;
 class NetPacketQueueRefCount;
 class csRandomGen;
-class csStringHash;
+class csStringHashReversible;
 struct iEngine;
 typedef GenericRefQueue <MsgEntry> MsgQueue;
 typedef GenericRefQueue <psNetPacketEntry> NetPacketQueue;
@@ -183,9 +182,9 @@ public:
     struct timeval timeout;
 
     /// Set the MsgString Hash
-    void SetMsgStrings(csStringHash* msgstrings) { this->msgstrings = msgstrings; }
+    void SetMsgStrings(csStringHashReversible* msgstrings) { this->msgstrings = msgstrings; }
     /// Get the MsgString Hash
-    csStringHash* GetMsgStrings() { return msgstrings; }
+    csStringHashReversible* GetMsgStrings() { return msgstrings; }
     /// Set the Engine
     void SetEngine(iEngine* engine) { this->engine = engine; }
     /// Get the Engine
@@ -533,7 +532,7 @@ protected:
     csTicks lastSendReport;
     unsigned int avgIndex;
     
-    unsigned int resends[RESENDAVGCOUNT];
+    size_t resends[RESENDAVGCOUNT];
     unsigned int resendIndex;
     
     psNetMsgProfiles * profs;
@@ -560,7 +559,7 @@ private:
     psNetInfos netInfos;
 
     /** MsgString Hash */
-    csStringHash * msgstrings;
+    csStringHashReversible * msgstrings;
 
     /** Engine */
     iEngine * engine;
