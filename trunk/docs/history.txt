@@ -1,3 +1,8 @@
+*** 2008-05-07 by Kenny Graunke
+- Disable introduction system until a well thought out and approved system is
+  made. Right now it is trivially worked around, and simply alienating players.
+  This change done with the approval of Xillix.
+
 *** 2007-05-07 by Mike Gist
 - Changed DR messages to carry the id of sectors again.
 - NETVER BUMP!
