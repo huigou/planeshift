@@ -1,5 +1,14 @@
+*** 2007-05-07 by Mike Gist
+- Changed DR messages to carry the id of sectors again.
+- NETVER BUMP!
+- Changed all csStringHash to csStringHashReversible, which should give a
+  big speedup when we do reverse lookups on our common strings data (often).
+- Bumped CS revision to 29568 to get csStringHashReversible which I just
+  implemented.
+
 *** 2008-05-06 by Frank Barton (Eriroley)
-- added to create_all.sql a file previously forgotten - already included in upgrade_schema
+- added to create_all.sql a file previously forgotten - already included
+  in upgrade_schema
 
 *** 2008-05-06 by Mike Gist
 - Made psQuestPrereqOp ref countable, solving some annoying to debug crashes

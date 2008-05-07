@@ -22,7 +22,7 @@
 // Crystal Space Includes
 //=============================================================================
 #include <csutil/ref.h>
-#include <csutil/strhash.h>
+#include <csutil/strhashr.h>
 
 //=============================================================================
 // Project Includes
@@ -54,7 +54,7 @@ public:
 
     virtual void HandleMessage(MsgEntry* me);
 
-    csStringHash * GetMsgStrings() { return msgstrings; }
+    csStringHashReversible * GetMsgStrings() { return msgstrings; }
     bool GotStrings() {return gotStrings;}
 
     void CheckSectorCrossing(GEMClientActor* actor);
@@ -80,7 +80,7 @@ protected:
 
     pawsGroupWindow* groupWindow;
 
-    csStringHash*    msgstrings;
+    csStringHashReversible* msgstrings;
     
 private:
     void HandleOverride( MsgEntry* me );

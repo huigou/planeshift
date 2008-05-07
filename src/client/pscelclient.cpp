@@ -1376,7 +1376,7 @@ GEMClientActor::~GEMClientActor()
     delete linmove;
 }
 
-int GEMClientActor::GetAnimIndex (csStringHash* msgstrings, csStringID animid)
+int GEMClientActor::GetAnimIndex (csStringHashReversible* msgstrings, csStringID animid)
 {
     if (!cal3dstate) 
     {
@@ -1511,7 +1511,7 @@ bool GEMClientActor::NeedDRUpdate(unsigned char& priority)
     return false;
 }
 
-void GEMClientActor::SendDRUpdate(unsigned char priority, csStringHash* msgstrings)
+void GEMClientActor::SendDRUpdate(unsigned char priority, csStringHashReversible* msgstrings)
 {
     // send update out
     PS_ID mappedid = id;  // no mapping anymore, IDs are identical

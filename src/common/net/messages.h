@@ -25,7 +25,7 @@
 #include <csutil/array.h>
 #include <csutil/stringarray.h>
 #include <csutil/databuf.h>
-#include <csutil/strhash.h>
+#include <csutil/strhashr.h>
 #include "util/psscf.h"
 #include <csgeom/vector3.h>
 #include "rpgrules/psmoney.h"
@@ -43,7 +43,7 @@ class psLinearMovement;
 
 // This holds the version number of the network code, remember to increase
 // this each time you do an update which breaks compatibility
-#define PS_NETVERSION   0x0089
+#define PS_NETVERSION   0x008A
 // Remember to bump the version in pscssetup.h, as well.
 
 // NPC Networking version is separate so we don't have to break compatibility
@@ -302,7 +302,7 @@ public:
      */
     struct AccessPointers
     {
-        csStringHash* msgstrings;
+        csStringHashReversible* msgstrings;
         iEngine *engine;
     };
 
@@ -361,7 +361,7 @@ public:
 typedef psMessageCracker* (*psfMsgFactoryFunc)(MsgEntry* me,psMessageCracker::AccessPointers * access_ptrs);
 
 csString GetMsgTypeName(int msgType);
-csString GetDecodedMessage(MsgEntry* me, csStringHash* msgstrings, iEngine *engine, bool filterhex);
+csString GetDecodedMessage(MsgEntry* me, csStringHashReversible* msgstrings, iEngine *engine, bool filterhex);
 
 void psfRegisterMsgFactoryFunction(psfMsgFactoryFunc factoryfunc, int msgtype, const char* msgtypename);
 psMessageCracker* psfCreateMsg(int msgtype,
@@ -2194,10 +2194,10 @@ public:
      * This hash table will be allocated during message cracking,
      * and \b must \b be \b deleted manually.
      */
-    csStringHash* msgstrings;
+    csStringHashReversible* msgstrings;
 
     /** Create psMessageBytes struct for outbound use */
-    psMsgStringsMessage(uint32_t clientnum, csStringHash *strings);
+    psMsgStringsMessage(uint32_t clientnum, csStringHashReversible *strings);
 
     /** Crack incoming psMessageBytes struct for inbound use */
     psMsgStringsMessage(MsgEntry *message);
@@ -2683,9 +2683,9 @@ protected:
                     bool on_ground, uint8_t mode, uint8_t counter,
                     const csVector3& pos, float yrot, iSector *sector,
                     const csVector3& vel, csVector3& worldVel, float ang_vel,
-                    csStringHash* msgstrings, bool donewriting=true);
-    void ReadDRInfo( MsgEntry* me, csStringHash* msgstrings, iEngine *engine);
-    void CreateMsgEntry(uint32_t client, csStringHash* msgstrings, iSector *sector);
+                    csStringHashReversible* msgstrings, bool donewriting=true);
+    void ReadDRInfo( MsgEntry* me, csStringHashReversible* msgstrings, iEngine *engine);
+    void CreateMsgEntry(uint32_t client, csStringHashReversible* msgstrings, iSector *sector);
 
     /// Flags indicating what components are packed in this message
     enum DRDataFlags
@@ -2721,14 +2721,14 @@ public:
 
     psDRMessage() { }
     psDRMessage(uint32_t client, PS_ID mappedid, uint8_t counter,
-                csStringHash* msgstrings, psLinearMovement *linmove, uint8_t mode=0);
+                csStringHashReversible* msgstrings, psLinearMovement *linmove, uint8_t mode=0);
     psDRMessage(uint32_t client, PS_ID mappedid,
                 bool on_ground, uint8_t mode, uint8_t counter,
                 const csVector3& pos, float yrot, iSector *sector,
                 const csVector3& vel, csVector3& worldVel, float ang_vel,
-                csStringHash* msgstrings);
-    psDRMessage(void *data,int size,csStringHash* msgstrings, iEngine *engine);
-    psDRMessage( MsgEntry* me, csStringHash* msgstrings, iEngine *engine);
+                csStringHashReversible* msgstrings);
+    psDRMessage(void *data,int size, csStringHashReversible* msgstrings, iEngine *engine);
+    psDRMessage( MsgEntry* me, csStringHashReversible* msgstrings, iEngine *engine);
 
     /// Returns true if this message is newer than the passed DR sequence value
     bool IsNewerThan(uint8_t oldCounter);
@@ -2854,13 +2854,13 @@ public:
                     const char* texParts,
                     const char* equipmentParts,
                     uint8_t counter,
-                    PS_ID mappedid,csStringHash* msgstrings, psLinearMovement *linmove,
+                    PS_ID mappedid, csStringHashReversible* msgstrings, psLinearMovement *linmove,
                     uint8_t movementMode,
                     uint8_t serverMode,
                     uint32_t playerID = 0, uint32_t groupID = 0, PS_ID ownerEID = 0,
                     uint32_t flags = NONE );
 
-    psPersistActor( MsgEntry* me, csStringHash* msgstrings, iEngine *engine );
+    psPersistActor( MsgEntry* me, csStringHashReversible* msgstrings, iEngine *engine );
 
     PSF_DECLARE_MSG_FACTORY();
 

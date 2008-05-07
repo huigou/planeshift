@@ -31,7 +31,6 @@
 #include <iutil/comp.h>
 #include <iutil/eventh.h>
 #include <csutil/scf.h>
-#include <csutil/strhash.h>
 #include <csutil/stringarray.h>
 #include <csutil/sysfunc.h>
 #include <csutil/weakref.h>
