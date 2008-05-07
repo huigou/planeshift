@@ -2987,7 +2987,10 @@ psGuildLevel * psCharacter::GetGuildLevel()
 
 bool psCharacter::Knows(unsigned int charID)
 {
-    return acquaintances.Contains(charID);
+    // Introduction system is currently disabled - it's trivially worked
+    // around, and simply alienating players.
+    //return acquaintances.Contains(charID);
+    return true;
 }
 
 bool psCharacter::Introduce(psCharacter *c)
