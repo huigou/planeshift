@@ -391,8 +391,8 @@ PS_ID EntityManager::GetMasterFamiliarID( psCharacter *charData )
 
     if(!xmlDoc)
     {
-      csString msg;
-      msg.Format("Error parsing animal affinity for character %s!\n", charData->fullname.GetData());
+      csString msg("Error parsing animal affinity for character ");
+      msg.AppendFmt("%s!\n", charData->fullname.GetData());
       CS_ASSERT_MSG(msg.GetData(), xmlDoc != NULL);
     }
 	
