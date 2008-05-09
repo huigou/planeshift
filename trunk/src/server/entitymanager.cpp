@@ -31,6 +31,7 @@
 #include <csgeom/box.h>
 #include <imesh/objmodel.h>
 #include <csgeom/transfrm.h>
+#include <csutil/csstring.h>
 #include <csutil/snprintf.h>
 
 #include <physicallayer/pl.h>
@@ -387,6 +388,13 @@ PS_ID EntityManager::GetMasterFamiliarID( psCharacter *charData )
 
     // Parse the string into an XML document.
     csRef<iDocument> xmlDoc = ParseString( animalAffinity );
+
+    if(!xmlDoc)
+    {
+      csString msg;
+      msg.Format("Error parsing animal affinity for character %s!\n", charData->fullname.GetData());
+      CS_ASSERT_MSG(msg.GetData(), xmlDoc != NULL);
+    }
 	
     // Find existing nodes
     csRef<iDocumentNodeIterator> iter = xmlDoc->GetRoot()->GetNodes();
