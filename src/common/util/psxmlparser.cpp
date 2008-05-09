@@ -306,7 +306,7 @@ csRef<iDocument> ParseString(const csString & str)
     const char* error = doc->Parse(str);
     if ( error )
     {
-        Error3("Error in XML: %s\nString was: %s", error, str.GetData() );
+        Error3("Error in XML: %s\nString was: %s", error, str.GetDataSafe() );
         return NULL;
     }
     return doc;

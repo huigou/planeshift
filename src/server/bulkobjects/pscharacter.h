@@ -959,7 +959,7 @@ public:
     bool IsPet() { return characterType == PSCHARACTER_TYPE_PET; };
     int GetFamiliarID() { return familiar_id; };
     void SetFamiliarID(int v);
-    const char *GetAnimalAffinity() { return animal_affinity.GetData(); };
+    const char *GetAnimalAffinity() { return animal_affinity.GetDataSafe(); };
     void SetAnimialAffinity( const char* v ) { animal_affinity = v; };
     int GetOwnerID() { return owner_id; };
     void SetOwnerID(int v) { owner_id = v; };
