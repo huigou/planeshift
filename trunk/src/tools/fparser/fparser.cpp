@@ -2,9 +2,9 @@
 // Function parser v2.82 by Warp
 //===============================
 
-#include "fpconfig.hh"
-#include "fparser.hh"
-#include "fptypes.hh"
+#include "fpconfig.h"
+#include "fparser.h"
+#include "fptypes.h"
 using namespace FUNCTIONPARSERTYPES;
 
 #include <cstdlib>

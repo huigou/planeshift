@@ -8,7 +8,7 @@
 // NOTE:
 // This file is for the internal use of the function parser only.
 // You don't need to include this file in your source files, just
-// include "fparser.hh".
+// include "fparser.h".
 
 /*
  Comment out the following line if your compiler supports the (non-standard)
