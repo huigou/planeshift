@@ -13,8 +13,8 @@ AC_PREREQ([2.56])
 #----------------------------------------------------------------------------
 AC_INIT([PlaneShift], [0.4.01], [planeshift-develop@lists.sourceforge.net])
 CS_PACKAGEINFO([PlaneShift a 3d MMORPG],
-	[Copyright (C)2001-2008 by Atomic Blue],
-	[http://www.planeshift.it])
+	[Copyright (C)2001-2008 Atomic Blue],
+	[http://www.planeshift.it/])
 AC_CONFIG_SRCDIR([mk/jam/build.jam])
 AC_CONFIG_AUX_DIR([mk/autoconf])
 AC_CANONICAL_HOST
