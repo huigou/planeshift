@@ -1,6 +1,6 @@
-//==============================
-// Function parser v2.8 by Warp
-//==============================
+//===============================
+// Function parser v2.82 by Warp
+//===============================
 
 // Configuration file
 // ------------------
@@ -54,3 +54,14 @@
  can introduce inaccuracies in comparisons.)
 */
 #define FP_EPSILON 1e-14
+
+
+/*
+ No member function of FunctionParser is thread-safe. Most prominently,
+ Eval() is not thread-safe. By uncommenting one of these lines the Eval()
+ function can be made thread-safe at the cost of a possible small overhead.
+ The second version requires that the compiler supports the alloca() function,
+ which is not standard, but is faster.
+ */
+//#define FP_USE_THREAD_SAFE_EVAL
+//#define FP_USE_THREAD_SAFE_EVAL_WITH_ALLOCA

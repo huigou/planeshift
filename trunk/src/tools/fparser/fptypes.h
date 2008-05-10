@@ -1,6 +1,6 @@
-//==============================
-// Function parser v2.8 by Warp
-//==============================
+//===============================
+// Function parser v2.82 by Warp
+//===============================
 
 // NOTE:
 // This file contains only internal types for the function parser library.

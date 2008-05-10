@@ -1,3 +1,7 @@
+*** 2007-05-10 by Mike Gist
+- Fixed a server crash where no animal affinity exists.
+- Updated fparser to v2.82
+
 *** 2008-05-07 by Kenny Graunke
 - Disable introduction system until a well thought out and approved system is
   made. Right now it is trivially worked around, and simply alienating players.

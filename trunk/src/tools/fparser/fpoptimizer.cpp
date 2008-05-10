@@ -1,6 +1,6 @@
-//===========================================
-// Function parser v2.8 optimizer by Bisqwit
-//===========================================
+//============================================
+// Function parser v2.82 optimizer by Bisqwit
+//============================================
 
 /*
  NOTE!
@@ -14,12 +14,12 @@
 */
 
 
-#include "fpconfig.h"
+#include "fpconfig.hh"
 
 #ifdef SUPPORT_OPTIMIZER
 
-#include "fparser.h"
-#include "fptypes.h"
+#include "fparser.hh"
+#include "fptypes.hh"
 using namespace FUNCTIONPARSERTYPES;
 
 #include <cmath>
@@ -40,6 +40,13 @@ using namespace std;
 #define CONSTANT_L10EI CONSTANT_L10            // 1/log10(e)
 #define CONSTANT_DR    (180.0 / M_PI)          // 180/pi
 #define CONSTANT_RD    (M_PI / 180.0)          // pi/180
+
+// Debugging in optimizer? Not recommended for production use.
+//#define TREE_DEBUG
+#ifdef TREE_DEBUG
+// Debug verbosely?
+#include <ostream>
+#endif
 
 namespace {
 inline double Min(double d1, double d2)
@@ -62,7 +69,7 @@ public:
     // is it not?
     bool operator! () const { return state != 1; }
     bool operator==(bool b) const { return state != !b; }
-    bool operator!=(bool b) const { return state != (int)b; }
+    bool operator!=(bool b) const { return state != b; }
 private:
     char state;
 };
@@ -108,6 +115,12 @@ bool IsInverse(const SubTree &p1, const SubTree &p2);
 
 typedef list<SubTree> paramlist;
 
+#ifdef TREE_DEBUG
+struct CodeTreeData;
+std::ostream& operator << (std::ostream& str, const CodeTreeData& tree);
+std::ostream& operator << (std::ostream& str, const CodeTree& tree);
+#endif
+
 struct CodeTreeData
 {
     paramlist args;
@@ -124,20 +137,15 @@ public:
 
     void SetOp(unsigned newop)     { op=newop; }
     void SetFuncNo(unsigned newno) { funcno=newno; }
-    unsigned GetFuncNo() const { return funcno; }
+
+    inline unsigned GetOp() const { return op; }
+    inline double GetImmed() const { return value; }
+    inline unsigned GetVar() const { return var; }
+    inline unsigned GetFuncNo() const { return funcno; }
 
     bool IsFunc() const  { return op == cFCall || op == cPCall; }
     bool IsImmed() const { return op == cImmed; }
     bool IsVar() const   { return op == cVar; }
-    inline unsigned GetOp() const { return op; }
-    inline double GetImmed() const
-    {
-        return value;
-    }
-    inline unsigned GetVar() const
-    {
-        return var;
-    }
 
     void AddParam(const SubTree &p)
     {
@@ -261,7 +269,7 @@ public:
     const SubTree& getp0() const { /*chk<1>();*/pcit tmp=GetBegin();               return *tmp; }
     const SubTree& getp1() const { /*chk<2>();*/pcit tmp=GetBegin(); ++tmp;        return *tmp; }
     const SubTree& getp2() const { /*chk<3>();*/pcit tmp=GetBegin(); ++tmp; ++tmp; return *tmp; }
-    size_t GetArgCount() const { return data->args.size(); }
+    unsigned GetArgCount() const { return data->args.size(); }
     void Erase(const pit p)      { data->args.erase(p); }
 
     SubTree& getp0() { /*chk<1>();*/pit tmp=GetBegin();               return *tmp; }
@@ -295,7 +303,7 @@ private:
         double voidvalue;
         list<pit> cp;
         double value;
-        size_t size() const { return cp.size(); }
+        unsigned size() const { return cp.size(); }
     };
     struct ConstList BuildConstList();
     void KillConst(const ConstList &cl)
@@ -1084,7 +1092,9 @@ public:
     void Optimize();
 
     void Assemble(vector<unsigned> &byteCode,
-                  vector<double>   &immed) const;
+                  vector<double>   &immed,
+                  size_t& stacktop_cur,
+                  size_t& stacktop_max) const;
 
     void FinalOptimize()
     {
@@ -1151,11 +1161,19 @@ public:
             }
             else if(cl.value == CONSTANT_DR)
             {
+                KillConst(cl);
                 OptimizeRedundant();
+#ifdef TREE_DEBUG
+    cout << "PRE_REP         :" << (*this) << endl;
+#endif
                 ReplaceWith(cDeg, *this);
+#ifdef TREE_DEBUG
+    cout << "POST_REP        :" << (*this) << endl;
+#endif
             }
             else if(cl.value == CONSTANT_RD)
             {
+                KillConst(cl);
                 OptimizeRedundant();
                 ReplaceWith(cRad, *this);
             }
@@ -1165,6 +1183,95 @@ public:
         SortIfPossible();
     }
 };
+
+#ifdef TREE_DEBUG
+std::ostream& operator << (std::ostream& str, const CodeTree& tree)
+{
+    const CodeTreeData& data = *tree.data;
+    switch( (FUNCTIONPARSERTYPES::OPCODE) data.GetOp())
+    {
+        case cImmed: str << data.GetImmed(); return str;
+        case cVar:   str << "Var" << data.GetVar(); return str;
+        case cFCall: str << "FCall(Func" << data.GetFuncNo() << ")"; break;
+        case cPCall: str << "PCall(Func" << data.GetFuncNo() << ")"; break;
+        
+        case cAbs: str << "cAbs"; break;
+        case cAcos: str << "cAcos"; break;
+#ifndef NO_ASINH
+        case cAcosh: str << "cAcosh"; break;
+#endif
+        case cAsin: str << "cAsin"; break;
+#ifndef NO_ASINH
+        case cAsinh: str << "cAsinh"; break;
+#endif
+        case cAtan: str << "cAtan"; break;
+        case cAtan2: str << "cAtan2"; break;
+#ifndef NO_ASINH
+        case cAtanh: str << "cAtanh"; break;
+#endif
+        case cCeil: str << "cCeil"; break;
+        case cCos: str << "cCos"; break;
+        case cCosh: str << "cCosh"; break;
+        case cCot: str << "cCot"; break;
+        case cCsc: str << "cCsc"; break;
+#ifndef DISABLE_EVAL
+        case cEval: str << "cEval"; break;
+#endif
+        case cExp: str << "cExp"; break;
+        case cFloor: str << "cFloor"; break;
+        case cIf: str << "cIf"; break;
+        case cInt: str << "cInt"; break;
+        case cLog: str << "cLog"; break;
+        case cLog10: str << "cLog10"; break;
+        case cMax: str << "cMax"; break;
+        case cMin: str << "cMin"; break;
+        case cSec: str << "cSec"; break;
+        case cSin: str << "cSin"; break;
+        case cSinh: str << "cSinh"; break;
+        case cSqrt: str << "cSqrt"; break;
+        case cTan: str << "cTan"; break;
+        case cTanh: str << "cTanh"; break;
+
+        // These do not need any ordering:
+        case cJump: str << "cJump"; break;
+        case cNeg: str << "cNeg"; break;
+        case cAdd: str << "cAdd"; break;
+        case cSub: str << "cSub"; break;
+        case cMul: str << "cMul"; break;
+        case cDiv: str << "cDiv"; break;
+        case cMod: str << "cMod"; break;
+        case cPow: str << "cPow"; break;
+        case cEqual: str << "cEqual"; break;
+        case cNEqual: str << "cNEqual"; break;
+        case cLess: str << "cLess"; break;
+        case cLessOrEq: str << "cLessOrEq"; break;
+        case cGreater: str << "cGreater"; break;
+        case cGreaterOrEq: str << "cGreaterOrEq"; break;
+        case cNot: str << "cNot"; break;
+        case cAnd: str << "cAnd"; break;
+        case cOr: str << "cOr"; break;
+        case cDeg: str << "cDeg"; break;
+        case cRad: str << "cRad"; break;
+        case cDup: str << "cDup"; break;
+        case cInv: str << "cInv"; break;
+        case VarBegin: str << "VarBegin"; break;
+    }
+    str << '(';
+    
+    bool first = true;
+    for(paramlist::const_iterator
+        i = data.args.begin(); i != data.args.end(); ++i)
+    {
+        if(first) first=false; else str << ", ";
+        const SubTree& sub = *i;
+        if(sub.getsign()) str << '!';
+        str << *sub;
+    }
+    str << ')';
+    
+    return str;
+}
+#endif
 
 void CodeTreeDataPtr::Shock()
 {
@@ -1206,8 +1313,8 @@ CodeTree::ConstList CodeTree::BuildConstList()
     if(GetOp() == cMul)
     {
         /*
-          Jos joku niistï¿½arvoista on -1 eikï¿½se ole ainoa arvo,
-          niin joku muu niistï¿½arvoista negatoidaan.
+          Jos joku niistä arvoista on -1 eikä se ole ainoa arvo,
+          niin joku muu niistä arvoista negatoidaan.
         */
         for(bool done=false; cp.size() > 1 && !done; )
         {
@@ -1233,21 +1340,30 @@ CodeTree::ConstList CodeTree::BuildConstList()
 
 void CodeTree::Assemble
    (vector<unsigned> &byteCode,
-    vector<double>   &immed) const
+    vector<double>   &immed,
+    size_t& stacktop_cur,
+    size_t& stacktop_max) const
 {
     #define AddCmd(op) byteCode.push_back((op))
     #define AddConst(v) do { \
         byteCode.push_back(cImmed); \
         immed.push_back((v)); \
     } while(0)
+    #define SimuPush(n) stacktop_cur += (n)
+    #define SimuPop(n) do { \
+        if(stacktop_cur > stacktop_max) stacktop_max = stacktop_cur; \
+        stacktop_cur -= (n); \
+    } while(0)
 
     if(IsVar())
     {
+        SimuPush(1);
         AddCmd(GetVar());
         return;
     }
     if(IsImmed())
     {
+        SimuPush(1);
         AddConst(GetImmed());
         return;
     }
@@ -1276,7 +1392,8 @@ void CodeTree::Assemble
                     {
                         CodeTree tmp = *pa;
                         tmp.data->InvertImmed();
-                        tmp.Assemble(byteCode, immed);
+                        tmp.Assemble(byteCode, immed,
+                                     stacktop_cur, stacktop_max);
                         pnega = !pnega;
                         done = true;
                     }
@@ -1289,13 +1406,14 @@ void CodeTree::Assemble
                     {
                         CodeTree tmp = *pa;
                         tmp.data->NegateImmed();
-                        tmp.Assemble(byteCode, immed);
+                        tmp.Assemble(byteCode, immed,
+                                     stacktop_cur, stacktop_max);
                         pnega = !pnega;
                         done = true;
                     }
                 }
                 if(!done)
-                    pa->Assemble(byteCode, immed);
+                    pa->Assemble(byteCode, immed, stacktop_cur, stacktop_max);
 
                 if(opcount == 2)
                 {
@@ -1304,6 +1422,8 @@ void CodeTree::Assemble
                     {
                         tmpop = (tmpop == cMul) ? cDiv : cSub;
                     }
+                    
+                    SimuPop(1);
                     AddCmd(tmpop);
                 }
                 else if(pnega)
@@ -1317,63 +1437,74 @@ void CodeTree::Assemble
         case cIf:
         {
             // If the parameter amount is != 3, we're screwed.
-            getp0()->Assemble(byteCode, immed);
+            getp0()->Assemble(byteCode, immed, stacktop_cur, stacktop_max); // expression
+            SimuPop(1);
 
-            size_t ofs = byteCode.size();
+            unsigned ofs = byteCode.size();
             AddCmd(cIf);
             AddCmd(0); // code index
             AddCmd(0); // immed index
 
-            getp1()->Assemble(byteCode, immed);
+            getp1()->Assemble(byteCode, immed, stacktop_cur, stacktop_max); // true branch
+            SimuPop(1);
 
-            byteCode[ofs+1] = (unsigned)byteCode.size()+2;
-            byteCode[ofs+2] = (unsigned)immed.size();
+            byteCode[ofs+1] = byteCode.size()+2;
+            byteCode[ofs+2] = immed.size();
 
             ofs = byteCode.size();
             AddCmd(cJump);
             AddCmd(0); // code index
             AddCmd(0); // immed index
 
-            getp2()->Assemble(byteCode, immed);
+            getp2()->Assemble(byteCode, immed, stacktop_cur, stacktop_max); // false branch
+            SimuPop(1);
 
-            byteCode[ofs+1] = (unsigned)byteCode.size()-1;
-            byteCode[ofs+2] = (unsigned)immed.size();
+            byteCode[ofs+1] = byteCode.size()-1;
+            byteCode[ofs+2] = immed.size();
+            
+            SimuPush(1);
 
             break;
         }
         case cFCall:
         {
             // If the parameter count is invalid, we're screwed.
+            size_t was_stacktop = stacktop_cur;
             for(pcit a=GetBegin(); a!=GetEnd(); ++a)
             {
                 const SubTree &pa = *a;
-                pa->Assemble(byteCode, immed);
+                pa->Assemble(byteCode, immed, stacktop_cur, stacktop_max);
             }
             AddCmd(GetOp());
             AddCmd(data->GetFuncNo());
+            SimuPop(stacktop_cur - was_stacktop - 1);
             break;
         }
         case cPCall:
         {
             // If the parameter count is invalid, we're screwed.
+            size_t was_stacktop = stacktop_cur;
             for(pcit a=GetBegin(); a!=GetEnd(); ++a)
             {
                 const SubTree &pa = *a;
-                pa->Assemble(byteCode, immed);
+                pa->Assemble(byteCode, immed, stacktop_cur, stacktop_max);
             }
             AddCmd(GetOp());
             AddCmd(data->GetFuncNo());
+            SimuPop(stacktop_cur - was_stacktop - 1);
             break;
         }
         default:
         {
             // If the parameter count is invalid, we're screwed.
+            size_t was_stacktop = stacktop_cur;
             for(pcit a=GetBegin(); a!=GetEnd(); ++a)
             {
                 const SubTree &pa = *a;
-                pa->Assemble(byteCode, immed);
+                pa->Assemble(byteCode, immed, stacktop_cur, stacktop_max);
             }
             AddCmd(GetOp());
+            SimuPop(stacktop_cur - was_stacktop - 1);
             break;
         }
     }
@@ -1416,16 +1547,16 @@ void CodeTree::Optimize()
                conflict= * redundant
                addmulflat=
                constantmath1= addmulflat * conflict
-               linearcombine= conflict * addmulflat redundant
+               linearcombine= conflict * addmulflat¹ redundant¹
                powmuladd=
-               exponents= linearcombine * powmuladd conflict
+               exponents= linearcombine * powmuladd conflict¹
                logarithm= exponents *
                functioncalls= IDLE
                linearexplode= IDLE
                pascal= IDLE
 
                * = actions here
-                = only if made changes
+               ¹ = only if made changes
             */
         }
     }
@@ -1589,7 +1720,7 @@ void FunctionParser::MakeTree(void *r) const
     } while(0)
 
     #define EAT(n, opcode) do { \
-        unsigned newstacktop = stacktop-n; \
+        unsigned newstacktop = stacktop-(n); \
         if((n) == 0) GROW(1); \
         stack[stacktop].SetOp((opcode)); \
         for(unsigned a=0, b=(n); a<b; ++a) \
@@ -1609,7 +1740,7 @@ void FunctionParser::MakeTree(void *r) const
     list<unsigned> labels;
 
     const unsigned* const ByteCode = data->ByteCode;
-    const size_t ByteCodeSize = data->ByteCodeSize;
+    const unsigned ByteCodeSize = data->ByteCodeSize;
     const double* const Immed = data->Immed;
 
     for(unsigned IP=0, DP=0; ; ++IP)
@@ -1798,16 +1929,27 @@ void FunctionParser::MakeTree(void *r) const
 
 void FunctionParser::Optimize()
 {
-    copyOnWrite();
+    CopyOnWrite();
 
     CodeTree tree;
     MakeTree(&tree);
 
+#ifdef TREE_DEBUG
+    cout << "BEFORE OPT      :" << tree << endl;
+#endif
     // Do all sorts of optimizations
     tree.Optimize();
+
+#ifdef TREE_DEBUG
+    cout << "BEFORE FINAL    :" << tree << endl;
+#endif
+
     // Last changes before assembly
     tree.FinalOptimize();
 
+#ifdef TREE_DEBUG
+    cout << "AFTER           :" << tree << endl;
+#endif
     // Now rebuild from the tree.
 
     vector<unsigned> byteCode;
@@ -1821,7 +1963,16 @@ void FunctionParser::Optimize()
     for(unsigned a=0; a<Comp.ImmedSize; ++a)immed[a] = Comp.Immed[a];
 #else
     byteCode.clear(); immed.clear();
-    tree.Assemble(byteCode, immed);
+    size_t stacktop_cur = 0;
+    size_t stacktop_max = 0;
+    tree.Assemble(byteCode, immed, stacktop_cur, stacktop_max);
+    
+    if(data->StackSize < stacktop_max)
+    {
+        delete[] data->Stack;
+        data->Stack = new double[stacktop_max];
+        data->StackSize = stacktop_max;
+    }
 #endif
 
     delete[] data->ByteCode; data->ByteCode = 0;
