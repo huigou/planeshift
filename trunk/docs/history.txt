@@ -1,6 +1,6 @@
 *** 2008-05-10 by Dave Bentham
 - Fixed bug FS#1424: /item prohibits unique and personalise items like books
-  and maps.
+  and maps. 
 
 *** 2008-05-10 by Mike Gist
 - Fixed a server crash where no animal affinity exists.
