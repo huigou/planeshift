@@ -14,12 +14,12 @@
 */
 
 
-#include "fpconfig.hh"
+#include "fpconfig.h"
 
 #ifdef SUPPORT_OPTIMIZER
 
-#include "fparser.hh"
-#include "fptypes.hh"
+#include "fparser.h"
+#include "fptypes.h"
 using namespace FUNCTIONPARSERTYPES;
 
 #include <cmath>
