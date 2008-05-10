@@ -1,6 +1,6 @@
 /***************************************************************************\
-|* Function parser v2.8 by Warp                                            *|
-|* ----------------------------                                            *|
+|* Function parser v2.82 by Warp                                           *|
+|* -----------------------------                                           *|
 |* Parses and evaluates the given function with the given variable values. *|
 |* See fparser.txt for details.                                            *|
 |*                                                                         *|
@@ -38,6 +38,7 @@ public:
     inline int EvalError() const { return evalErrorType; }
 
     bool AddConstant(const std::string& name, double value);
+    bool AddUnit(const std::string& name, double value);
 
     typedef double (*FunctionPtr)(const double*);
 
@@ -55,6 +56,9 @@ public:
     // copy-on-write technique for efficiency):
     FunctionParser(const FunctionParser&);
     FunctionParser& operator=(const FunctionParser&);
+
+
+    void ForceDeepCopy();
 
 
 #ifdef FUNCTIONPARSER_SUPPORT_DEBUG_OUTPUT
@@ -85,6 +89,7 @@ private:
 
         typedef std::map<std::string, double> ConstMap_t;
         ConstMap_t Constants;
+        ConstMap_t Units;
 
         VarMap_t FuncPtrNames;
         struct FuncPtrData
@@ -98,11 +103,11 @@ private:
         std::vector<FunctionParser*> FuncParsers;
 
         unsigned* ByteCode;
-        size_t ByteCodeSize;
+        unsigned ByteCodeSize;
         double* Immed;
-        size_t ImmedSize;
+        unsigned ImmedSize;
         double* Stack;
-        size_t StackSize;
+        unsigned StackSize;
 
         Data();
         ~Data();
@@ -122,17 +127,21 @@ private:
 
 // Private methods:
 // ---------------
-    void copyOnWrite();
+    void CopyOnWrite();
 
 
-    bool checkRecursiveLinking(const FunctionParser*) const;
+    bool CheckRecursiveLinking(const FunctionParser*) const;
 
-    bool isValidName(const std::string&) const;
-    Data::VarMap_t::const_iterator FindVariable(const char*,
-                                                const Data::VarMap_t&) const;
-    Data::ConstMap_t::const_iterator FindConstant(const char*) const;
+    bool ParseVars(const std::string& Vars,
+                   std::map<std::string, unsigned>& dest);
+    int VarNameType(const std::string&) const;
+    Data::VarMap_t::const_iterator
+    FindVariable(const char*, const Data::VarMap_t&) const;
+    Data::ConstMap_t::const_iterator
+    FindConstant(const char*, const Data::ConstMap_t&) const;
+    int CheckForUnit(const char*, int) const;
     int CheckSyntax(const char*);
-    bool Compile(const char*);
+    int Compile(const char*);
     bool IsVariable(int);
     void AddCompiledByte(unsigned);
     void AddImmediate(double);
@@ -141,6 +150,7 @@ private:
     int CompileIf(const char*, int);
     int CompileFunctionParams(const char*, int, unsigned);
     int CompileElement(const char*, int);
+    int CompilePossibleUnit(const char*, int);
     int CompilePow(const char*, int);
     int CompileUnaryMinus(const char*, int);
     int CompileMult(const char*, int);

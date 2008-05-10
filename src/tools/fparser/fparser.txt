@@ -1,5 +1,5 @@
-  Function parser for C++  v2.8 by Warp.
-  =====================================
+  Function parser for C++  v2.82 by Warp.
+  ======================================
 
   Optimization code contributed by Bisqwit (http://iki.fi/bisqwit/)
 
@@ -7,21 +7,30 @@
   The usage license of this library is located at the end of this text file.
 
 
+  What's new in v2.82
+  -------------------
+  - Fixed bug in the optimizer which caused a crash with some functions.
 
-  What's new in v2.8
-  ------------------
-  - Put the compile-time options to a separate file fpconfig.hh.
-  - Added comparison operators "!=", "<=" and ">=".
-  - Added an epsilon value to the comparison operators (its value can be
-    changed in fpconfig.hh or it can be completely disabled there).
-  - Added unary not operator "!".
-  - Now user-defined functions can take 0 parameters.
-  - Added a maximum recursion level to the "eval()" function (definable in
-    (fpconfig.hh). Now "eval()" should never cause an infinite recursion.
-    (Note however, that it may still be relevant to disable it completely
-    because it is possible to write functions which take enormous amounts
-    of time to evaluate even when the maximum recursion level is not reached.)
-  - Separated the optimizer code to its own file (makes developement easier).
+  What's new in v2.81
+  -------------------
+  - Added support for units (see help on the AddUnit() method).
+  - Added support for optionally making the Eval() function thread-safe
+    with a precompiler constant.
+
+
+  Table of contents:
+  -----------------
+  - Preface
+  - Usage
+    * Configuring the compilation
+    * Copying and assignment
+    * Short descriptions of FunctionParser methods
+    * Long descriptions of FunctionParser methods
+  - About thread safety
+  - The function string
+  - Contacting the author
+  - The algorithm used in the library
+  - Usage license
 
 
 
@@ -106,6 +115,17 @@ SUPPORT_OPTIMIZER in fpconfig.hh), you can leave the latter file out.
        Epsilon value used in comparison operators.
        If this line is commented out, then no epsilon will be used.
 
+  FP_USE_THREAD_SAFE_EVAL : (Default off)
+       Define this precompiler constant to make Eval() thread-safe.
+       Refer to the thread safety section later in this document for
+       more information.
+       Note that defining this may make Eval() slightly slower.
+
+  FP_USE_THREAD_SAFE_EVAL_WITH_ALLOCA : (Default off)
+       This like the previous, but makes Eval() use the alloca() function
+       (instead of std::vector). This will make it faster, but the alloca()
+       function is not standard and thus not supported by all compilers.
+
 
   * Copying and assignment:
     ----------------------
@@ -181,6 +201,12 @@ void Optimize();
 bool AddConstant(const std::string& name, double value);
 
     Add a constant to the parser. Returns false if the name of the constant
+    is invalid, else true.
+
+
+bool AddUnit(const std::string& name, double value);
+
+    Add a new unit to the parser. Returns false if the name of the unit
     is invalid, else true.
 
 
@@ -393,6 +419,49 @@ bool AddConstant(const std::string& name, double value);
 
 
 ---------------------------------------------------------------------------
+bool AddUnit(const std::string& name, double value);
+---------------------------------------------------------------------------
+
+    In some applications it is desirable to have units of measurement.
+    A typical example is an application which creates a page layout to be
+    printed. When printing, distances are usually measured in points
+    (defined by the resolution of the printer). However, it is often more
+    useful for the user to be able to specify measurements in other units
+    such as centimeters or inches.
+
+      A unit is simply a value by which the preceding element is multiplied.
+    For example, if the printing has been set up to 300 DPI, one inch is
+    then 300 points (dots). Thus saying eg. "5in" is the same as saying
+    "5*300" or "1500" (assuming "in" has been added as a unit with the
+    value 300).
+
+      Note that units are slightly different from a multiplication in
+    that they have a higher precedence than any other operator (except
+    parentheses). Thus for example "5/2in" is parsed as "5/(2*300)".
+    (If 5/2 inches is what one wants, it has to be written "(5/2)in".)
+
+      You can use the AddUnit() method to add a new unit. The unit can then
+    be used after any element in the function (and will work as a multiplier
+    for that element). An element is a float literal, a constant, a variable,
+    a function or any expression in parentheses. When the element is not a
+    float literal nor an expression in parentheses, there has to naturally
+    be at least one whitespace between the element and the unit (eg. "x in").
+    To change the value of a unit, call AddUnit() again with the same unit
+    name and the new value.
+
+      Note that units are independent from variables, constants and functions.
+    This means that a unit can have the same name as those (there isn't any
+    syntactical problem in that), thus for example "x x" is a valid function
+    if "x" is a variable or constant and "x" is a unit, although for the sake
+    of clarity that is usually not recommended.
+
+    Example: parser.AddUnit("in", 300);
+
+      Now for example the function "5in" will be identical to "(5*300)".
+    Other usage examples include "x in", "3in+2", "pow(x,2)in", "(x+2)in".
+
+
+---------------------------------------------------------------------------
 bool AddFunction(const std::string& name,
                  double (*functionPtr)(const double*),
                  unsigned paramsAmount);
@@ -494,6 +563,36 @@ bool AddFunction(const std::string& name, FunctionParser&);
 
 
 =============================================================================
+  - About thread safety
+=============================================================================
+
+  None of the member functions of the FunctionParser class are thread-safe.
+Most prominently, the Eval() function is not thread-safe. (In other words,
+the Eval() function of a single FunctionParser instance cannot be safely
+called simultaneously by two threads.)
+
+  There are ways to use this library in a thread-safe way, though. If each
+thread uses its own FunctionParser instance, no problems will obviously
+happen. Note, however, that if these instances need to be a copy of a given
+FunctionParser instance (eg. one where the user has entered a function),
+a deep copy of this instance has to be performed for each thread. By
+default FunctionParser uses shallow-copying (copy-on-write), which means
+that a simple assignment of copy construction will not copy the data itself.
+To force a deep copy you can all the ForceDeepCopy() function on each of
+the instances of each thread after the assignment or copying has been done.
+
+  Another possibility is to compile the FunctionParser library so that
+its Eval() function will be thread-safe. (This can be done by defining
+the FP_USE_THREAD_SAFE_EVAL or the FP_USE_THREAD_SAFE_EVAL_WITH_ALLOCA
+precompiler constant.) As long as only one thread calls the other functions
+of FunctionParser, the other threads can safely call the Eval() of this
+one instance.
+  Note, however, that compiling the library like this can make Eval()
+slightly slower. (The alloca version, if supported by the compiler,
+will not be as slow.)
+
+
+=============================================================================
   - The function string
 =============================================================================
 
@@ -502,6 +601,7 @@ bool AddFunction(const std::string& name, FunctionParser&);
 or functions using the following operators in this order of precedence:
 
    ()             expressions in parentheses first
+   A unit         a unit multiplier (if one has been added)
    A^B            exponentiation (A raised to the power B)
    -A             unary minus
    !A             unary logical not (result is 1 if int(A) is 0, else 0)
@@ -596,7 +696,6 @@ or functions using the following operators in this order of precedence:
   but still take enormous amounts of time to evaluate.
   This can sometimes be undesirable because it is prone to exploitation,
   but you can disable the eval() function completely in the fpconfig.hh file.
-
 
 
 =============================================================================
