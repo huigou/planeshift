@@ -1,4 +1,8 @@
-*** 2007-05-10 by Mike Gist
+*** 2008-05-10 by Dave Bentham
+- Fixed bug FS#1424: /item prohibits unique and personalise items like books
+  and maps.
+
+*** 2008-05-10 by Mike Gist
 - Fixed a server crash where no animal affinity exists.
 - Updated fparser to v2.82
 
@@ -7,7 +11,7 @@
   made. Right now it is trivially worked around, and simply alienating players.
   This change done with the approval of Xillix.
 
-*** 2007-05-07 by Mike Gist
+*** 2008-05-07 by Mike Gist
 - Changed DR messages to carry the id of sectors again.
 - NETVER BUMP!
 - Changed all csStringHash to csStringHashReversible, which should give a

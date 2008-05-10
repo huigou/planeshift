@@ -923,7 +923,8 @@ void GMEventManager::RewardPlayer(int clientnum, Client* target, short stackCoun
     {
         // inform recipient of their prize
         psserver->SendSystemInfo(target->GetClientNum(), 
-                                 "You have been rewarded for participating in this GM event.");        psserver->SendSystemInfo(clientnum, "%s has been rewarded.", target->GetName());
+                                 "You have been rewarded for participating in this GM event.");
+        psserver->SendSystemInfo(clientnum, "%s has been rewarded.", target->GetName());
         return;
     }
 
