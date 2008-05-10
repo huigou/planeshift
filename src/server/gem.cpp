@@ -2931,7 +2931,7 @@ void gemActor::MulticastDRUpdate(MsgEntry *resend)
         csVector3 pos,vel,worldVel;
         iSector *sector;
         pcmove->GetDRData(on_ground,speed,pos,yrot,sector,vel,worldVel,ang_vel);
-        psDRMessage drmsg(0,entity->GetID(),on_ground,movementMode,DRcounter,
+        psDRMessage drmsg(0, GetEntityID(),on_ground,movementMode,DRcounter,
                           pos,yrot,sector,vel,worldVel,ang_vel,
                           CacheManager::GetSingleton().GetMsgStrings() );
         drmsg.msg->priority = PRIORITY_HIGH;
@@ -3220,7 +3220,7 @@ void gemActor::SetAction(const char *anim,csTicks& timeDelay)
                     
     // Player must be standing for anim to happen
     spstate->SetAnimAction(anim,.25,.25);
-    psOverrideActionMessage action(0,entity->GetID(),anim);
+    psOverrideActionMessage action(0,GetEntityID(),anim);
     action.Multicast(GetMulticastClients(),-1,0);
 }
 
@@ -3862,7 +3862,7 @@ void gemNPC::Send( int clientnum, bool control, bool to_superclient )
                          texparts,
                          equipmentParts,
                          DRcounter,
-                         entity->GetID(),
+                         GetEntityID(),
                          CacheManager::GetSingleton().GetMsgStrings(),
                          pcmove,
                          movementMode,
