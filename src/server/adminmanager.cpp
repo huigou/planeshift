@@ -1851,6 +1851,13 @@ void AdminManager::CreateHuntLocation(MsgEntry* me,psAdminCmdMessage& msg, Admin
         return;
     }
 
+    // cant create personalised or unique items
+    if (rawitem->GetBuyPersonalise() || rawitem->GetUnique())
+    {
+       psserver->SendSystemError(me->clientnum, "Item is personalised or unique");
+       return;
+    }
+
     // Find the location
     csVector3 pos;
     float angle;
@@ -3748,7 +3755,7 @@ void AdminManager::CreateItem(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
 
     // TODO: Get number of items to create from client
     int stackCount = 1;
-    if (CreateItem((const char*)data.item,pos.x,pos.y,pos.z,angle,sector->QueryObject()->GetName(),instance,stackCount,data.random,data.value))
+    if (CreateItem((const char*)data.item,pos.x,pos.y,pos.z,angle,sector->QueryObject()->GetName(),instance,stackCount,data.random,data.value, client))
     {
         psserver->SendSystemInfo(me->clientnum, "New item %s added!",data.item.GetData());
     }
@@ -3758,7 +3765,7 @@ void AdminManager::CreateItem(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
     }
 }
 
-bool AdminManager::CreateItem(const char * name, double xPos, double yPos, double zPos, float angle, const char * sector, unsigned int instance, int stackCount, int random, int value)
+bool AdminManager::CreateItem(const char * name, double xPos, double yPos, double zPos, float angle, const char * sector, unsigned int instance, int stackCount, int random, int value, Client *client)
 {
     psSectorInfo *sectorinfo = CacheManager::GetSingleton().GetSectorInfoByName(sector);
     if (sectorinfo==NULL)
@@ -3779,6 +3786,13 @@ bool AdminManager::CreateItem(const char * name, double xPos, double yPos, doubl
     {
         Error2("'%s' was not found as a valid base item.",name);
         return false;
+    }
+
+    // cant create personalised or unique items
+    if (basestats->GetBuyPersonalise() || basestats->GetUnique())
+    {
+       Error2("'%s' is a personalised or unique item.", name);
+       return false;
     }
 
     psItem *newitem = NULL;
@@ -3809,17 +3823,24 @@ bool AdminManager::CreateItem(const char * name, double xPos, double yPos, doubl
 
     if (newitem==NULL)
     {
-        Error2("Could not instanciate from base item '%s'.",name);
+        Error2("Could not instantiate from base item '%s'.",name);
         return false;
     }
 
     newitem->SetStackCount(stackCount);
-    newitem->SetLocationInWorld(instance,sectorinfo,xPos,yPos,zPos,angle);
 
-    if (!EntityManager::GetSingleton().CreateItem(newitem, true))
+    // try to put into inventory
+    if (!client->GetActor()->GetCharacterData()->Inventory().Add(newitem))
     {
-        delete newitem;
-        return false;
+        // else drop it into the world & guard it
+        newitem->SetLocationInWorld(instance,sectorinfo,xPos,yPos,zPos,angle);
+        newitem->SetGuardingCharacterID(client->GetActor()->GetCharacterData()->GetCharacterID());
+
+        if (!EntityManager::GetSingleton().CreateItem(newitem, true))
+        {
+            delete newitem;
+            return false;
+        }
     }
 
     newitem->SetLoaded();  // Item is fully created

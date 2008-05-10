@@ -154,7 +154,7 @@ protected:
     void CreateNPC(MsgEntry *me,psAdminCmdMessage& msg, AdminCmdData& data, Client *client, gemActor* basis);
     void KillNPC(MsgEntry *me, psAdminCmdMessage& msg, AdminCmdData& data, Client *client);
     void CreateItem(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data, Client *client);
-    bool CreateItem(const char * name, double xPos, double yPos, double zPos, float angle, const char * sector, INSTANCE_ID instance,int stackCount, int random, int value);
+    bool CreateItem(const char * name, double xPos, double yPos, double zPos, float angle, const char * sector, INSTANCE_ID instance,int stackCount, int random, int value, Client *client);
     void ModifyKey(MsgEntry *me, psAdminCmdMessage& msg, AdminCmdData& data, Client *client);
     void ChangeLock(MsgEntry *me, psAdminCmdMessage& msg, AdminCmdData& data, Client *client);
     void MakeUnlockable(MsgEntry *me, psAdminCmdMessage& msg, AdminCmdData& data, Client *client);
