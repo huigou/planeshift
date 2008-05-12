@@ -803,7 +803,7 @@ bool psCharacterLoader::SaveCharacterData(psCharacter *chardata,gemActor *actor,
     targetUpdate->AddField("time_connected_sec", chardata->GetTotalOnlineTime());
     targetUpdate->AddField("experience_points", chardata->GetExperiencePoints()); // Save W
     // X is saved when changed
-    targetUpdate->AddField("animal_affinity", chardata->animal_affinity.GetData() );
+    targetUpdate->AddField("animal_affinity", chardata->animal_affinity.GetDataSafe() );
     //fields.FormatPush("%u", chardata->owner_id );
     targetUpdate->AddField("help_event_flags", chardata->help_event_flags );
     targetUpdate->AddField("description",chardata->GetDescription());
