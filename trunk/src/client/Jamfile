@@ -22,7 +22,7 @@ if [ Property build : projgen ] = msvc
 }
 Application psclient_static : [ Wildcard *.cpp *.h ] $(extrafiles) : independent noinstall nohelp ;
 CFlags psclient_static : [ FDefines CS_STATIC_LINKED ] $(CAL3D.CFLAGS) ;
-LFlags psclient_static : -lcrystalspace_staticplugins-1.2 -lcal3d ;
+LFlags psclient_static : -lcrystalspace_staticplugins-1.3 -lcal3d ;
 MsvcDefine psclient_static : CS_STATIC_LINKED ;
 LinkWith psclient_static : gui psnet psengine psrpgrules pssound psutil paws effects fparser ;
 

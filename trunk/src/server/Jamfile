@@ -16,7 +16,7 @@ if $(HAVE_STATIC_PLUGINS) = "yes"
 SubVariant static ;
 Application psserver_static : [ Wildcard *.cpp *.h ] $(extrafiles) : console independent noinstall nohelp ;
 CFlags psserver_static : [ FDefines CS_STATIC_LINKED ] ;
-LFlags psserver_static : -lcrystalspace_staticplugins-1.2 -lcel_staticplugins-1.2 ;
+LFlags psserver_static : -lcrystalspace_staticplugins-1.3 -lcel_staticplugins-1.3 ;
 MsvcDefine psserver_static : CS_STATIC_LINKED ;
 LinkWith psserver_static : dbmysqlstatic bulkobjects fparser psnet psengine psutil psrpgrules ;
 
