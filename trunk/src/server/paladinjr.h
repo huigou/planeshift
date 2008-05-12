@@ -19,7 +19,7 @@
 
 #ifndef __PALADIN_H__
 #define __PALADIN_H__
-#define PALADIN_DEBUG
+//#define PALADIN_DEBUG
 
 #include "entitymanager.h"
 #include <iutil/cfgmgr.h>

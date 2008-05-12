@@ -240,7 +240,7 @@ void psServerDR::WorkOnMessage (MsgEntry* me,Client *client)
         return;
     }
 
-    //paladin->PredictClient(client, drmsg);
+    paladin->PredictClient(client, drmsg);
 
     // Go ahead and update the server version
     if (!actor->SetDRData(drmsg)) // out of date message if returns false
@@ -303,7 +303,7 @@ void psServerDR::WorkOnMessage (MsgEntry* me,Client *client)
                           actor->GetMulticastClients(),
                           me->clientnum,PROX_LIST_ANY_RANGE);
 
-    //paladin->CheckClient(client);
+    paladin->CheckClient(client);
 
     // Swap lines for easy Death Penalty testing.            
     //if (strcmp(drmsg.sector->QueryObject()->GetName(), "NPCroom1") == 0)

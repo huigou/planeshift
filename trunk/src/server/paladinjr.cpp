@@ -58,6 +58,10 @@ void PaladinJr::Initialize(EntityManager* celbase)
 
 void PaladinJr::PredictClient(Client* client, psDRMessage& currUpdate)
 {
+    // Don't check GMs/Devs
+    if(client->GetSecurityLevel())
+        return;
+
     // Speed check always enabled
     SpeedCheck(client, currUpdate);
 
@@ -82,7 +86,7 @@ void PaladinJr::PredictClient(Client* client, psDRMessage& currUpdate)
             target = client;
             lastUpdate = currUpdate;
 #ifdef PALADIN_DEBUG
-            CPrintf(CON_DEBUG, "Now checking client %d", target->GetClientNum());
+            CPrintf(CON_DEBUG, "Now checking client %d\n", target->GetClientNum());
 #endif
             checked.DeleteAll();
         }
@@ -95,7 +99,7 @@ void PaladinJr::PredictClient(Client* client, psDRMessage& currUpdate)
         target = client;
         lastUpdate = currUpdate;
 #ifdef PALADIN_DEBUG
-        CPrintf(CON_DEBUG, "Now checking client %d", target->GetClientNum());
+        CPrintf(CON_DEBUG, "Now checking client %d\n", target->GetClientNum());
 #endif
         return;
     }
@@ -148,7 +152,7 @@ void PaladinJr::PredictClient(Client* client, psDRMessage& currUpdate)
 
 void PaladinJr::CheckClient(Client* client)
 {
-    if (!enabled || !checkClient)
+    if (!enabled || !checkClient || !client->GetSecurityLevel())
         return;
 
     csVector3 pos;
@@ -180,7 +184,7 @@ void PaladinJr::CheckClient(Client* client)
 #endif
 
         csString buf;
-        buf.Format("%s, %s, %s, %.3f %.3f %.3f, %.3f %.3f %.3f, %.3f %.3f %.3f, %.3f %.3f %.3f, %.3f %.3f %.3f, %s", 
+        buf.Format("%s, %s, %s, %.3f %.3f %.3f, %.3f %.3f %.3f, %.3f %.3f %.3f, %.3f %.3f %.3f, %.3f %.3f %.3f, %s\n", 
                    client->GetName(), "CD violation", sector->QueryObject()->GetName(),origPos.x, origPos.y, origPos.z, 
                    maxmove.x, maxmove.y, maxmove.z, posChange.x, posChange.y, posChange.z, vel.x, vel.y, vel.z, 
                    angVel.x, angVel.y, angVel.z, PALADIN_VERSION);
@@ -248,7 +252,7 @@ void PaladinJr::SpeedCheck(Client* client, psDRMessage& currUpdate)
 
         vel = client->GetActor()->pcmove->GetVelocity();
         client->GetActor()->pcmove->GetAngularVelocity(angVel);
-        buf.Format("%s, %s, %s, %.3f %.3f %.3f, %.3f 0 %.3f, %.3f %.3f %.3f, %.3f %.3f %.3f, %.3f %.3f %.3f, %s",
+        buf.Format("%s, %s, %s, %.3f %.3f %.3f, %.3f 0 %.3f, %.3f %.3f %.3f, %.3f %.3f %.3f, %.3f %.3f %.3f, %s\n",
                    client->GetName(), type.GetData(), sectorName.GetData(),oldpos.x, oldpos.y, oldpos.z,
                    max_noncheat_distance, max_noncheat_distance, 
                    currUpdate.pos.x - oldpos.x, currUpdate.pos.y - oldpos.y, currUpdate.pos.z - oldpos.z,

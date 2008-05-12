@@ -351,23 +351,20 @@ LogCSV::LogCSV(iConfigManager* configmanager, iVFS* vfs)
 
     for(int i = 0;i < MAX_CSV;i++)
     {
-        if(logs[i].first.IsEmpty())
-            StartLog(logs[i].first, vfs, logs[i].second, maxSize, csvFile[i]);
+        StartLog(logs[i].first, vfs, logs[i].second, maxSize, csvFile[i]);
     }
 }
              
 void LogCSV::StartLog(const char* logfile, iVFS* vfs, const char* header, size_t maxSize, csRef<iFile>& csvFile)
 {
 		bool writeHeader = false;
-        if (!(vfs->Exists(logfile)))
+        if (!vfs->Exists(logfile))
         {
             csvFile = vfs->Open(logfile,VFS_FILE_WRITE);
-			writeHeader = true;
-            
+			writeHeader = true;            
         }
         else
-        {
-            
+        {            
             csvFile = vfs->Open(logfile,VFS_FILE_APPEND);
             
 			// Need to rotate log

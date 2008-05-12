@@ -113,8 +113,6 @@ psCharacter::psCharacter() : inventory(this),
     familiar_id = 0;
     owner_id = 0;
 
-    animal_affinity.Clear();
-
     override_max_hp = 0.0f;
     override_max_mana = 0.0f;
 
