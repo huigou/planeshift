@@ -14,7 +14,7 @@ if $(HAVE_STATIC_PLUGINS) = "yes"
 SubVariant static ;
 Application pssetup_static : [ Wildcard *.cpp *.h ] : independent noinstall nohelp ;
 CFlags pssetup_static : [ FDefines CS_STATIC_LINKED ] ;
-LFlags pssetup_static : "-lcrystalspace_staticplugins-1.2" ;
+LFlags pssetup_static : "-lcrystalspace_staticplugins-1.3" ;
 MsvcDefine pssetup_static : CS_STATIC_LINKED ;
 LinkWith pssetup_static : paws psutil fparser ;
 
