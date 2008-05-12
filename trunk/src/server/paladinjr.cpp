@@ -152,7 +152,7 @@ void PaladinJr::PredictClient(Client* client, psDRMessage& currUpdate)
 
 void PaladinJr::CheckClient(Client* client)
 {
-    if (!enabled || !checkClient || !client->GetSecurityLevel())
+    if (!enabled || !checkClient || client->GetSecurityLevel())
         return;
 
     csVector3 pos;
