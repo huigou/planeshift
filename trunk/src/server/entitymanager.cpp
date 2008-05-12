@@ -389,11 +389,11 @@ PS_ID EntityManager::GetMasterFamiliarID( psCharacter *charData )
     // Parse the string into an XML document.
     csRef<iDocument> xmlDoc = ParseString( animalAffinity );
 
-    if(!xmlDoc)
+    if(!xmlDoc.IsValid())
     {
       csString msg("Error parsing animal affinity for character ");
       msg.AppendFmt("%s!\n", charData->fullname.GetData());
-      CS_ASSERT_MSG(msg.GetData(), xmlDoc != NULL);
+      CS_ASSERT_MSG(msg.GetData(), xmlDoc.IsValid());
     }
 	
     // Find existing nodes
