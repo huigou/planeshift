@@ -277,8 +277,8 @@ static char *addr[] ={
     "", "", "e", "e"
 };
 
-static int offsets[NUMPARTS] = { 0, 0, 8, 16 };
-static int cnts[NUMPARTS] = { 0, 8, 8, 4 };
+static int offsets[] = { 0, 0, 8, 16 };
+static int cnts[] = { 0, 8, 8, 4 };
 
 static int strend(char *str1, char *str2)
 {
