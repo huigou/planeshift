@@ -257,6 +257,78 @@ void psNPCDialog::CleanPunctuation(psString& str, bool cleanQMark)
     }
 }
 
+// Stemming code
+
+static char *sufx[] ={ 
+    /* Noun suffixes */
+    "s", "ses", "xes", "zes", "ches", "shes", "men", "ies",
+    /* Verb suffixes */
+    "s", "ies", "es", "es", "ed", "ed", "ing", "ing",
+    /* Adjective suffixes */
+    "er", "est", "er", "est"
+};
+
+static char *addr[] ={ 
+    /* Noun endings */
+    "", "s", "x", "z", "ch", "sh", "man", "y",
+    /* Verb endings */
+    "", "y", "e", "", "e", "", "e", "",
+    /* Adjective endings */
+    "", "", "e", "e"
+};
+
+static int offsets[NUMPARTS] = { 0, 0, 8, 16 };
+static int cnts[NUMPARTS] = { 0, 8, 8, 4 };
+
+static int strend(char *str1, char *str2)
+{
+    char *pt1;
+    
+    if(strlen(str2) >= strlen(str1))
+        return(0);
+    else {
+        pt1=str1;
+        pt1=strchr(str1,0);
+        pt1=pt1-strlen(str2);
+        return(!strcmp(pt1,str2));
+    }
+}
+
+static const char *wordbase(const char *word, int ender)
+{
+    char *pt1;
+    static char copy[1024];
+    
+    strcpy(copy, word);
+    if(strend(copy,sufx[ender])) {
+        pt1=strchr(copy,'\0');
+        pt1 -= strlen(sufx[ender]);
+        *pt1='\0';
+        strcat(copy,addr[ender]);
+    }
+    return(copy);
+}
+
+const char *morphword(const char *tmpbuf)
+{
+    int offset, cnt;
+    static char retval[1024];
+    // We treat all words to be stemmed as nouns for now
+    offset = offsets[1];
+    cnt = cnts[1];
+    
+    for(int i = 0; i < cnt; i++){
+        strcpy(retval, wordbase(tmpbuf, (i + offset)));
+        if(strcmp(retval, tmpbuf) && is_defined(retval, 1)) {
+            return(retval);
+        }
+    }
+    return NULL;
+}
+
+
+
+
 void psNPCDialog::FilterKnownTerms(const psString & text, NpcTriggerSentence &trigger, Client *client)
 {
     const size_t MAX_SENTENCE_LENGTH = 4;
@@ -266,6 +338,7 @@ void psNPCDialog::FilterKnownTerms(const psString & text, NpcTriggerSentence &tr
     size_t numWordsInPhrase = words.GetCount();
     size_t firstWord=0;
     csString candidate;
+    bool morphed = false;
     
     if (!dict)   // Pointless to try if no dictionary loaded.
         return;
@@ -274,21 +347,37 @@ void psNPCDialog::FilterKnownTerms(const psString & text, NpcTriggerSentence &tr
     
     while (firstWord<words.GetCount() && trigger.TermLength()<MAX_SENTENCE_LENGTH)
     {
-        candidate = words.GetWords(firstWord, firstWord+numWordsInPhrase);
+        if(!morphed)
+            candidate = words.GetWords(firstWord, firstWord+numWordsInPhrase);
         term  = dict->FindTermOrSynonym(candidate);
         if (term)
         {
             trigger.AddToSentence(term);
             firstWord += numWordsInPhrase;
             numWordsInPhrase = words.GetCount() - firstWord;
+            morphed = false;
+            continue;
         }
-        else if (numWordsInPhrase > 1)
-            numWordsInPhrase--;
-        else
+        if (numWordsInPhrase > 1)
         {
-            firstWord ++;
-            numWordsInPhrase = (int)words.GetCount() - firstWord;
+            numWordsInPhrase--;
+            continue;
         }
+        if(!morphed)   // try stemming the word to see if it matches
+        {
+            const char * morphedWord = morphword(candidate);
+            if(morphedWord)
+            {
+                candidate = morphedWord;
+                morphed = true;
+                continue;
+            }
+        }
+        // stemming failed to match so move on
+
+        morphed = false;
+        firstWord ++;
+        numWordsInPhrase = (int)words.GetCount() - firstWord;
     }
     
     Debug2(LOG_NPC, client->GetClientNum(),"Phrases recognized: '%s'", trigger.GetString().GetData());
