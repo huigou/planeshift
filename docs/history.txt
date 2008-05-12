@@ -1,3 +1,12 @@
+*** 2008-05-12 by Andrew Dai
+- Added a bit of the wordnet stemmer into the npc dialog input processing.
+  Right now stemming will only happen on single words and only on words
+  where there is no preexisting match with a trigger. Also, an exception
+  list must be added to the stemmer in the future.
+  To make full use of this new stemmer, trigger texts should contain
+  already stemmed words. e.g. 'sword' not 'swords' or 'swordses'.
+  This may not work with multi word triggers at the moment.
+
 *** 2008-05-10 by Dave Bentham
 - Fixed bug FS#1424: /item prohibits unique and personalise items like books
   and maps. 
