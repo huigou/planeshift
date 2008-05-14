@@ -8,6 +8,9 @@
     2) Return NULL if the FactoryIndexEntry exists, but the mesh isn't loaded.
     3) Assert if the FactoryIndexEntry can't be loaded - this should never occur.
 
+*** 2008-05-12 by Mike Gist
+- Fixed some bugs in logging.
+
 *** 2008-05-12 by Andrew Dai
 - Added a bit of the wordnet stemmer into the npc dialog input processing.
   Right now stemming will only happen on single words and only on words
