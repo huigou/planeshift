@@ -813,10 +813,10 @@ void psCelClient::UpdateShader(iMeshWrapper* mesh)
             for(int i=0; i<list->GetCount(); i++)
             {
                 iLight* light = list->Get(i);
-                csVector3 center = list->Get(i)->GetFullCenter();
+                csVector3 center = light->GetFullCenter();
                 csVector3 mag = center - pos;
 
-                if(list->Get(i)->GetCutoffDistance() < mag.Norm())
+                if(light->GetCutoffDistance() < mag.Norm())
                 {
                     outOfRangeCount++;
                     continue;
@@ -826,12 +826,12 @@ void psCelClient::UpdateShader(iMeshWrapper* mesh)
                 if(mag.Norm() <= mag2.Norm())
                 {
                     closest = center;
-                    cutoff = list->Get(i)->GetCutoffDistance();
-                    colour = list->Get(i)->GetColor();
+                    cutoff = light->GetCutoffDistance();
+                    colour = light->GetColor();
                 }
             }
 
-            if(outOfRangeCount == list->GetCount())
+            if(outOfRangeCount == (size_t)list->GetCount())
                 remove = true;
 
             csReversibleTransform trans = mesh->GetMovable()->GetFullTransform();
