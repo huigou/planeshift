@@ -164,8 +164,7 @@ bool pawsGMSpawnWindow::OnSelected(pawsWidget* widget)
                     Error2("Mesh Factory %s not found", item.mesh.GetData() );
                     return false;
                 }
-                psengine->GetCacheManager()->LoadNewFactory(filename);
-                factory = psengine->GetEngine()->GetMeshFactories()->FindByName (item.mesh);
+                factory = psengine->GetCacheManager()->GetFactoryEntry(filename)->factory;
 
                 if (!factory)
                 {

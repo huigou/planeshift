@@ -532,8 +532,7 @@ bool psCharAppearance::Attach(const char* socketName, const char* meshFactName )
             Error2("Mesh Factory %s not found", meshFactName );            
             return false;
         }
-        psengine->GetCacheManager()->LoadNewFactory(filename);
-        factory = psengine->GetEngine()->GetMeshFactories()->FindByName (meshFactName);      
+        factory = psengine->GetCacheManager()->GetFactoryEntry(filename)->factory;
         if (!factory)
         {
             Error2("Mesh Factory %s not found", meshFactName );

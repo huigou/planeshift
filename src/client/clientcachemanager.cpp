@@ -49,7 +49,7 @@ ClientCacheManager::~ClientCacheManager()
     psengine->GetEngine()->RemoveCollection(cache);
 }
 
-void ClientCacheManager::LoadNewFactory(const char* filename)
+FactoryIndexEntry* ClientCacheManager::LoadNewFactory(const char* filename)
 {
     csString file = filename;
 
@@ -57,21 +57,21 @@ void ClientCacheManager::LoadNewFactory(const char* filename)
     if (!psengine->GetVFS()->Exists(filename))
     {
         Error2("Couldn't find file %s",filename);
-        return;
+        return NULL;
     }
 
     csRef<iDocument> doc = ParseFile(psengine->GetObjectRegistry(),filename);
     if (!doc)
     {
         Error2("Couldn't parse file %s",filename);
-        return;
+        return NULL;
     }
 
     csRef<iDocumentNode> root = doc->GetRoot();
     if (!root)
     {
         Error2("The file(%s) doesn't have a root",filename);
-        return;
+        return NULL;
     }
 
     csRef<iDocumentNode> meshNode;
@@ -83,85 +83,122 @@ void ClientCacheManager::LoadNewFactory(const char* filename)
     if (!meshNode)
     {
         Error2("The file(%s) doesn't have a meshfact or library node", filename);
-        return;
+        return NULL;
     }
 
-    FactoryIndexEntry* indexEntry = new FactoryIndexEntry;
-    indexEntry->factory = NULL;
+    csRef<FactoryIndexEntry> indexEntry;
+    indexEntry.AttachNew(new FactoryIndexEntry);
+    indexEntry->factname = meshNode->GetAttributeValue("name");
 
-    // If we have a mesh name, see if it's already loaded
-    const char* name = meshNode->GetAttributeValue("name");
-    indexEntry->factname = name;
-    if (name)
+    if(!indexEntry->factname)
     {
-        iMeshFactoryWrapper* meshW = psengine->GetEngine()->GetMeshFactories()->FindByName(name);
-        if (meshW) 
-            indexEntry->factory = meshW;
-    }
-
-    if(file.Find(".cal3d") != (size_t)-1)
-    {
-        if(!(psengine->GetGFXFeatures() & useNormalMaps))
-        {
-            csRef<iDocumentNode> texNode = libNode->GetNode("textures");
-            csRef<iDocumentNodeIterator> textures = texNode->GetNodes();
-            while(textures->HasNext())
-            {
-                csRef<iDocumentNode> texture = textures->Next();
-                csRef<iDocumentNode> classNode = texture->GetNode("class");
-                if(classNode)
-                {
-                    csString texClass(classNode->GetContentsValue());
-                    if(texClass.Compare("normalmap"))
-                    {
-                        texNode->RemoveNode(texture);
-                    }
-                }
-            }
-            csRef<iDocumentNode> matNode = libNode->GetNode("materials");
-            csRef<iDocumentNodeIterator> materials = matNode->GetNodes();
-            while(materials->HasNext())
-            {
-                csRef<iDocumentNode> material = materials->Next();
-                material->RemoveNodes(material->GetNodes("shader"));
-                material->RemoveNodes(material->GetNodes("shadervar"));
-            }
-        }
-    }
-
-    if (indexEntry->factory == NULL)
-    {
-        psengine->GetLoader()->Load (root, cache, false);
-        iMeshFactoryWrapper* meshW = psengine->GetEngine()->GetMeshFactories()->FindByName(name);
-        indexEntry->factory = meshW;
+        Error2("The mesh with file %s doesn't have a factory name. This is very bad!", filename);
+        return NULL;
     }
 
     indexEntry->filename = filename;
+    indexEntry->factory = NULL;
+    indexEntry->loaded = false;
+    factIndex.Put(filename, indexEntry);
 
-    factIndex.Push(indexEntry);
+    // Check if it's already loaded.
+    iMeshFactoryWrapper* meshW = psengine->GetEngine()->GetMeshFactories()->FindByName(indexEntry->factname);
+    if (meshW)
+    {
+        indexEntry->factory = meshW;
+        indexEntry->loaded = true;
+    }
+
+    if (!indexEntry->loaded)
+    {
+        if(file.Find(".cal3d") != (size_t)-1)
+        {
+            if(!(psengine->GetGFXFeatures() & useNormalMaps))
+            {
+                csRef<iDocumentNode> texNode = libNode->GetNode("textures");
+                csRef<iDocumentNodeIterator> textures = texNode->GetNodes();
+                while(textures->HasNext())
+                {
+                    csRef<iDocumentNode> texture = textures->Next();
+                    csRef<iDocumentNode> classNode = texture->GetNode("class");
+                    if(classNode)
+                    {
+                        csString texClass(classNode->GetContentsValue());
+                        if(texClass.Compare("normalmap"))
+                        {
+                            texNode->RemoveNode(texture);
+                        }
+                    }
+                }
+                csRef<iDocumentNode> matNode = libNode->GetNode("materials");
+                csRef<iDocumentNodeIterator> materials = matNode->GetNodes();
+                while(materials->HasNext())
+                {
+                    csRef<iDocumentNode> material = materials->Next();
+                    material->RemoveNodes(material->GetNodes("shader"));
+                    material->RemoveNodes(material->GetNodes("shadervar"));
+                }
+            }
+        }
+
+        psengine->GetLoader()->Load (root, cache, false);
+    }
+
+    return indexEntry;
 }
 
 FactoryIndexEntry* ClientCacheManager::GetFactoryEntry(const char* filename)
 {
-    for (size_t i = 0;i < factIndex.GetSize(); i++)
-    {
-        FactoryIndexEntry* factory = factIndex.Get(i);
-        if (!factory)
-            continue;
+    // Search for a factory entry with the filename we've passed.
+    FactoryIndexEntry* indexEntry = factIndex.Get(filename, NULL);
 
-        if (factory->filename == filename)
-            return factory;
+    // If the factory entry exists...
+    if (indexEntry && indexEntry->filename == filename)
+    {
+        // If it's loaded then we can return it.
+        if(indexEntry->loaded)
+        {
+            return indexEntry;
+        }
+
+        // Check if it has been loaded.
+        iMeshFactoryWrapper* meshW = psengine->GetEngine()->GetMeshFactories()->FindByName(indexEntry->factname);
+        if(meshW)
+        {
+            indexEntry->factory = meshW;
+            indexEntry->loaded = true;
+            return indexEntry;
+        }
+
+        // Try again later.
+        return NULL;
     }
     
-    LoadNewFactory(filename);
-    for (size_t i = 0;i < factIndex.GetSize(); i++)
-    {
-        FactoryIndexEntry* factory = factIndex.Get(i);
-        if (!factory)
-            continue;
+    // No such factory entry exists.. so create a new one.
+    indexEntry = LoadNewFactory(filename);
 
-        if (factory->filename == filename)
-            return factory;
+    // Return it if it's loaded.
+    if(indexEntry)
+    {
+        if(indexEntry->loaded)
+        {
+            return indexEntry;
+        }
+
+        iMeshFactoryWrapper* meshW = psengine->GetEngine()->GetMeshFactories()->FindByName(indexEntry->factname);
+        if(meshW)
+        {
+            indexEntry->factory = meshW;
+            indexEntry->loaded = true;
+            return indexEntry;
+        }
+
+        return NULL;
     }
+
+    // It looks like something bad happened. This should be caught before now.. so bail out screaming!
+    csString msg;
+    msg.Format("Factory Entry %s failed to load!", filename);
+    CS_ASSERT_MSG(msg.GetData(), false);
     return NULL;
 }
