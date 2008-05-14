@@ -23,7 +23,8 @@
 //=============================================================================
 // Crystal Space Includes
 //=============================================================================
-#include <csutil/parray.h>
+#include <csutil/hash.h>
+#include <csutil/refarr.h>
 #include <csutil/leakguard.h>
 
 //=============================================================================
@@ -38,11 +39,12 @@
 struct iCollection;
 
 /** Holds details on a mesh factory. */
-struct FactoryIndexEntry
+struct FactoryIndexEntry : public csRefCount
 {
     csString filename;
     csString factname;
     csRef<iMeshFactoryWrapper> factory;
+    bool loaded;
 };
 
 //-----------------------------------------------------------------------------
@@ -57,11 +59,6 @@ class ClientCacheManager
 public:
     ClientCacheManager();
     ~ClientCacheManager();
-
-    /** Loads a new model factory. 
-     * @param filename The VFS file name of the model file to load.
-     */
-    void LoadNewFactory(const char* filename);
     
     /** Checks the cache list for a particular factory.
       * @param filename  The model file that we want to get.
@@ -70,8 +67,15 @@ public:
     FactoryIndexEntry* GetFactoryEntry(const char* filename);
 
 private:
+
+    /** Loads a new model factory. 
+     * @param filename The VFS file name of the model file to load.
+     * @param old Use the old functionallity (compatibility).
+     */
+    FactoryIndexEntry* LoadNewFactory(const char* filename);
+
     csRef<iCollection> cache;
-    csPDelArray<FactoryIndexEntry> factIndex;
+    csHash<csRef<FactoryIndexEntry>, const char*> factIndex;
 };
 
 #endif

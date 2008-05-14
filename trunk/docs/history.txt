@@ -1,3 +1,13 @@
+*** 2008-05-14 by Mike Gist
+- Rewrote most of ClientCacheManager:
+  - It's now many times faster when doing lookups.
+  - It supports the loading of meshes in the background. The behaviour has
+    changed so that only GetFactoryEntry is public, and that can do one of
+    three things:
+    1) Return the FactoryIndexEntry, if the mesh for it is loaded.
+    2) Return NULL if the FactoryIndexEntry exists, but the mesh isn't loaded.
+    3) Assert if the FactoryIndexEntry can't be loaded - this should never occur.
+
 *** 2008-05-12 by Andrew Dai
 - Added a bit of the wordnet stemmer into the npc dialog input processing.
   Right now stemming will only happen on single words and only on words

@@ -1445,9 +1445,6 @@ inline void psEngine::PreloadModels()
     }
     else
     {
-        //Sets up for the cache dir.
-        //GetEngine()->SetCacheManager(NULL);
-
         if (modelnames.GetSize()-1 < modelToLoad)
         {
             Debug1(LOG_ADMIN,0, "Preloading complete");
@@ -1462,8 +1459,18 @@ inline void psEngine::PreloadModels()
             return;
         }
 
-        // Now build the index
-        cachemanager->LoadNewFactory(modelnames.Get(modelToLoad));
+        // Now build the index, wait for each model to load (timeout after 20 sec).
+        size_t counter = 0;
+        while(!cachemanager->GetFactoryEntry(modelnames.Get(modelToLoad))->factory && counter < 200)
+        {
+            counter++;
+            csSleep(100);
+        }
+
+        if(counter == 200)
+        {
+            Error2("Model %s didn't seem to load!", modelnames.Get(modelToLoad));
+        }
 
         modelToLoad++;
         bar->SetCurrentValue( modelToLoad );
