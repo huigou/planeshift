@@ -1294,13 +1294,8 @@ void gemActiveObject::SendBehaviorMessage(const csString & msg_id, gemObject *ac
     }
     else if ( msg_id == "pickup")
     {
-        // Check to see if this client has the admin level to move this particular item
-        Client* client = psserver->GetConnections()->FindAny(clientnum);
-        bool securityOverride = CacheManager::GetSingleton().GetCommandManager()->Validate(client->GetSecurityLevel(), 
-          "move unpickupables/spawns");
-
         // If the player is in range of the item AND the item may be picked up or securityOveride, and check for dead user
-        if ( actor->IsAlive() && (RangeTo( actor ) < RANGE_TO_SELECT) && (IsPickable() || securityOverride))
+        if (actor->IsAlive() && RangeTo(actor) < RANGE_TO_SELECT && IsPickable())
         {
             gemActor* gActor = dynamic_cast<gemActor*>(actor);
             psCharacter* chardata = NULL;
@@ -1328,15 +1323,10 @@ void gemActiveObject::SendBehaviorMessage(const csString & msg_id, gemObject *ac
 
             // Cache values from item, because item might be deleted by Add
             csString qname = item->GetQuantityName();
-            bool isPickable = IsPickable();
             gemContainer *container = dynamic_cast<gemContainer*> (this);
 
             if (chardata && chardata->Inventory().Add(item,false, true, PSCHARACTER_SLOT_NONE, container))
             {
-                if (!isPickable)
-                {
-                    psserver->SendSystemOK(clientnum,"You picked up a non-pickable item.");
-                }
                 psSystemMessage newmsg(clientnum, MSG_INFO_BASE, "%s picked up %s", actor->GetName(), qname.GetData() );
                 newmsg.Multicast(actor->GetMulticastClients(),0,RANGE_TO_SELECT);
 
@@ -1377,12 +1367,12 @@ void gemActiveObject::SendBehaviorMessage(const csString & msg_id, gemObject *ac
         }
         else
         {
-            if(!actor->IsAlive())
-                psserver->SendSystemInfo(clientnum,"You can't pickup items when you're dead");
-            else if(!IsPickable() && !securityOverride)
-                psserver->SendSystemInfo(clientnum,"You can't pick up this item");
+            if (!actor->IsAlive())
+                psserver->SendSystemInfo(clientnum,"You can't pick up items when you're dead.");
+            else if (!IsPickable())
+                psserver->SendSystemInfo(clientnum,"You can't pick up this item.");
             else
-                psserver->SendSystemInfo(clientnum,"Item out of range.");
+                psserver->SendSystemInfo(clientnum,"You're too far away to pick up that item.");
         }
     }
     

@@ -1,3 +1,10 @@
+*** 2008-05-15 by Kenny Graunke
+- Completed FS#1298.  GMs can no longer pick up non-pickupable items.
+  Instead, they will have to "/modify target pickupable false", "/pickup",
+  and then set it non-pickupable again after dropping it.  A much better
+  alternative, if the goal is simply to move the item, is to use /info, /pos
+  and then "/modify eid:blah move x y z [y-rotation]"
+
 *** 2008-05-14 by Mike Gist
 - Rewrote most of ClientCacheManager:
   - It's now many times faster when doing lookups.
