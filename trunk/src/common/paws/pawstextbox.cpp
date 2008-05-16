@@ -938,28 +938,31 @@ void pawsEditTextBox::Clear()
 bool pawsEditTextBox::OnMouseDown( int button, int modifiers, int x, int y )
 {
     x -= (screenFrame.xmin+4); // Adjust x to be relative to the text box
-    int textWidth;
+    int textWidth; 
+    int boxWidth = screenFrame.xmax -  screenFrame.xmin;
     int dummy;
 
     //Force the cursor to blink
     blink = true;
 
     // Basic comparisons to see if it was clicked after all the text or before all the text or neither
-    if (x<=0)
+    if (x <= 0 || text.Length() == 0)
     {
         start=0;
         cursorPosition=0;
         return true;
     }
 
-    if ( text.Length() > 0 )
+    GetFont()->GetDimensions(text.GetData(),textWidth,dummy);
+    if (x >= textWidth)
     {
-        GetFont()->GetDimensions(text.GetData(),textWidth,dummy);
-        if (x>=textWidth)
-        {
-            cursorPosition=text.Length();
-            return true;
-        }
+    	cursorPosition = text.Length();
+    	return true;
+    }
+    
+    if(textWidth > boxWidth)
+    {
+    	x += textWidth - boxWidth;
     }
 
     // Find exact letter mouse was clicked on

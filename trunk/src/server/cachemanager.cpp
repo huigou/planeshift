@@ -1826,11 +1826,12 @@ psRaceInfo *CacheManager::GetRaceInfoByNameGender(const char *name,PSCHARACTER_G
 {
     size_t i;
     psRaceInfo *currentri;
+    csString raceName(name);
 
     for (i=0;i<raceinfolist.GetSize();i++)
     {
         currentri=raceinfolist.Get(i);
-        if (currentri!=NULL && currentri->gender==gender && currentri->name ==name)
+        if (currentri!=NULL && currentri->gender==gender && raceName.CompareNoCase(currentri->name))
         {
             return currentri;
         }
