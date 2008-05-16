@@ -46,7 +46,7 @@ csString NormalizeCharacterName(const csString & name);
  *  <LI> Appearance.
  * </UL>
  */
-class pawsCreationMain : public pawsWidget, public psClientNetSubscriber 
+class pawsCreationMain : public pawsWidget, public psClientNetSubscriber, public DelayedLoader
 {
 public:
     
@@ -59,6 +59,7 @@ public:
 	bool OnChange(pawsWidget *widget);
     void Draw();
     void Show();
+    void CheckMeshLoad();
 
     /* Reloads all character creation windows so that they reset */
     void ResetAllWindows();    
@@ -158,6 +159,9 @@ private:
 	pawsEditTextBox* nameTextBox;
     
     psCharAppearance* charApp;
+
+    bool loaded;
+    csString fileName;
 };
 
 

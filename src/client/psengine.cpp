@@ -770,6 +770,11 @@ bool psEngine::HandleEvent (iEvent &ev)
 
     if (ev.Name == event_preprocess)
     {
+        for(size_t i=0; i<delayedLoaders.GetSize(); i++)
+        {
+            delayedLoaders.Get(i)->CheckMeshLoad();
+        }
+
         if (gameLoaded)
         {
             modehandler->PreProcess();

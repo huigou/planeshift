@@ -26,13 +26,13 @@
 #include <csutil/leakguard.h>
 #include <ivaria/profile.h>
 
-#include "util/prb.h"
-#include "util/slots.h"
-
 #include "paws/pawsmanager.h"
 #include "paws/psmousebinds.h"
 #include "psclientchar.h"
 #include "psinventorycache.h"
+
+#include "util/prb.h"
+#include "util/slots.h"
 
 class psCelClient;
 class psClientMsgHandler;
@@ -74,6 +74,11 @@ class psSlotManager;
 class GEMClientObject;
 class GEMClientActor;
 class GUIHandler;
+
+struct DelayedLoader
+{
+    virtual void CheckMeshLoad() = 0;
+};
 
 /**
  * psEngine
@@ -357,6 +362,8 @@ public:
     /// The graphics features that are enabled/disabled.
     uint GetGFXFeatures() { return gfxFeatures; }
 
+    void RegisterDelayedLoader(DelayedLoader* obj) { delayedLoaders.Push(obj); }
+
 private:
     // Load the log report settings from the config file.
     void LoadLogSettings();
@@ -487,6 +494,8 @@ private:
 
     CS_EVENTHANDLER_NAMES ("planeshift.engine")
     CS_EVENTHANDLER_NIL_CONSTRAINTS
+
+    csArray<DelayedLoader*> delayedLoaders;
 };
 
 #endif

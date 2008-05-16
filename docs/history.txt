@@ -1,3 +1,6 @@
+*** 2008-05-16 by Mike Gist
+- Added support for delayed mesh loading to pawscharcreate.
+
 *** 2008-05-16 by Steven Patrick (Aresilek)
 - Fixed FS#837, patch by peeg
 - Fixed FS#721, patch by peeg
