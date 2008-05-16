@@ -63,6 +63,9 @@ pawsCharacterPickerWindow::pawsCharacterPickerWindow()
     lastResend = 0;
     
     charApp = new psCharAppearance(psengine->GetObjectRegistry());
+
+    psengine->RegisterDelayedLoader(this);
+    loaded = true;
 }
 
 
@@ -448,51 +451,50 @@ void pawsCharacterPickerWindow::SelectCharacter(int character)
     else
     {
         // Show the model for the selected character.
+        loaded = false;
         view->Show();
-        FactoryIndexEntry* entry = psengine->GetCacheManager()->GetFactoryEntry(models[selectedCharacter].fileName);
-        if (!entry)
-        {
-            psengine->FatalError("The server sent an invalid model filename, please run the updater\n");
-            printf("Model sent: %s",models[selectedCharacter].fileName.GetData());
-            return;
-        }
-
-        if (!entry->factname.IsEmpty())
-            view->View( entry->factname, entry->filename );
-        else
-            view->View(entry->factory);
-                
-        iMeshWrapper * mesh = view->GetObject();        
-        if (!mesh)
-        {
-            PawsManager::GetSingleton().CreateWarningBox("Couldn't find mesh! Please run the updater");
-            return;
-        }
-        charApp->ClearEquipment();
-        charApp->SetMesh(mesh);
-        psengine->GetCelClient()->UpdateShader(mesh);
-
-        csRef<iSpriteCal3DState> spstate =
-            
-                                        scfQueryInterface<iSpriteCal3DState> (mesh->GetMeshObject());
-        if (spstate)
-        {
-            // Setup cal3d to select random 0 velocity anims
-            spstate->SetVelocity(0.0,&psengine->GetRandomGen());
-            csString traits(models[selectedCharacter].traits);
-            csString equipment( models[selectedCharacter].equipment );
-            
-            //psengine->BuildAppearance( mesh, traits );     
-            charApp->ApplyTraits(traits);
-            
-            //csPDelArray<Trait> dummy;
-            //psengine->BuildEquipment(mesh, equipment, dummy);               
-            charApp->ApplyEquipment(equipment);
-        }
+        CheckMeshLoad();
     }
 }
 
+void pawsCharacterPickerWindow::CheckMeshLoad()
+{
+    if(!loaded)
+    {
+        FactoryIndexEntry* entry = psengine->GetCacheManager()->GetFactoryEntry(models[selectedCharacter].fileName);
+        if (entry && entry->factory)
+        {
+            view->View(entry->factory);
 
+            iMeshWrapper * mesh = view->GetObject();        
+            if (!mesh)
+            {
+                PawsManager::GetSingleton().CreateWarningBox("Couldn't find mesh! Please run the updater");
+                return;
+            }
+            charApp->ClearEquipment();
+            charApp->SetMesh(mesh);
+            psengine->GetCelClient()->UpdateShader(mesh);
+
+            csRef<iSpriteCal3DState> spstate = scfQueryInterface<iSpriteCal3DState> (mesh->GetMeshObject());
+            if (spstate)
+            {
+                // Setup cal3d to select random 0 velocity anims
+                spstate->SetVelocity(0.0,&psengine->GetRandomGen());
+                csString traits(models[selectedCharacter].traits);
+                csString equipment( models[selectedCharacter].equipment );
+
+                //psengine->BuildAppearance( mesh, traits );     
+                charApp->ApplyTraits(traits);
+
+                //csPDelArray<Trait> dummy;
+                //psengine->BuildEquipment(mesh, equipment, dummy);               
+                charApp->ApplyEquipment(equipment);
+            }
+            loaded = true;
+        }
+    }
+}
 
 void pawsCharacterPickerWindow::SelectCharacter(int character, pawsWidget* widget)
 {
