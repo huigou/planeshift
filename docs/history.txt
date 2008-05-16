@@ -1,3 +1,9 @@
+*** 2008-05-16 by Steven Patrick (Aresilek)
+- Fixed FS#837, patch by peeg
+- Fixed FS#721, patch by peeg
+- Fixed FS#1482, patch by peeg
+- Fixed FS#1377, patch by peeg
+
 *** 2008-05-15 by Kenny Graunke
 - Completed FS#1298.  GMs can no longer pick up non-pickupable items.
   Instead, they will have to "/modify target pickupable false", "/pickup",

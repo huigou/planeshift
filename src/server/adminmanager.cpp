@@ -915,8 +915,17 @@ bool AdminManager::AdminCmdData::DecodeAdminCmdMessage(MsgEntry *pMsg, psAdminCm
     }
     else if (command == "/settrait")
     {
-        player = words.Get(1);
-        name = words.Get(2);
+        if(words.Get(1) == "list")
+        {
+            subCmd = words.Get(1);
+            attribute = words.Get(2);
+            attribute2 = words.Get(3);
+        }
+        else
+        {
+            player = words.Get(1);
+            name = words.Get(2);
+        }
         return true;
     }
     else if (command == "/setitemname")
@@ -6888,9 +6897,69 @@ void AdminManager::HandleSetQuality(psAdminCmdMessage& msg, AdminCmdData& data, 
 
 void AdminManager::HandleSetTrait(psAdminCmdMessage& msg, AdminCmdData& data, Client *client, gemObject* object )
 {
+    if(data.subCmd == "list")
+    {
+        if(data.attribute.IsEmpty() || data.attribute2.IsEmpty())
+        {
+            psserver->SendSystemError(client->GetClientNum(), "Syntax: /settrait list [race] [gender]");
+            return;
+        }
+
+        // determine and validate requested gender
+        PSCHARACTER_GENDER gender;
+        if(data.attribute2 == "m" || data.attribute2 == "male")
+        {
+            gender = PSCHARACTER_GENDER_MALE;
+        }
+        else if(data.attribute2 == "f" || data.attribute2 == "female")
+        {
+            gender = PSCHARACTER_GENDER_FEMALE;
+        }
+        else if(data.attribute2 == "n" || data.attribute2 == "none")
+        {
+            gender = PSCHARACTER_GENDER_NONE;
+        }
+        else
+        {
+            psserver->SendSystemError(client->GetClientNum(), "Invalid gender!");
+            return;
+        }
+
+        // check if given race is valid
+        psRaceInfo * raceInfo = CacheManager::GetSingleton().GetRaceInfoByNameGender(data.attribute.GetData(), gender);
+        if(!raceInfo)
+        {
+            psserver->SendSystemError(client->GetClientNum(), "Invalid race!");
+            return;
+        }
+
+        // collect all matching traits
+        CacheManager::TraitIterator ti = CacheManager::GetSingleton().GetTraitIterator();
+        csString message = "Available traits:\n";
+        bool found = false;
+        while(ti.HasNext())
+        {
+            psTrait* currTrait = ti.Next();
+            if(currTrait->race == raceInfo->race && currTrait->gender == gender && message.Find(currTrait->name.GetData()) == (size_t)-1)
+            {
+                message.Append(currTrait->name+", ");
+                found = true;
+            }
+        }
+
+        // get rid of the last semicolon
+        if(found)
+        {
+            message.DeleteAt(message.FindLast(','));
+        }
+
+        psserver->SendSystemInfo(client->GetClientNum(), message);
+        return;
+    }
+
     if (data.name.IsEmpty())
     {
-        psserver->SendSystemError(client->GetClientNum(), "Syntax: /settrait [target] [trait]");
+        psserver->SendSystemError(client->GetClientNum(), "Syntax: /settrait [[target] [trait] | list [race] [gender]]");
         return;
     }
 
@@ -6914,11 +6983,18 @@ void AdminManager::HandleSetTrait(psAdminCmdMessage& msg, AdminCmdData& data, Cl
             currTrait->name.CompareNoCase(data.name))
         {
             target->SetTraitForLocation(currTrait->location, currTrait);
+            
             csString str( "<traits>" );
-            str.Append(currTrait->ToXML() );
-            str.Append("</traits>");        
+            do
+            {
+                str.Append(currTrait->ToXML() );              
+                currTrait = currTrait->next_trait;
+            }while(currTrait);
+            str.Append("</traits>");
+
             psTraitChangeMessage message( client->GetClientNum(), (uint32_t)target->GetActor()->GetEntityID(), str );
-            message.Multicast( target->GetActor()->GetMulticastClients(), 0, PROX_LIST_ANY_RANGE );     
+            message.Multicast( target->GetActor()->GetMulticastClients(), 0, PROX_LIST_ANY_RANGE );
+            
             psserver->SendSystemOK(client->GetClientNum(), "Trait successfully changed");
             return;
         }
@@ -6989,6 +7065,8 @@ void AdminManager::HandleReload(psAdminCmdMessage& msg, AdminCmdData& data, Clie
 void AdminManager::HandleListWarnings(psAdminCmdMessage& msg, AdminCmdData& data, Client *client, gemObject* object )
 {
     Client* target = NULL;
+    int accountID = 0;
+    
     if (!data.target.IsEmpty() && data.target != "target")
     {
         target = psserver->GetCharManager()->FindPlayerClient(data.target);
@@ -6999,10 +7077,24 @@ void AdminManager::HandleListWarnings(psAdminCmdMessage& msg, AdminCmdData& data
         if (targetActor)
             target = targetActor->GetClient();
     }
-
-    if (target)
+    
+    if(target)
     {
-        Result rs(db->Select("select warningGM, timeOfWarn, warnMessage from warnings where accountid = %d", client->GetAccountID()));
+        accountID = target->GetAccountID();
+    }
+    else
+    {
+        // let's see if there's a offline character with given name
+        Result rs(db->Select("SELECT account_id FROM characters WHERE name='%s'", data.target.GetData()));
+        if(rs.IsValid() && rs.Count() > 0)
+        {
+            accountID = rs[0].GetUInt32("account_id");
+        }
+    }
+    
+    if (accountID)
+    {
+        Result rs(db->Select("select warningGM, timeOfWarn, warnMessage from warnings where accountid = %d", accountID));
         if (rs.IsValid())
         {
             csString newLine;
@@ -7013,9 +7105,9 @@ void AdminManager::HandleListWarnings(psAdminCmdMessage& msg, AdminCmdData& data
                 psserver->SendSystemInfo(client->GetClientNum(), newLine.GetData());
             }
             if (i == 0)
-                psserver->SendSystemInfo(client->GetClientNum(), "No warnings found");
+                psserver->SendSystemInfo(client->GetClientNum(), "No warnings found.");
         }
     }
     else
-        psserver->SendSystemError(client->GetClientNum(), "Target wasn't found");
+        psserver->SendSystemError(client->GetClientNum(), "Target wasn't found.");
 }
