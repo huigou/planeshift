@@ -122,6 +122,7 @@ void pawsCreationMain::Reset()
 
 pawsCreationMain::~pawsCreationMain()
 {
+    psengine->UnregisterDelayedLoader(this);
 }
 
 bool pawsCreationMain::PostSetup()

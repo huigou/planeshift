@@ -71,6 +71,7 @@ pawsCharacterPickerWindow::pawsCharacterPickerWindow()
 
 pawsCharacterPickerWindow::~pawsCharacterPickerWindow()
 {
+    psengine->UnregisterDelayedLoader(this);
     delete charApp;
     if(msgHandler)
     {

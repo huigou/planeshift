@@ -363,6 +363,7 @@ public:
     uint GetGFXFeatures() { return gfxFeatures; }
 
     void RegisterDelayedLoader(DelayedLoader* obj) { delayedLoaders.Push(obj); }
+    void UnregisterDelayedLoader(DelayedLoader* obj) { delayedLoaders.Delete(obj); }
 
 private:
     // Load the log report settings from the config file.

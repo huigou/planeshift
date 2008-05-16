@@ -51,12 +51,15 @@ pawsGMSpawnWindow::pawsGMSpawnWindow()
 
 pawsGMSpawnWindow::~pawsGMSpawnWindow()
 {
+    psengine->UnregisterDelayedLoader(this);
 }
 
 bool pawsGMSpawnWindow::PostSetup()
 {
     psengine->GetMsgHandler()->Subscribe( this, MSGTYPE_GMSPAWNITEMS );
     psengine->GetMsgHandler()->Subscribe( this, MSGTYPE_GMSPAWNTYPES );
+    psengine->RegisterDelayedLoader(this);
+    loaded = true;
                 
     itemName = (pawsTextBox*)FindWidget("ItemName");
     itemCount= (pawsEditTextBox*)FindWidget("Count");
@@ -156,54 +159,20 @@ bool pawsGMSpawnWindow::OnSelected(pawsWidget* widget)
         {
             csRef<iMeshFactoryWrapper> factory = psengine->GetEngine()->GetMeshFactories()->FindByName (item.mesh);                     
             if(!factory)
-            {         
+            {
                 // Try loading the mesh again
-                csString filename;
                 if (!psengine->GetFileNameByFact(item.mesh, filename))
                 {
                     Error2("Mesh Factory %s not found", item.mesh.GetData() );
                     return false;
                 }
-                factory = psengine->GetCacheManager()->GetFactoryEntry(filename)->factory;
-
-                if (!factory)
-                {
-                    objView->Clear();
-
-                    if(!cbForce->GetState())
-                    {
-                        csString error;
-                        error.Format("Couldn't find mesh %s.spr!",item.mesh.GetData());
-
-                        Error1(error);
-                        PawsManager::GetSingleton().CreateWarningBox(error);
-
-                        // Hide stuff because we had a mesh error
-                        itemCount->Hide();
-                        itemName->SetText("None");
-                        itemImage->Hide();
-                        cbLockable->Hide();
-                        cbLocked->Hide();
-                        lockStr->Hide();
-                        lockSkill->Hide();
-                        cbPickupable->Hide();
-                        cbCollidable->Hide();
-
-                        pawsWidget* spawnBtn = FindWidget("Spawn");
-                        spawnBtn->Hide();
-                        return true;
-                    }
-                    else
-                    {
-                        PawsManager::GetSingleton().CreateWarningBox(
-                            "Warning! This mesh could not be loaded, but you are able to spawn it. Please use caution with this item");
-                    }
-                }
-                else
-                    objView->View(factory);
+                loaded = false;
+                CheckMeshLoad();
             }
             else
+            {
                 objView->View(factory);
+            }
         }
         
         // set stuff
@@ -239,6 +208,20 @@ bool pawsGMSpawnWindow::OnSelected(pawsWidget* widget)
     msg.SendMessage();
 
     return true;
+}
+
+void pawsGMSpawnWindow::CheckMeshLoad()
+{
+    if(!loaded)
+    {
+        FactoryIndexEntry* indexEntry = psengine->GetCacheManager()->GetFactoryEntry(filename);
+
+        if(indexEntry && indexEntry->factory)
+        {
+            objView->View(indexEntry->factory);
+            loaded = true;
+        }
+    }
 }
 
 bool pawsGMSpawnWindow::OnButtonPressed(int button,int keyModifier,pawsWidget* widget)

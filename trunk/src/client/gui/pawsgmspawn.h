@@ -20,6 +20,7 @@
 #define PAWS_GMSPAWN_HEADER
 
 #include "paws/pawswidget.h"
+#include "psengine.h"
 
 class pawsSimpleTree;
 class pawsObjectView;
@@ -27,7 +28,7 @@ class pawsTextBox;
 class pawsEditTextBox;
 class pawsCheckBox;
 
-class pawsGMSpawnWindow : public pawsWidget, public psClientNetSubscriber
+class pawsGMSpawnWindow : public pawsWidget, public psClientNetSubscriber, public DelayedLoader
 {
 public:
     pawsGMSpawnWindow();
@@ -39,6 +40,8 @@ public:
     bool OnSelected(pawsWidget* widget);
 
     bool OnButtonPressed(int button,int keyModifier,pawsWidget* widget);
+
+    void CheckMeshLoad();
 
 private:
     pawsSimpleTree*                 itemTree;
@@ -65,6 +68,8 @@ private:
     csArray<Item>   items;
 
     csString currentItem;
+    bool loaded;
+    csString filename;
 };
 
 

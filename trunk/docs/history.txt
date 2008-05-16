@@ -1,5 +1,6 @@
 *** 2008-05-16 by Mike Gist
-- Added support for delayed mesh loading to pawscharcreate and pawscharpick.
+- Added support for delayed mesh loading to pawsCreationMain,
+  pawsCharacterPickerWindow and pawsGMSpawnWindow.
 
 *** 2008-05-16 by Steven Patrick (Aresilek)
 - Fixed FS#837, patch by peeg

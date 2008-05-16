@@ -20,6 +20,7 @@
 #define PAWS_CHARACTER_CREATION_MAIN
 
 #include "paws/pawswidget.h"
+#include "psengine.h"
 
 //////////////////////////////////////////////////////////////////////////////
 // FORWARD DECLARATIONS
