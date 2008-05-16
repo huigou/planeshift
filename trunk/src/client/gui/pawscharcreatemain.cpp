@@ -89,6 +89,9 @@ pawsCreationMain::pawsCreationMain()
     nameWarning = 0;
     
     charApp = new psCharAppearance(psengine->GetObjectRegistry());
+    loaded = true;
+
+    psengine->RegisterDelayedLoader(this);
 }
 
 
@@ -984,6 +987,7 @@ void pawsCreationMain::Show()
 
 void pawsCreationMain::UpdateRace(int id)
 {
+    loaded = false;
     int raceCP = createManager->GetRaceCP( id );
     lastRaceID = id;                
 
@@ -1010,56 +1014,58 @@ void pawsCreationMain::UpdateRace(int id)
     csString factName = createManager->GetModelName( id, currentGender );
     
     // Store the factory name and file name for the mesh
-    csString fileName;
     fileName.Format("/planeshift/models/%s/%s.cal3d",factName.GetData(), factName.GetData());
                        
     // Show the model for the selected race.
     view->Show();
     view->EnableMouseControl(true);
 
-    FactoryIndexEntry* entry = psengine->GetCacheManager()->GetFactoryEntry(fileName);
-    if (!entry)
+    CheckMeshLoad();
+}
+
+void pawsCreationMain::CheckMeshLoad()
+{
+    if(!loaded)
     {
-        psengine->FatalError("The server sent an invaild model filename, please run the updater\n");
-        return;
+        FactoryIndexEntry* entry = psengine->GetCacheManager()->GetFactoryEntry(fileName);
+
+        if(entry && entry->factory)
+        {
+            view->View(entry->factory);
+
+            iMeshWrapper * mesh = view->GetObject();
+            charApp->SetMesh(mesh);
+            if (!mesh)
+            {
+                PawsManager::GetSingleton().CreateWarningBox("Couldn't find mesh! Please run the updater");
+                return;
+            }
+
+            csRef<iSpriteCal3DState> spstate =  scfQueryInterface<iSpriteCal3DState> (mesh->GetMeshObject());
+            if (spstate)
+            {
+                // Setup cal3d to select random 0 velocity anims
+                spstate->SetVelocity(0.0,&psengine->GetRandomGen());
+            }
+
+            currentFaceChoice = 0; 
+            activeHairStyle = 0;
+            currentBeardStyleChoice = 0;
+            activeHairColour = 0;
+            currentSkinColour = 0;
+
+            ChangeFace(0);    
+            ChangeHairColour(0);    
+            SetHairStyle( activeHairStyle );    
+            ChangeSkinColour( currentSkinColour );
+            ChangeBeardStyle( currentBeardStyleChoice );
+
+            view->UnlockCamera();
+
+            GrayStyleButtons();
+            loaded = true;
+        }
     }
-
-    if (!entry->factname.IsEmpty())
-        view->View( entry->factname, entry->filename );
-    else
-        view->View(entry->factory);
-
-                
-    iMeshWrapper * mesh = view->GetObject();
-    charApp->SetMesh(mesh);
-    if (!mesh)
-    {
-        PawsManager::GetSingleton().CreateWarningBox("Couldn't find mesh! Please run the updater");
-        return;
-    }
-
-    csRef<iSpriteCal3DState> spstate =  scfQueryInterface<iSpriteCal3DState> (mesh->GetMeshObject());
-    if (spstate)
-    {
-       // Setup cal3d to select random 0 velocity anims
-        spstate->SetVelocity(0.0,&psengine->GetRandomGen());
-    }
-    
-    currentFaceChoice = 0; 
-    activeHairStyle = 0;
-    currentBeardStyleChoice = 0;
-    activeHairColour = 0;
-    currentSkinColour = 0;
-        
-    ChangeFace(0);    
-    ChangeHairColour(0);    
-    SetHairStyle( activeHairStyle );    
-    ChangeSkinColour( currentSkinColour );
-    ChangeBeardStyle( currentBeardStyleChoice );
-
-    view->UnlockCamera();
-        
-    GrayStyleButtons();
 }
 
 
