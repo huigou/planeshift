@@ -6,6 +6,8 @@
 #include "net/message.h"
 #include "net/msghandler.h"
 
+#include "psengine.h"
+
 class pawsObjectView;
 class psCharAppearance;
 
@@ -27,7 +29,7 @@ struct Model
  *  that phase. This is connected to the network and listens for MSGTYPE_CHARACTERDATA
  *  type messages.
  */
-class pawsCharacterPickerWindow: public pawsWidget, public psClientNetSubscriber, public iOnStringEnteredAction
+class pawsCharacterPickerWindow: public pawsWidget, public psClientNetSubscriber, public iOnStringEnteredAction, public DelayedLoader
 {
 public:
     pawsCharacterPickerWindow();
@@ -47,6 +49,8 @@ public:
     void Draw();
     
     void StoreHashedPassword(csString passwordHash) {passHash = passwordHash;}
+
+    void CheckMeshLoad();
 private:
 
     /// Creates the character creation screens.
@@ -74,6 +78,7 @@ private:
 
     csString passHash;
     psCharAppearance* charApp;
+    bool loaded;
 };
 
 CREATE_PAWS_FACTORY( pawsCharacterPickerWindow );
