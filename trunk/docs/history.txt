@@ -1,3 +1,8 @@
+*** 2008-05-17 by Dave Bentham
+- Maps treated the same as books during trade: trade recipient can only see
+  a description of the map instead of the map itself. Map description
+  is very simple so far: just title & artist.
+
 *** 2008-05-16 by Mike Gist
 - Added support for delayed mesh loading to pawsCreationMain,
   pawsCharacterPickerWindow and pawsGMSpawnWindow.

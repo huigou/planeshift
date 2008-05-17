@@ -626,15 +626,12 @@ public:
     bool Save();
     bool SetAttribute( csString* op, csString* attrName, float modifier);
 
-    /// Currently the Sketch definition is just a big string, passed to the client.  Server doesn't use it.
-    bool SetSketch(const csString&);
-
     /// return creative contents
     const csString& GetSketch(void) { return creativeStats.content; }
     const csString& GetLiteratureText(void) { return creativeStats.content; }
 
-    /// Write lit text (eg book)
-    bool SetLiteratureText (const csString&, csString);
+    /// Write creative stuff such as lit text (eg book) or map data.
+    bool SetCreation (PSITEMSTATS_CREATIVETYPE, const csString&, csString);
 
     /// creator (i.e. author, artist, etc) of creative things
     void SetCreator (unsigned int, PSITEMSTATS_CREATORSTATUS);

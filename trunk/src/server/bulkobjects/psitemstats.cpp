@@ -340,7 +340,6 @@ csString psItemCreativeStats::UpdateDescription(PSITEMSTATS_CREATIVETYPE creativ
 {
     csString newDescription = "No description yet";
 
-    // only works on books for now.
     if (creativeType == PSITEMSTATS_CREATIVETYPE_LITERATURE)
     {
         newDescription = "A book, titled \"" + title + "\"";
@@ -353,6 +352,17 @@ csString psItemCreativeStats::UpdateDescription(PSITEMSTATS_CREATIVETYPE creativ
             newDescription.Append(". Unknown author.");
 
         newDescription.AppendFmt(" The book is %d characters long.", (int)content.Length());
+    }
+    else if (creativeType == PSITEMSTATS_CREATIVETYPE_SKETCH)
+    {
+        newDescription = "A map, titled \"" + title + "\"";
+
+        if (creatorIDStatus == PSITEMSTATS_CREATOR_VALID)
+            newDescription.AppendFmt(" drawn by %s.", author.GetDataSafe());
+        else if (creatorIDStatus == PSITEMSTATS_CREATOR_PUBLIC)
+            newDescription.Append(". Anyone can draw this map.");
+        else
+            newDescription.Append(". Unknown artist.");
     }
 
     return newDescription;
@@ -1411,24 +1421,19 @@ bool psItemStats::SetAttribute( csString* op, csString* attrName, float modifier
     return true;
 }
 
-bool psItemStats::SetLiteratureText (const csString& newText, csString author)
+bool psItemStats::SetCreation (PSITEMSTATS_CREATIVETYPE creativeType, const csString& newCreation, csString creatorName)
 {
     csString newDescription;
 
-    if (creativeStats.SetCreativeContent(PSITEMSTATS_CREATIVETYPE_LITERATURE, newText, uid))
+    if (creativeStats.SetCreativeContent(creativeType, newCreation, uid))
     {
-        newDescription = creativeStats.UpdateDescription(PSITEMSTATS_CREATIVETYPE_LITERATURE, name, author);
+        newDescription = creativeStats.UpdateDescription(creativeType, name, creatorName);
         SetDescription(newDescription.GetDataSafe());
         SaveDescription();
         return true;
     }
 
     return false;
-}
-
-bool psItemStats::SetSketch(const csString& xml)
-{
-    return creativeStats.SetCreativeContent(PSITEMSTATS_CREATIVETYPE_SKETCH, xml, uid);
 }
 
 void psItemStats::SetCreator (unsigned int characterID, PSITEMSTATS_CREATORSTATUS creatorStatus)
