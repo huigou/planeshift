@@ -2266,6 +2266,15 @@ void psItem::SetGemObject(gemItem *object)
 
 bool psItem::SetBookText(const csString& newText)
 {
-    return GetBaseStats()->SetLiteratureText(newText, owning_character ? owning_character->GetCharFullName():"Unknown");
+    return GetBaseStats()->SetCreation(PSITEMSTATS_CREATIVETYPE_LITERATURE,
+                                       newText,
+                                       owning_character ? owning_character->GetCharFullName():"Unknown");
+}
+
+bool psItem::SetSketch(const csString& newSketchData)
+{
+    return GetBaseStats()->SetCreation(PSITEMSTATS_CREATIVETYPE_SKETCH,
+                                       newSketchData,
+                                       owning_character ? owning_character->GetCharFullName():"Unknown");
 }
 

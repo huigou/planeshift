@@ -180,12 +180,12 @@ void psServerCharManager::UpdateSketch( MsgEntry* me )
             }
 
             // TODO: Probably need to validate the xml here somehow
-            if (item->GetBaseStats()->SetSketch(csString(sketchMsg.Sketch)))
+            // for first sketcher, sets authorship.
+            item->GetBaseStats()->SetCreator(client->GetCharacterData()->GetCharacterID(), PSITEMSTATS_CREATOR_VALID);
+            if (item->SetSketch(csString(sketchMsg.Sketch)))
             {
                 printf("Updated sketch for item %u to: %s\n", sketchMsg.ItemID, sketchMsg.Sketch.GetDataSafe());
                 psserver->SendSystemInfo(me->clientnum, "Your drawing has been updated.");
-                // for first sketcher, sets authorship.
-                item->GetBaseStats()->SetCreator(client->GetCharacterData()->GetCharacterID(), PSITEMSTATS_CREATOR_VALID);
                 item->GetBaseStats()->Save();
             }
         }
@@ -294,7 +294,8 @@ void psServerCharManager::ViewItem(Client* client, int containerID, INVENTORY_SL
             SendBookText(client, item, containerID, slotID);
         }
         else if (item->GetBaseStats()->GetCreative() == PSITEMSTATS_CREATIVETYPE_SKETCH &&
-                 item->GetBaseStats()->GetSketch().Length() > 0)   // Sketch
+                 item->GetBaseStats()->GetSketch().Length() > 0 &&
+                 (client->GetCharacterData() == owningCharacter || !owningCharacter))   // Sketch
         {
             SendSketchDefinition(item,client);
         }

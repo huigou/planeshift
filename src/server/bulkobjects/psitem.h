@@ -784,6 +784,8 @@ public:
     csString GetBookText() { return GetBaseStats()->GetLiteratureText(); }
     /// Sets the book text, should only be used if this is a book.
     bool SetBookText(const csString& newText);
+    /// Sets sketch data
+    bool SetSketch(const csString& newSketchData);
 
     bool HasCharges() const;
     bool IsRechargeable() const;
