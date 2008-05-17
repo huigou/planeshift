@@ -29,11 +29,11 @@
 enum
 {
   PKTSIZE_ACK    = 0,        // 0 pktsize means ACK pkt
-  PKTMAXLATENCY    = 3000,        // 500 mseconds till packet resent
+  PKTMAXLATENCY    = 1500,        // 1500 mseconds till packet resent
   FLAG_RESEND      = 0x04,  // this is a resent packet, so must not be merged
   FLAG_MULTIPACKET = 0x08,  // priority bit 8 is multipacket 
   /// MAXPACKETSIZE includes header length ( sizeof(struct psNetPacket) )
-  MAXPACKETSIZE       = 515    // 515 bytes is max size of network packet
+  MAXPACKETSIZE       = 1400    // 1400 bytes is max size of network packet
 };
 
 /**
