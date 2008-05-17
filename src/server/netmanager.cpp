@@ -223,7 +223,7 @@ void NetManager::CheckResendPkts()
             }
             resendAvg /= RESENDAVGCOUNT;
             csString status;
-            if(timeTaken > 50)
+            if(timeTaken > 50 || pkts.GetSize() > 300)
             {
                 status.Format("Resending high priority packets has taken %u time to process, for %u packets.", timeTaken, (unsigned int) pkts.GetSize());
                 CPrintf(CON_WARNING, "%s\n", (const char *) status.GetData());
