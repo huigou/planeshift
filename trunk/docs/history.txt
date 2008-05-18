@@ -1,3 +1,7 @@
+*** 2008-05-18 by Dave Bentham
+- Sketches (Maps) cannot be edited unless in the inventory (consistent with 
+  books).
+
 *** 2008-05-18 by Andrew Dai
 - Fixed PaladinJr calculation of maximum velocities.
 - Fixed PaladinJr estimation of player positions. This is now based on

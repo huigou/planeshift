@@ -338,8 +338,10 @@ void psServerCharManager::SendSketchDefinition(psItem *item, Client *client)
     csString xml("<limits>");
     xml.AppendFmt("<count>%d</count>",primCount);  // This limits how many things you can add on the client.
 
-    // If the player is not the crafter, and a crafter is specified, then the player cannot edit the item
-    if (item->GetCrafterID() && item->GetCrafterID() != (uint)client->GetActor()->GetPlayerID())
+    // If the player is not the crafter, and a crafter is specified, 
+    // or not in the inventory then the player cannot edit the item
+    if (item->GetCrafterID() && item->GetCrafterID() != (uint)client->GetActor()->GetPlayerID() ||
+        item->GetOwningCharacter() != client->GetCharacterData())
         xml.Append("<rdonly/>");
 
     size_t i=0;
