@@ -939,6 +939,21 @@ void psLinearMovement::GetLastPosition (csVector3& pos, float& yrot,
   sector = GetSector ();
 }
 
+void psLinearMovement::GetLastClientPosition (csVector3& pos, float& yrot,
+                                        iSector*& sector)
+{
+    if (!mesh)  return;
+    
+    // Position
+    pos = lastClientPosition;
+    
+    // rotation
+    yrot = lastClientYrot;
+    
+    // Sector
+    sector = lastClientSector;
+}
+
 void psLinearMovement::GetLastFullPosition (csVector3& pos, float& yrot,
     iSector*& sector)
 {
@@ -1021,6 +1036,10 @@ void psLinearMovement::SetDRData (bool on_ground, float speed,
   csVector3 rot (0.0f, ang_vel, 0.0f);
   SetAngularVelocity (rot);
   lastDRUpdate = csGetTicks ();
+    lastClientDRUpdate = lastDRUpdate;
+    lastClientPosition = pos;
+    lastClientSector = sector;
+    lastClientYrot = yrot;
 }
 
 void psLinearMovement::SetSoftDRData (bool on_ground, float speed,

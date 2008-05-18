@@ -110,6 +110,7 @@ public:
   virtual void SetFullPosition (const csVector3& pos, float yrot, const iSector* sector);
   virtual void SetPosition (const char* center_name, float yrot, iSector* sector);
   virtual void SetFullPosition (const char* center_name, float yrot, iSector* sector);
+    virtual void GetLastClientPosition (csVector3& pos, float& yrot, iSector*& sector);
 
   virtual bool IsOnGround () const;
 
@@ -133,7 +134,8 @@ public:
    * or extrapolation took place
    */
   virtual csTicks TimeDiff (void);
-
+    
+    virtual csTicks ClientTimeDiff() { return csGetTicks() - lastClientDRUpdate; }
 
   /// Return all necessary data for Dead Reckoning
   virtual void GetDRData (bool& on_ground, float& speed, csVector3& pos,
@@ -304,6 +306,10 @@ protected:
   csVector3 intervalSize;
 
   csTicks lastDRUpdate;
+    csTicks lastClientDRUpdate;
+    csVector3 lastClientPosition;
+    float lastClientYrot;
+    iSector* lastClientSector;
   float deltaLimit;
 
   // Variables for 'Soft Update' of position

@@ -138,9 +138,4 @@ void psCollisionDetection::UseCD (bool flag)
     useCD = flag; 
 }
 
-bool psCollisionDetection::QueryRevert()
-{ 
-    return colliderActor.CheckRevertMove ();
-}
-  
 
