@@ -1327,14 +1327,18 @@ void gemActiveObject::SendBehaviorMessage(const csString & msg_id, gemObject *ac
 
             if (chardata && chardata->Inventory().Add(item,false, true, PSCHARACTER_SLOT_NONE, container))
             {
+                psPickupEvent evt(
+                               chardata->GetCharacterID(),
+                               item->GetUID(),
+                               item->GetStackCount(),
+                               (int)item->GetCurrentStats()->GetQuality(),
+                               0
+                               );
+                evt.FireEvent();
                 psSystemMessage newmsg(clientnum, MSG_INFO_BASE, "%s picked up %s", actor->GetName(), qname.GetData() );
                 newmsg.Multicast(actor->GetMulticastClients(),0,RANGE_TO_SELECT);
 
                 psserver->GetCharManager()->UpdateItemViews(clientnum);
-
-                csString buf;
-                buf.Format("%s, %s, %s, \"%s\", %d, %d", actor->GetName(), "World", "Pickup", qname.GetData(), 0, 0);
-                psserver->GetLogCSV()->Write(CSV_EXCHANGES, buf);
 
                 EntityManager::GetSingleton().RemoveActor(this);  // Destroy this
             }
@@ -3701,20 +3705,6 @@ Client *gemNPC::GetRandomLootClient(int range)
     }
 
     return NULL;
-}
-
-bool gemNPC::AdjustMoneyLootClients(const psMoney &m)
-{
-    if(lootable_clients.GetSize() == 0)
-        return false;
-
-    for(unsigned int i=0; i< lootable_clients.GetSize(); i++)
-    {
-        Client *c = psserver->GetNetManager()->GetClient(lootable_clients[i]);
-        if (c)
-            c->GetCharacterData()->AdjustMoney(m, false);
-    }
-    return true;
 }
 
 void gemNPC::Say(const char *strsay,Client *who, bool saypublic,csTicks& timeDelay)

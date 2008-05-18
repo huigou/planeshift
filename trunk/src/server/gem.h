@@ -793,8 +793,8 @@ public:
     virtual void AddLootableClient(int cnum);
     virtual void RemoveLootableClient(int cnum);
     bool IsLootableClient(int cnum);
+    const csArray<int>& GetLootableClients() const {return lootable_clients; }
     Client *GetRandomLootClient(int range);
-    bool AdjustMoneyLootClients(const psMoney &m);
 
     /// Used to allow a NPC to communicate to its environment
     /// void NPCTalk(const csString & text);

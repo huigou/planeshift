@@ -570,6 +570,8 @@ protected:
     csArray<psItemStats *> loot_pending;
     /// Last response of an NPC to this character (not saved)
     int  lastResponse;
+    /// Amount of money ready to be looted
+    int  loot_money;
 
 public:
     void RegisterDurationEvent(ProgressionDelay* progDelay, csString& name, csTicks duration);
@@ -689,8 +691,6 @@ public:
 
     /// Id of Loot category to use if this char has extra loot
     int  loot_category_id;
-    /// Amount of money ready to be looted
-    int  loot_money;
 
     csString animal_affinity;
     uint32_t owner_id;
@@ -775,7 +775,9 @@ public:
     void AddLootItem(psItemStats *item);
     void AddLootMoney(int money) { loot_money += money; }
     size_t  GetLootItems(psLootMessage& msg,int entity,int cnum);
-    int  GetLootMoney()          { return loot_money;   }
+    
+    /// Gets and zeroes the loot money
+    int  GetLootMoney();
 
     /// Clears the pending loot items array and money
     void ClearLoot();

@@ -46,6 +46,7 @@
 #include "globals.h"
 #include "clientstatuslogger.h"
 #include "bulkobjects/pssectorinfo.h"
+#include "economymanager.h"
 
 
 /*****************************************************************
@@ -85,10 +86,14 @@ void psServerStatusRunEvent::Trigger ()
     time( &now );
     currentTime = *gmtime( &now );
     timeString = asctime( &currentTime );
+    EconomyManager::Economy& economy = psserver->GetEconomyManager()->economy;
+    
+    unsigned int moneyIn = economy.lootValue + economy.sellingValue + economy.pickupsValue;
+    unsigned int moneyOut = economy.buyingValue + economy.droppedValue;
     
     ClientConnectionSet * clients = EntityManager::GetSingleton().GetClients();
-    reportString.Format("<server_report time=\"%s\" now=\"%ld\" number=\"%u\" client_count=\"%zu\" mob_births=\"%u\" mob_deaths=\"%u\" player_deaths=\"%u\" sold_items=\"%u\" sold_value=\"%u\">\n",
-        timeString.GetData(), now, ServerStatus::count, clients->Count(), ServerStatus::mob_birthcount, ServerStatus::mob_deathcount, ServerStatus::player_deathcount, ServerStatus::sold_items, ServerStatus::sold_value );
+    reportString.Format("<server_report time=\"%s\" now=\"%ld\" number=\"%u\" client_count=\"%zu\" mob_births=\"%u\" mob_deaths=\"%u\" player_deaths=\"%u\" sold_items=\"%u\" sold_value=\"%u\" totalMoneyIn=\"%u\" totalMoneyOut=\"%u\">\n",
+        timeString.GetData(), now, ServerStatus::count, clients->Count(), ServerStatus::mob_birthcount, ServerStatus::mob_deathcount, ServerStatus::player_deathcount, ServerStatus::sold_items, ServerStatus::sold_value, moneyIn, moneyOut );
     ClientIterator i(*clients);
     while(i.HasNext())
     {

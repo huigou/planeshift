@@ -79,7 +79,7 @@ EconomyManager::~EconomyManager()
     }
 }
 
-void EconomyManager::AddTransaction(TransactionEntity* trans,bool sell)
+void EconomyManager::AddTransaction(TransactionEntity* trans,bool moneyIn)
 {
     if(!trans)
         return;
@@ -87,7 +87,7 @@ void EconomyManager::AddTransaction(TransactionEntity* trans,bool sell)
     CPrintf(
         CON_DEBUG,
         "Adding %s transaction for item %s (%d's, %d qua) (%d => %d) with price %u\n",
-        sell?"selling":"buying",
+        moneyIn?"moneyIn":"moneyOut",
         trans->item.GetData(),
         trans->count,
         trans->quality,
@@ -95,21 +95,25 @@ void EconomyManager::AddTransaction(TransactionEntity* trans,bool sell)
         trans->to,
         trans->price);
 #endif
-    trans->selling = sell;
+    trans->moneyIn = moneyIn;
     trans->stamp = time(NULL);
 
     history.Push(trans);
 
     if (!supplyDemandInfo.Contains(trans->item))
     {
-        csRef<ItemSupplyDemandInfo> newInfo(new ItemSupplyDemandInfo);
+        csRef<ItemSupplyDemandInfo> newInfo = csPtr<ItemSupplyDemandInfo>(new ItemSupplyDemandInfo);
         supplyDemandInfo.Put(trans->item, newInfo);
     }
 
-    if (sell)
+    if (moneyIn)
+    {
         (*supplyDemandInfo[trans->item])->sold+=trans->count;
+    }
     else
+    {
         (*supplyDemandInfo[trans->item])->bought+=trans->count;
+    }
 
 }
 
@@ -121,12 +125,35 @@ void EconomyManager::HandleMessage(MsgEntry* me,Client* client)
         {
             psBuyEvent event(me);
             AddTransaction(event.trans,false);
+            economy.buyingValue += event.trans->price;
             break;
         }
         case MSGTYPE_SELL_EVENT:
         {
-            psBuyEvent event(me);
+            psSellEvent event(me);
             AddTransaction(event.trans,true);
+            economy.sellingValue += event.trans->price;
+            break;
+        }
+        case MSGTYPE_PICKUP_EVENT:
+        {
+            psPickupEvent event(me);
+            AddTransaction(event.trans,true);
+            economy.pickupsValue += event.trans->price;
+            break;
+        }
+        case MSGTYPE_DROP_EVENT:
+        {
+            psDropEvent event(me);
+            AddTransaction(event.trans,false);
+            economy.droppedValue += event.trans->price;
+            break;
+        }
+        case MSGTYPE_LOOT_EVENT:
+        {
+            psLootEvent event(me);
+            AddTransaction(event.trans,true);
+            economy.lootValue += event.trans->price;
             break;
         }
     }
@@ -164,7 +191,7 @@ csRef<ItemSupplyDemandInfo> EconomyManager::GetItemSupplyDemandInfo(unsigned int
 {
     if (!supplyDemandInfo.Contains(itemId))
     {
-        csRef<ItemSupplyDemandInfo> newInfo(new ItemSupplyDemandInfo);
+        csRef<ItemSupplyDemandInfo> newInfo = csPtr<ItemSupplyDemandInfo> (new ItemSupplyDemandInfo);
         supplyDemandInfo.Put(itemId, newInfo);
     }
     return *supplyDemandInfo[itemId];
@@ -211,7 +238,7 @@ void psEconomyDrop::Trigger()
                 bool found = false;
                 for(unsigned int z = 0; z < items.GetSize();z++)
                 {
-                    if(items[z].item == trans->item && items[z].sold == trans->selling)
+                    if(items[z].item == trans->item && items[z].sold == trans->moneyIn)
                     {
                         items[z].count++; // Increase the count
                         if(items[z].price < (int)trans->price)
@@ -228,7 +255,7 @@ void psEconomyDrop::Trigger()
                     ItemCount item;
                     item.item = trans->item;
                     item.count = 1;
-                    item.sold = trans->selling;
+                    item.sold = trans->moneyIn;
                     item.price = trans->price;
                     items.Push(item);
                 }
@@ -236,7 +263,7 @@ void psEconomyDrop::Trigger()
                 // Dump it
                 csString str;
                 str.Format("%s,%d,%d,%d,%d,%d,%u,%d",
-                    trans->selling?"S":"B",
+                    trans->moneyIn?"moneyIn":"moneyOut",
                     trans->count,
                     trans->item,
                     trans->quality,

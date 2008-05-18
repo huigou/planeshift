@@ -1480,6 +1480,7 @@ void UserManager::HandleLoot(Client *client)
     if (chr)
     {
         // Send items to looting player
+        int money = chr->GetLootMoney();
         psLootMessage loot;
         size_t count = chr->GetLootItems(loot,
             target->GetEntityID(),
@@ -1489,7 +1490,7 @@ void UserManager::HandleLoot(Client *client)
             Debug3(LOG_LOOT, client->GetClientNum(), "Sending %zu loot items to %s.\n", count, client->GetActor()->GetName());
             loot.SendMessage();
         }
-        else if(!count && !chr->GetLootMoney())
+        else if(!count && !money)
         {
             Debug1(LOG_LOOT, client->GetClientNum(),"Mob doesn't have loot.\n");
             psserver->SendSystemError(client->GetClientNum(),"%s has nothing to be looted.",target->GetName() );
@@ -1498,7 +1499,6 @@ void UserManager::HandleLoot(Client *client)
         // Split up money among LootableClients in group. 
         // These are those clients who were close enough when the NPC was killed.
 
-        int money = chr->GetLootMoney();
         if (money)
         {
             Debug2(LOG_LOOT, client->GetClientNum(),"Splitting up %d money.\n", money);
@@ -1508,6 +1508,7 @@ void UserManager::HandleLoot(Client *client)
             {
                 // Locate the group members who are in range to loot the trias
                 csArray<gemActor*> closegroupmembers;
+                const csArray<int>& lootable_clients = npc->GetLootableClients();
                 size_t membercount = group->GetMemberCount();
                 for (size_t i = 0 ; i < membercount ; i++)
                 {
@@ -1518,7 +1519,7 @@ void UserManager::HandleLoot(Client *client)
                     }
                     //Copy all lootable clients.
                     //TODO: a direct interface to gemNPC::lootable_clients would be better
-                    if (target->IsLootableClient(currmember->GetClientID()))
+                    if (lootable_clients.Contains(currmember->GetClientID()) != csArrayItemNotFound)
                     {
                         closegroupmembers.Push(currmember);
                     }
@@ -1545,15 +1546,31 @@ void UserManager::HandleLoot(Client *client)
                             //Normal loot is not shown in yellow. Until that happens, do not do it for few coins
                             //psserver->SendSystemResult(currmember->GetClient()->GetClientNum(), "You have looted %s.", eachstr.GetData());
                             psserver->SendSystemInfo(currmember->GetClient()->GetClientNum(), "You have looted %s.", eachstr.GetData());
+                            
+                            psLootEvent evt(
+                                            chr->GetCharacterID(),
+                                            currmember->GetCharacterData()->GetCharacterID(),
+                                            0,
+                                            0,
+                                            0,
+                                            eachmoney.GetTotal()
+                                            );
+                            evt.FireEvent();
                         }
                         else
                         {
                             // Something less intrusive for players who were too far away
                             psserver->SendSystemInfo(currmember->GetClient()->GetClientNum(), "You were too far away to loot.");
                         }
+                        
+                        
                     }
 
-                    npc->AdjustMoneyLootClients(eachmoney);
+                    for(unsigned int i=0; i< closegroupmembers.GetSize(); i++)
+                    {
+                        closegroupmembers[i]->GetCharacterData()->AdjustMoney(eachmoney, false);
+                    }
+
                 }
                 if(remainder)
                 {
@@ -1561,6 +1578,15 @@ void UserManager::HandleLoot(Client *client)
                     loot2.SendMessage();
 
                     client->GetCharacterData()->AdjustMoney(remmoney, false);
+                    psLootEvent evt(
+                                    chr->GetCharacterID(),
+                                    client->GetCharacterData()->GetCharacterID(),
+                                    0,
+                                    0,
+                                    0,
+                                    remmoney.GetTotal()
+                                    );
+                    evt.FireEvent();
                 }
             }
             else
@@ -1572,8 +1598,17 @@ void UserManager::HandleLoot(Client *client)
                 loot.SendMessage();
 
                 client->GetCharacterData()->AdjustMoney(m, false);
+                
+                psLootEvent evt(
+                               chr->GetCharacterID(),
+                               client->GetCharacterData()->GetCharacterID(),
+                               0,
+                               0,
+                               0,
+                               m.GetTotal()
+                               );
+                evt.FireEvent();
             }
-            chr->AddLootMoney(-money);  // zero out loot now
         }
         else
             Debug1(LOG_LOOT, client->GetClientNum(),"Mob has no money to loot.\n");

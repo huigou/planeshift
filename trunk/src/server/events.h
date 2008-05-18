@@ -167,6 +167,61 @@ public:
 
     TransactionEntity* trans;
 };
+class psPickupEvent : public psMessageCracker
+    {
+    public:
+        psPickupEvent( int to, unsigned int item, int stack, int quality,unsigned int price);
+        psPickupEvent( MsgEntry* event);
+        
+        PSF_DECLARE_MSG_FACTORY();
+        
+        /**
+         * Convert the message into human readable string.
+         *
+         * @param access_ptrs A struct to a number of access pointers.
+         * @return Return a human readable string for the message.
+         */
+        virtual csString ToString(AccessPointers * access_ptrs);
+        
+        TransactionEntity* trans;
+    };
+class psDropEvent : public psMessageCracker
+    {
+    public:
+        psDropEvent( int from, unsigned int item, int stack, int quality,unsigned int price);
+        psDropEvent( MsgEntry* event);
+        
+        PSF_DECLARE_MSG_FACTORY();
+        
+        /**
+         * Convert the message into human readable string.
+         *
+         * @param access_ptrs A struct to a number of access pointers.
+         * @return Return a human readable string for the message.
+         */
+        virtual csString ToString(AccessPointers * access_ptrs);
+        
+        TransactionEntity* trans;
+    };
+
+class psLootEvent : public psMessageCracker
+    {
+    public:
+        psLootEvent( int from, int to, unsigned int item, int stack, int quality,unsigned int price);
+        psLootEvent( MsgEntry* event);
+        
+        PSF_DECLARE_MSG_FACTORY();
+        
+        /**
+         * Convert the message into human readable string.
+         *
+         * @param access_ptrs A struct to a number of access pointers.
+         * @return Return a human readable string for the message.
+         */
+        virtual csString ToString(AccessPointers * access_ptrs);
+        
+        TransactionEntity* trans;
+    };
 
 
 /**

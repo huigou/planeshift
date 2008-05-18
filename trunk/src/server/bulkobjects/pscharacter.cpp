@@ -1425,6 +1425,17 @@ void psCharacter::DropItem(psItem *&item, csVector3 suggestedPos, bool transient
         item = obj->GetItem();
         item->SetGuardingCharacterID(GetCharacterID());
     }
+    
+    psMoney money;
+    
+    psDropEvent evt(
+                    GetCharacterID(),
+                    item->GetUID(),
+                    item->GetStackCount(),
+                    (int)item->GetCurrentStats()->GetQuality(),
+                    0
+                    );
+    evt.FireEvent();
 
     // If a container, move its contents as well...
     gemContainer *cont = dynamic_cast<gemContainer*> (obj);
@@ -1599,6 +1610,12 @@ bool psCharacter::RemoveLootItem(int id)
         }
     }
     return false;
+}
+int psCharacter::GetLootMoney()
+{
+    int val = loot_money;
+    loot_money = 0;
+    return val;
 }
 
 void psCharacter::ClearLoot()

@@ -2184,7 +2184,7 @@ int com_transactions(char* str)
                 CPrintf(
                     CON_CMDOUTPUT,
                     "%s transaction for %d %d (Quality %d) (%d => %d) with price %u/ (%d)\n",
-                    trans->selling?"Selling":" Buying",
+                    trans->moneyIn?"Selling":" Buying",
                     trans->count,
                     trans->item,
                     trans->quality,
