@@ -1,3 +1,17 @@
+*** 2008-05-18 by Andrew Dai
+- Fixed PaladinJr calculation of maximum velocities.
+- Fixed PaladinJr estimation of player positions. This is now based on
+  last received DR packets, which is the correct method.
+- Changed the reporting of exchanges to be done through events. This should
+  make future calculation of inflation much easier.
+
+*** 2008-05-17 by Andrew Dai
+- Made debugging network messages more informative.
+- Increased MTU to 1400 from 515, assumes that most of our players are no
+  longer on dialup.
+- Halved the packet resend timeout to 1.5 seconds. This should improve
+  network lag.
+
 *** 2008-05-17 by Dave Bentham
 - Maps treated the same as books during trade: trade recipient can only see
   a description of the map instead of the map itself. Map description
