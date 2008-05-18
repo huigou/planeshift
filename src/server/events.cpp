@@ -283,6 +283,148 @@ csString psSellEvent::ToString(AccessPointers * /*access_ptrs*/)
 
     return msgtext;
 }
+//------------------------------------------------------------------------------
+
+PSF_IMPLEMENT_MSG_FACTORY(psPickupEvent,MSGTYPE_PICKUP_EVENT);
+
+psPickupEvent::psPickupEvent( int to, unsigned int item, int stack, int quality,unsigned int price)
+{
+    // Player => Merchant
+    
+    msg.AttachNew(new MsgEntry( (sizeof(int) * 4) + sizeof(unsigned int)+
+                               sizeof(item), PRIORITY_LOW));
+    
+    msg->SetType(MSGTYPE_PICKUP_EVENT);                   
+    msg->clientnum = 0;  
+    msg->Add( (int32_t) to);
+    msg->Add( item);
+    msg->Add( (int32_t) stack);
+    msg->Add( (int32_t) quality);
+    msg->Add( (uint32_t) price);
+}
+
+psPickupEvent::psPickupEvent( MsgEntry* event)
+{
+    if(!event)
+        return;
+    
+    trans = new TransactionEntity(); // needs to be handled by economy manager
+    
+    trans->from = event->GetInt32();
+    trans->to = event->GetInt32();
+    
+    trans->item = event->GetUInt32();
+    trans->count = event->GetInt32();
+    trans->quality = event->GetInt32();
+    trans->price = event->GetUInt32();
+}
+
+csString psPickupEvent::ToString(AccessPointers * /*access_ptrs*/)
+{
+    csString msgtext;
+    
+    msgtext.AppendFmt("From: %d To: %d Item: '%d' Count: %d Quality: %d Price %d",
+                      trans->from,trans->to,trans->item,
+                      trans->count,trans->quality,trans->price);
+    
+    return msgtext;
+}
+
+//------------------------------------------------------------------------------
+
+PSF_IMPLEMENT_MSG_FACTORY(psDropEvent,MSGTYPE_DROP_EVENT);
+
+psDropEvent::psDropEvent( int from, unsigned int item, int stack, int quality,unsigned int price)
+{
+    // Player => Merchant
+    
+    msg.AttachNew(new MsgEntry( (sizeof(int) * 4) + sizeof(unsigned int)+
+                               sizeof(item), PRIORITY_LOW));
+    
+    msg->SetType(MSGTYPE_DROP_EVENT);                   
+    msg->clientnum = 0;  
+    msg->Add( (int32_t) from);
+    msg->Add( item);
+    msg->Add( (int32_t) stack);
+    msg->Add( (int32_t) quality);
+    msg->Add( (uint32_t) price);
+}
+
+psDropEvent::psDropEvent( MsgEntry* event)
+{
+    if(!event)
+        return;
+    
+    trans = new TransactionEntity(); // needs to be handled by economy manager
+    
+    trans->from = event->GetInt32();
+    trans->to = event->GetInt32();
+    
+    trans->item = event->GetUInt32();
+    trans->count = event->GetInt32();
+    trans->quality = event->GetInt32();
+    trans->price = event->GetUInt32();
+}
+
+csString psDropEvent::ToString(AccessPointers * /*access_ptrs*/)
+{
+    csString msgtext;
+    
+    msgtext.AppendFmt("From: %d To: %d Item: '%d' Count: %d Quality: %d Price %d",
+                      trans->from,trans->to,trans->item,
+                      trans->count,trans->quality,trans->price);
+    
+    return msgtext;
+}
+
+//------------------------------------------------------------------------------
+
+PSF_IMPLEMENT_MSG_FACTORY(psLootEvent,MSGTYPE_LOOT_EVENT);
+
+psLootEvent::psLootEvent( int from, int to, unsigned int item, int stack, int quality,unsigned int price)
+{
+    // Player => Merchant
+    
+    msg.AttachNew(new MsgEntry( (sizeof(int) * 4) + sizeof(unsigned int)+
+                               sizeof(item), PRIORITY_LOW));
+    
+    msg->SetType(MSGTYPE_LOOT_EVENT);                   
+    msg->clientnum = 0;  
+    msg->Add( (int32_t) from);
+    msg->Add( (int32_t) to);
+    msg->Add( item);
+    msg->Add( (int32_t) stack);
+    msg->Add( (int32_t) quality);
+    msg->Add( (uint32_t) price);
+}
+
+psLootEvent::psLootEvent( MsgEntry* event)
+{
+    if(!event)
+        return;
+    
+    trans = new TransactionEntity(); // needs to be handled by economy manager
+    
+    trans->from = event->GetInt32();
+    trans->to = event->GetInt32();
+    
+    trans->item = event->GetUInt32();
+    trans->count = event->GetInt32();
+    trans->quality = event->GetInt32();
+    trans->price = event->GetUInt32();
+}
+
+csString psLootEvent::ToString(AccessPointers * /*access_ptrs*/)
+{
+    csString msgtext;
+    
+    msgtext.AppendFmt("From: %d To: %d Item: '%d' Count: %d Quality: %d Price %d",
+                      trans->from,trans->to,trans->item,
+                      trans->count,trans->quality,trans->price);
+    
+    return msgtext;
+}
+
 
 //------------------------------------------------------------------------------
 

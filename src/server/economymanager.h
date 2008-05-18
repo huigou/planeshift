@@ -54,7 +54,7 @@ struct TransactionEntity
     int quality;
     unsigned int price;
 
-    bool selling;
+    bool moneyIn;
     int stamp;
 };
 
@@ -81,6 +81,21 @@ public:
     void ScheduleDrop(csTicks ticks,bool loop);
 
     csRef<ItemSupplyDemandInfo> GetItemSupplyDemandInfo(unsigned int itemId);
+    
+    struct Economy
+    {
+        // Money flowing in to the economy
+        unsigned int lootValue;
+        unsigned int sellingValue;
+        unsigned int pickupsValue;
+        // Money flowing out of the economy
+        unsigned int buyingValue;
+        unsigned int droppedValue;
+        
+        Economy() : lootValue(0), sellingValue(0), pickupsValue(0), buyingValue(0), droppedValue(0) { };
+    };
+    
+    Economy economy;
 
 protected:
     csPDelArray<TransactionEntity> history;

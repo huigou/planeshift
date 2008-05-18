@@ -403,17 +403,7 @@ void ExchangingCharacter::TransferOffer(int targetClientNum)
 
                     // Drop item on ground!!
                     target->DropItem( newItem );
-
-                    csString buf;
-                    buf.Format("%s, %s, %s, \"%s\", %u, %d",
-                                me->GetCharFullName(),
-                                target->GetCharFullName(),
-                                "P2P - Item drop",
-                                newItem->GetName(),
-                                (unsigned int)newItem->GetStackCount(),
-                                0);
-
-                    psserver->GetLogCSV()->Write(CSV_EXCHANGES, buf);
+                    
                 }
             }
         }

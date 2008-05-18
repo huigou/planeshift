@@ -81,6 +81,7 @@ public:
     psItem* item;    ///< The looted item we're prompting for
     int looterID;    ///< The ID of the player who attempted to pick up the item
     int rollerID;    ///< The ID of the player who would have won it in a roll
+    int looteeID;
 
     csString lootername;
     csString rollername;
@@ -105,6 +106,7 @@ public:
         item = loot;
         looterID = looter->GetActor()->GetPlayerID();
         rollerID = roller->GetActor()->GetPlayerID();
+        looteeID = dropper->GetCharacterID();
 
         // These might not be around later, so save their names now
         lootername = looter->GetName();
@@ -160,15 +162,15 @@ public:
         psSystemMessage loot(getter->GetClientID(), MSG_LOOT, lootmsg.GetData() );
         getter->SendGroupMessage(loot.msg);
 
-        // Log the event
-        csString buf;
-        buf.Format("%s, %s, %s, \"%s\", %d, %d",
-                   getter->GetName(),
-                   looteename.GetData(),
-                   "Loot after prompt",
-                   item->GetName(),
-                   0, 0);
-        psserver->GetLogCSV()->Write(CSV_EXCHANGES, buf);
+        psLootEvent evt(
+                       looteeID,
+                       getter->GetCharacterData()->GetCharacterID(),
+                       item->GetUID(),
+                       item->GetStackCount(),
+                       (int)item->GetCurrentStats()->GetQuality(),
+                       0
+                       );
+        evt.FireEvent();
     }
     
     void HandleTimeout() { HandleAnswer("yes"); }
@@ -971,15 +973,16 @@ void SpawnManager::HandleLootItem(MsgEntry *me,Client *client)
         rem.SendMessage();
     }
 
-    // Log the event
-    csString buf;
-    buf.Format("%s, %s, %s, \"%s\", %d, %d",
-               looterclient->GetName(),
-               chr->GetCharName(),
-               type.GetData(),
-               item->GetName(),
-               0, 0);
-    psserver->GetLogCSV()->Write(CSV_EXCHANGES, buf);
+    psLootEvent evt(
+                   chr->GetCharacterID(),
+                   looterclient->GetCharacterData()->GetCharacterID(),
+                   item->GetUID(),
+                   item->GetStackCount(),
+                   (int)item->GetCurrentStats()->GetQuality(),
+                   0
+                   );
+    evt.FireEvent();
+
 }
 
 void SpawnManager::HandleDeathEvent(MsgEntry *me)

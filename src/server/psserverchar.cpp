@@ -1088,11 +1088,6 @@ void psServerCharManager::HandleMerchantBuy(psGUIMerchantMessage& msg, Client *c
             return;
         }
 
-        csString buf;
-        buf.Format("%s, %s, %s, \"%s\", %d, %d", client->GetName(), merchant->name.GetData(), "Buy", 
-        itemName.GetData(), count, (price * count).GetTotal());
-        psserver->GetLogCSV()->Write(CSV_EXCHANGES, buf);
-
         // Update client views
         SendPlayerMoney( client );
         SendMerchantItems( client, merchant, item->GetCategory() );
@@ -1173,11 +1168,6 @@ void psServerCharManager::HandleMerchantSell(psGUIMerchantMessage& msg, Client *
 
         ServerStatus::sold_items += count;
         ServerStatus::sold_value += (price * count).GetTotal();
-
-        csString buf;
-        buf.Format("%s, %s, %s, \"%s\", %d, %d", client->GetName(), merchant->name.GetData(), "Sell", 
-            itemName.GetData(), count, (price * count).GetTotal());
-        psserver->GetLogCSV()->Write(CSV_EXCHANGES, buf);
 
         // Update client views
         SendPlayerMoney( client );
