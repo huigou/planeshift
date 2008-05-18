@@ -29,6 +29,7 @@
 #include "psserver.h"
 #include "playergroup.h"
 #include "engine/linmove.h"
+#include "cachemanager.h"
 
 #include "paladinjr.h"
 
@@ -42,12 +43,30 @@ void PaladinJr::Initialize(EntityManager* celbase)
     iConfigManager* configmanager = psserver->GetConfig();
     enabled = configmanager->GetBool("PlaneShift.Paladin.Enabled");
 
-    maxVelocity.x = configmanager->GetFloat("PlaneShift.Paladin.MaxXVelocity", 2.0f);
-    maxVelocity.y = configmanager->GetFloat("PlaneShift.Paladin.MaxYVelocity", 3.5f);
-    maxVelocity.z = configmanager->GetFloat("PlaneShift.Paladin.MaxZVelocity", 4.0f);
+    const csPDelArray<psCharMode>& modes = CacheManager::GetSingleton().GetCharModes();
+    const csPDelArray<psMovement>& moves = CacheManager::GetSingleton().GetMovements();
+    
+    maxVelocity.Set(0.0f);
+    csVector3 maxMod(0);
+    
+    for(size_t i = 0;i < moves.GetSize(); i++)
+    {
+        maxVelocity.x = MAX(maxVelocity.x, moves[i]->base_move.x);
+        maxVelocity.y = MAX(maxVelocity.y, moves[i]->base_move.y);
+        maxVelocity.z = MAX(maxVelocity.z, moves[i]->base_move.z);
+    }
+    for(size_t i = 0;i < modes.GetSize(); i++)
+    {
+        maxMod.x = MAX(maxMod.x, modes[i]->move_mod.x);
+        maxMod.y = MAX(maxMod.y, modes[i]->move_mod.y);
+        maxMod.z = MAX(maxMod.z, modes[i]->move_mod.z);
+    }
+    maxVelocity.x *= maxMod.x;
+    maxVelocity.y *= maxMod.y;
+    maxVelocity.z *= maxMod.z;
 
     // Running forward while strafing
-    maxSpeed = sqrt(pow(maxVelocity.z, 2.0f) + pow((maxVelocity.z/2.0f), 2.0f));
+    maxSpeed = 1;
 
 
     watchTime = configmanager->GetInt("PlaneShift.Paladin.WatchTime", 30000);
@@ -199,12 +218,12 @@ void PaladinJr::SpeedCheck(Client* client, psDRMessage& currUpdate)
     float yrot;
     iSector* sector;
 
-    client->GetActor()->pcmove->GetLastPosition (oldpos, yrot, sector);
+    client->GetActor()->pcmove->GetLastClientPosition (oldpos, yrot, sector);
 
     float dist = sqrt (pow((currUpdate.pos.x - oldpos.x), 2.0f) +
         pow((currUpdate.pos.z - oldpos.z), 2.0f));
 
-    csTicks timedelta = client->GetActor()->pcmove->TimeDiff();
+    csTicks timedelta = client->GetActor()->pcmove->ClientTimeDiff();
 
     float max_noncheat_distance=maxSpeed*timedelta/1000;
 
@@ -223,7 +242,8 @@ void PaladinJr::SpeedCheck(Client* client, psDRMessage& currUpdate)
         else
         {   
             // Subtract from the accumulated lag.
-            client->accumulatedLag-=(csTicks)((dist-max_noncheat_distance)
+            if(client->accumulatedLag > (csTicks)((dist-max_noncheat_distance) * 1000.0f/maxSpeed))
+               client->accumulatedLag-=(csTicks)((dist-max_noncheat_distance)
                 * 1000.0f/maxSpeed);
         }
     }

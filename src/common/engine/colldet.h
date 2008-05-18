@@ -72,9 +72,6 @@ public:
                             float delta,
                             iMovable* movable);
 
-  virtual bool QueryRevert();
-  
-  
 protected:              
   csRef<iMeshWrapper> mesh;
 
