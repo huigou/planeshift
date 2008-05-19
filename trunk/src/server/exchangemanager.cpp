@@ -567,12 +567,19 @@ float ExchangingCharacter::GetSumWeight()
 void ExchangingCharacter::GetOfferingCSV(csString& buff)
 {
     buff.Empty();
+    bool first = true;
     for (int i=0; i<EXCHANGE_SLOT_COUNT; i++)
     {
         psCharacterInventory::psCharacterInventoryItem *itemInSlot = chrinv->FindExchangeSlotOffered(i);
         psItem *item = (itemInSlot) ? itemInSlot->GetItem() : NULL;
         if (item)
-            buff.AppendFmt("%s, ",item->GetName() );
+        {
+            if(!first)
+                buff.AppendFmt(", ");
+            buff.AppendFmt("%d %s",item->GetStackCount(), item->GetName() );
+            if(first)
+                first = false;
+        }
     }
 }
 
@@ -1023,19 +1030,11 @@ bool PlayerToPlayerExchange::HandleAccept(Client * client)
         csString items;
         csString buf;
         starterChar.GetOfferingCSV(items);
-        if (!items.IsEmpty())
-        {
-            items.Truncate(items.Length() - 2);
-        }
         
         buf.Format("%s, %s, %s, \"%s\", %d, \"%s\"", playerName, targetName, "P2P Exchange", items.GetDataSafe(), 0, starterChar.GetOfferedMoney().ToString().GetData());
         psserver->GetLogCSV()->Write(CSV_EXCHANGES, buf);
         
         targetChar.GetOfferingCSV(items);
-        if (!items.IsEmpty())
-        {
-            items.Truncate(items.Length() - 2);
-        }
 
         buf.Format("%s, %s, %s, \"%s\", %d, \"%s\"", targetName, playerName, "P2P Exchange", items.GetDataSafe(), 0, targetChar.GetOfferedMoney().ToString().GetData());
         psserver->GetLogCSV()->Write(CSV_EXCHANGES, buf);

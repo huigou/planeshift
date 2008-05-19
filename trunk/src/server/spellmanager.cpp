@@ -484,6 +484,10 @@ void psSpellManager::StartPurifying(Client * client, int statID)
 
             // Reset the stack count to account for the one that was destroyed.
             stackOfGlyphs->SetStackCount(stackOfGlyphs->GetStackCount() + 1);
+            csString status;
+            status.Format("Warning: New glpyh created in StartPurifying for %s, stack count now %d", 
+                          (const char *) client->GetName(), stackOfGlyphs->GetStackCount());
+            psserver->GetLogCSV()->Write(CSV_STATUS, status);
             return;
         }
         stackOfGlyphs->Save(false);
