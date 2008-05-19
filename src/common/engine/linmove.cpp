@@ -132,6 +132,8 @@ psLinearMovement::psLinearMovement (iObjectRegistry* object_reg)
     angleToReachFlag = false;
     angDelta = 0.0f;
     lastDRUpdate = 0;
+    lastClientSector = NULL;
+    lastClientDRUpdate = 0;
 
     xRot = 0.0f;
     zRot = 0.0f;
