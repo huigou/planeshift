@@ -30,7 +30,7 @@
 #define PALADIN_MAX_SWITCH_TIME 5000
 #endif
 
-#define PALADIN_VERSION "0.12"
+#define PALADIN_VERSION "0.13"
 
 class PaladinJr
 {

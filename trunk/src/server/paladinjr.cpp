@@ -219,6 +219,10 @@ void PaladinJr::SpeedCheck(Client* client, psDRMessage& currUpdate)
     iSector* sector;
 
     client->GetActor()->pcmove->GetLastClientPosition (oldpos, yrot, sector);
+    
+    // If no previous observations then we have nothing to check against.
+    if(!sector)
+        return;
 
     float dist = sqrt (pow((currUpdate.pos.x - oldpos.x), 2.0f) +
         pow((currUpdate.pos.z - oldpos.z), 2.0f));
