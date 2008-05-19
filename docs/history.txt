@@ -1,3 +1,6 @@
+*** 2008-05-19 by Mike Gist
+- Bump CS revision to r29696.
+
 *** 2008-05-19 by Kenny Graunke
 - Fix FS#1496 by sanity checking stack counts in offerings before allowing
   a transaction to go through.  We could certainly do better sanity checking,
