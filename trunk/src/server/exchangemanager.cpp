@@ -357,6 +357,20 @@ void ExchangingCharacter::TransferMoney( psCharacter *target )
     offeringMoney.Set(0, 0, 0, 0);
 }
 
+bool ExchangingCharacter::IsOfferingSane()
+{
+    // Make sure offered items have valid stack counts.
+    for (int i=0; i < EXCHANGE_SLOT_COUNT; i++)
+    {
+        psCharacterInventory::psCharacterInventoryItem *itemInSlot = chrinv->FindExchangeSlotOffered(i);
+        const psItem *item = (itemInSlot) ? itemInSlot->GetItem() : NULL;
+
+        if (item && itemInSlot->exchangeStackCount > item->GetStackCount())
+            return false;
+    }
+    return true;
+}
+
 void ExchangingCharacter::TransferOffer(int targetClientNum)
 {
     // printf("In ExchangingCharacter::TransferOffer(%d)...\n",targetClientNum);
@@ -390,8 +404,10 @@ void ExchangingCharacter::TransferOffer(int targetClientNum)
             psCharacterInventory::psCharacterInventoryItem *itemInSlot = chrinv->FindExchangeSlotOffered(i);
             psItem *item = (itemInSlot) ? itemInSlot->GetItem() : NULL;
 
-            if (item != NULL)
+            if (item)
             {
+                CS_ASSERT(itemInSlot->exchangeStackCount <= item->GetStackCount());
+
                 psItem *newItem = item->CreateNew();
                 item->Copy(newItem);
                 newItem->SetStackCount(itemInSlot->exchangeStackCount);
@@ -403,7 +419,6 @@ void ExchangingCharacter::TransferOffer(int targetClientNum)
 
                     // Drop item on ground!!
                     target->DropItem( newItem );
-                    
                 }
             }
         }
@@ -970,6 +985,12 @@ bool PlayerToPlayerExchange::CheckExchange(uint32_t clientNum, bool checkRange)
         return false;
     }
 
+    if (!starterChar.IsOfferingSane() || !targetChar.IsOfferingSane())
+    {
+        exchangeEnded = true;
+        return false;
+    }
+
     if (checkRange)
     {
         if (clientNum == player)
@@ -1169,6 +1190,12 @@ bool PlayerToNPCExchange::CheckExchange(uint32_t clientNum, bool checkRange)
 
     gemObject * targetGEM = GetTargetGEM();
     if (targetGEM == NULL)
+    {
+        exchangeEnded = true;
+        return false;
+    }
+
+    if (!starterChar.IsOfferingSane())
     {
         exchangeEnded = true;
         return false;

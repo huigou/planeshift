@@ -1,3 +1,8 @@
+*** 2008-05-19 by Kenny Graunke
+- Fix FS#1496 by sanity checking stack counts in offerings before allowing
+  a transaction to go through.  We could certainly do better sanity checking,
+  but this is sufficient to stop currently known exploits.
+
 *** 2008-05-18 by Dave Bentham
 - Sketches (Maps) cannot be edited unless in the inventory (consistent with 
   books).
