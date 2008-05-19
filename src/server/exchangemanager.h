@@ -68,6 +68,10 @@ public:
 
     bool MoveOfferedItem(int fromSlot,int stackcount,int toSlot);
 
+    /** Make sure all offered items still have legal stack counts.
+     */
+    bool IsOfferingSane();
+
     /** Transfers offered items and money to character 'target'.
      *
      * Target can be 0 - in this case everything is just destroyed.
