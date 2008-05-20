@@ -2524,9 +2524,11 @@ psItemStats* CacheManager::CopyItemStats(uint32 id, csString newName)
 
     id = db->GetLastInsertID();
     CS_ASSERT(id != 0);
+    csString escape;
+    db->Escape( escape, newName );
 
     // change to the new name for the new item
-    if (db->Command("UPDATE item_stats SET name = \'%s\' WHERE id = \'%u\'", newName.GetDataSafe(), id) == QUERY_FAILED)
+    if (db->Command("UPDATE item_stats SET name = \'%s\' WHERE id = \'%u\'", escape.GetDataSafe(), id) == QUERY_FAILED)
     {
         Error4("Error while renaming copied item_stats for id %d.\nSQL:%s\nError:%s\n", id, db->GetLastQuery(), db->GetLastError());
         db->Command("DELETE FROM item_stats WHERE id = \'%u\'", id);
