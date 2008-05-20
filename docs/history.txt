@@ -16,6 +16,7 @@
 - Fixed crash when creating money items.
 - Added assertion when inventory message overflows. This may point to a
   bug.
+- Fixed bug where item name wasn't being escaped when it was copied.
 
 *** 2008-05-20 by Steven Patrick
 - Fixed FS#1232, patch by phenom_
