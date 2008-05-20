@@ -418,7 +418,7 @@ public:
      *  @param rank    The value to set this skill rank at.
      *  @param recalculatestats   if true, stats of player will be recalculated taking into account the new skill rank
      */    
-    void SetSkillRank( PSSKILL which, int rank, bool recalculatestats = true);
+    void SetSkillRank( PSSKILL which, unsigned int rank, bool recalculatestats = true);
     
     /** Update the costs for all the skills.
      */
@@ -1168,4 +1168,5 @@ public:
 };
 
 #endif
+
 

@@ -5969,14 +5969,24 @@ void AdminManager::SetSkill(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& 
         return;
     }
 
+	// use unsigned int since skills are never negative (this also takes care of overflows)
+	unsigned int value = data.value;
+	unsigned int max = MAX(MAX_SKILL, MAX_STAT);
     if (data.skill == "all")
     {
+		// if the value is out of range, send an error
+		if (value < 0 || value > max)
+		{
+			psserver->SendSystemError(me->clientnum, "Valid values are between 0 and %u", max);
+			return;
+		}
+
         for (int i=0; i<PSSKILL_COUNT; i++)
         {
             psSkillInfo * skill = CacheManager::GetSingleton().GetSkillByID(i);
             if (skill == NULL) continue;
 
-            pchar->SetSkillRank(skill->id, data.value);
+            pchar->SetSkillRank(skill->id, value);
         }
         
         psserver->SendSystemInfo(me->clientnum, "Fine");
@@ -5993,14 +6003,25 @@ void AdminManager::SetSkill(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& 
         unsigned int old_value = pchar->GetSkills()->GetSkillRank(skill->id);
         if (data.value == -1)
         {
-            psserver->SendSystemInfo(me->clientnum, "Current '%s' is %d",skill->name.GetDataSafe(),old_value);
+            psserver->SendSystemInfo(me->clientnum, "Current '%s' is %u",skill->name.GetDataSafe(),old_value);
             return;
-        } else
+        } 
+		else if (skill->category == PSSKILLS_CATEGORY_STATS && (value < 0 || value > MAX_STAT))
+		{
+			psserver->SendSystemError(me->clientnum, "Stat values are between 0 and %u", MAX_STAT);
+			return;
+		} 
+		else if (skill->category != PSSKILLS_CATEGORY_STATS && (value < 0 || value > MAX_SKILL))
+		{
+			psserver->SendSystemError(me->clientnum, "Skill values are between 0 and %u", MAX_SKILL);
+			return;
+		}
     
-        pchar->SetSkillRank(skill->id, data.value);
-        psserver->SendSystemInfo(me->clientnum, "Changed '%s' from %d to %d",skill->name.GetDataSafe(),old_value,data.value);
+        pchar->SetSkillRank(skill->id, value);
+        psserver->SendSystemInfo(me->clientnum, "Changed '%s' from %u to %u",skill->name.GetDataSafe(),old_value,data.value);
     }
 
+	// Send updated skill list to client
     psserver->GetProgressionManager()->SendSkillList(target, false);
 
     if (target != client)
