@@ -310,7 +310,6 @@ psPickupEvent::psPickupEvent( MsgEntry* event)
     
     trans = new TransactionEntity(); // needs to be handled by economy manager
     
-    trans->from = event->GetInt32();
     trans->to = event->GetInt32();
     
     trans->item = event->GetUInt32();
@@ -358,7 +357,6 @@ psDropEvent::psDropEvent( MsgEntry* event)
     trans = new TransactionEntity(); // needs to be handled by economy manager
     
     trans->from = event->GetInt32();
-    trans->to = event->GetInt32();
     
     trans->item = event->GetUInt32();
     trans->count = event->GetInt32();

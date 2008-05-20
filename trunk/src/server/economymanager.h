@@ -48,6 +48,10 @@ struct TransactionEntity
 {
     int from;
     int to;
+    
+    csString fromName;
+    csString toName;
+    csString itemName;
 
     unsigned int item;
     int count;
@@ -56,6 +60,8 @@ struct TransactionEntity
 
     bool moneyIn;
     int stamp;
+    
+    TransactionEntity(): from(0), to(0), fromName("NA"), toName("NA"), itemName("NA"), item(0) { };
 };
 
 struct ItemSupplyDemandInfo : public csRefCount
@@ -73,7 +79,7 @@ public:
 
     void HandleMessage(MsgEntry *me,Client *client);
 
-    void AddTransaction(TransactionEntity* trans,bool sell);
+    void AddTransaction(TransactionEntity* trans,bool sell, const char* type);
 
     TransactionEntity* GetTransaction(int id);
     unsigned int GetTotalTransactions();
