@@ -334,14 +334,22 @@ void SlotManager::MoveFromMoney(psSlotMovementMsg& msg, Client *fromClient)
 {
     psCharacter *chr = fromClient->GetCharacterData();
     // Remove the money from the character
+    
+    // This can be caused by packet misordering
     if (chr->Money().Get(msg.fromSlot) - msg.stackCount < 0) 
     {
-        Error2("Client %s is trying to cheat by grabbing too much money", fromClient->GetName());
+        psserver->SendSystemError(fromClient->GetClientNum(), "You do not have that much money.");
         return;
     }                
 
     psMoney money;
     money.Adjust(msg.fromSlot, msg.stackCount);
+    
+    if(msg.stackCount > MAX_STACK_COUNT)
+    {
+        psserver->SendSystemError(fromClient->GetClientNum(), "You can't place a stack of more than %d items.", MAX_STACK_COUNT);
+        return;
+    }
 
     switch (msg.toContainer)
     {

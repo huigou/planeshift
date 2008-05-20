@@ -3779,13 +3779,13 @@ bool AdminManager::CreateItem(const char * name, double xPos, double yPos, doubl
     psSectorInfo *sectorinfo = CacheManager::GetSingleton().GetSectorInfoByName(sector);
     if (sectorinfo==NULL)
     {
-        Error2("'%s' was not found as a valid sector.",sector);
+        psserver->SendSystemError(client->GetClientNum(), "'%s' was not found as a valid sector.",sector);
         return false;
     }
 
     if ( name == NULL )
     {
-        Error1( "No item name was given" );
+         psserver->SendSystemError(client->GetClientNum(), "No item name was given" );
         return false;
     }
     
@@ -3793,15 +3793,22 @@ bool AdminManager::CreateItem(const char * name, double xPos, double yPos, doubl
     psItemStats *basestats=CacheManager::GetSingleton().GetBasicItemStatsByName(name);
     if (basestats==NULL)
     {
-        Error2("'%s' was not found as a valid base item.",name);
+         psserver->SendSystemError(client->GetClientNum(), "'%s' was not found as a valid base item.",name);
         return false;
     }
 
     // cant create personalised or unique items
     if (basestats->GetBuyPersonalise() || basestats->GetUnique())
     {
-       Error2("'%s' is a personalised or unique item.", name);
+        psserver->SendSystemError(client->GetClientNum(), "'%s' is a personalised or unique item.", name);
        return false;
+    }
+    
+    // creating money items will confuse the server into creating the money in the db then deleting it again when adding to the inventory
+    if(basestats->IsMoney())
+    {
+        psserver->SendSystemError(client->GetClientNum(), "Creating money items is not permitted.");
+        return false;
     }
 
     psItem *newitem = NULL;
