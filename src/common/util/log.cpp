@@ -146,7 +146,13 @@ void LogMessage (const char* file, int line, const char* function,
     if(con <= ConsoleOut::GetMaximumOutputClassStdout())
     {
         char msgid[5000];
-        snprintf (msgid, 5000, "<%s:%d %s>\n",
+        if(con < CON_WARNING && con > CON_CMDOUTPUT)
+        {
+            snprintf (msgid, 5000, "<%s:%d %s SEVERE>\n",
+                      file, line, function);
+        }
+        else
+            snprintf (msgid, 5000, "<%s:%d %s>\n",
             file, line, function);
 
         char description[5001];
