@@ -898,11 +898,11 @@ bool AdminManager::AdminCmdData::DecodeAdminCmdMessage(MsgEntry *pMsg, psAdminCm
     {
         if (words.GetCount() == 1)
         {
-            value = 2;
+            subCmd = "list";
         }
         else if (words.GetCount() == 3)
         {
-            value = words.GetInt(1);
+            subCmd = words[1];
             text = words[2];
         }
         return true;
@@ -6839,55 +6839,71 @@ void AdminManager::HandleBadText(psAdminCmdMessage& msg, AdminCmdData& data, Cli
 
 void AdminManager::HandleCompleteQuest(MsgEntry* me,psAdminCmdMessage& msg, AdminCmdData& data, Client *client, Client *subject)
 {
-    Client* target = client;
-    if (subject && CacheManager::GetSingleton().GetCommandManager()->Validate(client->GetSecurityLevel(), "quest others"))
-        target = subject;    
+    Client *target = subject ? subject : client;
 
-    switch (data.value)
+    // Security levels involved:
+    // "/quest"              gives access to list and change your own quests.
+    // "quest list others"   gives access to list other players' quests.
+    // "quest change others" gives access to complete/discard other players' quests.
+    const bool listOthers = CacheManager::GetSingleton().GetCommandManager()->Validate(client->GetSecurityLevel(), "quest list others");
+    const bool changeOthers = CacheManager::GetSingleton().GetCommandManager()->Validate(client->GetSecurityLevel(), "quest change others");
+
+    if (data.subCmd == "complete")
     {
-        case 1:
+        if (target != client && !changeOthers)
         {
-            psQuest* quest = CacheManager::GetSingleton().GetQuestByName(data.text);
-            if (!quest)
-            {
-                psserver->SendSystemError(me->clientnum, "Quest not found!");
-                return;
-            }
-            target->GetActor()->GetCharacterData()->AssignQuest(quest, 0);
-            if (target->GetActor()->GetCharacterData()->CompleteQuest(quest))
-            {
-                psserver->SendSystemInfo(me->clientnum, "Quest %s completed!", data.text.GetData());
-            }
-            break;
+            psserver->SendSystemError(client->GetClientNum(), "You don't have permission to complete other players' quests.");
+            return;
         }
-        case 0:
+
+        psQuest *quest = CacheManager::GetSingleton().GetQuestByName(data.text);
+        if (!quest)
         {
-            psQuest* quest = CacheManager::GetSingleton().GetQuestByName(data.text);
-            if (!quest)
-            {
-                psserver->SendSystemError(me->clientnum, "Quest not found!");
-                return;
-            }
-            QuestAssignment* questassignment = target->GetActor()->GetCharacterData()->IsQuestAssigned(quest->GetID());
-            if (!questassignment)
-            {
-                psserver->SendSystemError(me->clientnum, "Quest was never started!");
-                return;
-            }
-            target->GetActor()->GetCharacterData()->DiscardQuest(questassignment, true);
-            psserver->SendSystemInfo(me->clientnum, "Quest %s discarded!", data.text.GetData());
-            break;
+            psserver->SendSystemError(me->clientnum, "Quest not found!");
+            return;
         }
-        case 2:
+        target->GetActor()->GetCharacterData()->AssignQuest(quest, 0);
+        if (target->GetActor()->GetCharacterData()->CompleteQuest(quest))
         {
-            csArray<QuestAssignment*> quests = target->GetCharacterData()->GetAssignedQuests();
-            size_t len = quests.GetSize();
-            for (size_t i = 0 ; i < len ; i++)
-            {
-                QuestAssignment* currassignment = quests.Get(i);
-                psserver->SendSystemInfo(me->clientnum, "Quest name: %s. Status: %c", currassignment->GetQuest()->GetName(), currassignment->status);
-            }
-            break;
+            psserver->SendSystemInfo(me->clientnum, "Quest %s completed!", data.text.GetData());
+        }
+    }
+    else if (data.subCmd == "discard")
+    {
+        if (target != client && !changeOthers)
+        {
+            psserver->SendSystemError(client->GetClientNum(), "You don't have permission to discard other players' quests.");
+            return;
+        }
+
+        psQuest *quest = CacheManager::GetSingleton().GetQuestByName(data.text);
+        if (!quest)
+        {
+            psserver->SendSystemError(me->clientnum, "Quest not found!");
+            return;
+        }
+        QuestAssignment *questassignment = target->GetActor()->GetCharacterData()->IsQuestAssigned(quest->GetID());
+        if (!questassignment)
+        {
+            psserver->SendSystemError(me->clientnum, "Quest was never started!");
+            return;
+        }
+        target->GetActor()->GetCharacterData()->DiscardQuest(questassignment, true);
+        psserver->SendSystemInfo(me->clientnum, "Quest %s discarded!", data.text.GetData());
+    }
+    else // assume "list" (even if it isn't)
+    {
+        if (target != client && !listOthers)
+        {
+            psserver->SendSystemError(client->GetClientNum(), "You don't have permission to list other players' quests.");
+            return;
+        }
+
+        csArray<QuestAssignment*> quests = target->GetCharacterData()->GetAssignedQuests();
+        for (size_t i = 0; i < quests.GetSize(); i++)
+        {
+            QuestAssignment *currassignment = quests.Get(i);
+            psserver->SendSystemInfo(me->clientnum, "Quest name: %s. Status: %c", currassignment->GetQuest()->GetName(), currassignment->status);
         }
     }
 }

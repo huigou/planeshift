@@ -1,3 +1,10 @@
+*** 2008-05-20 by Kenny Graunke
+- Improvements to the /quest command:
+  - Syntax is now "/quest [discard|complete]" rather than "/quest [0|1]".
+  - GM2+ can now list other players quests, but cannot change them.
+  - It now complains at you if you don't have access to list/change other
+    players' quests, rather than listing/changing your own instead.
+
 *** 2008-05-20 by Andrew Dai
 - Fixed crash when dropping helm. Patch by Vornne.
 
