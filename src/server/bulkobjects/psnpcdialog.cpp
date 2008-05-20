@@ -259,7 +259,7 @@ void psNPCDialog::CleanPunctuation(psString& str, bool cleanQMark)
 
 // Stemming code
 
-static char *sufx[] ={ 
+static const char *sufx[] ={ 
     /* Noun suffixes */
     "s", "ses", "xes", "zes", "ches", "shes", "men", "ies",
     /* Verb suffixes */
@@ -268,7 +268,7 @@ static char *sufx[] ={
     "er", "est", "er", "est"
 };
 
-static char *addr[] ={ 
+static const char *addr[] ={ 
     /* Noun endings */
     "", "s", "x", "z", "ch", "sh", "man", "y",
     /* Verb endings */
