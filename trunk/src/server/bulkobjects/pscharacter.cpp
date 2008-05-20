@@ -3800,11 +3800,15 @@ void StatSet::BuffStat( PSITEMSTATS_STAT attrib, int buffAmount )
 
 void StatSet::SetStat(PSITEMSTATS_STAT attrib, unsigned int val, bool recalculatestats)
 {
-    if (attrib<0 || attrib>=PSITEMSTATS_STAT_COUNT)
+    if (attrib < 0 || attrib >= PSITEMSTATS_STAT_COUNT)
         return;
 
-    stats[attrib].rank=val;
-    if (recalculatestats)
+	// Clamp values to prevent huge numbers
+	if (val > MAX_STAT)
+		val = MAX_STAT;
+
+    stats[attrib].rank = val;
+	if (recalculatestats)
       self->RecalculateStats();
 }
 
@@ -3813,7 +3817,7 @@ void StatSet::AddToStat(PSITEMSTATS_STAT attrib, unsigned int delta)
     if (attrib<0 || attrib>=PSITEMSTATS_STAT_COUNT)
         return;
 
-    stats[attrib].rank += delta;
+	stats[attrib].rank += delta;
 
     self->RecalculateStats();
 }
@@ -3961,14 +3965,20 @@ void SkillSet::SetSkillInfo( PSSKILL which, psSkillInfo* info, bool recalculates
       self->RecalculateStats();
 }
 
-void SkillSet::SetSkillRank( PSSKILL which, int rank, bool recalculatestats )
+void SkillSet::SetSkillRank( PSSKILL which, unsigned int rank, bool recalculatestats )
 {
-    if (which<0 || which>=PSSKILL_COUNT)
+    if (which < 0 || which >= PSSKILL_COUNT)
         return;
+
+    bool isStat = (which >= PSSKILL_AGI && which <= PSSKILL_WILL);
 
     // Clamp rank to stay within sane values, even if given something totally outrageous.
     if (rank < 0)
         rank = 0;
+    else if (!isStat && rank > MAX_SKILL)
+        rank = MAX_SKILL;
+	else if (isStat && rank > MAX_STAT)
+		rank = MAX_STAT;
 
     skills[which].rank = rank;
     skills[which].CalculateCosts(self);
@@ -4081,4 +4091,5 @@ void QuestAssignment::SetQuest(psQuest *q)
         quest_id = q->GetID();
     }
 }
+
 

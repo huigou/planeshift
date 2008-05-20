@@ -42,16 +42,18 @@ bool pawsInventoryDollView::OnMouseDown( int button, int modifiers, int x, int y
     // Make sure we actually have something
     if ( !psengine->GetSlotManager()->IsDragging() )
         return true;
-        
+       
+    pawsSlot *draggingSlot = (pawsSlot*) PawsManager::GetSingleton().GetDragDropWidget(); 
     //Client* client = clients->Find(me->clientnum);    
     //psCharacter *chardata=client->GetCharacterData();
     
     int container = psengine->GetSlotManager()->HoldingContainerID();
     int slot = psengine->GetSlotManager()->HoldingSlotID();
+    int count = draggingSlot->StackCount();
 
-        
+    // Let server know movement of item to doll
     csRef<MsgHandler> msgHandler = psengine->GetMsgHandler();
-    psSlotMovementMsg msg(container, slot, CONTAINER_INVENTORY_EQUIPMENT, -1, 1);
+    psSlotMovementMsg msg(container, slot, CONTAINER_INVENTORY_EQUIPMENT, PSCHARACTER_SLOT_NONE, count);
     PawsManager::GetSingleton().SetDragDropWidget(NULL);
     
     // Let the slot manager know that we are not dragging items anymore.
