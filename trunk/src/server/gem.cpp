@@ -1334,16 +1334,35 @@ void gemActiveObject::SendBehaviorMessage(const csString & msg_id, gemObject *ac
             csString qname = item->GetQuantityName();
             gemContainer *container = dynamic_cast<gemContainer*> (this);
 
+            uint32 origUID = item->GetUID();
+            unsigned short origStackCount = item->GetStackCount();
+
             if (chardata && chardata->Inventory().Add(item,false, true, PSCHARACTER_SLOT_NONE, container))
             {
-                psPickupEvent evt(
+            	// item is deleted if we pickup money
+            	if(item)
+            	{
+            		psPickupEvent evt(
                                chardata->GetCharacterID(),
                                item->GetUID(),
                                item->GetStackCount(),
                                (int)item->GetCurrentStats()->GetQuality(),
                                0
                                );
-                evt.FireEvent();
+                    evt.FireEvent();
+            	}
+            	else
+            	{
+                    psPickupEvent evt(
+                                   chardata->GetCharacterID(),
+                                   origUID,
+                                   origStackCount,
+                                   0,
+                                   0
+                                   );          
+                    evt.FireEvent();
+            	}
+                
                 psSystemMessage newmsg(clientnum, MSG_INFO_BASE, "%s picked up %s", actor->GetName(), qname.GetData() );
                 newmsg.Multicast(actor->GetMulticastClients(),0,RANGE_TO_SELECT);
 

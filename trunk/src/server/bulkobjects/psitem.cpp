@@ -760,6 +760,7 @@ void psItem::SetUID(uint32 v)
 
 void psItem::SetStackCount(unsigned short v)
 {
+    CS_ASSERT(v <= MAX_STACK_COUNT && v > 0);
     stack_count=v;
 }
 
