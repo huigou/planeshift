@@ -14,6 +14,8 @@
 - Added assertions to ensure stats are always positive.
 - Fixed crash when big money stacks are dropped.
 - Fixed crash when creating money items.
+- Added assertion when inventory message overflows. This may point to a
+  bug.
 
 *** 2008-05-20 by Steven Patrick
 - Fixed FS#1232, patch by phenom_

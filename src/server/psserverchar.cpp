@@ -603,6 +603,7 @@ bool psServerCharManager::SendInventory( int clientNum, bool sendUpdatesOnly)
     else
     {
         Bug2("Could not create valid psGUIInventoryMessage for client %u.\n",toClientNumber);
+        CS_ASSERT(false);
     }
 
     delete outgoing;
