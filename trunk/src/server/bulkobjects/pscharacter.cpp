@@ -1814,7 +1814,7 @@ float psCharacter::AdjustHitPointsMax(float adjust)
 }
 void psCharacter::SetHitPointsMax(float v)
 {
-    CS_ASSERT_MSG("Negative Max HP!", v > -0.01f);
+    CS_ASSERT(v > -0.01f);
     vitals->DirtyVital(VITAL_HITPOINTS, DIRTY_VITAL_HP_MAX).max = v;
 }
 float psCharacter::GetHP()
@@ -3772,6 +3772,7 @@ unsigned int StatSet::GetStat(PSITEMSTATS_STAT attrib, bool withBuff)
 
     int buff   = withBuff?stats[attrib].rankBuff:0;
     int result = (int)stats[attrib].rank + buff;
+    CS_ASSERT(result > 0);
     return result;
 }
 

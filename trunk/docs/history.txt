@@ -11,6 +11,9 @@
 - Re-enabled Wordnet. Currently, Wordnet is only used for the stemmer.
 - Removed hacked implementation of stemmer. Now uses the full stemmer
   from Wordnet including the exception dictionary.
+- Added assertions to ensure stats are always positive.
+- Fixed crash when big money stacks are dropped.
+- Fixed crash when creating money items.
 
 *** 2008-05-20 by Steven Patrick
 - Fixed FS#1232, patch by phenom_
