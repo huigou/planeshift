@@ -79,9 +79,17 @@ EconomyManager::~EconomyManager()
     }
 }
 
-void EconomyManager::AddTransaction(TransactionEntity* trans,bool moneyIn)
+void EconomyManager::AddTransaction(TransactionEntity* trans,bool moneyIn, const char* type)
 {
     if(!trans)
+        return;
+    
+    csString buf;
+    
+    buf.Format("%d, %d, %s, %d, %u, \"%u\"", trans->from, trans->to, type, trans->item, trans->count, trans->price);
+    psserver->GetLogCSV()->Write(CSV_EXCHANGES, buf);
+    
+    if(!trans->item)
         return;
 #ifdef ECONOMY_DEBUG
     CPrintf(
@@ -124,35 +132,35 @@ void EconomyManager::HandleMessage(MsgEntry* me,Client* client)
         case MSGTYPE_BUY_EVENT:
         {
             psBuyEvent event(me);
-            AddTransaction(event.trans,false);
+            AddTransaction(event.trans,false, "Buy");
             economy.buyingValue += event.trans->price;
             break;
         }
         case MSGTYPE_SELL_EVENT:
         {
             psSellEvent event(me);
-            AddTransaction(event.trans,true);
+            AddTransaction(event.trans,true, "Sell");
             economy.sellingValue += event.trans->price;
             break;
         }
         case MSGTYPE_PICKUP_EVENT:
         {
             psPickupEvent event(me);
-            AddTransaction(event.trans,true);
+            AddTransaction(event.trans,true, "Pickup");
             economy.pickupsValue += event.trans->price;
             break;
         }
         case MSGTYPE_DROP_EVENT:
         {
             psDropEvent event(me);
-            AddTransaction(event.trans,false);
+            AddTransaction(event.trans,false, "Drop");
             economy.droppedValue += event.trans->price;
             break;
         }
         case MSGTYPE_LOOT_EVENT:
         {
             psLootEvent event(me);
-            AddTransaction(event.trans,true);
+            AddTransaction(event.trans,true, "Loot");
             economy.lootValue += event.trans->price;
             break;
         }
