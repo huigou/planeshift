@@ -7,6 +7,10 @@
 
 *** 2008-05-20 by Andrew Dai
 - Fixed crash when dropping helm. Patch by Vornne.
+- Added assertions to ensure checks on stack counts are made in future.
+- Re-enabled Wordnet. Currently, Wordnet is only used for the stemmer.
+- Removed hacked implementation of stemmer. Now uses the full stemmer
+  from Wordnet including the exception dictionary.
 
 *** 2008-05-20 by Steven Patrick
 - Fixed FS#1232, patch by phenom_

@@ -64,6 +64,9 @@
 #include "psnpcdialog.h"
 #include "psraceinfo.h"
 #include "psquest.h"
+extern "C" {
+#include "../tools/wordnet/wn.h"
+}
 
 //----------------------------------------------------------------------------
 
@@ -257,78 +260,6 @@ void psNPCDialog::CleanPunctuation(psString& str, bool cleanQMark)
     }
 }
 
-// Stemming code
-
-static const char *sufx[] ={ 
-    /* Noun suffixes */
-    "s", "ses", "xes", "zes", "ches", "shes", "men", "ies",
-    /* Verb suffixes */
-    "s", "ies", "es", "es", "ed", "ed", "ing", "ing",
-    /* Adjective suffixes */
-    "er", "est", "er", "est"
-};
-
-static const char *addr[] ={ 
-    /* Noun endings */
-    "", "s", "x", "z", "ch", "sh", "man", "y",
-    /* Verb endings */
-    "", "y", "e", "", "e", "", "e", "",
-    /* Adjective endings */
-    "", "", "e", "e"
-};
-
-static int offsets[] = { 0, 0, 8, 16 };
-static int cnts[] = { 0, 8, 8, 4 };
-
-static int strend(char *str1, char *str2)
-{
-    char *pt1;
-    
-    if(strlen(str2) >= strlen(str1))
-        return(0);
-    else {
-        pt1=str1;
-        pt1=strchr(str1,0);
-        pt1=pt1-strlen(str2);
-        return(!strcmp(pt1,str2));
-    }
-}
-
-static const char *wordbase(const char *word, int ender)
-{
-    char *pt1;
-    static char copy[1024];
-    
-    strcpy(copy, word);
-    if(strend(copy,sufx[ender])) {
-        pt1=strchr(copy,'\0');
-        pt1 -= strlen(sufx[ender]);
-        *pt1='\0';
-        strcat(copy,addr[ender]);
-    }
-    return(copy);
-}
-
-const char *morphword(const char *tmpbuf)
-{
-    int offset, cnt;
-    static char retval[1024];
-    // We treat all words to be stemmed as nouns for now
-    offset = offsets[1];
-    cnt = cnts[1];
-    
-    for(int i = 0; i < cnt; i++){
-        strcpy(retval, wordbase(tmpbuf, (i + offset)));
-        if(strcmp(retval, tmpbuf) && is_defined(retval, 1)) {
-            return(retval);
-        }
-    }
-    return NULL;
-}
-
-
-
-
 void psNPCDialog::FilterKnownTerms(const psString & text, NpcTriggerSentence &trigger, Client *client)
 {
     const size_t MAX_SENTENCE_LENGTH = 4;
@@ -365,7 +296,8 @@ void psNPCDialog::FilterKnownTerms(const psString & text, NpcTriggerSentence &tr
         }
         if(!morphed)   // try stemming the word to see if it matches
         {
-            const char * morphedWord = morphword(candidate);
+            // assume all words are nouns
+            const char * morphedWord = morphword(const_cast<char *>(candidate.GetData()), NOUN);
             if(morphedWord)
             {
                 candidate = morphedWord;

@@ -53,9 +53,9 @@
 #include "../netmanager.h"
 
 #include "../iserver/idal.h"
-
+extern "C" {
 #include "../tools/wordnet/wn.h"
-
+}
 #include "rpgrules/factions.h"
 
 //=============================================================================
@@ -86,12 +86,12 @@ NPCDialogDict::~NPCDialogDict()
 
 bool NPCDialogDict::Initialize(iDataConnection *db)
 {
-    /* Initialise WordNet
+    // Initialise WordNet
     if (wninit() != 0)
     {
         Error1("*****************************\nWordNet failed to initialize.\n"
                "******************************\n");
-    }*/
+    }
 
     if (LoadDisallowedWords(db))
     {
