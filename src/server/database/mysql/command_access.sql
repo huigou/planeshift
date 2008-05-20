@@ -114,10 +114,10 @@ INSERT INTO command_group_assignment VALUES( "/impersonate", 30 );
 INSERT INTO command_group_assignment VALUES( "/impersonate", 26 );
 INSERT INTO command_group_assignment VALUES( "/impersonate", 25 );
 INSERT INTO command_group_assignment VALUES( "/impersonate", 24 );
-INSERT INTO command_group_assignment VALUES( "quest others", 30 );
-INSERT INTO command_group_assignment VALUES( "quest others", 26 );
-INSERT INTO command_group_assignment VALUES( "quest others", 25 );
-INSERT INTO command_group_assignment VALUES( "quest others", 24 );
+INSERT INTO command_group_assignment VALUES( "quest change others", 30 );
+INSERT INTO command_group_assignment VALUES( "quest change others", 26 );
+INSERT INTO command_group_assignment VALUES( "quest change others", 25 );
+INSERT INTO command_group_assignment VALUES( "quest change others", 24 );
 INSERT INTO command_group_assignment VALUES( "/setitemname", 30 );
 INSERT INTO command_group_assignment VALUES( "/setitemname", 26 );
 INSERT INTO command_group_assignment VALUES( "/setitemname", 25 );
@@ -252,6 +252,13 @@ INSERT INTO command_group_assignment VALUES( "/settrait", 25 );
 INSERT INTO command_group_assignment VALUES( "/settrait", 24 );
 INSERT INTO command_group_assignment VALUES( "/settrait", 23 );
 INSERT INTO command_group_assignment VALUES( "/settrait", 22 );
+INSERT INTO command_group_assignment VALUES( "quest list others", 30 );
+INSERT INTO command_group_assignment VALUES( "quest list others", 26 );
+INSERT INTO command_group_assignment VALUES( "quest list others", 25 );
+INSERT INTO command_group_assignment VALUES( "quest list others", 24 );
+INSERT INTO command_group_assignment VALUES( "quest list others", 23 );
+INSERT INTO command_group_assignment VALUES( "quest list others", 22 );
+
 
 # GM1 and above
 INSERT INTO command_group_assignment VALUES( "/teleport", 30 );
