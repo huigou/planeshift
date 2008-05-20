@@ -730,7 +730,16 @@ bool gemObject::InitMesh(const char *name,
         Error1("Could not create Item because pcmesh class doesn't implement iPcMesh.");
         return false;
     }
-    
+
+    // Replace helm group token with the default race.
+    psString fact_name(factname);
+    fact_name.ReplaceAllSubString("$H", "stonebm");
+    factname = fact_name;
+
+    psString file_name(filename);
+    file_name.ReplaceAllSubString("$H", "stonebm");
+    filename = file_name;
+
     csRef<iEngine> engine = csQueryRegistry<iEngine> (psserver->GetObjectReg());
     csRef<iVFS> vfs = csQueryRegistry<iVFS> (psserver->GetObjectReg());
     csRef<iMeshWrapper> mesh = engine->GetMeshes()->FindByName(factname);

@@ -1,3 +1,6 @@
+*** 2008-05-20 by Andrew Dai
+- Fixed crash when dropping helm. Patch by Vornne.
+
 *** 2008-05-20 by Steven Patrick
 - Fixed FS#1232, patch by phenom_
 - Fixed FS#1104, patch by phenom_

@@ -157,7 +157,15 @@ bool pawsGMSpawnWindow::OnSelected(pawsWidget* widget)
         }
         else 
         {
-            csRef<iMeshFactoryWrapper> factory = psengine->GetEngine()->GetMeshFactories()->FindByName (item.mesh);                     
+            psString fact_name(item.mesh);
+            fact_name.ReplaceAllSubString("$H", "stonebm");
+            item.mesh = fact_name;
+
+            psString file_name(filename);
+            file_name.ReplaceAllSubString("$H", "stonebm");
+            filename = file_name;
+
+            csRef<iMeshFactoryWrapper> factory = psengine->GetEngine()->GetMeshFactories()->FindByName (item.mesh);
             if(!factory)
             {
                 // Try loading the mesh again
