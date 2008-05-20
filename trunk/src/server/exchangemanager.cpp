@@ -373,31 +373,16 @@ bool ExchangingCharacter::IsOfferingSane()
 
 void ExchangingCharacter::TransferOffer(int targetClientNum)
 {
-    // printf("In ExchangingCharacter::TransferOffer(%d)...\n",targetClientNum);
-
-    psCharacter * me = GetClientCharacter(client);
-    psCharacter * target;
+    psCharacter *target = NULL;
 
     if (targetClientNum != 0)
     {
         target = GetClientCharacter(targetClientNum);
-        if (target == NULL)
-        {
-            // printf("  targetClient is not found.\n");
+        if (!target)
             return;
-        }
-        else
-        {
-            // printf("  targetClient is %s.\n",target->GetCharName() );
-        }
-    }
-    else
-    {
-        // printf("  targetClient is cleared.\n",target->GetCharName() );
-        target = NULL;
     }
 
-    if (target != NULL)
+    if (target)
     {
         for (int i=0; i < EXCHANGE_SLOT_COUNT; i++)
         {
