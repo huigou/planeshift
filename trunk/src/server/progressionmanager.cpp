@@ -1525,6 +1525,9 @@ public:
                         psserver->GetProgressionManager()->QueueUndoScript(undoscript.GetData(), delay, actor, target, item, persistentID);
                     }                        
                 }
+                else
+                    // Spell is blocked so the rest of the script must not execute.
+                    return false;
                 break;
             }                
 
