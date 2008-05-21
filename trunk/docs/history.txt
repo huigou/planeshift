@@ -17,6 +17,8 @@
 - Added assertion when inventory message overflows. This may point to a
   bug.
 - Fixed bug where item name wasn't being escaped when it was copied.
+- Added more informative message error messages when the buffer is
+  overflowed.
 
 *** 2008-05-20 by Steven Patrick
 - Fixed FS#1232, patch by phenom_

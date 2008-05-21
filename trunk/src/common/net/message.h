@@ -92,12 +92,6 @@ enum
 // 8 bit should hopefully be enough
 typedef uint8_t msgtype;
 
-/*  To protect the server from a client with ill intent sending a simply HUGE message that requires tons of
- *  memory to reassemble, messages beyond this size will be dropped.
- *  Changing this value requires a NETVERSION change in messages.h.
- */
-#define MAX_MESSAGE_SIZE 65535 - 4  // Current max, -4 for sizeof(psMessageBytes)
-
 /**
  * this struct represents the data that is sent out through the network (all
  * additional stuff should go into the struct MsgEntry
@@ -119,6 +113,12 @@ struct psMessageBytes
 };
 // set to default packing
 #pragma pack()
+
+/*  To protect the server from a client with ill intent sending a simply HUGE message that requires tons of
+ *  memory to reassemble, messages beyond this size will be dropped.
+ *  Changing this value requires a NETVERSION change in messages.h.
+ */
+const unsigned int MAX_MESSAGE_SIZE = 65535 - sizeof(psMessageBytes) - 1;  // Current max, -1 for safety
 
 /**
  * The structure of 1 queue entry (pointer to a message)
@@ -214,8 +214,8 @@ public:
             // No space left!  Don't overwrite the buffer.
             if (current + 1 > bytes->GetSize())
             {
-                Bug3("MsgEntry::Add(const char *) call for msgid=%u len=%u would overflow buffer! str = (null)\n",
-                    msgid,0);
+                Bug4("MsgEntry::Add(const char *) call for msgid=%u len=%u would overflow buffer! str = (null) type = %u\n",
+                    msgid,0, bytes->type);
                 overrun=true;
                 return;
             }
@@ -227,8 +227,8 @@ public:
         // Not enough space left!  Don't overwrite the buffer.
         if (current + strlen(str)+1 > bytes->GetSize())
         {
-            Bug4("MsgEntry::Add(const char *) call for msgid=%u len=%u would overflow buffer! str = %s\n",
-                (unsigned int)msgid,(unsigned int)strlen(str),str);
+            Bug5("MsgEntry::Add(const char *) call for msgid=%u len=%u would overflow buffer! str = %s type = %u\n",
+                (unsigned int)msgid,(unsigned int)strlen(str),str, bytes->type);
             overrun=true;
             return;
         }
@@ -254,7 +254,7 @@ public:
         // Not enough space left!  Don't overwrite the buffer.
         if (current + sizeof(uint32) > bytes->GetSize())
         {
-            Bug2("MsgEntry::Add(const float) call for msgid=%u would overflow buffer!\n",msgid);
+            Bug3("MsgEntry::Add(const float) call for msgid=%u would overflow buffer! type = %u\n",msgid, bytes->type);
             overrun=true;
             return;
         }
@@ -283,7 +283,7 @@ public:
         // Not enough space left!  Don't overwrite the buffer.
         if (current + sizeof(double) > bytes->GetSize())
         {
-            Bug2("MsgEntry::Add(const double) call for msgid=%u would overflow buffer!\n",msgid);
+            Bug3("MsgEntry::Add(const double) call for msgid=%u would overflow buffer! type = %u\n",msgid, bytes->type);
             overrun=true;
             return;
         }
@@ -311,7 +311,7 @@ public:
         // Not enough space left!  Don't overwrite the buffer.
         if (current + sizeof(uint16_t) > bytes->GetSize())
         {
-            Bug2("MsgEntry::Add(const uint16_t) call for msgid=%u would overflow buffer!\n",msgid);
+            Bug3("MsgEntry::Add(const uint16_t) call for msgid=%u would overflow buffer! type = %u\n",msgid, bytes->type);
             overrun=true;
             return;
         }
@@ -338,7 +338,7 @@ public:
         // Not enough space left!  Don't overwrite the buffer.
         if (current + sizeof(int16_t) > bytes->GetSize())
         {
-            Bug2("MsgEntry::Add(const int16_t) call for msgid=%u would overflow buffer!\n",msgid);
+            Bug3("MsgEntry::Add(const int16_t) call for msgid=%u would overflow buffer! type = %u\n",msgid, bytes->type);
             overrun=true;
             return;
         }
@@ -364,7 +364,7 @@ public:
         // Not enough space left!  Don't overwrite the buffer.
         if (current + sizeof(int32_t) > bytes->GetSize())
         {
-            Bug2("MsgEntry::Add(const int32_t) call for msgid=%u would overflow buffer!\n",msgid);
+            Bug3("MsgEntry::Add(const int32_t) call for msgid=%u would overflow buffer! type = %u\n",msgid, bytes->type);
             overrun=true;
             return;
         }
@@ -392,7 +392,7 @@ public:
         // Not enough space left!  Don't overwrite the buffer.
         if (current + sizeof(uint32_t) > bytes->GetSize())
         {
-            Bug2("MsgEntry::Add(const uint32_t) call for msgid=%u would overflow buffer!\n",msgid);
+            Bug3("MsgEntry::Add(const uint32_t) call for msgid=%u would overflow buffer! type = %u\n",msgid, bytes->type);
             overrun=true;
             return;
         }
@@ -420,7 +420,7 @@ public:
         // Not enough space left!  Don't overwrite the buffer.
          if (current + sizeof(uintptr_t) > bytes->GetSize())
          {
-             Bug2("MsgEntry::Add(const uintptr_t) call for msgid=%u would overflow buffer!\n",msgid);
+             Bug3("MsgEntry::Add(const uintptr_t) call for msgid=%u would overflow buffer! type = %u\n",msgid, bytes->type);
              overrun=true;
              return;
          }
@@ -448,7 +448,7 @@ public:
         // Not enough space left!  Don't overwrite the buffer.
         if (current + sizeof(uint8_t) > bytes->GetSize())
         {
-            Bug2("MsgEntry::Add(const uint8_t) call for msgid=%u would overflow buffer!\n",msgid);
+            Bug3("MsgEntry::Add(const uint8_t) call for msgid=%u would overflow buffer! type = %u\n",msgid, bytes->type);
             overrun=true;
             return;
         }
@@ -475,7 +475,7 @@ public:
         // Not enough space left!  Don't overwrite the buffer.
         if (current + sizeof(int8_t) > bytes->GetSize())
         {
-            Bug2("MsgEntry::Add(const int8_t) call for msgid=%u would overflow buffer!\n",msgid);
+            Bug3("MsgEntry::Add(const int8_t) call for msgid=%u would overflow buffer! type = %u\n",msgid, bytes->type);
             overrun=true;
             return;
         }
@@ -502,7 +502,7 @@ public:
         // Not enough space left!  Don't overwrite the buffer.
         if (current + sizeof(uint8_t) > bytes->GetSize())
         {
-            Bug2("MsgEntry::Add(const bool) call for msgid=%u would overflow buffer!\n",msgid);
+            Bug3("MsgEntry::Add(const bool) call for msgid=%u would overflow buffer! type = %u\n",msgid, bytes->type);
             overrun=true;
             return;
         }
@@ -528,7 +528,7 @@ public:
         // Not enough space left!  Don't overwrite the buffer.
         if (current + 3*sizeof(uint32) > bytes->GetSize())
         {
-            Bug2("MsgEntry::Add(const csVector3) call for msgid=%u would overflow buffer!\n",msgid);
+            Bug3("MsgEntry::Add(const csVector3) call for msgid=%u would overflow buffer! type = %u\n",msgid, bytes->type);
             overrun=true;
             return;
         }
@@ -559,8 +559,8 @@ public:
         // Not enough space left!  Don't overwrite the buffer.
         if (current + sizeof(uint32_t) + length > bytes->GetSize())
         {
-            Bug3("MsgEntry::Add(const void *datastream,const uint32_t length) call for msgid=%u len=%u would overflow buffer!\n",
-                msgid,length);
+            Bug4("MsgEntry::Add(const void *datastream,const uint32_t length) call for msgid=%u len=%u would overflow buffer! type = %u\n",
+                msgid,length, bytes->type);
             overrun=true;
             return;
         }
