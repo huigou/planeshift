@@ -132,7 +132,7 @@ class psSpell : public iScriptableVar
                 PS_ID &anchorID, PS_ID &targetID, csString *affectText) const;
     bool AffectTarget( psSpellCastGameEvent * event, csString &effectName, csVector3 &offset,
                        PS_ID& anchorID, PS_ID& targetID, csString *affectText) const;
-    bool PerformResult(gemActor *caster, gemObject *target, float max_range, bool saved, float powerLevel, bool inverse = false) const;
+    bool PerformResult(gemActor *caster, gemObject *target, float max_range, bool saved, float powerLevel, csTicks duration = 0) const;
 
     csString SpellToXML() const;
     csString DescriptionToXML() const;

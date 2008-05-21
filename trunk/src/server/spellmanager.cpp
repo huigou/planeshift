@@ -645,9 +645,9 @@ void psSpellManager::HandleSpellCastEvent(psSpellCastGameEvent *event)
 void psSpellManager::HandleSpellAffectEvent( psSpellAffectGameEvent *event )
 { 
     // Since we just came in from an event, make sure target is still alive.
-    if ( event->target->IsAlive() || event->inverse )
+    if ( event->target->IsAlive())
     {
-        event->spell->PerformResult( event->caster->GetActor(), event->target, event->max_range, event->saved, event->powerLevel, event->inverse);
+        event->spell->PerformResult( event->caster->GetActor(), event->target, event->max_range, event->saved, event->powerLevel, event->duration);
     }
 
     // We may have just killed the target, lets check to make sure it's still alive.
@@ -770,8 +770,7 @@ psSpellAffectGameEvent::psSpellAffectGameEvent(psSpellManager *mgr,
                                    float max_range,
                                    bool saved,
                                    float powerLevel,
-                                   csTicks duration,
-                                   bool inverse)
+                                   csTicks duration)
     : psGameEvent(0, progression_delay,"psSpellAffectGameEvent")
 {
     spellmanager     = mgr;
@@ -782,7 +781,6 @@ psSpellAffectGameEvent::psSpellAffectGameEvent(psSpellManager *mgr,
     this->saved      = saved;
     this->powerLevel = powerLevel;
     this->duration   = duration;
-    this->inverse    = inverse;
 
     target->RegisterCallback( dynamic_cast< iDeleteObjectCallback *>(this) );
     caster->GetActor()->RegisterCallback( dynamic_cast< iDeleteObjectCallback *>(this) );

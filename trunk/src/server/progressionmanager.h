@@ -142,8 +142,23 @@ public:
     bool LoadScript(iDocument *doc);
     bool LoadScript(iDocumentNode *topNode);
 
-    float ForceRun();
-    float Run(gemActor *actor, gemObject *target, psItem *item, bool inverse = false);
+    float ForceRun(csTicks duration = 0);
+    /** Run this script.
+     *
+     *  @param actor The actor
+     *  @param target The target
+     *  @param item The item
+     *  @param duration The length of time to wait until the inverse script is executed. Set to 0 if this is a permanent change.
+     */
+    float Run(gemActor *actor, gemObject *target, psItem *item, csTicks duration = 0)
+    {
+        return RunScript(actor, target, item, false, duration);
+    }
+    /// This function should not exist. It is simply wrong but because of the existing system for unequipping items we need it.
+    float RunInverse(gemActor *actor, gemObject *target, psItem *item)
+    {
+        return RunScript(actor, target, item, true, 0);
+    }
     void CopyVariables(MathScript *from);
     virtual csString ToString(bool topLevel) const;
 
@@ -160,6 +175,10 @@ public:
     csString name;
 
 protected:
+    // Internal Run function that is allowed to run inverse versions of scripts
+    // Outside functions must not be allowed to invert scripts because scripts may not run to completion
+    float RunScript(gemActor *actor, gemObject *target, psItem *item, bool inverse, csTicks duration);
+    
     // saved parameters given to Run() so that we can use callbacks for delayed events
     csWeakRef<gemActor> runParamActor;
     csWeakRef<gemObject> runParamTarget;

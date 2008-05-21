@@ -238,7 +238,6 @@ class psSpellAffectGameEvent : public psGameEvent, public iDeleteObjectCallback,
     bool         saved;
     float        powerLevel;
     csTicks      duration;
-    bool         inverse;       ///< specifies if the progression script should run it's inverse or not.
     
     psSpellAffectGameEvent(psSpellManager *mgr,
                            const psSpell *spell,
@@ -248,8 +247,7 @@ class psSpellAffectGameEvent : public psGameEvent, public iDeleteObjectCallback,
                            float max_range,
                            bool saved,
                            float powerLevel,
-                           csTicks duration,
-                           bool inverse = false);
+                           csTicks duration);
 
     ~psSpellAffectGameEvent();
                          
