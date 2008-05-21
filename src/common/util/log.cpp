@@ -381,7 +381,7 @@ void LogCSV::StartLog(const char* logfile, iVFS* vfs, const char* header, size_t
 				csvFile = NULL;
                 
 				// Rolling history
-				for (int index = 4; index > 0; index--)
+				for (int index = 10; index > 0; index--)
 				{
                     csString src(logfile), dst(logfile);
                     src.Append(index);
