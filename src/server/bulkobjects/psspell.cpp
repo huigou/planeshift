@@ -637,23 +637,13 @@ bool psSpell::AffectTarget(psSpellCastGameEvent * event, csString &effectName, c
     }
     else
     {
-        if ( !PerformResult( caster, target, event->max_range, saved, event->powerLevel ) )
-        {
-            affectText->Format("%s has no effect.", name.GetData() );
-            return false;
-        }
-
         // In this case we have a spell that lasts for a period of time
         // So we want to schedule an inverse of the progression event
         // to run when the duration time is up.
-        if ( event->duration != 0 ) 
+        if ( !PerformResult( caster, target, event->max_range, saved, event->powerLevel, event->duration ) )
         {
-           psSpellAffectGameEvent *e = new psSpellAffectGameEvent( psserver->GetSpellManager(), event->spell, 
-                                                                   event->caster, event->target,
-                                                                   event->duration,
-                                                                   event->max_range, saved, event->powerLevel,
-                                                                   0,true );
-           e->QueueEvent();
+            affectText->Format("%s has no effect.", name.GetData() );
+            return false;
         }
     }
 
@@ -668,7 +658,7 @@ bool psSpell::AffectTarget(psSpellCastGameEvent * event, csString &effectName, c
     return true;
 }
 
-bool psSpell::PerformResult(gemActor *caster, gemObject *target, float max_range, bool saved, float powerLevel, bool inverse) const
+bool psSpell::PerformResult(gemActor *caster, gemObject *target, float max_range, bool saved, float powerLevel, csTicks duration) const
 {    
     float result = 0;
 
@@ -702,7 +692,7 @@ bool psSpell::PerformResult(gemActor *caster, gemObject *target, float max_range
 
             progEvent->CopyVariables(mathScript);
 
-            result = progEvent->Run(caster, target, caster->GetCharacterData()->Inventory().GetItemHeld(), inverse);
+            result = progEvent->Run(caster, target, caster->GetCharacterData()->Inventory().GetItemHeld(), duration);
             if ( !result )
             {
                 Notify2(LOG_SCRIPT, "Couldn't run the progression event \"%s\"", eventName.GetData());

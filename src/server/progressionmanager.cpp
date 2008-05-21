@@ -135,6 +135,8 @@ public:
     ProgressionOperation() { my_script=NULL; valuevar=targetvar=actorvar=NULL; value_script=delay_script=NULL; result =  0.0F;}
     virtual ~ProgressionOperation() {if (value_script) delete value_script; if (delay_script) delete delay_script; }
     void SetTicksElapsed(int ticks) { ticksElapsed = ticks; }
+    
+    /// The return value from Run is very important. If it is false it prevents the rest of the script from executing.
     virtual bool Run(gemActor *actor, gemObject *target, psItem * item, bool inverse)=0;
     virtual bool Load(iDocumentNode *node, ProgressionEvent *script)=0;
     virtual csString ToString()=0;
@@ -1523,10 +1525,6 @@ public:
                         psserver->GetProgressionManager()->QueueUndoScript(undoscript.GetData(), delay, actor, target, item, persistentID);
                     }                        
                 }
-                else
-                {
-                    return false;
-                }
                 break;
             }                
 
@@ -1728,7 +1726,7 @@ public:
         if (!object)
         {
             Error2("Error: ProgressionEvent(%s) DetachScriptOp need a target\n",eventName->GetData());
-            return 0.0;
+            return false;
         }
         
         if (event == "attack")
@@ -5091,7 +5089,10 @@ float ProgressionManager::ProcessEvent(ProgressionEvent * ev, gemActor * actor, 
       inverse ? "inverse" : "", ev->name.GetData(),(actor?actor->GetName():"(null)"),
             (target?target->GetName():"(null)"));
             
-    return ev->Run(actor, target, item, inverse);
+    if(inverse)
+        return ev->RunInverse(actor, target, item);
+    else
+        return ev->Run(actor, target, item);
 }
 
 ProgressionEvent * ProgressionManager::CreateEvent(const char *name, const char *script)
@@ -5678,7 +5679,7 @@ MathScriptVar *ProgressionEvent::FindVariable(const char *name)
     return NULL;
 }
 
-float ProgressionEvent::ForceRun()
+float ProgressionEvent::ForceRun(csTicks duration)
 {
     float result = 1.0f;
 
@@ -5709,7 +5710,7 @@ float ProgressionEvent::ForceRun()
     
     // If this script is set to run for a particular length of time. Then insert a new 
     // event that is the inverse to run.    
-    if ( durationScript != NULL )
+    if (duration == 0 && durationScript != NULL )
     {   
         size_t a;
         size_t len = variables.GetSize();
@@ -5719,8 +5720,10 @@ float ProgressionEvent::ForceRun()
             var->SetValue(variables[a]->GetValue());
         }
         durationScript->Execute();
-        csTicks duration  = (csTicks)durationVar->GetValue();        
-        
+        duration  = (csTicks)durationVar->GetValue();      
+    }
+    if(duration > 0)
+    {
         
         csString scriptStr;
         scriptStr.Format("<evt>%s</evt>", finalScript.GetData());
@@ -5768,7 +5771,7 @@ float ProgressionEvent::ForceRun()
     return result;
 }
 
-float ProgressionEvent::Run(gemActor * actor, gemObject *target, psItem * item, bool inverse)
+float ProgressionEvent::RunScript(gemActor * actor, gemObject *target, psItem * item, bool inverse, csTicks duration)
 {
     runParamActor = actor;
     runParamTarget = target;
@@ -5792,7 +5795,7 @@ float ProgressionEvent::Run(gemActor * actor, gemObject *target, psItem * item, 
 
     if (delay <= 0)
     {
-        return ForceRun();
+        return ForceRun(duration);
     }
 
     // schedule a delay

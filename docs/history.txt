@@ -1,3 +1,8 @@
+*** 2008-05-21 by Andrew Dai
+- Fixed critical bugs in the spell system which involved undo scripts
+  being applied wrongly so breaking many spells if they were cast more than
+  once.
+
 *** 2008-05-20 by Kenny Graunke
 - Improvements to the /quest command:
   - Syntax is now "/quest [discard|complete]" rather than "/quest [0|1]".
