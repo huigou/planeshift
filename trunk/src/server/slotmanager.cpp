@@ -158,7 +158,7 @@ void SlotManager::MoveFromWorldContainer(psSlotMovementMsg& msg, Client *fromCli
 
     if (!itemProposed)
     {
-        Error4("Cannot find any item in slot %d for container %s(%d).", msg.fromSlot, parentItem->GetName(), parentItem->GetUID());
+        Error5("Cannot find any item in slot %d for container %s(%d) range of player is %g.", msg.fromSlot, parentItem->GetName(), parentItem->GetUID(), fromClient->GetActor()->RangeTo(worldContainer, true));
         return;
     }
 
