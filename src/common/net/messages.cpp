@@ -930,7 +930,7 @@ psGuildCmdMessage::psGuildCmdMessage(MsgEntry *message)
 
     command = words[0];
 
-    if (command == "/newguild" || command == "/endguild" || command == "/guildname" || command == "/guildpoints" )
+    if (command == "/newguild" || command == "/endguild" || command == "/guildname" || command == "/guildpoints" || command == "/allianceleader")
     {
         guildname = words.GetTail(1);
         return;
@@ -977,7 +977,7 @@ psGuildCmdMessage::psGuildCmdMessage(MsgEntry *message)
         motd = words.GetTail(1);
         return;
     }
-    if (command == "/newalliance" || command == "/allianceremove" || command == "/allianceleader")
+    if (command == "/newalliance" || command == "/allianceremove")
     {
         alliancename = words.GetTail(1);
         return;
