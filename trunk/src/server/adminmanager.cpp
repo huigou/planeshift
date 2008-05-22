@@ -3784,7 +3784,7 @@ void AdminManager::CreateItem(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
                       stackCount,
                       false,
                       false,
-                      0,
+                      "",
                       0,
                       true,
                       true,
