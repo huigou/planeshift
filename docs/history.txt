@@ -1,3 +1,7 @@
+*** 2008-05-22 by Steven Patrick
+- Fixed FS#1561, length requirement for advisors removed.
+- Fixed FS#1559, no advisor message changed from suggesting using /shout (which no one will hear in the tutorial) to ask in IRC/forums or use /tell.
+
 *** 2008-05-22 by Andrew Dai
 - Refactored the /item command so now the gui version shares the same code.
 - Added the /money command to create money.
