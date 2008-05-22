@@ -188,6 +188,8 @@ FactoryIndexEntry* ClientCacheManager::GetFactoryEntry(const char* filename)
         iMeshFactoryWrapper* meshW = psengine->GetEngine()->GetMeshFactories()->FindByName(indexEntry->factname);
         if(meshW)
         {
+            // Disable decals on all movable meshes. Make more specific if/when we need this and it works.
+            meshW->GetFlags().Set(CS_ENTITY_NODECAL);
             indexEntry->factory = meshW;
             indexEntry->loaded = true;
             return indexEntry;
