@@ -497,7 +497,7 @@ void AdviceManager::HandleAdviceRequest( Client *advisee, csString message )
     if ( advisors.GetSize() == 0 )                             //No advisors are online
     {
         //Send back an message that there is no advisor online
-        psserver->SendSystemInfo( advisee->GetClientNum(),"The world has no advisors at the moment. You are now allowed to shout your question to other players. You can do it this way \"/shout <question here>\".");
+        psserver->SendSystemInfo( advisee->GetClientNum(),"The world has no advisors at the moment. You may ask for further help on IRC or on our forums. You may also try to ask players around you for help with \"/tell <player name> <message>\".");
         return;
     }
 
@@ -693,11 +693,11 @@ void AdviceManager::HandleAdviceResponse( Client *advisor, csString sAdvisee, cs
         if ( activeSession->GetAdvisor() == NULL || activeSession->status != SESSION_STATUS_OWNED )
         {
             // Check to make sure the advice is 'good'
-            if ( message.Length() < 20 )
-            {
-                psserver->SendSystemInfo(advisor->GetClientNum(), "Please be more specific when answering questions. Your advice has been ignored.");
-                return;            
-            }
+            // if ( message.Length() < 20 )
+            // {
+                // psserver->SendSystemInfo(advisor->GetClientNum(), "Please be more specific when answering questions. Your advice has been ignored.");
+                // return;            
+            // }
 
             //activeSession->AdvisorClientNum = me->clientnum;
             activeSession->SetAdvisor( advisor );
