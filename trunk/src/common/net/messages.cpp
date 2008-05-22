@@ -6066,7 +6066,9 @@ psGMSpawnItem::psGMSpawnItem(const char* item,
                              const char* lskill,
                              int lstr,
                              bool pickupable,
-                             bool collidable
+                             bool collidable,
+                             bool random,
+                             float quality
                              )
 {
     msg.AttachNew(new MsgEntry(
@@ -6078,6 +6080,8 @@ psGMSpawnItem::psGMSpawnItem(const char* item,
                         + sizeof(int32_t) // lstr
                         + sizeof(bool) // pickupable
                         + sizeof(bool) // collidable
+                        + sizeof(bool) // random
+                        + sizeof(float) // quality
                       ));
 
     msg->SetType(MSGTYPE_GMSPAWNITEM);
@@ -6090,6 +6094,8 @@ psGMSpawnItem::psGMSpawnItem(const char* item,
     msg->Add( (int32_t)lstr );
     msg->Add( pickupable );
     msg->Add( collidable );
+    msg->Add(random);
+                  msg->Add(quality);
 }
 
 psGMSpawnItem::psGMSpawnItem(MsgEntry *me)
@@ -6102,13 +6108,15 @@ psGMSpawnItem::psGMSpawnItem(MsgEntry *me)
     lstr = me->GetInt32();
     pickupable = me->GetBool();
     collidable = me->GetBool();
+    random = me->GetBool();
+    quality = me->GetFloat();
 }
 
 csString psGMSpawnItem::ToString(AccessPointers * /*access_ptrs*/)
 {
     csString msgtext;
 
-    msgtext.AppendFmt("Item: '%s' Count: %d Lockable: %s, Is %s, Skill: '%s' Str: %d Pickupable: %s Collidable: %s",
+    msgtext.AppendFmt("Item: '%s' Count: %d Lockable: %s, Is %s, Skill: '%s' Str: %d Pickupable: %s Collidable: %s Random: %s Quality %f",
         item.GetDataSafe(),
         count,
         (lockable ? "True" : "False"),
@@ -6116,7 +6124,9 @@ csString psGMSpawnItem::ToString(AccessPointers * /*access_ptrs*/)
         lskill.GetDataSafe(),
         lstr,
         (pickupable ? "True" : "False"),
-        (collidable ? "True" : "False"));
+        (collidable ? "True" : "False"),
+        (random ? "True" : "False"),
+        quality);
 
     return msgtext;
 }

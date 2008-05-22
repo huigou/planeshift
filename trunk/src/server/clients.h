@@ -84,7 +84,7 @@ public:
     /// Find by player id
     Client *FindPlayer(unsigned int playerID);
     /// Find by account id
-    Client *FindAccount(int accountID, uint32_t excludeClient = -1);
+    Client *FindAccount(int accountID, uint32_t excludeClient = 0);
     /// Find by IP addr and Port
     Client *Find(LPSOCKADDR_IN addr);
     

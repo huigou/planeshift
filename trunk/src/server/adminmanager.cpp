@@ -284,6 +284,25 @@ bool AdminManager::AdminCmdData::DecodeAdminCmdMessage(MsgEntry *pMsg, psAdminCm
         }
         return true;
     }
+    else if (command == "/money")
+    {
+        item = words[1];
+        random = 0;
+        value = 0;
+        
+        if (words.GetCount()>2)
+        {
+            if (words[2]=="random")
+            {
+                random = 1;
+            }
+            else
+            {
+                value = words.GetInt(2);
+            }
+        }
+        return true;
+    }
     else if (command == "/key")
     {
         subCmd = words[1];
@@ -1062,6 +1081,10 @@ void AdminManager::HandleAdminCmdMessage(MsgEntry *me, psAdminCmdMessage &msg, A
         {
             SendSpawnTypes(me,msg,data,client);
         }
+    }
+    else if (data.command == "/money")
+    {
+        CreateMoney(me,msg,data,client);
     }
     else if (data.command == "/key")
     {
@@ -3746,14 +3769,6 @@ void AdminManager::CreateNPC(MsgEntry* me,psAdminCmdMessage& msg, AdminCmdData& 
 
 void AdminManager::CreateItem(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data,Client *client)
 {
-    csVector3 pos;
-    iSector*  sector = 0;
-    float angle;
-    INSTANCE_ID instance;
-
-    client->GetActor()->GetPosition(pos, angle, sector);
-    instance = client->GetActor()->GetInstance();
-
     if (data.item == "help")
     {
         psserver->SendSystemError(me->clientnum, "Syntax: /item or /item <name>|[help] [random] [<quality>]");
@@ -3764,105 +3779,56 @@ void AdminManager::CreateItem(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
 
     // TODO: Get number of items to create from client
     int stackCount = 1;
-    if (CreateItem((const char*)data.item,pos.x,pos.y,pos.z,angle,sector->QueryObject()->GetName(),instance,stackCount,data.random,data.value, client))
-    {
-        psserver->SendSystemInfo(me->clientnum, "New item %s added!",data.item.GetData());
-    }
-    else
-    {
-        psserver->SendSystemError(me->clientnum, "Can't create item %s!",data.item.GetData());
-    }
+    psGMSpawnItem spawnMsg(
+                      data.item,
+                      stackCount,
+                      false,
+                      false,
+                      0,
+                      0,
+                      true,
+                      true,
+                      data.random,
+                      data.value
+                      );
+    SpawnItemInv(me, spawnMsg, client);
 }
 
-bool AdminManager::CreateItem(const char * name, double xPos, double yPos, double zPos, float angle, const char * sector, unsigned int instance, int stackCount, int random, int value, Client *client)
+void AdminManager::CreateMoney(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data,Client *client)
 {
-    psSectorInfo *sectorinfo = CacheManager::GetSingleton().GetSectorInfoByName(sector);
-    if (sectorinfo==NULL)
-    {
-        psserver->SendSystemError(client->GetClientNum(), "'%s' was not found as a valid sector.",sector);
-        return false;
-    }
-
-    if ( name == NULL )
-    {
-         psserver->SendSystemError(client->GetClientNum(), "No item name was given" );
-        return false;
-    }
+    bool valid = true;
+    Money_Slots type;
     
-    // retrieve base stats item
-    psItemStats *basestats=CacheManager::GetSingleton().GetBasicItemStatsByName(name);
-    if (basestats==NULL)
+    if(data.item == "trias")
+        type = MONEY_TRIAS;
+    else if(data.item == "hexas")
+        type = MONEY_HEXAS;
+    else if(data.item == "octas")
+        type = MONEY_OCTAS;
+    else if(data.item == "circles")
+        type = MONEY_CIRCLES;
+    else
+        valid = false;
+       
+    if (valid == false || (data.value == 0 && data.random == 0))
     {
-         psserver->SendSystemError(client->GetClientNum(), "'%s' was not found as a valid base item.",name);
-        return false;
+        psserver->SendSystemError(me->clientnum, "Syntax: /money <circles|hexas|octas|trias> <random|quantity>");
+        return;
     }
 
-    // cant create personalised or unique items
-    if (basestats->GetBuyPersonalise() || basestats->GetUnique())
-    {
-        psserver->SendSystemError(client->GetClientNum(), "'%s' is a personalised or unique item.", name);
-       return false;
-    }
     
-    // creating money items will confuse the server into creating the money in the db then deleting it again when adding to the inventory
-    if(basestats->IsMoney())
-    {
-        psserver->SendSystemError(client->GetClientNum(), "Creating money items is not permitted.");
-        return false;
-    }
-
-    psItem *newitem = NULL;
-
-    // randomize if requested
-    if (random) 
-    {
-        LootRandomizer* lootRandomizer = psserver->GetSpawnManager()->GetLootRandomizer();
-        psItemStats *newstats = lootRandomizer->RandomizeItem( basestats, value );
-        newitem = newstats->InstantiateBasicItem(true);
-    } 
-    else
-    {
-        newitem = basestats->InstantiateBasicItem(true);
-    }
-
-    if (value > 0)
-    {
-        newitem->SetItemQuality((float)value);
-        // Setting craftet quality as well if quality given by user
-        newitem->SetMaxItemQuality((float)value);
-    }
-    else
-    {
-        newitem->SetItemQuality(basestats->GetQuality());
-    }
-        
-
-    if (newitem==NULL)
-    {
-        Error2("Could not instantiate from base item '%s'.",name);
-        return false;
-    }
-
-    newitem->SetStackCount(stackCount);
-
-    // try to put into inventory
-    if (!client->GetActor()->GetCharacterData()->Inventory().Add(newitem))
-    {
-        // else drop it into the world & guard it
-        newitem->SetLocationInWorld(instance,sectorinfo,xPos,yPos,zPos,angle);
-        newitem->SetGuardingCharacterID(client->GetActor()->GetCharacterData()->GetCharacterID());
-
-        if (!EntityManager::GetSingleton().CreateItem(newitem, true))
-        {
-            delete newitem;
-            return false;
-        }
-    }
-
-    newitem->SetLoaded();  // Item is fully created
-    newitem->Save(false);    // First save
-
-    return true;
+    psCharacter* charData = client->GetCharacterData();
+    
+    int quantity = psserver->rng->Get(INT_MAX-1)+1;
+    
+    psMoney money;
+    
+    money.Set(type, quantity);
+    
+    Debug4(LOG_ADMIN,me->clientnum,  "Created %d %s for %s\n", quantity, data.item.GetDataSafe(), charData->GetCharName());
+    
+    charData->AdjustMoney(money, false);
+    
 }
 
 void AdminManager::RunScript(MsgEntry *me, psAdminCmdMessage& msg, AdminCmdData& data,Client *client)
@@ -5629,7 +5595,7 @@ void AdminManager::SendSpawnItems (MsgEntry* me, psGMSpawnItems& msg,Client *cli
     {
         unsigned id = result[i].GetUInt32(0);
         psItemStats* item = CacheManager::GetSingleton().GetBasicItemStatsByID(id);
-        if(item)
+        if(item && !item->IsMoney())
         {
             csString name(item->GetName());
             csString mesh(item->GetMeshName());
@@ -5678,6 +5644,13 @@ void AdminManager::SpawnItemInv(MsgEntry* me, psGMSpawnItem& msg,Client *client)
         psserver->SendSystemError(me->clientnum, "Couldn't find basic stats for that item!");
         return;
     }
+    
+    // creating money items will confuse the server into creating the money in the db then deleting it again when adding to the inventory
+    if(stats->IsMoney())
+    {
+        psserver->SendSystemError(me->clientnum, "Spawning money items is not permitted. Use /money instead");
+        return;
+    }
 
     // Check skill
     PSSKILL skill = CacheManager::GetSingleton().ConvertSkillString(msg.lskill);
@@ -5700,15 +5673,30 @@ void AdminManager::SpawnItemInv(MsgEntry* me, psGMSpawnItem& msg,Client *client)
         psserver->SendSystemError(me->clientnum, "Cannot spawn personalised item!");
         return;
     }
-
-    // Create the new item
-    psItem *item = stats->InstantiateBasicItem();
+    // randomize if requested
+    if (msg.random) 
+    {
+        LootRandomizer* lootRandomizer = psserver->GetSpawnManager()->GetLootRandomizer();
+        stats = lootRandomizer->RandomizeItem( stats, msg.quality );
+    } 
+    psItem* item = stats->InstantiateBasicItem();
 
     item->SetStackCount(msg.count);
     item->SetIsLockable(msg.lockable);
     item->SetIsLocked(msg.locked);
     item->SetIsPickupable(msg.pickupable);
     item->SetIsCD(msg.collidable);
+    
+    if (msg.quality > 0)
+    {
+        item->SetItemQuality(msg.quality);
+        // Setting craftet quality as well if quality given by user
+        item->SetMaxItemQuality(msg.quality);
+    }
+    else
+    {
+        item->SetItemQuality(stats->GetQuality());
+    }
 
     if (msg.lockable)
     {        
