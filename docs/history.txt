@@ -1,3 +1,6 @@
+*** 2008-05-22 by Mike Gist
+- Disabled decals on movable meshes. This doesn't work yet.
+
 *** 2008-05-22 by Steven Patrick
 - Fixed FS#1509, patch by kougaro
 - Fixed FS#1542, patch by peeg
