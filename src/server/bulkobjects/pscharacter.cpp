@@ -1674,12 +1674,12 @@ void psCharacter::SaveMoney(bool bank)
 
     if(bank)
     {
-        sql.AppendFmt("update characters set bank_money_circles=%u, bank_money_trias=%u, bank_money_hexas=%u, bank_money_octas=%u where id=%u",
+        sql.AppendFmt("update characters set bank_money_circles=%d, bank_money_trias=%d, bank_money_hexas=%d, bank_money_octas=%d where id=%u",
                       bankMoney.GetCircles(), bankMoney.GetTrias(), bankMoney.GetHexas(), bankMoney.GetOctas(), GetCharacterID());
     }
     else
     {
-        sql.AppendFmt("update characters set money_circles=%u, money_trias=%u, money_hexas=%u, money_octas=%u where id=%u",
+        sql.AppendFmt("update characters set money_circles=%d, money_trias=%d, money_hexas=%d, money_octas=%d where id=%u",
                       money.GetCircles(), money.GetTrias(), money.GetHexas(), money.GetOctas(), GetCharacterID());
     }
 

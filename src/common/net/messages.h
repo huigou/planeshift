@@ -43,7 +43,7 @@ class psLinearMovement;
 
 // This holds the version number of the network code, remember to increase
 // this each time you do an update which breaks compatibility
-#define PS_NETVERSION   0x008A
+#define PS_NETVERSION   0x008B
 // Remember to bump the version in pscssetup.h, as well.
 
 // NPC Networking version is separate so we don't have to break compatibility
@@ -4269,7 +4269,9 @@ public:
         const char* lskill,
         int lstr,
         bool pickupable,
-	bool collidable);
+	bool collidable,
+    bool random = false,
+    float quality = 0.0f);
 
     psGMSpawnItem( MsgEntry* me );
 
@@ -4289,6 +4291,8 @@ public:
 
     csString lskill;
     int lstr;
+    bool random;
+    float quality;
 };
 
 class psLootRemoveMessage : public psMessageCracker

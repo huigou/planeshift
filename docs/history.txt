@@ -1,3 +1,8 @@
+*** 2008-05-22 by Andrew Dai
+- Refactored the /item command so now the gui version shares the same code.
+- Added the /money command to create money.
+- Bumped NETVERSION!
+
 *** 2008-05-22 by Mike Gist
 - Disabled decals on movable meshes. This doesn't work yet.
 
