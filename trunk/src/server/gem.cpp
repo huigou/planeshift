@@ -3167,9 +3167,7 @@ void gemActor::SendBehaviorMessage(const csString & msg_id, gemObject *actor)
 
             int options = 0;
 
-            csString desc = this->GetCharacterData()->GetDescription();
-            if( !desc.IsEmpty() )
-                options |= psGUIInteractMessage::PLAYERDESC;
+            options |= psGUIInteractMessage::PLAYERDESC;
 
             // Get the actor who is targetting. The target is *this.
             gemActor* activeActor = dynamic_cast<gemActor*>(actor);

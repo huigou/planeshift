@@ -1,3 +1,7 @@
+*** 2008-05-22 by Steven Patrick
+- Fixed FS#1509, patch by kougaro
+- Fixed FS#1542, patch by Vornne
+
 *** 2008-05-21 by Andrew Dai
 - Fixed critical bugs in the spell system which involved undo scripts
   being applied wrongly so breaking many spells if they were cast more than
