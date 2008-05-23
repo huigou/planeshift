@@ -1,3 +1,6 @@
+*** 2008-05-23 by Mike Gist
+- Fixed server assert caused by a boolean not being set right.
+
 *** 2008-05-22 by Steven Patrick
 - Fixed FS#1561, length requirement for advisors removed.
 - Fixed FS#1559, no advisor message changed from suggesting using /shout (which no one will hear in the tutorial) to ask in IRC/forums or use /tell.
