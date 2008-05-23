@@ -372,12 +372,12 @@ bool psItem::Load(iResultRow& row)
         //        printf("KWF: Item instance=%d\n", instance);
 
         psSectorInfo *itemsector=CacheManager::GetSingleton().GetSectorInfoByID(row.GetInt("loc_sector_id"));
-        if (!itemsector && row.GetUInt32("parent_item_id") == 0 )
+        if (!itemsector)
         {
             csString error;
             error.Format("Item %s(%s) Could not be loaded\nIt is in sector id %s which does not resolve\n",
                GetName(), row["id"], row["loc_sector_id"] );
-            Error1( error );   
+            Error1( error );
             return false;
         }
 
