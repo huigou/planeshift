@@ -3791,6 +3791,18 @@ void AdminManager::CreateItem(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
                       data.random,
                       data.value
                       );
+    
+    // Copy these items into the correct fields
+    spawnMsg.item = data.item;
+    spawnMsg.count = stackCount;
+    spawnMsg.lockable = spawnMsg.locked = false;
+    spawnMsg.pickupable = spawnMsg.collidable = true;
+    spawnMsg.lskill = "";
+    spawnMsg.lstr = 0;
+    spawnMsg.random = data.random;
+    spawnMsg.quality = data.value;
+    
+    // Spawn using this message
     SpawnItemInv(me, spawnMsg, client);
 }
 
