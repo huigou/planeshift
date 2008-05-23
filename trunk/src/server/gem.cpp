@@ -745,9 +745,10 @@ bool gemObject::InitMesh(const char *name,
     csRef<iMeshWrapper> mesh = engine->GetMeshes()->FindByName(factname);
     if(!mesh)
     {
-        bool failed = false;
+        bool failed = true;
         if(vfs->Exists(filename))
         {
+            failed = false;
             while(!failed)
             {
                 csRef<iDocument> doc = ParseFile(psserver->GetObjectReg(), filename);
