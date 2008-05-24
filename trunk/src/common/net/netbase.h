@@ -35,7 +35,7 @@
 
 #define NUM_BROADCAST        0xffffffff
 #define MAXQUEUESIZE        20000
-#define MAXPACKETHISTORY    200
+#define MAXPACKETHISTORY    400
 #define NETAVGCOUNT 400
 #define RESENDAVGCOUNT 200
 

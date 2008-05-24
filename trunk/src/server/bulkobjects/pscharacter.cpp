@@ -85,7 +85,7 @@ const char *psCharacter::characterTypeName[] = { "player", "npc", "pet" };
 PoolAllocator<psCharacter> psCharacter::characterpool;
 
 const char * psCharacter::player_mode_to_str[] =
- {"unknown","peace","combat","spell casting","working","dead","sitting","carrying too much","exhausted"};
+ {"unknown","peace","combat","spell casting","working","dead","sitting","carrying too much","exhausted", "defeated"};
 
 void *psCharacter::operator new(size_t allocSize)
 {
