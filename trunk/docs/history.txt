@@ -1,3 +1,7 @@
+*** 2008-05-24 by Andrew Dai
+- Fixed server crash when printing mode strings.
+- Doubled packet history to better handle doubled packets.
+
 *** 2008-05-24 by Steven Patrick
 - Fixed FS#1410, patch by ThomPhoenix
 
