@@ -78,6 +78,7 @@ class GUIHandler;
 struct DelayedLoader
 {
     virtual void CheckMeshLoad() = 0;
+    virtual ~DelayedLoader() { };
 };
 
 /**
