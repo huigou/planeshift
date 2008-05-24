@@ -3,7 +3,7 @@
             <!-- ContextMenu="data/gui/chatmenu.xml" disabled until its finished -->
         <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="8" />
         <frame x="360" y="300" width="330" height="122" border="no" />
-        <minframe width="475" height="190" />
+        <minframe width="280" height="110" />
         <bgimage resource="Chat Background" alpha="128" />
         <title resource="Nanaki Title Bar" text="Communication" align="left" close_button="yes"/>
         <childborders>
@@ -15,6 +15,7 @@
         </childborders>
         
         <widget name="InputText" factory="pawsEditTextBox">
+		<font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="9" scalefont="no" />
             <frame x="18" y="90" width="287" height="15" border="no" />
             <attachpoints>
                 <attach point="ATTACH_RIGHT" />
@@ -25,7 +26,7 @@
         </widget>
 
         <widget name="Chat Tabs" factory="pawsTabWindow">
-		<font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="10" scalefont="no" />
+		<font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="9" scalefont="no" />
             <frame x="6" y="2" width="330" height="100" border="no" />
             <attachpoints>
                 <attach point="ATTACH_RIGHT" />
@@ -41,6 +42,7 @@
                 <colour r="220" g="220" b="220" />
             </childborders>
             <widget name="Main Button" factory="pawsButton" toggle="yes" id="1000" shadows="yes">
+				<font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="8" scalefont="yes" />
                 <frame x="19" y="0" width="25" height="16" border="no" />
                 <buttonup resource="Chat Tab Button Up" />
                 <buttondown resource="Chat Tab Button Down" />
@@ -54,6 +56,7 @@
                 <label text="Main" />
             </widget>
             <widget name="NPC Button" factory="pawsButton" toggle="yes" id="1002" shadows="yes">
+				<font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="8" scalefont="yes" />
                 <frame x="45" y="0" width="30" height="16" border="no" />
                 <buttonup resource="Chat Tab Button Up" />
                 <buttondown resource="Chat Tab Button Down" />
@@ -67,6 +70,7 @@
                 <label text="NPC" />
             </widget>
             <widget name="Tell Button" factory="pawsButton" toggle="yes" id="1003" shadows="yes">
+				<font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="8" scalefont="yes" />
                 <frame x="76" y="0" width="30" height="16" border="no" />
                 <buttonup resource="Chat Tab Button Up" />
                 <buttondown resource="Chat Tab Button Down" />
@@ -80,6 +84,7 @@
                 <label text="Tells" />
             </widget>
             <widget name="Guild Button" factory="pawsButton" toggle="yes" id="1004" shadows="yes">
+				<font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="8" scalefont="yes" />
                 <frame x="107" y="0" width="35" height="16" border="no" />
                 <buttonup resource="Chat Tab Button Up" />
                 <buttondown resource="Chat Tab Button Down" />
@@ -93,6 +98,7 @@
                 <label text="Guild" />
             </widget>
             <widget name="Group Button" factory="pawsButton" toggle="yes" id="1005" shadows="yes">
+				<font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="8" scalefont="yes" />
                 <frame x="143" y="0" width="35" height="16" border="no" />
                 <buttonup resource="Chat Tab Button Up" />
                 <buttondown resource="Chat Tab Button Down" />
@@ -106,6 +112,7 @@
                 <label text="Group" />
             </widget>
             <widget name="Auction Button" factory="pawsButton" toggle="yes" id="1006" shadows="yes">
+				<font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="8" scalefont="yes" />
                 <frame x="179" y="0" width="40" height="16" border="no" />
                 <buttonup resource="Chat Tab Button Up" />
                 <buttondown resource="Chat Tab Button Down" />
@@ -119,6 +126,7 @@
                 <label text="Auction" />
             </widget>
             <widget name="System Button" factory="pawsButton" toggle="yes" id="1001" shadows="yes">
+				<font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="8" scalefont="yes" />
                 <frame x="220" y="0" width="45" height="16" border="no" />
                 <buttonup resource="Chat Tab Button Up" />
 				<buttondown resource="Chat Tab Button Down" />
@@ -132,6 +140,7 @@
                 <label text="System" />
             </widget>
              <widget name="Help Button" factory="pawsButton" toggle="yes" id="1007" shadows="yes">
+			 	<font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="8" scalefont="yes" />
                  <frame x="285" y="0" width="30" height="16" border="no" />
                  <buttonup resource="Chat Tab Button Up" />
                  <buttondown resource="Chat Tab Button Down" />
