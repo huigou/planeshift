@@ -1,3 +1,6 @@
+*** 2008-05-24 by Steven Patrick
+- Fixed FS#1410, patch by ThomPhoenix
+
 *** 2008-05-23 by Mike Gist
 - Fixed server assert caused by a boolean not being set right.
 
