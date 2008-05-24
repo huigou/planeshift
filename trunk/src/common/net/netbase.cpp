@@ -510,11 +510,6 @@ bool NetBase::SendMergedPackets(NetPacketQueue *q)
             // A failed append means that the packet can't fit or is a resent packet.
             // Resent packets MUST NOT be merged because it circumvents clientside packet dup
             // detection
-            // Set a random ID for the new merged packet
-            if(final->packet->pktid == 0)
-            {
-                final->packet->pktid = GetRandomID();
-            }
             SendSinglePacket(final);
             
             // Start the process again with the packet that wouldn't fit
@@ -523,9 +518,6 @@ bool NetBase::SendMergedPackets(NetPacketQueue *q)
     }
 
     // There is always data in final here
-    // Set a random ID for the new merged packet if this is a merged packet (pktid==0)
-    if (final->packet->pktid == 0)
-        final->packet->pktid = GetRandomID();
     SendSinglePacket(final);  // this deletes if necessary
 
     return true;
@@ -571,7 +563,10 @@ bool NetBase::SendFinalPacket(psNetPacketEntry *pkt)
 #endif
         return false;
     }
-
+    if(pkt->packet->pktid == 0)
+    {
+        pkt->packet->pktid = connection->GetNextPacketID();
+    }
     return SendFinalPacket(pkt,&(connection->addr));
     
 }
@@ -968,7 +963,8 @@ bool NetBase::SendMessage(MsgEntry* me,NetPacketQueueRefCount *queue)
         
 #ifndef CS_PLATFORM_WIN32
         // tell the network code there is a transmission waiting, this minimises lag time for sending network messages
-        write(pipe_fd[1], &notify, 1);
+        if(pipe_fd[1] > 0)
+            write(pipe_fd[1], &notify, 1);
 #endif
         
         bytesleft -= pktlen;
@@ -1262,7 +1258,7 @@ uint32_t NetBase::GetRandomID()
 
 // --------------------------------------------------------------------------
 
-NetBase::Connection::Connection(uint32_t num)
+NetBase::Connection::Connection(uint32_t num): sequence(1)
 {
     pcknumin=0;
     pcknumout=0;

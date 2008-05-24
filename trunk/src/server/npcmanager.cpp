@@ -560,7 +560,7 @@ void NPCManager::HandleAuthentRequest(MsgEntry *me)
 
     // CHECK 4: Check to see if the login is correct.
 
-    Error2("Check Superclient Login for: '%s'\n", (const char*)msg.sUser);
+    Notify2(LOG_SUPERCLIENT, "Check Superclient Login for: '%s'\n", (const char*)msg.sUser);
     psAccountInfo *acctinfo=CacheManager::GetSingleton().GetAccountInfoByUsername((const char *)msg.sUser);
     
     if (clients->FindAccount(acctinfo->accountid, client->GetClientNum()))  // username already logged in

@@ -368,14 +368,15 @@ protected:
         FD_ZERO (&set);
         FD_SET (mysocket, &set);
 #ifndef CS_PLATFORM_WIN32
-        FD_SET (pipe_fd[0], &set);
+        if(pipe_fd[0] > 0)
+            FD_SET (pipe_fd[0], &set);
 #endif
         
         // Backup the timeval struct in case select changes it as on Linux
         struct timeval prevTimeout = timeout;
 
         /* select returns 0 if timeout, 1 if input available, -1 if error. */
-        if (SOCK_SELECT(MAX(mysocket, pipe_fd[0]) + 1, &set, NULL, NULL, &timeout) < 1)
+        if (SOCK_SELECT(MAX(mysocket + 1, pipe_fd[0]) + 1, &set, NULL, NULL, &timeout) < 1)
         {
             timeout = prevTimeout;
             return 0;
@@ -584,6 +585,7 @@ private:
 /** This class holds data for a connection */
 class NetBase::Connection
 {
+    uint32_t sequence;
 public:
     /** buffer for split up packets, allocated when needed */
     void *buf;
@@ -611,6 +613,8 @@ public:
     ~Connection();
     bool isValid() const
     { return valid; }
+    
+    uint32_t GetNextPacketID() {return sequence++;}
 };
 
 class NetPacketQueueRefCount : public NetPacketQueue, public csSyncRefCount, public CS::Utility::WeakReferenced
