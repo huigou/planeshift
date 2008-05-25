@@ -90,12 +90,12 @@ bool psSpell::Load(iResultRow& row)
     if(!offensive)
     {
         errorMsg.Format("Non-offensive spell '%s' cannot be cast on friends!", (const char *) name);
-        CS_ASSERT_MSG(errorMsg, spell_target & TARGET_FRIEND > 0);
+        CS_ASSERT_MSG(errorMsg, (spell_target & TARGET_FRIEND) > 0);
     }
     else
     {
         errorMsg.Format("Offensive spell '%s' cannot be cast on enemies!", (const char *) name);
-        CS_ASSERT_MSG(errorMsg, spell_target & TARGET_PVP > 0);
+        CS_ASSERT_MSG(errorMsg, (spell_target & TARGET_PVP) > 0);
     }
 
     npcSpellCategoryID    = row.GetInt("cstr_npc_spell_category");
