@@ -327,7 +327,7 @@ psSpellCastGameEvent *psSpell::Cast(psSpellManager * mgr, Client * client, csStr
 
     // Check if this spell needs a target and if so, it is the correct type
     if ( (( ( spell_target & TARGET_NONE ) == 0 ) && ( ( spell_target & target_type) == 0) && !client->IsGM())
-        || (client->IsGM() && (spell_target & TARGET_ITEM > 0) && (target_type & TARGET_ITEM > 0)))
+        || (client->IsGM() && (spell_target & TARGET_ITEM == 0) && (target_type == TARGET_ITEM)))
     {
         csString targetTypeName;
         client->GetTargetTypeName( spell_target, targetTypeName );
