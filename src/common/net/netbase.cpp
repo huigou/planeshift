@@ -49,8 +49,6 @@
 
 int NetBase::socklibrefcount=0;
 
-#define PSMIN(a,b) ((a<b)?a:b)
-
 // warning: this messes your logs with much data
 //#define PACKETDEBUG
 
@@ -929,21 +927,27 @@ bool NetBase::SendMessage(MsgEntry* me,NetPacketQueueRefCount *queue)
 
     size_t bytesleft = me->bytes->GetTotalSize();
     size_t offset    = 0;
+    uint32_t id = 0;
 
     if (!queue)
         queue = NetworkQueue;
 
     LogMessages('S',me);
     
+    // fragments must have the same packet id, this needs to be fixed to use sequential numbering at some time in the future
+    if(bytesleft > MAXPACKETSIZE-sizeof(struct psNetPacket))
+        id = GetRandomID();
+
+    
     while (bytesleft > 0)
     {
         // The pktlen does not include the length of the headers, but the MAXPACKETSIZE does
-        size_t pktlen = PSMIN(MAXPACKETSIZE-sizeof(struct psNetPacket), bytesleft);
+        size_t pktlen = MIN(MAXPACKETSIZE-sizeof(struct psNetPacket), bytesleft);
         char notify = '!';
 
         psNetPacketEntry *pNewPkt = new psNetPacketEntry(me->priority, 
             me->clientnum, 
-            0, 
+            id, 
             (uint16_t)offset,
             (uint16_t)me->bytes->GetTotalSize(), 
             (uint16_t)pktlen, 
