@@ -33,7 +33,7 @@
 #include "util/fileutil.h"
 
 /* To be incremented every time we want to make an update. */
-#define UPDATER_VERSION 4
+#define UPDATER_VERSION 5
 
 struct iConfigManager;
 struct iVFS;

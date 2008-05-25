@@ -23,7 +23,7 @@
 
 #include "download.h"
 
-int ProgressCallback(int progress, int finalSize)
+static int ProgressCallback(int progress, int finalSize)
 {
     static int lastSize = 0;
     
@@ -32,6 +32,8 @@ int ProgressCallback(int progress, int finalSize)
         if(finalSize > 102400)
         {
             printf("\n0%% ");
+            if(progress == 0)
+                progress++;
             lastSize = progress;
         }
     }
