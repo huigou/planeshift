@@ -908,8 +908,14 @@ UPDATE `server_options` SET `option_value`='1184' WHERE `option_name`='db_versio
 CREATE TABLE `wc_cmdlog` (`id` int(10) NOT NULL auto_increment, `username` varchar(100) NOT NULL, `query` text , `date` datetime , UNIQUE KEY `id` (`id`));
 UPDATE `server_options` SET `option_value`='1185' WHERE `option_name`='db_version';
 
+#### 1186 - Steven Patrick - Adding range and amount for /crystal
+ALTER TABLE `hunt_locations` ADD COLUMN `amount` INTEGER UNSIGNED NOT NULL DEFAULT 1 AFTER `sector`,
+ ADD COLUMN `range` DOUBLE(10,2) UNSIGNED NOT NULL DEFAULT '0.00' AFTER `amount`;
+UPDATE `server_options` SET `option_value`='1186' WHERE `option_name`='db_version';
+
 # Insert your upgrade before this line. Remember when you set a new db_version
 # to update the server_options.sql file and update psserver.cpp as well.
 # This to ensure that everything is working if you use the create_all.sql to
 # create a new fresh DB.
+
 

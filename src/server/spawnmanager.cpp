@@ -393,9 +393,12 @@ void SpawnManager::LoadHuntLocations(psSectorInfo *sectorinfo)
     csString query;
     
     if ( sectorinfo )
-        query.Format("SELECT * FROM hunt_locations WHERE sector='%s'", sectorinfo->name.GetData() );
+    {
+        query.Format("SELECT h.*,i.name FROM hunt_locations h JOIN item_stats i ON i.id = h.itemid WHERE sector='%s'", 
+            sectorinfo->name.GetData());
+    }
     else
-        query = "SELECT * FROM hunt_locations";
+        query = "SELECT h.*,i.name FROM hunt_locations h JOIN item_stats i ON i.id = h.itemid";
                 
     Result result(db->Select(query));
     
@@ -414,6 +417,9 @@ void SpawnManager::LoadHuntLocations(psSectorInfo *sectorinfo)
         int interval = result[i].GetInt("interval");
         int max_rnd = result[i].GetInt("max_random");
         int id      = result[i].GetInt("id");
+		int amount = result[i].GetInt("amount");
+		float range = result[i].GetFloat("range");
+        csString name = result[i]["name"];
         
         // Schdule the item spawn
         psSectorInfo *spawnsector=CacheManager::GetSingleton().GetSectorInfoByName(sector);
@@ -423,13 +429,46 @@ void SpawnManager::LoadHuntLocations(psSectorInfo *sectorinfo)
             Error2("hunt_location failed to load, wrong sector: %s\n", sector.GetData() );
             continue;
         }
-
-        // This object won't get destroyed in a while (until something stops it or psItem is destroyed without moving)
-        psScheduledItem* item = new psScheduledItem(id,itemid,pos,spawnsector,0,interval,max_rnd);
+		
+		iSector *iSec = EntityManager::GetSingleton().FindSector(sector.GetData());
+        GEMSupervisor* gem = GEMSupervisor::GetSingletonPtr();
         
-        // Queue it  ToDo - check if item already exists
-        psItemSpawnEvent *newevent = new psItemSpawnEvent(item);
-        psserver->GetEventManager()->Push(newevent);
+        csRef<iCelEntityList> nearlist;
+        size_t handledSpawnsCount = 0;
+ 
+        if (gem)
+        {
+            // Look for nearby items to prevent rescheduling of existing items
+            nearlist = gem->pl->FindNearbyEntities(iSec, pos, range);
+            size_t nearbyItemsCount = nearlist->GetCount();
+                        
+    		for (size_t i = 0; i < nearbyItemsCount; ++i)
+    		{
+                psItem *item = gem->GetObjectFromEntityList(nearlist,i)->GetItem();
+                if (item)
+                {
+                    if (name == item->GetName()) // Correct item?
+                    {
+                        psScheduledItem* schedule = new psScheduledItem(id,itemid,pos,spawnsector,0,interval,max_rnd,range);
+                        item->SetScheduledItem(schedule);
+                        ++handledSpawnsCount;
+                    }
+                }
+                
+                if ((int) handledSpawnsCount == amount) // All schedules accounted for
+                    break;
+    		}
+        }
+				
+		for (int i = 0; i < (amount - (int) handledSpawnsCount); ++i) //Make desired amount of items that are not already existing
+		{
+	        // This object won't get destroyed in a while (until something stops it or psItem is destroyed without moving)
+	        psScheduledItem* item = new psScheduledItem(id,itemid,pos,spawnsector,0,interval,max_rnd,range);
+	        
+	        // Queue it 
+	        psItemSpawnEvent *newevent = new psItemSpawnEvent(item);
+	        psserver->GetEventManager()->Push(newevent);
+		}
     }
 }
 
@@ -1800,4 +1839,5 @@ float LootRandomizer::CalcModifierCostCap(psCharacter *chr)
     Debug2(LOG_LOOT,0,"DEBUG: Calculated cost cap %f\n",modcap);
     return modcap;
 }
+
 

@@ -317,7 +317,9 @@ bool AdminManager::AdminCmdData::DecodeAdminCmdMessage(MsgEntry *pMsg, psAdminCm
     {
         interval = words.GetInt(1);
         random   = words.GetInt(2);
-        item = words.GetTail(3);
+		value = words.GetInt(3);
+		range = words.GetFloat(4);
+        item = words.GetTail(5);
         return true;
     }
     else if (command == "/teleport")
@@ -557,6 +559,16 @@ bool AdminManager::AdminCmdData::DecodeAdminCmdMessage(MsgEntry *pMsg, psAdminCm
         {
             interval = words.GetInt(3);
             random = words.GetInt(4);
+            return true;
+        }
+        else if (action == "amount")
+        {
+            value = words.GetInt(3);
+            return true;
+        }
+        else if (action == "range")
+        {
+            range = words.GetFloat(3);
             return true;
         }
         else if (action == "move")
@@ -1857,7 +1869,7 @@ void AdminManager::CreateHuntLocation(MsgEntry* me,psAdminCmdMessage& msg, Admin
 {    
     if (data.item.IsEmpty())
     {
-        psserver->SendSystemError(me->clientnum, "Insufficent parameters. Use /crystal <interval> <random> <itemname>");
+        psserver->SendSystemError(me->clientnum, "Insufficent parameters. Use /crystal <interval> <random> <amount> <range> <itemname>");
         return;
     }
 
@@ -1871,6 +1883,16 @@ void AdminManager::CreateHuntLocation(MsgEntry* me,psAdminCmdMessage& msg, Admin
         psserver->SendSystemError(me->clientnum, "Intervals need to be greater than 0");
         return;
     }
+	if (data.value < 1)
+	{
+		psserver->SendSystemError(me->clientnum, "Amount must be greater than 0");
+		return;
+	}
+	if (data.range < 0)
+	{
+		psserver->SendSystemError(me->clientnum, "Range must be equal to or greater than 0");
+		return;
+	}
 
     // In seconds
     int interval = 1000*data.interval;
@@ -1915,13 +1937,17 @@ void AdminManager::CreateHuntLocation(MsgEntry* me,psAdminCmdMessage& msg, Admin
     // to db
     db->Command(
         "INSERT INTO hunt_locations"
-        "(`x`,`y`,`z`,`itemid`,`sector`,`interval`,`max_random`)"
-        "VALUES ('%f','%f','%f','%u','%s','%d','%d')",
-        pos.x,pos.y,pos.z, rawitem->GetUID(),sector->QueryObject()->GetName(),interval,random);
+        "(`x`,`y`,`z`,`itemid`,`sector`,`interval`,`max_random`,`amount`,`range`)"
+        "VALUES ('%f','%f','%f','%u','%s','%d','%d','%d','%f')",
+        pos.x,pos.y,pos.z, rawitem->GetUID(),sector->QueryObject()->GetName(),interval,random,data.value,data.range);
 
-    psScheduledItem* schedule = new psScheduledItem(db->GetLastInsertID(),rawitem->GetUID(),pos,spawnsector,instance,interval,random);
-    psItemSpawnEvent* event = new psItemSpawnEvent(schedule);
-    psserver->GetEventManager()->Push(event);
+	for (int i = 0; i < data.value; ++i) //Make desired amount of items
+	{
+	    psScheduledItem* schedule = new psScheduledItem(db->GetLastInsertID(),rawitem->GetUID(),pos,spawnsector,instance,
+				interval,random,data.range);
+	    psItemSpawnEvent* event = new psItemSpawnEvent(schedule);
+	    psserver->GetEventManager()->Push(event);
+	}
 
     // Done!
     psserver->SendSystemInfo(me->clientnum,"New hunt location created!");
@@ -6438,6 +6464,7 @@ void AdminManager::ModifyHuntLocation(MsgEntry* me, psAdminCmdMessage& msg, Admi
         return;
     }
 
+    // TODO: Update Sibling spawn points
     if (data.action == "remove")
     {
         if (item->GetScheduledItem())
@@ -6471,6 +6498,38 @@ void AdminManager::ModifyHuntLocation(MsgEntry* me, psAdminCmdMessage& msg, Admi
         }
         else
             psserver->SendSystemError(me->clientnum,"This item does not spawn; no intervals");
+    }
+    else if (data.action == "amount")
+    {
+    	if (data.value < 1)
+    	{
+    		psserver->SendSystemError(me->clientnum, "Amount must be greater than 0");
+    		return;
+    	}
+        
+        if (item->GetScheduledItem())
+        {
+            item->GetScheduledItem()->ChangeAmount(data.value);
+            psserver->SendSystemInfo(me->clientnum,"Amount of spawns for %s set to %d. This will require a restart to take effect.",item->GetName(),data.value);
+        }
+        else
+            psserver->SendSystemError(me->clientnum,"This item does not spawn; no amount");
+    }
+    else if (data.action == "range")
+    {
+    	if (data.range < 0)
+    	{
+    		psserver->SendSystemError(me->clientnum, "Range must be equal to or greater than 0");
+    		return;
+    	}
+        
+        if (item->GetScheduledItem())
+        {
+            item->GetScheduledItem()->ChangeRange(data.range);
+            psserver->SendSystemInfo(me->clientnum,"Range of spawns for %s set to %f. This will require a restart to take effect.",item->GetName(),data.range);
+        }
+        else
+            psserver->SendSystemError(me->clientnum,"This item does not spawn; no range");
     }
     else if (data.action == "move")
     {

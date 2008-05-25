@@ -16,11 +16,16 @@ CREATE TABLE `hunt_locations` (
   `interval` int(11) NOT NULL default '0',
   `max_random` int(11) NOT NULL default '0',
   `sector` varchar(30) NOT NULL default '',
+  `amount` int(10) unsigned NOT NULL default '1',
+  `range` double(10,2) unsigned NOT NULL default '0.00',
   PRIMARY KEY  (`id`)
 );
 
 #
 # Dumping data for table 'hunt_locations'
 #
-INSERT INTO `hunt_locations` VALUES (1, '-16.60', '-0.01', '-171.90', 91, 4000, 0, 'NPCroom');
+INSERT INTO `hunt_locations` VALUES (1, '-16.60', '-0.01', '-171.90', 91, 4000, 0, 'NPCroom', 1, '0.00');
+
+
+
 
