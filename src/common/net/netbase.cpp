@@ -437,8 +437,7 @@ void NetBase::CheckResendPkts()
         Debug2(LOG_NET,0,"Resending nonacked HIGH packet (ID %d).\n", pkt->packet->pktid);
 #endif
         pkt->timestamp = currenttime;   // update stamp on packet
-        pkt->packet->Resend();
-
+        
         // re-add to send queue
         if(NetworkQueue->Add(pkt))
         {
@@ -505,7 +504,7 @@ bool NetBase::SendMergedPackets(NetPacketQueue *q)
     while ((queueget=q->Get()))
     {
         candidate = queueget;
-        if(final->packet->IsResent() || candidate->packet->IsResent() || !final->Append(candidate))
+        if(!final->Append(candidate))
         {
             // A failed append means that the packet can't fit or is a resent packet.
             // Resent packets MUST NOT be merged because it circumvents clientside packet dup
@@ -934,8 +933,6 @@ bool NetBase::SendMessage(MsgEntry* me,NetPacketQueueRefCount *queue)
     if (!queue)
         queue = NetworkQueue;
 
-    uint32_t id = GetRandomID();
-
     LogMessages('S',me);
     
     while (bytesleft > 0)
@@ -946,7 +943,7 @@ bool NetBase::SendMessage(MsgEntry* me,NetPacketQueueRefCount *queue)
 
         psNetPacketEntry *pNewPkt = new psNetPacketEntry(me->priority, 
             me->clientnum, 
-            id, 
+            0, 
             (uint16_t)offset,
             (uint16_t)me->bytes->GetTotalSize(), 
             (uint16_t)pktlen, 
