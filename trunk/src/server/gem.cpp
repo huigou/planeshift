@@ -821,7 +821,7 @@ bool gemObject::InitMesh(const char *name,
             Error3("Could not set mesh with factname=%s and filename=%s. Trying dummy model",factname,filename);                
             factname = "stonebm";
             filename = "/planeshift/models/stonebm/stonebm.cal3d";
-            if ( !pcmesh->SetMesh(factname, filename) )
+            if ( !pcmesh->SetMesh(factname, filename) || !pcmesh->GetMesh())
             {
                 Error3("Could not use dummy CVS mesh with factname=%s and filename=%s",factname,filename);        
                 return false;

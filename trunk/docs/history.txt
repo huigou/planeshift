@@ -2,6 +2,7 @@
 - Fixed some updater bugs.
 - Fixed binary xml parsing for some CS change.
 - Made all items with no sector fail to load, this will happen anyway later on.
+- Attempted to fix a crash when a dummy mesh fails to load properly.
 
 *** 2008-05-25 by Steven Patrick
 - Fixed FS#1422, /crystal command now can be used to make multiple spawns within a range.
