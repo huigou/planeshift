@@ -327,7 +327,7 @@ psSpellCastGameEvent *psSpell::Cast(psSpellManager * mgr, Client * client, csStr
 
     // Check if this spell needs a target and if so, it is the correct type
     // noone can override the item target limit
-    if (  (spell_target & TARGET_ITEM == 0) && (target_type == TARGET_ITEM) ||
+    if (  (((spell_target & TARGET_ITEM) == 0) && (target_type == TARGET_ITEM)) ||
         (( (spell_target & TARGET_NONE) == 0 ) && ( (spell_target & target_type) == 0) && !client->IsGM()))
     {
         csString targetTypeName;
