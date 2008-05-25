@@ -2072,9 +2072,11 @@ psGUIInventoryMessage::psGUIInventoryMessage(uint32_t clientnum,
                                              uint8_t command,
                                              uint32_t totalItems,
                                              uint32_t totalEmptiedSlots,
-                                             float maxWeight  )
+                                             float maxWeight,
+                                             size_t msgsize)
 {
-    msg.AttachNew(new MsgEntry( 10000 ));
+    // add on this header size
+    msg.AttachNew(new MsgEntry( msgsize + sizeof(uint8_t) + sizeof(uint32_t) * 2 + sizeof(float) ));
     msg->SetType(MSGTYPE_GUIINVENTORY);
     msg->clientnum      = clientnum;
 

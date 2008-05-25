@@ -556,13 +556,12 @@ bool psServerCharManager::SendInventory( int clientNum, bool sendUpdatesOnly)
     psCharacter *chardata=client->GetCharacterData();
     if (chardata==NULL)
         return false;
-
-    outgoing = new psGUIInventoryMessage(toClientNumber,
-                                         psGUIInventoryMessage::LIST,
-                                         (uint32_t)chardata->Inventory().GetInventoryIndexCount()-1,  // skip item 0
-                                         (uint32_t)0, chardata->Inventory().MaxWeight() );
+    
+    size_t msgsize = 0;
 
     Notify2(LOG_EXCHANGES,"Sending %zu items...\n", chardata->Inventory().GetInventoryIndexCount()-1);
+    
+    // first count how big the buffer needs to be
     for (size_t i=1; i < chardata->Inventory().GetInventoryIndexCount(); i++)
     {
         psCharacterInventory::psCharacterInventoryItem *invitem = chardata->Inventory().GetIndexCharInventoryItem(i);
@@ -576,6 +575,34 @@ bool psServerCharManager::SendInventory( int clientNum, bool sendUpdatesOnly)
             invType = CONTAINER_INVENTORY_EQUIPMENT;
 
         Notify5(LOG_EXCHANGES, "  Inv item %s, slot %d, weight %1.1f, stack count %u\n",item->GetName(), slot, item->GetWeight(), item->GetStackCount() );
+        msgsize += strlen(item->GetName()) + 1 + sizeof(uint32_t) * 3 + sizeof(float) * 2 + strlen(item->GetImageName()) + 1 + sizeof(uint8_t);
+    }
+    
+    psMoney m = chardata->Money();
+    Exchange *exchange = exchanging ? psserver->exchangemanager->GetExchange(client->GetExchangeID()) : NULL;
+    if (exchange)
+        m += -exchange->GetOfferedMoney(client);
+    msgsize += strlen(m.ToString()) + 1;
+    
+    // actually create the message
+    outgoing = new psGUIInventoryMessage(toClientNumber,
+                                         psGUIInventoryMessage::LIST,
+                                         (uint32_t)chardata->Inventory().GetInventoryIndexCount()-1,  // skip item 0
+                                         (uint32_t)0, chardata->Inventory().MaxWeight(), msgsize);
+    
+    for (size_t i=1; i < chardata->Inventory().GetInventoryIndexCount(); i++)
+    {
+        psCharacterInventory::psCharacterInventoryItem *invitem = chardata->Inventory().GetIndexCharInventoryItem(i);
+        psItem *item  = invitem->GetItem();
+        
+        int slot  = item->GetLocInParent(true);
+        
+        int invType = CONTAINER_INVENTORY_BULK;
+        
+        if (slot < PSCHARACTER_SLOT_BULK1)  // equipped if < than first bulk
+            invType = CONTAINER_INVENTORY_EQUIPMENT;
+        
+        Notify5(LOG_EXCHANGES, "  Inv item %s, slot %d, weight %1.1f, stack count %u\n",item->GetName(), slot, item->GetWeight(), item->GetStackCount() );
         outgoing->AddItem(item->GetName(),
                           invType,
                           slot,
@@ -586,10 +613,7 @@ bool psServerCharManager::SendInventory( int clientNum, bool sendUpdatesOnly)
                           item->GetPurifyStatus());
     }
 
-    psMoney m = chardata->Money();
-    Exchange *exchange = exchanging ? psserver->exchangemanager->GetExchange(client->GetExchangeID()) : NULL;
-    if (exchange)
-        m += -exchange->GetOfferedMoney(client);
+    
     outgoing->AddMoney(m);
 
     if (outgoing->valid)
