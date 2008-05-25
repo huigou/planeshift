@@ -1471,7 +1471,8 @@ public:
                            uint8_t command,
                            uint32_t totalItems,
                            uint32_t totalEmptiedSlots,
-                           float maxWeight  );
+                           float maxWeight,
+                           size_t msgsize);
 
 
     /** Crack open the message.

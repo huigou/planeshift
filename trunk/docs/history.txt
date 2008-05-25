@@ -21,6 +21,7 @@
 - Fixed #959, patch by Lanarel.
 - Loosened assert in checking for stats.
 - Help for /money, patch by ThomPhoenix.
+- Inventory message sizes are now dynamic. Fixed #1132.
 
 *** 2008-05-24 by Andrew Dai
 - Fixed server crash when printing mode strings.
