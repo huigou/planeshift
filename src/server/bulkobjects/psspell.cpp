@@ -89,7 +89,7 @@ bool psSpell::Load(iResultRow& row)
     csString errorMsg;
     if(!offensive)
     {
-        errorMsg.Format("Non-offensive spell '%s' cannot be cast on friends/self/item!", (const char *) name);
+        errorMsg.Format("Non-offensive spell '%s' cannot be cast on friends/self/item!", (const char *) name);  
         CS_ASSERT_MSG(errorMsg, (spell_target & TARGET_FRIEND) > 0 || (spell_target & TARGET_SELF) > 0 || (spell_target & TARGET_ITEM) > 0);
     }
     else

@@ -746,7 +746,12 @@ void psSpellCastGameEvent::Interrupt()
         return;
     }
     
-    psserver->SendSystemInfo(caster->GetClientNum(),"Your spell (%s) has been interrupted!",spell->GetName().GetData());
+    if(target && !target->IsAlive())
+    {
+        psserver->SendSystemError(caster->GetClientNum(),"%s is already dead.", (const char*)target->GetName() );
+    }
+    else
+        psserver->SendSystemInfo(caster->GetClientNum(),"Your spell (%s) has been interrupted!",spell->GetName().GetData());
 
     caster->GetActor()->SetMode( PSCHARACTER_MODE_PEACE );
     caster->GetCharacterData()->SetSpellCasting(NULL);
