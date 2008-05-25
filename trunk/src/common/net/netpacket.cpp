@@ -83,7 +83,8 @@ bool psNetPacketEntry::Append(psNetPacketEntry *next)
 #endif
     
     /// We do not allow multipackets to be appended to multipackets.
-    if(next->packet->IsMultiPacket())
+    // if the pktid > 0, then this is a resent packet so no appending.
+    if(next->packet->IsMultiPacket() || packet->pktid > 0 || next->packet->pktid > 0)
         return false;
 
     if(next->clientnum != clientnum)

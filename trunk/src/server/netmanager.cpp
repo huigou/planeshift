@@ -115,7 +115,7 @@ bool NetManager::HandleUnknownClient (LPSOCKADDR_IN addr, MsgEntry* me)
 
         psNetPacketEntry *pkt = new
             psNetPacketEntry(pong.msg->priority, 0,
-            pong.msg->msgid, 0, (uint32_t) pong.msg->bytes->GetTotalSize(),
+            0, 0, (uint32_t) pong.msg->bytes->GetTotalSize(),
             (uint16_t) pong.msg->bytes->GetTotalSize(), pong.msg->bytes);
 
         SendFinalPacket(pkt,addr);
@@ -482,7 +482,7 @@ void NetManager::Broadcast(MsgEntry *me, int scope, int guildID)
         // here and now! Because in the next moment he'll be deleted
         psNetPacketEntry* pkt = 
         new psNetPacketEntry(me->priority, newmsg->clientnum,
-            newmsg->msgid, 0, (uint32_t) newmsg->bytes->GetTotalSize(),
+            0, 0, (uint32_t) newmsg->bytes->GetTotalSize(),
             (uint16_t) newmsg->bytes->GetTotalSize(), newmsg->bytes);
         // this will also delete the pkt
         SendFinalPacket(pkt);
