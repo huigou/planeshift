@@ -2695,6 +2695,12 @@ void gemActor::SetPosition(const csVector3& pos,float angle, iSector* sector)
 
 //#define STAMINA_PROCESS_DEBUG
 
+void gemActor::ProcessStamina()
+{
+    csVector3 vel = pcmove->GetVelocity();
+    ProcessStamina(vel, true);
+}
+
 void gemActor::ProcessStamina(const csVector3& velocity, bool force)
 {
     // GM flag
@@ -2715,13 +2721,10 @@ void gemActor::ProcessStamina(const csVector3& velocity, bool force)
         
         float times = 1.0f;
 
-        if (!atRest)  // Check if we were at rest last check
-        {
             /* If we're slow or forced, we need to multiply the stamina with the secs passed.
              * DR updates are sent when speed changes, so it should be quite accurate.
              */
             times = float(elapsed) / 1000.0f;
-        }
         
         atRest = velocity.IsZero();
 

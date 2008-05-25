@@ -1305,7 +1305,6 @@ void psCharacter::SetMode(PSCHARACTER_MODE newmode, uint32_t clientnum)
     }
     switch( newmode )
     {
-        case PSCHARACTER_MODE_PEACE:
         case PSCHARACTER_MODE_EXHAUSTED:
         case PSCHARACTER_MODE_COMBAT:
             SetStaminaRegenerationStill();  // start stamina regen
@@ -1331,6 +1330,9 @@ void psCharacter::SetMode(PSCHARACTER_MODE newmode, uint32_t clientnum)
     }
 
     player_mode = newmode;
+    
+    if(newmode == PSCHARACTER_MODE_PEACE || newmode == PSCHARACTER_MODE_SPELL_CASTING)
+        actor->ProcessStamina();
 }
 
 void psCharacter::ResetMode()
