@@ -1307,7 +1307,6 @@ void psCharacter::SetMode(PSCHARACTER_MODE newmode, uint32_t clientnum)
     {
         case PSCHARACTER_MODE_PEACE:
         case PSCHARACTER_MODE_EXHAUSTED:
-        case PSCHARACTER_MODE_SPELL_CASTING:
         case PSCHARACTER_MODE_COMBAT:
             SetStaminaRegenerationStill();  // start stamina regen
             break;
