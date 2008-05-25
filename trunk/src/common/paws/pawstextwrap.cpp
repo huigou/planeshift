@@ -552,6 +552,8 @@ void pawsMultilineEditTextBox::SetText( const char* newText, bool publish )
     LayoutText();
 
     SetupScrollBar();
+    
+    cursorLoc = lineInfo[cursorLine]->lineLength - lineInfo[cursorLine]->lineExtra;
 }
 
 
