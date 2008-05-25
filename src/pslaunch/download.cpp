@@ -27,13 +27,15 @@ static int ProgressCallback(int progress, int finalSize)
 {
     static int lastSize = 0;
     
+    // Don't output anything if there's been no progress.
+    if(progress == 0)
+        return 0;
+
     if(lastSize == 0)
     {
         if(finalSize > 102400)
         {
             printf("\n0%% ");
-            if(progress == 0)
-                progress++;
             lastSize = progress;
         }
     }
