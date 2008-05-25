@@ -3772,7 +3772,7 @@ unsigned int StatSet::GetStat(PSITEMSTATS_STAT attrib, bool withBuff)
 
     int buff   = withBuff?stats[attrib].rankBuff:0;
     int result = (int)stats[attrib].rank + buff;
-    CS_ASSERT(result > 0);
+    CS_ASSERT(result >= 0);
     return result;
 }
 
