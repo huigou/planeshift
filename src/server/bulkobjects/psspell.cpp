@@ -84,6 +84,19 @@ bool psSpell::Load(iResultRow& row)
     max_power           = row.GetInt("max_power");
     offensive           = row.GetInt("offensive") ? true : false;
     spell_target        = row.GetInt("target_type");
+    
+    // if spell is defensive then you must be able to cast it on friends, otherwise the entry is wrong.
+    csString errorMsg;
+    if(!offensive)
+    {
+        errorMsg.Format("Non-offensive spell '%s' cannot be cast on friends!", (const char *) name);
+        CS_ASSERT_MSG(errorMsg, spell_target & TARGET_FRIEND > 0);
+    }
+    else
+    {
+        errorMsg.Format("Offensive spell '%s' cannot be cast on enemies!", (const char *) name);
+        CS_ASSERT_MSG(errorMsg, spell_target & TARGET_PVP > 0);
+    }
 
     npcSpellCategoryID    = row.GetInt("cstr_npc_spell_category");
     npcSpellRelativePower = row.GetFloat("npc_spell_power");

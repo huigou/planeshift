@@ -2,6 +2,8 @@
 - Packet ids are now set to be 0 until they are just about to be sent.
   This means packet ids are now ordered unless the packet is a resent
   packet.
+- Added assertions to try to ensure the offensive flag is set correctly.
+- Fixed some offensive flags in the db spells.
 
 *** 2008-05-24 by Andrew Dai
 - Fixed server crash when printing mode strings.
