@@ -3938,7 +3938,15 @@ void psWorkManager::StartLockpick(Client* client,psItem* item)
     if (client->GetCharacterData()->Inventory().HaveKeyForLock(item->GetUID()))
     {
         bool locked = item->GetIsLocked();
-        psserver->SendSystemInfo(client->GetClientNum(),locked ? "You unlocked %s" : "You locked %s", item->GetName());
+		//Make sure the player knows he unlocked or locked his lock. Imagine guildhouse left unlocked on accident.
+        if (locked)
+         {
+         	psserver->SendSystemError(client->GetClientNum(), "You unlocked %s", item->GetName());
+ 		 }
+ 		else
+ 		 {
+ 			psserver->SendSystemOK(client->GetClientNum(), "You locked %s", item->GetName());
+ 		 }
         item->SetIsLocked(!locked);
         item->Save(false);
         return;
