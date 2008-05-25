@@ -844,7 +844,8 @@ private:
 class psScheduledItem
 {
 public:
-    psScheduledItem(int spawnID,uint32 itemID,csVector3& position, psSectorInfo* sector,INSTANCE_ID instance, int interval,int maxrnd);
+    psScheduledItem(int spawnID,uint32 itemID,csVector3& position, psSectorInfo* sector,INSTANCE_ID instance, int interval,int maxrnd, 
+				float range);
 
     psItem* CreateItem();
     uint32 GetItemID() { return itemID;}
@@ -858,6 +859,8 @@ public:
     csTicks GetLastSpawn() { return lastSpawn; }
     void UpdatePosition(csVector3& positon, const char *sector);
     void ChangeIntervals(int newint, int newrand);
+    void ChangeRange(float newRange);
+    void ChangeAmount(int newAmount);
     void Remove(); ///< Deletes from the DB and everything
 
     bool WantToDie() { return wantToDie; }
@@ -871,6 +874,7 @@ private:
     int worldInstance;     ///< Instance ID to spawn in
     int interval;          ///< Interval in msecs
     int maxrnd;            ///< Maximum random interval modifier in msecs
+	float range;		   ///< Range in which to spawn item
     csTicks lastSpawn;     ///< When we last spawned it, good for something perhaps? :)
 };
 

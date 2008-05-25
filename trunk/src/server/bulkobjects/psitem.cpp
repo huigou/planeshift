@@ -2121,7 +2121,8 @@ void psItem::ScheduleRespawn()
     schedule = NULL;
 }
 
-psScheduledItem::psScheduledItem(int id,uint32 itemID,csVector3& position, psSectorInfo* sector,INSTANCE_ID instance, int interval,int maxrnd)
+psScheduledItem::psScheduledItem(int id,uint32 itemID,csVector3& position, psSectorInfo* sector,INSTANCE_ID instance, int interval,int maxrnd,
+			float range)
 {
     spawnID = id;
     this->itemID = itemID;
@@ -2130,6 +2131,7 @@ psScheduledItem::psScheduledItem(int id,uint32 itemID,csVector3& position, psSec
     this->interval = interval;
     this->maxrnd = maxrnd;
     this->worldInstance = instance;
+	this->range = range;
     wantToDie= false;
 }
 
@@ -2151,7 +2153,9 @@ psItem* psScheduledItem::CreateItem() // Spawns the item
         if (item)
         {
             // Create the item
-            item->SetLocationInWorld(worldInstance,GetSector(),GetPosition().x, GetPosition().y, GetPosition().z, 0);
+			float xpos = GetPosition().x - range + psserver->GetRandom() * range * 2; // Random position within range
+			float zpos = GetPosition().z - range + psserver->GetRandom() * range * 2;
+            item->SetLocationInWorld(worldInstance,GetSector(),xpos, GetPosition().y, zpos, 0);
             if ( !EntityManager::GetSingleton().CreateItem(item,false) )
             {
                 delete item;
@@ -2191,6 +2195,25 @@ void psScheduledItem::ChangeIntervals(int newint, int newrand)
     maxrnd = newrand;
     db->Command("UPDATE hunt_locations SET interval='%d', max_random='%d' WHERE id='%d'",
                 interval,maxrnd,spawnID);
+}
+
+void psScheduledItem::ChangeRange(float newRange)
+{
+    if(wantToDie)
+        return;
+
+    range = newRange;
+    db->Command("UPDATE hunt_locations SET range='%f' WHERE id='%d'",
+                range, spawnID);
+}
+
+void psScheduledItem::ChangeAmount(int newAmount)
+{
+    if(wantToDie)
+        return;
+
+    db->Command("UPDATE hunt_locations SET amount='%d' WHERE id='%d'",
+                newAmount, spawnID);
 }
 
 void psScheduledItem::Remove()
@@ -2278,4 +2301,5 @@ bool psItem::SetSketch(const csString& newSketchData)
                                        newSketchData,
                                        owning_character ? owning_character->GetCharFullName():"Unknown");
 }
+
 

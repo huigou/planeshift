@@ -1,3 +1,8 @@
+*** 2008-05-25 by Steven Patrick
+- Fixed FS#1422, /crystal command now can be used to make multiple spawns within a range.
+  The server no longer recreates spawn points for items that have already been spawned on restart thus preventing stacks of items found at a spawn point.
+- DB VER BUMP to 1186
+
 *** 2008-05-25 by Andrew Dai
 - Packet ids are now set to be 0 until they are just about to be sent.
   This means packet ids are now ordered unless the packet is a resent
