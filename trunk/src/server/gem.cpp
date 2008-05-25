@@ -2772,7 +2772,7 @@ void gemActor::ApplyStaminaCalculations(const csVector3& v, float times)
             printf("Not moving\n");
         #endif
 
-        if (psChar->GetMode() == PSCHARACTER_MODE_PEACE)
+        if (psChar->GetMode() == PSCHARACTER_MODE_PEACE || psChar->GetMode() == PSCHARACTER_MODE_SPELL_CASTING)
             psChar->SetStaminaRegenerationStill();
     }
     else // Moving
@@ -2842,7 +2842,7 @@ void gemActor::ApplyStaminaCalculations(const csVector3& v, float times)
         #endif
 
         // Apply stuff
-        if (psChar->GetMode() == PSCHARACTER_MODE_PEACE)
+        if (psChar->GetMode() == PSCHARACTER_MODE_PEACE || psChar->GetMode() == PSCHARACTER_MODE_SPELL_CASTING)
         {
             psChar->SetStaminaRegenerationWalk();
             psChar->AdjustStaminaRate(-value,true);
