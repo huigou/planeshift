@@ -604,6 +604,7 @@ public:
     bool LogMessage(const char *who, const psChatMessage &msg);
 
     void UpdateStats();
+    void ProcessStamina();
     void ProcessStamina(const csVector3& velocity, bool force=false);
     virtual float DrainMana(float adjust, bool absolute);
 
