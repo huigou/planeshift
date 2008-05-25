@@ -618,7 +618,7 @@ void UpdaterEngine::generalUpdate()
         }
 
         // Download update zip.
-        printOutput("Downloading update file..\n");
+        printOutput("\nDownloading update file..\n");
         downloader->DownloadFile(zip, zip, false, true);
 
         // Check md5sum is correct.
