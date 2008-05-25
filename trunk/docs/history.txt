@@ -4,6 +4,7 @@
   packet.
 - Added assertions to try to ensure the offensive flag is set correctly.
 - Fixed some offensive flags in the db spells.
+- Fragmented messages do not have ordered packet ids.
 
 *** 2008-05-24 by Andrew Dai
 - Fixed server crash when printing mode strings.
