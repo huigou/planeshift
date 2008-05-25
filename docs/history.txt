@@ -8,6 +8,7 @@
 - GMs can now cast spells on anything. Bug #1122
 - Fixed #564.
 - Fixed #161.
+- Fixed #959, patch by Lanarel.
 
 *** 2008-05-24 by Andrew Dai
 - Fixed server crash when printing mode strings.
