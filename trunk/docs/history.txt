@@ -1,3 +1,8 @@
+*** 2008-05-25 by Mike Gist
+- Fixed some updater bugs.
+- Fixed binary xml parsing for some CS change.
+- Made all items with no sector fail to load, this will happen anyway later on.
+
 *** 2008-05-25 by Steven Patrick
 - Fixed FS#1422, /crystal command now can be used to make multiple spawns within a range.
   The server no longer recreates spawn points for items that have already been spawned on restart thus preventing stacks of items found at a spawn point.
