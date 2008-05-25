@@ -398,10 +398,21 @@ FloodBuffRow::FloodBuffRow(uint8_t chtType, csString txt, csString rcpt, unsigne
     ticks = newticks;
 }
 
+bool Client::IsGM() const
+{
+    return GetSecurityLevel() >= GM_LEVEL_0;
+}
+
 bool Client::IsAllowedToAttack(gemObject * target, bool inform)
 {
     csString tmp;
     const char *sMsg = NULL;
+    
+    // Am I a GM?
+       if (IsGM())
+       {
+           return true; /* Everything is attackable */
+       }
 
     if ( target == NULL )
     {
@@ -620,12 +631,6 @@ int Client::GetTargetType(gemObject* target)
     psGuildInfo* targetguild = targetclient->GetActor()->GetGuild();
     if (attackguild && targetguild &&
         targetguild->IsGuildWarActive(attackguild))
-    {
-        return TARGET_PVP; /* Attackable player */
-    }
-
-    // Am I a GM?
-    if (GetSecurityLevel() >= GM_LEVEL_0)
     {
         return TARGET_PVP; /* Attackable player */
     }
