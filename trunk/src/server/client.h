@@ -179,8 +179,10 @@ public:
     //    void SetObjectID(int ID) { objectID = ID; }
 
     /// The security level of this player
-    int GetSecurityLevel() { return securityLevel; }
+    int GetSecurityLevel() const { return securityLevel; }
     void SetSecurityLevel(int level) { securityLevel=level; }
+    
+    bool IsGM() const;
 
     /// The guild id value if player is member of guild.
     int GetGuildID();
