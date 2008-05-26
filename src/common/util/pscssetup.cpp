@@ -390,7 +390,8 @@ void psCSSetup::MountUserData()
 
     // Create the mount point if it doesn't exist...die if we can't.
     FileUtil fileUtil(vfs);
-    if (!fileUtil.StatFile(configPath) && CS_MKDIR(configPath) < 0)
+    csRef<FileStat> filestat = fileUtil.StatFile(configPath);
+    if (filestat.IsValid() && CS_MKDIR(configPath) < 0)
     {
         printf("Could not create required %s directory!\n", configPath.GetData());
         PS_PAUSEEXIT(1);

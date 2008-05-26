@@ -45,8 +45,10 @@ csPtr<FileStat> FileUtil::StatFile (const char* path)
 {
     csString fullpath("/this/");
     fullpath.Append(path);
+
+    csRef<iDataBuffer> db = vfs->GetRealPath(fullpath);
     struct stat filestats;
-    if (stat(vfs->GetRealPath(fullpath), &filestats) < 0)
+    if (stat(db->GetData(), &filestats) < 0)
         return NULL;
 
     csRef<FileStat> filestat;
@@ -166,7 +168,7 @@ bool FileUtil::CopyFile(csString from, csString to, bool vfsPath, bool executabl
         file = buff->GetData();
     }
 
-    FileStat* stat = StatFile(file);
+    csRef<FileStat> stat = StatFile(file);
     if(stat && stat->readonly)
     {
         if(!silent)
