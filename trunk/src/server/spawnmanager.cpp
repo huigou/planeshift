@@ -431,6 +431,11 @@ void SpawnManager::LoadHuntLocations(psSectorInfo *sectorinfo)
         }
 		
 		iSector *iSec = EntityManager::GetSingleton().FindSector(sector.GetData());
+        if(!iSec)
+        {
+            Error2("Sector '%s' failed to be found when loading hunt location.", sector.GetData());
+        }
+
         GEMSupervisor* gem = GEMSupervisor::GetSingletonPtr();
         
         csRef<iCelEntityList> nearlist;
