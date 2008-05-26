@@ -43,12 +43,8 @@ FileUtil::~FileUtil()
 
 csPtr<FileStat> FileUtil::StatFile (const char* path)
 {
-    csString fullpath("/this/");
-    fullpath.Append(path);
-
-    csRef<iDataBuffer> db = vfs->GetRealPath(fullpath);
     struct stat filestats;
-    if (stat(db->GetData(), &filestats) < 0)
+    if (stat(path, &filestats) < 0)
         return NULL;
 
     csRef<FileStat> filestat;
@@ -74,7 +70,7 @@ csPtr<FileStat> FileUtil::StatFile (const char* path)
     filestat->executable = (filestats.st_mode & S_IEXEC) != 0;
     filestat->readonly = !(filestats.st_mode & S_IWRITE);
 
-    return filestat;
+    return csPtr<FileStat>(filestat);
 }
 
 bool FileUtil::RemoveFile (const char* filename, bool silent)
