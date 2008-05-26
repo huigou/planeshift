@@ -62,7 +62,7 @@ public:
     FileUtil(csRef<iVFS> vfs);
     ~FileUtil();
     /* Tests if the file exists and returns data about the file. */
-    csRef<FileStat> StatFile(const char* path);
+    csPtr<FileStat> StatFile(const char* path);
 
     bool RemoveFile(const char* filename, bool silent = false);
 

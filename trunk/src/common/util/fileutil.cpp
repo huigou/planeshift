@@ -41,10 +41,12 @@ FileUtil::~FileUtil()
 {
 }
 
-csRef<FileStat> FileUtil::StatFile (const char* path)
+csPtr<FileStat> FileUtil::StatFile (const char* path)
 {
+    csString fullpath("/this/");
+    fullpath.Append(path);
     struct stat filestats;
-    if (stat(path, &filestats) < 0)
+    if (stat(vfs->GetRealPath(fullpath), &filestats) < 0)
         return NULL;
 
     csRef<FileStat> filestat;
