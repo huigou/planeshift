@@ -1,9 +1,13 @@
+*** 2008-05-26 by Mike Gist
+- Attempted to make StatFile work right.
+
 *** 2008-05-25 by Mike Gist
 - Fixed some updater bugs.
 - Fixed binary xml parsing for some CS change.
 - Made all items with no sector fail to load, this will happen anyway later on.
 - Attempted to fix a crash when a dummy mesh fails to load properly.
 - Fixed a crash when the sector can't be found when loading hunt locations.
+- Made the updater print it's version on start.
 
 *** 2008-05-25 by Steven Patrick
 - Fixed FS#1422, /crystal command now can be used to make multiple spawns within a range.
