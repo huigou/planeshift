@@ -706,7 +706,10 @@ void UpdaterEngine::generalUpdate()
                 csRef<iDocumentNode> next = nodeItr->Next();
 
                 csString newFilePath = next->GetAttributeValue("filepath");
-                bool isExec = fileUtil->isExecutable(newFilePath);
+                csString realPath("/this/");
+                realPath.Append(newFilePath);
+                csRef<iDataBuffer> db = vfs->GetRealPath(realPath);
+                bool isExec = fileUtil->isExecutable(db->GetData());
                 if(!config->UpdateExecs() && isExec)
                     continue;
 
