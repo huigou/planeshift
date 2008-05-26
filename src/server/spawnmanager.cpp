@@ -434,6 +434,7 @@ void SpawnManager::LoadHuntLocations(psSectorInfo *sectorinfo)
         if(!iSec)
         {
             Error2("Sector '%s' failed to be found when loading hunt location.", sector.GetData());
+            continue;
         }
 
         GEMSupervisor* gem = GEMSupervisor::GetSingletonPtr();
