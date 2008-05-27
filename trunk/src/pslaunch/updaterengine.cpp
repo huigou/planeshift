@@ -685,6 +685,14 @@ void UpdaterEngine::generalUpdate()
             if(newListType.Get(i) && !config->UpdateExecs())
                 continue;
 
+            // Set the permissions based on the target parent folder.
+            csString folder("/this/");
+            folder.Append(newList.Get(i));
+            folder.Truncate(folder.FindLast('/'));
+            csRef<iDataBuffer> db = vfs->GetRealPath(folder);
+            csRef<FileStat> fs = fileUtil->StatFile(db->GetData());
+            fileUtil->SetPermissions("/zip/" + newList.Get(i), fs);
+
             if(newListType.Get(i))
             {
                 fileUtil->CopyFile("/zip/" + newList.Get(i), "/this/" + newList.Get(i), true, true);
@@ -724,11 +732,16 @@ void UpdaterEngine::generalUpdate()
                 fileUtil->CopyFile("/zip/" + diff, "/this/" + newFilePath + ".vcdiff", true, false, true);
                 diff = newFilePath + ".vcdiff";
 
-                // Binary patch.
-                printOutput("Patching file %s: ", newFilePath.GetData());
+                // Get real paths.
                 csRef<iDataBuffer> oldFP = vfs->GetRealPath("/this/" + oldFilePath);
                 csRef<iDataBuffer> diffFP = vfs->GetRealPath("/this/" + diff);
                 csRef<iDataBuffer> newFP = vfs->GetRealPath("/this/" + newFilePath);
+                
+                // Save permissions.
+                csRef<FileStat> fs = fileUtil->StatFile(oldFP->GetData());
+
+                // Binary patch.
+                printOutput("Patching file %s: ", newFilePath.GetData());
                 if(!PatchFile(oldFP->GetData(), diffFP->GetData(), newFP->GetData()))
                 {
                     printOutput("Failed!\n");
@@ -790,9 +803,8 @@ void UpdaterEngine::generalUpdate()
                 // Clean up temp files.
                 fileUtil->RemoveFile("/this/" + diff, false);
 
-                // Set Executable if needed.
-                if(isExec)
-                    fileUtil->SetExecutable(newFP->GetData());
+                // Set permissions.
+                fileUtil->SetPermissions(newFP->GetData(), fs);
             }
         }
 
