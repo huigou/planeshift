@@ -154,9 +154,9 @@ bool FileUtil::CopyFile(csString from, csString to, bool vfsPath, bool executabl
     csString n2;
 
     csString file = to;
+    csRef<iDataBuffer> buff = vfs->GetRealPath(to);
     if(vfsPath)
     {
-        csRef<iDataBuffer> buff = vfs->GetRealPath(to);
         if(!buff)
         {
             if(!silent)
@@ -212,7 +212,7 @@ bool FileUtil::CopyFile(csString from, csString to, bool vfsPath, bool executabl
     if(executable)
     {
         if(chmod(buff->GetData(), fromStat->mode | S_IXUSR | S_IXGRP) == -1)
-            printf("Failed to set permissions on file %s.\n", real.GetData());
+            printf("Failed to set permissions on file %s.\n", to.GetData());
     }
 #endif
 
