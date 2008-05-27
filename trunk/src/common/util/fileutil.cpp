@@ -218,7 +218,7 @@ bool FileUtil::isExecutable(const char *path)
     csRef<FileStat> stats = StatFile(path);
     if(stats.IsValid())
         return stats->executable;
-    return NULL;
+    return true;
 }
 
 void FileUtil::SetExecutable(const char *path)
