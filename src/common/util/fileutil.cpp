@@ -69,6 +69,9 @@ csPtr<FileStat> FileUtil::StatFile (const char* path)
     filestat->size = (uint32_t)filestats.st_size;
     filestat->executable = (filestats.st_mode & S_IEXEC) != 0;
     filestat->readonly = !(filestats.st_mode & S_IWRITE);
+    filestat->mode = filestats.st_mode;
+    filestat->uid = filestats.st_uid;
+    filestat->gid = filestats.st_gid;
 
     return csPtr<FileStat>(filestat);
 }
@@ -164,6 +167,10 @@ bool FileUtil::CopyFile(csString from, csString to, bool vfsPath, bool executabl
         file = buff->GetData();
     }
 
+    // Get current permissions for later.
+    csRef<iDataBuffer> fromBuff = vfs->GetRealPath(from);
+    csRef<FileStat> fromStat = StatFile(fromBuff->GetData());
+
     csRef<FileStat> stat = StatFile(file);
     if(stat && stat->readonly)
     {
@@ -201,11 +208,10 @@ bool FileUtil::CopyFile(csString from, csString to, bool vfsPath, bool executabl
 
 #ifdef CS_PLATFORM_UNIX
     // On unix type systems we might need to set permissions after copy.
+    SetPermissions(buff->GetData(), fromStat);
     if(executable)
     {
-        csString real(to);
-        real.FindReplace("/this/", "./");
-        if(chmod(real.GetData(), S_IRUSR | S_IWUSR | S_IXUSR | S_IRGRP | S_IWGRP | S_IXGRP) == -1)
+        if(chmod(buff->GetData(), fromStat->mode | S_IXUSR | S_IXGRP) == -1)
             printf("Failed to set permissions on file %s.\n", real.GetData());
     }
 #endif
@@ -221,10 +227,13 @@ bool FileUtil::isExecutable(const char *path)
     return true;
 }
 
-void FileUtil::SetExecutable(const char *path)
+void FileUtil::SetPermissions(const char *path, FileStat *fs)
 {
 #ifdef CS_PLATFORM_UNIX
-    if(chmod(path, S_IRUSR | S_IWUSR | S_IXUSR | S_IRGRP | S_IWGRP | S_IXGRP) == -1)
-    printf("Failed to set permissions on file %s.\n", path);
+    if(chmod(path, fs->mode) == -1)
+        printf("Failed to set permissions on file %s.\n", path);
+
+    if(chown(path, fs->uid, fs->gid) == -1)
+        printf("Failed to set permissions on file %s.\n", path);
 #endif
 }

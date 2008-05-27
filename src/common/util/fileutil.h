@@ -46,6 +46,9 @@ public:
     uint32_t size;
     char* target;
     bool readonly;
+    unsigned short mode;
+    short uid;
+    short gid;
 
     FileStat ()
     { target = NULL; }
@@ -87,8 +90,8 @@ public:
     /* Returns true is the file at the specified path is executable. */
     bool isExecutable(const char* path);
 
-    /* Sets a file as executable in UNIX. */
-    void SetExecutable(const char* path);
+    /* Sets all permissions on a file. */
+    void SetPermissions(const char* path, FileStat* fs);
 };
 
 #endif // __FILEUTIL_H__
