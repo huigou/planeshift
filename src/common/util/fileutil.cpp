@@ -216,7 +216,9 @@ bool FileUtil::CopyFile(csString from, csString to, bool vfsPath, bool executabl
 bool FileUtil::isExecutable(const char *path)
 {
     csRef<FileStat> stats = StatFile(path);
-    return stats->executable;
+    if(stats.IsValid())
+        return stats->executable;
+    return NULL;
 }
 
 void FileUtil::SetExecutable(const char *path)
