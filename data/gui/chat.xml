@@ -146,7 +146,7 @@
                  <buttondown resource="Chat Tab Button Down" />
 		     <buttonspecial resource="Chat Tab Button Special" />
                  <attachpoints>
-                     <attach point="ATTACH_RIGHT" />
+                     <attach point="PROPORTIONAL_RIGHT" />
                      <attach point="PROPORTIONAL_LEFT" />
                      <attach point="ATTACH_TOP" />
                      <attach point="PROPORTIONAL_BOTTOM" />
