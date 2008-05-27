@@ -3948,6 +3948,9 @@ bool gemContainer::CanAdd(unsigned short amountToAdd, psItem *item, int slot)
     if (!item)
         return false;
 
+    if (GetItem()->GetGuardingCharacterID() && GetItem()->GetGuardingCharacterID() != item->GetOwningCharacterID())
+        return false;
+
     /* We often want to see if a partial stack could be added, but we want to
      * check before actually doing the splitting.  So, we take an extra parameter
      * and fake the stack count before calling AddToContainer with the test flag;
@@ -4006,8 +4009,10 @@ bool gemContainer::AddToContainer(psItem *item, Client *fromClient, int slot, bo
 
     // If the gemContainer we are dropping the item into is not pickupable then we
     // guard the item placed inside.  Otherwise the item becomes public.
-    if (GetItem()->GetIsNoPickup() && item->GetOwningCharacterID())
-        item->SetGuardingCharacterID(item->GetOwningCharacterID());
+    item->SetGuardingCharacterID(item->GetOwningCharacterID());
+    if (!GetItem()->GetIsNoPickup() && item->GetOwningCharacterID())
+        GetItem()->SetGuardingCharacterID(item->GetOwningCharacterID());
+        
     item->SetOwningCharacter(NULL);
     item->SetContainerID(GetItem()->GetUID());
     item->SetLocInParent((INVENTORY_SLOT_NUMBER)(slot));

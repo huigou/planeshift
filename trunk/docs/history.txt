@@ -1,3 +1,8 @@
+*** 2008-05-27 by Steven Patrick
+- Fixed FS#781, patch by kougaro
+- Fixed FS#1275, patch by peeg
+- Fixed FS#1410, additional patch by Caarrie
+
 *** 2008-05-26 by Mike Gist
 - Attempted to make StatFile work right.
 

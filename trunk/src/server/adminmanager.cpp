@@ -5122,6 +5122,7 @@ void AdminManager::ChangeName(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
     bool online;
     unsigned int id = 0;
     unsigned int type = 0;
+    unsigned int gid = 0;
 
     Client* target = NULL;
 
@@ -5143,11 +5144,11 @@ void AdminManager::ChangeName(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
         csString query;
         if (pid)
         {
-            query.Format("SELECT id,name,lastname,character_type FROM characters WHERE id=%u",pid);
+            query.Format("SELECT id,name,lastname,character_type,guild_member_of FROM characters WHERE id=%u",pid);
         }
         else
         {
-            query.Format("SELECT id,name,lastname,character_type FROM characters WHERE name='%s'",name.GetData());
+            query.Format("SELECT id,name,lastname,character_type,guild_member_of FROM characters WHERE name='%s'",name.GetData());
         }
 
         Result result(db->Select(query));
@@ -5167,7 +5168,7 @@ void AdminManager::ChangeName(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
             prevFirstName = row["name"];
             prevLastName = row["lastname"];
             id = row.GetUInt32("id");
-
+            gid = row.GetUInt32("guild_member_of");
             type = row.GetUInt32("character_type");
             if (type == PSCHARACTER_TYPE_NPC)
             {
@@ -5181,7 +5182,7 @@ void AdminManager::ChangeName(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
         prevFirstName = target->GetCharacterData()->GetCharName();
         prevLastName = target->GetCharacterData()->GetCharLastName();
         id = target->GetCharacterData()->GetCharacterID();
-
+        gid = target->GetGuildID();
         type = target->GetCharacterData()->GetCharType();
     }
 
@@ -5305,14 +5306,16 @@ void AdminManager::ChangeName(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
         csRef<PlayerGroup> group = target->GetActor()->GetGroup();
         if(group)
             group->BroadcastMemberList();
-
-        // Handle guild update
-        psGuildInfo* guild = target->GetActor()->GetGuild();
-        if(guild)
+    }
+    
+    // Handle guild update
+    psGuildInfo* guild = CacheManager::GetSingleton().FindGuild(gid);
+    if(guild)
+    {
+        psGuildMember* member = guild->FindMember(id);
+        if(member)
         {
-            psGuildMember* mem = guild->FindMember((unsigned int)target->GetActor()->GetCharacterData()->GetCharacterID());
-            if(mem)
-                mem->name = data.newName;
+            member->name = data.newName; 
         }
     }
     
