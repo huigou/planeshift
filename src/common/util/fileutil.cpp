@@ -207,7 +207,17 @@ bool FileUtil::CopyFile(csString from, csString to, bool vfsPath, bool executabl
     }
 
 #ifdef CS_PLATFORM_UNIX
-    // On unix type systems we might need to set permissions after copy.
+    /**
+     * On unix type systems we might need to set permissions after copy.
+     * If the 'from' stat is null, the file is probably in a zip.
+     * So we use the permissions of the parent folder of the 'to' dir.
+     */
+    if(!fromStat.IsValid())
+    {
+        n2.Truncate(n2.FindLast('/'));
+        csRef<iDataBuffer> db = vfs->GetRealPath(n2);
+        fromStat = fileUtil->StatFile(db->GetData());
+    }
     SetPermissions(buff->GetData(), fromStat);
     if(executable)
     {
