@@ -55,7 +55,8 @@
 #include "cachemanager.h"
 #include "globals.h"
 #include "icachedobject.h"
-
+#include "advicemanager.h"
+#include "commandmanager.h"
 
 class CachedAuthMessage : public iCachedObject
 {
@@ -527,6 +528,9 @@ void psAuthenticationServer::HandleAuthent(MsgEntry *me)
     {
         psserver->GetAdminManager()->Admin(client->GetPlayerID(), me->clientnum, client);
     }
+    
+    if (CacheManager::GetSingletonPtr()->GetCommandManager()->Validate(client->GetSecurityLevel(), "default advisor"))
+        psserver->GetAdviceManager()->AddAdvisor(client);
 
     psserver->GetWeatherManager()->SendClientGameTime(me->clientnum);
 

@@ -1448,7 +1448,7 @@ bool psServerCharManager::SendItemDescription( Client *client, psItem *item)
     }
 
     itemCategory.Format( "Category: %s", itemStats->GetCategory()->name.GetData() );
-    weight.Format("\nWeight: %.1f", item->GetWeight() );
+    weight.Format("\nWeight: %.2f", item->GetWeight() );
     size.Format("\nSize: %hu", item->GetItemSize() );
 
     // Check identify skill before sending quality detail
@@ -1912,4 +1912,5 @@ bool psServerCharManager::VerifyGoal(Client* client, psCharacter* character, psI
 
     return true;
 }
+
 
