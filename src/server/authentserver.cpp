@@ -516,7 +516,7 @@ void psAuthenticationServer::HandleAuthent(MsgEntry *me)
     }
     // Send auth approved and char list in one message now
     cam->msg->SendMessage();
-    CacheManager::GetSingleton().AddToCache(cam,CacheManager::GetSingleton().MakeCacheName("auth",acctinfo->accountid),120);
+    CacheManager::GetSingleton().AddToCache(cam, CacheManager::GetSingleton().MakeCacheName("auth",acctinfo->accountid), 10);
 
     SendMsgStrings(me->clientnum); 
     

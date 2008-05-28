@@ -5,6 +5,7 @@
 
 *** 2008-05-28 by Mike Gist
 - Improved permissions handling in the updater.
+- Reduced character list caching to 10 sec.
 
 *** 2008-05-27 by Steven Patrick
 - Fixed FS#781, patch by kougaro
@@ -24,7 +25,8 @@
 
 *** 2008-05-25 by Steven Patrick
 - Fixed FS#1422, /crystal command now can be used to make multiple spawns within a range.
-  The server no longer recreates spawn points for items that have already been spawned on restart thus preventing stacks of items found at a spawn point.
+  The server no longer recreates spawn points for items that have already
+  been spawned on restart thus preventing stacks of items found at a spawn point.
 - DB VER BUMP to 1186
 
 *** 2008-05-25 by Andrew Dai
@@ -57,7 +59,8 @@
 
 *** 2008-05-22 by Steven Patrick
 - Fixed FS#1561, length requirement for advisors removed.
-- Fixed FS#1559, no advisor message changed from suggesting using /shout (which no one will hear in the tutorial) to ask in IRC/forums or use /tell.
+- Fixed FS#1559, no advisor message changed from suggesting using /shout
+  (which no one will hear in the tutorial) to ask in IRC/forums or use /tell.
 
 *** 2008-05-22 by Andrew Dai
 - Refactored the /item command so now the gui version shares the same code.
