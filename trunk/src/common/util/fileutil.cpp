@@ -210,7 +210,7 @@ bool FileUtil::CopyFile(csString from, csString to, bool vfsPath, bool executabl
     /**
      * On unix type systems we might need to set permissions after copy.
      * If the 'from' stat is null, the file is probably in a zip.
-     * So we use the permissions of the parent folder of the 'to' dir.
+     * So we use the permissions of the parent folder of the 'to' location.
      */
     if(!fromStat.IsValid())
     {
