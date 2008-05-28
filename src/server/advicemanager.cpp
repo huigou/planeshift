@@ -46,6 +46,7 @@
 #include "netmanager.h"
 #include "advicemanager.h"
 
+#define GM_TESTER 10
 
 /**
  * This class is the relationship of Advisor to Advisee.
@@ -360,6 +361,26 @@ void AdviceManager::HandleMessage(MsgEntry *me,Client *client)
     {
         if ( msg.sMessage == "on" )
         {
+            // GM's can always become advisors
+            if (client->GetSecurityLevel() < GM_TESTER)
+            {
+                // TODO: Is account banned from advising?
+                // Calculate time connected
+                Result result(db->Select("SELECT time_connected_sec FROM characters WHERE account_id = %d", client->GetAccountID()));
+                if (result.IsValid())
+                {
+                    unsigned int totalTimeConnected = 0;
+                    for (size_t i = 0; i < result.Count(); ++i)
+                    {
+                        totalTimeConnected += result[i].GetUInt32("time_connected_sec");
+                    }
+                    if ((totalTimeConnected / 3600) < 30)
+                    {
+                        psserver->SendSystemError(me->clientnum, "You must be in game for more than 30 hours to become an advisor.");
+                        return;
+                    }
+                }
+            }
             AddAdvisor(client);
         }
         else if ( msg.sMessage == "off" )

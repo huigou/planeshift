@@ -3938,15 +3938,15 @@ void psWorkManager::StartLockpick(Client* client,psItem* item)
     if (client->GetCharacterData()->Inventory().HaveKeyForLock(item->GetUID()))
     {
         bool locked = item->GetIsLocked();
-		//Make sure the player knows he unlocked or locked his lock. Imagine guildhouse left unlocked on accident.
+        // Make sure the player knows he unlocked or locked his lock. Imagine guildhouse left unlocked on accident.
         if (locked)
-         {
-         	psserver->SendSystemError(client->GetClientNum(), "You unlocked %s", item->GetName());
- 		 }
- 		else
- 		 {
- 			psserver->SendSystemOK(client->GetClientNum(), "You locked %s", item->GetName());
- 		 }
+        {
+            psserver->SendSystemError(client->GetClientNum(), "You unlocked %s.", item->GetName());
+        }
+        else
+        {
+            psserver->SendSystemOK(client->GetClientNum(), "You locked %s.", item->GetName());
+        }
         item->SetIsLocked(!locked);
         item->Save(false);
         return;
@@ -4011,7 +4011,7 @@ void psWorkManager::LockpickComplete(psWorkGameEvent* workEvent)
         if(character->GetSkills()->GetSkillRank(skill) >= workEvent->object->GetLockStrength())
         {
             bool locked = workEvent->object->GetIsLocked();
-            psserver->SendSystemInfo(workEvent->client->GetClientNum(),locked ? "You unlocked %s!" : "You locked %s!", workEvent->object->GetName());
+            psserver->SendSystemOK(workEvent->client->GetClientNum(), locked ? "You unlocked %s." : "You locked %s.", workEvent->object->GetName());
             workEvent->object->SetIsLocked(!locked);
             workEvent->object->Save(false);
         }
