@@ -302,6 +302,16 @@ int Client::GetGuildID()
     return guild->id;
 }
 
+unsigned int Client::GetAccountTotalOnlineTime()
+{
+    unsigned int totalTimeConnected = GetCharacterData()->GetOnlineTimeThisSession();
+    Result result(db->Select("SELECT SUM(time_connected_sec) FROM characters WHERE account_id = %d", GetAccountID()));
+    if (result.IsValid())
+        totalTimeConnected += result[0].GetUInt32("SUM(time_connected_sec)");
+        
+    return totalTimeConnected;
+}
+
 void Client::AddDuelClient(int clientnum)
 {
     if (!IsDuelClient(clientnum))
