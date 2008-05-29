@@ -293,6 +293,8 @@ public:
     const SOCKADDR_IN& GetAddress() const { return addr; }
 
     csRef<NetPacketQueueRefCount> outqueue;
+    
+    unsigned int GetAccountTotalOnlineTime();
 
     void AddDuelClient(int clientnum);
     void RemoveDuelClient(Client *client);
