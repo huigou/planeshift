@@ -341,6 +341,20 @@ void CacheManager::RemoveInstance( psItem * & item )
     item = NULL;
 }
 
+void CacheManager::RemoveItemStats (psItemStats *&itemStats)
+{
+    if (itemStats && itemStats->GetUID() != 0)
+    {
+        itemStats_NameHash.Delete(itemStats->GetDownCaseName(), itemStats);
+        itemStats_IDHash.Delete(itemStats->GetUID(), itemStats);
+
+        db->Command("DELETE from item_stats where id='%u'", itemStats->GetUID());
+
+        delete itemStats;
+        itemStats = NULL;
+    }
+}
+
 bool CacheManager::PreloadSkills()
 {
     unsigned int currentrow;

@@ -1201,7 +1201,12 @@ void psServerCharManager::HandleMerchantSell(psGUIMerchantMessage& msg, Client *
         SendPlayerItems( client, item->GetCategory() );
 
         // items are not currently given to merchant, they are just destroyed
+        psItemStats *itemStats = item->GetBaseStats();
+        bool uniqueItem = itemStats->GetUnique();
         CacheManager::GetSingleton().RemoveInstance(item);
+        // if the item is unique, like a player-written book, remove the item stats too
+        if (uniqueItem)
+            CacheManager::GetSingleton().RemoveItemStats(itemStats);
 
         // Update all client views
         UpdateItemViews( client->GetClientNum() );

@@ -297,7 +297,8 @@ public:
     float GetArmorVSWeaponResistance(psItemStats* armor, psItemStats* weapon);
 
     void RemoveInstance( psItem * & item );
-    
+    void RemoveItemStats (psItemStats *&itemStats);
+
     PSITEMSTATS_STAT ConvertAttributeString(const char *attributestring);
     
     // Converts the stat enum to a string.
