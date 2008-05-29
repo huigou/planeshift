@@ -216,7 +216,7 @@ bool FileUtil::CopyFile(csString from, csString to, bool vfsPath, bool executabl
     {
         n2.Truncate(n2.FindLast('/'));
         csRef<iDataBuffer> db = vfs->GetRealPath(n2);
-        fromStat = fileUtil->StatFile(db->GetData());
+        fromStat = StatFile(db->GetData());
     }
     SetPermissions(buff->GetData(), fromStat);
     if(executable)
