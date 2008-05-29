@@ -615,7 +615,7 @@ void psServer::RemovePlayer (uint32_t clientnum,const char *reason)
         npcmanager->Disconnect(client);
     }
 
-    serverthread->GetConnections()->Delete(client);
+    serverthread->GetConnections()->MarkDelete(client);
 }
 
 void psServer::MutePlayer (uint32_t clientnum,const char *reason)

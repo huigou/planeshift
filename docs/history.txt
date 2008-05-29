@@ -1,3 +1,6 @@
+*** 2008-05-29 by Andrew Dai
+- Fixed deadlock in server while checking for linkdead clients.
+
 *** 2008-05-28 by Steven Patrick
 - Made advisormode is on by default for GMs
 - /advisormode now requires that the account has a total connected time over 30 hours
