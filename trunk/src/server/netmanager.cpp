@@ -533,18 +533,44 @@ void NetManager::CheckLinkDead()
 {
     csTicks currenttime = csGetTicks();
 
-    ClientIterator i(clients);
-
-    while(i.HasNext())
+    csArray<uint32_t> checkedClients;
+    Client *pClient = NULL;
+    
+    // Delete all clients marked for deletion already
+    clients.SweepDelete();
+    
+    while(true)
     {
-        Client *pClient = i.Next();
+        pClient = NULL;
+
+        // Put the iterator in a limited scope so we don't hold on to the lock which may cause deadlock
+        {
+            ClientIterator i(clients);
+            
+            while(i.HasNext())
+            {
+                Client *candidate = i.Next();
+                
+                // Skip if already seen
+                if(checkedClients.FindSortedKey(csArrayCmp<uint32_t, uint32_t> (candidate->GetClientNum())) == csArrayItemNotFound)
+                    continue;
+                
+                checkedClients.InsertSorted(candidate->GetClientNum());
+                pClient = candidate;
+            }
+        }
+        
+        // No more clients to check so break
+        if(!pClient)
+            break;
+        
         // Shortcut here so zombies may immediately disconnect
         if(pClient->IsZombie() && pClient->ZombieAllowDisconnect())
         {
             /* This simulates receipt of this message from the client
-            ** without any network access, so that disconnection logic
-            ** is all in one place.
-            */
+             ** without any network access, so that disconnection logic
+             ** is all in one place.
+             */
             psDisconnectMessage discon(pClient->GetClientNum(), 0, "You should not see this.");
             if (discon.valid)
             {
@@ -568,18 +594,18 @@ void NetManager::CheckLinkDead()
             {
                 if(!pClient->AllowDisconnect())
                     continue;
-
+                
                 char ipaddr[20];
                 pClient->GetIPAddress(ipaddr);
-
+                
                 csString status;
                 status.Format("%s, %u, Client (%s) went linkdead.", ipaddr, pClient->GetClientNum(), pClient->GetName());
                 psserver->GetLogCSV()->Write(CSV_AUTHENT, status);
-
+                
                 /* This simulates receipt of this message from the client
-                ** without any network access, so that disconnection logic
-                ** is all in one place.
-                */
+                 ** without any network access, so that disconnection logic
+                 ** is all in one place.
+                 */
                 psDisconnectMessage discon(pClient->GetClientNum(), 0, "You are linkdead.");
                 if (discon.valid)
                 {

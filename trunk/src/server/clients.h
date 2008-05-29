@@ -63,6 +63,7 @@ protected:
     
     AddressHash addrHash;
     csHash<Client*> hash;
+    csPDelArray<Client> toDelete;
     CS::Threading::RecursiveMutex mutex;
 
 public:
@@ -72,7 +73,12 @@ public:
     bool Initialize();
 
     Client *Add(LPSOCKADDR_IN addr);
-    void Delete(Client* client);
+    
+    // Delete all clients marked to be deleted
+    void SweepDelete();
+    
+    // Mark this client as ready to be deleted
+    void MarkDelete(Client *client);
     size_t Count(void) const;
 
     ///  Find by 32bit id value, used in UDP messages, returns ready or not.

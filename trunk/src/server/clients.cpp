@@ -82,15 +82,23 @@ static int compareClientsByName(Client * const &a, Client * const &b)
 }
 */
 
-void ClientConnectionSet::Delete(Client *client)
+void ClientConnectionSet::MarkDelete(Client *client)
 {
 	CS::Threading::RecursiveMutexScopedLock lock (mutex);
     
     uint32_t clientid = client->GetClientNum();
     if (!addrHash.DeleteAll(client->GetAddress()))
         Bug2("Couldn't delete client %d, it was never added!", clientid);
+
     hash.DeleteAll(clientid);
-    delete client;
+    toDelete.Push(client);
+}
+
+void ClientConnectionSet::SweepDelete()
+{
+	CS::Threading::RecursiveMutexScopedLock lock (mutex);
+
+    toDelete.Empty();
 }
 
 size_t ClientConnectionSet::Count() const
