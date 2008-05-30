@@ -81,7 +81,7 @@ int main(int argc, char* argv[])
     // Initialize updater engine.
     UpdaterEngine* engine = new UpdaterEngine(args, updater->GetObjectRegistry(), "psupdater");
 
-    printf("PlaneShift Updater Version %i\n\n", UPDATER_VERSION);
+    printf("PlaneShift Updater Version %i for %s.\n\n", UPDATER_VERSION, engine->GetConfig()->GetCurrentConfig()->GetPlatform());
 
     // Run the update process!
     updater->RunUpdate(engine);
