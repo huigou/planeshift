@@ -76,7 +76,13 @@ const char* Config::GetPlatform() const
 #if defined(CS_PLATFORM_WIN32)
     return "win32";
 #elif defined(CS_PLATFORM_MACOSX)
-    return "macosx";
+    long version;
+    Gestalt(gestaltSystemVersion, &version);
+    if(version >= 0x1040)
+    {
+        return "macosx";
+    }
+    return "macosx 10.3.9";
 #elif defined(CS_PLATFORM_UNIX) && CS_PROCESSOR_SIZE == 64
     return "linux64";
 #elif defined(CS_PLATFORM_UNIX) && CS_PROCESSOR_SIZE == 32
