@@ -1,3 +1,7 @@
+*** 2008-05-30 by Kenny Graunke
+- Tristan Cragnolini (kougaro) fixed FS#156 - prevent characters from sending
+  marriage proposals until they've played at least 24 hours.
+
 *** 2008-05-29 by Dave Bentham
 - Fixed FS#1511, books/maps sold back to merchant removed from item_stats table.
 
