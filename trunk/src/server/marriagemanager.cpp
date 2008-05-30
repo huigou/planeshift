@@ -235,9 +235,9 @@ void psMarriageManager::Propose( Client* client, csString proposedCharName, csSt
     }
     
     // Make sure the character is old enough (24 hours = 86400 seconds), but not apply if tester, or more
-    if (client->GetCharacterData()->GetTotalOnlineTime() < 86400 && client->GetSecurityLevel() < GM_TESTER)
+    if (client->GetAccountTotalOnlineTime() < 86400 && client->GetSecurityLevel() < GM_TESTER)
     {
-        psserver->SendSystemError( client->GetClientNum(), "You have not played long enough to marry someone.");
+        psserver->SendSystemError( client->GetClientNum(), "You have not played long enough (24 hours) to marry someone.");
         return;
     }
 
