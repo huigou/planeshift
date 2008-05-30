@@ -35,6 +35,7 @@
 //=============================================================================
 // Local Includes
 //=============================================================================
+#include "adminmanager.h"
 #include "marriagemanager.h"
 #include "chatmanager.h"
 #include "psserver.h"
@@ -163,7 +164,7 @@ public:
 
         if ( answer == "no" )
         {
-            // Inform proposer that marriage has been rejected
+            // Inform proposer that divorce has been rejected
             tempStr.Format( "%s has rejected your divorce request.", 
                             divorcedFirstName.GetDataSafe() );
             psserver->SendSystemError( divorcerClient->GetClientNum(),
@@ -230,6 +231,13 @@ void psMarriageManager::Propose( Client* client, csString proposedCharName, csSt
         psserver->SendSystemError( client->GetClientNum(),
             "You are already married to %s",
             client->GetCharacterData()->GetSpouseName() );
+        return;
+    }
+    
+    // Make sure the character is old enough (24 hours = 86400 seconds), but not apply if tester, or more
+    if (client->GetCharacterData()->GetTotalOnlineTime() < 86400 && client->GetSecurityLevel() < GM_TESTER)
+    {
+        psserver->SendSystemError( client->GetClientNum(), "You have not played long enough to marry someone.");
         return;
     }
 
