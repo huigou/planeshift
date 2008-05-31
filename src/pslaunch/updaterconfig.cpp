@@ -19,6 +19,10 @@
 
 #include "updaterconfig.h"
 
+#if defined(CS_PLATFORM_MACOSX)
+#include <Carbon/Carbon.h>
+#endif
+
 iObjectRegistry* UpdaterConfig::object_reg = NULL;
 
 UpdaterConfig::UpdaterConfig(csArray<csString> args, iObjectRegistry* _object_reg, csRef<iVFS> _vfs)
