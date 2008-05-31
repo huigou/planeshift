@@ -1,3 +1,6 @@
+*** 2008-05-31 by Steven Patrick
+- GMs now can see all advisor and advisee communications, not just the first line of each.
+
 *** 2008-05-31 by Andrew Dai
 - Fixed mistake in checking for linkdead clients.
 
