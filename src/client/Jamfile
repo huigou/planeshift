@@ -34,6 +34,7 @@ STATIC.PLUGINLIST =
   bruteblock
   csddsimg
   csfont
+  csgifimg
   csjpgimg
   csopcode
   csparser
@@ -95,7 +96,7 @@ STATIC.PLUGINLIST =
   xmltiny
   ;
 
-if $(TARGET.OS) != "WIN32" { STATIC.PLUGINLIST += xwin xext86vm glx2d sndsysalsa sndsysoss ; }
+if $(TARGET.OS) != "WIN32" { if $(TARGET.OS) != "MACOS_X" { STATIC.PLUGINLIST += xwin xext86vm glx2d sndsysalsa sndsysoss ; } }
 if $(TARGET.OS) = "WIN32" { STATIC.PLUGINLIST += glwin32 sndsyswin ; }
 if $(TARGET.OS) = "MACOS_X" { STATIC.PLUGINLIST += glosx2d sndsyscoreaudio ; }
 

@@ -38,7 +38,7 @@ STATIC.PLUGINLIST =
   xmltiny
   ;
 
-if $(TARGET.OS) != "WIN32" { STATIC.PLUGINLIST += xwin xext86vm glx2d ; }
+if $(TARGET.OS) != "WIN32" { if $(TARGET.OS) != "MACOS_X" { STATIC.PLUGINLIST += xwin xext86vm glx2d ; } }
 if $(TARGET.OS) = "WIN32" { STATIC.PLUGINLIST += glwin32 ; }
 if $(TARGET.OS) = "MACOS_X" { STATIC.PLUGINLIST += glosx2d ; }
 
