@@ -685,14 +685,6 @@ void UpdaterEngine::generalUpdate()
             if(newListType.Get(i) && !config->UpdateExecs())
                 continue;
 
-            // Set the permissions based on the target parent folder.
-            csString folder("/this/");
-            folder.Append(newList.Get(i));
-            folder.Truncate(folder.FindLast('/'));
-            csRef<iDataBuffer> db = vfs->GetRealPath(folder);
-            csRef<FileStat> fs = fileUtil->StatFile(db->GetData());
-            fileUtil->SetPermissions("/zip/" + newList.Get(i), fs);
-
             if(newListType.Get(i))
             {
                 fileUtil->CopyFile("/zip/" + newList.Get(i), "/this/" + newList.Get(i), true, true);
