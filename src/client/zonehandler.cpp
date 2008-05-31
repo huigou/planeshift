@@ -87,6 +87,12 @@ ZoneHandler::~ZoneHandler()
     {
         msghandler->Unsubscribe(this,MSGTYPE_NEWSECTOR);
     }
+    
+    csHash<ZoneLoadInfo *, const char*>::GlobalIterator it(zonelist.GetIterator());
+    
+    while(it.hasNext())
+        delete it.Next();
+        
 }
 
 bool ZoneHandler::FindLoadWindow()
@@ -107,8 +113,7 @@ bool ZoneHandler::FindLoadWindow()
 
 ZoneLoadInfo * ZoneHandler::FindZone(const char* sector)
 {
-    ZoneLoadInfo key(sector, NULL);
-    ZoneLoadInfo* zone = zonelist.Find(&key);
+    ZoneLoadInfo* zone = zonelist.Get(sector, NULL);
 
     if (zone == NULL)
         Error2("Fatal error: Could not find zone info for sector %s!\n",sector);
@@ -164,7 +169,7 @@ bool ZoneHandler::LoadZoneInfo()
         }
 
         ZoneLoadInfo *zone = new ZoneLoadInfo(zoneNode);
-        zonelist.Insert(zone, true);
+        zonelist.Put(zone->inSector, zone);
     }
 
     return true;

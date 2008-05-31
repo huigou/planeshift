@@ -4535,6 +4535,11 @@ ProgressionManager::~ProgressionManager()
     psserver->GetEventManager()->Unsubscribe(this,MSGTYPE_GUISKILL);
     psserver->GetEventManager()->Unsubscribe(this,MSGTYPE_DEATH_EVENT);
     psserver->GetEventManager()->Unsubscribe(this,MSGTYPE_ZPOINT_EVENT);    
+    
+    csHash<ProgressionEvent *, const char *>::GlobalIterator it(events.GetIterator());
+    
+    while ( it.HasNext () )
+        delete it.Next();
 }
 
 void ProgressionManager::QueueUndoScript(const char *scriptText, int delay, gemActor *actor, gemObject *target, psItem * item, int persistentID)
@@ -4568,7 +4573,7 @@ bool ProgressionManager::Initialize()
         {
             unsigned long x = (unsigned long)index; // remove casting warnings
 
-            ProgressionEvent *ev = new ProgressionEvent;
+            csRef<ProgressionEvent> ev = csPtr<ProgressionEvent> (new ProgressionEvent);
             ev->name = result_events[x]["name"];
 
             csRef<iDocument> doc = xml->CreateDocument();
@@ -4582,7 +4587,7 @@ bool ProgressionManager::Initialize()
             }
             if (ev->LoadScript(doc))
             {
-                events.Insert(ev,TREE_OWNS_DATA);
+                events.Put(ev->name, ev);
             }
             else 
             {
@@ -5108,11 +5113,7 @@ ProgressionEvent * ProgressionManager::CreateEvent(const char *name, const char 
         int uniq_number = (int)(9999*psserver->GetRandom());
         ev->name.Format("%s%04d",name,uniq_number++);
     } while (FindEvent(ev->name) != NULL && count < 100);
-    if (count >= 100)
-    {
-        Error2("Uniq number not found. Failed to execute script: %s",script);
-        return NULL;
-    }
+    CS_ASSERT_MSG("Uniq name not found. Failed to execute script.", count < 100);
 
     csRef<iDocumentSystem> xml = csPtr<iDocumentSystem>(new csTinyDocumentSystem);
     csRef<iDocument> doc = xml->CreateDocument();
@@ -5125,7 +5126,7 @@ ProgressionEvent * ProgressionManager::CreateEvent(const char *name, const char 
     }
     if (ev->LoadScript(doc))
     {
-        events.Insert(ev,TREE_OWNS_DATA);
+        events.Put(ev->name, ev);
     }
     else
     {
@@ -5166,7 +5167,14 @@ bool ProgressionManager::AddScript(const char *name, const char *script)
     ev->name = name;
 
     if (ev->LoadScript(doc))
-        events.Insert(ev,TREE_OWNS_DATA);
+        events.Put(ev->name, ev);
+    else
+    {
+        Error2("Loading script error: %s", script );
+        delete ev;
+        return false;
+    }
+    
     csString escText;
     db->Escape( escText, script );
     unsigned long res = db->Command("INSERT INTO progression_events "
@@ -5182,9 +5190,8 @@ bool ProgressionManager::AddScript(const char *name, const char *script)
 ProgressionEvent *ProgressionManager::FindEvent(char const *name)
 {
     if ( name == NULL ) return NULL;
-    ProgressionEvent ev;
-    ev.name = name;
-    return events.Find(&ev);
+
+    return events.Get(name, NULL);
 }
 
 Faction *ProgressionManager::FindFaction(const char *name)
@@ -5731,8 +5738,7 @@ float ProgressionEvent::ForceRun(csTicks duration)
         csString scriptStr;
         scriptStr.Format("<evt>%s</evt>", finalScript.GetData());
         
-        // Memory Leak?
-        ProgressionEvent * script =  new ProgressionEvent();
+        csRef<ProgressionEvent> script =  csPtr<ProgressionEvent> (new ProgressionEvent());
         script->LoadScript(scriptStr.GetData());
         script->name = name;
         script->runParamInverse = true;
