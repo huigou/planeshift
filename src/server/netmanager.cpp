@@ -1,7 +1,7 @@
 /*
  * NetManager.cpp by Matze Braun <MatzeBraun@gmx.de>
  *
- * Copyright (C) 2001 Atomic Blue (info@planeshift.it, http://www.atomicblue.org) 
+ * Copyright (C) 2001 Atomic Blue (info@planeshift.it, http://www.atomicblue.org)
  *
  *
  * This program is free software; you can redistribute it and/or
@@ -98,7 +98,7 @@ bool NetManager::HandleUnknownClient (LPSOCKADDR_IN addr, MsgEntry* me)
         return false;
 
     if ( msg->type == MSGTYPE_PING )
-    {   
+    {
         psPingMsg ping(me);
 
         if (!(ping.flags & PINGFLAG_REQUESTFLAGS) && !psserver->IsReady())
@@ -123,9 +123,9 @@ bool NetManager::HandleUnknownClient (LPSOCKADDR_IN addr, MsgEntry* me)
         delete pkt;
 
         return false;
-    }        
+    }
 
-    // Don't accept any new clients when not ready, npcclients is accepted 
+    // Don't accept any new clients when not ready, npcclients is accepted
     if(msg->type==client_firstmsg && !psserver->IsReady())
         return false;
 
@@ -209,7 +209,7 @@ void NetManager::CheckResendPkts()
     {
         resends[resendIndex] = pkts.GetSize();
         resendIndex = (resendIndex + 1) % RESENDAVGCOUNT;
-        
+
         csTicks timeTaken = csGetTicks() - currenttime;
         if(pkts.GetSize() > 300 || resendIndex == 1 || timeTaken > 50)
         {
@@ -229,22 +229,22 @@ void NetManager::CheckResendPkts()
                 CPrintf(CON_WARNING, "%s\n", (const char *) status.GetData());
             }
             status.AppendFmt("Resending non-acked packet statistics: %g average resends, peak of %u resent packets", resendAvg, peakResend);
-            
+
             if(LogCSV::GetSingletonPtr())
                 LogCSV::GetSingleton().Write(CSV_STATUS, status);
         }
-        
+
     }
-    
+
 }
 
 NetManager::Connection *NetManager::GetConnByIP (LPSOCKADDR_IN addr)
 {
     Client* client = clients.Find(addr);
-    
+
     if (!client)
         return NULL;
-    
+
     return client->GetConnection();
 }
 
@@ -257,7 +257,7 @@ NetManager::Connection *NetManager::GetConnByNum (uint32_t clientnum)
 
     // Debug check to see if we have a concurrency problem
     CS_ASSERT(clients.FindAny(clientnum) != NULL);
-    
+
     return client->GetConnection();
 }
 
@@ -304,7 +304,7 @@ void NetManager::Run ()
     csTicks lastlinkcheck   = currentticks;
     csTicks lastresendcheck = currentticks;
     csTicks laststatdisplay = currentticks;
-    
+
     // Maximum time to spend in ProcessNetwork
     csTicks maxTime = MIN(MIN(LINKCHECK, RESENDCHECK), STATDISPLAYCHECK);
     csTicks timeout;
@@ -324,7 +324,7 @@ void NetManager::Run ()
     size_t clientCountMax = 0;
 
     printf("Network thread started!\n");
-    
+
     stop_network = false;
     while ( !stop_network )
     {
@@ -338,8 +338,8 @@ void NetManager::Run ()
         ProcessNetwork (timeout);
 
         currentticks = csGetTicks();
-       
-        // Check for link dead clients.  
+
+        // Check for link dead clients.
         if (currentticks - lastlinkcheck > LINKCHECK)
         {
             lastlinkcheck = currentticks;
@@ -369,11 +369,11 @@ void NetManager::Run ()
             {
                 kbpsOutMax = kbpsout;
             }
- 
+
             lasttotaltransferout = totaltransferout;
 
             laststatdisplay = currentticks;
-       
+
             if ( clients.Count() > clientCountMax )
             {
                 clientCountMax = clients.Count();
@@ -388,7 +388,7 @@ void NetManager::Run ()
                 CPrintf(CON_DEBUG, "Packets inbound %ld , outbound %ld...\n",
                         totalcountin-lasttotalcountin,totalcountout-lasttotalcountout);
             }
-        
+
             lasttotalcountout = totalcountout;
             lasttotalcountin = totalcountin;
         }
@@ -429,7 +429,7 @@ void NetManager::Broadcast(MsgEntry *me, int scope, int guildID)
                 }
 
                 // Only clients that finished connecting get broadcastet
-                // stuff                                                    
+                // stuff
                 if (!p->IsReady())
                     continue;
 
@@ -445,15 +445,15 @@ void NetManager::Broadcast(MsgEntry *me, int scope, int guildID)
         {
             CS_ASSERT_MSG("NetBase::BC_GUILD broadcast must specify guild ID", guildID != -1 );
 
-            /** 
-             * Send the message to each client with the same guildID 
+            /**
+             * Send the message to each client with the same guildID
              */
 
             // Copy message to send out to everyone
             csRef<MsgEntry> newmsg;
             newmsg.AttachNew(new MsgEntry(me));
             newmsg->msgid = GetRandomID();
-            
+
             // Message is copied again into packet sections, so we can reuse same one.
             ClientIterator i(clients);
 
@@ -480,7 +480,7 @@ void NetManager::Broadcast(MsgEntry *me, int scope, int guildID)
 
         // XXX: This is hacky, but we need to send the message to the client
         // here and now! Because in the next moment he'll be deleted
-        psNetPacketEntry* pkt = 
+        psNetPacketEntry* pkt =
         new psNetPacketEntry(me->priority, newmsg->clientnum,
             0, 0, (uint32_t) newmsg->bytes->GetTotalSize(),
             (uint16_t) newmsg->bytes->GetTotalSize(), newmsg->bytes);
@@ -511,7 +511,7 @@ Client *NetManager::GetAnyClient(int cnum)
 void NetManager::Multicast (MsgEntry* me, const csArray<PublishDestination>& multi, int except, float range)
 {
     for (size_t i=0; i<multi.GetSize(); i++)
-    {       
+    {
          if (multi[i].client==except)  // skip the exception client to avoid circularity
             continue;
 
@@ -535,10 +535,10 @@ void NetManager::CheckLinkDead()
 
     csArray<uint32_t> checkedClients;
     Client *pClient = NULL;
-    
+
     // Delete all clients marked for deletion already
     clients.SweepDelete();
-    
+
     while(true)
     {
         pClient = NULL;
@@ -546,24 +546,24 @@ void NetManager::CheckLinkDead()
         // Put the iterator in a limited scope so we don't hold on to the lock which may cause deadlock
         {
             ClientIterator i(clients);
-            
+
             while(i.HasNext())
             {
                 Client *candidate = i.Next();
-                
+
                 // Skip if already seen
-                if(checkedClients.FindSortedKey(csArrayCmp<uint32_t, uint32_t> (candidate->GetClientNum())) == csArrayItemNotFound)
+                if(checkedClients.FindSortedKey(csArrayCmp<uint32_t, uint32_t> (candidate->GetClientNum())) != csArrayItemNotFound)
                     continue;
-                
+
                 checkedClients.InsertSorted(candidate->GetClientNum());
                 pClient = candidate;
             }
         }
-        
+
         // No more clients to check so break
         if(!pClient)
             break;
-        
+
         // Shortcut here so zombies may immediately disconnect
         if(pClient->IsZombie() && pClient->ZombieAllowDisconnect())
         {
@@ -594,14 +594,14 @@ void NetManager::CheckLinkDead()
             {
                 if(!pClient->AllowDisconnect())
                     continue;
-                
+
                 char ipaddr[20];
                 pClient->GetIPAddress(ipaddr);
-                
+
                 csString status;
                 status.Format("%s, %u, Client (%s) went linkdead.", ipaddr, pClient->GetClientNum(), pClient->GetName());
                 psserver->GetLogCSV()->Write(CSV_AUTHENT, status);
-                
+
                 /* This simulates receipt of this message from the client
                  ** without any network access, so that disconnection logic
                  ** is all in one place.

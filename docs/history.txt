@@ -1,3 +1,6 @@
+*** 2008-05-31 by Andrew Dai
+- Fixed mistake in checking for linkdead clients.
+
 *** 2008-05-30 by Frank Barton
 - upgrade_schema to change stat_type of items as needed
 - DB BUMP
