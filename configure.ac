@@ -312,7 +312,7 @@ AC_ARG_WITH([cs], [AC_HELP_STRING([--without-cs],
 AS_IF([test -z "$with_cs"], [with_cs=yes])
 
 AS_IF([test $with_cs != no],
-[CS_PATH_CRYSTAL_EMIT([1.2], [],
+[CS_PATH_CRYSTAL_EMIT([1.3], [],
   [AC_MSG_ERROR([
 *** Crystal Space could not be found or was unusable. The latest version is
 *** always available from http://www.crystalspace3d.org/
@@ -380,7 +380,7 @@ m4_if(cel_desired, [yes],
 AS_IF([test -z "$with_cel"], [with_cel=yes])
 
 AS_IF([test $with_cel != no],
-[CS_PATH_CEL_EMIT([1.2], [],
+[CS_PATH_CEL_EMIT([1.3], [],
   [AC_MSG_ERROR([
 *** CEL could not be found or was unusable. The latest version is always
 *** available from http://cel.crystalspace3d.org/
@@ -404,7 +404,7 @@ AS_IF([test $with_cel != no],
   AC_MSG_RESULT([$cc_have_cel_static])],
   [cc_have_cel_static=no])
 
-AS_IF([test $cc_have_cel_static != no && test $cc_have_crystal_static != no],
+AS_IF([(test $cc_have_cel_static != no || test $with_cel = no) && test $cc_have_crystal_static != no],
   [CS_EMIT_BUILD_PROPERTY([HAVE_STATIC_PLUGINS], [yes])])
 
 
