@@ -61,6 +61,7 @@ struct AdvisorStruct
     uint32_t id;
     csString request;
     bool ready;
+    bool GM;
 };
 
 
@@ -175,4 +176,5 @@ public:
 };
 
 #endif
+
 

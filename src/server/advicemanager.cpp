@@ -582,6 +582,15 @@ void AdviceManager::HandleAdviceRequest( Client *advisee, csString message )
 
         psChatMessage msgAdvisor( activeSession->AdvisorClientNum, advisee->GetName(), 0, message , CHAT_ADVICE, false );
         msgAdvisor.SendMessage();
+
+        // Send message to GM chars as well
+        for (size_t i = 0; i < advisors.GetSize(); i++)
+        {
+            if (!advisors[i].GM || advisors[i].id == activeSession->AdvisorClientNum)
+                continue;
+            psChatMessage msgAdvisor( advisors[i].id, advisee->GetName(), 0, message, CHAT_ADVICE, false);
+            msgAdvisor.SendMessage();
+        }
     }
     else
     {
@@ -724,6 +733,8 @@ void AdviceManager::HandleAdviceResponse( Client *advisor, csString sAdvisee, cs
                 if ( advisors[i].id != activeSession->AdvisorClientNum )
                 {
                     psserver->SendSystemInfo( advisors[i].id, "%s has been assigned to %s.",  advisee->GetName(), advisor->GetName() );
+                    if ( advisors[i].GM )
+                        continue;
                     msgChat.msg->clientnum = advisors[i].id;
                     msgChat.SendMessage();
                 }
@@ -743,6 +754,15 @@ void AdviceManager::HandleAdviceResponse( Client *advisor, csString sAdvisee, cs
         // Send Message to advisor
         msgChat.msg->clientnum = activeSession->AdvisorClientNum;
         msgChat.SendMessage();
+
+        // Send message to GM chars as well
+        for (size_t i = 0; i < advisors.GetSize(); i++)
+        {
+            if (!advisors[i].GM || advisors[i].id == activeSession->AdvisorClientNum)
+                continue;
+            msgChat.msg->clientnum = advisors[i].id;
+            msgChat.SendMessage();
+        }
     }
 
     // Add timeout for Advisor-Advisee relationship
@@ -783,6 +803,7 @@ void AdviceManager::AddAdvisor(Client *client)
     AdvisorStruct advisor;
     advisor.id = id;
     advisor.ready = true;
+    advisor.GM = client->GetSecurityLevel() >= GM_TESTER;
 
     advisors.Push(advisor);
 
