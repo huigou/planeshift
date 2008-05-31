@@ -913,6 +913,11 @@ ALTER TABLE `hunt_locations` ADD COLUMN `amount` INTEGER UNSIGNED NOT NULL DEFAU
  ADD COLUMN `range` DOUBLE(10,2) UNSIGNED NOT NULL DEFAULT '0.00' AFTER `amount`;
 UPDATE `server_options` SET `option_value`='1186' WHERE `option_name`='db_version';
 
+#### 1187 - Frank Barton - changing stat_type to appropriate value for random loot an unique items
+UPDATE `item_stats` SET `stat_type`='R' WHERE `id`>'10000';
+UPDATE `item_stats` SET `stat_type`='U' WHERE `stat_type`='R' AND `flags` LIKE '%PERSONALIZE%'; 
+UPDATE `server_options` SET `option_value`='1187' WHERE `option_name`='db_version';
+
 # Insert your upgrade before this line. Remember when you set a new db_version
 # to update the server_options.sql file and update psserver.cpp as well.
 # This to ensure that everything is working if you use the create_all.sql to

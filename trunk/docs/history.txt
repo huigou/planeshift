@@ -1,3 +1,7 @@
+*** 2008-05-30 by Frank Barton
+- upgrade_schema to change stat_type of items as needed
+- DB BUMP
+
 *** 2008-05-30 by Steven Patrick
 - Changed proposal limit to by account instead of by character. Added the required time to the error message.
 
