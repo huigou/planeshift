@@ -58,7 +58,7 @@ class pawsProgressBar;
 class ZoneLoadInfo
 {
 public:
-    csString    inSector;
+    const csString inSector;
     csString    loadImage;
     bool        transitional;
     
@@ -106,7 +106,7 @@ public:
     void SetKeepMapsLoaded(bool v) { keepMapsLoaded = v; }
     
 protected:
-    BinaryRBTree<ZoneLoadInfo> zonelist;
+    csHash<ZoneLoadInfo *, const char*> zonelist;
     csArray<csString>       alllist;
     iObjectRegistry*        object_reg;
     csRef<MsgHandler>        msghandler;

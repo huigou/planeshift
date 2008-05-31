@@ -109,7 +109,7 @@ protected:
 
     csHash<csString, csString> affinitycategories;
 
-    BinaryRBTree<ProgressionEvent> events;
+    csHash<ProgressionEvent *, const char *> events;
 
     ClientConnectionSet    *clients;
 };
@@ -123,7 +123,7 @@ private:
     unsigned int client;
 
 public:
-    ProgressionEvent * progEvent;
+    csRef<ProgressionEvent> progEvent;
     
     ProgressionDelay(ProgressionEvent * progEvent, csTicks delay, unsigned int clientnum);
     virtual ~ProgressionDelay();
@@ -133,7 +133,7 @@ public:
 
 //-----------------------------------------------------------------------------
 
-class ProgressionEvent
+class ProgressionEvent : public csRefCount
 {
 public:
     ProgressionEvent();
