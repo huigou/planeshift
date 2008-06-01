@@ -793,6 +793,9 @@
 				RelativePath="..\..\src\client\gui\pawsconfigpvp.cpp">
 			</File>
 			<File
+				RelativePath="..\..\src\client\gui\pawsconfigshadows.cpp">
+			</File>
+			<File
 				RelativePath="..\..\src\client\gui\pawsconfigsound.cpp">
 			</File>
 			<File
@@ -1005,6 +1008,9 @@
 			</File>
 			<File
 				RelativePath="..\..\src\client\gui\pawsconfigpvp.h">
+			</File>
+			<File
+				RelativePath="..\..\src\client\gui\pawsconfigshadows.h">
 			</File>
 			<File
 				RelativePath="..\..\src\client\gui\pawsconfigsound.h">
