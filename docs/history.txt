@@ -7,6 +7,7 @@
 - Fixed memory leak when using progression undo scripts.
 - Changed ZoneHandler and ProgressionManager to use csHash instead of
   BinaryRBTree.
+- Changed /who so it now shows as many players as can fit inside a packet.
 
 *** 2008-05-30 by Frank Barton
 - upgrade_schema to change stat_type of items as needed
