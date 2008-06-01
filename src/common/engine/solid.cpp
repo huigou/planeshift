@@ -25,7 +25,6 @@
 #include "cstool/collider.h"
 #include "iutil/objreg.h"
 #include "ivaria/collider.h"
-#include "propclass/mesh.h"
 
 //=============================================================================
 // Project Includes
