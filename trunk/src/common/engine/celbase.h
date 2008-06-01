@@ -19,6 +19,8 @@
 #ifndef __CELBASE_H__
 #define __CELBASE_H__
 
+#ifdef USE_CEL
+
 #include <csutil/ref.h>
 #include <csutil/leakguard.h>
 
@@ -83,6 +85,8 @@ protected:
     csRef<iPluginManager>   pluginMgr;
     csRef<iCelEntity>       actors;
 };
+
+#endif // USE_CEL
 
 #endif
 
