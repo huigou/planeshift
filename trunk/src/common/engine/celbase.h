@@ -29,7 +29,6 @@
 #include <physicallayer/entity.h>
 #include <physicallayer/propfact.h>
 #include <physicallayer/propclas.h>
-//#include <physicallayer/persist.h>
 #include <propclass/mesh.h>
 #include <propclass/mesh.h>
 #include <propclass/meshsel.h>
