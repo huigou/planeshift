@@ -272,28 +272,36 @@ bool UpdaterEngine::checkUpdater()
 {
     // Backup old config, download new.
     fileUtil->MoveFile("/this/updaterinfo.xml", "/this/updaterinfo.xml.bak", true, false);
+
+    bool failed = false;
     
     if(!downloader->DownloadFile("updaterinfo.xml", "updaterinfo.xml", false, true))
-        return false;
+        failed = true;
 
     // Load new config data.
     csRef<iDocumentNode> root = GetRootNode(UPDATERINFO_FILENAME);
-    if(!root)
+    if(!failed && !root)
     {
         printOutput("Unable to get root node\n");
-        return false;
+        failed = true;
     }
 
     csRef<iDocumentNode> confignode = root->GetNode("config");
-    if (!confignode)
+    if (!failed && !confignode)
     {
         printOutput("Couldn't find config node in configfile!\n");
-        return false;
+        failed = true;
     }
 
-    if (!config->GetNewConfig()->Initialize(confignode))
+    if (!failed && !config->GetNewConfig()->Initialize(confignode))
     {
         printOutput("Failed to Initialize mirror config new!\n");
+        failed = true;
+    }
+
+    if(failed)
+    {
+        fileUtil->MoveFile("/this/updaterinfo.xml.bak", "/this/updaterinfo.xml", true, false);
         return false;
     }
 
