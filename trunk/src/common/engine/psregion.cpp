@@ -83,7 +83,7 @@ bool psRegion::Load(bool loadMeshes)
     csString target;
     target.Format("%s/world", worlddir.GetData());
 
-    csRef<iDataBuffer> buf (vfs->ReadFile (target.GetData(), false));
+    csRef<iDataBuffer> buf (vfs->ReadFile (target.GetData()));
     if (!buf || !buf->GetSize ())
     {
         Error2("Error loading world file. %s\n", target.GetData());
