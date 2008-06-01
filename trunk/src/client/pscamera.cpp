@@ -59,6 +59,7 @@
 #include "pscelclient.h"
 #include "pscharcontrol.h"
 #include "globals.h"
+#include "shadowmanager.h"
 
 
 psCamera::psCamera()
@@ -1298,7 +1299,7 @@ void psCamera::UseFixedDistanceClipping(float dist)
 {
     distanceCfg.adaptive = false;
     distanceCfg.dist = (int)dist;
-    SetDistanceClipping(dist);
+    SetDistanceClipping(dist);    
 }
 
 void psCamera::UseAdaptiveDistanceClipping(int minFPS, int maxFPS, int minDist)
@@ -1702,6 +1703,10 @@ void psCamera::SetDistanceClipping(float dist)
     csVector3 v1(0, 0, dist), v2(0, 1, dist), v3(1, 0, dist);
     csPlane3  p(v1, v2, v3);
     view->GetCamera()->SetFarPlane(&p);
+
+    // control distance we see shadows as well
+    psShadowManager *shadowManager = psengine->GetCelClient()->GetShadowManager();
+    shadowManager->SetShadowRange(dist);
 }
 
 float psCamera::GetDistanceClipping()
@@ -1779,5 +1784,6 @@ void psCamera::AdaptDistanceClipping()
 
     lastTime = currTime;
 }
+
 
 

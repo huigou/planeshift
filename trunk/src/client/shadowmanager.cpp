@@ -34,17 +34,22 @@
 #include "effects/pseffectobj.h"
 #include "effects/pseffectobjtext.h"
 
+// Used to determine if shadows are enabled or not
+#define DEFAULT_FILE  "/planeshift/data/options/shadows_def.xml"
+#define USER_FILE     "/planeshift/userdata/options/shadows.xml"
+
 bool psShadowManager::WithinRange(GEMClientObject * object) const
 {
-    if (shadowRange <= 0.000001f)
+    if (shadowRange < 0)
         return true;
 
     GEMClientObject * mainPlayer = psengine->GetCelClient()->GetMainPlayer();
     if (!mainPlayer)
         return true;
-
+    
     csVector3 diff = object->GetMesh()->GetMovable()->GetPosition() - 
-        psengine->GetCelClient()->GetMainPlayer()->GetMesh()->GetMovable()->GetPosition();
+                     mainPlayer->GetMesh()->GetMovable()->GetPosition();
+    
     return (diff.SquaredNorm() <= shadowRange*shadowRange);
 }
 
@@ -52,7 +57,13 @@ psShadowManager::psShadowManager()
 {
     cfgmgr = psengine->GetConfig();
     shadowRange = cfgmgr->GetFloat("PlaneShift.Visuals.ShadowRange", -1.0f);
-
+    
+    bool result = Load(USER_FILE);
+    if (result == false)
+    {
+        result = Load(DEFAULT_FILE);
+    }
+    
     RecreateAllShadows();
 }
 
@@ -61,8 +72,63 @@ psShadowManager::~psShadowManager()
 
 }
 
+bool psShadowManager::Load(const char * filename)
+{
+    csRef<iDocument> doc;
+    csRef<iDocumentNode> root;
+    csRef<iVFS> vfs;
+    csRef<iDocumentSystem>  xml;
+    const char* error;
+
+    vfs = psengine->GetVFS();
+    assert(vfs);
+    csRef<iDataBuffer> buff = vfs->ReadFile(filename);
+      
+    if (buff == NULL)
+    {
+        Error2("Could not find file: %s", filename);
+        return false;
+    }
+    
+    xml = psengine->GetXMLParser ();
+    doc = xml->CreateDocument();
+    assert(doc);
+    error = doc->Parse( buff );
+    if ( error )
+    {
+        Error3("Parse error in %s: %s", filename, error);
+        return false;
+    }
+    if (doc == NULL)
+        return false;
+
+    root = doc->GetRoot();
+    if (root == NULL)
+    {
+        Error2("No root in XML %s", filename);
+        return false;
+    }
+
+    csRef<iDocumentNode> shadowsNode = root->GetNode("shadows");
+    if (!shadowsNode)
+    {
+        Error2("No shadows node in %s", filename);
+        return false;
+    }
+
+    if ((csString) shadowsNode->GetAttributeValue("enabled") == "false")
+		DisableShadows();
+	else
+		EnableShadows();
+    
+    return true;
+}
+
 void psShadowManager::CreateShadow(GEMClientObject * object)
 {
+    if (shadowsEnabled == false)
+        return;
+
     if (!object)
         return;
 
@@ -110,14 +176,20 @@ void psShadowManager::RemoveShadow(GEMClientObject * object)
 
 void psShadowManager::RecreateAllShadows()
 {
+    if (shadowsEnabled == false)
+        return;
+
     const csPDelArray<GEMClientObject>& entities = psengine->GetCelClient()->GetEntities();
     size_t len = entities.GetSize();
     for (size_t a=0; a<len; ++a)
         CreateShadow(entities[a]);
 }
 
-void psShadowManager::RemoveAllShadows(GEMClientObject * object)
+void psShadowManager::RemoveAllShadows()
 {
+    if (shadowsEnabled == false)
+        return;
+
     const csPDelArray<GEMClientObject>& entities = psengine->GetCelClient()->GetEntities();
     size_t len = entities.GetSize();
     for (size_t a=0; a<len; ++a)
@@ -137,6 +209,9 @@ void psShadowManager::SetShadowRange(float shadowRange)
 
 void psShadowManager::UpdateShadows()
 {
+    if (shadowsEnabled == false)
+        return;
+
     const csPDelArray<GEMClientObject>& entities = psengine->GetCelClient()->GetEntities();
     size_t len = entities.GetSize();
     for (size_t a=0; a<len; ++a)
@@ -147,4 +222,5 @@ void psShadowManager::UpdateShadows()
             CreateShadow(entities[a]);         
     }
 }
+
 
