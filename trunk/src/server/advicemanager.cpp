@@ -403,6 +403,10 @@ void AdviceManager::HandleMessage(MsgEntry *me,Client *client)
     {
         HandleAdviceList( client );
     }
+    else if ( msg.sCommand == "/advisor_list" ) 
+    {
+        HandleListAdvisors( client );
+    }
     else if ( msg.sCommand == "/advisor" )
     {
         if (!client->IsMute())
@@ -495,6 +499,23 @@ void AdviceManager::HandleAdviceList( Client *advisor )
 
     if ( !found ) psserver->SendSystemInfo(advisor->GetClientNum(),"There are no messengers waiting for an advisor.");
 
+}
+
+void AdviceManager::HandleListAdvisors( Client *advisor )
+{
+    psserver->SendSystemInfo(advisor->GetClientNum(),"There are %u advisors online.", advisors.GetSize());
+    
+    // If your not a GM that's all you get to know
+    if ( advisor->GetSecurityLevel() < GM_TESTER || !advisors.GetSize())
+        return;        
+    
+    psserver->SendSystemInfo(advisor->GetClientNum(),"They are:", advisors.GetSize());
+    for (size_t i = 0; i < advisors.GetSize(); i++)
+    {
+            Client * client = psserver->GetConnections()->Find(advisors[i].id);
+            psserver->SendSystemInfo(advisor->GetClientNum(),"%s %s", client->GetName(), advisors[i].GM ? "(GM)" : "");
+
+    }    
 }
 
 void AdviceManager::HandleAdviceRequest( Client *advisee, csString message )

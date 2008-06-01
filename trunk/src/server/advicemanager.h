@@ -122,6 +122,7 @@ protected:
     void HandleAdviceResponse( Client *advisee, csString sAdvisee, csString message );
     void HandleAdviceList( Client *advisor );
     void HandleAdviseeList( Client *advisor );
+    void HandleListAdvisors( Client *advisor );
 
     bool FloodControl(csString& newmessage, Client *client);
 
@@ -176,5 +177,6 @@ public:
 };
 
 #endif
+
 
 

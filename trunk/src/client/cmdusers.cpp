@@ -94,6 +94,7 @@ psUserCommands::psUserCommands(MsgHandler* mh,CmdHandler *ch,iObjectRegistry* ob
     cmdsource->Subscribe("/clear", this);
     cmdsource->Subscribe("/advisormode", this);
     cmdsource->Subscribe("/list_advice_requests", this);
+    cmdsource->Subscribe("/advisor_list", this);    
     cmdsource->Subscribe("/advisor", this);
     cmdsource->Subscribe("/advice", this);
     cmdsource->Subscribe("/train", this);
@@ -162,6 +163,7 @@ psUserCommands::~psUserCommands()
     cmdsource->Unsubscribe("/clear",  this);
     cmdsource->Unsubscribe("/advisormode",          this);
     cmdsource->Unsubscribe("/list_advice_requests", this);
+    cmdsource->Unsubscribe("/advisor_list",          this);        
     cmdsource->Unsubscribe("/advisor",              this);
     cmdsource->Unsubscribe("/advice",               this);
     cmdsource->Unsubscribe("/train",     this);
@@ -530,6 +532,15 @@ const char *psUserCommands::HandleCommand(const char *cmd)
         return NULL;
     }
     else if (words[0] == "/list_advice_requests" )
+    {
+        csString pPerson;
+        csString pText;
+
+        psAdviceMessage advice(0,words[0].GetDataSafe(),pPerson.GetDataSafe(), pText.GetDataSafe());
+        msgqueue->SendMessage(advice.msg);
+        return NULL;
+    }
+    else if (words[0] == "/advisor_list" )
     {
         csString pPerson;
         csString pText;
