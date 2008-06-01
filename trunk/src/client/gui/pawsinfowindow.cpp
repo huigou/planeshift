@@ -30,7 +30,6 @@
 #include "net/messages.h"
 #include "net/msghandler.h"
 #include "net/cmdhandler.h"
-#include "engine/netpersist.h"
 
 // CLIENT INCLUDES
 #include "pscelclient.h"

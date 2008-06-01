@@ -51,7 +51,6 @@
 #include "effects/pseffect.h"
 #include "effects/pseffectmanager.h"
 
-#include "engine/netpersist.h"
 #include "engine/psworld.h"
 #include "engine/solid.h"
 #include "engine/linmove.h"

@@ -25,7 +25,6 @@
 // COMMON INCLUDES
 #include "net/msghandler.h"
 #include "net/messages.h"
-#include "engine/netpersist.h"
 
 // CLIENT INCLUDES
 #include "pscelclient.h"

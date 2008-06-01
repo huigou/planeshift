@@ -45,8 +45,6 @@
 #include "net/msghandler.h"
 #include "net/charmessages.h"
 
-#include "engine/netpersist.h"
-
 #include "iclient/isoundmngr.h"
 
 #include "paws/pawsmanager.h"
