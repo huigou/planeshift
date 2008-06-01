@@ -58,7 +58,7 @@ class pawsProgressBar;
 class ZoneLoadInfo
 {
 public:
-    const csString inSector;
+    csString inSector;
     csString    loadImage;
     bool        transitional;
     

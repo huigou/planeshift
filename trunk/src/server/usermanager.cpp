@@ -884,7 +884,7 @@ void UserManager::Who(psUserCmdMessage& msg, Client* client, int clientnum)
 
     // Guild rank, guild and title should come from acraig's player prop class.
     ClientIterator i(*clients);     
-    while(count < 30 && i.HasNext())
+    while(i.HasNext())
     {
         Client *curr = i.Next();
         csString playerName(curr->GetName());
@@ -922,14 +922,8 @@ void UserManager::Who(psUserCmdMessage& msg, Client* client, int clientnum)
         if (!msg.filter.IsEmpty() && lower.FindStr(msg.filter) == (size_t)-1)
             continue;
 
-        // If the message is too big, send in chunks.
-        if (temp.Length() + message.Length() > 1000)
-        {
-            psSystemMessageSafe newmsg(clientnum ,MSG_WHO, message);
-            newmsg.SendMessage();
-
-            message.Clear();
-        }
+        if (temp.Length() + message.Length() > MAXPACKETSIZE)
+            break;
         else
             message.Append('\n');
         message.Append(temp);
@@ -939,14 +933,8 @@ void UserManager::Who(psUserCmdMessage& msg, Client* client, int clientnum)
 
     // Could be about to overflow by now, so check.
     temp.Format("%u shown from %zu players online\n", count, clients->Count());
-    if (temp.Length() + message.Length() > 1000)
-    {
-        psSystemMessageSafe newmsg(clientnum ,MSG_WHO, message);
-        newmsg.SendMessage();
-        message.Clear();
-    }
-    else
-        message.Append('\n');
+
+    message.Append('\n');
     message.Append(temp);
 
     psSystemMessageSafe newmsg(clientnum ,MSG_WHO, message);
