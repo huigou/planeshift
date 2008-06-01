@@ -2,6 +2,7 @@
 - Enabled sse and sse2 on intel macs.
 - Made the updater fail cleanly if there are no mirrors available when fetching
   updaterinfo.xml
+- Bumped CS revision to r29799.
 
 *** 2008-05-31 by Steven Patrick
 - GMs now can see all advisor and advisee communications, not just the first
