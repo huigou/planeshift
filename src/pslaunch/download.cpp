@@ -181,7 +181,7 @@ bool Downloader::DownloadFile(const char *file, const char *dest, bool URL, bool
         mirror = NULL;
     }
     else
-        printf("There are no active mirrors! Please check the forums for more info and help!\n");
+        printf("\nThere are no active mirrors! Please check the forums for more info and help!\n");
 
     return false;
 }
