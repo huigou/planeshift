@@ -47,6 +47,10 @@
                     <attr name="SectionName" value="entitylabels"/>
                     <attr name="factory" value="pawsConfigEntityLabels"/>
                 </widget>
+                <widget factory="pawsSimpleTreeNode" label="Shadows">
+                    <attr name="SectionName" value="shadows"/>
+                    <attr name="factory" value="pawsConfigShadows"/>
+                </widget>
             </widget>
     
         <widget factory="pawsSimpleTreeNode" label="Sound">

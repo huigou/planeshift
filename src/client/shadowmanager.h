@@ -30,22 +30,31 @@ class psShadowManager
 private:
     csRef<iConfigManager>   cfgmgr;
     float                   shadowRange;
+    bool                    shadowsEnabled;
 
     bool WithinRange(GEMClientObject * object) const;
 public:
     psShadowManager();
     ~psShadowManager();
 
+    bool Load(const char * filename);
+
     void CreateShadow(GEMClientObject * object);
     void RemoveShadow(GEMClientObject * object);
 
     void RecreateAllShadows();
-    void RemoveAllShadows(GEMClientObject * object);
+    void RemoveAllShadows();
 
     float GetShadowRange() const;
     void SetShadowRange(float shadowRange);
 
     void UpdateShadows();
+
+    void DisableShadows() { RemoveAllShadows(); shadowsEnabled = false; }
+
+    void EnableShadows() { RecreateAllShadows(); shadowsEnabled = true; }
+
+    bool ShadowsEnabled() { return shadowsEnabled; }
 };
 
 #endif // SHADOW_MANAGER_H

@@ -198,6 +198,7 @@ if (!myref) {                                                   \
 #include "gui/pawsgameboard.h"
 #include "gui/pawsbankwindow.h"
 #include "gui/pawsconfigchatbubbles.h"
+#include "gui/pawsconfigshadows.h"
 
 
 // ----------------------------------------------------------------------------
@@ -714,6 +715,7 @@ void psEngine::DeclareExtraFactories()
     RegisterFactory (pawsGameTileFactory);
     RegisterFactory (pawsBankWindowFactory);
 	RegisterFactory (pawsConfigChatBubblesFactory);
+    RegisterFactory (pawsConfigShadowsFactory);
 }
 
 
