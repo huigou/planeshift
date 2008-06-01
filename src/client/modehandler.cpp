@@ -54,8 +54,6 @@
 
 #include "effects/pseffectmanager.h"
 
-#include "engine/netpersist.h"
-
 #include "util/psscf.h"
 #include "util/psconst.h"
 #include "util/log.h"

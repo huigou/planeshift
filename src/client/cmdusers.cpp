@@ -36,8 +36,6 @@
 
 #include "util/strutil.h"
 
-#include "engine/netpersist.h"
-
 #include "gui/chatwindow.h"
 #include "gui/pawsdetailwindow.h"
 #include "gui/pawsinfowindow.h"
