@@ -1,9 +1,16 @@
+*** 2008-06-01 by Mike Gist
+- Enabled sse and sse2 on intel macs.
+- Made the updater fail cleanly if there are no mirrors available when fetching
+  updaterinfo.xml
+
 *** 2008-05-31 by Steven Patrick
-- GMs now can see all advisor and advisee communications, not just the first line of each.
+- GMs now can see all advisor and advisee communications, not just the first
+  line of each.
 - Fixed FS#1405 and FS#1284, patches by phenom_
 - Added /ban_advisor and /unban_advisor for GM2+
 - DB VER BUMP to 1188
-- Added /advisor_list command, lists how many advisors are online, with names if called by a GM
+- Added /advisor_list command, lists how many advisors are online, with names
+  if called by a GM
 
 *** 2008-05-31 by Andrew Dai
 - Fixed mistake in checking for linkdead clients.
@@ -17,7 +24,8 @@
 - DB BUMP
 
 *** 2008-05-30 by Steven Patrick
-- Changed proposal limit to by account instead of by character. Added the required time to the error message.
+- Changed proposal limit to by account instead of by character.
+  Added the required time to the error message.
 
 *** 2008-05-30 by Kenny Graunke
 - Tristan Cragnolini (kougaro) fixed FS#156 - prevent characters from sending
@@ -31,7 +39,8 @@
 
 *** 2008-05-28 by Steven Patrick
 - Made advisormode is on by default for GMs
-- /advisormode now requires that the account has a total connected time over 30 hours
+- /advisormode now requires that the account has a total connected time over
+  30 hours
 - Fixed FS#1593, patch by peeg
 
 *** 2008-05-28 by Mike Gist
@@ -55,9 +64,11 @@
 - Made the updater print it's version on start.
 
 *** 2008-05-25 by Steven Patrick
-- Fixed FS#1422, /crystal command now can be used to make multiple spawns within a range.
+- Fixed FS#1422, /crystal command now can be used to make multiple spawns
+  within a range.
   The server no longer recreates spawn points for items that have already
-  been spawned on restart thus preventing stacks of items found at a spawn point.
+  been spawned on restart thus preventing stacks of items found at a
+  spawn point.
 - DB VER BUMP to 1186
 
 *** 2008-05-25 by Andrew Dai

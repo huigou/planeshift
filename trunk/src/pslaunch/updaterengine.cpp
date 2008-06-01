@@ -211,6 +211,9 @@ void UpdaterEngine::checkForUpdates()
             return;
         }
 
+        if(!vfs->Exists("/this/updaterinfo.xml"))
+            return;
+
         printOutput("No updates needed!\nChecking for updates to all files: ");
 
         // Check for normal updates.
@@ -269,7 +272,9 @@ bool UpdaterEngine::checkUpdater()
 {
     // Backup old config, download new.
     fileUtil->MoveFile("/this/updaterinfo.xml", "/this/updaterinfo.xml.bak", true, false);
-    downloader->DownloadFile("updaterinfo.xml", "updaterinfo.xml", false, true);
+    
+    if(!downloader->DownloadFile("updaterinfo.xml", "updaterinfo.xml", false, true))
+        return false;
 
     // Load new config data.
     csRef<iDocumentNode> root = GetRootNode(UPDATERINFO_FILENAME);
