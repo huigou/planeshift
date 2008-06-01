@@ -360,10 +360,15 @@ void AdviceManager::HandleMessage(MsgEntry *me,Client *client)
     {
         if ( msg.sMessage == "on" )
         {
+            // Is account banned from advising?
+            if (client->IsAdvisorBanned())
+            {
+                psserver->SendSystemError(me->clientnum, "You are banned from advising!");
+                return;
+            }
             // GM's can always become advisors
             if (client->GetSecurityLevel() < GM_TESTER)
-            {
-                // TODO: Is account banned from advising?
+            {                
                 // Has account been on for long enough?
                 if ((client->GetAccountTotalOnlineTime() / 3600) < 30)
                 {

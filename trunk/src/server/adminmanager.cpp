@@ -207,8 +207,8 @@ bool AdminManager::AdminCmdData::DecodeAdminCmdMessage(MsgEntry *pMsg, psAdminCm
              command == "/mute" ||
              command == "/unmute" ||
              command == "/unban" ||
-             command == "/advisor_ban" ||
-             command == "/advisor_unban" ||
+             command == "/ban_advisor" ||
+             command == "/unban_advisor" ||
              command == "/death" ||
              command == "/info" ||
              command == "/charlist" ||
@@ -1206,6 +1206,14 @@ void AdminManager::HandleAdminCmdMessage(MsgEntry *me, psAdminCmdMessage &msg, A
     {
         UnbanClient( me, msg, data, client );
     }
+    else if (data.command == "/ban_advisor" )
+    {
+        BanAdvisor( me, msg, data, client );
+    }
+    else if (data.command == "/unban_advisor" )
+    {
+        UnbanAdvisor( me, msg, data, client );
+    }
     else if (data.command == "/awardexp" )
     {
         AwardExperience(me, msg, data, client, targetclient);
@@ -1660,6 +1668,7 @@ void AdminManager::GetInfo(MsgEntry* me,psAdminCmdMessage& msg, AdminCmdData& da
     bool banned = false;
     time_t banTimeLeft;
     int daysLeft = 0, hoursLeft = 0, minsLeft = 0;
+    bool advisorBanned = false;
     
     if (target) // Online
     {
@@ -1696,6 +1705,8 @@ void AdminManager::GetInfo(MsgEntry* me,psAdminCmdMessage& msg, AdminCmdData& da
                 securityLevel.Format("%d(%d)",currSL,trueSL);
             else
                 securityLevel.Format("%d",currSL);
+                
+            advisorBanned = targetclient->IsAdvisorBanned();
         }
         else // NPC
         {
@@ -1720,8 +1731,8 @@ void AdminManager::GetInfo(MsgEntry* me,psAdminCmdMessage& msg, AdminCmdData& da
     else // Offline
     {
         Result result(db->Select("SELECT c.id as 'id', c.name as 'name', lastname, account_id, time_connected_sec, loc_instance, "
-				"s.name as 'sector', loc_x, loc_y, loc_z, loc_yrot from characters c join sectors s on s.id = loc_sector_id "
-				"where c.name='%s'", data.player.GetData()));
+				"s.name as 'sector', loc_x, loc_y, loc_z, loc_yrot, advisor_ban from characters c join sectors s on s.id = loc_sector_id "
+                "join accounts a on a.id = account_id where c.name='%s'", data.player.GetData()));
 
         if (!result.IsValid() || result.Count() == 0)
         {
@@ -1748,6 +1759,7 @@ void AdminManager::GetInfo(MsgEntry* me,psAdminCmdMessage& msg, AdminCmdData& da
 			 loc_y = row.GetFloat("loc_y");
 			 loc_z = row.GetFloat("loc_z");
 			 loc_yrot = row.GetFloat("loc_yrot");
+             advisorBanned = row.GetUInt32("advisor_ban");
         }
     }
     BanEntry* ban = psserver->GetAuthServer()->GetBanManager()->GetBanByAccount(accountId);
@@ -1795,6 +1807,9 @@ void AdminManager::GetInfo(MsgEntry* me,psAdminCmdMessage& msg, AdminCmdData& da
         {
             info.AppendFmt(" The player's account is banned! Time left: %d days, %d hours, %d minutes.", daysLeft, hoursLeft, minsLeft);
         }
+        
+        if (advisorBanned)
+            info.Append(" The player's account is banned from advising.");
 
         psserver->SendSystemInfo(client->GetClientNum(),info);
     }
@@ -5546,6 +5561,100 @@ void AdminManager::UnbanClient(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdDat
         psserver->SendSystemResult(me->clientnum, "%s has been unbanned", user.GetData() );
     else
         psserver->SendSystemError(me->clientnum, "%s is not banned", user.GetData() );
+}
+
+void AdminManager::BanAdvisor(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data,Client *gm)
+{
+    if (data.player.Length() == 0)
+    {
+        psserver->SendSystemError(me->clientnum, "You must specify a player name or an account name or number.");
+        return;
+    }
+    
+    Client* target = clients->Find(data.player);
+    // Check if the target is online,
+    if (target)
+    {
+        target->SetAdvisorBan(true);
+        psserver->SendSystemResult(me->clientnum, "%s has been banned from advising.", target->GetName());
+        return;
+    }
+
+    Result result;
+    unsigned int account = atoi( data.player.GetDataSafe() );  // See if we're going by character name or account ID
+
+    if (account == 0)
+    {
+        if ( !GetAccount(data.player,result) )
+        {
+            // not found
+            psserver->SendSystemError(me->clientnum, "Couldn't find account with the name %s",data.player.GetDataSafe());
+            return;
+        }
+        account = result[0].GetUInt32("id");
+    }
+    else
+    {
+        result = db->Select("SELECT * FROM accounts WHERE id = '%u' LIMIT 1",account);
+        if ( !result.IsValid() || !result.Count() )
+        {
+            psserver->SendSystemError(me->clientnum, "Couldn't find account with id %u",account);
+            return;
+        }
+    }
+
+    db->Command("UPDATE accounts SET advisor_ban = 1 WHERE id = %d", account);
+    
+    csString user = result[0]["username"];
+
+    psserver->SendSystemResult(me->clientnum, "%s has been banned from advising.", user.GetData() );
+}
+
+void AdminManager::UnbanAdvisor(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data,Client *gm)
+{
+    if (data.player.Length() == 0)
+    {
+        psserver->SendSystemError(me->clientnum, "You must specify a player name or an account name or number.");
+        return;
+    }
+    
+    Client* target = clients->Find(data.player);
+    // Check if the target is online,
+    if (target)
+    {
+        target->SetAdvisorBan(false);
+        psserver->SendSystemResult(me->clientnum, "%s has been unbanned from advising.", target->GetName());
+        return;
+    }
+
+    Result result;
+    unsigned int account = atoi( data.player.GetDataSafe() );  // See if we're going by character name or account ID
+
+    if (account == 0)
+    {
+        if ( !GetAccount(data.player,result) )
+        {
+            // not found
+            psserver->SendSystemError(me->clientnum, "Couldn't find account with the name %s",data.player.GetDataSafe());
+            return;
+        }
+        account = result[0].GetUInt32("id");
+    }
+    else
+    {
+        result = db->Select("SELECT * FROM accounts WHERE id = '%u' LIMIT 1",account);
+        if ( !result.IsValid() || !result.Count() )
+        {
+            psserver->SendSystemError(me->clientnum, "Couldn't find account with id %u",account);
+            return;
+        }
+    }
+
+    db->Command("UPDATE accounts SET advisor_ban = 0 WHERE id = %d", account);
+    
+    csString user = result[0]["username"];
+
+    psserver->SendSystemResult(me->clientnum, "%s has been unbanned from advising.", user.GetData() );
 }
 
 bool AdminManager::GetAccount(csString useroracc,Result& resultre )

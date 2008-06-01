@@ -713,3 +713,20 @@ uint32_t Client::LocationGetEffectID()
 
     return locationEffectID;
 }
+
+void Client::SetAdvisorBan(bool ban)
+{
+    db->Command("UPDATE accounts SET advisor_ban = %d WHERE id = %d", (int) ban, GetAccountID());
+    psserver->GetAdviceManager()->RemoveAdvisor(clientnum, clientnum);
+    psserver->SendSystemError(clientnum, "You have been %s from advising by a GM.", ban ? "banned" : "unbanned");
+}
+
+bool Client::IsAdvisorBanned()
+{
+    bool advisorBan = false;
+    Result result(db->Select("SELECT advisor_ban FROM accounts WHERE id = %d", GetAccountID()));
+    if (result.IsValid())
+        advisorBan = result[0].GetUInt32("advisor_ban");
+        
+    return advisorBan;
+}

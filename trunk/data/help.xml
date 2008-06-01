@@ -387,6 +387,9 @@ Awards progression points to a player for the completion of a GM run event. (ent
 OR /ban name reason
 
 Bans a player from logging into the game for a specified amount of time.  (default is 1 year)  'Name' may be a character name, an account name, or an account number.  A reason must be specified.</topic>
+        <topic name="/ban_advisor">/ban_advisor name
+        
+Bans a player from advising until /unban_advisor is used.</topic>
         <topic name="/banname">/banname name
 
 Bans a name from use in character creation</topic>
@@ -667,6 +670,9 @@ sector where you are, if it supports lightning.</topic>
         <topic name="/unban">/unban name
 
 Remove the ban on a player, allowing them to log in again.</topic>
+        <topic name="/unban_advisor">/unban_advisor name
+        
+Remove the advisor ban on a player, allowing them to advise again.</topic>
         <topic name="/unbanname">/unbanname name
 
 Unban a name and makes it available for use again in character creation</topic>

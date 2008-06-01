@@ -1,6 +1,8 @@
 *** 2008-05-31 by Steven Patrick
 - GMs now can see all advisor and advisee communications, not just the first line of each.
 - Fixed FS#1405 and FS#1284, patches by phenom_
+- Added /ban_advisor and /unban_advisor for GM2+
+- DB VER BUMP to 1188
 
 *** 2008-05-31 by Andrew Dai
 - Fixed mistake in checking for linkdead clients.
