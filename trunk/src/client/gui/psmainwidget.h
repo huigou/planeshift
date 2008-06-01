@@ -32,8 +32,6 @@
 //=============================================================================
 #include "net/msghandler.h"
 
-#include "engine/netpersist.h"
-
 #include "util/prb.h"
 
 #include "paws/pawswidget.h"
