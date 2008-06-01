@@ -133,7 +133,7 @@ bool pawsObjectView::LoadMap( const char* map, const char* sector )
         csRef<iDocument> doc = xml->CreateDocument();
         csString filename = map;
         filename.Append("/world");
-        csRef<iDataBuffer> buf (VFS->ReadFile (filename, false));
+        csRef<iDataBuffer> buf (VFS->ReadFile (filename));
         doc->Parse(buf);
         csRef<iDocumentNode> worldNode = doc->GetRoot()->GetNode("world");
 
