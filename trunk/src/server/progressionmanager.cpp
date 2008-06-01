@@ -4573,7 +4573,7 @@ bool ProgressionManager::Initialize()
         {
             unsigned long x = (unsigned long)index; // remove casting warnings
 
-            csRef<ProgressionEvent> ev = csPtr<ProgressionEvent> (new ProgressionEvent);
+            ProgressionEvent* ev = new ProgressionEvent;
             ev->name = result_events[x]["name"];
 
             csRef<iDocument> doc = xml->CreateDocument();
