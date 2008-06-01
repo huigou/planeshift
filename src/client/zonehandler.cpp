@@ -90,7 +90,7 @@ ZoneHandler::~ZoneHandler()
     
     csHash<ZoneLoadInfo *, const char*>::GlobalIterator it(zonelist.GetIterator());
     
-    while(it.hasNext())
+    while(it.HasNext())
         delete it.Next();
         
 }
