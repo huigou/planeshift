@@ -86,16 +86,20 @@ CS_COMPILER_WARNINGS([C++], [cs_cv_prog_cxx_enable_warnings],
 	[$cs_cv_prog_cxx_enable_warnings], [+])])
 
 #------------------------------------------------------------------------------
-# Check for SIMD flags
+# Check for SIMD flags, enable -msse and -msse2 on intel osx.
 #------------------------------------------------------------------------------
 
-CS_CHECK_BUILD_FLAGS([for -msse flag], [cs_cv_prog_cc_msse], [CS_CREATE_TUPLE([-msse])])
-AS_IF([test -n "$cs_cv_prog_cc_msse"], [CS_EMIT_BUILD_PROPERTY([COMPILER.CFLAGS.SSE],
-[$cs_cv_prog_cc_msse], [+])])
+case $cs_host_target in
+    macosx)
+        CS_CHECK_BUILD_FLAGS([for -msse flag], [cs_cv_prog_cc_msse], [CS_CREATE_TUPLE([-msse])])
+        AS_IF([test -n "$cs_cv_prog_cc_msse"], [CS_EMIT_BUILD_PROPERTY([COMPILER.CFLAGS],
+        [$cs_cv_prog_cc_msse], [+])])
 
-CS_CHECK_BUILD_FLAGS([for -msse2 flag], [cs_cv_prog_cc_msse2], [CS_CREATE_TUPLE([-msse2])])
-AS_IF([test -n "$cs_cv_prog_cc_msse2"], [CS_EMIT_BUILD_PROPERTY([COMPILER.CFLAGS.SSE2],
-[$cs_cv_prog_cc_msse2], [+])])
+        CS_CHECK_BUILD_FLAGS([for -msse2 flag], [cs_cv_prog_cc_msse2], [CS_CREATE_TUPLE([-msse2])])
+        AS_IF([test -n "$cs_cv_prog_cc_msse2"], [CS_EMIT_BUILD_PROPERTY([COMPILER.CFLAGS],
+        [$cs_cv_prog_cc_msse2], [+])])
+        ;;
+esac
  
 #------------------------------------------------------------------------------
 # Check for compiler- and CPU-specific code generation flags.  These flags are
