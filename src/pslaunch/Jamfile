@@ -4,19 +4,6 @@ Application psupdater :
 	[ Filter [ Wildcard *.cpp *.h ] : pslaunch.cpp pawslauncherwindow.cpp pslaunch.h pawslauncherwindow.h globals.h ] : console
 ;
 
-if $(TARGET.OS) = "MACOS_X"
-{
-  if $(COMPILER.CFLAGS.SSE)
-  {
-    C++FLAGS on [ DoObjectGrist updaterengine$(SUFOBJ) ] += $(COMPILER.CFLAGS.SSE) ;
-  }
-
-  if $(COMPILER.CFLAGS.SSE2)
-  {
-    C++FLAGS on [ DoObjectGrist updaterengine$(SUFOBJ) ] += $(COMPILER.CFLAGS.SSE2) ;
-  }
-}
-
 ExternalLibs psupdater : CRYSTAL ;
 LinkWith psupdater : xdelta3 psutil xpnet ;
 
@@ -29,19 +16,6 @@ CFlags psupdater_static : [ FDefines CS_STATIC_LINKED ] ;
 LFlags psupdater_static : -lcrystalspace_staticplugins-1.3 ;
 MsvcDefine psupdater_static : CS_STATIC_LINKED ;
 LinkWith psupdater_static : xdelta3 psutil xpnet ;
-
-if $(TARGET.OS) = "MACOS_X"
-{
-  if $(COMPILER.CFLAGS.SSE)
-  {
-    C++FLAGS on [ DoObjectGrist updaterengine$(SUFOBJ) ] += $(COMPILER.CFLAGS.SSE) ;
-  }
-
-  if $(COMPILER.CFLAGS.SSE2)
-  {
-    C++FLAGS on [ DoObjectGrist updaterengine$(SUFOBJ) ] += $(COMPILER.CFLAGS.SSE2) ;
-  }
-}
 
 LinkStaticPlugins psupdater_static :
   vfs
@@ -59,19 +33,6 @@ Application pslaunch :
 	[ Filter [ Wildcard *.cpp *.h ] : updater.cpp updater.h ] :
 ;
 
-if $(TARGET.OS) = "MACOS_X"
-{
-  if $(COMPILER.CFLAGS.SSE)
-  {
-    C++FLAGS on [ DoObjectGrist updaterengine$(SUFOBJ) ] += $(COMPILER.CFLAGS.SSE) ;
-  }
-
-  if $(COMPILER.CFLAGS.SSE2)
-  {
-    C++FLAGS on [ DoObjectGrist updaterengine$(SUFOBJ) ] += $(COMPILER.CFLAGS.SSE2) ;
-  }
-}
-
 ExternalLibs pslaunch : CRYSTAL ;
 CompileGroups pslaunch : client ;
 LinkWith pslaunch : xdelta3 paws psutil fparser xpnet ;
@@ -86,19 +47,6 @@ CFlags pslaunch_static : [ FDefines CS_STATIC_LINKED ] ;
 LFlags pslaunch_static : -lcrystalspace_staticplugins-1.3 ;
 MsvcDefine pslaunch_static : CS_STATIC_LINKED ;
 LinkWith pslaunch_static : xdelta3 paws psutil fparser xpnet ;
-
-if $(TARGET.OS) = "MACOS_X"
-{
-  if $(COMPILER.CFLAGS.SSE)
-  {
-    C++FLAGS on [ DoObjectGrist updaterengine$(SUFOBJ) ] += $(COMPILER.CFLAGS.SSE) ;
-  }
-
-  if $(COMPILER.CFLAGS.SSE2)
-  {
-    C++FLAGS on [ DoObjectGrist updaterengine$(SUFOBJ) ] += $(COMPILER.CFLAGS.SSE2) ;
-  }
-}
 
 STATIC.PLUGINLIST = 
   engine
