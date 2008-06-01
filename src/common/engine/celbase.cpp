@@ -18,6 +18,8 @@
  */
 #include <psconfig.h>
 
+#ifdef USE_CEL
+
 #include "engine/celbase.h"
 #include "util/consoleout.h"
 #include "util/log.h"
@@ -110,3 +112,5 @@ bool CelBase::RemoveItem( iCelEntity* item )
 {
     return RemoveActor(item);
 }
+
+#endif // USE_CEL
