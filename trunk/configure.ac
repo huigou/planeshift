@@ -251,7 +251,7 @@ AC_DEFUN([CS_CHECK_OPTIMIZE_FLAGS],
 
     CS_EMIT_BUILD_FLAGS([how to enable optimizations],
 	[cs_cv_prog_cxx_optimize],
-	[CS_CREATE_TUPLE([-O3]) CS_CREATE_TUPLE([-O2]) CS_CREATE_TUPLE([-Os]) CS_CREATE_TUPLE([-O])],
+	[CS_CREATE_TUPLE([-O3]) CS_CREATE_TUPLE([-O3]) CS_CREATE_TUPLE([-Os]) CS_CREATE_TUPLE([-O])],
 	[C++], [COMPILER.CFLAGS.optimize], [+],
 	[cs_optimize_flags="$cs_optimize_flags $cs_cv_prog_cxx_optimize"])
 
