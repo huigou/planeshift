@@ -3,6 +3,7 @@
 - Fixed FS#1405 and FS#1284, patches by phenom_
 - Added /ban_advisor and /unban_advisor for GM2+
 - DB VER BUMP to 1188
+- Added /advisor_list command, lists how many advisors are online, with names if called by a GM
 
 *** 2008-05-31 by Andrew Dai
 - Fixed mistake in checking for linkdead clients.

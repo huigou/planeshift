@@ -717,7 +717,10 @@ uint32_t Client::LocationGetEffectID()
 void Client::SetAdvisorBan(bool ban)
 {
     db->Command("UPDATE accounts SET advisor_ban = %d WHERE id = %d", (int) ban, GetAccountID());
-    psserver->GetAdviceManager()->RemoveAdvisor(clientnum, clientnum);
+    
+    if (isAdvisor)
+        psserver->GetAdviceManager()->RemoveAdvisor(clientnum, clientnum);
+    
     psserver->SendSystemError(clientnum, "You have been %s from advising by a GM.", ban ? "banned" : "unbanned");
 }
 

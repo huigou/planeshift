@@ -62,6 +62,9 @@ Use this command if you are an advisor to send a reply to a player. eg. /advice 
         <topic name="/advisor">/advisor message
 
 Ask one of the advisors a question.  eg. /advisor How do I attack something?. Anything you type in the Help channel of the Chat Window will be sent as an advice request automatically.</topic>
+        <topic name="/advisor_list">/advisor_list
+
+Returns how many advisors are online at the moment.</topic>
         <topic name="/advisormode">/advisormode on/off
 
 Turn advisor mode on or off. if you make yourself an advisor, other players will be able to contact you using the /advisor for help.  If run with no parameters, will indicate your current advisor status.</topic>
@@ -380,6 +383,9 @@ To create a new action location entrance:
         <topic name="/admin">/admin
 
 Resets your admin level.  Lists and allows you to use various GM/admin commands.</topic>
+        <topic name="/advisor_list">/advisor_list
+
+Lists advisors that are online at the moment.</topic>
         <topic name="/awardexp">/awardexp target value
 
 Awards progression points to a player for the completion of a GM run event. (enter a negative value to take away PP)</topic>
