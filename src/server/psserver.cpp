@@ -92,7 +92,7 @@
 #include "introductionmanager.h"
 
 // Remember to bump this in server_options.sql and add to upgrade_schema.sql!
-#define DATABASE_VERSION_STR "1187"
+#define DATABASE_VERSION_STR "1188"
 
 
 psCharacterLoader psServer::CharacterLoader;
@@ -1069,5 +1069,6 @@ bool psServer::SetServerOption(const char *option_name,const csString& value)
 
     return result==1;
 }
+
 
 

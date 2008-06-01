@@ -278,6 +278,8 @@ protected:
 
     void BanClient(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data, Client *client);
     void UnbanClient(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data, Client *client);
+    void BanAdvisor(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data, Client *client);
+    void UnbanAdvisor(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data, Client *client);
     void SendSpawnTypes (MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data, Client *client);
     void SendSpawnItems (MsgEntry* me, psGMSpawnItems& msg, Client *client);
     void SpawnItemInv( MsgEntry* me, psGMSpawnItem& msg, Client *client);
@@ -420,4 +422,5 @@ protected:
 };
 
 #endif
+
 

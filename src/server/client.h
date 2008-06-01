@@ -314,6 +314,8 @@ public:
     /// Set this client's advisor status
     void SetAdvisor(bool advisor) { isAdvisor = advisor; }
     bool GetAdvisor() { return isAdvisor; }
+    void SetAdvisorBan(bool ban);
+    bool IsAdvisorBanned();
 
     /// For cheat detection
     csTicks accumulatedLag;
