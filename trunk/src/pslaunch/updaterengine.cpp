@@ -944,7 +944,7 @@ void UpdaterEngine::CheckIntegrity()
                 csRef<iDataBuffer> buffer = vfs->ReadFile("/this/" + path);
                 if(!buffer)
                 {
-                    PrintOutput("Can't get the md5sum of the file %s!\n", path);
+                    // File doesn't exist. Don't handle this yet (valid in some cases).
                     continue;
                 }
 
