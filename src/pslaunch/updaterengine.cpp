@@ -211,7 +211,7 @@ void UpdaterEngine::checkForUpdates()
             return;
         }
 
-        if(!vfs->Exists("/this/updaterinfo.xml"))
+        if(!vfs->Exists("/this/updaterinfo.xml.bak"))
             return;
 
         printOutput("No updates needed!\nChecking for updates to all files: ");
