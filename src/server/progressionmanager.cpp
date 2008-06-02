@@ -5754,7 +5754,7 @@ float ProgressionEvent::ForceRun(csTicks duration)
         durationScript->Execute();
         duration  = (csTicks)durationVar->GetValue();      
     }
-    if(duration > 0)
+    if(finalScript.Length() > 0 && duration > 0)
     {
         
         csString scriptStr;
