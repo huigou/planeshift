@@ -259,12 +259,6 @@ void UpdaterEngine::checkForUpdates()
         infoShare->SetUpdateNeeded(false);
     }
 
-    if(appName.Compare("psupdater"))
-    {
-        printf("Updater finished, press enter to exit.\n");
-        getchar();
-    }
-
     return;
 }
 
