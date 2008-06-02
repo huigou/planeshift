@@ -150,22 +150,25 @@ public:
     * Starts and finishes a self update
     * Returns true if a restart is needed (MSVC compiled)
     */
-    bool selfUpdate(int selfUpdating);
+    bool SelfUpdate(int selfUpdating);
 
     /* Starts a general update */
-    void generalUpdate();
+    void GeneralUpdate();
 
     /* Check for any updates */
-    void checkForUpdates();
+    void CheckForUpdates();
 
     /* Check for updater/launcher updates */
-    bool checkUpdater();
+    bool CheckUpdater();
 
     /* Check for 'general' updates */
-    bool checkGeneral();
+    bool CheckGeneral();
+
+    /* Check the integrity of the install */
+    void CheckIntegrity();
 
     /* Print to console and save to array for GUI output. */
-    void printOutput(const char* string, ...);
+    void PrintOutput(const char* string, ...);
 };
 
 #endif // __UPDATERENGINE_H__

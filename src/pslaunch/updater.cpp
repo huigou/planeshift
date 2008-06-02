@@ -56,13 +56,20 @@ void psUpdater::RunUpdate(UpdaterEngine* engine) const
     if(engine->GetConfig()->IsSelfUpdating())
     {
         // Continue the self update, passing the update stage.
-        if(engine->selfUpdate(engine->GetConfig()->IsSelfUpdating()))
+        if(engine->SelfUpdate(engine->GetConfig()->IsSelfUpdating()))
             return;
+    }
+
+    // Check if we want to do an integrity check instead of an update.
+    if(engine->GetConfig()->CheckForIntegrity())
+    {
+        printf("Checking the integrity of the install:\n");
+        return;
     }
 
     // Begin update checking!
     printf("Checking for updates:\n");
-    engine->checkForUpdates();
+    engine->CheckForUpdates();
     return;
 }
 

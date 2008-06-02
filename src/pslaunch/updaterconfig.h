@@ -144,6 +144,8 @@ public:
     /* Returns true if the updater is self updating */
     int IsSelfUpdating() const { return selfUpdating; }
 
+    bool CheckForIntegrity() const { return checkIntegrity; }
+
     /* Returns the proxy struct */
     Proxy GetProxy() { return proxy; }
 
