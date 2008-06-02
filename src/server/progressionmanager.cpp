@@ -983,8 +983,8 @@ public:
     {
         csString script;
         
-        script.Format("<evt><%s adjust=\"add\" aim=\"target\" base=\"%s\" value=\"%f\" />", 
-                      statToString[stat], base ? "yes" : "no", oldValue - finalValue);
+        script.Format("<evt><%s adjust=\"add\" aim=\"%s\" base=\"%s\" value=\"%f\" />", 
+                      statToString[stat], aimIsActor ? "actor" : "target", base ? "yes" : "no", oldValue - finalValue);
         if (undoMsg.Length() > 0)
             script.AppendFmt("<msg aim=\"target\" text=\"%s\"/>", undoMsg.GetData());
         script += "</evt>";
@@ -995,8 +995,8 @@ public:
     csString Absolute()        
     {
         csString script;        
-        script.Format("<%s adjust=\"add\" aim=\"target\" base=\"%s\" value=\"%f\" />", 
-                      statToString[stat], base ? "yes" : "no", newValue - oldValue);    
+        script.Format("<%s adjust=\"add\" aim=\"%s\" base=\"%s\" value=\"%f\" />", 
+                      statToString[stat], aimIsActor ? "actor" : "target", base ? "yes" : "no", newValue - oldValue);    
         return script;                      
     }
     
