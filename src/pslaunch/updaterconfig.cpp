@@ -49,6 +49,10 @@ UpdaterConfig::UpdaterConfig(csArray<csString> args, iObjectRegistry* _object_re
             selfUpdating = 1;
         else if(arg.Compare("selfUpdateSecond"))
             selfUpdating = 2;
+        else if(arg.Compare("CheckIntegrity"))
+            checkIntegrity = true;
+        else
+            checkIntegrity = false;
     }
 
     // Load config settings from cfg file.
