@@ -367,7 +367,6 @@ INSERT INTO command_group_assignment VALUES( "default infinite inventory", 24 );
 INSERT INTO command_group_assignment VALUES( "default infinite inventory", 23 );
 INSERT INTO command_group_assignment VALUES( "default infinite inventory", 22 );
 INSERT INTO command_group_assignment VALUES( "default infinite inventory", 21 );
-INSERT INTO command_group_assignment VALUES( "default advisor", 30 );
 INSERT INTO command_group_assignment VALUES( "default advisor", 26 );
 INSERT INTO command_group_assignment VALUES( "default advisor", 25 );
 INSERT INTO command_group_assignment VALUES( "default advisor", 24 );
