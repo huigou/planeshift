@@ -4,7 +4,7 @@
 - Added an active attribute to updaterinfo.xml, so we can 'disable' an updater
   mirror.
 - Fixed an 'out of sync' case in the updater.
-- Begun work on integrity check functionality in the updater.
+- Added integrity check functionality in the updater.
 
 *** 2008-06-02 by Andrew Dai
 - Fixed critical bugs in undoing stats progression operations.
