@@ -733,9 +733,6 @@
 				RelativePath="..\..\src\common\engine\materialmanager.cpp">
 			</File>
 			<File
-				RelativePath="..\..\src\common\engine\netpersist.cpp">
-			</File>
-			<File
 				RelativePath="..\..\src\common\engine\psregion.cpp">
 			</File>
 			<File
@@ -759,9 +756,6 @@
 			</File>
 			<File
 				RelativePath="..\..\src\common\engine\materialmanager.h">
-			</File>
-			<File
-				RelativePath="..\..\src\common\engine\netpersist.h">
 			</File>
 			<File
 				RelativePath="..\..\src\common\engine\psregion.h">
