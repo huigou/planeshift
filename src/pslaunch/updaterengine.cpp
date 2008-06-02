@@ -983,8 +983,15 @@ void UpdaterEngine::CheckIntegrity()
                     {
                         csString url = baseurl + "backup/";
                         csString downloadpath("/this/");
-                        downloader->DownloadFile(url.Append(failed.Get(i)->GetAttributeValue("path")),
-                                                 downloadpath + failed.Get(i)->GetAttributeValue("path"), true, true);
+                        if(!downloader->DownloadFile(url.Append(failed.Get(i)->GetAttributeValue("path")),
+                                                     downloadpath + failed.Get(i)->GetAttributeValue("path"), true, true))
+                        {
+                            // Maybe it's in a platform specific subdirectory. Try that next.
+                           url = baseurl + "backup/";
+                           url.AppendFmt("%s/", config->GetNewConfig()->GetPlatform());
+                           downloader->DownloadFile(url.Append(failed.Get(i)->GetAttributeValue("path")),
+                                                    downloadpath + failed.Get(i)->GetAttributeValue("path"), true, true);
+                        }
                     }
                     PrintOutput("Done!\n");
                 }
