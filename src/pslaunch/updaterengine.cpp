@@ -899,7 +899,7 @@ void UpdaterEngine::CheckIntegrity()
         GetConfig()->GetProxy().port);
 
     // Get the zip with md5sums.
-    csString baseurl = config->GetNewConfig()->GetMirror(0)->GetBaseURL();
+    csString baseurl = config->GetCurrentConfig()->GetMirror(0)->GetBaseURL();
     if(!downloader->DownloadFile(baseurl.Append("backup/integrity.zip"), "integrity.zip", true, true))
     {
         PrintOutput("\nFailed to download integrity.zip!\n");
