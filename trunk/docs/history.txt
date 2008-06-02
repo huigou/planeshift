@@ -1,3 +1,6 @@
+*** 2008-06-02 by Andrew Dai
+- Fixed a critical bug in undoing stats progression operations.
+
 *** 2008-06-01 by Mike Gist
 - Enabled sse and sse2 on intel macs.
 - Made the updater fail cleanly if there are no mirrors available when fetching
