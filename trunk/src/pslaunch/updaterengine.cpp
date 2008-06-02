@@ -940,11 +940,16 @@ void UpdaterEngine::CheckIntegrity()
 
                 csString path = node->GetAttributeValue("path");
                 csString md5sum = node->GetAttributeValue("md5sum");
+                bool specific = node->GetAttributeValueAsBool("specific");
 
                 csRef<iDataBuffer> buffer = vfs->ReadFile("/this/" + path);
                 if(!buffer)
                 {
-                    // File doesn't exist. Don't handle this yet (valid in some cases).
+                    // File is genuinely missing.
+                    if(!specific)
+                    {
+                        failed.Push(node);
+                    }
                     continue;
                 }
 
