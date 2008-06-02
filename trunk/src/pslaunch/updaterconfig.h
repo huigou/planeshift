@@ -173,6 +173,9 @@ private:
     /* True if we want the updater to update executable files. */
     bool updateExecs;
 
+    /* True if we're being asked to check the integrity of the install. */
+    bool checkIntegrity;
+
     /* VFS, Object Registry */
     csRef<iVFS> vfs;
     static iObjectRegistry* object_reg;

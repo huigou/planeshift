@@ -333,20 +333,38 @@ bool UpdaterEngine::checkGeneral()
     const csRefArray<ClientVersion>& oldCvs = config->GetCurrentConfig()->GetClientVersions();
     const csRefArray<ClientVersion>& newCvs = config->GetNewConfig()->GetClientVersions();
 
-    // Same size.
-    if(oldCvs.GetSize() == newCvs.GetSize())
+    size_t newSize = newCvs.GetSize();
+
+    // Old is bigger than the new (out of sync), or same size.
+    if(oldCvs.GetSize() >= newSize)
     {
         // If both are empty then skip the extra name check!
-        if(newCvs.GetSize() != 0)
+        if(newSize != 0)
         {
-            ClientVersion* oldCv = oldCvs.Get(oldCvs.GetSize()-1);
-            ClientVersion* newCv = newCvs.Get(newCvs.GetSize()-1);
+            bool outOfSync = oldCvs.GetSize() > newSize;
 
-            csString name(newCv->GetName());
-            if(!name.Compare(oldCv->GetName()))
+            if(!outOfSync)
+            {
+                for(size_t i=0; i<newSize; i++)
+                {
+                    ClientVersion* oldCv = oldCvs.Get(i);
+                    ClientVersion* newCv = newCvs.Get(i);
+
+                    csString name(newCv->GetName());
+                    if(!name.Compare(oldCv->GetName()))
+                    {
+                        outOfSync = true;
+                        break;
+                    }
+                }
+            }
+
+            if(outOfSync)
             {
                 // There's a problem and we can't continue. Throw a boo boo and clean up.
                 printOutput("\nLocal config and server config are incompatible!\n");
+                printOutput("This is caused when your local version becomes out of sync with the update mirrors.\n");
+                printOutput("To resolve this, reinstall your client using the latest installer on the website.\n");
                 fileUtil->RemoveFile("/this/updaterinfo.xml");
                 fileUtil->MoveFile("/this/updaterinfo.xml.bak", "/this/updaterinfo.xml", true, false);
                 return false;
@@ -357,7 +375,7 @@ bool UpdaterEngine::checkGeneral()
         return false;
     }
 
-    // Not the same size, so there's updates.
+    // New is bigger than the old, so there's updates.
     return true;
 }
 
