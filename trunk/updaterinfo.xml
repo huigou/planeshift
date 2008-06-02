@@ -1,4 +1,4 @@
-<config>
+<config active="false">
     <mirrors>
         <mirror id="1" name="Xordan" url="http://www.xordan.com/psupdater/" />
     </mirrors>

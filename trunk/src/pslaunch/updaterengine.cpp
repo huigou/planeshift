@@ -158,6 +158,12 @@ void UpdaterEngine::checkForUpdates()
             return;
         }
 
+        if(!confignode->GetAttributeValueAsBool("active", true))
+        {
+            printOutput("This updaterinfo.xml file is marked as inactive and will not work. Please get another one.\n");
+            return;
+        }
+
         // Load updater config
         if (!config->GetCurrentConfig()->Initialize(confignode))
         {
@@ -288,6 +294,12 @@ bool UpdaterEngine::checkUpdater()
             if (!confignode)
             {
                 printOutput("Couldn't find config node in configfile!\n");
+                failed = true;
+            }
+
+            if(!failed && !confignode->GetAttributeValueAsBool("active", true))
+            {
+                printOutput("The updater mirrors are down, possibly for an update. Please try again later.\n");
                 failed = true;
             }
 
