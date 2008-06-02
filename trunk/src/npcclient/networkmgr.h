@@ -21,7 +21,6 @@
 
 #include <csutil/csstring.h>
 
-#include "engine/netpersist.h"
 #include "net/cmdbase.h"   // Subscriber class
 #include "util/serverconsole.h"  // iCommandCatcher
 class MsgHandler;

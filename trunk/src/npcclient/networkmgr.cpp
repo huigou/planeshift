@@ -37,7 +37,6 @@
 #include "net/messages.h"
 #include "net/msghandler.h"
 #include "net/npcmessages.h"
-#include "engine/netpersist.h"
 #include "util/eventmanager.h"
 
 //=============================================================================

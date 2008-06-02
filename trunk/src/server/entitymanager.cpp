@@ -67,7 +67,6 @@
 #include "util/psxmlparser.h"
 #include "util/serverconsole.h"
 
-#include "engine/netpersist.h"
 #include "engine/psworld.h"
 #include "engine/linmove.h"
 

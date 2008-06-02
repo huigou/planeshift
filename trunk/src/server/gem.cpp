@@ -76,7 +76,6 @@
 #include "net/msghandler.h"
 
 #include "engine/psworld.h"
-#include "engine/netpersist.h"
 #include "engine/linmove.h"
 
 //=============================================================================
