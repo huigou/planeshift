@@ -936,8 +936,7 @@ bool EntityManager::CreateActionLocation( psActionLocation *instance, bool trans
     // Add action location to all Super Clients
     psserver->npcmanager->AddEntity(obj);
 
-    Debug3(LOG_STARTUP ,0, "Action Location ID %u : Created successfully(EID: %u)!\n", 
-           instance->id,obj->GetEntityID());
+    //Debug3(LOG_STARTUP ,0, "Action Location ID %u : Created successfully(EID: %u)!\n", instance->id,obj->GetEntityID());
     return true;
 }
 
