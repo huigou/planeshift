@@ -279,24 +279,30 @@ bool UpdaterEngine::checkUpdater()
         failed = true;
 
     // Load new config data.
-    csRef<iDocumentNode> root = GetRootNode(UPDATERINFO_FILENAME);
-    if(!failed && !root)
+    if(!failed)
     {
-        printOutput("Unable to get root node\n");
-        failed = true;
-    }
+        csRef<iDocumentNode> root = GetRootNode(UPDATERINFO_FILENAME);
+        if(!root)
+        {
+            printOutput("Unable to get root node\n");
+            failed = true;
+        }
 
-    csRef<iDocumentNode> confignode = root->GetNode("config");
-    if (!failed && !confignode)
-    {
-        printOutput("Couldn't find config node in configfile!\n");
-        failed = true;
-    }
+        if(!failed)
+        {
+            csRef<iDocumentNode> confignode = root->GetNode("config");
+            if (!confignode)
+            {
+                printOutput("Couldn't find config node in configfile!\n");
+                failed = true;
+            }
 
-    if (!failed && !config->GetNewConfig()->Initialize(confignode))
-    {
-        printOutput("Failed to Initialize mirror config new!\n");
-        failed = true;
+            if (!failed && !config->GetNewConfig()->Initialize(confignode))
+            {
+                printOutput("Failed to Initialize mirror config new!\n");
+                failed = true;
+            }
+        }
     }
 
     if(failed)
