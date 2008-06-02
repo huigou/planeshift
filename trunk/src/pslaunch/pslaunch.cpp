@@ -312,7 +312,7 @@ int main(int argc, char* argv[])
         // If we're self updating, continue self update.
         if(engine->GetConfig()->IsSelfUpdating())
         {
-            exitApp = engine->selfUpdate(engine->GetConfig()->IsSelfUpdating());
+            exitApp = engine->SelfUpdate(engine->GetConfig()->IsSelfUpdating());
         }
 
         // If we don't have to exit the app, create GUI thread and run updater.
@@ -335,7 +335,7 @@ int main(int argc, char* argv[])
             
             //Begin update checking.
             if(engine)
-                engine->checkForUpdates();
+                engine->CheckForUpdates();
 
             // Wait for the gui to exit.
             while(guiThread->IsRunning())
