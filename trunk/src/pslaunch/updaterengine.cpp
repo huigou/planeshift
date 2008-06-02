@@ -174,12 +174,11 @@ void UpdaterEngine::CheckForUpdates()
         // Initialise downloader.
         downloader = new Downloader(GetVFS(), config);
 
-        //Set proxy
+        // Set proxy
         downloader->SetProxy(GetConfig()->GetProxy().host.GetData(),
             GetConfig()->GetProxy().port);
 
         PrintOutput("Checking for updates to the updater: ");
-
 
         if(CheckUpdater())
         {
@@ -284,7 +283,7 @@ bool UpdaterEngine::CheckUpdater()
         csRef<iDocumentNode> root = GetRootNode(UPDATERINFO_FILENAME);
         if(!root)
         {
-            PrintOutput("Unable to get root node\n");
+            PrintOutput("Unable to get root node!\n");
             failed = true;
         }
 
@@ -810,7 +809,7 @@ void UpdaterEngine::GeneralUpdate()
 
                     // Check md5sum is correct.
                     PrintOutput("Checking for correct md5sum: ");
-                    csRef<iDataBuffer> buffer = vfs->ReadFile("/this/" + newFilePath, true);
+                    csRef<iDataBuffer> buffer = vfs->ReadFile("/this/" + newFilePath);
                     if(!buffer)
                     {
                         PrintOutput("Could not get MD5 of patched file %s! Reverting file!\n", newFilePath.GetData());
@@ -864,5 +863,138 @@ void UpdaterEngine::GeneralUpdate()
 
 void UpdaterEngine::CheckIntegrity()
 {
+    // Load current config data.
+    csRef<iDocumentNode> root = GetRootNode(UPDATERINFO_FILENAME);
+    if(!root)
+    {
+        PrintOutput("Unable to get root node!\n");
+        return;
+    }
+
+    csRef<iDocumentNode> confignode = root->GetNode("config");
+    if (!confignode)
+    {
+        PrintOutput("Couldn't find config node in configfile!\n");
+        return;
+    }
+
+    if(!confignode->GetAttributeValueAsBool("active", true))
+    {
+        PrintOutput("This updaterinfo.xml file is marked as inactive and will not work. Please get another one.\n");
+        return;
+    }
+
+    // Load updater config
+    if (!config->GetCurrentConfig()->Initialize(confignode))
+    {
+        PrintOutput("Failed to Initialize mirror config current!\n");
+        return;
+    }
+
+    // Initialise downloader.
+    downloader = new Downloader(GetVFS(), config);
+
+    // Set proxy
+    downloader->SetProxy(GetConfig()->GetProxy().host.GetData(),
+        GetConfig()->GetProxy().port);
+
+    // Get the zip with md5sums.
+    csString baseurl = config->GetNewConfig()->GetMirror(0)->GetBaseURL();
+    if(!downloader->DownloadFile(baseurl.Append("backup/integrity.zip"), "integrity.zip", true, true))
+    {
+        PrintOutput("\nFailed to download integrity.zip!\n");
+        return;
+    }
+
+    // Process the list of md5sums.
+    vfs->Mount("/zip/", "/this/integrity.zip");
+
+    bool failed = false;
+    csRef<iDocumentNode> r = GetRootNode("/zip/integrity.xml");
+    if(!r)
+    {
+        PrintOutput("Unable to get root node!\n");
+        failed = true;
+    }
+
+    if(!failed)
+    {
+        csRef<iDocumentNode> md5sums = r->GetNode("md5sums");
+        if (!md5sums)
+        {
+            PrintOutput("Couldn't find md5sums node!\n");
+            failed = true;
+        }
+
+        if(!failed)
+        {
+            csArray<iDocumentNode*> failed;
+            csRef<iDocumentNodeIterator> md5nodes = md5sums->GetNodes("md5sum");
+            while(md5nodes->HasNext())
+            {
+                csRef<iDocumentNode> node = md5nodes->Next();
+
+                bool exec = node->GetAttributeValueAsBool("exec");
+                if(!config->UpdateExecs() && exec)
+                    continue;
+
+                csString path = node->GetAttributeValue("path");
+                csString md5sum = node->GetAttributeValue("md5sum");
+
+                csRef<iDataBuffer> buffer = vfs->ReadFile("/this/" + path);
+                if(!buffer)
+                {
+                    PrintOutput("Can't get the md5sum of the file %s!\n", path);
+                    continue;
+                }
+
+                csMD5::Digest md5 = csMD5::Encode(buffer->GetData(), buffer->GetSize());
+                csString md5s = md5.HexString();
+
+                if(!md5s.Compare(md5sum))
+                {
+                    failed.Push(node);
+                }
+            }
+
+            size_t failedSize = failed.GetSize();
+            if(failedSize == 0)
+            {
+                PrintOutput("\nAll files passed the check!\n");
+            }
+            else
+            {
+                PrintOutput("\nThe following files failed the check:\n");
+                for(size_t i=0; i<failedSize; i++)
+                {
+                    PrintOutput("%s\n", failed.Get(i)->GetAttributeValue("path"));
+                }
+
+                PrintOutput("\nDo you wish to download the correct copies of these files? (y/n)\n");
+                char c = getchar();
+                while(c != 'y' && c != 'n')
+                {
+                    c = getchar();
+                }
+                
+                if(c == 'y')
+                {
+                    for(size_t i=0; i<failedSize; i++)
+                    {
+                        csString url = baseurl + "backup/";
+                        csString downloadpath("/this/");
+                        downloader->DownloadFile(url.Append(failed.Get(i)->GetAttributeValue("path")),
+                                                 downloadpath + failed.Get(i)->GetAttributeValue("path"), true, true);
+                    }
+                    PrintOutput("Done!\n");
+                }
+            }
+        }
+    }
+
+    vfs->Unmount("/zip/", "/this/integrity.zip");
+
+    fileUtil->RemoveFile("integrity.zip", true);
+
     return;
 }

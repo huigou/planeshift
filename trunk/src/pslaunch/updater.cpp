@@ -64,6 +64,7 @@ void psUpdater::RunUpdate(UpdaterEngine* engine) const
     if(engine->GetConfig()->CheckForIntegrity())
     {
         printf("Checking the integrity of the install:\n");
+        engine->CheckIntegrity();
         return;
     }
 
