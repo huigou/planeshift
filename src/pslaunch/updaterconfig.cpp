@@ -97,7 +97,7 @@ const char* Config::GetPlatform() const
 
 Config::Config()
 {
-    updaterVersionLatest = 0;    
+    updaterVersionLatest = 0.0f;    
 }
 
 bool Config::Initialize(csRef<iDocumentNode> node)
@@ -106,7 +106,7 @@ bool Config::Initialize(csRef<iDocumentNode> node)
     csRef<iDocumentNode> updaterNode = node->GetNode("updater");
     if(updaterNode)
     {
-        updaterVersionLatest = updaterNode->GetAttributeValueAsInt("version");
+        updaterVersionLatest = updaterNode->GetAttributeValueAsFloat("version");
         
         csString md5 = "md5";
         csRef<iDocumentNode> md5Node;

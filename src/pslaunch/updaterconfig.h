@@ -115,7 +115,7 @@ public:
     const char* GetPlatform() const;
 
     /* Get latest updater version */
-    int GetUpdaterVersionLatest() const { return updaterVersionLatest; }
+    float GetUpdaterVersionLatest() const { return updaterVersionLatest; }
 
     /* Get latest updater version md5sum */
     const char* GetUpdaterVersionLatestMD5() const { return updaterVersionLatestMD5; }
@@ -123,7 +123,7 @@ public:
 
 private:
     /* Latest updater version */
-    int updaterVersionLatest;
+    float updaterVersionLatest;
 
     /* Latest version md5sum */
     const char* updaterVersionLatestMD5;
