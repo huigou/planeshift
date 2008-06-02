@@ -214,7 +214,7 @@ bool FileUtil::CopyFile(csString from, csString to, bool vfsPath, bool executabl
      */
     if(!fromStat.IsValid())
     {
-        n2.Truncate(n2.FindLast('/'));
+        n2.Truncate(n2.FindLast('/')+1);
         csRef<iDataBuffer> db = vfs->GetRealPath(n2);
         fromStat = StatFile(db->GetData());
     }
