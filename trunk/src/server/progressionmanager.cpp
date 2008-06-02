@@ -1086,10 +1086,10 @@ public:
             return false;
         }
         
-        if(inverse && undomsg.Length() > 0)
+        if(inverse && undoMsg.Length() > 0)
         {
             // print the undo message
-            psString sendtext(undomsg);
+            psString sendtext(undoMsg);
             SubstituteVars(actor, target, sendtext);
             if(object->GetClientID())
                 psserver->SendSystemInfo(object->GetClientID(),sendtext);
