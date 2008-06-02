@@ -41,8 +41,6 @@
 #include "util/log.h"
 #include "util/consoleout.h"
 
-#include "engine/netpersist.h"
-
 #include "net/msghandler.h"
 #include "net/messages.h"
 

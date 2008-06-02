@@ -33,7 +33,6 @@
 #include "net/msghandler.h"
 
 #include "engine/celbase.h"
-#include "engine/netpersist.h"
 #include "engine/linmove.h"
 
 #include "util/serverconsole.h"

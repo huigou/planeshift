@@ -41,7 +41,6 @@
 #include "util/eventmanager.h"
 
 #include "engine/celbase.h"
-#include "engine/netpersist.h"
 #include "engine/psworld.h"
 
 #include "bulkobjects/pscharacter.h"
