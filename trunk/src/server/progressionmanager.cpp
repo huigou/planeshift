@@ -120,6 +120,9 @@ protected:
     
     MathScript *delay_script;
     MathScriptVar *delayvar,*delaytargetvar,*delayactorvar;
+    
+    // has an undo script already been queued
+    bool undoQueued;
 
     float result;
 
@@ -132,7 +135,7 @@ protected:
     
 public:
     csString * eventName;
-    ProgressionOperation() { my_script=NULL; valuevar=targetvar=actorvar=NULL; value_script=delay_script=NULL; result =  0.0F;}
+    ProgressionOperation() { my_script=NULL; valuevar=targetvar=actorvar=NULL; value_script=delay_script=NULL; result =  0.0F; undoQueued = false;}
     virtual ~ProgressionOperation() {if (value_script) delete value_script; if (delay_script) delete delay_script; }
     void SetTicksElapsed(int ticks) { ticksElapsed = ticks; }
     
@@ -144,10 +147,44 @@ public:
     virtual void LoadVariables(csArray<MathScriptVar*> & variables);
     virtual float GetResult() { return result; };
     virtual csString Absolute();
+    
+    void SubstituteVars(gemActor * actor, gemObject *target, psString& str)
+    {
+        int where = (int) str.FindFirst('$');
+        while (where != -1)
+        {
+            psString word;
+            str.GetWord(where+1,word,false);
+            MathScriptVar *pv = my_script->FindVariable(word);
+            if (pv)
+            {
+                csString buff;
+                buff.Format("%1.0f",pv->GetValue() );
+                str.ReplaceSubString(word,buff);
+                str.DeleteAt(where);
+            }
+            else
+            {
+                if (word.CompareNoCase( "target" ) == true )
+                {
+                    str.ReplaceSubString( word, target->GetName() );
+                    str.DeleteAt( where );
+                }
+                else if (word.CompareNoCase( "actor" ) == true )
+                {
+                    str.ReplaceSubString( word, actor->GetName() );
+                    str.DeleteAt( where );
+                }
+            }
+            where = (int) str.FindFirst('$',where+1);
+        }
+    }
 };
 
 csString ProgressionOperation::Absolute()
 {
+    if(undoQueued)
+        return "";
     return ToString();
 } 
 
@@ -986,7 +1023,7 @@ public:
         script.Format("<evt><%s adjust=\"add\" aim=\"%s\" base=\"%s\" value=\"%f\" />", 
                       statToString[stat], aimIsActor ? "actor" : "target", base ? "yes" : "no", oldValue - finalValue);
         if (undoMsg.Length() > 0)
-            script.AppendFmt("<msg aim=\"target\" text=\"%s\"/>", undoMsg.GetData());
+            script.AppendFmt("<msg aim=\"%s\" text=\"%s\"/>", aimIsActor ? "actor" : "target", undoMsg.GetData());
         script += "</evt>";
     
         return script;
@@ -994,9 +1031,11 @@ public:
 
     csString Absolute()        
     {
+        if(undoQueued)
+            return "";
         csString script;        
-        script.Format("<%s adjust=\"add\" aim=\"%s\" base=\"%s\" value=\"%f\" />", 
-                      statToString[stat], aimIsActor ? "actor" : "target", base ? "yes" : "no", newValue - oldValue);    
+        script.Format("<%s adjust=\"add\" aim=\"%s\" base=\"%s\" value=\"%f\" undomsg=\"%s\" />", 
+                      statToString[stat], aimIsActor ? "actor" : "target", base ? "yes" : "no", newValue - oldValue, undoMsg.GetData());    
         return script;                      
     }
     
@@ -1046,6 +1085,17 @@ public:
             Notify2(LOG_SCRIPT,"Error: ProgressionEvent(%s): StatsOp SetValue not possible.\n",eventName->GetData());
             return false;
         }
+        
+        if(inverse && undomsg.Length() > 0)
+        {
+            // print the undo message
+            psString sendtext(undomsg);
+            SubstituteVars(actor, target, sendtext);
+            if(object->GetClientID())
+                psserver->SendSystemInfo(object->GetClientID(),sendtext);
+        }
+        
+        
 
         if ( client )
         {
@@ -1060,6 +1110,7 @@ public:
 
             int persistentID = targetChar->RegisterProgressionEvent(ToString(), ticksElapsed);
             psserver->GetProgressionManager()->QueueUndoScript(undoScript.GetData(), delay, actor, object, item, persistentID);
+            undoQueued = true;
         }
         return true;
     }
@@ -1262,6 +1313,7 @@ public:
             psString undoScript;
             if (CreateUndoScript(adjustValue, undoScript))
             {
+                undoQueued = true;
                 gemActor *object = dynamic_cast <gemActor*> (aimIsActor ? actor : target);
                 int persistentID = character->RegisterProgressionEvent(ToString(), ticksElapsed);
                 psserver->GetProgressionManager()->QueueUndoScript(undoScript.GetData(), delay, actor, object, item, persistentID);
@@ -1372,38 +1424,6 @@ public:
         return true;
     }
 protected:
-
-    void SubstituteVars(gemActor * actor, gemObject *target, psString& str)
-    {
-        int where = (int) str.FindFirst('$');
-        while (where != -1)
-        {
-            psString word;
-            str.GetWord(where+1,word,false);
-            MathScriptVar *pv = my_script->FindVariable(word);
-            if (pv)
-            {
-                csString buff;
-                buff.Format("%1.0f",pv->GetValue() );
-                str.ReplaceSubString(word,buff);
-                str.DeleteAt(where);
-            }
-            else
-            {
-                if (word.CompareNoCase( "target" ) == true )
-                {
-                    str.ReplaceSubString( word, target->GetName() );
-                    str.DeleteAt( where );
-                }
-                else if (word.CompareNoCase( "actor" ) == true )
-                {
-                    str.ReplaceSubString( word, actor->GetName() );
-                    str.DeleteAt( where );
-                }
-            }
-            where = (int) str.FindFirst('$',where+1);
-        }
-    }
 
     csString text;
     // True if its the actors is the aim that should be used.
@@ -1522,6 +1542,7 @@ public:
                     {
                         int persistentID = targetActor->GetCharacterData() ? targetActor->GetCharacterData()->RegisterProgressionEvent(ToString(), ticksElapsed) : 0;
                         psString undoscript = CreateUndoScript();
+                        undoQueued = true;
                         psserver->GetProgressionManager()->QueueUndoScript(undoscript.GetData(), delay, actor, target, item, persistentID);
                     }                        
                 }
@@ -5711,6 +5732,7 @@ float ProgressionEvent::ForceRun(csTicks duration)
         {
             break;
         }
+        // If the op already queued 
         finalScript.Append(po->Absolute());
                                             
         result += po->GetResult();

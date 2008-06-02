@@ -1,5 +1,6 @@
 *** 2008-06-02 by Andrew Dai
-- Fixed a critical bug in undoing stats progression operations.
+- Fixed critical bugs in undoing stats progression operations.
+- Fixed statsop not printing the undomsg.
 
 *** 2008-06-01 by Mike Gist
 - Enabled sse and sse2 on intel macs.
