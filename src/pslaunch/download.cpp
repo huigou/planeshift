@@ -35,7 +35,7 @@ static int ProgressCallback(int progress, int finalSize)
     {
         if(finalSize > 102400)
         {
-            printf("\n0%% ");
+            printf("0%% ");
             lastSize = progress;
         }
     }
