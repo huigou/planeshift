@@ -898,6 +898,7 @@ void UpdaterEngine::CheckIntegrity()
         GetConfig()->GetProxy().port);
 
     // Get the zip with md5sums.
+    fileUtil->RemoveFile("integrity.zip", true);
     csString baseurl = config->GetCurrentConfig()->GetMirror(0)->GetBaseURL();
     baseurl.Append("backup/");
     if(!downloader->DownloadFile(baseurl + "integrity.zip", "integrity.zip", true, true))
@@ -988,13 +989,13 @@ void UpdaterEngine::CheckIntegrity()
                     for(size_t i=0; i<failedSize; i++)
                     {
                         csString downloadpath("/this/");
-                        if(!downloader->DownloadFile(baseurl + failed.Get(i)->GetAttributeValue("path"),
-                                                     downloadpath + failed.Get(i)->GetAttributeValue("path"), true, true))
+                        downloadpath.Append(failed.Get(i)->GetAttributeValue("path"));
+                        fileUtil->RemoveFile(downloadpath, true);
+                        if(!downloader->DownloadFile(baseurl + failed.Get(i)->GetAttributeValue("path"), downloadpath, true, true))
                         {
                             // Maybe it's in a platform specific subdirectory. Try that next.
                            csString url = baseurl + config->GetNewConfig()->GetPlatform() + "/";
-                           downloader->DownloadFile(url + failed.Get(i)->GetAttributeValue("path"),
-                                                    downloadpath + failed.Get(i)->GetAttributeValue("path"), true, true);
+                           downloader->DownloadFile(url + failed.Get(i)->GetAttributeValue("path"), downloadpath, true, true);
                         }
                     }
                     PrintOutput("Done!\n");
