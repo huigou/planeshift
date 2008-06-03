@@ -942,13 +942,14 @@ void UpdaterEngine::CheckIntegrity()
 
                 csString path = node->GetAttributeValue("path");
                 csString md5sum = node->GetAttributeValue("md5sum");
-                bool specific = node->GetAttributeValueAsBool("specific");
+                csString platform = node->GetAttributeValue("platform");
 
                 csRef<iDataBuffer> buffer = vfs->ReadFile("/this/" + path);
                 if(!buffer)
                 {
                     // File is genuinely missing.
-                    if(!specific)
+                    if(platform.Compare(config->GetCurrentConfig()->GetPlatform()) ||
+                       platform.Compare("all"))
                     {
                         failed.Push(node);
                     }
@@ -991,11 +992,13 @@ void UpdaterEngine::CheckIntegrity()
                         csString downloadpath("/this/");
                         downloadpath.Append(failed.Get(i)->GetAttributeValue("path"));
                         fileUtil->RemoveFile(downloadpath, true);
-                        if(!downloader->DownloadFile(baseurl + failed.Get(i)->GetAttributeValue("path"), downloadpath, true, true))
+                        if(!downloader->DownloadFile(baseurl + failed.Get(i)->GetAttributeValue("path"),
+                                                     failed.Get(i)->GetAttributeValue("path"), true, true))
                         {
                             // Maybe it's in a platform specific subdirectory. Try that next.
-                           csString url = baseurl + config->GetNewConfig()->GetPlatform() + "/";
-                           downloader->DownloadFile(url + failed.Get(i)->GetAttributeValue("path"), downloadpath, true, true);
+                           csString url = baseurl + config->GetCurrentConfig()->GetPlatform() + "/";
+                           downloader->DownloadFile(url + failed.Get(i)->GetAttributeValue("path"),
+                                                    failed.Get(i)->GetAttributeValue("path"), true, true);
                         }
                     }
                     PrintOutput("Done!\n");
