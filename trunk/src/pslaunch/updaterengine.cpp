@@ -19,7 +19,6 @@
 
 #include <csutil/csmd5.h>
 #include <csutil/xmltiny.h>
-
 #include <iutil/stringarray.h>
 
 #include "updaterconfig.h"
@@ -907,7 +906,8 @@ void UpdaterEngine::CheckIntegrity()
     }
 
     // Process the list of md5sums.
-    vfs->Mount("/zip/", "/this/integrity.zip");
+    csRef<iDataBuffer> realZipPath = vfs->GetRealPath("/this/integrity.zip");
+    vfs->Mount("/zip/", realZipPath->GetData());
 
     bool failed = false;
     csRef<iDocumentNode> r = GetRootNode("/zip/integrity.xml");
@@ -928,7 +928,7 @@ void UpdaterEngine::CheckIntegrity()
 
         if(!failed)
         {
-            csArray<iDocumentNode*> failed;
+            csRefArray<iDocumentNode> failed;
             csRef<iDocumentNodeIterator> md5nodes = md5sums->GetNodes("md5sum");
             while(md5nodes->HasNext())
             {
@@ -1004,7 +1004,7 @@ void UpdaterEngine::CheckIntegrity()
         }
     }
 
-    vfs->Unmount("/zip/", "/this/integrity.zip");
+    vfs->Unmount("/zip/", realZipPath->GetData());
 
     fileUtil->RemoveFile("integrity.zip", true);
 
