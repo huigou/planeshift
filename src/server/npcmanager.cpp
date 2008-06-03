@@ -1599,7 +1599,8 @@ void NPCManager::HandlePetCommand( MsgEntry * me )
                 {
                     gemActor * targetActor = trg->GetActorPtr();
                     
-                    if( trg->GetCharacterData()->impervious_to_attack ||
+                    if( targetActor == NULL ||
+                        trg->GetCharacterData()->impervious_to_attack ||
                       ( trg->GetClient() && trg->GetActorPtr()->GetInvincibility() ) ||
                       ( trg == pet ) )
 
