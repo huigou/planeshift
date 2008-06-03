@@ -1,3 +1,7 @@
+*** 2008-06-03 by Steven Patrick
+- Fixed FS#1648, patch by peeg
+- Fixed FS#1638, patch by Vornne
+
 *** 2008-06-02 by Mike Gist
 - Some cleanups.
 - Fixed a few misc bugs in the updater.

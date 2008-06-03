@@ -290,7 +290,22 @@ void psAuthenticationServer::HandleAuthent(MsgEntry *me)
 
     // Add account to cache to optimize repeated login attempts
     CacheManager::GetSingleton().AddToCache(acctinfo,msg.sUser,120);
-
+    
+    // Check if password was correct
+    csString passwordhashandclientnum (acctinfo->password);
+    passwordhashandclientnum.Append(":");
+    passwordhashandclientnum.Append(me->clientnum);
+    
+    csString encoded_hash = csMD5::Encode(passwordhashandclientnum).HexString();
+    if (strcmp( encoded_hash.GetData() , msg.sPassword.GetData())) // authentication error
+    {
+        psserver->RemovePlayer(me->clientnum, "Incorrect password.");
+        Notify2(LOG_CONNECTIONS,"User '%s' authentication request rejected (Bad password).",(const char *)msg.sUser);
+        // No delete necessary because AddToCache will auto-delete
+        // delete acctinfo;
+        return;
+    }
+    
     /**
      * Check if the client is already logged in
      */
@@ -319,28 +334,6 @@ void psAuthenticationServer::HandleAuthent(MsgEntry *me)
         return;
     }
 
-    csString passwordhashandclientnum (acctinfo->password);
-    passwordhashandclientnum.Append(":");
-    passwordhashandclientnum.Append(me->clientnum);
-    
-    csString encoded_hash = csMD5::Encode(passwordhashandclientnum).HexString();
-    if (acctinfo==NULL || strcmp( encoded_hash.GetData() ,
-                                  msg.sPassword.GetData())) // authentication error
-    {
-        psserver->RemovePlayer(me->clientnum, "Incorrect password.");
-
-        if (acctinfo==NULL)
-        {
-            Notify2(LOG_CONNECTIONS,"User '%s' authentication request rejected (Username not found).",(const char *)msg.sUser);
-        }
-        else
-        {
-            Notify2(LOG_CONNECTIONS,"User '%s' authentication request rejected (Bad password).",(const char *)msg.sUser);
-        }
-        // No delete necessary because AddToCache will auto-delete
-        // delete acctinfo;
-        return;
-    }
 
     if(csGetTicks() - start > 500)
     {
