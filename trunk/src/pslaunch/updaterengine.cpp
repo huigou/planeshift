@@ -989,16 +989,33 @@ void UpdaterEngine::CheckIntegrity()
                 {
                     for(size_t i=0; i<failedSize; i++)
                     {
+                        PrintOutput("Downloading file: %s\n", failed.Get(i)->GetAttributeValue("path"));
+
                         csString downloadpath("/this/");
                         downloadpath.Append(failed.Get(i)->GetAttributeValue("path"));
-                        fileUtil->RemoveFile(downloadpath, true);
+
+                        // Save permissions.
+                        csRef<FileStat> fs = fileUtil->StatFile(downloadpath);
+                        fileUtil->MoveFile(downloadpath, downloadpath + ".bak", true, false, true);
+
+                        // Download file.
                         if(!downloader->DownloadFile(baseurl + failed.Get(i)->GetAttributeValue("path"),
                                                      failed.Get(i)->GetAttributeValue("path"), true, true))
                         {
                             // Maybe it's in a platform specific subdirectory. Try that next.
                            csString url = baseurl + config->GetCurrentConfig()->GetPlatform() + "/";
-                           downloader->DownloadFile(url + failed.Get(i)->GetAttributeValue("path"),
-                                                    failed.Get(i)->GetAttributeValue("path"), true, true);
+                           if(!downloader->DownloadFile(url + failed.Get(i)->GetAttributeValue("path"),
+                                                        failed.Get(i)->GetAttributeValue("path"), true, true))
+                           {
+                               // Restore file.
+                               fileUtil->MoveFile(downloadpath + ".bak", downloadpath, true, false, true);
+                           }
+                        }
+
+                        // Restore permissions.
+                        if(fs.IsValid())
+                        {
+                            fileUtil->SetPermissions(downloadpath, fs);
                         }
                     }
                     PrintOutput("Done!\n");
