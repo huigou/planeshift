@@ -646,12 +646,14 @@ void psMovementManager::MouseLook(iEvent& ev)
     if ( camera->RotateCameraWithPlayer() )
     {
         deltaYaw = 0.0f;
-
         if (!locked)
         {
             float spin = -1.0f * deltaX * (sensX/200.0f);
-            if (spin > 5) spin = 5.0f;
-            if (spin < -5) spin = -5.0f;
+
+            //if (spin > 5) spin = 5.0f; // the limitation to +-5.0f slowed the horizontal (LAWI)
+            //if (spin < -5) spin = -5.0f; 
+            if (spin > 20) spin = 20.0f;
+            if (spin < -20) spin = -20.0f;
             linearMove->SetAngularVelocity( csVector3(0,spin,0) );
         }
     }

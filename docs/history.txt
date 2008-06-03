@@ -1,6 +1,9 @@
 *** 2008-06-03 by Steven Patrick
 - Fixed FS#1648, patch by peeg
 - Fixed FS#1638, patch by Vornne
+- Fixed FS#1062, patch by peeg
+- Fixed FS#1372, patch by peeg
+- Fixed FS#1241, patch by lawi
 
 *** 2008-06-02 by Mike Gist
 - Some cleanups.
