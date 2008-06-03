@@ -141,9 +141,9 @@ bool Downloader::DownloadFile(const char *file, const char *dest, bool URL, bool
         if (result != nsSocket::OK && !silent)
         {
             if (result == nsSocket::E_INVALID_HOST)
-                error.Format("Couldn't connect to mirror %s. \n", url.GetData());
+                error.Format("Couldn't connect to mirror %s\n", url.GetData());
             else
-                error.Format("Error while downloading file: %s.\n", url.GetData());
+                error.Format("Error while downloading file: %s\n", url.GetData());
         }
 
         // Tell the user that we failed
@@ -152,9 +152,9 @@ bool Downloader::DownloadFile(const char *file, const char *dest, bool URL, bool
             if(!silent)
             {
                 if(error.IsEmpty())
-                    printf ("Server error %i (%s).\n", httpCode, url.GetData());
+                    printf ("Server error %i (%s)\n", httpCode, url.GetData());
                 else
-                    printf ("Server error: %s (%i).\n", error.GetData(), httpCode);
+                    printf ("Server error: %s (%i)\n", error.GetData(), httpCode);
             }
 
             if(!URL)
