@@ -613,7 +613,8 @@ void psTriggerHandler::HandleMovementAction(const psControl* trigger, bool value
 {
     if (trigger->name == "Sit")
     {
-        if (psengine->GetCelClient()->GetMainPlayer()->GetMode() == psModeMessage::SIT)
+        if (psengine->GetCelClient()->GetMainPlayer()->GetMode() == psModeMessage::SIT ||
+            psengine->GetCelClient()->GetMainPlayer()->GetMode() == psModeMessage::OVERWEIGHT)
             psengine->GetCmdHandler()->Execute("/stand");
         else
             psengine->GetCmdHandler()->Execute("/sit");
@@ -931,4 +932,5 @@ bool psCharController::MatchTrigger(const char* name, psControl::Device device, 
     const psControl* trigger = controls.GetMappedTrigger(device,button,mods);
     return trigger && trigger->name == name;
 }
+
 

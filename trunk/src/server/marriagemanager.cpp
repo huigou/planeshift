@@ -474,18 +474,55 @@ bool psMarriageManager::CreateMarriageEntry( psCharacter* charData,  psCharacter
 
 void psMarriageManager::DeleteMarriageInfo(  psCharacter* charData )
 {
-        
-    // If this character is a female then revert it's lastname change
-    if( charData->GetRaceInfo()->gender == PSCHARACTER_GENDER_FEMALE )
+    csString spouseFullName = charData->GetSpouseName();
+    csString spouseName = spouseFullName.Slice( 0, spouseFullName.FindFirst(' '));
+    Client* otherClient = psserver->GetCharManager()->FindPlayerClient(spouseName.GetData());
+    
+    // Step 1: Revert the changed last name of the female (if necessary)
+    if( charData->GetRaceInfo()->gender == PSCHARACTER_GENDER_MALE )
     {
-        // Update cached old last name
+        // spouse has to be female
+        if(otherClient && otherClient->GetCharacterData())
+        {
+            // spouse is online (or at least still cached)
+            otherClient->GetCharacterData()->SetLastName( otherClient->GetCharacterData()->GetOldLastName() );
+            otherClient->GetCharacterData()->SetOldLastName( "" );
+            UpdateName( otherClient->GetCharacterData() );
+        }
+        else
+        {
+            // spouse is offline - hit the database
+            csString query;
+            query.Format( "SELECT id FROM characters WHERE name='%s'", spouseName.GetData() );
+            Result result( db->Select( query.GetData() ) );
+            
+            if(!result.IsValid() || result.Count() != 1)
+            {
+                Error2( "DeleteMarriageInfo(): DB Error: %s", db->GetLastError() ); 
+                return;
+            }
+            
+            iResultRow& row = result[0];
+            unsigned int id = row.GetUInt32("id");
+            
+            query.Format("UPDATE characters SET lastname=old_lastname, old_lastname='' WHERE id=%d", id);
+            
+            if(!db->Command( query.GetData()))
+            {
+                Error2( "DeleteMarriageInfo(): DB Error: %s", db->GetLastError() ); 
+                return;
+            }
+        } 
+    }
+    else if ( charData->GetRaceInfo()->gender == PSCHARACTER_GENDER_FEMALE)
+    {
+        // divorcer is female
         charData->SetLastName( charData->GetOldLastName() );
         charData->SetOldLastName( "" );
-
         UpdateName( charData ); 
     }
 
-    //We remove the data about the marriage now.
+    // Step 2: We remove the data about the marriage now.
     csString query;
     query.Format( "DELETE FROM character_relationships WHERE (character_id='%d' OR related_id='%d') and relationship_type='spouse'", charData->GetCharacterID(), charData->GetCharacterID() );
     if ( !db->Command( query.GetData() ) )
@@ -494,13 +531,11 @@ void psMarriageManager::DeleteMarriageInfo(  psCharacter* charData )
         return;
     }
 
-    // Update cached spouse name
-    Client* otherClient = psserver->GetCharManager()->FindPlayerClient(charData->GetSpouseName());
+    // Step 3: Update cached spouse name
     if (otherClient && otherClient->GetCharacterData())
     {
         otherClient->GetCharacterData()->SetSpouseName("");
     }
-
     charData->SetSpouseName( "" );
 }
 
