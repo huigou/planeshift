@@ -778,7 +778,7 @@ void UpdaterEngine::GeneralUpdate()
                 if(!PatchFile(oldFP->GetData(), diffFP->GetData(), newFP->GetData()))
                 {
                     PrintOutput("Failed!\n");
-                    PrintOutput("Attempting to download full version of %s: ", newFilePath.GetData());
+                    PrintOutput("Attempting to download full version of %s: \n", newFilePath.GetData());
 
                     // Get the 'backup' mirror, should always be the first in the list.
                     csString baseurl = config->GetNewConfig()->GetMirror(0)->GetBaseURL();
@@ -989,13 +989,14 @@ void UpdaterEngine::CheckIntegrity()
                 {
                     for(size_t i=0; i<failedSize; i++)
                     {
-                        PrintOutput("Downloading file: %s\n", failed.Get(i)->GetAttributeValue("path"));
+                        PrintOutput("\nDownloading file: %s\n", failed.Get(i)->GetAttributeValue("path"));
 
                         csString downloadpath("/this/");
                         downloadpath.Append(failed.Get(i)->GetAttributeValue("path"));
 
                         // Save permissions.
-                        csRef<FileStat> fs = fileUtil->StatFile(downloadpath);
+                        csRef<iDataBuffer> rp = vfs->GetRealPath(downloadpath);
+                        csRef<FileStat> fs = fileUtil->StatFile(rp->GetData());
                         fileUtil->MoveFile(downloadpath, downloadpath + ".bak", true, false, true);
 
                         // Download file.
@@ -1009,14 +1010,17 @@ void UpdaterEngine::CheckIntegrity()
                            {
                                // Restore file.
                                fileUtil->MoveFile(downloadpath + ".bak", downloadpath, true, false, true);
+                               PrintOutput("Failed!\n");
                            }
                         }
 
                         // Restore permissions.
                         if(fs.IsValid())
                         {
-                            fileUtil->SetPermissions(downloadpath, fs);
+                            fileUtil->SetPermissions(rp->GetData(), fs);
                         }
+                        fileUtil->RemoveFile(downloadpath + ".bak", true);
+                        PrintOutput("Success!\n");
                     }
                     PrintOutput("Done!\n");
                 }
