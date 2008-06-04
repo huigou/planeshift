@@ -1,3 +1,6 @@
+*** 2008-06-03 by Mike Gist
+- Fixed FS#1656, patch by Zwenze.
+
 *** 2008-06-03 by Steven Patrick
 - Fixed FS#1648, patch by peeg
 - Fixed FS#1638, patch by Vornne
