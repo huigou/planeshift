@@ -661,6 +661,7 @@ gemObject::~gemObject()
     cel->RemoveEntity(this,gemID);
     delete proxlist;
     proxlist = NULL;
+    pcmesh->SetMesh(0);
 }
 
 uint gemObject::GetEntityID()
@@ -1319,7 +1320,7 @@ void gemActiveObject::SendBehaviorMessage(const csString & msg_id, gemObject *ac
                 if (guard &&
                     guard != actor->GetCharacterData()->GetCharacterID() &&
                     guardActor &&
-                    guardActor->RangeTo(item->GetGemObject()) < 5)
+                    guardActor->RangeTo(item->GetGemObject()) < RANGE_TO_SELECT)
                 {
                     psserver->SendSystemInfo(clientnum,"You notice that the item is being guarded by %s",
                         guardActor->GetCharacterData()->GetCharFullName());
