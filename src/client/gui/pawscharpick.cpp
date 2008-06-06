@@ -452,6 +452,51 @@ void pawsCharacterPickerWindow::SelectCharacter(int character)
     else
     {
         // Show the model for the selected character.
+        view->Clear();
+        loaded = false;
+        view->Show();
+        CheckMeshLoad();
+    }
+}
+
+void pawsCharacterPickerWindow::SelectCharacter(int character, pawsWidget* widget)
+{
+    if(!gotStrings)
+        return;
+
+    pawsWidget* wdg;
+
+    for (int i = 0;i < 4; i++)
+    {
+        csString name;
+        name = "ImgCharacter";
+        name += i;
+        wdg = FindWidget(name);
+        if (!wdg)
+            return;
+
+        if (character == i)
+            wdg->SetBackground("radioon2");
+        else
+            wdg->SetBackground("radiooff2");
+    }
+
+    pawsButton* loginWidget = (pawsButton*)FindWidget("login");
+
+    selectedCharacter = widget->GetID();                                    
+    loginWidget->SetText( PawsManager::GetSingleton().Translate("Join") );
+                
+    // If the button selected has an empty character then button will
+    // be for creating a new character
+    if ( widget->GetID() >= charactersFound  )
+    {            
+        SetupCharacterCreationScreens();
+        view->Hide();
+    }
+    else
+    {
+        // Show the model for the selected character.
+        view->Clear();
         loaded = false;
         view->Show();
         CheckMeshLoad();
@@ -493,83 +538,6 @@ void pawsCharacterPickerWindow::CheckMeshLoad()
                 charApp->ApplyEquipment(equipment);
             }
             loaded = true;
-        }
-    }
-}
-
-void pawsCharacterPickerWindow::SelectCharacter(int character, pawsWidget* widget)
-{
-    if(!gotStrings)
-        return;
-
-    pawsWidget* wdg;
-
-    for (int i = 0;i < 4; i++)
-    {
-        csString name;
-        name = "ImgCharacter";
-        name += i;
-        wdg = FindWidget(name);
-        if (!wdg)
-            return;
-
-        if (character == i)
-            wdg->SetBackground("radioon2");
-        else
-            wdg->SetBackground("radiooff2");
-    }
-
-    pawsButton* loginWidget = (pawsButton*)FindWidget("login");
-
-    selectedCharacter = widget->GetID();                                    
-    loginWidget->SetText( PawsManager::GetSingleton().Translate("Join") );
-                
-    // If the button selected has an empty character then button will
-    // be for creating a new character
-    if ( widget->GetID() >= charactersFound  )
-    {            
-        SetupCharacterCreationScreens();
-        view->Hide();
-    }
-    else
-    {
-        // Show the model for the selected character.
-        view->Show();
-        FactoryIndexEntry* entry = psengine->GetCacheManager()->GetFactoryEntry(models[selectedCharacter].fileName);
-        if (!entry)
-        {
-            psengine->FatalError("The server sent an invalid model filename, please run the updater\n");
-            return;
-        }
-
-        if (!entry->factname.IsEmpty())
-            view->View( entry->factname, entry->filename );
-        else
-            view->View(entry->factory);
-                
-        iMeshWrapper * mesh = view->GetObject();
-        if (!mesh)
-        {
-            PawsManager::GetSingleton().CreateWarningBox("Couldn't find mesh! Please run the updater");
-            return;
-        }
-
-        csString traits(models[selectedCharacter].traits);
-        csString equipment( models[selectedCharacter].equipment );
-        
-        charApp->ClearEquipment();
-        charApp->SetMesh(view->GetObject());                    
-        charApp->ApplyTraits(traits);            
-        charApp->ApplyEquipment(equipment);
-        psengine->GetCelClient()->UpdateShader(mesh);
-        
-        csRef<iSpriteCal3DState> spstate =            
-                                        scfQueryInterface<iSpriteCal3DState> (mesh->GetMeshObject());
-                                        
-        if (spstate)
-        {
-            // Setup cal3d to select random 0 velocity anims
-            spstate->SetVelocity(0.0,&psengine->GetRandomGen());          
         }
     }
 }

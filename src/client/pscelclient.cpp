@@ -327,13 +327,19 @@ void psCelClient::HandleMainActor( psPersistActor& mesg )
                 Error2( "Mesh Factory %s not found", mesg.factname.GetData() );            
                 return;
             }
-            factory = psengine->GetCacheManager()->GetFactoryEntry(filename)->factory;
-            if (!factory)
+            FactoryIndexEntry* fie = psengine->GetCacheManager()->GetFactoryEntry(filename);
+            while(!fie)
+            {
+                csSleep(100);
+                fie = psengine->GetCacheManager()->GetFactoryEntry(filename);
+            }
+            factory = fie->factory;
+            if(!factory)
             {
                 Error2("Couldn't morph main player! Factory %s doesn't exist!", mesg.factname.GetData() );
                 return;
             }
-        }
+       } 
         
         // New or resetting?
         if (local_player_defaultFactName != mesg.factname)
@@ -1264,13 +1270,19 @@ bool GEMClientObject::InitMesh( const char *factname,
             Error2( "Mesh Factory %s not found", factoryName.GetData() );            
             return false;
         }
-        factory = psengine->GetCacheManager()->GetFactoryEntry(filename)->factory;          
-        if (!factory)
+        FactoryIndexEntry* fie = psengine->GetCacheManager()->GetFactoryEntry(filename);
+        while(!fie)
         {
-            Error2( "Mesh Factory %s not found", factoryName.GetData() );            
+            csSleep(100);
+            fie = psengine->GetCacheManager()->GetFactoryEntry(filename);
+        }
+        factory = fie->factory;
+        if(!factory)
+        {
+            Error2( "Mesh Factory %s not found", factoryName.GetData() );
             return false;
         }
-    }    
+     }    
 
     pcmesh = factory->CreateMeshWrapper();
     psengine->GetEngine()->GetMeshes()->Add(pcmesh);

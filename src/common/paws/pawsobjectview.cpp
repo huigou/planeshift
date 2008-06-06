@@ -207,18 +207,23 @@ void pawsObjectView::View( const char* factName, const char* fileName )
 
 void pawsObjectView::View( iMeshFactoryWrapper* wrapper )
 {
-    if ( !wrapper )
-        return;
-
     Clear();
 
-    iSector* sector =  loadedMap ? meshSector : stage;
-    object = engine->CreateMeshWrapper (wrapper, "PaperDoll", sector, csVector3(0,0,0) );
+    if(wrapper)
+    {
+      iSector* sector = loadedMap ? meshSector : stage;
+      object = engine->CreateMeshWrapper (wrapper, "PaperDoll", sector, csVector3(0,0,0) );
+    }
 }
 
 void pawsObjectView::View( iMeshWrapper* wrapper )
 {
-    if (wrapper) View(wrapper->GetFactory());
+    Clear();
+
+    if(wrapper)
+    {
+      View(wrapper->GetFactory());
+    }
 }
 
 void pawsObjectView::Rotate(int speed,float radians)

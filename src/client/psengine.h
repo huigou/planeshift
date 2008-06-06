@@ -443,6 +443,7 @@ private:
     uint gfxFeatures;
     bool modelsLoaded;  ///< Tells if the models are finished loading yet.
     size_t modelToLoad; ///< Keeps a count of the models loaded so far.
+    bool modelsInit;    ///< True if we've begun the process of loading models.
     csStringArray modelnames;
     csHash<csString, csString> factfilenames;
 
@@ -481,6 +482,9 @@ private:
 
     /// Define what kind of loading we want to do; unload first or unload last.
     bool unloadLast;
+
+    /// Whether or not we're using a threaded loader (will break things if you don't and you set to true).
+    bool threadedLoad;
     
     // Event ID cache
     csEventID event_preprocess;

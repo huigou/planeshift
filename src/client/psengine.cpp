@@ -231,6 +231,8 @@ psEngine::psEngine (iObjectRegistry *objectreg)
 
     loadtimeout = 10;  // Default load timeout
 
+    threadedLoad = false;
+    modelsInit = false;
     preloadModels = false;
     modelsLoaded = false;
     modelToLoad = (size_t)-1;
@@ -379,16 +381,22 @@ bool psEngine::Initialize (int level)
         // Check if we're preloading models.
         preloadModels = (cmdline->GetBoolOption("preload_models", false) || GetConfig()->GetBool("PlaneShift.Client.Loading.PreloadModels", false));
 
-        // Check if we're using post proc effects of any kind.
+        // Check if we're using normal maps etc.
         if(cmdline->GetBoolOption("use_normal_maps", false))
         {
             gfxFeatures |= useNormalMaps;
         }
 
+        // Check if we're using meshgen.
         if(cmdline->GetBoolOption("use_meshgen", true))
         {
             gfxFeatures |= useMeshGen;
         }
+
+        if(cmdline->GetBoolOption("threaded_load", false))
+        {
+            threadedLoad = true;
+        }        
 
         //Check if sound is on or off in psclient.cfg
         csString soundPlugin;
@@ -1442,13 +1450,22 @@ inline void psEngine::PreloadModels()
     /// Load the models
     if (modelToLoad == (size_t)-1)
     {
-        // Load the cal3d models
+        // Load the cal3d model names.
         PreloadSubDir("");
-        // Load the items
+        // Load the item model names.
         PreloadItemsDir();
         modelToLoad = 0;
 
         bar->SetTotalValue( modelnames.GetSize() );
+
+        if(threadedLoad && !modelsInit)
+        {
+            for(size_t i=0; i<modelnames.GetSize(); i++)
+            {
+                cachemanager->GetFactoryEntry(modelnames.Get(i));
+            }
+            modelsInit = true;
+        }
     }
     else
     {
@@ -1466,21 +1483,12 @@ inline void psEngine::PreloadModels()
             return;
         }
 
-        // Now build the index, wait for each model to load (timeout after 20 sec).
-        size_t counter = 0;
-        while(!cachemanager->GetFactoryEntry(modelnames.Get(modelToLoad))->factory && counter < 200)
+        // Now build the index..
+        if(cachemanager->GetFactoryEntry(modelnames.Get(modelToLoad)))
         {
-            counter++;
-            csSleep(100);
+            modelToLoad++;
+            bar->SetCurrentValue( modelToLoad );
         }
-
-        if(counter == 200)
-        {
-            Error2("Model %s didn't seem to load!", modelnames.Get(modelToLoad));
-        }
-
-        modelToLoad++;
-        bar->SetCurrentValue( modelToLoad );
     }
 }
 

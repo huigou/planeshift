@@ -34,6 +34,7 @@
 
 psCharAppearance::psCharAppearance(iObjectRegistry* objectReg)
 {
+    psengine->RegisterDelayedLoader(this);
     stringSet = csQueryRegistryTagInterface<iStringSet>(objectReg, "crystalspace.shared.stringset");
     engine = csQueryRegistry<iEngine>(objectReg);
     loader = csQueryRegistry<iLoader>(objectReg);
@@ -53,7 +54,7 @@ psCharAppearance::psCharAppearance(iObjectRegistry* objectReg)
 
 psCharAppearance::~psCharAppearance()
 {
-    
+    psengine->UnregisterDelayedLoader(this);
 }
 
 void psCharAppearance::SetMesh(iMeshWrapper* mesh)
@@ -509,7 +510,7 @@ bool psCharAppearance::ChangeMesh(const char* partPattern, const char* newPart)
 }
 
 
-bool psCharAppearance::Attach(const char* socketName, const char* meshFactName )
+bool psCharAppearance::Attach(const char* socketName, const char* meshFactName)
 {
     if (!socketName || !meshFactName)
         return false;
@@ -532,15 +533,34 @@ bool psCharAppearance::Attach(const char* socketName, const char* meshFactName )
             Error2("Mesh Factory %s not found", meshFactName );            
             return false;
         }
-        factory = psengine->GetCacheManager()->GetFactoryEntry(filename)->factory;
-        if (!factory)
+
+        // Check for factory and set up callback if not loaded yet.
+        FactoryIndexEntry* fie = psengine->GetCacheManager()->GetFactoryEntry(filename);
+        if(!fie)
         {
-            Error2("Mesh Factory %s not found", meshFactName );
-            return false;
+            Attachment attach;
+            attach.filename = filename;
+            attach.socket = socket;
+            delayedAttach.PushBack(attach);
+        }
+        else
+        {
+            factory = fie->factory;
+            ProcessAttach(factory, meshFactName, socket);
         }
     }
+    else
+    {
+        ProcessAttach(factory, meshFactName, socket);
+    }
 
-    csRef<iMeshWrapper> meshWrap = engine->CreateMeshWrapper( factory, meshFactName );
+    return true;
+}
+
+void psCharAppearance::ProcessAttach(csRef<iMeshFactoryWrapper> factory, const char* meshFactName, csRef<iSpriteCal3DSocket> socket)
+{
+     csRef<iMeshWrapper> meshWrap = engine->CreateMeshWrapper( factory, meshFactName );
+     const char* socketName = socket->GetName();
 
     // Given a socket name of "righthand", we're looking for a key in the form of "socket_righthand"
     char * keyName = (char *)malloc(strlen(socketName)+strlen("socket_")+1);
@@ -568,10 +588,21 @@ bool psCharAppearance::Attach(const char* socketName, const char* meshFactName )
     socket->SetTransform( csTransform(csZRotMatrix3(rot_z)*csYRotMatrix3(rot_y)*csXRotMatrix3(rot_x), csVector3(trans_x,trans_y,trans_z)) );
 
     usedSlots.PushSmart(socketName);
-    return true;
 }
 
-
+void psCharAppearance::CheckMeshLoad()
+{
+    if(!delayedAttach.IsEmpty())
+    {
+        Attachment attach = delayedAttach.Front();
+        FactoryIndexEntry* fie = psengine->GetCacheManager()->GetFactoryEntry(attach.filename);
+        if(fie)
+        {
+            ProcessAttach(fie->factory, fie->factname, attach.socket);
+            delayedAttach.PopFront();
+        }
+    }
+}
 
 void psCharAppearance::ApplyTraits(csString& traitString)
 {
