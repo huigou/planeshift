@@ -143,7 +143,7 @@ FactoryIndexEntry* ClientCacheManager::LoadNewFactory(const char* filename)
             }
         }
 
-        psengine->GetLoader()->GetThreadedLoader()->Load (root, cache, false);
+        psengine->GetLoader()->Load (root, cache, false);
     }
 
     return indexEntry;
