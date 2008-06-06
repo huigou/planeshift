@@ -25,7 +25,6 @@
 //=============================================================================
 #include <csutil/hash.h>
 #include <csutil/refarr.h>
-#include <csutil/leakguard.h>
 
 //=============================================================================
 // Project Includes
@@ -75,7 +74,8 @@ private:
     FactoryIndexEntry* LoadNewFactory(const char* filename);
 
     csRef<iCollection> cache;
-    csHash<csRef<FactoryIndexEntry>, const char*> factIndex;
+    csRef<iStringSet> stringset;
+    csHash<csRef<FactoryIndexEntry>, csStringID> factIndex;
 };
 
 #endif

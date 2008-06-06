@@ -825,10 +825,7 @@ bool pawsCreationMain::OnButtonPressed( int mouseButton, int keyModifier, pawsWi
         {
             Hide();
             pawsCharacterPickerWindow* charPicker = (pawsCharacterPickerWindow*)PawsManager::GetSingleton().FindWidget( "CharPickerWindow" );
-
-            // Reset the selected character
             charPicker->Show();
-            charPicker->SelectCharacter(0);   
             return true;
         }
         case NAMEHELP_BUTTON:
@@ -988,6 +985,7 @@ void pawsCreationMain::Show()
 
 void pawsCreationMain::UpdateRace(int id)
 {
+    view->Clear();
     loaded = false;
     int raceCP = createManager->GetRaceCP( id );
     lastRaceID = id;                

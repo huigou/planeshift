@@ -42,6 +42,8 @@
 ClientCacheManager::ClientCacheManager()
 {
     cache = psengine->GetEngine()->CreateCollection("psclientcache");
+    stringset = csQueryRegistryTagInterface<iStringSet>(psengine->GetObjectRegistry(),
+                                                       "crystalspace.shared.stringset");
 }
 
 ClientCacheManager::~ClientCacheManager()
@@ -99,7 +101,7 @@ FactoryIndexEntry* ClientCacheManager::LoadNewFactory(const char* filename)
     indexEntry->filename = filename;
     indexEntry->factory = NULL;
     indexEntry->loaded = false;
-    factIndex.Put(filename, indexEntry);
+    factIndex.Put(stringset->Request(filename), indexEntry);
 
     // Check if it's already loaded.
     iMeshFactoryWrapper* meshW = psengine->GetEngine()->GetMeshFactories()->FindByName(indexEntry->factname);
@@ -141,7 +143,7 @@ FactoryIndexEntry* ClientCacheManager::LoadNewFactory(const char* filename)
             }
         }
 
-        psengine->GetLoader()->Load (root, cache, false);
+        psengine->GetLoader()->GetThreadedLoader()->Load (root, cache, false);
     }
 
     return indexEntry;
@@ -150,11 +152,13 @@ FactoryIndexEntry* ClientCacheManager::LoadNewFactory(const char* filename)
 FactoryIndexEntry* ClientCacheManager::GetFactoryEntry(const char* filename)
 {
     // Search for a factory entry with the filename we've passed.
-    FactoryIndexEntry* indexEntry = factIndex.Get(filename, NULL);
+    FactoryIndexEntry* indexEntry = factIndex.Get(stringset->Request(filename), NULL);
 
     // If the factory entry exists...
-    if (indexEntry && indexEntry->filename == filename)
+    if (indexEntry)
     {
+        CS_ASSERT_MSG("Factory index != filename", indexEntry->filename == filename);
+
         // If it's loaded then we can return it.
         if(indexEntry->loaded)
         {
@@ -163,7 +167,7 @@ FactoryIndexEntry* ClientCacheManager::GetFactoryEntry(const char* filename)
 
         // Check if it has been loaded.
         iMeshFactoryWrapper* meshW = psengine->GetEngine()->GetMeshFactories()->FindByName(indexEntry->factname);
-        if(meshW)
+        if(meshW && meshW->GetMeshObjectFactory())
         {
             indexEntry->factory = meshW;
             indexEntry->loaded = true;
@@ -186,7 +190,7 @@ FactoryIndexEntry* ClientCacheManager::GetFactoryEntry(const char* filename)
         }
 
         iMeshFactoryWrapper* meshW = psengine->GetEngine()->GetMeshFactories()->FindByName(indexEntry->factname);
-        if(meshW)
+        if(meshW && meshW->GetMeshObjectFactory())
         {
             // Disable decals on all movable meshes. Make more specific if/when we need this and it works.
             meshW->GetFlags().Set(CS_ENTITY_NODECAL);

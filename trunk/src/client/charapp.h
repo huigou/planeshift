@@ -4,6 +4,7 @@
 // Crystal Space Includes
 //=============================================================================
 #include <csutil/csstring.h>
+#include <csutil/list.h>
 #include <csgeom/vector3.h>
 #include <iengine/mesh.h>
 #include <imesh/spritecal3d.h>
@@ -15,7 +16,7 @@
 //=============================================================================
 // Local Includes
 //=============================================================================
-
+#include "psengine.h"
 
 struct Trait;
 struct iEngine;
@@ -40,7 +41,7 @@ struct SkinToneSet
 
 /** A manager class that handles all the details of a characters appearance.
   */
-class psCharAppearance
+class psCharAppearance : public DelayedLoader
 {
 public:
     /** Setup the class.
@@ -128,6 +129,8 @@ public:
     
     /** Clears the equipment on a mesh. */
     void ClearEquipment(const char* slot = NULL);
+
+    void CheckMeshLoad();
     
 private:
     /** Parse a string from it's parts into a proper string.
@@ -191,6 +194,7 @@ private:
       */
     void DefaultMesh(const char* part);
 
+    void ProcessAttach(csRef<iMeshFactoryWrapper> factory, const char* meshFactName, csRef<iSpriteCal3DSocket> socket);
                
     csRef<iMeshWrapper> baseMesh;                           // The mesh that is our base model.
 
@@ -224,6 +228,15 @@ private:
     csArray<csString> usedSlots;                        // Slots that have been used.
     csHash<int, csString> effectids;                    // Array of effects that are in use.
     csHash<int, csString> lightids;                    // Array of lights that are in use.
+
+    // Delayed loading.
+    struct Attachment
+    {
+        csRef<iSpriteCal3DSocket> socket;
+        csString filename;
+    };
+
+    csList<Attachment> delayedAttach;
 };
 
 #endif
