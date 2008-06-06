@@ -2,6 +2,7 @@
 - Changed the client cache manager to store by csStringID.
 - Improved threaded loading support in char creation, selection, appearance
   and model preloading.
+- Moved us onto the CS 1.4 branch, CS revision is now 29846.
 
 *** 2008-06-03 by Mike Gist
 - Fixed FS#1656, patch by Zwenze.
