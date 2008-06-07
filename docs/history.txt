@@ -1,3 +1,6 @@
+*** 2008-06-07 by Andrew Dai
+- Fixed bug where no more than 64 coins could be exchanged.
+
 *** 2008-06-06 by Mike Gist
 - Changed the client cache manager to store by csStringID.
 - Improved threaded loading support in char creation, selection, appearance

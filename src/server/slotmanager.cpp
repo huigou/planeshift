@@ -345,17 +345,17 @@ void SlotManager::MoveFromMoney(psSlotMovementMsg& msg, Client *fromClient)
     psMoney money;
     money.Adjust(msg.fromSlot, msg.stackCount);
     
-    if(msg.stackCount > MAX_STACK_COUNT)
-    {
-        psserver->SendSystemError(fromClient->GetClientNum(), "You can't place a stack of more than %d items.", MAX_STACK_COUNT);
-        return;
-    }
 
     switch (msg.toContainer)
     {
         case CONTAINER_WORLD:
         {
             // printf("Dropping money from slot %d, count %d, in world.\n", msg.fromSlot, msg.stackCount);
+            if(msg.stackCount > MAX_STACK_COUNT)
+            {
+                psserver->SendSystemError(fromClient->GetClientNum(), "You can't place a stack of more than %d items.", MAX_STACK_COUNT);
+                return;
+            }
             psItem *item = MakeMoneyItem((INVENTORY_SLOT_NUMBER)msg.fromSlot, msg.stackCount);
             if (item)
             {
