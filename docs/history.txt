@@ -1,3 +1,7 @@
+*** 2008-06-09 by Dave Bentham
+- Book/map titles use psItemStats::name directly in book/map view & edit
+  windows.
+
 *** 2008-06-07 by Andrew Dai
 - Fixed bug where no more than 64 coins could be exchanged.
 

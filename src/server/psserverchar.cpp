@@ -164,7 +164,7 @@ void psServerCharManager::UpdateSketch( MsgEntry* me )
         if (item)
         {
             // check title is still unique
-            csString currentTitle = item->GetName();
+            csString currentTitle = item->GetStandardName();
             if (sketchMsg.name.Length() > 0)
             {
                 uint32 existingItemID = CacheManager::GetSingleton().BasicItemStatsByNameExist(sketchMsg.name);
@@ -357,7 +357,7 @@ void psServerCharManager::SendSketchDefinition(psItem *item, Client *client)
     xml += "</limits>";
 
     // Now send all this
-    psSketchMessage msg( client->GetClientNum(), item->GetUID(), 0, xml, item->GetBaseStats()->GetSketch(), item->GetBaseStats()->IsThisTheCreator(client->GetCharacterData()->GetCharacterID()), item->GetName() );
+    psSketchMessage msg( client->GetClientNum(), item->GetUID(), 0, xml, item->GetBaseStats()->GetSketch(), item->GetBaseStats()->IsThisTheCreator(client->GetCharacterData()->GetCharacterID()), item->GetStandardName() );
     msg.SendMessage();
 }
 
@@ -380,7 +380,7 @@ void psServerCharManager::HandleBookWrite(MsgEntry* me, Client* client)
               //book that was opened for writing.  This would be a good thing.
               //Also check for other writing in progress
               csString theText(item->GetBookText());
-              csString theTitle(item->GetName());
+              csString theTitle(item->GetStandardName());
               psWriteBookMessage resp(client->GetClientNum(), theTitle, theText, true,  (INVENTORY_SLOT_NUMBER)mesg.slotID, mesg.containerID);
               resp.SendMessage();
               // this only does set the creator for first write to book
@@ -401,7 +401,7 @@ void psServerCharManager::HandleBookWrite(MsgEntry* me, Client* client)
         if(item && item->GetBaseStats()->GetIsWriteable())
         {
             // check title is still unique
-            csString currentTitle = item->GetName();
+            csString currentTitle = item->GetStandardName();
             if (mesg.title.Length() > 0)
             {
                 uint32 existingItemID = CacheManager::GetSingleton().BasicItemStatsByNameExist(mesg.title);
@@ -1740,7 +1740,7 @@ bool psServerCharManager::SendBookText(Client *client, psItem *item, int contain
     if (item==NULL)
         return false;
 
-    csString name = item->GetName();
+    csString name = item->GetStandardName();
     csString text;
     csString lockedText("This item is locked\n");
     if(item->GetIsLocked())
@@ -1750,10 +1750,10 @@ bool psServerCharManager::SendBookText(Client *client, psItem *item, int contain
     //determine whether to display the 'write' button
     //and send the appropriate information if so
 
-	//is it a writable book?  In our inventory? Are we the author?
-	bool shouldWrite = (item->GetBaseStats()->GetIsWriteable() && 
-		item->GetOwningCharacter() == client->GetCharacterData() &&
-		item->GetBaseStats()->IsThisTheCreator(client->GetCharacterData()->GetCharacterID()));
+    //is it a writable book?  In our inventory? Are we the author?
+    bool shouldWrite = (item->GetBaseStats()->GetIsWriteable() && 
+        item->GetOwningCharacter() == client->GetCharacterData() &&
+        item->GetBaseStats()->IsThisTheCreator(client->GetCharacterData()->GetCharacterID()));
 	
   //  CPrintf(CON_DEBUG,"Sent text for book %u %u\n",slotID, containerID);
     psReadBookTextMessage outgoing(client->GetClientNum(), name, text, shouldWrite, slotID, containerID);
