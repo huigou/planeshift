@@ -40,8 +40,9 @@ UpdaterConfig::UpdaterConfig(csArray<csString> args, iObjectRegistry* _object_re
     }
     configManager = csQueryRegistry<iConfigManager> (object_reg);
 
-    // Check if we're in the middle of a self update, and the iteration.
+    // Check if we're in the middle of a self update or doing an integrity check.
     selfUpdating = 0;
+    checkIntegrity = false;
     for(uint i=0; i<args.GetSize(); i++)
     {
         csString arg = args.Pop();
@@ -51,8 +52,6 @@ UpdaterConfig::UpdaterConfig(csArray<csString> args, iObjectRegistry* _object_re
             selfUpdating = 2;
         else if(arg.Compare("CheckIntegrity"))
             checkIntegrity = true;
-        else
-            checkIntegrity = false;
     }
 
     // Load config settings from cfg file.
