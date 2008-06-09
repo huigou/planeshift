@@ -837,7 +837,10 @@ void UpdaterEngine::GeneralUpdate()
                 fileUtil->RemoveFile("/this/" + diff, false);
 
                 // Set permissions.
-                fileUtil->SetPermissions(newFP->GetData(), fs);
+                if(fs.IsValid())
+                {
+                    fileUtil->SetPermissions(newFP->GetData(), fs);
+                }
             }
         }
 
