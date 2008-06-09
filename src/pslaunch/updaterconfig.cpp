@@ -90,7 +90,7 @@ const char* Config::GetPlatform() const
     {
         return "macosx";
     }
-    return "macosx10.3.9";
+    return "macosx1039";
 #elif defined(CS_PLATFORM_UNIX) && CS_PROCESSOR_SIZE == 64
     return "linux64";
 #elif defined(CS_PLATFORM_UNIX) && CS_PROCESSOR_SIZE == 32
