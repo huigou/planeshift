@@ -1753,13 +1753,13 @@ void AdminManager::GetInfo(MsgEntry* me,psAdminCmdMessage& msg, AdminCmdData& da
              ipAddress = "(offline)";
              timeConnected = row.GetFloat("time_connected_sec") / 3600;
              securityLevel.Format("%d",GetTrueSecurityLevel(accountId));
-			 sectorName = row["sector"];
-			 instance = row.GetUInt32("loc_instance");
-			 loc_x = row.GetFloat("loc_x");
-			 loc_y = row.GetFloat("loc_y");
-			 loc_z = row.GetFloat("loc_z");
-			 loc_yrot = row.GetFloat("loc_yrot");
-             advisorBanned = row.GetUInt32("advisor_ban");
+						 sectorName = row["sector"];
+						 instance = row.GetUInt32("loc_instance");
+						 loc_x = row.GetFloat("loc_x");
+						 loc_y = row.GetFloat("loc_y");
+						 loc_z = row.GetFloat("loc_z");
+						 loc_yrot = row.GetFloat("loc_yrot");
+             advisorBanned = row.GetUInt32("advisor_ban") != 0;
         }
     }
     BanEntry* ban = psserver->GetAuthServer()->GetBanManager()->GetBanByAccount(accountId);
@@ -3829,7 +3829,7 @@ void AdminManager::CreateItem(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
                       0,
                       true,
                       true,
-                      data.random,
+                      data.random != 0,
                       data.value
                       );
     
@@ -3840,7 +3840,7 @@ void AdminManager::CreateItem(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
     spawnMsg.pickupable = spawnMsg.collidable = true;
     spawnMsg.lskill = "";
     spawnMsg.lstr = 0;
-    spawnMsg.random = data.random;
+    spawnMsg.random = data.random != 0;
     spawnMsg.quality = data.value;
     
     // Spawn using this message

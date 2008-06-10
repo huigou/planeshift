@@ -1,3 +1,6 @@
+*** 2008-06-10 by Andrew Dai
+- Fixed #1573, patch by Kaerli Stronwylle.
+
 *** 2008-06-10 by Mike Gist
 - Renamed Update.Execs to Update.Platform and improved support for it.
 - Improved permissions handling in the updater some more.
