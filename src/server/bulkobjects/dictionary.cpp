@@ -360,7 +360,7 @@ bool NPCDialogDict::LoadTriggers(iDataConnection *db)
 
         if(newtrig->trigger.Length() == 0)
         {
-            Error4("Found bad trigger %d of trigger length 0 in triggers, area %s\n", newtrig->id, newtrig->trigger.GetDataSafe(), newtrig->area.GetDataSafe());
+            Error3("Found bad trigger %d of trigger length 0 in triggers, area %s\n", newtrig->id, newtrig->area.GetDataSafe());
             delete newtrig;
             continue;
         }
