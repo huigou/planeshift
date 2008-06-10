@@ -832,10 +832,15 @@ bool gemObject::InitMesh(const char *name,
             pcmesh->SetMesh(mesh);
     }
 
-    if ( !mesh )
+    if (!mesh)
     {
         Error1("Could not create Item because pcmesh didn't have iMeshWrapper.");
         return false;
+    }
+
+    if(!pcmesh->GetMesh())
+    {
+        pcmesh->SetMesh(mesh);
     }
 
     Move(pos,rotangle,room);
@@ -854,7 +859,7 @@ iMeshWrapper *gemObject::GetMeshWrapper()
 void gemObject::Move(const csVector3& pos,float rotangle, iSector* room)
 {
     // Position and sector
-    pcmesh->MoveMesh( room, pos);
+    pcmesh->MoveMesh(room, pos);
 
     // Rotation
     csMatrix3 matrix = (csMatrix3) csYRotMatrix3 (rotangle);

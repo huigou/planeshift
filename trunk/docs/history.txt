@@ -4,6 +4,7 @@
 *** 2008-06-10 by Mike Gist
 - Renamed Update.Execs to Update.Platform and improved support for it.
 - Improved permissions handling in the updater some more.
+- Fixed a bug in InitMesh where the pcmesh wasn't getting its mesh set.
 
 *** 2008-06-09 by Dave Bentham
 - Book/map titles use psItemStats::name directly in book/map view & edit
