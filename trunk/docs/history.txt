@@ -1,3 +1,6 @@
+*** 2008-06-11 by Mike Gist
+- Added error check for 0 length trigger.
+
 *** 2008-06-10 by Andrew Dai
 - Fixed #1573, patch by Kaerli Stronwylle.
 

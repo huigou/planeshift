@@ -358,11 +358,18 @@ bool NPCDialogDict::LoadTriggers(iDataConnection *db)
 
         ParseMultiTrigger(newtrig);
 
+        if(newtrig->trigger.Length() == 0)
+        {
+            Error4("Found bad trigger %d of trigger length 0 in triggers, area %s\n", newtrig->id, newtrig->trigger.GetDataSafe(), newtrig->area.GetDataSafe());
+            delete newtrig;
+            continue;
+        }
+
         AddWords(newtrig->trigger); // Make sure these trigger words are in known word list.
 
         if (triggers.Insert(newtrig,TREE_OWNS_DATA))
         {
-          Error4("Found equal trigger %d (%s) in triggers, area %s\n",newtrig->id,newtrig->trigger.GetData(),newtrig->area.GetData());
+            Error4("Found equal trigger %d (%s) in triggers, area %s\n", newtrig->id, newtrig->trigger.GetDataSafe(), newtrig->area.GetDataSafe());
             delete newtrig;
             continue;
         }
