@@ -160,7 +160,7 @@ public:
     /* Returns true if the last update was successful */
     bool WasCleanUpdate() const { return cleanUpdate; }
 
-    /* Returns true if we want the updater to update executable files. */
+    /* Returns true if we want the updater to update platform specific files. */
     bool UpdatePlatform() const { return updatePlatform; }
 
     /* Returns the configfile for the app */
@@ -174,7 +174,7 @@ private:
     /* Holds whether or not the last update was successful. */
     bool cleanUpdate;
 
-    /* True if we want the updater to update executable files. */
+    /* True if we want the updater to update platform specific files. */
     bool updatePlatform;
 
     /* True if we're being asked to check the integrity of the install. */
