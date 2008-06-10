@@ -61,7 +61,7 @@ UpdaterConfig::UpdaterConfig(csArray<csString> args, iObjectRegistry* _object_re
     }
     configFile = new csConfigFile(CONFIG_FILENAME, vfs);
     cleanUpdate = configFile->GetBool("Update.Clean", true);
-    updateExecs = configFile->GetBool("Update.Execs", true);
+    updatePlatform = configFile->GetBool("Update.Platform", true);
     proxy.host = configFile->GetStr("Updater.Proxy.Host", "");
     proxy.port = configFile->GetInt("Updater.Proxy.Port", 0);
 
@@ -80,6 +80,10 @@ UpdaterConfig::~UpdaterConfig()
 
 const char* Config::GetPlatform() const
 {
+    if(!UpdaterConfig::GetSingletonPtr()->UpdatePlatform())
+    {
+        return "generic";
+    }
 #if defined(CS_PLATFORM_WIN32)
     return "win32";
 #elif defined(CS_PLATFORM_MACOSX)
