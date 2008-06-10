@@ -36,7 +36,7 @@ STATIC.PLUGINLIST =
   csfont
   csgifimg
   csjpgimg
-  csmngimg
+  csjngimg
   csopcode
   csparser
   cspngimg
