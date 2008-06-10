@@ -26,6 +26,8 @@
 #include <csutil/cfgfile.h>
 #include <iutil/document.h>
 
+#include "util/singleton.h"
+
 #define CONFIG_FILENAME "/this/psupdater.cfg"
 #define UPDATERINFO_FILENAME "/this/updaterinfo.xml"
 #define UPDATERINFO_OLD_FILENAME "/this/updaterinfo.xml.bak"
@@ -135,7 +137,7 @@ private:
     csRefArray<ClientVersion> clientVersions;
 };
 
-class UpdaterConfig
+class UpdaterConfig : public Singleton<UpdaterConfig>
 {
 public:
     UpdaterConfig(const csArray<csString> args, iObjectRegistry* _object_reg, csRef<iVFS> _vfs);
@@ -159,7 +161,7 @@ public:
     bool WasCleanUpdate() const { return cleanUpdate; }
 
     /* Returns true if we want the updater to update executable files. */
-    bool UpdateExecs() const { return updateExecs; }
+    bool UpdatePlatform() const { return updatePlatform; }
 
     /* Returns the configfile for the app */
     csRef<iConfigFile> GetConfigFile() const { return configFile; }
@@ -173,7 +175,7 @@ private:
     bool cleanUpdate;
 
     /* True if we want the updater to update executable files. */
-    bool updateExecs;
+    bool updatePlatform;
 
     /* True if we're being asked to check the integrity of the install. */
     bool checkIntegrity;

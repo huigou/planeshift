@@ -18,6 +18,7 @@
 */
 
 #include <csutil/csmd5.h>
+#include <csutil/hash.h>
 #include <csutil/xmltiny.h>
 #include <iutil/stringarray.h>
 
@@ -316,7 +317,7 @@ bool UpdaterEngine::CheckUpdater()
     }
 
     // Compare Versions.
-    return(config->UpdateExecs() && config->GetNewConfig()->GetUpdaterVersionLatest() != UPDATER_VERSION);        
+    return(config->UpdatePlatform() && config->GetNewConfig()->GetUpdaterVersionLatest() != UPDATER_VERSION);        
 }
 
 bool UpdaterEngine::CheckGeneral()
@@ -693,7 +694,8 @@ void UpdaterEngine::GeneralUpdate()
             csRef<iDocumentNodeIterator> nodeItr = deletednode->GetNodes();
             while(nodeItr->HasNext())
             {
-                deletedList.PushSmart(nodeItr->Next()->GetAttributeValue("name"));
+                csRef<iDocumentNode> node = nodeItr->Next();
+                deletedList.PushSmart(node->GetAttributeValue("name"));
             }
         }
 
@@ -705,7 +707,8 @@ void UpdaterEngine::GeneralUpdate()
 
         // Parse new files xml, make a list.
         csArray<csString> newList;
-        csArray<bool> newListType;
+        csArray<csString> newListPlatform;
+        csArray<bool> newListExec;
         csRef<iDocumentNode> newrootnode = GetRootNode("/zip/newfiles.xml");
         if(newrootnode)
         {
@@ -715,25 +718,15 @@ void UpdaterEngine::GeneralUpdate()
             {
                 csRef<iDocumentNode> node = nodeItr->Next();
                 newList.PushSmart(node->GetAttributeValue("name"));
-                newListType.Push(node->GetAttributeValueAsBool("exec"));
+                newListPlatform.Push(node->GetAttributeValue("platform"));
+                newListExec.Push(node->GetAttributeValueAsBool("exec"));
             }
         }
 
         // Copy all those files to our real dir.
         for(uint i=0; i<newList.GetSize(); i++)
         {
-            // Skip if it's an executable and we're not updating those.
-            if(newListType.Get(i) && !config->UpdateExecs())
-                continue;
-
-            if(newListType.Get(i))
-            {
-                fileUtil->CopyFile("/zip/" + newList.Get(i), "/this/" + newList.Get(i), true, true);
-            }
-            else
-            {
-                fileUtil->CopyFile("/zip/" + newList.Get(i), "/this/" + newList.Get(i), true, false);
-            }
+            fileUtil->CopyFile("/zip/" + newList.Get(i), "/this/" + newList.Get(i), true, newListExec.Get(i));
         }
 
         // Parse changed files xml, binary patch each file.
@@ -747,13 +740,6 @@ void UpdaterEngine::GeneralUpdate()
                 csRef<iDocumentNode> next = nodeItr->Next();
 
                 csString newFilePath = next->GetAttributeValue("filepath");
-                csString realPath("/this/");
-                realPath.Append(newFilePath);
-                csRef<iDataBuffer> db = vfs->GetRealPath(realPath);
-                bool isExec = fileUtil->isExecutable(db->GetData());
-                if(!config->UpdateExecs() && isExec)
-                    continue;
-
                 csString diff = next->GetAttributeValue("diff");
                 csString oldFilePath = newFilePath;
                 oldFilePath.AppendFmt(".old");
@@ -772,6 +758,12 @@ void UpdaterEngine::GeneralUpdate()
                 
                 // Save permissions.
                 csRef<FileStat> fs = fileUtil->StatFile(oldFP->GetData());
+#ifdef CS_PLATFORM_UNIX
+                if(next->GetAttributeValueAsBool("exec"))
+                {
+                    fs->mode = fs->mode | S_IXUSR | S_IXGRP;
+                }
+#endif
 
                 // Binary patch.
                 PrintOutput("Patching file %s: ", newFilePath.GetData());
@@ -934,18 +926,21 @@ void UpdaterEngine::CheckIntegrity()
         if(!failed)
         {
             csRefArray<iDocumentNode> failed;
+#ifdef CS_PLATFORM_UNIX
+            csHash<bool, iDocumentNode*> failedExec;
+#endif
             csRef<iDocumentNodeIterator> md5nodes = md5sums->GetNodes("md5sum");
             while(md5nodes->HasNext())
             {
                 csRef<iDocumentNode> node = md5nodes->Next();
 
-                bool exec = node->GetAttributeValueAsBool("exec");
-                if(!config->UpdateExecs() && exec)
+                csString platform = node->GetAttributeValue("platform");
+
+                if(!config->UpdatePlatform() && !platform.Compare("all"))
                     continue;
 
                 csString path = node->GetAttributeValue("path");
                 csString md5sum = node->GetAttributeValue("md5sum");
-                csString platform = node->GetAttributeValue("platform");
 
                 csRef<iDataBuffer> buffer = vfs->ReadFile("/this/" + path);
                 if(!buffer)
@@ -955,6 +950,9 @@ void UpdaterEngine::CheckIntegrity()
                        platform.Compare("all"))
                     {
                         failed.Push(node);
+#ifdef CS_PLATFORM_UNIX
+                        failedExec.Put(node, node->GetAttributeValueAsBool("exec"));
+#endif
                     }
                     continue;
                 }
@@ -1020,6 +1018,13 @@ void UpdaterEngine::CheckIntegrity()
                         // Restore permissions.
                         if(fs.IsValid())
                         {
+#ifdef CS_PLATFORM_UNIX
+                            bool failedEx = failedExec.Get(failed.Get(i), false);
+                            if(failedEx)
+                            {
+                                fs->mode = fs->mode | S_IXUSR | S_IXGRP;
+                            }
+#endif
                             fileUtil->SetPermissions(rp->GetData(), fs);
                         }
                         fileUtil->RemoveFile(downloadpath + ".bak", true);
