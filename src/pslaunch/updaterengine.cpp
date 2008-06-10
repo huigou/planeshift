@@ -927,7 +927,7 @@ void UpdaterEngine::CheckIntegrity()
         {
             csRefArray<iDocumentNode> failed;
 #ifdef CS_PLATFORM_UNIX
-            csHash<bool, iDocumentNode*> failedExec;
+            csHash<bool, csRef<iDocumentNode>> failedExec;
 #endif
             csRef<iDocumentNodeIterator> md5nodes = md5sums->GetNodes("md5sum");
             while(md5nodes->HasNext())
