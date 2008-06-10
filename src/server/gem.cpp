@@ -818,24 +818,15 @@ bool gemObject::InitMesh(const char *name,
 
         if(failed)
         {
-            Error3("Could not set mesh with factname=%s and filename=%s. Trying dummy model",factname,filename);                
+            Error3("Could not set mesh with factname=%s and filename=%s. Trying dummy model", factname, filename);                
             factname = "stonebm";
             filename = "/planeshift/models/stonebm/stonebm.cal3d";
-            if ( !pcmesh->SetMesh(factname, filename) || !pcmesh->GetMesh())
+            if (!pcmesh->SetMesh(factname, filename))
             {
-                Error3("Could not use dummy CVS mesh with factname=%s and filename=%s",factname,filename);        
+                Error3("Could not use dummy CVS mesh with factname=%s and filename=%s", factname, filename);        
                 return false;
             }
-            mesh = pcmesh->GetMesh();
         }
-        else
-            pcmesh->SetMesh(mesh);
-    }
-
-    if (!mesh)
-    {
-        Error1("Could not create Item because pcmesh didn't have iMeshWrapper.");
-        return false;
     }
 
     if(!pcmesh->GetMesh())
