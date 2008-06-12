@@ -116,7 +116,11 @@ void FileUtil::MakeDirectory (const char* directory)
             }
 
             real = vfs->GetRealPath(dir);
+#ifdef CS_PLATFORM_WIN32
             rc = mkdir(real->GetData());
+#else
+            rc = mkdir(real->GetData(), S_IRUSR | S_IWUSR);
+#endif
         }
 
 #ifdef CS_PLATFORM_UNIX
