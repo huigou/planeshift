@@ -101,7 +101,11 @@ void FileUtil::MakeDirectory (const char* directory)
     csRef<iDataBuffer> realPath = vfs->GetRealPath(directory);
     while(!vfs->Exists(directory))
     {
-        int rc = mkdir(realPath->GetData());
+#ifdef CS_PLATFORM_WIN32
+            int rc = mkdir(realPath->GetData());
+#else
+            int rc = mkdir(realPath->GetData(), S_IRUSR | S_IWUSR);
+#endif
 
         csString dir = directory;
         csRef<iDataBuffer> real;
