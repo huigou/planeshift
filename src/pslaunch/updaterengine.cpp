@@ -971,7 +971,7 @@ void UpdaterEngine::CheckIntegrity()
                 csMD5::Digest md5 = csMD5::Encode(buffer->GetData(), buffer->GetSize());
                 csString md5s = md5.HexString();
 
-                if(!md5s.Compare(md5sum))
+                if(platform.Compare(config->GetCurrentConfig()->GetPlatform()) && !md5s.Compare(md5sum))
                 {
                     failed.Push(node);
                 }
