@@ -18,7 +18,7 @@
     var csWinLibsVersionStab = "1.3_003"; // cs win32 libs version.
     var csWinLibsVersion = "1.3_003"; // cs win32 libs version.
     //Update date and author, to be changed everytime and updates occurred
-    var UpdateDate = "11 June 2008"; //Date when the update occurred
+    var UpdateDate = "13 June 2008"; //Date when the update occurred
     var UpdateAuthor = "Caarrie"; //Author of the update
 -->
 </script>
@@ -328,11 +328,19 @@ function Initialize()
 	  Dave Garrett, author of the new compiling guides layout;<br>
 	  Andrew Craig, author of the first Linux guides that were available on <a href="http://laanx.fragnetics.com">Laanx website</a>;<br>
 	  Platyna, author of the first compiling guide for Slackware distribution.<br>
-        Mike Gist, author of the static compiling guide.
+        Mike Gist, author of the static compiling guide.<br>
+</div>
+    <div class="MacOSX">
+        This guide gives a very basic description on how to get a working client up and
+        running on an Intel Mac. It gives instructions on how to get to check out the source code and configure it. At the end there you will have a
+        PlaneShift client and a PlaneShift updater application, and if you want also the server.<br><br>
+	  <b>Credits</b><br>
+       Caarrie, Author of the first basic Mac guide with help from the <a href="http://vaalnor.mine.nu/psdoc/?q=node/38">PSDocs</a> guide and Trymm
 
     </div>
     <div class="MacOSX">
-    <p>We have no Mac guide at this time. Check the Linux guide, or refer to <a href="http://vaalnor.mine.nu/psdoc/?q=node/38">PSDocs</a>, a user maintained guide.</p>
+    <p>Here is a basic Mac guide based on the linux guide, for more specifics refer to <a href="http://vaalnor.mine.nu/psdoc/?q=node/38">PSDocs</a>, a user maintained guide.</p>
+            <div class="Static">There is no Mac static build guide at this time</div>
     </div>
 </p>
 
@@ -381,7 +389,7 @@ function Initialize()
     <p><i class="command">C:\development\</i></p>
 </div>
 <div class="MacOSX">
-    <p><i class="command">/home/user/development</i></p>
+    <p><i class="command">$HOME/development</i></p>
 </div>
 
 <div class="Windows"><div class="MINGW">
@@ -707,6 +715,70 @@ After that we need to refresh our sources.list file like so:<br>
         <p>Via portage: <i class="command"># emerge nvidia-cg-toolkit</i></p>
     </div>
 </div>
+<div class="MacOSX" >
+To build on OSX you need to Install Xcode which you can get from <a href="https://connect.apple.com/">here.</a> This guide also recomends you to install fink. You can get fink from <a href="http://fink.sourceforge.net/">here.</a> 
+Note: Do not use darwinports if you are using fink. It can cause conflicts if 
+they both have the same package installed. <br />
+Open a terminal window and set the required environment variables for fink by 
+issuing the following command:
+<br />
+<i class="commandBox" ><pre># <code>/sw/bin/pathsetup.sh</code></pre>
+</i>
+<i class="commandBox" ><pre># <code>source /sw/bin/init.sh</code></pre>
+</i>
+<br />
+<br />
+Configure fink (Optional)
+We are going to configure fink to download and install packages from source only. (no binary packages)<br />
+This step is optional, but has a better success rate for installing the fink 
+dependencies.
+<br />
+<i class="commandBox" ><pre># <code>fink configure</code></pre>
+</i>
+<br />
+Provided below are the questions and the standard recommended answers for the configuration:
+<i class="commandBox" ><pre>
+Password:
+OK, I'll ask you some questions and update the configuration file in '/sw/etc/fink.conf'.
+In what additional directory should Fink look for downloaded tarballs? [] 
+Which directory should Fink use to build packages? (If you don't know what this means, it is safe to leave it
+at its default.) [] 
+
+Should Fink try to download pre-compiled packages from the binary distribution if available? [y/N] n
+(1)     Quiet (do not show download statistics)
+(2)     Low (do not show tarballs being expanded)
+(3)     Medium (will show almost everything)
+(4)     High (will show everything)
+ 
+How verbose should Fink be? [4] 4
+ 
+Proxy/Firewall settings
+Enter the URL of the HTTP proxy to use, or 'none' for no proxy. The URL should start with http:// and may
+contain username, password, and/or port specifications. Note that this value will be visible to all users on
+your computer.
+Example, http://username:password@hostname:port
+Your proxy:  [none] 
+Enter the URL of the FTP proxy to use, or 'none' for no proxy. The URL should start with http:// and may
+contain username, password, and/or port specifications. Note that this value will be visible to all users on
+your computer.
+Example, http://username:password@hostname:port
+Your proxy:  [none] 
+Use passive mode FTP transfers (to get through a firewall)? [Y/n] y
+ 
+Mirror selection
+All mirrors are set. Do you want to change them? [y/N] n
+ 
+Writing updated configuration to '/sw/etc/fink.conf'...
+</pre></i>
+<br />
+
+You need to install Ftjam which you can get from <a href="http://sourceforge.net/project/showfiles.php?group_id=3157">here.</a> You also need to install the following packages from Fink <br />
+<i class="command"> libjpeg freetype freetype-shlibs freetype2 freetype2-dev freetype2-shlibs libogg libvorbis0 libvorbis0-shlibs libmng2 libpng3 autoconf2.5 automake1.9 libtool wget curl</i><br /><br />
+
+Since SVN is not always installed you need to make sure it is installed you can get it from <a href="http://metissian.com/projects/macosx/subversion/">here.</a> <br />
+
+You also need to install Nvidia's Cg Toolkit from <a href="http://www.nvidia.com/object/cg_toolkit.html">
+here.</a>
 <p>
     <h3>Server Databases</h3>
     <i>Optional section</i>
@@ -756,7 +828,7 @@ After that we need to refresh our sources.list file like so:<br>
                         mv libmysqlclient.a ..
                     </div></p>
                 </div>
-        </div>
+        </div></div>
 
         <b>WordNet:</b><br>
         You will also need the WordNet dictionaries. Download and install the <a href="http://wordnet.princeton.edu/obtain/">WordNet binaries</a>, version 2.1.
@@ -955,7 +1027,66 @@ trim down the length of the CEL linker flag list.</div>
     </p>
 </div>
 <div class="MacOSX">
-    No guide yet.  Try the Linux version for now.
+    <h3>Cal3D</h3>
+    <p>We need to build cal3d from source before we can start on Crystal Space. Cal3d is a library that is used for
+    handling skeleton systems. This is a very nice system and can allow for fluid transformations between animations.
+    This needs to be built/installed first because when we configure Crystal Space it has to find the cal3d libraries
+    so it can know to build the sprcal3d plugin.  Cal3D doesn't change much, so just download latest stable or checkout latest from svn:</p>
+    <p><a href="http://home.gna.org/cal3d/">Cal3D Home</a></p>
+    <p><i class="command">$HOME/development$ svn co -r CAL3D_SOURCE_REV svn://svn.gna.org/svn/cal3d/trunk/cal3d cal3d</i></p>
+
+    <h3>Crystal Space (CS)</h3>
+    <p>Crystal Space 3D SDK is the engine that we use for rendering and sound.</p>
+    <div class="User">
+    <p><i class="command">$HOME/development$ svn co -r CS_SOURCE_REV https://crystal.svn.sourceforge.net/svnroot/crystal/CS/branches/release/V1.4 cs</i></p>
+    </div>
+    <div class="Developer">
+    <p><i class="command">$HOME/development$ svn co -r CS_SOURCE_REV_HEAD https://crystal.svn.sourceforge.net/svnroot/crystal/CS/branches/release/V1.4 cs</i></p>
+    </div>
+
+    <h3>Crystal Entity Layer (CEL)</h3>
+    <p>CEL is a layer on top of Crystal Space that is used for entity and behavior control.</p>
+    <div class="User">
+    <p><i class="command">$HOME/development$ svn co -r CEL_SOURCE_REV https://cel.svn.sourceforge.net/svnroot/cel/cel/branches/release/V1.4 cel</i></p>
+    </div>
+    <div class="Developer">
+    <p><i class="command">$HOME/development$ svn co -r CEL_SOURCE_REV_HEAD https://cel.svn.sourceforge.net/svnroot/cel/cel/branches/release/V1.4 cel</i></p>
+    </div>
+
+    <h3>PlaneShift</h3>
+    <p>Lastly, download our source:</p>
+    <div class="User">
+    <p><i class="command">$HOME/development$ svn co https://planeshift.svn.sourceforge.net/svnroot/planeshift/stable planeshift</i></p>
+    </div>
+    <div class="Developer">
+    <p><i class="command">$HOME/development$ svn co https://planeshift.svn.sourceforge.net/svnroot/planeshift/trunk planeshift</i></p>
+    </div>
+<h3>Updating Sources</h3>
+    <p>From time to time, newer PlaneShift revisions will require you to upgrade your cal3d, CS, and CEL repositories to a newer revision as well.  To update your supporting libraries, always be certain that you use the "-r" option keep from updating to the latest revision:</p>
+
+    If you want to update to a new revision replace REVISON with the number of the revision you want to use:
+    <p><div class="commandBox">
+	/home/user/development/cal3d$ svn update -r REVISION<br>
+        /home/user/development/cs$ svn update -r REVISION<br>
+        /home/user/development/cel$ svn update -r REVISION<br>
+    </div></p>
+	<p>Unlike the supporting libraries, you will generally want to use the latest PlaneShift source (or the HEAD) rather than an intermediate revision.  In this case, you will omit the "-r" option like so:
+	<div class="commandBox">
+	/home/user/development/planeshift$ svn update
+	</div></p><br>
+    If, for some reason, you wish to update any of the supporting libraries to the latest version (i.e. the HEAD), you have to remove the sticky date tag. WE DO NOT RECOMMEND THIS as it may break your build:
+    <p><div class="commandBox">
+	/home/user/development/cal3d$ svn update -r HEAD<br>
+        /home/user/development/cs$ svn update -r HEAD<br>
+        /home/user/development/cel$ svn update -r HEAD<br>
+    </div></p>
+
+
+If you update a repository, you will need to recompile that repository and each repository that depends on it. Before doing so, you should do a "jam clean" for each project you want to jam again. So, for example, if you want to rebuild PS you will do:
+    <p><div class="commandBox">
+        /home/user/development/planeshift$ jam clean<br>
+        /home/user/development/planeshift$ jam -aq
+    </div></p>
 </div>
 
 <!---------------------------------------------------------------------------------------------------->
@@ -1157,7 +1288,80 @@ We should export the CEL environment variable so applications outside the CEL tr
    </div>
 </div>
 <div class="MacOSX">
-        No guide yet.  Try the Linux version for now.
+       <p>If you have a dual core or better processor then you can take advantage of parallel make or jam by adding -j3 after the command. You can replace 3 with the number of jobs you want to run in parallel.</p>
+        <h3>Cal3D</h3>
+        <p>Since cal3d is a library in development we probably don't want to 'install' this one as root since there is a good
+        possibility it will change in the future. Instead we will 'install' it into our working directory. This is done
+        by using the --prefix option when we configure it.</p>
+	<div class="linux-Generic" >
+	Using a text editor open configure.in and remove the line 
+	<p><i class="commandBox">
+        AM_USE_UNITTESTCPP</i></p>
+        <p>Or you can use the following sed command</p>
+        <p> <i class="commandBox" >
+  mv configure.in configure-old.in<br />
+sed 's/AM_USE_UNITTESTCPP/# AM_USE_UNITTESTCPP/' configure-old.in > configure.in</i></p>
+<p> Then you can build cal3d </p>
+        <p><i class="commandBox">
+            $HOME/development/cal3d$ autoreconf --install --force<br>
+            $HOME/development/cal3d$ ./configure --prefix=$HOME/development/cal3d<br>
+            $HOME/development/cal3d$ make<br>
+            $HOME/development/cal3d$ make install
+        </i></p></div>
+  <h3>Crystal Space (CS)</h3>
+        <p>Now we can build it and use the configure line to tell it where we installed the cal3d libraries.
+        To do this, use the prefix line that was used for Cal3d above.</p></div>
+	   <div class="User"><i class="commandBox">
+            $HOME/development/cs$./configure --without-java --without-perl --without-python --without-lib3ds --with-cal3d=$HOME/development/cal3d</i></div>
+           <div class="Developer"><i class="commandBox">
+            $HOME/development/cs$./configure --enable-debug --without-java --without-perl --without-python --without-lib3ds --with-cal3d=$HOME/development/cal3d</i></div><br>
+           <div class="Normal"><i class="command">
+            $HOME/development/cs$ jam -aq libs plugins cs-config walktest</i></div><br>
+            <div class="Static"> there is no Mac static build guide at this time</div>
+           </div> 
+	
+We should export the CRYSTAL environment variable so applications outside the Crystal Space	 
+	         tree know where to find the .so's.	 
+	         <p><i class="command">export CRYSTAL=$HOME/development/cs</i></p>	
+	 	 
+	         <h3>Crystal Entity Layer (CEL)</h3>	 
+	         <p><div class="commandBox">	 
+	             $HOME/development/cel$ ./configure --without-python<br>	 
+	            <div class="Normal">	 
+	             $HOME/development/cel$ jam -aq libs plugins cel-config	 
+	            </div>
+            <div class="Static"> there is no Mac static build guide at this time</div>	 
+	         </div></p>	 
+	 	 
+We should export the CEL environment variable so applications outside the CEL tree know where to find the .so's.	 
+	         <p><i class="command">export CEL=$HOME/development/cel</i></p>	 
+	         
+<h3>PlaneShift</h3>
+        <p><i class="commandBox">
+            $HOME/development/planeshift$ ./autogen.sh<br>
+           <i class="User">
+            $HOME/development/planeshift$ ./configure --with-cal3d=$HOME/development/cal3d<br>
+           </i>
+           <i class="Developer">
+            $HOME/development/planeshift$ ./configure --enable-debug --with-cal3d=$HOME/development/cal3d<br>
+           </i>
+           <i class="Normal">
+            $HOME/development/planeshift$ jam -aq client
+           </i>
+            <i class="Static"> there is no Mac static build guide at this time</i>
+</i></p>
+        If you also want to build the server, do this as well:
+        <div class="Normal">
+           <p><i class="command">$HOME/development/planeshift$ jam -aq server</i></p>
+        </div>
+        </div>
+        If you want to build the extra tools, just do "jam -a".
+<p>If your psclient has no skin you are used to seeing launch pssetup after you have copied your art over and select a new skin</p>
+       <p>If you wish for your psclient to not use the same user files as your other build/install you may run ps with the following command<br />
+       <i class="commandBox">
+$HOME/development/planeshift$ ./psclient.app/Contents/MacOS/psclient -cfgset=PlaneShift.UserConfigPath=$HOME/Library/Application Support/PlaneShift2</i>
+      <p> You can also edit this in the psclient.cfg file under the game section uncomment the appropriate line and edit the path.</p> 
+   </div>
     </div>
 </div>
 <div class="MINGW">
@@ -1461,7 +1665,9 @@ downloaded from the SVN are usually more recent and updated.
 <div class="Linux">
   <p>Simply copy the dictionary files from your /usr/share/wordnet folder to the /home/user/development/planeshift/data/dict folder.</p>
 </div>
-
+<div class="MacOSX">
+  <p>Simply copy the dictionary files from your /usr/share/wordnet folder to the $HOME/development/planeshift/data/dict folder.</p>
+</div>
 <h3>Create the Database</h3>
 <p>Check if MySQL is running.<br>
 <div class="Windows">
