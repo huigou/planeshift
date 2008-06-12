@@ -568,6 +568,8 @@ bool UpdaterEngine::SelfUpdate(int selfUpdating)
             // Remove updater zip.
             fileUtil->RemoveFile("/this/" + zip); 
 
+            GetConfig()->SetSelfUpdating(false);
+
             return false;
         }
     default: // We need to extract the new updater and execute it.
@@ -620,6 +622,7 @@ bool UpdaterEngine::SelfUpdate(int selfUpdating)
             if(fork() == 0)
                 execl(appName, appName, "selfUpdateSecond", NULL);
 #endif
+            GetConfig()->SetSelfUpdating(true);
             return true;
         }
     }
