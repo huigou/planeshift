@@ -69,7 +69,7 @@ public:
 
     bool RemoveFile(const char* filename, bool silent = false);
 
-    /* Creates a directory, given a vfs path (/this/*). */
+    /* Creates a directory, given a vfs path (/this/). */
     void MakeDirectory(const char* directory);
 
     /* Copies a file. */
