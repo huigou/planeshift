@@ -24,6 +24,10 @@
 #pragma warning( disable : 4996 )
 #endif
 
+#ifdef CS_PLATFORM_WIN32
+#include <direct.h>
+#endif
+
 #include <sys/stat.h>
 #include <csutil/util.h>
 #include <iutil/databuff.h> 
@@ -92,61 +96,37 @@ bool FileUtil::RemoveFile (const char* filename, bool silent)
     return true;
 }
 
+void FileUtil::MakeDirectory (const char* directory)
+{
+    csRef<iDataBuffer> realPath = vfs->GetRealPath(directory);
+    while(!vfs->Exists(directory))
+    {
+        int rc = mkdir(realPath->GetData());
+
+        csString dir = directory;
+        csRef<iDataBuffer> real;
+        while(rc < 0)
+        {
+            dir.Truncate(dir.FindLast('/')+1);
+
+            if(vfs->Exists(directory))
+            {
+                printf("Couldn't create directory '%s'.", directory);
+                return;
+            }
+
+            real = vfs->GetRealPath(dir);
+            rc = mkdir(real->GetData());
+        }
+
 #ifdef CS_PLATFORM_UNIX
-#include <sys/stat.h>
-
-char* FileUtil::ConvertToSystemPath (const char* path)
-{
-    return csStrNew (path);
-}
-
-void FileUtil::MakeDirectory (const char* directory)
-{
-    // Append the /this/ path, since our assertion only works for relative paramaters
-    if (vfs)
-    {
-        csRef<iDataBuffer> prefixpath = vfs->GetRealPath("/this/");
-        csString destpath(prefixpath->GetData());
-        destpath += directory;
-
-        if (mkdir (destpath, S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH) < 0)
-            if(!vfs->Exists(csString("/this/") + directory))
-                printf("Couldn't create directory '%s'.\n", (const char *)destpath);
-    }
-    else
-        printf("Could not find VFS!!!");
-}
-
+        dir.Truncate(dir.FindLast('/')+1);
+        csRef<iDataBuffer> parent = vfs->GetRealPath(dir);
+        csRef<FileStat> dirStat = StatFile(parent->GetData());
+        SetPermissions(real->GetData(), dirStat);
 #endif
-
-#ifdef CS_PLATFORM_WIN32
-#include <direct.h>
-
-char* FileUtil::ConvertToSystemPath (const char* path)
-{
-    char* newpath = csStrNew(path);
-
-    for (char*p = newpath; *p != 0; p++)
-    {
-        if (*p == '/')
-            *p = '\\';
     }
-
-    return newpath;
 }
-
-void FileUtil::MakeDirectory (const char* directory)
-{
-    char* path = ConvertToSystemPath (directory);
-    int rc = mkdir(path);
-    delete[] path;
-
-    if (rc < 0)
-        if(!vfs->Exists(csString("/this/") + directory))
-            printf("Couldn't create directory '%s'.", directory);
-}
-
-#endif
 
 bool FileUtil::CopyFile(csString from, csString to, bool vfsPath, bool executable, bool silent)
 {
@@ -157,6 +137,10 @@ bool FileUtil::CopyFile(csString from, csString to, bool vfsPath, bool executabl
     csRef<iDataBuffer> buff = vfs->GetRealPath(to);
     if(vfsPath)
     {
+        // Make parent dir if needed.
+        csString parent = to;
+        MakeDirectory(parent.Truncate(parent.FindLast('/')+1));
+
         if(!buff)
         {
             if(!silent)
