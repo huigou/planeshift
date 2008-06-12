@@ -440,7 +440,10 @@ bool UpdaterEngine::SelfUpdate(int selfUpdating)
             tempName.AppendFmt("2.exe");
 
             // Delete the old updater file and copy the new in place.
-            fileUtil->RemoveFile("/this/" + appName);
+            while(!fileUtil->RemoveFile("/this/" + appName))
+            {
+                csSleep(50);
+            }
             fileUtil->CopyFile("/this/" + tempName, "/this/" + appName, true, true);
 
             // Copy any art and data.
@@ -483,8 +486,12 @@ bool UpdaterEngine::SelfUpdate(int selfUpdating)
             fileUtil->RemoveFile("/this/" + zip); 
 
             // Remove temp updater file.
-            fileUtil->RemoveFile("/this/" + appName + "2.exe");            
+            while(!fileUtil->RemoveFile("/this/" + appName + "2.exe"))
+            {
+                csSleep(50);
+            }
 
+            GetConfig()->SetSelfUpdating(false);
             return false;
         }
     default: // We need to extract the new updater and execute it.
@@ -535,6 +542,7 @@ bool UpdaterEngine::SelfUpdate(int selfUpdating)
 
             // Create a new process of the updater.
             CreateProcess(appName.GetData(), "selfUpdateFirst", 0, 0, false, CREATE_DEFAULT_ERROR_MODE, 0, 0, &siStartupInfo, &piProcessInfo);
+            GetConfig()->SetSelfUpdating(true);
             return true;
         }
     }
