@@ -1,7 +1,7 @@
 <head>
 
 <title>PlaneShift Compiling Guide</title>
-<meta name="copyright" content="&copy; 2006 Atomic Blue">
+<meta name="copyright" content="&copy; 2008 Atomic Blue">
 <meta http-equiv="content-type" content="text/html">
 
 <script type="text/javascript">
@@ -9,17 +9,17 @@
     // Source versions are listed here and automatically updated in the body.
     // Standard dates (CSrev, CELrev) are the ones that are compatible with Laanx.
     // An additional set of CS/CEL revisions (CSrev_HEAD, CELrev_HEAD) may be specified for the latest version of PS.
-    var CSrev = "29388";  // CS_SOURCE_REV
-    var CELrev = "3331";  // CEL_SOURCE_REV
+    var CSrev = "29846";  // CS_SOURCE_REV
+    var CELrev = "3452";  // CEL_SOURCE_REV
     var CAL3Drev = "493"; // CAL3D_SOURCE_REV
     var CSrev_HEAD = "29846";  // CS_SOURCE_REV_HEAD
     var CELrev_HEAD = "3452";  // CEL_SOURCE_REV_HEAD
     var CAL3Drev_HEAD = "493"; // CAL3D_SOURCE_REV_HEAD
-    var csWinLibsVersionStab = "1.2_002"; // cs win32 libs version.
+    var csWinLibsVersionStab = "1.3_003"; // cs win32 libs version.
     var csWinLibsVersion = "1.3_003"; // cs win32 libs version.
     //Update date and author, to be changed everytime and updates occurred
-    var UpdateDate = "7 June 2008"; //Date when the update occurred
-    var UpdateAuthor = "Steven Patrick"; //Author of the update
+    var UpdateDate = "11 June 2008"; //Date when the update occurred
+    var UpdateAuthor = "Caarrie"; //Author of the update
 -->
 </script>
 
@@ -352,8 +352,8 @@ function Initialize()
     <p>
         Currently compatible with Laanx:<br>
         <b>CAL3D SVN revision:</b> CAL3D_SOURCE_REV <br>
-        <b>CS 1.2 SVN revision:</b> CS_SOURCE_REV <br>
-        <b>CEL 1.2 SVN revision:</b> CEL_SOURCE_REV <br>
+        <b>CS 1.4 SVN revision:</b> CS_SOURCE_REV <br>
+        <b>CEL 1.4 SVN revision:</b> CEL_SOURCE_REV <br>
     </p>
     </div>
     <div class="Developer">
@@ -652,8 +652,10 @@ After that we need to refresh our sources.list file like so:<br>
 <p>If you are on Gutsy use this command</p>
 <p><i class="commandBox"># sudo apt-get --assume-yes install libjpeg62-dev x11proto-gl-dev autoconf jam bison flex-old automake1.9 libmng-dev libmikmod2-dev libogg-dev libvorbis-dev zlib1g-dev libpng12-dev build-essential libtool libglu1-mesa-dev libglu1-xorg-dev xserver-xorg-dev libxt-dev libopenal0a libopenal-dev subversion zlibc libttf2 libfreetype6-dev libfreetype6 libasound2-dev alsa-oss libxxf86vm-dev libxext-dev x11proto-xext-dev
 </i></p>
+<p>If you are on Hardy use this command></p>
+<p><i class="commandBox"># sudo apt-get --assume-yes install libjpeg62-dev x11proto-gl-dev autoconf jam bison flex-old automake1.9 libcurl4-openssl-dev libmng-dev libmikmod2-dev libogg-dev libvorbis-dev zlib1g-dev libpng12-dev build-essential libtool libglu1-mesa-dev libglu1-xorg-dev xserver-xorg-dev libxt-dev libopenal0a libopenal-dev subversion zlibc libttf2 libfreetype6-dev libfreetype6 libasound2-dev alsa-oss libxxf86vm-dev libxext-dev x11proto-xext-dev</i></p>
 
-<strong> BOTH of these above commands are assuming you do not need a server if you do please follow directions in the <a href="#mysql">mysql</a> section for installing other required packages</strong>
+<strong> ALL of these above commands are assuming you do not need a server if you do please follow directions in the <a href="#mysql">mysql</a> section for installing other required packages</strong>
 </div>
 
 <div class="Linux-Debian">
@@ -679,27 +681,27 @@ After that we need to refresh our sources.list file like so:<br>
 <div class="Linux">
     <h3>nVidia Toolkit</h3>
     <p>Since Crystal Space needs it (independently from your graphic card, so <i>even if you have an ATI card</i>), you
-    should download from <a href="http://developer.nvidia.com/object/cg-toolkit-15.html">www.nvidia.com</a> the nvidia-toolkit.  Download the appropriate version for your architecture&#8212;either x86 or x86-64.
+    should download from <a href="http://developer.nvidia.com/object/cg_toolkit.html">www.nvidia.com</a> the nvidia-toolkit.  Download the appropriate version for your architecture&#8212;either x86 or x86-64.
     Make sure to use the appropriate file based on your chipset. To install the file, place it in the root directory and use the following command, then delete the tar.gz file.</p>
     <div class="Linux-Generic">
-        <i class="command">tar -zxvf Cg-1.5_x86*.tar.gz</i>
+        <i class="command">tar -zxvf Cg-2.0_May2008_x86*.tgz</i>
     </div>
     <div class="Linux-Debian">
-        <i class="command">tar -zxvf Cg-1.5_x86*.tar.gz</i>
+        <i class="command">tar -zxvf Cg-2.0_May2008_x86*.tgz</i>
     </div>
     <div class="Linux-Slackware">
-        <i class="command">tar -zxvf Cg-1.5_x86*.tar.gz</i>
+        <i class="command">tar -zxvf Cg-2.0_May2008_x86*.tgz</i>
     </div>
     <div class="Linux-Ubuntu">
 
 	If you are on Gutsy you can
 	<p><i class="command"># sudo apt-get install nvidia-cg-toolkit</i></p>        
 	<p> Otherwise you MUST do this</p>
-	<p><i class="command"># wget -c http://developer.download.nvidia.com/cg/Cg_1.5/1.5.0/Cg-1.5_x86.tar.gz</i></p> 
-        <p><i class="command"># sudo mv Cg-1.5_x86*.tar.gz /</i></p>
+	<p><i class="command"># wget -c hhttp://developer.download.nvidia.com/cg/Cg_2.0/2.0.0015/Cg-2.0_May2008_x86.tgz</i></p> 
+        <p><i class="command"># sudo mvCg-2.0_May2008_x86*.tgz /</i></p>
         <p><i class="command"># cd /</i></p>
-        <p><i class="command"># sudo tar -zxvf Cg-1.5_x86*.tar.gz</i></p>
-        <p><i class="command"># sudo rm Cg-1.5_x86*.tar.gz</i></p>
+        <p><i class="command"># sudo tar -zxvf Cg-2.0_May2008_x86*.tgz</i></p>
+        <p><i class="command"># sudo rm Cg-2.0_May2008_x86*.tgz</i></p>
     </div>
     <div class="Linux-Gentoo">
         <p>Via portage: <i class="command"># emerge nvidia-cg-toolkit</i></p>
@@ -781,7 +783,7 @@ After that we need to refresh our sources.list file like so:<br>
     <h3>Crystal Space (CS)</h3>
     <p>Crystal Space 3D SDK is the engine that we use for rendering and sound.</p>
     <div class="User">
-    <p><i class="command">/home/user/development$ svn co -r CS_SOURCE_REV https://crystal.svn.sourceforge.net/svnroot/crystal/CS/branches/release/V1.2 cs</i></p>
+    <p><i class="command">/home/user/development$ svn co -r CS_SOURCE_REV https://crystal.svn.sourceforge.net/svnroot/crystal/CS/branches/release/V1.4 cs</i></p>
     </div>
     <div class="Developer">
     <p><i class="command">/home/user/development$ svn co -r CS_SOURCE_REV_HEAD https://crystal.svn.sourceforge.net/svnroot/crystal/CS/branches/release/V1.4 cs</i></p>
@@ -790,7 +792,7 @@ After that we need to refresh our sources.list file like so:<br>
     <h3>Crystal Entity Layer (CEL)</h3>
     <p>CEL is a layer on top of Crystal Space that is used for entity and behavior control.</p>
     <div class="User">
-    <p><i class="command">/home/user/development$ svn co -r CEL_SOURCE_REV https://cel.svn.sourceforge.net/svnroot/cel/cel/branches/release/V1.2 cel</i></p>
+    <p><i class="command">/home/user/development$ svn co -r CEL_SOURCE_REV https://cel.svn.sourceforge.net/svnroot/cel/cel/branches/release/V1.4 cel</i></p>
     </div>
     <div class="Developer">
     <p><i class="command">/home/user/development$ svn co -r CEL_SOURCE_REV_HEAD https://cel.svn.sourceforge.net/svnroot/cel/cel/branches/release/V1.4 cel</i></p>
@@ -840,7 +842,7 @@ If you update a repository, you will need to recompile that repository and each 
     <p>
         Right-click on the development directory and select "SVN Checkout". Specify the URL as:
     <div class="User">
-    <p><i class="command">https://crystal.svn.sourceforge.net/svnroot/crystal/CS/branches/release/V1.2</i></p>
+    <p><i class="command">https://crystal.svn.sourceforge.net/svnroot/crystal/CS/branches/release/V1.4</i></p>
         Specify the checkout directory as "C:\development\CS", select "Revision", and paste the current
         CS revision number: CS_SOURCE_REV
     </div>
@@ -912,7 +914,7 @@ trim down the length of the CEL linker flag list.</div>
     <p>
         Right-click on the development directory and select "SVN Checkout". Specify the URL as:
     <div class="User">
-    <p><i class="command">https://cel.svn.sourceforge.net/svnroot/cel/cel/branches/release/V1.2</i></p>
+    <p><i class="command">https://cel.svn.sourceforge.net/svnroot/cel/cel/branches/release/V1.4</i></p>
         Specify the checkout directory as "C:\development\cel", select "Revision", and paste the current
         CEL revision number: CEL_SOURCE_REV
     </div>
@@ -972,6 +974,11 @@ trim down the length of the CEL linker flag list.</div>
 	Using a text editor open configure.in and remove the line 
 	<p><i class="commandBox">
         AM_USE_UNITTESTCPP</i></p>
+        <p>Or you can use the following sed command</p>
+        <p> <i class="commandBox" >
+  mv configure.in configure-old.in
+sed 's/AM_USE_UNITTESTCPP/# AM_USE_UNITTESTCPP/' configure-old.in > configure.in</i></p>
+<p> Then you can build cal3d </p>
         <p><i class="commandBox">
             /home/user/development/cal3d$ autoreconf --install --force<br>
             /home/user/development/cal3d$ ./configure --prefix=/home/user/development/cal3d<br>
@@ -982,6 +989,11 @@ trim down the length of the CEL linker flag list.</div>
 	Using a text editor open configure.in and remove the line 
 	<p><i class="commandBox">
         AM_USE_UNITTESTCPP</i></p>
+        <p>Or you can use the following sed command</p>
+        <p> <i class="commandBox" >
+  mv configure.in configure-old.in
+sed 's/AM_USE_UNITTESTCPP/# AM_USE_UNITTESTCPP/' configure-old.in > configure.in</i></p>
+<p> Then you can build cal3d </p>
         <p><i class="commandBox">
             /home/user/development/cal3d$ autoreconf --install --force<br>
             /home/user/development/cal3d$ ./configure --prefix=/home/user/development/cal3d<br>
@@ -992,6 +1004,11 @@ trim down the length of the CEL linker flag list.</div>
 	Using a text editor open configure.in and remove the line 
 	<p><i class="commandBox">
       AM_USE_UNITTESTCPP</i></p>
+        <p>Or you can use the following sed command</p>
+        <p> <i class="commandBox" >
+  mv configure.in configure-old.in
+sed 's/AM_USE_UNITTESTCPP/# AM_USE_UNITTESTCPP/' configure-old.in > configure.in</i></p>
+<p> Then you can build cal3d </p>
         <p><i class="commandBox">
             /home/user/development/cal3d$ autoreconf --install --force<br>
             /home/user/development/cal3d$ ./configure --prefix=/home/user/development/cal3d<br>
@@ -1002,6 +1019,11 @@ trim down the length of the CEL linker flag list.</div>
 	Using a text editor open configure.in and remove the line 
 	<p><i class="commandBox">
         AM_USE_UNITTESTCPP</i></p>
+        <p>Or you can use the following sed command</p>
+        <p> <i class="commandBox" >
+  mv configure.in configure-old.in
+sed 's/AM_USE_UNITTESTCPP/# AM_USE_UNITTESTCPP/' configure-old.in > configure.in</i></p>
+<p> Then you can build cal3d </p>
         <p><i class="commandBox">
             /home/user/development/cal3d$ autoreconf --install --force<br>
             /home/user/development/cal3d$ ./configure --prefix=/home/user/development/cal3d<br>
@@ -1012,6 +1034,11 @@ trim down the length of the CEL linker flag list.</div>
 	Using a text editor open configure.in and remove the line 
 	<p><i class="commandBox">
         AM_USE_UNITTESTCPP</i></p>
+        <p>Or you can use the following sed command</p>
+        <p> <i class="commandBox" >
+  mv configure.in configure-old.in
+sed 's/AM_USE_UNITTESTCPP/# AM_USE_UNITTESTCPP/' configure-old.in > configure.in</i></p>
+<p> Then you can build cal3d </p>
         <p><i class="commandBox">
             /home/user/development/cal3d$ autoreconf --install --force<br>
             /home/user/development/cal3d$ ./configure --prefix=/home/user/development/cal3d<br>
@@ -1026,47 +1053,59 @@ trim down the length of the CEL linker flag list.</div>
         <p>Now we can build it and use the configure line to tell it where we installed the cal3d libraries.
         To do this, use the prefix line that was used for Cal3d above.</p></div>
 	<div class="Linux-Generic" >           
-           <i class="commandBox">
-            /home/user/development/cs$./configure --without-java --without-perl --without-python --without-lib3ds --with-cal3d=/home/user/development/cal3d</i><br><br>
+           <div class="User"><i class="commandBox">
+            /home/user/development/cs$./configure --without-java --without-perl --without-python --without-lib3ds --with-cal3d=/home/user/development/cal3d</i></div><br>
+           <div class="Developer"><i class="commandBox">
+            /home/user/development/cs$./configure --enable-debug --without-java --without-perl --without-python --without-lib3ds --with-cal3d=/home/user/development/cal3d</i></div><br>
            <div class="Normal"><i class="command">
             /home/user/development/cs$ jam -aq libs plugins cs-config walktest</i></div><br>
            <div class="Static"><i class="command">
             /home/user/development/cs$ jam -aq libs staticplugins cs-config walktest_static</i><br>
            </div></div> 
 	<div class="Linux-Debian" >           
-           <i class="commandBox">
-            /home/user/development/cs$ ./configure --without-java --without-perl --without-python --without-lib3ds --with-cal3d=/home/user/development/cal3d</i><br><br>
+            <div class="User"><i class="commandBox">
+            /home/user/development/cs$./configure --without-java --without-perl --without-python --without-lib3ds --with-cal3d=/home/user/development/cal3d</i></div><br>
+           <div class="Developer"><i class="commandBox">
+            /home/user/development/cs$./configure --enable-debug --without-java --without-perl --without-python --without-lib3ds --with-cal3d=/home/user/development/cal3d</i></div><br>
            <div class="Normal"><i class="command">
             /home/user/development/cs$ jam -aq libs plugins cs-config walktest</i></div><br>
            <div class="Static"><i class="command">
             /home/user/development/cs$ jam -aq libs staticplugins cs-config walktest_static</i><br>
            </div></div> 
 	<div class="Linux-Gentoo" >           
-           <i class="command">
-            /home/user/development/cs$ ./configure --without-java --without-perl --without-python --without-lib3ds --with-cal3d=/home/user/development/cal3d</i><br><br>
+            <div class="User"><i class="commandBox">
+            /home/user/development/cs$./configure --without-java --without-perl --without-python --without-lib3ds --with-cal3d=/home/user/development/cal3d</i></div><br>
+           <div class="Developer"><i class="commandBox">
+            /home/user/development/cs$./configure --enable-debug --without-java --without-perl --without-python --without-lib3ds --with-cal3d=/home/user/development/cal3d</i></div><br>
            <div class="Normal"><i class="commandBox">
             /home/user/development/cs$ jam -aq libs plugins cs-config walktest</i></div><br>
            <div class="Static"><i class="command">
             /home/user/development/cs$ jam -aq libs staticplugins cs-config walktest_static</i><br>
            </div></div> 
 	<div class="Linux-Slackware" >           
-           <i class="command">
-            /home/user/development/cs$ ./configure --without-java --without-perl --without-python --without-lib3ds --with-cal3d=/home/user/development/cal3d</i><br><br>
+            <div class="User"><i class="commandBox">
+            /home/user/development/cs$./configure --without-java --without-perl --without-python --without-lib3ds --with-cal3d=/home/user/development/cal3d</i></div><br>
+           <div class="Developer"><i class="commandBox">
+            /home/user/development/cs$./configure --enable-debug --without-java --without-perl --without-python --without-lib3ds --with-cal3d=/home/user/development/cal3d</i></div><br>
            <div class="Normal"><i class="command">
             /home/user/development/cs$ jam -aq libs plugins cs-config walktest</i></div><br>
            <div class="Static"><i class="command">
             /home/user/development/cs$ jam -aq libs staticplugins cs-config walktest_static</i><br>
            </div></div> 
         <div class="Linux-Ubuntu">
-	<i class="commandBox">
-	/home/user/development/cs$ ./configure --without-python --without-java --without-lib3ds --with-libcal3d=/home/user/development/cal3d</i><br><br>
-	<p><div class="Normal"><i class="command">
+	 <div class="User"><i class="commandBox">
+            /home/user/development/cs$./configure --without-java --without-perl --without-python --without-lib3ds --with-cal3d=/home/user/development/cal3d</i></div><br>
+           <div class="Developer"><i class="commandBox">
+            /home/user/development/cs$./configure --enable-debug --without-java --without-perl --without-python --without-lib3ds --with-cal3d=/home/user/development/cal3d</i></div><br>
+	  <div class="Normal"><i class="command">
             /home/user/development/cs$ jam -aq libs plugins cs-config walktest</i></div><br>
            <div class="Static"><i class="command">
             /home/user/development/cs$ jam -aq libs staticplugins cs-config walktest_static</i></div><br>
 	   </div></div>
+
+
 <div class="Linux">	   
-We should add the CRYSTAL environment variable to the .bashrc file so applications outside the Crystal Space	 
+We should export the CRYSTAL environment variable so applications outside the Crystal Space	 
 	         tree know where to find the .so's.	 
 	         <p><i class="command">export CRYSTAL=/home/user/development/cs</i></p>	 
 	 	 
@@ -1081,26 +1120,25 @@ We should add the CRYSTAL environment variable to the .bashrc file so applicatio
 	            </div>	 
 	         </div></p>	 
 	 	 
-	         We should add the CEL environment variable to the .bashrc file so applications outside the CEL	 
-	         tree know where to find the .so's.	 
+We should export the CEL environment variable so applications outside the CEL tree know where to find the .so's.	 
 	         <p><i class="command">export CEL=/home/user/development/cel</i></p>	 
 	         
 <h3>PlaneShift</h3>
-        <p><div class="commandBox">
+        <p><i class="commandBox">
             /home/user/development/planeshift$ ./autogen.sh<br>
-           <div class="User">
+           <i class="User">
             /home/user/development/planeshift$ ./configure --with-cal3d=/home/user/development/cal3d<br>
-           </div>
-           <div class="Developer">
+           </i>
+           <i class="Developer">
             /home/user/development/planeshift$ ./configure --enable-debug --with-cal3d=/home/user/development/cal3d<br>
-           </div>
-           <div class="Normal">
+           </i>
+           <i class="Normal">
             /home/user/development/planeshift$ jam -aq client
-           </div>
-           <div class="Static">
+           </i>
+           <i class="Static">
             /home/user/development/planeshift$ jam -aq client_static
-           </div>
-        </div></p>
+           </i>
+</i></p>
         If you also want to build the server, do this as well:
         <div class="Normal">
            <p><i class="command">/home/user/development/planeshift$ jam -aq server</i></p>
@@ -1109,7 +1147,14 @@ We should add the CRYSTAL environment variable to the .bashrc file so applicatio
            <p><i class="command">/home/user/development/planeshift$ jam -aq server_static</i></p>
         </div>
         If you want to build the extra tools, just do "jam -a".
-    </div>
+<p> Before launching any PS app you need to tell PS where to find CS and CEL as we did not install them globally</p>
+       <i class="commandBox">export LD_LIBRARY_PATH="/home/user/development/cal3d/src/cal3d/.libs/:/home/user/development/cs/:/home/user/development/cel:"$LD_LIBRARY_PATH</i>
+       <p>If your psclient has no skin you are used to seeing launch pssetup after you have copied your art over and select a new skin</p>
+       <p>If you wish for your psclient to not use the same user files as your other build/install you may run ps with the following command<br />
+       <i class="commandBox">
+/home/user/development/planeshift$ ./psclient -cfgset=PlaneShift.UserConfigPath=/home/user/.PlaneShift2</i>
+      <p> You can also edit this in the psclient.cfg file under the game section uncomment the appropriate line and edit the path.</p> 
+   </div>
 </div>
 <div class="MacOSX">
         No guide yet.  Try the Linux version for now.
@@ -1127,8 +1172,10 @@ We should add the CRYSTAL environment variable to the .bashrc file so applicatio
         Configure to debug mode and jam. (if you wish to build in optimized mode, just run
         configure without any arguments) If you chose to build cal3d, rather than use
         it from the CS win libs, you can specify its location with:  --with-cal3d=/c/development/cal3d/
-        <p><div class="commandBox">
-            ./configure --without-java --without-perl --without-python --without-lib3ds<br>
+        <p><div class="User"><i class="commandBox">
+            ./configure --without-java --without-perl --without-python --without-lib3ds</i><br>
+<p><div class="Developer"><i class="commandBox">
+            ./configure --enable-debug --without-java --without-perl --without-python --without-lib3ds</i><br></div>
            <div class="Normal">
             jam -aq libs plugins cs-config walktest
            </div>
@@ -1217,10 +1264,14 @@ then just copy it back to the file.<br></p>
            </div>
         </div></p>
         If you're building the server, you also need to configure with your MySQL location:
-        <p><div class="commandBox">
+        <p><div class="User"> <i class="commandBox">
+            ./autogen.sh<br>
+            ./configure --with-mysqlclient=/c/mysql<br>
+        </i></div></p>
+        <p><div class="Developer"> <i class="commandBox">
             ./autogen.sh<br>
             ./configure --enable-debug --with-mysqlclient=/c/mysql<br>
-        </div></p>
+        </i></div></p>
         <div class="Normal">
            <p><i class="command">jam -aq server</i></p>
         </div>
@@ -1230,8 +1281,13 @@ then just copy it back to the file.<br></p>
         <p>If you want to build the extra tools, just do "jam -a". </p>
 
         <p>This should compile PlaneShift.</p>
+<p>If your psclient has no skin you are used to seeing launch pssetup after you have copied your art over and select a new skin</p>
+       <p>If you wish for your psclient to not use the same user files as your other build/install you may run ps with the following command<br />
+       <i class="commandBox">
+psclient.exe -cfgset=PlaneShift.UserConfigPath=C:\development\pssettings</i>
+      <p>You can also edit this in the psclient.cfg file under the game section uncomment the appropriate line and edit the path.</p>
     </div>
-</div>
+</div></div>
     
 <div class="MSVC">
 
@@ -1240,7 +1296,7 @@ then just copy it back to the file.<br></p>
     <p><b>Note for MSVC 2005 (also known as Visual Studio 8.0, MSVC 8.0 or Visual Studio .NET 2005)
     (Full Edition Only)</b>: Make sure the "Show all settings" checkbox is checked in
     Tools->Options before continuing.<br>
-    If you have MSVC 2003, you might know it as MSVC 7.1, Visual Studio 7.1 or Visual Studio .NET 2003.
+    If you have MSVC 2003, you might know it as MSVC 7.1, Visual Studio 7.1 or Visual Studio .NET 2003. If you have MSCV 2008, you might know it as MSVC 9.0, Visual Studio 9.0 or Visual Studio .NET 2008.
     Here we will add all the directories containing all the include and libraries files that we will need to
     use for compiling PlaneShift.<br> Under Tools->Options in you MSVC look on the left hand side for the Projects
     folder. Under Projects choose "VC++ Directories". In the "Show Directories for" choose "Include Files".
@@ -1264,11 +1320,13 @@ then just copy it back to the file.<br></p>
         If you have MSVC 7.0 open C:\development\CS\mk\msvc7\wkstypical.sln<br>
         If you have MSVC 7.1 open C:\development\CS\mk\msvc71\wkstypical.sln<br>
         If you have MSVC 8.0 open C:\development\CS\mk\msvc8\wkstypical.sln
+        If you have MSVC 9.0 open C:\development\CS\mk\msvc9\wkstypical.sln
         </div>
         <div class="Static">
         If you have MSVC 7.0 open C:\development\CS\mk\msvc7\wksstatic.sln<br>
         If you have MSVC 7.1 open C:\development\CS\mk\msvc71\wksstatic.sln<br>
         If you have MSVC 8.0 open C:\development\CS\mk\msvc8\wksstatic.sln
+        If you have MSVC 9.0 open C:\development\CS\mk\msvc9\wksstatic.sln
         </div>
     </p>
     <p>Make sure that your specific 'msvc' folder has the 'read only' box unchecked (right click on the folder
@@ -1285,12 +1343,14 @@ and select Properties, 'read only' is one of the attributes in the General tab) 
         <div class="Normal">
         If you have MSVC 7.0 open C:\development\cel\msvc\7\wkscel.sln<br>
         If you have MSVC 7.1 open C:\development\cel\msvc\71\wkscel.sln<br>
-        If you have MSVC 8.0 open C:\development\cel\msvc\8\wkscel.sln
+        If you have MSVC 8.0 open C:\development\cel\msvc\8\wkscel.sln<br>
+        If you have MSCV 9.0 open C:\development\cel\msvc\9\wkscel.sln
         </div>
         <div class="Static">
         If you have MSVC 7.0 open C:\development\cel\msvc\7\wksstatic.sln<br>
         If you have MSVC 7.1 open C:\development\cel\msvc\71\wksstatic.sln<br>
-        If you have MSVC 8.0 open C:\development\cel\msvc\8\wksstatic.sln
+        If you have MSVC 8.0 open C:\development\cel\msvc\8\wksstatic.sln<br>
+        If you have MSVC 9.0 open C:\development\cel\msvc\9\wksstatic.sln
         </div>
     </p>
     <p>Make sure that your specific 'msvc' folder has the 'read only' box unchecked before continuing.</p>    
@@ -1309,7 +1369,8 @@ and select Properties, 'read only' is one of the attributes in the General tab) 
     <p>
         7 for MSVC 7<br>
         71 for Visual Studio .NET 2003/MSVC 7.1<br>
-        8 for Visual Studio .NET 2005/MSVC 8
+        8 for Visual Studio .NET 2005/MSVC 8<br>
+        9 for Visual Studio .NET 2005/MSVC 9
     </p>
 
     <p>
@@ -1317,11 +1378,13 @@ and select Properties, 'read only' is one of the attributes in the General tab) 
         If you have MSVC.NET 7.0 open C:\development\planeshift\mk\msvc7\wkspstypical.sln<br>
         If you have MSVC.NET 2003/VC 7.1 open C:\development\planeshift\mk\msvc71\wkspstypical.sln<br>
         If you have MSVC.NET 2005/VC 8.0 open c:\development\PlaneShift\mk\msvc8\wkspstypical.sln
+        If you have MSVC.NET 2008/VC 9.0 open c:\development\PlaneShift\mk\msvc9\wkspstypical.sln
         </div>
         <div class="Static">
         If you have MSVC.NET 7.0 open C:\development\planeshift\mk\msvc7\wkspsstatic.sln<br>
         If you have MSVC.NET 2003/VC 7.1 open C:\development\planeshift\mk\msvc71\wkspsstatic.sln<br>
         If you have MSVC.NET 2005/VC 8.0 open c:\development\planeshift\mk\msvc8\wkspsstatic.sln
+        If you have MSVC.NET 2008/VC 9.0 open c:\development\planeshift\mk\msvc9\wkspsstatic.sln
         </div>
     </p>
 
@@ -1376,12 +1439,6 @@ a <i>art</i> subdirectory in your PlaneShift directory.
 <div class="Windows">
 <p><i class="command">https://planeshift.svn.sourceforge.net/svnroot/planeshift/art</i></p>
 </div>
-</p><p>
-The official released artwork for PlaneShift is not included in SVN. 
-There are two ways to get it: you can either get the data
-from a PlaneShift release or use the PlaneShift updater.<br>
-It's suggested, if you have a release of
-PlaneShift installed, to get the data from it, saving download time and bandwidth.
 </p>
 
 <h3>From a PlaneShift installation</h3>

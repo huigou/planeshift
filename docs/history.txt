@@ -1,3 +1,6 @@
+*** 2008-06-11 by Steven Patrick
+- Changes to compiling.html by Caarrie
+
 *** 2008-06-11 by Mike Gist
 - Added error check for 0 length trigger.
 
