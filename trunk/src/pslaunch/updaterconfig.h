@@ -166,6 +166,8 @@ public:
     /* Returns the configfile for the app */
     csRef<iConfigFile> GetConfigFile() const { return configFile; }
 
+    void SetSelfUpdating(bool t) { selfUpdating = t ? 1 : 0; }
+
 
 private:
     /* Holds stage of self updating. */

@@ -97,14 +97,17 @@ int main(int argc, char* argv[])
     // Maybe this fixes a bug.
     fflush(stdout);
 
+    if(!engine->GetConfig()->IsSelfUpdating())
+    {
+        printf("\nUpdater finished, press enter to exit.\n");
+        getchar();
+    }
+
     // Terminate updater!
     delete engine;
     delete updater;
     engine = NULL;
     updater = NULL;
-
-    printf("\nUpdater finished, press enter to exit.\n");
-    getchar();
 
     return 0;
 }
