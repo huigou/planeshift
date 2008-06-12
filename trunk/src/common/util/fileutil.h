@@ -69,12 +69,7 @@ public:
 
     bool RemoveFile(const char* filename, bool silent = false);
 
-    /* Convert path to system specific path (for example changes / into \ on
-    * win32). The result has to be free with delete[]. */
-    char* ConvertToSystemPath(const char* path);
-
-    /* Creates a directory.
-    * directory is interpreted as relative to /this/, i.e. not absolute. */
+    /* Creates a directory, given a vfs path (/this/*). */
     void MakeDirectory(const char* directory);
 
     /* Copies a file. */

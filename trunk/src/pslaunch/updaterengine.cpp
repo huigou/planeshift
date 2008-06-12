@@ -1011,6 +1011,10 @@ void UpdaterEngine::CheckIntegrity()
                         csRef<FileStat> fs = fileUtil->StatFile(rp->GetData());
                         fileUtil->MoveFile(downloadpath, downloadpath + ".bak", true, false, true);
 
+                        // Make parent dir if needed.
+                        csString parent = downloadpath;
+                        fileUtil->MakeDirectory(parent.Truncate(parent.FindLast('/')+1));
+
                         // Download file.
                         if(!downloader->DownloadFile(baseurl + failed.Get(i)->GetAttributeValue("path"),
                                                      failed.Get(i)->GetAttributeValue("path"), true, true))
