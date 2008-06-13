@@ -1066,26 +1066,26 @@ trim down the length of the CEL linker flag list.</div>
 
     If you want to update to a new revision replace REVISON with the number of the revision you want to use:
     <p><div class="commandBox">
-	/home/user/development/cal3d$ svn update -r REVISION<br>
-        /home/user/development/cs$ svn update -r REVISION<br>
-        /home/user/development/cel$ svn update -r REVISION<br>
+	$HOME/development/cal3d$ svn update -r REVISION<br>
+        $HOME/development/cs$ svn update -r REVISION<br>
+        $HOME/development/cel$ svn update -r REVISION<br>
     </div></p>
 	<p>Unlike the supporting libraries, you will generally want to use the latest PlaneShift source (or the HEAD) rather than an intermediate revision.  In this case, you will omit the "-r" option like so:
 	<div class="commandBox">
-	/home/user/development/planeshift$ svn update
+	$HOME/development/planeshift$ svn update
 	</div></p><br>
     If, for some reason, you wish to update any of the supporting libraries to the latest version (i.e. the HEAD), you have to remove the sticky date tag. WE DO NOT RECOMMEND THIS as it may break your build:
     <p><div class="commandBox">
-	/home/user/development/cal3d$ svn update -r HEAD<br>
-        /home/user/development/cs$ svn update -r HEAD<br>
-        /home/user/development/cel$ svn update -r HEAD<br>
+	$HOME/development/cal3d$ svn update -r HEAD<br>
+        $HOME/development/cs$ svn update -r HEAD<br>
+        $HOME/development/cel$ svn update -r HEAD<br>
     </div></p>
 
 
 If you update a repository, you will need to recompile that repository and each repository that depends on it. Before doing so, you should do a "jam clean" for each project you want to jam again. So, for example, if you want to rebuild PS you will do:
     <p><div class="commandBox">
-        /home/user/development/planeshift$ jam clean<br>
-        /home/user/development/planeshift$ jam -aq
+        $HOME/development/planeshift$ jam clean<br>
+        $HOME/development/planeshift$ jam -aq
     </div></p>
 </div>
 
@@ -1185,9 +1185,9 @@ sed 's/AM_USE_UNITTESTCPP/# AM_USE_UNITTESTCPP/' configure-old.in > configure.in
         To do this, use the prefix line that was used for Cal3d above.</p></div>
 	<div class="Linux-Generic" >           
            <div class="User"><i class="commandBox">
-            /home/user/development/cs$./configure --without-java --without-perl --without-python --without-lib3ds --with-cal3d=/home/user/development/cal3d</i></div><br>
+            /home/user/development/cs$ ./configure --without-java --without-perl --without-python --without-lib3ds --with-cal3d=/home/user/development/cal3d</i></div><br>
            <div class="Developer"><i class="commandBox">
-            /home/user/development/cs$./configure --enable-debug --without-java --without-perl --without-python --without-lib3ds --with-cal3d=/home/user/development/cal3d</i></div><br>
+            /home/user/development/cs$ ./configure --enable-debug --without-java --without-perl --without-python --without-lib3ds --with-cal3d=/home/user/development/cal3d</i></div><br>
            <div class="Normal"><i class="command">
             /home/user/development/cs$ jam -aq libs plugins cs-config walktest</i></div><br>
            <div class="Static"><i class="command">
@@ -1195,9 +1195,9 @@ sed 's/AM_USE_UNITTESTCPP/# AM_USE_UNITTESTCPP/' configure-old.in > configure.in
            </div></div> 
 	<div class="Linux-Debian" >           
             <div class="User"><i class="commandBox">
-            /home/user/development/cs$./configure --without-java --without-perl --without-python --without-lib3ds --with-cal3d=/home/user/development/cal3d</i></div><br>
+            /home/user/development/cs$ ./configure --without-java --without-perl --without-python --without-lib3ds --with-cal3d=/home/user/development/cal3d</i></div><br>
            <div class="Developer"><i class="commandBox">
-            /home/user/development/cs$./configure --enable-debug --without-java --without-perl --without-python --without-lib3ds --with-cal3d=/home/user/development/cal3d</i></div><br>
+            /home/user/development/cs$ ./configure --enable-debug --without-java --without-perl --without-python --without-lib3ds --with-cal3d=/home/user/development/cal3d</i></div><br>
            <div class="Normal"><i class="command">
             /home/user/development/cs$ jam -aq libs plugins cs-config walktest</i></div><br>
            <div class="Static"><i class="command">
@@ -1252,23 +1252,23 @@ We should export the CRYSTAL environment variable so applications outside the Cr
 	         </div></p>	 
 	 	 
 We should export the CEL environment variable so applications outside the CEL tree know where to find the .so's.	 
-	         <p><i class="command">export CEL=/home/user/development/cel</i></p>	 
+	         <p><i class="commandBox">export CEL=/home/user/development/cel<br />export CSCONFPATH=/home/user/development/cel</i></p>	 
 	         
 <h3>PlaneShift</h3>
         <p><i class="commandBox">
             /home/user/development/planeshift$ ./autogen.sh<br>
-           <i class="User">
+           <div class="User">
             /home/user/development/planeshift$ ./configure --with-cal3d=/home/user/development/cal3d<br>
-           </i>
-           <i class="Developer">
+           </div>
+           <div class="Developer">
             /home/user/development/planeshift$ ./configure --enable-debug --with-cal3d=/home/user/development/cal3d<br>
-           </i>
-           <i class="Normal">
+           </div>
+           <div class="Normal">
             /home/user/development/planeshift$ jam -aq client
-           </i>
-           <i class="Static">
+           </div>
+           <div class="Static">
             /home/user/development/planeshift$ jam -aq client_static
-           </i>
+           </div>
 </i></p>
         If you also want to build the server, do this as well:
         <div class="Normal">
@@ -1286,7 +1286,7 @@ We should export the CEL environment variable so applications outside the CEL tr
 /home/user/development/planeshift$ ./psclient -cfgset=PlaneShift.UserConfigPath=/home/user/.PlaneShift2</i>
       <p> You can also edit this in the psclient.cfg file under the game section uncomment the appropriate line and edit the path.</p> 
    </div>
-</div>
+</div></div></div>
 <div class="MacOSX">
        <p>If you have a dual core or better processor then you can take advantage of parallel make or jam by adding -j3 after the command. You can replace 3 with the number of jobs you want to run in parallel.</p>
         <h3>Cal3D</h3>
@@ -1310,7 +1310,7 @@ sed 's/AM_USE_UNITTESTCPP/# AM_USE_UNITTESTCPP/' configure-old.in > configure.in
         </i></p></div>
   <h3>Crystal Space (CS)</h3>
         <p>Now we can build it and use the configure line to tell it where we installed the cal3d libraries.
-        To do this, use the prefix line that was used for Cal3d above.</p></div>
+        To do this, use the prefix line that was used for Cal3d above.</p>
 	   <div class="User"><i class="commandBox">
             $HOME/development/cs$./configure --without-java --without-perl --without-python --without-lib3ds --with-cal3d=$HOME/development/cal3d</i></div>
            <div class="Developer"><i class="commandBox">
@@ -1318,9 +1318,7 @@ sed 's/AM_USE_UNITTESTCPP/# AM_USE_UNITTESTCPP/' configure-old.in > configure.in
            <div class="Normal"><i class="command">
             $HOME/development/cs$ jam -aq libs plugins cs-config walktest</i></div><br>
             <div class="Static"> there is no Mac static build guide at this time</div>
-           </div> 
-	
-We should export the CRYSTAL environment variable so applications outside the Crystal Space	 
+        We should export the CRYSTAL environment variable so applications outside the Crystal Space	 
 	         tree know where to find the .so's.	 
 	         <p><i class="command">export CRYSTAL=$HOME/development/cs</i></p>	
 	 	 
@@ -1354,7 +1352,6 @@ We should export the CEL environment variable so applications outside the CEL tr
         <div class="Normal">
            <p><i class="command">$HOME/development/planeshift$ jam -aq server</i></p>
         </div>
-        </div>
         If you want to build the extra tools, just do "jam -a".
 <p>If your psclient has no skin you are used to seeing launch pssetup after you have copied your art over and select a new skin</p>
        <p>If you wish for your psclient to not use the same user files as your other build/install you may run ps with the following command<br />
@@ -1363,7 +1360,6 @@ $HOME/development/planeshift$ ./psclient.app/Contents/MacOS/psclient -cfgset=Pla
       <p> You can also edit this in the psclient.cfg file under the game section uncomment the appropriate line and edit the path.</p> 
    </div>
     </div>
-</div>
 <div class="MINGW">
     <div class="Windows">
 
