@@ -106,6 +106,9 @@ void pawsCharacterPickerWindow::HandleMessage( MsgEntry* me )
 //         // character name and the factory of the mesh.
         case MSGTYPE_AUTHAPPROVED:
         {
+            if(charactersFound != 0)
+                return;
+
             psAuthApprovedMessage msg(me);            
 
             for (int i=0; i < msg.msgNumOfChars; i++)
@@ -133,7 +136,7 @@ void pawsCharacterPickerWindow::HandleMessage( MsgEntry* me )
                 models[charactersFound].race = race;
                 models[charactersFound].traits = traits;
                 models[charactersFound].equipment = equipment;                                   
-                charactersFound++;            
+                charactersFound++;
                                         
                 SelectCharacter(0,FindWidget("SelectCharacter0"));            
             }

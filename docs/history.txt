@@ -1,3 +1,6 @@
+*** 2008-06-13 by Mike Gist
+- Fixed crash if more than one psAuthApprovedMessage is received.
+
 *** 2008-06-13 by Steven Patrick
 - Adding Mac section to compiling.html by Caarrie
 - Fixed FS#685, patch by Kaerli
