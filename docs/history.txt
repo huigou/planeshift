@@ -1,5 +1,6 @@
 *** 2008-06-13 by Steven Patrick
 - Adding Mac section to compiling.html by Caarrie
+- Fixed FS#685, patch by Kaerli
 
 *** 2008-06-12 by Mike Gist
 - Made a lot of updater fixes.

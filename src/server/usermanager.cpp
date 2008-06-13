@@ -510,6 +510,13 @@ csString fmtStatLine(const char *const label, unsigned int value, unsigned int b
     return s;
 }
 
+const enum PSITEMSTATS_STAT skilltostat[6] = {PSITEMSTATS_STAT_AGILITY,
+    PSITEMSTATS_STAT_CHARISMA,
+    PSITEMSTATS_STAT_ENDURANCE,
+    PSITEMSTATS_STAT_INTELLIGENCE,
+    PSITEMSTATS_STAT_STRENGTH,
+    PSITEMSTATS_STAT_WILL};
+
 void UserManager::SendCharacterDescription(Client * client, psCharacter * charData, bool full, bool simple, const csString & requestor)
 {
     StatSet* playerAttr = client->GetCharacterData()->GetAttributes();
@@ -529,8 +536,9 @@ void UserManager::SendCharacterDescription(Client * client, psCharacter * charDa
         desc += "\n\n";
         desc += "HP: "+intToStr(int(charData->GetHP()))+" Max HP: "+intToStr(int(charData->GetHitPointsMax()))+"\n";
         SkillSet *sks = charData->GetSkills();
+        StatSet *sts = charData->GetAttributes();
 
-        for(int skill = 0; sks && skill < PSSKILL_COUNT; skill++)
+        for(int skill = 0; sks && sts && skill < PSSKILL_COUNT; skill++)
         {
             psSkillInfo *skinfo;
             skinfo = CacheManager::GetSingleton().GetSkillByID((PSSKILL)skill);
@@ -538,9 +546,19 @@ void UserManager::SendCharacterDescription(Client * client, psCharacter * charDa
                 psCharacterDetailsMessage::NetworkDetailSkill s;
 
                 s.category = skinfo->category;
-                s.text = fmtStatLine( skinfo->name,
-                    sks->GetSkillRank((PSSKILL)skill, false),
-                    sks->GetSkillRank((PSSKILL)skill, true));
+                if (PSSKILL_AGI <= skill && skill <= PSSKILL_WILL)
+                {
+                        // handle stats specially in order to pick up buffs/debuffs
+                        s.text = fmtStatLine(skinfo->name,
+                            sts->GetStat(skilltostat[skill - PSSKILL_AGI], false),
+                            sts->GetStat(skilltostat[skill - PSSKILL_AGI], true));
+                }
+                else
+                {
+                        s.text = fmtStatLine(skinfo->name,
+                            sks->GetSkillRank(static_cast<PSSKILL>(skill), false),
+                            sks->GetSkillRank(static_cast<PSSKILL>(skill), true));
+                }
                 skills.Push(s);
             }
         }
