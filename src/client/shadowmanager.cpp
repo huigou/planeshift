@@ -40,6 +40,9 @@
 
 bool psShadowManager::WithinRange(GEMClientObject * object) const
 {
+    if (!object || !object->GetMesh().IsValid())
+        return false;
+
     if (shadowRange < 0)
         return true;
 
@@ -59,9 +62,13 @@ psShadowManager::psShadowManager()
     shadowRange = cfgmgr->GetFloat("PlaneShift.Visuals.ShadowRange", -1.0f);
     
     bool result = Load(USER_FILE);
-    if (result == false)
+    if (!result)
     {
         result = Load(DEFAULT_FILE);
+        if(!result)
+        {
+            Error2("Could not find file: %s", DEFAULT_FILE);
+        }
     }
     
     RecreateAllShadows();
@@ -86,7 +93,6 @@ bool psShadowManager::Load(const char * filename)
       
     if (buff == NULL)
     {
-        Error2("Could not find file: %s", filename);
         return false;
     }
     

@@ -1,5 +1,6 @@
 *** 2008-06-14 by Mike Gist
 - Fixed permissions bugs in the updater.
+- Fixed FS#1637, patch by Vornne.
 
 *** 2008-06-14 by Kenny Graunke
 - Commit patch for part of FS#74.
