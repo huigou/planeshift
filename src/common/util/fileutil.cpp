@@ -98,13 +98,17 @@ bool FileUtil::RemoveFile (const char* filename, bool silent)
 
 void FileUtil::MakeDirectory (const char* directory)
 {
-    csRef<iDataBuffer> realPath = vfs->GetRealPath(directory);
-    while(!vfs->Exists(directory))
+    csString dirAppended(directory);
+    dirAppended.Append("/");
+
+    csRef<iDataBuffer> realPath = vfs->GetRealPath(dirAppended);
+    while(!vfs->Exists(dirAppended))
     {
+        
 #ifdef CS_PLATFORM_WIN32
-            int rc = mkdir(realPath->GetData());
+        int rc = mkdir(realPath->GetData());
 #else
-            int rc = mkdir(realPath->GetData(), S_IRUSR | S_IWUSR);
+        int rc = mkdir(realPath->GetData(), S_IRUSR | S_IWUSR);
 #endif
 
         csString dir = directory;
@@ -119,7 +123,7 @@ void FileUtil::MakeDirectory (const char* directory)
                 return;
             }
 
-            real = vfs->GetRealPath(dir);
+            real = vfs->GetRealPath(dir + "/");
 #ifdef CS_PLATFORM_WIN32
             rc = mkdir(real->GetData());
 #else
@@ -129,7 +133,7 @@ void FileUtil::MakeDirectory (const char* directory)
 
 #ifdef CS_PLATFORM_UNIX
         dir.Truncate(dir.FindLast('/'));
-        csRef<iDataBuffer> parent = vfs->GetRealPath(dir);
+        csRef<iDataBuffer> parent = vfs->GetRealPath(dir + "/");
         csRef<FileStat> dirStat = StatFile(parent->GetData());
         SetPermissions(real->GetData(), dirStat);
 #endif
