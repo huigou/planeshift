@@ -1,3 +1,6 @@
+*** 2008-06-14 by Kenny Graunke
+- Commit patch for part of FS#74.
+
 *** 2008-06-13 by Mike Gist
 - Fixed crash if more than one psAuthApprovedMessage is received.
 
