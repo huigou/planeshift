@@ -1013,7 +1013,7 @@ void UpdaterEngine::CheckIntegrity()
 
                         // Make parent dir if needed.
                         csString parent = downloadpath;
-                        fileUtil->MakeDirectory(parent.Truncate(parent.FindLast('/')+1));
+                        fileUtil->MakeDirectory(parent.Truncate(parent.FindLast('/')));
 
                         // Download file.
                         if(!downloader->DownloadFile(baseurl + failed.Get(i)->GetAttributeValue("path"),
@@ -1027,21 +1027,21 @@ void UpdaterEngine::CheckIntegrity()
                                // Restore file.
                                fileUtil->MoveFile(downloadpath + ".bak", downloadpath, true, false, true);
                                PrintOutput("Failed!\n");
+                               continue;
                            }
                         }
-
+#ifdef CS_PLATFORM_UNIX
                         // Restore permissions.
                         if(fs.IsValid())
                         {
-#ifdef CS_PLATFORM_UNIX
                             bool failedEx = failedExec.Get(failed.Get(i), false);
                             if(failedEx)
                             {
                                 fs->mode = fs->mode | S_IXUSR | S_IXGRP;
                             }
-#endif
                             fileUtil->SetPermissions(rp->GetData(), fs);
                         }
+#endif
                         fileUtil->RemoveFile(downloadpath + ".bak", true);
                         PrintOutput("Success!\n");
                     }

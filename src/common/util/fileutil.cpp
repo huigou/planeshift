@@ -108,10 +108,10 @@ void FileUtil::MakeDirectory (const char* directory)
 #endif
 
         csString dir = directory;
-        csRef<iDataBuffer> real;
+        csRef<iDataBuffer> real = realPath;
         while(rc < 0)
         {
-            dir.Truncate(dir.FindLast('/')+1);
+            dir.Truncate(dir.FindLast('/'));
 
             if(vfs->Exists(directory))
             {
@@ -128,7 +128,7 @@ void FileUtil::MakeDirectory (const char* directory)
         }
 
 #ifdef CS_PLATFORM_UNIX
-        dir.Truncate(dir.FindLast('/')+1);
+        dir.Truncate(dir.FindLast('/'));
         csRef<iDataBuffer> parent = vfs->GetRealPath(dir);
         csRef<FileStat> dirStat = StatFile(parent->GetData());
         SetPermissions(real->GetData(), dirStat);
@@ -147,7 +147,7 @@ bool FileUtil::CopyFile(csString from, csString to, bool vfsPath, bool executabl
     {
         // Make parent dir if needed.
         csString parent = to;
-        MakeDirectory(parent.Truncate(parent.FindLast('/')+1));
+        MakeDirectory(parent.Truncate(parent.FindLast('/')));
 
         if(!buff)
         {
