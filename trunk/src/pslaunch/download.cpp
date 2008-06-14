@@ -141,12 +141,15 @@ bool Downloader::DownloadFile(const char *file, const char *dest, bool URL, bool
             delete conn;
             conn = NULL;
 
-            if (result != nsSocket::OK && !silent)
+            if (result != nsSocket::OK)
             {
-                if (result == nsSocket::E_INVALID_HOST)
-                    error.Format("Couldn't connect to mirror %s\n", url.GetData());
-                else
-                    error.Format("Error while downloading file: %s\n", url.GetData());
+                if(!silent)
+                {
+                    if (result == nsSocket::E_INVALID_HOST)
+                        error.Format("Couldn't connect to mirror %s\n", url.GetData());
+                    else
+                        error.Format("Error while downloading file: %s\n", url.GetData());
+                }
             }
             else
             {
