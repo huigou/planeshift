@@ -314,9 +314,20 @@ nsSocket::Send(unsigned char *aBuf, int *aBufSize)
     if (rv == 0)
         return E_TIMEOUT;
 
-    rv = write(mFd, aBuf, *aBufSize);
+    rv = 0;
+    for(int i=0; i<3 && rv<=0; i++)
+    {
+#ifdef CS_PLATFORM_WIN32
+        rv = write(mFd, aBuf, *aBufSize);
+#else
+        rv = send(mFd, aBuf, *aBufSize, MSG_NOSIGNAL);
+#endif
+    }
+
     if (rv <= 0)
+    {
         rv = E_WRITE;
+    }
     else
     {
         *aBufSize = rv;

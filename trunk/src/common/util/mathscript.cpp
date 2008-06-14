@@ -221,6 +221,10 @@ void MathScriptLine::ParseFormula(MathScript *myScript)
         printf( "Caller: %s", myScript->name.GetData());
         Error4("Error in Col %d: %s\n Script: \"%s\" ",(int)ret,fp.ErrorMsg(),scriptLine.GetData() );
     }
+    else
+    {
+        fp.Optimize();
+    }
 }
 
 void MathScriptLine::Execute()
