@@ -39,7 +39,7 @@ public:
      * If URL is true; download a file from 'file' where 'file' is the
      * full URL to the file, and save to 'dest'
      */
-    bool DownloadFile (const char* file, const char* dest, bool URL, bool silent = false);
+    bool DownloadFile (const char* file, const char* dest, bool URL, bool silent = false, uint retries = 2);
 
     /* Set the proxy server host and port */
     void SetProxy (const char* host, int port);
