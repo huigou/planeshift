@@ -92,7 +92,7 @@ void Downloader::SetProxy(const char *host, int port)
 {
 }
 
-bool Downloader::DownloadFile(const char *file, const char *dest, bool URL, bool silent)
+bool Downloader::DownloadFile(const char *file, const char *dest, bool URL, bool silent, uint retries)
 {
     // Get active url, append file to get full path.
     Mirror* mirror;
@@ -128,22 +128,30 @@ bool Downloader::DownloadFile(const char *file, const char *dest, bool URL, bool
             return false;
         }
 
-        nsHTTPConn *conn = new nsHTTPConn(url.GetData());
-        int result = conn->Open();
-        result = conn->ResumeOrGet(ProgressCallback, destpath.GetData());
-        int httpCode = conn->GetResponseCode();
-        conn->Close();
-        delete conn;
-        conn = NULL;
-
+        int httpCode = 200;
         csString error;
 
-        if (result != nsSocket::OK && !silent)
+        for(uint i=0; i<=retries; i++)
         {
-            if (result == nsSocket::E_INVALID_HOST)
-                error.Format("Couldn't connect to mirror %s\n", url.GetData());
+            nsHTTPConn *conn = new nsHTTPConn(url.GetData());
+            int result = conn->Open();
+            result = conn->ResumeOrGet(ProgressCallback, destpath.GetData());
+            httpCode = conn->GetResponseCode();
+            conn->Close();
+            delete conn;
+            conn = NULL;
+
+            if (result != nsSocket::OK && !silent)
+            {
+                if (result == nsSocket::E_INVALID_HOST)
+                    error.Format("Couldn't connect to mirror %s\n", url.GetData());
+                else
+                    error.Format("Error while downloading file: %s\n", url.GetData());
+            }
             else
-                error.Format("Error while downloading file: %s\n", url.GetData());
+            {
+                break;
+            }
         }
 
         // Tell the user that we failed
