@@ -97,7 +97,7 @@ bool pawsGlyphWindow::PostSetup()
     if ( !msgHandler ) return false;
 
     // Subscribe our message types that we are interested in.
-    if ( !msgHandler->Subscribe( this, MSGTYPE_GLPYH_REQUEST ) ) return false;
+    if ( !msgHandler->Subscribe( this, MSGTYPE_GLYPH_REQUEST ) ) return false;
     if ( !msgHandler->Subscribe( this, MSGTYPE_GLYPH_ASSEMBLE ) ) return false;
     
     
@@ -155,7 +155,7 @@ void pawsGlyphWindow::HandleMessage ( MsgEntry* me )
 {
     switch( me->GetType() )
     {
-        case MSGTYPE_GLPYH_REQUEST:
+        case MSGTYPE_GLYPH_REQUEST:
         {
             HandleGlyphList(me);
             break;

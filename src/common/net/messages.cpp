@@ -2876,7 +2876,7 @@ csString psGlyphAssembleMessage::ToString(AccessPointers * /*access_ptrs*/)
 
 //--------------------------------------------------------------------------
 
-PSF_IMPLEMENT_MSG_FACTORY(psRequestGlyphsMessage,MSGTYPE_GLPYH_REQUEST);
+PSF_IMPLEMENT_MSG_FACTORY(psRequestGlyphsMessage,MSGTYPE_GLYPH_REQUEST);
 
 psRequestGlyphsMessage::psRequestGlyphsMessage( uint32_t client )
 {
@@ -2885,7 +2885,7 @@ psRequestGlyphsMessage::psRequestGlyphsMessage( uint32_t client )
     if ( client == 0 )
     {
         msg.AttachNew(new MsgEntry());
-        msg->SetType(MSGTYPE_GLPYH_REQUEST);
+        msg->SetType(MSGTYPE_GLYPH_REQUEST);
         msg->clientnum = client;
     }
 }
@@ -2913,7 +2913,7 @@ void psRequestGlyphsMessage::AddGlyph( csString name, csString image, int purifi
 void psRequestGlyphsMessage::Construct()
 {
     msg.AttachNew(new MsgEntry( size + sizeof(int) ));
-    msg->SetType(MSGTYPE_GLPYH_REQUEST);
+    msg->SetType(MSGTYPE_GLYPH_REQUEST);
     msg->clientnum = client;
 
     msg->Add( (uint32_t)glyphs.GetSize() );

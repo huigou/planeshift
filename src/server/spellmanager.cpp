@@ -60,7 +60,7 @@ psSpellManager::psSpellManager(ClientConnectionSet *ccs,
 
     randomgen = psserver->rng;
 
-    psserver->GetEventManager()->Subscribe(this,MSGTYPE_GLPYH_REQUEST,REQUIRE_READY_CLIENT|REQUIRE_ALIVE);  
+    psserver->GetEventManager()->Subscribe(this,MSGTYPE_GLYPH_REQUEST,REQUIRE_READY_CLIENT|REQUIRE_ALIVE);  
     psserver->GetEventManager()->Subscribe(this,MSGTYPE_GLYPH_ASSEMBLE,REQUIRE_READY_CLIENT|REQUIRE_ALIVE);  
     psserver->GetEventManager()->Subscribe(this,MSGTYPE_SPELL_CAST,REQUIRE_READY_CLIENT|REQUIRE_ALIVE);  
     psserver->GetEventManager()->Subscribe(this,MSGTYPE_PURIFY_GLYPH,REQUIRE_READY_CLIENT|REQUIRE_ALIVE);  
@@ -84,7 +84,7 @@ psSpellManager::~psSpellManager()
 {
     if (psserver->GetEventManager())
     {
-        psserver->GetEventManager()->Unsubscribe(this,MSGTYPE_GLPYH_REQUEST);
+        psserver->GetEventManager()->Unsubscribe(this,MSGTYPE_GLYPH_REQUEST);
         psserver->GetEventManager()->Unsubscribe(this,MSGTYPE_GLYPH_ASSEMBLE);
         psserver->GetEventManager()->Unsubscribe(this,MSGTYPE_SPELL_CAST);  
         psserver->GetEventManager()->Unsubscribe(this,MSGTYPE_PURIFY_GLYPH);  
@@ -114,7 +114,7 @@ void psSpellManager::HandleMessage(MsgEntry *me,Client *client)
             SendSpellBook( client );
             break;
         }
-        case MSGTYPE_GLPYH_REQUEST:
+        case MSGTYPE_GLYPH_REQUEST:
         {
             SendGlyphs( client );
             break; 
