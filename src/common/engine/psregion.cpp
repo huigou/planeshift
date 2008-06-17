@@ -119,6 +119,7 @@ bool psRegion::Load(bool loadMeshes)
 
     // Now load the map into the selected region
     vfs->ChDir (worlddir);
+    engine->SetVFSCacheManager();
 
     csTicks start = csGetTicks();
     Debug2(LOG_LOAD, 0,"Loading map file %s", worlddir.GetData());
@@ -136,7 +137,7 @@ bool psRegion::Load(bool loadMeshes)
     if (using3D)
     {
         engine->ShineLights(collection);
-        engine->PrecacheDraw (collection);
+        engine->PrecacheDraw(collection);
         Debug2(LOG_LOAD, 0,"After Precache, %dms elapsed", csGetTicks()-start);
     }
 
