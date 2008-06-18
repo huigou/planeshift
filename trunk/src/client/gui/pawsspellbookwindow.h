@@ -63,7 +63,8 @@ private:
     csString selectedSpell;
     csRef<MsgHandler> msgHandler;
     
-    csArray<csString> descriptions;
+//    csArray<csString> descriptions;
+    csHash<csString, csString> descriptions_Hash;
 };
 
 CREATE_PAWS_FACTORY( pawsSpellBookWindow );

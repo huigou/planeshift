@@ -1,4 +1,8 @@
-*** 2008-16-18 by Steven Patrick
+*** 2008-06-18 by Dave Bentham
+-  Fixed FS#1218: Fix Spell Description when sorting spells in Spell Book
+   window.
+
+*** 2008-06-18 by Steven Patrick
 -Fixed FS#1572, by kougaro
 -DB VER BUMP to 1189
 

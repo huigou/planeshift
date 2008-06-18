@@ -104,7 +104,8 @@ bool pawsSpellBookWindow::OnButtonPressed( int mouseButton, int keyModifier, paw
 void pawsSpellBookWindow::HandleSpells( MsgEntry* me )
 {
     spellList->Clear();
-    descriptions.DeleteAll();
+    descriptions_Hash.Empty();
+
     psSpellBookMessage mesg(me);
     for ( size_t x = 0; x < mesg.spells.GetSize(); x++ )
     {       
@@ -123,8 +124,7 @@ void pawsSpellBookWindow::HandleSpells( MsgEntry* me )
             pawsWidget* glyph = (pawsWidget*)row->GetColumn(1+i);
             glyph->SetBackground(mesg.spells[x].glyphs[i]);
         }
-        descriptions.Push( mesg.spells[x].description );
-
+        descriptions_Hash.Put(mesg.spells[x].name, mesg.spells[x].description);
         if (selectedSpell == mesg.spells[x].name)
         {
             spellList->Select(row);
@@ -182,11 +182,10 @@ void pawsSpellBookWindow::OnListAction( pawsListBox* widget, int status )
         spellDescription->Clear();
         pawsListBoxRow* row = widget->GetSelectedRow();
 
-        size_t selected = widget->GetSelectedRowNum();
         pawsTextBox* spellName = (pawsTextBox*)(row->GetColumn(0));
 
         selectedSpell.Replace( spellName->GetText() );
-        spellDescription->AddMessage( descriptions[selected] );
+        spellDescription->AddMessage(descriptions_Hash.Get(spellName->GetText(), "Unknown"));
         spellDescription->ResetScroll();        
     }
 }
