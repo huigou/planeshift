@@ -15,7 +15,7 @@ CREATE TABLE guilds (
   date_created datetime NOT NULL DEFAULT '0000-00-00 00:00:00' ,
   karma_points int(10) NOT NULL DEFAULT '0' ,
   secret_ind char(1) ,
-  motd char(90) ,
+  motd char(200) ,
   alliance int(11),
   bank_money_circles int(10) unsigned NOT NULL default '0',
   bank_money_octas int(10) unsigned NOT NULL default '0',

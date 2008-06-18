@@ -378,7 +378,13 @@ void GuildManager::HandleGUIMessage(psGUIGuildMessage& msg,Client *client)
 
 void GuildManager::HandleMOTDSet(psGuildMOTDSetMessage& msg,Client *client)
 {
-    if (CheckClientRights(client,RIGHTS_EDIT_GUILD,"You don't have permission to change settings of your guild.")) {
+    if (CheckClientRights(client,RIGHTS_EDIT_GUILD,"You don't have permission to change settings of your guild.")) 
+    {
+        if (msg.guildmotd.Length() > 200)
+        {
+            psserver->SendSystemError(client->GetClientNum(),"The MOTD you tried to save is %i character long, the maximum is 200.",msg.guildmotd.Length());
+            return;
+        }
         psGuildInfo *gi = client->GetActor()->GetGuild();
         gi->SetMOTD(msg.guildmotd);
         //Send notify to all guild members
@@ -2429,4 +2435,5 @@ void GuildManager::ResendGuildData(int id)
 {
     SendNotifications(id, psGUIGuildMessage::GUILD_DATA);
 }
+
 

@@ -1,20 +1,20 @@
 <widget_description>
 
-    <widget name="LoadWindow" factory="pawsLoadWindow" 
+  <widget name="LoadWindow" factory="pawsLoadWindow"
             visible="yes" movable="no" resizable="no" resizetoscreen="yes" >
         <frame x="0" y="0" width="800" height="600" border="no" />
         <font name="/planeshift/data/ttf/cupandtalon.ttf" r="180" g="180" b="180" size="12" shadow="yes" resizetoscreen="yes" />
         <bgimage resource="Loading Background" />
-        
+       
         <widget name="loadtext" factory="pawsMessageTextBox" >
-            <frame x="30" y="160" width="295" height="120" border="no" />
+            <frame x="30" y="160" width="295" height="80" border="no" />
             <font name="/planeshift/data/ttf/cupandtalon.ttf" r="180" g="180" b="180" size="10" shadow="yes" resizetoscreen="yes" />
         </widget>
         <widget name="motd" factory="pawsMultiLineTextBox" >
-            <frame x="30" y="280" width="295" height="80" border="no" />
+            <frame x="30" y="240" width="295" height="100" border="no" />
         </widget>
         <widget name="guildmotd" factory="pawsMultiLineTextBox" >
-            <frame x="30" y="380" width="295" height="80" border="no" />
+            <frame x="30" y="350" width="295" height="100" border="no" />
         </widget>
         <widget name="tip" factory="pawsMultiLineTextBox" >
             <frame x="380" y="510" width="410" height="40" border="no" />
@@ -25,6 +25,6 @@
             <fadecolor r="100" g="100" b="255" />
         </widget>
     </widget>
-    
 </widget_description>
+
 
