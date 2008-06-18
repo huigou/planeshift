@@ -922,6 +922,10 @@ UPDATE `server_options` SET `option_value`='1187' WHERE `option_name`='db_versio
 ALTER TABLE `accounts` ADD COLUMN `advisor_ban` tinyint(1) DEFAULT 0 AFTER `realname`;
 UPDATE `server_options` SET `option_value`='1188' WHERE `option_name`='db_version';
 
+#### 1189 - Steven Patrick - Expanding length of guild MOTD, FS#1572
+ALTER TABLE `guilds` MODIFY COLUMN `motd` CHAR(200);
+UPDATE `server_options` SET `option_value`='1189' WHERE `option_name`='db_version';
+
 # Insert your upgrade before this line. Remember when you set a new db_version
 # to update the server_options.sql file and update psserver.cpp as well.
 # This to ensure that everything is working if you use the create_all.sql to
