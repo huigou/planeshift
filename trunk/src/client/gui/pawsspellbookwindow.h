@@ -63,7 +63,6 @@ private:
     csString selectedSpell;
     csRef<MsgHandler> msgHandler;
     
-//    csArray<csString> descriptions;
     csHash<csString, csString> descriptions_Hash;
 };
 
