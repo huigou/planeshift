@@ -1,10 +1,13 @@
+*** 2008-06-18 by Mike Gist
+- Fixed a crash in psLights on sector change.
+
 *** 2008-06-18 by Dave Bentham
--  Fixed FS#1218: Fix Spell Description when sorting spells in Spell Book
-   window.
+- Fixed FS#1218: Fix Spell Description when sorting spells in Spell Book
+  window.
 
 *** 2008-06-18 by Steven Patrick
--Fixed FS#1572, by kougaro
--DB VER BUMP to 1189
+- Fixed FS#1572, by kougaro
+- DB VER BUMP to 1189
 
 *** 2007-06-17 by Mike Gist
 - Fixed a bug in psregion where the vfs cache manager wasn't being

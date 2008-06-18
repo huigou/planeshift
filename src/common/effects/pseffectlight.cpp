@@ -38,21 +38,15 @@ psLight::psLight()
 
 psLight::~psLight()
 {
-    if(sector)
-    {
-        sector->GetLights()->Remove(light);
-    }
 }
 
 unsigned int psLight::AttachLight(csRef<iLight> newLight, csRef<iMeshWrapper> mw)
 {
     light = newLight;
-    //light->QuerySceneNode()->SetParent(mw->QuerySceneNode());
     movable = mw->GetMovable();
     lightBasePos = light->GetCenter();
     sector = movable->GetSectors()->Get(0);
     light->GetMovable()->SetSector(sector);
-    sector->GetLights()->Add(light);
     light->SetCenter(lightBasePos+movable->GetFullPosition());
     light->Setup(); 
 
@@ -77,11 +71,8 @@ bool psLight::Update()
             {
                 if(sectors && (!sector || sector != sectors->Get(0)))
                 {
-                    if(sector)
-                    {
-                        sector->GetLights()->Remove(light);
-                    }
-                    light->GetMovable()->SetSector(sectors->Get(0));
+                    sector = sectors->Get(0);
+                    light->GetMovable()->SetSector(sector);
                 }
                 light->SetCenter(newPos);
                 light->Setup(); 
