@@ -46,7 +46,6 @@ private:
     iObjectRegistry* object_reg;
     csRef<iVFS> vfs;
     csRef<iConfigManager> configManager;
-    csRef<iEngine>          engine;
     csRef<iGraphics3D>      g3d;
     csRef<iGraphics2D>      g2d;
     csRef<iEventQueue>      queue;

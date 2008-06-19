@@ -80,13 +80,6 @@ bool psLauncherGUI::InitApp()
         return false;
     }
 
-    engine = csQueryRegistry<iEngine> (object_reg);
-    if (!engine)
-    {
-        printf("No iEngine plugin!\n");
-        return false;
-    }
-
     queue = csQueryRegistry<iEventQueue> (object_reg);
     if (!queue)
     {
@@ -108,7 +101,7 @@ bool psLauncherGUI::InitApp()
         return false;
     }
     
-    iNativeWindow *nw = g3d->GetDriver2D()->GetNativeWindow();
+    iNativeWindow *nw = g2d->GetNativeWindow();
     if (nw)
         nw->SetTitle(APPNAME);
     
@@ -124,7 +117,7 @@ bool psLauncherGUI::InitApp()
         return false;
     }
     
-    g3d->GetDriver2D()->AllowResize(false);
+    g2d->AllowResize(false);
 
     // Mount the skin
     if (!vfs->Mount ("/planeshift/", "$^"))
@@ -243,11 +236,11 @@ bool psLauncherGUI::HandleEvent (iEvent &ev)
             csSleep(150);
         }
     }
-    else if (ev.Name == csevCanvasHidden (object_reg, g3d->GetDriver2D ()))
+    else if (ev.Name == csevCanvasHidden (object_reg, g2d))
     {
         drawScreen = false;
     }
-    else if (ev.Name == csevCanvasExposed (object_reg, g3d->GetDriver2D ()))
+    else if (ev.Name == csevCanvasExposed (object_reg, g2d))
     {
         drawScreen = true;
     }
@@ -324,7 +317,7 @@ int main(int argc, char* argv[])
 
             // Request needed plugins for GUI.
             csInitializer::RequestPlugins(object_reg, CS_REQUEST_FONTSERVER, CS_REQUEST_IMAGELOADER,
-                                          CS_REQUEST_OPENGL3D, CS_REQUEST_ENGINE, CS_REQUEST_END);
+                                          CS_REQUEST_OPENGL3D, CS_REQUEST_END);
 
             // Start up GUI.
             csRef<Runnable> gui;
