@@ -29,6 +29,7 @@
 struct Faction
 {
     csString name;
+    csString description;
     int      id;
     float    weight;
     bool operator==(Faction& other) const

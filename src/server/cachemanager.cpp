@@ -1945,6 +1945,21 @@ Faction *CacheManager::GetFaction(const char *name)
     return factions.Find(&fac);
 }
 
+Faction *CacheManager::GetFactionByName(const char *name)
+{
+    if (name==NULL)
+        return NULL;
+
+    csHash<Faction*, int>::GlobalIterator it (factions_by_id.GetIterator ());
+    while (it.HasNext ())
+    {
+        Faction* faction = it.Next();
+        if (!strcasecmp(faction->name, name))
+            return faction;
+    }
+    return NULL;
+}
+
 Faction *CacheManager::GetFaction(int id)
 {
     return factions_by_id.Get(id,0);
@@ -2289,6 +2304,7 @@ bool CacheManager::PreloadFactions()
             Faction *f = new Faction;
             f->id = atoi( result_factions[x]["id"] );
             f->name = result_factions[x]["faction_name"];
+            f->description = result_factions[x]["faction_description"];
             f->weight = atof( result_factions[x]["faction_weight"] );
             // Stored two different ways
             factions.Insert(f,TREE_OWNS_DATA);

@@ -119,7 +119,7 @@ protected:
 	pawsListBox *factionList;
 
     pawsMultiLineTextBox *combatSkillDescription, *magicSkillDescription, *jobsSkillDescription;
-    pawsMultiLineTextBox *variousSkillDescription, *statsSkillDescription;
+    pawsMultiLineTextBox *variousSkillDescription, *statsSkillDescription, *factionsDescription;
     pawsProgressBar *hpBar, *manaBar, *pysStaminaBar, *menStaminaBar, *experienceBar;
     pawsTextBox *hpFrac, *manaFrac, *pysStaminaFrac, *menStaminaFrac, *experiencePerc;
 

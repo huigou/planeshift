@@ -260,6 +260,7 @@ public:
     // Factions
     Faction * GetFaction(const char *name);
     Faction * GetFaction(int id);
+    Faction * GetFactionByName(const char *name);
     csHash<Faction*, int> &GetFactionHash() { return factions_by_id; }
     
     // Spells

@@ -312,6 +312,17 @@
 						</column>
 					</columns>
 				</widget>
+				
+				<widget name="" factory="pawsTextBox" >
+					<font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" size="12" />
+					<frame x="30" y="110" width="180" height="20" border="no"/>
+					<text string="Faction description:" />
+				</widget>
+				
+				<widget name="FactionDescription" factory="pawsMultiLineTextBox" >
+					<frame x="28" y="130" width="375" height="80" border="no" />
+					<font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="10" />
+				</widget>
 			</widget>
 			
 			
