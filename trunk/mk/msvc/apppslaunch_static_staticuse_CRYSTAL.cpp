@@ -14,9 +14,13 @@
 #endif
 struct _static_use_CRYSTAL { _static_use_CRYSTAL (); };
 _static_use_CRYSTAL::_static_use_CRYSTAL () {}
-SCF_USE_STATIC_PLUGIN(engine)
+SCF_USE_STATIC_PLUGIN(csfont)
+SCF_USE_STATIC_PLUGIN(cspngimg)
 SCF_USE_STATIC_PLUGIN(fontplex)
+SCF_USE_STATIC_PLUGIN(freefnt2)
+SCF_USE_STATIC_PLUGIN(gl3d)
 SCF_USE_STATIC_PLUGIN(imgplex)
+SCF_USE_STATIC_PLUGIN(shadermgr)
 SCF_USE_STATIC_PLUGIN(vfs)
 SCF_USE_STATIC_PLUGIN(glwin32)
 
