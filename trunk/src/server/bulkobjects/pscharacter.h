@@ -715,22 +715,22 @@ public:
     bool Store(const char *location,const char *slot,psItem *what);
 
     void SetCharacterID(const unsigned int characterID) { characterid=characterID; }
-    unsigned int GetCharacterID() { return characterid; }
+    unsigned int GetCharacterID() const { return characterid; }
     
-    unsigned int GetMasterNPCID() { return npc_masterid?npc_masterid:characterid; }
+    unsigned int GetMasterNPCID() const { return npc_masterid?npc_masterid:characterid; }
 
     void SetAccount(int id) { accountid = id;   }
-    int  GetAccount()       { return accountid; }
+    int  GetAccount() const { return accountid; }
 
     void SetName(const char* newName) { SetFullName(newName,lastname.GetData()); }
     void SetLastName(const char* newLastName) { SetFullName(name.GetData(),newLastName); }
     void SetFullName(const char* newFirstName, const char* newLastName);
     void SetOldLastName( const char* oldLastName ) { this->oldlastname = oldLastName; };
     
-    const char *GetCharName() {  return name.GetData(); }
-    const char *GetCharLastName() { return lastname.GetData(); }
-    const char *GetCharFullName() { return fullname.GetData(); }
-    const char *GetOldLastName() { return oldlastname.GetData(); }
+    const char *GetCharName() const     { return name.GetData(); }
+    const char *GetCharLastName() const { return lastname.GetData(); }
+    const char *GetCharFullName() const { return fullname.GetData(); }
+    const char *GetOldLastName() const  { return oldlastname.GetData(); }
     
     // Introductions
     /// Answers whether this character knows the given character or not.
@@ -741,20 +741,20 @@ public:
     /// Unintroduces this character to the given character; answers false if not introduced.
     bool Unintroduce(psCharacter *c);
 
-    unsigned int GetCharType() { return characterType; }
+    unsigned int GetCharType() const { return characterType; }
     void SetCharType(unsigned int v) { CS_ASSERT(v < PSCHARACTER_TYPE_COUNT); characterType = v; }
     const char *GetCharTypeName() { return psCharacter::characterTypeName[ characterType ]; }
 
     void SetLastLoginTime( const char* last_login = NULL, bool save = true);
-    csString GetLastLoginTime();
+    csString GetLastLoginTime() const { return lastlogintime; }
 
     void SetSpouseName(const char* name);
     /** Gets Spouse Name of a character. 
      * @return  SpouseName or "" if not married.
      */
-    const char *GetSpouseName() { return spouseName.GetData(); }
+    const char *GetSpouseName() const { return spouseName.GetData(); }
     void SetIsMarried( bool married ) { isMarried = married; }
-    bool GetIsMarried() { return isMarried; }
+    bool GetIsMarried() const { return isMarried; }
     
     void SetRaceInfo(psRaceInfo *rinfo);
     psRaceInfo *GetRaceInfo() { return raceinfo; }
@@ -768,7 +768,7 @@ public:
     const char *GetFactionStandings() { return faction_standings; }
 
     void SetLootCategory(int id) { loot_category_id = id; }
-    int  GetLootCategory()       { return loot_category_id; }
+    int  GetLootCategory() const { return loot_category_id; }
     bool RemoveLootItem(int id);
 
     void AddInventoryToLoot();
@@ -831,7 +831,7 @@ public:
     void UseProgressionPoints(unsigned int X);
 
     void SetKFactor(float K);
-    float GetKFactor() { return KFactor; }
+    float GetKFactor() const { return KFactor; }
     void SetSpellCasting(psSpellCastGameEvent * event) { spellCasting = event; }
     bool IsSpellCasting() { return spellCasting != NULL; }
     void InterruptSpellCasting();
@@ -941,7 +941,7 @@ public:
     bool CheckFaction(Faction * faction, int value);
 
     /* Check if the character is a banker */
-    bool IsBanker() { return banker; }
+    bool IsBanker() const { return banker; }
 
 private: 
     float AdjustVital( int vitalName, int dirtyFlag, float adjust);

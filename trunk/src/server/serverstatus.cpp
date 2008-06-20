@@ -127,54 +127,28 @@ void psServerStatusRunEvent::Trigger ()
 
 void psServerStatusRunEvent::ReportClient(Client * curr, ClientStatusLogger & clientLogger, csString & reportString)
 {
-    psGuildInfo * guild = 0;
-    csString guildTitle;
-    csString guildName;
-    csString format("%s"); // Player name
-    csString guildSecret="no";
-
     if (curr->IsSuperClient() || !curr->GetActor()) 
         return;
 
-    psCharacter *chardata = curr->GetActor()->GetCharacterData();
+    const psCharacter *chr = curr->GetCharacterData();
     // log this client's info with the clientLogger
     clientLogger.LogClientInfo(curr);
 
-    guild = curr->GetActor()->GetGuild();
-
-    if (guild != NULL)
+    psGuildInfo *guild = curr->GetActor()->GetGuild();
+    csString guildTitle;
+    csString guildName;
+    if (guild && guild->id && !guild->IsSecret())
     {
-        if (guild->id)
+        psGuildLevel *level = curr->GetActor()->GetGuildLevel();
+        if (level)
         {
-            psGuildLevel * level = curr->GetActor()->GetGuildLevel();
-            if (level)
-            {
-                format.Append(", %s in %s"); // Guild level title
-                guildTitle = level->title;
-            }
-            else
-            {
-                format.Append(", %s");
-            }
-            guildName = guild->name;
-        }       
+            guildTitle = EscpXML(level->title);
+        }
+        guildName = EscpXML(guild->name);
     }
     
-    csString player;
-    csString escpxml_name = EscpXML(curr->GetName());
-    csString escpxml_guildname = EscpXML(guildName);
-    csString escpxml_guildtitle = EscpXML(guildTitle);
-    
-    if ( guild  && guild->IsSecret() == true)
-    {       
-        escpxml_guildname = EscpXML("");
-        escpxml_guildtitle = EscpXML("");
-    }                    
-    player.Format("<player name=\"%s\" characterID=\"%u\" guild=\"%s\" title=\"%s\" security=\"%d\" kills=\"%u\" deaths=\"%u\" suicides=\"%u\" pos=\"%s\" sector=\"%s\" />\n", 
-                    escpxml_name.GetData(), chardata->GetCharacterID(), escpxml_guildname.GetData(), escpxml_guildtitle.GetData(),
-                    curr->GetSecurityLevel(), chardata->GetKills(), chardata->GetDeaths(), chardata->GetSuicides(), (const char*) chardata->location.loc.Description(), (const char*) EscpXML(chardata->location.loc_sector->name));
-    
-    reportString.Append( player ); 
+    reportString.AppendFmt("<player name=\"%s\" characterID=\"%u\" guild=\"%s\" title=\"%s\" security=\"%d\" kills=\"%u\" deaths=\"%u\" suicides=\"%u\" pos=\"%s\" sector=\"%s\" />\n",
+                           EscpXML(curr->GetName()).GetData(), chr->GetCharacterID(), guildName.GetDataSafe(), guildTitle.GetDataSafe(), curr->GetSecurityLevel(), chr->GetKills(), chr->GetDeaths(), chr->GetSuicides(), chr->location.loc.Description().GetData(), EscpXML(chr->location.loc_sector->name).GetData());
 }
 
 void psServerStatusRunEvent::ReportNPC(psCharacter* chardata, csString & reportString)

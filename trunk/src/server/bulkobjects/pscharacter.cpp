@@ -728,12 +728,6 @@ void psCharacter::SetLastLoginTime(const char *last_login, bool save )
     }
 }
 
-csString psCharacter::GetLastLoginTime()
-{
-    return this->lastlogintime;
-}
-
-
 bool psCharacter::LoadSpells(unsigned int use_id)
 {
     // Load spells in asc since we use push to create the spell list.
