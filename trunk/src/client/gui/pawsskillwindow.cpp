@@ -126,7 +126,8 @@ bool pawsSkillWindow::PostSetup()
     variousSkillList        = (pawsListBox*)FindWidget("VariousSkillList");
     variousSkillDescription = (pawsMultiLineTextBox*)FindWidget("VariousDescription");
 
-	factionList             = (pawsListBox*)FindWidget("FactionList");
+	factionList        = (pawsListBox*)FindWidget("FactionList");
+	factionsDescription = (pawsMultiLineTextBox*)FindWidget("FactionDescription");
     
     hpBar = dynamic_cast <pawsProgressBar*> (FindWidget("HPBar"));
     manaBar = dynamic_cast <pawsProgressBar*> (FindWidget("ManaBar"));
@@ -620,6 +621,11 @@ void pawsSkillWindow::HandleSkillDescription( csString& description )
             variousSkillDescription->SetText(descStr);
             break;
         }
+        case 5://Factions
+        {
+            factionsDescription->SetText(descStr);
+            break;            
+        }
     }
 }
 
@@ -780,6 +786,11 @@ void pawsSkillWindow::OnListAction( pawsListBox* widget, int status )
                 {
                     variousSkillDescription->SetText(desc->GetDescription());
                     break;
+                }
+                case 5://Factions
+                {
+                    factionsDescription->SetText(desc->GetDescription());
+                    break;            
                 }
             }
         }

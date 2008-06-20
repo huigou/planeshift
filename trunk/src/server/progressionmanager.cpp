@@ -4747,19 +4747,28 @@ void ProgressionManager::HandleSkill(Client * client, psGUISkillMessage& msg)
             csString skillName = topNode->GetAttributeValue("NAME");
 
             psSkillInfo * info = CacheManager::GetSingleton().GetSkillByName(skillName);
-
+            Faction * faction = CacheManager::GetSingleton().GetFactionByName(skillName);
             csString buff;
+            csString description;
+            int cathegory;
             if (info)
             {
-                buff.Format("<DESCRIPTION NAME=\"%s\" DESC=\"%s\" CAT=\"%d\"/>",
-                            EscpXML(skillName).GetData(), EscpXML(info->description).GetData(),
-                            info->category);
+                description = EscpXML(info->description).GetData();
+                cathegory = info->category;
+            }
+            else if (faction)
+            {
+                description = faction->description;
+                cathegory = PSSKILLS_CATEGORY_FACTIONS;
             }
             else
             {
-                buff.Format("<DESCRIPTION NAME=\"%s\" DESC=\"\" CAT=\"%d\"/>",
-                            EscpXML(skillName).GetData(), PSSKILLS_CATEGORY_VARIOUS);  // if not found, then category unknown
+                description = "";
+                cathegory = PSSKILLS_CATEGORY_VARIOUS;
             }
+            buff.Format("<DESCRIPTION NAME=\"%s\" DESC=\"%s\" CAT=\"%d\"/>",
+                        EscpXML(skillName).GetData(), description.GetData(),
+                        cathegory);
 
             psCharacter* chr = client->GetCharacterData();
             psGUISkillMessage newmsg(client->GetClientNum(),
