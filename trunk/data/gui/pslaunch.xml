@@ -21,27 +21,31 @@
       </widget>
 
       <!-- Quit button -->
-      <widget name="QuitButton" factory="pawsButton" id="112">
-        <bgimage resource="Quit Button" alpha="255" fade="false"/>
-        <frame x="58" y="515" width="95" height="50" border="no"/> 
+      <widget name="QuitButton" factory="pawsButton" id="112" changeonmouseover="true">
+        <buttonup resource="Quit Button"/>
+        <buttondown resource="Quit Button MO"/>
+        <frame x="58" y="516" width="95" height="50" border="no"/> 
       </widget>
 
       <!-- Repair button -->
-      <widget name="RepairButton" factory="pawsButton" id="113">
-        <bgimage resource="Repair Button" alpha="255" fade="false"/>
-        <frame x="200" y="515" width="95" height="50" border="no"/>
+      <widget name="RepairButton" factory="pawsButton" id="113" changeonmouseover="true">
+        <buttonup resource="Repair Button"/>
+        <buttondown resource="Repair Button MO"/>
+        <frame x="200" y="518" width="95" height="50" border="no"/>
       </widget>
 
       <!-- Settings button --> 
-      <widget name="SettingsButton" factory="pawsButton" toggle="no" shadows="yes" id="114">
-        <frame x="340" y="545" width="95" height="20" border="no"/> 
-        <label text="Settings"/>
+      <widget name="SettingsButton" factory="pawsButton" toggle="no" id="114" changeonmouseover="true">
+        <buttonup resource="Settings Button"/>
+        <buttondown resource="Settings Button MO"/>
+        <frame x="340" y="518" width="95" height="50" border="no"/> 
       </widget>
    
-      <!-- Launch Client button -->
-      <widget name="LaunchButton" factory="pawsButton" id="115">
-        <frame x="645" y="545" width="95" height="20" border="no"/>
-	  <label text="Play"/>
+      <!-- Play button -->
+      <widget name="PlayButton" factory="pawsButton" id="115" changeonmouseover="true">
+        <buttonup resource="Play Button"/>
+        <buttondown resource="Play Button MO"/>
+        <frame x="645" y="528" width="95" height="45" border="no"/>
       </widget>
     </widget>
 
@@ -55,14 +59,16 @@
       </widget>
 
       <!-- Yes button -->
-      <widget name="UpdaterYesButton" factory="pawsButton" id="122">
-        <bgimage resource="Yes Button" alpha="255" fade="false"/>
+      <widget name="UpdaterYesButton" factory="pawsButton" id="122" changeonmouseover="true">
+        <buttonup resource="Yes Button"/>
+        <buttondown resource="Yes Button MO"/>
         <frame x="250" y="517" width="95" height="50" border="no"/>
       </widget>
 
       <!-- No button -->
-      <widget name="UpdaterNoButton" factory="pawsButton" id="123">
-        <bgimage resource="No Button" alpha="255" fade="false"/>
+      <widget name="UpdaterNoButton" factory="pawsButton" id="123" changeonmouseover="true">
+        <buttonup resource="No Button"/>
+        <buttondown resource="No Button MO"/>
         <frame x="400" y="517" width="95" height="55" border="no"/> 
       </widget>
     </widget>
@@ -73,14 +79,16 @@
       <frame x="0" y="0" width="850" height="600" border="no"/>
 
       <!-- Ok button -->
-      <widget name="SettingsOkButton" factory="pawsButton" id="131">
-        <bgimage resource="Ok Button" alpha="255" fade="false"/>
+      <widget name="SettingsOkButton" factory="pawsButton" id="131" changeonmouseover="true">
+        <buttonup resource="Ok Button"/>
+        <buttondown resource="Ok Button MO"/>
         <frame x="645" y="528" width="95" height="45" border="no"/>
       </widget>
 
       <!-- Cancel button -->
-      <widget name="SettingsCancelButton" factory="pawsButton" id="132">
-        <bgimage resource="Cancel Button" alpha="255" fade="false"/>
+      <widget name="SettingsCancelButton" factory="pawsButton" id="132" changeonmouseover="true">
+        <buttonup resource="Cancel Button"/>
+        <buttondown resource="Cancel Button MO"/>
         <frame x="58" y="515" width="95" height="60" border="no"/> 
       </widget>
     </widget>

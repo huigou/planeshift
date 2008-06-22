@@ -40,7 +40,7 @@ bool pawsLauncherWindow::PostSetup()
     launcherMain->OnGainFocus();
 
     // Get server news.
-    UpdateNews();
+    newsUpdater.AttachNew(new Thread(new NewsUpdater(this), true));
 
     // Setup update available window.
     updateAvailable = (pawsYesNoBox*)FindWidget("UpdateAvailable");
@@ -74,7 +74,7 @@ bool pawsLauncherWindow::OnButtonPressed(int mouseButton, int keyModifier, pawsW
     {
         psLaunchGUI->Quit();
     }
-    else if(ID == LAUNCH_BUTTON)
+    else if(ID == PLAY_BUTTON)
     {
         psLaunchGUI->ExecClient(true);
         psLaunchGUI->Quit();

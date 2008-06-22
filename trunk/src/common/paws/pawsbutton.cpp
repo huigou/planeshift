@@ -37,14 +37,12 @@
 pawsButton::pawsButton()
           : enabled(true), upTextOffsetX(0), upTextOffsetY(0), downTextOffsetX(0), downTextOffsetY(0)
 {
-
     down = false;
     notify = NULL;
     toggle = false;
     flash = 0;
     flashtype = FLASH_REGULAR;
-
-    keybinding    = 0;
+    keybinding = 0;
 }
 
 
@@ -100,6 +98,9 @@ bool pawsButton::Setup( iDocumentNode* node )
     csRef<iDocumentAttribute> notifyAttribute = node->GetAttribute( "notify" );
     if ( notifyAttribute )
         notify = PawsManager::GetSingleton().FindWidget(notifyAttribute->GetValue());
+
+    // Check for mouse over
+    changeOnMouseOver = node->GetAttributeValueAsBool("changeonmouseover", false);
 
     // Get the down button image name.
     csRef<iDocumentNode> buttonDownImage = node->GetNode( "buttondown" );
@@ -288,6 +289,26 @@ void pawsButton::Draw()
 		else
 			DrawWidgetText(buttonLabel, drawX + upTextOffsetX, drawY + upTextOffsetY);
     }
+}
+
+bool pawsButton::OnMouseEnter()
+{
+    if(changeOnMouseOver)
+    {
+        SetState(true, false);
+    }
+
+    return true;
+}
+
+bool pawsButton::OnMouseExit()
+{
+    if(changeOnMouseOver)
+    {
+        SetState(false, false);
+    }
+
+    return true;
 }
 
 bool pawsButton::OnMouseDown( int button, int modifiers, int x, int y )
