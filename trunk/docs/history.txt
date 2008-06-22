@@ -2,6 +2,7 @@
 - Fixed PawsManager::SetCurrentFocusedWidget to a) Work properly. b) Be sane.
 - Added 'alwaysontop' paws widget attribute.
 - Continued work on pslaunch.
+- Bumped CS revision to 30039.
 
 *** 2008-06-20 by Frank Barton
 - Patch for FS#1699 Faction Descriptions by Zwenze
