@@ -50,6 +50,9 @@ private:
     /* If true, then it's okay to perform the update. */
     bool performUpdate;
 
+    /* Set to true to perform an integrity check. */
+    bool checkIntegrity;
+
     /* Safety. */
     CS::Threading::Mutex mutex;
 
@@ -62,16 +65,19 @@ public:
         exitGUI = false;
         performUpdate = true;
         updateNeeded = true;
+        checkIntegrity = false;
         mutex.Initialize();
     }
 
     void SetExitGUI(bool v) { exitGUI = v; }
     void SetUpdateNeeded(bool v) { updateNeeded = v; }
     void SetPerformUpdate(bool v) { performUpdate = v; }
+    void SetCheckIntegrity(bool v) { checkIntegrity = v; }
 
     bool GetExitGUI() { return exitGUI; }
     bool GetUpdateNeeded() { return updateNeeded; }
     bool GetPerformUpdate() { return performUpdate; }
+    bool GetCheckIntegrity() { return checkIntegrity; }
 
     void ConsolePush(csString str)
     {

@@ -795,39 +795,22 @@ void PawsManager::SetCurrentFocusedWidget ( pawsWidget* widget )
         return;
     }
 
-    if ( modalWidget == NULL )
+    // Allow widget to be focused if it is a child of the modal widget, or if there is no modal widget.
+    if (!modalWidget || modalWidget->FindWidget( widget->GetName(), false ))
     {
-        if ( currentFocusedWidget != widget )
+        // Check if widget CAN be focused, if it can't then pass it to the parent
+        while(currentFocusedWidget != widget && widget != mainWidget && !widget->OnGainFocus())
         {
-            // Check if widget CAN be focused, if it can't, pass it to the parent
-            for (;!(widget->OnGainFocus()) && widget != mainWidget;widget = widget->GetParent())
-                if (widget == currentFocusedWidget) // Abort
-                    break;
-            if (currentFocusedWidget) currentFocusedWidget->OnLostFocus();
-
-        }   
-    
-        currentFocusedWidget = widget; 
-    }
-    else
-    {
-        // Allow widget to be focused if it is a child of the modal widget
-        pawsWidget* check = modalWidget->FindWidget( widget->GetName(), false );
-        if (check)
-        {
-            if ( currentFocusedWidget != widget )
-            {
-                // Check if widget CAN be focused, if it can't, pass it to the parent
-                for (;!(widget->OnGainFocus()) && widget != mainWidget;widget = widget->GetParent())
-                    if (widget == currentFocusedWidget) // Abort
-                        break;
-                widget->OnGainFocus();
-                if (currentFocusedWidget) currentFocusedWidget->OnLostFocus();
-            }
-
-            currentFocusedWidget = widget;
+            widget = widget->GetParent();
         }
     }
+
+    if(currentFocusedWidget)
+    {
+        currentFocusedWidget->OnLostFocus();
+    }
+    currentFocusedWidget = widget;
+    currentFocusedWidget->OnGainFocus();
 
     // Check if the focused widget or any of it's parents grab the keyboard input
     for (focusOverridesControls = false; widget != NULL && !focusOverridesControls; widget = widget->GetParent())

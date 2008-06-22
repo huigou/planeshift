@@ -373,7 +373,8 @@ bool pawsWidget::LoadAttributes( iDocumentNode* node )
         xmlbinding = atr->GetValue();
     }
 
-    
+    alwaysOnTop = node->GetAttributeValueAsBool( "alwaysontop", false );
+   
     // Get tool tip, if any
     atr = node->GetAttribute( "tooltip" );
     if (atr)
