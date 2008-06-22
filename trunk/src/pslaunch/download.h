@@ -21,11 +21,13 @@
 #ifndef __DOWNLOAD_H__
 #define __DOWNLOAD_H__
 
-#include "updaterconfig.h"
+#include <iutil/vfs.h>
 
 #include "../tools/libxpnet/nsSocket.h"
 #include "../tools/libxpnet/nsHTTPConn.h"
 
+class UpdaterEngine;
+class UpdaterConfig;
 
 class Downloader
 {

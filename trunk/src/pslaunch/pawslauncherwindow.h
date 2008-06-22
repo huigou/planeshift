@@ -21,9 +21,9 @@
 #define __PAWS_LAUNCHER_WINDOW_H__
 
 #include "pslaunch.h"
-#include "paws/pawswidget.h"
-#include "paws/pawstextbox.h"
-#include "paws/pawsyesnobox.h"
+
+class pawsWidget;
+class pawsYesNoBox;
 
 class pawsLauncherWindow : public pawsWidget
 {
@@ -73,6 +73,7 @@ private:
         UPDATER_OUTPUT = 121,
         UPDATER_YES_BUTTON,
         UPDATER_NO_BUTTON,
+        UPDATER_OK_BUTTON,
         SETTINGS_OK_BUTTON = 131,
         SETTINGS_CANCEL_BUTTON,
         UPDATE_MESSAGE_BOX = 141,

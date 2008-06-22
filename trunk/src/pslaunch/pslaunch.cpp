@@ -32,6 +32,7 @@
 #include "pslaunch.h"
 #include "pawslauncherwindow.h"
 
+#include "paws/pawsbutton.h"
 #include "paws/pawstextbox.h"
 #include "util/log.h"
 
@@ -183,7 +184,30 @@ bool psLauncherGUI::HandleEvent (iEvent &ev)
     if(infoShare->GetExitGUI())
         Quit();
 
-    if(!updateTold)
+    if(infoShare->GetCheckIntegrity())
+    {
+        pawsMessageTextBox* updateProgressOutput = (pawsMessageTextBox*)paws->FindWidget("UpdaterOutput");
+        while(!infoShare->ConsoleIsEmpty())
+        {
+            csString message = infoShare->ConsolePop();
+            if(message.FindLast("\n") != size_t(-1))
+            {
+                updateProgressOutput->AddMessage(message);
+            }
+            else
+            {
+                updateProgressOutput->AppendLastMessage(message);
+            }
+        }
+        if(infoShare->GetUpdateNeeded())
+        {
+            pawsButton* yes = (pawsButton*)paws->FindWidget("UpdaterYesButton");
+            pawsButton* no = (pawsButton*)paws->FindWidget("UpdaterNoButton");
+            yes->Show();
+            no->Show();
+        }
+    }
+    else if(!updateTold)
     {
         if(infoShare->GetUpdateNeeded())
         {
@@ -213,6 +237,10 @@ bool psLauncherGUI::HandleEvent (iEvent &ev)
             updateProgress->Hide();
             infoShare->SetPerformUpdate(false);
         }
+    }
+    else if(paws->FindWidget("LauncherUpdater")->IsVisible())
+    {
+        paws->FindWidget("UpdaterOkButton")->Show();
     }
 
     if (paws->HandleEvent(ev))
@@ -270,6 +298,26 @@ void psLauncherGUI::Quit()
 {
     queue->GetEventOutlet()->Broadcast(csevQuit (object_reg));
     infoShare->SetExitGUI(true);
+}
+
+void psLauncherGUI::PerformUpdate(bool update)
+{
+    if(update)
+    {
+        infoShare->SetPerformUpdate(true);
+    }
+    
+    infoShare->SetUpdateNeeded(false);
+}
+
+void psLauncherGUI::PerformRepair()
+{
+    infoShare->EmptyConsole();
+    if(infoShare->GetCheckIntegrity())
+    {
+        csSleep(500);
+    }
+    infoShare->SetCheckIntegrity(true);
 }
 
 int main(int argc, char* argv[])
@@ -341,6 +389,7 @@ int main(int argc, char* argv[])
                 if(infoShare->GetCheckIntegrity())
                 {
                     engine->CheckIntegrity();
+                    csSleep(1000);
                     infoShare->SetCheckIntegrity(false);
                 }
 

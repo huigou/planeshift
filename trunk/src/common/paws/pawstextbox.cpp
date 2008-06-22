@@ -461,59 +461,93 @@ bool pawsMessageTextBox::SelfPopulate( iDocumentNode *node)
 
 
 void pawsMessageTextBox::AddMessage( const char* data, int msgColour )
-{   
-    bool onBottom = false;
-    int oldTopLine = topLine;
-    
-    if ( topLine == (int)scrollBar->GetMaxValue() )
-        onBottom = true;                        
-    if ( (size_t)scrollBar->GetMaxValue() < maxLines )
-        onBottom = true;    
-    
-    if ( topLine < 0 )
-        topLine = 0;                 
-     
-    // Add it to the main message buffer.
-    MessageLine * msg = new MessageLine;
-    int colour;
-    
-    msg->text = data;
-    if ( msgColour != -1 ) 
-        colour = msgColour;
-    else 
-        colour = GetFontColour();
-    msg->colour = colour;
-            
-    messages.Push(msg);    
-        
+{
+    // Extract \n out of the data and print a newline for each.
+    csString message = data;
+    csArray<csString> cutMessages;
 
-    SplitMessage( data, colour );            
-                      
-    if (scrollBar)
+    int pos = (int)message.Length();
+    while(pos > 0)
     {
-        if ( adjusted.GetSize() > maxLines )
-            scrollBar->ShowBehind();
+        int last = (int)message.FindLast("\n");
+        if(last == (size_t)-1)
+        {
+            cutMessages.Push(message);
+            break;
+        }
+        if(last != (int)message.Length()-1)
+        {
+            cutMessages.Push(message.Slice(last+1, pos));
+            cutMessages.Push("");
+        }
+        message.Truncate(last);
+        pos = last;
+    }
+
+    while(!cutMessages.IsEmpty())
+    {
+        csString messageText = cutMessages.Pop();
+        bool onBottom = false;
+        int oldTopLine = topLine;
+
+        if ( topLine == (int)scrollBar->GetMaxValue() )
+            onBottom = true;                        
+        if ( (size_t)scrollBar->GetMaxValue() < maxLines )
+            onBottom = true;    
+
+        if ( topLine < 0 )
+            topLine = 0;                 
+
+        // Add it to the main message buffer.
+        MessageLine * msg = new MessageLine;
+        int colour;
+
+        msg->text = messageText;
+        if ( msgColour != -1 ) 
+            colour = msgColour;
+        else 
+            colour = GetFontColour();
+        msg->colour = colour;
+
+        messages.Push(msg);    
+
+
+        SplitMessage( messageText, colour );            
+
+        if (scrollBar)
+        {
+            if ( adjusted.GetSize() > maxLines )
+                scrollBar->ShowBehind();
+            else
+                scrollBar->Hide();
+        }
+
+
+        scrollBar->SetMaxValue( (float)(adjusted.GetSize()-maxLines) );
+
+        topLine = (int)adjusted.GetSize() - (int)maxLines;      
+        if ( topLine < 0 )
+            topLine = 0;                 
+
+
+        if ( !onBottom )            
+        {
+            topLine = oldTopLine;
+            scrollBar->SetCurrentValue( float(topLine) );
+        }
         else
-            scrollBar->Hide();
+        {
+            scrollBar->SetCurrentValue( float(topLine) );
+        }
     }
+}
 
-    
-    scrollBar->SetMaxValue( (float)(adjusted.GetSize()-maxLines) );
-        
-    topLine = (int)adjusted.GetSize() - (int)maxLines;      
-    if ( topLine < 0 )
-        topLine = 0;                 
-
-                        
-    if ( !onBottom )            
-    {
-        topLine = oldTopLine;
-        scrollBar->SetCurrentValue( (float)topLine );
-    }
-    else
-    {
-        scrollBar->SetCurrentValue( float(topLine) );
-    }            
+void pawsMessageTextBox::AppendLastMessage(const char* data)
+{
+    MessageLine* line = messages.Get(messages.GetSize()-1);
+    line->text.Append(data);
+    line = adjusted.Get(adjusted.GetSize()-1);
+    line->text.Append(data);
 }
 
 void pawsMessageTextBox::OnUpdateData(const char *dataname,PAWSData& value)

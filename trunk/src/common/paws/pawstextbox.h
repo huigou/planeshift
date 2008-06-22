@@ -158,6 +158,8 @@ public:
      */
     void AddMessage( const char* data, int colour = -1 );
 
+    void AppendLastMessage( const char* data );
+
     virtual void OnResize();
     virtual void Resize(); 
     virtual bool OnScroll( int direction, pawsScrollBar* widget );

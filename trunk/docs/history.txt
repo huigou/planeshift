@@ -1,9 +1,11 @@
 *** 2008-06-22 by Mike Gist
 - Fixed PawsManager::SetCurrentFocusedWidget to a) Work properly. b) Be sane.
 - Added 'alwaysontop' paws widget attribute.
-- Continued work on pslaunch.
+- Lots of work on pslaunch.
 - Bumped CS revision to 30039.
 - Added support for image changing on mouse over in pawsButton.
+- Enhanced pawsMessageTextBox to read \n as a linebreak and make one.
+- Added a method to pawsMessageTextBox to append data onto the last message.
 
 *** 2008-06-20 by Frank Barton
 - Patch for FS#1699 Faction Descriptions by Zwenze
