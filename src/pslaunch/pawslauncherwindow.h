@@ -37,9 +37,26 @@ private:
     pawsWidget* launcherSettings;
     pawsYesNoBox* updateAvailable;
     csRef<iConfigFile> configFile;
+    csRef<Thread> newsUpdater;
 
     static void HandleUpdateButton(bool choice, void *thisptr);
     void UpdateNews();
+
+    class NewsUpdater : public Runnable
+    {
+    public:
+        NewsUpdater(pawsLauncherWindow* plw)
+        {
+            lw = plw;
+        }
+
+        void Run()
+        {
+            lw->UpdateNews();
+        }
+    private:
+        pawsLauncherWindow* lw;
+    };
 
     enum WidgetID
     {
@@ -52,7 +69,7 @@ private:
         QUIT_BUTTON,
         REPAIR_BUTTON,
         SETTINGS_BUTTON,
-        LAUNCH_BUTTON,
+        PLAY_BUTTON,
         UPDATER_OUTPUT = 121,
         UPDATER_YES_BUTTON,
         UPDATER_NO_BUTTON,

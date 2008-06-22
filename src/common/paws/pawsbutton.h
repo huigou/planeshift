@@ -55,6 +55,8 @@ public:
 
     virtual void Draw();
 
+    virtual bool OnMouseEnter();
+    virtual bool OnMouseExit();
     virtual bool OnMouseDown( int button, int modifiers, int x, int y );
     virtual bool OnMouseUp( int button, int modifiers, int x, int y );
     virtual bool OnKeyDown( int keyCode, int key, int modifiers );
@@ -93,10 +95,10 @@ protected:
     /// Track to see if the button is down.
     bool down;
 
-    /// Image to draw when button is pressed.
+    /// Image to draw when button is pressed or when the mouse enters.
     csRef<iPAWSDrawable> pressedImage;
 
-    /// Image to draw when button is released.
+    /// Image to draw when button is released or when the mouse exits.
     csRef<iPAWSDrawable> releasedImage;
 
 	csRef<iPAWSDrawable> greyUpImage;
@@ -134,6 +136,9 @@ protected:
 	int upTextOffsetY;
 	int downTextOffsetX;
 	int downTextOffsetY;
+
+    /// Whether or not to change image on mouse enter/exit.
+    bool changeOnMouseOver;
 };
 
 //----------------------------------------------------------------------

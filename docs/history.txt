@@ -3,6 +3,7 @@
 - Added 'alwaysontop' paws widget attribute.
 - Continued work on pslaunch.
 - Bumped CS revision to 30039.
+- Added support for image changing on mouse over in pawsButton.
 
 *** 2008-06-20 by Frank Barton
 - Patch for FS#1699 Faction Descriptions by Zwenze
