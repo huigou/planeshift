@@ -33,6 +33,7 @@
 #include "pawslauncherwindow.h"
 
 #include "paws/pawstextbox.h"
+#include "util/log.h"
 
 CS_IMPLEMENT_APPLICATION
 
@@ -66,6 +67,8 @@ void psLauncherGUI::Run()
 
 bool psLauncherGUI::InitApp()
 {
+    pslog::Initialize(object_reg);
+
     vfs = csQueryRegistry<iVFS> (object_reg);
     if (!vfs)
     {
@@ -128,7 +131,7 @@ bool psLauncherGUI::InitApp()
 
     // paws initialization
     csString skinPath;
-    skinPath = configManager->GetStr("PlaneShift.GUI.Skin", "/planeshift/art/apps.zip");
+    skinPath = configManager->GetStr("PlaneShift.GUI.Skin", "/planeshift/art/pslaunch.zip");
     paws = new PawsManager(object_reg, skinPath);
     if (!paws)
     {
@@ -152,7 +155,7 @@ bool psLauncherGUI::InitApp()
         return false;
     }
 
-    pawsWidget* launcher = paws->FindWidget("launcher");
+    pawsWidget* launcher = paws->FindWidget("Launcher");
     launcher->SetBackgroundAlpha(0);
 
     paws->GetMouse()->ChangeImage("Standard Mouse Pointer");
@@ -286,6 +289,7 @@ int main(int argc, char* argv[])
         }
 
         // Request needed plugins for updater.
+        csInitializer::SetupConfigManager(object_reg, LAUNCHER_CONFIG_FILENAME);
         csInitializer::RequestPlugins(object_reg, CS_REQUEST_VFS, CS_REQUEST_END);
 
         // Convert args to an array of csString.
@@ -333,7 +337,13 @@ int main(int argc, char* argv[])
             // Wait for the gui to exit.
             while(guiThread->IsRunning())
             {
-                csSleep(1000);
+                csSleep(500);
+                if(infoShare->GetCheckIntegrity())
+                {
+                    engine->CheckIntegrity();
+                    infoShare->SetCheckIntegrity(false);
+                }
+
             }
 
             // Free updater.

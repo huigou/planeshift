@@ -1,74 +1,111 @@
 <widget_description>
+  <widget name="Launcher" factory="pawsLauncherWindow" visible="yes" savepositions="no" movable="no" resizable="no" resizetoscreen="yes" id="1">
 
-<widget name="launcher" factory="pawsLauncherWindow" visible="yes" savepositions="no" movable="no" resizable="no" resizetoscreen="yes" >
-        
-    <bgimage resource="SetupBackground" alpha="255" fade="false"/>
-
+    <bgimage resource="Launcher BG1" alpha="255" fade="false"/>
     <frame x="0" y="0" width="850" height="600" border="no"/>
     <title resource="Blue Title" text="PlaneShift Launcher" align="left"/>
     <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="12"/>
 
-    <!-- Server news -->
-    <widget name="ServerNews" factory="pawsMultiLineTextBox">
-        <frame x="280" y="350" width="400" height="120" />
+    <widget name="LauncherMain" factory="pawsWidget" visible="yes" savepositions="no" movable="no" resizable="no" resizetoscreen="yes" id="11">
+
+      <bgimage resource="Launcher Main" alpha="255" fade="false"/>
+      <frame x="0" y="0" width="850" height="600" border="no"/>
+
+      <!-- Server news -->
+      <widget name="NewsWindow" factory="pawsButton" id="111" alwaysontop="true">
+        <bgimage resource="News Window" alpha="255" fade="false"/>
+        <frame x="60" y="50" width="300" height="470" />
+        <widget name="ServerNews" factory="pawsMultiLineTextBox" id="1111">
+          <frame x="60" y="50" width="400" height="120" />
+        </widget>
+      </widget>
+
+      <!-- Quit button -->
+      <widget name="QuitButton" factory="pawsButton" id="112">
+        <bgimage resource="Quit Button" alpha="255" fade="false"/>
+        <frame x="58" y="515" width="95" height="50" border="no"/> 
+      </widget>
+
+      <!-- Repair button -->
+      <widget name="RepairButton" factory="pawsButton" id="113">
+        <bgimage resource="Repair Button" alpha="255" fade="false"/>
+        <frame x="200" y="515" width="95" height="50" border="no"/>
+      </widget>
+
+      <!-- Settings button --> 
+      <widget name="SettingsButton" factory="pawsButton" toggle="no" shadows="yes" id="114">
+        <frame x="340" y="545" width="95" height="20" border="no"/> 
+        <label text="Settings"/>
+      </widget>
+   
+      <!-- Launch Client button -->
+      <widget name="LaunchButton" factory="pawsButton" id="115">
+        <frame x="645" y="545" width="95" height="20" border="no"/>
+	  <label text="Play"/>
+      </widget>
+    </widget>
+
+    <!-- Update output window -->
+    <widget name="LauncherUpdater" factory="pawsWidget" visible="no" savepositions="no" movable="no" resizable="no" resizetoscreen="yes" id="12">
+      <bgimage resource="Launcher Other" alpha="255" fade="false"/>
+      <frame x="0" y="0" width="850" height="600" border="no"/>
+
+      <widget name="UpdaterOutput" factory="pawsMultiLineTextBox" id="121">
+        <frame x="50" y="50" width="700" height="313" />
+      </widget>
+
+      <!-- Yes button -->
+      <widget name="UpdaterYesButton" factory="pawsButton" id="122">
+        <bgimage resource="Yes Button" alpha="255" fade="false"/>
+        <frame x="250" y="517" width="95" height="50" border="no"/>
+      </widget>
+
+      <!-- No button -->
+      <widget name="UpdaterNoButton" factory="pawsButton" id="123">
+        <bgimage resource="No Button" alpha="255" fade="false"/>
+        <frame x="400" y="517" width="95" height="55" border="no"/> 
+      </widget>
+    </widget>
+
+    <!-- Settings window -->
+    <widget name="LauncherSettings" factory="pawsWidget" visible="no" savepositions="no" movable="no" resizable="no" resizetoscreen="yes" id="13">
+      <bgimage resource="Launcher Other" alpha="255" fade="false"/>
+      <frame x="0" y="0" width="850" height="600" border="no"/>
+
+      <!-- Ok button -->
+      <widget name="SettingsOkButton" factory="pawsButton" id="131">
+        <bgimage resource="Ok Button" alpha="255" fade="false"/>
+        <frame x="645" y="528" width="95" height="45" border="no"/>
+      </widget>
+
+      <!-- Cancel button -->
+      <widget name="SettingsCancelButton" factory="pawsButton" id="132">
+        <bgimage resource="Cancel Button" alpha="255" fade="false"/>
+        <frame x="58" y="515" width="95" height="60" border="no"/> 
+      </widget>
     </widget>
 
     <!-- Update available window -->
-    <widget name="UpdateAvailable" factory="pawsYesNoBox" visible="no" savepositions="no" movable="no" resizable="no" >        
-    <frame x="200" y="100" width="400" height="250" border="no" />
-    <bgimage resource="YesNo" alpha="0" />
+    <widget name="UpdateAvailable" factory="pawsYesNoBox" visible="no" savepositions="no" movable="no" resizable="no" id="14">        
+      <frame x="200" y="100" width="400" height="250" border="no" />
+      <bgimage resource="YesNo" alpha="0" />
 
-        <widget name="Message Box" factory="pawsMultiLineTextBox">
-            <frame x="100" y="50" width="250" height="68" border="no" />
-        </widget>
+      <widget name="Message Box" factory="pawsMultiLineTextBox" id="141">
+        <frame x="100" y="50" width="250" height="68" border="no" />
+      </widget>
 
-        <widget name="YesButton" factory="pawsButton" id="-10" key="Y" >
-            <frame x="120" y="180" width="80" height="40" border="no" />
-            <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" size="20" />
-            <label text="Yes" />
-        </widget>
+      <widget name="YesButton" factory="pawsButton" id="-10" key="Y" id="142">
+        <frame x="120" y="180" width="80" height="40" border="no" />
+        <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" size="20" />
+        <label text="Yes" />
+      </widget>
 
-        <widget name="NoButton" factory="pawsButton" id="-20" key="N" >
-            <frame x="220" y="180" width="50" height="40" border="no" />
-            <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" size="20" />
-            <label text="No" />
-        </widget>
+      <widget name="NoButton" factory="pawsButton" id="-20" key="N" id="143">
+        <frame x="220" y="180" width="50" height="40" border="no" />
+        <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" size="20" />
+        <label text="No" />
+      </widget>
     </widget>
 
-    <!-- Quit button -->
-    <widget name="Quit" factory="pawsButton">
-        <frame x="210" y="520" width="130" height="30" border="no"/> 
-         <buttonup resource="SetupButtonDown"/>
-         <buttondown resource="SetupButtonDown"/>
-	 <label text="Quit"/>
-    </widget>
-   
-       <!-- Launch Client button -->
-    <widget name="LaunchButton" factory="pawsButton">
-        <frame x="350" y="520" width="130" height="30" border="no"/>
-         <buttonup resource="SetupButtonDown"/>
-         <buttondown resource="SetupButtonDown"/>
-	 <label text="Launch Client"/>
-    </widget>
-
-   <!-- Settings button --> 
-    <widget name="SettingsButton" factory="pawsButton" toggle="no" shadows="yes">
-        <frame x="490" y="520" width="130" height="30" border="no"/> 
-         <buttonup resource="SetupButtonDown"/>
-         <buttondown resource="SetupButtonDown"/>
-	 <label text="Settings"/>
-    </widget>
-    
-</widget>
-
-<!-- Update output window -->
-<widget name="UpdateProgress" factory="pawsWidget" visible="no" savepositions="no" movable="no" resizable="no">
-    <bgimage resource="UpdaterBackground" alpha="255" fade="false"/>
-    <frame x="0" y="0" width="850" height="600" border="no"/>
-
-    <widget name="UpdaterOutput" factory="pawsMultiLineTextBox">
-        <frame x="50" y="50" width="700" height="313" />
-    </widget>
-</widget>
-
+  </widget>
 </widget_description>

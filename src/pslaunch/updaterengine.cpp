@@ -991,11 +991,18 @@ void UpdaterEngine::CheckIntegrity()
                     PrintOutput("%s\n", failed.Get(i)->GetAttributeValue("path"));
                 }
 
-                PrintOutput("\nDo you wish to download the correct copies of these files? (y/n)\n");
                 char c = getchar();
-                while(c != 'y' && c != 'n')
+                if(appName.Compare("psupdater"))
                 {
-                    c = getchar();
+                    PrintOutput("\nDo you wish to download the correct copies of these files? (y/n)\n");
+                    while(c != 'y' && c != 'n')
+                    {
+                        c = getchar();
+                    }
+                }
+                else
+                {
+                    c = 'y';
                 }
                 
                 if(c == 'y')

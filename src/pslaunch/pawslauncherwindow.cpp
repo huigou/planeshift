@@ -25,15 +25,33 @@
 
 using namespace std;
 
+pawsLauncherWindow::pawsLauncherWindow()
+{
+}
+
 bool pawsLauncherWindow::PostSetup()
 {
-    configFile = new csConfigFile(LAUNCHER_CONFIG_FILENAME, psLaunchGUI->GetVFS());
-    quit = (pawsButton*)FindWidget("Quit");
-    launchClient = (pawsButton*)FindWidget("LaunchButton");
-    settings = (pawsButton*)FindWidget("SettingsButton");
+    configFile.AttachNew(new csConfigFile(LAUNCHER_CONFIG_FILENAME, psLaunchGUI->GetVFS()));
+
+    launcherMain = FindWidget("LauncherMain");
+    launcherSettings = FindWidget("LauncherSettings");
+    launcherUpdater = FindWidget("LauncherUpdater");
+
+    launcherMain->OnGainFocus();
 
     // Get server news.
-    serverNews = (pawsMultiLineTextBox*)FindWidget("ServerNews");
+    UpdateNews();
+
+    // Setup update available window.
+    updateAvailable = (pawsYesNoBox*)FindWidget("UpdateAvailable");
+    updateAvailable->SetCallBack(HandleUpdateButton, updateAvailable, "An update to PlaneShift is available. Do you wish to update now?");
+
+    return true;
+}
+
+void pawsLauncherWindow::UpdateNews()
+{
+    pawsMultiLineTextBox* serverNews = (pawsMultiLineTextBox*)FindWidget("ServerNews");
     psLaunchGUI->GetDownloader()->DownloadFile(configFile->GetStr("Launcher.News.URL", ""), "servernews", true, false);
     
     ifstream newsFile("servernews", ifstream::in);
@@ -46,43 +64,65 @@ bool pawsLauncherWindow::PostSetup()
     serverNews->SetText(buffer.GetDataSafe());
     newsFile.close();
     psLaunchGUI->GetFileUtil()->RemoveFile("servernews");
-
-    // Setup update available window.
-    updateAvailable = (pawsYesNoBox*)FindWidget("UpdateAvailable");
-    updateAvailable->SetCallBack(HandleUpdateButton, updateAvailable, "An update to PlaneShift is available. Do you wish to update now?");
-
-    return true;
 }
 
 bool pawsLauncherWindow::OnButtonPressed(int mouseButton, int keyModifier, pawsWidget* widget)
 {
-    if (widget==(pawsWidget*)quit)
+    int ID = widget->GetID();
+
+    if(ID == QUIT_BUTTON)
     {
         psLaunchGUI->Quit();
     }
-    else if (widget==(pawsWidget*)launchClient)
+    else if(ID == LAUNCH_BUTTON)
     {
         psLaunchGUI->ExecClient(true);
         psLaunchGUI->Quit();
     }
-    else if (widget==(pawsWidget*)settings)
+    else if(ID == SETTINGS_BUTTON)
     {
-        // Show settings widgets.
+        launcherMain->Hide();
+        launcherSettings->Show();
+        launcherSettings->OnGainFocus();
+    }
+    else if(ID == REPAIR_BUTTON)
+    {
+        launcherMain->Hide();
+        launcherUpdater->Show();
+        launcherUpdater->OnGainFocus();
+        psLaunchGUI->PerformRepair();
+    }
+    else if(ID == UPDATER_YES_BUTTON)
+    {
+        launcherUpdater->Hide();
+        launcherMain->Show();
+        launcherMain->OnGainFocus();
+    }
+    else if(ID == UPDATER_NO_BUTTON)
+    {
+        launcherUpdater->Hide();
+        launcherMain->Show();
+        launcherMain->OnGainFocus();
+    }
+    else if(ID == SETTINGS_CANCEL_BUTTON)
+    {
+        launcherSettings->Hide();
+        launcherMain->Show();
+        launcherMain->OnGainFocus();
+    }
+    else if(ID == SETTINGS_OK_BUTTON)
+    {
+        launcherSettings->Hide();
+        launcherMain->Show();
+        launcherMain->OnGainFocus();
     }
 
     return true;
 }
 
-void pawsLauncherWindow::HandleUpdateButton(bool yes, void *updatewindow)
+void pawsLauncherWindow::HandleUpdateButton(bool choice, void *updatewindow)
 {
-    pawsYesNoBox* updateWindow = (pawsYesNoBox *)updatewindow;
-    if(yes)
-    {
-        psLaunchGUI->PerformUpdate(true);
-    }
-    else
-    {
-        psLaunchGUI->PerformUpdate(false);
-    }
+    pawsWidget* updateWindow = (pawsWidget*)updatewindow;
+    psLaunchGUI->PerformUpdate(choice);
     updateWindow->Hide();
 }

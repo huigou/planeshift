@@ -102,6 +102,8 @@ public:
 
     void PerformUpdate(bool update) { if(update) infoShare->SetPerformUpdate(true); else infoShare->SetUpdateNeeded(false); }
 
+    void PerformRepair() { infoShare->SetCheckIntegrity(true); }
+
     // Run thread.
     void Run();
     

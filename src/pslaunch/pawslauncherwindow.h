@@ -28,17 +28,40 @@
 class pawsLauncherWindow : public pawsWidget
 {
 public:
-    pawsLauncherWindow() {}
+    pawsLauncherWindow();
     bool OnButtonPressed(int mouseButton, int keyModifier, pawsWidget* widget );
     bool PostSetup();
 private:
-    pawsButton* quit;
-    pawsButton* launchClient;
-    pawsButton* settings;
-    pawsMultiLineTextBox* serverNews;
+    pawsWidget* launcherMain;
+    pawsWidget* launcherUpdater;
+    pawsWidget* launcherSettings;
     pawsYesNoBox* updateAvailable;
     csRef<iConfigFile> configFile;
-    static void HandleUpdateButton(bool yes, void *thisptr);
+
+    static void HandleUpdateButton(bool choice, void *thisptr);
+    void UpdateNews();
+
+    enum WidgetID
+    {
+        LAUNCHER = 1,
+        LAUNCHER_MAIN = 11,
+        LAUNCHER_UPDATER,
+        LAUNCHER_SETTINGS,
+        UPDATE_AVAILABLE,
+        SERVER_NEWS = 111,
+        QUIT_BUTTON,
+        REPAIR_BUTTON,
+        SETTINGS_BUTTON,
+        LAUNCH_BUTTON,
+        UPDATER_OUTPUT = 121,
+        UPDATER_YES_BUTTON,
+        UPDATER_NO_BUTTON,
+        SETTINGS_OK_BUTTON = 131,
+        SETTINGS_CANCEL_BUTTON,
+        UPDATE_MESSAGE_BOX = 141,
+        UPDATE_YES_BUTTON,
+        UPDATE_NO_BUTTON
+    };
 };
 
 CREATE_PAWS_FACTORY( pawsLauncherWindow );
