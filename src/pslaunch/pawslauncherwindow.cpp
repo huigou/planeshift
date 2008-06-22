@@ -20,6 +20,11 @@
 #include <psconfig.h>
 #include <fstream>
 
+#include "paws/pawsbutton.h"
+#include "paws/pawswidget.h"
+#include "paws/pawstextbox.h"
+#include "paws/pawsyesnobox.h"
+
 #include "globals.h"
 #include "pawslauncherwindow.h"
 
@@ -87,19 +92,37 @@ bool pawsLauncherWindow::OnButtonPressed(int mouseButton, int keyModifier, pawsW
     }
     else if(ID == REPAIR_BUTTON)
     {
+        psLaunchGUI->PerformRepair();
+        pawsMessageTextBox* output = (pawsMessageTextBox*)FindWidget("UpdaterOutput");
+        output->Clear();
         launcherMain->Hide();
         launcherUpdater->Show();
         launcherUpdater->OnGainFocus();
-        psLaunchGUI->PerformRepair();
     }
     else if(ID == UPDATER_YES_BUTTON)
     {
-        launcherUpdater->Hide();
-        launcherMain->Show();
-        launcherMain->OnGainFocus();
+        pawsButton* no = (pawsButton*)FindWidget("UpdaterNoButton");
+        no->Hide();
+        widget->Hide();
+        psLaunchGUI->PerformUpdate(true);
     }
     else if(ID == UPDATER_NO_BUTTON)
     {
+        pawsButton* yes = (pawsButton*)FindWidget("UpdaterYesButton");
+        yes->Hide();
+        widget->Hide();
+        launcherUpdater->Hide();
+        launcherMain->Show();
+        launcherMain->OnGainFocus();
+        psLaunchGUI->PerformUpdate(false);
+    }
+    else if(ID == UPDATER_OK_BUTTON)
+    {
+        pawsButton* no = (pawsButton*)FindWidget("UpdaterNoButton");
+        no->Hide();
+        pawsButton* yes = (pawsButton*)FindWidget("UpdaterYesButton");
+        yes->Hide();
+        widget->Hide();
         launcherUpdater->Hide();
         launcherMain->Show();
         launcherMain->OnGainFocus();

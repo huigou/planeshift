@@ -30,7 +30,12 @@
 #include <unistd.h>
 #endif
 
+#define CHECK_QUIT \
+    if(CheckQuit()) return; \
+
 iObjectRegistry* UpdaterEngine::object_reg = NULL;
+InfoShare * UpdaterEngine::infoShare = NULL;
+csRef<iFile> UpdaterEngine::log = NULL;
 
 UpdaterEngine::UpdaterEngine(const csArray<csString> args, iObjectRegistry* object_reg, const char* appName)
 {
@@ -868,6 +873,8 @@ void UpdaterEngine::GeneralUpdate()
 
 void UpdaterEngine::CheckIntegrity()
 {
+    PrintOutput("Beginning integrity check!\n");
+
     // Load current config data.
     csRef<iDocumentNode> root = GetRootNode(UPDATERINFO_FILENAME);
     if(!root)
@@ -943,6 +950,7 @@ void UpdaterEngine::CheckIntegrity()
             csRef<iDocumentNodeIterator> md5nodes = md5sums->GetNodes("md5sum");
             while(md5nodes->HasNext())
             {
+                CHECK_QUIT
                 csRef<iDocumentNode> node = md5nodes->Next();
 
                 csString platform = node->GetAttributeValue("platform");
@@ -991,10 +999,10 @@ void UpdaterEngine::CheckIntegrity()
                     PrintOutput("%s\n", failed.Get(i)->GetAttributeValue("path"));
                 }
 
-                char c = getchar();
+                char c = ' ';
+                PrintOutput("\nDo you wish to download the correct copies of these files? (y/n)\n");
                 if(appName.Compare("psupdater"))
                 {
-                    PrintOutput("\nDo you wish to download the correct copies of these files? (y/n)\n");
                     while(c != 'y' && c != 'n')
                     {
                         c = getchar();
@@ -1002,13 +1010,20 @@ void UpdaterEngine::CheckIntegrity()
                 }
                 else
                 {
-                    c = 'y';
+                    infoShare->SetUpdateNeeded(true);
+                    while(infoShare->GetUpdateNeeded())
+                    {
+                        csSleep(500);
+                    }
+                    c = infoShare->GetPerformUpdate() ? 'y' : 'n';
+                    infoShare->SetPerformUpdate(false);
                 }
                 
                 if(c == 'y')
                 {
                     for(size_t i=0; i<failedSize; i++)
                     {
+                        CHECK_QUIT
                         PrintOutput("\nDownloading file: %s\n", failed.Get(i)->GetAttributeValue("path"));
 
                         csString downloadpath("/this/");
@@ -1054,7 +1069,7 @@ void UpdaterEngine::CheckIntegrity()
                         fileUtil->RemoveFile(downloadpath + ".bak", true);
                         PrintOutput("Success!\n");
                     }
-                    PrintOutput("Done!\n");
+                    PrintOutput("\nDone!\n");
                 }
             }
         }

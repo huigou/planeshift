@@ -100,9 +100,9 @@ public:
 
     FileUtil* GetFileUtil() { return fileUtil; }
 
-    void PerformUpdate(bool update) { if(update) infoShare->SetPerformUpdate(true); else infoShare->SetUpdateNeeded(false); }
+    void PerformUpdate(bool update);
 
-    void PerformRepair() { infoShare->SetCheckIntegrity(true); }
+    void PerformRepair();
 
     // Run thread.
     void Run();

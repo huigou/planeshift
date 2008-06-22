@@ -22,6 +22,8 @@
 #include <csutil/randomgen.h>
 
 #include "download.h"
+#include "updaterconfig.h"
+#include "updaterengine.h"
 
 static int ProgressCallback(int progress, int finalSize)
 {
@@ -35,33 +37,33 @@ static int ProgressCallback(int progress, int finalSize)
     {
         if(finalSize > 102400)
         {
-            printf("0%% ");
+            UpdaterEngine::PrintOutput("\n0%% ");
             lastSize = progress;
         }
     }
     else if(finalSize/progress < 4 && lastSize < finalSize/4)
     {
-        printf(" 25%% ");
+        UpdaterEngine::PrintOutput(" 25%% ");
         lastSize = progress;
     }
     else if(finalSize/progress < 2 && lastSize < finalSize/2)
     {
-        printf(" 50%% ");
+        UpdaterEngine::PrintOutput(" 50%% ");
         lastSize = progress;
     }
     else if((float)finalSize/(float)progress < 1.34 && (float)lastSize < (float)finalSize/1.34)
     {
-        printf(" 75%% ");
+        UpdaterEngine::PrintOutput(" 75%% ");
         lastSize = progress;
     }
     else if(progress == finalSize)
     {
-        printf(" 100%%\n");
+        UpdaterEngine::PrintOutput(" 100%%\n");
         lastSize = 0;
     }
     else if((progress-lastSize) > (finalSize/20) && progress < finalSize - (finalSize/20))
     {
-        printf("-");
+        UpdaterEngine::PrintOutput("-");
         lastSize = progress;
     }
 

@@ -4,7 +4,7 @@
     <bgimage resource="Launcher BG1" alpha="255" fade="false"/>
     <frame x="0" y="0" width="850" height="600" border="no"/>
     <title resource="Blue Title" text="PlaneShift Launcher" align="left"/>
-    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="12"/>
+    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="10"/>
 
     <widget name="LauncherMain" factory="pawsWidget" visible="yes" savepositions="no" movable="no" resizable="no" resizetoscreen="yes" id="11">
 
@@ -54,22 +54,29 @@
       <bgimage resource="Launcher Other" alpha="255" fade="false"/>
       <frame x="0" y="0" width="850" height="600" border="no"/>
 
-      <widget name="UpdaterOutput" factory="pawsMultiLineTextBox" id="121">
-        <frame x="50" y="50" width="700" height="313" />
+      <widget name="UpdaterOutput" factory="pawsMessageTextBox" id="121" alwaysontop="true">
+        <frame x="90" y="205" width="670" height="290" />
       </widget>
 
       <!-- Yes button -->
-      <widget name="UpdaterYesButton" factory="pawsButton" id="122" changeonmouseover="true">
+      <widget name="UpdaterYesButton" factory="pawsButton" id="122" changeonmouseover="true" visible="no">
         <buttonup resource="Yes Button"/>
         <buttondown resource="Yes Button MO"/>
         <frame x="250" y="517" width="95" height="50" border="no"/>
       </widget>
 
       <!-- No button -->
-      <widget name="UpdaterNoButton" factory="pawsButton" id="123" changeonmouseover="true">
+      <widget name="UpdaterNoButton" factory="pawsButton" id="123" changeonmouseover="true" visible="no">
         <buttonup resource="No Button"/>
         <buttondown resource="No Button MO"/>
         <frame x="400" y="517" width="95" height="55" border="no"/> 
+      </widget>
+
+      <!-- Ok button -->
+      <widget name="UpdaterOkButton" factory="pawsButton" id="124" changeonmouseover="true" visible="no">
+        <buttonup resource="Ok Button"/>
+        <buttondown resource="Ok Button MO"/>
+        <frame x="645" y="528" width="95" height="45" border="no"/>
       </widget>
     </widget>
 

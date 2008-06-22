@@ -31,6 +31,7 @@
 
 #include "download.h"
 #include "util/fileutil.h"
+#include "util/singleton.h"
 
 /* To be incremented every time we want to make an update. */
 #define UPDATER_VERSION 5
@@ -63,8 +64,8 @@ public:
     InfoShare()
     {
         exitGUI = false;
-        performUpdate = true;
-        updateNeeded = true;
+        performUpdate = false;
+        updateNeeded = false;
         checkIntegrity = false;
         mutex.Initialize();
     }
@@ -78,6 +79,13 @@ public:
     bool GetUpdateNeeded() { return updateNeeded; }
     bool GetPerformUpdate() { return performUpdate; }
     bool GetCheckIntegrity() { return checkIntegrity; }
+
+    void EmptyConsole()
+    {
+        mutex.Lock();
+        consoleOut.DeleteAll();
+        mutex.Unlock();
+    }
 
     void ConsolePush(csString str)
     {
@@ -101,7 +109,7 @@ public:
     }
 };
 
-class UpdaterEngine
+class UpdaterEngine : public Singleton<UpdaterEngine>
 {
 private:
     static iObjectRegistry* object_reg;
@@ -125,13 +133,13 @@ private:
     csRef<iDocument> configdoc;
 
     /* Info shared with other threads. */
-    InfoShare *infoShare;
+    static InfoShare *infoShare;
 
     /* True if we're using a GUI. */
     bool hasGUI;
 
     /* Output console prints to file. */
-    csRef<iFile> log;
+    static csRef<iFile> log;
 
     /* Function shared by ctors */
     void Init(const csArray<csString> args, iObjectRegistry* _object_reg, const char* _appName,
@@ -173,8 +181,11 @@ public:
     /* Check the integrity of the install */
     void CheckIntegrity();
 
+    /* Check if a quit event has been triggered. */
+    inline bool CheckQuit() { return infoShare->GetExitGUI(); }
+
     /* Print to console and save to array for GUI output. */
-    void PrintOutput(const char* string, ...);
+    static void PrintOutput(const char* string, ...);
 };
 
 #endif // __UPDATERENGINE_H__
