@@ -18,8 +18,8 @@
     var csWinLibsVersionStab = "1.3_003"; // cs win32 libs version.
     var csWinLibsVersion = "1.3_004"; // cs win32 libs version.
     //Update date and author, to be changed everytime and updates occurred
-    var UpdateDate = "22 June 2008"; //Date when the update occurred
-    var UpdateAuthor = "Mike Gist"; //Author of the update
+    var UpdateDate = "24 June 2008"; //Date when the update occurred
+    var UpdateAuthor = "Caarrie"; //Author of the update
 -->
 </script>
 
@@ -439,9 +439,9 @@ function Initialize()
 Unzipping the tar.bz2 archives needs to be done through the MSYS
 command-line by changing directory with the cd command to where you
 downloaded the files. Then, run the following commands:
-<i class="command">tar -xjf msys-autoconf-2.59.tar.bz2 -C /c/msys/1.0<br>
+<div class="commandBox">tar -xjf msys-autoconf-2.59.tar.bz2 -C /c/msys/1.0<br>
 tar -xjf msys-automake-1.8.2.tar.bz2 -C /c/msys/1.0<br>
-tar -xzf binutils-2.16.91-20060119-1.tar.gz -C /c/MinGW</i><br>
+tar -xzf binutils-2.16.91-20060119-1.tar.gz -C /c/MinGW</div><br>
            This allows MSYS to setup the MinGW paths correctly.<br>
            The installation program should also add an icon for MSYS to your start menu. <br>
            Click the "MSYS" icon and it should open up a shell window. Type "exit" to close the shell window again.<br><br>
@@ -655,13 +655,13 @@ continue as indicated.<br></p>
 After that we need to refresh our sources.list file like so:<br>
     <p><i class="command"># sudo apt-get update</i></p>
     Once that is complete, we can fetch all the required packages using the following command:<br>
-    <p><i class="commandBox"># sudo apt-get --assume-yes install libjpeg62-dev x11proto-gl-dev autoconf jam bison flex-old automake1.9 libmng-dev libmikmod2-dev libogg-dev libvorbis-dev zlib1g-dev libpng12-dev build-essential libtool libglu1-mesa-dev xserver-xorg-dev libxt-dev libopenal0a libopenal-dev subversion zlibc libttf2 libfreetype6-dev libfreetype6 libasound2-dev alsa-oss libxxf86vm-dev libxext-dev x11proto-xext-dev
-</i></p>
+    <p><div class="commandBox"># sudo apt-get --assume-yes install libjpeg62-dev x11proto-gl-dev autoconf jam bison flex-old automake1.9 libmng-dev libmikmod2-dev libogg-dev libvorbis-dev zlib1g-dev libpng12-dev build-essential libtool libglu1-mesa-dev xserver-xorg-dev libxt-dev libopenal0a libopenal-dev subversion zlibc libttf2 libfreetype6-dev libfreetype6 libasound2-dev alsa-oss libxxf86vm-dev libxext-dev x11proto-xext-dev
+</div></p>
 <p>If you are on Gutsy use this command</p>
-<p><i class="commandBox"># sudo apt-get --assume-yes install libjpeg62-dev x11proto-gl-dev autoconf jam bison flex-old automake1.9 libmng-dev libmikmod2-dev libogg-dev libvorbis-dev zlib1g-dev libpng12-dev build-essential libtool libglu1-mesa-dev libglu1-xorg-dev xserver-xorg-dev libxt-dev libopenal0a libopenal-dev subversion zlibc libttf2 libfreetype6-dev libfreetype6 libasound2-dev alsa-oss libxxf86vm-dev libxext-dev x11proto-xext-dev
-</i></p>
+<p><div class="commandBox"># sudo apt-get --assume-yes install libjpeg62-dev x11proto-gl-dev autoconf jam bison flex-old automake1.9 libmng-dev libmikmod2-dev libogg-dev libvorbis-dev zlib1g-dev libpng12-dev build-essential libtool libglu1-mesa-dev libglu1-xorg-dev xserver-xorg-dev libxt-dev libopenal0a libopenal-dev subversion zlibc libttf2 libfreetype6-dev libfreetype6 libasound2-dev alsa-oss libxxf86vm-dev libxext-dev x11proto-xext-dev
+</div></p>
 <p>If you are on Hardy use this command></p>
-<p><i class="commandBox"># sudo apt-get --assume-yes install libjpeg62-dev x11proto-gl-dev autoconf jam bison flex-old automake1.9 libcurl4-openssl-dev libmng-dev libmikmod2-dev libogg-dev libvorbis-dev zlib1g-dev libpng12-dev build-essential libtool libglu1-mesa-dev libglu1-xorg-dev xserver-xorg-dev libxt-dev libopenal0a libopenal-dev subversion zlibc libttf2 libfreetype6-dev libfreetype6 libasound2-dev alsa-oss libxxf86vm-dev libxext-dev x11proto-xext-dev</i></p>
+<p><div class="commandBox"># sudo apt-get --assume-yes install libjpeg62-dev x11proto-gl-dev autoconf jam bison flex-old automake1.9 libcurl4-openssl-dev libmng-dev libmikmod2-dev libogg-dev libvorbis-dev zlib1g-dev libpng12-dev build-essential libtool libglu1-mesa-dev libglu1-xorg-dev xserver-xorg-dev libxt-dev libopenal0a libopenal-dev subversion zlibc libttf2 libfreetype6-dev libfreetype6 libasound2-dev alsa-oss libxxf86vm-dev libxext-dev x11proto-xext-dev</div></p>
 
 <strong> ALL of these above commands are assuming you do not need a server if you do please follow directions in the <a href="#mysql">mysql</a> section for installing other required packages</strong>
 </div>
@@ -722,10 +722,10 @@ they both have the same package installed. <br />
 Open a terminal window and set the required environment variables for fink by 
 issuing the following command:
 <br />
-<i class="commandBox" ><pre># <code>/sw/bin/pathsetup.sh</code></pre>
-</i>
-<i class="commandBox" ><pre># <code>source /sw/bin/init.sh</code></pre>
-</i>
+<div class="commandBox" ><pre># <code>/sw/bin/pathsetup.sh</code></pre>
+</div>
+<div class="commandBox" ><pre># <code>source /sw/bin/init.sh</code></pre>
+</div>
 <br />
 <br />
 Configure fink (Optional)
@@ -733,11 +733,11 @@ We are going to configure fink to download and install packages from source only
 This step is optional, but has a better success rate for installing the fink 
 dependencies.
 <br />
-<i class="commandBox" ><pre># <code>fink configure</code></pre>
-</i>
+<div class="commandBox" ><pre># <code>fink configure</code></pre>
+</div>
 <br />
 Provided below are the questions and the standard recommended answers for the configuration:
-<i class="commandBox" ><pre>
+<div class="commandBox" ><pre>
 Password:
 OK, I'll ask you some questions and update the configuration file in '/sw/etc/fink.conf'.
 In what additional directory should Fink look for downloaded tarballs? [] 
@@ -769,7 +769,7 @@ Mirror selection
 All mirrors are set. Do you want to change them? [y/N] n
  
 Writing updated configuration to '/sw/etc/fink.conf'...
-</pre></i>
+</pre></div>
 <br />
 
 You need to install Ftjam which you can get from <a href="http://sourceforge.net/project/showfiles.php?group_id=3157">here.</a> You also need to install the following packages from Fink <br />
@@ -793,8 +793,8 @@ here.</a>
 	      <i class="command">WARNING: could not load plugin 'planeshift.database.mysql'</i> make sure you have  the dev package installed, if it was not installed, ./autogen.sh, ./configure, and recompile the server again, according to the documentation below.</p>
 		</div>
             <div class="Linux-Ubuntu">
-            <p>for Feisty via apt-get: <i class="commandBox"># sudo apt-get --assume-yes install libdbd-mysql-perl libdbi-perl libnet-daemon-perl libplrpc-perl mysql-client-5.0 mysql-server-5.0 libmysqlclient15-dev libmysqlclient15off</i></p>
-	    <p>for Gutsy via apt-get: <i class="commandBox"># sudo apt-get --assume-yes install libdbd-mysql-perl libdbi-perl libnet-daemon-perl libplrpc-perl mysql-client-5.0 mysql-server-5.0 libmysqlclient15-dev libmysqlclient15off </i></p> 
+            <p>for Feisty via apt-get: <div class="commandBox"># sudo apt-get --assume-yes install libdbd-mysql-perl libdbi-perl libnet-daemon-perl libplrpc-perl mysql-client-5.0 mysql-server-5.0 libmysqlclient15-dev libmysqlclient15off</div></p>
+	    <p>for Gutsy via apt-get: <div class="commandBox"># sudo apt-get --assume-yes install libdbd-mysql-perl libdbi-perl libnet-daemon-perl libplrpc-perl mysql-client-5.0 mysql-server-5.0 libmysqlclient15-dev libmysqlclient15off </div></p> 
 
 		<p>If after building if you see that mysql was not found when running the server and you get the following error:
 		<i class="command">WARNING: could not load plugin 'planeshift.database.mysql'</i> make sure you have libmysqlclient15-dev installed, if it was not installed, ./autogen.sh, ./configure, and recompile the server again, according to the documentation below.</p>
@@ -1103,79 +1103,79 @@ If you update a repository, you will need to recompile that repository and each 
         by using the --prefix option when we configure it.</p>
 	<div class="linux-Generic" >
 	Using a text editor open configure.in and remove the line 
-	<p><i class="commandBox">
-        AM_USE_UNITTESTCPP</i></p>
+	<p><div class="commandBox">
+        AM_USE_UNITTESTCPP</div></p>
         <p>Or you can use the following sed command</p>
-        <p> <i class="commandBox" >
+        <p> <div class="commandBox" >
   mv configure.in configure-old.in<br />
-sed 's/AM_USE_UNITTESTCPP/# AM_USE_UNITTESTCPP/' configure-old.in > configure.in</i></p>
+sed 's/AM_USE_UNITTESTCPP/# AM_USE_UNITTESTCPP/' configure-old.in > configure.in</div></p>
 <p> Then you can build cal3d </p>
-        <p><i class="commandBox">
+        <p><div class="commandBox">
             /home/user/development/cal3d$ autoreconf --install --force<br>
             /home/user/development/cal3d$ ./configure --prefix=/home/user/development/cal3d<br>
             /home/user/development/cal3d$ make<br>
             /home/user/development/cal3d$ make install
-        </i></p></div>
+        </div></p></div>
 	<div class="linux-Debian" >
 	Using a text editor open configure.in and remove the line 
-	<p><i class="commandBox">
-        AM_USE_UNITTESTCPP</i></p>
+	<p><div class="commandBox">
+        AM_USE_UNITTESTCPP</div></p>
         <p>Or you can use the following sed command</p>
-        <p> <i class="commandBox" >
+        <p> <div class="commandBox" >
   mv configure.in configure-old.in<br />
-sed 's/AM_USE_UNITTESTCPP/# AM_USE_UNITTESTCPP/' configure-old.in > configure.in</i></p>
+sed 's/AM_USE_UNITTESTCPP/# AM_USE_UNITTESTCPP/' configure-old.in > configure.in</div></p>
 <p> Then you can build cal3d </p>
-        <p><i class="commandBox">
+        <p><div class="commandBox">
             /home/user/development/cal3d$ autoreconf --install --force<br>
             /home/user/development/cal3d$ ./configure --prefix=/home/user/development/cal3d<br>
             /home/user/development/cal3d$ make<br>
             /home/user/development/cal3d$ make install
-        </i></p></div>
+        </div></p></div>
 	<div class="linux-Gentoo" >
 	Using a text editor open configure.in and remove the line 
-	<p><i class="commandBox">
-      AM_USE_UNITTESTCPP</i></p>
+	<p><div class="commandBox">
+      AM_USE_UNITTESTCPP</div></p>
         <p>Or you can use the following sed command</p>
-        <p> <i class="commandBox" >
+        <p> <div class="commandBox" >
   mv configure.in configure-old.in<br />
-sed 's/AM_USE_UNITTESTCPP/# AM_USE_UNITTESTCPP/' configure-old.in > configure.in</i></p>
+sed 's/AM_USE_UNITTESTCPP/# AM_USE_UNITTESTCPP/' configure-old.in > configure.in</div></p>
 <p> Then you can build cal3d </p>
-        <p><i class="commandBox">
+        <p><div class="commandBox">
             /home/user/development/cal3d$ autoreconf --install --force<br>
             /home/user/development/cal3d$ ./configure --prefix=/home/user/development/cal3d<br>
             /home/user/development/cal3d$ make<br>
             /home/user/development/cal3d$ make install
-        </i></p></div>
+        </div></p></div>
 	<div class="linux-Slackware" >
 	Using a text editor open configure.in and remove the line 
-	<p><i class="commandBox">
-        AM_USE_UNITTESTCPP</i></p>
+	<p><div class="commandBox">
+        AM_USE_UNITTESTCPP</div></p>
         <p>Or you can use the following sed command</p>
-        <p> <i class="commandBox" >
+        <p> <div class="commandBox" >
   mv configure.in configure-old.in<br />
-sed 's/AM_USE_UNITTESTCPP/# AM_USE_UNITTESTCPP/' configure-old.in > configure.in</i></p>
+sed 's/AM_USE_UNITTESTCPP/# AM_USE_UNITTESTCPP/' configure-old.in > configure.in</div></p>
 <p> Then you can build cal3d </p>
-        <p><i class="commandBox">
+        <p><div class="commandBox">
             /home/user/development/cal3d$ autoreconf --install --force<br>
             /home/user/development/cal3d$ ./configure --prefix=/home/user/development/cal3d<br>
             /home/user/development/cal3d$ make<br>
             /home/user/development/cal3d$ make install
-        </i></p></div>
+        </div></p></div>
 	<div class="linux-Ubuntu" >
 	Using a text editor open configure.in and remove the line 
-	<p><i class="commandBox">
-        AM_USE_UNITTESTCPP</i></p>
+	<p><div class="commandBox">
+        AM_USE_UNITTESTCPP</div></p>
         <p>Or you can use the following sed command</p>
-        <p> <i class="commandBox" >
+        <p> <div class="commandBox" >
   mv configure.in configure-old.in<br />
-sed 's/AM_USE_UNITTESTCPP/# AM_USE_UNITTESTCPP/' configure-old.in > configure.in</i></p>
+sed 's/AM_USE_UNITTESTCPP/# AM_USE_UNITTESTCPP/' configure-old.in > configure.in</div></p>
 <p> Then you can build cal3d </p>
-        <p><i class="commandBox">
+        <p><div class="commandBox">
             /home/user/development/cal3d$ autoreconf --install --force<br>
             /home/user/development/cal3d$ ./configure --prefix=/home/user/development/cal3d<br>
             /home/user/development/cal3d$ make<br>
             /home/user/development/cal3d$ make install
-        </i></p></div>
+        </div></p></div>
         Because we did not install cal3d we need to make sure other things can find it. This is done using the LD_LIBRARY_PATH:
         <p><i class="command">export LD_LIBRARY_PATH=/home/user/development/cal3d/src/cal3d/.libs/:$LD_LIBRARY_PATH</i></p>
 </div></div>
@@ -1184,50 +1184,50 @@ sed 's/AM_USE_UNITTESTCPP/# AM_USE_UNITTESTCPP/' configure-old.in > configure.in
         <p>Now we can build it and use the configure line to tell it where we installed the cal3d libraries.
         To do this, use the prefix line that was used for Cal3d above.</p></div>
 	<div class="Linux-Generic" >           
-           <div class="User"><i class="commandBox">
-            /home/user/development/cs$ ./configure --without-java --without-perl --without-python --without-lib3ds --with-cal3d=/home/user/development/cal3d</i></div><br>
-           <div class="Developer"><i class="commandBox">
-            /home/user/development/cs$ ./configure --enable-debug --without-java --without-perl --without-python --without-lib3ds --with-cal3d=/home/user/development/cal3d</i></div><br>
+           <div class="User"><div class="commandBox">
+            /home/user/development/cs$ ./configure --without-java --without-perl --without-python --without-lib3ds --with-cal3d=/home/user/development/cal3d</div></div><br>
+           <div class="Developer"><div class="commandBox">
+            /home/user/development/cs$ ./configure --enable-debug --without-java --without-perl --without-python --without-lib3ds --with-cal3d=/home/user/development/cal3d</div></div><br>
            <div class="Normal"><i class="command">
             /home/user/development/cs$ jam -aq libs plugins cs-config walktest</i></div><br>
            <div class="Static"><i class="command">
             /home/user/development/cs$ jam -aq libs staticplugins cs-config walktest_static</i><br>
            </div></div> 
 	<div class="Linux-Debian" >           
-            <div class="User"><i class="commandBox">
-            /home/user/development/cs$ ./configure --without-java --without-perl --without-python --without-lib3ds --with-cal3d=/home/user/development/cal3d</i></div><br>
-           <div class="Developer"><i class="commandBox">
-            /home/user/development/cs$ ./configure --enable-debug --without-java --without-perl --without-python --without-lib3ds --with-cal3d=/home/user/development/cal3d</i></div><br>
+            <div class="User"><div class="commandBox">
+            /home/user/development/cs$ ./configure --without-java --without-perl --without-python --without-lib3ds --with-cal3d=/home/user/development/cal3d</div></div><br>
+           <div class="Developer"><div class="commandBox">
+            /home/user/development/cs$ ./configure --enable-debug --without-java --without-perl --without-python --without-lib3ds --with-cal3d=/home/user/development/cal3d</div></div><br>
            <div class="Normal"><i class="command">
             /home/user/development/cs$ jam -aq libs plugins cs-config walktest</i></div><br>
            <div class="Static"><i class="command">
             /home/user/development/cs$ jam -aq libs staticplugins cs-config walktest_static</i><br>
            </div></div> 
 	<div class="Linux-Gentoo" >           
-            <div class="User"><i class="commandBox">
-            /home/user/development/cs$./configure --without-java --without-perl --without-python --without-lib3ds --with-cal3d=/home/user/development/cal3d</i></div><br>
-           <div class="Developer"><i class="commandBox">
-            /home/user/development/cs$./configure --enable-debug --without-java --without-perl --without-python --without-lib3ds --with-cal3d=/home/user/development/cal3d</i></div><br>
-           <div class="Normal"><i class="commandBox">
-            /home/user/development/cs$ jam -aq libs plugins cs-config walktest</i></div><br>
+            <div class="User"><div class="commandBox">
+            /home/user/development/cs$./configure --without-java --without-perl --without-python --without-lib3ds --with-cal3d=/home/user/development/cal3d</div></div><br>
+           <div class="Developer"><div class="commandBox">
+            /home/user/development/cs$./configure --enable-debug --without-java --without-perl --without-python --without-lib3ds --with-cal3d=/home/user/development/cal3d</div></div><br>
+           <div class="Normal"><div class="commandBox">
+            /home/user/development/cs$ jam -aq libs plugins cs-config walktest</div></div><br>
            <div class="Static"><i class="command">
             /home/user/development/cs$ jam -aq libs staticplugins cs-config walktest_static</i><br>
            </div></div> 
 	<div class="Linux-Slackware" >           
-            <div class="User"><i class="commandBox">
-            /home/user/development/cs$./configure --without-java --without-perl --without-python --without-lib3ds --with-cal3d=/home/user/development/cal3d</i></div><br>
-           <div class="Developer"><i class="commandBox">
-            /home/user/development/cs$./configure --enable-debug --without-java --without-perl --without-python --without-lib3ds --with-cal3d=/home/user/development/cal3d</i></div><br>
+            <div class="User"><div class="commandBox">
+            /home/user/development/cs$./configure --without-java --without-perl --without-python --without-lib3ds --with-cal3d=/home/user/development/cal3d</div></div><br>
+           <div class="Developer"><div class="commandBox">
+            /home/user/development/cs$./configure --enable-debug --without-java --without-perl --without-python --without-lib3ds --with-cal3d=/home/user/development/cal3d</div></div><br>
            <div class="Normal"><i class="command">
             /home/user/development/cs$ jam -aq libs plugins cs-config walktest</i></div><br>
            <div class="Static"><i class="command">
             /home/user/development/cs$ jam -aq libs staticplugins cs-config walktest_static</i><br>
            </div></div> 
         <div class="Linux-Ubuntu">
-	 <div class="User"><i class="commandBox">
-            /home/user/development/cs$./configure --without-java --without-perl --without-python --without-lib3ds --with-cal3d=/home/user/development/cal3d</i></div><br>
-           <div class="Developer"><i class="commandBox">
-            /home/user/development/cs$./configure --enable-debug --without-java --without-perl --without-python --without-lib3ds --with-cal3d=/home/user/development/cal3d</i></div><br>
+	 <div class="User"><div class="commandBox">
+            /home/user/development/cs$./configure --without-java --without-perl --without-python --without-lib3ds --with-cal3d=/home/user/development/cal3d</div></div><br>
+           <div class="Developer"><div class="commandBox">
+            /home/user/development/cs$./configure --enable-debug --without-java --without-perl --without-python --without-lib3ds --with-cal3d=/home/user/development/cal3d</div></div><br>
 	  <div class="Normal"><i class="command">
             /home/user/development/cs$ jam -aq libs plugins cs-config walktest</i></div><br>
            <div class="Static"><i class="command">
@@ -1252,10 +1252,10 @@ We should export the CRYSTAL environment variable so applications outside the Cr
 	         </div></p>	 
 	 	 
 We should export the CEL environment variable so applications outside the CEL tree know where to find the .so's.	 
-	         <p><i class="commandBox">export CEL=/home/user/development/cel<br />export CSCONFPATH=/home/user/development/cel</i></p>	 
+	         <p><div class="commandBox">export CEL=/home/user/development/cel<br />export CSCONFPATH=/home/user/development/cel</div></p>	 
 	         
 <h3>PlaneShift</h3>
-        <p><i class="commandBox">
+        <p><div class="commandBox">
             /home/user/development/planeshift$ ./autogen.sh<br>
            <div class="User">
             /home/user/development/planeshift$ ./configure --with-cal3d=/home/user/development/cal3d<br>
@@ -1269,7 +1269,7 @@ We should export the CEL environment variable so applications outside the CEL tr
            <div class="Static">
             /home/user/development/planeshift$ jam -aq client_static
            </div>
-</i></p>
+</div></p>
         If you also want to build the server, do this as well:
         <div class="Normal">
            <p><i class="command">/home/user/development/planeshift$ jam -aq server</i></p>
@@ -1279,11 +1279,11 @@ We should export the CEL environment variable so applications outside the CEL tr
         </div>
         If you want to build the extra tools, just do "jam -a".
 <p> Before launching any PS app you need to tell PS where to find CS and CEL as we did not install them globally</p>
-       <i class="commandBox">export LD_LIBRARY_PATH="/home/user/development/cal3d/src/cal3d/.libs/:/home/user/development/cs/:/home/user/development/cel:"$LD_LIBRARY_PATH</i>
+       <div class="commandBox">export LD_LIBRARY_PATH="/home/user/development/cal3d/src/cal3d/.libs/:/home/user/development/cs/:/home/user/development/cel:"$LD_LIBRARY_PATH</div>
        <p>If your psclient has no skin you are used to seeing launch pssetup after you have copied your art over and select a new skin</p>
        <p>If you wish for your psclient to not use the same user files as your other build/install you may run ps with the following command<br />
-       <i class="commandBox">
-/home/user/development/planeshift$ ./psclient -cfgset=PlaneShift.UserConfigPath=/home/user/.PlaneShift2</i>
+       <div class="commandBox">
+/home/user/development/planeshift$ ./psclient -cfgset=PlaneShift.UserConfigPath=/home/user/.PlaneShift2</div>
       <p> You can also edit this in the psclient.cfg file under the game section uncomment the appropriate line and edit the path.</p> 
    </div>
 </div></div></div>
@@ -1295,26 +1295,26 @@ We should export the CEL environment variable so applications outside the CEL tr
         by using the --prefix option when we configure it.</p>
 	<div class="linux-Generic" >
 	Using a text editor open configure.in and remove the line 
-	<p><i class="commandBox">
-        AM_USE_UNITTESTCPP</i></p>
+	<p><div class="commandBox">
+        AM_USE_UNITTESTCPP</div></p>
         <p>Or you can use the following sed command</p>
-        <p> <i class="commandBox" >
+        <p> <div class="commandBox" >
   mv configure.in configure-old.in<br />
-sed 's/AM_USE_UNITTESTCPP/# AM_USE_UNITTESTCPP/' configure-old.in > configure.in</i></p>
+sed 's/AM_USE_UNITTESTCPP/# AM_USE_UNITTESTCPP/' configure-old.in > configure.in</div></p>
 <p> Then you can build cal3d </p>
-        <p><i class="commandBox">
+        <p><div class="commandBox">
             $HOME/development/cal3d$ autoreconf --install --force<br>
             $HOME/development/cal3d$ ./configure --prefix=$HOME/development/cal3d<br>
             $HOME/development/cal3d$ make<br>
             $HOME/development/cal3d$ make install
-        </i></p></div>
+        </div></p></div>
   <h3>Crystal Space (CS)</h3>
         <p>Now we can build it and use the configure line to tell it where we installed the cal3d libraries.
         To do this, use the prefix line that was used for Cal3d above.</p>
-	   <div class="User"><i class="commandBox">
-            $HOME/development/cs$./configure --without-java --without-perl --without-python --without-lib3ds --with-cal3d=$HOME/development/cal3d</i></div>
-           <div class="Developer"><i class="commandBox">
-            $HOME/development/cs$./configure --enable-debug --without-java --without-perl --without-python --without-lib3ds --with-cal3d=$HOME/development/cal3d</i></div><br>
+	   <div class="User"><div class="commandBox">
+            $HOME/development/cs$./configure --without-java --without-perl --without-python --without-lib3ds --with-cal3d=$HOME/development/cal3d</div></div>
+           <div class="Developer"><div class="commandBox">
+            $HOME/development/cs$./configure --enable-debug --without-java --without-perl --without-python --without-lib3ds --with-cal3d=$HOME/development/cal3d</div></div><br>
            <div class="Normal"><i class="command">
             $HOME/development/cs$ jam -aq libs plugins cs-config walktest</i></div><br>
             <div class="Static"> there is no Mac static build guide at this time</div>
@@ -1335,7 +1335,7 @@ We should export the CEL environment variable so applications outside the CEL tr
 	         <p><i class="command">export CEL=$HOME/development/cel</i></p>	 
 	         
 <h3>PlaneShift</h3>
-        <p><i class="commandBox">
+        <p><div class="commandBox">
             $HOME/development/planeshift$ ./autogen.sh<br>
            <i class="User">
             $HOME/development/planeshift$ ./configure --with-cal3d=$HOME/development/cal3d<br>
@@ -1347,7 +1347,7 @@ We should export the CEL environment variable so applications outside the CEL tr
             $HOME/development/planeshift$ jam -aq client
            </i>
             <i class="Static"> there is no Mac static build guide at this time</i>
-</i></p>
+</div></p>
         If you also want to build the server, do this as well:
         <div class="Normal">
            <p><i class="command">$HOME/development/planeshift$ jam -aq server</i></p>
@@ -1355,8 +1355,8 @@ We should export the CEL environment variable so applications outside the CEL tr
         If you want to build the extra tools, just do "jam -a".
 <p>If your psclient has no skin you are used to seeing launch pssetup after you have copied your art over and select a new skin</p>
        <p>If you wish for your psclient to not use the same user files as your other build/install you may run ps with the following command<br />
-       <i class="commandBox">
-$HOME/development/planeshift$ ./psclient.app/Contents/MacOS/psclient -cfgset=PlaneShift.UserConfigPath=$HOME/Library/Application Support/PlaneShift2</i>
+       <div class="commandBox">
+$HOME/development/planeshift$ ./psclient.app/Contents/MacOS/psclient -cfgset=PlaneShift.UserConfigPath=$HOME/Library/Application Support/PlaneShift2</div>
       <p> You can also edit this in the psclient.cfg file under the game section uncomment the appropriate line and edit the path.</p> 
    </div>
     </div>
@@ -1372,17 +1372,17 @@ $HOME/development/planeshift$ ./psclient.app/Contents/MacOS/psclient -cfgset=Pla
         Configure to debug mode and jam. (if you wish to build in optimized mode, just run
         configure without any arguments) If you chose to build cal3d, rather than use
         it from the CS win libs, you can specify its location with:  --with-cal3d=/c/development/cal3d/
-        <p><div class="User"><i class="commandBox">
-            ./configure --without-java --without-perl --without-python --without-lib3ds</i><br>
-<p><div class="Developer"><i class="commandBox">
-            ./configure --enable-debug --without-java --without-perl --without-python --without-lib3ds</i><br></div>
+        <p><div class="commandBox"><div class="User">
+            ./configure --without-java --without-perl --without-python --without-lib3ds</div>
+<div class="Developer">
+            ./configure --enable-debug --without-java --without-perl --without-python --without-lib3ds</div>
            <div class="Normal">
             jam -aq libs plugins cs-config walktest
            </div>
            <div class="Static">
             jam -aq libs staticplugins cs-config walktest_static
-           </div>
-        </div></p>
+           </div></div>
+        </div>
         </p>
         This will build all the needed libraries and plugins, as well as the standard test application.<br>
         After everything compiles, try running "walktest.exe" in /c/development/cs to check that everything is ok.
@@ -1464,14 +1464,14 @@ then just copy it back to the file.<br></p>
            </div>
         </div></p>
         If you're building the server, you also need to configure with your MySQL location:
-        <p><div class="User"> <i class="commandBox">
+        <p><div class="User"> <div class="commandBox">
             ./autogen.sh<br>
             ./configure --with-mysqlclient=/c/mysql<br>
-        </i></div></p>
-        <p><div class="Developer"> <i class="commandBox">
+        </div></div></p>
+        <p><div class="Developer"> <div class="commandBox">
             ./autogen.sh<br>
             ./configure --enable-debug --with-mysqlclient=/c/mysql<br>
-        </i></div></p>
+        </div></div></p>
         <div class="Normal">
            <p><i class="command">jam -aq server</i></p>
         </div>
@@ -1483,8 +1483,8 @@ then just copy it back to the file.<br></p>
         <p>This should compile PlaneShift.</p>
 <p>If your psclient has no skin you are used to seeing launch pssetup after you have copied your art over and select a new skin</p>
        <p>If you wish for your psclient to not use the same user files as your other build/install you may run ps with the following command<br />
-       <i class="commandBox">
-psclient.exe -cfgset=PlaneShift.UserConfigPath=C:\development\pssettings</i>
+       <div class="commandBox">
+psclient.exe -cfgset=PlaneShift.UserConfigPath=C:\development\pssettings</div>
       <p>You can also edit this in the psclient.cfg file under the game section uncomment the appropriate line and edit the path.</p>
     </div>
 </div></div>
@@ -1599,16 +1599,16 @@ and select Properties, 'read only' is one of the attributes in the General tab) 
     PlaneShift directory if you get problems. You usually need to move libz-cs.dll, and libmySQL.dll.</p>
 <div class="MINGW">
 <p>For Mingw you need to copy also these files to the
-PlaneShift directory:<br>
+PlaneShift directory:<br><div class=commandBox>
 C:\msys\1.0\local\bin\libpng12-0.dll<br>
 C:\development\cs\cg.dll<br>
 C:\development\cs\cgGL.dll<br>
-C:\MinGW\bin\libjpeg-62.dll<br><br>
-or by command-line:<br>
+C:\MinGW\bin\libjpeg-62.dll<br></div><br>
+or by command-line:<br><div class=commandBox>
 cp /c/msys/1.0/local/bin/libpng12-0.dll <br>
 cp /c/development/cs/cg.dll <br>
 cp /c/development/cs/cgGL.dll <br>
-cp /c/MinGW/bin/libjpeg-62.dll <br>
+cp /c/MinGW/bin/libjpeg-62.dll <br></div>
 </p>
 </div>
 
