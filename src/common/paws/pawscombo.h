@@ -84,6 +84,7 @@ private:
     int oldWidth;
     bool closed;
     bool fliptotop;
+    bool useScrollBar;
     
     int rows;
     int rowHeight;
