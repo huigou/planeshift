@@ -37,10 +37,6 @@
         return; \
     } \
 
-iObjectRegistry* UpdaterEngine::object_reg = NULL;
-InfoShare * UpdaterEngine::infoShare = NULL;
-csRef<iFile> UpdaterEngine::log = NULL;
-
 UpdaterEngine::UpdaterEngine(const csArray<csString> args, iObjectRegistry* object_reg, const char* appName)
 {
     InfoShare *is = new InfoShare();
