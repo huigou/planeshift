@@ -70,7 +70,7 @@ static int ProgressCallback(int progress, int finalSize)
 
     fflush(stdout);
     
-    return UpdaterEngine::GetSingletonPtr()->CheckQuit() ? 0 : nsHTTPConn::E_USER_CANCEL;
+    return UpdaterEngine::GetSingletonPtr()->CheckQuit() ? nsHTTPConn::E_USER_CANCEL : 0;
 }
 
 Downloader::Downloader(csRef<iVFS> _vfs, UpdaterConfig* _config)
