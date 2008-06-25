@@ -319,10 +319,18 @@ bool pawsButton::OnMouseDown( int button, int modifiers, int x, int y )
     // plays a sound
     PawsManager::GetSingleton().PlaySound(sound_click);
     
-    if ( toggle ) 
+    if ( toggle )
+    {
         SetState(!IsDown());
+    }
+    else if(changeOnMouseOver)
+    {
+        SetState(false, false);
+    }
     else
+    {
         SetState(true, false);
+    }
 
     if ( flash )
         flash = 0;

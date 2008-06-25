@@ -402,7 +402,7 @@ void pawsMessageTextBox::OnResize()
 
     // Re adjust the top line value 
     topLine = (int)adjusted.GetSize() - (int)maxLines;
-    if ( topLine < 0 ) 
+    if ( topLine < 0 )
         topLine = 0;
 
     if (scrollBar)

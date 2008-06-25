@@ -31,7 +31,11 @@
 #endif
 
 #define CHECK_QUIT \
-    if(CheckQuit()) return; \
+    if(CheckQuit()) \
+    { \
+        infoShare->SetCancelUpdater(false); \
+        return; \
+    } \
 
 iObjectRegistry* UpdaterEngine::object_reg = NULL;
 InfoShare * UpdaterEngine::infoShare = NULL;

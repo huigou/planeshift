@@ -58,7 +58,8 @@ static int ProgressCallback(int progress, int finalSize)
     }
     else if(progress == finalSize)
     {
-        UpdaterEngine::PrintOutput(" 100%%\n");
+        UpdaterEngine::PrintOutput(" 100%%");
+        UpdaterEngine::PrintOutput("\n");
         lastSize = 0;
     }
     else if((progress-lastSize) > (finalSize/20) && progress < finalSize - (finalSize/20))

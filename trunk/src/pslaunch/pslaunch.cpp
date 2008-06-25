@@ -190,7 +190,7 @@ bool psLauncherGUI::HandleEvent (iEvent &ev)
         while(!infoShare->ConsoleIsEmpty())
         {
             csString message = infoShare->ConsolePop();
-            if(message.FindLast("\n") != size_t(-1))
+            if(message.FindLast("\n") == message.Length()-1 || message.FindFirst("\n") == 0)
             {
                 updateProgressOutput->AddMessage(message);
             }
@@ -241,6 +241,7 @@ bool psLauncherGUI::HandleEvent (iEvent &ev)
     else if(paws->FindWidget("LauncherUpdater")->IsVisible())
     {
         paws->FindWidget("UpdaterOkButton")->Show();
+        paws->FindWidget("UpdaterCancelButton")->Hide();
     }
 
     if (paws->HandleEvent(ev))

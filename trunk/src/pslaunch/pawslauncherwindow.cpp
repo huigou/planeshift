@@ -21,6 +21,7 @@
 #include <fstream>
 
 #include "paws/pawsbutton.h"
+#include "paws/pawscombo.h"
 #include "paws/pawswidget.h"
 #include "paws/pawstextbox.h"
 #include "paws/pawsyesnobox.h"
@@ -37,12 +38,16 @@ pawsLauncherWindow::pawsLauncherWindow()
 bool pawsLauncherWindow::PostSetup()
 {
     configFile.AttachNew(new csConfigFile(LAUNCHER_CONFIG_FILENAME, psLaunchGUI->GetVFS()));
+    configUser.AttachNew(new csConfigFile("/planeshift/userdata/planeshift.cfg", psLaunchGUI->GetVFS()));
 
     launcherMain = FindWidget("LauncherMain");
     launcherSettings = FindWidget("LauncherSettings");
     launcherUpdater = FindWidget("LauncherUpdater");
 
     launcherMain->OnGainFocus();
+
+    // Load game settings.
+    LoadSettings();
 
     // Get server news.
     newsUpdater.AttachNew(new Thread(new NewsUpdater(this), true));
@@ -71,6 +76,11 @@ void pawsLauncherWindow::UpdateNews()
     psLaunchGUI->GetFileUtil()->RemoveFile("servernews");
 }
 
+pawsButton* pawsLauncherWindow::FindButton(WidgetID id)
+{
+    return static_cast<pawsButton*>(FindWidget(id));
+}
+
 bool pawsLauncherWindow::OnButtonPressed(int mouseButton, int keyModifier, pawsWidget* widget)
 {
     int ID = widget->GetID();
@@ -89,6 +99,7 @@ bool pawsLauncherWindow::OnButtonPressed(int mouseButton, int keyModifier, pawsW
         launcherMain->Hide();
         launcherSettings->Show();
         launcherSettings->OnGainFocus();
+        FindButton(SETTINGS_GENERAL_BUTTON)->SetState(true, false);
     }
     else if(ID == REPAIR_BUTTON)
     {
@@ -101,15 +112,14 @@ bool pawsLauncherWindow::OnButtonPressed(int mouseButton, int keyModifier, pawsW
     }
     else if(ID == UPDATER_YES_BUTTON)
     {
-        pawsButton* no = (pawsButton*)FindWidget("UpdaterNoButton");
-        no->Hide();
         widget->Hide();
+        FindWidget("UpdaterNoButton")->Hide();
+        FindWidget("UpdaterCancelButton")->Show();
         psLaunchGUI->PerformUpdate(true);
     }
     else if(ID == UPDATER_NO_BUTTON)
     {
-        pawsButton* yes = (pawsButton*)FindWidget("UpdaterYesButton");
-        yes->Hide();
+        FindWidget("UpdaterYesButton")->Hide();
         widget->Hide();
         launcherUpdater->Hide();
         launcherMain->Show();
@@ -118,14 +128,20 @@ bool pawsLauncherWindow::OnButtonPressed(int mouseButton, int keyModifier, pawsW
     }
     else if(ID == UPDATER_OK_BUTTON)
     {
-        pawsButton* no = (pawsButton*)FindWidget("UpdaterNoButton");
-        no->Hide();
-        pawsButton* yes = (pawsButton*)FindWidget("UpdaterYesButton");
-        yes->Hide();
+        FindWidget("UpdaterNoButton")->Hide();
+        FindWidget("UpdaterYesButton")->Hide();
         widget->Hide();
         launcherUpdater->Hide();
         launcherMain->Show();
         launcherMain->OnGainFocus();
+    }
+    else if(ID == UPDATER_CANCEL_BUTTON)
+    {
+        widget->Hide();
+        launcherUpdater->Hide();
+        launcherMain->Show();
+        launcherMain->OnGainFocus();
+        psLaunchGUI->CancelUpdater();
     }
     else if(ID == SETTINGS_CANCEL_BUTTON)
     {
@@ -138,6 +154,51 @@ bool pawsLauncherWindow::OnButtonPressed(int mouseButton, int keyModifier, pawsW
         launcherSettings->Hide();
         launcherMain->Show();
         launcherMain->OnGainFocus();
+        SaveSettings();
+    }
+    else if(ID == SETTINGS_AUDIO_BUTTON)
+    {
+        FindWidget("SettingsAudio")->Show();
+        FindWidget("SettingsControls")->Hide();
+        FindWidget("SettingsGeneral")->Hide();
+        FindWidget("SettingsGraphics")->Hide();
+        FindButton(SETTINGS_CONTROLS_BUTTON)->SetState(false, false);
+        FindButton(SETTINGS_GENERAL_BUTTON)->SetState(false, false);
+        FindButton(SETTINGS_GRAPHICS_BUTTON)->SetState(false, false);
+        launcherSettings->OnGainFocus();
+    }
+    else if(ID == SETTINGS_CONTROLS_BUTTON)
+    {
+        FindWidget("SettingsAudio")->Hide();
+        FindWidget("SettingsControls")->Show();
+        FindWidget("SettingsGeneral")->Hide();
+        FindWidget("SettingsGraphics")->Hide();
+        FindButton(SETTINGS_AUDIO_BUTTON)->SetState(false, false);
+        FindButton(SETTINGS_GENERAL_BUTTON)->SetState(false, false);
+        FindButton(SETTINGS_GRAPHICS_BUTTON)->SetState(false, false);
+        launcherSettings->OnGainFocus();
+    }
+    else if(ID == SETTINGS_GENERAL_BUTTON)
+    {
+        FindWidget("SettingsAudio")->Hide();
+        FindWidget("SettingsControls")->Hide();
+        FindWidget("SettingsGeneral")->Show();
+        FindWidget("SettingsGraphics")->Hide();
+        FindButton(SETTINGS_CONTROLS_BUTTON)->SetState(false, false);
+        FindButton(SETTINGS_AUDIO_BUTTON)->SetState(false, false);
+        FindButton(SETTINGS_GRAPHICS_BUTTON)->SetState(false, false);
+        launcherSettings->OnGainFocus();
+    }
+    else if(ID == SETTINGS_GRAPHICS_BUTTON)
+    {
+        FindWidget("SettingsAudio")->Hide();
+        FindWidget("SettingsControls")->Hide();
+        FindWidget("SettingsGeneral")->Hide();
+        FindWidget("SettingsGraphics")->Show();
+        FindButton(SETTINGS_CONTROLS_BUTTON)->SetState(false, false);
+        FindButton(SETTINGS_GENERAL_BUTTON)->SetState(false, false);
+        FindButton(SETTINGS_AUDIO_BUTTON)->SetState(false, false);
+        launcherSettings->OnGainFocus();
     }
 
     return true;
@@ -148,4 +209,55 @@ void pawsLauncherWindow::HandleUpdateButton(bool choice, void *updatewindow)
     pawsWidget* updateWindow = (pawsWidget*)updatewindow;
     psLaunchGUI->PerformUpdate(choice);
     updateWindow->Hide();
+}
+
+void pawsLauncherWindow::LoadSettings()
+{
+    csConfigFile configPSC("/planeshift/psclient.cfg", psLaunchGUI->GetVFS());
+
+    pawsComboBox* graphicsPreset = (pawsComboBox*)FindWidget("GraphicsPreset");
+    graphicsPreset->NewOption("Highest");
+    graphicsPreset->NewOption("High");
+    graphicsPreset->NewOption("Low");
+    graphicsPreset->NewOption("Lowest");
+    graphicsPreset->NewOption("Custom");
+
+    csString preset = configUser->GetStr("PlaneShift.Graphics.Preset");
+    if(preset.Compare(""))
+    {
+        preset = configPSC.GetStr("PlaneShift.Graphics.Preset");
+    }
+    graphicsPreset->Select(preset);
+}
+
+void pawsLauncherWindow::SaveSettings()
+{
+    pawsComboBox* graphicsPreset = (pawsComboBox*)FindWidget("GraphicsPreset");
+    configUser->SetStr("PlaneShift.Graphics.Preset", graphicsPreset->GetSelectedRowString());
+
+    switch(graphicsPreset->GetSelectedRowNum())
+    {
+    case HIGHEST:
+        {
+            break;
+        }
+    case HIGH:
+        {
+            break;
+        }
+    case LOW:
+        {
+            break;
+        }
+    case LOWEST:
+        {
+            break;
+        }
+    case CUSTOM:
+        {
+            break;
+        }
+    };
+
+    configUser->Save();
 }

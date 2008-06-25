@@ -45,6 +45,9 @@ private:
     /* Set to true if we want the GUI to exit. */
     bool exitGUI;
 
+    /* Set to true to cancel the updater. */
+    bool cancelUpdater;
+
     /* Set to true if we need to tell the GUI that an update is pending. */
     bool updateNeeded;
 
@@ -67,6 +70,7 @@ public:
         performUpdate = false;
         updateNeeded = false;
         checkIntegrity = false;
+        cancelUpdater = false;
         mutex.Initialize();
     }
 
@@ -74,11 +78,13 @@ public:
     void SetUpdateNeeded(bool v) { updateNeeded = v; }
     void SetPerformUpdate(bool v) { performUpdate = v; }
     void SetCheckIntegrity(bool v) { checkIntegrity = v; }
+    void SetCancelUpdater(bool v) { cancelUpdater = v; }
 
     bool GetExitGUI() { return exitGUI; }
     bool GetUpdateNeeded() { return updateNeeded; }
     bool GetPerformUpdate() { return performUpdate; }
     bool GetCheckIntegrity() { return checkIntegrity; }
+    bool GetCancelUpdater() { return cancelUpdater; }
 
     void EmptyConsole()
     {
@@ -182,7 +188,7 @@ public:
     void CheckIntegrity();
 
     /* Check if a quit event has been triggered. */
-    inline bool CheckQuit() { return infoShare->GetExitGUI(); }
+    inline bool CheckQuit() { return infoShare->GetExitGUI() || infoShare->GetCancelUpdater(); }
 
     /* Print to console and save to array for GUI output. */
     static void PrintOutput(const char* string, ...);

@@ -53,6 +53,7 @@ bool pawsComboBox::Setup( iDocumentNode* node )
     text      = listNode->GetAttributeValue("text");
     listalpha = listNode->GetAttributeValueAsInt("alpha");
     fliptotop = listNode->GetAttributeValueAsBool("fliptotop");
+    useScrollBar = listNode->GetAttributeValueAsBool("useScrollBar", true);
     
     return true;
 }
@@ -92,15 +93,20 @@ bool pawsComboBox::PostSetup()
     
     ///////////////////////////////////////////////////////////////////////
     // Create the drop down list box
-    ///////////////////////////////////////////////////////////////////////      
+    ///////////////////////////////////////////////////////////////////////   
     listChoice = new pawsListBox;
     AddChild( listChoice );
+
     if (fliptotop)
+    {
         listChoice->SetRelativeFrame( 0 , 0, defaultFrame.Width(), rows*GetActualHeight(rowHeight)+15);
+    }
     else
+    {
         listChoice->SetRelativeFrame( 0 , defaultFrame.Height(), defaultFrame.Width(), rows*GetActualHeight(rowHeight)+15);
-    ok = ok && listChoice->PostSetup();
-    listChoice->Hide();   
+    }
+
+    listChoice->Hide();
     listChoice->UseTitleRow( false ); 
     listChoice->SetID( id );
     listChoice->SetBackground("Standard Background");
@@ -111,9 +117,16 @@ bool pawsComboBox::PostSetup()
     
     csString widgetDef("<widget name=\"Text\" factory=\"pawsTextBox\" ></widget>");
     listChoice->SetTotalColumns( 1 );
-    listChoice->SetColumnDef( 0, 
-                              defaultFrame.Width()-32 , rowHeight,
-                              widgetDef );
+
+    if(useScrollBar)
+    {
+        ok = ok && listChoice->PostSetup();
+        listChoice->SetColumnDef( 0, defaultFrame.Width()-32, rowHeight, widgetDef );
+    }
+    else
+    {
+        listChoice->SetColumnDef( 0, defaultFrame.Width()-10, rowHeight, widgetDef );
+    }
 
     return ok;
 }
@@ -129,7 +142,7 @@ pawsListBoxRow* pawsComboBox::NewOption(const csString & text)
         if (cell != NULL)
             cell->SetText(text);
     }
-    //itemChoice->SetText(text);
+
     return row;        
 }
 

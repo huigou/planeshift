@@ -78,10 +78,17 @@
         <buttondown resource="Ok Button MO"/>
         <frame x="645" y="528" width="95" height="45" border="no"/>
       </widget>
+
+      <!-- Cancel button -->
+      <widget name="UpdaterCancelButton" factory="pawsButton" id="125" changeonmouseover="true" visible="no">
+        <buttonup resource="Cancel Button"/>
+        <buttondown resource="Cancel Button MO"/>
+        <frame x="58" y="515" width="95" height="60" border="no"/> 
+      </widget>
     </widget>
 
     <!-- Settings window -->
-    <widget name="LauncherSettings" factory="pawsWidget" visible="no" savepositions="no" movable="no" resizable="no" resizetoscreen="yes" id="13">
+    <widget name="LauncherSettings" factory="pawsButton" visible="no" alwaysontop="true" savepositions="no" movable="no" resizable="no" resizetoscreen="yes" id="13">
       <bgimage resource="Launcher Other" alpha="255" fade="false"/>
       <frame x="0" y="0" width="850" height="600" border="no"/>
 
@@ -96,7 +103,65 @@
       <widget name="SettingsCancelButton" factory="pawsButton" id="132" changeonmouseover="true">
         <buttonup resource="Cancel Button"/>
         <buttondown resource="Cancel Button MO"/>
-        <frame x="58" y="515" width="95" height="60" border="no"/> 
+        <frame x="58" y="515" width="95" height="60" border="no"/>
+      </widget>
+
+      <!-- Audio button -->
+      <widget name="SettingsAudioButton" factory="pawsButton" id="133" toggle="yes">
+        <buttonup resource="Audio Button"/>
+        <buttondown resource="Audio Button MO"/>
+        <frame x="100" y="50" width="100" height="30" border="no"/>
+      </widget>
+
+      <!-- Controls button -->
+      <widget name="SettingsControlsButton" factory="pawsButton" id="134" toggle="yes">
+        <buttonup resource="Controls Button"/>
+        <buttondown resource="Controls Button MO"/>
+        <frame x="220" y="50" width="100" height="30" border="no"/>
+      </widget>
+
+      <!-- General button -->
+      <widget name="SettingsGeneralButton" factory="pawsButton" id="135" toggle="yes">
+        <buttonup resource="General Button"/>
+        <buttondown resource="General Button MO"/>
+        <frame x="100" y="100" width="100" height="30" border="no"/>
+      </widget>
+
+      <!-- Graphics button -->
+      <widget name="SettingsGraphicsButton" factory="pawsButton" id="136" toggle="yes">
+        <buttonup resource="Graphics Button"/>
+        <buttondown resource="Graphics Button MO"/>
+        <frame x="220" y="100" width="100" height="30" border="no"/>
+      </widget>
+
+      <!-- Audio Widget -->
+      <widget name="SettingsAudio" factory="pawsWidget" id="137" visible="no" alwaysontop="true">
+        <frame x="90" y="200" width="670" height="290" />
+      </widget>
+
+      <!-- Controls Widget -->
+      <widget name="SettingsControls" factory="pawsWidget" id="138" visible="no" alwaysontop="true">
+        <frame x="90" y="200" width="670" height="290" />
+      </widget>
+
+      <!-- General Widget -->
+      <widget name="SettingsGeneral" factory="pawsWidget" id="139" visible="yes" alwaysontop="true">
+        <frame x="90" y="200" width="670" height="290" />
+
+        <widget name="GraphicsPresetText" factory="pawsTextBox">
+          <frame x="0" y="3" width="90" height="30"/>
+          <text string="Graphics Quality:"/>
+        </widget>
+
+    	  <widget name="GraphicsPreset" factory="pawsComboBox">
+          <frame x="90" y="0" width="50" height="25" border="no" />
+          <listbox rows="5" height="25" useScrollBar="false" />
+    	  </widget>
+      </widget>
+
+      <!-- Graphics Widget -->
+      <widget name="SettingsGraphics" factory="pawsWidget" id="140" visible="no" alwaysontop="true">
+        <frame x="90" y="200" width="670" height="290" />
       </widget>
     </widget>
 

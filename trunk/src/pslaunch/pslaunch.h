@@ -104,6 +104,8 @@ public:
 
     void PerformRepair();
 
+    void CancelUpdater() { infoShare->SetCancelUpdater(true); }
+
     // Run thread.
     void Run();
     

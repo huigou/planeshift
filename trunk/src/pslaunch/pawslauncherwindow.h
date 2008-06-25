@@ -37,10 +37,13 @@ private:
     pawsWidget* launcherSettings;
     pawsYesNoBox* updateAvailable;
     csRef<iConfigFile> configFile;
+    csRef<iConfigFile> configUser;
     csRef<Thread> newsUpdater;
 
     static void HandleUpdateButton(bool choice, void *thisptr);
     void UpdateNews();
+    void LoadSettings();
+    void SaveSettings();
 
     class NewsUpdater : public Runnable
     {
@@ -74,12 +77,28 @@ private:
         UPDATER_YES_BUTTON,
         UPDATER_NO_BUTTON,
         UPDATER_OK_BUTTON,
+        UPDATER_CANCEL_BUTTON,
         SETTINGS_OK_BUTTON = 131,
         SETTINGS_CANCEL_BUTTON,
+        SETTINGS_AUDIO_BUTTON,
+        SETTINGS_CONTROLS_BUTTON,
+        SETTINGS_GENERAL_BUTTON,
+        SETTINGS_GRAPHICS_BUTTON,
         UPDATE_MESSAGE_BOX = 141,
         UPDATE_YES_BUTTON,
         UPDATE_NO_BUTTON
     };
+
+    enum GraphicsPresets
+    {
+        HIGHEST = 0,
+        HIGH,
+        LOW,
+        LOWEST,
+        CUSTOM
+    };
+
+    pawsButton* FindButton(WidgetID id);
 };
 
 CREATE_PAWS_FACTORY( pawsLauncherWindow );
