@@ -118,7 +118,7 @@ public:
 class UpdaterEngine : public Singleton<UpdaterEngine>
 {
 private:
-    static iObjectRegistry* object_reg;
+    iObjectRegistry* object_reg;
 
     /* VFS to manage our zips */
     csRef<iVFS> vfs;
@@ -139,13 +139,13 @@ private:
     csRef<iDocument> configdoc;
 
     /* Info shared with other threads. */
-    static InfoShare *infoShare;
+    InfoShare *infoShare;
 
     /* True if we're using a GUI. */
     bool hasGUI;
 
     /* Output console prints to file. */
-    static csRef<iFile> log;
+    csRef<iFile> log;
 
     /* Function shared by ctors */
     void Init(const csArray<csString> args, iObjectRegistry* _object_reg, const char* _appName,
@@ -191,7 +191,7 @@ public:
     inline bool CheckQuit() { return infoShare->GetExitGUI() || infoShare->GetCancelUpdater(); }
 
     /* Print to console and save to array for GUI output. */
-    static void PrintOutput(const char* string, ...);
+    void PrintOutput(const char* string, ...);
 };
 
 #endif // __UPDATERENGINE_H__
