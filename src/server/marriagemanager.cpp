@@ -372,35 +372,16 @@ void psMarriageManager::Divorce( Client* client, csString divorceMsg )
     }
     else
     {
-        int result = psserver->GetCharManager()->HasConnected( divorcedCharFirstName );
-        //The partner doesn't exist.
-        if ( result == 1 )
-        {
-            //If female
-            if ( client->GetCharacterData()->GetRaceInfo()->gender == 1 )
-            {
-                psserver->SendSystemError( client->GetClientNum(), "%s is probably dead and you are a widow!",
-                    divorcedCharFirstName.GetData() );
-            }
-            //If male or Kran
-            else
-            {
-                psserver->SendSystemError( client->GetClientNum(), "%s is probably dead and you are a widower!",
-                    divorcedCharFirstName.GetData() );
-            }
-            psserver->SendSystemInfo( client->GetClientNum(), "You can divorce anyway, but you have to contact a Game Master." );
-
-        }
-        else if ( result == 2 )
-        {
-            //The partner hasn't logon in the latest two months.
-            psserver->SendSystemError( client->GetClientNum(), "%s hasn't walked in Yliakum in a long time.", divorcedChar.GetData());
-            psserver->SendSystemInfo( client->GetClientNum(), "Contact a Game Master for obtaining a divorce.");
-        }
-        else
+        if (psserver->GetCharManager()->HasConnected( divorcedCharFirstName ))
         {
             //If we are here, the partner char is still existing and it has been connecting recently. Wait to be online.
             psserver->SendSystemInfo( client->GetClientNum(), "%s is not in Yliakum right now.", divorcedChar.GetData());
+        }
+        else
+        {
+            //The partner hasn't logged on in the latest two months
+            psserver->SendSystemError( client->GetClientNum(), "%s hasn't walked in Yliakum in a long time!", divorcedChar.GetData());
+            psserver->SendSystemInfo( client->GetClientNum(), "Contact a Game Master for obtaining a divorce.");
         }
     }
 }

@@ -11,6 +11,8 @@
 - commit fix to FS#1705 by peeg - can't add NPCs to buddy list any more
 - commit slightly modified fix to FS#1739 by Vornne - money object shouldn't
   overflow int any more for large coin counts.
+- commit fix to FS#1584 by peeg - divorce messages should be the right way
+  around now.
 
 *** 2008-06-26 by Mike Gist
 - Work on pslaunch.
