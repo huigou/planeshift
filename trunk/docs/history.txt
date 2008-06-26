@@ -9,6 +9,8 @@
 - commit feature request FS#1686 by Cebot - show inviting member when announcing
   new guild member join
 - commit fix to FS#1705 by peeg - can't add NPCs to buddy list any more
+- commit slightly modified fix to FS#1739 by Vornne - money object shouldn't
+  overflow int any more for large coin counts.
 
 *** 2008-06-26 by Mike Gist
 - Work on pslaunch.
