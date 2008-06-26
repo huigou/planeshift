@@ -384,7 +384,7 @@ void pawsMessageTextBox::Resize()
     adjusted.Empty();    
     for ( size_t x = 0; x < messages.GetSize(); x++ )    
     {        
-       SplitMessage( messages[x]->text, messages[x]->colour ); 
+        SplitMessage( messages[x]->text, messages[x]->colour, messages[x]->size ); 
     } 
 }
 
@@ -436,12 +436,19 @@ void pawsMessageTextBox::Draw()
     {
         if ( x < adjusted.GetSize() )
         {
+            int oldSize = GetFont()->GetSize();
+            if(adjusted[x]->size)
+            {
+                ChangeFontSize(adjusted[x]->size);
+            }
+
             graphics2D->Write(  GetFont(),
                                 screenFrame.xmin,
                                 screenFrame.ymin + yPos*lineHeight,
                                 adjusted[x]->colour,
                                 -1,
-                                (const char*)adjusted[x]->text );              
+                                (const char*)adjusted[x]->text );
+            ChangeFontSize(oldSize);
             yPos++;                                                                            
         }
     }
@@ -500,19 +507,43 @@ void pawsMessageTextBox::AddMessage( const char* data, int msgColour )
 
         // Add it to the main message buffer.
         MessageLine * msg = new MessageLine;
-        int colour;
 
-        msg->text = messageText;
-        if ( msgColour != -1 ) 
-            colour = msgColour;
-        else 
+        // Find font info embedded in the data.
+        int colour = msgColour;
+        int size = 0;
+
+        size_t pos = messageText.Find("<f");
+        if(pos != (size_t)-1)
+        {
+            csString fontData = messageText.Slice(pos, messageText.FindFirst('>')+1);
+            csRef<iDocumentSystem> xml;
+            xml.AttachNew(new csTinyDocumentSystem);    
+            csRef<iDocument> doc = xml->CreateDocument();
+            doc->Parse(fontData);
+
+            if(msgColour == -1)
+            {
+                int r = doc->GetRoot()->GetNode("f")->GetAttributeValueAsInt("r");
+                int g = doc->GetRoot()->GetNode("f")->GetAttributeValueAsInt("g");
+                int b = doc->GetRoot()->GetNode("f")->GetAttributeValueAsInt("b");
+                colour = graphics2D->FindRGB(r, g, b);
+            }
+
+            size = doc->GetRoot()->GetNode("f")->GetAttributeValueAsInt("s");
+            messageText = messageText.Slice(messageText.Find(">", pos)+1);
+        } 
+        else if(msgColour == -1)
+        {
             colour = GetFontColour();
-        msg->colour = colour;
+        }
 
+        msg->size = size;
+        msg->colour = colour;
+        msg->text = messageText;
         messages.Push(msg);    
 
 
-        SplitMessage( messageText, colour );            
+        SplitMessage( messageText, colour, size );            
 
         if (scrollBar)
         {
@@ -572,13 +603,18 @@ void pawsMessageTextBox::FullScroll()
 
 }
 
-void pawsMessageTextBox::SplitMessage( const char* newText, int colour )
+void pawsMessageTextBox::SplitMessage( const char* newText, int colour, int size )
 {
     if ( newText != NULL )
     {    
         int maxWidth;
         int maxHeight;
     
+        int oldSize = GetFont()->GetSize();
+        if(size)
+        {
+            ChangeFontSize(size);
+        }
         GetFont()->GetMaxSize( maxWidth, maxHeight );
         
         char* dummy = new char[strlen( newText ) + 1];
@@ -598,7 +634,8 @@ void pawsMessageTextBox::SplitMessage( const char* newText, int colour )
             {
                 csString temp( dummy );
                 MessageLine* msgLine = new MessageLine;
-                msgLine->text   = temp;
+                msgLine->size = size;
+                msgLine->text = temp;
                 msgLine->colour = colour;
                 adjusted.Push( msgLine );
                 break;
@@ -619,17 +656,18 @@ void pawsMessageTextBox::SplitMessage( const char* newText, int colour )
                 }                    
             
                 // Index now points to the whitespace line so we can break it here.
-            
                 csString test;
                 test.Append( dummy, index );
                 dummy+=index;        
                 MessageLine* msgLine = new MessageLine;
-                msgLine->text   = test;
+                msgLine->size = size;
+                msgLine->text = test;
                 msgLine->colour = colour;
                 adjusted.Push( msgLine );            
             }
         }
-                
+        
+        ChangeFontSize(oldSize);
         delete [] head;        
     }        
 }

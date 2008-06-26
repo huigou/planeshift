@@ -66,7 +66,7 @@ bool pawsLauncherWindow::PostSetup()
 
 void pawsLauncherWindow::UpdateNews()
 {
-    pawsMultiLineTextBox* serverNews = (pawsMultiLineTextBox*)FindWidget("ServerNews");
+    pawsMessageTextBox* serverNews = (pawsMessageTextBox*)FindWidget("ServerNews");
     psLaunchGUI->GetDownloader()->DownloadFile(configFile->GetStr("Launcher.News.URL", ""), "servernews", true, false);
     
     ifstream newsFile("servernews", ifstream::in);
@@ -76,7 +76,7 @@ void pawsLauncherWindow::UpdateNews()
         buffer.Append((char)newsFile.get());
     }
     buffer.Truncate(buffer.Length()-1);
-    serverNews->SetText(buffer.GetDataSafe());
+    serverNews->AddMessage(buffer.GetDataSafe());
     newsFile.close();
     psLaunchGUI->GetFileUtil()->RemoveFile("servernews");
 }
@@ -160,6 +160,7 @@ bool pawsLauncherWindow::OnButtonPressed(int mouseButton, int keyModifier, pawsW
         launcherMain->Show();
         launcherMain->OnGainFocus();
         SaveSettings();
+        LoadSettings();
     }
     else if(ID == SETTINGS_AUDIO_BUTTON)
     {
@@ -226,6 +227,7 @@ void pawsLauncherWindow::LoadSettings()
 
     // Graphics Preset
     pawsComboBox* graphicsPreset = (pawsComboBox*)FindWidget("GraphicsPreset");
+    graphicsPreset->Clear();
     graphicsPreset->NewOption("Highest");
     graphicsPreset->NewOption("High");
     graphicsPreset->NewOption("Medium");
@@ -242,6 +244,7 @@ void pawsLauncherWindow::LoadSettings()
 
     // Screen Resolution
     pawsComboBox* resolution = (pawsComboBox*)FindWidget("ScreenResolution");
+    resolution->Clear();
     resolution->NewOption("1920x1200");
     resolution->NewOption("1680x1050");
     resolution->NewOption("1600x1200");
@@ -308,6 +311,7 @@ void pawsLauncherWindow::LoadSettings()
 
     // AA
     pawsComboBox* antiAliasing = (pawsComboBox*)FindWidget("AntiAiasing");
+    antiAliasing->Clear();
     antiAliasing->NewOption("0x");
     antiAliasing->NewOption("2x");
     antiAliasing->NewOption("2xQ");
@@ -344,6 +348,7 @@ void pawsLauncherWindow::LoadSettings()
 
     // Anistropic
     pawsComboBox* anistopicFiltering = (pawsComboBox*)FindWidget("AnisotropicFiltering");
+    anistopicFiltering->Clear();
     anistopicFiltering->NewOption("0x");
     anistopicFiltering->NewOption("1x");
     anistopicFiltering->NewOption("2x");
@@ -361,6 +366,7 @@ void pawsLauncherWindow::LoadSettings()
 
     // Texture Quality
     pawsComboBox* textureQuality = (pawsComboBox*)FindWidget("TextureQuality");
+    textureQuality->Clear();
     textureQuality->NewOption("High");
     textureQuality->NewOption("Medium");
     textureQuality->NewOption("Low");
@@ -397,6 +403,7 @@ void pawsLauncherWindow::LoadSettings()
     textureQuality->Select(setting);
 
     pawsComboBox* shaders = (pawsComboBox*)FindWidget("Shaders");
+    shaders->Clear();
     shaders->NewOption("Basic");
     shaders->NewOption("Advanced");
 
@@ -469,6 +476,7 @@ void pawsLauncherWindow::LoadSettings()
 
     // Fill the skins
     pawsComboBox* skins = (pawsComboBox*)FindWidget("Skins");
+    skins->Clear();
     csString skinPath = configPSC.GetStr("PlaneShift.GUI.Skin.Dir");
     csRef<iStringArray> files = psLaunchGUI->GetVFS()->FindFiles(skinPath);
     for (size_t i = 0; i < files->GetSize(); i++)
