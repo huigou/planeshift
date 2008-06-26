@@ -135,6 +135,14 @@ public:
     {
         csString text;
         int colour;
+        int size;
+
+        MessageLine()
+        {
+            text = "";
+            colour = 0;
+            size = 0;
+        }
     };
 
     pawsMessageTextBox( );
@@ -186,7 +194,7 @@ protected:
     
     //void AdjustMessages();
     
-    void SplitMessage( const char* text, int colour );
+    void SplitMessage( const char* text, int colour, int size );
 
     /// Calculates value of the lineHeight attribute
     void CalcLineHeight();

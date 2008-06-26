@@ -15,8 +15,8 @@
       <widget name="NewsWindow" factory="pawsButton" id="111" alwaysontop="true">
         <bgimage resource="News Window" alpha="255" fade="false"/>
         <frame x="60" y="50" width="300" height="470" />
-        <widget name="ServerNews" factory="pawsMultiLineTextBox" id="1111">
-          <frame x="60" y="50" width="400" height="120" />
+        <widget name="ServerNews" factory="pawsMessageTextBox" id="1111">
+          <frame x="20" y="40" width="280" height="220" />
         </widget>
       </widget>
 

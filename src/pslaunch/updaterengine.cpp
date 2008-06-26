@@ -322,7 +322,7 @@ bool UpdaterEngine::CheckUpdater()
     }
 
     // Compare Versions.
-    return(config->UpdatePlatform() && config->GetNewConfig()->GetUpdaterVersionLatest() != UPDATER_VERSION);        
+    return(config->UpdatePlatform() && config->GetNewConfig()->GetUpdaterVersionLatest() > UPDATER_VERSION);        
 }
 
 bool UpdaterEngine::CheckGeneral()
