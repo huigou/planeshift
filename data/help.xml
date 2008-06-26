@@ -457,7 +457,7 @@ It creates fog effect in a specific sector, with a specific density, the rgb val
 value (in milliseconds).
 With specified sector, it starts fog with default values: density 200, fade 10 sec, soft white (r 200, g 200, w 200).
 Use /fog sector off or /fog sector -1 for resetting. </topic>
-        <topic name="/giveitem">/giveitem [target] [quantity|'all'|''] [item]
+        <topic name="/giveitem">/giveitem [target] [quantity|'all'|''] [item|tria]
 
 Commands used to transfer an item from you to another character.  Example: "/giveitem Bob Apple"</topic>
         <topic name="/impersonate">/impersonate name command message
@@ -637,7 +637,7 @@ value (in milliseconds).
 With specified sector, it starts snow with default values: density 4000 flakes, length 10 minutes and 10 seconds of fade.
 The maximum number of flakes allowed is 8000.
 Use /snow sector 0 or /snow sector off for ending the event.</topic>
-        <topic name="/takeitem">/takeitem [target] [quantity|'all'|''] [item]
+        <topic name="/takeitem">/takeitem [target] [quantity|'all'|''] [item|tria]
 
 Command used to transfer an item to you from another character.  Example: "/takeitem target 3 Sabre"</topic>
 	<topic name="/teleport">/teleport &lt;subject&gt; &lt;destination&gt;

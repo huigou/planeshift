@@ -2286,7 +2286,7 @@ void AdminManager::Teleport(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& 
             return;
         }
         
-        sql.AppendFmt("update characters set loc_x=%10.2f, loc_y=%10.2f, loc_z=%10.2f, loc_yrot=%10.2f, loc_sector_id=%u, loc_instance=%d where name='%s'",
+        sql.AppendFmt("update characters set loc_x=%10.2f, loc_y=%10.2f, loc_z=%10.2f, loc_yrot=%10.2f, loc_sector_id=%u, loc_instance=%u where name='%s'",
             myPoint.x, myPoint.y, myPoint.z, yRot, mysectorinfo->uid, client->GetActor()->GetInstance(), data.player.GetData());
         
         if (db->CommandPump(sql) != 1)
@@ -5968,7 +5968,7 @@ void AdminManager::TransferItem(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdDa
     
     if (data.value == 0 || data.item.IsEmpty())
     {
-        psserver->SendSystemError(me->clientnum, "Syntax: \"/[giveitem|takeitem] [target] [quantity|'all'|''] [item]\"");
+        psserver->SendSystemError(me->clientnum, "Syntax: \"/[giveitem|takeitem] [target] [quantity|'all'|''] [item|tria]\"");
         return;
     }
 
@@ -5982,71 +5982,103 @@ void AdminManager::TransferItem(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdDa
     psCharacter* targetchar = target->GetCharacterData();
     psCharacter* sourcechar = source->GetCharacterData();
 
-    InventoryTransaction srcTran( &sourcechar->Inventory() );
+    
 
     //int slot = sourcechar->Inventory().FindItemInTopLevelBulkWithStats(itemstats);
     size_t slot = sourcechar->Inventory().FindItemStatIndex(itemstats);
-    if (slot == SIZET_NOT_FOUND)
+    
+    if (slot != SIZET_NOT_FOUND)
+    {
+    	InventoryTransaction srcTran( &sourcechar->Inventory() );
+        psItem* item;
+        item = sourcechar->Inventory().RemoveItemIndex(slot,data.value);  // data.value is the stack count to move, or -1
+        if (!item)
+        {
+            Error2("Cannot RemoveItemIndex on slot %zu.\n", slot);
+            psserver->SendSystemError(me->clientnum, "Cannot remove %s from %s's inventory.",
+                                      data.item.GetData(), source->GetActor()->GetName() );
+            return;
+        }
+        psserver->GetCharManager()->UpdateItemViews(source->GetClientNum());
+
+        if (item->GetStackCount() < data.value)
+        {
+            psserver->SendSystemError(me->clientnum, "There are only %d, not %d in the stack.", item->GetStackCount(), data.value );
+            return;
+        }
+
+        bool wasEquipped = item->IsEquipped();
+
+        // Now here we handle the target machine
+        InventoryTransaction trgtTran( &targetchar->Inventory() );
+
+        if (!targetchar->Inventory().Add(item))
+        {
+            psserver->SendSystemError(me->clientnum, "Target inventory is too full to accept item transfer.");
+            return;
+        }
+        psserver->GetCharManager()->UpdateItemViews(target->GetClientNum());
+
+        // Inform the GM doing the transfer
+        psserver->SendSystemOK(me->clientnum, "%s transferred from %s's %s to %s",
+                                              item->GetName(),
+                                              source->GetActor()->GetName(),
+                                              wasEquipped?"equipment":"inventory",
+                                              target->GetActor()->GetName() );
+
+        // If we're giving to someone else, notify them
+        if (target->GetClientNum() != me->clientnum)
+        {
+             psserver->SendSystemOK(target->GetClientNum(), "You were given %s by GM %s.",
+                                                            item->GetName(),
+                                                            source->GetActor()->GetName() );
+        }
+
+        // If we're taking from someone else, notify them
+        if (source->GetClientNum() != me->clientnum)
+        {
+             psserver->SendSystemResult(source->GetClientNum(), "%s was taken by GM %s.",
+                                                                item->GetName(),
+                                                             target->GetActor()->GetName() );
+        }
+
+        trgtTran.Commit();
+        srcTran.Commit();
+        return;
+    }
+    else if (data.item == "tria") 
+    {
+    	psMoney srcMoney = sourcechar->Money();
+    	psMoney targetMoney = targetchar->Money();
+    	int value = data.value;
+    	if (value == -1)
+    	{
+    		value = srcMoney.GetTotal();
+    	} 
+    	else if (value > srcMoney.GetTotal())
+    	{
+            value = srcMoney.GetTotal();
+            psserver->SendSystemError(me->clientnum, "Only %d tria taken.",srcMoney.GetTotal());
+    	}
+    	psMoney transferMoney(0, 0, 0, value);
+    	transferMoney = transferMoney.Normalized();
+    	sourcechar->SetMoney( srcMoney - transferMoney );
+    	targetchar->SetMoney( targetMoney + transferMoney );
+        // If we're taking from someone else, notify them
+        if (source->GetClientNum() != me->clientnum)
+        {
+             psserver->SendSystemResult(source->GetClientNum(), "%d tria was taken by %s.",
+                                                                value,
+                                                             target->GetActor()->GetName() );
+        }
+        return;
+    }
+    else
     {
         psserver->SendSystemError(me->clientnum, "Cannot find any %s in %s's inventory.",
                                                  data.item.GetData(), source->GetActor()->GetName() );
-        return;
+        return;    	
     }
-
-    psItem* item;
-    item = sourcechar->Inventory().RemoveItemIndex(slot,data.value);  // data.value is the stack count to move, or -1
-    if (!item)
-    {
-        Error2("Cannot RemoveItemIndex on slot %zu.\n", slot);
-        psserver->SendSystemError(me->clientnum, "Cannot remove %s from %s's inventory.",
-                                  data.item.GetData(), source->GetActor()->GetName() );
-        return;
-    }
-    psserver->GetCharManager()->UpdateItemViews(source->GetClientNum());
-
-    if (item->GetStackCount() < data.value)
-    {
-        psserver->SendSystemError(me->clientnum, "There are only %d, not %d in the stack.", item->GetStackCount(), data.value );
-        return;
-    }
-
-    bool wasEquipped = item->IsEquipped();
-
-    // Now here we handle the target machine
-    InventoryTransaction trgtTran( &targetchar->Inventory() );
-
-    if (!targetchar->Inventory().Add(item))
-    {
-        psserver->SendSystemError(me->clientnum, "Target inventory is too full to accept item transfer.");
-        return;
-    }
-    psserver->GetCharManager()->UpdateItemViews(target->GetClientNum());
-
-    // Inform the GM doing the transfer
-    psserver->SendSystemOK(me->clientnum, "%s transferred from %s's %s to %s",
-                                          item->GetName(),
-                                          source->GetActor()->GetName(),
-                                          wasEquipped?"equipment":"inventory",
-                                          target->GetActor()->GetName() );
-
-    // If we're giving to someone else, notify them
-    if (target->GetClientNum() != me->clientnum)
-    {
-         psserver->SendSystemOK(target->GetClientNum(), "You were given %s by GM %s.",
-                                                        item->GetName(),
-                                                        source->GetActor()->GetName() );
-    }
-
-    // If we're taking from someone else, notify them
-    if (source->GetClientNum() != me->clientnum)
-    {
-         psserver->SendSystemResult(source->GetClientNum(), "%s was taken by GM %s.",
-                                                            item->GetName(),
-                                                         target->GetActor()->GetName() );
-    }
-
-    trgtTran.Commit();
-    srcTran.Commit();
 }
 
 void AdminManager::FreezeClient(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data, Client* client, Client* target)
