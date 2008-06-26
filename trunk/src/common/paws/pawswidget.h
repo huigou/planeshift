@@ -974,7 +974,7 @@ public:
         return ( (int)ret );
     }
 
-    /** Returns the actual width assuming the passed value was in 800x600 
+    /** Returns the actual Height assuming the passed value was in 800x600
      * resolution. 
      */
     int GetActualHeight( int myValue )

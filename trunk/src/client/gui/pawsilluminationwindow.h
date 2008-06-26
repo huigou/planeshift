@@ -61,6 +61,7 @@ class pawsSketchWindow : public pawsWidget, public psClientNetSubscriber,public 
         virtual void Draw();
         virtual bool IsHit(int mouseX, int mouseY);
         virtual void SetStr(const char *s);
+        virtual void UpdatePosition(int _x, int _y);
     };
     struct SketchText : public SketchObject
     {
@@ -79,6 +80,7 @@ class pawsSketchWindow : public pawsWidget, public psClientNetSubscriber,public 
         virtual void WriteXml(csString& xml);
         virtual void Draw();
         virtual bool IsHit(int mouseX, int mouseY);
+        virtual void UpdatePosition(int _x, int _y);
     };
     struct SketchLine : public SketchObject
     {
