@@ -37,6 +37,7 @@ public:
     virtual ~pawsDetailWindow();
 
     bool OnButtonPressed( int mouseButton, int keyModifier, pawsWidget* widget );
+    bool SelectTab( pawsWidget* widget );
 
     bool PostSetup();
     bool FillInfo();
