@@ -1,5 +1,8 @@
 *** 2008-06-26 by Roland Schulz
 - commit fix to FS#170 by Boite
+  Prevent objects on canvas being moved outside of the canvas area, effectively
+  becoming undeleteable.
+- commit fix to FS#215 by phenom - remove /quests command from tab completion
 
 *** 2008-06-26 by Mike Gist
 - Work on pslaunch.

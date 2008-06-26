@@ -96,7 +96,7 @@ psUserCommands::psUserCommands(MsgHandler* mh,CmdHandler *ch,iObjectRegistry* ob
     cmdsource->Subscribe("/advisor", this);
     cmdsource->Subscribe("/advice", this);
     cmdsource->Subscribe("/train", this);
-    cmdsource->Subscribe("/quests", this);
+    //cmdsource->Subscribe("/quests", this);
     cmdsource->Subscribe("/use", this);
     cmdsource->Subscribe("/dig", this);
     cmdsource->Subscribe("/fish", this);
@@ -165,7 +165,7 @@ psUserCommands::~psUserCommands()
     cmdsource->Unsubscribe("/advisor",              this);
     cmdsource->Unsubscribe("/advice",               this);
     cmdsource->Unsubscribe("/train",     this);
-    cmdsource->Unsubscribe("/quests",    this);
+    //cmdsource->Unsubscribe("/quests",    this);
     cmdsource->Unsubscribe("/use",       this);
     cmdsource->Unsubscribe("/dig",       this);
     cmdsource->Unsubscribe("/fish",		 this);
