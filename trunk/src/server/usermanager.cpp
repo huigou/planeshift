@@ -982,8 +982,8 @@ void UserManager::Buddy(psUserCmdMessage& msg,Client *client,int clientnum)
 
     unsigned int selfid=client->GetCharacterData()->GetCharacterID();
 
-    bool searchNPCs = false;
-    unsigned int buddyid=psServer::CharacterLoader.FindCharacterID(msg.player.GetData(), searchNPCs);
+    bool excludeNPCs = true;
+    unsigned int buddyid=psServer::CharacterLoader.FindCharacterID(msg.player.GetData(), excludeNPCs);
 
     if (buddyid==0)
     {
