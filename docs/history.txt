@@ -6,8 +6,9 @@
 - commit fix to FS#686 by Boite - remember selected tab in detail window
 - commit fix to FS#707 by Zwenze - /giveitem and /takeitem now allow to take
   or give trias as well
-- commit feature request FS#1686 by peeg - show inviting member when announcing
+- commit feature request FS#1686 by Cebot - show inviting member when announcing
   new guild member join
+- commit fix to FS#1705 by peeg - can't add NPCs to buddy list any more
 
 *** 2008-06-26 by Mike Gist
 - Work on pslaunch.
