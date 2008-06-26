@@ -207,6 +207,11 @@ bool psLauncherGUI::HandleEvent (iEvent &ev)
             no->Show();
         }
     }
+    else if(paws->FindWidget("LauncherUpdater")->IsVisible())
+    {
+        paws->FindWidget("UpdaterOkButton")->Show();
+        paws->FindWidget("UpdaterCancelButton")->Hide();
+    }
     else if(!updateTold)
     {
         if(infoShare->GetUpdateNeeded())
@@ -237,11 +242,6 @@ bool psLauncherGUI::HandleEvent (iEvent &ev)
             updateProgress->Hide();
             infoShare->SetPerformUpdate(false);
         }
-    }
-    else if(paws->FindWidget("LauncherUpdater")->IsVisible())
-    {
-        paws->FindWidget("UpdaterOkButton")->Show();
-        paws->FindWidget("UpdaterCancelButton")->Hide();
     }
 
     if (paws->HandleEvent(ev))

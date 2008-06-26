@@ -47,6 +47,10 @@ pawsComboBox::~pawsComboBox()
 bool pawsComboBox::Setup( iDocumentNode* node ) 
 { 
     csRef<iDocumentNode> listNode = node->GetNode( "listbox" );
+    if(!listNode.IsValid())
+    {
+        return false;
+    }
     
     rows      = listNode->GetAttributeValueAsInt("rows");
     rowHeight = listNode->GetAttributeValueAsInt("height");

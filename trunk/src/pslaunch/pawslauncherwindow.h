@@ -39,11 +39,16 @@ private:
     csRef<iConfigFile> configFile;
     csRef<iConfigFile> configUser;
     csRef<Thread> newsUpdater;
+    csString mountedPath;
+    csString currentSkin;
 
     static void HandleUpdateButton(bool choice, void *thisptr);
     void UpdateNews();
     void LoadSettings();
     void SaveSettings();
+    void LoadSkin(const char* name);
+    bool LoadResource(const char* resource,const char* resname, const char* mountPath);
+    void OnListAction(pawsListBox* widget, int status);
 
     class NewsUpdater : public Runnable
     {
@@ -93,6 +98,7 @@ private:
     {
         HIGHEST = 0,
         HIGH,
+        MEDIUM,
         LOW,
         LOWEST,
         CUSTOM
