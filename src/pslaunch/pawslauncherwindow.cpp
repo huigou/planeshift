@@ -366,8 +366,8 @@ void pawsLauncherWindow::LoadSettings()
     textureQuality->NewOption("Low");
     textureQuality->NewOption("Very Low");
 
-    int ds = configUser->GetInt("Video.OpenGL.TextureDownsample", (size_t)-1);
-    if(ds == (size_t)-1)
+    int ds = configUser->GetInt("Video.OpenGL.TextureDownsample", (int)-1);
+    if(ds == (int)-1)
     {
         ds = configPSC.GetInt("Video.OpenGL.TextureDownsample", 0);
     }
