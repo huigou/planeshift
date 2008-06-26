@@ -1386,7 +1386,7 @@ void GuildManager::HandleJoinGuild(PendingGuildInvite *invite)
     csString text;
     text.Format("Player %s has joined the guild!",invite->inviteeName.GetData() );
     psChatMessage guildmsg(invite->inviterClientNum,"System",0,text,CHAT_GUILD, false);
-    chatserver->SendGuild(inviteeClient->GetCharacterData()->GetCharName(), guild, guildmsg);
+    chatserver->SendGuild(invite->inviterName.GetData(), guild, guildmsg);
 
     SendNotifications(guild->id, psGUIGuildMessage::MEMBER_DATA);
 
