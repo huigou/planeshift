@@ -1,3 +1,6 @@
+*** 2008-06-26 by Roland Schulz
+- commit fix to FS#170 by Boite
+
 *** 2008-06-26 by Mike Gist
 - Work on pslaunch.
 - Some improvements to PAWS.

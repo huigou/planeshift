@@ -648,6 +648,7 @@ void pawsSketchWindow::SketchIcon::Draw()
     }
     if (selected)
         frame = (frame > 29) ? 0 : frame+1;
+
 }
 
 bool pawsSketchWindow::SketchIcon::IsHit(int mouseX, int mouseY)
@@ -802,7 +803,15 @@ bool pawsSketchWindow::SketchLine::IsHit(int mouseX, int mouseY)
 
 void pawsSketchWindow::SketchLine::UpdatePosition(int _x, int _y)
 {
-    int dx, dy;
+    int dx, dy, newX, newY, newX2, newY2;
+    csRect rect = parent->ScreenFrame();
+
+    rect.xmax -= rect.xmin;
+    rect.ymax -= rect.ymin;
+    rect.xmin = 0;
+    rect.ymin = 0;
+
+    rect.Normalize();
 
     _x -= offsetX;  // This backs off the cursor from where it was
     _y -= offsetY;
@@ -813,21 +822,117 @@ void pawsSketchWindow::SketchLine::UpdatePosition(int _x, int _y)
     switch (dragMode)
     {
         case 0:
-            x += dx;
-            y += dy;
-            x2 += dx;
-            y2 += dy;
+            //drag Line
+            newX = x + dx;
+            newY = y + dy;
+            newX2 = x2 + dx;
+            newY2 = y2 + dy;
+            if(rect.ClipLineSafe(newX,newY,newX2,newY2))
+            {
+                x = newX;
+                y = newY;
+                x2 = newX2;
+                y2 = newY2;
+            }
             break;
         case 1:
-            x += dx;
-            y += dy;
+            //move the first point x,y
+            newX = x + dx;
+            newY = y + dy;
+            newX2 = x2;
+            newY2 = y2;
+            if(rect.ClipLineSafe(newX,newY,newX2,newY2))
+            {
+                x = newX;
+                y = newY;
+                x2 = newX2;
+                y2 = newY2;
+            }
             break;
         case 2:
-            x2 += dx;
-            y2 += dy;
+            //move the second point x2,y2
+            newX = x;
+            newY = y;
+            newX2 = x2 + dx;
+            newY2 = y2 + dy;
+            if(rect.ClipLineSafe(newX,newY,newX2,newY2))
+            {
+                x = newX;
+                y = newY;
+                x2 = newX2;
+                y2 = newY2;
+            }
             break;
     }
     offsetX = 0;
     offsetY = 0;
 }
 
+void pawsSketchWindow::SketchIcon::UpdatePosition (int _x, int _y){
+    int dx, dy, newX, newY, newX2, newY2, x2Updated, y2Updated;
+    csRect rect = parent->ScreenFrame();
+    rect.xmax -= rect.xmin;
+    rect.ymax -= rect.ymin;
+    rect.xmin = 0;
+    rect.ymin = 0;
+
+    rect.Normalize();
+
+    dx = _x - x;
+    dy = _y - y;
+
+    x2Updated = x + iconImage->GetWidth() + dx;
+    y2Updated = y + iconImage->GetHeight() + dy;
+
+    newX = x + dx;
+    newY = y + dy;
+    newX2 = x2Updated;
+    newY2 = y2Updated;
+
+    //test for one diagonal only if the point up move the obj
+    //are on one corner
+    if ( rect.ClipLineSafe(newX,newY,newX2,newY2) )
+    {
+        if ( newX == ( x + dx ) && newY == ( y + dy ))
+        {
+            x = newX - ( x2Updated - newX2 );
+            y = newY - ( y2Updated - newY2 );
+        }
+    }
+}
+
+void pawsSketchWindow::SketchText::UpdatePosition (int _x, int _y){
+
+    int dx, dy, newX, newY, newX2, newY2, x2Updated, y2Updated;
+    csRect rect = parent->ScreenFrame();
+    csRect rectText = parent->ScreenFrame();
+
+    rect.xmax -= rect.xmin;
+    rect.ymax -= rect.ymin;
+    rect.xmin = 0;
+    rect.ymin = 0;
+
+    rectText = parent->GetWidgetTextRect(str, x, y);
+
+    dx = _x - x;
+    dy = _y - y;
+
+    x2Updated = rectText.xmax + dx;
+    y2Updated = rectText.ymax + dy;
+
+    newX = rectText.xmin + dx;
+    newY = rectText.ymin + dy;
+    newX2 = x2Updated;
+    newY2 = y2Updated;
+
+    //test for one diagonal only if the point up move the obj
+    //are on one corner
+    if ( rect.ClipLineSafe(newX,newY,newX2,newY2) )
+    {
+        if ( newX == ( x + dx ) && newY == ( y + dy ))
+        {
+            x = newX - ( x2Updated - newX2 );
+            y = newY - ( y2Updated - newY2 );
+        }
+    }
+}
