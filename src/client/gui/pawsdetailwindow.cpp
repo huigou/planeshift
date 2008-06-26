@@ -180,6 +180,7 @@ void pawsDetailWindow::HandleMessage( MsgEntry* me )
                 {
                     skills[cat].Append(msg.skills[s].text);
                 }
+		SelectTab((pawsWidget*)lastTab);
             }
         }
         this->Show();
@@ -188,6 +189,11 @@ void pawsDetailWindow::HandleMessage( MsgEntry* me )
 }
 
 bool pawsDetailWindow::OnButtonPressed( int mouseButton, int keyModifier, pawsWidget* widget )
+{
+    return SelectTab(widget);
+}
+
+bool pawsDetailWindow::SelectTab( pawsWidget* widget )
 {       
     switch ( widget->GetID() )
     {
