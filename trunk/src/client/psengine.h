@@ -229,11 +229,11 @@ public:
         }
 
         CS_EVENTHANDLER_NAMES ("planeshift.engine.int")
-        virtual CS_CONST_METHOD const csHandlerID * GenericPrec(
+        virtual const csHandlerID * GenericPrec(
             csRef<iEventHandlerRegistry>&,
             csRef<iEventNameRegistry>&,
             csEventID) const;
-        virtual CS_CONST_METHOD const csHandlerID * GenericSucc(
+        virtual const csHandlerID * GenericSucc(
             csRef<iEventHandlerRegistry>&,
             csRef<iEventNameRegistry>&,
             csEventID) const;
