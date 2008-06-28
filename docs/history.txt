@@ -1,3 +1,6 @@
+*** 2008-06-27 by Roland Schulz
+- change int64_t to int64, windows doesn't have the former
+
 *** 2008-06-26 by Roland Schulz
 - commit fix to FS#170 by Boite
   Prevent objects on canvas being moved outside of the canvas area, effectively
