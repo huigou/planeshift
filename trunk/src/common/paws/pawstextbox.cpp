@@ -439,7 +439,7 @@ void pawsMessageTextBox::Draw()
             int oldSize = GetFont()->GetSize();
             if(adjusted[x]->size)
             {
-                ChangeFontSize(adjusted[x]->size);
+                //ChangeFontSize(adjusted[x]->size);
             }
 
             graphics2D->Write(  GetFont(),
@@ -613,7 +613,7 @@ void pawsMessageTextBox::SplitMessage( const char* newText, int colour, int size
         int oldSize = GetFont()->GetSize();
         if(size)
         {
-            ChangeFontSize(size);
+            //ChangeFontSize(size);
         }
         GetFont()->GetMaxSize( maxWidth, maxHeight );
         
