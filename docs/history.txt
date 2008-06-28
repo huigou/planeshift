@@ -1,3 +1,6 @@
+*** 2008-06-28 by Dave Bentham
+- Fixed FS#564 - erroneous "..is already dead" text after kill by magic.
+
 *** 2008-06-27 by Roland Schulz
 - change int64_t to int64, windows doesn't have the former
 

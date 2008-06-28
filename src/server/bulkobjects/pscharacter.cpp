@@ -1103,7 +1103,6 @@ void psCharacter::InterruptSpellCasting()
     {
         spellCasting->Interrupt();
     }
-    SetSpellCasting(NULL);
 }
 
 void psCharacter::SetTradeWork(psWorkGameEvent * event)
