@@ -448,7 +448,7 @@ void pawsMessageTextBox::Draw()
                                 adjusted[x]->colour,
                                 -1,
                                 (const char*)adjusted[x]->text );
-            ChangeFontSize(oldSize);
+            //ChangeFontSize(oldSize);
             yPos++;                                                                            
         }
     }
@@ -667,7 +667,7 @@ void pawsMessageTextBox::SplitMessage( const char* newText, int colour, int size
             }
         }
         
-        ChangeFontSize(oldSize);
+        //ChangeFontSize(oldSize);
         delete [] head;        
     }        
 }
