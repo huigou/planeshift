@@ -915,7 +915,7 @@ UPDATE `server_options` SET `option_value`='1186' WHERE `option_name`='db_versio
 
 #### 1187 - Frank Barton - changing stat_type to appropriate value for random loot an unique items
 UPDATE `item_stats` SET `stat_type`='R' WHERE `id`>'10000';
-UPDATE `item_stats` SET `stat_type`='U' WHERE `stat_type`='R' AND `flags` LIKE '%PERSONALIZE%'; 
+UPDATE `item_stats` SET `stat_type`='U' WHERE `stat_type`='R' AND `flags` LIKE '%PERSONALISE%'; 
 UPDATE `server_options` SET `option_value`='1187' WHERE `option_name`='db_version';
 
 #### 1188 - Steven Patrick - Adding advisor_ban field
