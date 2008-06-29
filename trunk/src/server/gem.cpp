@@ -2099,7 +2099,7 @@ void gemActor::DoDamage(gemActor * attacker, float damage, float damageRate, csT
 
         // if damage due to spell then spell is ending anyway, so no need to force
         // 'stop attack.'
-        if (attacker->GetMode() == PSCHARACTER_MODE_COMBAT)
+        if (attacker && attacker->GetMode() == PSCHARACTER_MODE_COMBAT)
         {
             psserver->combatmanager->StopAttack(attacker);
         }
