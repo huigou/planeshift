@@ -175,7 +175,11 @@ nsSocket::Open()
         socklen_t newTCPWin, len;
        
         len = sizeof( newTCPWin );
- 
+
+#ifdef SO_NOSIGPIPE
+        int value = 1;
+        setsockopt( mFd, SOL_SOCKET, SO_NOSIGPIPE, &value, sizeof( value ));
+#endif
         setsockopt( mFd, SOL_SOCKET, SO_RCVBUF, (char*) &windowSize, sizeof( windowSize ));
 #ifdef DEBUG
         getsockopt( mFd, SOL_SOCKET, SO_RCVBUF, (char*) &newTCPWin, &len );
@@ -321,7 +325,13 @@ nsSocket::Send(unsigned char *aBuf, int *aBufSize)
 #ifdef CS_PLATFORM_WIN32
         rv = write(mFd, aBuf, *aBufSize);
 #else
+//MSG_NOSIGNAL is not posix compliant. In particular not defined on OSX/BSD.
+//Socket option is used here instead.
+#ifdef MSG_NOSIGNAL
         rv = send(mFd, aBuf, *aBufSize, MSG_NOSIGNAL);
+#else
+        rv = send(mFd, aBuf, *aBufSize, 0);
+#endif
 #endif
     }
 
