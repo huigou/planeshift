@@ -1,3 +1,6 @@
+*** 2008-06-29 by Mike Gist
+- Added a missing check for attacker in gemActor::DoDamage.
+
 *** 2008-06-28 by Dave Bentham
 - Fixed FS#564 - erroneous "..is already dead" text after kill by magic.
 
