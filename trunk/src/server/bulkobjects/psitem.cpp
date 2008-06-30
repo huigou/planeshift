@@ -362,8 +362,10 @@ bool psItem::Load(iResultRow& row)
     owningCharacterID = row.GetUInt32("char_id_owner");
     guardingCharacterID = row.GetUInt32("char_id_guardian");
                    
-    if ( row.GetInt("location_in_parent") == -1 ||  // SLOT_NONE
-        (row.GetInt("location_in_parent") == 0 && row.GetInt("char_id_owner") == 0)) // No owner and no slot
+    if(row.GetInt("location_in_parent") == -1 ||  // SLOT_NONE
+      (row.GetInt("location_in_parent") == 0 &&
+       row.GetInt("char_id_owner") == 0 &&
+       row.GetInt("parent_item_id") == 0)) // No owner and no slot
     {
         float x,y,z,yrot;
         INSTANCE_ID instance;
