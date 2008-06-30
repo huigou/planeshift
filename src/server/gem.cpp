@@ -1719,14 +1719,14 @@ nevertired(false), infinitemana(false), instantcast(false), safefall(false)
     
     SetAlive(true);
 
-    chardata->SetActor(this);
-
     if (!InitLinMove(pos,rotangle,room))
     {
         Error1("Could not initialize LinMove prop class, so actor not created.");
         entity = NULL;
         return;
     }
+
+    chardata->SetActor(this);
 
     if (!InitCharData(client))
     {
