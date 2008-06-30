@@ -1,5 +1,6 @@
 *** 2008-06-30 by Mike Gist
 - Fixed a crash in the gemActor ctor.
+- Fixed items in a container failing to load.
 
 *** 2008-06-29 by Mike Gist
 - Added a missing check for attacker in gemActor::DoDamage.
