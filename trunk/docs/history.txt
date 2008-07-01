@@ -1,3 +1,7 @@
+*** 2008-07-01 by Mike Gist
+- Made the integrity check in the updater more robust.
+- Improved the updater so it checks if you already have the correct version of a file on patch fail.
+
 *** 2008-07-01 by Steven Patrick
 - Fix for FS#1794, patch by Caarrie.
 

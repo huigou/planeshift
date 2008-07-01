@@ -163,12 +163,6 @@ void UpdaterEngine::CheckForUpdates()
             return;
         }
 
-        if(!confignode->GetAttributeValueAsBool("active", true))
-        {
-            PrintOutput("This updaterinfo.xml file is marked as inactive and will not work. Please get another one.\n");
-            return;
-        }
-
         // Load updater config
         if (!config->GetCurrentConfig()->Initialize(confignode))
         {
@@ -771,7 +765,7 @@ void UpdaterEngine::GeneralUpdate()
                 csRef<iDataBuffer> oldFP = vfs->GetRealPath("/this/" + oldFilePath);
                 csRef<iDataBuffer> diffFP = vfs->GetRealPath("/this/" + diff);
                 csRef<iDataBuffer> newFP = vfs->GetRealPath("/this/" + newFilePath);
-                
+
                 // Save permissions.
                 csRef<FileStat> fs = fileUtil->StatFile(oldFP->GetData());
 #ifdef CS_PLATFORM_UNIX
@@ -786,29 +780,54 @@ void UpdaterEngine::GeneralUpdate()
                 if(!PatchFile(oldFP->GetData(), diffFP->GetData(), newFP->GetData()))
                 {
                     PrintOutput("Failed!\n");
-                    PrintOutput("Attempting to download full version of %s: \n", newFilePath.GetData());
 
-                    // Get the 'backup' mirror, should always be the first in the list.
-                    csString baseurl = config->GetNewConfig()->GetMirror(0)->GetBaseURL();
-                    baseurl.Append("backup/");
-
-                    // Try path from base URL.
-                    csString url = baseurl;
-                    if(!downloader->DownloadFile(url.Append(newFilePath.GetData()), newFilePath.GetData(), true, true))
+                    // Check if the file is already up to date.
+                    bool download = true;
+                    csRef<iDataBuffer> buffer = vfs->ReadFile("/this/" + oldFilePath);
+                    if(buffer)
                     {
-                        // Maybe it's in a platform specific subdirectory. Try that next.
-                        url = baseurl;
-                        url.AppendFmt("%s/", config->GetNewConfig()->GetPlatform());
+                        csMD5::Digest md5 = csMD5::Encode(buffer->GetData(), buffer->GetSize());
+                        csString md5sum = md5.HexString();
+
+                        csString fileMD5 = next->GetAttributeValue("md5sum");
+
+                        if(md5sum.Compare(fileMD5))
+                        {
+                            fileUtil->RemoveFile("/this/" + newFilePath);
+                            fileUtil->RemoveFile("/this/" + diff);
+                            fileUtil->CopyFile("/this/" + oldFilePath, "/this/" + newFilePath, true, false);
+                            download = false;
+                        }
+                    }
+
+                    if(download)
+                    {
+                        PrintOutput("Attempting to download full version of %s: \n", newFilePath.GetData());
+
+                        // Get the 'backup' mirror, should always be the first in the list.
+                        csString baseurl = config->GetNewConfig()->GetMirror(0)->GetBaseURL();
+                        baseurl.Append("backup/");
+
+                        // Try path from base URL.
+                        csString url = baseurl;
                         if(!downloader->DownloadFile(url.Append(newFilePath.GetData()), newFilePath.GetData(), true, true))
                         {
-                            PrintOutput("\nUnable to update file: %s. Reverting file!\n", newFilePath.GetData());
-                            fileUtil->CopyFile("/this/" + oldFilePath, "/this/" + newFilePath, true, false);
+                            // Maybe it's in a platform specific subdirectory. Try that next.
+                            url = baseurl;
+                            url.AppendFmt("%s/", config->GetNewConfig()->GetPlatform());
+                            if(!downloader->DownloadFile(url.Append(newFilePath.GetData()), newFilePath.GetData(), true, true))
+                            {
+                                PrintOutput("\nUnable to update file: %s. Reverting file!\n", newFilePath.GetData());
+                                fileUtil->CopyFile("/this/" + oldFilePath, "/this/" + newFilePath, true, false);
+                            }
+                            else
+                                PrintOutput("Done!\n");
                         }
                         else
                             PrintOutput("Done!\n");
                     }
                     else
-                        PrintOutput("Done!\n");
+                        PrintOutput("File is already up to date!");
                 }
                 else
                 {
@@ -840,7 +859,7 @@ void UpdaterEngine::GeneralUpdate()
                             PrintOutput("Success!\n");
                     }
                     fileUtil->RemoveFile("/this/" + oldFilePath);
-                 }
+                }
                 // Clean up temp files.
                 fileUtil->RemoveFile("/this/" + diff, false);
 
@@ -877,23 +896,46 @@ void UpdaterEngine::CheckIntegrity()
 
     // Load current config data.
     csRef<iDocumentNode> root = GetRootNode(UPDATERINFO_FILENAME);
+    bool success = true;
     if(!root)
     {
         PrintOutput("Unable to get root node!\n");
-        return;
+        success = false;
     }
 
     csRef<iDocumentNode> confignode = root->GetNode("config");
     if (!confignode)
     {
         PrintOutput("Couldn't find config node in configfile!\n");
-        return;
+        success = false;
     }
 
-    if(!confignode->GetAttributeValueAsBool("active", true))
+    if(!success)
     {
-        PrintOutput("This updaterinfo.xml file is marked as inactive and will not work. Please get another one.\n");
-        return;
+        fileUtil->RemoveFile("/this/updaterinfo.xml", true);
+        downloader = new Downloader(vfs);
+        downloader->SetProxy(config->GetProxy().host.GetData(), config->GetProxy().port);
+        if(!downloader->DownloadFile("http://www.psmirror.org/repo/updaterinfo.xml", "updaterinfo.xml", true, true))
+        {
+            PrintOutput("\nFailed to download updater info!\n");
+            return;
+        }
+
+        delete downloader;
+
+        root = GetRootNode(UPDATERINFO_FILENAME);
+        if(!root)
+        {
+            PrintOutput("Unable to get root node!\n");
+            return;
+        }
+       
+        confignode = root->GetNode("config");
+        if (!confignode)
+        {
+            PrintOutput("Couldn't find config node in configfile!\n");
+            return;
+        }
     }
 
     // Load updater config
@@ -904,11 +946,46 @@ void UpdaterEngine::CheckIntegrity()
     }
 
     // Initialise downloader.
-    downloader = new Downloader(GetVFS(), config);
+    downloader = new Downloader(vfs, config);
 
     // Set proxy
-    downloader->SetProxy(GetConfig()->GetProxy().host.GetData(),
-        GetConfig()->GetProxy().port);
+    downloader->SetProxy(config->GetProxy().host.GetData(), config->GetProxy().port);
+
+    // Backup old config, download new.
+    fileUtil->MoveFile("/this/updaterinfo.xml", "/this/updaterinfo.xml.bak", true, false);
+
+    if(!downloader->DownloadFile("updaterinfo.xml", "updaterinfo.xml", false, true))
+    {
+        PrintOutput("\nFailed to download updater info from a mirror!\n");
+        return;
+    }
+
+    delete downloader;
+
+    root = GetRootNode(UPDATERINFO_FILENAME);
+    if(!root)
+    {
+        PrintOutput("Unable to get root node!\n");
+    }
+
+    confignode = root->GetNode("config");
+    if (!confignode)
+    {
+        PrintOutput("Couldn't find config node in configfile!\n");
+    }
+
+    // Load updater config
+    if (!config->GetCurrentConfig()->Initialize(confignode))
+    {
+        PrintOutput("Failed to Initialize mirror config current!\n");
+        return;
+    }
+
+    // Initialise downloader.
+    downloader = new Downloader(vfs, config);
+
+    // Set proxy
+    downloader->SetProxy(config->GetProxy().host.GetData(), config->GetProxy().port);
 
     // Get the zip with md5sums.
     fileUtil->RemoveFile("integrity.zip", true);
@@ -1019,7 +1096,15 @@ void UpdaterEngine::CheckIntegrity()
                     infoShare->SetPerformUpdate(false);
                 }
                 
-                if(c == 'y')
+                if(c == 'n')
+                {
+                    if(vfs->Exists("/this/updaterinfo.xml.bak"))
+                    {
+                        fileUtil->RemoveFile("/this/updaterinfo.xml", true);
+                        fileUtil->MoveFile("/this/updaterinfo.xml.bak", "/this/updaterinfo.xml", true, false);
+                    }
+                }
+                else if(c == 'y')
                 {
                     for(size_t i=0; i<failedSize; i++)
                     {
@@ -1069,6 +1154,7 @@ void UpdaterEngine::CheckIntegrity()
                         fileUtil->RemoveFile(downloadpath + ".bak", true);
                         PrintOutput("Success!\n");
                     }
+                    fileUtil->RemoveFile("/this/updaterinfo.xml.bak", true);
                     PrintOutput("\nDone!\n");
                 }
             }
