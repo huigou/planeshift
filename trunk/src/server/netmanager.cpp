@@ -557,6 +557,7 @@ void NetManager::CheckLinkDead()
 
                 checkedClients.InsertSorted(candidate->GetClientNum());
                 pClient = candidate;
+                break;
             }
         }
 
