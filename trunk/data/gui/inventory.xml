@@ -182,7 +182,7 @@
     
     <widget name="TotalTrias" factory="pawsTextBox">
         <frame x="60" y="172" width="90" height="30" />
-        <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="64" size="12" />    
+        <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="64" size="10" />    
         <text string="0" />
         <subscriptions>
             <subscribe data="sigInvMoneyTotal" />
@@ -192,7 +192,7 @@
     
     <widget name="TotalWeight" factory="pawsTextBox">
         <frame x="60" y="185" width="90" height="30" />
-        <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="64" size="12" />    
+        <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="64" size="10" />    
         <text string="0" />
         <subscriptions>
             <subscribe data="sigInvWeightTotal" />
@@ -201,7 +201,7 @@
     
     <widget name="TotalCapacity" factory="pawsTextBox">
         <frame x="70" y="212" width="60" height="30"/>
-        <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="64" size="12" />            
+        <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="64" size="10" />            
         <text string="0" />
         <subscriptions>
             <subscribe data="fmaxcapacity" />
@@ -210,7 +210,7 @@
     
         <widget name="CurrCapacity" factory="pawsTextBox">
         <frame x="5" y="212" width="60" height="30"/>
-        <font name="/planeshift/data/ttf/cupandtalon.ttf" r="215" g="167" b="32" size="12" />            
+        <font name="/planeshift/data/ttf/cupandtalon.ttf" r="215" g="167" b="32" size="10" />            
         <text string="0" />
         <subscriptions>
             <subscribe data="fcurrcap" />
