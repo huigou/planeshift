@@ -179,13 +179,8 @@ bool pawsWidget::CheckButtonPressed( int button, int modifiers, pawsWidget* pres
  */
 pawsWidget* pawsWidget::WidgetAt( int x, int y )
 {
-    if ( ignore ) 
+    if (ignore || !Contains(x,y))
         return NULL;
-
-    if ( Contains( x, y ) == false )
-    {
-        return NULL;
-    }
 
     //Recurse through children to see if they could the one the mouse is over.
     for (size_t z = 0; z < children.GetSize(); z++ )
@@ -783,7 +778,7 @@ bool pawsWidget::LoadChildren( iDocumentNode* node )
         }
 
         // Let the widget parse the rest of the node information
-        if ( widget->Load( childWidgetNode ) == false )
+        if (!widget->Load(childWidgetNode))
         {
             Error1("Failed to load child widget");
             return false;

@@ -328,7 +328,7 @@ void pawsSkillWindow::HandleMessage( MsgEntry* me )
 				case psGUISkillMessage::SKILL_LIST:
 				{
 					skillString = "no";
-					if ( !IsVisible() && incoming.openWindow == true ) 
+					if (!IsVisible() && incoming.openWindow) 
 					{
 						Show();
 					}
@@ -708,7 +708,7 @@ void pawsSkillWindow::Show()
 	
 	// If this is the first time the window is open then we need to get our 
 	// full list of faction information.
-	if ( factRequest == false )
+	if (!factRequest)
 	{
 		psFactionMessage factionRequest(0, psFactionMessage::MSG_FULL_LIST);
 		factionRequest.BuildMsg();

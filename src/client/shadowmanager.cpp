@@ -132,7 +132,7 @@ bool psShadowManager::Load(const char * filename)
 
 void psShadowManager::CreateShadow(GEMClientObject * object)
 {
-    if (shadowsEnabled == false)
+    if (!shadowsEnabled)
         return;
 
     if (!object)
@@ -182,7 +182,7 @@ void psShadowManager::RemoveShadow(GEMClientObject * object)
 
 void psShadowManager::RecreateAllShadows()
 {
-    if (shadowsEnabled == false)
+    if (!shadowsEnabled)
         return;
 
     const csPDelArray<GEMClientObject>& entities = psengine->GetCelClient()->GetEntities();
@@ -193,7 +193,7 @@ void psShadowManager::RecreateAllShadows()
 
 void psShadowManager::RemoveAllShadows()
 {
-    if (shadowsEnabled == false)
+    if (!shadowsEnabled)
         return;
 
     const csPDelArray<GEMClientObject>& entities = psengine->GetCelClient()->GetEntities();
@@ -215,7 +215,7 @@ void psShadowManager::SetShadowRange(float shadowRange)
 
 void psShadowManager::UpdateShadows()
 {
-    if (shadowsEnabled == false)
+    if (!shadowsEnabled)
         return;
 
     const csPDelArray<GEMClientObject>& entities = psengine->GetCelClient()->GetEntities();

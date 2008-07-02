@@ -1348,7 +1348,7 @@ void ExchangeManager::StartExchange( Client* client, bool withPlayer )
 
     target = client->GetTargetObject();
 
-    if ( target->IsAlive() == false )
+    if (!target->IsAlive())
     {
         psserver->SendSystemError(client->GetClientNum(), "Cannot give items to dead things!");
         return;

@@ -177,7 +177,7 @@ void pawsLoginWindow::UpdateUserPasswdFromConfig()
         storedPasswd = cfg->GetStr(cfg_name, "");
     }
     
-    if (storedPasswd.IsEmpty() == false)
+    if (!storedPasswd.IsEmpty())
         passwd->SetText(ASTERISKS);
     else
         passwd->SetText("");

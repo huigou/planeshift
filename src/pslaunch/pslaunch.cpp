@@ -410,7 +410,7 @@ int main(int argc, char* argv[])
             delete infoShare;
             infoShare = NULL;
             
-            if(execPSClient == true)
+            if (execPSClient)
             {
                 // Execute psclient process.
 

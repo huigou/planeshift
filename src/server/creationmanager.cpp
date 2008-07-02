@@ -804,7 +804,7 @@ void psCharCreationManager::HandleUploadMessage( MsgEntry* me, Client *client )
 
 
     csString error;
-    if (  psserver->charCreationManager->Validate( upload, error) == false )
+    if (!psserver->charCreationManager->Validate(upload, error))
     {
         error.Append(", your creation choices are invalid." );
         psCharRejectedMessage reject(me->clientnum,
@@ -889,7 +889,7 @@ void psCharCreationManager::HandleUploadMessage( MsgEntry* me, Client *client )
     }
     
     
-    if ( sectorFound == false )
+    if (!sectorFound)
     {
         Error2("Unresolvable starting sector='%s'", sectorname );
         psCharRejectedMessage reject(me->clientnum);

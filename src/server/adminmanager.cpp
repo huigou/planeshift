@@ -3863,7 +3863,7 @@ void AdminManager::CreateMoney(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdDat
     else
         valid = false;
        
-    if (valid == false || (data.value == 0 && data.random == 0))
+    if (!valid || (data.value == 0 && data.random == 0))
     {
         psserver->SendSystemError(me->clientnum, "Syntax: /money <circles|hexas|octas|trias> <random|quantity>");
         return;

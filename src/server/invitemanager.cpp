@@ -139,7 +139,7 @@ bool PendingInvite::CheckForSpam(Client *inviter, psQuestionMessage::questionTyp
 
     csTicks ban = INVITESPAMBANTIME[inviter->GetSpamPoints()-1]*60*1000;
 
-    if (inviter->GetSpamPoints() && inviter->GetLastInviteResult() == false && now < then + ban)
+    if (inviter->GetSpamPoints() && !inviter->GetLastInviteResult() && now < then + ban)
     {
         // Warn the player, if not done already this session
         if (inviter->GetSpamPoints() >= 2 && !inviter->HasBeenWarned())

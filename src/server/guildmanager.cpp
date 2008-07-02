@@ -1716,7 +1716,7 @@ void GuildManager::Secret(psGuildCmdMessage &msg, Client *client)
         return;
     }
 
-    bool new_secrecy_value = (msg.secret == "on");
+    const bool new_secrecy_value = (msg.secret == "on");
 
     // Only update the database if the value is really being changed.
     if (new_secrecy_value != guild->IsSecret() )
@@ -1737,7 +1737,7 @@ void GuildManager::Secret(psGuildCmdMessage &msg, Client *client)
     
     // If secrecy is on send a message to all others clearing guild name
     // else send a message to all others to show the guild name.
-    if ( new_secrecy_value == true )
+    if (new_secrecy_value)
     {
         // Turn label off for everybody
         psUpdatePlayerGuildMessage update(
@@ -1762,8 +1762,6 @@ void GuildManager::Secret(psGuildCmdMessage &msg, Client *client)
                 guild->GetName() );
         psserver->GetEventManager()->Broadcast(update.msg,NetBase::BC_EVERYONE);          
     }
-            
-    
 }
 
 void GuildManager::Web(psGuildCmdMessage &msg, Client *client)

@@ -654,7 +654,7 @@ gemObject::gemObject(const char* name,
 gemObject::~gemObject()
 {   
     // Assert on any dublicate delete
-    assert(valid == true);
+    assert(valid);
     valid = false;
     
     Disconnect();         

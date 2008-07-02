@@ -123,7 +123,7 @@ bool pawsGMActionWindow::OnButtonPressed(int button,int keyModifier,pawsWidget* 
         //}
         break;
     case 103: // Use Full Mesh
-        if ( chkFullMesh->GetState() == true )
+        if (chkFullMesh->GetState())
         {
             txtPolygon->SetText( "0" );
             txtPosX->SetText( "0" );

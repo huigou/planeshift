@@ -150,8 +150,8 @@ void pawsCharParents::Draw()
     pawsWidget::Draw();
 
     // Check to see if we are waiting for data from the server. Should have a waiting
-    // curser if this fails.     
-    if ( dataLoaded == false && createManager->HasParentData())
+    // cursor if this fails.     
+    if (!dataLoaded && createManager->HasParentData())
     {
         PopulateFields();
         dataLoaded = true;

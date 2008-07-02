@@ -165,12 +165,12 @@ public:
             }
             else
             {
-                if (word.CompareNoCase( "target" ) == true )
+                if (word.CompareNoCase("target"))
                 {
                     str.ReplaceSubString( word, target->GetName() );
                     str.DeleteAt( where );
                 }
-                else if (word.CompareNoCase( "actor" ) == true )
+                else if (word.CompareNoCase("actor"))
                 {
                     str.ReplaceSubString( word, actor->GetName() );
                     str.DeleteAt( where );
