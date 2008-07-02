@@ -4,6 +4,7 @@
   deal with the root of the issue causing it, so more investigation it needed.
 - Added extra error checking to UserManager::HandleLoot() and refactored it a
   little bit.
+- Disabled material stripping from thing mesh factories and objects. 
 
 *** 2008-07-01 by Mike Gist
 - Made the integrity check in the updater more robust.
