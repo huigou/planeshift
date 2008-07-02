@@ -520,8 +520,6 @@ void AdviceManager::HandleListAdvisors( Client *advisor )
 
 void AdviceManager::HandleAdviceRequest( Client *advisee, csString message )
 {
-    CPrintf(CON_DEBUG,"User asked for advice.\n");
-
     //    psserver->SendSystemInfo( advisee->GetClientNum(), "Sorry for the inconvenience, you cannot request advice right now. The advice system is under maintenaince and will be available after a server restart soon.");
     //    return;
 
@@ -643,8 +641,6 @@ void AdviceManager::HandleAdviceResponse( Client *advisor, csString sAdvisee, cs
         psserver->SendSystemInfo(advisor->GetClientNum(),"You need to be an advisor to use this command.");
         return;
     }
-
-    CPrintf(CON_DEBUG,"Advisor has responded.\n");
 
     csString buf;
     // Source Client Name, Target Client Name, Message
@@ -838,8 +834,6 @@ void AdviceManager::AddAdvisor(Client *client)
     //Send message to advisor that he/she is an advisor
     psserver->SendSystemInfo(id,"Your request to become an advisor has been granted.");
     //psserver->SendSystemInfo(id, "You currently have %d advisor points.",  client->GetAdvisorPoints() );
-
-    CPrintf(CON_DEBUG,"Advisor has been added\n");
 }
 
 void AdviceManager::RemoveAdvisor(uint32_t id, int connectionId)
@@ -874,7 +868,6 @@ void AdviceManager::RemoveAdvisor(uint32_t id, int connectionId)
 
     //Send message to non-advisor that he/she isn't an advisor any more
     psserver->SendSystemInfo(connectionId,"You have just laid down your advisor role.");
-    // CPrintf(CON_DEBUG,"Advisor has been removed\n");
 }
 
 void AdviceManager::AdviceRequestTimeout(AdviceSession *adviceSession)
