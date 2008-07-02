@@ -1,6 +1,12 @@
+*** 2008-07-02 by Mike Gist
+- Changed ProximityList::ClearTouched() to not set 'self' to untouched, as it
+  is guaranteed to always be touched. This also fixes an assert, although doesn't
+  deal with the root of the issue causing it, so more investigation it needed.
+
 *** 2008-07-01 by Mike Gist
 - Made the integrity check in the updater more robust.
-- Improved the updater so it checks if you already have the correct version of a file on patch fail.
+- Improved the updater so it checks if you already have the correct version of
+  a file on patch fail.
 - Patch from Arerano to fix the timout on disconnect not working.
 
 *** 2008-07-01 by Steven Patrick
