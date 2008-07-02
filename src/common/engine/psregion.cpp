@@ -278,17 +278,21 @@ csRef<iDocumentNode> psRegion::Filter(csRef<iDocumentNode> world, bool using3D)
         while(meshfacts->HasNext())
         {
             csRef<iDocumentNode> meshfact = meshfacts->Next();
-            csRef<iDocumentNode> params = meshfact->GetNode("params");
-            if(params)
+            csRef<iDocumentNode> plugin = meshfact->GetNode("plugin");
+            if(!plugin || !csString("thingFact").Compare(plugin->GetContentsValue()))
             {
-                params->RemoveNodes(params->GetNodes("n"));
-                csRef<iDocumentNodeIterator> submeshes = params->GetNodes("submesh");
-                while(submeshes->HasNext())
+                csRef<iDocumentNode> params = meshfact->GetNode("params");
+                if(params)
                 {
-                    csRef<iDocumentNode> submesh = submeshes->Next();
-                    if(submesh->GetNode("material"))
+                    params->RemoveNodes(params->GetNodes("n"));
+                    csRef<iDocumentNodeIterator> submeshes = params->GetNodes("submesh");
+                    while(submeshes->HasNext())
                     {
-                        submesh->RemoveNode(submesh->GetNode("material"));
+                        csRef<iDocumentNode> submesh = submeshes->Next();
+                        if(submesh->GetNode("material"))
+                        {
+                            submesh->RemoveNode(submesh->GetNode("material"));
+                        }
                     }
                 }
             }
@@ -302,26 +306,29 @@ csRef<iDocumentNode> psRegion::Filter(csRef<iDocumentNode> world, bool using3D)
             while(meshobjs->HasNext())
             {
                 csRef<iDocumentNode> meshobj = meshobjs->Next();
-                csRef<iDocumentNode> params = meshobj->GetNode("params");
-                if(params)
+                csRef<iDocumentNode> plugin = meshobj->GetNode("plugin");
+                if(!plugin || !csString("thing").Compare(plugin->GetContentsValue()))
                 {
-                    if(params->GetNode("material"))
+                    csRef<iDocumentNode> params = meshobj->GetNode("params");
+                    if(params)
                     {
-                        params->RemoveNode(params->GetNode("material"));
-                    }
-                    if(params->GetNode("materialpalette"))
-                    {
-                        params->RemoveNode(params->GetNode("materialpalette"));
-                    }
-                    csRef<iDocumentNodeIterator> submeshes = params->GetNodes("submesh");
-                    while(submeshes->HasNext())
-                    {
-                        csRef<iDocumentNode> submesh = submeshes->Next();
-                        if(submesh->GetNode("material"))
+                        if(params->GetNode("material"))
                         {
-                            submesh->RemoveNode(submesh->GetNode("material"));
+                            params->RemoveNode(params->GetNode("material"));
                         }
-
+                        if(params->GetNode("materialpalette"))
+                        {
+                            params->RemoveNode(params->GetNode("materialpalette"));
+                        }
+                        csRef<iDocumentNodeIterator> submeshes = params->GetNodes("submesh");
+                        while(submeshes->HasNext())
+                        {
+                            csRef<iDocumentNode> submesh = submeshes->Next();
+                            if(submesh->GetNode("material"))
+                            {
+                                submesh->RemoveNode(submesh->GetNode("material"));
+                            }
+                        }
                     }
                 }
             }
