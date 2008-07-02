@@ -139,7 +139,7 @@ void pawsPetStatWindow::HandleMessage( MsgEntry* me )
         case psPetSkillMessage::SKILL_LIST:
         {
             skillString = "no";
-//            if ( !IsVisible() && incoming.openWindow == true ) 
+//            if (!IsVisible() && incoming.openWindow) 
 //                Show();
             skillString = incoming.commandData;
             HandleSkillList(skillString);

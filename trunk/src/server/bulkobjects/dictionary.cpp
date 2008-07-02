@@ -1010,7 +1010,7 @@ void NpcTerm::BuildHypernymList()
 
             }
         }
-    } while(hit == true);
+    } while (hit);
 }
 
 bool NpcTrigger::Load(iResultRow& row)
@@ -1037,7 +1037,7 @@ bool NpcTrigger::HaveAvailableResponses(Client * client, gemNPC * npc, NPCDialog
         {
             if (resp->quest || resp->prerequisite)
             {
-                if ( resp->quest && resp->quest->Active() == false )
+                if (resp->quest && !resp->quest->Active())
                 {
                     haveAvail = false;    
                 }

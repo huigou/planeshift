@@ -83,7 +83,7 @@ bool psInventoryCacheServer::ClearAllSlots(void)
 {
     bool slotOK = true;
     
-    for (int slot=0; slot<PSCHARACTER_SLOT_BULK_END && slotOK==true; slot++)
+    for (int slot = 0; slot < PSCHARACTER_SLOT_BULK_END && slotOK; slot++)
     {
         slotOK = ClearSlot((INVENTORY_SLOT_NUMBER)slot);
     }

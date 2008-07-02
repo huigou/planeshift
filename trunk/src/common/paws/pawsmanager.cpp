@@ -747,7 +747,7 @@ pawsWidget * PawsManager::LoadWidget( csRef<iDocumentNode> widgetNode )
         return NULL;
     }
 
-    if ( widget->Load( widgetNode ) == false )
+    if (!widget->Load(widgetNode))
     {
         Error3("Widget %s failed to load %s", widget->GetName(), factory.GetData() );
         delete widget;

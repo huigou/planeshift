@@ -331,9 +331,9 @@ void ChatManager::SendGuild(Client *client, psChatMessage& msg)
     }
 
     level = client->GetCharacterData()->GetGuildLevel();
-    if (level!=NULL  &&  level->HasRights(RIGHTS_CHAT)==false)
+    if (level && !level->HasRights(RIGHTS_CHAT))
     {
-        psserver->SendSystemInfo(client->GetClientNum(), "You are not allowed to use chat channel of your guild.");
+        psserver->SendSystemInfo(client->GetClientNum(), "You are not allowed to use your guild's chat channel.");
         return;
     }
 

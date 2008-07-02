@@ -225,23 +225,22 @@ void psCharAppearance::HairColor(csVector3& color)
 
 void psCharAppearance::ShowHair(bool show)
 {
-    if ( show && hairAttached )
+    if (show)
     {
-        return;
+        if (hairAttached)
+            return;
+
+        state->AttachCoreMesh(hairMesh);
+
+        if (colorSet)
+            HairColor(hairShader);
+
+        hairAttached = true;
     }
-    else if ( show == false )
+    else
     {
         state->DetachCoreMesh(hairMesh);
         hairAttached = false;
-    }
-    else if ( show == true )
-    {            
-        state->AttachCoreMesh(hairMesh);        
-        
-        if (colorSet)
-            HairColor(hairShader);
-            
-        hairAttached = true;
     }
 }
 

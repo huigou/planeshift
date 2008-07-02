@@ -1490,7 +1490,7 @@ LootRandomizer::~LootRandomizer()
 
 void LootRandomizer::AddLootModifier(LootModifier *entry)
 {
-    if ( entry->modifier_type.CompareNoCase( "prefix" ) == true )
+    if (entry->modifier_type.CompareNoCase("prefix"))
     {
         prefixes.Push( entry );
         if (entry->probability > prefix_max) 
@@ -1498,7 +1498,7 @@ void LootRandomizer::AddLootModifier(LootModifier *entry)
             prefix_max = entry->probability;
         }
     }
-    else if ( entry->modifier_type.CompareNoCase( "suffix" ) == true )
+    else if (entry->modifier_type.CompareNoCase("suffix"))
     {
         suffixes.Push( entry );
         if (entry->probability > suffix_max)
@@ -1506,7 +1506,7 @@ void LootRandomizer::AddLootModifier(LootModifier *entry)
             suffix_max = entry->probability;
         }
     }
-    else if ( entry->modifier_type.CompareNoCase( "adjective" ) == true )
+    else if (entry->modifier_type.CompareNoCase("adjective"))
     {
         adjectives.Push( entry );
         if (entry->probability > adjective_max)
@@ -1577,17 +1577,17 @@ psItemStats* LootRandomizer::RandomizeItem( psItemStats* itemstats, float maxcos
         LootModifier *lootModifier = NULL;
         csArray<LootModifier *> *modifierList = NULL;
 
-        if ( modifierType.CompareNoCase( "prefix" ) == true )            
+        if (modifierType.CompareNoCase("prefix"))
         {
             modifierList = &prefixes; 
             max_probability=(int)prefix_max;
         }
-        else if ( modifierType.CompareNoCase( "suffix" ) == true )
+        else if (modifierType.CompareNoCase("suffix"))
         {
             modifierList = &suffixes;
             max_probability=(int)suffix_max;
         }
-        else if ( modifierType.CompareNoCase( "adjective" ) == true )
+        else if (modifierType.CompareNoCase("adjective"))
         {
             modifierList = &adjectives;
             max_probability=(int)adjective_max;
@@ -1654,19 +1654,19 @@ void LootRandomizer::AddModifier( LootModifier *oper1, LootModifier *oper2 )
 {
     csString newName;
     // Change Name
-    if ( oper2->modifier_type.CompareNoCase( "prefix" ) == true )
+    if (oper2->modifier_type.CompareNoCase("prefix"))
     {
         newName.Append( oper2->name );
         newName.Append( " " );
         newName.Append( oper1->name );
     }
-    else if ( oper2->modifier_type.CompareNoCase( "suffix" ) == true )
+    else if (oper2->modifier_type.CompareNoCase("suffix"))
     {
         newName.Append( oper1->name );
         newName.Append( " " );
         newName.Append( oper2->name );
     }
-    else if ( oper2->modifier_type.CompareNoCase( "adjective" ) == true )
+    else if (oper2->modifier_type.CompareNoCase("adjective"))
     {
         newName.Append( oper2->name );
         newName.Append( " " );

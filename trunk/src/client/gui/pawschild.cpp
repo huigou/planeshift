@@ -191,11 +191,11 @@ void pawsChildhoodWindow::Draw()
 {
     pawsWidget::Draw();
     // Check to see if we are waiting for data from the server. Should have a waiting
-    // curser if this fails.     
-    if ( dataLoaded == false && createManager->HasChildhoodData() )        
+    // cursor if this fails.     
+    if (!dataLoaded && createManager->HasChildhoodData())
     {
-            PopulateFields();
-            dataLoaded = true;                
+        PopulateFields();
+        dataLoaded = true;                
     }
 }
 

@@ -200,14 +200,14 @@ void pawsCreationMain::HandleMessage( MsgEntry* me )
         
         case MSGTYPE_CHAR_CREATE_NAME:
         {
-             psNameCheckMessage msg;
-             msg.FromServer( me );
-             if ( msg.accepted == false )
-             {
+            psNameCheckMessage msg;
+            msg.FromServer(me);
+            if (!msg.accepted)
+            {
                 PawsManager::GetSingleton().CreateWarningBox( msg.reason ); 
-             }
-             else
-             {
+            }
+            else
+            {
                 if ( newWindow.Length() > 0 )
                 {
                     Hide();

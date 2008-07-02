@@ -560,7 +560,7 @@ void AdviceManager::HandleAdviceRequest( Client *advisee, csString message )
     else
     {
         // One unadvised unanswered question at a time
-        if ( ( activeSession->GetAdvisor() == NULL ) && ( activeSession->answered == false ) )
+        if (!activeSession->GetAdvisor() && !activeSession->answered)
         {
             psserver->SendSystemError(advisee->GetClientNum(), "Please wait for an advisor to respond to your previous inquiry before asking another question.");
             return;

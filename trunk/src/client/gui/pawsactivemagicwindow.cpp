@@ -63,7 +63,7 @@ void pawsActiveMagicWindow::HandleMessage( MsgEntry* me )
     psGUIActiveMagicMessage incoming(me);
     pawsListBox *list;
 
-    if ( !IsVisible() && incoming.openWindow == true && psengine->loadstate == psEngine::LS_DONE) 
+    if (!IsVisible() && incoming.openWindow && psengine->loadstate == psEngine::LS_DONE)
         Show();
 
     //buffCategories->Clear();

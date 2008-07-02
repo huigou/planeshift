@@ -1996,10 +1996,8 @@ bool psSoundObject::MatchTime( int time )
 
 void psSoundObject::Update()
 {
-   if ( fadeComplete == true )
-   {
+    if (fadeComplete)
         return;
-   }
 
     csTicks currentTime = csGetTicks();
     float diff = currentTime - startTime;
@@ -2012,7 +2010,7 @@ void psSoundObject::Update()
             Debug2( LOG_SOUND,0, "diff > fadeDelay for %s.  Setting currentVolume to minVol.",GetName().GetData());
             currentVolume = minVol;
         }
-       fadeComplete = true;
+        fadeComplete = true;
     }
     else
     {
@@ -2041,12 +2039,12 @@ void psSoundObject::Update()
     
     if ( currentVolume <= minVol && fadeDir == FADE_DOWN )
     {
-      isPlaying = false;
-      stream.SetVolume(0.0f);
+        isPlaying = false;
+        stream.SetVolume(0.0f);
     }
     else
     {
-      stream.SetVolume( currentVolume * ambientVolume );
+        stream.SetVolume(currentVolume * ambientVolume);
     }
 }
 

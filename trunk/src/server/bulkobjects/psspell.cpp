@@ -532,7 +532,7 @@ bool psSpell::AffectTargets(psSpellManager * mgr, psSpellCastGameEvent * event, 
                     if (targetnpc)
                         psserver->npcmanager->QueueAttackPerception(caster, targetnpc);
                 }
-                if ( AffectTarget( event, effectName, offset, anchorID, affectedTargetID, affectText) == true )
+                if (AffectTarget(event, effectName, offset, anchorID, affectedTargetID, affectText))
                 {
                     affectedCount++;
                 }

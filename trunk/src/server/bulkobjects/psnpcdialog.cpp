@@ -567,7 +567,7 @@ NpcResponse *psNPCDialog::FindOrGeneralizeTrigger(Client *client,NpcTriggerSente
             }
         }
         depth++;
-    } while (hit == true);
+    } while (hit);
 
     return NULL;
 }

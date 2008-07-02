@@ -294,13 +294,13 @@ void psEconomyDrop::Trigger()
         unsigned int mostv = 0; // Valuable
         for(unsigned int z = 0; z < items.GetSize();z++)
         {
-            if(items[z].count > items[mosts].count && items[z].sold == true)
+            if (items[z].count > items[mosts].count && items[z].sold)
                 mosts = z;
 
-            if(items[z].count > items[mostb].count && items[z].sold == false)
+            if (items[z].count > items[mostb].count && !items[z].sold)
                 mostb = z;
 
-            if(items[z].price > items[mostv].price)
+            if (items[z].price > items[mostv].price)
                 mostv = z;
         }
 
