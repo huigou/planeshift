@@ -304,7 +304,13 @@ gemNPCItem::gemNPCItem( psNPCClient* cel, psPersistItem& mesg)
     entity->SetName( mesg.name );
     id = mesg.id;
     type = mesg.type;
-    InitMesh(  mesg.factname, mesg.filename, mesg.pos, mesg.yRot, mesg.sector );
+
+    if(!mesg.factname.GetData())
+    {
+        Error2("Item %s has bad data! Check cstr_id_gfx_mesh for this item!\n", mesg.name.GetData());
+    }
+
+    InitMesh(  mesg.factname.GetDataSafe(), mesg.filename.GetDataSafe(), mesg.pos, mesg.yRot, mesg.sector );
     if (mesg.flags & psPersistItem::NOPICKUP) flags |= NOPICKUP;
 }
 
