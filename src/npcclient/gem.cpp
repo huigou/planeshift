@@ -103,12 +103,24 @@ bool gemNPCObject::InitMesh(
         return false;
     }
 
-    csRef<iMeshWrapper> mesh = npcclient->GetEngine()->GetMeshes()->FindByName(factname);
+    // Replace helm group token with the default race.
+    psString fact_name(factname);
+    fact_name.ReplaceAllSubString("$H", "stonebm");
+    factname = fact_name;
+
+    psString file_name(filename);
+    file_name.ReplaceAllSubString("$H", "stonebm");
+    filename = file_name;
+
+    csRef<iEngine> engine = csQueryRegistry<iEngine> (npcclient->GetObjectReg());
+    csRef<iVFS> vfs = csQueryRegistry<iVFS> (npcclient->GetObjectReg());
+    csRef<iMeshWrapper> mesh = engine->GetMeshes()->FindByName(factname);
     if(!mesh)
     {
-        bool failed = false;
-        if(npcclient->GetVFS()->Exists(filename))
+        bool failed = true;
+        if(vfs->Exists(filename))
         {
+            failed = false;
             while(!failed)
             {
                 csRef<iDocument> doc = ParseFile(npcclient->GetObjectReg(), filename);
@@ -170,7 +182,7 @@ bool gemNPCObject::InitMesh(
 
                 csRef<iLoader> loader (csQueryRegistry<iLoader> (npcclient->GetObjectReg()));
                 loader->Load(root);
-                mesh = npcclient->GetEngine()->GetMeshFactories()->FindByName(factname)->CreateMeshWrapper();
+                mesh = engine->GetMeshFactories()->FindByName(factname)->CreateMeshWrapper();
                 failed = !mesh;
                 break;
             }
@@ -178,24 +190,20 @@ bool gemNPCObject::InitMesh(
 
         if(failed)
         {
-            Error3("Could not set mesh with factname=%s and filename=%s. Trying dummy model",factname,filename);                
+            Error3("Could not set mesh with factname=%s and filename=%s. Trying dummy model", factname, filename);                
             factname = "stonebm";
             filename = "/planeshift/models/stonebm/stonebm.cal3d";
-            if ( !pcmesh->SetMesh(factname, filename) )
+            if (!pcmesh->SetMesh(factname, filename))
             {
-                Error3("Could not use dummy CVS mesh with factname=%s and filename=%s",factname,filename);        
+                Error3("Could not use dummy CVS mesh with factname=%s and filename=%s", factname, filename);        
                 return false;
             }
-            mesh = pcmesh->GetMesh();
         }
-        else
-            pcmesh->SetMesh(mesh);
     }
 
-    if ( !mesh )
+    if(!pcmesh->GetMesh())
     {
-        Error1("Could not create Item because pcmesh didn't have iMeshWrapper.");
-        return false;
+        pcmesh->SetMesh(mesh);
     }
 
     Move(pos,rotangle,room);
