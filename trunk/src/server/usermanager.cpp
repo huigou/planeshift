@@ -1438,34 +1438,36 @@ void UserManager::HandleLoot(Client *client)
         return;
     }
     
-    gemNPC *npc = target->GetNPCPtr();
-    
-    if(!npc && clientnum == target->GetClient()->GetClientNum())
+    gemNPC *npc = target->GetNPCPtr();    
+    if(!npc)
     {
-        psserver->SendSystemError(clientnum, "You can't loot yourself.");
-        return;
-    }
-    
-    if (target->IsAlive() && !npc)
-    {
-        psserver->SendSystemError(clientnum, "You can't loot a person that is alive.");
+        gemActor *actor = target->GetActorPtr();
+        if(actor && actor->GetClient())
+        {
+            if (clientnum == actor->GetClient()->GetClientNum())
+            {
+                psserver->SendSystemError(clientnum, "You can't loot yourself.");
+                return;
+            }
+
+            if (actor->IsAlive())
+            {
+                psserver->SendSystemError(clientnum, "You can't loot a person that is alive.");
+                return;
+            }
+        }
+        psserver->SendSystemError(clientnum, "You can only loot NPCs.");
         return;
     }
 
-    if (target->IsAlive() && npc)
+
+    if (target->IsAlive())
     {
         psserver->SendSystemError(clientnum, "You can't loot a creature that is alive.");
         return;
     }
 
-
     // Check target lootable by this client
-    if (!npc)
-    {
-        psserver->SendSystemError(clientnum, "You can only loot NPCs.");
-        return;
-    }
-
     if (!npc->IsLootableClient(client->GetClientNum()))
     {
         Debug2(LOG_USER, client->GetClientNum(),"Client %d tried to loot mob that wasn't theirs.\n",client->GetClientNum() );
