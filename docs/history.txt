@@ -2,6 +2,8 @@
 - Changed ProximityList::ClearTouched() to not set 'self' to untouched, as it
   is guaranteed to always be touched. This also fixes an assert, although doesn't
   deal with the root of the issue causing it, so more investigation it needed.
+- Added extra error checking to UserManager::HandleLoot() and refactored it a
+  little bit.
 
 *** 2008-07-01 by Mike Gist
 - Made the integrity check in the updater more robust.
