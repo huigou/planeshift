@@ -165,10 +165,31 @@ bool psChatBubbles::Load(const char * filename, bool saveAgain)
         else if (type == "npc_narrate")
             chat.chatType = CHAT_NPC_NARRATE;
 
-        // color
-        r = chatNode->GetAttributeValueAsInt("colourR");
-        g = chatNode->GetAttributeValueAsInt("colourG");
-        b = chatNode->GetAttributeValueAsInt("colourB");
+        // colour
+        if (chatNode->GetAttribute("colorR") != 0)
+        {
+            r = chatNode->GetAttributeValueAsInt("colorR");
+        }
+        else
+        {
+            r = chatNode->GetAttributeValueAsInt("colourR");
+        }
+        if (chatNode->GetAttribute("colorG") != 0)
+        {
+            g = chatNode->GetAttributeValueAsInt("colorG");
+        }
+        else
+        {
+            g = chatNode->GetAttributeValueAsInt("colourG");
+        }
+        if (chatNode->GetAttribute("colorB") != 0)
+        {
+            b = chatNode->GetAttributeValueAsInt("colorB");
+        }
+        else
+        {
+            b = chatNode->GetAttributeValueAsInt("colourB");
+        }
         chat.textSettings.colour = psengine->GetG2D()->FindRGB(r, g, b);
 
         // shadow
