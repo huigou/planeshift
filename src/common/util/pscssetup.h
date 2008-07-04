@@ -24,7 +24,7 @@
 #define CSSETUP_HEADER
 
 #ifndef APPNAME
-#define APPNAME "PlaneShift Steel Blue (0.4.01)"
+#define APPNAME "PlaneShift Steel Blue (0.4.02)"
 #endif
 
 #ifdef CS_COMPILER_GCC
