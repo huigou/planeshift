@@ -394,10 +394,9 @@ void ProximityList::ClearTouched()
 {
     size_t objNum;
 
-    // Element 0 will always be 'self', and so will always be touched.
-    for (objNum = 1; objNum < objectsThatWatchMe_touched.GetSize(); objNum++ )
+    for (objNum = 0; objNum < objectsThatWatchMe_touched.GetSize(); objNum++ )
         objectsThatWatchMe_touched[objNum] = false;
-    for (objNum = 1; objNum < objectsThatIWatch_touched.GetSize(); objNum++ )
+    for (objNum = 0; objNum < objectsThatIWatch_touched.GetSize(); objNum++ )
         objectsThatIWatch_touched[objNum]  = false;
 }
 

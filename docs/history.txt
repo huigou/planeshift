@@ -5,9 +5,6 @@
 - Fixed incompatibility in chatbubbles.xml, it now accepts both 'color' and 'colour' tags, patch by Celestar.
 
 *** 2008-07-02 by Mike Gist
-- Changed ProximityList::ClearTouched() to not set 'self' to untouched, as it
-  is guaranteed to always be touched. This also fixes an assert, although doesn't
-  deal with the root of the issue causing it, so more investigation it needed.
 - Added extra error checking to UserManager::HandleLoot() and refactored it a
   little bit.
 - Disabled material stripping from thing mesh factories and objects.
