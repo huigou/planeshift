@@ -2929,7 +2929,7 @@ bool gemActor::SetDRData(psDRMessage& drmsg)
         {
             psChar->SetLocationInWorld(worldInstance,sectorInfo, drmsg.pos.x, drmsg.pos.y, drmsg.pos.z, drmsg.yrot );
 
-            if ( psChar->IsSpellCasting() && ( PSABS( drmsg.vel.SquaredNorm() ) > 9.0f ) )
+            if ( psChar->IsSpellCasting() && ( PSABS( drmsg.vel.SquaredNorm() ) > 13.0f ) )
             {
                 psChar->InterruptSpellCasting();
             }
