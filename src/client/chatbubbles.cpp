@@ -270,6 +270,24 @@ void psChatBubbles::HandleMessage(MsgEntry * msg, Client * client)
     else
         firstName = chatMsg.sPerson;
 
+    //We don't want /me or /my messages in the chat box, change them to something nice
+    if (chatMsg.sText.StartsWith("/me"))
+    {
+        chatMsg.sText.DeleteAt(0, 3);
+        chatMsg.sText.Insert(0, firstName);
+        chatMsg.sText.Insert(0, "* ");
+        chatMsg.sText.Append(" *");
+    }
+    if (chatMsg.sText.StartsWith("/my"))
+    {
+        csString apofirstname(firstName);
+        apofirstname.Append("'s");
+        chatMsg.sText.DeleteAt(0, 3);
+        chatMsg.sText.Insert(0, apofirstname);
+        chatMsg.sText.Insert(0, "* ");
+        chatMsg.sText.Append(" *");
+    }
+
     GEMClientActor* actor = psengine->GetCelClient()->GetActorByName(firstName);
     if (!actor)
         return;
