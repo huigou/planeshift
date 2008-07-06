@@ -4072,6 +4072,8 @@ bool gemContainer::RemoveFromContainer(psItem *item,Client *fromClient)
 
         if (fromClient)
         {
+            gemActor *guardian = GEMSupervisor::GetSingleton().FindPlayerEntity(item->GetGuardingCharacterID());
+ 
             // printf("Multicasting removal update to nearby clients of %s.\n\n", fromClient->GetName() );
             // Update client(s)
             psViewItemUpdate mesg(fromClient->GetClientNum(), 
@@ -4081,7 +4083,7 @@ bool gemContainer::RemoveFromContainer(psItem *item,Client *fromClient)
                                   item->GetName(),
                                   item->GetImageName(),
                                   item->GetStackCount(),
-                                  0);
+                                  guardian ? guardian->GetEntityID() : 0);
 
             mesg.Multicast(fromClient->GetActor()->GetMulticastClients(),0,5);
         }

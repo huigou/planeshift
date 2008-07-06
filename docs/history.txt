@@ -4,6 +4,8 @@
   in an area. Also does not spawn items anew if a pickup didn't succeed.
 - Fix to FS#1336 by Boite - use mouselook only when focussed on main widget.
 - Fix to FS#1694 by Zwenze - added GM /checkitem command.
+- Fix to FS#1376 by Oskaris - display bug in ownership when splitting a stack
+  in furnace
 
 *** 2008-07-06 by Mike Gist
 - Fixed unique iMeshWrappers not being created for new objects.
