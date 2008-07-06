@@ -742,8 +742,15 @@ bool gemObject::InitMesh(const char *name,
 
     csRef<iEngine> engine = csQueryRegistry<iEngine> (psserver->GetObjectReg());
     csRef<iVFS> vfs = csQueryRegistry<iVFS> (psserver->GetObjectReg());
-    csRef<iMeshWrapper> mesh = engine->GetMeshes()->FindByName(factname);
-    if(!mesh)
+
+    csRef<iMeshWrapper> mesh;
+    csRef<iMeshFactoryWrapper> meshFact = engine->GetMeshFactories()->FindByName(factname);
+    if(meshFact.IsValid())
+    {
+        mesh = meshFact->CreateMeshWrapper();
+    }
+    
+    if(!mesh.IsValid())
     {
         bool failed = true;
         if(vfs->Exists(filename))
@@ -810,8 +817,12 @@ bool gemObject::InitMesh(const char *name,
 
                 csRef<iLoader> loader (csQueryRegistry<iLoader> (psserver->GetObjectReg()));
                 loader->Load(root);
-                mesh = engine->GetMeshFactories()->FindByName(factname)->CreateMeshWrapper();
-                failed = !mesh;
+                meshFact = engine->GetMeshFactories()->FindByName(factname);
+                if(meshFact.IsValid())
+                {
+                    mesh = meshFact->CreateMeshWrapper();
+                }
+                failed = !mesh.IsValid();
                 break;
             }
         }

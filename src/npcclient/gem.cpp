@@ -114,8 +114,15 @@ bool gemNPCObject::InitMesh(
 
     csRef<iEngine> engine = csQueryRegistry<iEngine> (npcclient->GetObjectReg());
     csRef<iVFS> vfs = csQueryRegistry<iVFS> (npcclient->GetObjectReg());
-    csRef<iMeshWrapper> mesh = engine->GetMeshes()->FindByName(factname);
-    if(!mesh)
+
+    csRef<iMeshWrapper> mesh;
+    csRef<iMeshFactoryWrapper> meshFact = engine->GetMeshFactories()->FindByName(factname);
+    if(meshFact.IsValid())
+    {
+        mesh = meshFact->CreateMeshWrapper();
+    }
+    
+    if(!mesh.IsValid())
     {
         bool failed = true;
         if(vfs->Exists(filename))
@@ -182,8 +189,12 @@ bool gemNPCObject::InitMesh(
 
                 csRef<iLoader> loader (csQueryRegistry<iLoader> (npcclient->GetObjectReg()));
                 loader->Load(root);
-                mesh = engine->GetMeshFactories()->FindByName(factname)->CreateMeshWrapper();
-                failed = !mesh;
+                meshFact = engine->GetMeshFactories()->FindByName(factname);
+                if(meshFact.IsValid())
+                {
+                    mesh = meshFact->CreateMeshWrapper();
+                }
+                failed = !mesh.IsValid();
                 break;
             }
         }
