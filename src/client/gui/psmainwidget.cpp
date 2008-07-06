@@ -354,6 +354,11 @@ bool psMainWidget::OnMouseDown( int button, int keyModifier, int x, int y )
     {
         GEMClientObject* over = FindMouseOverObject( x, y );
 
+        const psControl* mouseLookTrigger = psengine->GetCharControl()->GetTrigger("MouseLook");
+        if(mouseLookTrigger->button==button && mouseLookTrigger->mods==keyModifier){
+            psengine->GetCharControl()->GetMovementManager()->MouseLookCanAct(true);
+        }
+
         if (psengine->GetMouseBinds()->CheckBind("EntitySelect", button, keyModifier))
         {
             if ( over )

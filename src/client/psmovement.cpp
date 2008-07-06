@@ -89,6 +89,7 @@ psMovementManager::psMovementManager(iEventNameRegistry* eventname_reg, psContro
     toggleRun = false;
     mouseAutoMove = false;
     mouseLook = false;
+    mouseLookCanAct = false;
     mouseZoom = false;
     mouseMove = false;
     sneaking = false;
@@ -599,6 +600,9 @@ void psMovementManager::LoadMouseSettings()
     SetMouseSensX( v2 );
 }
 
+void psMovementManager::MouseLookCanAct(bool v){
+    mouseLookCanAct = v;
+}
 
 void psMovementManager::MouseLook(bool v)
 {
@@ -606,6 +610,9 @@ void psMovementManager::MouseLook(bool v)
 	{
 		return;
 	}
+
+    if(mouseLookCanAct || !v)
+    {
 	mouseLook = v;
 	psCamera* camera = psengine->GetPSCamera();
 	if( camera->RotateCameraWithPlayer() )
@@ -619,6 +626,8 @@ void psMovementManager::MouseLook(bool v)
 			}
 		}
 	}
+}
+    mouseLookCanAct = false;
 }
 
 void psMovementManager::MouseLook(iEvent& ev)

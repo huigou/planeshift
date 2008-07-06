@@ -527,7 +527,7 @@ void psTriggerHandler::HandleMouseLook(const psControl* trigger, bool value)
     // RS: invert mouselook status so the mouselook button can be
     // used to temporarily switch out of mouselook mode too
     movement->MouseLook(!movement->MouseLook());
-    if (!movement->MouseZoom()) { // KL: No CenterMouse while in MouseZoom mode.
+    if (!movement->MouseZoom() && movement->MouseLook()) { // KL: No CenterMouse while in MouseZoom mode.
         charcontrol->CenterMouse(value);
     }
  

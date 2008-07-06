@@ -86,17 +86,22 @@ bool pawsSlot::OnMouseDown( int button, int modifiers, int x, int y )
         psengine->GetMsgHandler()->SendMessage( out.msg );
         return true;
     }
-    else if ( dragDrop && (!empty || psengine->GetSlotManager()->IsDragging()) )
+    else
     {
-        // Grab one item if shift key are used. Grab everything in the slot 
-        // if either middle mouse button or ctrl key are used
-        mgr->Handle( this, modifiers==1, button==2 || modifiers==2 );
+        bool grab = psengine->GetMouseBinds()->CheckBind("EntityDragDrop", button, modifiers);
+        bool grabAll = psengine->GetMouseBinds()->CheckBind("EntityDragDropAll", button, modifiers);
+        bool grabOne = psengine->GetMouseBinds()->CheckBind("EntityDragDropOne", button, modifiers);
+        if ( dragDrop && (grab || grabAll || grabOne) && (!empty || psengine->GetSlotManager()->IsDragging()) )
+        {
+            // Grab one item if EntityDragDropOne modifiers key are used. Grab everything in the slot
+            // if EntityDragDropAll modifiers key are used
+            mgr->Handle( this, grabOne, grabAll );
         return true;
-    }
-    else if ( parent )
+        }else if ( parent )
         return parent->OnButtonPressed(button, modifiers, this);
     else
         return pawsWidget::OnMouseDown(button, modifiers, x, y );
+}
 }
 
 void pawsSlot::SetToolTip( const char* text )
