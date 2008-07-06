@@ -408,6 +408,9 @@ Changes the player's name to something else. The unique parameter is either no o
         <topic name="/charlist">/charlist player
 
 Informs the GM of the IDs and names of all characters on the same account as the account of the given character.</topic>
+        <topic name="/checkitem">/checkitem [target] [quantity|''] [item|tria]
+
+Commands used to check the presence of an item in another character.  Example: "/checkitem Bob 42 tria"</topic>
         <topic name="/crystal">/crystal [interval] [max random interval modifier] [amount] [range] [item]
 
 Create a new hunt location which spawns an item in interval + random secs up to a max of amount within the range.

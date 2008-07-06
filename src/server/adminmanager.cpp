@@ -51,6 +51,7 @@
 #include "bulkobjects/psitem.h"
 #include "bulkobjects/pssectorinfo.h"
 #include "bulkobjects/pstrait.h"
+#include "bulkobjects/pscharinventory.h"
 
 #include "rpgrules/factions.h"
 
@@ -429,6 +430,21 @@ bool AdminManager::AdminCmdData::DecodeAdminCmdMessage(MsgEntry *pMsg, psAdminCm
         else if (words[2] == "all")
         {
             value = -1;
+            item = words.GetTail(3);
+        }
+        else
+        {
+            value = 1;
+            item = words.GetTail(2);
+        }
+        return true;
+    }
+    else if (command == "/checkitem" )
+    {
+        player = words[1];
+        value = words.GetInt(2);
+        if (value)
+        {
             item = words.GetTail(3);
         }
         else
@@ -1230,6 +1246,10 @@ void AdminManager::HandleAdminCmdMessage(MsgEntry *me, psAdminCmdMessage &msg, A
     else if (data.command == "/takeitem" )
     {
         TransferItem(me, msg, data, targetclient, client);
+    }
+    else if (data.command == "/checkitem" )
+    {
+        CheckItem(me, msg, data, targetclient);
     }
     else if (data.command == "/freeze")
     {
@@ -5969,6 +5989,72 @@ void AdminManager::TransferItem(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdDa
         psserver->SendSystemError(me->clientnum, "Cannot find any %s in %s's inventory.",
                                                  data.item.GetData(), source->GetActor()->GetName() );
         return;    	
+    }
+}
+
+void AdminManager::CheckItem(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data, Client* target)
+{
+    if (!target || !target->GetCharacterData())
+    {
+        psserver->SendSystemError(me->clientnum, "Invalid character to check");
+        return;
+    }
+    
+    if (data.value == 0 || data.item.IsEmpty())
+    {
+        psserver->SendSystemError(me->clientnum, "Syntax: \"/[checkitem] [target] [quantity|''] [item|tria]\"");
+        return;
+    }
+
+    psItemStats* itemstats = CacheManager::GetSingleton().GetBasicItemStatsByName(data.item);
+    if (!itemstats)
+    {
+        psserver->SendSystemError(me->clientnum, "Invalid item name");
+        return;
+    }
+
+    psCharacter* targetchar = target->GetCharacterData();
+    size_t itemIndex = targetchar->Inventory().FindItemStatIndex(itemstats);
+    
+    if (itemIndex != SIZET_NOT_FOUND)
+    {
+        psItem* item;
+        item = targetchar->Inventory().GetInventoryIndexItem(itemIndex);
+        if (!item)
+        {
+            Error2("Cannot GetInventoryIndexItem on itemIndex %zu.\n", itemIndex);
+            psserver->SendSystemError(me->clientnum, "Cannot check %s from %s's inventory.",
+                                      data.item.GetData(), target->GetActor()->GetName() );
+            return;
+        }
+
+        if (item->GetStackCount() < data.value)
+        {
+            psserver->SendSystemOK(me->clientnum, "Cannot find %d %s.", data.value, data.item.GetData());
+        }
+        else
+        {
+            psserver->SendSystemOK(me->clientnum, "Found %d %s.", data.value, data.item.GetData());
+        }
+        return;
+    }
+    else if (data.item == "tria") 
+    {
+        psMoney targetMoney = targetchar->Money();
+        if (data.value > targetMoney.GetTotal())
+        {
+            psserver->SendSystemOK(me->clientnum, "Cannot find %d tria.", data.value);
+        }
+        else
+        {
+            psserver->SendSystemOK(me->clientnum, "Found %d tria.", data.value);
+        }
+        return;
+    }
+    else
+    {
+        psserver->SendSystemOK(me->clientnum, "Cannot find %s.", data.item.GetData());
+        return;       
     }
 }
 
