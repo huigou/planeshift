@@ -292,6 +292,9 @@ protected:
     /** Transfers an item from one client to another */
     void TransferItem(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data, Client* source, Client* target);
 
+    /** Checks the presence of items */
+    void CheckItem(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data, Client* target);
+
     /** Freezes a client, preventing it from doing anything. */
     void FreezeClient(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data, Client* client, Client* target);
 
