@@ -108,6 +108,7 @@ protected:
     bool autoMove;
     bool toggleRun;
     bool mouseLook;
+    bool mouseLookCanAct;
     bool mouseZoom;
     bool mouseMove;
     bool sneaking;
@@ -171,6 +172,9 @@ public:
     void SetInvertedMouse(bool v) { invertedMouse = v; }
     bool GetInvertedMouse() { return invertedMouse; }
     void LoadMouseSettings();
+
+    void MouseLookCanAct(bool v);
+    bool MouseLookCanAct(){ return mouseLookCanAct; }
 
     void MouseLook(bool v);
     bool MouseLook() { return mouseLook; }
