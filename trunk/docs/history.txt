@@ -1,8 +1,13 @@
+*** 2008-07-06 by Mike Gist
+- Fixed unique iMeshWrappers not being created for new objects.
+  Thanks to Andrew Dai for debugging.
+
 *** 2008-07-04 by Steven Patrick
 - Fixed FS#1857, patch by Caarrie.
 
 *** 2008-07-03 by Steven Patrick
-- Fixed incompatibility in chatbubbles.xml, it now accepts both 'color' and 'colour' tags, patch by Celestar.
+- Fixed incompatibility in chatbubbles.xml, it now accepts both 'color' and 'colour'
+  tags, patch by Celestar.
 
 *** 2008-07-02 by Mike Gist
 - Added extra error checking to UserManager::HandleLoot() and refactored it a
