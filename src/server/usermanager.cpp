@@ -37,6 +37,7 @@
 #include "util/serverconsole.h"
 #include "util/pserror.h"
 #include "util/psconst.h"
+#include "util/strutil.h"
 #include "util/log.h"
 #include "util/eventmanager.h"
 
@@ -374,10 +375,163 @@ void UserManager::HandleUserCommand(MsgEntry *me,Client *client)
     {
         HandleBanking(client, msg.action);
     }
+    else if (msg.command == "/pickup")
+    {
+        HandlePickup(client, msg.target);
+    }
     else
     {
         psserver->SendSystemError(me->clientnum,"Command not supported by server yet.");
     }
+}
+
+csArray<csString> UserManager::DecodeCommandArea(Client *client, csString target)
+{
+    csArray<csString> result;
+
+    if (!CacheManager::GetSingleton().GetCommandManager()->Validate(client->GetSecurityLevel(), "command area"))
+    {
+        psserver->SendSystemError(client->GetClientNum(),
+                "You are not allowed to use area", target.GetData());
+        return result;
+    }
+
+    csArray<csString> splitTarget = psSplit(target, ':');
+    size_t splitSize = splitTarget.GetSize();
+
+    if ((2>splitSize) || (splitSize>4))
+    {
+        psserver->SendSystemError(client->GetClientNum(),
+                "Try /$CMD area:item[:range[:name]]");
+        return result;
+    }
+
+    csString itemName = splitTarget[1];
+    csString* rangeName = splitSize > 2 ? &splitTarget[2] : 0;
+    csString* nameFilter = splitSize > 3 ? &splitTarget[3] : 0;
+
+    int range = 99999; /* TODO: check is this value is large enough */
+    if (rangeName)
+        range = atoi(rangeName->GetData());
+
+    bool allNames = true;
+    if (nameFilter && (*nameFilter!="all"))
+        allNames = false;
+
+    int mode;
+    if (itemName == "players")
+        mode = 0;
+    else if (itemName == "actors")
+        mode = 1;
+    else if (itemName == "items")
+        mode = 2;
+    else if (itemName == "npcs")
+        mode = 3;
+    else if (itemName == "entities")
+        mode = 4;
+    else
+    {
+        psserver->SendSystemError(client->GetClientNum(),
+                "item must be players|actors|items|npcs|entities");
+        return result;
+    }
+
+    gemActor* self = client->GetActor();
+    if (!self)
+    {
+        psserver->SendSystemError(client->GetClientNum(), "You do not exist...");
+        return result;
+    }
+
+    csVector3 pos;
+    iSector* sector;
+    self->GetPosition(pos, sector);
+
+    GEMSupervisor* gem = GEMSupervisor::GetSingletonPtr();
+    if (!gem)
+        return result;
+
+    csRef<iCelEntityList> nearlist = gem->pl->FindNearbyEntities(sector, pos,
+            range);
+    size_t count = nearlist->GetCount();
+    csArray<csString *> results;
+
+    for (size_t i=0; i<count; i++)
+    {
+        gemObject *nearobj = gem->GetObjectFromEntityList(nearlist, i);
+        if (!nearobj)
+            continue;
+
+        if (nearobj->GetInstance() != self->GetInstance())
+            continue;
+
+        if (!allNames)
+        {
+            csString nearobjName = nearobj->GetName();
+            if (!nearobjName.StartsWith(*nameFilter->GetData(), true))
+                continue;
+        }
+
+        csString newTarget;
+
+        switch (mode)
+        {
+        case 0: // Target players
+        {
+            if (nearobj->GetClientID())
+            {
+                newTarget.Format("pid:%d", nearobj->GetPlayerID());
+                break;
+            }
+            else
+                continue;
+        }
+        case 1: // Target actors
+        {
+            if (nearobj->GetPlayerID())
+            {
+                newTarget.Format("pid:%d", nearobj->GetPlayerID());
+                break;
+            }
+            else
+                continue;
+        }
+        case 2: // Target items
+        {
+            if (nearobj->GetItem())
+            {
+                newTarget.Format("eid:%u", nearobj->GetEntityID());
+                break;
+            }
+            else
+                continue;
+        }
+        case 3: // Target NPCs
+        {
+            if (nearobj->GetNPCPtr())
+            {
+                newTarget.Format("pid:%d", nearobj->GetPlayerID());
+                break;
+            }
+            else
+                continue;
+        }
+        case 4: // Target everything
+        {
+            newTarget.Format("eid:%u", nearobj->GetEntityID());
+            break;
+        }
+        }
+
+        // Run this once for every target in range  (each one will be verified and logged seperately)
+        result.Push(newTarget);
+    }
+    if (result.IsEmpty())
+    {
+        psserver->SendSystemError(client->GetClientNum(),
+                "Nothing of specified type in range.");
+    }
+    return result;
 }
 
 bool UserManager::CheckForEmote(csString command, bool execute, MsgEntry *me, Client *client)
@@ -875,7 +1029,6 @@ void UserManager::HandleMessage(MsgEntry *me,Client *client)
 void UserManager::Who(psUserCmdMessage& msg, Client* client, int clientnum)
 {
     csString message((size_t) 1024);
-    csString temp((size_t) 1024);
     csString headerMsg("Players Currently Online");
 
     if (!msg.filter.IsEmpty())
@@ -899,63 +1052,97 @@ void UserManager::Who(psUserCmdMessage& msg, Client* client, int clientnum)
 
     unsigned count = 0;
 
-    // Guild rank, guild and title should come from acraig's player prop class.
-    ClientIterator i(*clients);     
-    while(i.HasNext())
+    if (msg.filter.StartsWith("area:"))
     {
-        Client *curr = i.Next();
-        csString playerName(curr->GetName());
-        csString guildTitle;
-        csString guildName;
-        csString format("%s"); // Player name.
-
-        if (curr->IsSuperClient() || !curr->GetActor())
-            continue;
-
-        psGuildInfo* guild = curr->GetActor()->GetGuild();
-        if (guild != NULL)
+        csArray<csString> filters = DecodeCommandArea(client, msg.filter);
+        csArray<csString>::Iterator it(filters.GetIterator());
+        while (it.HasNext())
         {
-            if (guild->id && (!guild->IsSecret()
-                || guild->id == client->GetGuildID()))
+            csString pid = it.Next();
+            gemObject *object = psserver->GetAdminManager()->FindObjectByString(pid,client->GetActor());
+            Client* thisclient = object->GetClient();
+            if (thisclient)
             {
-                psGuildLevel* level = curr->GetActor()->GetGuildLevel();
-                if (level)
-                {
-                    format.Append(", %s in %s"); // Guild level title.
-                    guildTitle = level->title;
-                }
-                else
-                {
-                    format.Append(", %s");
-                }
-                guildName = guild->name;
+                if (!WhoProcessClient(thisclient, client->GetGuildID(), &message, msg.filter,
+                        false, &count))
+                    break;
             }
         }
-        temp.Format(format.GetData(), curr->GetName(), guildTitle.GetData(),
-            guildName.GetData());
-
-        csString lower(temp);
-        StrToLowerCase(lower);
-        if (!msg.filter.IsEmpty() && lower.FindStr(msg.filter) == (size_t)-1)
-            continue;
-
-        if (temp.Length() + message.Length() > MAXPACKETSIZE)
-            break;
-        else
-            message.Append('\n');
-        message.Append(temp);
-
-        count++;
+    }
+    else
+    {
+        // Guild rank, guild and title should come from acraig's player prop class.
+        ClientIterator i(*clients);
+        while (i.HasNext())
+        {
+            Client *curr = i.Next();
+            if (!WhoProcessClient(curr, client->GetGuildID(), &message, msg.filter, true,
+                    &count))
+                break;
+        }
     }
 
     // Could be about to overflow by now, so check.
+    csString temp;
     temp.Format("%u shown from %zu players online\n", count, clients->Count());
 
     message.Append('\n');
     message.Append(temp);
 
-    psSystemMessageSafe newmsg(clientnum ,MSG_WHO, message);
+    psSystemMessageSafe newmsg(clientnum, MSG_WHO, message);
     newmsg.SendMessage();
+}
+
+bool UserManager::WhoProcessClient(Client *curr, int guildId, csString* message, csString filter, bool check, unsigned * count)
+{
+    if (curr->IsSuperClient() || !curr->GetActor())
+        return true;
+    
+    csString temp((size_t) 1024);
+    csString playerName(curr->GetName());
+    csString guildTitle;
+    csString guildName;
+    csString format("%s"); // Player name.
+
+    psGuildInfo* guild = curr->GetActor()->GetGuild();
+    if (guild != NULL)
+    {
+        if (guild->id && (!guild->IsSecret() || guild->id
+                == guildId))
+        {
+            psGuildLevel* level = curr->GetActor()->GetGuildLevel();
+            if (level)
+            {
+                format.Append(", %s in %s"); // Guild level title.
+                guildTitle = level->title;
+            }
+            else
+            {
+                format.Append(", %s");
+            }
+            guildName = guild->name;
+        }
+    }
+    temp.Format(format.GetData(), curr->GetName(), guildTitle.GetData(),
+            guildName.GetData());
+
+    if (check)
+    {
+        csString lower(temp);
+        StrToLowerCase(lower);
+        if (!filter.IsEmpty() && lower.FindStr(filter) == (size_t) -1)
+            return true;
+    }
+
+    /* if message + new text + 50 spare bytes for the footer exceed the maximum package size do not append */
+    if (temp.Length() + message->Length() + 50 > MAXPACKETSIZE)
+        return false;
+    else
+        message->Append('\n');
+    message->Append(temp);
+
+    (*count)++;
+    return true;
 }
 
 void UserManager::StrToLowerCase(csString& str)
@@ -1155,6 +1342,18 @@ void UserManager::RollDice(psUserCmdMessage& msg,Client *client,int clientnum)
 
 void UserManager::ReportPosition(psUserCmdMessage& msg,Client *client,int clientnum)
 {
+
+    if (msg.player.StartsWith("area:"))
+    {
+        csArray<csString> filters = DecodeCommandArea(client, msg.player);
+        csArray<csString>::Iterator it(filters.GetIterator());
+        while (it.HasNext()) {
+            msg.player = it.Next();
+            ReportPosition(msg, client, clientnum);
+        }
+        return;
+    }
+
     gemObject *object = NULL;
     bool self = true;
 
@@ -1762,6 +1961,42 @@ void UserManager::HandleBanking(Client *client, csString accountType)
         psserver->SendSystemError( client->GetClientNum(), "Usage: /bank [personal|guild]" );
         return;
     }
+}
+
+void UserManager::HandlePickup(Client *client, csString target)
+{
+    if (target.StartsWith("area:"))
+    {
+        csArray<csString> filters = DecodeCommandArea(client, target);
+        csArray<csString>::Iterator it(filters.GetIterator());
+        while (it.HasNext()) {
+            HandlePickup(client, it.Next());
+        }
+        return;
+    }
+    else if (target.StartsWith("eid:", true))
+    {
+        gemObject* object= NULL;
+        GEMSupervisor *gem = GEMSupervisor::GetSingletonPtr();
+        csString eid_str = target.Slice(4);
+        PS_ID eID = (PS_ID)atoi(eid_str.GetDataSafe() );
+        if (eID)
+        {
+            object = gem->FindObject(eID);
+            if (object && object->GetItem())
+            {
+                object->SendBehaviorMessage("pickup", client->GetActor() );
+            }
+            else
+            {
+                psserver->SendSystemError(client->GetClientNum(),
+                                "Item not found.", target.GetData());
+            }
+        }
+    }
+    else
+        psserver->SendSystemError(client->GetClientNum(),
+                "You can't pickup %s", target.GetData());
 }
 
 void UserManager::GiveTip(int id)

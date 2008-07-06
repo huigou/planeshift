@@ -1,3 +1,8 @@
+*** 2008-07-06 by Roland Schulz
+- Fix to FS#1741, FS#1703 and likely FS#1130 by Zwenze. This adds an area
+  syntax improvment to GM commands, allowing to target all items/npcs/players
+  in an area. Also does not spawn items anew if a pickup didn't succeed.
+
 *** 2008-07-06 by Mike Gist
 - Fixed unique iMeshWrappers not being created for new objects.
   Thanks to Andrew Dai for debugging.

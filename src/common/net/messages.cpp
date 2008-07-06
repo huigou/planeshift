@@ -1328,6 +1328,11 @@ psUserCmdMessage::psUserCmdMessage(MsgEntry *message)
         action = words.Get(1);
         return;
     }
+    if ( command == "/pickup" )
+    {
+        target = words.Get(1);
+        return;
+    }
 
     valid = false;
 }

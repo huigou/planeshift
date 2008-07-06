@@ -1311,108 +1311,123 @@ void gemActiveObject::SendBehaviorMessage(const csString & msg_id, gemObject *ac
     }
     else if ( msg_id == "pickup")
     {
-        // If the player is in range of the item AND the item may be picked up or securityOveride, and check for dead user
-        if (actor->IsAlive() && RangeTo(actor) < RANGE_TO_SELECT && IsPickable())
+        // Check if the char is dead
+        if (!actor->IsAlive())
         {
-            gemActor* gActor = dynamic_cast<gemActor*>(actor);
-            psCharacter* chardata = NULL;
-            if (gActor) chardata = gActor->GetCharacterData();
+            psserver->SendSystemInfo(clientnum,"You can't pick up items when you're dead.");
+            return;
+        }
+        // Check if the item is pickupable
+        if (!IsPickable())
+        {
+            psserver->SendSystemInfo(clientnum,"You can't pick up %s.", GetName());
+            return;
+        }
 
-            psItem* item = GetItem();
-
-            if (actor->GetClient()->GetSecurityLevel() < GM_LEVEL_2)
+        // Check if the item is in range
+        if (!(RangeTo(actor) < RANGE_TO_SELECT))
+        {
+            if (!CacheManager::GetSingleton().GetCommandManager()->Validate(actor->GetClient()->GetSecurityLevel(), "pickup override"))
             {
-                unsigned int guard = item->GetGuardingCharacterID();
-                gemActor* guardActor = GEMSupervisor::GetSingleton().FindPlayerEntity(guard);
-                if (guard &&
-                    guard != actor->GetCharacterData()->GetCharacterID() &&
-                    guardActor &&
-                    guardActor->RangeTo(item->GetGemObject()) < RANGE_TO_SELECT)
-                {
-                    psserver->SendSystemInfo(clientnum,"You notice that the item is being guarded by %s",
-                        guardActor->GetCharacterData()->GetCharFullName());
-
-                    return;
-                }
+                psserver->SendSystemInfo(clientnum,"You're too far away to pick up %s.", GetName());            
+                return;
             }
+        }
 
-            item->ScheduleRespawn();
+        psItem* item = GetItem();
 
-            // Cache values from item, because item might be deleted by Add
-            csString qname = item->GetQuantityName();
-            gemContainer *container = dynamic_cast<gemContainer*> (this);
-
-            uint32 origUID = item->GetUID();
-            unsigned short origStackCount = item->GetStackCount();
-
-            if (chardata && chardata->Inventory().Add(item,false, true, PSCHARACTER_SLOT_NONE, container))
+        // Check if item is guarded
+        if (!CacheManager::GetSingleton().GetCommandManager()->Validate(actor->GetClient()->GetSecurityLevel(), "pickup override"))
+        {
+            unsigned int guardCharacterID = item->GetGuardingCharacterID();
+            gemActor* guardActor = GEMSupervisor::GetSingleton().FindPlayerEntity(guardCharacterID);
+            if (guardCharacterID &&
+                guardCharacterID != actor->GetCharacterData()->GetCharacterID() &&
+                guardActor &&
+                guardActor->RangeTo(item->GetGemObject()) < RANGE_TO_SELECT)
             {
-            	// item is deleted if we pickup money
-            	if(item)
-            	{
-            		psPickupEvent evt(
+                psserver->SendSystemInfo(clientnum,"You notice that the item is being guarded by %s",
+                    guardActor->GetCharacterData()->GetCharFullName());
+                return;
+            }
+        }
+
+        // Cache values from item, because item might be deleted by Add
+        csString qname = item->GetQuantityName();
+        gemContainer *container = dynamic_cast<gemContainer*> (this);
+
+        uint32 origUID = item->GetUID();
+        unsigned short origStackCount = item->GetStackCount();
+
+        gemActor* gActor = dynamic_cast<gemActor*>(actor);
+        psCharacter* chardata = NULL;
+        if (gActor) chardata = gActor->GetCharacterData();
+        if (chardata && chardata->Inventory().Add(item,false, true, PSCHARACTER_SLOT_NONE, container))
+        {
+            Client* client = actor->GetClient();
+            if (!client)
+            {
+                Debug2(LOG_ANY,clientnum,"User action from unknown client!  Clientnum:%d\n",clientnum);
+                return;
+            }
+            client->SetTargetObject(NULL);
+        	// item is deleted if we pickup money
+        	if(item)
+        	{
+                item->ScheduleRespawn();
+        		psPickupEvent evt(
+                           chardata->GetCharacterID(),
+                           item->GetUID(),
+                           item->GetStackCount(),
+                           (int)item->GetCurrentStats()->GetQuality(),
+                           0
+                           );
+                evt.FireEvent();
+        	}
+        	else
+        	{
+                psPickupEvent evt(
                                chardata->GetCharacterID(),
-                               item->GetUID(),
-                               item->GetStackCount(),
-                               (int)item->GetCurrentStats()->GetQuality(),
+                               origUID,
+                               origStackCount,
+                               0,
                                0
-                               );
-                    evt.FireEvent();
-            	}
-            	else
-            	{
-                    psPickupEvent evt(
-                                   chardata->GetCharacterID(),
-                                   origUID,
-                                   origStackCount,
-                                   0,
-                                   0
-                                   );          
-                    evt.FireEvent();
-            	}
-                
-                psSystemMessage newmsg(clientnum, MSG_INFO_BASE, "%s picked up %s", actor->GetName(), qname.GetData() );
-                newmsg.Multicast(actor->GetMulticastClients(),0,RANGE_TO_SELECT);
+                               );          
+                evt.FireEvent();
+        	}
+            
+            psSystemMessage newmsg(clientnum, MSG_INFO_BASE, "%s picked up %s", actor->GetName(), qname.GetData() );
+            newmsg.Multicast(actor->GetMulticastClients(),0,RANGE_TO_SELECT);
 
-                psserver->GetCharManager()->UpdateItemViews(clientnum);
+            psserver->GetCharManager()->UpdateItemViews(clientnum);
 
-                EntityManager::GetSingleton().RemoveActor(this);  // Destroy this
-            }
-            else
-            {
-
-                /* TODO: Include support for partial pickup of stacks
-
-                // Check if part of a stack where picked up
-                if (item && count > item->GetStackCount())
-                {
-                    count = count - item->GetStackCount();
-                    qname = psItem::GetQuantityName(item->GetName(),count);
-                        
-                    psSystemMessage newmsg(client, MSG_INFO, "%s picked up %s", actor->GetName(), qname.GetData() );
-                    newmsg.Multicast(actor->GetMulticastClients(),0,RANGE_TO_SELECT);
-
-                    psserver->GetCharManager()->UpdateItemViews(clientnum);
-                    
-                    csString buf;
-                    buf.Format("%s, %s, %s, \"%s\", %d, %d", actor->GetName(), "World", "Pickup", GetName(), 0, 0);
-                    psserver->GetLogCSV()->Write(CSV_EXCHANGES, buf);
-                    
-                }
-                */
-
-                // Assume inventory is full so tell player about that to.
-                psserver->SendSystemInfo(clientnum, "You can't carry anymore %s",GetName());
-            }
+            EntityManager::GetSingleton().RemoveActor(this);  // Destroy this
         }
         else
         {
-            if (!actor->IsAlive())
-                psserver->SendSystemInfo(clientnum,"You can't pick up items when you're dead.");
-            else if (!IsPickable())
-                psserver->SendSystemInfo(clientnum,"You can't pick up this item.");
-            else
-                psserver->SendSystemInfo(clientnum,"You're too far away to pick up that item.");
+
+            /* TODO: Include support for partial pickup of stacks
+
+            // Check if part of a stack where picked up
+            if (item && count > item->GetStackCount())
+            {
+                count = count - item->GetStackCount();
+                qname = psItem::GetQuantityName(item->GetName(),count);
+                    
+                psSystemMessage newmsg(client, MSG_INFO, "%s picked up %s", actor->GetName(), qname.GetData() );
+                newmsg.Multicast(actor->GetMulticastClients(),0,RANGE_TO_SELECT);
+
+                psserver->GetCharManager()->UpdateItemViews(clientnum);
+                
+                csString buf;
+                buf.Format("%s, %s, %s, \"%s\", %d, %d", actor->GetName(), "World", "Pickup", GetName(), 0, 0);
+                psserver->GetLogCSV()->Write(CSV_EXCHANGES, buf);
+                
+            }
+            */
+
+            // Assume inventory is full so tell player about that to.
+            psserver->SendSystemInfo(clientnum, "You can't carry anymore %s",GetName());
         }
     }
     
