@@ -122,6 +122,13 @@ public:
 	// Load emotes from xml.
 	bool LoadEmotes(const char *xmlfile, iVFS *vfs);
 
+    /** Decodes an area: expression
+     * 
+     *  @param client The client of the caller
+     *  @param target The area: expression
+     * */
+    static csArray<csString> DecodeCommandArea(Client *client, csString target);
+
 protected:
     /** Send a list of the players that are online to a client.
       * Sends the name/guild/rank of all players in the world.
@@ -131,6 +138,18 @@ protected:
       * @param clientnum The client id number of the requesting client.
       */
     void Who(psUserCmdMessage& msg, Client* client, int clientnum);
+    
+
+    /** Formats output of a player and adds it to a message.
+      *
+      * @param client The client that is to be formated
+      * @param guildId The guildId of the caller
+      * @param message The target csString object 
+      * @param filter What clients
+      * @param check If a check against filter should be done 
+      * @param count COunter to be increased in case of a successfull match
+      */
+    bool WhoProcessClient(Client *curr, int guildId, csString* message, csString filter, bool check, unsigned * count);
 
     /** Converts a string to lowercase.
       *
@@ -269,6 +288,12 @@ protected:
       * @param client The client that issued the command.
       */
     void HandleBanking(Client *client, csString accountType);
+    
+    /** Handles a player command to pickup an item.
+          * @param client The client that issued the command.
+          * @target description of the item to be picked up.
+          */
+    void HandlePickup(Client *client, csString target);
 
     /** Handles a player request to 'use' the targeted item.
       *

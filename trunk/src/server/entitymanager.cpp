@@ -1147,17 +1147,6 @@ void EntityManager::HandleUserAction(MsgEntry* me)
             object->SendTargetStatDR(client);
     }
 
-    // Check to see if this client has the admin level to move this particular item
-    bool securityOverride = CacheManager::GetSingleton().GetCommandManager()->Validate(client->GetSecurityLevel(), 
-      "move unpickupables/spawns");
-    if ( action == "pickup"
-    && dynamic_cast<gemActiveObject*> (object)
-    && ((dynamic_cast<gemActiveObject*> (object))->IsPickable() 
-    || securityOverride))
-    {
-        client->SetTargetObject(NULL);
-    }
-
     Debug5(LOG_USER,client->GetClientNum(), "User Action: %s %s %s:%d\n",client->GetName(),
         (const char *)action,
         (object)?object->GetName():"None",

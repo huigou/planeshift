@@ -240,6 +240,11 @@ INSERT INTO command_group_assignment VALUES( "quest list others", 25 );
 INSERT INTO command_group_assignment VALUES( "quest list others", 24 );
 INSERT INTO command_group_assignment VALUES( "quest list others", 23 );
 INSERT INTO command_group_assignment VALUES( "quest list others", 22 );
+INSERT INTO command_group_assignment VALUES( "pickup override", 30 );
+INSERT INTO command_group_assignment VALUES( "pickup override", 25 );
+INSERT INTO command_group_assignment VALUES( "pickup override", 24 );
+INSERT INTO command_group_assignment VALUES( "pickup override", 23 );
+INSERT INTO command_group_assignment VALUES( "pickup override", 22 );
 
 
 # GM1 and above

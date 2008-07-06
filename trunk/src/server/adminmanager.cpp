@@ -1011,9 +1011,14 @@ void AdminManager::HandleAdminCmdMessage(MsgEntry *me, psAdminCmdMessage &msg, A
         }
         else if (data.player.StartsWith("area:",true))
         {
-            int range = atoi( data.player.Slice(data.player.FindLast(':')+1).GetDataSafe() );
-            CommandArea(me, msg, data, client, range);
-            return;  // Done.
+            csArray<csString> filters = UserManager::DecodeCommandArea(client, data.player);
+            csArray<csString>::Iterator it(filters.GetIterator());
+            while (it.HasNext())
+            {
+                data.player = it.Next();
+                HandleAdminCmdMessage(me, msg, data, client);
+            }
+            return;
         }
         else
         {
@@ -1385,120 +1390,6 @@ gemObject* AdminManager::FindObjectByString(const csString& str, gemActor * me) 
     }        
 
     return found;
-}
-
-void AdminManager::CommandArea(MsgEntry *me, psAdminCmdMessage& msg, AdminCmdData& data, Client *client, int range)
-{
-    if (!Valid(client->GetSecurityLevel(), "command area", me->clientnum))
-    {
-        psserver->SendSystemInfo(me->clientnum,"You are not allowed to use area");
-        return;
-    }
-
-    if (range)
-    {
-        gemActor* self = client->GetActor();
-        if (!self)
-        {
-            psserver->SendSystemError(client->GetClientNum(), "You do not exist...");
-            return;
-        }
-
-        int mode = 0;
-        if (data.player.StartsWith("area:players",true))
-            mode = 0;
-        else if (data.player.StartsWith("area:actors",true))
-            mode = 1;
-        else if (data.player.StartsWith("area:items",true))
-            mode = 2;
-        else if (data.player.StartsWith("area:npcs",true))
-            mode = 3;
-        else if (data.player.StartsWith("area:entities",true))
-            mode = 4;
-
-        csVector3 pos;
-        iSector* sector;
-        self->GetPosition(pos,sector);
-                
-        GEMSupervisor* gem = GEMSupervisor::GetSingletonPtr();
-        if (!gem)
-            return;
-
-        csRef<iCelEntityList> nearlist = gem->pl->FindNearbyEntities(sector,pos,range);
-        size_t count = nearlist->GetCount();
-        size_t handled_entities = 0;
-        
-
-        for (size_t i=0; i<count; i++)
-        {
-            gemObject *nearobj = gem->GetObjectFromEntityList(nearlist,i);
-            if (!nearobj)
-                continue;
-
-            switch (mode)
-            {
-                case 0:  // Target players
-                {
-                    if (nearobj->GetClientID())
-                    {
-                        data.player.Format("pid:%d",nearobj->GetPlayerID());
-                        break;
-                    }
-                    else
-                        continue;
-                }
-                case 1:  // Target actors
-                {
-                    if (nearobj->GetPlayerID())
-                    {
-                        data.player.Format("pid:%d",nearobj->GetPlayerID());
-                        break;
-                    }
-                    else
-                        continue;
-                }
-                case 2:  // Target items
-                {
-                    if (nearobj->GetItem())
-                    {
-                        data.player.Format("eid:%u",nearobj->GetEntityID());
-                        break;
-                    }
-                    else
-                        continue;
-                }
-                case 3:  // Target NPCs
-                {
-                    if (nearobj->GetNPCPtr())
-                    {
-                        data.player.Format("pid:%d",nearobj->GetPlayerID());
-                        break;
-                    }
-                    else
-                        continue;
-                }
-                case 4:  // Target everything
-                {
-                    data.player.Format("eid:%u",nearobj->GetEntityID());
-                    break;
-                }
-            }
-
-            // Run this once for every target in range  (each one will be verified and logged seperately)
-            HandleAdminCmdMessage(me, msg, data, client);
-            handled_entities++;
-        }
-
-        if (!handled_entities)
-        {
-            psserver->SendSystemError(client->GetClientNum(), "Nothing of specified type in range.");
-            return;
-        }
-    }
-    else
-    {
-        psserver->SendSystemError(client->GetClientNum(), "You must specify a range.");
-    }
 }
 
 void AdminManager::GetSiblingChars(MsgEntry* me,psAdminCmdMessage& msg, AdminCmdData& data,Client *client)

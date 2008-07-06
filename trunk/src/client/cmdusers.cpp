@@ -657,7 +657,19 @@ const char *psUserCommands::HandleCommand(const char *cmd)
          else
              object = FindEntityWithName(words[1]);
          if (object)
-             psengine->GetCharManager()->SetTarget(object,"pickup");
+         {
+             psengine->GetCharManager()->SetTarget(object,"select");
+             PS_ID mappedID = object->GetID();
+             csString newCmd;
+             newCmd.Format("/pickup eid:%d", mappedID);
+             psUserCmdMessage cmdmsg(newCmd);
+             msgqueue->SendMessage(cmdmsg.msg);
+         }
+         else
+         {
+             psUserCmdMessage cmdmsg(cmd);
+             msgqueue->SendMessage(cmdmsg.msg);
+         }
     }
 
     else if ( words[0] == "/game" )

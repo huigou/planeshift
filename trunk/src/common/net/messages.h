@@ -1092,7 +1092,7 @@ public:
 class psUserCmdMessage : public psMessageCracker
 {
 public:
-    csString command,player,filter,action,text;
+    csString command,player,filter,action,text,target;
     int dice,sides;
     int level;
     csString stance;
