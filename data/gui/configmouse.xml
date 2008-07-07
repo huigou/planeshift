@@ -18,6 +18,15 @@
             <widget factory="pawsSeqTreeNode" name="EntitySelect">
                 <attr name="type" value="action"/>
             </widget>
+            <widget factory="pawsSeqTreeNode" name="EntityDragDrop">
+                <attr name="type" value="action"/>
+        </widget>
+            <widget factory="pawsSeqTreeNode" name="EntityDragDropOne">
+                <attr name="type" value="action"/>
+            </widget>
+            <widget factory="pawsSeqTreeNode" name="EntityDragDropAll">
+                <attr name="type" value="action"/>
+            </widget>
         </widget>
         <widget factory="pawsWidgetTreeNode">
             <nodewidget>

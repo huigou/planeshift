@@ -8,6 +8,7 @@
   in furnace
 - Fix to FS#1654 by Celestar - Inconsistency with /me in different displays
 - Fix to FS#1426 by Oskaris - Strafe interrupts spell casting
+- Fix to FS#723 by Oskaris - ability for players to edit existion petitions
 
 *** 2008-07-06 by Mike Gist
 - Fixed unique iMeshWrappers not being created for new objects.

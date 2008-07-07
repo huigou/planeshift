@@ -1736,17 +1736,21 @@ void AdminManager::HandlePetitionMessage(MsgEntry *me, psPetitionRequestMessage&
     if (msg.request == "query")
     {
         if (msg.isGM)
-            GMListPetitions(me, msg,client);
+            GMListPetitions(me, msg, client);
         else
-            ListPetitions(me, msg,client);
+            ListPetitions(me, msg, client);
     }
     else if (msg.request == "cancel" && !msg.isGM)
     {
-        CancelPetition(me, msg,client);
+        CancelPetition(me, msg, client);
+    }
+    else if (msg.request == "change" && !msg.isGM)
+    {
+        ChangePetition(me, msg, client);
     }
     else if (msg.isGM)
     {
-        GMHandlePetition(me, msg,client);
+        GMHandlePetition(me, msg, client);
     }
 }
 
@@ -4586,6 +4590,19 @@ void AdminManager::CancelPetition(MsgEntry *me, psPetitionRequestMessage& msg,Cl
     BroadcastDirtyPetitions(me->clientnum);
 }
 
+void AdminManager::ChangePetition(MsgEntry *me, psPetitionRequestMessage& msg, Client *client)
+{
+    // Tell the database to change the status of this petition:
+    if (!ChangePetition(client->GetPlayerID(), msg.id, msg.desc))
+    {
+        psPetitionMessage error(me->clientnum, NULL, db->GetLastError(), false, PETITION_CHANGE);
+        error.SendMessage();
+        return;
+    }
+
+    // refresh client list
+    ListPetitions(me, msg, client);
+}
 
 void AdminManager::GMListPetitions(MsgEntry *me, psPetitionRequestMessage& msg,Client *client)
 {
@@ -4868,6 +4885,37 @@ bool AdminManager::CancelPetition(int playerID, int petitionID)
     result = db->CommandPump("UPDATE petitions SET status='Cancelled' WHERE id=%d AND player=%d", petitionID, playerID);
 
     return (result != -1);
+}
+
+bool AdminManager::ChangePetition(int playerID, int petitionID, const char* petition)
+{
+	csString escape;
+    db->Escape( escape, petition );
+
+    // If player ID is -1, just change the petition (a GM is requesting the change)
+    if (playerID == -1)
+    {
+		int result = db->Command("UPDATE petitions SET petition=\"%s\" WHERE id=%d", escape.GetData(), playerID);
+        return (result != -1);
+    }
+
+    // Attempt to select this petition; 
+	// following things can go wrong: 
+	// - it doesn't exist 
+	// - the player didn't create it
+	// - it has not the right status
+    int result = db->SelectSingleNumber("SELECT id FROM petitions WHERE id=%d AND player=%d AND status='Open'", petitionID, playerID);
+    if (!result || result <= -1)
+    {
+        lasterror.Format("Couldn't change the petition. Either it does not exist, or you did not "
+            "create the petition, or it has not correct status.");
+        return false;
+    }
+
+    // Update the petition status
+    result = db->CommandPump("UPDATE petitions SET petition=\"%s\" WHERE id=%d AND player=%d", escape.GetData(), petitionID, playerID);
+
+	return (result != -1);
 }
 
 bool AdminManager::ClosePetition(int gmID, int petitionID, const char* desc)
