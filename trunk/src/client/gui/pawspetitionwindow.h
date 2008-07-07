@@ -113,7 +113,7 @@ protected:
     psPetitionInfo selectedPet;
 
     /// Displays text of petition
-    pawsMessageTextBox * petText;
+    pawsMultilineEditTextBox * petText;
     
 };
 

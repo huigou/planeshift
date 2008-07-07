@@ -35,7 +35,10 @@
 #include "paws/pawsmainwidget.h"
 #include "gui/pawscontrolwindow.h"
 
+// ByyUTTON IDs
 #define CANCEL_BUTTON        1
+#define NEW_BUTTON           2
+#define SAVE_BUTTON          3
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
@@ -70,7 +73,7 @@ bool pawsPetitionWindow::PostSetup()
     // Grab the pointer to the petition listbox:
     petitionList  = (pawsListBox*)FindWidget("PetitionList");
 
-    petText = (pawsMessageTextBox*)FindWidget("PetitionText");
+    petText = (pawsMultilineEditTextBox*)FindWidget("PetitionText");
 
     hasPetInterest = false;
     
@@ -190,15 +193,6 @@ bool pawsPetitionWindow::OnButtonPressed( int mouseButton, int keyModifier, paws
     // We know that the calling widget is a button.
     int button = widget->GetID();
 
-    csString widgetName( widget->GetName() );
-    if ( widgetName == "New Button" )
-    {
-        pawsStringPromptWindow::Create(PawsManager::GetSingleton().Translate("Add Petition"), csString(""),
-                                       true, 500, 60, this, "petition" );
-                                       
-        return true;                                       
-    }
-    
     switch( button )
     {
         case CANCEL_BUTTON:
@@ -221,6 +215,60 @@ bool pawsPetitionWindow::OnButtonPressed( int mouseButton, int keyModifier, paws
                 msgqueue->SendMessage(queryMsg.msg);
             }
             break;
+        }
+        case NEW_BUTTON:
+        {
+			// Popup Input Window
+			pawsStringPromptWindow::Create(PawsManager::GetSingleton().Translate("Add Petition"), csString(""),
+				true, 500, 60, this, "petition" );
+			break;
+        }
+        case SAVE_BUTTON:
+        {
+            if (petCount > 0)
+            {
+                // Get the currently selected row:
+                int sel = petitionList->GetSelection();
+                if (sel < 0)
+                {
+					// no petition selected, create new one
+	  				OnStringEntered (0, 0, petText->GetText());
+                    return true;
+                }
+
+				currentRow = sel;
+
+				// check petitions status
+				if (petitionMessage.petitions.Get(currentRow).status != "Open")
+				{
+					psSystemMessage error(0, MSG_INFO, "You can only change open petitions.");
+					msgqueue->Publish(error.msg);
+					return true;
+				}
+
+				// save changes to selected petition
+				csString text(petText->GetText());
+				text.Trim();
+
+				if (!text.IsEmpty())
+				{
+					// Send a message to the server requesting change
+					psPetitionRequestMessage changeMsg(false, "change", petitionMessage.petitions.Get(currentRow).id,petText->GetText());
+					msgqueue->SendMessage(changeMsg.msg);
+				}
+				else
+				{
+					// Show an error
+					psSystemMessage error(0, MSG_INFO, "You must enter a text for the petition.");
+					msgqueue->Publish(error.msg);
+				}
+			}
+			else
+			{
+				// no petition selected, create new one
+				OnStringEntered (0, 0, petText->GetText());
+			}
+			break;
         }
     }
     return true;
@@ -344,11 +392,11 @@ void pawsPetitionWindow::OnListAction( pawsListBox* selected, int status )
         petText->Clear();
         if( petitionMessage.petitions.Get(sel).status=="Closed" )
 		{
-            petText->AddMessage( petitionMessage.petitions.Get(sel).petition+" "+PawsManager::GetSingleton().Translate("Resolution")+": "+petitionMessage.petitions.Get(sel).resolution );
+            petText->SetText( petitionMessage.petitions.Get(sel).petition+" "+PawsManager::GetSingleton().Translate("Resolution")+": "+petitionMessage.petitions.Get(sel).resolution );
 		}
 		else
 		{
-			petText->AddMessage( petitionMessage.petitions.Get(sel).petition );
+			petText->SetText( petitionMessage.petitions.Get(sel).petition );
 		}
     }
 }

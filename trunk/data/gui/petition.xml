@@ -5,7 +5,7 @@
         resizable="no" configurable="yes">
         
     <frame x="0" y="100" width="600" height="350" border="yes" />
-    <title resource="Blue Title" text="List Petitions" align="left" close_button="yes"/>
+    <title resource="Blue Title" text="Manage Petitions" align="left" close_button="yes"/>
     <bgimage resource="Petitions Background" alpha="128" />
     
     <widget name="PetitionList" factory="pawsListBox">    
@@ -49,8 +49,8 @@
         <text string="Petition text:" />
     </widget>
 
-    <widget name="PetitionText" factory="pawsMessageTextBox" >
-        <frame x="32" y="227" width="540" height="94" border="no" />
+    <widget name="PetitionText" factory="pawsMultilineEditTextBox" style="textinput" >
+        <frame x="32" y="227" width="540" height="94" />
         <font name="/planeshift/data/ttf/LiberationMono-Regular.ttf" r="255" g="255" b="255" size="10" />
     </widget>
 
@@ -77,6 +77,19 @@
             <attach point="ATTACH_BOTTOM" />
         </attachpoints>
     </widget>
+
+    <widget name="Save Button" factory="pawsButton" toggle="no" id="3" shadows="yes" >
+        <frame x="265" y="324" width="94" height="22" border="no" />
+	<font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="10" />
+        <bgimage resource="Standard Button"/>
+        <label text="Save" />
+
+        <attachpoints>
+            <attach point="ATTACH_LEFT" />
+            <attach point="ATTACH_BOTTOM" />
+        </attachpoints>
+    </widget>
+
 </widget>
 
 

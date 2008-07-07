@@ -241,6 +241,7 @@ protected:
     /// Handles queries sent by the client to the server for information or actions
     void ListPetitions(MsgEntry* me, psPetitionRequestMessage& msg, Client *client);
     void CancelPetition(MsgEntry* me, psPetitionRequestMessage& msg, Client *client);
+    void ChangePetition(MsgEntry* me, psPetitionRequestMessage& msg, Client *client);
 
     /// Handles queries send by a GM to the server for dealing with petitions
     void GMListPetitions(MsgEntry* me, psPetitionRequestMessage& msg, Client *client);
@@ -364,6 +365,14 @@ protected:
      * @return Returns either success or failure.
      */
     bool CancelPetition(int playerID, int petitionID);
+
+    /** Changes the description of the specified petition if the player was its creator
+     * @param playerID: Is the ID of the player who is requesting the change.
+     *            if ID is -1, that means a GM is changing someone's petition
+     * @param petitionID: The petition id
+     * @return Returns either success or failure.
+     */
+    bool ChangePetition(int playerID, int petitionID, const char* petition);
 
     /** Closes the specified petition (GM only)
      * @param gmID: Is the ID of the GM who is requesting the close.

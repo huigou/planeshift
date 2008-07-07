@@ -43,7 +43,7 @@ class psLinearMovement;
 
 // This holds the version number of the network code, remember to increase
 // this each time you do an update which breaks compatibility
-#define PS_NETVERSION   0x008C
+#define PS_NETVERSION   0x008D
 // Remember to bump the version in pscssetup.h, as well.
 
 // NPC Networking version is separate so we don't have to break compatibility
@@ -864,10 +864,11 @@ enum {
     PETITION_LIST = 0,      // server is returning a list of petitions
     PETITION_CANCEL = 1,    // server sends back result of cancel petition
     PETITION_CLOSE = 2,     // server sends back result of close petition
-    PETITION_ASSIGN = 3,    // server sends back result of assignation of petition
-    PETITION_ESCALATE = 4,  // server sends back result of escalation of petition
-    PETITION_DESCALATE = 5, // server sends back result of descalation of petition
-    PETITION_DIRTY = 6      // server informs client that their petition list is dirty
+    PETITION_CHANGE = 3,    // server sends back result of change petition
+    PETITION_ASSIGN = 4,    // server sends back result of assignation of petition
+    PETITION_ESCALATE = 5,  // server sends back result of escalation of petition
+    PETITION_DESCALATE = 6, // server sends back result of descalation of petition
+    PETITION_DIRTY = 7      // server informs client that their petition list is dirty
 };
 
 /**
@@ -905,10 +906,11 @@ public:
  * This class was added in case we need to add more petition
  * requests to the server, currently the recognized requests are:
  *
- *  - query : return list of user petitions or all petitions if GM
- *  - cancel : cancel the specified petition
- *  - close : closes the specified petition
- *  - assign : assign the GM to work on the specified petition
+ *  - query    : return list of user petitions or all petitions if GM
+ *  - cancel   : cancel the specified petition
+ *  - change   : change the specified petition
+ *  - close    : closes the specified petition
+ *  - assign   : assign the GM to work on the specified petition
  *  - escalate : escalates the specified petition
  */
 class psPetitionRequestMessage: public psMessageCracker
