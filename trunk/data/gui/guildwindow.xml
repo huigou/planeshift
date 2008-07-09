@@ -380,7 +380,7 @@
 
                     </column>
 
-                    <column width="135" xmlbinding="level" >
+                    <column width="120" xmlbinding="level" >
 
                          <widget name="Level" factory="pawsTextBox"> </widget>
 
@@ -392,7 +392,7 @@
 
                     </column>
 
-                    <column width="75" xmlbinding="sector" >
+                    <column width="95" xmlbinding="sector" >
 
                          <widget name="Sector" factory="pawsTextBox"> <text horizAdjust="CENTRE" /></widget>
 
@@ -538,7 +538,7 @@
 
             <widget name="CreateAlliance" factory="pawsButton" id="505">
 
-                <frame x="520" y="7" width="90" height="19" />
+                <frame x="520" y="7" width="100" height="19" />
 
                 <bgimage resource="Standard Button" />
 
@@ -747,4 +747,5 @@
 
 
 </widget_description>
+
 
