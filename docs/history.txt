@@ -1,3 +1,6 @@
+*** 2008-07-09 by Steven Patrick
+- Fix to guild window xml, patch by Caarrie.
+
 *** 2008-07-06 by Roland Schulz
 - Fix to FS#1741, FS#1703 and likely FS#1130 by Zwenze. This adds an area
   syntax improvment to GM commands, allowing to target all items/npcs/players
