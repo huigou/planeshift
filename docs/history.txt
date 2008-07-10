@@ -1,4 +1,4 @@
-*** 2008-07-09 by Steven Patrick
+*** 2008-07-10 by Steven Patrick
 - Fix to FS#774, patch by weltall.
 
 *** 2008-07-09 by Steven Patrick
