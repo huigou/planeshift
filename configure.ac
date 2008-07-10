@@ -255,12 +255,6 @@ AC_DEFUN([CS_CHECK_OPTIMIZE_FLAGS],
 	[C++], [COMPILER.CFLAGS.optimize], [+],
 	[cs_optimize_flags="$cs_optimize_flags $cs_cv_prog_cxx_optimize"])
 
-    CS_EMIT_BUILD_FLAGS([how to enable debug optimizations],
-	[cs_cv_prog_cxx_debug],
-	[CS_CREATE_TUPLE([-O2]) CS_CREATE_TUPLE([-Os]) CS_CREATE_TUPLE([-O])],
-	[C++], [COMPILER.CFLAGS.debug], [+],
-	[cs_debug_flags="$cs_debug_flags $cs_cv_prog_cxx_debug"])
-
     CS_EMIT_BUILD_FLAGS([if -fomit-frame-pointer is accepted],
 	[cs_cv_prog_cxx_omit_frame_pointer],
 	[CS_CREATE_TUPLE([-fomit-frame-pointer])],
