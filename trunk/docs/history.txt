@@ -1,4 +1,7 @@
 *** 2008-07-09 by Steven Patrick
+- Fix to FS#774, patch by weltall.
+
+*** 2008-07-09 by Steven Patrick
 - Fix to guild window xml, patch by Caarrie.
 
 *** 2008-07-06 by Roland Schulz

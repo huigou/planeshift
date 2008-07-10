@@ -292,6 +292,8 @@ void pawsSketchWindow::AddSketchText()
 
 void pawsSketchWindow::OnStringEntered(const char *name,int param,const char *value)
 {
+    stringPending = false;
+    
     if (!value || !strlen(value))
         return;
 
@@ -308,8 +310,7 @@ void pawsSketchWindow::OnStringEntered(const char *name,int param,const char *va
         sketchName = value;
         SetTitle(sketchName);
     }
-
-    stringPending = false;
+    
 }
 
 void pawsSketchWindow::AddSketchLine()
