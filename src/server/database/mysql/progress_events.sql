@@ -99,3 +99,6 @@ INSERT INTO progression_events VALUES('death_penalty','<evt><block category="-De
 INSERT INTO progression_events VALUES('Recharge','<evt><recharge charges="1" error="Nothing to recharge" success="Item where recharged" /></evt>');
 INSERT INTO progression_events VALUES("CraftTest","<evt><craft pattern=\"wayoutbread\" /></evt>");
 INSERT INTO progression_events VALUES("CraftTest2","<evt><craft pattern=\"flame weapon\" /></evt>");
+
+INSERT INTO progression_events VALUES('PATH_Street Warrior','<evt><str adjust=\"add\" value=\"0.35*CharPoints\" base=\"yes\" /><end adjust=\"add\" value=\"0.25*CharPoints\" base=\"yes\" /><agi adjust=\"add\" value=\"0.25*CharPoints\" base=\"yes\" /><int adjust=\"add\" value=\"0.05*CharPoints\" base=\"yes\" /><wil adjust=\"add\"  value=\"0.05*CharPoints\" base=\"yes\" /><cha adjust=\"add\" value=\"0.05*CharPoints\" base=\"yes\" /><skill name=\"Mace & Hammer\" adjust=\"set\" value=\"1\" buff=\"no\" /><skill name=\"Medium Armor\" adjust=\"set\" value=\"1\" buff=\"no\" /><skill name=\"Pickpockets\" adjust=\"set\" value=\"1\" buff=\"no\" /><skill name=\"Find Traps\" adjust=\"set\" value=\"1\" buff=\"no\" /><skill name=\"Body Development\" adjust=\"set\" value=\"2\" buff=\"no\" /></evt>');
+
