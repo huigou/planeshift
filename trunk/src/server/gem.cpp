@@ -588,6 +588,18 @@ void GEMSupervisor::Teleport( gemObject* object, float x, float y, float z, floa
 }
 
 
+void GEMSupervisor::AttachObject( iObject* object, gemObject* gobject )
+{
+    csRef<psGemServerMeshAttach> attacher = csPtr<psGemServerMeshAttach>(new psGemServerMeshAttach(gobject));
+    attacher->SetName( object->GetName() );
+    csRef<iObject> attacher_obj(scfQueryInterface<iObject>(attacher));
+
+    object->ObjAdd( attacher_obj );
+}
+
+
+
+
 /*****************************************************************/
 
 csString GetDefaultBehavior(const csString & dfltBehaviors, int behaviorNum)
