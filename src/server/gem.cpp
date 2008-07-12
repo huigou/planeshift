@@ -597,6 +597,58 @@ void GEMSupervisor::AttachObject( iObject* object, gemObject* gobject )
     object->ObjAdd( attacher_obj );
 }
 
+void GEMSupervisor::UnattachObject( iObject* object, gemObject* gobject )
+{
+    csRef<psGemServerMeshAttach> attacher (CS::GetChildObject<psGemServerMeshAttach>(object));
+    if (attacher)
+    {
+        if (attacher->GetObject() == gobject)
+        {
+            csRef<iObject> attacher_obj(scfQueryInterface<iObject>(attacher));
+            object->ObjRemove(attacher_obj);
+        }
+    }
+}
+
+gemObject* GEMSupervisor::FindAttachedObject( iObject* object )
+{
+    gemObject* found = 0;
+
+    csRef<psGemServerMeshAttach> attacher(CS::GetChildObject<psGemServerMeshAttach>(object));
+    if ( attacher )
+    {
+        found = attacher->GetObject();
+    }
+
+    return found;
+}
+
+csArray<gemObject*> GEMSupervisor::FindNearbyEntities( iSector* sector, const csVector3& pos, float radius, bool doInvisible )
+{
+    csArray<gemObject*> list;
+    csRef<iEngine> engine = csQueryRegistry<iEngine> (psserver->GetObjectReg());
+
+    csRef<iMeshWrapperIterator> obj_it =  engine->GetNearbyMeshes( sector, pos, radius );
+    while (obj_it->HasNext())
+    {
+        iMeshWrapper* m = obj_it->Next();
+        if (!doInvisible)
+        {
+            bool invisible = m->GetFlags().Check(CS_ENTITY_INVISIBLE);
+            if (invisible)
+                continue;
+        }
+
+        gemObject* object = FindAttachedObject(m->QueryObject());
+
+        if (object)
+        {
+            list.Push( object );
+        }
+    }
+
+    return list;
+}
 
 
 

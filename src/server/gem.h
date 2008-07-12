@@ -177,6 +177,34 @@ public:
      */ 
     void AttachObject( iObject* object, gemObject* gobject);
 
+    /** Unattach a gemObject from a Crystal Space object.
+      * In most cases the Crystal Space object is a meshwrapper.
+      *
+      * @param object The Crystal Space object we want to unattach our client object from.
+      * @param gobject The gem object we want to unattach.
+      */
+    void UnattachObject( iObject* object, gemObject* gobject); 
+
+    /** See if there is a gemObject attached to a given Crystal Space object.
+      * 
+      * @param object The Cyrstal Space object we want to see if there is an object attached to.
+      *
+      * @return A gemObject if it exists that is attached to the Crystal Space object.
+      */
+    gemObject* FindAttachedObject (iObject* object);
+    
+    
+    /** Create a list of all nearby gem objects.
+      * @param sector The sector to check in.
+      * @param pos The starting position
+      * @param radius The distance around the starting point to check.
+      * @param doInvisible If true check invisible meshes otherwise ignore them.     
+      *
+      * @return A csArray<> of all the objects in the given radius.
+      */
+    csArray<gemObject*> FindNearbyEntities (iSector* sector, const csVector3& pos, float radius, bool doInvisible = false);
+
+
 protected:
     csHash<gemObject *> entities_by_cel_id;
     csHash<gemObject *> entities_by_ps_id;
