@@ -116,6 +116,16 @@
 /// Number of messages in the chat history buffer
 #define CHAT_HISTORY_SIZE 50
 
+//-----------------------------------------------------------------------------
+
+psGemServerMeshAttach::psGemServerMeshAttach(gemObject* objectToAttach) : scfImplementationType(this)
+{
+    object = objectToAttach; 
+}
+
+
+//-----------------------------------------------------------------------------
+
 GEMSupervisor *gemObject::cel = NULL;
 
 GEMSupervisor::GEMSupervisor(iObjectRegistry *objreg,
