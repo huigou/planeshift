@@ -168,6 +168,15 @@ public:
  
     void HandleMessage(MsgEntry *me, Client *client);
 
+   
+    /** Attach a server gemObject to a Crystal Space object.
+     * In most cases this will be a mesh wrapper.
+     *
+     * @param object The Crystal Space object we want to attach our gemObject to.
+     * @param gobject The PlaneShift object that we want to attach.
+     */ 
+    void AttachObject( iObject* object, gemObject* gobject);
+
 protected:
     csHash<gemObject *> entities_by_cel_id;
     csHash<gemObject *> entities_by_ps_id;
