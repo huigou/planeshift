@@ -24,6 +24,7 @@
 // Crystal Space Includes
 //=============================================================================
 #include <iutil/vfs.h>
+#include <csutil/csobject.h>
 #include <csutil/csstring.h>
 #include <csutil/hash.h>
 #include <csutil/weakreferenced.h>
@@ -79,6 +80,32 @@ class psLinearMovement;
 
 #define UNSTICK_TIME 15000
 
+
+//-----------------------------------------------------------------------------
+
+/** Helper class to attach a PlaneShift gem object to a particular mesh.
+  */
+class psGemServerMeshAttach : public scfImplementationExt1<psGemServerMeshAttach,
+                                                           csObject, 
+                                                           scfFakeInterface<psGemServerMeshAttach> >
+{
+public:
+    SCF_INTERFACE(psGemServerMeshAttach, 0, 0, 1);
+
+    /** Setup this helper with the object we want to attach with.
+     * @param object  The gemObject we want to attach to a mesh.
+     */
+    psGemServerMeshAttach(gemObject* object);
+
+    /** Get the gemObject that the mesh has attached.
+     */
+    gemObject* GetObject() { return object; }
+
+private:
+    gemObject* object;          ///< The object that is attached to a iMeshWrapper object. 
+};
+
+//-----------------------------------------------------------------------------
 
 /**
 * This class holds the refs to the core factories, etc in CEL.
