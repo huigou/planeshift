@@ -1,3 +1,6 @@
+*** 2008-07-12 by Mike Gist
+- Fixed FS#1872, thanks to peeg for looking at this.
+
 *** 2008-07-10 by Steven Patrick
 - Fix to FS#774, patch by weltall.
 
