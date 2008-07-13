@@ -363,7 +363,7 @@ protected:
     bool InitProximityList(float radius,int clientnum);
 
     bool InitMesh(const char *name,const char *factname,const char *filename,
-        const csVector3& pos,const float rotangle,iSector* room, const char *action);
+        const csVector3& pos,const float rotangle,iSector* room);
 };
 
 /*
