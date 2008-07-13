@@ -91,6 +91,8 @@ STATIC.PLUGINLIST =
   sprcal3dldr
   stdrep
   terrainldr
+  terrain2
+  terrain2ldr
   thing
   thingldr
   vfs
