@@ -1,6 +1,7 @@
 *** 2008-07-12 by Andrew Craig
-- Added in a helper function that will be used to attach gemObjects to meshes.  Part 
-  of a server side clean up. 
+- Added in a helper function that will be used to attach gemObjects to meshes.  
+  Part of a server side clean up. 
+- Removed the 'action' from gemObject::InitMesh() function since it was never used.
 
 *** 2008-07-12 by Mike Gist
 - Fixed FS#1872, thanks to peeg for looking at this.

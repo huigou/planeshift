@@ -709,7 +709,7 @@ gemObject::gemObject(const char* name,
     prox_distance_desired=DEF_PROX_DIST;
     prox_distance_current=DEF_PROX_DIST;
 
-    if (!InitMesh(name,factname,filename,pos,rotangle,room,NULL))
+    if (!InitMesh(name,factname,filename,pos,rotangle,room))
     {
         Error1("Could not create gemObject because mesh could not be Init'd.");
         Error4("Name: %s Factory: %s File: %s\n", name, factname, filename );
@@ -786,8 +786,7 @@ bool gemObject::InitMesh(const char *name,
                            const char *filename,
                            const csVector3& pos,
                            const float rotangle,
-                           iSector* room,
-                           const char *action)
+                           iSector* room)
 {
     csRef<iCelPropertyClass> pc;
     
@@ -920,9 +919,6 @@ bool gemObject::InitMesh(const char *name,
     }
 
     Move(pos,rotangle,room);
-
-    if (action)
-        pcmesh->SetAnimation(action, false);
 
     return true;
 }
