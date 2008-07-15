@@ -517,9 +517,15 @@ bool pawsListBox::Select( pawsListBoxRow* row, bool notify)
 
 void pawsListBox::SetScrollBarMaxValue()
 {
+    int horiz = 0;
 
+    // If horz scroll bar is visible add an extra vertical scroll  
+    if ( horzscrollBar->IsVisible() )
+    {
+        horiz = 1;
+    }
     scrollBar->SetMaxValue(
-                            int(rows.GetSize()) + (usingTitleRow?1:0)
+                            int(rows.GetSize()) + (usingTitleRow?1:0) + horiz + 
                                 - 
                             screenFrame.Height() / columnDef[0].height
                           );
