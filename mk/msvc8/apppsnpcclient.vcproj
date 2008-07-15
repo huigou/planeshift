@@ -774,6 +774,9 @@
 				RelativePath="..\..\src\npcclient\npcclient.cpp">
 			</File>
 			<File
+				RelativePath="..\..\src\npcclient\npcmesh.cpp">
+			</File>
+			<File
 				RelativePath="..\..\src\npcclient\npcoperations.cpp">
 			</File>
 			<File
@@ -815,6 +818,9 @@
 			</File>
 			<File
 				RelativePath="..\..\src\npcclient\npcclient.h">
+			</File>
+			<File
+				RelativePath="..\..\src\npcclient\npcmesh.h">
 			</File>
 			<File
 				RelativePath="..\..\src\npcclient\npcoperations.h">

@@ -810,6 +810,9 @@
 				RelativePath="..\..\src\server\gem.cpp">
 			</File>
 			<File
+				RelativePath="..\..\src\server\gemmesh.cpp">
+			</File>
+			<File
 				RelativePath="..\..\src\server\gmeventmanager.cpp">
 			</File>
 			<File
@@ -953,6 +956,9 @@
 			</File>
 			<File
 				RelativePath="..\..\src\server\gem.h">
+			</File>
+			<File
+				RelativePath="..\..\src\server\gemmesh.h">
 			</File>
 			<File
 				RelativePath="..\..\src\server\globals.h">

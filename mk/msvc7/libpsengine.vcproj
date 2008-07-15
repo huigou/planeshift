@@ -721,9 +721,6 @@
 			Name="Source Files"
 			Filter="">
 			<File
-				RelativePath="..\..\src\common\engine\celbase.cpp">
-			</File>
-			<File
 				RelativePath="..\..\src\common\engine\colldet.cpp">
 			</File>
 			<File
@@ -745,9 +742,6 @@
 		<Filter
 			Name="Header Files"
 			Filter="">
-			<File
-				RelativePath="..\..\src\common\engine\celbase.h">
-			</File>
 			<File
 				RelativePath="..\..\src\common\engine\colldet.h">
 			</File>
