@@ -39,7 +39,7 @@
 
 
         <widget name="ItemDescription" factory="pawsMultiLineTextBox" >
-            <frame x="107" y="27" width="215" height="73" border="no"/>
+            <frame x="89" y="27" width="200" height="73" border="no"/>
 	    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="225" g="255" b="225" size="10" />
         </widget>
         
