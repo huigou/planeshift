@@ -29,20 +29,19 @@
 #include <iengine/mesh.h>
 #include <iengine/movable.h>
 
-#include <propclass/mesh.h>
-#include <physicallayer/entity.h>
-#include <physicallayer/propclas.h>
 
 //=============================================================================
 // Project Includes
 //=============================================================================
 #include "net/msghandler.h"
 #include "net/npcmessages.h"
+
 #include "util/log.h"
 #include "util/location.h"
 #include "util/psconst.h"
 #include "util/strutil.h"
 #include "util/psutil.h"
+
 #include "engine/psworld.h"
 
 //=============================================================================
@@ -55,6 +54,8 @@
 #include "perceptions.h"
 #include "npcclient.h"
 #include "networkmgr.h"
+#include "npcmesh.h"
+#include "gem.h"
 
 extern bool running;
 
@@ -851,24 +852,23 @@ csString psResumeScriptEvent::ToString() const
 {
     csString result;
     result.Format("Resuming script operation %s for %s",scriptOp->GetName(),npc->GetName());
-    if (npc->GetEntity())
+    if (npc)
     {
-        result.AppendFmt("(EID: %u)", npc->GetEntity()->GetID());
+        result.AppendFmt("(EID: %u)", npc->GetEID());
     }
     return result;
 }
 
 //---------------------------------------------------------------------------
 
-void psGameObject::GetPosition(iCelEntity *entity, csVector3& pos, float& yrot,iSector*& sector)
+void psGameObject::GetPosition(gemNPCObject* object, csVector3& pos, float& yrot,iSector*& sector)
 {
-    csRef<iPcMesh> pcmesh = CEL_QUERY_PROPCLASS(entity->GetPropertyClassList(), 
-        iPcMesh);
+    npcMesh * pcmesh = object->pcmesh;
 
     // Position
     if(!pcmesh->GetMesh())
     {
-        CPrintf(CON_ERROR,"ERROR! NO MESH FOUND FOR OBJECT %s!\n",entity->GetName());
+        CPrintf(CON_ERROR,"ERROR! NO MESH FOUND FOR OBJECT %s!\n",object->GetName());
         return;
     }
 
@@ -889,18 +889,15 @@ void psGameObject::GetPosition(iCelEntity *entity, csVector3& pos, float& yrot,i
     }
 }
 
-void psGameObject::SetPosition(iCelEntity *entity, csVector3& pos, iSector* sector)
+void psGameObject::SetPosition(gemNPCObject* object, csVector3& pos, iSector* sector)
 {
-    csRef<iPcMesh> pcmesh = CEL_QUERY_PROPCLASS(entity->GetPropertyClassList(), 
-        iPcMesh);
-
+    npcMesh * pcmesh = object->pcmesh;
     pcmesh->MoveMesh(sector,pos);
 }
 
-void psGameObject::SetRotationAngle(iCelEntity *entity, float angle)
+void psGameObject::SetRotationAngle(gemNPCObject* object, float angle)
 {
-    csRef<iPcMesh> pcmesh = CEL_QUERY_PROPCLASS(entity->GetPropertyClassList(), 
-        iPcMesh);
+    npcMesh * pcmesh = object->pcmesh;
 
     csMatrix3 matrix = (csMatrix3) csYRotMatrix3 (angle);
     pcmesh->GetMesh()->GetMovable()->GetTransform().SetO2T (matrix);

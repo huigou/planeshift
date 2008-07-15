@@ -19,6 +19,9 @@
 #ifndef __TRIBE_H__
 #define __TRIBE_H__
 
+//=============================================================================
+// Crystal Space Includes
+//=============================================================================
 #include <csutil/array.h>
 #include <csutil/list.h>
 #include <csgeom/vector3.h>

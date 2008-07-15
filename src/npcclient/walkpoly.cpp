@@ -15,24 +15,38 @@
 * along with this program; if not, write to the Free Software
 * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
-
 #include <psconfig.h>
 #include <math.h>
+
+//=============================================================================
+// Crystal Space Includes
+//=============================================================================
 #include <iengine/mesh.h>
 #include <iengine/movable.h>
+#include <iengine/engine.h>
+#include <iengine/sector.h>
 #include <imesh/object.h>
 #include <imesh/objmodel.h>
-#include <propclass/linmove.h>
-#include <engine/celbase.h>
 #include <csutil/xmltiny.h>
-#include <iutil/object.h>
 #include <csutil/databuf.h>
+#include <iutil/object.h>
 
-#include "walkpoly.h"
+//=============================================================================
+// Library Includes
+//=============================================================================
 #include "util/consoleout.h"
 #include "util/psprofile.h"
 #include "util/log.h"
 #include "util/psxmlparser.h"
+
+#include "engine/linmove.h"
+
+//=============================================================================
+// Local Includes
+//=============================================================================
+#include "walkpoly.h"
+#include "npcmesh.h"
+#include "npcclient.h"
 
 const int VERT_COUNT      = 12;   // low vert count limits possible stretching directions
 const int NUM_DIRECTIONS  = 1;
@@ -504,12 +518,19 @@ public:
     //static const float WALK_Y_TOLERANCE = 0.3;
         //must be big enough to tolerate terrain elevation and setmini
     
-    psMapWalker(CelBase * cel)
+    psMapWalker(psNPCClient * npcclient)
     {
-        this->cel = cel;
-        entity = cel->GetPlLayer()->CreateEntity();
+        this->npcclient = npcclient;
+        pcmesh = NULL;
+        pcmove = NULL;
     }
     
+    ~psMapWalker()
+    {
+        delete pcmesh;
+        delete pcmove;
+    }
+
     bool Init()
     {
         return InitMesh("stonebm", "/planeshift/models/stonebm/stonebm.cal3d")
@@ -704,20 +725,7 @@ protected: ////////////////////
     
     bool InitMesh(const char *factname, const char *filename)
     {
-        csRef<iCelPropertyClass> pc;
-        pc = cel->GetPlLayer()->CreatePropertyClass(entity, "pcmesh");
-        if ( !pc )
-        {
-            Error1("Could not create MapWalker because pcmesh class couldn't be created.");
-            return false;
-        }
-        
-        pcmesh =  scfQueryInterface<iPcMesh > ( pc);
-        if ( !pcmesh )
-        {
-            Error1("Could not create MapWalker because pcmesh class doesn't implement iPcMesh.");
-            return false;
-        }
+        pcmesh = new npcMesh(npcclient->GetObjectReg(), NULL, NULL);
         
         if (!pcmesh->SetMesh(factname, filename))
         {
@@ -736,14 +744,7 @@ protected: ////////////////////
     
     bool InitLinmove()
     {
-        csRef<iCelPropertyClass> pc;
-        pc = cel->GetPlLayer()->CreatePropertyClass(entity, "pclinearmovement");
-        if ( !pc )
-        {
-            Error1("Could not create MapWalker property class pclinearmovement.");
-            return false;
-        }
-        pcmove =  scfQueryInterface<iPcLinearMovement> (pc);
+        pcmove =  new psLinearMovement(npcclient->GetObjectReg());
         pcmove->SetSpeed(1);
         return true;
     }
@@ -771,7 +772,7 @@ protected: ////////////////////
         top.z *= .7f;
         bottom.x *= .7f;
         bottom.z *= .7f;
-        pcmove->InitCD(top, bottom,offset);
+        pcmove->InitCD(top, bottom,offset, pcmesh->GetMesh());
         return true;
     }
     
@@ -782,10 +783,9 @@ protected: ////////////////////
         return 0;
     }
     
-    csRef<iPcMesh> pcmesh;
-    csRef<iPcLinearMovement> pcmove;
-    csRef<iCelEntity> entity;
-    CelBase * cel;
+    npcMesh* pcmesh;
+    psLinearMovement* pcmove;
+    psNPCClient * npcclient;
     float height;
 };
 
@@ -955,7 +955,7 @@ float CalcSlope(const csVector3 & from, const csVector3 & to)
 }
 
 
-void pathFindTest_Walkability(CelBase * cel)
+void pathFindTest_Walkability(psNPCClient * npcclient)
 {
     psMapWalker * w;
     
@@ -965,11 +965,11 @@ void pathFindTest_Walkability(CelBase * cel)
     //za  -61 0 -147
     //vpravo -56 0 -147
     
-    w = new psMapWalker(cel);
+    w = new psMapWalker(npcclient);
     assert(w->Init());
     
     iSector * sector;
-    csRef<iEngine> engine =  csQueryRegistry<iEngine> (cel->GetObjectReg());
+    csRef<iEngine> engine =  csQueryRegistry<iEngine> (npcclient->GetObjectReg());
     //sector = engine->FindSector("NPCroom");
     sector = engine->FindSector("blue");
     assert(sector);
@@ -2780,24 +2780,24 @@ void pathFindTest_Convex()
         )));
 }
 
-void pathFindTest_PruneWP(CelBase * cel)
+void pathFindTest_PruneWP(psNPCClient* npcclient)
 {
-    psWalkPolyMap map(cel->GetObjectReg());
+    psWalkPolyMap map(npcclient->GetObjectReg());
     map.LoadFromFile("/this/pfgen.xml");
     map.PrunePolys();
     map.SaveToFile("/this/pfgen.xml");
 }
 
-void pathFindTest_Stretch(CelBase * cel)
+void pathFindTest_Stretch(psNPCClient * npcclient)
 {
     //printf("%f %f %f %f\n", NormalizeAngle(1), NormalizeAngle(7), NormalizeAngle(-1), NormalizeAngle(-7));
     //printf("%f %f %f\n", AngleDiff(1,-1), AngleDiff(1,7), AngleDiff(-1,-7));
 
-    psWalkPolyMap map(cel->GetObjectReg());
+    psWalkPolyMap map(npcclient->GetObjectReg());
     psWalkPoly p1, p2;
     iSector * sector;
-    psSeedSet seeds(cel->GetObjectReg());
-    csRef<iEngine> engine =  csQueryRegistry<iEngine> (cel->GetObjectReg());
+    psSeedSet seeds(npcclient->GetObjectReg());
+    csRef<iEngine> engine =  csQueryRegistry<iEngine> (npcclient->GetObjectReg());
     
     
     //map.LoadFromFile("/this/pfgen.xml");
@@ -2848,7 +2848,7 @@ void pathFindTest_Stretch(CelBase * cel)
     //krizovatka u mrize
     sector = engine->FindSector("blue");
     seeds.AddSeed(psSeed(csVector3(-180, -5.4F, -192), sector, 1));
-    map.Generate(cel, seeds, sector);
+    map.Generate(npcclient, seeds, sector);
     
     //nad krizovatkou u mrize
     //map.Generate(cel, csVector3(-180, -5.4, -170), sector);
@@ -2913,7 +2913,7 @@ void pathFindTest_Stretch(CelBase * cel)
 }
 
 
-void psWalkPolyMap::Generate(CelBase * cel, psSeedSet & seeds, iSector * sector)
+void psWalkPolyMap::Generate(psNPCClient* npcclient, psSeedSet & seeds, iSector * sector)
 {
     psWalkPoly * poly;
     int numMovedThisStep;
@@ -2927,7 +2927,7 @@ void psWalkPolyMap::Generate(CelBase * cel, psSeedSet & seeds, iSector * sector)
     const float MAX_AREA = 1000;
 
     
-    walker = new psMapWalker(cel);
+    walker = new psMapWalker(npcclient);
     assert(walker->Init());
     
     watch.Start();
@@ -3206,10 +3206,10 @@ void psWalkPolyMap::CalcConts()
     }
 }
 
-void pathFindTest_Save(CelBase * cel)
+void pathFindTest_Save(psNPCClient* npcclient)
 {
     psWalkPoly p1, p2;
-    psWalkPolyMap map(cel->GetObjectReg());
+    psWalkPolyMap map(npcclient->GetObjectReg());
     
     p1.AddVert(csVector3(0, 0, 2.123F));
     p1.AddVert(csVector3(2, 0, 2));
@@ -3226,7 +3226,7 @@ void pathFindTest_Save(CelBase * cel)
     
     map.SaveToFile("/this/pf.xml");
     
-    psWalkPolyMap map2(cel->GetObjectReg());
+    psWalkPolyMap map2(npcclient->GetObjectReg());
     map2.LoadFromFile("/this/pf.xml");
     map2.DumpPolys();
 }
@@ -3325,11 +3325,11 @@ bool psWalkPoly::MoveToNextPoly(const csVector3 & goal, csVector3 & point, psWal
 }
 
 
-void pathFindTest_CheckDirect(CelBase * cel)
+void pathFindTest_CheckDirect(psNPCClient* npcclient)
 {
     csVector3 goal;
     csVector3 currPoint;
-    psWalkPolyMap map(cel->GetObjectReg());
+    psWalkPolyMap map(npcclient->GetObjectReg());
 //    int edgeNum;
 //    int i;
     

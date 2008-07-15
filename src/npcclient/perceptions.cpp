@@ -29,22 +29,26 @@
 #include <iengine/mesh.h>
 #include <iengine/movable.h>
 
-#include <propclass/mesh.h>
-#include <physicallayer/entity.h>
-#include <physicallayer/propclas.h>
-
+//=============================================================================
+// Library Includes
+//=============================================================================
 #include "net/msghandler.h"
 #include "net/npcmessages.h"
+
+#include "util/log.h"
+#include "util/location.h"
+#include "util/strutil.h"
+#include "util/psutil.h"
+
+//=============================================================================
+// Local Includes
+//=============================================================================
 #include "npcbehave.h"
 #include "perceptions.h"
 #include "npc.h"
 #include "npcclient.h"
 #include "networkmgr.h"
 #include "globals.h"
-#include "util/log.h"
-#include "util/location.h"
-#include "util/strutil.h"
-#include "util/psutil.h"
 #include "gem.h"
 
 
@@ -281,10 +285,8 @@ void Reaction::React(NPC *who, EventManager *eventmgr, Perception *pcpt)
     who->SetLastPerception(p);
 }
 
-bool Reaction::ShouldReact(iCelEntity* entity, Perception *pcpt)
+bool Reaction::ShouldReact(gemNPCObject* actor, Perception *pcpt)
 {
-    gemNPCObject * actor = npcclient->FindEntityID(entity->GetID());
-
     if (!actor) return false;
 
     if (!(actor->IsVisible() || react_when_invisible))
@@ -454,7 +456,7 @@ Perception *FactionPerception::MakeCopy()
 
 void FactionPerception::ExecutePerception(NPC *npc,float weight)
 {
-    npc->AddToHateList(player,weight*-faction_delta);
+    npc->AddToHateList((gemNPCActor*)player,weight*-faction_delta);
 }
 
 //---------------------------------------------------------------------------------
@@ -521,7 +523,7 @@ Perception *AttackPerception::MakeCopy()
 
 void AttackPerception::ExecutePerception(NPC *npc,float weight)
 {
-    npc->AddToHateList(attacker,weight);
+    npc->AddToHateList((gemNPCActor*)attacker,weight);
 }
 //---------------------------------------------------------------------------------
 
@@ -534,7 +536,7 @@ Perception *GroupAttackPerception::MakeCopy()
 void GroupAttackPerception::ExecutePerception(NPC *npc,float weight)
 {
     for(size_t i=0;i<attacker_ents.GetSize();i++)
-        npc->AddToHateList(attacker_ents[i],bestSkillSlots[i]*weight);
+        npc->AddToHateList((gemNPCActor*)attacker_ents[i],bestSkillSlots[i]*weight);
 }
 
 //---------------------------------------------------------------------------------
@@ -547,13 +549,13 @@ Perception *DamagePerception::MakeCopy()
 
 void DamagePerception::ExecutePerception(NPC *npc,float weight)
 {
-    npc->AddToHateList(attacker,damage*weight);
+    npc->AddToHateList((gemNPCActor*)attacker,damage*weight);
 }
 
 //---------------------------------------------------------------------------------
 
 SpellPerception::SpellPerception(const char *name,
-                                 iCelEntity *caster,iCelEntity *target, 
+                                 gemNPCObject *caster,gemNPCObject *target, 
                                  const char *type,float severity)
                                  : Perception(name)
 {
@@ -568,11 +570,11 @@ bool SpellPerception::ShouldReact(Reaction *reaction,NPC *npc)
     csString event(type);
     event.Append(':');
 
-    if (npc->GetEntityHate(caster) || npc->GetEntityHate(target))
+    if (npc->GetEntityHate((gemNPCActor*)caster) || npc->GetEntityHate((gemNPCActor*)target))
     {
         event.Append("target");
     }
-    else if (target == npc->GetEntity())
+    else if (target == npc->GetActor())
     {
         event.Append("self");
     }
@@ -599,7 +601,7 @@ Perception *SpellPerception::MakeCopy()
 
 void SpellPerception::ExecutePerception(NPC *npc,float weight)
 {
-    npc->AddToHateList(caster,spell_severity*weight);
+    npc->AddToHateList((gemNPCActor*)caster,spell_severity*weight);
 }
 
 //---------------------------------------------------------------------------------
@@ -718,9 +720,9 @@ Perception *InventoryPerception::MakeCopy()
 
 OwnerCmdPerception::OwnerCmdPerception( const char *name,
                                         psPETCommandMessage::PetCommand_t command,
-                                        iCelEntity *owner,
-                                        iCelEntity *pet,
-                                        iCelEntity *target ) : Perception(BuildName(command))
+                                        gemNPCObject *owner,
+                                        gemNPCObject *pet,
+                                        gemNPCObject *target ) : Perception(BuildName(command))
 {
     this->command = command;
     this->owner = owner;
@@ -773,7 +775,7 @@ void OwnerCmdPerception::ExecutePerception( NPC *pet, float weight )
     case psPETCommandMessage::CMD_ATTACK : // Attack
         if (pet->GetTarget())
         {
-            pet->AddToHateList(target, 1 * weight );
+            pet->AddToHateList((gemNPCActor*)target, 1 * weight );
         }
         else
         {
@@ -833,8 +835,8 @@ csString OwnerCmdPerception::BuildName(psPETCommandMessage::PetCommand_t command
 
 OwnerActionPerception::OwnerActionPerception( const char *name  ,
                                               int action,
-                                              iCelEntity *owner ,
-                                              iCelEntity *pet   ) : Perception(name)
+                                              gemNPCObject *owner ,
+                                              gemNPCObject *pet   ) : Perception(name)
 {
     this->action = action;
     this->owner = owner;

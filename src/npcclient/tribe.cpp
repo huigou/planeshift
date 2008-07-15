@@ -16,17 +16,29 @@
 * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 *
 */
-
 #include <psconfig.h>
+//=============================================================================
+// Crystal Space Includes
+//=============================================================================
 #include <csutil/csstring.h>
 #include <iutil/object.h>
 #include <iengine/sector.h>
-#include "tribe.h"
-#include "globals.h"
+#include <iengine/engine.h>
+
+//=============================================================================
+// Library Includes
+//=============================================================================
 #include "util/psdatabase.h"
 #include "util/strutil.h"
 #include "util/psutil.h"
+
 #include "engine/psworld.h"
+
+//=============================================================================
+// Local Includes
+//=============================================================================
+#include "tribe.h"
+#include "globals.h"
 #include "npc.h"
 #include "npcclient.h"
 #include "npcbehave.h"
@@ -474,7 +486,7 @@ bool psTribe::GetResource(NPC* npc, csVector3 start_pos, iSector * start_sector,
     }
     if (!memory)
     {
-        npc->Printf("Couldn't locate resource for npc.",npc->GetEntity()->GetName() );
+        npc->Printf("Couldn't locate resource for npc.",npc->GetName() );
         return false;
     }
 

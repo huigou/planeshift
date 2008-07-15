@@ -439,18 +439,18 @@ void SpawnManager::LoadHuntLocations(psSectorInfo *sectorinfo)
 
         GEMSupervisor* gem = GEMSupervisor::GetSingletonPtr();
         
-        csRef<iCelEntityList> nearlist;
+        csArray<gemObject*> nearlist;
         size_t handledSpawnsCount = 0;
  
         if (gem)
         {
             // Look for nearby items to prevent rescheduling of existing items
-            nearlist = gem->pl->FindNearbyEntities(iSec, pos, range);
-            size_t nearbyItemsCount = nearlist->GetCount();
+            nearlist = gem->FindNearbyEntities(iSec, pos, range);
+            size_t nearbyItemsCount = nearlist.GetSize();
                         
     		for (size_t i = 0; i < nearbyItemsCount; ++i)
     		{
-                psItem *item = gem->GetObjectFromEntityList(nearlist,i)->GetItem();
+                psItem *item = nearlist[i]->GetItem();
                 if (item)
                 {
                     if (name == item->GetName()) // Correct item?
@@ -811,10 +811,10 @@ void SpawnManager::RemoveNPC(gemObject *obj)
         return;
     }
 
-#ifdef SPAWNDEBUG
-    if (obj->GetEntity()->GetRefCount() != 2)
-        Error1("Dead NPC refcount is not 1.  Clients and server out of sync!\n");
-#endif
+//#ifdef SPAWNDEBUG
+//    if (obj->GetEntity()->GetRefCount() != 2)
+//        Error1("Dead NPC refcount is not 1.  Clients and server out of sync!\n");
+//#endif
 
 
     csVector3 pos;

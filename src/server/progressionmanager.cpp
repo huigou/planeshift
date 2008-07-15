@@ -27,6 +27,8 @@
 #include <iutil/document.h>
 #include <csutil/xmltiny.h>
 #include <iutil/object.h>
+#include <csutil/scfstr.h>
+#include <iengine/engine.h>
 
 //=============================================================================
 // Library Includes
@@ -2092,11 +2094,11 @@ public:
         GEMSupervisor* gem = GEMSupervisor::GetSingletonPtr();
         psWorld* world = EntityManager::GetSingleton().GetWorld();
 
-        csRef<iCelEntityList> nearlist = gem->pl->FindNearbyEntities(target_sector,target_pos,range);
-        size_t count = nearlist->GetCount();
+        csArray<gemObject*> nearlist = gem->FindNearbyEntities(target_sector,target_pos,range);
+        size_t count = nearlist.GetSize();
         for (size_t i=0, n=0; i<count; i++)
         {
-            gemObject* nearobj = gem->GetObjectFromEntityList(nearlist,i);
+            gemObject* nearobj = nearlist[i];
 
             if (!includetarget && nearobj == target)
                 continue;
@@ -3459,7 +3461,6 @@ public:
 
     bool Run(gemActor *actor, gemObject *target, psItem * item, bool inverse)
     {
-        iCelEntity* entity;
         psCharacter* character;
         gemObject* gem;
 
@@ -3478,7 +3479,6 @@ public:
                 return true;
             }
             gem = actor;
-            entity = actor->GetEntity();
             character = actor->GetCharacterData();
         }
         else
@@ -3489,7 +3489,6 @@ public:
                 return true;
             }
             gem = target;
-            entity = target->GetEntity();
             character = target->GetCharacterData();
         }
 
@@ -3497,7 +3496,7 @@ public:
         {
             case EFFECTOPFUNCTIONS_ATTACHED:
             {
-                if (!entity)
+                if (!gem)
                 {
                     Error2("Error: ProgressionEvent(%s) EffectOP could not get entity data\n",eventName->GetData());
                     return true;
@@ -3505,7 +3504,7 @@ public:
 
                 // Attach effect to actor or target
                 csVector3 offset(0,0,0);
-                psEffectMessage newmsg(0, effectName, offset, entity->GetID(), 0, 0);
+                psEffectMessage newmsg(0, effectName, offset, gem->GetEntityID(), 0, 0);
                 if (!newmsg.valid)
                 {
                     Error2("Error: ProgressionEvent(%s) EffectOP could not create valid psEffectMessage\n",eventName->GetData());

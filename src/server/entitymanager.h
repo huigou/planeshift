@@ -21,19 +21,22 @@
 //=============================================================================
 // Crystal Space Includes
 //=============================================================================
+#include <csgeom/vector3.h>
 
 //=============================================================================
 // Project Includes
 //=============================================================================
-#include "engine/celbase.h"
-
 #include "util/psconst.h"
 #include "util/singleton.h"
+
 //=============================================================================
 // Local Includes
 //=============================================================================
 #include "msgmanager.h"
 #include "commandmanager.h"
+
+struct iSector;
+struct iEngine;
 
 class ClientConnectionSet;
 class psServerDR;
@@ -74,7 +77,7 @@ public:
 
 
 /// Manages CEL entities on the server
-class EntityManager : public CelBase, public MessageManager, public Singleton<EntityManager>
+class EntityManager : public MessageManager, public Singleton<EntityManager>
 {
 public:
     EntityManager();

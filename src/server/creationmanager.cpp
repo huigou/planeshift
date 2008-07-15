@@ -935,7 +935,8 @@ void psCharCreationManager::HandleUploadMessage( MsgEntry* me, Client *client )
                                     newinstance,
                                     EntityManager::GetSingleton().FindSector(sectorinfo->name),
                                     csVector3(x,y,z),yrot,
-                                    client->GetClientNum(),chardata->GetCharacterID());
+                                    client->GetClientNum(),
+                                    GEMSupervisor::GetSingleton().GetNextID());
 
     actor->SetupCharData();
 

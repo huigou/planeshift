@@ -24,20 +24,21 @@
 //=============================================================================
 #include <csutil/csstring.h>
 #include <iutil/vfs.h>
+#include <iengine/engine.h>
 
-
-#include <behaviourlayer/behave.h>
 
 //=============================================================================
 // Project Space Includes
 //=============================================================================
 #include "util/sleep.h"
 #include "util/log.h"
+#include "util/serverconsole.h"
+#include "util/eventmanager.h"
+
 #include "net/connection.h"
 #include "net/messages.h"
 #include "net/msghandler.h"
 #include "net/npcmessages.h"
-#include "util/eventmanager.h"
 
 //=============================================================================
 // Local Space Includes
@@ -47,7 +48,6 @@
 #include "npcclient.h"
 #include "npc.h"
 #include "gem.h"
-#include "util/serverconsole.h"
 #include "tribe.h"
 
 extern bool running;
@@ -269,15 +269,13 @@ void NetworkManager::HandleActor( MsgEntry* me )
         CPrintf(CON_ERROR, "Deleting because we already know gemNPCActor: "
                 "%s (%s), EID: %u PID: %u as EID: %u PID: %u.\n", 
                 mesg.name.GetData(), obj->GetName(), mesg.entityid, mesg.playerID, 
-                obj->GetEntity()->GetID(), obj->GetPlayerID() );
+                obj->GetID(), obj->GetPlayerID() );
 
         npcclient->Remove(obj);
         obj = NULL; // Obj isn't valid after remove
     }
 
     gemNPCActor* actor = new gemNPCActor( npcclient, mesg);
-    
-    CS_ASSERT(actor->GetEntity() != NULL);
     
     if ( mesg.flags & psPersistActor::NPC )
     {
@@ -299,7 +297,7 @@ void NetworkManager::HandleItem( MsgEntry* me )
         CPrintf(CON_ERROR, "Deleting because we already know gemNPCActor: "
                 "%s (%s), EID: %u as EID: %u.\n", 
                 mesg.name.GetData(), obj->GetName(), mesg.id,
-                obj->GetEntity()->GetID() );
+                obj->GetID() );
 
         npcclient->Remove(obj);
         obj = NULL; // Obj isn't valid after remove
@@ -439,7 +437,8 @@ void NetworkManager::HandlePerceptions(MsgEntry *msg)
                            targetEID,speakerEID);
                     break;
                 }
-                iCelEntity *speaker_ent = npcclient->FindEntity(speakerEID);
+
+                gemNPCObject *speaker_ent = npcclient->FindEntityID(speakerEID);
                 if (!speaker_ent)
                 {
                     npc->Printf("Got talk perception from unknown speaker(EID: %u)!\n", speakerEID);
@@ -459,7 +458,7 @@ void NetworkManager::HandlePerceptions(MsgEntry *msg)
                 PS_ID attackerEID = list.msg->GetUInt32();
 
                 NPC *npc = npcclient->FindNPC(targetEID);
-                iCelEntity *attacker_ent = npcclient->FindEntity(attackerEID);
+                gemNPCActor *attacker_ent = (gemNPCActor*)npcclient->FindEntityID(attackerEID);
                 
                 if (!npc)
                 {
@@ -486,18 +485,18 @@ void NetworkManager::HandlePerceptions(MsgEntry *msg)
                 NPC *npc = npcclient->FindNPC(targetEID);
 
                 int groupCount = list.msg->GetUInt8();
-                csArray<iCelEntity *> attacker_ents(groupCount);
+                csArray<gemNPCObject *> attacker_ents(groupCount);
                 csArray<int> bestSkillSlots(groupCount);
                 for (int i=0; i<groupCount; i++)
                 {
-                    attacker_ents.Push(npcclient->FindEntity(list.msg->GetUInt32()));
+                    attacker_ents.Push(npcclient->FindEntityID(list.msg->GetUInt32()));
                     bestSkillSlots.Push(list.msg->GetInt8());
                     if(!attacker_ents.Top())
                     {
                         if(npc)
                         {
                             npc->Printf("Got group attack perception for unknown group member!",
-                                        npc->GetEntity()->GetName() );
+                                        npc->GetActor()->GetName() );
                         }
                         
                         attacker_ents.Pop();
@@ -540,7 +539,7 @@ void NetworkManager::HandlePerceptions(MsgEntry *msg)
                     Debug2(LOG_NPC, targetEID, "Attack on unknown npc(EID: %u).",targetEID);
                     break;
                 }
-                iCelEntity *attacker_ent = npcclient->FindEntity(attackerEID);
+                gemNPCObject *attacker_ent = npcclient->FindEntityID(attackerEID);
                 if (!attacker_ent)
                 {
                     CPrintf(CON_ERROR, "%s got attack perception for unknown attacker! (EID: %u)\n",
@@ -577,9 +576,9 @@ void NetworkManager::HandlePerceptions(MsgEntry *msg)
                 float    severity = list.msg->GetInt8() / 10;
                 csString type = GetCommonString(strhash);
 
-                iCelEntity *caster_ent = npcclient->FindEntity(caster);
+                gemNPCObject *caster_ent = npcclient->FindEntityID(caster);
                 NPC *npc = npcclient->FindNPC(target);
-                iCelEntity *target_ent = (npc) ? npc->GetEntity() : npcclient->FindEntity(target);
+                gemNPCObject *target_ent = (npc) ? npc->GetActor() : npcclient->FindEntityID(target);
 
                 if (npc)
                 {
@@ -615,7 +614,7 @@ void NetworkManager::HandlePerceptions(MsgEntry *msg)
                 npc->Printf("Range perception npc: %d, player: %d, faction:%.0f\n",
                             npcEID, playerEID, faction);
 
-                iCelEntity *npc_ent = (npc) ? npc->GetEntity() : npcclient->FindEntity(npcEID);
+                gemNPCObject *npc_ent = (npc) ? npc->GetActor() : npcclient->FindEntityID(npcEID);
                 gemNPCObject * player = npcclient->FindEntityID(playerEID);
 
                 if (!player || !npc_ent)
@@ -641,7 +640,7 @@ void NetworkManager::HandlePerceptions(MsgEntry *msg)
                     pcpt_name.Append("adjacent");
 
         // @@@ Jorrit: cast to in ok below?
-                FactionPerception pcpt(pcpt_name, int (faction), player->GetEntity());
+                FactionPerception pcpt(pcpt_name, int (faction), player);
 
                 npcclient->TriggerEvent(npc, &pcpt);
                 break;
@@ -653,12 +652,12 @@ void NetworkManager::HandlePerceptions(MsgEntry *msg)
                 PS_ID pet_id = list.msg->GetUInt32();
                 PS_ID target_id = list.msg->GetUInt32();
 
-                iCelEntity *owner = npcclient->FindEntity(owner_id);
+                gemNPCObject *owner = npcclient->FindEntityID(owner_id);
                 NPC *npc = npcclient->FindNPC(pet_id);
                 
-                iCelEntity *pet = (npc) ? npc->GetEntity() : npcclient->FindEntity( pet_id );
+                gemNPCObject *pet = (npc) ? npc->GetActor() : npcclient->FindEntityID( pet_id );
 
-                iCelEntity *target = npcclient->FindEntity( target_id );
+                gemNPCObject *target = npcclient->FindEntityID( target_id );
 
                 if (npc)
                 {
@@ -687,9 +686,9 @@ void NetworkManager::HandlePerceptions(MsgEntry *msg)
                 PS_ID owner_id = list.msg->GetUInt32();
                 PS_ID pet_id = list.msg->GetUInt32();
 
-                iCelEntity *owner = npcclient->FindEntity(owner_id);
+                gemNPCObject *owner = npcclient->FindEntityID(owner_id);
                 NPC *npc = npcclient->FindNPC(pet_id);
-                iCelEntity *pet = (npc) ? npc->GetEntity() : npcclient->FindEntity( pet_id );
+                gemNPCObject *pet = (npc) ? npc->GetActor() : npcclient->FindEntityID( pet_id );
 
                 if (npc)
                 {
@@ -718,7 +717,7 @@ void NetworkManager::HandlePerceptions(MsgEntry *msg)
                 bool inserted = msg->GetBool();
                 int count = msg->GetInt16();
 
-                iCelEntity *owner = npcclient->FindEntity(owner_id);
+                gemNPCObject *owner = npcclient->FindEntityID(owner_id);
                 NPC *npc = npcclient->FindNPC(owner_id);
 
                 if (!owner || !npc)
@@ -812,7 +811,7 @@ void NetworkManager::HandlePerceptions(MsgEntry *msg)
                 iSector *sector;
                 csVector3 pos;
                 float yrot;
-                psGameObject::GetPosition(npc->GetEntity(),pos,yrot,sector);
+                psGameObject::GetPosition(npc->GetActor(),pos,yrot,sector);
 
                 InventoryPerception pcpt( "transfer", item, count, pos, sector, 5.0 );
 
@@ -926,15 +925,14 @@ void NetworkManager::DequeueDRData(NPC * npc )
 }
 
 
-void NetworkManager::QueueDRData(iCelEntity *entity, psLinearMovement *linmove, uint8_t counter)
+void NetworkManager::QueueDRData(gemNPCActor *entity, psLinearMovement *linmove, uint8_t counter)
 {
     if ( outbound->msg->current > ( outbound->msg->bytes->GetSize() - 100 ) )
     {
         CPrintf(CON_DEBUG, "Sent all commands [%d] due to possible Message overrun.\n", cmd_count );
         SendAllCommands();
     }
-
-
+   
     psDRMessage drmsg(0,entity->GetID(),counter,msgstrings,linmove);
 
     outbound->msg->Add( (int8_t) psNPCCommandsMessage::CMD_DRDATA);
@@ -947,7 +945,7 @@ void NetworkManager::QueueDRData(iCelEntity *entity, psLinearMovement *linmove, 
     cmd_count++;
 }
 
-void NetworkManager::QueueAttackCommand(iCelEntity *attacker, iCelEntity *target)
+void NetworkManager::QueueAttackCommand(gemNPCActor *attacker, gemNPCActor *target)
 {
 
     if ( outbound->msg->current > ( outbound->msg->bytes->GetSize() - 100 ) )
@@ -976,7 +974,7 @@ void NetworkManager::QueueAttackCommand(iCelEntity *attacker, iCelEntity *target
     cmd_count++;
 }
 
-void NetworkManager::QueueSpawnCommand(iCelEntity *mother, iCelEntity *father)
+void NetworkManager::QueueSpawnCommand(gemNPCActor *mother, gemNPCActor *father)
 {
     if ( outbound->msg->current > ( outbound->msg->bytes->GetSize() - 100 ) )
     {
@@ -995,7 +993,7 @@ void NetworkManager::QueueSpawnCommand(iCelEntity *mother, iCelEntity *father)
     cmd_count++;
 }
 
-void NetworkManager::QueueTalkCommand(iCelEntity *speaker, const char* text)
+void NetworkManager::QueueTalkCommand(gemNPCActor *speaker, const char* text)
 {
     if ( outbound->msg->current > ( outbound->msg->bytes->GetSize() - 100 ) )
     {
@@ -1015,7 +1013,7 @@ void NetworkManager::QueueTalkCommand(iCelEntity *speaker, const char* text)
     cmd_count++;
 }
 
-void NetworkManager::QueueVisibilityCommand(iCelEntity *entity, bool status)
+void NetworkManager::QueueVisibilityCommand(gemNPCActor *entity, bool status)
 {
     if ( outbound->msg->current > ( outbound->msg->bytes->GetSize() - 100 ) )
     {
@@ -1035,7 +1033,7 @@ void NetworkManager::QueueVisibilityCommand(iCelEntity *entity, bool status)
     cmd_count++;
 }
 
-void NetworkManager::QueuePickupCommand(iCelEntity *entity, iCelEntity *item, int count)
+void NetworkManager::QueuePickupCommand(gemNPCActor *entity, gemNPCObject *item, int count)
 {
     if ( outbound->msg->current > ( outbound->msg->bytes->GetSize() - 100 ) )
     {
@@ -1056,7 +1054,7 @@ void NetworkManager::QueuePickupCommand(iCelEntity *entity, iCelEntity *item, in
     cmd_count++;
 }
 
-void NetworkManager::QueueEquipCommand(iCelEntity *entity, csString item, csString slot, int count)
+void NetworkManager::QueueEquipCommand(gemNPCActor *entity, csString item, csString slot, int count)
 {
     if ( outbound->msg->current > ( outbound->msg->bytes->GetSize() - 100 ) )
     {
@@ -1078,7 +1076,7 @@ void NetworkManager::QueueEquipCommand(iCelEntity *entity, csString item, csStri
     cmd_count++;
 }
 
-void NetworkManager::QueueDequipCommand(iCelEntity *entity, csString slot)
+void NetworkManager::QueueDequipCommand(gemNPCActor *entity, csString slot)
 {
     if ( outbound->msg->current > ( outbound->msg->bytes->GetSize() - 100 ) )
     {
@@ -1098,7 +1096,7 @@ void NetworkManager::QueueDequipCommand(iCelEntity *entity, csString slot)
     cmd_count++;
 }
 
-void NetworkManager::QueueDigCommand(iCelEntity *entity, csString resource)
+void NetworkManager::QueueDigCommand(gemNPCActor *entity, csString resource)
 {
     if ( outbound->msg->current > ( outbound->msg->bytes->GetSize() - 100 ) )
     {
@@ -1118,7 +1116,7 @@ void NetworkManager::QueueDigCommand(iCelEntity *entity, csString resource)
     cmd_count++;
 }
 
-void NetworkManager::QueueTransferCommand(iCelEntity *entity, csString item, int count, csString target)
+void NetworkManager::QueueTransferCommand(gemNPCActor *entity, csString item, int count, csString target)
 {
     if ( outbound->msg->current > ( outbound->msg->bytes->GetSize() - 100 ) )
     {
@@ -1140,7 +1138,7 @@ void NetworkManager::QueueTransferCommand(iCelEntity *entity, csString item, int
     cmd_count++;
 }
 
-void NetworkManager::QueueDropCommand(iCelEntity *entity, csString slot)
+void NetworkManager::QueueDropCommand(gemNPCActor *entity, csString slot)
 {
     if ( outbound->msg->current > ( outbound->msg->bytes->GetSize() - 100 ) )
     {
@@ -1206,7 +1204,7 @@ void NetworkManager::QueueSequenceCommand(csString name, int cmd, int count)
     cmd_count++;
 }
 
-void NetworkManager::QueueImperviousCommand(iCelEntity * entity, bool impervious)
+void NetworkManager::QueueImperviousCommand(gemNPCActor * entity, bool impervious)
 {
     if ( outbound->msg->current > ( outbound->msg->bytes->GetSize() - 100 ) )
     {
@@ -1235,7 +1233,7 @@ void NetworkManager::SendAllCommands(bool final)
         while ( it.HasNext() )
         {
             NPC * npc = it.Next();
-            QueueDRData(npc->GetEntity(),npc->GetLinMove(),npc->GetDRCounter());
+            QueueDRData(npc->GetActor(),npc->GetLinMove(),npc->GetDRCounter());
         }
         cmd_dr_outbound.DeleteAll();
     }

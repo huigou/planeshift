@@ -19,13 +19,13 @@
 
 #include <psconfig.h>
 
-// CS
+//=============================================================================
+// Crystal Space Includes
+//=============================================================================
 #include <csutil/csstring.h>
 #include <iengine/movable.h>
 #include <cstool/collider.h>
-
-// Cel
-#include <propclass/mesh.h>
+#include <iengine/mesh.h>
 
 //=============================================================================
 // Project Space Includes
@@ -41,6 +41,9 @@
 #include "util/psutil.h"
 #include "util/psstring.h"
 
+//=============================================================================
+// Local Includes
+//=============================================================================
 #include "npcoperations.h"
 #include "npcclient.h"
 #include "networkmgr.h"
@@ -48,6 +51,7 @@
 #include "tribe.h"
 #include "perceptions.h"
 #include "gem.h"
+#include "npcmesh.h"
 
 //---------------------------------------------------------------------------
 
@@ -132,7 +136,7 @@ void ScriptOperation::InterruptOperation(NPC *npc,EventManager *eventmgr)
 {
     StopResume();
 
-    iCelEntity * entity = npc->GetEntity();
+    gemNPCObject * entity = npc->GetActor();
     if (entity)
     {
         psGameObject::GetPosition(entity,interrupted_position,interrupted_angle,interrupted_sector);
@@ -156,7 +160,7 @@ bool ScriptOperation::AtInterruptedPosition(NPC *npc)
     csVector3  pos;
     iSector   *sector;
 
-    psGameObject::GetPosition(npc->GetEntity(),pos,angle,sector);
+    psGameObject::GetPosition(npc->GetActor(),pos,angle,sector);
     return AtInterruptedPosition(pos,sector);
 }
 
@@ -166,14 +170,13 @@ bool ScriptOperation::AtInterruptedAngle(NPC *npc)
     csVector3  pos;
     iSector   *sector;
 
-    psGameObject::GetPosition(npc->GetEntity(),pos,angle,sector);
+    psGameObject::GetPosition(npc->GetActor(),pos,angle,sector);
     return AtInterruptedAngle(pos,sector,angle);
 }
 
 bool ScriptOperation::CheckMovedOk(NPC *npc, EventManager *eventmgr, csVector3 oldPos, iSector* oldSector, const csVector3 & newPos, iSector* newSector, float timedelta)
 {
-    csRef<iPcMesh> pcmesh = CEL_QUERY_PROPCLASS(npc->GetEntity()->GetPropertyClassList(), 
-        iPcMesh);
+    npcMesh* pcmesh = npc->GetActor()->pcmesh;
 
     npcclient->GetWorld()->WarpSpace(oldSector, newSector, oldPos);
 
@@ -275,14 +278,14 @@ void ScriptOperation::TurnTo(NPC *npc, csVector3& dest, iSector* destsect, csVec
 {
     npc->Printf(6,"TurnTo localDest=%s",toString(dest,destsect).GetData());
 
-    csRef<iPcMesh> pcmesh = CEL_QUERY_PROPCLASS(npc->GetEntity()->GetPropertyClassList(), iPcMesh);
+    npcMesh* pcmesh = npc->GetActor()->pcmesh;
 
     // Turn to face the direction we're going.
     csVector3 pos, up;
     float rot;
     iSector *sector;
 
-    psGameObject::GetPosition(npc->GetEntity(),pos,rot,sector);
+    psGameObject::GetPosition(npc->GetActor(),pos,rot,sector);
 
     npcclient->GetWorld()->WarpSpace(sector, destsect, pos);
 
@@ -299,7 +302,7 @@ void ScriptOperation::TurnTo(NPC *npc, csVector3& dest, iSector* destsect, csVec
 
     pcmesh->GetMesh()->GetMovable()->GetTransform().LookAt (-forward.Unit(), up.Unit());
 
-    psGameObject::GetPosition(npc->GetEntity(),pos,rot,sector);
+    psGameObject::GetPosition(npc->GetActor(),pos,rot,sector);
     if (rot < 0) rot += TWO_PI;
 
     // Get Going at the right velocity
@@ -310,7 +313,7 @@ void ScriptOperation::TurnTo(NPC *npc, csVector3& dest, iSector* destsect, csVec
 
 void ScriptOperation::StopMovement(NPC *npc)
 {
-    if (!npc->GetEntity()) return; // No enity to stop, returning
+    if (!npc->GetActor()) return; // No enity to stop, returning
 
     // Stop the movement
     
@@ -361,7 +364,7 @@ int ScriptOperation::StartTurnTo(NPC *npc, EventManager *eventmgr, float turn_en
     float rot;
     iSector *sector;
 
-    psGameObject::GetPosition(npc->GetEntity(),pos,rot,sector);
+    psGameObject::GetPosition(npc->GetActor(),pos,rot,sector);
 
 
     // Get Going at the right velocity
@@ -409,9 +412,7 @@ void ScriptOperation::AddRandomRange(csVector3& dest,float radius)
 
 void ScriptOperation::SetAnimation(NPC * npc, const char*name)
 {
-    csRef<iPcMesh> pcmesh = CEL_QUERY_PROPCLASS(npc->GetEntity()->GetPropertyClassList(), 
-        iPcMesh);
-    pcmesh->SetAnimation(name, false);
+    //npc->GetActor()->pcmesh->SetAnimation(name, false);
 }
 
 //---------------------------------------------------------------------------
@@ -500,7 +501,7 @@ void MoveOperation::Advance(float timedelta, NPC *npc, EventManager *eventmgr)
     npc->GetLinMove()->ExtrapolatePosition(timedelta);
     npc->GetLinMove()->GetLastPosition(newPos, newRot, newSector);
 
-    psGameObject::SetPosition(npc->GetEntity(), newPos, newSector);
+    psGameObject::SetPosition(npc->GetActor(), newPos, newSector);
 
     CheckMovedOk(npc, eventmgr, oldPos, oldSector, newPos, newSector, timedelta);
 }
@@ -607,7 +608,7 @@ bool MoveToOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
     float rot;
     iSector *sector;
 
-    psGameObject::GetPosition(npc->GetEntity(),pos,rot,sector);
+    psGameObject::GetPosition(npc->GetActor(),pos,rot,sector);
     
     path.SetMaps(npcclient->GetMaps());
     path.SetDest(dest);
@@ -676,7 +677,7 @@ bool MoveToOperation::CompleteOperation(NPC *npc,EventManager *eventmgr)
     float rot;
     iSector *sector;
     csVector3 pos;
-    psGameObject::GetPosition(npc->GetEntity(),pos,rot,sector);
+    psGameObject::GetPosition(npc->GetActor(),pos,rot,sector);
 
     // Set position to where it is supposed to go
     npc->GetLinMove()->SetPosition(dest,rot,sector);
@@ -763,7 +764,7 @@ bool RotateOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
     float rot;
     csVector3 pos;
     iSector* sector;
-    psGameObject::GetPosition(npc->GetEntity(),pos,rot,sector);
+    psGameObject::GetPosition(npc->GetActor(),pos,rot,sector);
 
     float ang_vel = GetAngularVelocity(npc);
 
@@ -889,7 +890,7 @@ float RotateOperation::SeekAngle(NPC* npc, float targetYRot)
     float rot;
     iSector *sector;
     csVector3 pos;
-    psGameObject::GetPosition(npc->GetEntity(),pos,rot,sector);
+    psGameObject::GetPosition(npc->GetActor(),pos,rot,sector);
 
     csVector3 isect,start,end,dummy,box,legs;
 
@@ -979,7 +980,7 @@ void RotateOperation::InterruptOperation(NPC *npc, EventManager *eventmgr)
 bool RotateOperation::CompleteOperation(NPC *npc, EventManager *eventmgr)
 {
     // Set target angle and stop the turn
-    psGameObject::SetRotationAngle(npc->GetEntity(),target_angle);
+    psGameObject::SetRotationAngle(npc->GetActor(),target_angle);
     StopMovement(npc);
 
     completed = true;
@@ -1074,7 +1075,7 @@ bool LocateOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
     float start_rot;
     iSector *start_sector;
     csVector3 start_pos;
-    psGameObject::GetPosition(npc->GetEntity(),start_pos,start_rot,start_sector);
+    psGameObject::GetPosition(npc->GetActor(),start_pos,start_rot,start_sector);
 
     ReplaceVariables(object,npc);
 
@@ -1098,7 +1099,7 @@ bool LocateOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
     {
         npc->Printf(5,"LocateOp - Target");
 
-        iCelEntity *ent;
+        gemNPCActor *ent;
         // Since we don't have a current enemy targeted, find one!
         if (range)
         {
@@ -1147,7 +1148,7 @@ bool LocateOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
         float rot;
         iSector *sector;
         csVector3 pos;
-        psGameObject::GetPosition(owner->GetEntity(),pos,rot,sector);
+        psGameObject::GetPosition(owner,pos,rot,sector);
 
         located_pos = pos;
         located_angle = 0;
@@ -1157,9 +1158,9 @@ bool LocateOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
     {
         npc->Printf(5,"LocateOp - Self");
 
-        iCelEntity *ent;
+        gemNPCActor *ent;
 
-        ent = npc->GetEntity();
+        ent = npc->GetActor();
 
         if(ent)
         {
@@ -1217,7 +1218,7 @@ bool LocateOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
             if (!memory)
             {
                 npc->Printf(5, "Couldn't locate any <%s> in npc script for <%s>.",
-                            (const char *)object,npc->GetEntity()->GetName() );
+                            (const char *)object,npc->GetName() );
                 return true;
             }
             located_pos = memory->pos;
@@ -1237,7 +1238,7 @@ bool LocateOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
     {
         npc->Printf(5, "LocateOp - Friend");
 
-        iCelEntity *ent = npc->GetNearestVisibleFriend(20);
+        gemNPCActor *ent = npc->GetNearestVisibleFriend(20);
         if(ent)
         {
             npc->SetTarget(ent);
@@ -1295,7 +1296,7 @@ bool LocateOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
         if (!located_wp)
         {
             npc->Printf(5, "Couldn't locate any <%s> in npc script for <%s>.",
-                (const char *)object,npc->GetEntity()->GetName() );
+                (const char *)object,npc->GetName() );
             return true;
         }
         npc->Printf(5, "Located waypoint: %s at %s range %.2f",located_wp->GetName(),
@@ -1330,7 +1331,7 @@ bool LocateOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
         if (!location)
         {
             npc->Printf(5, "Couldn't locate any <%s> in npc script for <%s>.",
-                (const char *)object,npc->GetEntity()->GetName() );
+                (const char *)object,npc->GetName() );
             return true;
         }
         located_pos = location->pos;
@@ -1475,7 +1476,7 @@ Waypoint * WanderOperation::GetNextRandomWaypoint(NPC *npc, Waypoint * prior_wp,
 bool WanderOperation::FindNextWaypoint(NPC *npc)
 {
     float rot=0;
-    psGameObject::GetPosition(npc->GetEntity(),current_pos,rot,current_sector);
+    psGameObject::GetPosition(npc->GetActor(),current_pos,rot,current_sector);
 
     if (random)
     {
@@ -1552,7 +1553,7 @@ bool WanderOperation::CalculateWaypointList(NPC *npc)
     csVector3 start_pos;
     iSector* start_sector;
     
-    psGameObject::GetPosition(npc->GetEntity(), start_pos, start_rot, start_sector);
+    psGameObject::GetPosition(npc->GetActor(), start_pos, start_rot, start_sector);
 
     if (random)
     {
@@ -1651,7 +1652,7 @@ bool WanderOperation::StartMoveToWaypoint(NPC *npc, EventManager *eventmgr)
     if (!path)
     {
         Error5("%s(%d) Could not find path between '%s' and '%s'",
-               npc->GetName(),npc->GetEntity()->GetID(),
+               npc->GetName(),npc->GetActor()->GetID(),
                (prior_wp?prior_wp->GetName():""),
                (active_wp?active_wp->GetName():""));
         return false;
@@ -1738,7 +1739,7 @@ void WanderOperation::Advance(float timedelta,NPC *npc,EventManager *eventmgr)
     if (npc->IsDebugging(10))
     {
         csVector3 pos; float rot; iSector *sec;
-        psGameObject::GetPosition(npc->GetEntity(),pos,rot,sec);
+        psGameObject::GetPosition(npc->GetActor(),pos,rot,sec);
 
         npc->Printf(10, "Wander Loc is %s Rot: %1.2f Vel: %.2f Dist: %.2f Index: %d Fraction %.2f",
                     toString(pos).GetDataSafe(),
@@ -1787,7 +1788,7 @@ bool WanderOperation::CompleteOperation(NPC *npc,EventManager *eventmgr)
         npc->Printf(5, "WanderOp - Reached final waypoint %s.",active_wp->GetName() );
 
         // Only set position if at a end point.
-        psGameObject::SetPosition(npc->GetEntity(),dest,dest_sector);
+        psGameObject::SetPosition(npc->GetActor(),dest,dest_sector);
         current_pos = dest;  // make sure waypoint is starting point of next path
     }
 
@@ -1995,7 +1996,7 @@ bool ChaseOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
 
     csVector3 dest;
     csString name;
-    iCelEntity *entity = NULL;
+    gemNPCObject *entity = NULL;
     target_id = (uint32_t)~0;
         
     switch (type)
@@ -2006,7 +2007,7 @@ bool ChaseOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
                     (const char *)name, dest.x, dest.y, dest.z);
         if ( target_id != (uint32_t)-1 )
         {
-            entity = npcclient->FindEntity(target_id);
+            entity = npcclient->FindEntityID(target_id);
         }
         break;
     case OWNER:
@@ -2015,7 +2016,7 @@ bool ChaseOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
             gemNPCObject * owner = npc->GetOwner();
             if (owner)
             {
-                entity = owner->GetEntity();
+                entity = owner;
             }
             if (entity)
             {
@@ -2032,7 +2033,7 @@ bool ChaseOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
             gemNPCObject * target = npc->GetTarget();
             if (target)
             {
-                entity = target->GetEntity();
+                entity = target;
             }
             if (entity)
             {
@@ -2047,7 +2048,7 @@ bool ChaseOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
 
     if ( ( target_id != (uint32_t)-1 ) && entity )
     {
-        psGameObject::GetPosition(npc->GetEntity(),myPos, myRot, mySector);
+        psGameObject::GetPosition(npc->GetActor(),myPos, myRot, mySector);
     
         psGameObject::GetPosition(entity, targetPos, targetRot, targetSector);
 
@@ -2115,11 +2116,11 @@ void ChaseOperation::Advance(float timedelta, NPC *npc, EventManager *eventmgr)
         }
     }
  
-    iCelEntity *target_entity = NULL;
+    gemNPCActor *target_entity = NULL;
     gemNPCActor * targetActor = dynamic_cast<gemNPCActor*>(npcclient->FindEntityID(target_id));
     if (targetActor)
     {
-        target_entity = targetActor->GetEntity();
+        target_entity = targetActor;
     }
 
     if (!targetActor || !target_entity) // no entity close to us
@@ -2209,7 +2210,7 @@ void ChaseOperation::Advance(float timedelta, NPC *npc, EventManager *eventmgr)
                 Calc2DDistance(localDest, myPos));
 
     {
-        ScopedTimer st(250, "chase extrapolate %.2f time for EID: %u",timedelta,npc->GetEntity()->GetID());
+        ScopedTimer st(250, "chase extrapolate %.2f time for EID: %u",timedelta,npc->GetActor()->GetID());
         npc->GetLinMove()->ExtrapolatePosition(timedelta);
     }
     bool on_ground;
@@ -2261,7 +2262,7 @@ ScriptOperation *PickupOperation::MakeCopy()
 
 bool PickupOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
 {
-    iCelEntity *item = NULL;
+    gemNPCObject *item = NULL;
 
     if (object == "perception")
     {
@@ -2278,7 +2279,7 @@ bool PickupOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
 
     npc->Printf(5, "   Who: %s What: %s Count: %d",npc->GetName(),item->GetName(), count);
 
-    npcclient->GetNetworkMgr()->QueuePickupCommand(npc->GetEntity(), item, count);
+    npcclient->GetNetworkMgr()->QueuePickupCommand(npc->GetActor(), item, count);
 
     return true;
 }
@@ -2308,7 +2309,7 @@ bool EquipOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
     npc->Printf(5, "   Who: %s What: %s Where: %s Count: %d",
                 npc->GetName(),item.GetData(), slot.GetData(), count);
 
-    npcclient->GetNetworkMgr()->QueueEquipCommand(npc->GetEntity(), item, slot, count);
+    npcclient->GetNetworkMgr()->QueueEquipCommand(npc->GetActor(), item, slot, count);
 
     return true;
 }
@@ -2333,7 +2334,7 @@ bool DequipOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
     npc->Printf(5, "   Who: %s Where: %s",
                 npc->GetName(), slot.GetData());
 
-    npcclient->GetNetworkMgr()->QueueDequipCommand(npc->GetEntity(), slot );
+    npcclient->GetNetworkMgr()->QueueDequipCommand(npc->GetActor(), slot );
 
     return true;
 }
@@ -2363,7 +2364,7 @@ bool TalkOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
 
     if(!target)
     {
-        npcclient->GetNetworkMgr()->QueueTalkCommand(npc->GetEntity(), npc->GetName() + text);
+        npcclient->GetNetworkMgr()->QueueTalkCommand(npc->GetActor(), npc->GetName() + text);
         return true;
     }
     
@@ -2373,7 +2374,7 @@ bool TalkOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
     NPC* friendNPC = npc->GetTarget()->GetNPC();
     if(friendNPC)
     {
-        npcclient->GetNetworkMgr()->QueueTalkCommand(npc->GetEntity(), npc->GetName() + text);
+        npcclient->GetNetworkMgr()->QueueTalkCommand(npc->GetActor(), npc->GetName() + text);
         
         Perception collision("friend:" + command);
         friendNPC->TriggerEvent(&collision, eventmgr);
@@ -2442,7 +2443,7 @@ ScriptOperation *VisibleOperation::MakeCopy()
 
 bool VisibleOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
 {
-    npcclient->GetNetworkMgr()->QueueVisibilityCommand(npc->GetEntity(), true);
+    npcclient->GetNetworkMgr()->QueueVisibilityCommand(npc->GetActor(), true);
     return true;
 }
 
@@ -2461,7 +2462,7 @@ ScriptOperation *InvisibleOperation::MakeCopy()
 
 bool InvisibleOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
 {
-    npcclient->GetNetworkMgr()->QueueVisibilityCommand(npc->GetEntity(), false);
+    npcclient->GetNetworkMgr()->QueueVisibilityCommand(npc->GetActor(), false);
     return true;
 }
 
@@ -2487,7 +2488,7 @@ bool ReproduceOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
     if(friendNPC)
     {
         npc->Printf(5, "Reproduce");
-        npcclient->GetNetworkMgr()->QueueSpawnCommand(friendNPC->GetEntity(), npc->GetEntity());
+        npcclient->GetNetworkMgr()->QueueSpawnCommand(friendNPC->GetActor(), npc->GetActor());
     }
 
     return true;
@@ -2594,7 +2595,7 @@ bool MeleeOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
     {
         npc->Printf(5, "Melee starting to attack %s(%d)",attacked_ent->GetName(),attacked_ent->GetID());
 
-        npcclient->GetNetworkMgr()->QueueAttackCommand(npc->GetEntity(),attacked_ent);
+        npcclient->GetNetworkMgr()->QueueAttackCommand(npc->GetActor(),attacked_ent);
     }
     else
     {
@@ -2608,7 +2609,7 @@ bool MeleeOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
 void MeleeOperation::Advance(float timedelta, NPC *npc, EventManager *eventmgr)
 {
     // Check hate list to make sure we are still attacking the right person
-    iCelEntity *ent = npc->GetMostHated(melee_range, attack_invisible, attack_invincible);
+    gemNPCActor *ent = npc->GetMostHated(melee_range, attack_invisible, attack_invincible);
     if (!ent)
     {
         npc->Printf(8, "No Melee target in range (%2.2f), going to chase!", melee_range);
@@ -2653,7 +2654,7 @@ void MeleeOperation::Advance(float timedelta, NPC *npc, EventManager *eventmgr)
             npc->Printf(5, "Melee stop attack");
         }
         attacked_ent = ent;
-        npcclient->GetNetworkMgr()->QueueAttackCommand(npc->GetEntity(), ent);
+        npcclient->GetNetworkMgr()->QueueAttackCommand(npc->GetActor(), ent);
     }
 }
 
@@ -2661,12 +2662,12 @@ void MeleeOperation::InterruptOperation(NPC *npc,EventManager *eventmgr)
 {
     ScriptOperation::InterruptOperation(npc,eventmgr);
     
-    npcclient->GetNetworkMgr()->QueueAttackCommand(npc->GetEntity(),NULL);
+    npcclient->GetNetworkMgr()->QueueAttackCommand(npc->GetActor(),NULL);
 }
 
 bool MeleeOperation::CompleteOperation(NPC *npc,EventManager *eventmgr)
 {
-    npcclient->GetNetworkMgr()->QueueAttackCommand(npc->GetEntity(),NULL);
+    npcclient->GetNetworkMgr()->QueueAttackCommand(npc->GetActor(),NULL);
 
     completed = true;
 
@@ -2783,7 +2784,7 @@ ScriptOperation *DropOperation::MakeCopy()
 
 bool DropOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
 {
-    npcclient->GetNetworkMgr()->QueueDropCommand(npc->GetEntity(), slot );
+    npcclient->GetNetworkMgr()->QueueDropCommand(npc->GetActor(), slot );
 
     return true;
 }
@@ -2836,7 +2837,7 @@ bool TransferOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
         
     }
     
-    npcclient->GetNetworkMgr()->QueueTransferCommand(npc->GetEntity(), transferItem, count, target );
+    npcclient->GetNetworkMgr()->QueueTransferCommand(npc->GetActor(), transferItem, count, target );
 
     return true;
 }
@@ -2863,12 +2864,12 @@ bool DigOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
     {
         if (npc->GetTribe())
         {
-            npcclient->GetNetworkMgr()->QueueDigCommand(npc->GetEntity(), npc->GetTribe()->GetNeededResourceNick());
+            npcclient->GetNetworkMgr()->QueueDigCommand(npc->GetActor(), npc->GetTribe()->GetNeededResourceNick());
         }
     }
     else
     {
-        npcclient->GetNetworkMgr()->QueueDigCommand(npc->GetEntity(), resource );
+        npcclient->GetNetworkMgr()->QueueDigCommand(npc->GetActor(), resource );
     }
     
 
@@ -3012,7 +3013,7 @@ void MovePathOperation::Advance(float timedelta, NPC *npc, EventManager *eventmg
     if (npc->IsDebugging())
     {
         csVector3 pos; float rot; iSector *sec;
-        psGameObject::GetPosition(npc->GetEntity(),pos,rot,sec);
+        psGameObject::GetPosition(npc->GetActor(),pos,rot,sec);
 
         npc->Printf(8, "MovePath Loc is %s Rot: %1.2f Vel: %.2f Dist: %.2f Index: %d Fraction %.2f",
                     toString(pos).GetDataSafe(),rot,GetVelocity(npc),anchor->GetDistance(),anchor->GetCurrentAtIndex(),anchor->GetCurrentAtFraction());
@@ -3142,7 +3143,7 @@ bool WatchOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
             if (watchedEnt)
             {
                 target_id = watchedEnt->GetID();
-                psGameObject::GetPosition(watchedEnt->GetEntity(), targetPos,targetRot,targetSector);
+                psGameObject::GetPosition(watchedEnt, targetPos,targetRot,targetSector);
                 npc->Printf(5, "Targeting owner (%s) at (%1.2f,%1.2f,%1.2f) for watch ...",
                             watchedEnt->GetName(),targetPos.x,targetPos.y,targetPos.z );
 
@@ -3153,7 +3154,7 @@ bool WatchOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
             if (watchedEnt)
             {
                 target_id = watchedEnt->GetID();
-                psGameObject::GetPosition(watchedEnt->GetEntity(), targetPos,targetRot,targetSector);
+                psGameObject::GetPosition(watchedEnt, targetPos,targetRot,targetSector);
                 npc->Printf(5, "Targeting current target (%s) at (%1.2f,%1.2f,%1.2f) for chase ...",
                             watchedEnt->GetName(),targetPos.x,targetPos.y,targetPos.z );
             }
@@ -3185,10 +3186,10 @@ bool WatchOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
 
 bool WatchOperation::OutOfRange(NPC *npc)
 {
-    iCelEntity * npcEnt = npc->GetEntity();
-    csRef<iPcMesh> pcmesh = CEL_QUERY_PROPCLASS(npcEnt->GetPropertyClassList(), iPcMesh);
-
-    csRef<iPcMesh> watchedMesh = CEL_QUERY_PROPCLASS(watchedEnt->GetEntity()->GetPropertyClassList(), iPcMesh);
+    npcMesh* pcmesh = npc->GetActor()->pcmesh;
+    gemNPCActor * npcEnt = npc->GetActor();
+    
+    npcMesh* watchedMesh = watchedEnt->pcmesh;
 
     // Position
     if(!pcmesh->GetMesh() || !watchedMesh)

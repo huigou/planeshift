@@ -23,13 +23,17 @@
 #ifndef __PERCEPTIONS_H__
 #define __PERCEPTIONS_H__
 
+//=============================================================================
+// Crystal Space Includes
+//=============================================================================
 #include <csgeom/matrix3.h>
 #include <csutil/weakref.h>
 #include <iutil/document.h>
 #include <csutil/array.h>
 
-#include <physicallayer/entity.h>
-
+//=============================================================================
+// Library Includes
+//=============================================================================
 #include "util/prb.h"
 #include "util/eventmanager.h"
 #include "util/psconst.h"
@@ -42,8 +46,11 @@ class NPC;
 class EventManager;
 class BehaviorSet;
 class Location;
-struct iCelEntity;
 struct iSector;
+class gemNPCObject;
+class gemNPCActor;
+class gemNPCItem;
+
 
 /**
 * A reaction embodies the change in desire which occurs
@@ -96,7 +103,7 @@ public:
 
     // Caled by perception related to entitis to check
     // for reaction against visibility and invincibility
-    bool ShouldReact(iCelEntity* entity, Perception *pcpt);
+    bool ShouldReact(gemNPCObject* entity, Perception *pcpt);
 
     const char     *GetEventType()      { return event_type;   }
     float           GetRange()          { return range;        }
@@ -137,7 +144,7 @@ public:
     virtual Perception *MakeCopy();
     virtual void ExecutePerception(NPC *npc,float weight) { }
   
-    virtual iCelEntity *GetTarget() { return NULL; }
+    virtual gemNPCObject *GetTarget() { return NULL; }
 
     const char* GetName() { return name; }
     const char* GetType() { return type; }
@@ -182,17 +189,17 @@ class FactionPerception : public Perception
 {
 protected:
     int faction_delta;
-    csWeakRef<iCelEntity> player;
+    gemNPCObject* player;
 
 public:
-    FactionPerception(const char *n,int d,iCelEntity *p)
+    FactionPerception(const char *n,int d,gemNPCObject *p)
     : Perception(n), faction_delta(d), player(p)  {    }
     virtual ~FactionPerception() {}
 
     virtual bool ShouldReact(Reaction *reaction,NPC *npc);
     virtual Perception *MakeCopy();
     virtual bool GetLocation(csVector3& pos, iSector*& sector);
-    virtual iCelEntity *GetTarget() { return player; }
+    virtual gemNPCObject *GetTarget() { return player; }
     virtual void ExecutePerception(NPC *npc,float weight);
 };
 
@@ -203,16 +210,16 @@ public:
 class ItemPerception : public Perception
 {
 protected:
-    csWeakRef<iCelEntity> item;
+    gemNPCObject* item;
 
 public:
-    ItemPerception(const char *n,iCelEntity *i)
+    ItemPerception(const char *n,gemNPCObject *i)
     : Perception(n), item(i)  {    }
     virtual ~ItemPerception() {}
 
     virtual Perception *MakeCopy();
     virtual bool GetLocation(csVector3& pos, iSector*& sector);
-    virtual iCelEntity *GetTarget() { return item; }
+    virtual gemNPCObject *GetTarget() { return item; }
 };
 
 /**
@@ -247,15 +254,15 @@ public:
 class AttackPerception : public Perception
 {
 protected:
-    csWeakRef<iCelEntity> attacker;
+    gemNPCObject* attacker;
 
 public:
-    AttackPerception(const char *n,iCelEntity *attack)
+    AttackPerception(const char *n,gemNPCObject *attack)
         : Perception(n), attacker(attack) { }
 
     virtual Perception *MakeCopy();
     virtual void ExecutePerception(NPC *npc,float weight);
-    virtual iCelEntity *GetTarget() { return attacker; }
+    virtual gemNPCObject *GetTarget() { return attacker; }
 };
 
 /**
@@ -269,12 +276,12 @@ public:
 class GroupAttackPerception : public Perception
 {
 protected:
-    iCelEntity *attacker;
-    csArray<iCelEntity *> attacker_ents;
+    gemNPCObject *attacker;
+    csArray<gemNPCObject *> attacker_ents;
     csArray<int> bestSkillSlots;
 
 public:
-    GroupAttackPerception(const char *n,csArray<iCelEntity *> & ents, csArray<int> & slots)
+    GroupAttackPerception(const char *n,csArray<gemNPCObject *> & ents, csArray<int> & slots)
         : Perception(n), attacker_ents(ents), bestSkillSlots(slots) { }
 
     virtual Perception *MakeCopy();
@@ -289,11 +296,11 @@ public:
 class DamagePerception : public Perception
 {
 protected:
-    iCelEntity *attacker;
+    gemNPCObject *attacker;
     float damage;
 
 public:
-    DamagePerception(const char *n,iCelEntity *attack,float dmg)
+    DamagePerception(const char *n,gemNPCObject *attack,float dmg)
         : Perception(n), attacker(attack), damage(dmg) { }
 
     virtual Perception *MakeCopy();
@@ -312,12 +319,12 @@ public:
 class SpellPerception : public Perception
 {
 protected:
-    iCelEntity *caster;
-    iCelEntity *target;
+    gemNPCObject *caster;
+    gemNPCObject *target;
     float       spell_severity;
 
 public:
-    SpellPerception(const char *name,iCelEntity *caster,iCelEntity *target, const char *spell_type, float severity);
+    SpellPerception(const char *name,gemNPCObject *caster,gemNPCObject *target, const char *spell_type, float severity);
 
     virtual bool ShouldReact(Reaction *reaction,NPC *npc);
     virtual Perception *MakeCopy();
@@ -378,17 +385,17 @@ class OwnerCmdPerception : public Perception
 {
 protected:
     psPETCommandMessage::PetCommand_t command;
-    iCelEntity *owner;
-    iCelEntity *pet;
-    iCelEntity *target;
+    gemNPCObject *owner;
+    gemNPCObject *pet;
+    gemNPCObject *target;
 
 public:
-    OwnerCmdPerception(const char *n, psPETCommandMessage::PetCommand_t command, iCelEntity *owner, iCelEntity *pet, iCelEntity *target);
+    OwnerCmdPerception(const char *n, psPETCommandMessage::PetCommand_t command, gemNPCObject *owner, gemNPCObject *pet, gemNPCObject *target);
 
     virtual bool ShouldReact( Reaction *reaction, NPC *pet );
     virtual Perception *MakeCopy();
     virtual void ExecutePerception( NPC *pet, float weight );
-    virtual iCelEntity *GetTarget() { return target; }
+    virtual gemNPCObject *GetTarget() { return target; }
     static csString BuildName(psPETCommandMessage::PetCommand_t command);
 };
 
@@ -401,11 +408,11 @@ class OwnerActionPerception : public Perception
 {
 protected:
     int action;
-    iCelEntity *owner;
-    iCelEntity *pet;
+    gemNPCObject *owner;
+    gemNPCObject *pet;
 
 public:
-    OwnerActionPerception(const char *n, int action, iCelEntity *owner, iCelEntity *pet );
+    OwnerActionPerception(const char *n, int action, gemNPCObject *owner, gemNPCObject *pet );
 
     virtual bool ShouldReact( Reaction *reaction, NPC *pet );
     virtual Perception *MakeCopy();

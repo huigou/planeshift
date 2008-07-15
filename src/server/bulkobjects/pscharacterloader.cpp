@@ -24,6 +24,7 @@
 #include <csutil/threading/thread.h>
 #include <csutil/stringarray.h>
 #include <iengine/sector.h>
+#include <iengine/engine.h>
 
 //=============================================================================
 // Project Includes
@@ -631,7 +632,7 @@ bool psCharacterLoader::DeleteCharacterData( unsigned int charID, csString& erro
     GEMSupervisor::GetSingleton().GetPlayerObjects( charID, list );
     for ( size_t x = 0; x < list.GetSize(); x++ )
     {
-        GEMSupervisor::GetSingleton().RemoveEntity(list[x],list[x]->GetGemID());
+        GEMSupervisor::GetSingleton().RemoveEntity(list[x]);
     }                            
     
     query.Format("delete from item_instances where char_id_owner=%d", charID );

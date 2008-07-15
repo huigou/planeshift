@@ -18,18 +18,31 @@
  */
 #ifndef __NETWORKMGR_H__
 #define __NETWORKMGR_H__
-
+//=============================================================================
+// Crystal Space Includes
+//=============================================================================
 #include <csutil/csstring.h>
 
-#include "net/cmdbase.h"   // Subscriber class
-#include "util/serverconsole.h"  // iCommandCatcher
+//=============================================================================
+// Library Includes
+//=============================================================================
+#include "net/cmdbase.h"            // Subscriber class
+#include "util/serverconsole.h"     // iCommandCatcher
+
 class MsgHandler;
 class EventManager;
-class psNPCCommandsMessage;
 class psLinearMovement;
+
+//=============================================================================
+// Local Includes
+//=============================================================================
+class psNPCCommandsMessage;
 class psNetConnection;
 class psGameEvent;
 class NPC;
+class gemNPCActor;
+class gemNPCObject;
+
 
 class NetworkManager : public psClientNetSubscriber 
 {
@@ -79,23 +92,23 @@ public:
     void Authenticate(csString& host,int port,csString& user,csString& pass);
     bool IsReady() { return ready; }
     void Disconnect();
-    void QueueDRData(iCelEntity *entity,psLinearMovement *linmove,uint8_t counter);
+    void QueueDRData(gemNPCActor *entity,psLinearMovement *linmove,uint8_t counter);
     void QueueDRData(NPC * npc );
     /// Call to remove queued dr updates when entities are removed/deleted.
     void DequeueDRData(NPC * npc );
-    void QueueAttackCommand(iCelEntity *attacker, iCelEntity *target);
-    void QueueSpawnCommand(iCelEntity *mother, iCelEntity *father);
-    void QueueTalkCommand(iCelEntity *speaker, const char* text);
-    void QueueVisibilityCommand(iCelEntity *entity, bool status);
-    void QueuePickupCommand(iCelEntity *entity, iCelEntity *item, int count);
-    void QueueEquipCommand(iCelEntity *entity, csString item, csString slot, int count);
-    void QueueDequipCommand(iCelEntity *entity, csString slot);
-    void QueueDigCommand(iCelEntity *entity, csString resource);
-    void QueueTransferCommand(iCelEntity *entity, csString item, int count, csString target);
-    void QueueDropCommand(iCelEntity *entity, csString slot);
+    void QueueAttackCommand(gemNPCActor *attacker, gemNPCActor *target);
+    void QueueSpawnCommand(gemNPCActor *mother, gemNPCActor *father);
+    void QueueTalkCommand(gemNPCActor *speaker, const char* text);
+    void QueueVisibilityCommand(gemNPCActor *entity, bool status);
+    void QueuePickupCommand(gemNPCActor *entity, gemNPCObject *item, int count);
+    void QueueEquipCommand(gemNPCActor *entity, csString item, csString slot, int count);
+    void QueueDequipCommand(gemNPCActor *entity, csString slot);
+    void QueueDigCommand(gemNPCActor *entity, csString resource);
+    void QueueTransferCommand(gemNPCActor *entity, csString item, int count, csString target);
+    void QueueDropCommand(gemNPCActor *entity, csString slot);
     void QueueResurrectCommand(csVector3 where, float rot, csString sector, int character_id);
     void QueueSequenceCommand(csString name, int cmd, int count);
-    void QueueImperviousCommand(iCelEntity * entity, bool impervious);
+    void QueueImperviousCommand(gemNPCActor * entity, bool impervious);
     void SendAllCommands(bool final = false);
 
     void SendConsoleCommand(const char *cmd);

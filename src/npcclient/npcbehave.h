@@ -22,15 +22,26 @@
 */
 #ifndef __NPCBEHAVE_H__
 #define __NPCBEHAVE_H__
-
+//=============================================================================
+// Crystal Space Includes
+//=============================================================================
 #include <csgeom/matrix3.h>
-
-#include <util/prb.h>
 #include <csutil/array.h>
 #include <iutil/document.h>
+
+struct iSector;
+
+//=============================================================================
+// Library Includes
+//=============================================================================
+#include "util/prb.h"
 #include "util/eventmanager.h"
 #include "util/consoleout.h"
 #include "util/pspath.h"
+
+//=============================================================================
+// Local Includes
+//=============================================================================
 #include "perceptions.h"
 #include "walkpoly.h"
 
@@ -41,8 +52,6 @@ class Behavior;
 class NPC;
 class EventManager;
 class BehaviorSet;
-struct iCelEntity;
-struct iSector;
 class Waypoint;
 class psResumeScriptEvent;
 
@@ -248,19 +257,18 @@ public:
     virtual csString ToString() const;
 };
 
-struct iCelEntity;
 
 class psGameObject
 {
 public:
-    static void GetPosition(iCelEntity *entity, csVector3& pos, float& yrot,iSector*& sector);
-    static void SetPosition(iCelEntity *entity, csVector3& pos, iSector* = NULL);
-    static void SetRotationAngle(iCelEntity *entity, float angle);
-    static void GetRotationAngle(iCelEntity *entity, float& yrot)
+    static void GetPosition(gemNPCObject* object, csVector3& pos, float& yrot,iSector*& sector);
+    static void SetPosition(gemNPCObject* objecty, csVector3& pos, iSector* = NULL);
+    static void SetRotationAngle(gemNPCObject* object, float angle);
+    static void GetRotationAngle(gemNPCObject* object, float& yrot)
     {
         csVector3 pos;
         iSector *sector;
-        GetPosition(entity,pos,yrot,sector);
+        GetPosition(object,pos,yrot,sector);
     }
     static float CalculateIncidentAngle(csVector3& pos, csVector3& dest);
     

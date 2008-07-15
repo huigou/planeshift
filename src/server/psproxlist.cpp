@@ -36,9 +36,6 @@
 #include <iengine/engine.h>
 #include <ivaria/collider.h>
 
-#include <physicallayer/entity.h>
-#include <propclass/mesh.h>
-
 //=============================================================================
 // Project Includes
 //=============================================================================

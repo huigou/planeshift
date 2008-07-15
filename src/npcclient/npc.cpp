@@ -31,10 +31,6 @@
 #include <iengine/mesh.h>
 #include <iengine/movable.h>
 #include <cstool/collider.h>
-
-#include <propclass/mesh.h>
-#include <physicallayer/entity.h>
-#include <physicallayer/propclas.h>
 #include <ivaria/collider.h>
 
 //=============================================================================
@@ -60,6 +56,7 @@
 #include "npcclient.h"
 #include "globals.h"
 #include "gem.h"
+#include "npcmesh.h"
 
 extern iDataConnection *db;
 
@@ -70,7 +67,6 @@ NPC::NPC(): checked(false)
     pid=0;
     oldID=0;
     last_update=0; 
-    entity=NULL; 
     npcActor=NULL;
     movable=NULL;
     DRcounter=0; 
@@ -103,10 +99,12 @@ NPC::~NPC()
 
 PS_ID NPC::GetEID()
 {
-    if (entity)
+    if (npcActor)
     {
-        return entity->GetID();
-    } else {
+        return npcActor->GetID();
+    } 
+    else 
+    {
         return 0;
     }
 }
@@ -209,18 +207,13 @@ void NPC::SetActor(gemNPCActor * actor)
     // Initialize active location to a known ok value
     if (npcActor)
     {
-        entity = actor->GetEntity();
-
+        
         iSector *sector;
-        psGameObject::GetPosition(entity,active_locate_pos,active_locate_angle,sector);
-
-        csRef<iPcMesh> pcmesh = CEL_QUERY_PROPCLASS(entity->GetPropertyClassList(), 
-                                                    iPcMesh);
-        movable = pcmesh->GetMesh()->GetMovable();
+        psGameObject::GetPosition(actor,active_locate_pos,active_locate_angle,sector);
+        movable = actor->pcmesh->GetMesh()->GetMovable();
     }
     else
     {
-        entity = NULL;
         movable = NULL;
     }
 }
@@ -260,14 +253,14 @@ void NPC::SetLastPerception(Perception *pcpt)
     last_perception = pcpt;
 }
 
-iCelEntity *NPC::GetMostHated(float range, bool include_invisible, bool include_invincible)
+gemNPCActor *NPC::GetMostHated(float range, bool include_invisible, bool include_invincible)
 {
     iSector *sector=NULL;
     csVector3 pos;
     float yrot;
-    psGameObject::GetPosition(entity,pos,yrot,sector);
+    psGameObject::GetPosition(GetActor(),pos,yrot,sector);
 
-    iCelEntity * hated = hatelist.GetMostHated(sector,pos,range,GetRegion(),include_invisible,include_invincible);
+    gemNPCActor * hated = hatelist.GetMostHated(sector,pos,range,GetRegion(),include_invisible,include_invincible);
 
     if (hated)
     {
@@ -282,7 +275,7 @@ iCelEntity *NPC::GetMostHated(float range, bool include_invisible, bool include_
     return hated;
 }
 
-void NPC::AddToHateList(iCelEntity *attacker, float delta)
+void NPC::AddToHateList(gemNPCActor *attacker, float delta)
 {
     Printf("Adding %1.2f to hatelist score for %s(EID: %u).",
            delta,attacker->GetName(),attacker->GetID() );
@@ -301,7 +294,7 @@ void NPC::RemoveFromHateList(PS_ID who)
     }
 }
 
-float NPC::GetEntityHate(iCelEntity *ent)
+float NPC::GetEntityHate(gemNPCActor *ent)
 {
     return hatelist.GetHate( ent->GetID() );
 }
@@ -353,7 +346,7 @@ void NPC::Disable()
 
     //now persist
     npcclient->GetNetworkMgr()->QueueDRData(this);
-    npcclient->GetNetworkMgr()->QueueImperviousCommand(GetEntity(),true);
+    npcclient->GetNetworkMgr()->QueueImperviousCommand(GetActor(),true);
 }
 
 void NPC::DumpState()
@@ -363,9 +356,9 @@ void NPC::DumpState()
     float rot;
     int instance = -1;
 
-    if (entity)
+    if (GetActor())
     {
-        psGameObject::GetPosition(entity,loc,rot,sector);
+        psGameObject::GetPosition(GetActor(),loc,rot,sector);
     }
     if (npcActor)
     {
@@ -374,7 +367,7 @@ void NPC::DumpState()
 
     CPrintf(CON_CMDOUTPUT, "States for %s (PID: %u)\n",name.GetData(),pid);
     CPrintf(CON_CMDOUTPUT, "---------------------------------------------\n");
-    CPrintf(CON_CMDOUTPUT, "Position:            %s\n",entity?toString(loc,sector).GetDataSafe():"(none)");
+    CPrintf(CON_CMDOUTPUT, "Position:            %s\n",npcActor?toString(loc,sector).GetDataSafe():"(none)");
     CPrintf(CON_CMDOUTPUT, "Rotation:            %.2f\n",rot);
     CPrintf(CON_CMDOUTPUT, "Instance:            %d\n",instance);
     CPrintf(CON_CMDOUTPUT, "Debugging:           %d\n",debugging);
@@ -419,9 +412,9 @@ void NPC::DumpHateList()
     CPrintf(CON_CMDOUTPUT, "Hate list for %s (PID: %u)\n",name.GetData(),pid );
     CPrintf(CON_CMDOUTPUT, "---------------------------------------------\n");
 
-    if (entity)
+    if (GetActor())
     {
-        psGameObject::GetPosition(entity,pos,yrot,sector);
+        psGameObject::GetPosition(GetActor(),pos,yrot,sector);
         hatelist.DumpHateList(pos,sector);
     }
 }
@@ -445,16 +438,16 @@ void NPC::GetNearestEntity(uint32_t& target_id,csVector3& dest,csString& name,fl
     float rot,min_range;
     target_id = (uint32_t)-1;
 
-    psGameObject::GetPosition(entity,loc,rot,sector);
+    psGameObject::GetPosition(GetActor(),loc,rot,sector);
 
-    csRef<iCelEntityList> nearlist = npcclient->GetPlLayer()->FindNearbyEntities(sector,loc,range);
-    if (nearlist)
+    csArray<gemNPCObject*> nearlist = npcclient->FindNearbyEntities(sector,loc,range);
+    if (nearlist.GetSize() > 0)
     {
         min_range=range;
-        for (size_t i=0; i<nearlist->GetCount(); i++)
+        for (size_t i=0; i<nearlist.GetSize(); i++)
         {
-            iCelEntity *ent = nearlist->Get(i);
-            if(ent == entity)
+            gemNPCObject *ent = nearlist[i];
+            if(ent == GetActor())
                 continue;
             csVector3 loc2;
             iSector *sector2;
@@ -473,23 +466,23 @@ void NPC::GetNearestEntity(uint32_t& target_id,csVector3& dest,csString& name,fl
     }
 }
 
-iCelEntity* NPC::GetNearestVisibleFriend(float range)
+gemNPCActor* NPC::GetNearestVisibleFriend(float range)
 {
     csVector3 loc;
     iSector* sector;
     float rot,min_range;
-    iCelEntity *friendEnt = NULL;
+    gemNPCObject *friendEnt = NULL;
 
-    psGameObject::GetPosition(entity,loc,rot,sector);
+    psGameObject::GetPosition(GetActor(),loc,rot,sector);
 
-    csRef<iCelEntityList> nearlist = npcclient->GetPlLayer()->FindNearbyEntities(sector,loc,range);
-    if (nearlist)
+    csArray<gemNPCObject*> nearlist = npcclient->FindNearbyEntities(sector,loc,range);
+    if (nearlist.GetSize() > 0)
     {
         min_range=range;
-        for (size_t i=0; i<nearlist->GetCount(); i++)
+        for (size_t i=0; i<nearlist.GetSize(); i++)
         {
-            iCelEntity *ent = nearlist->Get(i);
-            NPC* npcFriend = npcclient->FindAttachedNPC(ent);
+            gemNPCObject *ent = nearlist[i];
+            NPC* npcFriend = ent->GetNPC();
 
             if (!npcFriend || npcFriend == this)
                 continue;
@@ -517,7 +510,7 @@ iCelEntity* NPC::GetNearestVisibleFriend(float range)
             friendEnt = ent;
         }
     }
-    return friendEnt;
+    return (gemNPCActor*)friendEnt;
 }
 
 void NPC::Printf(const char *msg,...)
@@ -570,7 +563,7 @@ gemNPCObject *NPC::GetTarget()
         if (GetLastPerception())
         {
             gemNPCObject * target = NULL;
-            iCelEntity *entity = GetLastPerception()->GetTarget();
+            gemNPCObject *entity = GetLastPerception()->GetTarget();
             if (entity)
             {
                 target = npcclient->FindEntityID(entity->GetID());
@@ -579,20 +572,6 @@ gemNPCObject *NPC::GetTarget()
             return target;
         }
         return NULL;
-    }
-}
-
-void NPC::SetTarget(iCelEntity *t)
-{
-    if (t == NULL)
-    {
-        Printf(10,"Clearing target");
-        target_id = (uint32_t)~0;
-    }
-    else
-    {
-        Printf(10,"Setting target to: %s",t->GetName());
-        target_id = t->GetID();
     }
 }
 
@@ -660,8 +639,8 @@ RaceInfo_t* NPC::GetRaceInfo()
 void NPC::CheckPosition()
 {
     // We only need to check the position once
-    csRef<iPcMesh> pcmesh = CEL_QUERY_PROPCLASS(entity->GetPropertyClassList(), 
-    iPcMesh);
+    
+    npcMesh *pcmesh =  GetActor()->pcmesh;
 
     if(checked)
     {
@@ -692,7 +671,7 @@ void NPC::CheckPosition()
         if(vel.y < -50)
         {
             CPrintf(CON_ERROR,"Got bad starting location %f %f %f, killing %s (PID: %u/EID: %u).\n",
-                    pos.x,pos.y,pos.z,name.GetData(),pid,entity->GetID());
+                    pos.x,pos.y,pos.z,name.GetData(),pid,GetActor()->GetID());
             SetAlive(false);
             break;
         }
@@ -703,7 +682,7 @@ void NPC::CheckPosition()
     {
         // Collision detection is not being applied!
         GetLinMove()->SetVelocity(csVector3(0.0f, 0.0f, 0.0f));
-        psGameObject::SetPosition(entity, pos);
+        psGameObject::SetPosition(GetActor(), pos);
     }
     checked = true;
     checkedPos = pos;
@@ -730,18 +709,18 @@ void HateList::AddHate(int entity_id,float delta)
     }
 }
 
-iCelEntity *HateList::GetMostHated(iSector *sector, csVector3& pos, float range, LocationType * region, bool include_invisible, bool include_invincible)
+gemNPCActor *HateList::GetMostHated(iSector *sector, csVector3& pos, float range, LocationType * region, bool include_invisible, bool include_invincible)
 {
-    iCelEntity *most = NULL;
+    gemNPCObject *most = NULL;
     float most_hate_amount=0;
 
-    csRef<iCelEntityList> list = npcclient->GetPlLayer()->FindNearbyEntities(sector,pos,range);
-    for (size_t i=0; i<list->GetCount(); i++)
+    csArray<gemNPCObject*> list = npcclient->FindNearbyEntities(sector,pos,range);
+    for (size_t i=0; i<list.GetSize(); i++)
     {
-        HateListEntry *h = hatelist.Get( list->Get(i)->GetID(),0 );
+        HateListEntry *h = hatelist.Get( list[i]->GetID(),0 );
         if (h)
         {
-            gemNPCObject * obj = npcclient->FindEntityID(list->Get(i)->GetID());
+            gemNPCObject * obj = npcclient->FindEntityID(list[i]->GetID());
 
             if (!obj) continue;
 
@@ -757,12 +736,12 @@ iCelEntity *HateList::GetMostHated(iSector *sector, csVector3& pos, float range,
                     continue;
                 }
                 
-                most = list->Get(i);
+                most = list[i];
                 most_hate_amount = h->hate_amount;
             }
         }
     }
-    return most;
+    return (gemNPCActor*)most;
 }
 
 bool HateList::Remove(int entity_id)
@@ -802,7 +781,7 @@ void HateList::DumpHateList(const csVector3& myPos, iSector *mySector)
         if (obj)
         {
             iSector* sector;
-            psGameObject::GetPosition(obj->GetEntity(),pos,yrot,sector);
+            psGameObject::GetPosition(obj,pos,yrot,sector);
             if(sector)
             {
                 sectorName = sector->QueryObject()->GetName();

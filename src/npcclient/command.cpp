@@ -36,22 +36,27 @@
 #include <iutil/objreg.h>
 #include <iutil/cfgmgr.h>
 #include <iutil/vfs.h>
-
+#include <iengine/engine.h>
 #include <csutil/csstring.h>
 
+//=============================================================================
+// Project Includes
+//=============================================================================
 #include "util/command.h"
 #include "util/serverconsole.h"
 #include "util/log.h"
 #include "util/location.h"
+#include "util/strutil.h"
+
 #include "engine/psworld.h"
 
-#include "globals.h"
+#include "net/connection.h"
+
 #include "npcclient.h"
 #include "npc.h"
 #include "networkmgr.h"
+#include "globals.h"
 
-#include "util/strutil.h"
-#include "net/connection.h"
 
 /* shut down the server and exit program */
 int com_quit(char *)

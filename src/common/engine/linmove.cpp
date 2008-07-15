@@ -891,7 +891,15 @@ void psLinearMovement::GetDRData (bool& on_ground, float& speed,
 
 iSector* psLinearMovement::GetSector ()
 {
-  return mesh->GetMovable ()->GetSectors ()->Get (0);
+    if ( mesh->GetMovable()->GetSectors()->GetCount() > 0 )
+    {
+        return mesh->GetMovable ()->GetSectors ()->Get (0);
+    }
+    else
+    {
+        printf("psLinearMovement::GetSector() tried to get a sector where none were available");
+        return NULL;
+    }
 }
 
 // --------------------------------------------------------------------------

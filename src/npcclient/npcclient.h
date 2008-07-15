@@ -18,24 +18,28 @@
  */
 #ifndef __NPCCLIENT_H__
 #define __NPCCLIENT_H__
-
+//=============================================================================
+// Crystal Space Includes
+//=============================================================================
 #include <csutil/csstring.h>
 #include <csutil/hash.h>
 #include <csutil/ref.h>
 #include <csutil/list.h>
-#include "net/pstypes.h"
-
-#include "engine/celbase.h"
-
-#include "util/prb.h"
-#include "util/psconst.h"
-#include "util/serverconsole.h"
-#include "util/pspath.h"
 
 struct iObjectRegistry;
 struct iDocumentNode;
 struct iConfigManager;
 struct iCollideSystem;
+
+//=============================================================================
+// Library Includes
+//=============================================================================
+#include "net/pstypes.h"
+
+#include "util/prb.h"
+#include "util/psconst.h"
+#include "util/serverconsole.h"
+#include "util/pspath.h"
 
 class  psDatabase;
 class  MsgHandler;
@@ -47,7 +51,6 @@ class  NPC;
 class  gemNPCActor;
 class  gemNPCObject;
 class  gemNPCItem;
-struct iCelEntity;
 struct iVFS;
 class  Perception;
 class  psWorld;
@@ -71,7 +74,7 @@ struct RaceInfo_t
 /**
  * The main NPC Client class holding references to important superclient objects
  */
-class psNPCClient : public CelBase, public iCommandCatcher
+class psNPCClient : public iCommandCatcher
 {
 public:
 
@@ -364,10 +367,8 @@ public:
     void CheckAttachTribes( NPC* npc);
 
     void AttachNPC( gemNPCActor* actor, uint8_t DRcounter ); 
-    iCelEntity* FindEntity( PS_ID EID );
 
     iCollideSystem *GetCollDetSys() { return cdsys; }
-    NPC* FindAttachedNPC(iCelEntity *entity);
 
     NPC *ReadSingleNPC(unsigned int char_id);
 
@@ -389,6 +390,42 @@ public:
     int GetGameTODDay() { return gameDay;}
     int GetGameTODMonth() { return gameMonth;} 
     int GetGameTODYear(){ return gameYear;} 
+
+    /** Attach a server gemObject to a Crystal Space object.
+     * In most cases this will be a mesh wrapper.
+     *
+     * @param object The Crystal Space object we want to attach our gemObject to.
+     * @param gobject The PlaneShift object that we want to attach.
+     */ 
+    void AttachObject( iObject* object, gemNPCObject* gobject);
+
+    /** Unattach a gemObject from a Crystal Space object.
+      * In most cases the Crystal Space object is a meshwrapper.
+      *
+      * @param object The Crystal Space object we want to unattach our object from.
+      * @param gobject The gem object we want to unattach.
+      */
+    void UnattachObject( iObject* object, gemNPCObject* gobject); 
+
+    /** See if there is a gemObject attached to a given Crystal Space object.
+      * 
+      * @param object The Cyrstal Space object we want to see if there is an object attached to.
+      *
+      * @return A gemNPCObject if it exists that is attached to the Crystal Space object.
+      */
+    gemNPCObject* FindAttachedObject (iObject* object);
+    
+    
+    /** Create a list of all nearby gem objects.
+      * @param sector The sector to check in.
+      * @param pos The starting position
+      * @param radius The distance around the starting point to check.
+      * @param doInvisible If true check invisible meshes otherwise ignore them.     
+      *
+      * @return A csArray<> of all the objects in the given radius.
+      */
+    csArray<gemNPCObject*> FindNearbyEntities (iSector* sector, const csVector3& pos, float radius, bool doInvisible = false);
+
     
 protected:
 
@@ -403,10 +440,6 @@ protected:
     /** Load Tribes from db */
     bool LoadTribes();
 
- public:
-    // Fns to get NPC* from iCelEntity*   
-    void AttachNPC(iCelEntity *entity, NPC *npc);
-    void UnattachNPC(iCelEntity *entity, NPC *npc);
 
 protected:
     /**
@@ -437,7 +470,6 @@ protected:
     csArray<NPC*>              npcs;
     csArray<DeferredNPC>       npcsDeferred;
     csArray<psTribe*>          tribes;
-    csHash<iCelEntity*>        all_entities_by_eid;
     csHash<gemNPCObject*>      all_gem_objects_by_eid;
     csHash<gemNPCObject*>      all_gem_objects_by_pid;
     csArray<gemNPCObject*>     all_gem_objects;

@@ -22,6 +22,7 @@
 #include <csutil/weakref.h>
 #include <csutil/parray.h>
 #include <igeom/path.h>
+#include <csgeom/vector3.h>
 
 #include "iserver/idal.h"
 

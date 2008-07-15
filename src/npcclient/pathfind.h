@@ -19,6 +19,9 @@
 #ifndef ___PATHFIND_HEADER___
 #define ___PATHFIND_HEADER___
 
+//=============================================================================
+// Crystal Space Includes
+//=============================================================================
 #include <csgeom/vector3.h>
 #include <csgeom/box.h>
 #include <csutil/hash.h>
@@ -28,7 +31,6 @@
 #include <csutil/list.h>
 
 
-class CelBase;
 class psANode;
 class psWalkPoly;
 class psWalkPolyMap;
@@ -261,9 +263,6 @@ protected:
     iObjectRegistry * objReg;
     csRef<iVFS> vfs;
 };
-
-void pathFindTest(CelBase * cel);
-
 
 
 #endif

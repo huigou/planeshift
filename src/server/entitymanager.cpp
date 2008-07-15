@@ -34,22 +34,6 @@
 #include <csutil/csstring.h>
 #include <csutil/snprintf.h>
 
-#include <physicallayer/pl.h>
-#include <behaviourlayer/bl.h>
-#include <physicallayer/entity.h>
-#include <physicallayer/propfact.h>
-#include <physicallayer/propclas.h>
-#include <physicallayer/persist.h>
-#include <propclass/mesh.h>
-#include <propclass/meshsel.h>
-#include <propclass/inv.h>
-#include <propclass/chars.h>
-#include <propclass/move.h>
-#include <propclass/tooltip.h>
-#include <propclass/camera.h>
-#include <propclass/gravity.h>
-#include <propclass/timer.h>
-#include <propclass/input.h>
 
 //=============================================================================
 // Project Includes
@@ -146,9 +130,6 @@ bool EntityManager::Initialize(iObjectRegistry* object_reg,
                                ClientConnectionSet* clients,
                                UserManager* umanager)
 {
-    if (!CelBase::Initialize(object_reg))
-        return false;
-
     csRef<iEngine> engine2 = csQueryRegistry<iEngine> (psserver->GetObjectReg());
     engine = engine2; // get out of csRef;
 
@@ -163,7 +144,7 @@ bool EntityManager::Initialize(iObjectRegistry* object_reg,
 
     EntityManager::clients = clients;
 
-    gem = new GEMSupervisor(object_reg,pl,psserver->GetDatabase());
+    gem = new GEMSupervisor(object_reg,psserver->GetDatabase());
 
     serverdr = new psServerDR;
     if (!serverdr->Initialize(this, clients))
@@ -603,7 +584,7 @@ bool EntityManager::CreatePlayer (Client* client)
 
     gemActor *actor = new gemActor(chardata,raceinfo->mesh_name,filename,
                                    instance,sector,pos,yrot,
-                                   client->GetClientNum(),chardata->GetCharacterID() );
+                                   client->GetClientNum(),gem->GetNextID() );
 
     client->SetActor(actor);
 
@@ -742,7 +723,7 @@ PS_ID EntityManager::CreateNPC(psCharacter *chardata, INSTANCE_ID instance, csVe
 
     gemNPC *actor = new gemNPC(chardata, raceinfo->mesh_name, raceinfo->GetMeshFileName(), 
                                instance, sector, pos, yrot, 0,
-                               chardata->GetCharacterID());
+                               gem->GetNextID());
 
     if ( !actor->IsValid() )
     {
@@ -833,11 +814,11 @@ gemObject *EntityManager::CreateItem( psItem *& iteminstance, bool transient )
         return NULL;
 
     // Try to stack this first
-    csRef<iCelEntityList> nearlist = gem->pl->FindNearbyEntities( isec, newpos, RANGE_TO_STACK );
-    size_t count = nearlist->GetCount();
+    csArray<gemObject*> nearlist = gem->FindNearbyEntities( isec, newpos, RANGE_TO_STACK );
+    size_t count = nearlist.GetSize();
     for (size_t i=0; i<count; i++)
     {
-        gemObject *nearobj = gem->GetObjectFromEntityList(nearlist,i);
+        gemObject *nearobj = nearlist[i];
         if (!nearobj)
             continue;
 
@@ -868,16 +849,16 @@ gemObject *EntityManager::CreateItem( psItem *& iteminstance, bool transient )
     if (iteminstance->GetIsContainer())
     {
         obj = new gemContainer(iteminstance,meshname,
-                               meshfile,instance,isec,newpos,yrot,0,iteminstance->GetUID() );
+                               meshfile,instance,isec,newpos,yrot,0, gem->GetNextID());
     }
     else
     {
         obj = new gemItem(iteminstance,meshname,
-                          meshfile,instance,isec,newpos,yrot,0,iteminstance->GetUID() );
+                          meshfile,instance,isec,newpos,yrot,0,gem->GetNextID());
     }
 
     // Won't create item if gemItem entity was not created
-    CS_ASSERT(obj->GetEntity() != NULL);
+    //CS_ASSERT(obj->GetEntity() != NULL);
     
     if (transient)
         iteminstance->ScheduleRemoval();
@@ -908,18 +889,18 @@ bool EntityManager::CreateActionLocation( psActionLocation *instance, bool trans
     isec = FindSector( sector );
     if ( isec == NULL )
     {
-        CPrintf(CON_ERROR, "Action Location ID %u : Sector not found!\n", instance->id);
+        CPrintf(CON_ERROR, "Action Location ID %u : Sector not found!\n", gem->GetNextID());
         return false;
     }
 
-    gemActionLocation *obj = new gemActionLocation( gem, instance, isec, 0, instance->id );    
+    gemActionLocation *obj = new gemActionLocation( gem, instance, isec, 0, gem->GetNextID());    
     
     //won't create item if gemItem entity was not created
-    if ( obj->GetEntity() == NULL ) 
-    {
-        CPrintf(CON_ERROR, "Action Location ID %u : Failed to create gemActionLocation!\n", instance->id);
-        return false;
-    }
+    //if ( obj->GetEntity() == NULL ) 
+    //{
+    //    CPrintf(CON_ERROR, "Action Location ID %u : Failed to create gemActionLocation!\n", instance->id);
+    //    return false;
+    //}
     
 //    if ( transient )
 //        psserver->CharacterLoader.ScheduleRemoval( instance );
@@ -1147,10 +1128,9 @@ void EntityManager::HandleUserAction(MsgEntry* me)
             object->SendTargetStatDR(client);
     }
 
-    Debug5(LOG_USER,client->GetClientNum(), "User Action: %s %s %s:%d\n",client->GetName(),
+    Debug4(LOG_USER,client->GetClientNum(), "User Action: %s %s %s\n",client->GetName(),
         (const char *)action,
-        (object)?object->GetName():"None",
-        (object)?object->GetEntity()->GetRefCount():0);
+        (object)?object->GetName():"None")
 
     object->SendBehaviorMessage(action, client->GetActor() );
 }
@@ -1189,8 +1169,6 @@ bool EntityManager::RemoveActor(gemObject *actor)
     // Need to remove all references to this entity before
     // attempting to remove from the world.
     clients->ClearAllTargets(actor);
-
-    CelBase::RemoveActor( actor->GetEntity() );
 
     delete actor;
     actor = NULL;

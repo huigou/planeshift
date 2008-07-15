@@ -227,7 +227,6 @@ struct psItemAnimation
     int      flags;
 };
 
-struct iCelEntity;
 
 //-----------------------------------------------------------------------------
 /** This class stores an items various armour related information. */

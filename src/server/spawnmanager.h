@@ -25,7 +25,6 @@ class psCharacter;
 class psDatabase;
 class psScheduledItem;
 class psSectorInfo;
-struct iCelEntity;
 
 #include <util/prb.h>
 #include <csgeom/vector3.h>

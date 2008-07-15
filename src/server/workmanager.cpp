@@ -1755,7 +1755,7 @@ bool psWorkManager::ScriptAction(gemActionLocation* gemAction)
     INSTANCE_ID instance_id = action->GetInstanceID();
     if (instance_id==INSTANCE_ALL)
     {
-        instance_id = action->GetGemObject()->GetEntity()->GetID();
+        instance_id = action->GetGemObject()->GetEntityID();
     }
     gemItem* target = GEMSupervisor::GetSingleton().FindItemEntity( instance_id );
 

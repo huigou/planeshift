@@ -18,13 +18,55 @@
 #ifndef PS_GEM_HEADER
 #define PS_GEM_HEADER
 
-#include "npcclient.h"
+//=============================================================================
+// Crystal Space Includes
+//=============================================================================
+#include <csutil/csobject.h>
+
+struct iMeshWrapper;
+
+//=============================================================================
+// Project Library Includes
+//=============================================================================
 #include "net/messages.h"
 
-struct iPcLinearMovement;
-struct iPcMesh;
+//=============================================================================
+// Local Includes
+//=============================================================================
+#include "npcclient.h"
 
 class gemNPCActor;
+class gemNPCObject;
+class npcMesh;
+
+
+//-----------------------------------------------------------------------------
+
+/** Helper class to attach a PlaneShift npc gem object to a particular mesh.
+  */
+class psNpcMeshAttach : public scfImplementationExt1<psNpcMeshAttach,
+                                                           csObject,
+                                                           scfFakeInterface<psNpcMeshAttach> >
+{
+public:
+    SCF_INTERFACE(psNpcMeshAttach, 0, 0, 1);
+
+    /** Setup this helper with the object we want to attach with.
+     * @param object  The npcObject we want to attach to a mesh.
+     */
+    psNpcMeshAttach(gemNPCObject* object);
+
+    /** Get the npc Object that the mesh has attached.
+     */
+    gemNPCObject* GetObject() { return object; }
+
+private:
+    gemNPCObject* object;          ///< The object that is attached to a iMeshWrapper object. 
+};
+
+//-----------------------------------------------------------------------------
+
+
 
 class gemNPCObject
 {
@@ -33,7 +75,6 @@ public:
 
     gemNPCObject( psNPCClient* cel, PS_ID id );
     virtual ~gemNPCObject();
-    iCelEntity* GetEntity() { return entity; }
     
     bool InitMesh(const char *factname,const char *filename,
                   const csVector3& pos,const float rotangle, const char* sector );
@@ -43,7 +84,7 @@ public:
     void Move(const csVector3& pos, float rotangle, const char* room, int instance);
     
     int GetID() { return id; }
-    csRef<iPcMesh> pcmesh;   
+    npcMesh* pcmesh;   
     
     int GetType() { return type; }
     
@@ -70,7 +111,6 @@ public:
 protected:
     static psNPCClient *cel;
     
-    csRef<iCelEntity> entity;
 
     csString name;
     int  id;

@@ -38,7 +38,6 @@
 //=============================================================================
 
 
-struct iCelEntity;
 class ClientConnectionSet;
 class psCharacter;
 class psItem;

@@ -28,6 +28,8 @@
 #include <iengine/mesh.h>
 #include <iengine/movable.h>
 #include <iengine/sector.h>
+#include <iengine/region.h>
+#include <iengine/engine.h>
 #include <iutil/object.h>
 
 //=============================================================================
@@ -41,7 +43,6 @@
 #include "util/log.h"
 #include "util/eventmanager.h"
 
-#include "engine/celbase.h"
 #include "engine/psworld.h"
 
 #include "bulkobjects/pscharacter.h"
@@ -451,14 +452,14 @@ csArray<csString> UserManager::DecodeCommandArea(Client *client, csString target
     if (!gem)
         return result;
 
-    csRef<iCelEntityList> nearlist = gem->pl->FindNearbyEntities(sector, pos,
+    csArray<gemObject*> nearlist = gem->FindNearbyEntities(sector, pos,
             range);
-    size_t count = nearlist->GetCount();
+    size_t count = nearlist.GetSize();
     csArray<csString *> results;
 
     for (size_t i=0; i<count; i++)
     {
-        gemObject *nearobj = gem->GetObjectFromEntityList(nearlist, i);
+        gemObject *nearobj = nearlist[i];
         if (!nearobj)
             continue;
 
@@ -1415,7 +1416,7 @@ void UserManager::ReportPosition(psUserCmdMessage& msg,Client *client,int client
         if (extras)
         {
             // Get the region this sector belongs to
-            csRef<iCollection> psRegion =  scfQueryInterface<iCollection> (sector->QueryObject()->GetObjectParent());
+            csRef<iRegion> psRegion =  scfQueryInterface<iRegion> (sector->QueryObject()->GetObjectParent());
             csString region_name = (psRegion) ? psRegion->QueryObject()->GetName() : "(null)";
 
             int degrees = (int)(angle*180.0/PI);

@@ -21,10 +21,12 @@
 #include <math.h>
 #include <csutil/databuf.h>
 #include <iutil/object.h>
+#include <iengine/engine.h>
+#include <iengine/sector.h>
 
-#include <engine/celbase.h>
 #include "pathfind.h"
 #include "walkpoly.h"
+#include "npcclient.h"
 #include "util/log.h"
 #include "util/psxmlparser.h"
 #include "util/consoleout.h"
@@ -126,10 +128,10 @@ float CalcDistance(psANode * node1, psANode * node2)
 *
 ************************************************************************************/
 
-void pathFindTest_AMapConstruction(CelBase * cel)
+void pathFindTest_AMapConstruction(psNPCClient* npcclient)
 {
-    psAMap Amap(cel->GetObjectReg());
-    psWalkPolyMap map(cel->GetObjectReg());
+    psAMap Amap(npcclient->GetObjectReg());
+    psWalkPolyMap map(npcclient->GetObjectReg());
     map.LoadFromFile("/this/pfgen.xml");
     //map.CalcConts();
     map.BuildBasicAMap(Amap);
@@ -983,7 +985,7 @@ void pathFindTest_AStarWithArtificialMap()
     Dump(path);*/
 }
 
-void pathFindTest_AStarWithRealMap(CelBase * cel)
+void pathFindTest_AStarWithRealMap(psNPCClient * cel)
 {
     psAPath path;
     psAMap AMap(cel->GetObjectReg());
@@ -1003,9 +1005,9 @@ void pathFindTest_AStarWithRealMap(CelBase * cel)
     path.Dump();
 }
 
-void pathFindTest_PathCalc(CelBase * cel)
+void pathFindTest_PathCalc(psNPCClient* npcclient)
 {
-    psPFMaps maps(cel->GetObjectReg());
+    psPFMaps maps(npcclient->GetObjectReg());
     psAPath path(&maps);
     csVector3 localDest;
     
@@ -1015,7 +1017,7 @@ void pathFindTest_PathCalc(CelBase * cel)
     //PMap.LoadFromFile("/this/pfgen.xml");
     //AMap.LoadFromFile("/this/pfagen.xml", &PMap);
     
-    csRef<iEngine> engine =  csQueryRegistry<iEngine> (cel->GetObjectReg());
+    csRef<iEngine> engine =  csQueryRegistry<iEngine> (npcclient->GetObjectReg());
     
     path.SetDest(csVector3(-239, -4.75F, -91.43F));
     
@@ -1423,10 +1425,10 @@ void psAPath::SetDest(const csVector3 & dest)
 
 //////////////////////////////////////////////////////
 
-void pathFindTest_APathGetDest(CelBase * cel)
+void pathFindTest_APathGetDest(psNPCClient * npcclient)
 {
-    psPFMaps * maps = new psPFMaps(cel->GetObjectReg());
-    csRef<iEngine> engine =  csQueryRegistry<iEngine> (cel->GetObjectReg());
+    psPFMaps * maps = new psPFMaps(npcclient->GetObjectReg());
+    csRef<iEngine> engine =  csQueryRegistry<iEngine> (npcclient->GetObjectReg());
     psAPath path(maps);
     csVector3 localDest;
     
@@ -1440,18 +1442,18 @@ void pathFindTest_APathGetDest(CelBase * cel)
     ::Dump3("localDest", localDest);
 }
 
-void pathFindTest_CheckDirect(CelBase * cel);
+void pathFindTest_CheckDirect(psNPCClient * npcclient);
 void pathFindTest_Inter();
 void pathFindTest_PolyInter();
 void pathFindTest_NormEq();
-void pathFindTest_Walkability(CelBase * cel);
-void pathFindTest_Stretch(CelBase * cel);
+void pathFindTest_Walkability(psNPCClient* npcclient);
+void pathFindTest_Stretch(psNPCClient * cel);
 void pathFindTest_Convex();
-void pathFindTest_Save(CelBase * cel);
-void pathFindTest_PruneWP(CelBase * cel);
-void pathFindTest_PathCalc(CelBase * cel);
+void pathFindTest_Save(psNPCClient * cel);
+void pathFindTest_PruneWP(psNPCClient * cel);
+void pathFindTest_PathCalc(psNPCClient * cel);
 
-void pathFindTest(CelBase * cel)
+void pathFindTest(psNPCClient * cel)
 {
     //pathFindTest_CheckDirect(cel);
     //pathFindTest_NormEq();

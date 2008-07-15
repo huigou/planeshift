@@ -18,14 +18,22 @@
 
 #ifndef ___WALKPOLY_HEADER___
 #define ___WALKPOLY_HEADER___
-
+//=============================================================================
+// Crystal Space Includes
+//=============================================================================
 #include <csgeom/vector3.h>
 #include <csgeom/box.h>
 #include <iutil/objreg.h>
 #include <csutil/array.h>
 #include <csutil/csstring.h>
 #include <csutil/list.h>
+
+//=============================================================================
+// Local Includes
+//=============================================================================
 #include "pathfind.h"
+
+class psNPCClient;
 
 void Dump3(const char * name, const csVector3 & p);
 void Dump(const char * name, const csBox3 & b);
@@ -227,7 +235,7 @@ public:
     /** Checks if you can go directly between two points without problems */
     bool CheckDirectPath(csVector3 start, csVector3 goal);
     
-    void Generate(CelBase * cel, psSeedSet & seeds, iSector * sector);
+    void Generate(psNPCClient * npcclient, psSeedSet & seeds, iSector * sector);
     
     void CalcConts();
     

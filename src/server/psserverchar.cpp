@@ -43,8 +43,6 @@
 #include "net/msghandler.h"
 #include "net/charmessages.h"
 
-#include "engine/celbase.h"
-
 #include "bulkobjects/pscharacter.h"
 #include "bulkobjects/pscharacterloader.h"
 #include "bulkobjects/psitem.h"
