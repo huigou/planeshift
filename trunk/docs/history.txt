@@ -1,6 +1,8 @@
 *** 2008-07-15 by Andrew Craig
 - Fixed:  FS#795 - cannot select last item in scrolling list.  Fixed by adding
   an extra vertical scroll if the horizontal scroll bar is showing
+- FS#1278 - Tab autocompletion doesn't always find name.  
+  Added patch from peeg
 
 *** 2008-07-15 by Steven Patrick
 - Minor xml fixes, patch by Caarrie.

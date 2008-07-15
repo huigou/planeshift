@@ -1904,7 +1904,6 @@ void pawsChatWindow::TabCompleteName(const char *cmdstr)
     psString partial(cmd);
     if (partial.Length () == 0)
         return;
-    partial.SetAt(0, toupper(partial.GetAt(0)));
 
     // valid but not unique
     psString list, last;
@@ -1914,7 +1913,7 @@ void pawsChatWindow::TabCompleteName(const char *cmdstr)
     while (iter.HasNext())
     {
         psString found = iter.Next();
-        if (!found.PartialEquals(partial))
+        if(found.StartsWith(partial, true))
         {
             list.Append(" ");
             list.Append(found);
@@ -2176,16 +2175,21 @@ void pawsChatWindow::ChatOutput(pawsMessageTextBox *pmtb, const char *data,
         ((pawsButton *) FindWidget(buttonName))->Flash(true);
 }
 
-void pawsChatWindow::AddAutoCompleteName(const char *name)
+void pawsChatWindow::AddAutoCompleteName(const char *cname)
 {
-    for (size_t i = 0; i < autoCompleteNames.GetSize(); i++)
+	// normalize name
+	csString name = cname;
+	name.Downcase();
+	name.SetAt(0,toupper(name.GetAt(0)));
+	
+	for (size_t i = 0; i < autoCompleteNames.GetSize(); i++)
     {
         if (autoCompleteNames[i].CompareNoCase(name))
         {
             return;
         }
     }
-
+	
     autoCompleteNames.Push(name);
 }
 
