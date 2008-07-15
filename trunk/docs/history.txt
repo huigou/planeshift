@@ -1,3 +1,8 @@
+*** 2008-07-14 by Andrew Craig
+- Removed the CelBase class and cleaned up the server and npcclient.  This is
+  a fairly large commit and could be some issues.  This cleans up the minor use
+  if CEL we were using.
+
 *** 2008-07-12 by Andrew Craig
 - Added in a helper function that will be used to attach gemObjects to meshes.  
   Part of a server side clean up. 

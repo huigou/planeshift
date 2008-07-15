@@ -23,6 +23,7 @@
 #include <iutil/databuff.h>
 #include <iengine/movable.h>
 #include <iengine/mesh.h>
+#include <iengine/region.h>
 #include <iutil/object.h>
 
 
@@ -32,7 +33,6 @@
 #include "net/message.h"
 #include "net/msghandler.h"
 
-#include "engine/celbase.h"
 #include "engine/linmove.h"
 
 #include "util/serverconsole.h"
@@ -152,7 +152,7 @@ void psServerDR::ResetPos(gemActor* actor)
     csString targetSectorName;
     float yRot = 0;
     actor->GetPosition(targetPoint, yRot, targetSector);
-    csRef<iCollection> psRegion =  scfQueryInterface<iCollection> (targetSector->QueryObject()->GetObjectParent());
+    csRef<iRegion> psRegion =  scfQueryInterface<iRegion> (targetSector->QueryObject()->GetObjectParent());
     if (psRegion)
         targetSectorName = psRegion->QueryObject()->GetName();
     else

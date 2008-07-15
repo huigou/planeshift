@@ -39,16 +39,8 @@
 #include <imesh/object.h>
 #include <imesh/spritecal3d.h>
 #include <imesh/nullmesh.h>
+#include <imap/loader.h>
 #include <csqsqrt.h>  // CS quick square root
-
-#include <physicallayer/pl.h>
-#include <behaviourlayer/bl.h>
-#include <physicallayer/entity.h>
-#include <physicallayer/propfact.h>
-#include <physicallayer/propclas.h>
-#include <physicallayer/persist.h>
-#include <propclass/mesh.h>
-#include <propclass/meshsel.h>
 
 //=============================================================================
 // Project Space Includes
@@ -85,6 +77,7 @@
 #include "clients.h"
 #include "playergroup.h"
 #include "gem.h"
+#include "gemmesh.h"
 #include "invitemanager.h"
 #include "chatmanager.h"
 #include "groupmanager.h"
@@ -129,11 +122,9 @@ psGemServerMeshAttach::psGemServerMeshAttach(gemObject* objectToAttach) : scfImp
 GEMSupervisor *gemObject::cel = NULL;
 
 GEMSupervisor::GEMSupervisor(iObjectRegistry *objreg,
-             iCelPlLayer *p_layer,             
-             psDatabase *db)
+                             psDatabase *db)
 {
     object_reg = objreg;
-    pl = p_layer;    
     database = db;
     npcmanager = NULL;
 
@@ -141,8 +132,6 @@ GEMSupervisor::GEMSupervisor(iObjectRegistry *objreg,
     // Default celID scope has max of 100000 IDs so to support more than 
     // 90000 enties another scope should be added to cel 
     nextEID = 10000; 
-
-    freeListEIDLength = 0;
 
     psserver->GetEventManager()->Subscribe(this,MSGTYPE_DAMAGE_EVENT,NO_VALIDATION);
     psserver->GetEventManager()->Subscribe(this,MSGTYPE_STATDRUPDATE, REQUIRE_READY_CLIENT );
@@ -152,17 +141,17 @@ GEMSupervisor::GEMSupervisor(iObjectRegistry *objreg,
 GEMSupervisor::~GEMSupervisor()
 {
     // Slow but safe method of deleting.
-    size_t count = entities_by_cel_id.GetSize();
+    size_t count = entities_by_ps_id.GetSize();
     while(count > 0)
     {
-        csHash<gemObject *>::GlobalIterator i(entities_by_cel_id.GetIterator());
+        csHash<gemObject *>::GlobalIterator i(entities_by_ps_id.GetIterator());
         gemObject* obj = i.Next();
         delete obj;
 
         // Make sure the gemObject has deleted itself from our list otherwise
         // something has gone very wrong.
-        CS_ASSERT(count > entities_by_cel_id.GetSize());
-        count = entities_by_cel_id.GetSize();
+        CS_ASSERT(count > entities_by_ps_id.GetSize());
+        count = entities_by_ps_id.GetSize();
         continue;
     }
     if (psserver->GetEventManager())
@@ -209,61 +198,32 @@ void GEMSupervisor::HandleMessage(MsgEntry *me,Client *client)
     }
 }
 
-PS_ID GEMSupervisor::GetEID()
+PS_ID GEMSupervisor::GetNextID()
 {
-    // Always wait some entities before we reuse the id.
-    if (freeListEIDLength > 30000)
-    {
-        PS_ID eid = freeListEID.Front();
-        freeListEID.PopFront();
-        freeListEIDLength --;
-        return eid;
-    } 
-    else
-    {
-        return nextEID++;
-    }
+    return nextEID++;
 }
 
-void GEMSupervisor::FreeEID(PS_ID eid)
+void GEMSupervisor::CreateEntity(gemObject *obj)
 {
-    freeListEIDLength++;
-    freeListEID.PushBack(eid);
-}
-
-csPtr<iCelEntity> GEMSupervisor::CreateEntity(gemObject *obj, uint32 gemID)
-{
-    PS_ID eid = GetEID();
-    
-    csRef<iCelEntity> ent = pl->CreateEntity(eid);
     if (obj)
     {
-        entities_by_cel_id.Put(eid, obj);
-        entities_by_ps_id.Put(gemID, obj);
+        entities_by_ps_id.Put(obj->GetEntityID(), obj);
+        Debug3(LOG_CELPERSIST,0,"Entity <%s> added to supervisor with ID: %d\n", obj->GetName(), obj->GetEntityID());      
     }
-
-    Debug3(LOG_CELPERSIST,0,"GEM creating entity id %d EID: %u.", 
-           gemID,ent->GetID());
-
-    return (csPtr<iCelEntity>) ent;
 }
 
-void GEMSupervisor::RemoveEntity(gemObject *which,uint32 gemID)
+void GEMSupervisor::RemoveEntity(gemObject *which)
 {
-    PS_ID eid = which->GetEntityID();
-    
-    Debug3(LOG_CELPERSIST,0,"GEM removing entity id %d EID: %u.", 
-           gemID,eid);
-
-    entities_by_cel_id.DeleteAll(eid); // Should only be one to delete
-    entities_by_ps_id.Delete(gemID,which);
-
-    FreeEID(eid);
+    if ( which )
+    {
+        Debug3(LOG_CELPERSIST,0,"Entity <%s> removed from supervisor with ID: %d\n", which->GetName(), which->GetEntityID());          
+        entities_by_ps_id.Delete(which->GetEntityID(), which);
+    }        
 }
 
 void GEMSupervisor::RemoveClientFromLootables(int cnum)
 {
-    csHash<gemObject *>::GlobalIterator i(entities_by_cel_id.GetIterator());
+    csHash<gemObject *>::GlobalIterator i(entities_by_ps_id.GetIterator());
     while ( i.HasNext() )
     {
         gemObject* obj = i.Next();
@@ -277,11 +237,11 @@ void GEMSupervisor::RemoveClientFromLootables(int cnum)
 
 gemObject *GEMSupervisor::FindObject(PS_ID id)
 {
-    csHash<gemObject *>::Iterator i(entities_by_cel_id.GetIterator(id));
-    gemObject* obj;
-
     if (id == 0)  // ID zero is a placeholder for "no object."
         return NULL;
+
+    csHash<gemObject *>::Iterator i(entities_by_ps_id.GetIterator(id));
+    gemObject* obj;
 
     while ( i.HasNext() )
     {
@@ -336,7 +296,7 @@ PS_ID GEMSupervisor::FindItemID(psItem *item)
     if (item == NULL)
         return 0;
 
-    csHash<gemObject *>::GlobalIterator i(entities_by_cel_id.GetIterator());
+    csHash<gemObject *>::GlobalIterator i(entities_by_ps_id.GetIterator());
     while ( i.HasNext() )
     {
         gemObject* obj = i.Next();
@@ -350,7 +310,7 @@ PS_ID GEMSupervisor::FindItemID(psItem *item)
 
 gemObject *GEMSupervisor::FindObject(const csString& name)
 {
-    csHash<gemObject *>::GlobalIterator i(entities_by_cel_id.GetIterator());
+    csHash<gemObject *>::GlobalIterator i(entities_by_ps_id.GetIterator());
 
     while ( i.HasNext() )
     {
@@ -360,15 +320,6 @@ gemObject *GEMSupervisor::FindObject(const csString& name)
     }
     Error2("No object with the name of '%s' was found.", name.GetData());
     return NULL;
-}
-
-gemObject *GEMSupervisor::GetObjectFromEntityList(iCelEntityList *list,size_t i)
-{
-    iCelEntity *ent = list->Get(i);
-    if (ent)
-        return FindObject( ent->GetID() );
-    else
-        return NULL;
 }
 
 gemActor *GEMSupervisor::FindPlayerEntity(int player_id)
@@ -415,7 +366,7 @@ gemItem *GEMSupervisor::FindItemEntity(int item_id)
 
 int GEMSupervisor::CountManagedNPCs(int superclientID)
 {
-    csHash<gemObject *>::GlobalIterator iter(entities_by_cel_id.GetIterator());
+    csHash<gemObject *>::GlobalIterator iter(entities_by_ps_id.GetIterator());
 
     int count_players=0;
     while (iter.HasNext())
@@ -431,7 +382,7 @@ int GEMSupervisor::CountManagedNPCs(int superclientID)
 
 void GEMSupervisor::FillNPCList(MsgEntry *msg,int superclientID)
 {
-    csHash<gemObject *>::GlobalIterator iter(entities_by_cel_id.GetIterator());
+    csHash<gemObject *>::GlobalIterator iter(entities_by_ps_id.GetIterator());
 
     while (iter.HasNext())
     {
@@ -452,7 +403,7 @@ void GEMSupervisor::StopAllNPCs(int superclientID)
 {
     CPrintf(CON_NOTIFY, "Shutting down entities managed by superclient %d.\n",superclientID);
 
-    csHash<gemObject *>::GlobalIterator iter(entities_by_cel_id.GetIterator());
+    csHash<gemObject *>::GlobalIterator iter(entities_by_ps_id.GetIterator());
 
     count_players=0;
     while (iter.HasNext())
@@ -479,7 +430,7 @@ void GEMSupervisor::StopAllNPCs(int superclientID)
 
 void GEMSupervisor::UpdateAllDR()
 {
-    csHash<gemObject *>::GlobalIterator iter(entities_by_cel_id.GetIterator());
+    csHash<gemObject *>::GlobalIterator iter(entities_by_ps_id.GetIterator());
 
     count_players=0;
     while (iter.HasNext())
@@ -495,7 +446,7 @@ void GEMSupervisor::UpdateAllDR()
 
 void GEMSupervisor::UpdateAllStats()
 {
-    csHash<gemObject *>::GlobalIterator iter(entities_by_cel_id.GetIterator());
+    csHash<gemObject *>::GlobalIterator iter(entities_by_ps_id.GetIterator());
 
     count_players=0;
     while (iter.HasNext())
@@ -509,7 +460,7 @@ void GEMSupervisor::UpdateAllStats()
 
 void GEMSupervisor::GetPlayerObjects(unsigned int playerID, csArray<gemObject*> &list )
 {
-    csHash<gemObject *>::GlobalIterator iter(entities_by_cel_id.GetIterator());
+    csHash<gemObject *>::GlobalIterator iter(entities_by_ps_id.GetIterator());
     while (iter.HasNext())
     {
         gemObject* obj = iter.Next();
@@ -524,7 +475,7 @@ void GEMSupervisor::GetPlayerObjects(unsigned int playerID, csArray<gemObject*> 
 
 void GEMSupervisor::GetAllEntityPos(psAllEntityPosMessage& update)
 {
-    csHash<gemObject *>::GlobalIterator iter(entities_by_cel_id.GetIterator());
+    csHash<gemObject *>::GlobalIterator iter(entities_by_ps_id.GetIterator());
 
     update.SetLength(count_players,0);  // Theoretical max of how many
 
@@ -704,8 +655,8 @@ gemObject::gemObject(const char* name,
     proxlist = NULL;
     is_alive = false;
 
-    entity = cel->CreateEntity(this,id);
-    entity->SetName(name);
+    cel->CreateEntity(this);
+
     prox_distance_desired=DEF_PROX_DIST;
     prox_distance_current=DEF_PROX_DIST;
 
@@ -713,14 +664,12 @@ gemObject::gemObject(const char* name,
     {
         Error1("Could not create gemObject because mesh could not be Init'd.");
         Error4("Name: %s Factory: %s File: %s\n", name, factname, filename );
-        entity = NULL;
         return;
     }
 
     if (!InitProximityList(DEF_PROX_DIST,clientnum))
     {
         Error1("Could not create gemObject because prox list could not be Init'd.");
-        entity = NULL;
         return;
     }    
 }
@@ -732,26 +681,21 @@ gemObject::~gemObject()
     valid = false;
     
     Disconnect();         
-    cel->RemoveEntity(this,gemID);
+    cel->RemoveEntity(this);
     delete proxlist;
     proxlist = NULL;
-    pcmesh->SetMesh(0);
+    delete pcmesh;
 }
 
-uint gemObject::GetEntityID()
-{
-    return entity->GetID();
-}
 
 const char *gemObject::GetName()
 {
-    return entity->GetName();
+    return name;
 }
 
 void gemObject::SetName(const char *n)
 {
     name = n;
-    entity->SetName(n);
 }
 
 void gemObject::Disconnect()
@@ -788,21 +732,7 @@ bool gemObject::InitMesh(const char *name,
                            const float rotangle,
                            iSector* room)
 {
-    csRef<iCelPropertyClass> pc;
-    
-    pc = cel->pl->CreatePropertyClass(entity, "pcmesh");
-    if ( !pc )
-    {
-        Error1("Could not create Item because pcmesh class couldn't be created.");
-        return false;
-    }
-
-    pcmesh =  scfQueryInterface<iPcMesh > ( pc);
-    if ( !pcmesh )
-    {
-        Error1("Could not create Item because pcmesh class doesn't implement iPcMesh.");
-        return false;
-    }
+    pcmesh = new gemMesh(psserver->GetObjectReg(), this, cel);
 
     // Replace helm group token with the default race.
     psString fact_name(factname);
@@ -826,6 +756,7 @@ bool gemObject::InitMesh(const char *name,
     if(!mesh.IsValid())
     {
         bool failed = true;
+
         if(vfs->Exists(filename))
         {
             failed = false;
@@ -899,6 +830,10 @@ bool gemObject::InitMesh(const char *name,
                 break;
             }
         }
+        else
+        {
+          Error2("The file(%s) could not be found", filename);    
+        }   
 
         if(failed)
         {
@@ -1020,19 +955,19 @@ void gemObject::UpdateProxList( bool force )
     csTicks time = csGetTicks();
     
     GetPosition(pos,yrot,sector);
-    csRef<iCelEntityList> nearlist = cel->pl->FindNearbyEntities(sector,pos,prox_distance_current, true);
+    csArray<gemObject*> nearlist = cel->FindNearbyEntities(sector,pos,prox_distance_current, true);
     
     //CPrintf(CON_SPAM, "\nUpdating proxlist for %s\n--------------------------\n",GetName());
     
     // Cycle through list and add any entities
     // that represent players to the proximity subscription list.
-    size_t count = nearlist->GetCount();
+    size_t count = nearlist.GetSize();
     size_t player_count = 0;
     
     proxlist->ClearTouched();
     for (size_t i=0; i<count; i++)
     {
-        gemObject *nearobj = cel->GetObjectFromEntityList(nearlist,i);
+        gemObject *nearobj = nearlist[i];
         if (!nearobj)
             continue;
         
@@ -1207,13 +1142,13 @@ csArray< gemObject* > *gemObject::GetObjectsInRange( float range )
     csVector3 pos;
     iSector *sector;
     GetPosition(pos,sector);
-    csRef<iCelEntityList> nearlist = cel->pl->FindNearbyEntities( sector, pos, range);
+    csArray<gemObject*> nearlist = cel->FindNearbyEntities( sector, pos, range);
 
-    size_t count = nearlist->GetCount();
+    size_t count = nearlist.GetSize();
 
     for (size_t i=0; i<count; i++)
     {
-        gemObject *nearobj = cel->GetObjectFromEntityList(nearlist,i);
+        gemObject *nearobj = nearlist[i];
         if (!nearobj)
             continue;
         
@@ -1287,8 +1222,6 @@ csString gemObject::GetDefaultBehavior(const csString & dfltBehaviors)
 
 void gemObject::Dump()
 {
-    CPrintf(CON_CMDOUTPUT ,"Entity %d is %s with refCount %d:\n",
-            GetEntityID(),GetName(),GetEntity()->GetRefCount() );
     csString out;
     CPrintf(CON_CMDOUTPUT ,"ProxList:\n");
     CPrintf(CON_CMDOUTPUT ,"Distance: %.2f <= Desired: %.2f \n",
@@ -1315,12 +1248,13 @@ gemActiveObject::gemActiveObject( const char* name,
                                      : gemObject(name,factname,filename,myInstance,room,pos,rotangle,clientnum, id)
 {
     //if entity is not set, object is not a success
-    if (entity != NULL)
-    {
+//    if (entity != NULL)
+//    {
 //        CPrintf(CON_DEBUG, "New object: %s at %1.2f,%1.2f,%1.2f, sector %s.\n",
 //            factname,pos.x,pos.y,pos.z,    sector->QueryObject()->GetName());
-    }
-    else CPrintf(CON_DEBUG, "Object %s was not created.\n", factname);
+//    }
+//    else CPrintf(CON_DEBUG, "Object %s was not created.\n", factname);
+
 }
 
 void gemActiveObject::Broadcast(int clientnum, bool control )
@@ -1508,7 +1442,7 @@ void gemActiveObject::SendBehaviorMessage(const csString & msg_id, gemObject *ac
     else if (msg_id == "unlock")
         ; //???????
     else if (msg_id == "examine")
-        psserver->GetCharManager()->ViewItem(actor->GetClient(), entity->GetID(), PSCHARACTER_SLOT_NONE);
+        psserver->GetCharManager()->ViewItem(actor->GetClient(), actor->GetEntityID(), PSCHARACTER_SLOT_NONE);
 
     return;
 }
@@ -1539,7 +1473,7 @@ void gemItem::Broadcast(int clientnum, bool control )
 
     psPersistItem mesg(  
                          clientnum,                         
-                         entity->GetID(),                         
+                         GetEntityID(),                         
                          -2,                        
                          name, 
                          factname, 
@@ -1596,7 +1530,7 @@ void gemItem::Send( int clientnum, bool , bool to_superclient)
     
     psPersistItem mesg(
                          clientnum,
-                         entity->GetID(),
+                         GetEntityID(),
                          -2,
                          name, 
                          factname, 
@@ -1655,7 +1589,7 @@ gemActionLocation::gemActionLocation( GEMSupervisor *cel,
     
     this->yRot  = 0;
     this->action = action;
-
+    this->gemID = id;
     action->SetGemObject( this );
 
     this->prox_distance_desired = 0.0F;
@@ -1666,24 +1600,11 @@ gemActionLocation::gemActionLocation( GEMSupervisor *cel,
     proxlist = NULL;
     is_alive = false;
 
-    csRef<iCelPropertyClass> pc;
-    entity = cel->CreateEntity(this,id);
-    entity->SetName(name);
+    cel->CreateEntity(this);
+    SetName(name);
+ 
+    pcmesh = new gemMesh(psserver->GetObjectReg(), this, cel);
     
-    pc = cel->pl->CreatePropertyClass(entity, "pcmesh");
-    if ( !pc )
-    {
-        Error1("Could not create gemActionLocation because pcmesh class couldn't be created.");
-        return ;
-    }
-
-    pcmesh =  scfQueryInterface<iPcMesh > ( pc);
-    if ( !pcmesh )
-    {
-        Error1("Could not create ActionLocation because pcmesh class doesn't implement iPcMesh.");
-        return ;
-    }
-
     csRef< iEngine > engine =  csQueryRegistry<iEngine> (psserver->GetObjectReg());
     csRef< iMeshWrapper > nullmesh = engine->CreateMeshWrapper("crystalspace.mesh.object.null", "pos_anchor", isec, action->position);
     if ( !nullmesh )
@@ -1699,13 +1620,11 @@ gemActionLocation::gemActionLocation( GEMSupervisor *cel,
     }
     state->SetRadius(1.0);
     
-
     pcmesh->SetMesh( nullmesh );
 
     if (!InitProximityList(DEF_PROX_DIST,clientnum))
     {
         Error1("Could not create gemActionLocation because prox list could not be Init'd.");
-        entity = NULL;
         return;
     }    
 
@@ -1715,7 +1634,7 @@ void gemActionLocation::Broadcast(int clientnum, bool control )
 {
     psPersistActionLocation mesg(  
                                     clientnum,                         
-                                    entity->GetID(),                         
+                                    GetEntityID(),                         
                                     -2,                        
                                     name,  
                                     sector->QueryObject()->GetName(),
@@ -1754,7 +1673,7 @@ void gemActionLocation::Send( int clientnum, bool , bool to_superclient )
 {
     psPersistActionLocation mesg(
                                     clientnum,
-                                    entity->GetID(),
+                                    GetEntityID(),
                                     -2,
                                     name.GetData(), 
                                     sector->QueryObject()->GetName(),
@@ -1809,7 +1728,6 @@ nevertired(false), infinitemana(false), instantcast(false), safefall(false)
     if (clientnum && !client)
     {
         Error3("Failed to find client %d for player %d!",clientnum,playerID);
-        entity = NULL;
         return;
     }
     
@@ -1818,7 +1736,6 @@ nevertired(false), infinitemana(false), instantcast(false), safefall(false)
     if (!InitLinMove(pos,rotangle,room))
     {
         Error1("Could not initialize LinMove prop class, so actor not created.");
-        entity = NULL;
         return;
     }
 
@@ -1827,7 +1744,6 @@ nevertired(false), infinitemana(false), instantcast(false), safefall(false)
     if (!InitCharData(client))
     {
         Error1("Could not init char data.  Actor not created.");
-        entity = NULL;
         return;
     }
 
@@ -2415,7 +2331,7 @@ void gemActor::Send( int clientnum, bool control, bool to_superclient  )
                          texparts,
                          equipmentParts,
                          DRcounter,
-                         entity->GetID(),
+                         GetEntityID(),
                          CacheManager::GetSingleton().GetMsgStrings(),
                          pcmove,
                          movementMode,
@@ -2463,7 +2379,7 @@ void gemActor::Broadcast(int clientnum, bool control)
     {
         psUpdatePlayerGuildMessage update(
             clientnum,
-            entity->GetID(),
+            GetEntityID(),
             psChar->GetGuild()->GetName());
             
         psserver->GetEventManager()->Broadcast(update.msg,NetBase::BC_GUILD,psChar->GetGuild()->id);        
@@ -3552,11 +3468,11 @@ gemNPC::gemNPC( psCharacter *chardata,
     nextShortRangeAvail = 0;     /// When can npc respond to short range prox trigger again
     nextLongRangeAvail = 0;      /// When can npc respond to long range prox trigger again
 
-    if( !GetEntity() )
-    {
-        Error3("Error in GemNPC %s constructor File: %s", factname, filename);
-        return;
-    }
+    //if( !GetEntity() )
+    //{
+    //    Error3("Error in GemNPC %s constructor File: %s", factname, filename);
+    //    return;
+    //}
 
     pcmove->SetOnGround(true);
 

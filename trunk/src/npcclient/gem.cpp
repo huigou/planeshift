@@ -22,18 +22,32 @@
 //=============================================================================
 #include <iengine/mesh.h>
 #include <iengine/movable.h>
+#include <iengine/engine.h>
+#include <imap/loader.h>
 
 //=============================================================================
-// Project Space Includes
+// Project Library Includes
 //=============================================================================
-#include "engine/linmove.h"
-
-#include "gem.h"
-#include "npc.h"
-#include "globals.h"
-#include "networkmgr.h"
 #include "util/consoleout.h"
 #include "util/psxmlparser.h"
+
+#include "engine/linmove.h"
+
+//=============================================================================
+// Local Includes
+//=============================================================================
+#include "gem.h"
+#include "npc.h"
+#include "npcmesh.h"
+#include "globals.h"
+#include "networkmgr.h"
+
+//-----------------------------------------------------------------------------
+
+psNpcMeshAttach::psNpcMeshAttach(gemNPCObject* objectToAttach) : scfImplementationType(this)
+{
+    object = objectToAttach;
+}
 
 
 //-------------------------------------------------------------------------------
@@ -45,12 +59,11 @@ gemNPCObject::gemNPCObject( psNPCClient* cel, PS_ID id )
     if (!this->cel)
         this->cel = cel;
 
-    entity = cel->GetPlLayer()->CreateEntity(id);
 }    
 
 gemNPCObject::~gemNPCObject()
 {
-    cel->GetPlLayer()->RemoveEntity( entity );    
+    delete pcmesh;
 }
 
 void gemNPCObject::Move(const csVector3& pos, float rotangle,  const char* room, int instance)
@@ -87,22 +100,8 @@ bool gemNPCObject::InitMesh(
                                 const char* room
                              )
 {
-    csRef<iCelPropertyClass> pc;
+    pcmesh = new npcMesh(npcclient->GetObjectReg(), this, cel);
     
-    pc = cel->GetPlLayer()->CreatePropertyClass(entity, "pcmesh");
-    if ( !pc )
-    {
-        Error1("Could not create Item because pcmesh class couldn't be created.");
-        return false;
-    }
-
-    pcmesh =  scfQueryInterface<iPcMesh > ( pc);
-    if ( !pcmesh )
-    {
-        Error1("Could not create Item because pcmesh class doesn't implement iPcMesh.");
-        return false;
-    }
-
     // Replace helm group token with the default race.
     psString fact_name(factname);
     fact_name.ReplaceAllSubString("$H", "stonebm");
@@ -224,7 +223,7 @@ bool gemNPCObject::InitMesh(
 
 void gemNPCObject::SetPosition(csVector3& pos, iSector* sector, int* instance)
 {
-    psGameObject::SetPosition(GetEntity(), pos, sector);
+    psGameObject::SetPosition(this, pos, sector);
 
     if (instance)
     {
@@ -244,7 +243,6 @@ gemNPCActor::gemNPCActor( psNPCClient* cel, psPersistActor& mesg)
     : gemNPCObject( cel, mesg.entityid ), npc(NULL)
 {
     name = mesg.name;
-    entity->SetName( mesg.name );
     id = mesg.entityid;
     type = mesg.type;
     playerID = mesg.playerID;
@@ -265,7 +263,6 @@ gemNPCActor::~gemNPCActor()
 {
     if (npc)
     {
-        npcclient->UnattachNPC(entity,npc);
         npc->ClearState();
         npc->SetActor(NULL);
         npc = NULL;
@@ -276,7 +273,6 @@ void gemNPCActor::AttachNPC(NPC * newNPC)
 {
     npc = newNPC;
     npc->SetActor(this);
-    npcclient->AttachNPC(entity,npc);
     npc->SetAlive(true);
 }
 
@@ -289,13 +285,6 @@ bool gemNPCActor::InitCharData( const char* textParts, const char* equipment )
 bool gemNPCActor::InitLinMove(const csVector3& pos, float angle, const char* sector,
                               csVector3 top, csVector3 bottom, csVector3 offset )
 {
-    csRef<iCelPropertyClass> pc;
-    pc = cel->GetPlLayer()->CreatePropertyClass(entity, "pclinearmovement");
-    if ( !pc )
-    {
-        Error1("Could not create property class pclinearmovement.  Actor not created.");
-        return false;
-    }
     pcmove =  new psLinearMovement(cel->GetObjectReg());
 
     csRef<iEngine> engine =  csQueryRegistry<iEngine> (cel->GetObjectReg());
@@ -312,7 +301,6 @@ gemNPCItem::gemNPCItem( psNPCClient* cel, psPersistItem& mesg)
 {        
     name = mesg.name;
     Debug3( LOG_CELPERSIST, 0,"Item %s(%d) Received", mesg.name.GetData(), mesg.id );
-    entity->SetName( mesg.name );
     id = mesg.id;
     type = mesg.type;
 

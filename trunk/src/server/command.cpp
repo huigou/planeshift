@@ -37,6 +37,8 @@
 #include <csutil/csmd5.h>
 #include <iutil/stringarray.h>
 #include <iengine/collection.h>
+#include <iengine/engine.h>
+
 #include "util/command.h"
 #include "util/serverconsole.h"
 #include "net/messages.h"
@@ -279,7 +281,7 @@ int com_status(char *)
     {
         Client *client = i.Next();
         int eid = 0;
-        if (client->GetActor() && client->GetActor()->GetEntity() )
+        if (client->GetActor())
         {
             eid = client->GetActor()->GetEntityID();
         }

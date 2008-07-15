@@ -27,6 +27,7 @@
 #include <iengine/campos.h>
 #include <iengine/mesh.h>
 #include <iengine/movable.h>
+#include <iengine/engine.h>
 
 //=============================================================================
 // Library Includes
@@ -1484,7 +1485,7 @@ bool AdminManager::Valid( int level, const char* command, int clientnum )
 void AdminManager::GetInfo(MsgEntry* me,psAdminCmdMessage& msg, AdminCmdData& data,Client *client, gemObject* target)
 {    
     PS_ID entityId = 0;
-    if ( target && target->GetEntity() )
+    if ( target )
         entityId = target->GetEntityID();
 
     if (target && strcmp(target->GetObjectType(), "ActionLocation") == 0) // Action location

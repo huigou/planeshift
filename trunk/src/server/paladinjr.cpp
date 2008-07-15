@@ -19,7 +19,6 @@
 #include <psconfig.h>
 #include <iengine/movable.h>
 
-#include "engine/celbase.h"
 #include <iutil/object.h>
 #include "util/serverconsole.h"
 #include "gem.h"

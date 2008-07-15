@@ -45,10 +45,6 @@
 #include "msgmanager.h"
 #include "deathcallback.h"
 
-struct iCelPlLayer;
-struct iCelEntityList;
-struct iCelEntity;
-struct iPcMesh;
 struct iMeshWrapper;
 
 class ProximityList;
@@ -74,6 +70,7 @@ class gemPet;
 class ClientConnectionSet;
 class PublishVector;
 class psLinearMovement;
+class gemMesh;
 
 #define BUFF_INDICATOR          "+"
 #define DEBUFF_INDICATOR        "-"
@@ -114,30 +111,26 @@ class GEMSupervisor : public MessageManager, public Singleton<GEMSupervisor>
 {
 public:
     iObjectRegistry*        object_reg;
-    csRef<iCelPlLayer>      pl;
     psDatabase             *database;
     NPCManager             *npcmanager;
 
-    GEMSupervisor(iObjectRegistry *objreg,
-        iCelPlLayer *player,
-        psDatabase *db);
+    GEMSupervisor(iObjectRegistry *objreg, psDatabase *db);
 
     virtual ~GEMSupervisor();
 
-    csHash<gemObject *>& GetAllGEMS() { return entities_by_cel_id; }
+    csHash<gemObject *>& GetAllGEMS() { return entities_by_ps_id; }
 
     // Search functions
     PS_ID      FindItemID(psItem *item);
     gemObject *FindObject(PS_ID cel_id);
     gemObject *FindObject(const csString& name);
-    gemObject *GetObjectFromEntityList(iCelEntityList *list,size_t i);
-
+    
     gemActor  *FindPlayerEntity(int player_id);
     gemNPC    *FindNPCEntity(int npc_id);
     gemItem   *FindItemEntity(int item_id);
 
-    csPtr<iCelEntity> CreateEntity(gemObject *obj,uint32 gemID);
-    void RemoveEntity(gemObject *which,uint32 gemID);
+    void CreateEntity(gemObject *obj);
+    void RemoveEntity(gemObject *which);
     
     void RemoveClientFromLootables(int cnum);
         
@@ -204,18 +197,13 @@ public:
       */
     csArray<gemObject*> FindNearbyEntities (iSector* sector, const csVector3& pos, float radius, bool doInvisible = false);
 
+    PS_ID GetNextID();    
 
 protected:
-    csHash<gemObject *> entities_by_cel_id;
     csHash<gemObject *> entities_by_ps_id;
     int                 count_players;
 
     PS_ID               nextEID;
-    csList<PS_ID>       freeListEID;
-    unsigned int        freeListEIDLength;
-    
-    void FreeEID(PS_ID eid);
-    PS_ID GetEID();
     
 };
 
@@ -236,12 +224,12 @@ public:
 
     virtual ~gemObject();
 
-    uint32 GetGemID() { return gemID; }
+    uint32 GetEntityID() { return gemID; }
 
     /// Called when a client disconnects
     virtual void Disconnect();
 
-    virtual bool IsValid(void) { return (entity!=NULL); }
+    virtual bool IsValid(void) { return gemID != 0; }
 
     /// Returns whether the object is alive.
     bool IsAlive() const { return is_alive; }
@@ -250,13 +238,7 @@ public:
     uint32 GetClientID();
 
     virtual const char* GetObjectType() { return "Object"; }
-    iCelEntity *GetEntity() { return entity; }
     
-    /** Get the ID of the entity 
-    *   @return The ID of the entity this object has. 
-    */
-    uint GetEntityID();
-
     virtual psItem *GetItem() { return NULL; }
     virtual gemActor* GetActorPtr() { return NULL; }
     virtual gemNPC* GetNPCPtr()  { return NULL; }
@@ -341,8 +323,8 @@ public:
 protected:
     bool valid;                             // Is object fully loaded
 //    csRef<gemObjectSafe> self_reference;    // Placeholder for ref 1 of saferef
-    csRef<iCelEntity> entity;               // link to CEL entity for CEL's purposes
-    csRef<iPcMesh> pcmesh;                  // link to CEL mesh class
+
+    gemMesh* pcmesh;                        ///< link to mesh class
     ProximityList *proxlist;                // Proximity List for this object
     csString name;                          // Name of this object, used mostly for debugging
     static GEMSupervisor *cel;              // Static ptr back to main collection of all objects

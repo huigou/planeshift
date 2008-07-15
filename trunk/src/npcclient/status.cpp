@@ -1,16 +1,45 @@
+/*
+* status.cpp 
+*
+* Copyright (C) 2008 Atomic Blue (info@planeshift.it, http://www.atomicblue.org) 
+*
+*
+* This program is free software; you can redistribute it and/or
+* modify it under the terms of the GNU General Public License
+* as published by the Free Software Foundation (version 2 of the License)
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+* You should have received a copy of the GNU General Public License
+* along with this program; if not, write to the Free Software
+* Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+*
+*/
 #include <psconfig.h>
 
+//=============================================================================
+// Crystal Space Includes
+//=============================================================================
+#include <csutil/csstring.h>
+#include <csutil/xmltiny.h>
+#include <iutil/objreg.h>
+#include <iutil/cfgmgr.h>
+
+//=============================================================================
+// Library Includes
+//=============================================================================
+#include "util/sleep.h"
+#include "util/eventmanager.h"
+#include "util/psxmlparser.h"
+
+//=============================================================================
+// Local Includes
+//=============================================================================
 #include "globals.h"
 #include "status.h"
 #include "npcclient.h"
 
-#include "csutil/csstring.h"
-#include "csutil/xmltiny.h"
-#include "iutil/objreg.h"
-#include "iutil/cfgmgr.h"
-#include "util/sleep.h"
-#include "util/eventmanager.h"
-#include "util/psxmlparser.h"
 
 
 class psNPCStatusRunEvent : public psGameEvent

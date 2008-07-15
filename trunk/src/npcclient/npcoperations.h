@@ -21,19 +21,30 @@
 
 #include <psstdint.h>
 
+//=============================================================================
+// Crystal Space Includes
+//=============================================================================
 #include <csgeom/vector3.h>
 #include <csutil/csstring.h>
 
+struct iDocumentNode;
+struct iSector;
+
+//=============================================================================
+// Library Includes
+//=============================================================================
 #include "util/pspath.h"
+
+//=============================================================================
+// Project Includes
+//=============================================================================
 #include "walkpoly.h"
 
 class psResumeScriptEvent;
 class EventManager;
 class NPC;
 class gemNPCObject;
-struct iDocumentNode;
-struct iSector;
-struct iCelEntity;
+class gemNPCActor;
 
 /**
 * This is the base class for all operations in action scripts.
@@ -422,7 +433,7 @@ class MeleeOperation : public ScriptOperation
 {
 protected:
     float seek_range, melee_range;
-    csWeakRef<iCelEntity> attacked_ent;
+    gemNPCActor* attacked_ent;
     bool  attack_invisible,attack_invincible;
 public:
 

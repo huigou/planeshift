@@ -22,17 +22,21 @@
 */
 #ifndef __NPC_H__
 #define __NPC_H__
-
+//=============================================================================
+// Crystal Space Includes
+//=============================================================================
 #include <csutil/hash.h>
+
+struct iMovable;
+
+//=============================================================================
+// Local Includes
+//=============================================================================
 #include "npcbehave.h"
 
 class EventManager;
-struct iCelEntity;
 class  HateList;
 struct HateListEntry;
-struct iPcLinearMovement;
-struct iPcCollisionDetection;
-struct iMovable;
 class iResultRow;
 class psTribe;
 class Waypoint;
@@ -54,7 +58,7 @@ public:
     HateList() {}
 
     void AddHate(int entity_id,float delta);
-    iCelEntity *GetMostHated(iSector *sector, csVector3& pos, float range, LocationType * region, bool include_invisible, bool include_invincible);
+    gemNPCActor *GetMostHated(iSector *sector, csVector3& pos, float range, LocationType * region, bool include_invisible, bool include_invincible);
     bool Remove(int entity_id);
     void DumpHateList(const csVector3& myPos, iSector *mySector);
     void Clear();
@@ -74,7 +78,6 @@ protected:
     PS_ID              oldID;
     csString           name;
     csTicks            last_update;
-    iCelEntity        *entity;
     gemNPCActor       *npcActor;
     iMovable          *movable;
     uint8_t            DRcounter;
@@ -114,7 +117,6 @@ public:
      * Return the entity ID if an entity exist else 0.
      */
     PS_ID                 GetEID();
-    iCelEntity           *GetEntity()    { return entity; }
     iMovable             *GetMovable()   { return movable; }
     psLinearMovement     *GetLinMove();
     uint8_t               GetDRCounter() { return ++DRcounter;}
@@ -160,9 +162,9 @@ public:
     void SetLastPerception(Perception *pcpt);
     Perception *GetLastPerception() { return last_perception; }
 
-    iCelEntity *GetMostHated(float range, bool include_invisible, bool include_invincible);
-    float       GetEntityHate(iCelEntity *ent);
-    void AddToHateList(iCelEntity *attacker,float delta);
+    gemNPCActor *GetMostHated(float range, bool include_invisible, bool include_invincible);
+    float       GetEntityHate(gemNPCActor *ent);
+    void AddToHateList(gemNPCActor *attacker,float delta);
     void RemoveFromHateList(PS_ID who);
 
     void SetActiveLocate(csVector3& pos, iSector* sector, float rot, Waypoint * wp)
@@ -209,14 +211,13 @@ public:
 
     void GetNearestEntity(uint32_t& target_id,csVector3& dest,csString& name,float range);
 
-    iCelEntity * GetNearestVisibleFriend(float range);
+    gemNPCActor * GetNearestVisibleFriend(float range);
 
     void Printf(const char *msg,...);
     void Printf(int debug, const char *msg,...);
     void VPrintf(int debug, const char *msg,va_list arg);
 
     gemNPCObject *GetTarget();
-    void SetTarget(iCelEntity *t);
     void SetTarget(gemNPCObject *t);
 
     gemNPCObject *GetOwner();

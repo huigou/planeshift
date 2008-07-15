@@ -186,7 +186,7 @@ void Client::SetFamiliar( gemActor *familiar )
 { 
     if ( familiar )
     {
-        pets[0] = familiar->GetGemID(); 
+        pets[0] = familiar->GetEntityID(); 
     }
     else
     {
@@ -211,7 +211,7 @@ gemActor* Client::GetFamiliar()
 
 void Client::AddPet( gemActor *pet ) 
 { 
-    pets.Push( pet->GetGemID() ); 
+    pets.Push( pet->GetEntityID() ); 
 }
 void Client::RemovePet( size_t index ) 
 { 

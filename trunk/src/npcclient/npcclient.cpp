@@ -33,14 +33,14 @@
 #include <csutil/xmltiny.h>
 #include <cstool/collider.h>
 #include <ivaria/collider.h>
+#include <iengine/mesh.h>
+#include <iengine/engine.h>
 
 //=============================================================================
 // Project Includes
 //=============================================================================
 #include "util/serverconsole.h"
 #include "util/psdatabase.h"
-#include "net/connection.h"
-#include "net/msghandler.h"
 #include "util/eventmanager.h"
 #include "util/location.h"
 #include "util/waypoint.h"
@@ -48,6 +48,10 @@
 #include "util/strutil.h"
 #include "util/psutil.h"
 #include "util/pspathnetwork.h"
+
+#include "net/connection.h"
+#include "net/msghandler.h"
+
 #include "engine/psworld.h"
 
 //=============================================================================
@@ -102,9 +106,6 @@ psNPCClient::~psNPCClient()
 bool psNPCClient::Initialize(iObjectRegistry* object_reg,const char *_host, const char *_user, const char *_pass, int _port)
 {
     objreg = object_reg;
-
-    if (!CelBase::Initialize(object_reg))
-        return false;
 
     configmanager =  csQueryRegistry<iConfigManager> (object_reg);
     if (!configmanager)
@@ -389,7 +390,7 @@ bool psNPCClient::LoadNPCTypes(const char *xmlfile)
 
 void psNPCClient::Add( gemNPCObject* object )
 {
-    PS_ID EID = object->GetEntity()->GetID();
+    PS_ID EID = object->GetID();
 
     all_gem_objects.Push( object );
 
@@ -404,8 +405,7 @@ void psNPCClient::Add( gemNPCObject* object )
     {
         all_gem_objects_by_pid.Put( object->GetPlayerID(), object);
     }
-    all_entities_by_eid.Put( EID, object->GetEntity() );
-
+    
     Notify2(LOG_CELPERSIST,"Added gemNPCObject(EID: %u)\n", EID);
 }
 
@@ -417,7 +417,7 @@ void psNPCClient::Remove ( gemNPCObject * object )
         npc->Printf("Removing entity");
     }
 
-    PS_ID EID = object->GetEntity()->GetID();
+    PS_ID EID = object->GetID();
     
     // Remove entity from all hated lists.
     for (size_t x=0; x<npcs.GetSize(); x++)
@@ -425,7 +425,6 @@ void psNPCClient::Remove ( gemNPCObject * object )
         npcs[x]->RemoveFromHateList(EID);
     }
 
-    all_entities_by_eid.DeleteAll( EID );
     all_gem_objects_by_eid.DeleteAll( EID );
     if (object->GetPlayerID() != gemNPCObject::NO_PLAYER_ID)
     {
@@ -455,16 +454,16 @@ void psNPCClient::Remove ( gemNPCObject * object )
 
 void psNPCClient::RemoveAll()
 {
-    size_t i;
-    for (i=0; i<all_gem_objects.GetSize(); i++)
-    {
-        UnattachNPC(all_gem_objects[i]->GetEntity(),FindAttachedNPC(all_gem_objects[i]->GetEntity()));
-    }
+//    size_t i;
+//    for (i=0; i<all_gem_objects.GetSize(); i++)
+//    {
+//        UnattachNPC(all_gem_objects[i]->GetEntity(),FindAttachedNPC(all_gem_objects[i]->GetEntity()));
+//    }
+
     all_gem_objects.DeleteAll();
     all_gem_items.DeleteAll();
     all_gem_objects_by_eid.DeleteAll();
-    all_gem_objects_by_pid.DeleteAll();
-    all_entities_by_eid.DeleteAll();
+    all_gem_objects_by_pid.DeleteAll();    
 }
 
 gemNPCObject *psNPCClient::FindEntityID(PS_ID EID)
@@ -661,14 +660,7 @@ void psNPCClient::AttachNPC( gemNPCActor* actor, uint8_t DRcounter)
                 actor->GetName(), actor->GetPlayerID() );
         return;
     }
-
-    if(npc->GetEntity() != NULL)
-    {
-        CPrintf(CON_NOTIFY,"NPC '%s' (PID: %u) (EID: %u) is already assigned EID: %u named '%s'.\n",
-                actor->GetName(), actor->GetPlayerID(), actor->GetEntity()->GetID(),
-                npc->GetEntity()->GetID(), npc->GetName() );
-    }
-
+    
     actor->AttachNPC(npc);
 
     if(DRcounter != (uint8_t) -1)
@@ -679,7 +671,7 @@ void psNPCClient::AttachNPC( gemNPCActor* actor, uint8_t DRcounter)
     CheckAttachTribes(npc);
 
     npc->Printf("We are now managing NPC: %s(PID: %u) EID: %u.\n", actor->GetName(),
-                actor->GetPlayerID(), actor->GetEntity()->GetID());
+                actor->GetPlayerID(), actor->GetID());
 
     // Test if this actor is in a valid starting position.
     npc->CheckPosition();
@@ -752,13 +744,13 @@ void psNPCClient::TriggerEvent(NPC *npc,Perception *pcpt,float max_range,
             }
             else
             {
-                if (npcs[i]->GetEntity() == NULL) // Need an entity to find position
+                if (npcs[i]->GetActor() == NULL) // Need an entity to find position
                     continue;
 
                 iSector *sector;
                 csVector3 pos;
                 float yrot;
-                psGameObject::GetPosition(npcs[i]->GetEntity(),pos,yrot,sector);
+                psGameObject::GetPosition(npcs[i]->GetActor(),pos,yrot,sector);
 
                 float dist = GetWorld()->Distance(pos,sector,*base_pos,base_sector);
                 
@@ -869,68 +861,6 @@ void psNPCClient::Tick()
 }
 
 
-// Class which is used to attach to an iCelEntity so that
-// we can find the NPC * again.
-
-SCF_VERSION (NPCFinder, 0, 0, 1);
-struct NPCFinder : public csObject
-{
-private:
-    NPC* npc;
-
-public:
-    NPCFinder (NPC *npc)
-    {
-        NPCFinder::npc = npc;
-    }
-    virtual ~NPCFinder ()
-    { }
-    NPC* GetNPC() const { return npc; }
-    SCF_DECLARE_IBASE_EXT (csObject);
-};
-
-SCF_IMPLEMENT_IBASE_EXT (NPCFinder)
-SCF_IMPLEMENTS_INTERFACE (NPCFinder)
-SCF_IMPLEMENT_IBASE_EXT_END
-
-void psNPCClient::AttachNPC(iCelEntity *entity, NPC *npc)
-{
-    NPC* old_npc = FindAttachedNPC(entity);
-    if (old_npc == npc)
-        return;
-
-    if (old_npc != 0)
-        UnattachNPC(entity, old_npc);
-
-    CS_ASSERT(FindAttachedNPC(entity) == NULL);
-    csRef<iObject> object ( scfQueryInterface<iObject> (entity));
-    csRef<NPCFinder> cef = csPtr<NPCFinder> (new NPCFinder(npc) );
-    cef->SetName ("__npcfind__");    // @@@ For debugging mostly.
-    csRef<iObject> cef_obj ( scfQueryInterface<iObject> (cef));
-    object->ObjAdd (cef_obj);
-}
-
-void psNPCClient::UnattachNPC(iCelEntity *entity, NPC *npc)
-{
-    csRef<iObject> object ( scfQueryInterface<iObject> (entity));
-    csRef<NPCFinder> cef (CS::GetChildObject<NPCFinder>(object));
-    if (cef)
-    {
-        if (cef->GetNPC () != npc)
-        { return; }
-        csRef<iObject> cef_obj ( scfQueryInterface<iObject> (cef));
-        object->ObjRemove (cef_obj);
-    }
-}
-
-NPC* psNPCClient::FindAttachedNPC(iCelEntity *entity)
-{
-    csRef<iObject> object ( scfQueryInterface<iObject> (entity));
-    csRef<NPCFinder> cef (CS::GetChildObject<NPCFinder>(object));
-    if (cef)
-        return cef->GetNPC();
-    return 0;
-}
 
 
 bool psNPCClient::LoadMap(const char* mapfile)
@@ -1176,7 +1106,7 @@ void psNPCClient::ListAllNPCs(const char * pattern)
                 alive++;
             if(npcs[i]->IsDisabled())
                 disabled++;
-            if(npcs[i]->GetEntity())
+            if(npcs[i]->GetActor())
                 entity++;
             if(npcs[i]->GetCurrentBehavior())
                 behaviour++;
@@ -1192,9 +1122,9 @@ void psNPCClient::ListAllNPCs(const char * pattern)
         {
             CPrintf(CON_CMDOUTPUT, "%-7u %-5d %-30s %-6s %-6s %-20s %-20s %4d %-3s %-8s\n" ,
                     npcs[i]->GetPID(),
-                    (npcs[i]->GetEntity()?npcs[i]->GetEntity()->GetID():0),
+                    (npcs[i]->GetActor()?npcs[i]->GetActor()->GetID():0),
                     npcs[i]->GetName(),
-                    (npcs[i]->GetEntity()?"Entity":"None  "),
+                    (npcs[i]->GetActor()?"Entity":"None  "),
                     (npcs[i]->IsAlive()?"Alive":"Dead"),
                     (npcs[i]->GetBrain()?npcs[i]->GetBrain()->GetName():"(None)"),
                     (npcs[i]->GetCurrentBehavior()?npcs[i]->GetCurrentBehavior()->GetName():"(None)"),
@@ -1264,7 +1194,7 @@ void psNPCClient::ListAllEntities(const char * pattern, bool onlyCharacters)
             {
                 CPrintf(CON_CMDOUTPUT, "%-9d %-5d %-10s %-30s %-3s %-3s\n",
                         actor->GetPlayerID(),
-                        actor->GetEntity()->GetID(),
+                        actor->GetID(),
                         actor->GetObjectType(),
                         actor->GetName(),
                         (actor->IsVisible()?"Yes":"No"),
@@ -1279,16 +1209,15 @@ void psNPCClient::ListAllEntities(const char * pattern, bool onlyCharacters)
     for (size_t i=0; i < all_gem_objects.GetSize(); i++)
     {
         gemNPCObject * obj = all_gem_objects[i];
-        iCelEntity *ent = obj->GetEntity();
         csVector3 pos;
         float rot;
         iSector *sector;
-        psGameObject::GetPosition(ent,pos,rot,sector);
+        psGameObject::GetPosition(obj,pos,rot,sector);
 
         if (!pattern || strstr(obj->GetName(),pattern))
         {
             CPrintf(CON_CMDOUTPUT, "%5d %-10s %-30s %-3s %-3s %-4s %s %d\n",
-                    ent->GetID(),
+                    obj->GetID(),
                     obj->GetObjectType(),
                     obj->GetName(),
                     (obj->IsVisible()?"Yes":"No"),
@@ -1328,9 +1257,9 @@ void psNPCClient::ListTribes(const char * pattern)
                 NPC * npc = tribes[i]->GetMember(j);
                 CPrintf(CON_CMDOUTPUT, "%6u %6d %-30s %-6s %-6s %-15s %-15s %-20s %-20s\n" ,
                         npc->GetPID(),
-                        (npc->GetEntity()?npc->GetEntity()->GetID():0),
+                        (npc->GetActor()?npc->GetActor()->GetID():0),
                         npc->GetName(),
-                        (npc->GetEntity()?"Entity":"None  "),
+                        (npc->GetActor()?"Entity":"None  "),
                         (npc->IsAlive()?"Alive":"Dead"),
                         (npc->GetBrain()?npc->GetBrain()->GetName():""),
                         (npc->GetCurrentBehavior()?npc->GetCurrentBehavior()->GetName():""),
@@ -1437,10 +1366,6 @@ void psNPCClient::HandlePlayerDeath(PS_ID who)
 {
 }
 
-iCelEntity* psNPCClient::FindEntity( uint32_t EID )
-{
-    return all_entities_by_eid.Get( EID, 0 );
-}
 
 void psNPCClient::PerceptProximityItems()
 {
@@ -1452,13 +1377,13 @@ void psNPCClient::PerceptProximityItems()
     
     for (size_t i=0; i<npcs.GetSize(); i++)
     {
-        if (npcs[i]==NULL || npcs[i]->GetEntity() == NULL) // Can't do anyting unless we have both
+        if (npcs[i]==NULL || npcs[i]->GetActor() == NULL) // Can't do anyting unless we have both
             continue;
         
         iSector *npc_sector;
         csVector3 npc_pos;
         float yrot; // Used later for items as well
-        psGameObject::GetPosition(npcs[i]->GetEntity(),npc_pos,yrot,npc_sector);
+        psGameObject::GetPosition(npcs[i]->GetActor(),npc_pos,yrot,npc_sector);
         
         //
         // Note: The follwing method could skeep checking a item for
@@ -1488,9 +1413,9 @@ void psNPCClient::PerceptProximityItems()
             
             iSector *item_sector;
             csVector3 item_pos;
-            psGameObject::GetPosition(item->GetEntity(),item_pos,yrot,item_sector);
+            psGameObject::GetPosition(item,item_pos,yrot,item_sector);
                          
-            if (item && item->GetEntity() && item->IsPickable())
+            if (item && item->IsPickable())
             {
                 float dist = GetWorld()->Distance(npc_pos,npc_sector,item_pos,item_sector);
                 
@@ -1500,15 +1425,15 @@ void psNPCClient::PerceptProximityItems()
                     {
                         if (dist <= PERSONAL_RANGE_PERCEPTION)
                         {
-                            ItemPerception pcpt_nearby("item nearby", item->GetEntity());
+                            ItemPerception pcpt_nearby("item nearby", item);
                             TriggerEvent(npcs[i],&pcpt_nearby);
                             continue;
                         }
-                        ItemPerception pcpt_adjacent("item adjacent", item->GetEntity());
+                        ItemPerception pcpt_adjacent("item adjacent", item);
                         TriggerEvent(npcs[i],&pcpt_adjacent);
                         continue;
                     }
-                    ItemPerception pcpt_sensed("item sensed", item->GetEntity());
+                    ItemPerception pcpt_sensed("item sensed", item);
                     TriggerEvent(npcs[i],&pcpt_sensed);
                     continue;
                 }
@@ -1556,6 +1481,66 @@ void psNPCClient::CatchCommand(const char *cmd)
     network->SendConsoleCommand(cmd+1);
 }
 
+void psNPCClient::AttachObject( iObject* object, gemNPCObject* gobject )
+{
+    csRef<psNpcMeshAttach> attacher = csPtr<psNpcMeshAttach>(new psNpcMeshAttach(gobject));
+    attacher->SetName( object->GetName() );
+    csRef<iObject> attacher_obj(scfQueryInterface<iObject>(attacher));
+
+    object->ObjAdd( attacher_obj );
+}
+
+void psNPCClient::UnattachObject( iObject* object, gemNPCObject* gobject )
+{
+    csRef<psNpcMeshAttach> attacher (CS::GetChildObject<psNpcMeshAttach>(object));
+    if (attacher)
+    {
+        if (attacher->GetObject() == gobject)
+        {
+            csRef<iObject> attacher_obj(scfQueryInterface<iObject>(attacher));
+            object->ObjRemove(attacher_obj);
+        }
+    }
+}
+
+gemNPCObject* psNPCClient::FindAttachedObject( iObject* object )
+{
+    gemNPCObject* found = 0;
+
+    csRef<psNpcMeshAttach> attacher(CS::GetChildObject<psNpcMeshAttach>(object));
+    if ( attacher )
+    {
+        found = attacher->GetObject();
+    }
+
+    return found;
+}
+
+csArray<gemNPCObject*> psNPCClient::FindNearbyEntities( iSector* sector, const csVector3& pos, float radius, bool doInvisible )
+{
+    csArray<gemNPCObject*> list;
+    
+    csRef<iMeshWrapperIterator> obj_it =  engine->GetNearbyMeshes( sector, pos, radius );
+    while (obj_it->HasNext())
+    {
+        iMeshWrapper* m = obj_it->Next();
+        if (!doInvisible)
+        {
+            bool invisible = m->GetFlags().Check(CS_ENTITY_INVISIBLE);
+            if (invisible)
+                continue;
+        }
+
+        gemNPCObject* object = FindAttachedObject(m->QueryObject());
+
+        if (object)
+        {
+            list.Push( object );
+        }
+    }
+
+    return list;
+}
 
 
 /*------------------------------------------------------------------*/
