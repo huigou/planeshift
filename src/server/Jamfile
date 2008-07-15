@@ -6,7 +6,7 @@ Application psserver :
 	[ Wildcard *.cpp *.h ] : console
 ;
 
-ExternalLibs psserver : CRYSTAL CEL ;
+ExternalLibs psserver : CRYSTAL ;
 LinkWith psserver : bulkobjects fparser psnet psengine psutil psrpgrules ;
 CompileGroups psserver : server ;
 
@@ -16,7 +16,7 @@ if $(HAVE_STATIC_PLUGINS) = "yes"
 SubVariant static ;
 Application psserver_static : [ Wildcard *.cpp *.h ] $(extrafiles) : console independent noinstall nohelp ;
 CFlags psserver_static : [ FDefines CS_STATIC_LINKED ] ;
-LFlags psserver_static : -lcrystalspace_staticplugins-1.3 -lcel_staticplugins-1.3 ;
+LFlags psserver_static : -lcrystalspace_staticplugins-1.3 ;
 MsvcDefine psserver_static : CS_STATIC_LINKED ;
 LinkWith psserver_static : dbmysqlstatic bulkobjects fparser psnet psengine psutil psrpgrules ;
 
@@ -56,18 +56,7 @@ LinkStaticPlugins psserver_static :
 :
 ;
 
-LinkStaticPlugins psserver_static :
-  pfdefcam
-  pfengine
-  pfinput
-  pfmesh
-  pfmove
-  stdphyslayer
-:
-: CEL
-; 
-
-ExternalLibs psserver_static : CRYSTAL CEL ;
+ExternalLibs psserver_static : CRYSTAL ;
 CompileGroups psserver_static : server_static ;
 
 
