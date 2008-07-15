@@ -105,28 +105,6 @@ MsvcGenConfig CRYSTAL.LIBDIRS.DEBUG :
   [ ConcatDirs "$(hash)(CRYSTAL)" libs csutil win32 libs ] ;
 MsvcGenConfig CRYSTAL.STATICDEPS : $(TOP)/mk/jam/crystalspace_staticplugins_msvc.jam ;
 
-# Cel
-
-MsvcGenConfig CEL.AVAILABLE : yes ;
-MsvcGenConfig CEL.DEFINES : USE_CEL ;
-MsvcGenConfig CEL.CFLAGS ;
-MsvcGenConfig CEL.LFLAGS ;
-MsvcGenConfig CEL.LIBS : "libceltool.lib" ;
-MsvcGenConfig CEL.LIBS.DEBUG : "libceltool_d.lib" ;
-MsvcGenConfig CEL.INCDIRS :
-  [ ConcatDirs .. .. .. cel include ]
-  [ ConcatDirs "$(hash)(CEL)" include ]
-  [ ConcatDirs "$(hash)(CEL)" include cel ] ;
-MsvcGenConfig CEL.LIBDIRS :
-  [ ConcatDirs .. .. .. cel out release$(MSVC_VERSION) libs ]
-  [ ConcatDirs "$(hash)(CEL)" out release$(MSVC_VERSION) libs ]
-  [ ConcatDirs "$(hash)(CEL)" libs ] ;
-MsvcGenConfig CEL.LIBDIRS.DEBUG :
-  [ ConcatDirs .. .. .. cel out debug$(MSVC_VERSION) libs ]
-  [ ConcatDirs "$(hash)(CEL)" out debug$(MSVC_VERSION) libs ]
-  [ ConcatDirs "$(hash)(CEL)" libs ] ;
-MsvcGenConfig CEL.STATICDEPS : $(TOP)/mk/jam/cel_staticplugins_msvc.jam ;
-
 # Generate project files for static targets.
 
 MsvcGenConfig HAVE_STATIC_PLUGINS : yes ;

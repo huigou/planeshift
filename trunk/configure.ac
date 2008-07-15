@@ -377,51 +377,6 @@ AS_IF([test $with_cs != no],
   AC_MSG_RESULT([$cc_have_crystal_static])],
   [cc_have_crystal_static=no])
 
-
-#----------------------------------------------------------------------------
-# Check for Crystal Entity Layer (CEL)
-#----------------------------------------------------------------------------
-m4_define([cel_desired], [yes])
-CS_EMIT_BUILD_PROPERTY([CEL.DESIRED], [cel_desired])
-m4_if(cel_desired, [yes],
-[AC_ARG_WITH([cel], [AC_HELP_STRING([--without-cel],
-  [do not look for an installed Crystal Entity Layer SDK; this option is useful
-  only if you need to perform routine maintenance tasks, such as generating
-  project files or converting documentation, without having the CEL SDK
-  installed])])
-AS_IF([test -z "$with_cel"], [with_cel=yes])
-
-AS_IF([test $with_cel != no],
-[CS_PATH_CEL_EMIT([1.3], [],
-  [AC_MSG_ERROR([
-*** CEL could not be found or was unusable. The latest version is always
-*** available from http://cel.crystalspace3d.org/
-])])
-AC_DEFINE([USE_CEL], [], [Define to enable CEL.])
-AC_DEFINE_UNQUOTED([CEL_PLUGIN_DIR], ["$CEL_PLUGIN_DIR"],
-  [Define with path to CEL plugins.])
-])])
-
-#----------------------------------------------------------------------------
-# Check if the CEL static plugins library was built.
-#----------------------------------------------------------------------------
-AS_IF([test $with_cel != no],
-  [AC_MSG_CHECKING([for CEL static plugins])
-  cc_have_cel_static=no
-  for m in $CEL_AVAILABLE_LIBS; do
-      AS_IF([test cel_staticplugins = "$m"],
-	  [cc_have_cel_static=yes
-	  break])
-  done
-  AC_MSG_RESULT([$cc_have_cel_static])],
-  [cc_have_cel_static=no])
-
-AS_IF([(test $cc_have_cel_static != no || test $with_cel = no) && test $cc_have_crystal_static != no],
-  [CS_EMIT_BUILD_PROPERTY([HAVE_STATIC_PLUGINS], [yes])])
-
-
-
-
 #------------------------------------------------------------------------------
 # Check for Cal3D.
 #------------------------------------------------------------------------------
