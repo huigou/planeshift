@@ -43,7 +43,7 @@
 
         <widget name="ShowCombat" factory="pawsButton" style="tabbuttonskills" id="1001" >
             <frame x="140" y="65" width="30" />
-            <label text="Comat" />
+            <label text="Combat" />
             <attachpoints>
                 <attach point="PROPORTIONAL_RIGHT" />
                 <attach point="PROPORTIONAL_LEFT" />
