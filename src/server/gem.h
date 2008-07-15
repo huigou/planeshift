@@ -110,21 +110,37 @@ private:
 class GEMSupervisor : public MessageManager, public Singleton<GEMSupervisor>
 {
 public:
-    iObjectRegistry*        object_reg;
-    psDatabase             *database;
-    NPCManager             *npcmanager;
+    iObjectRegistry*        object_reg;                     ///< The Crystal Space Object Registry.
+    psDatabase             *database;                       ///< The main PlaneShift database object.
+    NPCManager             *npcmanager;                     ///< NPC controller.
 
+    /** Create a new singleton of the GEM Supervisor object.
+      * @param objreg The Crystal Space Object Registry.
+      * @param db The main PlaneShift database.
+      */
     GEMSupervisor(iObjectRegistry *objreg, psDatabase *db);
 
+    /** Destroy this singleton.
+     * This will only be ever called on a server shutdown.
+     */
     virtual ~GEMSupervisor();
 
+    /** Get a hash of all the current entities on the server.
+     * @return a csHash of all the gemObjects.
+     */
     csHash<gemObject *>& GetAllGEMS() { return entities_by_ps_id; }
 
     // Search functions
+    /** Find an entity ID for an item.
+     * @param item The psItem that we want to find the entity ID for.
+     *
+     * @return the PS_ID of that item if it was found. 0 if no id could be found.
+     */
     PS_ID      FindItemID(psItem *item);
     gemObject *FindObject(PS_ID cel_id);
     gemObject *FindObject(const csString& name);
     
+
     gemActor  *FindPlayerEntity(int player_id);
     gemNPC    *FindNPCEntity(int npc_id);
     gemItem   *FindItemEntity(int item_id);
@@ -170,6 +186,7 @@ public:
      */ 
     void AttachObject( iObject* object, gemObject* gobject);
 
+
     /** Unattach a gemObject from a Crystal Space object.
       * In most cases the Crystal Space object is a meshwrapper.
       *
@@ -177,6 +194,7 @@ public:
       * @param gobject The gem object we want to unattach.
       */
     void UnattachObject( iObject* object, gemObject* gobject); 
+
 
     /** See if there is a gemObject attached to a given Crystal Space object.
       * 
@@ -197,16 +215,22 @@ public:
       */
     csArray<gemObject*> FindNearbyEntities (iSector* sector, const csVector3& pos, float radius, bool doInvisible = false);
 
+
+    /** Get the next ID for an object.
+      * @return The next ID available that can be assigned to an object.
+      */
     PS_ID GetNextID();    
 
-protected:
-    csHash<gemObject *> entities_by_ps_id;
-    int                 count_players;
 
-    PS_ID               nextEID;
+protected:
+    csHash<gemObject *> entities_by_ps_id;                  ///< A list of all the entities stored by ID.
+    int                 count_players;                      ///< Total Number of players
+
+    PS_ID               nextEID;                            ///< The next ID available for an object.
     
 };
 
+//-----------------------------------------------------------------------------
 
 /**
 * A gemObject is any solid, graphical object visible in PS with normal physics
@@ -348,6 +372,8 @@ protected:
         const csVector3& pos,const float rotangle,iSector* room);
 };
 
+//-----------------------------------------------------------------------------
+
 /*
 * Any PS Object with which a player may have interaction (i.e. clickable).
 */
@@ -380,6 +406,8 @@ public:
     virtual bool IsSecutityLocked() { return false; }
     virtual bool IsContainer() { return false; }
 };
+
+//-----------------------------------------------------------------------------
 
 class gemItem : public gemActiveObject
 {
@@ -417,6 +445,8 @@ public:
     virtual bool GetCanTransform();
     virtual bool GetVisibility();
 };
+
+//-----------------------------------------------------------------------------
 
 /**
  * gemContainers are the public containers in the world for crafting, like
@@ -476,6 +506,8 @@ public:
     };
 };
 
+//-----------------------------------------------------------------------------
+
 class gemActionLocation : public gemActiveObject
 {
 private:
@@ -498,6 +530,8 @@ public:
     virtual void SetVisibility(bool vis) { visible = vis; };
 };
 
+//-----------------------------------------------------------------------------
+
 /*
     Struct for damage history
 */
@@ -509,6 +543,8 @@ struct DamageHistory
     int hp;
     unsigned int timestamp;
 };
+
+//-----------------------------------------------------------------------------
 
 /*
 * Any semi-autonomous object, either a player or an NPC.
@@ -786,6 +822,8 @@ public:
     void SetFiniteInventory(bool v) { GetCharacterData()->Inventory().SetDoRestrictions(v); }
 };
 
+//-----------------------------------------------------------------------------
+
 class gemNPC : public gemActor
 {
 protected:
@@ -883,6 +921,8 @@ public:
     virtual void SetPosition(const csVector3& pos, float angle, iSector* sector);
 };
 
+//-----------------------------------------------------------------------------
+
 class gemPet : public gemNPC
 {
 public:
@@ -904,6 +944,8 @@ public:
 private:
     csString persistanceLevel;
 };
+
+//-----------------------------------------------------------------------------
 
 /**
  * This class automatically implements timed events which depend
@@ -952,6 +994,8 @@ public:
         }
     }
 };
+
+//-----------------------------------------------------------------------------
 
 class psResurrectEvent : public psGameEvent // psGEMEvent
 {
