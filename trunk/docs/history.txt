@@ -3,6 +3,8 @@
   an extra vertical scroll if the horizontal scroll bar is showing
 - FS#1278 - Tab autocompletion doesn't always find name.  
   Added patch from peeg
+- Added some checks to make sure a player cannot buy from a merchant and be 
+  in an exchange at the same time. 
 
 *** 2008-07-15 by Steven Patrick
 - Minor xml fixes, patch by Caarrie.

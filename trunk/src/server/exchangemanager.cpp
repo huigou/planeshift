@@ -1354,6 +1354,18 @@ void ExchangeManager::StartExchange( Client* client, bool withPlayer )
         return;
     }
 
+    // Check to make sure that the client or target are not busy with a merchant first. 
+    if ( target->GetCharacterData()->GetTradingStatus() != psCharacter::NOT_TRADING )
+    {
+        psserver->SendSystemError(client->GetClientNum(), "%s is busy at the moment", target->GetName());
+        return;
+    }
+    if ( client->GetCharacterData()->GetTradingStatus() != psCharacter::NOT_TRADING )
+    {
+        psserver->SendSystemError(client->GetClientNum(), "You are busy with the merchant", target->GetName());
+        return;
+    }
+
     // if the command was "/give":
     if (!withPlayer)
     {
