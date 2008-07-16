@@ -821,6 +821,12 @@ void psServerCharManager::BeginTrading(Client * client, gemObject * target, cons
         return;
     }
 
+    if ( client->GetExchangeID() )
+    {
+        psserver->SendSystemError(client->GetClientNum(), "You are already busy with another trade" );
+        return;
+    }
+
     merchant = target->GetCharacterData();
     if(!merchant)
     {
