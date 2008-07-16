@@ -1,3 +1,6 @@
+*** 2008-07-16 by Steven Patrick
+- Updated MinGW section of compiling.html.
+
 *** 2008-07-15 by Andrew Craig
 - Fixed:  FS#795 - cannot select last item in scrolling list.  Fixed by adding
   an extra vertical scroll if the horizontal scroll bar is showing

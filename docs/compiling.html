@@ -18,8 +18,8 @@
     var csWinLibsVersionStab = "1.3_003"; // cs win32 libs version.
     var csWinLibsVersion = "1.3_004"; // cs win32 libs version.
     //Update date and author, to be changed everytime and updates occurred
-    var UpdateDate = "24 June 2008"; //Date when the update occurred
-    var UpdateAuthor = "Caarrie"; //Author of the update
+    var UpdateDate = "16 July 2008"; //Date when the update occurred
+    var UpdateAuthor = "Aresilek"; //Author of the update
 -->
 </script>
 
@@ -426,36 +426,38 @@ function Initialize()
            First, we'll get MinGW and a few necessary dependencies.<br>
            Note: These are the minimum required packages for the MinGW build.<br>
            Go here: <a href="http://prdownloads.sourceforge.net/mingw/">http://prdownloads.sourceforge.net/mingw/</a> and fetch:<br><br>
-           MinGW [bin] MinGW-4.1.0.exe<br>
+           MinGW [bin] MinGW-5.1.4.exe<br>
            MSYS [bin] MSYS-1.0.10.exe<br>
            MSYS DTK [bin] msysDTK-1.0.1.exe<br>
            GDB [bin] gdb-5.2.1-1.exe (Optional)<br>
            MSYS Autoconf [bin] msys-autoconf-2.59.tar.bz2<br>
            MSYS Automake [bin] msys-automake-1.8.2.tar.bz2<br>
-           BinUtils [bin] binutils-2.16.91-20060119-1.tar.gz<br><br>
+           BinUtils [bin] binutils-2.17.50-20060824-1.tar.gz<br><br>
 
-           Run the exe	files in the order they were downloaded to install the compiler and unzip the conf/make utilities in c:\msys\1.0\. <br>
-           Then unzip the BinUtils to the c:\mingw directory.<br>
+           Run the exe	files in the order they were downloaded to install the compiler. Select 'Full' type for the MinGW installation.<br>
+           The installation program should also add an icon for MSYS to your start menu. <br>
+           Click the "MSYS" icon and it should open up a shell window. Type "exit" to close the shell window again.<br><br>
+
+           Unzip the conf/make utilities in c:\msys\1.0\, then unzip the BinUtils to the c:\mingw directory as follows:<br>
 Unzipping the tar.bz2 archives needs to be done through the MSYS
 command-line by changing directory with the cd command to where you
 downloaded the files. Then, run the following commands:
 <div class="commandBox">tar -xjf msys-autoconf-2.59.tar.bz2 -C /c/msys/1.0<br>
 tar -xjf msys-automake-1.8.2.tar.bz2 -C /c/msys/1.0<br>
-tar -xzf binutils-2.16.91-20060119-1.tar.gz -C /c/MinGW</div><br>
+tar -xzf binutils-2.17.50-20060824-1.tar.gz -C /c/MinGW</div><br>
            This allows MSYS to setup the MinGW paths correctly.<br>
-           The installation program should also add an icon for MSYS to your start menu. <br>
-           Click the "MSYS" icon and it should open up a shell window. Type "exit" to close the shell window again.<br><br>
 
-           Download the following dependencies from the same site, but do not install these yet. Their install instructions are included.<br>
+           Download the following dependencies from the same site, but do not install these yet. Their install instructions are included below.<br>
            From explorer, create and place these dependencies into C:\msys\1.0\src. Also, create the C:\msys\1.0\local directory.<br><br>
 
            freetype-2.1.9-mingwPORT.tar.bz2 <br>
            jpeg-6b-mingwPORT.tar.bz2<br>
-           zlib-1.2.3-mingwPORT.tar.bz2<br>
+           zlib-1.2.3-mingwPORT-1.tar.bz2<br>
            wget-1.9.1-mingwPORT.tar.bz2<br>
        </p>
         The following dependencies use a scripted system to download and install them, built into their files.<br>
-        For the unanswered questions below, just press enter to accept the default (in parentheses).<br><br>
+        For the unanswered questions below, just press enter to accept the default (in parentheses).<br>
+        The follow commands are to be run in the MSYS shell.<br><br>
         <b>Installing wget</b>
         <p> The input listed by the mingwPORT.sh script assumes that there is a file
 called wget-1.9.1.tar.gz in /usr/src, but the file you do have is
@@ -473,6 +475,7 @@ continue as indicated.<br></p>
 
 
         <p><div class="commandBox">
+            $ cd /usr/src<br>
             $ tar -jxvf wget-1.9.1-mingwPORT.tar.bz2<br>
             $ cd wget-1.9.1/mingwPORT<br>
             $ ./mingwPORT.sh<br>
@@ -480,14 +483,15 @@ continue as indicated.<br></p>
             Unarchive file? (Yes)<br>
             Archive file type? (tar.gz) <br>
             Archive file? (wget-1.9.1.tar.gz) <br>
-            Archive file path? (/tmp) /c/distro<br>
+            Archive file path? (/tmp) /usr/src<br>
             Source path? (/usr/src/wget-1.9.1) <br>
             Installation directory? (/mingw) <br>
             CFLAGS (-O3 -s -mms-bitfields -march=i686) <br>
          </div></p>
          <b>Installing zlib</b>
          <p><div class="commandBox">
-             $ tar -jxvf zlib-1.2.3-mingwPORT.tar.bz2 <br>
+             $ cd /usr/src<br>
+             $ tar -jxvf zlib-1.2.3-mingwPORT-1.tar.bz2 <br>
              $ cd zlib-1.2.3/mingwPORT<br>
              $ ./mingwPORT.sh<br>
              Download file? (Yes) <br>
@@ -508,6 +512,7 @@ continue as indicated.<br></p>
          </div></p>
          <b>Installing JPEG Support</b>
          <p><div class="commandBox">
+         $ cd /usr/src<br>
          $ tar -jxvf jpeg-6b-mingwPORT.tar.bz2 <br>
          $ cd jpeg-6b/mingwPORT<br>
          $ ./mingwPORT.sh<br>
@@ -529,18 +534,20 @@ continue as indicated.<br></p>
          </div></p>
          <b>Installing LibPNG Support</b><br>
          Go to <a href="http://sourceforge.net/projects/libpng/">LibPNG's homepage</a> to get the latest source distribution.<br>
-         We'll be using libpng-1.2.12.tar.bz2<br>
+         We'll be using libpng-1.2.29.tar.bz2<br>
          Do not use the mingwPORT file. It is very outdated and no longer works.<br>
          Put this file in the /usr/src directory as well.
          <p><div class="commandBox">
-         $ tar -jxvf libpng-1.2.12.tar.bz2 <br>
-         $ cd libpng-1.2.12<br>
+         $ cd /usr/src<br>
+         $ tar -jxvf libpng-1.2.29.tar.bz2 <br>
+         $ cd libpng-1.2.29<br>
          $ ./configure<br>
          $ make<br>
          $ make install<br>
          </div></p>
          <b>Installing FreeType2 Support</b>
          <p><div class="commandBox">
+         $ cd /usr/src<br>
          $ tar -jxvf freetype-2.1.9-mingwPORT.tar.bz2<br>
          $ cd freetype-2.1.9/mingwPORT<br>
          $ ./mingwPORT.sh<br>
