@@ -479,6 +479,8 @@ bool psEngine::Initialize (int level)
         if ( ! paws->LoadWidget("data/gui/quitinfo.xml") )
             return false;
 
+        LoadPawsWidget( "Yes / No dialog",         "data/gui/yesno.xml" );
+ 
         //Load confirmation information for duels
         if (!LoadDuelConfirm())
             return false;
@@ -1279,8 +1281,7 @@ void psEngine::LoadGame()
         LoadPawsWidget( "Container description window",    "data/gui/containerdesc.xml" );
         LoadPawsWidget( "Book Reading window", "data/gui/readbook.xml" );
         LoadPawsWidget( "Interact menu",           "data/gui/interact.xml" );
-        LoadPawsWidget( "Yes / No dialog",         "data/gui/yesno.xml" );
-        LoadPawsWidget( "Group status window",     "data/gui/group.xml" );
+       LoadPawsWidget( "Group status window",     "data/gui/group.xml" );
         LoadPawsWidget( "Exchange window",         "data/gui/exchange.xml" );
         LoadPawsWidget( "Glyph window",            "data/gui/glyph.xml" );
         LoadPawsWidget( "Merchant window",         "data/gui/merchant.xml" );
