@@ -116,6 +116,7 @@ public:
     char            GetOp()             { if (oper.Length()) return oper.GetAt(0); else return 0; }
 };
 
+//-----------------------------------------------------------------------------
 
 /**
 * This embodies any perception an NPC might have,
@@ -155,6 +156,8 @@ public:
     virtual csString ToString();
 };
 
+//-----------------------------------------------------------------------------
+
 class RangePerception : public Perception
 {
 protected:
@@ -170,6 +173,8 @@ public:
     virtual csString ToString();
 };
 
+//-----------------------------------------------------------------------------
+
 class TimePerception : public Perception
 {
 protected:
@@ -184,6 +189,8 @@ public:
     virtual Perception *MakeCopy();
     virtual csString ToString();
 };
+
+//-----------------------------------------------------------------------------
 
 class FactionPerception : public Perception
 {
@@ -203,6 +210,8 @@ public:
     virtual void ExecutePerception(NPC *npc,float weight);
 };
 
+//-----------------------------------------------------------------------------
+
 /**
  * Whenever an NPC is close to an item, this perception is
  * passed to the npc.
@@ -221,6 +230,8 @@ public:
     virtual bool GetLocation(csVector3& pos, iSector*& sector);
     virtual gemNPCObject *GetTarget() { return item; }
 };
+
+//-----------------------------------------------------------------------------
 
 /**
  * Whenever an NPC is close to an location, this perception is
@@ -242,6 +253,7 @@ public:
     virtual float GetRadius() const;
 };
 
+//-----------------------------------------------------------------------------
 
 /**
  * Whenever an NPC is attacked by a player, this perception is
@@ -264,6 +276,8 @@ public:
     virtual void ExecutePerception(NPC *npc,float weight);
     virtual gemNPCObject *GetTarget() { return attacker; }
 };
+
+//-----------------------------------------------------------------------------
 
 /**
  * Whenever an NPC is attacked by a grouop, this perception is
@@ -288,6 +302,8 @@ public:
     virtual void ExecutePerception(NPC *npc,float weight);
 };
 
+//-----------------------------------------------------------------------------
+
 /**
  * Whenever an NPC is hit for damage by a melee hit or a spell,
  * this perception is passed to the damaged npc.  Right now,
@@ -306,6 +322,8 @@ public:
     virtual Perception *MakeCopy();
     virtual void ExecutePerception(NPC *npc,float weight);
 };
+
+//-----------------------------------------------------------------------------
 
 /**
  * Whenever a player casts a spell on himself, another player,
@@ -331,6 +349,8 @@ public:
     virtual void ExecutePerception(NPC *npc,float weight);
 };
 
+//-----------------------------------------------------------------------------
+
 /**
  * The network layer is notified of any deaths from players
  * or NPCs on the server.  This perception is passed to all
@@ -349,6 +369,8 @@ public:
     virtual Perception *MakeCopy();
     virtual void ExecutePerception(NPC *npc,float weight);
 };
+
+//-----------------------------------------------------------------------------
 
 /**
  * This perception is used when a item is added or removed from inventory.
@@ -374,6 +396,7 @@ public:
     
 };
 
+//-----------------------------------------------------------------------------
 
 /// NPC Pet Perceptions ============================================
 /**
@@ -399,6 +422,8 @@ public:
     static csString BuildName(psPETCommandMessage::PetCommand_t command);
 };
 
+//-----------------------------------------------------------------------------
+
 /**
  * Whenever an NPCPet is told by it's owner to stay,
  * this perception is passed to the NPCPet.  Right now,
@@ -418,6 +443,9 @@ public:
     virtual Perception *MakeCopy();
     virtual void ExecutePerception( NPC *pet, float weight );
 };
+
+//-----------------------------------------------------------------------------
+
 /// NPC Pet Perceptions ============================================
 
 /**
