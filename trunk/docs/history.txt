@@ -1,3 +1,6 @@
+*** 2008-07-17 by Mike Gist
+- Bumped CS revision to 30349. Removed CEL from the compiling guide.
+
 *** 2008-07-16 by Andrew Craig
 - Fix for FS#1865 - Improve the delete char message. 
   Now does an initial prompt window that gives details about what will happen.
