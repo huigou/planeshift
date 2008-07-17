@@ -51,6 +51,8 @@
 #define BACK_BUTTON             200
 #define QUIT_BUTTON             250
 
+#define YES_DELETE_CHARACTER    300
+#define NO_DELETE_CHARACTER     302
 
 pawsCharacterPickerWindow::pawsCharacterPickerWindow()
 {
@@ -212,6 +214,27 @@ bool pawsCharacterPickerWindow::OnButtonPressed( int mouseButton, int keyModifer
 
     switch ( widget->GetID() )
     {
+        case YES_DELETE_CHARACTER:
+        {
+            PawsManager::GetSingleton().SetModalWidget(NULL);
+            widget->GetParent()->Hide();
+
+            pawsStringPromptWindow::Create("Please enter your account password to confirm:", csString(""),false, 220, 20, this, "DeletionConfirm", 0, true); 
+            pawsEditTextBox* passbox =  dynamic_cast<pawsEditTextBox*>
+                                        (PawsManager::GetSingleton().FindWidget("stringPromptEntry"));
+
+            if (passbox)
+            {
+               passbox->SetPassword(true);
+            }
+            return true;
+        }
+
+        case NO_DELETE_CHARACTER:
+        {
+            return true;
+        }
+
         case CHARACTER_DELETE_BUTTON:
         {
             csString name;
@@ -229,16 +252,10 @@ bool pawsCharacterPickerWindow::OnButtonPressed( int mouseButton, int keyModifer
             // Catch invalid selection.
             if(charName == "New Character")
                 return false;
-            // Selection is valid.
-            pawsStringPromptWindow::Create("Please enter your account password to confirm:", csString(""),
-            false, 220, 20, this, "DeletionConfirm", 0, true); 
-            pawsEditTextBox* passbox =  dynamic_cast<pawsEditTextBox*>
-                                        (PawsManager::GetSingleton().FindWidget("stringPromptEntry"));
-            if (passbox)
-            {
-                passbox->SetPassword(true);
-            }
-            
+
+            csString msg("Warning! this will PERMANENTLY DELETE your character.  Are you sure you want to continue?");
+            pawsYesNoBox::Create(this, msg, YES_DELETE_CHARACTER, NO_DELETE_CHARACTER);
+
             return true;
         }
 

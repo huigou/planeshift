@@ -96,9 +96,9 @@ bool pawsYesNoBox::OnButtonPressed( int mouseButton, int keyModifier, pawsWidget
     // The parent is responisble for handling the button presses.
     if ( notify )
     {
+        PawsManager::GetSingleton().SetModalWidget( 0 );
         bool result = notify->OnButtonPressed( mouseButton, keyModifier, widget );
         SetNotify(0);
-        PawsManager::GetSingleton().SetModalWidget( 0 );
         Hide();
         return result;
     }
