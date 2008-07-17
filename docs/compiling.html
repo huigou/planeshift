@@ -785,7 +785,7 @@ You need to install Ftjam which you can get from <a href="http://sourceforge.net
 Since SVN is not always installed you need to make sure it is installed you can get it from <a href="http://metissian.com/projects/macosx/subversion/">here.</a> <br />
 
 You also need to install Nvidia's Cg Toolkit from <a href="http://www.nvidia.com/object/cg_toolkit.html">
-here.</a>
+here.</a></div>
 <p>
     <h3>Server Databases</h3>
     <i>Optional section</i>
@@ -823,19 +823,22 @@ here.</a>
                 <div class="MINGW">
                     <p>Also, we need to create MinGW compatible libraries from the standard
                     Microsoft compatible libraries that ship with MySQL. Read the
-                    <a href="http://www.mingw.org/mingwfaq.shtml">FAQ for mingw32</a>
+                    <a href="http://www.mingw.org/MinGWiki/index.php/MSVC-MinGW-DLL">FAQ for mingw32</a>
                     under the section "How can an MSVC program call a MinGW DLL, and vice versa?"
                     You will find reimp here: <a href="http://wyw.dcweb.cn/reimp_new.zip">http://wyw.dcweb.cn/reimp_new.zip</a><br>
-                    Copy the reimp.exe file to your /c/mingw/bin directory.<br>
-                    Open an msys prompt, cd to the /c/mysql/lib/debug directory and do the following:</p>
+                    You will have to compile it as an exe is not provided anymore, create and extract the contents of the zip into C:\msys\1.0\src\reimp, open an msys prompt then do the following:<br>
                     <p><div class="commandBox">
+                        cd /usr/src/reimp/src<br>
+                        make<br>
+                        cp reimp.exe /c/mingw/bin<br>
+                        cd /c/mysql/lib/debug<br>
                         reimp -d libmysql.lib<br>
                         dlltool -k -d LIBMYSQL.def -l libmysqlclient.a<br>
                         rm LIBMYSQL.def<br>
                         mv libmysqlclient.a ..
                     </div></p>
                 </div>
-        </div></div>
+        </div>
 
         <b>WordNet:</b><br>
         You will also need the WordNet dictionaries. Download and install the <a href="http://wordnet.princeton.edu/obtain/">WordNet binaries</a>, version 2.1.
@@ -1422,6 +1425,15 @@ Change your working directory to PS's,
            </div>
 </div>
 </p>
+        If you're building the server instead do the following as you also need to configure with your MySQL location:
+        <p><div class="User"> <div class="commandBox">
+            ./autogen.sh<br>
+            ./configure --with-mysqlclient=/c/mysql<br>
+        </div></div></p>
+        <p><div class="Developer"> <div class="commandBox">
+            ./autogen.sh<br>
+            ./configure --enable-debug --with-mysqlclient=/c/mysql<br>
+        </div></div></p>
 <p>
  Sometimes when compiling with GCC it says the list of linker flags
 for CEL is too long. Many of the flags are just duplicates and can be
@@ -1470,15 +1482,7 @@ then just copy it back to the file.<br></p>
             jam -aq client_static
            </div>
         </div></p>
-        If you're building the server, you also need to configure with your MySQL location:
-        <p><div class="User"> <div class="commandBox">
-            ./autogen.sh<br>
-            ./configure --with-mysqlclient=/c/mysql<br>
-        </div></div></p>
-        <p><div class="Developer"> <div class="commandBox">
-            ./autogen.sh<br>
-            ./configure --enable-debug --with-mysqlclient=/c/mysql<br>
-        </div></div></p>
+        If your building a server also do the following to compile it:
         <div class="Normal">
            <p><i class="command">jam -aq server</i></p>
         </div>
