@@ -129,6 +129,8 @@ public:
     
 };
 
+//-----------------------------------------------------------------------------
+
 /**
 * Moving entails a velocity vector and an animation action.
 */
@@ -157,6 +159,8 @@ public:
 
 };
 
+//-----------------------------------------------------------------------------
+
 /**
 * Moving entails a circle with radius at a velocity and an animation action.
 */
@@ -173,6 +177,8 @@ public:
 
     virtual bool Run(NPC *npc,EventManager *eventmgr,bool interrupted);
 };
+
+//-----------------------------------------------------------------------------
 
 /**
 * MovePath specifies the name of a path and an animation action.
@@ -202,6 +208,8 @@ public:
     virtual bool CompleteOperation(NPC *npc,EventManager *eventmgr);
 };
 
+//-----------------------------------------------------------------------------
+
 /**
 * Moving to a spot entails a position vector, a linear velocity,
 * and an animation action.
@@ -223,6 +231,8 @@ public:
     virtual ScriptOperation *MakeCopy();
     virtual bool CompleteOperation(NPC *npc,EventManager *eventmgr);
 };
+
+//-----------------------------------------------------------------------------
 
 /**
 * Rotating requires storing or determining the angle to 
@@ -268,6 +278,7 @@ public:
     float SeekAngle(NPC* npc, float targetYRot);           // Finds an angle which won't lead to a collision
 };
 
+//-----------------------------------------------------------------------------
 
 /**
 * Locate is a very powerful function which will find
@@ -301,6 +312,8 @@ public:
     virtual ScriptOperation *MakeCopy();
 };
 
+//-----------------------------------------------------------------------------
+
 /**
 * Navigate moves the NPC to the position and orientation
 * of the last located thing.  (See LocateOperation)
@@ -322,6 +335,8 @@ public:
     virtual ScriptOperation *MakeCopy();
     virtual bool CompleteOperation(NPC *npc,EventManager *eventmgr);
 };
+
+//-----------------------------------------------------------------------------
 
 /**
 * Chase updates periodically and turns, moving towards a certain
@@ -358,6 +373,8 @@ public:
 };
 
 class Waypoint;
+
+//-----------------------------------------------------------------------------
 
 /**
  * Wander auto-navigates randomly between a network of waypoints specified
@@ -425,6 +442,8 @@ public:
     csList<Waypoint*> WaypointListGet() { return waypoint_list; }
 };
 
+//-----------------------------------------------------------------------------
+
 /**
 * Melee will tell the npc to attack the most hated
 * entity within range.
@@ -449,6 +468,8 @@ public:
     virtual bool CompleteOperation(NPC *npc,EventManager *eventmgr);
 };
 
+//-----------------------------------------------------------------------------
+
 /**
 * Pickup will tell the npc to pickup a nearby
 * entity (or fake it).
@@ -469,6 +490,8 @@ public:
     virtual ScriptOperation *MakeCopy();
 };
 
+//-----------------------------------------------------------------------------
+
 /**
 * Equip will tell the npc to equip a item
 */
@@ -488,6 +511,8 @@ public:
     virtual ScriptOperation *MakeCopy();
 };
 
+//-----------------------------------------------------------------------------
+
 /**
 * Dequip will tell the npc to dequip a item
 */
@@ -504,6 +529,8 @@ public:
     virtual bool Load(iDocumentNode *node);
     virtual ScriptOperation *MakeCopy();
 };
+
+//-----------------------------------------------------------------------------
 
 /**
 * Talk will tell the npc to communicate to a nearby
@@ -524,6 +551,8 @@ public:
     virtual bool Load(iDocumentNode *node);
     virtual ScriptOperation *MakeCopy();
 };
+
+//-----------------------------------------------------------------------------
 
 /**
 * Sequence will control a named sequence in the world.
@@ -552,6 +581,7 @@ public:
     virtual ScriptOperation *MakeCopy();
 };
 
+//-----------------------------------------------------------------------------
 
 /**
 * Visible will make the npc visible.
@@ -567,6 +597,8 @@ public:
     virtual ScriptOperation *MakeCopy();
 };
 
+//-----------------------------------------------------------------------------
+
 /**
 * Invisible will make the npc invisible.
 */
@@ -580,6 +612,8 @@ public:
     virtual bool Load(iDocumentNode *node);
     virtual ScriptOperation *MakeCopy();
 };
+
+//-----------------------------------------------------------------------------
 
 /**
 * Reproduce will make the npc to setup a spawn point here
@@ -597,6 +631,8 @@ public:
     virtual ScriptOperation *MakeCopy();
 };
 
+//-----------------------------------------------------------------------------
+
 /**
 * Resurrect will make the npc to setup a spawn point here
 */
@@ -613,6 +649,8 @@ public:
     virtual ScriptOperation *MakeCopy();
 };
 
+//-----------------------------------------------------------------------------
+
 /**
 * Memorize will make the npc to setup a spawn point here
 */
@@ -628,6 +666,8 @@ public:
     virtual bool Load(iDocumentNode *node);
     virtual ScriptOperation *MakeCopy();
 };
+
+//-----------------------------------------------------------------------------
 
 /**
 * BeginLoop will only print BeginLoop for debug purpose.
@@ -648,6 +688,8 @@ public:
     virtual ScriptOperation *MakeCopy();
 };
 
+//-----------------------------------------------------------------------------
+
 /**
 * EndLoop will jump back to the beginning
 * of the loop.
@@ -667,6 +709,8 @@ public:
     virtual bool Load(iDocumentNode *node);
     virtual ScriptOperation *MakeCopy();
 };
+
+//-----------------------------------------------------------------------------
 
 /**
 * Wait will simply set the mesh animation to
@@ -693,6 +737,8 @@ public:
     virtual ScriptOperation *MakeCopy();
 };
 
+//-----------------------------------------------------------------------------
+
 /**
 * Drop will make the NPC drop whatever he is
 * holding.
@@ -710,6 +756,8 @@ public:
     virtual bool Load(iDocumentNode *node);
     virtual ScriptOperation *MakeCopy();
 };
+
+//-----------------------------------------------------------------------------
 
 /**
 * Transfer will transfer a item from the NPC to a target. The
@@ -731,6 +779,8 @@ public:
     virtual ScriptOperation *MakeCopy();
 };
 
+//-----------------------------------------------------------------------------
+
 /**
 * Dig will make the NPC dig for a resource
 */
@@ -747,6 +797,8 @@ public:
     virtual bool Load(iDocumentNode *node);
     virtual ScriptOperation *MakeCopy();
 };
+
+//-----------------------------------------------------------------------------
 
 /**
 * Debug will turn on and off debug for the npc. Used for debuging
@@ -766,6 +818,7 @@ public:
     virtual ScriptOperation *MakeCopy();
 };
 
+//-----------------------------------------------------------------------------
 
 /**
 * Watch operation will tell if the targt goes out of range.
