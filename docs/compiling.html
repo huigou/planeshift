@@ -7,19 +7,17 @@
 <script type="text/javascript">
 <!--
     // Source versions are listed here and automatically updated in the body.
-    // Standard dates (CSrev, CELrev) are the ones that are compatible with Laanx.
-    // An additional set of CS/CEL revisions (CSrev_HEAD, CELrev_HEAD) may be specified for the latest version of PS.
-    var CSrev = "30039";  // CS_SOURCE_REV
-    var CELrev = "3452";  // CEL_SOURCE_REV
+    // Standard revisions (CSrev) are the ones that are compatible with Laanx.
+    // An additional CS revision (CSrev_HEAD) may be specified for the latest version of PS.
+    var CSrev = "30349";  // CS_SOURCE_REV
     var CAL3Drev = "493"; // CAL3D_SOURCE_REV
-    var CSrev_HEAD = "30039";  // CS_SOURCE_REV_HEAD
-    var CELrev_HEAD = "3452";  // CEL_SOURCE_REV_HEAD
+    var CSrev_HEAD = "30349";  // CS_SOURCE_REV_HEAD
     var CAL3Drev_HEAD = "493"; // CAL3D_SOURCE_REV_HEAD
-    var csWinLibsVersionStab = "1.3_003"; // cs win32 libs version.
+    var csWinLibsVersionStab = "1.3_004"; // cs win32 libs version.
     var csWinLibsVersion = "1.3_004"; // cs win32 libs version.
     //Update date and author, to be changed everytime and updates occurred
-    var UpdateDate = "16 July 2008"; //Date when the update occurred
-    var UpdateAuthor = "Aresilek"; //Author of the update
+    var UpdateDate = "17 July 2008"; //Date when the update occurred
+    var UpdateAuthor = "Mike Gist"; //Author of the update
 -->
 </script>
 
@@ -32,9 +30,9 @@ How to edit this guide:
     <p><i class="command">text</i></p>  or  <p><div class="commandBox">text<br>text</div></p>
     
     Source dates/revisions compatible with Laanx should be specified in the body as:
-    PS_SOURCE_DATE or CS_SOURCE_REV or CEL_SOURCE_REV
-    The CS/CEL SVN revisions required for latest PS are specified by:
-    CS_SOURCE_REV_HEAD and CEL_SOURCE_REV_HEAD
+    PS_SOURCE_DATE or CS_SOURCE_REV
+    The CS SVN revisions required for latest PS are specified by:
+    CS_SOURCE_REV_HEAD
     Update and author date should be specified instead as:
     UPDATE_DATE and UPDATE_AUTHOR
     
@@ -222,17 +220,15 @@ function Initialize()
     document.body.innerHTML = document.body.innerHTML.
                               replace(/CAL3D_SOURCE_REV_HEAD/g, CAL3Drev_HEAD).
                               replace(/CS_SOURCE_REV_HEAD/g, CSrev_HEAD).
-                              replace(/CEL_SOURCE_REV_HEAD/g, CELrev_HEAD).
                               replace(/CAL3D_SOURCE_REV/g, CAL3Drev).
                               replace(/CS_SOURCE_REV/g, CSrev).
-                              replace(/CEL_SOURCE_REV/g, CELrev).
 					replace(/UPDATE_DATE/g, UpdateDate).
                               replace(/LIBS_VER_STAB/g, csWinLibsVersionStab).
                               replace(/LIBS_VER/g, csWinLibsVersion).
 			            replace(/UPDATE_AUTHOR/g, UpdateAuthor);
 
     // Hide the second CS date if we don't need it
-    if (CSrev_HEAD == CSrev && CELrev_HEAD == CELrev)
+    if (CSrev_HEAD == CSrev)
         document.getElementById("forked").style.display = "none";
 }
 
@@ -353,7 +349,7 @@ function Initialize()
 <p>
     <h3>Source Dates:</h3>
     <i>Make sure you get the correct dates required for the version of PS you are building.<br>
-    Note that different versions of PS require different CS/CEL revisions, and PS revisions<br>
+    Note that different versions of PS require different CS and PS revisions.<br>
     after those listed here may not be compatible with the public server.</i>
 
     <div class="User">
@@ -361,7 +357,6 @@ function Initialize()
         Currently compatible with Laanx:<br>
         <b>CAL3D SVN revision:</b> CAL3D_SOURCE_REV <br>
         <b>CS 1.4 SVN revision:</b> CS_SOURCE_REV <br>
-        <b>CEL 1.4 SVN revision:</b> CEL_SOURCE_REV <br>
     </p>
     </div>
     <div class="Developer">
@@ -369,7 +364,6 @@ function Initialize()
         Currently compatible with trunk of PS:<br>
         <b>CAL3D SVN revision:</b> CAL3D_SOURCE_REV_HEAD <br>
         <b>CS SVN revision:</b> CS_SOURCE_REV_HEAD <br>
-        <b>CEL SVN revision:</b> CEL_SOURCE_REV_HEAD <br>
     </p>
     </div>
 </p>
@@ -595,15 +589,11 @@ continue as indicated.<br></p>
 
     <p><i>Variable Name</i>: CRYSTAL (all caps)<br>
     <i>Variable Value</i>: C:\development\cs</p>
-    <p><i>Variable Name</i>: CEL (all caps)<br>
-    <i>Variable Value</i>: C:\development\cel</p>
 
     <div class="MINGW">
         <p>Before compiling each time in MinGW, you will also need to enter at the MSYS prompt:</p>
         <p><div class="commandBox">
-            export CEL=/c/development/cel<br>
             export CRYSTAL=/c/development/cs<br>
-            export CSCONFPATH=/c/development/cel
         </div></p>
     </div>
 </div>
@@ -613,14 +603,14 @@ continue as indicated.<br></p>
     <p>You will need a tool called Jam. Jam is a replacement for make. It's a bit easier to maintain and create
     custom builds. If you do not already have Jam, you can find it at <a href="ftp://ftp.perforce.com/pub/jam/">ftp://ftp.perforce.com/pub/jam/</a> - install it system wide. You can also use your distro's package manager to install it.</p>
     <h3>SVN</h3>
-    <p>CS, CEL and PlaneShift use SVN for their source repositories, so you'll need that too.<br>
+    <p>CS and PlaneShift use SVN for their source repositories, so you'll need that too.<br>
        You can find the software at: <a href="http://subversion.tigris.org/">http://subversion.tigris.org/</a><br>
        A GUI is available at: <a href="http://esvn.umputun.com/">http://esvn.umputun.com/</a> You can also use your distro's package manger to install it.</p>
 </div>
 
 <div class="Windows">
     <h3>SVN client</h3>
-    <p>PS, CS and CEL use SVN for their source repositories, so you will need an SVN client.<br>
+    <p>PS and CS use SVN for their source repositories, so you will need an SVN client.<br>
        The SVN client for Windows is <a href="http://tortoisesvn.tigris.org/">TortoiseSVN</a>.</p>
 </div>
 <div class="Linux-Gentoo">
@@ -871,15 +861,6 @@ here.</a></div>
     <p><i class="command">/home/user/development$ svn co -r CS_SOURCE_REV_HEAD https://crystal.svn.sourceforge.net/svnroot/crystal/CS/branches/release/V1.4 cs</i></p>
     </div>
 
-    <h3>Crystal Entity Layer (CEL)</h3>
-    <p>CEL is a layer on top of Crystal Space that is used for entity and behavior control.</p>
-    <div class="User">
-    <p><i class="command">/home/user/development$ svn co -r CEL_SOURCE_REV https://cel.svn.sourceforge.net/svnroot/cel/cel/branches/release/V1.4 cel</i></p>
-    </div>
-    <div class="Developer">
-    <p><i class="command">/home/user/development$ svn co -r CEL_SOURCE_REV_HEAD https://cel.svn.sourceforge.net/svnroot/cel/cel/branches/release/V1.4 cel</i></p>
-    </div>
-
     <h3>PlaneShift</h3>
     <p>Lastly, download our source:</p>
     <div class="User">
@@ -892,13 +873,12 @@ here.</a></div>
 
 
     <h3>Updating Sources</h3>
-    <p>From time to time, newer PlaneShift revisions will require you to upgrade your cal3d, CS, and CEL repositories to a newer revision as well.  To update your supporting libraries, always be certain that you use the "-r" option keep from updating to the latest revision:</p>
+    <p>From time to time, newer PlaneShift revisions will require you to upgrade your cal3d and CS repositories to a newer revision as well.  To update your supporting libraries, always be certain that you use the "-r" option keep from updating to the latest revision:</p>
 
     If you want to update to a new revision replace REVISON with the number of the revision you want to use:
     <p><div class="commandBox">
 	/home/user/development/cal3d$ svn update -r REVISION<br>
         /home/user/development/cs$ svn update -r REVISION<br>
-        /home/user/development/cel$ svn update -r REVISION<br>
     </div></p>
 	<p>Unlike the supporting libraries, you will generally want to use the latest PlaneShift source (or the HEAD) rather than an intermediate revision.  In this case, you will omit the "-r" option like so:
 	<div class="commandBox">
@@ -908,7 +888,6 @@ here.</a></div>
     <p><div class="commandBox">
 	/home/user/development/cal3d$ svn update -r HEAD<br>
         /home/user/development/cs$ svn update -r HEAD<br>
-        /home/user/development/cel$ svn update -r HEAD<br>
     </div></p>
 
 
@@ -958,8 +937,6 @@ If you update a repository, you will need to recompile that repository and each 
  <p>Run the program and install the libraries. The Default name is fine. </p></div>
 <div class="MINGW">
 <p>Run the program and install the libraries in C:\CSLibs. <br>
-This helps to
-trim down the length of the CEL linker flag list.</div>
 
 <p>When it asks you for the CS directory, enter
     <b>C:\development\CS</b>.<br>
@@ -991,22 +968,6 @@ trim down the length of the CEL linker flag list.</div>
          </div>
     </p>
     
-    <h3>Crystal Entity Layer (CEL)</h3>
-    <p>CEL is a layer on top of Crystal Space that is used for entity and behaviour control.</p>
-    <p>
-        Right-click on the development directory and select "SVN Checkout". Specify the URL as:
-    <div class="User">
-    <p><i class="command">https://cel.svn.sourceforge.net/svnroot/cel/cel/branches/release/V1.4</i></p>
-        Specify the checkout directory as "C:\development\cel", select "Revision", and paste the current
-        CEL revision number: CEL_SOURCE_REV
-    </div>
-    <div class="Developer">
-    <p><i class="command">https://cel.svn.sourceforge.net/svnroot/cel/cel/branches/release/V1.4</i></p>
-        Specify the checkout directory as "C:\development\cel", select "Revision", and paste the current
-        CEL revision number: CEL_SOURCE_REV_HEAD
-    </div>
-    </p>
-
     <h3>PlaneShift</h3>
     <p>Lastly, download PlaneShift source code:</p>
     <p>
@@ -1021,12 +982,12 @@ trim down the length of the CEL linker flag list.</div>
     </p>
 
     <h3>Updating Sources</h3>
-    <p>If in the future you have the intentions to update cal3d, CS, CEL or PS because the team has decided to use
+    <p>If in the future you have the intentions to update cal3d, CS or PS because the team has decided to use
     another revision or because you feel like you want to update it, instead of doing a checkout you have simply to update.
-    Please, remember that CS, and CEL must be the exact revision specified above (or near the top of this <a name="dates">guide</a>) while PS can be newer.</p>
+    Please, remember that CS must be the exact revision specified above (or near the top of this <a name="dates">guide</a>) while PS can be newer.</p>
 
     <p>
-        <i>CS and CEL SVNs:</i><br>
+        <i>CS SVN:</i><br>
         Right-click on the folder of the module you want and goto TortoiseSVN->"Update to Revision".
         Enter a new revsion number or select HEAD to get latest, there is a possibility that HEAD may not work with with PS so keep that in mind. Click ok, and the files will be updated.
     </p>
@@ -1054,15 +1015,6 @@ trim down the length of the CEL linker flag list.</div>
     <p><i class="command">$HOME/development$ svn co -r CS_SOURCE_REV_HEAD https://crystal.svn.sourceforge.net/svnroot/crystal/CS/branches/release/V1.4 cs</i></p>
     </div>
 
-    <h3>Crystal Entity Layer (CEL)</h3>
-    <p>CEL is a layer on top of Crystal Space that is used for entity and behavior control.</p>
-    <div class="User">
-    <p><i class="command">$HOME/development$ svn co -r CEL_SOURCE_REV https://cel.svn.sourceforge.net/svnroot/cel/cel/branches/release/V1.4 cel</i></p>
-    </div>
-    <div class="Developer">
-    <p><i class="command">$HOME/development$ svn co -r CEL_SOURCE_REV_HEAD https://cel.svn.sourceforge.net/svnroot/cel/cel/branches/release/V1.4 cel</i></p>
-    </div>
-
     <h3>PlaneShift</h3>
     <p>Lastly, download our source:</p>
     <div class="User">
@@ -1072,13 +1024,12 @@ trim down the length of the CEL linker flag list.</div>
     <p><i class="command">$HOME/development$ svn co https://planeshift.svn.sourceforge.net/svnroot/planeshift/trunk planeshift</i></p>
     </div>
 <h3>Updating Sources</h3>
-    <p>From time to time, newer PlaneShift revisions will require you to upgrade your cal3d, CS, and CEL repositories to a newer revision as well.  To update your supporting libraries, always be certain that you use the "-r" option keep from updating to the latest revision:</p>
+    <p>From time to time, newer PlaneShift revisions will require you to upgrade your cal3d and CS repositories to a newer revision as well.  To update your supporting libraries, always be certain that you use the "-r" option keep from updating to the latest revision:</p>
 
     If you want to update to a new revision replace REVISON with the number of the revision you want to use:
     <p><div class="commandBox">
 	$HOME/development/cal3d$ svn update -r REVISION<br>
         $HOME/development/cs$ svn update -r REVISION<br>
-        $HOME/development/cel$ svn update -r REVISION<br>
     </div></p>
 	<p>Unlike the supporting libraries, you will generally want to use the latest PlaneShift source (or the HEAD) rather than an intermediate revision.  In this case, you will omit the "-r" option like so:
 	<div class="commandBox">
@@ -1088,7 +1039,6 @@ trim down the length of the CEL linker flag list.</div>
     <p><div class="commandBox">
 	$HOME/development/cal3d$ svn update -r HEAD<br>
         $HOME/development/cs$ svn update -r HEAD<br>
-        $HOME/development/cel$ svn update -r HEAD<br>
     </div></p>
 
 
@@ -1250,20 +1200,6 @@ We should export the CRYSTAL environment variable so applications outside the Cr
 	         tree know where to find the .so's.	 
 	         <p><i class="command">export CRYSTAL=/home/user/development/cs</i></p>	 
 	 	 
-	         <h3>Crystal Entity Layer (CEL)</h3>	 
-	         <p><div class="commandBox">	 
-	             /home/user/development/cel$ ./configure --without-python<br>	 
-	            <div class="Normal">	 
-	             /home/user/development/cel$ jam -aq libs plugins cel-config	 
-	            </div>	 
-	            <div class="Static">	 
-	             /home/user/development/cel$ jam -aq libs staticplugins cel-config	 
-	            </div>	 
-	         </div></p>	 
-	 	 
-We should export the CEL environment variable so applications outside the CEL tree know where to find the .so's.	 
-	         <p><div class="commandBox">export CEL=/home/user/development/cel<br />export CSCONFPATH=/home/user/development/cel</div></p>	 
-	         
 <h3>PlaneShift</h3>
         <p><div class="commandBox">
             /home/user/development/planeshift$ ./autogen.sh<br>
@@ -1288,8 +1224,8 @@ We should export the CEL environment variable so applications outside the CEL tr
            <p><i class="command">/home/user/development/planeshift$ jam -aq server_static</i></p>
         </div>
         If you want to build the extra tools, just do "jam -a".
-<p> Before launching any PS app you need to tell PS where to find CS and CEL as we did not install them globally</p>
-       <div class="commandBox">export LD_LIBRARY_PATH="/home/user/development/cal3d/src/cal3d/.libs/:/home/user/development/cs/:/home/user/development/cel:"$LD_LIBRARY_PATH</div>
+<p> Before launching any PS app you need to tell PS where to find CS as we did not install it globally</p>
+       <div class="commandBox">export LD_LIBRARY_PATH="/home/user/development/cal3d/src/cal3d/.libs/:/home/user/development/cs/:"$LD_LIBRARY_PATH</div>
        <p>If your psclient has no skin you are used to seeing launch pssetup after you have copied your art over and select a new skin</p>
        <p>If you wish for your psclient to not use the same user files as your other build/install you may run ps with the following command<br />
        <div class="commandBox">
@@ -1331,19 +1267,7 @@ sed 's/AM_USE_UNITTESTCPP/# AM_USE_UNITTESTCPP/' configure-old.in > configure.in
         We should export the CRYSTAL environment variable so applications outside the Crystal Space	 
 	         tree know where to find the .so's.	 
 	         <p><i class="command">export CRYSTAL=$HOME/development/cs</i></p>	
-	 	 
-	         <h3>Crystal Entity Layer (CEL)</h3>	 
-	         <p><div class="commandBox">	 
-	             $HOME/development/cel$ ./configure --without-python<br>	 
-	            <div class="Normal">	 
-	             $HOME/development/cel$ jam -aq libs plugins cel-config	 
-	            </div>
-            <div class="Static"> there is no Mac static build guide at this time</div>	 
-	         </div></p>	 
-	 	 
-We should export the CEL environment variable so applications outside the CEL tree know where to find the .so's.	 
-	         <p><i class="command">export CEL=$HOME/development/cel</i></p>	 
-	         
+         
 <h3>PlaneShift</h3>
         <p><div class="commandBox">
             $HOME/development/planeshift$ ./autogen.sh<br>
@@ -1397,19 +1321,6 @@ $HOME/development/planeshift$ ./psclient.app/Contents/MacOS/psclient -cfgset=Pla
         This will build all the needed libraries and plugins, as well as the standard test application.<br>
         After everything compiles, try running "walktest.exe" in /c/development/cs to check that everything is ok.
 
-        <h3>Crystal Entity Layer (CEL)</h3>
-        <p>Change your working directory to CEL's, and do:</p>
-        <p><div class="commandBox">
-            ./configure --without-python<br>
-           <div class="Normal">
-            jam -aq libs plugins cel-config
-           </div>
-           <div class="Static">
-            jam -aq libs staticplugins cel-config
-           </div>
-        </div></p>
-        You can test this build by running the demo application "celtst.exe" in /c/development/cel to check that everything is ok.
-
         <h3>PlaneShift</h3>
         <p>If you chose to build cal3d, rather than use
         it from the CS win libs, you can specify its location after the configure command with:  --with-cal3d=/c/development/cal3d/ <br>
@@ -1434,45 +1345,7 @@ Change your working directory to PS's,
             ./autogen.sh<br>
             ./configure --enable-debug --with-mysqlclient=/c/mysql<br>
         </div></div></p>
-<p>
- Sometimes when compiling with GCC it says the list of linker flags
-for CEL is too long. Many of the flags are just duplicates and can be
-removed. The box below can be used to do it for you automatically.<br>
-<script language="Javascript">
-<!--
-function fixflags()
-{
-  var config=document.getElementById("flagfixerbox").value;
-  while(config.indexOf("\r\n")>-1){config=config.replace("\r\n","\n");} // Different platforms using different newline indications
-  while(config.indexOf("\n\r")>-1){config=config.replace("\n\r","\n");}
-  while(config.indexOf("\r")>-1){config=config.replace("\r","\n");}
-  config=config.split("\n");
-  var i=0;
-  var i2=0;
-  while(i<config.length)
-  {
-    if(config[i].indexOf("\"")>-1) // In case of empty lines
-    {
-      var flags=config[i].substring(config[i].indexOf("\"")+1,config[i].indexOf("\"",config[i].indexOf("\"")+1)).split(" ");
-      var newflags=new Array();
-      i2=0;
-      while(i2<flags.length)
-      {
-        if(("�"+newflags.join("�")+"�").indexOf("�"+flags[i2]+"�")<0){newflags[newflags.length]=flags[i2];}
-      i2++;}
-      config[i]=config[i].substring(0,config[i].indexOf("\"")+1)+newflags.join(" ")+config[i].substring(config[i].indexOf("\"",config[i].indexOf("\"")+1),config[i].length);
-    }
-  i++;}
-  document.getElementById("flagfixerbox").value=config.join("\r\n");
-}
-//-->
-</script>
 
-<textarea rows="10" cols="40" id="flagfixerbox"></textarea><br>
-<button onclick="fixflags();">Fix flags</button><br>
-You must paste the content of the file Jamconfig
-(all of it, no need to find the right line) and click "Fix flags",
-then just copy it back to the file.<br></p>
 <p><div class="commandBox">
            <div class="Normal">
 
@@ -1515,7 +1388,6 @@ psclient.exe -cfgset=PlaneShift.UserConfigPath=C:\development\pssettings</div>
     <p>
         C:\development\CS\include<br>
         C:\development\CS\include\csutil\win32<br>
-        C:\development\cel\include<br>
         C:\mysql\include
     </p>
 
@@ -1548,34 +1420,15 @@ and select Properties, 'read only' is one of the attributes in the General tab) 
     If you encounter any errors, check you have done everything correctly, and then if the problem persists, you can
     ask for help in the CS IRC channel:<br>
     irc.freenode.net #crystalspace</p>
-
-    <h3>Crystal Entity Layer (CEL)</h3>
-    <p>
-        <div class="Normal">
-        If you have MSVC 7.0 open C:\development\cel\msvc\7\wkscel.sln<br>
-        If you have MSVC 7.1 open C:\development\cel\msvc\71\wkscel.sln<br>
-        If you have MSVC 8.0 open C:\development\cel\msvc\8\wkscel.sln<br>
-        If you have MSCV 9.0 open C:\development\cel\msvc\9\wkscel.sln
-        </div>
-        <div class="Static">
-        If you have MSVC 7.0 open C:\development\cel\msvc\7\wksstatic.sln<br>
-        If you have MSVC 7.1 open C:\development\cel\msvc\71\wksstatic.sln<br>
-        If you have MSVC 8.0 open C:\development\cel\msvc\8\wksstatic.sln<br>
-        If you have MSVC 9.0 open C:\development\cel\msvc\9\wksstatic.sln
-        </div>
-    </p>
-    <p>Make sure that your specific 'msvc' folder has the 'read only' box unchecked before continuing.</p>    
-    <p>Build the solution. <br>Just ignore any Python errors.</p>
-    
+   
     <h3>PlaneShift</h3>
     <p>Under Tools-&gt;Options in you MSVC look on the left hand side for the Projects
     folder. Under Projects choose "VC++ Directories". In the Show Directories for: choose
     "Library Files". Click the new folder icon to add the following directories:</p>
     <p>
         C:\development\CS\out\releaseX\libs<br>
-        C:\development\cel\out\releaseX\libs
     </p>
-    <p>You have to change X (in the path concerning CS and cel libraries) to these
+    <p>You have to change X (in the path concerning CS) to these
     values, depending from the version you have of MSVC:</p>
     <p>
         7 for MSVC 7<br>
@@ -1875,13 +1728,11 @@ is located somewhere else or you want to connect to somebody's else server, you 
     <h2><a name="scripts">Mini Scripts</a></h2>
     <i>Optional section</i>
     <p>You might want to create some script so that you don't have to manually type in the environment variables every
-    time. In this way you can also have multiple versions of CS + CEL coexisting peacefully.</p>
+    time. In this way you can also have multiple versions of CS coexisting peacefully.</p>
 
     <p><div class="commandBox">
         $ echo \#\!/bin/sh > PlaneShiftserver.sh<br>
         $ echo "export CRYSTAL=$PWD/cs/" >> PlaneShiftserver.sh<br>
-        $ echo "export CEL=$PWD/cel/" >> PlaneShiftserver.sh<br>
-        $ echo "export CSCONFPATH=$PWD/cel/" >> PlaneShiftserver.sh<br>
         $ echo "cd $PWD/PlaneShift" >> PlaneShiftserver.sh<br>
         $ echo "./psserver \$@" >>  PlaneShiftserver.sh<br>
         $ chmod +x PlaneShiftserver.sh
@@ -1890,8 +1741,6 @@ is located somewhere else or you want to connect to somebody's else server, you 
     <p><div class="commandBox">
         $ echo \#\!/bin/sh > PlaneShiftclient.sh<br>
         $ echo "export CRYSTAL=$PWD/cs/" >> PlaneShiftclient.sh<br>
-        $ echo "export CEL=$PWD/cel/" >> PlaneShiftclient.sh<br>
-        $ echo "export CSCONFPATH=$PWD/cel" >> PlaneShiftclient.sh<br>
         $ echo "cd $PWD/PlaneShift/" >> PlaneShiftclient.sh<br>
         $ echo "./psclient \$@" >>  PlaneShiftclient.sh<br>
         $ chmod +x PlaneShiftclient.sh
