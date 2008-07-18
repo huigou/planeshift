@@ -16,8 +16,8 @@
     var csWinLibsVersionStab = "1.3_004"; // cs win32 libs version.
     var csWinLibsVersion = "1.3_004"; // cs win32 libs version.
     //Update date and author, to be changed everytime and updates occurred
-    var UpdateDate = "17 July 2008"; //Date when the update occurred
-    var UpdateAuthor = "Mike Gist"; //Author of the update
+    var UpdateDate = "18 July 2008"; //Date when the update occurred
+    var UpdateAuthor = "Steven Patrick"; //Author of the update
 -->
 </script>
 
@@ -657,7 +657,7 @@ After that we need to refresh our sources.list file like so:<br>
 <p>If you are on Gutsy use this command</p>
 <p><div class="commandBox"># sudo apt-get --assume-yes install libjpeg62-dev x11proto-gl-dev autoconf jam bison flex-old automake1.9 libmng-dev libmikmod2-dev libogg-dev libvorbis-dev zlib1g-dev libpng12-dev build-essential libtool libglu1-mesa-dev libglu1-xorg-dev xserver-xorg-dev libxt-dev libopenal0a libopenal-dev subversion zlibc libttf2 libfreetype6-dev libfreetype6 libasound2-dev alsa-oss libxxf86vm-dev libxext-dev x11proto-xext-dev
 </div></p>
-<p>If you are on Hardy use this command></p>
+<p>If you are on Hardy use this command</p>
 <p><div class="commandBox"># sudo apt-get --assume-yes install libjpeg62-dev x11proto-gl-dev autoconf jam bison flex-old automake1.9 libcurl4-openssl-dev libmng-dev libmikmod2-dev libogg-dev libvorbis-dev zlib1g-dev libpng12-dev build-essential libtool libglu1-mesa-dev libglu1-xorg-dev xserver-xorg-dev libxt-dev libopenal0a libopenal-dev subversion zlibc libttf2 libfreetype6-dev libfreetype6 libasound2-dev alsa-oss libxxf86vm-dev libxext-dev x11proto-xext-dev</div></p>
 
 <strong> ALL of these above commands are assuming you do not need a server if you do please follow directions in the <a href="#mysql">mysql</a> section for installing other required packages</strong>
@@ -702,11 +702,11 @@ After that we need to refresh our sources.list file like so:<br>
 	If you are on Gutsy you can
 	<p><i class="command"># sudo apt-get install nvidia-cg-toolkit</i></p>        
 	<p> Otherwise you MUST do this</p>
-	<p><i class="command"># wget -c hhttp://developer.download.nvidia.com/cg/Cg_2.0/2.0.0015/Cg-2.0_May2008_x86.tgz</i></p> 
-        <p><i class="command"># sudo mvCg-2.0_May2008_x86*.tgz /</i></p>
-        <p><i class="command"># cd /</i></p>
-        <p><i class="command"># sudo tar -zxvf Cg-2.0_May2008_x86*.tgz</i></p>
-        <p><i class="command"># sudo rm Cg-2.0_May2008_x86*.tgz</i></p>
+	<div class="commandBox"># wget -c http://developer.download.nvidia.com/cg/Cg_2.0/2.0.0015/Cg-2.0_May2008_x86.tgz</br>
+        # sudo mvCg-2.0_May2008_x86*.tgz /</br>
+        # cd /</br>
+        # sudo tar -zxvf Cg-2.0_May2008_x86*.tgz</br>
+        # sudo rm Cg-2.0_May2008_x86*.tgz</div></br>
     </div>
     <div class="Linux-Gentoo">
         <p>Via portage: <i class="command"># emerge nvidia-cg-toolkit</i></p>
@@ -1047,7 +1047,7 @@ If you update a repository, you will need to recompile that repository and each 
         $HOME/development/planeshift$ jam clean<br>
         $HOME/development/planeshift$ jam -aq
     </div></p>
-</div>
+</div></div>
 
 <!---------------------------------------------------------------------------------------------------->
 <!---------------------------------------------------------------------------------------------------->
@@ -1138,7 +1138,7 @@ sed 's/AM_USE_UNITTESTCPP/# AM_USE_UNITTESTCPP/' configure-old.in > configure.in
         </div></p></div>
         Because we did not install cal3d we need to make sure other things can find it. This is done using the LD_LIBRARY_PATH:
         <p><i class="command">export LD_LIBRARY_PATH=/home/user/development/cal3d/src/cal3d/.libs/:$LD_LIBRARY_PATH</i></p>
-</div></div>
+</div></div></div>
      <div class="Linux">    
         <h3>Crystal Space (CS)</h3>
         <p>Now we can build it and use the configure line to tell it where we installed the cal3d libraries.
@@ -1199,7 +1199,7 @@ sed 's/AM_USE_UNITTESTCPP/# AM_USE_UNITTESTCPP/' configure-old.in > configure.in
 We should export the CRYSTAL environment variable so applications outside the Crystal Space	 
 	         tree know where to find the .so's.	 
 	         <p><i class="command">export CRYSTAL=/home/user/development/cs</i></p>	 
-	 	 
+
 <h3>PlaneShift</h3>
         <p><div class="commandBox">
             /home/user/development/planeshift$ ./autogen.sh<br>
@@ -1307,9 +1307,9 @@ $HOME/development/planeshift$ ./psclient.app/Contents/MacOS/psclient -cfgset=Pla
         configure without any arguments) If you chose to build cal3d, rather than use
         it from the CS win libs, you can specify its location with:  --with-cal3d=/c/development/cal3d/
         <p><div class="commandBox"><div class="User">
-            ./configure --without-java --without-perl --without-python --without-lib3ds</div>
+            ./configure --without-java --without-perl --without-python --without-lib3ds --enable-shared=no</div>
 <div class="Developer">
-            ./configure --enable-debug --without-java --without-perl --without-python --without-lib3ds</div>
+            ./configure --enable-debug --without-java --without-perl --without-python --without-lib3ds --enable-shared=no</div>
            <div class="Normal">
             jam -aq libs plugins cs-config walktest
            </div>
@@ -1319,6 +1319,18 @@ $HOME/development/planeshift$ ./psclient.app/Contents/MacOS/psclient -cfgset=Pla
         </div>
         </p>
         This will build all the needed libraries and plugins, as well as the standard test application.<br>
+<div class="MINGW">
+<p>For Mingw you need to copy also these files to the
+Crystal Space directory for walktest to work:<br><div class=commandBox>
+C:\msys\1.0\local\bin\libpng12-0.dll<br>
+C:\MinGW\bin\libjpeg-62.dll<br>
+C:\MinGW\bin\zlib1.dll<br></div><br>
+or by command-line:<br><div class=commandBox>
+cp /c/msys/1.0/local/bin/libpng12-0.dll <br>
+cp /c/MinGW/bin/libjpeg-62.dll <br>
+cp /c/MinGW/bin/zlib1.dll <br></div>
+</p>
+</div>
         After everything compiles, try running "walktest.exe" in /c/development/cs to check that everything is ok.
 
         <h3>PlaneShift</h3>
@@ -1467,12 +1479,14 @@ PlaneShift directory:<br><div class=commandBox>
 C:\msys\1.0\local\bin\libpng12-0.dll<br>
 C:\development\cs\cg.dll<br>
 C:\development\cs\cgGL.dll<br>
-C:\MinGW\bin\libjpeg-62.dll<br></div><br>
+C:\MinGW\bin\libjpeg-62.dll<br>
+C:\MinGW\bin\zlib1.dll<br></div><br>
 or by command-line:<br><div class=commandBox>
 cp /c/msys/1.0/local/bin/libpng12-0.dll <br>
 cp /c/development/cs/cg.dll <br>
 cp /c/development/cs/cgGL.dll <br>
-cp /c/MinGW/bin/libjpeg-62.dll <br></div>
+cp /c/MinGW/bin/libjpeg-62.dll <br>
+cp /c/MinGW/bin/zlib1.dll <br></div>
 </p>
 </div>
 
