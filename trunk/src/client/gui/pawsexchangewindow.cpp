@@ -362,14 +362,14 @@ void pawsExchangeWindow::HandleMoney( MsgEntry* me )
     {
         offeringMoneyWidget->Set(money.circles, money.octas, money.hexas, money.trias);
         csString triasOffered;
-        triasOffered.Format("Trias Offered %d", money.circles*CIRCLES_VALUE_TRIAS + money.octas*OCTAS_VALUE_TRIAS + money.hexas*HEXAS_VALUE_TRIAS + money.trias);
+        triasOffered.Format("Tria Offered %d", money.circles*CIRCLES_VALUE_TRIAS + money.octas*OCTAS_VALUE_TRIAS + money.hexas*HEXAS_VALUE_TRIAS + money.trias);
         totalTriasOffered->SetText(triasOffered);
     }
     else if ( money.container == CONTAINER_RECEIVING_MONEY )
     {
         receivingMoneyWidget->Set(money.circles, money.octas, money.hexas, money.trias);
         csString triasReceived;
-        triasReceived.Format("Trias Received %d", money.circles*CIRCLES_VALUE_TRIAS + money.octas*OCTAS_VALUE_TRIAS + money.hexas*HEXAS_VALUE_TRIAS + money.trias);
+        triasReceived.Format("Tria Received %d", money.circles*CIRCLES_VALUE_TRIAS + money.octas*OCTAS_VALUE_TRIAS + money.hexas*HEXAS_VALUE_TRIAS + money.trias);
         totalTriasReceived->SetText(triasReceived);
     }
 }

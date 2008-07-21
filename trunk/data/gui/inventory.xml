@@ -221,7 +221,7 @@
     <widget name="TotalTriasLabel" factory="pawsTextBox">
         <frame x="5" y="172" width="50" height="30" />
         <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="128" size="10" />    
-        <text string="Trias" />
+        <text string="Tria" />
     </widget>
 
     <widget name="TotalWeightLabel" factory="pawsTextBox">

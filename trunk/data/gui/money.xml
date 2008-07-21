@@ -1,6 +1,6 @@
 <widget_description>
     <widget factory="pawsMoney">
-	    <widget name="Circles" factory="pawsSlot" tooltip="250 Trias" >
+	    <widget name="Circles" factory="pawsSlot" tooltip="250 Tria" >
 		<frame x="0" y="0" width="48" height="48" />
 		<font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="64" size="10" />    
             <attachpoints>
@@ -10,7 +10,7 @@
               <attach point="PROPORTIONAL_BOTTOM" /> 
             </attachpoints>
         </widget>
-	<widget name="Octas" factory="pawsSlot" tooltip="50 Trias" >
+	<widget name="Octas" factory="pawsSlot" tooltip="50 Tria" >
             <frame x="48" y="0" width="48" height="48" />
 	    <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="64" size="10" />
             <attachpoints>
@@ -20,7 +20,7 @@
               <attach point="PROPORTIONAL_BOTTOM" /> 
             </attachpoints>
         </widget>
-	<widget name="Hexas" factory="pawsSlot" tooltip="10 Trias" >
+	<widget name="Hexas" factory="pawsSlot" tooltip="10 Tria" >
 		<frame x="0" y="48" width="48" height="48" />
 		<font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="64" size="10" />
             <attachpoints>
