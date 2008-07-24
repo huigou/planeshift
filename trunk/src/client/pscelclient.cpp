@@ -312,6 +312,7 @@ void psCelClient::HandleMainActor( psPersistActor& mesg )
 
     // Update equipment list
     local_player->equipment = mesg.equipment;
+    local_player->type = mesg.masqueradeType;
 
     if (mesg.factname != local_player->GetFactName())
     {

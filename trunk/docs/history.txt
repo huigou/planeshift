@@ -1,3 +1,7 @@
+*** 2008-07-24 by Steven Patrick
+- Fixed FS#1991 - deputizing doesn't update GM console, patch by Zwenze.
+- Changed max deputize to 1 below current level, patch by Kerol.
+
 *** 2008-07-17 by Mike Gist
 - Bumped CS revision to 30463. Removed CEL from the compiling guide.
 

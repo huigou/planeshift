@@ -6833,8 +6833,8 @@ void AdminManager::TempSecurityLevel(MsgEntry* me, psAdminCmdMessage& msg, Admin
         return;
     }
     
-    // Can only set others to a max of 3 levels below own level (ex: GM4 can set someone to GM1)
-    int maxleveltoset = client->GetSecurityLevel() - 3;
+    // Can only set others to a max of 1 level below own level (ex: GM4 can set someone to GM3)
+    int maxleveltoset = client->GetSecurityLevel() - 1;
 
     int value;
 

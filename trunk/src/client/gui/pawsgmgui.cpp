@@ -146,6 +146,7 @@ void pawsGmGUIWindow::Show()
     //We don't want old information
     //SelectTab(1);
     pawsWidget::Show();
+    SetSecurity();
     QueryServer();
 }
 
