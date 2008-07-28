@@ -2,7 +2,7 @@
 - Fix for FS#1692 - fixing 2 bugs that caused entities to get lost in a temporary sector
 - Cleaned up fix for FS#707
 - Fixed FS#1826
-- Fixed FS#1909, patch by Weltall.
+- Fixed FS#1909 and FS#2028, patch by Weltall.
 
 *** 2008-07-28 by Mike Gist
 - Fixed FS#1925, patch by peeg.
