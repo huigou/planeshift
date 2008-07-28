@@ -146,7 +146,7 @@ void pawsContainerDescWindow::HandleViewItem( MsgEntry* me )
             contents->Clear();
             containerSlots = PSITEM_MAX_CONTAINER_SLOTS;
 
-            const int cols = 6;
+            const int cols = contents->GetTotalColumns(); //6;
             const int rows = (int) ceil(float(containerSlots)/cols);
             for (int i = 0; i < rows; i++)
             {

@@ -60,25 +60,39 @@ bool pawsSmallInventoryWindow::PostSetup()
         border->JustTitle();
         
         // Setup our inventory slots in the list box.
-        pawsListBox * bulkList = dynamic_cast <pawsListBox*> (FindWidget("BulkList"));        
-        for (int i = 0; i < INVENTORY_BULK_COUNT/2; i++)
+        pawsListBox * bulkList = dynamic_cast <pawsListBox*> (FindWidget("BulkList"));
+
+        int colCount = bulkList->GetTotalColumns();
+        int rowCount = (int) ceil(float(INVENTORY_BULK_COUNT)/colCount);
+
+        for(int r = 0; r < rowCount; r ++)
         {
-            pawsListBoxRow * listRow = bulkList->NewRow(i);
-            for (int j = 0; j < 2; j++)
+            pawsListBoxRow * listRow = bulkList->NewRow(r);
+            for (int j = 0; j < colCount; j++)
             {
+                int i = r*colCount + j;
                 pawsSlot * slot;
                 slot = dynamic_cast <pawsSlot*> (listRow->GetColumn(j));
                 slot->SetContainer( CONTAINER_INVENTORY_BULK );
-                slot->SetSlotID( i*2+j );
+                //csString name;
+                slot->SetSlotID( i );
                 csString name;
-                name.Format("invslot_%d",16 + i*2+j);
+                name.Format("invslot_%d", 16 + i ); // 16 equip slots come first
                 slot->SetSlotName(name);
+
+                if(i >= INVENTORY_BULK_COUNT)
+                {
+                    slot->Hide();
+                    continue;
+                }
+
+                //printf("Subscribing bulk slot to %s.\n",name.GetData() );
                 PawsManager::GetSingleton().Subscribe( name, slot );
                 PawsManager::GetSingleton().Subscribe("sigClearInventorySlots", slot);
-                slot->SetName( name );     
-                bulkSlots[i*2+j] = slot;            
-            }                
-        }  
+                bulkSlots[i] = slot;
+            }
+        }
+
         money = dynamic_cast <pawsMoney*> (FindWidget("Money")); 
         if ( !money )
             return false;
