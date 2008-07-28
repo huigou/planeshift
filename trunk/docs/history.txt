@@ -2,6 +2,7 @@
 - Fixed FS#1925, patch by peeg.
 - Patch for FS#2001 from weltall.
 - Fixed a memory leak caused by a reference leak in netbase.
+- Patch for FS#1912 from weltall.
 
 *** 2008-07-24 by Steven Patrick
 - Fixed FS#1991 - deputizing doesn't update GM console, patch by Zwenze.
