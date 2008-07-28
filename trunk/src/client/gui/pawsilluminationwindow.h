@@ -115,6 +115,17 @@ protected:
     int primCount;
     bool readOnly;
     bool stringPending;
+    
+    pawsWidget* FeatherTool;
+    pawsWidget* TextTool;
+    pawsWidget* LineTool;
+    pawsWidget* PlusTool;
+    pawsWidget* LeftArrowTool;
+    pawsWidget* RightArrowTool;
+    pawsWidget* DeleteTool;
+    pawsWidget* NameTool;
+    pawsWidget* SaveButton;
+    pawsWidget* LoadButton;
 
     void DrawSketch();
     bool ParseSketch(const char *xml);
@@ -127,6 +138,10 @@ protected:
     void NextPrevIcon(int delta);
     void MoveObject(int dx, int dy);
     void ChangeSketchName();
+    void SaveSketch();
+    void LoadSketch();
+    bool isBadChar(char c);
+    csString filenameSafe(const csString &original);
 
     csString sketchName;
 

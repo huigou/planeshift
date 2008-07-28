@@ -5939,7 +5939,7 @@ void AdminManager::TransferItem(MsgEntry* me, psAdminCmdMessage& msg,
     psCharacter* targetchar = target->GetCharacterData();
     psCharacter* sourcechar = source->GetCharacterData();
 
-    if (data.item == "tria")
+    if (data.item.Downcase() == "tria")
     {
         psMoney srcMoney = sourcechar->Money();
         psMoney targetMoney = targetchar->Money();
@@ -5970,7 +5970,7 @@ void AdminManager::TransferItem(MsgEntry* me, psAdminCmdMessage& msg,
         if (target->GetClientNum() != me->clientnum)
         {
             psserver->SendSystemOK(target->GetClientNum(),
-                    "%d tria was by GM %s.", value,
+                    "%d tria was given by GM %s.", value,
                     source->GetActor()->GetName());
         }
 

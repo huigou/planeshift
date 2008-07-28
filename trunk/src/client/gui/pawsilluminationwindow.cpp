@@ -54,6 +54,17 @@ pawsSketchWindow::~pawsSketchWindow()
 bool pawsSketchWindow::PostSetup()
 {
     psengine->GetMsgHandler()->Subscribe(this, MSGTYPE_VIEW_SKETCH);
+    //setup an easy way to access our widgets
+    FeatherTool = dynamic_cast<pawsWidget*> (FindWidget("FeatherTool"));
+    TextTool = dynamic_cast<pawsWidget*> (FindWidget("TextTool"));
+    LineTool = dynamic_cast<pawsWidget*> (FindWidget("LineTool"));
+    PlusTool = dynamic_cast<pawsWidget*> (FindWidget("PlusTool"));
+    LeftArrowTool = dynamic_cast<pawsWidget*> (FindWidget("LeftArrowTool"));
+    RightArrowTool = dynamic_cast<pawsWidget*> (FindWidget("RightArrowTool"));
+    DeleteTool = dynamic_cast<pawsWidget*> (FindWidget("DeleteTool"));
+    NameTool = dynamic_cast<pawsWidget*> (FindWidget("NameTool"));
+    SaveButton = dynamic_cast<pawsWidget*> (FindWidget("SaveButton"));
+    LoadButton = dynamic_cast<pawsWidget*> (FindWidget("LoadButton"));
     return true;
 }
 
@@ -72,14 +83,63 @@ void pawsSketchWindow::HandleMessage( MsgEntry* me )
     currentItemID = msg.ItemID;
     Notify4(LOG_PAWS,"Got Sketch for item %u: %s\nLimits:%s\n", msg.ItemID, msg.Sketch.GetData(), msg.limits.GetDataSafe());
     objlist.Empty();
-
-    ParseSketch(msg.Sketch);
+    
     dirty = false;
     ParseLimits(msg.limits);
-
+    ParseSketch(msg.Sketch);
+    
     // if char does not have the right to edit (ie not the originator-artist)...
     if (!msg.rightToEdit)
         readOnly = true;
+    
+    if(readOnly)
+    {
+        //hide useless widgets in the window so the sketch is more clean 
+        //to whoever looks at it while not being the author
+        if(FeatherTool)
+            FeatherTool->Hide();
+        if(TextTool)
+            TextTool->Hide();
+        if(LineTool)
+            LineTool->Hide();
+        if(PlusTool)
+            PlusTool->Hide();
+        if(LeftArrowTool)
+            LeftArrowTool->Hide();
+        if(RightArrowTool)
+            RightArrowTool->Hide();
+        if(DeleteTool)
+            DeleteTool->Hide();
+        if(NameTool)
+            NameTool->Hide();
+        if(SaveButton)
+            SaveButton->Hide();
+        if(LoadButton)
+            LoadButton->Hide();
+    }
+    else //we have editing rights so let's show buttons to do some editing
+    {
+        if(FeatherTool)
+            FeatherTool->Show();
+        if(TextTool)
+            TextTool->Show();
+        if(LineTool)
+            LineTool->Show();
+        if(PlusTool)
+            PlusTool->Show();
+        if(LeftArrowTool)
+            LeftArrowTool->Show();
+        if(RightArrowTool)
+            RightArrowTool->Show();
+        if(DeleteTool)
+            DeleteTool->Show();
+        if(NameTool)
+            NameTool->Show();
+        if(SaveButton)
+            SaveButton->Show();
+        if(LoadButton)
+            LoadButton->Show();
+    }
 
     sketchName = msg.name;
     SetTitle(sketchName);
@@ -182,6 +242,16 @@ double pawsSketchWindow::CalcFunction(const char * functionName, const double * 
         OnKeyDown(0,'n',0);
         return 0.0;
     }
+    else if (!strcasecmp(functionName,"ClickSaveButton"))
+    {
+        OnKeyDown(0,'s',0);
+        return 0.0;
+    }
+    else if (!strcasecmp(functionName,"ClickLoadButton"))
+    {
+        OnKeyDown(0,'l',0);
+        return 0.0;
+    }
 
     // else call parent version to inherit other functions
     return pawsWidget::CalcFunction(functionName,params);
@@ -225,6 +295,11 @@ bool pawsSketchWindow::OnKeyDown( int keyCode, int key, int modifiers )
         }
         return true;
     }
+    else if (key == 's' && !readOnly) //allow saving also when not in edit mode but check if the player saving the sketch
+    {                                 //has editing rights over the sketch it's being saved
+            SaveSketch();
+            return true;
+    }
     else if (editMode)
     {
         if (key == '+') // keycode is the kbd scan code, key is the ASCII
@@ -245,6 +320,11 @@ bool pawsSketchWindow::OnKeyDown( int keyCode, int key, int modifiers )
         else if (key == 'n')
         {
             ChangeSketchName();
+            return true;
+        }
+        else if (key == 'l') //allow loading only in editing mode
+        {
+            LoadSketch();
             return true;
         }
         switch (keyCode)
@@ -301,7 +381,6 @@ void pawsSketchWindow::OnStringEntered(const char *name,int param,const char *va
     {
         int x = (ScreenFrame().xmax + ScreenFrame().xmin)/2 - ScreenFrame().xmin;
         int y = (ScreenFrame().ymax + ScreenFrame().ymin)/2 - ScreenFrame().ymin;
-
         SketchText *text = new SketchText(x,y,value,this);
         objlist.Push(text);
     }
@@ -310,7 +389,24 @@ void pawsSketchWindow::OnStringEntered(const char *name,int param,const char *va
         sketchName = value;
         SetTitle(sketchName);
     }
-    
+    else if (!strcasecmp(name,"FileNameBox"))
+    {
+        //we got to load the sketch we were asked for
+        csRef<iVFS> vfs = psengine->GetVFS();
+        csString tempFileName;
+        tempFileName.Format("/planeshift/userdata/sketches/%s", value);
+        if (!vfs->Exists(tempFileName))
+        {
+            psSystemMessage msg(0, MSG_ERROR, "File not found!" );
+            msg.FireEvent();
+            return;
+        }
+        csRef<iDataBuffer> buff = vfs->ReadFile(tempFileName); //reads the file
+        csString sketchxml =  buff->operator*(); //converts what we have read in something our ParseSketch function can
+                                              //understand
+        objlist.Empty();                      //clears the objlist to start loading our new sketch from clean
+        ParseSketch(sketchxml);                  //loads our sketch
+    }
 }
 
 void pawsSketchWindow::AddSketchLine()
@@ -398,6 +494,57 @@ void pawsSketchWindow::ChangeSketchName()
         // This window calls OnStringEntered when Ok is pressed.
         pawsStringPromptWindow::Create("Sketch Name", sketchName,
             false, 220, 20, this, "ChangeName");
+    }
+}
+
+void pawsSketchWindow::SaveSketch()
+{
+    csString xml;
+    //generates the xml document from the objects currently displayed in the sketch
+    xml = "<pages><page ";
+    xml.AppendFmt("l=\"%d\" t=\"%d\" w=\"%d\" h=\"%d\">",
+                  GetLogicalWidth(screenFrame.xmin),
+                  GetLogicalHeight(screenFrame.ymin),
+                  GetLogicalWidth(screenFrame.xmax-screenFrame.xmin),
+                  GetLogicalHeight(screenFrame.ymax-screenFrame.ymin));
+
+    for (size_t i=0; i<objlist.GetSize(); i++)
+        objlist[i]->WriteXml(xml);
+
+    xml += "</page></pages>";
+    csRef<iVFS> vfs = psengine->GetVFS();
+    unsigned int tempNumber = 0;
+    //searchs for a free sketch slot in the user directory and write in it
+    csString tempFileNameTemplate = "/planeshift/userdata/sketches/%s.xml", tempFileName;
+    if (filenameSafe(sketchName).Length()) 
+    {
+        tempFileName.Format(tempFileNameTemplate, filenameSafe(sketchName).GetData());
+    }
+    else
+    {
+        tempFileNameTemplate = "/planeshift/userdata/books/book%d.txt";
+        do
+        {
+            tempFileName.Format(tempFileNameTemplate, tempNumber);
+            tempNumber++;
+        } while (vfs->Exists(tempFileName));
+    }
+
+    vfs->WriteFile(tempFileName, xml, xml.Length());
+    psSystemMessage msg(0, MSG_ACK, "Sketch saved to %s", tempFileName.GetData()+30 );
+    msg.FireEvent();			
+}
+
+void pawsSketchWindow::LoadSketch()
+{
+    if (!stringPending)
+    {
+        stringPending = true;
+
+        //This window calls OnStringEntered when Ok is pressed. 
+        //Asks to the user the file name of the sketch inside the sketches directory under their user directory
+        pawsStringPromptWindow::Create("Enter local filename", "",
+            false, 220, 20, this, "FileNameBox",0,true);
     }
 }
 
@@ -556,6 +703,8 @@ bool pawsSketchWindow::ParseSketch(const char *xmlstr)
             SketchObject *obj=NULL;
             csRef<iDocumentNode> tmp = pagenodes->Next();
             csString type = tmp->GetValue();
+            if((int)objlist.GetSize() >= primCount) //are we under the limitations?...
+                break; //...it seems we aren't so break before going on, at least one part of sketch is available
             // Determine what type to create, and create it
             if (type == "ic") // icon
                 obj = new SketchIcon;
@@ -936,4 +1085,24 @@ void pawsSketchWindow::SketchText::UpdatePosition (int _x, int _y){
             y = newY - ( y2Updated - newY2 );
         }
     }
+}
+
+bool pawsSketchWindow::isBadChar(char c)
+{
+    csString badChars = "/\\?%*:|\"<>";
+    if (badChars.FindFirst(c) == (size_t) -1)
+        return false;
+    else
+        return true;
+}
+
+csString pawsSketchWindow::filenameSafe(const csString &original)
+{
+    csString safe;
+    size_t len = original.Length();
+    for (size_t c = 0; c < len; ++c) {
+        if (!isBadChar(original[c]))
+            safe += original[c];
+    }
+    return safe;
 }
