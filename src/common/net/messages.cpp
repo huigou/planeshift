@@ -2048,7 +2048,7 @@ psGUIInventoryMessage::psGUIInventoryMessage(MsgEntry *message)
                 item.slot          = message->GetUInt32();
                 item.stackcount    = message->GetUInt32();
                 item.weight        = message->GetFloat();
-                item.size          = message->GetFloat();
+                item.size          = message->GetUInt32();
                 item.iconImage     = message->GetStr();
                 item.purifyStatus  = message->GetUInt8();
                 items.Push(item);
@@ -2100,7 +2100,7 @@ void psGUIInventoryMessage::AddItem( const char* name,
                                      int slotID,
                                      int stackcount,
                                      float weight,
-                                     float size,
+                                     uint32 size,
                                      const char* icon,
                                      int purifyStatus )
 {
@@ -2149,7 +2149,7 @@ csString psGUIInventoryMessage::ToString(AccessPointers * /*access_ptrs*/)
             msgtext.AppendFmt("%d x '%s' ", items[x].stackcount, items[x].name.GetDataSafe());
 
 #ifdef FULL_DEBUG_DUMP
-            msgtext.AppendFmt("(Container: %d Slot: %d Weight: %.2f Size: %.2f Icon: '%s' Purified: %d), ",
+            msgtext.AppendFmt("(Container: %d Slot: %d Weight: %.2f Size: %ud Icon: '%s' Purified: %d), ",
             items[x].container,
             items[x].slot,
             items[x].weight,
