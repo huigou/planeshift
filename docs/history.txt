@@ -1,4 +1,7 @@
 *** 2008-07-28 by Andreas Heinchen
+- Cleaned up fix for FS#707
+
+*** 2008-07-28 by Andreas Heinchen
 - Fixed FS#1826
 
 *** 2008-07-28 by Mike Gist
