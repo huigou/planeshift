@@ -164,7 +164,7 @@ public:
     void HandleItemEffect( const char* factName, csRef<iMeshWrapper> mw, bool onGround = true, const char* slot = 0,
                            csHash<int, csString> *effectids = 0, csHash<int, csString> *lightids = 0 );
 
-    /** Caled when new world maps were loaded
+    /** Called when new world maps were loaded
         CelClient looks for GEM Objects which have sectors with unknown name and checks if this name is known now */
     void OnMapsLoaded();
 

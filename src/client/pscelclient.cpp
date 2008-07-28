@@ -15,7 +15,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- *  Implements the varrious things relating to the CEL for the client.
+ *  Implements the various things relating to the CEL for the client.
  */
 #include <psconfig.h>
 
@@ -958,6 +958,8 @@ void psCelClient::OnRegionsDeleted(csArray<iCollection*>& regions)
 
             bool unresolved = true;
 
+            iSector* sectorToBeDeleted = 0;
+            
             // Are all the sectors going to be unloaded?
             for(int i = 0;i<sectors->GetCount();i++)
             {
@@ -968,6 +970,8 @@ void psCelClient::OnRegionsDeleted(csArray<iCollection*>& regions)
                     // We've found a sector that won't be unloaded so the mesh won't need to be moved
                     unresolved = false;
                     break;
+                } else {
+                    sectorToBeDeleted = sectors->Get(i);
                 }
             }
 
@@ -976,7 +980,7 @@ void psCelClient::OnRegionsDeleted(csArray<iCollection*>& regions)
                 // All the sectors the mesh is in are going to be unloaded
                 Warning1(LOG_ANY,"Moving entity to temporary sector");
                 // put the mesh to the sector that server uses for keeping meshes located in unload maps
-                HandleUnresolvedPos(entities[entNum], movable->GetPosition(), 0.0f, unresSector->QueryObject ()->GetName ());
+                HandleUnresolvedPos(entities[entNum], movable->GetPosition(), 0.0f, sectorToBeDeleted->QueryObject ()->GetName ());
             }
         }
     }
@@ -1046,8 +1050,8 @@ void psCelClient::OnMapsLoaded()
                 actor->GetMovement()->SetOnGround(false);
 
             delete *posIter;
-            // Deleting automatically increments the iterator.
             unresPos.Delete(posIter);
+            ++posIter;
         }
         else
            ++posIter;

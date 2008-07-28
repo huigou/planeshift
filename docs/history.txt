@@ -1,4 +1,7 @@
 *** 2008-07-28 by Andreas Heinchen
+- Fix for FS#1692 - fixing 2 bugs that caused entities to get lost in a temporary sector
+
+*** 2008-07-28 by Andreas Heinchen
 - Cleaned up fix for FS#707
 
 *** 2008-07-28 by Andreas Heinchen
