@@ -858,6 +858,8 @@ struct psPetitionInfo
     csString player;        // the player
     csString created;       // date and time of creation
 	csString resolution;    // resolution of a closed petition
+	
+	bool online;			// is the player online?
 };
 
 enum {

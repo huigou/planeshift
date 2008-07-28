@@ -298,7 +298,7 @@ void pawsListBox::CreateTitleRow()
     titleRow = new pawsListBoxRow();
     titleRow->SetParent( this );
 
-    titleRow->SetRelativeFrame( 5, 0,
+    titleRow->SetRelativeFrame( 0, 0,
                                 ScreenFrame().Width() ,  GetActualHeight(columnHeight) );
 
     for ( int x = 0; x < totalColumns; x++ )
@@ -1164,7 +1164,7 @@ void pawsListBoxRow::AddTitleColumn( int column, ColumnDef* def )
     for ( int x = 0; x < column; x++ ) 
         offset+=def[x].width;
 
-    title->SetRelativeFrame( offset+4, 4, def[column].width, def[column].height );
+    title->SetRelativeFrame( offset-4, -4, def[column].width, def[column].height );
     innerWidget->SetRelativeFrame(4, 4, def[column].width, def[column].height );
     title->SetID(column);
 }

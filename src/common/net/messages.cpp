@@ -636,7 +636,8 @@ psPetitionMessage::psPetitionMessage(uint32_t clientnum, csArray<psPetitionInfo>
         {
             messageSize+=sizeof(int32_t);
             messageSize+=curr->created.Length()+1;
-            messageSize+=curr->player.Length()+1;            
+            messageSize+=curr->player.Length()+1;
+            messageSize+=sizeof(bool);					// online flag for players
         }
     }
 
@@ -677,6 +678,7 @@ psPetitionMessage::psPetitionMessage(uint32_t clientnum, csArray<psPetitionInfo>
             msg->Add((int32_t)current->escalation);
             msg->Add(current->created.GetData());
             msg->Add(current->player.GetData());
+            msg->Add(current->online);
         }
     }
     msg->Add(errMsg);
@@ -716,6 +718,7 @@ psPetitionMessage::psPetitionMessage(MsgEntry *message)
             current.escalation = message->GetInt32();
             current.created = message->GetStr();
             current.player = message->GetStr();
+            current.online = message->GetBool();
         }
 
         petitions.Push(current);
