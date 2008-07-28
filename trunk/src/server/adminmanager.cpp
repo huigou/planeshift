@@ -5970,7 +5970,7 @@ void AdminManager::TransferItem(MsgEntry* me, psAdminCmdMessage& msg,
         if (target->GetClientNum() != me->clientnum)
         {
             psserver->SendSystemOK(target->GetClientNum(),
-                    "%d tria was given by GM %s.", value,
+                    "%d tria were given by GM %s.", value,
                     source->GetActor()->GetName());
         }
 
@@ -5978,7 +5978,7 @@ void AdminManager::TransferItem(MsgEntry* me, psAdminCmdMessage& msg,
         if (source->GetClientNum() != me->clientnum)
         {
             psserver->SendSystemResult(source->GetClientNum(),
-                    "%d tria was taken by %s.", value,
+                    "%d tria were taken by %s.", value,
                     target->GetActor()->GetName());
         }
         return;
