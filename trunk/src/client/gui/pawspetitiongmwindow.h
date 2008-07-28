@@ -29,9 +29,10 @@
 enum {
     PGMCOL_LVL = 0,
     PGMCOL_PLAYER = 1,
-    PGMCOL_STATUS = 2,
-    PGMCOL_CREATED = 3,
-    PGMCOL_PETITION = 4
+    PGMCOL_ONLINE = 2,
+    PGMCOL_STATUS = 3,
+    PGMCOL_CREATED = 4,
+    PGMCOL_PETITION = 5
 };
 
 /** Defines the length a petition can be before it is

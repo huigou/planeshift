@@ -567,6 +567,7 @@ void pawsPetitionGMWindow::AddPetitions(csArray<psPetitionInfo> &petitions)
         selectedPet.status =          petitionList->GetTextCellValue(selRow, PGMCOL_STATUS);
         selectedPet.created =         petitionList->GetTextCellValue(selRow, PGMCOL_CREATED);
         selectedPet.petition =        petitionList->GetTextCellValue(selRow, PGMCOL_PETITION);
+        selectedPet.online =          petitionList->GetTextCellValue(selRow, PGMCOL_ONLINE);
     }
     else
     {
@@ -587,6 +588,7 @@ void pawsPetitionGMWindow::AddPetitions(csArray<psPetitionInfo> &petitions)
         petitionList->NewRow(i);
         SetText(i, PGMCOL_LVL, "%d", info.escalation);
         SetText(i, PGMCOL_PLAYER, "%s", info.player.GetData());
+        SetText(i, PGMCOL_ONLINE, "%s", (info.online ? "yes" : "no"));
         SetText(i, PGMCOL_STATUS, "%s", info.status.GetData());
         SetText(i, PGMCOL_CREATED, "%s", info.created.GetData());
         SetText(i, PGMCOL_PETITION, "%s", info.petition.GetData());

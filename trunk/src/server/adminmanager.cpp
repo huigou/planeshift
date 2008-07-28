@@ -4632,7 +4632,8 @@ void AdminManager::GMListPetitions(MsgEntry *me, psPetitionRequestMessage& msg,C
             info.escalation = atoi((*rs)[i][3]);
             info.created = csString((*rs)[i][4]).Slice(0, 16);
             info.player = (*rs)[i][5];
-
+            info.online = (clients->Find(info.player) ? true : false); 
+            
             // Append to the message:
             petitions.Push(info);
         }
@@ -4717,8 +4718,9 @@ void AdminManager::GMHandlePetition(MsgEntry *me, psPetitionRequestMessage& msg,
             info.petition = (*rs)[i][1];
             info.status = (*rs)[i][2];
             info.escalation = atoi((*rs)[i][3]);
-            info.created = (*rs)[i][4];
+            info.created = csString((*rs)[i][4]).Slice(0, 16);
             info.player = (*rs)[i][5];
+            info.online = (clients->Find(info.player) ? true : false);
 
             // Append to the message:
             petitions.Push(info);
