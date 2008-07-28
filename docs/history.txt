@@ -1,3 +1,6 @@
+*** 2008-07-28 by Andreas Heinchen
+- Fixed FS#1826
+
 *** 2008-07-28 by Mike Gist
 - Fixed FS#1925, patch by peeg.
 - Patch for FS#2001 from weltall.

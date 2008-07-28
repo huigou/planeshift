@@ -564,6 +564,7 @@ protected:
 
     uint8_t DRcounter;  /// increments in loop to prevent out of order packet overwrites of better data
     csTicks lastDR;
+    csVector3 lastV;
 
     /** Production Start Pos is used to record the place where people started digging. */
     csVector3 productionStartPos;
