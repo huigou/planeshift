@@ -2765,6 +2765,9 @@ public:
 
 void gemActor::ApplyStaminaCalculations(const csVector3& v, float times)
 {
+    csVector3 thisV = lastV;
+    lastV=v;
+
     // Script
     static MathScript* script = psserver->GetMathScriptEngine()->FindScript("StaminaMove");
     if (!script)
@@ -2816,17 +2819,17 @@ void gemActor::ApplyStaminaCalculations(const csVector3& v, float times)
         double Speed; ///< magnitude of the velocity vector
         double Angle; ///< angle between velocity vector and X-Z plane
 
-        double XZvel = csQsqrt(v.x*v.x + v.z*v.z);
-        if (v.y > EPSILON)
+        double XZvel = csQsqrt(thisV.x*thisV.x + thisV.z*thisV.z);
+        if (thisV.y > EPSILON)
         {
             if (XZvel > EPSILON)
             {
-                Speed = csQsqrt(v.y*v.y + XZvel*XZvel);
-                Angle = atan(v.y / XZvel);
+                Speed = csQsqrt(thisV.y*thisV.y + XZvel*XZvel);
+                Angle = atan(thisV.y / XZvel);
             }
             else // straight up
             {
-                Speed = v.y;
+                Speed = thisV.y;
                 Angle = HALF_PI;
             }
         }

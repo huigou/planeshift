@@ -186,7 +186,7 @@ INSERT INTO math_scripts VALUES( "CalculateStatCosts",
 
 INSERT INTO math_scripts VALUES( "StaminaMove",
 "
-        Drain = (Speed/10) + ((Weight/MaxWeight)/10);
+        Drain = (Speed/3) * (Weight/MaxWeight);
 ");
 
 INSERT INTO math_scripts VALUES( "StaminaCombat",
