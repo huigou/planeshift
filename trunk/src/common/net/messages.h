@@ -43,7 +43,7 @@ class psLinearMovement;
 
 // This holds the version number of the network code, remember to increase
 // this each time you do an update which breaks compatibility
-#define PS_NETVERSION   0x008D
+#define PS_NETVERSION   0x008E
 // Remember to bump the version in pscssetup.h, as well.
 
 // NPC Networking version is separate so we don't have to break compatibility
@@ -1500,7 +1500,7 @@ public:
                     int slot,
                     int stackcount,
                     float weight,
-                    float size,
+                    uint32 size,
                     const char* icon,
                     int purifyStatus );
 
@@ -1518,7 +1518,7 @@ public:
         csString name;
         int slot;
         float weight;
-        float size;
+        uint32 size;
         int stackcount;
         csString iconImage;
         int container;

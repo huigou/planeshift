@@ -729,7 +729,7 @@ bool Client::IsAdvisorBanned()
     bool advisorBan = false;
     Result result(db->Select("SELECT advisor_ban FROM accounts WHERE id = %d", GetAccountID()));
     if (result.IsValid())
-        advisorBan = result[0].GetUInt32("advisor_ban");
+        advisorBan = result[0].GetUInt32("advisor_ban") != 0;
         
     return advisorBan;
 }
