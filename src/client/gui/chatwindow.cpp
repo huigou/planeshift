@@ -1191,7 +1191,7 @@ void pawsChatWindow::HandleSystemMessage(MsgEntry *me)
                 soundmgr->HandleSoundType(msg.type);
 			}
 
-            LogMessage(msg.type == MSG_INFO_BASE ? CHAT_LOG_ALL : CHAT_LOG_SYSTEM, buff.GetData());
+            LogMessage((msg.type == MSG_INFO_BASE || msg.type == MSG_INFO_SERVER) ? CHAT_LOG_ALL : CHAT_LOG_SYSTEM, buff.GetData());
         }
         delete[] currentLine;
     }

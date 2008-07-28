@@ -52,9 +52,8 @@ protected:
 
 public:
     /// Initialize object and set reference to 1.
-    csSyncRefCount()
+    csSyncRefCount() : ref_count(1)
     {
-        AtomicOperations::Set(&ref_count, 1);
     }
 
     /// Increase the number of references to this object.
