@@ -114,20 +114,28 @@ bool pawsExchangeWindow::PostSetup()
     if (!bulkList)
         return false;
 
-    int i, j;
+    int colCount = bulkList->GetTotalColumns();
+    int rowCount = (int) ceil(float(EXCHANGE_SLOT_COUNT)/colCount);
+    int r, j, i;
 
-    for (i = 0; i < EXCHANGE_SLOT_COUNT/NUM_COLUMNS; i++)
+    for (r = 0; r < rowCount; r++)
     {
-        pawsListBoxRow * listRow = bulkList->NewRow(i);
-        for (j = 0; j < NUM_COLUMNS; j++)
+        pawsListBoxRow * listRow = bulkList->NewRow(r);
+        for (j = 0; j < colCount; j++)
         {
+            i = r*colCount+j;
             pawsSlot * slot;
             slot = dynamic_cast <pawsSlot*> (listRow->GetColumn(j));
             if (slot == NULL)
                 return false;            
             slot->SetContainer( CONTAINER_EXCHANGE_OFFERING );            
-            slot->SetSlotID( i*2+j );                   
-            offeringSlots[i*2+j] = slot;            
+            slot->SetSlotID( i );
+            if (i >= EXCHANGE_SLOT_COUNT)
+            {
+                slot->Hide();
+                continue;
+            }
+            offeringSlots[i] = slot;
         }
     }
     
@@ -136,19 +144,28 @@ bool pawsExchangeWindow::PostSetup()
     if (!bulkList)
         return false;
 
-    for (i = 0; i < EXCHANGE_SLOT_COUNT/NUM_COLUMNS; i++)
+    colCount = bulkList->GetTotalColumns();
+    rowCount = (int) ceil(float(EXCHANGE_SLOT_COUNT)/colCount);
+
+    for (r = 0; r < rowCount; r++)
     {
-        pawsListBoxRow * listRow = bulkList->NewRow(i);
-        for (j = 0; j < NUM_COLUMNS; j++)
+        pawsListBoxRow * listRow = bulkList->NewRow(r);
+        for (j = 0; j < colCount; j++)
         {
+            i = r*colCount+j;
             pawsSlot * slot;
             slot = dynamic_cast <pawsSlot*> (listRow->GetColumn(j));
             if (slot == NULL)
                 return false;            
             slot->SetContainer( CONTAINER_EXCHANGE_RECEIVING );            
-            slot->SetSlotID( i*2+j );                   
+            slot->SetSlotID( i );
             slot->SetDrag(false);
-            receivingSlots[i*2+j] = slot;               
+            if (i >= EXCHANGE_SLOT_COUNT)
+            {
+                slot->Hide();
+                continue;
+               }
+            receivingSlots[i] = slot;
         }
     }
 
