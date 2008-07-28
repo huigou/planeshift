@@ -610,7 +610,7 @@ bool NetBase::SendOut()
     unsigned int senderCount = senders.Count();
     unsigned int sentCount = 0;
     csRef<NetPacketQueueRefCount> q; 
-    while (q = csPtr<NetPacketQueueRefCount> (senders.Get()))
+    while (q = senders.Get())
     {
         sentCount += q->Count();
         if (SendMergedPackets(q))
@@ -945,20 +945,20 @@ bool NetBase::SendMessage(MsgEntry* me,NetPacketQueueRefCount *queue)
         size_t pktlen = MIN(MAXPACKETSIZE-sizeof(struct psNetPacket), bytesleft);
         char notify = '!';
 
-        psNetPacketEntry *pNewPkt = new psNetPacketEntry(me->priority, 
-            me->clientnum, 
-            id, 
-            (uint16_t)offset,
-            (uint16_t)me->bytes->GetTotalSize(), 
-            (uint16_t)pktlen, 
-            me->bytes);
+        csRef<psNetPacketEntry> pNewPkt;
+        pNewPkt.AttachNew(new psNetPacketEntry(me->priority, me->clientnum, id, (uint16_t)offset,
+          (uint16_t)me->bytes->GetTotalSize(), (uint16_t)pktlen, me->bytes));
 
         if (!queue->Add(pNewPkt))
         {
             if(queue == NetworkQueue)
-                Error1("NetworkQueue full. Could not add packet.\n")
+            {
+                Error1("NetworkQueue full. Could not add packet.\n");
+            }
             else
-                Error2("Target full. Could not add packet with clientnum %d.\n", me->clientnum)
+            {
+                Error2("Target full. Could not add packet with clientnum %d.\n", me->clientnum);
+            }
             return false;
         }
         
@@ -1280,5 +1280,4 @@ NetBase::Connection::~Connection()
     if (buf) 
         cs_free(buf);
 }
-
 

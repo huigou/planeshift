@@ -152,7 +152,7 @@ public:
 template<> class csHashComputer<PacketKey> :
 public csHashComputerStruct<PacketKey> {};
 
-class psNetPacketEntry : public csRefCount
+class psNetPacketEntry : public csSyncRefCount
 {
 public:
     /** clientnum this packet comes from/goes to */

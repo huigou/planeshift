@@ -488,6 +488,8 @@ void psMainWidget::HandleMessage( MsgEntry* message )
 
     if(mesg.type == MSG_ERROR)
         color = graphics2D->FindRGB(255,0,0);
+    else if(mesg.type == MSG_INFO_SERVER)
+        color = graphics2D->FindRGB(255,0,0);
     else if(mesg.type == MSG_RESULT)
         color = graphics2D->FindRGB(255,255,0);
     else if(mesg.type == MSG_OK)

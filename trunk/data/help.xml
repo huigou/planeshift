@@ -105,14 +105,14 @@ Give items to current Target NPC.</topic>
 If you are an advisor, lists all currently unanswered questions.</topic>
         <topic name="/notbuddy">/notbuddy player
 
-Removes the named player from your buddy list.  Not your friend anymore?  what a shame.</topic>
+Removes the named player from your buddy list.  Not your friend anymore?  What a shame.</topic>
         <branch name="/pet"> Control your pet(s).
 /pet [petname,] assist
 /pet [petname,] attack
 /pet [petname,] dismiss
 /pet [petname,] follow
 /pet [petname,] name
-/pet [petname,] quard
+/pet [petname,] guard
 /pet [petname,] stay
 /pet [petname,] summon
 /pet [petname,] target
@@ -127,7 +127,7 @@ Removes the named player from your buddy list.  Not your friend anymore?  what a
           <topic name="/pet name">/pet [petname,] name &lt;newname&gt;
 
 Give your pet a new name.</topic>
-          <topic name="/pet quard">/pet [petname,] quard
+          <topic name="/pet guard">/pet [petname,] guard
 </topic>
           <topic name="/pet stay">/pet [petname,] stay
 </topic>
