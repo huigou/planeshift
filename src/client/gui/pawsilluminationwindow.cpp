@@ -77,6 +77,7 @@ iGraphics2D *pawsSketchWindow::GetG2D()
 void pawsSketchWindow::HandleMessage( MsgEntry* me )
 {   
     editMode      = false;
+    isResizable = false;
     stringPending = false;
     psSketchMessage msg( me );
 
