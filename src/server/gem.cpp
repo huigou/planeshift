@@ -141,17 +141,17 @@ GEMSupervisor::GEMSupervisor(iObjectRegistry *objreg,
 GEMSupervisor::~GEMSupervisor()
 {
     // Slow but safe method of deleting.
-    size_t count = entities_by_ps_id.GetSize();
+    size_t count = entities_by_eid.GetSize();
     while(count > 0)
     {
-        csHash<gemObject *>::GlobalIterator i(entities_by_ps_id.GetIterator());
+        csHash<gemObject *>::GlobalIterator i(entities_by_eid.GetIterator());
         gemObject* obj = i.Next();
         delete obj;
 
         // Make sure the gemObject has deleted itself from our list otherwise
         // something has gone very wrong.
-        CS_ASSERT(count > entities_by_ps_id.GetSize());
-        count = entities_by_ps_id.GetSize();
+        CS_ASSERT(count > entities_by_eid.GetSize());
+        count = entities_by_eid.GetSize();
         continue;
     }
     if (psserver->GetEventManager())
@@ -203,27 +203,52 @@ PS_ID GEMSupervisor::GetNextID()
     return nextEID++;
 }
 
-void GEMSupervisor::CreateEntity(gemObject *obj)
+PS_ID GEMSupervisor::CreateEntity(gemObject *obj)
 {
+    const PS_ID eid = GetNextID();
+
     if (obj)
     {
-        entities_by_ps_id.Put(obj->GetEntityID(), obj);
-        Debug3(LOG_CELPERSIST,0,"Entity <%s> added to supervisor with ID: %d\n", obj->GetName(), obj->GetEntityID());      
+        entities_by_eid.Put(eid, obj);
+        Debug3(LOG_CELPERSIST,0,"Entity <%s> added to supervisor with ID: %d\n", obj->GetName(), eid);
     }
+
+    return eid;
+}
+
+void GEMSupervisor::AddActorEntity(gemActor *actor)
+{
+    actors_by_pid.Put(actor->GetPlayerID(), actor);
+    Debug3(LOG_CELPERSIST,0,"Actor added to supervisor with EID:%u and PID:%u.\n", actor->GetEntityID(), actor->GetPlayerID());
+}
+
+void GEMSupervisor::AddItemEntity(gemItem *item)
+{
+    items_by_uid.Put(item->GetItem()->GetUID(), item);
+    Debug3(LOG_CELPERSIST,0,"Item added to supervisor with EID:%u and UID:%u.\n", item->GetEntityID(), item->GetItem()->GetUID());
 }
 
 void GEMSupervisor::RemoveEntity(gemObject *which)
 {
-    if ( which )
+    if (!which)
+        return;
+
+    entities_by_eid.Delete(which->GetEntityID(), which);
+    Debug3(LOG_CELPERSIST,0,"Entity <%s> removed from supervisor with ID: %d\n", which->GetName(), which->GetEntityID());          
+
+    if (which->GetPlayerID())
     {
-        Debug3(LOG_CELPERSIST,0,"Entity <%s> removed from supervisor with ID: %d\n", which->GetName(), which->GetEntityID());          
-        entities_by_ps_id.Delete(which->GetEntityID(), which);
-    }        
+        actors_by_pid.Delete(which->GetPlayerID(), (gemActor*) which);
+    }
+    else if (which->GetItem())
+    {
+        items_by_uid.Delete(which->GetItem()->GetUID(), (gemItem*) which);
+    }
 }
 
 void GEMSupervisor::RemoveClientFromLootables(int cnum)
 {
-    csHash<gemObject *>::GlobalIterator i(entities_by_ps_id.GetIterator());
+    csHash<gemObject *>::GlobalIterator i(entities_by_eid.GetIterator());
     while ( i.HasNext() )
     {
         gemObject* obj = i.Next();
@@ -240,7 +265,7 @@ gemObject *GEMSupervisor::FindObject(PS_ID id)
     if (id == 0)  // ID zero is a placeholder for "no object."
         return NULL;
 
-    csHash<gemObject *>::Iterator i(entities_by_ps_id.GetIterator(id));
+    csHash<gemObject *>::Iterator i(entities_by_eid.GetIterator(id));
     gemObject* obj;
 
     while ( i.HasNext() )
@@ -254,63 +279,9 @@ gemObject *GEMSupervisor::FindObject(PS_ID id)
     return NULL;
 }
 
-#if 0
-/** THIS AN HACK, USED IN psserverchar.cpp and actionmanager.cpp
-* TO BE CHANGED ASAP FOR PERFORMANCE REASONS
-*/
-gemItem *GEMSupervisor::FindObjectFromInstanceID(PS_ID instance_id)
-{
-    // Get all entities (gemObjects)
-    csHash<gemObject *>& gems = GEMSupervisor::GetSingleton().GetAllGEMS();
-
-    csHash<gemObject *>::GlobalIterator i(gems.GetIterator());
-    gemObject* obj;
-    gemItem *foundgItem = NULL;
-
-    // Iterate through each one
-    while ( i.HasNext() )
-    {
-        obj = i.Next();
-        if (obj)
-        {
-            gemItem *gItem = dynamic_cast<gemItem*>(obj);
-            if (gItem) 
-            {
-                psItem *pItem = gItem->GetItem();
-
-                if ( pItem->GetUID() == instance_id )
-                {
-                    foundgItem = gItem;
-                    break;
-                }
-            }
-        }
-    }
-
-    return foundgItem;
-}
-#endif
-
-PS_ID GEMSupervisor::FindItemID(psItem *item)
-{
-    if (item == NULL)
-        return 0;
-
-    csHash<gemObject *>::GlobalIterator i(entities_by_ps_id.GetIterator());
-    while ( i.HasNext() )
-    {
-        gemObject* obj = i.Next();
-        if ( obj->GetItem() == item)
-            return obj->GetEntityID();
-    }
-    Error1("No ID was found.");
-    return 0;
-}
-
-
 gemObject *GEMSupervisor::FindObject(const csString& name)
 {
-    csHash<gemObject *>::GlobalIterator i(entities_by_ps_id.GetIterator());
+    csHash<gemObject *>::GlobalIterator i(entities_by_eid.GetIterator());
 
     while ( i.HasNext() )
     {
@@ -324,49 +295,22 @@ gemObject *GEMSupervisor::FindObject(const csString& name)
 
 gemActor *GEMSupervisor::FindPlayerEntity(int player_id)
 {
-    csHash<gemObject *>::Iterator iter(entities_by_ps_id.GetIterator(player_id));
-
-    while (iter.HasNext())
-    {
-        gemObject *obj = iter.Next();
-        gemActor *actor = dynamic_cast<gemActor*>(obj);
-        if (actor)
-            return actor;
-    }
-    return NULL;
+    return actors_by_pid.Get(player_id, NULL);
 }
 
 gemNPC *GEMSupervisor::FindNPCEntity(int npc_id)
 {
-    csHash<gemObject *>::Iterator iter(entities_by_ps_id.GetIterator(npc_id));
-
-    while (iter.HasNext())
-    {
-        gemObject *obj = iter.Next();
-        gemNPC *npc = dynamic_cast<gemNPC*>(obj);
-        if (npc)
-            return npc;
-    }
-    return NULL;
+    return dynamic_cast<gemNPC*>(actors_by_pid.Get(npc_id, NULL));
 }
 
 gemItem *GEMSupervisor::FindItemEntity(int item_id)
 {
-    csHash<gemObject *>::Iterator iter(entities_by_ps_id.GetIterator(item_id));
-
-    while (iter.HasNext())
-    {
-        gemObject *obj = iter.Next();
-        gemItem *item = dynamic_cast<gemItem*>(obj);
-        if (item)
-            return item;
-    }
-    return NULL;
+    return items_by_uid.Get(item_id, NULL);
 }
 
 int GEMSupervisor::CountManagedNPCs(int superclientID)
 {
-    csHash<gemObject *>::GlobalIterator iter(entities_by_ps_id.GetIterator());
+    csHash<gemObject *>::GlobalIterator iter(entities_by_eid.GetIterator());
 
     int count_players=0;
     while (iter.HasNext())
@@ -382,7 +326,7 @@ int GEMSupervisor::CountManagedNPCs(int superclientID)
 
 void GEMSupervisor::FillNPCList(MsgEntry *msg,int superclientID)
 {
-    csHash<gemObject *>::GlobalIterator iter(entities_by_ps_id.GetIterator());
+    csHash<gemObject *>::GlobalIterator iter(entities_by_eid.GetIterator());
 
     while (iter.HasNext())
     {
@@ -403,7 +347,7 @@ void GEMSupervisor::StopAllNPCs(int superclientID)
 {
     CPrintf(CON_NOTIFY, "Shutting down entities managed by superclient %d.\n",superclientID);
 
-    csHash<gemObject *>::GlobalIterator iter(entities_by_ps_id.GetIterator());
+    csHash<gemObject *>::GlobalIterator iter(entities_by_eid.GetIterator());
 
     count_players=0;
     while (iter.HasNext())
@@ -430,7 +374,7 @@ void GEMSupervisor::StopAllNPCs(int superclientID)
 
 void GEMSupervisor::UpdateAllDR()
 {
-    csHash<gemObject *>::GlobalIterator iter(entities_by_ps_id.GetIterator());
+    csHash<gemObject *>::GlobalIterator iter(entities_by_eid.GetIterator());
 
     count_players=0;
     while (iter.HasNext())
@@ -446,9 +390,9 @@ void GEMSupervisor::UpdateAllDR()
 
 void GEMSupervisor::UpdateAllStats()
 {
-    csHash<gemObject *>::GlobalIterator iter(entities_by_ps_id.GetIterator());
+    csHash<gemObject *>::GlobalIterator iter(entities_by_eid.GetIterator());
 
-    count_players=0;
+    count_players=0; // FIXME: This is zeroed out but not recounted?
     while (iter.HasNext())
     {
         gemObject *obj = iter.Next();
@@ -460,7 +404,7 @@ void GEMSupervisor::UpdateAllStats()
 
 void GEMSupervisor::GetPlayerObjects(unsigned int playerID, csArray<gemObject*> &list )
 {
-    csHash<gemObject *>::GlobalIterator iter(entities_by_ps_id.GetIterator());
+    csHash<gemObject *>::GlobalIterator iter(entities_by_eid.GetIterator());
     while (iter.HasNext())
     {
         gemObject* obj = iter.Next();
@@ -475,7 +419,7 @@ void GEMSupervisor::GetPlayerObjects(unsigned int playerID, csArray<gemObject*> 
 
 void GEMSupervisor::GetAllEntityPos(psAllEntityPosMessage& update)
 {
-    csHash<gemObject *>::GlobalIterator iter(entities_by_ps_id.GetIterator());
+    csHash<gemObject *>::GlobalIterator iter(entities_by_eid.GetIterator());
 
     update.SetLength(count_players,0);  // Theoretical max of how many
 
@@ -627,7 +571,6 @@ gemObject::gemObject(const char *name)
     prox_distance_desired=DEF_PROX_DIST; 
     prox_distance_current=DEF_PROX_DIST; 
     gemID = 0;
-
 }
 
 gemObject::gemObject(const char* name, 
@@ -637,13 +580,10 @@ gemObject::gemObject(const char* name,
                      iSector* room,
                      const csVector3& pos,
                      float rotangle,
-                     int clientnum,
-                     uint32 id)
+                     int clientnum)
 {
     if (!this->cel)
         this->cel = GEMSupervisor::GetSingletonPtr();
-
-    gemID = id;
 
     this->valid    = true;
     this->name     = name;
@@ -655,7 +595,7 @@ gemObject::gemObject(const char* name,
     proxlist = NULL;
     is_alive = false;
 
-    cel->CreateEntity(this);
+    gemID = cel->CreateEntity(this);
 
     prox_distance_desired=DEF_PROX_DIST;
     prox_distance_current=DEF_PROX_DIST;
@@ -1244,8 +1184,8 @@ gemActiveObject::gemActiveObject( const char* name,
                                      iSector* room,
                                      const csVector3& pos,
                                      float rotangle,
-                                     int clientnum, uint32 id)
-                                     : gemObject(name,factname,filename,myInstance,room,pos,rotangle,clientnum, id)
+                                     int clientnum)
+                                     : gemObject(name,factname,filename,myInstance,room,pos,rotangle,clientnum)
 {
     //if entity is not set, object is not a success
 //    if (entity != NULL)
@@ -1456,13 +1396,13 @@ gemItem::gemItem(csWeakRef<psItem> item,
                      iSector* room,
                      const csVector3& pos,
                      float rotangle,
-                     int clientnum,uint32 id)
-                     : gemActiveObject(item->GetName(),factname,filename,instance,room,pos,
-                                       rotangle,clientnum,id)
+                     int clientnum)
+                     : gemActiveObject(item->GetName(),factname,filename,instance,room,pos,rotangle,clientnum)
 {
     itemdata=item;
     itemType.Format("Item(%s)",itemdata->GetItemType());
     itemdata->SetGemObject( this ); 
+    cel->AddItemEntity(this);
 }
 
 void gemItem::Broadcast(int clientnum, bool control )
@@ -1578,29 +1518,21 @@ bool gemItem::GetVisibility()
 // gemActionLocation
 //--------------------------------------------------------------------------------------
 
-gemActionLocation::gemActionLocation( GEMSupervisor *cel, 
-                                      psActionLocation *action, 
-                                      iSector *isec,
-                                      int clientnum, uint32 id )  
-                                      : gemActiveObject( action->name )
+gemActionLocation::gemActionLocation(psActionLocation *action, iSector *isec, int clientnum)
+                                     : gemActiveObject(action->name)
 {
-    if (!this->cel)
-        this->cel = cel;
-    
     this->yRot  = 0;
     this->action = action;
-    this->gemID = id;
     action->SetGemObject( this );
+
+    // action locations use the AL ID as their EID for some reason
+    gemID = action->id;
 
     this->prox_distance_desired = 0.0F;
     this->prox_distance_current = 0.0F;
             
     visible = false;
 
-    proxlist = NULL;
-    is_alive = false;
-
-    cel->CreateEntity(this);
     SetName(name);
  
     pcmesh = new gemMesh(psserver->GetObjectReg(), this, cel);
@@ -1713,14 +1645,16 @@ gemActor::gemActor( psCharacter *chardata,
                        iSector* room,
                        const csVector3& pos,
                        float rotangle,
-                       int clientnum,uint32 id) :
-  gemObject(chardata->GetCharFullName(),factname,filename,myInstance,room,pos,rotangle,clientnum,id),
+                       int clientnum) :
+  gemObject(chardata->GetCharFullName(),factname,filename,myInstance,room,pos,rotangle,clientnum),
 psChar(chardata), factions(NULL), DRcounter(0), lastDR(0), lastSentSuperclientPos(0, 0, 0),
 lastSentSuperclientInstance(-1), numReports(0), reportTargetId(0), isFalling(false), invincible(false), visible(true), viewAllObjects(false), meshcache(factname), 
 movementMode(0), isAllowedToMove(true), atRest(true), pcmove(NULL),
 nevertired(false), infinitemana(false), instantcast(false), safefall(false)
 {
     playerID = chardata->GetCharacterID();
+
+    cel->AddActorEntity(this);
 
     // Store a safe reference to the client
     Client* client = psserver->GetConnections()->FindAny(clientnum);
@@ -3462,8 +3396,8 @@ gemNPC::gemNPC( psCharacter *chardata,
                    iSector* room,
                    const csVector3& pos,
                    float rotangle,
-                   int clientnum,uint32 id)
-                   : gemActor(chardata,factname,filename,instance,room,pos,rotangle,clientnum,id)
+                   int clientnum)
+                   : gemActor(chardata,factname,filename,instance,room,pos,rotangle,clientnum)
 {
     npcdialog = NULL;
     superClientID = 0;
@@ -3954,8 +3888,8 @@ gemContainer::gemContainer(csWeakRef<psItem> item,
              iSector* room,
              const csVector3& pos,
              float rotangle,
-             int clientnum,uint32 id)
-             : gemItem(item,factname,filename,myInstance,room,pos,rotangle,clientnum,id)
+             int clientnum)
+             : gemItem(item,factname,filename,myInstance,room,pos,rotangle,clientnum)
 {
 }
 

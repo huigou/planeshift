@@ -584,7 +584,7 @@ bool EntityManager::CreatePlayer (Client* client)
 
     gemActor *actor = new gemActor(chardata,raceinfo->mesh_name,filename,
                                    instance,sector,pos,yrot,
-                                   client->GetClientNum(),gem->GetNextID() );
+                                   client->GetClientNum());
 
     client->SetActor(actor);
 
@@ -722,8 +722,7 @@ PS_ID EntityManager::CreateNPC(psCharacter *chardata, INSTANCE_ID instance, csVe
     }
 
     gemNPC *actor = new gemNPC(chardata, raceinfo->mesh_name, raceinfo->GetMeshFileName(), 
-                               instance, sector, pos, yrot, 0,
-                               gem->GetNextID());
+                               instance, sector, pos, yrot, 0);
 
     if ( !actor->IsValid() )
     {
@@ -848,13 +847,11 @@ gemObject *EntityManager::CreateItem( psItem *& iteminstance, bool transient )
     
     if (iteminstance->GetIsContainer())
     {
-        obj = new gemContainer(iteminstance,meshname,
-                               meshfile,instance,isec,newpos,yrot,0, gem->GetNextID());
+        obj = new gemContainer(iteminstance,meshname,meshfile,instance,isec,newpos,yrot,0);
     }
     else
     {
-        obj = new gemItem(iteminstance,meshname,
-                          meshfile,instance,isec,newpos,yrot,0,gem->GetNextID());
+        obj = new gemItem(iteminstance,meshname,meshfile,instance,isec,newpos,yrot,0);
     }
 
     // Won't create item if gemItem entity was not created
@@ -889,11 +886,11 @@ bool EntityManager::CreateActionLocation( psActionLocation *instance, bool trans
     isec = FindSector( sector );
     if ( isec == NULL )
     {
-        CPrintf(CON_ERROR, "Action Location ID %u : Sector not found!\n", gem->GetNextID());
+        CPrintf(CON_ERROR, "Action Location ID %u : Sector not found!\n", instance->id);
         return false;
     }
 
-    gemActionLocation *obj = new gemActionLocation( gem, instance, isec, 0, gem->GetNextID());    
+    gemActionLocation *obj = new gemActionLocation(instance, isec, 0);
     
     //won't create item if gemItem entity was not created
     //if ( obj->GetEntity() == NULL ) 

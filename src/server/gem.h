@@ -128,7 +128,7 @@ public:
     /** Get a hash of all the current entities on the server.
      * @return a csHash of all the gemObjects.
      */
-    csHash<gemObject *>& GetAllGEMS() { return entities_by_ps_id; }
+    csHash<gemObject *>& GetAllGEMS() { return entities_by_eid; }
 
     // Search functions
     /** Find an entity ID for an item.
@@ -145,8 +145,10 @@ public:
     gemNPC    *FindNPCEntity(int npc_id);
     gemItem   *FindItemEntity(int item_id);
 
-    void CreateEntity(gemObject *obj);
+    PS_ID CreateEntity(gemObject *obj);
     void RemoveEntity(gemObject *which);
+    void AddActorEntity(gemActor *actor);
+    void AddItemEntity(gemItem *item);
     
     void RemoveClientFromLootables(int cnum);
         
@@ -215,15 +217,16 @@ public:
       */
     csArray<gemObject*> FindNearbyEntities (iSector* sector, const csVector3& pos, float radius, bool doInvisible = false);
 
-
+protected:
     /** Get the next ID for an object.
       * @return The next ID available that can be assigned to an object.
       */
     PS_ID GetNextID();    
 
+    csHash<gemObject*> entities_by_eid; ///< A list of all the entities stored by EID (entity/gem ID).
+    csHash<gemItem*>   items_by_uid;    ///< A list of all the items stored by UID (psItem ID).
+    csHash<gemActor*>  actors_by_pid;   ///< A list of all the actors stored by PID (player/character ID).
 
-protected:
-    csHash<gemObject *> entities_by_ps_id;                  ///< A list of all the entities stored by ID.
     int                 count_players;                      ///< Total Number of players
 
     PS_ID               nextEID;                            ///< The next ID available for an object.
@@ -241,7 +244,7 @@ class gemObject : public iDeleteNotificationObject, public CS::Utility::WeakRefe
 
 public:
     gemObject(const char* name, const char* factname,const char* filename,INSTANCE_ID myinstance,iSector* room,
-        const csVector3& pos,float rotangle,int clientnum,uint32 id);
+        const csVector3& pos,float rotangle,int clientnum);
 
     /// This ctor is only for use in making keys for the BinaryTree
     gemObject(const char *name);
@@ -388,7 +391,7 @@ public:
                     iSector* room,
                     const csVector3& pos,
                     float rotangle,
-                    int clientnum,uint32 id);
+                    int clientnum);
 
     virtual const char* GetObjectType() { return "Active object"; }
 
@@ -423,7 +426,7 @@ public:
         iSector* room,
         const csVector3& pos,
         float rotangle,
-        int clientnum,uint32 id);
+        int clientnum);
 
     virtual const char* GetObjectType() { return itemType.GetData(); }
     virtual psItem *GetItem();
@@ -467,7 +470,7 @@ public:
         iSector* room,
         const csVector3& pos,
         float rotangle,
-        int clientnum,uint32 id);
+        int clientnum);
 
     bool CanAdd(unsigned short amountToAdd, psItem *item, int slot=-1);
     bool AddToContainer(psItem *item,Client *fromClient, int slot=-1) { return AddToContainer(item, fromClient, slot, false); }
@@ -515,7 +518,7 @@ private:
     bool visible;
 
 public:
-    gemActionLocation( GEMSupervisor *cel, psActionLocation *action, iSector *isec, int clientnum, uint32 id );
+    gemActionLocation(psActionLocation *action, iSector *isec, int clientnum);
 
     virtual const char* GetObjectType() { return "ActionLocation"; }
     virtual psActionLocation *GetAction() { return action; }
@@ -630,7 +633,7 @@ public:
     psLinearMovement* pcmove;
 
     gemActor(psCharacter *chardata, const char* factname,const char* filename,
-        unsigned int myInstance,iSector* room,const csVector3& pos,float rotangle,int clientnum,uint32 id);
+        unsigned int myInstance,iSector* room,const csVector3& pos,float rotangle,int clientnum);
 
     virtual ~gemActor();
 
@@ -861,7 +864,7 @@ protected:
 
 public:
     gemNPC(psCharacter *chardata, const char* factname,const char* filename,
-           unsigned int myInstance,iSector* room,const csVector3& pos,float rotangle,int clientnum,uint32 id);
+           unsigned int myInstance,iSector* room,const csVector3& pos,float rotangle,int clientnum);
 
     virtual ~gemNPC();
 
@@ -929,7 +932,7 @@ class gemPet : public gemNPC
 public:
 
     gemPet(psCharacter *chardata, const char* factname,const char* filename,INSTANCE_ID instance,iSector* room,
-        const csVector3& pos,float rotangle,int clientnum,uint32 id) : gemNPC(chardata,factname,filename,instance,room,pos,rotangle,clientnum,id) 
+        const csVector3& pos,float rotangle,int clientnum,uint32 id) : gemNPC(chardata,factname,filename,instance,room,pos,rotangle,clientnum) 
     {
         this->persistanceLevel = "Temporary";
     };
