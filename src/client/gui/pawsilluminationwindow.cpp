@@ -380,8 +380,8 @@ void pawsSketchWindow::OnStringEntered(const char *name,int param,const char *va
 
     if (!strcasecmp(name,"AddText"))
     {
-        int x = (ScreenFrame().xmax + ScreenFrame().xmin)/2 - ScreenFrame().xmin;
-        int y = (ScreenFrame().ymax + ScreenFrame().ymin)/2 - ScreenFrame().ymin;
+        int x = (ScreenFrame().xmax - ScreenFrame().xmin)/2;
+        int y = (ScreenFrame().ymax - ScreenFrame().ymin)/2;
         SketchText *text = new SketchText(x,y,value,this);
         objlist.Push(text);
     }
@@ -419,8 +419,8 @@ void pawsSketchWindow::AddSketchLine()
         return;
     }
 
-    int x = (ScreenFrame().xmax + ScreenFrame().xmin)/2 - ScreenFrame().xmin;
-    int y = (ScreenFrame().ymax + ScreenFrame().ymin)/2 - ScreenFrame().ymin;
+    int x = (ScreenFrame().xmax - ScreenFrame().xmin)/2;
+    int y = (ScreenFrame().ymax - ScreenFrame().ymin)/2;
     int x2 = x + 50;
     int y2 = y + 50;
 
@@ -442,8 +442,8 @@ void pawsSketchWindow::AddSketchIcon()
 
     // printf("Adding sketch icon now.\n");
     
-    int x = (ScreenFrame().xmax + ScreenFrame().xmin)/2;
-    int y = (ScreenFrame().ymax + ScreenFrame().ymin)/2;
+    int x = (ScreenFrame().xmax - ScreenFrame().xmin)/2;
+    int y = (ScreenFrame().ymax - ScreenFrame().ymin)/2;
 
     SketchIcon *icon = new SketchIcon(x,y,iconList[0],this);
     objlist.Push(icon);
