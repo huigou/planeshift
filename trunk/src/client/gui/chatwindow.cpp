@@ -814,6 +814,15 @@ void pawsChatWindow::LogMessage(enum E_CHAT_LOG channel, const char* message)
                 newtime = localtime(&aclock);
                 strftime(buf, 32, "%a %d-%b-%Y %H:%M:%S", newtime);
 		csString buffer;
+#ifdef _WIN32
+		buffer.Format(
+					"================================================\r\n"
+					"%s %s\r\n"
+					"------------------------------------------------\r\n",
+					buf, psengine->GetCelClient()->GetMainPlayer()->GetName()
+					);
+		logFile[channel]->Write(buffer.GetData(), buffer.Length());
+#else
 		buffer.Format(
                     "================================================\n"
                     "%s %s\n"
@@ -821,6 +830,7 @@ void pawsChatWindow::LogMessage(enum E_CHAT_LOG channel, const char* message)
                     buf, psengine->GetCelClient()->GetMainPlayer()->GetName()
                     );
                 logFile[channel]->Write(buffer.GetData(), buffer.Length());
+#endif
             }
             else
             {
@@ -838,7 +848,11 @@ void pawsChatWindow::LogMessage(enum E_CHAT_LOG channel, const char* message)
             newtime = localtime(&aclock);
             strftime(buf, 32, "(%H:%M:%S)", newtime);
 	    csString buffer;
-	    buffer.Format("%s %s\n", buf, message);
+#ifdef _WIN32
+	    buffer.Format("%s %s\r\n", buf, message);
+#else
+		buffer.Format("%s %s\n", buf, message);
+#endif
 	    logFile[channel]->Write(buffer.GetData(), buffer.Length());
 	    logFile[channel]->Flush();
         }
