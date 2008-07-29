@@ -1,3 +1,7 @@
+*** 2008-07-29 by Kenny Graunke
+- Fixed bugs caused by using the wrong IDs in r1908.  Specifically, items in
+  containers were failing to load, and most action locations didn't work.
+
 *** 2008-07-28 by Andreas Heinchen
 - Fix for FS#1692 - fixing 2 bugs that caused entities to get lost in a temporary sector
 - Cleaned up fix for FS#707
