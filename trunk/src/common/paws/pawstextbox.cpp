@@ -1219,7 +1219,7 @@ void pawsMultiLineTextBox::SetText( const char* newText )
     
     OrganizeText( str.GetData() );
                 
-    if ( canDrawLines > lines.GetSize() )
+    if ( canDrawLines >= lines.GetSize() )
         canDrawLines = lines.GetSize();
     else
     {
