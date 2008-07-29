@@ -1,5 +1,5 @@
 *** 2008-07-29 by Andreas Heinchen
-- Fix for FS#773, patch by Weltall
+- Fixed FS#773 and FS#2030, patch by Weltall
 
 *** 2008-07-29 by Kenny Graunke
 - Fixed bugs caused by using the wrong IDs in r1908.  Specifically, items in

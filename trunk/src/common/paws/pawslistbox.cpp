@@ -630,9 +630,13 @@ void pawsListBox::CalculateDrawPositions()
             break;
     }
 
-    if ( rows.GetSize() > numberOfRows )
-        if ( scrollBar ) 
+    if (scrollBar)
+    {
+        if (rows.GetSize() > numberOfRows)
             scrollBar->Show();
+        else
+            scrollBar->Hide();
+    }
 }
 
 
