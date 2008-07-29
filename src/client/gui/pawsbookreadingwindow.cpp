@@ -156,7 +156,9 @@ bool pawsBookReadingWindow::OnButtonPressed( int mouseButton, int keyModifier, p
 		}
         
         bookFormat = description->GetText();
-		
+#ifdef _WIN32
+		bookFormat.ReplaceAll("\n", "\r\n");
+#endif
         vfs->WriteFile(tempFileName, bookFormat, bookFormat.Length());
 		
         psSystemMessage msg(0, MSG_ACK, "Book saved to %s", tempFileName.GetData()+27 );

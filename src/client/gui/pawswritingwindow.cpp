@@ -175,6 +175,7 @@ void pawsWritingWindow::OnStringEntered(const char *name, int param,const char *
         msg.FireEvent();
     }        
     csString book(data->GetData(), MIN(data->GetSize(), MAX_BOOK_FILE_SIZE));
+	book.ReplaceAll("\r\n", "\n");
     lefttext->SetText(book, true);
     
     psSystemMessage msg(0, MSG_ACK, "Book Loaded Successfully!" );
