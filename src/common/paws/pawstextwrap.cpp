@@ -66,7 +66,6 @@ pawsMultilineEditTextBox::pawsMultilineEditTextBox()
     // Find the line height;
     int dummy;
     GetFont()->GetMaxSize( dummy, lineHeight );
-    lineHeight -=2;
     OnResize();
 }
 
@@ -201,8 +200,8 @@ bool pawsMultilineEditTextBox::OnKeyDown( int code, int key, int modifiers )
         parent->OnChange(this);
     }
 
-    if (cursorLine > topLine+canDrawLines)
-        topLine = cursorLine - canDrawLines;
+    if (cursorLine >= topLine+canDrawLines)
+        topLine = cursorLine - canDrawLines+1; 
     else if (cursorLine < topLine)
         topLine = cursorLine;
     SetupScrollBar();
@@ -220,7 +219,22 @@ bool pawsMultilineEditTextBox::OnKeyDown( int code, int key, int modifiers )
 
 void pawsMultilineEditTextBox::OnResize()
 {
-    canDrawLines = (screenFrame.Height()-lineHeight) / lineHeight;
+    canDrawLines = (screenFrame.Height() / lineHeight); 
+    UpdateScrollBar();
+}
+
+void pawsMultilineEditTextBox::UpdateScrollBar()
+{
+    if(!vScrollBar) return;
+    
+    float barPosition = (float)topLine;
+    vScrollBar->SetMaxValue((int)lineInfo.GetSize() - canDrawLines);
+    vScrollBar->SetCurrentValue((float)barPosition);
+    
+    if (lineInfo.GetSize() <= canDrawLines)
+        vScrollBar->Hide(); // turn off scrollbar
+    else
+        vScrollBar->Show();
 }
 
 void pawsMultilineEditTextBox::SetupScrollBar()
@@ -237,17 +251,7 @@ void pawsMultilineEditTextBox::SetupScrollBar()
         AddChild( vScrollBar ); 
     }
 
-    if (lineInfo.GetSize() < canDrawLines)
-    {
-        // turn off scrollbar
-        vScrollBar->Hide();
-    } 
-    else 
-    {
-        vScrollBar->SetCurrentValue((float)topLine);
-        vScrollBar->SetMaxValue((int)lineInfo.GetSize() - canDrawLines );
-        vScrollBar->Show();
-    }
+    UpdateScrollBar();
 }
 
 bool pawsMultilineEditTextBox::OnMouseDown( int button, int modifiers, int x, int y )

@@ -1,3 +1,6 @@
+*** 2008-07-30 by Andreas Heinchen
+- completly fixed FS#1373, patch by weltall
+
 *** 2008-07-29 by Andreas Heinchen
 - Fixed FS#773 and FS#2030, partially fixed FS#1373, patches by Weltall
 
