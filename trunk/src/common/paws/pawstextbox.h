@@ -371,6 +371,7 @@ public:
      */
     void SetText( const char* text, bool publish = true );
     const char* GetText();
+    void UpdateScrollBar();
     virtual void SetupScrollBar();
 
     bool OnScroll( int direction, pawsScrollBar* widget );
