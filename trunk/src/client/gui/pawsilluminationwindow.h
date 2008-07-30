@@ -141,6 +141,9 @@ protected:
     void SaveSketch();
     void LoadSketch();
     bool isBadChar(char c);
+    
+    csString toXML();
+    
     csString filenameSafe(const csString &original);
 
     csString sketchName;
