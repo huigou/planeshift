@@ -3957,7 +3957,17 @@ bool gemContainer::AddToContainer(psItem *item, Client *fromClient, int slot, bo
 
     // If the gemContainer we are dropping the item into is not pickupable then we
     // guard the item placed inside.  Otherwise the item becomes public.
-    item->SetGuardingCharacterID(item->GetOwningCharacterID());
+    if (fromClient)
+    {
+        /* put the player behind the client as guard */
+        item->SetGuardingCharacterID(fromClient->GetCharacterData()->characterid);
+    }
+    if (item->GetOwningCharacterID())
+    {
+        /* item comes from a player () */
+        item->SetGuardingCharacterID(item->GetOwningCharacterID());
+    }
+
     if (!GetItem()->GetIsNoPickup() && item->GetOwningCharacterID())
         GetItem()->SetGuardingCharacterID(item->GetOwningCharacterID());
         
@@ -4035,6 +4045,9 @@ psItem* gemContainer::RemoveFromContainer(psItem *itemStack, int fromSlot, Clien
     {
         // Split out the stack for the required amount.
         item = itemStack->SplitStack(stackCount);
+        
+        // Save the lowered value
+        itemStack->Save(false);
     }
             
     // Send out messages about the change in the item stack.    
