@@ -2,7 +2,7 @@
 - Fixed inconsistency between world and database.
   Fixed ownership of items moved from world container to world container.
   Fixed FS#1376 splitted stacks in world containers did not update the clients properly
-- completly fixed FS#1373, patch by weltall
+- several fixes for FS#1373, patches by weltall
 
 *** 2008-07-29 by Andreas Heinchen
 - Fixed FS#773 and FS#2030, partially fixed FS#1373, patches by Weltall

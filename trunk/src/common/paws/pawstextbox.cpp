@@ -436,7 +436,7 @@ void pawsMessageTextBox::Draw()
     {
         if ( x < adjusted.GetSize() )
         {
-            int oldSize = GetFont()->GetSize();
+            //int oldSize = GetFont()->GetSize();
             if(adjusted[x]->size)
             {
                 //ChangeFontSize(adjusted[x]->size);
@@ -610,7 +610,7 @@ void pawsMessageTextBox::SplitMessage( const char* newText, int colour, int size
         int maxWidth;
         int maxHeight;
     
-        int oldSize = GetFont()->GetSize();
+        //int oldSize = GetFont()->GetSize();
         if(size)
         {
             //ChangeFontSize(size);
@@ -1220,7 +1220,14 @@ void pawsMultiLineTextBox::SetText( const char* newText )
     OrganizeText( str.GetData() );
                 
     if ( canDrawLines >= lines.GetSize() )
+    {
         canDrawLines = lines.GetSize();
+        if(scrollBar) //if there is a scrollbar we must setup it correctly else we will scroll in the void
+        {
+            scrollBar->SetMaxValue(0);
+            scrollBar->SetCurrentValue(0);
+        }
+    }
     else
     {
         usingScrollBar = true;
