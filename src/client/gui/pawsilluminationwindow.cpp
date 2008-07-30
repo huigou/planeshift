@@ -150,28 +150,33 @@ void pawsSketchWindow::HandleMessage( MsgEntry* me )
     Show();
 }
 
+csString pawsSketchWindow::toXML(void )
+{
+    //generates the xml document from the objects currently displayed in the sketch
+    csString xml;
+
+    xml = "<pages><page ";
+    xml.AppendFmt("l=\"%d\" t=\"%d\" w=\"%d\" h=\"%d\">", GetLogicalWidth(
+            screenFrame.xmin), GetLogicalHeight(screenFrame.ymin),
+            GetLogicalWidth(screenFrame.xmax - screenFrame.xmin),
+            GetLogicalHeight(screenFrame.ymax - screenFrame.ymin));
+
+    // Add background and size stuff here
+    for (size_t i = 0; i < objlist.GetSize(); i++)
+        if (objlist[i]->x <= screenFrame.xmax - screenFrame.xmin
+                && objlist[i]->y <= screenFrame.ymax - screenFrame.ymin)
+            objlist[i]->WriteXml(xml);
+
+    xml += "</page></pages>";
+    return xml;
+}
+
 void pawsSketchWindow::Hide()
 {
     if (dirty)
     {
-        csString xml;
-
-        xml = "<pages><page ";
-        xml.AppendFmt("l=\"%d\" t=\"%d\" w=\"%d\" h=\"%d\">",
-                      GetLogicalWidth(screenFrame.xmin),
-                      GetLogicalHeight(screenFrame.ymin),
-                      GetLogicalWidth(screenFrame.xmax-screenFrame.xmin),
-                      GetLogicalHeight(screenFrame.ymax-screenFrame.ymin));
-
-        // Add background and size stuff here
-
-        for (size_t i=0; i<objlist.GetSize(); i++)
-            objlist[i]->WriteXml(xml);
-
-        xml += "</page></pages>";
-
+        csString xml = toXML();
         // printf("Saving sketch as: %s\n",xml.GetDataSafe());
-
         psSketchMessage sketch(0, currentItemID,0,"", xml, true, sketchName);
         sketch.SendMessage();
     }
@@ -190,7 +195,14 @@ void pawsSketchWindow::Draw()
 }
 void pawsSketchWindow::DrawSketch()
 {
-    for (size_t i=0; i<objlist.GetSize(); i++)
+    if (selectedIndex != SIZET_NOT_FOUND && IsMouseDown())
+    {
+        psPoint pos = PawsManager::GetSingleton().GetMouse()->GetPosition();
+        objlist[selectedIndex]->UpdatePosition(GetLogicalWidth(pos.x
+                - ScreenFrame().xmin), GetLogicalHeight(pos.y
+                - ScreenFrame().ymin));
+    }
+    for (size_t i = 0; i < objlist.GetSize(); i++)
         objlist[i]->Draw();
 }
 
@@ -500,19 +512,7 @@ void pawsSketchWindow::ChangeSketchName()
 
 void pawsSketchWindow::SaveSketch()
 {
-    csString xml;
-    //generates the xml document from the objects currently displayed in the sketch
-    xml = "<pages><page ";
-    xml.AppendFmt("l=\"%d\" t=\"%d\" w=\"%d\" h=\"%d\">",
-                  GetLogicalWidth(screenFrame.xmin),
-                  GetLogicalHeight(screenFrame.ymin),
-                  GetLogicalWidth(screenFrame.xmax-screenFrame.xmin),
-                  GetLogicalHeight(screenFrame.ymax-screenFrame.ymin));
-
-    for (size_t i=0; i<objlist.GetSize(); i++)
-        objlist[i]->WriteXml(xml);
-
-    xml += "</page></pages>";
+    csString xml = toXML();
     csRef<iVFS> vfs = psengine->GetVFS();
     unsigned int tempNumber = 0;
     //searchs for a free sketch slot in the user directory and write in it
@@ -837,7 +837,7 @@ void pawsSketchWindow::SketchText::WriteXml(csString& xml)
 
 void pawsSketchWindow::SketchText::Draw()
 {
-    if (!selected || frame > 15)
+    if (parent->IsMouseDown() || !selected || frame > 15)
     {
         parent->DrawWidgetText(str,
                                parent->GetActualWidth(x)+parent->ScreenFrame().xmin,
@@ -872,7 +872,7 @@ bool pawsSketchWindow::SketchLine::Load(iDocumentNode *node, pawsSketchWindow *p
     pts.GetWordNumber(4,num);
     y2  = atoi(num.GetDataSafe());
 
-    printf("Line %d,%d to %d, %d\n",x,y,x2,y2);
+    //printf("Line %d,%d to %d, %d\n",x,y,x2,y2);
 
     this->parent = parent;
     return true;
@@ -898,7 +898,7 @@ void pawsSketchWindow::SketchLine::Draw()
                           parent->GetActualHeight(y2)+parent->ScreenFrame().ymin,
                           black );
 
-    if (!selected || frame > 15)
+    if (parent->IsMouseDown() || !selected || frame > 15)
     {
         parent->DrawBlackBox(parent->GetActualWidth(x)+parent->ScreenFrame().xmin-3,
                              parent->GetActualHeight(y)+parent->ScreenFrame().ymin-3);
@@ -932,8 +932,8 @@ bool pawsSketchWindow::SketchLine::IsHit(int mouseX, int mouseY)
         abs(mouseY-y2) < 3)
     {
         dragMode = 2;
-        offsetX = mouseX - x;
-        offsetY = mouseY - y;
+        offsetX = mouseX - x2;
+        offsetY = mouseY - y2;
         return true;
     }
 
@@ -966,9 +966,10 @@ void pawsSketchWindow::SketchLine::UpdatePosition(int _x, int _y)
 
     _x -= offsetX;  // This backs off the cursor from where it was
     _y -= offsetY;
-
-    dx = _x - x;
-    dy = _y - y;
+    
+    //if we are taking the second point we must check it's position
+    dx = _x - (dragMode == 2 ? x2 : x); 
+    dy = _y - (dragMode == 2 ? y2 : y); 
 
     switch (dragMode)
     {
@@ -1015,8 +1016,6 @@ void pawsSketchWindow::SketchLine::UpdatePosition(int _x, int _y)
             }
             break;
     }
-    offsetX = 0;
-    offsetY = 0;
 }
 
 void pawsSketchWindow::SketchIcon::UpdatePosition (int _x, int _y){
