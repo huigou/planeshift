@@ -314,16 +314,8 @@ void SlotManager::MoveFromWorldContainer(psSlotMovementMsg& msg, Client *fromCli
                 itemProposed->Save(false);
 
             // Update client(s)
-            psViewItemUpdate mesg(fromClient->GetClientNum(), 
-                                  worldContainer->GetEntityID(),
-                                  msg.fromSlot,
-                                  true,
-                                  itemProposed->GetName(),
-                                  itemProposed->GetImageName(),
-                                  itemProposed->GetStackCount(),
-                                  0);
+            itemProposed->UpdateView(fromClient, worldContainer->GetEntityID(), true);
 
-            mesg.Multicast(fromClient->GetActor()->GetMulticastClients(),0,5);
 //            psserver->GetCharManager()->SendContainerContents(fromClient, parentItem, containerEntityID);
             break;
         }

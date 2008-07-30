@@ -42,6 +42,7 @@
 //=============================================================================
 // Local Includes
 //=============================================================================
+#include "client.h"
 #include "psskills.h"
 #include "psitemstats.h"
 #include "deleteobjcallback.h"
@@ -214,6 +215,9 @@ public:
 
     /// Handles deleted gem objects.
     virtual void DeleteObjectCallback(iDeleteNotificationObject * object);
+    
+    //inform clients on view updates
+    void UpdateView(Client *fromClient, uint EntityId, bool clear);
 
 private:
 

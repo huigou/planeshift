@@ -3977,22 +3977,7 @@ bool gemContainer::AddToContainer(psItem *item, Client *fromClient, int slot, bo
     item->Save(false);
     itemlist.PushSmart(item);
 
-    if (fromClient)
-    {
-        gemActor *guardian = GEMSupervisor::GetSingleton().FindPlayerEntity(item->GetGuardingCharacterID());
-
-        // Update client(s)
-        psViewItemUpdate mesg(fromClient->GetClientNum(), 
-                              GetEntityID(),
-                              slot,
-                              false,
-                              item->GetName(),
-                              item->GetImageName(),
-                              item->GetStackCount(),
-                              guardian ? guardian->GetEntityID() : 0);
-
-        mesg.Multicast(fromClient->GetActor()->GetMulticastClients(),0,5);
-    }
+    item->UpdateView(fromClient, GetEntityID(), false);
     return true;
 }
 
@@ -4001,25 +3986,7 @@ bool gemContainer::RemoveFromContainer(psItem *item,Client *fromClient)
     // printf("Removing %s from container now.\n", item->GetName() );
     if (itemlist.Delete(item))
     {
-        uint32_t slot = item->GetLocInParent();
-
-        if (fromClient)
-        {
-            gemActor *guardian = GEMSupervisor::GetSingleton().FindPlayerEntity(item->GetGuardingCharacterID());
- 
-            // printf("Multicasting removal update to nearby clients of %s.\n\n", fromClient->GetName() );
-            // Update client(s)
-            psViewItemUpdate mesg(fromClient->GetClientNum(), 
-                                  GetEntityID(),
-                                  slot,
-                                  true,
-                                  item->GetName(),
-                                  item->GetImageName(),
-                                  item->GetStackCount(),
-                                  guardian ? guardian->GetEntityID() : 0);
-
-            mesg.Multicast(fromClient->GetActor()->GetMulticastClients(),0,5);
-        }
+        item->UpdateView(fromClient, GetEntityID(), true);
         return true;
     }
     else
@@ -4050,25 +4017,8 @@ psItem* gemContainer::RemoveFromContainer(psItem *itemStack, int fromSlot, Clien
         itemStack->Save(false);
     }
             
-    // Send out messages about the change in the item stack.    
-    uint32_t slot = itemStack->GetLocInParent();
-
-    if (fromClient)
-    {
-        // printf("Multicasting removal update to nearby clients of %s.\n\n", fromClient->GetName() );
-        // Update client(s)
-        psViewItemUpdate mesg(fromClient->GetClientNum(), 
-                              GetEntityID(),
-                              slot,
-                              clear,
-                              itemStack->GetName(),
-                              itemStack->GetImageName(),
-                              itemStack->GetStackCount(),
-                              0);
-        
-        mesg.Multicast(fromClient->GetActor()->GetMulticastClients(),0,5);
-    }                
-    
+    // Send out messages about the change in the item stack.
+    itemStack->UpdateView(fromClient, GetEntityID(), clear);
     return item;
 }
 
