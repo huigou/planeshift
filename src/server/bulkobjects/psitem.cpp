@@ -48,6 +48,7 @@
 //=============================================================================
 // Local Includes
 //=============================================================================
+#include "client.h"
 #include "psitem.h"
 #include "pscharacter.h"
 #include "pssectorinfo.h"
@@ -2276,6 +2277,24 @@ void psItem::DeleteObjectCallback(iDeleteNotificationObject * object)
         gItem->UnregisterCallback(this);
         gItem = NULL;
     }
+}
+
+void psItem::UpdateView(Client *fromClient, uint EntityId, bool clear)
+{
+    if (!fromClient)
+        return;
+    
+    gemActor *guardian = clear ? 0 : GEMSupervisor::GetSingleton().FindPlayerEntity(GetGuardingCharacterID());
+    psViewItemUpdate mesg(fromClient->GetClientNum(), 
+                          EntityId,
+                          GetLocInParent(),
+                          clear,
+                          GetName(),
+                          GetImageName(),
+                          GetStackCount(),
+                          guardian ? guardian->GetEntityID() : 0);
+    
+    mesg.Multicast(fromClient->GetActor()->GetMulticastClients(),0,5);
 }
 
 void psItem::SetGemObject(gemItem *object)
