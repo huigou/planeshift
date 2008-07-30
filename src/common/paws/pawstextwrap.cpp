@@ -227,14 +227,27 @@ void pawsMultilineEditTextBox::UpdateScrollBar()
 {
     if(!vScrollBar) return;
     
-    float barPosition = (float)topLine;
-    vScrollBar->SetMaxValue((int)lineInfo.GetSize() - canDrawLines);
-    vScrollBar->SetCurrentValue((float)barPosition);
+    float barMaxValue; //holds the maximum value of the scrollbar
+    float barPosition; //holds the current position of the scrollbar
     
-    if (lineInfo.GetSize() <= canDrawLines)
-        vScrollBar->Hide(); // turn off scrollbar
-    else
-        vScrollBar->Show();
+
+
+    if (lineInfo.GetSize() <= canDrawLines) //can all the lines stay on screen?
+    {
+        vScrollBar->Hide(); //... yes they can then hide the scrollbar and...
+        barMaxValue = 0; //set the scrollbar max value and position to zero as we have nothing to scroll
+        barPosition = 0;
+    }
+    else //no they can't so...
+    {
+        vScrollBar->Show();//... show the scrollbar and...
+        barMaxValue = (int)lineInfo.GetSize() - canDrawLines; //... set it's max values and position
+        barPosition = (float)topLine;
+    }  
+    
+    //set new values to the scrollbar
+    vScrollBar->SetMaxValue(barMaxValue);
+    vScrollBar->SetCurrentValue(barPosition);
 }
 
 void pawsMultilineEditTextBox::SetupScrollBar()
