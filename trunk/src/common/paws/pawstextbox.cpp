@@ -407,7 +407,7 @@ void pawsMessageTextBox::OnResize()
 
     if (scrollBar)
     {
-        scrollBar->SetMaxValue( (float)(adjusted.GetSize()-maxLines) );
+        scrollBar->SetMaxValue( maxLines > adjusted.GetSize() ? 0 : (float)(adjusted.GetSize()-maxLines) );
         scrollBar->SetCurrentValue( (float)topLine );
 
         if ( maxLines < adjusted.GetSize() )
@@ -554,7 +554,7 @@ void pawsMessageTextBox::AddMessage( const char* data, int msgColour )
         }
 
 
-        scrollBar->SetMaxValue( (float)(adjusted.GetSize()-maxLines) );
+        scrollBar->SetMaxValue( maxLines > adjusted.GetSize() ? 0 : (float)(adjusted.GetSize()-maxLines) );
 
         topLine = (int)adjusted.GetSize() - (int)maxLines;      
         if ( topLine < 0 )
