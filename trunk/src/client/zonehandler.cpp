@@ -53,6 +53,8 @@
 
 #include "iclient/isoundmngr.h"
 
+#include "psclientdr.h"
+
 //=============================================================================
 // Local Includes
 //=============================================================================
@@ -182,7 +184,7 @@ void ZoneHandler::HandleMessage(MsgEntry* me)
 
     Notify3(LOG_LOAD, "Crossed from sector %s to sector %s.", msg.oldSector.GetData(), msg.newSector.GetData() );
 
-    if (needsToLoadMaps) 
+    if (IsMapLoadNeeded()) 
     {
         Warning2(LOG_LOAD, "Still loading maps, ignoring crossing to sector %s.", msg.newSector.GetData());
         return;
@@ -202,7 +204,7 @@ void ZoneHandler::HandleMessage(MsgEntry* me)
 
     if (world->NeedsLoading(zone->transitional))
     {
-        needsToLoadMaps = true;
+        SetMapLoadNeeded(true);
         sectorToLoad = msg.newSector;
         haveNewPos = true;
         newPos = msg.pos;
@@ -229,7 +231,7 @@ void ZoneHandler::HandleMessage(MsgEntry* me)
     if(cam && !cam->GetDistanceCfg().adaptive)
         cam->UseFixedDistanceClipping(cam->GetFixedDistClip());
 
-    if(!needsToLoadMaps)
+    if(!IsMapLoadNeeded())
         psengine->GetModeHandler()->DoneLoading(msg.newSector);
 }
 
@@ -256,13 +258,23 @@ void ZoneHandler::MovePlayerTo(const csVector3 & newPos, const csString & newSec
         loadProgressBar->Completed();
 }
 
+void ZoneHandler::SetMapLoadNeeded(bool needed)
+{
+    needsToLoadMaps = needed;
+    //inform server about status change
+    psClientDR* clientDr = celclient->GetClientDR(); 
+    if (clientDr)
+        clientDr->CheckDeadReckoningUpdate();
+}
+
 void ZoneHandler::OnDrawingFinished()
 {
-    if (needsToLoadMaps)
+    if (IsMapLoadNeeded())
     {
         if(ExecuteFlaggedRegions(sectorToLoad))
         {
-            needsToLoadMaps = false;
+
+            SetMapLoadNeeded(false);
 
             psengine->SetLoadedMap(true);
             psengine->GetModeHandler()->FinishLightFade();  // make sure new map gets relit for time of day
@@ -341,7 +353,7 @@ void ZoneHandler::FlagRegions(ZoneLoadInfo* zone)
 void ZoneHandler::LoadZone(const char* sector)
 {
     sectorToLoad = sector;
-    needsToLoadMaps = true;
+    SetMapLoadNeeded(true);
     FlagRegions( FindZone(sectorToLoad) );
 }
 

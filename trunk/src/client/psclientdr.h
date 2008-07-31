@@ -36,7 +36,6 @@
 
 class psCelClient;
 class MsgHandler;
-class ZoneHandler;
 class MsgEntry;
 class pawsGroupWindow;
 class pawsPetStatWindow;
@@ -70,7 +69,6 @@ protected:
     bool gotStrings;
 
     psCelClient* celclient;
-    ZoneHandler * zonehandler;
     csRef<MsgHandler> msghandler;
     
     csTicks lastupdate;

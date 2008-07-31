@@ -159,6 +159,8 @@ public:
     psShadowManager * GetShadowManager() { return shadowManager; }
 
     GEMClientActor* GetMainPlayer() { return local_player; }
+    
+    ZoneHandler* GetZoneHandler() { return zonehandler; }
 
     /* Check if the item has an effect attached to it and process it if so. */
     void HandleItemEffect( const char* factName, csRef<iMeshWrapper> mw, bool onGround = true, const char* slot = 0,

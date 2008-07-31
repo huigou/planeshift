@@ -105,6 +105,9 @@ public:
     void SetLoadAllMaps(bool v) { loadAllMaps = v; }
     void SetKeepMapsLoaded(bool v) { keepMapsLoaded = v; }
     
+    bool IsMapLoadNeeded(void) { return needsToLoadMaps; }
+    void SetMapLoadNeeded(bool needed);
+    
 protected:
     csHash<ZoneLoadInfo *, const char*> zonelist;
     csArray<csString>       alllist;

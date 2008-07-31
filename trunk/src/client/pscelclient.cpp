@@ -1537,6 +1537,16 @@ void GEMClientActor::SendDRUpdate(unsigned char priority, csStringHashReversible
 
     linmove->GetDRData(on_ground,speed,pos,yrot,sector,vel,worldVel,ang_vel);
 
+    ZoneHandler* zonehandler = cel->GetZoneHandler();
+    if (zonehandler && zonehandler->IsMapLoadNeeded())
+    {
+        // disable movement to stop stamina drain while map is loading
+        on_ground = true;
+        speed = 0;
+        vel = 0;
+        ang_vel = 0;         
+    }
+    
     // Hack to guarantee out of order packet detection -- KWF
     //if (DRcounter%20 == 0)
     //{
