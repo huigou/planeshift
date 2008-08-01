@@ -1148,7 +1148,6 @@ csPtr<MsgEntry> NetBase::CheckCompleteMessage(uint32_t client, uint32_t id)
 
         // We don't care how many times it's in the queue, there's a mistake if it's over 1. Let's fix it now.
         packets.Delete(PacketKey(client, id), pkt);
-        printf("%s:%d pkt has ref count %d\n", __FILE__, __LINE__, pkt->GetRefCount());
     }
     /* If the search offset didnt finish at the end of the packet, we have gaps, not all pieces were deleted,
      * someone is trying to play games, and we should ignore the message, and 
