@@ -221,8 +221,6 @@ public:
     {   }
     bool GetPending()
     { return false; }
-    void IncRef() {};
-    void DecRef() {};
 };
 
 template<>
