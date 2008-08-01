@@ -237,7 +237,7 @@ bool NetBase::CheckIn()
         }
     }
 
-    //Create new net packet entry and transfere overship of bufpacket to pkt.
+    //Create new net packet entry and transfer ownership of bufpacket to pkt.
     csRef<psNetPacketEntry> pkt;
     pkt.AttachNew(new psNetPacketEntry( bufpacket, 
             connection ? connection->clientnum : 0, packetlen));
@@ -245,7 +245,6 @@ bool NetBase::CheckIn()
     // ACK packets can get eaten by HandleAck
     if (HandleAck(pkt, connection, &addr))
     {
-        // pkt should be unref'd here
         return true;
     }
 
@@ -278,9 +277,7 @@ bool NetBase::CheckIn()
         splitpacket = pkt->GetNextPacket(packetdata);
         if (splitpacket)
             BuildMessage(splitpacket, connection, &addr);
-            // if BuildMessage didn't store it, splitpacket should be unref'd here
     } while (packetdata);
-    // merged packet pkt should be unref'd
     return true;
 }
 
@@ -348,7 +345,6 @@ bool NetBase::HandleAck(csRef<psNetPacketEntry> pkt, Connection* connection,
                 Debug2(LOG_NET,0,"No packet in ack queue :%d\n", ack->packet->pktid);
 #endif
             }
-            // else ack should be unref'd here
         }
         else // if not found, it is probably a resent ACK which is redundant so do nothing
         {
@@ -1152,7 +1148,7 @@ csPtr<MsgEntry> NetBase::CheckCompleteMessage(uint32_t client, uint32_t id)
 
         // We don't care how many times it's in the queue, there's a mistake if it's over 1. Let's fix it now.
         packets.Delete(PacketKey(client, id), pkt);
-        // pkt should be unref'd here
+        printf("%s:%d pkt has ref count %d\n", __FILE__, __LINE__, pkt->GetRefCount());
     }
     /* If the search offset didnt finish at the end of the packet, we have gaps, not all pieces were deleted,
      * someone is trying to play games, and we should ignore the message, and 

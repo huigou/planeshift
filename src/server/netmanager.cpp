@@ -120,8 +120,6 @@ bool NetManager::HandleUnknownClient (LPSOCKADDR_IN addr, MsgEntry* me)
             (uint16_t) pong.msg->bytes->GetTotalSize(), pong.msg->bytes));
 
         SendFinalPacket(pkt,addr);
-        // pkt should be unref'd here
-
         return false;
     }
 
@@ -484,7 +482,6 @@ void NetManager::Broadcast(MsgEntry *me, int scope, int guildID)
             (uint16_t) newmsg->bytes->GetTotalSize(), newmsg->bytes));
         // this will also delete the pkt
         SendFinalPacket(pkt);
-        // pkt should be unref'd here
 
         CHECK_FINAL_DECREF(newmsg, "FinalPacket");
         break;
