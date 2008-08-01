@@ -1,7 +1,7 @@
 *** 2008-07-31 by Andreas Heinchen
 - Fixed FS#426 - stamina drain on map load
 - another patch for FS#1373 from weltall
-- refactored heo netword code to fix leaks and other memory issues
+- refactored the network code to fix leaks and other memory issues
 
 *** 2008-07-30 by Andreas Heinchen
 - Fixed inconsistency between world and database.
