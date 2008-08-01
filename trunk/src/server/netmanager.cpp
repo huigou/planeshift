@@ -113,14 +113,14 @@ bool NetManager::HandleUnknownClient (LPSOCKADDR_IN addr, MsgEntry* me)
         psPingMsg pong(0,ping.id,flags);
         pong.msg->msgid = GetRandomID();
 
-        psNetPacketEntry *pkt = new
+        csRef<psNetPacketEntry> pkt;
+        pkt.AttachNew(new
             psNetPacketEntry(pong.msg->priority, 0,
             0, 0, (uint32_t) pong.msg->bytes->GetTotalSize(),
-            (uint16_t) pong.msg->bytes->GetTotalSize(), pong.msg->bytes);
+            (uint16_t) pong.msg->bytes->GetTotalSize(), pong.msg->bytes));
 
         SendFinalPacket(pkt,addr);
-
-        delete pkt;
+        // pkt should be unref'd here
 
         return false;
     }
@@ -142,9 +142,9 @@ bool NetManager::HandleUnknownClient (LPSOCKADDR_IN addr, MsgEntry* me)
 
 void NetManager::CheckResendPkts()
 {
-    csHash<psNetPacketEntry*, PacketKey>::GlobalIterator it (awaitingack.GetIterator());
-    psNetPacketEntry *pkt = NULL;
-    csArray<psNetPacketEntry *> pkts;
+    csHash<csRef<psNetPacketEntry>, PacketKey>::GlobalIterator it (awaitingack.GetIterator());
+    csRef<psNetPacketEntry> pkt;
+    csArray<csRef<psNetPacketEntry> > pkts;
 
     csTicks currenttime = csGetTicks();
 
@@ -167,7 +167,6 @@ void NetManager::CheckResendPkts()
         if (!outqueue)
         {
             awaitingack.Delete(PacketKey(pkt->clientnum, pkt->packet->pktid), pkt);
-            pkt->DecRef();
             continue;
         }
 
@@ -201,8 +200,6 @@ void NetManager::CheckResendPkts()
             Debug2(LOG_NET,"No packet in ack queue :%d\n", pkt->packet->pktid);
 #endif
         }
-        else
-            pkt->DecRef();
 
     }
     if(pkts.GetSize() > 0)
@@ -480,13 +477,14 @@ void NetManager::Broadcast(MsgEntry *me, int scope, int guildID)
 
         // XXX: This is hacky, but we need to send the message to the client
         // here and now! Because in the next moment he'll be deleted
-        psNetPacketEntry* pkt =
-        new psNetPacketEntry(me->priority, newmsg->clientnum,
+        
+        csRef<psNetPacketEntry> pkt;
+        pkt.AttachNew( new psNetPacketEntry(me->priority, newmsg->clientnum,
             0, 0, (uint32_t) newmsg->bytes->GetTotalSize(),
-            (uint16_t) newmsg->bytes->GetTotalSize(), newmsg->bytes);
+            (uint16_t) newmsg->bytes->GetTotalSize(), newmsg->bytes));
         // this will also delete the pkt
         SendFinalPacket(pkt);
-        delete pkt;
+        // pkt should be unref'd here
 
         CHECK_FINAL_DECREF(newmsg, "FinalPacket");
         break;

@@ -238,13 +238,14 @@ bool NetBase::CheckIn()
     }
 
     //Create new net packet entry and transfere overship of bufpacket to pkt.
-    psNetPacketEntry* pkt = new psNetPacketEntry( bufpacket, 
-        connection ? connection->clientnum : 0, packetlen);
+    csRef<psNetPacketEntry> pkt;
+    pkt.AttachNew(new psNetPacketEntry( bufpacket, 
+            connection ? connection->clientnum : 0, packetlen));
 
     // ACK packets can get eaten by HandleAck
     if (HandleAck(pkt, connection, &addr))
     {
-        delete pkt;
+        // pkt should be unref'd here
         return true;
     }
 
@@ -269,29 +270,17 @@ bool NetBase::CheckIn()
     * Now either send this packet to BuildMessage, or loop through
     * subpackets if they are merged.
     */
-    psNetPacketEntry *splitpacket= pkt;
+    csRef<psNetPacketEntry> splitpacket = pkt;
     psNetPacket      *packetdata = NULL;
 
     do
     {
         splitpacket = pkt->GetNextPacket(packetdata);
         if (splitpacket)
-        {
-            if (!BuildMessage(splitpacket, connection, &addr))
-            {
-                // if BuildMessage didn't store it we should delete it now
-                delete splitpacket;
-            }
-        }
+            BuildMessage(splitpacket, connection, &addr);
+            // if BuildMessage didn't store it, splitpacket should be unref'd here
     } while (packetdata);
-
-    /**
-    * If we split apart a multipacket packet above, remove the merged one
-    * now, because the loop above doesn't do it in this case
-    */
-    if (splitpacket != pkt)
-        delete pkt;
-
+    // merged packet pkt should be unref'd
     return true;
 }
 
@@ -307,7 +296,7 @@ bool NetBase::Flush(MsgQueue * queue)
 }
 
 
-bool NetBase::HandleAck(psNetPacketEntry *pkt, Connection* connection,
+bool NetBase::HandleAck(csRef<psNetPacketEntry> pkt, Connection* connection,
                         LPSOCKADDR_IN addr)
 {
     psNetPacket* packet = pkt->packet;
@@ -332,10 +321,10 @@ bool NetBase::HandleAck(psNetPacketEntry *pkt, Connection* connection,
             connection->pcknumin++;
         }
 
-        psNetPacketEntry * ack = NULL;
+        csRef<psNetPacketEntry> ack;
         
         // The hash only keys on the clientnum and pktid so we need to go looking for the offset
-        csArray<psNetPacketEntry *> acks = awaitingack.GetAll(PacketKey(pkt->clientnum, pkt->packet->pktid));
+        csArray<csRef<psNetPacketEntry> > acks = awaitingack.GetAll(PacketKey(pkt->clientnum, pkt->packet->pktid));
         for(size_t i = 0;i < acks.GetSize(); i++)
         {
             if(acks[i]->packet->offset == pkt->packet->offset)
@@ -359,10 +348,7 @@ bool NetBase::HandleAck(psNetPacketEntry *pkt, Connection* connection,
                 Debug2(LOG_NET,0,"No packet in ack queue :%d\n", ack->packet->pktid);
 #endif
             }
-            else
-            {
-                delete ack;
-            }
+            // else ack should be unref'd here
         }
         else // if not found, it is probably a resent ACK which is redundant so do nothing
         {
@@ -382,23 +368,23 @@ bool NetBase::HandleAck(psNetPacketEntry *pkt, Connection* connection,
         
         if (connection)
         {
-            psNetPacketEntry *ack = new psNetPacketEntry(PRIORITY_LOW,
-                                                         pkt->clientnum,
-                                                         pkt->packet->pktid,
-                                                         pkt->packet->offset,
-                                                         pkt->packet->msgsize,
-                                                         PKTSIZE_ACK,(char *)NULL);
+            csRef<psNetPacketEntry> ack;
+            ack.AttachNew(new psNetPacketEntry(PRIORITY_LOW,
+                    pkt->clientnum,
+                    pkt->packet->pktid,
+                    pkt->packet->offset,
+                    pkt->packet->msgsize,
+                    PKTSIZE_ACK,(char *)NULL));
             
             SendFinalPacket(ack, addr);
-            delete ack;
-
+            // ack should be unre'd here
         }
     }
 
     return false;
 }
 
-bool NetBase::CheckDoublePackets(Connection* connection, psNetPacketEntry* pkt)
+bool NetBase::CheckDoublePackets(Connection* connection, csRef<psNetPacketEntry> pkt)
 {
     int i;
 
@@ -416,9 +402,9 @@ bool NetBase::CheckDoublePackets(Connection* connection, psNetPacketEntry* pkt)
 
 void NetBase::CheckResendPkts()
 {
-    csHash<psNetPacketEntry *, PacketKey>::GlobalIterator it(awaitingack.GetIterator());
-    psNetPacketEntry *pkt = NULL;
-    csArray<psNetPacketEntry *> pkts;
+    csHash<csRef<psNetPacketEntry> , PacketKey>::GlobalIterator it(awaitingack.GetIterator());
+    csRef<psNetPacketEntry> pkt;
+    csArray<csRef<psNetPacketEntry> > pkts;
 
     csTicks currenttime = csGetTicks();
 
@@ -448,8 +434,6 @@ void NetBase::CheckResendPkts()
                 Debug2(LOG_NET,0,"No packet in ack queue :%d\n", pkt->packet->pktid);
 #endif
             }
-            else
-                pkt->DecRef();
         }
     }
     if(pkts.GetSize() > 0)
@@ -520,7 +504,7 @@ bool NetBase::SendMergedPackets(NetPacketQueue *q)
     return true;
 }
 
-bool NetBase::SendSinglePacket(psNetPacketEntry* pkt)
+bool NetBase::SendSinglePacket(csRef<psNetPacketEntry> pkt)
 {
     if (!SendFinalPacket (pkt))
     {
@@ -540,15 +524,12 @@ bool NetBase::SendSinglePacket(psNetPacketEntry* pkt)
             pkt->packet->pktid, pkt->clientnum);
 #endif
         awaitingack.Put(PacketKey(pkt->clientnum, pkt->packet->pktid), pkt);
-        // queue holds ref now -> don't delete pkt
-        pkt->IncRef();
-
     }
 
     return true;
 }
 
-bool NetBase::SendFinalPacket(psNetPacketEntry *pkt)
+bool NetBase::SendFinalPacket(csRef<psNetPacketEntry> pkt)
 {
     Connection* connection = GetConnByNum(pkt->clientnum);
     if (!connection)
@@ -568,7 +549,7 @@ bool NetBase::SendFinalPacket(psNetPacketEntry *pkt)
     
 }
 
-bool NetBase::SendFinalPacket(psNetPacketEntry *pkt, LPSOCKADDR_IN addr)
+bool NetBase::SendFinalPacket(csRef<psNetPacketEntry> pkt, LPSOCKADDR_IN addr)
 {
     // send packet...
 #ifdef PACKETDEBUG
@@ -977,12 +958,12 @@ bool NetBase::SendMessage(MsgEntry* me,NetPacketQueueRefCount *queue)
 
 void NetBase::CheckFragmentTimeouts(void)
 {
-    psNetPacketEntry *pkt = NULL;
+    csRef<psNetPacketEntry> pkt;
 
     // A set of packet ids that should NOT be discarded
     csSet<unsigned> newids;
 
-    psNetPacketEntry *oldpackets[10];
+    csRef<psNetPacketEntry> oldpackets[10];
     int count=0,index=0;
     csTicks current = csGetTicks();
 
@@ -993,7 +974,7 @@ void NetBase::CheckFragmentTimeouts(void)
         return;
 
     // Iterate through all packets in the list searching for old packets
-    csHash<psNetPacketEntry *, PacketKey>::GlobalIterator it(packets.GetIterator());
+    csHash<csRef<psNetPacketEntry> , PacketKey>::GlobalIterator it(packets.GetIterator());
     while(it.HasNext())
     {
         pkt = it.Next();
@@ -1021,13 +1002,16 @@ void NetBase::CheckFragmentTimeouts(void)
         /* Drop refcount until the packet is removed from the list.
          *  If we don't do this all at once we'll do this again the very next check since the time wont be altered.
          */
-        while (packets.Delete(PacketKey(oldpackets[index]->clientnum, oldpackets[index]->packet->pktid), oldpackets[index]));
-            delete oldpackets[index];
+        while (packets.Delete(PacketKey(oldpackets[index]->clientnum, oldpackets[index]->packet->pktid), oldpackets[index]))
+        {
+            // all oldpackets should be reffed only by the oldpackets array
+            // previous implementation deleted oldpüackets several times
+        }
     }
 }
 
 
-bool NetBase::BuildMessage(psNetPacketEntry* pkt, Connection* &connection,
+bool NetBase::BuildMessage(csRef<psNetPacketEntry> pkt, Connection* &connection,
                            LPSOCKADDR_IN addr)
 {
     if (connection)
@@ -1086,8 +1070,8 @@ bool NetBase::BuildMessage(psNetPacketEntry* pkt, Connection* &connection,
 
 csPtr<MsgEntry> NetBase::CheckCompleteMessage(uint32_t client, uint32_t id)
 {
-    csArray<psNetPacketEntry *> pkts;
-    psNetPacketEntry *pkt;
+    csArray<csRef<psNetPacketEntry> > pkts;
+    csRef<psNetPacketEntry> pkt;
 
     // This search is FAST, and without the first packet, you can't build the message.
     pkts = packets.GetAll(PacketKey(client, id));
@@ -1167,9 +1151,8 @@ csPtr<MsgEntry> NetBase::CheckCompleteMessage(uint32_t client, uint32_t id)
         offset+=pkt->packet->pktsize;
 
         // We don't care how many times it's in the queue, there's a mistake if it's over 1. Let's fix it now.
-        packets.Delete(PacketKey(client, id), pkt); 
-        // And delete the packet entry object
-        delete pkt;
+        packets.Delete(PacketKey(client, id), pkt);
+        // pkt should be unref'd here
     }
     /* If the search offset didnt finish at the end of the packet, we have gaps, not all pieces were deleted,
      * someone is trying to play games, and we should ignore the message, and 
@@ -1211,7 +1194,7 @@ bool NetBase::QueueMessage(MsgEntry *me)
 }
 
 void NetBase::HandleCompletedMessage(MsgEntry *me, Connection* &connection,
-                                     LPSOCKADDR_IN addr,psNetPacketEntry* pkt)
+                                     LPSOCKADDR_IN addr,csRef<psNetPacketEntry> pkt)
 {
     profs->AddReceivedMsg(me);
     

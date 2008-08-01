@@ -432,7 +432,7 @@ protected:
      * This takes incoming packets and examines them for priority.
      * If pkt is ACK, it finds the awaiting ack pkt and removes it.
      */
-    bool HandleAck(psNetPacketEntry* pkt, Connection* connection, LPSOCKADDR_IN addr);
+    bool HandleAck(csRef<psNetPacketEntry> pkt, Connection* connection, LPSOCKADDR_IN addr);
 
     /**
      * This cycles through set of pkts awaiting ack and resends old ones.
@@ -445,7 +445,7 @@ protected:
      * This takes incoming packets and rebuilds psMessages from them. If/when a
      * complete message is reassembled, it calls HandleCompletedMessage().
      */
-    bool BuildMessage(psNetPacketEntry* pkt,Connection* &connection,LPSOCKADDR_IN addr);
+    bool BuildMessage(csRef<psNetPacketEntry> pkt,Connection* &connection,LPSOCKADDR_IN addr);
 
     /**
      * This checks the list of packets waiting to be assembled into complete messages.
@@ -470,12 +470,12 @@ protected:
     void HandleCompletedMessage(MsgEntry *me,
                 Connection* &connection,
                 LPSOCKADDR_IN addr,
-                psNetPacketEntry* pkt);
+                csRef<psNetPacketEntry> pkt);
 
     /**
      * This tries to drop packets that received doubled
      */
-    bool CheckDoublePackets (Connection* connection, psNetPacketEntry* pkt);
+    bool CheckDoublePackets (Connection* connection, csRef<psNetPacketEntry> pkt);
 
 
     /**
@@ -487,17 +487,17 @@ protected:
     /**
      * This does the sending and puts the packet in "awaiting ack" if necessary.
      */
-    bool SendSinglePacket(psNetPacketEntry* pkt);
+    bool SendSinglePacket(csRef<psNetPacketEntry> pkt);
 
     /**
      * Send packet to the clientnum given by clientnum in psNetPacketEntry
      */
-    bool SendFinalPacket(psNetPacketEntry* pkt);
+    bool SendFinalPacket(csRef<psNetPacketEntry> pkt);
 
     /**
      * This only sends out a packet
      */
-    bool SendFinalPacket(psNetPacketEntry* pkt, LPSOCKADDR_IN addr);
+    bool SendFinalPacket(csRef<psNetPacketEntry> pkt, LPSOCKADDR_IN addr);
 
     /** Outgoing message queue */
     csRef<NetPacketQueueRefCount> NetworkQueue;
@@ -509,7 +509,7 @@ protected:
     csArray<MsgQueue*> inqueues;
 
     /** Packets Awaiting Ack pool */
-    csHash<psNetPacketEntry *, PacketKey> awaitingack;
+    csHash<csRef<psNetPacketEntry>, PacketKey> awaitingack;
 
     /** System Socket lib initialized? */
     static int socklibrefcount;
@@ -546,7 +546,7 @@ private:
     SOCKET pipe_fd[2];
 
     /** tree holding the outgoing packets */
-    csHash<psNetPacketEntry *, PacketKey> packets;
+    csHash<csRef<psNetPacketEntry> , PacketKey> packets;
 
     /** for generating random values (unfortunately the msvc rand() function
      * is not good at all
