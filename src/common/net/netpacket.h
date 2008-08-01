@@ -180,15 +180,15 @@ public:
                       uint32_t id, uint32_t off, uint32_t totalsize, uint16_t sz,
                       const char *bytes);
 
-    psNetPacketEntry (psNetPacketEntry* )
+    psNetPacketEntry (csRef<psNetPacketEntry> )
     {
         CS_ASSERT(false);
     }
 
     ~psNetPacketEntry();
     
-    bool Append(psNetPacketEntry *next);
-    psNetPacketEntry *GetNextPacket(psNetPacket* &packetdata);
+    bool Append(csRef<psNetPacketEntry> next);
+    csRef <psNetPacketEntry> GetNextPacket(psNetPacket* &packetdata);
 
 
     void* GetData()
@@ -226,10 +226,10 @@ public:
 };
 
 template<>
-class csComparator<psNetPacketEntry *, psNetPacketEntry *>
+class csComparator<csRef<psNetPacketEntry> , csRef<psNetPacketEntry> >
 {
 public:
-    static int Compare(psNetPacketEntry* const &r1, psNetPacketEntry* const &r2)
+    static int Compare(csRef<psNetPacketEntry> const &r1, csRef<psNetPacketEntry> const &r2)
     {
         return csComparator<psNetPacketEntry, psNetPacketEntry>::Compare(*r1, *r2);
     }

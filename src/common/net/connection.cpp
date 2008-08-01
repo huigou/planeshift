@@ -129,18 +129,9 @@ void psNetConnection::DisConnect()
     }
 
     // Clear awaitingack queue
-    csHash<psNetPacketEntry*, PacketKey>::GlobalIterator it (awaitingack.GetIterator());
-    csArray<psNetPacketEntry *> pkts;
-    psNetPacketEntry *next =NULL;
-    while (it.HasNext())
-    {
-        next = it.Next();
-        pkts.Push(next);
-    }
+    csHash<csRef<psNetPacketEntry>, PacketKey>::GlobalIterator it (awaitingack.GetIterator());
 
-    for(size_t i = 0;i < pkts.GetSize(); i++)
-        delete pkts.Get(i);
-
+    // with proper refcounting this should kill all members of the hash
     awaitingack.Empty();
 }
 

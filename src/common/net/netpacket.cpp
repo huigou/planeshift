@@ -75,7 +75,7 @@ psNetPacketEntry::~psNetPacketEntry()
         cs_free(packet);
 }
 
-bool psNetPacketEntry::Append(psNetPacketEntry *next)
+bool psNetPacketEntry::Append(csRef<psNetPacketEntry> next)
 {
 #ifdef PACKETDEBUG
     Debug5(LOG_NET,0,"Appending packet into MULTIPACKET (ID %d Size: %d). (ID %d Size: %d)\n", 
@@ -168,7 +168,7 @@ bool psNetPacketEntry::Append(psNetPacketEntry *next)
     return true;
 };
 
-psNetPacketEntry *psNetPacketEntry::GetNextPacket(psNetPacket * &packetdata)
+csRef<psNetPacketEntry> psNetPacketEntry::GetNextPacket(psNetPacket * &packetdata)
 {
     if (!packet->IsMultiPacket())
     {
@@ -253,13 +253,14 @@ psNetPacketEntry *psNetPacketEntry::GetNextPacket(psNetPacket * &packetdata)
         packetdata->pktid, this, packet->pktid);
 #endif
 
-        psNetPacketEntry *pnew = new psNetPacketEntry (packetdata->flags,
+        csRef<psNetPacketEntry> pnew;
+        pnew.AttachNew(new psNetPacketEntry (packetdata->flags,
                                                        clientnum,
                                                        packetdata->pktid,
                                                        packetdata->offset,
                                                        packetdata->msgsize,
                                                        packetdata->pktsize, 
-                                                       (const char *)packetdata->data);
+                                                       (const char *)packetdata->data));
 
         return pnew;
     }
