@@ -223,6 +223,8 @@ bool ProgressionOperation::LoadValue(iDocumentNode *node, ProgressionEvent *prg_
     script.Append(node->GetAttributeValue("value"));
     script_text = node->GetAttributeValue("value");  // save for persisting later
 
+    // TODO is this is really efficient? can we reuse?
+    if (value_script) delete value_script;
     value_script = new MathScript(prg_script->name.GetData(),script);
 
     valuevar = value_script->GetVar("Value");  // always required and supplied
@@ -256,7 +258,9 @@ bool ProgressionOperation::LoadDelay(iDocumentNode *node, ProgressionEvent *prg_
 
     csString script("Delay = ");
     script.Append(delay_text);
-    
+
+    // TODO is this is really efficient? can we reuse?
+    if (delay_script) delete delay_script;
     delay_script = new MathScript(prg_script->name.GetData(),script);
 
     delayvar = delay_script->GetVar("Delay");  // always required and supplied
