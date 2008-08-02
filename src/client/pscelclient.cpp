@@ -1725,6 +1725,9 @@ bool GEMClientActor::SetAnimation(const char* anim, int duration)
         fadein = 0.0;
         fadeout = 1.5;
     }
+    
+    //removes the idle_var animation if it's in execution to avoid interferences.
+    cal3dstate->GetCal3DModel()->getMixer()->removeAction(cal3dstate->FindAnim("idle_var"));
 
     return cal3dstate->SetAnimAction(anim,fadein,fadeout);
 }
@@ -1755,11 +1758,11 @@ void GEMClientActor::SetMode(uint8_t mode, bool newactor)
             SetIdleAnimation(psengine->GetCharControl()->GetMovementManager()->GetModeIdleAnim(movementMode));
             break;
         case psModeMessage::SPELL_CASTING:
-            SetIdleAnimation("cast");
             break;
 
         case psModeMessage::COMBAT:
             // TODO: Get stance and set anim for that stance
+            cal3dstate->ClearAllAnims();
             SetIdleAnimation("combat stand");
             break;
             
