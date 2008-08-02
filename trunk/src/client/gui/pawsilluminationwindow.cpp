@@ -547,6 +547,8 @@ void pawsSketchWindow::RemoveSelected()
     {
         objlist.DeleteIndex(selectedIndex);
         selectedIndex = SIZET_NOT_FOUND;
+        if (IsMouseDown()) //if the mouse is being used we need to restore it's shape
+            PawsManager::GetSingleton().GetMouse()->ChangeImage("Skins Normal Mouse Pointer");
     }
 }
 
