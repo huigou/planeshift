@@ -44,6 +44,7 @@ pawsSketchWindow::pawsSketchWindow()
     dirty     = false;
     editMode  = false;
     mouseDown = false;
+    frame = 0;
 }
 
 pawsSketchWindow::~pawsSketchWindow()
@@ -191,6 +192,50 @@ void pawsSketchWindow::Draw()
     // The close button X overrides the clip region so we have to set it back here
     ClipToParent();
     
+    // if (editMode && !mouseDown) update "new selection" each nth frame
+    if (editMode && !mouseDown)
+    {
+        frame++;
+        if(frame > 9)
+        {
+            frame = 0;
+            // Error1("Frame>9");
+            psPoint pos = PawsManager::GetSingleton().GetMouse()->GetPosition();
+            static int prevMouseX = 0;
+            static int prevMouseY = 0;
+
+            if( (abs(prevMouseX - pos.x)>1) || (abs(prevMouseY - pos.y)>1) ) // only update if the mouse moved (otherwise keyboard editing will be impossible
+            {
+                // Error1("prevMouseX != pos.x || prevMouseY != pos.y");
+                prevMouseX = pos.x;
+                prevMouseY = pos.y;
+
+                for (size_t i=0; i<objlist.GetSize(); i++)
+                {
+                    if (objlist[i]->IsHit(pos.x,pos.y))
+                    {
+                        // we have it selected already
+                        if(i == selectedIndex)
+                        {
+                            break;
+                        }
+
+                        // Unselect old object
+                        if (selectedIndex != SIZET_NOT_FOUND)
+                        {
+                            objlist[selectedIndex]->Select(false);
+                        }
+
+                        // Select new object
+                        selectedIndex = i;
+                        objlist[i]->Select(true);                        
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
     DrawSketch();
 }
 void pawsSketchWindow::DrawSketch()
@@ -457,8 +502,15 @@ void pawsSketchWindow::AddSketchIcon()
     int x = (ScreenFrame().xmax - ScreenFrame().xmin)/2;
     int y = (ScreenFrame().ymax - ScreenFrame().ymin)/2;
 
+    // deselect the previous object, if any
+    if (selectedIndex != SIZET_NOT_FOUND)
+    {
+        objlist[selectedIndex]->Select(false);
+    }
+
     SketchIcon *icon = new SketchIcon(x,y,iconList[0],this);
-    objlist.Push(icon);
+    selectedIndex = objlist.Push(icon);
+    objlist[selectedIndex]->Select(true);
 }
 
 void pawsSketchWindow::NextPrevIcon(int delta)
@@ -583,6 +635,8 @@ bool pawsSketchWindow::OnMouseDown( int button, int modifiers, int x, int y )
         objlist[selectedIndex]->Select(false);
         selectedIndex = SIZET_NOT_FOUND;
     }
+    // MouseUp doesn't get fired here IF MouseDown was handled by pawsWidget.
+    mouseDown = false; // thus we need to prevent having a wrong "mouseDown" state.
     return pawsWidget::OnMouseDown(button, modifiers,x,y);
 }
 
@@ -595,7 +649,6 @@ bool pawsSketchWindow::OnMouseUp( int button, int modifiers, int x, int y )
 
     if (selectedIndex != SIZET_NOT_FOUND)
     {
-        objlist[selectedIndex]->UpdatePosition(GetLogicalWidth(x-ScreenFrame().xmin),GetLogicalHeight(y-ScreenFrame().ymin));
         PawsManager::GetSingleton().GetMouse()->ChangeImage("Skins Normal Mouse Pointer");
         dirty = true;
         return true;
@@ -890,21 +943,38 @@ void pawsSketchWindow::SketchLine::Draw()
 {
     iGraphics2D *graphics2D = parent->GetG2D();
 
-    int black = graphics2D->FindRGB( 0,0,0 );
+    //int black = graphics2D->FindRGB( 0,0,0 );
+    int color;
+    bool showBoxes, showFirstBox, showSecondBox;
+    if(selected)
+        color = graphics2D->FindRGB( 150,0,0 );
+    else
+        color = graphics2D->FindRGB( 0,0,0 );
+
+    showBoxes = (!selected || (frame > 15 && !parent->mouseDown));
+    showFirstBox = (showBoxes || dragMode == 2);
+    showSecondBox = (showBoxes || dragMode == 1);
+    
 
     graphics2D->DrawLine( parent->GetActualWidth(x)+parent->ScreenFrame().xmin,
                           parent->GetActualHeight(y)+parent->ScreenFrame().ymin,
                           parent->GetActualWidth(x2)+parent->ScreenFrame().xmin,
                           parent->GetActualHeight(y2)+parent->ScreenFrame().ymin,
-                          black );
-
-    if (parent->IsMouseDown() || !selected || frame > 15)
+                          color );
+    
+    //if (parent->IsMouseDown() || !selected || frame > 15)
+    //{
+    if(showFirstBox)
     {
         parent->DrawBlackBox(parent->GetActualWidth(x)+parent->ScreenFrame().xmin-3,
                              parent->GetActualHeight(y)+parent->ScreenFrame().ymin-3);
+    }
+    if(showSecondBox)
+    {
         parent->DrawBlackBox(parent->GetActualWidth(x2)+parent->ScreenFrame().xmin-3,
                              parent->GetActualHeight(y2)+parent->ScreenFrame().ymin-3);
     }
+    //}
     if (selected)
         frame = (frame > 29) ? 0 : frame+1;
 }
@@ -944,8 +1014,51 @@ bool pawsSketchWindow::SketchLine::IsHit(int mouseX, int mouseY)
 
     rect.Normalize();
 
+    int xDiff, yDiff;
+    xDiff = rect.xmax - rect.xmin;
+    yDiff = rect.ymax - rect.ymin;
+    
+    // give a chance to select horizontal Lines
+    if(xDiff < 3)
+    {
+        rect.xmax += 3 -xDiff; //correct would be 3-xDiff/2 (but we an expensive division isn't really required here. a diff of 6 or 5 doesn't really make a difference.
+        rect.xmin -= 3 -xDiff;
+    }
+
+    // give a chance to select vertical Lines
+    if(yDiff < 3)
+    {
+        rect.ymax += 3 -yDiff;
+        rect.ymin -= 3 -yDiff;
+    }
+
     if (!rect.Contains(mouseX,mouseY))
         return false;
+
+    // calculate the normal distance of the point (mouse pos) to the line:
+    //        A (vector)
+    //     .-'| normalDist
+    //  .-'   |
+    // B-------------------B1 (vector B, origin at x, y of this line)
+    csVector2 b1(x, y);
+    csVector2 a(mouseX, mouseY);
+    a-=b1;
+    csVector2 b(x2, y2);
+    b-=b1;
+
+    csVector2 c;
+    float dotab = ( a.x * b.x ) + ( a.y * b.y );
+    float dotb = ( b.x * b.x ) + ( b.y * b.y );
+    float dotabDivb = dotab / dotb;
+    c.x = b.x * dotabDivb;
+    c.y = b.y * dotabDivb;
+
+    csVector2 e(a - c);
+    float distFromLine = e.Norm();
+    if(!(distFromLine <= 2.5 && distFromLine >= -2.5))
+    {
+        return false;
+    }
 
     offsetX = mouseX - x;
     offsetY = mouseY - y;
@@ -963,13 +1076,21 @@ void pawsSketchWindow::SketchLine::UpdatePosition(int _x, int _y)
     rect.ymin = 0;
 
     rect.Normalize();
-
-    _x -= offsetX;  // This backs off the cursor from where it was
-    _y -= offsetY;
     
-    //if we are taking the second point we must check it's position
-    dx = _x - (dragMode == 2 ? x2 : x); 
-    dy = _y - (dragMode == 2 ? y2 : y); 
+    if(parent->IsMouseDown()) //if we are using the mouse to move this thing in real time we must do some changes from when the keyboard is used
+    {
+        _x -= offsetX;  // This backs off the cursor from where it was
+        _y -= offsetY;
+        
+        //if we are taking the second point we must check it's position
+        dx = _x - (dragMode == 2 ? x2 : x); 
+        dy = _y - (dragMode == 2 ? y2 : y); 
+    }
+    else //the keyboard is being used
+    {
+        dx = _x - x; 
+        dy = _y - y;
+    }
 
     switch (dragMode)
     {

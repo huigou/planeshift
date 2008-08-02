@@ -115,6 +115,8 @@ protected:
     int primCount;
     bool readOnly;
     bool stringPending;
+
+    int frame; // incremented each frame till 10 (to update selection without clicking)
     
     pawsWidget* FeatherTool;
     pawsWidget* TextTool;
