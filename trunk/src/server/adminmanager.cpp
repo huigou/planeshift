@@ -5201,7 +5201,7 @@ void AdminManager::ChangeName(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
     }
 
     // If the first name should be unique, check it
-    if (checkFirst && type == PSCHARACTER_TYPE_PLAYER)
+    if (data.uniqueName && checkFirst && type == PSCHARACTER_TYPE_PLAYER)
     {
         if (!psCharCreationManager::IsUnique(data.newName))
         {
