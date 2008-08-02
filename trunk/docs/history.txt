@@ -1,3 +1,6 @@
+*** 2008-08-02 by Andreas Heinchen
+- Patch for FS#2048 from Arerano
+
 *** 2008-07-31 by Andreas Heinchen
 - Fixed FS#426 - stamina drain on map load
 - another patch for FS#1373 from weltall

@@ -523,7 +523,7 @@ void pawsSketchWindow::SaveSketch()
     }
     else
     {
-        tempFileNameTemplate = "/planeshift/userdata/books/book%d.txt";
+        tempFileNameTemplate = "/planeshift/userdata/sketches/sketch%d.xml";
         do
         {
             tempFileName.Format(tempFileNameTemplate, tempNumber);
