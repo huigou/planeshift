@@ -373,13 +373,25 @@ bool AdminManager::AdminCmdData::DecodeAdminCmdMessage(MsgEntry *pMsg, psAdminCm
     {
         player = words[1];
 
-        if (words[2] == "no")
-            uniqueName = false;
-        else
-            uniqueName = true;
+        int param = 2;        
 
-        newName = words[3];
-        newLastName = words[4];
+        uniqueName = true;
+        uniqueFirstName = true;
+        
+        if (words[param] == "force")
+        {
+            uniqueName = false;
+            param++;
+        }
+        else if (words[param] == "forceall")
+        {
+            uniqueName = false;
+            uniqueFirstName = false;
+            param++;
+        }
+
+        newName = words[param++];
+        newLastName = words[param++];
 
         return true;
     }
@@ -5068,50 +5080,43 @@ void AdminManager::DeleteCharacter(MsgEntry* me, psAdminCmdMessage& msg, AdminCm
 
 
 void AdminManager::ChangeName(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data,Client *client)
-{    
-    WordArray words (msg.cmd, false);
-    csString pid_str = words[1]; // Player is changed to string so no point in testing that if multiple entites with same name.
-
+{
     if (!data.player.Length() || !data.newName.Length())
     {
-        psserver->SendSystemInfo(me->clientnum,"Syntax: \"/changename <OldName|pid:[id]> <yes|no> <NewName> [NewLastName|No]\"");
+        psserver->SendSystemInfo(me->clientnum,"Syntax: \"/changename <OldName|pid:[id]> [force|forceall] <NewName> [NewLastName]\"");
         return;
     }
 
     unsigned int pid = 0;
+    Client* target = NULL;
     
-    if (pid_str.StartsWith("pid:",true) && pid_str.Length() > 4) // Find by player ID
+    if (data.player.StartsWith("pid:",true) && data.player.Length() > 4) // Find by player ID
     {
-        pid = atoi( pid_str.Slice(4).GetData() );
+        pid = atoi( data.player.Slice(4).GetData() );
         if (!pid)
         {
             psserver->SendSystemError(me->clientnum,"Error, bad PID");
             return;
         }
-
+        else
+        {
+            target = clients->FindPlayer(pid);
+        }
     }
+    else
+    {
+        target = clients->Find(data.player);
+    }
+    bool online = (target != NULL);
 
     // Fix names
     data.newName = NormalizeCharacterName(data.newName);
     data.newLastName = NormalizeCharacterName(data.newLastName);
     csString name = NormalizeCharacterName(data.player);
     
-    bool online;
     unsigned int id = 0;
     unsigned int type = 0;
     unsigned int gid = 0;
-
-    Client* target = NULL;
-
-    if (pid)
-    {
-        target = clients->FindPlayer(pid);
-    }
-    else
-    {
-        target = clients->Find(data.player);
-    }
-    online = (target != NULL);
 
     csString prevFirstName,prevLastName;
 
@@ -5136,7 +5141,7 @@ void AdminManager::ChangeName(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
         }
         else if (result.Count() != 1)
         {
-            psserver->SendSystemError(me->clientnum,"Multiple characters with same name '%s' use pid.",name.GetData());               
+            psserver->SendSystemError(me->clientnum,"Multiple characters with same name '%s'. Use pid.",name.GetData());               
             return; 
         }
         else
@@ -5177,47 +5182,48 @@ void AdminManager::ChangeName(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
         checkLast = false;
     }
 
-    if (data.player == data.newName)
+    if (data.newName == name)
         checkFirst = false;
 
     if (!checkFirst && !checkLast && data.newLastName.Length() != 0)
         return;
 
-    if(checkFirst)
+    if(checkFirst && !psCharCreationManager::FilterName(data.newName))
     {   
-        if (!psCharCreationManager::FilterName(data.newName))   
-        {   
-            psserver->SendSystemError(me->clientnum,"The name %s is invalid!",data.newName.GetData());   
-            return;   
-        }   
-    }
-    if(checkLast)   
-    {   
-        if (!psCharCreationManager::FilterName(data.newLastName))   
-        {
-            psserver->SendSystemError(me->clientnum,"The last name %s is invalid!",data.newLastName.GetData());   
-            return;
-        }   
+        psserver->SendSystemError(me->clientnum,"The name %s is invalid!",data.newName.GetData());   
+        return;
+    }   
+
+    if(checkLast && !psCharCreationManager::FilterName(data.newLastName))
+    {
+        psserver->SendSystemError(me->clientnum,"The last name %s is invalid!",data.newLastName.GetData());   
+        return;
     }
 
+    bool nameUnique = psCharCreationManager::IsUnique(data.newName);    
     // If the first name should be unique, check it
-    if (data.uniqueName && checkFirst && type == PSCHARACTER_TYPE_PLAYER)
+    if (checkFirst && data.uniqueFirstName && type == PSCHARACTER_TYPE_PLAYER && !nameUnique)
     {
-        if (!psCharCreationManager::IsUnique(data.newName))
-        {
-            psserver->SendSystemError(me->clientnum,"The name %s is not unique!",data.newName.GetData());               
-            return;
-        }
+        psserver->SendSystemError(me->clientnum,"The name %s is not unique!",data.newName.GetData());               
+        return;
     }
 
+    bool secondNameUnique = psCharCreationManager::IsLastNameUnique(data.newLastName);    
     // If the last name should be unique, check it
-    if (data.uniqueName && checkLast && data.newLastName.Length())
+    if (checkLast && data.uniqueName && data.newLastName.Length() && !secondNameUnique)
     {
-        if (!psCharCreationManager::IsLastNameUnique(data.newLastName))
-        {
-            psserver->SendSystemError(me->clientnum,"The last name %s is not unique!",data.newLastName.GetData());               
-            return;
-        }
+        psserver->SendSystemError(me->clientnum,"The last name %s is not unique!",data.newLastName.GetData());               
+        return;
+    }
+    
+    if (checkFirst && !data.uniqueFirstName && type == PSCHARACTER_TYPE_PLAYER && !nameUnique)
+    {
+        psserver->SendSystemResult(me->clientnum,"WARNING: Changing despite the name %s is not unique!",data.newName.GetData());
+    }
+
+    if (checkLast && !data.uniqueName && data.newLastName.Length() && !secondNameUnique)
+    {
+        psserver->SendSystemResult(me->clientnum,"Changing despite the last name %s is not unique!",data.newLastName.GetData());               
     }
 
     // Apply

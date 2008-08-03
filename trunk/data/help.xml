@@ -402,9 +402,9 @@ Bans a name from use in character creation</topic>
         <topic name="/changeguildname">/changeguildname
 
 Change the selected guilds name.</topic>
-        <topic name="/changename">/changename [name] [unique] [new name] [new last name | no]
+        <topic name="/changename">/changename name [force|forceall] new name [new lastname]
 
-Changes the player's name to something else. The unique parameter is either no or nothing, if it is no, the name doesn't have to have a unique first and last name (Used for weddings). If the lastname is no the lastname will be removed</topic>
+Changes the player's name. If force is given, the lastname doesn't have to be unique. If forceall is given name and lastname doesn't have to be unique. If the lastname is not given the lastname will be preseved. If no is given as lastname, the lastname will be removed.</topic>
         <topic name="/charlist">/charlist player
 
 Informs the GM of the IDs and names of all characters on the same account as the account of the given character.</topic>
