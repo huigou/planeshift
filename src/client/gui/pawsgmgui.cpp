@@ -322,7 +322,7 @@ bool pawsGmGUIWindow::OnButtonPressed( int mouseButton, int keyModifier, pawsWid
             first = NormalizeCharacterName(first);
             last = NormalizeCharacterName(last);
 
-            cmd.Format("/changename %s no %s %s",GetSelectedName(),first.GetData(),last.GetData());
+            cmd.Format("/changename %s force %s %s",GetSelectedName(),first.GetData(),last.GetData());
             updateAfter = true;
             
             break;
@@ -999,6 +999,7 @@ void pawsGmGUIWindow::OnStringEntered(const char *name,int param,const char *val
 
         csString firstName,lastName;
         
+        // TODO Does this make sense? Split the name to concat it?
         if (place == -1)
         {        
             firstName = text;
@@ -1010,7 +1011,7 @@ void pawsGmGUIWindow::OnStringEntered(const char *name,int param,const char *val
         }
 
         csString cmd;
-        cmd.Format("/changename %s no %s %s", GetSelectedName(), firstName.GetData(), lastName.GetData());
+        cmd.Format("/changename %s force %s %s", GetSelectedName(), firstName.GetData(), lastName.GetData());
         psengine->GetCmdHandler()->Execute(cmd);
         //Need to update our list
         QueryServer();
