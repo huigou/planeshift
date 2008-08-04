@@ -72,6 +72,9 @@ bool pawsGMSpawnWindow::PostSetup()
     cbCollidable = (pawsCheckBox*)FindWidget("Collidable");
     lockSkill = (pawsEditTextBox*)FindWidget("LockSkill");
     lockStr = (pawsEditTextBox*)FindWidget("LockStr");
+    factname = (pawsTextBox*)FindWidget("meshfactname");
+    meshname = (pawsTextBox*)FindWidget("meshname");
+    imagename = (pawsTextBox*)FindWidget("imagename");
 
     // creates tree:
     itemTree = new pawsSimpleTree;
@@ -200,6 +203,10 @@ bool pawsGMSpawnWindow::OnSelected(pawsWidget* widget)
         cbCollidable->SetState(false);
         lockSkill->SetText("Lockpicking");
         lockStr->SetText("5");
+        imagename->SetText(item.icon);
+        factname->SetText(item.mesh);
+        psengine->GetFileNameByFact(item.mesh, filename); //we need to get the updated filename to show it
+        meshname->SetText(item.mesh ? filename: "");
 
         cbLockable->Show();
         cbLocked->Show();
@@ -207,6 +214,9 @@ bool pawsGMSpawnWindow::OnSelected(pawsWidget* widget)
         cbCollidable->Show();
         lockStr->Hide();
         lockSkill->Hide();
+        imagename->Show();
+        meshname->Show();
+        factname->Show();
 
         currentItem = item.name;
         return true;
