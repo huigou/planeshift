@@ -1,3 +1,6 @@
+*** 2008-08-04 by Andreas Heinchen
+- Fixed FS#2069, fix by weltall
+
 *** 2008-08-02 by Andreas Heinchen
 - Fixing FS#2045, GMs can now take monster names. "/changename" syntax changed!
 

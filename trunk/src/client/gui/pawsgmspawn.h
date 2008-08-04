@@ -56,6 +56,9 @@ private:
     pawsEditTextBox*                itemCount;
     pawsEditTextBox*                lockSkill;
     pawsEditTextBox*                lockStr;
+    pawsTextBox*                    factname;
+    pawsTextBox*                    meshname;
+    pawsTextBox*                    imagename;
 
     struct Item
     {

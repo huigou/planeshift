@@ -80,9 +80,24 @@
         </widget>
         
         <widget name="Spawn" factory="pawsButton" id ="1000" visible="no">
-            <frame x="310" y="430" width="150" height="20" border="no" />
+            <frame x="310" y="410" width="150" height="20" border="no" />
             <bgimage resource="Blue Title" alpha="0" fade="no" />
             <label text="Spawn item"/>
+        </widget>
+        
+        <widget name="meshfactname" factory="pawsTextBox" visible="no" tooltip="Name of the mesh fact">
+            <frame x="310" y="430" width="380" height="20" border="no" />
+            <text string="none"/>
+        </widget>
+        
+        <widget name="meshname" factory="pawsTextBox" visible="no" tooltip="Name of the mesh">
+            <frame x="310" y="450" width="380" height="20" border="no" />
+            <text string="none"/>
+        </widget>
+
+        <widget name="imagename" factory="pawsTextBox" visible="no" tooltip="Name of the pic">
+            <frame x="310" y="470" width="380" height="20" border="no" />
+            <text string="none"/>
         </widget>
     </widget>
 </widget_description>
