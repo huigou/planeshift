@@ -1217,9 +1217,31 @@ void pawsTree::SetScrollBarMax()
     {
         layout->GetTreeSize(width, height);
         if (horizScrollBar != NULL)
-            horizScrollBar  -> SetMaxValue(MAX(0, width  - screenFrame.Width()));
+        {
+            if( width > screenFrame.Width())
+            {
+                horizScrollBar  -> SetMaxValue(MAX(0, width  - screenFrame.Width()));
+                vertScrollBar->Show();
+            }
+            else
+            {
+                horizScrollBar->Hide();
+                vertScrollBar->SetMaxValue(0);
+            }
+         }
         if (vertScrollBar != NULL)
-            vertScrollBar   -> SetMaxValue(MAX(0, height - screenFrame.Height()));
+        {
+            if(height > screenFrame.Height())
+            {
+                vertScrollBar   -> SetMaxValue(MAX(0, height - screenFrame.Height()));
+                vertScrollBar->Show();
+            }
+            else
+            {
+                vertScrollBar->Hide();
+                vertScrollBar->SetMaxValue(0);
+            }
+        }
     }
 }
 
