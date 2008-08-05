@@ -930,6 +930,11 @@ UPDATE `server_options` SET `option_value`='1189' WHERE `option_name`='db_versio
 ALTER TABLE `factions` ADD COLUMN `faction_description` text AFTER `faction_name`;
 UPDATE `server_options` SET `option_value`='1190' WHERE `option_name`='db_version';
 
+#### 1191 - Kayden - bugfix for bogus default value for stat requirements
+ALTER TABLE `item_stats` ALTER COLUMN `requirement_3_name` SET DEFAULT NULL;
+UPDATE `item_stats` SET `requirement_3_name`=NULL where `requirement_3_name` = '0';
+UPDATE `server_options` SET `option_value`='1191' WHERE `option_name`='db_version';
+
 # Insert your upgrade before this line. Remember when you set a new db_version
 # to update the server_options.sql file and update psserver.cpp as well.
 # This to ensure that everything is working if you use the create_all.sql to
