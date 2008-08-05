@@ -1,5 +1,5 @@
 *** 2008-08-04 by Andreas Heinchen
-- Addition to FS#2069 by weltall
+- Addition to FS#2069 and FS#1373 by weltall
 
 *** 2008-08-04 by Andreas Heinchen
 - Fixed FS#2069, fix by weltall
