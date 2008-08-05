@@ -175,7 +175,6 @@ bool pawsGMSpawnWindow::OnSelected(pawsWidget* widget)
                 if (!psengine->GetFileNameByFact(item.mesh, filename))
                 {
                     Error2("Mesh Factory %s not found", item.mesh.GetData() );
-                    return false;
                 }
                 loaded = false;
                 CheckMeshLoad();
@@ -205,8 +204,8 @@ bool pawsGMSpawnWindow::OnSelected(pawsWidget* widget)
         lockStr->SetText("5");
         imagename->SetText(item.icon);
         factname->SetText(item.mesh);
-        psengine->GetFileNameByFact(item.mesh, filename); //we need to get the updated filename to show it
-        meshname->SetText(item.mesh ? filename: "");
+        //we need to check if the factory was found and get the updated filename to show it
+        meshname->SetText(item.mesh && psengine->GetFileNameByFact(item.mesh, filename) ? filename: "");
 
         cbLockable->Show();
         cbLocked->Show();
