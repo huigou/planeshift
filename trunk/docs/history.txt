@@ -1,3 +1,8 @@
+*** 2008-08-05 by Kenny Graunke
+- Fixed a bogus default in item stat requirements...probably caused some items
+  to have only two requirements when they should have had three.
+  ==> BUMPED DB VERSION <== (now 1191)
+
 *** 2008-08-04 by Andreas Heinchen
 - Addition to FS#2069 and FS#1373 by weltall
 - Fixed FS#2076, patch by weltall
