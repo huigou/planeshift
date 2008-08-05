@@ -398,9 +398,6 @@ void psMovementManager::SetActorMode(const psCharMode* mode)
 
 void psMovementManager::Start(const psCharMode* mode)
 {
-    if (locked)
-        return;
-
     #ifdef MOVE_DEBUG
         printf("Starting mode %s\n", mode->name.GetData() );
     #endif
@@ -411,9 +408,6 @@ void psMovementManager::Start(const psCharMode* mode)
 
 void psMovementManager::Stop(const psCharMode* mode)
 {
-    if (locked)
-        return;
-
     #ifdef MOVE_DEBUG
         printf("Stopping mode %s\n", mode->name.GetData() );
     #endif
