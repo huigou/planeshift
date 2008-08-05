@@ -264,6 +264,7 @@ bool pawsListBox::PostSetup()
         scrollBar->UseBorder();
     scrollBar->PostSetup();
     scrollBar->SetTickValue( 1.0 );
+    scrollBar->Hide();
     AddChild( scrollBar );
 
     // Add horizontal scollie
