@@ -172,6 +172,9 @@ public:
 
     pawsIgnoreWindow*  GetIgnoredList() { return IgnoredList; }
     
+    /// Remove bad words from the output string
+    void BadWordsFilter(csString& s);
+    
 protected:
 
     void HandleSystemMessage( MsgEntry* message );
@@ -188,9 +191,6 @@ protected:
 
     /// If currently selected chat tab is not in 'allowedTabs', switch to 'defaultTab'
     void AutoselectChatTabIfNeeded(const csArray<csString> &allowedTabs, const char * defaultTab);
-
-    /// Remove bad words from the output string
-    void BadWordsFilter(csString& s);
 
     /// Output text to a specific tab.
     void ChatOutput(pawsMessageTextBox *pmtb, const char *data, int colour = -1,

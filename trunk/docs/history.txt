@@ -1,3 +1,8 @@
+*** 2008-08-06 by Mike Gist
+- Fixed FS#1373, patch from weltall.
+- Fixed FS#2084, patch from weltall.
+- Possible fix for FS#1901, patch from Kaerli.
+
 *** 2008-08-05 by Kenny Graunke
 - Fixed a bogus default in item stat requirements...probably caused some items
   to have only two requirements when they should have had three.
