@@ -5200,7 +5200,12 @@ void AdminManager::ChangeName(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
         return;
     }
 
-    bool nameUnique = psCharCreationManager::IsUnique(data.newName);    
+    bool nameUnique = psCharCreationManager::IsUnique(data.newName);
+    bool allowedToClonename = CacheManager::GetSingleton().GetCommandManager()->Validate(
+                    client->GetSecurityLevel(), "changenameall");
+    if (!allowedToClonename)
+        data.uniqueFirstName=true;
+
     // If the first name should be unique, check it
     if (checkFirst && data.uniqueFirstName && type == PSCHARACTER_TYPE_PLAYER && !nameUnique)
     {

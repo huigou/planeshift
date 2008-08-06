@@ -139,6 +139,11 @@ INSERT INTO command_group_assignment VALUES( "/impersonate", 25 );
 INSERT INTO command_group_assignment VALUES( "/impersonate", 24 );
 INSERT INTO command_group_assignment VALUES( "/impersonate", 23 );
 
+INSERT INTO command_group_assignment VALUES( "/changenameall", 30 );
+INSERT INTO command_group_assignment VALUES( "/changenameall", 25 );
+INSERT INTO command_group_assignment VALUES( "/changenameall", 24 );
+INSERT INTO command_group_assignment VALUES( "/changenameall", 23 );
+
 # GM2 and above
 INSERT INTO command_group_assignment VALUES( "/divorce", 30 );
 INSERT INTO command_group_assignment VALUES( "/divorce", 25 );
