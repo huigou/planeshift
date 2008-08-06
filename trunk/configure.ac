@@ -101,7 +101,7 @@ case $cs_host_target in
 		[CS_CREATE_TUPLE([-msse2])])
         AS_IF([test -n "$cs_cv_prog_cc_msse2"],
             [CS_EMIT_BUILD_PROPERTY([COMPILER.CFLAGS],
-             [$cs_cv_prog_cc_msse2], [+])]
+             [$cs_cv_prog_cc_msse2], [+])])
 
 	CS_CHECK_BUILD_FLAGS([for -mfpmath=sse flag], [cs_cv_prog_cc_mfpmath_sse],
 		[CS_CREATE_TUPLE([-mfpmath=sse])])
