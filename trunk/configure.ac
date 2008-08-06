@@ -91,15 +91,23 @@ CS_COMPILER_WARNINGS([C++], [cs_cv_prog_cxx_enable_warnings],
 
 case $cs_host_target in
     macosx)
-        CS_CHECK_BUILD_FLAGS([for -msse flag], [cs_cv_prog_cc_msse], [CS_CREATE_TUPLE([-msse])])
-        AS_IF([test -n "$cs_cv_prog_cc_msse"], [CS_EMIT_BUILD_PROPERTY([COMPILER.CFLAGS],
-        [$cs_cv_prog_cc_msse], [+])])
+        CS_CHECK_BUILD_FLAGS([for -msse flag], [cs_cv_prog_cc_msse],
+		[CS_CREATE_TUPLE([-msse])])
+        AS_IF([test -n "$cs_cv_prog_cc_msse"],
+            [CS_EMIT_BUILD_PROPERTY([COMPILER.CFLAGS],
+             [$cs_cv_prog_cc_msse], [+])])
 
-        CS_CHECK_BUILD_FLAGS([for -msse2 flag], [cs_cv_prog_cc_msse2], [CS_CREATE_TUPLE([-msse2])])
-        AS_IF([test -n "$cs_cv_prog_cc_msse2"], [CS_EMIT_BUILD_PROPERTY([COMPILER.CFLAGS],
-        [$cs_cv_prog_cc_msse2], [+])
-	CS_EMIT_BUILD_PROPERTY([COMPILER.CFLAGS],
-	["-mfpmath=sse"], [+])])
+	CS_CHECK_BUILD_FLAGS([for -msse2 flag], [cs_cv_prog_cc_msse2],
+		[CS_CREATE_TUPLE([-msse2])])
+        AS_IF([test -n "$cs_cv_prog_cc_msse2"],
+            [CS_EMIT_BUILD_PROPERTY([COMPILER.CFLAGS],
+             [$cs_cv_prog_cc_msse2], [+])]
+
+	CS_CHECK_BUILD_FLAGS([for -mfpmath=sse flag], [cs_cv_prog_cc_mfpmath_sse],
+		[CS_CREATE_TUPLE([-mfpmath=sse])])
+        AS_IF([test -n "$cs_cv_prog_cc_mfpmath_sse"],
+            [CS_EMIT_BUILD_PROPERTY([COMPILER.CFLAGS],
+             [$cs_cv_prog_cc_mfpmath_sse], [+])])
         ;;
 esac
  
@@ -324,7 +332,7 @@ AC_ARG_WITH([cs], [AC_HELP_STRING([--without-cs],
 AS_IF([test -z "$with_cs"], [with_cs=yes])
 
 AS_IF([test $with_cs != no],
-[CS_PATH_CRYSTAL_EMIT([1.3], [],
+[CS_PATH_CRYSTAL_EMIT([1.4], [],
   [AC_MSG_ERROR([
 *** Crystal Space could not be found or was unusable. The latest version is
 *** always available from http://www.crystalspace3d.org/
