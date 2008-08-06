@@ -1221,12 +1221,14 @@ void pawsTree::SetScrollBarMax()
             if( width > screenFrame.Width())
             {
                 horizScrollBar  -> SetMaxValue(MAX(0, width  - screenFrame.Width()));
-                vertScrollBar->Show();
+                if(!horizScrollBar->IsVisible()) //as this function is called continually we have to check if
+                    horizScrollBar->Show(); //the widget is already shown to avoid flickering
             }
             else
             {
-                horizScrollBar->Hide();
-                vertScrollBar->SetMaxValue(0);
+                if(horizScrollBar->IsVisible())
+                    horizScrollBar->Hide();
+                horizScrollBar->SetMaxValue(0);
             }
          }
         if (vertScrollBar != NULL)
@@ -1234,11 +1236,13 @@ void pawsTree::SetScrollBarMax()
             if(height > screenFrame.Height())
             {
                 vertScrollBar   -> SetMaxValue(MAX(0, height - screenFrame.Height()));
-                vertScrollBar->Show();
+                if(!vertScrollBar->IsVisible())
+                    vertScrollBar->Show();
             }
             else
             {
-                vertScrollBar->Hide();
+                if(vertScrollBar->IsVisible())
+                    vertScrollBar->Hide();
                 vertScrollBar->SetMaxValue(0);
             }
         }

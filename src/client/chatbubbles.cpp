@@ -312,10 +312,14 @@ void psChatBubbles::HandleMessage(MsgEntry * msg, Client * client)
     static csArray<psEffectTextRow> rowBuffer;
     rowBuffer.Empty();
 
-  
     // build the text rows
-    const size_t textLen = chatMsg.sText.Length();
-    const char * text = chatMsg.sText.GetData();
+    csString inText = chatMsg.sText;
+    if (chatWindow->GetSettings().enableBadWordsFilterIncoming) //check for badwords filtering
+        chatWindow->BadWordsFilter(inText); //if enabled apply it
+
+    const size_t textLen = inText.Length();
+    const char * text = inText.GetData();  
+
     psEffectTextRow chat = type->textSettings;
 
     // create a row character by character while calculating word wrap

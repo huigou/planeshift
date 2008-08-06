@@ -178,19 +178,17 @@ private:
     class psEffectMovableListener : public scfImplementation1<psEffectMovableListener,iMovableListener>
     {
     private:
-        iSectorList * moveSectors;
-        csVector3 movePos;
-        csMatrix3 transf;
         bool movableDead;
+		bool movableChanged;
+		iMovable* movable;
 
     public:
         psEffectMovableListener()
             : scfImplementationType(this)
         {
-            moveSectors = 0;
-            movePos = csVector3(0,0,0);
-            transf.Identity();
             movableDead = false;
+			movableChanged = false;
+			movable = 0;
         }
 
         virtual ~psEffectMovableListener() {}
@@ -199,9 +197,8 @@ private:
          */
         virtual void MovableChanged(iMovable * movable)
         {
-            movePos = movable->GetFullPosition();
-            moveSectors = movable->GetSectors();
-            transf = movable->GetFullTransform().GetT2O();
+			movableChanged = true;
+			this->movable = movable;
         }
 
         /** Implementation of the iMovableListener function, allows us to detect if the movable was destroyed
@@ -209,6 +206,8 @@ private:
         virtual void MovableDestroyed(iMovable * movable)
         {
             movableDead = true;
+			this->movable = 0;
+			movableChanged = false;
         }
         
         /** Checks to see if the movable has disappeared
@@ -227,14 +226,14 @@ private:
          */
         bool GrabNewData(iSectorList *& newSectors, csVector3 & newPos, csMatrix3 & newTransf)
         {
-            if (!moveSectors)
+            if (!movableChanged || !movable)
                 return false;
             
-            newSectors = moveSectors;
-            newPos = movePos;
-            newTransf = transf;
+            newPos = movable->GetFullPosition();
+            newSectors = movable->GetSectors();
+            newTransf = movable->GetFullTransform().GetT2O();
 
-            moveSectors = 0;
+            movableChanged = false;
             return true;
         }
 
@@ -245,18 +244,21 @@ private:
          */
         bool GrabNewData(csVector3 & newPos, csMatrix3 & newTransf)
         {
-            if (!moveSectors)
+            if (!movableChanged || !movable)
                 return false;
 
-            newPos = movePos;
-            newTransf = transf;
-            moveSectors = 0;
+            newPos = movable->GetFullPosition();
+            newTransf = movable->GetFullTransform().GetT2O();
+            movableChanged = false;
             return true;
         }
 
         csVector3 GetPosition()
         {
-            return movePos;
+			if (movable)
+				return movable->GetFullPosition();
+			else
+				return csVector3(0, 0, 0);
         }
     };
     
