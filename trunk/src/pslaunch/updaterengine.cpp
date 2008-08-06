@@ -671,13 +671,19 @@ void UpdaterEngine::GeneralUpdate()
 
         // Download update zip.
         PrintOutput("\nDownloading update file..\n");
-        downloader->DownloadFile(zip, zip, false, true);
+        if(!downloader->DownloadFile(zip, zip, false, true))
+        {
+            PrintOutput("Failed to download the update file! Try again later.\n");
+            fileUtil->MoveFile("/this/updaterinfo.xml.bak", "/this/updaterinfo.xml", true, false);
+            return;
+        }
 
         // Check md5sum is correct.
         csRef<iDataBuffer> buffer = vfs->ReadFile("/this/" + zip, true);
         if (!buffer)
         {
             PrintOutput("Could not get MD5 of updater zip!!\n");
+            fileUtil->MoveFile("/this/updaterinfo.xml.bak", "/this/updaterinfo.xml", true, false);
             return;
         }
 
@@ -688,6 +694,7 @@ void UpdaterEngine::GeneralUpdate()
         if(!md5sum.Compare(newCv->GetMD5Sum()))
         {
             PrintOutput("md5sum of client zip does not match correct md5sum!!\n");
+            fileUtil->MoveFile("/this/updaterinfo.xml.bak", "/this/updaterinfo.xml", true, false);
             return;
         }
 
