@@ -461,13 +461,6 @@ void psSpellManager::StartPurifying(Client * client, int statID)
 
     if (glyph->GetStackCount() > 1)
     {
-        if ( !character->Inventory().HowManyCanFit(glyph) )
-        {
-            psserver->SendSystemError(client->GetClientNum(), "Your inventory is full!" );
-            SendGlyphs(client);
-            return;
-        }
-
         psGlyph* stackOfGlyphs = glyph;
 
         glyph = dynamic_cast <psGlyph*> (stackOfGlyphs->SplitStack(1));
@@ -479,15 +472,14 @@ void psSpellManager::StartPurifying(Client * client, int statID)
         psItem *glyphItem = glyph; // Needed for reference in next function
         if (!character->Inventory().Add(glyphItem,false,false))
         {
-            Error2("Failed to move purifying glyph to bulk slot for %s", client->GetName() );
+            // Notify the player that and why purification failed
+            psserver->SendSystemError(client->GetClientNum(), "You can't purfiy %s because your inventory is full!", glyph->GetName());
+            
             CacheManager::GetSingleton().RemoveInstance(glyphItem);
 
             // Reset the stack count to account for the one that was destroyed.
             stackOfGlyphs->SetStackCount(stackOfGlyphs->GetStackCount() + 1);
-            csString status;
-            status.Format("Warning: New glpyh created in StartPurifying for %s, stack count now %d", 
-                          (const char *) client->GetName(), stackOfGlyphs->GetStackCount());
-            psserver->GetLogCSV()->Write(CSV_STATUS, status);
+            SendGlyphs(client);
             return;
         }
         stackOfGlyphs->Save(false);

@@ -1,5 +1,6 @@
 *** 2008-08-06 by Andreas Heinchen
-- Fixed FS#1241, ptach from Arerano
+- Fixed FS#1241, patch from Arerano
+- Fixed FS#190, patch by Peeg
 
 *** 2008-08-06 by Andreas Heinchen
 - Restricting changename with 'forceall' option to gm3 and above
