@@ -18,30 +18,31 @@
 # Table structure for table accounts
 #
 
-CREATE TABLE `accounts` (
-  `id` int(10) unsigned NOT NULL auto_increment,
-  `username` varchar(50) NOT NULL default '0',
-  `password` varchar(32) NOT NULL default '0',
-  `last_login` datetime default NULL,
-  `created_date` datetime default NULL,
-  `last_login_ip` varchar(16) default NULL,
-  `security_level` tinyint(3) NOT NULL default '0',
-  `verificationid` varchar(32) default NULL,
-  `country` varchar(64) default NULL,
-  `gender` varchar(1) default 'N',
-  `birth` int(4) default '0',
-  `status` char(1) default NULL,
-  `spam_points` tinyint(1) default '0',
-  `advisor_points` int(10) NOT NULL default '0',
+CREATE TABLE  `planeshift`.`accounts` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `username` varchar(50) NOT NULL DEFAULT '0',
+  `password` varchar(32) NOT NULL DEFAULT '0',
+  `last_login` datetime DEFAULT NULL,
+  `created_date` datetime DEFAULT NULL,
+  `last_login_ip` varchar(16) DEFAULT NULL,
+  `security_level` tinyint(3) NOT NULL DEFAULT '0',
+  `verificationid` varchar(32) DEFAULT NULL,
+  `country` varchar(64) DEFAULT NULL,
+  `gender` varchar(1) DEFAULT 'N',
+  `birth` int(4) DEFAULT '0',
+  `status` char(1) DEFAULT NULL,
+  `spam_points` tinyint(1) DEFAULT '0',
+  `advisor_points` int(10) NOT NULL DEFAULT '0',
   `comments` text,
-  `realname` varchar(64) default NULL,
-  `advisor_ban` tinyint(1) default '0',
-  PRIMARY KEY  (`id`),
+  `realname` varchar(64) DEFAULT NULL,
+  `advisor_ban` tinyint(1) DEFAULT '0',
+  PRIMARY KEY (`id`),
   UNIQUE KEY `username` (`username`),
   UNIQUE KEY `id` (`id`),
-  KEY `id_2` (`id`),
-  KEY `username_2` (`username`)
+  KEY `indx_accounts_ip` (`last_login_ip`)
+ USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
 
 #
 # Dumping data for table accounts
