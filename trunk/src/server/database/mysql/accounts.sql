@@ -18,7 +18,7 @@
 # Table structure for table accounts
 #
 
-CREATE TABLE  `planeshift`.`accounts` (
+CREATE TABLE  `accounts` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `username` varchar(50) NOT NULL DEFAULT '0',
   `password` varchar(32) NOT NULL DEFAULT '0',
