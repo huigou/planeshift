@@ -48,7 +48,7 @@ public:
 protected:
     psEntityLabels * entityLabels;
 
-    pawsRadioButtonGroup * visibilityRadioGroup, * contentRadioGroup;
+    pawsRadioButtonGroup *visCreaturesRadioGroup, *visItemsRadioGroup, *contentRadioGroup;
 };
 
 

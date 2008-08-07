@@ -74,12 +74,12 @@ public:
     /**
      * Sets options for label behaviour:
      */
-    void Configure(psEntityLabelVisib visibility, bool showGuild);
+    void Configure(psEntityLabelVisib visCreatures, psEntityLabelVisib visItems, bool showGuild);
     
     /**
      * Gets options for label behaviour:
      */
-    void GetConfiguration(psEntityLabelVisib & visibility, bool & showGuild);
+    void GetConfiguration(psEntityLabelVisib & visCreatures, psEntityLabelVisib & visItems, bool & showGuild);
     
     /**
      * Reads options for label behaviour from file:
@@ -151,11 +151,14 @@ protected:
      * Deletes label from entity
      */    
     void DeleteLabelOfObject( GEMClientObject* object );
-        
+     
+    
+    bool ShowLabel(GEMOBJECT_TYPE type, psEntityLabelVisib vis);
     /**
      * Configuration options
      */
-    psEntityLabelVisib visibility;
+    psEntityLabelVisib visCreatures;
+    psEntityLabelVisib visItems;
     bool showGuild;                    // should the label contain name of character's guild ?
 
     /**

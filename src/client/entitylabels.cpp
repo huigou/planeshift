@@ -64,7 +64,8 @@ int ParseColor(const csString & str, iGraphics2D *g2d);
 
 psEntityLabels::psEntityLabels()
 {    
-    visibility = LABEL_ALWAYS;
+    visCreatures = LABEL_ONMOUSE;
+    visItems = LABEL_ONMOUSE;
     showGuild = true;
     
     underMouse = NULL;
@@ -104,15 +105,16 @@ bool psEntityLabels::Initialize(iObjectRegistry * object_reg, psCelClient * _cel
     return true;
 }
 
-void psEntityLabels::Configure(psEntityLabelVisib _visibility, bool _showGuild)
+void psEntityLabels::Configure(psEntityLabelVisib _visCreatures, psEntityLabelVisib _visItems, bool _showGuild)
 {
     // Hide all on changed visibility to refresh what we're showing
-    if (visibility != _visibility)
+    if (visCreatures != _visCreatures || visItems != _visItems)
         HideAllLabels();
 
     bool refreshGuilds = (showGuild != _showGuild);
 
-    visibility = _visibility;
+    visCreatures = _visCreatures;
+    visItems = _visItems;
     showGuild = _showGuild;
 
     // Refresh guild labels if our display option has changed
@@ -120,9 +122,10 @@ void psEntityLabels::Configure(psEntityLabelVisib _visibility, bool _showGuild)
         RefreshGuildLabels();
 }
 
-void psEntityLabels::GetConfiguration(psEntityLabelVisib & _visibility, bool & _showGuild)
+void psEntityLabels::GetConfiguration(psEntityLabelVisib & _visCreatures, psEntityLabelVisib & _visItems, bool & _showGuild)
 {
-    _visibility = visibility;
+    _visCreatures = visCreatures;
+    _visItems = visItems;
     _showGuild = showGuild;
 }
 
@@ -135,11 +138,12 @@ bool psEntityLabels::HandleEvent(iEvent & ev)
     if (celClient->GetMainPlayer() == NULL)
         return false;  // Not loaded yet
 
-    if (visibility == LABEL_ALWAYS)
+    if (visItems == LABEL_ALWAYS || visCreatures == LABEL_ALWAYS)
     {
         UpdateVisibility();
     }
-    else if (visibility == LABEL_ONMOUSE)
+    
+    if (visItems == LABEL_ONMOUSE || visCreatures == LABEL_ONMOUSE)
     {
         UpdateMouseover();
     }
@@ -328,15 +332,18 @@ void psEntityLabels::OnObjectArrived( GEMClientObject* object )
 {
     CS_ASSERT_MSG("Effects Manager must exist before loading entity labels!", psengine->GetEffectManager() );
 
-    if (visibility == LABEL_NEVER)
+    if (visCreatures == LABEL_NEVER && visItems == LABEL_NEVER)
         return;
 
     if(object->GetEntityLabel())
     {
         RepaintObjectLabel( object );
-    } else {
+    } 
+    else 
+    {
         CreateLabelOfObject( object );
-        if (visibility == LABEL_ONMOUSE)
+        
+        if (visCreatures == LABEL_ONMOUSE || visItems == LABEL_ONMOUSE)
         {
             psPoint mouse = PawsManager::GetSingleton().GetMouse()->GetPosition();
             GEMClientObject *um = psengine->GetMainWidget()->FindMouseOverObject(mouse.x, mouse.y);
@@ -361,6 +368,8 @@ bool psEntityLabels::LoadFromFile()
         fileName = CONFIG_FILE_NAME_DEF;
     }
 
+    //csString fileName = CONFIG_FILE_NAME_DEF;
+    
     doc = ParseFile(psengine->GetObjectRegistry(), fileName);
     if (doc == NULL)
     {
@@ -380,16 +389,17 @@ bool psEntityLabels::LoadFromFile()
         return false;
     }
     
+    // Players, NPCs, monsters
     optionNode = entityLabelsNode->GetNode("Visibility");
     if (optionNode != NULL)
     {
         option = optionNode->GetAttributeValue("value");
         if (option == "always")
-            visibility = LABEL_ALWAYS;
+            visCreatures = LABEL_ALWAYS;
         else if (option == "mouse")
-            visibility = LABEL_ONMOUSE;
+            visCreatures = LABEL_ONMOUSE;
         else if (option == "never")
-            visibility = LABEL_NEVER;
+            visCreatures = LABEL_NEVER;
     }
     
     optionNode = entityLabelsNode->GetNode("ShowGuild");
@@ -398,6 +408,19 @@ bool psEntityLabels::LoadFromFile()
         option = optionNode->GetAttributeValue("value");
         showGuild = (option == "yes");
     }
+
+    // Items
+    optionNode = entityLabelsNode->GetNode("VisibilityItems");
+    if (optionNode != NULL)
+    {
+        option = optionNode->GetAttributeValue("value");
+        if (option == "always")
+            visItems = LABEL_ALWAYS;
+        else if (option == "mouse")
+            visItems = LABEL_ONMOUSE;
+        else if (option == "never")
+            visItems = LABEL_NEVER;
+    }    
 
     return true;
 }
@@ -417,7 +440,11 @@ inline void psEntityLabels::UpdateVisibility()
         // Don't show other player names unless introduced.
         if (object->GetObjectType() == GEM_ACTOR && !(object->Flags() & psPersistActor::NAMEKNOWN))
             continue;
-
+        
+        // Don't show labels of stuff whose label isn't always visible
+        if (!ShowLabel(object->GetObjectType(), LABEL_ALWAYS))
+        	continue;
+        
         // Only show labels within range
         csVector3 there = mesh->GetMovable()->GetPosition();
         int range = (object->GetObjectType() == GEM_ITEM) ? RANGE_TO_SEE_ITEM_LABELS : RANGE_TO_SEE_ACTOR_LABELS ;
@@ -437,6 +464,13 @@ inline void psEntityLabels::UpdateMouseover()
     // Find out the object
     underMouse = psengine->GetMainWidget()->FindMouseOverObject(mouse.x, mouse.y);
 
+    if(underMouse)
+    {
+    	// Don't show labels of stuff whose label isn't only visible on mouse over
+    	if(!ShowLabel(underMouse->GetObjectType(), LABEL_ONMOUSE))
+    		return;
+    }
+    	
     // Is this a new object?
     if (underMouse != lastUnderMouse)
     {
@@ -469,18 +503,27 @@ inline void psEntityLabels::UpdateMouseover()
 bool psEntityLabels::SaveToFile()
 {
     csString xml;
-    csString visibilityStr, showGuildStr;
+    csString visCreaturesStr, visItemsStr, showGuildStr;
 
-    switch (visibility)
+    switch (visCreatures)
     {
-        case LABEL_ALWAYS:  visibilityStr = "always"; break;
-        case LABEL_ONMOUSE: visibilityStr = "mouse"; break;
-        case LABEL_NEVER:   visibilityStr = "never"; break;
+        case LABEL_ALWAYS:  visCreaturesStr = "always"; break;
+        case LABEL_ONMOUSE: visCreaturesStr = "mouse"; break;
+        case LABEL_NEVER:   visCreaturesStr = "never"; break;
     }
+
+    switch (visItems)
+    {
+        case LABEL_ALWAYS:  visItemsStr = "always"; break;
+        case LABEL_ONMOUSE: visItemsStr = "mouse"; break;
+        case LABEL_NEVER:   visItemsStr = "never"; break;
+    }
+    
     showGuildStr = showGuild ? "yes" : "no";
     
     xml = "<EntityLabels>\n";
-    xml += "    <Visibility value=\"" + visibilityStr + "\"/>\n";
+    xml += "    <Visibility value=\"" + visCreaturesStr + "\"/>\n";
+    xml += "    <VisibilityItems value=\"" + visItemsStr + "\"/>\n";
     xml += "    <ShowGuild value=\"" + showGuildStr + "\"/>\n";
     xml += "</EntityLabels>\n";
     
@@ -545,4 +588,19 @@ void psEntityLabels::LoadAllEntityLabels()
     const csPDelArray<GEMClientObject>& entities = celClient->GetEntities();
     for (size_t i=0; i<entities.GetSize(); i++)
         OnObjectArrived( entities.Get(i) );
+}
+
+bool psEntityLabels::ShowLabel(GEMOBJECT_TYPE type, psEntityLabelVisib vis)
+{
+	if(type == GEM_ACTOR)
+	{
+		return visCreatures == vis;
+	}
+	
+	if(type == GEM_ITEM)
+	{
+		return visItems == vis;
+	}
+	
+	return false;
 }

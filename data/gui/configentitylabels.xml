@@ -3,27 +3,31 @@
 <widget name="ConfigEntityLabels" factory="pawsConfigEntityLabels"
         visible="no" savepositions="no" movable="no" 
         resizable="no">
-	<frame x="225" y="10" width="400" height="300" border="no" />
+	<frame x="225" y="10" width="420" height="300" border="yes" />
 	<font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="200" g="200" b="200" size="10" scalefont="no" />
 
-    <widget name="visibility" factory="pawsRadioButtonGroup">
-        <frame x="10" y="10" width="190" height="120" />
+    <widget name="visibilityCreatures" factory="pawsRadioButtonGroup">
+        <frame x="10" y="10" width="190" height="120" border="no" />
+        <widget factory="pawsTextBox" name="">
+          <frame x="0" y="0" width="180" height="20" border="no" />
+          <text string="Creatures:"/>
+        </widget> 
         <widget name="always" factory="pawsRadioButton" id="0">
-            <frame x="10" y="10" width="190" height="30" />
+            <frame x="10" y="15" width="190" height="30" />
             <text string="Always visible" position="right"/>
         </widget>
         <widget name="mouse" factory="pawsRadioButton" id="1">
-            <frame x="10" y="50" width="190" height="30" />        
+            <frame x="10" y="55" width="190" height="30" />        
             <text string="Visible on mouse" position="right"/>
         </widget>
         <widget name="never" factory="pawsRadioButton" id="2">
-            <frame x="10" y="90" width="190" height="30" />        
+            <frame x="10" y="95" width="190" height="30" />        
             <text string="Invisible" position="right"/>
         </widget>
     </widget>
 
     <widget name="content" factory="pawsRadioButtonGroup">
-        <frame x="10" y="160" width="190" height="80" />
+        <frame x="10" y="160" width="190" height="80" border="no" />
         <widget name="guild" factory="pawsRadioButton" id="0">
             <frame x="10" y="10" width="190" height="30" />        
             <text string="Name and guild" position="right"/>
@@ -31,6 +35,26 @@
         <widget name="name" factory="pawsRadioButton" id="1">
             <frame x="10" y="50" width="190" height="30" />        
             <text string="Name only" position="right"/>
+        </widget>
+    </widget>
+
+    <widget name="visibilityItems" factory="pawsRadioButtonGroup">
+        <frame x="210" y="10" width="190" height="120" border="no" />
+        <widget factory="pawsTextBox" name="">
+          <frame x="0" y="0" width="180" height="20" border="no" />
+          <text string="Items:"/>
+        </widget>
+        <widget name="always" factory="pawsRadioButton" id="0">
+            <frame x="10" y="15" width="190" height="30" />
+            <text string="Always visible" position="right"/>
+        </widget>
+        <widget name="mouse" factory="pawsRadioButton" id="1">
+            <frame x="10" y="55" width="190" height="30" />        
+            <text string="Visible on mouse" position="right"/>
+        </widget>
+        <widget name="never" factory="pawsRadioButton" id="2">
+            <frame x="10" y="95" width="190" height="30" />        
+            <text string="Invisible" position="right"/>
         </widget>
     </widget>
 
