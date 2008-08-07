@@ -50,31 +50,52 @@ bool pawsConfigEntityLabels::Initialize()
 
 bool pawsConfigEntityLabels::PostSetup()
 {
-    visibilityRadioGroup = dynamic_cast<pawsRadioButtonGroup*> (FindWidget("visibility"));
-    if (visibilityRadioGroup == NULL)
+    visCreaturesRadioGroup = dynamic_cast<pawsRadioButtonGroup*> (FindWidget("visibilityCreatures"));
+    if (visCreaturesRadioGroup == NULL)
         return false;
+    
+    visItemsRadioGroup = dynamic_cast<pawsRadioButtonGroup*> (FindWidget("visibilityItems"));
+    if(visItemsRadioGroup == NULL)
+    	return false;
+    
     contentRadioGroup = dynamic_cast<pawsRadioButtonGroup*> (FindWidget("content"));
     if (contentRadioGroup == NULL)
         return false;
+    
     return true;
 }
 
 bool pawsConfigEntityLabels::LoadConfig()
 {
-    psEntityLabelVisib visibility;
+    psEntityLabelVisib visCreatures;
+    psEntityLabelVisib visItems;
     bool showGuild;
 
-    entityLabels->GetConfiguration(visibility, showGuild);
-    switch (visibility)
+    entityLabels->GetConfiguration(visCreatures, visItems, showGuild);
+    
+    switch (visCreatures)
     {
         case LABEL_ALWAYS:
-            visibilityRadioGroup->SetActive("always");
+            visCreaturesRadioGroup->SetActive("always");
             break;
         case LABEL_ONMOUSE:
-            visibilityRadioGroup->SetActive("mouse");
+        	visCreaturesRadioGroup->SetActive("mouse");
             break;
         case LABEL_NEVER:
-            visibilityRadioGroup->SetActive("never");
+        	visCreaturesRadioGroup->SetActive("never");
+            break;
+    }
+
+    switch (visItems)
+    {
+        case LABEL_ALWAYS:
+            visItemsRadioGroup->SetActive("always");
+            break;
+        case LABEL_ONMOUSE:
+        	visItemsRadioGroup->SetActive("mouse");
+            break;
+        case LABEL_NEVER:
+        	visItemsRadioGroup->SetActive("never");
             break;
     }
     
@@ -89,25 +110,34 @@ bool pawsConfigEntityLabels::LoadConfig()
 
 bool pawsConfigEntityLabels::SaveConfig()
 {
-    psEntityLabelVisib visibility;
+    psEntityLabelVisib visCreatures;
+    psEntityLabelVisib visItems;
     bool showGuild;
     csString activeVisib;
 
-    activeVisib = visibilityRadioGroup->GetActive();
+    activeVisib = visCreaturesRadioGroup->GetActive();
     if (activeVisib == "always")
-        visibility = LABEL_ALWAYS;
+        visCreatures = LABEL_ALWAYS;
     else if (activeVisib == "mouse")
-        visibility = LABEL_ONMOUSE;
+        visCreatures = LABEL_ONMOUSE;
     else // if (activeVisib == "never")
-        visibility = LABEL_NEVER;
+        visCreatures = LABEL_NEVER;
 
+    activeVisib = visItemsRadioGroup->GetActive();
+    if (activeVisib == "always")
+        visItems = LABEL_ALWAYS;
+    else if (activeVisib == "mouse")
+        visItems = LABEL_ONMOUSE;
+    else // if (activeVisib == "never")
+        visItems = LABEL_NEVER;
+    
     if (contentRadioGroup->GetActive() == "guild")
         showGuild = true;
     else
         showGuild = false;
 
 
-    entityLabels->Configure(visibility, showGuild);
+    entityLabels->Configure(visCreatures, visItems, showGuild);
     entityLabels->SaveToFile();
     dirty = false;
     return true;
@@ -115,14 +145,15 @@ bool pawsConfigEntityLabels::SaveConfig()
 
 void pawsConfigEntityLabels::SetDefault()
 {
-    visibilityRadioGroup->SetActive("always");
+    visCreaturesRadioGroup->SetActive("mouse");
+    visItemsRadioGroup->SetActive("mouse");
     contentRadioGroup->SetActive("guild");
     dirty = true;
 }
 
 bool pawsConfigEntityLabels::OnChange(pawsWidget * widget)
 {
-    if ((widget == visibilityRadioGroup) || (widget == contentRadioGroup))
+    if ((widget == visCreaturesRadioGroup) || (widget == visItemsRadioGroup) || (widget == contentRadioGroup))
         dirty = true;
 
     return true;
