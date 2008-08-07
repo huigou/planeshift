@@ -43,6 +43,7 @@ pawsButton::pawsButton()
     flash = 0;
     flashtype = FLASH_REGULAR;
     keybinding = 0;
+    changeOnMouseOver = false;
 }
 
 
