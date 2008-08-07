@@ -59,9 +59,6 @@ psQuest::psQuest()
 
 psQuest::~psQuest()
 {
-    if (prerequisite)
-        delete prerequisite;
-    
     prerequisite = NULL;
 
     for(size_t i = 0;i < triggerPairs.GetSize(); i++)

@@ -1,5 +1,6 @@
 *** 2008-08-06 by Andreas Heinchen
 - Restricting changename with 'forceall' option to gm3 and above
+- Fixed a wrong handling of a referenced object
 
 *** 2008-08-06 by Mike Gist
 - Fixed FS#1373, patch from weltall.
