@@ -1,3 +1,6 @@
+*** 2008-08-07 by Mike Gist
+- Fixed FS#2088, patch from weltall.
+
 *** 2008-08-06 by Andreas Heinchen
 - Fixed FS#1241, patch from Arerano
 - Fixed FS#190, FS#1971 patch by Peeg
