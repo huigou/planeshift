@@ -1,6 +1,8 @@
 *** 2008-08-06 by Andreas Heinchen
 - Restricting changename with 'forceall' option to gm3 and above
 - Fixed a wrong handling of a referenced object
+- Fixed typo in commands, added missing entries in upgrade_schema
+  ==> BUMPED DB VERSION <== (now 1192)
 
 *** 2008-08-06 by Mike Gist
 - Fixed FS#1373, patch from weltall.
