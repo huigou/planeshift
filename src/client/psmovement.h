@@ -121,6 +121,8 @@ protected:
     float sensY;
     float sensX;
     bool invertedMouse;
+	float lastDeltaX;
+	float lastDeltaY;
 
     csEventID event_frame;
     csEventID event_mousemove;
@@ -179,6 +181,7 @@ public:
     void MouseLook(bool v);
     bool MouseLook() { return mouseLook; }
     void MouseLook(iEvent& ev);
+	void UpdateMouseLook();
 
     void MouseZoom(bool v) { mouseZoom = v; }
     bool MouseZoom() { return mouseZoom; }
