@@ -205,6 +205,9 @@ bool psMovementManager::HandleEvent( iEvent &event )
         if (!onGround && linearMove->IsOnGround())
             UpdateVelocity();
 
+		// UpdateMouseLook will take care of "recent mouse-look turning" based on "bool mouseLook"
+		UpdateMouseLook();
+
         if (mouseMove)
             UpdateRunTo();
     }
@@ -624,6 +627,74 @@ void psMovementManager::MouseLook(bool v)
     mouseLookCanAct = false;
 }
 
+void psMovementManager::UpdateMouseLook()
+{
+	if (!ready || !actor || !linearMove )
+	{
+		return;
+	}
+
+	psCamera* camera = psengine->GetPSCamera();
+
+	if ( !mouseLook  )
+	{
+		if ( lastDeltaX == 0 && lastDeltaY == 0 )
+		{
+			return;
+		}
+		else
+		{ // mouseLook turned off. Reset.
+			lastDeltaX = 0;
+			lastDeltaY = 0;
+			if ( camera->RotateCameraWithPlayer() )
+			{
+				csVector3 vec(0,0,0);
+				linearMove->SetAngularVelocity(vec);
+			}
+			return;
+		}
+	}
+
+	if ( (abs(lastDeltaX) > 150 || abs(lastDeltaY) > 150) )
+	{ // Higher values shouldn't slow down too fast
+		lastDeltaX *= 0.9f;
+		lastDeltaY *= 0.9f;
+	}
+	else if ( (abs(lastDeltaX) > 5 || abs(lastDeltaY) > 5) )
+	{
+		lastDeltaX *= 0.6f;
+		lastDeltaY *= 0.6f;
+	}
+	else
+	{ // very slow turning. Set to 0 for more precise control. The actual mouse events will cause the turning.
+		lastDeltaX = 0;
+		lastDeltaY = 0;
+	}
+
+    float deltaPitch = lastDeltaY * (sensY/25000.0f) * (invertedMouse ? 1.0f : -1.0f);
+    float deltaYaw;
+
+    if ( camera->RotateCameraWithPlayer() )
+    {
+        deltaYaw = 0.0f;
+        if (!locked)
+        {
+            float spin = -1.0f * lastDeltaX * (sensX/200.0f);
+
+            if (spin > 5) spin = 5.0f;
+            if (spin < -5) spin = -5.0f; 
+            linearMove->SetAngularVelocity( csVector3(0,spin,0) );
+        }
+    }
+    else
+    {
+        deltaYaw = lastDeltaX * (sensX/25000.0f);
+    }
+
+    camera->MovePitch(deltaPitch);
+    camera->MoveYaw(deltaYaw);
+}
+
 void psMovementManager::MouseLook(iEvent& ev)
 {
 	if (!ready || !actor || !linearMove )
@@ -640,6 +711,14 @@ void psMovementManager::MouseLook(iEvent& ev)
     float deltaX = float(mouseX - centerX);
     float deltaY = float(mouseY - centerY);
 
+	if ( deltaX == 0 && deltaY == 0)
+	{// No actual event but caused by reseting the mouse position
+		return;
+	}
+	// remember the current values.
+	lastDeltaX = deltaX;
+	lastDeltaY = deltaY;
+
     // Recenter mouse so we don't lose focus
     g2d->SetMousePosition(centerX, centerY);
 
@@ -653,10 +732,10 @@ void psMovementManager::MouseLook(iEvent& ev)
         {
             float spin = -1.0f * deltaX * (sensX/200.0f);
 
-            //if (spin > 5) spin = 5.0f; // the limitation to +-5.0f slowed the horizontal (LAWI)
-            //if (spin < -5) spin = -5.0f; 
-            if (spin > 20) spin = 20.0f;
-            if (spin < -20) spin = -20.0f;
+            if (spin > 5) spin = 5.0f; // the limitation to +-5.0f slowed the horizontal (LAWI) << on purpose.
+            if (spin < -5) spin = -5.0f; 
+            //if (spin > 20) spin = 20.0f; // removing that hack which enables "turning with lightspeed"
+            //if (spin < -20) spin = -20.0f;
             linearMove->SetAngularVelocity( csVector3(0,spin,0) );
         }
     }

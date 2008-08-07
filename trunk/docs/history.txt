@@ -1,4 +1,7 @@
 *** 2008-08-06 by Andreas Heinchen
+- Fixed FS#1241, ptach from Arerano
+
+*** 2008-08-06 by Andreas Heinchen
 - Restricting changename with 'forceall' option to gm3 and above
 - Fixed a wrong handling of a referenced object
 - Fixed typo in commands, added missing entries in upgrade_schema
