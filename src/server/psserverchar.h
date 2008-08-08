@@ -82,8 +82,6 @@ public:
     /// Update all views with items
     virtual bool UpdateItemViews( int clientNum );
 
-    bool SendActionContents(Client *client, psActionLocation *action, psItem *item);
-
     void SendOutPlaySoundMessage( int clientnum, const char* itemsound, const char* action );
 
     /** Sends out equipment messages to all the people around client.
@@ -114,9 +112,6 @@ public:
     ///Checked if the character exists still or if it hasn't connected in two months.
     bool HasConnected( csString name );
 
-    bool SendContainerContents(Client *client, psItem *item, 
-                               int containerID = CONTAINER_INVENTORY_BULK);
-
 protected:
 
     // -------------------Merchant Handling -------------------------------
@@ -130,24 +125,11 @@ protected:
     void HandleMerchantView(psGUIMerchantMessage& msg, Client *client);
 
     void SendPlayerMoney( Client *client);
-    bool SendItemDescription( Client *client, psItem *item);
-    void SendSketchDefinition(psItem *item, Client *client);
-    void SendCraftTransInfo( Client *client, psItem *item);
-    csString* GetComboInfoString(psCharacter* character, uint32 designID);
-    csString* GetTransInfoString(psCharacter* character, uint32 designID);
-    bool SendBookText( Client *client, psItem *item, int containerID, int slotID);
 
     bool SendPlayerItems( Client *client, psItemCategory * category);
    
     void HandleBookWrite(MsgEntry* me, Client* client);
     void HandleCraftTransInfo( MsgEntry * me, Client *client );
-
-    /** Fills up the message with the details about the items in the container.
-      * @param item The item that is the container
-      * @param client The client the message is for. Used to figure out ownership flags.
-      * @param outgoing The message that needs to be populated.
-      */
-    void FillContainerMsg( psItem* item, Client* client, psViewItemDescription& outgoing );
 
     /// Return true if all trade params are ok
     bool VerifyTrade( Client * client, psCharacter * character, psCharacter ** merchant, psMerchantInfo ** info,

@@ -3605,7 +3605,7 @@ public:
   * of these messages.  The item screen for a single item or the container screen
   * if the item is a container.
   *
-  * When sending an item to a client you create this messge by giving the name and
+  * When sending an item to a client you create this message by giving the name and
   * description of the item ( all items have this )
   *
   * If it is a container you need to set the container ID and call AddContents() for

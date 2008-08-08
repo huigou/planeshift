@@ -257,7 +257,7 @@ void SlotManager::MoveFromWorldContainer(psSlotMovementMsg& msg, Client *fromCli
                 psserver->GetWorkManager()->StartAutoWork(fromClient, worldContainer, newItem, newItem->GetStackCount());
             }                
 
-            // psserver->GetCharManager()->SendContainerContents(fromClient, parentItem, containerEntityID);
+            // parentItem->SendContainerContents(fromClient, containerEntityID);
 
             break;
         }
@@ -316,7 +316,7 @@ void SlotManager::MoveFromWorldContainer(psSlotMovementMsg& msg, Client *fromCli
             // Update client(s)
             itemProposed->UpdateView(fromClient, worldContainer->GetEntityID(), true);
 
-//            psserver->GetCharManager()->SendContainerContents(fromClient, parentItem, containerEntityID);
+//            parentItem->SendContainerContents(fromClient, containerEntityID);
             break;
         }
     }
@@ -616,11 +616,11 @@ void SlotManager::MoveFromInventory(psSlotMovementMsg& msg, Client *fromClient)
                     // Updating Containers view if needed
                     if(destSlot > 99)
                     {
-                        psserver->GetCharManager()->SendContainerContents(fromClient,chr->Inventory().GetItem(NULL, (INVENTORY_SLOT_NUMBER) (destSlot / 100)),msg.toContainer);
+                        chr->Inventory().GetItem(NULL, (INVENTORY_SLOT_NUMBER) (destSlot / 100))->SendContainerContents(fromClient, msg.toContainer);
                     }
                     else if(srcSlot > 99)
                     {
-                        psserver->GetCharManager()->SendContainerContents(fromClient,chr->Inventory().GetItem(NULL, (INVENTORY_SLOT_NUMBER) (srcSlot / 100)),msg.fromContainer);
+                        chr->Inventory().GetItem(NULL, (INVENTORY_SLOT_NUMBER) (srcSlot / 100))->SendContainerContents(fromClient, msg.fromContainer);
                     }
                     return;
                 }
@@ -693,11 +693,11 @@ void SlotManager::MoveFromInventory(psSlotMovementMsg& msg, Client *fromClient)
             // Updating Containers view if needed
             if(destSlot > 99)
             {
-                psserver->GetCharManager()->SendContainerContents(fromClient,chr->Inventory().GetItem(NULL, (INVENTORY_SLOT_NUMBER) (destSlot / 100)),msg.toContainer);
+                chr->Inventory().GetItem(NULL, (INVENTORY_SLOT_NUMBER) (destSlot / 100))->SendContainerContents(fromClient, msg.toContainer);
             }
             else if(srcSlot > 99)
             {
-                psserver->GetCharManager()->SendContainerContents(fromClient,chr->Inventory().GetItem(NULL, (INVENTORY_SLOT_NUMBER) (srcSlot / 100)),msg.fromContainer);
+                chr->Inventory().GetItem(NULL, (INVENTORY_SLOT_NUMBER) (srcSlot / 100))->SendContainerContents(fromClient, msg.fromContainer);
             }
             break;
         }
