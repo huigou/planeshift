@@ -1,5 +1,6 @@
 *** 2008-08-07 by Andreas Heinchen
 - Fixed FS#1819
+- Code cleanup
 
 *** 2008-08-07 by Mike Gist
 - Fixed FS#2088, patch from weltall.

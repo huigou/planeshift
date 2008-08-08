@@ -49,14 +49,14 @@
 // Local Includes
 //=============================================================================
 #include "client.h"
+#include "psguildinfo.h"
 #include "psitem.h"
 #include "pscharacter.h"
+#include "pscharacterloader.h"
 #include "pssectorinfo.h"
 #include "pstrade.h"
 #include "psmerchantinfo.h"
 #include "psraceinfo.h"
-
-
 
 #if SAVE_DEBUG
 #include <typeinfo>
@@ -2323,4 +2323,530 @@ bool psItem::SetSketch(const csString& newSketchData)
                                        owning_character ? owning_character->GetCharFullName():"Unknown");
 }
 
+void psItem::FillContainerMsg(Client* client, psViewItemDescription& outgoing)
+{
+    gemContainer *container = dynamic_cast<gemContainer*> (gItem);
 
+    if (!container)
+    {
+        // This is not a container in the world so it must be a container inside the pserson's
+        // inventory.  So check to see which items the player has that are in the container.
+        int slot = 0;
+        for (size_t i = 0; i < client->GetCharacterData()->Inventory().GetInventoryIndexCount(); i++)
+        {
+            psItem *child = client->GetCharacterData()->Inventory().GetInventoryIndexItem(i);
+            if (parent_item_instance_id == uid)
+            {
+                outgoing.AddContents(child->GetName(), child->GetImageName(),
+                        child->GetPurifyStatus(), slot++,
+                        child->GetStackCount());
+            }
+        }
+        return;
+    }
+
+    gemContainer::psContainerIterator it(container);
+    while (it.HasNext())
+    {
+        psItem* child = it.Next();
+        if (!child)
+        {
+            Debug2(LOG_NET,client->GetClientNum(),"Container iterator has next but returns null psItem pointer for %u.\n",client->GetClientNum());
+            return;
+        }
+
+        int stackCount = client->CanTake(child) ? child->GetStackCount() : -1;
+        outgoing.AddContents(child->GetName(), child->GetImageName(),
+                child->GetPurifyStatus(), child->GetLocInParent(), stackCount);
+    }
+}
+
+bool psItem::SendItemDescription( Client *client)
+{
+    csString itemInfo, weight, size, itemQuality, itemCategory, itemName, itemCharges;
+
+    if(GetIsLocked())
+    {
+        itemInfo = "This item is locked\n\n";
+    }
+
+    itemCategory.Format( "Category: %s", current_stats->GetCategory()->name.GetData() );
+    weight.Format("\nWeight: %.2f", GetWeight() );
+    size.Format("\nSize: %hu", GetItemSize() );
+    itemInfo += itemCategory+weight+size;
+
+    // Check identify skill before sending quality detail
+    itemQuality = "";
+    int idSkill = GetIdentifySkill();
+    int idMin = GetIdentifyMinSkill();
+    if (!idSkill || ((uint)idMin < client->GetCharacterData()->GetSkills()->GetSkillRank((PSSKILL)idSkill)))
+    {
+        // If the item is an average stackable type object it has no max quality so don't 
+        // send that information to the client since it is not applicable.
+        if ( current_stats->GetFlags() & PSITEMSTATS_FLAG_AVERAGEQUALITY )
+        {
+            itemQuality.Format("\nAverage Quality: %.0f", GetItemQuality() );
+        }
+        else
+        {
+            itemQuality.Format("\nQuality: %.0f/%.0f", GetItemQuality(),GetMaxItemQuality() );
+        }
+    }
+    itemInfo += itemQuality;
+
+    if (HasCharges())
+    {
+        itemCharges.Format("\nCharges: %d",GetCharges());
+        itemInfo += itemCharges;
+    }
+
+    // Generate item name
+    if ( crafter_id != 0 )
+    {
+        // Add craft adjective
+        itemName.Format("%s %s",GetQualityString(),GetName());
+    }
+    else
+    {
+        itemName = GetName();        
+    }
+    
+    // Item was crafted
+    if ( crafter_id != 0 )
+    {
+        // Crafter and guild names
+        csString crafterInfo;
+        psCharacter* charData = psServer::CharacterLoader.QuickLoadCharacterData( crafter_id, true );
+        if ( charData )
+        {
+            crafterInfo.Format( "\n\nCrafter: %s", charData->GetCharFullName());
+            itemInfo += crafterInfo;
+        }
+        
+        // Item was crafted by a guild member
+        if ( GetGuildID() != 0 )
+        {
+            csString guildInfo;
+            psGuildInfo* guild = CacheManager::GetSingleton().FindGuild( GetGuildID() );
+            if ( guild && !guild->IsSecret())
+            {
+                guildInfo.Format( "\nGuild: %s", guild->GetName().GetData());
+                itemInfo += guildInfo;
+            }
+        }
+    }
+
+    if ( GetGuardingCharacterID() )
+    {
+        csString guardingChar;
+        gemActor *guardian = GEMSupervisor::GetSingleton().FindPlayerEntity(GetGuardingCharacterID());
+        if (guardian && guardian->GetCharacterData())
+        {
+            guardingChar.Format("\nGuarded by: %s", guardian->GetCharacterData()->GetCharFullName());
+            itemInfo += guardingChar;
+        }
+    }
+
+    // Item is a key
+    if ( GetIsKey() )
+    {
+        csString lockInfo;
+        if (GetIsMasterKey())
+        {
+            lockInfo.Format( "\nThis is a master key!");
+            itemInfo += lockInfo;
+        }
+        lockInfo.Format( "\nOpens: %s", GetOpenableLockNames().GetData());
+        itemInfo += lockInfo;
+    }
+
+    // Item is a weapon
+    if ( GetCategory()->id == 1 )
+    {
+        csString speed, damage;
+        // Weapon Speed
+        speed.Format( "\n\nSpeed: %.2f", current_stats->Weapon().Latency() );
+        
+        // Weapon Damage Type
+        damage = "\n\nDamage:";
+        float dmgSlash, dmgBlunt, dmgPierce;
+        dmgSlash = GetDamage(PSITEMSTATS_DAMAGETYPE_SLASH);
+        dmgBlunt = GetDamage(PSITEMSTATS_DAMAGETYPE_BLUNT);
+        dmgPierce = GetDamage(PSITEMSTATS_DAMAGETYPE_PIERCE);
+
+        // Only worth printing if their value is not zero
+        if ( dmgSlash )
+            damage += csString().Format( "\n Slash: %.2f", dmgSlash );
+        if ( dmgBlunt )
+            damage += csString().Format( "\n Blunt: %.2f", dmgBlunt );
+        if ( dmgPierce )
+            damage += csString().Format( "\n Pierce: %.2f", dmgPierce );
+
+        itemInfo+= speed + damage;
+    }
+
+    // Item is armor
+    if ( GetCategory()->id == 2)
+    {
+        csString armor_type = "\n\n";
+        switch (GetBaseStats()->Armor().Type())
+        {
+            case PSITEMSTATS_ARMORTYPE_LIGHT:
+                armor_type.Append("Light Armor");
+                break;
+            case PSITEMSTATS_ARMORTYPE_MEDIUM:
+                armor_type.Append("Medium Armor");
+                break;
+            case PSITEMSTATS_ARMORTYPE_HEAVY:
+                armor_type.Append("Heavy Armor");
+                break;
+        default:
+            break;
+        }
+        itemInfo += armor_type;
+    }
+
+    if (strcmp(GetDescription(),"0") != 0)
+    {
+        itemInfo += "\n\nDescription: ";
+        itemInfo += GetDescription();
+    }
+   
+    psViewItemDescription outgoing( client->GetClientNum(), itemName.GetData(), itemInfo.GetData(), GetImageName(), stack_count );
+
+    if ( outgoing.valid )
+        psserver->GetEventManager()->SendMessage(outgoing.msg);
+    else
+    {
+        Bug2("Could not create valid psViewItemDescription for client %u.\n",client->GetClientNum());
+        return false;
+    }
+
+    return true;
+}
+
+bool psItem::SendContainerContents(Client *client, int containerID)
+{
+    if (GetIsLocked())
+        return SendItemDescription(client);
+
+    csString desc( GetDescription() );
+    
+    // FIXME: This function is called for world containers too...
+    desc.AppendFmt("\n\nWeight: %.2f\nCapacity: %u/%u",
+                    client->GetCharacterData()->Inventory().GetContainedWeight(this), 
+                    client->GetCharacterData()->Inventory().GetContainedSize(this), 
+                    GetContainerMaxSize() );
+
+    psViewItemDescription outgoing( client->GetClientNum(),
+                                    GetName(),
+                                    desc,
+                                    GetImageName(),
+                                    0,
+                                    IS_CONTAINER );
+                                          
+    if (gItem != NULL )
+        outgoing.containerID = gItem->GetEntityID();
+    else
+        outgoing.containerID = containerID;        
+
+    FillContainerMsg( client, outgoing);
+    
+    outgoing.ConstructMsg();
+    outgoing.SendMessage();
+
+    return true;
+}
+
+void psItem::SendCraftTransInfo(Client *client)
+{
+    csString mess;
+    psItemStats* mindStats = GetCurrentStats();
+    if ( !mindStats )
+    {
+        Error1("No stats for mind item.");
+        return;
+    }
+
+    // Get character pointer
+    if ( client == NULL )
+    {
+        Error1("Bad client pointer.");
+        return;
+    }
+
+    psCharacter* character = client->GetCharacterData();
+    if ( character == NULL )
+    {
+        Error1("Bad client psCharacter pointer.");
+        return;
+    }
+
+    // Get craft combo info string based on skill levels
+    csString* combString = GetComboInfoString(character,mindStats->GetUID());
+    mess.Append(combString->GetData());
+    mess.Append("\n");
+
+    // Get transformation info string based on skill levels
+    csString* transString = GetTransInfoString(character,mindStats->GetUID());
+    mess.Append(transString->GetData());
+
+    // Send info to cleint
+    psMsgCraftingInfo msg(client->GetClientNum(),mess);
+    if (msg.valid)
+        psserver->GetEventManager()->SendMessage(msg.msg);
+    else
+        Bug2("Could not create valid psMsgCraftingInfo for client %u.\n",client->GetClientNum());
+}
+
+csString* psItem::GetComboInfoString(psCharacter* character, uint32 designID)
+{
+    csString* combString = new csString("");
+    CraftComboInfo* combInfo = CacheManager::GetSingleton().GetTradeComboInfoByItemID(designID);
+    if ( combInfo == NULL )
+    {
+        return combString;
+    }
+
+    // If any skill check fails then do not display this combinations string
+    csArray<CraftSkills*>* skillArray = combInfo->skillArray;
+    for ( int count = 0; count<(int)skillArray->GetSize(); count++ )
+    {
+        // Check if craft step minimum primary skill level is meet by client
+        int priSkill = skillArray->Get(count)->priSkillId;
+        if(priSkill != 0)
+        {
+            if(skillArray->Get(count)->minPriSkill >= (int)character->GetSkills()->GetSkillRank((PSSKILL)priSkill))
+            {
+                return combString;
+            }
+        }
+
+        // Check if craft step minimum secondary skill level is meet by client
+        int secSkill = skillArray->Get(count)->secSkillId;
+        if(secSkill != 0)
+        {
+            if(skillArray->Get(count)->minSecSkill >= (int)character->GetSkills()->GetSkillRank((PSSKILL)priSkill))
+            {
+                return combString;
+            }
+        }
+    }
+
+    // Otherwise send combination string
+    combString->Append(combInfo->craftCombDescription.GetData());
+    return combString;
+}
+
+csString* psItem::GetTransInfoString(psCharacter* character, uint32 designID)
+{
+    csString* transString = new csString("");
+    csArray<CraftTransInfo*>* craftArray = CacheManager::GetSingleton().GetTradeTransInfoByItemID(designID);
+    if ( craftArray == NULL )
+    {
+        return transString;
+    }
+
+    for ( int count = 0; count<(int)craftArray->GetSize(); count++ )
+    {
+        // Check if craft step minimum primary skill level is meet by client
+        int priSkill = craftArray->Get(count)->priSkillId;
+        if(priSkill != 0)
+        {
+            if(craftArray->Get(count)->minPriSkill >= (int)character->GetSkills()->GetSkillRank((PSSKILL)priSkill))
+            {
+                continue;
+            }
+        }
+
+        // Check if craft step minimum seconday skill level is meet by client
+        int secSkill = craftArray->Get(count)->secSkillId;
+        if(secSkill != 0)
+        {
+            if(craftArray->Get(count)->minSecSkill >= (int)character->GetSkills()->GetSkillRank((PSSKILL)secSkill))
+            {
+                continue;
+            }
+        }
+
+        // Otherwise tack on trasnformation step description to message
+        transString->Append(craftArray->Get(count)->craftStepDescription.GetData());
+    }
+    return transString;
+}
+
+bool psItem::SendBookText(Client *client, int containerID, int slotID)
+{
+    csString name = GetStandardName();
+    csString text;
+    csString lockedText("This item is locked\n");
+    if(GetIsLocked())
+    {
+        text = lockedText;
+    } else text = GetBookText();
+    //determine whether to display the 'write' button
+    //and send the appropriate information if so
+
+    //is it a writable book?  In our inventory? Are we the author?
+    bool shouldWrite = (GetBaseStats()->GetIsWriteable() && 
+        GetOwningCharacter() == client->GetCharacterData() &&
+        GetBaseStats()->IsThisTheCreator(client->GetCharacterData()->GetCharacterID()));
+    
+  //  CPrintf(CON_DEBUG,"Sent text for book %u %u\n",slotID, containerID);
+    psReadBookTextMessage outgoing(client->GetClientNum(), name, text, shouldWrite, slotID, containerID);
+
+    if (outgoing.valid)
+    {
+        psserver->GetEventManager()->SendMessage(outgoing.msg);
+    }
+    else
+    {
+        Bug2("Could not create valid psReadBookText for client %u.\n",client->GetClientNum());
+        return false;
+    }
+
+    return true;
+}
+
+void psItem::SendSketchDefinition(Client *client)
+{
+    // Get character capabilities
+    static MathScript *script;
+    if (!script)
+        script = psserver->GetMathScriptEngine()->FindScript("Calc Player Sketch Limits");
+    if (!script)
+    {
+        Error1("Cannot find mathscript: Calc Player Sketch Limits");
+        return;
+    }
+
+    static MathScriptVar *var;
+    static MathScriptVar *score;
+    static MathScriptVar *count;
+
+    if (!var)
+    {
+        var = script->GetOrCreateVar("Actor");
+        score = script->GetOrCreateVar("IconScore");
+        count = script->GetOrCreateVar("PrimCount");
+    }
+
+    var->SetObject(client->GetActor()->GetCharacterData() );  // Now the mathscript can access all info about player
+    script->Execute();
+    int playerScore = (int)score->GetValue();
+    int primCount   = (int)count->GetValue();
+
+    // Build the limit string for the client
+    csString xml("<limits>");
+    xml.AppendFmt("<count>%d</count>",primCount);  // This limits how many things you can add on the client.
+
+    // If the player is not the crafter, and a crafter is specified, 
+    // or not in the inventory then the player cannot edit the item
+    if (GetCrafterID() && GetCrafterID() != (uint)client->GetActor()->GetPlayerID() ||
+        GetOwningCharacter() != client->GetCharacterData())
+        xml.Append("<rdonly/>");
+
+    size_t i=0;
+    while (CacheManager::GetSingleton().GetLimitation(i))
+    {
+        const psCharacterLimitation *charlimit = CacheManager::GetSingleton().GetLimitation(i);
+
+        // This limits which icons each player can use to only the ones below his level.
+        if (playerScore > charlimit->min_score)
+            xml.AppendFmt("<ic>%s</ic>",charlimit->value.GetDataSafe() );
+        i++;
+    }
+    xml += "</limits>";
+
+    // Now send all this
+    psSketchMessage msg( client->GetClientNum(), GetUID(), 0, xml, GetBaseStats()->GetSketch(), GetBaseStats()->IsThisTheCreator(client->GetCharacterData()->GetCharacterID()), GetStandardName() );
+    msg.SendMessage();
+}
+
+void psItem::ViewItem(Client* client, int containerID,
+        INVENTORY_SLOT_NUMBER slotID)
+{
+    psCharacter *owningCharacter = GetOwningCharacter();
+
+    if (current_stats->GetIsContainer())
+    {
+        SendContainerContents(client, slotID);
+    }
+
+    // for now, just examining mind item gives craft information rather then its normal description
+    //  eventually /study will give same results after some delay
+    // check if we are examining an item that is meant for mind slot
+    else if (FitsInSlots(PSITEMSTATS_SLOT_MIND))
+    {
+        //We pass through container, slot & parent IDs so that we can pass them back and forth when writing books.
+        SendCraftTransInfo(client);
+    }
+
+    //for now, we pretend that /examine reads.  When we implement /read, this will change to only send the description of the book
+    //e.g. "This book is bound in a leathery Pterosaur hide and branded with the insignia of the Sunshine Squadron"
+    //NOTE that this logic is sensitive to ordering; Books currently have a nonzero "sketch" length since that's where they 
+    //store their content.         
+    else if (GetBaseStats()->GetIsReadable() && (client->GetCharacterData()
+            == owningCharacter || !owningCharacter))
+    {
+        //We pass through container, slot & parent IDs so that we can pass them back and forth when writing books.
+        SendBookText(client, containerID, slotID);
+    }
+    else if (GetBaseStats()->GetCreative() == PSITEMSTATS_CREATIVETYPE_SKETCH
+            && GetBaseStats()->GetSketch().Length() > 0
+            && (client->GetCharacterData() == owningCharacter
+                    || !owningCharacter)) // Sketch
+    {
+        SendSketchDefinition(client);
+    }
+    else // Not a container, show description
+    {
+        SendItemDescription(client);
+    }
+}
+
+bool psItem::SendActionContents(Client *client, psActionLocation *action)
+{
+    if ( action == NULL )
+        return false;
+
+    //if(GetIsLocked())
+    //    return SendItemDescription(client);
+
+    csString name( action->name );
+    csString desc( GetDescription() );
+    csString icon( GetImageName() );
+
+    csString description = action->GetDescription();
+    if ( description )
+    {
+        desc = description.GetData();
+    }
+
+    bool isContainer = GetIsContainer();
+    
+    psViewItemDescription outgoing( client->GetClientNum(),
+                                    name,
+                                    desc,
+                                    icon,
+                                    0,
+                                    isContainer );
+
+    /* REMOVED: was probably there to avoid a crash, remove after some testing.
+    if (action->gItem != NULL )
+        outgoing.containerID = action->gItem->GetEntity()->GetID();
+    else
+        outgoing.containerID = containerID;
+    */
+
+    outgoing.containerID = gItem->GetEntityID();
+
+    if ( isContainer )
+    {           
+        FillContainerMsg( client, outgoing );
+        outgoing.ConstructMsg();    
+    }
+    
+    outgoing.SendMessage();
+    return true;
+}

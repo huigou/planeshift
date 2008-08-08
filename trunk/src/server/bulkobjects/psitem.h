@@ -46,6 +46,7 @@
 #include "psskills.h"
 #include "psitemstats.h"
 #include "deleteobjcallback.h"
+#include "psactionlocationinfo.h"
 
 
 class psString;
@@ -219,7 +220,38 @@ public:
     //inform clients on view updates
     void UpdateView(Client *fromClient, uint EntityId, bool clear);
 
+    bool SendItemDescription( Client *client);
+    
+    bool SendContainerContents(Client *client, int containerID = CONTAINER_INVENTORY_BULK);
+    
+    /** Send an item to the client.
+     * @param client The client the message is for.
+     * @param containerID the ID of the owning container
+     * @param slotID the slot this item is in
+     * TODO check if we can't get the data our self
+     */
+    void ViewItem(Client* client, int containerID, INVENTORY_SLOT_NUMBER slotID);
+    
+    bool SendActionContents(Client *client, psActionLocation *action);
+    
 private:
+
+    
+    /** Fills up the message with the details about the items in the container.
+      * @param client The client the message is for. Used to figure out ownership flags.
+      * @param outgoing The message that needs to be populated.
+      */
+    void FillContainerMsg(Client* client, psViewItemDescription& outgoing);
+
+    void SendCraftTransInfo( Client *client);
+    
+    csString* GetComboInfoString(psCharacter* character, uint32 designID);
+
+    csString* GetTransInfoString(psCharacter* character, uint32 designID);
+    
+    bool SendBookText( Client *client, int containerID, int slotID);
+    
+    void SendSketchDefinition(Client *client);
 
     /// The 32 bit Unique Identifier of this item.
     uint32 uid;
