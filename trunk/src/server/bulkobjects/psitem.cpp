@@ -2465,7 +2465,7 @@ bool psItem::SendItemDescription( Client *client)
     {
         csString speed, damage;
         // Weapon Speed
-        speed.Format( "\n\nSpeed: %.2f", current_stats->Weapon().Latency() );
+        speed.Format( "\n\nAttack delay: %.2f", current_stats->Weapon().Latency() );
         
         // Weapon Damage Type
         damage = "\n\nDamage:";
