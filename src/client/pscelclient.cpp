@@ -1272,8 +1272,12 @@ bool GEMClientObject::InitMesh( const char *factname,
         csString filename;
         if (!psengine->GetFileNameByFact(factoryName, filename))
         {
-            Error2( "Mesh Factory %s not found", factoryName.GetData() );            
-            return false;
+            Error2( "Mesh Factory %s not found.\nTrying to use a sack instead.", factoryName.GetData() );            
+            if (!psengine->GetFileNameByFact("items#sack02a", filename))
+            {
+                Error1( "Replacement Mesh Factory items#sack02a not found.\nGiving up loading the mesh.");            
+                return false;
+            }
         }
         FactoryIndexEntry* fie = psengine->GetCacheManager()->GetFactoryEntry(filename);
         while(!fie)
