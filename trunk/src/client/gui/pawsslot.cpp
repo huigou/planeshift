@@ -91,6 +91,16 @@ bool pawsSlot::OnMouseDown( int button, int modifiers, int x, int y )
         bool grab = psengine->GetMouseBinds()->CheckBind("EntityDragDrop", button, modifiers);
         bool grabAll = psengine->GetMouseBinds()->CheckBind("EntityDragDropAll", button, modifiers);
         bool grabOne = psengine->GetMouseBinds()->CheckBind("EntityDragDropOne", button, modifiers);
+        
+        if(!grab && !grabAll && !grabOne)
+        {
+        	// TODO: this should be removed sometime  
+        	// fallback for old configuration files (pre 0.4.02)
+        	grab = psengine->GetMouseBinds()->CheckBind("EntitySelect", button, modifiers);
+        	grabAll = (modifiers == 2 || button == 2);
+        	grabOne = (modifiers == 1);
+        }
+        
         if ( dragDrop && (grab || grabAll || grabOne) && (!empty || psengine->GetSlotManager()->IsDragging()) )
         {
             // Grab one item if EntityDragDropOne modifiers key are used. Grab everything in the slot
