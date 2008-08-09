@@ -293,6 +293,14 @@ bool psMainWidget::OnKeyDown( int keyCode, int key, int modifiers )
         }
         return true;
     }
+    
+    // Unlock mouse look if a matching key was pressed
+    if (charctrl->MatchTrigger("Toggle MouseLook", psControl::KEYBOARD, keyCode, modifiers) || 
+    	charctrl->MatchTrigger("MouseLook", psControl::KEYBOARD, keyCode, modifiers))
+    {
+        psengine->GetCharControl()->GetMovementManager()->MouseLookCanAct(true);
+    }
+    
     return false;
    
  }
@@ -354,11 +362,20 @@ bool psMainWidget::OnMouseDown( int button, int keyModifier, int x, int y )
     {
         GEMClientObject* over = FindMouseOverObject( x, y );
 
-        const psControl* mouseLookTrigger = psengine->GetCharControl()->GetTrigger("MouseLook");
-        if(mouseLookTrigger->button==button && mouseLookTrigger->mods==keyModifier){
+        // Unlock mouse look if a matching key was pressed
+        const psControl* mouseLook = psengine->GetCharControl()->GetTrigger("MouseLook");
+        if(mouseLook->button==button && mouseLook->mods==keyModifier)
+        {
             psengine->GetCharControl()->GetMovementManager()->MouseLookCanAct(true);
         }
 
+        const psControl* mouseLookToggle = psengine->GetCharControl()->GetTrigger("Toggle MouseLook");
+        if(mouseLookToggle->button==button && mouseLookToggle->mods==keyModifier)
+        {
+            psengine->GetCharControl()->GetMovementManager()->MouseLookCanAct(true);
+        }
+        
+        
         if (psengine->GetMouseBinds()->CheckBind("EntitySelect", button, keyModifier))
         {
             if ( over )
