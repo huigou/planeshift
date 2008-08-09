@@ -1,6 +1,7 @@
 *** 2008-08-09 by Steven Patrick
 - Fixed FS#1336 - Middle click (inventory "take all stack") 
   toggles MouseLook when bound to MouseLook, patch by peeg
+- Added the "view stats" permission to GM1, patch by Kerol
 
 *** 2008-08-07 by Andreas Heinchen
 - Fixed FS#1819
