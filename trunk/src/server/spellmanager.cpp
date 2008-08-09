@@ -473,7 +473,7 @@ void psSpellManager::StartPurifying(Client * client, int statID)
         if (!character->Inventory().Add(glyphItem,false,false))
         {
             // Notify the player that and why purification failed
-            psserver->SendSystemError(client->GetClientNum(), "You can't purfiy %s because your inventory is full!", glyph->GetName());
+            psserver->SendSystemError(client->GetClientNum(), "You can't purify %s because your inventory is full!", glyph->GetName());
             
             CacheManager::GetSingleton().RemoveInstance(glyphItem);
 
