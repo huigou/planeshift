@@ -234,11 +234,6 @@ INSERT INTO command_group_assignment VALUES( "/inspect", 25 );
 INSERT INTO command_group_assignment VALUES( "/inspect", 24 );
 INSERT INTO command_group_assignment VALUES( "/inspect", 23 );
 INSERT INTO command_group_assignment VALUES( "/inspect", 22 );
-INSERT INTO command_group_assignment VALUES( "view stats", 30 );
-INSERT INTO command_group_assignment VALUES( "view stats", 25 );
-INSERT INTO command_group_assignment VALUES( "view stats", 24 );
-INSERT INTO command_group_assignment VALUES( "view stats", 23 );
-INSERT INTO command_group_assignment VALUES( "view stats", 22 );
 INSERT INTO command_group_assignment VALUES( "quest list others", 30 );
 INSERT INTO command_group_assignment VALUES( "quest list others", 25 );
 INSERT INTO command_group_assignment VALUES( "quest list others", 24 );
@@ -258,6 +253,12 @@ INSERT INTO command_group_assignment VALUES( "pickup override", 22 );
 
 
 # GM1 and above
+INSERT INTO command_group_assignment VALUES( "view stats", 30 );
+INSERT INTO command_group_assignment VALUES( "view stats", 25 );
+INSERT INTO command_group_assignment VALUES( "view stats", 24 );
+INSERT INTO command_group_assignment VALUES( "view stats", 23 );
+INSERT INTO command_group_assignment VALUES( "view stats", 22 );
+INSERT INTO command_group_assignment VALUES( "view stats", 21 );
 INSERT INTO command_group_assignment VALUES( "/teleport", 30 );
 INSERT INTO command_group_assignment VALUES( "/teleport", 25 );
 INSERT INTO command_group_assignment VALUES( "/teleport", 24 );
