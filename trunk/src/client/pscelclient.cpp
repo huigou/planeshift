@@ -1766,7 +1766,6 @@ void GEMClientActor::SetMode(uint8_t mode, bool newactor)
 
         case psModeMessage::COMBAT:
             // TODO: Get stance and set anim for that stance
-            cal3dstate->ClearAllAnims();
             SetIdleAnimation("combat stand");
             break;
             
