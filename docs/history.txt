@@ -1,3 +1,6 @@
+*** 2008-08-11 by Andreas Heinchen
+- Fix for flawed combat animation by weltall
+
 *** 2008-08-09 by Steven Patrick
 - Fixed FS#1336 - Middle click (inventory "take all stack") 
   toggles MouseLook when bound to MouseLook, patch by peeg
