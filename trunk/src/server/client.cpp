@@ -186,7 +186,7 @@ void Client::SetFamiliar( gemActor *familiar )
 { 
     if ( familiar )
     {
-        pets[0] = familiar->GetEntityID(); 
+        pets[0] = familiar->GetPlayerID(); 
     }
     else
     {
