@@ -153,7 +153,7 @@ protected:
     void DeleteLabelOfObject( GEMClientObject* object );
      
     
-    bool ShowLabel(GEMOBJECT_TYPE type, psEntityLabelVisib vis);
+    bool MatchVisibility(GEMOBJECT_TYPE type, psEntityLabelVisib vis);
     /**
      * Configuration options
      */
