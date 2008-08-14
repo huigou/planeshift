@@ -36,7 +36,7 @@
 
         <!-- BULK -->
         <widget name="OfferingList" factory="pawsListBox" selectable="0">
-            <frame x="2" y="5" width="130" height="100" border="no"/>
+            <frame x="5" y="5" width="130" height="100" border="no"/>
             <columns height="48" headings="no" >
                 <column width="48" >
                     <widget name="offering_Bulk0" factory="pawsSlot">
@@ -80,7 +80,7 @@
 
         <!-- BULK -->
         <widget name="ReceivingList" factory="pawsListBox" selectable="0">
-            <frame x="32" y="5" width="130" height="100" border="no"/>
+            <frame x="5" y="5" width="130" height="100" border="no"/>
             <columns height="48" headings="no" >
                 <column width="48" >
                     <widget name="receiving_Bulk0" factory="pawsSlot">
@@ -98,7 +98,7 @@
         </widget>
 
         <widget name="ReceivingMoney" factory="pawsMoney" border="yes">
-            <frame x="35" y="120" width="100" height="100"/>
+            <frame x="5" y="120" width="100" height="100"/>
             <bgimage resource="Standard Background" alpha="255" />
         </widget>        
           
