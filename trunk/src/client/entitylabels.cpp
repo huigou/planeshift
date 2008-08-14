@@ -332,9 +332,9 @@ void psEntityLabels::OnObjectArrived( GEMClientObject* object )
 {
     CS_ASSERT_MSG("Effects Manager must exist before loading entity labels!", psengine->GetEffectManager() );
 
-    if (visCreatures == LABEL_NEVER && visItems == LABEL_NEVER)
-        return;
-
+    if(MatchVisibility(object->GetObjectType(), LABEL_NEVER))
+    	return;
+    
     if(object->GetEntityLabel())
     {
         RepaintObjectLabel( object );
@@ -442,7 +442,7 @@ inline void psEntityLabels::UpdateVisibility()
             continue;
         
         // Don't show labels of stuff whose label isn't always visible
-        if (!ShowLabel(object->GetObjectType(), LABEL_ALWAYS))
+        if (!MatchVisibility(object->GetObjectType(), LABEL_ALWAYS))
         	continue;
         
         // Only show labels within range
@@ -463,20 +463,16 @@ inline void psEntityLabels::UpdateMouseover()
 
     // Find out the object
     underMouse = psengine->GetMainWidget()->FindMouseOverObject(mouse.x, mouse.y);
-
-    if(underMouse)
-    {
-    	// Don't show labels of stuff whose label isn't only visible on mouse over
-    	if(!ShowLabel(underMouse->GetObjectType(), LABEL_ONMOUSE))
-    		return;
-    }
     	
     // Is this a new object?
     if (underMouse != lastUnderMouse)
     {
         // Hide old
-        if (lastUnderMouse != NULL)
+        if (lastUnderMouse != NULL && MatchVisibility(lastUnderMouse->GetObjectType(), LABEL_ONMOUSE))
             ShowLabelOfObject(lastUnderMouse,false);
+        
+        if (underMouse != NULL && !MatchVisibility(underMouse->GetObjectType(), LABEL_ONMOUSE))
+        		return;
 
         // Show new
         if (underMouse != NULL && underMouse != celClient->GetMainPlayer())
@@ -590,7 +586,7 @@ void psEntityLabels::LoadAllEntityLabels()
         OnObjectArrived( entities.Get(i) );
 }
 
-bool psEntityLabels::ShowLabel(GEMOBJECT_TYPE type, psEntityLabelVisib vis)
+bool psEntityLabels::MatchVisibility(GEMOBJECT_TYPE type, psEntityLabelVisib vis)
 {
 	if(type == GEM_ACTOR)
 	{
