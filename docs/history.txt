@@ -1,5 +1,5 @@
 *** 2008-08-14 by Andreas Heinchen
-- Fix for FS#1971, patch by peeg
+- Fix for FS#1971, FS#2140 patch by peeg
 - Fixed FS#2094, patch by Arerano
 - Fixed FS#2095, patches by Arerano and ThomPhoenix
 
