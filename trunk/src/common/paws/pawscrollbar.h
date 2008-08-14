@@ -100,6 +100,15 @@ public:
     virtual bool OnMouseExit();
 
     virtual void OnUpdateData(const char *dataname,PAWSData& data);
+    
+    /** Scrolls one step up
+     * @return true if the scrollbar was scrolled
+     */
+    bool ScrollUp();
+    /** Scrolls one step down
+     * @return true if the scrollbar was scrolled
+     */
+    bool ScrollDown();
 protected:
     /** Sets position and size of thumb on screen according to currentValue */
     void SetThumbLayout();

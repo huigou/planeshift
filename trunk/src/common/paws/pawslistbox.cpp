@@ -52,7 +52,9 @@ public:
         
     bool OnMouseDown( int button, int modifiers, int x, int y )
     {
-        if (listBox->GetSortedColumn() == colNum)
+        if (button == csmbWheelUp || button == csmbWheelDown)
+            return listBox->OnMouseDown( button, modifiers, x, y );
+        else if (listBox->GetSortedColumn() == colNum)
             listBox->SetSortOrder( ! listBox->GetSortOrder() );
         else
             listBox->SetSortedColumn(colNum);
@@ -1092,14 +1094,17 @@ bool pawsListBoxRow::OnMouseDown( int button, int modifiers, int x, int y )
     {
         return parentBox->OnMouseDown(button, modifiers, x, y);
     }
-
     return parentBox->Select( this );
 }
 
-bool pawsListBoxRow::OnDoubleClick(int, int, int, int)
+bool pawsListBoxRow::OnDoubleClick(int button, int modifiers, int x, int y)
 {
     pawsListBox * parentBox = (pawsListBox *)parent;
-    parentBox->SendOnListAction(LISTBOX_SELECTED);
+    
+    if (button != csmbWheelUp && button != csmbWheelDown)
+    {
+        parentBox->SendOnListAction(LISTBOX_SELECTED);
+    }
     return true;
 }
 
