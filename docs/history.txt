@@ -1,3 +1,7 @@
+*** 2008-08-13 by Roland Schulz
+- Fix for FS#800 by Vegar - the scroll wheel now correctly scrolls through
+  inventory list if used on the item slots or the scrollbar
+
 *** 2008-08-11 by Kenny Graunke
 - Fix for pet summoning broken by r1908 - SetFamiliar was storing the EID,
   while GetFamiliar was treating it as a PID.

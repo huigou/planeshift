@@ -258,6 +258,24 @@ void pawsShortcutWindow::OnResize()
     }                    
 }
 
+bool pawsShortcutWindow::OnMouseDown( int button, int modifiers, int x, int y )
+{
+    if ( button == csmbWheelUp )
+    {
+        scrollBar->ScrollUp();
+        return true;
+    }
+    else if ( button == csmbWheelDown )
+    {
+        scrollBar->ScrollDown();
+        return true;
+    }
+    else
+    {
+        return pawsControlledWindow::OnMouseDown(button, modifiers, x, y);
+    }
+}
+
 bool pawsShortcutWindow::OnButtonPressed( int mouseButton, int keyModifier, pawsWidget* widget )
 {
     if (!subWidget)
@@ -383,12 +401,10 @@ bool pawsShortcutWindow::OnButtonPressed( int mouseButton, int keyModifier, paws
         subWidget->Show();
         PawsManager::GetSingleton().SetCurrentFocusedWidget(textBox);
     }
-    else if ( mouseButton == csmbWheelUp )
-        scrollBar->SetCurrentValue( scrollBar->GetCurrentValue() - 1 );
-    else if ( mouseButton == csmbWheelDown )
-        scrollBar->SetCurrentValue( scrollBar->GetCurrentValue() + 1 );
     else
+    {
         return false;
+    }
     return true;
 }
 

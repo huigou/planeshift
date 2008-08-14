@@ -395,7 +395,18 @@ void pawsScrollBar::SetThumbLayout()
 
 bool pawsScrollBar::OnMouseDown( int button, int modifiers, int x, int y )
 {
-    if (WidgetAt(x, y) == thumb)
+    if (button == csmbWheelUp)
+    {
+        ScrollUp();
+        // Always return true, we don't want the scroll to go to the parent widget(s)
+        return true;
+    }
+    else if(button == csmbWheelDown)
+    {
+        ScrollDown();
+        return true;
+    }
+    else if (WidgetAt(x, y) == thumb)
     {
         if (horizontal)
             thumbDragPoint = x - thumb->ScreenFrame().xmin;
@@ -489,25 +500,11 @@ bool pawsScrollBar::OnButtonPressed( int button, int keyModifier, pawsWidget* wi
     switch( widget->GetID() )
     {
         case SCROLL_DOWN:
-            if ( currentValue < maxValue  ||  !limited )
-            {
-                currentValue += tickValue;
-                if ( limited )
-                    LimitCurrentValue();
-                SetThumbLayout();
-                return parent->OnScroll( widget->GetID(), this );
-            }
+            return ScrollDown();
             break;
 
-        case SCROLL_UP: 
-            if ( currentValue > minValue  ||  !limited )
-            {
-                currentValue -= tickValue;
-                if ( limited )
-                    LimitCurrentValue();
-                SetThumbLayout();
-                return parent->OnScroll( widget->GetID(), this );
-            }
+        case SCROLL_UP:
+            return ScrollUp();
             break;
     }
 
@@ -615,3 +612,30 @@ int pawsScrollBar::GetThumbScaleLength()
     else
         return screenFrame.Height() - 3*scrollBarSize + 2*THUMB_MARGIN;
 }
+
+bool pawsScrollBar::ScrollDown()
+{
+     if ( currentValue < maxValue  ||  !limited )
+     {
+         currentValue += tickValue;
+         if ( limited )
+            LimitCurrentValue();
+        SetThumbLayout();
+        return parent->OnScroll( SCROLL_DOWN, this );
+    }
+    return false;
+}
+
+bool pawsScrollBar::ScrollUp()
+{
+    if ( currentValue > minValue  ||  !limited )
+    {
+        currentValue -= tickValue;
+        if ( limited )
+            LimitCurrentValue();
+        SetThumbLayout();
+        return parent->OnScroll( SCROLL_UP, this );
+    }
+    return false;
+}
+
