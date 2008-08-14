@@ -40,7 +40,6 @@ CREATE TABLE  `accounts` (
   UNIQUE KEY `username` (`username`),
   UNIQUE KEY `id` (`id`),
   KEY `indx_accounts_ip` (`last_login_ip`)
- USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 
