@@ -44,6 +44,8 @@ pawsSketchWindow::pawsSketchWindow()
     dirty     = false;
     editMode  = false;
     mouseDown = false;
+    mouseDownX = 0;
+    mouseDownY = 0;
     frame = 0;
 }
 
@@ -88,7 +90,11 @@ void pawsSketchWindow::HandleMessage( MsgEntry* me )
     
     dirty = false;
     ParseLimits(msg.limits);
-    ParseSketch(msg.Sketch);
+    if(!ParseSketch(msg.Sketch))
+    {// Don't show a sketch which can't be parsed.
+        Hide();
+        return;
+    }
     
     // if char does not have the right to edit (ie not the originator-artist)...
     if (!msg.rightToEdit)
@@ -243,9 +249,13 @@ void pawsSketchWindow::DrawSketch()
     if (selectedIndex != SIZET_NOT_FOUND && IsMouseDown())
     {
         psPoint pos = PawsManager::GetSingleton().GetMouse()->GetPosition();
+        /* UpdatePosition requires the RELATIVE position now. Much easier, much cleaner.
         objlist[selectedIndex]->UpdatePosition(GetLogicalWidth(pos.x
                 - ScreenFrame().xmin), GetLogicalHeight(pos.y
-                - ScreenFrame().ymin));
+                - ScreenFrame().ymin));*/
+        objlist[selectedIndex]->UpdatePosition(pos.x - mouseDownX, pos.y - mouseDownY);
+        mouseDownX = pos.x; // remember new position for the next relative update.
+        mouseDownY = pos.y;
     }
     for (size_t i = 0; i < objlist.GetSize(); i++)
         objlist[i]->Draw();
@@ -437,10 +447,17 @@ void pawsSketchWindow::OnStringEntered(const char *name,int param,const char *va
 
     if (!strcasecmp(name,"AddText"))
     {
+        // deselect the previous object, if any
+        if (selectedIndex != SIZET_NOT_FOUND)
+        {
+            objlist[selectedIndex]->Select(false);
+        }
+
         int x = (ScreenFrame().xmax - ScreenFrame().xmin)/2;
         int y = (ScreenFrame().ymax - ScreenFrame().ymin)/2;
         SketchText *text = new SketchText(x,y,value,this);
-        objlist.Push(text);
+        selectedIndex = objlist.Push(text);
+        objlist[selectedIndex]->Select(true);
     }
     else if (!strcasecmp(name,"ChangeName"))
     {
@@ -537,8 +554,9 @@ void pawsSketchWindow::MoveObject(int dx, int dy)
     if (selectedIndex == SIZET_NOT_FOUND)
         return;
 
-    objlist[selectedIndex]->UpdatePosition(objlist[selectedIndex]->x + dx,
-                                           objlist[selectedIndex]->y + dy);
+    /*objlist[selectedIndex]->UpdatePosition(objlist[selectedIndex]->x + dx,
+                                           objlist[selectedIndex]->y + dy);*/
+    objlist[selectedIndex]->UpdatePosition(dx, dy);
 }
 
 void pawsSketchWindow::RemoveSelected()
@@ -547,8 +565,9 @@ void pawsSketchWindow::RemoveSelected()
     {
         objlist.DeleteIndex(selectedIndex);
         selectedIndex = SIZET_NOT_FOUND;
-        if (IsMouseDown()) //if the mouse is being used we need to restore it's shape
-            PawsManager::GetSingleton().GetMouse()->ChangeImage("Skins Normal Mouse Pointer");
+		// We don't set the mouse pointer anymore. It flickered on setting/unsetting and made problems with the offset. (icon jumped on click)
+        //if (IsMouseDown()) //if the mouse is being used we need to restore it's shape
+        //    PawsManager::GetSingleton().GetMouse()->ChangeImage("Skins Normal Mouse Pointer");
     }
 }
 
@@ -609,7 +628,8 @@ bool pawsSketchWindow::OnMouseDown( int button, int modifiers, int x, int y )
         return pawsWidget::OnMouseDown(button, modifiers,x,y);
 
     mouseDown = true;
-
+    mouseDownX = x;
+    mouseDownY = y;
     for (size_t i=0; i<objlist.GetSize(); i++)
     {
         if (objlist[i]->IsHit(x,y))
@@ -626,7 +646,8 @@ bool pawsSketchWindow::OnMouseDown( int button, int modifiers, int x, int y )
             objlist[i]->Select(true);
             // printf("Select object %d.\n", selectedIndex);
 
-            PawsManager::GetSingleton().GetMouse()->ChangeImage( objlist[i]->GetStr() );
+            // flickers and makes the icon jump
+            //PawsManager::GetSingleton().GetMouse()->ChangeImage( objlist[i]->GetStr() );
             return true;
         }
     }
@@ -651,7 +672,8 @@ bool pawsSketchWindow::OnMouseUp( int button, int modifiers, int x, int y )
 
     if (selectedIndex != SIZET_NOT_FOUND)
     {
-        PawsManager::GetSingleton().GetMouse()->ChangeImage("Skins Normal Mouse Pointer");
+        // flickers and makes the icon jump
+        //PawsManager::GetSingleton().GetMouse()->ChangeImage("Skins Normal Mouse Pointer");
         dirty = true;
         return true;
     }
@@ -773,6 +795,9 @@ bool pawsSketchWindow::ParseSketch(const char *xmlstr)
             else
             {
                 Error2("Illegal sketch op <%s>.  Sketch cannot display.",type.GetDataSafe() );
+                // The user has to be aware of that without looking into the "Error log".
+                psSystemMessage sysMsg( 0, MSG_ERROR, PawsManager::GetSingleton().Translate("Illegal sketch op. Sketch cannot display.") );
+                sysMsg.FireEvent();
                 return false;
             }
 
@@ -844,9 +869,10 @@ void pawsSketchWindow::SketchIcon::WriteXml(csString& xml)
 
 void pawsSketchWindow::SketchIcon::Draw()
 {
-    if (!selected || frame > 15)
+    if (!selected || parent->IsMouseDown() || frame > 15) // blink icon only if it isn't dragged.
     {
-        if (!parent->IsMouseDown() || !selected)
+        // replacing the mouse cursor with the icon flickers and makes the icon jump.
+        //if (!parent->IsMouseDown() || !selected) 
             iconImage->Draw(parent->GetActualWidth(x) + parent->ScreenFrame().xmin,
                             parent->GetActualHeight(y) + parent->ScreenFrame().ymin,
                             parent->GetActualWidth(iconImage->GetWidth()),
@@ -1079,20 +1105,9 @@ void pawsSketchWindow::SketchLine::UpdatePosition(int _x, int _y)
 
     rect.Normalize();
     
-    if(parent->IsMouseDown()) //if we are using the mouse to move this thing in real time we must do some changes from when the keyboard is used
-    {
-        _x -= offsetX;  // This backs off the cursor from where it was
-        _y -= offsetY;
-        
-        //if we are taking the second point we must check it's position
-        dx = _x - (dragMode == 2 ? x2 : x); 
-        dy = _y - (dragMode == 2 ? y2 : y); 
-    }
-    else //the keyboard is being used
-    {
-        dx = _x - x; 
-        dy = _y - y;
-    }
+    // _x, _y are already expected to be RELATIVE!
+    dx = _x;
+    dy = _y;
 
     switch (dragMode)
     {
@@ -1151,8 +1166,9 @@ void pawsSketchWindow::SketchIcon::UpdatePosition (int _x, int _y){
 
     rect.Normalize();
 
-    dx = _x - x;
-    dy = _y - y;
+    // _x, _y are expected to be RELATIVE!
+    dx = _x;
+    dy = _y;
 
     x2Updated = x + iconImage->GetWidth() + dx;
     y2Updated = y + iconImage->GetHeight() + dy;
@@ -1187,8 +1203,9 @@ void pawsSketchWindow::SketchText::UpdatePosition (int _x, int _y){
 
     rectText = parent->GetWidgetTextRect(str, x, y);
 
-    dx = _x - x;
-    dy = _y - y;
+    // _x, _y are expected to be RELATIVE!
+    dx = _x;
+    dy = _y;
 
     x2Updated = rectText.xmax + dx;
     y2Updated = rectText.ymax + dy;
