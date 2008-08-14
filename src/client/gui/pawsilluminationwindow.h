@@ -47,6 +47,7 @@ class pawsSketchWindow : public pawsWidget, public psClientNetSubscriber,public 
         virtual void Draw()=0;
         virtual bool IsHit(int mouseX, int mouseY)=0;
         virtual void Select(bool _selected)         { selected=_selected;  frame=0; }
+        // update the RELATIVE position
         virtual void UpdatePosition(int _x, int _y) { x = _x; y = _y;     }
     };
     struct SketchIcon : public SketchObject
@@ -61,6 +62,7 @@ class pawsSketchWindow : public pawsWidget, public psClientNetSubscriber,public 
         virtual void Draw();
         virtual bool IsHit(int mouseX, int mouseY);
         virtual void SetStr(const char *s);
+        // update the RELATIVE position
         virtual void UpdatePosition(int _x, int _y);
     };
     struct SketchText : public SketchObject
@@ -80,6 +82,7 @@ class pawsSketchWindow : public pawsWidget, public psClientNetSubscriber,public 
         virtual void WriteXml(csString& xml);
         virtual void Draw();
         virtual bool IsHit(int mouseX, int mouseY);
+        // update the RELATIVE position
         virtual void UpdatePosition(int _x, int _y);
     };
     struct SketchLine : public SketchObject
@@ -100,6 +103,7 @@ class pawsSketchWindow : public pawsWidget, public psClientNetSubscriber,public 
         virtual void WriteXml(csString& xml);
         virtual void Draw();
         virtual bool IsHit(int mouseX, int mouseY);
+        // update the RELATIVE position
         virtual void UpdatePosition(int _x, int _y);
     };
 
@@ -111,6 +115,8 @@ protected:
     csRef<iPAWSDrawable> blackBox;
     bool editMode;
     bool mouseDown;
+    int mouseDownX; // used to calculate the updatePosition diff. this value is updated OnMouseDown
+    int mouseDownY;
     csStringArray iconList;
     int primCount;
     bool readOnly;
