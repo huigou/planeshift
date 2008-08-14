@@ -512,7 +512,7 @@ void pawsMessageTextBox::AddMessage( const char* data, int msgColour )
         int colour = msgColour;
         int size = 0;
 
-        size_t pos = messageText.Find("<f");
+        size_t pos = messageText.Find("<f ");
         if(pos != (size_t)-1)
         {
             csString fontData = messageText.Slice(pos, messageText.FindFirst('>')+1);
