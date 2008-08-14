@@ -61,6 +61,7 @@ bool pawsSketchWindow::PostSetup()
     FeatherTool = dynamic_cast<pawsWidget*> (FindWidget("FeatherTool"));
     TextTool = dynamic_cast<pawsWidget*> (FindWidget("TextTool"));
     LineTool = dynamic_cast<pawsWidget*> (FindWidget("LineTool"));
+    BezierTool = dynamic_cast<pawsWidget*> (FindWidget("BezierTool"));
     PlusTool = dynamic_cast<pawsWidget*> (FindWidget("PlusTool"));
     LeftArrowTool = dynamic_cast<pawsWidget*> (FindWidget("LeftArrowTool"));
     RightArrowTool = dynamic_cast<pawsWidget*> (FindWidget("RightArrowTool"));
@@ -110,6 +111,8 @@ void pawsSketchWindow::HandleMessage( MsgEntry* me )
             TextTool->Hide();
         if(LineTool)
             LineTool->Hide();
+        if(BezierTool)
+            BezierTool->Hide();
         if(PlusTool)
             PlusTool->Hide();
         if(LeftArrowTool)
@@ -133,6 +136,8 @@ void pawsSketchWindow::HandleMessage( MsgEntry* me )
             TextTool->Show();
         if(LineTool)
             LineTool->Show();
+        if(BezierTool)
+            BezierTool->Show();
         if(PlusTool)
             PlusTool->Show();
         if(LeftArrowTool)
@@ -285,6 +290,11 @@ double pawsSketchWindow::CalcFunction(const char * functionName, const double * 
         OnKeyDown(0,'\\',0);
         return 0.0;
     }
+    else if (!strcasecmp(functionName,"ClickBezierTool"))
+    {
+        OnKeyDown(0,'b',0);
+        return 0.0;
+    }
     else if (!strcasecmp(functionName,"ClickIconTool"))
     {
         OnKeyDown(0,'+',0);
@@ -378,6 +388,11 @@ bool pawsSketchWindow::OnKeyDown( int keyCode, int key, int modifiers )
         else if (key == '\\')
         {
             AddSketchLine();
+            return true;
+        }
+        else if (key == 'b')
+        {
+            AddSketchBezier();
             return true;
         }
         else if (key == 't')
@@ -500,6 +515,28 @@ void pawsSketchWindow::AddSketchLine()
 
     SketchLine *line = new SketchLine(x,y,x2,y2,this);
     objlist.Push(line);
+}
+
+void pawsSketchWindow::AddSketchBezier()
+{
+    if ((int)objlist.GetSize() >= primCount)
+    {
+        psSystemMessage sysMsg( 0, MSG_ERROR, PawsManager::GetSingleton().Translate("Your sketch is too complex for you to add more.") );
+        sysMsg.FireEvent();
+        return;
+    }
+    int x = (ScreenFrame().xmax - ScreenFrame().xmin)/2 -50;
+    int y = (ScreenFrame().ymax - ScreenFrame().ymin)/2 -50;
+
+    // deselect the previous object, if any
+    if (selectedIndex != SIZET_NOT_FOUND)
+    {
+        objlist[selectedIndex]->Select(false);
+    }
+
+    SketchBezier *bezier = new SketchBezier(x,y, x, y+50, x+50,y+50 , x+50, y,this);
+    selectedIndex = objlist.Push(bezier);
+    objlist[selectedIndex]->Select(true);
 }
 
 void pawsSketchWindow::AddSketchIcon()
@@ -792,6 +829,8 @@ bool pawsSketchWindow::ParseSketch(const char *xmlstr)
                 ; // do nothing
             else if (type == "ln")
                 obj = new SketchLine;
+            else if (type == "bc") // bezier curve
+                obj = new SketchBezier; 
             else
             {
                 Error2("Illegal sketch op <%s>.  Sketch cannot display.",type.GetDataSafe() );
@@ -1093,6 +1132,226 @@ bool pawsSketchWindow::SketchLine::IsHit(int mouseX, int mouseY)
     return true;
 }
 
+bool pawsSketchWindow::SketchBezier::Load(iDocumentNode *node, pawsSketchWindow *parent)
+{
+    psString pts = node->GetAttributeValue("pts");
+    psString num;
+
+    int x0, y0, x1, y1, x2, y2, x3, y3;
+    pts.GetWordNumber(1,num);
+    x0 = atoi(num.GetDataSafe());
+    pts.GetWordNumber(2,num);
+    y0 = atoi(num.GetDataSafe());
+    pts.GetWordNumber(3,num);
+    x1 = atoi(num.GetDataSafe());
+    pts.GetWordNumber(4,num);
+    y1 = atoi(num.GetDataSafe());
+    pts.GetWordNumber(5,num);
+    x2 = atoi(num.GetDataSafe());
+    pts.GetWordNumber(6,num);
+    y2 = atoi(num.GetDataSafe());
+    pts.GetWordNumber(7,num);
+    x3 = atoi(num.GetDataSafe());
+    pts.GetWordNumber(8,num);
+    y3 = atoi(num.GetDataSafe());
+
+    this->parent = parent;
+    p0p1.parent = parent;
+    p0p1.x = x0; // point 0 (also start point)
+    p0p1.y = y0;
+    p0p1.x2 = x1; // point 1 (control point 1)
+    p0p1.y2 = y1;
+
+    p0p3.parent = parent;
+    p0p3.x = x0; // point 0
+    p0p3.y = y0;
+    p0p3.x2 = x3; // point 3 (also end point)
+    p0p3.y2 = y3;
+
+    p3p2.parent = parent;
+    p3p2.x2 = x2; // point 3 (also end point)
+    p3p2.y2 = y2;
+    p3p2.x = x3; // point 2 (control point 2)
+    p3p2.y = y3;
+    
+    return true;
+}
+
+void pawsSketchWindow::SketchBezier::WriteXml(csString& xml)
+{
+    csString add;
+                        //x0 y0 x1 y1 x2 y2 x3 y3
+    add.Format("<bc pts=\"%d %d %d %d %d %d %d %d\"/>", p0p1.x, p0p1.y, p0p1.x2, p0p1.y2, 
+                                                        p3p2.x2, p3p2.y2, p3p2.x, p3p2.y);
+    xml += add;
+}
+
+void pawsSketchWindow::SketchBezier::Draw()
+{
+    iGraphics2D *graphics2D = parent->GetG2D();
+    int black = graphics2D->FindRGB( 0,0,0 );
+
+    if(parent->editMode)
+    {
+        if(!this->selected)
+        { // update selection of lines in case this got delelected;
+            p0p3.Select(false);
+            p0p1.Select(false);
+            p3p2.Select(false);
+        }
+        else // we are selected, make sure that the "base control line" is selected, if none other is
+        {
+            if(!p0p1.selected && !p0p3.selected && !p3p2.selected)
+            {
+                p0p3.Select(true);
+            }
+        }
+        // use nice colours (for easier understanding) for the control lines.
+        int blue = graphics2D->FindRGB( 0,0,150 );
+        int green = graphics2D->FindRGB( 0,150,0 );
+        // draws lines and boxes and makes them blink dependant on their selection state
+        p0p3.Draw();
+        p0p1.Draw();
+        p3p2.Draw();
+
+        // draw those "handle lines" which aren't selected in another colour
+        // main line: blue
+        if(!p0p3.selected)
+        { 
+             graphics2D->DrawLine( parent->GetActualWidth(p0p3.x)+parent->ScreenFrame().xmin,
+                              parent->GetActualHeight(p0p3.y)+parent->ScreenFrame().ymin,
+                              parent->GetActualWidth(p0p3.x2)+parent->ScreenFrame().xmin,
+                              parent->GetActualHeight(p0p3.y2)+parent->ScreenFrame().ymin,
+                              blue );
+        }
+        
+        // Handle 1: green
+        if(!p0p1.selected)
+        { 
+             graphics2D->DrawLine( parent->GetActualWidth(p0p1.x)+parent->ScreenFrame().xmin,
+                              parent->GetActualHeight(p0p1.y)+parent->ScreenFrame().ymin,
+                              parent->GetActualWidth(p0p1.x2)+parent->ScreenFrame().xmin,
+                              parent->GetActualHeight(p0p1.y2)+parent->ScreenFrame().ymin,
+                              green );
+        }
+
+        // Handle 2: green
+        if(!p3p2.selected)
+        { 
+             graphics2D->DrawLine( parent->GetActualWidth(p3p2.x)+parent->ScreenFrame().xmin,
+                              parent->GetActualHeight(p3p2.y)+parent->ScreenFrame().ymin,
+                              parent->GetActualWidth(p3p2.x2)+parent->ScreenFrame().xmin,
+                              parent->GetActualHeight(p3p2.y2)+parent->ScreenFrame().ymin,
+                              green );
+        }
+    }
+
+    // The actual bezier line drawing
+    int segX, segY, segX1, segY1;
+
+    // no need to compute the first point.
+    segX = p0p1.x;
+    segY = p0p1.y;
+    // skip 0,1,2,3    we use the total array offset, thus *4; +4
+    for(int i = 4; i < SKETCHBEZIER_SEGMENTS*4 /*resolution*/; i+=4)
+	{
+        // This is how the unoptimized code would look (alike - if we have Math.Pow)
+		// P(t) = (1-t)^3P0 + 3(1-t)^2tP1 + 3(1-t)t^2P2 + t^3P3 with t running from 0 to 1.
+        //float t = ((float)i/(float)20);
+        /*float fsegX = Math.Pow((1-t), 3) *p0p1.x
+			+ 3* t * Math.Pow((1-t), 2) *p0p1.x2
+			+ 3* Math.Pow(t, 2)*(1-t)*p3p2.x2
+			+ Math.Pow(t, 3)*p3p2.x;
+        float fsegY = Math.Pow((1-t), 3) *p0p1.y
+			+ 3* t * Math.Pow((1-t), 2) *p0p1.y2
+			+ 3* Math.Pow(t, 2)*(1-t)*p3p2.y2
+			+ Math.Pow(t, 3)*p3p2.y;*/
+
+        float fsegX = parent->bezierWeights.Get(i) * p0p1.x +
+                      parent->bezierWeights.Get(i+1) * p0p1.x2 +
+                      parent->bezierWeights.Get(i+2) * p3p2.x2 +
+                      parent->bezierWeights.Get(i+3) * p3p2.x;
+
+        float fsegY = parent->bezierWeights.Get(i) * p0p1.y +
+                      parent->bezierWeights.Get(i+1) * p0p1.y2 +
+                      parent->bezierWeights.Get(i+2) * p3p2.y2 +
+                      parent->bezierWeights.Get(i+3) * p3p2.y;
+
+        // this makes sure that we always draw a line from the "previous" calculated point to the newly calculated point
+        if(i&4)
+        {
+            segX1 = (int)(fsegX + 0.5);
+            segY1 = (int)(fsegY + 0.5);
+        }
+        else
+        {
+		    segX = (int)(fsegX + 0.5);
+            segY = (int)(fsegY + 0.5);
+        }
+
+        graphics2D->DrawLine( parent->GetActualWidth(segX)+parent->ScreenFrame().xmin,
+                          parent->GetActualHeight(segY)+parent->ScreenFrame().ymin,
+                          parent->GetActualWidth(segX1)+parent->ScreenFrame().xmin,
+                          parent->GetActualHeight(segY1)+parent->ScreenFrame().ymin,
+                          black );
+	}
+
+    // no need to calculate the last point either
+    if(SKETCHBEZIER_SEGMENTS&1)
+    {
+        segX1 = p3p2.x;
+        segY1 = p3p2.y;
+    }
+    else
+    {
+        segX = p3p2.x;
+        segY = p3p2.y;
+    }
+    graphics2D->DrawLine( parent->GetActualWidth(segX)+parent->ScreenFrame().xmin,
+                          parent->GetActualHeight(segY)+parent->ScreenFrame().ymin,
+                          parent->GetActualWidth(segX1)+parent->ScreenFrame().xmin,
+                          parent->GetActualHeight(segY1)+parent->ScreenFrame().ymin,
+                          black );
+}
+
+bool pawsSketchWindow::SketchBezier::IsHit(int mouseX, int mouseY)
+{
+    p0p3.Select(false);
+    p0p1.Select(false);
+    p3p2.Select(false);
+    
+    if(p0p3.IsHit(mouseX, mouseY))
+    {
+        p0p3.Select(true);
+        //p0p3.selected = true;
+        // this is needed to have the boxes blink. We MUST keep the right order in Draw and UpdatePosition!!
+        //p0p1.selected = true;
+        //p0p1.dragMode = 1;
+        //p3p2.selected = true;
+        //p3p2.dragMode = 1;
+        return true;
+    }
+    if(p0p1.IsHit(mouseX, mouseY))
+    {
+        p0p1.Select(true);
+        //p0p1.selected = true;
+        // for blinking box
+        //p0p3.selected = true;
+        //p0p3.dragMode = 1;
+        return true;
+    }
+    if(p3p2.IsHit(mouseX, mouseY))
+    {
+        p3p2.Select(true);
+        //p3p2.selected = true;
+        // for blinking box
+        //p0p3.selected = true;
+        //p0p3.dragMode = 2;
+        return true;
+    }
+    return false;
+}
+
 void pawsSketchWindow::SketchLine::UpdatePosition(int _x, int _y)
 {
     int dx, dy, newX, newY, newX2, newY2;
@@ -1153,6 +1412,49 @@ void pawsSketchWindow::SketchLine::UpdatePosition(int _x, int _y)
                 y2 = newY2;
             }
             break;
+    }
+}
+
+void pawsSketchWindow::SketchBezier::UpdatePosition(int _x, int _y)
+{
+    int xDiff;
+    int yDiff;
+    // Error3("SB Update: %d, %d", _x, _y);
+    if(p0p3.selected)
+    {
+        xDiff = p0p3.x;
+        yDiff = p0p3.y;
+        p0p3.UpdatePosition(_x, _y);
+        xDiff -= p0p3.x;
+        yDiff -= p0p3.y;
+        p0p1.x = p0p3.x;
+        p0p1.y = p0p3.y;
+        p3p2.x = p0p3.x2;
+        p3p2.y = p0p3.y2;
+        if(p0p3.dragMode == 0)
+        {
+            //p3p2.x2 += xDiff; // interesting rot
+            //p3p2.y2 += yDiff;
+            //p0p1.x2 += xDiff;
+            //p0p1.y2 += yDiff;
+
+            p3p2.x2 -= xDiff;
+            p3p2.y2 -= yDiff;
+            p0p1.x2 -= xDiff;
+            p0p1.y2 -= yDiff;
+        }
+    }
+    else if(p0p1.selected)
+    {
+        p0p1.UpdatePosition(_x, _y);
+        p0p3.x = p0p1.x;
+        p0p3.y = p0p1.y;
+    }
+    else if(p3p2.selected)
+    {
+        p3p2.UpdatePosition( _x, _y);
+        p0p3.x2 = p3p2.x;
+        p0p3.y2 = p3p2.y;
     }
 }
 
@@ -1245,4 +1547,34 @@ csString pawsSketchWindow::filenameSafe(const csString &original)
             safe += original[c];
     }
     return safe;
+}
+
+
+pawsSketchWindow::BezierWeights::BezierWeights()
+{
+    // using a single dimensional array to save memory and accelerate the access
+    precomputedBezierWeights = new float[(SKETCHBEZIER_SEGMENTS+1) * 4];
+    for(int i = 0; i <= (SKETCHBEZIER_SEGMENTS * 4); i+=4)
+    {
+        // t is a number from 0.0 to 1.0
+        // t is used to calculate any given point of a cubic bezier curve, 0.0 gives the start point, 1.0 the end point
+        // to calculate a point of a bezier curve, you have to use following formula
+        // Pt is the point of position t, P0 - P3 are the 4 control points.
+        // Pt = (1-t)^3*P0 + 3*t*((1-t)^2)*P1 + 3*(t^2)*(t-1)*P2 + (t^3)*P3
+        // here we calculate everything (but the multiplication with the point) in advance for a given "Bezier Curve" resolution.
+        // 0 will be the start point, SKETCHBEZIER_SEGMENTS+1 is the end point. (+1 because a line consists of two points. 21 Points = 20 Line segments)
+
+        // t = i / numofSegments
+        float t = ((float)(i/4) * (float)(1.0f/SKETCHBEZIER_SEGMENTS));
+
+        precomputedBezierWeights[i] = (1-t)*(1-t)*(1-t);     //Math.Pow((1-t), 3);
+        precomputedBezierWeights[i+1] = 3 * t * ((1-t)*(1-t)); //3* t * Math.Pow((1-t), 2);
+        precomputedBezierWeights[i+2] = 3 * (t*t) * (1-t);     //3* Math.Pow(t, 2)*(1-t);
+        precomputedBezierWeights[i+3] = t*t*t;                 //Math.Pow(t, 3);
+    }
+}
+
+pawsSketchWindow::BezierWeights::~BezierWeights()
+{
+    delete [] precomputedBezierWeights;
 }

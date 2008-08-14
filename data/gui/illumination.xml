@@ -62,6 +62,11 @@
           <bgimage resource="TextTool" /> 
 	    <eventMouseDown>Ret = SketchWindow:ClickNameTool()</eventMouseDown>
       </widget>
+      <widget name="BezierTool" factory="pawsButton" id="113" tooltip="Add Bezier Curve (b)">
+          <frame x="158" y="0" width="16" height="16" /> 
+          <bgimage resource="BezierTool" /> 
+	    <eventMouseDown>Ret = SketchWindow:ClickBezierTool()</eventMouseDown>
+      </widget>
       <widget name="SaveButton" factory="pawsButton" id="111" tooltip="Save (s)">
           <frame x="180" y="0" width="16" height="16" /> 
           <bgimage resource="FeatherTool" /> 

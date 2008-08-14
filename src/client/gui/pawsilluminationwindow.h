@@ -23,11 +23,35 @@
 #include "paws/pawswidget.h"
 #include "paws/pawsstringpromptwindow.h"
 
+#define SKETCHBEZIER_SEGMENTS 20
 /**
  * A window that shows a map or picture.
  */
 class pawsSketchWindow : public pawsWidget, public psClientNetSubscriber,public iOnStringEnteredAction
 {
+    class BezierWeights
+    {
+    private:
+        float *precomputedBezierWeights; //[SKETCHBEZIER_SEGMENTS+1][4];
+    public:
+        BezierWeights();
+        ~BezierWeights();
+
+        // this is SLOWER than Get(int offset)
+        inline float Get(int segmentIndex, int controlpointNum)
+        {
+            //CS_ASSERT(segmentIndex <= SKETCHBEZIER_SEGMENTS && segmentIndex >= 0);
+            //CS_ASSERT(controlpointNum >= 0 && controlpointNum <= 3);
+            return precomputedBezierWeights[segmentIndex * SKETCHBEZIER_SEGMENTS + controlpointNum];
+        }
+
+        // returns the precomputed value of "segmentIndex*SKETCHBEZIER_SEGMENTS + controlpointNum"
+        inline float Get(int offset)
+        {
+            //CS_ASSERT(offset <= (SKETCHBEZIER_SEGMENTS+1)*4 && offset >= 0);
+            return precomputedBezierWeights[offset];
+        }
+    };
     struct SketchObject
     {
         bool selected;
@@ -106,6 +130,56 @@ class pawsSketchWindow : public pawsWidget, public psClientNetSubscriber,public 
         // update the RELATIVE position
         virtual void UpdatePosition(int _x, int _y);
     };
+    struct SketchBezier : public SketchObject
+    {
+        /* Cubic Bézier Curve
+            p1        p2 (control points)
+           /            \_
+        p0-----------------p3
+
+        2 lines would actually be enough to handle the bezier curve. 
+        Connecting p0-p1 and p3-p2: However, the usability would suffer since we can't move the "whole line" then.
+        Connecting p1-p2 and p0-p3: Displaying this doesn't look good and usability suffers.
+        */
+
+        //BezierHelper *bezierHelper;
+
+        SketchLine p0p1;
+        SketchLine p0p3;
+        SketchLine p3p2;
+        
+        SketchBezier(int x, int y, int x1, int y1, int x2, int y2, int x3, int y3, pawsSketchWindow *_parent)
+        {
+            this->parent = _parent;
+            //this->bezierHelper = &_parent->bezierHelper;
+
+            p0p1.parent = _parent;
+            p0p1.x = x; // point 0 (also start point)
+            p0p1.y = y;
+            p0p1.x2 = x1; // point 1 (control point 1)
+            p0p1.y2 = y1;
+
+            p0p3.parent = _parent;
+            p0p3.x = x; // point 0
+            p0p3.y = y;
+            p0p3.x2 = x3; // point 3 (also end point)
+            p0p3.y2 = y3;
+
+            p3p2.parent = _parent;
+            p3p2.x2 = x2; // point 3 (also end point)
+            p3p2.y2 = y2;
+            p3p2.x = x3; // point 2 (control point 2)
+            p3p2.y = y3;
+        }
+        SketchBezier() {};
+        virtual ~SketchBezier() {};
+        virtual bool Load(iDocumentNode *node, pawsSketchWindow *parent);
+        virtual void WriteXml(csString& xml);
+        virtual void Draw();
+        virtual bool IsHit(int mouseX, int mouseY);
+        // update the RELATIVE position
+        virtual void UpdatePosition(int _x, int _y);
+    };
 
 protected:
     csPDelArray<SketchObject> objlist;
@@ -121,12 +195,14 @@ protected:
     int primCount;
     bool readOnly;
     bool stringPending;
+    BezierWeights bezierWeights;
 
     int frame; // incremented each frame till 10 (to update selection without clicking)
     
     pawsWidget* FeatherTool;
     pawsWidget* TextTool;
     pawsWidget* LineTool;
+    pawsWidget* BezierTool;
     pawsWidget* PlusTool;
     pawsWidget* LeftArrowTool;
     pawsWidget* RightArrowTool;
@@ -142,6 +218,7 @@ protected:
     void AddSketchText();
     void AddSketchIcon();
     void AddSketchLine();
+    void AddSketchBezier();
     void RemoveSelected();
     void NextPrevIcon(int delta);
     void MoveObject(int dx, int dy);
