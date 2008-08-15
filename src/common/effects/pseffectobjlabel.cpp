@@ -104,6 +104,14 @@ bool psEffectObjLabel::Load(iDocumentNode *node)
         csReport(psCSSetup::object_reg, CS_REPORTER_SEVERITY_ERROR, "planeshift_effects", "Attempting to create an effect obj with no material.\n");
         return false;
     }
+
+    material = effectsCollection->FindMaterial(materialName);
+    if (!material.IsValid())
+    {
+        csReport(psCSSetup::object_reg, CS_REPORTER_SEVERITY_ERROR, "planeshift_effects", "No material for label mesh: %s\n", materialName.GetData());
+        return false;
+    }
+
     if (!sizeFileName.IsEmpty())
     {
         LoadGlyphs(sizeFileName);
@@ -185,13 +193,12 @@ bool psEffectObjLabel::CreateMeshFact()
     }
 
     // setup the material
-    csRef<iMaterialWrapper> mat = effectsCollection->FindMaterial(materialName);
-    if (mat)
+    if(!material)
     {
-        fact->SetMaterialWrapper(mat);
-    } else {
-        csReport(psCSSetup::object_reg, CS_REPORTER_SEVERITY_ERROR, "planeshift_effects", "No material for label mesh: %s\n", materialName.GetData());
+      return false;
     }
+
+    fact->SetMaterialWrapper(material);
     
 #if 0
     facState->SetVertexCount(4);
