@@ -123,10 +123,27 @@ bool psLauncherGUI::InitApp()
     
     g2d->AllowResize(false);
 
-    // Mount the skin
+    // Mount the VFS paths.
     if (!vfs->Mount ("/planeshift/", "$^"))
     {
-        printf("Failed to mount skin!\n");
+        printf("Failed to mount /planeshift!\n");
+        return false;
+    }
+
+    csString configPath = csGetPlatformConfigPath("PlaneShift");
+    configPath.ReplaceAll("/.crystalspace/", "/.");
+    configPath = configManager->GetStr("PlaneShift.UserConfigPath", configPath);
+    FileUtil fileUtil(vfs);
+    csRef<FileStat> filestat = fileUtil.StatFile(configPath);
+    if (!filestat.IsValid() && CS_MKDIR(configPath) < 0)
+    {
+        printf("Could not create required %s directory!\n", configPath.GetData());
+        return false;
+    }
+
+    if (!vfs->Mount("/planeshift/userdata", configPath + "$/"))
+    {
+        printf("Could not mount %s as /planeshift/userdata!\n", configPath.GetData());
         return false;
     }
 

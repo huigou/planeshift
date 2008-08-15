@@ -130,6 +130,7 @@ bool Config::Initialize(csRef<iDocumentNode> node)
     csRef<iDocumentNode> mirrorNode = node->GetNode("mirrors");
     if (mirrorNode)
     {
+        mirrors.Empty();
         csRef<iDocumentNodeIterator> nodeItr = mirrorNode->GetNodes();
         while(nodeItr->HasNext())
         {
@@ -156,6 +157,7 @@ bool Config::Initialize(csRef<iDocumentNode> node)
     csRef<iDocumentNode> clientNode = node->GetNode("client");
     if(clientNode)
     {
+        clientVersions.Empty();
         csRef<iDocumentNodeIterator> nodeItr = clientNode->GetNodes();
         while(nodeItr->HasNext())
         {
