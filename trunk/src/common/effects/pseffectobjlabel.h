@@ -41,6 +41,8 @@ private:
     csRef<iGeneralFactoryState> facState;
     csRef<iGeneralMeshState> genState;
 
+    csRef<iMaterialWrapper> material;
+
     // font
     csString       sizeFileName;
     float          labelwidth;
