@@ -286,6 +286,7 @@ protected:
     void SpawnItemInv( MsgEntry* me, psGMSpawnItem& msg, Client *client);
     bool GetAccount(csString useroracc,Result& resultre);
     void RenameGuild( MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data, Client* client);
+    void ChangeGuildLeader( MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data, Client* client);
     
     /** Awards experience to a player, by a GM */
     void AwardExperience(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data, Client* client, Client* target);

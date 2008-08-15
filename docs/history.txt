@@ -1,3 +1,7 @@
+*** 2008-08-15 by Steven Patrick
+- Added /changeguildleader command for GM2+.
+- DB VER BUMP to 1193
+
 *** 2008-08-14 by Andreas Heinchen
 - Fix for FS#1971, FS#2140 patch by peeg
 - Fixed FS#2094, patch by Arerano

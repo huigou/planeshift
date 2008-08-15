@@ -401,6 +401,12 @@ bool AdminManager::AdminCmdData::DecodeAdminCmdMessage(MsgEntry *pMsg, psAdminCm
         newName = words.GetTail(2);
         return true;
     }
+    else if (command == "/changeguildleader")
+    {
+        player = words[1];
+        target = words.GetTail(2);
+        return true;
+    }
     else if (command == "/petition")
     {
         petition = words.GetTail(1);
@@ -1223,6 +1229,10 @@ void AdminManager::HandleAdminCmdMessage(MsgEntry *me, psAdminCmdMessage &msg, A
     else if (data.command == "/changeguildname")
     {
         RenameGuild( me, msg, data, client );
+    }
+    else if (data.command == "/changeguildleader")
+    {
+        ChangeGuildLeader( me, msg, data, client );
     }
     else if (data.command == "/banname" )
     {
@@ -6418,6 +6428,61 @@ void AdminManager::RenameGuild(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdDat
 
     // Broadcast to everyone
     psserver->GetEventManager()->Broadcast(newNameMsg.msg,NetBase::BC_EVERYONE);
+}
+
+void AdminManager::ChangeGuildLeader(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data, Client* client)
+{
+    if (data.target.IsEmpty() || data.player.IsEmpty())
+    {
+        psserver->SendSystemError(me->clientnum, "Syntax: /changeguildleader <new leader> guildname");
+        return;
+    }
+
+    psGuildInfo* guild = CacheManager::GetSingleton().FindGuild(data.target);
+    if (!guild)
+    {
+        psserver->SendSystemError(me->clientnum, "No guild with that name.");
+        return;
+    }
+    
+    psGuildMember* member = guild->FindMember(data.player.GetData());
+    if (!member)
+    {
+        psserver->SendSystemError(me->clientnum, "Can't find member %s.", data.player.GetData());
+        return;
+    }
+
+    // Is the leader the target player?
+    psGuildMember* gleader = guild->FindLeader();
+    if (member == gleader)
+    {
+        psserver->SendSystemError(me->clientnum, "%s is already the guild leader.", data.player.GetData());
+        return;
+    }
+    
+    // Change the leader
+    // Promote player to leader
+    if (!guild->UpdateMemberLevel(member, MAX_GUILD_LEVEL))
+    {
+        psserver->SendSystemError(me->clientnum, "SQL Error: %s", db->GetLastError());
+        return;
+    }
+    // Demote old leader
+    if (!guild->UpdateMemberLevel(gleader, MAX_GUILD_LEVEL - 1))
+    {
+        psserver->SendSystemError(me->clientnum, "SQL Error: %s", db->GetLastError());
+        return;
+    }
+    
+    psserver->GetGuildManager()->ResendGuildData(guild->id);
+
+    psserver->SendSystemOK(me->clientnum,"Guild leader changed to '%s'.", data.player.GetData());
+    
+    csString text;
+    text.Format("%s has been promoted to '%s' by a GM.", data.player.GetData(), member->guildlevel->title.GetData() );
+    psChatMessage guildmsg(me->clientnum,"System",0,text,CHAT_GUILD, false);
+    if (guildmsg.valid)
+        psserver->GetChatManager()->SendGuild("server", guild, guildmsg);
 }
 
 void AdminManager::Thunder(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data, Client *client)
