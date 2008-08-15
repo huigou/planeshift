@@ -148,6 +148,7 @@ public:
     PS_ID CreateEntity(gemObject *obj);
     void RemoveEntity(gemObject *which);
     void AddActorEntity(gemActor *actor);
+    void RemoveActorEntity(gemActor *actor);
     void AddItemEntity(gemItem *item);
     
     void RemoveClientFromLootables(int cnum);

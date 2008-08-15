@@ -222,6 +222,12 @@ void GEMSupervisor::AddActorEntity(gemActor *actor)
     Debug3(LOG_CELPERSIST,0,"Actor added to supervisor with EID:%u and PID:%u.\n", actor->GetEntityID(), actor->GetPlayerID());
 }
 
+void GEMSupervisor::RemoveActorEntity(gemActor *actor)
+{
+    actors_by_pid.Delete(actor->GetPlayerID(), actor);
+    Debug3(LOG_CELPERSIST,0,"Actor removed from supervisor with EID:%u and PID:%u.\n", actor->GetEntityID(), actor->GetPlayerID());
+}
+
 void GEMSupervisor::AddItemEntity(gemItem *item)
 {
     items_by_uid.Put(item->GetItem()->GetUID(), item);
@@ -236,11 +242,7 @@ void GEMSupervisor::RemoveEntity(gemObject *which)
     entities_by_eid.Delete(which->GetEntityID(), which);
     Debug3(LOG_CELPERSIST,0,"Entity <%s> removed from supervisor with ID: %d\n", which->GetName(), which->GetEntityID());          
 
-    if (which->GetPlayerID())
-    {
-        actors_by_pid.Delete(which->GetPlayerID(), (gemActor*) which);
-    }
-    else if (which->GetItem())
+    if (which->GetItem())
     {
         items_by_uid.Delete(which->GetItem()->GetUID(), (gemItem*) which);
     }
@@ -1694,6 +1696,8 @@ gemActor::~gemActor()
 {
     // Disconnect while pointers are still valid
     Disconnect();
+
+    cel->RemoveActorEntity(this);
 
     if (factions)
     {

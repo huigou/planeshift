@@ -1,3 +1,6 @@
+*** 2008-08-15 by Andreas Heinchen
+- fixed bug in destruction of gemActors
+
 *** 2008-08-15 by Steven Patrick
 - Added /changeguildleader command for GM2+.
 - DB VER BUMP to 1193
