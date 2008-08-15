@@ -1578,3 +1578,4 @@ pawsSketchWindow::BezierWeights::~BezierWeights()
 {
     delete [] precomputedBezierWeights;
 }
+
