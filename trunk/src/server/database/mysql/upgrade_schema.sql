@@ -948,6 +948,14 @@ INSERT INTO command_group_assignment VALUES( "changenameall", 24 );
 INSERT INTO command_group_assignment VALUES( "changenameall", 23 );
 UPDATE `server_options` SET `option_value`='1192' WHERE `option_name`='db_version';
 
+#### 1193 - Steven Patrick - Adding /changeguildleader GM command
+INSERT INTO command_group_assignment VALUES( "/changeguildleader", 30 );
+INSERT INTO command_group_assignment VALUES( "/changeguildleader", 25 );
+INSERT INTO command_group_assignment VALUES( "/changeguildleader", 24 );
+INSERT INTO command_group_assignment VALUES( "/changeguildleader", 23 );
+INSERT INTO command_group_assignment VALUES( "/changeguildleader", 22 );
+UPDATE `server_options` SET `option_value`='1193' WHERE `option_name`='db_version';
+
 # Insert your upgrade before this line. Remember when you set a new db_version
 # to update the server_options.sql file and update psserver.cpp as well.
 # This to ensure that everything is working if you use the create_all.sql to

@@ -399,6 +399,9 @@ Bans a player from advising until /unban_advisor is used.</topic>
         <topic name="/banname">/banname name
 
 Bans a name from use in character creation</topic>
+        <topic name="/changeguildleader">/changeguildleader [new leader] [guildname]
+
+Change the guilds leader.</topic>
         <topic name="/changeguildname">/changeguildname
 
 Change the selected guilds name.</topic>
