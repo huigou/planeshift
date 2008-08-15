@@ -150,6 +150,7 @@ public:
     void AddActorEntity(gemActor *actor);
     void RemoveActorEntity(gemActor *actor);
     void AddItemEntity(gemItem *item);
+    void RemoveItemEntity(gemItem *item);
     
     void RemoveClientFromLootables(int cnum);
         

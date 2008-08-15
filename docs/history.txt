@@ -1,5 +1,5 @@
 *** 2008-08-15 by Andreas Heinchen
-- fixed bug in destruction of gemActors
+- fixed bug in destruction of gemActors and gemItems
 
 *** 2008-08-15 by Steven Patrick
 - Added /changeguildleader command for GM2+.

@@ -234,6 +234,12 @@ void GEMSupervisor::AddItemEntity(gemItem *item)
     Debug3(LOG_CELPERSIST,0,"Item added to supervisor with EID:%u and UID:%u.\n", item->GetEntityID(), item->GetItem()->GetUID());
 }
 
+void GEMSupervisor::RemoveItemEntity(gemItem *item)
+{
+    items_by_uid.Delete(item->GetItem()->GetUID(), item);
+    Debug3(LOG_CELPERSIST,0,"Item removed from supervisor with EID:%u and UID:%u.\n", item->GetEntityID(), item->GetItem()->GetUID());
+}
+
 void GEMSupervisor::RemoveEntity(gemObject *which)
 {
     if (!which)
@@ -242,10 +248,6 @@ void GEMSupervisor::RemoveEntity(gemObject *which)
     entities_by_eid.Delete(which->GetEntityID(), which);
     Debug3(LOG_CELPERSIST,0,"Entity <%s> removed from supervisor with ID: %d\n", which->GetName(), which->GetEntityID());          
 
-    if (which->GetItem())
-    {
-        items_by_uid.Delete(which->GetItem()->GetUID(), (gemItem*) which);
-    }
 }
 
 void GEMSupervisor::RemoveClientFromLootables(int cnum)
@@ -1427,7 +1429,7 @@ void gemItem::Broadcast(int clientnum, bool control )
                          );
                          
     mesg.Multicast(GetMulticastClients(),clientnum,PROX_LIST_ANY_RANGE);
-
+    cel->RemoveItemEntity(this);
 }
 
 void gemItem::SetPosition(const csVector3& pos,float angle, iSector* sector, INSTANCE_ID instance)
