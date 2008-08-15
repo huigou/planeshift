@@ -3592,13 +3592,16 @@ void AdminManager::Slide(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& dat
         }
 
         // Update the object
-        if ( !MoveObject(client,target,pos,yrot,sector,client->GetActor()->GetInstance()) )
+        if ( !MoveObject(client,target,pos,yrot,sector,target->GetInstance()) )
             return;
 
         target->UpdateProxList(false); // Update ProxList if needed
 
         if (target->GetActorPtr() && client->GetActor() != target->GetActorPtr())
+        {
             psserver->SendSystemInfo(me->clientnum, "Sliding %s...", target->GetName());
+            psserver->SendSystemInfo(target->GetClientID(), "You were moved by a GM.");
+        }
     }
     else
     {
