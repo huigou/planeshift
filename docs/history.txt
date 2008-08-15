@@ -3,7 +3,6 @@
 - DB VER BUMP to 1193
 - Fixed FS#2142 - possible to change instance of player or npc using slide
   The target is now slid in their own instance, not the GMs.
-  The target is now informed that he was moved be a GM.
 
 *** 2008-08-14 by Andreas Heinchen
 - Fix for FS#1971, FS#2140 patch by peeg
