@@ -1567,7 +1567,7 @@ void psEngine::PreloadItemsDir()
                     for (size_t i=0; i < files2->GetSize(); i++)
                     {
                         csString localName= files2->Get(i);
-                        if (localName.Slice(localName.Length()-4,4) != ".spr")
+                        if (localName.Slice(localName.Length()-4,4) != ".meshfact")
                             continue;
 
                         modelnames.Push(localName);
@@ -1576,7 +1576,7 @@ void psEngine::PreloadItemsDir()
                 continue;
             }
 
-            if (filename.Slice(filename.Length()-4,4) != ".spr")
+            if (filename.Slice(filename.Length()-4,4) != ".meshfact")
                 continue;
 
             modelnames.Push(filename);
