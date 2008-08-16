@@ -164,7 +164,7 @@ public:
     csRef<iVFS> GetVFS() const { return vfs; }
 
     // Find the config node given an xml file name.
-    csRef<iDocumentNode> GetRootNode(const char* fileName);
+    csRef<iDocumentNode> GetRootNode(const char* fileName, csRef<iDocument>* document = 0);
 
     /*
     * Starts and finishes a self update

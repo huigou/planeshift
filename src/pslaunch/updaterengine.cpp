@@ -228,7 +228,7 @@ void UpdaterEngine::CheckForUpdates()
 bool UpdaterEngine::CheckUpdater()
 {
     // Download the latest updaterinfo. 
-    if(!downloader->DownloadFile("updaterinfo.xml", UPDATERINFO_FILENAME, false, true))
+    if(!downloader->DownloadFile("updaterinfo.xml", UPDATERINFO_FILENAME, false, true, 3, true))
     {
         return false;
     }
@@ -318,7 +318,7 @@ bool UpdaterEngine::CheckGeneral()
     return true;
 }
 
-csRef<iDocumentNode> UpdaterEngine::GetRootNode(const char* nodeName)
+csRef<iDocumentNode> UpdaterEngine::GetRootNode(const char* nodeName, csRef<iDocument>* document)
 {
     // Load xml.
     csRef<iDocumentSystem> xml = csPtr<iDocumentSystem> (new csTinyDocumentSystem);
@@ -337,7 +337,16 @@ csRef<iDocumentNode> UpdaterEngine::GetRootNode(const char* nodeName)
     }
 
     // Try to parse file
-    configdoc = xml->CreateDocument();
+    if(document)
+    {
+        *document = xml->CreateDocument();
+        configdoc = *document;
+    }
+    else
+    {
+        configdoc = xml->CreateDocument();
+    }
+
     const char* error = configdoc->Parse(buf);
     if (error)
     {
@@ -583,7 +592,8 @@ void UpdaterEngine::GeneralUpdate()
     // Start by fetching the configs.
     csRefArray<ClientVersion>& oldCvs = config->GetCurrentConfig()->GetClientVersions();
     const csRefArray<ClientVersion>& newCvs = config->GetNewConfig()->GetClientVersions();
-    csRef<iDocumentNode> rootnode = GetRootNode(UPDATERINFO_CURRENT_FILENAME);
+    csRef<iDocument> updaterinfo;
+    csRef<iDocumentNode> rootnode = GetRootNode(UPDATERINFO_CURRENT_FILENAME, &updaterinfo);
     csRef<iDocumentNode> confignode = rootnode->GetNode("config");
 
     if (!confignode)
@@ -834,7 +844,7 @@ void UpdaterEngine::GeneralUpdate()
         csString value("<version name=\"");
         value.AppendFmt("%s\" />", newCv->GetName());
         confignode->GetNode("client")->CreateNodeBefore(CS_NODE_TEXT)->SetValue(value);
-        configdoc->Write(vfs, UPDATERINFO_CURRENT_FILENAME);
+        updaterinfo->Write(vfs, UPDATERINFO_CURRENT_FILENAME);
         oldCvs.PushSmart(newCv);
      }
 }
@@ -871,7 +881,7 @@ void UpdaterEngine::CheckIntegrity()
         fileUtil->RemoveFile("/this/updaterinfo.xml", true);
         downloader = new Downloader(vfs);
         downloader->SetProxy(config->GetProxy().host.GetData(), config->GetProxy().port);
-        if(!downloader->DownloadFile("http://www.psmirror.org/repo/updaterinfo.xml", UPDATERINFO_CURRENT_FILENAME, true, true))
+        if(!downloader->DownloadFile("http://www.psmirror.org/repo/updaterinfo.xml", UPDATERINFO_CURRENT_FILENAME, true, true, 3, true))
         {
             PrintOutput("\nFailed to download updater info!\n");
             return;
@@ -909,7 +919,7 @@ void UpdaterEngine::CheckIntegrity()
 
     // Download new config.
     fileUtil->RemoveFile(UPDATERINFO_CURRENT_FILENAME, true);
-    if(!downloader->DownloadFile("updaterinfo.xml", UPDATERINFO_CURRENT_FILENAME, false, true))
+    if(!downloader->DownloadFile("updaterinfo.xml", UPDATERINFO_CURRENT_FILENAME, false, true, 3, true))
     {
         PrintOutput("\nFailed to download updater info from a mirror!\n");
         return;
