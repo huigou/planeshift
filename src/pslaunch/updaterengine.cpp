@@ -842,9 +842,9 @@ void UpdaterEngine::GeneralUpdate()
         }
 
         // Add version info to updaterinfo.xml and oldCvs.
-        csString value("<version name=\"");
-        value.AppendFmt("%s\" />", newCv->GetName());
-        confignode->GetNode("client")->CreateNodeBefore(CS_NODE_ELEMENT)->SetValue(value);
+        csRef<iDocumentNode> newNode = confignode->GetNode("client")->CreateNodeBefore(CS_NODE_ELEMENT);
+        newNode->SetValue("version");
+        newNode->SetAttribute("name", newCv->GetName());
         updaterinfo->Write(vfs, UPDATERINFO_CURRENT_FILENAME);
         oldCvs.PushSmart(newCv);
      }
