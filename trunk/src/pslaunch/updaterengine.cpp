@@ -163,7 +163,6 @@ void UpdaterEngine::CheckForUpdates()
                 {
                     delete downloader;
                     downloader = NULL;
-                    fileUtil->RemoveFile(UPDATERINFO_FILENAME, true);
                     return;
                 }
 
@@ -177,7 +176,6 @@ void UpdaterEngine::CheckForUpdates()
 
         // Begin the self update process.
         SelfUpdate(false);
-        fileUtil->RemoveFile(UPDATERINFO_FILENAME, true);
         return;
     }
 
@@ -206,7 +204,6 @@ void UpdaterEngine::CheckForUpdates()
                 {
                     delete downloader;
                     downloader = NULL;
-                    fileUtil->RemoveFile(UPDATERINFO_FILENAME, true);
                     return;
                 }
             }
@@ -226,12 +223,12 @@ void UpdaterEngine::CheckForUpdates()
     delete downloader;
     downloader = NULL;
     infoShare->SetUpdateNeeded(false);
-    fileUtil->RemoveFile(UPDATERINFO_FILENAME, true);
 }
 
 bool UpdaterEngine::CheckUpdater()
 {
     // Download the latest updaterinfo. 
+    fileUtil->RemoveFile(UPDATERINFO_FILENAME, true);
     if(!downloader->DownloadFile("updaterinfo.xml", UPDATERINFO_FILENAME, false, true, 3, true))
     {
         return false;
