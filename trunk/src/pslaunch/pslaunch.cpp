@@ -123,30 +123,6 @@ bool psLauncherGUI::InitApp()
     
     g2d->AllowResize(false);
 
-    // Mount the VFS paths.
-    if (!vfs->Mount ("/planeshift/", "$^"))
-    {
-        printf("Failed to mount /planeshift!\n");
-        return false;
-    }
-
-    csString configPath = csGetPlatformConfigPath("PlaneShift");
-    configPath.ReplaceAll("/.crystalspace/", "/.");
-    configPath = configManager->GetStr("PlaneShift.UserConfigPath", configPath);
-    FileUtil fileUtil(vfs);
-    csRef<FileStat> filestat = fileUtil.StatFile(configPath);
-    if (!filestat.IsValid() && CS_MKDIR(configPath) < 0)
-    {
-        printf("Could not create required %s directory!\n", configPath.GetData());
-        return false;
-    }
-
-    if (!vfs->Mount("/planeshift/userdata", configPath + "$/"))
-    {
-        printf("Could not mount %s as /planeshift/userdata!\n", configPath.GetData());
-        return false;
-    }
-
     // paws initialization
     csString skinPath;
     skinPath = configManager->GetStr("PlaneShift.GUI.Skin", "/planeshift/art/pslaunch.zip");
@@ -368,6 +344,32 @@ int main(int argc, char* argv[])
         InfoShare *infoShare = new InfoShare();
         infoShare->SetPerformUpdate(false);
         infoShare->SetUpdateNeeded(false);
+
+        // Mount the VFS paths.
+        csRef<iVFS> vfs = csQueryRegistry<iVFS>(object_reg);
+        if (!vfs->Mount ("/planeshift/", "$^"))
+        {
+          printf("Failed to mount /planeshift!\n");
+          return false;
+        }
+
+        csRef<iConfigManager> configManager = csQueryRegistry<iConfigManager> (object_reg);
+        csString configPath = csGetPlatformConfigPath("PlaneShift");
+        configPath.ReplaceAll("/.crystalspace/", "/.");
+        configPath = configManager->GetStr("PlaneShift.UserConfigPath", configPath);
+        FileUtil fileUtil(vfs);
+        csRef<FileStat> filestat = fileUtil.StatFile(configPath);
+        if (!filestat.IsValid() && CS_MKDIR(configPath) < 0)
+        {
+          printf("Could not create required %s directory!\n", configPath.GetData());
+          return false;
+        }
+
+        if (!vfs->Mount("/planeshift/userdata", configPath + "$/"))
+        {
+          printf("Could not mount %s as /planeshift/userdata!\n", configPath.GetData());
+          return false;
+        }
 
         // Initialize updater engine.
         UpdaterEngine* engine = new UpdaterEngine(args, object_reg, "pslaunch", infoShare);

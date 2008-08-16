@@ -105,213 +105,158 @@ void UpdaterEngine::PrintOutput(const char *string, ...)
 
 void UpdaterEngine::CheckForUpdates()
 {
-    if(!log.IsValid())
+    // Make sure the old instance had time to terminate (self-update).
+    if(config->IsSelfUpdating())
+        csSleep(1000);
+
+    // Load current config data.
+    csRef<iDocumentNode> root = GetRootNode(UPDATERINFO_CURRENT_FILENAME);
+    if(!root)
     {
-        if(appName.Compare("psupdater"))
+        PrintOutput("Unable to get root node\n");
+        return;
+    }
+
+    csRef<iDocumentNode> confignode = root->GetNode("config");
+    if (!confignode)
+    {
+        PrintOutput("Couldn't find config node in configfile!\n");
+        return;
+    }
+
+    // Load updater config
+    if (!config->GetCurrentConfig()->Initialize(confignode))
+    {
+        PrintOutput("Failed to Initialize mirror config current!\n");
+        return;
+    }
+
+    // Initialise downloader.
+    downloader = new Downloader(GetVFS(), config);
+
+    // Set proxy
+    downloader->SetProxy(GetConfig()->GetProxy().host.GetData(),
+        GetConfig()->GetProxy().port);
+
+    PrintOutput("Checking for updates to the updater: ");
+
+    if(CheckUpdater())
+    {
+        PrintOutput("Update Available!\n");
+
+        // Check if we have write permissions.
+        if(!log.IsValid())
         {
-            printf("This program requires admin/root or write privileges to run. Please restart the program with these.\n");
-            printf("In windows, this means right clicking the Updater shortcut and selecting \"Run as administrator\".\n");
-            printf("For everyone else, login as the root user. If you don't have root access, contact someone who does and ask them nicely to run the updater!\n");
+            PrintOutput("Please run this program with administrator permissions to continue updating.\n");
+            return;
         }
-        else
+
+        // If using a GUI, prompt user whether or not to update.
+        if(!appName.Compare("psupdater"))
         {
-            /*
-             * This will need fixing for pslaunch somehow. We don't want to need admin rights until we know we need to update...
-             * Maybe write updaterinfo.xml to the userdata path instead of the install path, then execute a new thread which
-             * needs admin if we don't have it.. for UAC anyway. For linux, we can think of something else (maybe just print a message in the pslaunch
-             * window like we do to the console in psupdater.
-             */
+            infoShare->SetUpdateNeeded(true);         
+            while(!infoShare->GetPerformUpdate() || !infoShare->GetExitGUI())
+            {
+                csSleep(500);
+                // Make sure we die if we exit the gui as well.
+                if(!infoShare->GetUpdateNeeded() || infoShare->GetExitGUI())
+                {
+                    delete downloader;
+                    downloader = NULL;
+                    return;
+                }
+
+                // If we're going to self-update, close the GUI.
+                if(infoShare->GetPerformUpdate())
+                {
+                    infoShare->SetExitGUI(true);
+                }
+            }
         }
+
+        // Begin the self update process.
+        SelfUpdate(false);
+        return;
+    }
+
+    PrintOutput("No updates needed!\nChecking for updates to all files: ");
+
+    // Check for normal updates.
+    if(CheckGeneral())
+    {
+        PrintOutput("Updates Available!\n");
+
+        // Check if we have write permissions.
+        if(!log.IsValid())
+        {
+            PrintOutput("Please run this program with administrator permissions to continue updating.\n");
+            return;
+        }
+
+        // If using a GUI, prompt user whether or not to update.
+        if(!appName.Compare("psupdater"))
+        {
+            infoShare->SetUpdateNeeded(true);
+            while(!infoShare->GetPerformUpdate())
+            {
+                csSleep(500);
+                if(!infoShare->GetUpdateNeeded())
+                {
+                    delete downloader;
+                    downloader = NULL;
+                    return;
+                }
+            }
+        }
+
+        // Begin general update.
+        GeneralUpdate();
+
+        // Maybe this fixes a bug.
+        fflush(stdout);
+
+        PrintOutput("Update finished!\n");
     }
     else
-    {
+        PrintOutput("No updates needed!\n");
 
-        // Make sure the old instance had time to terminate (self-update).
-        if(config->IsSelfUpdating())
-            csSleep(1000);
-
-        // Check if the last attempt at a general updated ended in failure.
-        if(!config->WasCleanUpdate())
-        {
-            // Safety check.
-            if(!vfs->Exists("/this/updaterinfo.xml.bak"))
-            {
-                config->GetConfigFile()->SetBool("Update.Clean", true);
-                config->GetConfigFile()->Save();
-            }
-            else
-            {
-                // Restore config file which gives us the last updated position.
-                fileUtil->RemoveFile("/this/updaterinfo.xml");
-                fileUtil->MoveFile("/this/updaterinfo.xml.bak", "/this/updaterinfo.xml", true, false);
-            }
-        }
-
-
-        // Load current config data.
-        csRef<iDocumentNode> root = GetRootNode(UPDATERINFO_FILENAME);
-        if(!root)
-        {
-            PrintOutput("Unable to get root node\n");
-            return;
-        }
-
-        csRef<iDocumentNode> confignode = root->GetNode("config");
-        if (!confignode)
-        {
-            PrintOutput("Couldn't find config node in configfile!\n");
-            return;
-        }
-
-        // Load updater config
-        if (!config->GetCurrentConfig()->Initialize(confignode))
-        {
-            PrintOutput("Failed to Initialize mirror config current!\n");
-            return;
-        }
-
-        // Initialise downloader.
-        downloader = new Downloader(GetVFS(), config);
-
-        // Set proxy
-        downloader->SetProxy(GetConfig()->GetProxy().host.GetData(),
-            GetConfig()->GetProxy().port);
-
-        PrintOutput("Checking for updates to the updater: ");
-
-        if(CheckUpdater())
-        {
-            PrintOutput("Update Available!\n");
-
-            // Restore config files.
-            fileUtil->RemoveFile("/this/updaterinfo.xml");
-            fileUtil->MoveFile("/this/updaterinfo.xml.bak", "/this/updaterinfo.xml", true, false);
-
-            // If using a GUI, prompt user whether or not to update.
-            if(!appName.Compare("psupdater"))
-            {
-                infoShare->SetUpdateNeeded(true);         
-                while(!infoShare->GetPerformUpdate() || !infoShare->GetExitGUI())
-                {
-                    csSleep(500);
-                    // Make sure we die if we exit the gui as well.
-                    if(!infoShare->GetUpdateNeeded() || infoShare->GetExitGUI())
-                    {
-                        delete downloader;
-                        downloader = NULL;
-                        return;
-                    }
-
-                    // If we're going to self-update, close the GUI.
-                    if(infoShare->GetPerformUpdate())
-                    {
-                        infoShare->SetExitGUI(true);
-                    }
-                }
-            }
-
-            // Begin the self update process.
-            SelfUpdate(false);
-            return;
-        }
-
-        if(!vfs->Exists("/this/updaterinfo.xml.bak"))
-            return;
-
-        PrintOutput("No updates needed!\nChecking for updates to all files: ");
-
-        // Check for normal updates.
-        if(CheckGeneral())
-        {
-            PrintOutput("Updates Available!\n");
-            // Mark update as incomplete.
-            config->GetConfigFile()->SetBool("Update.Clean", false);
-            config->GetConfigFile()->Save();
-
-            // If using a GUI, prompt user whether or not to update.
-            if(!appName.Compare("psupdater"))
-            {
-                infoShare->SetUpdateNeeded(true);
-                while(!infoShare->GetPerformUpdate())
-                {
-                    csSleep(500);
-                    if(!infoShare->GetUpdateNeeded())
-                    {
-                        delete downloader;
-                        downloader = NULL;
-                        return;
-                    }
-                }
-            }
-
-            // Begin general update.
-            GeneralUpdate();
-
-            // Maybe this fixes a bug.
-            fflush(stdout);
-
-            // Mark update as complete and clean up.
-            config->GetConfigFile()->SetBool("Update.Clean", true);
-            config->GetConfigFile()->Save();
-            PrintOutput("Update finished!\n");
-        }
-        else
-            PrintOutput("No updates needed!\n");
-
-        delete downloader;
-        downloader = NULL;
-        infoShare->SetUpdateNeeded(false);
-    }
-
-    return;
+    delete downloader;
+    downloader = NULL;
+    infoShare->SetUpdateNeeded(false);
 }
 
 bool UpdaterEngine::CheckUpdater()
 {
-    // Backup old config, download new.
-    fileUtil->MoveFile("/this/updaterinfo.xml", "/this/updaterinfo.xml.bak", true, false);
-
-    bool failed = false;
-    
-    if(!downloader->DownloadFile("updaterinfo.xml", "updaterinfo.xml", false, true))
-        failed = true;
-
-    // Load new config data.
-    if(!failed)
+    // Download the latest updaterinfo. 
+    if(!downloader->DownloadFile("updaterinfo.xml", UPDATERINFO_FILENAME, false, true))
     {
-        csRef<iDocumentNode> root = GetRootNode(UPDATERINFO_FILENAME);
-        if(!root)
-        {
-            PrintOutput("Unable to get root node!\n");
-            failed = true;
-        }
-
-        if(!failed)
-        {
-            csRef<iDocumentNode> confignode = root->GetNode("config");
-            if (!confignode)
-            {
-                PrintOutput("Couldn't find config node in configfile!\n");
-                failed = true;
-            }
-
-            if(!failed && !confignode->GetAttributeValueAsBool("active", true))
-            {
-                PrintOutput("The updater mirrors are down, possibly for an update. Please try again later.\n");
-                failed = true;
-            }
-
-            if (!failed && !config->GetNewConfig()->Initialize(confignode))
-            {
-                PrintOutput("Failed to Initialize mirror config new!\n");
-                failed = true;
-            }
-        }
+        return false;
     }
 
-    if(failed)
+    // Load new config data.
+    csRef<iDocumentNode> root = GetRootNode(UPDATERINFO_FILENAME);
+    if(!root)
     {
-        fileUtil->MoveFile("/this/updaterinfo.xml.bak", "/this/updaterinfo.xml", true, false);
+        PrintOutput("Unable to get root node!\n");
+        return false;
+    }
+
+    csRef<iDocumentNode> confignode = root->GetNode("config");
+    if (!confignode)
+    {
+        PrintOutput("Couldn't find config node in configfile!\n");
+        return false;
+    }
+
+    if(!confignode->GetAttributeValueAsBool("active", true))
+    {
+        PrintOutput("The updater mirrors are down, possibly for an update. Please try again later.\n");
+        return false;
+    }
+
+    if(!config->GetNewConfig()->Initialize(confignode))
+    {
+        PrintOutput("Failed to Initialize mirror config new!\n");
         return false;
     }
 
@@ -363,13 +308,9 @@ bool UpdaterEngine::CheckGeneral()
                 PrintOutput("\nLocal config and server config are incompatible!\n");
                 PrintOutput("This is caused when your local version becomes out of sync with the update mirrors.\n");
                 PrintOutput("To resolve this, reinstall your client using the latest installer on the website.\n");
-                fileUtil->RemoveFile("/this/updaterinfo.xml");
-                fileUtil->MoveFile("/this/updaterinfo.xml.bak", "/this/updaterinfo.xml", true, false);
-                return false;
             }
         }
-        // Remove the backup of the xml (they're the same).
-        fileUtil->RemoveFile("/this/updaterinfo.xml.bak");
+
         return false;
     }
 
@@ -387,7 +328,7 @@ csRef<iDocumentNode> UpdaterEngine::GetRootNode(const char* nodeName)
         return NULL;
     }
 
-    //Try to read file
+    // Try to read file
     csRef<iDataBuffer> buf = vfs->ReadFile(nodeName);
     if (!buf || !buf->GetSize())
     {
@@ -395,7 +336,7 @@ csRef<iDocumentNode> UpdaterEngine::GetRootNode(const char* nodeName)
         return NULL;
     }
 
-    //Try to parse file
+    // Try to parse file
     configdoc = xml->CreateDocument();
     const char* error = configdoc->Parse(buf);
     if (error)
@@ -404,7 +345,7 @@ csRef<iDocumentNode> UpdaterEngine::GetRootNode(const char* nodeName)
         return NULL;
     }
 
-    //Try to get root
+    // Try to get root
     csRef<iDocumentNode> root = configdoc->GetRoot ();
     if (!root)
     {
@@ -642,7 +583,7 @@ void UpdaterEngine::GeneralUpdate()
     // Start by fetching the configs.
     csRefArray<ClientVersion>& oldCvs = config->GetCurrentConfig()->GetClientVersions();
     const csRefArray<ClientVersion>& newCvs = config->GetNewConfig()->GetClientVersions();
-    csRef<iDocumentNode> rootnode = GetRootNode(UPDATERINFO_OLD_FILENAME);
+    csRef<iDocumentNode> rootnode = GetRootNode(UPDATERINFO_CURRENT_FILENAME);
     csRef<iDocumentNode> confignode = rootnode->GetNode("config");
 
     if (!confignode)
@@ -889,10 +830,11 @@ void UpdaterEngine::GeneralUpdate()
             printf("Failed to unmount file %s\n", zip.GetData());
         }
 
-        // Add version info to updaterinfo.xml.bak and oldCvs.
+        // Add version info to updaterinfo.xml and oldCvs.
         csString value("<version name=\"");
         value.AppendFmt("%s\" />", newCv->GetName());
         confignode->GetNode("client")->CreateNodeBefore(CS_NODE_TEXT)->SetValue(value);
+        configdoc->Write(vfs, UPDATERINFO_CURRENT_FILENAME);
         oldCvs.PushSmart(newCv);
      }
 }
@@ -902,7 +844,7 @@ void UpdaterEngine::CheckIntegrity()
     PrintOutput("Beginning integrity check!\n");
 
     // Load current config data.
-    csRef<iDocumentNode> root = GetRootNode(UPDATERINFO_FILENAME);
+    csRef<iDocumentNode> root = GetRootNode(UPDATERINFO_CURRENT_FILENAME);
     bool success = true;
     if(!root)
     {
@@ -919,10 +861,17 @@ void UpdaterEngine::CheckIntegrity()
 
     if(!success)
     {
+        // Check if we have write permissions.
+        if(!log.IsValid())
+        {
+            PrintOutput("Please run this program with administrator permissions to run the integrity check.\n");
+            return;
+        }
+
         fileUtil->RemoveFile("/this/updaterinfo.xml", true);
         downloader = new Downloader(vfs);
         downloader->SetProxy(config->GetProxy().host.GetData(), config->GetProxy().port);
-        if(!downloader->DownloadFile("http://www.psmirror.org/repo/updaterinfo.xml", "updaterinfo.xml", true, true))
+        if(!downloader->DownloadFile("http://www.psmirror.org/repo/updaterinfo.xml", UPDATERINFO_CURRENT_FILENAME, true, true))
         {
             PrintOutput("\nFailed to download updater info!\n");
             return;
@@ -930,7 +879,7 @@ void UpdaterEngine::CheckIntegrity()
 
         delete downloader;
 
-        root = GetRootNode(UPDATERINFO_FILENAME);
+        root = GetRootNode(UPDATERINFO_CURRENT_FILENAME);
         if(!root)
         {
             PrintOutput("Unable to get root node!\n");
@@ -958,10 +907,9 @@ void UpdaterEngine::CheckIntegrity()
     // Set proxy
     downloader->SetProxy(config->GetProxy().host.GetData(), config->GetProxy().port);
 
-    // Backup old config, download new.
-    fileUtil->MoveFile("/this/updaterinfo.xml", "/this/updaterinfo.xml.bak", true, false);
-
-    if(!downloader->DownloadFile("updaterinfo.xml", "updaterinfo.xml", false, true))
+    // Download new config.
+    fileUtil->RemoveFile(UPDATERINFO_CURRENT_FILENAME, true);
+    if(!downloader->DownloadFile("updaterinfo.xml", UPDATERINFO_CURRENT_FILENAME, false, true))
     {
         PrintOutput("\nFailed to download updater info from a mirror!\n");
         return;
@@ -969,7 +917,7 @@ void UpdaterEngine::CheckIntegrity()
 
     delete downloader;
 
-    root = GetRootNode(UPDATERINFO_FILENAME);
+    root = GetRootNode(UPDATERINFO_CURRENT_FILENAME);
     if(!root)
     {
         PrintOutput("Unable to get root node!\n");

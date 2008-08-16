@@ -43,6 +43,32 @@ psUpdater::psUpdater(int argc, char* argv[])
     }
     // Request needed plugins.
     csInitializer::RequestPlugins(object_reg, CS_REQUEST_VFS, CS_REQUEST_END);
+
+    // Mount the VFS paths.
+    csRef<iVFS> vfs = csQueryRegistry<iVFS>(object_reg);
+    if (!vfs->Mount ("/planeshift/", "$^"))
+    {
+        printf("Failed to mount /planeshift!\n");
+        exit(1);
+    }
+
+    csRef<iConfigManager> configManager = csQueryRegistry<iConfigManager> (object_reg);
+    csString configPath = csGetPlatformConfigPath("PlaneShift");
+    configPath.ReplaceAll("/.crystalspace/", "/.");
+    configPath = configManager->GetStr("PlaneShift.UserConfigPath", configPath);
+    FileUtil fileUtil(vfs);
+    csRef<FileStat> filestat = fileUtil.StatFile(configPath);
+    if (!filestat.IsValid() && CS_MKDIR(configPath) < 0)
+    {
+        printf("Could not create required %s directory!\n", configPath.GetData());
+        exit(1);
+    }
+
+    if (!vfs->Mount("/planeshift/userdata", configPath + "$/"))
+    {
+        printf("Could not mount %s as /planeshift/userdata!\n", configPath.GetData());
+        exit(1);
+    }
 }
 
 psUpdater::~psUpdater()
