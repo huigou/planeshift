@@ -95,7 +95,7 @@ void Downloader::SetProxy(const char *host, int port)
 {
 }
 
-bool Downloader::DownloadFile(const char *file, const char *dest, bool URL, bool silent, uint retries)
+bool Downloader::DownloadFile(const char *file, const char *dest, bool URL, bool silent, uint retries, bool vfsPath)
 {
     // Get active url, append file to get full path.
     Mirror* mirror;
@@ -122,7 +122,16 @@ bool Downloader::DownloadFile(const char *file, const char *dest, bool URL, bool
 
         if (vfs)
         {
-            csRef<iDataBuffer> path = vfs->GetRealPath("/this/" + destpath);
+            csRef<iDataBuffer> path;
+            if(vfsPath)
+            {
+                path = vfs->GetRealPath(destpath);
+            }
+            else
+            {
+                path = vfs->GetRealPath("/this/" + destpath);
+            }
+
             destpath = path->GetData();
         }
         else
