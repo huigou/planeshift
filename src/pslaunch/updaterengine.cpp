@@ -163,6 +163,7 @@ void UpdaterEngine::CheckForUpdates()
                 {
                     delete downloader;
                     downloader = NULL;
+                    fileUtil->RemoveFile(UPDATERINFO_FILENAME, true);
                     return;
                 }
 
@@ -176,6 +177,7 @@ void UpdaterEngine::CheckForUpdates()
 
         // Begin the self update process.
         SelfUpdate(false);
+        fileUtil->RemoveFile(UPDATERINFO_FILENAME, true);
         return;
     }
 
@@ -204,6 +206,7 @@ void UpdaterEngine::CheckForUpdates()
                 {
                     delete downloader;
                     downloader = NULL;
+                    fileUtil->RemoveFile(UPDATERINFO_FILENAME, true);
                     return;
                 }
             }
@@ -223,6 +226,7 @@ void UpdaterEngine::CheckForUpdates()
     delete downloader;
     downloader = NULL;
     infoShare->SetUpdateNeeded(false);
+    fileUtil->RemoveFile(UPDATERINFO_FILENAME, true);
 }
 
 bool UpdaterEngine::CheckUpdater()
@@ -843,7 +847,7 @@ void UpdaterEngine::GeneralUpdate()
         // Add version info to updaterinfo.xml and oldCvs.
         csString value("<version name=\"");
         value.AppendFmt("%s\" />", newCv->GetName());
-        confignode->GetNode("client")->CreateNodeBefore(CS_NODE_TEXT)->SetValue(value);
+        confignode->GetNode("client")->CreateNodeBefore(CS_NODE_ELEMENT)->SetValue(value);
         updaterinfo->Write(vfs, UPDATERINFO_CURRENT_FILENAME);
         oldCvs.PushSmart(newCv);
      }
