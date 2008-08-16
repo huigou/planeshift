@@ -125,7 +125,6 @@ process:
             }
         default:
             {
-                fprintf (stderr,"!!! INVALID %s %d !!! : ", stream.msg, res);
                 return res;
             }
         }
