@@ -1,3 +1,6 @@
+*** 2008-08-17 by Steven Patrick
+- Changed white labels (invisible) to override guild and group colour labels.
+
 *** 2008-08-15 by Andreas Heinchen
 - fixed bug in destruction of gemActors and gemItems
 
