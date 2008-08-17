@@ -162,46 +162,36 @@ void psEntityLabels::SetObjectText(GEMClientObject* object)
     int colour = 0xff0000;  // Default color, on inanimate objects
     if ( object->IsAlive() )
     {
-        int flags = object->Flags();
-        bool invisible = flags & psPersistActor::INVISIBLE;
-        
-        if ( invisible )
+        int type = object->GetMasqueradeType();
+        if (type > 26)
+            type = 26;
+
+        switch ( type )    
         {
-            colour = 0xffffff;                    
-        }
-        else
-        {
-            int type = object->GetMasqueradeType();
-            if (type > 26)
-                type = 26;
+            case 0: // player
+                colour = 0x00ff00;
+                break;
 
-            switch ( type )    
-            {
-                case 0: // player
-                    colour = 0x00ff00;
-                    break;
+            case -1: // NPC
+                colour = 0x00ffff;
+                break;
 
-                case -1: // NPC
-                    colour = 0x00ffff;
-                    break;
+            default:
+            case 21: // GM1 or unknown group
+                colour = 0x008000;
+                break;            
 
-                default:
-                case 21: // GM1 or unknown group
-                    colour = 0x008000;
-                    break;            
+            case 22:
+            case 23:
+            case 24:
+            case 25: // GM2-5
+                colour = 0xffff80;
+                break;
 
-                case 22:
-                case 23:
-                case 24:
-                case 25: // GM2-5
-                    colour = 0xffff80;
-                    break;
-
-                case 26: // dev char
-                    colour = 0xff8080;
-                    break;
-            }                    
-        }
+            case 26: // dev char
+                colour = 0xff8080;
+                break;
+        }                    
     }
 
     // Is our object an actor?
@@ -210,6 +200,15 @@ void psEntityLabels::SetObjectText(GEMClientObject* object)
     // Grouped with have other color
     if (actor && actor->IsGroupedWith(celClient->GetMainPlayer()))
       colour = 0x0080ff;
+
+    // White colour labels for invisible objects should overide all
+    int flags = object->Flags();
+    bool invisible = flags & psPersistActor::INVISIBLE;
+    
+    if ( invisible )
+    {
+        colour = 0xffffff;                    
+    }
 
     psEffectTextRow nameRow;
     psEffectTextRow guildRow;
@@ -229,7 +228,7 @@ void psEntityLabels::SetObjectText(GEMClientObject* object)
         if ( guild.Length() )
         {
             // If same guild, indicate with color
-            if (guild == guild2)
+            if (guild == guild2 && !invisible)
                 colour = 0xf6dfa6;
 
             guildRow.text = "<" + guild + ">";
