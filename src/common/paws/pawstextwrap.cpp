@@ -309,7 +309,7 @@ bool pawsMultilineEditTextBox::OnMouseUp( int button, int modifiers, int x, int 
 void pawsMultilineEditTextBox::CalcMouseClick( int x, int y, size_t &cursorLine, size_t &cursorChar)
 {
     // Adjust x to be relative to the text box
-    x -= (screenFrame.xmin+4); 
+    x -= screenFrame.xmin; 
 
     //Force the cursor to blink
     blink = true;
