@@ -734,7 +734,10 @@ void psCombatManager::HandleCombatEvent(psCombatGameEvent *event)
     bool skipThisRound = false;
 
     if (!event->GetAttacker() || !event->GetTarget()) // disconnected and deleted
+    {
+        psserver->SendSystemError(event->AttackerCID, "Combat stopped as one participant logged of.");
         return;
+    }
 
     gemActor *gemAttacker = dynamic_cast<gemActor*> ((gemObject *) event->attacker);
     gemActor *gemTarget   = dynamic_cast<gemActor*> ((gemObject *) event->target);
@@ -742,18 +745,35 @@ void psCombatManager::HandleCombatEvent(psCombatGameEvent *event)
     attacker_data=event->GetAttackerData();
     target_data=event->GetTargetData();
 
-    // If the attacker is no longer in attack mode or target is dead, abort.
-    if (attacker_data->GetMode() != PSCHARACTER_MODE_COMBAT || !gemTarget->IsAlive() )
+    // If the attacker is no longer in attack mode abort.
+    if (attacker_data->GetMode() != PSCHARACTER_MODE_COMBAT)
+    {
+        psserver->SendSystemError(event->AttackerCID,
+                "Combat stopped as you left combat mode.");
         return;
-    
+    }
+
+    // If target is dead, abort.
+    if (!gemTarget->IsAlive() )
+    {
+        psserver->SendSystemResult(event->AttackerCID, "Combat stopped as one participant logged of.");
+        return;
+    }
+
     // If the slot is no longer attackable, abort
     if (!attacker_data->Inventory().CanItemAttack(event->GetWeaponSlot()))
+    {
+        psserver->SendSystemError(event->AttackerCID, "Combat stopped as you have no longer an attackable item equipped.");
         return;
-
+    }
+    
     // If the slot next attack time is not yet up, abort (another event sequence should have been started)
     if (attacker_data->GetSlotNextAttackTime(event->GetWeaponSlot()) > csGetTicks())
+    {
+        psserver->SendSystemError(event->AttackerCID, "Combat stopped as you have no longer an item to attack equipped.");
         return;
-
+    }
+    
     psItem* weapon = attacker_data->Inventory().GetEffectiveWeaponInSlot(event->GetWeaponSlot());
 
     // weapon became unwieldable
@@ -798,14 +818,20 @@ void psCombatManager::HandleCombatEvent(psCombatGameEvent *event)
 
         // If the target has changed, abort (assume another combat event has started since we are still in attack mode)
         if (gemTarget != attacker_client->GetTargetObject())
+        {
+            psserver->SendSystemError(event->AttackerCID, "Target changed.");
             return;
+        }
     }
     else
     {
         // Check if the npc's target has changed (if it has, then assume another combat event has started.)
         gemNPC* npcAttacker = dynamic_cast<gemNPC*>(gemAttacker);
         if (npcAttacker && npcAttacker->GetTarget() != gemTarget)
+        {
+            psserver->SendSystemError(event->AttackerCID, "NPC's target changed.");
             return;
+        }
     }
 
     if (attacker_data->IsSpellCasting())
@@ -906,6 +932,10 @@ void psCombatManager::HandleCombatEvent(psCombatGameEvent *event)
     {
 //      CPrintf(CON_DEBUG, "Queueing Slot %d for %s's next combat event.\n",event->GetWeaponSlot(), event->attacker->GetName() );
         QueueNextEvent(event);
+    }
+    else
+    {
+        psserver->SendSystemError(event->AttackerCID, "Item %s is not a auto attack item.",attacker_data->Inventory().GetEffectiveWeaponInSlot(event->GetWeaponSlot())->GetName());
     }
 //    else
 //        CPrintf(CON_DEBUG, "Slot %d for %s not an auto-attack slot.\n",event->GetWeaponSlot(), event->attacker->GetName() );
