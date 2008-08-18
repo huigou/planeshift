@@ -770,7 +770,7 @@ void psCombatManager::HandleCombatEvent(psCombatGameEvent *event)
     // If the slot next attack time is not yet up, abort (another event sequence should have been started)
     if (attacker_data->GetSlotNextAttackTime(event->GetWeaponSlot()) > csGetTicks())
     {
-        psserver->SendSystemError(event->AttackerCID, "Combat stopped as you have no longer an item to attack equipped.");
+        psserver->SendSystemError(event->AttackerCID, "Combat stopped as you have attacked several times.");
         return;
     }
     
@@ -789,6 +789,7 @@ void psCombatManager::HandleCombatEvent(psCombatGameEvent *event)
     if (event->WeaponID != weapon->GetUID())
     {
         Debug2(LOG_COMBAT, gemAttacker->GetClientID(),"%s has changed weapons mid battle", gemAttacker->GetName() );
+        psserver->SendSystemError(event->AttackerCID, "Weapon changed. Skipping");
         skipThisRound = true;
     }
 
