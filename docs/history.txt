@@ -1,6 +1,7 @@
-*** 2008-08-15 by Andreas Heinchen
+*** 2008-08-19 by Andreas Heinchen
 - Fixed FS#2123, patch by weltall
 - Added messages in combat manager to see why attacks are stopped
+- Added check against overlows in quit command, patch by weltall
 
 *** 2008-08-17 by Steven Patrick
 - Changed white labels (invisible) to override guild and group colour labels.
