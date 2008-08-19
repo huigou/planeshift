@@ -201,9 +201,9 @@ void psEntityLabels::SetObjectText(GEMClientObject* object)
     if (actor && actor->IsGroupedWith(celClient->GetMainPlayer()))
       colour = 0x0080ff;
 
-    // White colour labels for invisible objects should overide all
+    // White colour labels for invisible objects should overide all (for living objects)
     int flags = object->Flags();
-    bool invisible = flags & psPersistActor::INVISIBLE;
+    bool invisible = object->IsAlive() && (flags & psPersistActor::INVISIBLE);
     
     if ( invisible )
     {
