@@ -65,7 +65,6 @@ csTicks EventManager::ProcessEventQueue()
 {
     csTicks now = csGetTicks();
 
-    static int lastticks;
     static int lastid;
 
     psGameEvent *event = NULL;
@@ -111,7 +110,6 @@ csTicks EventManager::ProcessEventQueue()
             CPrintf(CON_DEBUG, "Event %d is being processed more than once at time %d!\n",event->id,event->triggerticks);
         }
         lastid    = event->id;
-        lastticks = event->triggerticks;
 
         delete event;
 
