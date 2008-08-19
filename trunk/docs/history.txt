@@ -1,4 +1,7 @@
 *** 2008-08-19 by Andreas Heinchen
+- removed unused var
+
+*** 2008-08-18 by Andreas Heinchen
 - Fixed FS#2123, patch by weltall
 - Added messages in combat manager to see why attacks are stopped
 - Added check against overlows in quit command, patch by weltall
