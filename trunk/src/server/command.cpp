@@ -158,7 +158,7 @@ int com_quit(char *arg)
             uint quit_delay = atoi(arg); //if the user passed a number we will read it
             if (quit_delay) //we have an argument > 0 so let's put an event for server shut down
             {
-                if(quit_delay > pow(256,sizeof(csTicks))/60/1000) 
+                if(quit_delay > pow(256,(double)sizeof(csTicks))/60/1000) 
                 { //input value is too high for the event manager so we have to avoid it
                   //This value is about 71500 minutes commonly and it's calculated from the csticks size
                     CPrintf(CON_CMDOUTPUT, "The specified quit time is too high. Try with a lower value.\n");
