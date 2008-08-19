@@ -1,5 +1,6 @@
 *** 2008-08-19 by Andreas Heinchen
 - removed unused var
+- added some sanity checks to event manager
 
 *** 2008-08-18 by Andreas Heinchen
 - Fixed FS#2123, patch by weltall

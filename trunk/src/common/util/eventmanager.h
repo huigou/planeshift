@@ -42,6 +42,8 @@ protected:
     /** thread main loop */
     virtual void Run ();
     
+    csTicks lastTick;
+    
 public:
     EventManager();
     virtual ~EventManager();
