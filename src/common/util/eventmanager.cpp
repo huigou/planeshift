@@ -38,6 +38,7 @@ EventManager::EventManager()
     // Setting up the static pointer in psGameEvent. Used so
     // that an event can be fired without needing to look up 
     // the event manager first.
+    lastTick = 0;
     psGameEvent::eventmanager = this;
 }
 
@@ -56,6 +57,17 @@ void EventManager::Push(psGameEvent *event)
 
     // This inserts the event into the priority queue, sorted by timestamp
     eventqueue.Insert(event);
+
+    /*check if events are inserted late*/
+    if (event->triggerticks < lastTick)
+    {
+        // yelp and adjust lastTick to avoid wrong warning
+        CPrintf(
+                CON_DEBUG,
+                "Event %d scheduled at %d is being inserted late. Last processed event was scheduled for %d.\n",
+                event->id, event->triggerticks, lastTick);
+        lastTick = event->triggerticks;
+    }
 }
 
 // Process events at least every 250 tick
@@ -84,7 +96,23 @@ csTicks EventManager::ProcessEventQueue()
                 break;
             }
             eventqueue.DeleteMin();
+
+            /*check if events arrive in order*/
+            if (event->triggerticks < lastTick)
+            {
+                /* this should not happen at all */
+                CPrintf(
+                        CON_DEBUG,
+                        "Event %d scheduled at %d is being processed out of order at time %d! Last processed event was scheduled for %d.\n",
+                        event->id, event->triggerticks, now, lastTick);
+            }
+            else
+            {
+                lastTick = event->triggerticks;
+            }
+
         }
+        
 
         csTicks start = csGetTicks();
 
