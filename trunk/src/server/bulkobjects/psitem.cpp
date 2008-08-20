@@ -2506,6 +2506,12 @@ bool psItem::SendItemDescription( Client *client)
         itemInfo += armor_type;
     }
 
+    // Item is a container
+    if(GetIsContainer())
+    {
+    	itemInfo += csString().Format("\nCapacity: %d", GetContainerMaxSize());
+    }
+    
     if (strcmp(GetDescription(),"0") != 0)
     {
         itemInfo += "\n\nDescription: ";
