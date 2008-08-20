@@ -36,8 +36,8 @@
 // Local Includes
 //=============================================================================
 
-#define MAX_SKILL 200
-#define MAX_STAT  400
+#define MAX_SKILL 5000
+#define MAX_STAT  5000
 
 enum PSSKILL {
     PSSKILL_NONE            =   -1,
