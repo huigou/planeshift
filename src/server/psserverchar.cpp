@@ -1044,19 +1044,7 @@ void psServerCharManager::HandleMerchantView(psGUIMerchantMessage& msg, Client *
             return;
         }
 
-        // check for container items
-        if (item->GetIsContainer())
-        {
-            // FIXME: I don't think you want to open the container window
-            //        when buying an empty container.  We also don't want
-            //        to allow selling non-empty containers...they probaly
-            //        shouldn't even appear in the list...
-            item->SendContainerContents(client);
-        }
-        else
-        {
-            item->SendItemDescription(client);
-        }
+        item->SendItemDescription(client);
     }
 }
 
