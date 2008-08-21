@@ -19,8 +19,7 @@
 #include <psconfig.h>
 
 #include <csutil/sysfunc.h>  // csTicks def
-
-
+#include <csutil/threading/atomicops.h>
 
 #include "util/gameevent.h"
 #include "util/eventmanager.h"
@@ -41,9 +40,9 @@ psGameEvent::psGameEvent(csTicks ticks,int offsetticks, const char* newType)
     {
         triggerticks = csGetTicks() + offsetticks;
     }
-    
+
     strcpy(type,newType);
-    id = ++nextid;
+    id =  CS::Threading::AtomicOperations::Increment(&nextid);
     valid = true;
 }
 
