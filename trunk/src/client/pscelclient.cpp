@@ -1682,13 +1682,13 @@ bool GEMClientActor::SetAnimation(const char* anim, int duration)
     int animation = cal3dstate->FindAnim(anim);
     if (animation < 0)
     {
-        Error3("Didn't find animation '%s' for '%s.",anim , GetName());
+        Error3("Didn't find animation '%s' for '%s'.",anim , GetName());
         return false;
     }
     
     if (!cal3dstate->GetCal3DModel()->getCoreModel()->getCoreAnimation(animation))
     {
-        Error3("Could not get core animation '%s' for '%s.",anim , GetName());
+        Error3("Could not get core animation '%s' for '%s'.",anim , GetName());
         return false;
     }
 

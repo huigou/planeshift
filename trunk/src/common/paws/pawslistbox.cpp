@@ -511,6 +511,11 @@ bool pawsListBox::Select( pawsListBoxRow* row, bool notify)
         topRow=(selected-numberOfRows)+1;
 
     CalculateDrawPositions();
+       
+    if ( scrollBar )
+    {
+       scrollBar->SetCurrentValue( (float)topRow );
+    }
     
     if (notify)
         SendOnListAction(LISTBOX_HIGHLIGHTED);
@@ -604,12 +609,13 @@ void pawsListBox::CalculateDrawPositions()
        
     size_t numberOfRows = screenFrame.Height() / columnDef[0].height - offset;
 
-    //Hide all rows to start with then figure out which ones to draw.
-    for ( size_t x = 0; x < rows.GetSize(); x++ )
-        rows[x]->Hide();
-    
     size_t row = topRow;
 
+    //Hide all rows till the one which will be drawn
+    for ( size_t x = 0; x < row; x++ )
+        rows[x]->Hide();
+    
+    //figure out which ones to draw and position them
     for ( size_t z = 0; z < numberOfRows; z++ )
     {
         if ( row < rows.GetSize() )
@@ -633,6 +639,10 @@ void pawsListBox::CalculateDrawPositions()
             break;
     }
 
+    //hide the last rows we don't see
+    for (size_t x = row; x < rows.GetSize(); x++ )
+        rows[x]->Hide();
+        
     if (scrollBar)
     {
         if (rows.GetSize() > numberOfRows)

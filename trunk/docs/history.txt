@@ -1,5 +1,5 @@
 *** 2008-08-21 by Andreas Heinchen
-- fixed FS#2125, patch by weltall
+- fixed FS#2125, FS#2169 patch by weltall
 - fixed FS#2133
 - moved construction of netmanager/eventmanager into the respective thread to avoid false positives in valgrind's helgrind
 
