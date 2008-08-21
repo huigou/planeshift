@@ -96,7 +96,10 @@ protected:
     int gameTimeYear;
 
     csArray<psWeatherGameEvent*> ignored; // Used for overriding commands like /rain
-    csArray<psWeatherGameEvent*> events; // Ugly, but we need a copy of our events    
+    
+    CS::Threading::Mutex eventsMutex;
+    csArray<psWeatherGameEvent*> events; // Ugly, but we need a copy of our events
+    
 };
 
 /**
