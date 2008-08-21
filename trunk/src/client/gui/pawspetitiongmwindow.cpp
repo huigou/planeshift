@@ -567,7 +567,7 @@ void pawsPetitionGMWindow::AddPetitions(csArray<psPetitionInfo> &petitions)
         selectedPet.status =          petitionList->GetTextCellValue(selRow, PGMCOL_STATUS);
         selectedPet.created =         petitionList->GetTextCellValue(selRow, PGMCOL_CREATED);
         selectedPet.petition =        petitionList->GetTextCellValue(selRow, PGMCOL_PETITION);
-        selectedPet.online =          petitionList->GetTextCellValue(selRow, PGMCOL_ONLINE) != 0;
+        selectedPet.online =          petitionList->GetTextCellValue(selRow, PGMCOL_ONLINE) == "yes";
     }
     else
     {
