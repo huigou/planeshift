@@ -54,9 +54,10 @@
 // Redisplay network server stats every 60 seconds
 #define STATDISPLAYCHECK 60000
 
-NetManager::NetManager()
+NetManager::NetManager(csRef<CS::Threading::Thread> _thread)
     : NetBase (1000),stop_network(false)
 {
+    thread=_thread;
     port=0;
 }
 
@@ -80,13 +81,72 @@ bool NetManager::Initialize(int client_firstmsg, int npcclient_firstmsg, int tim
     if (!clients.Initialize())
         return false;
 
-    thread.AttachNew( new CS::Threading::Thread(this, true) );
-    if (!thread->IsRunning())
-        return false;
-
     SetMsgStrings(CacheManager::GetSingleton().GetMsgStrings());
 
     return true;
+}
+
+class ServerStarter : public CS::Threading::Runnable
+{
+public:
+    csRef<NetManager> netManager;
+    csRef<CS::Threading::Thread> thread;
+    CS::Threading::Mutex doneMutex;
+    CS::Threading::Condition initDone;
+    int client_firstmsg;
+    int npcclient_firstmsg;
+    int timeout;
+
+
+    ServerStarter(int _client_firstmsg, int _npcclient_firstmsg, int _timeout)
+    {
+        client_firstmsg = _client_firstmsg;
+        npcclient_firstmsg = _npcclient_firstmsg;
+        timeout = _timeout;
+    }
+
+    void Run()
+    {
+        {
+            CS::Threading::MutexScopedLock lock (doneMutex);
+            // construct the netManager is its own thread to avoid wrong warnings of dynamic thread checking via valgrind
+            netManager.AttachNew(new NetManager(thread));
+            if (!netManager->Initialize(client_firstmsg, npcclient_firstmsg,
+                    timeout))
+            {
+                Error1 ("Network thread initialization failed!\nIs there already a server running?");
+                delete netManager;
+                netManager = NULL;
+                initDone.NotifyAll();
+                return;
+            }
+            initDone.NotifyAll();
+        }
+
+        /* run the network loop */
+        netManager->Run();
+    }
+};
+
+NetManager* NetManager::Create(int client_firstmsg, int npcclient_firstmsg, int timeout)
+{
+    csRef<ServerStarter> serverStarter;
+    serverStarter.AttachNew (new ServerStarter(client_firstmsg, npcclient_firstmsg, timeout));
+    csRef<CS::Threading::Thread> thread;
+    thread.AttachNew (new CS::Threading::Thread (serverStarter));
+    serverStarter->thread = thread;
+    thread->Start();
+    
+    if (!thread->IsRunning()) {
+        return NULL;        
+    }
+
+    // wait for initialization to be finished
+    {
+        CS::Threading::MutexScopedLock lock (serverStarter->doneMutex);
+        serverStarter->initDone.Wait(serverStarter->doneMutex);
+    }
+    return serverStarter->netManager;
 }
 
 bool NetManager::HandleUnknownClient (LPSOCKADDR_IN addr, MsgEntry* me)

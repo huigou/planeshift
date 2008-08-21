@@ -348,13 +348,9 @@ bool psServer::Initialize(iObjectRegistry* object_reg)
 
     // Start Network Thread
 
-    serverthread=new NetManager;
-    if (!serverthread->Initialize(MSGTYPE_PREAUTHENTICATE,MSGTYPE_NPCAUTHENT))
+    serverthread=NetManager::Create(MSGTYPE_PREAUTHENTICATE,MSGTYPE_NPCAUTHENT);
+    if (!serverthread)
     {
-        Error1 ("Network thread initialization failed!\n");
-        Error1 ("Is there already a server running?\n");
-        delete serverthread;
-        serverthread = NULL;
         return false;
     }
 
