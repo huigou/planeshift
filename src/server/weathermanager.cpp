@@ -213,8 +213,10 @@ void WeatherManager::QueueNextEvent(int delayticks,
                                    si,
                                    clientnum,
                                    r,g,b);
-
-    events.Push(event);
+    {
+        CS::Threading::MutexScopedLock lock (eventsMutex);
+        events.Push(event);
+    }
     psserver->GetEventManager()->Push(event);
 }
 
@@ -233,7 +235,10 @@ void WeatherManager::BroadcastGameTime()
 
 void WeatherManager::HandleWeatherEvent(psWeatherGameEvent *event)
 {
-    events.Delete(event); // Delete this from our "db"
+    {
+        CS::Threading::MutexScopedLock lock (eventsMutex);
+        events.Delete(event); // Delete this from our "db"
+    }
 
     // See if we want to ignore this event
     for(size_t i = 0; i < ignored.GetSize();i++)
@@ -341,22 +346,26 @@ void WeatherManager::HandleWeatherEvent(psWeatherGameEvent *event)
             // Simple case is when event types are equal. In addition we have to test
             // for the mutal exclusive case where we are changing from snow to rain or
             // rain to snow.
-            for(size_t i = 0; i < events.GetSize();i++)
+            
             {
-                psWeatherGameEvent* evt = events[i];
-                if(evt->sector == event->sector && 
-                   (evt->type == event->type || ((evt->type==psWeatherMessage::RAIN||
-                                                  evt->type==psWeatherMessage::SNOW)&&
-                                                 (event->type==psWeatherMessage::RAIN||
-                                                  event->type==psWeatherMessage::SNOW))))
+                CS::Threading::MutexScopedLock lock (eventsMutex);
+                for (size_t i = 0; i < events.GetSize(); i++)
                 {
-                    ignored.Push(evt); // Ignore when the eventmanager handles the event
-                    events.DeleteIndex(i);
-                    i--;
-
-                    Notify4(LOG_WEATHER,"Removed disturbing event for sector '%s' (%d,%d)",
-                            evt->sector.GetData(),evt->value,evt->duration);
-
+                    psWeatherGameEvent* evt = events[i];
+                    if (evt->sector == event->sector && (evt->type == event->type
+                            || ((evt->type == psWeatherMessage::RAIN || evt->type
+                                    == psWeatherMessage::SNOW) && (event->type
+                                    == psWeatherMessage::RAIN || event->type
+                                    == psWeatherMessage::SNOW))))
+                    {
+                        ignored.Push(evt); // Ignore when the eventmanager handles the event
+                        events.DeleteIndex(i);
+                        i--;
+    
+                        Notify4(LOG_WEATHER,"Removed disturbing event for sector '%s' (%d,%d)",
+                                evt->sector.GetData(),evt->value,evt->duration);
+    
+                    }
                 }
             }
 
