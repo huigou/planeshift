@@ -1,6 +1,7 @@
 *** 2008-08-21 by Andreas Heinchen
 - fixed FS#2125, patch by weltall
 - fixed FS#2133
+- moved construction of netmanager into the netmanaging thread to avoid false positives in valgrind's helgrind
 
 *** 2008-08-20 by Andreas Heinchen
 - fixed FS#1630, patch by peeg

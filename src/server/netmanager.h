@@ -45,7 +45,7 @@
 class NetManager : public NetBase, public CS::Threading::Runnable
 {
 public:
-    NetManager();
+    NetManager(csRef<CS::Threading::Thread> _thread);
     ~NetManager();
 
     /** Initialize the network thread.
@@ -62,6 +62,8 @@ public:
      * @return Returns success or faliure for initializing.
      */
     bool Initialize(int client_firstmsg, int npcclient_firstmsg, int timeout=15000);
+    
+    static NetManager* Create(int client_firstmsg, int npcclient_firstmsg, int timeout=15000);
 
     /** This broadcasts the same msg out to a bunch of Clients.  
      * Which clients recieve this message, depend on the scope.DON'T use this
@@ -133,6 +135,14 @@ public:
      */
     virtual bool SendMessage (MsgEntry* me);
 
+    /** This is the main thread function.
+     * If it hasn't been initialized it waits until the server is ready to go
+     * (i.e. is initialized) if so then it sits in a loop where it calls
+     * NetBase::ProcessNetwork() and also checks all the dead links. This
+     * method also calculates the data transfer rate.
+     */
+    void Run ();
+
 protected:
 
     /** Returns a NetManager::Connection from the given IP address.
@@ -172,23 +182,6 @@ private:
      * This cycles through set of pkts awaiting ack and resends old ones.
      */
     void CheckResendPkts(void);
-
-    /** This is the main thread function.
-     * If it hasn't been initialized it waits until the server is ready to go
-     * (i.e. is initialized) if so then it sits in a loop where it calls
-     * NetBase::ProcessNetwork() and also checks all the dead links. This
-     * method also calculates the data transfer rate.
-     */
-    void Run ();
-
-
-    // These 2 are stupid defs in csRunnable which aren't used anyway
-    virtual void IncRef ()
-    { }
-    virtual void DecRef ()
-    { }
-    
-    virtual int GetRefCount() { return 1; }
 
     csRef<CS::Threading::Thread> thread;
    
