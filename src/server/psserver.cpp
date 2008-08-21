@@ -375,15 +375,12 @@ bool psServer::Initialize(iObjectRegistry* object_reg)
     // both messages and events. For backward compablility
     // we still store two points. But they are one object
     // and one thread.
-    eventmanager = csPtr<EventManager>( new EventManager );
+    eventmanager = EventManager::Create(serverthread, 1000);
+    if (!eventmanager)
+        return false;
 
     // This gives access to msghandler to all message types
     psMessageCracker::msghandler = eventmanager;
-
-    if (!eventmanager->Initialize(serverthread, 1000))
-        return false;                // Attach to incoming messages.
-    if (!eventmanager->StartThread() )
-        return false;
 
     Debug1(LOG_STARTUP,0,"Started Event Manager Thread\n");
 
