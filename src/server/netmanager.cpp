@@ -135,15 +135,16 @@ NetManager* NetManager::Create(int client_firstmsg, int npcclient_firstmsg, int 
     csRef<CS::Threading::Thread> thread;
     thread.AttachNew (new CS::Threading::Thread (serverStarter));
     serverStarter->thread = thread;
-    thread->Start();
-    
-    if (!thread->IsRunning()) {
-        return NULL;        
-    }
 
     // wait for initialization to be finished
     {
         CS::Threading::MutexScopedLock lock (serverStarter->doneMutex);
+        thread->Start();
+        
+        if (!thread->IsRunning()) {
+            return NULL;        
+        }
+
         serverStarter->initDone.Wait(serverStarter->doneMutex);
     }
     return serverStarter->netManager;
