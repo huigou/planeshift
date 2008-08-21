@@ -39,15 +39,18 @@ protected:
     CS::Threading::Mutex runmutex;
     int runstate;
 
-    /** thread main loop */
-    virtual void Run ();
-    
     csTicks lastTick;
     
 public:
+    EventManager(csRef<CS::Threading::Thread> _thread);
     EventManager();
     virtual ~EventManager();
 
+    /** thread main loop */
+    virtual void Run ();
+
+    static csRef<EventManager> Create(NetBase* netBase, int queuelen);
+    
     /// Add new event to scheduler queue.
     void Push(psGameEvent *event);
 

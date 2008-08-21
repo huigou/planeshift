@@ -86,7 +86,7 @@ bool NetManager::Initialize(int client_firstmsg, int npcclient_firstmsg, int tim
     return true;
 }
 
-class ServerStarter : public CS::Threading::Runnable
+class NetManagerStarter : public CS::Threading::Runnable
 {
 public:
     csRef<NetManager> netManager;
@@ -98,7 +98,7 @@ public:
     int timeout;
 
 
-    ServerStarter(int _client_firstmsg, int _npcclient_firstmsg, int _timeout)
+    NetManagerStarter(int _client_firstmsg, int _npcclient_firstmsg, int _timeout)
     {
         client_firstmsg = _client_firstmsg;
         npcclient_firstmsg = _npcclient_firstmsg;
@@ -130,24 +130,24 @@ public:
 
 NetManager* NetManager::Create(int client_firstmsg, int npcclient_firstmsg, int timeout)
 {
-    csRef<ServerStarter> serverStarter;
-    serverStarter.AttachNew (new ServerStarter(client_firstmsg, npcclient_firstmsg, timeout));
+    csRef<NetManagerStarter> netManagerStarter;
+    netManagerStarter.AttachNew (new NetManagerStarter(client_firstmsg, npcclient_firstmsg, timeout));
     csRef<CS::Threading::Thread> thread;
-    thread.AttachNew (new CS::Threading::Thread (serverStarter));
-    serverStarter->thread = thread;
+    thread.AttachNew (new CS::Threading::Thread (netManagerStarter));
+    netManagerStarter->thread = thread;
 
     // wait for initialization to be finished
     {
-        CS::Threading::MutexScopedLock lock (serverStarter->doneMutex);
+        CS::Threading::MutexScopedLock lock (netManagerStarter->doneMutex);
         thread->Start();
         
         if (!thread->IsRunning()) {
             return NULL;        
         }
 
-        serverStarter->initDone.Wait(serverStarter->doneMutex);
+        netManagerStarter->initDone.Wait(netManagerStarter->doneMutex);
     }
-    return serverStarter->netManager;
+    return netManagerStarter->netManager;
 }
 
 bool NetManager::HandleUnknownClient (LPSOCKADDR_IN addr, MsgEntry* me)
