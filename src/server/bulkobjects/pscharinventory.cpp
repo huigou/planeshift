@@ -60,6 +60,7 @@ psCharacterInventory::psCharacterInventory(psCharacter *ownr)
         equipment[i].default_if_empty  = NULL;
         equipment[i].itemIndexEquipped = 0;
         equipment[i].NextSwingTime     = 0;
+        equipment[i].eventId           = 0;
         equipment[i].EquipmentFlags    = 0x00000000;
     }
 
@@ -347,6 +348,7 @@ void psCharacterInventory::Equip(psItem *item)
     CS_ASSERT(itemIndex != SIZET_NOT_FOUND);
     equipment[item->GetLocInParent()].itemIndexEquipped = itemIndex;
     equipment[item->GetLocInParent()].NextSwingTime = 0;
+    equipment[item->GetLocInParent()].eventId = 0;
 
     psserver->GetCharManager()->SendOutPlaySoundMessage(fromClient->GetClientNum(), item->GetSound(), "equip");
     psserver->GetCharManager()->SendOutEquipmentMessages(actor, item->GetLocInParent(false), item, psEquipmentMessage::EQUIP);
