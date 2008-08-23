@@ -458,6 +458,7 @@ void psCombatManager::QueueNextEvent(gemObject *attacker,INVENTORY_SLOT_NUMBER w
                                   attackerCID,
                                   targetCID,
                                   previousResult);
+    event->GetAttackerData()->TagEquipmentObject(weaponslot,event->id);
 
     psserver->GetEventManager()->Push(event);
 }
@@ -767,13 +768,22 @@ void psCombatManager::HandleCombatEvent(psCombatGameEvent *event)
         return;
     }
     
-    // If the slot next attack time is not yet up, abort (another event sequence should have been started)
-    if (attacker_data->GetSlotNextAttackTime(event->GetWeaponSlot()) > csGetTicks())
+    if (attacker_data->Inventory().GetEquipmentObject(event->GetWeaponSlot()).eventId != event->id)
     {
-        psserver->SendSystemError(event->AttackerCID, "Combat stopped as you have attacked several times.");
+        psserver->SendSystemError(event->AttackerCID, "Ignored combat event as newer is in.");
         return;
     }
-    
+
+	// If the slot next attack time is not yet up, yelp (another event sequence should have been started,
+    // but is not according to event ids)
+    csTicks scheduled = attacker_data->GetSlotNextAttackTime(event->GetWeaponSlot());
+    csTicks now = csGetTicks();
+    if (scheduled > now)
+    {
+        csTicks triggerTicks = event->triggerticks;
+        Error4("combatEvent returned to soon. scheduled for %d, arrived at %d, shoult be triggered at %d.", scheduled, now, triggerTicks);
+    }
+   
     psItem* weapon = attacker_data->Inventory().GetEffectiveWeaponInSlot(event->GetWeaponSlot());
 
     // weapon became unwieldable

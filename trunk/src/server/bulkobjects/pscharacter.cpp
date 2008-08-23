@@ -2079,6 +2079,7 @@ void psCharacter::ResetSwings(csTicks timeofattack)
         if (Weapon !=NULL)
         {
             inventory.GetEquipmentObject((INVENTORY_SLOT_NUMBER)slot).NextSwingTime=csTicks(timeofattack+ (Weapon->GetLatency() * 1000.0f));
+            inventory.GetEquipmentObject((INVENTORY_SLOT_NUMBER)slot).eventId=0;
         }
     }
 }
@@ -2105,6 +2106,28 @@ void psCharacter::NotifyAttackPerformed(INVENTORY_SLOT_NUMBER slot,csTicks timeo
         CombatDrain(slot);
 }
 
+void psCharacter::TagEquipmentObject(INVENTORY_SLOT_NUMBER slot,int eventId)
+{
+    psItem *Weapon;
+
+    // Slot out of range
+    if (slot<0 || slot>=PSCHARACTER_SLOT_BULK1)
+        return;
+
+    // TODO: Reduce ammo if this is an ammunition using weapon
+
+    // Reset next attack time
+    Weapon=Inventory().GetEffectiveWeaponInSlot(slot);
+
+    if (Weapon!=NULL)
+        inventory.GetEquipmentObject(slot).eventId = eventId;
+
+    //drain stamina on player attacks
+    //if(actor->GetClientID() && !actor->nevertired)
+    //    CombatDrain(slot);
+}
+
+
 csTicks psCharacter::GetSlotNextAttackTime(INVENTORY_SLOT_NUMBER slot)
 {
     // Slot out of range
@@ -2114,6 +2137,14 @@ csTicks psCharacter::GetSlotNextAttackTime(INVENTORY_SLOT_NUMBER slot)
     return inventory.GetEquipmentObject(slot).NextSwingTime;
 }
 
+int psCharacter::GetSlotEventId(INVENTORY_SLOT_NUMBER slot)
+{
+    // Slot out of range
+    if (slot<0 || slot>=PSCHARACTER_SLOT_BULK1)
+        return 0;
+
+    return inventory.GetEquipmentObject(slot).eventId;
+}
 
 // AVPRO= attack Value progression (this is to change the progression of all the calculation in AV for now it is equal to 1)
 #define AVPRO 1

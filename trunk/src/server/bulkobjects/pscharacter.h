@@ -160,16 +160,6 @@ enum PSCHARACTER_CUSTOM
     PSCHARACTER_CUSTOM_COUNT
 };
 
-
-typedef struct
-{
-    unsigned int EquipmentFlags;
-    csTicks NextSwingTime;
-    psItem *item;
-    psItem *default_if_empty;
-} EQUIPMENTDATA_TYPE;
-
-
 #define PSQUEST_DELETE   'D'
 #define PSQUEST_ASSIGNED 'A'
 #define PSQUEST_COMPLETE 'C'
@@ -980,6 +970,8 @@ public:
     void ResetSwings(csTicks timeofattack);
     void NotifyAttackPerformed(INVENTORY_SLOT_NUMBER slot,csTicks timeofattack);
     csTicks GetSlotNextAttackTime(INVENTORY_SLOT_NUMBER slot);
+    void TagEquipmentObject(INVENTORY_SLOT_NUMBER slot,int eventId);
+    int GetSlotEventId(INVENTORY_SLOT_NUMBER slot);
 
     void SetCombatStance(const Stance& stance);
     const Stance& GetCombatStance() { return combat_stance; }

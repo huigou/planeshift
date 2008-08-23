@@ -1,3 +1,6 @@
+*** 2008-08-23 by Andreas Heinchen
+- check for psCombatGameEvents based on event ids instead of timing
+
 *** 2008-08-21 by Andreas Heinchen
 - fixed FS#2125, FS#2169 patch by weltall
 - fixed FS#2133

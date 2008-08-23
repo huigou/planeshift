@@ -109,6 +109,7 @@ protected:
     {
         unsigned int EquipmentFlags;
         csTicks      NextSwingTime;
+        int          eventId;
         size_t       itemIndexEquipped;
         psItem      *default_if_empty;
     };
