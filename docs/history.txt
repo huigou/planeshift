@@ -2,6 +2,7 @@
 - changed small flaw in eventManagers timing
 - code cleansups and simplifications
 - fixed complier warnings, patch by boite
+- increasing max. quality degeneration on repair
 
 *** 2008-08-24 by Mike Gist
 - FS#477, patch from Kaerli.
