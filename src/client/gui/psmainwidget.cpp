@@ -364,13 +364,13 @@ bool psMainWidget::OnMouseDown( int button, int keyModifier, int x, int y )
 
         // Unlock mouse look if a matching key was pressed
         const psControl* mouseLook = psengine->GetCharControl()->GetTrigger("MouseLook");
-        if(mouseLook->button==button && mouseLook->mods==keyModifier)
+        if(mouseLook->button==(uint)button && mouseLook->mods==(uint)keyModifier)
         {
             psengine->GetCharControl()->GetMovementManager()->MouseLookCanAct(true);
         }
 
         const psControl* mouseLookToggle = psengine->GetCharControl()->GetTrigger("Toggle MouseLook");
-        if(mouseLookToggle->button==button && mouseLookToggle->mods==keyModifier)
+        if(mouseLookToggle->button==(uint)button && mouseLookToggle->mods==(uint)keyModifier)
         {
             psengine->GetCharControl()->GetMovementManager()->MouseLookCanAct(true);
         }

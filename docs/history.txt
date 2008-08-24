@@ -1,6 +1,7 @@
 *** 2008-08-24 by Andreas Heinchen
 - changed small flaw in eventManagers timing
 - code cleansups and simplifications
+- fixed complier warnings, patch by boite
 
 *** 2008-08-24 by Mike Gist
 - FS#477, patch from Kaerli.
