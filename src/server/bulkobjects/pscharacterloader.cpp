@@ -31,7 +31,6 @@
 //=============================================================================
 #include "util/log.h"
 #include "util/gameevent.h"
-#include "util/eventmanager.h"
 #include "util/psdatabase.h"
 
 #include "rpgrules/factions.h"

@@ -29,7 +29,6 @@
 // Project Includes
 //=============================================================================
 #include "util/serverconsole.h"
-#include "util/eventmanager.h"
 #include "util/pserror.h"
 #include "util/log.h"
 

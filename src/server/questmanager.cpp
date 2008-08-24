@@ -33,6 +33,7 @@
 #include "util/strutil.h"
 #include "util/psxmlparser.h"
 #include "util/psdatabase.h"
+#include "util/eventmanager.h"
 
 #include "bulkobjects/pscharacterloader.h"
 #include "bulkobjects/psitem.h"

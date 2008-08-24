@@ -29,8 +29,6 @@
 #include "net/messages.h"            // Message definitions
 #include "net/msghandler.h"         // Network access
 
-#include "util/eventmanager.h"
-
 #include "bulkobjects/psquest.h"
 
 //=============================================================================

@@ -1,7 +1,7 @@
 /*
  * combatmanager.cpp
  *
- * Coptright (C) 2001-2002 Atomic Blue (info@planeshift.it, http://www.atomicblue.org) 
+ * Copyright (C) 2001-2002 Atomic Blue (info@planeshift.it, http://www.atomicblue.org) 
  *
  *
  * This program is free software; you can redistribute it and/or
@@ -19,43 +19,24 @@
 
 #include <psconfig.h>
 //=============================================================================
-// Crystal Space Includes
-//=============================================================================
-#include <csutil/xmltiny.h>
-
-//=============================================================================
 // Project Includes
 //=============================================================================
-#include "net/msghandler.h"
-#include "net/messages.h"
-
 #include "util/eventmanager.h"
 #include "util/location.h"
 #include "util/mathscript.h"
-#include "util/serverconsole.h"
 
 #include "engine/psworld.h"
-
-#include "bulkobjects/psitem.h"
 
 //=============================================================================
 // Local Includes
 //=============================================================================
-#include "psserver.h"
-#include "playergroup.h"
 #include "events.h"
 #include "gem.h"
 #include "entitymanager.h"
-#include "psproxlist.h"
-#include "spawnmanager.h"
-#include "progressionmanager.h"
-#include "groupmanager.h"
 #include "npcmanager.h"
 #include "combatmanager.h"
 #include "netmanager.h"
-#include "client.h"
 #include "globals.h"
-#include "cachemanager.h"
 #include "psserverchar.h"
 
 /// This #define determines how far away people will get detailed combat events.
@@ -71,7 +52,7 @@
  * time.  Other events (like equiping items, removing items, spell effects, etc)
  * may alter this time.
  *
- * When a combat event fires, the first task is to check wether the action can actually
+ * When a combat event fires, the first task is to check whether the action can actually
  * occur at this time.  If it cannot, the event should not create another event since
  * the action that caused the "delay" or "acceleration" change should have created its 
  * own event.
@@ -92,18 +73,18 @@ public:
     int AttackerCID;                 ///< ClientID of attacker
     INVENTORY_SLOT_NUMBER WeaponSlot; ///< Identifier of the slot for which this attack event should process
     uint32 WeaponID;                 ///< UID of the weapon used for this attack event
-    float AttackValue;               ///< Measure of quality of attack ability
-    float AttackRoll;                ///< Randomized attack value.  Used for
-    float DefenseRoll;               ///< Randomized defense effectiveness this event
-    float DodgeValue;                ///< Measure of quality of dodge ability of target
-    float BlockValue;                ///< Quality of blocking ability of all weapons target has
-    float CounterBlockValue;         ///< Dificulty of blocking attacking weapon
-    float QualityOfHit;              ///< How much of attack remains after shield protection
-    float BaseHitDamage;             ///< Hit damage without taking armor into account.
+    //float AttackValue;               ///< Measure of quality of attack ability
+    //float AttackRoll;                ///< Randomized attack value.  Used for
+    //float DefenseRoll;               ///< Randomized defense effectiveness this event
+    //float DodgeValue;                ///< Measure of quality of dodge ability of target
+    //float BlockValue;                ///< Quality of blocking ability of all weapons target has
+    //float CounterBlockValue;         ///< Difficulty of blocking attacking weapon
+    //float QualityOfHit;              ///< How much of attack remains after shield protection
+    //float BaseHitDamage;             ///< Hit damage without taking armor into account.
     INVENTORY_SLOT_NUMBER AttackLocation;  ///< Which slot should we check the armor of?
-    float ArmorDamageAdjustment;     ///< How much does armor in the struck spot help?
-    float FinalBaseDamage;           ///< Resulting damage after armor adjustment
-    float DamageMods;                ///< Magnifiers on damage for magic effects, etc.
+    //float ArmorDamageAdjustment;     ///< How much does armor in the struck spot help?
+    //float FinalBaseDamage;           ///< Resulting damage after armor adjustment
+    //float DamageMods;                ///< Magnifiers on damage for magic effects, etc.
     float FinalDamage;               ///< Final damage applied to target
 
     int   AttackResult;              ///< Code indicating the result of the attack attempt
@@ -153,7 +134,6 @@ public:
 
 protected:
     psCombatManager *combatmanager;
-    int action;    
 };
 
 psCombatManager::psCombatManager() : pvp_region(NULL)
@@ -723,9 +703,6 @@ void psCombatManager::ApplyCombatEvent(psCombatGameEvent *event, int attack_resu
                     StopAttack(dynamic_cast<gemActor*>((gemObject *) event->attacker));  // if you run out of ammo, you exit attack mode
             }
     }
-
-    // Notify that the attack took place
-    attacker_data->NotifyAttackPerformed(event->GetWeaponSlot(),csGetTicks());
 }
 
 void psCombatManager::HandleCombatEvent(psCombatGameEvent *event)
@@ -772,16 +749,6 @@ void psCombatManager::HandleCombatEvent(psCombatGameEvent *event)
     {
         psserver->SendSystemError(event->AttackerCID, "Ignored combat event as newer is in.");
         return;
-    }
-
-	// If the slot next attack time is not yet up, yelp (another event sequence should have been started,
-    // but is not according to event ids)
-    csTicks scheduled = attacker_data->GetSlotNextAttackTime(event->GetWeaponSlot());
-    csTicks now = csGetTicks();
-    if (scheduled > now)
-    {
-        csTicks triggerTicks = event->triggerticks;
-        Error4("combatEvent returned to soon. scheduled for %d, arrived at %d, shoult be triggered at %d.", scheduled, now, triggerTicks);
     }
    
     psItem* weapon = attacker_data->Inventory().GetEffectiveWeaponInSlot(event->GetWeaponSlot());
@@ -1088,7 +1055,6 @@ psCombatGameEvent::psCombatGameEvent(psCombatManager *mgr,
   : psGameEvent(0,delayticks,"psCombatGameEvent")
 {
     combatmanager  = mgr;
-    action         = act;
     this->attacker = attacker;
     this->WeaponSlot = weaponslot;
     this->WeaponID = weapon;
@@ -1106,17 +1072,7 @@ psCombatGameEvent::psCombatGameEvent(psCombatManager *mgr,
     if (!attackerdata || !targetdata)
         return;
 
-    AttackValue=-1;      
-    AttackRoll=-1;
-    DefenseRoll=-1;
-    DodgeValue=-1;
-    BlockValue=-1;       
-    QualityOfHit=-1;     
-    BaseHitDamage=-1;    
     AttackLocation=PSCHARACTER_SLOT_NONE;   
-    ArmorDamageAdjustment=-1;
-    FinalBaseDamage=-1;  
-    DamageMods=-1;       
     FinalDamage=-1;
     AttackResult=ATTACK_NOTCALCULATED;
     PreviousAttackResult=previousResult;

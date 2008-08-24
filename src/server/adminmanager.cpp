@@ -73,7 +73,6 @@
 #include "psserver.h"
 #include "usermanager.h"
 #include "cachemanager.h"
-#include "combatmanager.h"
 #include "netmanager.h"
 #include "npcmanager.h"
 #include "psserverchar.h"

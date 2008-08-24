@@ -41,6 +41,7 @@
 
 #include "util/command.h"
 #include "util/serverconsole.h"
+#include "util/eventmanager.h"
 #include "net/messages.h"
 #include "globals.h"
 #include "psserver.h"
