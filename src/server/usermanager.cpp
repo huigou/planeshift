@@ -1300,44 +1300,79 @@ void UserManager::RollDice(psUserCmdMessage& msg,Client *client,int clientnum)
 {
     int total=0;
 
-    if (msg.dice > 10)
-        msg.dice = 10;
+    if (msg.dice > 100)
+        msg.dice = 100;
     if (msg.sides > 10000)
         msg.sides = 10000;
+		if (msg.target > msg.sides)
+				msg.target = msg.sides;
 
-    if ( msg.dice < 1 )
+    if (msg.dice < 1)
         msg.dice = 1;
-    if ( msg.sides < 1 )
+    if (msg.sides < 1)
         msg.sides = 1;
+		if (msg.target < 0)
+				msg.target = 0;
 
     for (int i = 0; i<msg.dice; i++)
     {
         // must use msg.sides instead of msg.sides-1 because rand never actually
         // returns max val, and int truncation never results in max val as a result
-        total = total + psserver->rng->Get(msg.sides) + 1;
+				if (msg.target)
+						total += ((psserver->rng->Get(msg.sides) + 1 >= msg.target)? 1: 0);
+				else
+						total = total + psserver->rng->Get(msg.sides) + 1;
     }
+		if (msg.target)
+		{
+				if (msg.dice > 1)
+				{
+						psSystemMessage newmsg(clientnum,MSG_INFO_BASE,
+								"Player %s has rolled %d %d-sided dice and had %d of them come up %d or greater.",
+								client->GetName(),
+								msg.dice,
+								msg.sides,
+								total,
+								msg.target);
 
-    if (msg.dice > 1)
-    {
-        psSystemMessage newmsg(clientnum,MSG_INFO_BASE,
-            "Player %s has rolled %d %d-sided dice for a %d.",
-            client->GetName(),
-            msg.dice,
-            msg.sides,
-            total);
+						newmsg.Multicast(client->GetActor()->GetMulticastClients(),0, 10);
+				}
+				else
+				{
+						psSystemMessage newmsg(clientnum,MSG_INFO_BASE,((total)?
+								"Player %s has rolled a %d-sided dice and had it come up %d or greater.":
+								"Player %s has rolled a %d-sided dice and had it come up less than %d."),
+								client->GetName(),
+								msg.sides,
+								msg.target);
 
-        newmsg.Multicast(client->GetActor()->GetMulticastClients(),0, 10);
-    }
-    else
-    {
-        psSystemMessage newmsg(clientnum,MSG_INFO_BASE,
-            "Player %s has rolled a %d-sided die for a %d.",
-            client->GetName(),
-            msg.sides,
-            total);
+						newmsg.Multicast(client->GetActor()->GetMulticastClients(),0, 10);
+				}
+		}
+		else
+		{
+				if (msg.dice > 1)
+				{
+						psSystemMessage newmsg(clientnum,MSG_INFO_BASE,
+								"Player %s has rolled %d %d-sided dice for a %d.",
+								client->GetName(),
+								msg.dice,
+								msg.sides,
+								total);
 
-        newmsg.Multicast(client->GetActor()->GetMulticastClients(),0, 10);
-    }
+						newmsg.Multicast(client->GetActor()->GetMulticastClients(),0, 10);
+				}
+				else
+				{
+						psSystemMessage newmsg(clientnum,MSG_INFO_BASE,
+								"Player %s has rolled a %d-sided die for a %d.",
+								client->GetName(),
+								msg.sides,
+								total);
+
+						newmsg.Multicast(client->GetActor()->GetMulticastClients(),0, 10);
+				}
+		}
 }
 
 

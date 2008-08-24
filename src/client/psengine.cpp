@@ -241,6 +241,8 @@ psEngine::psEngine (iObjectRegistry *objectreg)
 
     cal3DCallbackLoader = csPtr<psCal3DCallbackLoader> (new psCal3DCallbackLoader(objectreg));
 
+    BrightnessCorrection = 0.0f;
+
     KFactor = 0.0f;
     targetPetitioner = "None";
     confirmation = 1;  // Def
@@ -1623,6 +1625,10 @@ size_t psEngine::GetTime()
     return modehandler->GetTime();
 }
 
+void psEngine::UpdateLights()
+{
+    modehandler->UpdateLights();
+}
 
 void psEngine::SetDuelConfirm(int confirmType)
 {

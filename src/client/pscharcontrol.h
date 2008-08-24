@@ -191,6 +191,9 @@ public:
     ~psTriggerHandler();
 
     // Functions called by triggers  (psControl stores pointers to these)
+    void HandleBrightnessUp         (const psControl* trigger, bool value);
+    void HandleBrightnessDown         (const psControl* trigger, bool value);
+    void HandleBrightnessReset         (const psControl* trigger, bool value);
     void HandleMovement         (const psControl* trigger, bool value);
     void HandleMovementJump     (const psControl* trigger, bool value);
     void HandleMode             (const psControl* trigger, bool value);

@@ -411,6 +411,50 @@ psTriggerHandler::~psTriggerHandler()
     movement = NULL;
 }
 
+void psTriggerHandler::HandleBrightnessUp(const psControl* trigger, bool value)
+{
+    csString sysmsg;
+
+    float BrightnessCorrection = psengine->GetBrightnessCorrection();
+
+    if(BrightnessCorrection < 3.0f)
+        BrightnessCorrection += 0.1f;
+
+    psengine->SetBrightnessCorrection(BrightnessCorrection);
+    psengine->UpdateLights();
+
+    sysmsg.Format("Brightness correction: %0.1f.",BrightnessCorrection);
+    psSystemMessage ackmsg(0, MSG_OK, sysmsg);
+    ackmsg.FireEvent();
+}
+
+void psTriggerHandler::HandleBrightnessDown(const psControl* trigger, bool value)
+{
+    csString sysmsg;
+
+    float BrightnessCorrection = psengine->GetBrightnessCorrection();
+
+    if(BrightnessCorrection > -1.0f)
+        BrightnessCorrection -= 0.1f;
+
+    psengine->SetBrightnessCorrection(BrightnessCorrection);
+    psengine->UpdateLights();
+
+    sysmsg.Format("Brightness correction: %0.1f.",BrightnessCorrection);
+    psSystemMessage ackmsg(0, MSG_OK, sysmsg);
+    ackmsg.FireEvent();
+}
+
+ void psTriggerHandler::HandleBrightnessReset(const psControl* trigger, bool value)
+{
+    psengine->SetBrightnessCorrection(0.0f);
+    psengine->UpdateLights();
+ 
+ 
+    psSystemMessage ackmsg(0, MSG_OK, "Brightness Reset!");
+    ackmsg.FireEvent();
+}
+
 void psTriggerHandler::HandleMovement(const psControl* trigger, bool value)
 {
     const psMovement* move = static_cast<const psMovement*>(trigger->data);
@@ -705,6 +749,9 @@ void psCharController::CreateKeys()
     controls.NewTrigger("Rotate right" , psControl::NORMAL, &psTriggerHandler::HandleMovement);
     controls.NewTrigger("Strafe left"  , psControl::NORMAL, &psTriggerHandler::HandleMovement);
     controls.NewTrigger("Strafe right" , psControl::NORMAL, &psTriggerHandler::HandleMovement);
+    controls.NewTrigger("Brightness up" , psControl::TOGGLE, &psTriggerHandler::HandleBrightnessUp);
+    controls.NewTrigger("Brightness down" , psControl::TOGGLE, &psTriggerHandler::HandleBrightnessDown);
+    controls.NewTrigger("Brightness Reset" , psControl::TOGGLE, &psTriggerHandler::HandleBrightnessReset);
     controls.NewTrigger("Forward (sec)"      , psControl::NORMAL, &psTriggerHandler::HandleMovement);
     controls.NewTrigger("Backward (sec)"     , psControl::NORMAL, &psTriggerHandler::HandleMovement);
     controls.NewTrigger("Rotate left (sec)"  , psControl::NORMAL, &psTriggerHandler::HandleMovement);

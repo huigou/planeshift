@@ -220,7 +220,7 @@ bool pawsPetitionWindow::OnButtonPressed( int mouseButton, int keyModifier, paws
         {
 			// Popup Input Window
 			pawsStringPromptWindow::Create(PawsManager::GetSingleton().Translate("Add Petition"), csString(""),
-				true, 500, 60, this, "petition" );
+				true, 500, 300, this, "petition" );
 			break;
         }
         case SAVE_BUTTON:

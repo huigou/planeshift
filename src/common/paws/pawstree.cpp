@@ -1024,6 +1024,21 @@ void pawsTree::SetScrollBars(bool horiz, bool vert)
 void pawsTree::Select(pawsTreeNode *node)
 {
     selected = node;
+    
+    //we have to check if the selected element is outside sight. If so move the scrollbar
+    //correctly in order to have it on screen.
+    
+    if(selected->ScreenFrame().ymin < ScreenFrame().ymin) //the element is hidden in the top
+    {   //get the current position and move it relatively of the part which is hidden
+        if(vertScrollBar) //just to be safe
+            vertScrollBar->SetCurrentValue(vertScrollBar->GetCurrentValue()-(ScreenFrame().ymin-selected->ScreenFrame().ymin));
+    }
+    else if(selected->ScreenFrame().ymax > ScreenFrame().ymax) //the element is hidden in the bottom
+    {   //get the current position and move it relatively of the part which is hidden
+        if(vertScrollBar) //just to be safe
+            vertScrollBar->SetCurrentValue(vertScrollBar->GetCurrentValue()+(selected->ScreenFrame().ymax-ScreenFrame().ymax));
+    }
+    
     if (notificationTarget != NULL)
         notificationTarget->OnSelected(node);
 }
@@ -1168,9 +1183,9 @@ bool pawsTree::OnKeyDown( int keyCode, int keyChar, int modifiers )
 {
     pawsTreeNode *node;
 
-    switch (keyCode)
+    switch (keyChar)
     {
-    case 1000:
+    case CSKEY_UP:
         if (selected != NULL)
         {
             node = selected;
@@ -1183,7 +1198,7 @@ bool pawsTree::OnKeyDown( int keyCode, int keyChar, int modifiers )
         }
         return true;
 
-    case 1001:
+    case CSKEY_DOWN:
         if (selected != NULL)
         {
             node = selected;
@@ -1196,8 +1211,19 @@ bool pawsTree::OnKeyDown( int keyCode, int keyChar, int modifiers )
         }
         return true;
         
-    case 13:
-        if (selected == NULL)
+    case CSKEY_ENTER:
+    case CSKEY_SPACE:
+        if (selected != NULL)
+        {
+            //Is the selected node expandable or collapsable?
+            if(selected->IsCollapsable() && selected->GetFirstChild() != NULL)
+            { //If so expand or collapse it depending on its status
+                if (selected->IsCollapsed())
+                    selected->Expand();
+                else
+                    selected->Collapse();
+            }
+        }
         //some notify?
         return true;
     }
