@@ -1319,7 +1319,7 @@ void UserManager::RollDice(psUserCmdMessage& msg,Client *client,int clientnum)
         // must use msg.sides instead of msg.sides-1 because rand never actually
         // returns max val, and int truncation never results in max val as a result
 				if (msg.dtarget)
-						total += ((psserver->rng->Get(msg.sides) + 1 >= msg.dtarget)? 1: 0);
+						total += ((psserver->rng->Get(msg.sides) + 1 >= (uint)msg.dtarget)? 1: 0);
 				else
 						total = total + psserver->rng->Get(msg.sides) + 1;
     }

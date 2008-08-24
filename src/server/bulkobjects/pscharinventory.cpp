@@ -777,7 +777,7 @@ psCharacterInventory::psEquipInfo& psCharacterInventory::GetEquipmentObject(INVE
 {
     // We have to return a valid equipInfo in all cases, so make a dummy one here for that
     // ItemIndex 0 is always a dummy item for this purpose
-    static psEquipInfo dummy_equipment = {0, 0, 0, NULL};
+    static psEquipInfo dummy_equipment = {0, 0, 0, 0};
 
     if (slot<PSCHARACTER_SLOT_NONE || slot>=PSCHARACTER_SLOT_BULK1)
         return dummy_equipment;
