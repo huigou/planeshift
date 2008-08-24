@@ -36,6 +36,7 @@ struct iSector;
 //=============================================================================
 #include "util/prb.h"
 #include "util/eventmanager.h"
+#include "util/gameevent.h"
 #include "util/consoleout.h"
 #include "util/pspath.h"
 
@@ -272,7 +273,7 @@ public:
     }
     static float CalculateIncidentAngle(csVector3& pos, csVector3& dest);
     
-    // Clamp the angle witin 0 to 2*PI
+    // Clamp the angle within 0 to 2*PI
     static void ClampRadians(float &target_angle);
     
     // Normalize angle within -PI to PI

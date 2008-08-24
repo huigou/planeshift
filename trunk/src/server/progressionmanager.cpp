@@ -71,7 +71,6 @@
 #include "entitymanager.h"
 #include "cachemanager.h"
 #include "spellmanager.h"
-#include "combatmanager.h"
 #include "weathermanager.h"
 #include "actionmanager.h"
 #include "workmanager.h"

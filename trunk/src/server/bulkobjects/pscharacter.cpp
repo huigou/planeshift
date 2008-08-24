@@ -2078,32 +2078,9 @@ void psCharacter::ResetSwings(csTicks timeofattack)
         Weapon = Inventory().GetEffectiveWeaponInSlot((INVENTORY_SLOT_NUMBER)slot);
         if (Weapon !=NULL)
         {
-            inventory.GetEquipmentObject((INVENTORY_SLOT_NUMBER)slot).NextSwingTime=csTicks(timeofattack+ (Weapon->GetLatency() * 1000.0f));
             inventory.GetEquipmentObject((INVENTORY_SLOT_NUMBER)slot).eventId=0;
         }
     }
-}
-
-
-void psCharacter::NotifyAttackPerformed(INVENTORY_SLOT_NUMBER slot,csTicks timeofattack)
-{
-    psItem *Weapon;
-
-    // Slot out of range
-    if (slot<0 || slot>=PSCHARACTER_SLOT_BULK1)
-        return;
-
-    // TODO: Reduce ammo if this is an ammunition using weapon
-
-    // Reset next attack time
-    Weapon=Inventory().GetEffectiveWeaponInSlot(slot);
-
-    if (Weapon!=NULL)
-        inventory.GetEquipmentObject(slot).NextSwingTime=csTicks(timeofattack+ (Weapon->GetLatency() * 1000.0f));
-
-    //drain stamina on player attacks
-    if(actor->GetClientID() && !actor->nevertired)
-        CombatDrain(slot);
 }
 
 void psCharacter::TagEquipmentObject(INVENTORY_SLOT_NUMBER slot,int eventId)
@@ -2123,18 +2100,8 @@ void psCharacter::TagEquipmentObject(INVENTORY_SLOT_NUMBER slot,int eventId)
         inventory.GetEquipmentObject(slot).eventId = eventId;
 
     //drain stamina on player attacks
-    //if(actor->GetClientID() && !actor->nevertired)
-    //    CombatDrain(slot);
-}
-
-
-csTicks psCharacter::GetSlotNextAttackTime(INVENTORY_SLOT_NUMBER slot)
-{
-    // Slot out of range
-    if (slot<0 || slot>=PSCHARACTER_SLOT_BULK1)
-        return (csTicks)0;
-
-    return inventory.GetEquipmentObject(slot).NextSwingTime;
+    if(actor->GetClientID() && !actor->nevertired)
+        CombatDrain(slot);
 }
 
 int psCharacter::GetSlotEventId(INVENTORY_SLOT_NUMBER slot)

@@ -40,6 +40,7 @@
 #include "util/strutil.h"
 #include "util/psutil.h"
 #include "util/psstring.h"
+#include "util/eventmanager.h"
 
 //=============================================================================
 // Local Includes

@@ -41,6 +41,7 @@
 #include "util/psconst.h"
 #include "util/strutil.h"
 #include "util/psutil.h"
+#include "util/eventmanager.h"
 
 #include "engine/psworld.h"
 

@@ -35,7 +35,6 @@
 // Library Includes
 //=============================================================================
 #include "util/prb.h"
-#include "util/eventmanager.h"
 #include "util/psconst.h"
 #include "net/npcmessages.h"
 

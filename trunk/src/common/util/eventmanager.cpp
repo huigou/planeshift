@@ -18,12 +18,7 @@
 */
 #include <psconfig.h>
 
-#include <csutil/sysfunc.h>
-
 #include "gameevent.h"
-#include "sleep.h"
-#include "psconst.h"
-#include "util/log.h"
 #include "util/consoleout.h"
 
 #include "eventmanager.h"
@@ -125,7 +120,7 @@ csRef<EventManager> EventManager::Create(NetBase* netBase, int queuelen)
 
 void EventManager::Push(psGameEvent *event)
 {
-    CS::Threading::RecursiveMutexScopedLock lock(mutex);
+    CS::Threading::MutexScopedLock lock(mutex);
 
     // This inserts the event into the priority queue, sorted by timestamp
     eventqueue.Insert(event);
@@ -158,7 +153,7 @@ csTicks EventManager::ProcessEventQueue()
     {
 
         {
-            CS::Threading::RecursiveMutexScopedLock lock(mutex);
+            CS::Threading::MutexScopedLock lock(mutex);
 
             event = eventqueue.FindMin();
 
@@ -225,7 +220,7 @@ csTicks EventManager::ProcessEventQueue()
     {
         // We have a event so report when we would like to be
         // called again
-        return MIN(event->triggerticks - now, PROCESS_EVENT);
+        return MIN(event->triggerticks, PROCESS_EVENT + now);
     }
 
     return PROCESS_EVENT; // Process events at least every PROCESS_EVENT ticks
@@ -302,10 +297,9 @@ void EventManager::Run ()
         }
         else if (now >= nextEvent)
         {
-            nextEvent = ProcessEventQueue() + csGetTicks();
+            nextEvent = ProcessEventQueue();
         }
     }
-    CS::Threading::MutexScopedLock lock(runmutex);
     if(filled)
     {
         status.Format("Event manager shutdown, average time of events is %u", eventtimesTotal / EVENT_AVERAGETIME_COUNT);

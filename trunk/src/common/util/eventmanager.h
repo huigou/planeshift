@@ -20,9 +20,11 @@
 #ifndef __EVENTMANAGER_H__
 #define __EVENTMANAGER_H__
 
-#include "util/gameevent.h"
 #include "util/heap.h"
 #include "net/msghandler.h"
+
+class psGameEvent;
+class MsgHandler;
 
 /**
  * This class handles all queueing and invoking of timed events, such as
@@ -34,10 +36,8 @@
 class EventManager : public MsgHandler, public Singleton<EventManager>
 {
 protected:
-    CS::Threading::RecursiveMutex mutex;
+    CS::Threading::Mutex mutex;
     Heap<psGameEvent> eventqueue;
-    CS::Threading::Mutex runmutex;
-    int runstate;
 
     csTicks lastTick;
     

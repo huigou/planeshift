@@ -21,16 +21,6 @@
 #define __COMBATMANAGER_H__
 
 //=============================================================================
-// Crystal Space Includes
-//=============================================================================
-#include <csutil/randomgen.h>
-#include <csutil/sysfunc.h>
-
-//=============================================================================
-// Project Includes
-//=============================================================================
-
-//=============================================================================
 // Local Includes
 //=============================================================================
 #include "msgmanager.h"
@@ -53,18 +43,16 @@ enum COMBATMANAGER_ATTACKTYPE
     ATTACK_OUTOFAMMO
 };
 
-class psSpawnManager;
 class LocationType;
 class MathScriptEngine;
 class MathScript;
-class EntityManager;
 
 /**
  *  This class handles all calculations around combat, using statistics
  *  and information from the pspccharacterinfo Prop Classes for both
  *  the attacker and the target.
  */
-class psCombatManager : public MessageManager
+class psCombatManager: public MessageManager
 {
 public:
 
@@ -73,57 +61,39 @@ public:
 
     virtual ~psCombatManager();
 
-   
-    void HandleMessage(MsgEntry *me,Client *client);
+    void HandleMessage(MsgEntry *me, Client *client);
 
     /// This is how you start an attack sequence
     void AttackSomeone(gemActor *attacker, gemObject *target, Stance stance);
-    void SetCombat(gemActor *combatant, Stance stance);
 
     /// This is how you break an attack sequence off, through death or user command.
     void StopAttack(gemActor *attacker);
 
-    bool InPVPRegion(csVector3& pos,iSector* sector);
+    bool InPVPRegion(csVector3& pos, iSector* sector);
 
-    bool ValidDistance(gemObject *attacker,gemObject *target,psItem *Weapon);
-    bool ValidCombatAngle(gemObject *attacker,gemObject *target,psItem *Weapon);
-    void NotifyTarget(gemActor *attacker,gemObject *target);
-    void QueueNextEvent(psCombatGameEvent *event);
-    void QueueNextEvent(gemObject *attacker,
-                        INVENTORY_SLOT_NUMBER weaponslot,
-                        gemObject *target,
-                        int attackerCID,
-                        int targetCID,
-                        int previousResult = ATTACK_NOTCALCULATED);
-
-    void  HandleCombatEvent(psCombatGameEvent *event);
-    void ApplyCombatEvent(psCombatGameEvent *event, int attack_result);
-    void  DebugOutput(psCombatGameEvent *event);
-    int  CalculateAttack(psCombatGameEvent *event, psItem* subWeapon = NULL);
-
+    void HandleCombatEvent(psCombatGameEvent *event);
 
     /***********************
      * Not implemented yet *
      ***********************
-    int  GetQueuedAction(gemActor *attacker);
-    int  GetDefaultModeAction(gemActor *attacker);
-    int  GetAttackDelay(gemActor *attacker, int action);*/
-    
+     int  GetQueuedAction(gemActor *attacker);
+     int  GetDefaultModeAction(gemActor *attacker);
+     int  GetAttackDelay(gemActor *attacker, int action);*/
+
     csArray<INVENTORY_SLOT_NUMBER> targetLocations;
-    
-    
-protected:
-//    psSpawnManager *spawnmanager;
+
+private:
+    //    psSpawnManager *spawnmanager;
     csRandomGen* randomgen;
     LocationType* pvp_region;
 
     MathScriptEngine *script_engine; /// Scripting engine handles all RPG calculations.
-    MathScript *calc_damage;         /// This is the particular calculation for damage.
-    MathScriptVar *var_IAH;          /// IAH == If Attack Hit
-    MathScriptVar *var_AHR;          /// AHR == Attack Hit Roll
-    MathScriptVar *var_Blocked;      /// Blocked == Blocked by weapon
-    MathScriptVar *var_QOH;          /// QOH == Quality Of Hit
-    MathScriptVar *var_FinalDmg;     /// Actual Damage done, if any
+    MathScript *calc_damage; /// This is the particular calculation for damage.
+    MathScriptVar *var_IAH; /// IAH == If Attack Hit
+    MathScriptVar *var_AHR; /// AHR == Attack Hit Roll
+    MathScriptVar *var_Blocked; /// Blocked == Blocked by weapon
+    MathScriptVar *var_QOH; /// QOH == Quality Of Hit
+    MathScriptVar *var_FinalDmg; /// Actual Damage done, if any
     MathScriptVar *var_AttackWeapon;
     MathScriptVar *var_AttackWeaponSecondary;
     MathScriptVar *var_TargetAttackWeapon;
@@ -143,11 +113,23 @@ protected:
 
     void HandleDeathEvent(MsgEntry *me);
 
-    
+    bool ValidDistance(gemObject *attacker, gemObject *target, psItem *Weapon);
+    void SetCombat(gemActor *combatant, Stance stance);
+
+    bool ValidCombatAngle(gemObject *attacker, gemObject *target,
+            psItem *Weapon);
+    void NotifyTarget(gemActor *attacker, gemObject *target);
+    void QueueNextEvent(psCombatGameEvent *event);
+    void QueueNextEvent(gemObject *attacker, INVENTORY_SLOT_NUMBER weaponslot,
+            gemObject *target, int attackerCID, int targetCID,
+            int previousResult = ATTACK_NOTCALCULATED);
+
+    void ApplyCombatEvent(psCombatGameEvent *event, int attack_result);
+    void DebugOutput(psCombatGameEvent *event);
+    int CalculateAttack(psCombatGameEvent *event, psItem* subWeapon = NULL);
 };
 
-
-class psSpareDefeatedEvent : public psGameEvent
+class psSpareDefeatedEvent: public psGameEvent
 {
 public:
     psSpareDefeatedEvent(gemActor *losr);
@@ -155,7 +137,7 @@ public:
 
 protected:
     csWeakRef<Client> loser;
-    
+
 };
 
 #endif
