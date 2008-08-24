@@ -1294,17 +1294,26 @@ psUserCmdMessage::psUserCmdMessage(MsgEntry *message)
         {
             dice  = 1;
             sides = 6;
+						target = 0;
         }
         else if (words.GetCount() == 2)
         {
             dice  = 1;
             sides = words.GetInt(1);
+						target = 0;
         }
-        else
+        else if (words.GetCount() == 3)
         {
             dice = words.GetInt(1);
             sides = words.GetInt(2);
+						target = 0;
         }
+				else
+				{
+						dice = words.GetInt(1);
+						sides = words.GetInt(2);
+						target = words.GetInt(3);
+				}
         return;
     }
     if ( command == "/assist" )
@@ -1364,7 +1373,10 @@ csString psUserCmdMessage::ToString(AccessPointers * /*access_ptrs*/)
 	}
 	if (command == "/roll")
 	{
-		msgtext.AppendFmt("Rolled '%d' '%d' sided dice", dice, sides);
+		if (target)
+			msgtext.AppendFmt("Rolled '%d' '%d' sided dice with a target of '%d'", dice, sides, target);
+		else
+			msgtext.AppendFmt("Rolled '%d' '%d' sided dice", dice, sides);
 		return msgtext;
 	}
 	if (command == "/marriage")

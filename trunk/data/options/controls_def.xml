@@ -5,6 +5,9 @@
     <bind action="Rotate right" key="d" />
     <bind action="Strafe left" key="q" />
     <bind action="Strafe right" key="e" />
+    <bind action="Brightness up" key="F12" />
+    <bind action="Brightness down" key="F11" />
+    <bind action="Brightness reset" key="F10" />
     <bind action="Forward (sec)" key="Up" />
     <bind action="Backward (sec)" key="Down" />
     <bind action="Rotate left (sec)" key="Left" />

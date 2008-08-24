@@ -1062,6 +1062,22 @@ void ModeHandler::PreProcess()
     UpdateWeather(now);
 }
 
+void ModeHandler::UpdateLights()
+{
+    uint i;
+
+    if (clockHour >= lights.GetSize())
+        return;
+
+    LightingList *list = lights[clockHour];
+
+    for(i=0; i<list->colors.GetSize(); i++)
+        ProcessLighting(list->colors[i], 0.0f);
+
+    for(i=0; i<list->colors.GetSize(); i++)
+        ProcessLighting(list->colors[i], 1.0f);
+}
+
 /**
  * This function is called periodically by psclient.  It
  * handles the smooth interpolation of lights to the new
@@ -1175,6 +1191,17 @@ bool ModeHandler::ProcessLighting(LightingSetting *setting, float pct)
             target_color = setting->color;
         }
     }
+
+    float gamma=psengine->GetBrightnessCorrection();
+    target_color.red += gamma;
+    target_color.green += gamma;
+    target_color.blue += gamma;
+    target_color.red = target_color.red<0? 0.0f: target_color.red>=1.0f?
+			1.0f: target_color.red;
+    target_color.green = target_color.green<0? 0.0f: target_color.green>=1.0f?
+			1.0f: target_color.green;
+    target_color.blue = target_color.blue<0? 0.0f: target_color.blue>=1.0f?
+			1.0f: target_color.blue;
     
     if (setting->type == "light")
     {

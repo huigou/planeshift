@@ -245,6 +245,10 @@ public:
 
     size_t GetTime();
 
+    float GetBrightnessCorrection() { return BrightnessCorrection; }
+    void SetBrightnessCorrection(float B) { BrightnessCorrection = B; }
+    void UpdateLights();
+
     float GetKFactor() { return KFactor; }
     void SetKFactor(float K) { KFactor = K; }
 
@@ -454,6 +458,8 @@ private:
     csString targetPetitioner;
 
     bool okToLoadModels;     ///< Make sure that it is allowed to start preloading
+    float BrightnessCorrection;
+
     float KFactor;           ///< Hold the K factor used for casting spells.
 
     iEvent* lastEvent;

@@ -1,3 +1,9 @@
+*** 2008-08-24 by Mike Gist
+- FS#477, patch from Kaerli.
+- Fixed FS#2173, patch from weltall.
+- Fixed FS#2003, patch from Caarrie.
+- FS#1401, patch from Caarrie, Giraut and weltall (I think).
+
 *** 2008-08-23 by Andreas Heinchen
 - check for psCombatGameEvents based on event ids instead of timing
 

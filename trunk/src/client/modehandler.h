@@ -145,6 +145,7 @@ public:
     void RemoveDownfallObject(WeatherObject* weatherobject);
 
     void SetModeSounds(uint8_t mode);
+    void UpdateLights();
 
 protected:
     GEMClientObject* actorEntity;
