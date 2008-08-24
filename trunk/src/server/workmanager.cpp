@@ -500,7 +500,7 @@ void psWorkManager::HandleRepairEvent(psWorkGameEvent* workEvent)
     repairTarget->SetItemQuality( repairTarget->GetItemQuality() + workEvent->repairAmount);
 
     // Lower the maximum quality based on the repair amount
-    float newmax = repairTarget->GetMaxItemQuality() - (workEvent->repairAmount * 0.02);
+    float newmax = repairTarget->GetMaxItemQuality() - (workEvent->repairAmount * 0.2);
     newmax = (newmax<0) ? 0 : newmax;
     repairTarget->SetMaxItemQuality(newmax);
 
