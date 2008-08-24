@@ -1304,26 +1304,26 @@ void UserManager::RollDice(psUserCmdMessage& msg,Client *client,int clientnum)
         msg.dice = 100;
     if (msg.sides > 10000)
         msg.sides = 10000;
-		if (msg.target > msg.sides)
-				msg.target = msg.sides;
+		if (msg.dtarget > msg.sides)
+				msg.dtarget = msg.sides;
 
     if (msg.dice < 1)
         msg.dice = 1;
     if (msg.sides < 1)
         msg.sides = 1;
-		if (msg.target < 0)
-				msg.target = 0;
+		if (msg.dtarget < 0)
+				msg.dtarget = 0;
 
     for (int i = 0; i<msg.dice; i++)
     {
         // must use msg.sides instead of msg.sides-1 because rand never actually
         // returns max val, and int truncation never results in max val as a result
-				if (msg.target)
-						total += ((psserver->rng->Get(msg.sides) + 1 >= msg.target)? 1: 0);
+				if (msg.dtarget)
+						total += ((psserver->rng->Get(msg.sides) + 1 >= msg.dtarget)? 1: 0);
 				else
 						total = total + psserver->rng->Get(msg.sides) + 1;
     }
-		if (msg.target)
+		if (msg.dtarget)
 		{
 				if (msg.dice > 1)
 				{
@@ -1333,7 +1333,7 @@ void UserManager::RollDice(psUserCmdMessage& msg,Client *client,int clientnum)
 								msg.dice,
 								msg.sides,
 								total,
-								msg.target);
+								msg.dtarget);
 
 						newmsg.Multicast(client->GetActor()->GetMulticastClients(),0, 10);
 				}
@@ -1344,7 +1344,7 @@ void UserManager::RollDice(psUserCmdMessage& msg,Client *client,int clientnum)
 								"Player %s has rolled a %d-sided dice and had it come up less than %d."),
 								client->GetName(),
 								msg.sides,
-								msg.target);
+								msg.dtarget);
 
 						newmsg.Multicast(client->GetActor()->GetMulticastClients(),0, 10);
 				}
