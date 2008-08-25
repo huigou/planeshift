@@ -1007,8 +1007,7 @@ void PawsManager::RegisterFactories()
     RegisterFactory (pawsMenuFactory);
     RegisterFactory (pawsMenuItemFactory);
     RegisterFactory (pawsMenuSeparatorFactory);
-/*  RegisterFactory (pawsChatMenuItemFactory);
-
+/*
     RegisterFactory (pawsSkillWindowFactory);
     RegisterFactory (pawsQuestListWindowFactory);
     RegisterFactory (pawsSpellCancelWindowFactory);
