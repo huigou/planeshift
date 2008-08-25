@@ -13,7 +13,7 @@ if $(HAVE_STATIC_PLUGINS) = "yes"
 SubVariant updaterStatic ;
 Application psupdater_static : [ Filter [ Wildcard *.cpp *.h ] : pslaunch.cpp pawslauncherwindow.cpp pslaunch.h pawslauncherwindow.h globals.h ] : console ;
 CFlags psupdater_static : [ FDefines CS_STATIC_LINKED ] ;
-LFlags psupdater_static : -lcrystalspace_staticplugins-1.3 ;
+LFlags psupdater_static : -lcrystalspace_staticplugins-$(CRYSTAL.VERSION) ;
 MsvcDefine psupdater_static : CS_STATIC_LINKED ;
 LinkWith psupdater_static : xdelta3 psutil xpnet ;
 
@@ -44,7 +44,7 @@ if $(HAVE_STATIC_PLUGINS) = "yes"
 SubVariant launcherStatic ;
 Application pslaunch_static : [ Filter [ Wildcard *.cpp *.h ] : updater.cpp updater.h ] : ;
 CFlags pslaunch_static : [ FDefines CS_STATIC_LINKED ] ;
-LFlags pslaunch_static : -lcrystalspace_staticplugins-1.3 ;
+LFlags pslaunch_static : -lcrystalspace_staticplugins-$(CRYSTAL.VERSION) ;
 MsvcDefine pslaunch_static : CS_STATIC_LINKED ;
 LinkWith pslaunch_static : xdelta3 paws psutil fparser xpnet ;
 
