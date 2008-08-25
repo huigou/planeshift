@@ -28,8 +28,8 @@
 //=============================================================================
 // Project Includes
 //=============================================================================
-#include "../entitymanager.h"
 #include "../psserver.h"
+#include "../entitymanager.h"
 #include "../cachemanager.h"
 #include "../psserverchar.h"
 #include "../exchangemanager.h"
