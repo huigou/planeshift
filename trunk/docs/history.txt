@@ -1,3 +1,6 @@
+*** 2008-08-25 by Mike Gist
+- Readded pawseditor, thanks to weltall.
+
 *** 2008-08-24 by Andreas Heinchen
 - changed small flaw in eventManagers timing
 - code cleansups and simplifications
