@@ -1,6 +1,5 @@
 <widget_description>
     <widget name="ChatWindow" factory="pawsChatWindow" visible="yes" savepositions="yes" movable="yes" resizable="yes" keepaspect="no" configurable="yes">
-            <!-- ContextMenu="data/gui/chatmenu.xml" disabled until its finished -->
         <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="8" />
         <frame x="360" y="300" width="330" height="122" border="no" />
         <minframe width="280" height="110" />
@@ -226,17 +225,6 @@
                     <attach point="PROPORTIONAL_BOTTOM" />
                 </attachpoints>
             </widget>
-        </widget> 
-
-        <!--widget name="inputback" factory="pawsButton" ignore="yes">
-            <bgimage resource="Chat Text Background" />
-            <frame x="3" y="235" width="392" height="115" border="no" />
-            <attachpoints>
-                <attach point="ATTACH_RIGHT" />
-                <attach point="ATTACH_BOTTOM" />
-                <attach point="ATTACH_LEFT" />
-            </attachpoints>
-        </widget-->
-
+        </widget>
     </widget>
 </widget_description>

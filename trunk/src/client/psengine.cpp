@@ -693,7 +693,6 @@ void psEngine::DeclareExtraFactories()
     RegisterFactory (pawsLifeEventWindowFactory);
     RegisterFactory (pawsPathWindowFactory);
     RegisterFactory (pawsSummaryWindowFactory);
-    RegisterFactory (pawsChatMenuItemFactory);
     RegisterFactory (pawsSkillWindowFactory);
     RegisterFactory (pawsQuestListWindowFactory);
     RegisterFactory (pawsSpellCancelWindowFactory);

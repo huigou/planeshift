@@ -2298,28 +2298,6 @@ csString *pawsChatHistory::GetPrev()
 
 //------------------------------------------------------------------------------
 
-void pawsChatMenuItem::LoadAction(iDocumentNode * node)
-{
-    csRef<iDocumentAttribute> attr;
-    csString label;
-
-    // If there is no action definition in the XML, it will make its own description
-    attr = node->GetAttribute("action");
-    if (attr != NULL)
-        pawsMenuItem::LoadAction(node);
-    else
-    {
-        attr = node->GetAttribute("label");
-        if (attr != NULL)
-            label = attr->GetValue();
-        else
-            label = "<missing label in menu>";
-        action.name = "TranslatedChat";
-        action.params.SetSize(1);
-        action.params[0] = label;
-    }
-}
-
 void pawsChatWindow::SetSettings(ChatSettings& newSets)
 {
     settings = newSets;

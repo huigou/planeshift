@@ -308,17 +308,4 @@ private:
     csPDelArray<csString> buffer;
 };
 
-
-
-// pawsChatMenuItem - this is menu item customized for the translated-chat menu.
-// It determines automatically the description of its action
-// so you don't have to write this description to the widget XML definition.
-class pawsChatMenuItem : public pawsMenuItem
-{
-protected:
-    virtual void LoadAction(iDocumentNode * node);
-};
-
-CREATE_PAWS_FACTORY( pawsChatMenuItem );
-
 #endif
