@@ -175,9 +175,15 @@ void psEntityLabels::SetObjectText(GEMClientObject* object)
             case -1: // NPC
                 colour = 0x00ffff;
                 break;
+            case -3: // DEAD
+                colour = 0xff0000;
+                break;
 
             default:
-            case 21: // GM1 or unknown group
+            case 10: // Tester or unknown group
+                colour = 0x338CA7;
+                break;
+            case 21: // GM1
                 colour = 0x008000;
                 break;            
 
@@ -198,8 +204,12 @@ void psEntityLabels::SetObjectText(GEMClientObject* object)
     GEMClientActor* actor = dynamic_cast<GEMClientActor*>(object);
 
     // Grouped with have other color
+    bool grouped = false;
     if (actor && actor->IsGroupedWith(celClient->GetMainPlayer()))
+    {
       colour = 0x0080ff;
+      grouped = true;
+    }
 
     // White colour labels for invisible objects should overide all (for living objects)
     int flags = object->Flags();
@@ -227,8 +237,8 @@ void psEntityLabels::SetObjectText(GEMClientObject* object)
 
         if ( guild.Length() )
         {
-            // If same guild, indicate with color
-            if (guild == guild2 && !invisible)
+            // If same guild, indicate with color, unless grouped or invisible
+            if (guild == guild2 && !invisible && !grouped)
                 colour = 0xf6dfa6;
 
             guildRow.text = "<" + guild + ">";
