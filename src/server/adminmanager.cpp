@@ -2079,9 +2079,13 @@ void AdminManager::SetLabelColor(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdD
         return;
     }
 
-    if (data.setting == "normal")
+    if (data.setting == "normal" || data.setting == "alive")
     {
         mask = subject->GetSecurityLevel();
+    }
+    else if (data.setting == "dead")
+    {
+        mask = -3;
     }
     else if (data.setting == "npc")
     {
@@ -2090,6 +2094,10 @@ void AdminManager::SetLabelColor(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdD
     else if (data.setting == "player")
     {
         mask = 0;
+    }
+    else if (data.setting == "tester")
+    {
+        mask = 10;
     }
     else if (data.setting == "gm1")
     {
@@ -2102,7 +2110,7 @@ void AdminManager::SetLabelColor(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdD
     else
     {
         psserver->SendSystemInfo(me->clientnum,
-            "Correct syntax is: \"/setlabelcolor [target] [npc|player|gm1|gm|normal]\"");
+            "Correct syntax is: \"/setlabelcolor [target] [npc|player|tester|gm1|gm|dead|alive|normal]\"");
         return;
     }
     subject->SetMasqueradeLevel(mask);

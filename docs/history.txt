@@ -1,3 +1,9 @@
+*** 2008-08-27 by Steven Patrick
+- Added label colour for tester level, patch by Caarrie.
+- Added 'tester', 'dead' and 'alive' (normal) for /setlabelcolor, patch by 
+  Caarrie.
+- Made group colour override guild colour for labels.
+
 *** 2008-08-25 by Mike Gist
 - Readded pawseditor, thanks to weltall.
 
