@@ -385,6 +385,9 @@ AS_IF([test $with_cs != no],
   AC_MSG_RESULT([$cc_have_crystal_static])],
   [cc_have_crystal_static=no])
 
+AS_IF([test $cc_have_crystal_static != no],
+  [CS_EMIT_BUILD_PROPERTY([HAVE_STATIC_PLUGINS], [yes])])
+
 #------------------------------------------------------------------------------
 # Check for Cal3D.
 #------------------------------------------------------------------------------
