@@ -507,29 +507,6 @@ void pawsQuestListWindow::OnListAction( pawsListBox* selected, int status )
 
 void pawsQuestListWindow::SaveNotes(const char * fileName)
 {
-#if (CS_PROCESSOR_SIZE == 64) // Workaround pending CS trac #423, PS FS#483
-    csString xml;
-    xml += "<questnotes>\n";
-
-    QuestNote *qn;
-    csString nodeName, noteString;
-    for (size_t i = 0; i < quest_notes.GetSize(); i++)
-    {
-        qn = quest_notes[i];
-        if (qn->notes.IsEmpty())
-            continue;
-
-        nodeName.Format("quest%d", qn->id);
-
-        xml += "    <"; xml += nodeName; xml += ">";
-
-        noteString.Format("<![CDATA[%s]]>", qn->notes.GetData() );
-
-        xml += noteString; xml += "</"; xml += nodeName; xml += ">\n";
-    }
-    xml += "</questnotes>\n";
-    vfs->WriteFile(fileName, xml.GetData(), xml.Length());
-#else
 
     // Save quest notes to a local file
     char temp[20];
@@ -556,7 +533,6 @@ void pawsQuestListWindow::SaveNotes(const char * fileName)
         }
     }
     doc->Write(vfs, fileName);
-#endif
 }
 
 void pawsQuestListWindow::LoadNotes(const char * fileName)
