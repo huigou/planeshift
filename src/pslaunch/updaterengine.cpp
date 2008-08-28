@@ -855,7 +855,7 @@ void UpdaterEngine::CheckIntegrity()
     PrintOutput("Beginning integrity check!\n");
 
     // Load current config data.
-    csRef<iDocumentNode> confignode
+    csRef<iDocumentNode> confignode;
     csRef<iDocumentNode> root = GetRootNode(UPDATERINFO_CURRENT_FILENAME);
     bool success = true;
     if(!root.IsValid())
