@@ -162,9 +162,9 @@ Begins a repair on the item in the specified slot. Default slot is righthand
 
 Slot Names: righthand, lefthand, head, legs, boots, bracers, torso, gloves, neck, rightfinger, leftfinger, belt, arms, back
 </topic>
-        <topic name="/roll">/roll times sides
+        <topic name="/roll">/roll times sides target
 
-Rolls a certain number of dice with the specified sides and gives the answer.  Example: "/roll 2 6" rolls 2 6-sided dice.  Use this to invent your own gambling games.</topic>
+Rolls a certain number of dice with the specified sides and gives the answer.  Example: "/roll 2 6" rolls 2 6-sided dice.  If target is defined it will only announce the number of dice which got a number higher than the specified one. Example: "/roll 2 6 3" rolls a 2 6-sided dice and tells how many of them got a 3 or an higher number. Use this to invent your own gambling games.</topic>
         <topic name="/sell">/sell merchant
 
 Sell to specified merchant.  If no merchant specified, sell to current target.</topic>
