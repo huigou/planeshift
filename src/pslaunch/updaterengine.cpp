@@ -855,19 +855,22 @@ void UpdaterEngine::CheckIntegrity()
     PrintOutput("Beginning integrity check!\n");
 
     // Load current config data.
+    csRef<iDocumentNode> confignode
     csRef<iDocumentNode> root = GetRootNode(UPDATERINFO_CURRENT_FILENAME);
     bool success = true;
-    if(!root)
+    if(!root.IsValid())
     {
         PrintOutput("Unable to get root node!\n");
         success = false;
     }
-
-    csRef<iDocumentNode> confignode = root->GetNode("config");
-    if (!confignode)
+    else
     {
+      confignode = root->GetNode("config");
+      if (!confignode.IsValid())
+      {
         PrintOutput("Couldn't find config node in configfile!\n");
         success = false;
+      }
     }
 
     if(!success)
