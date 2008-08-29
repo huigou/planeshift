@@ -1,4 +1,8 @@
 *** 2008-08-27 by Steven Patrick
+- Fixed FS#2181 - skillwindow and petstatwindow coherency/misplacement issues,
+  patch by weltall.
+
+*** 2008-08-27 by Steven Patrick
 - Added label colour for tester level, patch by Caarrie.
 - Added 'tester', 'dead' and 'alive' (normal) for /setlabelcolor, patch by 
   Caarrie.
