@@ -807,7 +807,7 @@ bool AdminManager::AdminCmdData::DecodeAdminCmdMessage(MsgEntry *pMsg, psAdminCm
         else if (subCmd == "help")
         {
             help = true;
-            subCmd = words[2]; // This might be help on a specefix command
+            subCmd = words[2]; // This might be help on a specific command
         }
         else
         {
@@ -832,7 +832,7 @@ bool AdminManager::AdminCmdData::DecodeAdminCmdMessage(MsgEntry *pMsg, psAdminCm
         {
             // No params
         }
-        else if (subCmd == "show") // Alias for dislay
+        else if (subCmd == "show") // Alias for display
         {
             subCmd = "display";
         }
@@ -1882,7 +1882,7 @@ void AdminManager::CreateHuntLocation(MsgEntry* me,psAdminCmdMessage& msg, Admin
     psSectorInfo *spawnsector = CacheManager::GetSingleton().GetSectorInfoByName(sector->QueryObject()->GetName());
     if(!spawnsector)
     {
-        CPrintf(CON_ERROR,"Player is in invaild sector %s!",sector->QueryObject()->GetName());
+        CPrintf(CON_ERROR,"Player is in invalid sector %s!",sector->QueryObject()->GetName());
         return;
     }
  
@@ -2473,7 +2473,7 @@ void AdminManager::HandleActionLocation(MsgEntry* me, psAdminCmdMessage& msg, Ad
         // Add on description
         resp.AppendFmt("<Description>%s</Description></Examine>",data.description.GetData());
 
-        // Create entrance action location w/ possition info since there will be many of these
+        // Create entrance action location w/ position info since there will be many of these
         psActionLocation* actionLocation = new psActionLocation();
         actionLocation->SetName(name);
         actionLocation->SetSectorName(sector_name.GetData());
@@ -2829,7 +2829,7 @@ void AdminManager::HandlePath(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
             }
             else
             {
-                psserver->SendSystemError( me->clientnum, "Stoping selected path.");
+                psserver->SendSystemError( me->clientnum, "Stopping selected path.");
                 client->PathSetPath(NULL);
             }
         }
@@ -2843,7 +2843,7 @@ void AdminManager::HandlePath(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
         Waypoint * wp = pathNetwork->FindNearestWaypoint(myPos,mySector,2.0,&range);
         if (wp)
         {
-            psserver->SendSystemInfo( me->clientnum, "Starting path, using exsisting waypoint %s(%d) at range %.2f",
+            psserver->SendSystemInfo( me->clientnum, "Starting path, using existing waypoint %s(%d) at range %.2f",
                                       wp->GetName(), wp->GetID(), range);
         } else
         {
@@ -2904,7 +2904,7 @@ void AdminManager::HandlePath(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
                 return;
             }
             
-            psserver->SendSystemInfo( me->clientnum, "Stoping path using exsisting waypoint %s(%d) at range %.2f",
+            psserver->SendSystemInfo( me->clientnum, "Stoping path using existing waypoint %s(%d) at range %.2f",
                                       wp->GetName(), wp->GetID(), range);
         } else
         {
@@ -3697,7 +3697,7 @@ void AdminManager::CreateNPC(MsgEntry* me,psAdminCmdMessage& msg, AdminCmdData& 
 
     if ( !psserver->GetConnections()->FindAccount(masternpc->GetSuperclientID()) )
     {
-        psserver->SendSystemError(me->clientnum, "%s's superclient is not online", basis->GetName() );
+        psserver->SendSystemError(me->clientnum, "%s's super client is not online", basis->GetName() );
         return;
     }
 
@@ -4039,7 +4039,7 @@ void AdminManager::MakeUnlockable(MsgEntry *me, psAdminCmdMessage& msg, AdminCmd
         target = GEMSupervisor::GetSingleton().FindItemEntity( instance_id );
         if (!target)
         {
-            psserver->SendSystemError(me->clientnum,"There is no item assoviated with this action location.");
+            psserver->SendSystemError(me->clientnum,"There is no item associated with this action location.");
             return;
         }
     }
@@ -4089,7 +4089,7 @@ void AdminManager::MakeSecurity(MsgEntry *me, psAdminCmdMessage& msg, AdminCmdDa
         target = GEMSupervisor::GetSingleton().FindItemEntity( instance_id );
         if (!target)
         {
-            psserver->SendSystemError(me->clientnum,"There is no item assoviated with this action location.");
+            psserver->SendSystemError(me->clientnum,"There is no item associated with this action location.");
             return;
         }
     }
@@ -4176,7 +4176,7 @@ void AdminManager::AddRemoveLock(MsgEntry *me, psAdminCmdMessage& msg, AdminCmdD
         target = GEMSupervisor::GetSingleton().FindItemEntity( instance_id );
         if (!target)
         {
-            psserver->SendSystemError(me->clientnum,"There is no item assoviated with this action location.");
+            psserver->SendSystemError(me->clientnum,"There is no item associated with this action location.");
             return;
         }
     }
@@ -4234,7 +4234,7 @@ void AdminManager::ChangeLock(MsgEntry *me, psAdminCmdMessage& msg, AdminCmdData
         target = GEMSupervisor::GetSingleton().FindItemEntity( instance_id );
         if (!target)
         {
-            psserver->SendSystemError(me->clientnum,"There is no item assoviated with this action location.");
+            psserver->SendSystemError(me->clientnum,"There is no item associated with this action location.");
             return;
         }
     }
@@ -4761,7 +4761,7 @@ void AdminManager::GMHandlePetition(MsgEntry *me, psPetitionRequestMessage& msg,
     }
     else
     {
-        // Tell GM operation was successful eventhough we don't have a list of petitions
+        // Tell GM operation was successful even though we don't have a list of petitions
         psPetitionMessage message(me->clientnum, NULL, "Successful", true, type, true);
         message.SendMessage();
     }
@@ -5090,7 +5090,7 @@ void AdminManager::DeleteCharacter(MsgEntry* me, psAdminCmdMessage& msg, AdminCm
         if ( error.Length() )
             psserver->SendSystemError(me->clientnum,"Deletion error: %s", error.GetData() );
         else
-            psserver->SendSystemError(me->clientnum,"Character deletion got unkown error!", error.GetData() );
+            psserver->SendSystemError(me->clientnum,"Character deletion got unknown error!", error.GetData() );
     }
 }
 
