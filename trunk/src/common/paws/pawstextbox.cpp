@@ -473,16 +473,16 @@ void pawsMessageTextBox::AddMessage( const char* data, int msgColour )
     csString message = data;
     csArray<csString> cutMessages;
 
-    int pos = (int)message.Length();
+    size_t pos = message.Length();
     while(pos > 0)
     {
-        int last = (int)message.FindLast("\n");
-        if(last == -1)
+        size_t last = message.FindLast("\n");
+        if(last == (size_t)-1)
         {
             cutMessages.Push(message);
             break;
         }
-        if(last != (int)message.Length()-1)
+        if(last != message.Length()-1)
         {
             cutMessages.Push(message.Slice(last+1, pos));
             cutMessages.Push("");
