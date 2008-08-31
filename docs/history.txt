@@ -1,4 +1,7 @@
-*** 2008-08-27 by Steven Patrick
+*** 2008-08-31 by Steven Patrick
+- Fix to compiling.html, patch by kougaro.
+
+*** 2008-08-29 by Steven Patrick
 - Fixed FS#2181 - skillwindow and petstatwindow coherency/misplacement issues,
   patch by weltall.
 
