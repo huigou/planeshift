@@ -1745,6 +1745,8 @@ is located somewhere else or you want to connect to somebody's else server, you 
     time. In this way you can also have multiple versions of CS coexisting peacefully.</p>
 
     <p><div class="commandBox">
+        $ cd /home/user/development<br>
+        $ echo "export LD_LIBRARY_PATH="$PWD/cal3d/src/cal3d/.libs/:$PWD/cs/:"$LD_LIBRARY_PATH"
         $ echo \#\!/bin/sh > PlaneShiftserver.sh<br>
         $ echo "export CRYSTAL=$PWD/cs/" >> PlaneShiftserver.sh<br>
         $ echo "cd $PWD/PlaneShift" >> PlaneShiftserver.sh<br>
@@ -1753,6 +1755,8 @@ is located somewhere else or you want to connect to somebody's else server, you 
     </div></p>
 
     <p><div class="commandBox">
+        $ cd /home/user/development<br>
+        $ echo "export LD_LIBRARY_PATH="$PWD/cal3d/src/cal3d/.libs/:$PWD/cs/:"$LD_LIBRARY_PATH"
         $ echo \#\!/bin/sh > PlaneShiftclient.sh<br>
         $ echo "export CRYSTAL=$PWD/cs/" >> PlaneShiftclient.sh<br>
         $ echo "cd $PWD/PlaneShift/" >> PlaneShiftclient.sh<br>
