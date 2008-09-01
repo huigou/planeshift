@@ -1286,7 +1286,12 @@ void pawsChatWindow::HandleMessage (MsgEntry *me)
         }
         case CHAT_SHOUT:
         {
-            buff.Format(PawsManager::GetSingleton().Translate("%s shouts: %s"),
+            if ( msg.sText.StartsWith("/me ") )
+                buff.Format("*%s %s*", (const char *)msg.sPerson, ((const char *)msg.sText)+4);
+            else if ( msg.sText.StartsWith("/my ") )
+                buff.Format("*%s's %s*", (const char *)msg.sPerson, ((const char *)msg.sText)+4);
+            else
+                buff.Format(PawsManager::GetSingleton().Translate("%s shouts: %s"),
                         (const char *)msg.sPerson, (const char *)msg.sText);
             colour = settings.shoutColor;
             break;
@@ -1314,7 +1319,12 @@ void pawsChatWindow::HandleMessage (MsgEntry *me)
 
         case CHAT_AUCTION:
         {
-            buff.Format(PawsManager::GetSingleton().Translate("%s from %s: %s"), pType,
+            if ( msg.sText.StartsWith("/me ") )
+                buff.Format("*%s %s*", (const char *)msg.sPerson, ((const char *)msg.sText)+4);
+            else if ( msg.sText.StartsWith("/my ") )
+                buff.Format("*%s's %s*", (const char *)msg.sPerson, ((const char *)msg.sText)+4);
+            else
+                buff.Format(PawsManager::GetSingleton().Translate("%s from %s: %s"), pType,
                         (const char *)msg.sPerson, (const char *)msg.sText);
             colour = settings.auctionColor;
             break;

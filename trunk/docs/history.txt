@@ -1,3 +1,7 @@
+*** 2008-09-01 by Steven Patrick
+- Fix for FS#2207 - Doing actions with /shout /me does not work, patch by
+  Caarrie.
+
 *** 2008-08-31 by Steven Patrick
 - Fix to compiling.html, patch by kougaro.
 
