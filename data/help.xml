@@ -91,9 +91,6 @@ Use to commit suicide, for example when /unstick does not get you free.</topic>
         <topic name="/dig">/dig for resource
 
 Mine for natural resources in the ground.  For example: /dig for gold.  Some locations are better than others for digging, and how well you do depends on where you are, your skill and your tools.</topic>
-        <topic name="/duelpoints">/duelpoints
-
-Shows how many duel points you have.</topic>
         <topic name="/equip">/equip quantity item_name
 
 Equips the specified quantity of a certain item.  This is equivalent to equipping items in your Inventory Window.</topic>
