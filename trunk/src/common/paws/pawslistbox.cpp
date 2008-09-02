@@ -582,7 +582,7 @@ void pawsListBox::SetScrollBarMaxValue()
     }
 
     // If everything has space, don't show scrollbar
-    if(longest - GetActualWidth(rowWidth) < 0)
+    if(longest - GetActualWidth(rowWidth) <= 0)
     {
         horzscrollBar->Hide();
     }

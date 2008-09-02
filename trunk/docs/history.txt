@@ -1,7 +1,8 @@
 *** 2008-09-02 by Andreas Heinchen
 - Fix for FS#2218 - Removed remnants for the duel points system, patch by
   Caarrie.
-
+- another fix for FS#1373 - Fixed of by 1 error in calculation for need of
+  horizScrollBar, patch by weltall.
 
 *** 2008-09-01 by Steven Patrick
 - Fix for FS#2207 - Doing actions with /shout /me does not work, patch by
