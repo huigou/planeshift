@@ -55,6 +55,7 @@
 #define NAMEHELP_BUTTON 900
 
 #define FEMALE_ICON "mainfemale"
+#define NEUTRAL_ICON "mainneutral"
 
 //////////////////////////////////////////////////////////////////////////////
 
@@ -77,6 +78,11 @@ pawsCreationMain::pawsCreationMain()
     if (!femaleImage)
     {
         Warning1( LOG_PAWS, "Could not locate the female icon image. This image is not part of the GPL.");
+    }
+    neutralImage = PawsManager::GetSingleton().GetTextureManager()->GetDrawable(NEUTRAL_ICON);
+    if (!neutralImage)
+    {
+        Warning1( LOG_PAWS, "Could not locate the neutral icon image. This image is not part of the GPL.");
     }
         
     currentFaceChoice = 0; 
@@ -958,10 +964,14 @@ void pawsCreationMain::Draw()
     
     graphics2D->SetClipRect( 0,0, graphics2D->GetWidth(), graphics2D->GetHeight());         
     
-    if ( currentGender == PSCHARACTER_GENDER_FEMALE )
+    if ( currentGender == PSCHARACTER_GENDER_FEMALE && createManager->GetSelectedRace() != 9)
     {   
         femaleImage->Draw(GetActualWidth(363),GetActualHeight(74), GetActualWidth(82),GetActualHeight(34));        
-    }        
+    }
+    if ( createManager->GetSelectedRace() == 9)
+    {
+        neutralImage->Draw(GetActualWidth(363),GetActualHeight(74), GetActualWidth(82),GetActualHeight(34));
+    }
 }
 
 bool pawsCreationMain::OnChange(pawsWidget *widget)

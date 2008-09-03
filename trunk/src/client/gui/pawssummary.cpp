@@ -70,7 +70,9 @@ void pawsSummaryWindow::Update()
     pawsMultiLineTextBox* text = (pawsMultiLineTextBox*) FindWidget("text_birth");
     pawsMultiLineTextBox* lifeText = (pawsMultiLineTextBox*) FindWidget("text_life");
 
-    if (createManager->GetSelectedGender() == PSCHARACTER_GENDER_FEMALE)
+    if (createManager->GetSelectedRace() == 9)
+        textString.Append("Gender: neutral\n");
+    else if (createManager->GetSelectedGender() == PSCHARACTER_GENDER_FEMALE)
         textString.Append("Gender: female\n");
     else if (createManager->GetSelectedGender() == PSCHARACTER_GENDER_MALE)
         textString.Append("Gender: male\n");
