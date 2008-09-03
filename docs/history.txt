@@ -1,3 +1,6 @@
+*** 2008-09-03 by Steven Patrick
+- Fix for FS#419 - Kran Gender in CharGen, patch by kougaro.
+
 *** 2008-09-02 by Andreas Heinchen
 - Fix for FS#2218 - Removed remnants for the duel points system, patch by
   Caarrie.

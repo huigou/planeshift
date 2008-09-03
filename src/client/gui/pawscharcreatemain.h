@@ -133,6 +133,8 @@ private:
     csRef<MsgHandler> msgHandler; 
   
     csRef<iPAWSDrawable> femaleImage;
+    csRef<iPAWSDrawable> neutralImage;
+
     
     /// Paper doll view of model.
     pawsObjectView* view;   
