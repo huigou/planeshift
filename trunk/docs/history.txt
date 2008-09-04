@@ -1,3 +1,7 @@
+*** 2008-09-04 by Mike Gist
+- Fixed a typo causing the updater to have trouble restarting itself on macs.
+- Renamed CheckIntegrity to --repair (-repair is also valid).
+
 *** 2008-09-03 by Steven Patrick
 - Fix for FS#419 - Kran Gender in CharGen, patch by kougaro.
 
