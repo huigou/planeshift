@@ -46,11 +46,11 @@ UpdaterConfig::UpdaterConfig(csArray<csString> args, iObjectRegistry* _object_re
     for(uint i=0; i<args.GetSize(); i++)
     {
         csString arg = args.Pop();
-        if(arg.Compare("selfUpdateFirst"))
+        if(arg.CompareNoCase("selfUpdateFirst"))
             selfUpdating = 1;
-        else if(arg.Compare("selfUpdateSecond"))
+        else if(arg.CompareNoCase("selfUpdateSecond"))
             selfUpdating = 2;
-        else if(arg.Compare("CheckIntegrity"))
+        else if(arg.CompareNoCase("-repair") || arg.CompareNoCase("--repair"))
             checkIntegrity = true;
     }
 

@@ -562,7 +562,7 @@ bool UpdaterEngine::SelfUpdate(int selfUpdating)
             cmd.Format("cd %s; unzip -oqq %s", thisPath->GetData(), zip.GetData());
             system(cmd);
 
-#if defined(CSPLATFORM_MACOSX)
+#if defined(CS_PLATFORM_MACOSX)
 
             // Create a new process of the updater and exit.
             cmd.Clear();
