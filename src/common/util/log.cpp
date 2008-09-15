@@ -145,30 +145,28 @@ void LogMessage (const char* file, int line, const char* function,
 
     if(con <= ConsoleOut::GetMaximumOutputClassStdout())
     {
-        char msgid[5000];
+        csString msgid;
         if(con < CON_WARNING && con > CON_CMDOUTPUT)
         {
-            snprintf (msgid, 5000, "<%s:%d %s SEVERE>\n",
+            msgid.Format("<%s:%d %s SEVERE>\n",
                       file, line, function);
         }
         else
-            snprintf (msgid, 5000, "<%s:%d %s>\n",
+            msgid.Format("<%s:%d %s>\n",
             file, line, function);
 
-        char description[5001];
+        csString description;
         va_start(arg, msg);
-        cs_vsnprintf (description, 5000, msg, arg);
+        description.FormatV(msg, arg);
         va_end(arg);
-        size_t len = strlen(description);
-        description[len++] = '\n';
-        description[len] = '\0';
+        description.Append("\n"); //add an ending new line
 
         // Disable use of csReport while testing using CPrintf
         //        va_start(arg, msg);
         //        csReportV (logger, severity, msgid, msg, arg);
         //        va_end(arg);
-        CPrintf(con,msgid);
-        CPrintf(con,description);
+        CPrintf(con,msgid.GetDataSafe());
+        CPrintf(con,description.GetDataSafe());
 
         /* ERR and BUG will be loged to errorLog by the CPrintf
         // Log errors to a file so they can be emailed to devs daily.

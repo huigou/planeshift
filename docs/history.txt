@@ -1,3 +1,7 @@
+*** 2008-09-15 by Roland Schulz
+- patch by weltall removing fixed char buffers in console output, replaced by csstring.
+  and remove spamming item names to console in src/client/gui/pawsmerchantwindow.cpp
+
 *** 2008-09-04 by Mike Gist
 - Fixed a typo causing the updater to have trouble restarting itself on macs.
 - Renamed CheckIntegrity to --repair (-repair is also valid).
