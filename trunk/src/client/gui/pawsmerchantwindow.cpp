@@ -308,7 +308,6 @@ void pawsMerchantWindow::HandleCategories( const char* data )
 
 void pawsMerchantWindow::HandleItems( const char* data )
 {
-Error2("%s", data);
     itemsBox->Clear();
     csRef<iDocumentSystem> xml =  csQueryRegistry<iDocumentSystem> (PawsManager::GetSingleton().GetObjectRegistry());
 

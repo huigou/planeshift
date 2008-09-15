@@ -124,55 +124,38 @@ void ConsoleOut::Intern_Printf (ConsoleOutMsgClass con, const char* string, ...)
 
 void ConsoleOut::Intern_VPrintf (ConsoleOutMsgClass con, const char* string, va_list args)
 {
-    char buffer[5000];
-    vsnprintf(buffer, 5000, string, args);
-
     csString output;
-    char * nextline;
-    char * start = buffer;
+    csString time_buffer; //holds the time string to be appended to each line
+    bool ending_newline = false;
+    output.FormatV(string, args); //formats the output
+	
+	//get time stamp
+    time_t curtime = time(NULL);
+    struct tm *loctime;
+    loctime = localtime (&curtime);
+    time_buffer.Format("%s", asctime(loctime)); //formats the time string to be appended
+    time_buffer.Truncate(time_buffer.Length()-1);
+    time_buffer.Append(", ");
+    // Append any shift
+    for (int i=0; i < shift; i++)
+    {
+        time_buffer.Append("  ");
+    }
+    output.Insert(0, time_buffer); //add it to the starting of the string
 
     // Format output with timestamp at each line and apply shifts
-    do
-    {
-        nextline = strchr(start,'\n');
-        if (nextline)
-        {
-            *nextline = '\0';
-            nextline++;
-        }
-
-        if (atStartOfLine)
-        {
-            // Append timestamp
-            time_t curtime = time(NULL);
-            struct tm *loctime;
-            loctime = localtime (&curtime);
-            output.Append(asctime(loctime));
-            
-            output.Truncate(output.Length()-1);
-            
-            output.Append(", ");
-
-
-            
-            // Append any shift
-            for (int i=0; i < shift; i++)
-            {
-                output.Append("  ");
-            }
-        }
-        atStartOfLine = false;
-        
-        output.Append(start);
-        if (nextline)
-        {
-            output.Append("\n");
-            atStartOfLine = true;
-        }
-
-        start = nextline;
-    } while (start && *start);
     
+    if(output.GetAt(output.Length()-1) == '\n')  //check if there is an ending new line to avoid substitution there
+    {
+        output.Truncate(output.Length()-1);
+        ending_newline = true;
+    }
+
+    time_buffer.Insert(0, "\n"); //add the leading new line in the time string
+    output.FindReplace("\n", time_buffer); //adds the string to be appended to the output string
+    
+    if(ending_newline) //restore the ending newline if it was removed
+        output.Append("\n");
 
     // Now that we have output correctly formated check where to send the output
 
@@ -260,8 +243,8 @@ void ConsoleOut::SetPrompt(const char *format, ...)
 {
     va_list args;
     va_start(args, format);
-    char buffer[5000];
-    vsnprintf(buffer, 5000, format, args);
+    csString buffer;
+    buffer.FormatV(format, args);
     va_end(args);
 
     if (!atStartOfLine)
@@ -270,7 +253,7 @@ void ConsoleOut::SetPrompt(const char *format, ...)
         atStartOfLine = true;
     }
 
-    printf("%8u) %s",csGetTicks(),buffer);
+    printf("%8u) %s",csGetTicks(),buffer.GetDataSafe());
     promptDisplayed = true;
 }
 
