@@ -26,7 +26,6 @@
 #include "globals.h"
 #include "psserver.h"
 #include "iserver/idal.h"
-#include "net/netpacket.h"
 
 #include "util/serverconsole.h"
 #include "util/log.h"

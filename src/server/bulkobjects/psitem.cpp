@@ -1553,26 +1553,22 @@ float psItem::GetHardness()
     return current_stats->Armor().Hardness();
 }
 
-PSITEMSTATS_STAT psItem::GetWeaponAttributeBonusType(PSITEMSTATS_STAT_BONUS_INDEX index)
+PSITEMSTATS_STAT psItem::GetWeaponAttributeBonusType(int index)
 {
     return current_stats->Weapon().AttributeBonusType(index);
 }
 
 float psItem::GetWeaponAttributeBonus(PSITEMSTATS_STAT stat)
 {
-    if (GetWeaponAttributeBonusType(PSITEMSTATS_STAT_BONUS_INDEX_0)== stat)
-        return GetWeaponAttributeBonusMax(PSITEMSTATS_STAT_BONUS_INDEX_0);
-
-    else if (GetWeaponAttributeBonusType(PSITEMSTATS_STAT_BONUS_INDEX_1)== stat)
-        return GetWeaponAttributeBonusMax(PSITEMSTATS_STAT_BONUS_INDEX_1);
-
-    else if (GetWeaponAttributeBonusType(PSITEMSTATS_STAT_BONUS_INDEX_2)== stat)
-        return GetWeaponAttributeBonusMax(PSITEMSTATS_STAT_BONUS_INDEX_2);
-    else
-        return 0.0F;
+    for (int i = 0; i < PSITEMSTATS_STAT_BONUS_COUNT; i++)
+    {
+        if (GetWeaponAttributeBonusType(i) == stat)
+            return GetWeaponAttributeBonusMax(i);
+    }
+    return 0.0f;
 }
 
-float psItem::GetWeaponAttributeBonusMax(PSITEMSTATS_STAT_BONUS_INDEX index)
+float psItem::GetWeaponAttributeBonusMax(int index)
 {
     return current_stats->Weapon().AttributeBonusMax(index);
 }

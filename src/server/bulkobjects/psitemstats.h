@@ -194,14 +194,7 @@ struct st_attribute_bonus {
     short bonus_max;
 };
 
-enum PSITEMSTATS_STAT_BONUS_INDEX
-{
-    PSITEMSTATS_STAT_BONUS_INDEX_0 = 0,
-    PSITEMSTATS_STAT_BONUS_INDEX_1,
-    PSITEMSTATS_STAT_BONUS_INDEX_2,
-    PSITEMSTATS_STAT_BONUS_INDEX_COUNT
-};
-
+#define PSITEMSTATS_STAT_BONUS_COUNT 3
 
 /**
  * This is a struct used by item stats to say that a person
@@ -276,13 +269,13 @@ public:
     float TargetedBlockValue(){ return targeted_block_value;}
     float CounterBlockValue(){ return counter_block_value; }
     
-    PSITEMSTATS_STAT AttributeBonusType(PSITEMSTATS_STAT_BONUS_INDEX index);
-    float AttributeBonusMax(PSITEMSTATS_STAT_BONUS_INDEX index);
+    PSITEMSTATS_STAT AttributeBonusType(int index);
+    float AttributeBonusMax(int index);
          
 private:
     PSITEMSTATS_WEAPONTYPE weapon_type;
     PSSKILL weapon_skill[PSITEMSTATS_WEAPONSKILL_INDEX_COUNT];
-    st_attribute_bonus attribute_bonuses[PSITEMSTATS_STAT_BONUS_INDEX_COUNT];
+    st_attribute_bonus attribute_bonuses[PSITEMSTATS_STAT_BONUS_COUNT];
     float latency;
     float damages[PSITEMSTATS_DAMAGETYPE_COUNT];  // 4.3 precision 
     float penetration;
