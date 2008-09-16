@@ -442,9 +442,10 @@ bool psEngine::Initialize (int level)
         
         options = new psOptions("/planeshift/userdata/options.cfg", vfs);
         
-        // Default to maximum 1000/(14)fps (71.4 fps)
+        // Default to maximum 71 fps
         // Actual fps get be up to 10 fps less so set a reasonably high limit
-        frameLimit = cfgmgr->GetInt("Video.FrameLimit", 14);
+        maxFPS = cfgmgr->GetInt("Video.FrameLimit", 71);
+        frameLimit = 1000 / maxFPS;
         
         paws->SetSoundStatus(soundOn);
         mainWidget = new psMainWidget();
@@ -1903,8 +1904,9 @@ void psEngine::FatalError(const char* msg)
 
 void psEngine::setLimitFPS(int a)
 {
-    frameLimit = ( 1000 / a );
-    cfgmgr->SetInt("Video.frameLimit", frameLimit);
+    maxFPS = a;
+    frameLimit = ( 1000 / maxFPS );
+    cfgmgr->SetInt("Video.frameLimit", maxFPS);
     cfgmgr->Save();// need to save this every time
 }
 

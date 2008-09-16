@@ -61,9 +61,10 @@ void pawsStringPromptWindow::Initialize(const csString & label, const csString &
     SetLabel(label);
     PawsManager::GetSingleton().SetCurrentFocusedWidget(inputWidget);
     LayoutWindow();
-    inputWidget->SetBackground("Entry Field Background");
-    inputWidget->SetBackgroundAlpha(0);
-     
+    //inputWidget->SetBackground("Entry Field Background");
+    //inputWidget->SetBackgroundAlpha(0);
+    inputWidget->UseBorder("line");
+ 
     this->action = action;
     this->name   = name;
     this->param  = param;
