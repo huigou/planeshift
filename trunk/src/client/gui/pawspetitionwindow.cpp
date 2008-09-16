@@ -35,7 +35,7 @@
 #include "paws/pawsmainwidget.h"
 #include "gui/pawscontrolwindow.h"
 
-// ByyUTTON IDs
+// BUTTON IDs
 #define CANCEL_BUTTON        1
 #define NEW_BUTTON           2
 #define SAVE_BUTTON          3

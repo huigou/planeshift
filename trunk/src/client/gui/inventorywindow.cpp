@@ -125,38 +125,14 @@ bool pawsInventoryWindow::PostSetup()
     // Setup the Doll
     if ( !SetupDoll() )
         return false;
-
-    trias  = dynamic_cast <pawsTextBox*> (FindWidget("TotalTrias")); 
-    if ( !trias )
-        return false;
-    weight = dynamic_cast <pawsTextBox*> (FindWidget("TotalWeight")); 
-    if ( !weight )
-        return false;
         
     money = dynamic_cast <pawsMoney*> (FindWidget("Money")); 
-    if ( !money )
-        return false;
-    
-    money->SetContainer( CONTAINER_INVENTORY_MONEY );            
-     
-    // If you add something here, DO NOT FORGET TO CHANGE 'INVENTORY_EQUIP_COUNT'!!!
-    if ( !SetupSlot("lefthand") )    return false;
-    if ( !SetupSlot("righthand") )   return false;
-    if ( !SetupSlot("leftfinger") )  return false;
-    if ( !SetupSlot("rightfinger") ) return false;
-    if ( !SetupSlot("head") )        return false;
-    if ( !SetupSlot("neck") )        return false;
-    if ( !SetupSlot("back") )        return false;
-    if ( !SetupSlot("arms") )        return false;    
-    if ( !SetupSlot("gloves") )      return false;        
-    if ( !SetupSlot("boots") )       return false;            
-    if ( !SetupSlot("legs") )        return false;            
-    if ( !SetupSlot("belt") )        return false;                
-    if ( !SetupSlot("bracers") )     return false;            
-    if ( !SetupSlot("torso") )       return false;                
-    if ( !SetupSlot("mind") )        return false;
+    if ( money ){
+        money->SetContainer( CONTAINER_INVENTORY_MONEY );
+    }
         
     pawsListBox * bulkList = dynamic_cast <pawsListBox*> (FindWidget("BulkList"));
+    if (bulkList){
     int colCount = bulkList->GetTotalColumns();
     int rowCount = (int) ceil(float(INVENTORY_BULK_COUNT)/colCount);
 
@@ -187,7 +163,7 @@ bool pawsInventoryWindow::PostSetup()
             bulkSlots[i] = slot;
         }
     }
-
+   }
     // Ask the server to send us the inventory
     inventoryCache = psengine->GetInventoryCache();
     if (!inventoryCache)
@@ -205,6 +181,7 @@ bool pawsInventoryWindow::PostSetup()
 bool pawsInventoryWindow::SetupDoll()
 {
     pawsObjectView* widget = dynamic_cast<pawsObjectView*>(FindWidget("InventoryDoll"));
+    if (widget){
     GEMClientActor* actor = psengine->GetCelClient()->GetMainPlayer();
     if (!widget || !actor)
         return false;
@@ -242,8 +219,10 @@ bool pawsInventoryWindow::SetupDoll()
     //bool a = psengine->BuildAppearance( widget->GetObject(), actor->traits );
     //bool e = psengine->BuildEquipment( widget->GetObject(), actor->equipment, actor->traitList );
     
+
+    }
     return true;
-    //return (a && e);
+    //return (a && e);  
 }
 
 bool pawsInventoryWindow::OnMouseDown( int button, int keyModifier, int x, int y )

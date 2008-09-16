@@ -785,6 +785,7 @@ void psCharController::CreateKeys()
     controls.NewTrigger("Communications" , psControl::NORMAL, &psTriggerHandler::HandleWindow);
     controls.NewTrigger("Help"           , psControl::NORMAL, &psTriggerHandler::HandleWindow);
     controls.NewTrigger("Inventory"      , psControl::NORMAL, &psTriggerHandler::HandleWindow);
+	controls.NewTrigger("Bag"			 , psControl::NORMAL, &psTriggerHandler::HandleWindow);
     controls.NewTrigger("Options"        , psControl::NORMAL, &psTriggerHandler::HandleWindow);
     controls.NewTrigger("Quit"           , psControl::NORMAL, &psTriggerHandler::HandleWindow);
     controls.NewTrigger("Spell book"     , psControl::NORMAL, &psTriggerHandler::HandleWindow);
