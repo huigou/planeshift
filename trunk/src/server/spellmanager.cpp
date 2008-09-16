@@ -127,7 +127,7 @@ void psSpellManager::HandleMessage(MsgEntry *me,Client *client)
         
         case MSGTYPE_SPELL_CANCEL:
         {
-            CancelSpellCasting(client->GetActor());
+            client->GetCharacterData()->InterruptSpellCasting();
             break;
         }            
     }
@@ -339,11 +339,6 @@ void psSpellManager::Cast(Client * client, csString spellName, float kFactor)
     {
         psserver->SendSystemInfo(client->GetClientNum(),castingText.GetData());
     }
-}
-
-void psSpellManager::CancelSpellCasting(gemActor * caster)
-{
-    caster->GetCharacterData()->InterruptSpellCasting();
 }
 
 void psSpellManager::SendSpellBook(Client * client)
