@@ -357,7 +357,7 @@ bool psCamera::InitializeView(GEMClientActor* entity)
     return true;
 }
 
-bool psCamera::LoadFromFile(bool useDefault)
+bool psCamera::LoadFromFile(bool useDefault, bool overrideCurrent)
 {
     csString fileName = "/planeshift/userdata/options/camera.xml";
     if (!psengine->GetVFS()->Exists(fileName) || useDefault)
@@ -493,18 +493,21 @@ bool psCamera::LoadFromFile(bool useDefault)
                 csString settingValue = settingNode->GetAttributeValue("value");
                 if (settingName == "StartingPitch")
                 {
-                    camData[c].pitch = atof(settingValue.GetData());
-                    camData[c].defaultPitch = camData[c].pitch;
+                    camData[c].defaultPitch = atof(settingValue.GetData());
+                    if(overrideCurrent)
+                        camData[c].pitch = camData[c].defaultPitch;
                 }
                 else if (settingName == "StartingYaw")
                 {
-                    camData[c].yaw = atof(settingValue.GetData());
-                    camData[c].defaultYaw = camData[c].yaw;
+                    camData[c].defaultYaw = atof(settingValue.GetData());
+                    if(overrideCurrent)
+                        camData[c].yaw = camData[c].defaultYaw;
                 }
                 else if (settingName == "StartingRoll")
                 {
-                    camData[c].roll = atof(settingValue.GetData());
-                    camData[c].defaultRoll = camData[c].roll;
+                    camData[c].defaultRoll = atof(settingValue.GetData());
+                    if(overrideCurrent)
+                        camData[c].roll = camData[c].defaultRoll;
                 }
                 else if (settingName == "CameraDistance")
                     camData[c].distance = atof(settingValue.GetData());

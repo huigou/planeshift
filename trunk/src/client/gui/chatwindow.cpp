@@ -97,6 +97,13 @@ pawsChatWindow::pawsChatWindow()
     settings.meFilters = 0;
     settings.vicinityFilters = 0;
     settings.echoScreenInSystem = false;
+    //TODO: REMOVE NEXT 3 LINES AFTER THE FIRST RELEASE MADE WITH THIS! (SO AFTER A RELEASE >= 0.4.03)
+    //sets a default color for npc and a default for mainBrackets and yourColorMix in order to 
+    //allow safe update to next release
+    settings.npcColor = graphics2D->FindRGB( 255, 0, 255 ); 
+    settings.mainBrackets = true; 
+    settings.yourColorMix = true;
+                                                            
 
     for (int i = 0; i < CHAT_NLOG; i++)
         logFile[i] = NULL;
@@ -201,6 +208,10 @@ void pawsChatWindow::LoadChatSettings()
                 settings.selectTabStyle = (int)option->GetAttributeValueAsInt("value");
             else if (nodeName == "echoscreeninsystem")
                 settings.echoScreenInSystem = option->GetAttributeValueAsInt("value") ? true : false;
+            else if (nodeName == "mainbrackets")
+                settings.mainBrackets = option->GetAttributeValueAsInt("value") ? true : false;
+            else if (nodeName == "yourcolormix")
+                settings.yourColorMix = option->GetAttributeValueAsInt("value") ? true : false;
             else
             {
                 for (int i = 0; i < CHAT_NLOG; i++)
@@ -349,6 +360,8 @@ void pawsChatWindow::LoadChatSettings()
         }
     }
 
+
+
     // Load colors
     colorNode = chatNode->GetNode("chatcolors");
     if (colorNode != NULL)
@@ -369,6 +382,7 @@ void pawsChatWindow::LoadChatSettings()
             if ( nodeName == "admintext"  ) settings.adminColor = col;
             if ( nodeName == "playernametext" ) settings.playerColor = col;
             if ( nodeName == "chattext") settings.chatColor = col;
+            if ( nodeName == "npctext") settings.npcColor = col;
             if ( nodeName == "telltext") settings.tellColor = col;
             if ( nodeName == "shouttext") settings.shoutColor = col;
             if ( nodeName == "gmtext") settings.gmColor = col;
@@ -744,6 +758,19 @@ const char* pawsChatWindow::HandleCommand( const char* cmd )
                         defaultButton = "Main Button";
                 }
             }
+            else if (chatType == "AuctionText")
+            {
+                chattype = CHAT_AUCTION;
+                words.GetTail(0,text);
+                allowedTabs.Push("AuctionText");
+                defaultButton = "Auction Button";
+                if (settings.auctionIncluded)
+                {
+                    allowedTabs.Push("MainText");
+                    if (settings.selectTabStyle == 2)
+                        defaultButton = "Main Button";
+                }
+            }
             else if (words[0] == "/my")
             {
                 chattype = CHAT_MY;
@@ -791,7 +818,7 @@ const char* pawsChatWindow::HandleCommand( const char* cmd )
     return NULL;
 }
 
-void pawsChatWindow::LogMessage(enum E_CHAT_LOG channel, const char* message)
+void pawsChatWindow::LogMessage(enum E_CHAT_LOG channel, const char* message, int type)
 {
     if (settings.logChannel[channel])
     {
@@ -813,24 +840,23 @@ void pawsChatWindow::LogMessage(enum E_CHAT_LOG channel, const char* message)
                 time(&aclock);
                 newtime = localtime(&aclock);
                 strftime(buf, 32, "%a %d-%b-%Y %H:%M:%S", newtime);
-		csString buffer;
+                csString buffer;
 #ifdef _WIN32
-		buffer.Format(
-					"================================================\r\n"
-					"%s %s\r\n"
-					"------------------------------------------------\r\n",
-					buf, psengine->GetCelClient()->GetMainPlayer()->GetName()
-					);
-		logFile[channel]->Write(buffer.GetData(), buffer.Length());
+                buffer.Format(
+                    "================================================\r\n"
+                    "%s %s\r\n"
+                    "------------------------------------------------\r\n",
+                    buf, psengine->GetCelClient()->GetMainPlayer()->GetName()
+                    );
 #else
-		buffer.Format(
+                buffer.Format(
                     "================================================\n"
                     "%s %s\n"
                     "------------------------------------------------\n",
                     buf, psengine->GetCelClient()->GetMainPlayer()->GetName()
                     );
-                logFile[channel]->Write(buffer.GetData(), buffer.Length());
 #endif
+                logFile[channel]->Write(buffer.GetData(), buffer.Length());
             }
             else
             {
@@ -849,9 +875,9 @@ void pawsChatWindow::LogMessage(enum E_CHAT_LOG channel, const char* message)
             strftime(buf, 32, "(%H:%M:%S)", newtime);
 	    csString buffer;
 #ifdef _WIN32
-	    buffer.Format("%s %s\r\n", buf, message);
+        buffer.Format("%s %s%s\r\n", buf, GetBracket(type).GetDataSafe(), message);
 #else
-		buffer.Format("%s %s\n", buf, message);
+        buffer.Format("%s %s%s\n", buf, GetBracket(type).GetDataSafe(), message);
 #endif
 	    logFile[channel]->Write(buffer.GetData(), buffer.Length());
 	    logFile[channel]->Flush();
@@ -881,7 +907,8 @@ void pawsChatWindow::SaveChatSettings()
     csRef<iDocument> doc = docsys->CreateDocument();
     csRef<iDocumentNode> root,chatNode, colorNode, optionNode,looseNode,filtersNode,
                          badWordsNode,badWordsTextNode,cNode, logNode, selectTabStyleNode,
-                         echoScreenInSystemNode, mainTabNode, flashingNode, flashingOnCharNode, node;
+                         echoScreenInSystemNode, mainBracketsNode, yourColorMixNode,mainTabNode, 
+                         flashingNode, flashingOnCharNode, node;
 
     root = doc->CreateRoot();
 
@@ -899,6 +926,14 @@ void pawsChatWindow::SaveChatSettings()
     echoScreenInSystemNode->SetValue("echoscreeninsystem");
     echoScreenInSystemNode->SetAttributeAsInt("value",(int)settings.echoScreenInSystem);
 
+    mainBracketsNode = optionNode->CreateNodeBefore(CS_NODE_ELEMENT,0);
+    mainBracketsNode->SetValue("mainbrackets");
+    mainBracketsNode->SetAttributeAsInt("value",(int)settings.mainBrackets);
+    
+    yourColorMixNode = optionNode->CreateNodeBefore(CS_NODE_ELEMENT,0);
+    yourColorMixNode->SetValue("yourcolormix");
+    yourColorMixNode->SetAttributeAsInt("value",(int)settings.yourColorMix);
+    
     looseNode = optionNode->CreateNodeBefore(CS_NODE_ELEMENT,0);
     looseNode->SetValue("loose");
     looseNode->SetAttributeAsInt("value",(int)settings.looseFocusOnSend);
@@ -1018,6 +1053,7 @@ void pawsChatWindow::SaveChatSettings()
     CreateSettingNode(colorNode,settings.yourColor,"yourtext");
     CreateSettingNode(colorNode,settings.guildColor,"guildtext");
     CreateSettingNode(colorNode,settings.shoutColor,"shouttext");
+    CreateSettingNode(colorNode,settings.npcColor, "npctext" );
     CreateSettingNode(colorNode,settings.tellColor,"telltext");
     CreateSettingNode(colorNode,settings.chatColor,"chattext");
     CreateSettingNode(colorNode,settings.adminColor,"admintext");
@@ -1249,7 +1285,6 @@ void pawsChatWindow::HandleMessage (MsgEntry *me)
 
     csString buff;
     int colour = -1;
-    const char *pType = msg.GetTypeText();
 
     if ( !havePlayerName )  // save name for auto-complete later
     {
@@ -1279,7 +1314,7 @@ void pawsChatWindow::HandleMessage (MsgEntry *me)
             else if ( msg.sText.StartsWith("/my ") )
                 buff.Format("%s's %s", (const char *)msg.sPerson, ((const char *)msg.sText)+4);
             else
-                buff.Format(PawsManager::GetSingleton().Translate("%s tells group: %s"),
+                buff.Format(PawsManager::GetSingleton().Translate("%s says: %s"),
                             (const char *)msg.sPerson, (const char *)msg.sText);
             colour = settings.groupColor;
             break;
@@ -1287,9 +1322,9 @@ void pawsChatWindow::HandleMessage (MsgEntry *me)
         case CHAT_SHOUT:
         {
             if ( msg.sText.StartsWith("/me ") )
-                buff.Format("*%s %s*", (const char *)msg.sPerson, ((const char *)msg.sText)+4);
+                buff.Format("%s %s", (const char *)msg.sPerson, ((const char *)msg.sText)+4);
             else if ( msg.sText.StartsWith("/my ") )
-                buff.Format("*%s's %s*", (const char *)msg.sPerson, ((const char *)msg.sText)+4);
+                buff.Format("%s's %s", (const char *)msg.sPerson, ((const char *)msg.sText)+4);
             else
                 buff.Format(PawsManager::GetSingleton().Translate("%s shouts: %s"),
                         (const char *)msg.sPerson, (const char *)msg.sText);
@@ -1311,7 +1346,7 @@ void pawsChatWindow::HandleMessage (MsgEntry *me)
             else if ( msg.sText.StartsWith("/my ") )
                 buff.Format("%s's %s", (const char *)msg.sPerson, ((const char *)msg.sText)+4);
             else
-                buff.Format(PawsManager::GetSingleton().Translate("%s from %s: %s"), pType,
+                buff.Format(PawsManager::GetSingleton().Translate("%s says: %s"), 
                             (const char *)msg.sPerson,(const char *)msg.sText);
             colour = settings.guildColor;
             break;
@@ -1320,46 +1355,67 @@ void pawsChatWindow::HandleMessage (MsgEntry *me)
         case CHAT_AUCTION:
         {
             if ( msg.sText.StartsWith("/me ") )
-                buff.Format("*%s %s*", (const char *)msg.sPerson, ((const char *)msg.sText)+4);
+                buff.Format("%s %s", (const char *)msg.sPerson, ((const char *)msg.sText)+4);
             else if ( msg.sText.StartsWith("/my ") )
-                buff.Format("*%s's %s*", (const char *)msg.sPerson, ((const char *)msg.sText)+4);
+                buff.Format("%s's %s", (const char *)msg.sPerson, ((const char *)msg.sText)+4);
             else
-                buff.Format(PawsManager::GetSingleton().Translate("%s from %s: %s"), pType,
+                buff.Format(PawsManager::GetSingleton().Translate("%s auctions: %s"), 
                         (const char *)msg.sPerson, (const char *)msg.sText);
             colour = settings.auctionColor;
             break;
         }
 
         case CHAT_SAY:
-        case CHAT_NPC:
         {
             buff.Format(PawsManager::GetSingleton().Translate("%s says: %s"),
                         (const char *)msg.sPerson, (const char *)msg.sText);
-            colour = settings.chatColor;
+            colour = settings.yourColor;
             break;
         }
 
         case CHAT_ME:
-        case CHAT_NPC_ME:
         {
             buff.Format("%s %s", (const char *)msg.sPerson, ((const char *)msg.sText));
-            colour = settings.chatColor;
+            colour = settings.yourColor;
             break;
         }
 
         case CHAT_MY:
+        {
+            buff.Format("%s's %s", (const char *)msg.sPerson, ((const char *)msg.sText));
+            colour = settings.yourColor;
+            break;
+        }
+
+        case CHAT_NPC:
+        {
+            buff.Format(PawsManager::GetSingleton().Translate("%s says: %s"),
+                        (const char *)msg.sPerson, (const char *)msg.sText);
+            colour = settings.npcColor;
+            break;
+        }
+
+        case CHAT_NPC_ME:
+        {
+            buff.Format("%s %s", (const char *)msg.sPerson, ((const char *)msg.sText));
+            colour = settings.npcColor;
+            break;
+        }
+
         case CHAT_NPC_MY:
         {
             buff.Format("%s's %s", (const char *)msg.sPerson, ((const char *)msg.sText));
-            colour = settings.chatColor;
+            colour = settings.npcColor;
             break;
         }
+
         case CHAT_NPC_NARRATE:
         {
             buff.Format("-%s-", (const char *)msg.sText);
             colour = settings.shoutColor;
             break;
         }
+
         case CHAT_PET_ACTION:
         {
             if (msg.sText.StartsWith("'s "))
@@ -1424,7 +1480,7 @@ void pawsChatWindow::HandleMessage (MsgEntry *me)
             if (IgnoredList->IsIgnored(msg.sPerson))
                 ChatOutput(PawsManager::GetSingleton().Translate("You are ignoring all replies from that person."));
 
-            colour = settings.yourColor;
+            colour = settings.tellColor;
             flashEnabled = false;
             break;
         }
@@ -1485,12 +1541,22 @@ void pawsChatWindow::HandleMessage (MsgEntry *me)
     // Add the player to our auto-complete list
     AddAutoCompleteName(msg.sPerson);
 
-    if (msg.iChatType != CHAT_TELL &&
-        msg.iChatType != CHAT_TELLSELF)
+    if (msg.iChatType != CHAT_TELL)
     {
-        if ( noCasePlayerForename == noCasePerson )
+        if ( noCasePlayerForename == noCasePerson || msg.iChatType == CHAT_TELLSELF)
         {
-            colour = settings.yourColor;
+            //if the yourColorMix is enabled mix the yourcolour with the colour of the chat type
+            //else use the normal yourcolour
+            if(settings.yourColorMix)
+            {
+                int r,g,b;
+                int r2,g2,b2;
+                graphics2D->GetRGB(colour,r,g,b); //gets the rgb values of the colour for the chat type
+                graphics2D->GetRGB(settings.yourColor,r2,g2,b2); //gets the rgb values of the colour yourColour
+                colour = graphics2D->FindRGB((r+r2)/2,(g+g2)/2,(b+b2)/2); //does the average of the two colours
+            }
+            else
+                colour = settings.yourColor;
             flashEnabled = false;
         }
         else if ( psContain(noCaseMsg,chatTriggers) )
@@ -1507,7 +1573,7 @@ void pawsChatWindow::HandleMessage (MsgEntry *me)
         ChatOutput(buff.GetData(), colour, msg.iChatType, flashEnabled, hasCharName);
 	}
 
-    LogMessage(CHAT_LOG_ALL, buff.GetDataSafe());
+    LogMessage(CHAT_LOG_ALL, buff.GetDataSafe(), msg.iChatType);
 
     if ( sendAway )
     {
@@ -1608,14 +1674,10 @@ bool pawsChatWindow::OnKeyDown(int keyCode, int key, int modifiers )
     {
         case CSKEY_ENTER:
         {
-            SendChatLine();
-            
             if (settings.looseFocusOnSend || !strcmp(inputText->GetText(), ""))
-            {
-                pawsWidget *topParent;
-                for (topParent=this; topParent->GetParent(); topParent = topParent->GetParent());
-                    PawsManager::GetSingleton().SetCurrentFocusedWidget(topParent);
-            }
+                PawsManager::GetSingleton().SetCurrentFocusedWidget((pawsWidget*)PawsManager::GetSingleton().GetMainWidget());
+
+            SendChatLine();
 
             inputText->Clear();
 
@@ -2086,13 +2148,38 @@ void pawsChatWindow::BadWordsFilter(csString& s)
     }
 }
 
+csString pawsChatWindow::GetBracket(int type) //according to the type return the correct bracket
+{
+    switch (type)
+    {
+        case CHAT_TELL:
+        case CHAT_TELLSELF:
+            return "[Tell] ";
+        case CHAT_GUILD:
+            return "[Guild] ";
+        case CHAT_GROUP:
+            return "[Group] ";
+        case CHAT_AUCTION:
+            return "[Auction] ";
+        case CHAT_ADVISOR:
+        case CHAT_ADVICE:
+        case CHAT_ADVICE_LIST:
+            return "[Help] ";
+        case CHAT_NPC:
+        case CHAT_NPC_ME:
+        case CHAT_NPC_MY:
+        case CHAT_NPC_NARRATE:
+            return "[NPC] ";
+    }
+    return "";
+}
+
 void pawsChatWindow::ChatOutput(const char* data, int colour, int type, bool flashEnabled, bool hasCharName)
 {
     csString s = data;
     if (settings.enableBadWordsFilterIncoming)
     {
         BadWordsFilter(s);
-        data = s.GetDataSafe();
     }
 
     pawsWidget *currentTab = tabs->GetActiveTab();
@@ -2121,32 +2208,32 @@ void pawsChatWindow::ChatOutput(const char* data, int colour, int type, bool fla
         case CHAT_SYSTEM:
             toMain = settings.systemIncluded;
             flashMain &= currentTab != systemText;
-            ChatOutput(systemText, data, colour, flashEnabled && !toMain && (settings.systemFlashing || (hasCharName && settings.systemcFlashing)) , "System Button");
+            ChatOutput(systemText, s.GetDataSafe(), colour, flashEnabled && !toMain && (settings.systemFlashing || (hasCharName && settings.systemcFlashing)) , "System Button");
             break;
 
         case CHAT_TELL:
         case CHAT_TELLSELF:
             toMain = settings.tellIncluded;
             flashMain &= currentTab != tellText;
-            ChatOutput(tellText, data, colour, flashEnabled && !toMain && (settings.tellFlashing || (hasCharName && settings.tellcFlashing)), "Tell Button");
+            ChatOutput(tellText, s.GetDataSafe(), colour, flashEnabled && !toMain && (settings.tellFlashing || (hasCharName && settings.tellcFlashing)), "Tell Button");
             break;
 
         case CHAT_GUILD:
             toMain = settings.guildIncluded;
             flashMain &= currentTab != guildText;
-            ChatOutput(guildText, data, colour, flashEnabled && !toMain && (settings.guildFlashing || (hasCharName && settings.guildcFlashing)), "Guild Button");
+            ChatOutput(guildText, s.GetDataSafe(), colour, flashEnabled && !toMain && (settings.guildFlashing || (hasCharName && settings.guildcFlashing)), "Guild Button");
             break;
 
         case CHAT_GROUP:
             toMain = settings.groupIncluded;
             flashMain &= currentTab != groupText;
-            ChatOutput(groupText, data, colour, flashEnabled && !toMain && (settings.groupFlashing || (hasCharName && settings.groupcFlashing)), "Group Button");
+            ChatOutput(groupText, s.GetDataSafe(), colour, flashEnabled && !toMain && (settings.groupFlashing || (hasCharName && settings.groupcFlashing)), "Group Button");
             break;
 
         case CHAT_AUCTION:
             toMain = settings.auctionIncluded;
             flashMain &= currentTab != auctionText;
-            ChatOutput(auctionText, data, colour, flashEnabled && !toMain && (settings.auctionFlashing || (hasCharName && settings.auctioncFlashing)), "Auction Button");
+            ChatOutput(auctionText, s.GetDataSafe(), colour, flashEnabled && !toMain && (settings.auctionFlashing || (hasCharName && settings.auctioncFlashing)), "Auction Button");
             break;
 
         case CHAT_ADVISOR:
@@ -2154,7 +2241,7 @@ void pawsChatWindow::ChatOutput(const char* data, int colour, int type, bool fla
         case CHAT_ADVICE_LIST:
             toMain = settings.helpIncluded;
             flashMain &= currentTab != helpText;
-            ChatOutput(helpText, data, colour, flashEnabled && !toMain && (settings.helpFlashing || (hasCharName && settings.helpcFlashing)), "Help Button");
+            ChatOutput(helpText, s.GetDataSafe(), colour, flashEnabled && !toMain && (settings.helpFlashing || (hasCharName && settings.helpcFlashing)), "Help Button");
             break;
 
         case CHAT_NPC:
@@ -2163,7 +2250,7 @@ void pawsChatWindow::ChatOutput(const char* data, int colour, int type, bool fla
         case CHAT_NPC_NARRATE:
             toMain = settings.npcIncluded;
             flashMain &= currentTab != npcText;
-            ChatOutput(npcText, data, colour, flashEnabled && !toMain && (settings.npcFlashing || (hasCharName && settings.npccFlashing)), "NPC Button");
+            ChatOutput(npcText, s.GetDataSafe(), colour, flashEnabled && !toMain && (settings.npcFlashing || (hasCharName && settings.npccFlashing)), "NPC Button");
             break;
 
         case CHAT_SYSTEM_BASE:
@@ -2175,7 +2262,7 @@ void pawsChatWindow::ChatOutput(const char* data, int colour, int type, bool fla
                 // There is another chance that it still would be shown on the main tab as well
                 toMain = settings.systemIncluded;
                 flashMain &= currentTab != systemText;
-                ChatOutput(systemText, data, colour, flashEnabled && !toMain && (settings.systemFlashing || (hasCharName && settings.systemcFlashing)), "System Button");
+                ChatOutput(systemText, s.GetDataSafe(), colour, flashEnabled && !toMain && (settings.systemFlashing || (hasCharName && settings.systemcFlashing)), "System Button");
             }
             break;
 
@@ -2186,7 +2273,11 @@ void pawsChatWindow::ChatOutput(const char* data, int colour, int type, bool fla
     }
 
     if (toMain)
-        ChatOutput(mainText, data, colour, flashMain && (settings.mainFlashing || (hasCharName && settings.maincFlashing)), "Main Button");
+    {
+        if(settings.mainBrackets) //check if we have to add brackets
+            s.Insert(0, GetBracket(type));
+        ChatOutput(mainText, s.GetDataSafe(), colour, flashMain && (settings.mainFlashing || (hasCharName && settings.maincFlashing)), "Main Button");
+    }
 }
 
 void pawsChatWindow::ChatOutput(pawsMessageTextBox *pmtb, const char *data,
@@ -2201,10 +2292,7 @@ void pawsChatWindow::ChatOutput(pawsMessageTextBox *pmtb, const char *data,
 
 void pawsChatWindow::AddAutoCompleteName(const char *cname)
 {
-	// normalize name
 	csString name = cname;
-	name.Downcase();
-	name.SetAt(0,toupper(name.GetAt(0)));
 	
 	for (size_t i = 0; i < autoCompleteNames.GetSize(); i++)
     {

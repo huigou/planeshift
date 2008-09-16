@@ -70,8 +70,6 @@ psShadowManager::psShadowManager()
             Error2("Could not find file: %s", DEFAULT_FILE);
         }
     }
-    
-    RecreateAllShadows();
 }
 
 psShadowManager::~psShadowManager()
@@ -193,7 +191,7 @@ void psShadowManager::RecreateAllShadows()
 
 void psShadowManager::RemoveAllShadows()
 {
-    if (!shadowsEnabled)
+    if (shadowsEnabled)
         return;
 
     const csPDelArray<GEMClientObject>& entities = psengine->GetCelClient()->GetEntities();

@@ -54,7 +54,7 @@ pawsConfigCamera::~pawsConfigCamera()
 
 bool pawsConfigCamera::Initialize()
 {
-    psengine->GetPSCamera()->LoadFromFile();
+    psengine->GetPSCamera()->LoadFromFile(false,false);
     if (!CreateTree())
         return false;
 
@@ -64,7 +64,7 @@ bool pawsConfigCamera::Initialize()
 
 bool pawsConfigCamera::LoadConfig()
 {
-    return psengine->GetPSCamera()->LoadFromFile();
+    return psengine->GetPSCamera()->LoadFromFile(false,false);
 }
 
 bool pawsConfigCamera::SaveConfig()

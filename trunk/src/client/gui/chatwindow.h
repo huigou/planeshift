@@ -73,6 +73,7 @@ struct ChatSettings
     int chatColor;
     int systemColor;
     int adminColor;
+    int npcColor;
     int tellColor;
     int guildColor;
     int shoutColor;
@@ -85,6 +86,9 @@ struct ChatSettings
     bool logChannel[CHAT_NLOG];
     bool enableBadWordsFilterIncoming, enableBadWordsFilterOutgoing;
     bool echoScreenInSystem;
+    bool mainBrackets; //If it's true brackets like [guild] [tell] will be put in main tab.
+    bool yourColorMix; //If it's true the yourColor will be mixed with the Color of the destination 
+                       //Example: if you send a tell the color of your text will be (yourColor+tellColor)/2
     csArray<csString> badWords;
     csArray<csString> goodWords;
     int selectTabStyle;
@@ -153,6 +157,8 @@ public:
 
     virtual void OnLostFocus();
     virtual void Show();
+
+    csString GetBracket(int type); ///generates a bracket like [tell] starting from the msgtype
 
     /// Function that handles output of various tabbed windows.
     void ChatOutput(const char* data, int colour = -1, int type = CHAT_SYSTEM, bool flashEnabled = true, bool hasCharName = false);
@@ -259,7 +265,7 @@ protected:
 
     csRef<iFile> logFile[CHAT_NLOG];
     
-    void LogMessage(enum E_CHAT_LOG channel, const char* message);
+    void LogMessage(enum E_CHAT_LOG channel, const char* message, int type = CHAT_SAY);
 
     void CreateSettingNode(iDocumentNode* mNode,int color,const char* name);
 
