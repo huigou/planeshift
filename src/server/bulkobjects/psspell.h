@@ -114,9 +114,6 @@ class psSpell : public iScriptableVar
      */
     psSpellCastGameEvent *Cast(psSpellManager * mgr, Client * client, csString &effectName, csVector3 &offset,
                            PS_ID& anchorID, PS_ID& targetID, unsigned int &castingDuration, csString *castingText) const;
-    bool isTargetAffected( Client * client, gemObject *target, float max_range, csString *castingText ) const;
-    int checkRange( gemActor *caster, gemObject *target, float max_range) const;
-
         
     /** Find all objects in range for spell around caster
      *
@@ -151,6 +148,9 @@ class psSpell : public iScriptableVar
     double CalcFunction(const char * functionName, const double * params);
 
 protected:
+    bool isTargetAffected( Client * client, gemObject *target, float max_range, csString *castingText ) const;
+    int checkRange( gemActor *caster, gemObject *target, float max_range) const;
+
     // Returns mathscript variable with given name - when there is no such variable, returns NULL and writes error into log
     MathScriptVar * GetScriptVar(const char * varName);
 

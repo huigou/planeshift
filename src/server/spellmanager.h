@@ -117,12 +117,6 @@ protected:
       */
     void Cast(Client * client, csString spellName, float kFactor);
     
-    /** Abort a spell cast.
-      * 
-      * @param castor The castor that was casting this spell.
-      */
-    void CancelSpellCasting(gemActor * caster);
-    
     /** Send the player's spell book.
       * 
       * @param client The client that will be sent the spell book.
