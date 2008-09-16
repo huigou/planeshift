@@ -11,6 +11,9 @@
   FS#2229 Camera position changed when checking the camera and detail setting
   FS#2230 minor tweak of gained practice point message
   FS#2187 Database corruption when going to a missing sector, then coming back
+  feature request FS#2225, add comment line to shortcutwindow file
+- FS#347 by Oskaris, text is not properly aligned in petition add window
+- FS#1870 by Morgul, rounding error makes FPS cap lower itself when client restarted
 
 *** 2008-09-04 by Mike Gist
 - Fixed a typo causing the updater to have trouble restarting itself on macs.

@@ -90,7 +90,7 @@ void pawsPromptWindow::LayoutWindow()
     windowWidth = MAX(
                         2*spacing + label->DefaultFrame().Width(),
                         MAX(
-                             2*spacing + inputWidget->DefaultFrame().Width(),
+                             4*spacing + inputWidget->DefaultFrame().Width(),
                              3*spacing + okButton->DefaultFrame().Width() + cancelButton->DefaultFrame().Width()
                            )
                      );

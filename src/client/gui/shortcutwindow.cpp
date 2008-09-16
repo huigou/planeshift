@@ -589,7 +589,12 @@ void pawsShortcutWindow::ExecuteCommand(int shortcutNum, bool local)
                 if (next)
                     command.Truncate(next - pos);
             }
-            
+
+            if(command.GetAt(0) == '#') //it's a comment skip it
+            {
+                continue;
+            }
+ 
             if(command.FindFirst("$target") != command.Length() - 1)
             {
                 GEMClientObject *object= psengine->GetCharManager()->GetTarget();
