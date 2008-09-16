@@ -61,43 +61,42 @@ bool pawsSmallInventoryWindow::PostSetup()
         
         // Setup our inventory slots in the list box.
         pawsListBox * bulkList = dynamic_cast <pawsListBox*> (FindWidget("BulkList"));
-
-        int colCount = bulkList->GetTotalColumns();
-        int rowCount = (int) ceil(float(INVENTORY_BULK_COUNT)/colCount);
-
-        for(int r = 0; r < rowCount; r ++)
+        if(bulkList)
         {
-            pawsListBoxRow * listRow = bulkList->NewRow(r);
-            for (int j = 0; j < colCount; j++)
+            int colCount = bulkList->GetTotalColumns();
+            int rowCount = (int) ceil(float(INVENTORY_BULK_COUNT)/colCount);
+
+            for(int r = 0; r < rowCount; r ++)
             {
-                int i = r*colCount + j;
-                pawsSlot * slot;
-                slot = dynamic_cast <pawsSlot*> (listRow->GetColumn(j));
-                slot->SetContainer( CONTAINER_INVENTORY_BULK );
-                //csString name;
-                slot->SetSlotID( i );
-                csString name;
-                name.Format("invslot_%d", 16 + i ); // 16 equip slots come first
-                slot->SetSlotName(name);
-
-                if(i >= INVENTORY_BULK_COUNT)
+                pawsListBoxRow * listRow = bulkList->NewRow(r);
+                for (int j = 0; j < colCount; j++)
                 {
-                    slot->Hide();
-                    continue;
-                }
+                    int i = r*colCount + j;
+                    pawsSlot * slot;
+                    slot = dynamic_cast <pawsSlot*> (listRow->GetColumn(j));
+                    slot->SetContainer( CONTAINER_INVENTORY_BULK );
+                    //csString name;
+                    slot->SetSlotID( i );
+                    csString name;
+                    name.Format("invslot_%d", 16 + i ); // 16 equip slots come first
+                    slot->SetSlotName(name);
 
-                //printf("Subscribing bulk slot to %s.\n",name.GetData() );
-                PawsManager::GetSingleton().Subscribe( name, slot );
-                PawsManager::GetSingleton().Subscribe("sigClearInventorySlots", slot);
-                bulkSlots[i] = slot;
+                    if(i >= INVENTORY_BULK_COUNT)
+                    {
+                        slot->Hide();
+                        continue;
+                    }
+
+                    //printf("Subscribing bulk slot to %s.\n",name.GetData() );
+                    PawsManager::GetSingleton().Subscribe( name, slot );
+                    PawsManager::GetSingleton().Subscribe("sigClearInventorySlots", slot);
+                    bulkSlots[i] = slot;
+                }
             }
         }
-
         money = dynamic_cast <pawsMoney*> (FindWidget("Money")); 
-        if ( !money )
-            return false;
-    
-        money->SetContainer( CONTAINER_INVENTORY_MONEY );        
+        if ( money ){
+        money->SetContainer( CONTAINER_INVENTORY_MONEY );}        
         
         
         // We want to know about inventory messages. 
