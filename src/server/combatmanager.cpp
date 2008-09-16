@@ -226,7 +226,7 @@ bool psCombatManager::InitializePVP()
     if (rs.Count() > 1)
     {
         Error1("More than one pvp_region defined!");
-        return false;
+        // return false; // not really fatal
     }
 
     LocationType *loctype = new LocationType();
@@ -239,7 +239,7 @@ bool psCombatManager::InitializePVP()
     {
         Error2("Could not load location: %s",db->GetLastError() );            
         delete loctype;
-        return false;
+        // return false; // not fatal
     }
     return true;
 }

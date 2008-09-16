@@ -38,8 +38,12 @@
 #include "paws/pawstextbox.h"
 #include "paws/pawsradio.h"
 
+//This will set back the color settings in the chat window
 #define SET_CHAT_VALUE(x) settings.x##Color = PawsManager::GetSingleton().GetGraphics2D()->FindRGB(atoi(x##R->GetText()),atoi(x##G->GetText()),atoi(x##B->GetText()));
-#define SET_WIDGET_VALUE(x) x##R->SetText(r); x##G->SetText(g); x##B->SetText(b);
+//this will get the color setting from the chat window and split it in the r, g, b components to display them
+#define SET_WIDGET_VALUE(x) graphics2D->GetRGB(settings.x##Color,ir,ig,ib); \
+                            r.Format("%d", ir); g.Format("%d", ig); b.Format("%d", ib); \
+                            x##R->SetText(r); x##G->SetText(g); x##B->SetText(b);
 
 pawsConfigChat::pawsConfigChat()
 {
@@ -83,6 +87,8 @@ pawsConfigChat::pawsConfigChat()
     badwordsIncoming = NULL;
     badwordsOutgoing = NULL;
     echoScreenInSystem = NULL;
+    mainBrackets = NULL;
+    yourColorMix = NULL;
 }
 
 bool pawsConfigChat::Initialize()
@@ -118,6 +124,9 @@ bool pawsConfigChat::PostSetup()
     chatR = (pawsEditTextBox*)FindWidget("chattextr");
     chatG = (pawsEditTextBox*)FindWidget("chattextg");
     chatB = (pawsEditTextBox*)FindWidget("chattextb");
+    npcR = (pawsEditTextBox*)FindWidget("npctextr");
+    npcG = (pawsEditTextBox*)FindWidget("npctextg");
+    npcB = (pawsEditTextBox*)FindWidget("npctextb");
     tellR = (pawsEditTextBox*)FindWidget("telltextr");
     tellG = (pawsEditTextBox*)FindWidget("telltextg");
     tellB = (pawsEditTextBox*)FindWidget("telltextb");
@@ -146,151 +155,60 @@ bool pawsConfigChat::PostSetup()
     badwordsOutgoing = (pawsCheckBox*)FindWidget("badwordsoutgoing");
     selectTabStyleGroup = dynamic_cast<pawsRadioButtonGroup*> (FindWidget("selecttabstyle"));
     echoScreenInSystem = (pawsCheckBox*)FindWidget("echoscreeninsystem");
+    mainBrackets = (pawsCheckBox*)FindWidget("mainbrackets");
+    yourColorMix = (pawsCheckBox*)FindWidget("yourcolormix");
                 
     return true;
 }
 
 bool pawsConfigChat::LoadConfig()
 {
-
     // Need to reload settings
-    csRef<iDocument> doc;
-    csRef<iDocumentNode> root,chatNode, colorNode, optionNode, filtersNode, badWordsNode;
-    csString option;
-    
-    csString fileName = CONFIG_CHAT_FILE_NAME;
-    if (!psengine->GetVFS()->Exists(fileName))
-    {
-        fileName = CONFIG_CHAT_FILE_NAME_DEF;
-    }
+    chatWindow->LoadChatSettings();
 
-    doc = ParseFile(psengine->GetObjectRegistry(), fileName);
-    if (doc == NULL)
+    ChatSettings settings = chatWindow->GetSettings();
+
+    loose->SetState(settings.looseFocusOnSend);
+    echoScreenInSystem->SetState(settings.echoScreenInSystem);
+    mainBrackets->SetState(settings.mainBrackets);
+    yourColorMix->SetState(settings.yourColorMix);
+
+    //gets the tabstyle from the chat settings
+    switch (settings.selectTabStyle)
     {
-        Error2("Failed to parse file %s", fileName.GetData());
-        return false;
-    }
-    root = doc->GetRoot();
-    if (root == NULL)
-    {
-        Error1("chat.xml has no XML root");
-        return false;
-    }
-    chatNode = root->GetNode("chat");
-    if (chatNode == NULL)
-    {
-        Error1("chat.xml has no <chat> tag");
-        return false;
+        case 0: selectTabStyleGroup->SetActive("none");
+            break;
+        case 1: selectTabStyleGroup->SetActive("fitting");
+            break;
+        case 2: selectTabStyleGroup->SetActive("alltext");
+            break;
     }
     
-    // Load options such as loose after sending
-    optionNode = chatNode->GetNode("chatoptions");
-    if (optionNode != NULL)
-    {
-        csRef<iDocumentNodeIterator> oNodes = optionNode->GetNodes();
-        while(oNodes->HasNext())
-        {
-            csRef<iDocumentNode> option = oNodes->Next();
-            
-            csString nodeName (option->GetValue());
-            if (nodeName == "loose")
-                loose->SetState((option->GetAttributeValueAsInt("value")? true : false));
-            else if (nodeName == "selecttabstyle")
-                {
-                 switch (option->GetAttributeValueAsInt("value"))
-                 {
-                  case 0: selectTabStyleGroup->SetActive("none");
-                          break;
-                  case 1: selectTabStyleGroup->SetActive("fitting");
-                          break;
-                  case 2: selectTabStyleGroup->SetActive("alltext");
-                          break;
-                 }
-                }
-            else if (nodeName == "echoscreeninsystem")
-                echoScreenInSystem->SetState(option->GetAttributeValueAsInt("value") ? true : false);
-            else 
-            {
-                for (int i = 0; i < CHAT_NLOG; i++)
-                    if (nodeName == logWidgetName[i])    // Take the same name for simplicity
-                        logEnable[i]->SetState(option->GetAttributeValueAsInt("value") ? true : false);
-            }
-        }
-    }
+    //variables used to hold the temporary values
+    int ir,ig,ib;
+    csString r,g,b;
 
-    // Load colors
-    colorNode = chatNode->GetNode("chatcolors");
-    if (colorNode != NULL)
-    {
-        csRef<iDocumentNodeIterator> cNodes = colorNode->GetNodes();
-        while(cNodes->HasNext())
-        {
-            csRef<iDocumentNode> color = cNodes->Next();
-            
-            csString r,g,b;
-            r.Format("%d", color->GetAttributeValueAsInt( "r" ));            
-            g.Format("%d", color->GetAttributeValueAsInt( "g" ));            
-            b.Format("%d", color->GetAttributeValueAsInt( "b" ));            
-            
-            csString nodeName ( color->GetValue() );
-            if ( nodeName == "systemtext" ) 
-            {
-                SET_WIDGET_VALUE(system);
-            }
-            if ( nodeName == "admintext"  ) 
-            {
-                SET_WIDGET_VALUE(admin);
-            }
-            if ( nodeName == "playernametext" ) 
-            {
-                SET_WIDGET_VALUE(player);
-            }
-            if ( nodeName == "chattext") 
-            {
-                SET_WIDGET_VALUE(chat);
-            }
-            if ( nodeName == "telltext") 
-            {
-                SET_WIDGET_VALUE(tell);
-            }
-            if ( nodeName == "shouttext") 
-            {
-                SET_WIDGET_VALUE(shout);
-            }
-            if ( nodeName == "guildtext") 
-            {
-                SET_WIDGET_VALUE(guild);
-            }
-            if ( nodeName == "yourtext") 
-            {
-                SET_WIDGET_VALUE(your);
-            }
-            if ( nodeName == "grouptext") 
-            {
-                SET_WIDGET_VALUE(group);
-            }
-            if ( nodeName == "auctiontext") 
-            {
-                SET_WIDGET_VALUE(auction);
-            }
-            if ( nodeName == "helptext") 
-            {
-                SET_WIDGET_VALUE(help);
-            }
-         }
-    }
+    //loads color settings
+    SET_WIDGET_VALUE(system);
+    SET_WIDGET_VALUE(admin);
+    SET_WIDGET_VALUE(player);
+    SET_WIDGET_VALUE(chat);
+    SET_WIDGET_VALUE(npc);
+    SET_WIDGET_VALUE(tell);
+    SET_WIDGET_VALUE(shout);
+    SET_WIDGET_VALUE(guild);
+    SET_WIDGET_VALUE(your);
+    SET_WIDGET_VALUE(group);
+    SET_WIDGET_VALUE(auction);
+    SET_WIDGET_VALUE(help);
 
-    // load bad words options
-    filtersNode = chatNode->GetNode("filters");
-    if (filtersNode != NULL) 
-    {
-        badWordsNode = filtersNode->GetNode("badwords");
-        if (badWordsNode != NULL) 
-        {
-            badwordsIncoming->SetState((bool)badWordsNode->GetAttributeValueAsBool("incoming"));
-            badwordsOutgoing->SetState((bool)badWordsNode->GetAttributeValueAsBool("outgoing"));
-        }
-    }
+    //gets badwords settings from the chat settings
+    badwordsIncoming->SetState(settings.enableBadWordsFilterIncoming);
+    badwordsOutgoing->SetState(settings.enableBadWordsFilterOutgoing);
+
+    //gets the log settings from the chat settings
+    for (int i = 0; i < CHAT_NLOG; i++)
+        logEnable[i]->SetState(settings.logChannel[i]);
 
     // Check boxes doesn't send OnChange :(
     dirty = true;
@@ -312,6 +230,7 @@ bool pawsConfigChat::SaveConfig()
     SET_CHAT_VALUE(your);
     SET_CHAT_VALUE(guild);
     SET_CHAT_VALUE(shout);
+    SET_CHAT_VALUE(npc);
     SET_CHAT_VALUE(tell);
     SET_CHAT_VALUE(chat);
     settings.looseFocusOnSend = loose->GetState();
@@ -325,6 +244,8 @@ bool pawsConfigChat::SaveConfig()
     else settings.selectTabStyle = 2;
 
     settings.echoScreenInSystem = echoScreenInSystem->GetState();
+    settings.mainBrackets = mainBrackets->GetState();
+    settings.yourColorMix = yourColorMix->GetState();
 
     chatWindow->SetSettings(settings);
 

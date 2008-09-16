@@ -236,6 +236,7 @@ public:
     {
         index = 0;
         memset(bind, 0, sizeof(MYSQL_BIND) * count);
+        command.Empty(); //clears the command array to avoid restarting from a wrong position.
     }
 
     

@@ -5098,6 +5098,13 @@ void AdminManager::DeleteCharacter(MsgEntry* me, psAdminCmdMessage& msg, AdminCm
 
 void AdminManager::ChangeName(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data,Client *client)
 {
+    WordArray words (msg.cmd, false); 	 
+    csString pid_str = words[1];
+    // Player is changed to string so no point in testing that if multiple entites
+    // with same name. A note the code above is done to workaround the substitution
+    // of the pid: with the name of the player which is invalid when changing the
+    // name of players online 
+
     if (!data.player.Length() || !data.newName.Length())
     {
         psserver->SendSystemInfo(me->clientnum,"Syntax: \"/changename <OldName|pid:[id]> [force|forceall] <NewName> [NewLastName]\"");
@@ -5107,9 +5114,9 @@ void AdminManager::ChangeName(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
     unsigned int pid = 0;
     Client* target = NULL;
     
-    if (data.player.StartsWith("pid:",true) && data.player.Length() > 4) // Find by player ID
+    if (pid_str.StartsWith("pid:",true) && pid_str.Length() > 4) // Find by player ID
     {
-        pid = atoi( data.player.Slice(4).GetData() );
+        pid = atoi( pid_str.Slice(4).GetData() );
         if (!pid)
         {
             psserver->SendSystemError(me->clientnum,"Error, bad PID");
@@ -5122,6 +5129,13 @@ void AdminManager::ChangeName(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
     }
     else
     {
+        //if we are using the name we must check that it's unique to avoid unwanted changes
+        if(!psCharCreationManager::IsUnique(data.player)) 
+        {                                                          
+            psserver->SendSystemError(me->clientnum,"Multiple characters with same name '%s'. Use pid.",data.player.GetData());               
+            return; 
+        }
+
         target = clients->Find(data.player);
     }
     bool online = (target != NULL);

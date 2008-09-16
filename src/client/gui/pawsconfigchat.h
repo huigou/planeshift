@@ -65,6 +65,9 @@ protected:
     pawsEditTextBox* chatR;
     pawsEditTextBox* chatG;
     pawsEditTextBox* chatB;
+    pawsEditTextBox* npcR;
+    pawsEditTextBox* npcG;
+    pawsEditTextBox* npcB;
     pawsEditTextBox* tellR;
     pawsEditTextBox* tellG;
     pawsEditTextBox* tellB;
@@ -92,6 +95,8 @@ protected:
     pawsCheckBox* badwordsIncoming, *badwordsOutgoing;
     pawsRadioButtonGroup* selectTabStyleGroup;
     pawsCheckBox* echoScreenInSystem;
+    pawsCheckBox* mainBrackets;
+    pawsCheckBox* yourColorMix;
 
 };
 

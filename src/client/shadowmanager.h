@@ -50,9 +50,9 @@ public:
 
     void UpdateShadows();
 
-    void DisableShadows() { RemoveAllShadows(); shadowsEnabled = false; }
+    void DisableShadows() { shadowsEnabled = false; RemoveAllShadows(); }
 
-    void EnableShadows() { RecreateAllShadows(); shadowsEnabled = true; }
+    void EnableShadows() { shadowsEnabled = true; RecreateAllShadows(); }
 
     bool ShadowsEnabled() { return shadowsEnabled; }
 };

@@ -4664,10 +4664,10 @@ void ProgressionManager::HandleMessage(MsgEntry *me,Client *client)
             }
 
             csString string;
-            string.Format("You've gained some practice points in %s. ", evt.skillName.GetData() );
+            string.Format("You've gained some practice points in %s.", evt.skillName.GetData() );
             if ( evt.rankUp )
             {
-                string.Append("You've also Ranked up!");                    
+                string.Append(" You've also ranked up!");                    
             }
             psserver->SendSystemInfo(evt.actor->GetClientID(), string);            
 

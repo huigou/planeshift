@@ -155,7 +155,7 @@ bool pawsConfigDetails::LoadConfig()
 {
     psCamera::DistanceCfg cfg;
 
-    psengine->GetPSCamera()->LoadFromFile();
+    psengine->GetPSCamera()->LoadFromFile(false,false);
     cfg = psengine->GetPSCamera()->GetDistanceCfg();
     adaptCheck->SetState(cfg.adaptive);
     SetModeVisibility();

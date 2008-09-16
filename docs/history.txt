@@ -1,6 +1,16 @@
 *** 2008-09-15 by Roland Schulz
 - patch by weltall removing fixed char buffers in console output, replaced by csstring.
   and remove spamming item names to console in src/client/gui/pawsmerchantwindow.cpp
+- a few more patches from weltall, hopefully fixing:
+  FS#2185 Shadow manager loadin doesn't correctly initialize stuff
+  FS#2208 Names appear in lower case when using Tab completion
+  FS#2209 Logging and display of System and Chat messages inconsistent
+  FS#2045 Command to use mob names - this still needs work done tho
+  FS#2164 failing to load pvp region shouldn't stop server from starting
+  FS#2201 Char creation screen says there is no gfx for female Nolthrir
+  FS#2229 Camera position changed when checking the camera and detail setting
+  FS#2230 minor tweak of gained practice point message
+  FS#2187 Database corruption when going to a missing sector, then coming back
 
 *** 2008-09-04 by Mike Gist
 - Fixed a typo causing the updater to have trouble restarting itself on macs.

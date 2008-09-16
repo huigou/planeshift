@@ -105,9 +105,10 @@ public:
 
     /** loads the camera settings from a file
      *   @param useDefault if true, use the default config file even if the normal exists
+     *   @param overrideCurrent if true, change current camera settings with loaded data
      *   @return true on success, false otherwise
      */
-    bool LoadFromFile(bool useDefault=false);
+    bool LoadFromFile(bool useDefault=false, bool overrideCurrent=true);
 
     /** saves the camera settings to a file
      *   @return true on success, false otherwise
