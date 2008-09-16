@@ -147,16 +147,16 @@ PSSKILL psItemWeaponStats::Skill(PSITEMSTATS_WEAPONSKILL_INDEX index)
     return weapon_skill[index];
 }
 
-PSITEMSTATS_STAT psItemWeaponStats::AttributeBonusType(PSITEMSTATS_STAT_BONUS_INDEX index)
+PSITEMSTATS_STAT psItemWeaponStats::AttributeBonusType(int index)
 {
-    if (index<0 || index >= PSITEMSTATS_STAT_BONUS_INDEX_COUNT)
+    if (index < 0 || index >= PSITEMSTATS_STAT_BONUS_COUNT)
         return PSITEMSTATS_STAT_NONE;
     return attribute_bonuses[index].attribute_id;
 }
 
-float psItemWeaponStats::AttributeBonusMax(PSITEMSTATS_STAT_BONUS_INDEX index)
+float psItemWeaponStats::AttributeBonusMax(int index)
 {
-    if (index<0 || index >= PSITEMSTATS_STAT_BONUS_INDEX_COUNT)
+    if (index < 0 || index >= PSITEMSTATS_STAT_BONUS_COUNT)
         return 0.0f;
     return attribute_bonuses[index].bonus_max;
 }

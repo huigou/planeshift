@@ -1489,46 +1489,34 @@ void psCharacter::CalculateEquipmentModifiers()
     }
     // go through list and make items active whose requirements are fulfilled and remove item from list.
     // stop when a complete loop has been made without making a change.
-    int haschanged = 1;   // go through list at least once
-    while( haschanged )
+    bool hasChanged;
+    do
     {
-        haschanged = 0;
-        csList<psItem*>::Iterator i(itemlist);
-        while( i.HasNext() )
+        hasChanged = false;
+        csList<psItem*>::Iterator it(itemlist);
+        while (it.HasNext())
         {
-            currentitem = i.Next();
+            currentitem = it.Next();
 
             csString response;
             if (!currentitem->CheckRequirements(this, response))
             {
                 continue;
             }
-            if( !currentitem->IsActive() )
+            if (!currentitem->IsActive())
             {
                 Inventory().RunEquipScript(currentitem);
             }
             // Check for attr bonuses
-            for(int z = 0; z < PSITEMSTATS_STAT_BONUS_INDEX_COUNT; z++)
+            for (int i = 0; i < PSITEMSTATS_STAT_BONUS_COUNT; i++)
             {
-                PSITEMSTATS_STAT_BONUS_INDEX stat = PSITEMSTATS_STAT_BONUS_INDEX_0;
-
-                if(z == 0)
-                    stat = PSITEMSTATS_STAT_BONUS_INDEX_0;
-                else if( z == 1)
-                    stat = PSITEMSTATS_STAT_BONUS_INDEX_1;
-                else if( z == 2)
-                    stat = PSITEMSTATS_STAT_BONUS_INDEX_2;
-
-                float bonus = currentitem->GetWeaponAttributeBonusMax(stat);
-
-                // Add to right var
-                modifiers.AddToStat(currentitem->GetWeaponAttributeBonusType(stat), (int)bonus);
+                modifiers.AddToStat(currentitem->GetWeaponAttributeBonusType(i), (int) currentitem->GetWeaponAttributeBonusMax(i));
             }
-            haschanged = 1;
-            itemlist.Delete(i);
+            hasChanged = true;
+            itemlist.Delete(it);
             break;
         }
-    }
+    } while (hasChanged);
 
     // go through list of items whose requirements are not fulfilled and deactivate them
     csList<psItem*>::Iterator i(itemlist);

@@ -679,8 +679,8 @@ public:
     float GetDamageProtection(PSITEMSTATS_DAMAGETYPE dmgtype);
     float GetHardness();
     float GetWeaponAttributeBonus(PSITEMSTATS_STAT stat);
-    PSITEMSTATS_STAT GetWeaponAttributeBonusType(PSITEMSTATS_STAT_BONUS_INDEX index);
-    float GetWeaponAttributeBonusMax(PSITEMSTATS_STAT_BONUS_INDEX index);
+    PSITEMSTATS_STAT GetWeaponAttributeBonusType(int index);
+    float GetWeaponAttributeBonusMax(int index);
 
     float GetWeight();
     unsigned short GetItemSize();
