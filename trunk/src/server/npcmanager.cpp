@@ -1313,7 +1313,7 @@ void NPCManager::UpdateWorldPositions()
     }
 }
 
-bool NPCManager::CanPetHereYou(int clientnum, Client * owner, gemNPC * pet, const char * type)
+bool NPCManager::CanPetHearYou(int clientnum, Client *owner, gemNPC *pet, const char *type)
 {
     //TODO: Add a range check
 
@@ -1430,7 +1430,7 @@ void NPCManager::HandlePetCommand( MsgEntry * me )
     case psPETCommandMessage::CMD_FOLLOW :
         if ( pet != NULL )
         {
-            if (CanPetHereYou(me->clientnum, owner, pet, typeStr) && WillPetReact(me->clientnum, owner, pet, typeStr, 1))
+            if (CanPetHearYou(me->clientnum, owner, pet, typeStr) && WillPetReact(me->clientnum, owner, pet, typeStr, 1))
             {
                 // If no target target owner
                 if (!pet->GetTarget())
@@ -1450,7 +1450,7 @@ void NPCManager::HandlePetCommand( MsgEntry * me )
     case psPETCommandMessage::CMD_STAY :
         if ( pet != NULL )
         {
-            if (CanPetHereYou(me->clientnum, owner, pet, typeStr) && WillPetReact(me->clientnum, owner, pet, typeStr, 1))
+            if (CanPetHearYou(me->clientnum, owner, pet, typeStr) && WillPetReact(me->clientnum, owner, pet, typeStr, 1))
             {
                 QueueOwnerCmdPerception( owner->GetActor(), pet, psPETCommandMessage::CMD_STAY );
                 owner->GetCharacterData()->GetSkills()->AddSkillPractice(PSSKILL_EMPATHY, 1);
@@ -1591,7 +1591,7 @@ void NPCManager::HandlePetCommand( MsgEntry * me )
     case psPETCommandMessage::CMD_ATTACK :
         if ( pet != NULL )
         {
-            if ( CanPetHereYou(me->clientnum, owner, pet, typeStr) && WillPetReact(me->clientnum, owner, pet, typeStr, 4))
+            if (CanPetHearYou(me->clientnum, owner, pet, typeStr) && WillPetReact(me->clientnum, owner, pet, typeStr, 4))
             {
                 gemActor *lastAttacker = NULL;
                 gemObject * trg = pet->GetTarget();
@@ -1647,7 +1647,7 @@ void NPCManager::HandlePetCommand( MsgEntry * me )
     case psPETCommandMessage::CMD_STOPATTACK :
         if ( pet != NULL )
         {
-            if ( CanPetHereYou(me->clientnum, owner, pet, typeStr) && WillPetReact(me->clientnum, owner, pet, typeStr, 4))
+            if (CanPetHearYou(me->clientnum, owner, pet, typeStr) && WillPetReact(me->clientnum, owner, pet, typeStr, 4))
             {
                 QueueOwnerCmdPerception( owner->GetActor(), pet, psPETCommandMessage::CMD_STOPATTACK );
                 owner->GetCharacterData()->GetSkills()->AddSkillPractice(PSSKILL_EMPATHY, 1);
@@ -1662,7 +1662,7 @@ void NPCManager::HandlePetCommand( MsgEntry * me )
     case psPETCommandMessage::CMD_ASSIST :
         if ( pet != NULL )
         {
-            if ( CanPetHereYou(me->clientnum, owner, pet, typeStr) && WillPetReact(me->clientnum, owner, pet, typeStr, 3) )
+            if (CanPetHearYou(me->clientnum, owner, pet, typeStr) && WillPetReact(me->clientnum, owner, pet, typeStr, 3) )
             {
                 QueueOwnerCmdPerception( owner->GetActor(), pet, psPETCommandMessage::CMD_ASSIST );
             }
@@ -1676,7 +1676,7 @@ void NPCManager::HandlePetCommand( MsgEntry * me )
     case psPETCommandMessage::CMD_GUARD :
         if ( pet != NULL )
         {
-            if ( CanPetHereYou(me->clientnum, owner, pet, typeStr) && WillPetReact(me->clientnum, owner, pet, typeStr, 2))
+            if (CanPetHearYou(me->clientnum, owner, pet, typeStr) && WillPetReact(me->clientnum, owner, pet, typeStr, 2))
             {
                 QueueOwnerCmdPerception( owner->GetActor(), pet, psPETCommandMessage::CMD_GUARD );
             }
@@ -1691,7 +1691,7 @@ void NPCManager::HandlePetCommand( MsgEntry * me )
         if ( pet != NULL )
         {
             
-            if ( !CanPetHereYou(me->clientnum, owner, pet, typeStr) )
+            if (!CanPetHearYou(me->clientnum, owner, pet, typeStr))
             {
                 return;
             }
@@ -1794,7 +1794,7 @@ void NPCManager::HandlePetCommand( MsgEntry * me )
     case psPETCommandMessage::CMD_TARGET :
         if ( pet != NULL )
         {
-            if ( CanPetHereYou(me->clientnum, owner, pet, typeStr) )
+            if (CanPetHearYou(me->clientnum, owner, pet, typeStr))
             {
                 if ( words.GetCount() == 0 )
                 {

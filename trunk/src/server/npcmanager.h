@@ -158,7 +158,7 @@ protected:
     void SendRaces(Client *client);
 
     /// Check if a pet is within range to react to commands
-    bool CanPetHereYou(int clientnum, Client * owner, gemNPC * pet, const char * type);
+    bool CanPetHearYou(int clientnum, Client *owner, gemNPC *pet, const char *type);
 
     /// Check if your pet will reacto to your command based on skills
     bool WillPetReact(int clientnum, Client * owner, gemNPC * pet, const char * type, int level);
