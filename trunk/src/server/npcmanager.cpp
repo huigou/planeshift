@@ -1219,7 +1219,7 @@ void NPCManager::HandleCommandList(MsgEntry *me)
                     break;
                 }
 
-                psserver->GetSpawnManager()->Respawn(-1,where,rot,sector,playerID);
+                psserver->GetSpawnManager()->Respawn(INSTANCE_ALL,where,rot,sector,playerID);
 
                 break;
             }

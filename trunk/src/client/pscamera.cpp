@@ -495,22 +495,33 @@ bool psCamera::LoadFromFile(bool useDefault, bool overrideCurrent)
                 {
                     camData[c].defaultPitch = atof(settingValue.GetData());
                     if(overrideCurrent)
+                    {
                         camData[c].pitch = camData[c].defaultPitch;
+                    }
                 }
                 else if (settingName == "StartingYaw")
                 {
                     camData[c].defaultYaw = atof(settingValue.GetData());
                     if(overrideCurrent)
+                    {
                         camData[c].yaw = camData[c].defaultYaw;
+                    }
                 }
                 else if (settingName == "StartingRoll")
                 {
                     camData[c].defaultRoll = atof(settingValue.GetData());
                     if(overrideCurrent)
+                    {
                         camData[c].roll = camData[c].defaultRoll;
+                    }
                 }
                 else if (settingName == "CameraDistance")
-                    camData[c].distance = atof(settingValue.GetData());
+                {
+                    if(overrideCurrent) //there isn't a default distance entry?
+                    {
+                        camData[c].distance = atof(settingValue.GetData());
+                    }
+                }
                 else if (settingName == "MinCameraDistance")
                     camData[c].minDistance = atof(settingValue.GetData());
                 else if (settingName == "MaxCameraDistance")
