@@ -1,3 +1,6 @@
+*** 2008-09-17 by Roland Schulz
+- additional small fix for FS#2208 and FS#2229, thanks again weltall
+
 *** 2008-09-16 by Roland Schulz
 - patch by ThomPhoenix to make customization of various windows easier
 

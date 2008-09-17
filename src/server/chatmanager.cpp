@@ -389,7 +389,7 @@ void ChatManager::SendTell(psChatMessage& msg, const char* who,Client *client,Cl
     cmsg.SendMessage();
 
     // Echo the message back to the speaker also
-    psChatMessage cmsg2(client->GetClientNum(), msg.sPerson, 0, msg.sText, CHAT_TELLSELF, msg.translate);
+    psChatMessage cmsg2(client->GetClientNum(), who, 0, msg.sText, CHAT_TELLSELF, msg.translate);
     cmsg2.SendMessage();
 }
 
