@@ -381,7 +381,7 @@ void ChatManager::SendTell(psChatMessage& msg, const char* who,Client *client,Cl
 
     // Sanity check that we are sending to correct clientnum!
     csString targetName = msg.sPerson;
-    NormalizeCharacterName(targetName);
+    targetName = NormalizeCharacterName(targetName);
     CS_ASSERT(strcasecmp(p->GetName(), targetName) == 0);
 
     // Create a new message and send it to that person if found
@@ -389,7 +389,7 @@ void ChatManager::SendTell(psChatMessage& msg, const char* who,Client *client,Cl
     cmsg.SendMessage();
 
     // Echo the message back to the speaker also
-    psChatMessage cmsg2(client->GetClientNum(), who, 0, msg.sText, CHAT_TELLSELF, msg.translate);
+    psChatMessage cmsg2(client->GetClientNum(), targetName, 0, msg.sText, CHAT_TELLSELF, msg.translate);
     cmsg2.SendMessage();
 }
 
