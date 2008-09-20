@@ -89,9 +89,6 @@ INSERT INTO command_group_assignment VALUES( "/thunder", 24 );
 INSERT INTO command_group_assignment VALUES( "/money", 30 );
 INSERT INTO command_group_assignment VALUES( "/money", 25 );
 INSERT INTO command_group_assignment VALUES( "/money", 24 );
-INSERT INTO command_group_assignment VALUES( "command area", 30 );
-INSERT INTO command_group_assignment VALUES( "command area", 25 );
-INSERT INTO command_group_assignment VALUES( "command area", 24 );
 INSERT INTO command_group_assignment VALUES( "/event", 30 );
 INSERT INTO command_group_assignment VALUES( "/event", 25 );
 INSERT INTO command_group_assignment VALUES( "/event", 24 );
@@ -144,6 +141,11 @@ INSERT INTO command_group_assignment VALUES( "changenameall", 24 );
 INSERT INTO command_group_assignment VALUES( "changenameall", 23 );
 
 # GM2 and above
+INSERT INTO command_group_assignment VALUES( "command area", 30 );
+INSERT INTO command_group_assignment VALUES( "command area", 25 );
+INSERT INTO command_group_assignment VALUES( "command area", 24 );
+INSERT INTO command_group_assignment VALUES( "command area", 23 );
+INSERT INTO command_group_assignment VALUES( "command area", 22 );
 INSERT INTO command_group_assignment VALUES( "/divorce", 30 );
 INSERT INTO command_group_assignment VALUES( "/divorce", 25 );
 INSERT INTO command_group_assignment VALUES( "/divorce", 24 );

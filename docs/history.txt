@@ -1,3 +1,6 @@
+*** 2008-09-20 by Steven Patrick
+- Changed "command area" to GM2+, patch by Kerol.
+
 *** 2008-09-19 by Stefano Angeleri
 - Hopefully a complete fix for FS#2208
 
