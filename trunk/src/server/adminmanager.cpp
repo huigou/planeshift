@@ -1436,6 +1436,13 @@ gemObject* AdminManager::FindObjectByString(const csString& str, gemActor * me) 
 
 void AdminManager::GetSiblingChars(MsgEntry* me,psAdminCmdMessage& msg, AdminCmdData& data,Client *client)
 {
+    WordArray words (msg.cmd, false); 	 
+    csString pid_str = words[1];
+    // Player is changed to string so no point in testing that if multiple entites
+    // with same name. A note the code above is done to workaround the substitution
+    // of the pid: with the name of the player which is invalid when changing the
+    // name of players online 
+
     if (!data.player || data.player.Length() == 0)
     {
         psserver->SendSystemError(me->clientnum, "You must specify a character name.");
@@ -1443,7 +1450,18 @@ void AdminManager::GetSiblingChars(MsgEntry* me,psAdminCmdMessage& msg, AdminCmd
     }
 
     size_t accountId = 0;
-    Result result(db->Select("SELECT account_id FROM characters WHERE name = '%s'", data.player.GetData()));
+    csString query;
+    if (pid_str.StartsWith("pid:",true) && pid_str.Length() > 4) // Find by player ID
+    {
+        query.Format("SELECT account_id FROM characters WHERE id = '%i'", atoi( pid_str.Slice(4).GetData() ));
+    }
+    else //find player by name
+    {
+        query.Format("SELECT account_id FROM characters WHERE name = '%s'", data.player.GetData());
+    }
+
+    Result result(db->Select(query));
+
     if (result.IsValid() && result.Count())
     {
         iResultRow& accountRow = result[0];
@@ -1457,7 +1475,12 @@ void AdminManager::GetSiblingChars(MsgEntry* me,psAdminCmdMessage& msg, AdminCmd
         psserver->SendSystemError(me->clientnum, "No player with name %s found in database.", data.player.GetData());
         return;
     }
-
+    
+    if(result.Count() > 1)
+    {
+        psserver->SendSystemInfo(client->GetClientNum(), "Player name isn't unique. It's suggested to use pid.");
+    }
+    
     if (accountId != 0)
     {
         Result result2(db->Select("SELECT id, name, lastname, last_login FROM characters WHERE account_id = %d", accountId));
@@ -5130,7 +5153,7 @@ void AdminManager::ChangeName(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
     else
     {
         //if we are using the name we must check that it's unique to avoid unwanted changes
-        if(!psCharCreationManager::IsUnique(data.player)) 
+        if(!psCharCreationManager::IsUnique(data.player, true)) 
         {                                                          
             psserver->SendSystemError(me->clientnum,"Multiple characters with same name '%s'. Use pid.",data.player.GetData());               
             return; 

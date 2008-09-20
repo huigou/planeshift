@@ -64,9 +64,10 @@ public:
 
     /** Check to see a name is unique in the characters table.
       * @param playerName The name to check to see if it is unique.
+      * @param dbUniqueness If false checks if it's still missing from the db, if true checks if there is only one entry in the db
       * @return true if the name is unique.
       */
-    static bool IsUnique( const char* playerName );
+    static bool IsUnique( const char* playerName,  bool dbUniqueness = false);
 
     /** Check to see a lastname is unique in the characters table.
       * @param lastname The lastname to check to see if it is unique.
