@@ -1171,7 +1171,8 @@ bool psCharCreationManager::IsUnique( const char* name , bool dbUniqueness)
     csString query;
     query.Format( "Select id from characters where name='%s'", escape.GetData() );
     Result result (db->Select( query ) );
-    return ! ( result.IsValid() && (result.Count()-dbUniqueness >= 1) );
+    //if dbUniqueness is true we will check result.Count() for > 1 else > 0 (like >= 1)
+    return ! ( result.IsValid() && (result.Count() > dbUniqueness) );
 }
 
 bool psCharCreationManager::IsLastNameUnique( const char* lastname )
