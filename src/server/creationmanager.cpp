@@ -1162,7 +1162,7 @@ int psCharCreationManager::IsReserved( const char* name, int acctID )
     return NAME_AVAILABLE;
 }
 
-bool psCharCreationManager::IsUnique( const char* name )
+bool psCharCreationManager::IsUnique( const char* name , bool dbUniqueness)
 {
     csString escape;
     db->Escape( escape, name );
@@ -1171,7 +1171,7 @@ bool psCharCreationManager::IsUnique( const char* name )
     csString query;
     query.Format( "Select id from characters where name='%s'", escape.GetData() );
     Result result (db->Select( query ) );
-    return ! ( result.IsValid() && result.Count() >= 1 );
+    return ! ( result.IsValid() && (result.Count()-dbUniqueness >= 1) );
 }
 
 bool psCharCreationManager::IsLastNameUnique( const char* lastname )

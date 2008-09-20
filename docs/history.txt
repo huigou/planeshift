@@ -1,3 +1,10 @@
+*** 2008-09-20 by Stefano Angeleri
+- Additional patch for FS#2045 fixing /charlist to support pid and alert
+  if it's being used on a duplicate name, fixing also a bug in changename,
+  which blocked changing with names, and adding an optional argument to 
+  IsUnique which changes its behaviour (uniqueness in the db (the additional way) 
+  vs uniqueness if adding a new entry in db)
+
 *** 2008-09-20 by Steven Patrick
 - Changed "command area" to GM2+, patch by Kerol.
 
