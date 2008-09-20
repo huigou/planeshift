@@ -486,7 +486,7 @@ bool psMainWidget::SetupMain()
     printf("Using fontsize %d for resolution %dx%d\n",(int)fontsize,screenFrame.Width(),screenFrame.Height());
 
     mesgFont       = graphics2D->GetFontServer()->LoadFont("/this/data/ttf/LiberationSans-Regular.ttf",(int)fontsize);
-    mesgFirstFont  = graphics2D->GetFontServer()->LoadFont("/this/data/ttf/scurlock.ttf",(int)fontsize*2);
+    mesgFirstFont  = graphics2D->GetFontServer()->LoadFont("/this/data/ttf/cupandtalon.ttf",(int)(fontsize*1.75));
 
     msgqueue->Subscribe(this, MSGTYPE_SYSTEM);
 
