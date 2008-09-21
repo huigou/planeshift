@@ -8,6 +8,7 @@
 - removed CHAT_ME and CHAT_MY which are now useless
 - BUMPED NET VERSION
 - Fixed FS#2255 by adding the characther name at the end of the output
+- Fix for #FS2251 "/modify can’t disable the transient flag" patch by peeg
 
 *** 2008-09-20 by Steven Patrick
 - Minor changes to detailwindow, patch by Caarrie.
