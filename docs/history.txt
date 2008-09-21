@@ -1,3 +1,6 @@
+*** 2008-09-20 by Steven Patrick
+- Minor changes to detailwindow, patch by Caarrie.
+
 *** 2008-09-20 by Andreas Heinchen
 - Fix for FS#2027 - SendSystemXXX omits first char if its a digit, patch by Caarrie.
 
