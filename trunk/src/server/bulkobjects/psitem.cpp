@@ -2087,7 +2087,7 @@ void psItem::SetIsPickupable(bool v)
 
 void psItem::SetIsTransient(bool v)
 {
-    if (!v)
+    if (v)
         flags=flags | PSITEM_FLAG_TRANSIENT;
     else
         flags=flags & ~PSITEM_FLAG_TRANSIENT;
