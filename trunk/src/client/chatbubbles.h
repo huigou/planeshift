@@ -38,6 +38,10 @@
 //=============================================================================
 #include "psengine.h"
 
+//these are special cases used to manage /me /my configurations in chat bubbles
+#define CHATBUBBLE_ME -2
+#define CHATBUBBLE_MY -3
+
 struct BubbleChatType
 {
     int                 chatType;           // the chat type this settings will apply to
@@ -60,6 +64,9 @@ private:
     size_t bubbleLongPhraseLineCount;   // messages with more than this many lines get large bubble
 
 	bool bubblesEnabled;						// enable all chat bubbles
+	bool mixActionColours;
+	BubbleChatType* GetTemplate(int iChatType);
+
 public:
     psChatBubbles();
     virtual ~psChatBubbles();
@@ -81,6 +88,7 @@ public:
 	void SetBubbleChatTypes(csArray<BubbleChatType> chatTypes) { this->chatTypes = chatTypes; }
 	
 	bool isEnabled() { return bubblesEnabled; }
+	bool isMixingActionColours() { return mixActionColours; }
 	void setEnabled(bool enable) { bubblesEnabled = enable; }
 
     size_t GetBubbleMaxLineLen() { return bubbleMaxLineLen; }

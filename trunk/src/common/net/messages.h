@@ -43,7 +43,7 @@ class psLinearMovement;
 
 // This holds the version number of the network code, remember to increase
 // this each time you do an update which breaks compatibility
-#define PS_NETVERSION   0x008F
+#define PS_NETVERSION   0x0090
 // Remember to bump the version in pscssetup.h, as well.
 
 // NPC Networking version is separate so we don't have to break compatibility
@@ -733,7 +733,6 @@ enum {
     CHAT_GUILD,
     CHAT_AUCTION,
     CHAT_SHOUT,
-    CHAT_ME,
     CHAT_TELLSELF,
     CHAT_REPORT,
     CHAT_ADVISOR,
@@ -742,7 +741,6 @@ enum {
     CHAT_SERVER_TELL,      // this tell came from the server, not from another player
     CHAT_GM,
     CHAT_SERVER_INFO,
-    CHAT_MY,
     CHAT_NPC,
     CHAT_SYSTEM_BASE,      // System messages that are also shown on the "Main" tab
     CHAT_PET_ACTION,

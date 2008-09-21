@@ -181,6 +181,9 @@ public:
     /// Remove bad words from the output string
     void BadWordsFilter(csString& s);
     
+    /// mixes two colours and returns their mixed colour
+    int mixColours(int colour1, int colour2);
+    
 protected:
 
     void HandleSystemMessage( MsgEntry* message );

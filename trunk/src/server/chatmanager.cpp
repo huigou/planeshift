@@ -153,8 +153,6 @@ void ChatManager::HandleMessage(MsgEntry *me, Client *client)
 
               break;
           }
-          case CHAT_MY:
-          case CHAT_ME:
           case CHAT_SAY:
           {
               // Send to all if there's no NPC response or the response is public

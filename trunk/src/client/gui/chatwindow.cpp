@@ -202,21 +202,21 @@ void pawsChatWindow::LoadChatSettings()
             csString nodeName (option->GetValue());
 
             if (nodeName == "loose")
-                settings.looseFocusOnSend = option->GetAttributeValueAsInt("value") ? true : false;
+                settings.looseFocusOnSend = option->GetAttributeValueAsBool("value", false);
 
             else if (nodeName == "selecttabstyle")
                 settings.selectTabStyle = (int)option->GetAttributeValueAsInt("value");
             else if (nodeName == "echoscreeninsystem")
-                settings.echoScreenInSystem = option->GetAttributeValueAsInt("value") ? true : false;
+                settings.echoScreenInSystem = option->GetAttributeValueAsBool("value", true);
             else if (nodeName == "mainbrackets")
-                settings.mainBrackets = option->GetAttributeValueAsInt("value") ? true : false;
+                settings.mainBrackets = option->GetAttributeValueAsBool("value", true);
             else if (nodeName == "yourcolormix")
-                settings.yourColorMix = option->GetAttributeValueAsInt("value") ? true : false;
+                settings.yourColorMix = option->GetAttributeValueAsBool("value", true);
             else
             {
                 for (int i = 0; i < CHAT_NLOG; i++)
                     if (nodeName == logWidgetName[i])   // Take the same name for simplicity
-                        settings.logChannel[i] = option->GetAttributeValueAsInt("value") ? true : false;
+                        settings.logChannel[i] = option->GetAttributeValueAsBool("value", false);
             }
         }
     }
@@ -771,16 +771,10 @@ const char* pawsChatWindow::HandleCommand( const char* cmd )
                         defaultButton = "Main Button";
                 }
             }
-            else if (words[0] == "/my")
-            {
-                chattype = CHAT_MY;
-                words.GetTail(1,text);
-                allowedTabs.Push("MainText");
-            }
             else // when in doubt, use the normal way
             {
-                chattype = CHAT_ME;
-                words.GetTail(1,text);
+                chattype = CHAT_SAY;
+                words.GetTail(0,text);
                 allowedTabs.Push("MainText");
             }
             //pPerson.Clear();
@@ -1367,23 +1361,14 @@ void pawsChatWindow::HandleMessage (MsgEntry *me)
 
         case CHAT_SAY:
         {
-            buff.Format(PawsManager::GetSingleton().Translate("%s says: %s"),
+            if ( msg.sText.StartsWith("/me ") )
+                buff.Format("%s %s", (const char *)msg.sPerson, ((const char *)msg.sText)+4);
+            else if ( msg.sText.StartsWith("/my ") )
+                buff.Format("%s's %s", (const char *)msg.sPerson, ((const char *)msg.sText)+4);
+            else
+                buff.Format(PawsManager::GetSingleton().Translate("%s says: %s"),
                         (const char *)msg.sPerson, (const char *)msg.sText);
-            colour = settings.yourColor;
-            break;
-        }
-
-        case CHAT_ME:
-        {
-            buff.Format("%s %s", (const char *)msg.sPerson, ((const char *)msg.sText));
-            colour = settings.yourColor;
-            break;
-        }
-
-        case CHAT_MY:
-        {
-            buff.Format("%s's %s", (const char *)msg.sPerson, ((const char *)msg.sText));
-            colour = settings.yourColor;
+            colour = settings.chatColor;
             break;
         }
 
@@ -1548,15 +1533,10 @@ void pawsChatWindow::HandleMessage (MsgEntry *me)
             //if the yourColorMix is enabled mix the yourcolour with the colour of the chat type
             //else use the normal yourcolour
             if(settings.yourColorMix)
-            {
-                int r,g,b;
-                int r2,g2,b2;
-                graphics2D->GetRGB(colour,r,g,b); //gets the rgb values of the colour for the chat type
-                graphics2D->GetRGB(settings.yourColor,r2,g2,b2); //gets the rgb values of the colour yourColour
-                colour = graphics2D->FindRGB((r+r2)/2,(g+g2)/2,(b+b2)/2); //does the average of the two colours
-            }
+               colour =  mixColours(colour, settings.yourColor);
             else
                 colour = settings.yourColor;
+
             flashEnabled = false;
         }
         else if ( psContain(noCaseMsg,chatTriggers) )
@@ -2324,6 +2304,16 @@ void pawsChatWindow::NpcChat()
 
     AutoselectChatTabIfNeeded(allowedTabs, "NPC Button");
 }
+
+int pawsChatWindow::mixColours(int colour1, int colour2)
+{
+    int r,g,b;
+    int r2,g2,b2;
+    graphics2D->GetRGB(colour1,r,g,b); //gets the rgb values of the first colour
+    graphics2D->GetRGB(colour2,r2,g2,b2); //gets the rgb values of the second colour
+    return graphics2D->FindRGB((r+r2)/2,(g+g2)/2,(b+b2)/2); //does the average of the two colours and returns it back
+}
+
 
 //------------------------------------------------------------------------------
 

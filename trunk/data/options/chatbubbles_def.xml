@@ -1,5 +1,5 @@
 <?xml version="1.0" ?> 
-<chat_bubbles maxLineLen="32" shortPhraseCharCount="9" longPhraseLineCount="5" enabled="yes">
+<chat_bubbles maxLineLen="32" shortPhraseCharCount="9" longPhraseLineCount="5" mixActionColours="yes" enabled="yes">
 	<chat type="say" enabled="yes" colourR="186" colourG="168" colourB="126" shadowR="108" shadowG="98" shadowB="73" align="left" effectPrefix="chatbubble_" /> 
 	<chat type="tell" enabled="yes" colourR="38" colourG="196" colourB="15" shadowR="22" shadowG="66" shadowB="9" outlineR="0" outlineG="0" outlineB="0" align="left" effectPrefix="chatbubble_" /> 
 	<chat type="group" enabled="yes" colourR="108" colourG="57" colourB="222" shadowR="46" shadowG="24" shadowB="94" outlineR="0" outlineG="0" outlineB="0" align="left" effectPrefix="chatbubble_" /> 
