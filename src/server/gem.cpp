@@ -2427,8 +2427,6 @@ bool gemActor::LogMessage(const char *who, const psChatMessage &msg)
             break;
         }
         case CHAT_SAY:
-        case CHAT_MY:
-        case CHAT_ME:
         {
             s->Format("%s says: %s", who, msg.sText.GetData());
             break;

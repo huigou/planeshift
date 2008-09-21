@@ -40,8 +40,6 @@
 #include "chatbubbles.h"
 #include "pscelclient.h"
 
-
-
 //#define DISABLE_CHAT_BUBBLES
 
 // Used to set default config files if the userdata ones are not found.
@@ -122,11 +120,12 @@ bool psChatBubbles::Load(const char * filename, bool saveAgain)
     bubbleMaxLineLen = chatBubblesNode->GetAttributeValueAsInt("maxLineLen");
     bubbleShortPhraseCharCount = chatBubblesNode->GetAttributeValueAsInt("shortPhraseCharCount");
     bubbleLongPhraseLineCount = chatBubblesNode->GetAttributeValueAsInt("longPhraseLineCount");
+    
+	mixActionColours = chatBubblesNode->GetAttributeValueAsBool("mixActionColours",true);
 	
-	if ((csString) chatBubblesNode->GetAttributeValue("enabled") == "no")
-		bubblesEnabled = false;
-	else
-		bubblesEnabled = true;
+	bubblesEnabled = chatBubblesNode->GetAttributeValueAsBool("enabled", true);
+		
+    
 
     csRef<iDocumentNodeIterator> nodes = chatBubblesNode->GetNodes("chat");
     while (nodes->HasNext())
@@ -151,11 +150,11 @@ bool psChatBubbles::Load(const char * filename, bool saveAgain)
         else if (type == "shout")
             chat.chatType = CHAT_SHOUT;
         else if (type == "me")
-            chat.chatType = CHAT_ME;
+            chat.chatType = CHATBUBBLE_ME;
         else if (type == "tellself")
             chat.chatType = CHAT_TELLSELF;
         else if (type == "my")
-            chat.chatType = CHAT_MY;
+            chat.chatType = CHATBUBBLE_MY;
         else if (type == "npc")
             chat.chatType = CHAT_NPC;
         else if (type == "npc_me")
@@ -235,6 +234,21 @@ bool psChatBubbles::Verify(MsgEntry * msg, unsigned int flags, Client *& client)
     return true;
 }
 
+//returns the template of the chat bubble. If not found returns NULL
+BubbleChatType* psChatBubbles::GetTemplate(int iChatType)
+{
+    // get the template for the chat type
+    size_t len = chatTypes.GetSize();
+    for (size_t a=0; a<len; ++a)
+    {
+        if (iChatType == chatTypes[a].chatType)
+        {
+            return &chatTypes[a];
+        }
+    }
+    return NULL;
+}
+
 void psChatBubbles::HandleMessage(MsgEntry * msg, Client * client)
 {
 #ifdef DISABLE_CHAT_BUBBLES
@@ -261,7 +275,10 @@ void psChatBubbles::HandleMessage(MsgEntry * msg, Client * client)
     {
         return;
     }
-
+    
+    //we have to manage this separately as sPerson in this case holds the destination in place of the origin
+    if(chatMsg.iChatType == CHAT_TELLSELF)
+        chatMsg.sPerson = psengine->GetCelClient()->GetMainPlayer()->GetName();
 
     // Get the first name of the person (needed for NPCs with both the first and the last name)
     csString firstName;
@@ -270,44 +287,66 @@ void psChatBubbles::HandleMessage(MsgEntry * msg, Client * client)
     else
         firstName = chatMsg.sPerson;
 
-    //We don't want /me or /my messages in the chat box, change them to something nice
-    if (chatMsg.sText.StartsWith("/me"))
-    {
-        chatMsg.sText.DeleteAt(0, 3);
-        chatMsg.sText.Insert(0, firstName);
-        chatMsg.sText.Insert(0, "* ");
-        chatMsg.sText.Append(" *");
-    }
-    if (chatMsg.sText.StartsWith("/my"))
-    {
-        csString apofirstname(firstName);
-        apofirstname.Append("'s");
-        chatMsg.sText.DeleteAt(0, 3);
-        chatMsg.sText.Insert(0, apofirstname);
-        chatMsg.sText.Insert(0, "* ");
-        chatMsg.sText.Append(" *");
-    }
-
     GEMClientActor* actor = psengine->GetCelClient()->GetActorByName(firstName);
     if (!actor)
         return;
 
     // get the template for the chat type
     const BubbleChatType* type = 0;
-    size_t len = chatTypes.GetSize();
-    for (a=0; a<len; ++a)
-    {
-        if (chatMsg.iChatType == chatTypes[a].chatType)
-        {
-            type = &chatTypes[a];
-            break;
-        }
-    }
+    type = GetTemplate(chatMsg.iChatType);
+
     if (!type)
         return;
 		
 	if (!(type->enabled))
 		return;
+
+    //We don't want /me or /my messages in the chat box, change them to something nice
+    if (chatMsg.sText.StartsWith("/me") || chatMsg.sText.StartsWith("/my"))
+    {
+        const BubbleChatType* subType = 0;
+        BubbleChatType mixType;
+        if(chatMsg.sText.StartsWith("/my")) //we have to add an 's
+        {
+            firstName.Append("'s");
+            subType = GetTemplate(CHATBUBBLE_MY);
+        }
+        else
+        {
+            subType = GetTemplate(CHATBUBBLE_ME);
+        }
+        chatMsg.sText.DeleteAt(0, 3);
+        chatMsg.sText.Insert(0, firstName);
+        chatMsg.sText.Insert(0, "* ");
+        chatMsg.sText.Append(" *");
+
+        //check if the subtype is enabled if so mix the main type to the subtype and generated a mixed type
+        if(!subType)
+            return;
+
+        if(!(subType->enabled))
+            return;
+
+        if(mixActionColours)
+        {
+            //generate the mixed type:
+            //mix the colours
+            mixType.textSettings.colour = chatWindow->mixColours(type->textSettings.colour, subType->textSettings.colour);
+            mixType.textSettings.shadowColour = chatWindow->mixColours(type->textSettings.shadowColour, subType->textSettings.shadowColour);
+            mixType.textSettings.outlineColour = chatWindow->mixColours(type->textSettings.outlineColour, subType->textSettings.outlineColour);
+            
+            //copy the remaining data from the subtype
+            mixType.textSettings.hasShadow = subType->textSettings.hasShadow;
+            mixType.textSettings.hasOutline = subType->textSettings.hasOutline;
+            mixType.textSettings.align = subType->textSettings.align;
+            mixType.enabled = subType->enabled; //not really usefull but just to be safe
+            mixType.chatType = subType->chatType; //not really usefull but just to be safe
+            strcpy(mixType.effectPrefix, subType->effectPrefix);
+            type = &mixType; //put our mixed type in place of the type for use later
+        }
+        else //if we don't mix colours just get the settings for me/my directly
+            type = subType;
+    }
 
     static csArray<psEffectTextRow> rowBuffer;
     rowBuffer.Empty();

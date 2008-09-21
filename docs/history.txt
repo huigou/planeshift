@@ -1,3 +1,13 @@
+*** 2008-09-21 by Stefano Angeleri
+- Various code Improvements and clean ups in chatwindow and chat bubbles
+- Fixes for FS#2209 and FS#2207 (wrong colours used for say and
+  wrong chat bubbles placement of tells)
+- Added an option in chat bubbles configuration which, if enabled,
+  mixes the defined ME / MY colours with the colour of the chat type
+- fixed problems with /say /me, /say /my
+- removed CHAT_ME and CHAT_MY which are now useless
+- BUMPED NET VERSION
+
 *** 2008-09-20 by Steven Patrick
 - Minor changes to detailwindow, patch by Caarrie.
 

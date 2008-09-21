@@ -470,6 +470,11 @@
             </widget>
             <widget name="longPhraseLineCount" factory="pawsEditTextBox"><frame border="yes" x="140" y="50" width="30" height="20" /></widget>
 
+            <widget name="mixActionColours" factory="pawsCheckBox">
+                <frame x="10" y="50" width="350" height="20"/>
+                <text string="Mix Action colours" />
+            </widget>
+
 		</widget>
 
 </widget_description>

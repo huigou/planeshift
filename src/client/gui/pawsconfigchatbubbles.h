@@ -94,6 +94,7 @@ private:
 	pawsEditTextBox *longPhraseLineCount;
 	
 	pawsScrollBar *scrollBar;
+    pawsCheckBox *mixActionColours;
 };
 
 CREATE_PAWS_FACTORY( pawsConfigChatBubbles );

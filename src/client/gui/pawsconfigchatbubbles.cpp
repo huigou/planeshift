@@ -105,7 +105,7 @@ bool pawsConfigChatBubbles::PostSetup()
 				break;
 			case 7:
 				temp.type = "me";
-				temp.chatType = CHAT_ME;
+				temp.chatType = CHATBUBBLE_ME;
 				break;
 			case 8:
 				temp.type = "tellself";
@@ -113,7 +113,7 @@ bool pawsConfigChatBubbles::PostSetup()
 				break;
 			case 9:
 				temp.type = "my";
-				temp.chatType = CHAT_MY;
+				temp.chatType = CHATBUBBLE_MY;
 				break;
 			case 10:
 				temp.type = "npc_me";
@@ -277,6 +277,12 @@ bool pawsConfigChatBubbles::PostSetup()
 		Error1("Could not locate longPhraseLineCount widget!");
 		return false;
 	}
+
+	mixActionColours = (pawsCheckBox*)FindWidget("mixActionColours");
+	if (!mixActionColours) {
+		Error1("Could not locate mixActionColours widget!");
+		return false;
+	}	
 		
 	//Create scrollBar
 	scrollBar = new pawsScrollBar;
@@ -328,6 +334,7 @@ void pawsConfigChatBubbles::drawFrame()
 	shortPhraseCharCount->Hide();
 	longPhraseLineCountText->Hide();
 	longPhraseLineCount->Hide();
+	mixActionColours->Hide();
 	
 	int startLineNo = (int) scrollBar->GetCurrentValue();
 	
@@ -421,6 +428,14 @@ void pawsConfigChatBubbles::drawFrame()
 		longPhraseLineCount->SetRelativeFramePos(X_B_POS, yPos);
 		longPhraseLineCount->Show();
 	}
+	
+	++lineNo;
+	
+    if (lineNo >= startLineNo && lineNo <= endLineNo) {
+		int yPos = Y_START_POS + HEIGHT * (lineNo - startLineNo);
+		mixActionColours->SetRelativeFramePos(X_TEXT_POS, yPos);
+		mixActionColours->Show();
+	}
 }
 
 bool pawsConfigChatBubbles::Initialize()
@@ -498,6 +513,8 @@ bool pawsConfigChatBubbles::LoadConfig()
 		}
 	}
 	
+	mixActionColours->SetState(chatBubbles->isMixingActionColours());
+	
     dirty = false;
 	
 	return true;
@@ -511,8 +528,8 @@ bool pawsConfigChatBubbles::SaveConfig()
 	// xml += "<!-- Supported attributes for <chat>: type, color[R,G,B], shadow[R,G,B], outline[R,G,B], align, effectPrefix -->\n";
 	// xml += "<!-- Supported Chat Types: say, tell, group, guild, auction, shout, me, tellself, my, npc, npc_me, npc_my, npc_narrate -->\n";
 	// xml += "<!-- Supported Align Types: left, center, right -->\n\n";
-	xml.AppendFmt("<chat_bubbles maxLineLen=\"%s\" shortPhraseCharCount=\"%s\" longPhraseLineCount=\"%s\" enabled=\"%s\">\n",
-			maxLineLen->GetText(), shortPhraseCharCount->GetText(), longPhraseLineCount->GetText(), allEnabled->GetState() ? "yes" : "no");
+	xml.AppendFmt("<chat_bubbles maxLineLen=\"%s\" shortPhraseCharCount=\"%s\" longPhraseLineCount=\"%s\" mixActionColours=\"%s\" enabled=\"%s\">\n",
+			maxLineLen->GetText(), shortPhraseCharCount->GetText(), longPhraseLineCount->GetText(), mixActionColours->GetState() ? "yes" : "no", allEnabled->GetState() ? "yes" : "no");
 
 	size_t lenPawsBubbleChatTypes = pawsBubbleChatTypes.GetSize();
 	for (size_t c = 0; c < lenPawsBubbleChatTypes; ++c) {

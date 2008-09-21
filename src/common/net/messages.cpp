@@ -496,20 +496,20 @@ const char *psChatMessage::GetTypeText()
 {
     switch (iChatType)
     {
-        case CHAT_SAY:      return "Say";
-        case CHAT_TELL:     return "Tell";
-        case CHAT_NPC:      return "TellNPC";
-        case CHAT_TELLSELF: return "TellSelf";
-        case CHAT_GROUP:    return "GroupMsg";
-        case CHAT_SHOUT:    return "Shout";
-        case CHAT_GM:       return "GM";
-        case CHAT_GUILD:    return "GuildChat";
-        case CHAT_AUCTION:  return "Auction";
-        case CHAT_MY: case CHAT_ME: case CHAT_PET_ACTION: return "Action";
-        case CHAT_REPORT:   return "Report";
-        case CHAT_ADVISOR:  return "Advisor";
-        case CHAT_ADVICE:   return "Advice";
-        default:            return "Unknown";
+        case CHAT_SAY:        return "Say";
+        case CHAT_TELL:       return "Tell";
+        case CHAT_NPC:        return "TellNPC";
+        case CHAT_TELLSELF:   return "TellSelf";
+        case CHAT_GROUP:      return "GroupMsg";
+        case CHAT_SHOUT:      return "Shout";
+        case CHAT_GM:         return "GM";
+        case CHAT_GUILD:      return "GuildChat";
+        case CHAT_AUCTION:    return "Auction";
+        case CHAT_PET_ACTION: return "Action";
+        case CHAT_REPORT:     return "Report";
+        case CHAT_ADVISOR:    return "Advisor";
+        case CHAT_ADVICE:     return "Advice";
+        default:              return "Unknown";
     }
 }
 
