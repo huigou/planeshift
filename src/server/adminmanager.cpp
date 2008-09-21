@@ -3804,8 +3804,8 @@ void AdminManager::CreateItem(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
     // Copy these items into the correct fields
     spawnMsg.item = data.item;
     spawnMsg.count = stackCount;
-    spawnMsg.lockable = spawnMsg.locked = false;
-    spawnMsg.pickupable = spawnMsg.collidable = true;
+    spawnMsg.lockable = spawnMsg.locked = spawnMsg.collidable = false;
+    spawnMsg.pickupable = true;
     spawnMsg.lskill = "";
     spawnMsg.lstr = 0;
     spawnMsg.random = data.random != 0;

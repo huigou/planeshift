@@ -1,3 +1,7 @@
+﻿*** 2008-09-21 by Steven Patrick
+- /item <item> no longer spawns collidable items making it consistent with 
+  /item GUI, patch by Aiken.
+
 *** 2008-09-21 by Stefano Angeleri
 - Various code Improvements and clean ups in chatwindow and chat bubbles
 - Fixes for FS#2209 and FS#2207 (wrong colours used for say and
