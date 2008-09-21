@@ -6173,11 +6173,11 @@ void AdminManager::CheckItem(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData&
 
         if (item->GetStackCount() < data.value)
         {
-            psserver->SendSystemOK(me->clientnum, "Cannot find %d %s.", data.value, data.item.GetData());
+            psserver->SendSystemOK(me->clientnum, "Cannot find %d %s in %s.", data.value, data.item.GetData(), target->GetActor()->GetName());
         }
         else
         {
-            psserver->SendSystemOK(me->clientnum, "Found %d %s.", data.value, data.item.GetData());
+            psserver->SendSystemOK(me->clientnum, "Found %d %s in %s.", data.value, data.item.GetData(), target->GetActor()->GetName());
         }
         return;
     }
@@ -6186,17 +6186,17 @@ void AdminManager::CheckItem(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData&
         psMoney targetMoney = targetchar->Money();
         if (data.value > targetMoney.GetTotal())
         {
-            psserver->SendSystemOK(me->clientnum, "Cannot find %d tria.", data.value);
+            psserver->SendSystemOK(me->clientnum, "Cannot find %d tria in %s.", data.value, target->GetActor()->GetName());
         }
         else
         {
-            psserver->SendSystemOK(me->clientnum, "Found %d tria.", data.value);
+            psserver->SendSystemOK(me->clientnum, "Found %d tria in %s.", data.value, target->GetActor()->GetName());
         }
         return;
     }
     else
     {
-        psserver->SendSystemOK(me->clientnum, "Cannot find %s.", data.item.GetData());
+        psserver->SendSystemOK(me->clientnum, "Cannot find %s in %s.", data.item.GetData(), target->GetActor()->GetName());
         return;       
     }
 }
