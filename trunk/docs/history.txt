@@ -7,6 +7,7 @@
 - fixed problems with /say /me, /say /my
 - removed CHAT_ME and CHAT_MY which are now useless
 - BUMPED NET VERSION
+- Fixed FS#2255 by adding the characther name at the end of the output
 
 *** 2008-09-20 by Steven Patrick
 - Minor changes to detailwindow, patch by Caarrie.
