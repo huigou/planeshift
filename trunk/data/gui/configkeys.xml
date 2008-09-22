@@ -89,6 +89,7 @@
             <widget factory="pawsSeqTreeNode" name="Spell book"/>
             <widget factory="pawsSeqTreeNode" name="Stats"/>
             <widget factory="pawsSeqTreeNode" name="Inventory"/>
+            <widget factory="pawsSeqTreeNode" name="Bag"/>
             <widget factory="pawsSeqTreeNode" name="Help"/>
             <widget factory="pawsSeqTreeNode" name="Buddy"/>
             <widget factory="pawsSeqTreeNode" name="Buy"/>
