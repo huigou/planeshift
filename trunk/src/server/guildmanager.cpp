@@ -1413,6 +1413,7 @@ void GuildManager::Remove(psGuildCmdMessage& msg,Client *client)
     Client * targetClient;
     csString name;
     int clientnum = client->GetClientNum();
+    bool isRemoved = false; //holds if the player is being removed by someone else, if false he/she's leaving the guild by himself
     
     psGuildInfo *gi = client->GetActor()->GetGuild();
     if (!gi)
@@ -1434,8 +1435,12 @@ void GuildManager::Remove(psGuildCmdMessage& msg,Client *client)
         return;
     }
 
-    // Verify rights if the player is removing someone else from the guild
+    //check if someone is removing the player or the player is leaving by him/herself
     if (client->GetPlayerID() != target->char_id )
+        isRemoved = true;
+
+    // Verify rights if the player is removing someone else from the guild
+    if(isRemoved)
     {
         if ( ! IsLeader(client))
         {
@@ -1462,7 +1467,10 @@ void GuildManager::Remove(psGuildCmdMessage& msg,Client *client)
 
     if (targetClient != NULL)
     {
-        psserver->SendSystemInfo(targetClient->GetClientNum(),"You have been removed from your guild.");
+        if(isRemoved)
+            psserver->SendSystemInfo(targetClient->GetClientNum(),"You have been removed from your guild.");
+        else
+            psserver->SendSystemInfo(targetClient->GetClientNum(),"You have left your guild.");
         UnsubscribeGuildData(targetClient);
 
         // forward blank MOTD to remove old
@@ -1473,13 +1481,16 @@ void GuildManager::Remove(psGuildCmdMessage& msg,Client *client)
     }
 
     csString text;
-    if (client->GetPlayerID() != target->char_id ) //check if the player left the guild or was removed from it
+
+    if (isRemoved) //check if the player left the guild or was removed from it
         text.Format("Player %s has been removed from the guild.", (const char *)msg.player );
     else
         text.Format("Player %s has left the guild.", (const char *)msg.player );
+
     psChatMessage guildmsg(0,"System",0,text,CHAT_GUILD, false);
+    
     if (guildmsg.valid)
-    chatserver->SendGuild(client->GetCharacterData()->GetCharName(), gi, guildmsg);
+        chatserver->SendGuild(client->GetCharacterData()->GetCharName(), gi, guildmsg);
     
     SendNotifications(gi->id, psGUIGuildMessage::MEMBER_DATA);
 
