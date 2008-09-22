@@ -1473,9 +1473,13 @@ void GuildManager::Remove(psGuildCmdMessage& msg,Client *client)
     }
 
     csString text;
-    text.Format("Player %s has left the guild.", (const char *)msg.player );
+    if (client->GetPlayerID() != target->char_id ) //check if the player left the guild or was removed from it
+        text.Format("Player %s has been removed from the guild.", (const char *)msg.player );
+    else
+        text.Format("Player %s has left the guild.", (const char *)msg.player );
     psChatMessage guildmsg(0,"System",0,text,CHAT_GUILD, false);
-    chatserver->SendGuild("server", gi, guildmsg);
+    if (guildmsg.valid)
+    chatserver->SendGuild(client->GetCharacterData()->GetCharName(), gi, guildmsg);
     
     SendNotifications(gi->id, psGUIGuildMessage::MEMBER_DATA);
 

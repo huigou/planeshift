@@ -118,6 +118,13 @@ bool Client::Disconnect()
         SaveAccountData();
     }
 
+    /*we have to clear the challenges else the other players will be stuck
+     in challenge mode */
+    if(GetDuelClientCount())
+    {
+        ClearAllDuelClients();
+    }
+
     return true;
 }
 
