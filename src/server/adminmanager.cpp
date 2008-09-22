@@ -318,8 +318,8 @@ bool AdminManager::AdminCmdData::DecodeAdminCmdMessage(MsgEntry *pMsg, psAdminCm
     {
         interval = words.GetInt(1);
         random   = words.GetInt(2);
-		value = words.GetInt(3);
-		range = words.GetFloat(4);
+        value = words.GetInt(3);
+        range = words.GetFloat(4);
         item = words.GetTail(5);
         return true;
     }
@@ -1436,7 +1436,7 @@ gemObject* AdminManager::FindObjectByString(const csString& str, gemActor * me) 
 
 void AdminManager::GetSiblingChars(MsgEntry* me,psAdminCmdMessage& msg, AdminCmdData& data,Client *client)
 {
-    WordArray words (msg.cmd, false); 	 
+    WordArray words (msg.cmd, false);    
     csString pid_str = words[1];
     // Player is changed to string so no point in testing that if multiple entites
     // with same name. A note the code above is done to workaround the substitution
@@ -1628,19 +1628,19 @@ void AdminManager::GetInfo(MsgEntry* me,psAdminCmdMessage& msg, AdminCmdData& da
     
     if (target) // Online
     {
-		csVector3 pos;
-		iSector* sector = 0;
-			
-		target->GetPosition(pos, loc_yrot, sector);
-		loc_x = pos.x;
-		loc_y = pos.y;
-		loc_z = pos.z;
-		
-		instance = target->GetInstance();
-		
-		sectorName = (sector) ? sector->QueryObject()->GetName() : "(null)";
+        csVector3 pos;
+        iSector* sector = 0;
+            
+        target->GetPosition(pos, loc_yrot, sector);
+        loc_x = pos.x;
+        loc_y = pos.y;
+        loc_z = pos.z;
+        
+        instance = target->GetInstance();
+        
+        sectorName = (sector) ? sector->QueryObject()->GetName() : "(null)";
 
-		Client* targetclient = target->GetClient();
+        Client* targetclient = target->GetClient();
 
         playerId = target->GetPlayerID();
         if (target->GetCharacterData())
@@ -1667,27 +1667,27 @@ void AdminManager::GetInfo(MsgEntry* me,psAdminCmdMessage& msg, AdminCmdData& da
         else // NPC
         {
             name = target->GetName();
-			int degrees = (int)(loc_yrot * 180 / PI );
+            int degrees = (int)(loc_yrot * 180 / PI );
             psserver->SendSystemInfo(client->GetClientNum(),
                 "NPC: %s has a player ID %d, entity ID %u, at position %1.2f, %1.2f, %1.2f "
-				"angle: %d in sector: %s, instance: %d, and has been active for %1.1f hours.", 
+                "angle: %d in sector: %s, instance: %d, and has been active for %1.1f hours.", 
                 name.GetData(),
                 playerId,
                 entityId,
-				loc_x, 
-				loc_y, 
-				loc_z, 
-				degrees, 
-				sectorName.GetData(), 
-				instance,
-				timeConnected );
+                loc_x, 
+                loc_y, 
+                loc_z, 
+                degrees, 
+                sectorName.GetData(), 
+                instance,
+                timeConnected );
             return; // Done
         }
     }
     else // Offline
     {
         Result result(db->Select("SELECT c.id as 'id', c.name as 'name', lastname, account_id, time_connected_sec, loc_instance, "
-				"s.name as 'sector', loc_x, loc_y, loc_z, loc_yrot, advisor_ban from characters c join sectors s on s.id = loc_sector_id "
+                "s.name as 'sector', loc_x, loc_y, loc_z, loc_yrot, advisor_ban from characters c join sectors s on s.id = loc_sector_id "
                 "join accounts a on a.id = account_id where c.name='%s'", data.player.GetData()));
 
         if (!result.IsValid() || result.Count() == 0)
@@ -1709,12 +1709,12 @@ void AdminManager::GetInfo(MsgEntry* me,psAdminCmdMessage& msg, AdminCmdData& da
              ipAddress = "(offline)";
              timeConnected = row.GetFloat("time_connected_sec") / 3600;
              securityLevel.Format("%d",GetTrueSecurityLevel(accountId));
-						 sectorName = row["sector"];
-						 instance = row.GetUInt32("loc_instance");
-						 loc_x = row.GetFloat("loc_x");
-						 loc_y = row.GetFloat("loc_y");
-						 loc_z = row.GetFloat("loc_z");
-						 loc_yrot = row.GetFloat("loc_yrot");
+                         sectorName = row["sector"];
+                         instance = row.GetUInt32("loc_instance");
+                         loc_x = row.GetFloat("loc_x");
+                         loc_y = row.GetFloat("loc_y");
+                         loc_z = row.GetFloat("loc_z");
+                         loc_yrot = row.GetFloat("loc_yrot");
              advisorBanned = row.GetUInt32("advisor_ban") != 0;
         }
     }
@@ -1726,7 +1726,7 @@ void AdminManager::GetInfo(MsgEntry* me,psAdminCmdMessage& msg, AdminCmdData& da
         {
             banTimeLeft = ban->end - now;
             banned = true;
-    		
+            
             banTimeLeft = banTimeLeft / 60; // don't care about seconds
             minsLeft = banTimeLeft % 60;
             banTimeLeft = banTimeLeft / 60;
@@ -1750,10 +1750,10 @@ void AdminManager::GetInfo(MsgEntry* me,psAdminCmdMessage& msg, AdminCmdData& da
             info.AppendFmt("entity ID %u, IP is %s, ", entityId, ipAddress.GetData() );
         else
             info.Append("is offline, ");
-		
-		int degrees = (int)(loc_yrot * 180 / PI );
-		info.AppendFmt("at position %1.2f, %1.2f, %1.2f angle: %d in sector: %s, instance: %d, ",
-				loc_x, loc_y, loc_z, degrees, sectorName.GetData(), instance);
+        
+        int degrees = (int)(loc_yrot * 180 / PI );
+        info.AppendFmt("at position %1.2f, %1.2f, %1.2f angle: %d in sector: %s, instance: %d, ",
+                loc_x, loc_y, loc_z, degrees, sectorName.GetData(), instance);
             
         info.AppendFmt("total time connected is %1.1f hours", timeConnected );
 
@@ -1858,16 +1858,16 @@ void AdminManager::CreateHuntLocation(MsgEntry* me,psAdminCmdMessage& msg, Admin
         psserver->SendSystemError(me->clientnum, "Intervals need to be greater than 0");
         return;
     }
-	if (data.value < 1)
-	{
-		psserver->SendSystemError(me->clientnum, "Amount must be greater than 0");
-		return;
-	}
-	if (data.range < 0)
-	{
-		psserver->SendSystemError(me->clientnum, "Range must be equal to or greater than 0");
-		return;
-	}
+    if (data.value < 1)
+    {
+        psserver->SendSystemError(me->clientnum, "Amount must be greater than 0");
+        return;
+    }
+    if (data.range < 0)
+    {
+        psserver->SendSystemError(me->clientnum, "Range must be equal to or greater than 0");
+        return;
+    }
 
     // In seconds
     int interval = 1000*data.interval;
@@ -1916,13 +1916,13 @@ void AdminManager::CreateHuntLocation(MsgEntry* me,psAdminCmdMessage& msg, Admin
         "VALUES ('%f','%f','%f','%u','%s','%d','%d','%d','%f')",
         pos.x,pos.y,pos.z, rawitem->GetUID(),sector->QueryObject()->GetName(),interval,random,data.value,data.range);
 
-	for (int i = 0; i < data.value; ++i) //Make desired amount of items
-	{
-	    psScheduledItem* schedule = new psScheduledItem(db->GetLastInsertID(),rawitem->GetUID(),pos,spawnsector,instance,
-				interval,random,data.range);
-	    psItemSpawnEvent* event = new psItemSpawnEvent(schedule);
-	    psserver->GetEventManager()->Push(event);
-	}
+    for (int i = 0; i < data.value; ++i) //Make desired amount of items
+    {
+        psScheduledItem* schedule = new psScheduledItem(db->GetLastInsertID(),rawitem->GetUID(),pos,spawnsector,instance,
+                interval,random,data.range);
+        psItemSpawnEvent* event = new psItemSpawnEvent(schedule);
+        psserver->GetEventManager()->Push(event);
+    }
 
     // Done!
     psserver->SendSystemInfo(me->clientnum,"New hunt location created!");
@@ -2192,34 +2192,68 @@ void AdminManager::ViewMarriage(MsgEntry* me, AdminCmdData& data)
         return;
     }
 
+    bool married;
+    csString spouse;
+
     Client* player = clients->Find( data.player );
+    if(player)
+    {
+        // player is online
+        psCharacter* playerData = player->GetCharacterData();
+        married = playerData->GetIsMarried();
     
-    // If the player is not online, we can't proceed.
-    if (!player)
-    {
-        psserver->SendSystemInfo(me->clientnum, "The player who's marriage info you wish to check must be online." );
-        return;
-    }
-
-    psCharacter* playerData = player->GetCharacterData();
-
-    // If the player is not married, there's no info.
-    if(!playerData->GetIsMarried())
-    {
-        psserver->SendSystemInfo(me->clientnum, "This player is not married.");
-        return;
-    }
-
-    csString spouseFullName = playerData->GetSpouseName();
-    csString spouseName = spouseFullName.Slice( 0, spouseFullName.FindFirst(' '));
-
-    if(psserver->GetCharManager()->HasConnected(spouseName))
-    {
-        psserver->SendSystemInfo(me->clientnum, "%s is married to %s, who was last online less than two months ago.", data.player.GetData(), spouseName.GetData());
+        if(married)
+        {
+            csString spouseFullName = playerData->GetSpouseName();
+            spouse = spouseFullName.Slice( 0, spouseFullName.FindFirst(' '));
+        }
     }
     else
     {
-        psserver->SendSystemInfo(me->clientnum, "%s is married to %s, who was last online more than two months ago.", data.player.GetData(), spouseName.GetData());
+        // player is offline - hit the db
+        Result result;
+        result = db->Select("SELECT id FROM characters WHERE name='%s'", data.player.GetData());;
+
+        if(!result.IsValid() || result.Count() == 0)
+        {
+            // there's no character with given name
+            psserver->SendSystemInfo(me->clientnum, "There's no character named %s!", data.player.GetData());
+            return;
+        }
+
+        iResultRow& row = result[0];
+        int charID = row.GetInt("id");
+
+        result = db->Select(
+                "SELECT name FROM characters WHERE id = "
+                "("
+                "   SELECT related_id FROM character_relationships WHERE character_id = %d AND relationship_type='spouse'"
+                ")", charID);
+
+        married = (result.IsValid() && result.Count() != 0);
+        if(married)
+        {
+            iResultRow& row = result[0];
+            spouse = row["name"];
+        }
+    }
+
+    if(married)
+    {
+        // character is married
+        if(psserver->GetCharManager()->HasConnected(spouse))
+        {
+            psserver->SendSystemInfo(me->clientnum, "%s is married to %s, who was last online less than two months ago.", data.player.GetData(), spouse.GetData());
+        }
+        else
+        {
+            psserver->SendSystemInfo(me->clientnum, "%s is married to %s, who was last online more than two months ago.", data.player.GetData(), spouse.GetData());
+        }
+    }
+    else
+    {
+        // character isn't married
+        psserver->SendSystemInfo(me->clientnum, "%s is not married.", data.player.GetData());
     }
 }
 
@@ -4565,14 +4599,14 @@ void AdminManager::ListPetitions(MsgEntry *me, psPetitionRequestMessage& msg,Cli
             info.created = csString((*rs)[i][3]).Slice(0, 16);
             info.assignedgm = (*rs)[i][4];
             if (info.assignedgm.Length() == 0)
-			{
+            {
                 info.assignedgm = "No GM Assigned";
-			}
-			info.resolution = (*rs)[i][5];
-			if (info.resolution.Length() == 0)
-			{
-				info.resolution = "No Resolution";
-			}
+            }
+            info.resolution = (*rs)[i][5];
+            if (info.resolution.Length() == 0)
+            {
+                info.resolution = "No Resolution";
+            }
 
             // Append to the message:
             petitions.Push(info);
@@ -4618,13 +4652,13 @@ void AdminManager::CancelPetition(MsgEntry *me, psPetitionRequestMessage& msg,Cl
             info.created = (*rs)[i][3];
             info.assignedgm = (*rs)[i][4];
             if (info.assignedgm.Length() == 0)
-			{
+            {
                 info.assignedgm = "No GM Assigned";
-			}
-			if (info.resolution.Length() == 0)
-			{
-				info.resolution = "No Resolution";
-			}
+            }
+            if (info.resolution.Length() == 0)
+            {
+                info.resolution = "No Resolution";
+            }
 
             // Append to the message:
             petitions.Push(info);
@@ -4944,21 +4978,21 @@ bool AdminManager::CancelPetition(int playerID, int petitionID)
 
 bool AdminManager::ChangePetition(int playerID, int petitionID, const char* petition)
 {
-	csString escape;
+    csString escape;
     db->Escape( escape, petition );
 
     // If player ID is -1, just change the petition (a GM is requesting the change)
     if (playerID == -1)
     {
-		int result = db->Command("UPDATE petitions SET petition=\"%s\" WHERE id=%d", escape.GetData(), playerID);
+        int result = db->Command("UPDATE petitions SET petition=\"%s\" WHERE id=%d", escape.GetData(), playerID);
         return (result != -1);
     }
 
     // Attempt to select this petition; 
-	// following things can go wrong: 
-	// - it doesn't exist 
-	// - the player didn't create it
-	// - it has not the right status
+    // following things can go wrong: 
+    // - it doesn't exist 
+    // - the player didn't create it
+    // - it has not the right status
     int result = db->SelectSingleNumber("SELECT id FROM petitions WHERE id=%d AND player=%d AND status='Open'", petitionID, playerID);
     if (!result || result <= -1)
     {
@@ -4970,7 +5004,7 @@ bool AdminManager::ChangePetition(int playerID, int petitionID, const char* peti
     // Update the petition status
     result = db->CommandPump("UPDATE petitions SET petition=\"%s\" WHERE id=%d AND player=%d", escape.GetData(), petitionID, playerID);
 
-	return (result != -1);
+    return (result != -1);
 }
 
 bool AdminManager::ClosePetition(int gmID, int petitionID, const char* desc)
@@ -5121,7 +5155,7 @@ void AdminManager::DeleteCharacter(MsgEntry* me, psAdminCmdMessage& msg, AdminCm
 
 void AdminManager::ChangeName(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data,Client *client)
 {
-    WordArray words (msg.cmd, false); 	 
+    WordArray words (msg.cmd, false);    
     csString pid_str = words[1];
     // Player is changed to string so no point in testing that if multiple entites
     // with same name. A note the code above is done to workaround the substitution
@@ -6268,17 +6302,17 @@ void AdminManager::SetSkill(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& 
         return;
     }
 
-	// use unsigned int since skills are never negative (this also takes care of overflows)
-	unsigned int value = data.value;
-	unsigned int max = MAX(MAX_SKILL, MAX_STAT);
+    // use unsigned int since skills are never negative (this also takes care of overflows)
+    unsigned int value = data.value;
+    unsigned int max = MAX(MAX_SKILL, MAX_STAT);
     if (data.skill == "all")
     {
-		// if the value is out of range, send an error
-		if (value < 0 || value > max)
-		{
-			psserver->SendSystemError(me->clientnum, "Valid values are between 0 and %u", max);
-			return;
-		}
+        // if the value is out of range, send an error
+        if (value < 0 || value > max)
+        {
+            psserver->SendSystemError(me->clientnum, "Valid values are between 0 and %u", max);
+            return;
+        }
 
         for (int i=0; i<PSSKILL_COUNT; i++)
         {
@@ -6305,22 +6339,22 @@ void AdminManager::SetSkill(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& 
             psserver->SendSystemInfo(me->clientnum, "Current '%s' is %u",skill->name.GetDataSafe(),old_value);
             return;
         } 
-		else if (skill->category == PSSKILLS_CATEGORY_STATS && (value < 0 || value > MAX_STAT))
-		{
-			psserver->SendSystemError(me->clientnum, "Stat values are between 0 and %u", MAX_STAT);
-			return;
-		} 
-		else if (skill->category != PSSKILLS_CATEGORY_STATS && (value < 0 || value > MAX_SKILL))
-		{
-			psserver->SendSystemError(me->clientnum, "Skill values are between 0 and %u", MAX_SKILL);
-			return;
-		}
+        else if (skill->category == PSSKILLS_CATEGORY_STATS && (value < 0 || value > MAX_STAT))
+        {
+            psserver->SendSystemError(me->clientnum, "Stat values are between 0 and %u", MAX_STAT);
+            return;
+        } 
+        else if (skill->category != PSSKILLS_CATEGORY_STATS && (value < 0 || value > MAX_SKILL))
+        {
+            psserver->SendSystemError(me->clientnum, "Skill values are between 0 and %u", MAX_SKILL);
+            return;
+        }
     
         pchar->SetSkillRank(skill->id, value);
         psserver->SendSystemInfo(me->clientnum, "Changed '%s' from %u to %u",skill->name.GetDataSafe(),old_value,data.value);
     }
 
-	// Send updated skill list to client
+    // Send updated skill list to client
     psserver->GetProgressionManager()->SendSkillList(target, false);
 
     if (target != client)
@@ -6820,11 +6854,11 @@ void AdminManager::ModifyHuntLocation(MsgEntry* me, psAdminCmdMessage& msg, Admi
     }
     else if (data.action == "amount")
     {
-    	if (data.value < 1)
-    	{
-    		psserver->SendSystemError(me->clientnum, "Amount must be greater than 0");
-    		return;
-    	}
+        if (data.value < 1)
+        {
+            psserver->SendSystemError(me->clientnum, "Amount must be greater than 0");
+            return;
+        }
         
         if (item->GetScheduledItem())
         {
@@ -6836,11 +6870,11 @@ void AdminManager::ModifyHuntLocation(MsgEntry* me, psAdminCmdMessage& msg, Admi
     }
     else if (data.action == "range")
     {
-    	if (data.range < 0)
-    	{
-    		psserver->SendSystemError(me->clientnum, "Range must be equal to or greater than 0");
-    		return;
-    	}
+        if (data.range < 0)
+        {
+            psserver->SendSystemError(me->clientnum, "Range must be equal to or greater than 0");
+            return;
+        }
         
         if (item->GetScheduledItem())
         {
@@ -7000,8 +7034,8 @@ void AdminManager::TempSecurityLevel(MsgEntry* me, psAdminCmdMessage& msg, Admin
         target->SetSecurityLevel(trueSL);
         target->GetActor()->SetSecurityLevel(trueSL);
 
-		 // Refresh the label
-		target->GetActor()->UpdateProxList(true);
+         // Refresh the label
+        target->GetActor()->UpdateProxList(true);
 
         psserver->SendSystemOK(target->GetClientNum(),"Your access level was reset");
         if (target != client)

@@ -1,4 +1,10 @@
-﻿*** 2008-09-21 by Steven Patrick
+﻿*** 2008-09-21 by Stefano Angeleri
+- Fixed FS#2256 '/marriageinfo output problems' patch by peeg
+- Fixed FS#2195 'If you challenge another player, and they log off, nobody can trade with you' patch by peeg
+- Converted adminmanager.cpp tabs to 4 spaces in order to adhere with coding standards
+- Fixed FS#2266 partial patch by caarrie refactored by me
+
+*** 2008-09-21 by Steven Patrick
 - /item <item> no longer spawns collidable items making it consistent with 
   /item GUI, patch by Aiken.
 
