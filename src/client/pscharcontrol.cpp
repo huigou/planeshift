@@ -544,7 +544,7 @@ void psTriggerHandler::HandleLook(const psControl* trigger, bool value)
 
 void psTriggerHandler::HandleZoom(const psControl* trigger, bool value)
 {
-	// KL: Removed check for value because we now treat this event as TOGGLE.
+    // KL: Removed check for value because we now treat this event as TOGGLE.
     if (trigger->name == "Zoom in")
     {
         if (psengine->GetPSCamera()->GetMinDistance() == psengine->GetPSCamera()->GetDistance() &&
@@ -554,7 +554,7 @@ void psTriggerHandler::HandleZoom(const psControl* trigger, bool value)
         }
         psengine->GetPSCamera()->MoveDistance(-1.0f);
     }
-	else
+    else
     {
         if (psengine->GetPSCamera()->GetMinDistance() == psengine->GetPSCamera()->GetDistance())
         {
@@ -603,13 +603,13 @@ void psTriggerHandler::HandleMouseLookToggle(const psControl* trigger, bool valu
   
 void psTriggerHandler::HandleMouseZoom(const psControl* trigger, bool value)
 {
- 	// KL: Changed order to match HandleMouseLookToggle (no change in functionality, just to keep code more readable).
- 	if (movement->MouseZoom()!=value) // KL: Switch only if necessary to avoid jumping mouse cursor or overwriting last saved position.
- 	{
- 	    movement->MouseZoom(value);
- 		if (!movement->MouseLook()) // KL: No CenterMouse while in MouseLook mode.
- 		    charcontrol->CenterMouse(value);
- 	}
+    // KL: Changed order to match HandleMouseLookToggle (no change in functionality, just to keep code more readable).
+    if (movement->MouseZoom()!=value) // KL: Switch only if necessary to avoid jumping mouse cursor or overwriting last saved position.
+    {
+        movement->MouseZoom(value);
+        if (!movement->MouseLook()) // KL: No CenterMouse while in MouseLook mode.
+            charcontrol->CenterMouse(value);
+    }
 }
 
 
@@ -785,7 +785,7 @@ void psCharController::CreateKeys()
     controls.NewTrigger("Communications" , psControl::NORMAL, &psTriggerHandler::HandleWindow);
     controls.NewTrigger("Help"           , psControl::NORMAL, &psTriggerHandler::HandleWindow);
     controls.NewTrigger("Inventory"      , psControl::NORMAL, &psTriggerHandler::HandleWindow);
-	controls.NewTrigger("Bag"			 , psControl::NORMAL, &psTriggerHandler::HandleWindow);
+    controls.NewTrigger("Bag"            , psControl::NORMAL, &psTriggerHandler::HandleWindow);
     controls.NewTrigger("Options"        , psControl::NORMAL, &psTriggerHandler::HandleWindow);
     controls.NewTrigger("Quit"           , psControl::NORMAL, &psTriggerHandler::HandleWindow);
     controls.NewTrigger("Spell book"     , psControl::NORMAL, &psTriggerHandler::HandleWindow);
@@ -967,12 +967,12 @@ void psCharController::CenterMouse(bool value)
 
 void psCharController::CancelMouseLook()
 {
- 	// KL: Fixed and simplified CancelMouseLook.
- 	if (GetMovementManager()->MouseLook()) 
-	{
- 	    GetMovementManager()->MouseLook(false);
- 	    CenterMouse(false);
- 	}
+    // KL: Fixed and simplified CancelMouseLook.
+    if (GetMovementManager()->MouseLook()) 
+    {
+        GetMovementManager()->MouseLook(false);
+        CenterMouse(false);
+    }
 }
 
 bool psCharController::MatchTrigger(const char* name, psControl::Device device, uint button, uint32 mods)
