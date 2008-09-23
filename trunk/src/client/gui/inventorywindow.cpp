@@ -130,7 +130,24 @@ bool pawsInventoryWindow::PostSetup()
     if ( money ){
         money->SetContainer( CONTAINER_INVENTORY_MONEY );
     }
-        
+    
+    // If you add something here, DO NOT FORGET TO CHANGE 'INVENTORY_EQUIP_COUNT'!!!
+    SetupSlot("lefthand");
+    SetupSlot("righthand");
+    SetupSlot("leftfinger");
+    SetupSlot("rightfinger");
+    SetupSlot("head");
+    SetupSlot("neck");
+    SetupSlot("back");
+    SetupSlot("arms");
+    SetupSlot("gloves");
+    SetupSlot("boots");
+    SetupSlot("legs");
+    SetupSlot("belt");
+    SetupSlot("bracers");
+    SetupSlot("torso");
+    SetupSlot("mind");
+    
     pawsListBox * bulkList = dynamic_cast <pawsListBox*> (FindWidget("BulkList"));
     if (bulkList){
     int colCount = bulkList->GetTotalColumns();
