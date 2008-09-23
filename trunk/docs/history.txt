@@ -3,6 +3,7 @@
   a bug in the changename function with npc which didn't update some things 
   with the new name and added some additional error checking.
 - Removed trailing spaces in code from adminmanager.cpp
+- Little update to help.xml changing charlist/changename to have target in place of name/pid
 
 *** 2008-09-23 by Steven Patrick
 - Fixed FS#2267 - Equipping items in invalid slots makes them disappear,
