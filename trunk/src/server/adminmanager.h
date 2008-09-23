@@ -209,7 +209,7 @@ protected:
     void Divorce(MsgEntry* me, AdminCmdData& data);
 
     /// Get the marriage info of a player.
-    void ViewMarriage(MsgEntry* me, AdminCmdData& data);
+    void ViewMarriage(MsgEntry* me, AdminCmdData& data, Client *player, bool duplicateActor);
 
     /// Add new Path point to DB
     int PathPointCreate(int pathID, int prevPointId, csVector3& pos, csString& sectorName);
