@@ -1319,7 +1319,7 @@ void AdminManager::HandleAdminCmdMessage(MsgEntry *me, psAdminCmdMessage &msg, A
     }
     else if (data.command == "/marriageinfo")
     {
-        ViewMarriage(me, data);
+        ViewMarriage(me, data, targetclient, duplicateActor);
     }
     else if (data.command == "/path")
     {
@@ -2193,18 +2193,17 @@ void AdminManager::Divorce(MsgEntry* me, AdminCmdData& data)
     Debug3(LOG_MARRIAGE, me->clientnum, "%s divorced from %s.", data.player.GetData(), spouseName.GetData());
 }
 
-void AdminManager::ViewMarriage(MsgEntry* me, AdminCmdData& data)
+void AdminManager::ViewMarriage(MsgEntry* me, AdminCmdData& data, Client *player, bool duplicateActor)
 {
-    if (!data.player.Length())
+    if (!data.player.Length() && !player)
     {
-        psserver->SendSystemInfo(me->clientnum, "Usage: \"/marriageinfo [character]\"");
+        psserver->SendSystemInfo(me->clientnum, "Usage: \"/marriageinfo [me/target/eid/pid/area/name]\"");
         return;
     }
 
     bool married;
     csString spouse;
-
-    Client* player = clients->Find( data.player );
+    
     if(player)
     {
         // player is online
@@ -2221,7 +2220,10 @@ void AdminManager::ViewMarriage(MsgEntry* me, AdminCmdData& data)
     {
         // player is offline - hit the db
         Result result;
-        result = db->Select("SELECT id FROM characters WHERE name='%s'", data.player.GetData());;
+        if(data.player.StartsWith("pid:",true) && data.player.Length() > 4) //check if pid was provided or only name
+            result = db->Select("SELECT id FROM characters WHERE name='%i'", atoi( data.player.Slice(4).GetData()));
+        else
+            result = db->Select("SELECT id FROM characters WHERE name='%s'", data.player.GetData());
 
         if(!result.IsValid() || result.Count() == 0)
         {
@@ -2245,7 +2247,13 @@ void AdminManager::ViewMarriage(MsgEntry* me, AdminCmdData& data)
             iResultRow& row = result[0];
             spouse = row["name"];
         }
+        
+        if(result.Count() > 1) //check for duplicate
+            duplicateActor = true;
     }
+
+    if(duplicateActor) //report that we found more than one result and data might be wrong
+            psserver->SendSystemInfo(me->clientnum, "Player name isn't unique. It's suggested to use pid.");
 
     if(married)
     {
