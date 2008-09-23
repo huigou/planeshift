@@ -144,28 +144,28 @@ void AdminManager::HandleMessage(MsgEntry *me, Client *client)
             HandleAdminCmdMessage(me, msg, data, client);
             break;
         }
-        
+
         case MSGTYPE_PETITION_REQUEST:
         {
             psPetitionRequestMessage msg(me);
             HandlePetitionMessage(me, msg, client);
             break;
         }
-        
+
         case MSGTYPE_GMGUI:
         {
             psGMGuiMessage msg(me);
             HandleGMGuiMessage(me, msg, client);
             break;
         }
-        
+
         case MSGTYPE_GMSPAWNITEMS:
         {
             psGMSpawnItems msg(me);
             SendSpawnItems(me, msg, client);
             break;
         }
-        
+
         case MSGTYPE_GMSPAWNITEM:
         {
             psGMSpawnItem msg(me);
@@ -190,11 +190,11 @@ bool AdminManager::AdminCmdData::DecodeAdminCmdMessage(MsgEntry *pMsg, psAdminCm
 
     command = words[0];
     help = false;
-    
+
     if ( command == "/updaterespawn" )
     {
         return true;
-    } 
+    }
     else if (command == "/deletechar")
     {
         zombie = words[1];
@@ -259,7 +259,7 @@ bool AdminManager::AdminCmdData::DecodeAdminCmdMessage(MsgEntry *pMsg, psAdminCm
     }
     else if (command == "/loadquest")
     {
-        text = words[1];        
+        text = words[1];
         return true;
     }
     else if (command == "/item")
@@ -267,7 +267,7 @@ bool AdminManager::AdminCmdData::DecodeAdminCmdMessage(MsgEntry *pMsg, psAdminCm
         item = words[1];
         random = 0;
         value = -1;
-        
+
         if (words.GetCount()>2)
         {
             if (words[2]=="random")
@@ -290,7 +290,7 @@ bool AdminManager::AdminCmdData::DecodeAdminCmdMessage(MsgEntry *pMsg, psAdminCm
         item = words[1];
         random = 0;
         value = 0;
-        
+
         if (words.GetCount()>2)
         {
             if (words[2]=="random")
@@ -350,7 +350,7 @@ bool AdminManager::AdminCmdData::DecodeAdminCmdMessage(MsgEntry *pMsg, psAdminCm
                     instanceValid = true;
                 }
             }
-        } else 
+        } else
         {
             if (words.GetCount() >= 4)
             {
@@ -358,7 +358,7 @@ bool AdminManager::AdminCmdData::DecodeAdminCmdMessage(MsgEntry *pMsg, psAdminCm
                 instanceValid = true;
             }
         }
-        
+
         return true;
     }
     else if (command == "/slide")
@@ -372,11 +372,11 @@ bool AdminManager::AdminCmdData::DecodeAdminCmdMessage(MsgEntry *pMsg, psAdminCm
     {
         player = words[1];
 
-        int param = 2;        
+        int param = 2;
 
         uniqueName = true;
         uniqueFirstName = true;
-        
+
         if (words[param] == "force")
         {
             uniqueName = false;
@@ -695,7 +695,7 @@ bool AdminManager::AdminCmdData::DecodeAdminCmdMessage(MsgEntry *pMsg, psAdminCm
                 insert = true;
                 wp1 = words[2]; // Alias name
             }
-            
+
             if (wp1.IsEmpty())
             {
                 help = true;
@@ -761,7 +761,7 @@ bool AdminManager::AdminCmdData::DecodeAdminCmdMessage(MsgEntry *pMsg, psAdminCm
             {
                 wp1 = words[3];
             }
-            
+
             if (wp1.IsEmpty())
             {
                 help = true;
@@ -811,7 +811,7 @@ bool AdminManager::AdminCmdData::DecodeAdminCmdMessage(MsgEntry *pMsg, psAdminCm
         }
         else
         {
-            subCmd = "help"; //Unknown command so force help on path. 
+            subCmd = "help"; //Unknown command so force help on path.
             help = true;
         }
         return true;
@@ -842,7 +842,7 @@ bool AdminManager::AdminCmdData::DecodeAdminCmdMessage(MsgEntry *pMsg, psAdminCm
         }
         else
         {
-            subCmd = "help"; //Unknown command so force help on cmd. 
+            subCmd = "help"; //Unknown command so force help on cmd.
             help = true;
         }
         return true;
@@ -1004,7 +1004,7 @@ bool AdminManager::AdminCmdData::DecodeAdminCmdMessage(MsgEntry *pMsg, psAdminCm
         subCmd = words.Get(1);
         if (subCmd == "item")
             value = words.GetInt(2);
-        
+
         return true;
     }
     else if (command == "/listwarnings")
@@ -1023,13 +1023,15 @@ void AdminManager::HandleAdminCmdMessage(MsgEntry *me, psAdminCmdMessage &msg, A
     if ( me->clientnum != 0 && !IsReseting(msg.cmd) && !Valid(client->GetSecurityLevel(), data.command,  me->clientnum) )
     {
         psserver->SendSystemError(me->clientnum, "You are not allowed to use %s.", data.command.GetData());
-        return;       
+        return;
     }
-    
+
     // Called functions should report all needed errors
     gemObject* targetobject = NULL;
     gemActor* targetactor = NULL;
     Client* targetclient = NULL;
+    //is set to true if a character was found trough name and multiple name instances were found
+    bool duplicateActor = false;
 
     // Targeting for all commands
     if ( data.player.Length() > 0 )
@@ -1063,6 +1065,8 @@ void AdminManager::HandleAdminCmdMessage(MsgEntry *me, psAdminCmdMessage &msg, A
             else
             {
                 targetclient = FindPlayerClient(data.player); // Other player?
+                if(targetclient && !psCharCreationManager::IsUnique(data.player, true)) //chech that the actor name isn't duplicate
+                    duplicateActor = true;
             }
 
             if (targetclient) // Found client
@@ -1113,7 +1117,7 @@ void AdminManager::HandleAdminCmdMessage(MsgEntry *me, psAdminCmdMessage &msg, A
 
     if (me->clientnum)
         LogGMCommand( client->GetPlayerID(), targetID, msg.cmd );
-    
+
     if (data.command == "/npc")
     {
         CreateNPC(me,msg,data,client,targetactor);
@@ -1171,7 +1175,7 @@ void AdminManager::HandleAdminCmdMessage(MsgEntry *me, psAdminCmdMessage &msg, A
     }
     else if (data.command == "/charlist")
     {
-        GetSiblingChars(me,msg,data,client);
+        GetSiblingChars(me,msg,data,client,targetobject, duplicateActor);
     }
     else if (data.command == "/crystal")
     {
@@ -1223,7 +1227,7 @@ void AdminManager::HandleAdminCmdMessage(MsgEntry *me, psAdminCmdMessage &msg, A
     }
     else if (data.command == "/changename" )
     {
-        ChangeName( me, msg, data, client );
+        ChangeName( me, msg, data, client, targetobject, duplicateActor );
     }
     else if (data.command == "/changeguildname")
     {
@@ -1287,7 +1291,7 @@ void AdminManager::HandleAdminCmdMessage(MsgEntry *me, psAdminCmdMessage &msg, A
     }
     else if ( data.command == "/updaterespawn")
     {
-        UpdateRespawn(client, targetactor);        
+        UpdateRespawn(client, targetactor);
     }
     else if (data.command == "/modify")
     {
@@ -1370,32 +1374,32 @@ void AdminManager::HandleAdminCmdMessage(MsgEntry *me, psAdminCmdMessage &msg, A
 void AdminManager::HandleLoadQuest(psAdminCmdMessage& msg, AdminCmdData& data, Client* client)
 {
     uint32 questID = (uint32)-1;
-    
-    Result result(db->Select("select * from quests where name='%s'", data.text.GetData()));    
+
+    Result result(db->Select("select * from quests where name='%s'", data.text.GetData()));
     if (!result.IsValid() || result.Count() == 0)
     {
-        psserver->SendSystemError(client->GetClientNum(), "Quest <%s> not found", data.text.GetData());        
+        psserver->SendSystemError(client->GetClientNum(), "Quest <%s> not found", data.text.GetData());
         return;
     }
     else
     {
         questID = result[0].GetInt("id");
     }
-        
+
     if(!CacheManager::GetSingleton().UnloadQuest(questID))
-        psserver->SendSystemError(client->GetClientNum(), "Quest <%s> Could not be unloaded", data.text.GetData());                
+        psserver->SendSystemError(client->GetClientNum(), "Quest <%s> Could not be unloaded", data.text.GetData());
     else
-        psserver->SendSystemError(client->GetClientNum(), "Quest <%s> unloaded", data.text.GetData());        
-        
+        psserver->SendSystemError(client->GetClientNum(), "Quest <%s> unloaded", data.text.GetData());
+
     if(!CacheManager::GetSingleton().LoadQuest(questID))
     {
-        psserver->SendSystemError(client->GetClientNum(), "Quest <%s> Could not be loaded", data.text.GetData());                
+        psserver->SendSystemError(client->GetClientNum(), "Quest <%s> Could not be loaded", data.text.GetData());
         psserver->SendSystemError(client->GetClientNum(), psserver->questmanager->LastError());
-    }        
+    }
     else
     {
-        psserver->SendSystemError(client->GetClientNum(), "Quest <%s> loaded", data.text.GetData());                    
-    }        
+        psserver->SendSystemError(client->GetClientNum(), "Quest <%s> loaded", data.text.GetData());
+    }
 }
 
 
@@ -1403,10 +1407,10 @@ gemObject* AdminManager::FindObjectByString(const csString& str, gemActor * me) 
 {
     gemObject* found = NULL;
     GEMSupervisor *gem = GEMSupervisor::GetSingletonPtr();
-    if (!gem) 
+    if (!gem)
     {
         return NULL;
-    }        
+    }
 
     if ( str.StartsWith("pid:",true) ) // Find by player ID
     {
@@ -1429,38 +1433,43 @@ gemObject* AdminManager::FindObjectByString(const csString& str, gemActor * me) 
     else // Try finding an entity by name
     {
         found = gem->FindObject(str);
-    }        
+    }
 
     return found;
 }
 
-void AdminManager::GetSiblingChars(MsgEntry* me,psAdminCmdMessage& msg, AdminCmdData& data,Client *client)
+void AdminManager::GetSiblingChars(MsgEntry* me,psAdminCmdMessage& msg, AdminCmdData& data,Client *client, gemObject *targetobject, bool duplicateActor)
 {
-    WordArray words (msg.cmd, false);    
-    csString pid_str = words[1];
-    // Player is changed to string so no point in testing that if multiple entites
-    // with same name. A note the code above is done to workaround the substitution
-    // of the pid: with the name of the player which is invalid when changing the
-    // name of players online 
-
-    if (!data.player || data.player.Length() == 0)
+    if(targetobject && !targetobject->GetCharacterData()) //no need to go on this isn't an npc or pc characther (most probably an item)
     {
-        psserver->SendSystemError(me->clientnum, "You must specify a character name.");
+        psserver->SendSystemError(me->clientnum,"Charlist can be used only on Player or NPC characters");
+        return;
+    }
+
+    if ((!data.player || !data.player.Length()) && !targetobject)
+    {
+        psserver->SendSystemError(me->clientnum, "You must specify a character name or target.");
         return;
     }
 
     size_t accountId = 0;
+    unsigned int pid = 0;
     csString query;
-    if (pid_str.StartsWith("pid:",true) && pid_str.Length() > 4) // Find by player ID
+    if (targetobject) //find by target: will be used in most cases
+        pid = targetobject->GetCharacterData()->GetCharacterID();
+    else if (data.player.StartsWith("pid:",true) && data.player.Length() > 4) // Get player ID should happen only if offline
+        pid = atoi( data.player.Slice(4).GetData());
+
+    if (pid) // Find by player ID
     {
-        query.Format("SELECT account_id FROM characters WHERE id = '%i'", atoi( pid_str.Slice(4).GetData() ));
+        query.Format("SELECT account_id FROM characters WHERE id = '%i'", pid);
     }
-    else //find player by name
+    else //find player by name: should happen only if offline
     {
         query.Format("SELECT account_id FROM characters WHERE name = '%s'", data.player.GetData());
     }
 
-    Result result(db->Select(query));
+    Result result(db->Select(query)); //send the query and get the results
 
     if (result.IsValid() && result.Count())
     {
@@ -1475,12 +1484,12 @@ void AdminManager::GetSiblingChars(MsgEntry* me,psAdminCmdMessage& msg, AdminCmd
         psserver->SendSystemError(me->clientnum, "No player with name %s found in database.", data.player.GetData());
         return;
     }
-    
-    if(result.Count() > 1)
+
+    if(result.Count() > 1 || duplicateActor) //we found more than one result so let's alert the user
     {
         psserver->SendSystemInfo(client->GetClientNum(), "Player name isn't unique. It's suggested to use pid.");
     }
-    
+
     if (accountId != 0)
     {
         Result result2(db->Select("SELECT id, name, lastname, last_login FROM characters WHERE account_id = %d", accountId));
@@ -1516,7 +1525,7 @@ void AdminManager::GetSiblingChars(MsgEntry* me,psAdminCmdMessage& msg, AdminCmd
 bool AdminManager::Valid( int level, const char* command, int clientnum )
 {
     csString errorStr;
-    
+
     if ( !CacheManager::GetSingleton().GetCommandManager()->Validate( level, command, errorStr ) )
     {
         psserver->SendSystemError(clientnum, errorStr);
@@ -1527,7 +1536,7 @@ bool AdminManager::Valid( int level, const char* command, int clientnum )
 
 
 void AdminManager::GetInfo(MsgEntry* me,psAdminCmdMessage& msg, AdminCmdData& data,Client *client, gemObject* target)
-{    
+{
     PS_ID entityId = 0;
     if ( target )
         entityId = target->GetEntityID();
@@ -1560,7 +1569,7 @@ void AdminManager::GetInfo(MsgEntry* me,psAdminCmdMessage& msg, AdminCmdData& da
 
           csString info;
           info.Format("Item: %s ", item->GetName() );
-          
+
           if ( item->GetStackCount() > 1 )
               info.AppendFmt("(x%d) ", item->GetStackCount() );
 
@@ -1625,19 +1634,19 @@ void AdminManager::GetInfo(MsgEntry* me,psAdminCmdMessage& msg, AdminCmdData& da
     time_t banTimeLeft;
     int daysLeft = 0, hoursLeft = 0, minsLeft = 0;
     bool advisorBanned = false;
-    
+
     if (target) // Online
     {
         csVector3 pos;
         iSector* sector = 0;
-            
+
         target->GetPosition(pos, loc_yrot, sector);
         loc_x = pos.x;
         loc_y = pos.y;
         loc_z = pos.z;
-        
+
         instance = target->GetInstance();
-        
+
         sectorName = (sector) ? sector->QueryObject()->GetName() : "(null)";
 
         Client* targetclient = target->GetClient();
@@ -1656,12 +1665,12 @@ void AdminManager::GetInfo(MsgEntry* me,psAdminCmdMessage& msg, AdminCmdData& da
             // Because of /deputize we'll need to get the real SL from DB
             int currSL = targetclient->GetSecurityLevel();
             int trueSL = GetTrueSecurityLevel(accountId);
-            
+
             if (currSL != trueSL)
                 securityLevel.Format("%d(%d)",currSL,trueSL);
             else
                 securityLevel.Format("%d",currSL);
-                
+
             advisorBanned = targetclient->IsAdvisorBanned();
         }
         else // NPC
@@ -1670,15 +1679,15 @@ void AdminManager::GetInfo(MsgEntry* me,psAdminCmdMessage& msg, AdminCmdData& da
             int degrees = (int)(loc_yrot * 180 / PI );
             psserver->SendSystemInfo(client->GetClientNum(),
                 "NPC: %s has a player ID %d, entity ID %u, at position %1.2f, %1.2f, %1.2f "
-                "angle: %d in sector: %s, instance: %d, and has been active for %1.1f hours.", 
+                "angle: %d in sector: %s, instance: %d, and has been active for %1.1f hours.",
                 name.GetData(),
                 playerId,
                 entityId,
-                loc_x, 
-                loc_y, 
-                loc_z, 
-                degrees, 
-                sectorName.GetData(), 
+                loc_x,
+                loc_y,
+                loc_z,
+                degrees,
+                sectorName.GetData(),
                 instance,
                 timeConnected );
             return; // Done
@@ -1726,7 +1735,7 @@ void AdminManager::GetInfo(MsgEntry* me,psAdminCmdMessage& msg, AdminCmdData& da
         {
             banTimeLeft = ban->end - now;
             banned = true;
-            
+
             banTimeLeft = banTimeLeft / 60; // don't care about seconds
             minsLeft = banTimeLeft % 60;
             banTimeLeft = banTimeLeft / 60;
@@ -1740,21 +1749,21 @@ void AdminManager::GetInfo(MsgEntry* me,psAdminCmdMessage& msg, AdminCmdData& da
     {
         csString info;
         info.Format("Player: %s has ", name.GetData() );
-        
+
         if (securityLevel != "0")
             info.AppendFmt("security level %s, ", securityLevel.GetData() );
 
         info.AppendFmt("account ID %d, player ID %d, ", accountId, playerId );
-        
+
         if (ipAddress != "(offline)")
             info.AppendFmt("entity ID %u, IP is %s, ", entityId, ipAddress.GetData() );
         else
             info.Append("is offline, ");
-        
+
         int degrees = (int)(loc_yrot * 180 / PI );
         info.AppendFmt("at position %1.2f, %1.2f, %1.2f angle: %d in sector: %s, instance: %d, ",
                 loc_x, loc_y, loc_z, degrees, sectorName.GetData(), instance);
-            
+
         info.AppendFmt("total time connected is %1.1f hours", timeConnected );
 
         info.AppendFmt(" has had %d exploits flagged.", client->GetFlagCount());
@@ -1763,7 +1772,7 @@ void AdminManager::GetInfo(MsgEntry* me,psAdminCmdMessage& msg, AdminCmdData& da
         {
             info.AppendFmt(" The player's account is banned! Time left: %d days, %d hours, %d minutes.", daysLeft, hoursLeft, minsLeft);
         }
-        
+
         if (advisorBanned)
             info.Append(" The player's account is banned from advising.");
 
@@ -1803,7 +1812,7 @@ void AdminManager::HandleGMGuiMessage(MsgEntry *me, psGMGuiMessage& msg,Client *
 {
     if (msg.type == psGMGuiMessage::TYPE_QUERYPLAYERLIST)
     {
-        if (client->GetSecurityLevel() >= GM_LEVEL_0) 
+        if (client->GetSecurityLevel() >= GM_LEVEL_0)
             SendGMPlayerList(me, msg,client);
         else
             psserver->SendSystemError(me->clientnum, "You are not a GM.");
@@ -1841,7 +1850,7 @@ void AdminManager::SendGMAttribs(Client* client)
 }
 
 void AdminManager::CreateHuntLocation(MsgEntry* me,psAdminCmdMessage& msg, AdminCmdData& data,Client *client)
-{    
+{
     if (data.item.IsEmpty())
     {
         psserver->SendSystemError(me->clientnum, "Insufficent parameters. Use /crystal <interval> <random> <amount> <range> <itemname>");
@@ -1908,7 +1917,7 @@ void AdminManager::CreateHuntLocation(MsgEntry* me,psAdminCmdMessage& msg, Admin
         CPrintf(CON_ERROR,"Player is in invalid sector %s!",sector->QueryObject()->GetName());
         return;
     }
- 
+
     // to db
     db->Command(
         "INSERT INTO hunt_locations"
@@ -2150,7 +2159,7 @@ void AdminManager::Divorce(MsgEntry* me, AdminCmdData& data)
     }
 
     Client* divorcer = clients->Find( data.player );
-    
+
     // If the player that wishes to divorce is not online, we can't proceed.
     if (!divorcer)
     {
@@ -2201,7 +2210,7 @@ void AdminManager::ViewMarriage(MsgEntry* me, AdminCmdData& data)
         // player is online
         psCharacter* playerData = player->GetCharacterData();
         married = playerData->GetIsMarried();
-    
+
         if(married)
         {
             csString spouseFullName = playerData->GetSpouseName();
@@ -2267,7 +2276,7 @@ void AdminManager::Teleport(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& 
                                  "             here [<instance>]/last/spawn/restore/map [<map name>|here] <x> <y> <z> [<instance>]\n");
         return;
     }
-    
+
     // If player is offline and the special argument is called
     if (subject == NULL && data.target == "restore")
     {
@@ -2287,10 +2296,10 @@ void AdminManager::Teleport(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& 
             psserver->SendSystemError(client->GetClientNum(), "Sector not found!");
             return;
         }
-        
+
         sql.AppendFmt("update characters set loc_x=%10.2f, loc_y=%10.2f, loc_z=%10.2f, loc_yrot=%10.2f, loc_sector_id=%u, loc_instance=%u where name='%s'",
             myPoint.x, myPoint.y, myPoint.z, yRot, mysectorinfo->uid, client->GetActor()->GetInstance(), data.player.GetData());
-        
+
         if (db->CommandPump(sql) != 1)
         {
             Error3 ("Couldn't save character's position to database.\nCommand was "
@@ -2300,7 +2309,7 @@ void AdminManager::Teleport(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& 
         }
         else
             psserver->SendSystemResult(client->GetClientNum(), "%s will next log in at your current location", data.player.GetData());
-        
+
         return;
     }
     else if (subject == NULL)
@@ -2318,9 +2327,9 @@ void AdminManager::Teleport(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& 
         psserver->SendSystemError(client->GetClientNum(), "Cannot teleport %s to %s", data.player.GetData(), data.target.GetData() );
         return;
     }
-    
+
     //Error6("tele %s to %s %f %f %f",subject->GetName(), targetSector->QueryObject()->GetName(), targetPoint.x, targetPoint.y, targetPoint.z);
-    
+
     csVector3 oldpos;
     float oldyrot;
     iSector *oldsector;
@@ -2364,7 +2373,7 @@ void AdminManager::Teleport(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& 
     {
         subject->UpdateProxList(false); // Update ProxList if needed
     }
-    
+
 
     if ( dynamic_cast<gemActor*>(subject) ) // Record old location of actor, for undo
         ((gemActor*)subject)->UpdateValidLocation(oldpos, 0.0f, oldyrot, oldsector, true);
@@ -2376,12 +2385,12 @@ void AdminManager::Teleport(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& 
         csString instance_str;
         instance_str.Format(" in instance %u",targetInstance);
 
-        psserver->SendSystemResult(client->GetClientNum(), "Teleported %s to %s%s", subject->GetName(), 
+        psserver->SendSystemResult(client->GetClientNum(), "Teleported %s to %s%s", subject->GetName(),
                                    ((data.target=="map")?destName:data.target).GetData(),
                                    instance_changed?instance_str.GetData():"");
         psserver->SendSystemResult(subject->GetClientID(), "You were moved by a GM");
     }
-    
+
     if (data.player == "me"  &&  data.target != "map"  &&  data.target != "here")
     {
         psGUITargetUpdateMessage updateMessage( client->GetClientNum(), subject->GetEntityID() );
@@ -2577,7 +2586,7 @@ int AdminManager::PathPointCreate(int pathID, int prevPointId, csVector3& pos, c
         Error2("No sector info for %s",sectorName.GetDataSafe());
         return -1;
     }
-    
+
     psStringArray values;
     values.FormatPush("%u", pathID );
     values.FormatPush("%u", prevPointId );
@@ -2585,18 +2594,18 @@ int AdminManager::PathPointCreate(int pathID, int prevPointId, csVector3& pos, c
     values.FormatPush("%10.2f",pos.y);
     values.FormatPush("%10.2f",pos.z);
     values.FormatPush("%u",si->uid);
-    
+
     unsigned int id = db->GenericInsertWithID("sc_path_points",fieldnames,values);
     if (id==0)
     {
         Error2("Failed to create new Path Point Error %s",db->GetLastError());
         return -1;
     }
-    
+
     return id;
 }
 
-void AdminManager::FindPath(csVector3 & pos, iSector * sector, float radius, 
+void AdminManager::FindPath(csVector3 & pos, iSector * sector, float radius,
                             Waypoint** wp, float *rangeWP,
                             psPath ** path, float *rangePath, int *indexPath, float *fraction,
                             psPath ** pointPath, float *rangePoint, int *indexPoint)
@@ -2608,7 +2617,7 @@ void AdminManager::FindPath(csVector3 & pos, iSector * sector, float radius,
     }
     if (path)
     {
-        *path = pathNetwork->FindNearestPath(pos,sector,radius,rangePath,indexPath,fraction);        
+        *path = pathNetwork->FindNearestPath(pos,sector,radius,rangePath,indexPath,fraction);
     }
     if (pointPath)
     {
@@ -2627,7 +2636,7 @@ void AdminManager::FindPath(csVector3 & pos, iSector * sector, float radius,
         }
     }
 }
-                            
+
 void AdminManager::HandlePath(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data, Client *client)
 {
     const char* usage         = "/path adjust|alias|display|format|help|hide|info|point|start|stop [options]";
@@ -2651,10 +2660,10 @@ void AdminManager::HandlePath(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
     float myRotY;
     iSector* mySector = 0;
     csString mySectorName;
-    
+
     client->GetActor()->GetPosition(myPos, myRotY, mySector);
     mySectorName = mySector->QueryObject()->GetName();
-    
+
     // First check if some help is needed
     if (data.help)
     {
@@ -2734,7 +2743,7 @@ void AdminManager::HandlePath(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
     {
         float rangeWP,rangePath,rangePoint,fraction;
         int index,indexPoint;
-        
+
         Waypoint * wp = NULL;
         psPath * path = NULL;
         psPath * pathPoint = NULL;
@@ -2749,7 +2758,7 @@ void AdminManager::HandlePath(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
         {
             point = pathPoint->points[indexPoint];
         }
-            
+
         if (!wp && !pathPoint)
         {
             psserver->SendSystemInfo(me->clientnum, "No path point or waypoint in range of %.2f.",data.radius);
@@ -2765,8 +2774,8 @@ void AdminManager::HandlePath(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
                     psEffectMessage msg(me->clientnum,"admin_waypoint",myPos,0,0,client->PathGetEffectID());
                     msg.SendMessage();
                 }
-                
-                psserver->SendSystemInfo(me->clientnum, 
+
+                psserver->SendSystemInfo(me->clientnum,
                                          "Adjusted waypoint %s(%d) at range %.2f",
                                          wp->GetName(), wp->GetID(), rangeWP);
             }
@@ -2780,7 +2789,7 @@ void AdminManager::HandlePath(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
                     psEffectMessage msg(me->clientnum,"admin_path_point",myPos,0,0,client->PathGetEffectID());
                     msg.SendMessage();
                 }
-                
+
                 psserver->SendSystemInfo(me->clientnum,
                                          "Adjusted point(%d) %d of path %s(%d) at range %.2f",
                                          point->GetID(),indexPoint,path->GetName(),path->GetID(),rangePoint);
@@ -2791,7 +2800,7 @@ void AdminManager::HandlePath(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
     {
         float rangeWP,rangePoint;
         int indexPoint;
-        
+
         Waypoint * wp = NULL;
         psPath * pathPoint = NULL;
 
@@ -2807,7 +2816,7 @@ void AdminManager::HandlePath(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
                 psserver->SendSystemError( me->clientnum, "No waypoint nearby.");
                 return;
             }
-            
+
             // Check if alias is used before
             Waypoint * existing = pathNetwork->FindWaypoint(data.wp1.GetDataSafe());
             if (existing)
@@ -2815,7 +2824,7 @@ void AdminManager::HandlePath(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
                 psserver->SendSystemError( me->clientnum, "Waypoint already exists with the name %s", data.wp1.GetDataSafe());
                 return;
             }
-            
+
             // Create the alias in db
             wp->CreateAlias(db, data.wp1);
             psserver->SendSystemInfo( me->clientnum, "Added alias %s to waypoint %s(%d)",
@@ -2836,8 +2845,8 @@ void AdminManager::HandlePath(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
                 psserver->SendSystemError( me->clientnum, "Can't remove the name of the waypoint", data.wp1.GetDataSafe());
                 return;
             }
-            
-            
+
+
             // Remove the alias from db
             wp->RemoveAlias(db, data.wp1);
             psserver->SendSystemInfo( me->clientnum, "Removed alias %s from waypoint %s(%d)",
@@ -2859,22 +2868,22 @@ void AdminManager::HandlePath(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
             psserver->SendSystemError(me->clientnum, "You have no path. Please start/select one.");
             return;
         }
-        
+
         path->AddPoint(db, myPos, mySectorName);
-        
+
         if (client->PathIsDisplaying())
         {
             psEffectMessage msg(me->clientnum,"admin_path_point",myPos,0,0,client->PathGetEffectID());
             msg.SendMessage();
         }
-        
+
         psserver->SendSystemInfo( me->clientnum, "Added point.");
-        
+
     }
     else if (data.subCmd == "start")
     {
         float range;
-        
+
         psPath * path = client->PathGetPath();
 
         if (path)
@@ -2896,7 +2905,7 @@ void AdminManager::HandlePath(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
             psserver->SendSystemError( me->clientnum, "No path format set yet.");
             return;
         }
-        
+
         Waypoint * wp = pathNetwork->FindNearestWaypoint(myPos,mySector,2.0,&range);
         if (wp)
         {
@@ -2906,7 +2915,7 @@ void AdminManager::HandlePath(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
         {
             csString wpName;
             wpName.Format(client->WaypointGetPathName(),client->WaypointGetNewPathIndex());
-            
+
             Waypoint * existing = pathNetwork->FindWaypoint(wpName);
             if (existing)
             {
@@ -2932,13 +2941,13 @@ void AdminManager::HandlePath(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
     {
         float range;
         psPath * path = client->PathGetPath();
-        
+
         if (!path)
         {
             psserver->SendSystemError( me->clientnum, "You have no path started.");
             return;
         }
-        
+
         Waypoint * wp = pathNetwork->FindNearestWaypoint(myPos,mySector,2.0,&range);
         if (wp)
         {
@@ -2950,7 +2959,7 @@ void AdminManager::HandlePath(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
                                           wp->GetName(), wp->GetID(), range);
                 return;
             }
-            
+
             // A path returning to the same point dosn't seams to make any sence unless there is a serten
             // number of path points.
             if (wp == path->start &&  path->GetNumPoints() < 3)
@@ -2960,14 +2969,14 @@ void AdminManager::HandlePath(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
                                           wp->GetName(), wp->GetID(), range);
                 return;
             }
-            
+
             psserver->SendSystemInfo( me->clientnum, "Stoping path using existing waypoint %s(%d) at range %.2f",
                                       wp->GetName(), wp->GetID(), range);
         } else
         {
             csString wpName;
             wpName.Format(client->WaypointGetPathName(),client->WaypointGetNewPathIndex());
-            
+
             Waypoint * existing = pathNetwork->FindWaypoint(wpName);
             if (existing)
             {
@@ -3002,21 +3011,21 @@ void AdminManager::HandlePath(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
         if (data.attribute.IsEmpty() || toupper(data.attribute.GetAt(0)) == 'P')
         {
             Result rs(db->Select("select pp.* from sc_path_points pp, sectors s where pp.loc_sector_id = s.id and s.name ='%s'",mySectorName.GetDataSafe()));
-            
+
             if (!rs.IsValid())
             {
                 Error2("Could not load path points from db: %s",db->GetLastError() );
                 return ;
             }
-            
+
             for (int i=0; i<(int)rs.Count(); i++)
             {
-                
+
                 csVector3 pos(rs[i].GetFloat("x"),rs[i].GetFloat("y"),rs[i].GetFloat("z"));
                 psEffectMessage msg(me->clientnum,"admin_path_point",pos,0,0,client->PathGetEffectID());
                 msg.SendMessage();
             }
-            
+
             client->PathSetIsDisplaying(true);
             psserver->SendSystemInfo(me->clientnum, "Displaying all path points in sector %s",mySectorName.GetDataSafe());
         }
@@ -3029,10 +3038,10 @@ void AdminManager::HandlePath(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
                 Error2("Could not load waypoints from db: %s",db->GetLastError() );
                 return ;
             }
-            
+
             for (int i=0; i<(int)rs.Count(); i++)
             {
-                
+
                 csVector3 pos(rs[i].GetFloat("x"),rs[i].GetFloat("y"),rs[i].GetFloat("z"));
                 psEffectMessage msg(me->clientnum,"admin_waypoint",pos,0,0,client->WaypointGetEffectID());
                 msg.SendMessage();
@@ -3057,13 +3066,13 @@ void AdminManager::HandlePath(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
             client->WaypointSetIsDisplaying(false);
             psserver->SendSystemInfo(me->clientnum, "All waypoints hidden");
         }
-        
+
     }
     else if (data.subCmd == "info")
     {
         float rangeWP,rangePath,rangePoint,fraction;
         int index,indexPoint;
-        
+
         Waypoint * wp = NULL;
         psPath * path = NULL;
         psPath * pathPoint = NULL;
@@ -3078,7 +3087,7 @@ void AdminManager::HandlePath(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
         {
             point = pathPoint->points[indexPoint];
         }
-            
+
         if (!wp && !path && !point)
         {
             psserver->SendSystemInfo(me->clientnum, "No point, path or waypoint in range of %.2f.",data.radius);
@@ -3096,8 +3105,8 @@ void AdminManager::HandlePath(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
                 }
                 links.AppendFmt("%s(%d)",wp->links[i]->GetName(),wp->links[i]->GetID());
             }
-            
-            psserver->SendSystemInfo(me->clientnum, 
+
+            psserver->SendSystemInfo(me->clientnum,
                                      "Found waypoint %s(%d) at range %.2f\n"
                                      "Radius: %.2f\n"
                                      "Flags: %s\n"
@@ -3119,12 +3128,12 @@ void AdminManager::HandlePath(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
                                      pathPoint->start->GetName(),pathPoint->start->GetID(),
                                      pathPoint->end->GetName(),pathPoint->end->GetID(),
                                      pathPoint->GetFlags().GetDataSafe());
-            
+
         }
         if (path)
         {
             float length = path->GetLength(EntityManager::GetSingleton().GetWorld(),EntityManager::GetSingleton().GetEngine(),index);
-            
+
             psserver->SendSystemInfo(me->clientnum,
                                      "Found path: %s(%d) at range %.2f\n"
                                      "%.2f from point %d%s and %.2f from point %d%s\n"
@@ -3137,7 +3146,7 @@ void AdminManager::HandlePath(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
                                      path->end->GetName(),path->end->GetID(),
                                      path->GetFlags().GetDataSafe());
         }
-        
+
     }
     else if (data.subCmd == "select")
     {
@@ -3174,7 +3183,7 @@ void AdminManager::HandlePath(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
 
         csString wpName;
         wpName.Format(client->WaypointGetPathName(),client->WaypointGetNewPathIndex());
-            
+
         Waypoint * existing = pathNetwork->FindWaypoint(wpName);
         if (existing)
         {
@@ -3195,7 +3204,7 @@ void AdminManager::HandlePath(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
 
         psPath * path1 = pathNetwork->CreatePath("",path->start,wp, "" );
         psPath * path2 = pathNetwork->CreatePath("",wp,path->end, "" );
-        
+
         psserver->SendSystemInfo( me->clientnum, "Splitted %s(%d) into %s(%d) and %s(%d)",
                                   path->GetName(),path->GetID(),
                                   path1->GetName(),path1->GetID(),
@@ -3227,7 +3236,7 @@ void AdminManager::HandlePath(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
     {
         float rangeWP,rangePath,rangePoint,fraction;
         int index,indexPoint;
-        
+
         Waypoint * wp = NULL;
         psPath * path = NULL;
         psPath * pathPoint = NULL;
@@ -3289,11 +3298,11 @@ int AdminManager::LocationCreate(int typeID, csVector3& pos, csString& sectorNam
             "angle",
             "flags",
             "loc_sector_id",
-            
+
         };
 
     psSectorInfo * si = CacheManager::GetSingleton().GetSectorInfoByName(sectorName);
-    
+
     psStringArray values;
     values.FormatPush("%u", typeID );
     values.FormatPush("%d", -1 );
@@ -3305,14 +3314,14 @@ int AdminManager::LocationCreate(int typeID, csVector3& pos, csString& sectorNam
     values.FormatPush("%.2f", 0.0 );
     values.FormatPush("%s", "" );
     values.FormatPush("%u",si->uid);
-    
+
     unsigned int id = db->GenericInsertWithID("sc_locations",fieldnames,values);
     if (id==0)
     {
         Error2("Failed to create new Location Error %s",db->GetLastError());
         return -1;
     }
-    
+
     return id;
 }
 
@@ -3333,7 +3342,7 @@ void AdminManager::HandleLocation(MsgEntry* me, psAdminCmdMessage& msg, AdminCmd
         iSector* mySector = 0;
         int loc_id;
         int typeID = 0;
-        
+
         Result rs(db->Select("SELECT id from sc_location_type where name = '%s'",data.type.GetDataSafe()));
         if (!rs.IsValid())
         {
@@ -3345,12 +3354,12 @@ void AdminManager::HandleLocation(MsgEntry* me, psAdminCmdMessage& msg, AdminCmd
             psserver->SendSystemInfo( me->clientnum, "Location type not found");
             return;
         }
-        
+
         typeID = rs[0].GetInt("id");
-        
+
         client->GetActor()->GetPosition(myPos, myRotY, mySector);
         csString sectorName = mySector->QueryObject()->GetName();
-        
+
         loc_id = LocationCreate(typeID,myPos,sectorName,data.name);
 
         psserver->SendSystemInfo( me->clientnum, "Created new Location %u",loc_id);
@@ -3361,10 +3370,10 @@ void AdminManager::HandleLocation(MsgEntry* me, psAdminCmdMessage& msg, AdminCmd
         float myRotY,distance=10000.0;
         iSector* mySector = 0;
         int loc_id = -1;
-        
+
         client->GetActor()->GetPosition(myPos, myRotY, mySector);
         csString sectorName = mySector->QueryObject()->GetName();
-        
+
         Result rs(db->Select("select loc.* from sc_locations loc, sectors s where loc.loc_sector_id = s.id and s.name ='%s'",sectorName.GetDataSafe()));
 
         if (!rs.IsValid())
@@ -3372,10 +3381,10 @@ void AdminManager::HandleLocation(MsgEntry* me, psAdminCmdMessage& msg, AdminCmd
             Error2("Could not load location from db: %s",db->GetLastError() );
             return ;
         }
-        
+
         for (int i=0; i<(int)rs.Count(); i++)
         {
-            
+
             csVector3 pos(rs[i].GetFloat("x"),rs[i].GetFloat("y"),rs[i].GetFloat("z"));
             if ((pos-myPos).SquaredNorm() < distance)
             {
@@ -3383,22 +3392,22 @@ void AdminManager::HandleLocation(MsgEntry* me, psAdminCmdMessage& msg, AdminCmd
                 loc_id = rs[i].GetInt("id");
             }
         }
-        
+
         if (distance >= 10.0)
         {
             psserver->SendSystemInfo(me->clientnum, "To far from any locations to adjust.");
             return;
         }
-        
+
         db->CommandPump("UPDATE sc_locations SET x=%.2f,y=%.2f,z=%.2f WHERE id=%d",
                     myPos.x,myPos.y,myPos.z,loc_id);
-        
+
         if (client->LocationIsDisplaying())
         {
             psEffectMessage msg(me->clientnum,"admin_location",myPos,0,0,client->LocationGetEffectID());
             msg.SendMessage();
         }
-        
+
         psserver->SendSystemInfo(me->clientnum, "Adjusted location %d",loc_id);
     }
     else if (data.subCmd == "display")
@@ -3406,7 +3415,7 @@ void AdminManager::HandleLocation(MsgEntry* me, psAdminCmdMessage& msg, AdminCmd
         csVector3 myPos;
         float myRotY;
         iSector* mySector = 0;
-        
+
         client->GetActor()->GetPosition(myPos, myRotY, mySector);
         csString sectorName = mySector->QueryObject()->GetName();
 
@@ -3417,15 +3426,15 @@ void AdminManager::HandleLocation(MsgEntry* me, psAdminCmdMessage& msg, AdminCmd
             Error2("Could not load locations from db: %s",db->GetLastError() );
             return ;
         }
-        
+
         for (int i=0; i<(int)rs.Count(); i++)
         {
-            
+
             csVector3 pos(rs[i].GetFloat("x"),rs[i].GetFloat("y"),rs[i].GetFloat("z"));
             psEffectMessage msg(me->clientnum,"admin_location",pos,0,0,client->LocationGetEffectID());
             msg.SendMessage();
         }
-        
+
         client->LocationSetIsDisplaying(true);
         psserver->SendSystemInfo(me->clientnum, "Displaying all Locations in sector");
     }
@@ -3521,7 +3530,7 @@ bool AdminManager::GetTargetOfTeleport(Client *client, psAdminCmdMessage& msg, A
         {
             return false;
         }
-        
+
         obj->GetPosition(targetPoint, yRot, targetSector);
         instance = obj->GetInstance();
     }
@@ -3593,7 +3602,7 @@ bool AdminManager::GetStartOfMap(Client * client, const csString & map, iSector 
 }
 
 void AdminManager::Slide(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data, Client *client, gemObject *target)
-{    
+{
     if (!target)
     {
         psserver->SendSystemError(me->clientnum, "Invalid target");
@@ -3730,7 +3739,7 @@ bool AdminManager::MoveObject(Client *client, gemObject *target, csVector3& pos,
 }
 
 void AdminManager::CreateNPC(MsgEntry* me,psAdminCmdMessage& msg, AdminCmdData& data,Client *client, gemActor* basis)
-{        
+{
     if (!basis || !basis->GetCharacterData())
     {
         psserver->SendSystemError(me->clientnum, "Invalid target");
@@ -3742,7 +3751,7 @@ void AdminManager::CreateNPC(MsgEntry* me,psAdminCmdMessage& msg, AdminCmdData& 
     if (masternpc)
     {
         // Return the master npc's id for this npc. If this npc isn't from a master
-        // template this function will return the character id. In this way we 
+        // template this function will return the character id. In this way we
         // will copy all the attributes of the master later.
         masterNPCID = masternpc->GetCharacterData()->GetMasterNPCID();
     }
@@ -3776,7 +3785,7 @@ void AdminManager::CreateNPC(MsgEntry* me,psAdminCmdMessage& msg, AdminCmdData& 
     }
 
     // Copy the master NPC into a new player record, with all child tables also
-    unsigned int newNPCID = EntityManager::GetSingleton().CopyNPCFromDatabase(masterNPCID, pos.x, pos.y, pos.z, angle, 
+    unsigned int newNPCID = EntityManager::GetSingleton().CopyNPCFromDatabase(masterNPCID, pos.x, pos.y, pos.z, angle,
                                                                               sectorInfo->name, instance, NULL, NULL );
     if (newNPCID == 0)
     {
@@ -3788,7 +3797,7 @@ void AdminManager::CreateNPC(MsgEntry* me,psAdminCmdMessage& msg, AdminCmdData& 
 
     // Make new entity
     PS_ID eid = EntityManager::GetSingleton().CreateNPC(newNPCID, false);
-        
+
     // Get gemNPC for new entity
     gemNPC* npc = GEMSupervisor::GetSingleton().FindNPCEntity(newNPCID);
     if (npc == NULL)
@@ -3834,7 +3843,7 @@ void AdminManager::CreateItem(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
                       data.random != 0,
                       data.value
                       );
-    
+
     // Copy these items into the correct fields
     spawnMsg.item = data.item;
     spawnMsg.count = stackCount;
@@ -3844,7 +3853,7 @@ void AdminManager::CreateItem(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
     spawnMsg.lstr = 0;
     spawnMsg.random = data.random != 0;
     spawnMsg.quality = data.value;
-    
+
     // Spawn using this message
     SpawnItemInv(me, spawnMsg, client);
 }
@@ -3853,7 +3862,7 @@ void AdminManager::CreateMoney(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdDat
 {
     bool valid = true;
     Money_Slots type;
-    
+
     if(data.item == "trias")
         type = MONEY_TRIAS;
     else if(data.item == "hexas")
@@ -3864,28 +3873,28 @@ void AdminManager::CreateMoney(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdDat
         type = MONEY_CIRCLES;
     else
         valid = false;
-       
+
     if (!valid || (data.value == 0 && data.random == 0))
     {
         psserver->SendSystemError(me->clientnum, "Syntax: /money <circles|hexas|octas|trias> <random|quantity>");
         return;
     }
 
-    
+
     psCharacter* charData = client->GetCharacterData();
-    
+
     int quantity = data.value;
     if(data.random > 0)
         quantity = psserver->rng->Get(INT_MAX-1)+1;
-    
+
     psMoney money;
-    
+
     money.Set(type, quantity);
-    
+
     Debug4(LOG_ADMIN,me->clientnum,  "Created %d %s for %s\n", quantity, data.item.GetDataSafe(), charData->GetCharName());
-    
+
     charData->AdjustMoney(money, false);
-    
+
 }
 
 void AdminManager::RunScript(MsgEntry *me, psAdminCmdMessage& msg, AdminCmdData& data,Client *client)
@@ -3938,21 +3947,21 @@ void AdminManager::ModifyKey(MsgEntry *me, psAdminCmdMessage& msg, AdminCmdData&
         MakeUnlockable(me, msg, data, client);
         return;
     }
-    
+
     // Change lock to allow it to be unlocked
     if (data.subCmd == "securitylockable")
     {
         MakeSecurity(me, msg, data, client);
         return;
     }
-    
+
     // Make a key out of item in right hand
     if (data.subCmd == "make")
     {
         MakeKey(me, msg, data, client, false);
         return;
     }
-    
+
     // Make a master key out of item in right hand
     if (data.subCmd == "makemaster")
     {
@@ -4000,11 +4009,11 @@ void AdminManager::ModifyKey(MsgEntry *me, psAdminCmdMessage& msg, AdminCmdData&
         return;
     }
 
-    // Add or remove keys ability to lock targeted lock 
+    // Add or remove keys ability to lock targeted lock
     if ( data.subCmd == "addlock" || data.subCmd == "removelock")
     {
         AddRemoveLock(me, msg, data, client, key);
-        return;                
+        return;
     }
 }
 
@@ -4109,7 +4118,7 @@ void AdminManager::MakeUnlockable(MsgEntry *me, psAdminCmdMessage& msg, AdminCmd
         psserver->SendSystemError(me->clientnum,"Found gemItem but no psItem was attached!");
         return;
     }
-        
+
     // Flip the lockability
     if (item->GetIsLockable())
     {
@@ -4159,7 +4168,7 @@ void AdminManager::MakeSecurity(MsgEntry *me, psAdminCmdMessage& msg, AdminCmdDa
         psserver->SendSystemError(me->clientnum,"Found gemItem but no psItem was attached!");
         return;
     }
-        
+
     // Flip the security lockability
     if (item->GetIsSecurityLocked())
     {
@@ -4246,7 +4255,7 @@ void AdminManager::AddRemoveLock(MsgEntry *me, psAdminCmdMessage& msg, AdminCmdD
         psserver->SendSystemError(me->clientnum,"Found gemItem but no psItem was attached!");
         return;
     }
-        
+
     if(!item->GetIsLockable())
     {
         psserver->SendSystemError(me->clientnum,"This object isn't lockable");
@@ -4303,7 +4312,7 @@ void AdminManager::ChangeLock(MsgEntry *me, psAdminCmdMessage& msg, AdminCmdData
         Error1("Found gemItem but no psItem was attached!\n");
         psserver->SendSystemError(me->clientnum,"Found gemItem but no psItem was attached!");
         return;
-    }                
+    }
 
     // get instance ID
     psString buff;
@@ -4329,11 +4338,11 @@ void AdminManager::ChangeLock(MsgEntry *me, psAdminCmdMessage& msg, AdminCmdData
                 {
                     // add space to sparate since GetWordNumber is used to decode
                     if (!lstr.IsEmpty())
-                        lstr.Append(" "); 
+                        lstr.Append(" ");
                     lstr.Append(word);
 
                     // write back to database
-                    int result = db->CommandPump("UPDATE item_instances SET openable_locks='%s' WHERE id=%d", 
+                    int result = db->CommandPump("UPDATE item_instances SET openable_locks='%s' WHERE id=%d",
                         lstr.GetData(), keyID);
                     if (result == -1)
                     {
@@ -4391,7 +4400,7 @@ void AdminManager::KillNPC (MsgEntry *me, psAdminCmdMessage& msg, AdminCmdData& 
 
 
 void AdminManager::Admin ( int playerID, int clientnum,Client *client )
-{    
+{
     // Set client security level in case security level have
     // changed in database.
     csString commandList;
@@ -4401,7 +4410,7 @@ void AdminManager::Admin ( int playerID, int clientnum,Client *client )
     if (type>30) type=30;
 
     CacheManager::GetSingleton().GetCommandManager()->BuildXML( type, commandList );
-    
+
     psAdminCmdMessage admin(commandList.GetDataSafe(), clientnum);
     admin.SendMessage();
 }
@@ -4416,7 +4425,7 @@ void AdminManager::WarnMessage(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdDat
         psserver->SendSystemError(me->clientnum, "Invalid target to warn");
         return;
     }
-    
+
     if (data.reason.Length() == 0)
     {
         psserver->SendSystemError(me->clientnum, "Please enter a warn message");
@@ -4456,13 +4465,13 @@ void AdminManager::KickPlayer(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
 }
 
 void AdminManager::Death( MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data, Client *client, gemActor* target)
-{    
+{
     if (!target)
     {
         psserver->SendSystemError(me->clientnum,"You can't kill things that are not alive!");
         return;
     }
-    
+
     target->Kill(NULL);  // Have a nice day ;)
 
     if (target->GetClientID() != 0)
@@ -4476,7 +4485,7 @@ void AdminManager::Impersonate( MsgEntry* me, psAdminCmdMessage& msg, AdminCmdDa
         psserver->SendSystemError(me->clientnum, "Invalid parameters");
         return;
     }
-    
+
     // If no commandMod is given, default to say
     if (data.commandMod != "say" && data.commandMod != "shout" && data.commandMod != "worldshout")
     {
@@ -4555,7 +4564,7 @@ void AdminManager::HandleAddPetition(MsgEntry *me, psAdminCmdMessage& msg, Admin
         psserver->SendSystemError(me->clientnum,"You must enter a petition question/description after '/petition '");
         return;
     }
-    
+
     // Try and add the petition to the database:
     if (!AddPetition(client->GetPlayerID(), (const char*)data.petition))
     {
@@ -4701,7 +4710,7 @@ void AdminManager::GMListPetitions(MsgEntry *me, psPetitionRequestMessage& msg,C
     }
 
     // Try and grab the result set from the database:
-    
+
     // Show the player all petitions.
     iResultSet *rs = GetPetitions(-1, client->GetPlayerID(), GM_DEVELOPER );
     if (rs)
@@ -4718,8 +4727,8 @@ void AdminManager::GMListPetitions(MsgEntry *me, psPetitionRequestMessage& msg,C
             info.escalation = atoi((*rs)[i][3]);
             info.created = csString((*rs)[i][4]).Slice(0, 16);
             info.player = (*rs)[i][5];
-            info.online = (clients->Find(info.player) ? true : false); 
-            
+            info.online = (clients->Find(info.player) ? true : false);
+
             // Append to the message:
             petitions.Push(info);
         }
@@ -4810,7 +4819,7 @@ void AdminManager::GMHandlePetition(MsgEntry *me, psPetitionRequestMessage& msg,
 
             // Append to the message:
             petitions.Push(info);
-        }        
+        }
         // Tell GM operation was successful
         psPetitionMessage message(me->clientnum, &petitions, "Successful", true, type, true);
         message.SendMessage();
@@ -4834,7 +4843,7 @@ void AdminManager::SendGMPlayerList(MsgEntry* me, psGMGuiMessage& msg,Client *cl
         CPrintf(CON_ERROR, "Client %d tried to get GM player list, but hasn't got GM access!\n");
         return;
     }
-    
+
     csArray<psGMGuiMessage::PlayerInfo> playerList;
 
     // build the list of players
@@ -4845,7 +4854,7 @@ void AdminManager::SendGMPlayerList(MsgEntry* me, psGMGuiMessage& msg,Client *cl
         if (curr->IsSuperClient() || !curr->GetActor()) continue;
 
         psGMGuiMessage::PlayerInfo playerInfo;
-        
+
         playerInfo.name = curr->GetName();
         playerInfo.lastName = curr->GetCharacterData()->lastname;
         playerInfo.gender = curr->GetCharacterData()->GetRaceInfo()->gender;
@@ -4891,7 +4900,7 @@ bool AdminManager::EscalatePetition(int gmID, int gmLevel, int petitionID)
 
 bool AdminManager::DescalatePetition(int gmID, int gmLevel, int petitionID)
 {
-    
+
     int result = db->CommandPump("UPDATE petitions SET status='Open',assigned_gm=-1,"
                             "escalation_level=(escalation_level-1)"
                             "WHERE id=%d AND escalation_level<=%d AND (assigned_gm=%d OR status='Open' AND escalation_level != 0)", petitionID, gmLevel, gmID);
@@ -4988,9 +4997,9 @@ bool AdminManager::ChangePetition(int playerID, int petitionID, const char* peti
         return (result != -1);
     }
 
-    // Attempt to select this petition; 
-    // following things can go wrong: 
-    // - it doesn't exist 
+    // Attempt to select this petition;
+    // following things can go wrong:
+    // - it doesn't exist
     // - the player didn't create it
     // - it has not the right status
     int result = db->SelectSingleNumber("SELECT id FROM petitions WHERE id=%d AND player=%d AND status='Open'", petitionID, playerID);
@@ -5064,7 +5073,7 @@ const char *AdminManager::GetLastSQLError()
 void AdminManager::DeleteCharacter(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data,Client *client)
 {
     unsigned int zombieID = 0;
-    
+
     if ( data.zombie.StartsWith("pid:",true) ) // Find by player ID
     {
         zombieID = atoi( data.zombie.Slice(4).GetData() );
@@ -5082,10 +5091,10 @@ void AdminManager::DeleteCharacter(MsgEntry* me, psAdminCmdMessage& msg, AdminCm
             psserver->SendSystemInfo(me->clientnum,"Syntax: \"/deletechar CharacterName RequestorName\" OR \"/deletechar pid:[id]\"");
             return;
         }
-    
+
         csString escape;
         db->Escape( escape, data.zombie );
-       
+
         // Check account
         unsigned int zombieAccount = db->SelectSingleNumber( "SELECT account_id FROM characters WHERE name='%s'\n", escape.GetData() );
         if ( zombieAccount == QUERY_FAILED )
@@ -5117,7 +5126,7 @@ void AdminManager::DeleteCharacter(MsgEntry* me, psAdminCmdMessage& msg, AdminCm
             psserver->SendSystemError(me->clientnum,"No character found with PID %u!",zombieID);
             return;
         }
-        
+
         iResultRow& row = result[0];
         data.zombie = row["name"];
         unsigned int charType = row.GetUInt32("character_type");
@@ -5138,7 +5147,7 @@ void AdminManager::DeleteCharacter(MsgEntry* me, psAdminCmdMessage& msg, AdminCm
             }
         }
     }
-        
+
     csString error;
     if ( psserver->CharacterLoader.DeleteCharacterData(zombieID,error) )
         psserver->SendSystemInfo(me->clientnum,"Character %s (PID %u) has been deleted.", data.zombie.GetData(), zombieID );
@@ -5153,55 +5162,40 @@ void AdminManager::DeleteCharacter(MsgEntry* me, psAdminCmdMessage& msg, AdminCm
 
 
 
-void AdminManager::ChangeName(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data,Client *client)
+void AdminManager::ChangeName(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data,Client *client, gemObject *targetobject, bool duplicateActor)
 {
-    WordArray words (msg.cmd, false);    
-    csString pid_str = words[1];
-    // Player is changed to string so no point in testing that if multiple entites
-    // with same name. A note the code above is done to workaround the substitution
-    // of the pid: with the name of the player which is invalid when changing the
-    // name of players online 
+    unsigned int pid = 0; //used only if offline
+    Client *target;
+    if(targetobject)
+    {
+        if(!targetobject->GetCharacterData()) //no need to go on this isn't an npc or pc characther (most probably an item)
+        {
+            psserver->SendSystemError(me->clientnum,"Changename can be used only on Player or NPC characters");
+            return;
+        }
+        target = targetobject->GetClient(); //get the client target, this will return NULL if it's an NPC
+    }
 
     if (!data.player.Length() || !data.newName.Length())
     {
-        psserver->SendSystemInfo(me->clientnum,"Syntax: \"/changename <OldName|pid:[id]> [force|forceall] <NewName> [NewLastName]\"");
+        psserver->SendSystemInfo(me->clientnum,"Syntax: \"/changename <Target> [force|forceall] <NewName> [NewLastName]\"");
         return;
     }
 
-    unsigned int pid = 0;
-    Client* target = NULL;
-    
-    if (pid_str.StartsWith("pid:",true) && pid_str.Length() > 4) // Find by player ID
+    //if we are using the name we must check that it's unique to avoid unwanted changes
+    if(duplicateActor)
     {
-        pid = atoi( pid_str.Slice(4).GetData() );
-        if (!pid)
-        {
-            psserver->SendSystemError(me->clientnum,"Error, bad PID");
-            return;
-        }
-        else
-        {
-            target = clients->FindPlayer(pid);
-        }
+        psserver->SendSystemError(me->clientnum,"Multiple characters with same name '%s'. Use pid.",data.player.GetData());
+        return;
     }
-    else
-    {
-        //if we are using the name we must check that it's unique to avoid unwanted changes
-        if(!psCharCreationManager::IsUnique(data.player, true)) 
-        {                                                          
-            psserver->SendSystemError(me->clientnum,"Multiple characters with same name '%s'. Use pid.",data.player.GetData());               
-            return; 
-        }
 
-        target = clients->Find(data.player);
-    }
     bool online = (target != NULL);
 
     // Fix names
     data.newName = NormalizeCharacterName(data.newName);
     data.newLastName = NormalizeCharacterName(data.newLastName);
     csString name = NormalizeCharacterName(data.player);
-    
+
     unsigned int id = 0;
     unsigned int type = 0;
     unsigned int gid = 0;
@@ -5212,6 +5206,22 @@ void AdminManager::ChangeName(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
     if(!online)
     {
         csString query;
+        //check if it's an npc
+        if(targetobject && (targetobject->GetCharacterData()->GetCharType() == PSCHARACTER_TYPE_NPC ||
+           targetobject->GetCharacterData()->GetCharType() == PSCHARACTER_TYPE_PET))
+        { //if so get it's pid so it works correctly with targetting
+            pid = targetobject->GetCharacterData()->GetCharacterID();
+        }
+        else if (data.player.StartsWith("pid:",true) && data.player.Length() > 4) // Find by player ID, this is useful only if offline
+        {
+            pid = atoi( data.player.Slice(4).GetData() );
+            if (!pid)
+            {
+                 psserver->SendSystemError(me->clientnum,"Error, bad PID");
+                 return;
+            }
+        }
+
         if (pid)
         {
             query.Format("SELECT id,name,lastname,character_type,guild_member_of FROM characters WHERE id=%u",pid);
@@ -5224,13 +5234,13 @@ void AdminManager::ChangeName(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
         Result result(db->Select(query));
         if (!result.IsValid() || result.Count() == 0)
         {
-            psserver->SendSystemError(me->clientnum,"No online or offline player found with the name %s!",name.GetData());               
+            psserver->SendSystemError(me->clientnum,"No online or offline player found with the name %s!",name.GetData());
             return;
         }
         else if (result.Count() != 1)
         {
-            psserver->SendSystemError(me->clientnum,"Multiple characters with same name '%s'. Use pid.",name.GetData());               
-            return; 
+            psserver->SendSystemError(me->clientnum,"Multiple characters with same name '%s'. Use pid.",name.GetData());
+            return;
         }
         else
         {
@@ -5257,7 +5267,7 @@ void AdminManager::ChangeName(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
     }
 
     bool checkFirst=true; //If firstname is same as before, skip DB check
-    bool checkLast=true; //If we make the newLastName var the current value, we need to skip the db check on that    
+    bool checkLast=true; //If we make the newLastName var the current value, we need to skip the db check on that
 
     if(data.newLastName.CompareNoCase("no"))
     {
@@ -5277,14 +5287,14 @@ void AdminManager::ChangeName(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
         return;
 
     if(checkFirst && !psCharCreationManager::FilterName(data.newName))
-    {   
-        psserver->SendSystemError(me->clientnum,"The name %s is invalid!",data.newName.GetData());   
+    {
+        psserver->SendSystemError(me->clientnum,"The name %s is invalid!",data.newName.GetData());
         return;
-    }   
+    }
 
     if(checkLast && !psCharCreationManager::FilterName(data.newLastName))
     {
-        psserver->SendSystemError(me->clientnum,"The last name %s is invalid!",data.newLastName.GetData());   
+        psserver->SendSystemError(me->clientnum,"The last name %s is invalid!",data.newLastName.GetData());
         return;
     }
 
@@ -5297,18 +5307,18 @@ void AdminManager::ChangeName(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
     // If the first name should be unique, check it
     if (checkFirst && data.uniqueFirstName && type == PSCHARACTER_TYPE_PLAYER && !nameUnique)
     {
-        psserver->SendSystemError(me->clientnum,"The name %s is not unique!",data.newName.GetData());               
+        psserver->SendSystemError(me->clientnum,"The name %s is not unique!",data.newName.GetData());
         return;
     }
 
-    bool secondNameUnique = psCharCreationManager::IsLastNameUnique(data.newLastName);    
+    bool secondNameUnique = psCharCreationManager::IsLastNameUnique(data.newLastName);
     // If the last name should be unique, check it
     if (checkLast && data.uniqueName && data.newLastName.Length() && !secondNameUnique)
     {
-        psserver->SendSystemError(me->clientnum,"The last name %s is not unique!",data.newLastName.GetData());               
+        psserver->SendSystemError(me->clientnum,"The last name %s is not unique!",data.newLastName.GetData());
         return;
     }
-    
+
     if (checkFirst && !data.uniqueFirstName && type == PSCHARACTER_TYPE_PLAYER && !nameUnique)
     {
         psserver->SendSystemResult(me->clientnum,"WARNING: Changing despite the name %s is not unique!",data.newName.GetData());
@@ -5316,7 +5326,7 @@ void AdminManager::ChangeName(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
 
     if (checkLast && !data.uniqueName && data.newLastName.Length() && !secondNameUnique)
     {
-        psserver->SendSystemResult(me->clientnum,"Changing despite the last name %s is not unique!",data.newLastName.GetData());               
+        psserver->SendSystemResult(me->clientnum,"Changing despite the last name %s is not unique!",data.newLastName.GetData());
     }
 
     // Apply
@@ -5336,12 +5346,13 @@ void AdminManager::ChangeName(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
         gemNPC *npc = GEMSupervisor::GetSingleton().FindNPCEntity( id );
         if (!npc)
         {
-            psserver->SendSystemError(me->clientnum,"Unable to find NPC %s!", 
+            psserver->SendSystemError(me->clientnum,"Unable to find NPC %s!",
                 name.GetData());
             return;
         }
         npc->GetCharacterData()->SetFullName(data.newName, data.newLastName);
         fullName = npc->GetCharacterData()->GetCharFullName();
+        npc->SetName(data.newName);
         actorId = npc->GetEntityID();
     }
 
@@ -5383,7 +5394,7 @@ void AdminManager::ChangeName(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
         if(group)
             group->BroadcastMemberList();
     }
-    
+
     // Handle guild update
     psGuildInfo* guild = CacheManager::GetSingleton().FindGuild(gid);
     if(guild)
@@ -5391,17 +5402,17 @@ void AdminManager::ChangeName(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
         psGuildMember* member = guild->FindMember(id);
         if(member)
         {
-            member->name = data.newName; 
+            member->name = data.newName;
         }
     }
-    
+
     Client* buddy;
-    /*We update the buddy list of the people who have the target in their own buddy list and 
+    /*We update the buddy list of the people who have the target in their own buddy list and
       they are online. */
     if(online)
     {
         csArray<int> buddyOfList=target->GetCharacterData()->buddyOfList;
-    
+
         for (size_t i=0; i<buddyOfList.GetSize(); i++)
         {
             buddy = clients->FindPlayer(buddyOfList[i]);
@@ -5459,7 +5470,7 @@ void AdminManager::BanName(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& d
         psserver->SendSystemError(me->clientnum, "That name is already banned");
         return;
     }
-    
+
     CacheManager::GetSingleton().AddBadName(data.player);
     psserver->SendSystemInfo(me->clientnum, "You banned the name '%s'", data.player.GetDataSafe());
 }
@@ -5477,7 +5488,7 @@ void AdminManager::UnBanName(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData&
         psserver->SendSystemError(me->clientnum,"That name is not banned");
         return;
     }
-    
+
     CacheManager::GetSingleton().DelBadName(data.player);
     psserver->SendSystemInfo(me->clientnum,"You unbanned the name '%s'",data.player.GetDataSafe());
 }
@@ -5487,7 +5498,7 @@ void AdminManager::BanClient(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData&
     const time_t year = 31536000UL; //one year should be enough
     time_t secs = (data.mins * 60) + (data.hours * 60 * 60) + (data.days * 24 * 60 * 60);
     if ((secs > year) || (secs == 0))
-        secs = year; //some errors if time was too high 
+        secs = year; //some errors if time was too high
 
     if (data.player.Length() == 0)
     {
@@ -5508,7 +5519,7 @@ void AdminManager::BanClient(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData&
         psserver->SendSystemError(me->clientnum, "You can't ban yourself!");
         return;
     }
-    
+
     if (data.reason.Length() < 5)
     {
         psserver->SendSystemError(me->clientnum, "You must specify a reason to ban");
@@ -5564,7 +5575,7 @@ void AdminManager::BanClient(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData&
         else
             psserver->RemovePlayer(target->GetClientNum(),"You were banned from the server by a GM. Reason: " + data.reason);
     }
-    
+
     csString notify;
     notify.Format("You%s banned '%s' off the server for ", (target)?" kicked and":"", user.GetData() );
     if (secs == year)
@@ -5584,7 +5595,7 @@ void AdminManager::UnbanClient(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdDat
         psserver->SendSystemError(me->clientnum, "You must specify a player name or an account name or number.");
         return;
     }
-    
+
     Client* target = clients->Find(data.player);
     // Check if the target is online, if he/she/it is he/she/it can't be unbanned (No logic in it).
     if (target)
@@ -5631,7 +5642,7 @@ void AdminManager::BanAdvisor(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
         psserver->SendSystemError(me->clientnum, "You must specify a player name or an account name or number.");
         return;
     }
-    
+
     Client* target = clients->Find(data.player);
     // Check if the target is online,
     if (target)
@@ -5665,7 +5676,7 @@ void AdminManager::BanAdvisor(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
     }
 
     db->Command("UPDATE accounts SET advisor_ban = 1 WHERE id = %d", account);
-    
+
     csString user = result[0]["username"];
 
     psserver->SendSystemResult(me->clientnum, "%s has been banned from advising.", user.GetData() );
@@ -5678,7 +5689,7 @@ void AdminManager::UnbanAdvisor(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdDa
         psserver->SendSystemError(me->clientnum, "You must specify a player name or an account name or number.");
         return;
     }
-    
+
     Client* target = clients->Find(data.player);
     // Check if the target is online,
     if (target)
@@ -5712,7 +5723,7 @@ void AdminManager::UnbanAdvisor(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdDa
     }
 
     db->Command("UPDATE accounts SET advisor_ban = 0 WHERE id = %d", account);
-    
+
     csString user = result[0]["username"];
 
     psserver->SendSystemResult(me->clientnum, "%s has been unbanned from advising.", user.GetData() );
@@ -5733,7 +5744,7 @@ bool AdminManager::GetAccount(csString useroracc,Result& resultre )
         id = resultre[0].GetUInt32("account_id"); // store id
         character = true;
     }
-    
+
     if (character)
         resultre = db->Select("SELECT * FROM accounts WHERE id = '%u' LIMIT 1",id);
     else
@@ -5763,7 +5774,7 @@ void AdminManager::SendSpawnTypes(MsgEntry* me, psAdminCmdMessage& msg, AdminCmd
         size += (int)strlen(cat->name)+1;
         itemCat.Push(cat->name);
     }
-    
+
     itemCat.Sort();
     psGMSpawnTypes msg2(me->clientnum,size);
 
@@ -5787,23 +5798,23 @@ void AdminManager::SendSpawnItems (MsgEntry* me, psGMSpawnItems& msg,Client *cli
         return;
     }
 
-    psItemCategory * category = CacheManager::GetSingleton().GetItemCategoryByName(msg.type);    
+    psItemCategory * category = CacheManager::GetSingleton().GetItemCategoryByName(msg.type);
     if ( !category )
     {
         psserver->SendSystemError(me->clientnum, "Category %s is not valid.", msg.type.GetData() );
-        return;    
+        return;
     }
 
-    // Database hit.  
-    // Justification:  This is a rare event and it is quicker than us doing a sort.  
-    //                 Is also a read only event.     
+    // Database hit.
+    // Justification:  This is a rare event and it is quicker than us doing a sort.
+    //                 Is also a read only event.
     Result result(db->Select("SELECT id FROM item_stats WHERE category_id=%d AND stat_type not in ('U','R') ORDER BY Name ", category->id));
     if (!result.IsValid() || result.Count() == 0)
     {
         psserver->SendSystemError(me->clientnum, "Could not query database for category %s.", msg.type.GetData() );
         return;
     }
-    
+
     for ( unsigned int i=0; i < result.Count(); i++ )
     {
         unsigned id = result[i].GetUInt32(0);
@@ -5814,8 +5825,8 @@ void AdminManager::SendSpawnItems (MsgEntry* me, psGMSpawnItems& msg,Client *cli
             csString mesh(item->GetMeshName());
             csString icon(item->GetImageName());
             size += (int)name.Length()+(int)mesh.Length()+(int)icon.Length()+3;
-            items.Push(item);           
-        }            
+            items.Push(item);
+        }
     }
 
     psGMSpawnItems msg2(me->clientnum,msg.type,size);
@@ -5857,7 +5868,7 @@ void AdminManager::SpawnItemInv(MsgEntry* me, psGMSpawnItem& msg,Client *client)
         psserver->SendSystemError(me->clientnum, "Couldn't find basic stats for that item!");
         return;
     }
-    
+
     // creating money items will confuse the server into creating the money in the db then deleting it again when adding to the inventory
     if(stats->IsMoney())
     {
@@ -5887,11 +5898,11 @@ void AdminManager::SpawnItemInv(MsgEntry* me, psGMSpawnItem& msg,Client *client)
         return;
     }
     // randomize if requested
-    if (msg.random) 
+    if (msg.random)
     {
         LootRandomizer* lootRandomizer = psserver->GetSpawnManager()->GetLootRandomizer();
         stats = lootRandomizer->RandomizeItem( stats, msg.quality );
-    } 
+    }
     psItem* item = stats->InstantiateBasicItem();
 
     item->SetStackCount(msg.count);
@@ -5899,7 +5910,7 @@ void AdminManager::SpawnItemInv(MsgEntry* me, psGMSpawnItem& msg,Client *client)
     item->SetIsLocked(msg.locked);
     item->SetIsPickupable(msg.pickupable);
     item->SetIsCD(msg.collidable);
-    
+
     if (msg.quality > 0)
     {
         item->SetItemQuality(msg.quality);
@@ -5912,18 +5923,18 @@ void AdminManager::SpawnItemInv(MsgEntry* me, psGMSpawnItem& msg,Client *client)
     }
 
     if (msg.lockable)
-    {        
+    {
         item->SetLockpickSkill(skill);
         item->SetLockStrength(msg.lstr);
     }
-    
+
     // Place the new item in the GM's inventory
     csString text;
     item->SetLoaded();  // Item is fully created
     if (charData->Inventory().Add(item))
     {
         text.Format("You spawned %s to your inventory",msg.item.GetData());
-    }            
+    }
     else
     {
         text.Format("Couldn't spawn %s to your inventory, maybe it's full?",msg.item.GetData());
@@ -5935,13 +5946,13 @@ void AdminManager::SpawnItemInv(MsgEntry* me, psGMSpawnItem& msg,Client *client)
 }
 
 void AdminManager::AwardExperience(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data, Client* client, Client* target)
-{    
+{
     if (!target || !target->GetCharacterData())
     {
         psserver->SendSystemError(me->clientnum, "Invalid target to award experience to");
         return;
     }
-    
+
     if (data.value == 0)
     {
         psserver->SendSystemError(me->clientnum, "Invalid experience specified");
@@ -6000,10 +6011,10 @@ void AdminManager::AdjustFactionStandingOfTarget(int gmClientnum, Client* target
     }
 
     if (target->GetCharacterData()->UpdateFaction(faction, standingDelta))
-        psserver->SendSystemInfo(gmClientnum, "%s\'s standing on \'%s\' faction has been adjusted.", 
+        psserver->SendSystemInfo(gmClientnum, "%s\'s standing on \'%s\' faction has been adjusted.",
                                target->GetName(), faction->name.GetData());
     else
-        psserver->SendSystemError(gmClientnum, "%s\'s standing on \'%s\' faction failed.", 
+        psserver->SendSystemError(gmClientnum, "%s\'s standing on \'%s\' faction failed.",
                                target->GetName(), faction->name.GetData());
 }
 
@@ -6176,7 +6187,7 @@ void AdminManager::CheckItem(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData&
         psserver->SendSystemError(me->clientnum, "Invalid character to check");
         return;
     }
-    
+
     if (data.value == 0 || data.item.IsEmpty())
     {
         psserver->SendSystemError(me->clientnum, "Syntax: \"/[checkitem] [target] [quantity|''] [item|tria]\"");
@@ -6192,7 +6203,7 @@ void AdminManager::CheckItem(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData&
 
     psCharacter* targetchar = target->GetCharacterData();
     size_t itemIndex = targetchar->Inventory().FindItemStatIndex(itemstats);
-    
+
     if (itemIndex != SIZET_NOT_FOUND)
     {
         psItem* item;
@@ -6215,7 +6226,7 @@ void AdminManager::CheckItem(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData&
         }
         return;
     }
-    else if (data.item == "tria") 
+    else if (data.item == "tria")
     {
         psMoney targetMoney = targetchar->Money();
         if (data.value > targetMoney.GetTotal())
@@ -6231,7 +6242,7 @@ void AdminManager::CheckItem(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData&
     else
     {
         psserver->SendSystemOK(me->clientnum, "Cannot find %s in %s.", data.item.GetData(), target->GetActor()->GetName());
-        return;       
+        return;
     }
 }
 
@@ -6242,7 +6253,7 @@ void AdminManager::FreezeClient(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdDa
         psserver->SendSystemError(me->clientnum,"Invalid target for freeze");
         return;
     }
-    
+
     if (target->IsFrozen())
     {
         psserver->SendSystemError(me->clientnum,"The player is already frozen");
@@ -6268,8 +6279,8 @@ void AdminManager::ThawClient(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
     {
         psserver->SendSystemError(me->clientnum,"The player is not frozen");
         return;
-    }   
-    
+    }
+
     target->GetActor()->SetAllowedToMove(true);
     target->SetFrozen(false);
     target->GetActor()->SetMode(PSCHARACTER_MODE_PEACE);
@@ -6321,7 +6332,7 @@ void AdminManager::SetSkill(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& 
 
             pchar->SetSkillRank(skill->id, value);
         }
-        
+
         psserver->SendSystemInfo(me->clientnum, "Fine");
     }
     else
@@ -6338,18 +6349,18 @@ void AdminManager::SetSkill(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& 
         {
             psserver->SendSystemInfo(me->clientnum, "Current '%s' is %u",skill->name.GetDataSafe(),old_value);
             return;
-        } 
+        }
         else if (skill->category == PSSKILLS_CATEGORY_STATS && (value < 0 || value > MAX_STAT))
         {
             psserver->SendSystemError(me->clientnum, "Stat values are between 0 and %u", MAX_STAT);
             return;
-        } 
+        }
         else if (skill->category != PSSKILLS_CATEGORY_STATS && (value < 0 || value > MAX_SKILL))
         {
             psserver->SendSystemError(me->clientnum, "Skill values are between 0 and %u", MAX_SKILL);
             return;
         }
-    
+
         pchar->SetSkillRank(skill->id, value);
         psserver->SendSystemInfo(me->clientnum, "Changed '%s' from %u to %u",skill->name.GetDataSafe(),old_value,data.value);
     }
@@ -6377,7 +6388,7 @@ void AdminManager::UpdateRespawn(Client* client, gemActor* target)
         psserver->SendSystemError(client->GetClientNum(),"Critical error! The entity hasn't got any character data!");
         return;
     }
-    
+
     csVector3 pos;
     float yrot;
     iSector* sec;
@@ -6385,9 +6396,9 @@ void AdminManager::UpdateRespawn(Client* client, gemActor* target)
     csString sector = sec->QueryObject()->GetName();
 
     psSectorInfo* sectorinfo = CacheManager::GetSingleton().GetSectorInfoByName(sector);
-    
+
     target->GetCharacterData()->UpdateRespawn(pos, yrot, sectorinfo);
-    
+
     csString buffer;
     buffer.Format("%s now respawning (%.2f,%.2f,%.2f) <%s>", target->GetName(), pos.x, pos.y, pos.z, sector.GetData());
     psserver->SendSystemOK(client->GetClientNum(), buffer);
@@ -6395,7 +6406,7 @@ void AdminManager::UpdateRespawn(Client* client, gemActor* target)
 
 
 void AdminManager::Inspect(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data, Client* client, gemActor* target)
-{    
+{
     if (!target)
     {
         psserver->SendSystemError(me->clientnum,"You need to specify or target a player or NPC");
@@ -6484,7 +6495,7 @@ void AdminManager::RenameGuild(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdDat
     }
 
     psserver->SendSystemOK(me->clientnum,"Guild renamed to '%s'",data.newName.GetData());
-    
+
     // Get all connected guild members
     csArray<uint32_t> array;
     for (size_t i = 0; i < guild->members.GetSize();i++)
@@ -6492,7 +6503,7 @@ void AdminManager::RenameGuild(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdDat
         psGuildMember* member = guild->members[i];
         if(member->actor)
             array.Push(member->actor->GetActor()->GetEntityID());
-    }   
+    }
 
     // Update the labels
     int length = (int)array.GetSize();
@@ -6522,7 +6533,7 @@ void AdminManager::ChangeGuildLeader(MsgEntry* me, psAdminCmdMessage& msg, Admin
         psserver->SendSystemError(me->clientnum, "No guild with that name.");
         return;
     }
-    
+
     psGuildMember* member = guild->FindMember(data.player.GetData());
     if (!member)
     {
@@ -6537,7 +6548,7 @@ void AdminManager::ChangeGuildLeader(MsgEntry* me, psAdminCmdMessage& msg, Admin
         psserver->SendSystemError(me->clientnum, "%s is already the guild leader.", data.player.GetData());
         return;
     }
-    
+
     // Change the leader
     // Promote player to leader
     if (!guild->UpdateMemberLevel(member, MAX_GUILD_LEVEL))
@@ -6551,11 +6562,11 @@ void AdminManager::ChangeGuildLeader(MsgEntry* me, psAdminCmdMessage& msg, Admin
         psserver->SendSystemError(me->clientnum, "SQL Error: %s", db->GetLastError());
         return;
     }
-    
+
     psserver->GetGuildManager()->ResendGuildData(guild->id);
 
     psserver->SendSystemOK(me->clientnum,"Guild leader changed to '%s'.", data.player.GetData());
-    
+
     csString text;
     text.Format("%s has been promoted to '%s' by a GM.", data.player.GetData(), member->guildlevel->title.GetData() );
     psChatMessage guildmsg(me->clientnum,"System",0,text,CHAT_GUILD, false);
@@ -6564,7 +6575,7 @@ void AdminManager::ChangeGuildLeader(MsgEntry* me, psAdminCmdMessage& msg, Admin
 }
 
 void AdminManager::Thunder(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data, Client *client)
-{   
+{
     // Find the sector
     psSectorInfo *sectorinfo = NULL;
 
@@ -6590,7 +6601,7 @@ void AdminManager::Thunder(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& d
         psserver->SendSystemError(me->clientnum,"Sector not found!");
         return;
     }
-    
+
     if (sectorinfo->lightning_max_gap == 0)
     {
         psserver->SendSystemError(me->clientnum, "Lightning not defined for this sector!");
@@ -6606,8 +6617,8 @@ void AdminManager::Thunder(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& d
 
 
     // Queue thunder
-    psserver->GetWeatherManager()->QueueNextEvent(0, psWeatherMessage::LIGHTNING, 0, 0, 0, 
-                                                  sectorinfo->name, sectorinfo, 
+    psserver->GetWeatherManager()->QueueNextEvent(0, psWeatherMessage::LIGHTNING, 0, 0, 0,
+                                                  sectorinfo->name, sectorinfo,
                                                   client->GetActor()->GetEntityID());
 
 }
@@ -6644,12 +6655,12 @@ void AdminManager::Fog(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data,
     else
     {
         // Set fog
-        psserver->GetWeatherManager()->QueueNextEvent(0, psWeatherMessage::FOG, 
-                                                      data.density, 0, data.fade, 
+        psserver->GetWeatherManager()->QueueNextEvent(0, psWeatherMessage::FOG,
+                                                      data.density, 0, data.fade,
                                                       sectorinfo->name, sectorinfo,0,
                                                       (int)data.x,(int)data.y,(int)data.z); //rgb
     }
-    
+
 }
 
 void AdminManager::Weather(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data, Client *client)
@@ -6683,7 +6694,7 @@ void AdminManager::Weather(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& d
             psserver->SendSystemInfo(me->clientnum,"The weather is already automatic in sector %s",
                                      data.sector.GetDataSafe());
         }
-        
+
     }
     // Stop automatic weather
     else if (data.interval == -2)
@@ -6698,12 +6709,12 @@ void AdminManager::Weather(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& d
         {
             psserver->SendSystemInfo(me->clientnum,"The automatic weather is already off in sector %s",
                                      data.sector.GetDataSafe());
-        }       
+        }
     }
 }
 
 void AdminManager::Rain(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data, Client *client)
-{    
+{
     if(data.sector.Length() == 0)
     {
         psserver->SendSystemError(me->clientnum, "Syntax: /rain sector [[drops length fade]|stop]");
@@ -6729,16 +6740,16 @@ void AdminManager::Rain(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data
     if (data.interval == -3 || (data.interval == 0 && data.rainDrops == 0 && data.fade == 0 ))
     {
         if( !sectorinfo->is_raining) //If it is not raining already then you don't stop anything.
-        { 
+        {
             psserver->SendSystemInfo( me->clientnum, "You need some weather, first." );
             return;
         }
         else
         {
             psserver->SendSystemInfo( me->clientnum, "The weather was stopped." );
-           
+
             // queue the event
-            psserver->GetWeatherManager()->QueueNextEvent(0, psWeatherMessage::RAIN, 
+            psserver->GetWeatherManager()->QueueNextEvent(0, psWeatherMessage::RAIN,
                                                       0, 0,
                                                       0, data.sector, sectorinfo);
          }
@@ -6746,7 +6757,7 @@ void AdminManager::Rain(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data
     else
     {
         // queue the event
-        psserver->GetWeatherManager()->QueueNextEvent(0, psWeatherMessage::RAIN, 
+        psserver->GetWeatherManager()->QueueNextEvent(0, psWeatherMessage::RAIN,
                                                       data.rainDrops, data.interval,
                                                       data.fade, data.sector, sectorinfo);
     }
@@ -6774,21 +6785,21 @@ void AdminManager::Snow(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data
         psserver->SendSystemError(me->clientnum,"Sector not found!");
         return;
     }
-   
+
     // Stop snowing
     if (data.interval == -3 || (data.interval == 0 && data.fade == 0 && data.rainDrops == 0 ))
     {
         if( !sectorinfo->is_snowing) //If it is not snowing already then you don't stop anything.
-        { 
+        {
             psserver->SendSystemInfo( me->clientnum, "You need some snow, first." );
             return;
         }
         else
         {
             psserver->SendSystemInfo( me->clientnum, "The snow was stopped." );
-           
+
             // queue the event
-            psserver->GetWeatherManager()->QueueNextEvent(0, psWeatherMessage::SNOW, 
+            psserver->GetWeatherManager()->QueueNextEvent(0, psWeatherMessage::SNOW,
                                                       0, 0,
                                                       0, data.sector, sectorinfo);
          }
@@ -6796,14 +6807,14 @@ void AdminManager::Snow(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data
     else
     {
         // queue the event
-        psserver->GetWeatherManager()->QueueNextEvent(0, psWeatherMessage::SNOW, data.rainDrops, 
+        psserver->GetWeatherManager()->QueueNextEvent(0, psWeatherMessage::SNOW, data.rainDrops,
                                                     data.interval, data.fade, data.sector, sectorinfo);
     }
 }
 
 
 void AdminManager::ModifyHuntLocation(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data, Client* client, gemObject* object)
-{    
+{
     if (!object)
     {
         psserver->SendSystemError(me->clientnum,"You need to specify an item in the world with 'target' or 'eid:#'");
@@ -6859,7 +6870,7 @@ void AdminManager::ModifyHuntLocation(MsgEntry* me, psAdminCmdMessage& msg, Admi
             psserver->SendSystemError(me->clientnum, "Amount must be greater than 0");
             return;
         }
-        
+
         if (item->GetScheduledItem())
         {
             item->GetScheduledItem()->ChangeAmount(data.value);
@@ -6875,7 +6886,7 @@ void AdminManager::ModifyHuntLocation(MsgEntry* me, psAdminCmdMessage& msg, Admi
             psserver->SendSystemError(me->clientnum, "Range must be equal to or greater than 0");
             return;
         }
-        
+
         if (item->GetScheduledItem())
         {
             item->GetScheduledItem()->ChangeRange(data.range);
@@ -6988,7 +6999,7 @@ void AdminManager::Morph(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& dat
         psserver->SendSystemError(me->clientnum,"Invalid target for morph");
         return;
     }
-    
+
     gemActor* target = targetclient->GetActor();
 
     if (data.mesh == "reset")
@@ -7015,7 +7026,7 @@ void AdminManager::TempSecurityLevel(MsgEntry* me, psAdminCmdMessage& msg, Admin
         psserver->SendSystemError(me->clientnum,"Invalid target");
         return;
     }
-    
+
     // Can only set others to a max of 1 level below own level (ex: GM4 can set someone to GM3)
     int maxleveltoset = client->GetSecurityLevel() - 1;
 
@@ -7040,7 +7051,7 @@ void AdminManager::TempSecurityLevel(MsgEntry* me, psAdminCmdMessage& msg, Admin
         psserver->SendSystemOK(target->GetClientNum(),"Your access level was reset");
         if (target != client)
             psserver->SendSystemOK(me->clientnum,"Access level for %s was reset",target->GetName());
-            
+
         if (trueSL)
             psserver->SendSystemInfo(target->GetClientNum(),"Your access level has been reset to %d",trueSL);
 
@@ -7098,12 +7109,12 @@ void AdminManager::TempSecurityLevel(MsgEntry* me, psAdminCmdMessage& msg, Admin
         psserver->SendSystemInfo(target->GetClientNum(),"You may do \"/deputize me reset\" at any time to reset yourself. "
                                  " The temporary access level will also expire on logout.");
     }
-    
+
 
     // Set temporary security level (not saved to DB)
     target->SetSecurityLevel(value);
     target->GetActor()->SetSecurityLevel(value);
-    
+
     // Refresh the label
     target->GetActor()->UpdateProxList(true);
 
@@ -7112,7 +7123,7 @@ void AdminManager::TempSecurityLevel(MsgEntry* me, psAdminCmdMessage& msg, Admin
     {
         psserver->SendSystemOK(target->GetClientNum(),"Your access level was set to %s by a GM",data.setting.GetData());
     }
-    
+
 }
 
 int AdminManager::GetTrueSecurityLevel(int accountID)
@@ -7129,9 +7140,9 @@ void AdminManager::HandleGMEvent(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdD
 {
     bool gmeventResult;
     GMEventManager* gmeventManager = psserver->GetGMEventManager();
-    
+
     // bit more vetting of the /event command - if in doubt, give help
-    if ((data.subCmd == "create" && 
+    if ((data.subCmd == "create" &&
         (data.gmeventName.Length() == 0 || data.gmeventDesc.Length() == 0)) ||
         (data.subCmd == "register" && data.player.Length() == 0 && data.rangeSpecifier == INDIVIDUAL) ||
         (data.subCmd == "remove" && data.player.Length() == 0) ||
@@ -7178,7 +7189,7 @@ void AdminManager::HandleGMEvent(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdD
         }
         return;
     }
-    
+
     // player completed event
     if (data.subCmd == "complete")
     {
@@ -7343,7 +7354,7 @@ void AdminManager::HandleSetQuality(psAdminCmdMessage& msg, AdminCmdData& data, 
         psserver->SendSystemError(client->GetClientNum(), "Not an item");
         return;
     }
-    
+
     item->SetItemQuality(data.x);
     if (data.y)
         item->SetMaxItemQuality(data.y);
@@ -7441,18 +7452,18 @@ void AdminManager::HandleSetTrait(psAdminCmdMessage& msg, AdminCmdData& data, Cl
             currTrait->name.CompareNoCase(data.name))
         {
             target->SetTraitForLocation(currTrait->location, currTrait);
-            
+
             csString str( "<traits>" );
             do
             {
-                str.Append(currTrait->ToXML() );              
+                str.Append(currTrait->ToXML() );
                 currTrait = currTrait->next_trait;
             }while(currTrait);
             str.Append("</traits>");
 
             psTraitChangeMessage message( client->GetClientNum(), (uint32_t)target->GetActor()->GetEntityID(), str );
             message.Multicast( target->GetActor()->GetMulticastClients(), 0, PROX_LIST_ANY_RANGE );
-            
+
             psserver->SendSystemOK(client->GetClientNum(), "Trait successfully changed");
             return;
         }
@@ -7509,7 +7520,7 @@ void AdminManager::HandleReload(psAdminCmdMessage& msg, AdminCmdData& data, Clie
                 delete itemStats;
             return;
         }
-        
+
         if (bCreatingNew)
         {
             CacheManager::GetSingleton().AddItemStatsToHashTable(itemStats);
@@ -7524,7 +7535,7 @@ void AdminManager::HandleListWarnings(psAdminCmdMessage& msg, AdminCmdData& data
 {
     Client* target = NULL;
     int accountID = 0;
-    
+
     if (!data.target.IsEmpty() && data.target != "target")
     {
         target = psserver->GetCharManager()->FindPlayerClient(data.target);
@@ -7535,7 +7546,7 @@ void AdminManager::HandleListWarnings(psAdminCmdMessage& msg, AdminCmdData& data
         if (targetActor)
             target = targetActor->GetClient();
     }
-    
+
     if(target)
     {
         accountID = target->GetAccountID();
@@ -7549,7 +7560,7 @@ void AdminManager::HandleListWarnings(psAdminCmdMessage& msg, AdminCmdData& data
             accountID = rs[0].GetUInt32("account_id");
         }
     }
-    
+
     if (accountID)
     {
         Result rs(db->Select("select warningGM, timeOfWarn, warnMessage from warnings where accountid = %d", accountID));

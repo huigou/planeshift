@@ -1,8 +1,14 @@
-﻿*** 2008-09-23 by Steven Patrick
+﻿*** 2008-09-23 by Stefano Angeleri
+- Reworked Changename and Charlist to get the target from the generic function, fixed
+  a bug in the changename function with npc which didn't update some things 
+  with the new name and added some additional error checking.
+- Removed trailing spaces in code from adminmanager.cpp
+
+*** 2008-09-23 by Steven Patrick
 - Fixed FS#2267 - Equipping items in invalid slots makes them disappear,
   patch by ThomPhoenix.
 
-*** 2008-09-21 by Stefano Angeleri
+*** 2008-09-22 by Stefano Angeleri
 - Fixed FS#2256 '/marriageinfo output problems' patch by peeg
 - Fixed FS#2195 'If you challenge another player, and they log off, nobody can trade with you' patch by peeg
 - Converted adminmanager.cpp tabs to 4 spaces in order to adhere with coding standards
