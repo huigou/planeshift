@@ -81,26 +81,26 @@ public:
     virtual ~AdminManager();
 
     virtual void HandleMessage(MsgEntry *pMsg,Client *client);
-    
+
     /** This is called when a player does /admin.
-      * This builds up the list of commands that are available to the player 
-      * at their current GM rank.  If commands need to be placed in different 
+      * This builds up the list of commands that are available to the player
+      * at their current GM rank.  If commands need to be placed in different
       * GM levels then this function needs to be updated for that.
-      */      
+      */
     void Admin(int playerID, int clientnum,Client *client);
-    
-    /** This sets the player as a Role Play Master and hooks them into the 
+
+    /** This sets the player as a Role Play Master and hooks them into the
       * admin commands they should have for their level.
-      *       
-      */      
-    
+      *
+      */
+
     void AdminCreateNewNPC(csString& data);
 
     gemObject* FindObjectByString(const csString& str, gemActor * me) const;
 
     void AwardExperienceToTarget(int gmClientnum, Client* target, csString recipient, int ppAward);
     void AdjustFactionStandingOfTarget(int gmClientnum, Client* target, csString factionName, int standingDelta);
-    
+
     /** Get sector and coordinates of starting point of a map. Returns success. */
     bool GetStartOfMap(Client *client, const csString & map, iSector * & targetSector,  csVector3 & targetPoint);
 
@@ -109,7 +109,7 @@ protected:
     bool Valid( int level, const char* command, int clientnum );
     bool IsReseting(const csString& command);
 
-    
+
     struct AdminCmdData
     {
         csString player, target, command, subCmd, commandMod;
@@ -123,7 +123,7 @@ protected:
         csString gmeventName, gmeventDesc;
         csString zombie, requestor;
         csString type,name; // Used by: /location
-        
+
         int value, interval, random;
         int rainDrops, density, fade;
         unsigned int mins, hours, days;
@@ -135,21 +135,21 @@ protected:
         bool instanceValid;
         RangeSpecifier rangeSpecifier;
 
-        bool DecodeAdminCmdMessage(MsgEntry *pMsg, psAdminCmdMessage& msg, Client *client);        
+        bool DecodeAdminCmdMessage(MsgEntry *pMsg, psAdminCmdMessage& msg, Client *client);
     };
-    
+
     void CommandArea(MsgEntry *me, psAdminCmdMessage& msg, AdminCmdData& data, Client *client, int range);
     void HandleAdminCmdMessage(MsgEntry *pMsg, psAdminCmdMessage& msg, AdminCmdData& data, Client *client);
     void HandlePetitionMessage(MsgEntry *pMsg, psPetitionRequestMessage& msg, Client *client);
     void HandleGMGuiMessage(MsgEntry *pMsg, psGMGuiMessage& msg, Client *client);
-    
+
     /** Handles a request to reload a quest from the database.
      *  @param msg The text name is in the msg.text field.
      *  @param client The client we will send error codes back to.
      */
     void HandleLoadQuest(psAdminCmdMessage& msg, AdminCmdData& data, Client* client);
 
-    void GetSiblingChars(MsgEntry* me,psAdminCmdMessage& msg, AdminCmdData& data,Client *client);
+    void GetSiblingChars(MsgEntry* me,psAdminCmdMessage& msg, AdminCmdData& data,Client *client, gemObject *targetobject, bool duplicateActor);
     void GetInfo(MsgEntry* me,psAdminCmdMessage& msg, AdminCmdData& data,Client *client, gemObject* target);
     void CreateNPC(MsgEntry *me,psAdminCmdMessage& msg, AdminCmdData& data, Client *client, gemActor* basis);
     void KillNPC(MsgEntry *me, psAdminCmdMessage& msg, AdminCmdData& data, Client *client);
@@ -192,7 +192,7 @@ protected:
     void MutePlayer(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data, Client *client, Client *target);
     //This function will unmute a player
     void UnmutePlayer(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data, Client *client, Client *target);
-    
+
     /// Kills by doing a large amount of damage to target.
     void Death( MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data, Client *client, gemActor* target);
 
@@ -215,26 +215,26 @@ protected:
     int PathPointCreate(int pathID, int prevPointId, csVector3& pos, csString& sectorName);
 
     /// Lookup path information close to a point
-    void FindPath(csVector3 & pos, iSector * sector, float radius, 
+    void FindPath(csVector3 & pos, iSector * sector, float radius,
                   Waypoint** wp, float *rangeWP,
                   psPath ** path, float *rangePath, int *indexPath, float *fraction,
                   psPath ** pointPath, float *rangePoint, int *indexPoint);
-    
+
     /// Handle online path editing.
     void HandlePath( MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data, Client *client );
 
     /// Add new location point to DB
     int LocationCreate(int typeID, csVector3& pos, csString& sectorName, csString& name);
-    
+
     /// Handle online path editing.
     void HandleLocation( MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data, Client *client );
-    
+
     /// Handle action location entrances
     void HandleActionLocation(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data, Client *client);
 
     /// Handles a user submitting a petition
     void HandleAddPetition(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data,Client *client);
-    
+
     /// Handles broadcasting the petition list dirty signal
     void BroadcastDirtyPetitions(int clientNum, bool includeSelf=false);
 
@@ -246,11 +246,11 @@ protected:
     /// Handles queries send by a GM to the server for dealing with petitions
     void GMListPetitions(MsgEntry* me, psPetitionRequestMessage& msg, Client *client);
     void GMHandlePetition(MsgEntry* me, psPetitionRequestMessage& msg, Client *client);
-    
+
     void SendGMPlayerList(MsgEntry* me, psGMGuiMessage& msg, Client *client);
 
-    
-    void ChangeName(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data, Client *client);
+
+    void ChangeName(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data, Client *client, gemObject *targetobject, bool duplicateActor);
 
     /// Handles a change to set the NPC's default spawn location.
     void UpdateRespawn(Client* client, gemActor* target);
@@ -264,16 +264,16 @@ protected:
 
     /** Deletes a character from the database.  Should be used with caution.
       * This function will also send out reasons why a delete failed. Possible
-      * reasons are not found or the requester is not the same account as the 
-      * one to delete.  Also if the character is a guild leader they must resign 
-      * first and assign a new leader. 
+      * reasons are not found or the requester is not the same account as the
+      * one to delete.  Also if the character is a guild leader they must resign
+      * first and assign a new leader.
       *
       * @param me The incomming message from the GM
       * @param mesg The cracked command message.
       * @param client The GM client the command came from.
       */
     void DeleteCharacter( MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data, Client* client );
-    
+
     void BanName(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data, Client *client);
     void UnBanName(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data, Client *client);
 
@@ -287,7 +287,7 @@ protected:
     bool GetAccount(csString useroracc,Result& resultre);
     void RenameGuild( MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data, Client* client);
     void ChangeGuildLeader( MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data, Client* client);
-    
+
     /** Awards experience to a player, by a GM */
     void AwardExperience(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data, Client* client, Client* target);
 
@@ -399,7 +399,7 @@ protected:
      */
     bool EscalatePetition(int gmID, int gmLevel, int petitionID);
     bool DescalatePetition(int gmID, int gmLevel, int petitionID);
-    
+
     /** logs all gm commands
      * @param gmID: the ID of the GM
      * @param playerID: the ID of the player
@@ -409,22 +409,22 @@ protected:
     bool LogGMCommand(int gmID, int playerID, const char* cmd);
 
     /** Returns the last error generated by SQL
-     * 
+     *
      * @return Returns a string that describes the last sql error.
      * @see iConnection::GetLastError()
      */
     const char* GetLastSQLError ();
-    
+
     csString lasterror;
 
     ClientConnectionSet* clients;
-   
+
     void SendGMAttribs(Client* client);
 
     //! Holds a dummy dialog.
     /*! We may need this later on when NPC's are inserted.  This also
-     * insures that the dicitonary will always exist.  There where some 
-     * problems with the dictionary getting deleted just after the 
+     * insures that the dicitonary will always exist.  There where some
+     * problems with the dictionary getting deleted just after the
      * initial npc was added. This prevents that
      */
     psNPCDialog *npcdlg;
