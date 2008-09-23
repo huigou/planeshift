@@ -345,7 +345,7 @@ function Initialize()
 
 <p> 
     <h3><a name="dates">Last Update<a></h3>
-    This guide has been update by UPDATE_AUTHOR, the UPDATE_DATE.
+    This guide has been updated by UPDATE_AUTHOR, the UPDATE_DATE.
 <p>
     <h3>Source Dates:</h3>
     <i>Make sure you get the correct dates required for the version of PS you are building.<br>
@@ -401,12 +401,15 @@ function Initialize()
 
         <p>This step is necessary if you are using VC8 Express Edition.
         You should download and install the Platform SDK from this location:<br>
-        <a href="http://msdn.microsoft.com/vstudio/express/visualc/usingpsdk/">http://msdn.microsoft.com/vstudio/express/visualc/usingpsdk/</a><br>
+        <a href="http://www.microsoft.com/express/2005/platformsdk/default.aspx">http://www.microsoft.com/express/2005/platformsdk/default.aspx</a><br>
         Remember to follow all the listed steps to get things working: this includes to update the directories for Visual C++ and 
         edit corewin_express.vsprops as indicated.</p>
         
         <h3>MSVC 8 Full Edition</h3>
         <p>If you are using this version of the build environment, you need to update it with the Service Pack 1!</p>
+        
+        <h3>MSVC 9 Express/Full Edition</h3>
+        <p>If you are using this version of the build environment, you might want to update it to Service Pack 1!</p>
     </div>
     <div class="MINGW">
         <h3>MinGW32 and MSYS</h3>
@@ -1405,6 +1408,7 @@ psclient.exe -cfgset=PlaneShift.UserConfigPath=C:\development\pssettings</div>
     <p>
         C:\development\CS\include<br>
         C:\development\CS\include\csutil\win32<br>
+        C:\development\CS\win32libs\include<br>
         C:\mysql\include
     </p>
 
@@ -1412,6 +1416,7 @@ psclient.exe -cfgset=PlaneShift.UserConfigPath=C:\development\pssettings</div>
     to add the following directories:</p>
     <p>
         C:\mysql\lib\opt<br>
+        C:\development\CS\win32libs\lib<br>
     </p>
 
     <h3>Crystal Space (CS)</h3>
