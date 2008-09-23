@@ -1448,7 +1448,7 @@ void AdminManager::GetSiblingChars(MsgEntry* me,psAdminCmdMessage& msg, AdminCmd
 
     if ((!data.player || !data.player.Length()) && !targetobject)
     {
-        psserver->SendSystemError(me->clientnum, "You must specify a character name or target.");
+        psserver->SendSystemError(me->clientnum, "Syntax: \"/charlist [me/target/eid/pid/area/name]\"");
         return;
     }
 
@@ -5178,7 +5178,7 @@ void AdminManager::ChangeName(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
 
     if (!data.player.Length() || !data.newName.Length())
     {
-        psserver->SendSystemInfo(me->clientnum,"Syntax: \"/changename <Target> [force|forceall] <NewName> [NewLastName]\"");
+        psserver->SendSystemInfo(me->clientnum,"Syntax: \"/changename [me/target/eid/pid/area/name] [force|forceall] <NewName> [NewLastName]\"");
         return;
     }
 

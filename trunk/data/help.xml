@@ -402,10 +402,10 @@ Change the guilds leader.</topic>
         <topic name="/changeguildname">/changeguildname
 
 Change the selected guilds name.</topic>
-        <topic name="/changename">/changename target [force|forceall] new name [new lastname]
+        <topic name="/changename">/changename [me/target/eid/pid/area] [force|forceall] new name [new lastname]
 
 Changes the player's name. If force is given, the lastname doesn't have to be unique. If forceall is given name and lastname doesn't have to be unique. If the lastname is not given the lastname will be preseved. If no is given as lastname, the lastname will be removed.</topic>
-        <topic name="/charlist">/charlist target
+        <topic name="/charlist">/charlist [me/target/eid/pid/area]
 
 Informs the GM of the IDs and names of all characters on the same account as the account of the given character.</topic>
         <topic name="/checkitem">/checkitem [target] [quantity|''] [item|tria]
