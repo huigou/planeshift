@@ -477,8 +477,6 @@ bool pawsListBox::Select( pawsListBoxRow* row, bool notify)
         return true;            
     } 
 
-    PawsManager::GetSingleton().SetCurrentFocusedWidget( row );
-
     for ( int x = 0; x < (int)rows.GetSize(); x++ )
     {
         if ( rows[x] == row )

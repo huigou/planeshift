@@ -147,7 +147,7 @@ void pawsSummaryWindow::Draw()
         if (  createManager->GetCurrentCP() < 0 ) 
         {
             PawsManager::GetSingleton().CreateWarningBox( "You cannot have a negative CP value." ); 
-            PawsManager::GetSingleton().FindWidget("CharCreateMain")->Show();            
+            PawsManager::GetSingleton().FindWidget("LifeEvents")->Show();            
             PawsManager::GetSingleton().FindWidget("Summary")->Hide();
             return;
         }
