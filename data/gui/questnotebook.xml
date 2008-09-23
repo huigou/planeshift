@@ -32,7 +32,7 @@
             <frame x="16" y="27" width="186" height="161"/>
             <highlight resource="Hightlight" alpha="128" />
             <columns height="30" headings="no" xmlbinding="q" >
-            <column width="130" xmlbinding="desc" >
+            <column width="166" xmlbinding="desc" >
                 <widget name="Name" factory="pawsTextBox" style="label">
                 </widget>
             </column>
@@ -49,7 +49,7 @@
             <frame x="16" y="27" width="186" height="161" />
             <highlight resource="Hightlight" alpha="128" />
             <columns height="30" headings="no" xmlbinding="q" >
-            <column width="130" xmlbinding="desc" >
+            <column width="166" xmlbinding="desc" >
                 <widget name="Name" factory="pawsTextBox" style="label">
                 </widget>
             </column>
@@ -83,7 +83,7 @@
             <frame x="16" y="27" width="186" height="161"/>
             <highlight resource="Hightlight" alpha="128" />
             <columns height="30" headings="no" xmlbinding="event" >
-            <column width="130" xmlbinding="name" >
+            <column width="166" xmlbinding="name" >
                 <widget name="Name" factory="pawsTextBox" style="label"></widget>
             </column>
             <column width="7" xmlbinding="role" >
@@ -102,7 +102,7 @@
             <frame x="16" y="27" width="186" height="161" />
             <highlight resource="Hightlight" alpha="128" />
             <columns height="30" headings="no" xmlbinding="event" >
-            <column width="130" xmlbinding="name" >
+            <column width="166" xmlbinding="name" >
                 <widget name="Name" factory="pawsTextBox" style="label"></widget>
             </column>
             <column width="7" xmlbinding="role" >
