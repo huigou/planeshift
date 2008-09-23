@@ -11,7 +11,7 @@
   and additional things about include/lib paths for MSVC by f-rd
 - Removed uneccessary focusing of the listbox entries on Select() fixing FS#2182
 - Changed return window in char creation if cp < 0: it's logical going back to the last screen
-  (childhood events) and not to the first screen with characther name/race selection
+  (life events) and not to the first screen with characther name/race selection
 - Increased space available for the name of the quests in the quest notebook
 - Fixed misplacement of GP and randomize button text and incoherence of the first
   screen with all the others, also fixed identation
