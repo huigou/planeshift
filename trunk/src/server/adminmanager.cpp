@@ -1175,7 +1175,7 @@ void AdminManager::HandleAdminCmdMessage(MsgEntry *me, psAdminCmdMessage &msg, A
     }
     else if (data.command == "/charlist")
     {
-        GetSiblingChars(me,msg,data,client,targetobject, duplicateActor);
+        GetSiblingChars(me,msg,data,client,targetactor, duplicateActor);
     }
     else if (data.command == "/crystal")
     {
@@ -1227,7 +1227,7 @@ void AdminManager::HandleAdminCmdMessage(MsgEntry *me, psAdminCmdMessage &msg, A
     }
     else if (data.command == "/changename" )
     {
-        ChangeName( me, msg, data, client, targetobject, duplicateActor );
+        ChangeName( me, msg, data, client, targetactor, duplicateActor );
     }
     else if (data.command == "/changeguildname")
     {
@@ -1438,15 +1438,15 @@ gemObject* AdminManager::FindObjectByString(const csString& str, gemActor * me) 
     return found;
 }
 
-void AdminManager::GetSiblingChars(MsgEntry* me,psAdminCmdMessage& msg, AdminCmdData& data,Client *client, gemObject *targetobject, bool duplicateActor)
+void AdminManager::GetSiblingChars(MsgEntry* me,psAdminCmdMessage& msg, AdminCmdData& data,Client *client, gemActor *targetactor, bool duplicateActor)
 {
-    if(targetobject && !targetobject->GetCharacterData()) //no need to go on this isn't an npc or pc characther (most probably an item)
+    if(targetactor && !targetactor->GetCharacterData()) //no need to go on this isn't an npc or pc characther (most probably an item)
     {
         psserver->SendSystemError(me->clientnum,"Charlist can be used only on Player or NPC characters");
         return;
     }
 
-    if ((!data.player || !data.player.Length()) && !targetobject)
+    if ((!data.player || !data.player.Length()) && !targetactor)
     {
         psserver->SendSystemError(me->clientnum, "Syntax: \"/charlist [me/target/eid/pid/area/name]\"");
         return;
@@ -1455,8 +1455,8 @@ void AdminManager::GetSiblingChars(MsgEntry* me,psAdminCmdMessage& msg, AdminCmd
     size_t accountId = 0;
     unsigned int pid = 0;
     csString query;
-    if (targetobject) //find by target: will be used in most cases
-        pid = targetobject->GetCharacterData()->GetCharacterID();
+    if (targetactor) //find by target: will be used in most cases
+        pid = targetactor->GetCharacterData()->GetCharacterID();
     else if (data.player.StartsWith("pid:",true) && data.player.Length() > 4) // Get player ID should happen only if offline
         pid = atoi( data.player.Slice(4).GetData());
 
@@ -5170,18 +5170,18 @@ void AdminManager::DeleteCharacter(MsgEntry* me, psAdminCmdMessage& msg, AdminCm
 
 
 
-void AdminManager::ChangeName(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data,Client *client, gemObject *targetobject, bool duplicateActor)
+void AdminManager::ChangeName(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data,Client *client, gemActor *targetactor, bool duplicateActor)
 {
     unsigned int pid = 0; //used only if offline
-    Client *target;
-    if(targetobject)
+    Client *target = NULL;
+    if(targetactor)
     {
-        if(!targetobject->GetCharacterData()) //no need to go on this isn't an npc or pc characther (most probably an item)
+        if(!targetactor->GetCharacterData()) //no need to go on this isn't an npc or pc characther (most probably an item)
         {
             psserver->SendSystemError(me->clientnum,"Changename can be used only on Player or NPC characters");
             return;
         }
-        target = targetobject->GetClient(); //get the client target, this will return NULL if it's an NPC
+        target = targetactor->GetClient(); //get the client target, this will return NULL if it's an NPC
     }
 
     if (!data.player.Length() || !data.newName.Length())
@@ -5215,10 +5215,10 @@ void AdminManager::ChangeName(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
     {
         csString query;
         //check if it's an npc
-        if(targetobject && (targetobject->GetCharacterData()->GetCharType() == PSCHARACTER_TYPE_NPC ||
-           targetobject->GetCharacterData()->GetCharType() == PSCHARACTER_TYPE_PET))
+        if(targetactor && (targetactor->GetCharacterData()->GetCharType() == PSCHARACTER_TYPE_NPC ||
+           targetactor->GetCharacterData()->GetCharType() == PSCHARACTER_TYPE_PET))
         { //if so get it's pid so it works correctly with targetting
-            pid = targetobject->GetCharacterData()->GetCharacterID();
+            pid = targetactor->GetCharacterData()->GetCharacterID();
         }
         else if (data.player.StartsWith("pid:",true) && data.player.Length() > 4) // Find by player ID, this is useful only if offline
         {

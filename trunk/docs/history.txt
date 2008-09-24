@@ -1,7 +1,9 @@
 ﻿*** 2008-09-23 by Stefano Angeleri
 - Updated the compiling guide with support for things like #Linux-generic.GCC.Developer.Normal
   which autoselects the correct entries to make easier to help peoples compiling planeshift
-  patch by Gothi[c]
+  patch by Gothi[c] and additional updates suggested by caarrie
+- Fixed an unitialized variable which could lead changename to crash and changed targetobject
+  with targetactor
 
 *** 2008-09-24 by Kenny Graunke
 - Made range required for area: targeting, to avoid GMs accidentally applying

@@ -149,7 +149,7 @@ protected:
      */
     void HandleLoadQuest(psAdminCmdMessage& msg, AdminCmdData& data, Client* client);
 
-    void GetSiblingChars(MsgEntry* me,psAdminCmdMessage& msg, AdminCmdData& data,Client *client, gemObject *targetobject, bool duplicateActor);
+    void GetSiblingChars(MsgEntry* me,psAdminCmdMessage& msg, AdminCmdData& data,Client *client, gemActor *targetactor, bool duplicateActor);
     void GetInfo(MsgEntry* me,psAdminCmdMessage& msg, AdminCmdData& data,Client *client, gemObject* target);
     void CreateNPC(MsgEntry *me,psAdminCmdMessage& msg, AdminCmdData& data, Client *client, gemActor* basis);
     void KillNPC(MsgEntry *me, psAdminCmdMessage& msg, AdminCmdData& data, Client *client);
@@ -250,7 +250,7 @@ protected:
     void SendGMPlayerList(MsgEntry* me, psGMGuiMessage& msg, Client *client);
 
 
-    void ChangeName(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data, Client *client, gemObject *targetobject, bool duplicateActor);
+    void ChangeName(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data, Client *client, gemActor *targetactor, bool duplicateActor);
 
     /// Handles a change to set the NPC's default spawn location.
     void UpdateRespawn(Client* client, gemActor* target);
