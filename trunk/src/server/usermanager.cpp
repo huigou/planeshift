@@ -400,20 +400,23 @@ csArray<csString> UserManager::DecodeCommandArea(Client *client, csString target
     csArray<csString> splitTarget = psSplit(target, ':');
     size_t splitSize = splitTarget.GetSize();
 
-    if ((2>splitSize) || (splitSize>4))
+    if (splitSize < 3 || splitSize > 4)
     {
         psserver->SendSystemError(client->GetClientNum(),
-                "Try /$CMD area:item[:range[:name]]");
+                "Try /$CMD area:item:range[:name]");
         return result;
     }
 
     csString itemName = splitTarget[1];
-    csString* rangeName = splitSize > 2 ? &splitTarget[2] : 0;
     csString* nameFilter = splitSize > 3 ? &splitTarget[3] : 0;
 
-    int range = 99999; /* TODO: check is this value is large enough */
-    if (rangeName)
-        range = atoi(rangeName->GetData());
+    const int range = atoi(splitTarget[2].GetData());
+    if (range <= 0)
+    {
+        psserver->SendSystemError(client->GetClientNum(),
+                "You must specify a positive integer for the area: range.");
+        return result;
+    }
 
     bool allNames = true;
     if (nameFilter && (*nameFilter!="all"))
