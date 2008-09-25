@@ -694,6 +694,9 @@ Send a warning message to a player in big, red, un-ignorable text on their scree
         <topic name="/weather"> /weather sector [on|off]
 
 Turn on or off automatic weather for a sector. </topic>
+        <topic name="/target_name"> /target [me/target/eid/pid/area]
+
+Get the name of all the targeted objects. </topic>
     </branch>
     <branch name="Default Keyboard Controls">
 Default controls.  You may alter your settings to your liking via the options window.

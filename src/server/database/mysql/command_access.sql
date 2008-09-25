@@ -367,6 +367,12 @@ INSERT INTO command_group_assignment VALUES( "/listwarnings", 24 );
 INSERT INTO command_group_assignment VALUES( "/listwarnings", 23 );
 INSERT INTO command_group_assignment VALUES( "/listwarnings", 22 );
 INSERT INTO command_group_assignment VALUES( "/listwarnings", 21 );
+INSERT INTO command_group_assignment VALUES( "/target_name", 30 );
+INSERT INTO command_group_assignment VALUES( "/target_name", 25 );
+INSERT INTO command_group_assignment VALUES( "/target_name", 24 );
+INSERT INTO command_group_assignment VALUES( "/target_name", 23 );
+INSERT INTO command_group_assignment VALUES( "/target_name", 22 );
+INSERT INTO command_group_assignment VALUES( "/target_name", 21 );
 
 # testers group
 INSERT INTO command_group_assignment VALUES( "/slide", 10 );

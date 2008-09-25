@@ -1012,6 +1012,11 @@ bool AdminManager::AdminCmdData::DecodeAdminCmdMessage(MsgEntry *pMsg, psAdminCm
         target = words.Get(1);
         return true;
     }
+    else if (command == "/target_name") //will return what would be targeted in an admin function, mostly useful with area targeting
+    {
+        player = words[1];
+        return true;
+    }
     return false;
 }
 
@@ -1368,6 +1373,10 @@ void AdminManager::HandleAdminCmdMessage(MsgEntry *me, psAdminCmdMessage &msg, A
     else if (data.command == "/listwarnings")
     {
         HandleListWarnings(msg, data, client, targetobject);
+    }
+    else if (data.command == "/target_name")
+    {
+        CheckTarget(msg, data, client, targetobject);
     }
 }
 
@@ -5360,7 +5369,6 @@ void AdminManager::ChangeName(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
         }
         npc->GetCharacterData()->SetFullName(data.newName, data.newLastName);
         fullName = npc->GetCharacterData()->GetCharFullName();
-        npc->SetName(data.newName);
         actorId = npc->GetEntityID();
     }
 
@@ -7587,4 +7595,16 @@ void AdminManager::HandleListWarnings(psAdminCmdMessage& msg, AdminCmdData& data
     }
     else
         psserver->SendSystemError(client->GetClientNum(), "Target wasn't found.");
+}
+
+void AdminManager::CheckTarget(psAdminCmdMessage& msg, AdminCmdData& data, Client *client, gemObject* object )
+{
+    printf("a\n");
+    if ((!data.player || !data.player.Length()) && !object)
+    {
+        psserver->SendSystemInfo(client->GetClientNum(),"Syntax: \"/target_name [me/target/eid/pid/area/name]\"");
+        return;
+    }
+    if(object) //just to be sure
+        psserver->SendSystemInfo(client->GetClientNum(),"Targeted: %s", object->GetName());
 }

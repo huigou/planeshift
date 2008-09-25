@@ -1,4 +1,10 @@
-﻿*** 2008-09-23 by Stefano Angeleri
+﻿*** 2008-09-25 by Stefano Angeleri
+- Fixed a problem with the compiling guide which didn't update correctly when choosing things
+  from the dropdown boxes
+- Added a /target_name command for gm1+ which will return the name of all targetted things
+  according to the passed target: requested by Kerol
+
+*** 2008-09-24 by Stefano Angeleri
 - Updated the compiling guide with support for things like #Linux-generic.GCC.Developer.Normal
   which autoselects the correct entries to make easier to help peoples compiling planeshift
   patch by Gothi[c] and additional updates suggested by caarrie
