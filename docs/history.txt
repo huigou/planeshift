@@ -3,6 +3,10 @@
   from the dropdown boxes
 - Added a /target_name command for gm1+ which will return the name of all targetted things
   according to the passed target: requested by Kerol
+- Fixed a bug in the pawsillumination which could lead to the function stopping parsing maps
+  got from the server if the player had a lower limit than the one of who made the map.
+- Improved pawsillumination by hiding all the editing buttons (except the edit ans save buttons)
+  also for the author of the map. When entering editmode the buttons usefull for that will appear
 
 *** 2008-09-24 by Stefano Angeleri
 - Updated the compiling guide with support for things like #Linux-generic.GCC.Developer.Normal
