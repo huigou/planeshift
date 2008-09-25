@@ -7599,7 +7599,6 @@ void AdminManager::HandleListWarnings(psAdminCmdMessage& msg, AdminCmdData& data
 
 void AdminManager::CheckTarget(psAdminCmdMessage& msg, AdminCmdData& data, Client *client, gemObject* object )
 {
-    printf("a\n");
     if ((!data.player || !data.player.Length()) && !object)
     {
         psserver->SendSystemInfo(client->GetClientNum(),"Syntax: \"/target_name [me/target/eid/pid/area/name]\"");

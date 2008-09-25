@@ -78,6 +78,71 @@ iGraphics2D *pawsSketchWindow::GetG2D()
     return gfx;
 }
 
+void pawsSketchWindow::SetToolbarButtons()
+{        
+    //hide useless widgets in the window so the sketch is more clean 
+    //to whoever looks at it while not being the author
+    if(readOnly)
+    {
+        if(FeatherTool)
+            FeatherTool->Hide();
+        if(SaveButton)
+            SaveButton->Hide();
+    }
+    else
+    {
+         if(FeatherTool)
+            FeatherTool->Show();
+        if(SaveButton)
+            SaveButton->Show();       
+    }
+
+    if(!editMode) //we aren't in edit mode, let's hide the unusable tools
+    {
+        if(TextTool)
+            TextTool->Hide();
+        if(LineTool)
+            LineTool->Hide();
+        if(BezierTool)
+            BezierTool->Hide();
+        if(PlusTool)
+            PlusTool->Hide();
+        if(LeftArrowTool)
+            LeftArrowTool->Hide();
+        if(RightArrowTool)
+            RightArrowTool->Hide();
+        if(DeleteTool)
+            DeleteTool->Hide();
+        if(NameTool)
+            NameTool->Hide();
+        if(LoadButton)
+            LoadButton->Hide();
+    }
+    else //we are in edit mode so let's show buttons to do some editing
+    {
+        if(TextTool)
+            TextTool->Show();
+        if(LineTool)
+            LineTool->Show();
+        if(BezierTool)
+            BezierTool->Show();
+        if(PlusTool)
+            PlusTool->Show();
+        if(LeftArrowTool)
+            LeftArrowTool->Show();
+        if(RightArrowTool)
+            RightArrowTool->Show();
+        if(DeleteTool)
+            DeleteTool->Show();
+        if(NameTool)
+            NameTool->Show();
+        if(SaveButton)
+            SaveButton->Show();
+        if(LoadButton)
+            LoadButton->Show();
+    }
+}
+
 void pawsSketchWindow::HandleMessage( MsgEntry* me )
 {   
     editMode      = false;
@@ -101,58 +166,7 @@ void pawsSketchWindow::HandleMessage( MsgEntry* me )
     if (!msg.rightToEdit)
         readOnly = true;
     
-    if(readOnly)
-    {
-        //hide useless widgets in the window so the sketch is more clean 
-        //to whoever looks at it while not being the author
-        if(FeatherTool)
-            FeatherTool->Hide();
-        if(TextTool)
-            TextTool->Hide();
-        if(LineTool)
-            LineTool->Hide();
-        if(BezierTool)
-            BezierTool->Hide();
-        if(PlusTool)
-            PlusTool->Hide();
-        if(LeftArrowTool)
-            LeftArrowTool->Hide();
-        if(RightArrowTool)
-            RightArrowTool->Hide();
-        if(DeleteTool)
-            DeleteTool->Hide();
-        if(NameTool)
-            NameTool->Hide();
-        if(SaveButton)
-            SaveButton->Hide();
-        if(LoadButton)
-            LoadButton->Hide();
-    }
-    else //we have editing rights so let's show buttons to do some editing
-    {
-        if(FeatherTool)
-            FeatherTool->Show();
-        if(TextTool)
-            TextTool->Show();
-        if(LineTool)
-            LineTool->Show();
-        if(BezierTool)
-            BezierTool->Show();
-        if(PlusTool)
-            PlusTool->Show();
-        if(LeftArrowTool)
-            LeftArrowTool->Show();
-        if(RightArrowTool)
-            RightArrowTool->Show();
-        if(DeleteTool)
-            DeleteTool->Show();
-        if(NameTool)
-            NameTool->Show();
-        if(SaveButton)
-            SaveButton->Show();
-        if(LoadButton)
-            LoadButton->Show();
-    }
+    SetToolbarButtons();
 
     sketchName = msg.name;
     SetTitle(sketchName);
@@ -364,6 +378,7 @@ bool pawsSketchWindow::OnKeyDown( int keyCode, int key, int modifiers )
                 psSystemMessage sysMsg( 0, MSG_OK, PawsManager::GetSingleton().Translate("Edit mode has been disabled.") );
                 sysMsg.FireEvent();
             }
+            SetToolbarButtons();
         }
         else
         {
@@ -495,7 +510,7 @@ void pawsSketchWindow::OnStringEntered(const char *name,int param,const char *va
         csString sketchxml =  buff->operator*(); //converts what we have read in something our ParseSketch function can
                                               //understand
         objlist.Empty();                      //clears the objlist to start loading our new sketch from clean
-        ParseSketch(sketchxml);                  //loads our sketch
+        ParseSketch(sketchxml,true);          //loads our sketch, and check that it's under our limits
     }
 }
 
@@ -772,7 +787,7 @@ bool pawsSketchWindow::ParseLimits(const char *xmlstr)
     return true;
 }
 
-bool pawsSketchWindow::ParseSketch(const char *xmlstr)
+bool pawsSketchWindow::ParseSketch(const char *xmlstr, bool checklimits)
 {
     csRef<iDocumentSystem>  xml;
     xml =  csQueryRegistry<iDocumentSystem> ( psengine->GetObjectRegistry() );
@@ -818,7 +833,7 @@ bool pawsSketchWindow::ParseSketch(const char *xmlstr)
             SketchObject *obj=NULL;
             csRef<iDocumentNode> tmp = pagenodes->Next();
             csString type = tmp->GetValue();
-            if((int)objlist.GetSize() >= primCount) //are we under the limitations?...
+            if(checklimits && (int)objlist.GetSize() >= primCount) //are we under the limitations?...
                 break; //...it seems we aren't so break before going on, at least one part of sketch is available
             // Determine what type to create, and create it
             if (type == "ic") // icon

@@ -212,8 +212,9 @@ protected:
     pawsWidget* LoadButton;
 
     void DrawSketch();
-    bool ParseSketch(const char *xml);
+    bool ParseSketch(const char *xml, bool checklimits = false);
     bool ParseLimits(const char *xmlstr);
+    void SetToolbarButtons();  //sets the toolbar buttons hide/show status
 
     void AddSketchText();
     void AddSketchIcon();
