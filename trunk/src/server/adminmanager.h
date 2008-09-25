@@ -335,11 +335,14 @@ protected:
     /// Change name of items
     void HandleSetItemName(psAdminCmdMessage& msg, AdminCmdData& data, Client *client, gemObject* object );
 
-    // Handle reloads from DB
+    /// Handle reloads from DB
     void HandleReload(psAdminCmdMessage& msg, AdminCmdData& data, Client *client, gemObject* object );
 
     /// List warnings given to account
     void HandleListWarnings(psAdminCmdMessage& msg, AdminCmdData& data, Client *client, gemObject* object );
+    
+    /// Returns what the target used in command will afflict in the game
+    void CheckTarget(psAdminCmdMessage& msg, AdminCmdData& data, Client *client, gemObject* object );
 
     /** Adds a petition under the passed user's name to the 'petitions' table in the database
      * Will automatically add the date and time of the petition's submission
