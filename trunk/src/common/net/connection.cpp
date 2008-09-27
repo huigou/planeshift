@@ -186,7 +186,7 @@ void psNetConnection::Run ()
     {
         if (!ready)
         {
-            psSleep(100);
+            csSleep(100);
             continue;
         }
 
@@ -249,7 +249,7 @@ void psNetConnection::CheckLinkDead (csTicks currenttime)
             psSystemMessage quit(0,MSG_INFO,"Server is not responding, try again in 5 minutes. Exiting PlaneShift...");
             HandleCompletedMessage(quit.msg, server, &server->addr,NULL);
             
-            psSleep(1000);
+            csSleep(1000);
             
             // If no packets received ever, then use -1 to indicate cannot connect
             psDisconnectMessage msgb(0,server->pcknumin?0:-1,
