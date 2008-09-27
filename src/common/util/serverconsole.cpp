@@ -21,6 +21,9 @@
 #include <psconfig.h>
 
 #include <csutil/snprintf.h>
+#include <iutil/vfs.h>
+#include <iutil/objreg.h>
+#include <iutil/cmdline.h>
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -77,29 +80,34 @@
 #include "command.h"
 #include "util/pserror.h"
 
-const char *ServerConsole::appname=0;
-const char *ServerConsole::prompt=0;
-iCommandCatcher *ServerConsole::cmdcatcher=NULL;
-volatile ServerConsole::Status ServerConsole::running=STOPPED;
+const char *ServerConsole::prompt = NULL;
 
 #ifdef USE_READLINE
 char **server_command_completion (const char *,int,int);
 #endif
 
-void ServerConsole::Init(const char *name, const char *command_prompt)
+ServerConsole::ServerConsole(iObjectRegistry* oreg, const char *name, const char *prmpt)
 {
-    appname     = name;
-    prompt      = command_prompt;
-    cmdcatcher  = NULL;
+    objreg     = oreg;
+    appname    = name;
+    prompt     = prmpt;
+    cmdcatcher = NULL;
+    stop       = false;
+    thread.AttachNew(new CS::Threading::Thread(this));
+    thread->Start();
 
 #ifdef USE_READLINE
     rl_readline_name = name;
     rl_attempted_completion_function = server_command_completion;
     rl_initialize();
 #endif
+}
 
-    CPrintf (CON_CMDOUTPUT, COL_RED "-Server Console initialized (%s-V0.1)-\n" COL_NORMAL
-        , appname);
+ServerConsole::~ServerConsole()
+{
+    stop = true;
+    thread->Wait();
+    thread = NULL;
 }
 
 // command execution time
@@ -167,22 +175,6 @@ char *stripwhite(char *string)
     return s;
 }
 
-void ServerConsole::Stop()
-{
-    running=STOPPED;
-}
-
-void ServerConsole::Abort()
-{
-    running=ABORTED;
-}
-
-int ServerConsole::MainLoop ()
-{
-    InputRun();
-    return running;
-}
-
 void ServerConsole::ExecuteScript(const char* script)
 {
     const char* bufptr = script;
@@ -218,6 +210,27 @@ void ServerConsole::ExecuteScript(const char* script)
     }
 }
 
+void ServerConsole::Run()
+{
+    CPrintf(CON_CMDOUTPUT, COL_RED "-Server Console initialized (%s-V0.1)-\n" COL_NORMAL, appname);
+
+    // Run any script files specified on the command line with -run=filename.
+    csRef<iCommandLineParser> cmdline = csQueryRegistry<iCommandLineParser>(objreg);
+    csRef<iVFS> vfs = csQueryRegistry<iVFS>(objreg);
+    if (cmdline && vfs)
+    {
+        const char *autofile;
+        for (int i = 0; (autofile = cmdline->GetOption("run", i)); i++)
+        {
+            csRef<iDataBuffer> script = vfs->ReadFile(autofile);
+            if (script.IsValid())
+                ExecuteScript(*(*script));
+        }
+    }
+
+    MainLoop();
+}
+
 #ifdef WIN32
 #include "windows.h"
 #endif
@@ -225,17 +238,16 @@ void ServerConsole::ExecuteScript(const char* script)
 #ifndef USE_READLINE
 
 // simple version without readline...
-void ServerConsole::InputRun()
+void ServerConsole::MainLoop()
 {
     char line[321];
     line[0] = '\0';
 
-    running=RUNNING;
     CPrompt (COL_BLUE "%s: " COL_NORMAL, prompt);
 
     // This important flag allows clean shutdown outside the console
     // since stdin is polled asynchronously
-    while (running == RUNNING)
+    while (!stop)
     {
 
         // Make sure that if we don't type anything the loop is continued
@@ -321,7 +333,7 @@ void ServerConsole::InputRun()
     }
 }
 #else
-void ServerConsole::InputRun()
+void ServerConsole::MainLoop()
 {
     running=RUNNING;
 

@@ -48,7 +48,7 @@ struct Subscription
 /**
  * This class handles the incoming network packets
  */
-class MsgHandler : public CS::Threading::Runnable
+class MsgHandler : public csRefCount
 {
 public:
     MsgHandler();
@@ -83,18 +83,8 @@ public:
     virtual void Multicast(MsgEntry* msg, csArray<PublishDestination>& multi, int except, float range)
     { netbase->Multicast(msg, multi, except, range); }
 
-    /// Start the separate thread
-    virtual bool StartThread();
-
-    /// Wait for the separate thread to stop
-    virtual bool StopThread();
-    
     /// Detects multiple subscriptions on the same object
     bool IsSubscribed (Subscription* p );
-
-    virtual void IncRef () { csRefCount::IncRef (); }
-    virtual void DecRef () { csRefCount::DecRef (); }
-    virtual int GetRefCount() { return csRefCount::GetRefCount(); }
 
     void AddToLocalQueue(MsgEntry *me) { netbase->QueueMessage(me); }
 
@@ -104,9 +94,6 @@ public:
     bool Flush() { return netbase->Flush(queue); }
 
 protected:
-    /** thread main loop */
-    virtual void Run () = 0;
-
     NetBase                       *netbase;
     MsgQueue                      *queue;
 
@@ -115,9 +102,7 @@ protected:
      * to them directly instead of searching the entire list of all subscribers.
      */
     csPDelArray<Subscription>      subscribers[MAX_MESSAGE_TYPES];
-    csRef<CS::Threading::Thread>   thread;
     CS::Threading::RecursiveMutex  mutex;
-    bool                           stop_network;
 };
 
 #endif

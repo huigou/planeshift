@@ -846,7 +846,6 @@ void NetworkManager::HandleDisconnect(MsgEntry *msg)
     Disconnect();
     CPrintf(CON_WARNING, "Reconnect disabled...\n");
     exit(-1);
-    ServerConsole::Abort();
     if(!reconnect && false)
     {
         connected = ready = false;

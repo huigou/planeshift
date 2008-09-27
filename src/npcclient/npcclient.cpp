@@ -99,6 +99,7 @@ psNPCClient::psNPCClient ()
 psNPCClient::~psNPCClient()
 {
     running = false;
+    delete serverconsole;
     if (database)
         delete database;
 }
@@ -183,13 +184,6 @@ bool psNPCClient::Initialize(iObjectRegistry* object_reg,const char *_host, cons
     {
         return false;                // Attach to incoming messages.
     }
-    if (!msghandler->StartThread() )
-    {
-        return false;
-    }
-
-    CPrintf(CON_DEBUG, "Initialising CEL...\n");
-
 
     vfs =  csQueryRegistry<iVFS> (object_reg);
     if (!vfs)
@@ -251,9 +245,8 @@ bool psNPCClient::Initialize(iObjectRegistry* object_reg,const char *_host, cons
     return true;
 }
 
-int psNPCClient::MainLoop ()
+void psNPCClient::MainLoop ()
 {
-    // Eventually load an autoexec file
     csRef<iCommandLineParser> cmdline = 
          csQueryRegistry<iCommandLineParser> (objreg);
 
@@ -272,24 +265,19 @@ int psNPCClient::MainLoop ()
                 ConsoleOut::SetOutputFile (afile, true);
             }
         }
-        const char* autofile;
-        for (int i = 0; (autofile = cmdline->GetOption("run", i)); i++)
-        {
-            char toexec[1000];
-            strcpy(toexec, "exec ");
-            strcat(toexec, autofile);
-            ServerConsole::ExecuteScript(toexec);
-        }
     }
     ConsoleOut::SetMaximumOutputClassStdout (CON_SPAM);
     ConsoleOut::SetMaximumOutputClassFile (CON_SPAM);
 
-    int result = ServerConsole::MainLoop ();
+    // Start the server console (and handle -run=file).
+    serverconsole = new ServerConsole(objreg, "psnpcclient", "NPC Client");
+    serverconsole->SetCommandCatcher(this);
+
+    // Enter the real main loop - handling events and messages.
+    eventmanager->Run();
 
     // Save log settings
     SaveLogSettings();
-
-    return result;
 }
 
 void psNPCClient::Disconnect()

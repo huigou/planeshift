@@ -1,4 +1,17 @@
-﻿*** 2008-09-25 by Stefano Angeleri
+﻿*** 2008-09-27 by Kenny Graunke
+- Reworked threading in server and npcclient.  The server has three threads:
+  1. EventManager (the main thread where virtually everything is done)
+  2. NetworkManager
+  3. ServerConsole
+  Previously, the main thread started up the server, forked off EventManager,
+  and then ran SC.  This was ugly because server initialization and execution
+  were done in different threads.  Now, the main thread runs EventManager
+  instead, and forks off ServerConsole in its own thread.  This change should
+  not affect the client, which never used a separate thread anyway.
+- Made ServerConsole more of a real class, not just a static shell/namespace.
+- Removed Sasha's experimental threaded DR code.
+
+*** 2008-09-27 by Stefano Angeleri
 - Added an warning window when using the area target: it will ask the user if he
   really want to execute the command with the area target, providing also a list
   of the affected object names. If the command is confirmed it will be executed.

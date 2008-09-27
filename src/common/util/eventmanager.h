@@ -40,6 +40,9 @@ protected:
     Heap<psGameEvent> eventqueue;
 
     csTicks lastTick;
+
+    /// A flag indicating the server is shutting down.
+    bool stop;
     
 public:
     EventManager(csRef<CS::Threading::Thread> _thread);
@@ -49,7 +52,9 @@ public:
     /** thread main loop */
     virtual void Run ();
 
-    static csRef<EventManager> Create(NetBase* netBase, int queuelen);
+    void Stop() { stop = true; }
+
+    static csRef<EventManager> Create(int queuelen);
     
     /// Add new event to scheduler queue.
     void Push(psGameEvent *event);

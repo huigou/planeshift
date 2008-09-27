@@ -105,11 +105,10 @@ public:
     { return objreg; }
 
     /**
-     * Load and starts an optional script file that sets 
-     * up the server. After that it jumps into the
-     * server console's main loop, accepting commands from the user.
+     * Load and fork off a new thread for the Server Console. Then start
+     * EventManager's main loop, processing all network and server events.
      */
-    int MainLoop ();
+    void MainLoop ();
 
     virtual void CatchCommand(const char *cmd);
 
@@ -459,6 +458,7 @@ protected:
     csRef<iEngine>             engine;
     csRef<iConfigManager >     configmanager;
     csRef<MsgHandler>          msghandler;
+    ServerConsole             *serverconsole;
     EventManager              *eventmanager;
     NetworkManager            *network;
     psDatabase                *database;

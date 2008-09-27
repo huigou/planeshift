@@ -96,7 +96,8 @@ psCharacterLoader psServer::CharacterLoader;
 
 psServer::psServer ()
 {
-    serverthread        = NULL;
+    serverconsole       = NULL;
+    netmanager          = NULL;
     marriageManager     = NULL;
     entitymanager       = NULL;
     tutorialmanager     = NULL;
@@ -139,9 +140,9 @@ psServer::psServer ()
 psServer::~psServer()
 {
     // Kick players from server
-    if ( serverthread )
+    if ( netmanager )
     {
-        ClientConnectionSet* clients = serverthread->GetConnections();
+        ClientConnectionSet* clients = netmanager->GetConnections();
 
         Client* p = NULL;
         do
@@ -169,7 +170,7 @@ psServer::~psServer()
     delete entitymanager;
     delete usermanager;
     delete exchangemanager;
-    delete serverthread;
+    delete netmanager;
     delete database;
     delete marriageManager;
     delete spawnmanager;
@@ -306,7 +307,6 @@ bool psServer::Initialize(iObjectRegistry* object_reg)
 
     Debug1(LOG_STARTUP,0,"Started Database\n");
 
-    
     cachemanager = new CacheManager();
     
     //Loads the standard motd message from db
@@ -347,8 +347,8 @@ bool psServer::Initialize(iObjectRegistry* object_reg)
 
     // Start Network Thread
 
-    serverthread=NetManager::Create(MSGTYPE_PREAUTHENTICATE,MSGTYPE_NPCAUTHENT);
-    if (!serverthread)
+    netmanager = NetManager::Create(MSGTYPE_PREAUTHENTICATE,MSGTYPE_NPCAUTHENT);
+    if (!netmanager)
     {
         return false;
     }
@@ -359,10 +359,10 @@ bool psServer::Initialize(iObjectRegistry* object_reg)
     configmanager->GetInt("PlaneShift.Server.Port", 1243);
     Debug3(LOG_STARTUP,0,COL_BLUE "Listening on '%s' Port %d.\n" COL_NORMAL,
             (const char*) serveraddr, port);
-    if (!serverthread->Bind (serveraddr, port))
+    if (!netmanager->Bind(serveraddr, port))
     {
-        delete serverthread;
-        serverthread = NULL;
+        delete netmanager;
+        netmanager = NULL;
         return false;
     }
     Debug1(LOG_STARTUP,0,"Started Network Thread\n");
@@ -374,17 +374,20 @@ bool psServer::Initialize(iObjectRegistry* object_reg)
     // both messages and events. For backward compablility
     // we still store two points. But they are one object
     // and one thread.
-    eventmanager = EventManager::Create(serverthread, 1000);
+    eventmanager.AttachNew(new EventManager);
     if (!eventmanager)
         return false;
 
     // This gives access to msghandler to all message types
     psMessageCracker::msghandler = eventmanager;
 
+    if (!eventmanager->Initialize(netmanager, 1000))
+        return false;
+
     Debug1(LOG_STARTUP,0,"Started Event Manager Thread\n");
 
 
-    usermanager = new UserManager(serverthread->GetConnections() );
+    usermanager = new UserManager(GetConnections());
     Debug1(LOG_STARTUP,0,"Started User Manager\n");
 
     // Load emotes
@@ -395,9 +398,7 @@ bool psServer::Initialize(iObjectRegistry* object_reg)
     }
 
     entitymanager = new EntityManager;
-    if (!entitymanager->Initialize(object_reg,
-                                   serverthread->GetConnections(),
-                                   usermanager))
+    if (!entitymanager->Initialize(object_reg, GetConnections(), usermanager))
     {
         Error1("Failed to initialise CEL!\n");
         delete entitymanager;
@@ -405,7 +406,7 @@ bool psServer::Initialize(iObjectRegistry* object_reg)
         return false;
     }
     entitymanager->SetReady(false);
-    serverthread->SetEngine(entitymanager->GetEngine());
+    netmanager->SetEngine(entitymanager->GetEngine());
     Debug1(LOG_STARTUP,0,"Started CEL\n");
 
     // Start Combat Manager
@@ -417,7 +418,7 @@ bool psServer::Initialize(iObjectRegistry* object_reg)
     Debug1(LOG_STARTUP,0,"Started Combat Manager\n");
 
     // Start Spell Manager
-    spellmanager = new psSpellManager(serverthread->GetConnections(), object_reg);
+    spellmanager = new psSpellManager(GetConnections(), object_reg);
     Debug1(LOG_STARTUP,0,"Started Spell Manager\n");
 
     // Start Weather Manager
@@ -435,8 +436,7 @@ bool psServer::Initialize(iObjectRegistry* object_reg)
     chatmanager = csPtr<ChatManager> (new ChatManager);
     Debug1(LOG_STARTUP,0,"Started Chat Manager\n");
 
-    guildmanager = csPtr<GuildManager>(new GuildManager(serverthread->GetConnections(),
-                                                        chatmanager));
+    guildmanager = csPtr<GuildManager>(new GuildManager(GetConnections(), chatmanager));
     Debug1(LOG_STARTUP,0,"Started Guild Manager\n");
 
     questionmanager = csPtr<QuestionManager>(new QuestionManager() );
@@ -445,12 +445,11 @@ bool psServer::Initialize(iObjectRegistry* object_reg)
     advicemanager = csPtr<AdviceManager>(new AdviceManager( database ) );
     Debug1(LOG_STARTUP,0,"Started Advice Manager\n");
 
-    groupmanager = csPtr<GroupManager>
-    (new GroupManager(serverthread->GetConnections(),chatmanager));
+    groupmanager = csPtr<GroupManager>(new GroupManager(GetConnections(), chatmanager));
     Debug1(LOG_STARTUP,0,"Started Group Manager\n");
 
     charmanager = new psServerCharManager();
-    if ( !charmanager->Initialize(serverthread->GetConnections()) )
+    if (!charmanager->Initialize(GetConnections()))
         return false;
     Debug1(LOG_STARTUP,0,"Started Character Manager\n");
 
@@ -465,18 +464,13 @@ bool psServer::Initialize(iObjectRegistry* object_reg)
     actionmanager = csPtr<ActionManager>(new ActionManager( database));
     Debug1(LOG_STARTUP,0,"Started Action Manager\n");
 
-    authserver = csPtr<psAuthenticationServer>
-    (new psAuthenticationServer(serverthread->GetConnections(),
-                                usermanager,
-                                guildmanager));
+    authserver = csPtr<psAuthenticationServer>(new psAuthenticationServer(GetConnections(), usermanager, guildmanager));
     Debug1(LOG_STARTUP,0,"Started Authentication Server\n");
 
-    exchangemanager = new ExchangeManager(serverthread->GetConnections());
+    exchangemanager = new ExchangeManager(GetConnections());
     Debug1(LOG_STARTUP,0,"Started Exchange Manager\n");
 
-    npcmanager = new NPCManager(serverthread->GetConnections(),
-                                database,
-                                eventmanager);
+    npcmanager = new NPCManager(GetConnections(), database, eventmanager);
     if ( !npcmanager->Initialize())
     {
         Error1("Failed to start npc manager!");
@@ -485,7 +479,7 @@ bool psServer::Initialize(iObjectRegistry* object_reg)
     }
     Debug1(LOG_STARTUP,0,"Started NPC Superclient Manager\n");
 
-    progression = new ProgressionManager(serverthread->GetConnections());
+    progression = new ProgressionManager(GetConnections());
     if ( !progression->Initialize())
     {
         Error1("Failed to start progression manager!");
@@ -544,40 +538,25 @@ bool psServer::Initialize(iObjectRegistry* object_reg)
 
 void psServer::MainLoop ()
 {
-    // Eventually load an autoexec file
-    csRef<iCommandLineParser> cmdline =
-         csQueryRegistry<iCommandLineParser> (objreg);
-
-    if (cmdline)
-    {
-        const char* autofile;
-        for (int i = 0; (autofile = cmdline->GetOption("run", i)); i++)
-        {
-            char toexec[1000];
-            strcpy(toexec, "exec ");
-            strcat(toexec, autofile);
-            ServerConsole::ExecuteScript(toexec);
-        }
-    }
+    // Start the server console.
+    serverconsole = new ServerConsole(objreg, "psserver", "PS Server");
 
     csString status("Server initialized");
     logcsv->Write(CSV_STATUS, status);
 
-    ServerConsole::MainLoop ();
+    // Enter the real main loop - handling events and messages.
+    eventmanager->Run();
 
     status = "Server shutdown";
     logcsv->Write(CSV_STATUS, status);
 
     // Save log settings
     SaveLogSettings();
-
-    // Shut things down
-    eventmanager->StopThread();
 }
 
 void psServer::RemovePlayer (uint32_t clientnum,const char *reason)
 {
-    Client* client = serverthread->GetConnections()->FindAny(clientnum);
+    Client* client = netmanager->GetConnections()->FindAny(clientnum);
     if (!client)
     {
         CPrintf (CON_WARNING, "Tried to remove non-existent client: %d\n", clientnum);
@@ -605,12 +584,12 @@ void psServer::RemovePlayer (uint32_t clientnum,const char *reason)
         npcmanager->Disconnect(client);
     }
 
-    serverthread->GetConnections()->MarkDelete(client);
+    netmanager->GetConnections()->MarkDelete(client);
 }
 
 void psServer::MutePlayer (uint32_t clientnum,const char *reason)
 {
-    Client* client = serverthread->GetConnections()->Find(clientnum);
+    Client* client = netmanager->GetConnections()->Find(clientnum);
     if (!client)
     {
         CPrintf (CON_WARNING, "Tried to mute non-existent client: %d\n", clientnum);
@@ -627,7 +606,7 @@ void psServer::MutePlayer (uint32_t clientnum,const char *reason)
 
 void psServer::UnmutePlayer (uint32_t clientnum,const char *reason)
 {
-    Client* client = serverthread->GetConnections()->Find(clientnum);
+    Client* client = netmanager->GetConnections()->Find(clientnum);
     if (!client)
     {
         CPrintf (CON_WARNING, "Tried to unmute non-existent client: %d\n", clientnum);
@@ -835,7 +814,7 @@ void psServer::SaveLogSettings()
 
 ClientConnectionSet* psServer::GetConnections()
 {
-    return serverthread->GetConnections();
+    return netmanager->GetConnections();
 }
 
 /*-----------------Buddy List Management Functions-------------------------*/

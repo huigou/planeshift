@@ -19,6 +19,7 @@
 #ifndef __SERVERCONSOLE_H__
 #define __SERVERCONSOLE_H__
 
+#include <csutil/threading/thread.h>
 #include "util/consoleout.h"
 #include "util/gameevent.h"
 
@@ -43,6 +44,7 @@ struct COMMAND;
 const COMMAND *find_command(const char *name);
 int execute_line(const char *line,csString *buffer);
 
+class iObjectRegistry;
 
 /**
  * This defines an interface for intercepting commands instead of handling them
@@ -58,21 +60,11 @@ public:
 /**
  * This class is implements the user input and output console for the server.
  */
-class ServerConsole : public ConsoleOut
+class ServerConsole : public ConsoleOut, public CS::Threading::Runnable
 {
 public:
-
-    enum Status
-    {
-        STOPPED,
-        RUNNING,
-        ABORTED
-    };
-    /**
-     * Initializes the console. 
-     * appname is the resulting name for this server application.
-     */
-    static void Init(const char *appname, const char *command_prompt);
+    ServerConsole(iObjectRegistry *oreg, const char *appname, const char *prompt);
+    ~ServerConsole();
 
     /**
      * Executes a script of commands. The script is passed
@@ -84,46 +76,40 @@ public:
     static void ExecuteScript(const char* script);
 
     /**
+     * Starts the server console, first looking if there's a script passed
+     * via -run=file on the command line, then entering the main loop.
+     */
+    void Run();
+
+    /**
      * The main server console loop. This waits for a user
      * to enter a line of data and executes the command
      * that the user entered.
      */
-    static void InputRun();
+    void MainLoop();
 
-    /**
-     * Is the loop that runs until Stop() has been called.
-     * This just calls InputRun() which contains the real loop.
-     */
-    static int MainLoop ();
-
-    /**
-     * Halts any execution of the server console. Sets running to RUNNING.
-     */
-    static void Stop();    
-
-    /**
-     * Aborts any execution of the server console. Sets running to ABORT.
-     */
-    static void Abort();
-
-    static void SetCommandCatcher(iCommandCatcher *cmdcatch)
+    void SetCommandCatcher(iCommandCatcher *cmdcatch)
     {
         cmdcatcher = cmdcatch;
     }
 
     /// Holds the prompt.
     static const char *prompt;
+
 protected:
+    /// The name of this application.  Only used for printing & readline.
+    const char *appname;
 
-    /// A boolean variable that gives the current status of the server console.
-    static volatile Status running;
+    /// The server console runs in its own thread.
+    csRef<CS::Threading::Thread> thread;
 
-    /// Holds the name of the current application.
-    static const char *appname;
-    //
+    /// If true, the server is shutting down, and the main loop should stop.
+    bool stop;
 
     /// CommandCatcher intercepts typed commands without processing them here
-    static iCommandCatcher *cmdcatcher;
+    iCommandCatcher *cmdcatcher;
+
+    iObjectRegistry *objreg;
 };
 
 // Allows the console commands to be thread-safe by inserting them into the main event queue

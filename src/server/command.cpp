@@ -117,7 +117,7 @@ public:
         if(trigger_server_lock) //this is triggering the server lock
             com_lock(NULL);
         if(trigger_server_shutdown) //this is triggering the server shut down
-            ServerConsole::Stop();
+            psserver->GetEventManager()->Stop();
     }
     virtual bool CheckTrigger()
     {   //if this is the event triggering the server shut down pass it's validity, else check that event if
@@ -205,7 +205,7 @@ int com_quit(char *arg)
             }
             else //we have no arguments or the argument passed is zero let's quit immediately
             {
-                 ServerConsole::Stop();
+                 psserver->GetEventManager()->Stop();
             }
         }
         else //we have found a quit event so we will inform the user about that

@@ -84,6 +84,7 @@ class  csVector3;
 struct iVFS;
 class  GMEventManager;
 class  BankManager;
+class  ServerConsole;
 
 /** The main server class.
  * The main server class holding references to important server objects.
@@ -200,7 +201,7 @@ public:
      *
      * @return Returns the NetManager object for the current networking thread.
      */
-    NetManager* GetNetManager() { return serverthread; }
+    NetManager* GetNetManager() { return netmanager; }
     /** Returns the Chat manager.
      *
      * @return Returns a reference to the current chat manager server.
@@ -520,8 +521,9 @@ public:
      
 protected:
 
+    ServerConsole*                  serverconsole;
     CacheManager*                   cachemanager;
-    NetManager*                     serverthread;
+    NetManager*                     netmanager;
     EntityManager*                  entitymanager;
     AdminManager*                   adminmanager;
     psDatabase*                     database;

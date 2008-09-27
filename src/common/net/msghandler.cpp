@@ -32,15 +32,12 @@ MsgHandler::MsgHandler()
 {
     netbase = NULL;
     queue   = NULL;
-    thread = NULL;
 }
 
 MsgHandler::~MsgHandler()
 {   
-    if ( thread )
-        thread->Stop ();
-
-    if (queue) delete queue;
+    if (queue)
+        delete queue;
 }
 
 bool MsgHandler::Initialize(NetBase* nb, int queuelen)
@@ -54,25 +51,6 @@ bool MsgHandler::Initialize(NetBase* nb, int queuelen)
 
     return true;
 }
-
-bool MsgHandler::StartThread()
-{
-    thread.AttachNew( new CS::Threading::Thread(this, true) );
-    if (!thread->IsRunning())
-        return false;
-
-    return true;
-}
-
-bool MsgHandler::StopThread()
-{
-    stop_network = true;
-    thread->Wait();
-    thread = NULL;
-
-    return true;
-}
-
 
 void MsgHandler::Publish(MsgEntry* me)
 {
