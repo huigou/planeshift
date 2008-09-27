@@ -1,9 +1,17 @@
-﻿*** 2008-09-27 by Kenny Graunke
+﻿*** 2008-09-25 by Stefano Angeleri
+- Added an warning window when using the area target: it will ask the user if he
+  really want to execute the command with the area target, providing also a list
+  of the affected object names. If the command is confirmed it will be executed.
+  Requested by Kerol.
+- Reverted changes from targetactor to targetobject as it allows to reduce db load
+  (changename, charlist)
+
+*** 2008-09-27 by Kenny Graunke
 - Minor cleanup: removed ancient psSleep() code.  Use csSleep() instead.
 
 *** 2008-09-25 by Stefano Angeleri
 - Fixed a problem with the compiling guide which didn't update correctly when choosing things
-  from the dropdown boxes
+  from the dropdown boxes patch by Gothi[c]
 - Added a /target_name command for gm1+ which will return the name of all targetted things
   according to the passed target: requested by Kerol
 - Fixed a bug in the pawsillumination which could lead to the function stopping parsing maps
