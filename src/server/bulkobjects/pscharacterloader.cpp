@@ -658,7 +658,7 @@ bool psCharacterLoader::SaveCharacterData(psCharacter *chardata,gemActor *actor,
     static iRecord* updatePlayer;
     static iRecord* updateNpc;
     if(playerORpet && updatePlayer == NULL)
-        updatePlayer = db->NewUpdatePreparedStatement("characters", "id", 37); // 36 fields + 1 id field
+        updatePlayer = db->NewUpdatePreparedStatement("characters", "id", 38); // 37 fields + 1 id field
     if(!playerORpet && updateNpc == NULL)
         updateNpc = db->NewUpdatePreparedStatement("characters", "id", 32); // 31 fields + 1 id field
     
@@ -753,7 +753,9 @@ bool psCharacterLoader::SaveCharacterData(psCharacter *chardata,gemActor *actor,
         targetUpdate->AddField("loc_z", pos.z);
         targetUpdate->AddField("loc_yrot", yrot);
         targetUpdate->AddField("loc_sector_id", sectorinfo->uid);
+        targetUpdate->AddField("loc_instance", actor->GetInstance());
     }
+
 
     if(!chardata->GetLastLoginTime().GetData())
     {

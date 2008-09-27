@@ -1095,18 +1095,21 @@ void AdminManager::HandleAdminCmdMessage(MsgEntry *me, psAdminCmdMessage &msg, A
             question.Format("Are you sure you want to execute %s on:\n", data.command.GetDataSafe());
             csArray<csString> filters = UserManager::DecodeCommandArea(client, data.player); //decode the area command
             csArray<csString>::Iterator it(filters.GetIterator());
-            while (it.HasNext()) //iterate the resulting entities
+            if(filters.GetSize())
             {
-                csString player = it.Next();
-                targetobject = FindObjectByString(player,client->GetActor()); //search for the entity in order to work on it
-                if(targetobject) //just to be sure
+                while (it.HasNext()) //iterate the resulting entities
                 {
-                    question += targetobject->GetName(); //get the name of the target in order to show it nicely
-                    question += '\n';
+                    csString player = it.Next();
+                    targetobject = FindObjectByString(player,client->GetActor()); //search for the entity in order to work on it
+                    if(targetobject) //just to be sure
+                    {
+                        question += targetobject->GetName(); //get the name of the target in order to show it nicely
+                        question += '\n';
+                    }
                 }
+                //send the question to the client
+                psserver->questionmanager->SendQuestion(new AreaTargetConfirm(msg.cmd, data.player, question, client));
             }
-            //send the question to the client
-            psserver->questionmanager->SendQuestion(new AreaTargetConfirm(msg.cmd, data.player, question, client));
             return;
         }
         else
