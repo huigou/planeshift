@@ -42,9 +42,6 @@ int main(int argc, char **argv)
 
     pslog::Initialize (object_reg);
 
-    // Setup ServerConsole
-    ServerConsole::Init(argv[0],"NPC Client");
-
     // Start the server
     npcclient = new psNPCClient;
     const char *host, *user, *pass;
@@ -60,9 +57,7 @@ int main(int argc, char **argv)
         return 1;
     }
 
-    ServerConsole::SetCommandCatcher(npcclient);
-
-    int retval = npcclient->MainLoop ();
+    npcclient->MainLoop ();
     delete npcclient;
 
     // Save Configuration
@@ -75,6 +70,6 @@ int main(int argc, char **argv)
 
     csInitializer::DestroyApplication(object_reg);
 
-    return retval;
+    return 0;
 }
 

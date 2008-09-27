@@ -43,12 +43,6 @@ public:
     bool Connect(const char* server, int port);
 
     /**
-     * Start the handler thread is only relevant for server, so overridden here
-     * to allow EventQueue to be registered.
-     */
-    virtual bool StartThread() { return false; } // this function not allowed in subclass
-    
-    /**
      * Send outgoing messages, setting the clientnum automatically
      * beforehand.
      */
@@ -67,11 +61,6 @@ public:
      */
     bool DispatchQueue();
 
-    /**
-     * Stub for abstract parent function.
-     */
-    virtual void Run(){};
-    
     /// Declare our event handler
     DeclareGenericEventHandler(EventHandler,psClientMsgHandler,"planeshift.clientmsghandler");
     csRef<EventHandler> scfiEventHandler;

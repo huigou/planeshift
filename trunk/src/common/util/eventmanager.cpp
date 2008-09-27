@@ -28,22 +28,13 @@
 
 /*---------------------------------------------------------------------------*/
 
-EventManager::EventManager(csRef<CS::Threading::Thread> _thread) {
-    // Setting up the static pointer in psGameEvent. Used so
-    // that an event can be fired without needing to look up 
-    // the event manager first.
-    lastTick = 0;
-    psGameEvent::eventmanager = this;
-    
-    thread = _thread;
-}
-
 EventManager::EventManager()
 {
     // Setting up the static pointer in psGameEvent. Used so
     // that an event can be fired without needing to look up 
     // the event manager first.
     lastTick = 0;
+    stop = false;
     psGameEvent::eventmanager = this;
 }
 
@@ -54,68 +45,6 @@ EventManager::~EventManager()
     {
         delete eventqueue.DeleteMin();
     }
-}
-
-
-class ServerStarter : public CS::Threading::Runnable
-{
-public:
-    csRef<EventManager> eventManager;
-    csRef<CS::Threading::Thread> thread;
-    NetBase* netBase;
-    CS::Threading::Mutex doneMutex;
-    CS::Threading::Condition initDone;
-
-    int queuelen;
-    
-    bool success;
-    
-    ServerStarter(NetBase* _netBase, int _queuelen)
-    {
-        netBase = _netBase;
-        queuelen = _queuelen;
-    }
-
-    void Run()
-    {
-        {
-            CS::Threading::MutexScopedLock lock (doneMutex);
-            // construct the netManager is its own thread to avoid wrong warnings of dynamic thread checking via valgrind
-            eventManager.AttachNew(new EventManager(thread));
-            if (!eventManager->Initialize(netBase, queuelen))
-            {
-                success = false;
-                initDone.NotifyAll();
-                return;
-            }
-            success = true;
-            initDone.NotifyAll();
-        }
-
-        /* run the network loop */
-        eventManager->Run();
-    }
-};
-
-
-
-csRef<EventManager> EventManager::Create(NetBase* netBase, int queuelen)
-{
-    csRef<ServerStarter> serverStarter;
-    serverStarter.AttachNew (new ServerStarter(netBase, queuelen));
-    csRef<CS::Threading::Thread> thread;
-    thread.AttachNew (new CS::Threading::Thread (serverStarter));
-    serverStarter->thread = thread;
-    // wait for initialization to be finished
-    {
-        CS::Threading::MutexScopedLock lock (serverStarter->doneMutex);
-        thread->Start();   
-        if (!thread->IsRunning()) {
-            return NULL;        
-        }
-        serverStarter->initDone.Wait(serverStarter->doneMutex);
-    }
-    return serverStarter->eventManager;
 }
 
 void EventManager::Push(psGameEvent *event)
@@ -245,9 +174,7 @@ void EventManager::Run ()
 
     csTicks nextEvent = csGetTicks() + PROCESS_EVENT;
 
-    stop_network = false;
-
-    while( !stop_network)
+    while (!stop)
     {
         csTicks now = csGetTicks();
         int timeout = nextEvent - now;

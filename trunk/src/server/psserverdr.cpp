@@ -66,13 +66,6 @@ psServerDR::psServerDR()
     entitymanager = NULL;
     clients = NULL;
     paladin = NULL;
-
-#ifdef USE_THREADED_DR
-    dm.AttachNew(new DelayedDRManager(this));
-    dmThread.AttachNew(new Thread(dm));
-    dmThread->Start();
-    dmThread->SetPriority(CS::Threading::THREAD_PRIO_HIGH);
-#endif
 }
 
 psServerDR::~psServerDR()
@@ -80,10 +73,6 @@ psServerDR::~psServerDR()
     if (psserver->GetEventManager())
         psserver->GetEventManager()->Unsubscribe(this,MSGTYPE_DEAD_RECKONING);
     //delete paladin;
-#ifdef USE_THREADED_DR
-    dm->Stop();
-    dmThread->Stop();
-#endif
 }
 
 bool psServerDR::Initialize(EntityManager* entitymanager,
@@ -166,16 +155,6 @@ void psServerDR::ResetPos(gemActor* actor)
 }
 
 void psServerDR::HandleMessage (MsgEntry* me,Client *client)
-{
-#ifdef USE_THREADED_DR
-    me->IncRef();
-    dm->Push(me, client);
-    return;
-#endif
-    WorkOnMessage(me, client);
-}
-
-void psServerDR::WorkOnMessage (MsgEntry* me,Client *client)
 {
     psDRMessage drmsg(me,CacheManager::GetSingleton().GetMsgStrings(),EntityManager::GetSingleton().GetEngine() );
     if (!drmsg.valid)
@@ -315,61 +294,3 @@ void psServerDR::WorkOnMessage (MsgEntry* me,Client *client)
     }
 }
 
-#ifdef USE_THREADED_DR
-
-DelayedDRManager::DelayedDRManager(psServerDR* pDR)
-{
-    m_Close = false;
-    start=end=0;
-    arr.SetSize(100);
-    arrClients.SetSize(3000);
-    serverdr = pDR;
-}
-
-void DelayedDRManager::Stop()
-{
-    m_Close = true;
-    datacondition.NotifyOne();
-    CS::Threading::Thread::Yield();
-}
-
-void DelayedDRManager::Run()
-{
-    while(!m_Close)
-    {
-        CS::Threading::MutexScopedLock lock(mutex);
-        datacondition.Wait(mutex);
-        while (start != end)
-        {
-            MsgEntry* me;
-            Client* c;
-            {
-                CS::Threading::RecursiveMutexScopedLock lock(mutexArray);
-                me = arr[end];
-                c = arrClients[end];
-                end = (end+1) % arr.GetSize();
-            }
-            Debug2(LOG_NET, 0, "Processing DR from client %d", c->GetClientNum());
-            serverdr->WorkOnMessage(me, c);
-            me->DecRef();
-        }
-    }
-}
-
-void DelayedDRManager::Push(MsgEntry* msg, Client* c) 
-{ 
-    Debug2(LOG_NET, 0, "Queueing new DR from client %d", c->GetClientNum());
-    {
-        CS::Threading::RecursiveMutexScopedLock lock(mutexArray);
-        size_t tstart = (start+1) % arr.GetSize();
-        while (tstart == end)
-        {
-            csSleep(100);
-        }
-        arr[start] = msg;
-        arrClients[start] = c;
-        start = tstart;
-    }
-    datacondition.NotifyOne();
-}
-#endif

@@ -61,9 +61,6 @@ int main(int argc, char **argv)
 
     pslog::Initialize (object_reg);
 
-    // Setup ServerConsole
-    ServerConsole::Init(argv[0],"PS Server");
-
     // Start the server      
     psserver = new psServer;
     

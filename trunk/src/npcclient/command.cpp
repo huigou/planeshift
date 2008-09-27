@@ -63,7 +63,7 @@ int com_quit(char *)
 {
     npcclient->Disconnect();
 
-    ServerConsole::Stop();
+    npcclient->GetEventMgr()->Stop();
 
     return 0;
 }
