@@ -26,7 +26,6 @@
 #include <csutil/sysfunc.h>
 
 #include "util/pserror.h"
-#include "util/sleep.h"
 #include "util/log.h"
 #include "net/connection.h"
 #include "net/messages.h"

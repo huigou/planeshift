@@ -34,7 +34,6 @@
 // Library Include
 //=============================================================================
 #include "util/serverconsole.h"
-#include "util/sleep.h"
 #include "util/mathscript.h"
 #include "util/psdatabase.h"
 #include "util/eventmanager.h"

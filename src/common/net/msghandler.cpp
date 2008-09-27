@@ -17,7 +17,6 @@
  */
 #include <psconfig.h>
 
-#include "util/sleep.h"
 #include "net/message.h"
 #include "net/messages.h"
 #include "net/netbase.h"

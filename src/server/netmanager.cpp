@@ -26,7 +26,6 @@
 // Project Includes
 //=============================================================================
 #include "util/pserror.h"
-#include "util/sleep.h"
 #include "util/serverconsole.h"
 
 #include "net/message.h"
