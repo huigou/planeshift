@@ -85,11 +85,48 @@
 #include "gmeventmanager.h"
 #include "actionmanager.h"
 #include "progressionmanager.h"
+#include "questionmanager.h"
 
 
 // Define maximum value for awarded experience
 #define MAXIMUM_EXP_CHANGE 100
 //-----------------------------------------------------------------------------
+
+/** This class asks user to confirm that he really wants to do the area target he/she requested */
+class AreaTargetConfirm : public PendingQuestion
+{
+    public:
+        AreaTargetConfirm(const csString in_msg, csString in_player, const csString & question, Client *in_client)
+            : PendingQuestion(in_client->GetClientNum(),question, psQuestionMessage::generalConfirm)
+        {   //save variables for later use
+            this->command  =   in_msg;      
+            this->client  =   in_client;
+            this->player = in_player;
+        }
+            
+        virtual void HandleAnswer(const csString & answer) //handles the user choice
+        {
+            if (answer != "yes") //if we haven't got a confirm just get out of here
+                return;
+
+            //decode the are command and get the list of objects to work on
+            csArray<csString> filters = UserManager::DecodeCommandArea(client, player);
+            csArray<csString>::Iterator it(filters.GetIterator());
+            while (it.HasNext())
+            {
+                csString cur_player = it.Next(); //get the data about the specific entity on this iteration
+                csString cur_command = command;  //get the original command inside a variable where we will change it according to cur_player
+                cur_command.ReplaceAll(player.GetData(), cur_player.GetData()); //replace the area command with the eid got from the iteration
+                psAdminCmdMessage cmd(cur_command.GetData(),client->GetClientNum()); //prepare the new message
+                cmd.FireEvent(); //send it to adminmanager
+            }
+        }
+        
+    protected:
+        csString command;   //the complete command sent from the client
+        Client *client;     //originating client
+        csString player;    //normally this should be the area:x:x command
+};
 
 AdminManager::AdminManager()
 {
@@ -1052,13 +1089,24 @@ void AdminManager::HandleAdminCmdMessage(MsgEntry *me, psAdminCmdMessage &msg, A
         }
         else if (data.player.StartsWith("area:",true))
         {
-            csArray<csString> filters = UserManager::DecodeCommandArea(client, data.player);
+            //generate the string
+            csString question; //used to hold the generated question for the client
+            //first part of the question add also the command which will be used on the are if confirmed (the name not the arguments)
+            question.Format("Are you sure you want to execute %s on:\n", data.command.GetDataSafe());
+            csArray<csString> filters = UserManager::DecodeCommandArea(client, data.player); //decode the area command
             csArray<csString>::Iterator it(filters.GetIterator());
-            while (it.HasNext())
+            while (it.HasNext()) //iterate the resulting entities
             {
-                data.player = it.Next();
-                HandleAdminCmdMessage(me, msg, data, client);
+                csString player = it.Next();
+                targetobject = FindObjectByString(player,client->GetActor()); //search for the entity in order to work on it
+                if(targetobject) //just to be sure
+                {
+                    question += targetobject->GetName(); //get the name of the target in order to show it nicely
+                    question += '\n';
+                }
             }
+            //send the question to the client
+            psserver->questionmanager->SendQuestion(new AreaTargetConfirm(msg.cmd, data.player, question, client));
             return;
         }
         else
@@ -1180,7 +1228,7 @@ void AdminManager::HandleAdminCmdMessage(MsgEntry *me, psAdminCmdMessage &msg, A
     }
     else if (data.command == "/charlist")
     {
-        GetSiblingChars(me,msg,data,client,targetactor, duplicateActor);
+        GetSiblingChars(me,msg,data,client,targetobject, duplicateActor);
     }
     else if (data.command == "/crystal")
     {
@@ -1232,7 +1280,7 @@ void AdminManager::HandleAdminCmdMessage(MsgEntry *me, psAdminCmdMessage &msg, A
     }
     else if (data.command == "/changename" )
     {
-        ChangeName( me, msg, data, client, targetactor, duplicateActor );
+        ChangeName( me, msg, data, client, targetobject, duplicateActor );
     }
     else if (data.command == "/changeguildname")
     {
@@ -1447,25 +1495,25 @@ gemObject* AdminManager::FindObjectByString(const csString& str, gemActor * me) 
     return found;
 }
 
-void AdminManager::GetSiblingChars(MsgEntry* me,psAdminCmdMessage& msg, AdminCmdData& data,Client *client, gemActor *targetactor, bool duplicateActor)
+void AdminManager::GetSiblingChars(MsgEntry* me,psAdminCmdMessage& msg, AdminCmdData& data,Client *client, gemObject *targetobject, bool duplicateActor)
 {
-    if(targetactor && !targetactor->GetCharacterData()) //no need to go on this isn't an npc or pc characther (most probably an item)
+    if ((!data.player || !data.player.Length()) && !targetobject)
     {
-        psserver->SendSystemError(me->clientnum,"Charlist can be used only on Player or NPC characters");
+        psserver->SendSystemError(me->clientnum, "Syntax: \"/charlist [me/target/eid/pid/area/name]\"");
         return;
     }
 
-    if ((!data.player || !data.player.Length()) && !targetactor)
+    if(targetobject && !targetobject->GetCharacterData()) //no need to go on this isn't an npc or pc characther (most probably an item)
     {
-        psserver->SendSystemError(me->clientnum, "Syntax: \"/charlist [me/target/eid/pid/area/name]\"");
+        psserver->SendSystemError(me->clientnum,"Charlist can be used only on Player or NPC characters");
         return;
     }
 
     size_t accountId = 0;
     unsigned int pid = 0;
     csString query;
-    if (targetactor) //find by target: will be used in most cases
-        pid = targetactor->GetCharacterData()->GetCharacterID();
+    if (targetobject) //find by target: will be used in most cases
+        pid = targetobject->GetCharacterData()->GetCharacterID();
     else if (data.player.StartsWith("pid:",true) && data.player.Length() > 4) // Get player ID should happen only if offline
         pid = atoi( data.player.Slice(4).GetData());
 
@@ -5179,24 +5227,25 @@ void AdminManager::DeleteCharacter(MsgEntry* me, psAdminCmdMessage& msg, AdminCm
 
 
 
-void AdminManager::ChangeName(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data,Client *client, gemActor *targetactor, bool duplicateActor)
+void AdminManager::ChangeName(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data,Client *client, gemObject *targetobject, bool duplicateActor)
 {
     unsigned int pid = 0; //used only if offline
     Client *target = NULL;
-    if(targetactor)
+
+    if ((!data.player.Length() || !data.newName.Length()) && !targetobject)
     {
-        if(!targetactor->GetCharacterData()) //no need to go on this isn't an npc or pc characther (most probably an item)
+        psserver->SendSystemInfo(me->clientnum,"Syntax: \"/changename [me/target/eid/pid/area/name] [force|forceall] <NewName> [NewLastName]\"");
+        return;
+    }
+    
+    if(targetobject)
+    {
+        if(!targetobject->GetCharacterData()) //no need to go on this isn't an npc or pc characther (most probably an item)
         {
             psserver->SendSystemError(me->clientnum,"Changename can be used only on Player or NPC characters");
             return;
         }
-        target = targetactor->GetClient(); //get the client target, this will return NULL if it's an NPC
-    }
-
-    if (!data.player.Length() || !data.newName.Length())
-    {
-        psserver->SendSystemInfo(me->clientnum,"Syntax: \"/changename [me/target/eid/pid/area/name] [force|forceall] <NewName> [NewLastName]\"");
-        return;
+        target = targetobject->GetClient(); //get the client target, this will return NULL if it's an NPC
     }
 
     //if we are using the name we must check that it's unique to avoid unwanted changes
@@ -5224,10 +5273,10 @@ void AdminManager::ChangeName(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
     {
         csString query;
         //check if it's an npc
-        if(targetactor && (targetactor->GetCharacterData()->GetCharType() == PSCHARACTER_TYPE_NPC ||
-           targetactor->GetCharacterData()->GetCharType() == PSCHARACTER_TYPE_PET))
+        if(targetobject && (targetobject->GetCharacterData()->GetCharType() == PSCHARACTER_TYPE_NPC ||
+           targetobject->GetCharacterData()->GetCharType() == PSCHARACTER_TYPE_PET))
         { //if so get it's pid so it works correctly with targetting
-            pid = targetactor->GetCharacterData()->GetCharacterID();
+            pid = targetobject->GetCharacterData()->GetCharacterID();
         }
         else if (data.player.StartsWith("pid:",true) && data.player.Length() > 4) // Find by player ID, this is useful only if offline
         {
