@@ -1,4 +1,10 @@
-﻿*** 2008-09-27 by Kenny Graunke
+﻿*** 2008-09-27 by Stefano Angeleri
+- Fixed the character save function to save also the loc_instance which wasn't being done
+  moving the player to the first instance of the map even if they were in another one on
+  relogin
+- Now the question window when using the area target doesn't appear if no targets were found
+
+*** 2008-09-27 by Kenny Graunke
 - Reworked threading in server and npcclient.  The server has three threads:
   1. EventManager (the main thread where virtually everything is done)
   2. NetworkManager
@@ -12,7 +18,7 @@
 - Removed Sasha's experimental threaded DR code.
 
 *** 2008-09-27 by Stefano Angeleri
-- Added an warning window when using the area target: it will ask the user if he
+- Added a warning window when using the area target: it will ask the user if he
   really want to execute the command with the area target, providing also a list
   of the affected object names. If the command is confirmed it will be executed.
   Requested by Kerol.
