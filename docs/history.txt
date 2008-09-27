@@ -1,4 +1,7 @@
-﻿*** 2008-09-25 by Stefano Angeleri
+﻿*** 2008-09-27 by Kenny Graunke
+- Minor cleanup: removed ancient psSleep() code.  Use csSleep() instead.
+
+*** 2008-09-25 by Stefano Angeleri
 - Fixed a problem with the compiling guide which didn't update correctly when choosing things
   from the dropdown boxes
 - Added a /target_name command for gm1+ which will return the name of all targetted things

@@ -386,7 +386,7 @@ void NetManager::Run ()
     {
         if (!IsReady())
         {
-            psSleep(100);
+            csSleep(100);
             continue;
         }
 
