@@ -25,7 +25,6 @@
 #include "net/clientmsghandler.h"
 #include "authentclient.h"
 #include "net/connection.h"
-#include "util/sleep.h"
 #include "net/cmdhandler.h"
 #include "cmdusers.h"
 #include "cmdguilds.h"

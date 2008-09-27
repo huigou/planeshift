@@ -30,7 +30,6 @@
 //=============================================================================
 // Project Space Includes
 //=============================================================================
-#include "util/sleep.h"
 #include "util/log.h"
 #include "util/serverconsole.h"
 #include "util/eventmanager.h"
