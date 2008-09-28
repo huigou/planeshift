@@ -643,7 +643,8 @@ csRef<iDocumentNode> PawsEditorApp::ParseWidgetFile_mod( const char* widgetFile 
     buff.ReplaceAll("factory=\"pawsInventoryDollView\"", "factory=\"peEditableWidget\""); 
     buff.ReplaceAll("factory=\"pawsSlot\"", "factory=\"peEditableWidget\""); 
     
-    printf("string =>\n %s\n---------------------\nCUT HERE\n", buff.GetData());
+    //This is for debug purposes
+    //printf("string =>\n %s\n---------------------\nCUT HERE\n", buff.GetData());
     csRef<iDocument> doc = ParseString(buff);
     
     if (!doc)

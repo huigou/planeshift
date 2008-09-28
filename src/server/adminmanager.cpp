@@ -104,7 +104,8 @@ class AreaTargetConfirm : public PendingQuestion
             this->player = in_player;
         }
             
-        virtual void HandleAnswer(const csString & answer) //handles the user choice
+        /// Handles the user choice
+        virtual void HandleAnswer(const csString & answer) 
         {
             if (answer != "yes") //if we haven't got a confirm just get out of here
                 return;
@@ -115,6 +116,13 @@ class AreaTargetConfirm : public PendingQuestion
             while (it.HasNext())
             {
                 csString cur_player = it.Next(); //get the data about the specific entity on this iteration
+
+                gemObject * targetobject = psserver->GetAdminManager()->FindObjectByString(cur_player,client->GetActor());
+                if(targetobject == client->GetActor())
+                {
+                    continue;
+                }
+
                 csString cur_command = command;  //get the original command inside a variable where we will change it according to cur_player
                 cur_command.ReplaceAll(player.GetData(), cur_player.GetData()); //replace the area command with the eid got from the iteration
                 psAdminCmdMessage cmd(cur_command.GetData(),client->GetClientNum()); //prepare the new message
@@ -123,9 +131,9 @@ class AreaTargetConfirm : public PendingQuestion
         }
         
     protected:
-        csString command;   //the complete command sent from the client
-        Client *client;     //originating client
-        csString player;    //normally this should be the area:x:x command
+        csString command;   ///< The complete command sent from the client originally (without any modification)
+        Client *client;     ///< Originating client of the command
+        csString player;    ///< Normally this should be the area:x:x command extrapolated from the original command
 };
 
 AdminManager::AdminManager()
@@ -1101,7 +1109,7 @@ void AdminManager::HandleAdminCmdMessage(MsgEntry *me, psAdminCmdMessage &msg, A
                 {
                     csString player = it.Next();
                     targetobject = FindObjectByString(player,client->GetActor()); //search for the entity in order to work on it
-                    if(targetobject) //just to be sure
+                    if(targetobject && targetobject != client->GetActor()) //just to be sure
                     {
                         question += targetobject->GetName(); //get the name of the target in order to show it nicely
                         question += '\n';
@@ -1283,7 +1291,7 @@ void AdminManager::HandleAdminCmdMessage(MsgEntry *me, psAdminCmdMessage &msg, A
     }
     else if (data.command == "/changename" )
     {
-        ChangeName( me, msg, data, client, targetobject, duplicateActor );
+        ChangeName( me, msg, data, targetobject, duplicateActor, client);
     }
     else if (data.command == "/changeguildname")
     {
@@ -1375,7 +1383,7 @@ void AdminManager::HandleAdminCmdMessage(MsgEntry *me, psAdminCmdMessage &msg, A
     }
     else if (data.command == "/marriageinfo")
     {
-        ViewMarriage(me, data, targetclient, duplicateActor);
+        ViewMarriage(me, data, duplicateActor, targetclient);
     }
     else if (data.command == "/path")
     {
@@ -1427,7 +1435,7 @@ void AdminManager::HandleAdminCmdMessage(MsgEntry *me, psAdminCmdMessage &msg, A
     }
     else if (data.command == "/target_name")
     {
-        CheckTarget(msg, data, client, targetobject);
+        CheckTarget(msg, data, targetobject, client);
     }
 }
 
@@ -2253,7 +2261,7 @@ void AdminManager::Divorce(MsgEntry* me, AdminCmdData& data)
     Debug3(LOG_MARRIAGE, me->clientnum, "%s divorced from %s.", data.player.GetData(), spouseName.GetData());
 }
 
-void AdminManager::ViewMarriage(MsgEntry* me, AdminCmdData& data, Client *player, bool duplicateActor)
+void AdminManager::ViewMarriage(MsgEntry* me, AdminCmdData& data, bool duplicateActor, Client *player)
 {
     if (!data.player.Length() && !player)
     {
@@ -5228,9 +5236,7 @@ void AdminManager::DeleteCharacter(MsgEntry* me, psAdminCmdMessage& msg, AdminCm
     }
 }
 
-
-
-void AdminManager::ChangeName(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data,Client *client, gemObject *targetobject, bool duplicateActor)
+void AdminManager::ChangeName(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data, gemObject *targetobject, bool duplicateActor, Client *client)
 {
     unsigned int pid = 0; //used only if offline
     Client *target = NULL;
@@ -7649,13 +7655,13 @@ void AdminManager::HandleListWarnings(psAdminCmdMessage& msg, AdminCmdData& data
         psserver->SendSystemError(client->GetClientNum(), "Target wasn't found.");
 }
 
-void AdminManager::CheckTarget(psAdminCmdMessage& msg, AdminCmdData& data, Client *client, gemObject* object )
+void AdminManager::CheckTarget(psAdminCmdMessage& msg, AdminCmdData& data, gemObject* targetobject, Client *client )
 {
-    if ((!data.player || !data.player.Length()) && !object)
+    if ((!data.player || !data.player.Length()) && !targetobject)
     {
         psserver->SendSystemInfo(client->GetClientNum(),"Syntax: \"/target_name [me/target/eid/pid/area/name]\"");
         return;
     }
-    if(object) //just to be sure
-        psserver->SendSystemInfo(client->GetClientNum(),"Targeted: %s", object->GetName());
+    if(targetobject) //just to be sure
+        psserver->SendSystemInfo(client->GetClientNum(),"Targeted: %s", targetobject->GetName());
 }
