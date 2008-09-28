@@ -1239,7 +1239,7 @@ void AdminManager::HandleAdminCmdMessage(MsgEntry *me, psAdminCmdMessage &msg, A
     }
     else if (data.command == "/charlist")
     {
-        GetSiblingChars(me,msg,data,client,targetobject, duplicateActor);
+        GetSiblingChars(me,msg,data, targetobject, duplicateActor, client);
     }
     else if (data.command == "/crystal")
     {
@@ -1506,7 +1506,7 @@ gemObject* AdminManager::FindObjectByString(const csString& str, gemActor * me) 
     return found;
 }
 
-void AdminManager::GetSiblingChars(MsgEntry* me,psAdminCmdMessage& msg, AdminCmdData& data,Client *client, gemObject *targetobject, bool duplicateActor)
+void AdminManager::GetSiblingChars(MsgEntry* me,psAdminCmdMessage& msg, AdminCmdData& data, gemObject *targetobject, bool duplicateActor, Client *client)
 {
     if ((!data.player || !data.player.Length()) && !targetobject)
     {
