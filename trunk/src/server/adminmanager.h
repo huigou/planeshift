@@ -55,7 +55,7 @@ class psPathNetwork;
 class psPath;
 class Waypoint;
 
-// List of GM levels and their security level.
+/// List of GM levels and their security level.
 enum GM_LEVEL
 {
     GM_DEVELOPER = 30,
@@ -122,7 +122,7 @@ protected:
         csString wp1, wp2;
         csString gmeventName, gmeventDesc;
         csString zombie, requestor;
-        csString type,name; // Used by: /location
+        csString type,name; ///< Used by: /location
 
         int value, interval, random;
         int rainDrops, density, fade;
@@ -143,13 +143,21 @@ protected:
     void HandlePetitionMessage(MsgEntry *pMsg, psPetitionRequestMessage& msg, Client *client);
     void HandleGMGuiMessage(MsgEntry *pMsg, psGMGuiMessage& msg, Client *client);
 
-    /** Handles a request to reload a quest from the database.
+    /** @brief Handles a request to reload a quest from the database.
      *  @param msg The text name is in the msg.text field.
      *  @param client The client we will send error codes back to.
      */
     void HandleLoadQuest(psAdminCmdMessage& msg, AdminCmdData& data, Client* client);
 
-    void GetSiblingChars(MsgEntry* me,psAdminCmdMessage& msg, AdminCmdData& data,Client *client, gemObject *targetobject, bool duplicateActor);
+    /** @brief Get the list of characters in the same account of the provided one.
+     *  @param me Thviewmae incomming message from the GM
+     *  @param msg The cracked command message.
+     *  @param targetobject A pointer to the targetted object for direct access
+     *  @param duplicateActor If it the provided target is ambiguous this will be true
+     *  @param client The GM client the command came from.
+     */
+    void GetSiblingChars(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data, gemObject *targetobject, bool duplicateActor, Client *client);
+
     void GetInfo(MsgEntry* me,psAdminCmdMessage& msg, AdminCmdData& data,Client *client, gemObject* target);
     void CreateNPC(MsgEntry *me,psAdminCmdMessage& msg, AdminCmdData& data, Client *client, gemActor* basis);
     void KillNPC(MsgEntry *me, psAdminCmdMessage& msg, AdminCmdData& data, Client *client);
@@ -171,6 +179,7 @@ protected:
     void Slide(MsgEntry* me,psAdminCmdMessage& msg, AdminCmdData& data, Client *client, gemObject *target);
 
     void Teleport(MsgEntry* me,psAdminCmdMessage& msg, AdminCmdData& data, Client *client, gemObject *subject);
+
     /** Get sector and coordinates of target of teleportation described by 'msg'.
         Return success */
     bool GetTargetOfTeleport(Client *client, psAdminCmdMessage& msg, AdminCmdData& data, iSector * & targetSector,  csVector3 & targetPoint, float &yRot, gemObject *subject, INSTANCE_ID &instance);
@@ -188,9 +197,10 @@ protected:
      */
     void KickPlayer(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data, Client *client, Client *target);
 
-    //This function will mute a player until logoff
+    ///This function will mute a player until logoff
     void MutePlayer(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data, Client *client, Client *target);
-    //This function will unmute a player
+
+    ///This function will unmute a player
     void UnmutePlayer(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data, Client *client, Client *target);
 
     /// Kills by doing a large amount of damage to target.
@@ -208,8 +218,13 @@ protected:
     /// Divorce char1 and char2, if they're married.
     void Divorce(MsgEntry* me, AdminCmdData& data);
 
-    /// Get the marriage info of a player.
-    void ViewMarriage(MsgEntry* me, AdminCmdData& data, Client *player, bool duplicateActor);
+    /** @brief Get the marriage info of a player.
+     *  @param me The incomming message from the GM
+     *  @param msg The cracked command message.
+     *  @param duplicateActor If it the provided target is ambiguous this will be true
+     *  @param client The client of the targeted player
+     */
+    void ViewMarriage(MsgEntry* me, AdminCmdData& data, bool duplicateActor, Client *player);
 
     /// Add new Path point to DB
     int PathPointCreate(int pathID, int prevPointId, csVector3& pos, csString& sectorName);
@@ -249,8 +264,14 @@ protected:
 
     void SendGMPlayerList(MsgEntry* me, psGMGuiMessage& msg, Client *client);
 
-
-    void ChangeName(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data, Client *client, gemObject *targetobject, bool duplicateActor);
+    /** @brief Changes the name of the player to the specified one.
+     *  @param me The incomming message from the GM
+     *  @param msg The cracked command message.
+     *  @param targetobject A pointer to the targetted object for direct access
+     *  @param duplicateActor If it the provided target is ambiguous this will be true
+     *  @param client The GM client the command came from.
+     */
+    void ChangeName(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data, gemObject *targetobject, bool duplicateActor, Client *client);
 
     /// Handles a change to set the NPC's default spawn location.
     void UpdateRespawn(Client* client, gemActor* target);
@@ -262,14 +283,16 @@ protected:
     void Thunder(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data, Client *client);
     void Fog(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data, Client *client);
 
-    /** Deletes a character from the database.  Should be used with caution.
+    /** @brief Deletes a character from the database.
+      * 
+      * Should be used with caution.
       * This function will also send out reasons why a delete failed. Possible
       * reasons are not found or the requester is not the same account as the
       * one to delete.  Also if the character is a guild leader they must resign
       * first and assign a new leader.
       *
       * @param me The incomming message from the GM
-      * @param mesg The cracked command message.
+      * @param msg The cracked command message.
       * @param client The GM client the command came from.
       */
     void DeleteCharacter( MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data, Client* client );
@@ -341,80 +364,86 @@ protected:
     /// List warnings given to account
     void HandleListWarnings(psAdminCmdMessage& msg, AdminCmdData& data, Client *client, gemObject* object );
     
-    /// Returns what the target used in command will afflict in the game
-    void CheckTarget(psAdminCmdMessage& msg, AdminCmdData& data, Client *client, gemObject* object );
+    /** @brief Shows what the target used in command will afflict in the game
+     *  @param msg The cracked command message.
+     *  @param targetobject A pointer to the targetted object for direct access
+     *  @param client The GM client the command came from.
+     */
+    void CheckTarget(psAdminCmdMessage& msg, AdminCmdData& data, gemObject* targetobject , Client *client);
 
-    /** Adds a petition under the passed user's name to the 'petitions' table in the database
-     * Will automatically add the date and time of the petition's submission
-     * in the appropriate table columns
-     * @param playerName: Is the name of the player who is submitting the petition.
-     * @param petition: The player's request.
-     * @return Returns either success or failure.
+    /** @brief Adds a petition under the passed user's name to the 'petitions' table in the database.
+     * 
+     *  Will automatically add the date and time of the petition's submission
+     *  in the appropriate table columns
+     *  @param playerName: Is the name of the player who is submitting the petition.
+     *  @param petition: The player's request.
+     *  @return Returns either success or failure.
      */
     bool AddPetition(int playerID, const char* petition);
 
-    /** Returns a list of all the petitions for the specified player
-     * @param playerID: Is the ID of the player who is requesting the list.
-     *            if the ID is -1, that means a GM is requesting a complete listing
-     * @param gmID: Is the id of the GM who is requesting petitions, ignored if playerID != -1
-     * @param gmLevel: Is the security level of the GM who is requesting petitions, ignored if playerID != -1
-     * @return Returns a iResultSet which contains the set of all matching petitions for the user
+    /** @brief Returns a list of all the petitions for the specified player
+     *  @param playerID: Is the ID of the player who is requesting the list.
+     *                   if the ID is -1, that means a GM is requesting a complete listing
+     *  @param gmID: Is the id of the GM who is requesting petitions, ignored if playerID != -1
+     *  @param gmLevel: Is the security level of the GM who is requesting petitions, ignored if playerID != -1
+     *  @return Returns a iResultSet which contains the set of all matching petitions for the user
      */
     iResultSet *GetPetitions(int playerID, int gmID = -1, int gmLevel = -1);
 
-    /** Cancels the specified petition if the player was its creator
-     * @param playerID: Is the ID of the player who is requesting the change.
-     *            if ID is -1, that means a GM is cancelling someone's petition
-     * @param petitionID: The petition id
-     * @return Returns either success or failure.
+    /** @brief Cancels the specified petition if the player was its creator
+     *  @param playerID: Is the ID of the player who is requesting the change.
+     *                   if ID is -1, that means a GM is cancelling someone's petition
+     *  @param petitionID: The petition id
+     *  @return Returns either success or failure.
      */
     bool CancelPetition(int playerID, int petitionID);
 
-    /** Changes the description of the specified petition if the player was its creator
-     * @param playerID: Is the ID of the player who is requesting the change.
-     *            if ID is -1, that means a GM is changing someone's petition
-     * @param petitionID: The petition id
-     * @return Returns either success or failure.
+    /** @brief Changes the description of the specified petition if the player was its creator
+     *  @param playerID: Is the ID of the player who is requesting the change.
+     *                   if ID is -1, that means a GM is changing someone's petition
+     *  @param petitionID: The petition id
+     *  @return Returns either success or failure.
      */
     bool ChangePetition(int playerID, int petitionID, const char* petition);
 
-    /** Closes the specified petition (GM only)
-     * @param gmID: Is the ID of the GM who is requesting the close.
-     * @param petitionID: The petition id
-     * @param desc: the closing description
-     * @return Returns either success or failure.
+    /** @brief Closes the specified petition (GM only)
+     *  @param gmID: Is the ID of the GM who is requesting the close.
+     *  @param petitionID: The petition id
+     *  @param desc: the closing description
+     *  @return Returns either success or failure.
      */
     bool ClosePetition(int gmID, int petitionID, const char* desc);
 
-    /** Assignes the specified GM to the specified petition
-     * @param gmID: Is the ID of the GM who is requesting the assignment.
-     * @param petitionID: The petition id
-     * @return Returns either success or failure.
+    /** @brief Assignes the specified GM to the specified petition
+     *  @param gmID: Is the ID of the GM who is requesting the assignment.
+     *  @param petitionID: The petition id
+     *  @return Returns either success or failure.
      */
     bool AssignPetition(int gmID, int petitionID);
 
-    /** Escalates the level of the specified petition, changes
-     * the assigned_gm to -1, and the status to 'Open'
-     * @param gmID: Is the ID of the GM who is requesting the escalation.
-     * @param gmLevel: The security level of the gm
-     * @param petitionID: The petition id
-     * @return Returns either success or failure.
+    /** @brief Escalates the level of the specified petition.
+     * 
+     *  Changes the assigned_gm to -1, and the status to 'Open'
+     *  @param gmID: Is the ID of the GM who is requesting the escalation.
+     *  @param gmLevel: The security level of the gm
+     *  @param petitionID: The petition id
+     *  @return Returns either success or failure.
      */
     bool EscalatePetition(int gmID, int gmLevel, int petitionID);
     bool DescalatePetition(int gmID, int gmLevel, int petitionID);
 
-    /** logs all gm commands
-     * @param gmID: the ID of the GM
-     * @param playerID: the ID of the player
-     * @param cmd: the command the GM executed
-     * @return Returns either success or failure.
+    /** @brief logs all gm commands
+     *  @param gmID: the ID of the GM
+     *  @param playerID: the ID of the player
+     *  @param cmd: the command the GM executed
+     *  @return Returns either success or failure.
      */
     bool LogGMCommand(int gmID, int playerID, const char* cmd);
 
-    /** Returns the last error generated by SQL
+    /** @brief Returns the last error generated by SQL
      *
-     * @return Returns a string that describes the last sql error.
-     * @see iConnection::GetLastError()
+     *  @return Returns a string that describes the last sql error.
+     *  @see iConnection::GetLastError()
      */
     const char* GetLastSQLError ();
 
