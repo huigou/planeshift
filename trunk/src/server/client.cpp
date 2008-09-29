@@ -506,7 +506,7 @@ bool Client::CanTake(psItem* item)
         return false;
 
     // Check for npc-owned container
-    if (item->GetContainerID() && GetSecurityLevel() < 22)
+    if (item->GetContainerID() && GetSecurityLevel() < GM_LEVEL_2)
     {
         gemObject *gemcont = GEMSupervisor::GetSingleton().FindItemEntity(item->GetContainerID());
         if (gemcont)
@@ -527,7 +527,7 @@ bool Client::CanTake(psItem* item)
         {
             if (gemitem->GetItem()->GetIsLocked())
             {
-                psserver->SendSystemError(GetClientNum(), "You cannot take the item from a locked container");
+                psserver->SendSystemError(GetClientNum(), "You cannot take an item from a locked container!");
                 return false;
             }
         }

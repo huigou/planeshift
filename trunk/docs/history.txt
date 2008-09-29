@@ -4,6 +4,7 @@
 - Various cleanups and code coherency fixes in adminmanager, additionally fixed
   various comments to be doxygen compatible and added some missing comments
 - Removed some debug output from the pawseditor
+- Fixed FS#782 - adding items to a locked container - patch by Peeg
 
 *** 2008-09-27 by Stefano Angeleri
 - Fixed the character save function to save also the loc_instance which wasn't being done
