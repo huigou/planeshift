@@ -468,6 +468,12 @@ void SlotManager::MoveFromInventory(psSlotMovementMsg& msg, Client *fromClient)
                     "You are not in range to use %s.",worldContainer->GetItem()->GetName());
                 return;
             }
+            // don't allow players to put an item from in locked container
+            if (parentItem->GetIsLocked() && fromClient->GetSecurityLevel() < GM_LEVEL_2)
+            {
+                psserver->SendSystemError(fromClient->GetClientNum(), "You cannot put an item in a locked container!");
+                return;
+            }
 
             // Now take this out of inventory and put in container
             if (worldContainer->CanAdd(msg.stackCount, itemProposed, msg.toSlot))

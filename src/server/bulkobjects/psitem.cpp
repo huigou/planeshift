@@ -44,6 +44,7 @@
 #include "../psserverchar.h"
 #include "../progressionmanager.h"
 #include "../globals.h"
+#include "../adminmanager.h"
 
 //=============================================================================
 // Local Includes
@@ -2529,7 +2530,7 @@ bool psItem::SendItemDescription( Client *client)
 
 bool psItem::SendContainerContents(Client *client, int containerID)
 {
-    if (GetIsLocked())
+    if (GetIsLocked() && client->GetSecurityLevel() < GM_LEVEL_2)
         return SendItemDescription(client);
 
     csString desc( GetDescription() );
