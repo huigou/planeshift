@@ -355,9 +355,9 @@ Requests a tip from the server.</topic>
 Commands available to game master level characters.  Note that this is a full list of abilities, and not all access groups have everything listed here.
         <branch name="General Syntax">
 Commands which act on a target all use the same system.  A number of keywords and features are available to make specifying the target easier and more flexible.
-            <topic name="area">area syntax: 'area:[type]:[range]'
+            <topic name="area">area syntax: 'area:[type]:range'
 
-Used run a command on all entities of a specific type within a range. (crosses portals; range includes yourself) Available types are players (default), actors, npcs, items, and entities. (no spaces before/after colons) Note that this is a very powerful feature; be careful! Examples: "/info area:entities:30" lists info on everything within 30m, "/modify area:items:10 remove" deletes all litter within 10m, "/teleport area:players:5 hydlaa_plaza" teleports you and all players within 5m to the plaza</topic>
+Used run a command on all entities of a specific type within a range. (crosses portals; range doesn't include yourself) Available types are players (default), actors, npcs, items, and entities. (no spaces before/after colons) Note that this is a very powerful feature; be careful! Examples: "/info area:entities:30" lists info on everything within 30m, "/modify area:items:10 remove" deletes all litter within 10m, "/teleport area:players:5 hydlaa_plaza" teleports you and all players within 5m to the plaza</topic>
             <topic name="here">keyword 'here'
 
 Used to specify your current sector for sector based commands. Also may be used as a destination for /teleport to indicate your exact location. Examples: "/thunder here", "/teleport target here"</topic>
