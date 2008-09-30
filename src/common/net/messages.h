@@ -43,7 +43,7 @@ class psLinearMovement;
 
 // This holds the version number of the network code, remember to increase
 // this each time you do an update which breaks compatibility
-#define PS_NETVERSION   0x0090
+#define PS_NETVERSION   0x0091
 // Remember to bump the version in pscssetup.h, as well.
 
 // NPC Networking version is separate so we don't have to break compatibility
@@ -1030,7 +1030,9 @@ public:
                    SET_LEVEL_RIGHT,            // clients changes right for guild level
 
                    SET_MEMBER_POINTS,
-                   SET_MEMBER_PUBLIC_NOTES, SET_MEMBER_PRIVATE_NOTES };
+                   SET_MEMBER_PUBLIC_NOTES, SET_MEMBER_PRIVATE_NOTES,
+                   
+                   SET_GUILD_NOTIFICATION};
 
     /** Constuct a new equipment message to go on the network.
      * This will build any of the GUI exchange message needed in

@@ -50,13 +50,14 @@
 #define BTN_PERMISSIONS_TAB    200
 #define BTN_MEMBER_TAB         201
 #define BTN_ALLIANCE_TAB       202
-#define BTN_SETTINGS_Tab       203
+#define BTN_SETTINGS_TAB       203
 
 // Control ID definitions
 #define EDIT_GUILD_NAME     1001
 #define CHECK_GUILD_SECRET  1002
 #define CHECK_ONLINE_ONLY   1003
 #define EDIT_GUILD_WEB_PAGE 1004
+#define CHECK_GUILD_NOTIFY  1005
 
 #define REMOVE_MEMBER_BUTTON 300
 #define EDIT_LEVEL_BUTTON 301
@@ -89,10 +90,6 @@
 // Each name of level in listbox of levels is clickable button, and this is ID of the first of them:
 // Other levels have 401, 402, 403, ....
 #define LEVEL_NAME_BUTTON  400
-
-
-
-
 
 int textBoxSortFunc_Level(pawsWidget * widgetA, pawsWidget * widgetB)
 {
@@ -236,6 +233,11 @@ bool pawsGuildWindow::PostSetup()
     if (!onlineOnly)
         return false;
     onlineOnly->SetState(true);
+    
+    guildNotifications = dynamic_cast<pawsCheckBox*>(FindWidget("MemberNotifications"));
+    if (!onlineOnly)
+        return false;
+    guildNotifications->SetState(true);
 
     allianceMemberList = dynamic_cast<pawsListBox*>(FindWidget("AllianceMemberList"));
     if (!allianceMemberList)
@@ -439,7 +441,11 @@ void pawsGuildWindow::HandleMemberData( csString& openString )
     
     csRef<iDocumentNode> playerNode = root->GetNode("playerinfo");
     if (playerNode)
+    {
         char_id = playerNode->GetAttributeValueAsInt("char_id");
+        if(guildNotifications)
+            guildNotifications->SetState(playerNode->GetAttributeValueAsBool("guildnotifications"));
+    }
     else
     {
         Error2("No <playerinfo> tag in %s", openString.GetData());
@@ -723,7 +729,7 @@ bool pawsGuildWindow::OnButtonPressed( int mouseButton, int keyModifier, pawsWid
             retVal = true;                                               
             break;
         }
-        case BTN_SETTINGS_Tab:
+        case BTN_SETTINGS_TAB:
         {
             currentPanel->Hide();
             currentTab->SetState(false);
@@ -750,6 +756,16 @@ bool pawsGuildWindow::OnButtonPressed( int mouseButton, int keyModifier, pawsWid
             csString command;
             command.Format("<r onlineonly=\"%s\"/>", onlineOnly->GetState() ? "yes":"no");
             psGUIGuildMessage msg(psGUIGuildMessage::SET_ONLINE, command);
+            msgHandler->SendMessage(msg.msg);
+            retVal = true;                                                           
+            break;
+        }
+        
+        case CHECK_GUILD_NOTIFY:
+        {
+            csString command;
+            command.Format("<r guildnotifications=\"%s\"/>", guildNotifications->GetState() ? "yes":"no");
+            psGUIGuildMessage msg(psGUIGuildMessage::SET_GUILD_NOTIFICATION, command);
             msgHandler->SendMessage(msg.msg);
             retVal = true;                                                           
             break;

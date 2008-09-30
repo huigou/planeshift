@@ -1289,15 +1289,47 @@ void UserManager::NotifyBuddies(Client * client, bool logged_in)
 
             if (logged_in)
             {
-                psserver->SendSystemInfo(buddy->GetClientNum(),"%s just joined PlaneShift",client->GetName());
+                psserver->SendSystemInfo(buddy->GetClientNum(),"%s just joined PlaneShift",name.GetData());
             }
             else
             {
-                psserver->SendSystemInfo(buddy->GetClientNum(),"%s has quit",client->GetName());
+                psserver->SendSystemInfo(buddy->GetClientNum(),"%s has quit",name.GetData());
             }
         }
     }
 }
+
+void UserManager::NotifyGuildBuddies(Client * client, bool logged_in)
+{
+    csString name (client->GetName());
+    unsigned int char_id = client->GetCharacterData()->characterid;
+    psGuildInfo * charGuild = client->GetCharacterData()->GetGuild();
+    if(charGuild)
+    {
+        for(size_t i = 0; i < charGuild->members.GetSize(); i++)
+        {
+            psCharacter *notifiedmember = charGuild->members[i]->actor;
+            gemActor *notifiedactor = notifiedmember? notifiedmember->GetActor() : NULL;
+            
+            if(notifiedactor && notifiedmember && (charGuild->members[i]->char_id != char_id))
+            {
+                if(notifiedmember->IsGettingGuildNotifications())
+                {
+                    csString text;
+                    if (logged_in)
+                        text.Format("/me just joined PlaneShift");
+                    else
+                        text.Format("/me has quit");
+
+                    psChatMessage guildmsg(notifiedactor->GetClientID(),name.GetData(),0,text,CHAT_GUILD, false);
+                    guildmsg.SendMessage();
+                }
+            }
+        }
+    }
+}
+
+
 
 void UserManager::RollDice(psUserCmdMessage& msg,Client *client,int clientnum)
 {

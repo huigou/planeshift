@@ -961,6 +961,17 @@ INSERT INTO command_group_assignment VALUES( "command area", 23 );
 INSERT INTO command_group_assignment VALUES( "command area", 22 );
 UPDATE `server_options` SET `option_value`='1194' WHERE `option_name`='db_version';
 
+#### 1195 - Stefano Angeleri - adding /target_name command and notifications on join/part of guild members from game
+
+INSERT INTO command_group_assignment VALUES( "/target_name", 30 );
+INSERT INTO command_group_assignment VALUES( "/target_name", 25 );
+INSERT INTO command_group_assignment VALUES( "/target_name", 24 );
+INSERT INTO command_group_assignment VALUES( "/target_name", 23 );
+INSERT INTO command_group_assignment VALUES( "/target_name", 22 );
+INSERT INTO command_group_assignment VALUES( "/target_name", 21 );
+ALTER TABLE `characters` ADD `guild_notifications` TINYINT( 1 ) UNSIGNED NOT NULL DEFAULT '0' AFTER `guild_private_notes` ;
+UPDATE `server_options` SET `option_value`='1195' WHERE `option_name`='db_version';
+
 # Insert your upgrade before this line. Remember when you set a new db_version
 # to update the server_options.sql file and update psserver.cpp as well.
 # This to ensure that everything is working if you use the create_all.sql to

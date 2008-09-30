@@ -49,8 +49,8 @@ e.custom(start,val,"");}});return true;});},queue:function(type,fn){if(jQuery.is
     var csWinLibsVersionStab = "1.3_004"; // cs win32 libs version.
     var csWinLibsVersion = "1.3_004"; // cs win32 libs version.
     //Update date and author, to be changed everytime and updates occurred
-    var UpdateDate = "24 Sep 2008"; //Date when the update occurred
-    var UpdateAuthor = "Gothi[c]"; //Author of the update
+    var UpdateDate = "30 Sep 2008"; //Date when the update occurred
+    var UpdateAuthor = "Caarrie"; //Author of the update
 -->
 </script>
 
@@ -432,7 +432,7 @@ $(document).ready(function(){
     however this guide will assume you use: 
 
 <div class="Linux">
-    <p><i class="command">/home/user/development/</i></p>
+    <p><i class="command">$HOME/development/</i></p>
     Many people get confused here because they copy and paste commands which contain this path. User generally refers to your username.  The above path is only useable if you create it manually.  
 </div>
 <div class="Windows">
@@ -908,27 +908,27 @@ here.</a></div>
     This needs to be built/installed first because when we configure Crystal Space it has to find the cal3d libraries
     so it can know to build the sprcal3d plugin.  Cal3D doesn't change much, so just download latest stable or checkout latest from svn:</p>
     <p><a href="http://home.gna.org/cal3d/">Cal3D Home</a></p>
-    <p><i class="command">/home/user/development$ svn co -r CAL3D_SOURCE_REV svn://svn.gna.org/svn/cal3d/trunk/cal3d cal3d</i></p>
+    <p><i class="command">$HOME/development$ svn co -r CAL3D_SOURCE_REV svn://svn.gna.org/svn/cal3d/trunk/cal3d cal3d</i></p>
 
     <p>In case of a slow download use the following command:</p> 
-    <p><i class="command">/home/user/development$ svn co -r CAL3D_SOURCE_REV http://svn.gna.org/svn/cal3d/trunk/cal3d cal3d</i></p> 
+    <p><i class="command">$HOME/development$ svn co -r CAL3D_SOURCE_REV http://svn.gna.org/svn/cal3d/trunk/cal3d cal3d</i></p> 
 
     <h3>Crystal Space (CS)</h3>
     <p>Crystal Space 3D SDK is the engine that we use for rendering and sound.</p>
     <div class="User">
-    <p><i class="command">/home/user/development$ svn co -r CS_SOURCE_REV https://crystal.svn.sourceforge.net/svnroot/crystal/CS/branches/release/V1.4 cs</i></p>
+    <p><i class="command">$HOME/development$ svn co -r CS_SOURCE_REV https://crystal.svn.sourceforge.net/svnroot/crystal/CS/branches/release/V1.4 cs</i></p>
     </div>
     <div class="Developer">
-    <p><i class="command">/home/user/development$ svn co -r CS_SOURCE_REV_HEAD https://crystal.svn.sourceforge.net/svnroot/crystal/CS/branches/release/V1.4 cs</i></p>
+    <p><i class="command">$HOME/development$ svn co -r CS_SOURCE_REV_HEAD https://crystal.svn.sourceforge.net/svnroot/crystal/CS/branches/release/V1.4 cs</i></p>
     </div>
 
     <h3>PlaneShift</h3>
     <p>Lastly, download our source:</p>
     <div class="User">
-    <p><i class="command">/home/user/development$ svn co https://planeshift.svn.sourceforge.net/svnroot/planeshift/stable planeshift</i></p>
+    <p><i class="command">$HOME/development$ svn co https://planeshift.svn.sourceforge.net/svnroot/planeshift/stable planeshift</i></p>
     </div>
     <div class="Developer">
-    <p><i class="command">/home/user/development$ svn co https://planeshift.svn.sourceforge.net/svnroot/planeshift/trunk planeshift</i></p>
+    <p><i class="command">$HOME/development$ svn co https://planeshift.svn.sourceforge.net/svnroot/planeshift/trunk planeshift</i></p>
     </div>
 
 
@@ -938,24 +938,24 @@ here.</a></div>
 
     If you want to update to a new revision replace REVISON with the number of the revision you want to use:
     <p><div class="commandBox">
-	/home/user/development/cal3d$ svn update -r REVISION<br>
-        /home/user/development/cs$ svn update -r REVISION<br>
+	$HOME/development/cal3d$ svn update -r REVISION<br>
+        $HOME/development/cs$ svn update -r REVISION<br>
     </div></p>
 	<p>Unlike the supporting libraries, you will generally want to use the latest PlaneShift source (or the HEAD) rather than an intermediate revision.  In this case, you will omit the "-r" option like so:
 	<div class="commandBox">
-	/home/user/development/planeshift$ svn update
+	$HOME/development/planeshift$ svn update
 	</div></p><br>
     If, for some reason, you wish to update any of the supporting libraries to the latest version (i.e. the HEAD), you have to remove the sticky date tag. WE DO NOT RECOMMEND THIS as it may break your build:
     <p><div class="commandBox">
-	/home/user/development/cal3d$ svn update -r HEAD<br>
-        /home/user/development/cs$ svn update -r HEAD<br>
+	$HOME/development/cal3d$ svn update -r HEAD<br>
+        $HOME/development/cs$ svn update -r HEAD<br>
     </div></p>
 
 
 If you update a repository, you will need to recompile that repository and each repository that depends on it. Before doing so, you should do a "jam clean" for each project you want to jam again. So, for example, if you want to rebuild PS you will do:
     <p><div class="commandBox">
-        /home/user/development/planeshift$ jam clean<br>
-        /home/user/development/planeshift$ jam -aq
+        $HOME/development/planeshift$ jam clean<br>
+        $HOME/development/planeshift$ jam -aq
     </div></p>
 </div>
 <div class="Windows">
@@ -1135,10 +1135,10 @@ If you update a repository, you will need to recompile that repository and each 
 sed 's/AM_USE_UNITTESTCPP/# AM_USE_UNITTESTCPP/' configure-old.in > configure.in</div></p>
 <p> Then you can build cal3d </p>
         <p><div class="commandBox">
-            /home/user/development/cal3d$ autoreconf --install --force<br>
-            /home/user/development/cal3d$ ./configure --prefix=/home/user/development/cal3d<br>
-            /home/user/development/cal3d$ make<br>
-            /home/user/development/cal3d$ make install
+            $HOME/development/cal3d$ autoreconf --install --force<br>
+            $HOME/development/cal3d$ ./configure --prefix=$HOME/development/cal3d<br>
+            $HOME/development/cal3d$ make<br>
+            $HOME/development/cal3d$ make install
         </div></p></div>
 	<div class="linux-Debian" >
 	Using a text editor open configure.in and remove the line 
@@ -1150,10 +1150,10 @@ sed 's/AM_USE_UNITTESTCPP/# AM_USE_UNITTESTCPP/' configure-old.in > configure.in
 sed 's/AM_USE_UNITTESTCPP/# AM_USE_UNITTESTCPP/' configure-old.in > configure.in</div></p>
 <p> Then you can build cal3d </p>
         <p><div class="commandBox">
-            /home/user/development/cal3d$ autoreconf --install --force<br>
-            /home/user/development/cal3d$ ./configure --prefix=/home/user/development/cal3d<br>
-            /home/user/development/cal3d$ make<br>
-            /home/user/development/cal3d$ make install
+            $HOME/development/cal3d$ autoreconf --install --force<br>
+            $HOME/development/cal3d$ ./configure --prefix=$HOME/development/cal3d<br>
+            $HOME/development/cal3d$ make<br>
+            $HOME/development/cal3d$ make install
         </div></p></div>
 	<div class="linux-Gentoo" >
 	Using a text editor open configure.in and remove the line 
@@ -1165,10 +1165,10 @@ sed 's/AM_USE_UNITTESTCPP/# AM_USE_UNITTESTCPP/' configure-old.in > configure.in
 sed 's/AM_USE_UNITTESTCPP/# AM_USE_UNITTESTCPP/' configure-old.in > configure.in</div></p>
 <p> Then you can build cal3d </p>
         <p><div class="commandBox">
-            /home/user/development/cal3d$ autoreconf --install --force<br>
-            /home/user/development/cal3d$ ./configure --prefix=/home/user/development/cal3d<br>
-            /home/user/development/cal3d$ make<br>
-            /home/user/development/cal3d$ make install
+            $HOME/development/cal3d$ autoreconf --install --force<br>
+            $HOME/development/cal3d$ ./configure --prefix=$HOME/development/cal3d<br>
+            $HOME/development/cal3d$ make<br>
+            $HOME/development/cal3d$ make install
         </div></p></div>
 	<div class="linux-Slackware" >
 	Using a text editor open configure.in and remove the line 
@@ -1180,10 +1180,10 @@ sed 's/AM_USE_UNITTESTCPP/# AM_USE_UNITTESTCPP/' configure-old.in > configure.in
 sed 's/AM_USE_UNITTESTCPP/# AM_USE_UNITTESTCPP/' configure-old.in > configure.in</div></p>
 <p> Then you can build cal3d </p>
         <p><div class="commandBox">
-            /home/user/development/cal3d$ autoreconf --install --force<br>
-            /home/user/development/cal3d$ ./configure --prefix=/home/user/development/cal3d<br>
-            /home/user/development/cal3d$ make<br>
-            /home/user/development/cal3d$ make install
+            $HOME/development/cal3d$ autoreconf --install --force<br>
+            $HOME/development/cal3d$ ./configure --prefix=$HOME/development/cal3d<br>
+            $HOME/development/cal3d$ make<br>
+            $HOME/development/cal3d$ make install
         </div></p></div>
 	<div class="linux-Ubuntu" >
 	Using a text editor open configure.in and remove the line 
@@ -1195,13 +1195,13 @@ sed 's/AM_USE_UNITTESTCPP/# AM_USE_UNITTESTCPP/' configure-old.in > configure.in
 sed 's/AM_USE_UNITTESTCPP/# AM_USE_UNITTESTCPP/' configure-old.in > configure.in</div></p>
 <p> Then you can build cal3d </p>
         <p><div class="commandBox">
-            /home/user/development/cal3d$ autoreconf --install --force<br>
-            /home/user/development/cal3d$ ./configure --prefix=/home/user/development/cal3d<br>
-            /home/user/development/cal3d$ make<br>
-            /home/user/development/cal3d$ make install
+            $HOME/development/cal3d$ autoreconf --install --force<br>
+            $HOME/development/cal3d$ ./configure --prefix=$HOME/development/cal3d<br>
+            $HOME/development/cal3d$ make<br>
+            $HOME/development/cal3d$ make install
         </div></p></div>
         Because we did not install cal3d we need to make sure other things can find it. This is done using the LD_LIBRARY_PATH:
-        <p><i class="command">export LD_LIBRARY_PATH=/home/user/development/cal3d/src/cal3d/.libs/:$LD_LIBRARY_PATH</i></p>
+        <p><i class="command">export LD_LIBRARY_PATH=$HOME/development/cal3d/src/cal3d/.libs/:$LD_LIBRARY_PATH</i></p>
 </div></div></div>
      <div class="Linux">    
         <h3>Crystal Space (CS)</h3>
@@ -1209,91 +1209,91 @@ sed 's/AM_USE_UNITTESTCPP/# AM_USE_UNITTESTCPP/' configure-old.in > configure.in
         To do this, use the prefix line that was used for Cal3d above.</p></div>
 	<div class="Linux-Generic" >           
            <div class="User"><div class="commandBox">
-            /home/user/development/cs$ ./configure --without-java --without-perl --without-python --without-lib3ds --with-cal3d=/home/user/development/cal3d</div></div><br>
+            $HOME/development/cs$ ./configure --without-java --without-perl --without-python --without-lib3ds --with-cal3d=$HOME/development/cal3d</div></div><br>
            <div class="Developer"><div class="commandBox">
-            /home/user/development/cs$ ./configure --enable-debug --without-java --without-perl --without-python --without-lib3ds --with-cal3d=/home/user/development/cal3d</div></div><br>
+            $HOME/development/cs$ ./configure --enable-debug --without-java --without-perl --without-python --without-lib3ds --with-cal3d=$HOME/development/cal3d</div></div><br>
            <div class="Normal"><i class="command">
-            /home/user/development/cs$ jam -aq libs plugins cs-config walktest</i></div><br>
+            $HOME/development/cs$ jam -aq libs plugins cs-config walktest</i></div><br>
            <div class="Static"><i class="command">
-            /home/user/development/cs$ jam -aq libs staticplugins cs-config walktest_static</i><br>
+            $HOME/development/cs$ jam -aq libs staticplugins cs-config walktest_static</i><br>
            </div></div> 
 	<div class="Linux-Debian" >           
             <div class="User"><div class="commandBox">
-            /home/user/development/cs$ ./configure --without-java --without-perl --without-python --without-lib3ds --with-cal3d=/home/user/development/cal3d</div></div><br>
+            $HOME/development/cs$ ./configure --without-java --without-perl --without-python --without-lib3ds --with-cal3d=$HOME/development/cal3d</div></div><br>
            <div class="Developer"><div class="commandBox">
-            /home/user/development/cs$ ./configure --enable-debug --without-java --without-perl --without-python --without-lib3ds --with-cal3d=/home/user/development/cal3d</div></div><br>
+            $HOME/development/cs$ ./configure --enable-debug --without-java --without-perl --without-python --without-lib3ds --with-cal3d=$HOME/development/cal3d</div></div><br>
            <div class="Normal"><i class="command">
-            /home/user/development/cs$ jam -aq libs plugins cs-config walktest</i></div><br>
+            $HOME/development/cs$ jam -aq libs plugins cs-config walktest</i></div><br>
            <div class="Static"><i class="command">
-            /home/user/development/cs$ jam -aq libs staticplugins cs-config walktest_static</i><br>
+            $HOME/development/cs$ jam -aq libs staticplugins cs-config walktest_static</i><br>
            </div></div> 
 	<div class="Linux-Gentoo" >           
             <div class="User"><div class="commandBox">
-            /home/user/development/cs$./configure --without-java --without-perl --without-python --without-lib3ds --with-cal3d=/home/user/development/cal3d</div></div><br>
+            $HOME/development/cs$./configure --without-java --without-perl --without-python --without-lib3ds --with-cal3d=$HOME/development/cal3d</div></div><br>
            <div class="Developer"><div class="commandBox">
-            /home/user/development/cs$./configure --enable-debug --without-java --without-perl --without-python --without-lib3ds --with-cal3d=/home/user/development/cal3d</div></div><br>
+            $HOME/development/cs$./configure --enable-debug --without-java --without-perl --without-python --without-lib3ds --with-cal3d=$HOME/development/cal3d</div></div><br>
            <div class="Normal"><div class="commandBox">
-            /home/user/development/cs$ jam -aq libs plugins cs-config walktest</div></div><br>
+            $HOME/development/cs$ jam -aq libs plugins cs-config walktest</div></div><br>
            <div class="Static"><i class="command">
-            /home/user/development/cs$ jam -aq libs staticplugins cs-config walktest_static</i><br>
+            $HOME/development/cs$ jam -aq libs staticplugins cs-config walktest_static</i><br>
            </div></div> 
 	<div class="Linux-Slackware" >           
             <div class="User"><div class="commandBox">
-            /home/user/development/cs$./configure --without-java --without-perl --without-python --without-lib3ds --with-cal3d=/home/user/development/cal3d</div></div><br>
+            $HOME/development/cs$./configure --without-java --without-perl --without-python --without-lib3ds --with-cal3d=$HOME/development/cal3d</div></div><br>
            <div class="Developer"><div class="commandBox">
-            /home/user/development/cs$./configure --enable-debug --without-java --without-perl --without-python --without-lib3ds --with-cal3d=/home/user/development/cal3d</div></div><br>
+            $HOME/development/cs$./configure --enable-debug --without-java --without-perl --without-python --without-lib3ds --with-cal3d=$HOME/development/cal3d</div></div><br>
            <div class="Normal"><i class="command">
-            /home/user/development/cs$ jam -aq libs plugins cs-config walktest</i></div><br>
+            $HOME/development/cs$ jam -aq libs plugins cs-config walktest</i></div><br>
            <div class="Static"><i class="command">
-            /home/user/development/cs$ jam -aq libs staticplugins cs-config walktest_static</i><br>
+            $HOME/development/cs$ jam -aq libs staticplugins cs-config walktest_static</i><br>
            </div></div> 
         <div class="Linux-Ubuntu">
 	 <div class="User"><div class="commandBox">
-            /home/user/development/cs$./configure --without-java --without-perl --without-python --without-lib3ds --with-cal3d=/home/user/development/cal3d</div></div><br>
+            $HOME/development/cs$./configure --without-java --without-perl --without-python --without-lib3ds --with-cal3d=$HOME/development/cal3d</div></div><br>
            <div class="Developer"><div class="commandBox">
-            /home/user/development/cs$./configure --enable-debug --without-java --without-perl --without-python --without-lib3ds --with-cal3d=/home/user/development/cal3d</div></div><br>
+            $HOME/development/cs$./configure --enable-debug --without-java --without-perl --without-python --without-lib3ds --with-cal3d=$HOME/development/cal3d</div></div><br>
 	  <div class="Normal"><i class="command">
-            /home/user/development/cs$ jam -aq libs plugins cs-config walktest</i></div><br>
+            $HOME/development/cs$ jam -aq libs plugins cs-config walktest</i></div><br>
            <div class="Static"><i class="command">
-            /home/user/development/cs$ jam -aq libs staticplugins cs-config walktest_static</i></div><br>
+            $HOME/development/cs$ jam -aq libs staticplugins cs-config walktest_static</i></div><br>
 	   </div></div>
 
 
 <div class="Linux">	   
 We should export the CRYSTAL environment variable so applications outside the Crystal Space	 
 	         tree know where to find the .so's.	 
-	         <p><i class="command">export CRYSTAL=/home/user/development/cs</i></p>	 
+	         <p><i class="command">export CRYSTAL=$HOME/development/cs</i></p>	 
 
 <h3>PlaneShift</h3>
         <p><div class="commandBox">
-            /home/user/development/planeshift$ ./autogen.sh<br>
+            $HOME/development/planeshift$ ./autogen.sh<br>
            <div class="User">
-            /home/user/development/planeshift$ ./configure --with-cal3d=/home/user/development/cal3d<br>
+            $HOME/development/planeshift$ ./configure --with-cal3d=$HOME/development/cal3d<br>
            </div>
            <div class="Developer">
-            /home/user/development/planeshift$ ./configure --enable-debug --with-cal3d=/home/user/development/cal3d<br>
+            $HOME/development/planeshift$ ./configure --enable-debug --with-cal3d=$HOME/development/cal3d<br>
            </div>
            <div class="Normal">
-            /home/user/development/planeshift$ jam -aq client
+            $HOME/development/planeshift$ jam -aq client
            </div>
            <div class="Static">
-            /home/user/development/planeshift$ jam -aq client_static
+            $HOME/development/planeshift$ jam -aq client_static
            </div>
 </div></p>
         If you also want to build the server, do this as well:
         <div class="Normal">
-           <p><i class="command">/home/user/development/planeshift$ jam -aq server</i></p>
+           <p><i class="command">$HOME/development/planeshift$ jam -aq server</i></p>
         </div>
         <div class="Static">
-           <p><i class="command">/home/user/development/planeshift$ jam -aq server_static</i></p>
+           <p><i class="command">$HOME/development/planeshift$ jam -aq server_static</i></p>
         </div>
         If you want to build the extra tools, just do "jam -a".
 <p> Before launching any PS app you need to tell PS where to find CS as we did not install it globally</p>
-       <div class="commandBox">export LD_LIBRARY_PATH="/home/user/development/cal3d/src/cal3d/.libs/:/home/user/development/cs/:"$LD_LIBRARY_PATH</div>
+       <div class="commandBox">export LD_LIBRARY_PATH="$HOME/development/cal3d/src/cal3d/.libs/:$HOME/development/cs/:"$LD_LIBRARY_PATH</div>
        <p>If your psclient has no skin you are used to seeing launch pssetup after you have copied your art over and select a new skin</p>
        <p>If you wish for your psclient to not use the same user files as your other build/install you may run ps with the following command<br />
        <div class="commandBox">
-/home/user/development/planeshift$ ./psclient -cfgset=PlaneShift.UserConfigPath=/home/user/.PlaneShift2</div>
+$HOME/development/planeshift$ ./psclient -cfgset=PlaneShift.UserConfigPath=$HOME/.PlaneShift2</div>
       <p> You can also edit this in the psclient.cfg file under the game section uncomment the appropriate line and edit the path.</p> 
    </div>
 </div></div></div>
@@ -1577,7 +1577,7 @@ to have if you want to run your client. If you want to fetch this art, you need 
 a <i>art</i> subdirectory in your PlaneShift directory.
 
 <div class="Linux">
-<p><i class="command">/home/user/development/planeshift$ svn co https://planeshift.svn.sourceforge.net/svnroot/planeshift/art</i></p>
+<p><i class="command">$HOME/development/planeshift$ svn co https://planeshift.svn.sourceforge.net/svnroot/planeshift/art</i></p>
 </div>
  
 <div class="Windows">
@@ -1603,7 +1603,7 @@ downloaded from the SVN are usually more recent and updated.
   <p>Simply copy the dictionary files from your \WordNet\2.1\dict folder to the \planeshift\data\dict folder.</p>
 </div>
 <div class="Linux">
-  <p>Simply copy the dictionary files from your /usr/share/wordnet folder to the /home/user/development/planeshift/data/dict folder.</p>
+  <p>Simply copy the dictionary files from your /usr/share/wordnet folder to the $HOME/development/planeshift/data/dict folder.</p>
 </div>
 <div class="MacOSX">
   <p>Simply copy the dictionary files from your /usr/share/wordnet folder to the $HOME/development/planeshift/data/dict folder.</p>
@@ -1697,10 +1697,11 @@ NOTE: If you have upgraded MySQL server to 4.1 or superior (while the client is 
     </div>
     <div class="MSVC">Go to your PlaneShift directory (C:\development\planeshift) and run psserver. This will start the server.</div>
 </div>
-<div class="Linux">Go to your PlaneShift directory (home/user/development/planeshift) and run psserver, this will start the server. If you have a script to start your server or load maps you can use<br><br>
+<div class="Linux">Go to your PlaneShift directory ($HOME/development/planeshift) and run psserver, this will start the server. If you have a script to start your server or load maps you can use<br><br>
 <i class="command">./psserver --run=/this/script_name</i> <br> <br>	
 </div>
-<div class="MacOSX">Go to your PlaneShift directory (home/user/development/planeshift) and run psserver, this will start the server.</div>
+<div class="MacOSX">Go to your PlaneShift directory ($HOME/development/planeshift) and run psserver, this will start the server. If you have a script to start your server or load maps you can use<br><br>
+<i class="command">./psserver --run=/this/script_name</i><br></div>
 Once the server has been started, you should see a "PS Server:" prompt. Not always does the prompt show PS Server: on first start but this is ok as long as you have gotten no errors so far.</p>
 
 <div class="Windows">
@@ -1724,9 +1725,9 @@ To see a list of all available psserver commands, type "help".  You can shut dow
 <p>You should now be able to start psclient and log in. The server is localhost on port 13331, if your server
 is located somewhere else or you want to connect to somebody's else server, you need to modify the servers list.
 
-<div class="Windows">The servers list is located in C:\development\planeshift\data\servers.xml.</div> <br>
-<div class="Linux">The servers list is located in home/user/development/planeshift/data/servers.xml.</div><br>
-<div class="MacOSX">The servers list is located in home/user/development/planeshift/data/servers.xml.</div><br>
+<div class="Windows">The servers list is located in <i class="Command">C:\development\planeshift\data\servers.xml.</i></div> <br>
+<div class="Linux">The servers list is located in <i class="Command"> $HOME/development/planeshift/data/servers.xml</i></div><br>
+<div class="MacOSX">The servers list is located in <i class="Command" >$HOME/development/planeshift/data/servers.xml</i></div><br>
 
 
  The following accounts are in the SVN DB:</p>
@@ -1811,7 +1812,7 @@ is located somewhere else or you want to connect to somebody's else server, you 
     time. In this way you can also have multiple versions of CS coexisting peacefully.</p>
 
     <p><div class="commandBox">
-        $ cd /home/user/development<br>
+        $ cd $HOME/development<br>
         $ echo "export LD_LIBRARY_PATH="$PWD/cal3d/src/cal3d/.libs/:$PWD/cs/:"$LD_LIBRARY_PATH"
         $ echo \#\!/bin/sh > PlaneShiftserver.sh<br>
         $ echo "export CRYSTAL=$PWD/cs/" >> PlaneShiftserver.sh<br>
@@ -1821,7 +1822,7 @@ is located somewhere else or you want to connect to somebody's else server, you 
     </div></p>
 
     <p><div class="commandBox">
-        $ cd /home/user/development<br>
+        $ cd $HOME/development<br>
         $ echo "export LD_LIBRARY_PATH="$PWD/cal3d/src/cal3d/.libs/:$PWD/cs/:"$LD_LIBRARY_PATH"
         $ echo \#\!/bin/sh > PlaneShiftclient.sh<br>
         $ echo "export CRYSTAL=$PWD/cs/" >> PlaneShiftclient.sh<br>

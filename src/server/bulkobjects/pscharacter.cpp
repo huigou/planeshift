@@ -334,6 +334,8 @@ bool psCharacter::Load(iResultRow& row)
     guildinfo = CacheManager::GetSingleton().FindGuild(row.GetUInt32("guild_member_of"));
     if (guildinfo)
         guildinfo->Connect(this);
+    
+    SetGuildNotifications(row.GetInt("guild_notifications") == 1);
 
     // Loot rule here
     loot_category_id = row.GetInt("npc_addl_loot_category_id");

@@ -113,7 +113,7 @@ public:
     {
         psSystemMessage newmsg(0, MSG_INFO_SERVER, mytext);
         psserver->GetEventManager()->Broadcast(newmsg.msg);
-        CPrintf(CON_CMDOUTPUT, "%s\n", (const char*) mytext);
+        CPrintf(CON_CMDOUTPUT, "%s\n", mytext.GetDataSafe());
         if(trigger_server_lock) //this is triggering the server lock
             com_lock(NULL);
         if(trigger_server_shutdown) //this is triggering the server shut down
@@ -122,22 +122,22 @@ public:
     virtual bool CheckTrigger()
     {   //if this is the event triggering the server shut down pass it's validity, else check that event if
         //it's still valid
-        return message_quit_event == NULL? valid : message_quit_event->CheckTrigger();
+        return message_quit_event == NULL ? valid : message_quit_event->CheckTrigger();
     }
     void Invalidate()
     {
         valid = false; //this is used to inavlidate the server shut down event
     }
 private:
-    csString mytext; //keeps the message which will be sent to clients
-    bool trigger_server_lock; //if true this is the event locking the server
-    bool trigger_server_shutdown; //if true this is the event which will shut down the server
-    psQuitEvent *message_quit_event; //stores a link to the master event which will shut down the server
+    csString mytext; ///< Keeps the message which will be sent to clients
+    bool trigger_server_lock; ///< If true this is the event locking the server
+    bool trigger_server_shutdown; ///< If true this is the event which will shut down the server
+    psQuitEvent *message_quit_event; ///< Stores a link to the master event which will shut down the server
 };
 
-psQuitEvent *server_quit_event = NULL; //used to keep track of the shut down event
+psQuitEvent *server_quit_event = NULL; ///< Used to keep track of the shut down event
 
-/* shut down the server and exit program */
+/// Shuts down the server and exit program
 int com_quit(char *arg)
 {
     if(strncasecmp(arg,"stop", 4) == 0) //if the user passed 'stop' we will abort the shut down process
@@ -150,7 +150,7 @@ int com_quit(char *arg)
         csString abort_msg = "Server Admin: The server is no longer restarting."; 
         psSystemMessage newmsg(0, MSG_INFO_SERVER, abort_msg);
         psserver->GetEventManager()->Broadcast(newmsg.msg);
-        CPrintf(CON_CMDOUTPUT, "%s\n", (const char*) abort_msg);
+        CPrintf(CON_CMDOUTPUT, "%s\n", abort_msg.GetDataSafe());
     }
     else
     {
@@ -219,7 +219,7 @@ int com_quit(char *arg)
                 quitInfo += minutes; quitInfo += "minutes ";
             if(seconds) //if we don't have seconds (so they are zero) skip them
                 quitInfo += seconds; quitInfo += "seconds";
-            CPrintf(CON_CMDOUTPUT, "%s\n", (const char*) quitInfo); //send the message to the server console
+            CPrintf(CON_CMDOUTPUT, "%s\n", quitInfo.GetDataSafe()); //send the message to the server console
         }
     }
     return 0;
