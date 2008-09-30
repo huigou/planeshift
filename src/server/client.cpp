@@ -508,10 +508,11 @@ bool Client::CanTake(psItem* item)
     // Check for npc-owned container
     if (item->GetContainerID() && GetSecurityLevel() < GM_LEVEL_2)
     {
-        gemObject *gemcont = GEMSupervisor::GetSingleton().FindItemEntity(item->GetContainerID());
+        gemObject *gemcont = GEMSupervisor::GetSingleton().FindObject(item->GetContainerID());
         if (gemcont)
         {
             psItem *cont = gemcont->GetItem();
+            CS_ASSERT(cont);
             if (cont->GetIsNpcOwned())
             {
                 return false;

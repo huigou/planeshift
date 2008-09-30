@@ -1,4 +1,9 @@
-﻿*** 2008-09-28 by Stefano Angeleri
+﻿*** 2008-09-30 by Kenny Graunke
+- Probably fixed FS#2272.  As I recall, container IDs were either (1) slot
+  numbers (if in inventory) or EIDs (if in world).  Thus Client::CanTake
+  was giving an EID to FindItemEntity which takes a UID...which is wrong.
+
+*** 2008-09-28 by Stefano Angeleri
 - Now area doesn't target who used the command (for example the gm using it)
   patch by Peeg fixing request by Kerol in FS#2258, updated also the help
 - Various cleanups and code coherency fixes in adminmanager, additionally fixed
