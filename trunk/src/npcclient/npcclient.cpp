@@ -467,12 +467,13 @@ gemNPCObject *psNPCClient::FindCharacterID(unsigned int PID)
 NPC* psNPCClient::ReadSingleNPC(unsigned int char_id)
 {
     Result result(db->Select("select * from sc_npc_definitions where char_id=%u",char_id));
-    if (!result.IsValid())
+    if (!result.IsValid() || !result.Count())
     {
         Error2("Error loading char_id %d.",char_id);
         return NULL;
     }
     NPC *newnpc = new NPC;
+
     if (newnpc->Load(result[0],npctypes))
     {
         npcs.Push(newnpc);
@@ -646,7 +647,34 @@ void psNPCClient::AttachNPC( gemNPCActor* actor, uint8_t DRcounter)
     {
         CPrintf(CON_NOTIFY,"NPC %s (PID: %u) was not found in scripted npcs for this npcclient.\n",
                 actor->GetName(), actor->GetPlayerID() );
-        return;
+
+        npc = ReadSingleNPC(actor->GetPlayerID()); //try reloading the tables if we didn't find it
+        if(!npc) //still not found. Try recovering missing data. The recovery process is only for pets, but teorically it can be expanded
+        {        //to other npcs types
+        
+                Result result(db->Select("select * from character_relationships where related_id=%u",actor->GetPlayerID()));
+                if (result.IsValid() && result.Count() && (csString)result[0][2] == "familiar") //just to be sure
+                {
+                    int owner_id = result[0].GetUInt32("character_id"); //good we have the owner
+                    //now we need the char master npc
+                    Result result2(db->Select("select npc_master_id from characters where id=%u",actor->GetPlayerID()));
+                    
+                    if (result.IsValid() && result.Count())
+                    {
+                        int master_id = result2[0].GetUInt32(0); //gotcha :)
+                        NPC *npc_int = FindNPCByPID(master_id);
+                        if(npc_int)
+                        {
+                            npc_int->InsertCopy(actor->GetPlayerID(),owner_id);
+                            npc = ReadSingleNPC(actor->GetPlayerID()); //should load now :P
+                            CPrintf(CON_WARNING, "Recreated missing pet %u owned by %u of type %u\n", actor->GetPlayerID(), owner_id , master_id);
+                        }
+                    }
+
+                }
+                if(!npc) //last chance if false good bye
+                    return;
+        }
     }
     
     actor->AttachNPC(npc);

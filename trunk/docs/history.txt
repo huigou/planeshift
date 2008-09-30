@@ -1,4 +1,17 @@
-﻿*** 2008-09-30 by Kenny Graunke
+﻿*** 2008-09-30 by Stefano Angeleri
+- Added some informations in the compiling guide patch by Caarrie, plus
+  changed /home/user to $HOME in linux guides
+- Added a new function for guilds: guild members login/logout announcement.
+  It's disabled by default and can be enabled from the guild window, if enabled
+  it will tell you if a member of your guild logged in/out from planeshift
+- Added hopefully a fix for FS#980. This patch adds to npcclient the possibility
+  to recover missing data about npcs for pets in case it's missing, fixing all
+  pets created while npcclient was down and when it will be down in the future.
+- Various cleanups around
+- Improved commenting in some functions
+- NET VERSION BUMP AND DB VERSION BUMP
+
+*** 2008-09-30 by Kenny Graunke
 - Probably fixed FS#2272.  As I recall, container IDs were either (1) slot
   numbers (if in inventory) or EIDs (if in world).  Thus Client::CanTake
   was giving an EID to FindItemEntity which takes a UID...which is wrong.

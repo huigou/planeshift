@@ -527,9 +527,9 @@ struct DurationEvent
 class psCharacter : public iScriptableVar, public iCachedObject
 {
 protected:    
-    psCharacterInventory      inventory;                    /// Character's inventory handler.
-    psMoney money;                                          /// Current cash set on player.
-    psMoney bankMoney;                                      /// Money stored in the players bank account.
+    psCharacterInventory      inventory;                    ///< Character's inventory handler.
+    psMoney money;                                          ///< Current cash set on player.
+    psMoney bankMoney;                                      ///< Money stored in the players bank account.
     
     psGuildInfo*              guildinfo;
     csArray<psSpell*>         spellList;
@@ -538,6 +538,7 @@ protected:
     SkillSet                  skills;
     psSkillCache              skillCache;
     GMEventsAssignment        assigned_events;
+    bool guildNotified; ///< If true the player will get notifications about his guild members logging in and out
     
     bool LoadSpells(unsigned int use_id);
     bool LoadAdvantages(unsigned int use_id);
@@ -626,6 +627,11 @@ public:
     psGuildInfo  *GetGuild() { return guildinfo; }
     /// Return the guild level for this character, if any.
     psGuildLevel *GetGuildLevel();
+
+    ///Returns if the client should receive notifications about guild members logging in
+    bool IsGettingGuildNotifications() { return guildNotified; }
+    ///Sets if the client should receive notifications about guild members logging in
+    void SetGuildNotifications(bool enabled) { guildNotified = enabled; }
 
     StatSet *GetAttributes() { return &attributes; }
     StatSet *GetModifiers()  { return &modifiers;  }

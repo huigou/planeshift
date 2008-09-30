@@ -361,6 +361,9 @@ void GuildManager::HandleGUIMessage(psGUIGuildMessage& msg,Client *client)
     case psGUIGuildMessage::SET_ONLINE:
         HandleSetOnline(client, doc->GetRoot());
         break;
+    case psGUIGuildMessage::SET_GUILD_NOTIFICATION:
+        HandleSetGuildNotifications(client, doc->GetRoot());
+        break;
     case psGUIGuildMessage::SET_LEVEL_RIGHT:
         HandleSetLevelRight(client, doc->GetRoot());
         break;
@@ -453,6 +456,16 @@ bool RetrieveOnlineOnly(iDocumentNode * root)
     return (onlineOnly == "yes");
 }
 
+bool RetrieveGuildNotifications(iDocumentNode * root)
+{
+    csRef<iDocumentNode> topNode = root->GetNode("r");
+    if (!topNode)
+         return true;
+    
+    csString guildNotifications = topNode->GetAttributeValue("guildnotifications");
+    return (guildNotifications == "yes");
+}
+
 void GuildManager::HandleSubscribeGuildData(Client *client,iDocumentNode * root)
 {
     int clientnum = client->GetClientNum();
@@ -499,6 +512,12 @@ void GuildManager::HandleSetOnline(Client *client,iDocumentNode * root)
         subscr->onlineOnly = RetrieveOnlineOnly(root);
         SendMemberData(client, subscr->onlineOnly);
     }
+}
+
+void GuildManager::HandleSetGuildNotifications(Client *client,iDocumentNode * root)
+{
+    if(client && client->GetCharacterData())
+        client->GetCharacterData()->SetGuildNotifications(RetrieveGuildNotifications(root));
 }
 
 void GuildManager::SendNotifications(int guild, int msg)
@@ -934,7 +953,7 @@ void GuildManager::SendMemberData(Client *client,bool onlineOnly)
     
     open.Append("</memberinfo>");
     
-    open.AppendFmt("<playerinfo char_id=\"%i\"/>", client->GetPlayerID());
+    open.AppendFmt("<playerinfo char_id=\"%i\" guildnotifications=\"%i\"/>", client->GetPlayerID(), client->GetCharacterData()->IsGettingGuildNotifications());
 
     psGUIGuildMessage cmd(clientnum,psGUIGuildMessage::MEMBER_DATA,open);
     cmd.SendMessage();

@@ -90,6 +90,7 @@ protected:
     void HandleSubscribeGuildData(Client *client,iDocumentNode * root);
     void UnsubscribeGuildData(Client *client);
     void HandleSetOnline(Client *client,iDocumentNode * root);
+    void HandleSetGuildNotifications(Client *client,iDocumentNode * root);
     void HandleSetLevelRight(Client *client,iDocumentNode * root);
     void HandleRemoveMember(Client *client,iDocumentNode * root);
     void HandleSetMemberLevel(Client *client,iDocumentNode * root);

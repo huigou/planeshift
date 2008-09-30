@@ -414,9 +414,15 @@
 
             </widget>
 
+            <widget name="MemberNotifications" factory="pawsCheckBox" id="1005" shadows="yes" >
 
+                <frame x="10" y="270" width="400" height="20" />
 
-            
+                <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" size="12" />
+
+                <text string="Notify when members login/logout" position="right" />
+
+            </widget>            
 
             <widget name="RemoveMember" factory="pawsButton" id="300">
 
