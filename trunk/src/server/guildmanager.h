@@ -1,7 +1,7 @@
 /*
  * guildmanager.h
  *
- * Copyright (C) 2003 Atomic Blue (info@planeshift.it, http://www.atomicblue.org) 
+ * Copyright (C) 2003 Atomic Blue (info@planeshift.it, http://www.atomicblue.org)
  *
  *
  * This program is free software; you can redistribute it and/or
@@ -42,7 +42,7 @@ class PendingGuildInvite;
 class PendingGuildWarInvite;
 
 
-/** Information about client that asked us to tell him when some guild data change: */
+/** Information about client that asked us to tell him when some guild data change */
 class GuildNotifySubscription
 {
 public:
@@ -52,9 +52,9 @@ public:
         this->clientnum   = clientnum;
         this->onlineOnly  = onlineOnly;
     }
-    int guild;            //guild id
-    int clientnum;        //client id
-    bool onlineOnly;      //should we send members that are online only, or all members ?
+    int guild;            ///< Guild ID
+    int clientnum;        ///< Client Id
+    bool onlineOnly;      ///< Should we send members that are online only, or all members ?
 };
 
 
@@ -107,9 +107,9 @@ protected:
     void SendLevelData(Client *client);
     void SendMemberData(Client *client, bool onlineOnly);
     void SendAllianceData(Client *client);
-    
+
     csString MakeAllianceMemberXML(psGuildInfo * member, bool allianceLeader);
-    
+
     void CreateGuild(psGuildCmdMessage& msg,Client *client);
 
     /// This function actually removes the guild
@@ -130,31 +130,32 @@ protected:
     void MOTD(psGuildCmdMessage &msg, Client *client);
     void GuildWar(psGuildCmdMessage &msg, Client *client);
     void GuildYield(psGuildCmdMessage &msg, Client *client);
-    
+
     void NewAlliance(psGuildCmdMessage &msg, Client *client);
     void AllianceInvite(psGuildCmdMessage &msg, Client *client);
     void AllianceRemove(psGuildCmdMessage &msg, Client *client);
     void AllianceLeave(psGuildCmdMessage &msg, Client *client);
     void AllianceLeader(psGuildCmdMessage &msg, Client *client);
     void EndAlliance(psGuildCmdMessage &msg, Client *client);
-    void RemoveMemberFromAlliance(Client * client, psGuildInfo * guild, psGuildAlliance * alliance, 
+    void RemoveMemberFromAlliance(Client * client, psGuildInfo * guild, psGuildAlliance * alliance,
                                   psGuildInfo * removedGuild);
-    
+
     bool AddPlayerToGuild(int guild,const char *guildname,Client *client,int level);
     GuildNotifySubscription * FindNotifySubscr(Client * client);
-    
-    /** Sends changed guild data to notification subscribers
-      * Value of 'msg' says which kind of data and it can be: 
+
+    /** @brief Sends changed guild data to notification subscribers
+      *
+      * Value of 'msg' says which kind of data and it can be:
       *       psGUIGuildMessage::GUILD_DATA
       *       psGUIGuildMessage::LEVEL_DATA
       *       psGUIGuildMessage::MEMBER_DATA
       *       psGUIGuildMessage::ALLIANCE_DATA
       */
     void SendNotifications(int guild, int msg);
-    
+
     /** Calls SendNotifications() with type psGUIGuildMessage::ALLIANCE_DATA for all alliance members */
     void SendAllianceNotifications(psGuildAlliance * alliance);
-    
+
     /** Sends psGUIGuildMessage::ALLIANCE_DATA messages saying "you are not in any alliance"
       * to all notification subscribers from given alliance.
       * This is used when an alliance is being disbanded or when one of its members is removed. */
@@ -162,11 +163,11 @@ protected:
     void SendNoAllianceNotifications(psGuildInfo * guild);
 
     void SendGuildPoints(psGuildCmdMessage& msg,Client *client);
-    
+
     void UnsubscribeWholeGuild(psGuildInfo * guild);
-    
+
     bool IsLeader(Client * client);
-    
+
     ChatManager* chatserver;
     ClientConnectionSet* clients;
     csArray<GuildNotifySubscription*> notifySubscr;

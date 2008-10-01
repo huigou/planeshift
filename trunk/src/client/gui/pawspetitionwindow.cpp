@@ -44,7 +44,7 @@
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
-pawsPetitionWindow::pawsPetitionWindow() 
+pawsPetitionWindow::pawsPetitionWindow()
     : psCmdBase( NULL,NULL,  PawsManager::GetSingleton().GetObjectRegistry() )
 {
     petitionList = NULL;
@@ -76,7 +76,7 @@ bool pawsPetitionWindow::PostSetup()
     petText = (pawsMultilineEditTextBox*)FindWidget("PetitionText");
 
     hasPetInterest = false;
-    
+
     return true;
 }
 
@@ -95,12 +95,12 @@ void pawsPetitionWindow::Show()
 
 const char* pawsPetitionWindow::HandleCommand( const char* cmd )
 {
-    csString buff(cmd);        
+    WordArray words (cmd, false);
     // Check which command was invoked:
-    if ( buff.CompareNoCase("/petition_list") )
+    if ( words[0].CompareNoCase("/petition_list") )
     {
         hasPetInterest = true;
-        
+
         // Display this window to the user and query the server for messages at the same time
         this->Show();
     }
@@ -120,7 +120,7 @@ void pawsPetitionWindow::HandleMessage ( MsgEntry* me )
     }
     if (message.isGM)
         return;
-    
+
     petitionMessage = message;
 
     // Check if server reported errors on the query
@@ -128,7 +128,7 @@ void pawsPetitionWindow::HandleMessage ( MsgEntry* me )
     {
         psSystemMessage error(0,MSG_INFO,message.error);
         msgqueue->Publish(error.msg);
-    
+
         petCount = 0;
         petitionList->Clear();
         petText->Clear();
@@ -185,7 +185,7 @@ void pawsPetitionWindow::Close()
 {
     petitionList->Clear();
     hasPetInterest = true;
-    pawsControlledWindow::Hide(); 
+    pawsControlledWindow::Hide();
 }
 
 bool pawsPetitionWindow::OnButtonPressed( int mouseButton, int keyModifier, pawsWidget* widget )
@@ -207,9 +207,9 @@ bool pawsPetitionWindow::OnButtonPressed( int mouseButton, int keyModifier, paws
                     msgqueue->Publish(error.msg);
                     return true;
                 }
-                
+
                 currentRow = sel;
-                
+
                 // Send a message to the server requesting cancel
                 psPetitionRequestMessage queryMsg(false, "cancel", petitionMessage.petitions.Get(currentRow).id);
                 msgqueue->SendMessage(queryMsg.msg);
@@ -218,10 +218,10 @@ bool pawsPetitionWindow::OnButtonPressed( int mouseButton, int keyModifier, paws
         }
         case NEW_BUTTON:
         {
-			// Popup Input Window
-			pawsStringPromptWindow::Create(PawsManager::GetSingleton().Translate("Add Petition"), csString(""),
-				true, 500, 300, this, "petition" );
-			break;
+            // Popup Input Window
+            pawsStringPromptWindow::Create(PawsManager::GetSingleton().Translate("Add Petition"), csString(""),
+                true, 500, 300, this, "petition" );
+            break;
         }
         case SAVE_BUTTON:
         {
@@ -231,44 +231,44 @@ bool pawsPetitionWindow::OnButtonPressed( int mouseButton, int keyModifier, paws
                 int sel = petitionList->GetSelection();
                 if (sel < 0)
                 {
-					// no petition selected, create new one
-	  				OnStringEntered (0, 0, petText->GetText());
+                    // no petition selected, create new one
+                    OnStringEntered (0, 0, petText->GetText());
                     return true;
                 }
 
-				currentRow = sel;
+                currentRow = sel;
 
-				// check petitions status
-				if (petitionMessage.petitions.Get(currentRow).status != "Open")
-				{
-					psSystemMessage error(0, MSG_INFO, "You can only change open petitions.");
-					msgqueue->Publish(error.msg);
-					return true;
-				}
+                // check petitions status
+                if (petitionMessage.petitions.Get(currentRow).status != "Open")
+                {
+                    psSystemMessage error(0, MSG_INFO, "You can only change open petitions.");
+                    msgqueue->Publish(error.msg);
+                    return true;
+                }
 
-				// save changes to selected petition
-				csString text(petText->GetText());
-				text.Trim();
+                // save changes to selected petition
+                csString text(petText->GetText());
+                text.Trim();
 
-				if (!text.IsEmpty())
-				{
-					// Send a message to the server requesting change
-					psPetitionRequestMessage changeMsg(false, "change", petitionMessage.petitions.Get(currentRow).id,petText->GetText());
-					msgqueue->SendMessage(changeMsg.msg);
-				}
-				else
-				{
-					// Show an error
-					psSystemMessage error(0, MSG_INFO, "You must enter a text for the petition.");
-					msgqueue->Publish(error.msg);
-				}
-			}
-			else
-			{
-				// no petition selected, create new one
-				OnStringEntered (0, 0, petText->GetText());
-			}
-			break;
+                if (!text.IsEmpty())
+                {
+                    // Send a message to the server requesting change
+                    psPetitionRequestMessage changeMsg(false, "change", petitionMessage.petitions.Get(currentRow).id,petText->GetText());
+                    msgqueue->SendMessage(changeMsg.msg);
+                }
+                else
+                {
+                    // Show an error
+                    psSystemMessage error(0, MSG_INFO, "You must enter a text for the petition.");
+                    msgqueue->Publish(error.msg);
+                }
+            }
+            else
+            {
+                // no petition selected, create new one
+                OnStringEntered (0, 0, petText->GetText());
+            }
+            break;
         }
     }
     return true;
@@ -321,7 +321,7 @@ void pawsPetitionWindow::AddPetitions(csArray<psPetitionInfo> &petitions)
     // get info about the selected petition
     if (petitionList->GetRowCount() <= 0)
         petitionList->Select(NULL);
-    
+
     if (petitionList->GetSelection() >= 0)
     {
         selectedPet.escalation = 0;
@@ -335,7 +335,7 @@ void pawsPetitionWindow::AddPetitions(csArray<psPetitionInfo> &petitions)
         selectedPet.escalation = -1;
     }
     petitionList->Select(NULL);
-    
+
     // Clear the list box and add the user's petitions
     petitionList->Clear();
     petText->Clear();
@@ -346,24 +346,24 @@ void pawsPetitionWindow::AddPetitions(csArray<psPetitionInfo> &petitions)
     {
         info = petitions.Get(i);
         petCount++;
-        
+
         // Set the data for this row:
         petitionList->NewRow(i);
         SetText(i, PCOL_GM, "%s", info.assignedgm.GetData());
         SetText(i, PCOL_STATUS, "%s", info.status.GetData());
         SetText(i, PCOL_CREATED, "%s", info.created.GetData());
-       	// Add resolution info for Closed petitions
-		if ( info.status=="Closed" )
-		{
-			SetText(i, PCOL_PETITION, "%s", (info.petition+(" "+PawsManager::GetSingleton().Translate("Resolution")+": "+info.resolution)).GetData());
-		}
-		else
-		{
-			SetText(i, PCOL_PETITION, "%s", info.petition.GetData());
-		}
+        // Add resolution info for Closed petitions
+        if ( info.status=="Closed" )
+        {
+            SetText(i, PCOL_PETITION, "%s", (info.petition+(" "+PawsManager::GetSingleton().Translate("Resolution")+": "+info.resolution)).GetData());
+        }
+        else
+        {
+            SetText(i, PCOL_PETITION, "%s", info.petition.GetData());
+        }
 
 
-        // reselect the petition        
+        // reselect the petition
         if (selectedPet.escalation != -1)
         {
             if (selectedPet.created == info.created)
@@ -386,18 +386,18 @@ void pawsPetitionWindow::OnListAction( pawsListBox* selected, int status )
     {
         size_t sel = petitionList->GetSelection();
         if ( sel >= petitionMessage.petitions.GetSize() )
-		{
+        {
             return;
-		}
+        }
         petText->Clear();
         if( petitionMessage.petitions.Get(sel).status=="Closed" )
-		{
+        {
             petText->SetText( petitionMessage.petitions.Get(sel).petition+" "+PawsManager::GetSingleton().Translate("Resolution")+": "+petitionMessage.petitions.Get(sel).resolution );
-		}
-		else
-		{
-			petText->SetText( petitionMessage.petitions.Get(sel).petition );
-		}
+        }
+        else
+        {
+            petText->SetText( petitionMessage.petitions.Get(sel).petition );
+        }
     }
 }
 
