@@ -72,18 +72,19 @@ public:
 
     virtual void HandleMessage(MsgEntry *pMsg,Client *client);
 
-    /** Send a notification to all clients on a person buddy list if they log on/off.
-     * This does a database hit.
+    /** @brief Send a notification to all clients on a person buddy list if they log on/off.
      *
-     * @param client The client that has logged in/out.
-     * @param loggedon True if the player has logged on. False if logged off.
+     *  This does a database hit.
+     *
+     *  @param client The client that has logged in/out.
+     *  @param loggedon True if the player has logged on. False if logged off.
      */
     void NotifyBuddies(Client * client, bool loggedon);
-    
-    /** Send a notification to all clients on a person guild if they log on/off.
+
+    /** @brief Send a notification to all clients on a person guild if they log on/off.
      *
-     * @param client The client that has logged in/out.
-     * @param loggedon True if the player has logged on. False if logged off.
+     *  @param client The client that has logged in/out.
+     *  @param loggedon True if the player has logged on. False if logged off.
      */
     void NotifyGuildBuddies(Client * client, bool loggedon);
 
@@ -93,32 +94,35 @@ public:
         LOGGED_ON  = 1
     };
 
-     /** Send a buddy list to a player.
-      * Sends a list of all the players that are currently on a player's buddy list.
+     /** @brief Send a buddy list to a player.
       *
-      * @param client The client that request the command..
-      * @param clientnum The client id number of the requesting client.
-      * @param filter True if show only buddies online. Else show all buddies.
+      *  Sends a list of all the players that are currently on a player's buddy list.
+      *
+      *  @param client The client that request the command..
+      *  @param clientnum The client id number of the requesting client.
+      *  @param filter True if show only buddies online. Else show all buddies.
       */
     void BuddyList(Client *client,int clientnum,bool filter);
 
     void UserStatRegeneration();
     void Ready();
 
-    /** This is called by the Pending Invite if the duel is accepted.
+    /** @brief This is called by the Pending Invite if the duel is accepted.
       *
       * @param invite This is the invitemanager structure used to invoke the invitation.
       */
     void AcceptDuel(PendingDuelInvite *invite);
 
-    /** Sends detail information about 'charData' to 'client'.
+    /** @brief Sends detail information about 'charData' to 'client'.
+      *
       * If 'full' is true, it contains info about HP and basic stats like Strength.
       */
     void SendCharacterDescription(Client * client, psCharacter * charData, bool full, bool simple, const csString & requestor);
 
     void Attack(Stance stance, Client *client,int clientnum);
 
-    /** Handles a /loot command from a player to loot something.
+    /** @brief Handles a /loot command from a player to loot something.
+      *
       * Sends the lootable item to the client and splits any loot money across
       * a group ( if present ).
       *
@@ -126,18 +130,19 @@ public:
       */
     void HandleLoot(Client *client);
 
-	// Load emotes from xml.
-	bool LoadEmotes(const char *xmlfile, iVFS *vfs);
+    // Load emotes from xml.
+    bool LoadEmotes(const char *xmlfile, iVFS *vfs);
 
-    /** Decodes an area: expression
-     * 
+    /** @brief Decodes an area: expression
+     *
      *  @param client The client of the caller
      *  @param target The area: expression
      * */
     static csArray<csString> DecodeCommandArea(Client *client, csString target);
 
 protected:
-    /** Send a list of the players that are online to a client.
+    /** @brief Send a list of the players that are online to a client.
+      *
       * Sends the name/guild/rank of all players in the world.
       *
       * @param msg The incomming user command message (unused)
@@ -145,37 +150,39 @@ protected:
       * @param clientnum The client id number of the requesting client.
       */
     void Who(psUserCmdMessage& msg, Client* client, int clientnum);
-    
 
-    /** Formats output of a player and adds it to a message.
+
+    /** @brief Formats output of a player and adds it to a message.
       *
       * @param client The client that is to be formated
       * @param guildId The guildId of the caller
-      * @param message The target csString object 
+      * @param message The target csString object
       * @param filter What clients
-      * @param check If a check against filter should be done 
+      * @param check If a check against filter should be done
       * @param count COunter to be increased in case of a successfull match
       */
     bool WhoProcessClient(Client *curr, int guildId, csString* message, csString filter, bool check, unsigned * count);
 
-    /** Converts a string to lowercase.
+    /** @brief Converts a string to lowercase.
       *
       * @param str The string.
       */
     void StrToLowerCase(csString& str);
 
-    /** Adds a person to a player's buddy list.
+    /** @brief Adds a person to a player's buddy list.
+      *
       * This does a database hit to add to the buddy table.
-
+      *
       * @param msg The incomming user command message.
       * @param client The client that request the /buddy.
       * @param clientnum The client id number of the requesting client.
       */
     void Buddy(psUserCmdMessage& msg,Client *client,int clientnum);
 
-    /** Removes a person to a player's buddy list.
+    /** @brief Removes a person to a player's buddy list.
+      *
       * This does a database hit to remove from the buddy table.
-
+      *
       * @param msg The incomming user command message.
       * @param client The client that request the /notbuddy.
       * @param clientnum The client id number of the requesting client.
@@ -183,7 +190,7 @@ protected:
     void NotBuddy(psUserCmdMessage& msg,Client *client,int clientnum);
 
 
-   
+
     enum
     {
         ALL_PLAYERS=0,
@@ -191,8 +198,8 @@ protected:
     };
 
 
-    /** Calculates a dice roll from a player based on number of die and sides.
-
+    /** @brief Calculates a dice roll from a player based on number of die and sides.
+      *
       * @param msg The incomming user command message.
       * @param client The client that request the command..
       * @param clientnum The client id number of the requesting client.
@@ -200,8 +207,8 @@ protected:
     void RollDice(psUserCmdMessage& msg,Client *client,int clientnum);
 
 
-    /** Sends the player their current position and sector.
-
+    /** @brief Sends the player their current position and sector.
+      *
       * @param msg The incomming user command message.
       * @param client The client that request the command..
       * @param clientnum The client id number of the requesting client.
@@ -209,51 +216,51 @@ protected:
     void ReportPosition(psUserCmdMessage& msg,Client *client,int clientnum);
 
 
-    /** Moves a player back to the default start point for their race.
-
+    /** @brief Moves a player back to the default start point for their race.
+      *
       * @param msg The incomming user command message.
       * @param client The client that request the command..
       * @param clientnum The client id number of the requesting client.
       */
     void MoveToSpawnPos(psUserCmdMessage& msg,Client *client,int clientnum);
 
-    /** Moves a player back to his last valid position.
-
+    /** @brief Moves a player back to his last valid position.
+      *
       * @param msg The incomming user command message.
       * @param client The client that request the command..
       * @param clientnum The client id number of the requesting client.
       */
     void HandleUnstick(psUserCmdMessage& msg,Client *client,int clientnum);
 
-    /** Helper function to log a stuck character's details.
+    /** @brief Helper function to log a stuck character's details.
      *
-     * @param The client that requested to be unstuck.
+     *  @param The client that requested to be unstuck.
      */
     void LogStuck(Client* client);
 
-    /** Helper function to make the character stop attacking.
+    /** @brief Helper function to make the character stop attacking.
      *
-     * @param client The client that needs to stop attacking.
+     *  @param client The client that needs to stop attacking.
      */
     void StopAllCombat(Client* client);
 
-    /** Command to start attacking something. Starts the combat manager
-        working.
-
+    /** @brief Command to start attacking something. Starts the combat manager
+      * working.
+      *
       * @param msg The incomming user command message.
       * @param client The client that request the command..
       * @param clientnum The client id number of the requesting client.
       */
     void HandleAttack(psUserCmdMessage& msg,Client *client,int clientnum);
 
-    /** Command to challenge someone to a duel.
+    /** @brief Command to challenge someone to a duel.
       *
       * @param msg The incoming user command message.
       * @param client The client that request the command..
       */
     void ChallengeToDuel(psUserCmdMessage& msg,Client *client);
 
-    /** Command to surrender to someone in a duel.
+    /** @brief Command to surrender to someone in a duel.
       *
       * @param msg The incoming user command message.
       * @param client The client that request the command..
@@ -261,62 +268,63 @@ protected:
     void YieldDuel(Client *client);
 
 
-    /** Sends a client a list of their current assigned quests.
+    /** @brief Sends a client a list of their current assigned quests.
      *
-     * @param client The requesting client.
+     *  @param client The requesting client.
      */
     void HandleQuests(Client *client);
 
-    /** Sends a client a list of their current assigned event.
-     * @param client: the requesting client.
+    /** @brief Sends a client a list of their current assigned event.
+     *  @param client: the requesting client.
      */
     void HandleGMEvents(Client* client);
 
-    /** Give a tip from the database to the client
+    /** @brief Give a tip from the database to the client
       *
       * @param id The id of the client who wants the tip
       */
     void GiveTip(int id);
 
-    /** Sends the MOTD  to the client
+    /** @brief Sends the MOTD  to the client
       *
       * @param id The id of the client
       */
     void GiveMOTD(int id);
 
 
-    /** Handles a player command to start training with targeted entity.
+    /** @brief Handles a player command to start training with targeted entity.
       *
       * @param client The client that issued the command.
       */
     void HandleTraining(Client *client);
 
-    /** Handles a player command to start banking with the targeted entity.
+    /** @brief Handles a player command to start banking with the targeted entity.
       * @param client The client that issued the command.
       */
     void HandleBanking(Client *client, csString accountType);
-    
-    /** Handles a player command to pickup an item.
-          * @param client The client that issued the command.
-          * @target description of the item to be picked up.
-          */
+
+    /** @brief Handles a player command to pickup an item.
+      *
+      * @param client The client that issued the command.
+      * @param target description of the item to be picked up.
+      */
     void HandlePickup(Client *client, csString target);
 
-    /** Handles a player request to 'use' the targeted item.
+    /** @brief Handles a player request to 'use' the targeted item.
       *
       * @param client The client that issued the command.
       * @param on Toggle for start/stop using.
       */
     void HandleUse(Client *client, bool on);
 
-    /** Handles an /Assist command comming from the client.
-     * @param msg The incomming command message
-     * @param client A pointer to the client struct.
-     * @param clientnum The id number of this client.
+    /** @brief Handles an /Assist command comming from the client.
+     *  @param msg The incomming command message
+     *  @param client A pointer to the client struct.
+     *  @param clientnum The id number of this client.
      */
     void Assist( psUserCmdMessage& msg, Client* client, int clientnum );
 
-    /** Teleport player to a location.
+    /** @brief Teleport player to a location.
      *
      *  @param client The player to move
      *  @param x,y,z  Location to move to
@@ -335,24 +343,24 @@ protected:
 
     void SwitchAttackTarget(Client *targeter, Client *targeted);
 
-	/** Process an emote command.
-	 *
-	 *  @param general   The phrase to broadcast if no target is selected.
-	 *  @param specific  The phrase to broadcast if a target is selected.
-	 *  @param animation The animation for the emote. If there isn't one pass "noanim".
-	 *  @param range     The range of the broadcast.
-	 *  @param target    The target, if there is one.
-	 */
-	void Emote(csString general, csString specific, csString animation, MsgEntry *me, Client *client);
+    /** @brief Process an emote command.
+     *
+     *  @param general   The phrase to broadcast if no target is selected.
+     *  @param specific  The phrase to broadcast if a target is selected.
+     *  @param animation The animation for the emote. If there isn't one pass "noanim".
+     *  @param range     The range of the broadcast.
+     *  @param target    The target, if there is one.
+     */
+    void Emote(csString general, csString specific, csString animation, MsgEntry *me, Client *client);
 
-	/** Check to see if command is an emote.
+    /** @brief Check to see if command is an emote.
      *
      *  @param command  The command in question.
      *  @param execute  Execute the emote or not.
      */
-	bool CheckForEmote(csString command, bool execute, MsgEntry *me, Client *client);
+    bool CheckForEmote(csString command, bool execute, MsgEntry *me, Client *client);
 
-	// Struct to hold our emote data.
+    /// Struct to hold our emote data.
     struct EMOTE {
     csString command;
     csString general;
@@ -360,7 +368,7 @@ protected:
     csString anim;
     };
 
-	csArray<EMOTE> emoteList;
+    csArray<EMOTE> emoteList;
 
     ClientConnectionSet     *clients;
 //    psDatabase              *database;

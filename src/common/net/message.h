@@ -57,7 +57,7 @@ public:
     }
 
     /// Increase the number of references to this object.
-    void IncRef () 
+    void IncRef ()
     {
         AtomicOperations::Increment(&ref_count);
     }
@@ -98,12 +98,9 @@ typedef uint8_t msgtype;
 #pragma pack (1)
 struct psMessageBytes
 {
-    /// Version
-    msgtype    type;
-    /// the size of the following data
-    uint16_t    size;
-    /** this can be used as a pointer to the data */
-    char    payload[0];
+    msgtype    type; ///< Version
+    uint16_t    size; ///< the size of the following data
+    char    payload[0]; ///< this can be used as a pointer to the data
 
     size_t GetTotalSize() const { return sizeof(psMessageBytes) + csLittleEndian::Convert(size); }
     size_t GetSize() const      { return csLittleEndian::Convert(size); }
@@ -160,7 +157,7 @@ public:
         bytes->SetTotalSize(msgsize);
     }
 
-    MsgEntry (const MsgEntry* me) 
+    MsgEntry (const MsgEntry* me)
     {
         size_t msgsize = me->bytes->GetTotalSize();
         if (msgsize > MAX_MESSAGE_SIZE)
@@ -193,7 +190,7 @@ public:
     }
 
     void Reset(int pos = 0) { current = pos; }
-    
+
     /// Add a string to the current psMessageBytes buffer
     void Add(const char *str)
     {
@@ -372,9 +369,9 @@ public:
         *p = csLittleEndian::Convert((int32) i);
         current += sizeof(int32_t);
     }
-    
+
        /// Add unsigned 4byte int to current psMessageBytes buffer
-    
+
     void Add(const uint32_t i)
     {
         if (bytes == NULL)
@@ -400,9 +397,9 @@ public:
         *p = csLittleEndian::Convert((uint32) i);
         current += sizeof(uint32_t);
     }
-          
+
       /// Add a pointer to the current psMessageBytes buffer. Pointers must never be sent over the network!
-    
+
     void AddPointer(const uintptr_t i)
      {
          if (bytes == NULL)
@@ -430,7 +427,7 @@ public:
      }
 
        /// Add 8bit unsigned int to current psMessageBytes buffer
-    
+
     void Add(const uint8_t i)
     {
         if (bytes == NULL)
@@ -509,7 +506,7 @@ public:
         uint8_t t = b ? 1 : 0;
         Add(t);
     }
-    
+
     /// Add an x,y,z vector to the buffer
     void Add(const csVector3& v)
     {
@@ -542,7 +539,7 @@ public:
 
     /// Add a processed buffer of some kind; should only be used by files and the like.
     // NOTE THIS IS NOT ENDIAN-CONVERTED:  YOUR DATA MUST ALREADY BE ENDIAN SAFE.
-    void Add(const void *datastream,const uint32_t length) 
+    void Add(const void *datastream,const uint32_t length)
     {
         if (bytes == NULL)
         {
@@ -566,7 +563,7 @@ public:
 
         Add(length);
 
-        if (length!=0) 
+        if (length!=0)
         {
             void *currentloc = (void *) (bytes->payload+current);
             memcpy(currentloc, datastream, length);
@@ -684,7 +681,7 @@ public:
         current += sizeof(int32_t);
         return csLittleEndian::Convert(*p);
     }
-    
+
     /// Get an unsigned 4byte int from the current psMessageBytes buffer
     uint32_t GetUInt32()
     {
@@ -775,7 +772,7 @@ public:
 
         return (GetUInt8() != 0);
     }
-    
+
     csVector3 GetVector()
     {
         // If the message is in overrun state, we know we can't read anymore
@@ -788,7 +785,7 @@ public:
             overrun=true;
             return 0;
         }
-        
+
         uint32 *p = (uint32 *)(bytes->payload+current);
         csVector3 v;
         v.x = csIEEEfloat::ToNative( csLittleEndian::Convert(*(p++)) );
@@ -828,7 +825,7 @@ public:
         current += *length;
         return datastream;
     }
-    
+
     void SetType(uint8_t type)
     {
         bytes->type = type;
@@ -844,11 +841,11 @@ public:
     { }
     bool GetPending()
     { return false; }
-    
+
     /// Return the size of the databuffer
     size_t GetSize()
     { return bytes->GetSize();}
-    
+
 
 public:
     /** The Number of the client the Message is from/goes to */

@@ -47,7 +47,7 @@
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
-pawsPetitionGMWindow::pawsPetitionGMWindow() 
+pawsPetitionGMWindow::pawsPetitionGMWindow()
 : psCmdBase( NULL,NULL,  PawsManager::GetSingleton().GetObjectRegistry() )
 {
 }
@@ -86,16 +86,16 @@ bool pawsPetitionGMWindow::PostSetup()
 
 const char* pawsPetitionGMWindow::HandleCommand( const char* cmd )
 {
-    char* buff = csStrNew(cmd);
+    WordArray words (cmd, false);
 
     // Check which command was invoked:
-    if ( !strncmp(buff+1, "petition_manage", 13))
+    if ( words[0].CompareNoCase("/petition_manage") )
     {
         hasPetInterest = true;
-        
+
         // First, display this window to the user
         Show();
-    
+
         // Query the server for messages:
         QueryServer();
     }
@@ -113,7 +113,7 @@ void pawsPetitionGMWindow::HandleMessage ( MsgEntry* me )
     {
         //printf("Bailing out because of message.isGM");
         return;
-    }        
+    }
 
     if (message.msgType == PETITION_DIRTY && psengine->GetCelClient()->GetMainPlayer()->GetType() > 20)
     {
@@ -121,10 +121,10 @@ void pawsPetitionGMWindow::HandleMessage ( MsgEntry* me )
         {
             //printf("Looking for pet interest and bailing out\n");
             QueryServer();
-        }            
+        }
         return;
     }
-    
+
     // if the server gave us a list of petitions, then use it
 //    if (message.petitions.GetSize() > 0)
     petitionMessage = message;
@@ -174,11 +174,13 @@ void pawsPetitionGMWindow::HandleMessage ( MsgEntry* me )
             printf("Invalid currentRow\n");
             return;
         }
-
+    
         // Remove the item and refresh the list:
 //        petitionMessage.petitions.DeleteIndex(currentRow);
-        //printf("Adding peitions\n");
+
         AddPetitions(petitionMessage.petitions);
+        
+        petitionList->Select(petitionList->GetRow(currentRow));
 
         csString report;
         csString translation1 = PawsManager::GetSingleton().Translate("The selected petition was %s");
@@ -187,7 +189,7 @@ void pawsPetitionGMWindow::HandleMessage ( MsgEntry* me )
         psSystemMessage confirm(0,MSG_INFO,report.GetData());
         msgqueue->Publish(confirm.msg);
 
-        
+
         return;
     }
 
@@ -226,7 +228,7 @@ void pawsPetitionGMWindow::HandleMessage ( MsgEntry* me )
         //printf("Escalate\n");
         // Check if server reported errors on the query
         if (!message.success)
-        {            
+        {
             psSystemMessage error(0,MSG_INFO,message.error);
             msgqueue->Publish(error.msg);
             return;
@@ -255,7 +257,7 @@ void pawsPetitionGMWindow::HandleMessage ( MsgEntry* me )
         //printf("Descalate\n");
         // Check if server reported errors on the query
         if (!message.success)
-        {            
+        {
             psSystemMessage error(0,MSG_INFO,message.error);
             msgqueue->Publish(error.msg);
             return;
@@ -291,7 +293,7 @@ void pawsPetitionGMWindow::HandleMessage ( MsgEntry* me )
 }
 
 bool pawsPetitionGMWindow::OnButtonPressed( int mouseButton, int keyModifier, pawsWidget* widget )
-{  
+{
     // We know that the calling widget is a button.
     int button = widget->GetID();
 
@@ -348,11 +350,11 @@ bool pawsPetitionGMWindow::OnButtonPressed( int mouseButton, int keyModifier, pa
                     msgqueue->Publish(error.msg);
                     return true;
                 }
-        
+
                 if (csString("Open") == ((pawsTextBox*)(petitionList->GetSelected()->GetColumn(PGMCOL_STATUS)))->GetText())
                 {
                     currentRow = sel;
-            
+
                     // Send a message to the server requesting assignment:
                     psPetitionRequestMessage queryMsg(true, "assign", petitionMessage.petitions.Get(currentRow).id);
                     msgqueue->SendMessage(queryMsg.msg);
@@ -378,12 +380,12 @@ bool pawsPetitionGMWindow::OnButtonPressed( int mouseButton, int keyModifier, pa
                     msgqueue->Publish(error.msg);
                     return true;
                 }
-            
+
                 if (csString("In Progress") == ((pawsTextBox*)(petitionList->GetSelected()->GetColumn(PGMCOL_STATUS)))->GetText())
                 {
                     currentRow = sel;
 
-                    pawsStringPromptWindow::Create(PawsManager::GetSingleton().Translate("Describe the petition and how you've helped"), "", 
+                    pawsStringPromptWindow::Create(PawsManager::GetSingleton().Translate("Describe the petition and how you've helped"), "",
                                                    true, 400, 60, this, "CloseDesc");
                 }
                 else
@@ -414,12 +416,12 @@ bool pawsPetitionGMWindow::OnButtonPressed( int mouseButton, int keyModifier, pa
                     if ( level == 10 )
                     {
                         psSystemMessage error(0,MSG_INFO,"Cannot escalate above 10");
-                        msgqueue->Publish(error.msg);                    
+                        msgqueue->Publish(error.msg);
                         return true;
                     }
 
                     currentRow = sel;
-        
+
                     // Send a message to the server requesting assignment:
                     psPetitionRequestMessage queryMsg(true, "escalate", petitionMessage.petitions.Get(currentRow).id);
                     msgqueue->SendMessage(queryMsg.msg);
@@ -427,7 +429,7 @@ bool pawsPetitionGMWindow::OnButtonPressed( int mouseButton, int keyModifier, pa
             }
             break;
         }
-    
+
         case DESCALATE_BUTTON:
         {
             if (petCount > 0)
@@ -447,12 +449,12 @@ bool pawsPetitionGMWindow::OnButtonPressed( int mouseButton, int keyModifier, pa
                     if ( level == 0 )
                     {
                         psSystemMessage error(0,MSG_INFO,"Cannot descalate below 0");
-                        msgqueue->Publish(error.msg);                    
+                        msgqueue->Publish(error.msg);
                         return true;
                     }
-                                        
+
                     currentRow = sel;
-        
+
                     // Send a message to the server requesting assignment:
                     psPetitionRequestMessage queryMsg(true, "descalate", petitionMessage.petitions.Get(currentRow).id);
                     msgqueue->SendMessage(queryMsg.msg);
@@ -480,7 +482,7 @@ bool pawsPetitionGMWindow::OnButtonPressed( int mouseButton, int keyModifier, pa
             }
             else
                 psengine->SetTargetPetitioner("None");
-            
+
             // load the gm gui so that the gm can access functions to aid the pet
             const char* errorMessage = cmdsource->Publish( "/show_gm" );
             if ( errorMessage )
@@ -550,8 +552,8 @@ void pawsPetitionGMWindow::SetText(size_t rowNum, int colNum, const char* fmt, .
 void pawsPetitionGMWindow::AddPetitions(csArray<psPetitionInfo> &petitions)
 {
     // figure out the selected petition
-    
-    
+
+
     if (petitionList->GetRowCount() <= 0)
         petitionList->Select(NULL);
 
@@ -574,7 +576,7 @@ void pawsPetitionGMWindow::AddPetitions(csArray<psPetitionInfo> &petitions)
         selectedPet.escalation = -1;
     }
     petitionList->Select(NULL);
-    
+
     // Clear the list box and add the user's petitions
     petitionList->Clear();
     psPetitionInfo info;
@@ -583,7 +585,7 @@ void pawsPetitionGMWindow::AddPetitions(csArray<psPetitionInfo> &petitions)
     {
         info = petitions.Get(i);
         petCount++;
-                    
+
         // Set the data for this row:
         petitionList->NewRow(i);
         SetText(i, PGMCOL_LVL, "%d", info.escalation);
@@ -593,7 +595,7 @@ void pawsPetitionGMWindow::AddPetitions(csArray<psPetitionInfo> &petitions)
         SetText(i, PGMCOL_CREATED, "%s", info.created.GetData());
         SetText(i, PGMCOL_PETITION, "%s", info.petition.GetData());
 
-        // reselect the petition        
+        // reselect the petition
         if (selectedPet.escalation != -1)
         {
             if (selectedPet.created == info.created
