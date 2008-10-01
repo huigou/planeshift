@@ -658,6 +658,7 @@ eid:&lt;EID&gt; - Subject is the enity with the given eid.
 
 Destination might be one of the following:
 here [&lt;instance&gt;] - Your current position possible in another instance.
+there &lt;instance&gt; - Their current position in another instance.
 last - Last position
 spawn - Spawn position
 restore - Teleport offline character here
