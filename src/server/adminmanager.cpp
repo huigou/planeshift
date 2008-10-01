@@ -2349,7 +2349,8 @@ void AdminManager::Teleport(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& 
         psserver->SendSystemInfo(client->GetClientNum(), "Use: /teleport <subject> <destination>\n"
                                  "Subject    : me/target/<object name>/<NPC name>/<player name>/eid:<EID>/pid:<PID>\n"
                                  "Destination: me [<instance>]/target/<object name>/<NPC name>/<player name>/eid:<EID>/pid:<PID>/\n"
-                                 "             here [<instance>]/last/spawn/restore/map [<map name>|here] <x> <y> <z> [<instance>]\n");
+                                 "             here [<instance>]/last/spawn/restore/map [<map name>|here] <x> <y> <z> [<instance>]\n"
+                                 "             there <instance>\n");
         return;
     }
 
@@ -2393,7 +2394,7 @@ void AdminManager::Teleport(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& 
         psserver->SendSystemError(client->GetClientNum(), "Cannot teleport target");
         return;
     }
-
+    
     csVector3 targetPoint;
     float yRot = 0.0;
     iSector *targetSector;
@@ -3572,6 +3573,20 @@ bool AdminManager::GetTargetOfTeleport(Client *client, psAdminCmdMessage& msg, A
         else
         {
             instance = client->GetActor()->GetInstance();
+        }
+    }
+    // Teleport to a different instance in the same position
+    else if (data.target == "there")
+    {
+        subject->GetPosition(targetPoint, yRot, targetSector);
+        if (data.instanceValid)
+        {
+            instance = data.instance;
+        }
+        else
+        {
+            psserver->SendSystemError(client->GetClientNum(), "You must specify what instance.");
+            return false;
         }
     }
     // Teleport to last valid location (force unstick/teleport undo)

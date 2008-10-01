@@ -1,4 +1,8 @@
-﻿*** 2008-09-30 by Stefano Angeleri
+﻿*** 2008-10-01 by Steven Patrick
+- Added 'there <instance>' destination to /teleport command, teleports subject
+  to a different instance in the same position.
+
+*** 2008-09-30 by Stefano Angeleri
 - Added some informations in the compiling guide patch by Caarrie, plus
   changed /home/user to $HOME in linux guides
 - Added a new function for guilds: guild members login/logout announcement.
