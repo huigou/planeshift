@@ -99,13 +99,13 @@ class AreaTargetConfirm : public PendingQuestion
         AreaTargetConfirm(const csString in_msg, csString in_player, const csString & question, Client *in_client)
             : PendingQuestion(in_client->GetClientNum(),question, psQuestionMessage::generalConfirm)
         {   //save variables for later use
-            this->command  =   in_msg;      
+            this->command  =   in_msg;
             this->client  =   in_client;
             this->player = in_player;
         }
-            
+
         /// Handles the user choice
-        virtual void HandleAnswer(const csString & answer) 
+        virtual void HandleAnswer(const csString & answer)
         {
             if (answer != "yes") //if we haven't got a confirm just get out of here
                 return;
@@ -129,7 +129,7 @@ class AreaTargetConfirm : public PendingQuestion
                 cmd.FireEvent(); //send it to adminmanager
             }
         }
-        
+
     protected:
         csString command;   ///< The complete command sent from the client originally (without any modification)
         Client *client;     ///< Originating client of the command
@@ -2271,7 +2271,7 @@ void AdminManager::ViewMarriage(MsgEntry* me, AdminCmdData& data, bool duplicate
 
     bool married;
     csString spouse;
-    
+
     if(player)
     {
         // player is online
@@ -2315,7 +2315,7 @@ void AdminManager::ViewMarriage(MsgEntry* me, AdminCmdData& data, bool duplicate
             iResultRow& row = result[0];
             spouse = row["name"];
         }
-        
+
         if(result.Count() > 1) //check for duplicate
             duplicateActor = true;
     }
@@ -2394,7 +2394,7 @@ void AdminManager::Teleport(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& 
         psserver->SendSystemError(client->GetClientNum(), "Cannot teleport target");
         return;
     }
-    
+
     csVector3 targetPoint;
     float yRot = 0.0;
     iSector *targetSector;
@@ -5261,7 +5261,7 @@ void AdminManager::ChangeName(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
         psserver->SendSystemInfo(me->clientnum,"Syntax: \"/changename [me/target/eid/pid/area/name] [force|forceall] <NewName> [NewLastName]\"");
         return;
     }
-    
+
     if(targetobject)
     {
         if(!targetobject->GetCharacterData()) //no need to go on this isn't an npc or pc characther (most probably an item)
@@ -6451,7 +6451,7 @@ void AdminManager::SetSkill(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& 
         }
 
         pchar->SetSkillRank(skill->id, value);
-        psserver->SendSystemInfo(me->clientnum, "Changed '%s' from %u to %u",skill->name.GetDataSafe(),old_value,data.value);
+        psserver->SendSystemInfo(me->clientnum, "Changed '%s' of '%s' from %u to %u",skill->name.GetDataSafe(), target->GetName(), old_value,data.value);
     }
 
     // Send updated skill list to client

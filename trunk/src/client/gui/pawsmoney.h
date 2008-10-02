@@ -48,7 +48,7 @@ public:
     void Set(const psMoney & money);
     void Get(int & circles, int & octas, int & hexas, int & trias);
     int  Get(int coinType);
-    
+
     /** Returns the amount of money in trias */
     int  GetAmount() { return amount; }
 
@@ -56,24 +56,24 @@ public:
 
     /** Tells if the amount of money is Zero (null) */
     bool IsNoAmount();
-    
+
     /** Returns pawsItemSlot that represents given coin */
     pawsSlot * GetSlot(int coin);
-    
+
     void SetContainer( int containerID );
     void Drag( bool dragOn );
-    
+
     void OnUpdateData(const char *dataname,PAWSData& value);
-    
+
 protected:
     /** Loads pawsMoney widget content from file */
     bool CreateGUI();
-    
-    bool border;    // should the slot widgets have border ?
-    int spacing;    // distance between slots
 
-    int amount;     // The total amount of money in trias
-    
+    bool border;    ///< should the slot widgets have border ?
+    int spacing;    ///< distance between slots
+
+    int amount;     ///< The total amount of money in trias
+
     pawsSlot * circles;
     pawsSlot * octas;
     pawsSlot * hexas;
