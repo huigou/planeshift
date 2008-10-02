@@ -98,9 +98,6 @@ INSERT INTO command_group_assignment VALUES( "/awardexp", 24 );
 INSERT INTO command_group_assignment VALUES( "/deputize", 30 );
 INSERT INTO command_group_assignment VALUES( "/deputize", 25 );
 INSERT INTO command_group_assignment VALUES( "/deputize", 24 );
-INSERT INTO command_group_assignment VALUES( "/morph", 30 );
-INSERT INTO command_group_assignment VALUES( "/morph", 25 );
-INSERT INTO command_group_assignment VALUES( "/morph", 24 );
 INSERT INTO command_group_assignment VALUES( "quest change others", 30 );
 INSERT INTO command_group_assignment VALUES( "quest change others", 25 );
 INSERT INTO command_group_assignment VALUES( "quest change others", 24 );
@@ -116,7 +113,9 @@ INSERT INTO command_group_assignment VALUES( "/setitemname", 24 );
 INSERT INTO command_group_assignment VALUES( "/setquality", 30 );
 INSERT INTO command_group_assignment VALUES( "/setquality", 25 );
 INSERT INTO command_group_assignment VALUES( "/setquality", 24 );
-
+INSERT INTO command_group_assignment VALUES( "morph others", 30 );
+INSERT INTO command_group_assignment VALUES( "morph others", 25 );
+INSERT INTO command_group_assignment VALUES( "morph others", 24 );
 
 # GM3 and above
 INSERT INTO command_group_assignment VALUES( "/settrait", 30 );
@@ -139,6 +138,10 @@ INSERT INTO command_group_assignment VALUES( "changenameall", 30 );
 INSERT INTO command_group_assignment VALUES( "changenameall", 25 );
 INSERT INTO command_group_assignment VALUES( "changenameall", 24 );
 INSERT INTO command_group_assignment VALUES( "changenameall", 23 );
+INSERT INTO command_group_assignment VALUES( "/morph", 30 );
+INSERT INTO command_group_assignment VALUES( "/morph", 25 );
+INSERT INTO command_group_assignment VALUES( "/morph", 24 );
+INSERT INTO command_group_assignment VALUES( "/morph", 23 );
 
 # GM2 and above
 INSERT INTO command_group_assignment VALUES( "command area", 30 );
