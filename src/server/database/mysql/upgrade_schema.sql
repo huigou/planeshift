@@ -972,6 +972,13 @@ INSERT INTO command_group_assignment VALUES( "/target_name", 21 );
 ALTER TABLE `characters` ADD `guild_notifications` TINYINT( 1 ) UNSIGNED NOT NULL DEFAULT '0' AFTER `guild_private_notes` ;
 UPDATE `server_options` SET `option_value`='1195' WHERE `option_name`='db_version';
 
+#### 1196 - Stefano Angeleri - allowing /morph me to gm3+
+INSERT INTO command_group_assignment VALUES( "morph others", 30 );
+INSERT INTO command_group_assignment VALUES( "morph others", 25 );
+INSERT INTO command_group_assignment VALUES( "morph others", 24 );
+INSERT INTO command_group_assignment VALUES( "/morph", 23 );
+UPDATE `server_options` SET `option_value`='1196' WHERE `option_name`='db_version';
+
 # Insert your upgrade before this line. Remember when you set a new db_version
 # to update the server_options.sql file and update psserver.cpp as well.
 # This to ensure that everything is working if you use the create_all.sql to

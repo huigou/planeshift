@@ -7089,6 +7089,12 @@ void AdminManager::Morph(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& dat
         return;
     }
 
+    if(targetclient != client && !Valid(client->GetSecurityLevel(), "morph others", me->clientnum))
+    {
+        psserver->SendSystemError(me->clientnum,"You don't have permission to change mesh of %s!", targetclient->GetName() );
+        return;
+    }
+
     gemActor* target = targetclient->GetActor();
 
     if (data.mesh == "reset")

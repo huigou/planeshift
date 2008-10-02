@@ -3,6 +3,7 @@
 - Fixed FS#2324 - setskill has insufficient system output
 - identation/trailing spaces/comment improvement/fixes in various files
 - Fixed FS#2323 - giveitem command doesn't say how many given
+- Fixed FS#1961 - GM3 command /morph self
 
 *** 2008-10-01 by Steven Patrick
 - Added 'there <instance>' destination to /teleport command, teleports subject
