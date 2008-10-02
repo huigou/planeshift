@@ -40,7 +40,7 @@ enum {
  */
 #define        MAX_GMPETITION_LENGTH   (65)
 
-/** Window contains a manageable list of petitions. 
+/** Window contains a manageable list of petitions.
  * with options for GMs handling them
  *
  * NOTE: the current expected columns for the listbox are
@@ -51,7 +51,7 @@ enum {
  *    3) created date/tiem
  *    4) petition
  */
-class pawsPetitionGMWindow : public pawsWidget, public psCmdBase, public iOnStringEnteredAction  
+class pawsPetitionGMWindow : public pawsWidget, public psCmdBase, public iOnStringEnteredAction
 {
 public:
     /// Constructor
@@ -103,14 +103,14 @@ protected:
 
     /// count the number of actual petitions
     int petCount;
-    
+
     /// this is set to true the first time a player looks at this petition window
     /// this allows for most players to refrain from querying the petition list
     bool hasPetInterest;
-    
+
     /// keep track of the selected petition so that we can select it after receiving a new petition list
     psPetitionInfo selectedPet;
-   
+
     /// Displays text of petition
     pawsMessageTextBox * petText;
 };
