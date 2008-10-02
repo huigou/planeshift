@@ -1,7 +1,8 @@
 ﻿*** 2008-10-02 by Stefano Angeleri
 - Fixed FS#2320 - petition bugs - also removed some c code
-- Fixed FS#2324 - setskill has insufficient system output -
+- Fixed FS#2324 - setskill has insufficient system output
 - identation/trailing spaces/comment improvement/fixes in various files
+- Fixed FS#2323 - giveitem command doesn't say how many given
 
 *** 2008-10-01 by Steven Patrick
 - Added 'there <instance>' destination to /teleport command, teleports subject

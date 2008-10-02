@@ -6243,7 +6243,7 @@ void AdminManager::TransferItem(MsgEntry* me, psAdminCmdMessage& msg,
 
         // Inform the GM doing the transfer
         psserver->SendSystemOK(me->clientnum,
-                "%s transferred from %s's %s to %s", item->GetName(),
+                "%u %s transferred from %s's %s to %s", item->GetStackCount(), item->GetName(),
                 source->GetActor()->GetName(), wasEquipped ? "equipment"
                         : "inventory", target->GetActor()->GetName());
 
@@ -6251,7 +6251,7 @@ void AdminManager::TransferItem(MsgEntry* me, psAdminCmdMessage& msg,
         if (target->GetClientNum() != me->clientnum)
         {
             psserver->SendSystemOK(target->GetClientNum(),
-                    "You were given %s by GM %s.", item->GetName(),
+                    "You were given %u %s by GM %s.", item->GetStackCount(), item->GetName(),
                     source->GetActor()->GetName());
         }
 
@@ -6259,7 +6259,7 @@ void AdminManager::TransferItem(MsgEntry* me, psAdminCmdMessage& msg,
         if (source->GetClientNum() != me->clientnum)
         {
             psserver->SendSystemResult(source->GetClientNum(),
-                    "%s was taken by GM %s.", item->GetName(),
+                    "%u %s was taken by GM %s.", item->GetStackCount(), item->GetName(),
                     target->GetActor()->GetName());
         }
 
