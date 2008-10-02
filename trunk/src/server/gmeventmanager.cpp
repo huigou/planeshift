@@ -48,7 +48,7 @@ GMEventManager::GMEventManager()
 
     // initialise gmEvents
     gmEvents.DeleteAll();
-    
+
     psserver->GetEventManager()->Subscribe(this, MSGTYPE_GMEVENT_INFO, REQUIRE_READY_CLIENT);
 }
 
@@ -126,11 +126,11 @@ bool GMEventManager::AddNewGMEvent (Client* client, csString eventName, csString
     unsigned int gmID = client->GetPlayerID();
     int clientnum = client->GetClientNum();
     GMEvent* gmEvent;
-    
+
     // if this GM already has an active event, he/she cant start another
     if ((gmEvent = GetGMEventByGM(gmID, RUNNING, zero)) != NULL)
     {
-        psserver->SendSystemInfo(clientnum, 
+        psserver->SendSystemInfo(clientnum,
                                  "You are already running the \'%s\' event.",
                                  gmEvent->eventName.GetDataSafe());
         return false;
@@ -139,12 +139,12 @@ bool GMEventManager::AddNewGMEvent (Client* client, csString eventName, csString
     if (eventName.Length() > MAX_EVENT_NAME_LENGTH)
     {
         eventName.Truncate(MAX_EVENT_NAME_LENGTH);
-        psserver->SendSystemInfo(client->GetClientNum(), 
+        psserver->SendSystemInfo(client->GetClientNum(),
                                  "Event name truncated to \'%s\'.",
                                  eventName.GetDataSafe());
     }
 
-    
+
     // GM can register his/her event
     newEventID = GetNextEventID();
 
@@ -157,23 +157,23 @@ bool GMEventManager::AddNewGMEvent (Client* client, csString eventName, csString
     db->Command("INSERT INTO gm_events(id, gm_id, name, description, status) VALUES (%i, %i, '%s', '%s', %i)",
         newEventID,
         gmID,
-       	escEventName.GetDataSafe(),
-       	escEventDescription.GetDataSafe(),
+        escEventName.GetDataSafe(),
+        escEventDescription.GetDataSafe(),
         RUNNING);
 
     // and in the local cache.
     gmEvent = new GMEvent;
     gmEvent->id = newEventID;
     gmEvent->gmID = gmID;
-    gmEvent->eventName = escEventName;
-    gmEvent->eventDescription = escEventDescription;
+    gmEvent->eventName = eventName;
+    gmEvent->eventDescription = eventDescription;
     gmEvent->status = RUNNING;
     gmEvents.Push(gmEvent);
 
     // keep psCharacter upto date
     client->GetActor()->GetCharacterData()->AssignGMEvent(gmEvent->id,true);
 
-    psserver->SendSystemInfo(client->GetClientNum(), 
+    psserver->SendSystemInfo(client->GetClientNum(),
                              "You have initiated a new event, \'%s\'.",
                              eventName.GetDataSafe());
 
@@ -188,8 +188,8 @@ bool GMEventManager::RegisterPlayerInGMEvent (Client* client, Client* target)
     int zero=0;
     GMEvent *gmEvent;
     unsigned int gmID = client->GetPlayerID();
- 
-    // make sure GM is running (or assisting) an event, the player is valid and available. 
+
+    // make sure GM is running (or assisting) an event, the player is valid and available.
     if ((gmEvent = GetGMEventByGM(gmID, RUNNING, zero)) == NULL)
     {
         zero = 0;
@@ -300,7 +300,7 @@ bool GMEventManager::ListGMEvents (Client* client)
         if (gmEvents[i]->status == RUNNING)
         {
             psserver->SendSystemInfo(client->GetClientNum(), "%s", gmEvents[i]->eventName.GetData());
-        }            
+        }
     }
     return true;
 }
@@ -325,7 +325,7 @@ bool GMEventManager::CompleteGMEvent (Client* client, unsigned int gmID, bool by
     // if this GM does not have an active event, he/she can't end it.
     GMEvent* theEvent;
     int clientnum = client->GetClientNum();
-    
+
     if ((theEvent = GetGMEventByGM(gmID, RUNNING, zero)) == NULL)
     {
         psserver->SendSystemInfo(clientnum, "You are not running an event.");
@@ -360,7 +360,7 @@ bool GMEventManager::CompleteGMEvent (Client* client, unsigned int gmID, bool by
     db->Command("UPDATE gm_events SET status = %d, description = '%s' WHERE id = %d",
                 COMPLETED, theEvent->eventDescription.GetDataSafe(), theEvent->id);
     theEvent->status = COMPLETED;
-    
+
     psserver->SendSystemInfo(clientnum, "Event '%s' complete.", theEvent->eventName.GetDataSafe());
 
     return true;
@@ -375,7 +375,7 @@ bool GMEventManager::RemovePlayerFromGMEvent (Client* client, Client* target)
     GMEvent* gmEvent;
     GMEvent* playerEvent;
     unsigned int gmID = client->GetPlayerID();
-     
+
     // make sure GM is running (or assisting) an event, the player is valid and registered.
     if ((gmEvent = GetGMEventByGM(gmID, RUNNING, zero)) == NULL)
     {
@@ -534,7 +534,7 @@ bool GMEventManager::RewardPlayersInGMEvent (Client* client,
 
     return true;
 }
- 
+
 /// return all events, running & complete, for a specified player
 int GMEventManager::GetAllGMEventsForPlayer (unsigned int playerID,
                                              csArray<int>& completedEvents,
@@ -543,7 +543,7 @@ int GMEventManager::GetAllGMEventsForPlayer (unsigned int playerID,
 {
     int runningEvent = -1, id, index=0;
     GMEvent* gmEvent;
-    
+
     completedEvents.DeleteAll();
     completedEventsAsGM.DeleteAll();
 
@@ -567,8 +567,8 @@ int GMEventManager::GetAllGMEventsForPlayer (unsigned int playerID,
         }
     }
     while (gmEvent);
-   
-    index = 0; 
+
+    index = 0;
     gmEvent = GetGMEventByPlayer(playerID, RUNNING, index);
     if (gmEvent)
         runningEvent = gmEvent->id;
@@ -599,7 +599,7 @@ void GMEventManager::HandleMessage(MsgEntry* me, Client* client)
 
         if (msg.command == psGMEventInfoMessage::CMD_QUERY)
         {
-            GMEvent* theEvent;    
+            GMEvent* theEvent;
             if ((theEvent = GetGMEventByID(msg.id)) == NULL)
             {
                 Error3("Client %s requested unavailable GM Event %d", client->GetName(), msg.id);
@@ -615,7 +615,7 @@ void GMEventManager::HandleMessage(MsgEntry* me, Client* client)
 
                 // if this client is the GM, list the participants too
                 if (client->GetPlayerID() == theEvent->gmID)
-                {		    
+                {
                     eventDesc.AppendFmt(". Participants: %zu. Online: ", theEvent->playerID.GetSize());
                     csArray<unsigned int>::Iterator iter = theEvent->playerID.GetIterator();
                     while (iter.HasNext())
@@ -635,10 +635,10 @@ void GMEventManager::HandleMessage(MsgEntry* me, Client* client)
                     if ((target = clientConnections->FindPlayer(theEvent->gmID)))
                     {
                         eventDesc.AppendFmt(" (%s)", target->GetName());
-                    }		    
+                    }
                 }
-		
-                psGMEventInfoMessage response(me->clientnum, 
+
+                psGMEventInfoMessage response(me->clientnum,
                                               psGMEventInfoMessage::CMD_INFO,
                                               msg.id,
                                               theEvent->eventName.GetDataSafe(),
@@ -656,7 +656,7 @@ void GMEventManager::HandleMessage(MsgEntry* me, Client* client)
         }
     }
 }
-     
+
 /// remove players complete references to GM events they were involved with,
 /// e.g. if a character is deleted.
 bool GMEventManager::RemovePlayerFromGMEvents(unsigned int playerID)
@@ -743,7 +743,7 @@ bool GMEventManager::AssumeControlOfGMEvent(Client* client, csString eventName)
     // if this GM already has an active event, he/she cant control another
     if ((gmEvent = GetGMEventByGM(newGMID, RUNNING, zero)))
     {
-        psserver->SendSystemInfo(clientnum, 
+        psserver->SendSystemInfo(clientnum,
                                  "You are already running the \'%s\' event.",
                                  gmEvent->eventName.GetDataSafe());
         return false;
@@ -753,7 +753,7 @@ bool GMEventManager::AssumeControlOfGMEvent(Client* client, csString eventName)
     zero = 0;
     if (!(gmEvent = GetGMEventByName(eventName, RUNNING, zero)))
     {
-        psserver->SendSystemInfo(clientnum, 
+        psserver->SendSystemInfo(clientnum,
                                  "The \'%s\' event is not recognised or not running.",
                                  eventName.GetDataSafe());
         return false;
@@ -766,7 +766,7 @@ bool GMEventManager::AssumeControlOfGMEvent(Client* client, csString eventName)
     {
         if ((target = clientConnections->FindPlayer(gmEvent->gmID)))
         {
-            psserver->SendSystemInfo(clientnum, 
+            psserver->SendSystemInfo(clientnum,
                                      "The \'%s\' event's GM, %s, is online: you cannot assume control.",
                                      gmEvent->eventName.GetDataSafe(),
                                      target->GetName());
@@ -781,7 +781,7 @@ bool GMEventManager::AssumeControlOfGMEvent(Client* client, csString eventName)
     gmEvent->gmID = newGMID;
     db->Command("UPDATE gm_events SET gm_id = %d WHERE id = %d", newGMID, gmEvent->id);
     client->GetActor()->GetCharacterData()->AssignGMEvent(gmEvent->id,true);
-    psserver->SendSystemInfo(clientnum, 
+    psserver->SendSystemInfo(clientnum,
                              "You now control the \'%s\' event.",
                              gmEvent->eventName.GetDataSafe());
 
@@ -822,7 +822,7 @@ bool GMEventManager::EraseGMEvent(Client* client, csString eventName)
 }
 
 /// returns details of an event
-GMEventStatus GMEventManager::GetGMEventDetailsByID (int id, 
+GMEventStatus GMEventManager::GetGMEventDetailsByID (int id,
                                                      csString& name,
                                                      csString& description)
 {
@@ -883,7 +883,7 @@ GMEventManager::GMEvent* GMEventManager::GetGMEventByName(csString eventName, GM
 /// status for a particular player. Note startIndex will be modified upon
 /// return.
 GMEventManager::GMEvent* GMEventManager::GetGMEventByPlayer(unsigned int playerID, GMEventStatus status, int& startIndex)
-{    
+{
     for (size_t e = startIndex; e < gmEvents.GetSize(); e++)
     {
         startIndex++;
@@ -922,7 +922,7 @@ void GMEventManager::RewardPlayer(int clientnum, Client* target, short stackCoun
     if (target->GetActor()->GetCharacterData()->Inventory().Add(newitem))
     {
         // inform recipient of their prize
-        psserver->SendSystemInfo(target->GetClientNum(), 
+        psserver->SendSystemInfo(target->GetClientNum(),
                                  "You have been rewarded for participating in this GM event.");
         psserver->SendSystemInfo(clientnum, "%s has been rewarded.", target->GetName());
         return;
@@ -949,7 +949,7 @@ void GMEventManager::DiscardGMEvent(Client* client, int eventID)
     csArray<int> completedEventIDsAsGM;
     csArray<int> completedEventIDs;
     GMEvent* gmEvent;
- 
+
     // look for this event in the player's events
     runningEventID = GetAllGMEventsForPlayer((playerID = client->GetPlayerID()),
                                              completedEventIDs,
@@ -1012,7 +1012,7 @@ bool GMEventManager::EraseGMEvent(Client* client, GMEvent* gmEvent)
     {
         if ((target = clientConnections->FindPlayer(gmEvent->gmID)))
         {
-            psserver->SendSystemInfo(clientnum, 
+            psserver->SendSystemInfo(clientnum,
                                      "The \'%s\' event's GM, %s, is online: you cannot discard their event.",
                                      gmEvent->eventName.GetDataSafe(),
                                      target->GetName());
@@ -1034,7 +1034,7 @@ bool GMEventManager::EraseGMEvent(Client* client, GMEvent* gmEvent)
                                      "Event '%s' has been discarded.",
                                      gmEvent->eventName.GetDataSafe());
         }
-    }   
+    }
     gmEvent->playerID.DeleteAll();
 
     // remove GM
