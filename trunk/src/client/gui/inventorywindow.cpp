@@ -69,13 +69,13 @@ pawsInventoryWindow::pawsInventoryWindow()
     msgHandler = NULL;
 
     loader =  csQueryRegistry<iLoader > ( PawsManager::GetSingleton().GetObjectRegistry() );
-    
+
     bulkSlots.SetSize( 32 );
     equipmentSlots.SetSize( PSCHARACTER_SLOT_COUNT );
     for ( size_t n = 0; n < equipmentSlots.GetSize(); n++ )
         equipmentSlots[n] = NULL;
-        
-    charApp = new psCharAppearance(PawsManager::GetSingleton().GetObjectRegistry());        
+
+    charApp = new psCharAppearance(PawsManager::GetSingleton().GetObjectRegistry());
 }
 
 pawsInventoryWindow::~pawsInventoryWindow()
@@ -104,33 +104,33 @@ bool pawsInventoryWindow::SetupSlot( const char* slotName )
     uintptr_t slotID = psengine->slotName.GetID(slotName);
     if ( slotID == csInvalidStringID )
     {
-        Error2("Could not located the %s slot", slotName); 
+        Error2("Could not located the %s slot", slotName);
         return false;
     }
     slot->SetContainer(  CONTAINER_INVENTORY_EQUIPMENT );
     slot->SetSlotID( slotID );
     slot->DrawStackCount(true);
-   
+
     equipmentSlots[slotID] = slot;
     return true;
 }
 
 bool pawsInventoryWindow::PostSetup()
-{    
+{
     //printf("Inventory setup\n");
     msgHandler = psengine->GetMsgHandler();
     if ( !msgHandler )
         return false;
-    
+
     // Setup the Doll
     if ( !SetupDoll() )
         return false;
-        
-    money = dynamic_cast <pawsMoney*> (FindWidget("Money")); 
+
+    money = dynamic_cast <pawsMoney*> (FindWidget("Money"));
     if ( money ){
         money->SetContainer( CONTAINER_INVENTORY_MONEY );
     }
-    
+
     // If you add something here, DO NOT FORGET TO CHANGE 'INVENTORY_EQUIP_COUNT'!!!
     SetupSlot("lefthand");
     SetupSlot("righthand");
@@ -147,7 +147,7 @@ bool pawsInventoryWindow::PostSetup()
     SetupSlot("bracers");
     SetupSlot("torso");
     SetupSlot("mind");
-    
+
     pawsListBox * bulkList = dynamic_cast <pawsListBox*> (FindWidget("BulkList"));
     if (bulkList){
     int colCount = bulkList->GetTotalColumns();
@@ -204,14 +204,14 @@ bool pawsInventoryWindow::SetupDoll()
         return false;
 
     csRef<iMeshWrapper> mesh = actor->GetMesh();
-    if (!mesh) 
+    if (!mesh)
     {
         return false;
-    }        
+    }
 
     // Set the doll view
     widget->View( mesh );
-    
+
     // Register this doll for updates
     widget->SetID( actor->GetID() );
 
@@ -224,22 +224,22 @@ bool pawsInventoryWindow::SetupDoll()
 
     charApp->Clone(actor->charApp);
     charApp->SetMesh(widget->GetObject());
-    
+
     //printf("Inventory Applying Traits: %s\n", actor->traits.GetData());
     //printf("Inventory Applying Equipment: %s\n", actor->equipment.GetData());
-    
-    
+
+
     charApp->ApplyTraits(actor->traits);
     charApp->ApplyEquipment(actor->equipment);
-    
+
     // Build doll appearance and equipment
     //bool a = psengine->BuildAppearance( widget->GetObject(), actor->traits );
     //bool e = psengine->BuildEquipment( widget->GetObject(), actor->equipment, actor->traitList );
-    
+
 
     }
     return true;
-    //return (a && e);  
+    //return (a && e);
 }
 
 bool pawsInventoryWindow::OnMouseDown( int button, int keyModifier, int x, int y )
@@ -258,16 +258,16 @@ bool pawsInventoryWindow::OnButtonPressed( int mouseButton, int keyModifer, paws
 {
     // Check to see if this was the view button.
     if ( widget->GetID() == VIEW_BUTTON )
-    {       
+    {
         if ( psengine->GetSlotManager()->IsDragging() )
         {
-            psViewItemDescription out(psengine->GetSlotManager()->HoldingContainerID(), 
-                                      psengine->GetSlotManager()->HoldingSlotID());   
+            psViewItemDescription out(psengine->GetSlotManager()->HoldingContainerID(),
+                                      psengine->GetSlotManager()->HoldingSlotID());
             msgHandler->SendMessage( out.msg );
 
             psengine->GetSlotManager()->CancelDrag();
         }
-    
+
         return true;
     }
 
@@ -282,11 +282,11 @@ void pawsInventoryWindow::Close()
 pawsSlot* pawsInventoryWindow::GetFreeSlot()
 {
     for ( size_t n = 0; n < bulkSlots.GetSize(); n++ )
-    {    
+    {
         if ( bulkSlots[n] && bulkSlots[n]->IsEmpty() )
         {
             return bulkSlots[n];
-        }       
+        }
     }
 
     return NULL;
@@ -294,133 +294,136 @@ pawsSlot* pawsInventoryWindow::GetFreeSlot()
 
 
 void pawsInventoryWindow::Dequip( const char* itemName )
-{    
-    if ( itemName != NULL )
-    {                    
+{
+    pawsListBox * bulkList = dynamic_cast <pawsListBox*> (FindWidget("BulkList"));
+    if ( (itemName != NULL) && (bulkList) )
+    {
         pawsSlot* fromSlot = NULL;
         // See if we can find the item in the equipment slots.
         for ( size_t z = 0; z < equipmentSlots.GetSize(); z++ )
-        {                   
+        {
             if ( equipmentSlots[z] && !equipmentSlots[z]->IsEmpty() )
-            {                               
-                csString tip(equipmentSlots[z]->GetToolTip()); 
-                if ( tip.CompareNoCase(itemName) )                
+            {
+                csString tip(equipmentSlots[z]->GetToolTip());
+                if ( tip.CompareNoCase(itemName) )
                 {
                     fromSlot = equipmentSlots[z];
                     break;
-                }                
+                }
             }
         }
-         
-        if ( fromSlot == NULL ) // if item was not found, look in slotnames 
-            fromSlot = dynamic_cast <pawsSlot*> (FindWidget(itemName));    
-    
+
+        if ( fromSlot == NULL ) // if item was not found, look in slotnames
+            fromSlot = dynamic_cast <pawsSlot*> (FindWidget(itemName));
+
         if ( fromSlot )
         {
             int container   = fromSlot->ContainerID();
             int slot        = fromSlot->ID();
             int stackCount  = fromSlot->StackCount();
-                   
+
             pawsSlot* freeSlot = GetFreeSlot();
             if ( freeSlot )
             {
-            
+
                 // Move from the equipped slot to an empty slot
                 psSlotMovementMsg msg( container, slot,
                                        freeSlot->ContainerID() ,
                                        freeSlot->ID(),
                                        stackCount );
-                               
-                msgHandler->SendMessage( msg.msg );                                               
+
+                msgHandler->SendMessage( msg.msg );
                 fromSlot->Clear();
             }
-            
-        }    
-    }        
+
+        }
+    }
 }
 
 void pawsInventoryWindow::Equip( const char* itemName, int stackCount )
-{    
-    if ( itemName != NULL )
-    {        
-        pawsSlot* fromSlot = NULL;        
+{
+    pawsListBox * bulkList = dynamic_cast <pawsListBox*> (FindWidget("BulkList"));
+    if ( (itemName != NULL) && (bulkList) )
+    {
+        pawsSlot* fromSlot = NULL;
         for ( size_t z = 0; z < bulkSlots.GetSize(); z++ )
         {
             if ( !bulkSlots[z]->IsEmpty() )
             {
-                csString tip(bulkSlots[z]->GetToolTip()); 
+                csString tip(bulkSlots[z]->GetToolTip());
                 if ( tip.CompareNoCase(itemName) )
                 {
                     fromSlot = bulkSlots[z];
                     break;
-                }                
+                }
             }
         }
-            
+
         if ( fromSlot )
         {
             int container   = fromSlot->ContainerID();
             int slot        = fromSlot->ID();
-        
-            //psItem* item = charData->GetItemInSlot( slot );    
+
+            //psItem* item = charData->GetItemInSlot( slot );
             csRef<MsgHandler> msgHandler = psengine->GetMsgHandler();
             psSlotMovementMsg msg( container, slot,
                                CONTAINER_INVENTORY_EQUIPMENT, -1,
                                stackCount );
-            msgHandler->SendMessage( msg.msg );                                               
+            msgHandler->SendMessage( msg.msg );
         }
-    }         
+    }
 }
 
 //search for items in bulk, then in equipped slots
 void pawsInventoryWindow::Write( const char* itemName )
 {
-    if ( itemName != NULL )
-    {        
-        pawsSlot* fromSlot = NULL;        
+    pawsListBox * bulkList = dynamic_cast <pawsListBox*> (FindWidget("BulkList"));
+    if ( (itemName != NULL) && (bulkList) )
+    {
+        pawsSlot* fromSlot = NULL;
         for ( size_t z = 0; z < bulkSlots.GetSize(); z++ )
         {
             if ( !bulkSlots[z]->IsEmpty() )
             {
-                csString tip(bulkSlots[z]->GetToolTip()); 
+                csString tip(bulkSlots[z]->GetToolTip());
                 if ( tip.CompareNoCase(itemName) )
                 {
                     fromSlot = bulkSlots[z];
                     break;
-                }                
+                }
             }
         }
-        
+
         if( fromSlot == NULL){
             // See if we can find the item in the equipment slots.
             for ( size_t z = 0; z < equipmentSlots.GetSize(); z++ )
-            {                   
+            {
                 if ( equipmentSlots[z] && !equipmentSlots[z]->IsEmpty() )
-                {                               
-                    csString tip(equipmentSlots[z]->GetToolTip()); 
-                    if ( tip.CompareNoCase(itemName) )                
+                {
+                    csString tip(equipmentSlots[z]->GetToolTip());
+                    if ( tip.CompareNoCase(itemName) )
                     {
                         fromSlot = equipmentSlots[z];
                         break;
-                    }                
+                    }
                 }
             }
-             
-            if ( fromSlot == NULL ) // if item was not found, look in slotnames 
-                fromSlot = dynamic_cast <pawsSlot*> (FindWidget(itemName));    
+
+            if ( fromSlot == NULL ) // if item was not found, look in slotnames
+                fromSlot = dynamic_cast <pawsSlot*> (FindWidget(itemName));
         }
-            
+
         if ( fromSlot )
         {
            printf("Found item %s to write on\n", itemName);
             int container   = fromSlot->ContainerID();
             int slot        = fromSlot->ID();
-        
-            //psItem* item = charData->GetItemInSlot( slot );    
+
+            //psItem* item = charData->GetItemInSlot( slot );
             csRef<MsgHandler> msgHandler = psengine->GetMsgHandler();
             psWriteBookMessage msg(slot, container);
-            msgHandler->SendMessage( msg.msg );                                               
+            msgHandler->SendMessage( msg.msg );
         }
-    }         
+    }
 
 }
