@@ -6408,7 +6408,7 @@ void AdminManager::SetSkill(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& 
     if (data.skill == "all")
     {
         // if the value is out of range, send an error
-        if (value < 0 || value > max)
+        if (data.value != -1 && (value < 0 || value > max))
         {
             psserver->SendSystemError(me->clientnum, "Valid values are between 0 and %u", max);
             return;
@@ -6418,11 +6418,22 @@ void AdminManager::SetSkill(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& 
         {
             psSkillInfo * skill = CacheManager::GetSingleton().GetSkillByID(i);
             if (skill == NULL) continue;
+            
+            unsigned int old_value = pchar->GetSkills()->GetSkillRank(skill->id);
 
-            pchar->SetSkillRank(skill->id, value);
+            if(data.value == -1)
+            {
+                psserver->SendSystemInfo(me->clientnum, "Current '%s' of '%s' is %u", skill->name.GetDataSafe(), target->GetName(), old_value);
+            }
+            else
+            {
+                pchar->SetSkillRank(skill->id, value);
+                psserver->SendSystemInfo(me->clientnum, "Changed '%s' of '%s' from %u to %u", skill->name.GetDataSafe(), target->GetName(), old_value,data.value);
+            }
         }
-
-        psserver->SendSystemInfo(me->clientnum, "Fine");
+            
+        if(data.value != -1)
+            psserver->SendSystemInfo(target->GetClientNum(), "Fine");
     }
     else
     {
@@ -6436,7 +6447,7 @@ void AdminManager::SetSkill(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& 
         unsigned int old_value = pchar->GetSkills()->GetSkillRank(skill->id);
         if (data.value == -1)
         {
-            psserver->SendSystemInfo(me->clientnum, "Current '%s' is %u",skill->name.GetDataSafe(),old_value);
+            psserver->SendSystemInfo(me->clientnum, "Current '%s' of '%s' is %u",skill->name.GetDataSafe(), target->GetName(), old_value);
             return;
         }
         else if (skill->category == PSSKILLS_CATEGORY_STATS && (value < 0 || value > MAX_STAT))
@@ -6451,7 +6462,7 @@ void AdminManager::SetSkill(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& 
         }
 
         pchar->SetSkillRank(skill->id, value);
-        psserver->SendSystemInfo(me->clientnum, "Changed '%s' of '%s' from %u to %u",skill->name.GetDataSafe(), target->GetName(), old_value,data.value);
+        psserver->SendSystemInfo(me->clientnum, "Changed '%s' of '%s' from %u to %u", skill->name.GetDataSafe(), target->GetName(), old_value,data.value);
     }
 
     // Send updated skill list to client
