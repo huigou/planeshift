@@ -1,4 +1,8 @@
-﻿*** 2008-10-02 by Stefano Angeleri
+﻿*** 2008-10-03 by Stefano Angeleri
+- Fixed possible crashes when using some commands managed in inventorywindow.cpp
+  patch by ThomPhoenix
+
+*** 2008-10-02 by Stefano Angeleri
 - Fixed FS#2320 - petition bugs - also removed some c code
 - Fixed FS#2324 - setskill has insufficient system output
 - identation/trailing spaces/comment improvement/fixes in various files
