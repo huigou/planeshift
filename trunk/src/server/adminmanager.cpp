@@ -6432,8 +6432,9 @@ void AdminManager::SetSkill(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& 
             }
         }
             
-        if(data.value != -1)
-            psserver->SendSystemInfo(target->GetClientNum(), "Fine");
+        if(data.value == -1)
+            return;
+        psserver->SendSystemInfo(target->GetClientNum(), "Fine");
     }
     else
     {

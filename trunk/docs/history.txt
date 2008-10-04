@@ -1,4 +1,7 @@
-﻿*** 2008-10-03 by Stefano Angeleri
+﻿*** 2008-10-04 by Stefano Angeleri
+- Fixed additional problems stated by kerol in FS#2324 - setskill has insufficient system output
+
+*** 2008-10-03 by Stefano Angeleri
 - Fixed possible crashes when using some commands managed in inventorywindow.cpp
   patch by ThomPhoenix
 
