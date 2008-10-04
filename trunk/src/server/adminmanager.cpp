@@ -19,6 +19,7 @@
 
 #include <psconfig.h>
 #include <ctype.h>
+#include <limits.h>
 //=============================================================================
 // Crystal Space Includes
 //=============================================================================
@@ -87,9 +88,6 @@
 #include "progressionmanager.h"
 #include "questionmanager.h"
 
-
-// Define maximum value for awarded experience
-#define MAXIMUM_EXP_CHANGE 100
 //-----------------------------------------------------------------------------
 
 /** This class asks user to confirm that he really wants to do the area target he/she requested */
@@ -1010,10 +1008,14 @@ bool AdminManager::AdminCmdData::DecodeAdminCmdMessage(MsgEntry *pMsg, psAdminCm
         {
             subCmd = "list";
         }
-        else if (words.GetCount() == 3)
+        else
         {
-            subCmd = words[1];
-            text = words[2];
+            player = words[1];
+            if(words.GetCount() == 2)
+                subCmd = "list";
+            else
+                subCmd = words[2];
+            text = words[3];
         }
         return true;
     }
@@ -1129,7 +1131,7 @@ void AdminManager::HandleAdminCmdMessage(MsgEntry *me, psAdminCmdMessage &msg, A
             else
             {
                 targetclient = FindPlayerClient(data.player); // Other player?
-                if(targetclient && !psCharCreationManager::IsUnique(data.player, true)) //chech that the actor name isn't duplicate
+                if(targetclient && !psCharCreationManager::IsUnique(data.player, true)) //check that the actor name isn't duplicate
                     duplicateActor = true;
             }
 
@@ -6053,26 +6055,19 @@ void AdminManager::AwardExperience(MsgEntry* me, psAdminCmdMessage& msg, AdminCm
 
 void AdminManager::AwardExperienceToTarget(int gmClientnum, Client* target, csString recipient, int ppAward)
 {
-    int pp = target->GetCharacterData()->GetProgressionPoints();
+    unsigned int pp = target->GetCharacterData()->GetProgressionPoints();
 
     if (pp == 0 && ppAward < 0)
     {
         psserver->SendSystemError(gmClientnum, "Target has no experience to penalize");
         return;
     }
-    //Limiting the amount of awarded pp.
-    if (abs(ppAward) > MAXIMUM_EXP_CHANGE)
-    {
-        ppAward = (ppAward > 0 ? MAXIMUM_EXP_CHANGE : -MAXIMUM_EXP_CHANGE);
-        psserver->SendSystemError(gmClientnum, "The experience awarded is too large. Limited to %d", ppAward);
-    }
 
-    pp += ppAward; // Negative changes are allowed
-    if (pp < 0) // Negative values are not
-    {
-        ppAward += -pp;
-        pp = 0;
-    }
+    if(pp+ppAward > INT_MAX) //don't allow more than INT_MAX as other parts of code doesn't allow it as they don't work with unsigned int
+        pp = INT_MAX;         //NOTE: because of a bug the area INT_MAX <-> INT_MAX-0x7F will show crap in the skill window, as the backend
+    else                      //manages it correctly i'm not adding a work around.
+        pp += ppAward; // Negative changes are allowed
+
 
     target->GetCharacterData()->SetProgressionPoints(pp,true);
 
@@ -6418,7 +6413,7 @@ void AdminManager::SetSkill(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& 
         {
             psSkillInfo * skill = CacheManager::GetSingleton().GetSkillByID(i);
             if (skill == NULL) continue;
-            
+
             unsigned int old_value = pchar->GetSkills()->GetSkillRank(skill->id);
 
             if(data.value == -1)
@@ -6431,10 +6426,9 @@ void AdminManager::SetSkill(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& 
                 psserver->SendSystemInfo(me->clientnum, "Changed '%s' of '%s' from %u to %u", skill->name.GetDataSafe(), target->GetName(), old_value,data.value);
             }
         }
-            
+
         if(data.value == -1)
             return;
-        psserver->SendSystemInfo(target->GetClientNum(), "Fine");
     }
     else
     {
@@ -7398,13 +7392,13 @@ void AdminManager::HandleCompleteQuest(MsgEntry* me,psAdminCmdMessage& msg, Admi
         psQuest *quest = CacheManager::GetSingleton().GetQuestByName(data.text);
         if (!quest)
         {
-            psserver->SendSystemError(me->clientnum, "Quest not found!");
+            psserver->SendSystemError(me->clientnum, "Quest not found for %s", target->GetName());
             return;
         }
         target->GetActor()->GetCharacterData()->AssignQuest(quest, 0);
         if (target->GetActor()->GetCharacterData()->CompleteQuest(quest))
         {
-            psserver->SendSystemInfo(me->clientnum, "Quest %s completed!", data.text.GetData());
+            psserver->SendSystemInfo(me->clientnum, "Quest %s completed for %s!", data.text.GetData(), target->GetName());
         }
     }
     else if (data.subCmd == "discard")
@@ -7418,17 +7412,17 @@ void AdminManager::HandleCompleteQuest(MsgEntry* me,psAdminCmdMessage& msg, Admi
         psQuest *quest = CacheManager::GetSingleton().GetQuestByName(data.text);
         if (!quest)
         {
-            psserver->SendSystemError(me->clientnum, "Quest not found!");
+            psserver->SendSystemError(me->clientnum, "Quest not found for %s!", target->GetName());
             return;
         }
         QuestAssignment *questassignment = target->GetActor()->GetCharacterData()->IsQuestAssigned(quest->GetID());
         if (!questassignment)
         {
-            psserver->SendSystemError(me->clientnum, "Quest was never started!");
+            psserver->SendSystemError(me->clientnum, "Quest was never started for %s!", target->GetName());
             return;
         }
         target->GetActor()->GetCharacterData()->DiscardQuest(questassignment, true);
-        psserver->SendSystemInfo(me->clientnum, "Quest %s discarded!", data.text.GetData());
+        psserver->SendSystemInfo(me->clientnum, "Quest %s discarded for %s!", data.text.GetData(), target->GetName());
     }
     else // assume "list" (even if it isn't)
     {
@@ -7437,6 +7431,8 @@ void AdminManager::HandleCompleteQuest(MsgEntry* me,psAdminCmdMessage& msg, Admi
             psserver->SendSystemError(client->GetClientNum(), "You don't have permission to list other players' quests.");
             return;
         }
+
+        psserver->SendSystemError(me->clientnum, "Quest list of %s!", target->GetName());
 
         csArray<QuestAssignment*> quests = target->GetCharacterData()->GetAssignedQuests();
         for (size_t i = 0; i < quests.GetSize(); i++)

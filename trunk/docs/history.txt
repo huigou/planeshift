@@ -1,5 +1,10 @@
 ﻿*** 2008-10-04 by Stefano Angeleri
 - Fixed additional problems stated by kerol in FS#2324 - setskill has insufficient system output
+- Fixed first problem of FS#1320, detailed also in FS#2339
+- Fixed FS#2336 - Can't teleport to NPC by first name
+- Fixed FS#2325 - /awardexp is limited for no reason 
+- Removed "fine" message sent to target client which gets his skill changed with setskill all value
+- Identation/trailing spaces/comment improvement/fixes in various files
 
 *** 2008-10-03 by Stefano Angeleri
 - Fixed possible crashes when using some commands managed in inventorywindow.cpp
