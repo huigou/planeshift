@@ -26,7 +26,7 @@
 #define MANA_REGEN_RATE  0.2F
 
 
-/** The vitals that the client is concerned about. Used as params into 
+/** The vitals that the client is concerned about. Used as params into
   * the vitals manager.
   */
 enum PS_VITALS
@@ -57,7 +57,7 @@ enum PS_DIRTY_VITALS
     DIRTY_VITAL_PROGRESSION     = 0x2000,
     DIRTY_VITAL_ALL = DIRTY_VITAL_HP | DIRTY_VITAL_HP_MAX | DIRTY_VITAL_HP_RATE |
                       DIRTY_VITAL_MANA | DIRTY_VITAL_MANA_MAX |DIRTY_VITAL_MANA_RATE |
-                      DIRTY_VITAL_PYSSTAMINA | DIRTY_VITAL_PYSSTAMINA_MAX | DIRTY_VITAL_PYSSTAMINA_RATE | 
+                      DIRTY_VITAL_PYSSTAMINA | DIRTY_VITAL_PYSSTAMINA_MAX | DIRTY_VITAL_PYSSTAMINA_RATE |
                       DIRTY_VITAL_MENSTAMINA | DIRTY_VITAL_MENSTAMINA_MAX | DIRTY_VITAL_MENSTAMINA_RATE |
                       DIRTY_VITAL_EXPERIENCE |
                       DIRTY_VITAL_PROGRESSION
@@ -66,7 +66,7 @@ enum PS_DIRTY_VITALS
 //----------------------------------------------------------------------------
 
 
-/** A character vital stat. These are things such as the current HP or MANA. Can 
+/** A character vital stat. These are things such as the current HP or MANA. Can
   * be any number of different type of vital statistic.
   */
 struct psCharVital
@@ -74,14 +74,14 @@ struct psCharVital
     float value;
     float drRate;
     float max;
-	float maxModifier;
+    float maxModifier;
 };
 
 
 
 //----------------------------------------------------------------------------
 
-/** Manages a set of Vitals and does the predictions and updates on them 
+/** Manages a set of Vitals and does the predictions and updates on them
   *   when new data comes from the server.
   */
 class psVitalManager
@@ -89,48 +89,49 @@ class psVitalManager
 public:
     psVitalManager();
     ~psVitalManager();
-    
+
     void ResetVitals();
     void SetOrigVitals();
 
     /** Get the value of a particular Vital.
      */
     float GetValue( int vital );
-    
-    /** Get players experience points. */
-    int GetExp() { return experiencePoints; }
-    
-    /** Gets a players current progression points.*/
-    int GetPP()  { return progressionPoints; }
-    
 
-    /** Get the current Hitpoint value. */   
+    /** Get players experience points. */
+    unsigned int GetExp() { return experiencePoints; }
+
+    /** Gets a players current progression points.*/
+    unsigned int GetPP()  { return progressionPoints; }
+
+
+    /** Get the current Hitpoint value. */
     float GetHP() { return vitals[VITAL_HITPOINTS].value; }
-    
+
     /** Get the current Mana value. */
     float GetMana() { return vitals[VITAL_MANA].value; }
-    
+
     /** Get the current stamina value. */
     float GetStamina(bool pys);
-    
-    /** Get a reference to a particular vital. 
+
+    /** @brief Get a reference to a particular vital.
+      *
       * @param vital @see PS_VITALS
-      * @return The vital reference. 
+      * @return The vital reference.
       */
     psCharVital & GetVital( int vital );
-    
-protected:
-    /// Used by the above Predict function to determine new predicted values. 
-    csTicks lastDRUpdate;        
 
-    /** A list of player Vital. */   
-    psCharVital vitals[VITAL_COUNT]; 
-    psCharVital orig_vitals[VITAL_COUNT]; 
-    
+protected:
+    /// Used by the above Predict function to determine new predicted values.
+    csTicks lastDRUpdate;
+
+    /** A list of player Vital. */
+    psCharVital vitals[VITAL_COUNT];
+    psCharVital orig_vitals[VITAL_COUNT];
+
     /// Players current experience points
-    int experiencePoints;
-    
+    unsigned int experiencePoints;
+
     /// Players progression Points
-    int progressionPoints;
+    unsigned int progressionPoints;
 };
 #endif

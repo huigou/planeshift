@@ -6063,11 +6063,20 @@ void AdminManager::AwardExperienceToTarget(int gmClientnum, Client* target, csSt
         return;
     }
 
-    if(pp+ppAward > INT_MAX) //don't allow more than INT_MAX as other parts of code doesn't allow it as they don't work with unsigned int
-        pp = INT_MAX;         //NOTE: because of a bug the area INT_MAX <-> INT_MAX-0x7F will show crap in the skill window, as the backend
-    else                      //manages it correctly i'm not adding a work around.
+    if( ppAward < 0 && (unsigned int) abs(ppAward) > pp) //we need to check for "underflows"
+    {
+        pp = 0;
+        psserver->SendSystemError(gmClientnum, "Target experience got to minimum so requested exp was cropped!");
+    }
+    else if((uint64) pp+ppAward > UINT_MAX) //...and for overflows
+    {
+        pp = UINT_MAX;
+        psserver->SendSystemError(gmClientnum, "Target experience got to maximum so requested exp was cropped!");
+    }
+    else
+    {
         pp += ppAward; // Negative changes are allowed
-
+    }
 
     target->GetCharacterData()->SetProgressionPoints(pp,true);
 

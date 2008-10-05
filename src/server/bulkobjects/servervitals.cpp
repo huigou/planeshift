@@ -54,11 +54,11 @@ bool psServerVitals::SendStatDRMessage(uint32_t clientnum, PS_ID eid, int flags,
     else if (version % 10 == 0)  // every 10th msg to this person, send everything
         statsDirty = DIRTY_VITAL_ALL;
 
-    if (!statsDirty) 
+    if (!statsDirty)
         return false;
 
     csArray<float> fVitals;
-    csArray<int32_t> iVitals;
+    csArray<uint32_t> uiVitals;
 
     if (statsDirty & DIRTY_VITAL_HP)
         fVitals.Push(vitals[VITAL_HITPOINTS].value / vitals[VITAL_HITPOINTS].max);
@@ -87,12 +87,12 @@ bool psServerVitals::SendStatDRMessage(uint32_t clientnum, PS_ID eid, int flags,
         fVitals.Push(vitals[VITAL_MENSTAMINA].drRate / vitals[VITAL_MENSTAMINA].max);
 
     if (statsDirty & DIRTY_VITAL_EXPERIENCE)
-        iVitals.Push((int32_t) GetExp());
+        uiVitals.Push(GetExp());
 
     if (statsDirty & DIRTY_VITAL_PROGRESSION)
-        iVitals.Push((int32_t) GetPP());
+        uiVitals.Push(GetPP());
 
-    psStatDRMessage msg(clientnum, eid, fVitals, iVitals, ++version, statsDirty);
+    psStatDRMessage msg(clientnum, eid, fVitals, uiVitals, ++version, statsDirty);
     if (group == NULL)
         msg.SendMessage();
     else
@@ -111,7 +111,7 @@ bool psServerVitals::Update( csTicks now )
     with 0 HP and negative drRate will enter a loop of death, but it has to be really small in order to guarantee
     a smooth increment of the stats. Since, now can be quite a random value when lastDRUpdate is 0, it is important
     to give an high value to drdelta, so we can force a stats update.*/
-    if(!lastDRUpdate) 
+    if(!lastDRUpdate)
     {
         delta=0.1f; //The value can be adjusted but it has to be really small.
         drdelta= 11000; //drdelta must be really high, in order to avoid randomness and guarantee stats update
@@ -123,17 +123,17 @@ bool psServerVitals::Update( csTicks now )
     // iterate over all fields and predict their values based on their recharge rate
     for ( int x = 0; x < VITAL_COUNT; x++ )
     {
-        vitals[x].value += vitals[x].drRate*delta;            
-        
+        vitals[x].value += vitals[x].drRate*delta;
+
         if ( vitals[x].value < 0 )
             vitals[x].value = 0;
         if ( vitals[x].value > vitals[x].max )
-            vitals[x].value = vitals[x].max;                
-    }        
+            vitals[x].value = vitals[x].max;
+    }
 
     if (vitals[VITAL_HITPOINTS].value==0  &&  vitals[VITAL_HITPOINTS].drRate<0)
         character->GetActor()->Kill(NULL);
-    
+
     if (drdelta > 10000)
         statsDirty = QUERY_FAILED;
 
@@ -141,13 +141,13 @@ bool psServerVitals::Update( csTicks now )
 }
 
 
-void psServerVitals::SetExp( int W )
+void psServerVitals::SetExp( unsigned int W )
 {
     experiencePoints = W;
     statsDirty |= DIRTY_VITAL_EXPERIENCE;
 }
 
-void psServerVitals::SetPP( int pp )
+void psServerVitals::SetPP( unsigned int pp )
 {
     progressionPoints = pp;
     statsDirty |= DIRTY_VITAL_PROGRESSION;
@@ -156,6 +156,6 @@ void psServerVitals::SetPP( int pp )
 psCharVital& psServerVitals::DirtyVital( int vitalName, int dirtyFlag )
 {
     statsDirty |= dirtyFlag;
-    return GetVital( vitalName );    
+    return GetVital( vitalName );
 }
 

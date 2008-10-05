@@ -618,11 +618,11 @@ psPetitionMessage::psPetitionMessage(uint32_t clientnum, csArray<psPetitionInfo>
         errLen = strlen(errMsg)+1;
     }
     psPetitionInfo *curr;
-    
+
     for (size_t i = 0; i < petitionLen; i++)
     {
         curr = &petition->Get(i);
-        
+
         messageSize+= sizeof(int32_t);                // Petition ID
         messageSize+= curr->petition.Length()+1;      // Petition String
         messageSize+= curr->status.Length()+1;        // Petition status string
@@ -631,13 +631,13 @@ psPetitionMessage::psPetitionMessage(uint32_t clientnum, csArray<psPetitionInfo>
             messageSize+=curr->created.Length()+1;
             messageSize+=curr->assignedgm.Length()+1;
             messageSize+=curr->resolution.Length()+1;
-        }            
+        }
         else
         {
             messageSize+=sizeof(int32_t);
             messageSize+=curr->created.Length()+1;
             messageSize+=curr->player.Length()+1;
-            messageSize+=sizeof(bool);					// online flag for players
+            messageSize+=sizeof(bool);                  // online flag for players
         }
     }
 
@@ -647,8 +647,8 @@ psPetitionMessage::psPetitionMessage(uint32_t clientnum, csArray<psPetitionInfo>
                                errLen          +    // Space for error message.
                                sizeof(succeed) +    // Space for success boolean
                                sizeof(int32_t)));    // Space for type int32_t
-                         
-                                 
+
+
      //+ (maxPetitionTextLen + 250)* (petitionLen+1) + sizeof(errMsg) +
      //       sizeof(succeed) + sizeof(int32_t) + sizeof(gm));
 
@@ -711,7 +711,7 @@ psPetitionMessage::psPetitionMessage(MsgEntry *message)
         {
             current.created = message->GetStr();
             current.assignedgm = message->GetStr();
-			current.resolution = message->GetStr();
+            current.resolution = message->GetStr();
         }
         else
         {
@@ -825,7 +825,7 @@ psGMGuiMessage::psGMGuiMessage(uint32_t clientnum, int gmSets)
     msg->SetType(MSGTYPE_GMGUI);
     msg->clientnum = clientnum;
 
-    msg->Add(TYPE_GETGMSETTINGS);    
+    msg->Add(TYPE_GETGMSETTINGS);
     msg->Add(gmSettings);
 
     valid=!(msg->overrun);
@@ -1191,25 +1191,25 @@ csString psGroupCmdMessage::ToString(AccessPointers * /*access_ptrs*/)
 {
     csString msgtext;
 
-	msgtext.AppendFmt("Command: '%s'", command.GetDataSafe());
-	if (command == "/invite" || command == "/groupremove")
-	{
-		msgtext.AppendFmt("Player: '%s'", player.GetDataSafe());
-		return msgtext;
-	}
-	if (command == "/confirmgoupjoin")
-	{
-		msgtext.AppendFmt("Accept: '%s'", accept.GetDataSafe());
-		return msgtext;
-	}
-	if (command == "/disband" ||
-			command == "/leavegroup" ||
-			command == "/groupmembers")
-	{
-		return msgtext;
-	}
+    msgtext.AppendFmt("Command: '%s'", command.GetDataSafe());
+    if (command == "/invite" || command == "/groupremove")
+    {
+        msgtext.AppendFmt("Player: '%s'", player.GetDataSafe());
+        return msgtext;
+    }
+    if (command == "/confirmgoupjoin")
+    {
+        msgtext.AppendFmt("Accept: '%s'", accept.GetDataSafe());
+        return msgtext;
+    }
+    if (command == "/disband" ||
+            command == "/leavegroup" ||
+            command == "/groupmembers")
+    {
+        return msgtext;
+    }
 
-	msgtext.AppendFmt("Error: Not Decoded");
+    msgtext.AppendFmt("Error: Not Decoded");
 
     return msgtext;
 }
@@ -1239,7 +1239,7 @@ psUserCmdMessage::psUserCmdMessage(MsgEntry *message)
     WordArray words(message->GetStr());
 
     command = words[0];
-        
+
     if (command == "/who" || command == "/buddylist")
     {
         filter = words[1];
@@ -1293,26 +1293,26 @@ psUserCmdMessage::psUserCmdMessage(MsgEntry *message)
         {
             dice  = 1;
             sides = 6;
-						dtarget = 0;
+                        dtarget = 0;
         }
         else if (words.GetCount() == 2)
         {
             dice  = 1;
             sides = words.GetInt(1);
-						dtarget = 0;
+                        dtarget = 0;
         }
         else if (words.GetCount() == 3)
         {
             dice = words.GetInt(1);
             sides = words.GetInt(2);
-						dtarget = 0;
+                        dtarget = 0;
         }
-				else
-				{
-						dice = words.GetInt(1);
-						sides = words.GetInt(2);
-						dtarget = words.GetInt(3);
-				}
+                else
+                {
+                        dice = words.GetInt(1);
+                        sides = words.GetInt(2);
+                        dtarget = words.GetInt(3);
+                }
         return;
     }
     if ( command == "/assist" )
@@ -1352,41 +1352,41 @@ csString psUserCmdMessage::ToString(AccessPointers * /*access_ptrs*/)
 {
     csString msgtext;
 
-	msgtext.AppendFmt("Command: '%s'", command.GetDataSafe());
-	if (command == "/who" || command == "/buddylist" ||
-			command == "/advisormode")
-	{
-		msgtext.AppendFmt("Filter: '%s'", filter.GetDataSafe());
-		return msgtext;
-	}
+    msgtext.AppendFmt("Command: '%s'", command.GetDataSafe());
+    if (command == "/who" || command == "/buddylist" ||
+            command == "/advisormode")
+    {
+        msgtext.AppendFmt("Filter: '%s'", filter.GetDataSafe());
+        return msgtext;
+    }
     if (command == "/buddy" || command == "/notbuddy" ||
-			command == "/pos" || command == "/assist")
-	{
-		msgtext.AppendFmt("Player: '%s'", player.GetDataSafe());
-		return msgtext;
-	}
-	if (command == "/attack")
-	{
-		msgtext.AppendFmt("Stance: '%s'", stance.GetDataSafe());
-		return msgtext;
-	}
-	if (command == "/roll")
-	{
-		if (target)
-			msgtext.AppendFmt("Rolled '%d' '%d' sided dice with a target of '%d'", dice, sides, dtarget);
-		else
-			msgtext.AppendFmt("Rolled '%d' '%d' sided dice", dice, sides);
-		return msgtext;
-	}
-	if (command == "/marriage")
-	{
-		msgtext.AppendFmt("Action: %s ", action.GetData());
-		if (player.Length())
-		    msgtext.AppendFmt("Player: %s ", player.GetData());
+            command == "/pos" || command == "/assist")
+    {
+        msgtext.AppendFmt("Player: '%s'", player.GetDataSafe());
+        return msgtext;
+    }
+    if (command == "/attack")
+    {
+        msgtext.AppendFmt("Stance: '%s'", stance.GetDataSafe());
+        return msgtext;
+    }
+    if (command == "/roll")
+    {
+        if (target)
+            msgtext.AppendFmt("Rolled '%d' '%d' sided dice with a target of '%d'", dice, sides, dtarget);
+        else
+            msgtext.AppendFmt("Rolled '%d' '%d' sided dice", dice, sides);
+        return msgtext;
+    }
+    if (command == "/marriage")
+    {
+        msgtext.AppendFmt("Action: %s ", action.GetData());
+        if (player.Length())
+            msgtext.AppendFmt("Player: %s ", player.GetData());
         msgtext.AppendFmt("Message: %s", text.GetData());
-		return msgtext;
-	}
-	if (command == "/spawn" || command == "/unstick" ||
+        return msgtext;
+    }
+    if (command == "/spawn" || command == "/unstick" ||
          command == "/die" || command == "/loot" ||
          command == "/train" || command == "/use" ||
          command == "/stopattack" || command == "/starttrading" ||
@@ -1394,14 +1394,14 @@ csString psUserCmdMessage::ToString(AccessPointers * /*access_ptrs*/)
          command == "/tip" || command == "/motd" ||
          command == "/challenge" || command == "/yield" ||
          command == "/admin" ||
-		 command == "/list" || command == "/listemotes" ||
-		 command == "/sit" || command == "/stand" ||
+         command == "/list" || command == "/listemotes" ||
+         command == "/sit" || command == "/stand" ||
          command == "/bank")
-	{
-		return msgtext;
-	}
+    {
+        return msgtext;
+    }
 
-	msgtext.AppendFmt("Error: Not Decoded");
+    msgtext.AppendFmt("Error: Not Decoded");
 
     return msgtext;
 }
@@ -1447,7 +1447,7 @@ psWorkCmdMessage::psWorkCmdMessage(MsgEntry *message)
         }
         return;
     }
-    
+
     if (command == "/repair")
     {
         repairSlotName = words[1];
@@ -2184,7 +2184,7 @@ csString psGUIInventoryMessage::ToString(AccessPointers * /*access_ptrs*/)
             }
 #endif
         }
-	msgtext.AppendFmt(" Money: %s", money.ToUserString().GetDataSafe());
+    msgtext.AppendFmt(" Money: %s", money.ToUserString().GetDataSafe());
     }
 
     return msgtext;
@@ -2829,7 +2829,7 @@ psGlyphAssembleMessage::psGlyphAssembleMessage(  int slot0, int slot1, int slot2
     msg->Add( (uint32_t)slot1 );
     msg->Add( (uint32_t)slot2 );
     msg->Add( (uint32_t)slot3 );
-	msg->Add( (uint8_t)info );
+    msg->Add( (uint8_t)info );
 }
 
 psGlyphAssembleMessage::psGlyphAssembleMessage( uint32_t client,
@@ -2866,7 +2866,7 @@ void psGlyphAssembleMessage::FromClient( MsgEntry* me )
     glyphs[1] = me->GetUInt32();
     glyphs[2] = me->GetUInt32();
     glyphs[3] = me->GetUInt32();
-	info = me->GetBool();
+    info = me->GetBool();
 }
 
 void psGlyphAssembleMessage::FromServer( MsgEntry* me )
@@ -3170,11 +3170,11 @@ psMsgStringsMessage::psMsgStringsMessage(uint32_t clientnum, csStringHashReversi
     z.avail_out = COMPRESSION_BUFFSIZE;
 
     // Set
-	int err = deflateInit(&z,Z_BEST_COMPRESSION);
+    int err = deflateInit(&z,Z_BEST_COMPRESSION);
     CS_ASSERT(err == Z_OK);
 
     // Go
-	err = deflate(&z,Z_FINISH);
+    err = deflate(&z,Z_FINISH);
     CS_ASSERT(err == Z_STREAM_END);
     deflateEnd(&z);
 
@@ -3494,23 +3494,23 @@ csString psSoundEventMessage::ToString(AccessPointers * /*access_ptrs*/)
 
 PSF_IMPLEMENT_MSG_FACTORY(psStatDRMessage,MSGTYPE_STATDRUPDATE);
 
-psStatDRMessage::psStatDRMessage(uint32_t clientnum, PS_ID eid, csArray<float> fVitals, csArray<int32_t> iVitals, uint8_t version, int flags)
+psStatDRMessage::psStatDRMessage(uint32_t clientnum, PS_ID eid, csArray<float> fVitals, csArray<uint32_t> uiVitals, uint8_t version, int flags)
 {
-    msg.AttachNew(new MsgEntry(2*sizeof(uint32_t) + sizeof(float) * fVitals.GetSize() + sizeof(int32_t) * iVitals.GetSize() + sizeof(uint8_t), PRIORITY_LOW)); 
+    msg.AttachNew(new MsgEntry(2*sizeof(uint32_t) + sizeof(float) * fVitals.GetSize() + sizeof(uint32_t) * uiVitals.GetSize() + sizeof(uint8_t), PRIORITY_LOW));
 
     msg->clientnum = clientnum;
     msg->SetType(MSGTYPE_STATDRUPDATE);
 
     msg->Add((uint32_t) eid);
     msg->Add((uint32_t) flags);
-    
+
     for (size_t i = 0; i < fVitals.GetSize(); i++)
         msg->Add(fVitals[i]);
-    for (size_t i = 0; i < iVitals.GetSize(); i++)
-        msg->Add(iVitals[i]);
-    
+    for (size_t i = 0; i < uiVitals.GetSize(); i++)
+        msg->Add(uiVitals[i]);
+
     msg->Add((uint8_t) version);
-    
+
     msg->ClipToCurrentSize();
 
     valid = !(msg->overrun);
@@ -3528,7 +3528,7 @@ psStatDRMessage::psStatDRMessage()
 
 psStatDRMessage::psStatDRMessage(MsgEntry* me)
 {
-    /* We handle PS_ID as a uint32 - which it is at this time.  If it ever changes we 
+    /* We handle PS_ID as a uint32 - which it is at this time.  If it ever changes we
      *  will need to adjust.
      */
     CS_ASSERT(sizeof(PS_ID) == sizeof(uint32_t));
@@ -3829,7 +3829,7 @@ csString psGUISkillMessage::ToString(AccessPointers * /*access_ptrs*/)
 PSF_IMPLEMENT_MSG_FACTORY(psGUIBankingMessage, MSGTYPE_BANKING);
 
 psGUIBankingMessage::psGUIBankingMessage(uint32_t clientNum, uint8_t command, bool guild,
-                                         int circles, int octas, int hexas, int trias, 
+                                         int circles, int octas, int hexas, int trias,
                                          int circlesBanked, int octasBanked, int hexasBanked,
                                          int triasBanked, int maxCircles, int maxOctas, int maxHexas,
                                          int maxTrias, float exchangeFee, bool forceOpen)
@@ -3852,7 +3852,7 @@ psGUIBankingMessage::psGUIBankingMessage(uint32_t clientNum, uint8_t command, bo
                        sizeof(int) +
                        sizeof(float) +
                        sizeof(bool)));
-        
+
     msg->SetType(MSGTYPE_BANKING);
     msg->clientnum  = clientNum;
     msg->Add( true );
@@ -3889,7 +3889,7 @@ psGUIBankingMessage::psGUIBankingMessage(uint8_t command, bool guild,
                        sizeof(int) +
                        sizeof(int) +
                        sizeof(int)));
-     
+
     msg->clientnum = 0;
     msg->SetType(MSGTYPE_BANKING);
     msg->Add( false );
@@ -3914,7 +3914,7 @@ psGUIBankingMessage::psGUIBankingMessage(uint8_t command, bool guild,
                        sizeof(bool) +
                        sizeof(int) +
                        sizeof(int)));
-     
+
     msg->clientnum = 0;
     msg->SetType(MSGTYPE_BANKING);
     msg->Add( false );
@@ -5124,7 +5124,7 @@ void psViewItemDescription::AddContents( const char *name, const char *icon, int
     ContainerContents item;
     item.name = name;
     item.icon = icon;
-	item.purifyStatus = purifyStatus; 
+    item.purifyStatus = purifyStatus;
     item.slotID = slot;
     item.stackCount = stack;
 
@@ -5151,7 +5151,7 @@ void psViewItemDescription::ConstructMsg()
     {
         msg->Add( contents[n].name );
         msg->Add( contents[n].icon );
-		msg->Add( contents[n].purifyStatus );
+        msg->Add( contents[n].purifyStatus );
         msg->Add( (uint32_t)contents[n].slotID );
         msg->Add( (uint32_t)contents[n].stackCount );
     }
@@ -5192,7 +5192,7 @@ psViewItemDescription::psViewItemDescription( MsgEntry* me )
                 ContainerContents item;
                 item.name = me->GetStr();
                 item.icon = me->GetStr();
-				item.purifyStatus = me->GetUInt32();
+                item.purifyStatus = me->GetUInt32();
                 item.slotID = me->GetUInt32();
                 item.stackCount = me->GetUInt32();
                 contents.Push( item );
@@ -5223,10 +5223,10 @@ csString psViewItemDescription::ToString(AccessPointers * /*access_ptrs*/)
 
             for (size_t n = 0; n < contents.GetSize(); n++)
             {
-				msgtext.AppendFmt("Name: '%s' Icon: '%s' Purify Status: %d Slot ID: %d Stack Count: %d ",
+                msgtext.AppendFmt("Name: '%s' Icon: '%s' Purify Status: %d Slot ID: %d Stack Count: %d ",
                         contents[n].name.GetData(),
                         contents[n].icon.GetData(),
-						contents[n].purifyStatus,
+                        contents[n].purifyStatus,
                         contents[n].slotID,
                         contents[n].stackCount);
             }
@@ -5240,7 +5240,7 @@ csString psViewItemDescription::ToString(AccessPointers * /*access_ptrs*/)
 
 PSF_IMPLEMENT_MSG_FACTORY(psViewItemUpdate,MSGTYPE_UPDATE_ITEM);
 
-psViewItemUpdate::psViewItemUpdate( uint32_t to,  uint32_t containerID, uint32_t slotID, bool clearSlot, 
+psViewItemUpdate::psViewItemUpdate( uint32_t to,  uint32_t containerID, uint32_t slotID, bool clearSlot,
                                     const char *itemName, const char *icon, uint32_t stackCount, uint32_t ownerID)
 {
     msg.AttachNew(new MsgEntry( sizeof(containerID)+1 + sizeof(slotID) + sizeof(clearSlot) + strlen(itemName)+1 + strlen(icon)+1 + sizeof(stackCount) + sizeof(ownerID) ));
@@ -5419,15 +5419,15 @@ csString psWriteBookMessage::ToString(AccessPointers * /*access_ptrs*/)
 
     switch(messagetype)
     {
-       case REQUEST: 
+       case REQUEST:
             msgtext.AppendFmt("Write Book REQUEST for slot %d, container %d", slotID, containerID);
             break;
        case RESPONSE:
-            msgtext.AppendFmt("Write Book RESPONSE for slot %d, container %d.  Successful? %s  Title: \"%s\"", 
+            msgtext.AppendFmt("Write Book RESPONSE for slot %d, container %d.  Successful? %s  Title: \"%s\"",
                               slotID, containerID, success?"true":"false", title.GetDataSafe());
             break;
        case SAVE:
-            msgtext.AppendFmt("Write Book SAVE for slot %d, container %d. Title: \"%s\"", 
+            msgtext.AppendFmt("Write Book SAVE for slot %d, container %d. Title: \"%s\"",
                               slotID, containerID, title.GetDataSafe());
 #ifdef FULL_DEBUG_DUMP
             textForDebug.ReplaceAll("%", "[pc]");
@@ -5435,7 +5435,7 @@ csString psWriteBookMessage::ToString(AccessPointers * /*access_ptrs*/)
 #endif
             break;
        case SAVERESPONSE:
-            msgtext.AppendFmt("Write Book SAVERESPONSE Successful? %s  Title: \"%s\"", 
+            msgtext.AppendFmt("Write Book SAVERESPONSE Successful? %s  Title: \"%s\"",
                               success?"true":"false", title.GetDataSafe());
             break;    }
 
@@ -6488,7 +6488,7 @@ psMGBoardMessage::psMGBoardMessage(MsgEntry *me)
     : msgLayout(0)
 {
     msg = me;
- 
+
     msgCounter = msg->GetUInt8();
     msgGameID = msg->GetUInt32();
     msgOptions = msg->GetUInt16();
@@ -6646,7 +6646,7 @@ psGMEventListMessage::psGMEventListMessage(MsgEntry* msg)
 {
     if (!msg)
         return;
-    
+
     gmEventsXML = msg->GetStr();
     valid =! (msg->overrun);
 }
@@ -6657,7 +6657,7 @@ void psGMEventListMessage::Populate(csString& gmeventStr, int clientnum)
 
     msg->SetType(MSGTYPE_GMEVENT_LIST);
     msg->clientnum = clientnum;
-    
+
     msg->Add(gmeventStr);
 
     valid=!(msg->overrun);
@@ -6733,63 +6733,63 @@ csString psGMEventInfoMessage::ToString(AccessPointers * /*access_ptrs*/)
 
 
 psFactionMessage::psFactionMessage(int cnum, int cmd)
-{	
-	this->client = cnum;
-	this->cmd = cmd;
+{
+    this->client = cnum;
+    this->cmd = cmd;
 
 }
 
 
 psFactionMessage::psFactionMessage(MsgEntry* message)
 {
-	cmd			= message->GetInt8();
-	int facts   = message->GetInt32();
+    cmd         = message->GetInt8();
+    int facts   = message->GetInt32();
 
-	for ( int z = 0; z < facts; z++ )
-	{
-		psFactionMessage::FactionPair *fp = new psFactionMessage::FactionPair;
-		fp->faction = message->GetStr();
-		fp->rating  = message->GetInt32();
+    for ( int z = 0; z < facts; z++ )
+    {
+        psFactionMessage::FactionPair *fp = new psFactionMessage::FactionPair;
+        fp->faction = message->GetStr();
+        fp->rating  = message->GetInt32();
 
-		factionInfo.Push(fp);
-	}    
+        factionInfo.Push(fp);
+    }
 }
 
 
 void psFactionMessage::AddFaction( csString factionName, int rating )
 {
-	psFactionMessage::FactionPair *pair = new psFactionMessage::FactionPair;
-	pair->faction = factionName;
-	pair->rating = rating;
+    psFactionMessage::FactionPair *pair = new psFactionMessage::FactionPair;
+    pair->faction = factionName;
+    pair->rating = rating;
 
-	factionInfo.Push(pair);
+    factionInfo.Push(pair);
 }
 
 
 void psFactionMessage::BuildMsg()
-{	
-	size_t size = sizeof(uint8_t)+sizeof(int32_t);
+{
+    size_t size = sizeof(uint8_t)+sizeof(int32_t);
 
-	for ( size_t z = 0; z < factionInfo.GetSize(); z++ )
-	{
-		size += factionInfo[z]->faction.Length()+1;
-		size += sizeof(int32_t);
-	}
+    for ( size_t z = 0; z < factionInfo.GetSize(); z++ )
+    {
+        size += factionInfo[z]->faction.Length()+1;
+        size += sizeof(int32_t);
+    }
 
-	msg.AttachNew(new MsgEntry(size));
+    msg.AttachNew(new MsgEntry(size));
     msg->SetType(MSGTYPE_FACTION_INFO);
     msg->clientnum = client;
 
     msg->Add((uint8_t)cmd);
-	msg->Add((int32_t)factionInfo.GetSize());
+    msg->Add((int32_t)factionInfo.GetSize());
 
-	for(size_t i = 0; i < factionInfo.GetSize(); i++)
-	{
-		msg->Add(factionInfo[i]->faction);
-		msg->Add((int32_t)factionInfo[i]->rating);
-	}
+    for(size_t i = 0; i < factionInfo.GetSize(); i++)
+    {
+        msg->Add(factionInfo[i]->faction);
+        msg->Add((int32_t)factionInfo[i]->rating);
+    }
 
-	valid=!(msg->overrun);
+    valid=!(msg->overrun);
 }
 
 csString psFactionMessage::ToString(AccessPointers * /*access_ptrs*/)
@@ -7003,7 +7003,7 @@ csString psSequenceMessage::ToString(AccessPointers * /*access_ptrs*/)
 {
     csString msgtext;
 
-    msgtext.AppendFmt("Sequence: '%s' Cmd: %d Count: %d", 
+    msgtext.AppendFmt("Sequence: '%s' Cmd: %d Count: %d",
                       name.GetDataSafe(),command,count);
 
     return msgtext;

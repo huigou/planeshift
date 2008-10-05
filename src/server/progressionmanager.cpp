@@ -1,7 +1,7 @@
 /*
  * progressionmanager.cpp
  *
- * Copyright (C) 2003 Atomic Blue (info@planeshift.it, http://www.atomicblue.org) 
+ * Copyright (C) 2003 Atomic Blue (info@planeshift.it, http://www.atomicblue.org)
  *
  *
  * This program is free software; you can redistribute it and/or
@@ -98,7 +98,7 @@ public:
     virtual void DeathCallback( iDeathNotificationObject * object );
 
     void Trigger();
-    
+
 protected:
     ProgressionEvent * script;
     int persistentID;
@@ -118,11 +118,11 @@ protected:
     MathScriptVar *valuevar,*targetvar,*actorvar;
     csString script_text,delay_text,result_var_name;
     ProgressionEvent *my_script;
-    
+
     MathScript *delay_script;
     MathScriptVar *delayvar,*delaytargetvar,*delayactorvar;
-    
-    // has an undo script already been queued
+
+    /// has an undo script already been queued
     bool undoQueued;
 
     float result;
@@ -133,13 +133,13 @@ protected:
     float GetValue(gemActor * actor, gemObject *target);
     bool LoadDelay(iDocumentNode *node, ProgressionEvent *script);
     int GetDelay(gemActor * actor, gemObject *target);
-    
+
 public:
     csString * eventName;
     ProgressionOperation() { my_script=NULL; valuevar=targetvar=actorvar=NULL; value_script=delay_script=NULL; result =  0.0F; undoQueued = false;}
     virtual ~ProgressionOperation() {if (value_script) delete value_script; if (delay_script) delete delay_script; }
     void SetTicksElapsed(int ticks) { ticksElapsed = ticks; }
-    
+
     /// The return value from Run is very important. If it is false it prevents the rest of the script from executing.
     virtual bool Run(gemActor *actor, gemObject *target, psItem * item, bool inverse)=0;
     virtual bool Load(iDocumentNode *node, ProgressionEvent *script)=0;
@@ -148,7 +148,7 @@ public:
     virtual void LoadVariables(csArray<MathScriptVar*> & variables);
     virtual float GetResult() { return result; };
     virtual csString Absolute();
-    
+
     void SubstituteVars(gemActor * actor, gemObject *target, psString& str)
     {
         int where = (int) str.FindFirst('$');
@@ -187,13 +187,13 @@ csString ProgressionOperation::Absolute()
     if(undoQueued)
         return "";
     return ToString();
-} 
+}
 
 void ProgressionOperation::LoadVariables(csArray<MathScriptVar*> & variables)
 {
     MathScriptVar *var;
     size_t i;
-    
+
     for (i=0; i<variables.GetSize(); i++)
     {
         if (value_script)
@@ -201,7 +201,7 @@ void ProgressionOperation::LoadVariables(csArray<MathScriptVar*> & variables)
             var = value_script->GetOrCreateVar(variables[i]->name);
             var->SetValue(variables[i]->GetValue() );
         }
-        
+
         if (delay_script)
         {
             var = delay_script->GetOrCreateVar(variables[i]->name);
@@ -255,7 +255,7 @@ bool ProgressionOperation::LoadDelay(iDocumentNode *node, ProgressionEvent *prg_
 
     csString script("Delay = ");
     script.Append(delay_text);
-    
+
     delay_script = new MathScript(prg_script->name.GetData(),script);
 
     delayvar = delay_script->GetVar("Delay");  // always required and supplied
@@ -271,12 +271,12 @@ float ProgressionOperation::GetValue(gemActor *actor, gemObject *target)
         Error2("Invalid value script in Progression Event '%s'.",this->eventName->GetData() );
         return 0.0;
     }
-    
-    targetvar->SetObject(target ? target->GetCharacterData() : NULL);            
+
+    targetvar->SetObject(target ? target->GetCharacterData() : NULL);
     actorvar->SetObject(actor ? actor->GetCharacterData() : NULL );
 
     value_script->Execute();
-    
+
     if (result_var_name.Length())
     {
         MathScriptVar *pv = my_script->FindVariable(result_var_name);
@@ -293,11 +293,11 @@ int ProgressionOperation::GetDelay(gemActor *actor, gemObject *target)
         Error2("Invalid delay script in Progression Event '%s'.",this->eventName->GetData() );
         return 0;
     }
-    delaytargetvar->SetObject(target ? target->GetCharacterData() : NULL);            
+    delaytargetvar->SetObject(target ? target->GetCharacterData() : NULL);
     delayactorvar->SetObject(actor ? actor->GetCharacterData() : NULL);
 
     delay_script->Execute();
-    
+
     return (int) delayvar->GetValue() - ticksElapsed;
 }
 
@@ -306,20 +306,20 @@ class FireEventOp : public ProgressionOperation
 {
 protected:
     csString event;
-    
+
 public:
     FireEventOp() : ProgressionOperation() {}
     virtual ~FireEventOp() {}
-    
+
     bool Load(iDocumentNode* node, ProgressionEvent* script)
     {
-        event = node->GetAttributeValue( "event" );            
+        event = node->GetAttributeValue( "event" );
         return LoadValue(node, script);
     }
-    
+
     virtual csString ToString()
     {
-        csString xml;           
+        csString xml;
         xml.Format("<fire_event name='%s' />", event.GetData() );
         return xml;
     }
@@ -348,7 +348,7 @@ public:
 /** TraitChangeOp
   * Used to create a change in character traits.
   * This is used to change a character's appearance live in game.
-  * It takes the trait ID number and sends a broadcast out to all 
+  * It takes the trait ID number and sends a broadcast out to all
   * the players in range about the change.
   *
   * Syntax:
@@ -358,27 +358,27 @@ public:
   *    You apply trait 100 (grey hair) to actor and send message:
   *        <trait value="100" /><msg aim="actor" text="You drop the liquid on your hair."/>
   *
-  * On the Run it checks to make sure the selected trait is allowed 
-  * for that race and rejects with an error message if it is not.  
+  * On the Run it checks to make sure the selected trait is allowed
+  * for that race and rejects with an error message if it is not.
   */
 class TraitChangeOp : public ProgressionOperation
 {
 protected:
     int traitID;
-    
+
 public:
     TraitChangeOp() : ProgressionOperation() {}
     virtual ~TraitChangeOp() {}
-    
+
     bool Load(iDocumentNode* node, ProgressionEvent* script)
     {
-        traitID = node->GetAttributeValueAsInt( "value" );            
+        traitID = node->GetAttributeValueAsInt( "value" );
         return LoadValue(node, script);
     }
-    
+
     virtual csString ToString()
     {
-        csString xml;           
+        csString xml;
         xml.Format("<trait value=\"%d\" />", traitID );
         return xml;
     }
@@ -401,22 +401,22 @@ public:
         psRaceInfo* raceInfo = data->GetRaceInfo();
 
         psTrait* trait = CacheManager::GetSingleton().GetTraitByID( traitID );
-        
-        // Validate that the selected trait can be applied to the player's race. 
+
+        // Validate that the selected trait can be applied to the player's race.
         if ( trait->raceID != raceInfo->uid )
         {
             psserver->SendSystemInfo(clientID,"Doesn't work on you, try a better brand.");
             return false;
         }
-        
-        data->SetTraitForLocation( trait->location, trait );  
-        
+
+        data->SetTraitForLocation( trait->location, trait );
+
         // Send out updated information to all clients on prox. list
         csString str( "<traits>" );
         str.Append(trait->ToXML() );
-        str.Append("</traits>");        
+        str.Append("</traits>");
         psTraitChangeMessage message( (uint32_t)clientID, (uint32_t)actor->GetEntityID(), str );
-        message.Multicast( actor->GetMulticastClients(), 0, PROX_LIST_ANY_RANGE );                           
+        message.Multicast( actor->GetMulticastClients(), 0, PROX_LIST_ANY_RANGE );
         return true;
     }
 };
@@ -454,8 +454,8 @@ public:
         xml.Format("<exp type=\"%s\" value=\"%s\" />",type.GetData(),script_text.GetData() );
         return xml;
     }
-    
-    
+
+
     float AllocateKillDamage(gemObject *target, int exp)
     {
         // Convert to gemActor
@@ -484,7 +484,7 @@ public:
                 break;
             }
             lastTimestamp = history->timestamp;
-            
+
             // Special check for DoT adjustments if the target died before the DoT expired
             if(history->damageRate != 0)
             {
@@ -528,7 +528,7 @@ public:
                 continue;  // should not happen with new safe ref system.
 
             float dmgMade = 0;
-            float mod = 0;           
+            float mod = 0;
 
             for (int x = (int)targetAct->GetDamageHistoryCount();x > lastHistory; x--)
             {
@@ -546,11 +546,11 @@ public:
             }
             // Use the latest HP (needs to be redesigned when NPCs can cast heal spells on eachoter)
             mod = dmgMade / totalDamage; // Get a 0.something value or 1 if we did all dmg
-            if (mod > 1.0) 
+            if (mod > 1.0)
                 mod = 1.0;
 
             int final = int(exp * mod);
-            
+
             psserver->SendSystemInfo(attacker->GetClientID(),"You gained %d experience points.",final);
             if (int pp = attacker->GetCharacterData()->AddExperiencePoints(final))
             {
@@ -642,10 +642,10 @@ public:
                    escpxml.GetData(), script_text.GetData());
         return xml;
     }
-    
-    
+
+
     bool Run(gemActor *actor, gemObject *target, psItem * item, bool inverse)
-    {        
+    {
         if (!aimIsActor && !target)
         {
             Error2("Error: ProgressionEvent(%s)  FactionOp need a target\n",eventName->GetData());
@@ -657,14 +657,14 @@ public:
             Error2("Error: ProgressionEvent(%s)  FactionOp need an actor\n",eventName->GetData());
             return true;
         }
-        
+
         psCharacter * character;
-       
+
         if (aimIsActor)
             character = actor->GetCharacterData();
         else
             character = target->GetCharacterData();
-        
+
         if (!character)
         {
             Error2("Error: ProgressionEvent(%s)  FactionOp aim isn't a character\n",eventName->GetData());
@@ -672,10 +672,10 @@ public:
         }
 
         int delta = (int) GetValue(actor, target);
-        
+
         if ( inverse )
             delta = -delta;
-        
+
         character->UpdateFaction(faction, delta);
 
         return true;
@@ -711,19 +711,19 @@ public:
  *    Taking the path of a street warrior adds 35% of character points to strength:
  *        <str adjust="add" value="0.35*CharPoints" />
  *    Effect of darkness spell on actor is to reduce attack modifier by mutiplying by 1 minus 2% of powerlevel
- *        <attack adjust="mul" aim="target" value="1-0.02*PowerLevel" delay="10000*PowerLevel" 
+ *        <attack adjust="mul" aim="target" value="1-0.02*PowerLevel" delay="10000*PowerLevel"
  *        undomsg="Your vision clears as the globe of darkness fades." />
  */
 class StatsOp : public ProgressionOperation
 {
 public:
-    
+
     typedef enum {HP,MANA,PSTAMINA,MSTAMINA,STR,AGI,END,INT,WIL,CHA,CON,STA,MSTA,ATTACK,DEFENSE,HPRATE,MRATE,PSTAMRATE,MSTAMRATE} Stat_t;
     typedef enum {adjust_set, adjust_add, adjust_mul, adjust_pct} adjust_t;
-    
+
     static const char * statToString[];
     static const PSITEMSTATS_STAT statToAttrib[];
-    
+
     StatsOp(Stat_t state):ProgressionOperation() {stat=state;};
     virtual ~StatsOp() {};
 
@@ -738,7 +738,7 @@ public:
             else if (adjustStr == "mul")
                 adjust = adjust_mul;
             else if (adjustStr == "pct")
-                adjust = adjust_pct;                
+                adjust = adjust_pct;
         }
 
         if (node->GetAttributeValue("aim"))
@@ -752,24 +752,24 @@ public:
 
         return LoadValue(node, script) && LoadDelay(node, script);
     }
-    
+
     virtual csString ToString()
     {
         psString xml;
         psString adjustStr, delayStr;
-        
+
         xml.Format("<%s ",statToString[stat]);
         if (!aimIsActor)
             xml.AppendFmt("aim=\"target\" ");
-        
+
         switch (adjust)
         {
             case adjust_set: adjustStr = "set"; break;
             case adjust_add: adjustStr = "add"; break;
-            case adjust_mul: adjustStr = "mul"; break;            
+            case adjust_mul: adjustStr = "mul"; break;
             case adjust_pct: adjustStr = "pct"; break;
         }
-        
+
         xml.AppendFmt("adjust=\"%s\" ", adjustStr.GetData());
         if (base)
             xml.AppendFmt("base=\"yes\" ");
@@ -809,7 +809,7 @@ public:
             else
                 return targetChar->GetStamina(false);
             break;
-        case STR:        
+        case STR:
         case AGI:
         case END:
         case INT:
@@ -845,27 +845,27 @@ public:
         }
         return 0.0;
     }
-    
+
     float CalcNewValue(float oldValue, float adjustValue, bool inverse, float baseValue)
     {
         switch (adjust)
         {
             case adjust_set: return adjustValue;
-            case adjust_add: if (inverse) return oldValue - adjustValue; else return oldValue + adjustValue; 
+            case adjust_add: if (inverse) return oldValue - adjustValue; else return oldValue + adjustValue;
             case adjust_mul: if (inverse) return oldValue / adjustValue; else return oldValue * adjustValue;
             case adjust_pct:
             {
                 float pct = baseValue * adjustValue/100.0f;
                 if ( inverse )
                     return oldValue-pct;
-                else    
-                    return oldValue+pct;               
+                else
+                    return oldValue+pct;
             }
         }
-                        
+
         return 0.0;
     }
-    
+
     bool SetValue(gemActor * actor, psCharacter * targetChar, float oldValue, float newValue, int duration)
     {
         switch (stat)
@@ -888,26 +888,26 @@ public:
                         {
                             if (!strcmp(actor->GetName(), targetChar->GetActor()->GetName()))
                             {
-                                psserver->SendSystemInfo(actor->GetClient()->GetClientNum(), 
+                                psserver->SendSystemInfo(actor->GetClient()->GetClientNum(),
                                                      "Your attempt doesn't have any effect since you don't have any wounds.");
                             }
                             else
                             {
                                 psserver->SendSystemInfo(actor->GetClient()->GetClientNum(),
-                                                     "Your attempt doesn't have any effect since %s doesn't have any wounds.", 
+                                                     "Your attempt doesn't have any effect since %s doesn't have any wounds.",
                                                      targetChar->GetActor()->GetName());
                             }
                             //return false;
                         }
                         else
-                        {                        
+                        {
                             targetChar->SetHitPoints(newValue);
-                        }                            
+                        }
                     }
                 }
                 break;
             }
-                            
+
             case MANA:
             {
                 if (base)
@@ -920,7 +920,7 @@ public:
                 }
                 break;
             }
-                            
+
             case PSTAMINA:
             {
                 if (base)
@@ -933,7 +933,7 @@ public:
                 }
                 break;
             }
-                            
+
             case MSTAMINA:
             {
                 if (base)
@@ -942,8 +942,8 @@ public:
                     targetChar->SetStamina(newValue, false);
                 break;
             }
-                            
-            case STR:        
+
+            case STR:
             case AGI:
             case END:
             case INT:
@@ -956,55 +956,55 @@ public:
                 {
                     targetChar->GetAttributes()->SetStat(statToAttrib[stat],(unsigned)newValue);
                     targetChar->CalculateEquipmentModifiers();
-                } 
-                else 
+                }
+                else
                 {
                     targetChar->GetAttributes()->BuffStat(statToAttrib[stat],unsigned(newValue-oldValue));
                     targetChar->CalculateEquipmentModifiers();
                 }
                 break;
-            }                
-            
+            }
+
             case ATTACK:
             {
                 targetChar->AdjustAttackValueModifier(newValue/oldValue);
                 break;
             }
-                            
+
             case DEFENSE:
             {
                 targetChar->AdjustDefenseValueModifier(newValue/oldValue);
                 break;
-            }                
-                        
+            }
+
             case HPRATE:
             {
                 targetChar->GetActor()->DoDamage(actor, 0.0, newValue-oldValue, duration);
                 break;
-            }                
-            
+            }
+
             case MRATE:
             {
                 targetChar->AdjustManaRate(newValue);
                 break;
             }
-                            
+
             case PSTAMRATE:
             {
                 targetChar->AdjustStaminaRate(newValue, true);
                 break;
             }
-                            
+
             case MSTAMRATE:
             {
                 targetChar->AdjustStaminaRate(newValue, false);
                 break;
             }
-                            
+
             default:
             {
-                break;            
-            }                
+                break;
+            }
         }
 
         // This function recalculates the target HP, Mana and Stamina
@@ -1013,33 +1013,33 @@ public:
         Client *client = actor ? actor->GetClient() : NULL;
         if (client && client->GetCharacterData())
             psserver->GetProgressionManager()->SendSkillList( client, false );
-            
+
         return true;
     }
-    
+
     csString CreateUndoScript(float oldValue, float finalValue)
     {
         csString script;
-        
-        script.Format("<evt><%s adjust=\"add\" aim=\"%s\" base=\"%s\" value=\"%f\" />", 
+
+        script.Format("<evt><%s adjust=\"add\" aim=\"%s\" base=\"%s\" value=\"%f\" />",
                       statToString[stat], aimIsActor ? "actor" : "target", base ? "yes" : "no", oldValue - finalValue);
         if (undoMsg.Length() > 0)
             script.AppendFmt("<msg aim=\"%s\" text=\"%s\"/>", aimIsActor ? "actor" : "target", undoMsg.GetData());
         script += "</evt>";
-    
+
         return script;
     }
 
-    csString Absolute()        
+    csString Absolute()
     {
         if(undoQueued)
             return "";
-        csString script;        
-        script.Format("<%s adjust=\"add\" aim=\"%s\" base=\"%s\" value=\"%f\" undomsg=\"%s\" />", 
-                      statToString[stat], aimIsActor ? "actor" : "target", base ? "yes" : "no", newValue - oldValue, undoMsg.GetData());    
-        return script;                      
+        csString script;
+        script.Format("<%s adjust=\"add\" aim=\"%s\" base=\"%s\" value=\"%f\" undomsg=\"%s\" />",
+                      statToString[stat], aimIsActor ? "actor" : "target", base ? "yes" : "no", newValue - oldValue, undoMsg.GetData());
+        return script;
     }
-    
+
     bool Run(gemActor *actor, gemObject *target, psItem * item, bool inverse)
     {
         psCharacter * targetChar;
@@ -1051,30 +1051,30 @@ public:
             Error2("Error: ProgressionEvent(%s)  StatsOp need a target\n",eventName->GetData());
             return true;
         }
-        
+
         targetChar = object->GetCharacterData();
         if (!targetChar)
         {
             Error3("Error: ProgressionEvent(%s)  StatsOp aim %s isn't a character\n",eventName->GetData(),object->GetName() );
             return true;
         }
-        
+
         Client* client = NULL;
         if ( actor )
         {
            client = psserver->GetConnections()->Find( actor->GetClientID() );
         }
-       
+
         if ( client )
         {
             object->SendTargetStatDR( client );
         }
-        
+
         int delay = GetDelay(actor, target);
         if (delay < 0)
         {
             return false; // No time left for the effect to apply, so don't bother.
-        }            
+        }
 
         oldValue = GetCurrentValue(targetChar);
         float adjustValue = GetValue(actor, target);
@@ -1086,7 +1086,7 @@ public:
             Notify2(LOG_SCRIPT,"Error: ProgressionEvent(%s): StatsOp SetValue not possible.\n",eventName->GetData());
             return false;
         }
-        
+
         if(inverse && undoMsg.Length() > 0)
         {
             // print the undo message
@@ -1095,16 +1095,16 @@ public:
             if(object->GetClientID())
                 psserver->SendSystemInfo(object->GetClientID(),sendtext);
         }
-        
-        
+
+
 
         if ( client )
         {
            object->SendTargetStatDR( client );
         }
- 
 
-        if (delay > 0)                    
+
+        if (delay > 0)
         {
             float finalValue = GetCurrentValue(targetChar);
             csString undoScript = CreateUndoScript(oldValue, finalValue);
@@ -1115,30 +1115,28 @@ public:
         }
         return true;
     }
-    
+
 protected:
     float oldValue;
     float newValue;
- 
-    adjust_t adjust; 
 
-    // True if it is the base value that should be used.
-    bool base; 
+    adjust_t adjust;
 
-    // True if its the actors stat that should be used.
-    bool aimIsActor;
-    
+    bool base; ///< True if it is the base value that should be used.
+
+    bool aimIsActor; ///< True if its the actors stat that should be used.
+
     csString undoMsg;
-    
+
     Stat_t stat;
 };
 
 const char *StatsOp::statToString[] = {"hp","mana","pstamina","mstamina","str","agi","end","int","wil","cha","con","sta","msta", "attack", "defense", "hpRate", "mRate", "pStamRate", "mStamRate"};
-const PSITEMSTATS_STAT StatsOp::statToAttrib[] = 
-    {PSITEMSTATS_STAT_NONE, // hp
-     PSITEMSTATS_STAT_NONE, // mana
-     PSITEMSTATS_STAT_NONE, //stamina
-     PSITEMSTATS_STAT_NONE, //stamina
+const PSITEMSTATS_STAT StatsOp::statToAttrib[] =
+    {PSITEMSTATS_STAT_NONE,             ///< hp
+     PSITEMSTATS_STAT_NONE,             ///< mana
+     PSITEMSTATS_STAT_NONE,             ///< stamina
+     PSITEMSTATS_STAT_NONE,             ///< stamina
      PSITEMSTATS_STAT_STRENGTH,
      PSITEMSTATS_STAT_AGILITY,
      PSITEMSTATS_STAT_ENDURANCE,
@@ -1147,12 +1145,12 @@ const PSITEMSTATS_STAT StatsOp::statToAttrib[] =
      PSITEMSTATS_STAT_CHARISMA,
      PSITEMSTATS_STAT_CONSTITUTION,
      PSITEMSTATS_STAT_STAMINA,
-     PSITEMSTATS_STAT_NONE, // attack modifier
-     PSITEMSTATS_STAT_NONE, // defense modifier
-     PSITEMSTATS_STAT_NONE,  // hp rate
-     PSITEMSTATS_STAT_NONE,  // mrate
-     PSITEMSTATS_STAT_NONE,  // pstam rate
-     PSITEMSTATS_STAT_NONE  // mstam rate
+     PSITEMSTATS_STAT_NONE,             ///< attack modifier
+     PSITEMSTATS_STAT_NONE,             ///< defense modifier
+     PSITEMSTATS_STAT_NONE,             ///< hp rate
+     PSITEMSTATS_STAT_NONE,             ///< mrate
+     PSITEMSTATS_STAT_NONE,             ///< pstam rate
+     PSITEMSTATS_STAT_NONE              ///< mstam rate
      };
 
 /*-------------------------------------------------------------*/
@@ -1170,7 +1168,7 @@ const PSITEMSTATS_STAT StatsOp::statToAttrib[] =
  *        value = "#" value to set skill
  * Examples:
  *    Increase skill "Red Way" by 2 for 120 seconds and give message when potion wears off
- *        <skill name="Red Way" value="2" delay="120000" aim="actor" attribute="adjust" base="no" 
+ *        <skill name="Red Way" value="2" delay="120000" aim="actor" attribute="adjust" base="no"
  *          undomsg="The potion wears off." />
  *    An item increases the herbal skill by 3 with no buf:
  *        <skill name="herbal" buff="no" attribute="adjust" value="3"/>
@@ -1178,7 +1176,7 @@ const PSITEMSTATS_STAT StatsOp::statToAttrib[] =
 class SkillOp : public ProgressionOperation
 {
 public:
-    
+
     SkillOp() : ProgressionOperation() { };
     virtual ~SkillOp() {};
 
@@ -1194,7 +1192,7 @@ public:
             Error1("Error: No name for skill\n");
             return false;
         }
-        
+
         csString name = node->GetAttributeValue("name");
         skill = CacheManager::GetSingleton().ConvertSkillString(name);
 
@@ -1203,7 +1201,7 @@ public:
 
         return LoadValue(node, script) && LoadDelay(node, script);
     }
-    
+
     bool CreateUndoScript( float adjustValue, psString& undoScript )
     {
         psSkillInfo* info = CacheManager::GetSingleton().GetSkillByID(skill);
@@ -1213,21 +1211,21 @@ public:
             csString escname = EscpXML( info->name );
             undoScript.AppendFmt("<skill name=\"%s\" ", escname.GetData() );
             if (!isBuff)
-                undoScript.Append("buff=\"no\" ");       
+                undoScript.Append("buff=\"no\" ");
             if (!aimIsActor)
-                undoScript.Append("aim=\"target\" ");       
+                undoScript.Append("aim=\"target\" ");
             if (setValue)
                 undoScript.AppendFmt("adjust=\"set\" value=\"%u\" />", oldSkillRank);
             else
                 undoScript.AppendFmt("value=\"%f\" />", -adjustValue);
             undoScript.Append("</evt>");
             return true;
-        }   
+        }
         Error2("Error: ProgressionEvent(%s) SkillOp  no info for skill\n",eventName->GetData());
         return false;
     }
 
-        
+
     virtual csString ToString()
     {
         psString xml;
@@ -1288,8 +1286,8 @@ public:
             Error2("Error: ProgressionEvent(%s)  SkillOp target isn't a character\n",eventName->GetData());
             return true;
         }
-        
-        int adjustValue = (int) GetValue(actor, target);  
+
+        int adjustValue = (int) GetValue(actor, target);
         if (inverse)
             adjustValue = -adjustValue;
 
@@ -1298,7 +1296,7 @@ public:
             character->GetSkills()->BuffSkillRank( skill, adjustValue );
             result = adjustValue;
         }
-        else            
+        else
         {
             oldSkillRank = character->GetSkills()->GetSkillRank(skill, false);
             result = adjustValue + (int) (setValue ? 0 : oldSkillRank);
@@ -1320,19 +1318,19 @@ public:
                 psserver->GetProgressionManager()->QueueUndoScript(undoScript.GetData(), delay, actor, object, item, persistentID);
             }
         }
-        
+
         return true;
     }
 protected:
     unsigned int oldSkillRank;
 
-    // True if the return from the expression shall be used to 
-    // set the skill value. Otherwise it will just adjust it.
-    bool setValue; 
-    // True if its the actors is the aim that should be used.
+    /// True if the return from the expression shall be used to
+    /// set the skill value. Otherwise it will just adjust it.
+    bool setValue;
+    /// True if its the actors is the aim that should be used.
     bool aimIsActor;
-    
-    bool isBuff; // True if setting a buff, rather than a permanent skill rank change
+
+    bool isBuff; ///< True if setting a buff, rather than a permanent skill rank change
     PSSKILL skill;
 };
 
@@ -1348,7 +1346,7 @@ protected:
  *        text = "%s" text to send
  * Examples:
  *    Send message to actor and target about spell effects:
- *          <msg aim="actor" text="You fire sharp ice blades from your fingers, hurting your opponents."/> 
+ *          <msg aim="actor" text="You fire sharp ice blades from your fingers, hurting your opponents."/>
  *          <msg aim="target" text="You are hit by sharp ice blades."/></area>
 */
 class MsgOp : public ProgressionOperation
@@ -1360,7 +1358,7 @@ public:
     bool Load(iDocumentNode *node, ProgressionEvent *script)
     {
         my_script = script;
-    
+
         if (node->GetAttributeValue("aim"))
         {
             aimIsActor = !strcasecmp(node->GetAttributeValue("aim"),"actor");
@@ -1371,7 +1369,7 @@ public:
         text = node->GetAttributeValue("text");
         return true;
     }
-    
+
     virtual csString ToString()
     {
         psString xml;
@@ -1406,7 +1404,7 @@ public:
             clientID = actor->GetClientID();
         else
             clientID = target->GetClientID();
-        
+
 
         if (!clientID)
         {
@@ -1420,15 +1418,14 @@ public:
         SubstituteVars(actor, target, sendtext);
 
         psserver->SendSystemInfo(clientID,sendtext);
-               
+
 
         return true;
     }
 protected:
 
     csString text;
-    // True if its the actors is the aim that should be used.
-    bool aimIsActor;
+    bool aimIsActor; ///< True if its the actors is the aim that should be used.
 };
 
 /*-------------------------------------------------------------*/
@@ -1460,7 +1457,7 @@ public:
     virtual ~BlockOp() {};
 
     static const char * operationToString[];
-    
+
     bool Load(iDocumentNode *node, ProgressionEvent *script)
     {
         my_script = script;
@@ -1483,7 +1480,7 @@ public:
         category = node->GetAttributeValue("category");
         return LoadDelay(node, script);
     }
-    
+
     virtual csString ToString()
     {
         psString xml;
@@ -1509,9 +1506,9 @@ public:
             else if ( operation == BLOCK_REMOVE )
             {
                 operation = BLOCK_ADD;
-            }                
+            }
         }
-         
+
         gemActor *targetActor;
 
         if ( !target )
@@ -1528,7 +1525,7 @@ public:
         else
         {
             targetActor = target->GetActorPtr();
-        }            
+        }
 
         switch ( operation )
         {
@@ -1538,26 +1535,26 @@ public:
                 if (targetActor->AddActiveMagicCategory(category))
                 {
                     int delay = GetDelay(actor, target);
-                    
+
                     if ( delay > 0 )
                     {
                         int persistentID = targetActor->GetCharacterData() ? targetActor->GetCharacterData()->RegisterProgressionEvent(ToString(), ticksElapsed) : 0;
                         psString undoscript = CreateUndoScript();
                         undoQueued = true;
                         psserver->GetProgressionManager()->QueueUndoScript(undoscript.GetData(), delay, actor, target, item, persistentID);
-                    }                        
+                    }
                 }
                 else
                     // Spell is blocked so the rest of the script must not execute.
                     return false;
                 break;
-            }                
+            }
 
             case BLOCK_REMOVE:
             {
                 targetActor->RemoveActiveMagicCategory(category);
                 break;
-            }                
+            }
         }
 
         return true;
@@ -1568,7 +1565,7 @@ protected:
     psString CreateUndoScript( void )
     {
         psString script;
-        
+
         script = "<evt>";
         script.Append("<block ");
         csString escpxml = EscpXML(operationToString[BLOCK_REMOVE]);
@@ -1602,7 +1599,7 @@ const char *BlockOp::operationToString[] = {"add","remove"};
  *        undomsg = "%s" message to send when attachment is finished
  * Examples:
  *    Cast a Flame Spire spell by running defensive damage script "apply Flame Spire" for 2 times PowerLevel seconds
- *        <attachscript aim="actor" delay="2000+PowerLevel" scriptName="apply Flame Spire" event="defense" 
+ *        <attachscript aim="actor" delay="2000+PowerLevel" scriptName="apply Flame Spire" event="defense"
  *         undomsg="The flame spire disappears."/>
  */
 class AttachScriptOp : public ProgressionOperation
@@ -1614,7 +1611,7 @@ public:
     bool Load(iDocumentNode *node, ProgressionEvent *script)
     {
         my_script = script;
-        
+
         if (node->GetAttributeValue("aim"))
             aimIsActor = !strcasecmp(node->GetAttributeValue("aim"),"actor");
         else
@@ -1625,7 +1622,7 @@ public:
         undoMsg = node->GetAttributeValue("undomsg");
         return LoadDelay(node, script);
     }
-    
+
     virtual csString ToString()
     {
         psString xml;
@@ -1648,27 +1645,27 @@ public:
 
         gemActor * object;
         int scriptID;
-        
+
         if (aimIsActor)
             object = dynamic_cast<gemActor*> (actor);
         else
             object = dynamic_cast<gemActor*> (target);
-        
+
         if (!object)
         {
             Error2("Error: ProgressionEvent(%s) DetachScriptOp need a target\n",eventName->GetData());
             return true;
         }
-        
+
         if (event == "attack")
             scriptID = object->AttachAttackScript(scriptName);
         else
             scriptID = object->AttachDamageScript(scriptName);
-        
+
         int delay = GetDelay(actor, target);
         if (delay < 0)
             return false; // No time left for the effect to apply, so don't bother.
-        
+
         if (delay > 0)
         {
             psString undoScript;
@@ -1680,7 +1677,7 @@ public:
             int persistentID = object->GetCharacterData() ? object->GetCharacterData()->RegisterProgressionEvent(ToString(), ticksElapsed) : 0;
             psserver->GetProgressionManager()->QueueUndoScript(undoScript.GetData(), delay, actor, object, item, persistentID);
         }
-        
+
         return true;
     }
 protected:
@@ -1712,17 +1709,17 @@ public:
     bool Load(iDocumentNode *node, ProgressionEvent *script)
     {
         my_script = script;
-    
+
         if (node->GetAttributeValue("aim"))
             aimIsActor = !strcasecmp(node->GetAttributeValue("aim"),"actor");
         else
             aimIsActor = true; // Default
-            
+
         scriptID = node->GetAttributeValueAsInt("scriptID");
         event = node->GetAttributeValue("event");
         return true;
     }
-    
+
     virtual csString ToString()
     {
         psString xml;
@@ -1742,23 +1739,23 @@ public:
             return true;
 
         gemActor * object;
-        
+
         if (aimIsActor)
             object = dynamic_cast<gemActor*> (actor);
         else
             object = dynamic_cast<gemActor*> (target);
-            
+
         if (!object)
         {
             Error2("Error: ProgressionEvent(%s) DetachScriptOp need a target\n",eventName->GetData());
             return false;
         }
-        
+
         if (event == "attack")
             object->DetachAttackScript(scriptID);
         else
             object->DetachDamageScript(scriptID);
-        
+
         return true;
     }
 protected:
@@ -1787,7 +1784,7 @@ public:
     {
         return true;
     }
-    
+
     virtual csString ToString()
     {
         psString xml;
@@ -1804,7 +1801,7 @@ public:
 
         gemItem * gItem;
         int clientnum;
-        
+
         if (!actor)
         {
             Error2("Error: ProgressionEvent(%s) IdentifyMagicOp needs an actor\n",eventName->GetData());
@@ -1817,14 +1814,14 @@ public:
             Error2("Error: ProgressionEvent(%s) IdentifyMagicOp needs a client\n",eventName->GetData());
             return true;
         }
-        
+
         gItem = dynamic_cast <gemItem*> (target);
         if (!gItem)
         {
             psserver->SendSystemError(clientnum,"You must have an item selected");
             return true;
         }
-        
+
         psItemStats * stats = gItem->GetItem()->GetBaseStats();
         // this is really bad.. should have specific flag?
         if (stats->GetProgressionEventEquip().Length() > 0 || stats->GetProgressionEventUnEquip().Length() > 0)
@@ -1835,7 +1832,7 @@ public:
         {
             psserver->SendSystemInfo(clientnum,"This is an ordinary item without any magical powers.");
         }
-        
+
         return true;
     }
 };
@@ -1860,7 +1857,7 @@ class ScriptOp : public ProgressionOperation
 public:
     ScriptOp() : ProgressionOperation() { };
     virtual ~ScriptOp(){};
-    
+
     bool Load(iDocumentNode *node, ProgressionEvent *prg_script)
     {
         delay = node->GetAttributeValueAsInt("delay");
@@ -1874,7 +1871,7 @@ public:
         script.LoadScript(node);
         return true;
     }
-    
+
     virtual csString ToString()
     {
         csString xml;
@@ -1896,7 +1893,7 @@ public:
         {
             persistentID = target->GetCharacterData()->RegisterProgressionEvent(ToString(), ticksElapsed);
         }
-        
+
         psserver->GetProgressionManager()->QueueEvent(new psScriptGameEvent(delay, &script, actor, target, item, persistentID));
 
         return true;
@@ -1916,7 +1913,7 @@ protected:
  * Applies a script to everything of a type in an area.
  *
  * Syntax:
- *    <area type="entity|item|actor|group|hostile|friendly" range="#" anglerange="#" 
+ *    <area type="entity|item|actor|group|hostile|friendly" range="#" anglerange="#"
  *      delaybetween="#" includetarget="yes|no" > %s </area>
  *        type = "entity" apply to everything
  *        type = "item" apply to items only
@@ -1932,8 +1929,8 @@ protected:
  * Examples:
  *    Cast Icy Blast on all all mobs within 12 by applying script to reduce HP by 2 plus PowerLevel for Powerlevel seconds
  *        <area type="hostile" range="12">
- *          <hp adjust="add" aim="target" value="-1*(2+PowerLevel)" delay="1000*PowerLevel"/> 
- *          <msg aim="actor" text="You fire sharp ice blades from your fingers, hurting your opponents."/> 
+ *          <hp adjust="add" aim="target" value="-1*(2+PowerLevel)" delay="1000*PowerLevel"/>
+ *          <msg aim="actor" text="You fire sharp ice blades from your fingers, hurting your opponents."/>
  *          <msg aim="target" text="You are hit by sharp ice blades."/></area>
  *
  */
@@ -1942,7 +1939,7 @@ class AreaOp : public ProgressionOperation
 public:
     AreaOp() : ProgressionOperation() { };
     virtual ~AreaOp(){};
-    
+
     enum target_type { ENTITY, ITEM, ACTOR, GROUP, HOSTILE, FRIENDLY };
 
     bool Load(iDocumentNode *node, ProgressionEvent *prg_script)
@@ -1975,7 +1972,7 @@ public:
             Error3("Invalid type in ProgressionEvent(%s) AreaOp: %s\n",eventName->GetData(), type.GetData() );
             return true;
         }
-        
+
         if (range < 1 || range > 100)
         {
             Error2("Range in ProgressionEvent(%s) AreaOp must be at least 1 and less than 100\n",eventName->GetData() );
@@ -1998,7 +1995,7 @@ public:
         script.LoadScript(node);
         return true;
     }
-    
+
     virtual csString ToString()
     {
         csString xml;
@@ -2052,10 +2049,10 @@ public:
             }
         }
 
-        csVector3 actor_pos;    /// Actor's position
-        csVector3 target_pos;   /// Target's position
-        iSector* actor_sector;  /// Actor's sector
-        iSector* target_sector; /// Target's sector
+        csVector3 actor_pos;    ///< Actor's position
+        csVector3 target_pos;   ///< Target's position
+        iSector* actor_sector;  ///< Actor's sector
+        iSector* target_sector; ///< Target's sector
 
 #define NORMALIZE_BIG_ANGLE(a)  { if (a > TWO_PI) a -= TWO_PI; }
 #define NORMALIZE_NEG_ANGLE(a)  { if (a < 0.0f) a += TWO_PI; }
@@ -2066,7 +2063,7 @@ public:
         {
             float actor_angle;
             actor->GetPosition(actor_pos,actor_angle,actor_sector);
-            
+
             // angle is actually in the opposite direction the character is facing...
             actor_angle += PI;
             NORMALIZE_BIG_ANGLE(actor_angle);
@@ -2080,7 +2077,7 @@ public:
         }
 
         if (anglerange && target == actor)
-        {   
+        {
             // Just copy the values if we already have them
             target_pos = actor_pos;
             target_sector = actor_sector;
@@ -2158,13 +2155,13 @@ public:
     }
 
 protected:
-    int range;                /// Range of area application, in meters
-    int anglerange;           /// Wedge of area to apply to, in degrees
-    csString type;            /// Type of entity to apply to
-    target_type typecode;     /// Code for type, from enum
-    csTicks delaybetween;     /// Delay between each apply, in miliseconds
-    bool includetarget;       /// Apply to target, or just area around?
-    ProgressionEvent script;  /// Script to apply to each
+    int range;                ///< Range of area application, in meters
+    int anglerange;           ///< Wedge of area to apply to, in degrees
+    csString type;            ///< Type of entity to apply to
+    target_type typecode;     ///< Code for type, from enum
+    csTicks delaybetween;     ///< Delay between each apply, in miliseconds
+    bool includetarget;       ///< Apply to target, or just area around?
+    ProgressionEvent script;  ///< Script to apply to each
 };
 
 /*-------------------------------------------------------------*/
@@ -2187,7 +2184,7 @@ class ChargeOp : public ProgressionOperation
 public:
     ChargeOp() : ProgressionOperation() { };
     virtual ~ChargeOp(){};
-    
+
     bool Load(iDocumentNode *node, ProgressionEvent *prg_script)
     {
         charges = node->GetAttributeValueAsInt("charges");
@@ -2197,7 +2194,7 @@ public:
 
         return true;
     }
-    
+
     virtual csString ToString()
     {
         csString xml;
@@ -2219,7 +2216,7 @@ public:
         {
             item->SetCharges(item->GetCharges()-charges);
             item->Save(false);
-        
+
             script.Run(actor, target, item, inverse);
         }
 
@@ -2227,8 +2224,8 @@ public:
     }
 
 protected:
-    int charges;              /// Number of charges needed to perform this operation.
-    ProgressionEvent script;  /// Script to apply if charged
+    int charges;              ///< Number of charges needed to perform this operation.
+    ProgressionEvent script;  ///< Script to apply if charged
 };
 
 
@@ -2252,7 +2249,7 @@ class RechargeOp : public ProgressionOperation
 public:
     RechargeOp() : ProgressionOperation() { };
     virtual ~RechargeOp(){};
-    
+
     bool Load(iDocumentNode *node, ProgressionEvent *prg_script)
     {
         charges = node->GetAttributeValueAsInt("charges");
@@ -2260,7 +2257,7 @@ public:
         failureText = node->GetAttributeValue("failure");
         return true;
     }
-    
+
     virtual csString ToString()
     {
         csString xml;
@@ -2292,7 +2289,7 @@ public:
             {
                 new_charges = item->GetMaxCharges();
             }
-            
+
             item->SetCharges(new_charges);
             item->Save(false);
 
@@ -2313,7 +2310,7 @@ public:
     }
 
 protected:
-    int charges;              /// Number of charges to apply
+    int charges;              ///< Number of charges to apply
     csString successText;
     csString failureText;
 };
@@ -2354,34 +2351,34 @@ public:
         name = node->GetAttributeValue("name");
         location = node->GetAttributeValue("location");
         stackCount = node->GetAttributeValueAsInt("count");
-        if (!location.IsEmpty() && location != "inventory" && 
+        if (!location.IsEmpty() && location != "inventory" &&
             location != "wallet" && location != "ground" )
         {
             Error3("Error:ProgressionEvent(%s) ItemOp Location %s not legal\n",eventName->GetData(), location.GetData());
         }
         return true;
     }
-    
+
     virtual csString ToString()
     {
         psString xml;
         csString escpxml = EscpXML(name);
         xml.Format("<item name=\"%s\" ",escpxml.GetData());
-        if (!location.IsEmpty()) 
+        if (!location.IsEmpty())
         {
             escpxml = EscpXML(location);
             xml.AppendFmt("location=\"%s\" ",escpxml.GetData());
         }
         if (!aimIsActor)
             xml.AppendFmt("aim=\"target\" ");
-        if (stackCount != 0) 
+        if (stackCount != 0)
             xml.AppendFmt("count=\"%d\" ",stackCount);
         xml.AppendFmt("/>");
         return xml;
     }
 
     bool Run(gemActor *actor, gemObject *target, psItem * item, bool inverse)
-    {    
+    {
         // Remove this when adding support for the inverse operation
         if (inverse)
             return true;
@@ -2400,7 +2397,7 @@ public:
         }
 
         psCharacter * character;
-       
+
         if (aimIsActor)
             character = actor->GetCharacterData();
         else
@@ -2417,7 +2414,7 @@ public:
         if ( location == "wallet" )
         {
             psMoney money;
-            
+
             if ( name == "trias" )
                 money.SetTrias( stackCount );
             if ( name == "hexas" )
@@ -2426,12 +2423,12 @@ public:
                 money.SetOctas( stackCount );
             if ( name == "circles" )
                 money.SetCircles( stackCount );
-                                           
-            psMoney charMoney = character->Money(); 
+
+            psMoney charMoney = character->Money();
             charMoney = charMoney + money;
             character->SetMoney( charMoney );
             return true;
-        } 
+        }
         else if (location == "inventory")
         {
             psItem * iteminstance = CreateItem(false);
@@ -2441,7 +2438,7 @@ public:
             }
 
             character->Inventory().AddOrDrop(iteminstance, false);
-        } 
+        }
         else if (location == "ground")
         {
             psItem * iteminstance = CreateItem(true);
@@ -2457,7 +2454,7 @@ public:
 
     psItem *CreateItem(bool transient)
     {
-            
+
         // Get the ItemStats based on the name provided.
         psItemStats *itemstats=CacheManager::GetSingleton().GetBasicItemStatsByName(name.GetData());
         if (!itemstats)
@@ -2466,7 +2463,7 @@ public:
                     eventName->GetData(),name.GetData());
             return NULL;
         }
-        
+
         psItem *iteminstance = itemstats->InstantiateBasicItem(transient);
         if (iteminstance==NULL)
         {
@@ -2474,7 +2471,7 @@ public:
                     eventName->GetData());
             return NULL;
         }
-       
+
         if (stackCount != 0)
         {
             if (!iteminstance->GetIsStackable())
@@ -2486,18 +2483,17 @@ public:
                 iteminstance->SetStackCount(stackCount);
             }
         }
-        
+
         iteminstance->SetLoaded();  // Item is fully created
 
         return iteminstance;
     }
-    
+
 protected:
     csString name;
     csString location;
     int stackCount;
-    // True if its the actors is the aim that should be used.
-    bool aimIsActor;
+    bool aimIsActor; ///< True if its the actors is the aim that should be used.
 };
 
 /*-------------------------------------------------------------*/
@@ -2521,7 +2517,7 @@ public:
         glyphUID = node->GetAttributeValueAsInt("glyph");
         return true;
     }
-    
+
     virtual csString ToString()
     {
         csString xml ;
@@ -2542,7 +2538,7 @@ public:
         }
 
         psCharacter *character = actor->GetCharacterData();
-        
+
         if (!character)
         {
             Error2("Error: ProgressionEvent(%s) PurifyOp need a character\n",eventName->GetData());
@@ -2576,7 +2572,7 @@ public:
     {
         return true;
     }
-    
+
     virtual csString ToString()
     {
         csString xml ;
@@ -2661,8 +2657,8 @@ public:
     }
 
 protected:
-    csString mesh;  /// Mesh to morph into
-    int duration;   /// Duration of effect in seconds
+    csString mesh;  ///< Mesh to morph into
+    int duration;   ///< Duration of effect in seconds
 };
 
 /*-------------------------------------------------------------*/
@@ -2691,7 +2687,7 @@ public:
         pattern = node->GetAttributeValue("pattern");
         return true;
     }
-    
+
     virtual csString ToString()
     {
         psString xml;
@@ -2701,7 +2697,7 @@ public:
     }
 
     bool Run(gemActor *actor, gemObject *target, psItem * item, bool inverse)
-    {    
+    {
         // Remove this when adding support for the inverse operation
         if (inverse)
             return true;
@@ -2720,9 +2716,9 @@ public:
         return true;
     }
 
-    
+
 protected:
-    csString pattern;           // Craft pattern name
+    csString pattern; ///< Craft pattern name
 };
 
 /*-------------------------------------------------------------*/
@@ -2745,7 +2741,7 @@ protected:
  * For complete function result = 1 if quest is completed otherwise 0
  */
 enum QuestOpFunctions
-{   
+{
     QUESTOPFUNCTIONS_UNKNOWN=0,         /// Unknown/undefined function
     QUESTOPFUNCTIONS_COMPLETE           /// Check for complete quest
 };
@@ -2794,7 +2790,7 @@ public:
                     xml.AppendFmt("aim=\"target\" ");
                 xml.AppendFmt("prerequisite=\"%s\" />", questName.GetData() );
             }
-            
+
             default:
                 break;
         }
@@ -2847,13 +2843,13 @@ public:
             default:
                 break;
         }
-        return true; 
+        return true;
     }
 
 protected:
-    int function;               /// Operation function
-    bool aimIsActor;            /// True if its the actors stat that should be used.
-    csString questName;         /// Quest to check for completeness
+    int function;               ///< Operation function
+    bool aimIsActor;            ///< True if its the actors stat that should be used.
+    csString questName;         ///< Quest to check for completeness
 };
 
 /*-------------------------------------------------------------*/
@@ -2873,9 +2869,9 @@ protected:
  *
  */
 enum TeleportOpFunctions
-{   
-    TELEPORTOPFUNCTIONS_UNKNOWN=0,         /// Unknown/undefined function
-    TELEPORTOPFUNCTIONS_SPAWN              /// Send actor to spawn location
+{
+    TELEPORTOPFUNCTIONS_UNKNOWN=0,         ///< Unknown/undefined function
+    TELEPORTOPFUNCTIONS_SPAWN              ///< Send actor to spawn location
 };
 
 class TeleportOp : public ProgressionOperation
@@ -2968,11 +2964,11 @@ public:
             default:
                 break;
         }
-        return true; 
+        return true;
     }
 
 protected:
-    int function;               /// Operation function
+    int function; ///< Operation function
 };
 
 /*-------------------------------------------------------------*/
@@ -2995,7 +2991,7 @@ protected:
  *         <action funct="activate" sector="guildlaw" stat="Small Key" />
  */
 enum ActionOpFunctions
-{   
+{
     ACTIONOPFUNCTIONS_UNKNOWN=0,    /// Unknown/undefined function
     ACTIONOPFUNCTIONS_ACTIVATE      /// Activate an action location
 };
@@ -3174,9 +3170,9 @@ public:
     }
 
 protected:
-    int function;               /// Operation function
-    csString sector;            /// sector name of action location entrance to activate
-    csString keyStat;           /// Item stat name to use for making new key
+    int function;               ///< Operation function
+    csString sector;            ///< sector name of action location entrance to activate
+    csString keyStat;           ///< Item stat name to use for making new key
 };
 
 /*-------------------------------------------------------------*/
@@ -3203,10 +3199,10 @@ protected:
  *        <key funct="make" lockID="75" stat="Small Key" location="inventory" />
  */
 enum KeyOpFunctions
-{   
+{
     KEYOPFUNCTIONS_UNKNOWN=0,   /// Unknown/undefined function
     KEYOPFUNCTIONS_MAKE,        /// Make new key
-    KEYOPFUNCTIONS_MODIFY       /// Modify existing key 
+    KEYOPFUNCTIONS_MODIFY       /// Modify existing key
 };
 
 class KeyOp : public ProgressionOperation
@@ -3357,19 +3353,19 @@ public:
     }
 
 protected:
-    int function;               /// Operation function
-    csString location;          /// Location of where to create key
-    uint32 lockID;              /// Instance ID of lock to assign to key
-    csString keyStat;           /// Item stat name to use for making new key
-    uint32 keyID;               /// Key instance ID to check lock
+    int function;               ///< Operation function
+    csString location;          ///< Location of where to create key
+    uint32 lockID;              ///< Instance ID of lock to assign to key
+    csString keyStat;           ///< Item stat name to use for making new key
+    uint32 keyID;               ///< Key instance ID to check lock
 };
 
 /*-------------------------------------------------------------*/
 
 /**
  * EffectOp
- * There is two functions of this script.  
- *  The "attached" function will create an effect attached to a aim.  
+ * There is two functions of this script.
+ *  The "attached" function will create an effect attached to a aim.
  *  The "unattached" function will create a new unattached effect in front of the aim.
  *
  * Syntax:
@@ -3387,10 +3383,10 @@ protected:
  *        <effect funct="attached" effect="sparks" />
  */
 enum EffectOpFunctions
-{   
-    EFFECTOPFUNCTIONS_UNKNOWN=0,   /// Unknown/undefined function
-    EFFECTOPFUNCTIONS_ATTACHED,    /// Render an attached effect
-    EFFECTOPFUNCTIONS_UNATTACHED   /// Render an unattached effect
+{
+    EFFECTOPFUNCTIONS_UNKNOWN=0,   ///< Unknown/undefined function
+    EFFECTOPFUNCTIONS_ATTACHED,    ///< Render an attached effect
+    EFFECTOPFUNCTIONS_UNATTACHED   ///< Render an unattached effect
 };
 
 class EffectOp : public ProgressionOperation
@@ -3551,9 +3547,9 @@ public:
     }
 
 protected:
-    int function;               /// Operation function
-    bool aimIsActor;            /// True if its the actor should be used.
-    csString effectName;        /// Name of effect
+    int function;               ///< Operation function
+    bool aimIsActor;            ///< True if its the actor should be used.
+    csString effectName;        ///< Name of effect
 };
 
 /*-------------------------------------------------------------*/
@@ -3589,7 +3585,7 @@ public:
         attrib = node->GetAttributeValue("attrib");
         duration = node->GetAttributeValueAsInt("duration");
         value = node->GetAttributeValueAsBool("value",true);
-        
+
         if (attrib != "invincible" && attrib != "invisible" && attrib != "nofalldamage" &&
             attrib != "nevertired" && attrib != "infintemana" && attrib != "instantcast")
         {
@@ -3669,10 +3665,10 @@ public:
     }
 
 protected:
-    csString undo;    /// Undo script
-    csString attrib;  /// Attribute we're setting
-    bool value;       /// Value we're setting to (true=on, false=off)
-    int duration;     /// Duration of effect in seconds
+    csString undo;    ///< Undo script
+    csString attrib;  ///< Attribute we're setting
+    bool value;       ///< Value we're setting to (true=on, false=off)
+    int duration;     ///< Duration of effect in seconds
 };
 
 /*-------------------------------------------------------------*/
@@ -3682,7 +3678,7 @@ protected:
  * Change the weather in specified sector
  *
  * Syntax:
- *    <weather type="rain|snow" sector="this|%s" duration="#" 
+ *    <weather type="rain|snow" sector="this|%s" duration="#"
  *     density="#" fade="#" enable="true|false" />
  *        type = "rain" causes rain
  *        type = "snow" causes snow
@@ -3693,7 +3689,7 @@ protected:
  *        fade = "#" amount of time in seconds to fade in 0 means no fade
  *        enable = "true" turn on weather
  *        enable = "false" turn off weather
- *    <weather type="lightning" sector="this|%s" duration="#" 
+ *    <weather type="lightning" sector="this|%s" duration="#"
  *     density="#" fade="#" enable="true|false" />
  *        type = "lightning" causes lightning
  *        sector = "this" use actor's sector map name
@@ -3702,7 +3698,7 @@ protected:
  *        fade = "#" amount of time in seconds to fade in 0 means no fade
  *        enable = "true" turn on weather (default)
  *        enable = "false" turn off weather
- *    <weather type="fog" sector="%s" duration="#" 
+ *    <weather type="fog" sector="%s" duration="#"
  *     fade="#" r="#" g="#" b="#" enable="true|false" />
  *        type = "fog" causes fog
  *        sector = "this" use actor's sector map name
@@ -3785,7 +3781,7 @@ public:
             wtype = 0;
         else
             wtype = -1;
-            
+
         // Check parameters
         switch (wtype)
         {
@@ -3837,7 +3833,7 @@ public:
                 }
                 else break;
             }
-            
+
             default:
             {
                 Error3("Invalid type for ProgressionEvent(%s) WeatherOp: %s\n",
@@ -3884,7 +3880,7 @@ public:
                     return true;
                 }
             }
-            
+
             iSector* sector = target->GetSector();
             if (sector == NULL)
             {
@@ -3909,7 +3905,7 @@ public:
                 return true;
             }
         }
-        
+
         if (wtype)
         {
             if (enable)  // Queue the weather event
@@ -3935,15 +3931,15 @@ public:
     }
 
 protected:
-    psSectorInfo* sectorinfo;   /// Sector to work in
-    bool useCurLoc;             /// Use target or actor's current sector
-    csString type;              /// Type of weather
-    int wtype;                  /// Type of weather code
-    int duration;               /// Duration in seconds
-    int density;                /// Density of fog/precipitation
-    int fade;                   /// Fade in/out time in seconds
-    int r, g, b;                /// Color for fog
-    bool enable;                /// Are we turning on or off?
+    psSectorInfo* sectorinfo;   ///< Sector to work in
+    bool useCurLoc;             ///< Use target or actor's current sector
+    csString type;              ///< Type of weather
+    int wtype;                  ///< Type of weather code
+    int duration;               ///< Duration in seconds
+    int density;                ///< Density of fog/precipitation
+    int fade;                   ///< Fade in/out time in seconds
+    int r, g, b;                ///< Color for fog
+    bool enable;                ///< Are we turning on or off?
 };
 
 /*-------------------------------------------------------------*/
@@ -3954,7 +3950,7 @@ protected:
  *
  * Syntax:
  *    <createpet masterids="#|#,#,#,..." controlled="true|false" />
- *        masterids = "#" specific pet ID 
+ *        masterids = "#" specific pet ID
  *        masterids = "#,#,# ..."  range of pet IDs to pick
  *        controlled = "true|false" not yet implimented
  */
@@ -3997,9 +3993,9 @@ public:
             familiarid = master_ids[ familiarid ];
             break;
         }
-        
+
         gemNPC *Familiar = EntityManager::GetSingleton().CreatePet( actor->GetClient(), familiarid );
-        if ( Familiar == NULL ) 
+        if ( Familiar == NULL )
         {
             Error2("Failed to create pet %d \n",familiarid);
             return false;
@@ -4024,7 +4020,7 @@ public:
         }
 
         controlled = node->GetAttributeValueAsBool("controlled");
-        
+
         return LoadValue(node, script);
     }
 
@@ -4037,7 +4033,7 @@ protected:
     csArray<int> master_ids;
     bool controlled;
     int value;
-    
+
 };
 
 /*-------------------------------------------------------------*/
@@ -4067,23 +4063,23 @@ public:
             return true;
         }
 
-        if ( !actor->GetClientID()) 
+        if ( !actor->GetClientID())
         {
             Error3( "Error: ProgressionEvent(%s) CreateFamiliar needs a valid client for actor '%s'.\n",eventName->GetData(),actor->GetName() );
             return true;
         }
 
         if ( actor->GetCharacterData()->GetFamiliarID() == 0 )
-        {        
+        {
             gemNPC *Familiar = EntityManager::GetSingleton().CreateFamiliar( actor );
-            if ( Familiar == NULL ) 
+            if ( Familiar == NULL )
             {
                 Error2( "Failed to create familiar for %s.\n", actor->GetName() );
                 return false;
             }
 
             return true;
-      
+
         }
         else
         {
@@ -4129,8 +4125,8 @@ public:
     typedef enum { adjust_add, adjust_set } adjust_t;
 
     virtual bool Run(gemActor *actor, gemObject *target, psItem * item, bool inverse)
-	{
-        /// Pointer to the Crystal Space iDocumentSystem. 
+    {
+        /// Pointer to the Crystal Space iDocumentSystem.
         //csRef<iDocumentSystem>  xml = csPtr<iDocumentSystem>(new csTinyDocumentSystem);
 
         if ( !actor )
@@ -4150,7 +4146,7 @@ public:
         psCharacter *chardata = actor->GetCharacterData();
         csString animalAffinity = chardata->GetAnimalAffinity();
 
-        if ( animalAffinity.Length() == 0 ) 
+        if ( animalAffinity.Length() == 0 )
         {
             animalAffinity.Append("");
         }
@@ -4234,9 +4230,9 @@ public:
         switch ( attribute )
         {
             case adjust_set: return adjustValue;
-            case adjust_add: if ( inverse ) return oldValue - adjustValue; else return oldValue + adjustValue; 
+            case adjust_add: if ( inverse ) return oldValue - adjustValue; else return oldValue + adjustValue;
         }
-                        
+
         return 0.0;
     }
 
@@ -4254,7 +4250,7 @@ public:
         name = node->GetAttributeValue("name");
 
         return LoadValue(node, script);
-        
+
         Debug2( LOG_PETS, 0,"AnimalAffinityOp: %s \n", this->ToString().GetData() );
     }
 
@@ -4262,19 +4258,19 @@ public:
     virtual csString ToString()
     {
         psString attrStr, xml;
-                
+
         switch (attribute)
         {
             case adjust_set: attrStr = "set"; break;
             case adjust_add: attrStr = "adjust"; break;
         }
         xml.Format( "<animalaffinity name='%s' attribute='%s' value='%s'/>", name.GetData(), attrStr.GetData(), script_text.GetData() );
-        
+
         return xml;
     }
 
 protected:
-    adjust_t attribute; 
+    adjust_t attribute;
     csString name;
 };
 
@@ -4300,7 +4296,7 @@ public:
         gemActor * tgtAsActor;
         gemItem * tgtAsItem;
         Client * client;
-        
+
         if (!actor)
         {
             Error2( "Error: ProgressionEvent(%s)  ShowDetailsOp needs an actor\n",
@@ -4310,18 +4306,18 @@ public:
 
         if (actor->GetCharacterData() == NULL)
             return true;
-        
+
         client = psserver->GetConnections()->FindPlayer(actor->GetCharacterData()->GetCharacterID());
         if (client == NULL)
             return true;
-        
+
         tgtAsActor = dynamic_cast<gemActor*>(target);
         if (tgtAsActor != NULL)
         {
             psserver->usermanager->SendCharacterDescription(client, tgtAsActor->GetCharacterData(), true, false, "ShowDetailsOp");
             return true;
         }
-        
+
         tgtAsItem = dynamic_cast<gemItem*>(target);
         if (tgtAsItem != NULL)
         {
@@ -4347,7 +4343,7 @@ public:
  * Create move modification for actor.
  *
  * Syntax:
- *    <move type="reset|add|mod|const|push" duration="#" 
+ *    <move type="reset|add|mod|const|push" duration="#"
  *     x="#" y="#" z="#" yrot="#" />
  *        type="reset" resets move modifiers
  *        type="add" add this to movements
@@ -4390,7 +4386,7 @@ public:
         }
 
         duration = node->GetAttributeValueAsInt("duration");
-        
+
         if (typecode == psMoveModMsg::PUSH && duration != 0)
         {
             Error2("Duration cannot be used for type=\"push\" in ProgressionEvent(%s) MovementOp\n", eventName->GetData());
@@ -4442,7 +4438,7 @@ public:
             Error2( "Error: ProgressionEvent(%s) MovementOp needs a client\n",eventName->GetData());
             return true;
         }
-        
+
         // Send modifier to client
         psMoveModMsg msg(client->GetClientNum(), typecode, moveMod, YrotMod);
         msg.SendMessage();
@@ -4458,11 +4454,11 @@ public:
     }
 
 protected:
-    csString type;                   /// Type of modifier
-    psMoveModMsg::ModType typecode;  /// Type code from msg enum
-    int duration;                    /// Duration of effect in seconds
-    csVector3 moveMod;               /// Movement modifier
-    float YrotMod;                   /// Rotation modifier
+    csString type;                   ///< Type of modifier
+    psMoveModMsg::ModType typecode;  ///< Type code from msg enum
+    int duration;                    ///< Duration of effect in seconds
+    csVector3 moveMod;               ///< Movement modifier
+    float YrotMod;                   ///< Rotation modifier
 };
 
 /*-------------------------------------------------------------*/
@@ -4496,7 +4492,7 @@ psScriptGameEvent::~psScriptGameEvent()
         target->GetActorPtr()->UnregisterCallback(dynamic_cast<iDeathCallback *>(this));
 }
 
-/** 
+/**
  * Called when the actor or target object dies.
  */
 void psScriptGameEvent::DeathCallback(iDeathNotificationObject * object)
@@ -4505,11 +4501,11 @@ void psScriptGameEvent::DeathCallback(iDeathNotificationObject * object)
     SetValid(false);
 }
 
-/** 
+/**
  * Called when the target object disconnect. It will than store
  * the progression script in the DB to be executed when character
  * reconnect. There are no way to remove events from the event queue
- * so by setting script to NULL, the event is than marked for 
+ * so by setting script to NULL, the event is than marked for
  * no execution when it is triggered.
  */
 void psScriptGameEvent::DeleteObjectCallback(iDeleteNotificationObject * object)
@@ -4521,7 +4517,7 @@ void psScriptGameEvent::DeleteObjectCallback(iDeleteNotificationObject * object)
 void psScriptGameEvent::Trigger()
 {
     if ( IsValid() )
-    {    
+    {
         if (target.IsValid())
         {
             gemActor* act = (actor.IsValid()) ? dynamic_cast<gemActor*>((gemObject *) actor) : NULL ;
@@ -4543,7 +4539,7 @@ ProgressionManager::ProgressionManager(ClientConnectionSet *ccs)
     clients      = ccs;
 
     psserver->GetEventManager()->Subscribe(this,MSGTYPE_GUISKILL,REQUIRE_READY_CLIENT);
-    
+
     psserver->GetEventManager()->Subscribe(this,MSGTYPE_DEATH_EVENT,NO_VALIDATION);
     psserver->GetEventManager()->Subscribe(this,MSGTYPE_ZPOINT_EVENT,NO_VALIDATION);
 }
@@ -4553,10 +4549,10 @@ ProgressionManager::~ProgressionManager()
 {
     psserver->GetEventManager()->Unsubscribe(this,MSGTYPE_GUISKILL);
     psserver->GetEventManager()->Unsubscribe(this,MSGTYPE_DEATH_EVENT);
-    psserver->GetEventManager()->Unsubscribe(this,MSGTYPE_ZPOINT_EVENT);    
-    
+    psserver->GetEventManager()->Unsubscribe(this,MSGTYPE_ZPOINT_EVENT);
+
     csHash<ProgressionEvent *, const char *>::GlobalIterator it(events.GetIterator());
-    
+
     while ( it.HasNext () )
         delete it.Next();
 }
@@ -4599,7 +4595,7 @@ bool ProgressionManager::Initialize()
             const char* error = doc->Parse( result_events[x]["event_script"] );
             if ( error )
             {
-                Error2("Could not parse the event named %s. Reason: ", ev->name.GetData() );               
+                Error2("Could not parse the event named %s. Reason: ", ev->name.GetData() );
                 Error3("%s\n%s",error,result_events[x]["event_script"]);
                 delete ev;
                 return false;
@@ -4608,13 +4604,13 @@ bool ProgressionManager::Initialize()
             {
                 events.Put(ev->name, ev);
             }
-            else 
+            else
             {
                 Error2("Couldn't load script %s\n",ev->name.GetData());
                 delete ev;
                 return false;
             }
-        }    
+        }
     }
 
     Result result_affinitycategories(db->Select("SELECT * from char_create_affinity"));
@@ -4622,9 +4618,9 @@ bool ProgressionManager::Initialize()
     if ( result_affinitycategories.IsValid() )
     {
         for ( unsigned int x = 0; x < result_affinitycategories.Count(); x++ )
-        {   
-            affinitycategories.Put( csString( result_affinitycategories[(unsigned long)x]["category"]).Downcase() , csString( result_affinitycategories[(unsigned long)x]["attribute"]).Downcase() );            
-        }    
+        {
+            affinitycategories.Put( csString( result_affinitycategories[(unsigned long)x]["category"]).Downcase() , csString( result_affinitycategories[(unsigned long)x]["attribute"]).Downcase() );
+        }
     }
 
     return true;
@@ -4650,11 +4646,11 @@ void ProgressionManager::HandleMessage(MsgEntry *me,Client *client)
             HandleDeathEvent(me);
             break;
         }
-        
+
         case MSGTYPE_ZPOINT_EVENT:
         {
             psZPointsGainedEvent evt(me);
-            
+
             Client* client = clients->Find( evt.actor->GetClientID() );
 
             if (!client)
@@ -4667,15 +4663,15 @@ void ProgressionManager::HandleMessage(MsgEntry *me,Client *client)
             string.Format("You've gained some practice points in %s.", evt.skillName.GetData() );
             if ( evt.rankUp )
             {
-                string.Append(" You've also ranked up!");                    
+                string.Append(" You've also ranked up!");
             }
-            psserver->SendSystemInfo(evt.actor->GetClientID(), string);            
+            psserver->SendSystemInfo(evt.actor->GetClientID(), string);
 
             SendSkillList( client, false );
-            
+
             break;
         }
-        
+
     }
 }
 
@@ -4688,7 +4684,7 @@ void ProgressionManager::HandleDeathEvent(MsgEntry *me)
     if (evt.deadActor->GetClientID()==0 && !evt.deadActor->GetCharacterData()->IsPet())
     {
         csString progEvent = FindEvent( "kill" )->ToString(true);
-        
+
         // Convert the exp to a char
         csString buffer;
         buffer.Format("%lu",(unsigned long) evt.deadActor->GetCharacterData()->GetKillExperience());
@@ -4719,7 +4715,7 @@ void ProgressionManager::HandleSkill(Client * client, psGUISkillMessage& msg)
             csRef<iDocumentSystem> xml = csPtr<iDocumentSystem>(new csTinyDocumentSystem);
 
             CS_ASSERT( xml );
-            
+
             csRef<iDocument> invList  = xml->CreateDocument();
 
             const char* error = invList->Parse( msg.commandData);
@@ -4741,7 +4737,7 @@ void ProgressionManager::HandleSkill(Client * client, psGUISkillMessage& msg)
                 Error1("No <S> tag");
                 return;
             }
-            
+
             csString skillName = topNode->GetAttributeValue("NAME");
 
             psSkillInfo * info = CacheManager::GetSingleton().GetSkillByName(skillName);
@@ -4791,7 +4787,7 @@ void ProgressionManager::HandleSkill(Client * client, psGUISkillMessage& msg)
                             PSSKILL_NONE,
                             -1,
                             false);
-            
+
             if (newmsg.valid)
                 SendMessage(newmsg.msg);
             else
@@ -4806,7 +4802,7 @@ void ProgressionManager::HandleSkill(Client * client, psGUISkillMessage& msg)
             csRef<iDocumentSystem> xml = csPtr<iDocumentSystem>(new csTinyDocumentSystem);
 
             CS_ASSERT( xml );
-            
+
             csRef<iDocument> invList  = xml->CreateDocument();
 
             const char* error = invList->Parse( msg.commandData);
@@ -4828,13 +4824,13 @@ void ProgressionManager::HandleSkill(Client * client, psGUISkillMessage& msg)
                 Error1("No <B> tag");
                 return;
             }
-            
+
             csString skillName = topNode->GetAttributeValue("NAME");
             uint skillAmount = topNode->GetAttributeValueAsInt("AMOUNT");
-            
+
             psSkillInfo * info = CacheManager::GetSingleton().GetSkillByName(skillName);
             Debug2(LOG_SKILLXP, client->GetClientNum(),"    Looking for: %s\n", (const char*)skillName);
-            
+
             if (!info)
             {
                 Error2("No skill with name %s found!",skillName.GetData());
@@ -4850,7 +4846,7 @@ void ProgressionManager::HandleSkill(Client * client, psGUISkillMessage& msg)
                                          "Can't buy skills when not training!");
                 return;
             }
-            
+
             gemActor* actorTrainer = character->GetTrainer()->GetActor();
             if ( actorTrainer )
             {
@@ -4858,7 +4854,7 @@ void ProgressionManager::HandleSkill(Client * client, psGUISkillMessage& msg)
                 {
                     psserver->SendSystemInfo(client->GetClientNum(),
                                              "Need to get a bit closer to understand the training.");
-                    return;                    
+                    return;
                 }
             }
 
@@ -4869,9 +4865,9 @@ void ProgressionManager::HandleSkill(Client * client, psGUISkillMessage& msg)
                 psserver->SendSystemError(client->GetClientNum(), err);
                 return;
             }
-            
-            Debug2(LOG_SKILLXP, client->GetClientNum(),"    PP available: %d\n", character->GetProgressionPoints() );
-            
+
+            Debug2(LOG_SKILLXP, client->GetClientNum(),"    PP available: %u\n", character->GetProgressionPoints() );
+
             // Test for progression points
             if (character->GetProgressionPoints() < skillAmount)
             {
@@ -4881,7 +4877,7 @@ void ProgressionManager::HandleSkill(Client * client, psGUISkillMessage& msg)
             }
 
             // Test for money
-            
+
             if ((info->price * skillAmount) > character->Money())
             {
                 psserver->SendSystemInfo(client->GetClientNum(),
@@ -4892,25 +4888,25 @@ void ProgressionManager::HandleSkill(Client * client, psGUISkillMessage& msg)
             {
                 psserver->SendSystemInfo(client->GetClientNum(),
                                          "You cannot train this skill any higher yet!");
-                return;            
+                return;
             }
-            
+
             unsigned int current = character->GetSkills()->GetSkillRank((PSSKILL)info->id, false);
             float faction = actorTrainer->GetRelativeFaction(character->GetActor());
             if ( !character->GetTrainer()->GetTrainerInfo()->TrainingInSkill((PSSKILL)info->id, current, faction))
             {
                 psserver->SendSystemInfo(client->GetClientNum(),
                                          "You cannot train this skill currently.");
-                return;            
+                return;
             }
 
             character->UseProgressionPoints(skillAmount);
-            character->SetMoney(character->Money()-(info->price * skillAmount));            
+            character->SetMoney(character->Money()-(info->price * skillAmount));
             character->Train(info->id,skillAmount);
             SendSkillList(client,true,info->id);
             psserver->GetCharManager()->UpdateItemViews(client->GetClientNum());
             psserver->SendSystemInfo(client->GetClientNum(), "You've received some %s training", skillName.GetData());
-            
+
             break;
         }
         case psGUISkillMessage::QUIT:
@@ -4998,7 +4994,7 @@ void ProgressionManager::SendSkillList(Client * client, bool forceOpen, PSSKILL 
             if (info->category != 0)
                 actualStat = character->GetSkills()->GetSkillRank((PSSKILL)skillID);
             else
-            { 
+            {
                 if(info->name=="Strength")
                 {
                     actualStat=character->GetAttributes()->GetStat(PSITEMSTATS_STAT_STRENGTH);
@@ -5006,7 +5002,7 @@ void ProgressionManager::SendSkillList(Client * client, bool forceOpen, PSSKILL 
                 else if(info->name== "Endurance")
                 {
                     actualStat=character->GetAttributes()->GetStat(PSITEMSTATS_STAT_ENDURANCE);
-                } 
+                }
                 else if(info->name== "Agility")
                 {
                     actualStat=character->GetAttributes()->GetStat(PSITEMSTATS_STAT_AGILITY);
@@ -5020,7 +5016,7 @@ void ProgressionManager::SendSkillList(Client * client, bool forceOpen, PSSKILL 
                     actualStat=character->GetAttributes()->GetStat(PSITEMSTATS_STAT_WILL);
                 }
                 else
-                {   
+                {
                     actualStat=character->GetAttributes()->GetStat(PSITEMSTATS_STAT_CHARISMA);
                 }
 
@@ -5108,12 +5104,12 @@ float ProgressionManager::ProcessEvent(const char *event, gemActor * actor, gemO
 
     csString actorName = "N/A";
     csString targetName = "N/A";
-    
+
     if ( actor )
         actorName = actor->GetName();
     if ( target )
         targetName = target->GetName();
-    
+
     Error4( "Error: Can't find progression event: %s from actor [%s] on target [%s]\n", event, actorName.GetData(), targetName.GetData());
 
     return 0.0;
@@ -5124,7 +5120,7 @@ float ProgressionManager::ProcessEvent(ProgressionEvent * ev, gemActor * actor, 
     Debug5(LOG_SPELLS, actor?actor->GetClientID():0,"Process %s event %s on %s with target %s.\n",
       inverse ? "inverse" : "", ev->name.GetData(),(actor?actor->GetName():"(null)"),
             (target?target->GetName():"(null)"));
-            
+
     if(inverse)
         return ev->RunInverse(actor, target, item);
     else
@@ -5168,9 +5164,9 @@ ProgressionEvent * ProgressionManager::CreateEvent(const char *name, const char 
 
 
 float ProgressionManager::ProcessScript(const char *script, gemActor * actor, gemObject *target, psItem *item)
-{    
+{
     ProgressionEvent * ev = CreateEvent((actor?actor->GetName():"Unknown"),script);
-    
+
     if (ev)
     {
         return ProcessEvent(ev->name,actor,target,item);
@@ -5202,7 +5198,7 @@ bool ProgressionManager::AddScript(const char *name, const char *script)
         delete ev;
         return false;
     }
-    
+
     csString escText;
     db->Escape( escText, script );
     unsigned long res = db->Command("INSERT INTO progression_events "
@@ -5252,7 +5248,7 @@ void ProgressionManager::ChangeScript( csString& script, int param, const char* 
     psString scriptString( script );
     csString buff;
     buff.Format("$%d", param );
-     
+
     scriptString.ReplaceAllSubString( buff, text );
     script.Replace( scriptString.GetData() );
 }
@@ -5278,9 +5274,9 @@ bool ProgressionDelay::CheckTrigger()
         if (clt)
         {
             clt->GetCharacterData()->UnregisterDurationEvent(this);
-        }        
+        }
     }
-    
+
     return valid;
 }
 
@@ -5292,8 +5288,8 @@ void ProgressionDelay::Trigger()
     {
         progEvent->ForceRun();
         clt->GetCharacterData()->UnregisterDurationEvent(this);
-    }        
-    
+    }
+
     valid = false;
 }
 
@@ -5301,8 +5297,8 @@ ProgressionEvent::ProgressionEvent()
                 : triggerDelay(0), progDelay(0)
 {
     durationScript = NULL;
-    durationVar = NULL;       
-}                            
+    durationVar = NULL;
+}
 
 ProgressionEvent::~ProgressionEvent()
 {
@@ -5327,7 +5323,7 @@ ProgressionEvent::~ProgressionEvent()
 
 bool ProgressionEvent::LoadScript(const char* data)
 {
-   csRef<iDocument> xmlDoc = ParseString(data); 
+   csRef<iDocument> xmlDoc = ParseString(data);
    return LoadScript(xmlDoc);
 }
 
@@ -5360,19 +5356,19 @@ bool ProgressionEvent::LoadScript(iDocumentNode *topNode)
     {
         savedName = topNode->GetAttributeValue("name");
     }
-        
+
     // Check to see if there is a duration script to load.
     if ( topNode->GetAttribute("duration") )
     {
         csString durationString = "Duration = ";
         durationString += topNode->GetAttributeValue("duration");
-                
+
         csString scriptName = name;
         scriptName += "_duration";
         durationScript = new MathScript(scriptName, durationString);
         durationVar = durationScript->GetVar("Duration");
     }
-    
+
     // get the delay between the call to Run() and actually executing the script
     csString delayText = topNode->GetAttributeValue("delay");
     if (!delayText.IsEmpty())
@@ -5388,7 +5384,7 @@ bool ProgressionEvent::LoadScript(iDocumentNode *topNode)
     else
     {
         triggerDelay = 0;
-    }        
+    }
 
     csRef<iDocumentNodeIterator> iter = topNode->GetNodes();
 
@@ -5405,7 +5401,7 @@ bool ProgressionEvent::LoadScript(iDocumentNode *topNode)
         if ( strcmp( node->GetValue(), "agi" ) == 0 )
         {
             op = new StatsOp(StatsOp::AGI);
-        } 
+        }
         else if ( strcmp( node->GetValue(), "area" ) == 0 )
         {
             op = new AreaOp();
@@ -5413,83 +5409,83 @@ bool ProgressionEvent::LoadScript(iDocumentNode *topNode)
         else if ( strcmp( node->GetValue(), "cha" ) == 0 )
         {
             op = new StatsOp(StatsOp::CHA);
-        } 
+        }
         else if ( strcmp( node->GetValue(), "con" ) == 0 )
         {
             op = new StatsOp(StatsOp::CON);
-        } 
+        }
         else if ( strcmp( node->GetValue(), "charge" ) == 0 )
         {
             op = new ChargeOp();
-        } 
+        }
         else if ( strcmp( node->GetValue(), "recharge" ) == 0 )
         {
             op = new RechargeOp();
-        } 
+        }
         else if ( strcmp( node->GetValue(), "end" ) == 0 )
         {
             op = new StatsOp(StatsOp::END);
-        } 
+        }
         else if ( strcmp( node->GetValue(), "exp" ) == 0 )
         {
             op = new ExperienceOp;
-        } 
+        }
         else if ( strcmp( node->GetValue(), "faction" ) == 0 )
         {
             op = new FactionOp;
-        } 
+        }
         else if ( strcmp( node->GetValue(), "pstamina" ) == 0 )
         {
             op = new StatsOp(StatsOp::PSTAMINA);
-        } 
+        }
         else if ( strcmp( node->GetValue(), "mstamina" ) == 0 )
         {
             op = new StatsOp(StatsOp::MSTAMINA);
-        } 
+        }
         else if ( strcmp( node->GetValue(), "hp" ) == 0 )
         {
             op = new StatsOp(StatsOp::HP);
-        } 
+        }
         else if ( strcmp( node->GetValue(), "int" ) == 0 )
         {
             op = new StatsOp(StatsOp::INT);
-        } 
+        }
         else if ( strcmp( node->GetValue(), "item" ) == 0 )
         {
             op = new ItemOp();
-        } 
+        }
         else if ( strcmp( node->GetValue(), "mana" ) == 0 )
         {
             op = new StatsOp(StatsOp::MANA);
-        } 
+        }
         else if ( strcmp( node->GetValue(), "msg" ) == 0 )
         {
              op = new MsgOp();
-        } 
+        }
         else if ( strcmp( node->GetValue(), "block" ) == 0 )
         {
              op = new BlockOp();
-        } 
+        }
         else if ( strcmp( node->GetValue(), "purify" ) == 0 )
         {
             op = new PurifyOp();
-        } 
+        }
         else if ( strcmp( node->GetValue(), "script" ) == 0 )
         {
             op = new ScriptOp();
-        } 
+        }
         else if ( strcmp( node->GetValue(), "str" ) == 0 )
         {
             op = new StatsOp(StatsOp::STR);
-        } 
+        }
         else if ( strcmp( node->GetValue(), "wil" ) == 0 )
         {
             op = new StatsOp(StatsOp::WIL);
-        } 
+        }
         else if ( strcmp( node->GetValue(), "sta" ) == 0 )
         {
             op = new StatsOp(StatsOp::STA);
-        } 
+        }
         else if ( strcmp( node->GetValue(), "attack" ) == 0 )
         {
             op = new StatsOp(StatsOp::ATTACK);
@@ -5525,15 +5521,15 @@ bool ProgressionEvent::LoadScript(iDocumentNode *topNode)
         else if ( strcmp( node->GetValue(), "attachscript" ) == 0 )
         {
             op = new AttachScriptOp();
-        } 
+        }
         else if ( strcmp( node->GetValue(), "detachscript" ) == 0 )
         {
             op = new DetachScriptOp();
-        } 
+        }
         else if ( strcmp( node->GetValue(), "identifymagic" ) == 0 )
         {
             op = new IdentifyMagicOp();
-        } 
+        }
         else if ( strcmp( node->GetValue(), "createnpc" ) == 0 )
         {
             op = new CreatePetOp();
@@ -5553,7 +5549,7 @@ bool ProgressionEvent::LoadScript(iDocumentNode *topNode)
         else if ( strcmp( node->GetValue(), "trait" ) == 0 )
         {
             op = new TraitChangeOp();
-        }         
+        }
         else if ( strcmp( node->GetValue(), "animalaffinity" ) == 0 )
         {
             op = new AnimalAffinityOp();
@@ -5609,7 +5605,7 @@ bool ProgressionEvent::LoadScript(iDocumentNode *topNode)
         }
 
         op->eventName = &name;
-        
+
         op->SetTicksElapsed(ticksElapsed);
         if (op->Load(node, this))
             sequence.Push(op);
@@ -5655,7 +5651,7 @@ void ProgressionEvent::CopyVariables(MathScript *from)
 void ProgressionEvent::LoadVariables(MathScript *script)
 {
     if (!script)
-        return; 
+        return;
 
     size_t i;
     for (i=0; i<variables.GetSize(); i++)
@@ -5700,15 +5696,15 @@ void ProgressionEvent::SetValue( const char* name, double val )
             if ( var )
             {
                 var->SetValue( val );
-            }                
+            }
         }
-    }    
+    }
 }
 
 MathScriptVar *ProgressionEvent::FindVariable(const char *name)
 {
     size_t i;
-    
+
     for (i=0; i<variables.GetSize(); i++)
     {
         if (variables[i]->name == name)
@@ -5724,7 +5720,7 @@ float ProgressionEvent::ForceRun(csTicks duration)
     csString dump_str = Dump();
     Notify5(LOG_SCRIPT,"%s is running this script %s on %s:\n%s",
             (runParamActor ? runParamActor->GetName() : ""),
-            (runParamInverse ? "inversed":""), 
+            (runParamInverse ? "inversed":""),
             (runParamTarget ? runParamTarget->GetName() : "nobody"),
             dump_str.GetData());
 
@@ -5733,24 +5729,24 @@ float ProgressionEvent::ForceRun(csTicks duration)
     while (seq.HasNext())
     {
         ProgressionOperation * po = seq.Next();
-        po->LoadVariables(variables);       
-        
+        po->LoadVariables(variables);
+
         if (!po->Run(runParamActor, runParamTarget, runParamItem, runParamInverse))
         {
             break;
         }
-        // If the op already queued 
+        // If the op already queued
         finalScript.Append(po->Absolute());
-                                            
+
         result += po->GetResult();
         Notify3(LOG_SCRIPT,"Event: %s with result %f\n", po->ToString().GetData(), po->GetResult());
     }
-    
-    
-    // If this script is set to run for a particular length of time. Then insert a new 
-    // event that is the inverse to run.    
+
+
+    // If this script is set to run for a particular length of time. Then insert a new
+    // event that is the inverse to run.
     if (duration == 0 && durationScript != NULL )
-    {   
+    {
         size_t a;
         size_t len = variables.GetSize();
         for (a=0; a<len; ++a)
@@ -5759,24 +5755,24 @@ float ProgressionEvent::ForceRun(csTicks duration)
             var->SetValue(variables[a]->GetValue());
         }
         durationScript->Execute();
-        duration  = (csTicks)durationVar->GetValue();      
+        duration  = (csTicks)durationVar->GetValue();
     }
     if(finalScript.Length() > 0 && duration > 0)
     {
-        
+
         csString scriptStr;
         scriptStr.Format("<evt>%s</evt>", finalScript.GetData());
-        
+
         csRef<ProgressionEvent> script =  csPtr<ProgressionEvent> (new ProgressionEvent());
         script->LoadScript(scriptStr.GetData());
         script->name = name;
         script->runParamInverse = true;
         script->runParamActor = runParamActor;
-        script->runParamTarget = runParamTarget;        
-        
-        // Memory Leak?        
+        script->runParamTarget = runParamTarget;
+
+        // Memory Leak?
         progDelay = new ProgressionDelay(script, duration, runParamActor->GetClientID());
-        
+
         if ( savedName.Length() > 0 )
         {
             runParamActor->GetCharacterData()->RegisterDurationEvent(progDelay, savedName, duration);
@@ -5784,12 +5780,12 @@ float ProgressionEvent::ForceRun(csTicks duration)
         else
         {
             runParamActor->GetCharacterData()->RegisterDurationEvent(progDelay, name, duration);
-        }            
-        
-        progDelay->QueueEvent();    
+        }
+
+        progDelay->QueueEvent();
     }
-    
-             
+
+
         /*
         // Memory Leak?
         ProgressionEvent * script =  new ProgressionEvent();
@@ -5798,14 +5794,14 @@ float ProgressionEvent::ForceRun(csTicks duration)
         script->runParamInverse = false;
         script->runParamActor = runParamActor;
         script->runParamTarget = runParamTarget;
-        
+
         // Memory Leak?
         progDelay = new ProgressionDelay(script, duration, runParamActor->GetClientID());
-        progDelay->QueueEvent();    
+        progDelay->QueueEvent();
         */
-           
-        
-    
+
+
+
     return result;
 }
 

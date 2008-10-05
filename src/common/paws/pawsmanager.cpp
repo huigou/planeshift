@@ -91,7 +91,7 @@
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
-PawsManager::PawsManager(iObjectRegistry* object, const char* skin, const char* skinBase, 
+PawsManager::PawsManager(iObjectRegistry* object, const char* skin, const char* skinBase,
                          const char* pawsConfigFile, uint _gfxFeatures)
 {
     objectReg = object;
@@ -159,8 +159,8 @@ PawsManager::PawsManager(iObjectRegistry* object, const char* skin, const char* 
 
 
     mouse = new pawsMouse();
-    mouse->ChangeImage("Standard Mouse Pointer"); 
-    
+    mouse->ChangeImage("Standard Mouse Pointer");
+
     resizeImg = textureManager->GetDrawable("ResizeBox");
 
     graphics2D->SetMouseCursor( csmcNone );
@@ -171,7 +171,7 @@ PawsManager::PawsManager(iObjectRegistry* object, const char* skin, const char* 
 
     resizingWidget       = 0;
     resizingFlags        = 0;
-    
+
     modalWidget = 0;
     mouseoverWidget = 0;
     lastfadeWidget = 0;
@@ -183,7 +183,7 @@ PawsManager::PawsManager(iObjectRegistry* object, const char* skin, const char* 
     localization->SetLanguage(lang);
 
     tipDelay = cfg->GetInt("PlaneShift.GUI.ToolTipDelay", 250);
-    
+
     hadKeyDown = false;
     dragDropWidget = NULL;
     useSounds = true;
@@ -206,7 +206,7 @@ PawsManager::~PawsManager()
     delete localization;
     delete mouse;
     delete styles;
-    
+
     if (dragDropWidget != NULL)
         delete dragDropWidget;
 
@@ -263,7 +263,7 @@ bool PawsManager::HandleEvent( iEvent &event )
     if (event.Name == MouseUp)
       return HandleMouseUp (event);
     if (event.Name == KeyboardDown ||
-	event.Name == KeyboardUp)
+    event.Name == KeyboardUp)
       return HandleKeyDown( event );
 
     return false;
@@ -278,13 +278,13 @@ bool PawsManager::HandleDoubleClick( iEvent& ev )
     uint32 modifiers = csMouseEventHelper::GetModifiers(&ev);
 
     widget = mainWidget->WidgetAt( event.x, event.y );
-    
+
     if ( widget != NULL )
     {
         if ( modalWidget != NULL )
         {
             // Check to see if the widget is a child of the modal widget.
-            // These are the only components allowed access durning modal 
+            // These are the only components allowed access durning modal
             // mode
             pawsWidget* check = modalWidget->FindWidget( widget->GetName(), false );
             if ( check != widget )
@@ -341,7 +341,7 @@ bool PawsManager::LoadAdditionalSkin(const char* zip)
     // Get the mount path
     csRef<iDocumentNode> root = xml->GetRoot();
     if (!root)
-    { 
+    {
          Error2( "Could not read skin info on %s!",zip);
          return false;
     }
@@ -356,7 +356,7 @@ bool PawsManager::LoadAdditionalSkin(const char* zip)
     if ( !mount )
     {
         Error1("There was no mount_path found in the skin.xml file.  Please check the <xml> node to make sure mount_path is defined");
-        return false;               
+        return false;
     }
     csString mountPlace = mount->GetContentsValue();
     mountPlace.ReplaceAll("\\","/");
@@ -379,13 +379,13 @@ bool PawsManager::LoadAdditionalSkin(const char* zip)
     // mount
     vfs->Mount(mountPlace,realPath->GetData());
 
-	// Load additional styles
-	csString stylesFile = mountPlace + "/styles.xml";
-	if (vfs->Exists(stylesFile) && !styles->LoadStyles(stylesFile))
-	{
-		Error2("Couldn't load styles file: %s", stylesFile.GetData());
-		return false;
-	}
+    // Load additional styles
+    csString stylesFile = mountPlace + "/styles.xml";
+    if (vfs->Exists(stylesFile) && !styles->LoadStyles(stylesFile))
+    {
+        Error2("Couldn't load styles file: %s", stylesFile.GetData());
+        return false;
+    }
 
     // Load additional resources
     csString imageFile = mountPlace + "/imagelist.xml";
@@ -395,28 +395,28 @@ bool PawsManager::LoadAdditionalSkin(const char* zip)
 }
 
 bool PawsManager::HandleKeyDown( iEvent& event )
-{   
+{
     if ( currentFocusedWidget )
-    {    
-        if ( (csKeyEventHelper::GetEventType (&event) == csKeyEventTypeUp) )      
+    {
+        if ( (csKeyEventHelper::GetEventType (&event) == csKeyEventTypeUp) )
         {
             if ( hadKeyDown )
                 return true;
         }
-         
-           
+
+
         int raw = csKeyEventHelper::GetRawCode(&event);
         int cooked = csKeyEventHelper::GetCookedCode(&event);
         uint32 modifiers = csKeyEventHelper::GetModifiersBits(&event);
-                        
-        bool result = currentFocusedWidget->OnKeyDown( raw,        
-                                                       cooked, 
-                                                       modifiers );                                                       
-        hadKeyDown = result;                                                       
-        return result;                                                       
+
+        bool result = currentFocusedWidget->OnKeyDown( raw,
+                                                       cooked,
+                                                       modifiers );
+        hadKeyDown = result;
+        return result;
     }
 
-    return false;                          
+    return false;
 }
 
 
@@ -429,13 +429,13 @@ bool PawsManager::HandleMouseDown( iEvent &ev )
     uint32 modifiers = csMouseEventHelper::GetModifiers(&ev);
 
     widget = mainWidget->WidgetAt(event.x, event.y);
-   
-    if ( widget != NULL ) 
-    {        
+
+    if ( widget != NULL )
+    {
         if ( modalWidget != NULL )
         {
             // Check to see if the widget is a child of the modal widget.
-            // These are the only components allowed access durning modal 
+            // These are the only components allowed access durning modal
             // mode
             pawsWidget* check = modalWidget->FindWidget( widget->GetName(), false );
             if ( check != widget )
@@ -443,7 +443,7 @@ bool PawsManager::HandleMouseDown( iEvent &ev )
                 widget = modalWidget->WidgetAt(event.x, event.y);
             }
         }
-        
+
         if ( widget != NULL )
         {
             SetCurrentFocusedWidget( widget );
@@ -451,7 +451,7 @@ bool PawsManager::HandleMouseDown( iEvent &ev )
             if ( widget != mainWidget )
                 widget->GetParent()->BringToTop(widget);
             widget->RunScriptEvent(PW_SCRIPT_EVENT_MOUSEDOWN);
-            bool returnResult = widget->OnMouseDown( button, 
+            bool returnResult = widget->OnMouseDown( button,
                                                      modifiers,
                                                      event.x,
                                                      event.y );
@@ -460,7 +460,7 @@ bool PawsManager::HandleMouseDown( iEvent &ev )
 
         return false;
     }
-        
+
     return false;
 }
 
@@ -486,14 +486,14 @@ bool PawsManager::HandleMouseUp( iEvent &ev )
     }
 
     if ( currentFocusedWidget )
-        return currentFocusedWidget->OnMouseUp( button, 
+        return currentFocusedWidget->OnMouseUp( button,
                                                 modifiers,
-                                                event.x, 
+                                                event.x,
                                                 event.y );
 
-    
+
     pawsWidget* widget = mainWidget->WidgetAt(event.x, event.y );
-    
+
     SetCurrentFocusedWidget ( widget );
 
     if ( widget )
@@ -501,9 +501,9 @@ bool PawsManager::HandleMouseUp( iEvent &ev )
         if ( widget != mainWidget )
             widget->GetParent()->BringToTop( widget );
 
-        return widget->OnMouseUp( button, 
+        return widget->OnMouseUp( button,
                                   modifiers,
-                                  event.x, 
+                                  event.x,
                                   event.y );
     }
 
@@ -514,20 +514,20 @@ psPoint PawsManager::MouseLocation( iEvent &ev )
 {
     csMouseEventData event;
 
-    const void *_ax = 0; size_t _ax_sz = 0; 
-    csEventError ok = csEventErrNone;           
-    ok = ev.Retrieve("mAxes", _ax, _ax_sz);  
-    CS_ASSERT(ok == csEventErrNone); 
-    ok = ev.Retrieve("mNumAxes", event.numAxes);  
-    CS_ASSERT(ok == csEventErrNone); 
-    for (int iter=0 ; iter<CS_MAX_MOUSE_AXES ; iter++) 
-    { 
-        if (iter<(int)event.numAxes) 
-            event.axes[iter] = ((int *)_ax)[iter];    
-        else   
-            event.axes[iter] = 0; 
+    const void *_ax = 0; size_t _ax_sz = 0;
+    csEventError ok = csEventErrNone;
+    ok = ev.Retrieve("mAxes", _ax, _ax_sz);
+    CS_ASSERT(ok == csEventErrNone);
+    ok = ev.Retrieve("mNumAxes", event.numAxes);
+    CS_ASSERT(ok == csEventErrNone);
+    for (int iter=0 ; iter<CS_MAX_MOUSE_AXES ; iter++)
+    {
+        if (iter<(int)event.numAxes)
+            event.axes[iter] = ((int *)_ax)[iter];
+        else
+            event.axes[iter] = 0;
     }
-   
+
     psPoint point;
     point.x = event.axes[0];
     point.y = event.axes[1];
@@ -537,7 +537,7 @@ psPoint PawsManager::MouseLocation( iEvent &ev )
 
 
 bool PawsManager::HandleMouseMove( iEvent &ev )
-{  
+{
     psPoint event = MouseLocation(ev);
 
     mouse->SetPosition( event.x, event.y );
@@ -550,7 +550,7 @@ bool PawsManager::HandleMouseMove( iEvent &ev )
         movingWidget->MoveDelta( mouse->GetDeltas().x, mouse->GetDeltas().y);
         return true;
     }
-    
+
     if ( resizingWidget )
     {
         resizingWidget->Resize( resizingFlags );
@@ -568,10 +568,10 @@ bool PawsManager::HandleMouseMove( iEvent &ev )
                 widget->OnMouseEnter();
                 if ( mouseoverWidget ) mouseoverWidget->OnMouseExit();
             }
-            
+
             mouseoverWidget = widget;
             pawsWidget* widgetFade = widget;
-            
+
             // Only fade in/out topmost parent
             if (widgetFade != mainWidget)
             {
@@ -579,30 +579,30 @@ bool PawsManager::HandleMouseMove( iEvent &ev )
                 {
                     widgetFade = mainParent;
                 }
-            }                    
-            
-            
+            }
+
+
             if (lastfadeWidget != widgetFade && widgetFade && widgetFade->IsVisible())
-            {               
+            {
                 if (lastfadeWidget && lastfadeWidget != mainWidget)
                 {
-                    lastfadeWidget->MouseOver(false);                                                    
+                    lastfadeWidget->MouseOver(false);
                 }
                 lastfadeWidget = widgetFade;
-                
+
                 if (widgetFade != mainWidget)
                     widgetFade->MouseOver(true);                // Fade in
-            }            
+            }
         }
     }
-    
+
     return false;
 }
 
 
 
 void PawsManager::Draw()
-{       
+{
     mainWidget->DrawChildren();
     if ( modalWidget != NULL ) modalWidget->Draw();
 
@@ -629,7 +629,7 @@ csRef<iDocumentNode> PawsManager::ParseWidgetFile( const char* widgetFile )
 {
     csRef<iDocument> doc;
     const char* error;
-    
+
     csRef<iDataBuffer> buff = vfs->ReadFile(widgetFile);
     if (buff == NULL)
     {
@@ -657,7 +657,7 @@ csRef<iDocumentNode> PawsManager::ParseWidgetFile( const char* widgetFile )
            Error2("Bad XML document in %s", widgetFile);
         return NULL;
     }
-    
+
 }
 
 bool PawsManager::LoadWidget( const char* widgetFile )
@@ -708,7 +708,7 @@ bool PawsManager::LoadChildWidgets( const char* widgetFile, csArray<pawsWidget *
     csRef<iDocumentNode> topNode = ParseWidgetFile( fullPath );
     if (!topNode) return false;
     csRef<iDocumentNodeIterator> iter = topNode->GetNodes();
-    
+
     while ( iter->HasNext() )
     {
         csRef<iDocumentNode> node = iter->Next();
@@ -739,7 +739,7 @@ pawsWidget * PawsManager::LoadWidget( csRef<iDocumentNode> widgetNode )
         Error1("Could not read factory from XML file. Error in XML");
         return NULL;
     }
-         
+
     widget = CreateWidget( factory );
     if ( !widget )
     {
@@ -762,9 +762,10 @@ pawsWidget * PawsManager::LoadWidget( csRef<iDocumentNode> widgetNode )
 
 pawsWidget* PawsManager::CreateWidget( const char* factoryName )
 {
-    csString factory( factoryName );    
+
+    csString factory( factoryName );
     for ( size_t x = 0; x < factories.GetSize(); x++ )
-    {                
+    {
         if ( factory == factories[x]->GetName() )
         {
             pawsWidget * newWidget = factories[x]->Create();
@@ -788,7 +789,7 @@ void PawsManager::SetModalWidget( pawsWidget* widget )
 
 
 void PawsManager::SetCurrentFocusedWidget ( pawsWidget* widget )
-{    
+{
     if ( widget == NULL )
     {
         SetCurrentFocusedWidget( mainWidget );
@@ -841,9 +842,9 @@ void PawsManager::OnWidgetHidden(pawsWidget * widget)
     // if the focused widget will be hidden, removed focus from it
     if (widget->Includes(currentFocusedWidget))
         currentFocusedWidget = NULL;
-            
+
     if (widget->Includes(mouseoverWidget))
-        mouseoverWidget = NULL;  
+        mouseoverWidget = NULL;
 }
 
 csString PawsManager::Translate(const csString & orig)
@@ -868,7 +869,7 @@ void PawsManager::CreateWarningBox( const char* message, pawsWidget* notify, boo
     ok->SetText( message );
     ok->MoveTo( (graphics2D->GetWidth() - ok->GetActualWidth(512) ) / 2,
                 (graphics2D->GetHeight() - ok->GetActualHeight(256))/2 );
-    
+
     if ( notify )
         ok->SetNotify( notify );
 
@@ -896,7 +897,7 @@ void PawsManager::CreateYesNoBox( const char* message, pawsWidget* notify, bool 
                        (graphics2D->GetHeight() - yesNoBox->GetActualHeight(256))/2 );
     yesNoBox->SetText( Translate(message) );
     yesNoBox->Show();
-   
+
     if ( modal )
         SetModalWidget(yesNoBox);
 
@@ -928,7 +929,7 @@ void PawsManager::PositionDragDropWidget()
     }
 }
 
-                
+
 #define RegisterFactory(factoryclass)   \
     factory = new factoryclass();
 
@@ -939,7 +940,7 @@ void PawsManager::RegisterFactories()
 
     RegisterFactory (pawsBaseWidgetFactory);
     RegisterFactory (pawsButtonFactory);
-    RegisterFactory (pawsScrollBarFactory);    
+    RegisterFactory (pawsScrollBarFactory);
     RegisterFactory (pawsObjectViewFactory);
     RegisterFactory (pawsGenericViewFactory);
     RegisterFactory (pawsTextBoxFactory);
@@ -958,7 +959,7 @@ void PawsManager::RegisterFactories()
     RegisterFactory (pawsOkBoxFactory);
     RegisterFactory (pawsSelectorBoxFactory);
     RegisterFactory (pawsSpinBoxFactory);
-/*    
+/*
     RegisterFactory (pawsSplashWindowFactory);
     RegisterFactory (pawsLoadWindowFactory);
     RegisterFactory (pawsChatWindowFactory);
@@ -999,11 +1000,11 @@ void PawsManager::RegisterFactories()
 
     RegisterFactory (pawsCreationMainFactory);
     RegisterFactory (pawsCharParentsFactory);
-    RegisterFactory (pawsChildhoodWindowFactory);    
-    RegisterFactory (pawsLifeEventWindowFactory);    
-    RegisterFactory (pawsPathWindowFactory);    
-    RegisterFactory (pawsSummaryWindowFactory);    
-*/    
+    RegisterFactory (pawsChildhoodWindowFactory);
+    RegisterFactory (pawsLifeEventWindowFactory);
+    RegisterFactory (pawsPathWindowFactory);
+    RegisterFactory (pawsSummaryWindowFactory);
+*/
     RegisterFactory (pawsMenuFactory);
     RegisterFactory (pawsMenuItemFactory);
     RegisterFactory (pawsMenuSeparatorFactory);
@@ -1011,7 +1012,7 @@ void PawsManager::RegisterFactories()
     RegisterFactory (pawsSkillWindowFactory);
     RegisterFactory (pawsQuestListWindowFactory);
     RegisterFactory (pawsSpellCancelWindowFactory);
-*/  
+*/
     RegisterFactory (pawsCheckBoxFactory);
     RegisterFactory (pawsTabWindowFactory);
     RegisterFactory (pawsFileNavigationFactory);
@@ -1107,7 +1108,7 @@ csRef<iSndSysData> PawsManager::LoadSound(const char *filename,const char *regis
 
 void PawsManager::ToggleSounds(bool value)
 {
-    useSounds = value; 
+    useSounds = value;
     // No need to stop sounds since PAWS generaly use short sounds
 }
 
@@ -1136,7 +1137,7 @@ bool PawsManager::PlaySound(csRef<iSndSysData> sounddata)
       return false;
     }
 
-	  source->SetVolume(volume);
+      source->SetVolume(volume);
     sndstream->Unpause();
 
     // Although we lose the reference, the CS sound renderer holds a reference to the source until playback is complete
@@ -1147,7 +1148,7 @@ void PawsManager::ReleaseAllSounds()
 {
     PawsSoundHandle *pawssndhandle;
     {
-        // As we iterate through the hash, the pointers become invalid, it's important that 
+        // As we iterate through the hash, the pointers become invalid, it's important that
         //  the hash not be touched between this point and when DeleteAll() is called
         csHash<PawsSoundHandle *>::GlobalIterator sounditerator = sounds.GetIterator();
         while (sounditerator.HasNext())
@@ -1185,6 +1186,9 @@ const char *PAWSData::GetStr()
     case PAWS_DATA_FLOAT:
         temp_buffer.Format("%.2f",floatval);
         break;
+    case PAWS_DATA_UINT:
+        temp_buffer.Format("%u",uintval);
+        break;
     case PAWS_DATA_STR:
     case PAWS_DATA_UNKNOWN:
         break;
@@ -1202,6 +1206,7 @@ float PAWSData::GetFloat()
     case PAWS_DATA_BOOL:    return boolval?1:0;
     case PAWS_DATA_INT:     return intval;
     case PAWS_DATA_STR:     return atof(str);
+    case PAWS_DATA_UINT:    return uintval;
     case PAWS_DATA_FLOAT:
     case PAWS_DATA_UNKNOWN:
         break;
@@ -1219,7 +1224,26 @@ int   PAWSData::GetInt()
     case PAWS_DATA_BOOL:    return boolval?1:0;
     case PAWS_DATA_FLOAT:   return (int)floatval;
     case PAWS_DATA_STR:     return atoi(str);
+    case PAWS_DATA_UINT:    return uintval; //this should never be used (wrap warning!)
     case PAWS_DATA_INT:
+    case PAWS_DATA_UNKNOWN:
+    break;
+    }
+    return 0;
+}
+
+unsigned int   PAWSData::GetUInt()
+{
+    if (type == PAWS_DATA_UINT)
+        return uintval;
+
+    switch (type)
+    {
+    case PAWS_DATA_BOOL:    return boolval?1:0;
+    case PAWS_DATA_FLOAT:   return (unsigned int)floatval;
+    case PAWS_DATA_STR:     return atoi(str);
+    case PAWS_DATA_INT:
+    case PAWS_DATA_UINT:
     case PAWS_DATA_UNKNOWN:
     break;
     }
@@ -1235,13 +1259,14 @@ bool  PAWSData::GetBool()
     {
     case PAWS_DATA_INT:     return intval?true:false;
     case PAWS_DATA_FLOAT:   return floatval?true:false;
-    case PAWS_DATA_STR:     if (!str || 
-                                !strlen(str) || 
-                                !strcasecmp(str,"False") || 
+    case PAWS_DATA_STR:     if (!str ||
+                                !strlen(str) ||
+                                !strcasecmp(str,"False") ||
                                 !strcasecmp(str,"No"))
                                 return false;
                             else
                                 return true;
+    case PAWS_DATA_UINT:     return uintval?true:false;
     case PAWS_DATA_BOOL:
     case PAWS_DATA_UNKNOWN:
         break;
@@ -1345,6 +1370,14 @@ void PawsManager::Publish(const char *dataname,int   datavalue)
     PAWSData data;
     data.type = PAWS_DATA_INT;
     data.intval = datavalue;
+    Publish(dataname,data);
+}
+
+void PawsManager::Publish(const char *dataname,unsigned int   datavalue)
+{
+    PAWSData data;
+    data.type = PAWS_DATA_UINT;
+    data.uintval = datavalue;
     Publish(dataname,data);
 }
 

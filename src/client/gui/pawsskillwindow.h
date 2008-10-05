@@ -37,9 +37,9 @@ class psCharAppearance;
 
 /** Describes a skill description inside the GUI system.
  */
-class psSkillDescription 
+class psSkillDescription
 {
-public:		
+public:
     psSkillDescription()
     {
         category = 0;
@@ -92,7 +92,7 @@ public:
     virtual void Show();
     virtual void Hide();
     virtual void Close();
-    
+
     virtual void OnNumberEntered(const char *name,int param,int number);
 protected:
 
@@ -100,65 +100,66 @@ protected:
 
     void BuySkill();
     void BuyMaxSkill();
-    
+
     void HandleSkillList(psSkillCache *skills, int selectedNameId = -1, int *rowIdx = NULL);
     void HandleSkillDescription( csString& description );
-        
+
     void SelectSkill(int skill, int cat);
 
-    /* This method is used for making the tab button blinking. It is used while training:
-       a trainer can train skills in a certain category, so with the flashing of the tab 
-       (the category) the player knows that a certain skill is available to be trained*/
+    /** @brief This method is used for making the tab button blinking.
+     *
+     *  It is used while training: a trainer can train skills in a certain
+     *  category, so with the flashing of the tab (the category) the player
+     *  knows that a certain skill is available to be trained
+     */
     void FlashTabButton(const char* buttonName);
 
-    /* This handles the skill list for each category */
+    /** This handles the skill list for each category */
     void HandleSkillCategory(pawsListBox* tabNameSkillList, const char* indWidget,
                              const char* tabName, psSkillCacheItem* skillInfo, int &idx);
 
     pawsListBox *statsSkillList, *combatSkillList, *magicSkillList, *jobsSkillList, *variousSkillList;
-	pawsListBox *factionList;
+    pawsListBox *factionList;
 
     pawsMultiLineTextBox *combatSkillDescription, *magicSkillDescription, *jobsSkillDescription;
     pawsMultiLineTextBox *variousSkillDescription, *statsSkillDescription, *factionsDescription;
     pawsProgressBar *hpBar, *manaBar, *pysStaminaBar, *menStaminaBar, *experienceBar;
     pawsTextBox *hpFrac, *manaFrac, *pysStaminaFrac, *menStaminaFrac, *experiencePerc;
 
-    csArray<pawsListBoxRow*> unsortedSkills; // Array keeping the server order of the skills
+    csArray<pawsListBoxRow*> unsortedSkills; ///< Array keeping the server order of the skills
 
     bool filter, train, foundSelected;
-    int x; //Stores topnode "X" information
+    unsigned int x; ///< Stores topnode "X" information (progression points)
 
     csString skillString;
     csString selectedSkill;
     pawsListBoxRow* selectedRow;
-    
+
     int hitpointsMax, manaMax, physStaminaMax, menStaminaMax;
 
-    int currentTab, previousTab; //Used for storing which is the current tab and the previous one
-    
+    int currentTab, previousTab; ///< Used for storing which is the current tab and the previous one
+
     csRef<iDocumentSystem> xml;
     csRef<MsgHandler> msgHandler;
 
-    /* Local copy of skills and stats */
-    psSkillCache skillCache;
-    /* Local copy of skill and stat descriptions */
-    csHash<psSkillDescription *> skillDescriptions;
+    psSkillCache skillCache; ///< Local copy of skills and stats
+    csHash<psSkillDescription *> skillDescriptions; ///< Local copy of skill and stat descriptions
 
-	void HandleFactionMsg(MsgEntry* me);
+    void HandleFactionMsg(MsgEntry* me);
 
-	struct FactionRating
-	{
-		csString name;
-		int      rating;
-	};
+    struct FactionRating
+    {
+        csString name;
+        int      rating;
+    };
 
-	csPDelArray<FactionRating>   factions;		/// The factions by name
+    csPDelArray<FactionRating>   factions;      ///< The factions by name
 
-	/// Flag if we have sent our initial request for faction information. Only sent
-	/// once and everything else is an update. 
-	bool factRequest;	
-														
-    
+    /// Flag if we have sent our initial request for faction information. Only sent
+    /// once and everything else is an update.
+    bool factRequest;
+
+
     psCharAppearance* charApp;
 };
 
@@ -174,21 +175,20 @@ public:
     pawsSkillIndicator();
 
     void Draw();
-    void Set(int x, int rank, int y, int yCost, int z, int zCost);
+    void Set(unsigned int x, int rank, int y, int yCost, int z, int zCost);
 protected:
-    /* Calculates relative (to widget) horizontal coordinate of a point on the skill bar */
-    int GetRelCoord(int pt);
-    
-    void DrawSkillProgressBar(int x, int y, int width, int height, 
+    /** @brief Calculates relative (to widget) horizontal coordinate of a point on the skill bar */
+    unsigned int GetRelCoord(unsigned int pt);
+
+    void DrawSkillProgressBar(int x, int y, int width, int height,
                               int start_r, int start_g, int start_b);
 
-    /* Skill status: */
-    int x;
-    int rank, y, yCost, z, zCost;
+    unsigned int x; ///< progression points
+    int rank, y, yCost, z, zCost; ///< Skill status
 
     iGraphics2D * g2d;
 };
 
 CREATE_PAWS_FACTORY( pawsSkillIndicator );
 
-#endif 
+#endif

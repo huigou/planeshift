@@ -23,7 +23,7 @@
 //=============================================================================
 #include <iutil/virtclk.h>
 #include <csutil/databuf.h>
-#include <ctype.h>                    
+#include <ctype.h>
 
 //=============================================================================
 // Project Includes
@@ -231,11 +231,11 @@ bool psCharacter::Load(iResultRow& row)
 
     //Assign the Helm Group
     Result helmResult(db->Select("SELECT helm FROM race_info WHERE id=%d", raceid));
-    
+
     if(csGetTicks() - start > 500)
     {
         csString status;
-        status.Format("Warning: Spent %u time loading character ID %u %s:%d", 
+        status.Format("Warning: Spent %u time loading character ID %u %s:%d",
                       csGetTicks() - start, characterid, __FILE__, __LINE__);
         psserver->GetLogCSV()->Write(CSV_STATUS, status);
     }
@@ -268,11 +268,11 @@ bool psCharacter::Load(iResultRow& row)
         Error2("Cannot load skills for Character ID %u.",characterid);
         return false;
     }
-    
+
     if(csGetTicks() - start > 500)
     {
         csString status;
-        status.Format("Warning: Spent %u time loading character ID %u %s:%d", 
+        status.Format("Warning: Spent %u time loading character ID %u %s:%d",
                       csGetTicks() - start, characterid, __FILE__, __LINE__);
         psserver->GetLogCSV()->Write(CSV_STATUS, status);
     }
@@ -324,7 +324,7 @@ bool psCharacter::Load(iResultRow& row)
     if(csGetTicks() - start > 500)
     {
         csString status;
-        status.Format("Warning: Spent %u time loading character ID %u %s:%d", 
+        status.Format("Warning: Spent %u time loading character ID %u %s:%d",
                       csGetTicks() - start, characterid, __FILE__, __LINE__);
         psserver->GetLogCSV()->Write(CSV_STATUS, status);
     }
@@ -334,7 +334,7 @@ bool psCharacter::Load(iResultRow& row)
     guildinfo = CacheManager::GetSingleton().FindGuild(row.GetUInt32("guild_member_of"));
     if (guildinfo)
         guildinfo->Connect(this);
-    
+
     SetGuildNotifications(row.GetInt("guild_notifications") == 1);
 
     // Loot rule here
@@ -356,7 +356,7 @@ bool psCharacter::Load(iResultRow& row)
     if(csGetTicks() - start > 500)
     {
         csString status;
-        status.Format("Warning: Spent %u time loading character ID %u %s:%d", 
+        status.Format("Warning: Spent %u time loading character ID %u %s:%d",
                       csGetTicks() - start, characterid, __FILE__, __LINE__);
         psserver->GetLogCSV()->Write(CSV_STATUS, status);
     }
@@ -369,7 +369,7 @@ bool psCharacter::Load(iResultRow& row)
     if(csGetTicks() - start > 500)
     {
         csString status;
-        status.Format("Warning: Spent %u time loading character ID %u %s:%d", 
+        status.Format("Warning: Spent %u time loading character ID %u %s:%d",
                       csGetTicks() - start, characterid, __FILE__, __LINE__);
         psserver->GetLogCSV()->Write(CSV_STATUS, status);
     }
@@ -393,7 +393,7 @@ bool psCharacter::Load(iResultRow& row)
     if(csGetTicks() - start > 500)
     {
         csString status;
-        status.Format("Warning: Spent %u time loading character ID %u %s:%d", 
+        status.Format("Warning: Spent %u time loading character ID %u %s:%d",
                       csGetTicks() - start, characterid, __FILE__, __LINE__);
         psserver->GetLogCSV()->Write(CSV_STATUS, status);
     }
@@ -415,7 +415,7 @@ bool psCharacter::Load(iResultRow& row)
     if(csGetTicks() - start > 500)
     {
         csString status;
-        status.Format("Warning: Spent %u time loading character ID %u %s:%d", 
+        status.Format("Warning: Spent %u time loading character ID %u %s:%d",
                       csGetTicks() - start, characterid, __FILE__, __LINE__);
         psserver->GetLogCSV()->Write(CSV_STATUS, status);
     }
@@ -427,7 +427,7 @@ bool psCharacter::Load(iResultRow& row)
     if(csGetTicks() - start > 500)
     {
         csString status;
-        status.Format("Warning: Spent %u time loading character ID %u %s:%d", 
+        status.Format("Warning: Spent %u time loading character ID %u %s:%d",
                       csGetTicks() - start, characterid, __FILE__, __LINE__);
         psserver->GetLogCSV()->Write(CSV_STATUS, status);
     }
@@ -441,7 +441,7 @@ bool psCharacter::Load(iResultRow& row)
     if(csGetTicks() - start > 500)
     {
         csString status;
-        status.Format("Warning: Spent %u time loading character ID %u %s:%d", 
+        status.Format("Warning: Spent %u time loading character ID %u %s:%d",
                       csGetTicks() - start, characterid, __FILE__, __LINE__);
         psserver->GetLogCSV()->Write(CSV_STATUS, status);
     }
@@ -455,7 +455,7 @@ bool psCharacter::Load(iResultRow& row)
     if(csGetTicks() - start > 500)
     {
         csString status;
-        status.Format("Warning: Spent %u time loading character ID %u %s:%d", 
+        status.Format("Warning: Spent %u time loading character ID %u %s:%d",
                       csGetTicks() - start, characterid, __FILE__, __LINE__);
         psserver->GetLogCSV()->Write(CSV_STATUS, status);
     }
@@ -468,7 +468,7 @@ bool psCharacter::Load(iResultRow& row)
     if(csGetTicks() - start > 500)
     {
         csString status;
-        status.Format("Warning: Spent %u time loading character ID %u %s:%d", 
+        status.Format("Warning: Spent %u time loading character ID %u %s:%d",
                       csGetTicks() - start, characterid, __FILE__, __LINE__);
         psserver->GetLogCSV()->Write(CSV_STATUS, status);
     }
@@ -520,7 +520,7 @@ bool psCharacter::QuickLoad(iResultRow& row, bool noInventory)
     if (!noInventory)
     {
         SetRaceInfo(raceinfo);
-        
+
         helmGroup = raceinfo->helmGroup;
 
         if (!LoadTraits(characterid))
@@ -814,7 +814,7 @@ bool psCharacter::LoadSkills(unsigned int use_id)
     skills.GetSkill(PSSKILL_INT)->dirtyFlag = false;
     skills.GetSkill(PSSKILL_WILL)->dirtyFlag = false;
     skills.GetSkill(PSSKILL_STR)->dirtyFlag = false;
-    
+
     return true;
 }
 
@@ -925,7 +925,7 @@ void psCharacter::LoadSavedProgressionEvents()
         progressionEventsText.Clear();
         return;
     }
-    
+
     csRef<iDocumentNodeIterator> iter = evts->GetNodes();
 
     while (iter->HasNext())
@@ -1013,12 +1013,12 @@ bool psCharacter::HasAdvantage ( PSCHARACTER_ADVANTAGE advantage)
 }
 
 
-int psCharacter::GetExperiencePoints() // W
+unsigned int psCharacter::GetExperiencePoints() // W
 {
     return vitals->GetExp();
 }
 
-void psCharacter::SetExperiencePoints(int W)
+void psCharacter::SetExperiencePoints(unsigned int W)
 {
     vitals->SetExp(W);
 }
@@ -1030,11 +1030,11 @@ void psCharacter::SetExperiencePoints(int W)
 * into  progression points.
 * @return Return the number of progression points gained.
 */
-int psCharacter::AddExperiencePoints(int W)
+unsigned int psCharacter::AddExperiencePoints(unsigned int W)
 {
-    int pp = 0;
-    int exp = vitals->GetExp();
-    int progP = vitals->GetPP();
+    unsigned int pp = 0;
+    unsigned int exp = vitals->GetExp();
+    unsigned int progP = vitals->GetPP();
 
     exp += W;
     bool updatedPP = false;
@@ -1042,7 +1042,8 @@ int psCharacter::AddExperiencePoints(int W)
     while (exp >= 200)
     {
         exp -= 200;
-        progP++;
+        if(progP != UINT_MAX) //don't allow overflow
+            progP++;
         pp++;
         updatedPP = true;
     }
@@ -1077,13 +1078,13 @@ unsigned int psCharacter::GetProgressionPoints() // X
 
 void psCharacter::SetProgressionPoints(unsigned int X,bool save)
 {
-    int exp = vitals->GetExp();
+    unsigned int exp = vitals->GetExp();
     if (save)
     {
-        Debug3(LOG_SKILLXP,GetCharacterID(), "Updating PP points and Exp to %u and %d\n", X, exp);
+        Debug3(LOG_SKILLXP,GetCharacterID(), "Updating PP points and Exp to %u and %u\n", X, exp);
         // Update the DB
         csString sql;
-        sql.Format("UPDATE characters SET progression_points = '%u', experience_points = '%d' WHERE id ='%u'",X,exp,GetCharacterID());
+        sql.Format("UPDATE characters SET progression_points = '%u', experience_points = '%u' WHERE id ='%u'",X,exp,GetCharacterID());
         if(!db->CommandPump(sql))
         {
             Error3("Couldn't execute SQL %s!, Character %u's PP points are NOT saved",sql.GetData(),GetCharacterID());
@@ -1289,7 +1290,7 @@ void psCharacter::SetMode(PSCHARACTER_MODE newmode, uint32_t clientnum)
     actor->SetAlive(newmode != PSCHARACTER_MODE_DEAD);
 
     actor->SetAllowedToDisconnect(newmode != PSCHARACTER_MODE_SPELL_CASTING &&
-                                  newmode != PSCHARACTER_MODE_COMBAT && 
+                                  newmode != PSCHARACTER_MODE_COMBAT &&
                                   newmode != PSCHARACTER_MODE_DEFEATED);
 
     //cancel ongoing work
@@ -1308,7 +1309,7 @@ void psCharacter::SetMode(PSCHARACTER_MODE newmode, uint32_t clientnum)
         case PSCHARACTER_MODE_SIT:
             SetStaminaRegenerationSitting();
             break;
-        
+
         case PSCHARACTER_MODE_DEAD:
         case PSCHARACTER_MODE_OVERWEIGHT:
             SetStaminaRegenerationNone();  // no stamina regen while dead or overweight
@@ -1325,14 +1326,14 @@ void psCharacter::SetMode(PSCHARACTER_MODE newmode, uint32_t clientnum)
     }
 
     player_mode = newmode;
-    
+
     if(newmode == PSCHARACTER_MODE_PEACE || newmode == PSCHARACTER_MODE_SPELL_CASTING)
         actor->ProcessStamina();
 }
 
 void psCharacter::ResetMode()
 {
-    player_mode = PSCHARACTER_MODE_PEACE; 
+    player_mode = PSCHARACTER_MODE_PEACE;
     combat_stance = getStance("Normal");
 }
 
@@ -1421,9 +1422,9 @@ void psCharacter::DropItem(psItem *&item, csVector3 suggestedPos, bool transient
         item = obj->GetItem();
         item->SetGuardingCharacterID(GetCharacterID());
     }
-    
+
     psMoney money;
-    
+
     psDropEvent evt(
                     GetCharacterID(),
                     item->GetUID(),
@@ -1537,10 +1538,10 @@ void psCharacter::CalculateEquipmentModifiers()
 void psCharacter::AddLootItem(psItemStats *item)
 {
     if(!item){
-	    Error2("Attempted to add 'null' loot item to character %s, ignored.",fullname.GetDataSafe());
-	} else {
+        Error2("Attempted to add 'null' loot item to character %s, ignored.",fullname.GetDataSafe());
+    } else {
         loot_pending.Push(item);
-	}
+    }
 }
 
 size_t psCharacter::GetLootItems(psLootMessage& msg,int entity,int cnum)
@@ -1746,25 +1747,25 @@ float psCharacter::GetManaMaxModifier()
 float psCharacter::GetStaminaMax(bool pys)
 {
     if(pys)
-	{
+    {
         return vitals->GetVital(VITAL_PYSSTAMINA).max;
-	}
+    }
     else
-	{
+    {
         return vitals->GetVital(VITAL_MENSTAMINA).max;
-	}
+    }
 }
 
 float psCharacter::GetStaminaMaxModifier(bool pys)
 {
-	if(pys)
-	{
-		return vitals->GetVital(VITAL_PYSSTAMINA).maxModifier;
-	}
-	else
-	{
-		return vitals->GetVital(VITAL_MENSTAMINA).maxModifier;
-	}
+    if(pys)
+    {
+        return vitals->GetVital(VITAL_PYSSTAMINA).maxModifier;
+    }
+    else
+    {
+        return vitals->GetVital(VITAL_MENSTAMINA).maxModifier;
+    }
 }
 
 
@@ -1787,7 +1788,7 @@ float psCharacter::AdjustHitPointsMaxModifier(float adjust)
 
 void psCharacter::SetHitPointsMaxModifier (float v)
 {
-	vitals->DirtyVital(VITAL_HITPOINTS, DIRTY_VITAL_HP_MAX).maxModifier = v;
+    vitals->DirtyVital(VITAL_HITPOINTS, DIRTY_VITAL_HP_MAX).maxModifier = v;
 }
 
 
@@ -1919,28 +1920,28 @@ float psCharacter::AdjustStamina(float adjust, bool pys)
 }
 float psCharacter::AdjustStaminaMaxModifier (float adjust, bool pys)
 {
-	if(pys)
-	{
-		vitals->DirtyVital(VITAL_PYSSTAMINA, DIRTY_VITAL_PYSSTAMINA_MAX).maxModifier += adjust;
-		return vitals->GetVital(VITAL_PYSSTAMINA).maxModifier;
-	}
-	else
-	{
-		vitals->DirtyVital(VITAL_MENSTAMINA, DIRTY_VITAL_MENSTAMINA_MAX).maxModifier += adjust;
-		return vitals->GetVital(VITAL_MENSTAMINA).maxModifier;
-	}
+    if(pys)
+    {
+        vitals->DirtyVital(VITAL_PYSSTAMINA, DIRTY_VITAL_PYSSTAMINA_MAX).maxModifier += adjust;
+        return vitals->GetVital(VITAL_PYSSTAMINA).maxModifier;
+    }
+    else
+    {
+        vitals->DirtyVital(VITAL_MENSTAMINA, DIRTY_VITAL_MENSTAMINA_MAX).maxModifier += adjust;
+        return vitals->GetVital(VITAL_MENSTAMINA).maxModifier;
+    }
 }
 
 void psCharacter::SetStaminaMaxModifier(float v, bool pys)
 {
-	if(pys)
-	{
-		vitals->DirtyVital(VITAL_PYSSTAMINA, DIRTY_VITAL_PYSSTAMINA_MAX).maxModifier = v;
-	}
-	else
-	{
-		vitals->DirtyVital(VITAL_MENSTAMINA, DIRTY_VITAL_MENSTAMINA_MAX).maxModifier = v;
-	}
+    if(pys)
+    {
+        vitals->DirtyVital(VITAL_PYSSTAMINA, DIRTY_VITAL_PYSSTAMINA_MAX).maxModifier = v;
+    }
+    else
+    {
+        vitals->DirtyVital(VITAL_MENSTAMINA, DIRTY_VITAL_MENSTAMINA_MAX).maxModifier = v;
+    }
 }
 
 
@@ -2435,17 +2436,17 @@ void psCharacter::MakeEquipmentString( csString& equipment )
     equipment.AppendFmt("<helm>%s</helm>", EscpXML(helmGroup).GetData());
 
     for (int i=0; i<PSCHARACTER_SLOT_BULK1; i++)
-    {        
+    {
         psItem* item = inventory.GetInventoryItem((INVENTORY_SLOT_NUMBER)i);
         if (item == NULL)
             continue;
-    
+
         csString slot = EscpXML( CacheManager::GetSingleton().slotNameHash.GetName(i) );
         csString mesh = EscpXML( item->GetMeshName() );
         csString part = EscpXML( item->GetPartName() );
         csString texture = EscpXML( item->GetTextureName() );
         csString partMesh = EscpXML( item->GetPartMeshName() );
-        
+
         equipment.AppendFmt("<equip slot=\"%s\" mesh=\"%s\" part=\"%s\" texture=\"%s\" partMesh=\"%s\"  />",
                               slot.GetData(), mesh.GetData(), part.GetData(), texture.GetData(), partMesh.GetData() );
     }
@@ -2496,7 +2497,7 @@ int psCharacter::GetAssignedQuestLastResponse(uint i)
 
 //if (parent of) quest id is an assigned quest, set its last response
 bool psCharacter::SetAssignedQuestLastResponse(psQuest *quest, int response)
-{   
+{
     int id = 0;
 
     if (quest)
@@ -2565,10 +2566,10 @@ QuestAssignment *psCharacter::AssignQuest(psQuest *quest, int assigner_id)
     //first check if there is not another assigned quest with the same NPC
     for (size_t i=0; i<assigned_quests.GetSize(); i++)
     {
-        if (assigned_quests[i]->GetQuest().IsValid() && 
+        if (assigned_quests[i]->GetQuest().IsValid() &&
             assigned_quests[i]->assigner_id == assigner_id &&
             assigned_quests[i]->GetQuest()->GetID() != quest->GetID() &&
-            quest->GetParentQuest() == NULL && 
+            quest->GetParentQuest() == NULL &&
             assigned_quests[i]->GetQuest()->GetParentQuest() == NULL &&
             assigned_quests[i]->status == PSQUEST_ASSIGNED)
         {
@@ -2583,7 +2584,7 @@ QuestAssignment *psCharacter::AssignQuest(psQuest *quest, int assigner_id)
         q = new QuestAssignment;
         q->SetQuest(quest);
         q->status = PSQUEST_DELETE;
-        
+
         assigned_quests.Push(q);
     }
 
@@ -2594,7 +2595,7 @@ QuestAssignment *psCharacter::AssignQuest(psQuest *quest, int assigner_id)
         q->lockout_end = 0;
         q->assigner_id = assigner_id;
         q->last_response = this->lastResponse; //This should be the response given when starting this quest
-        
+
         // assign any skipped parent quests
         if (quest->GetParentQuest() && !IsQuestAssigned(quest->GetParentQuest()->GetID()))
                 AssignQuest(quest->GetParentQuest(),assigner_id );
@@ -2709,9 +2710,9 @@ void psCharacter::DiscardQuest(QuestAssignment *q, bool force)
         Debug3(LOG_QUESTS, GetCharacterID(),
                "Did not discard %s quest for player %s because it was already discarded or was a one-time quest.\n",
                q->GetQuest()->GetName(),GetCharName() );
-		// Notify the player that he can't discard one-time quests
+        // Notify the player that he can't discard one-time quests
         psserver->SendSystemError(GetActor()->GetClient()->GetClientNum(),
-			"You can't discard this quest, since it can be done just once!");
+            "You can't discard this quest, since it can be done just once!");
     }
 }
 
@@ -2747,7 +2748,7 @@ bool psCharacter::CheckQuestAvailable(psQuest *quest,int assigner_id)
 
     unsigned int now = csGetTicks() / 1000;
 
-    if (quest->GetParentQuest()) 
+    if (quest->GetParentQuest())
     {
         quest = quest->GetParentQuest();
     }
@@ -2758,7 +2759,7 @@ bool psCharacter::CheckQuestAvailable(psQuest *quest,int assigner_id)
         notify = CacheManager::GetSingleton().GetCommandManager()->Validate(GetActor()->GetClient()->GetSecurityLevel(), "quest notify");
     }
 
-    //NPC should always answer, if the quest is assigned, no matter who started the quest. 
+    //NPC should always answer, if the quest is assigned, no matter who started the quest.
     QuestAssignment *q = IsQuestAssigned(quest->GetID());
     if (q && q->status == PSQUEST_ASSIGNED)
     {
@@ -3318,13 +3319,13 @@ void psCharacter::Train( PSSKILL skill, int yIncrease )
 void psCharacter::RegisterDurationEvent(ProgressionDelay* progDelay, csString& name, csTicks duration)
 {
     FireEvent(name);
-    
+
     DurationEvent * newEvent = new DurationEvent;
     newEvent->queuedObject = progDelay;
     newEvent->name = name;
     newEvent->appliedTime = csGetTicks();
     newEvent->duration = duration;
-    
+
     durationEvents.Push(newEvent);
 }
 
@@ -3345,9 +3346,9 @@ void psCharacter::FireEvent(const char* name)
     {
         if ( durationEvents[z]->name == name )
         {
-            durationEvents[z]->queuedObject->Trigger(); 
+            durationEvents[z]->queuedObject->Trigger();
         }
-    }   
+    }
 }
 
 /*-----------------------------------------------------------------*/
@@ -3422,7 +3423,7 @@ void Skill::CalculateCosts(psCharacter* user)
     if ( z > zCost )
     {
         dirtyFlag = true;
-        z = zCost;        
+        z = zCost;
     }
 */
 }
@@ -3432,7 +3433,7 @@ void Skill::Train( int yIncrease )
     if(y < yCost)
     {
         y+=yIncrease;
-        dirtyFlag = true;        
+        dirtyFlag = true;
     }
 }
 
@@ -3595,7 +3596,7 @@ size_t psCharacter::GetAssignedGMEvents(psGMEventListMessage& gmeventsMsg, int c
     {
         eventStatus = psserver->GetGMEventManager()->GetGMEventDetailsByID(assigned_events.runningEventID,
                                                                            name,
-									   desc);
+                                       desc);
         event.Format("<event><name text=\"%s\" /><role text=\" \" /><status text=\"R\" /><id text=\"%d\" /></event>",
                      name.GetData(), assigned_events.runningEventID);
         gmeventsStr.Append(event);
@@ -3631,7 +3632,7 @@ size_t psCharacter::GetAssignedGMEvents(psGMEventListMessage& gmeventsMsg, int c
     gmeventsStr.Append("</gmevents>");
 
     if (numberOfEvents)
-	gmeventsMsg.Populate(gmeventsStr, clientnum);
+    gmeventsMsg.Populate(gmeventsStr, clientnum);
 
     return numberOfEvents;
 }
@@ -3649,7 +3650,7 @@ void psCharacter::CompleteGMEvent(bool playerIsGM)
     if (playerIsGM)
     {
         assigned_events.completedEventIDsAsGM.Push(assigned_events.runningEventIDAsGM);
-	assigned_events.runningEventIDAsGM = -1;
+    assigned_events.runningEventIDAsGM = -1;
     }
     else
     {
@@ -3679,10 +3680,10 @@ void psCharacter::RemoveGMEvent(int id, bool playerIsGM)
 
 bool psCharacter::UpdateFaction(Faction * faction, int delta)
 {
-    if (!GetActor()) 
+    if (!GetActor())
     {
         return false;
-    }        
+    }
 
     GetActor()->GetFactions()->UpdateFactionStanding(faction->id,delta);
     if (delta > 0)
@@ -3693,17 +3694,17 @@ bool psCharacter::UpdateFaction(Faction * faction, int delta)
     {
         psserver->SendSystemInfo(GetActor()->GetClientID(),"Your faction with %s has worsened.",faction->name.GetData());
     }
-    
-    
+
+
     psFactionMessage factUpdate( GetActor()->GetClientID(), psFactionMessage::MSG_UPDATE);
     int standing;
     float weight;
     GetActor()->GetFactions()->GetFactionStanding(faction->id, standing ,weight);
-    
+
     factUpdate.AddFaction(faction->name, standing);
     factUpdate.BuildMsg();
     factUpdate.SendMessage();
-    
+
     return true;
 }
 
@@ -3716,10 +3717,10 @@ bool psCharacter::CheckFaction(Faction * faction, int value)
 
 const char* psCharacter::GetDescription()
 {
-    return description; 
+    return description;
 }
 
-void psCharacter::SetDescription(const char* newValue) 
+void psCharacter::SetDescription(const char* newValue)
 {
     description = newValue;
     bool bChanged = false;
@@ -3786,12 +3787,12 @@ void StatSet::SetStat(PSITEMSTATS_STAT attrib, unsigned int val, bool recalculat
     if (attrib < 0 || attrib >= PSITEMSTATS_STAT_COUNT)
         return;
 
-	// Clamp values to prevent huge numbers
-	if (val > MAX_STAT)
-		val = MAX_STAT;
+    // Clamp values to prevent huge numbers
+    if (val > MAX_STAT)
+        val = MAX_STAT;
 
     stats[attrib].rank = val;
-	if (recalculatestats)
+    if (recalculatestats)
       self->RecalculateStats();
 }
 
@@ -3800,7 +3801,7 @@ void StatSet::AddToStat(PSITEMSTATS_STAT attrib, unsigned int delta)
     if (attrib<0 || attrib>=PSITEMSTATS_STAT_COUNT)
         return;
 
-	stats[attrib].rank += delta;
+    stats[attrib].rank += delta;
 
     self->RecalculateStats();
 }
@@ -3960,8 +3961,8 @@ void SkillSet::SetSkillRank( PSSKILL which, unsigned int rank, bool recalculates
         rank = 0;
     else if (!isStat && rank > MAX_SKILL)
         rank = MAX_SKILL;
-	else if (isStat && rank > MAX_STAT)
-		rank = MAX_STAT;
+    else if (isStat && rank > MAX_STAT)
+        rank = MAX_STAT;
 
     skills[which].rank = rank;
     skills[which].CalculateCosts(self);

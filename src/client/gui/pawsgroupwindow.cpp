@@ -69,31 +69,31 @@ bool pawsGroupWindow::PostSetup()
 
     memberList = (pawsListBox*)FindWidget("List");
     if ( !memberList ) return false;
-    
+
     chatWindow = (pawsChatWindow*)PawsManager::GetSingleton().FindWidget("ChatWindow");
     if (!chatWindow)
         return false;
-    
+
     return true;
 }
 
 
 void pawsGroupWindow::HandleMessage( MsgEntry* me )
-{   
+{
     psGUIGroupMessage incomming(me);
 
     switch ( incomming.command )
     {
         case psGUIGroupMessage::GROUP:
         {
-            Show();            
+            Show();
             HandleGroup( incomming.commandData );
             break;
         }
 
         case psGUIGroupMessage::MEMBERS:
         {
-            Show();            
+            Show();
             HandleMembers( incomming.commandData );
             break;
         }
@@ -102,15 +102,15 @@ void pawsGroupWindow::HandleMessage( MsgEntry* me )
         {
             Hide();
             memberList->Clear();
-                
+
             if ( incomming.commandData.Length() > 0 )
             {
                 psSystemMessage note(0,MSG_INFO, incomming.commandData );
                 psengine->GetMsgHandler()->Publish(note.msg);
             }
-            
-                            
-            break; 
+
+
+            break;
         }
     }
 }
@@ -159,14 +159,14 @@ void pawsGroupWindow::HandleMembers( csString& members )
         pawsProgressBar *progress;
         pawsTextBox *text;
         pawsWidget *icon;
-  
+
         box->SetName ( member->GetAttributeValue("N") );
 
         icon = stats->FindWidget("ICON");
         icon->SetBackground(csString(member->GetAttributeValue("R")) + " Icon");
-        
+
         chatWindow->AddAutoCompleteName( member->GetAttributeValue("N") );
-        
+
         //Set name
         text = (pawsTextBox*)stats->FindWidget("NAME");
         text->SetText( member->GetAttributeValue("N") );
@@ -185,29 +185,29 @@ void pawsGroupWindow::HandleMembers( csString& members )
 }
 
 void pawsGroupWindow::SetStats( GEMClientActor* actor )
-{   
-    
+{
+
     csString firstName(actor->GetName());
     size_t pos=firstName.FindFirst(' ');
     firstName = firstName.Slice(0,pos);
 
-    pawsListBoxRow* row = (pawsListBoxRow*)FindWidget( firstName.GetData() ); 
-    
+    pawsListBoxRow* row = (pawsListBoxRow*)FindWidget( firstName.GetData() );
+
     if ( row )
     {
         float hp;
         float mana;
 
         // Adjust the hitpoints
-        hp = actor->GetVitalMgr()->GetHP();   
+        hp = actor->GetVitalMgr()->GetHP();
 
-        // Adjust the mana 
-        mana = actor->GetVitalMgr()->GetMana();   
+        // Adjust the mana
+        mana = actor->GetVitalMgr()->GetMana();
 
         pawsProgressBar *progress;
 
         pawsWidget* stats = row->GetColumn(0)->FindWidget("stats");
-        
+
         //Set HP
         progress = (pawsProgressBar*)stats->FindWidget("HP");
         progress->SetTotalValue( 1 );
@@ -221,12 +221,12 @@ void pawsGroupWindow::SetStats( GEMClientActor* actor )
 }
 
 void pawsGroupWindow::Draw()
-{    
+{
     if (!player)
         player = psengine->GetCelClient()->GetMainPlayer();
 
     player->GetVitalMgr()->Predict( csGetTicks(),"Self" );
-    
+
     if (memberList->GetRowCount()>0)
         SetStats( player );
     pawsWidget::Draw();
@@ -242,7 +242,7 @@ void pawsGroupWindow::OnStringEntered(const char *name,int param,const char *val
             cmd.AppendFmt("/invite %s", value);
             psengine->GetCmdHandler()->Execute(cmd);
         }
-    }                
+    }
 }
 
 bool pawsGroupWindow::OnMenuAction(pawsWidget *widget, const pawsMenuAction & action)

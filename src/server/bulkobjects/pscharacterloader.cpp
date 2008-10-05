@@ -1,7 +1,7 @@
 /*
 * pscharacterloader.cpp
 *
-* Copyright (C) 2001 Atomic Blue (info@planeshift.it, http://www.atomicblue.org) 
+* Copyright (C) 2001 Atomic Blue (info@planeshift.it, http://www.atomicblue.org)
 *
 *
 * This program is free software; you can redistribute it and/or
@@ -104,7 +104,7 @@ psCharacterList *psCharacterLoader::LoadCharacterList(unsigned int accountid)
 
     psCharacterList *charlist = new psCharacterList;
 
-    charlist->SetValidCount( result.Count() );        
+    charlist->SetValidCount( result.Count() );
     for (unsigned int i=0;i<result.Count();i++)
     {
         charlist->SetEntryValid(i,true);
@@ -117,7 +117,7 @@ psCharacterList *psCharacterLoader::LoadCharacterList(unsigned int accountid)
 
 
 /*  This uses a relatively slow method of looking up the list of ids of all npcs (optionally in a given sector)
-*  and then loading each character data element with a seperate query. 
+*  and then loading each character data element with a seperate query.
 */
 
 psCharacter **psCharacterLoader::LoadAllNPCCharacterData(psSectorInfo *sector,int &count)
@@ -213,7 +213,7 @@ psCharacter *psCharacterLoader::LoadCharacterData(unsigned int uid, bool forceRe
     if(csGetTicks() - start > 500)
     {
         csString status;
-        status.Format("Warning: Spent %u time loading character ID %u %s:%d", 
+        status.Format("Warning: Spent %u time loading character ID %u %s:%d",
                       csGetTicks() - start, uid, __FILE__, __LINE__);
         psserver->GetLogCSV()->Write(CSV_STATUS, status);
     }
@@ -223,7 +223,7 @@ psCharacter *psCharacterLoader::LoadCharacterData(unsigned int uid, bool forceRe
         if(csGetTicks() - start > 500)
         {
             csString status;
-            status.Format("Warning: Spent %u time loading FAILED character ID %u", 
+            status.Format("Warning: Spent %u time loading FAILED character ID %u",
                 csGetTicks() - start, uid);
             psserver->GetLogCSV()->Write(CSV_STATUS, status);
         }
@@ -235,7 +235,7 @@ psCharacter *psCharacterLoader::LoadCharacterData(unsigned int uid, bool forceRe
     if(csGetTicks() - start > 500)
     {
         csString status;
-        status.Format("Warning: Spent %u time loading character ID %u %s:%d", 
+        status.Format("Warning: Spent %u time loading character ID %u %s:%d",
             csGetTicks() - start, uid, __FILE__, __LINE__);
         psserver->GetLogCSV()->Write(CSV_STATUS, status);
     }
@@ -353,7 +353,7 @@ bool psCharacterLoader::NewNPCCharacterData(unsigned int accountid, psCharacter 
     csString csv;
     if (chardata->GetActor())
         chardata->GetActor()->GetFactions()->GetFactionListCSV(csv);
-    values.FormatPush("%s",csv.GetData());     
+    values.FormatPush("%s",csv.GetData());
 
     values.FormatPush("%u",chardata->npc_spawnruleid);
     values.FormatPush("%u",chardata->npc_masterid);
@@ -362,7 +362,7 @@ bool psCharacterLoader::NewNPCCharacterData(unsigned int accountid, psCharacter 
     values.FormatPush("%u",chardata->GetKillExperience() );
     values.FormatPush("%s",chardata->GetAnimalAffinity() );
 
-    
+
     unsigned int id=db->GenericInsertWithID("characters",fieldnames,values);
 
     if (id==0)
@@ -394,7 +394,7 @@ bool psCharacterLoader::NewCharacterData(unsigned int accountid, psCharacter *ch
         Error3("Failed to clear traits for character id %u.  Error %s.",
                chardata->GetCharacterID(), db->GetLastError());
     }
-    
+
     for (i=0;i<PSTRAIT_LOCATION_COUNT;i++)
     {
         psTrait *trait=chardata->GetTraitForLocation((PSTRAIT_LOCATION)i);
@@ -411,7 +411,7 @@ bool psCharacterLoader::NewCharacterData(unsigned int accountid, psCharacter *ch
         Error3("Failed to clear skills for character id %u.  Error %s.",
                chardata->GetCharacterID(), db->GetLastError());
     }
-    
+
     for (i=0;i<PSSKILL_COUNT;i++)
     {
         unsigned int skillRank=chardata->GetSkills()->GetSkillRank((PSSKILL)i, false);
@@ -498,15 +498,15 @@ bool psCharacterLoader::UpdateCharacterSkill(unsigned int character_id,unsigned 
                                            unsigned int skill_z, unsigned int skill_y, unsigned int skill_rank)
 {
     csString sql;
-    
+
     sql.Format("UPDATE character_skills SET skill_z=%u, skill_y=%u, skill_rank=%u WHERE character_id=%u AND skill_id=%u",
         skill_z, skill_y, skill_rank, character_id, (unsigned int)skill_id );
-     
+
     unsigned long result=db->Command(sql);
 
     // If there was nothing to update we can add the skill to the database
     if (result == 0)
-    {                
+    {
         return SaveCharacterSkill(
             character_id,
             skill_id,
@@ -519,21 +519,21 @@ bool psCharacterLoader::UpdateCharacterSkill(unsigned int character_id,unsigned 
     {
         return true;
     }
-    else 
+    else
     {
         // If it updated more than one row than that is a problem.
         return false;
-    }                
+    }
 }
 
 
 bool psCharacterLoader::SaveCharacterSkill(unsigned int character_id,unsigned int skill_id,
                                            unsigned int skill_z, unsigned int skill_y, unsigned int skill_rank)
 {
-    // If a player has no knowledge of the skill then no need to add to database yet. 
+    // If a player has no knowledge of the skill then no need to add to database yet.
     if ( skill_z == 0 && skill_y == 0 && skill_rank == 0 )
         return true;
-        
+
     unsigned long result=db->CommandPump("INSERT INTO character_skills (character_id,skill_id,skill_y,skill_z,skill_rank) VALUES('%u','%u','%u','%u','%u')",
         character_id,skill_id,skill_y,skill_z,skill_rank);
     if (result==QUERY_FAILED)
@@ -583,7 +583,7 @@ bool psCharacterLoader::DeleteCharacterData( unsigned int charID, csString& erro
 
     unsigned int guild = row.GetUInt32("guild_member_of");
     int guildLevel = row.GetInt("guild_level");
-    
+
     // If Guild leader? then can't delete
     if ( guildLevel == 9 )
     {
@@ -595,7 +595,7 @@ bool psCharacterLoader::DeleteCharacterData( unsigned int charID, csString& erro
     Client* zombieClient = psserver->GetConnections()->Find( charName );
     if ( zombieClient )
         psserver->RemovePlayer(zombieClient->GetClientNum(),"This character is being deleted");
-    
+
     // Remove the character from guild if he has joined any
     psGuildInfo* guildinfo = CacheManager::GetSingleton().FindGuild( guild );
     if ( guildinfo )
@@ -606,17 +606,17 @@ bool psCharacterLoader::DeleteCharacterData( unsigned int charID, csString& erro
     // Note: Need to delete the pets using this function as well.
 
     query.Format( "delete from character_relationships where character_id=%d or related_id=%d", charID, charID );
-    db->CommandPump( query ); 
+    db->CommandPump( query );
 
     query.Format("delete from character_quests where player_id=%d", charID );
     db->CommandPump( query );
-        
+
     query.Format("delete from character_skills where character_id=%d", charID );
     db->CommandPump( query );
-    
+
     query.Format("delete from character_traits where character_id=%d", charID );
     db->CommandPump( query );
-            
+
     query.Format("delete from player_spells where player_id=%d", charID);
     db->CommandPump( query );
 
@@ -632,8 +632,8 @@ bool psCharacterLoader::DeleteCharacterData( unsigned int charID, csString& erro
     for ( size_t x = 0; x < list.GetSize(); x++ )
     {
         GEMSupervisor::GetSingleton().RemoveEntity(list[x]);
-    }                            
-    
+    }
+
     query.Format("delete from item_instances where char_id_owner=%d", charID );
     db->CommandPump( query );
 
@@ -643,7 +643,7 @@ bool psCharacterLoader::DeleteCharacterData( unsigned int charID, csString& erro
     CPrintf( CON_DEBUG, "\nSuccessfully delete character id: %d\n", charID );
 
     return true;
-    
+
 }
 
 // 08-02-2005 Borrillis:
@@ -661,15 +661,15 @@ bool psCharacterLoader::SaveCharacterData(psCharacter *chardata,gemActor *actor,
         updatePlayer = db->NewUpdatePreparedStatement("characters", "id", 39); // 38 fields + 1 id field
     if(!playerORpet && updateNpc == NULL)
         updateNpc = db->NewUpdatePreparedStatement("characters", "id", 32); // 31 fields + 1 id field
-    
+
     // Give 100% hp if the char is dead
     if(!actor->IsAlive())
         chardata->SetHitPoints( chardata->GetHitPointsMax() );
-    
+
     iRecord* targetUpdate = (playerORpet) ? updatePlayer : updateNpc;
-    
+
     targetUpdate->Reset();
-    
+
     targetUpdate->AddField("name", chardata->GetCharName());
     targetUpdate->AddField("lastname", chardata->GetCharLastName());
     targetUpdate->AddField("old_lastname", chardata->GetOldLastName());
@@ -693,21 +693,21 @@ bool psCharacterLoader::SaveCharacterData(psCharacter *chardata,gemActor *actor,
     targetUpdate->AddField("bank_money_trias", chardata->BankMoney().GetTrias());
     targetUpdate->AddField("bank_money_hexas", chardata->BankMoney().GetHexas());
     targetUpdate->AddField("bank_money_octas", chardata->BankMoney().GetOctas());
-    
+
     if ( playerORpet ) // Only Pets and Players save location info
     {
         float yrot;
         csVector3 pos(0,0,0);
         psSectorInfo *sectorinfo;
         csString sector;
-        if ( actor->IsAlive() )       
+        if ( actor->IsAlive() )
         {
             float vel_y;
             iSector* sec;
             // We want to save the last reported location
             actor->GetLastLocation(pos, vel_y, yrot, sec);
             sector = sec->QueryObject()->GetName();
-            
+
             sectorinfo = CacheManager::GetSingleton().GetSectorInfoByName(sector);
         }
         else
@@ -719,7 +719,7 @@ bool psCharacterLoader::SaveCharacterData(psCharacter *chardata,gemActor *actor,
             {
                 pos.x = -20.0f;
                 pos.y = 1.0f;
-                pos.z =  -180.0f; 
+                pos.z =  -180.0f;
                 yrot = 0.0f;
                 sector = "NPCroom";
             }
@@ -727,36 +727,36 @@ bool psCharacterLoader::SaveCharacterData(psCharacter *chardata,gemActor *actor,
             {
                 pos.x = -23.5f;
                 pos.y = -116.0f;
-                pos.z =  23.7f; 
+                pos.z =  23.7f;
                 yrot = 0.0f;
                 sector = "DR01";
             }
-            
+
             // Update actor's position for cached objects
             sec = EntityManager::GetSingleton().GetEngine()->FindSector(sector);
             if (sec)
             {
                 actor->SetPosition(pos, yrot, sec);
             }
-            
+
             sectorinfo =  CacheManager::GetSingleton().GetSectorInfoByName(sector);
-        }      
-        
+        }
+
         if(!sectorinfo)
         {
             Error3("ERROR: Sector %s could not be found in the database! Character %s could not be saved!",sector.GetData(),chardata->GetCharName());
             return false;
         }
-        
+
         targetUpdate->AddField("loc_x", pos.x);
         targetUpdate->AddField("loc_y", pos.y);
         targetUpdate->AddField("loc_z", pos.z);
         targetUpdate->AddField("loc_yrot", yrot);
         targetUpdate->AddField("loc_sector_id", sectorinfo->uid);
         targetUpdate->AddField("loc_instance", actor->GetInstance());
-        //Saves the guild notification setting: this is done only when the client correctly quits. 
+        //Saves the guild notification setting: this is done only when the client correctly quits.
         //This is to avoid flodding with setting changes as much as possible
-        targetUpdate->AddField("guild_notifications", chardata->IsGettingGuildNotifications() ); 
+        targetUpdate->AddField("guild_notifications", chardata->IsGettingGuildNotifications() );
     }
 
     if(!chardata->GetLastLoginTime().GetData())
@@ -764,7 +764,7 @@ bool psCharacterLoader::SaveCharacterData(psCharacter *chardata,gemActor *actor,
         time_t curr=time(0);
         tm* gmtm = gmtime(&curr);
         csString timeStr;
-        
+
         timeStr.Format("%d-%02d-%02d %02d:%02d:%02d",
                        gmtm->tm_year+1900,
                        gmtm->tm_mon+1,
@@ -776,34 +776,34 @@ bool psCharacterLoader::SaveCharacterData(psCharacter *chardata,gemActor *actor,
     }
     else
         targetUpdate->AddField("last_login", chardata->GetLastLoginTime().GetData() );
-    
+
     csString csv;
-    actor->GetFactions()->GetFactionListCSV(csv);   
+    actor->GetFactions()->GetFactionListCSV(csv);
     targetUpdate->AddField("faction_standings", csv.GetData());
-    
+
     csString progressionEvents;
-    
+
     while (chardata->progressionEvents.GetSize() > 0)
     {
         SavedProgressionEvent evt = chardata->progressionEvents.Pop();
         evt.ticksElapsed += csGetTicks() - evt.registrationTime;
         progressionEvents.AppendFmt("<evt elapsed=\"%u\">%s</evt>", evt.ticksElapsed, evt.script.GetData());
     }
-    
+
     csString durationEventStr;
     while ( chardata->durationEvents.GetSize() > 0 )
     {
         DurationEvent* devent = chardata->durationEvents.Pop();
         csTicks ticks = devent->duration - (csGetTicks()- devent->appliedTime);
-        
-        durationEventStr.AppendFmt("<evt duration='%u' name='%s'>%s</evt>", ticks, devent->name.GetData(), devent->queuedObject->progEvent->ToString(false).GetData());        
+
+        durationEventStr.AppendFmt("<evt duration='%u' name='%s'>%s</evt>", ticks, devent->name.GetData(), devent->queuedObject->progEvent->ToString(false).GetData());
     }
-    
-    
+
+
     csString scriptStr;
     scriptStr.Format("<evts>%s%s</evts>", progressionEvents.GetDataSafe(), durationEventStr.GetDataSafe());
     targetUpdate->AddField("progression_script", scriptStr);
-    
+
     targetUpdate->AddField("time_connected_sec", chardata->GetTotalOnlineTime());
     targetUpdate->AddField("experience_points", chardata->GetExperiencePoints()); // Save W
     // X is saved when changed
@@ -837,14 +837,14 @@ bool psCharacterLoader::SaveCharacterData(psCharacter *chardata,gemActor *actor,
     // For all the skills we have update them. If the update fails it will automatically save a new
     // one to the database.
     for (i=0;i<PSSKILL_COUNT;i++)
-    {            
+    {
         if ( chardata->GetSkills()->GetSkill((PSSKILL)i)->dirtyFlag )
-        {            
+        {
             unsigned int skillY=chardata->GetSkills()->GetSkillKnowledge((PSSKILL)i);
             unsigned int skillZ=chardata->GetSkills()->GetSkillPractice((PSSKILL)i);
             unsigned int skillRank=chardata->GetSkills()->GetSkillRank((PSSKILL)i, false);
             UpdateCharacterSkill(chardata->GetCharacterID(),i,skillZ,skillY,skillRank);
-        }            
+        }
     }
 
 
@@ -859,10 +859,10 @@ bool psCharacterLoader::SaveCharacterData(psCharacter *chardata,gemActor *actor,
 
     if (!ClearCharacterSpell(chardata))
         Error3("Failed to clear spells for character id %u.  Error %s.",chardata->GetCharacterID(),db->GetLastError());
-    SaveCharacterSpell( chardata ); 
+    SaveCharacterSpell( chardata );
 
     UpdateQuestAssignments( chardata );
-       
+
     return true;
 }
 
@@ -891,7 +891,7 @@ unsigned int psCharacterLoader::FindCharacterID(const char *character_name, bool
     }
     else
     {
-        result = db->SelectSingleNumber("SELECT id from characters where name='%s' AND npc_master_id=0",escape.GetData());        
+        result = db->SelectSingleNumber("SELECT id from characters where name='%s' AND npc_master_id=0",escape.GetData());
     }
 
     if(result == QUERY_FAILED)
@@ -907,7 +907,7 @@ unsigned int psCharacterLoader::FindCharacterID(const char *character_name, bool
 unsigned int psCharacterLoader::FindCharacterID(unsigned int accountID, const char *character_name )
 {
     csString escape;
- 
+
     // Don't crash
     if (character_name==NULL)
         return 0;
@@ -915,11 +915,11 @@ unsigned int psCharacterLoader::FindCharacterID(unsigned int accountID, const ch
     if (strlen(character_name)>32)
         return 0;
     db->Escape(escape,character_name);
- 
+
     unsigned long result;
- 
+
     result = db->SelectSingleNumber("SELECT id FROM characters WHERE name='%s' AND account_id=%d", escape.GetData(), accountID);
- 
+
     if(result == QUERY_FAILED)
         return 0;
     else
@@ -935,8 +935,8 @@ psSaveCharEvent::psSaveCharEvent(gemActor* object)
     : psGameEvent(0,psSaveCharEvent::SAVE_PERIOD,"psCharSaveEvent")
 {
     this->actor = NULL;
-    
-    object->RegisterCallback( this );    
+
+    object->RegisterCallback( this );
     this->actor = object;
 }
 
@@ -944,13 +944,13 @@ psSaveCharEvent::~psSaveCharEvent()
 {
     if ( this->actor )
     {
-        this->actor->UnregisterCallback(this);    
+        this->actor->UnregisterCallback(this);
     }
 }
 
 void psSaveCharEvent::DeleteObjectCallback(iDeleteNotificationObject * object)
 {
-    if ( this->actor )        
+    if ( this->actor )
         this->actor->UnregisterCallback(this);
 
     this->actor = NULL;
@@ -962,5 +962,5 @@ void psSaveCharEvent::Trigger()
 {
     psServer::CharacterLoader.SaveCharacterData( actor->GetCharacterData(), actor );
     psSaveCharEvent *saver = new psSaveCharEvent(actor);
-    saver->QueueEvent();       
+    saver->QueueEvent();
 }

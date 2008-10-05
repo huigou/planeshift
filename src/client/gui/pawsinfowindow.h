@@ -49,18 +49,18 @@ public:
     bool PostSetup();
 
     virtual void HandleMessage(MsgEntry *msg);
-    
+
     virtual bool OnScroll( int direction, pawsScrollBar* widget );
     virtual bool OnButtonPressed( int mouseButton, int keyModifier, pawsWidget* reporter );
-    
+
     void SetStanceHighlight(int stance);
-    
+
 private:
     pawsTextBox     *targetName;
-    pawsProgressBar *main_hp;        
-    pawsProgressBar *main_mana;        
-    pawsProgressBar *main_stamina[2];        
-    pawsProgressBar *target_hp;        
+    pawsProgressBar *main_hp;
+    pawsProgressBar *main_mana;
+    pawsProgressBar *main_stamina[2];
+    pawsProgressBar *target_hp;
     pawsScrollBar   *kFactor;
     pawsTextBox     *kFactorPct;
     pawsButton      *stanceButton0;
@@ -76,7 +76,7 @@ private:
 
     int selectedstance;
 
-    enum baseStances { 
+    enum baseStances {
         BLOODY = 1,
         AGGRESSIVE,
         NORMAL,
@@ -87,5 +87,5 @@ private:
 CREATE_PAWS_FACTORY( pawsInfoWindow );
 
 
-#endif 
+#endif
 

@@ -56,7 +56,7 @@ void pawsInfoWindow::Show()
 {
     psStatDRMessage msg;
     psengine->GetMsgHandler()->SendMessage( msg.msg );
-    pawsControlledWindow::Show(); 
+    pawsControlledWindow::Show();
 }
 
 
@@ -101,7 +101,7 @@ bool pawsInfoWindow::PostSetup()
     kFactor->SetMaxValue(100.0);
     kFactor->SetCurrentValue(0.0);
     kFactor->SetTickValue(10.0);
-	kFactor->EnableValueLimit(true);
+    kFactor->EnableValueLimit(true);
 
     // without this the buttons are not displayed at start
     SetStanceHighlight(0);
@@ -135,7 +135,7 @@ bool pawsInfoWindow::OnScroll( int direction, pawsScrollBar* widget )
 {
     csString cmd;
 
-    Notify4(LOG_PAWS,"Scrolling widget %d dir %d to value %.1f\n", 
+    Notify4(LOG_PAWS,"Scrolling widget %d dir %d to value %.1f\n",
            widget->GetID(), direction,widget->GetCurrentValue());
 
     if (widget == kFactor)
@@ -191,7 +191,7 @@ csString pawsInfoWindow::stanceConvert(const uint ID)
         break;
     }
 }
-        
+
 
 void pawsInfoWindow::SetStanceHighlight(int stance)
 {
@@ -207,7 +207,7 @@ void pawsInfoWindow::SetStanceHighlight(int stance)
             bg = bg.Slice(0,bg.Length()-6);
             wdg->SetBackground(bg);
         }
-        else 
+        else
             wdg->SetBackground(bg);
     }
 

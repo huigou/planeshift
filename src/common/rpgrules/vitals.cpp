@@ -25,19 +25,19 @@ psVitalManager::psVitalManager()
 {
     for ( int x = 0; x < VITAL_COUNT; x++ )
     {
-        orig_vitals[x].value = 0.0f;     
+        orig_vitals[x].value = 0.0f;
         orig_vitals[x].max = 0.0f;
-		orig_vitals[x].maxModifier = 0.0f; 
-    }  
-    
+        orig_vitals[x].maxModifier = 0.0f;
+    }
+
     experiencePoints = 0;
     progressionPoints = 0;
     orig_vitals[VITAL_HITPOINTS].drRate  = HP_REGEN_RATE;
-    orig_vitals[VITAL_MANA].drRate       = MANA_REGEN_RATE;    
+    orig_vitals[VITAL_MANA].drRate       = MANA_REGEN_RATE;
 
     orig_vitals[VITAL_PYSSTAMINA].drRate    = 0;
     orig_vitals[VITAL_MENSTAMINA].drRate    = 0;
-    
+
     experiencePoints = 0;
     progressionPoints = 0;
     lastDRUpdate = 0;
@@ -64,11 +64,11 @@ void psVitalManager::SetOrigVitals()
 }
 
 psCharVital& psVitalManager::GetVital( int vital )
-{    
+{
     if ( vital >=0 && vital < VITAL_COUNT )
     {
         return vitals[vital];
-    }    
+    }
     else
     {
         static psCharVital dummy;

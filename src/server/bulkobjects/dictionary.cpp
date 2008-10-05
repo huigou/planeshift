@@ -14,8 +14,8 @@
 * You should have received a copy of the GNU General Public License
 * along with this program; if not, write to the Free Software
 * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
-* 
-* 
+*
+*
 */
 
 #include <psconfig.h>
@@ -104,20 +104,20 @@ bool NPCDialogDict::Initialize(iDataConnection *db)
                     if (LoadResponses(db))
                     {
                         return true;
-                    } 
-                    else 
+                    }
+                    else
                         Error1("*********************************\nFailed to load Responses\n****************************\n");
-                } 
-                else 
+                }
+                else
                     Error1("****************************\nFailed to load Triggers\n****************************\n");
             }
             else
                 Error1("****************************\nFailed to load Trigger Groups\n************************\n");
-        } 
-        else 
+        }
+        else
             Error1("****************************\nFailed to load Synonyms\n****************************\n");
     }
-    else 
+    else
         Error1("****************************\nFailed to load Disallowed words\n****************************\n");
     return false;
 }
@@ -141,7 +141,7 @@ bool NPCDialogDict::LoadDisallowedWords(iDataConnection *db)
             Error2("Found equal disallowed(%s) in disallowed_words\n",newword->GetData());
             delete newword;
         }
-        
+
     }
 
     return true;
@@ -158,7 +158,7 @@ NpcTerm* NPCDialogDict::AddTerm(const char *term)
         delete newphrase;
         return NULL;
     }
-    
+
     return newphrase;
 }
 
@@ -201,7 +201,7 @@ void NPCDialogDict::AddWords(csString& trigger)
       return;
 
     while (word.Length())
-    {        
+    {
         size_t pos = 0;
         word = GetWordNumber(trigger,wordnum++,&pos);
         word.Downcase();
@@ -213,7 +213,7 @@ void NPCDialogDict::AddWords(csString& trigger)
         if (disallowed)
         {
             // Comment out warning here because disallowed words are actually skipped
-            // to make them *allowed* for Settings people to use to make their writing 
+            // to make them *allowed* for Settings people to use to make their writing
             // more natural while avoiding recording them in the actual triggers.
             //CPrintf(CON_DEBUG,"Skipping disallowed word '%s' in trigger '%s' at position %d.\n",
             //      word.GetData(), trigger.GetData(), pos);
@@ -224,7 +224,7 @@ void NPCDialogDict::AddWords(csString& trigger)
             trigger.LTrim();
             wordnum--;  // Back up a word since we took one out.
             found = true; // Mark that we found a disallowed word.
-            continue; 
+            continue;
         }
 
         NpcTerm *found, key(word);
@@ -260,7 +260,7 @@ int NPCDialogDict::AddTriggerGroupEntry(int id,const char *txt, int equivID)
     static int NextID=9000000;
 
     NpcTriggerGroupEntry *parent=NULL;
-    
+
     if (id==-1)
         id = NextID++;
 
@@ -344,7 +344,7 @@ bool NPCDialogDict::LoadTriggers(iDataConnection *db)
         CPrintf(CON_ERROR, db->GetLastError());
         return false;
     }
-    
+
     for (unsigned int i=0; i<result.Count(); i++)
     {
         NpcTrigger *newtrig = new NpcTrigger;
@@ -411,8 +411,8 @@ bool NPCDialogDict::LoadResponses(iDataConnection *db)
             Error2("Failed to load trigger for resp: %d\n",newresp->id);
             return false;
         }
-        
-        
+
+
 
         if (responses.Insert(newresp,TREE_OWNS_DATA))
         {
@@ -470,8 +470,8 @@ NpcResponse *NPCDialogDict::FindResponse(gemNPC * npc,
         Debug1(LOG_NPC, client->GetClientNum(),"NPCDialogDict::FindResponse no trigger found");
         return NULL;
     }
-    
-     
+
+
     csArray<int> availableResponseList;
 
     // Check if not all responses is blocked(Not available in quests, Prequests not fullfitted,...)
@@ -562,7 +562,7 @@ bool NPCDialogDict::AddTrigger( iDataConnection* db, int triggerID , int respons
 
     if ( (trig = triggers.Insert( newtrig, TREE_OWNS_DATA )) )
     {
-        // There are already a trigger with this combination of 
+        // There are already a trigger with this combination of
         // triggertext, KA, and prior respose so pushing the trigger
         // response on the same trigger.
         CS_ASSERT(responseID != -1);
@@ -570,7 +570,7 @@ bool NPCDialogDict::AddTrigger( iDataConnection* db, int triggerID , int respons
 
         delete newtrig;
     }
-    
+
     return true;
 }
 
@@ -650,7 +650,7 @@ NpcResponse *NPCDialogDict::AddResponse(const char *response_text,
                 delete newresp;
                 return NULL;
             }
-            
+
             if (end - start > 1)
             {
                 csString actionSegment;
@@ -703,14 +703,14 @@ NpcResponse *NPCDialogDict::AddResponse(const char *response_text,
     else
         opStr.Clear();
     newresp->ParseResponseScript(opStr.GetDataSafe() );
-    
+
     if (responses.Insert(newresp,TREE_OWNS_DATA))
     {
         Error2("Found equal response(%s) in responses\n",newresp->response[0].GetData());
         delete newresp;
         return NULL;
     }
-    
+
 
     return newresp;  // Make response available for script additions
 }
@@ -770,7 +770,7 @@ NpcTrigger *NPCDialogDict::AddTrigger(const char *k_area,const char *mytrigger,i
         NpcTrigger* oldtrig;
         if ( (oldtrig = triggers.Insert( newtrig, TREE_OWNS_DATA )) )
         {
-            // There are already a trigger with this combination of 
+            // There are already a trigger with this combination of
             // triggertext, KA, and prior respose so pushing the trigger
             // response on the same trigger.
             int respID = newtrig->responseIDlist.Top();
@@ -780,7 +780,7 @@ NpcTrigger *NPCDialogDict::AddTrigger(const char *k_area,const char *mytrigger,i
             delete newtrig;
             return oldtrig;
         }
-        
+
 
         return newtrig;
     }
@@ -861,34 +861,34 @@ void NPCDialogDict::Print(const char *area)
     CPrintf(CON_CMDOUTPUT ,"NPC Dictionary\n");
     CPrintf(CON_CMDOUTPUT ,"\n");
 
-	if (area!=NULL && strlen(area)) 
-	{
-		CPrintf(CON_CMDOUTPUT ,"----------- Triggers/Responses of area %s----------\n",area);
-		BinaryRBIterator<NpcTrigger> trig_iter(&triggers);
-		NpcTrigger * trig;
-		for (trig = trig_iter.First(); trig; trig = ++trig_iter)
-		{
-			// filter on given area
-			if (area!=NULL && strcasecmp(trig->area.GetDataSafe(),area)!=0)
-				continue;
+    if (area!=NULL && strlen(area))
+    {
+        CPrintf(CON_CMDOUTPUT ,"----------- Triggers/Responses of area %s----------\n",area);
+        BinaryRBIterator<NpcTrigger> trig_iter(&triggers);
+        NpcTrigger * trig;
+        for (trig = trig_iter.First(); trig; trig = ++trig_iter)
+        {
+            // filter on given area
+            if (area!=NULL && strcasecmp(trig->area.GetDataSafe(),area)!=0)
+                continue;
 
-			PrintTrigger(trig);
-			CPrintf(CON_CMDOUTPUT ,"\n");
+            PrintTrigger(trig);
+            CPrintf(CON_CMDOUTPUT ,"\n");
 
-			for (size_t i = 0; i < trig->responseIDlist.GetSize(); i++)
-			{
-				NpcResponse * resp = dict->FindResponse(trig->responseIDlist[i]);
-				if (resp)
-				{
-					PrintResponse(resp);
-				}
-				else
-					CPrintf(CON_CMDOUTPUT ,"Response [%d]: Error. Response not found!!!\n",trig->responseIDlist[i]);
-			}
-			CPrintf(CON_CMDOUTPUT ,"\n");
-		}
-		return;
-	}
+            for (size_t i = 0; i < trig->responseIDlist.GetSize(); i++)
+            {
+                NpcResponse * resp = dict->FindResponse(trig->responseIDlist[i]);
+                if (resp)
+                {
+                    PrintResponse(resp);
+                }
+                else
+                    CPrintf(CON_CMDOUTPUT ,"Response [%d]: Error. Response not found!!!\n",trig->responseIDlist[i]);
+            }
+            CPrintf(CON_CMDOUTPUT ,"\n");
+        }
+        return;
+    }
 
     CPrintf(CON_CMDOUTPUT ,"----------- All Triggers ----------\n");
     BinaryRBIterator<NpcTrigger> trig_iter(&triggers);
@@ -910,7 +910,7 @@ void NPCDialogDict::Print(const char *area)
     {
         PrintResponse(resp);
     }
-    
+
     CPrintf(CON_CMDOUTPUT ,"\n");
 
     CPrintf(CON_CMDOUTPUT ,"----------- All Terms ---------\n");
@@ -920,7 +920,7 @@ void NPCDialogDict::Print(const char *area)
     {
         term->Print();
     }
-    
+
     CPrintf(CON_CMDOUTPUT ,"\n");
 }
 
@@ -930,7 +930,7 @@ bool NpcTerm::IsNoun()
 
     if(!baseform)
         baseform = const_cast<char *>(term.GetData());
-    
+
     return in_wn(baseform, NOUN) != 0;
 }
 
@@ -968,7 +968,7 @@ void NpcTerm::BuildHypernymList()
         current = current->nextss;
         sense[sensecount] = current;
     }
-    
+
     // Perform breadth-first search of hypernyms/word senses
     do
     {
@@ -978,7 +978,7 @@ void NpcTerm::BuildHypernymList()
         {
             if(sense[j] == NULL)
                 continue;
-            
+
             sense[j] = sense[j]->ptrlist;
 
             // We have found a hypernym
@@ -1022,7 +1022,7 @@ bool NpcTrigger::Load(iResultRow& row)
     priorresponseID = row.GetInt("prior_response_required");
     // Both 0 and -1 can be used for no precodition, make sure we use -1
     if (priorresponseID == 0) priorresponseID = -1;
-    
+
     return true;
 }
 
@@ -1039,7 +1039,7 @@ bool NpcTrigger::HaveAvailableResponses(Client * client, gemNPC * npc, NPCDialog
             {
                 if (resp->quest && !resp->quest->Active())
                 {
-                    haveAvail = false;    
+                    haveAvail = false;
                 }
                 // Check if all prerequisites are true, and available(no lockout)
                 else if ((!resp->prerequisite || client->GetCharacterData()->CheckResponsePrerequisite(resp)) &&
@@ -1062,7 +1062,7 @@ bool NpcTrigger::HaveAvailableResponses(Client * client, gemNPC * npc, NPCDialog
         }
     }
 
-    return haveAvail; 
+    return haveAvail;
 }
 
 int NpcTrigger::GetRandomResponse( const csArray<int> &availableResponseList )
@@ -1075,7 +1075,7 @@ int NpcTrigger::GetRandomResponse( const csArray<int> &availableResponseList )
 
 bool NpcTrigger::operator==(NpcTrigger& other) const
 {
-    return (area==other.area && 
+    return (area==other.area &&
             trigger==other.trigger &&
             priorresponseID==other.priorresponseID);
 };
@@ -1086,15 +1086,15 @@ bool NpcTrigger::operator<(NpcTrigger& other) const
         return true;
     if (strcmp(area,other.area)>0)
         return false;
-    
+
     if (strcmp(trigger,other.trigger)<0)
         return true;
     if (strcmp(trigger,other.trigger)>0)
         return false;
-    
+
     if (priorresponseID<other.priorresponseID)
         return true;
-    
+
     return false;
 };
 
@@ -1124,7 +1124,7 @@ bool NpcResponse::Load(iResultRow& row)
     type = NpcResponse::VALID_RESPONSE;
 
     // if a quest_id is specified in this response,
-    // auto-generate a script op to make sure this 
+    // auto-generate a script op to make sure this
     // quest is active for the player before responding
     int quest_id = row.GetInt("quest_id");
     if (quest_id)
@@ -1142,7 +1142,7 @@ bool NpcResponse::Load(iResultRow& row)
     if (!ParsePrerequisiteScript(prereq,true))
     {
         Error3("Failed to decode response %d prerequisite: '%s'",id,prereq.GetDataSafe());
-        
+
         return false;
     }
 
@@ -1165,7 +1165,7 @@ const char *NpcResponse::GetResponse()
 
             if (i < MAX_RESP) which = i; // Loop through on the last 5 attempts
                                          // just to be sure we find one.
-            
+
             if (response[which].Length())
                 return response[which];
         }
@@ -1223,7 +1223,7 @@ bool NpcResponse::ParseResponseScript(const char *xmlstr,bool insertBeginning)
 
         // Some Responses need post load functions.
         bool postLoadAssignQuest = false;
-        
+
 
         ResponseOperation * op = NULL;
 
@@ -1394,12 +1394,12 @@ bool NpcResponse::ParsePrerequisiteScript(const char *xmlstr,bool insertBeginnin
     {
         return false;
     }
-    
+
     if (op)
     {
         return AddPrerequisite(op,insertBeginning);
     }
-    
+
     return false;
 }
 
@@ -1439,7 +1439,7 @@ bool NpcResponse::CheckPrerequisite(psCharacter * character)
 {
     if (prerequisite)
         return prerequisite->Check(character);
-    
+
     return true; // No prerequisite so its ok to do this quest
 }
 
@@ -1448,7 +1448,7 @@ bool NpcResponse::CheckPrerequisite(psCharacter * character)
 /////////// Training ///////////
 ////////////////////////////////
 
-/** Checks if training is possible (enough money to pay etc.) 
+/** Checks if training is possible (enough money to pay etc.)
   * If not, tells the user why */
 bool CheckTraining(gemNPC *who, Client *target, psSkillInfo* skill)
 {
@@ -1462,19 +1462,19 @@ bool CheckTraining(gemNPC *who, Client *target, psSkillInfo* skill)
 
     psCharacter * character = target->GetCharacterData();
 
-    CPrintf(CON_DEBUG, "    PP available: %d\n", character->GetProgressionPoints() );
-            
+    CPrintf(CON_DEBUG, "    PP available: %u\n", character->GetProgressionPoints() );
+
     // Test for progression points
     if (character->GetProgressionPoints() <= 0)
     {
         csString str;
-		csString downcase = skill->name.Downcase();
+        csString downcase = skill->name.Downcase();
         str.Format("You don't have any progression points to be trained in %s, Sorry",downcase.GetData());
         who->Say(str,target,false,timeDelay);
         return false;
     }
 
-    // Test for money      
+    // Test for money
     if (skill->price > character->Money())
     {
         csString str;
@@ -1483,14 +1483,14 @@ bool CheckTraining(gemNPC *who, Client *target, psSkillInfo* skill)
         who->Say(str,target,false,timeDelay);
         return false;
     }
-    
+
     if ( !character->CanTrain( skill->id ) )
     {
         csString str;
         csString downcase = skill->name.Downcase();
         str.Format("You can't train %s higher yet",downcase.GetData());
         who->Say(str,target,false,timeDelay);
-        return false;            
+        return false;
     }
     return true;
 }
@@ -1508,26 +1508,26 @@ public:
         this->target  =   target;
         this->skill   =   skill;
     }
-    
+
     virtual void HandleAnswer(const csString & answer)
     {
         if (answer != "yes")
             return;
-        
+
         // We better check again, if everything is still ok
         if (!CheckTraining(who, target, skill))
             return;
-        
+
         psCharacter * character = target->GetCharacterData();
-        
+
         character->UseProgressionPoints(1);
-        character->SetMoney(character->Money()-skill->price);            
-        character->Train(skill->id,1);            
-                
+        character->SetMoney(character->Money()-skill->price);
+        character->Train(skill->id,1);
+
     csString downcase = skill->name.Downcase();
         psserver->SendSystemInfo(target->GetClientNum(), "You've received some %s training", downcase.GetData());
     }
-    
+
 protected:
     gemNPC *who;
     Client *target;
@@ -1544,7 +1544,7 @@ bool SayResponseOp::Load(iDocumentNode *node)
     {
         sayWhat = new csString(node->GetAttributeValue("text"));
     }
-   
+
     return true;
 }
 
@@ -1558,19 +1558,19 @@ csString SayResponseOp::GetResponseScript()
 bool SayResponseOp::Run(gemNPC *who, Client *target,NpcResponse *owner,csTicks& timeDelay)
 {
     psString response;
-    
+
     if (sayWhat)
         response = *sayWhat;
     else
         response = owner->GetResponse();
-    
-    who->GetNPCDialogPtr()->SubstituteKeywords(target,response); 
+
+    who->GetNPCDialogPtr()->SubstituteKeywords(target,response);
 
     if (target->GetSecurityLevel() >= GM_DEVELOPER)
         response.AppendFmt(" (%s)",owner->triggerText.GetDataSafe() );
 
     who->Say(response,target,saypublic,timeDelay);
-    
+
     return true;
 }
 
@@ -1658,7 +1658,7 @@ bool VerifyQuestCompletedResponseOp::Run(gemNPC *who, Client *target,NpcResponse
     bool avail = target->GetCharacterData()->CheckQuestCompleted(quest);
     if (!avail)
     {
-        who->GetNPCDialogPtr()->SubstituteKeywords(target,error_msg); 
+        who->GetNPCDialogPtr()->SubstituteKeywords(target,error_msg);
         who->Say(error_msg,target,false,timeDelay);
         return false;
     }
@@ -1781,7 +1781,7 @@ bool AssignQuestResponseOp::Load(iDocumentNode *node)
     quest[2] = CacheManager::GetSingleton().GetQuestByName( node->GetAttributeValue("q3") );
     quest[3] = CacheManager::GetSingleton().GetQuestByName( node->GetAttributeValue("q4") );
     quest[4] = CacheManager::GetSingleton().GetQuestByName( node->GetAttributeValue("q5") );
-    
+
     if (!quest[0])
     {
         Error2("Quest %s was not found in Assign Quest script op! You must have at least one!",node->GetAttributeValue("q1") );
@@ -1815,7 +1815,7 @@ csString AssignQuestResponseOp::GetResponseScript()
         {
             resp.AppendFmt(" q%d=\"%s\"",n+1,quest[n]->GetName());
         }
-        
+
     }
     if (!timeout_msg.IsEmpty())
     {
@@ -1881,13 +1881,13 @@ csString FireEventResponseOp::GetResponseScript()
 {
     psString resp = GetName();
     return resp;
-}    
+}
 
 bool FireEventResponseOp::Run(gemNPC *who, Client *target,NpcResponse *owner,csTicks& timeDelay)
 {
     psCharacter *character = target->GetActor()->GetCharacterData();
-    character->FireEvent(event);        
-    
+    character->FireEvent(event);
+
     return true;
 }
 
@@ -1905,7 +1905,7 @@ bool CheckQuestTimeoutOp::Run(gemNPC *who, Client *target,NpcResponse *owner,csT
     if (!avail)
     {
         psString timeOutMsg = quest_op->GetTimeoutMsg();
-        who->GetNPCDialogPtr()->SubstituteKeywords(target,timeOutMsg); 
+        who->GetNPCDialogPtr()->SubstituteKeywords(target,timeOutMsg);
         who->Say(timeOutMsg,target,false,timeDelay);
         return false;
     }
@@ -1947,7 +1947,7 @@ bool CompleteQuestResponseOp::Run(gemNPC *who, Client *target,NpcResponse *owner
 {
     if (!psserver->questmanager->Complete(quest,target))
     {
-        who->GetNPCDialogPtr()->SubstituteKeywords(target,error_msg); 
+        who->GetNPCDialogPtr()->SubstituteKeywords(target,error_msg);
         who->Say(error_msg,target,false,timeDelay);
         return false;
     }
@@ -1995,7 +1995,7 @@ csString GiveItemResponseOp::GetResponseScript()
     {
         resp.AppendFmt(" count=\"%d\"",count);
     }
-    
+
     return resp;
 }
 
@@ -2111,7 +2111,7 @@ bool RunScriptResponseOp::Run(gemNPC *who, Client *target, NpcResponse *owner, c
             return true;
         }
     }
-    
+
     MathScriptVar *var;
     var = event->FindOrCreateVariable("Param0");
     if (var)
@@ -2122,7 +2122,7 @@ bool RunScriptResponseOp::Run(gemNPC *who, Client *target, NpcResponse *owner, c
     var = event->FindOrCreateVariable("Param2");
     if (var)
         var->SetValue(p2);
-    
+
     event->Run(target->GetActor(), who, target->GetCharacterData()->Inventory().GetItemHeld());
 
     return true;
@@ -2204,7 +2204,7 @@ bool OfferRewardResponseOp::Load(iDocumentNode *node)
     while (iter->HasNext())
     {
         csRef<iDocumentNode> node = iter->Next();
-        psItemStats* itemstat;    
+        psItemStats* itemstat;
         // get item
         uint32 itemID = (uint32)node->GetAttributeValueAsInt("id");
         if (itemID)
@@ -2219,7 +2219,7 @@ bool OfferRewardResponseOp::Load(iDocumentNode *node)
             return false;
         }
         // add this item to the list
-        offer.Push(itemstat);    
+        offer.Push(itemstat);
     }
     return true;
 }
@@ -2306,7 +2306,7 @@ bool IntroduceResponseOp::Run(gemNPC *who, Client *target,NpcResponse *owner,csT
             character->Introduce(((gemNPC*)obj)->GetCharacterData());
             obj->Send(target->GetClientNum(), false, false);
             psserver->SendSystemInfo(target->GetClientNum(), "You now know %s",((gemNPC*)obj)->GetName());
-        }            
+        }
     }
     else
     {
@@ -2314,7 +2314,7 @@ bool IntroduceResponseOp::Run(gemNPC *who, Client *target,NpcResponse *owner,csT
         who->Send(target->GetClientNum(), false, false);
         psserver->SendSystemInfo(target->GetClientNum(), "You now know %s",who->GetName());
     }
-    
+
     return true;
 }
 

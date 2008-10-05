@@ -1,6 +1,8 @@
 ﻿*** 2008-10-05 by Stefano Angeleri
 - Fixed the fact that the server admin messages were being filtered in the main tab
-- Identation/trailing spaces fixes
+- Fixed FS#2342 by changing all the misuses of int to unsigned int for progression points
+  and experience
+- Identation/trailing spaces/comment improvement/fixes in various files
 
 *** 2008-10-04 by Stefano Angeleri
 - Fixed additional problems stated by kerol in FS#2324 - setskill has insufficient system output

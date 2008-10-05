@@ -1,5 +1,5 @@
 /*
- * pawsskillwindow.cpp 
+ * pawsskillwindow.cpp
  *
  * Copyright (C) 2003 Atomic Blue (info@planeshift.it, http://www.atomicblue.org)
  *
@@ -40,16 +40,16 @@
 #include "paws/pawsprogressbar.h"
 #include "gui/pawscontrolwindow.h"
 
-#define BTN_BUY     100
-#define BTN_FILTER  101
+#define BTN_BUY       100
+#define BTN_FILTER    101
 //#define BTN_QUIT    102
-#define BTN_EDIT    102 //Edit description
+#define BTN_EDIT      102 ///< Edit description
 #define BTN_BUYLVL    103
-#define BTN_STATS    1000 //Stats button for the tab panel
-#define BTN_COMBAT   1001 //Combat button for the tab panel
-#define BTN_MAGIC    1002 //Magic button for the tab panel
-#define BTN_JOBS     1003 //Jobs button for the tab panel
-#define BTN_VARIOUS  1004 //Various button for the tab panel
+#define BTN_STATS    1000 ///< Stats button for the tab panel
+#define BTN_COMBAT   1001 ///< Combat button for the tab panel
+#define BTN_MAGIC    1002 ///< Magic button for the tab panel
+#define BTN_JOBS     1003 ///< Jobs button for the tab panel
+#define BTN_VARIOUS  1004 ///< Various button for the tab panel
 #define BTN_FACTION  1005
 #define MAX_CAT         4
 
@@ -98,7 +98,7 @@ bool pawsSkillWindow::PostSetup()
     {
         return false;
     }
-    
+
     msgHandler = psengine->GetMsgHandler();
     if ( !msgHandler->Subscribe( this, MSGTYPE_GUISKILL ) )
     {
@@ -128,7 +128,7 @@ bool pawsSkillWindow::PostSetup()
 
     factionList        = (pawsListBox*)FindWidget("FactionList");
     factionsDescription = (pawsMultiLineTextBox*)FindWidget("FactionDescription");
-    
+
     hpBar = dynamic_cast <pawsProgressBar*> (FindWidget("HPBar"));
     manaBar = dynamic_cast <pawsProgressBar*> (FindWidget("ManaBar"));
     pysStaminaBar = dynamic_cast <pawsProgressBar*> (FindWidget("PysStaminaBar"));
@@ -142,9 +142,9 @@ bool pawsSkillWindow::PostSetup()
     experiencePerc = dynamic_cast <pawsTextBox*> (FindWidget("ExperiencePerc"));
 
     if ( !hpBar || !manaBar || !pysStaminaBar || !menStaminaBar || !experienceBar
-         || !hpFrac || !manaFrac || !pysStaminaFrac || !menStaminaFrac || !experiencePerc ) 
-    { 
-        return false; 
+         || !hpFrac || !manaFrac || !pysStaminaFrac || !menStaminaFrac || !experiencePerc )
+    {
+        return false;
     }
 
     hpBar->SetTotalValue(1);
@@ -152,7 +152,7 @@ bool pawsSkillWindow::PostSetup()
     pysStaminaBar->SetTotalValue(1);
     menStaminaBar->SetTotalValue(1);
     experienceBar->SetTotalValue(1);
-    
+
     currentTab =0;
     previousTab =0;
 
@@ -176,7 +176,7 @@ bool pawsSkillWindow::SetupDoll()
 
     // Set the doll view
     widget->View( mesh );
-    
+
     // Register this doll for updates
     widget->SetID( actor->GetID() );
 
@@ -188,10 +188,10 @@ bool pawsSkillWindow::SetupDoll()
     }
 
     charApp->SetMesh(widget->GetObject());
-    
+
     charApp->ApplyTraits(actor->traits);
     charApp->ApplyEquipment(actor->equipment);
-    
+
     widget->EnableMouseControl(true);
 
     //return (a && e);
@@ -206,7 +206,7 @@ void pawsSkillWindow::HandleFactionMsg(MsgEntry* me)
     if ( factMsg.cmd == psFactionMessage::MSG_FULL_LIST )
     {
         // Flag that we have received our faction information.
-        factRequest = true; 
+        factRequest = true;
 
         factions.DeleteAll();
         factionList->Clear();
@@ -214,14 +214,14 @@ void pawsSkillWindow::HandleFactionMsg(MsgEntry* me)
         //Put all factions in the list.
         for ( size_t z = 0; z < factMsg.factionInfo.GetSize(); z++ )
         {
-            FactionRating *fact = new FactionRating; 
+            FactionRating *fact = new FactionRating;
             fact->name = factMsg.factionInfo[z]->faction;
             fact->rating = factMsg.factionInfo[z]->rating;
-            factions.Push(fact);                              
+            factions.Push(fact);
 
-            pawsListBoxRow* row = factionList->NewRow();                
+            pawsListBoxRow* row = factionList->NewRow();
             pawsTextBox* name = dynamic_cast <pawsTextBox*> (row->GetColumn(0));
-            if (name == NULL) 
+            if (name == NULL)
             {
                 return;
             }
@@ -229,13 +229,13 @@ void pawsSkillWindow::HandleFactionMsg(MsgEntry* me)
             name->SetText( fact->name );
 
             pawsTextBox* rank = dynamic_cast <pawsTextBox*> (row->GetColumn(1));
-            if (rank == NULL) 
+            if (rank == NULL)
             {
                 return;
             }
 
             ratingStr.Format("%d", fact->rating);
-            rank->SetText(ratingStr);           
+            rank->SetText(ratingStr);
         }
     }
     else if (factRequest)   // ignore MSG_UPDATE if weve not had full list first
@@ -243,7 +243,7 @@ void pawsSkillWindow::HandleFactionMsg(MsgEntry* me)
         //Put all the faction updates into the gui.
         for ( size_t z = 0; z < factMsg.factionInfo.GetSize(); z++ )
         {
-            bool found = false;         
+            bool found = false;
 
             // Find out where that faction is in our list
             size_t idx = 0;
@@ -253,11 +253,11 @@ void pawsSkillWindow::HandleFactionMsg(MsgEntry* me)
                 {
                     factions[t]->rating = factMsg.factionInfo[z]->rating;
                     found = true;
-                    idx = t;    
+                    idx = t;
                     break;
                 }
             }
-            
+
             // If it was found above then we can just update it.
             if (found)
             {
@@ -265,28 +265,28 @@ void pawsSkillWindow::HandleFactionMsg(MsgEntry* me)
                 if (row)
                 {
                     pawsTextBox* rank = dynamic_cast <pawsTextBox*> (row->GetColumn(1));
-                    if (rank == NULL) 
+                    if (rank == NULL)
                     {
                         return;
                     }
-                    
+
                     ratingStr.Format("%d", factions[idx]->rating);
-                    rank->SetText(ratingStr);           
+                    rank->SetText(ratingStr);
                 }
             }
             else
             {
-                // We don't know about this faction level yet so add it in. 
-                FactionRating *fact = new FactionRating; 
+                // We don't know about this faction level yet so add it in.
+                FactionRating *fact = new FactionRating;
                 fact->name = factMsg.factionInfo[z]->faction;
                 fact->rating = factMsg.factionInfo[z]->rating;
-                factions.Push(fact);                                            
+                factions.Push(fact);
 
-                pawsListBoxRow* row = factionList->NewRow();                
+                pawsListBoxRow* row = factionList->NewRow();
 
                 // Set the name of the faction
                 pawsTextBox* name = dynamic_cast <pawsTextBox*> (row->GetColumn(0));
-                if (name == NULL) 
+                if (name == NULL)
                 {
                     return;
                 }
@@ -294,13 +294,13 @@ void pawsSkillWindow::HandleFactionMsg(MsgEntry* me)
 
                 // Set the value of the faction.
                 pawsTextBox* rank = dynamic_cast <pawsTextBox*> (row->GetColumn(1));
-                if (rank == NULL) 
+                if (rank == NULL)
                 {
                     return;
                 }
 
                 ratingStr.Format("%d", fact->rating);
-                rank->SetText(ratingStr);           
+                rank->SetText(ratingStr);
             }
         }
     }
@@ -319,13 +319,13 @@ void pawsSkillWindow::HandleMessage( MsgEntry* me )
         case MSGTYPE_GUISKILL:
         {
             psGUISkillMessage incoming(me);
-       
+
             switch (incoming.command)
             {
                 case psGUISkillMessage::SKILL_LIST:
                 {
                     skillString = "no";
-                    if (!IsVisible() && incoming.openWindow) 
+                    if (!IsVisible() && incoming.openWindow)
                     {
                         Show();
                     }
@@ -338,15 +338,15 @@ void pawsSkillWindow::HandleMessage( MsgEntry* me )
                     HandleSkillList(&skillCache, incoming.focusSkill, &selectedRowIdx);
 
                     SelectSkill(selectedRowIdx, incoming.skillCat);
-            
+
                     hitpointsMax = incoming.hitpointsMax;
                     manaMax = incoming.manaMax;
                     physStaminaMax = incoming.physStaminaMax;
                     menStaminaMax = incoming.menStaminaMax;
-            
+
                     break;
                 }
-        
+
                 case psGUISkillMessage::DESCRIPTION:
                 {
                     HandleSkillDescription(incoming.commandData);
@@ -371,7 +371,7 @@ void pawsSkillWindow::Close()
 }
 
 bool pawsSkillWindow::OnButtonPressed( int mouseButton, int keyModifier, pawsWidget* widget )
-{       
+{
     switch ( widget->GetID() )
     {
         case BTN_FILTER:
@@ -380,7 +380,7 @@ bool pawsSkillWindow::OnButtonPressed( int mouseButton, int keyModifier, pawsWid
             HandleSkillList(&skillCache);
             return true;
         }
-        
+
         case BTN_BUY:
         {
             BuySkill();
@@ -406,7 +406,7 @@ bool pawsSkillWindow::OnButtonPressed( int mouseButton, int keyModifier, pawsWid
         case BTN_MAGIC:
         case BTN_JOBS:
         case BTN_VARIOUS:
-        {   
+        {
             previousTab = currentTab; //Keep the selection if we are hitting the same tab where we are.
             currentTab = widget->GetID() - 1000;
             if (previousTab != currentTab)
@@ -426,7 +426,7 @@ void pawsSkillWindow::SelectSkill(int skill, int cat)
     {
         return;
     }
- 
+
     //Let's see which category the skill belongs to
     switch(cat)
     {
@@ -446,7 +446,7 @@ void pawsSkillWindow::SelectSkill(int skill, int cat)
             break;
         }
     case 3://Jobs Skills
-        { 
+        {
             jobsSkillList->Select(unsortedSkills[skill]);
             break;
         }
@@ -498,7 +498,7 @@ void pawsSkillWindow::HandleSkillList(psSkillCache *skills, int selectedNameId, 
                 break;
             }
             case 1://Combat skills
-            {        
+            {
                 HandleSkillCategory(combatSkillList, "CombatIndicator", "Combat Button", skill, idx);
                 break;
             }
@@ -522,17 +522,17 @@ void pawsSkillWindow::HandleSkillList(psSkillCache *skills, int selectedNameId, 
         {
             combatSkillList->MoveRow(combatSkillList->GetRowCount()-1,stati);
             stati++;
-        }*/      
+        }*/
     }
 
     if (!foundSelected)
     {
-        selectedSkill.Clear();       
+        selectedSkill.Clear();
     }
 }
 
 void pawsSkillWindow::HandleSkillDescription( csString& description )
-{   
+{
     /* Example message:
     <DESCRIPTION NAME="Climbing" DESC="This skill enable user to climb." />
     */
@@ -621,7 +621,7 @@ void pawsSkillWindow::HandleSkillDescription( csString& description )
         case 5://Factions
         {
             factionsDescription->SetText(descStr);
-            break;            
+            break;
         }
     }
 }
@@ -653,10 +653,10 @@ void pawsSkillWindow::BuyMaxSkill()
     csStringID skillId = psengine->FindCommonStringId(selectedSkill);
     if (skillId == csInvalidStringID)
     {
-        PawsManager::GetSingleton().CreateWarningBox("You have to select a skill to buy."); 
+        PawsManager::GetSingleton().CreateWarningBox("You have to select a skill to buy.");
         return;
     }
-    
+
     psSkillCacheItem* currSkill = skillCache.getItemBySkillId(skillId);
     unsigned short possibleTraining = currSkill->getKnowledgeCost() - currSkill->getKnowledge();
 
@@ -673,14 +673,14 @@ void pawsSkillWindow::BuySkill()
 {
     if (selectedSkill.IsEmpty())
     {
-        PawsManager::GetSingleton().CreateWarningBox("You have to select a skill to buy."); 
+        PawsManager::GetSingleton().CreateWarningBox("You have to select a skill to buy.");
         return;
     }
 
     csStringID skillId = psengine->FindCommonStringId(selectedSkill);
     if (skillId == csInvalidStringID)
     {
-        PawsManager::GetSingleton().CreateWarningBox("You have to select a skill to buy."); 
+        PawsManager::GetSingleton().CreateWarningBox("You have to select a skill to buy.");
         return;
     }
     psSkillCacheItem* currSkill = skillCache.getItemBySkillId(skillId);
@@ -702,8 +702,8 @@ void pawsSkillWindow::Show()
         psGUISkillMessage outgoing(psGUISkillMessage::REQUEST, "");
         msgHandler->SendMessage(outgoing.msg);
     }
-    
-    // If this is the first time the window is open then we need to get our 
+
+    // If this is the first time the window is open then we need to get our
     // full list of faction information.
     if (!factRequest)
     {
@@ -787,7 +787,7 @@ void pawsSkillWindow::OnListAction( pawsListBox* widget, int status )
                 case 5://Factions
                 {
                     factionsDescription->SetText(desc->GetDescription());
-                    break;            
+                    break;
                 }
             }
         }
@@ -852,7 +852,7 @@ void pawsSkillWindow::HandleSkillCategory(pawsListBox* tabNameSkillList,
     }
 
     pawsListBoxRow* row = tabNameSkillList->NewRow();
-                
+
     pawsTextBox* name = dynamic_cast <pawsTextBox*> (row->GetColumn(0));
     if (name == NULL)
     {
@@ -880,7 +880,7 @@ void pawsSkillWindow::HandleSkillCategory(pawsListBox* tabNameSkillList,
     {
         return;
     }
-    
+
     pawsSkillIndicator * indicator = dynamic_cast <pawsSkillIndicator*> (indCol->FindWidget(indWidget));
     if (indicator == NULL)
     {
@@ -922,7 +922,7 @@ pawsSkillIndicator::pawsSkillIndicator()
     g2d = PawsManager::GetSingleton().GetGraphics2D();
 }
 
-int pawsSkillIndicator::GetRelCoord(int pt)
+unsigned int pawsSkillIndicator::GetRelCoord(unsigned int pt)
 {
     if (yCost + zCost == 0) // divide-by-zero guard
     {
@@ -940,7 +940,7 @@ int pawsSkillIndicator::GetRelCoord(int pt)
     }
 }
 
-void pawsSkillIndicator::DrawSkillProgressBar(int x, int y, int width, int height, 
+void pawsSkillIndicator::DrawSkillProgressBar(int x, int y, int width, int height,
                                 int start_r, int start_g, int start_b)
 {
     pawsProgressBar::DrawProgressBar(
@@ -952,11 +952,11 @@ void pawsSkillIndicator::Draw()
 {
     csRect sf = screenFrame;
 
-    int t1;
+    unsigned int t1;
 
     if (y < yCost)
     {
-        if (GetRelCoord(x) + GetRelCoord(y) < sf.Width())
+        if (GetRelCoord(x) + GetRelCoord(y) < (unsigned int) sf.Width())
         {
             t1 = GetRelCoord(x) + GetRelCoord(y);
         }
@@ -964,12 +964,12 @@ void pawsSkillIndicator::Draw()
         {
             t1 = sf.Width();
         }
-   
+
         int split = GetRelCoord(yCost);
         DrawSkillProgressBar(sf.xmin, sf.ymin, split, sf.Height(), 180, 180, 30);
         DrawSkillProgressBar(sf.xmin+split, sf.ymin, sf.Width()-split, sf.Height(), 180, 30, 30);
         DrawSkillProgressBar(sf.xmin, sf.ymin, t1, sf.Height()/2, 30, 30, 180);
-        DrawSkillProgressBar(sf.xmin, sf.ymin, GetRelCoord(y), sf.Height(), 0, 80, 0);        
+        DrawSkillProgressBar(sf.xmin, sf.ymin, GetRelCoord(y), sf.Height(), 0, 80, 0);
     }
     else
     {
@@ -983,7 +983,7 @@ void pawsSkillIndicator::Draw()
     g2d->DrawLine(sf.xmin, sf.ymin, sf.xmin, sf.ymax, 0);
 }
 
-void pawsSkillIndicator::Set(int x, int rank, int y, int yCost, int z, int zCost)
+void pawsSkillIndicator::Set(unsigned int x, int rank, int y, int yCost, int z, int zCost)
 {
     this->x = x;
     this->rank = rank;
