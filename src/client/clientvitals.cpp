@@ -58,27 +58,27 @@ void psClientVitals::HandleDRData(psStatDRMessage& msg, const char *labelname )
         counterSet = true;     // accept the first counter and drop anything out of date compared to that
     }
 
-    if (msg.statsDirty & DIRTY_VITAL_HP)       
+    if (msg.statsDirty & DIRTY_VITAL_HP)
     {
         vitals[VITAL_HITPOINTS].value = msg.hp;
         sprintf(buff,"fVitalValue%d:%s",VITAL_HITPOINTS,labelname);
         PawsManager::GetSingleton().Publish(buff,vitals[VITAL_HITPOINTS].value);
     }
-        
+
     if (msg.statsDirty & DIRTY_VITAL_HP_RATE)
     {
         vitals[VITAL_HITPOINTS].drRate = msg.hp_rate;
         sprintf(buff,"fVitalRate%d:%s",VITAL_HITPOINTS,labelname);
         PawsManager::GetSingleton().Publish(buff,vitals[VITAL_HITPOINTS].drRate);
     }
-        
+
     if (msg.statsDirty & DIRTY_VITAL_MANA)
     {
         vitals[VITAL_MANA].value = msg.mana;
         sprintf(buff,"fVitalValue%d:%s",VITAL_MANA,labelname);
         PawsManager::GetSingleton().Publish(buff,vitals[VITAL_MANA].value);
     }
-        
+
     if (msg.statsDirty & DIRTY_VITAL_MANA_RATE)
     {
         vitals[VITAL_MANA].drRate = msg.mana_rate;
@@ -116,14 +116,14 @@ void psClientVitals::HandleDRData(psStatDRMessage& msg, const char *labelname )
 
     if (msg.statsDirty & DIRTY_VITAL_EXPERIENCE)
     {
-        experiencePoints = (int)msg.exp;
+        experiencePoints = msg.exp;
         sprintf(buff,"fExpPts:%s",labelname);
         PawsManager::GetSingleton().Publish(buff,(float)experiencePoints/200.0F);
     }
-        
+
     if (msg.statsDirty & DIRTY_VITAL_PROGRESSION)
     {
-        progressionPoints = (int)msg.prog;
+        progressionPoints = msg.prog;
         sprintf(buff,"fProgrPts:%s",labelname);
         PawsManager::GetSingleton().Publish(buff,progressionPoints);
     }
@@ -157,7 +157,7 @@ void psClientVitals::Predict( csTicks now, const char *labelname )
         vitals[x].value += vitals[x].drRate*delta;
         if ( vitals[x].value< 0 )
             vitals[x].value = 0;
-            
+
         if ( vitals[x].value > 1.0 )
             vitals[x].value = 1.0;
 
@@ -166,5 +166,5 @@ void psClientVitals::Predict( csTicks now, const char *labelname )
             sprintf(buff,"fVitalValue%d:%s",x,labelname);
             PawsManager::GetSingleton().Publish(buff,vitals[x].value);
         }
-    }                
+    }
 }
