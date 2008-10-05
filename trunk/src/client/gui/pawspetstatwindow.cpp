@@ -42,15 +42,15 @@
 #include "gui/pawscontrolwindow.h"
 
 
-#define BTN_BUY     100
-#define BTN_FILTER  101
+#define BTN_BUY       100
+#define BTN_FILTER    101
 //#define BTN_QUIT    102
-#define BTN_EDIT    102 //Edit description
-#define BTN_STATS    1000 //Stats button for the tab panel
-#define BTN_COMBAT   1001 //Combat button for the tab panel
-#define BTN_MAGIC    1002 //Magic button for the tab panel
-#define BTN_JOBS     1003 //Jobs button for the tab panel
-#define BTN_VARIOUS  1004 //Various button for the tab panel
+#define BTN_EDIT      102 ///< Edit description
+#define BTN_STATS    1000 ///< Stats button for the tab panel
+#define BTN_COMBAT   1001 ///< Combat button for the tab panel
+#define BTN_MAGIC    1002 ///< Magic button for the tab panel
+#define BTN_JOBS     1003 ///< Jobs button for the tab panel
+#define BTN_VARIOUS  1004 ///< Various button for the tab panel
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
@@ -257,7 +257,7 @@ void pawsPetStatWindow::HandleSkillList( csString& skillString )
         Error1("No <L> tag in Skill List");
         return;
     }
-    int x = topNode->GetAttributeValueAsInt("X");
+    unsigned int x = topNode->GetAttributeValueAsInt("X");
     csRef<iDocumentNodeIterator> iter = topNode->GetNodes();
 
     bool foundSelected = false;

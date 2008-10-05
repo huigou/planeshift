@@ -43,7 +43,7 @@
 //=============================================================================
 #include "psskills.h"
 #include "psstdint.h"
-#include "pscharinventory.h"                                    
+#include "pscharinventory.h"
 #include "psinventorycachesvr.h"
 #include "psitemstats.h"
 
@@ -87,8 +87,8 @@ enum PSCHARACTER_GENDERRACE
     PSCHARACTER_GENRACE_MKLYROS = 19,
     PSCHARACTER_GENRACE_FYNNWN = 20,
     PSCHARACTER_GENRACE_MYNNWN = 21,
-    PSCHARACTER_GENRACE_NKRAN = 22, // Oddball race - Nuetral/No gender
-    PSCHARACTER_GENRACE_COUNT 
+    PSCHARACTER_GENRACE_NKRAN = 22, ///< Oddball race - Nuetral/No gender
+    PSCHARACTER_GENRACE_COUNT
 };
 
 enum PSCHARACTER_TYPE
@@ -272,8 +272,8 @@ struct CharStat
 {
     CharStat() { rank = rankBuff = 0; }
 
-    unsigned int rank;              // base rank without any buffs.
-    int rankBuff;                 // additional buffs.
+    unsigned int rank;    ///< base rank without any buffs.
+    int rankBuff;         ///< additional buffs.
 };
 
 
@@ -287,7 +287,7 @@ public:
 
     StatSet(psCharacter *self) : CharacterAttribute(self)
     {  Clear();  }
-    
+
     void Clear()
     {
         for (int i=0; i<PSITEMSTATS_STAT_COUNT; i++)
@@ -302,20 +302,20 @@ public:
 };
 
 
-/** A structure that holds the knowledge/practice/rank of each player skill. 
+/** A structure that holds the knowledge/practice/rank of each player skill.
  */
 struct Skill
 {
-    unsigned short z;        // Practice value
-    unsigned short y;        // Knowledge Level
-    unsigned short rank;     // Current skill rank 
-    short rankBuff;          // Current Buff amount on rank.
-       
-    unsigned short zCost;          // Cost in Z points.
-    unsigned short yCost;          // cost in y points.
-    bool dirtyFlag;                 // Flag if this was changed after load from database
-    
-    psSkillInfo *info;       // Database information about the skill.
+    unsigned short z;        ///< Practice value
+    unsigned short y;        ///< Knowledge Level
+    unsigned short rank;     ///< Current skill rank
+    short rankBuff;          ///< Current Buff amount on rank.
+
+    unsigned short zCost;    ///< Cost in Z points.
+    unsigned short yCost;    ///< cost in y points.
+    bool dirtyFlag;          ///< Flag if this was changed after load from database
+
+    psSkillInfo *info;       ///< Database information about the skill.
 
     Skill() { Clear(); }
     void Clear() { z=y=rank=rankBuff=0; zCost=yCost=0; info = NULL; dirtyFlag = false;}
@@ -325,38 +325,40 @@ struct Skill
     /** Checks to see if this skill can be trained any more at the current rank.
      */
     bool CanTrain() { return y < yCost; }
-    
-    /** Train a skill by a particular amount.
-      * This does range checking on the training level and will cap it at the 
+
+    /** @brief Train a skill by a particular amount.
+      *
+      * This does range checking on the training level and will cap it at the
       * max allowable level.
       * @param yIncrease The amount to try to increase the skill by.
       */
     void Train( int yIncrease );
-    
-    /** Practice this skill.
+
+    /** @brief Practice this skill.
+      *
       * This checks a couple of things.
-      * 1) If the player has the required knowledge to allow for training. 
-      * 2) If the amount of practice causes a rank change it will increase 
+      * 1) If the player has the required knowledge to allow for training.
+      * 2) If the amount of practice causes a rank change it will increase
       *    the rank of the skill and reset the knowledge/practice levels.
       *
       * @param amount The amount of practice on this skill.
-      * @param actuallyAdded [CHANGES] If the amount added causes a rank change 
+      * @param actuallyAdded [CHANGES] If the amount added causes a rank change
       *                       only the amount required is added and this variable
       *                       stores that.
       * @param user The character this was for.
-      * 
+      *
       * @return True if the practice causes a rank change, false if not.
-      */      
-    bool Practice( unsigned int amount, unsigned int& actuallyAdded,psCharacter* user  );    
-    
+      */
+    bool Practice( unsigned int amount, unsigned int& actuallyAdded,psCharacter* user  );
+
     /** Apply a Buff to this skill. */
     void Buff( short amount ) { rankBuff+=amount; }
 };
 
 
-/** A list of skills.  
-  * This maintains a list of all the skills and the player's current levels 
-  * in them. 
+/** A list of skills.
+  * This maintains a list of all the skills and the player's current levels
+  * in them.
   */
 class SkillSet : public CharacterAttribute
 {
@@ -374,7 +376,7 @@ public:
     /** Returns requested skill */
     Skill * GetSkill( PSSKILL which );
 
-    /** Sets the common skill info for this skill ( data from the database )
+    /** @brief Sets the common skill info for this skill ( data from the database )
       * @param which  The skill we want to set
       * @param info   The info structure to assign to this skill.
       * @param user   The owner character of this skill.
@@ -382,99 +384,111 @@ public:
       */
     void SetSkillInfo( PSSKILL which, psSkillInfo* info, bool recalculatestats = true);
 
-    /** Sets the practice level for the skill.
+    /** @brief Sets the practice level for the skill.
+      *
       * Does no error or range checking on the z value.  Simply assigns.
       *
       * @param which The skill we want to set.
       * @param z_value The practice level of that skill.
-      */            
+      */
     void SetSkillPractice(PSSKILL which,int z_value);
-    
-    /** Set a skill knowledge level.
+
+    /** @brief Set a skill knowledge level.
+     *
      *  Sets a skill to a particular knowledge level. This does no checking
      *  of allowed values. It just sets it to a particular value.
+     *
      *  @param which  Skill name. One of the PSSKILL enum values.
      *  @param y_value    The value to set this skill knowledge at.
-     */    
+     */
     void SetSkillKnowledge(PSSKILL which,int y_value);
 
-    /** Adds to a skill Buff */
-    void BuffSkillRank( PSSKILL which, int buffValue );    
-    
-    /** Set a skill rank level.
+    /** @brief Adds to a skill Buff */
+    void BuffSkillRank( PSSKILL which, int buffValue );
+
+    /** @brief Set a skill rank level.
+     *
      *  Sets a skill to a particular rank level. This does no checking
      *  of allowed values. It just sets it to a particular value.
+     *
      *  @param which  Skill name. One of the PSSKILL enum values.
      *  @param rank    The value to set this skill rank at.
      *  @param recalculatestats   if true, stats of player will be recalculated taking into account the new skill rank
-     */    
+     */
     void SetSkillRank( PSSKILL which, unsigned int rank, bool recalculatestats = true);
-    
+
     /** Update the costs for all the skills.
      */
     void Calculate();
-    
-    /** Figure out if this skill can be trained.
+
+    /** @brief Figure out if this skill can be trained.
+      *
       * Checks the current knowledge of the skill. If it is already maxed out then
       * can train no more.
-      * 
+      *
       * @param skill The skill we want to train.
       * @return  True if the skill still requires Y credits before it is fully trained.
       */
     bool CanTrain( PSSKILL skill );
-    
-    /** Trains a skill.
-     *  It will only train up to the cost of the next rank. So the yIncrease is 
+
+    /** @brief Trains a skill.
+     *
+     *  It will only train up to the cost of the next rank. So the yIncrease is
      *  capped by the cost and anything over will be lost.
+     *
      *  @param skill The skill we want to train.
      *  @param yIncrease  The amount we want to train this skill by.
      */
     void Train( PSSKILL skill, int yIncrease );
-    
-              
-    /** Get the current rank of a skill.
+
+
+    /** @brief Get the current rank of a skill.
+     *
      *  @param which The skill that we want the rank for.
-     *  @param withBuff If false return the base skill value. Else return true 
+     *  @param withBuff If false return the base skill value. Else return true
      *                    skill with all buffs and modifiers.
      *  @return The rank of the requested skill. O if no skill found.
      */
     unsigned int GetSkillRank( PSSKILL which, bool withBuff = true );
-    
-    /** Get the current knowledge level of a skill.
+
+    /** @brief Get the current knowledge level of a skill.
+     *
      *  @param skill the enum of the skill that we want.
      *  @return The Y value of that skill.
      */
     unsigned int GetSkillKnowledge( PSSKILL skill );
-    
-    /** Get the current practice level of a skill.
+
+    /** @brief Get the current practice level of a skill.
+     *
      *  @param skill the enum of the skill that we want.
      *  @return The Z value of that skill.
-     */            
+     */
     unsigned int GetSkillPractice(PSSKILL skill);
-    
-    /** Add some practice to a skill.  
-      * 
-      * @param skill The skill we want to practice      
-      * @param val The amount we want to practice the skill by. This value could 
+
+    /** @brief Add some practice to a skill.
+      *
+      * @param skill The skill we want to practice
+      * @param val The amount we want to practice the skill by. This value could
       *            be capped if the amount of practice causes a rank up.
       * @param added [CHANGES] The amount the skill changed by ( if any )
-      * 
+      *
       * @return True if practice caused a rank up.
-      */             
+      */
     bool  AddToSkillPractice(PSSKILL skill, unsigned int val, unsigned int& added );
 
     int AddSkillPractice(PSSKILL skill, unsigned int val);
 
     /** Gets a players best skill rank **/
     unsigned int GetBestSkillValue( bool withBuff );
-    
-    /** Get the slot that is the best skill in the set.
+
+    /** @brief Get the slot that is the best skill in the set.
+     *
      *  @param withBuff   Apply any skill buffs?
      *  @return The slot the best skill is in.
      */
     unsigned int GetBestSkillSlot( bool withBuff );
-    
-    Skill& Get(PSSKILL skill);        
+
+    Skill& Get(PSSKILL skill);
 };
 
 #define ALWAYS_IMPERVIOUS      1
@@ -518,7 +532,7 @@ struct DurationEvent
 {
     ProgressionDelay* queuedObject;  ///< The actual event that is in the queue
     csString name;                  ///< The name of the event
-    csTicks appliedTime;            ///< Time applied. 
+    csTicks appliedTime;            ///< Time applied.
     csTicks duration;               ///< Duration for the event.
 };
 
@@ -526,11 +540,11 @@ struct DurationEvent
 
 class psCharacter : public iScriptableVar, public iCachedObject
 {
-protected:    
+protected:
     psCharacterInventory      inventory;                    ///< Character's inventory handler.
     psMoney money;                                          ///< Current cash set on player.
     psMoney bankMoney;                                      ///< Money stored in the players bank account.
-    
+
     psGuildInfo*              guildinfo;
     csArray<psSpell*>         spellList;
     csArray<QuestAssignment*> assigned_quests;
@@ -539,7 +553,7 @@ protected:
     psSkillCache              skillCache;
     GMEventsAssignment        assigned_events;
     bool guildNotified; ///< If true the player will get notifications about his guild members logging in and out
-    
+
     bool LoadSpells(unsigned int use_id);
     bool LoadAdvantages(unsigned int use_id);
     bool LoadSkills(unsigned int use_id);
@@ -551,13 +565,13 @@ protected:
     bool LoadFamiliar( Result& pet, Result& owner);
     bool LoadGMEvents(void);
 
-    float override_max_hp,override_max_mana;  // These values are loaded from base_hp_max,base_mana_max in the db and
-                                              // should prevent normal HP calculations from taking place
+    float override_max_hp,override_max_mana;  ///< These values are loaded from base_hp_max,base_mana_max in the db and
+                                              ///< should prevent normal HP calculations from taking place
 
     static const char *characterTypeName[];
     unsigned int characterType;
 
-	// Array of items waiting to be looted.
+    /// Array of items waiting to be looted.
     csArray<psItemStats *> loot_pending;
     /// Last response of an NPC to this character (not saved)
     int  lastResponse;
@@ -568,26 +582,28 @@ public:
     void RegisterDurationEvent(ProgressionDelay* progDelay, csString& name, csTicks duration);
     void UnregisterDurationEvent(ProgressionDelay* progDelay);
     void FireEvent(const char* name);
-    
+
     psCharacterInventory& Inventory() { return inventory; }
-    
+
     psMoney Money() { return money; }
     psMoney& BankMoney() { return bankMoney; }
     void SetMoney(psMoney m);
-    /** Add a money object to the current wallet.
+    /** @brief Add a money object to the current wallet.
+      *
       * This is used when money is picked up and will destory the object passed in.
+      *
       * @param moneyObject The money object that was just picked up.
       */
     void SetMoney( psItem *& moneyObject );
-    void AdjustMoney(psMoney m, bool bank);    
+    void AdjustMoney(psMoney m, bool bank);
     void SaveMoney(bool bank);
-    
+
     void ResetStats();
 
 //    WorkInformation* workInfo;
     unsigned int characterid;
     unsigned int accountid;
-    
+
     csString name;
     csString lastname;
     csString fullname;
@@ -596,7 +612,7 @@ public:
     csString spouseName;
     bool     isMarried;
 
-    csArray<Buddy> buddyList;    
+    csArray<Buddy> buddyList;
     csArray<int> buddyOfList;
     csSet<unsigned int> acquaintances;
 
@@ -608,8 +624,8 @@ public:
     csString faction_standings;
     csArray<SavedProgressionEvent> progressionEvents;
     csPDelArray<DurationEvent> durationEvents;
-    
-    csString progressionEventsText; // flat string with evts, loaded from the DB.
+
+    csString progressionEventsText; ///< flat string with evts, loaded from the DB.
     int nextProgressionEventID;
     int     impervious_to_attack;
     /// Bitfield for which help events a character has already encountered.
@@ -642,19 +658,19 @@ public:
      */
     psSkillCache *GetSkillCache() { return &skillCache; }
 
-    // Set the work transformation state for the character.
+    /// Set the work transformation state for the character.
     void SetWorkState(PSCHARACTER_WORKSTATE state) { work_state = state; }
-    // Return the work transformation state
+    /// Return the work transformation state
     PSCHARACTER_WORKSTATE GetWorkState() { return work_state; }
-    // Assign trade work event so it can be accessed
+    /// Assign trade work event so it can be accessed
     void SetTradeWork(psWorkGameEvent * event);
-    // Return trade work event so it can be stopped
+    /// Return trade work event so it can be stopped
     psWorkGameEvent *GetTradeWork() { return workEvent; }
 
     // iCachedObject Functions below
-    virtual void ProcessCacheTimeout() {};  /// required for iCachedObject but not used here
-    virtual void *RecoverObject() { return this; }  /// Turn iCachedObject ptr into psCharacter
-    virtual void DeleteSelf() { delete this; }  /// Delete must come from inside object to handle operator::delete overrides.
+    virtual void ProcessCacheTimeout() {};  ///< required for iCachedObject but not used here
+    virtual void *RecoverObject() { return this; }  ///< Turn iCachedObject ptr into psCharacter
+    virtual void DeleteSelf() { delete this; }  ///< Delete must come from inside object to handle operator::delete overrides.
 
 
     struct st_bank
@@ -674,11 +690,11 @@ public:
     unsigned int advantage_bitfield[PSCHARACTER_ADVANTAGE_32BIT_BITFIELDS];
 
     float KFactor;
-    psSpellCastGameEvent *spellCasting; // Hold a pointer to the game event
-                                        // for the spell currently cast.
-    
+    psSpellCastGameEvent *spellCasting; ///< Hold a pointer to the game event
+                                        ///< for the spell currently cast.
+
     psServerVitals* vitals;
-    
+
     psTrait *traits[PSTRAIT_LOCATION_COUNT];
 
     // NPC specific data.  Should this go here?
@@ -690,7 +706,7 @@ public:
 
     csString animal_affinity;
     uint32_t owner_id;
-	uint32_t familiar_id;
+    uint32_t familiar_id;
 
 public:
     psCharacter();
@@ -712,7 +728,7 @@ public:
 
     void SetCharacterID(const unsigned int characterID) { characterid=characterID; }
     unsigned int GetCharacterID() const { return characterid; }
-    
+
     unsigned int GetMasterNPCID() const { return npc_masterid?npc_masterid:characterid; }
 
     void SetAccount(int id) { accountid = id;   }
@@ -722,12 +738,12 @@ public:
     void SetLastName(const char* newLastName) { SetFullName(name.GetData(),newLastName); }
     void SetFullName(const char* newFirstName, const char* newLastName);
     void SetOldLastName( const char* oldLastName ) { this->oldlastname = oldLastName; };
-    
+
     const char *GetCharName() const     { return name.GetData(); }
     const char *GetCharLastName() const { return lastname.GetData(); }
     const char *GetCharFullName() const { return fullname.GetData(); }
     const char *GetOldLastName() const  { return oldlastname.GetData(); }
-    
+
     // Introductions
     /// Answers whether this character knows the given character or not.
     bool Knows(unsigned int charid);
@@ -745,13 +761,14 @@ public:
     csString GetLastLoginTime() const { return lastlogintime; }
 
     void SetSpouseName(const char* name);
-    /** Gets Spouse Name of a character. 
-     * @return  SpouseName or "" if not married.
+    /** @brief Gets Spouse Name of a character.
+     *
+     *  @return  SpouseName or "" if not married.
      */
     const char *GetSpouseName() const { return spouseName.GetData(); }
     void SetIsMarried( bool married ) { isMarried = married; }
     bool GetIsMarried() const { return isMarried; }
-    
+
     void SetRaceInfo(psRaceInfo *rinfo);
     psRaceInfo *GetRaceInfo() { return raceinfo; }
 
@@ -760,7 +777,7 @@ public:
 
     void BuddyOf( unsigned int buddyID );
     void NotBuddyOf( unsigned int buddyID );
-    
+
     const char *GetFactionStandings() { return faction_standings; }
 
     void SetLootCategory(int id) { loot_category_id = id; }
@@ -771,7 +788,7 @@ public:
     void AddLootItem(psItemStats *item);
     void AddLootMoney(int money) { loot_money += money; }
     size_t  GetLootItems(psLootMessage& msg,int entity,int cnum);
-    
+
     /// Gets and zeroes the loot money
     int  GetLootMoney();
 
@@ -790,13 +807,13 @@ public:
     void SetLastResponse(int response) { lastResponse=response; }
 
     /**
-     * Sync dirty Quest Assignemnt to DB
+     * @brief Sync dirty Quest Assignemnt to DB
      *
      * @param force_update Force every QuestAssignment to be dirty
      * @return True if succesfully updated DB.
      */
     bool UpdateQuestAssignments(bool force_update = false);
-    
+
     size_t  GetAssignedQuests(psQuestListMessage& quests,int cnum);
     csArray<QuestAssignment*> GetAssignedQuests() { return assigned_quests; }
 
@@ -804,7 +821,7 @@ public:
     bool CheckQuestCompleted(psQuest *quest);
     bool CheckQuestAvailable(psQuest *quest,int assigner_id);
     /**
-     * Check if all prerequisites are valid for this response
+     * @brief Check if all prerequisites are valid for this response
      * for this character.
      *
      * @param resp The Response to check
@@ -817,11 +834,11 @@ public:
     void RemoveAdvantage( PSCHARACTER_ADVANTAGE advantage);
     bool HasAdvantage ( PSCHARACTER_ADVANTAGE advantage);
 
-    void CombatDrain(int);       
-    
-    int GetExperiencePoints(); // W
-    void SetExperiencePoints(int W);
-    int AddExperiencePoints(int W);
+    void CombatDrain(int);
+
+    unsigned int GetExperiencePoints(); // W
+    void SetExperiencePoints(unsigned int W);
+    unsigned int AddExperiencePoints(unsigned int W);
     unsigned int GetProgressionPoints(); // X
     void SetProgressionPoints(unsigned int X,bool save);
     void UseProgressionPoints(unsigned int X);
@@ -831,17 +848,17 @@ public:
     void SetSpellCasting(psSpellCastGameEvent * event) { spellCasting = event; }
     bool IsSpellCasting() { return spellCasting != NULL; }
     void InterruptSpellCasting();
-    float GetPowerLevel(); /// Get spell casting power level
+    float GetPowerLevel(); ///< Get spell casting power level
     float GetPowerLevel( PSSKILL skill );
-    // Get the maximum realm the caster can cast with given skill
+    /// Get the maximum realm the caster can cast with given skill
     int GetMaxAllowedRealm( PSSKILL skill );
-    // Checks if this character has enough knowledge to cast spell
-    // of given way and realm
+    /// Checks if this character has enough knowledge to cast spell
+    /// of given way and realm
     bool CheckMagicKnowledge( PSSKILL skill, int realm );
     inline float GetSkillRank( PSSKILL skill ) { return skills.GetSkillRank(skill); }
 
     PSCHARACTER_MODE GetMode() { return player_mode; }
-    const char* GetModeStr(); /// Return a string name of the mode
+    const char* GetModeStr(); ///< Return a string name of the mode
     bool CanSwitchMode(PSCHARACTER_MODE from, PSCHARACTER_MODE to);
     void SetMode(PSCHARACTER_MODE newmode, uint32_t clientnum);
 
@@ -849,15 +866,16 @@ public:
      * Reset modes for NPCs
      */
     void ResetMode();
-    
+
     void KilledBy(psCharacter* attacker) { deaths++; if(!attacker) suicides++; }
     void Kills(psCharacter* target) { kills++; }
-    
+
     unsigned int GetKills() const { return kills; }
     unsigned int GetDeaths() const { return deaths; }
     unsigned int GetSuicides() const { return suicides; }
 
-    /** Drops an item into the world (one meter from this character's position)
+    /** @brief Drops an item into the world (one meter from this character's position)
+      *
       * @param Item to be dropped
       * @param Transient flag (decay?) (default=true)
       */
@@ -865,38 +883,38 @@ public:
 
     float AdjustHitPoints(float adjust);
     float AdjustHitPointsMax(float adjust);
-	float AdjustHitPointsMaxModifier(float adjust);
+    float AdjustHitPointsMaxModifier(float adjust);
     float AdjustHitPointsRate(float adjust);
 
     float GetHitPointsMax();
-	float GetHitPointsMaxModifier();
-    
-    void SetHitPoints(float v);    
-    void SetHitPointsMax(float v); 
-	void SetHitPointsMaxModifier(float v);
+    float GetHitPointsMaxModifier();
+
+    void SetHitPoints(float v);
+    void SetHitPointsMax(float v);
+    void SetHitPointsMaxModifier(float v);
     void SetHitPointsRate(float v);
-    
+
     float AdjustMana(float adjust);
     float AdjustManaMax(float adjust);
-	float AdjustManaMaxModifier(float adjust);
+    float AdjustManaMaxModifier(float adjust);
     float AdjustManaRate(float adjust);
 
     float GetManaMax();
-	float GetManaMaxModifier();
+    float GetManaMaxModifier();
 
-    void SetMana(float v);    
+    void SetMana(float v);
     void SetManaMax(float v);
-	void SetManaMaxModifier(float v);
+    void SetManaMaxModifier(float v);
     void SetManaRate(float v);
-    
+
     float AdjustStamina(float adjust, bool pys);
     float AdjustStaminaMax(float adjust, bool pys);
-	float AdjustStaminaMaxModifier(float adjust, bool pys);
+    float AdjustStaminaMaxModifier(float adjust, bool pys);
     float AdjustStaminaRate(float adjust, bool pys);
 
     float GetStaminaMax(bool pys);
-	float GetStaminaMaxModifier(bool pys);
-    
+    float GetStaminaMaxModifier(bool pys);
+
     void SetStaminaRegenerationNone(bool physical = true, bool mental = true);
     void SetStaminaRegenerationWalk(bool physical = true, bool mental = true);
     void SetStaminaRegenerationSitting();
@@ -904,12 +922,12 @@ public:
     void SetStaminaRegenerationWork(int skill);
 
     void CalculateMaxStamina();
-    
+
     void SetStamina(float v, bool pys);
     void SetStaminaMax(float v, bool pys);
-	void SetStaminaMaxModifier(float v, bool pys);
+    void SetStaminaMaxModifier(float v, bool pys);
     void SetStaminaRate(float v, bool pys);
-    
+
     float GetHP();
     float GetMana();
     float GetStamina(bool pys);
@@ -920,17 +938,17 @@ public:
     void AssignGMEvent(int id, bool playerIsGM);
     void CompleteGMEvent(bool playerIsGM);
     void RemoveGMEvent(int id, bool playerIsGM=false);
-    
+
     /** Update a npc's default spawn position with given data.
     */
     void UpdateRespawn(csVector3 pos, float yrot, psSectorInfo *sector);
 
-    
+
     /**
      * Update this faction for this player with delta value.
      */
     bool UpdateFaction(Faction * faction, int delta);
-    
+
     /**
      * Check player for given faction.
      */
@@ -939,12 +957,12 @@ public:
     /* Check if the character is a banker */
     bool IsBanker() const { return banker; }
 
-private: 
+private:
     float AdjustVital( int vitalName, int dirtyFlag, float adjust);
     float SetVital( int vitalName, int dirtyFlag, float value);
     int FindGlyphSlot(const csArray<glyphSlotInfo>& slots, psItemStats * glyphType, int purifyStatus);
 
-    csString helmGroup;                 // Some races share helms so this tells which 
+    csString helmGroup;                 // Some races share helms so this tells which
                                         // group it's in. If empty assume in racial group.
     /* Whether or not the character is a banker */
     bool banker;
@@ -989,12 +1007,12 @@ public:
     float GetTotalUntargetedBlockValue();
     float GetCounterBlockValueForWeaponInSlot(INVENTORY_SLOT_NUMBER slot);
     float GetDodgeValue();
-    
+
     float GetAttackValueModifier();
     float GetDefenseValueModifier();
     void  AdjustAttackValueModifier(float  mul);
     void  AdjustDefenseValueModifier(float mul);
-    
+
     float GetMeleeDefensiveDamageModifier();
     void  AdjustMeleeDefensiveDamageModifier(float mul);
 
@@ -1025,28 +1043,31 @@ public:
     psTrainerInfo *GetTrainerInfo() { return trainerInfo; }
     psCharacter *GetTrainer() { return trainer; }
     void SetTrainer(psCharacter *trainer) { this->trainer = trainer; }
-    
-    /** Figure out if this skill can be trained.
+
+    /** @brief Figure out if this skill can be trained.
+      *
       * Checks the current knowledge of the skill. If it is already maxed out then
       * can train no more.
-      * 
+      *
       * @param skill The skill we want to train.
       * @return  True if the skill still requires Y credits before it is fully trained.
       */
     bool CanTrain( PSSKILL skill );
-    
-    /** Trains a skill.
-     *  It will only train up to the cost of the next rank. So the yIncrease is 
+
+    /** @brief Trains a skill.
+     *
+     *  It will only train up to the cost of the next rank. So the yIncrease is
      *  capped by the cost and anything over will be lost.
+     *
      *  @param skill The skill we want to train.
      *  @param yIncrease  The amount we want to train this skill by.
      */
     void Train( PSSKILL skill, int yIncrease );
-    
+
     /** Directly sets rank of given skill. It completely bypasses the skill logic,
        it is used for testing only. */
     void SetSkillRank( PSSKILL which, unsigned int rank);
-    
+
     psSpell * GetSpellByName(const csString& spellName);
     psSpell * GetSpellByIdx(int index);
     csString GetXMLSpellList();
@@ -1095,7 +1116,7 @@ public:
 
     void CalculateEquipmentModifiers();
     float GetStatModifier(PSITEMSTATS_STAT attrib);
-    
+
     csString& GetLastError() { return lastError; }
 
     csString lastError;
@@ -1104,7 +1125,7 @@ public:
     csRef<psMerchantInfo>  merchantInfo;
     bool tradingStopped;
     TradingStatus tradingStatus;
-    psCharacter* merchant; // The merchant this charcter trade with
+    psCharacter* merchant; ///< The merchant this charcter trade with
     gemActor * actor;
     //
     csRef<psTrainerInfo>  trainerInfo;
@@ -1114,40 +1135,39 @@ public:
     PSCHARACTER_WORKSTATE work_state;
     psWorkGameEvent * workEvent;
 
-    //Player description
-    csString description;
+    csString description; ///<Player description
 
     /// Kill Exp
     int kill_exp;
-    
-    float attackValueModifier; //attack value is multiplied by this
-    float defenseValueModifier; //defense value is multiplied by this
-    float meleeDefensiveDamageModifier; //melee damage to this character is multiplied by this
 
-    // The PowerLevel math script
+    float attackValueModifier; ///< Attack value is multiplied by this
+    float defenseValueModifier; ///< Defense value is multiplied by this
+    float meleeDefensiveDamageModifier; /// Melee damage to this character is multiplied by this
+
+    /// The PowerLevel math script
     MathScript* powerScript, *maxRealmScript;
 
-    // The stamina calc script
+    /// The stamina calc script
     MathScript* staminaCalc;
-    
+
 
 protected:
-    // String value copied from the database containing the last login time
+    /// String value copied from the database containing the last login time
     csString lastlogintime;
-    
+
     //Stats for this character
     unsigned int deaths;
     unsigned int kills;
     unsigned int suicides;
 
-     
+
 public:
     // NPC based functions - should these go here?
     int NPC_GetSpawnRuleID() { return npc_spawnruleid; }
     void NPC_SetSpawnRuleID(int v) { npc_spawnruleid=v; }
 
     st_location spawn_loc;
-    
+
     bool AppendCharacterSelectData(psAuthApprovedMessage& auth);
 
     ///  The new operator is overriden to call PoolAllocator template functions

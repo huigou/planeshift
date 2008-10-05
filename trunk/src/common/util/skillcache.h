@@ -1,5 +1,5 @@
 /*
- * skillcache.h 
+ * skillcache.h
  *
  * Copyright (C) 2006 Atomic Blue (info@planeshift.it, http://www.atomicblue.org)
  *
@@ -35,12 +35,10 @@ class psSkillCacheItem {
 
         /**
          * Operations with this skill item:
-         * UPDATE_OR_ADD: the item is updated or added
-         * REMOVE: the item should be removed from the list
          */
         enum Oper {
-            UPDATE_OR_ADD,
-            REMOVE
+            UPDATE_OR_ADD, ///< The item is updated or added
+            REMOVE         ///< The item should be removed from the list
         };
 
         /**
@@ -49,7 +47,7 @@ class psSkillCacheItem {
         psSkillCacheItem(psSkillCacheItem *item);
 
         /**
-         * Constructs an empty cache item where nameId and skillId are both set
+         * @brief Constructs an empty cache item where nameId and skillId are both set
          * to the nameId value.
          *
          * This constructor is used on the client side and is followed be the
@@ -58,7 +56,7 @@ class psSkillCacheItem {
         psSkillCacheItem(unsigned int nameId);
 
         /**
-         * Constructs the cache item with the given values.
+         * @brief Constructs the cache item with the given values.
          *
          * This constructor is used on the server side.
          */
@@ -158,23 +156,23 @@ class psSkillCache {
         ~psSkillCache();
 
         /**
-         * Updates the cache.
-         * 
+         * @brief Updates the cache.
+         *
          * The received list can contain new skills, updates to the existing skills or
          * skills that should be removed from the cache.
          */
         void apply(psSkillCache *list);
 
         /**
-         * Adds the skill to the cache using the skillId value as the key.
-         * 
+         * @brief Adds the skill to the cache using the skillId value as the key.
+         *
          * The skill item shall be allocated in the heap because the skill
          * cache will take ownership of the item and delete when necessary.
          */
         void addItem(int skillId, psSkillCacheItem *item);
 
         /**
-         * Searches for the skill item with the given ID value and returns a
+         * @brief Searches for the skill item with the given ID value and returns a
          * pointer to it or NULL if not found.
          *
          * The returned skill item is owned by the cache.
@@ -217,7 +215,7 @@ class psSkillCache {
         unsigned short count() const;
 
         /**
-         * Writes the cache and all the modified items to the message entry.
+         * @brief Writes the cache and all the modified items to the message entry.
          *
          * Make sure that no items in the cache are modified between size() and
          * write() function calls.

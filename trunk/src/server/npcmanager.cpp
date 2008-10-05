@@ -81,7 +81,7 @@ protected:
 
 public:
     psNPCManagerTick(int offsetticks, NPCManager *c);
-    virtual void Trigger();  // Abstract event processing function
+    virtual void Trigger();  ///< Abstract event processing function
 };
 
 #define NPC_TICK_INTERVAL 500  //msec
@@ -93,8 +93,8 @@ class PetOwnerSession : public iDeleteObjectCallback
 {
 
 public:
-    int ownerID; // Character ID of the owner
-    unsigned int petID; // Character ID of the pet
+    int ownerID; ///< Character ID of the owner
+    unsigned int petID; ///< Character ID of the pet
     bool isActive;
     gemActor *owner;
     NPCManager *manager;
@@ -136,7 +136,7 @@ public:
         elapsedTime = 0.0f;
         isActive = true;
         
-        // Get pet characterdata
+        /// Get pet characterdata
         if ( pet )
         {
             csString last_login = pet->GetLastLoginTime();
@@ -171,7 +171,7 @@ public:
             owner->UnregisterCallback( this );
     };
     
-    // Renable Time tracking for returning players
+    /// Renable Time tracking for returning players
     void Reconnect( gemActor *owner )
     {
         if ( owner )
@@ -257,7 +257,7 @@ public:
 
     };
 
-    // used to verify the session should still be valid
+    /// used to verify the session should still be valid
     bool CheckSession()
     {
         double maxTime = GetMaxPetTime();
@@ -288,7 +288,7 @@ public:
         return true;
     }
 
-    // Uses a MathScript to calculate the maximum amount of time a Pet can remain in world.
+    /// Uses a MathScript to calculate the maximum amount of time a Pet can remain in world.
     double GetMaxPetTime()
     {
         static MathScript *maxPetTime;
@@ -318,7 +318,7 @@ public:
         return maxTime;
     }
 
-    // The == and < operators for BinaryTree<> MUST be the same criteria!
+    /// The == and < operators for BinaryTree<> MUST be the same criteria!
     int operator==(PetOwnerSession& other) const
     {
         // use the familiar as the familiar can only have one owner
@@ -2390,7 +2390,7 @@ void NPCManager::SendPetSkillList(Client * client, bool forceOpen, PSSKILL focus
     psTrainerInfo * trainerInfo = NULL;
     float faction = 0.0;
 
-    buff.Format("<L X=\"%i\" >", character->GetProgressionPoints());
+    buff.Format("<L X=\"%u\" >", character->GetProgressionPoints());
 
     if (trainer)
     {

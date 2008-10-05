@@ -45,7 +45,7 @@ class MsgEntry;
 class psCharacter;
 
 /** Server side of the character vitals manager.  Does a lot more accessing
-  * of the data to set particular things.  Also does construction of data to 
+  * of the data to set particular things.  Also does construction of data to
   * send to a client.
   */
 class psServerVitals : public psVitalManager
@@ -53,28 +53,29 @@ class psServerVitals : public psVitalManager
 private:
     ///  @see  PS_DIRTY_VITALS
     unsigned int statsDirty;
-    unsigned char version;    
+    unsigned char version;
     psCharacter * character;  // the char whose vitals we manage
-        
+
 public:
     psServerVitals(psCharacter * character);
-    
+
      /** Handles new Vital data construction for the server.
-      */ 
+      */
     bool SendStatDRMessage(uint32_t clientnum, PS_ID eid, int flags, csRef<PlayerGroup> group = NULL);
-    
+
     bool Update( csTicks now );
-    
-    void SetExp( int exp );
-    void SetPP( int pp );    
-    
-    /** Adjust a field in a vital statistic.
+
+    void SetExp( unsigned int exp );
+    void SetPP( unsigned int pp );
+
+    /** @brief Adjust a field in a vital statistic.
+    *
     *   @param vitalName One of the enums @see PS_VITALS
     *   @param dirtyFlag What became dirty in this adjustment. @see  PS_DIRTY_VITAL.
     *
     *   @return The new value of the field in the vital stat.
-    */        
-    psCharVital& DirtyVital( int vitalName, int dirtyFlag );            
+    */
+    psCharVital& DirtyVital( int vitalName, int dirtyFlag );
 };
 
 

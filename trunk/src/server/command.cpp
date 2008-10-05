@@ -100,7 +100,7 @@ int com_ready (char *)
 class psQuitEvent : public psGameEvent
 {
 public:
-    psQuitEvent(csTicks msecDelay, psQuitEvent *quit_event, csString message, 
+    psQuitEvent(csTicks msecDelay, psQuitEvent *quit_event, csString message,
                        bool server_lock, bool server_shutdown)
         : psGameEvent(0,msecDelay,"psDelayedQuitEvent")
     {
@@ -114,19 +114,19 @@ public:
         psSystemMessage newmsg(0, MSG_INFO_SERVER, mytext);
         psserver->GetEventManager()->Broadcast(newmsg.msg);
         CPrintf(CON_CMDOUTPUT, "%s\n", mytext.GetDataSafe());
-        if(trigger_server_lock) //this is triggering the server lock
+        if(trigger_server_lock) //This is triggering the server lock
             com_lock(NULL);
-        if(trigger_server_shutdown) //this is triggering the server shut down
+        if(trigger_server_shutdown) //This is triggering the server shut down
             psserver->GetEventManager()->Stop();
     }
     virtual bool CheckTrigger()
-    {   //if this is the event triggering the server shut down pass it's validity, else check that event if
+    {   //If this is the event triggering the server shut down pass it's validity, else check that event if
         //it's still valid
         return message_quit_event == NULL ? valid : message_quit_event->CheckTrigger();
     }
     void Invalidate()
     {
-        valid = false; //this is used to inavlidate the server shut down event
+        valid = false; //This is used to invalidate the server shut down event
     }
 private:
     csString mytext; ///< Keeps the message which will be sent to clients
@@ -147,7 +147,7 @@ int com_quit(char *arg)
         com_ready(NULL); //remake the server available if it was locked in the process
         server_quit_event = NULL;  //we don't need it anymore so let's clean ourselves of it
         //Let the user know about the new situation about the server
-        csString abort_msg = "Server Admin: The server is no longer restarting."; 
+        csString abort_msg = "Server Admin: The server is no longer restarting.";
         psSystemMessage newmsg(0, MSG_INFO_SERVER, abort_msg);
         psserver->GetEventManager()->Broadcast(newmsg.msg);
         CPrintf(CON_CMDOUTPUT, "%s\n", abort_msg.GetDataSafe());
@@ -159,7 +159,7 @@ int com_quit(char *arg)
             uint quit_delay = atoi(arg); //if the user passed a number we will read it
             if (quit_delay) //we have an argument > 0 so let's put an event for server shut down
             {
-                if(quit_delay > pow(256,(double)sizeof(csTicks))/60/1000) 
+                if(quit_delay > pow(256,(double)sizeof(csTicks))/60/1000)
                 { //input value is too high for the event manager so we have to avoid it
                   //This value is about 71500 minutes commonly and it's calculated from the csticks size
                     CPrintf(CON_CMDOUTPUT, "The specified quit time is too high. Try with a lower value.\n");
@@ -167,23 +167,23 @@ int com_quit(char *arg)
                 }
                 if(quit_delay < 5) com_lock(NULL); //we got less than 5 minutes for shut down so let's lock the server
                                                    //immediately
-                                                   
+
                 //generates the messages to alert the user and allocates them in the queque
                 for(uint i = 3; i > 0; i--) //i = 3 sets up the 0 seconds message and so is the event triggering
                 {                           //shutdown
                     csString outtext = "Server Admin: The server will shut down in ";
                              outtext += 60-(i*20);
                              outtext += " seconds.";
-                    psQuitEvent *Quit_event = new psQuitEvent(((quit_delay-1)*60+i*20)*1000, server_quit_event, 
+                    psQuitEvent *Quit_event = new psQuitEvent(((quit_delay-1)*60+i*20)*1000, server_quit_event,
                                                                 outtext, false, i == 3 ? true : false);
-                    psserver->GetEventManager()->Push(Quit_event); 
+                    psserver->GetEventManager()->Push(Quit_event);
                     if(!server_quit_event) server_quit_event = Quit_event;
                 }
                 csString outtext = "Server Admin: The server will shut down in 1 minute.";
                 psQuitEvent *Quit_event = new psQuitEvent((quit_delay-1)*60*1000, server_quit_event, outtext,
                                                           false, false);
-                psserver->GetEventManager()->Push(Quit_event); 
-                
+                psserver->GetEventManager()->Push(Quit_event);
+
                 if(quit_delay == 1) return 0; //if the time we had was 1 minute no reason to go on
                 uint quit_time = (quit_delay < 5)? quit_delay : 5; //manage the period 1<x<5 minutes
                 while(1)
@@ -191,9 +191,9 @@ int com_quit(char *arg)
                     csString outtext = "Server Admin: The server will shut down in ";
                              outtext += quit_time;
                              outtext += " minutes.";
-                    psQuitEvent *Quit_event = new psQuitEvent((quit_delay-quit_time)*60*1000, server_quit_event, 
+                    psQuitEvent *Quit_event = new psQuitEvent((quit_delay-quit_time)*60*1000, server_quit_event,
                                                                 outtext, quit_time == 5 ? true : false, false);
-                    psserver->GetEventManager()->Push(Quit_event); 
+                    psserver->GetEventManager()->Push(Quit_event);
                     if(quit_time == quit_delay) { break; } //we have got to the first message saying the server
                                                            //will be shut down let's go out of the loop
                     else if(quit_time+5 > quit_delay) { quit_time = quit_delay; } //we have reached the second message
@@ -308,7 +308,7 @@ int com_settime( char* arg )
         CPrintf(CON_CMDOUTPUT,"Please provide a time to use\n");
         return 0;
     }
-   
+
     int hour = atoi( arg );
     int minute = 0;
 
@@ -317,10 +317,10 @@ int com_settime( char* arg )
         CPrintf( CON_CMDOUTPUT, "Select a time between 0-23\n");
         return 0;
     }
-    
+
     psserver->GetWeatherManager()->SetGameTime(hour,minute);
     CPrintf (CON_CMDOUTPUT, "Current Game Hour set to: %d:%02d\n", hour,minute);
-    
+
     return 0;
 }
 
@@ -542,14 +542,14 @@ int com_set(char *args)
         while (ci->HasNext())
         {
             ci->Next();
-            
+
             if (ci->GetKey(true))
             {
                 if (ci->GetComment())
                 {
                     CPrintf (CON_CMDOUTPUT ,"%s",ci->GetComment());
                 }
-                
+
                 CPrintf (CON_CMDOUTPUT ,COL_GREEN "%s = '%s'\n" COL_NORMAL,
                          ci->GetKey(true), ci->GetStr());
             }
@@ -633,7 +633,7 @@ int com_spawn(char* sector = 0)
     psSectorInfo *sectorinfo = NULL;
     if ( sector )
         sectorinfo = CacheManager::GetSingleton().GetSectorInfoByName(sector);
-    
+
     if (!already_spawned)
     {
         psserver->GetSpawnManager()->RepopulateLive(sectorinfo);
@@ -679,10 +679,10 @@ int com_rain(char* arg)
     }
     else
     {
-        CPrintf(CON_CMDOUTPUT ,"Starting rain in sector %s with %d drops for %d ticks with fade %d.\n", 
+        CPrintf(CON_CMDOUTPUT ,"Starting rain in sector %s with %d drops for %d ticks with fade %d.\n",
                 sector.GetData(), drops, length, fade);
     }
-    
+
     psserver->GetWeatherManager()->QueueNextEvent(0, psWeatherMessage::RAIN, drops, length, fade,
                                                   sector.GetData(), sectorinfo);
     return 0;
@@ -691,12 +691,12 @@ int com_rain(char* arg)
 int com_dict(char* arg)
 {
     WordArray words(arg);
-    if (words.GetCount()>1) 
-	{
+    if (words.GetCount()>1)
+    {
         csString fullname = words[0]+" "+words[1];
         dict->Print(fullname.GetDataSafe());
-    } 
-	else
+    }
+    else
         dict->Print(words[0].GetDataSafe());
     return 0;
 }
@@ -704,7 +704,7 @@ int com_dict(char* arg)
 int com_filtermsg(char* arg)
 {
     CPrintf(CON_CMDOUTPUT ,"%s\n",psserver->GetNetManager()->LogMessageFilter(arg).GetDataSafe());
-    
+
     return 0;
 }
 
@@ -1331,7 +1331,7 @@ void show_item_stats(psItem *item,int depth)
     CPrintf(CON_CMDOUTPUT ,"Weight:%g Size:%d ContainerMaxSize:%d VisDistance:%g DecayResist:%g\n",
                             item->GetWeight(),
                             item->GetItemSize(),
-                            item->GetContainerMaxSize(),    
+                            item->GetContainerMaxSize(),
                             item->GetVisibleDistance(),
                             item->GetDecayResistance());
 
@@ -1451,7 +1451,7 @@ void com_showinv_item(bool moreiteminfo, psItem *currentitem, const char *slotna
     csString output;
 
     if (currentitem!=NULL)
-    { 
+    {
         if(moreiteminfo)
         {
             output.AppendFmt("%s\tCount: %d\tID:%u Instance ID:%u \n",currentitem->GetName(),
@@ -1674,10 +1674,10 @@ int com_print(char *line)
             {
                 npcdlg->DumpDialog();
             }
-            
+
 
         }
-        
+
 
         return 0;
     }
@@ -1837,7 +1837,7 @@ int com_sectors(char *)
 
         }
         CPrintf(CON_CMDOUTPUT ,"\n");
-        
+
     }
     return 0;
 }
@@ -2082,8 +2082,8 @@ int com_liststats(char *line)
     CPrintf(CON_CMDOUTPUT ,"CHA        %7.1f\t%7.1f\n",(float)charData->GetAttributes()->GetStat(PSITEMSTATS_STAT_CHARISMA, false),(float)charData->GetAttributes()->GetBuffVal(PSITEMSTATS_STAT_CHARISMA) );
     }
 
-    CPrintf(CON_CMDOUTPUT ,"Experience points(W)  %7d\n",charData->GetExperiencePoints());
-    CPrintf(CON_CMDOUTPUT ,"Progression points(X) %7d\n",charData->GetProgressionPoints());
+    CPrintf(CON_CMDOUTPUT ,"Experience points(W)  %7u\n",charData->GetExperiencePoints());
+    CPrintf(CON_CMDOUTPUT ,"Progression points(X) %7u\n",charData->GetProgressionPoints());
     CPrintf(CON_CMDOUTPUT ,"%-20s %12s %12s %12s\n","Skill","Practice(Z)","Knowledge(Y)","Rank(R)");
     for (int skillID = 0; skillID < (int)PSSKILL_COUNT; skillID++)
     {
@@ -2230,7 +2230,7 @@ int com_questreward( char* str )
 {
     csString cmd(str);
     WordArray words(cmd);
-    
+
     csString charactername = words[0];
     csString item   = words[1];
 
@@ -2260,11 +2260,11 @@ int com_questreward( char* str )
     Client* client = psserver->GetNetManager()->GetConnections()->Find(charactername.GetData());
     csArray<psItemStats*> items;
     items.Push( itemstats );
-    
+
     if (!client)
     {
         // Character is not online
-        chardata=psserver->CharacterLoader.LoadCharacterData(characteruid,true);        
+        chardata=psserver->CharacterLoader.LoadCharacterData(characteruid,true);
         return 0;
     }
     else
@@ -2335,7 +2335,7 @@ int com_allocations(char* str)
 {
     CS::Debug::DumpAllocateMemoryBlocks();
     CPrintf(CON_CMDOUTPUT,"Dumped.\n");
-    
+
     return 0;
 }
 
@@ -2356,7 +2356,7 @@ int com_randomloot( char* loot )
         numModifiers = 0;
         CPrintf(CON_CMDOUTPUT, "Number of modifiers out of range 0-3. Default = 0\n");
     }
-    
+
     LootEntrySet* testLootEntrySet = new LootEntrySet(1);
     LootEntry* testEntry = new LootEntry;
     if (testLootEntrySet && testEntry)
@@ -2375,7 +2375,7 @@ int com_randomloot( char* loot )
             // add loot entry into set
             testLootEntrySet->AddLootEntry(testEntry);
 
-            // generate loot from base item 
+            // generate loot from base item
             testLootEntrySet->SetRandomizer(psserver->GetSpawnManager()->GetLootRandomizer());
             testLootEntrySet->CreateLoot(NULL, numModifiers);
 
@@ -2384,7 +2384,7 @@ int com_randomloot( char* loot )
         else
             CPrintf(CON_CMDOUTPUT, "\'%s\' not found.\n",
                     baseItemName.GetDataSafe());
-	
+
         delete testLootEntrySet;
     }
     else

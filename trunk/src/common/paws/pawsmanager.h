@@ -68,14 +68,14 @@ struct PAWSSubscription;
 
 typedef csHash<PAWSSubscription*,csString> PAWSSubscriptionsHash;
 
-/** 
+/**
  * Main PlaneShift Window manager.
  */
 class PawsManager : public Singleton<PawsManager>
 {
 public:
 
-    PawsManager(iObjectRegistry* objectReg, const char* skin, const char* skinBase = NULL, 
+    PawsManager(iObjectRegistry* objectReg, const char* skin, const char* skinBase = NULL,
                 const char* pawsConfigFile = "/planeshift/userdata/planeshift.cfg", uint _gfxFeatures = useAll);
 
     virtual ~PawsManager();
@@ -83,8 +83,8 @@ public:
     /// Establish main widget.
     void SetMainWidget(pawsMainWidget *widg);
 
-    /** Process mouse and keyboard events.
-     * @param event iEvent to process.
+    /** @brief Process mouse and keyboard events.
+     *  @param event iEvent to process.
      */
     bool HandleEvent( iEvent& event );
 
@@ -112,45 +112,51 @@ public:
     /// Loads a skin and loades unregistered resources
     bool LoadAdditionalSkin(const char* zip);
 
-    /** Add a new factory to the list that the manager knows about.
-     * Each widget type must have it's own factory so the manager can
-     * build it based on it's name.
-     * @param factory The widget factory to add to the list.
+    /** @brief Add a new factory to the list that the manager knows about.
+     *
+     *  Each widget type must have it's own factory so the manager can
+     *  build it based on it's name.
+     *  @param factory The widget factory to add to the list.
      */
     void RegisterWidgetFactory( pawsWidgetFactory* factory );
 
-    /** Loads a widget definition file.
-     * This loads a widget from XML and adds it to the main widget.
-     * @param widgetFile The standard path of the widget to load. 
-     * @see psLocalization::FindLocalizedFile()
-     * @return True if the widget was loaded properly.
+    /** @brief Loads a widget definition file.
+     *
+     *  This loads a widget from XML and adds it to the main widget.
+     *
+     *  @param widgetFile The standard path of the widget to load.
+     *  @see psLocalization::FindLocalizedFile()
+     *  @return True if the widget was loaded properly.
      */
     bool LoadWidget( const char* widgetFile );
 
-    /** Loads a widget from given XML node.
-     * @return NULL on failure. 
+    /** @brief Loads a widget from given XML node.
+     *  @return NULL on failure.
      */
     pawsWidget * LoadWidget( csRef<iDocumentNode> widgetNode );
 
-    /** Loads widgets from a definition file without assigning a parent.
-     * This loads multiple widgets from XML and places pointers to the 
-     * loaded widgets into the array loadedWidgets.
-     * @param widgetFile The standard path of the widget to load.
-     * @param loadedWidgets An array which will be cleared and then filled 
-     * with any widgets loaded.
-     * @return False if an error occured.  Note that some widgets may be 
-     * loaded even if an error occurs.
-     * @see psLocalization::FindLocalizedFile()
+    /** @brief Loads widgets from a definition file without assigning a parent.
+     *
+     *  This loads multiple widgets from XML and places pointers to the
+     *  loaded widgets into the array loadedWidgets.
+     *
+     *  @param widgetFile The standard path of the widget to load.
+     *  @param loadedWidgets An array which will be cleared and then filled
+     *  with any widgets loaded.
+     *  @return False if an error occured.  Note that some widgets may be
+     *  loaded even if an error occurs.
+     *  @see psLocalization::FindLocalizedFile()
      */
     bool LoadChildWidgets( const char* widgetFile, csArray<pawsWidget *> &loadedWidgets );
 
 
-    /** Create a new widget.
-     * This creates a new widget based on the factory that is passed in.
-     * @param factoryName The name of the factory that is used to create a
-     * widget.
-     * @return A new instance of a widget if the factory was found. NULL 
-     * if the widget could not be found.
+    /** @brief Create a new widget.
+     *
+     *  This creates a new widget based on the factory that is passed in.
+     *  @param factoryName The name of the factory that is used to create a
+     *  widget.
+     *  @return A new instance of a widget if the factory was found. NULL
+     *  if the widget could not be found.
      */
     pawsWidget* CreateWidget( const char* factoryName );
 
@@ -160,32 +166,32 @@ public:
     /// Returns true if the current focused widget needs to override all controls
     bool GetFocusOverridesControls() { return focusOverridesControls; }
 
-    /** Give this widget focus.
-     * @param widget The widget to focus.
+    /** @brief Give this widget focus.
+     *  @param widget The widget to focus.
      */
     void SetCurrentFocusedWidget ( pawsWidget* widget );
 
-    /** Make this widget modal.
-     * @param widget The modal widget.
+    /** @brief Make this widget modal.
+     *  @param widget The modal widget.
      */
     void SetModalWidget( pawsWidget* widget );
 
-    /** pawsWidget destructor calls this so PawsManager can NULLify all 
+    /** pawsWidget destructor calls this so PawsManager can NULLify all
      * its links to the widget.
      */
     void OnWidgetDeleted(pawsWidget * widget);
 
     /** Remove focus and mouseover effect from widget if widget is hidden */
     void OnWidgetHidden(pawsWidget * widget);
-    
-    /** Let the window manager know that a widget is being moved.
-     * @param moving The widget that is currently moving.
+
+    /** @brief Let the window manager know that a widget is being moved.
+     *  @param moving The widget that is currently moving.
      */
     void MovingWidget( pawsWidget* moving );
 
-    /** Let the manager know that a widget is being resized.
-     * @param widget The widget that is being resized.
-     * @param flags The resize flags that this widget should be resized with.
+    /** @brief Let the manager know that a widget is being resized.
+     *  @param widget The widget that is being resized.
+     *  @param flags The resize flags that this widget should be resized with.
      */
     void ResizingWidget( pawsWidget* widget, int flags );
 
@@ -199,7 +205,7 @@ public:
     csRef<iPAWSDrawable> GetResizeImage() { return resizeImg; }
 
     /** Locate a widget by name.
-     * @param name The name of the widget. 
+     * @param name The name of the widget.
      */
     pawsWidget* FindWidget( const char* name, bool complain=true );
 
@@ -213,66 +219,69 @@ public:
     /// A shortcut - translation without need to call GetLocalization().
     csString Translate(const csString & orig);
 
-    /** Gets the widget that is being drag'n'dropped over screen with the
-     * mouse.
-     * @return The widget being dragged.
-     * @remark Ownership of the widget goes to psPawsManager. This means that 
-     * this widget must not be already owned (e.g. be child of another widget).
-     * Parameter can be NULL.
+    /** @brief Gets the widget that is being drag'n'dropped over screen with the mouse.
+     *
+     *  @return The widget being dragged.
+     *  @remarks Ownership of the widget goes to psPawsManager. This means that
+     *  this widget must not be already owned (e.g. be child of another widget).
+     *  Parameter can be NULL.
      */
     pawsWidget * GetDragDropWidget();
 
-    /** Sets the widget that is being drag'n'dropped over screen with the
-     * mouse.
+    /** @brief Sets the widget that is being drag'n'dropped over screen with the mouse.
+     *
      * @param dragDropWidget The widget to drag.
-     * @remark Ownership of the widget goes to psPawsManager. This means that 
+     * @remarks Ownership of the widget goes to psPawsManager. This means that
      * this widget must not be already owned (e.g. be child of another widget).
      */
     void SetDragDropWidget(pawsWidget * dragDropWidget);
-    
-    /** Gets the factor the font should be adjusted by for proper fontsize based on resolution.
-     * @return the factor for the fontsize.
+
+    /** @brief Gets the factor the font should be adjusted by for proper fontsize based on resolution.
+     *  @return the factor for the fontsize.
      */
     float GetFontFactor() { return fontFactor; };
 
-    /** Creates a warning box with the supplied text. 
-     * @param message The warning.
-     * @param notify The widget which recevies event notifications ( i.e. Button Pressed ).
-     * @param modal If the widet should be a modal one or not.
-     */    
+    /** @brief Creates a warning box with the supplied text.
+     *  @param message The warning.
+     *  @param notify The widget which recevies event notifications ( i.e. Button Pressed ).
+     *  @param modal If the widet should be a modal one or not.
+     */
     void CreateWarningBox( const char* message, pawsWidget* notify = NULL, bool modal = true );
 
-    /** Creates a YesNo box with the supplied text.
+    /** @brief Creates a YesNo box with the supplied text.
      *  @param message The warning.
      *  @param notify The Widget which recives event notifications (i.e. Button Pressed).
-     +     
+     +
      */
     void CreateYesNoBox( const char* message, pawsWidget* notify = NULL, bool modal = true );
 
-    /** Applies PAWS style to XML node.
-     * @see pawsstyles.h
+    /** @brief Applies PAWS style to XML node.
+     *  @see pawsstyles.h
      */
     bool ApplyStyle(const char * name, iDocumentNode * target);
 
     /*                          Sound Functions
     ------------------------------------------------------------------------*/
 
-    /** Registers a pre-processed sound in the list of available sounds.
-      * This allows an application to handle its own sound loading prior to 
-      * initializing anyPaws widgets that use sounds.  The widgets may then 
+    /** @brief Registers a pre-processed sound in the list of available sounds.
+     *
+      * This allows an application to handle its own sound loading prior to
+      * initializing anyPaws widgets that use sounds.  The widgets may then
       * reference the registered sounds by any name provided here.
-      * @return FALSE if registration was not possible (conflict of name or 
+      *
+      * @return FALSE if registration was not possible (conflict of name or
       * memory allocation error).
      */
     bool RegisterSound(const char *name, csRef<iSndSysData> sounddata);
 
-    /** Loads a sound given a filename and an optional 'registered' name.
-      * If the registered name is specified, it is used for all operations 
+    /** @brief Loads a sound given a filename and an optional 'registered' name.
+      *
+      * If the registered name is specified, it is used for all operations
       * except loading the sound data from the VFS.  Otherwise the filename
       * is used for all operations. The name is first checked against the list
       * of previously registered or loaded sounds. If no match is found, a
-      * file with the given filename is loaded. If no file is found or the 
-      * file cannot be processed into a sound handle the function fails and 
+      * file with the given filename is loaded. If no file is found or the
+      * file cannot be processed into a sound handle the function fails and
       * returns an invalid csRef<>  (return.IsValid() == false).
      */
     csRef<iSndSysData> LoadSound(const char *filename, const char *registeredname=NULL);
@@ -316,9 +325,12 @@ public:
     /// Publish an int to all subscribers.
     void Publish(const char *dataname,int   datavalue);
 
+    /// Publish an unsigned int to all subscribers.
+    void Publish(const char *dataname,unsigned int   datavalue);
+
     /// Publish a float to all subscribers.
     void Publish(const char *dataname,float datavalue);
-    
+
     /// Publish nothing to all subscribers. (Used for one-time named signals.)
     void Publish(const char *dataname);
 
@@ -329,7 +341,7 @@ public:
     bool GetSoundStatus() { return soundStatus;}
 
     ///Set if sound is available or not (psclient.cfg)
-    void SetSoundStatus(bool sound){ soundStatus = sound; } 
+    void SetSoundStatus(bool sound){ soundStatus = sound; }
 
     void AddExtraScriptVar(iScriptableVar * var, const char * name);
     size_t GetExtraScriptVarCount() const;
@@ -343,15 +355,15 @@ protected:
         char name[64];
     };
     csArray<ExtraScriptVar> extraScriptVars;
-   
+
     psPoint MouseLocation( iEvent &ev );
 
-    /** Sets position of the dragDropWidget (if there is one) to the position  
+    /** Sets position of the dragDropWidget (if there is one) to the position
      * of the mouse cursor.
      */
     void PositionDragDropWidget();
-   
-    /// Localized file object registry. 
+
+    /// Localized file object registry.
     psLocalization * localization;
 
     /// The preference/default manager.
@@ -372,7 +384,7 @@ protected:
     /// The time mouse has been over the last widget.
     csTicks timeOver;
 
-    // The time mouse has been over a  widget before showing the tooltip.
+    /// The time mouse has been over a  widget before showing the tooltip.
     int tipDelay;
 
     /// Current widget that is being moved.
@@ -390,62 +402,71 @@ protected:
     /// Helper function to load standard factories.
     void RegisterFactories();
 
-    /** Process mouse movement events.
-     * Determines if a widget is moving or being resized. If there is no modal 
-     * widget it operates on the topmost widget at the event coordinates.
-     * @param event iEvent to process.
-     * @return TRUE if it moves, resizes or fades in a widget. 
+    /** @brief Process mouse movement events.
+     *
+     *  Determines if a widget is moving or being resized. If there is no modal
+     *  widget it operates on the topmost widget at the event coordinates.
+     *
+     *  @param event iEvent to process.
+     *  @return TRUE if it moves, resizes or fades in a widget.
      */
     bool HandleMouseMove( iEvent& event );
 
-     /** Process mouse down events.
-     * Determines the widget at event coordinates. 
-     * Calls OnMouseDown() on the currentFocusedWidget or widget at the event 
-     * coordinates.
-     * @param event iEvent to process.
-     * @return TRUE if event stops moving or resizing. 
-     */
+     /** @brief Process mouse down events.
+      *
+      *  Determines the widget at event coordinates.
+      *  Calls OnMouseDown() on the currentFocusedWidget or widget at the event
+      *  coordinates.
+      *  @param event iEvent to process.
+      *  @return TRUE if event stops moving or resizing.
+      */
     bool HandleMouseDown( iEvent& event );
 
-    
-    /** Process mouse double click events.
-      * Calls OnDoubleClick on the currentFocusedWidget or widget at the event 
+
+    /** @brief Process mouse double click events.
+      *
+      * Calls OnDoubleClick on the currentFocusedWidget or widget at the event
       * coordinates.
+      *
       * @param event iEvent to process.
       * @return Results of OnDoubleClick or FALSE.
       */
     bool HandleDoubleClick( iEvent& event );
 
-     /** Process mouse up events.
-     * Stops moving or resizing and turns off the corresponding flag. 
-     * Calls OnMouseUp on the currentFocusedWidget or widget at the event 
-     * coordinates.
-     * @param event iEvent to process.
-     * @return Results of OnMouseUp or FALSE.
-     */
+     /** @brief Process mouse up events.
+      *
+      *  Stops moving or resizing and turns off the corresponding flag.
+      *  Calls OnMouseUp on the currentFocusedWidget or widget at the event
+      *  coordinates.
+      *
+      *  @param event iEvent to process.
+      *  @return Results of OnMouseUp or FALSE.
+      */
     bool HandleMouseUp( iEvent& event );
 
-    /** Process key down events.
-     * If a widget has focus it extracts the event keycode, key and modifiers 
+    /** @brief Process key down events.
+     *
+     * If a widget has focus it extracts the event keycode, key and modifiers
      * and calls OnKeyDown on the focused widget.
+     *
      * @param event iEvent to process.
      * @return TRUE if a widget has focus AND the current event type is key up
-     * while hadKeyDown was set OR if OnKeyDown returns TRUE when called on  
+     * while hadKeyDown was set OR if OnKeyDown returns TRUE when called on
      * the focused widget.
-     * @remark Sets hadKeyDown to result of OnKeyDown call.
+     * @remarks Sets hadKeyDown to result of OnKeyDown call.
      */
     bool HandleKeyDown( iEvent& event );
 
-    /** The object registry. 
+    /** The object registry.
      */
     iObjectRegistry* objectReg;
 
-    /** Pointer to the Crystal Space iGraphics2D renderer used to display 
+    /** Pointer to the Crystal Space iGraphics2D renderer used to display
      * 2D graphics.
      */
     csRef<iGraphics2D> graphics2D;
-    
-    /** Pointer to the Crystal Space iGraphics3D renderer used to display 
+
+    /** Pointer to the Crystal Space iGraphics3D renderer used to display
      * 3D graphics.
      */
     csRef<iGraphics3D> graphics3D;
@@ -469,10 +490,10 @@ protected:
     /// An array of pointers to available factories.
     csPDelArray<pawsWidgetFactory> factories;
 
-    /// Pointer to the Crystal Space iVFS file system. 
+    /// Pointer to the Crystal Space iVFS file system.
     csRef<iVFS> vfs;
 
-    /// Pointer to the Crystal Space iDocumentSystem. 
+    /// Pointer to the Crystal Space iDocumentSystem.
     csRef<iDocumentSystem>  xml;
 
     /// Flag for key down function.
@@ -482,21 +503,21 @@ protected:
      * The widget that is drag'n'dropped across the screen by the mouse.
      * If it is not NULL, it is drawn instead of mouse on its position.
      * This widget has no parent widget (same as with pawsMainWidget)
-     */    
+     */
     pawsWidget * dragDropWidget;
 
     /// The font resizing factor for all widgets
     float fontFactor;
 
-    // Graphics features we want to use.
+    /// Graphics features we want to use.
     uint gfxFeatures;
 
 
     /*                      Sound Member Variables
     ------------------------------------------------------------------------*/
 
-    /** A hash of sounds currently available to Paws components. 
-     * Hashed based on the registered name. 
+    /** A hash of sounds currently available to Paws components.
+     * Hashed based on the registered name.
      */
     csHash<PawsSoundHandle *> sounds;
 
@@ -509,8 +530,8 @@ protected:
     /// Destructor helper for sound hash.
     void ReleaseAllSounds();
 
-    /** Parses given file and returns the <widget_description> tag of it
-     * @return NULL on failure. 
+    /** @brief Parses given file and returns the <widget_description> tag of it
+     *  @return NULL on failure.
      */
     csRef<iDocumentNode> ParseWidgetFile( const char* widgetFile );
 
@@ -522,14 +543,14 @@ protected:
 
     /// The volume for PAWS sound playback.
     float volume;
-    
-    /// PAWS style definitions. 
+
+    /// PAWS style definitions.
     pawsStyles * styles;
 
     /// Table of subscriptions.
     PAWSSubscriptionsHash subscriptions;
 
-    //Is sound on or off?
+    /// Is sound on or off?
     bool soundStatus;
 
     /*                      Shortcuts for events
@@ -555,7 +576,7 @@ class PawsSoundHandle
 public:
     PawsSoundHandle(const char *soundname,csRef<iSndSysData> sounddata) : name (soundname), snddata (sounddata) {};
     ~PawsSoundHandle() {};
-        
+
 public:
     csString name;
     csRef<iSndSysData> snddata;
@@ -568,6 +589,7 @@ enum PAWSDATATYPE
     PAWS_DATA_STR,
     PAWS_DATA_BOOL,
     PAWS_DATA_INT,
+    PAWS_DATA_UINT,
     PAWS_DATA_FLOAT
 };
 
@@ -577,9 +599,10 @@ struct PAWSData
     static csString temp_buffer;
 
     PAWSDATATYPE type;
-    union 
+    union
     {
         int intval;
+        unsigned int uintval;
         float floatval;
         bool boolval;
     };
@@ -599,6 +622,7 @@ struct PAWSData
     const char *GetStr();
     float GetFloat();
     int GetInt();
+    unsigned int GetUInt();
     bool GetBool();
 };
 

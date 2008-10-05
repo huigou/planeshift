@@ -35,7 +35,7 @@
 
 class psStatDRMessage;
 
-/** Handles the incoming vital data from the server to update it's 
+/** Handles the incoming vital data from the server to update it's
   * local values.
   */
 class psClientVitals : public psVitalManager
@@ -43,30 +43,32 @@ class psClientVitals : public psVitalManager
 public:
     psClientVitals();
 
-     /** Handles new Vital data from the server.
-      * @param me The Vital message from the server with the correct
-      *           values for this Vital.
-      * @param lable The label to be appended to published values
-      */ 
+     /** @brief Handles new Vital data from the server.
+      *  @param me The Vital message from the server with the correct
+      *            values for this Vital.
+      *  @param lable The label to be appended to published values
+      */
     void HandleDRData(psStatDRMessage& msg, const char *labelname );
-     
-     /** Reset virtuals on death
-      * @param lable The label to be appended to published values
-      */ 
+
+     /** @brief Reset virtuals on death
+      *  @param lable The label to be appended to published values
+      */
     void HandleDeath( const char *labelname );
-   
-    /** Predicts the new values of the various Vitals.  This helps limit the
-      * lag time in getting new values for these Vitals.
-      * @param now  The current ticks to use from last valid data from the server. 
+
+    /** @brief Predicts the new values of the various Vitals.
+      *
+      * This helps limit the lag time in getting new values for these Vitals.
+      *
+      * @param now  The current ticks to use from last valid data from the server.
       * @param lable The label to be appended to published values
-      */     
-    void Predict( csTicks now, const char *labelname );       
-    
-private:    
+      */
+    void Predict( csTicks now, const char *labelname );
+
+private:
     /// version indicator to ignore out of order packets
     unsigned char counter;
     bool counterSet;
-    
+
 };
 
 

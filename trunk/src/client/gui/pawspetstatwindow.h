@@ -50,14 +50,14 @@ public:
     virtual void Show();
     virtual void Hide();
     virtual void Close();
-    
+
     void UpdateStats( GEMClientActor* actor );
     void SetTarget( GEMClientActor* actor );
 
 protected:
 
     bool SetupDoll();
-    
+
     void BuySkill();
 
     void HandleSkillList( csString& skills );
@@ -68,22 +68,22 @@ protected:
     pawsMultiLineTextBox* combatSkillDescription, *magicSkillDescription, *knownSpellDescription;
     pawsMultiLineTextBox* variousSkillDescription, *statsSkillDescription;
     pawsProgressBar*    hpBar, *manaBar, *pysStaminaBar, *menStaminaBar;
-    pawsTextBox        *hpCurrent, *hpTotal, 
-                       *manaCurrent, *manaTotal, 
+    pawsTextBox        *hpCurrent, *hpTotal,
+                       *manaCurrent, *manaTotal,
                        *pysStaminaCurrent, *pysStaminaTotal,
                        *menStaminaCurrent, *menStaminaTotal;
-    
-    csArray<pawsListBoxRow*> unsortedSkills; // Array keeping the server order of the skills
+
+    csArray<pawsListBoxRow*> unsortedSkills; ///< Array keeping the server order of the skills
 
     bool filter;
     csString skillString;
     csString selectedSkill;
-    
+
     int hitpointsMax, manaMax, physStaminaMax, menStaminaMax;
-    
+
     csRef<iDocumentSystem> xml;
     csRef<MsgHandler> msgHandler;
-    
+
     GEMClientActor* target;
     csString targetID;
     psCharAppearance* charApp;
@@ -92,5 +92,5 @@ protected:
 CREATE_PAWS_FACTORY( pawsPetStatWindow );
 
 
-#endif 
+#endif
 

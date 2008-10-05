@@ -276,30 +276,30 @@ void psEngine::Cleanup()
 {
     if (loadstate==LS_DONE)
         QuitClient();
-    
+
     delete charmanager;
     delete charController;
     delete camera;
     delete chatBubbles;
-    
+
     if (scfiEventHandler && queue)
         queue->RemoveListener (scfiEventHandler);
 
     delete paws; // Include delete of mainWidget
-    
+
     delete questionclient;
     delete cachemanager;
     delete slotManager;
     delete mouseBinds;
     delete guiHandler;
     delete inventoryCache;
-    
+
 
     // Effect manager needs to be destoyed before the soundmanager
     effectManager = NULL;
-    
+
     object_reg->Unregister ((iSoundManager*)soundmanager, "iSoundManager");
-                
+
     delete options;
 }
 
@@ -333,11 +333,11 @@ bool psEngine::Initialize (int level)
         PS_QUERY_PLUGIN (loader, iLoader,        "iLoader");
         PS_QUERY_PLUGIN (vc,     iVirtualClock,  "iVirtualClock");
         PS_QUERY_PLUGIN (cmdline,iCommandLineParser, "iCommandLineParser");
-        
+
         g2d = g3d->GetDriver2D();
-        
+
         g2d->AllowResize(false);
-        
+
         // Check for configuration values for crash dump action and mode
         #ifdef USE_WIN32_MINIDUMP
             PS_CRASHACTION_TYPE crashaction=PSCrashActionPrompt;
@@ -378,7 +378,7 @@ bool psEngine::Initialize (int level)
         if (!txtmgr)
         {
             return false;
-        }            
+        }
 
         // Check if we're preloading models.
         preloadModels = (cmdline->GetBoolOption("preload_models", false) || GetConfig()->GetBool("PlaneShift.Client.Loading.PreloadModels", false));
@@ -398,21 +398,21 @@ bool psEngine::Initialize (int level)
         if(cmdline->GetBoolOption("threaded_load", false))
         {
             threadedLoad = true;
-        }        
+        }
 
         //Check if sound is on or off in psclient.cfg
         csString soundPlugin;
-      
+
         soundOn = cfgmgr->KeyExists("System.PlugIns.iSndSysRenderer");
-        
+
         if (soundOn)
         {
             psSoundManager* pssound = new psSoundManager(0);
-            
+
             pssound->Initialize(object_reg);
             soundmanager.AttachNew(pssound);
             object_reg->Register ((iSoundManager*) soundmanager, "iSoundManager");
-    
+
             if (!soundmanager->Setup())
             {
                 csReport(object_reg, CS_REPORTER_SEVERITY_NOTIFY, PSAPP,
@@ -433,28 +433,28 @@ bool psEngine::Initialize (int level)
         if ( vfs->Exists(skinPath + slash) )
         {
             skinPath += slash;
-        }            
+        }
 
-        
+
         // Create the PAWS window manager
         csString skinPathBase = cfgmgr->GetStr("PlaneShift.GUI.Skin.Base","/planeshift/art/skins/base/client_base.zip");
         paws = new PawsManager( object_reg, skinPath, skinPathBase, "/planeshift/userdata/planeshift.cfg", gfxFeatures );
-        
+
         options = new psOptions("/planeshift/userdata/options.cfg", vfs);
-        
+
         // Default to maximum 71 fps
         // Actual fps get be up to 10 fps less so set a reasonably high limit
         maxFPS = cfgmgr->GetInt("Video.FrameLimit", 71);
         frameLimit = 1000 / maxFPS;
-        
+
         paws->SetSoundStatus(soundOn);
         mainWidget = new psMainWidget();
         paws->SetMainWidget( mainWidget );
-        
+
         paws->GetMouse()->Hide(true);
 
         DeclareExtraFactories();
-        
+
         // Register default PAWS sounds
         if (soundmanager.IsValid() && soundOn)
         {
@@ -474,7 +474,7 @@ bool psEngine::Initialize (int level)
              }
         }
 
-        
+
         if ( ! paws->LoadWidget("data/gui/splash.xml") )
             return false;
         if ( ! paws->LoadWidget("data/gui/ok.xml") )
@@ -483,7 +483,7 @@ bool psEngine::Initialize (int level)
             return false;
 
         LoadPawsWidget( "Yes / No dialog",         "data/gui/yesno.xml" );
- 
+
         //Load confirmation information for duels
         if (!LoadDuelConfirm())
             return false;
@@ -498,7 +498,7 @@ bool psEngine::Initialize (int level)
               csevFrame (object_reg),
               csevMouseEvent (object_reg),
               csevKeyboardEvent (object_reg),
-              csevCanvasExposed (object_reg,g2d), 
+              csevCanvasExposed (object_reg,g2d),
               csevCanvasHidden (object_reg, g2d),
               csevFocusGained (object_reg),
               csevFocusLost (object_reg),
@@ -522,17 +522,17 @@ bool psEngine::Initialize (int level)
         csReport (object_reg, CS_REPORTER_SEVERITY_NOTIFY, PSAPP,
             "psEngine initialized.");
 
-        
+
         return true;
     }
     else if (level==1)
     {
-        
+
         // Initialize Networking
         if (!netmanager)
         {
             netmanager = csPtr<psNetManager> (new psNetManager);
-            
+
             if (!netmanager->Initialize(object_reg))
             {
                 lasterror = "Couldn't init Network Manager.";
@@ -550,7 +550,7 @@ bool psEngine::Initialize (int level)
         zonehandler = csPtr<ZoneHandler> (new ZoneHandler(netmanager->GetMsgHandler(),object_reg,celclient));
         cachemanager = new ClientCacheManager();
         questionclient = new psQuestionClient(GetMsgHandler(), object_reg);
-        
+
         if (cmdline)
         {
             celclient->IgnoreOthers(cmdline->GetBoolOption("ignore_others"));
@@ -562,7 +562,7 @@ bool psEngine::Initialize (int level)
         unloadLast = GetConfig()->GetBool("PlaneShift.Client.Loading.UnloadLast", true);
 
         materialmanager.AttachNew(new MaterialManager(object_reg, preloadModels));
-        
+
         if(preloadModels)
         {
             materialmanager->PreloadTextures();
@@ -575,7 +575,7 @@ bool psEngine::Initialize (int level)
             return false;
         }
 
-        
+
         if(!modehandler->Initialize())
         {
             lasterror = "ModeHandler failed init.";
@@ -588,8 +588,8 @@ bool psEngine::Initialize (int level)
 
         if (!camera)
         {
-            camera = new psCamera();            
-        }          
+            camera = new psCamera();
+        }
 
         if (!charmanager)
         {
@@ -602,7 +602,7 @@ bool psEngine::Initialize (int level)
             }
         }
 
-        
+
         // This widget requires NetManager to exist so must be in this stage
         if ( ! paws->LoadWidget("data/gui/charpick.xml") )
             return false;
@@ -618,9 +618,9 @@ bool psEngine::Initialize (int level)
             FatalError("Failed to load effects!");
             return 1;
         }
-        
+
         okToLoadModels = true;
-        
+
         return true;
     }
 
@@ -726,7 +726,7 @@ void psEngine::DeclareExtraFactories()
     RegisterFactory (pawsGameBoardFactory);
     RegisterFactory (pawsGameTileFactory);
     RegisterFactory (pawsBankWindowFactory);
-	RegisterFactory (pawsConfigChatBubblesFactory);
+    RegisterFactory (pawsConfigChatBubblesFactory);
     RegisterFactory (pawsConfigShadowsFactory);
 }
 
@@ -759,7 +759,7 @@ iNetManager* psEngine::GetNetManager()
 bool psEngine::HandleEvent (iEvent &ev)
 {
     lastEvent = &ev;
- 
+
     if ( paws->HandleEvent( ev ) )
     {
         if (charController && paws->GetFocusOverridesControls())
@@ -769,7 +769,7 @@ bool psEngine::HandleEvent (iEvent &ev)
 
         return true;
     }
-    
+
     if ( charController && charController->HandleEvent( ev ) )
     {
         if (paws->GetFocusOverridesControls())
@@ -779,7 +779,7 @@ bool psEngine::HandleEvent (iEvent &ev)
 
         return true;
     }
-    
+
     static bool drawFrame;
 
     if (ev.Name == event_preprocess)
@@ -823,7 +823,7 @@ bool psEngine::HandleEvent (iEvent &ev)
 
                         paws->GetMouse()->ChangeImage("Standard Mouse Pointer");
                         paws->GetMouse()->Hide(false);
-                    
+
                         modelsLoaded = true;
                     }
                 }
@@ -910,7 +910,7 @@ bool psEngine::HandleEvent (iEvent &ev)
         // for up to a few seconds, and seems very much unnecessary
         //if (IsGameLoaded())
         //    celclient->GetEntityLabels()->RepaintAllLabels();
-    }    
+    }
     else if (ev.Name == event_focusgained)
     {
         if(GetMuteSoundsOnFocusLoss() && soundOn)
@@ -1031,7 +1031,7 @@ void psEngine::UnmuteAllSounds(void)
     LoadSoundSettings(false);
 
     //If we are in the login/loading/credits/etc. screen we have to force the music to start again.
-    if(loadstate != LS_DONE) 
+    if(loadstate != LS_DONE)
     {
         const char* bgMusic = NULL;
         bgMusic = GetSoundManager()->GetSongName();
@@ -1105,10 +1105,10 @@ void psEngine::QuitClient()
     // Only run through the shut down procedure once
     static bool alreadyQuitting = false;
     if (alreadyQuitting)
-    { 
+    {
         return;
     }
-    
+
     alreadyQuitting = true;
 
     loadstate = LS_NONE;
@@ -1122,7 +1122,7 @@ void psEngine::QuitClient()
     if (cfg)
     {
         cfg->Save();
-    }        
+    }
 
     Disconnect(true);
 
@@ -1164,7 +1164,7 @@ void psEngine::LoadGame()
         paws->LoadWidget("data/gui/loadwindow.xml");
         LoadPawsWidget( "Active Magic window",     "data/gui/activemagicwindow.xml" );
         HideWindow("ActiveMagicWindow");
-        
+
         pawsLoadWindow* window = dynamic_cast <pawsLoadWindow*> (paws->FindWidget("LoadWindow"));
         if (!window)
         {
@@ -1182,7 +1182,7 @@ void psEngine::LoadGame()
         loadstate = LS_INIT_ENGINE;
         break;
     }
-    
+
     case LS_INIT_ENGINE:
     {
         if (charController == NULL)
@@ -1193,7 +1193,7 @@ void psEngine::LoadGame()
                 FatalError("Couldn't initialize the character controller!");
                 return;
             }
-        } 
+        }
 
         // load chat bubbles
         if (!chatBubbles)
@@ -1481,7 +1481,7 @@ inline void psEngine::PreloadModels()
 
             paws->GetMouse()->ChangeImage("Standard Mouse Pointer");
             paws->GetMouse()->Hide(false);
-            
+
             modelsLoaded = true;
             return;
         }
@@ -1886,7 +1886,7 @@ void psEngine::FatalError(const char* msg)
 {
     loadstate = LS_ERROR;
     Bug1(msg);
-    
+
     pawsQuitInfoBox* quitinfo = (pawsQuitInfoBox*)(paws->FindWidget("QuitInfoWindow"));
     if (quitinfo)
     {
@@ -1935,7 +1935,7 @@ int main (int argc, char *argv[])
     // Create our application object
     psengine = new psEngine(object_reg);
 
-    
+
     // Initialize engine
     if (!psengine->Initialize(0))
     {
@@ -1948,7 +1948,7 @@ int main (int argc, char *argv[])
     csDefaultRunLoop(object_reg);
 
     psengine->Cleanup();
-    
+
 
     Notify1(LOG_ANY,"Removing engine...");
 
