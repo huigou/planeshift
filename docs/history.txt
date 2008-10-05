@@ -1,4 +1,8 @@
-﻿*** 2008-10-04 by Stefano Angeleri
+﻿*** 2008-10-05 by Stefano Angeleri
+- Fixed the fact that the server admin messages were being filtered in the main tab
+- Identation/trailing spaces fixes
+
+*** 2008-10-04 by Stefano Angeleri
 - Fixed additional problems stated by kerol in FS#2324 - setskill has insufficient system output
 - Fixed first problem of FS#1320, detailed also in FS#2339
 - Fixed FS#2336 - Can't teleport to NPC by first name

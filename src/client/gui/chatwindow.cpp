@@ -80,7 +80,7 @@ const char *logFileName[CHAT_NLOG] = {
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
-pawsChatWindow::pawsChatWindow() 
+pawsChatWindow::pawsChatWindow()
     : psCmdBase( NULL,NULL,  PawsManager::GetSingleton().GetObjectRegistry() )
 {
     systemTriggers.Push("server admin");
@@ -98,12 +98,12 @@ pawsChatWindow::pawsChatWindow()
     settings.vicinityFilters = 0;
     settings.echoScreenInSystem = false;
     //TODO: REMOVE NEXT 3 LINES AFTER THE FIRST RELEASE MADE WITH THIS! (SO AFTER A RELEASE >= 0.4.03)
-    //sets a default color for npc and a default for mainBrackets and yourColorMix in order to 
+    //sets a default color for npc and a default for mainBrackets and yourColorMix in order to
     //allow safe update to next release
-    settings.npcColor = graphics2D->FindRGB( 255, 0, 255 ); 
-    settings.mainBrackets = true; 
+    settings.npcColor = graphics2D->FindRGB( 255, 0, 255 );
+    settings.mainBrackets = true;
     settings.yourColorMix = true;
-                                                            
+
 
     for (int i = 0; i < CHAT_NLOG; i++)
         logFile[i] = NULL;
@@ -262,7 +262,7 @@ void pawsChatWindow::LoadChatSettings()
         }
     }
 
-	// Load flashing on char name options
+    // Load flashing on char name options
     settings.maincFlashing = true;
     settings.npccFlashing = true;
     settings.tellcFlashing = true;
@@ -283,37 +283,37 @@ void pawsChatWindow::LoadChatSettings()
             bool value = node->GetAttributeValueAsBool("value");
 
             if (nodeName == "main")
-			{
+            {
                 settings.maincFlashing = value;
-			}
+            }
             else if (nodeName == "npc")
-			{
+            {
                 settings.npccFlashing = value;
-			}
+            }
             else if (nodeName == "tell")
-			{
+            {
                 settings.tellcFlashing = value;
-			}
+            }
             else if (nodeName == "guild")
-			{
+            {
                 settings.guildcFlashing = value;
-			}
+            }
             else if (nodeName == "group")
-			{
+            {
                 settings.groupcFlashing = value;
-			}
+            }
             else if (nodeName == "auction")
-			{
+            {
                 settings.auctioncFlashing = value;
-			}
+            }
             else if (nodeName == "system")
-			{
+            {
                 settings.systemcFlashing = value;
-			}
+            }
             else if (nodeName == "help")
-			{
+            {
                 settings.helpcFlashing = value;
-			}
+            }
 
         }
     }
@@ -509,7 +509,7 @@ const char* pawsChatWindow::HandleCommand( const char* cmd )
 
         if (words[0] == "/say")
         {
-            pPerson.Clear();            
+            pPerson.Clear();
             words.GetTail(1, text);
             chattype = CHAT_SAY;
             csArray<csString> allowedTabs;
@@ -789,7 +789,7 @@ const char* pawsChatWindow::HandleCommand( const char* cmd )
             }
         }
     }
-    
+
     if (settings.enableBadWordsFilterOutgoing)
         BadWordsFilter(text);
 
@@ -818,13 +818,13 @@ void pawsChatWindow::LogMessage(enum E_CHAT_LOG channel, const char* message, in
     {
         if (!logFile[channel])
         {
-	    csString filename;
-	    filename.Format("/planeshift/userdata/logs/%s_%s",
+        csString filename;
+        filename.Format("/planeshift/userdata/logs/%s_%s",
                             psengine->GetCelClient()->GetMainPlayer()->GetName(),
-			    logFileName[channel]);
+                logFileName[channel]);
             filename.ReplaceAll(" ", "_");
 
-	    logFile[channel] = psengine->GetVFS()->Open(filename, VFS_FILE_APPEND);
+        logFile[channel] = psengine->GetVFS()->Open(filename, VFS_FILE_APPEND);
             if (logFile[channel])
             {
                 time_t aclock;
@@ -867,14 +867,14 @@ void pawsChatWindow::LogMessage(enum E_CHAT_LOG channel, const char* message, in
             time(&aclock);
             newtime = localtime(&aclock);
             strftime(buf, 32, "(%H:%M:%S)", newtime);
-	    csString buffer;
+        csString buffer;
 #ifdef _WIN32
         buffer.Format("%s %s%s\r\n", buf, GetBracket(type).GetDataSafe(), message);
 #else
         buffer.Format("%s %s%s\n", buf, GetBracket(type).GetDataSafe(), message);
 #endif
-	    logFile[channel]->Write(buffer.GetData(), buffer.Length());
-	    logFile[channel]->Flush();
+        logFile[channel]->Write(buffer.GetData(), buffer.Length());
+        logFile[channel]->Flush();
         }
     }
 }
@@ -901,7 +901,7 @@ void pawsChatWindow::SaveChatSettings()
     csRef<iDocument> doc = docsys->CreateDocument();
     csRef<iDocumentNode> root,chatNode, colorNode, optionNode,looseNode,filtersNode,
                          badWordsNode,badWordsTextNode,cNode, logNode, selectTabStyleNode,
-                         echoScreenInSystemNode, mainBracketsNode, yourColorMixNode,mainTabNode, 
+                         echoScreenInSystemNode, mainBracketsNode, yourColorMixNode,mainTabNode,
                          flashingNode, flashingOnCharNode, node;
 
     root = doc->CreateRoot();
@@ -923,11 +923,11 @@ void pawsChatWindow::SaveChatSettings()
     mainBracketsNode = optionNode->CreateNodeBefore(CS_NODE_ELEMENT,0);
     mainBracketsNode->SetValue("mainbrackets");
     mainBracketsNode->SetAttributeAsInt("value",(int)settings.mainBrackets);
-    
+
     yourColorMixNode = optionNode->CreateNodeBefore(CS_NODE_ELEMENT,0);
     yourColorMixNode->SetValue("yourcolormix");
     yourColorMixNode->SetAttributeAsInt("value",(int)settings.yourColorMix);
-    
+
     looseNode = optionNode->CreateNodeBefore(CS_NODE_ELEMENT,0);
     looseNode->SetValue("loose");
     looseNode->SetAttributeAsInt("value",(int)settings.looseFocusOnSend);
@@ -977,7 +977,7 @@ void pawsChatWindow::SaveChatSettings()
     flashingNode = chatNode->CreateNodeBefore(CS_NODE_ELEMENT, 0);
     flashingNode->SetValue("flashingoptions");
 
-	flashingOnCharNode = chatNode->CreateNodeBefore(CS_NODE_ELEMENT, 0);
+    flashingOnCharNode = chatNode->CreateNodeBefore(CS_NODE_ELEMENT, 0);
     flashingOnCharNode->SetValue("flashingoncharoptions");
 
     node = flashingNode->CreateNodeBefore(CS_NODE_ELEMENT, 0);
@@ -1123,7 +1123,7 @@ void pawsChatWindow::HandleSystemMessage(MsgEntry *me)
 {
     psSystemMessage msg(me);
 
-    if(!settings.echoScreenInSystem && 
+    if(!settings.echoScreenInSystem &&
         (msg.type == MSG_OK || msg.type == MSG_ERROR || msg.type == MSG_RESULT || msg.type == MSG_ACK))
         return;
 
@@ -1136,12 +1136,12 @@ void pawsChatWindow::HandleSystemMessage(MsgEntry *me)
 
         //Handles messages containing the /who content
         if(msg.type == MSG_WHO)
-        { 
+        {
             csString msgCopy=msg.msgline;               // Make a copy for not modifying the original
             size_t nLocation = msgCopy.FindFirst('\n'); // This get the end of the first line
-            csArray<csString> playerLines;              // This is used for storing the data related to the players online 
+            csArray<csString> playerLines;              // This is used for storing the data related to the players online
             msgCopy.SubString(header,0, nLocation);     // The first line is copied, since it is the header and shouldn't be sorted.
-            csString playerCount; 
+            csString playerCount;
 
             if (nLocation > 0)
             {
@@ -1150,7 +1150,7 @@ void pawsChatWindow::HandleSystemMessage(MsgEntry *me)
 
                 csString line;
 
-                while (nLocation != ((size_t)-1))//Until it is possible to find "\n" 
+                while (nLocation != ((size_t)-1))//Until it is possible to find "\n"
                 {
                     // Extract the current string
                     msgCopy.SubString(line, stringStart , nLocation-stringStart);
@@ -1171,7 +1171,7 @@ void pawsChatWindow::HandleSystemMessage(MsgEntry *me)
             }
             header.Append('\n');
             header.Append(playerCount);//We add the line that says how many players there are online
-            start= header.GetData();//We copy to start, so it can be displayed like everything else in the chat.            
+            start= header.GetData();//We copy to start, so it can be displayed like everything else in the chat.
 
         }
         const char* workingString = start;
@@ -1231,9 +1231,9 @@ void pawsChatWindow::HandleSystemMessage(MsgEntry *me)
             ChatOutput(buff.GetData(), colour, chatType, true, hasCharName);
 
             if (soundmgr && psengine->GetSoundStatus())
-			{
+            {
                 soundmgr->HandleSoundType(msg.type);
-			}
+            }
 
             LogMessage((msg.type == MSG_INFO_BASE || msg.type == MSG_INFO_SERVER) ? CHAT_LOG_ALL : CHAT_LOG_SYSTEM, buff.GetData());
         }
@@ -1272,7 +1272,7 @@ void pawsChatWindow::HandleMessage (MsgEntry *me)
                 msg.sPerson = "Someone";
             }
             break;
-    }            
+    }
 
     if (msg.translate)
         msg.sText = PawsManager::GetSingleton().Translate(msg.sText);
@@ -1340,7 +1340,7 @@ void pawsChatWindow::HandleMessage (MsgEntry *me)
             else if ( msg.sText.StartsWith("/my ") )
                 buff.Format("%s's %s", (const char *)msg.sPerson, ((const char *)msg.sText)+4);
             else
-                buff.Format(PawsManager::GetSingleton().Translate("%s says: %s"), 
+                buff.Format(PawsManager::GetSingleton().Translate("%s says: %s"),
                             (const char *)msg.sPerson,(const char *)msg.sText);
             colour = settings.guildColor;
             break;
@@ -1353,7 +1353,7 @@ void pawsChatWindow::HandleMessage (MsgEntry *me)
             else if ( msg.sText.StartsWith("/my ") )
                 buff.Format("%s's %s", (const char *)msg.sPerson, ((const char *)msg.sText)+4);
             else
-                buff.Format(PawsManager::GetSingleton().Translate("%s auctions: %s"), 
+                buff.Format(PawsManager::GetSingleton().Translate("%s auctions: %s"),
                         (const char *)msg.sPerson, (const char *)msg.sText);
             colour = settings.auctionColor;
             break;
@@ -1549,9 +1549,9 @@ void pawsChatWindow::HandleMessage (MsgEntry *me)
     bool hasCharName = msg.sText.Downcase().Find(playerName[0].Downcase().GetData()) != (size_t)-1;
 
     if (!buff.IsEmpty())
-	{
+    {
         ChatOutput(buff.GetData(), colour, msg.iChatType, flashEnabled, hasCharName);
-	}
+    }
 
     LogMessage(CHAT_LOG_ALL, buff.GetDataSafe(), msg.iChatType);
 
@@ -1562,9 +1562,9 @@ void pawsChatWindow::HandleMessage (MsgEntry *me)
             clientmsg.Format("%s %s", psengine->GetCelClient()->GetMainPlayer()->GetName(), ((const char *)awayText)+4);
         else if ( clientmsg.StartsWith("/my ") )
             clientmsg.Format("%s's %s",psengine->GetCelClient()->GetMainPlayer()->GetName(), ((const char *)awayText)+4);
- 
+
         autoResponse.Format("/tell %s [auto-reply] %s", (const char*)msg.sPerson, clientmsg.GetData());
-		const char* errorMessage = cmdsource->Publish(autoResponse.GetData());
+        const char* errorMessage = cmdsource->Publish(autoResponse.GetData());
         if ( errorMessage )
             ChatOutput( errorMessage );
     }
@@ -2002,9 +2002,9 @@ void pawsChatWindow::TabCompleteName(const char *cmdstr)
     {
         list.Insert(0,PawsManager::GetSingleton().Translate("Ambiguous name:"));
         ChatOutput(list);
-        
+
         psString line, partial;
-        
+
         last.GetSubString(partial,0,max_common);
         line = cmdstr;
         line.DeleteAt(cmd-cmdstr,line.Length()-(cmd-cmdstr) );
@@ -2049,8 +2049,8 @@ void pawsChatWindow::AutoReply(void)
 
 void pawsChatWindow::SetAway(const char* text)
 {
-	if ( !strcmp(text, "off") || strlen(text) == 0)
-	{
+    if ( !strcmp(text, "off") || strlen(text) == 0)
+    {
         awayText.Clear();
         ChatOutput( "Auto-reply has been turned OFF" );
     }
@@ -2183,6 +2183,7 @@ void pawsChatWindow::ChatOutput(const char* data, int colour, int type, bool fla
             ChatOutput(npcText, data, colour, false, "NPC Button");
             toMain = true;
             flashMain = false; // Since it goes to all tabs, no reason to flash the main tab
+            s = data; //we have to restore the original data for the main tab if it went trough the badwordfiltering as this an admin message
             break;
 
         case CHAT_SYSTEM:
@@ -2272,16 +2273,16 @@ void pawsChatWindow::ChatOutput(pawsMessageTextBox *pmtb, const char *data,
 
 void pawsChatWindow::AddAutoCompleteName(const char *cname)
 {
-	csString name = cname;
-	
-	for (size_t i = 0; i < autoCompleteNames.GetSize(); i++)
+    csString name = cname;
+
+    for (size_t i = 0; i < autoCompleteNames.GetSize(); i++)
     {
         if (autoCompleteNames[i].CompareNoCase(name))
         {
             return;
         }
     }
-	
+
     autoCompleteNames.Push(name);
 }
 
@@ -2332,23 +2333,23 @@ pawsChatHistory::~pawsChatHistory()
 void pawsChatHistory::Insert(const char *str)
 {
     bool previous = false;
-    
+
     if ( buffer.GetSize() > 0 )
-    {        
+    {
         // Check to see if it's the same as the last one before adding.
         if ( *buffer[ buffer.GetSize()-1] == str )
         {
             previous = true;
-        }    
+        }
     }
-    
+
     if ( !previous )
     {
         csString * newStr = new csString( str );
-        buffer.Push( newStr );    
+        buffer.Push( newStr );
     }
     getLoc = 0;
-}    
+}
 
 
 // returns a copy of the stored string from 'n' commands back.
