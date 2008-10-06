@@ -1,4 +1,8 @@
-﻿*** 2008-10-06 by Kenny Graunke
+﻿*** 2008-10-06 by Stefano Angeleri
+- Updated MSVC projects manually
+- Fixed jobber.cfg and svnwrapper in order to work correctly
+
+*** 2008-10-06 by Kenny Graunke
 - Better debugging messages for understanding FS#2104.
 
 *** 2008-10-05 by Stefano Angeleri
@@ -6,6 +10,7 @@
 - Fixed FS#2342 by changing all the misuses of int to unsigned int for progression points
   and experience
 - Identation/trailing spaces/comment improvement/fixes in various files
+- NETVER BUMP
 
 *** 2008-10-04 by Stefano Angeleri
 - Fixed additional problems stated by kerol in FS#2324 - setskill has insufficient system output

@@ -5,14 +5,16 @@
 # checkout it also runs a number of updates afterwards to 
 # compensate for SFs sometimes broken SVN.
 
+eval adress=\$$#
+
 MAXITER=2
 
 if [[ "$1" == "co" || "$1" == "checkout" ]]
 then
   # First do a normal checkout, pass on all options to SVN
   # Then if it fails, do at most MAXITER updates
-  DIRNAME=`basename $2`
-  
+  DIRNAME=`basename $adress`
+
   svn $@
 
   if [[ $? ]]
