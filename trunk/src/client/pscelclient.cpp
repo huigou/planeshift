@@ -425,6 +425,8 @@ void psCelClient::HandleObjectRemoval( MsgEntry* me )
 {
     psRemoveObject mesg(me);
     
+    ForceEntityQueues();
+
     GEMClientObject* entity = FindObject( mesg.objectEID );
     
     if (entity)
@@ -754,14 +756,18 @@ void psCelClient::HandleStats( MsgEntry* me )
     
 }
 
-void psCelClient::QueueNewActor(MsgEntry *me)
+void psCelClient::ForceEntityQueues()
 {
-    newActorQueue.Push(me);
-}
-
-void psCelClient::QueueNewItem(MsgEntry *me)
-{
-    newItemQueue.Push(me);
+    while (!newActorQueue.IsEmpty())
+    {
+        csRef<MsgEntry> me = newActorQueue.Pop();
+        HandleActor(me);
+    }
+    if (!newItemQueue.IsEmpty())
+    {
+        csRef<MsgEntry> me = newItemQueue.Pop();
+        HandleItem(me);
+    }
 }
 
 void psCelClient::CheckEntityQueues()
@@ -886,7 +892,7 @@ void psCelClient::HandleMessage(MsgEntry *me)
         
         case MSGTYPE_PERSIST_ACTOR:
         {
-            QueueNewActor( me );
+            newActorQueue.Push(me);
             break;
         }   
         
@@ -894,7 +900,7 @@ void psCelClient::HandleMessage(MsgEntry *me)
         {
             if (!ignore_others) 
             {
-                QueueNewItem( me );
+                newItemQueue.Push(me);
             }
             break;
 
