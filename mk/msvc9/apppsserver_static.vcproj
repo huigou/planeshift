@@ -29,7 +29,7 @@
 				DebugInformationFormat="3"
 				BufferSecurityCheck="FALSE"
 				ProgramDataBaseFileName="..\..\out\release9\build\apppsserver_static\psserver_static.pdb"
-				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_CONSOLE;CS_STATIC_LINKED;WIN32"
+				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_CONSOLE;WIN32"
 				OptimizeForProcessor="1"
 				AdditionalOptions="/D CS_HAVE_CAL3D "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
@@ -64,7 +64,7 @@
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
-				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_CONSOLE;CS_STATIC_LINKED"
+				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_CONSOLE"
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
@@ -79,7 +79,7 @@
 				Name="VCPreLinkEventTool"/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_CONSOLE;CS_STATIC_LINKED;PROJECTGEN_VERSION=9"
+				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_CONSOLE;PROJECTGEN_VERSION=9"
 				AdditionalIncludeDirectories=".;..\..\src\server;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
 				Culture="1033"/>
 			<Tool
@@ -105,7 +105,7 @@
 				DebugInformationFormat="3"
 				BufferSecurityCheck="FALSE"
 				ProgramDataBaseFileName="..\..\out\release9\build\apppsserver_static\psserver_static.pdb"
-				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_CONSOLE;CS_STATIC_LINKED;WIN32;CS_BUILD_SHARED_LIBS"
+				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_CONSOLE;WIN32;CS_BUILD_SHARED_LIBS"
 				OptimizeForProcessor="1"
 				AdditionalOptions="/D CS_HAVE_CAL3D "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
@@ -140,7 +140,7 @@
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
-				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_CONSOLE;CS_STATIC_LINKED"
+				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_CONSOLE"
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
@@ -155,7 +155,7 @@
 				Name="VCPreLinkEventTool"/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_CONSOLE;CS_STATIC_LINKED;PROJECTGEN_VERSION=9"
+				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_CONSOLE;PROJECTGEN_VERSION=9"
 				AdditionalIncludeDirectories=".;..\..\src\server;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
 				Culture="1033"/>
 			<Tool
@@ -180,7 +180,7 @@
 				RuntimeLibrary="3"
 
 				ProgramDataBaseFileName="..\..\out\debug9\build\apppsserver_static\psserver_static.pdb"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_CONSOLE;CS_STATIC_LINKED;WIN32"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_CONSOLE;WIN32"
 				OptimizeForProcessor="1"
 				AdditionalOptions="/D CS_HAVE_CAL3D "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
@@ -213,7 +213,7 @@
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_CONSOLE;CS_STATIC_LINKED"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_CONSOLE"
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
@@ -228,7 +228,7 @@
 				Name="VCPreLinkEventTool"/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_CONSOLE;CS_STATIC_LINKED;PROJECTGEN_VERSION=9"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_CONSOLE;PROJECTGEN_VERSION=9"
 				AdditionalIncludeDirectories=".;..\..\src\server;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
 				Culture="1033"/>
 			<Tool
@@ -253,7 +253,7 @@
 				RuntimeLibrary="3"
 
 				ProgramDataBaseFileName="..\..\out\debug9\build\apppsserver_static\psserver_static.pdb"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_CONSOLE;CS_STATIC_LINKED;WIN32;CS_BUILD_SHARED_LIBS"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_CONSOLE;WIN32;CS_BUILD_SHARED_LIBS"
 				OptimizeForProcessor="1"
 				AdditionalOptions="/D CS_HAVE_CAL3D "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
@@ -286,7 +286,7 @@
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_CONSOLE;CS_STATIC_LINKED"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_CONSOLE"
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
@@ -301,7 +301,7 @@
 				Name="VCPreLinkEventTool"/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_CONSOLE;CS_STATIC_LINKED;PROJECTGEN_VERSION=9"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_CONSOLE;PROJECTGEN_VERSION=9"
 				AdditionalIncludeDirectories=".;..\..\src\server;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
 				Culture="1033"/>
 			<Tool
@@ -326,7 +326,7 @@
 				RuntimeLibrary="3"
 
 				ProgramDataBaseFileName="..\..\out\debug9\build\apppsserver_static\psserver_static.pdb"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;_CONSOLE;CS_STATIC_LINKED;WIN32"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;_CONSOLE;WIN32"
 				OptimizeForProcessor="1"
 				AdditionalOptions="/D CS_HAVE_CAL3D "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
@@ -359,7 +359,7 @@
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;_CONSOLE;CS_STATIC_LINKED"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;_CONSOLE"
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
@@ -374,7 +374,7 @@
 				Name="VCPreLinkEventTool"/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;_CONSOLE;CS_STATIC_LINKED;PROJECTGEN_VERSION=9"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;_CONSOLE;PROJECTGEN_VERSION=9"
 				AdditionalIncludeDirectories=".;..\..\src\server;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
 				Culture="1033"/>
 			<Tool
@@ -399,7 +399,7 @@
 				RuntimeLibrary="3"
 
 				ProgramDataBaseFileName="..\..\out\debug9\build\apppsserver_static\psserver_static.pdb"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;_CONSOLE;CS_STATIC_LINKED;WIN32;CS_BUILD_SHARED_LIBS"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;_CONSOLE;WIN32;CS_BUILD_SHARED_LIBS"
 				OptimizeForProcessor="1"
 				AdditionalOptions="/D CS_HAVE_CAL3D "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
@@ -432,7 +432,7 @@
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;_CONSOLE;CS_STATIC_LINKED"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;_CONSOLE"
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
@@ -447,7 +447,7 @@
 				Name="VCPreLinkEventTool"/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;_CONSOLE;CS_STATIC_LINKED;PROJECTGEN_VERSION=9"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;_CONSOLE;PROJECTGEN_VERSION=9"
 				AdditionalIncludeDirectories=".;..\..\src\server;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
 				Culture="1033"/>
 			<Tool
@@ -472,7 +472,7 @@
 				RuntimeLibrary="3"
 
 				ProgramDataBaseFileName="..\..\out\debug9\build\apppsserver_static\psserver_static.pdb"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;_CONSOLE;CS_STATIC_LINKED;WIN32"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;_CONSOLE;WIN32"
 				OptimizeForProcessor="1"
 				AdditionalOptions="/D CS_HAVE_CAL3D "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
@@ -505,7 +505,7 @@
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;_CONSOLE;CS_STATIC_LINKED"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;_CONSOLE"
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
@@ -520,7 +520,7 @@
 				Name="VCPreLinkEventTool"/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;_CONSOLE;CS_STATIC_LINKED;PROJECTGEN_VERSION=9"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;_CONSOLE;PROJECTGEN_VERSION=9"
 				AdditionalIncludeDirectories=".;..\..\src\server;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
 				Culture="1033"/>
 			<Tool
@@ -545,7 +545,7 @@
 				RuntimeLibrary="3"
 
 				ProgramDataBaseFileName="..\..\out\debug9\build\apppsserver_static\psserver_static.pdb"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;_CONSOLE;CS_STATIC_LINKED;WIN32;CS_BUILD_SHARED_LIBS"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;_CONSOLE;WIN32;CS_BUILD_SHARED_LIBS"
 				OptimizeForProcessor="1"
 				AdditionalOptions="/D CS_HAVE_CAL3D "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
@@ -578,7 +578,7 @@
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;_CONSOLE;CS_STATIC_LINKED"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;_CONSOLE"
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
@@ -593,7 +593,7 @@
 				Name="VCPreLinkEventTool"/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;_CONSOLE;CS_STATIC_LINKED;PROJECTGEN_VERSION=9"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;_CONSOLE;PROJECTGEN_VERSION=9"
 				AdditionalIncludeDirectories=".;..\..\src\server;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
 				Culture="1033"/>
 			<Tool
@@ -618,7 +618,7 @@
 				RuntimeLibrary="3"
 
 				ProgramDataBaseFileName="..\..\out\debug9\build\apppsserver_static\psserver_static.pdb"
-				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_CONSOLE;CS_STATIC_LINKED;WIN32"
+				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_CONSOLE;WIN32"
 				OptimizeForProcessor="1"
 				AdditionalOptions="/D CS_HAVE_CAL3D "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
@@ -651,7 +651,7 @@
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
-				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_CONSOLE;CS_STATIC_LINKED"
+				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_CONSOLE"
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
@@ -666,7 +666,7 @@
 				Name="VCPreLinkEventTool"/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_CONSOLE;CS_STATIC_LINKED;PROJECTGEN_VERSION=9"
+				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_CONSOLE;PROJECTGEN_VERSION=9"
 				AdditionalIncludeDirectories=".;..\..\src\server;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
 				Culture="1033"/>
 			<Tool
@@ -691,7 +691,7 @@
 				RuntimeLibrary="3"
 
 				ProgramDataBaseFileName="..\..\out\debug9\build\apppsserver_static\psserver_static.pdb"
-				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_CONSOLE;CS_STATIC_LINKED;WIN32;CS_BUILD_SHARED_LIBS"
+				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_CONSOLE;WIN32;CS_BUILD_SHARED_LIBS"
 				OptimizeForProcessor="1"
 				AdditionalOptions="/D CS_HAVE_CAL3D "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
@@ -724,7 +724,7 @@
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
-				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_CONSOLE;CS_STATIC_LINKED"
+				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_CONSOLE"
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
@@ -739,7 +739,7 @@
 				Name="VCPreLinkEventTool"/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_CONSOLE;CS_STATIC_LINKED;PROJECTGEN_VERSION=9"
+				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_CONSOLE;PROJECTGEN_VERSION=9"
 				AdditionalIncludeDirectories=".;..\..\src\server;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
 				Culture="1033"/>
 			<Tool
