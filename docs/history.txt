@@ -1,4 +1,9 @@
-﻿*** 2008-10-06 by Stefano Angeleri
+﻿*** 2008-10-06 by Kenny Graunke
+- Fixed FS#2104 by forcing processing of the new entity queue before
+  processing an entity removal request.  There are several other ways to fix
+  this, which may be better, but this is simple and solves the problem at hand.
+
+*** 2008-10-06 by Stefano Angeleri
 - Updated MSVC projects manually
 - Fixed jobber.cfg and svnwrapper in order to work correctly
 

@@ -192,7 +192,10 @@ public:
 
     bool IsIgnoringOthers() { return ignore_others; }
 
+    /// Add one new actor or item entity from the queue.
     void CheckEntityQueues();
+    /// Add all new entities on the queue.
+    void ForceEntityQueues();
 
     void Update();
 
@@ -236,9 +239,6 @@ public:
     void UpdateShader(iMeshWrapper* mesh);
         
 protected:
-    void QueueNewActor(MsgEntry *me);
-    void QueueNewItem(MsgEntry *me);
-
     /** Finds given entity in list of unresolved entities */
     csList<UnresolvedPos*>::Iterator FindUnresolvedPos(GEMClientObject * entity);
 
