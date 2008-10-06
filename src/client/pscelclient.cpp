@@ -427,11 +427,14 @@ void psCelClient::HandleObjectRemoval( MsgEntry* me )
     
     GEMClientObject* entity = FindObject( mesg.objectEID );
     
-    Debug2( LOG_CELPERSIST, 0, "Object %d Removed",  mesg.objectEID );
-
-    if (entity != NULL)
+    if (entity)
     {
         RemoveObject(entity);
+        Debug2(LOG_CELPERSIST, 0, "Object %d Removed", mesg.objectEID);
+    }
+    else
+    {
+        Debug2(LOG_CELPERSIST, 0, "Server told us to remove %d, but it does not seem to exist.", mesg.objectEID);
     }
 }
 
