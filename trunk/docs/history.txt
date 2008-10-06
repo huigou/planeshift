@@ -1,4 +1,7 @@
-﻿*** 2008-10-05 by Stefano Angeleri
+﻿*** 2008-10-06 by Kenny Graunke
+- Better debugging messages for understanding FS#2104.
+
+*** 2008-10-05 by Stefano Angeleri
 - Fixed the fact that the server admin messages were being filtered in the main tab
 - Fixed FS#2342 by changing all the misuses of int to unsigned int for progression points
   and experience
