@@ -808,41 +808,6 @@ csString psNewNPCCreatedMessage::ToString(AccessPointers * /*access_ptrs*/)
     return msgtext;
 }
 
-
-//---------------------------------------------------------------------------
-
-PSF_IMPLEMENT_MSG_FACTORY(psNPCSetOwnerMessage,MSGTYPE_NPC_SETOWNER);
-
-psNPCSetOwnerMessage::psNPCSetOwnerMessage(uint32_t clientToken,int npc_id,int master_id)
-{
-    msg.AttachNew(new MsgEntry( 2*sizeof(int) ));
-
-    msg->SetType(MSGTYPE_NPC_SETOWNER);
-    msg->clientnum = clientToken;
-
-    msg->Add((int32_t)npc_id);
-    msg->Add((int32_t)master_id);
-}
-
-psNPCSetOwnerMessage::psNPCSetOwnerMessage(MsgEntry *message)
-{
-    if (!message)
-        return;
-
-    npcpet_id = message->GetInt32();    
-    master_clientid  = message->GetInt32();    
-}
-
-csString psNPCSetOwnerMessage::ToString(AccessPointers * /*access_ptrs*/)
-{
-    csString msgtext;
-    
-    msgtext.AppendFmt("NPC PET ID: %d",npcpet_id);
-    msgtext.AppendFmt("Master ClientID: %d",master_clientid);
-
-    return msgtext;
-}
-
 //---------------------------------------------------------------------------
 
 PSF_IMPLEMENT_MSG_FACTORY(psPETCommandMessage,MSGTYPE_PET_COMMAND);

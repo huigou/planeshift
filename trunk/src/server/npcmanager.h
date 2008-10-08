@@ -125,9 +125,6 @@ public:
     /// Tell a superclient to control an existing npc.
     void ControlNPC( gemNPC* npc );
 
-    /// Tell a superclient the npc is ownered by another
-    void SetNPCOwner(gemNPC *npc,int owner_id);
-
     /// Add Session for pets
     PetOwnerSession *CreatePetOwnerSession( gemActor *, psCharacter * );
 

@@ -69,7 +69,6 @@ NetworkManager::NetworkManager(MsgHandler *mh,psNetConnection* conn)
     msghandler->Subscribe(this,MSGTYPE_WEATHER);
     msghandler->Subscribe(this,MSGTYPE_MSGSTRINGS);
     msghandler->Subscribe(this,MSGTYPE_NEW_NPC);
-    msghandler->Subscribe(this,MSGTYPE_NPC_SETOWNER);
     msghandler->Subscribe(this,MSGTYPE_NPC_COMMAND);
     msghandler->Subscribe(this,MSGTYPE_NPCRACELIST);
 
@@ -94,7 +93,6 @@ NetworkManager::~NetworkManager()
         msghandler->Unsubscribe(this,MSGTYPE_DISCONNECT);
         msghandler->Unsubscribe(this,MSGTYPE_WEATHER);
         msghandler->Unsubscribe(this,MSGTYPE_MSGSTRINGS);
-        msghandler->Unsubscribe(this,MSGTYPE_NPC_SETOWNER);
         msghandler->Unsubscribe(this,MSGTYPE_NPC_COMMAND);
         msghandler->Unsubscribe(this,MSGTYPE_NPCRACELIST);
     }
@@ -209,11 +207,6 @@ void NetworkManager::HandleMessage(MsgEntry *me)
         case MSGTYPE_NEW_NPC:
         {
             HandleNewNpc(me);
-            break;
-        }
-        case MSGTYPE_NPC_SETOWNER:
-        {
-            HandleNPCSetOwner(me);
             break;
         }
         case MSGTYPE_NPC_COMMAND:
@@ -885,24 +878,6 @@ void NetworkManager::HandleNewNpc(MsgEntry *me)
     {
         // Ignore it here.  We don't manage the master.
     }
-}
-
-void NetworkManager::HandleNPCSetOwner(MsgEntry *me)
-{
-    psNPCSetOwnerMessage msg(me);
-
-    NPC *npc = npcclient->FindNPCByPID( msg.npcpet_id );
-    if ( npc )
-    {
-        npc->Printf("Got NPC Owner notification for Master=%d",msg.master_clientid);
-        npc->SetOwnerID( msg.master_clientid );
-    }
-    else
-    {
-        CPrintf(CON_ERROR,"Got NPC Owner notification for unknown npc %d from master %d\n",
-                msg.npcpet_id,msg.master_clientid);
-    }
-    
 }
 
 void NetworkManager::PrepareCommandMessage()

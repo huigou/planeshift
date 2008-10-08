@@ -1,4 +1,10 @@
-﻿*** 2008-10-08 by Stefano Angeleri
+﻿*** 2008-10-08 by Kenny Graunke
+- Removed psNPCSetOwnerMessage, supposedly sent from the server to
+  superclients - it's actually dead code, and has serious typing issues.
+  ==> BUMPED NET VERSION <== (now 0x0093)
+  ==> BUMPED NPC NET VERSION <== (now 0x1012)
+
+*** 2008-10-08 by Stefano Angeleri
 - Fixed cropped fonts in pawstextboxes
 
 *** 2008-10-06 by Kenny Graunke
