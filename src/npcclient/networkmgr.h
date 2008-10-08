@@ -69,7 +69,6 @@ protected:
     void HandleDisconnect(MsgEntry *msg);
     void HandleTimeUpdate(MsgEntry *msg);
     void HandleNewNpc(MsgEntry *msg);
-    void HandleNPCSetOwner( MsgEntry *msg);
     // void RemoveEntity(psCelPersistMessage& pmsg);
 
     void PrepareCommandMessage();

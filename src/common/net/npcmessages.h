@@ -283,32 +283,6 @@ public:
 };
 
 /**
-* The message sent from server to superclient after successful
-* NPC Creation.  
-*/
-class psNPCSetOwnerMessage : public psMessageCracker
-{
-public:
-    int npcpet_id, master_clientid;
-
-    /// Create psMessageBytes struct for outbound use
-    psNPCSetOwnerMessage(uint32_t clientToken,int npc_id, int master_id);
-
-    /// Crack incoming psMessageBytes struct for inbound use
-    psNPCSetOwnerMessage(MsgEntry *message);
-    
-    PSF_DECLARE_MSG_FACTORY();
-
-    /**
-     * Convert the message into human readable string.
-     *
-     * @param access_ptrs A struct to a number of access pointers.
-     * @return Return a human readable string for the message.
-     */
-    virtual csString ToString(AccessPointers * access_ptrs);
-};
-
-/**
 * The message sent from client to server to control
 * the players pet.
 */

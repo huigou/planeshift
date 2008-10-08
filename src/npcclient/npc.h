@@ -221,7 +221,6 @@ public:
     void SetTarget(gemNPCObject *t);
 
     gemNPCObject *GetOwner();
-    void SetOwnerID( int owner ) { owner_id = owner; };
     const char* GetOwnerName();
 
     /** Set a new tribe for this npc */

@@ -2088,19 +2088,6 @@ void NPCManager::ControlNPC( gemNPC* npc )
     }
 }
  
-void NPCManager::SetNPCOwner(gemNPC *npc,int owner_id)
-{
-    /*Debug5(LOG_NPC,*/ printf("Setting NPC %d to Owner %d sent to superclients.\n",npc->GetPlayerID(), owner_id );
-
-    gemActor *owner = (gemActor *)GEMSupervisor::GetSingleton().FindObject( owner_id );
-    if ( owner )
-    {
-        psNPCSetOwnerMessage msg( 0, npc->GetPlayerID(), owner_id );
-        msg.Multicast(superclients,-1,PROX_LIST_ANY_RANGE);
-    }
-}
-
-
 PetOwnerSession *NPCManager::CreatePetOwnerSession( gemActor *owner, psCharacter* petData )
 {
     if ( owner && petData )
