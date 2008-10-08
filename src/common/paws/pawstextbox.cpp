@@ -212,6 +212,7 @@ void pawsTextBox::CalcTextSize(int & width, int & height)
     {
         GetFont()->GetDimensions( (const char*)text, width, height );
         width+=5;
+        height+=5;
     }        
     else
     {
