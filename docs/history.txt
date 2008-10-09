@@ -1,4 +1,7 @@
-﻿*** 2008-10-09 by Steven Patrick
+﻿*** 2008-10-09 by Stefano Angeleri
+- Added help section for /unstackable
+
+*** 2008-10-09 by Steven Patrick
 - Fixed FS#1472 - issues with quality, patch by kougaro.
 
 *** 2008-10-08 by Kenny Graunke
