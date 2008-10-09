@@ -689,6 +689,9 @@ Unban a name and makes it available for use again in character creation</topic>
         <topic name="/unmute">/unmute player
 
 Unmute the named player.</topic>
+        <topic name="/unstackable">/unstackable [on|off|info]
+
+Enables or disables the ability to stack the targeted item. Info will give the current status of this flag.</topic>
         <topic name="/warn">/warn target message
 
 Send a warning message to a player in big, red, un-ignorable text on their screen and in all chat tabs.</topic>
