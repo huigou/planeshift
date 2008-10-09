@@ -121,6 +121,9 @@ class psString;
 /// Flag defines if item can be used while equipped
 #define PSITEM_FLAG_ACTIVE              0x00010000
 
+/// Flag defines if item can *not* be stacked
+#define PSITEM_FLAG_UNSTACKABLE         0x00020000
+
 #define KEY_SKELETON      ((unsigned int)-2)
 
 #define MAX_STACK_COUNT        65  // This is the most items a player can have in a stack
@@ -794,6 +797,9 @@ public:
     bool IsTransient() { return ((flags & PSITEM_FLAG_TRANSIENT) ? true : false); }
     void SetIsTransient(bool v);
     void SetIsPickupable(bool v);
+
+    void SetIsUnstackable(bool v);
+
 
     PSSKILL GetLockpickSkill() { return lockpickSkill; }
     void SetLockpickSkill(PSSKILL v);

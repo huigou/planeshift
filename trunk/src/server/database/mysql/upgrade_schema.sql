@@ -979,6 +979,12 @@ INSERT INTO command_group_assignment VALUES( "morph others", 24 );
 INSERT INTO command_group_assignment VALUES( "/morph", 23 );
 UPDATE `server_options` SET `option_value`='1196' WHERE `option_name`='db_version';
 
+#### 1197 - Tristan Cragnolini - Adding /unstackable GM command
+INSERT INTO command_group_assignment VALUES( "/unstackable", 30 );
+INSERT INTO command_group_assignment VALUES( "/unstackable", 25 );
+INSERT INTO command_group_assignment VALUES( "/unstackable", 24 );
+UPDATE `server_options` SET `option_value`='1197' WHERE `option_name`='db_version';
+
 # Insert your upgrade before this line. Remember when you set a new db_version
 # to update the server_options.sql file and update psserver.cpp as well.
 # This to ensure that everything is working if you use the create_all.sql to

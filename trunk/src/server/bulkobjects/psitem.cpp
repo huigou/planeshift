@@ -317,6 +317,10 @@ bool psItem::Load(iResultRow& row)
     {
         flags |= PSITEM_FLAG_USE_CD;
     }
+    if (flagstr.FindSubString("UNSTACKABLE", 0, true) != -1)
+    {
+        flags |= PSITEM_FLAG_UNSTACKABLE;
+    }
 
     // Lockpick stuff
     SetLockStrength(row.GetInt("lock_str"));
@@ -582,6 +586,11 @@ void psItem::Commit(bool children)
     {
         if (!flagString.IsEmpty()) flagString.Append(",");
         flagString.Append("USECD");
+    }
+    if (flags & PSITEM_FLAG_UNSTACKABLE)
+    {
+        if (!flagString.IsEmpty()) flagString.Append(",");
+        flagString.Append("UNSTACKABLE");
     }
     
     targetQuery->AddField("flags",flagString);
@@ -1432,7 +1441,11 @@ bool psItem::GetUsesAmmo()
 
 bool psItem::GetIsStackable() const
 {
-    return current_stats->GetIsStackable();
+    if(!(flags & PSITEM_FLAG_UNSTACKABLE))
+    {
+        return current_stats->GetIsStackable();
+    }
+    return false;
 }
 
 bool psItem::GetIsEquipStackable() const
@@ -1941,6 +1954,15 @@ void psItem::SetIsCD(bool v)
         flags |= PSITEM_FLAG_USE_CD;
     else
         flags &= ~PSITEM_FLAG_USE_CD;
+}
+
+/// this only change the stackability for this instance, not all items (itemStats)
+void psItem::SetIsUnstackable(bool v)
+{
+    if (v)
+        flags |= PSITEM_FLAG_UNSTACKABLE;
+    else
+        flags &= ~PSITEM_FLAG_UNSTACKABLE;
 }
 
 void psItem::SetIsKey(bool v)

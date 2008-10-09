@@ -1,4 +1,7 @@
-﻿*** 2008-10-08 by Kenny Graunke
+﻿*** 2008-10-09 by Steven Patrick
+- Fixed FS#1472 - issues with quality, patch by kougaro.
+
+*** 2008-10-08 by Kenny Graunke
 - Removed psNPCSetOwnerMessage, supposedly sent from the server to
   superclients - it's actually dead code, and has serious typing issues.
   ==> BUMPED NET VERSION <== (now 0x0093)

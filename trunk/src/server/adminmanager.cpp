@@ -234,7 +234,7 @@ bool AdminManager::AdminCmdData::DecodeAdminCmdMessage(MsgEntry *pMsg, psAdminCm
     command = words[0];
     help = false;
 
-    if ( command == "/updaterespawn" )
+    if (command == "/updaterespawn")
     {
         return true;
     }
@@ -298,6 +298,11 @@ bool AdminManager::AdminCmdData::DecodeAdminCmdMessage(MsgEntry *pMsg, psAdminCm
         {
             target = words.GetWords(1, words.GetCount()-1);
         }
+        return true;
+    }
+    else if (command == "/unstackable")
+    {
+        setting = words.Get(1);
         return true;
     }
     else if (command == "/loadquest")
@@ -1418,6 +1423,10 @@ void AdminManager::HandleAdminCmdMessage(MsgEntry *me, psAdminCmdMessage &msg, A
     else if (data.command == "/setquality")
     {
         HandleSetQuality(msg, data, client, targetobject);
+    }
+    else if (data.command == "/unstackable")
+    {
+        Unstackable(me, data, client, targetobject);
     }
     else if (data.command == "/settrait")
     {
@@ -7450,6 +7459,48 @@ void AdminManager::HandleCompleteQuest(MsgEntry* me,psAdminCmdMessage& msg, Admi
             psserver->SendSystemInfo(me->clientnum, "Quest name: %s. Status: %c", currassignment->GetQuest()->GetName(), currassignment->status);
         }
     }
+}
+
+void AdminManager::Unstackable(MsgEntry* me, AdminCmdData& data, Client *client, gemObject* object )
+{
+    if (!object)
+    {
+        psserver->SendSystemError(client->GetClientNum(), "No target selected");
+        return;
+    }
+    
+    psItem *item = object->GetItem();
+    if (!item)
+    {
+        psserver->SendSystemError(client->GetClientNum(), "Not an item");
+        return;
+    }
+    if (data.setting == "info")
+    {
+        if(item->GetIsStackable())
+        {
+            psserver->SendSystemInfo(client->GetClientNum(), "This item is currently stackable");
+            return;
+        }
+        psserver->SendSystemInfo(client->GetClientNum(), "This item is currently unstackable");
+        return;
+    }
+    else if (data.setting == "on")
+    {
+        item->SetIsUnstackable(true);
+        item->Save(false);
+        psserver->SendSystemOK(client->GetClientNum(), "Unstackable flag ON");
+        return;
+    }
+    else if (data.setting == "off")
+    {
+        item->SetIsUnstackable(false);
+        item->Save(false);
+        psserver->SendSystemOK(client->GetClientNum(), "Unstackable flag OFF");
+        return;
+    }
+    psserver->SendSystemError(client->GetClientNum(), "%s is not a valid option", data.setting.GetData());
+    psserver->SendSystemError(client->GetClientNum(), "Syntax : /unstackable on|off|info");
 }
 
 void AdminManager::HandleSetQuality(psAdminCmdMessage& msg, AdminCmdData& data, Client *client, gemObject* object )
