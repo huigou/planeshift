@@ -113,7 +113,7 @@ psServer::psServer ()
     advicemanager       = NULL;
     actionmanager       = NULL;
     minigamemanager     = NULL;
-	economymanager      = NULL;
+    economymanager      = NULL;
     exchangemanager     = NULL;
     spawnmanager        = NULL;
     adminmanager        = NULL;
@@ -130,7 +130,7 @@ psServer::psServer ()
     cachemanager        = NULL;
     logcsv              = NULL;
     vfs                 = NULL;
-    
+
     // Initialize the RNG using current time() as the seed value
     randomGen.Initialize();
 }
@@ -146,7 +146,7 @@ psServer::~psServer()
 
         Client* p = NULL;
         do
-        {       
+        {
             // this is needed to not block the RemovePlayer later...
             {
                 ClientIterator i(*clients);
@@ -163,7 +163,7 @@ psServer::~psServer()
             }
         } while (p);
     }
-    
+
     delete economymanager;
     delete tutorialmanager;
     delete charmanager;
@@ -204,13 +204,13 @@ psServer::~psServer()
     PS_CHECK_REF_COUNT(advicemanager);
     PS_CHECK_REF_COUNT(actionmanager);
     */
-    guildmanager    = NULL;	 
-    questionmanager = NULL;	 
-    groupmanager    = NULL;	 
-    authserver      = NULL;	 
-    chatmanager     = NULL;	 
-    advicemanager   = NULL;	 
-    actionmanager   = NULL;	 
+    guildmanager    = NULL;
+    questionmanager = NULL;
+    groupmanager    = NULL;
+    authserver      = NULL;
+    chatmanager     = NULL;
+    advicemanager   = NULL;
+    actionmanager   = NULL;
     minigamemanager = NULL;
 }
 
@@ -244,7 +244,7 @@ bool psServer::Initialize(iObjectRegistry* object_reg)
 
     rng = new csRandomGen();
 
-    
+
     vfs =  csQueryRegistry<iVFS> (objreg);
     configmanager =  csQueryRegistry<iConfigManager> (object_reg);
 
@@ -261,7 +261,7 @@ bool psServer::Initialize(iObjectRegistry* object_reg)
 
     // Load the log settings
     LoadLogSettings();
-    
+
     // Initialise the CSV logger
     logcsv = new LogCSV(configmanager, vfs);
 
@@ -308,7 +308,7 @@ bool psServer::Initialize(iObjectRegistry* object_reg)
     Debug1(LOG_STARTUP,0,"Started Database\n");
 
     cachemanager = new CacheManager();
-    
+
     //Loads the standard motd message from db
     Result result(db->Select("SELECT option_value FROM server_options WHERE option_name = 'standard_motd'"));
     if (result.IsValid()  &&  result.Count()>0)
@@ -320,11 +320,11 @@ bool psServer::Initialize(iObjectRegistry* object_reg)
         motd.Clear();
     }
 
-    
+
     // MathScript Engine
     mathscriptengine = new MathScriptEngine();
-    
-    
+
+
     // Initialize DB settings cache
     if (!cachemanager->PreloadAll())
     {
@@ -485,7 +485,7 @@ bool psServer::Initialize(iObjectRegistry* object_reg)
         Error1("Failed to start progression manager!");
         return false;
     }
-    
+
     Debug1(LOG_STARTUP,0,"Started Progression Manager\n");
 
     // Start work manager
@@ -533,7 +533,7 @@ bool psServer::Initialize(iObjectRegistry* object_reg)
     }
 
     weathermanager->StartGameTime();
-    return true;    
+    return true;
 }
 
 void psServer::MainLoop ()

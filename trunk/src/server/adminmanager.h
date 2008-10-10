@@ -291,7 +291,7 @@ protected:
     void Fog(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data, Client *client);
 
     /** @brief Deletes a character from the database.
-      * 
+      *
       * Should be used with caution.
       * This function will also send out reasons why a delete failed. Possible
       * reasons are not found or the requester is not the same account as the
@@ -373,7 +373,7 @@ protected:
 
     /// List warnings given to account
     void HandleListWarnings(psAdminCmdMessage& msg, AdminCmdData& data, Client *client, gemObject* object );
-    
+
     /** @brief Shows what the target used in command will afflict in the game
      *  @param msg The cracked command message.
      *  @param targetobject A pointer to the targetted object for direct access
@@ -382,7 +382,7 @@ protected:
     void CheckTarget(psAdminCmdMessage& msg, AdminCmdData& data, gemObject* targetobject , Client *client);
 
     /** @brief Adds a petition under the passed user's name to the 'petitions' table in the database.
-     * 
+     *
      *  Will automatically add the date and time of the petition's submission
      *  in the appropriate table columns
      *  @param playerName: Is the name of the player who is submitting the petition.
@@ -432,7 +432,7 @@ protected:
     bool AssignPetition(int gmID, int petitionID);
 
     /** @brief Escalates the level of the specified petition.
-     * 
+     *
      *  Changes the assigned_gm to -1, and the status to 'Open'
      *  @param gmID: Is the ID of the GM who is requesting the escalation.
      *  @param gmLevel: The security level of the gm

@@ -16,7 +16,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
  */
- 
+
 #ifndef __PSSERVER_H__
 #define __PSSERVER_H__
 #include "psstdint.h"
@@ -253,7 +253,7 @@ public:
      * @return Returns a reference to the current weather manager.
      */
     WeatherManager*  GetWeatherManager() { return weathermanager; }
-    
+
     /** Returns the Math Scripting Engine.
      *
      * @return Returns a ptr to the math script engine.
@@ -303,7 +303,7 @@ public:
      *     server.
      */
     psWorkManager* GetWorkManager() { return workmanager; }
-    
+
     /** Returns the guild manager.
      *
      * @return Returns a reference to the current guild manager for the
@@ -336,13 +336,13 @@ public:
      *
      * @return returns a reference to the Bank manager for the server.
      */
-    BankManager *GetBankManager() { return bankmanager; } 
+    BankManager *GetBankManager() { return bankmanager; }
 
     /** Returns the Introduction Manager
      *
      * @return returns a reference to the introduction manager for the server.
      */
-    IntroductionManager *GetIntroductionManager() { return intromanager; } 
+    IntroductionManager *GetIntroductionManager() { return intromanager; }
 
     /// Returns a pointer to the psAuthenticationServer
     psAuthenticationServer* GetAuthServer() { return authserver; }
@@ -402,9 +402,9 @@ public:
     void SaveLogSettings();
 
     /** Adds a buddy to this players list of buddies.
-     * Takes the 
+     * Takes the
      * player ID of us and the player ID of the buddy.
-     * When you have a buddy, you will be able to see when they 
+     * When you have a buddy, you will be able to see when they
      * come online and leave.
      *
      * @param self: Is the player ID for the current player we are adding buddy to.
@@ -414,7 +414,7 @@ public:
     bool AddBuddy(int self,int buddy);
 
     /** Removes a buddy from this character's list of buddies.
-     * Takes the 
+     * Takes the
      * unique player ID of us and the player ID of the buddy.
      * Returns false if buddy diddnt exist.
      *
@@ -423,7 +423,7 @@ public:
      * @return Returns either success or failure.
      */
     bool RemoveBuddy(int self,int buddy);
-    
+
     /** Change the dialog responses for that trigger in the area.
      * Given the area, trigger and response number; change the
      * reponse to be the new value. There are seperate tables
@@ -440,7 +440,7 @@ public:
      * @param response: Is the new response for the trigger.
      * @param num: Is the response number to change. This can be a value from 1 - 5.
      */
-    void UpdateDialog( const char* area, const char* trigger, 
+    void UpdateDialog( const char* area, const char* trigger,
                        const char* response, int num );
 
     /** Changes the pronoun set for that trigger in that area.
@@ -453,11 +453,11 @@ public:
      * @param it:
      * @param them:
      */
-    void UpdateDialog( const char* area, const char* trigger, 
+    void UpdateDialog( const char* area, const char* trigger,
                        const char* prohim, const char* proher,
                        const char* it,     const char* them );
 
-    /** Gets all the triggers from a particular knowledge area. 
+    /** Gets all the triggers from a particular knowledge area.
      *
      * @param data: Is a string containing the name of the data area we want the triggers for.
      * @return Returns an iResultSet containing a list of all the triggers for a particular knowledge area.
@@ -465,7 +465,7 @@ public:
      *     - trigger
      */
     iResultSet* GetAllTriggersInArea(csString data);
-    
+
     /** Return a list of NPCs (with their info) managed by a particular superclient.
      *
      * @param superclientID is the playerID of the superclient
@@ -476,7 +476,7 @@ public:
      *      <LI>master (npc master id)
      *      <LI>x,y,z coords of positions
      *      <LI>rotational angle (y-axis)
-     *  </UL>     
+     *  </UL>
      */
     iResultSet *GetSuperclientNPCs(int superclientID);
 
@@ -493,7 +493,7 @@ public:
      * @return Return false is option not found or if an error happened. True otherwise.
      */
     bool SetServerOption(const char *option_name,const csString& value);
-   
+
     iResultSet* GetAllResponses( csString& trigger );
 
     static psCharacterLoader        CharacterLoader;
@@ -510,7 +510,7 @@ public:
     UserManager*                    usermanager;
     ExchangeManager*                exchangemanager;
     csRef<iVFS>                     vfs;
-     
+
 protected:
 
     ServerConsole*                  serverconsole;
@@ -523,8 +523,8 @@ protected:
     SpawnManager*                   spawnmanager;
     csRef<EventManager>             eventmanager;
     WeatherManager*                 weathermanager;
-    psSpellManager*                 spellmanager;    
-    ProgressionManager*             progression;    
+    psSpellManager*                 spellmanager;
+    ProgressionManager*             progression;
     psWorkManager*                  workmanager;
     EconomyManager*                 economymanager;
     TutorialManager*                tutorialmanager;

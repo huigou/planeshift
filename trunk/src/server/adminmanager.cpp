@@ -7457,7 +7457,7 @@ void AdminManager::Unstackable(MsgEntry* me, AdminCmdData& data, Client *client,
         psserver->SendSystemError(client->GetClientNum(), "No target selected");
         return;
     }
-    
+
     psItem *item = object->GetItem();
     if (!item)
     {
