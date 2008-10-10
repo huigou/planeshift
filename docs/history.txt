@@ -5,6 +5,7 @@
   system (which should be used for all the commands using targets like for example changename)
   Fixes FS#2364 - /killnpc PID: ### and it's an additional patch for FS#2045
 - Identation/trailing spaces/comment improvement/fixes in various files
+- Hopefully fixed FS#2365 - npc client can not handle large numbers of npcs 
 
 *** 2008-10-09 by Stefano Angeleri
 - Added help section for /unstackable

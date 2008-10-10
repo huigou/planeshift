@@ -39,7 +39,7 @@ SCF_IMPLEMENT_IBASE(psMysqlConnection)
 SCF_IMPLEMENT_IBASE_END
 
 // more SCF definitions
- 
+
 SCF_IMPLEMENT_FACTORY(psMysqlConnection)
 
 /**
@@ -71,7 +71,7 @@ bool psMysqlConnection::Initialize (iObjectRegistry *objectreg)
 
 bool psMysqlConnection::Initialize(const char *host, unsigned int port, const char *database,
                               const char *user, const char *pwd, LogCSV* logcsv)
-{    
+{
     this->logcsv = logcsv;
     // Create a mydb
     mysql_library_init(0, NULL, NULL);
@@ -80,8 +80,8 @@ bool psMysqlConnection::Initialize(const char *host, unsigned int port, const ch
     // Conn is the valid connection to be used for mydb. Have to store the mydb to get
     // errors if this call fails.
     MYSQL *conn_check = mysql_real_connect(conn,host,user,pwd,database,port,NULL,CLIENT_FOUND_ROWS);
-	if(!conn_check)
-		return false;
+    if(!conn_check)
+        return false;
     my_bool my_true = true;
 
 #if MYSQL_VERSION_ID >= 50000
@@ -93,7 +93,7 @@ bool psMysqlConnection::Initialize(const char *host, unsigned int port, const ch
     dqmThread.AttachNew(new Thread(dqm));
     dqmThread->Start();
     dqmThread->SetPriority(THREAD_PRIO_HIGH);
-#endif   
+#endif
 
     return (conn == conn_check);
 }
@@ -102,13 +102,13 @@ bool psMysqlConnection::Close()
 {
     mysql_close(conn);
     conn = NULL;
-    
+
 #ifdef USE_DELAY_QUERY
     mysql_thread_end();
 
     dqm->Stop();
     dqmThread->Stop();
-#endif    
+#endif
 
     mysql_library_end();
     return true;
@@ -130,7 +130,7 @@ void psMysqlConnection::Escape(csString& to, const char *from)
 {
     size_t len = strlen(from);
     char* buff = new char[len*2+1];
-  
+
     mysql_escape_string(buff, from, (unsigned long)len);
     to = buff;
     delete[] buff;
@@ -158,7 +158,7 @@ unsigned long psMysqlConnection::CommandPump(const char *sql,...)
     va_end(args);
 
     lastquery = querystr;
-    
+
 
     timer.Start();
     if (!mysql_query(conn, querystr))
@@ -178,8 +178,8 @@ unsigned long psMysqlConnection::CommandPump(const char *sql,...)
     }
     else
         return QUERY_FAILED;
-    
-#endif    
+
+#endif
 }
 
 unsigned long psMysqlConnection::Command(const char *sql,...)
@@ -332,18 +332,18 @@ bool psMysqlConnection::GenericUpdateWithID(const char *table,const char *idfiel
     uint i;
     const size_t count = fields.GetSize();
     csString command;
-    
+
     command.Append("UPDATE ");
     command.Append(table);
     command.Append(" SET ");
-    
+
     for (i=0;i<count;i++)
     {
         if (i>0)
             command.Append(",");
         command.Append(fields[i]);
     }
-    
+
     command.Append(" where ");
     command.Append(idfield);
     command.Append("='");
@@ -351,14 +351,14 @@ bool psMysqlConnection::GenericUpdateWithID(const char *table,const char *idfiel
     Escape( escape, id );
     command.Append(escape);
     command.Append("'");
-    
+
     //printf("%s\n",command.GetData());
-    
+
     if (CommandPump(command)==QUERY_FAILED)
     {
         return false;
     }
-    
+
     return true;
 }
 
@@ -381,7 +381,7 @@ bool psMysqlConnection::GenericUpdateWithID(const char *table,const char *idfiel
         {
             command.Append("='");
             csString escape;
-            Escape(escape, fieldvalues[i]); 
+            Escape(escape, fieldvalues[i]);
             command.Append(escape);
             command.Append("'");
         }
@@ -391,7 +391,7 @@ bool psMysqlConnection::GenericUpdateWithID(const char *table,const char *idfiel
         }
 
     }
-   
+
     command.Append(" where ");
     command.Append(idfield);
     command.Append("='");
@@ -483,7 +483,7 @@ void psResultRow::SetResultSet(void * resultsettoken)
 int psResultRow::Fetch(int row)
 {
     mysql_data_seek(rs, row);
-    
+
     rr = mysql_fetch_row(rs);
 
     if (rr)
@@ -501,7 +501,7 @@ const char *psResultRow::operator[](int whichfield)
         return rr[whichfield];
     else
         return "";
-}   
+}
 
 const char *psResultRow::operator[](const char *fieldname)
 {
@@ -654,10 +654,10 @@ void dbRecord::AddField(const char* fname, const char* sValue)
     AddToStatement(fname);
     temp[index].string = sValue;
     temp[index].length = (unsigned long)temp[index].string.Length();
-    
+
     bind[index].buffer_type = MYSQL_TYPE_STRING;
     bind[index].buffer = const_cast<char *> (temp[index].string.GetData());
-    
+
     bind[index].buffer_length = temp[index].length;
     bind[index].length = &(temp[index].length);
     index++;
@@ -674,22 +674,22 @@ bool dbRecord::Execute(uint32 uid)
 {
     SetID(uid);
     CS_ASSERT_MSG("Error: wrong number of expected fields", index == count);
-    
+
     if(!prepared)
         Prepare();
-    
+
     CS_ASSERT(count == mysql_stmt_param_count(stmt));
-    
+
     if(mysql_stmt_bind_param(stmt, bind) != 0)
         return false;
-    
+
     return (mysql_stmt_execute(stmt) == 0);
 }
 
 bool dbInsert::Prepare()
 {
     csString statement;
-    
+
     // count fields to update
     statement.Format("INSERT INTO %s (", table);
     for (unsigned int i=0;i<count;i++)
@@ -705,18 +705,18 @@ bool dbInsert::Prepare()
             statement.Append(", ");
         statement.Append("?");
     }
-    
+
     statement.Append(")");
-    
+
     prepared = (mysql_stmt_prepare(stmt, statement, (unsigned long)statement.Length()) == 0);
-    
+
     return prepared;
 }
 
 bool dbUpdate::Prepare()
 {
     csString statement;
-    
+
     // count - 1 fields to update
     statement.Format("UPDATE %s SET ", table);
     for (unsigned int i=0;i<(count-1);i++)
@@ -729,9 +729,9 @@ bool dbUpdate::Prepare()
     statement.Append(idfield);
     // field count is the idfield
     statement.Append("= ?");
-    
+
     prepared = (mysql_stmt_prepare(stmt, statement, (unsigned long)statement.Length()) == 0);
-    
+
     return prepared;
 }
 
@@ -772,7 +772,7 @@ void DelayedQueryManager::Run()
     my_bool my_true = true;
 
 #if MYSQL_VERSION_ID >= 50000
-    mysql_options(m_conn, MYSQL_OPT_RECONNECT, &my_true);    
+    mysql_options(m_conn, MYSQL_OPT_RECONNECT, &my_true);
 #endif
 
     psStopWatch timer;
@@ -797,8 +797,8 @@ void DelayedQueryManager::Run()
     mysql_thread_end();
 }
 
-void DelayedQueryManager::Push(csString query) 
-{ 
+void DelayedQueryManager::Push(csString query)
+{
     {
         CS::Threading::RecursiveMutexScopedLock lock(mutexArray);
         size_t tstart = (start+1) % THREADED_BUFFER_SIZE;
