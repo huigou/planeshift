@@ -167,7 +167,8 @@ unsigned long psMysqlConnection::CommandPump(const char *sql,...)
         {
             csString status;
             status.Format("SQL query %s, has taken %u time to process.\n", querystr.GetData(), timer.Stop());
-            logcsv->Write(CSV_STATUS, status);
+            if(logcsv)
+                logcsv->Write(CSV_STATUS, status);
         }
         //csString status;
         //status.Format("%s, %d", querystr.GetData(), timer.Stop());
@@ -200,7 +201,8 @@ unsigned long psMysqlConnection::Command(const char *sql,...)
         {
             csString status;
             status.Format("SQL query %s, has taken %u time to process.\n", querystr.GetData(), timer.Stop());
-            logcsv->Write(CSV_STATUS, status);
+            if(logcsv)
+                logcsv->Write(CSV_STATUS, status);
         }
         profs.AddSQLTime(querystr, timer.Stop());
         return (unsigned long) mysql_affected_rows(conn);
@@ -228,7 +230,8 @@ iResultSet *psMysqlConnection::Select(const char *sql, ...)
         {
             csString status;
             status.Format("SQL query %s, has taken %u time to process.\n", querystr.GetData(), timer.Stop());
-            logcsv->Write(CSV_STATUS, status);
+            if(logcsv)
+                logcsv->Write(CSV_STATUS, status);
         }
         profs.AddSQLTime(querystr, timer.Stop());
         iResultSet *rs = new psResultSet(conn);
@@ -257,7 +260,8 @@ int psMysqlConnection::SelectSingleNumber(const char *sql, ...)
         {
             csString status;
             status.Format("SQL query %s, has taken %u time to process.\n", querystr.GetData(), timer.Stop());
-            logcsv->Write(CSV_STATUS, status);
+            if(logcsv)
+                logcsv->Write(CSV_STATUS, status);
         }
         profs.AddSQLTime(querystr, timer.Stop());
         psResultSet *rs = new psResultSet(conn);
