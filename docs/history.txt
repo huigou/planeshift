@@ -4,6 +4,7 @@
 - Removed superflous targetting code from killnpc and made it use the generic targetting
   system (which should be used for all the commands using targets like for example changename)
   Fixes FS#2364 - /killnpc PID: ### and it's an additional patch for FS#2045
+- Identation/trailing spaces/comment improvement/fixes in various files
 
 *** 2008-10-09 by Stefano Angeleri
 - Added help section for /unstackable
