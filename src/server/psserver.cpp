@@ -819,28 +819,6 @@ ClientConnectionSet* psServer::GetConnections()
 
 /*-----------------Buddy List Management Functions-------------------------*/
 
-
-bool psServer::IsBuddy(int self,int buddy)
-{
-    Result result(db->Select("SELECT player_id"
-                                "  from buddy_list"
-                                " where player_buddy=%d "
-                                "   and player_id=%d",buddy,self));
-    if (!result.IsValid())
-    {
-        database->SetLastError(database->GetLastSQLError());
-        return false;
-    }
-
-    if (result.Count() < 1)
-    {
-        database->SetLastError("No buddy found");
-        return false;
-    }
-
-    return true;
-}
-
 bool psServer::AddBuddy(int self,int buddy)
 {
     //int rows=db->Command("insert into buddy_list values (%d, %d)",

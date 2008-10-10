@@ -1,4 +1,11 @@
-﻿*** 2008-10-09 by Stefano Angeleri
+﻿*** 2008-10-10 by Stefano Angeleri
+- Fixed FS#2361 - spawn command wrong description - Put a proper description for /spawn
+- Fixed FS#2360 - Buddy Table query inconsistency - Removed the unused and broken function
+- Removed superflous targetting code from killnpc and made it use the generic targetting
+  system (which should be used for all the commands using targets like for example changename)
+  Fixes FS#2364 - /killnpc PID: ### and it's an additional patch for FS#2045
+
+*** 2008-10-09 by Stefano Angeleri
 - Added help section for /unstackable
 
 *** 2008-10-09 by Steven Patrick

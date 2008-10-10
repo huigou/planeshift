@@ -292,11 +292,11 @@ bool AdminManager::AdminCmdData::DecodeAdminCmdMessage(MsgEntry *pMsg, psAdminCm
         if (words[words.GetCount()-1] == "reload")
         {
             action = "reload";
-            target = words.GetWords(1, words.GetCount()-2);
+            player = words.GetWords(1, words.GetCount()-2);
         }
         else
         {
-            target = words.GetWords(1, words.GetCount()-1);
+            player = words.GetWords(1, words.GetCount()-1);
         }
         return true;
     }
@@ -1195,7 +1195,7 @@ void AdminManager::HandleAdminCmdMessage(MsgEntry *me, psAdminCmdMessage &msg, A
     }
     else if (data.command == "/killnpc")
     {
-        KillNPC(me,msg,data,client);
+        KillNPC(me, msg, data, targetobject, client);
     }
     else if (data.command == "/item")
     {
@@ -4467,20 +4467,9 @@ void AdminManager::ChangeLock(MsgEntry *me, psAdminCmdMessage& msg, AdminCmdData
     psserver->SendSystemInfo(me->clientnum, "You changed the lock on %s", oldLock->GetName());
 }
 
-void AdminManager::KillNPC (MsgEntry *me, psAdminCmdMessage& msg, AdminCmdData& data, Client *client )
+void AdminManager::KillNPC (MsgEntry *me, psAdminCmdMessage& msg, AdminCmdData& data, gemObject* targetobject, Client *client )
 {
-    gemObject* obj = NULL;
-
-    if (data.target.IsEmpty())
-        obj = client->GetTargetObject();
-    else if (data.target.StartsWith("pid:"))
-        obj = GEMSupervisor::GetSingleton().FindNPCEntity(atoi(data.target.Slice(4).GetDataSafe()));
-    else if (data.target.StartsWith("eid:"))
-        obj = GEMSupervisor::GetSingleton().FindObject(atoi(data.target.Slice(4).GetDataSafe()));
-    else // try and use it as a name
-        obj = GEMSupervisor::GetSingleton().FindObject(data.target);
-
-    gemNPC *target = dynamic_cast<gemNPC*>(obj);
+    gemNPC *target = dynamic_cast<gemNPC*>(targetobject);
     if (target && target->GetClientID() == 0)
     {
         if (data.action != "reload")
@@ -4491,7 +4480,7 @@ void AdminManager::KillNPC (MsgEntry *me, psAdminCmdMessage& msg, AdminCmdData& 
         {
             unsigned int npcid = target->GetCharacterData()->GetCharacterID();
             psCharacter *npcdata = psServer::CharacterLoader.LoadCharacterData(npcid,true);
-            EntityManager::GetSingleton().RemoveActor(obj);
+            EntityManager::GetSingleton().RemoveActor(targetobject);
             EntityManager::GetSingleton().CreateNPC(npcdata);
             psserver->SendSystemResult(me->clientnum, "NPC (id %d) has been reloaded.",npcid);
         }

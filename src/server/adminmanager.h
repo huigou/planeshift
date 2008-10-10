@@ -150,7 +150,7 @@ protected:
     void HandleLoadQuest(psAdminCmdMessage& msg, AdminCmdData& data, Client* client);
 
     /** @brief Get the list of characters in the same account of the provided one.
-     *  @param me Thviewmae incomming message from the GM
+     *  @param me The incoming message from the GM
      *  @param msg The cracked command message.
      *  @param targetobject A pointer to the targetted object for direct access
      *  @param duplicateActor If it the provided target is ambiguous this will be true
@@ -160,7 +160,14 @@ protected:
 
     void GetInfo(MsgEntry* me,psAdminCmdMessage& msg, AdminCmdData& data,Client *client, gemObject* target);
     void CreateNPC(MsgEntry *me,psAdminCmdMessage& msg, AdminCmdData& data, Client *client, gemActor* basis);
-    void KillNPC(MsgEntry *me, psAdminCmdMessage& msg, AdminCmdData& data, Client *client);
+
+    /** @brief Kill an npc in order to make it respawn, It can be used also to reload the data of the npc from the database
+     *  @param me The incoming message from the GM
+     *  @param msg The cracked command message.
+     *  @param targetobject A pointer to the targetted object for direct access
+     *  @param client The GM client the command came from.
+     */
+    void KillNPC(MsgEntry *me, psAdminCmdMessage& msg, AdminCmdData& data, gemObject* targetobject, Client *client);
     void CreateItem(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data, Client *client);
     void CreateMoney(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data, Client *client);
     void ModifyKey(MsgEntry *me, psAdminCmdMessage& msg, AdminCmdData& data, Client *client);
@@ -219,7 +226,7 @@ protected:
     void Divorce(MsgEntry* me, AdminCmdData& data);
 
     /** @brief Get the marriage info of a player.
-     *  @param me The incomming message from the GM
+     *  @param me The incoming message from the GM
      *  @param msg The cracked command message.
      *  @param duplicateActor If it the provided target is ambiguous this will be true
      *  @param client The client of the targeted player
@@ -265,7 +272,7 @@ protected:
     void SendGMPlayerList(MsgEntry* me, psGMGuiMessage& msg, Client *client);
 
     /** @brief Changes the name of the player to the specified one.
-     *  @param me The incomming message from the GM
+     *  @param me The incoming message from the GM
      *  @param msg The cracked command message.
      *  @param targetobject A pointer to the targetted object for direct access
      *  @param duplicateActor If it the provided target is ambiguous this will be true
@@ -291,7 +298,7 @@ protected:
       * one to delete.  Also if the character is a guild leader they must resign
       * first and assign a new leader.
       *
-      * @param me The incomming message from the GM
+      * @param me The incoming message from the GM
       * @param msg The cracked command message.
       * @param client The GM client the command came from.
       */
