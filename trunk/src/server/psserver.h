@@ -401,14 +401,6 @@ public:
      */
     void SaveLogSettings();
 
-    /** Check if buddy is on your buddy list.
-     * 
-     * @param self: Is the player ID for the current player.
-     * @param buddy: Is the player ID for the buddy you wish to check for.
-     * @return Returns true if that person is in your buddy list.
-     */
-    bool IsBuddy(int self,int buddy);
-
     /** Adds a buddy to this players list of buddies.
      * Takes the 
      * player ID of us and the player ID of the buddy.

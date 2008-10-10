@@ -2417,7 +2417,7 @@ const COMMAND commands[] = {
     { "settime",   true, com_settime,    "Sets the current server hour using a 24 hour clock" },
     { "showtime",  true, com_showtime,   "Show the current time" },
     { "showlogs",  true, com_showlogs,  "Show server logs" },
-    { "spawn",     false, com_spawn,     "Loads a map into the server"},
+    { "spawn",     false, com_spawn,     "Loads npcs, items, action locations, hunt locations in the server"},
     { "status",    true, com_status,    "Show server status"},
     { "transactions", false, com_transactions, "Performs an action on the transaction history (run without parameters for options)" },
     { "dumpallocations", true, com_allocations, "Dump all allocations to allocations.txt if CS extensive memdebug is enabled" },
