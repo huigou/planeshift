@@ -1,4 +1,9 @@
-﻿*** 2008-10-11 by Steven Patrick
+﻿*** 2008-10-10 by Stefano Angeleri
+- Additional fix for FS#2324 - setskill has insufficient system output patch
+  by peeg, reworked by me
+- Fixed wrong help entry for setstackable
+
+*** 2008-10-11 by Steven Patrick
 - Fixed FS#1472 - issues with quality, revised patch by kougaro.
 - DB BUMP
 

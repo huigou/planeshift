@@ -6434,8 +6434,14 @@ void AdminManager::SetSkill(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& 
             }
         }
 
-        if(data.value == -1)
+        if(data.value != -1)
             return;
+
+        if (target != client)
+        {
+            // Inform the other player.
+            psserver->SendSystemOK(target->GetClientNum(), "All your skills were set to %d by a GM", data.value);
+        }
     }
     else
     {
@@ -6465,16 +6471,16 @@ void AdminManager::SetSkill(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& 
 
         pchar->SetSkillRank(skill->id, value);
         psserver->SendSystemInfo(me->clientnum, "Changed '%s' of '%s' from %u to %u", skill->name.GetDataSafe(), target->GetName(), old_value,data.value);
+
+        if (target != client)
+        {
+            // Inform the other player.
+            psserver->SendSystemOK(target->GetClientNum(), "Your '%s' level was set to %d by a GM", data.skill.GetDataSafe(), data.value);
+        }
     }
 
     // Send updated skill list to client
     psserver->GetProgressionManager()->SendSkillList(target, false);
-
-    if (target != client)
-    {
-        // Inform the other player.
-        psserver->SendSystemOK(target->GetClientNum(), "Your '%s' level was set to %d by a GM", data.skill.GetDataSafe(), data.value);
-    }
 }
 
 void AdminManager::UpdateRespawn(Client* client, gemActor* target)
