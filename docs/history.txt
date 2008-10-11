@@ -1,4 +1,4 @@
-﻿*** 2008-10-09 by Steven Patrick
+﻿*** 2008-10-11 by Steven Patrick
 - Fixed FS#1472 - issues with quality, revised patch by kougaro.
 - DB BUMP
 
