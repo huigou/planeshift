@@ -359,8 +359,8 @@ protected:
     /// Change quality of items
     void HandleSetQuality(psAdminCmdMessage& msg, AdminCmdData& data, Client *client, gemObject* object );
 
-    /// Make an item unstackable
-    void Unstackable(MsgEntry* me, AdminCmdData& data, Client *client, gemObject* target );
+    /// Decide whether an item is stackable or not, bypassing the flag for this type of item
+    void ItemStackable(MsgEntry* me, AdminCmdData& data, Client *client, gemObject* target );
 
     /// Set trait of a char
     void HandleSetTrait(psAdminCmdMessage& msg, AdminCmdData& data, Client *client, gemObject* object );

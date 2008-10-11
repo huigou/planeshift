@@ -1,4 +1,8 @@
-﻿*** 2008-10-10 by Stefano Angeleri
+﻿*** 2008-10-09 by Steven Patrick
+- Fixed FS#1472 - issues with quality, revised patch by kougaro.
+- DB BUMP
+
+*** 2008-10-10 by Stefano Angeleri
 - Fixed FS#2361 - spawn command wrong description - Put a proper description for /spawn
 - Fixed FS#2360 - Buddy Table query inconsistency - Removed the unused and broken function
 - Removed superflous targetting code from killnpc and made it use the generic targetting
@@ -12,6 +16,7 @@
 
 *** 2008-10-09 by Steven Patrick
 - Fixed FS#1472 - issues with quality, patch by kougaro.
+- DB BUMP
 
 *** 2008-10-08 by Kenny Graunke
 - Removed psNPCSetOwnerMessage, supposedly sent from the server to
