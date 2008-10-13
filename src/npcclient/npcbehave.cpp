@@ -855,7 +855,7 @@ csString psResumeScriptEvent::ToString() const
     result.Format("Resuming script operation %s for %s",scriptOp->GetName(),npc->GetName());
     if (npc)
     {
-        result.AppendFmt("(EID: %u)", npc->EID());
+        result.AppendFmt("(EID: %u)", npc->GetEID());
     }
     return result;
 }

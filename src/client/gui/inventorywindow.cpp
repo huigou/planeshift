@@ -213,7 +213,7 @@ bool pawsInventoryWindow::SetupDoll()
     widget->View( mesh );
 
     // Register this doll for updates
-    widget->SetID(actor->EID());
+    widget->SetID(actor->GetEID());
 
     csRef<iSpriteCal3DState> spstate = scfQueryInterface<iSpriteCal3DState> (widget->GetObject()->GetMeshObject());
     if (spstate)

@@ -1,5 +1,5 @@
 ﻿*** 2008-10-13 by Kenny Graunke
-- Renamed accessor methods to EID() and PID() for clarity and consistency
+- Renamed accessor methods to GetEID() and GetPID() for clarity and consistency
   across the project.
 
 *** 2008-10-10 by Stefano Angeleri

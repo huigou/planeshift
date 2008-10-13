@@ -165,7 +165,7 @@ Client *ClientConnectionSet::FindPlayer(unsigned int playerID)
     while (it.HasNext())
     {
         Client *p = it.Next();
-        if (p->PID() == playerID)
+        if (p->GetPID() == playerID)
             return p;
     }
 

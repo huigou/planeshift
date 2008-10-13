@@ -1397,7 +1397,7 @@ void ExchangeManager::StartExchange( Client* client, bool withPlayer )
             return;
         }
 
-        targetClient = clients->FindPlayer(target->PID());
+        targetClient = clients->FindPlayer(target->GetPID());
         if (targetClient == NULL)
         {
             psserver->SendSystemError(client->GetClientNum(), "Cannot find your target!");

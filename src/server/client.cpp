@@ -184,7 +184,7 @@ void Client::SetTargetObject(gemObject* newobject, bool updateClientGUI)
 
     if (updateClientGUI)
     {
-        psGUITargetUpdateMessage updateMessage(GetClientNum(), newobject->EID());
+        psGUITargetUpdateMessage updateMessage(GetClientNum(), newobject->GetEID());
         updateMessage.SendMessage();
     }
 }
@@ -193,7 +193,7 @@ void Client::SetFamiliar( gemActor *familiar )
 { 
     if ( familiar )
     {
-        pets[0] = familiar->PID(); 
+        pets[0] = familiar->GetPID(); 
     }
     else
     {
@@ -218,7 +218,7 @@ gemActor* Client::GetFamiliar()
 
 void Client::AddPet( gemActor *pet ) 
 { 
-    pets.Push(pet->EID()); 
+    pets.Push(pet->GetEID()); 
 }
 void Client::RemovePet( size_t index ) 
 { 
@@ -529,7 +529,7 @@ bool Client::CanTake(psItem* item)
     unsigned int guard = item->GetGuardingCharacterID();
     gemActor* guardingActor = GEMSupervisor::GetSingleton().FindPlayerEntity(guard);
 
-    if ((guard == 0 || guard == GetCharacterData()->PID() || !guardingActor)
+    if ((guard == 0 || guard == GetCharacterData()->GetPID() || !guardingActor)
          && !item->GetIsNpcOwned() && !item->GetIsNoPickup())
     {        
         return true;

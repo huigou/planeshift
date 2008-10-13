@@ -291,10 +291,10 @@ void psCelClient::HandleActor( MsgEntry* me )
 
 //    csVector3 pos = actor->pcmesh->GetMesh()->GetMovable()->GetPosition();
 //    iSector* sector = actor->pcmesh->GetMesh()->GetMovable()->GetSectors()->Get(0);
-//    printf("Recevied actor(%d) '%s' Pos (%.2f,%.2f,%.2f) sector '%s'\n", actor->EID(),actor->GetName(), pos.x,pos.y,pos.z, sector->QueryObject()->GetName() );
+//    printf("Recevied actor(%d) '%s' Pos (%.2f,%.2f,%.2f) sector '%s'\n", actor->GetEID(),actor->GetName(), pos.x,pos.y,pos.z, sector->QueryObject()->GetName() );
 
     entities.Push(actor);
-    entities_hash.Put(actor->EID(), actor);
+    entities_hash.Put(actor->GetEID(), actor);
 
     UpdateShader(actor);
 }
@@ -399,7 +399,7 @@ void psCelClient::HandleItem( MsgEntry* me )
     UpdateShader(newItem->GetMesh());
 
     entities.Push(newItem);    
-    entities_hash.Put(newItem->EID(), newItem);
+    entities_hash.Put(newItem->GetEID(), newItem);
 }
 
 void psCelClient::HandleActionLocation( MsgEntry* me )
@@ -418,7 +418,7 @@ void psCelClient::HandleActionLocation( MsgEntry* me )
     GEMClientActionLocation * newAction = new GEMClientActionLocation( this, mesg );
     entities.Push( newAction );   
     actions.Push( newAction );
-    entities_hash.Put (newAction->EID(), newAction);
+    entities_hash.Put (newAction->GetEID(), newAction);
 }
 
 void psCelClient::HandleObjectRemoval( MsgEntry* me )
@@ -585,7 +585,7 @@ void psCelClient::RemoveObject(GEMClientObject* entity)
     entityLabels->RemoveObject(entity);
     shadowManager->RemoveShadow(entity);
     pawsLootWindow* loot = (pawsLootWindow*)PawsManager::GetSingleton().FindWidget("LootWindow");
-    if(loot && loot->GetLootingActor() == entity->EID())
+    if(loot && loot->GetLootingActor() == entity->GetEID())
     {
         loot->Hide();
     }
@@ -603,7 +603,7 @@ void psCelClient::RemoveObject(GEMClientObject* entity)
     if(dynamic_cast<GEMClientActionLocation*>(entity))
         actions.Delete( static_cast<GEMClientActionLocation*>(entity) );
 
-    entities_hash.Delete (entity->EID(), entity);
+    entities_hash.Delete (entity->GetEID(), entity);
     entities.Delete(entity);
 }
 
@@ -721,7 +721,7 @@ void psCelClient::HandleGroupChange(MsgEntry* me)
         Error2("Couldn't find object %d, ignoring group change..",msg.objectID);
         return;
     }
-    printf("Got group update for actor %d (%s) to group %d\n",actor->EID(),actor->GetName(),msg.groupID);
+    printf("Got group update for actor %d (%s) to group %d\n",actor->GetEID(),actor->GetName(),msg.groupID);
     unsigned int oldGroup = actor->GetGroupID();
     actor->SetGroupID(msg.groupID);
 
@@ -1093,7 +1093,7 @@ void psCelClient::PruneEntities()
                 vel = actor->GetMovement()->GetVelocity();
                 if (vel.y < -50)            // Large speed puts too much stress on CPU
                 {
-                    Debug3(LOG_ANY,0, "Disabling CD on actor(%d): %s", actor->EID(),actor->GetName());
+                    Debug3(LOG_ANY,0, "Disabling CD on actor(%d): %s", actor->GetEID(),actor->GetName());
                     actor->GetMovement()->SetOnGround(false);
                     // Reset velocity
                     actor->StopMoving(true);
@@ -1850,7 +1850,7 @@ unsigned int GEMClientActor::GetChatBubbleID() const
 const char* GEMClientActor::GetName(bool trueName)
 {
     static const char* strUnknown = "[Unknown]";
-    if (trueName || (Flags() & psPersistActor::NAMEKNOWN) || (eid == psengine->GetCelClient()->GetMainPlayer()->EID()))
+    if (trueName || (Flags() & psPersistActor::NAMEKNOWN) || (eid == psengine->GetCelClient()->GetMainPlayer()->GetEID()))
         return name;
     return strUnknown;
 }

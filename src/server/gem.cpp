@@ -192,7 +192,7 @@ void GEMSupervisor::HandleMessage(MsgEntry *me,Client *client)
             gemActor *actor = client->GetActor();
             psCharacter *psChar = actor->GetCharacterData();
 
-            psChar->SendStatDRMessage(client->GetClientNum(), actor->EID(), DIRTY_VITAL_ALL);
+            psChar->SendStatDRMessage(client->GetClientNum(), actor->GetEID(), DIRTY_VITAL_ALL);
             break;
         }
     }
@@ -218,26 +218,26 @@ PS_ID GEMSupervisor::CreateEntity(gemObject *obj)
 
 void GEMSupervisor::AddActorEntity(gemActor *actor)
 {
-    actors_by_pid.Put(actor->PID(), actor);
-    Debug3(LOG_CELPERSIST,0,"Actor added to supervisor with EID:%u and PID:%u.\n", actor->EID(), actor->PID());
+    actors_by_pid.Put(actor->GetPID(), actor);
+    Debug3(LOG_CELPERSIST,0,"Actor added to supervisor with EID:%u and PID:%u.\n", actor->GetEID(), actor->GetPID());
 }
 
 void GEMSupervisor::RemoveActorEntity(gemActor *actor)
 {
-    actors_by_pid.Delete(actor->PID(), actor);
-    Debug3(LOG_CELPERSIST,0,"Actor removed from supervisor with EID:%u and PID:%u.\n", actor->EID(), actor->PID());
+    actors_by_pid.Delete(actor->GetPID(), actor);
+    Debug3(LOG_CELPERSIST,0,"Actor removed from supervisor with EID:%u and PID:%u.\n", actor->GetEID(), actor->GetPID());
 }
 
 void GEMSupervisor::AddItemEntity(gemItem *item)
 {
     items_by_uid.Put(item->GetItem()->GetUID(), item);
-    Debug3(LOG_CELPERSIST,0,"Item added to supervisor with EID:%u and UID:%u.\n", item->EID(), item->GetItem()->GetUID());
+    Debug3(LOG_CELPERSIST,0,"Item added to supervisor with EID:%u and UID:%u.\n", item->GetEID(), item->GetItem()->GetUID());
 }
 
 void GEMSupervisor::RemoveItemEntity(gemItem *item)
 {
     items_by_uid.Delete(item->GetItem()->GetUID(), item);
-    Debug3(LOG_CELPERSIST,0,"Item removed from supervisor with EID:%u and UID:%u.\n", item->EID(), item->GetItem()->GetUID());
+    Debug3(LOG_CELPERSIST,0,"Item removed from supervisor with EID:%u and UID:%u.\n", item->GetEID(), item->GetItem()->GetUID());
 }
 
 void GEMSupervisor::RemoveEntity(gemObject *which)
@@ -245,8 +245,8 @@ void GEMSupervisor::RemoveEntity(gemObject *which)
     if (!which)
         return;
 
-    entities_by_eid.Delete(which->EID(), which);
-    Debug3(LOG_CELPERSIST,0,"Entity <%s> removed from supervisor with ID: %d\n", which->GetName(), which->EID());
+    entities_by_eid.Delete(which->GetEID(), which);
+    Debug3(LOG_CELPERSIST,0,"Entity <%s> removed from supervisor with ID: %d\n", which->GetName(), which->GetEID());
 
 }
 
@@ -275,7 +275,7 @@ gemObject *GEMSupervisor::FindObject(PS_ID id)
     while ( i.HasNext() )
     {
         obj = i.Next();
-        if (obj->EID() == id)
+        if (obj->GetEID() == id)
         {
             return obj;
         }
@@ -343,8 +343,8 @@ void GEMSupervisor::FillNPCList(MsgEntry *msg,int superclientID)
         gemObject *obj = iter.Next();
         if (obj->GetSuperclientID() == superclientID)
         {
-            msg->Add( (uint32_t) obj->PID() );
-            msg->Add( (uint32_t) obj->EID() );
+            msg->Add( (uint32_t) obj->GetPID() );
+            msg->Add( (uint32_t) obj->GetEID() );
 
             // Turn off any npcs about to be managed from being temporarily impervious
             // CPrintf(CON_NOTIFY,"---------> GemSuperVisor Setting imperv\n");
@@ -390,7 +390,7 @@ void GEMSupervisor::UpdateAllDR()
     while (iter.HasNext())
     {
         gemObject *obj = iter.Next();
-        if (obj->PID())
+        if (obj->GetPID())
         {
             obj->UpdateDR();
             count_players++;
@@ -437,7 +437,7 @@ void GEMSupervisor::GetAllEntityPos(psAllEntityPosMessage& update)
     while (iter.HasNext())
     {
         gemObject *obj = iter.Next();
-        if (obj->PID())
+        if (obj->GetPID())
         {
             gemActor *actor = dynamic_cast<gemActor *>(obj);
             if (actor)
@@ -457,7 +457,7 @@ void GEMSupervisor::GetAllEntityPos(psAllEntityPosMessage& update)
                 if (dist2 > .04 || instance != oldInstance)
                 {
                     count_actual++;
-                    update.Add(obj->EID(), pos, sector, obj->GetInstance(),
+                    update.Add(obj->GetEID(), pos, sector, obj->GetInstance(),
                                CacheManager::GetSingleton().GetMsgStrings());
                     obj->SetLastSuperclientPos(pos,instance);
                 }
@@ -1031,7 +1031,7 @@ void gemObject::UpdateProxList( bool force )
             //               obj->GetPosition(pos,yrot,sector);
             //                CPrintf(CON_SPAM, "Removing %s at (%1.2f, %1.2f, %1.2f) in sector %s.\n",obj->GetName(),pos.x,pos.y,pos.z,sector->QueryObject()->GetName() );
 
-            psRemoveObject remove( GetClientID(), obj->EID() );
+            psRemoveObject remove( GetClientID(), obj->GetEID() );
             remove.SendMessage();
             proxlist->EndWatching(obj);
         }
@@ -1296,7 +1296,7 @@ void gemActiveObject::SendBehaviorMessage(const csString & msg_id, gemObject *ac
             unsigned int guardCharacterID = item->GetGuardingCharacterID();
             gemActor* guardActor = GEMSupervisor::GetSingleton().FindPlayerEntity(guardCharacterID);
             if (guardCharacterID &&
-                guardCharacterID != actor->GetCharacterData()->PID() &&
+                guardCharacterID != actor->GetCharacterData()->GetPID() &&
                 guardActor &&
                 guardActor->RangeTo(item->GetGemObject()) < RANGE_TO_SELECT)
             {
@@ -1330,7 +1330,7 @@ void gemActiveObject::SendBehaviorMessage(const csString & msg_id, gemObject *ac
             {
                 item->ScheduleRespawn();
                 psPickupEvent evt(
-                           chardata->PID(),
+                           chardata->GetPID(),
                            item->GetUID(),
                            item->GetStackCount(),
                            (int)item->GetCurrentStats()->GetQuality(),
@@ -1341,7 +1341,7 @@ void gemActiveObject::SendBehaviorMessage(const csString & msg_id, gemObject *ac
             else
             {
                 psPickupEvent evt(
-                               chardata->PID(),
+                               chardata->GetPID(),
                                origUID,
                                origStackCount,
                                0,
@@ -1392,7 +1392,7 @@ void gemActiveObject::SendBehaviorMessage(const csString & msg_id, gemObject *ac
     else if (msg_id == "unlock")
         ; //???????
     else if (msg_id == "examine")
-        psserver->GetCharManager()->ViewItem(actor->GetClient(), actor->EID(), PSCHARACTER_SLOT_NONE);
+        psserver->GetCharManager()->ViewItem(actor->GetClient(), actor->GetEID(), PSCHARACTER_SLOT_NONE);
 
     return;
 }
@@ -1662,7 +1662,7 @@ lastSentSuperclientInstance(-1), numReports(0), reportTargetId(0), isFalling(fal
 movementMode(0), isAllowedToMove(true), atRest(true), pcmove(NULL),
 nevertired(false), infinitemana(false), instantcast(false), safefall(false)
 {
-    pid = chardata->PID();
+    pid = chardata->GetPID();
 
     cel->AddActorEntity(this);
 
@@ -1720,7 +1720,7 @@ gemActor::~gemActor()
         // delete psChar;
         // psChar = NULL;
         psChar->SetActor(NULL); // clear so cached object doesn't attempt to retain this
-        CacheManager::GetSingleton().AddToCache(psChar, CacheManager::GetSingleton().MakeCacheName("char",psChar->PID()),120);
+        CacheManager::GetSingleton().AddToCache(psChar, CacheManager::GetSingleton().MakeCacheName("char",psChar->GetPID()),120);
         psChar = NULL;
     }
 
@@ -1952,12 +1952,12 @@ void InvokeScripts(csArray<csString> & scripts, gemActor * actor, gemActor * tar
 
     if (scripts.GetSize())
     {
-        Debug4(LOG_COMBAT,actor->PID(),"-----InvokeScripts %zu  %s %s",scripts.GetSize(), actor->GetName(), target->GetName());
+        Debug4(LOG_COMBAT,actor->GetPID(),"-----InvokeScripts %zu  %s %s",scripts.GetSize(), actor->GetName(), target->GetName());
         for (scriptID=0; scriptID < scripts.GetSize(); scriptID++)
         {
             if (scripts[scriptID].Length() > 0)
             {
-                Debug2(LOG_COMBAT,actor->PID(),"-----InvokeScripts script %s",scripts[scriptID].GetData());
+                Debug2(LOG_COMBAT,actor->GetPID(),"-----InvokeScripts script %s",scripts[scriptID].GetData());
                 psserver->GetProgressionManager()->ProcessEvent(scripts[scriptID], actor, target, item);
             }
         }
@@ -2004,7 +2004,7 @@ void gemActor::DoDamage(gemActor * attacker, float damage, float damageRate, csT
     {
         if (attacker != NULL)
         {
-            Debug5(LOG_COMBAT,attacker->PID(),"%s do damage %1.2f on %s to new hp %1.2f", attacker->GetName(),damage,GetName(),hp);
+            Debug5(LOG_COMBAT,attacker->GetPID(),"%s do damage %1.2f on %s to new hp %1.2f", attacker->GetName(),damage,GetName(),hp);
         }
         else
         {
@@ -3007,7 +3007,7 @@ void gemActor::SetGroup(PlayerGroup * group)
 
             // Send the rest of the group to us (To make sure we got all the actors)
             psUpdatePlayerGroupMessage update2(GetClientID(),
-                                               memb->EID(),
+                                               memb->GetEID(),
                                                groupID);
 
             // CPrintf(CON_DEBUG,"Sending group update to client %d (%s)\n",memb->GetClientID(),memb->GetName());
@@ -3554,7 +3554,7 @@ void gemNPC::SendBehaviorMessage(const csString & msg_id, gemObject *actor)
             if (psChar->IsPet())
             {
                 // Mine?
-                if (psChar->GetOwnerID() == (int)actor->GetCharacterData()->PID())
+                if (psChar->GetOwnerID() == (int)actor->GetCharacterData()->GetPID())
                 {
                     options |= psGUIInteractMessage::VIEWSTATS;
                     options |= psGUIInteractMessage::DISMISS;
@@ -3789,7 +3789,7 @@ void gemNPC::Send( int clientnum, bool control, bool to_superclient )
 
     if ( this->owner.IsValid())
     {
-        ownerEID = owner->EID();
+        ownerEID = owner->GetEID();
     }
 
     uint32_t flags = psPersistActor::NPC;
@@ -3964,7 +3964,7 @@ bool gemContainer::AddToContainer(psItem *item, Client *fromClient, int slot, bo
     if (fromClient)
     {
         /* put the player behind the client as guard */
-        item->SetGuardingCharacterID(fromClient->GetCharacterData()->PID());
+        item->SetGuardingCharacterID(fromClient->GetCharacterData()->GetPID());
     }
     if (item->GetOwningCharacterID())
     {

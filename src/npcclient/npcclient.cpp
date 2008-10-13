@@ -378,7 +378,7 @@ bool psNPCClient::LoadNPCTypes(const char *xmlfile)
 
 void psNPCClient::Add( gemNPCObject* object )
 {
-    PS_ID EID = object->EID();
+    PS_ID EID = object->GetEID();
 
     all_gem_objects.Push( object );
 
@@ -389,9 +389,9 @@ void psNPCClient::Add( gemNPCObject* object )
     }
 
     all_gem_objects_by_eid.Put( EID, object );
-    if (object->PID() != gemNPCObject::NO_PLAYER_ID)
+    if (object->GetPID() != gemNPCObject::NO_PLAYER_ID)
     {
-        all_gem_objects_by_pid.Put( object->PID(), object);
+        all_gem_objects_by_pid.Put( object->GetPID(), object);
     }
     
     Notify2(LOG_CELPERSIST,"Added gemNPCObject(EID: %u)\n", EID);
@@ -405,7 +405,7 @@ void psNPCClient::Remove ( gemNPCObject * object )
         npc->Printf("Removing entity");
     }
 
-    PS_ID EID = object->EID();
+    PS_ID EID = object->GetEID();
     
     // Remove entity from all hated lists.
     for (size_t x=0; x<npcs.GetSize(); x++)
@@ -414,9 +414,9 @@ void psNPCClient::Remove ( gemNPCObject * object )
     }
 
     all_gem_objects_by_eid.DeleteAll( EID );
-    if (object->PID() != gemNPCObject::NO_PLAYER_ID)
+    if (object->GetPID() != gemNPCObject::NO_PLAYER_ID)
     {
-        all_gem_objects_by_pid.DeleteAll( object->PID() );
+        all_gem_objects_by_pid.DeleteAll( object->GetPID() );
     }
 
     gemNPCItem * item = dynamic_cast<gemNPCItem*>(object);
@@ -642,22 +642,22 @@ void psNPCClient::AttachNPC( gemNPCActor* actor, uint8_t DRcounter)
     NPC *npc = NULL;
 
     // Check based on characterID
-    npc = FindNPCByPID( actor->PID() );
+    npc = FindNPCByPID( actor->GetPID() );
     if ( !npc )
     {
         CPrintf(CON_NOTIFY,"NPC %s (PID: %u) was not found in scripted npcs for this npcclient.\n",
-                actor->GetName(), actor->PID() );
+                actor->GetName(), actor->GetPID() );
 
-        npc = ReadSingleNPC(actor->PID()); //try reloading the tables if we didn't find it
+        npc = ReadSingleNPC(actor->GetPID()); //try reloading the tables if we didn't find it
         if(!npc) //still not found. Try recovering missing data. The recovery process is only for pets, but teorically it can be expanded
         {        //to other npcs types
         
-                Result result(db->Select("select * from character_relationships where related_id=%u",actor->PID()));
+                Result result(db->Select("select * from character_relationships where related_id=%u",actor->GetPID()));
                 if (result.IsValid() && result.Count() && (csString)result[0][2] == "familiar") //just to be sure
                 {
                     int owner_id = result[0].GetUInt32("character_id"); //good we have the owner
                     //now we need the char master npc
-                    Result result2(db->Select("select npc_master_id from characters where id=%u",actor->PID()));
+                    Result result2(db->Select("select npc_master_id from characters where id=%u",actor->GetPID()));
                     
                     if (result.IsValid() && result.Count())
                     {
@@ -665,9 +665,9 @@ void psNPCClient::AttachNPC( gemNPCActor* actor, uint8_t DRcounter)
                         NPC *npc_int = FindNPCByPID(master_id);
                         if(npc_int)
                         {
-                            npc_int->InsertCopy(actor->PID(),owner_id);
-                            npc = ReadSingleNPC(actor->PID()); //should load now :P
-                            CPrintf(CON_WARNING, "Recreated missing pet %u owned by %u of type %u\n", actor->PID(), owner_id , master_id);
+                            npc_int->InsertCopy(actor->GetPID(),owner_id);
+                            npc = ReadSingleNPC(actor->GetPID()); //should load now :P
+                            CPrintf(CON_WARNING, "Recreated missing pet %u owned by %u of type %u\n", actor->GetPID(), owner_id , master_id);
                         }
                     }
 
@@ -687,7 +687,7 @@ void psNPCClient::AttachNPC( gemNPCActor* actor, uint8_t DRcounter)
     CheckAttachTribes(npc);
 
     npc->Printf("We are now managing NPC: %s(PID: %u) EID: %u.\n", actor->GetName(),
-                actor->PID(), actor->EID());
+                actor->GetPID(), actor->GetEID());
 
     // Test if this actor is in a valid starting position.
     npc->CheckPosition();
@@ -702,7 +702,7 @@ NPC *psNPCClient::FindNPCByPID(unsigned int character_id)
 {
     for (size_t x=0; x<npcs.GetSize(); x++)
     {
-        if (npcs[x]->PID() == character_id)
+        if (npcs[x]->GetPID() == character_id)
             return npcs[x];
     }
 
@@ -840,7 +840,7 @@ void psNPCClient::Tick()
             if (timeTaken > 250)                      // This took way to long time
             {
                 CPrintf(CON_WARNING,"Used %u time to process tick for npc: %s(EID: %u)\n",
-                        timeTaken, npcs[i]->GetName(), npcs[i]->EID());
+                        timeTaken, npcs[i]->GetName(), npcs[i]->GetEID());
                 DumpNPC(npcs[i]);
             }
         }
@@ -1137,8 +1137,8 @@ void psNPCClient::ListAllNPCs(const char * pattern)
         if (!pattern || strstr(npcs[i]->GetName(),pattern))
         {
             CPrintf(CON_CMDOUTPUT, "%-7u %-5d %-30s %-6s %-6s %-20s %-20s %4d %-3s %-8s\n" ,
-                    npcs[i]->PID(),
-                    (npcs[i]->GetActor()?npcs[i]->GetActor()->EID():0),
+                    npcs[i]->GetPID(),
+                    (npcs[i]->GetActor()?npcs[i]->GetActor()->GetEID():0),
                     npcs[i]->GetName(),
                     (npcs[i]->GetActor()?"Entity":"None  "),
                     (npcs[i]->IsAlive()?"Alive":"Dead"),
@@ -1186,7 +1186,7 @@ bool psNPCClient::DumpNPC(const char *pattern)
     unsigned int id = atoi(pattern);
     for (size_t i=0; i<npcs.GetSize(); i++)
     {
-        if (npcs[i]->PID() == id)
+        if (npcs[i]->GetPID() == id)
         {
             DumpNPC(npcs[i]);
             return true;
@@ -1209,8 +1209,8 @@ void psNPCClient::ListAllEntities(const char * pattern, bool onlyCharacters)
             if (!pattern || strstr(actor->GetName(),pattern))
             {
                 CPrintf(CON_CMDOUTPUT, "%-9d %-5d %-10s %-30s %-3s %-3s\n",
-                        actor->PID(),
-                        actor->EID(),
+                        actor->GetPID(),
+                        actor->GetEID(),
                         actor->GetObjectType(),
                         actor->GetName(),
                         (actor->IsVisible()?"Yes":"No"),
@@ -1233,7 +1233,7 @@ void psNPCClient::ListAllEntities(const char * pattern, bool onlyCharacters)
         if (!pattern || strstr(obj->GetName(),pattern))
         {
             CPrintf(CON_CMDOUTPUT, "%5d %-10s %-30s %-3s %-3s %-4s %s %d\n",
-                    obj->EID(),
+                    obj->GetEID(),
                     obj->GetObjectType(),
                     obj->GetName(),
                     (obj->IsVisible()?"Yes":"No"),
@@ -1272,8 +1272,8 @@ void psNPCClient::ListTribes(const char * pattern)
             {
                 NPC * npc = tribes[i]->GetMember(j);
                 CPrintf(CON_CMDOUTPUT, "%6u %6d %-30s %-6s %-6s %-15s %-15s %-20s %-20s\n" ,
-                        npc->PID(),
-                        (npc->GetActor()?npc->GetActor()->EID():0),
+                        npc->GetPID(),
+                        (npc->GetActor()?npc->GetActor()->GetEID():0),
                         npc->GetName(),
                         (npc->GetActor()?"Entity":"None  "),
                         (npc->IsAlive()?"Alive":"Dead"),
@@ -1301,7 +1301,7 @@ void psNPCClient::ListTribes(const char * pattern)
                 csString name;
                 if (memory->npc)
                 {
-                    name.Format("%s(%u)",memory->npc->GetName(),memory->npc->PID());
+                    name.Format("%s(%u)",memory->npc->GetName(),memory->npc->GetPID());
                 }
                 CPrintf(CON_CMDOUTPUT,"%7d %-20s %7.1f %7.1f %7.1f %7.1f %-20s %-20s\n",
                         memory->id,
