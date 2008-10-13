@@ -104,9 +104,9 @@ public:
         }
 
         item = loot;
-        looterID = looter->GetActor()->GetPlayerID();
-        rollerID = roller->GetActor()->GetPlayerID();
-        looteeID = dropper->GetCharacterID();
+        looterID = looter->GetActor()->PID();
+        rollerID = roller->GetActor()->PID();
+        looteeID = dropper->PID();
 
         // These might not be around later, so save their names now
         lootername = looter->GetName();
@@ -164,7 +164,7 @@ public:
 
         psLootEvent evt(
                        looteeID,
-                       getter->GetCharacterData()->GetCharacterID(),
+                       getter->GetCharacterData()->PID(),
                        item->GetUID(),
                        item->GetStackCount(),
                        (int)item->GetCurrentStats()->GetQuality(),
@@ -774,9 +774,9 @@ void SpawnManager::RemoveNPC(gemObject *obj)
 
     ServerStatus::mob_deathcount++;
 
-    int pid = obj->GetPlayerID();
+    int pid = obj->PID();
 
-    Notify3(LOG_SPAWN,"Sending NPC %u disconnect msg to %zu clients.\n",obj->GetEntityID(),obj->GetMulticastClients().GetSize());
+    Notify3(LOG_SPAWN,"Sending NPC %u disconnect msg to %zu clients.\n",obj->EID(),obj->GetMulticastClients().GetSize());
 
     if (obj->GetCharacterData()==NULL)
     {
@@ -1019,8 +1019,8 @@ void SpawnManager::HandleLootItem(MsgEntry *me,Client *client)
     }
 
     psLootEvent evt(
-                   chr->GetCharacterID(),
-                   looterclient->GetCharacterData()->GetCharacterID(),
+                   chr->PID(),
+                   looterclient->GetCharacterData()->PID(),
                    item->GetUID(),
                    item->GetStackCount(),
                    (int)item->GetCurrentStats()->GetQuality(),
@@ -1276,7 +1276,7 @@ psDespawnGameEvent::psDespawnGameEvent(SpawnManager *mgr,
     : psGameEvent(0,delayticks,"psDespawnGameEvent")
 {
     spawnmanager = mgr;
-    entity       = obj->GetEntityID();
+    entity       = obj->EID();
 }
 
 void psDespawnGameEvent::Trigger()

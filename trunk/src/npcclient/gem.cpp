@@ -54,7 +54,7 @@ psNpcMeshAttach::psNpcMeshAttach(gemNPCObject* objectToAttach) : scfImplementati
 psNPCClient *gemNPCObject::cel = NULL;
 
 gemNPCObject::gemNPCObject( psNPCClient* cel, PS_ID id )
-    :visible(true),invincible(false),instance(0)
+    :eid(id), visible(true), invincible(false), instance(0)
 {
     if (!this->cel)
         this->cel = cel;
@@ -81,7 +81,7 @@ void gemNPCObject::Move(const csVector3& pos, float rotangle,  const char* room)
     iSector* sector = engine->FindSector(room);
     if ( sector == NULL )
     {
-        CPrintf(CON_DEBUG, "Can't move npc object %d. Sector %s not found!\n", GetID(),room);
+        CPrintf(CON_DEBUG, "Can't move npc object %d. Sector %s not found!\n", eid, room);
         return;
     }
     pcmesh->MoveMesh( sector , pos );
@@ -243,7 +243,6 @@ gemNPCActor::gemNPCActor( psNPCClient* cel, psPersistActor& mesg)
     : gemNPCObject( cel, mesg.entityid ), npc(NULL)
 {
     name = mesg.name;
-    id = mesg.entityid;
     type = mesg.type;
     playerID = mesg.playerID;
     ownerEID = mesg.ownerEID;
@@ -253,7 +252,7 @@ gemNPCActor::gemNPCActor( psNPCClient* cel, psPersistActor& mesg)
     SetInvincible( (mesg.flags & psPersistActor::INVINCIBLE) ?  true : false );
     SetInstance( mesg.instance );
 
-    Debug3( LOG_CELPERSIST, id, "Actor %s(%u) Received\n", mesg.name.GetData(), mesg.entityid );
+    Debug3( LOG_CELPERSIST, eid, "Actor %s(%u) Received\n", mesg.name.GetData(), mesg.entityid );
     InitMesh(  mesg.factname, mesg.filename, mesg.pos, mesg.yrot, mesg.sectorName );
     InitLinMove( mesg.pos, mesg.yrot, mesg.sectorName, mesg.top, mesg.bottom, mesg.offset );
     InitCharData( mesg.texParts, mesg.equipment );  
@@ -301,7 +300,6 @@ gemNPCItem::gemNPCItem( psNPCClient* cel, psPersistItem& mesg)
 {        
     name = mesg.name;
     Debug3( LOG_CELPERSIST, 0,"Item %s(%d) Received", mesg.name.GetData(), mesg.id );
-    id = mesg.id;
     type = mesg.type;
 
     if(!mesg.factname.GetData())

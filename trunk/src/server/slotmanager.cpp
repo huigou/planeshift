@@ -314,7 +314,7 @@ void SlotManager::MoveFromWorldContainer(psSlotMovementMsg& msg, Client *fromCli
                 itemProposed->Save(false);
 
             // Update client(s)
-            itemProposed->UpdateView(fromClient, worldContainer->GetEntityID(), true);
+            itemProposed->UpdateView(fromClient, worldContainer->EID(), true);
 
 //            parentItem->SendContainerContents(fromClient, containerEntityID);
             break;

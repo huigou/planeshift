@@ -509,7 +509,7 @@ void psItem::Commit(bool children)
     
     targetQuery->Reset();
     
-    targetQuery->AddField("char_id_owner",owning_character?owning_character->GetCharacterID():0);
+    targetQuery->AddField("char_id_owner",owning_character?owning_character->PID():0);
     targetQuery->AddField("char_id_guardian", guardingCharacterID);
     targetQuery->AddField("stack_count",GetStackCount());
     targetQuery->AddField("item_quality",GetItemQuality());
@@ -962,7 +962,7 @@ csString psItem::GetQuantityName(const char *namePtr, int stack_count, PSITEMSTA
 void psItem::SetOwningCharacter(psCharacter *owner)
 {
     owning_character = owner;
-    owningCharacterID = owner ? owner->characterid : 0;
+    owningCharacterID = owner ? owner->PID() : 0;
 
     // Owned items are always in inventory, never in the world.
     // Also, an item is owned, not guarded, when in the inventory.
@@ -2339,7 +2339,7 @@ void psItem::UpdateView(Client *fromClient, uint EntityId, bool clear)
                           GetName(),
                           GetImageName(),
                           GetStackCount(),
-                          guardian ? guardian->GetEntityID() : 0);
+                          guardian ? guardian->EID() : 0);
     
     mesg.Multicast(fromClient->GetActor()->GetMulticastClients(),0,5);
 }
@@ -2599,7 +2599,7 @@ bool psItem::SendContainerContents(Client *client, int containerID)
                                     IS_CONTAINER );
                                           
     if (gItem != NULL )
-        outgoing.containerID = gItem->GetEntityID();
+        outgoing.containerID = gItem->EID();
     else
         outgoing.containerID = containerID;        
 
@@ -2743,7 +2743,7 @@ bool psItem::SendBookText(Client *client, int containerID, int slotID)
     //is it a writable book?  In our inventory? Are we the author?
     bool shouldWrite = (GetBaseStats()->GetIsWriteable() && 
         GetOwningCharacter() == client->GetCharacterData() &&
-        GetBaseStats()->IsThisTheCreator(client->GetCharacterData()->GetCharacterID()));
+        GetBaseStats()->IsThisTheCreator(client->GetCharacterData()->PID()));
     
   //  CPrintf(CON_DEBUG,"Sent text for book %u %u\n",slotID, containerID);
     psReadBookTextMessage outgoing(client->GetClientNum(), name, text, shouldWrite, slotID, containerID);
@@ -2795,7 +2795,7 @@ void psItem::SendSketchDefinition(Client *client)
 
     // If the player is not the crafter, and a crafter is specified, 
     // or not in the inventory then the player cannot edit the item
-    if (GetCrafterID() && GetCrafterID() != (uint)client->GetActor()->GetPlayerID() ||
+    if (GetCrafterID() && GetCrafterID() != (uint)client->GetActor()->PID() ||
         GetOwningCharacter() != client->GetCharacterData())
         xml.Append("<rdonly/>");
 
@@ -2812,7 +2812,7 @@ void psItem::SendSketchDefinition(Client *client)
     xml += "</limits>";
 
     // Now send all this
-    psSketchMessage msg( client->GetClientNum(), GetUID(), 0, xml, GetBaseStats()->GetSketch(), GetBaseStats()->IsThisTheCreator(client->GetCharacterData()->GetCharacterID()), GetStandardName() );
+    psSketchMessage msg( client->GetClientNum(), GetUID(), 0, xml, GetBaseStats()->GetSketch(), GetBaseStats()->IsThisTheCreator(client->GetCharacterData()->PID()), GetStandardName() );
     msg.SendMessage();
 }
 
@@ -2892,7 +2892,7 @@ bool psItem::SendActionContents(Client *client, psActionLocation *action)
         outgoing.containerID = containerID;
     */
 
-    outgoing.containerID = gItem->GetEntityID();
+    outgoing.containerID = gItem->EID();
 
     if ( isContainer )
     {           

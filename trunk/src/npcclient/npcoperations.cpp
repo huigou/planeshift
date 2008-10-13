@@ -1653,7 +1653,7 @@ bool WanderOperation::StartMoveToWaypoint(NPC *npc, EventManager *eventmgr)
     if (!path)
     {
         Error5("%s(%d) Could not find path between '%s' and '%s'",
-               npc->GetName(),npc->GetActor()->GetID(),
+               npc->GetName(),npc->GetActor()->EID(),
                (prior_wp?prior_wp->GetName():""),
                (active_wp?active_wp->GetName():""));
         return false;
@@ -2021,7 +2021,7 @@ bool ChaseOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
             }
             if (entity)
             {
-                target_id = entity->GetID();
+                target_id = entity->EID();
                 psGameObject::GetPosition(entity, dest, targetRot, targetSector);
                 npc->Printf(6, "Targeting owner (%s) at (%1.2f,%1.2f,%1.2f) for chase ...",
                             entity->GetName(),dest.x,dest.y,dest.z );
@@ -2038,7 +2038,7 @@ bool ChaseOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
             }
             if (entity)
             {
-                target_id = entity->GetID();
+                target_id = entity->EID();
                 psGameObject::GetPosition(entity, dest, targetRot,targetSector);
                 npc->Printf(6, "Targeting current target (%s) at (%1.2f,%1.2f,%1.2f) for chase ...",
                             entity->GetName(), dest.x,dest.y, dest.z );
@@ -2053,7 +2053,7 @@ bool ChaseOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
     
         psGameObject::GetPosition(entity, targetPos, targetRot, targetSector);
 
-        npc->Printf(5, "Chasing enemy (%s) EID: %u at %s",entity->GetName(),entity->GetID(), 
+        npc->Printf(5, "Chasing enemy (%s) EID: %u at %s",entity->GetName(),entity->EID(), 
                     toString(targetPos,targetSector).GetDataSafe());
 
         // We need to work in the target sector space
@@ -2211,7 +2211,7 @@ void ChaseOperation::Advance(float timedelta, NPC *npc, EventManager *eventmgr)
                 Calc2DDistance(localDest, myPos));
 
     {
-        ScopedTimer st(250, "chase extrapolate %.2f time for EID: %u",timedelta,npc->GetActor()->GetID());
+        ScopedTimer st(250, "chase extrapolate %.2f time for EID: %u",timedelta,npc->GetActor()->EID());
         npc->GetLinMove()->ExtrapolatePosition(timedelta);
     }
     bool on_ground;
@@ -2523,7 +2523,7 @@ bool ResurrectOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
 
     // Todo: Add a random delta within radius to the where value.
 
-    npcclient->GetNetworkMgr()->QueueResurrectCommand(where,rot,sector->QueryObject()->GetName(),npc->GetPID());
+    npcclient->GetNetworkMgr()->QueueResurrectCommand(where, rot, sector->QueryObject()->GetName(), npc->PID());
 
     return true;
 }
@@ -2594,7 +2594,7 @@ bool MeleeOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
     attacked_ent = npc->GetMostHated(melee_range,attack_invisible,attack_invincible);
     if (attacked_ent)
     {
-        npc->Printf(5, "Melee starting to attack %s(%d)",attacked_ent->GetName(),attacked_ent->GetID());
+        npc->Printf(5, "Melee starting to attack %s(%d)",attacked_ent->GetName(),attacked_ent->EID());
 
         npcclient->GetNetworkMgr()->QueueAttackCommand(npc->GetActor(),attacked_ent);
     }
@@ -2648,7 +2648,7 @@ void MeleeOperation::Advance(float timedelta, NPC *npc, EventManager *eventmgr)
     {
         if (attacked_ent)
         {
-            npc->Printf(5, "Melee switching to attack %s(%d)", attacked_ent->GetName(), attacked_ent->GetID());
+            npc->Printf(5, "Melee switching to attack %s(%d)", attacked_ent->GetName(), attacked_ent->EID());
         }
         else
         {
@@ -3143,7 +3143,7 @@ bool WatchOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
             watchedEnt = npc->GetOwner();
             if (watchedEnt)
             {
-                target_id = watchedEnt->GetID();
+                target_id = watchedEnt->EID();
                 psGameObject::GetPosition(watchedEnt, targetPos,targetRot,targetSector);
                 npc->Printf(5, "Targeting owner (%s) at (%1.2f,%1.2f,%1.2f) for watch ...",
                             watchedEnt->GetName(),targetPos.x,targetPos.y,targetPos.z );
@@ -3154,7 +3154,7 @@ bool WatchOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
             watchedEnt = npc->GetTarget();
             if (watchedEnt)
             {
-                target_id = watchedEnt->GetID();
+                target_id = watchedEnt->EID();
                 psGameObject::GetPosition(watchedEnt, targetPos,targetRot,targetSector);
                 npc->Printf(5, "Targeting current target (%s) at (%1.2f,%1.2f,%1.2f) for chase ...",
                             watchedEnt->GetName(),targetPos.x,targetPos.y,targetPos.z );

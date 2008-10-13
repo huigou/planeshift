@@ -496,7 +496,7 @@ int psCombatManager::CalculateAttack(psCombatGameEvent *event, psItem* subWeapon
 
     calc_damage->Execute();
 
-	if (DoLogDebug2(LOG_COMBAT,event->GetAttackerData()->characterid))
+	if (DoLogDebug2(LOG_COMBAT,event->GetAttackerData()->PID()))
     {
         calc_damage->DumpAllVars();
     }
@@ -550,8 +550,8 @@ void psCombatManager::ApplyCombatEvent(psCombatGameEvent *event, int attack_resu
 
             psCombatEventMessage ev(event->AttackerCID,
                 isNearlyDead ? psCombatEventMessage::COMBAT_DAMAGE_NEARLY_DEAD : psCombatEventMessage::COMBAT_DAMAGE,
-                gemAttacker->GetEntityID(),
-                gemTarget->GetEntityID(),
+                gemAttacker->EID(),
+                gemTarget->EID(),
                 event->AttackLocation,
                 event->FinalDamage,
                 weapon->GetAttackAnimID(gemAttacker->GetCharacterData()),
@@ -606,8 +606,8 @@ void psCombatManager::ApplyCombatEvent(psCombatGameEvent *event, int attack_resu
         {
             psCombatEventMessage ev(event->AttackerCID,
                 psCombatEventMessage::COMBAT_DODGE,
-                gemAttacker->GetEntityID(),
-                gemTarget->GetEntityID(),
+                gemAttacker->EID(),
+                gemTarget->EID(),
                 event->AttackLocation,
                 0, // no dmg on a dodge
                 weapon->GetAttackAnimID(gemAttacker->GetCharacterData()),
@@ -628,8 +628,8 @@ void psCombatManager::ApplyCombatEvent(psCombatGameEvent *event, int attack_resu
         {
             psCombatEventMessage ev(event->AttackerCID,
                 psCombatEventMessage::COMBAT_BLOCK,
-                gemAttacker->GetEntityID(),
-                gemTarget->GetEntityID(),
+                gemAttacker->EID(),
+                gemTarget->EID(),
                 event->AttackLocation,
                 0, // no dmg on a block
                 weapon->GetAttackAnimID( gemAttacker->GetCharacterData() ),
@@ -660,8 +660,8 @@ void psCombatManager::ApplyCombatEvent(psCombatGameEvent *event, int attack_resu
         {
             psCombatEventMessage ev(event->AttackerCID,
                 psCombatEventMessage::COMBAT_MISS,
-                gemAttacker->GetEntityID(),
-                gemTarget->GetEntityID(),
+                gemAttacker->EID(),
+                gemTarget->EID(),
                 event->AttackLocation,
                 0, // no dmg on a miss
                 weapon->GetAttackAnimID( gemAttacker->GetCharacterData() ),
@@ -1011,8 +1011,8 @@ void psCombatManager::HandleDeathEvent(MsgEntry *me)
     // Send out the notification of death, which plays the anim, etc.
     psCombatEventMessage die(death.deadActor->GetClientID(),
                                 psCombatEventMessage::COMBAT_DEATH,
-                                (death.killer)?death.killer->GetEntityID():0,
-                                death.deadActor->GetEntityID(),
+                                (death.killer)?death.killer->EID():0,
+                                death.deadActor->EID(),
                                 -1, // no target location
                                 0,  // no dmg on a death
                                 (unsigned int)-1,  // TODO: "killing blow" matrix of mob-types vs. weapon types

@@ -156,7 +156,7 @@ void UserManager::HandleMOTDRequest(MsgEntry *me,Client *client)
     //If data isn't loaded, load from db
     if (!client->GetCharacterData())
     {
-        Result result(db->Select("SELECT guild_member_of FROM characters WHERE id = '%d'",client->GetPlayerID()));
+        Result result(db->Select("SELECT guild_member_of FROM characters WHERE id = '%d'",client->PID()));
         if (result.Count() > 0)
             guildID = result[0].GetUInt32(0);
     }
@@ -250,7 +250,7 @@ void UserManager::HandleUserCommand(MsgEntry *me,Client *client)
     }
     else if ( msg.command == "/admin" )
     {
-        psserver->GetAdminManager()->Admin(client->GetPlayerID(), me->clientnum, client);
+        psserver->GetAdminManager()->Admin(client->PID(), me->clientnum, client);
     }
     else if ( msg.command == "/loot" )
     {
@@ -278,7 +278,7 @@ void UserManager::HandleUserCommand(MsgEntry *me,Client *client)
         if (client->GetActor()->GetMode() == PSCHARACTER_MODE_SIT)
         {
             client->GetActor()->SetMode(PSCHARACTER_MODE_PEACE);
-            psUserActionMessage anim(me->clientnum, client->GetActor()->GetEntityID(), "stand up");
+            psUserActionMessage anim(me->clientnum, client->GetActor()->EID(), "stand up");
             anim.Multicast( client->GetActor()->GetMulticastClients(),0,PROX_LIST_ANY_RANGE );
             Emote("%s stands up.", "%s stands up.", "stand", me, client);
         }
@@ -484,7 +484,7 @@ csArray<csString> UserManager::DecodeCommandArea(Client *client, csString target
         {
             if (nearobj->GetClientID())
             {
-                newTarget.Format("pid:%d", nearobj->GetPlayerID());
+                newTarget.Format("pid:%d", nearobj->PID());
                 break;
             }
             else
@@ -492,9 +492,9 @@ csArray<csString> UserManager::DecodeCommandArea(Client *client, csString target
         }
         case 1: // Target actors
         {
-            if (nearobj->GetPlayerID())
+            if (nearobj->PID())
             {
-                newTarget.Format("pid:%d", nearobj->GetPlayerID());
+                newTarget.Format("pid:%d", nearobj->PID());
                 break;
             }
             else
@@ -504,7 +504,7 @@ csArray<csString> UserManager::DecodeCommandArea(Client *client, csString target
         {
             if (nearobj->GetItem())
             {
-                newTarget.Format("eid:%u", nearobj->GetEntityID());
+                newTarget.Format("eid:%u", nearobj->EID());
                 break;
             }
             else
@@ -514,7 +514,7 @@ csArray<csString> UserManager::DecodeCommandArea(Client *client, csString target
         {
             if (nearobj->GetNPCPtr())
             {
-                newTarget.Format("pid:%d", nearobj->GetPlayerID());
+                newTarget.Format("pid:%d", nearobj->PID());
                 break;
             }
             else
@@ -522,7 +522,7 @@ csArray<csString> UserManager::DecodeCommandArea(Client *client, csString target
         }
         case 4: // Target everything
         {
-            newTarget.Format("eid:%u", nearobj->GetEntityID());
+            newTarget.Format("eid:%u", nearobj->EID());
             break;
         }
         }
@@ -569,7 +569,7 @@ void UserManager::Emote(csString general, csString specific, csString animation,
 
     if (animation != "noanim")
     {
-        psUserActionMessage anim(me->clientnum, client->GetActor()->GetEntityID(), animation);
+        psUserActionMessage anim(me->clientnum, client->GetActor()->EID(), animation);
         anim.Multicast(client->GetActor()->GetMulticastClients(), 0, PROX_LIST_ANY_RANGE);
     }
 }
@@ -679,7 +679,7 @@ void UserManager::SendCharacterDescription(Client * client, psCharacter * charDa
 {
     StatSet* playerAttr = client->GetCharacterData()->GetAttributes();
 
-    bool isSelf = (charData->GetCharacterID() == client->GetCharacterData()->GetCharacterID());
+    bool isSelf = (charData->PID() == client->GetCharacterData()->PID());
 
     csString charName = charData->GetCharFullName();
     csString raceName = charData->GetRaceInfo()->name;
@@ -1171,7 +1171,7 @@ void UserManager::Buddy(psUserCmdMessage& msg,Client *client,int clientnum)
     }
 
 
-    unsigned int selfid=client->GetCharacterData()->GetCharacterID();
+    unsigned int selfid=client->GetCharacterData()->PID();
 
     bool excludeNPCs = true;
     unsigned int buddyid=psServer::CharacterLoader.FindCharacterID(msg.player.GetData(), excludeNPCs);
@@ -1222,7 +1222,7 @@ void UserManager::NotBuddy(psUserCmdMessage& msg,Client *client,int clientnum)
         Error3("Client for account '%s' attempted to remove buddy '%s' but has no character data!",client->GetName(),msg.player.GetData());
         return;
     }
-    unsigned int selfid=client->GetCharacterData()->GetCharacterID();
+    unsigned int selfid=client->GetCharacterData()->PID();
 
     bool searchNPCs = false;
     unsigned int buddyid=psServer::CharacterLoader.FindCharacterID(msg.player.GetData(), searchNPCs);
@@ -1302,7 +1302,7 @@ void UserManager::NotifyBuddies(Client * client, bool logged_in)
 void UserManager::NotifyGuildBuddies(Client * client, bool logged_in)
 {
     csString name (client->GetName());
-    unsigned int char_id = client->GetCharacterData()->characterid;
+    unsigned int char_id = client->GetCharacterData()->PID();
     psGuildInfo * charGuild = client->GetCharacterData()->GetGuild();
     if(charGuild)
     {
@@ -1760,7 +1760,7 @@ void UserManager::HandleLoot(Client *client)
         int money = chr->GetLootMoney();
         psLootMessage loot;
         size_t count = chr->GetLootItems(loot,
-            target->GetEntityID(),
+            target->EID(),
             client->GetClientNum() );
         if (count)
         {
@@ -1825,8 +1825,8 @@ void UserManager::HandleLoot(Client *client)
                             psserver->SendSystemInfo(currmember->GetClient()->GetClientNum(), "You have looted %s.", eachstr.GetData());
                             
                             psLootEvent evt(
-                                            chr->GetCharacterID(),
-                                            currmember->GetCharacterData()->GetCharacterID(),
+                                            chr->PID(),
+                                            currmember->GetCharacterData()->PID(),
                                             0,
                                             0,
                                             0,
@@ -1856,8 +1856,8 @@ void UserManager::HandleLoot(Client *client)
 
                     client->GetCharacterData()->AdjustMoney(remmoney, false);
                     psLootEvent evt(
-                                    chr->GetCharacterID(),
-                                    client->GetCharacterData()->GetCharacterID(),
+                                    chr->PID(),
+                                    client->GetCharacterData()->PID(),
                                     0,
                                     0,
                                     0,
@@ -1877,8 +1877,8 @@ void UserManager::HandleLoot(Client *client)
                 client->GetCharacterData()->AdjustMoney(m, false);
                 
                 psLootEvent evt(
-                               chr->GetCharacterID(),
-                               client->GetCharacterData()->GetCharacterID(),
+                               chr->PID(),
+                               client->GetCharacterData()->PID(),
                                0,
                                0,
                                0,

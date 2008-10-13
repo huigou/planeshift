@@ -83,13 +83,13 @@ public:
     void Move(const csVector3& pos, float rotangle, const char* room);
     void Move(const csVector3& pos, float rotangle, const char* room, int instance);
     
-    int GetID() { return id; }
+    int EID() { return eid; }
     npcMesh* pcmesh;   
     
     int GetType() { return type; }
     
     const char* GetName() { return name.GetDataSafe(); }
-    virtual unsigned int GetPlayerID() { return NO_PLAYER_ID; }
+    virtual unsigned int PID() { return NO_PLAYER_ID; }
 
     virtual const char* GetObjectType(){ return "Object"; }
     virtual gemNPCActor *GetActorPtr() { return NULL; }
@@ -113,7 +113,7 @@ protected:
     
 
     csString name;
-    int  id;
+    int  eid;
     int  type;
     bool visible;
     bool invincible;
@@ -130,7 +130,7 @@ public:
     
     psLinearMovement* pcmove;
     
-    virtual unsigned int GetPlayerID() { return playerID; }
+    virtual unsigned int PID() { return playerID; }
     virtual PS_ID GetOwnerEID() { return ownerEID; }
 
     csString& GetRace() { return race; };

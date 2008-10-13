@@ -1046,7 +1046,7 @@ void psCharCreationManager::HandleUploadMessage( MsgEntry* me, Client *client )
         }
 
         // Here everything is ok
-        client->SetPlayerID(chardata->GetCharacterID());
+        client->SetPlayerID(chardata->PID());
         client->SetName(playerName);
 
         psCharApprovedMessage app(me->clientnum);
@@ -1090,7 +1090,7 @@ void psCharCreationManager::HandleUploadMessage( MsgEntry* me, Client *client )
     if (!upload.verify)
     {
         // Remove char data from the cache
-        iCachedObject *obj = CacheManager::GetSingleton().RemoveFromCache(CacheManager::GetSingleton().MakeCacheName("char", chardata->GetCharacterID()));
+        iCachedObject *obj = CacheManager::GetSingleton().RemoveFromCache(CacheManager::GetSingleton().MakeCacheName("char", chardata->PID()));
         if (obj)
         {
             obj->ProcessCacheTimeout();

@@ -438,8 +438,8 @@ bool psMarriageManager::CreateMarriageEntry( psCharacter* charData,  psCharacter
     // create entry of this character in 'character_relationships'
 
     // Get character's Unique ID number
-    int id = charData->GetCharacterID();
-    int spouse_id = spouseData->GetCharacterID();
+    int id = charData->PID();
+    int spouse_id = spouseData->PID();
     csString spouse_name;
     db->Escape(spouse_name, spouseData->GetCharFullName());        
         
@@ -505,7 +505,7 @@ void psMarriageManager::DeleteMarriageInfo(  psCharacter* charData )
 
     // Step 2: We remove the data about the marriage now.
     csString query;
-    query.Format( "DELETE FROM character_relationships WHERE (character_id='%d' OR related_id='%d') and relationship_type='spouse'", charData->GetCharacterID(), charData->GetCharacterID() );
+    query.Format( "DELETE FROM character_relationships WHERE (character_id='%d' OR related_id='%d') and relationship_type='spouse'", charData->PID(), charData->PID() );
     if ( !db->Command( query.GetData() ) )
     {
         Error2( "DeleteMarriageInfo(): DB Error: %s", db->GetLastError() ); 
@@ -537,7 +537,7 @@ void psMarriageManager::UpdateName ( psCharacter* charData )
      actor->SetName( charData->GetCharFullName() );       
 
     //Update label
-    psUpdateObjectNameMessage newNameMsg( 0, actor->GetEntityID(), charData->GetCharFullName() );
+    psUpdateObjectNameMessage newNameMsg( 0, actor->EID(), charData->GetCharFullName() );
     psserver->GetEventManager()->Broadcast( newNameMsg.msg, NetBase::BC_EVERYONE );
     
  }

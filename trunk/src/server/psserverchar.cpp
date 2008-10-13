@@ -179,7 +179,7 @@ void psServerCharManager::UpdateSketch( MsgEntry* me )
 
             // TODO: Probably need to validate the xml here somehow
             // for first sketcher, sets authorship.
-            item->GetBaseStats()->SetCreator(client->GetCharacterData()->GetCharacterID(), PSITEMSTATS_CREATOR_VALID);
+            item->GetBaseStats()->SetCreator(client->GetCharacterData()->PID(), PSITEMSTATS_CREATOR_VALID);
             if (item->SetSketch(csString(sketchMsg.Sketch)))
             {
                 printf("Updated sketch for item %u to: %s\n", sketchMsg.ItemID, sketchMsg.Sketch.GetDataSafe());
@@ -279,7 +279,7 @@ void psServerCharManager::HandleBookWrite(MsgEntry* me, Client* client)
          //is it a writable book?  In our inventory? Are we the author?
          if(item && item->GetBaseStats()->GetIsWriteable() && 
             item->GetOwningCharacter() == client->GetCharacterData() &&
-            item->GetBaseStats()->IsThisTheCreator(client->GetCharacterData()->GetCharacterID()))
+            item->GetBaseStats()->IsThisTheCreator(client->GetCharacterData()->PID()))
          {
               //We could maybe let the work manager know that we're busy writing something
               //or track that this is the book we're working on, and only allow saves to a 
@@ -290,7 +290,7 @@ void psServerCharManager::HandleBookWrite(MsgEntry* me, Client* client)
               psWriteBookMessage resp(client->GetClientNum(), theTitle, theText, true,  (INVENTORY_SLOT_NUMBER)mesg.slotID, mesg.containerID);
               resp.SendMessage();
               // this only does set the creator for first write to book
-              item->GetBaseStats()->SetCreator(client->GetCharacterData()->GetCharacterID(), PSITEMSTATS_CREATOR_VALID);
+              item->GetBaseStats()->SetCreator(client->GetCharacterData()->PID(), PSITEMSTATS_CREATOR_VALID);
             //  CPrintf(CON_DEBUG, "Sent: %s\n",resp.ToString(NULL).GetDataSafe());
          } 
          else 
@@ -649,7 +649,7 @@ void psServerCharManager::BeginTrading(Client * client, gemObject * target, cons
     {
         csString commandData;
         commandData.Format("<MERCHANT ID=\"%d\" TRADE_CMD=\"%d\" />",
-                merchant->GetCharacterID(),psGUIMerchantMessage::SELL);
+                merchant->PID(),psGUIMerchantMessage::SELL);
 
         psGUIMerchantMessage msg1(clientnum,psGUIMerchantMessage::MERCHANT,commandData);
         msg1.SendMessage();
@@ -659,7 +659,7 @@ void psServerCharManager::BeginTrading(Client * client, gemObject * target, cons
     {
         csString commandData;
         commandData.Format("<MERCHANT ID=\"%d\" TRADE_CMD=\"%d\" />",
-                merchant->GetCharacterID(),psGUIMerchantMessage::BUY);
+                merchant->PID(),psGUIMerchantMessage::BUY);
         psGUIMerchantMessage msg1(clientnum,psGUIMerchantMessage::MERCHANT,commandData);
         psserver->GetEventManager()->SendMessage(msg1.msg);
         character->SetTradingStatus(psCharacter::BUYING,merchant);
@@ -893,8 +893,8 @@ void psServerCharManager::HandleMerchantBuy(psGUIMerchantMessage& msg, Client *c
                 count, itemName.GetData(), cost.ToUserString().GetDataSafe(),cost.GetTotal());
 
             psBuyEvent evt(
-                character->GetCharacterID(),
-                merchant->GetCharacterID(),
+                character->PID(),
+                merchant->PID(),
                 item->GetUID(),
                 count,
                 (int)item->GetCurrentStats()->GetQuality(),
@@ -980,8 +980,8 @@ void psServerCharManager::HandleMerchantSell(psGUIMerchantMessage& msg, Client *
                                count, itemName.GetData(), cost.ToUserString().GetDataSafe(),cost.GetTotal());
 
         // Record
-        psSellEvent evt(character->GetCharacterID(),
-                        merchant->GetCharacterID(),
+        psSellEvent evt(character->PID(),
+                        merchant->PID(),
                         item->GetUID(),
                         count,
                         (int)item->GetCurrentStats()->GetQuality(),
@@ -1125,7 +1125,7 @@ bool psServerCharManager::VerifyTrade( Client * client, psCharacter * character,
         return false;
     }
     // Check if this is correct merchant
-    if (merchantID != (*merchant)->GetCharacterID())
+    if (merchantID != (*merchant)->PID())
     {
         CPrintf(CON_DEBUG, "Player %s failed to %s item %s. Different merchant!\n",
                 character->GetCharName(), trade, itemName);
@@ -1171,7 +1171,7 @@ void psServerCharManager::SendOutEquipmentMessages( gemActor* actor,
                                                     psItem* item,
                                                     int equipped )
 {
-    PS_ID eid = actor->GetEntityID();
+    PS_ID eid = actor->EID();
 
     csString mesh = item->GetMeshName();
     csString part = item->GetPartName();

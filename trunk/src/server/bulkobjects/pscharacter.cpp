@@ -109,7 +109,7 @@ psCharacter::psCharacter() : inventory(this),
     help_event_flags = 0;
     memset(advantage_bitfield,0,sizeof(advantage_bitfield));
     accountid = 0;
-    characterid = 0;
+    pid = 0;
     familiar_id = 0;
     owner_id = 0;
 
@@ -213,7 +213,7 @@ bool psCharacter::Load(iResultRow& row)
 {
     // TODO:  Link in account ID?
     csTicks start = csGetTicks();
-    SetCharacterID(row.GetInt("id"));
+    pid = row.GetInt("id");
     SetAccount(row.GetInt("account_id"));
     SetCharType( row.GetUInt32("character_type") );
 
@@ -236,7 +236,7 @@ bool psCharacter::Load(iResultRow& row)
     {
         csString status;
         status.Format("Warning: Spent %u time loading character ID %u %s:%d",
-                      csGetTicks() - start, characterid, __FILE__, __LINE__);
+                      csGetTicks() - start, pid, __FILE__, __LINE__);
         psserver->GetLogCSV()->Write(CSV_STATUS, status);
     }
     helmGroup = helmResult[0]["helm"];
@@ -256,7 +256,7 @@ bool psCharacter::Load(iResultRow& row)
 
     // This substitution allows us to make 100 orcs which are all copies of the stats, traits and equipment
     // from a single master instance.
-    uint32_t use_id = (npc_masterid)?npc_masterid:characterid;
+    uint32_t use_id = npc_masterid ? npc_masterid : pid;
 
     SetHitPointsMax(row.GetFloat("base_hitpoints_max"));
     override_max_hp = GetHitPointsMax();
@@ -265,7 +265,7 @@ bool psCharacter::Load(iResultRow& row)
 
     if (!LoadSkills(use_id))
     {
-        Error2("Cannot load skills for Character ID %u.",characterid);
+        Error2("Cannot load skills for Character ID %u.", pid);
         return false;
     }
 
@@ -273,7 +273,7 @@ bool psCharacter::Load(iResultRow& row)
     {
         csString status;
         status.Format("Warning: Spent %u time loading character ID %u %s:%d",
-                      csGetTicks() - start, characterid, __FILE__, __LINE__);
+                      csGetTicks() - start, pid, __FILE__, __LINE__);
         psserver->GetLogCSV()->Write(CSV_STATUS, status);
     }
 
@@ -311,7 +311,7 @@ bool psCharacter::Load(iResultRow& row)
     psSectorInfo *sectorinfo=CacheManager::GetSingleton().GetSectorInfoByID(row.GetUInt32("loc_sector_id"));
     if (sectorinfo==NULL)
     {
-        Error3("Character ID %u has unresolvable sector id %lu.",characterid,row.GetUInt32("loc_sector_id"));
+        Error3("Character ID %u has unresolvable sector id %lu.",pid,row.GetUInt32("loc_sector_id"));
         return false;
     }
 
@@ -325,7 +325,7 @@ bool psCharacter::Load(iResultRow& row)
     {
         csString status;
         status.Format("Warning: Spent %u time loading character ID %u %s:%d",
-                      csGetTicks() - start, characterid, __FILE__, __LINE__);
+                      csGetTicks() - start, pid, __FILE__, __LINE__);
         psserver->GetLogCSV()->Write(CSV_STATUS, status);
     }
     spawn_loc = location;
@@ -349,7 +349,7 @@ bool psCharacter::Load(iResultRow& row)
 
     if (!LoadTraits(use_id))
     {
-        Error2("Cannot load traits for Character ID %u.",characterid);
+        Error2("Cannot load traits for Character ID %u.",pid);
         return false;
     }
 
@@ -357,12 +357,12 @@ bool psCharacter::Load(iResultRow& row)
     {
         csString status;
         status.Format("Warning: Spent %u time loading character ID %u %s:%d",
-                      csGetTicks() - start, characterid, __FILE__, __LINE__);
+                      csGetTicks() - start, pid, __FILE__, __LINE__);
         psserver->GetLogCSV()->Write(CSV_STATUS, status);
     }
     if (!LoadAdvantages(use_id))
     {
-        Error2("Cannot load advantages for Character ID %u.",characterid);
+        Error2("Cannot load advantages for Character ID %u.",pid);
         return false;
     }
 
@@ -370,7 +370,7 @@ bool psCharacter::Load(iResultRow& row)
     {
         csString status;
         status.Format("Warning: Spent %u time loading character ID %u %s:%d",
-                      csGetTicks() - start, characterid, __FILE__, __LINE__);
+                      csGetTicks() - start, pid, __FILE__, __LINE__);
         psserver->GetLogCSV()->Write(CSV_STATUS, status);
     }
     // This data is loaded only if it's a player, not an NPC
@@ -378,13 +378,13 @@ bool psCharacter::Load(iResultRow& row)
     {
         if (!LoadQuestAssignments())
         {
-            Error2("Cannot load quest assignments for Character ID %u.",characterid);
+            Error2("Cannot load quest assignments for Character ID %u.",pid);
             return false;
         }
 
         if (!LoadGMEvents())
         {
-            Error2("Cannot load GM Events for Character ID %u.", characterid);
+            Error2("Cannot load GM Events for Character ID %u.", pid);
             return false;
         }
 
@@ -394,16 +394,16 @@ bool psCharacter::Load(iResultRow& row)
     {
         csString status;
         status.Format("Warning: Spent %u time loading character ID %u %s:%d",
-                      csGetTicks() - start, characterid, __FILE__, __LINE__);
+                      csGetTicks() - start, pid, __FILE__, __LINE__);
         psserver->GetLogCSV()->Write(CSV_STATUS, status);
     }
-    if (use_id != characterid )
+    if (use_id != pid)
     {
         // This has a master npc template, so load character specific items
         // from the master npc.
         if (!inventory.Load(use_id))
         {
-            Error2("Cannot load character specific items for Character ID %u.",characterid);
+            Error2("Cannot load character specific items for Character ID %u.",pid);
             return false;
         }
     }
@@ -416,10 +416,10 @@ bool psCharacter::Load(iResultRow& row)
     {
         csString status;
         status.Format("Warning: Spent %u time loading character ID %u %s:%d",
-                      csGetTicks() - start, characterid, __FILE__, __LINE__);
+                      csGetTicks() - start, pid, __FILE__, __LINE__);
         psserver->GetLogCSV()->Write(CSV_STATUS, status);
     }
-    if ( !LoadRelationshipInfo( characterid ) ) // Buddies, Marriage Info, Familiars
+    if (!LoadRelationshipInfo(pid)) // Buddies, Marriage Info, Familiars
     {
         return false;
     }
@@ -428,7 +428,7 @@ bool psCharacter::Load(iResultRow& row)
     {
         csString status;
         status.Format("Warning: Spent %u time loading character ID %u %s:%d",
-                      csGetTicks() - start, characterid, __FILE__, __LINE__);
+                      csGetTicks() - start, pid, __FILE__, __LINE__);
         psserver->GetLogCSV()->Write(CSV_STATUS, status);
     }
     // Load merchant info
@@ -442,7 +442,7 @@ bool psCharacter::Load(iResultRow& row)
     {
         csString status;
         status.Format("Warning: Spent %u time loading character ID %u %s:%d",
-                      csGetTicks() - start, characterid, __FILE__, __LINE__);
+                      csGetTicks() - start, pid, __FILE__, __LINE__);
         psserver->GetLogCSV()->Write(CSV_STATUS, status);
     }
     // Load trainer info
@@ -456,12 +456,12 @@ bool psCharacter::Load(iResultRow& row)
     {
         csString status;
         status.Format("Warning: Spent %u time loading character ID %u %s:%d",
-                      csGetTicks() - start, characterid, __FILE__, __LINE__);
+                      csGetTicks() - start, pid, __FILE__, __LINE__);
         psserver->GetLogCSV()->Write(CSV_STATUS, status);
     }
     if (!LoadSpells(use_id))
     {
-        Error2("Cannot load spells for Character ID %u.",characterid);
+        Error2("Cannot load spells for Character ID %u.",pid);
         return false;
     }
 
@@ -469,7 +469,7 @@ bool psCharacter::Load(iResultRow& row)
     {
         csString status;
         status.Format("Warning: Spent %u time loading character ID %u %s:%d",
-                      csGetTicks() - start, characterid, __FILE__, __LINE__);
+                      csGetTicks() - start, pid, __FILE__, __LINE__);
         psserver->GetLogCSV()->Write(CSV_STATUS, status);
     }
     timeconnected        = row.GetUInt32("time_connected_sec");
@@ -506,7 +506,7 @@ bool psCharacter::Load(iResultRow& row)
 
 bool psCharacter::QuickLoad(iResultRow& row, bool noInventory)
 {
-    SetCharacterID(row.GetInt("id"));
+    pid = row.GetInt("id");
     SetFullName(row["name"], row["lastname"]);
 
     unsigned int raceid = row.GetUInt32("racegender_id");
@@ -523,39 +523,39 @@ bool psCharacter::QuickLoad(iResultRow& row, bool noInventory)
 
         helmGroup = raceinfo->helmGroup;
 
-        if (!LoadTraits(characterid))
+        if (!LoadTraits(pid))
         {
-            Error2("Cannot load traits for Character ID %u.",characterid);
+            Error2("Cannot load traits for Character ID %u.",pid);
             return false;
         }
 
         // Load equipped items
-        inventory.QuickLoad(characterid);
+        inventory.QuickLoad(pid);
     }
 
     return true;
 }
 
-bool psCharacter::LoadRelationshipInfo( unsigned int characterid)
+bool psCharacter::LoadRelationshipInfo(unsigned int pid)
 {
-    Result has_a( db->Select( "SELECT a.*, b.name AS 'buddy_name' FROM character_relationships a, characters b WHERE a.character_id = %u AND a.related_id = b.id", characterid ) );
-    Result of_a( db->Select( "SELECT a.*, b.name AS 'buddy_name' FROM character_relationships a, characters b WHERE a.related_id = %u AND a.character_id = b.id ", characterid ) );
+    Result has_a( db->Select( "SELECT a.*, b.name AS 'buddy_name' FROM character_relationships a, characters b WHERE a.character_id = %u AND a.related_id = b.id", pid) );
+    Result of_a( db->Select( "SELECT a.*, b.name AS 'buddy_name' FROM character_relationships a, characters b WHERE a.related_id = %u AND a.character_id = b.id ", pid) );
 
     if ( !LoadFamiliar( has_a, of_a ) )
     {
-        Error2("Cannot load familiar info for Character ID %u.",characterid);
+        Error2("Cannot load familiar info for Character ID %u.",pid);
         return false;
     }
 
     if ( !LoadMarriageInfo( has_a ) )
     {
-      Error2("Cannot load Marriage Info for Character ID %u.",characterid);
+      Error2("Cannot load Marriage Info for Character ID %u.",pid);
       return false;
     }
 
     if ( !LoadBuddies( has_a, of_a) )
     {
-        Error2("Cannot load buddies for Character ID %u.",characterid);
+        Error2("Cannot load buddies for Character ID %u.",pid);
         return false;
     }
     return true;
@@ -563,7 +563,7 @@ bool psCharacter::LoadRelationshipInfo( unsigned int characterid)
 
 void psCharacter::LoadIntroductions()
 {
-    Result r = db->Select("SELECT * FROM introductions WHERE charid=%d", characterid);
+    Result r = db->Select("SELECT * FROM introductions WHERE charid=%d", pid);
     if (r.IsValid())
     {
         for (unsigned long i = 0; i < r.Count(); i++)
@@ -613,11 +613,9 @@ bool psCharacter::LoadBuddies( Result& myBuddies, Result& buddyOf )
 
 bool psCharacter::LoadMarriageInfo( Result& result)
 {
-    //Result result( db->Select("SELECT * FROM character_marriage_details"
-    //                          " WHERE character_id=%d", characterid));
     if ( !result.IsValid() )
     {
-        Error3("Could not load marriage info for character %d. Error was: %s", characterid, db->GetLastError() );
+        Error3("Could not load marriage info for character %d. Error was: %s", pid, db->GetLastError() );
         return false;
     }
 
@@ -647,13 +645,13 @@ bool psCharacter::LoadFamiliar( Result& pet, Result& owner )
 
     if ( !pet.IsValid() )
     {
-        Error3("Could not load pet info for character %d. Error was: %s", characterid, db->GetLastError() );
+        Error3("Could not load pet info for character %d. Error was: %s", pid, db->GetLastError() );
         return false;
     }
 
     if ( !owner.IsValid() )
     {
-        Error3("Could not load owner info for character %d. Error was: %s", characterid, db->GetLastError() );
+        Error3("Could not load owner info for character %d. Error was: %s", pid, db->GetLastError() );
         return false;
     }
 
@@ -687,7 +685,7 @@ bool psCharacter::LoadFamiliar( Result& pet, Result& owner )
 bool psCharacter::LoadGMEvents(void)
 {
     assigned_events.runningEventID =
-        psserver->GetGMEventManager()->GetAllGMEventsForPlayer(characterid,
+        psserver->GetGMEventManager()->GetAllGMEventsForPlayer(pid,
                                                                assigned_events.completedEventIDs,
                                                                assigned_events.runningEventIDAsGM,
                                                                assigned_events.completedEventIDsAsGM);
@@ -721,8 +719,7 @@ void psCharacter::SetLastLoginTime(const char *last_login, bool save )
     if ( save )
     {
         //Store in database
-        if(!db->CommandPump("UPDATE characters SET last_login='%s' WHERE id='%d'", timeStr.GetData(),
-            this->GetCharacterID()))
+        if(!db->CommandPump("UPDATE characters SET last_login='%s' WHERE id='%d'", timeStr.GetData(), pid))
         {
              Error2( "Last login storage: DB Error: %s\n", db->GetLastError() );
              return;
@@ -830,7 +827,7 @@ bool psCharacter::LoadTraits(unsigned int use_id)
             psTrait *trait=CacheManager::GetSingleton().GetTraitByID(traits[i].GetInt("trait_id"));
             if (!trait)
             {
-                Error3("Player ID %u has unknown trait id %s.",characterid,traits[i]["trait_id"]);
+                Error3("Player ID %u has unknown trait id %s.",pid,traits[i]["trait_id"]);
             }
             else
                 SetTraitForLocation(trait->location,trait);
@@ -895,10 +892,10 @@ void psCharacter::SetFamiliarID( int v )
     csString sql;
 
     familiar_id = v;
-    sql.Format( "insert into character_relationships values ( %d, %d, 'familiar', '' )", characterid, familiar_id );
+    sql.Format("insert into character_relationships values ( %d, %d, 'familiar', '' )", pid, familiar_id);
     if( !db->Command( sql ) )
     {
-        Error3( "Couldn't execute SQL %s!, Character %u's pet relationship is not saved.", sql.GetData(), characterid );
+        Error3("Couldn't execute SQL %s!, Character %u's pet relationship is not saved.", sql.GetData(), pid);
     }
 
 };
@@ -1081,13 +1078,13 @@ void psCharacter::SetProgressionPoints(unsigned int X,bool save)
     unsigned int exp = vitals->GetExp();
     if (save)
     {
-        Debug3(LOG_SKILLXP,GetCharacterID(), "Updating PP points and Exp to %u and %u\n", X, exp);
+        Debug3(LOG_SKILLXP, pid, "Updating PP points and Exp to %u and %u\n", X, exp);
         // Update the DB
         csString sql;
-        sql.Format("UPDATE characters SET progression_points = '%u', experience_points = '%u' WHERE id ='%u'",X,exp,GetCharacterID());
+        sql.Format("UPDATE characters SET progression_points = '%u', experience_points = '%u' WHERE id ='%u'",X,exp,pid);
         if(!db->CommandPump(sql))
         {
-            Error3("Couldn't execute SQL %s!, Character %u's PP points are NOT saved",sql.GetData(),GetCharacterID());
+            Error3("Couldn't execute SQL %s!, Character %u's PP points are NOT saved",sql.GetData(),pid);
         }
     }
 
@@ -1277,7 +1274,7 @@ void psCharacter::SetMode(PSCHARACTER_MODE newmode, uint32_t clientnum)
         isFrozen = actor->GetClient()->IsFrozen();
     }
 
-    psModeMessage msg(clientnum, actor->GetEntityID(), (uint8_t) newmode, combat_stance.stance_id);
+    psModeMessage msg(clientnum, actor->EID(), (uint8_t) newmode, combat_stance.stance_id);
     msg.Multicast(actor->GetMulticastClients(), 0, PROX_LIST_ANY_RANGE);
 
     actor->SetAllowedToMove(newmode != PSCHARACTER_MODE_DEAD &&
@@ -1350,7 +1347,7 @@ void psCharacter::SetCombatStance(const Stance& stance)
         return;
 
     combat_stance = stance;
-    Debug3(LOG_COMBAT,GetCharacterID(),"Setting stance to %s for %s",stance.stance_name.GetData(),actor->GetName());
+    Debug3(LOG_COMBAT,pid,"Setting stance to %s for %s",stance.stance_name.GetData(),actor->GetName());
 }
 
 const Stance& psCharacter::getStance(csString name)
@@ -1420,18 +1417,16 @@ void psCharacter::DropItem(psItem *&item, csVector3 suggestedPos, bool transient
     {
         // Assign new object to replace the original object
         item = obj->GetItem();
-        item->SetGuardingCharacterID(GetCharacterID());
+        item->SetGuardingCharacterID(pid);
     }
 
     psMoney money;
 
-    psDropEvent evt(
-                    GetCharacterID(),
+    psDropEvent evt(pid,
                     item->GetUID(),
                     item->GetStackCount(),
                     (int)item->GetCurrentStats()->GetQuality(),
-                    0
-                    );
+                    0);
     evt.FireEvent();
 
     // If a container, move its contents as well...
@@ -1451,7 +1446,7 @@ void psCharacter::DropItem(psItem *&item, csVector3 suggestedPos, bool transient
                     Error2("Cannot add item into container slot %zu.\n", slot);
                     return;
                 }
-                item->SetGuardingCharacterID(GetCharacterID());
+                item->SetGuardingCharacterID(pid);
                 i--; // indexes shift when we remove one.
                 item->Save(false);
             }
@@ -1571,7 +1566,7 @@ size_t psCharacter::GetLootItems(psLootMessage& msg,int entity,int cnum)
             loot.Append(item);
         }
         loot.Append("</loot>");
-        Debug3(LOG_COMBAT, GetCharacterID(), "Loot was %s for %s\n",loot.GetData(), name.GetData());
+        Debug3(LOG_COMBAT, pid, "Loot was %s for %s\n",loot.GetData(), name.GetData());
         msg.Populate(entity,loot,cnum);
     }
     return loot_pending.GetSize();
@@ -1660,12 +1655,12 @@ void psCharacter::SaveMoney(bool bank)
     if(bank)
     {
         sql.AppendFmt("update characters set bank_money_circles=%d, bank_money_trias=%d, bank_money_hexas=%d, bank_money_octas=%d where id=%u",
-                      bankMoney.GetCircles(), bankMoney.GetTrias(), bankMoney.GetHexas(), bankMoney.GetOctas(), GetCharacterID());
+                      bankMoney.GetCircles(), bankMoney.GetTrias(), bankMoney.GetHexas(), bankMoney.GetOctas(), pid);
     }
     else
     {
         sql.AppendFmt("update characters set money_circles=%d, money_trias=%d, money_hexas=%d, money_octas=%d where id=%u",
-                      money.GetCircles(), money.GetTrias(), money.GetHexas(), money.GetOctas(), GetCharacterID());
+                      money.GetCircles(), money.GetTrias(), money.GetHexas(), money.GetOctas(), pid);
     }
 
     if (db->CommandPump(sql) != 1)
@@ -2345,7 +2340,7 @@ void psCharacter::SaveLocationInWorld()
     psString sql;
 
     sql.AppendFmt("update characters set loc_x=%10.2f, loc_y=%10.2f, loc_z=%10.2f, loc_yrot=%10.2f, loc_sector_id=%u, loc_instance=%u where id=%u",
-                     l.loc.x, l.loc.y, l.loc.z, l.loc_yrot, l.loc_sector->uid, l.worldInstance, characterid);
+                     l.loc.x, l.loc.y, l.loc.z, l.loc_yrot, l.loc_sector->uid, l.worldInstance, pid);
     if (db->CommandPump(sql) != 1)
     {
         Error3 ("Couldn't save character's position to database.\nCommand was "
@@ -2553,7 +2548,7 @@ size_t  psCharacter::GetAssignedQuests(psQuestListMessage& questmsg,int cnum)
             quests.Append(item);
         }
         quests.Append("</quests>");
-        Debug2(LOG_QUESTS, GetCharacterID(), "QuestMsg was %s\n",quests.GetData() );
+        Debug2(LOG_QUESTS, pid, "QuestMsg was %s\n",quests.GetData() );
         questmsg.Populate(quests,cnum);
     }
     return assigned_quests.GetSize();
@@ -2573,7 +2568,7 @@ QuestAssignment *psCharacter::AssignQuest(psQuest *quest, int assigner_id)
             assigned_quests[i]->GetQuest()->GetParentQuest() == NULL &&
             assigned_quests[i]->status == PSQUEST_ASSIGNED)
         {
-            Debug3(LOG_QUESTS, GetCharacterID(), "Did not assign %s quest to %s because (s)he already has a quest assigned with this npc.\n",quest->GetName(),GetCharName() );
+            Debug3(LOG_QUESTS, pid, "Did not assign %s quest to %s because (s)he already has a quest assigned with this npc.\n",quest->GetName(),GetCharName() );
             return false; // Cannot have multiple quests from the same guy
         }
     }
@@ -2614,12 +2609,12 @@ QuestAssignment *psCharacter::AssignQuest(psQuest *quest, int assigner_id)
 
         q->GetQuest()->SetQuestLastActivatedTime( csGetTicks() / 1000 );
 
-        Debug3(LOG_QUESTS, GetCharacterID(), "Assigned quest '%s' to player '%s'\n",quest->GetName(),GetCharName() );
+        Debug3(LOG_QUESTS, pid, "Assigned quest '%s' to player '%s'\n",quest->GetName(),GetCharName() );
         UpdateQuestAssignments();
     }
     else
     {
-        Debug3(LOG_QUESTS, GetCharacterID(), "Did not assign %s quest to %s because it was already assigned.\n",quest->GetName(),GetCharName() );
+        Debug3(LOG_QUESTS, pid, "Did not assign %s quest to %s because it was already assigned.\n",quest->GetName(),GetCharName() );
     }
 
     return q;
@@ -2647,7 +2642,7 @@ bool psCharacter::CompleteQuest(psQuest *quest)
     {
         if (q->status == PSQUEST_DELETE || q->status == PSQUEST_COMPLETE)
         {
-            Debug3(LOG_QUESTS, GetCharacterID(), "Player '%s' has already completed quest '%s'.  No credit.\n",GetCharName(),quest->GetName() );
+            Debug3(LOG_QUESTS, pid, "Player '%s' has already completed quest '%s'.  No credit.\n",GetCharName(),quest->GetName() );
             return false;  // already completed, so no credit here
         }
 
@@ -2677,7 +2672,7 @@ bool psCharacter::CompleteQuest(psQuest *quest)
             }
         }
 
-        Debug3(LOG_QUESTS, GetCharacterID(), "Player '%s' just completed quest '%s'.\n",GetCharName(),quest->GetName() );
+        Debug3(LOG_QUESTS, pid, "Player '%s' just completed quest '%s'.\n",GetCharName(),quest->GetName() );
         UpdateQuestAssignments();
         return true;
     }
@@ -2700,14 +2695,14 @@ void psCharacter::DiscardQuest(QuestAssignment *q, bool force)
                              q->GetQuest()->GetPlayerLockoutTime();
             // assignment entry will be deleted after expiration
 
-        Debug3(LOG_QUESTS, GetCharacterID(), "Player '%s' just discarded quest '%s'.\n",
+        Debug3(LOG_QUESTS, pid, "Player '%s' just discarded quest '%s'.\n",
                GetCharName(),q->GetQuest()->GetName() );
 
         UpdateQuestAssignments();
     }
     else
     {
-        Debug3(LOG_QUESTS, GetCharacterID(),
+        Debug3(LOG_QUESTS, pid,
                "Did not discard %s quest for player %s because it was already discarded or was a one-time quest.\n",
                q->GetQuest()->GetName(),GetCharName() );
         // Notify the player that he can't discard one-time quests
@@ -2892,7 +2887,7 @@ bool psCharacter::UpdateQuestAssignments(bool force_update)
                 r = db->CommandPump("delete from character_quests"
                                 " where player_id=%d"
                                 "   and quest_id=%d",
-                                characterid,q->GetQuest()->GetID() );
+                                pid, q->GetQuest()->GetID());
 
                 delete assigned_quests[i];
                 assigned_quests.DeleteIndex(i);
@@ -2912,7 +2907,7 @@ bool psCharacter::UpdateQuestAssignments(bool force_update)
                             "values (%d, %d, %d, '%c', %d, %d) "
                             "ON DUPLICATE KEY UPDATE "
                             "status='%c',remaininglockout=%ld,last_response=%ld;",
-                            characterid,
+                            pid,
                             q->assigner_id,
                             q->GetQuest()->GetID(),
                             q->status,
@@ -2921,7 +2916,7 @@ bool psCharacter::UpdateQuestAssignments(bool force_update)
                             q->status,
                             q->lockout_end,
                             q->last_response );
-            Debug3(LOG_QUESTS, GetCharacterID(), "Updated quest info for player %d, quest %d.\n",characterid,assigned_quests[i]->GetQuest()->GetID() );
+            Debug3(LOG_QUESTS, pid, "Updated quest info for player %d, quest %d.\n", pid, assigned_quests[i]->GetQuest()->GetID());
             assigned_quests[i]->dirty = false;
         }
     }
@@ -2931,11 +2926,10 @@ bool psCharacter::UpdateQuestAssignments(bool force_update)
 
 bool psCharacter::LoadQuestAssignments()
 {
-    Result result(db->Select("select * from character_quests"
-                             " where player_id=%d", characterid));
+    Result result(db->Select("SELECT * FROM character_quests WHERE player_id=%d", pid));
     if (!result.IsValid())
     {
-        Error3("Could not load quest assignments for character %d. Error was: %s",characterid, db->GetLastError() );
+        Error3("Could not load quest assignments for character %d. Error was: %s", pid, db->GetLastError() );
         return false;
     }
 
@@ -2953,7 +2947,7 @@ bool psCharacter::LoadQuestAssignments()
 
         if (!q->GetQuest())
         {
-            Error3("Quest %d for player %d not found!", result[i].GetInt("quest_id"), characterid );
+            Error3("Quest %d for player %d not found!", result[i].GetInt("quest_id"), pid);
             delete q;
             return false;
         }
@@ -2963,7 +2957,7 @@ bool psCharacter::LoadQuestAssignments()
         if (q->lockout_end > age + q->GetQuest()->GetPlayerLockoutTime())
             q->lockout_end = age + q->GetQuest()->GetPlayerLockoutTime();
 
-        Debug6(LOG_QUESTS, characterid, "Loaded quest %-40.40s, status %c, lockout %lu, last_response %d, for player %s.\n",
+        Debug6(LOG_QUESTS, pid, "Loaded quest %-40.40s, status %c, lockout %lu, last_response %d, for player %s.\n",
                q->GetQuest()->GetName(),q->status,
                ( q->lockout_end > age ? q->lockout_end-age:0),q->last_response, GetCharFullName());
         assigned_quests.Push(q);
@@ -2976,7 +2970,7 @@ psGuildLevel * psCharacter::GetGuildLevel()
     if (guildinfo == NULL)
         return 0;
 
-    psGuildMember * membership = guildinfo->FindMember((unsigned int)characterid);
+    psGuildMember * membership = guildinfo->FindMember((unsigned int) pid);
     if (membership == NULL)
         return 0;
 
@@ -2994,12 +2988,12 @@ bool psCharacter::Knows(unsigned int charID)
 bool psCharacter::Introduce(psCharacter *c)
 {
     if (!c) return false;
-    unsigned int theirID = c->GetCharacterID();
+    unsigned int theirID = c->PID();
 
     if (!acquaintances.Contains(theirID))
     {
         acquaintances.AddNoTest(theirID);
-        db->CommandPump("insert into introductions values(%d, %d)", this->characterid, theirID);
+        db->CommandPump("insert into introductions values(%d, %d)", this->pid, theirID);
         return true;
     }
     return false;
@@ -3008,12 +3002,12 @@ bool psCharacter::Introduce(psCharacter *c)
 bool psCharacter::Unintroduce(psCharacter *c)
 {
     if (!c) return false;
-    unsigned int theirID = c->GetCharacterID();
+    unsigned int theirID = c->PID();
 
     if (acquaintances.Contains(theirID))
     {
         acquaintances.Delete(theirID);
-        db->CommandPump("delete from introductions where charid=%d and introcharid=%d", this->characterid, theirID);
+        db->CommandPump("delete from introductions where charid=%d and introcharid=%d", this->pid, theirID);
         return true;
     }
     return false;
@@ -3047,7 +3041,7 @@ void psCharacter::NotBuddyOf( unsigned int buddyID )
 bool psCharacter::AddBuddy( unsigned int buddyID, csString& buddyName )
 {
     // Cannot addself to buddy list
-    if ( buddyID == characterid )
+    if (buddyID == pid)
         return false;
 
     for ( size_t x = 0; x < buddyList.GetSize(); x++ )
@@ -3287,11 +3281,11 @@ void psCharacter::Train( PSSKILL skill, int yIncrease )
                 fieldvalues.FormatPush("%d",attributes.GetStat(PSITEMSTATS_STAT_CHARISMA, false));
 
                 csString id;
-                id = GetCharacterID();
+                id = pid;
 
                 if(!db->GenericUpdateWithID("characters","id",id,fieldnames,fieldvalues))
                 {
-                    Error2("Couldn't save stats for character %u!\n",GetCharacterID());
+                    Error2("Couldn't save stats for character %u!\n",pid);
                 }
             }
 
@@ -3305,7 +3299,7 @@ void psCharacter::Train( PSSKILL skill, int yIncrease )
     {
         skills.Train( skill, yIncrease ); // Normal training
         psServer::CharacterLoader.UpdateCharacterSkill(
-                GetCharacterID(),
+                pid,
                 skill,
                 skills.GetSkillPractice((PSSKILL)skill),
                 skills.GetSkillKnowledge((PSSKILL)skill),
@@ -3826,7 +3820,7 @@ int SkillSet::AddSkillPractice(PSSKILL skill, unsigned int val)
         if(rankUp && self->GetActor()->GetClientID() != 0)
         {
             psServer::CharacterLoader.UpdateCharacterSkill(
-                self->GetCharacterID(),
+                self->PID(),
                 skill,
                 GetSkillPractice((PSSKILL)skill),
                 GetSkillKnowledge((PSSKILL)skill),

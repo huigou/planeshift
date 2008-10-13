@@ -1,4 +1,8 @@
-﻿*** 2008-10-10 by Stefano Angeleri
+﻿*** 2008-10-13 by Kenny Graunke
+- Renamed accessor methods to EID() and PID() for clarity and consistency
+  across the project.
+
+*** 2008-10-10 by Stefano Angeleri
 - Additional fix for FS#2324 - setskill has insufficient system output patch
   by peeg, reworked by me
 - Fixed wrong help entry for setstackable

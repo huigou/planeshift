@@ -540,7 +540,7 @@ void GuildManager::SendNotifications(int guild, int msg)
             }
             
             psUpdatePlayerGuildMessage update( client->GetClientNum(),
-                                               client->GetActor()->GetEntityID(),
+                                               client->GetActor()->EID(),
                                                guild->GetName() );
 
             if (guild->IsSecret())  // If this is a secret guild, we should only broadcast to members
@@ -787,7 +787,7 @@ void GuildManager::HandleSetMemberNotes(Client *client,iDocumentNode * root, boo
             psserver->SendSystemError(client->GetClientNum(),"You do not have the rights to edit private notes.");
             return;
         }
-        if (client->GetPlayerID() != char_id)// if this is not my info
+        if (client->PID() != char_id)// if this is not my info
             notes = member->private_notes + notes+ "\n";// append the notes to the end
     }
 
@@ -936,7 +936,7 @@ void GuildManager::SendMemberData(Client *client,bool onlineOnly)
         csString escpxml_privatenotes;
 
         // Only show private notes to yourself
-        if (client->GetPlayerID() == member->char_id)
+        if (client->PID() == member->char_id)
         {
             escpxml_privatenotes = EscpXML(member->private_notes);
         }
@@ -953,7 +953,7 @@ void GuildManager::SendMemberData(Client *client,bool onlineOnly)
     
     open.Append("</memberinfo>");
     
-    open.AppendFmt("<playerinfo char_id=\"%i\" guildnotifications=\"%i\"/>", client->GetPlayerID(), client->GetCharacterData()->IsGettingGuildNotifications());
+    open.AppendFmt("<playerinfo char_id=\"%i\" guildnotifications=\"%i\"/>", client->PID(), client->GetCharacterData()->IsGettingGuildNotifications());
 
     psGUIGuildMessage cmd(clientnum,psGUIGuildMessage::MEMBER_DATA,open);
     cmd.SendMessage();
@@ -1158,7 +1158,7 @@ void GuildManager::CreateGuild(psGuildCmdMessage& msg,Client *client)
 
     // Update the player's label
     psUpdatePlayerGuildMessage update(client->GetClientNum(),
-                                      client->GetActor()->GetEntityID(),
+                                      client->GetActor()->EID(),
                                       guild->GetName());
 
     update.Multicast(client->GetActor()->GetMulticastClients(),0,0 );
@@ -1218,7 +1218,7 @@ void GuildManager::EndGuild(psGuildInfo *guild,int clientnum)
         if (p->GetActor() && (p->GetActor()->GetGuild() == guild))
         {
             psUpdatePlayerGuildMessage update(p->GetClientNum(),
-                                              p->GetActor()->GetEntityID(),
+                                              p->GetActor()->EID(),
                                               "");
 
             update.Multicast(p->GetActor()->GetMulticastClients(),0,0 );
@@ -1413,7 +1413,7 @@ void GuildManager::HandleJoinGuild(PendingGuildInvite *invite)
     {
         psUpdatePlayerGuildMessage update(
                 inviteeClient->GetClientNum(),
-                inviteeClient->GetActor()->GetEntityID(),
+                inviteeClient->GetActor()->EID(),
                 guild->GetName() );
         psserver->GetEventManager()->Broadcast(update.msg,NetBase::BC_EVERYONE);  
     }    
@@ -1455,7 +1455,7 @@ void GuildManager::Remove(psGuildCmdMessage& msg,Client *client)
     }
 
     //check if someone is removing the player or the player is leaving by him/herself
-    if (client->GetPlayerID() != target->char_id )
+    if (client->PID() != target->char_id )
         isRemoved = true;
 
     // Verify rights if the player is removing someone else from the guild
@@ -1655,7 +1655,7 @@ void GuildManager::Promote(psGuildCmdMessage& msg,Client *client)
     // (i.e. the player who did this action).
     if (msg.level == MAX_GUILD_LEVEL)
     {
-        psGuildMember *clientMembership = guild->FindMember(client->GetPlayerID());
+        psGuildMember *clientMembership = guild->FindMember(client->PID());
         if (!clientMembership)
         {
             psserver->SendSystemError(clientnum,"Internal error: membership of player not found.");
@@ -1776,14 +1776,14 @@ void GuildManager::Secret(psGuildCmdMessage &msg, Client *client)
         // Turn label off for everybody
         psUpdatePlayerGuildMessage update(
                 clientnum,
-                client->GetActor()->GetEntityID(),
+                client->GetActor()->EID(),
                 "");
         psserver->GetEventManager()->Broadcast(update.msg,NetBase::BC_EVERYONE);
         
         // Update guild members with the label 
         psUpdatePlayerGuildMessage update2(
                 clientnum,
-                client->GetActor()->GetEntityID(),
+                client->GetActor()->EID(),
                 guild->GetName() );
         psserver->GetEventManager()->Broadcast(update2.msg,NetBase::BC_GUILD,guild->id);                  
     }                        
@@ -1792,7 +1792,7 @@ void GuildManager::Secret(psGuildCmdMessage &msg, Client *client)
         // turn label on for everybody
         psUpdatePlayerGuildMessage update(
                 clientnum,
-                client->GetActor()->GetEntityID(),
+                client->GetActor()->EID(),
                 guild->GetName() );
         psserver->GetEventManager()->Broadcast(update.msg,NetBase::BC_EVERYONE);          
     }

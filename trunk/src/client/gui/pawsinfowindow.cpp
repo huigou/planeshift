@@ -120,7 +120,7 @@ void pawsInfoWindow::HandleMessage( MsgEntry* me )
             psModeMessage msg(me);
 
             // We only want to deal with our own stance changes here...
-            if (msg.actorID == psengine->GetCelClient()->GetMainPlayer()->GetID())
+            if (msg.actorID == psengine->GetCelClient()->GetMainPlayer()->EID())
             {
                 if (msg.mode != psModeMessage::COMBAT && selectedstance)
                     SetStanceHighlight(0);
