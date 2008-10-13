@@ -1,4 +1,7 @@
-﻿*** 2008-10-13 by Kenny Graunke
+*** 2008-10-13 by Dave Bentham
+- WRITEABLE flag used in Maps - consistent with books.
+
+*** 2008-10-13 by Kenny Graunke
 - Renamed accessor methods to GetEID() and GetPID() for clarity and consistency
   across the project.
 
