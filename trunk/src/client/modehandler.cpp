@@ -323,7 +323,7 @@ void ModeHandler::HandleModeMessage(MsgEntry* me)
 
     actor->SetMode(msg.mode);
 
-    if (msg.actorID == celclient->GetMainPlayer()->EID())
+    if (msg.actorID == celclient->GetMainPlayer()->GetEID())
     {
         SetModeSounds(msg.mode);
         if (msg.mode == psModeMessage::OVERWEIGHT)

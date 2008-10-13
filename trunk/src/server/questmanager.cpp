@@ -1121,7 +1121,7 @@ bool QuestManager::GiveRewardToPlayer(Client *who, psItemStats* itemstat)
 
 void QuestManager::Assign(psQuest *quest, Client *who,gemNPC *assigner)
 {
-    who->GetActor()->GetCharacterData()->AssignQuest(quest,assigner->PID() );
+    who->GetActor()->GetCharacterData()->AssignQuest(quest, assigner->GetPID());
     psserver->SendSystemOK(who->GetClientNum(),"You got a quest!");
     psserver->SendSystemInfo(who->GetClientNum(),"You now have the %s quest.",quest->GetName() );
 

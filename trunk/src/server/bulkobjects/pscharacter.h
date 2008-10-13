@@ -727,7 +727,7 @@ public:
     bool Store(const char *location,const char *slot,psItem *what);
 
     void SetPID(const unsigned int characterID) { pid = characterID; }
-    unsigned int PID() const { return pid; }
+    unsigned int GetPID() const { return pid; }
 
     unsigned int GetMasterNPCID() const { return npc_masterid ? npc_masterid: pid; }
 
@@ -747,7 +747,7 @@ public:
     // Introductions
     /// Answers whether this character knows the given character or not.
     bool Knows(unsigned int charid);
-    bool Knows(psCharacter *c) { return (c ? Knows(c->PID()) : false); }
+    bool Knows(psCharacter *c) { return (c ? Knows(c->GetPID()) : false); }
     /// Introduces this character to the given character; answers false if already introduced.
     bool Introduce(psCharacter *c);
     /// Unintroduces this character to the given character; answers false if not introduced.

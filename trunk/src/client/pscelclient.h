@@ -322,7 +322,7 @@ public:
     /** Get sector of entity */
     virtual iSector* GetSector();
     
-    PS_ID EID() { return eid; }
+    PS_ID GetEID() { return eid; }
     csRef<iMeshWrapper> pcmesh;
 
     virtual int GetMasqueradeType();

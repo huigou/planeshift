@@ -253,7 +253,7 @@ public:
 
     virtual ~gemObject();
 
-    uint32 EID() { return eid; }
+    uint32 GetEID() { return eid; }
 
     /// Called when a client disconnects
     virtual void Disconnect();
@@ -328,7 +328,7 @@ public:
     // Overridden functions in child classes
     virtual PSCHARACTER_MODE GetMode() { return PSCHARACTER_MODE_UNKNOWN; }
     virtual void SetMode(PSCHARACTER_MODE mode) { }
-    virtual int PID() { return 0; }
+    virtual int GetPID() { return 0; }
     virtual int GetGuildID() { return 0; }
     virtual psGuildInfo* GetGuild() { return 0; }
     virtual bool UpdateDR() { return false; }
@@ -644,7 +644,7 @@ public:
     virtual psCharacter *GetCharacterData() { return psChar; }
     virtual Client* GetClient() const;
     
-    virtual int PID() { return pid; }
+    virtual int GetPID() { return pid; }
 
     bool SetupCharData();
 
@@ -914,7 +914,7 @@ public:
         if ( owner )
         {
             this->owner = owner;
-            this->GetCharacterData()->SetOwnerID(owner->GetCharacterData()->PID());
+            this->GetCharacterData()->SetOwnerID(owner->GetCharacterData()->GetPID());
         }
         else
             this->owner = NULL;

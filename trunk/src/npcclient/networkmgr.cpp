@@ -236,7 +236,7 @@ void NetworkManager::HandleActor( MsgEntry* me )
 
     gemNPCObject * obj = npcclient->FindEntityID(mesg.entityid);
 
-    if(obj && obj->PID() == mesg.playerID)
+    if(obj && obj->GetPID() == mesg.playerID)
     {
         // We already know this entity so just update the entity.
         CPrintf(CON_ERROR, "Already know about gemNPCActor: %s (%s), %u.\n", mesg.name.GetData(), obj->GetName(), mesg.entityid );
@@ -261,7 +261,7 @@ void NetworkManager::HandleActor( MsgEntry* me )
         CPrintf(CON_ERROR, "Deleting because we already know gemNPCActor: "
                 "%s (%s), EID: %u PID: %u as EID: %u PID: %u.\n", 
                 mesg.name.GetData(), obj->GetName(), mesg.entityid, mesg.playerID, 
-                obj->EID(), obj->PID() );
+                obj->GetEID(), obj->GetPID() );
 
         npcclient->Remove(obj);
         obj = NULL; // Obj isn't valid after remove
@@ -283,13 +283,13 @@ void NetworkManager::HandleItem( MsgEntry* me )
 
     gemNPCObject * obj = npcclient->FindEntityID(mesg.id);
 
-    if (obj && obj->PID() != gemNPCObject::NO_PLAYER_ID)
+    if (obj && obj->GetPID() != gemNPCObject::NO_PLAYER_ID)
     {
         // We have a player/NPC item mismatch.
         CPrintf(CON_ERROR, "Deleting because we already know gemNPCActor: "
                 "%s (%s), EID: %u as EID: %u.\n", 
                 mesg.name.GetData(), obj->GetName(), mesg.id,
-                obj->EID() );
+                obj->GetEID() );
 
         npcclient->Remove(obj);
         obj = NULL; // Obj isn't valid after remove
@@ -888,13 +888,13 @@ void NetworkManager::PrepareCommandMessage()
 
 void NetworkManager::QueueDRData(NPC * npc )
 {
-    cmd_dr_outbound.PutUnique(npc->PID(), npc);
+    cmd_dr_outbound.PutUnique(npc->GetPID(), npc);
 }
 
 void NetworkManager::DequeueDRData(NPC * npc )
 {
     npc->Printf(15, "Dequeuing DR Data...");
-    cmd_dr_outbound.DeleteAll(npc->PID());
+    cmd_dr_outbound.DeleteAll(npc->GetPID());
 }
 
 
@@ -906,7 +906,7 @@ void NetworkManager::QueueDRData(gemNPCActor *entity, psLinearMovement *linmove,
         SendAllCommands();
     }
    
-    psDRMessage drmsg(0,entity->EID(),counter,msgstrings,linmove);
+    psDRMessage drmsg(0,entity->GetEID(),counter,msgstrings,linmove);
 
     outbound->msg->Add( (int8_t) psNPCCommandsMessage::CMD_DRDATA);
     outbound->msg->Add( drmsg.msg->bytes->payload,(uint32_t)drmsg.msg->bytes->GetTotalSize() );
@@ -928,11 +928,11 @@ void NetworkManager::QueueAttackCommand(gemNPCActor *attacker, gemNPCActor *targ
     }
 
     outbound->msg->Add( (int8_t) psNPCCommandsMessage::CMD_ATTACK);
-    outbound->msg->Add( (uint32_t) attacker->EID() );
+    outbound->msg->Add( (uint32_t) attacker->GetEID() );
     
     if (target)
     {
-        outbound->msg->Add( (uint32_t) target->EID() );
+        outbound->msg->Add( (uint32_t) target->GetEID() );
     }
     else
     {
@@ -956,8 +956,8 @@ void NetworkManager::QueueSpawnCommand(gemNPCActor *mother, gemNPCActor *father)
     }
 
     outbound->msg->Add( (int8_t) psNPCCommandsMessage::CMD_SPAWN);
-    outbound->msg->Add( (uint32_t) mother->EID() );
-    outbound->msg->Add( (uint32_t) father->EID() );
+    outbound->msg->Add( (uint32_t) mother->GetEID() );
+    outbound->msg->Add( (uint32_t) father->GetEID() );
 
     if ( outbound->msg->overrun )
     {
@@ -975,7 +975,7 @@ void NetworkManager::QueueTalkCommand(gemNPCActor *speaker, const char* text)
     }
 
     outbound->msg->Add( (int8_t) psNPCCommandsMessage::CMD_TALK);
-    outbound->msg->Add( (uint32_t) speaker->EID() );
+    outbound->msg->Add( (uint32_t) speaker->GetEID() );
     
     outbound->msg->Add(text);
     if ( outbound->msg->overrun )
@@ -995,7 +995,7 @@ void NetworkManager::QueueVisibilityCommand(gemNPCActor *entity, bool status)
     }
 
     outbound->msg->Add( (int8_t) psNPCCommandsMessage::CMD_VISIBILITY);
-    outbound->msg->Add( (uint32_t) entity->EID() );
+    outbound->msg->Add( (uint32_t) entity->GetEID() );
     
     outbound->msg->Add(status);
     if ( outbound->msg->overrun )
@@ -1015,8 +1015,8 @@ void NetworkManager::QueuePickupCommand(gemNPCActor *entity, gemNPCObject *item,
     }
 
     outbound->msg->Add( (int8_t) psNPCCommandsMessage::CMD_PICKUP);
-    outbound->msg->Add( (uint32_t) entity->EID() );
-    outbound->msg->Add( (uint32_t) item->EID() );
+    outbound->msg->Add( (uint32_t) entity->GetEID() );
+    outbound->msg->Add( (uint32_t) item->GetEID() );
     outbound->msg->Add( (int16_t) count );
 
     if ( outbound->msg->overrun )
@@ -1036,7 +1036,7 @@ void NetworkManager::QueueEquipCommand(gemNPCActor *entity, csString item, csStr
     }
 
     outbound->msg->Add( (int8_t) psNPCCommandsMessage::CMD_EQUIP);
-    outbound->msg->Add( (uint32_t) entity->EID() );
+    outbound->msg->Add( (uint32_t) entity->GetEID() );
     outbound->msg->Add( item );
     outbound->msg->Add( slot );
     outbound->msg->Add( (int16_t) count );
@@ -1058,7 +1058,7 @@ void NetworkManager::QueueDequipCommand(gemNPCActor *entity, csString slot)
     }
 
     outbound->msg->Add( (int8_t) psNPCCommandsMessage::CMD_DEQUIP);
-    outbound->msg->Add( (uint32_t) entity->EID() );
+    outbound->msg->Add( (uint32_t) entity->GetEID() );
     outbound->msg->Add( slot );
 
     if ( outbound->msg->overrun )
@@ -1078,7 +1078,7 @@ void NetworkManager::QueueDigCommand(gemNPCActor *entity, csString resource)
     }
 
     outbound->msg->Add( (int8_t) psNPCCommandsMessage::CMD_DIG);
-    outbound->msg->Add( (uint32_t) entity->EID() );
+    outbound->msg->Add( (uint32_t) entity->GetEID() );
     outbound->msg->Add( resource );
 
     if ( outbound->msg->overrun )
@@ -1098,7 +1098,7 @@ void NetworkManager::QueueTransferCommand(gemNPCActor *entity, csString item, in
     }
 
     outbound->msg->Add( (int8_t) psNPCCommandsMessage::CMD_TRANSFER);
-    outbound->msg->Add( (uint32_t) entity->EID() );
+    outbound->msg->Add( (uint32_t) entity->GetEID() );
     outbound->msg->Add( item );
     outbound->msg->Add( (int8_t)count );
     outbound->msg->Add( target );
@@ -1120,7 +1120,7 @@ void NetworkManager::QueueDropCommand(gemNPCActor *entity, csString slot)
     }
 
     outbound->msg->Add( (int8_t) psNPCCommandsMessage::CMD_DROP);
-    outbound->msg->Add( (uint32_t) entity->EID() );
+    outbound->msg->Add( (uint32_t) entity->GetEID() );
     outbound->msg->Add( slot );
 
     if ( outbound->msg->overrun )
@@ -1186,7 +1186,7 @@ void NetworkManager::QueueImperviousCommand(gemNPCActor * entity, bool imperviou
     }
 
     outbound->msg->Add( (int8_t) psNPCCommandsMessage::CMD_IMPERVIOUS);
-    outbound->msg->Add( (uint32_t) entity->EID() );
+    outbound->msg->Add( (uint32_t) entity->GetEID() );
     outbound->msg->Add( (bool) impervious );
 
     if ( outbound->msg->overrun )

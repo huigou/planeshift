@@ -623,7 +623,7 @@ void psWorkManager::HandleProduction(Client *client,const char *type,const char 
     int time_req = nr->anim_duration_seconds;
 
     // Send anim and confirmation message to client and nearby people
-    psOverrideActionMessage msg(client->GetClientNum(),client->GetActor()->EID(),nr->anim,nr->anim_duration_seconds);
+    psOverrideActionMessage msg(client->GetClientNum(),client->GetActor()->GetEID(),nr->anim,nr->anim_duration_seconds);
     psserver->GetEventManager()->Multicast(msg.msg, client->GetActor()->GetMulticastClients(),0,PROX_LIST_ANY_RANGE);
     client->GetActor()->SetMode(PSCHARACTER_MODE_WORK);
 
@@ -688,7 +688,7 @@ void psWorkManager::HandleProduction(gemActor *actor,const char *type,const char
     {
         //psserver->SendSystemInfo(client->GetClientNum(),"You don't have the skill to %s for %s.",type,reward);
         Warning6(LOG_SUPERCLIENT,"%s(%d) don't have the skill(%d) to %s for %s.",
-                 actor->GetName(),actor->EID(),nr->skill->id,type,reward);
+                 actor->GetName(),actor->GetEID(),nr->skill->id,type,reward);
         return;
     }
 
@@ -705,7 +705,7 @@ void psWorkManager::HandleProduction(gemActor *actor,const char *type,const char
     int time_req = nr->anim_duration_seconds;
 
     // Send anim and confirmation message to client and nearby people
-    psOverrideActionMessage msg(0,actor->EID(),nr->anim,nr->anim_duration_seconds);
+    psOverrideActionMessage msg(0,actor->GetEID(),nr->anim,nr->anim_duration_seconds);
     psserver->GetEventManager()->Multicast(msg.msg, actor->GetMulticastClients(),0,PROX_LIST_ANY_RANGE);
 
     actor->SetMode(PSCHARACTER_MODE_WORK);
@@ -883,8 +883,8 @@ void psWorkManager::HandleProductionEvent(psWorkGameEvent* workEvent)
 
             if (!worke->Inventory().AddOrDrop(item))
             {
-                Debug5(LOG_ANY,worke->PID(),"HandleProductionEvent() could not give item of stat %u (%s) to character %u [%s])",
-                    newitem->GetUID(),newitem->GetName(),worke->PID(),worke->GetCharName());
+                Debug5(LOG_ANY,worke->GetPID(),"HandleProductionEvent() could not give item of stat %u (%s) to character %u [%s])",
+                    newitem->GetUID(),newitem->GetName(),worke->GetPID(),worke->GetCharName());
 
                 if (workEvent->client)
                 {
@@ -894,7 +894,7 @@ void psWorkManager::HandleProductionEvent(psWorkGameEvent* workEvent)
                 else
                 {
                     Debug5(LOG_SUPERCLIENT,0,"%s(EID: %u) found %s, but dropped it: %s",workEvent->worker->GetName(),
-                           workEvent->worker->EID(), newitem->GetName(), worke->Inventory().lastError.GetDataSafe() );
+                           workEvent->worker->GetEID(), newitem->GetName(), worke->Inventory().lastError.GetDataSafe() );
                 }
 
             }
@@ -908,7 +908,7 @@ void psWorkManager::HandleProductionEvent(psWorkGameEvent* workEvent)
                 else
                 {
                     Debug4(LOG_SUPERCLIENT,0,"%s(EID: %u) got some %s.",workEvent->worker->GetName(),
-                           workEvent->worker->EID(),newitem->GetName() );
+                           workEvent->worker->GetEID(),newitem->GetName() );
                 }
             }
 
@@ -1061,7 +1061,7 @@ void psWorkManager::StopWork(Client* client, psItem* item)
     }
     else
     {
-        Debug3(LOG_TRADE,clientNum, "Player id #%d stopped working on %s item.\n", worker->PID(), item->GetName());
+        Debug3(LOG_TRADE,clientNum, "Player id #%d stopped working on %s item.\n", worker->GetPID(), item->GetName());
 
         // Handle all the different transformation types
         if( curEvent->GetTransformationType() == TRANSFORMTYPE_AUTO_CONTAINER )
@@ -1142,7 +1142,7 @@ void psWorkManager::StartUseWork(Client* client)
         {
             // Only check the stuff that player owns
             psItem* item = it.Next();
-            if ((item->GetGuardingCharacterID() == owner->PID())
+            if ((item->GetGuardingCharacterID() == owner->GetPID())
                 || (item->GetGuardingCharacterID() == 0))
             {
                 itemArray.Push(item);
@@ -1755,7 +1755,7 @@ bool psWorkManager::ScriptAction(gemActionLocation* gemAction)
     INSTANCE_ID instance_id = action->GetInstanceID();
     if (instance_id==INSTANCE_ALL)
     {
-        instance_id = action->GetGemObject()->EID();
+        instance_id = action->GetGemObject()->GetEID();
     }
     gemItem* target = GEMSupervisor::GetSingleton().FindItemEntity( instance_id );
 
@@ -1786,7 +1786,7 @@ bool psWorkManager::IsContainerCombinable(uint32 &resultId, int &resultQty)
     {
         // Only check the stuff that player owns or is public
         psItem* item = it.Next();
-        if ((item->GetGuardingCharacterID() == owner->PID())
+        if ((item->GetGuardingCharacterID() == owner->GetPID())
             || (item->GetGuardingCharacterID() == 0))
         {
             itemArray.Push(item);
@@ -2259,7 +2259,7 @@ void psWorkManager::StartTransformationEvent(int transType, INVENTORY_SLOT_NUMBE
     {
         csVector3 offset(0,0,0);
         workEvent->effectID =  CacheManager::GetSingleton().NextEffectUID();
-        psEffectMessage newmsg( 0, process->GetRenderEffect(), offset, owner->GetActor()->EID(),0 ,workEvent->effectID );
+        psEffectMessage newmsg( 0, process->GetRenderEffect(), offset, owner->GetActor()->GetEID(),0 ,workEvent->effectID );
         newmsg.Multicast(workEvent->multi,0,PROX_LIST_ANY_RANGE);
     }
 
@@ -2269,7 +2269,7 @@ void psWorkManager::StartTransformationEvent(int transType, INVENTORY_SLOT_NUMBE
         // Send anim and confirmation message to client and nearby people
         if( process && !process->GetAnimation().IsEmpty())
         {
-            psOverrideActionMessage msg(clientNum, worker->EID(), process->GetAnimation(), delay);
+            psOverrideActionMessage msg(clientNum, worker->GetEID(), process->GetAnimation(), delay);
             psserver->GetEventManager()->Multicast(msg.msg, worker->GetMulticastClients(), 0, PROX_LIST_ANY_RANGE);
         }
 
@@ -2399,7 +2399,7 @@ bool psWorkManager::ValidateTarget(Client* client)
       INSTANCE_ID instance_id = action->GetInstanceID();
       if (instance_id==INSTANCE_ALL)
       {
-          instance_id = action->GetGemObject()->EID();
+          instance_id = action->GetGemObject()->GetEID();
       }
       target = GEMSupervisor::GetSingleton().FindItemEntity( instance_id );
     }
@@ -2684,7 +2684,7 @@ psItem* psWorkManager::CombineContainedItem(uint32 newId, int newQty, float item
     {
         // Remove all items from container that player owns
         psItem* item = it.Next();
-        if ((item->GetGuardingCharacterID() == owner->PID())
+        if ((item->GetGuardingCharacterID() == owner->GetPID())
             || (item->GetGuardingCharacterID() == 0) )
         {
             // Kill any trade work started
@@ -2716,7 +2716,7 @@ psItem* psWorkManager::CombineContainedItem(uint32 newId, int newQty, float item
 
     newItem->SetOwningCharacter(owner);
     // this is done by AddToContainer, as long as SetOwningCharacter is set _before_
-    // newItem->SetGuardingCharacterID(owner->PID());
+    // newItem->SetGuardingCharacterID(owner->GetPID());
 
     // Locate item in container and save container
     if (!container->AddToContainer(newItem,owner->GetActor()->GetClient()))
@@ -2739,7 +2739,7 @@ psItem* psWorkManager::CombineContainedItem(uint32 newId, int newQty, float item
     if (newItem->GetLocInParent(false) == -1 && newItem->GetOwningCharacter() && newItem->GetContainerID()==0)
     {
         Error6("Problem on item: item UID=%i crafterID=%i guildID=%i name=%s owner=%p",
-          newItem->GetBaseStats()->GetUID(),worker->PID(),
+          newItem->GetBaseStats()->GetUID(),worker->GetPID(),
           worker->GetGuildID(), owner->GetCharName(), owner);
         if (workItem && workItem->GetBaseStats())
         {
@@ -2798,7 +2798,7 @@ psItem* psWorkManager::TransformContainedItem(psItem* oldItem, uint32 newId, int
 
     newItem->SetOwningCharacter(owner);
     // this is done by AddToContainer, as long as SetOwningCharacter is set _before_
-    // newItem->SetGuardingCharacterID(owner->PID());
+    // newItem->SetGuardingCharacterID(owner->GetPID());
 
     // Locate item in container and save container
     if (!container->AddToContainer(newItem,owner->GetActor()->GetClient(),oldslot))
@@ -2821,7 +2821,7 @@ psItem* psWorkManager::TransformContainedItem(psItem* oldItem, uint32 newId, int
     if (newItem->GetLocInParent(false) == -1 && newItem->GetOwningCharacter() && newItem->GetContainerID()==0)
     {
         Error6("Problem on item: item UID=%i crafterID=%i guildID=%i name=%s owner=%p",
-          newItem->GetBaseStats()->GetUID(),worker->PID(),
+          newItem->GetBaseStats()->GetUID(),worker->GetPID(),
           worker->GetGuildID(), owner->GetCharName(), owner);
         if (workItem && workItem->GetBaseStats())
         {
@@ -2889,7 +2889,7 @@ psItem* psWorkManager::TransformSlotItem(INVENTORY_SLOT_NUMBER slot, uint32 newI
     if (newItem->GetLocInParent(false) == -1 && newItem->GetOwningCharacter() && newItem->GetContainerID()==0)
     {
         Error6("Problem on item: item UID=%i crafterID=%i guildID=%i name=%s owner=%p",
-          newItem->GetBaseStats()->GetUID(),worker->PID(),
+          newItem->GetBaseStats()->GetUID(),worker->GetPID(),
           worker->GetGuildID(), owner->GetCharName(), owner);
         if (workItem && workItem->GetBaseStats())
         {
@@ -2966,7 +2966,7 @@ psItem* psWorkManager::TransformTargetSlotItem(INVENTORY_SLOT_NUMBER slot, uint3
     if (newItem->GetLocInParent(false) == -1 && newItem->GetOwningCharacter() && newItem->GetContainerID()==0)
     {
         Error6("Problem on item: item UID=%i crafterID=%i guildID=%i name=%s owner=%p",
-          newItem->GetBaseStats()->GetUID(),worker->PID(),
+          newItem->GetBaseStats()->GetUID(),worker->GetPID(),
           worker->GetGuildID(), gemTarget->GetCharacterData()->GetCharName(), gemTarget->GetCharacterData());
         if (workItem && workItem->GetBaseStats())
         {
@@ -3041,7 +3041,7 @@ psItem* psWorkManager::TransformTargetItem(psItem* oldItem, uint32 newId, int ne
     if (newItem->GetLocInParent(false) == -1 && newItem->GetOwningCharacter() && newItem->GetContainerID()==0)
     {
         Error6("Problem on item: item UID=%i crafterID=%i guildID=%i name=%s owner=%p",
-          newItem->GetBaseStats()->GetUID(),worker->PID(),
+          newItem->GetBaseStats()->GetUID(),worker->GetPID(),
           worker->GetGuildID(), owner->GetCharName(), owner);
         if (workItem && workItem->GetBaseStats())
         {
@@ -3097,7 +3097,7 @@ psItem* psWorkManager::CreateTradeItem(uint32 newId, int newQty, float itemQuali
         newItem->SetDecayResistance(0.5);
 
         // Set current player ID creator mark
-        newItem->SetCrafterID(worker->PID());
+        newItem->SetCrafterID(worker->GetPID());
 
         // Set current player guild to creator mark
         if (owner->GetGuild())
@@ -3107,7 +3107,7 @@ psItem* psWorkManager::CreateTradeItem(uint32 newId, int newQty, float itemQuali
 
 #ifdef DEBUG_WORKMANAGER
         CPrintf(CON_DEBUG, "done creating item crafterID=%i guildID=%i name=%s owner=%p\n",
-                worker->PID(), worker->GetGuildID(), owner->GetCharName(), owner);
+                worker->GetPID(), worker->GetGuildID(), owner->GetCharName(), owner);
 #endif
 
         return newItem;

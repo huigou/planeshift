@@ -1184,10 +1184,10 @@ void AdminManager::HandleAdminCmdMessage(MsgEntry *me, psAdminCmdMessage &msg, A
 
     int targetID = 0;
     if (targetobject)
-        targetID = targetobject->PID();
+        targetID = targetobject->GetPID();
 
     if (me->clientnum)
-        LogGMCommand( client->PID(), targetID, msg.cmd );
+        LogGMCommand( client->GetPID(), targetID, msg.cmd );
 
     if (data.command == "/npc")
     {
@@ -1535,7 +1535,7 @@ void AdminManager::GetSiblingChars(MsgEntry* me,psAdminCmdMessage& msg, AdminCmd
     unsigned int pid = 0;
     csString query;
     if (targetobject) //find by target: will be used in most cases
-        pid = targetobject->GetCharacterData()->PID();
+        pid = targetobject->GetCharacterData()->GetPID();
     else if (data.player.StartsWith("pid:",true) && data.player.Length() > 4) // Get player ID should happen only if offline
         pid = atoi( data.player.Slice(4).GetData());
 
@@ -1618,7 +1618,7 @@ void AdminManager::GetInfo(MsgEntry* me,psAdminCmdMessage& msg, AdminCmdData& da
 {
     PS_ID entityId = 0;
     if ( target )
-        entityId = target->EID();
+        entityId = target->GetEID();
 
     if (target && strcmp(target->GetObjectType(), "ActionLocation") == 0) // Action location
     {
@@ -1730,7 +1730,7 @@ void AdminManager::GetInfo(MsgEntry* me,psAdminCmdMessage& msg, AdminCmdData& da
 
         Client* targetclient = target->GetClient();
 
-        playerId = target->PID();
+        playerId = target->GetPID();
         if (target->GetCharacterData())
             timeConnected = target->GetCharacterData()->GetTimeConnected() / 3600;
 
@@ -2481,7 +2481,7 @@ void AdminManager::Teleport(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& 
 
     if (data.player == "me"  &&  data.target != "map"  &&  data.target != "here")
     {
-        psGUITargetUpdateMessage updateMessage( client->GetClientNum(), subject->EID() );
+        psGUITargetUpdateMessage updateMessage( client->GetClientNum(), subject->GetEID() );
         updateMessage.SendMessage();
     }
 }
@@ -4202,7 +4202,7 @@ void AdminManager::MakeUnlockable(MsgEntry *me, psAdminCmdMessage& msg, AdminCmd
         INSTANCE_ID instance_id = action->GetInstanceID();
         if (instance_id == INSTANCE_ALL)
         {
-            instance_id = action->GetGemObject()->EID();
+            instance_id = action->GetGemObject()->GetEID();
         }
         target = GEMSupervisor::GetSingleton().FindItemEntity( instance_id );
         if (!target)
@@ -4252,7 +4252,7 @@ void AdminManager::MakeSecurity(MsgEntry *me, psAdminCmdMessage& msg, AdminCmdDa
         INSTANCE_ID instance_id = action->GetInstanceID();
         if (instance_id == INSTANCE_ALL)
         {
-            instance_id = action->GetGemObject()->EID();
+            instance_id = action->GetGemObject()->GetEID();
         }
         target = GEMSupervisor::GetSingleton().FindItemEntity( instance_id );
         if (!target)
@@ -4339,7 +4339,7 @@ void AdminManager::AddRemoveLock(MsgEntry *me, psAdminCmdMessage& msg, AdminCmdD
         INSTANCE_ID instance_id = action->GetInstanceID();
         if (instance_id == INSTANCE_ALL)
         {
-            instance_id = action->GetGemObject()->EID();
+            instance_id = action->GetGemObject()->GetEID();
         }
         target = GEMSupervisor::GetSingleton().FindItemEntity( instance_id );
         if (!target)
@@ -4397,7 +4397,7 @@ void AdminManager::ChangeLock(MsgEntry *me, psAdminCmdMessage& msg, AdminCmdData
         INSTANCE_ID instance_id = action->GetInstanceID();
         if (instance_id == INSTANCE_ALL)
         {
-            instance_id = action->GetGemObject()->EID();
+            instance_id = action->GetGemObject()->GetEID();
         }
         target = GEMSupervisor::GetSingleton().FindItemEntity( instance_id );
         if (!target)
@@ -4455,7 +4455,7 @@ void AdminManager::ChangeLock(MsgEntry *me, psAdminCmdMessage& msg, AdminCmdData
                     // reload inventory if key belongs to this character
                     uint32 ownerID = items[i].GetUInt32("char_id_owner");
                     psCharacter* character = client->GetCharacterData();
-                    if (character->PID() == ownerID)
+                    if (character->GetPID() == ownerID)
                     {
                         character->Inventory().Load();
                     }
@@ -4478,7 +4478,7 @@ void AdminManager::KillNPC (MsgEntry *me, psAdminCmdMessage& msg, AdminCmdData& 
         }
         else
         {
-            unsigned int npcid = target->GetCharacterData()->PID();
+            unsigned int npcid = target->GetCharacterData()->GetPID();
             psCharacter *npcdata = psServer::CharacterLoader.LoadCharacterData(npcid,true);
             EntityManager::GetSingleton().RemoveActor(targetobject);
             EntityManager::GetSingleton().CreateNPC(npcdata);
@@ -4657,7 +4657,7 @@ void AdminManager::HandleAddPetition(MsgEntry *me, psAdminCmdMessage& msg, Admin
     }
 
     // Try and add the petition to the database:
-    if (!AddPetition(client->PID(), (const char*)data.petition))
+    if (!AddPetition(client->GetPID(), (const char*)data.petition))
     {
         psserver->SendSystemError(me->clientnum,"SQL Error: %s", db->GetLastError());
         return;
@@ -4684,7 +4684,7 @@ void AdminManager::BroadcastDirtyPetitions(int clientNum, bool includeSelf)
 void AdminManager::ListPetitions(MsgEntry *me, psPetitionRequestMessage& msg,Client *client)
 {
     // Try and grab the result set from the database:
-    iResultSet *rs = GetPetitions(client->PID());
+    iResultSet *rs = GetPetitions(client->GetPID());
     if (rs)
     {
         // Send list to client:
@@ -4729,7 +4729,7 @@ void AdminManager::ListPetitions(MsgEntry *me, psPetitionRequestMessage& msg,Cli
 void AdminManager::CancelPetition(MsgEntry *me, psPetitionRequestMessage& msg,Client *client)
 {
     // Tell the database to change the status of this petition:
-    if (!CancelPetition(client->PID(), msg.id))
+    if (!CancelPetition(client->GetPID(), msg.id))
     {
         psPetitionMessage error(me->clientnum, NULL, db->GetLastError(), false, PETITION_CANCEL);
         error.SendMessage();
@@ -4737,7 +4737,7 @@ void AdminManager::CancelPetition(MsgEntry *me, psPetitionRequestMessage& msg,Cl
     }
 
     // Try and grab the result set from the database:
-    iResultSet *rs = GetPetitions(client->PID());
+    iResultSet *rs = GetPetitions(client->GetPID());
     if (rs)
     {
         // Send list to client:
@@ -4780,7 +4780,7 @@ void AdminManager::CancelPetition(MsgEntry *me, psPetitionRequestMessage& msg,Cl
 void AdminManager::ChangePetition(MsgEntry *me, psPetitionRequestMessage& msg, Client *client)
 {
     // Tell the database to change the status of this petition:
-    if (!ChangePetition(client->PID(), msg.id, msg.desc))
+    if (!ChangePetition(client->GetPID(), msg.id, msg.desc))
     {
         psPetitionMessage error(me->clientnum, NULL, db->GetLastError(), false, PETITION_CHANGE);
         error.SendMessage();
@@ -4803,7 +4803,7 @@ void AdminManager::GMListPetitions(MsgEntry *me, psPetitionRequestMessage& msg,C
     // Try and grab the result set from the database:
 
     // Show the player all petitions.
-    iResultSet *rs = GetPetitions(-1, client->PID(), GM_DEVELOPER );
+    iResultSet *rs = GetPetitions(-1, client->GetPID(), GM_DEVELOPER );
     if (rs)
     {
         // Send list to GM:
@@ -4860,26 +4860,26 @@ void AdminManager::GMHandlePetition(MsgEntry *me, psPetitionRequestMessage& msg,
     {
         // Closing petition:
         type = PETITION_CLOSE;
-        result = ClosePetition(client->PID(), msg.id, msg.desc);
+        result = ClosePetition(client->GetPID(), msg.id, msg.desc);
     }
     else if (msg.request == "assign")
     {
         // Assigning petition:
         type = PETITION_ASSIGN;
-        result = AssignPetition(client->PID(), msg.id);
+        result = AssignPetition(client->GetPID(), msg.id);
     }
     else if (msg.request == "escalate")
     {
         // Escalate petition:
         type = PETITION_ESCALATE;
-        result = EscalatePetition(client->PID(), client->GetSecurityLevel(), msg.id);
+        result = EscalatePetition(client->GetPID(), client->GetSecurityLevel(), msg.id);
     }
 
     else if (msg.request == "descalate")
     {
         // Descalate petition:
         type = PETITION_DESCALATE;
-        result = DescalatePetition(client->PID(), client->GetSecurityLevel(), msg.id);
+        result = DescalatePetition(client->GetPID(), client->GetSecurityLevel(), msg.id);
     }
 
     // Check result of operation
@@ -4891,7 +4891,7 @@ void AdminManager::GMHandlePetition(MsgEntry *me, psPetitionRequestMessage& msg,
     }
 
     // Try and grab the result set from the database:
-    iResultSet *rs = GetPetitions(-1, client->PID(), GM_DEVELOPER);
+    iResultSet *rs = GetPetitions(-1, client->GetPID(), GM_DEVELOPER);
     if (rs)
     {
         // Send list to GM:
@@ -5300,7 +5300,7 @@ void AdminManager::ChangeName(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
         if(targetobject && (targetobject->GetCharacterData()->GetCharType() == PSCHARACTER_TYPE_NPC ||
            targetobject->GetCharacterData()->GetCharType() == PSCHARACTER_TYPE_PET))
         { //if so get it's pid so it works correctly with targetting
-            pid = targetobject->GetCharacterData()->PID();
+            pid = targetobject->GetCharacterData()->GetPID();
         }
         else if (data.player.StartsWith("pid:",true) && data.player.Length() > 4) // Find by player ID, this is useful only if offline
         {
@@ -5351,7 +5351,7 @@ void AdminManager::ChangeName(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
     {
         prevFirstName = target->GetCharacterData()->GetCharName();
         prevLastName = target->GetCharacterData()->GetCharLastName();
-        id = target->GetCharacterData()->PID();
+        id = target->GetCharacterData()->GetPID();
         gid = target->GetGuildID();
         type = target->GetCharacterData()->GetCharType();
     }
@@ -5428,7 +5428,7 @@ void AdminManager::ChangeName(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
         fullName = target->GetCharacterData()->GetCharFullName();
         target->SetName(data.newName);
         target->GetActor()->SetName(fullName);
-        actorId = target->GetActor()->EID();
+        actorId = target->GetActor()->GetEID();
 
     }
     else if (type == PSCHARACTER_TYPE_NPC || type == PSCHARACTER_TYPE_PET)
@@ -5442,7 +5442,7 @@ void AdminManager::ChangeName(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
         }
         npc->GetCharacterData()->SetFullName(data.newName, data.newLastName);
         fullName = npc->GetCharacterData()->GetCharFullName();
-        actorId = npc->EID();
+        actorId = npc->GetEID();
     }
 
     // Inform
@@ -6610,7 +6610,7 @@ void AdminManager::RenameGuild(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdDat
     {
         psGuildMember* member = guild->members[i];
         if(member->actor)
-            array.Push(member->actor->GetActor()->EID());
+            array.Push(member->actor->GetActor()->GetEID());
     }
 
     // Update the labels
@@ -6727,7 +6727,7 @@ void AdminManager::Thunder(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& d
     // Queue thunder
     psserver->GetWeatherManager()->QueueNextEvent(0, psWeatherMessage::LIGHTNING, 0, 0, 0,
                                                   sectorinfo->name, sectorinfo,
-                                                  client->GetActor()->EID());
+                                                  client->GetActor()->GetEID());
 
 }
 
@@ -7309,7 +7309,7 @@ void AdminManager::HandleGMEvent(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdD
     {
         if (data.name.IsEmpty())
             gmeventResult = gmeventManager->CompleteGMEvent(client,
-                                                            client->PID());
+                                                            client->GetPID());
         else
             gmeventResult = gmeventManager->CompleteGMEvent(client,
                                                             data.name);
@@ -7626,7 +7626,7 @@ void AdminManager::HandleSetTrait(psAdminCmdMessage& msg, AdminCmdData& data, Cl
             }while(currTrait);
             str.Append("</traits>");
 
-            psTraitChangeMessage message( client->GetClientNum(), (uint32_t)target->GetActor()->EID(), str );
+            psTraitChangeMessage message(client->GetClientNum(), (uint32_t)target->GetActor()->GetEID(), str);
             message.Multicast( target->GetActor()->GetMulticastClients(), 0, PROX_LIST_ANY_RANGE );
 
             psserver->SendSystemOK(client->GetClientNum(), "Trait successfully changed");

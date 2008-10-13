@@ -768,7 +768,7 @@ bool psNPCLoader::WriteToDatabase()
     charloader.NewCharacterData(SUPER_CLIENT_ACCOUNT, npc);
 
     csString name = npc->GetCharName();
-    int      id   = npc->PID();
+    int      id   = npc->GetPID();
     csString invulnerable = (npc->GetImperviousToAttack() & ALWAYS_IMPERVIOUS) ? "Y" : "N";
     int kill_exp  = npc->GetKillExperience();
 
@@ -821,7 +821,7 @@ bool psNPCLoader::WriteToDatabase()
     for (size_t i=0;i<sells.GetSize();i++)
         db->Command("INSERT INTO merchant_item_categories VALUES(%i,%i)",id,sells[i]);
 
-    CPrintf(CON_DEBUG, "The NPC has been assigned the following id: %u\n",npc->PID());
+    CPrintf(CON_DEBUG, "The NPC has been assigned the following id: %u\n",npc->GetPID());
 
     return true;
 }

@@ -97,9 +97,9 @@ NPC::~NPC()
     }
 }
 
-PS_ID NPC::EID()
+PS_ID NPC::GetEID()
 {
-    return (npcActor ? npcActor->EID() : 0);
+    return (npcActor ? npcActor->GetEID() : 0);
 }
 
 psLinearMovement* NPC::GetLinMove()
@@ -257,7 +257,7 @@ gemNPCActor *NPC::GetMostHated(float range, bool include_invisible, bool include
 
     if (hated)
     {
-        Printf(5,"Found most hated: %s(EID: %u)",hated->GetName(),hated->EID());
+        Printf(5,"Found most hated: %s(EID: %u)",hated->GetName(),hated->GetEID());
         
     }
     else
@@ -271,8 +271,8 @@ gemNPCActor *NPC::GetMostHated(float range, bool include_invisible, bool include
 void NPC::AddToHateList(gemNPCActor *attacker, float delta)
 {
     Printf("Adding %1.2f to hatelist score for %s(EID: %u).",
-           delta,attacker->GetName(),attacker->EID() );
-    hatelist.AddHate(attacker->EID(),delta);
+           delta,attacker->GetName(),attacker->GetEID() );
+    hatelist.AddHate(attacker->GetEID(),delta);
     if(IsDebugging(5))
     {
         DumpHateList();
@@ -289,7 +289,7 @@ void NPC::RemoveFromHateList(PS_ID who)
 
 float NPC::GetEntityHate(gemNPCActor *ent)
 {
-    return hatelist.GetHate(ent->EID());
+    return hatelist.GetHate(ent->GetEID());
 }
 
 float NPC::GetWalkVelocity()
@@ -453,7 +453,7 @@ void NPC::GetNearestEntity(uint32_t& target_id,csVector3& dest,csString& name,fl
                 min_range = dist;
                 dest = loc2;
                 name = ent->GetName();
-                target_id = ent->EID();
+                target_id = ent->GetEID();
             }
         }
     }
@@ -559,7 +559,7 @@ gemNPCObject *NPC::GetTarget()
             gemNPCObject *entity = GetLastPerception()->GetTarget();
             if (entity)
             {
-                target = npcclient->FindEntityID(entity->EID());
+                target = npcclient->FindEntityID(entity->GetEID());
             }
             Printf(5,"GetTarget returning last perception entity: %s",target ? target->GetName() : "None specified");
             return target;
@@ -578,7 +578,7 @@ void NPC::SetTarget(gemNPCObject *t)
     else
     {
         Printf(10,"Setting target to: %s",t->GetName());
-        target_id = t->EID();
+        target_id = t->GetEID();
     }
 }
 
@@ -664,7 +664,7 @@ void NPC::CheckPosition()
         if(vel.y < -50)
         {
             CPrintf(CON_ERROR,"Got bad starting location %f %f %f, killing %s (PID: %u/EID: %u).\n",
-                    pos.x,pos.y,pos.z,name.GetData(),pid,GetActor()->EID());
+                    pos.x,pos.y,pos.z,name.GetData(),pid,GetActor()->GetEID());
             SetAlive(false);
             break;
         }
@@ -710,10 +710,10 @@ gemNPCActor *HateList::GetMostHated(iSector *sector, csVector3& pos, float range
     csArray<gemNPCObject*> list = npcclient->FindNearbyEntities(sector,pos,range);
     for (size_t i=0; i<list.GetSize(); i++)
     {
-        HateListEntry *h = hatelist.Get( list[i]->EID(),0 );
+        HateListEntry *h = hatelist.Get( list[i]->GetEID(),0 );
         if (h)
         {
-            gemNPCObject * obj = npcclient->FindEntityID(list[i]->EID());
+            gemNPCObject * obj = npcclient->FindEntityID(list[i]->GetEID());
 
             if (!obj) continue;
 

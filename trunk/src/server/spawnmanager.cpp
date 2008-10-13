@@ -104,9 +104,9 @@ public:
         }
 
         item = loot;
-        looterID = looter->GetActor()->PID();
-        rollerID = roller->GetActor()->PID();
-        looteeID = dropper->PID();
+        looterID = looter->GetActor()->GetPID();
+        rollerID = roller->GetActor()->GetPID();
+        looteeID = dropper->GetPID();
 
         // These might not be around later, so save their names now
         lootername = looter->GetName();
@@ -164,7 +164,7 @@ public:
 
         psLootEvent evt(
                        looteeID,
-                       getter->GetCharacterData()->PID(),
+                       getter->GetCharacterData()->GetPID(),
                        item->GetUID(),
                        item->GetStackCount(),
                        (int)item->GetCurrentStats()->GetQuality(),
@@ -774,9 +774,9 @@ void SpawnManager::RemoveNPC(gemObject *obj)
 
     ServerStatus::mob_deathcount++;
 
-    int pid = obj->PID();
+    int pid = obj->GetPID();
 
-    Notify3(LOG_SPAWN,"Sending NPC %u disconnect msg to %zu clients.\n",obj->EID(),obj->GetMulticastClients().GetSize());
+    Notify3(LOG_SPAWN,"Sending NPC %u disconnect msg to %zu clients.\n",obj->GetEID(),obj->GetMulticastClients().GetSize());
 
     if (obj->GetCharacterData()==NULL)
     {
@@ -1019,8 +1019,8 @@ void SpawnManager::HandleLootItem(MsgEntry *me,Client *client)
     }
 
     psLootEvent evt(
-                   chr->PID(),
-                   looterclient->GetCharacterData()->PID(),
+                   chr->GetPID(),
+                   looterclient->GetCharacterData()->GetPID(),
                    item->GetUID(),
                    item->GetStackCount(),
                    (int)item->GetCurrentStats()->GetQuality(),
@@ -1276,7 +1276,7 @@ psDespawnGameEvent::psDespawnGameEvent(SpawnManager *mgr,
     : psGameEvent(0,delayticks,"psDespawnGameEvent")
 {
     spawnmanager = mgr;
-    entity       = obj->EID();
+    entity       = obj->GetEID();
 }
 
 void psDespawnGameEvent::Trigger()

@@ -500,7 +500,7 @@ void psSpellManager::StartPurifying(Client * client, int statID)
 
 void psSpellManager::EndPurifying(psCharacter * character, uint32 glyphUID)
 {
-    Client * client = clients->FindPlayer(character->PID());
+    Client * client = clients->FindPlayer(character->GetPID());
     if (!client)
     {
         Error1("No purifyer!");

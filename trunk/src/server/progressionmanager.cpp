@@ -415,7 +415,7 @@ public:
         csString str( "<traits>" );
         str.Append(trait->ToXML() );
         str.Append("</traits>");
-        psTraitChangeMessage message( (uint32_t)clientID, (uint32_t)actor->EID(), str );
+        psTraitChangeMessage message( (uint32_t)clientID, (uint32_t)actor->GetEID(), str );
         message.Multicast( actor->GetMulticastClients(), 0, PROX_LIST_ANY_RANGE );
         return true;
     }
@@ -2109,7 +2109,7 @@ public:
                         break; else continue;
 
                 case ACTOR:
-                    if ( nearobj->PID() )
+                    if ( nearobj->GetPID() )
                         break; else continue;
 
                 case GROUP:
@@ -3149,7 +3149,7 @@ public:
                 float yrot;
                 const char* sector = NULL;
                 actionLocation->GetLocationInWorld( &sector, newpos.x, newpos.y, newpos.z, yrot );
-                uint32 meshID = actionLocation->GetGemObject()->EID();
+                uint32 meshID = actionLocation->GetGemObject()->GetEID();
 
                 // Send message to attach effect 1/2 m above action location
                 newpos.y += 0.5f;
@@ -3499,7 +3499,7 @@ public:
 
                 // Attach effect to actor or target
                 csVector3 offset(0,0,0);
-                psEffectMessage newmsg(0, effectName, offset, gem->EID(), 0, 0);
+                psEffectMessage newmsg(0, effectName, offset, gem->GetEID(), 0, 0);
                 if (!newmsg.valid)
                 {
                     Error2("Error: ProgressionEvent(%s) EffectOP could not create valid psEffectMessage\n",eventName->GetData());
@@ -4307,7 +4307,7 @@ public:
         if (actor->GetCharacterData() == NULL)
             return true;
 
-        client = psserver->GetConnections()->FindPlayer(actor->GetCharacterData()->PID());
+        client = psserver->GetConnections()->FindPlayer(actor->GetCharacterData()->GetPID());
         if (client == NULL)
             return true;
 
@@ -4951,7 +4951,7 @@ void ProgressionManager::SendSkillList(Client * client, bool forceOpen, PSSKILL 
         Skill * charSkill = character->GetSkills()->GetSkill( (PSSKILL)skillID );
         if (charSkill == NULL)
         {
-            Error3("Can't find skill %d in character %u", skillID, character->PID());
+            Error3("Can't find skill %d in character %u", skillID, character->GetPID());
             return;
         }
 

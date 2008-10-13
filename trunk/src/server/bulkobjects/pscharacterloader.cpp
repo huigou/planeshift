@@ -389,10 +389,10 @@ bool psCharacterLoader::NewCharacterData(unsigned int accountid, psCharacter *ch
     int i;
 
     // traits
-    if (!ClearCharacterTraits(chardata->PID()))
+    if (!ClearCharacterTraits(chardata->GetPID()))
     {
         Error3("Failed to clear traits for character id %u.  Error %s.",
-               chardata->PID(), db->GetLastError());
+               chardata->GetPID(), db->GetLastError());
     }
 
     for (i=0;i<PSTRAIT_LOCATION_COUNT;i++)
@@ -400,16 +400,16 @@ bool psCharacterLoader::NewCharacterData(unsigned int accountid, psCharacter *ch
         psTrait *trait=chardata->GetTraitForLocation((PSTRAIT_LOCATION)i);
         if (trait!=NULL)
         {
-            SaveCharacterTrait(chardata->PID(),trait->uid);
+            SaveCharacterTrait(chardata->GetPID(),trait->uid);
         }
     }
 
 
     // skills
-    if (!ClearCharacterSkills(chardata->PID()))
+    if (!ClearCharacterSkills(chardata->GetPID()))
     {
         Error3("Failed to clear skills for character id %u.  Error %s.",
-               chardata->PID(), db->GetLastError());
+               chardata->GetPID(), db->GetLastError());
     }
 
     for (i=0;i<PSSKILL_COUNT;i++)
@@ -417,18 +417,18 @@ bool psCharacterLoader::NewCharacterData(unsigned int accountid, psCharacter *ch
         unsigned int skillRank=chardata->GetSkills()->GetSkillRank((PSSKILL)i, false);
         unsigned int skillY=chardata->GetSkills()->GetSkillKnowledge((PSSKILL)i);
         unsigned int skillZ=chardata->GetSkills()->GetSkillPractice((PSSKILL)i);
-        SaveCharacterSkill(chardata->PID(),i,skillZ,skillY,skillRank);
+        SaveCharacterSkill(chardata->GetPID(),i,skillZ,skillY,skillRank);
     }
 
 
     // advantages
-    if (!ClearCharacterAdvantages(chardata->PID()))
-        Error3("Failed to clear advantages for character id %u.  Error %s.",chardata->PID(),db->GetLastError());
+    if (!ClearCharacterAdvantages(chardata->GetPID()))
+        Error3("Failed to clear advantages for character id %u.  Error %s.",chardata->GetPID(),db->GetLastError());
 
     for (i=0;i<PSCHARACTER_ADVANTAGE_COUNT;i++)
     {
         if (chardata->HasAdvantage((PSCHARACTER_ADVANTAGE)i))
-            SaveCharacterAdvantage(chardata->PID(),i);
+            SaveCharacterAdvantage(chardata->GetPID(),i);
     }
 
     return true;
@@ -441,7 +441,7 @@ bool psCharacterLoader::UpdateQuestAssignments(psCharacter *chr)
 
 bool psCharacterLoader::ClearCharacterSpell( psCharacter * character )
 {
-    unsigned int character_id = character->PID();
+    unsigned int character_id = character->GetPID();
     unsigned long result=db->CommandPump("DELETE FROM player_spells WHERE player_id='%u'",character_id);
     if (result==QUERY_FAILED)
         return false;
@@ -454,7 +454,7 @@ bool psCharacterLoader::SaveCharacterSpell( psCharacter * character )
     int index = 0;
     while (psSpell * spell = character->GetSpellByIdx(index))
     {
-        unsigned int character_id = character->PID();
+        unsigned int character_id = character->GetPID();
         unsigned long result=db->CommandPump("INSERT INTO player_spells (player_id,spell_id,spell_slot) VALUES('%u','%u','%u')",
             character_id,spell->GetID(),index);
         if (result==QUERY_FAILED)
@@ -814,10 +814,10 @@ bool psCharacterLoader::SaveCharacterData(psCharacter *chardata,gemActor *actor,
 
     // Done building the fields struct, now
     // SAVE it to the DB.
-    if(!targetUpdate->Execute(chardata->PID()))
+    if(!targetUpdate->Execute(chardata->GetPID()))
     {
         char characteridstring[25];
-        sprintf(characteridstring,"%u",chardata->PID());
+        sprintf(characteridstring,"%u",chardata->GetPID());
         Error3("Failed to save character %s. Error %s",characteridstring,db->GetLastError());
     }
 
@@ -825,13 +825,13 @@ bool psCharacterLoader::SaveCharacterData(psCharacter *chardata,gemActor *actor,
         return true;   // some updates don't need to save off every table.
 
     // traits
-    if (!ClearCharacterTraits(chardata->PID()))
-        Error3("Failed to clear traits for character id %u.  Error %s.",chardata->PID(),db->GetLastError());
+    if (!ClearCharacterTraits(chardata->GetPID()))
+        Error3("Failed to clear traits for character id %u.  Error %s.",chardata->GetPID(),db->GetLastError());
     for (i=0;i<PSTRAIT_LOCATION_COUNT;i++)
     {
         psTrait *trait=chardata->GetTraitForLocation((PSTRAIT_LOCATION)i);
         if (trait!=NULL)
-            SaveCharacterTrait(chardata->PID(),trait->uid);
+            SaveCharacterTrait(chardata->GetPID(),trait->uid);
     }
 
     // For all the skills we have update them. If the update fails it will automatically save a new
@@ -843,22 +843,22 @@ bool psCharacterLoader::SaveCharacterData(psCharacter *chardata,gemActor *actor,
             unsigned int skillY=chardata->GetSkills()->GetSkillKnowledge((PSSKILL)i);
             unsigned int skillZ=chardata->GetSkills()->GetSkillPractice((PSSKILL)i);
             unsigned int skillRank=chardata->GetSkills()->GetSkillRank((PSSKILL)i, false);
-            UpdateCharacterSkill(chardata->PID(),i,skillZ,skillY,skillRank);
+            UpdateCharacterSkill(chardata->GetPID(),i,skillZ,skillY,skillRank);
         }
     }
 
 
     // advantages
-    if (!ClearCharacterAdvantages(chardata->PID()))
-        Error3("Failed to clear advantages for character id %u.  Error %s.",chardata->PID(),db->GetLastError());
+    if (!ClearCharacterAdvantages(chardata->GetPID()))
+        Error3("Failed to clear advantages for character id %u.  Error %s.",chardata->GetPID(),db->GetLastError());
     for (i=0;i<PSCHARACTER_ADVANTAGE_COUNT;i++)
     {
         if (chardata->HasAdvantage((PSCHARACTER_ADVANTAGE)i))
-            SaveCharacterAdvantage(chardata->PID(),i);
+            SaveCharacterAdvantage(chardata->GetPID(),i);
     }
 
     if (!ClearCharacterSpell(chardata))
-        Error3("Failed to clear spells for character id %u.  Error %s.",chardata->PID(),db->GetLastError());
+        Error3("Failed to clear spells for character id %u.  Error %s.",chardata->GetPID(),db->GetLastError());
     SaveCharacterSpell( chardata );
 
     UpdateQuestAssignments( chardata );

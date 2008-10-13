@@ -167,8 +167,8 @@ public:
     void SetAccountID(int ID) { accountID = ID; }
 
     /// The player number for this client.
-    unsigned int PID() { return playerID; }
-    void SetPlayerID(unsigned int ID) { playerID = ID; }
+    unsigned int GetPID() { return playerID; }
+    void SetPID(unsigned int ID) { playerID = ID; }
 
     int GetExchangeID() { return exchangeID; }
     void SetExchangeID(int ID) { exchangeID = ID; }

@@ -255,7 +255,7 @@ psGuildLevel *psGuildInfo::Connect(psCharacter *player)
 {
     for (size_t i=0; i<members.GetSize(); i++)
     {
-        if (members[i]->char_id == player->PID())
+        if (members[i]->char_id == player->GetPID())
         {
             player->SetGuild(this);
             members[i]->actor = player;
@@ -293,7 +293,7 @@ bool psGuildInfo::AddNewMember(psCharacter *player, int level)
         "       guild_points=0,"
         "       guild_public_notes=NULL,"
         "       guild_private_notes=NULL"
-        " where id=%u", id, level, player->PID()) != 1)
+        " where id=%u", id, level, player->GetPID()) != 1)
     {
         Error3("Couldn't update guild for player.\nCommand was <%s>.\nError returned was <%s>\n",
             db->GetLastQuery(),db->GetLastError());
@@ -302,7 +302,7 @@ bool psGuildInfo::AddNewMember(psCharacter *player, int level)
 
     psGuildMember *gm = new psGuildMember;
 
-    gm->char_id = player->PID();
+    gm->char_id = player->GetPID();
     gm->actor   = NULL;
     gm->guild_points = 0;
     gm->guildlevel = FindLevel(level);

@@ -358,7 +358,7 @@ void psClientCharManager::SetTarget(GEMClientObject *newTarget, const char *acti
              targetEffect = psengine->GetEffectManager()->RenderEffect("target", csVector3(0,0,0), targetMesh);
     
          // notify the server of selection
-         mappedID = target->EID();
+         mappedID = target->GetEID();
     }
 
     // if it's a message sent by server, there is no need to resend back the same information
@@ -563,7 +563,7 @@ void psClientCharManager::HandleEffect( MsgEntry* me )
         if (effect.castDuration > 0)
         {
             //and it's anchored to the main actor then the you must be casting the spell
-            if (effect.anchorID == psengine->GetCelClient()->GetMainPlayer()->EID())
+            if (effect.anchorID == psengine->GetCelClient()->GetMainPlayer()->GetEID())
             {
                 // show the spell cancel window
                 pawsSpellCancelWindow* widget = (pawsSpellCancelWindow *)PawsManager::GetSingleton().FindWidget( "SpellCancelWindow" );

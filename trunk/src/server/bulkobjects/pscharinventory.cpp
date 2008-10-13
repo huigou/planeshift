@@ -176,7 +176,7 @@ void psCharacterInventory::UpdateEncumbrance()
 
 bool psCharacterInventory::Load()
 {
-    return Load(owner->PID());
+    return Load(owner->GetPID());
 }
 
 psItem *psCharacterInventory::GetItemFactory(psItemStats *stats)
@@ -239,7 +239,7 @@ bool psCharacterInventory::Load(unsigned int use_id)
             if ( !AddLoadedItem(items[i].GetUInt32("parent_item_id"),(INVENTORY_SLOT_NUMBER)items[i].GetInt("location_in_parent"), item) )
             {
                 Bug5("Item %s(%u) could not be loaded for %s(%d). Skipping this item.\n",
-                    item->GetName(), item->GetUID(), owner->GetCharName(), owner->PID() );
+                    item->GetName(), item->GetUID(), owner->GetCharName(), owner->GetPID() );
                 delete item;
                 continue;
             }
@@ -280,7 +280,7 @@ bool psCharacterInventory::QuickLoad(unsigned int use_id)
                 if (!AddLoadedItem(0, (INVENTORY_SLOT_NUMBER) items[i].GetInt("location_in_parent"), item))
                 {
                     Bug5("Item %s(%s) could not be quick loaded for %s(%d). Skipping this item.\n",
-                    item->GetName(), items[i]["id"], owner->GetCharName(), owner->PID() );
+                    item->GetName(), items[i]["id"], owner->GetCharName(), owner->GetPID() );
                     delete item;
                 }
             }
@@ -309,7 +309,7 @@ bool psCharacterInventory::AddLoadedItem(uint32 parentID, INVENTORY_SLOT_NUMBER 
                      item->GetName(), 
                      item->GetUID(), 
                      owner->GetCharName(), 
-                     owner->PID(),
+                     owner->GetPID(),
                      slot); 
         Bug1(error);
         return false;
