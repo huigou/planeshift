@@ -112,11 +112,11 @@ public:
     NPC();
     ~NPC();
 
-    unsigned int          GetPID()       { return pid; }
+    unsigned int          PID() { return pid; }
     /**
      * Return the entity ID if an entity exist else 0.
      */
-    PS_ID                 GetEID();
+    PS_ID                 EID();
     iMovable             *GetMovable()   { return movable; }
     psLinearMovement     *GetLinMove();
     uint8_t               GetDRCounter() { return ++DRcounter;}

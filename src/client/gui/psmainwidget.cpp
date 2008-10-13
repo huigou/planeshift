@@ -209,7 +209,7 @@ bool psMainWidget::OnDoubleClick( int button, int keyModifier, int x, int y )
         {
             if ( over )
             {
-                psUserActionMessage action( 0, over->GetID(), "dfltBehavior", entTypes.BuildDfltBehaviors() );
+                psUserActionMessage action(0, over->EID(), "dfltBehavior", entTypes.BuildDfltBehaviors());
                 action.SendMessage();
             }
         }

@@ -197,7 +197,7 @@ bool psTribe::CheckAttach(NPC * npc)
 {
     for (size_t i=0; i < members_id.GetSize(); i++)
     {
-        if (npc->GetPID() == members_id[i])
+        if (npc->PID() == members_id[i])
         {
             AttachMember(npc);
             return true;
@@ -206,14 +206,14 @@ bool psTribe::CheckAttach(NPC * npc)
     for (size_t i=0; i < members.GetSize(); i++)
     {
         if (strcmp(npc->GetName(),members[i]->GetName())==0 &&
-            npc->GetPID() != members[i]->GetPID())
+            npc->PID() != members[i]->PID())
         {
             AttachMember(npc);
 
             // Add to members list in db
             db->Command("INSERT INTO tribe_members (tribe_id,member_id) "
-                        "VALUES (%u,%u)",GetID(),npc->GetPID());
-            members_id.Push(npc->GetPID());
+                        "VALUES (%u,%u)",GetID(),npc->PID());
+            members_id.Push(npc->PID());
             return true;
         }
     }
@@ -226,7 +226,7 @@ bool psTribe::AttachMember(NPC * npc)
     npc->SetTribe(this);
     for (size_t i=0; i < members.GetSize(); i++)
     {
-        if (npc->GetPID() == members[i]->GetPID())
+        if (npc->PID() == members[i]->PID())
         {
             return true;
         }

@@ -222,7 +222,7 @@ gemNPC* EntityManager::CreateFamiliar (gemActor *owner)
 
     if ( chardata == NULL )
     {
-        CPrintf(CON_ERROR, "Player ID %u : Character Load failed!\n",owner->GetPlayerID());
+        CPrintf(CON_ERROR, "Player ID %u : Character Load failed!\n",owner->PID());
         return NULL;
     }
     
@@ -246,13 +246,13 @@ gemNPC* EntityManager::CreateFamiliar (gemActor *owner)
     familiarID = this->CopyNPCFromDatabase( masterFamiliarID, pos.x + 1.5, pos.y, pos.z + 1.5, yrot, sector->QueryObject()->GetName(), instance, familiarname, "Familiar" );
     if ( familiarID == 0 )
     {
-        CPrintf(CON_ERROR, "Player ID %u : Create Familiar Failed : Could not copy the master NPC %u\n",owner->GetPlayerID(), masterFamiliarID);
+        CPrintf(CON_ERROR, "Player ID %u : Create Familiar Failed : Could not copy the master NPC %u\n",owner->PID(), masterFamiliarID);
         psserver->SendSystemError( owner->GetClientID(), "Could not copy the master NPC familiar." );
         return NULL;
     }
 
     // Prepare NPC client to the new npc
-    psserver->npcmanager->NewNPCNotify(familiarID, masterFamiliarID, owner->GetPlayerID() );
+    psserver->npcmanager->NewNPCNotify(familiarID, masterFamiliarID, owner->PID() );
 
     // Create Familiar using new ID
     this->CreateNPC( familiarID , false); //Do not update proxList, we will do that later.
@@ -302,7 +302,7 @@ gemNPC* EntityManager::CloneNPC ( psCharacter *chardata )
     float deltaz = psserver->GetRandom(6)/4 - 1.5;
     
 
-    npcPID = this->CopyNPCFromDatabase( chardata->GetCharacterID(),
+    npcPID = this->CopyNPCFromDatabase( chardata->PID(),
                                         pos.x + deltax, pos.y, pos.z + deltaz,  // Set position some distance from parent
                                         yrot, sector->QueryObject()->GetName(),
                                         0,NULL, NULL ); // Keep name of parent
@@ -313,7 +313,7 @@ gemNPC* EntityManager::CloneNPC ( psCharacter *chardata )
     }
 
     // Prepare NPC client to the new npc
-    psserver->npcmanager->NewNPCNotify(npcPID, chardata->GetCharacterID(), 0 );
+    psserver->npcmanager->NewNPCNotify(npcPID, chardata->PID(), 0 );
 
     // Create npc using new ID
     this->CreateNPC( npcPID , false); //Do not update proxList, we will do that later.
@@ -512,7 +512,7 @@ gemNPC* EntityManager::CreatePet (Client *client, int masterFamiliarID)
     petData->SetFullName( familiarname, "Pet" );
 
     // Prepare NPC client to the new npc
-    psserver->npcmanager->NewNPCNotify(petData->GetCharacterID(), masterFamiliarID, client->GetPlayerID() );
+    psserver->npcmanager->NewNPCNotify(petData->PID(), masterFamiliarID, client->PID() );
 
     PS_ID familiarID = this->CreateNPC( petData, false ); //Do not update proxList, we will do that later.
 
@@ -547,10 +547,10 @@ gemNPC* EntityManager::CreatePet (Client *client, int masterFamiliarID)
 bool EntityManager::CreatePlayer (Client* client)
 {
     csString filename;
-    psCharacter *chardata=psServer::CharacterLoader.LoadCharacterData(client->GetPlayerID(),true);
+    psCharacter *chardata=psServer::CharacterLoader.LoadCharacterData(client->PID(),true);
     if (chardata==NULL)
     {
-        CPrintf(CON_ERROR, "Player ID %u : Character Load failed!\n",client->GetPlayerID());
+        CPrintf(CON_ERROR, "Player ID %u : Character Load failed!\n",client->PID());
         psserver->RemovePlayer (client->GetClientNum(),"Your character data could not be loaded from the database.  Please contact tech support about this.");
         return false;
     }
@@ -558,7 +558,7 @@ bool EntityManager::CreatePlayer (Client* client)
     psRaceInfo *raceinfo=chardata->GetRaceInfo();
     if (raceinfo==NULL)
     {
-        CPrintf(CON_ERROR, "Player ID %u : Character Load returned with NULL raceinfo pointer!\n",client->GetPlayerID());
+        CPrintf(CON_ERROR, "Player ID %u : Character Load returned with NULL raceinfo pointer!\n",client->PID());
         psserver->RemovePlayer (client->GetClientNum(),"Your character race could not be loaded from the database.  Please contact tech support about this.");
         delete chardata;
         return false;
@@ -575,7 +575,7 @@ bool EntityManager::CreatePlayer (Client* client)
     sector=FindSector(sectorinfo->name);
     if (sector==NULL)
     {
-        Error3("Player ID %u : Could not resolve sector named '%s'",client->GetPlayerID(),sectorinfo->name.GetData());
+        Error3("Player ID %u : Could not resolve sector named '%s'",client->PID(),sectorinfo->name.GetData());
         psserver->RemovePlayer (client->GetClientNum(),"The server could not create your character entity. (Sector not found)  Please contact tech support about this.");
         delete chardata;
         return false;
@@ -680,7 +680,7 @@ PS_ID EntityManager::CopyNPCFromDatabase(int master_id, float x, float y, float 
 
     if (psServer::CharacterLoader.NewNPCCharacterData(0, npc))
     {
-        new_id = npc->GetCharacterID();
+        new_id = npc->PID();
         db->Command("update characters set npc_master_id=%i where id=%i", master_id, new_id);
     }
     else
@@ -706,7 +706,7 @@ PS_ID EntityManager::CreateNPC(psCharacter *chardata, bool updateProxList)
 
     if (sector == NULL)
     {
-        Error3("NPC ID %u : Could not resolve sector named '%s'", chardata->GetCharacterID(), sectorinfo->name.GetData() );
+        Error3("NPC ID %u : Could not resolve sector named '%s'", chardata->PID(), sectorinfo->name.GetData() );
         delete chardata;
         return false;
     }
@@ -722,7 +722,7 @@ PS_ID EntityManager::CreateNPC(psCharacter *chardata, INSTANCE_ID instance, csVe
     psRaceInfo *raceinfo=chardata->GetRaceInfo();
     if (raceinfo==NULL)
     {
-        CPrintf(CON_ERROR, "NPC ID %u : Character Load returned with NULL raceinfo pointer!\n",chardata->GetCharacterID());
+        CPrintf(CON_ERROR, "NPC ID %u : Character Load returned with NULL raceinfo pointer!\n",chardata->PID());
         delete chardata;
         return false;
     }
@@ -732,7 +732,7 @@ PS_ID EntityManager::CreateNPC(psCharacter *chardata, INSTANCE_ID instance, csVe
 
     if ( !actor->IsValid() )
     {
-        CPrintf(CON_ERROR, "Error while creating Entity for NPC '%u'\n", chardata->GetCharacterID());
+        CPrintf(CON_ERROR, "Error while creating Entity for NPC '%u'\n", chardata->PID());
         delete actor;
         delete chardata;
         return false;
@@ -742,7 +742,7 @@ PS_ID EntityManager::CreateNPC(psCharacter *chardata, INSTANCE_ID instance, csVe
     actor->SetSuperclientID( chardata->GetAccount() );
     
     // Add NPC Dialog plugin if any knowledge areas are defined in db for him.
-    actor->SetupDialog(chardata->GetCharacterID());
+    actor->SetupDialog(chardata->PID());
 
     // Setup prox list and send to anyone who needs him
     if ( updateProxList )
@@ -752,9 +752,9 @@ PS_ID EntityManager::CreateNPC(psCharacter *chardata, INSTANCE_ID instance, csVe
 //        CPrintf(CON_NOTIFY,"------> Entity Manager Setting Imperv\n");
         psserver->npcmanager->ControlNPC( actor );
     }
-    Debug3(LOG_NPC,0,"Created NPC actor: <%s> [%u] in world\n", actor->GetName(), actor->GetEntityID());
+    Debug3(LOG_NPC,0,"Created NPC actor: <%s> [%u] in world\n", actor->GetName(), actor->EID());
 
-    return actor->GetEntityID();
+    return actor->EID();
 }
 
 
@@ -920,7 +920,7 @@ bool EntityManager::CreateActionLocation( psActionLocation *instance, bool trans
     // Add action location to all Super Clients
     psserver->npcmanager->AddEntity(obj);
 
-    //Debug3(LOG_STARTUP ,0, "Action Location ID %u : Created successfully(EID: %u)!\n", instance->id,obj->GetEntityID());
+    //Debug3(LOG_STARTUP ,0, "Action Location ID %u : Created successfully(EID: %u)!\n", instance->id,obj->EID());
     return true;
 }
 
@@ -1010,7 +1010,7 @@ void EntityManager::HandleActor(MsgEntry* me)
 
     // Then send stuff like HP and mana to player, flags=-1 force a update of all stats
     psCharacter * chardata = client->GetCharacterData();
-    chardata->SendStatDRMessage(me->clientnum, actor->GetEntityID(), -1);
+    chardata->SendStatDRMessage(me->clientnum, actor->EID(), -1);
 
     //Store info about the character login
     chardata->SetLastLoginTime();
@@ -1159,7 +1159,7 @@ bool EntityManager::SendActorList(Client *client)
 bool EntityManager::RemoveActor(gemObject *actor)
 {
     // Do network commmand to remove entity from all clients
-    psRemoveObject msg( 0, actor->GetEntityID() );
+    psRemoveObject msg( 0, actor->EID() );
     
     // Send to human clients in range
     psserver->GetEventManager()->Multicast(msg.msg, 

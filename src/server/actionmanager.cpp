@@ -233,7 +233,7 @@ void ActionManager::HandleQueryMessage( csString xml, Client *client )
     else
     {
         Error4("Player (%s)(%d) tried to send a bogus XML string as an action message\nString was %s", 
-        client->GetActor()->GetCharacterData()->GetCharName(), client->GetActor()->GetPlayerID(), xml.GetData() );
+        client->GetActor()->GetCharacterData()->GetCharName(), client->GetActor()->PID(), xml.GetData() );
     }
 }
 
@@ -392,7 +392,7 @@ psActionLocation *ActionManager::FindAction( uint id )
     {
         actionLocation = iter.Next();
 
-        if ( actionLocation->GetGemObject()->GetEntityID() == id )
+        if (actionLocation->GetGemObject()->EID() == id)
         {
             return actionLocation;
         }
@@ -493,7 +493,7 @@ void ActionManager::HandleListMessage( csString xml, Client *client )
     else
     {
         Error4("Player (%s)(%d) tried to send a bogus XML string as an action message\nString was %s", 
-        client->GetActor()->GetCharacterData()->GetCharName(), client->GetActor()->GetPlayerID(), xml.GetData() );
+        client->GetActor()->GetCharacterData()->GetCharName(), client->GetActor()->PID(), xml.GetData() );
     }
 
 }
@@ -596,7 +596,7 @@ void ActionManager::HandleSaveMessage( csString xml, Client *client )
     else
     {
         Error4("Player (%s)(%d) tried to send a bogus XML string as an action message\nString was %s", 
-        client->GetActor()->GetCharacterData()->GetCharName(), client->GetActor()->GetPlayerID(), xml.GetData() );
+        client->GetActor()->GetCharacterData()->GetCharName(), client->GetActor()->PID(), xml.GetData() );
     }
 }
 
@@ -656,7 +656,7 @@ void ActionManager::HandleDeleteMessage( csString xml, Client *client )
     else
     {
         Error4("Player (%s)(%d) tried to send a bogus XML string as an action message\nString was %s", 
-        client->GetActor()->GetCharacterData()->GetCharName(), client->GetActor()->GetPlayerID(), xml.GetData() );
+        client->GetActor()->GetCharacterData()->GetCharName(), client->GetActor()->PID(), xml.GetData() );
     }
 
     

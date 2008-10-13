@@ -555,12 +555,12 @@ NpcResponse *psNPCDialog::FindOrGeneralizeTrigger(Client *client,NpcTriggerSente
                 //         // a certain point
                 //         int times;
                 //         csTicks when;
-                //         if (dialogHistory.EverSaid(client->GetPlayerID(), resp->id, when, times))
+                //         if (dialogHistory.EverSaid(client->PID(), resp->id, when, times))
                 //         {
                 //             return RepeatedResponse(trigger.GetString(), resp, when, times);
                 //         }
                 //         else
-                //             dialogHistory.AddToHistory(client->GetPlayerID(), resp->id, csGetTicks() );
+                //             dialogHistory.AddToHistory(client->PID(), resp->id, csGetTicks() );
 
 
                 return resp; // Found what we are looking for
@@ -642,12 +642,12 @@ NpcResponse *psNPCDialog::Respond(const char * text,Client *client)
         //         // a certain point
         //         int times;
         //         csTicks when;
-        //         if (dialogHistory.EverSaid(client->GetPlayerID(), resp->id, when, times))
+        //         if (dialogHistory.EverSaid(client->PID(), resp->id, when, times))
         //         {
         //             return RepeatedResponse(trigger.GetString(), resp, when, times);
         //         }
         //         else
-        //             dialogHistory.AddToHistory(client->GetPlayerID(), resp->id, csGetTicks() );
+        //             dialogHistory.AddToHistory(client->PID(), resp->id, csGetTicks() );
 
         //May be it is safe not to check for characterdata (now needed for GetLastRespons())
         if (currentClient->GetCharacterData() == NULL)

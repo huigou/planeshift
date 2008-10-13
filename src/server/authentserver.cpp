@@ -468,7 +468,7 @@ void psAuthenticationServer::HandleAuthent(MsgEntry *me)
     if (!obj)
     {
         // Send approval message
-        psAuthApprovedMessage *message = new psAuthApprovedMessage(me->clientnum,client->GetPlayerID(), charlist->GetValidCount() );    
+        psAuthApprovedMessage *message = new psAuthApprovedMessage(me->clientnum,client->PID(), charlist->GetValidCount() );    
 
         if(csGetTicks() - start > 500)
         {
@@ -519,7 +519,7 @@ void psAuthenticationServer::HandleAuthent(MsgEntry *me)
 
     if (acctinfo->securitylevel >= GM_TESTER)
     {
-        psserver->GetAdminManager()->Admin(client->GetPlayerID(), me->clientnum, client);
+        psserver->GetAdminManager()->Admin(client->PID(), me->clientnum, client);
     }
     
     if (CacheManager::GetSingletonPtr()->GetCommandManager()->Validate(client->GetSecurityLevel(), "default advisor"))
@@ -565,7 +565,7 @@ void psAuthenticationServer::SendDisconnect(Client* client, const char *reason)
 {
     if (client->GetActor())
     {
-        psDisconnectMessage msg(client->GetClientNum(), client->GetActor()->GetEntityID(),reason);
+        psDisconnectMessage msg(client->GetClientNum(), client->GetActor()->EID(),reason);
         if (msg.valid)
         {
             msg.msg->priority = PRIORITY_LOW;

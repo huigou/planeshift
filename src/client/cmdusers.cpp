@@ -633,7 +633,7 @@ const char *psUserCommands::HandleCommand(const char *cmd)
             // If no name give use target name if exists
             if (options.Length() == 0 && psengine->GetCharManager()->GetTarget())
             {
-                options.Format("eid:%d",psengine->GetCharManager()->GetTarget()->GetID());
+                options.Format("eid:%d",psengine->GetCharManager()->GetTarget()->EID());
             }
         default:
             // Most cases do nothing
@@ -657,7 +657,7 @@ const char *psUserCommands::HandleCommand(const char *cmd)
          if (object)
          {
              psengine->GetCharManager()->SetTarget(object,"select");
-             PS_ID mappedID = object->GetID();
+             PS_ID mappedID = object->EID();
              csString newCmd;
              newCmd.Format("/pickup eid:%d", mappedID);
              psUserCmdMessage cmdmsg(newCmd);

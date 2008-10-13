@@ -2810,7 +2810,7 @@ psGuildInfo * CacheManager::FindGuild(const csString & name)
 
 bool CacheManager::CreateGuild(const char *guildname, Client *client)
 {
-    int leaderID = client->GetPlayerID();
+    int leaderID = client->PID();
 
     psGuildInfo *gi = new psGuildInfo(guildname,leaderID);
 

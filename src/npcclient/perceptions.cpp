@@ -750,7 +750,7 @@ void OwnerCmdPerception::ExecutePerception( NPC *pet, float weight )
     gemNPCObject * t = NULL;
     if (target)
     {
-        t = npcclient->FindEntityID(target->GetID());
+        t = npcclient->FindEntityID(target->EID());
     }
     pet->SetTarget(t);
     

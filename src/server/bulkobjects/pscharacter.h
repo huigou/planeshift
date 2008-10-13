@@ -559,7 +559,7 @@ protected:
     bool LoadSkills(unsigned int use_id);
     bool LoadTraits(unsigned int use_id);
     bool LoadQuestAssignments();
-    bool LoadRelationshipInfo( unsigned int characterid );
+    bool LoadRelationshipInfo(unsigned int pid);
     bool LoadBuddies( Result& myBuddy, Result& buddyOf);
     bool LoadMarriageInfo( Result& result);
     bool LoadFamiliar( Result& pet, Result& owner);
@@ -601,7 +601,7 @@ public:
     void ResetStats();
 
 //    WorkInformation* workInfo;
-    unsigned int characterid;
+    unsigned int pid;
     unsigned int accountid;
 
     csString name;
@@ -726,10 +726,10 @@ public:
     void AddSpell(psSpell * spell);
     bool Store(const char *location,const char *slot,psItem *what);
 
-    void SetCharacterID(const unsigned int characterID) { characterid=characterID; }
-    unsigned int GetCharacterID() const { return characterid; }
+    void SetPID(const unsigned int characterID) { pid = characterID; }
+    unsigned int PID() const { return pid; }
 
-    unsigned int GetMasterNPCID() const { return npc_masterid?npc_masterid:characterid; }
+    unsigned int GetMasterNPCID() const { return npc_masterid ? npc_masterid: pid; }
 
     void SetAccount(int id) { accountid = id;   }
     int  GetAccount() const { return accountid; }
@@ -747,7 +747,7 @@ public:
     // Introductions
     /// Answers whether this character knows the given character or not.
     bool Knows(unsigned int charid);
-    bool Knows(psCharacter *c) { return (c ? Knows(c->characterid) : false); }
+    bool Knows(psCharacter *c) { return (c ? Knows(c->PID()) : false); }
     /// Introduces this character to the given character; answers false if already introduced.
     bool Introduce(psCharacter *c);
     /// Unintroduces this character to the given character; answers false if not introduced.

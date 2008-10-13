@@ -253,12 +253,12 @@ public:
 
     virtual ~gemObject();
 
-    uint32 GetEntityID() { return gemID; }
+    uint32 EID() { return eid; }
 
     /// Called when a client disconnects
     virtual void Disconnect();
 
-    virtual bool IsValid(void) { return gemID != 0; }
+    virtual bool IsValid(void) { return eid != 0; }
 
     /// Returns whether the object is alive.
     bool IsAlive() const { return is_alive; }
@@ -328,7 +328,7 @@ public:
     // Overridden functions in child classes
     virtual PSCHARACTER_MODE GetMode() { return PSCHARACTER_MODE_UNKNOWN; }
     virtual void SetMode(PSCHARACTER_MODE mode) { }
-    virtual int GetPlayerID() { return 0; }
+    virtual int PID() { return 0; }
     virtual int GetGuildID() { return 0; }
     virtual psGuildInfo* GetGuild() { return 0; }
     virtual bool UpdateDR() { return false; }
@@ -364,7 +364,7 @@ protected:
     bool is_alive;                          // Flag indicating whether object is alive or not
     csString factname;                      // Name of CS Mesh Factory used to create this object
     csString filename;                      // VFS Filename of mesh
-    uint32 gemID;                           // Unique identifier for object
+    uint32 eid;                             // Entity ID (unique identifier for object)
 
     csArray<iDeleteObjectCallback*> receivers;  // List of objects which are to be notified when this object is deleted.
 
@@ -559,7 +559,7 @@ class gemActor :  public gemObject, public iDeathNotificationObject
 protected:
     psCharacter *psChar;
     FactionSet *factions;
-    int playerID;
+    int pid; ///< Player ID (also known as character ID or PID)
     csRef<PlayerGroup> group;
 
     csVector3 top, bottom, offset;
@@ -644,7 +644,7 @@ public:
     virtual psCharacter *GetCharacterData() { return psChar; }
     virtual Client* GetClient() const;
     
-    virtual int GetPlayerID() { return playerID; }
+    virtual int PID() { return pid; }
 
     bool SetupCharData();
 
@@ -914,7 +914,7 @@ public:
         if ( owner )
         {
             this->owner = owner;
-            this->GetCharacterData()->SetOwnerID( owner->GetCharacterData()->GetCharacterID() );
+            this->GetCharacterData()->SetOwnerID(owner->GetCharacterData()->PID());
         }
         else
             this->owner = NULL;

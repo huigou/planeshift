@@ -425,11 +425,11 @@ int com_status(char *)
         int eid = 0;
         if (client->GetActor())
         {
-            eid = client->GetActor()->GetEntityID();
+            eid = client->GetActor()->EID();
         }
         CPrintf (CON_CMDOUTPUT ,"%5d %5d %-25s %14d %10s",
             eid,
-            client->GetPlayerID(),
+            client->PID(),
             client->GetName(),
             client->GetClientNum(),
             (const char*) PS_GetClientStatus(client));
@@ -1707,7 +1707,7 @@ int com_entlist(char *)
                 (sector) ? sector->QueryObject()->GetName():"(null)";
 
             CPrintf(CON_CMDOUTPUT ,"%5d %-15s %-20s (%9.3f,%9.3f,%9.3f, %s)\n",
-                    obj->GetEntityID(),
+                    obj->EID(),
                     obj->GetObjectType(),
                     obj->GetName(),
                     pos.x,pos.y,pos.z,sector_name );
@@ -1732,8 +1732,8 @@ int com_charlist(char *)
         if (actor)
         {
             CPrintf(CON_CMDOUTPUT ,"%9u %5u %9u %-10s %-20s\n",
-                    actor->GetCharacterData()->GetCharacterID(),
-                    actor->GetEntityID(),
+                    actor->GetCharacterData()->PID(),
+                    actor->EID(),
                     actor->GetClientID(),
                     actor->GetObjectType(),
                     actor->GetName());
@@ -2210,7 +2210,7 @@ int com_kill(char* player)
         CPrintf(CON_CMDOUTPUT ,"Client %d not found!\n",clientNum);
         return 0;
     }
-    int playerNum = client->GetActor()->GetEntityID();
+    int playerNum = client->GetActor()->EID();
     gemActor* object = (gemActor*)GEMSupervisor::GetSingleton().FindObject(playerNum);
     object->Kill(NULL);
     return 0;
