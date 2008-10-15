@@ -28,6 +28,7 @@ INSERT INTO `action_locations` VALUES (4,0,'HealingTree','NPCroom','_g_treetop02
 INSERT INTO `action_locations` VALUES (5,0,'woodbox','NPCroom','smith_woodbox',0,0,0,0,5,'SELECT','EXAMINE','<Examine>\n<Container ID=\'80\'/>\n<Description>A Box full of books</Description>\n</Examine>','Y');
 INSERT INTO `action_locations` VALUES (6,0,'Smith Forge','NPCroom','smith_furnace',0,0,0,0,5,'SELECT','EXAMINE','<Examine>\n<Container ID=\'115\'/>\n<Description>A smith forge, ready to heat materials</Description>\n</Examine>','Y');
 INSERT INTO `action_locations` VALUES (7,0,'Anvil','NPCroom','smith_anvil',0,0,0,0,5,'SELECT','EXAMINE','<Examine>\n<Container ID=\'116\'/>\n<Description>An anvil used to forge items</Description>\n</Examine>','Y');
-INSERT INTO `action_locations` VALUES (8,0,'Test Game','NPCroom','Box10',0,4.2,0.99,-216.94,4,'SELECT','EXAMINE','<Examine><GameBoard Cols=\'6\' Rows=\'6\' Layout=\'FF00FFF0000F000000000000F0000FFF00FF\' Pieces=\'123456789ABCDE\' /><Description>A minigame board for testing.</Description></Examine>','Y');
+INSERT INTO `action_locations` VALUES (8,0,'Test Game','NPCroom','Box10',0,4.2,0.99,-216.94,4,'SELECT','EXAMINE','<Examine><GameBoard Name=\'Test Game\' /><Description>A minigame board for testing.</Description></Examine>','Y');
 INSERT INTO `action_locations` VALUES (10,0,'ownedbox','NPCroom','smith_woodplank',0,0,0,0,5,'SELECT','EXAMINE','<Examine>\n<Container ID=\'82\'/>\n<Description>A Box owned by the merchant</Description>\n</Examine>','Y');
+INSERT INTO `action_locations` VALUES (11,0,'Tic Tac Toe','NPCroom','Box09',0,-1.69,0.89,-217.21,4,'SELECT','EXAMINE','<Examine><GameBoard Name=\'Tic Tac Toe\' /><Description>Tic Tac Toe Board Game</Description></Examine>','Y');
 

@@ -30,8 +30,8 @@ namespace psMiniGame
     {
         ManagedGame         = 0x01, ///< A game managed by the server.
         BlackPieces         = 0x02, ///< Player with black pieces.
-        ReadOnly            = 0x04  ///< The game is read-only (for watchers).
-
+        ReadOnly            = 0x04, ///< The game is read-only (for watchers).
+        PersonalGame        = 0x08  ///< The game is personal & private
     };
 
     /// Minigame tile state values

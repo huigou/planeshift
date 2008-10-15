@@ -89,7 +89,7 @@
 #include "introductionmanager.h"
 
 // Remember to bump this in server_options.sql and add to upgrade_schema.sql!
-#define DATABASE_VERSION_STR "1198"
+#define DATABASE_VERSION_STR "1199"
 
 
 psCharacterLoader psServer::CharacterLoader;
@@ -500,6 +500,11 @@ bool psServer::Initialize(iObjectRegistry* object_reg)
 
     // Start minigame manager
     minigamemanager = new psMiniGameManager();
+    if (!minigamemanager->Initialise())
+    {
+        Error1("Failed to load minigame data");
+        return false;
+    }
     Debug1(LOG_STARTUP, 0, "Started Minigame Manager\n");
 
     charCreationManager = new psCharCreationManager();
