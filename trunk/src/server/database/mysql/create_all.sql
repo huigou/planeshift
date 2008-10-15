@@ -91,5 +91,6 @@ source warnings.sql;
 source guild_wars.sql;
 source wc_accessrules.sql;
 source wc_cmdlog.sql;
+source gameboards.sql;
 
 source create_indexes.sql;

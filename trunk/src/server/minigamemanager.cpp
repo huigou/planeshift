@@ -103,6 +103,49 @@ psMiniGameManager::~psMiniGameManager()
     psserver->GetEventManager()->Unsubscribe(this, MSGTYPE_MINIGAME_UPDATE);
 }
 
+bool psMiniGameManager::Initialise(void)
+{
+    // Load gameboard definitions
+    psMiniGameBoardDef *gameDef;
+    Result gameboards(db->Select("SELECT * from gameboards"));
+    if (gameboards.IsValid())
+    {
+        int i, count = gameboards.Count();
+        for (i=0; i<count; i++)
+        {
+            csString name(gameboards[i]["name"]);
+            const char *layout = gameboards[i]["layout"];
+            const char *pieces = gameboards[i]["pieces"];
+            const int8_t cols = gameboards[i].GetInt("numColumns");
+            const int8_t rows = gameboards[i].GetInt("numRows");
+            int8_t players = gameboards[i].GetInt("numPlayers");
+
+            if (name && layout && pieces &&
+                cols >= GAMEBOARD_MIN_COLS && cols <= GAMEBOARD_MAX_COLS &&
+                rows >= GAMEBOARD_MIN_ROWS && rows <= GAMEBOARD_MAX_ROWS &&
+                strlen(layout) == size_t(rows * cols))
+            {
+                if (players < GAMEBOARD_MIN_PLAYERS || players > GAMEBOARD_MAX_PLAYERS)
+                {
+                    Error2("Minigames GameBoard definition %d invalid num players.", i+1);
+                    players = GAMEBOARD_DEFAULT_PLAYERS;
+                }
+                gameDef = new psMiniGameBoardDef(name, cols, rows, layout, pieces, players);
+                gameBoardDef.Put(name.Downcase(), gameDef);
+            }
+            else
+            {
+                Error2("Minigames GameBoard definition %d invalid.", i+1);
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    return false;
+}
+
 void psMiniGameManager::HandleMessage(MsgEntry *me, Client *client)
 {
     if (me->GetType() == MSGTYPE_MINIGAME_STARTSTOP)
@@ -170,16 +213,13 @@ void psMiniGameManager::HandleStartGameRequest(Client *client)
     }
 
     // Remove from existing game sessions.
-    psMiniGameSession *session = playerSessions.Get(clientID, 0);
-    if (session)
-    {
-        session->RemovePlayer(client);
-        playerSessions.DeleteAll(clientID);
-    }
+    RemovePlayerFromSessions(playerSessions.Get(clientID, 0), client, clientID);
 
     // Find an existing session or create a new one.
-    session = GetSessionByID((uint32_t)actionLocation->id);
-    if (!session)
+    // If personal minigame, force new one for player.
+    psMiniGameSession *session = GetSessionByID((uint32_t)actionLocation->id);
+    if (!session ||
+        (session && !session->IsSessionPublic()))
     {
         // Create a new minigame session.
         session = new psMiniGameSession(this, action, actionLocation->name);
@@ -221,13 +261,32 @@ void psMiniGameManager::HandleStopGameRequest(Client *client)
     uint32_t clientID = client->GetClientNum();
 
     // Remove from existing game sessions.
-    psMiniGameSession *session = playerSessions.Get(clientID, 0);
+    RemovePlayerFromSessions(playerSessions.Get(clientID, 0), client, clientID);
+}
+
+void psMiniGameManager::RemovePlayerFromSessions(psMiniGameSession *session, Client *client, uint32_t clientID)
+{
     if (session)
     {
         session->RemovePlayer(client);
         playerSessions.DeleteAll(clientID);
-    }
 
+        if (session->GetSessionReset())
+            ResetGameSession(session);
+
+        // if session is personal, delete it.
+        if (!session->IsSessionPublic())
+        {
+            if (session->GameSessionActive())
+            {
+                Error1("Cannot remove personal minigame session as there are still participants."); // should never happen
+            }
+            else
+            {
+                sessions.Delete(session);
+            }
+        }
+    }
 }
 
 void psMiniGameManager::HandleGameUpdate(Client *client, psMGUpdateMessage &msg)
@@ -259,6 +318,14 @@ void psMiniGameManager::HandleGameUpdate(Client *client, psMGUpdateMessage &msg)
     session->Update(client, msg);
 }
 
+void psMiniGameManager::ResetAllGameSessions(void)
+{
+    for (size_t i = 0; i < sessions.GetSize(); i++)
+    {
+        ResetGameSession(sessions.Get(i));
+    }
+}
+
 psMiniGameSession *psMiniGameManager::GetSessionByID(uint32_t id)
 {
     for (size_t i = 0; i < sessions.GetSize(); i++)
@@ -280,6 +347,107 @@ void psMiniGameManager::Idle()
     psserver->GetEventManager()->Push(tick);
 }
 
+psMiniGameBoardDef *psMiniGameManager::FindGameDef(csString gameName)
+{
+    return gameBoardDef.Get(gameName.Downcase(), NULL);
+}
+
+void psMiniGameManager::ResetGameSession(psMiniGameSession *sessionToReset)
+{
+    if (!sessionToReset)
+    {
+        Error1("Attempt to reset NULL minigame session");
+        return;
+    }
+
+    if (sessionToReset->GameSessionActive())
+    {
+        sessionToReset->SetSessionReset();
+    }
+    else
+    {
+        if (!sessions.Delete(sessionToReset))
+        {
+            Error1("Could not remove minigame session");
+        }
+    }
+}
+
+//---------------------------------------------------------------------------
+
+psMiniGameBoardDef::psMiniGameBoardDef(csString gameName, const int8_t noCols, const int8_t noRows, const char *layoutStr, const char *piecesStr, const int8_t defPlayers)
+{
+    // rows & columns setup
+    rows = noRows;
+    cols = noCols;
+
+    // layout setup
+    layoutSize = cols * rows / 2;
+    if ((cols * rows % 2) != 0)
+        layoutSize++;
+
+    // Convert the layout string into a packed binary array
+    layout = new uint8_t[layoutSize];
+    PackLayoutString(layoutStr, layout);
+
+    // Get the list of available pieces
+    pieces = NULL;
+    uint8_t numPieces = 0;
+    
+    // Pack the list of pieces
+    numPieces = (uint8_t)strlen(piecesStr);
+    size_t piecesSize = numPieces / 2;
+    if (numPieces % 2)
+        piecesSize++;
+
+    pieces = new uint8_t[piecesSize];
+
+    for (size_t i = 0; i < numPieces; i++)
+    {
+        uint8_t v = 0;
+        if (isxdigit(piecesStr[i]))
+        {
+            char ch = toupper(piecesStr[i]);
+            v = (uint8_t)(ch - '0');
+            if (ch >= 'A')
+                v -= (uint8_t)('A' - '0') - 10;
+        }
+        if (i % 2)
+            pieces[i/2] |= v;
+        else
+            pieces[i/2] = (v << 4);
+    }
+
+    numPlayers = defPlayers;
+}
+
+psMiniGameBoardDef::~psMiniGameBoardDef()
+{
+    if (layout)
+        delete[] layout;
+    if (pieces)
+        delete[] pieces;
+}
+
+void psMiniGameBoardDef::PackLayoutString(const char *layoutStr, uint8_t *packedLayout)
+{
+    for (size_t i = 0; i < strlen(layoutStr); i++)
+    {
+        uint8_t v = 0x0F;
+        if (isxdigit(layoutStr[i]))
+        {
+            char ch = toupper(layoutStr[i]);
+            v = (uint8_t)(ch - '0');
+            if (ch >= 'A')
+                v -= (uint8_t)('A' - '0') - 10;
+        }
+        if (i % 2)
+            packedLayout[i/2] |= v;
+        else
+            packedLayout[i/2] = (v << 4);
+    }
+}
+
 //---------------------------------------------------------------------------
 
 psMiniGameSession::psMiniGameSession(psMiniGameManager *mng, gemActionLocation *obj, const char *name)
@@ -291,6 +459,7 @@ psMiniGameSession::psMiniGameSession(psMiniGameManager *mng, gemActionLocation *
     currentCounter = 0;
     whitePlayerID = (uint32_t)-1;
     blackPlayerID = (uint32_t)-1;
+    toReset = false;
 }
 
 psMiniGameSession::~psMiniGameSession()
@@ -329,6 +498,8 @@ bool psMiniGameSession::Load(csString &responseString)
     Debug2(LOG_ANY, 0, "Loading minigame: %s", responseString.GetData());
 #endif
 
+    options = 0;
+
     if (!responseString.StartsWith("<Examine>", false))
     {
         Error2("Invalid response string for minigame %s.", name.GetData());
@@ -363,85 +534,50 @@ bool psMiniGameSession::Load(csString &responseString)
         return false;
     }
 
-    // Get the number of columns and rows
-    int cols = boardNode->GetAttributeValueAsInt("Cols");
-    int rows = boardNode->GetAttributeValueAsInt("Rows");
-    if (cols <= 0 || cols > 16 || rows <= 0 || rows > 16)
+    const char *gameName = boardNode->GetAttributeValue("Name");
+    psMiniGameBoardDef *gameBoardDef = manager->FindGameDef(gameName);
+    if (!gameBoardDef)
     {
-        Error2("Invalid number of columns or rows in minigame %s response string.", name.GetData());
+        Error2("Game board \"%s\" not defined.", gameName);
         return false;
     }
 
-    // Get the layout string
+    // Get the optional layout string; will override the default layout
     const char *layoutStr = boardNode->GetAttributeValue("Layout");
-    if (!layoutStr || strlen(layoutStr) != size_t(rows * cols))
+    uint8_t *layout = NULL;
+    if (layoutStr && strlen(layoutStr) != size_t(gameBoardDef->GetRows() * gameBoardDef->GetCols()))
     {
-        Error2("Invalid layout string in minigame %s response string.", name.GetData());
+        Error2("Layout string in action_location minigame %s response string invalid. Using default.", gameName);
+    }
+    else if (layoutStr)
+    {
+        layout = new uint8_t[gameBoardDef->GetLayoutSize()];
+        gameBoardDef->PackLayoutString(layoutStr, layout);
+    }
+
+    // get the session type. "Personal" means a minigame session per player; each player gets their
+    // own personal session (i.e. no watchers, and restricted to single player games). Expected application
+    // for personal minigames is in-game puzzles, including quest steps maybe.
+    // "Public" is the more traditional, two player leisure games, such as Groffels Toe.
+    csString sessionStr(boardNode->GetAttributeValue("Session"));
+    if (sessionStr.Downcase() == "personal")
+    {
+        options |= PersonalGame;
+    }
+    else if (sessionStr.Length() > 0 && sessionStr.Downcase() != "public")
+    {
+        Error2("Session setting for minigame %s invalid. Defaulting to \'Public\'", gameName);
+    }
+    
+    // Setup the game board
+    gameBoard.Setup(gameBoardDef, layout);
+
+    // if session is personal, check its a 1-player game
+    if ((options & PersonalGame) && gameBoard.GetNumPlayers() > 1)
+    {
+        Error2("Personal game %s has 2 or more players, which is untenable.", gameName);
         return false;
     }
-
-    int layoutSize = cols * rows / 2;
-    if ((cols * rows % 2) != 0)
-        layoutSize++;
-
-    // Convert the layout string into a packed binary array
-    uint8_t *layout = new uint8_t[layoutSize];
-    for (size_t i = 0; i < strlen(layoutStr); i++)
-    {
-        uint8_t v = 0x0F;
-        if (isxdigit(layoutStr[i]))
-        {
-            char ch = toupper(layoutStr[i]);
-            v = (uint8_t)(ch - '0');
-            if (ch >= 'A')
-                v -= (uint8_t)('A' - '0') - 10;
-        }
-        if (i % 2)
-            layout[i/2] |= v;
-        else
-            layout[i/2] = (v << 4);
-    }
-
-    // Get the list of available pieces
-    uint8_t *pieces = NULL;
-    uint8_t numPieces = 0;
-    const char *piecesStr = boardNode->GetAttributeValue("Pieces");
-
-    // Pack the list of pieces
-    if (piecesStr)
-    {
-        numPieces = (uint8_t)strlen(piecesStr);
-        size_t piecesSize = numPieces / 2;
-        if (numPieces % 2)
-            piecesSize++;
-
-        pieces = new uint8_t[piecesSize];
-
-        for (size_t i = 0; i < numPieces; i++)
-        {
-            uint8_t v = 0;
-            if (isxdigit(piecesStr[i]))
-            {
-                char ch = toupper(piecesStr[i]);
-                v = (uint8_t)(ch - '0');
-                if (ch >= 'A')
-                    v -= (uint8_t)('A' - '0') - 10;
-            }
-            if (i % 2)
-                pieces[i/2] |= v;
-            else
-                pieces[i/2] = (v << 4);
-        }
-    }
-
-    options = 0;
-
-    // Setup the game board
-    gameBoard.Setup(cols, rows, layout, numPieces, pieces);
-
-    delete[] layout;
-    if (pieces)
-        delete[] pieces;
 
     return true;
 }
@@ -475,8 +611,8 @@ void psMiniGameSession::AddPlayer(Client *client)
         newmsg.Multicast(client->GetActor()->GetMulticastClients(), 0, CHAT_SAY_RANGE);
     }
 
-    // Or if there is no player with black pieces, give black pieces
-    else if (blackPlayerID == (uint32_t)-1)
+    // Or if there is no player with black pieces, and its a 2-player game, give black pieces
+    else if (blackPlayerID == (uint32_t)-1 && gameBoard.GetNumPlayers() >= 2)
     {
         blackPlayerID = clientID;
 
@@ -553,7 +689,6 @@ void psMiniGameSession::RemovePlayer(Client *client)
 #ifdef DEBUG_MINIGAMES
     Debug3(LOG_ANY, 0, "Removed player %u from the game session \"%s\"\n", clientID, name.GetData());
 #endif
-
 }
 
 void psMiniGameSession::Send(uint32_t clientID, uint32_t modOptions)
@@ -724,68 +859,51 @@ void psMiniGameSession::Idle()
     }
 }
 
+bool psMiniGameSession::GameSessionActive(void)
+{
+    return ((whitePlayerID!=(uint32_t)-1) || (blackPlayerID!=(uint32_t)-1) || !watchers.IsEmpty());
+}
+
+bool psMiniGameSession::IsSessionPublic(void)
+{
+    return !(options & PersonalGame);
+}
 
 //---------------------------------------------------------------------------
 
 psMiniGameBoard::psMiniGameBoard()
-    : layout(0), pieces(0)
+    : layout(0)
 {
-    cols = 0;
-    rows = 0;
-    numPieces = 0;
 }
 
 psMiniGameBoard::~psMiniGameBoard()
 {
     if (layout)
         delete[] layout;
-    if (pieces)
-        delete[] pieces;
 }
 
-void psMiniGameBoard::Setup(int8_t newCols, int8_t newRows, uint8_t *newLayout,
-                            uint8_t newNumPieces, uint8_t *newPieces)
+void psMiniGameBoard::Setup(psMiniGameBoardDef *newGameDef, uint8_t *preparedLayout)
 {
     // Delete the previous layout
     if (layout)
         delete[] layout;
 
-    cols = newCols;
-    rows = newRows;
+    gameBoardDef = newGameDef;
 
-    // Calculate the number of bytes needed for the packed layout buffer
-    size_t layoutSize = cols * rows / 2;
-    if (cols * rows % 2 != 0)
-        layoutSize++;
+    layout = new uint8_t[gameBoardDef->layoutSize];
 
-    layout = new uint8_t[layoutSize];
-
-    memcpy(layout, newLayout, layoutSize);
-
-    // Delete the previous list of pieces
-    if (pieces)
-        delete[] pieces;
-
-    numPieces = newNumPieces;
-    size_t piecesSize = newNumPieces/2;
-    if (newNumPieces % 2)
-        piecesSize++;
-
-    if (piecesSize > 0)
-    {
-        pieces = new uint8_t[piecesSize];
-        memcpy(pieces, newPieces, piecesSize);
-    }
+    if (!preparedLayout)
+        memcpy(layout, gameBoardDef->layout, gameBoardDef->layoutSize);
     else
-        pieces = NULL;
+        memcpy(layout, preparedLayout, gameBoardDef->layoutSize);
 }
 
 uint8_t psMiniGameBoard::Get(int8_t col, int8_t row) const
 {
-    if (col < 0 || col >= cols || row < 0 || row >= rows || !layout)
+    if (col < 0 || col >= gameBoardDef->cols || row < 0 || row >= gameBoardDef->rows || !layout)
         return DisabledTile;
 
-    int idx = row*cols + col;
+    int idx = row*gameBoardDef->cols + col;
     uint8_t v = layout[idx/2];
     if (idx % 2)
         return v & 0x0F;
@@ -795,10 +913,10 @@ uint8_t psMiniGameBoard::Get(int8_t col, int8_t row) const
 
 void psMiniGameBoard::Set(int8_t col, int8_t row, uint8_t state)
 {
-    if (col < 0 || col >= cols || row < 0 || row >= rows || !layout)
+    if (col < 0 || col >= gameBoardDef->cols || row < 0 || row >= gameBoardDef->rows || !layout)
         return;
 
-    int idx = row*cols + col;
+    int idx = row*gameBoardDef->cols + col;
     uint8_t v = layout[idx/2];
     if (idx % 2)
     {

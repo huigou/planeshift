@@ -42,18 +42,29 @@ class gemActionLocation;
 class gemObject;
 
 /**
- * Wrapper class for the game board layout buffer.
+ * Game board limits
  */
-class psMiniGameBoard
+#define GAMEBOARD_MIN_COLS 0
+#define GAMEBOARD_MAX_COLS 16
+#define GAMEBOARD_MIN_ROWS 0
+#define GAMEBOARD_MAX_ROWS 16
+
+#define GAMEBOARD_MIN_PLAYERS 1
+#define GAMEBOARD_MAX_PLAYERS 2
+#define GAMEBOARD_DEFAULT_PLAYERS 2
+
+/**
+ * Game board definition class.
+ */
+class psMiniGameBoardDef
 {
+    friend class psMiniGameBoard;
+
 public:
 
-    psMiniGameBoard();
+    psMiniGameBoardDef(csString defName, const int8_t defCols, const int8_t defRows, const char *defLayout, const char *defPieces, const int8_t defPlayers);
 
-    ~psMiniGameBoard();
-
-    /// Sets up the game board layout.
-    void Setup(int8_t newCols, int8_t newRows, uint8_t *newLayout, uint8_t newNUmPieces, uint8_t *newPieces);
+    ~psMiniGameBoardDef();
 
     /// Returns the number of columns.
     int8_t GetCols() const { return cols; }
@@ -61,24 +72,18 @@ public:
     /// Returns the number of rows.
     int8_t GetRows() const { return rows; }
 
-    /// Returns the packed game board layout.
-    uint8_t *GetLayout() const { return layout; };
+    /// returns layout size
+    int GetLayoutSize() const { return layoutSize; };
 
-    /// Returns the number of available pieces.
-    uint8_t GetNumPieces() const { return numPieces; }
+    /// pack string layout into binary array
+    void PackLayoutString(const char *layoutStr, uint8_t *packedLayout);
 
-    /// Returns the package list of available pieces.
-    uint8_t *GetPieces() const { return pieces; }
+private:
 
-    /// Gets the tile state from the specified column and row.
-    uint8_t Get(int8_t col, int8_t row) const;
+    /// layout size
+    int layoutSize;
 
-    /// Sets the tile state at the specified column and row.
-    void Set(int8_t col, int8_t row, uint8_t state);
-
-protected:
-
-    /// The current game board layout with tiles and pieces.
+    /// The initial game board layout with tiles and pieces.
     uint8_t *layout;
         
     /// The number of columns.
@@ -90,9 +95,56 @@ protected:
     /// The number of available pieces.
     uint8_t numPieces;
 
-    /// The package list of available gane pieces.
+    /// The package list of available game pieces.
     uint8_t *pieces;
 
+    int8_t numPlayers;
+};
+
+/**
+ * Wrapper class for the game board layout buffer.
+ */
+class psMiniGameBoard
+{
+public:
+
+    psMiniGameBoard();
+
+    ~psMiniGameBoard();
+
+    /// Sets up the game board layout.
+    void Setup(psMiniGameBoardDef *newGameDef, uint8_t *preparedLayout);
+
+    /// Returns the number of columns.
+    int8_t GetCols() const { return gameBoardDef->cols; }
+    
+    /// Returns the number of rows.
+    int8_t GetRows() const { return gameBoardDef->rows; }
+
+    /// Returns the packed game board layout.
+    uint8_t *GetLayout() const { return layout; };
+
+    /// Returns the number of available pieces.
+    uint8_t GetNumPieces() const { return gameBoardDef->numPieces; }
+
+    /// Returns the package list of available pieces.
+    uint8_t *GetPieces() const { return gameBoardDef->pieces; }
+
+    /// Gets the tile state from the specified column and row.
+    uint8_t Get(int8_t col, int8_t row) const;
+
+    /// Sets the tile state at the specified column and row.
+    void Set(int8_t col, int8_t row, uint8_t state);
+
+    int8_t GetNumPlayers(void) { return gameBoardDef->numPlayers; };
+
+protected:
+
+    /// The current game board layout with tiles and pieces.
+    uint8_t *layout;
+        
+    /// game board definition
+    psMiniGameBoardDef *gameBoardDef;
 };
 
 /**
@@ -101,18 +153,23 @@ protected:
  * Game sessions are bound to a game board (action location) and identified
  * by a unique name. The name of the game board is defined in the action_locations table (name field).
  *
- * The game itself is defined in the response string. The string is expected to have the
+ * The game itself is defined in the gameboards db table. 
+ * The response string specifies the name to the record in gameboards
+ * and an optional prepared layout & is expected to have the
  * following format:
  * <Examine>
- *  <GameBoard Cols='number of columns' Rows='number of rows' Layout='board layout' Pieces='list of pieces' />
+ *  <GameBoard Name='gameboard name' [Layout='board layout'] [Session=personal|public] />
  *  <Description>Description as seen by players</Description>
  * </Examine>
  *
  * The Layout attribute defines the layout of the game board and optionally also preset game
- * pieces on it.
+ * pieces on it. Optional - to override the default.
  *
- * The Pieces attribute defines the available game pieces. Clients can use only the pieces that are
- * defined in the Pieces attribute.
+ * The Session attribute allows a game to be personal (restricted to one-player games)
+ * whereby only the player sees the game, no other players or watchers. One such
+ * minigame at one action_location can spawn a session per player who plays their own
+ * private game. Set to public is for the traditional board game, and is the default if
+ * this option is omitted.
  *
  * In the future we will add more attributes like for game options and name of a plugin or
  * script for managed games.
@@ -178,6 +235,15 @@ public:
     /// Checks for idle players and players too far away
     void Idle();
 
+    /// Checks if game is actually active at all
+    bool GameSessionActive(void);
+
+    void SetSessionReset(void) { toReset = true; }
+
+    bool GetSessionReset(void) { return toReset; }
+
+    bool IsSessionPublic(void);
+
 protected:
 
     /// Game manager.
@@ -215,6 +281,9 @@ protected:
 
     /// The current game board.
     psMiniGameBoard gameBoard;
+
+    /// if game session marked for reset
+    bool toReset;
 };
 
 
@@ -237,19 +306,35 @@ public:
     /// Idle function to check for idle players and players too far away.
     void Idle();
 
+    /// Initialise Mini Game manager
+    bool Initialise();
+
+    /// Find & return game board definition
+    psMiniGameBoardDef *FindGameDef(csString gameName);
+
+    /// reset all sessions, prob due to reloading action locations
+    void ResetAllGameSessions(void);
+
 protected:
 
     void HandleStartGameRequest(Client *client);
 
     void HandleStopGameRequest(Client *client);
 
+    void RemovePlayerFromSessions(psMiniGameSession *session, Client *client, uint32_t clientID);
+
     void HandleGameUpdate(Client *client, psMGUpdateMessage &msg);
+
+    void ResetGameSession(psMiniGameSession *sessionToReset);
 
     /// Game sessions.
     csPDelArray<psMiniGameSession> sessions;
 
     /// Maps players to game sessions for quicker access.
     csHash<psMiniGameSession *, uint32_t> playerSessions;
+
+    /// Minigame board definitions by name
+    csHash<psMiniGameBoardDef *, csString> gameBoardDef;
 };
 
 

@@ -1,3 +1,13 @@
+*** 2008-10-14 by Dave Bentham
+- Minigames moved to own database table. 
+- DB VER BUMPED.
+- Minigames with variable number of players. So far can be 1 or 2.
+- Action location reloaded via GM GUI now affects minigames - either
+  immediately, or if in play, when play ended.
+- Minigames can be configured as personal or public in their action_locations XML description:
+  Session=Personal or Public [default]. Personal minigames invokes one game session per
+  player, is restricted to one-player game definitions and does not permit watchers.
+
 *** 2008-10-13 by Dave Bentham
 - WRITEABLE flag used in Maps - consistent with books.
 

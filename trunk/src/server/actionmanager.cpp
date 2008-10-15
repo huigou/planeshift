@@ -62,6 +62,7 @@
 #include "entitymanager.h"
 #include "progressionmanager.h"
 #include "adminmanager.h"
+#include "minigamemanager.h"
 
 
 psActionTimeoutGameEvent::psActionTimeoutGameEvent( ActionManager *mgr, const psActionLocation * actionLocation, size_t clientnum)
@@ -676,6 +677,9 @@ void ActionManager::HandleReloadMessage(Client * client)
         psActionLocation* actionLocation = it.Next ();
         delete actionLocation;
     }
+
+    // reset game sessions
+    psserver->GetMiniGameManager()->ResetAllGameSessions();
 
     actionLocationList.DeleteAll();
     actionLocation_by_sector.DeleteAll();
