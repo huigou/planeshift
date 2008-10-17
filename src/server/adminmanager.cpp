@@ -7385,7 +7385,20 @@ void AdminManager::HandleBadText(psAdminCmdMessage& msg, AdminCmdData& data, Cli
 
 void AdminManager::HandleCompleteQuest(MsgEntry* me,psAdminCmdMessage& msg, AdminCmdData& data, Client *client, Client *subject)
 {
-    Client *target = subject ? subject : client;
+    Client *target; //holds the target of our query
+    if(!subject)    //the target was empty check if it was because it's a command targetting the issuer or an offline player
+    {
+        if(data.player.Length()) //if there is a name or whathever after the command it means the player is offline
+        {
+            psserver->SendSystemError(me->clientnum,"Unable to manage quests: player %s is offline!",data.player.GetData());
+            return; //alert and get out of here till offline support is added
+        }
+        target = client; //the issuer didn't provide a name so do this on him/herself
+    }
+    else
+    {
+        target = subject; //all's normal just get the target
+    }
 
     // Security levels involved:
     // "/quest"              gives access to list and change your own quests.

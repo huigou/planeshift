@@ -1,3 +1,7 @@
+*** 2008-10-17 by Stefano Angeleri
+- Added a message in case the player is offline for /quest in accordance to FS#1320
+  at least till the offline version is implemented
+
 *** 2008-10-14 by Dave Bentham
 - Minigames moved to own database table. 
 - DB VER BUMPED.
