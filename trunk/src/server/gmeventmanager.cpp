@@ -923,8 +923,11 @@ void GMEventManager::RewardPlayer(int clientnum, Client* target, short stackCoun
     {
         // inform recipient of their prize
         psserver->SendSystemInfo(target->GetClientNum(),
-                                 "You have been rewarded for participating in this GM event.");
-        psserver->SendSystemInfo(clientnum, "%s has been rewarded.", target->GetName());
+                                 "You have been rewarded %d %s%s for participating in this event.",
+                                 stackCount, basestats->GetName(), (stackCount>1)?"s":"");
+        psserver->SendSystemInfo(clientnum, "%s has been rewarded %d %s%s.",
+                                 target->GetName(), stackCount,
+                                 basestats->GetName(), (stackCount>1)?"s":"");
         return;
     }
 
@@ -975,7 +978,20 @@ void GMEventManager::DiscardGMEvent(Client* client, int eventID)
     // attempt to remove player from event...
     if ((runningEventID == eventID || completedEventIDs.Find(eventID) != csArrayItemNotFound) && gmEvent)
     {
-        RemovePlayerRefFromGMEvent(gmEvent, client, playerID);
+        if (RemovePlayerRefFromGMEvent(gmEvent, client, playerID))
+            psserver->SendSystemInfo(client->GetClientNum(),
+                                     "You have discarded the \'%s\' event.",
+                                     gmEvent->eventName.GetDataSafe());
+
+        ClientConnectionSet *clientConnections = psserver->GetConnections();
+        Client *target = clientConnections->FindPlayer(gmEvent->gmID);
+        if (target)
+        {
+            psserver->SendSystemInfo(target->GetClientNum(),
+                                     "%s has discarded the \'%s\' event.",
+                                     client->GetName(),
+                                     gmEvent->eventName.GetDataSafe());
+        }
     }
     else
     {
