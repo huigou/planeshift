@@ -7386,18 +7386,60 @@ void AdminManager::HandleBadText(psAdminCmdMessage& msg, AdminCmdData& data, Cli
 void AdminManager::HandleCompleteQuest(MsgEntry* me,psAdminCmdMessage& msg, AdminCmdData& data, Client *client, Client *subject)
 {
     Client *target; //holds the target of our query
+    bool isOnline = true;
+    int pid = 0; //used to keep player pid used *only* in offline queries
+    csString name; //stores the char name
     if(!subject)    //the target was empty check if it was because it's a command targetting the issuer or an offline player
     {
         if(data.player.Length()) //if there is a name or whathever after the command it means the player is offline
         {
-            psserver->SendSystemError(me->clientnum,"Unable to manage quests: player %s is offline!",data.player.GetData());
-            return; //alert and get out of here till offline support is added
+            isOnline = false; //notify the rest of code that the player is offline
+
+            if (data.player.StartsWith("pid:",true) && data.player.Length() > 4) // Find by player ID, this is useful only if offline
+            {
+                pid = atoi( data.player.Slice(4).GetData() );
+                //get the name of the char from db
+                Result result(db->Select("SELECT name FROM characters where id=%u",pid));
+                if (!result.IsValid() && !result.Count())
+                {
+                    psserver->SendSystemError(me->clientnum,"No online or offline player found with pid '%u'!",pid);
+                    return;
+                }
+                name = result[0]["name"];
+            }
+            else //try to get the pid from the name
+            {
+                name = NormalizeCharacterName(data.player);
+                Result result(db->Select("SELECT id FROM characters where name='%s'",name.GetData()));
+                if (!result.IsValid() || result.Count() == 0) //nothing here, try with another name
+                {
+                    psserver->SendSystemError(me->clientnum,"No online or offline player found with the name '%s'!",name.GetData());
+                    return;
+                }
+                else if (result.Count() != 1) //more than one result it means we have duplicates, refrain from continuing
+                {
+                    psserver->SendSystemError(me->clientnum,"Multiple characters with same name '%s'. Use pid.",name.GetData());
+                    return;
+                }
+                pid = result[0].GetUInt32("id");
+            }
+
+            if (!pid)
+            {
+                psserver->SendSystemError(me->clientnum,"Error, bad PID");
+                return;
+            }
         }
-        target = client; //the issuer didn't provide a name so do this on him/herself
+        else
+        {
+            target = client; //the issuer didn't provide a name so do this on him/herself
+            name = target->GetName();
+        }
     }
     else
     {
         target = subject; //all's normal just get the target
+        name = target->GetName();
     }
 
     // Security levels involved:
@@ -7418,13 +7460,23 @@ void AdminManager::HandleCompleteQuest(MsgEntry* me,psAdminCmdMessage& msg, Admi
         psQuest *quest = CacheManager::GetSingleton().GetQuestByName(data.text);
         if (!quest)
         {
-            psserver->SendSystemError(me->clientnum, "Quest not found for %s", target->GetName());
+            psserver->SendSystemError(me->clientnum, "Quest not found for %s", name.GetData());
             return;
         }
-        target->GetActor()->GetCharacterData()->AssignQuest(quest, 0);
-        if (target->GetActor()->GetCharacterData()->CompleteQuest(quest))
+
+        if(isOnline)
         {
-            psserver->SendSystemInfo(me->clientnum, "Quest %s completed for %s!", data.text.GetData(), target->GetName());
+
+
+            target->GetActor()->GetCharacterData()->AssignQuest(quest, 0);
+            if (target->GetActor()->GetCharacterData()->CompleteQuest(quest))
+            {
+                psserver->SendSystemInfo(me->clientnum, "Quest %s completed for %s!", data.text.GetData(), name.GetData());
+            }
+        }
+        else
+        {
+            psserver->SendSystemError(me->clientnum,"Unable to complete quests: player %s is offline!", name.GetData());
         }
     }
     else if (data.subCmd == "discard")
@@ -7438,33 +7490,68 @@ void AdminManager::HandleCompleteQuest(MsgEntry* me,psAdminCmdMessage& msg, Admi
         psQuest *quest = CacheManager::GetSingleton().GetQuestByName(data.text);
         if (!quest)
         {
-            psserver->SendSystemError(me->clientnum, "Quest not found for %s!", target->GetName());
-            return;
+                psserver->SendSystemError(me->clientnum, "Quest not found for %s!", name.GetData());
+                return;
         }
-        QuestAssignment *questassignment = target->GetActor()->GetCharacterData()->IsQuestAssigned(quest->GetID());
-        if (!questassignment)
+
+        if(isOnline)
         {
-            psserver->SendSystemError(me->clientnum, "Quest was never started for %s!", target->GetName());
-            return;
+
+            QuestAssignment *questassignment = target->GetActor()->GetCharacterData()->IsQuestAssigned(quest->GetID());
+            if (!questassignment)
+            {
+                psserver->SendSystemError(me->clientnum, "Quest was never started for %s!", name.GetData());
+                return;
+            }
+            target->GetActor()->GetCharacterData()->DiscardQuest(questassignment, true);
+            psserver->SendSystemInfo(me->clientnum, "Quest %s discarded for %s!", data.text.GetData(), name.GetData());
         }
-        target->GetActor()->GetCharacterData()->DiscardQuest(questassignment, true);
-        psserver->SendSystemInfo(me->clientnum, "Quest %s discarded for %s!", data.text.GetData(), target->GetName());
+        else
+        {
+            Result result(db->Select("DELETE FROM character_quests WHERE player_id=%u AND quest_id=%u",pid, quest->GetID()));
+            if (result.IsValid())
+            {
+                psserver->SendSystemInfo(me->clientnum, "Quest %s discarded for %s!", data.text.GetData(), name.GetData());
+            }
+            else
+            {
+                psserver->SendSystemError(me->clientnum, "Quest was never started for %s!", name.GetData());
+            }
+        }
     }
     else // assume "list" (even if it isn't)
     {
-        if (target != client && !listOthers)
+        if (target != client && !listOthers)//the first part will evaluate as true if offline which is fine for us
         {
             psserver->SendSystemError(client->GetClientNum(), "You don't have permission to list other players' quests.");
             return;
         }
 
-        psserver->SendSystemError(me->clientnum, "Quest list of %s!", target->GetName());
+        psserver->SendSystemInfo(me->clientnum, "Quest list of %s!", name.GetData());
 
-        csArray<QuestAssignment*> quests = target->GetCharacterData()->GetAssignedQuests();
-        for (size_t i = 0; i < quests.GetSize(); i++)
+        if(isOnline) //our target is online
         {
-            QuestAssignment *currassignment = quests.Get(i);
-            psserver->SendSystemInfo(me->clientnum, "Quest name: %s. Status: %c", currassignment->GetQuest()->GetName(), currassignment->status);
+
+
+            csArray<QuestAssignment*> quests = target->GetCharacterData()->GetAssignedQuests();
+            for (size_t i = 0; i < quests.GetSize(); i++)
+            {
+                QuestAssignment *currassignment = quests.Get(i);
+                psserver->SendSystemInfo(me->clientnum, "Quest name: %s. Status: %c", currassignment->GetQuest()->GetName(), currassignment->status);
+            }
+        }
+        else //our target is offline access the db then...
+        {
+            //get the quest list from the player and their status
+            Result result(db->Select("SELECT quest_id, status FROM character_quests WHERE player_id=%u",pid));
+            if (result.IsValid()) //we got a good result
+            {
+                for(uint currResult = 0; currResult < result.Count(); currResult++) //iterate the results and output info about the quest
+                {
+                    psQuest* currQuest = CacheManager::GetSingleton().GetQuestByID(result[currResult].GetUInt32("quest_id"));
+                    psserver->SendSystemInfo(me->clientnum, "Quest name: %s. Status: %s", currQuest->GetName(), result[currResult]["status"]);
+                }
+            }
         }
     }
 }
