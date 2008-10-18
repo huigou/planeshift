@@ -1006,6 +1006,16 @@ CREATE TABLE gameboards
 );
 UPDATE `server_options` SET `option_value`='1199' WHERE `option_name`='db_version';
 
+### 1200 - Jochen 'peeg' Woidich - add support for sectors where dropped items do not get deleted after some time
+ALTER TABLE `sectors` ADD `non_transient_objects` TINYINT NOT NULL DEFAULT '0' AFTER `collide_objects` ;
+UPDATE sectors SET non_transient_objects = 1 WHERE name = 'guildlaw';
+UPDATE sectors SET non_transient_objects = 1 WHERE name = 'guildsimple';
+UPDATE sectors SET non_transient_objects = 1 WHERE name = 'NPCRoom';
+UPDATE sectors SET non_transient_objects = 1 WHERE name = 'NPCRoom1';
+UPDATE sectors SET non_transient_objects = 1 WHERE name = 'NPCRoom2';
+UPDATE sectors SET non_transient_objects = 1 WHERE name = 'NPCRoom3';
+UPDATE `server_options` SET `option_value`='1200' WHERE `option_name`='db_version';
+
 # Insert your upgrade before this line. Remember when you set a new db_version
 # to update the server_options.sql file and update psserver.cpp as well.
 # This to ensure that everything is working if you use the create_all.sql to

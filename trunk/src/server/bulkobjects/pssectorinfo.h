@@ -55,7 +55,9 @@ public:
     unsigned int GetRandomRainFadeIn();
     unsigned int GetRandomRainFadeOut();
     unsigned int GetRandomLightningGap();
+
     bool GetIsColliding() { return is_colliding; }
+    bool GetIsNonTransient() { return is_non_transient; }
     
     unsigned int uid;
     csString  name;
@@ -71,6 +73,7 @@ public:
     bool is_raining;
     bool is_snowing;
     bool is_colliding;
+    bool is_non_transient;
 
     // Fog
     unsigned int fog_density, fog_density_old;
@@ -84,4 +87,5 @@ public:
 
 
 #endif
+
 
