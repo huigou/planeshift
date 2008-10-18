@@ -118,7 +118,7 @@ void pawsDetailWindow::HandleMessage( MsgEntry* me )
             && msg.requestor!="ShowDetailsOp")
             return;
 
-        //Begin sentense
+        //Begin sentence
         csString str("You see a ");
 
         //Add gender

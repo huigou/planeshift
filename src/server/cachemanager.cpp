@@ -483,6 +483,7 @@ bool CacheManager::PreloadSectors()
         CS_ASSERT(newsector->rain_min_fade_out <= newsector->rain_max_fade_out);
 
         newsector->is_colliding = (result[currentrow].GetInt("collide_objects") != 0);
+        newsector->is_non_transient = (result[currentrow].GetInt("non_transient_objects") != 0);
 
         newsector->god_name = result[currentrow]["god_name"];
 

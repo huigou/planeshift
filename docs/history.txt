@@ -1,3 +1,6 @@
+﻿*** 2008-10-18 by Steven Patrick
+- Fixed FS#2250 - no transient in guildhouses!, patch by peeg.
+
 *** 2008-10-17 by Dave Bentham
 - Couple of improvements to /event info logs (FS#2327).
 

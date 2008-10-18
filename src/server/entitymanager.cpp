@@ -863,8 +863,11 @@ gemObject *EntityManager::CreateItem( psItem *& iteminstance, bool transient )
     // Won't create item if gemItem entity was not created
     //CS_ASSERT(obj->GetEntity() != NULL);
     
-    if (transient)
+    if (transient && !sectorinfo->GetIsNonTransient())
+    {
+        // don't create removal events for items in e.g guildhalls
         iteminstance->ScheduleRemoval();
+    }
 
     csReversibleTransform revTransform;
     iMeshWrapper *mesh = obj->GetMeshWrapper();
