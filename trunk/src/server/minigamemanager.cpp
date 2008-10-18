@@ -749,6 +749,8 @@ bool psMiniGameSession::IsValidToUpdate(Client *client) const
 
 void psMiniGameSession::Update(Client *client, psMGUpdateMessage &msg)
 {
+    uint32_t clientnum = client->GetClientNum();
+
     // Verify the message version
     if (!msg.IsNewerThan(currentCounter))
     {
@@ -761,16 +763,16 @@ void psMiniGameSession::Update(Client *client, psMGUpdateMessage &msg)
     // Verify range
     if (client->GetActor()->RangeTo(actionObject, true) > RANGE_TO_LOOT)
     {
-        psserver->SendSystemError(client->GetClientNum(), "You are not in range to play %s!",
+        psserver->SendSystemError(clientnum, "You are not in range to play %s!",
                                   name.GetData());
 
         // Reset the client's game board
-        if (client->GetClientNum() == whitePlayerID)
+        if (clientnum == whitePlayerID)
             Send(whitePlayerID, 0);
-        else if (client->GetClientNum() == blackPlayerID)
+        else if (clientnum == blackPlayerID)
             Send(blackPlayerID, BlackPieces);
         else
-            Send(client->GetClientNum(), ReadOnly);
+            Send(clientnum, ReadOnly);
 
         return;
     }
@@ -782,13 +784,32 @@ void psMiniGameSession::Update(Client *client, psMGUpdateMessage &msg)
     }
 
     // Update idle counters
-    if (client->GetClientNum() == whitePlayerID)
+    if (clientnum == whitePlayerID)
         whiteIdleCounter = MINIGAME_IDLE_TIME;
-    else if (client->GetClientNum() == blackPlayerID)
+    else if (clientnum == blackPlayerID)
         blackIdleCounter = MINIGAME_IDLE_TIME;
 
     // Broadcast the new game board layout
     Broadcast();
+
+    // broadcast the move info too
+    csString movedText = GetName() + csString(": ") + csString(client->GetName()) + 
+                         csString((clientnum==whitePlayerID)?" (white)":" (black)") + csString(" has moved.");
+    if (clientnum == whitePlayerID && blackPlayerID != (uint32_t)-1)
+    {
+        psserver->SendSystemInfo(blackPlayerID, movedText);
+    }
+    else if (clientnum == blackPlayerID && whitePlayerID != (uint32_t)-1)
+    {
+        psserver->SendSystemInfo(whitePlayerID, movedText);
+    }
+    csArray<uint32_t>::Iterator iter = watchers.GetIterator();
+    while (iter.HasNext())
+    {
+        uint32_t id = iter.Next();
+        if (movedText && id != (uint32_t)-1)
+            psserver->SendSystemInfo(id, movedText);
+    }
 }
 
 void psMiniGameSession::DeleteObjectCallback(iDeleteNotificationObject * object)
