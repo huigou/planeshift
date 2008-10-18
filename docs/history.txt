@@ -1,4 +1,7 @@
-﻿*** 2008-10-18 by Steven Patrick
+﻿*** 2008-10-18 by Dave Bentham
+- Minigames: added feedback to watchers when moves made.
+
+*** 2008-10-18 by Steven Patrick
 - Fixed FS#2250 - no transient in guildhouses!, patch by peeg.
 
 *** 2008-10-17 by Dave Bentham
@@ -10,7 +13,7 @@
 - Some fixes in help.xml (missing name)
 - Added offline support in /quest for list and discard. (FS#1320)
 
-*** 2008-10-14 by Dave Bentham
+*** 2008-10-15 by Dave Bentham
 - Minigames moved to own database table. 
 - DB VER BUMPED.
 - Minigames with variable number of players. So far can be 1 or 2.
