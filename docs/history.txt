@@ -1,3 +1,6 @@
+*** 2008-10-20 by Stefano Angeleri
+- Added public maps to trunk db fixing FS#1253
+
 ﻿*** 2008-10-18 by Dave Bentham
 - Minigames: added feedback to watchers when moves made.
 
