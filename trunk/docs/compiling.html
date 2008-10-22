@@ -49,7 +49,7 @@ e.custom(start,val,"");}});return true;});},queue:function(type,fn){if(jQuery.is
     var csWinLibsVersionStab = "1.3_004"; // cs win32 libs version.
     var csWinLibsVersion = "1.3_004"; // cs win32 libs version.
     //Update date and author, to be changed everytime and updates occurred
-    var UpdateDate = "30 Sep 2008"; //Date when the update occurred
+    var UpdateDate = "22 Oct 2008"; //Date when the update occurred
     var UpdateAuthor = "Caarrie"; //Author of the update
 -->
 </script>
@@ -352,6 +352,7 @@ $(document).ready(function(){
             with other free or open source software the majority of PlaneShift can be compiled
             under Windows without having to purchase any compiler or other licenses.<br><br>
 		<b>Credits</b><br>
+                Caarrie, Trying to maintain the guide;<br>
 		Arianna Benigno, maintained the guide;<br>
 		Rolenun, adjuster for good part of the content;<br>
 		Dave Garrett, author of the new compiling guides layout;<br>
@@ -363,6 +364,7 @@ $(document).ready(function(){
             need glut, Directx 9 SDK, and python. These features are not needed so they won't be
             covered here. As a result there will be some compilation errors due to missing files.<br><br>
 		<b>Credits</b><br>
+                Caarrie, Trying to maintain the guide;<br>
 		Arianna Benigno, maintained the guide;<br>
 		Rolenun, adjuster for good part of the content;<br>
 		Dave Garrett, author of the new compiling guides layout;<br>
@@ -376,6 +378,7 @@ $(document).ready(function(){
         to check out the source code and configure it. At the end there you will have a
         PlaneShift client and a PlaneShift updater application, and if you want also the server.<br><br>
 	  <b>Credits</b><br>
+          Caarrie, Trying to maintain the guide;<br>
 	  Arianna Benigno, maintained the guide;<br>
 	  Dave Garrett, author of the new compiling guides layout;<br>
 	  Andrew Craig, author of the first Linux guides that were available on <a href="http://laanx.fragnetics.com">Laanx website</a>;<br>
@@ -503,9 +506,6 @@ tar -xzf binutils-2.17.50-20060824-1.tar.gz -C /c/MinGW</div><br>
            Download the following dependencies from the same site, but do not install these yet. Their install instructions are included below.<br>
            From explorer, create and place these dependencies into C:\msys\1.0\src. Also, create the C:\msys\1.0\local directory.<br><br>
 
-           freetype-2.1.9-mingwPORT.tar.bz2 <br>
-           jpeg-6b-mingwPORT.tar.bz2<br>
-           zlib-1.2.3-mingwPORT-1.tar.bz2<br>
            wget-1.9.1-mingwPORT.tar.bz2<br>
        </p>
         The following dependencies use a scripted system to download and install them, built into their files.<br>
@@ -541,102 +541,6 @@ continue as indicated.<br></p>
             Installation directory? (/mingw) <br>
             CFLAGS (-O3 -s -mms-bitfields -march=i686) <br>
          </div></p>
-         <b>Installing zlib</b>
-         <p><div class="commandBox">
-             $ cd /usr/src<br>
-             $ tar -jxvf zlib-1.2.3-mingwPORT-1.tar.bz2 <br>
-             $ cd zlib-1.2.3/mingwPORT<br>
-             $ ./mingwPORT.sh<br>
-             Download file? (Yes) <br>
-             Download file URI? (http://www.zlib.net) <br>
-             Archive file type?<br>
-             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0) unknown<br>
-             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1) tar.gz<br>
-             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2) tgz<br>
-             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3) tar.bz2<br>
-             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;4) tbz2<br>
-             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;5) zip<br>
-             Select a numeric value: (3) <br>
-             Archive file? (zlib-1.2.3.tar.bz2) <br>
-             Download to path? (/tmp) /usr/src<br>
-             Source path? (/usr/src/zlib-1.2.3) <br>
-             Installation directory? (/mingw) <br>
-             CFLAGS (-O3 -s -mms-bitfields -march=i686) <br>
-         </div></p>
-         <b>Installing JPEG Support</b>
-         <p><div class="commandBox">
-         $ cd /usr/src<br>
-         $ tar -jxvf jpeg-6b-mingwPORT.tar.bz2 <br>
-         $ cd jpeg-6b/mingwPORT<br>
-         $ ./mingwPORT.sh<br>
-         Download file? (Yes) <br>
-         Download file URI? (ftp://ftp.uu.net/graphics/jpeg) <br>
-         Archive file type?<br>
-         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0) unknown<br>
-         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1) tar.gz<br>
-         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2) tgz<br>
-         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3) tar.bz2<br>
-         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;4) tbz2<br>
-         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;5) zip<br>
-         Select a numeric value: (1) <br>
-         Archive file? (jpegsrc.v6b.tar.gz) <br>
-         Download to path? (/tmp) /usr/src<br>
-         Source path? (/usr/src/jpeg-6b) <br>
-         Installation directory? (/mingw) <br>
-         CFLAGS (-O3 -s -mms-bitfields -march=i686) <br>
-         </div></p>
-         <b>Installing LibPNG Support</b><br>
-         Go to <a href="http://sourceforge.net/projects/libpng/">LibPNG's homepage</a> to get the latest source distribution.<br>
-         We'll be using libpng-1.2.29.tar.bz2<br>
-         Do not use the mingwPORT file. It is very outdated and no longer works.<br>
-         Put this file in the /usr/src directory as well.
-         <p><div class="commandBox">
-         $ cd /usr/src<br>
-         $ tar -jxvf libpng-1.2.29.tar.bz2 <br>
-         $ cd libpng-1.2.29<br>
-         $ ./configure<br>
-         $ make<br>
-         $ make install<br>
-         </div></p>
-         <b>Installing FreeType2 Support</b>
-         <p><div class="commandBox">
-         $ cd /usr/src<br>
-         $ tar -jxvf freetype-2.1.9-mingwPORT.tar.bz2<br>
-         $ cd freetype-2.1.9/mingwPORT<br>
-         $ ./mingwPORT.sh<br>
-         Download file? (Yes) <br>
-         SF Mirror (Yes) <br>
-         Which mirror from the list do you wish to use?<br>
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0) none (Oops, I wish to cancel)<br>
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1) jaist    (JP)<br>
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2) puzzle   (CH)<br>
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3) nchc     (TW)<br>
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;4) easynews (US)<br>
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;5) ovh      (FR)<br>
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;6) belnet   (BE)<br>
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;7) citkit   (RU)<br>
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;8) cogent   (US)<br>
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;9) voxel    (US)<br>
-           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;10) kent     (UK)<br>
-           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;11) heanet   (IE)<br>
-           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;12) switch   (CH)<br>
-           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;13) mesh     (DE)<br>
-           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;14) optusnet (AU)<br>
-        Select a numeric value: (0) 4<br>
-        Archive file type?<br>
-           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0) unknown<br>
-           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1) tar.gz<br>
-           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2) tgz<br>
-           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3) tar.bz2<br>
-           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;4) tbz2<br>
-           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;5) zip<br>
-        Select a numeric value: (3) 3<br>
-        Archive file? (freetype-2.1.9.tar.bz2) <br>
-        Download to path? (/tmp) /usr/src<br>
-        Source path? (/usr/src/freetype-2.1.9) <br>
-        Installation directory? (/mingw) <br>
-        CFLAGS (-O3 -s -mms-bitfields -march=i686) <br>
-        </div></p>
     </div>
 
     
@@ -683,41 +587,35 @@ continue as indicated.<br></p>
 <strong> BOTH of these above commands are assuming you do not need a server, if you do please follow directions in the <a href="#mysql">mysql</a> section for installing other required packages before moving on to building to save you time.</strong>
 </div>
 <div class="Linux-Ubuntu">
-    <p>The instructions here are tested using Ubuntu Feisty Fawn and Ubunty Gutsy Gibbons.<br>
-    Since Feisty Fawn and Gutsy Gibbons are installed by default with minimal packages, many required packages for this project are not available. <br>
+    <p>The instructions here are tested using Ubuntu Hardy Heron.<br>
+    Since Hardy Heron is installed by default with minimal packages, many required packages for this project are not available. <br>
     To correct this, you will first need to enable the universe and multiverse repositories.<br>
     To enable these, do the following:<br>
     <p><i class="command"># sudo gedit /etc/apt/sources.list</i></p>
-    Delete everything in the file that you have not added yourself. If you are not running Gutsy Gubbons, replace each instance of the word "gutsy" with the name of the distro you are using, i.e. hoary, warty, dapper, or edgy. Got that? Ok, Paste the following into the file and save it. Be sure to make the necessary changes if you are running a different version than Gutsy:<br>
+    Delete everything in the file that you have not added yourself. If you are not running Hard Heron, replace each instance of the word "hardy" with the name of the distro you are using, i.e. hoary, warty, dapper, or edgy. Got that? Ok, Paste the following into the file and save it. Be sure to make the necessary changes if you are running a different version than Hardy:<br>
     <p><div class="commandBox">
 		# Ubuntu supported packages<br>
 		# GPG key: 437D05B5<br>
-		deb http://us.archive.ubuntu.com/ubuntu gutsy main restricted<br>
-		deb http://us.archive.ubuntu.com/ubuntu gutsy-updates main restricted<br>
-		deb http://security.ubuntu.com/ubuntu gutsy-security main restricted<br><br>
+		deb http://us.archive.ubuntu.com/ubuntu hardy main restricted<br>
+		deb http://us.archive.ubuntu.com/ubuntu hardy-updates main restricted<br>
+		deb http://security.ubuntu.com/ubuntu hardy-security main restricted<br><br>
 
 		# Ubuntu community supported packages<br>
 		# GPG key: 437D05B5<br>
-		deb http://us.archive.ubuntu.com/ubuntu gutsy universe multiverse<br>
-		deb http://us.archive.ubuntu.com/ubuntu gutsy-updates universe multiverse<br>
-		deb http://security.ubuntu.com/ubuntu gutsy-security universe multiverse<br><br>
+		deb http://us.archive.ubuntu.com/ubuntu hardy universe multiverse<br>
+		deb http://us.archive.ubuntu.com/ubuntu hardy-updates universe multiverse<br>
+		deb http://security.ubuntu.com/ubuntu hardy-security universe multiverse<br><br>
 
 		# Ubuntu backports project<br>
 		# GPG key: 437D05B5<br>
-		deb http://us.archive.ubuntu.com/ubuntu gutsy-backports main restricted universe multiverse<br>
+		deb http://us.archive.ubuntu.com/ubuntu hardy-backports main restricted universe multiverse<br>
         </div></p><br>    
 	Now we need to double check that the gpg keys are added correctly to avoid gpg errors. Sounds scary, but worry not! All it takes is one simple command:<br>
     <p><i class="command"># gpg --keyserver hkp://subkeys.pgp.net --recv-keys 437D05B5 &&  gpg --export --armor 437D05B5 | sudo apt-key add -</i></p>
 After that we need to refresh our sources.list file like so:<br>
     <p><i class="command"># sudo apt-get update</i></p>
     Once that is complete, we can fetch all the required packages using the following command:<br>
-    <p><div class="commandBox"># sudo apt-get --assume-yes install libjpeg62-dev x11proto-gl-dev autoconf jam bison flex-old automake1.9 libmng-dev libmikmod2-dev libogg-dev libvorbis-dev zlib1g-dev libpng12-dev build-essential libtool libglu1-mesa-dev xserver-xorg-dev libxt-dev libopenal0a libopenal-dev subversion zlibc libttf2 libfreetype6-dev libfreetype6 libasound2-dev alsa-oss libxxf86vm-dev libxext-dev x11proto-xext-dev
-</div></p>
-<p>If you are on Gutsy use this command</p>
-<p><div class="commandBox"># sudo apt-get --assume-yes install libjpeg62-dev x11proto-gl-dev autoconf jam bison flex-old automake1.9 libmng-dev libmikmod2-dev libogg-dev libvorbis-dev zlib1g-dev libpng12-dev build-essential libtool libglu1-mesa-dev libglu1-xorg-dev xserver-xorg-dev libxt-dev libopenal0a libopenal-dev subversion zlibc libttf2 libfreetype6-dev libfreetype6 libasound2-dev alsa-oss libxxf86vm-dev libxext-dev x11proto-xext-dev
-</div></p>
-<p>If you are on Hardy use this command</p>
-<p><div class="commandBox"># sudo apt-get --assume-yes install libjpeg62-dev x11proto-gl-dev autoconf jam bison flex-old automake1.9 libcurl4-openssl-dev libmng-dev libmikmod2-dev libogg-dev libvorbis-dev zlib1g-dev libpng12-dev build-essential libtool libglu1-mesa-dev libglu1-xorg-dev xserver-xorg-dev libxt-dev libopenal0a libopenal-dev subversion zlibc libttf2 libfreetype6-dev libfreetype6 libasound2-dev alsa-oss libxxf86vm-dev libxext-dev x11proto-xext-dev</div></p>
+    <p><div class="commandBox"># sudo apt-get --assume-yes install libjpeg62-dev x11proto-gl-dev autoconf jam bison flex-old automake1.9 libcurl4-openssl-dev libmng-dev libmikmod2-dev libogg-dev libvorbis-dev zlib1g-dev libpng12-dev build-essential libtool libglu1-mesa-dev libglu1-xorg-dev xserver-xorg-dev libxt-dev libopenal0a libopenal-dev subversion zlibc libttf2 libfreetype6-dev libfreetype6 libasound2-dev alsa-oss libxxf86vm-dev libxext-dev x11proto-xext-dev</div></p>
 
 <strong> ALL of these above commands are assuming you do not need a server if you do please follow directions in the <a href="#mysql">mysql</a> section for installing other required packages</strong>
 </div>
@@ -746,9 +644,19 @@ After that we need to refresh our sources.list file like so:<br>
     <h3>nVidia Toolkit</h3>
     <p>Since Crystal Space needs it (independently from your graphic card, so <i>even if you have an ATI card</i>), you
     should download from <a href="http://developer.nvidia.com/object/cg_toolkit.html">www.nvidia.com</a> the nvidia-toolkit.  Download the appropriate version for your architecture&#8212;either x86 or x86-64.
-    Make sure to use the appropriate file based on your chipset. To install the file, place it in the root directory and use the following command, then delete the tar.gz file.</p>
+    Make sure to use the appropriate file based on your chipset. To install the file, place it in the root directory and use the following commands, then delete the tar.gz file.</p>
     <div class="Linux-Generic">
-        <i class="command">tar -zxvf Cg-2.0_May2008_x86*.tgz</i>
+<div class="commandBox"># wget -c http://developer.download.nvidia.com/cg/Cg_2.0/2.0.0015/Cg-2.0_May2008_x86.tgz</br>
+        # sudo mvCg-2.0_May2008_x86*.tgz /</br>
+        # cd /</br>
+        # sudo tar -zxvf Cg-2.0_May2008_x86*.tgz</br>
+        # sudo rm Cg-2.0_May2008_x86*.tgz</div></br>
+    <p>If you are a x86_64 system do the following </p>
+<div class="commandBox"># wget -c http://developer.download.nvidia.com/cg/Cg_2.0/2.0.0015/Cg-2.0_May2008_x86_64.tgz</br>
+        # sudo mvCg-2.0_May2008_x86*.tgz /</br>
+        # cd /</br>
+        # sudo tar -zxvf Cg-2.0_May2008_x86*.tgz</br>
+        # sudo rm Cg-2.0_May2008_x86*.tgz</div></br>
     </div>
     <div class="Linux-Debian">
         <i class="command">tar -zxvf Cg-2.0_May2008_x86*.tgz</i>
@@ -758,10 +666,16 @@ After that we need to refresh our sources.list file like so:<br>
     </div>
     <div class="Linux-Ubuntu">
 
-	If you are on Gutsy you can
+	If you are on Hardy you can
 	<p><i class="command"># sudo apt-get install nvidia-cg-toolkit</i></p>        
 	<p> Otherwise you MUST do this</p>
 	<div class="commandBox"># wget -c http://developer.download.nvidia.com/cg/Cg_2.0/2.0.0015/Cg-2.0_May2008_x86.tgz</br>
+        # sudo mvCg-2.0_May2008_x86*.tgz /</br>
+        # cd /</br>
+        # sudo tar -zxvf Cg-2.0_May2008_x86*.tgz</br>
+        # sudo rm Cg-2.0_May2008_x86*.tgz</div></br>
+    <p>If you are a x86_64 system do the following if the apt-get line above did not work</p>
+<div class="commandBox"># wget -c http://developer.download.nvidia.com/cg/Cg_2.0/2.0.0015/Cg-2.0_May2008_x86_64.tgz</br>
         # sudo mvCg-2.0_May2008_x86*.tgz /</br>
         # cd /</br>
         # sudo tar -zxvf Cg-2.0_May2008_x86*.tgz</br>
@@ -849,8 +763,7 @@ here.</a></div>
 	      <i class="command">WARNING: could not load plugin 'planeshift.database.mysql'</i> make sure you have  the dev package installed, if it was not installed, ./autogen.sh, ./configure, and recompile the server again, according to the documentation below.</p>
 		</div>
             <div class="Linux-Ubuntu">
-            <p>for Feisty via apt-get: <div class="commandBox"># sudo apt-get --assume-yes install libdbd-mysql-perl libdbi-perl libnet-daemon-perl libplrpc-perl mysql-client-5.0 mysql-server-5.0 libmysqlclient15-dev libmysqlclient15off</div></p>
-	    <p>for Gutsy via apt-get: <div class="commandBox"># sudo apt-get --assume-yes install libdbd-mysql-perl libdbi-perl libnet-daemon-perl libplrpc-perl mysql-client-5.0 mysql-server-5.0 libmysqlclient15-dev libmysqlclient15off </div></p> 
+	    <p>for Hardy via apt-get: <div class="commandBox"># sudo apt-get --assume-yes install libdbd-mysql-perl libdbi-perl libnet-daemon-perl libplrpc-perl mysql-client-5.0 mysql-server-5.0 libmysqlclient15-dev libmysqlclient15off </div></p>
 
 		<p>If after building if you see that mysql was not found when running the server and you get the following error:
 		<i class="command">WARNING: could not load plugin 'planeshift.database.mysql'</i> make sure you have libmysqlclient15-dev installed, if it was not installed, ./autogen.sh, ./configure, and recompile the server again, according to the documentation below.</p>
@@ -1043,7 +956,7 @@ If you update a repository, you will need to recompile that repository and each 
     </p>
 
     <h3>Updating Sources</h3>
-    <p>If in the future you have the intentions to update cal3d, CS or PS because the team has decided to use
+    <p>If in the future you have the intentions to update CS or PS because the team has decided to use
     another revision or because you feel like you want to update it, instead of doing a checkout you have simply to update.
     Please, remember that CS must be the exact revision specified above (or near the top of this <a name="dates">guide</a>) while PS can be newer.</p>
 
@@ -1368,8 +1281,7 @@ $HOME/development/planeshift$ ./psclient.app/Contents/MacOS/psclient -cfgset=Pla
         <h3>Crystal Space (CS)</h3>
         <p>Switch to the Crystal Space source dir using 'cd /c/development/cs'.
         Configure to debug mode and jam. (if you wish to build in optimized mode, just run
-        configure without any arguments) If you chose to build cal3d, rather than use
-        it from the CS win libs, you can specify its location with:  --with-cal3d=/c/development/cal3d/
+        configure without any arguments)
         <p><div class="commandBox"><div class="User">
             ./configure --without-java --without-perl --without-python --without-lib3ds --enable-shared=no</div>
 <div class="Developer">
@@ -1383,23 +1295,9 @@ $HOME/development/planeshift$ ./psclient.app/Contents/MacOS/psclient -cfgset=Pla
         </div>
         </p>
         This will build all the needed libraries and plugins, as well as the standard test application.<br>
-<div class="MINGW">
-<p>For Mingw you need to copy also these files to the
-Crystal Space directory for walktest to work:<br><div class=commandBox>
-C:\msys\1.0\local\bin\libpng12-0.dll<br>
-C:\MinGW\bin\libjpeg-62.dll<br>
-C:\MinGW\bin\zlib1.dll<br></div><br>
-or by command-line:<br><div class=commandBox>
-cp /c/msys/1.0/local/bin/libpng12-0.dll <br>
-cp /c/MinGW/bin/libjpeg-62.dll <br>
-cp /c/MinGW/bin/zlib1.dll <br></div>
-</p>
-</div>
         After everything compiles, try running "walktest.exe" in /c/development/cs to check that everything is ok.
 
         <h3>PlaneShift</h3>
-        <p>If you chose to build cal3d, rather than use
-        it from the CS win libs, you can specify its location after the configure command with:  --with-cal3d=/c/development/cal3d/ <br>
 Change your working directory to PS's, 
  and do:</p>
         <p><div class="commandBox">
@@ -1539,22 +1437,6 @@ and select Properties, 'read only' is one of the attributes in the General tab) 
 <div class="Windows">
     <p>Note: You might have to copy a few DLL files from other build directories to your
     PlaneShift directory if you get problems. You usually need to move libz-cs.dll, and libmySQL.dll.</p>
-<div class="MINGW">
-<p>For Mingw you need to copy also these files to the
-PlaneShift directory:<br><div class=commandBox>
-C:\msys\1.0\local\bin\libpng12-0.dll<br>
-C:\development\cs\cg.dll<br>
-C:\development\cs\cgGL.dll<br>
-C:\MinGW\bin\libjpeg-62.dll<br>
-C:\MinGW\bin\zlib1.dll<br></div><br>
-or by command-line:<br><div class=commandBox>
-cp /c/msys/1.0/local/bin/libpng12-0.dll <br>
-cp /c/development/cs/cg.dll <br>
-cp /c/development/cs/cgGL.dll <br>
-cp /c/MinGW/bin/libjpeg-62.dll <br>
-cp /c/MinGW/bin/zlib1.dll <br></div>
-</p>
-</div>
 
 </div>
 <div class="MSVC">

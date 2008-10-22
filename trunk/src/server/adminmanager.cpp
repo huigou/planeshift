@@ -4868,6 +4868,12 @@ void AdminManager::GMHandlePetition(MsgEntry *me, psPetitionRequestMessage& msg,
         type = PETITION_ASSIGN;
         result = AssignPetition(client->GetPID(), msg.id);
     }
+    else if (msg.request == "deassign")
+    {
+        // Deassigning petition:
+        type = PETITION_DEASSIGN;
+        result = DeassignPetition(client->GetPID(), msg.id);
+    }
     else if (msg.request == "escalate")
     {
         // Escalate petition:
@@ -5123,6 +5129,21 @@ bool AdminManager::ClosePetition(int gmID, int petitionID, const char* desc)
     }
 
     return (result != -1);
+}
+
+bool AdminManager::DeassignPetition(int gmID, int petitionID)
+{
+    int result = db->CommandPump("UPDATE petitions SET assigned_gm=-1,status=\"Open\" WHERE id=%d AND assigned_gm=%d", petitionID, gmID);
+
+    // If this failed if means that there is a serious error, or another GM was already assigned
+    if (result == -1)
+    {
+        lasterror.Format("Couldn't deassign you to petition #%d.  Another GM is assigned to that petition.",
+            petitionID);
+        return false;
+    }
+
+    return true;
 }
 
 bool AdminManager::AssignPetition(int gmID, int petitionID)

@@ -431,6 +431,13 @@ protected:
      */
     bool AssignPetition(int gmID, int petitionID);
 
+    /** @brief Deassignes the specified GM to the specified petition
+     *  @param gmID: Is the ID of the GM who is requesting the deassignment.
+     *  @param petitionID: The petition id
+     *  @return Returns either success or failure.
+     */
+    bool DeassignPetition(int gmID, int petitionID);
+
     /** @brief Escalates the level of the specified petition.
      *
      *  Changes the assigned_gm to -1, and the status to 'Open'
