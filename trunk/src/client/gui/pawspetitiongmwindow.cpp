@@ -175,12 +175,12 @@ void pawsPetitionGMWindow::HandleMessage ( MsgEntry* me )
             printf("Invalid currentRow\n");
             return;
         }
-    
+
         // Remove the item and refresh the list:
 //        petitionMessage.petitions.DeleteIndex(currentRow);
 
         AddPetitions(petitionMessage.petitions);
-        
+
         petitionList->Select(petitionList->GetRow(currentRow));
 
         csString report;
@@ -223,7 +223,7 @@ void pawsPetitionGMWindow::HandleMessage ( MsgEntry* me )
 
         return;
     }
-    
+
     if (message.msgType == PETITION_DEASSIGN)
     {
         // Check if server reported errors on the query
@@ -397,7 +397,7 @@ bool pawsPetitionGMWindow::OnButtonPressed( int mouseButton, int keyModifier, pa
             }
             break;
         }
-        
+
         case DEASSIGN_BUTTON:
         {
             if (petCount > 0)
