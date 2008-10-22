@@ -35,7 +35,7 @@ xhr.open(type,s.url,s.async);try{if(s.data)xhr.setRequestHeader("Content-Type",s
 jQuery.handleError(s,xhr,status);complete();if(s.async)xhr=null;}};if(s.async){var ival=setInterval(onreadystatechange,13);if(s.timeout>0)setTimeout(function(){if(xhr){xhr.abort();if(!requestDone)onreadystatechange("timeout");}},s.timeout);}try{xhr.send(s.data);}catch(e){jQuery.handleError(s,xhr,null,e);}if(!s.async)onreadystatechange();function success(){if(s.success)s.success(data,status);if(s.global)jQuery.event.trigger("ajaxSuccess",[xhr,s]);}function complete(){if(s.complete)s.complete(xhr,status);if(s.global)jQuery.event.trigger("ajaxComplete",[xhr,s]);if(s.global&&!--jQuery.active)jQuery.event.trigger("ajaxStop");}return xhr;},handleError:function(s,xhr,status,e){if(s.error)s.error(xhr,status,e);if(s.global)jQuery.event.trigger("ajaxError",[xhr,s,e]);},active:0,httpSuccess:function(xhr){try{return!xhr.status&&location.protocol=="file:"||(xhr.status>=200&&xhr.status<300)||xhr.status==304||xhr.status==1223||jQuery.browser.safari&&xhr.status==undefined;}catch(e){}return false;},httpNotModified:function(xhr,url){try{var xhrRes=xhr.getResponseHeader("Last-Modified");return xhr.status==304||xhrRes==jQuery.lastModified[url]||jQuery.browser.safari&&xhr.status==undefined;}catch(e){}return false;},httpData:function(xhr,type,filter){var ct=xhr.getResponseHeader("content-type"),xml=type=="xml"||!type&&ct&&ct.indexOf("xml")>=0,data=xml?xhr.responseXML:xhr.responseText;if(xml&&data.documentElement.tagName=="parsererror")throw"parsererror";if(filter)data=filter(data,type);if(type=="script")jQuery.globalEval(data);if(type=="json")data=eval("("+data+")");return data;},param:function(a){var s=[];if(a.constructor==Array||a.jquery)jQuery.each(a,function(){s.push(encodeURIComponent(this.name)+"="+encodeURIComponent(this.value));});else
 for(var j in a)if(a[j]&&a[j].constructor==Array)jQuery.each(a[j],function(){s.push(encodeURIComponent(j)+"="+encodeURIComponent(this));});else
 s.push(encodeURIComponent(j)+"="+encodeURIComponent(jQuery.isFunction(a[j])?a[j]():a[j]));return s.join("&").replace(/%20/g,"+");}});jQuery.fn.extend({show:function(speed,callback){return speed?this.animate({height:"show",width:"show",opacity:"show"},speed,callback):this.filter(":hidden").each(function(){this.style.display=this.oldblock||"";if(jQuery.css(this,"display")=="none"){var elem=jQuery("<"+this.tagName+" />").appendTo("body");this.style.display=elem.css("display");if(this.style.display=="none")this.style.display="block";elem.remove();}}).end();},hide:function(speed,callback){return speed?this.animate({height:"hide",width:"hide",opacity:"hide"},speed,callback):this.filter(":visible").each(function(){this.oldblock=this.oldblock||jQuery.css(this,"display");this.style.display="none";}).end();},_toggle:jQuery.fn.toggle,toggle:function(fn,fn2){return jQuery.isFunction(fn)&&jQuery.isFunction(fn2)?this._toggle.apply(this,arguments):fn?this.animate({height:"toggle",width:"toggle",opacity:"toggle"},fn,fn2):this.each(function(){jQuery(this)[jQuery(this).is(":hidden")?"show":"hide"]();});},slideDown:function(speed,callback){return this.animate({height:"show"},speed,callback);},slideUp:function(speed,callback){return this.animate({height:"hide"},speed,callback);},slideToggle:function(speed,callback){return this.animate({height:"toggle"},speed,callback);},fadeIn:function(speed,callback){return this.animate({opacity:"show"},speed,callback);},fadeOut:function(speed,callback){return this.animate({opacity:"hide"},speed,callback);},fadeTo:function(speed,to,callback){return this.animate({opacity:to},speed,callback);},animate:function(prop,speed,easing,callback){var optall=jQuery.speed(speed,easing,callback);return this[optall.queue===false?"each":"queue"](function(){if(this.nodeType!=1)return false;var opt=jQuery.extend({},optall),p,hidden=jQuery(this).is(":hidden"),self=this;for(p in prop){if(prop[p]=="hide"&&hidden||prop[p]=="show"&&!hidden)return opt.complete.call(this);if(p=="height"||p=="width"){opt.display=jQuery.css(this,"display");opt.overflow=this.style.overflow;}}if(opt.overflow!=null)this.style.overflow="hidden";opt.curAnim=jQuery.extend({},prop);jQuery.each(prop,function(name,val){var e=new jQuery.fx(self,opt,name);if(/toggle|show|hide/.test(val))e[val=="toggle"?hidden?"show":"hide":val](prop);else{var parts=val.toString().match(/^([+-]=)?([\d+-.]+)(.*)$/),start=e.cur(true)||0;if(parts){var end=parseFloat(parts[2]),unit=parts[3]||"px";if(unit!="px"){self.style[name]=(end||1)+unit;start=((end||1)/e.cur(true))*start;self.style[name]=start+unit;}if(parts[1])end=((parts[1]=="-="?-1:1)*end)+start;e.custom(start,end,unit);}else
-e.custom(start,val,"");}});return true;});},queue:function(type,fn){if(jQuery.isFunction(type)||(type&&type.constructor==Array)){fn=type;type="fx";}if(!type||(typeof type=="string"&&!fn))return queue(this[0],type);return this.each(function(){if(fn.constructor==Array)queue(this,type,fn);else{queue(this,type).push(fn);if(queue(this,type).length==1)fn.call(this);}});},stop:function(clearQueue,gotoEnd){var timers=jQuery.timers;if(clearQueue)this.queue([]);this.each(function(){for(var i=timers.length-1;i>=0;i--)if(timers[i].elem==this){if(gotoEnd)timers[i](true);timers.splice(i,1);}});if(!gotoEnd)this.dequeue();return this;}});var queue=function(elem,type,array){if(elem){type=type||"fx";var q=jQuery.data(elem,type+"queue");if(!q||array)q=jQuery.data(elem,type+"queue",jQuery.makeArray(array));}return q;};jQuery.fn.dequeue=function(type){type=type||"fx";return this.each(function(){var q=queue(this,type);q.shift();if(q.length)q[0].call(this);});};jQuery.extend({speed:function(speed,easing,fn){var opt=speed&&speed.constructor==Object?speed:{complete:fn||!fn&&easing||jQuery.isFunction(speed)&&speed,duration:speed,easing:fn&&easing||easing&&easing.constructor!=Function&&easing};opt.duration=(opt.duration&&opt.duration.constructor==Number?opt.duration:jQuery.fx.speeds[opt.duration])||jQuery.fx.speeds.def;opt.old=opt.complete;opt.complete=function(){if(opt.queue!==false)jQuery(this).dequeue();if(jQuery.isFunction(opt.old))opt.old.call(this);};return opt;},easing:{linear:function(p,n,firstNum,diff){return firstNum+diff*p;},swing:function(p,n,firstNum,diff){return((-Math.cos(p*Math.PI)/2)+0.5)*diff+firstNum;}},timers:[],timerId:null,fx:function(elem,options,prop){this.options=options;this.elem=elem;this.prop=prop;if(!options.orig)options.orig={};}});jQuery.fx.prototype={update:function(){if(this.options.step)this.options.step.call(this.elem,this.now,this);(jQuery.fx.step[this.prop]||jQuery.fx.step._default)(this);if(this.prop=="height"||this.prop=="width")this.elem.style.display="block";},cur:function(force){if(this.elem[this.prop]!=null&&this.elem.style[this.prop]==null)return this.elem[this.prop];var r=parseFloat(jQuery.css(this.elem,this.prop,force));return r&&r>-10000?r:parseFloat(jQuery.curCSS(this.elem,this.prop))||0;},custom:function(from,to,unit){this.startTime=now();this.start=from;this.end=to;this.unit=unit||this.unit||"px";this.now=this.start;this.pos=this.state=0;this.update();var self=this;function t(gotoEnd){return self.step(gotoEnd);}t.elem=this.elem;jQuery.timers.push(t);if(jQuery.timerId==null){jQuery.timerId=setInterval(function(){var timers=jQuery.timers;for(var i=0;i<timers.length;i++)if(!timers[i]())timers.splice(i--,1);if(!timers.length){clearInterval(jQuery.timerId);jQuery.timerId=null;}},13);}},show:function(){this.options.orig[this.prop]=jQuery.attr(this.elem.style,this.prop);this.options.show=true;this.custom(0,this.cur());if(this.prop=="width"||this.prop=="height")this.elem.style[this.prop]="1px";jQuery(this.elem).show();},hide:function(){this.options.orig[this.prop]=jQuery.attr(this.elem.style,this.prop);this.options.hide=true;this.custom(this.cur(),0);},step:function(gotoEnd){var t=now();if(gotoEnd||t>this.options.duration+this.startTime){this.now=this.end;this.pos=this.state=1;this.update();this.options.curAnim[this.prop]=true;var done=true;for(var i in this.options.curAnim)if(this.options.curAnim[i]!==true)done=false;if(done){if(this.options.display!=null){this.elem.style.overflow=this.options.overflow;this.elem.style.display=this.options.display;if(jQuery.css(this.elem,"display")=="none")this.elem.style.display="block";}if(this.options.hide)this.elem.style.display="none";if(this.options.hide||this.options.show)for(var p in this.options.curAnim)jQuery.attr(this.elem.style,p,this.options.orig[p]);}if(done)this.options.complete.call(this.elem);return false;}else{var n=t-this.startTime;this.state=n/this.options.duration;this.pos=jQuery.easing[this.options.easing||(jQuery.easing.swing?"swing":"linear")](this.state,n,0,1,this.options.duration);this.now=this.start+((this.end-this.start)*this.pos);this.update();}return true;}};jQuery.extend(jQuery.fx,{speeds:{slow:600,fast:200,def:400},step:{scrollLeft:function(fx){fx.elem.scrollLeft=fx.now;},scrollTop:function(fx){fx.elem.scrollTop=fx.now;},opacity:function(fx){jQuery.attr(fx.elem.style,"opacity",fx.now);},_default:function(fx){fx.elem.style[fx.prop]=fx.now+fx.unit;}}});jQuery.fn.offset=function(){var left=0,top=0,elem=this[0],results;if(elem)with(jQuery.browser){var parent=elem.parentNode,offsetChild=elem,offsetParent=elem.offsetParent,doc=elem.ownerDocument,safari2=safari&&parseInt(version)<522&&!/adobeair/i.test(userAgent),css=jQuery.curCSS,fixed=css(elem,"position")=="fixed";if(elem.getBoundingClientRect){var box=elem.getBoundingClientRect();add(box.left+Math.max(doc.documentElement.scrollLeft,doc.body.scrollLeft),box.top+Math.max(doc.documentElement.scrollTop,doc.body.scrollTop));add(-doc.documentElement.clientLeft,-doc.documentElement.clientTop);}else{add(elem.offsetLeft,elem.offsetTop);while(offsetParent){add(offsetParent.offsetLeft,offsetParent.offsetTop);if(mozilla&&!/^t(able|d|h)$/i.test(offsetParent.tagName)||safari&&!safari2)border(offsetParent);if(!fixed&&css(offsetParent,"position")=="fixed")fixed=true;offsetChild=/^body$/i.test(offsetParent.tagName)?offsetChild:offsetParent;offsetParent=offsetParent.offsetParent;}while(parent&&parent.tagName&&!/^body|html$/i.test(parent.tagName)){if(!/^inline|table.*$/i.test(css(parent,"display")))add(-parent.scrollLeft,-parent.scrollTop);if(mozilla&&css(parent,"overflow")!="visible")border(parent);parent=parent.parentNode;}if((safari2&&(fixed||css(offsetChild,"position")=="absolute"))||(mozilla&&css(offsetChild,"position")!="absolute"))add(-doc.body.offsetLeft,-doc.body.offsetTop);if(fixed)add(Math.max(doc.documentElement.scrollLeft,doc.body.scrollLeft),Math.max(doc.documentElement.scrollTop,doc.body.scrollTop));}results={top:top,left:left};}function border(elem){add(jQuery.curCSS(elem,"borderLeftWidth",true),jQuery.curCSS(elem,"borderTopWidth",true));}function add(l,t){left+=parseInt(l,10)||0;top+=parseInt(t,10)||0;}return results;};jQuery.fn.extend({position:function(){var left=0,top=0,results;if(this[0]){var offsetParent=this.offsetParent(),offset=this.offset(),parentOffset=/^body|html$/i.test(offsetParent[0].tagName)?{top:0,left:0}:offsetParent.offset();offset.top-=num(this,'marginTop');offset.left-=num(this,'marginLeft');parentOffset.top+=num(offsetParent,'borderTopWidth');parentOffset.left+=num(offsetParent,'borderLeftWidth');results={top:offset.top-parentOffset.top,left:offset.left-parentOffset.left};}return results;},offsetParent:function(){var offsetParent=this[0].offsetParent;while(offsetParent&&(!/^body|html$/i.test(offsetParent.tagName)&&jQuery.css(offsetParent,'position')=='static'))offsetParent=offsetParent.offsetParent;return jQuery(offsetParent);}});jQuery.each(['Left','Top'],function(i,name){var method='scroll'+name;jQuery.fn[method]=function(val){if(!this[0])return;return val!=undefined?this.each(function(){this==window||this==document?window.scrollTo(!i?val:jQuery(window).scrollLeft(),i?val:jQuery(window).scrollTop()):this[method]=val;}):this[0]==window||this[0]==document?self[i?'pageYOffset':'pageXOffset']||jQuery.boxModel&&document.documentElement[method]||document.body[method]:this[0][method];};});jQuery.each(["Height","Width"],function(i,name){var tl=i?"Left":"Top",br=i?"Right":"Bottom";jQuery.fn["inner"+name]=function(){return this[name.toLowerCase()]()+num(this,"padding"+tl)+num(this,"padding"+br);};jQuery.fn["outer"+name]=function(margin){return this["inner"+name]()+num(this,"border"+tl+"Width")+num(this,"border"+br+"Width")+(margin?num(this,"margin"+tl)+num(this,"margin"+br):0);};});})();          
+e.custom(start,val,"");}});return true;});},queue:function(type,fn){if(jQuery.isFunction(type)||(type&&type.constructor==Array)){fn=type;type="fx";}if(!type||(typeof type=="string"&&!fn))return queue(this[0],type);return this.each(function(){if(fn.constructor==Array)queue(this,type,fn);else{queue(this,type).push(fn);if(queue(this,type).length==1)fn.call(this);}});},stop:function(clearQueue,gotoEnd){var timers=jQuery.timers;if(clearQueue)this.queue([]);this.each(function(){for(var i=timers.length-1;i>=0;i--)if(timers[i].elem==this){if(gotoEnd)timers[i](true);timers.splice(i,1);}});if(!gotoEnd)this.dequeue();return this;}});var queue=function(elem,type,array){if(elem){type=type||"fx";var q=jQuery.data(elem,type+"queue");if(!q||array)q=jQuery.data(elem,type+"queue",jQuery.makeArray(array));}return q;};jQuery.fn.dequeue=function(type){type=type||"fx";return this.each(function(){var q=queue(this,type);q.shift();if(q.length)q[0].call(this);});};jQuery.extend({speed:function(speed,easing,fn){var opt=speed&&speed.constructor==Object?speed:{complete:fn||!fn&&easing||jQuery.isFunction(speed)&&speed,duration:speed,easing:fn&&easing||easing&&easing.constructor!=Function&&easing};opt.duration=(opt.duration&&opt.duration.constructor==Number?opt.duration:jQuery.fx.speeds[opt.duration])||jQuery.fx.speeds.def;opt.old=opt.complete;opt.complete=function(){if(opt.queue!==false)jQuery(this).dequeue();if(jQuery.isFunction(opt.old))opt.old.call(this);};return opt;},easing:{linear:function(p,n,firstNum,diff){return firstNum+diff*p;},swing:function(p,n,firstNum,diff){return((-Math.cos(p*Math.PI)/2)+0.5)*diff+firstNum;}},timers:[],timerId:null,fx:function(elem,options,prop){this.options=options;this.elem=elem;this.prop=prop;if(!options.orig)options.orig={};}});jQuery.fx.prototype={update:function(){if(this.options.step)this.options.step.call(this.elem,this.now,this);(jQuery.fx.step[this.prop]||jQuery.fx.step._default)(this);if(this.prop=="height"||this.prop=="width")this.elem.style.display="block";},cur:function(force){if(this.elem[this.prop]!=null&&this.elem.style[this.prop]==null)return this.elem[this.prop];var r=parseFloat(jQuery.css(this.elem,this.prop,force));return r&&r>-10000?r:parseFloat(jQuery.curCSS(this.elem,this.prop))||0;},custom:function(from,to,unit){this.startTime=now();this.start=from;this.end=to;this.unit=unit||this.unit||"px";this.now=this.start;this.pos=this.state=0;this.update();var self=this;function t(gotoEnd){return self.step(gotoEnd);}t.elem=this.elem;jQuery.timers.push(t);if(jQuery.timerId==null){jQuery.timerId=setInterval(function(){var timers=jQuery.timers;for(var i=0;i<timers.length;i++)if(!timers[i]())timers.splice(i--,1);if(!timers.length){clearInterval(jQuery.timerId);jQuery.timerId=null;}},13);}},show:function(){this.options.orig[this.prop]=jQuery.attr(this.elem.style,this.prop);this.options.show=true;this.custom(0,this.cur());if(this.prop=="width"||this.prop=="height")this.elem.style[this.prop]="1px";jQuery(this.elem).show();},hide:function(){this.options.orig[this.prop]=jQuery.attr(this.elem.style,this.prop);this.options.hide=true;this.custom(this.cur(),0);},step:function(gotoEnd){var t=now();if(gotoEnd||t>this.options.duration+this.startTime){this.now=this.end;this.pos=this.state=1;this.update();this.options.curAnim[this.prop]=true;var done=true;for(var i in this.options.curAnim)if(this.options.curAnim[i]!==true)done=false;if(done){if(this.options.display!=null){this.elem.style.overflow=this.options.overflow;this.elem.style.display=this.options.display;if(jQuery.css(this.elem,"display")=="none")this.elem.style.display="block";}if(this.options.hide)this.elem.style.display="none";if(this.options.hide||this.options.show)for(var p in this.options.curAnim)jQuery.attr(this.elem.style,p,this.options.orig[p]);}if(done)this.options.complete.call(this.elem);return false;}else{var n=t-this.startTime;this.state=n/this.options.duration;this.pos=jQuery.easing[this.options.easing||(jQuery.easing.swing?"swing":"linear")](this.state,n,0,1,this.options.duration);this.now=this.start+((this.end-this.start)*this.pos);this.update();}return true;}};jQuery.extend(jQuery.fx,{speeds:{slow:600,fast:200,def:400},step:{scrollLeft:function(fx){fx.elem.scrollLeft=fx.now;},scrollTop:function(fx){fx.elem.scrollTop=fx.now;},opacity:function(fx){jQuery.attr(fx.elem.style,"opacity",fx.now);},_default:function(fx){fx.elem.style[fx.prop]=fx.now+fx.unit;}}});jQuery.fn.offset=function(){var left=0,top=0,elem=this[0],results;if(elem)with(jQuery.browser){var parent=elem.parentNode,offsetChild=elem,offsetParent=elem.offsetParent,doc=elem.ownerDocument,safari2=safari&&parseInt(version)<522&&!/adobeair/i.test(userAgent),css=jQuery.curCSS,fixed=css(elem,"position")=="fixed";if(elem.getBoundingClientRect){var box=elem.getBoundingClientRect();add(box.left+Math.max(doc.documentElement.scrollLeft,doc.body.scrollLeft),box.top+Math.max(doc.documentElement.scrollTop,doc.body.scrollTop));add(-doc.documentElement.clientLeft,-doc.documentElement.clientTop);}else{add(elem.offsetLeft,elem.offsetTop);while(offsetParent){add(offsetParent.offsetLeft,offsetParent.offsetTop);if(mozilla&&!/^t(able|d|h)$/i.test(offsetParent.tagName)||safari&&!safari2)border(offsetParent);if(!fixed&&css(offsetParent,"position")=="fixed")fixed=true;offsetChild=/^body$/i.test(offsetParent.tagName)?offsetChild:offsetParent;offsetParent=offsetParent.offsetParent;}while(parent&&parent.tagName&&!/^body|html$/i.test(parent.tagName)){if(!/^inline|table.*$/i.test(css(parent,"display")))add(-parent.scrollLeft,-parent.scrollTop);if(mozilla&&css(parent,"overflow")!="visible")border(parent);parent=parent.parentNode;}if((safari2&&(fixed||css(offsetChild,"position")=="absolute"))||(mozilla&&css(offsetChild,"position")!="absolute"))add(-doc.body.offsetLeft,-doc.body.offsetTop);if(fixed)add(Math.max(doc.documentElement.scrollLeft,doc.body.scrollLeft),Math.max(doc.documentElement.scrollTop,doc.body.scrollTop));}results={top:top,left:left};}function border(elem){add(jQuery.curCSS(elem,"borderLeftWidth",true),jQuery.curCSS(elem,"borderTopWidth",true));}function add(l,t){left+=parseInt(l,10)||0;top+=parseInt(t,10)||0;}return results;};jQuery.fn.extend({position:function(){var left=0,top=0,results;if(this[0]){var offsetParent=this.offsetParent(),offset=this.offset(),parentOffset=/^body|html$/i.test(offsetParent[0].tagName)?{top:0,left:0}:offsetParent.offset();offset.top-=num(this,'marginTop');offset.left-=num(this,'marginLeft');parentOffset.top+=num(offsetParent,'borderTopWidth');parentOffset.left+=num(offsetParent,'borderLeftWidth');results={top:offset.top-parentOffset.top,left:offset.left-parentOffset.left};}return results;},offsetParent:function(){var offsetParent=this[0].offsetParent;while(offsetParent&&(!/^body|html$/i.test(offsetParent.tagName)&&jQuery.css(offsetParent,'position')=='static'))offsetParent=offsetParent.offsetParent;return jQuery(offsetParent);}});jQuery.each(['Left','Top'],function(i,name){var method='scroll'+name;jQuery.fn[method]=function(val){if(!this[0])return;return val!=undefined?this.each(function(){this==window||this==document?window.scrollTo(!i?val:jQuery(window).scrollLeft(),i?val:jQuery(window).scrollTop()):this[method]=val;}):this[0]==window||this[0]==document?self[i?'pageYOffset':'pageXOffset']||jQuery.boxModel&&document.documentElement[method]||document.body[method]:this[0][method];};});jQuery.each(["Height","Width"],function(i,name){var tl=i?"Left":"Top",br=i?"Right":"Bottom";jQuery.fn["inner"+name]=function(){return this[name.toLowerCase()]()+num(this,"padding"+tl)+num(this,"padding"+br);};jQuery.fn["outer"+name]=function(margin){return this["inner"+name]()+num(this,"border"+tl+"Width")+num(this,"border"+br+"Width")+(margin?num(this,"margin"+tl)+num(this,"margin"+br):0);};});})();
 </script>
 <script type="text/javascript">
 <!--
@@ -57,18 +57,18 @@ e.custom(start,val,"");}});return true;});},queue:function(type,fn){if(jQuery.is
 <!--
 How to edit this guide:
     Standard HTML and CSS may be used as needed. Don't, under any circumstances, edit this
-    with a WYSIWYG! 
+    with a WYSIWYG!
 
     Please keep commands in boxes to make them stand out more easily:
     <p><i class="command">text</i></p>  or  <p><div class="commandBox">text<br>text</div></p>
-    
+
     Source dates/revisions compatible with Laanx should be specified in the body as:
     PS_SOURCE_DATE or CS_SOURCE_REV
     The CS SVN revisions required for latest PS are specified by:
     CS_SOURCE_REV_HEAD
     Update and author date should be specified instead as:
     UPDATE_DATE and UPDATE_AUTHOR
-    
+
     Portions which only apply to specific operating systems or compilers should be enclosed in:
     <div class=name>section</div>  or  <span class=name>section</span>
 
@@ -191,9 +191,9 @@ function ShowSet(category,set)
     {
         SetVisibility(operatingsystem,false);
         operatingsystem = set;
-	
-	  if (operatingsystem == "Windows" && compiler == "GCC")
-		SelectOption("Compiler","MSVC");
+
+      if (operatingsystem == "Windows" && compiler == "GCC")
+        SelectOption("Compiler","MSVC");
         else if ((compiler == "MSVC" || compiler == "MINGW")&& operatingsystem != "Windows")
             SelectOption("Compiler","GCC");
     }
@@ -201,9 +201,9 @@ function ShowSet(category,set)
     {
         SetVisibility(compiler,false);
         compiler = set;
-        
-	  if (operatingsystem == "Windows" && compiler == "GCC")
-		SelectOption("OS","Linux-Generic");
+
+      if (operatingsystem == "Windows" && compiler == "GCC")
+        SelectOption("OS","Linux-Generic");
         else if ((compiler == "MSVC" || compiler == "MINGW") && operatingsystem != "Windows")
             SelectOption("OS","Windows");
     }
@@ -233,11 +233,11 @@ function SelectOption(category,option)
         list = document.menu.UserDevelopers;
     else if (category == "StaticNorm")
         list = document.menu.StaticNorm;
-        
+
     for (var i=0; i < list.options.length; i++)
         if (list.options[i].value == option)
             list.options[i].selected = true;
-            
+
     ShowSet(category,option);
 }
 
@@ -263,7 +263,7 @@ function Initialize()
     // Hide the second CS date if we don't need it
     if (CSrev_HEAD == CSrev)
       $("#forked").css({ display:"none" });
-    
+
 }
 
 $(document).ready(function(){
@@ -277,7 +277,7 @@ $(document).ready(function(){
     Initialize();
     var OS = scriptopts.substr(0,scriptopts.indexOf("."));
     SelectOption('OS',OS);
-    scriptopts = scriptopts.substr(scriptopts.indexOf(".")+1,scriptopts.length);  
+    scriptopts = scriptopts.substr(scriptopts.indexOf(".")+1,scriptopts.length);
     var COMPILER = scriptopts.substr(0,scriptopts.indexOf("."));
     SelectOption('Compiler',COMPILER);
     scriptopts = scriptopts.substr(scriptopts.indexOf(".")+1,scriptopts.length);
@@ -289,7 +289,7 @@ $(document).ready(function(){
 });
 
 // -->
-</script>   
+</script>
 
 </head>
 <body>
@@ -311,7 +311,7 @@ $(document).ready(function(){
     <select onChange="ShowSet('Compiler',this.options[this.selectedIndex].value)" name="Compilers">
         <option value="GCC" selected>GCC</option>
         <option value="MSVC">MSVC</option>
-	  <option value="MINGW">MINGW</option>
+      <option value="MINGW">MINGW</option>
     </select>
     <select onChange="ShowSet('UserDeveloper',this.options[this.selectedIndex].value)" name="UserDevelopers">
         <option value="User" selected>User</option>
@@ -351,25 +351,25 @@ $(document).ready(function(){
             associated toolset that can be used for compiling Win32 executables. In conjunction
             with other free or open source software the majority of PlaneShift can be compiled
             under Windows without having to purchase any compiler or other licenses.<br><br>
-		<b>Credits</b><br>
+        <b>Credits</b><br>
                 Caarrie, Trying to maintain the guide;<br>
-		Arianna Benigno, maintained the guide;<br>
-		Rolenun, adjuster for good part of the content;<br>
-		Dave Garrett, author of the new compiling guides layout;<br>
-		Steve Cook, author of the guide to compiling with Mingw32.<br>		
+        Arianna Benigno, maintained the guide;<br>
+        Rolenun, adjuster for good part of the content;<br>
+        Dave Garrett, author of the new compiling guides layout;<br>
+        Steve Cook, author of the guide to compiling with Mingw32.<br>
         </div>
         <div class="MSVC">
- 		This guide lists the steps necessary to download all the tools and compile PlaneShift.
+        This guide lists the steps necessary to download all the tools and compile PlaneShift.
             This guide assumes that Visual C++.NET or Visual Studio.NET is installed. Some tools
             need glut, Directx 9 SDK, and python. These features are not needed so they won't be
             covered here. As a result there will be some compilation errors due to missing files.<br><br>
-		<b>Credits</b><br>
+        <b>Credits</b><br>
                 Caarrie, Trying to maintain the guide;<br>
-		Arianna Benigno, maintained the guide;<br>
-		Rolenun, adjuster for good part of the content;<br>
-		Dave Garrett, author of the new compiling guides layout;<br>
-		Chris Ayers, author of the first guide for MSVC;<br>
-		Steve Cook, author of the guide to compiling with Mingw32, on which the first MSVC guide was based.<br>
+        Arianna Benigno, maintained the guide;<br>
+        Rolenun, adjuster for good part of the content;<br>
+        Dave Garrett, author of the new compiling guides layout;<br>
+        Chris Ayers, author of the first guide for MSVC;<br>
+        Steve Cook, author of the guide to compiling with Mingw32, on which the first MSVC guide was based.<br>
         </div>
     </div>
     <div class="Linux">
@@ -377,19 +377,19 @@ $(document).ready(function(){
         running in Linux. It gives instructions on how to get all the required tools and how
         to check out the source code and configure it. At the end there you will have a
         PlaneShift client and a PlaneShift updater application, and if you want also the server.<br><br>
-	  <b>Credits</b><br>
+      <b>Credits</b><br>
           Caarrie, Trying to maintain the guide;<br>
-	  Arianna Benigno, maintained the guide;<br>
-	  Dave Garrett, author of the new compiling guides layout;<br>
-	  Andrew Craig, author of the first Linux guides that were available on <a href="http://laanx.fragnetics.com">Laanx website</a>;<br>
-	  Platyna, author of the first compiling guide for Slackware distribution.<br>
+      Arianna Benigno, maintained the guide;<br>
+      Dave Garrett, author of the new compiling guides layout;<br>
+      Andrew Craig, author of the first Linux guides that were available on <a href="http://laanx.fragnetics.com">Laanx website</a>;<br>
+      Platyna, author of the first compiling guide for Slackware distribution.<br>
         Mike Gist, author of the static compiling guide.<br>
 </div>
     <div class="MacOSX">
         This guide gives a very basic description on how to get a working client up and
         running on an Intel Mac. It gives instructions on how to get to check out the source code and configure it. At the end there you will have a
         PlaneShift client and a PlaneShift updater application, and if you want also the server.<br><br>
-	  <b>Credits</b><br>
+      <b>Credits</b><br>
        Caarrie, Author of the first basic Mac guide with help from the <a href="http://vaalnor.mine.nu/psdoc/?q=node/38">PSDocs</a> guide and Trymm
 
     </div>
@@ -402,7 +402,7 @@ $(document).ready(function(){
 <!---------------------------------------------------------------------------------------------------->
 <!---------------------------------------------------------------------------------------------------->
 
-<p> 
+<p>
     <h3><a name="dates">Last Update<a></h3>
     This guide has been updated by UPDATE_AUTHOR, the UPDATE_DATE.
 <p>
@@ -431,12 +431,12 @@ $(document).ready(function(){
 <!---------------------------------------------------------------------------------------------------->
 
 <h2><a name="dir">Set Working Directory</a></h2>
-    The first step is to create your development directory. If you  want to choose a specific directory, you can do that, 
-    however this guide will assume you use: 
+    The first step is to create your development directory. If you  want to choose a specific directory, you can do that,
+    however this guide will assume you use:
 
 <div class="Linux">
     <p><i class="command">$HOME/development/</i></p>
-    Many people get confused here because they copy and paste commands which contain this path. User generally refers to your username.  The above path is only useable if you create it manually.  
+    Many people get confused here because they copy and paste commands which contain this path. User generally refers to your username.  The above path is only useable if you create it manually.
 </div>
 <div class="Windows">
     <p><i class="command">C:\development\</i></p>
@@ -461,12 +461,12 @@ $(document).ready(function(){
         <p>This step is necessary if you are using VC8 Express Edition.
         You should download and install the Platform SDK from this location:<br>
         <a href="http://www.microsoft.com/express/2005/platformsdk/default.aspx">http://www.microsoft.com/express/2005/platformsdk/default.aspx</a><br>
-        Remember to follow all the listed steps to get things working: this includes to update the directories for Visual C++ and 
+        Remember to follow all the listed steps to get things working: this includes to update the directories for Visual C++ and
         edit corewin_express.vsprops as indicated.</p>
-        
+
         <h3>MSVC 8 Full Edition</h3>
         <p>If you are using this version of the build environment, you need to update it with the Service Pack 1!</p>
-        
+
         <h3>MSVC 9 Express/Full Edition</h3>
         <p>If you are using this version of the build environment, you might want to update it to Service Pack 1!</p>
     </div>
@@ -474,7 +474,7 @@ $(document).ready(function(){
         <h3>MinGW32 and MSYS</h3>
         <p>The MinGW package contains the compiler, header and lib files.<br>
            The MSYS package contains the shell and make utility.<br>
-           The MSYSDTK package contains autoconf, automake, libtool, autogen, guile, SVN, 
+           The MSYSDTK package contains autoconf, automake, libtool, autogen, guile, SVN,
            openssl, openssh, inetutils, perl and vim.<br>
            Because autoconf and automake will be outdated, we will manually update them.<br>
            Also, With MinGW version 4.1.0.0, some of the BinUtils included are broken by default so we're fixing that.<br><br>
@@ -490,7 +490,7 @@ $(document).ready(function(){
            MSYS Automake [bin] msys-automake-1.8.2.tar.bz2<br>
            BinUtils [bin] binutils-2.17.50-20060824-1.tar.gz<br><br>
 
-           Run the exe	files in the order they were downloaded to install the compiler. Select 'Full' type for the MinGW installation.<br>
+           Run the exe  files in the order they were downloaded to install the compiler. Select 'Full' type for the MinGW installation.<br>
            The installation program should also add an icon for MSYS to your start menu. <br>
            Click the "MSYS" icon and it should open up a shell window. Type "exit" to close the shell window again.<br><br>
 
@@ -543,7 +543,7 @@ continue as indicated.<br></p>
          </div></p>
     </div>
 
-    
+
 
     <h3>Set Environment Variables</h3>
     <p>Right-Click My Computer on your desktop and choose Properties. Under Advanced choose Environmental Variables.
@@ -594,23 +594,23 @@ continue as indicated.<br></p>
     <p><i class="command"># sudo gedit /etc/apt/sources.list</i></p>
     Delete everything in the file that you have not added yourself. If you are not running Hard Heron, replace each instance of the word "hardy" with the name of the distro you are using, i.e. hoary, warty, dapper, or edgy. Got that? Ok, Paste the following into the file and save it. Be sure to make the necessary changes if you are running a different version than Hardy:<br>
     <p><div class="commandBox">
-		# Ubuntu supported packages<br>
-		# GPG key: 437D05B5<br>
-		deb http://us.archive.ubuntu.com/ubuntu hardy main restricted<br>
-		deb http://us.archive.ubuntu.com/ubuntu hardy-updates main restricted<br>
-		deb http://security.ubuntu.com/ubuntu hardy-security main restricted<br><br>
+        # Ubuntu supported packages<br>
+        # GPG key: 437D05B5<br>
+        deb http://us.archive.ubuntu.com/ubuntu hardy main restricted<br>
+        deb http://us.archive.ubuntu.com/ubuntu hardy-updates main restricted<br>
+        deb http://security.ubuntu.com/ubuntu hardy-security main restricted<br><br>
 
-		# Ubuntu community supported packages<br>
-		# GPG key: 437D05B5<br>
-		deb http://us.archive.ubuntu.com/ubuntu hardy universe multiverse<br>
-		deb http://us.archive.ubuntu.com/ubuntu hardy-updates universe multiverse<br>
-		deb http://security.ubuntu.com/ubuntu hardy-security universe multiverse<br><br>
+        # Ubuntu community supported packages<br>
+        # GPG key: 437D05B5<br>
+        deb http://us.archive.ubuntu.com/ubuntu hardy universe multiverse<br>
+        deb http://us.archive.ubuntu.com/ubuntu hardy-updates universe multiverse<br>
+        deb http://security.ubuntu.com/ubuntu hardy-security universe multiverse<br><br>
 
-		# Ubuntu backports project<br>
-		# GPG key: 437D05B5<br>
-		deb http://us.archive.ubuntu.com/ubuntu hardy-backports main restricted universe multiverse<br>
-        </div></p><br>    
-	Now we need to double check that the gpg keys are added correctly to avoid gpg errors. Sounds scary, but worry not! All it takes is one simple command:<br>
+        # Ubuntu backports project<br>
+        # GPG key: 437D05B5<br>
+        deb http://us.archive.ubuntu.com/ubuntu hardy-backports main restricted universe multiverse<br>
+        </div></p><br>
+    Now we need to double check that the gpg keys are added correctly to avoid gpg errors. Sounds scary, but worry not! All it takes is one simple command:<br>
     <p><i class="command"># gpg --keyserver hkp://subkeys.pgp.net --recv-keys 437D05B5 &&  gpg --export --armor 437D05B5 | sudo apt-key add -</i></p>
 After that we need to refresh our sources.list file like so:<br>
     <p><i class="command"># sudo apt-get update</i></p>
@@ -666,10 +666,10 @@ After that we need to refresh our sources.list file like so:<br>
     </div>
     <div class="Linux-Ubuntu">
 
-	If you are on Hardy you can
-	<p><i class="command"># sudo apt-get install nvidia-cg-toolkit</i></p>        
-	<p> Otherwise you MUST do this</p>
-	<div class="commandBox"># wget -c http://developer.download.nvidia.com/cg/Cg_2.0/2.0.0015/Cg-2.0_May2008_x86.tgz</br>
+    If you are on Hardy you can
+    <p><i class="command"># sudo apt-get install nvidia-cg-toolkit</i></p>
+    <p> Otherwise you MUST do this</p>
+    <div class="commandBox"># wget -c http://developer.download.nvidia.com/cg/Cg_2.0/2.0.0015/Cg-2.0_May2008_x86.tgz</br>
         # sudo mvCg-2.0_May2008_x86*.tgz /</br>
         # cd /</br>
         # sudo tar -zxvf Cg-2.0_May2008_x86*.tgz</br>
@@ -686,10 +686,10 @@ After that we need to refresh our sources.list file like so:<br>
     </div>
 </div>
 <div class="MacOSX" >
-To build on OSX you need to Install Xcode which you can get from <a href="https://connect.apple.com/">here.</a> This guide also recomends you to install fink. You can get fink from <a href="http://fink.sourceforge.net/">here.</a> 
-Note: Do not use darwinports if you are using fink. It can cause conflicts if 
+To build on OSX you need to Install Xcode which you can get from <a href="https://connect.apple.com/">here.</a> This guide also recomends you to install fink. You can get fink from <a href="http://fink.sourceforge.net/">here.</a>
+Note: Do not use darwinports if you are using fink. It can cause conflicts if
 they both have the same package installed. <br />
-Open a terminal window and set the required environment variables for fink by 
+Open a terminal window and set the required environment variables for fink by
 issuing the following command:
 <br />
 <div class="commandBox" ><pre># <code>/sw/bin/pathsetup.sh</code></pre>
@@ -700,7 +700,7 @@ issuing the following command:
 <br />
 Configure fink (Optional)
 We are going to configure fink to download and install packages from source only. (no binary packages)<br />
-This step is optional, but has a better success rate for installing the fink 
+This step is optional, but has a better success rate for installing the fink
 dependencies.
 <br />
 <div class="commandBox" ><pre># <code>fink configure</code></pre>
@@ -710,34 +710,34 @@ Provided below are the questions and the standard recommended answers for the co
 <div class="commandBox" ><pre>
 Password:
 OK, I'll ask you some questions and update the configuration file in '/sw/etc/fink.conf'.
-In what additional directory should Fink look for downloaded tarballs? [] 
+In what additional directory should Fink look for downloaded tarballs? []
 Which directory should Fink use to build packages? (If you don't know what this means, it is safe to leave it
-at its default.) [] 
+at its default.) []
 
 Should Fink try to download pre-compiled packages from the binary distribution if available? [y/N] n
 (1)     Quiet (do not show download statistics)
 (2)     Low (do not show tarballs being expanded)
 (3)     Medium (will show almost everything)
 (4)     High (will show everything)
- 
+
 How verbose should Fink be? [4] 4
- 
+
 Proxy/Firewall settings
 Enter the URL of the HTTP proxy to use, or 'none' for no proxy. The URL should start with http:// and may
 contain username, password, and/or port specifications. Note that this value will be visible to all users on
 your computer.
 Example, http://username:password@hostname:port
-Your proxy:  [none] 
+Your proxy:  [none]
 Enter the URL of the FTP proxy to use, or 'none' for no proxy. The URL should start with http:// and may
 contain username, password, and/or port specifications. Note that this value will be visible to all users on
 your computer.
 Example, http://username:password@hostname:port
-Your proxy:  [none] 
+Your proxy:  [none]
 Use passive mode FTP transfers (to get through a firewall)? [Y/n] y
- 
+
 Mirror selection
 All mirrors are set. Do you want to change them? [y/N] n
- 
+
 Writing updated configuration to '/sw/etc/fink.conf'...
 </pre></div>
 <br />
@@ -757,28 +757,28 @@ here.</a></div>
         <b><a name="mysql">MySQL:</b><br>
         If you have the intentions to run the server you have to install <a href="http://www.mysql.org/">MySQL</a> as well.
         PlaneShift uses MySQL version 5.0.
-	    <div class="Linux-Generic">   
-	    <p> For your distro install the mysql package and the -dev package, It might be named mysql-dev or libmysqlclient-dev or something similar.<p> 
+        <div class="Linux-Generic">
+        <p> For your distro install the mysql package and the -dev package, It might be named mysql-dev or libmysqlclient-dev or something similar.<p>
               <p>If after building if you see that mysql was not found when running the server and you get the following error:
-	      <i class="command">WARNING: could not load plugin 'planeshift.database.mysql'</i> make sure you have  the dev package installed, if it was not installed, ./autogen.sh, ./configure, and recompile the server again, according to the documentation below.</p>
-		</div>
+          <i class="command">WARNING: could not load plugin 'planeshift.database.mysql'</i> make sure you have  the dev package installed, if it was not installed, ./autogen.sh, ./configure, and recompile the server again, according to the documentation below.</p>
+        </div>
             <div class="Linux-Ubuntu">
-	    <p>for Hardy via apt-get: <div class="commandBox"># sudo apt-get --assume-yes install libdbd-mysql-perl libdbi-perl libnet-daemon-perl libplrpc-perl mysql-client-5.0 mysql-server-5.0 libmysqlclient15-dev libmysqlclient15off </div></p>
+        <p>for Hardy via apt-get: <div class="commandBox"># sudo apt-get --assume-yes install libdbd-mysql-perl libdbi-perl libnet-daemon-perl libplrpc-perl mysql-client-5.0 mysql-server-5.0 libmysqlclient15-dev libmysqlclient15off </div></p>
 
-		<p>If after building if you see that mysql was not found when running the server and you get the following error:
-		<i class="command">WARNING: could not load plugin 'planeshift.database.mysql'</i> make sure you have libmysqlclient15-dev installed, if it was not installed, ./autogen.sh, ./configure, and recompile the server again, according to the documentation below.</p>
-	</div>
+        <p>If after building if you see that mysql was not found when running the server and you get the following error:
+        <i class="command">WARNING: could not load plugin 'planeshift.database.mysql'</i> make sure you have libmysqlclient15-dev installed, if it was not installed, ./autogen.sh, ./configure, and recompile the server again, according to the documentation below.</p>
+    </div>
         <div class="Linux-Gentoo">
             <p>via portage: <i class="command">#emerge mysql</i></p>
         </div>
-	<div class="Linux-Debian">
-	   You need to make sure you have libmysqlclient-dev and mysql-server installed for your server to run correctly
-		<p>If after building if you see that mysql was not found when running the server and you get the following error:
-		<i class="command">WARNING: could not load plugin 'planeshift.database.mysql'</i> make sure you have libmysqlclient-dev installed, if it was not installed, ./autogen.sh, ./configure, and recompile the server again, according to the documentation below.</p></div>
+    <div class="Linux-Debian">
+       You need to make sure you have libmysqlclient-dev and mysql-server installed for your server to run correctly
+        <p>If after building if you see that mysql was not found when running the server and you get the following error:
+        <i class="command">WARNING: could not load plugin 'planeshift.database.mysql'</i> make sure you have libmysqlclient-dev installed, if it was not installed, ./autogen.sh, ./configure, and recompile the server again, according to the documentation below.</p></div>
 
         <div class="Windows">
                 <p>From the download page, select the Community Server option. You will end up in another page where you should select
-			one of the available Windows downloads between Windows (x86) ZIP/Setup.EXE and the Without Installer version.
+            one of the available Windows downloads between Windows (x86) ZIP/Setup.EXE and the Without Installer version.
                  It is recommend to select the "Without Installer version", since you have just to unzip the file in c:\ and rename the folder
                 (which should resemble mysql-5.0.xx) to simply mysql. At the end of these steps, you should have: c:\mysql\</p>
 
@@ -823,8 +823,8 @@ here.</a></div>
     <p><a href="http://home.gna.org/cal3d/">Cal3D Home</a></p>
     <p><i class="command">$HOME/development$ svn co -r CAL3D_SOURCE_REV svn://svn.gna.org/svn/cal3d/trunk/cal3d cal3d</i></p>
 
-    <p>In case of a slow download use the following command:</p> 
-    <p><i class="command">$HOME/development$ svn co -r CAL3D_SOURCE_REV http://svn.gna.org/svn/cal3d/trunk/cal3d cal3d</i></p> 
+    <p>In case of a slow download use the following command:</p>
+    <p><i class="command">$HOME/development$ svn co -r CAL3D_SOURCE_REV http://svn.gna.org/svn/cal3d/trunk/cal3d cal3d</i></p>
 
     <h3>Crystal Space (CS)</h3>
     <p>Crystal Space 3D SDK is the engine that we use for rendering and sound.</p>
@@ -851,16 +851,16 @@ here.</a></div>
 
     If you want to update to a new revision replace REVISON with the number of the revision you want to use:
     <p><div class="commandBox">
-	$HOME/development/cal3d$ svn update -r REVISION<br>
+    $HOME/development/cal3d$ svn update -r REVISION<br>
         $HOME/development/cs$ svn update -r REVISION<br>
     </div></p>
-	<p>Unlike the supporting libraries, you will generally want to use the latest PlaneShift source (or the HEAD) rather than an intermediate revision.  In this case, you will omit the "-r" option like so:
-	<div class="commandBox">
-	$HOME/development/planeshift$ svn update
-	</div></p><br>
+    <p>Unlike the supporting libraries, you will generally want to use the latest PlaneShift source (or the HEAD) rather than an intermediate revision.  In this case, you will omit the "-r" option like so:
+    <div class="commandBox">
+    $HOME/development/planeshift$ svn update
+    </div></p><br>
     If, for some reason, you wish to update any of the supporting libraries to the latest version (i.e. the HEAD), you have to remove the sticky date tag. WE DO NOT RECOMMEND THIS as it may break your build:
     <p><div class="commandBox">
-	$HOME/development/cal3d$ svn update -r HEAD<br>
+    $HOME/development/cal3d$ svn update -r HEAD<br>
         $HOME/development/cs$ svn update -r HEAD<br>
     </div></p>
 
@@ -915,12 +915,12 @@ If you update a repository, you will need to recompile that repository and each 
 <p>When it asks you for the CS directory, enter
     <b>C:\development\CS</b>.<br>
     When you have to select the components, you can select the options you prefer through the check boxes.<br>
-    
+
     <div class="MINGW">
-    Be sure that you are selecting also the MinGW Win32 Libraries and the support files for MSYS and Cygwin.<br>    
+    Be sure that you are selecting also the MinGW Win32 Libraries and the support files for MSYS and Cygwin.<br>
     </div>
     <div class="MSVC">
-    Be sure that you are selecting also the MSVC Win32 Libraries and the support files for your version of MSVC.<br>    
+    Be sure that you are selecting also the MSVC Win32 Libraries and the support files for your version of MSVC.<br>
     </div>
 
     Be sure that you are installing both DirectX 9 headers and libraries files.<br>
@@ -935,13 +935,13 @@ If you update a repository, you will need to recompile that repository and each 
     <p>
         You should now copy your CS Win Libs DLLs over to your new CS directory, if you haven't done that
         earlier, during the installation of the CS Winlibs.
-	  Goto the start menu, go to Programs and then to CrystalSpace Win32 libraries.
+      Goto the start menu, go to Programs and then to CrystalSpace Win32 libraries.
         Select "Copy DLLs to a CS directory".  Set the directory to C:\development\CS when prompted.
         <div class="MINGW">
             Next, copy CrystalSpaceLibs MinGW directory into a new generic directory.
          </div>
     </p>
-    
+
     <h3>PlaneShift</h3>
     <p>Lastly, download PlaneShift source code:</p>
     <p>
@@ -980,8 +980,8 @@ If you update a repository, you will need to recompile that repository and each 
     <p><a href="http://home.gna.org/cal3d/">Cal3D Home</a></p>
     <p><i class="command">$HOME/development$ svn co -r CAL3D_SOURCE_REV svn://svn.gna.org/svn/cal3d/trunk/cal3d cal3d</i></p>
 
-    <p>In case of a slow download use the following command:</p> 
-    <p><i class="command">$HOME/development$ svn co -r CAL3D_SOURCE_REV http://svn.gna.org/svn/cal3d/trunk/cal3d cal3d</i></p> 
+    <p>In case of a slow download use the following command:</p>
+    <p><i class="command">$HOME/development$ svn co -r CAL3D_SOURCE_REV http://svn.gna.org/svn/cal3d/trunk/cal3d cal3d</i></p>
 
     <h3>Crystal Space (CS)</h3>
     <p>Crystal Space 3D SDK is the engine that we use for rendering and sound.</p>
@@ -1005,16 +1005,16 @@ If you update a repository, you will need to recompile that repository and each 
 
     If you want to update to a new revision replace REVISON with the number of the revision you want to use:
     <p><div class="commandBox">
-	$HOME/development/cal3d$ svn update -r REVISION<br>
+    $HOME/development/cal3d$ svn update -r REVISION<br>
         $HOME/development/cs$ svn update -r REVISION<br>
     </div></p>
-	<p>Unlike the supporting libraries, you will generally want to use the latest PlaneShift source (or the HEAD) rather than an intermediate revision.  In this case, you will omit the "-r" option like so:
-	<div class="commandBox">
-	$HOME/development/planeshift$ svn update
-	</div></p><br>
+    <p>Unlike the supporting libraries, you will generally want to use the latest PlaneShift source (or the HEAD) rather than an intermediate revision.  In this case, you will omit the "-r" option like so:
+    <div class="commandBox">
+    $HOME/development/planeshift$ svn update
+    </div></p><br>
     If, for some reason, you wish to update any of the supporting libraries to the latest version (i.e. the HEAD), you have to remove the sticky date tag. WE DO NOT RECOMMEND THIS as it may break your build:
     <p><div class="commandBox">
-	$HOME/development/cal3d$ svn update -r HEAD<br>
+    $HOME/development/cal3d$ svn update -r HEAD<br>
         $HOME/development/cs$ svn update -r HEAD<br>
     </div></p>
 
@@ -1033,14 +1033,14 @@ If you update a repository, you will need to recompile that repository and each 
 
 <div class="GCC">
     <div class="Linux">
-		<p>If you have a dual core or better processor then you can take advantage of parallel make or jam by adding -j3 after the command. You can replace 3 with the number of jobs you want to run in parallel.</p>
+        <p>If you have a dual core or better processor then you can take advantage of parallel make or jam by adding -j3 after the command. You can replace 3 with the number of jobs you want to run in parallel.</p>
         <h3>Cal3D</h3>
         <p>Since cal3d is a library in development we probably don't want to 'install' this one as root since there is a good
         possibility it will change in the future. Instead we will 'install' it into our working directory. This is done
         by using the --prefix option when we configure it.</p>
-	<div class="linux-Generic" >
-	Using a text editor open configure.in and remove the line 
-	<p><div class="commandBox">
+    <div class="linux-Generic" >
+    Using a text editor open configure.in and remove the line
+    <p><div class="commandBox">
         AM_USE_UNITTESTCPP</div></p>
         <p>Or you can use the following sed command</p>
         <p> <div class="commandBox" >
@@ -1053,9 +1053,9 @@ sed 's/AM_USE_UNITTESTCPP/# AM_USE_UNITTESTCPP/' configure-old.in > configure.in
             $HOME/development/cal3d$ make<br>
             $HOME/development/cal3d$ make install
         </div></p></div>
-	<div class="linux-Debian" >
-	Using a text editor open configure.in and remove the line 
-	<p><div class="commandBox">
+    <div class="linux-Debian" >
+    Using a text editor open configure.in and remove the line
+    <p><div class="commandBox">
         AM_USE_UNITTESTCPP</div></p>
         <p>Or you can use the following sed command</p>
         <p> <div class="commandBox" >
@@ -1068,9 +1068,9 @@ sed 's/AM_USE_UNITTESTCPP/# AM_USE_UNITTESTCPP/' configure-old.in > configure.in
             $HOME/development/cal3d$ make<br>
             $HOME/development/cal3d$ make install
         </div></p></div>
-	<div class="linux-Gentoo" >
-	Using a text editor open configure.in and remove the line 
-	<p><div class="commandBox">
+    <div class="linux-Gentoo" >
+    Using a text editor open configure.in and remove the line
+    <p><div class="commandBox">
       AM_USE_UNITTESTCPP</div></p>
         <p>Or you can use the following sed command</p>
         <p> <div class="commandBox" >
@@ -1083,9 +1083,9 @@ sed 's/AM_USE_UNITTESTCPP/# AM_USE_UNITTESTCPP/' configure-old.in > configure.in
             $HOME/development/cal3d$ make<br>
             $HOME/development/cal3d$ make install
         </div></p></div>
-	<div class="linux-Slackware" >
-	Using a text editor open configure.in and remove the line 
-	<p><div class="commandBox">
+    <div class="linux-Slackware" >
+    Using a text editor open configure.in and remove the line
+    <p><div class="commandBox">
         AM_USE_UNITTESTCPP</div></p>
         <p>Or you can use the following sed command</p>
         <p> <div class="commandBox" >
@@ -1098,9 +1098,9 @@ sed 's/AM_USE_UNITTESTCPP/# AM_USE_UNITTESTCPP/' configure-old.in > configure.in
             $HOME/development/cal3d$ make<br>
             $HOME/development/cal3d$ make install
         </div></p></div>
-	<div class="linux-Ubuntu" >
-	Using a text editor open configure.in and remove the line 
-	<p><div class="commandBox">
+    <div class="linux-Ubuntu" >
+    Using a text editor open configure.in and remove the line
+    <p><div class="commandBox">
         AM_USE_UNITTESTCPP</div></p>
         <p>Or you can use the following sed command</p>
         <p> <div class="commandBox" >
@@ -1116,11 +1116,11 @@ sed 's/AM_USE_UNITTESTCPP/# AM_USE_UNITTESTCPP/' configure-old.in > configure.in
         Because we did not install cal3d we need to make sure other things can find it. This is done using the LD_LIBRARY_PATH:
         <p><i class="command">export LD_LIBRARY_PATH=$HOME/development/cal3d/src/cal3d/.libs/:$LD_LIBRARY_PATH</i></p>
 </div></div></div>
-     <div class="Linux">    
+     <div class="Linux">
         <h3>Crystal Space (CS)</h3>
         <p>Now we can build it and use the configure line to tell it where we installed the cal3d libraries.
         To do this, use the prefix line that was used for Cal3d above.</p></div>
-	<div class="Linux-Generic" >           
+    <div class="Linux-Generic" >
            <div class="User"><div class="commandBox">
             $HOME/development/cs$ ./configure --without-java --without-perl --without-python --without-lib3ds --with-cal3d=$HOME/development/cal3d</div></div><br>
            <div class="Developer"><div class="commandBox">
@@ -1129,8 +1129,8 @@ sed 's/AM_USE_UNITTESTCPP/# AM_USE_UNITTESTCPP/' configure-old.in > configure.in
             $HOME/development/cs$ jam -aq libs plugins cs-config walktest</i></div><br>
            <div class="Static"><i class="command">
             $HOME/development/cs$ jam -aq libs staticplugins cs-config walktest_static</i><br>
-           </div></div> 
-	<div class="Linux-Debian" >           
+           </div></div>
+    <div class="Linux-Debian" >
             <div class="User"><div class="commandBox">
             $HOME/development/cs$ ./configure --without-java --without-perl --without-python --without-lib3ds --with-cal3d=$HOME/development/cal3d</div></div><br>
            <div class="Developer"><div class="commandBox">
@@ -1139,8 +1139,8 @@ sed 's/AM_USE_UNITTESTCPP/# AM_USE_UNITTESTCPP/' configure-old.in > configure.in
             $HOME/development/cs$ jam -aq libs plugins cs-config walktest</i></div><br>
            <div class="Static"><i class="command">
             $HOME/development/cs$ jam -aq libs staticplugins cs-config walktest_static</i><br>
-           </div></div> 
-	<div class="Linux-Gentoo" >           
+           </div></div>
+    <div class="Linux-Gentoo" >
             <div class="User"><div class="commandBox">
             $HOME/development/cs$./configure --without-java --without-perl --without-python --without-lib3ds --with-cal3d=$HOME/development/cal3d</div></div><br>
            <div class="Developer"><div class="commandBox">
@@ -1149,8 +1149,8 @@ sed 's/AM_USE_UNITTESTCPP/# AM_USE_UNITTESTCPP/' configure-old.in > configure.in
             $HOME/development/cs$ jam -aq libs plugins cs-config walktest</div></div><br>
            <div class="Static"><i class="command">
             $HOME/development/cs$ jam -aq libs staticplugins cs-config walktest_static</i><br>
-           </div></div> 
-	<div class="Linux-Slackware" >           
+           </div></div>
+    <div class="Linux-Slackware" >
             <div class="User"><div class="commandBox">
             $HOME/development/cs$./configure --without-java --without-perl --without-python --without-lib3ds --with-cal3d=$HOME/development/cal3d</div></div><br>
            <div class="Developer"><div class="commandBox">
@@ -1159,23 +1159,23 @@ sed 's/AM_USE_UNITTESTCPP/# AM_USE_UNITTESTCPP/' configure-old.in > configure.in
             $HOME/development/cs$ jam -aq libs plugins cs-config walktest</i></div><br>
            <div class="Static"><i class="command">
             $HOME/development/cs$ jam -aq libs staticplugins cs-config walktest_static</i><br>
-           </div></div> 
+           </div></div>
         <div class="Linux-Ubuntu">
-	 <div class="User"><div class="commandBox">
+     <div class="User"><div class="commandBox">
             $HOME/development/cs$./configure --without-java --without-perl --without-python --without-lib3ds --with-cal3d=$HOME/development/cal3d</div></div><br>
            <div class="Developer"><div class="commandBox">
             $HOME/development/cs$./configure --enable-debug --without-java --without-perl --without-python --without-lib3ds --with-cal3d=$HOME/development/cal3d</div></div><br>
-	  <div class="Normal"><i class="command">
+      <div class="Normal"><i class="command">
             $HOME/development/cs$ jam -aq libs plugins cs-config walktest</i></div><br>
            <div class="Static"><i class="command">
             $HOME/development/cs$ jam -aq libs staticplugins cs-config walktest_static</i></div><br>
-	   </div></div>
+       </div></div>
 
 
-<div class="Linux">	   
-We should export the CRYSTAL environment variable so applications outside the Crystal Space	 
-	         tree know where to find the .so's.	 
-	         <p><i class="command">export CRYSTAL=$HOME/development/cs</i></p>	 
+<div class="Linux">
+We should export the CRYSTAL environment variable so applications outside the Crystal Space
+             tree know where to find the .so's.
+             <p><i class="command">export CRYSTAL=$HOME/development/cs</i></p>
 
 <h3>PlaneShift</h3>
         <p><div class="commandBox">
@@ -1207,7 +1207,7 @@ We should export the CRYSTAL environment variable so applications outside the Cr
        <p>If you wish for your psclient to not use the same user files as your other build/install you may run ps with the following command<br />
        <div class="commandBox">
 $HOME/development/planeshift$ ./psclient -cfgset=PlaneShift.UserConfigPath=$HOME/.PlaneShift2</div>
-      <p> You can also edit this in the psclient.cfg file under the game section uncomment the appropriate line and edit the path.</p> 
+      <p> You can also edit this in the psclient.cfg file under the game section uncomment the appropriate line and edit the path.</p>
    </div>
 </div></div></div>
 <div class="MacOSX">
@@ -1216,9 +1216,9 @@ $HOME/development/planeshift$ ./psclient -cfgset=PlaneShift.UserConfigPath=$HOME
         <p>Since cal3d is a library in development we probably don't want to 'install' this one as root since there is a good
         possibility it will change in the future. Instead we will 'install' it into our working directory. This is done
         by using the --prefix option when we configure it.</p>
-	<div class="linux-Generic" >
-	Using a text editor open configure.in and remove the line 
-	<p><div class="commandBox">
+    <div class="linux-Generic" >
+    Using a text editor open configure.in and remove the line
+    <p><div class="commandBox">
         AM_USE_UNITTESTCPP</div></p>
         <p>Or you can use the following sed command</p>
         <p> <div class="commandBox" >
@@ -1234,17 +1234,17 @@ sed 's/AM_USE_UNITTESTCPP/# AM_USE_UNITTESTCPP/' configure-old.in > configure.in
   <h3>Crystal Space (CS)</h3>
         <p>Now we can build it and use the configure line to tell it where we installed the cal3d libraries.
         To do this, use the prefix line that was used for Cal3d above.</p>
-	   <div class="User"><div class="commandBox">
+       <div class="User"><div class="commandBox">
             $HOME/development/cs$./configure --without-java --without-perl --without-python --without-lib3ds --with-cal3d=$HOME/development/cal3d</div></div>
            <div class="Developer"><div class="commandBox">
             $HOME/development/cs$./configure --enable-debug --without-java --without-perl --without-python --without-lib3ds --with-cal3d=$HOME/development/cal3d</div></div><br>
            <div class="Normal"><i class="command">
             $HOME/development/cs$ jam -aq libs plugins cs-config walktest</i></div><br>
             <div class="Static"> there is no Mac static build guide at this time</div>
-        We should export the CRYSTAL environment variable so applications outside the Crystal Space	 
-	         tree know where to find the .so's.	 
-	         <p><i class="command">export CRYSTAL=$HOME/development/cs</i></p>	
-         
+        We should export the CRYSTAL environment variable so applications outside the Crystal Space
+             tree know where to find the .so's.
+             <p><i class="command">export CRYSTAL=$HOME/development/cs</i></p>
+
 <h3>PlaneShift</h3>
         <p><div class="commandBox">
             $HOME/development/planeshift$ ./autogen.sh<br>
@@ -1268,7 +1268,7 @@ sed 's/AM_USE_UNITTESTCPP/# AM_USE_UNITTESTCPP/' configure-old.in > configure.in
        <p>If you wish for your psclient to not use the same user files as your other build/install you may run ps with the following command<br />
        <div class="commandBox">
 $HOME/development/planeshift$ ./psclient.app/Contents/MacOS/psclient -cfgset=PlaneShift.UserConfigPath=$HOME/Library/Application Support/PlaneShift2</div>
-      <p> You can also edit this in the psclient.cfg file under the game section uncomment the appropriate line and edit the path.</p> 
+      <p> You can also edit this in the psclient.cfg file under the game section uncomment the appropriate line and edit the path.</p>
    </div>
     </div>
 <div class="MINGW">
@@ -1277,7 +1277,7 @@ $HOME/development/planeshift$ ./psclient.app/Contents/MacOS/psclient -cfgset=Pla
 
         <p>Run MSYS from the start menu to open the shell. Be aware that if you have MSYS opened already, you need to restart the console, otherwise
  many things won't be found during the build process. Make sure you run the export commands to set the environment variables again</p>
-    
+
         <h3>Crystal Space (CS)</h3>
         <p>Switch to the Crystal Space source dir using 'cd /c/development/cs'.
         Configure to debug mode and jam. (if you wish to build in optimized mode, just run
@@ -1298,7 +1298,7 @@ $HOME/development/planeshift$ ./psclient.app/Contents/MacOS/psclient -cfgset=Pla
         After everything compiles, try running "walktest.exe" in /c/development/cs to check that everything is ok.
 
         <h3>PlaneShift</h3>
-Change your working directory to PS's, 
+Change your working directory to PS's,
  and do:</p>
         <p><div class="commandBox">
             ./autogen.sh<br>
@@ -1346,7 +1346,7 @@ psclient.exe -cfgset=PlaneShift.UserConfigPath=C:\development\pssettings</div>
       <p>You can also edit this in the psclient.cfg file under the game section uncomment the appropriate line and edit the path.</p>
     </div>
 </div></div>
-    
+
 <div class="MSVC">
 
     <h3>Setup MSVC Environment</h3>
@@ -1390,13 +1390,13 @@ psclient.exe -cfgset=PlaneShift.UserConfigPath=C:\development\pssettings</div>
     </p>
     <p>Make sure that your specific 'msvc' folder has the 'read only' box unchecked (right click on the folder
 and select Properties, 'read only' is one of the attributes in the General tab) before continuing.</p>
-    
+
     <p>Go into the 'Build' menu, and select 'configuration manager'. Change the 'Active Solution Configuration' to 'Release(with DLLs)'.<br>
     Right click on the solution and select 'Build Solution'. To test the build of CS, run walktest.exe in C:\development\CS.<br>
     If you encounter any errors, check you have done everything correctly, and then if the problem persists, you can
     ask for help in the CS IRC channel:<br>
     irc.freenode.net #crystalspace</p>
-   
+
     <h3>PlaneShift</h3>
     <p>Under Tools-&gt;Options in you MSVC look on the left hand side for the Projects
     folder. Under Projects choose "VC++ Directories". In the Show Directories for: choose
@@ -1455,13 +1455,13 @@ and select Properties, 'read only' is one of the attributes in the General tab) 
 <p>
 You can choose to run your local client and server with the official artwork or with the SVN one.</p><p>
 The SVN artwork is rather incomplete and it doesn't contain any fancy piece of art. It is however necessary
-to have if you want to run your client. If you want to fetch this art, you need to collect it from SVN and put it in 
+to have if you want to run your client. If you want to fetch this art, you need to collect it from SVN and put it in
 a <i>art</i> subdirectory in your PlaneShift directory.
 
 <div class="Linux">
 <p><i class="command">$HOME/development/planeshift$ svn co https://planeshift.svn.sourceforge.net/svnroot/planeshift/art</i></p>
 </div>
- 
+
 <div class="Windows">
 <p><i class="command">https://planeshift.svn.sourceforge.net/svnroot/planeshift/art</i></p>
 </div>
@@ -1580,7 +1580,7 @@ NOTE: If you have upgraded MySQL server to 4.1 or superior (while the client is 
     <div class="MSVC">Go to your PlaneShift directory (C:\development\planeshift) and run psserver. This will start the server.</div>
 </div>
 <div class="Linux">Go to your PlaneShift directory ($HOME/development/planeshift) and run psserver, this will start the server. If you have a script to start your server or load maps you can use<br><br>
-<i class="command">./psserver --run=/this/script_name</i> <br> <br>	
+<i class="command">./psserver --run=/this/script_name</i> <br> <br>
 </div>
 <div class="MacOSX">Go to your PlaneShift directory ($HOME/development/planeshift) and run psserver, this will start the server. If you have a script to start your server or load maps you can use<br><br>
 <i class="command">./psserver --run=/this/script_name</i><br></div>
@@ -1636,13 +1636,13 @@ is located somewhere else or you want to connect to somebody's else server, you 
         <td>full GM (30)</td>
     </tr>
     <tr>
-        <td>dev1</td> 
+        <td>dev1</td>
         <td>andrew</td>
         <td>full GM (30)</td>
     </tr>
     <tr>
-	<td>dev2</td>
-	<td>andrew</td>
+    <td>dev2</td>
+    <td>andrew</td>
         <td>full GM (30)</td>
     </tr>
     <tr>
@@ -1650,7 +1650,7 @@ is located somewhere else or you want to connect to somebody's else server, you 
         <td>andrew</td>
         <td>GM2 (22)</td>
     </tr>
-    <tr>   
+    <tr>
         <td>gm2</td>
          <td>andrew</td>
         <td>GM6 (26)</td>
@@ -1679,8 +1679,8 @@ is located somewhere else or you want to connect to somebody's else server, you 
 
 <p>
     To perform server actions you just have to log in as a GM character. If you want a list of commands available
-    execute the /admin command.  You will be given the list of available commands for your account's security group.  
-    When logged in with this account, you can view the in-game help to obtain the full list of available commands and syntax.  
+    execute the /admin command.  You will be given the list of available commands for your account's security group.
+    When logged in with this account, you can view the in-game help to obtain the full list of available commands and syntax.
     If you loaded any maps other than the test map "npcroom", you may teleport to them by using the command: "/teleport me map [mapname]"
 </p>
 
