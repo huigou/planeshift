@@ -43,7 +43,7 @@ class psLinearMovement;
 
 // This holds the version number of the network code, remember to increase
 // this each time you do an update which breaks compatibility
-#define PS_NETVERSION   0x0093
+#define PS_NETVERSION   0x0094
 // Remember to bump the version in pscssetup.h, as well.
 
 // NPC Networking version is separate so we don't have to break compatibility
@@ -868,9 +868,10 @@ enum {
     PETITION_CLOSE = 2,     ///< Server sends back result of close petition
     PETITION_CHANGE = 3,    ///< Server sends back result of change petition
     PETITION_ASSIGN = 4,    ///< Server sends back result of assignation of petition
-    PETITION_ESCALATE = 5,  ///< Server sends back result of escalation of petition
-    PETITION_DESCALATE = 6, ///< Server sends back result of descalation of petition
-    PETITION_DIRTY = 7      ///< Server informs client that their petition list is dirty
+    PETITION_DEASSIGN = 5,  ///< Server sends back result of deassignation of petition
+    PETITION_ESCALATE = 6,  ///< Server sends back result of escalation of petition
+    PETITION_DESCALATE = 7, ///< Server sends back result of descalation of petition
+    PETITION_DIRTY = 8      ///< Server informs client that their petition list is dirty
 };
 
 /**

@@ -35,13 +35,14 @@
 #include "pawspetitiongmwindow.h"
 #include "paws/pawsmainwidget.h"
 
-#define QUIT_BUTTON            1000
-#define    ASSIGN_BUTTON       2
-#define ESCALATE_BUTTON     3
-#define DESCALATE_BUTTON    4
-#define CLOSE_BUTTON        5
-#define CANCEL_BUTTON       6
-#define ADMIN_BUTTON        7
+#define QUIT_BUTTON         1000
+#define ASSIGN_BUTTON       2
+#define DEASSIGN_BUTTON     3
+#define ESCALATE_BUTTON     4
+#define DESCALATE_BUTTON    5
+#define CLOSE_BUTTON        6
+#define CANCEL_BUTTON       7
+#define ADMIN_BUTTON        8
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
@@ -222,6 +223,35 @@ void pawsPetitionGMWindow::HandleMessage ( MsgEntry* me )
 
         return;
     }
+    
+    if (message.msgType == PETITION_DEASSIGN)
+    {
+        // Check if server reported errors on the query
+        if (!message.success)
+        {
+            printf("dessign fail\n");
+            psSystemMessage error(0,MSG_INFO,message.error);
+            msgqueue->Publish(error.msg);
+            return;
+        }
+
+        // Change the status of the position we wanted to assign:
+        if (currentRow < 0)
+        {
+            printf("Bad row\n");
+            // This should NEVER happen (it means the server gave a bogus message)
+            Error1("PetitionGMWindow reports invalid currentRow!");
+            return;
+        }
+
+        // Change the status of the item in the list box:
+        AddPetitions(petitionMessage.petitions);
+
+        psSystemMessage confirm(0,MSG_INFO,PawsManager::GetSingleton().Translate("You have been deassigned from the selected petition."));
+        msgqueue->Publish(confirm.msg);
+
+        return;
+    }
 
     if (message.msgType == PETITION_ESCALATE)
     {
@@ -362,6 +392,36 @@ bool pawsPetitionGMWindow::OnButtonPressed( int mouseButton, int keyModifier, pa
                 else
                 {
                     psSystemMessage error(0,MSG_INFO,PawsManager::GetSingleton().Translate("The selected petition isn't Open."));
+                    msgqueue->Publish(error.msg);
+                }
+            }
+            break;
+        }
+        
+        case DEASSIGN_BUTTON:
+        {
+            if (petCount > 0)
+            {
+                // Get the currently selected row:
+                int sel = petitionList->GetSelection();
+                if (sel < 0)
+                {
+                    psSystemMessage error(0,MSG_INFO,PawsManager::GetSingleton().Translate("You must select a petition from the list in order to deassign yourself."));
+                    msgqueue->Publish(error.msg);
+                    return true;
+                }
+
+                if (csString("In Progress") == ((pawsTextBox*)(petitionList->GetSelected()->GetColumn(PGMCOL_STATUS)))->GetText())
+                {
+                    currentRow = sel;
+
+                    // Send a message to the server requesting deassignment:
+                    psPetitionRequestMessage queryMsg(true, "deassign", petitionMessage.petitions.Get(currentRow).id);
+                    msgqueue->SendMessage(queryMsg.msg);
+                }
+                else
+                {
+                    psSystemMessage error(0,MSG_INFO,PawsManager::GetSingleton().Translate("The selected petition isn't assigned."));
                     msgqueue->Publish(error.msg);
                 }
             }

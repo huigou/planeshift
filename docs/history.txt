@@ -1,4 +1,11 @@
 *** 2008-10-20 by Stefano Angeleri
+- Added an unclaim button in the petition manage window allowing the gm 
+  to remove his assignation from the petition fixing 
+  FS#710 - button to unclaim petitions 
+- Update by caarrie to the compiling guide
+- NET VERSION BUMP
+
+*** 2008-10-20 by Stefano Angeleri
 - Added public maps to trunk db fixing FS#1253
 
 ﻿*** 2008-10-18 by Dave Bentham

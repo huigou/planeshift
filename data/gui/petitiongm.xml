@@ -66,7 +66,7 @@
     </widget>
 
     <widget name="Admin Petition" factory="pawsButton" toggle="no" id="7" shadows="yes" >
-        <frame x="20" y="324" width="90" height="22" border="no" />
+        <frame x="20" y="324" width="75" height="22" border="no" />
         <bgimage resource="Standard Button"/>
 	<font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="10" />
         <label text="Admin" />
@@ -78,7 +78,7 @@
     </widget>
     
     <widget name="Assign Button" factory="pawsButton" toggle="no" id="2" shadows="yes" >
-        <frame x="115" y="324" width="90" height="22" border="no" />
+        <frame x="100" y="324" width="75" height="22" border="no" />
         <bgimage resource="Standard Button"/>
 	<font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="10" />
         <label text="Claim" />
@@ -89,8 +89,20 @@
         </attachpoints>            
     </widget>
     
-    <widget name="Escalate Button" factory="pawsButton" toggle="no" id="3" shadows="yes" >
-        <frame x="210" y="324" width="90" height="22" border="no" />
+    <widget name="Unassign Button" factory="pawsButton" toggle="no" id="3" shadows="yes" >
+        <frame x="180" y="324" width="75" height="22" border="no" />
+        <bgimage resource="Standard Button"/>
+	<font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="10" />
+        <label text="Unclaim" />
+
+        <attachpoints>
+            <attach point="ATTACH_LEFT" />
+            <attach point="ATTACH_BOTTOM" />
+        </attachpoints>            
+    </widget>
+    
+    <widget name="Escalate Button" factory="pawsButton" toggle="no" id="4" shadows="yes" >
+        <frame x="260" y="324" width="75" height="22" border="no" />
         <bgimage resource="Standard Button"/>
 	<font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="10" />
         <label text="Escalate" />
@@ -101,8 +113,8 @@
         </attachpoints>            
     </widget>    
     
-    <widget name="Descalate Button" factory="pawsButton" toggle="no" id="4" shadows="yes" >
-        <frame x="305" y="324" width="90" height="22" border="no" />
+    <widget name="Descalate Button" factory="pawsButton" toggle="no" id="5" shadows="yes" >
+        <frame x="340" y="324" width="75" height="22" border="no" />
         <bgimage resource="Standard Button"/>
 	<font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="10" />
         <label text="Descalate" />
@@ -113,8 +125,8 @@
         </attachpoints>            
     </widget>    
     
-    <widget name="Close Button" factory="pawsButton" toggle="no" id="5" shadows="yes" >
-        <frame x="400" y="324" width="90" height="22" border="no" />
+    <widget name="Close Button" factory="pawsButton" toggle="no" id="6" shadows="yes" >
+        <frame x="420" y="324" width="75" height="22" border="no" />
         <bgimage resource="Standard Button"/>
 	<font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="10" />
         <label text="Close" />
@@ -125,8 +137,8 @@
         </attachpoints>            
     </widget>    
     
-    <widget name="Cancel Button" factory="pawsButton" toggle="no" id="6" shadows="yes" >
-        <frame x="495" y="324" width="81" height="22" border="no" />
+    <widget name="Cancel Button" factory="pawsButton" toggle="no" id="7" shadows="yes" >
+        <frame x="500" y="324" width="75" height="22" border="no" />
         <bgimage resource="Standard Button"/>
 	<font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="10" />
         <label text="Delete" />
