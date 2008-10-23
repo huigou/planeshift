@@ -1,3 +1,7 @@
+*** 2008-10-23 by Andrew Dai
+- Added more debugging messages to "Went through event loop 100 times in one
+  timeslice" message and for when the trigger time becomes inconsistent.
+
 *** 2008-10-23 by Kenny Graunke
 - Added unique ID types for EID, PID, and AccountID, with more to come.
   This makes it very clear what kind of ID you're dealing with, and allows
