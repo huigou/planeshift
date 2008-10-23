@@ -76,6 +76,7 @@ csTicks EventManager::ProcessEventQueue()
     static int lastid;
 
     psGameEvent *event = NULL;
+    int events = 0;
     int count = 0;
 
     while (true)
@@ -99,8 +100,11 @@ csTicks EventManager::ProcessEventQueue()
                 /* this should not happen at all */
                 CPrintf(
                         CON_DEBUG,
-                        "Event %d scheduled at %d is being processed out of order at time %d! Last processed event was scheduled for %d.\n",
+                        "Event %s:%s (%d) scheduled at %d is being processed out of order at time %d! Last processed event was scheduled for %d.\n",
+                        event->GetType(), 
+                        event->ToString().GetDataSafe(),
                         event->id, event->triggerticks, now, lastTick);
+                CS_ASSERT_MSG("Event trigger time is inconsistent", false);
             }
             else
             {
@@ -110,6 +114,7 @@ csTicks EventManager::ProcessEventQueue()
         }
         
 
+        events++;
         csTicks start = csGetTicks();
 
         if (event->CheckTrigger())
@@ -138,10 +143,11 @@ csTicks EventManager::ProcessEventQueue()
         delete event;
 
         count++;
-        if (count == 100)
+        if (count % 100 == 0)
         {
-            CPrintf(CON_DEBUG, "Went through event loop 100 times in one timeslice.  This means we either have duplicate events, "
-                "bugs in event generation or bugs in deleting events from the event tree.\n");
+            CPrintf(CON_DEBUG, "Went through event loop 100 times in one timeslice for %d events.  This means we either have duplicate events, "
+                "bugs in event generation or bugs in deleting events from the event tree. "
+                "Last event: %s:%s took %u time\n", events, event->GetType(), event->ToString().GetDataSafe());
         }
     }
 
