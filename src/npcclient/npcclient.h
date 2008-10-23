@@ -80,8 +80,8 @@ public:
 
     struct DeferredNPC
     {
-        unsigned int id;
-        csString     name;
+        PID id;
+        csString name;
     };
 
     
@@ -278,17 +278,17 @@ public:
      * SetEntityPos finds the given ID entity, and updates
      * its position in mesh and linmove.
      */
-    void SetEntityPos(PS_ID id, csVector3& pos, iSector* sector, int instance);
+    void SetEntityPos(EID id, csVector3& pos, iSector* sector, int instance);
 
     /**
      * Find the NPC* attached to the entity with the specified character ID
      */
-    NPC *FindNPCByPID(unsigned int character_id);
+    NPC *FindNPCByPID(PID character_id);
     
     /**
      * Find the NPC* attached to the entity with the specified EID
      */
-    NPC *FindNPC(PS_ID entid);
+    NPC *FindNPC(EID entid);
 
     /**
      * Find a given path.
@@ -347,18 +347,12 @@ public:
      */
     void HandleDeath(NPC *who);
 
-    /**
-     * This is called when a human player dies, enabling NPCs
-     * to find out and react accordingly.
-     */
-    void HandlePlayerDeath(PS_ID who);
-
     void Add( gemNPCObject* object );
     void Remove ( gemNPCObject* object );
     void RemoveAll();
     
-    gemNPCObject *FindCharacterID(unsigned int PID);
-    gemNPCObject *FindEntityID(PS_ID EID);
+    gemNPCObject *FindCharacterID(PID pid);
+    gemNPCObject *FindEntityID(EID eid);
 
     /**
      * Loop through every tribe and check if this npc is a member.
@@ -369,7 +363,7 @@ public:
 
     iCollideSystem *GetCollDetSys() { return cdsys; }
 
-    NPC *ReadSingleNPC(unsigned int char_id);
+    NPC *ReadSingleNPC(PID char_id);
 
     /**
      * Update with time from server in order to start timed events.
@@ -470,8 +464,8 @@ protected:
     csArray<NPC*>              npcs;
     csArray<DeferredNPC>       npcsDeferred;
     csArray<psTribe*>          tribes;
-    csHash<gemNPCObject*>      all_gem_objects_by_eid;
-    csHash<gemNPCObject*>      all_gem_objects_by_pid;
+    csHash<gemNPCObject*, EID> all_gem_objects_by_eid;
+    csHash<gemNPCObject*, PID> all_gem_objects_by_pid;
     csArray<gemNPCObject*>     all_gem_objects;
     csArray<gemNPCItem*>       all_gem_items;
     csHash<RaceInfo_t,csString> raceInfos;

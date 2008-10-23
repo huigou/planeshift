@@ -88,9 +88,9 @@ public:
     /// Find by player name, used for Chat and other purposes. Returns NULL if found but not ready.
     Client *Find(const char* name);
     /// Find by player id
-    Client *FindPlayer(unsigned int playerID);
+    Client *FindPlayer(PID playerID);
     /// Find by account id
-    Client *FindAccount(int accountID, uint32_t excludeClient = 0);
+    Client *FindAccount(AccountID accountID, uint32_t excludeClient = 0);
     /// Find by IP addr and Port
     Client *Find(LPSOCKADDR_IN addr);
     

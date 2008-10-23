@@ -33,6 +33,7 @@ struct iSector;
 //=============================================================================
 // Library Includes
 //=============================================================================
+#include "util/psconst.h"
 #include "util/pspath.h"
 
 //=============================================================================
@@ -350,7 +351,7 @@ protected:
     float     searchRange;
     float     chaseRange;
     csVector3 offset;
-    uint32_t  target_id;
+    EID       target_id;
     psAPath   path;
     csVector3 localDest;
     

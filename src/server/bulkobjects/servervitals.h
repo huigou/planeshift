@@ -61,7 +61,7 @@ public:
 
      /** Handles new Vital data construction for the server.
       */
-    bool SendStatDRMessage(uint32_t clientnum, PS_ID eid, int flags, csRef<PlayerGroup> group = NULL);
+    bool SendStatDRMessage(uint32_t clientnum, EID eid, int flags, csRef<PlayerGroup> group = NULL);
 
     bool Update( csTicks now );
 

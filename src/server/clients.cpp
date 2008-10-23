@@ -157,7 +157,7 @@ Client *ClientConnectionSet::Find(const char* name)
         return NULL;
 }
 
-Client *ClientConnectionSet::FindPlayer(unsigned int playerID)
+Client *ClientConnectionSet::FindPlayer(PID playerID)
 {
     CS::Threading::RecursiveMutexScopedLock lock(mutex);
     AddressHash::GlobalIterator it (addrHash.GetIterator ());
@@ -172,7 +172,7 @@ Client *ClientConnectionSet::FindPlayer(unsigned int playerID)
     return NULL;
 }
 
-Client *ClientConnectionSet::FindAccount(int accountID, uint32_t excludeClient)
+Client *ClientConnectionSet::FindAccount(AccountID accountID, uint32_t excludeClient)
 {
     CS::Threading::RecursiveMutexScopedLock lock(mutex);
     AddressHash::GlobalIterator it (addrHash.GetIterator ());

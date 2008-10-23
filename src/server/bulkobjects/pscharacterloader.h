@@ -89,7 +89,7 @@ public:
     bool Initialize();
 
     /// Loads the names of characters for a given account for charpick screen on login
-    psCharacterList *LoadCharacterList(unsigned int accountid);
+    psCharacterList *LoadCharacterList(AccountID accountid);
     
 
     psCharacter **LoadAllNPCCharacterData(psSectorInfo *sector,int &count);
@@ -105,10 +105,10 @@ public:
      *  @return Pointer to a newly created psCharacter object, or NULL if the data could not be loaded.
      *
      */
-    psCharacter *LoadCharacterData(unsigned int uid, bool forceReload);
+    psCharacter *LoadCharacterData(PID pid, bool forceReload);
 
     /// Load just enough of the character data to know what it looks like (for selection screen)
-    psCharacter *QuickLoadCharacterData(unsigned int uid, bool noInventory);
+    psCharacter *QuickLoadCharacterData(PID pid, bool noInventory);
 
     /** Creates a new character entry to store the provided character data.
      *
@@ -122,8 +122,8 @@ public:
      *          When this function returns the UID member of the chardata structure will contain the unique id for this 
      *          character >0 if and only if the save was successful.
      */
-    bool NewCharacterData(unsigned int accountid, psCharacter *chardata);
-    bool NewNPCCharacterData(unsigned int accountid,psCharacter *chardata);
+    bool NewCharacterData(AccountID accountid, psCharacter *chardata);
+    bool NewNPCCharacterData(AccountID accountid,psCharacter *chardata);
     unsigned int InsertNewCharacterData(const char **fieldnames, psStringArray& fieldvalues);
 
     /** Saves character data to the database.
@@ -147,7 +147,7 @@ public:
      *
      *  @return true - Delete progressing.   false - Could not delete.
      */    
-    bool DeleteCharacterData( unsigned int charID, csString& error );
+    bool DeleteCharacterData(PID pid, csString& error );
 
     
     /** This function finds a character's ID given a character name.
@@ -157,7 +157,7 @@ public:
      *  @param excludeNPCs If we should exclude NPC's from the search.
      *  @return The ID of the character or 0 if not found
      */
-    unsigned int FindCharacterID(const char *character_name, bool excludeNPCs=true);
+    PID FindCharacterID(const char *character_name, bool excludeNPCs=true);
 
     /** This function finds a character's ID given a character name and the ID of the
      *  account that this character is supposed to be on.
@@ -167,7 +167,7 @@ public:
      *  @param character_name The name of the character we are looking for
      *  @return The ID of the character or 0 if not found
      */
-    unsigned int FindCharacterID(unsigned int accountID, const char *character_name);
+    PID FindCharacterID(AccountID accountID, const char *character_name);
 
     /** Checks to see if the character name is owned by a particular ID.
       *
@@ -175,22 +175,22 @@ public:
       * @param accountID The account this character should belong to.
       * @return true If the character name given belongs to the accountID given.
       */
-    bool AccountOwner( const char* characterName, unsigned int accountID );
+    bool AccountOwner( const char* characterName, AccountID accountID );
 
     /// Update the skill in the database
-    bool UpdateCharacterSkill(unsigned int character_id,unsigned int skill_id,
+    bool UpdateCharacterSkill(PID pid, unsigned int skill_id,
                               unsigned int skill_z, unsigned int skill_y, unsigned int skill_rank);
 
 
 private:
 
-    bool ClearCharacterAdvantages(unsigned int character_id);
-    bool SaveCharacterAdvantage(unsigned int character_id,unsigned int advantage_id);
-    bool ClearCharacterSkills(unsigned int character_id);
-    bool ClearCharacterTraits(unsigned int character_id);
-    bool SaveCharacterSkill(unsigned int character_id,unsigned int skill_id,
+    bool ClearCharacterAdvantages(PID pid);
+    bool SaveCharacterAdvantage(PID pid, unsigned int advantage_id);
+    bool ClearCharacterSkills(PID pid);
+    bool ClearCharacterTraits(PID pid);
+    bool SaveCharacterSkill(PID pid,unsigned int skill_id,
                             unsigned int skill_z, unsigned int skill_y, unsigned int skill_rank);
-    bool SaveCharacterTrait(unsigned int character_id,unsigned int trait_id);
+    bool SaveCharacterTrait(PID pid, unsigned int trait_id);
     bool UpdateQuestAssignments(psCharacter *chr);
     bool ClearCharacterSpell( psCharacter* character );
     bool SaveCharacterSpell( psCharacter* character );

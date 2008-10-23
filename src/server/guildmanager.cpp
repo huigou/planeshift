@@ -931,29 +931,22 @@ void GuildManager::SendMemberData(Client *client,bool onlineOnly)
     {
         psGuildMember* member = mIter2.Next();
         
-        csString escpxml_name = EscpXML(member->name);
-        csString escpxml_publicnotes = EscpXML(member->public_notes);
-        csString escpxml_privatenotes;
-
         // Only show private notes to yourself
+        csString escpxml_privatenotes;
         if (client->GetPID() == member->char_id)
         {
             escpxml_privatenotes = EscpXML(member->private_notes);
         }
-        else
-        {
-            escpxml_privatenotes.Clear();
-        }
 
         open.AppendFmt("<m char_id=\"%i\" name=\"%s\" public=\"%s\" private=\"%s\" points=\"%i\" level=\"%i\"/>",
-               member->char_id, escpxml_name.GetData(),
-                       escpxml_publicnotes.GetData(), escpxml_privatenotes.GetData(),
+                       member->char_id.Unbox(), EscpXML(member->name).GetData(),
+                       EscpXML(member->public_notes).GetData(), escpxml_privatenotes.GetData(),
                        member->guild_points, member->guildlevel->level);
     }
     
     open.Append("</memberinfo>");
     
-    open.AppendFmt("<playerinfo char_id=\"%i\" guildnotifications=\"%i\"/>", client->GetPID(), client->GetCharacterData()->IsGettingGuildNotifications());
+    open.AppendFmt("<playerinfo char_id=\"%i\" guildnotifications=\"%i\"/>", client->GetPID().Unbox(), client->GetCharacterData()->IsGettingGuildNotifications());
 
     psGUIGuildMessage cmd(clientnum,psGUIGuildMessage::MEMBER_DATA,open);
     cmd.SendMessage();

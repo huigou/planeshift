@@ -436,14 +436,10 @@ bool psMarriageManager::CreateMarriageEntry( psCharacter* charData,  psCharacter
     Result rs;
     
     // create entry of this character in 'character_relationships'
-
-    // Get character's Unique ID number
-    int id = charData->GetPID();
-    int spouse_id = spouseData->GetPID();
     csString spouse_name;
     db->Escape(spouse_name, spouseData->GetCharFullName());        
         
-    query.Format( "INSERT INTO character_relationships VALUES(%d,%d,'spouse','%s')", id, spouse_id, spouse_name.GetData() );
+    query.Format("INSERT INTO character_relationships VALUES(%d,%d,'spouse','%s')", charData->GetPID().Unbox(), spouseData->GetPID().Unbox(), spouse_name.GetData());
     if ( !db->Command( query.GetData() ) )
     {
         Error2( "CreateMarriageEntry(): DB Error: %s", db->GetLastError() );
@@ -505,7 +501,7 @@ void psMarriageManager::DeleteMarriageInfo(  psCharacter* charData )
 
     // Step 2: We remove the data about the marriage now.
     csString query;
-    query.Format( "DELETE FROM character_relationships WHERE (character_id='%d' OR related_id='%d') and relationship_type='spouse'", charData->GetPID(), charData->GetPID() );
+    query.Format( "DELETE FROM character_relationships WHERE (character_id='%d' OR related_id='%d') and relationship_type='spouse'", charData->GetPID().Unbox(), charData->GetPID().Unbox());
     if ( !db->Command( query.GetData() ) )
     {
         Error2( "DeleteMarriageInfo(): DB Error: %s", db->GetLastError() ); 

@@ -186,7 +186,7 @@ void psAuthenticationServer::HandleAuthCharacter( MsgEntry* me )
     }
 
     // cache will auto-delete this ptr if it times out
-    CacheManager::GetSingleton().AddToCache(charlist, CacheManager::GetSingleton().MakeCacheName("list",client->GetAccountID()),120);
+    CacheManager::GetSingleton().AddToCache(charlist, CacheManager::GetSingleton().MakeCacheName("list", client->GetAccountID().Unbox()),120);
 }
 
 
@@ -419,7 +419,7 @@ void psAuthenticationServer::HandleAuthent(MsgEntry *me)
     }
 
     // cache will auto-delete this ptr if it times out
-    CacheManager::GetSingleton().AddToCache(charlist, CacheManager::GetSingleton().MakeCacheName("list",client->GetAccountID()),120);
+    CacheManager::GetSingleton().AddToCache(charlist, CacheManager::GetSingleton().MakeCacheName("list", client->GetAccountID().Unbox()),120);
 
     
      /**
@@ -519,7 +519,7 @@ void psAuthenticationServer::HandleAuthent(MsgEntry *me)
 
     if (acctinfo->securitylevel >= GM_TESTER)
     {
-        psserver->GetAdminManager()->Admin(client->GetPID(), me->clientnum, client);
+        psserver->GetAdminManager()->Admin(me->clientnum, client);
     }
     
     if (CacheManager::GetSingletonPtr()->GetCommandManager()->Validate(client->GetSecurityLevel(), "default advisor"))
@@ -626,12 +626,12 @@ BanManager::BanManager()
     time_t now = time(0);
     for (unsigned int i=0; i<result.Count(); i++)
     {
-        uint32 account = result[i].GetUInt32("account");
+        AccountID account = AccountID(result[i].GetUInt32("account"));
         time_t end = result[i].GetUInt32("end");
 
         if (now > end)  // Time served
         {
-            db->Command("DELETE FROM bans WHERE account='%u'", account );
+            db->Command("DELETE FROM bans WHERE account='%u'", account.Unbox());
             continue;
         }
 
@@ -643,7 +643,7 @@ BanManager::BanManager()
         newentry->reason = result[i]["reason"];
         
         // If account ban, add to list
-        if (newentry->account)
+        if (newentry->account.IsValid())
             banList_IDHash.Put(newentry->account,newentry);
 
         // If IP range ban, add to list
@@ -654,7 +654,7 @@ BanManager::BanManager()
 
 BanManager::~BanManager()
 {
-    csHash<BanEntry*,uint32>::GlobalIterator it(banList_IDHash.GetIterator());
+    csHash<BanEntry*, AccountID>::GlobalIterator it(banList_IDHash.GetIterator());
     while (it.HasNext())
     {
         BanEntry* entry = it.Next();
@@ -662,20 +662,20 @@ BanManager::~BanManager()
     }
 }
 
-bool BanManager::RemoveBan(uint32 account)
+bool BanManager::RemoveBan(AccountID account)
 {
     BanEntry* ban = GetBanByAccount(account);
     if (!ban)
         return false;  // Not banned
 
-    db->Command("DELETE FROM bans WHERE account='%u'", account );
+    db->Command("DELETE FROM bans WHERE account='%u'", account.Unbox());
     banList_IDHash.Delete(account,ban);
     banList_IPRList.Delete(ban);
     delete ban;
     return true;
 }
 
-bool BanManager::AddBan(uint32 account, csString ipRange, time_t duration, csString reason)
+bool BanManager::AddBan(AccountID account, csString ipRange, time_t duration, csString reason)
 {
     if (GetBanByAccount(account))
         return false;  // Already banned
@@ -694,7 +694,7 @@ bool BanManager::AddBan(uint32 account, csString ipRange, time_t duration, csStr
     int ret = db->Command("INSERT INTO bans "
                           "(account,ip_range,start,end,reason) "
                           "VALUES ('%u','%s','%u','%u','%s')",
-                          newentry->account,
+                          newentry->account.Unbox(),
                           newentry->ipRange.GetData(),
                           newentry->start,
                           newentry->end,
@@ -705,7 +705,7 @@ bool BanManager::AddBan(uint32 account, csString ipRange, time_t duration, csStr
         return false;
     }
 
-    if (newentry->account)
+    if (newentry->account.IsValid())
         banList_IDHash.Put(newentry->account,newentry);
 
     if (newentry->ipRange.Length())
@@ -714,7 +714,7 @@ bool BanManager::AddBan(uint32 account, csString ipRange, time_t duration, csStr
     return true;
 }
 
-BanEntry* BanManager::GetBanByAccount(uint32 account)
+BanEntry* BanManager::GetBanByAccount(AccountID account)
 {
     return banList_IDHash.Get(account,NULL);
 }

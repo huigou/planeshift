@@ -170,7 +170,7 @@ enum PSCHARACTER_CUSTOM
 struct QuestAssignment
 {
     /// Character id of player who assigned quest to this player.  This is used to make sure you cannot get two quests from the same guy at the same time.
-    int assigner_id;
+    PID assigner_id;
     /// This status determines whether the quest was assigned, completed, or is marked for deletion.
     char status;
     /// Dirty flag determines minimal save on exit
@@ -261,7 +261,7 @@ class psWorkGameEvent;
 struct Buddy
 {
     csString name;
-    unsigned int playerID;
+    PID playerID;
 };
 
 /**
@@ -554,16 +554,16 @@ protected:
     GMEventsAssignment        assigned_events;
     bool guildNotified; ///< If true the player will get notifications about his guild members logging in and out
 
-    bool LoadSpells(unsigned int use_id);
-    bool LoadAdvantages(unsigned int use_id);
-    bool LoadSkills(unsigned int use_id);
-    bool LoadTraits(unsigned int use_id);
+    bool LoadSpells(PID use_id);
+    bool LoadAdvantages(PID use_id);
+    bool LoadSkills(PID use_id);
+    bool LoadTraits(PID use_id);
     bool LoadQuestAssignments();
-    bool LoadRelationshipInfo(unsigned int pid);
+    bool LoadRelationshipInfo(PID pid);
     bool LoadBuddies( Result& myBuddy, Result& buddyOf);
     bool LoadMarriageInfo( Result& result);
     bool LoadFamiliar( Result& pet, Result& owner);
-    bool LoadGMEvents(void);
+    bool LoadGMEvents();
 
     float override_max_hp,override_max_mana;  ///< These values are loaded from base_hp_max,base_mana_max in the db and
                                               ///< should prevent normal HP calculations from taking place
@@ -601,8 +601,8 @@ public:
     void ResetStats();
 
 //    WorkInformation* workInfo;
-    unsigned int pid;
-    unsigned int accountid;
+    PID pid;
+    AccountID accountid;
 
     csString name;
     csString lastname;
@@ -613,8 +613,8 @@ public:
     bool     isMarried;
 
     csArray<Buddy> buddyList;
-    csArray<int> buddyOfList;
-    csSet<unsigned int> acquaintances;
+    csArray<PID> buddyOfList;
+    csSet<PID> acquaintances;
 
     psRaceInfo *raceinfo;
     PSCHARACTER_MODE player_mode;
@@ -705,8 +705,8 @@ public:
     int  loot_category_id;
 
     csString animal_affinity;
-    uint32_t owner_id;
-    uint32_t familiar_id;
+    PID owner_id;
+    PID familiar_id;
 
 public:
     psCharacter();
@@ -726,13 +726,13 @@ public:
     void AddSpell(psSpell * spell);
     bool Store(const char *location,const char *slot,psItem *what);
 
-    void SetPID(const unsigned int characterID) { pid = characterID; }
-    unsigned int GetPID() const { return pid; }
+    void SetPID(PID characterID) { pid = characterID; }
+    PID GetPID() const { return pid; }
 
-    unsigned int GetMasterNPCID() const { return npc_masterid ? npc_masterid: pid; }
+    PID GetMasterNPCID() const { return npc_masterid ? npc_masterid : pid; }
 
-    void SetAccount(int id) { accountid = id;   }
-    int  GetAccount() const { return accountid; }
+    void SetAccount(AccountID id) { accountid = id; }
+    AccountID GetAccount() const { return accountid; }
 
     void SetName(const char* newName) { SetFullName(newName,lastname.GetData()); }
     void SetLastName(const char* newLastName) { SetFullName(name.GetData(),newLastName); }
@@ -746,7 +746,7 @@ public:
 
     // Introductions
     /// Answers whether this character knows the given character or not.
-    bool Knows(unsigned int charid);
+    bool Knows(PID charid);
     bool Knows(psCharacter *c) { return (c ? Knows(c->GetPID()) : false); }
     /// Introduces this character to the given character; answers false if already introduced.
     bool Introduce(psCharacter *c);
@@ -772,11 +772,11 @@ public:
     void SetRaceInfo(psRaceInfo *rinfo);
     psRaceInfo *GetRaceInfo() { return raceinfo; }
 
-    void RemoveBuddy( unsigned int buddyID );
-    bool AddBuddy( unsigned int buddyID, csString& name );
+    void RemoveBuddy(PID buddyID);
+    bool AddBuddy(PID buddyID, csString & name);
 
-    void BuddyOf( unsigned int buddyID );
-    void NotBuddyOf( unsigned int buddyID );
+    void BuddyOf(PID buddyID);
+    void NotBuddyOf(PID buddyID);
 
     const char *GetFactionStandings() { return faction_standings; }
 
@@ -787,7 +787,7 @@ public:
     void AddInventoryToLoot();
     void AddLootItem(psItemStats *item);
     void AddLootMoney(int money) { loot_money += money; }
-    size_t  GetLootItems(psLootMessage& msg,int entity,int cnum);
+    size_t GetLootItems(psLootMessage& msg, EID entity, int cnum);
 
     /// Gets and zeroes the loot money
     int  GetLootMoney();
@@ -796,7 +796,7 @@ public:
     void ClearLoot();
 
     QuestAssignment *IsQuestAssigned(int id);
-    QuestAssignment *AssignQuest(psQuest *quest, int assigner_id);
+    QuestAssignment *AssignQuest(psQuest *quest, PID assigner_id);
     bool CompleteQuest(psQuest *quest);
     void DiscardQuest(QuestAssignment *q, bool force = false);
     bool SetAssignedQuestLastResponse(psQuest *quest, int response);
@@ -819,7 +819,7 @@ public:
 
     bool CheckQuestAssigned(psQuest *quest);
     bool CheckQuestCompleted(psQuest *quest);
-    bool CheckQuestAvailable(psQuest *quest,int assigner_id);
+    bool CheckQuestAvailable(psQuest *quest, PID assigner_id);
     /**
      * @brief Check if all prerequisites are valid for this response
      * for this character.
@@ -973,15 +973,15 @@ public:
 
     /// Used to determine if this NPC is a pet
     bool IsPet() { return characterType == PSCHARACTER_TYPE_PET; };
-    int GetFamiliarID() { return familiar_id; };
-    void SetFamiliarID(int v);
+    PID  GetFamiliarID() { return familiar_id; };
+    void SetFamiliarID(PID v);
     const char *GetAnimalAffinity() { return animal_affinity.GetDataSafe(); };
     void SetAnimialAffinity( const char* v ) { animal_affinity = v; };
-    int GetOwnerID() { return owner_id; };
-    void SetOwnerID(int v) { owner_id = v; };
+    PID  GetOwnerID() { return owner_id; };
+    void SetOwnerID(PID v) { owner_id = v; };
 
     bool UpdateStatDRData(csTicks now);
-    bool SendStatDRMessage(uint32_t clientnum, PS_ID eid, int flags, csRef<PlayerGroup> group = NULL);
+    bool SendStatDRMessage(uint32_t clientnum, EID eid, int flags, csRef<PlayerGroup> group = NULL);
 
     /** Returns true if the character is able to attack with the current slot.
      *  This could be true even if the slot is empty (as in fists).

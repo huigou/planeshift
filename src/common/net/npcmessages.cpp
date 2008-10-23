@@ -253,8 +253,8 @@ csString psNPCCommandsMessage::ToString(AccessPointers * access_ptrs)
                 msgtext.Append("CMD_ATTACK: ");
 
                 // Extract the data
-                PS_ID attacker_id = msg->GetUInt32();
-                PS_ID target_id = msg->GetUInt32();
+                EID attacker_id = EID(msg->GetUInt32());
+                EID target_id = EID(msg->GetUInt32());
 
                 // Make sure we haven't run past the end of the buffer
                 if (msg->overrun)
@@ -263,7 +263,7 @@ csString psNPCCommandsMessage::ToString(AccessPointers * access_ptrs)
                     break;
                 }
 
-                msgtext.AppendFmt("Attacker: %u Target: %u ",attacker_id, target_id);
+                msgtext.AppendFmt("Attacker: %u Target: %u ", attacker_id.Unbox(), target_id.Unbox());
                 break;
             }
             case psNPCCommandsMessage::CMD_SPAWN:
@@ -271,8 +271,8 @@ csString psNPCCommandsMessage::ToString(AccessPointers * access_ptrs)
                 msgtext.Append("CMD_SPAWN: ");
 
                 // Extract the data
-                PS_ID spawner_id = msg->GetUInt32();
-                PS_ID spawned_id = msg->GetUInt32();
+                EID spawner_id = EID(msg->GetUInt32());
+                EID spawned_id = EID(msg->GetUInt32());
 
                 // Make sure we haven't run past the end of the buffer
                 if (msg->overrun)
@@ -281,7 +281,7 @@ csString psNPCCommandsMessage::ToString(AccessPointers * access_ptrs)
                     break;
                 }
                 
-                msgtext.AppendFmt("Spawner: %u Spawned: %d ",spawner_id,spawned_id);
+                msgtext.AppendFmt("Spawner: %u Spawned: %d ", spawner_id.Unbox(), spawned_id.Unbox());
                 break;
             }
             case psNPCCommandsMessage::CMD_TALK:
@@ -289,7 +289,7 @@ csString psNPCCommandsMessage::ToString(AccessPointers * access_ptrs)
                 msgtext.Append("CMD_TALK: ");
 
                 // Extract the data
-                PS_ID speaker_id = msg->GetUInt32();
+                EID speaker_id = EID(msg->GetUInt32());
                 const char* text = msg->GetStr();
 
                 // Make sure we haven't run past the end of the buffer
@@ -299,7 +299,7 @@ csString psNPCCommandsMessage::ToString(AccessPointers * access_ptrs)
                     break;
                 }
 
-                msgtext.AppendFmt("Speaker: %u Text: %s ",speaker_id,text);
+                msgtext.AppendFmt("Speaker: %u Text: %s ", speaker_id.Unbox(), text);
                 break;
             }
             case psNPCCommandsMessage::CMD_VISIBILITY:
@@ -307,7 +307,7 @@ csString psNPCCommandsMessage::ToString(AccessPointers * access_ptrs)
                 msgtext.Append("CMD_VISIBILITY: ");
 
                 // Extract the data
-                PS_ID entity_id = msg->GetUInt32();
+                EID entity_id = EID(msg->GetUInt32());
                 bool status = msg->GetBool();
 
                 // Make sure we haven't run past the end of the buffer
@@ -317,7 +317,7 @@ csString psNPCCommandsMessage::ToString(AccessPointers * access_ptrs)
                     break;
                 }
 
-                msgtext.AppendFmt("EID: %u Status: %s ",entity_id,(status?"true":"false"));
+                msgtext.AppendFmt("EID: %u Status: %s ", entity_id.Unbox(), status ? "true" : "false");
                 break;
             }
             case psNPCCommandsMessage::CMD_PICKUP:
@@ -325,8 +325,8 @@ csString psNPCCommandsMessage::ToString(AccessPointers * access_ptrs)
                 msgtext.Append("CMD_PICKUP: ");
 
                 // Extract the data
-                PS_ID entity_id = msg->GetUInt32();
-                PS_ID item_id = msg->GetUInt32();
+                EID entity_id = EID(msg->GetUInt32());
+                EID item_id   = EID(msg->GetUInt32());
                 int count     = msg->GetInt16();
 
                 // Make sure we haven't run past the end of the buffer
@@ -336,7 +336,7 @@ csString psNPCCommandsMessage::ToString(AccessPointers * access_ptrs)
                     break;
                 }
 
-                msgtext.AppendFmt("EID: %u Item: %u Count: %d ",entity_id,item_id,count);
+                msgtext.AppendFmt("EID: %u Item: %u Count: %d ", entity_id.Unbox(), item_id.Unbox(), count);
                 break;
             }
 
@@ -346,7 +346,7 @@ csString psNPCCommandsMessage::ToString(AccessPointers * access_ptrs)
                 msgtext.Append("CMD_EQUIP: ");
 
                 // Extract the data
-                PS_ID entity_id = msg->GetUInt32();
+                EID entity_id = EID(msg->GetUInt32());
                 csString item = msg->GetStr();
                 csString slot = msg->GetStr();
                 int count     = msg->GetInt16();
@@ -358,7 +358,7 @@ csString psNPCCommandsMessage::ToString(AccessPointers * access_ptrs)
                     break;
                 }
 
-                msgtext.AppendFmt("EID: %u Item: %s Slot: %s Count: %d ",entity_id,item.GetData(),slot.GetData(),count);
+                msgtext.AppendFmt("EID: %u Item: %s Slot: %s Count: %d ", entity_id.Unbox(), item.GetData(), slot.GetData(), count);
                 break;
             }
 
@@ -367,7 +367,7 @@ csString psNPCCommandsMessage::ToString(AccessPointers * access_ptrs)
                 msgtext.Append("CMD_DEQUIP: ");
 
                 // Extract the data
-                PS_ID entity_id = msg->GetUInt32();
+                EID entity_id = EID(msg->GetUInt32());
                 csString slot = msg->GetStr();
 
                 // Make sure we haven't run past the end of the buffer
@@ -377,7 +377,7 @@ csString psNPCCommandsMessage::ToString(AccessPointers * access_ptrs)
                     break;
                 }
 
-                msgtext.AppendFmt("EID: %u Slot: %s ",entity_id,slot.GetData());
+                msgtext.AppendFmt("EID: %u Slot: %s ", entity_id.Unbox(), slot.GetData());
                 break;
             }
 
@@ -386,7 +386,7 @@ csString psNPCCommandsMessage::ToString(AccessPointers * access_ptrs)
                 msgtext.Append("CMD_DIG: ");
 
                 // Extract the data
-                PS_ID entity_id = msg->GetUInt32();
+                EID entity_id = EID(msg->GetUInt32());
                 csString resource = msg->GetStr();
 
                 // Make sure we haven't run past the end of the buffer
@@ -396,7 +396,7 @@ csString psNPCCommandsMessage::ToString(AccessPointers * access_ptrs)
                     break;
                 }
 
-                msgtext.AppendFmt("EID: %u Resource: %s ",entity_id,resource.GetData());
+                msgtext.AppendFmt("EID: %u Resource: %s ", entity_id.Unbox(), resource.GetData());
                 break;
             }
 
@@ -405,7 +405,7 @@ csString psNPCCommandsMessage::ToString(AccessPointers * access_ptrs)
                 msgtext.Append("CMD_DROP: ");
 
                 // Extract the data
-                PS_ID entity_id = msg->GetUInt32();
+                EID entity_id = EID(msg->GetUInt32());
                 csString slot = msg->GetStr();
 
                 // Make sure we haven't run past the end of the buffer
@@ -415,7 +415,7 @@ csString psNPCCommandsMessage::ToString(AccessPointers * access_ptrs)
                     break;
                 }
 
-                msgtext.AppendFmt("EID: %u Slot: %s ",entity_id,slot.GetData());
+                msgtext.AppendFmt("EID: %u Slot: %s ", entity_id.Unbox(), slot.GetData());
                 break;
             }
 
@@ -424,7 +424,7 @@ csString psNPCCommandsMessage::ToString(AccessPointers * access_ptrs)
                 msgtext.Append("CMD_TRANSFER: ");
 
                 // Extract the data
-                PS_ID entity_id = msg->GetUInt32();
+                EID entity_id = EID(msg->GetUInt32());
                 csString item = msg->GetStr();
                 int count = msg->GetInt8();
                 csString target = msg->GetStr();
@@ -436,7 +436,7 @@ csString psNPCCommandsMessage::ToString(AccessPointers * access_ptrs)
                     break;
                 }
 
-                msgtext.AppendFmt("EID: %u Item: %s Count: %d Target: %s ",entity_id, item.GetDataSafe(), count, target.GetDataSafe());
+                msgtext.AppendFmt("EID: %u Item: %s Count: %d Target: %s ", entity_id.Unbox(), item.GetDataSafe(), count, target.GetDataSafe());
                 break;
             }
 
@@ -447,14 +447,12 @@ csString psNPCCommandsMessage::ToString(AccessPointers * access_ptrs)
                 // Extract the data
                 csVector3 where;
 
-                PS_ID character_id = msg->GetUInt32();
+                EID character_id = EID(msg->GetUInt32());
                 float rot = msg->GetFloat();
                 where.x = msg->GetFloat();
                 where.y = msg->GetFloat();
                 where.z = msg->GetFloat();
                 csString sector = msg->GetStr();
-                
-                
 
                 // Make sure we haven't run past the end of the buffer
                 if (msg->overrun)
@@ -464,7 +462,7 @@ csString psNPCCommandsMessage::ToString(AccessPointers * access_ptrs)
                 }
 
                 msgtext.AppendFmt("ID: %u Rot: %.2f Where: (%.2f,%.2f,%.2f) Sector: %s ",
-                                  character_id,rot,where.x,where.y,where.z,sector.GetDataSafe());
+                                  character_id.Unbox(),rot,where.x,where.y,where.z,sector.GetDataSafe());
                 break;
             }
 
@@ -492,7 +490,7 @@ csString psNPCCommandsMessage::ToString(AccessPointers * access_ptrs)
             {
                 msgtext.Append("CMD_IMPERVIOUS: ");
 
-                PS_ID entity_id = msg->GetUInt32();
+                EID entity_id = EID(msg->GetUInt32());
                 bool impervious = msg->GetBool();
 
                 // Make sure we haven't run past the end of the buffer
@@ -502,8 +500,7 @@ csString psNPCCommandsMessage::ToString(AccessPointers * access_ptrs)
                     break;
                 }
 
-                msgtext.AppendFmt("EID: %u Impervious: %s ",
-                                  entity_id,impervious?"true":"false");
+                msgtext.AppendFmt("EID: %u Impervious: %s ", entity_id.Unbox(), impervious ? "true" : "false");
                 break;
             }
 
@@ -512,33 +509,33 @@ csString psNPCCommandsMessage::ToString(AccessPointers * access_ptrs)
             case psNPCCommandsMessage::PCPT_TALK: 
             {
                 msgtext.Append("PCPT_TALK: ");
-                PS_ID speaker = msg->GetUInt32();
-                PS_ID target  = msg->GetUInt32();
+                EID speaker = EID(msg->GetUInt32());
+                EID target  = EID(msg->GetUInt32());
                 int faction   = msg->GetInt16();
 
-                msgtext.AppendFmt("Speaker: %u Target: %u Faction: %d ",speaker,target,faction);
+                msgtext.AppendFmt("Speaker: %u Target: %u Faction: %d ", speaker.Unbox(), target.Unbox(), faction);
                 break;
             }
             case psNPCCommandsMessage::PCPT_ATTACK:
             {
                 msgtext.Append("PCPT_ATTACK: ");
-                PS_ID target   = msg->GetUInt32();
-                PS_ID attacker = msg->GetUInt32();
+                EID target   = EID(msg->GetUInt32());
+                EID attacker = EID(msg->GetUInt32());
 
-                msgtext.AppendFmt("Target: %u Attacker: %u ",target,attacker);
+                msgtext.AppendFmt("Target: %u Attacker: %u ", target.Unbox(), attacker.Unbox());
                 break;
             }
             case psNPCCommandsMessage::PCPT_GROUPATTACK:
             {
                 msgtext.Append("PCPT_GROUPATTACK: ");
-                PS_ID target   = msg->GetUInt32();
-                msgtext.AppendFmt("Target: %u",target);
+                EID target   = EID(msg->GetUInt32());
+                msgtext.AppendFmt("Target: %u", target.Unbox());
                 int groupCount = msg->GetUInt8();
                 for (int i=0; i<groupCount; i++)
                 {
-                    PS_ID attacker = msg->GetUInt32();
+                    EID attacker = EID(msg->GetUInt32());
                     int bestSkillSlot = msg->GetInt8();
-                    msgtext.AppendFmt("Attacker(%i): %u, BestSkillSlot: %d ",i,attacker,bestSkillSlot);
+                    msgtext.AppendFmt("Attacker(%i): %u, BestSkillSlot: %d ", i, attacker.Unbox(), bestSkillSlot);
                 }
 
                 break;
@@ -546,31 +543,31 @@ csString psNPCCommandsMessage::ToString(AccessPointers * access_ptrs)
             case psNPCCommandsMessage::PCPT_DMG:
             {
                 msgtext.Append("PCPT_DMG: ");
-                PS_ID attacker = msg->GetUInt32();
-                PS_ID target   = msg->GetUInt32();
+                EID attacker = EID(msg->GetUInt32());
+                EID target   = EID(msg->GetUInt32());
                 float dmg      = msg->GetFloat();
 
-                msgtext.AppendFmt("Attacker: %u Target: %u Dmg: %.1f ",attacker,target,dmg);
+                msgtext.AppendFmt("Attacker: %u Target: %u Dmg: %.1f ", attacker.Unbox(), target.Unbox(), dmg);
                 break;
             }
             case psNPCCommandsMessage::PCPT_SPELL:
             {
                 msgtext.Append("PCPT_SPELL: ");
-                PS_ID caster = msg->GetUInt32();
-                PS_ID target = msg->GetUInt32();
+                EID caster = EID(msg->GetUInt32());
+                EID target = EID(msg->GetUInt32());
                 uint32_t strhash = msg->GetUInt32();
                 float    severity = msg->GetInt8() / 10;
                 csString type = access_ptrs->msgstrings->Request(strhash);
 
-                msgtext.AppendFmt("Caster: %u Target: %u Type: \"%s\"(%u) Severity: %f ",caster,target,type.GetData(),strhash,severity);
+                msgtext.AppendFmt("Caster: %u Target: %u Type: \"%s\"(%u) Severity: %f ", caster.Unbox(), target.Unbox(), type.GetData(), strhash, severity);
                 break;
             }
             case psNPCCommandsMessage::PCPT_DEATH:
             {
                 msgtext.Append("PCPT_DEATH: ");
-                PS_ID who = msg->GetUInt32();
+                EID who = EID(msg->GetUInt32());
 
-                msgtext.AppendFmt("Who: %u ",who);
+                msgtext.AppendFmt("Who: %u ", who.Unbox());
                 break;
             }
             case psNPCCommandsMessage::PCPT_LONGRANGEPLAYER:
@@ -586,65 +583,65 @@ csString psNPCCommandsMessage::ToString(AccessPointers * access_ptrs)
                     range = "VERYSHORT";
                 
                 msgtext.AppendFmt("PCPT_%sRANGEPLAYER: ",range.GetData());
-                PS_ID npcid   = msg->GetUInt32();
-                PS_ID player  = msg->GetUInt32();
+                EID npcid   = EID(msg->GetUInt32());
+                EID player  = EID(msg->GetUInt32());
                 float faction = msg->GetFloat();
 
-                msgtext.AppendFmt("NPCID: %u Player: %u Faction: %.0f ",npcid,player,faction);
+                msgtext.AppendFmt("NPCID: %u Player: %u Faction: %.0f ", npcid.Unbox(), player.Unbox(), faction);
                 break;
             }
             case psNPCCommandsMessage::PCPT_OWNER_CMD:
             {
                 msgtext.Append("PCPT_OWNER_CMD: ");
-                PS_ID command = msg->GetUInt32();
-                PS_ID owner_id = msg->GetUInt32();
-                PS_ID pet_id = msg->GetUInt32();
-                PS_ID target_id = msg->GetUInt32();
+                psPETCommandMessage::PetCommand_t command = (psPETCommandMessage::PetCommand_t) msg->GetUInt32();
+                EID owner_id = EID(msg->GetUInt32());
+                EID pet_id = EID(msg->GetUInt32());
+                EID target_id = EID(msg->GetUInt32());
 
                 msgtext.AppendFmt("Command: %s OwnerID: %u PetID: %u TargetID: %u ",
-                                  psPETCommandMessage::petCommandString[command],owner_id,pet_id,target_id);
+                                  psPETCommandMessage::petCommandString[command], owner_id.Unbox(), pet_id.Unbox(), target_id.Unbox());
                 break;
             }
             case psNPCCommandsMessage::PCPT_OWNER_ACTION:
             {
                 msgtext.Append("PCPT_OWNER_ACTION: ");
-                PS_ID action = msg->GetUInt32();
-                PS_ID owner_id = msg->GetUInt32();
-                PS_ID pet_id = msg->GetUInt32();
+                int action = msg->GetInt32();
+                EID owner_id = EID(msg->GetUInt32());
+                EID pet_id = EID(msg->GetUInt32());
 
-                msgtext.AppendFmt("Action: %u OwnerID: %u PetID: %u ",action,owner_id,pet_id);
+                msgtext.AppendFmt("Action: %u OwnerID: %u PetID: %u ", action, owner_id.Unbox(), pet_id.Unbox());
                 break;
             }
             case psNPCCommandsMessage::PCPT_INVENTORY:
             {
                 msgtext.Append("PCPT_INVENTORY: ");
-                PS_ID owner_id = msg->GetUInt32();
+                EID owner_id = EID(msg->GetUInt32());
                 csString item_name = msg->GetStr();
                 bool inserted = msg->GetBool();
                 int count = msg->GetInt16();
 
-                msgtext.AppendFmt("OwnerID: %u ItemName: %s Inserted: %s Count: %d ",owner_id,item_name.GetData(),(inserted?"true":"false"),count);
+                msgtext.AppendFmt("OwnerID: %u ItemName: %s Inserted: %s Count: %d ", owner_id.Unbox(), item_name.GetData(), inserted ? "true" : "false", count);
                 break;
             }
             case psNPCCommandsMessage::PCPT_FLAG:
             {
                 msgtext.Append("PCPT_FLAG: ");
-                PS_ID owner_id = msg->GetUInt32();
+                EID owner_id = EID(msg->GetUInt32());
                 uint32_t flags = msg->GetUInt32();
                 csString str;
                 if (flags & INVISIBLE)  str.Append(" INVISIBLE");
                 if (flags & INVINCIBLE) str.Append(" INVINCIBLE");
 
-                msgtext.AppendFmt("OwnerID: %u Flags: %s ",owner_id,str.GetDataSafe());
+                msgtext.AppendFmt("OwnerID: %u Flags: %s ", owner_id.Unbox(), str.GetDataSafe());
                 break;
             }
             case psNPCCommandsMessage::PCPT_NPCCMD:
             {
                 msgtext.Append("PCPT_NPCCMD: ");
-                PS_ID owner_id = msg->GetUInt32();
+                EID owner_id = EID(msg->GetUInt32());
                 csString cmd   = msg->GetStr();
 
-                msgtext.AppendFmt("OwnerID: %u Cmd: %s ",owner_id,cmd.GetDataSafe());
+                msgtext.AppendFmt("OwnerID: %u Cmd: %s ", owner_id.Unbox(), cmd.GetDataSafe());
                 break;
             }
 
@@ -653,7 +650,7 @@ csString psNPCCommandsMessage::ToString(AccessPointers * access_ptrs)
                 msgtext.Append("PCPT_TRANSFER: ");
 
                 // Extract the data
-                PS_ID entity_id = msg->GetUInt32();
+                EID entity_id = EID(msg->GetUInt32());
                 csString item = msg->GetStr();
                 int count = msg->GetInt8();
                 csString target = msg->GetStr();
@@ -665,7 +662,7 @@ csString psNPCCommandsMessage::ToString(AccessPointers * access_ptrs)
                     break;
                 }
 
-                msgtext.AppendFmt("EID: %u Item: %s Count: %d Target: %s ",entity_id, item.GetDataSafe(), count, target.GetDataSafe());
+                msgtext.AppendFmt("EID: %u Item: %s Count: %d Target: %s ", entity_id.Unbox(), item.GetDataSafe(), count, target.GetDataSafe());
                 break;
             }
 
@@ -702,9 +699,9 @@ void psAllEntityPosMessage::SetLength(int elems, int client)
     msg->Add((int16_t)elems);
 }
 
-void psAllEntityPosMessage::Add(PS_ID id, csVector3& pos, iSector*& sector, int instance, csStringHashReversible* msgstrings)
+void psAllEntityPosMessage::Add(EID id, csVector3& pos, iSector*& sector, int instance, csStringHashReversible* msgstrings)
 {
-    msg->Add((uint32_t)id);
+    msg->Add(id.Unbox());
     msg->Add(pos.x);
     msg->Add(pos.y);
     msg->Add(pos.z);
@@ -721,9 +718,9 @@ void psAllEntityPosMessage::Add(PS_ID id, csVector3& pos, iSector*& sector, int 
     msg->Add( (int32_t)instance );
 }
 
-void psAllEntityPosMessage::Get(PS_ID& id, csVector3& pos, iSector*& sector, int& instance, csStringHashReversible* msgstrings, iEngine *engine)
+EID psAllEntityPosMessage::Get(csVector3& pos, iSector*& sector, int& instance, csStringHashReversible* msgstrings, iEngine *engine)
 {
-    id = msg->GetUInt32();
+    EID eid(msg->GetUInt32());
     pos.x = msg->GetFloat();
     pos.y = msg->GetFloat();
     pos.z = msg->GetFloat();
@@ -748,6 +745,7 @@ void psAllEntityPosMessage::Get(PS_ID& id, csVector3& pos, iSector*& sector, int
         sector = NULL;
     }
     instance = msg->GetInt32();
+    return eid;
 }
 
 csString psAllEntityPosMessage::ToString(AccessPointers * access_ptrs)
@@ -757,14 +755,13 @@ csString psAllEntityPosMessage::ToString(AccessPointers * access_ptrs)
     msgtext.AppendFmt("Count: %d",count);
     for (int i = 0; i < count; i++)
     {
-        PS_ID id;
         csVector3 pos;
         iSector* sector;
         int instance;
         
-        Get(id, pos, sector, instance, access_ptrs->msgstrings, access_ptrs->engine);
+        EID eid = Get(pos, sector, instance, access_ptrs->msgstrings, access_ptrs->engine);
 
-        msgtext.AppendFmt(" ID: %u Pos: %s Inst: %d", id, toString(pos,sector).GetDataSafe(), instance);
+        msgtext.AppendFmt(" ID: %u Pos: %s Inst: %d", eid.Unbox(), toString(pos,sector).GetDataSafe(), instance);
     }
 
     return msgtext;
@@ -775,16 +772,16 @@ csString psAllEntityPosMessage::ToString(AccessPointers * access_ptrs)
 
 PSF_IMPLEMENT_MSG_FACTORY(psNewNPCCreatedMessage,MSGTYPE_NEW_NPC);
 
-psNewNPCCreatedMessage::psNewNPCCreatedMessage(uint32_t clientToken,int new_npc_id,int master_id,int owner_id)
+psNewNPCCreatedMessage::psNewNPCCreatedMessage(uint32_t clientToken, PID new_npc_id, PID master_id, PID owner_id)
 {
     msg.AttachNew(new MsgEntry( 3*sizeof(int) ));
 
     msg->SetType(MSGTYPE_NEW_NPC);
     msg->clientnum = clientToken;
 
-    msg->Add((int32_t)new_npc_id);
-    msg->Add((int32_t)master_id);
-    msg->Add((int32_t)owner_id);
+    msg->Add(new_npc_id.Unbox());
+    msg->Add(master_id.Unbox());
+    msg->Add(owner_id.Unbox());
 }
 
 psNewNPCCreatedMessage::psNewNPCCreatedMessage(MsgEntry *message)
@@ -792,18 +789,18 @@ psNewNPCCreatedMessage::psNewNPCCreatedMessage(MsgEntry *message)
     if (!message)
         return;
 
-    new_npc_id = message->GetInt32();    
-    master_id  = message->GetInt32();
-    owner_id   = message->GetInt32();
+    new_npc_id = PID(message->GetUInt32());    
+    master_id  = PID(message->GetUInt32());
+    owner_id   = PID(message->GetUInt32());
 }
 
 csString psNewNPCCreatedMessage::ToString(AccessPointers * /*access_ptrs*/)
 {
     csString msgtext;
     
-    msgtext.AppendFmt("New NPC ID: %d",new_npc_id);
-    msgtext.AppendFmt(" Master ID: %d",master_id);
-    msgtext.AppendFmt(" Owner ID: %d",owner_id);
+    msgtext.AppendFmt("New NPC ID: %d", new_npc_id.Unbox());
+    msgtext.AppendFmt(" Master ID: %d", master_id.Unbox());
+    msgtext.AppendFmt(" Owner ID: %d",  owner_id.Unbox());
 
     return msgtext;
 }

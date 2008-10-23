@@ -201,7 +201,7 @@ void psAuthenticationClient::HandlePreAuth( MsgEntry* me )
 void psAuthenticationClient::HandleAuthApproved( MsgEntry* me )
 {           
     psAuthApprovedMessage msg(me);            
-    Notify3( LOG_CONNECTIONS, "Connection request approved.  Token is %d.  PlayerID is %d.\n",msg.msgClientValidToken,msg.msgPlayerID);
+    Notify3(LOG_CONNECTIONS, "Connection request approved.  Token is %d.  PlayerID is %s.\n", msg.msgClientValidToken, ShowID(msg.msgPlayerID));
     iClientApproved = APPROVED;
                 
     psengine->SetNumChars( msg.msgNumOfChars );
@@ -227,7 +227,7 @@ void psAuthenticationClient::HandleDisconnect( MsgEntry* me )
             }
             else
             {
-                if (dc.actor)
+                if (dc.actor.IsValid())
                 {
                     rejectmsg = 
                         "Cannot connect to the PlaneShift server.  "

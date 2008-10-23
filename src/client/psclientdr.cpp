@@ -209,7 +209,7 @@ void psClientDR::HandleDeadReckon( MsgEntry* me )
             lastquery = currenttime;
         }
 
-        Error2("Got DR message for unknown entity %d.",drmsg.entityid);
+        Error2("Got DR message for unknown entity %s.", ShowID(drmsg.entityid));
         return;
     }
 
@@ -245,7 +245,7 @@ void psClientDR::HandleStatsUpdate( MsgEntry* me )
     GEMClientActor* gemObject  = (GEMClientActor*)psengine->GetCelClient()->FindObject( statdrmsg.entityid );
     if (!gemObject)
     {
-        Error2("Stat request failed because CelClient not ready for %d",statdrmsg.entityid);
+        Error2("Stat request failed because CelClient not ready for %s", ShowID(statdrmsg.entityid));
         return;
     }
 
@@ -266,8 +266,7 @@ void psClientDR::HandleStatsUpdate( MsgEntry* me )
     }        
     else 
     {   // Publish Vitals data using EntityID
-        csString ID;
-        ID.Append(gemObject->GetEID());
+        csString ID((size_t) gemObject->GetEID().Unbox());
         gemObject->GetVitalMgr()->HandleDRData(statdrmsg, ID.GetData() );
     }
 
@@ -348,8 +347,7 @@ void psClientDR::HandleDeath(GEMClientActor * gemObject)
     }
     else 
     {   // Publish Vitals data using EntityID
-        csString ID;
-        ID.Append(gemObject->GetEID());
+        csString ID((size_t) gemObject->GetEID().Unbox());
         gemObject->GetVitalMgr()->HandleDeath( ID.GetData() );
     }
 

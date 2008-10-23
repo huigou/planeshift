@@ -32,7 +32,7 @@
 //=============================================================================
 // Project Includes
 //=============================================================================
-#include "util/prb.h"
+#include "util/psconst.h"
 #include "util/psstring.h"
 
 #include "../iserver/idal.h"
@@ -175,9 +175,9 @@ public:
     psNPCDialog(gemNPC *npc);
     virtual ~psNPCDialog();
 
-    bool Initialize(iDataConnection *db,int NPCID);
+    bool Initialize(iDataConnection *db, PID npcID);
     bool Initialize( iDataConnection* db );
-    bool LoadKnowledgeAreas(int NPCID);
+    bool LoadKnowledgeAreas(PID npcID);
 
     NpcResponse *Respond(const char * text,Client *client);
 

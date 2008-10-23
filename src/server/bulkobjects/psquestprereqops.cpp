@@ -289,7 +289,7 @@ bool psQuestPrereqOpQuestCompletedCategory::Check(psCharacter * character)
 {
     int count = character->NumberOfQuestsCompleted(category);
 
-    Debug5(LOG_QUESTS,character->GetPID(),"Check for category %s in range %d <= %d <= %d",
+    Debug5(LOG_QUESTS, character->GetPID().Unbox(), "Check for category %s in range %d <= %d <= %d",
            category.GetDataSafe(),min,count,max);
 
     // Verify that the appropiate numbers of quest of given category is done.

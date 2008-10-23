@@ -162,20 +162,20 @@ bool psCharCreationManager::HandleCharDelete( MsgEntry* me, Client* client )
         return false; // No char
     }
 
-    unsigned int characteruid = psserver->CharacterLoader.FindCharacterID( client->GetAccountID(), charName );
+    PID pid = psserver->CharacterLoader.FindCharacterID(client->GetAccountID(), charName);
     csString error;
 
     if ( psserver->CharacterLoader.AccountOwner( charName, client->GetAccountID() ) )
     {
         // Found the char?
-        if ( !characteruid)
+        if (!pid.IsValid())
         {
             psserver->SendSystemError(client->GetClientNum(),"Couldn't find character data!");
             return false;
         }
 
         // Can we delete it?
-        if (!psserver->CharacterLoader.DeleteCharacterData(characteruid,error))
+        if (!psserver->CharacterLoader.DeleteCharacterData(pid, error))
         {
             psserver->SendSystemError(client->GetClientNum(),"Error: %s",error.GetData());
             return false;
@@ -183,13 +183,13 @@ bool psCharCreationManager::HandleCharDelete( MsgEntry* me, Client* client )
 
         // Remove cached objects to make sure that the client gets a fresh character
         // list from the database.
-        iCachedObject *obj = CacheManager::GetSingleton().RemoveFromCache(CacheManager::GetSingleton().MakeCacheName("list",client->GetAccountID()));
+        iCachedObject *obj = CacheManager::GetSingleton().RemoveFromCache(CacheManager::GetSingleton().MakeCacheName("list",client->GetAccountID().Unbox()));
         if (obj)
         {
             obj->ProcessCacheTimeout();
             obj->DeleteSelf();
         }
-        obj = CacheManager::GetSingleton().RemoveFromCache(CacheManager::GetSingleton().MakeCacheName("auth",client->GetAccountID()));
+        obj = CacheManager::GetSingleton().RemoveFromCache(CacheManager::GetSingleton().MakeCacheName("auth", client->GetAccountID().Unbox()));
         if (obj)
         {
             obj->ProcessCacheTimeout();
@@ -383,8 +383,7 @@ void psCharCreationManager::HandleName( MsgEntry* me, Client *client )
     Result result (db->Select( query ) );    
     if ( result.IsValid() && result.Count() == 1 )
     {
-        int acctID = client->GetAccountID();
-        int reservedName = IsReserved( name.firstName, acctID );
+        int reservedName = IsReserved(name.firstName, client->GetAccountID());
         if ( reservedName == NAME_RESERVED )
         {
             psNameCheckMessage response( me->clientnum, false, "Name is in reserved database"); 
@@ -683,10 +682,10 @@ void psCharCreationManager::HandleUploadMessage( MsgEntry* me, Client *client )
         return;
     }
 
-    int acctID = client->GetAccountID();
-    if ( !acctID )
+    AccountID acctID = client->GetAccountID();
+    if (!acctID.IsValid())
     {
-        Error2( "Player account %d could not be located", acctID );
+        Error2("Player tried to upload a character to unknown account %s.", ShowID(acctID));
 
         psCharRejectedMessage reject(me->clientnum);
 
@@ -697,7 +696,7 @@ void psCharCreationManager::HandleUploadMessage( MsgEntry* me, Client *client )
 
     // Check to see if the player already has 4 accounts;
     csString query;
-    query.Format( "Select id from characters where account_id=%d", acctID );
+    query.Format("SELECT id FROM characters WHERE account_id=%d", acctID.Unbox());
     Result result (db->Select( query ) );
     if ( result.IsValid() && result.Count() >= CHARACTERS_ALLOWED )
     {        
@@ -1032,13 +1031,13 @@ void psCharCreationManager::HandleUploadMessage( MsgEntry* me, Client *client )
 
         // Remove cached objects to make sure that the client gets a fresh character
         // list from the database if it logs out and in within 2 minutes.
-        iCachedObject *obj = CacheManager::GetSingleton().RemoveFromCache(CacheManager::GetSingleton().MakeCacheName("list",client->GetAccountID()));
+        iCachedObject *obj = CacheManager::GetSingleton().RemoveFromCache(CacheManager::GetSingleton().MakeCacheName("list",client->GetAccountID().Unbox()));
         if (obj)
         {
             obj->ProcessCacheTimeout();
             obj->DeleteSelf();
         }
-        obj = CacheManager::GetSingleton().RemoveFromCache(CacheManager::GetSingleton().MakeCacheName("auth",client->GetAccountID()));
+        obj = CacheManager::GetSingleton().RemoveFromCache(CacheManager::GetSingleton().MakeCacheName("auth",client->GetAccountID().Unbox()));
         if (obj)
         {
             obj->ProcessCacheTimeout();
@@ -1090,7 +1089,7 @@ void psCharCreationManager::HandleUploadMessage( MsgEntry* me, Client *client )
     if (!upload.verify)
     {
         // Remove char data from the cache
-        iCachedObject *obj = CacheManager::GetSingleton().RemoveFromCache(CacheManager::GetSingleton().MakeCacheName("char", chardata->GetPID()));
+        iCachedObject *obj = CacheManager::GetSingleton().RemoveFromCache(CacheManager::GetSingleton().MakeCacheName("char", chardata->GetPID().Unbox()));
         if (obj)
         {
             obj->ProcessCacheTimeout();
@@ -1099,10 +1098,10 @@ void psCharCreationManager::HandleUploadMessage( MsgEntry* me, Client *client )
     }
 }
 
-bool psCharCreationManager::PlayerHasFinishedTutorial(uint32 acctID, uint32 tutorialsecid)
+bool psCharCreationManager::PlayerHasFinishedTutorial(AccountID acctID, uint32 tutorialsecid)
 {
     // if there are characters associated with this account that are outside the tutorial assume the tutorial was passed...
-    Result result(db->Select("SELECT id FROM characters WHERE account_id = %u AND loc_sector_id != %u", acctID, tutorialsecid));
+    Result result(db->Select("SELECT id FROM characters WHERE account_id = %u AND loc_sector_id != %u", acctID.Unbox(), tutorialsecid));
     if (result.IsValid() && result.Count())
     {
         return true;
@@ -1132,7 +1131,7 @@ void psCharCreationManager::AssignScript( psCharacter* character )
     */
 }
 
-int psCharCreationManager::IsReserved( const char* name, int acctID )
+int psCharCreationManager::IsReserved(const char* name, AccountID acctID)
 {
     // Check to see if this name is reserved.  Does this check by comparing
     // the email address of the account with that stored in the migration table.
@@ -1146,7 +1145,7 @@ int psCharCreationManager::IsReserved( const char* name, int acctID )
     {
         csString savedEmail( result[0][0] );
 
-        query.Format( "SELECT username FROM accounts WHERE id=%d\n", acctID );
+        query.Format("SELECT username FROM accounts WHERE id=%d\n", acctID.Unbox());
 
         Result result2(db->Select( query ) );
         if ( result2.IsValid() && result2.Count() == 1 )

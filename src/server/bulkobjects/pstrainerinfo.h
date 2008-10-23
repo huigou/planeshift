@@ -48,7 +48,7 @@ struct psTrainerSkill
 class psTrainerInfo : public csRefCount
 {
 public:
-    bool Load(unsigned int characterid);
+    bool Load(PID pid);
     bool TrainingInSkill(PSSKILL skill, unsigned int rank, float faction);
 
 private:

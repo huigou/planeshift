@@ -46,8 +46,8 @@
 
 struct TransactionEntity
 {
-    int from;
-    int to;
+    PID from;
+    PID to;
     
     csString fromName;
     csString toName;

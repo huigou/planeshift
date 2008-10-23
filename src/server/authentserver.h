@@ -38,7 +38,7 @@ class Client;
 
 struct BanEntry
 {
-    uint32   account;
+    AccountID account;
     csString ipRange;
     time_t   start;
     time_t   end;
@@ -55,13 +55,13 @@ public:
     BanManager();
     ~BanManager();
 
-    bool RemoveBan(uint32 account);
-    bool AddBan(uint32 account, csString ipRange, time_t duration, csString reason);
-    BanEntry* GetBanByAccount(uint32 account);
+    bool RemoveBan(AccountID account);
+    bool AddBan(AccountID account, csString ipRange, time_t duration, csString reason);
+    BanEntry* GetBanByAccount(AccountID account);
     BanEntry* GetBanByIPRange(csString IPRange);
 
 protected:
-    csHash<BanEntry*,uint32> banList_IDHash;   /// Full list of all active bans
+    csHash<BanEntry*, AccountID> banList_IDHash;   /// Full list of all active bans
     csArray<BanEntry*> banList_IPRList;    /// List of active IP range bans
 };
 

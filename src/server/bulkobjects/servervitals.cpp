@@ -43,7 +43,7 @@ psServerVitals::psServerVitals(psCharacter * character)
     version    = 0;
 }
 
-bool psServerVitals::SendStatDRMessage(uint32_t clientnum, PS_ID eid, int flags, csRef<PlayerGroup> group)
+bool psServerVitals::SendStatDRMessage(uint32_t clientnum, EID eid, int flags, csRef<PlayerGroup> group)
 {
     bool backup=0;
     if (flags)

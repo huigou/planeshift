@@ -180,7 +180,7 @@ bool psCelClient::Initialize(iObjectRegistry* object_reg,
     return true;
 }
 
-GEMClientObject* psCelClient::FindObject( int id )
+GEMClientObject* psCelClient::FindObject(EID id)
 {
     return entities_hash.Get (id, NULL);
 }
@@ -260,7 +260,7 @@ void psCelClient::HandleActor( MsgEntry* me )
             return;
         }
             
-        Debug3(LOG_CELPERSIST, 0, "Found existing object<%s> with id %u, removing.\n", found->GetName(), mesg.entityid);
+        Debug3(LOG_CELPERSIST, 0, "Found existing object <%s> with %s, removing.\n", found->GetName(), ShowID(mesg.entityid));
         RemoveObject(found);
     }
 
@@ -385,10 +385,10 @@ void psCelClient::HandleItem( MsgEntry* me )
 
     // We already have an entity with this id so we must have missed the remove object message
     // so delete and remake it.
-    GEMClientObject* found = (GEMClientObject *) FindObject(mesg.id);
+    GEMClientObject *found = (GEMClientObject*) FindObject(mesg.eid);
     if(found)
     {
-        Debug3(LOG_CELPERSIST, 0, "Found existing item<%s> object with id %u, removing.\n", found->GetName(), mesg.id);
+        Debug3(LOG_CELPERSIST, 0, "Found existing item<%s> object with %s, removing.\n", found->GetName(), ShowID(mesg.eid));
         RemoveObject(found);
     }
 
@@ -408,10 +408,10 @@ void psCelClient::HandleActionLocation( MsgEntry* me )
 
     // We already have an entity with this id so we must have missed the remove object message
     // so delete and remake it.
-    GEMClientObject* found = (GEMClientObject *) FindObject(mesg.id);
+    GEMClientObject *found = (GEMClientObject*) FindObject(mesg.eid);
     if ( found )
     {
-        Debug3(LOG_CELPERSIST, 0, "Found existing location<%s> object with id %u, removing.\n", found->GetName(), mesg.id);
+        Debug3(LOG_CELPERSIST, 0, "Found existing location<%s> object with %s, removing.\n", found->GetName(), ShowID(mesg.eid));
         RemoveObject( found );        
     }
 
@@ -432,11 +432,11 @@ void psCelClient::HandleObjectRemoval( MsgEntry* me )
     if (entity)
     {
         RemoveObject(entity);
-        Debug2(LOG_CELPERSIST, 0, "Object %d Removed", mesg.objectEID);
+        Debug2(LOG_CELPERSIST, 0, "Object %s Removed", ShowID(mesg.objectEID));
     }
     else
     {
-        Debug2(LOG_CELPERSIST, 0, "Server told us to remove %d, but it does not seem to exist.", mesg.objectEID);
+        Debug2(LOG_CELPERSIST, 0, "Server told us to remove %s, but it does not seem to exist.", ShowID(mesg.objectEID));
     }
 }
 
@@ -652,7 +652,7 @@ void psCelClient::HandleNameChange( MsgEntry* me )
 
     if(!object)
     {
-        printf("Warning: Got rename message, but couldn't find actor %d!\n",msg.objectID);
+        printf("Warning: Got rename message, but couldn't find actor %s!\n", ShowID(msg.objectID));
         return;
     }
 
@@ -718,10 +718,10 @@ void psCelClient::HandleGroupChange(MsgEntry* me)
     //Apply the new name
     if(!actor)
     {
-        Error2("Couldn't find object %d, ignoring group change..",msg.objectID);
+        Error2("Couldn't find %s, ignoring group change.", ShowID(msg.objectID));
         return;
     }
-    printf("Got group update for actor %d (%s) to group %d\n",actor->GetEID(),actor->GetName(),msg.groupID);
+    printf("Got group update for actor %s (%s) to group %d\n", actor->GetName(), ShowID(actor->GetEID()), msg.groupID);
     unsigned int oldGroup = actor->GetGroupID();
     actor->SetGroupID(msg.groupID);
 
@@ -1093,7 +1093,7 @@ void psCelClient::PruneEntities()
                 vel = actor->GetMovement()->GetVelocity();
                 if (vel.y < -50)            // Large speed puts too much stress on CPU
                 {
-                    Debug3(LOG_ANY,0, "Disabling CD on actor(%d): %s", actor->GetEID(),actor->GetName());
+                    Debug3(LOG_ANY, 0, "Disabling CD on actor %s(%s)", actor->GetName(), ShowID(actor->GetEID()));
                     actor->GetMovement()->SetOnGround(false);
                     // Reset velocity
                     actor->StopMoving(true);
@@ -1178,7 +1178,7 @@ GEMClientObject::GEMClientObject()
     charApp = new psCharAppearance(psengine->GetObjectRegistry());
 }
 
-GEMClientObject::GEMClientObject( psCelClient* cel, PS_ID id )
+GEMClientObject::GEMClientObject(psCelClient* cel, EID id) : eid(id)
 {
     if (!this->cel)
         this->cel = cel;
@@ -1358,11 +1358,11 @@ GEMClientActor::GEMClientActor( psCelClient* cel, psPersistActor& mesg )
     if ( helmGroup.Length() == 0 )
         helmGroup = factname;
     
-    Debug3( LOG_CELPERSIST, 0, "Actor %s(%d) Received", mesg.name.GetData(), mesg.entityid );
+    Debug3(LOG_CELPERSIST, 0, "Actor %s(%s) Received", mesg.name.GetData(), ShowID(mesg.entityid));
 
     if ( !InitMesh(mesg.factname, mesg.filename) )
     {
-        Error3("Fatal Error: Could not create actor %s(%d)", mesg.name.GetData(), mesg.entityid );
+        Error3("Fatal Error: Could not create actor %s(%s)", mesg.name.GetData(), ShowID(mesg.entityid));
         return;
     }
 
@@ -1541,7 +1541,7 @@ bool GEMClientActor::NeedDRUpdate(unsigned char& priority)
 void GEMClientActor::SendDRUpdate(unsigned char priority, csStringHashReversible* msgstrings)
 {
     // send update out
-    PS_ID mappedid = eid;  // no mapping anymore, IDs are identical
+    EID mappedid = eid;  // no mapping anymore, IDs are identical
     bool on_ground;
     float speed,yrot,ang_vel;
     csVector3 pos, worldVel;
@@ -1856,17 +1856,17 @@ const char* GEMClientActor::GetName(bool trueName)
 }
 
 GEMClientItem::GEMClientItem( psCelClient* cel, psPersistItem& mesg )
-               : GEMClientObject( cel, mesg.id )
+               : GEMClientObject(cel, mesg.eid)
 {        
     name = mesg.name;
-    Debug3( LOG_CELPERSIST, 0, "Item %s(%d) Received", mesg.name.GetData(), mesg.id );
+    Debug3(LOG_CELPERSIST, 0, "Item %s(%s) Received", mesg.name.GetData(), ShowID(mesg.eid));
     type = mesg.type;
     factname = mesg.factname;
     solid = 0;
     
     if ( !InitMesh(mesg.factname, mesg.filename) )
     {
-        Error3("Fatal Error: Could not create item %s(%d)", mesg.name.GetData(), mesg.id );
+        Error3("Fatal Error: Could not create item %s(%s)", mesg.name.GetData(), ShowID(mesg.eid));
         return;
     }
     Move(mesg.pos, mesg.yRot, mesg.sector);
@@ -1889,11 +1889,11 @@ GEMClientItem::~GEMClientItem()
 }
 
 GEMClientActionLocation::GEMClientActionLocation( psCelClient* cel, psPersistActionLocation& mesg ) 
-               : GEMClientObject( cel, mesg.id )
+               : GEMClientObject(cel, mesg.eid)
 {        
     name = mesg.name;
 
-    Debug3( LOG_CELPERSIST, 0, "Action %s(%d) Received", mesg.name.GetData(), mesg.id );
+    Debug3(LOG_CELPERSIST, 0, "Action location %s(%s) Received", mesg.name.GetData(), ShowID(mesg.eid));
     type = mesg.type;
     meshname = mesg.mesh;
 

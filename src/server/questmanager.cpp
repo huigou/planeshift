@@ -1133,7 +1133,7 @@ void QuestManager::Assign(psQuest *quest, Client *who,gemNPC *assigner)
 
 bool QuestManager::Complete(psQuest *quest, Client *who)
 {
-    Debug3(LOG_QUESTS, who->GetAccountID(), "Completing quest '%s' for character %s.", quest->GetName(), who->GetName());
+    Debug3(LOG_QUESTS, who->GetAccountID().Unbox(), "Completing quest '%s' for character %s.", quest->GetName(), who->GetName());
 
     bool ret = who->GetActor()->GetCharacterData()->CompleteQuest(quest);
 

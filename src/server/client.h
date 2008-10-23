@@ -29,8 +29,8 @@
 //=============================================================================
 // Project Space Includes
 //=============================================================================
-#include "util/prb.h"
 #include "net/netbase.h"
+#include "util/psconst.h"
 #include "util/waypoint.h"
 
 //=============================================================================
@@ -163,12 +163,12 @@ public:
     uint32_t GetClientNum() const { return clientnum; }
 
     /// The account number for this client.
-    int GetAccountID() { return accountID; }
-    void SetAccountID(int ID) { accountID = ID; }
+    AccountID GetAccountID() { return accountID; }
+    void SetAccountID(AccountID id) { accountID = id; }
 
     /// The player number for this client.
-    unsigned int GetPID() { return playerID; }
-    void SetPID(unsigned int ID) { playerID = ID; }
+    PID GetPID() { return playerID; }
+    void SetPID(PID id) { playerID = id; }
 
     int GetExchangeID() { return exchangeID; }
     void SetExchangeID(int ID) { exchangeID = ID; }
@@ -380,7 +380,7 @@ protected:
     
     int exchangeID;
     gemActor *actor;
-    csArray<uint32> pets;
+    csArray<PID> pets;
     gemObject *target;
     csString mesh;
     bool ready;
@@ -391,8 +391,8 @@ protected:
     /// mute flag
     bool mute;
 
-    int  accountID;
-    unsigned int playerID;
+    AccountID accountID;
+    PID playerID;
     int  securityLevel;
     bool superclient;
     csArray<gemNPC *> listeningNpc;

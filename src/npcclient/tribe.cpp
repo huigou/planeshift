@@ -212,7 +212,7 @@ bool psTribe::CheckAttach(NPC * npc)
 
             // Add to members list in db
             db->Command("INSERT INTO tribe_members (tribe_id,member_id) "
-                        "VALUES (%u,%u)",GetID(),npc->GetPID());
+                        "VALUES (%u,%u)", GetID(), npc->GetPID().Unbox());
             members_id.Push(npc->GetPID());
             return true;
         }

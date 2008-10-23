@@ -824,11 +824,10 @@ ClientConnectionSet* psServer::GetConnections()
 
 /*-----------------Buddy List Management Functions-------------------------*/
 
-bool psServer::AddBuddy(int self,int buddy)
+bool psServer::AddBuddy(PID self, PID buddy)
 {
-    //int rows=db->Command("insert into buddy_list values (%d, %d)",
-    int rows = db->Command( "insert into character_relationships ( character_id, related_id, relationship_type ) values ( %d, %d, 'buddy' )",
-                            self, buddy);
+    int rows = db->Command("INSERT INTO character_relationships (character_id, related_id, relationship_type) VALUES (%u, %u, 'buddy')",
+                            self.Unbox(), buddy.Unbox());
 
     if (rows != 1)
     {
@@ -839,14 +838,10 @@ bool psServer::AddBuddy(int self,int buddy)
     return true;
 }
 
-bool psServer::RemoveBuddy(int self,int buddy)
+bool psServer::RemoveBuddy(PID self, PID buddy)
 {
-    //int rows=db->Command("delete"
-    //                        "  from buddy_list"
-    //                        " where player_id=%d"
-    //                        "   and player_buddy=%d",
-    int rows=db->Command("delete from character_relationships where character_id=%d and related_id=%d and relationship_type='buddy'",
-    self, buddy);
+    int rows = db->Command("DELETE FROM character_relationships WHERE character_id=%d AND related_id=%d AND relationship_type='buddy'",
+                           self.Unbox(), buddy.Unbox());
 
     if (rows != 1)
     {

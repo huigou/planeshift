@@ -149,8 +149,8 @@ protected:
       *          <LI>NAME_AVAILABLE - name is free for use.
       *          </UL>
       */
-    int IsReserved( const char* playerName, int acctID );
-    bool PlayerHasFinishedTutorial(uint32 acctID, uint32 tutorialsecid);
+    int IsReserved(const char* playerName, AccountID acctID);
+    bool PlayerHasFinishedTutorial(AccountID acctID, uint32 tutorialsecid);
         
 private:
     // Structure to hold the initial CP race values.

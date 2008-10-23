@@ -496,7 +496,7 @@ int psCombatManager::CalculateAttack(psCombatGameEvent *event, psItem* subWeapon
 
     calc_damage->Execute();
 
-	if (DoLogDebug2(LOG_COMBAT,event->GetAttackerData()->GetPID()))
+	if (DoLogDebug2(LOG_COMBAT, event->GetAttackerData()->GetPID().Unbox()))
     {
         calc_damage->DumpAllVars();
     }

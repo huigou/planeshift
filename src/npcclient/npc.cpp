@@ -65,7 +65,6 @@ NPC::NPC(): checked(false)
 { 
     brain=NULL; 
     pid=0;
-    oldID=0;
     last_update=0; 
     npcActor=NULL;
     movable=NULL;
@@ -79,8 +78,6 @@ NPC::NPC(): checked(false)
     last_perception=NULL; 
     debugging=0; 
     alive=false; 
-    owner_id=(uint32_t)-1;
-    target_id=(uint32_t)-1;
     tribe=NULL;
     raceInfo=NULL;
     checkedSector=NULL;
@@ -97,7 +94,7 @@ NPC::~NPC()
     }
 }
 
-PS_ID NPC::GetEID()
+EID NPC::GetEID()
 {
     return (npcActor ? npcActor->GetEID() : 0);
 }
@@ -175,12 +172,12 @@ bool NPC::Load(iResultRow& row,BinaryRBTree<NPCType>& npctypes)
     return true; // success
 }
 
-bool NPC::InsertCopy(int use_char_id, int ownerPID)
+bool NPC::InsertCopy(PID use_char_id, PID ownerPID)
 {
     int r = db->Command("insert into sc_npc_definitions "
                         "(name, char_id, npctype, region, ang_vel_override, move_vel_override, console_debug, char_id_owner) values "
                         "('%s', %d,      '%s',    '%s',     %f,               %f, '%c',%d)",
-                        name.GetData(), use_char_id, type.GetData(), region_name.GetData(), ang_vel, vel, IsDebugging()?'Y':'N', ownerPID);
+                        name.GetData(), use_char_id.Unbox(), type.GetData(), region_name.GetData(), ang_vel, vel, IsDebugging() ? 'Y' : 'N', ownerPID.Unbox());
 
     if (r!=1)
     {
@@ -188,7 +185,7 @@ bool NPC::InsertCopy(int use_char_id, int ownerPID)
     }
     else
     {
-        Debug2(LOG_NEWCHAR,use_char_id,"Inserted %s",db->GetLastQuery());
+        Debug2(LOG_NEWCHAR, use_char_id.Unbox(), "Inserted %s", db->GetLastQuery());
     }
     return (r==1);
 }
@@ -257,7 +254,7 @@ gemNPCActor *NPC::GetMostHated(float range, bool include_invisible, bool include
 
     if (hated)
     {
-        Printf(5,"Found most hated: %s(EID: %u)",hated->GetName(),hated->GetEID());
+        Printf(5, "Found most hated: %s(%s)", hated->GetName(), ShowID(hated->GetEID()));
         
     }
     else
@@ -270,8 +267,8 @@ gemNPCActor *NPC::GetMostHated(float range, bool include_invisible, bool include
 
 void NPC::AddToHateList(gemNPCActor *attacker, float delta)
 {
-    Printf("Adding %1.2f to hatelist score for %s(EID: %u).",
-           delta,attacker->GetName(),attacker->GetEID() );
+    Printf("Adding %1.2f to hatelist score for %s(%s).",
+           delta, attacker->GetName(), ShowID(attacker->GetEID()));
     hatelist.AddHate(attacker->GetEID(),delta);
     if(IsDebugging(5))
     {
@@ -279,11 +276,11 @@ void NPC::AddToHateList(gemNPCActor *attacker, float delta)
     }
 }
 
-void NPC::RemoveFromHateList(PS_ID who)
+void NPC::RemoveFromHateList(EID who)
 {
     if (hatelist.Remove(who))
     {
-        Printf("Removed PID: %u from hate list.",who );
+        Printf("Removed %s from hate list.", ShowID(who));
     }
 }
 
@@ -358,7 +355,7 @@ void NPC::DumpState()
         instance = npcActor->GetInstance();
     }
 
-    CPrintf(CON_CMDOUTPUT, "States for %s (PID: %u)\n",name.GetData(),pid);
+    CPrintf(CON_CMDOUTPUT, "States for %s (%s)\n", name.GetData(), ShowID(pid));
     CPrintf(CON_CMDOUTPUT, "---------------------------------------------\n");
     CPrintf(CON_CMDOUTPUT, "Position:            %s\n",npcActor?toString(loc,sector).GetDataSafe():"(none)");
     CPrintf(CON_CMDOUTPUT, "Rotation:            %.2f\n",rot);
@@ -382,7 +379,7 @@ void NPC::DumpState()
 
 void NPC::DumpBehaviorList()
 {
-    CPrintf(CON_CMDOUTPUT, "Behaviors for %s (PID: %u)\n",name.GetData(),pid);
+    CPrintf(CON_CMDOUTPUT, "Behaviors for %s (%s)\n", name.GetData(), ShowID(pid));
     CPrintf(CON_CMDOUTPUT, "---------------------------------------------\n");
     
     brain->DumpBehaviorList(this);
@@ -390,7 +387,7 @@ void NPC::DumpBehaviorList()
 
 void NPC::DumpReactionList()
 {
-    CPrintf(CON_CMDOUTPUT, "Reactions for %s (PID: %u)\n",name.GetData(),pid);
+    CPrintf(CON_CMDOUTPUT, "Reactions for %s (%s)\n", name.GetData(), ShowID(pid));
     CPrintf(CON_CMDOUTPUT, "---------------------------------------------\n");
     
     brain->DumpReactionList(this);
@@ -402,7 +399,7 @@ void NPC::DumpHateList()
     csVector3 pos;
     float yrot;
 
-    CPrintf(CON_CMDOUTPUT, "Hate list for %s (PID: %u)\n",name.GetData(),pid );
+    CPrintf(CON_CMDOUTPUT, "Hate list for %s (%s)\n", name.GetData(), ShowID(pid));
     CPrintf(CON_CMDOUTPUT, "---------------------------------------------\n");
 
     if (GetActor())
@@ -424,12 +421,11 @@ void NPC::ClearState()
     disabled = false;
 }
 
-void NPC::GetNearestEntity(uint32_t& target_id,csVector3& dest,csString& name,float range)
+EID NPC::GetNearestEntity(csVector3& dest,csString& name,float range)
 {
     csVector3 loc;
     iSector* sector;
     float rot,min_range;
-    target_id = (uint32_t)-1;
 
     psGameObject::GetPosition(GetActor(),loc,rot,sector);
 
@@ -453,10 +449,11 @@ void NPC::GetNearestEntity(uint32_t& target_id,csVector3& dest,csString& name,fl
                 min_range = dist;
                 dest = loc2;
                 name = ent->GetName();
-                target_id = ent->GetEID();
+                return ent->GetEID();
             }
         }
     }
+    return EID(0);
 }
 
 gemNPCActor* NPC::GetNearestVisibleFriend(float range)
@@ -526,7 +523,7 @@ void NPC::Printf(int debug, const char *msg,...)
     vsprintf(str, msg, args);
     va_end(args);
 
-    CPrintf(CON_CMDOUTPUT, "%s (%u)> %s\n",GetName(),pid,str);
+    CPrintf(CON_CMDOUTPUT, "%s (%s)> %s\n", GetName(), ShowID(pid), str);
 }
 
 void NPC::VPrintf(int debug, const char *msg, va_list args)
@@ -537,13 +534,13 @@ void NPC::VPrintf(int debug, const char *msg, va_list args)
     char str[1024];
     vsprintf(str, msg, args);
 
-    CPrintf(CON_CMDOUTPUT, "%s (%u)> %s\n",GetName(),pid,str);
+    CPrintf(CON_CMDOUTPUT, "%s (%s)> %s\n", GetName(), ShowID(pid), str);
 }
 
 gemNPCObject *NPC::GetTarget()
 {
     // If something is targeted, use it.
-    if (target_id != (uint32_t)-1 && target_id != 0)
+    if (target_id != 0)
     {
         // Check if visible
         gemNPCObject * obj = npcclient->FindEntityID(target_id);
@@ -573,7 +570,7 @@ void NPC::SetTarget(gemNPCObject *t)
     if (t == NULL)
     {
         Printf(10,"Clearing target");
-        target_id = (uint32_t)~0;
+        target_id = EID(0);
     }
     else
     {
@@ -585,17 +582,16 @@ void NPC::SetTarget(gemNPCObject *t)
 
 gemNPCObject *NPC::GetOwner()
 {
-    if (owner_id != -1)
+    if (owner_id.IsValid())
     {
         return npcclient->FindCharacterID( owner_id );
     }        
-    else
-        return NULL;        
+    return NULL;
 }
 
 const char * NPC::GetOwnerName()
 {
-    if (owner_id != -1)
+    if (owner_id.IsValid())
     {
         gemNPCObject *obj = npcclient->FindCharacterID( owner_id );
         if (obj)
@@ -663,8 +659,8 @@ void NPC::CheckPosition()
         // Bad starting position - npc is falling at high speed, server should automatically kill it
         if(vel.y < -50)
         {
-            CPrintf(CON_ERROR,"Got bad starting location %f %f %f, killing %s (PID: %u/EID: %u).\n",
-                    pos.x,pos.y,pos.z,name.GetData(),pid,GetActor()->GetEID());
+            CPrintf(CON_ERROR,"Got bad starting location %f %f %f, killing %s (%s/%s).\n",
+                    pos.x, pos.y, pos.z, name.GetData(), ShowID(pid), ShowID(GetActor()->GetEID()));
             SetAlive(false);
             break;
         }
@@ -686,7 +682,7 @@ void NPC::CheckPosition()
 //-----------------------------------------------------------------------------
 
 
-void HateList::AddHate(int entity_id,float delta)
+void HateList::AddHate(EID entity_id, float delta)
 {
     HateListEntry *h = hatelist.Get(entity_id, 0);
     if (!h)
@@ -737,7 +733,7 @@ gemNPCActor *HateList::GetMostHated(iSector *sector, csVector3& pos, float range
     return (gemNPCActor*)most;
 }
 
-bool HateList::Remove(int entity_id)
+bool HateList::Remove(EID entity_id)
 {
     return hatelist.DeleteAll(entity_id);
 }
@@ -747,7 +743,7 @@ void HateList::Clear()
     hatelist.DeleteAll();
 }
 
-float HateList::GetHate(int ent)
+float HateList::GetHate(EID ent)
 {
     HateListEntry *h = hatelist.Get(ent, 0);
     if (h)
@@ -758,7 +754,7 @@ float HateList::GetHate(int ent)
 
 void HateList::DumpHateList(const csVector3& myPos, iSector *mySector)
 {
-    csHash<HateListEntry*>::GlobalIterator iter = hatelist.GetIterator();
+    csHash<HateListEntry*, EID>::GlobalIterator iter = hatelist.GetIterator();
 
     CPrintf(CON_CMDOUTPUT, "%6s %5s %-40s %5s %s\n",
             "Entity","Hated","Pos","Range","Flags");
@@ -782,7 +778,7 @@ void HateList::DumpHateList(const csVector3& myPos, iSector *mySector)
 
             pos = obj->pcmesh->GetMesh()->GetMovable()->GetPosition();
             CPrintf(CON_CMDOUTPUT, "%6d %5.1f %40s %5.1f",
-                    h->entity_id,h->hate_amount,toString(pos,sector).GetDataSafe(),
+                    h->entity_id.Unbox(), h->hate_amount, toString(pos, sector).GetDataSafe(),
                     npcclient->GetWorld()->Distance(pos,sector,myPos,mySector));
             // Print flags
             if (obj->IsInvisible())
@@ -798,8 +794,7 @@ void HateList::DumpHateList(const csVector3& myPos, iSector *mySector)
         else
         {
             // This is an error situation. Should not hate something that isn't online.
-            CPrintf(CON_CMDOUTPUT, "Entity: %d Hated: %.1f\n",
-                    h->entity_id,h->hate_amount);
+            CPrintf(CON_CMDOUTPUT, "Entity: %u Hated: %.1f\n", h->entity_id.Unbox(), h->hate_amount);
         }
 
     }

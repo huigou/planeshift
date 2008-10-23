@@ -52,17 +52,17 @@ class LocationType;
 class HateList
 {
 protected:
-    csHash<HateListEntry*> hatelist;
+    csHash<HateListEntry*, EID> hatelist;
 
 public:
     HateList() {}
 
-    void AddHate(int entity_id,float delta);
+    void AddHate(EID entity_id, float delta);
     gemNPCActor *GetMostHated(iSector *sector, csVector3& pos, float range, LocationType * region, bool include_invisible, bool include_invincible);
-    bool Remove(int entity_id);
+    bool Remove(EID entity_id);
     void DumpHateList(const csVector3& myPos, iSector *mySector);
     void Clear();
-    float GetHate(int ent);
+    float GetHate(EID ent);
 };
 
 
@@ -74,8 +74,7 @@ class NPC
 protected:
     NPCType           *brain;
     csString           type;
-    unsigned int       pid;
-    PS_ID              oldID;
+    PID                pid;
     csString           name;
     csTicks            last_update;
     gemNPCActor       *npcActor;
@@ -93,8 +92,8 @@ protected:
     Perception        *last_perception;
     int                debugging;       /// The current debugging level for this npc
     bool               alive;
-    int                owner_id;
-    uint32_t           target_id;
+    PID                owner_id;
+    EID                target_id;
     psTribe           *tribe;
 
     RaceInfo_t        *raceInfo;
@@ -112,18 +111,18 @@ public:
     NPC();
     ~NPC();
 
-    unsigned int          GetPID() { return pid; }
+    PID                   GetPID() { return pid; }
     /**
      * Return the entity ID if an entity exist else 0.
      */
-    PS_ID                 GetEID();
+    EID                   GetEID();
     iMovable             *GetMovable()   { return movable; }
     psLinearMovement     *GetLinMove();
     uint8_t               GetDRCounter() { return ++DRcounter;}
     void                  SetDRCounter(uint8_t counter) { DRcounter = counter;}
 
     bool Load(iResultRow& row,BinaryRBTree<NPCType>& npctypes);
-    bool InsertCopy(int use_char_id,int ownerPID);
+    bool InsertCopy(PID use_char_id, PID ownerPID);
 
     void SetActor(gemNPCActor * actor);
     gemNPCActor * GetActor() { return npcActor; }
@@ -165,7 +164,7 @@ public:
     gemNPCActor *GetMostHated(float range, bool include_invisible, bool include_invincible);
     float       GetEntityHate(gemNPCActor *ent);
     void AddToHateList(gemNPCActor *attacker,float delta);
-    void RemoveFromHateList(PS_ID who);
+    void RemoveFromHateList(EID who);
 
     void SetActiveLocate(csVector3& pos, iSector* sector, float rot, Waypoint * wp)
     { active_locate_pos=pos; active_locate_sector = sector;
@@ -209,7 +208,7 @@ public:
     LocationType *GetRegion();
     csString& GetRegionName() { return region_name; }
 
-    void GetNearestEntity(uint32_t& target_id,csVector3& dest,csString& name,float range);
+    EID GetNearestEntity(csVector3& dest, csString& name, float range);
 
     gemNPCActor * GetNearestVisibleFriend(float range);
 
@@ -239,7 +238,7 @@ public:
 
 struct HateListEntry
 {
-    int   entity_id;
+    EID   entity_id;
     float hate_amount;
 };
 

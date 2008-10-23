@@ -123,7 +123,7 @@ bool GMEventManager::Initialise(void)
 bool GMEventManager::AddNewGMEvent (Client* client, csString eventName, csString eventDescription)
 {
     int newEventID, zero=0;
-    unsigned int gmID = client->GetPID();
+    PID gmID = client->GetPID();
     int clientnum = client->GetClientNum();
     GMEvent* gmEvent;
 
@@ -156,7 +156,7 @@ bool GMEventManager::AddNewGMEvent (Client* client, csString eventName, csString
     // first in the database
     db->Command("INSERT INTO gm_events(id, gm_id, name, description, status) VALUES (%i, %i, '%s', '%s', %i)",
         newEventID,
-        gmID,
+        gmID.Unbox(),
         escEventName.GetDataSafe(),
         escEventDescription.GetDataSafe(),
         RUNNING);
@@ -183,11 +183,11 @@ bool GMEventManager::AddNewGMEvent (Client* client, csString eventName, csString
 /// GM registers player into his/her event
 bool GMEventManager::RegisterPlayerInGMEvent (Client* client, Client* target)
 {
-    unsigned int playerID;
+    PID playerID;
     int clientnum = client->GetClientNum();
     int zero=0;
     GMEvent *gmEvent;
-    unsigned int gmID = client->GetPID();
+    PID gmID = client->GetPID();
 
     // make sure GM is running (or assisting) an event, the player is valid and available.
     if ((gmEvent = GetGMEventByGM(gmID, RUNNING, zero)) == NULL)
@@ -225,9 +225,7 @@ bool GMEventManager::RegisterPlayerInGMEvent (Client* client, Client* target)
     }
 
     // store the registration in db
-    db->Command("INSERT INTO character_events(event_id, player_id) VALUES (%i, %i)",
-        gmEvent->id,
-        playerID);
+    db->Command("INSERT INTO character_events(event_id, player_id) VALUES (%i, %i)", gmEvent->id, playerID.Unbox());
     gmEvent->playerID.Push(playerID);
 
     // keep psCharacter up to date
@@ -254,7 +252,7 @@ bool GMEventManager::RegisterPlayerInGMEvent (Client* client, Client* target)
 bool GMEventManager::RegisterPlayersInRangeInGMEvent (Client* client, float range)
 {
     int clientnum = client->GetClientNum(), zero = 0;
-    unsigned int gmID = client->GetPID();
+    PID gmID = client->GetPID();
 
     // make sure GM is running (or assisting) an event
     if (GetGMEventByGM(gmID, RUNNING, zero) == NULL)
@@ -318,7 +316,7 @@ bool GMEventManager::CompleteGMEvent (Client* client, csString eventName)
 }
 
 /// GM completes their event
-bool GMEventManager::CompleteGMEvent (Client* client, unsigned int gmID, bool byTheControllerGM)
+bool GMEventManager::CompleteGMEvent (Client* client, PID gmID, bool byTheControllerGM)
 {
     int zero = 0;
 
@@ -369,12 +367,12 @@ bool GMEventManager::CompleteGMEvent (Client* client, unsigned int gmID, bool by
 /// GM removes player from incomplete event
 bool GMEventManager::RemovePlayerFromGMEvent (Client* client, Client* target)
 {
-    unsigned int playerID;
+    PID playerID;
     int clientnum = client->GetClientNum();
     int zero=0;
     GMEvent* gmEvent;
     GMEvent* playerEvent;
-    unsigned int gmID = client->GetPID();
+    PID gmID = client->GetPID();
 
     // make sure GM is running (or assisting) an event, the player is valid and registered.
     if ((gmEvent = GetGMEventByGM(gmID, RUNNING, zero)) == NULL)
@@ -427,7 +425,7 @@ bool GMEventManager::RewardPlayersInGMEvent (Client* client,
     int clientnum = client->GetClientNum(), zero = 0;
     WordArray rewardDesc(itemName);
     RewardType rewardType = REWARD_ITEM;
-    unsigned int gmID = client->GetPID();
+    PID gmID = client->GetPID();
 
     // make sure GM is running (or assisting) an event
     if ((gmEvent = GetGMEventByGM(gmID, RUNNING, zero)) == NULL)
@@ -536,7 +534,7 @@ bool GMEventManager::RewardPlayersInGMEvent (Client* client,
 }
 
 /// return all events, running & complete, for a specified player
-int GMEventManager::GetAllGMEventsForPlayer (unsigned int playerID,
+int GMEventManager::GetAllGMEventsForPlayer (PID playerID,
                                              csArray<int>& completedEvents,
                                              int& runningEventAsGM,
                                              csArray<int>& completedEventsAsGM)
@@ -617,7 +615,7 @@ void GMEventManager::HandleMessage(MsgEntry* me, Client* client)
                 if (client->GetPID() == theEvent->gmID)
                 {
                     eventDesc.AppendFmt(". Participants: %zu. Online: ", theEvent->playerID.GetSize());
-                    csArray<unsigned int>::Iterator iter = theEvent->playerID.GetIterator();
+                    csArray<PID>::Iterator iter = theEvent->playerID.GetIterator();
                     while (iter.HasNext())
                     {
                         if ((target = clientConnections->FindPlayer(iter.Next())))
@@ -659,7 +657,7 @@ void GMEventManager::HandleMessage(MsgEntry* me, Client* client)
 
 /// remove players complete references to GM events they were involved with,
 /// e.g. if a character is deleted.
-bool GMEventManager::RemovePlayerFromGMEvents(unsigned int playerID)
+bool GMEventManager::RemovePlayerFromGMEvents(PID playerID)
 {
     int runningEventIDAsGM;
     int runningEventID, gmEventID;
@@ -683,7 +681,7 @@ bool GMEventManager::RemovePlayerFromGMEvents(unsigned int playerID)
             eventsFound = true;
         }
         else
-            Error3("Cannot remove player %d from GM Event %d.", playerID, runningEventID);
+            Error3("Cannot remove player %s from GM Event %d.", ShowID(playerID), runningEventID);
     }
     // remove ref's to old completed events
     csArray<int>::Iterator evIter = completedEventIDs.GetIterator();
@@ -697,11 +695,11 @@ bool GMEventManager::RemovePlayerFromGMEvents(unsigned int playerID)
             eventsFound = true;
          }
          else
-            Error3("Cannot remove player %d from GM Event %d.", playerID, runningEventID);
+            Error3("Cannot remove player %s from GM Event %d.", ShowID(playerID), runningEventID);
     }
     // ...and from the DB too
     if (eventsFound)
-        db->Command("DELETE FROM character_events WHERE player_id = %d", playerID);
+        db->Command("DELETE FROM character_events WHERE player_id = %u", playerID.Unbox());
 
     // if this is a GM thats being deleted, set its GMID to UNDEFINED_GMID.
     if (runningEventIDAsGM >= 0)
@@ -713,7 +711,7 @@ bool GMEventManager::RemovePlayerFromGMEvents(unsigned int playerID)
             db->Command("UPDATE gm_events SET gm_id = %d WHERE id = %d", UNDEFINED_GMID, gmEvent->id);
         }
         else
-            Error3("Cannot remove GM %d from Event %d.", playerID, runningEventID);
+            Error3("Cannot remove GM %s from Event %d.", ShowID(playerID), runningEventID);
     }
     evIter = completedEventIDsAsGM.GetIterator();
     while(evIter.HasNext())
@@ -726,7 +724,7 @@ bool GMEventManager::RemovePlayerFromGMEvents(unsigned int playerID)
             db->Command("UPDATE gm_events SET gm_id = %d WHERE id = %d", UNDEFINED_GMID, gmEvent->id);
         }
         else
-            Error3("Cannot remove GM %d from Event %d.", playerID, gmEventID);
+            Error3("Cannot remove GM %s from Event %d.", ShowID(playerID), gmEventID);
     }
 
     return true;
@@ -736,7 +734,7 @@ bool GMEventManager::RemovePlayerFromGMEvents(unsigned int playerID)
 bool GMEventManager::AssumeControlOfGMEvent(Client* client, csString eventName)
 {
     int zero=0;
-    unsigned int newGMID = client->GetPID();
+    PID newGMID = client->GetPID();
     int clientnum = client->GetClientNum();
     GMEvent* gmEvent;
 
@@ -779,13 +777,13 @@ bool GMEventManager::AssumeControlOfGMEvent(Client* client, csString eventName)
 
     // OK, assume control
     gmEvent->gmID = newGMID;
-    db->Command("UPDATE gm_events SET gm_id = %d WHERE id = %d", newGMID, gmEvent->id);
+    db->Command("UPDATE gm_events SET gm_id = %d WHERE id = %d", newGMID.Unbox(), gmEvent->id);
     client->GetActor()->GetCharacterData()->AssignGMEvent(gmEvent->id,true);
     psserver->SendSystemInfo(clientnum,
                              "You now control the \'%s\' event.",
                              gmEvent->eventName.GetDataSafe());
 
-    csArray<unsigned int>::Iterator iter = gmEvent->playerID.GetIterator();
+    csArray<PID>::Iterator iter = gmEvent->playerID.GetIterator();
     while (iter.HasNext())
     {
         if ((target = clientConnections->FindPlayer(iter.Next())))
@@ -854,7 +852,7 @@ GMEventManager::GMEvent* GMEventManager::GetGMEventByID(int id)
 }
 
 /// returns a RUNNING event for a GM, or NULL
-GMEventManager::GMEvent* GMEventManager::GetGMEventByGM(unsigned int gmID, GMEventStatus status, int& startIndex)
+GMEventManager::GMEvent* GMEventManager::GetGMEventByGM(PID gmID, GMEventStatus status, int& startIndex)
 {
     for (size_t e = startIndex; e < gmEvents.GetSize(); e++)
     {
@@ -882,14 +880,14 @@ GMEventManager::GMEvent* GMEventManager::GetGMEventByName(csString eventName, GM
 /// get the index into the gmEvents array for the next event of a specified
 /// status for a particular player. Note startIndex will be modified upon
 /// return.
-GMEventManager::GMEvent* GMEventManager::GetGMEventByPlayer(unsigned int playerID, GMEventStatus status, int& startIndex)
+GMEventManager::GMEvent* GMEventManager::GetGMEventByPlayer(PID playerID, GMEventStatus status, int& startIndex)
 {
     for (size_t e = startIndex; e < gmEvents.GetSize(); e++)
     {
         startIndex++;
         if (gmEvents[e]->status == status)
         {
-            csArray<unsigned int>::Iterator iter = gmEvents[e]->playerID.GetIterator();
+            csArray<PID>::Iterator iter = gmEvents[e]->playerID.GetIterator();
             while (iter.HasNext())
             {
                 if (iter.Next() == playerID)
@@ -948,7 +946,7 @@ void GMEventManager::DiscardGMEvent(Client* client, int eventID)
 {
     int runningEventIDAsGM;
     int runningEventID;
-    unsigned int playerID;
+    PID playerID;
     csArray<int> completedEventIDsAsGM;
     csArray<int> completedEventIDs;
     GMEvent* gmEvent;
@@ -1001,12 +999,12 @@ void GMEventManager::DiscardGMEvent(Client* client, int eventID)
 }
 
 /// Actually remove player reference from GMEvent.
-bool GMEventManager::RemovePlayerRefFromGMEvent(GMEvent* gmEvent, Client* client, unsigned int playerID)
+bool GMEventManager::RemovePlayerRefFromGMEvent(GMEvent* gmEvent, Client* client, PID playerID)
 {
     if (gmEvent->playerID.Delete(playerID))
     {
         // ...from the database
-        db->Command("DELETE FROM character_events WHERE event_id = %d AND player_id = %d", gmEvent->id, playerID);
+        db->Command("DELETE FROM character_events WHERE event_id = %d AND player_id = %d", gmEvent->id, playerID.Unbox());
         // ...from psCharacter
         client->GetActor()->GetCharacterData()->RemoveGMEvent(gmEvent->id);
 
@@ -1018,7 +1016,7 @@ bool GMEventManager::RemovePlayerRefFromGMEvent(GMEvent* gmEvent, Client* client
 
 bool GMEventManager::EraseGMEvent(Client* client, GMEvent* gmEvent)
 {
-    unsigned int discarderGMID = client->GetPID();
+    PID discarderGMID = client->GetPID();
     int clientnum = client->GetClientNum();
 
     // If event belongs to another GM, only proceed if that GM not online.
@@ -1040,7 +1038,7 @@ bool GMEventManager::EraseGMEvent(Client* client, GMEvent* gmEvent)
     size_t noPlayers = gmEvent->playerID.GetSize();
     for (size_t p = 0; p < noPlayers; p++)
     {
-        unsigned int playerID = gmEvent->playerID[p];
+        PID playerID = gmEvent->playerID[p];
         if ((target = clientConnections->FindPlayer(playerID)))
         {
             // psCharacter

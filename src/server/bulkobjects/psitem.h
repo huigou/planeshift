@@ -226,7 +226,7 @@ public:
     virtual void DeleteObjectCallback(iDeleteNotificationObject * object);
     
     //inform clients on view updates
-    void UpdateView(Client *fromClient, uint EntityId, bool clear);
+    void UpdateView(Client *fromClient, EID eid, bool clear);
 
     bool SendItemDescription( Client *client);
     
@@ -312,7 +312,7 @@ private:
     /** This field stores the UID of the character that crafted this item if it was crafted.
      * In this way we can add recognition to crafters as their items traverse the game.
      */
-    unsigned int crafter_id;
+    PID crafter_id;
     /** This field stores the guild UID of a guild that has CERTIFIED this item.
      * The concept of this is that a guild as an entity can certify certain works from any crafter.
      * This gives the ability to mark items after some kind of inspection through a method not based
@@ -346,8 +346,8 @@ private:
     /** The owner of the item may not be infact online so have to store the ID since the
         above may be undefined in some cases. 
     */    
-    unsigned int owningCharacterID;
-    unsigned int guardingCharacterID;
+    PID owningCharacterID;
+    PID guardingCharacterID;
 
     /** The basic stats of this item.
      * This can point to a common shared entry from the basic stats list, or a unique entry.  
@@ -452,9 +452,9 @@ public:
     void SetIsGuildIDValid(bool v);
     /// Returns the UID for the crafter of this item.  Be sure to check GetIsCrafterIDValid()!
 
-    unsigned int GetCrafterID() const { return crafter_id; }
+    PID GetCrafterID() const { return crafter_id; }
     /// Sets the UID for the cracter of this item.  Generally used immediately after completing the crafting work.
-    void SetCrafterID(unsigned int v);
+    void SetCrafterID(PID v);
 
     /// Returns the UID for the guild who has certified this item.  Be sure to check GetIsGuildIDValid()!
     unsigned int GetGuildID() const { return guild_id; }
@@ -579,15 +579,15 @@ public:
     /** Get the ID of the owning character.  This is required in cases where the owning 
       * character may not be online and the above pointer is undefined.
       */
-    unsigned int GetOwningCharacterID() const { return owningCharacterID; }
+    PID GetOwningCharacterID() const { return owningCharacterID; }
 
     /// Alters the owning character of this item.  Also see UpdateInventoryStatus.
     virtual void SetOwningCharacter(psCharacter *owner);
 
     /* Item guardians: items dropped in the world or placed in a public
      * container are not owned, but "guarded" by a character. */
-    unsigned int GetGuardingCharacterID() const { return guardingCharacterID; }
-    void SetGuardingCharacterID(unsigned int guardian) { guardingCharacterID = guardian; }
+    PID  GetGuardingCharacterID() const { return guardingCharacterID; }
+    void SetGuardingCharacterID(PID guardian) { guardingCharacterID = guardian; }
 
     /// Returns the item that contains this item, or NULL if it's not contained by another item.
     uint32 GetContainerID() const

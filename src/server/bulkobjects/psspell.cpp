@@ -233,7 +233,7 @@ bool psSpell::MatchGlyphs(const glyphList_t & assembler)
 }
 
 psSpellCastGameEvent *psSpell::Cast(psSpellManager * mgr, Client * client, csString &effectName,
-    csVector3 &offset, PS_ID &anchorID, PS_ID &targetID, unsigned int &castingDuration, csString *castingText) const
+    csVector3 &offset, EID &anchorID, EID &targetID, unsigned int &castingDuration, csString *castingText) const
 {
     gemActor *caster = client->GetActor();
     gemObject *target = client->GetTargetObject();
@@ -445,7 +445,7 @@ csArray< gemObject *> *psSpell::getTargetsInRange(Client * client, float max_ran
 }
 
 bool psSpell::AffectTargets(psSpellManager * mgr, psSpellCastGameEvent * event, csString &effectName, csVector3 &offset, 
-                            PS_ID &anchorID, PS_ID &targetID, csString *affectText) const
+                            EID &anchorID, EID &targetID, csString *affectText) const
 {
     gemActor * caster = event->caster->GetActor();
     gemObject * target = event->target;
@@ -524,7 +524,7 @@ bool psSpell::AffectTargets(psSpellManager * mgr, psSpellCastGameEvent * event, 
 
             if ( ( target_type & spell_target) != 0 )
             {
-                PS_ID affectedTargetID = affectedTarget->GetEID();
+                EID affectedTargetID = affectedTarget->GetEID();
                 event->target = affectedTarget;
                 if (offensive)
                 {
@@ -575,7 +575,7 @@ bool psSpell::AffectTargets(psSpellManager * mgr, psSpellCastGameEvent * event, 
 
 
 bool psSpell::AffectTarget(psSpellCastGameEvent * event, csString &effectName, csVector3 &offset,
-                           PS_ID& anchorID, PS_ID& targetID, csString *affectText) const
+                           EID & anchorID, EID & targetID, csString *affectText) const
 {
 
     ////////////////////////////////////

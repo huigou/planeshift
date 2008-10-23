@@ -144,10 +144,10 @@ public:
       * @param id The key into the character table for the character who's inventory we should load.
       * @return true if the inventory was loaded without error.
       */
-    bool Load(unsigned int id);
+    bool Load(PID id);
 
     /// Load the bare minimum to know what this character is looks like
-    bool QuickLoad(unsigned int id);
+    bool QuickLoad(PID id);
 
     /** Check to see if the player has a required amount of carrying capacity.
       * @param requiedSpace The amount of space that we want to check.

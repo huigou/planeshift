@@ -1182,7 +1182,7 @@ void AdminManager::HandleAdminCmdMessage(MsgEntry *me, psAdminCmdMessage &msg, A
         }
     }
 
-    int targetID = 0;
+    PID targetID;
     if (targetobject)
         targetID = targetobject->GetPID();
 
@@ -1494,16 +1494,16 @@ gemObject* AdminManager::FindObjectByString(const csString& str, gemActor * me) 
     if ( str.StartsWith("pid:",true) ) // Find by player ID
     {
         csString pid_str = str.Slice(4);
-        int pID = atoi( pid_str.GetDataSafe() );
-        if (pID)
-            found = gem->FindPlayerEntity( pID );
+        PID pid = PID(strtoul(pid_str.GetDataSafe(), NULL, 10));
+        if (pid.IsValid())
+            found = gem->FindPlayerEntity(pid);
     }
     else if ( str.StartsWith("eid:",true) ) // Find by entity ID
     {
         csString eid_str = str.Slice(4);
-        PS_ID eID = (PS_ID)atoi( eid_str.GetDataSafe() );
-        if (eID)
-            found = gem->FindObject( eID );
+        EID eid = EID(strtoul(eid_str.GetDataSafe(), NULL, 10));
+        if (eid.IsValid())
+            found = gem->FindObject(eid);
     }
     else if ( me != NULL && str.CompareNoCase("me") ) // Return me
     {
@@ -1531,17 +1531,17 @@ void AdminManager::GetSiblingChars(MsgEntry* me,psAdminCmdMessage& msg, AdminCmd
         return;
     }
 
-    size_t accountId = 0;
-    unsigned int pid = 0;
+    AccountID accountId;
+    PID pid;
     csString query;
     if (targetobject) //find by target: will be used in most cases
         pid = targetobject->GetCharacterData()->GetPID();
     else if (data.player.StartsWith("pid:",true) && data.player.Length() > 4) // Get player ID should happen only if offline
-        pid = atoi( data.player.Slice(4).GetData());
+        pid = PID(strtoul(data.player.Slice(4).GetData(), NULL, 10));
 
-    if (pid) // Find by player ID
+    if (pid.IsValid()) // Find by player ID
     {
-        query.Format("SELECT account_id FROM characters WHERE id = '%i'", pid);
+        query.Format("SELECT account_id FROM characters WHERE id = '%u'", pid.Unbox());
     }
     else //find player by name: should happen only if offline
     {
@@ -1553,10 +1553,10 @@ void AdminManager::GetSiblingChars(MsgEntry* me,psAdminCmdMessage& msg, AdminCmd
     if (result.IsValid() && result.Count())
     {
         iResultRow& accountRow = result[0];
-        accountId = accountRow.GetUInt32("account_id");
+        accountId = AccountID(accountRow.GetUInt32("account_id"));
 
-        psserver->SendSystemInfo(client->GetClientNum(), "Account ID of player %s is %d.",
-                                 data.player.GetData(), accountId);
+        psserver->SendSystemInfo(client->GetClientNum(), "Account ID of player %s is %s.",
+                                 data.player.GetData(), ShowID(accountId));
     }
     else
     {
@@ -1569,9 +1569,9 @@ void AdminManager::GetSiblingChars(MsgEntry* me,psAdminCmdMessage& msg, AdminCmd
         psserver->SendSystemInfo(client->GetClientNum(), "Player name isn't unique. It's suggested to use pid.");
     }
 
-    if (accountId != 0)
+    if (accountId.IsValid())
     {
-        Result result2(db->Select("SELECT id, name, lastname, last_login FROM characters WHERE account_id = %d", accountId));
+        Result result2(db->Select("SELECT id, name, lastname, last_login FROM characters WHERE account_id = %u", accountId.Unbox()));
 
         if (result2.IsValid() && result2.Count())
         {
@@ -1596,7 +1596,7 @@ void AdminManager::GetSiblingChars(MsgEntry* me,psAdminCmdMessage& msg, AdminCmd
     }
     else
     {
-        psserver->SendSystemInfo(me->clientnum, "The Account ID [%d] of player %s is not valid.", accountId, data.player.GetData());
+        psserver->SendSystemInfo(me->clientnum, "The Account ID [%d] of player %s is not valid.", ShowID(accountId), data.player.GetData());
     }
 }
 
@@ -1616,7 +1616,7 @@ bool AdminManager::Valid( int level, const char* command, int clientnum )
 
 void AdminManager::GetInfo(MsgEntry* me,psAdminCmdMessage& msg, AdminCmdData& data,Client *client, gemObject* target)
 {
-    PS_ID entityId = 0;
+    EID entityId;
     if ( target )
         entityId = target->GetEID();
 
@@ -1652,10 +1652,10 @@ void AdminManager::GetInfo(MsgEntry* me,psAdminCmdMessage& msg, AdminCmdData& da
           if ( item->GetStackCount() > 1 )
               info.AppendFmt("(x%d) ", item->GetStackCount() );
 
-          info.AppendFmt("with item ID %u, instance ID %u, and entity ID %u",
+          info.AppendFmt("with item ID %u, instance ID %u, and %s",
                       item->GetBaseStats()->GetUID(),
                       item->GetUID(),
-                      entityId );
+                      ShowID(entityId));
 
           if ( item->GetScheduledItem() )
               info.AppendFmt(", spawns with interval %d + %d max modifier",
@@ -1706,7 +1706,9 @@ void AdminManager::GetInfo(MsgEntry* me,psAdminCmdMessage& msg, AdminCmdData& da
 
     char ipaddr[20] = {0};
     csString name, ipAddress, securityLevel, sectorName;
-    int playerId = 0, accountId = 0, instance = 0;
+    PID playerId;
+    AccountID accountId;
+    int instance = 0;
     float timeConnected = 0.0f, loc_x = 0.0f, loc_y = 0.0f, loc_z = 0.0f, loc_yrot = 0.0f;
 
     bool banned = false;
@@ -1757,11 +1759,11 @@ void AdminManager::GetInfo(MsgEntry* me,psAdminCmdMessage& msg, AdminCmdData& da
             name = target->GetName();
             int degrees = (int)(loc_yrot * 180 / PI );
             psserver->SendSystemInfo(client->GetClientNum(),
-                "NPC: %s has a player ID %d, entity ID %u, at position %1.2f, %1.2f, %1.2f "
+                "NPC: <%s, %s, %s> is at position (%1.2f, %1.2f, %1.2f) "
                 "angle: %d in sector: %s, instance: %d, and has been active for %1.1f hours.",
                 name.GetData(),
-                playerId,
-                entityId,
+                ShowID(playerId),
+                ShowID(entityId),
                 loc_x,
                 loc_y,
                 loc_z,
@@ -1792,8 +1794,8 @@ void AdminManager::GetInfo(MsgEntry* me,psAdminCmdMessage& msg, AdminCmdData& da
                   name.Append(" ");
                   name.Append(row["lastname"]);
              }
-             playerId = row.GetUInt32("id");
-             accountId = row.GetUInt32("account_id");
+             playerId = PID(row.GetUInt32("id"));
+             accountId = AccountID(row.GetUInt32("account_id"));
              ipAddress = "(offline)";
              timeConnected = row.GetFloat("time_connected_sec") / 3600;
              securityLevel.Format("%d",GetTrueSecurityLevel(accountId));
@@ -1824,7 +1826,7 @@ void AdminManager::GetInfo(MsgEntry* me,psAdminCmdMessage& msg, AdminCmdData& da
         }
     }
 
-    if (playerId != 0)
+    if (playerId.IsValid())
     {
         csString info;
         info.Format("Player: %s has ", name.GetData() );
@@ -1832,10 +1834,10 @@ void AdminManager::GetInfo(MsgEntry* me,psAdminCmdMessage& msg, AdminCmdData& da
         if (securityLevel != "0")
             info.AppendFmt("security level %s, ", securityLevel.GetData() );
 
-        info.AppendFmt("account ID %d, player ID %d, ", accountId, playerId );
+        info.AppendFmt("%s, %s, ", ShowID(accountId), ShowID(playerId));
 
         if (ipAddress != "(offline)")
-            info.AppendFmt("entity ID %u, IP is %s, ", entityId, ipAddress.GetData() );
+            info.AppendFmt("%s, IP is %s, ", ShowID(entityId), ipAddress.GetData());
         else
             info.Append("is offline, ");
 
@@ -2300,7 +2302,7 @@ void AdminManager::ViewMarriage(MsgEntry* me, AdminCmdData& data, bool duplicate
         // player is offline - hit the db
         Result result;
         if(data.player.StartsWith("pid:",true) && data.player.Length() > 4) //check if pid was provided or only name
-            result = db->Select("SELECT id FROM characters WHERE name='%i'", atoi( data.player.Slice(4).GetData()));
+            result = db->Select("SELECT id FROM characters WHERE name='%i'", atoi( data.player.Slice(4).GetData())); // FIXME: I think this is wrong.
         else
             result = db->Select("SELECT id FROM characters WHERE name='%s'", data.player.GetData());
 
@@ -2434,7 +2436,7 @@ void AdminManager::Teleport(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& 
     Client* superclient = clients->FindAccount( subject->GetSuperclientID() );
     if(superclient && subject->GetSuperclientID()!=0)
     {
-        psserver->SendSystemError(client->GetClientNum(), "This entity %s is controlled by superclient %u and can't be teleported.",subject->GetName(), subject->GetSuperclientID());
+        psserver->SendSystemError(client->GetClientNum(), "This entity %s is controlled by superclient %s and can't be teleported.", subject->GetName(), ShowID(subject->GetSuperclientID()));
         return;
     }
 
@@ -3848,7 +3850,7 @@ void AdminManager::CreateNPC(MsgEntry* me,psAdminCmdMessage& msg, AdminCmdData& 
         return;
     }
 
-    unsigned int masterNPCID = 0;
+    PID masterNPCID;
     gemNPC *masternpc = basis->GetNPCPtr();
     if (masternpc)
     {
@@ -3857,7 +3859,7 @@ void AdminManager::CreateNPC(MsgEntry* me,psAdminCmdMessage& msg, AdminCmdData& 
         // will copy all the attributes of the master later.
         masterNPCID = masternpc->GetCharacterData()->GetMasterNPCID();
     }
-    if (masterNPCID == 0)
+    if (!masterNPCID.IsValid())
     {
         psserver->SendSystemError(me->clientnum, "%s was not found as a valid master NPC", basis->GetName() );
         return;
@@ -3887,9 +3889,9 @@ void AdminManager::CreateNPC(MsgEntry* me,psAdminCmdMessage& msg, AdminCmdData& 
     }
 
     // Copy the master NPC into a new player record, with all child tables also
-    unsigned int newNPCID = EntityManager::GetSingleton().CopyNPCFromDatabase(masterNPCID, pos.x, pos.y, pos.z, angle,
+    PID newNPCID = EntityManager::GetSingleton().CopyNPCFromDatabase(masterNPCID, pos.x, pos.y, pos.z, angle,
                                                                               sectorInfo->name, instance, NULL, NULL );
-    if (newNPCID == 0)
+    if (!newNPCID.IsValid())
     {
         psserver->SendSystemError(me->clientnum, "Could not copy the master NPC");
         return;
@@ -3898,7 +3900,7 @@ void AdminManager::CreateNPC(MsgEntry* me,psAdminCmdMessage& msg, AdminCmdData& 
     psserver->npcmanager->NewNPCNotify(newNPCID, masterNPCID, -1);
 
     // Make new entity
-    PS_ID eid = EntityManager::GetSingleton().CreateNPC(newNPCID, false);
+    EID eid = EntityManager::GetSingleton().CreateNPC(newNPCID, false);
 
     // Get gemNPC for new entity
     gemNPC* npc = GEMSupervisor::GetSingleton().FindNPCEntity(newNPCID);
@@ -3915,8 +3917,8 @@ void AdminManager::CreateNPC(MsgEntry* me,psAdminCmdMessage& msg, AdminCmdData& 
 
     npc->UpdateProxList(true);
 
-    psserver->SendSystemInfo(me->clientnum, "New %s with PID %u and EID %u at (%1.2f,%1.2f,%1.2f) in %s.",
-                                            npc->GetName(), newNPCID, eid,
+    psserver->SendSystemInfo(me->clientnum, "New %s with %s and %s at (%1.2f,%1.2f,%1.2f) in %s.",
+                                            npc->GetName(), ShowID(newNPCID), ShowID(eid),
                                             pos.x, pos.y, pos.z, sectorInfo->name.GetData() );
     psserver->SendSystemOK(me->clientnum, "New NPC created!");
 }
@@ -4202,7 +4204,7 @@ void AdminManager::MakeUnlockable(MsgEntry *me, psAdminCmdMessage& msg, AdminCmd
         INSTANCE_ID instance_id = action->GetInstanceID();
         if (instance_id == INSTANCE_ALL)
         {
-            instance_id = action->GetGemObject()->GetEID();
+            instance_id = action->GetGemObject()->GetEID().Unbox(); // FIXME: Understand and comment on conversion magic
         }
         target = GEMSupervisor::GetSingleton().FindItemEntity( instance_id );
         if (!target)
@@ -4252,7 +4254,7 @@ void AdminManager::MakeSecurity(MsgEntry *me, psAdminCmdMessage& msg, AdminCmdDa
         INSTANCE_ID instance_id = action->GetInstanceID();
         if (instance_id == INSTANCE_ALL)
         {
-            instance_id = action->GetGemObject()->GetEID();
+            instance_id = action->GetGemObject()->GetEID().Unbox(); // FIXME: Understand and comment on conversion magic
         }
         target = GEMSupervisor::GetSingleton().FindItemEntity( instance_id );
         if (!target)
@@ -4339,7 +4341,7 @@ void AdminManager::AddRemoveLock(MsgEntry *me, psAdminCmdMessage& msg, AdminCmdD
         INSTANCE_ID instance_id = action->GetInstanceID();
         if (instance_id == INSTANCE_ALL)
         {
-            instance_id = action->GetGemObject()->GetEID();
+            instance_id = action->GetGemObject()->GetEID().Unbox(); // FIXME: Understand and comment on conversion magic
         }
         target = GEMSupervisor::GetSingleton().FindItemEntity( instance_id );
         if (!target)
@@ -4397,7 +4399,8 @@ void AdminManager::ChangeLock(MsgEntry *me, psAdminCmdMessage& msg, AdminCmdData
         INSTANCE_ID instance_id = action->GetInstanceID();
         if (instance_id == INSTANCE_ALL)
         {
-            instance_id = action->GetGemObject()->GetEID();
+            instance_id = action->GetGemObject()->GetEID().Unbox(); // FIXME: Understand and comment on conversion magic
+
         }
         target = GEMSupervisor::GetSingleton().FindItemEntity( instance_id );
         if (!target)
@@ -4478,11 +4481,11 @@ void AdminManager::KillNPC (MsgEntry *me, psAdminCmdMessage& msg, AdminCmdData& 
         }
         else
         {
-            unsigned int npcid = target->GetCharacterData()->GetPID();
+            PID npcid = target->GetCharacterData()->GetPID();
             psCharacter *npcdata = psServer::CharacterLoader.LoadCharacterData(npcid,true);
             EntityManager::GetSingleton().RemoveActor(targetobject);
             EntityManager::GetSingleton().CreateNPC(npcdata);
-            psserver->SendSystemResult(me->clientnum, "NPC (id %d) has been reloaded.",npcid);
+            psserver->SendSystemResult(me->clientnum, "NPC (%s) has been reloaded.", npcid.Show().GetData());
         }
         return;
     }
@@ -4490,7 +4493,7 @@ void AdminManager::KillNPC (MsgEntry *me, psAdminCmdMessage& msg, AdminCmdData& 
 }
 
 
-void AdminManager::Admin ( int playerID, int clientnum,Client *client )
+void AdminManager::Admin(int clientnum, Client *client)
 {
     // Set client security level in case security level have
     // changed in database.
@@ -4529,7 +4532,7 @@ void AdminManager::WarnMessage(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdDat
 
     // This message will be in big red letters on their screen
     psserver->SendSystemError(target->GetClientNum(), data.reason);
-    db->CommandPump("insert into warnings values(%d, '%s', NOW(), '%s')", target->GetAccountID(), client->GetName(), data.reason.GetData());
+    db->CommandPump("INSERT INTO warnings VALUES(%u, '%s', NOW(), '%s')", target->GetAccountID().Unbox(), client->GetName(), data.reason.GetData());
 
     psserver->SendSystemInfo(client->GetClientNum(), "You warned '%s': " + data.reason, target->GetName());
 }
@@ -4979,12 +4982,12 @@ void AdminManager::SendGMPlayerList(MsgEntry* me, psGMGuiMessage& msg,Client *cl
     message.SendMessage();
 }
 
-bool AdminManager::EscalatePetition(int gmID, int gmLevel, int petitionID)
+bool AdminManager::EscalatePetition(PID gmID, int gmLevel, int petitionID)
 {
     int result = db->CommandPump("UPDATE petitions SET status='Open',assigned_gm=-1,"
                             "escalation_level=(escalation_level+1) "
                             "WHERE id=%d AND escalation_level<=%d AND escalation_level<%d "
-                            "AND (assigned_gm=%d OR status='Open')", petitionID, gmLevel, GM_DEVELOPER-20, gmID);
+                            "AND (assigned_gm=%d OR status='Open')", petitionID, gmLevel, GM_DEVELOPER-20, gmID.Unbox());
     // If this failed if means that there is a serious error
     if (result == -1)
     {
@@ -4995,12 +4998,12 @@ bool AdminManager::EscalatePetition(int gmID, int gmLevel, int petitionID)
     return (result != -1);
 }
 
-bool AdminManager::DescalatePetition(int gmID, int gmLevel, int petitionID)
+bool AdminManager::DescalatePetition(PID gmID, int gmLevel, int petitionID)
 {
 
     int result = db->CommandPump("UPDATE petitions SET status='Open',assigned_gm=-1,"
                             "escalation_level=(escalation_level-1)"
-                            "WHERE id=%d AND escalation_level<=%d AND (assigned_gm=%d OR status='Open' AND escalation_level != 0)", petitionID, gmLevel, gmID);
+                            "WHERE id=%d AND escalation_level<=%d AND (assigned_gm=%u OR status='Open' AND escalation_level != 0)", petitionID, gmLevel, gmID.Unbox());
     // If this failed if means that there is a serious error
     if (result == -1)
     {
@@ -5011,7 +5014,7 @@ bool AdminManager::DescalatePetition(int gmID, int gmLevel, int petitionID)
     return (result != -1);
 }
 
-bool AdminManager::AddPetition(int playerID, const char* petition)
+bool AdminManager::AddPetition(PID playerID, const char* petition)
 {
     /* The columns in the table NOT included in this command
      * have default values and thus we do not need to put them in
@@ -5021,12 +5024,12 @@ bool AdminManager::AddPetition(int playerID, const char* petition)
     db->Escape( escape, petition );
     int result = db->Command("INSERT INTO petitions "
                              "(player,petition,created_date,status,resolution) "
-                             "VALUES (%d,\"%s\",Now(),\"Open\",\"Not Resolved\")",playerID, escape.GetData());
+                             "VALUES (%u,\"%s\",Now(),\"Open\",\"Not Resolved\")", playerID.Unbox(), escape.GetData());
 
     return (result != -1);
 }
 
-iResultSet *AdminManager::GetPetitions(int playerID, int gmID, int gmLevel)
+iResultSet *AdminManager::GetPetitions(PID playerID, PID gmID, int gmLevel)
 {
     iResultSet *rs;
 
@@ -5037,7 +5040,7 @@ iResultSet *AdminManager::GetPetitions(int playerID, int gmID, int gmLevel)
                     "characters pl WHERE (pet.player!=%d AND ((pet.status=\"Open\" AND pet.escalation_level<=%d) "
                     "OR (pet.assigned_gm=%d AND pet.status=\"In Progress\"))) "
                     "AND pet.player=pl.id "
-                    "ORDER BY pet.status ASC,pet.escalation_level DESC,pet.created_date ASC", gmID, gmLevel, gmID);
+                    "ORDER BY pet.status ASC,pet.escalation_level DESC,pet.created_date ASC", gmID.Unbox(), gmLevel, gmID.Unbox());
     }
     else
     {
@@ -5046,7 +5049,7 @@ iResultSet *AdminManager::GetPetitions(int playerID, int gmID, int gmLevel)
                     "ON pet.assigned_gm=pl.id "
                     "WHERE pet.player=%d "
                     "AND pet.status!=\"Cancelled\" "
-                    "ORDER BY pet.status ASC,pet.escalation_level DESC", playerID);
+                    "ORDER BY pet.status ASC,pet.escalation_level DESC", playerID.Unbox());
     }
 
     if (!rs)
@@ -5057,7 +5060,7 @@ iResultSet *AdminManager::GetPetitions(int playerID, int gmID, int gmLevel)
     return rs;
 }
 
-bool AdminManager::CancelPetition(int playerID, int petitionID)
+bool AdminManager::CancelPetition(PID playerID, int petitionID)
 {
     // If player ID is -1, just cancel the petition (a GM is requesting the change)
     if (playerID == -1)
@@ -5067,7 +5070,7 @@ bool AdminManager::CancelPetition(int playerID, int petitionID)
     }
 
     // Attempt to select this petition; two things can go wrong: it doesn't exist or the player didn't create it
-    int result = db->SelectSingleNumber("SELECT id FROM petitions WHERE id=%d AND player=%d", petitionID, playerID);
+    int result = db->SelectSingleNumber("SELECT id FROM petitions WHERE id=%d AND player=%u", petitionID, playerID.Unbox());
     if (!result || result <= -1)
     {
         // Failure was due to nonexistant petition or ownership rights:
@@ -5077,12 +5080,12 @@ bool AdminManager::CancelPetition(int playerID, int petitionID)
     }
 
     // Update the petition status
-    result = db->CommandPump("UPDATE petitions SET status='Cancelled' WHERE id=%d AND player=%d", petitionID, playerID);
+    result = db->CommandPump("UPDATE petitions SET status='Cancelled' WHERE id=%d AND player=%u", petitionID, playerID.Unbox());
 
     return (result != -1);
 }
 
-bool AdminManager::ChangePetition(int playerID, int petitionID, const char* petition)
+bool AdminManager::ChangePetition(PID playerID, int petitionID, const char* petition)
 {
     csString escape;
     db->Escape( escape, petition );
@@ -5090,7 +5093,7 @@ bool AdminManager::ChangePetition(int playerID, int petitionID, const char* peti
     // If player ID is -1, just change the petition (a GM is requesting the change)
     if (playerID == -1)
     {
-        int result = db->Command("UPDATE petitions SET petition=\"%s\" WHERE id=%d", escape.GetData(), playerID);
+        int result = db->Command("UPDATE petitions SET petition=\"%s\" WHERE id=%u", escape.GetData(), playerID.Unbox());
         return (result != -1);
     }
 
@@ -5099,7 +5102,7 @@ bool AdminManager::ChangePetition(int playerID, int petitionID, const char* peti
     // - it doesn't exist
     // - the player didn't create it
     // - it has not the right status
-    int result = db->SelectSingleNumber("SELECT id FROM petitions WHERE id=%d AND player=%d AND status='Open'", petitionID, playerID);
+    int result = db->SelectSingleNumber("SELECT id FROM petitions WHERE id=%d AND player=%u AND status='Open'", petitionID, playerID.Unbox());
     if (!result || result <= -1)
     {
         lasterror.Format("Couldn't change the petition. Either it does not exist, or you did not "
@@ -5108,17 +5111,17 @@ bool AdminManager::ChangePetition(int playerID, int petitionID, const char* peti
     }
 
     // Update the petition status
-    result = db->CommandPump("UPDATE petitions SET petition=\"%s\" WHERE id=%d AND player=%d", escape.GetData(), petitionID, playerID);
+    result = db->CommandPump("UPDATE petitions SET petition=\"%s\" WHERE id=%d AND player=%u", escape.GetData(), petitionID, playerID.Unbox());
 
     return (result != -1);
 }
 
-bool AdminManager::ClosePetition(int gmID, int petitionID, const char* desc)
+bool AdminManager::ClosePetition(PID gmID, int petitionID, const char* desc)
 {
     csString escape;
     db->Escape( escape, desc );
     int result = db->CommandPump("UPDATE petitions SET status='Closed',closed_date=Now(),resolution='%s' "
-                             "WHERE id=%d AND assigned_gm=%d", escape.GetData(), petitionID, gmID);
+                             "WHERE id=%d AND assigned_gm=%u", escape.GetData(), petitionID, gmID.Unbox());
 
     // If this failed if means that there is a serious error, or the GM was not assigned
     if (result == -1)
@@ -5131,9 +5134,9 @@ bool AdminManager::ClosePetition(int gmID, int petitionID, const char* desc)
     return (result != -1);
 }
 
-bool AdminManager::DeassignPetition(int gmID, int petitionID)
+bool AdminManager::DeassignPetition(PID gmID, int petitionID)
 {
-    int result = db->CommandPump("UPDATE petitions SET assigned_gm=-1,status=\"Open\" WHERE id=%d AND assigned_gm=%d", petitionID, gmID);
+    int result = db->CommandPump("UPDATE petitions SET assigned_gm=-1,status=\"Open\" WHERE id=%d AND assigned_gm=%u", petitionID, gmID.Unbox());
 
     // If this failed if means that there is a serious error, or another GM was already assigned
     if (result == -1)
@@ -5146,9 +5149,9 @@ bool AdminManager::DeassignPetition(int gmID, int petitionID)
     return true;
 }
 
-bool AdminManager::AssignPetition(int gmID, int petitionID)
+bool AdminManager::AssignPetition(PID gmID, int petitionID)
 {
-    int result = db->CommandPump("UPDATE petitions SET assigned_gm=%d,status=\"In Progress\" WHERE id=%d AND assigned_gm=-1",gmID, petitionID);
+    int result = db->CommandPump("UPDATE petitions SET assigned_gm=%d,status=\"In Progress\" WHERE id=%d AND assigned_gm=-1", gmID.Unbox(), petitionID);
 
     // If this failed if means that there is a serious error, or another GM was already assigned
     if (result == -1)
@@ -5161,7 +5164,7 @@ bool AdminManager::AssignPetition(int gmID, int petitionID)
     return true;
 }
 
-bool AdminManager::LogGMCommand(int gmID, int playerID, const char* cmd)
+bool AdminManager::LogGMCommand(PID gmID, PID playerID, const char* cmd)
 {
     if (!strncmp(cmd,"/slide",6)) // don't log all these.  spamming the GM log table.
         return true;
@@ -5170,7 +5173,7 @@ bool AdminManager::LogGMCommand(int gmID, int playerID, const char* cmd)
     db->Escape( escape, cmd );
     int result = db->Command("INSERT INTO gm_command_log "
                              "(gm,command,player,ex_time) "
-                             "VALUES (%d,\"%s\",%d,Now())",gmID, escape.GetData(), playerID);
+                             "VALUES (%u,\"%s\",%u,Now())", gmID.Unbox(), escape.GetData(), playerID.Unbox());
     return (result != -1);
 }
 
@@ -5274,7 +5277,6 @@ void AdminManager::DeleteCharacter(MsgEntry* me, psAdminCmdMessage& msg, AdminCm
 
 void AdminManager::ChangeName(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data, gemObject *targetobject, bool duplicateActor, Client *client)
 {
-    unsigned int pid = 0; //used only if offline
     Client *target = NULL;
 
     if ((!data.player.Length() || !data.newName.Length()) && !targetobject)
@@ -5307,7 +5309,7 @@ void AdminManager::ChangeName(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
     data.newLastName = NormalizeCharacterName(data.newLastName);
     csString name = NormalizeCharacterName(data.player);
 
-    unsigned int id = 0;
+    PID pid;
     unsigned int type = 0;
     unsigned int gid = 0;
 
@@ -5325,17 +5327,17 @@ void AdminManager::ChangeName(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
         }
         else if (data.player.StartsWith("pid:",true) && data.player.Length() > 4) // Find by player ID, this is useful only if offline
         {
-            pid = atoi( data.player.Slice(4).GetData() );
-            if (!pid)
+            pid = PID(strtoul(data.player.Slice(4).GetData(), NULL, 10));
+            if (!pid.IsValid())
             {
                  psserver->SendSystemError(me->clientnum,"Error, bad PID");
                  return;
             }
         }
 
-        if (pid)
+        if (pid.IsValid())
         {
-            query.Format("SELECT id,name,lastname,character_type,guild_member_of FROM characters WHERE id=%u",pid);
+            query.Format("SELECT id,name,lastname,character_type,guild_member_of FROM characters WHERE id=%u", pid.Unbox());
         }
         else
         {
@@ -5358,7 +5360,7 @@ void AdminManager::ChangeName(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
             iResultRow& row = result[0];
             prevFirstName = row["name"];
             prevLastName = row["lastname"];
-            id = row.GetUInt32("id");
+            pid = PID(row.GetUInt32("id"));
             gid = row.GetUInt32("guild_member_of");
             type = row.GetUInt32("character_type");
             if (type == PSCHARACTER_TYPE_NPC)
@@ -5372,7 +5374,7 @@ void AdminManager::ChangeName(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
     {
         prevFirstName = target->GetCharacterData()->GetCharName();
         prevLastName = target->GetCharacterData()->GetCharLastName();
-        id = target->GetCharacterData()->GetPID();
+        pid = target->GetCharacterData()->GetPID();
         gid = target->GetGuildID();
         type = target->GetCharacterData()->GetCharType();
     }
@@ -5442,7 +5444,7 @@ void AdminManager::ChangeName(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
 
     // Apply
     csString fullName;
-    PS_ID actorId = 0;
+    EID actorId;
     if(online)
     {
         target->GetCharacterData()->SetFullName(data.newName, data.newLastName);
@@ -5454,7 +5456,7 @@ void AdminManager::ChangeName(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
     }
     else if (type == PSCHARACTER_TYPE_NPC || type == PSCHARACTER_TYPE_PET)
     {
-        gemNPC *npc = GEMSupervisor::GetSingleton().FindNPCEntity( id );
+        gemNPC *npc = GEMSupervisor::GetSingleton().FindNPCEntity(pid);
         if (!npc)
         {
             psserver->SendSystemError(me->clientnum,"Unable to find NPC %s!",
@@ -5495,7 +5497,7 @@ void AdminManager::ChangeName(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
     }
 
     // Need instant DB update if we should be able to change the same persons name twice
-    db->CommandPump("UPDATE characters SET name='%s', lastname='%s' WHERE id='%u'",data.newName.GetData(),data.newLastName.GetDataSafe(), id );
+    db->CommandPump("UPDATE characters SET name='%s', lastname='%s' WHERE id='%u'",data.newName.GetData(),data.newLastName.GetDataSafe(), pid.Unbox());
 
     // Resend group list
     if(online)
@@ -5509,7 +5511,7 @@ void AdminManager::ChangeName(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
     psGuildInfo* guild = CacheManager::GetSingleton().FindGuild(gid);
     if(guild)
     {
-        psGuildMember* member = guild->FindMember(id);
+        psGuildMember* member = guild->FindMember(pid);
         if(member)
         {
             member->name = data.newName;
@@ -5521,15 +5523,15 @@ void AdminManager::ChangeName(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
       they are online. */
     if(online)
     {
-        csArray<int> buddyOfList=target->GetCharacterData()->buddyOfList;
+        csArray<PID> & buddyOfList = target->GetCharacterData()->buddyOfList;
 
         for (size_t i=0; i<buddyOfList.GetSize(); i++)
         {
             buddy = clients->FindPlayer(buddyOfList[i]);
             if (buddy && buddy->IsReady())
             {
-                buddy->GetCharacterData()->RemoveBuddy(id);
-                buddy->GetCharacterData()->AddBuddy(id, data.newName);
+                buddy->GetCharacterData()->RemoveBuddy(pid);
+                buddy->GetCharacterData()->AddBuddy(pid, data.newName);
                 //We refresh the buddy list
                 psserver->usermanager->BuddyList(buddy, buddy->GetClientNum(), true);
            }
@@ -5540,7 +5542,7 @@ void AdminManager::ChangeName(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
         unsigned int buddyid;
 
         //If the target is offline then we select all the players online that have him in the buddylist
-        Result result2(db->Select("SELECT player_id FROM buddy_list WHERE player_buddy='%u'",id));
+        Result result2(db->Select("SELECT player_id FROM buddy_list WHERE player_buddy='%u'", pid.Unbox()));
 
         if (result2.IsValid())
         {
@@ -5551,8 +5553,8 @@ void AdminManager::ChangeName(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
                 buddy = clients->FindPlayer(buddyid);
                 if (buddy && buddy->IsReady())
                 {
-                    buddy->GetCharacterData()->RemoveBuddy(id);
-                    buddy->GetCharacterData()->AddBuddy(id, data.newName);
+                    buddy->GetCharacterData()->RemoveBuddy(pid);
+                    buddy->GetCharacterData()->AddBuddy(pid, data.newName);
                     //We refresh the buddy list
                     psserver->usermanager->BuddyList(buddy, buddy->GetClientNum(), true);
                 }
@@ -6626,7 +6628,7 @@ void AdminManager::RenameGuild(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdDat
     psserver->SendSystemOK(me->clientnum,"Guild renamed to '%s'",data.newName.GetData());
 
     // Get all connected guild members
-    csArray<uint32_t> array;
+    csArray<EID> array;
     for (size_t i = 0; i < guild->members.GetSize();i++)
     {
         psGuildMember* member = guild->members[i];
@@ -6636,7 +6638,7 @@ void AdminManager::RenameGuild(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdDat
 
     // Update the labels
     int length = (int)array.GetSize();
-    psUpdatePlayerGuildMessage newNameMsg(0,length,data.newName,false);
+    psUpdatePlayerGuildMessage newNameMsg(0, length, data.newName);
 
     // Copy array
     for(size_t i = 0; i < array.GetSize();i++)
@@ -6748,7 +6750,7 @@ void AdminManager::Thunder(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& d
     // Queue thunder
     psserver->GetWeatherManager()->QueueNextEvent(0, psWeatherMessage::LIGHTNING, 0, 0, 0,
                                                   sectorinfo->name, sectorinfo,
-                                                  client->GetActor()->GetEID());
+                                                  client->GetClientNum());
 
 }
 
@@ -7261,9 +7263,9 @@ void AdminManager::TempSecurityLevel(MsgEntry* me, psAdminCmdMessage& msg, Admin
 
 }
 
-int AdminManager::GetTrueSecurityLevel(int accountID)
+int AdminManager::GetTrueSecurityLevel(AccountID accountID)
 {
-    Result result(db->Select("SELECT security_level FROM accounts WHERE id='%d'", accountID ));
+    Result result(db->Select("SELECT security_level FROM accounts WHERE id='%d'", accountID.Unbox()));
 
     if (!result.IsValid() || result.Count() != 1)
         return -99;
@@ -7747,7 +7749,7 @@ void AdminManager::HandleSetTrait(psAdminCmdMessage& msg, AdminCmdData& data, Cl
             }while(currTrait);
             str.Append("</traits>");
 
-            psTraitChangeMessage message(client->GetClientNum(), (uint32_t)target->GetActor()->GetEID(), str);
+            psTraitChangeMessage message(client->GetClientNum(), target->GetActor()->GetEID(), str);
             message.Multicast( target->GetActor()->GetMulticastClients(), 0, PROX_LIST_ANY_RANGE );
 
             psserver->SendSystemOK(client->GetClientNum(), "Trait successfully changed");
@@ -7820,7 +7822,7 @@ void AdminManager::HandleReload(psAdminCmdMessage& msg, AdminCmdData& data, Clie
 void AdminManager::HandleListWarnings(psAdminCmdMessage& msg, AdminCmdData& data, Client *client, gemObject* object )
 {
     Client* target = NULL;
-    int accountID = 0;
+    AccountID accountID;
 
     if (!data.target.IsEmpty() && data.target != "target")
     {
@@ -7843,13 +7845,13 @@ void AdminManager::HandleListWarnings(psAdminCmdMessage& msg, AdminCmdData& data
         Result rs(db->Select("SELECT account_id FROM characters WHERE name='%s'", data.target.GetData()));
         if(rs.IsValid() && rs.Count() > 0)
         {
-            accountID = rs[0].GetUInt32("account_id");
+            accountID = AccountID(rs[0].GetUInt32("account_id"));
         }
     }
 
-    if (accountID)
+    if (accountID.IsValid())
     {
-        Result rs(db->Select("select warningGM, timeOfWarn, warnMessage from warnings where accountid = %d", accountID));
+        Result rs(db->Select("SELECT warningGM, timeOfWarn, warnMessage FROM warnings WHERE accountid = %u", accountID.Unbox()));
         if (rs.IsValid())
         {
             csString newLine;

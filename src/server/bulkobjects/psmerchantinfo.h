@@ -56,7 +56,7 @@ public:
     * @param characterid The characterid to check.
     * @return Return true if the character is a merchant.
     */
-    bool Load(unsigned int characterid);
+    bool Load(PID pid);
     
     psItemCategory * FindCategory(int id);
     psItemCategory * FindCategory(const csString & name);

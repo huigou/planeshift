@@ -80,7 +80,7 @@ void ClientStatusLogger::LogBasicInfo(Client* client, csRef<iDocumentNode> node)
     AddBasicNode(node, "PlayerName", client->GetName());
     AddBasicNode(node, "SecurityLevel", client->GetSecurityLevel());
     AddBasicNode(node, "ClientNum", client->GetClientNum());
-    AddBasicNode(node, "PlayerID", client->GetPID());
+    AddBasicNode(node, "PlayerID", client->GetPID().Unbox());
 }
 
 /**

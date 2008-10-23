@@ -93,7 +93,7 @@ class psCelClient : public psClientNetSubscriber
 private:
     csRef<iObjectRegistry> object_reg;
     csPDelArray<GEMClientObject> entities;
-    csHash<GEMClientObject*,int> entities_hash;
+    csHash<GEMClientObject*, EID> entities_hash;
     csRefArray<MsgEntry> newActorQueue;
     csRefArray<MsgEntry> newItemQueue;
 
@@ -139,7 +139,7 @@ public:
     void RequestServerWorld();
     bool IsReady();
 
-    GEMClientObject* FindObject( int ID  );
+    GEMClientObject* FindObject(EID eid);
 
     void SetMainActor(GEMClientActor* object);
     void SetPlayerReady(bool flag);
@@ -297,7 +297,7 @@ class GEMClientObject
 {
 public:
     GEMClientObject();
-    GEMClientObject( psCelClient* cel, PS_ID id );
+    GEMClientObject(psCelClient* cel, EID id);
     virtual ~GEMClientObject();
     
     virtual GEMOBJECT_TYPE GetObjectType() { return GEM_OBJECT; }
@@ -322,7 +322,7 @@ public:
     /** Get sector of entity */
     virtual iSector* GetSector();
     
-    PS_ID GetEID() { return eid; }
+    EID GetEID() { return eid; }
     csRef<iMeshWrapper> pcmesh;
 
     virtual int GetMasqueradeType();
@@ -368,7 +368,7 @@ protected:
     
     csString name;
     csString factname;
-    PS_ID eid;
+    EID eid;
     int type;
     
     int flags;                      ///< Various flags on the entity.
@@ -478,8 +478,8 @@ public:
     bool IsGroupedWith(GEMClientActor* actor);
     unsigned int GetGroupID() { return groupID; }
     void SetGroupID(unsigned int id) { groupID = id; }
-    unsigned int GetOwnerEID() { return ownerEID; }
-    void SetOwnerEID(unsigned int id) { ownerEID = id; }
+    EID  GetOwnerEID()       { return ownerEID; }
+    void SetOwnerEID(EID id) { ownerEID = id; }
 
     csPDelArray<Trait> traitList;
     
@@ -493,7 +493,7 @@ protected:
        
     unsigned int chatBubbleID;
     unsigned int groupID;
-    unsigned int ownerEID;
+    EID ownerEID;
     csString guildName;
     uint8_t  DRcounter;  /// increments in loop to prevent out of order packet overwrites of better data
     bool DRcounter_set;

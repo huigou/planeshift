@@ -195,10 +195,8 @@ psItem *psCharacterInventory::GetItemFactory(psItemStats *stats)
 }
 
 
-bool psCharacterInventory::Load(unsigned int use_id)
+bool psCharacterInventory::Load(PID use_id)
 {    
-    // printf("Loading inventory for char %d.\n", use_id);
-
     doRestrictions = (owner->GetCharType() == PSCHARACTER_TYPE_PLAYER);
 
     // Players get restrictions but GMs do not
@@ -207,7 +205,7 @@ bool psCharacterInventory::Load(unsigned int use_id)
         doRestrictions = false;
     }
         
-    Result items(db->Select("SELECT * from item_instances where char_id_owner=%u and location_in_parent!=-1",use_id));
+    Result items(db->Select("SELECT * FROM item_instances WHERE char_id_owner=%u AND location_in_parent!=-1", use_id.Unbox()));
     if ( items.IsValid() )
     {
         // psItemSet* set = new psItemSet;
@@ -238,8 +236,8 @@ bool psCharacterInventory::Load(unsigned int use_id)
             // Now add this instance to our inventory
             if ( !AddLoadedItem(items[i].GetUInt32("parent_item_id"),(INVENTORY_SLOT_NUMBER)items[i].GetInt("location_in_parent"), item) )
             {
-                Bug5("Item %s(%u) could not be loaded for %s(%d). Skipping this item.\n",
-                    item->GetName(), item->GetUID(), owner->GetCharName(), owner->GetPID() );
+                Bug5("Item %s(%u) could not be loaded for %s(%s). Skipping this item.\n",
+                     item->GetName(), item->GetUID(), owner->GetCharName(), ShowID(owner->GetPID()));
                 delete item;
                 continue;
             }
@@ -259,9 +257,9 @@ bool psCharacterInventory::Load(unsigned int use_id)
 }    
 
 
-bool psCharacterInventory::QuickLoad(unsigned int use_id)
+bool psCharacterInventory::QuickLoad(PID use_id)
 {    
-    Result items(db->Select("SELECT id, item_stats_id_standard, location_in_parent FROM item_instances WHERE char_id_owner = %u AND location_in_parent != -1", use_id));
+    Result items(db->Select("SELECT id, item_stats_id_standard, location_in_parent FROM item_instances WHERE char_id_owner = %u AND location_in_parent != -1", use_id.Unbox()));
 
     if ( items.IsValid() )
     {
@@ -279,8 +277,8 @@ bool psCharacterInventory::QuickLoad(unsigned int use_id)
 
                 if (!AddLoadedItem(0, (INVENTORY_SLOT_NUMBER) items[i].GetInt("location_in_parent"), item))
                 {
-                    Bug5("Item %s(%s) could not be quick loaded for %s(%d). Skipping this item.\n",
-                    item->GetName(), items[i]["id"], owner->GetCharName(), owner->GetPID() );
+                    Bug5("Item %s(%s) could not be quick loaded for %s(%s). Skipping this item.\n",
+                         item->GetName(), items[i]["id"], owner->GetCharName(), ShowID(owner->GetPID()));
                     delete item;
                 }
             }
@@ -305,11 +303,11 @@ bool psCharacterInventory::AddLoadedItem(uint32 parentID, INVENTORY_SLOT_NUMBER 
     if (slot < PSCHARACTER_SLOT_NONE || slot >= PSCHARACTER_SLOT_BULK_END)
     {
         csString error;
-        error.Format("Item %s(%u) Could not be placed in %s(%d) inventory into slot %d because its slot was illegal.", 
+        error.Format("Item %s(%u) Could not be placed in %s(%s) inventory into slot %d because its slot was illegal.", 
                      item->GetName(), 
                      item->GetUID(), 
                      owner->GetCharName(), 
-                     owner->GetPID(),
+                     ShowID(owner->GetPID()),
                      slot); 
         Bug1(error);
         return false;
@@ -1323,7 +1321,7 @@ void psCharacterInventory::WriteItem(csRef<iDocumentNode> equipmentNode, psItem*
 
     if (item->GetIsCrafterIDValid())
     {
-        Result result (db->Select("SELECT name FROM characters WHERE id='%d'",item->GetCrafterID()));
+        Result result (db->Select("SELECT name FROM characters WHERE id='%u'", item->GetCrafterID().Unbox()));
         if (result.IsValid())
             objNode->SetAttribute("crafter", result[0][0]);
     }

@@ -118,9 +118,8 @@ bool pawsQuestRewardWindow::OnButtonPressed( int mouseButton, int keyModifier, p
             {
                 // let questmanager know that the client has wants this
                 // item as a reward
-                int client = psengine->GetCelClient()->GetMainPlayer()->GetEID();
                 csString item = rewardList->GetTextCell(row, COLUMN_ID)->GetText();
-                psQuestRewardMessage message(client, item, psQuestRewardMessage::selectReward);
+                psQuestRewardMessage message(0, item, psQuestRewardMessage::selectReward);
                 msgqueue->SendMessage(message.msg);
                 Hide();
             }

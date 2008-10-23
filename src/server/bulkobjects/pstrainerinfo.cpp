@@ -44,11 +44,11 @@
  *
  * @return Return true if the character is a trainer.
  */
-bool psTrainerInfo::Load(unsigned int pid)
+bool psTrainerInfo::Load(PID pid)
 {
     bool isTrainer = false;
     
-    Result trainerSkills(db->Select("SELECT * from trainer_skills where player_id=%u",pid));
+    Result trainerSkills(db->Select("SELECT * from trainer_skills where player_id=%u", pid.Unbox()));
     if (trainerSkills.IsValid())
     {
         int i,count=trainerSkills.Count();

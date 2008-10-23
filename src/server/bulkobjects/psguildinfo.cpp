@@ -53,7 +53,7 @@ psGuildInfo::psGuildInfo()
 {
 }
 
-psGuildInfo::psGuildInfo(csString name, unsigned int founder)
+psGuildInfo::psGuildInfo(csString name, PID founder)
 :id(0),name(name),founder(founder),karma_points(0),secret(false),alliance(0)
 {
 }
@@ -129,7 +129,7 @@ bool psGuildInfo::Load(iResultRow& row)
     {
         psGuildMember *gm = new psGuildMember;
 
-        gm->char_id = member[i].GetUInt32("id");
+        gm->char_id = PID(member[i].GetUInt32("id"));
         gm->name    = NormalizeCharacterName(member[i]["name"]);
 
         gm->actor         = NULL;
@@ -142,7 +142,7 @@ bool psGuildInfo::Load(iResultRow& row)
 
         if (!gm->guildlevel)
         {
-            Error2("Could not find guild level for character %u.\n",gm->char_id);
+            Error2("Could not find guild level for %s.\n", ShowID(gm->char_id));
             delete gm;
             continue;
         }
@@ -164,7 +164,7 @@ bool psGuildInfo::Load(iResultRow& row)
     return true;
 }
 
-bool psGuildInfo::InsertNew(int leader_char_id)
+bool psGuildInfo::InsertNew(PID leader_char_id)
 {
     csString guildEsc;
 
@@ -173,7 +173,7 @@ bool psGuildInfo::InsertNew(int leader_char_id)
 
     if (db->Command("insert into guilds (name,char_id_founder,date_created) "
         "values ('%s', %d, Now() )",
-        guildEsc.GetData(),leader_char_id) != 1)
+        guildEsc.GetData(), leader_char_id.Unbox()) != 1)
     {
         Error3 ("Couldn't create new guild.\nCommand was "
             "<%s>.\nError returned was <%s>\n",db->GetLastQuery(),db->GetLastError());
@@ -231,7 +231,7 @@ psGuildLevel *psGuildInfo::FindLevel(int level)
     return NULL;
 }
 
-psGuildMember *psGuildInfo::FindMember(unsigned int char_id)
+psGuildMember *psGuildInfo::FindMember(PID char_id)
 {
     for (size_t i=0; i<members.GetSize(); i++)
     {
@@ -293,7 +293,7 @@ bool psGuildInfo::AddNewMember(psCharacter *player, int level)
         "       guild_points=0,"
         "       guild_public_notes=NULL,"
         "       guild_private_notes=NULL"
-        " where id=%u", id, level, player->GetPID()) != 1)
+        " where id=%u", id, level, player->GetPID().Unbox()) != 1)
     {
         Error3("Couldn't update guild for player.\nCommand was <%s>.\nError returned was <%s>\n",
             db->GetLastQuery(),db->GetLastError());
@@ -338,7 +338,7 @@ bool psGuildInfo::RemoveMember(psGuildMember *target)
                     "       guild_points=0,"
                     "       guild_public_notes=NULL,"
                     "       guild_private_notes=NULL"
-                    " where id=%d",target->char_id) <= 0)
+                    " where id=%u", target->char_id.Unbox()) <= 0)
     {
         Error3("Couldn't update players to not be guild "
             "members.\nCommand was <%s>.\nError returned was "
@@ -496,9 +496,7 @@ bool psGuildInfo::UpdateMemberLevel(psGuildMember *target,int level)
     {
         target->guildlevel = lev;
 
-        unsigned long res = db->Command("update characters"
-            "   set guild_level=%d"
-            " where id=%d",level,target->char_id);
+        unsigned long res = db->Command("UPDATE characters SET guild_level=%d WHERE id=%u", level, target->char_id.Unbox());
 
         if (res == QUERY_FAILED)
         {
@@ -508,8 +506,7 @@ bool psGuildInfo::UpdateMemberLevel(psGuildMember *target,int level)
 
         return true;
     }
-    else
-        return false;
+    return false;
 }
 
 void psGuildInfo::AdjustMoney(psMoney money, bool)
@@ -538,14 +535,13 @@ bool psGuildInfo::SetMemberPoints(psGuildMember * member, int points)
 {
     member->guild_points = points;
 
-    unsigned long res = db->Command("update characters set guild_points=%d where id=%d", points, member->char_id);
+    unsigned long res = db->Command("UPDATE characters SET guild_points=%d WHERE id=%u", points, member->char_id.Unbox());
     if (res != 1)
     {
-        Error3("Couldn't save guild_points of character %u sql error: %s", member->char_id, db->GetLastError());
+        Error3("Couldn't save guild_points of %s: %s", ShowID(member->char_id), db->GetLastError());
         return false;
     }
-    else
-        return true;
+    return true;
 }
 
 bool psGuildInfo::SetMemberNotes(psGuildMember * member, const csString & notes, bool isPublic)
@@ -565,10 +561,10 @@ bool psGuildInfo::SetMemberNotes(psGuildMember * member, const csString & notes,
 
     csString escNotes;
     db->Escape( escNotes, notes );
-    unsigned long res = db->Command("update characters set %s='%s' where id=%d", dbName, escNotes.GetData(), member->char_id);
+    unsigned long res = db->Command("UPDATE characters SET %s='%s' WHERE id=%u", dbName, escNotes.GetData(), member->char_id.Unbox());
     if (res != 1)
     {
-        Error4("Couldn't save %s of character %u sql error: %s", dbName, member->char_id, db->GetLastError());
+        Error4("Couldn't save %s of %s: %s", dbName, ShowID(member->char_id), db->GetLastError());
         return false;
     }
     else

@@ -422,14 +422,9 @@ int com_status(char *)
     while(i.HasNext())
     {
         Client *client = i.Next();
-        int eid = 0;
-        if (client->GetActor())
-        {
-            eid = client->GetActor()->GetEID();
-        }
         CPrintf (CON_CMDOUTPUT ,"%5d %5d %-25s %14d %10s",
-            eid,
-            client->GetPID(),
+            client->GetActor() ? client->GetActor()->GetEID().Unbox() : 0,
+            client->GetPID().Unbox(),
             client->GetName(),
             client->GetClientNum(),
             (const char*) PS_GetClientStatus(client));
@@ -501,8 +496,8 @@ int com_delete( char* name )
         psserver->RemovePlayer (client->GetClientNum(),"Your character is being deleted so you are being kicked.");
     }
 
-    unsigned int characteruid=psserver->CharacterLoader.FindCharacterID(name);
-    if (characteruid==0)
+    PID characteruid=psserver->CharacterLoader.FindCharacterID(name);
+    if (!characteruid.IsValid())
     {
         CPrintf(CON_CMDOUTPUT ,"Character <%s> was not found in the database.\n", name);
         return 0;
@@ -1189,8 +1184,8 @@ int com_addinv(char *line)
     }
 
     // Get the UID of this character based on the provided name.  This ensures the name is accurate.
-    unsigned int characteruid=psserver->CharacterLoader.FindCharacterID((char*)charactername.GetData());
-    if (characteruid==0)
+    PID characteruid = psserver->CharacterLoader.FindCharacterID(charactername.GetData());
+    if (!characteruid.IsValid())
     {
         CPrintf(CON_CMDOUTPUT ,"Character name not found.\n");
         return 0;
@@ -1276,7 +1271,7 @@ csString get_item_stats(psItem *item)
     stats.Format ("Qual:%g Guild:%u Crafter:%u DecayResist:%g SumWeight:%g Uni:%c",
         item->GetItemQuality(),
     item->GetGuildID(),
-    item->GetCrafterID(),
+    item->GetCrafterID().Unbox(),
     item->GetDecayResistance(),
     0.0, ////// TODO: Hardcoded zero weight
     //////////////////////////item->GetSumWeight(),
@@ -1541,8 +1536,8 @@ int com_showinv(char *line, bool moreiteminfo)
 
     // If the character is online use the active stats.  Otherwise we need to load the character data.
     psCharacter *chardata=NULL;
-    unsigned int characteruid=psserver->CharacterLoader.FindCharacterID(line,false);
-    if (characteruid==0)
+    PID characteruid = psserver->CharacterLoader.FindCharacterID(line,false);
+    if (!characteruid.IsValid())
     {
         CPrintf(CON_CMDOUTPUT ,"Character name is not found.\n");
         return 0;
@@ -1649,16 +1644,15 @@ int com_exec(char *line)
 
 int com_print(char *line)
 {
-    unsigned int num;
     if (!line || !atoi(line) )
     {
         CPrintf(CON_CMDOUTPUT ,"Please specify an entity #.\n");
         return 0;
     }
-    num = atoi(line);
+    EID eid(strtoul(line, NULL, 10));
     gemObject* obj;
 
-    obj = GEMSupervisor::GetSingleton().FindObject(num);
+    obj = GEMSupervisor::GetSingleton().FindObject(eid);
 
     if (obj)
     {
@@ -1682,15 +1676,14 @@ int com_print(char *line)
         return 0;
     }
 
-    CPrintf(CON_CMDOUTPUT ,"Entity %d was not found.\n",num);
+    CPrintf(CON_CMDOUTPUT ,"Entity %s was not found.\n", ShowID(eid));
     return 0;
 }
 
 int com_entlist(char *)
 {
-    csHash<gemObject *>& gems = GEMSupervisor::GetSingleton().GetAllGEMS();
-
-    csHash<gemObject *>::GlobalIterator i(gems.GetIterator());
+    csHash<gemObject*, EID> & gems = GEMSupervisor::GetSingleton().GetAllGEMS();
+    csHash<gemObject*, EID>::GlobalIterator i(gems.GetIterator());
     gemObject* obj;
 
     CPrintf(CON_CMDOUTPUT ,"%-5s %-15s %-20s Position\n","EID","Type","Name");
@@ -1707,7 +1700,7 @@ int com_entlist(char *)
                 (sector) ? sector->QueryObject()->GetName():"(null)";
 
             CPrintf(CON_CMDOUTPUT ,"%5d %-15s %-20s (%9.3f,%9.3f,%9.3f, %s)\n",
-                    obj->GetEID(),
+                    obj->GetEID().Unbox(),
                     obj->GetObjectType(),
                     obj->GetName(),
                     pos.x,pos.y,pos.z,sector_name );
@@ -1719,9 +1712,8 @@ int com_entlist(char *)
 
 int com_charlist(char *)
 {
-    csHash<gemObject *>& gems = GEMSupervisor::GetSingleton().GetAllGEMS();
-
-    csHash<gemObject *>::GlobalIterator i(gems.GetIterator());
+    csHash<gemObject*, EID> & gems = GEMSupervisor::GetSingleton().GetAllGEMS();
+    csHash<gemObject*, EID>::GlobalIterator i(gems.GetIterator());
     gemObject* obj;
 
     CPrintf(CON_CMDOUTPUT ,"%-9s %-5s %-9s %-10s %-20s\n","PID","EID","CNUM","Type","Name");
@@ -1732,8 +1724,8 @@ int com_charlist(char *)
         if (actor)
         {
             CPrintf(CON_CMDOUTPUT ,"%9u %5u %9u %-10s %-20s\n",
-                    actor->GetCharacterData()->GetPID(),
-                    actor->GetEID(),
+                    actor->GetCharacterData()->GetPID().Unbox(),
+                    actor->GetEID().Unbox(),
                     actor->GetClientID(),
                     actor->GetObjectType(),
                     actor->GetName());
@@ -1746,9 +1738,8 @@ int com_charlist(char *)
 int com_factions(char *)
 {
 
-    csHash<gemObject *>& gems = GEMSupervisor::GetSingleton().GetAllGEMS();
-
-    csHash<gemObject *>::GlobalIterator itr(gems.GetIterator());
+    csHash<gemObject*, EID> & gems = GEMSupervisor::GetSingleton().GetAllGEMS();
+    csHash<gemObject*, EID>::GlobalIterator itr(gems.GetIterator());
     gemObject* obj;
 
     csArray<gemActor*> actors;
@@ -1901,9 +1892,8 @@ int com_adjuststat(char *line)
     float adjust = atof(words[2]);
     int clientnum = atoi(words[0]);
 
-    csHash<gemObject *>& gems = GEMSupervisor::GetSingleton().GetAllGEMS();
-
-    csHash<gemObject *>::GlobalIterator i(gems.GetIterator());
+    csHash<gemObject*, EID> & gems = GEMSupervisor::GetSingleton().GetAllGEMS();
+    csHash<gemObject*, EID>::GlobalIterator i(gems.GetIterator());
     gemActor * actor = NULL;
     bool found = false;
 
@@ -2021,8 +2011,8 @@ int com_liststats(char *line)
         CPrintf(CON_CMDOUTPUT ,"Please specify: PlayerName");
         return 0;
     }
-    unsigned int characteruid=psserver->CharacterLoader.FindCharacterID(line,false);
-    if (characteruid==0)
+    PID characteruid = psserver->CharacterLoader.FindCharacterID(line, false);
+    if (!characteruid.IsValid())
     {
         CPrintf(CON_CMDOUTPUT ,"Character name is not found.\n");
         return 0;
@@ -2132,9 +2122,8 @@ int com_progress(char * line)
     // Convert to int, if possible
     int clientnum = atoi(charname);
 
-    csHash<gemObject *>& gems = GEMSupervisor::GetSingleton().GetAllGEMS();
-
-    csHash<gemObject *>::GlobalIterator i(gems.GetIterator());
+    csHash<gemObject*, EID> & gems = GEMSupervisor::GetSingleton().GetAllGEMS();
+    csHash<gemObject*, EID>::GlobalIterator i(gems.GetIterator());
     gemObject* obj;
     gemActor* actor = NULL;
     bool found = false;
@@ -2210,8 +2199,8 @@ int com_kill(char* player)
         CPrintf(CON_CMDOUTPUT ,"Client %d not found!\n",clientNum);
         return 0;
     }
-    int playerNum = client->GetActor()->GetEID();
-    gemActor* object = (gemActor*)GEMSupervisor::GetSingleton().FindObject(playerNum);
+    EID eid = client->GetActor()->GetEID();
+    gemActor* object = (gemActor*)GEMSupervisor::GetSingleton().FindObject(eid);
     object->Kill(NULL);
     return 0;
 }
@@ -2239,8 +2228,8 @@ int com_questreward( char* str )
         return 0;
     }
 
-    unsigned int characteruid=psserver->CharacterLoader.FindCharacterID((char*)charactername.GetData());
-    if (characteruid==0)
+    PID characteruid = psserver->CharacterLoader.FindCharacterID(charactername.GetData());
+    if (!characteruid.IsValid())
     {
         CPrintf(CON_CMDOUTPUT ,"Character name not found.\n");
         return 0;
@@ -2308,13 +2297,13 @@ int com_transactions(char* str)
                 // Dump it
                 CPrintf(
                     CON_CMDOUTPUT,
-                    "%s transaction for %d %d (Quality %d) (%d => %d) with price %u/ (%d)\n",
+                    "%s transaction for %d %d (Quality %d) (%s => %s) with price %u/ (%d)\n",
                     trans->moneyIn?"Selling":" Buying",
                     trans->count,
                     trans->item,
                     trans->quality,
-                    trans->from,
-                    trans->to,
+                    ShowID(trans->from),
+                    ShowID(trans->to),
                     trans->price,
                     trans->stamp);
             }

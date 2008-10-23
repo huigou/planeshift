@@ -309,8 +309,8 @@ void psSpellManager::Cast(Client * client, csString spellName, float kFactor)
 
     csString  effectName;
     csVector3 offset;
-    PS_ID     anchorID;
-    PS_ID     targetID;
+    EID       anchorID;
+    EID       targetID;
     unsigned int  castingDuration;
     csString  castingText;
 
@@ -560,8 +560,8 @@ void psSpellManager::HandleSpellCastEvent(psSpellCastGameEvent *event)
 {
     csString  responseEffectName;
     csVector3 offset;
-    PS_ID     anchorID = 0;
-    PS_ID     targetID = 0;
+    EID       anchorID;
+    EID       targetID;
     csString  affectText;
              
     // Start the effect if spell is successfully cast

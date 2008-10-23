@@ -113,7 +113,7 @@ class psSpell : public iScriptableVar
      *  @return An array of new psSpellCastGameEvents that are ready to be pushed inot the event stream.
      */
     psSpellCastGameEvent *Cast(psSpellManager * mgr, Client * client, csString &effectName, csVector3 &offset,
-                           PS_ID& anchorID, PS_ID& targetID, unsigned int &castingDuration, csString *castingText) const;
+                           EID & anchorID, EID & targetID, unsigned int & castingDuration, csString *castingText) const;
         
     /** Find all objects in range for spell around caster
      *
@@ -126,9 +126,9 @@ class psSpell : public iScriptableVar
     csArray< gemObject *> *getTargetsInRange(Client * client, float max_range, float range) const;
     
     bool AffectTargets(psSpellManager * mgr,psSpellCastGameEvent * event, csString &effectName, csVector3 &offset, 
-                PS_ID &anchorID, PS_ID &targetID, csString *affectText) const;
+                EID & anchorID, EID & targetID, csString *affectText) const;
     bool AffectTarget( psSpellCastGameEvent * event, csString &effectName, csVector3 &offset,
-                       PS_ID& anchorID, PS_ID& targetID, csString *affectText) const;
+                       EID & anchorID, EID & targetID, csString *affectText) const;
     bool PerformResult(gemActor *caster, gemObject *target, float max_range, bool saved, float powerLevel, csTicks duration = 0) const;
 
     csString SpellToXML() const;

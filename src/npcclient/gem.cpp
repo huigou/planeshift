@@ -53,7 +53,7 @@ psNpcMeshAttach::psNpcMeshAttach(gemNPCObject* objectToAttach) : scfImplementati
 //-------------------------------------------------------------------------------
 psNPCClient *gemNPCObject::cel = NULL;
 
-gemNPCObject::gemNPCObject( psNPCClient* cel, PS_ID id )
+gemNPCObject::gemNPCObject(psNPCClient* cel, EID id)
     :eid(id), visible(true), invincible(false), instance(0)
 {
     if (!this->cel)
@@ -81,7 +81,7 @@ void gemNPCObject::Move(const csVector3& pos, float rotangle,  const char* room)
     iSector* sector = engine->FindSector(room);
     if ( sector == NULL )
     {
-        CPrintf(CON_DEBUG, "Can't move npc object %d. Sector %s not found!\n", eid, room);
+        CPrintf(CON_DEBUG, "Can't move npc object %s. Sector %s not found!\n", ShowID(eid), room);
         return;
     }
     pcmesh->MoveMesh( sector , pos );
@@ -252,7 +252,7 @@ gemNPCActor::gemNPCActor( psNPCClient* cel, psPersistActor& mesg)
     SetInvincible( (mesg.flags & psPersistActor::INVINCIBLE) ?  true : false );
     SetInstance( mesg.instance );
 
-    Debug3( LOG_CELPERSIST, eid, "Actor %s(%u) Received\n", mesg.name.GetData(), mesg.entityid );
+    Debug3(LOG_CELPERSIST, eid.Unbox(), "Actor %s(%s) Received\n", mesg.name.GetData(), ShowID(mesg.entityid));
     InitMesh(  mesg.factname, mesg.filename, mesg.pos, mesg.yrot, mesg.sectorName );
     InitLinMove( mesg.pos, mesg.yrot, mesg.sectorName, mesg.top, mesg.bottom, mesg.offset );
     InitCharData( mesg.texParts, mesg.equipment );  
@@ -296,10 +296,10 @@ bool gemNPCActor::InitLinMove(const csVector3& pos, float angle, const char* sec
 
 
 gemNPCItem::gemNPCItem( psNPCClient* cel, psPersistItem& mesg) 
-    : gemNPCObject( cel, mesg.id ), flags(NONE)
+    : gemNPCObject(cel, mesg.eid), flags(NONE)
 {        
     name = mesg.name;
-    Debug3( LOG_CELPERSIST, 0,"Item %s(%d) Received", mesg.name.GetData(), mesg.id );
+    Debug3(LOG_CELPERSIST, 0, "Item %s(%s) Received", mesg.name.GetData(), ShowID(mesg.eid));
     type = mesg.type;
 
     if(!mesg.factname.GetData())

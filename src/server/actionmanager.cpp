@@ -233,8 +233,8 @@ void ActionManager::HandleQueryMessage( csString xml, Client *client )
     }
     else
     {
-        Error4("Player (%s)(%d) tried to send a bogus XML string as an action message\nString was %s", 
-        client->GetActor()->GetCharacterData()->GetCharName(), client->GetActor()->GetPID(), xml.GetData() );
+        Error4("Player (%s)(%s) tried to send a bogus XML string as an action message\nString was %s", 
+        client->GetActor()->GetCharacterData()->GetCharName(), ShowID(client->GetActor()->GetPID()), xml.GetData());
     }
 }
 
@@ -384,7 +384,7 @@ bool ActionManager::HandleProximityQuery( csRef<iDocumentNode> topNode, Client *
     return handled;
 }
 
-psActionLocation *ActionManager::FindAction( uint id )
+psActionLocation *ActionManager::FindAction(EID id)
 {
     psActionLocation* actionLocation;
     csHash<psActionLocation *>::GlobalIterator iter ( actionLocationList.GetIterator() );
@@ -459,7 +459,7 @@ void ActionManager::HandleListMessage( csString xml, Client *client )
 {
     if ( client->GetSecurityLevel() <= GM_LEVEL_9)
     {
-        psserver->SendSystemError(client->GetAccountID(), "Access is denied. Only Admin level 9 can manage Actions.");
+        psserver->SendSystemError(client->GetClientNum(), "Access is denied. Only Admin level 9 can manage Actions.");
         return;
     }
 
@@ -493,8 +493,8 @@ void ActionManager::HandleListMessage( csString xml, Client *client )
     }
     else
     {
-        Error4("Player (%s)(%d) tried to send a bogus XML string as an action message\nString was %s", 
-        client->GetActor()->GetCharacterData()->GetCharName(), client->GetActor()->GetPID(), xml.GetData() );
+        Error4("Player (%s)(%s) tried to send a bogus XML string as an action message\nString was %s", 
+        client->GetActor()->GetCharacterData()->GetCharName(), ShowID(client->GetActor()->GetPID()), xml.GetData());
     }
 
 }
@@ -596,8 +596,8 @@ void ActionManager::HandleSaveMessage( csString xml, Client *client )
     }
     else
     {
-        Error4("Player (%s)(%d) tried to send a bogus XML string as an action message\nString was %s", 
-        client->GetActor()->GetCharacterData()->GetCharName(), client->GetActor()->GetPID(), xml.GetData() );
+        Error4("Player (%s)(%s) tried to send a bogus XML string as an action message\nString was %s", 
+        client->GetActor()->GetCharacterData()->GetCharName(), ShowID(client->GetActor()->GetPID()), xml.GetData());
     }
 }
 
@@ -656,8 +656,8 @@ void ActionManager::HandleDeleteMessage( csString xml, Client *client )
     }
     else
     {
-        Error4("Player (%s)(%d) tried to send a bogus XML string as an action message\nString was %s", 
-        client->GetActor()->GetCharacterData()->GetCharName(), client->GetActor()->GetPID(), xml.GetData() );
+        Error4("Player (%s)(%s) tried to send a bogus XML string as an action message\nString was %s", 
+        client->GetActor()->GetCharacterData()->GetCharName(), ShowID(client->GetActor()->GetPID()), xml.GetData());
     }
 
     

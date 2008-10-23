@@ -192,7 +192,7 @@ csString psZPointsGainedEvent::ToString(AccessPointers * /*access_ptrs*/)
 
 PSF_IMPLEMENT_MSG_FACTORY(psBuyEvent,MSGTYPE_BUY_EVENT);
 
-psBuyEvent::psBuyEvent( int from, int to, unsigned int item, int stack, int quality,unsigned int price)
+psBuyEvent::psBuyEvent(PID from, PID to, unsigned int item, int stack, int quality, unsigned int price)
 {
     // Merchant => Player
 
@@ -201,8 +201,8 @@ psBuyEvent::psBuyEvent( int from, int to, unsigned int item, int stack, int qual
                        
     msg->SetType(MSGTYPE_BUY_EVENT);                   
     msg->clientnum = 0;  
-    msg->Add( (int32_t) from);
-    msg->Add( (int32_t) to);
+    msg->Add(from.Unbox());
+    msg->Add(to.Unbox());
     msg->Add( item);
     msg->Add( (int32_t) stack);
     msg->Add( (int32_t) quality);
@@ -216,8 +216,8 @@ psBuyEvent::psBuyEvent( MsgEntry* event)
 
     trans = new TransactionEntity(); // needs to be handled by economy manager
 
-    trans->from = event->GetInt32();
-    trans->to = event->GetInt32();
+    trans->from = PID(event->GetUInt32());
+    trans->to = PID(event->GetUInt32());
 
     trans->item = event->GetUInt32();
     trans->count = event->GetInt32();
@@ -229,8 +229,8 @@ csString psBuyEvent::ToString(AccessPointers * /*access_ptrs*/)
 {
     csString msgtext;
     
-    msgtext.AppendFmt("From: %d To: %d Item: '%d' Count: %d Quality: %d Price %d",
-                      trans->from,trans->to,trans->item,
+    msgtext.AppendFmt("From: %s To: %s Item: '%d' Count: %d Quality: %d Price %d",
+                      ShowID(trans->from), ShowID(trans->to), trans->item,
                       trans->count,trans->quality,trans->price);
 
     return msgtext;
@@ -240,7 +240,7 @@ csString psBuyEvent::ToString(AccessPointers * /*access_ptrs*/)
 
 PSF_IMPLEMENT_MSG_FACTORY(psSellEvent,MSGTYPE_SELL_EVENT);
 
-psSellEvent::psSellEvent( int from, int to, unsigned int item, int stack, int quality,unsigned int price)
+psSellEvent::psSellEvent(PID from, PID to, unsigned int item, int stack, int quality, unsigned int price)
 {
     // Player => Merchant
 
@@ -249,8 +249,8 @@ psSellEvent::psSellEvent( int from, int to, unsigned int item, int stack, int qu
                        
     msg->SetType(MSGTYPE_SELL_EVENT);                   
     msg->clientnum = 0;  
-    msg->Add( (int32_t) from);
-    msg->Add( (int32_t) to);
+    msg->Add(from.Unbox());
+    msg->Add(to.Unbox());
     msg->Add( item);
     msg->Add( (int32_t) stack);
     msg->Add( (int32_t) quality);
@@ -264,8 +264,8 @@ psSellEvent::psSellEvent( MsgEntry* event)
 
     trans = new TransactionEntity(); // needs to be handled by economy manager
 
-    trans->from = event->GetInt32();
-    trans->to = event->GetInt32();
+    trans->from = PID(event->GetUInt32());
+    trans->to = PID(event->GetUInt32());
 
     trans->item = event->GetUInt32();
     trans->count = event->GetInt32();
@@ -277,8 +277,8 @@ csString psSellEvent::ToString(AccessPointers * /*access_ptrs*/)
 {
     csString msgtext;
     
-    msgtext.AppendFmt("From: %d To: %d Item: '%d' Count: %d Quality: %d Price %d",
-                      trans->from,trans->to,trans->item,
+    msgtext.AppendFmt("From: %s To: %s Item: '%d' Count: %d Quality: %d Price %d",
+                      ShowID(trans->from), ShowID(trans->to), trans->item, 
                       trans->count,trans->quality,trans->price);
 
     return msgtext;
@@ -287,7 +287,7 @@ csString psSellEvent::ToString(AccessPointers * /*access_ptrs*/)
 
 PSF_IMPLEMENT_MSG_FACTORY(psPickupEvent,MSGTYPE_PICKUP_EVENT);
 
-psPickupEvent::psPickupEvent( int to, unsigned int item, int stack, int quality,unsigned int price)
+psPickupEvent::psPickupEvent(PID to, unsigned int item, int stack, int quality,unsigned int price)
 {
     // Player => Merchant
     
@@ -296,7 +296,7 @@ psPickupEvent::psPickupEvent( int to, unsigned int item, int stack, int quality,
     
     msg->SetType(MSGTYPE_PICKUP_EVENT);                   
     msg->clientnum = 0;  
-    msg->Add( (int32_t) to);
+    msg->Add(to.Unbox());
     msg->Add( item);
     msg->Add( (int32_t) stack);
     msg->Add( (int32_t) quality);
@@ -310,7 +310,7 @@ psPickupEvent::psPickupEvent( MsgEntry* event)
     
     trans = new TransactionEntity(); // needs to be handled by economy manager
     
-    trans->to = event->GetInt32();
+    trans->to = PID(event->GetUInt32());
     
     trans->item = event->GetUInt32();
     trans->count = event->GetInt32();
@@ -322,8 +322,8 @@ csString psPickupEvent::ToString(AccessPointers * /*access_ptrs*/)
 {
     csString msgtext;
     
-    msgtext.AppendFmt("From: %d To: %d Item: '%d' Count: %d Quality: %d Price %d",
-                      trans->from,trans->to,trans->item,
+    msgtext.AppendFmt("From: %s To: %s Item: '%d' Count: %d Quality: %d Price %d",
+                      ShowID(trans->from), ShowID(trans->to), trans->item, 
                       trans->count,trans->quality,trans->price);
     
     return msgtext;
@@ -333,7 +333,7 @@ csString psPickupEvent::ToString(AccessPointers * /*access_ptrs*/)
 
 PSF_IMPLEMENT_MSG_FACTORY(psDropEvent,MSGTYPE_DROP_EVENT);
 
-psDropEvent::psDropEvent( int from, unsigned int item, int stack, int quality,unsigned int price)
+psDropEvent::psDropEvent(PID from, unsigned int item, int stack, int quality,unsigned int price)
 {
     // Player => Merchant
     
@@ -342,7 +342,7 @@ psDropEvent::psDropEvent( int from, unsigned int item, int stack, int quality,un
     
     msg->SetType(MSGTYPE_DROP_EVENT);                   
     msg->clientnum = 0;  
-    msg->Add( (int32_t) from);
+    msg->Add(from.Unbox());
     msg->Add( item);
     msg->Add( (int32_t) stack);
     msg->Add( (int32_t) quality);
@@ -356,7 +356,7 @@ psDropEvent::psDropEvent( MsgEntry* event)
     
     trans = new TransactionEntity(); // needs to be handled by economy manager
     
-    trans->from = event->GetInt32();
+    trans->from = PID(event->GetUInt32());
     
     trans->item = event->GetUInt32();
     trans->count = event->GetInt32();
@@ -368,8 +368,8 @@ csString psDropEvent::ToString(AccessPointers * /*access_ptrs*/)
 {
     csString msgtext;
     
-    msgtext.AppendFmt("From: %d To: %d Item: '%d' Count: %d Quality: %d Price %d",
-                      trans->from,trans->to,trans->item,
+    msgtext.AppendFmt("From: %u To: %u Item: '%d' Count: %d Quality: %d Price %d",
+                      trans->from.Unbox(), trans->to.Unbox(), trans->item, 
                       trans->count,trans->quality,trans->price);
     
     return msgtext;
@@ -379,7 +379,7 @@ csString psDropEvent::ToString(AccessPointers * /*access_ptrs*/)
 
 PSF_IMPLEMENT_MSG_FACTORY(psLootEvent,MSGTYPE_LOOT_EVENT);
 
-psLootEvent::psLootEvent( int from, int to, unsigned int item, int stack, int quality,unsigned int price)
+psLootEvent::psLootEvent(PID from, PID to, unsigned int item, int stack, int quality, unsigned int price)
 {
     // Player => Merchant
     
@@ -388,8 +388,8 @@ psLootEvent::psLootEvent( int from, int to, unsigned int item, int stack, int qu
     
     msg->SetType(MSGTYPE_LOOT_EVENT);                   
     msg->clientnum = 0;  
-    msg->Add( (int32_t) from);
-    msg->Add( (int32_t) to);
+    msg->Add(from.Unbox());
+    msg->Add(to.Unbox());
     msg->Add( item);
     msg->Add( (int32_t) stack);
     msg->Add( (int32_t) quality);
@@ -403,8 +403,8 @@ psLootEvent::psLootEvent( MsgEntry* event)
     
     trans = new TransactionEntity(); // needs to be handled by economy manager
     
-    trans->from = event->GetInt32();
-    trans->to = event->GetInt32();
+    trans->from = PID(event->GetUInt32());
+    trans->to = PID(event->GetUInt32());
     
     trans->item = event->GetUInt32();
     trans->count = event->GetInt32();
@@ -416,8 +416,8 @@ csString psLootEvent::ToString(AccessPointers * /*access_ptrs*/)
 {
     csString msgtext;
     
-    msgtext.AppendFmt("From: %d To: %d Item: '%d' Count: %d Quality: %d Price %d",
-                      trans->from,trans->to,trans->item,
+    msgtext.AppendFmt("From: %s To: %s Item: '%d' Count: %d Quality: %d Price %d",
+                      ShowID(trans->from), ShowID(trans->to), trans->item,
                       trans->count,trans->quality,trans->price);
     
     return msgtext;

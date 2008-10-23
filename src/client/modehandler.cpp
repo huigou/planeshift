@@ -317,7 +317,7 @@ void ModeHandler::HandleModeMessage(MsgEntry* me)
     GEMClientActor* actor = dynamic_cast<GEMClientActor*>(celclient->FindObject(msg.actorID));
     if (!actor)
     {
-        Error2("Received psModeMessage for unknown object with ID %u", msg.actorID);
+        Error2("Received psModeMessage for unknown object %s", ShowID(msg.actorID));
         return;
     }
 

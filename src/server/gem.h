@@ -128,24 +128,24 @@ public:
     /** Get a hash of all the current entities on the server.
      * @return a csHash of all the gemObjects.
      */
-    csHash<gemObject *>& GetAllGEMS() { return entities_by_eid; }
+    csHash<gemObject*, EID> & GetAllGEMS() { return entities_by_eid; }
 
     // Search functions
     /** Find an entity ID for an item.
      * @param item The psItem that we want to find the entity ID for.
      *
-     * @return the PS_ID of that item if it was found. 0 if no id could be found.
+     * @return the EID of that item if it was found. 0 if no id could be found.
      */
-    PS_ID      FindItemID(psItem *item);
-    gemObject *FindObject(PS_ID cel_id);
+    EID        FindItemID(psItem *item);
+    gemObject *FindObject(EID cel_id);
     gemObject *FindObject(const csString& name);
     
 
-    gemActor  *FindPlayerEntity(int player_id);
-    gemNPC    *FindNPCEntity(int npc_id);
+    gemActor  *FindPlayerEntity(PID player_id);
+    gemNPC    *FindNPCEntity(PID npc_id);
     gemItem   *FindItemEntity(int item_id);
 
-    PS_ID CreateEntity(gemObject *obj);
+    EID  CreateEntity(gemObject *obj);
     void RemoveEntity(gemObject *which);
     void AddActorEntity(gemActor *actor);
     void RemoveActorEntity(gemActor *actor);
@@ -158,9 +158,9 @@ public:
     void UpdateAllStats();
 
     void GetAllEntityPos(psAllEntityPosMessage& msg);
-    int  CountManagedNPCs(int superclientID);
-    void FillNPCList(MsgEntry *msg,int superclientID);
-    void StopAllNPCs(int superclientID);
+    int  CountManagedNPCs(AccountID superclientID);
+    void FillNPCList(MsgEntry *msg, AccountID superclientID);
+    void StopAllNPCs(AccountID superclientID);
 
     /** Gets a list of all the 'live' entities that this player has ownership of.
       * This can be things like items in containers or work items.
@@ -168,7 +168,7 @@ public:
       * @param playerID The character owner ID we are looking for.
       * @param list The populated list of items that are active in game.
       */
-    void GetPlayerObjects(unsigned int playerID, csArray<gemObject*> &list);
+    void GetPlayerObjects(PID playerID, csArray<gemObject*> &list);
 
     /** Teleport a player to a location.
      *
@@ -223,15 +223,15 @@ protected:
     /** Get the next ID for an object.
       * @return The next ID available that can be assigned to an object.
       */
-    PS_ID GetNextID();    
+    EID GetNextID();    
 
-    csHash<gemObject*> entities_by_eid; ///< A list of all the entities stored by EID (entity/gem ID).
-    csHash<gemItem*>   items_by_uid;    ///< A list of all the items stored by UID (psItem ID).
-    csHash<gemActor*>  actors_by_pid;   ///< A list of all the actors stored by PID (player/character ID).
+    csHash<gemObject*, EID> entities_by_eid; ///< A list of all the entities stored by EID (entity/gem ID).
+    csHash<gemItem*>        items_by_uid;    ///< A list of all the items stored by UID (psItem ID).
+    csHash<gemActor*,  PID> actors_by_pid;   ///< A list of all the actors stored by PID (player/character ID).
 
     int                 count_players;                      ///< Total Number of players
 
-    PS_ID               nextEID;                            ///< The next ID available for an object.
+    uint32              nextEID;                            ///< The next ID available for an object.
     
 };
 
@@ -253,12 +253,12 @@ public:
 
     virtual ~gemObject();
 
-    uint32 GetEID() { return eid; }
+    EID GetEID() { return eid; }
 
     /// Called when a client disconnects
     virtual void Disconnect();
 
-    virtual bool IsValid(void) { return eid != 0; }
+    virtual bool IsValid(void) { return eid.IsValid(); }
 
     /// Returns whether the object is alive.
     bool IsAlive() const { return is_alive; }
@@ -328,7 +328,7 @@ public:
     // Overridden functions in child classes
     virtual PSCHARACTER_MODE GetMode() { return PSCHARACTER_MODE_UNKNOWN; }
     virtual void SetMode(PSCHARACTER_MODE mode) { }
-    virtual int GetPID() { return 0; }
+    virtual PID GetPID() { return 0; }
     virtual int GetGuildID() { return 0; }
     virtual psGuildInfo* GetGuild() { return 0; }
     virtual bool UpdateDR() { return false; }
@@ -341,8 +341,8 @@ public:
     virtual void RemoveLootableClient(int cnum) { }
     virtual bool IsLootableClient(int cnum) { return false; }
     virtual Client *GetRandomLootClient(int range) { return NULL; }
-    virtual int  GetSuperclientID() { return 0; }
-    virtual void SetSuperclientID(int id) { }
+    virtual AccountID GetSuperclientID() { return 0; }
+    virtual void SetSuperclientID(AccountID id) { }
 
     virtual bool GetVisibility() { return true; }
     virtual bool SeesObject(gemObject * object, float range) { return false; }
@@ -364,7 +364,7 @@ protected:
     bool is_alive;                          // Flag indicating whether object is alive or not
     csString factname;                      // Name of CS Mesh Factory used to create this object
     csString filename;                      // VFS Filename of mesh
-    uint32 eid;                             // Entity ID (unique identifier for object)
+    EID eid;                                // Entity ID (unique identifier for object)
 
     csArray<iDeleteObjectCallback*> receivers;  // List of objects which are to be notified when this object is deleted.
 
@@ -559,7 +559,7 @@ class gemActor :  public gemObject, public iDeathNotificationObject
 protected:
     psCharacter *psChar;
     FactionSet *factions;
-    int pid; ///< Player ID (also known as character ID or PID)
+    PID pid; ///< Player ID (also known as character ID or PID)
     csRef<PlayerGroup> group;
 
     csVector3 top, bottom, offset;
@@ -644,7 +644,7 @@ public:
     virtual psCharacter *GetCharacterData() { return psChar; }
     virtual Client* GetClient() const;
     
-    virtual int GetPID() { return pid; }
+    virtual PID GetPID() { return pid; }
 
     bool SetupCharData();
 
@@ -834,7 +834,7 @@ class gemNPC : public gemActor
 {
 protected:
     psNPCDialog *npcdialog;
-    int superClientID;
+    AccountID superClientID;
     csWeakRef<gemObject>  target;
     csWeakRef<gemObject>  owner;
 
@@ -875,10 +875,10 @@ public:
     virtual psNPCDialog *GetNPCDialogPtr() { return npcdialog; }
     virtual Client* GetClient() const      { return NULL;      }
 
-    virtual int GetSuperclientID()         { return superClientID; }
-    virtual void SetSuperclientID(int id)  { superClientID=id; }
+    virtual AccountID GetSuperclientID()        { return superClientID; }
+    virtual void SetSuperclientID(AccountID id) { superClientID = id; }
 
-    void SetupDialog(int NPCID);
+    void SetupDialog(PID npcID);
     void ReactToPlayerApproach(psNPCCommandsMessage::PerceptionType type,gemActor *player);
 
     virtual void AddLootableClient(int cnum);

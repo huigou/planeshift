@@ -1,3 +1,13 @@
+*** 2008-10-23 by Kenny Graunke
+- Added unique ID types for EID, PID, and AccountID, with more to come.
+  This makes it very clear what kind of ID you're dealing with, and allows
+  compile time type checking, preventing an entire class of obscure bugs.
+- Fixed an AccountID/ClientID mismatch in ActionManager ("Access is denied"),
+  and an EID/ClientID mismatch in AdminManager (LIGHTNING).
+- Changed NPCclient to use 0 for invalid IDs rather than -1, for consistency.
+- Disabled EntityManager::CreatePet, which has a EID/PID mismatch that's
+  tricky to resolve.  I don't believe this is used ATM...only CreateFamiliar.
+
 *** 2008-10-20 by Stefano Angeleri
 - Added an unclaim button in the petition manage window allowing the gm 
   to remove his assignation from the petition fixing 
