@@ -79,9 +79,9 @@ class PendingLootPrompt : public PendingQuestion
 {
 public:
     psItem* item;    ///< The looted item we're prompting for
-    int looterID;    ///< The ID of the player who attempted to pick up the item
-    int rollerID;    ///< The ID of the player who would have won it in a roll
-    int looteeID;
+    PID looterID;    ///< The ID of the player who attempted to pick up the item
+    PID rollerID;    ///< The ID of the player who would have won it in a roll
+    PID looteeID;
 
     csString lootername;
     csString rollername;
@@ -774,13 +774,13 @@ void SpawnManager::RemoveNPC(gemObject *obj)
 
     ServerStatus::mob_deathcount++;
 
-    int pid = obj->GetPID();
+    PID pid = obj->GetPID();
 
-    Notify3(LOG_SPAWN,"Sending NPC %u disconnect msg to %zu clients.\n",obj->GetEID(),obj->GetMulticastClients().GetSize());
+    Notify3(LOG_SPAWN, "Sending NPC %s disconnect msg to %zu clients.\n", ShowID(obj->GetEID()), obj->GetMulticastClients().GetSize());
 
     if (obj->GetCharacterData()==NULL)
     {
-        Error2("Character data for npc character %d was not found! Entity stays dead.\n",pid);
+        Error2("Character data for npc character %s was not found! Entity stays dead.\n", ShowID(pid));
         return;
     }
 
@@ -799,11 +799,11 @@ void SpawnManager::RemoveNPC(gemObject *obj)
     {
         if (spawnruleid == 0) // spawnruleid 0 is for non-respawning NPCs
         {
-            Notify2(LOG_SPAWN,"Temporary NPC based on player ID %d has died. Entity stays dead.\n", pid);
+            Notify2(LOG_SPAWN,"Temporary NPC based on player ID %s has died. Entity stays dead.\n", ShowID(pid));
         }
         else
         {
-            Error3("Respawn rule for player %d, rule %d was not found! Entity stays dead.\n", pid, spawnruleid);
+            Error3("Respawn rule for player %s, rule %d was not found! Entity stays dead.\n", ShowID(pid), spawnruleid);
         }
 
         // Remove mesh, etc from engine
@@ -828,14 +828,14 @@ void SpawnManager::RemoveNPC(gemObject *obj)
     // Remove mesh, etc from engine
     EntityManager::GetSingleton().RemoveActor(obj);
 
-    int newplayer = respawn->CheckSubstitution(pid);
+    PID newplayer = respawn->CheckSubstitution(pid);
 
     psRespawnGameEvent *newevent = new psRespawnGameEvent(this,delay,pos,angle,sector,newplayer,instance);
     psserver->GetEventManager()->Push(newevent);
     
     csString msg;
-    msg.Format("Scheduled NPC %d to be respawned in %1.1f seconds at (%1.0f,%1.0f,%1.0f) in %s.",
-               newplayer,
+    msg.Format("Scheduled NPC %s to be respawned in %1.1f seconds at (%1.0f,%1.0f,%1.0f) in %s.",
+               ShowID(newplayer),
                (float)delay/1000.0,
                pos.x, pos.y, pos.z, sector.GetData() );
 
@@ -859,7 +859,7 @@ void SpawnManager::HandleMessage(MsgEntry *me,Client *client)
     }
 }
 
-void SpawnManager::Respawn(INSTANCE_ID instance,csVector3& where,float rot,csString& sector,int playerID)
+void SpawnManager::Respawn(INSTANCE_ID instance, csVector3& where, float rot, csString& sector, PID playerID)
 {
     psSectorInfo* spawnsector = CacheManager::GetSingleton().GetSectorInfoByName(sector);
     if (spawnsector==NULL)
@@ -871,7 +871,7 @@ void SpawnManager::Respawn(INSTANCE_ID instance,csVector3& where,float rot,csStr
     psCharacter *chardata=psServer::CharacterLoader.LoadCharacterData(playerID,false);
     if (chardata==NULL)
     {
-        Error2("Character %u to be respawned does not have character data to be loaded!\n",playerID);
+        Error2("Character %s to be respawned does not have character data to be loaded!\n", ShowID(playerID));
         return;
     }
 
@@ -894,14 +894,14 @@ void SpawnManager::HandleLootItem(MsgEntry *me,Client *client)
     gemObject *obj = GEMSupervisor::GetSingleton().FindObject(msg.entity);
     if (!obj)
     {
-        Error3("LootItem Message from %s specified erroneous entity id of %d.\n",client->GetName(),msg.entity);
+        Error3("LootItem Message from %s specified an erroneous entity id: %s.\n", client->GetName(), ShowID(msg.entity));
         return;
     }
 
     psCharacter *chr = obj->GetCharacterData();
     if (!chr)
     {
-        Error3("LootItem Message from %s specified non-character entity id of %d.\n",client->GetName(),msg.entity);
+        Error3("LootItem Message from %s specified a non-character entity id: %s.\n", client->GetName(), ShowID(msg.entity));
         return;
     }
 
@@ -1104,7 +1104,7 @@ int SpawnRule::GetRespawnDelay()
 }
 
 
-int SpawnRule::CheckSubstitution(int originalplayer)
+PID SpawnRule::CheckSubstitution(PID originalplayer)
 {
     int score = randomgen->Get(10000);
 
@@ -1249,7 +1249,7 @@ psRespawnGameEvent::psRespawnGameEvent(SpawnManager *mgr,
                                        csVector3& pos,
                                        float angle,
                                        csString& sectorname,
-                                       int newplayer,
+                                       PID newplayer,
                                        INSTANCE_ID newinstance)
     : psGameEvent(0,delayticks,"psRespawnGameEvent")
 {
@@ -1285,7 +1285,7 @@ void psDespawnGameEvent::Trigger()
     if(!object)
     {
         csString status;
-        status.Format("Despawn event triggered for non-existant NPC id %u!", entity);
+        status.Format("Despawn event triggered for non-existant NPC %s!", ShowID(entity));
         psserver->GetLogCSV()->Write(CSV_STATUS, status);
 
         Error1(status);

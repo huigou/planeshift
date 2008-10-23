@@ -65,7 +65,7 @@ public:
 struct psFamiliarType
 {
 public:
-    PS_ID Id;
+    PID Id;
     csString Name;
     csString Type;
     csString Lifecycle;
@@ -94,10 +94,10 @@ public:
     bool CreatePlayer(Client* client);
     bool DeletePlayer(Client* client);
 
-    PS_ID CopyNPCFromDatabase(int master_id, float x, float y, float z, float angle, const csString & sector, INSTANCE_ID instance, const char *firstName = NULL, const char *lastName = NULL);
-    PS_ID CreateNPC(int NPCID, bool updateProxList = true);
-    PS_ID CreateNPC(psCharacter *chardata, bool updateProxList = true);
-    PS_ID CreateNPC(psCharacter *chardata, INSTANCE_ID instance, csVector3 pos, iSector* sector, float yrot, bool updateProxList = true);
+    PID CopyNPCFromDatabase(PID master_id, float x, float y, float z, float angle, const csString & sector, INSTANCE_ID instance, const char *firstName = NULL, const char *lastName = NULL);
+    EID CreateNPC(PID npcID, bool updateProxList = true);
+    EID CreateNPC(psCharacter *chardata, bool updateProxList = true);
+    EID CreateNPC(psCharacter *chardata, INSTANCE_ID instance, csVector3 pos, iSector* sector, float yrot, bool updateProxList = true);
 
     gemNPC *CreateFamiliar(gemActor *owner);
     gemNPC *CreatePet( Client* client, int familiarid );
@@ -135,7 +135,7 @@ public:
 
 protected:
     csHash<psAffinityAttribute *> affinityAttributeList;
-    csHash<psFamiliarType*, PS_ID> familiarTypeList;
+    csHash<psFamiliarType*, PID> familiarTypeList;
 
     bool CreateRoom (const char* name, const char* mapfile);
 
@@ -151,7 +151,7 @@ protected:
 
     void LoadFamiliarTypes();
     void LoadFamiliarAffinityAttributes();
-    PS_ID GetMasterFamiliarID( psCharacter *charData );
+    PID GetMasterFamiliarID(psCharacter *charData);
     int CalculateFamiliarAffinity(  psCharacter * chardata, size_t type, size_t lifecycle, size_t attacktool, size_t attacktype  );
 
 

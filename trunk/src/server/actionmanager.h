@@ -127,7 +127,7 @@ public:
       *
       * @param id The id of the cel entity to find.
       */
-    psActionLocation *FindAction( uint id );
+    psActionLocation *FindAction(EID id);
 
     /** Finds an ActionLocation from the action ID
       *

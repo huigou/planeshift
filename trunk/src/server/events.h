@@ -132,7 +132,7 @@ public:
 class psBuyEvent : public psMessageCracker
 {
 public:
-    psBuyEvent( int from, int to, unsigned int item, int stack, int quality,unsigned int price);
+    psBuyEvent(PID from, PID to, unsigned int item, int stack, int quality, unsigned int price);
     psBuyEvent( MsgEntry* event);
 
     PSF_DECLARE_MSG_FACTORY();
@@ -152,7 +152,7 @@ public:
 class psSellEvent : public psMessageCracker
 {
 public:
-    psSellEvent( int from, int to, unsigned int item, int stack, int quality,unsigned int price);
+    psSellEvent(PID from, PID to, unsigned int item, int stack, int quality, unsigned int price);
     psSellEvent( MsgEntry* event);
 
     PSF_DECLARE_MSG_FACTORY();
@@ -170,7 +170,7 @@ public:
 class psPickupEvent : public psMessageCracker
     {
     public:
-        psPickupEvent( int to, unsigned int item, int stack, int quality,unsigned int price);
+        psPickupEvent(PID to, unsigned int item, int stack, int quality,unsigned int price);
         psPickupEvent( MsgEntry* event);
         
         PSF_DECLARE_MSG_FACTORY();
@@ -188,7 +188,7 @@ class psPickupEvent : public psMessageCracker
 class psDropEvent : public psMessageCracker
     {
     public:
-        psDropEvent( int from, unsigned int item, int stack, int quality,unsigned int price);
+        psDropEvent(PID from, unsigned int item, int stack, int quality,unsigned int price);
         psDropEvent( MsgEntry* event);
         
         PSF_DECLARE_MSG_FACTORY();
@@ -207,7 +207,7 @@ class psDropEvent : public psMessageCracker
 class psLootEvent : public psMessageCracker
     {
     public:
-        psLootEvent( int from, int to, unsigned int item, int stack, int quality,unsigned int price);
+        psLootEvent(PID from, PID to, unsigned int item, int stack, int quality, unsigned int price);
         psLootEvent( MsgEntry* event);
         
         PSF_DECLARE_MSG_FACTORY();

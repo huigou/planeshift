@@ -139,7 +139,7 @@ bool psNPCDialog::Initialize( iDataConnection *db )
 }
 
 
-bool psNPCDialog::Initialize(iDataConnection *db,int NPCID)
+bool psNPCDialog::Initialize(iDataConnection *db, PID NPCID)
 {
     randomgen = psserver->rng;
     this->db = db;
@@ -157,11 +157,11 @@ bool psNPCDialog::Initialize(iDataConnection *db,int NPCID)
     return LoadKnowledgeAreas(NPCID);
 }
 
-bool psNPCDialog::LoadKnowledgeAreas(int NPCID)
+bool psNPCDialog::LoadKnowledgeAreas(PID npcID)
 {
     Result result(db->Select("select area,priority"
         "  from npc_knowledge_areas"
-        " where player_id=%d order by priority ASC",NPCID));
+        " where player_id=%u order by priority ASC", npcID.Unbox()));
 
     if (!result.IsValid() )
     {

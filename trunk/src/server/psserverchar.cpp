@@ -649,7 +649,7 @@ void psServerCharManager::BeginTrading(Client * client, gemObject * target, cons
     {
         csString commandData;
         commandData.Format("<MERCHANT ID=\"%d\" TRADE_CMD=\"%d\" />",
-                merchant->GetPID(),psGUIMerchantMessage::SELL);
+                merchant->GetPID().Unbox(), psGUIMerchantMessage::SELL);
 
         psGUIMerchantMessage msg1(clientnum,psGUIMerchantMessage::MERCHANT,commandData);
         msg1.SendMessage();
@@ -659,7 +659,7 @@ void psServerCharManager::BeginTrading(Client * client, gemObject * target, cons
     {
         csString commandData;
         commandData.Format("<MERCHANT ID=\"%d\" TRADE_CMD=\"%d\" />",
-                merchant->GetPID(),psGUIMerchantMessage::BUY);
+                merchant->GetPID().Unbox(), psGUIMerchantMessage::BUY);
         psGUIMerchantMessage msg1(clientnum,psGUIMerchantMessage::MERCHANT,commandData);
         psserver->GetEventManager()->SendMessage(msg1.msg);
         character->SetTradingStatus(psCharacter::BUYING,merchant);
@@ -1100,7 +1100,7 @@ void psServerCharManager::HandleMerchantMessage( MsgEntry* me, Client *client )
 }
 
 bool psServerCharManager::VerifyTrade( Client * client, psCharacter * character, psCharacter ** merchant, psMerchantInfo ** info,
-                                       const char * trade,const char * itemName, unsigned int merchantID)
+                                       const char * trade,const char * itemName, PID merchantID)
 {
     *merchant = character->GetMerchant();
     if (!*merchant)
@@ -1171,7 +1171,7 @@ void psServerCharManager::SendOutEquipmentMessages( gemActor* actor,
                                                     psItem* item,
                                                     int equipped )
 {
-    PS_ID eid = actor->GetEID();
+    EID eid = actor->GetEID();
 
     csString mesh = item->GetMeshName();
     csString part = item->GetPartName();

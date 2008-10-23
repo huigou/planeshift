@@ -239,7 +239,7 @@ void NetworkManager::HandleActor( MsgEntry* me )
     if(obj && obj->GetPID() == mesg.playerID)
     {
         // We already know this entity so just update the entity.
-        CPrintf(CON_ERROR, "Already know about gemNPCActor: %s (%s), %u.\n", mesg.name.GetData(), obj->GetName(), mesg.entityid );
+        CPrintf(CON_ERROR, "Already know about gemNPCActor: %s (%s), %s.\n", mesg.name.GetData(), obj->GetName(), ShowID(mesg.entityid));
 
         obj->Move(mesg.pos, mesg.yrot, mesg.sectorName, mesg.instance );
         obj->SetVisible( (mesg.flags & psPersistActor::INVISIBLE) ? false : true );
@@ -259,9 +259,9 @@ void NetworkManager::HandleActor( MsgEntry* me )
         // We have a player id, entity id mismatch and we already know this entity
         // so we can only assume a RemoveObject message misorder and we will delete the existing one and recreate.
         CPrintf(CON_ERROR, "Deleting because we already know gemNPCActor: "
-                "%s (%s), EID: %u PID: %u as EID: %u PID: %u.\n", 
-                mesg.name.GetData(), obj->GetName(), mesg.entityid, mesg.playerID, 
-                obj->GetEID(), obj->GetPID() );
+                "<%s, %s, %s> as <%s, %s, %s>.\n",
+                mesg.name.GetData(), ShowID(mesg.entityid), ShowID(mesg.playerID), 
+                obj->GetName(), ShowID(obj->GetEID()), ShowID(obj->GetPID()));
 
         npcclient->Remove(obj);
         obj = NULL; // Obj isn't valid after remove
@@ -281,15 +281,14 @@ void NetworkManager::HandleItem( MsgEntry* me )
 {
     psPersistItem mesg(me);
 
-    gemNPCObject * obj = npcclient->FindEntityID(mesg.id);
+    gemNPCObject * obj = npcclient->FindEntityID(mesg.eid);
 
-    if (obj && obj->GetPID() != gemNPCObject::NO_PLAYER_ID)
+    if (obj && obj->GetPID().IsValid())
     {
         // We have a player/NPC item mismatch.
         CPrintf(CON_ERROR, "Deleting because we already know gemNPCActor: "
-                "%s (%s), EID: %u as EID: %u.\n", 
-                mesg.name.GetData(), obj->GetName(), mesg.id,
-                obj->GetEID() );
+                "<%s, %s> as <%s, %s>.\n",
+                mesg.name.GetData(), ShowID(mesg.eid), obj->GetName(), ShowID(obj->GetEID()));
 
         npcclient->Remove(obj);
         obj = NULL; // Obj isn't valid after remove
@@ -300,8 +299,8 @@ void NetworkManager::HandleItem( MsgEntry* me )
     {
         // We already know this item so just update the position.
         CPrintf(CON_ERROR, "Deleting because we already know "
-                "gemNPCItem: %s (%s), %u.\n", mesg.name.GetData(), 
-                obj->GetName(), mesg.id );
+                "gemNPCItem: %s (%s), %s.\n", mesg.name.GetData(), 
+                obj->GetName(), ShowID(mesg.eid));
         
         npcclient->Remove(obj);
         obj = NULL; // Obj isn't valid after remove
@@ -320,8 +319,7 @@ void NetworkManager::HandleObjectRemoval( MsgEntry* me )
     gemNPCObject * object = npcclient->FindEntityID( mesg.objectEID );
     if (object == NULL)
     {
-        CPrintf(CON_ERROR, "NPCObject EID: %u cannot be removed - not found\n",
-                mesg.objectEID);
+        CPrintf(CON_ERROR, "NPCObject %s cannot be removed - not found\n", ShowID(mesg.objectEID));
         return;
     }
 
@@ -398,11 +396,10 @@ void NetworkManager::HandlePositionUpdates(MsgEntry *msg)
     for (int x=0; x<updates.count; x++)
     {
         csVector3 pos;
-        PS_ID id;
         iSector* sector;
         int instance;
 
-        updates.Get(id,pos, sector, instance, npcclient->GetNetworkMgr()->GetMsgStrings(), engine);
+        EID id = updates.Get(pos, sector, instance, npcclient->GetNetworkMgr()->GetMsgStrings(), engine);
         npcclient->SetEntityPos(id, pos, sector, instance);
     }
 }
@@ -418,62 +415,60 @@ void NetworkManager::HandlePerceptions(MsgEntry *msg)
         {
             case psNPCCommandsMessage::PCPT_TALK:
             {
-                PS_ID speakerEID = list.msg->GetUInt32();
-                PS_ID targetEID  = list.msg->GetUInt32();
-                int faction      = list.msg->GetInt16();
+                EID speakerEID = EID(list.msg->GetUInt32());
+                EID targetEID  = EID(list.msg->GetUInt32());
+                int faction    = list.msg->GetInt16();
 
                 NPC *npc = npcclient->FindNPC(targetEID);
                 if (!npc)
                 {
-                    Debug3(LOG_NPC, targetEID, "Got talk perception for unknown NPC(EID: %u) from %u!\n",
-                           targetEID,speakerEID);
+                    Debug3(LOG_NPC, targetEID.Unbox(), "Got talk perception for unknown NPC(%s) from %s!\n", ShowID(targetEID), ShowID(speakerEID));
                     break;
                 }
 
                 gemNPCObject *speaker_ent = npcclient->FindEntityID(speakerEID);
                 if (!speaker_ent)
                 {
-                    npc->Printf("Got talk perception from unknown speaker(EID: %u)!\n", speakerEID);
+                    npc->Printf("Got talk perception from unknown speaker(%s)!\n", ShowID(speakerEID));
                     break;
                 }
 
                 FactionPerception talk("talk",faction,speaker_ent);
-                npc->Printf("Got Talk perception for from actor %s(EID: %u), faction diff=%d.\n",
-                            speaker_ent->GetName(),speakerEID,faction);
+                npc->Printf("Got Talk perception for from actor %s(%s), faction diff=%d.\n",
+                            speaker_ent->GetName(), ShowID(speakerEID), faction);
 
                 npcclient->TriggerEvent(npc, &talk);
                 break;
             }
             case psNPCCommandsMessage::PCPT_ATTACK:
             {
-                PS_ID targetEID   = list.msg->GetUInt32();
-                PS_ID attackerEID = list.msg->GetUInt32();
+                EID targetEID   = EID(list.msg->GetUInt32());
+                EID attackerEID = EID(list.msg->GetUInt32());
 
                 NPC *npc = npcclient->FindNPC(targetEID);
                 gemNPCActor *attacker_ent = (gemNPCActor*)npcclient->FindEntityID(attackerEID);
                 
                 if (!npc)
                 {
-                    Debug2(LOG_NPC, targetEID, "Got attack perception for unknown NPC(EID: %u)!\n",
-                           targetEID);
+                    Debug2(LOG_NPC, targetEID.Unbox(), "Got attack perception for unknown NPC(%s)!\n", ShowID(targetEID));
                     break;
                 }
                 if (!attacker_ent)
                 {
-                    npc->Printf("Got attack perception for unknown attacker (EID: %u)!", attackerEID );
+                    npc->Printf("Got attack perception for unknown attacker (%s)!", ShowID(attackerEID));
                     break;
                 }
 
                 AttackPerception attack("attack",attacker_ent);
-                npc->Printf("Got Attack perception for from actor %s(EID: %u).",
-                            attacker_ent->GetName(),attackerEID);
+                npc->Printf("Got Attack perception for from actor %s(%s).",
+                            attacker_ent->GetName(), ShowID(attackerEID));
 
                 npcclient->TriggerEvent(npc, &attack);
                 break;
             }
             case psNPCCommandsMessage::PCPT_GROUPATTACK:
             {
-                PS_ID targetEID   = list.msg->GetUInt32();
+                EID targetEID = EID(list.msg->GetUInt32());
                 NPC *npc = npcclient->FindNPC(targetEID);
 
                 int groupCount = list.msg->GetUInt8();
@@ -481,7 +476,7 @@ void NetworkManager::HandlePerceptions(MsgEntry *msg)
                 csArray<int> bestSkillSlots(groupCount);
                 for (int i=0; i<groupCount; i++)
                 {
-                    attacker_ents.Push(npcclient->FindEntityID(list.msg->GetUInt32()));
+                    attacker_ents.Push(npcclient->FindEntityID(EID(list.msg->GetUInt32())));
                     bestSkillSlots.Push(list.msg->GetInt8());
                     if(!attacker_ents.Top())
                     {
@@ -499,8 +494,7 @@ void NetworkManager::HandlePerceptions(MsgEntry *msg)
 
                 if (!npc)
                 {
-                    Debug2(LOG_NPC, targetEID, "Got group attack perception for unknown NPC(EID: %u)!",
-                           targetEID);
+                    Debug2(LOG_NPC, targetEID.Unbox(), "Got group attack perception for unknown NPC(%s)!", ShowID(targetEID));
                     break;
                 }
 
@@ -521,34 +515,34 @@ void NetworkManager::HandlePerceptions(MsgEntry *msg)
 
             case psNPCCommandsMessage::PCPT_DMG:
             {
-                PS_ID attackerEID = list.msg->GetUInt32();
-                PS_ID targetEID   = list.msg->GetUInt32();
-                float dmg         = list.msg->GetFloat();
+                EID attackerEID = EID(list.msg->GetUInt32());
+                EID targetEID   = EID(list.msg->GetUInt32());
+                float dmg       = list.msg->GetFloat();
 
                 NPC *npc = npcclient->FindNPC(targetEID);
                 if (!npc)
                 {
-                    Debug2(LOG_NPC, targetEID, "Attack on unknown npc(EID: %u).",targetEID);
+                    Debug2(LOG_NPC, targetEID.Unbox(), "Attack on unknown NPC(%s).", ShowID(targetEID));
                     break;
                 }
                 gemNPCObject *attacker_ent = npcclient->FindEntityID(attackerEID);
                 if (!attacker_ent)
                 {
-                    CPrintf(CON_ERROR, "%s got attack perception for unknown attacker! (EID: %u)\n",
-                            npc->GetName(), attackerEID );
+                    CPrintf(CON_ERROR, "%s got attack perception for unknown attacker! (%s)\n",
+                            npc->GetName(), ShowID(attackerEID));
                     break;
                 }
 
                 DamagePerception damage("damage",attacker_ent,dmg);
-                npc->Printf("Got Damage perception for from actor %s(EID: %u) for %1.1f HP.",
-                            attacker_ent->GetName(),attackerEID,dmg);
+                npc->Printf("Got Damage perception for from actor %s(%s) for %1.1f HP.",
+                            attacker_ent->GetName(), ShowID(attackerEID), dmg);
 
                 npcclient->TriggerEvent(npc, &damage);
                 break;
             }
             case psNPCCommandsMessage::PCPT_DEATH:
             {
-                PS_ID who = list.msg->GetUInt32();
+                EID who = EID(list.msg->GetUInt32());
                 NPC *npc = npcclient->FindNPC(who);
                 if (!npc) // Not managed by us, or a player
                 {
@@ -562,8 +556,8 @@ void NetworkManager::HandlePerceptions(MsgEntry *msg)
             }
             case psNPCCommandsMessage::PCPT_SPELL:
             {
-                PS_ID caster = list.msg->GetUInt32();
-                PS_ID target = list.msg->GetUInt32();
+                EID caster = EID(list.msg->GetUInt32());
+                EID target = EID(list.msg->GetUInt32());
                 uint32_t strhash = list.msg->GetUInt32();
                 float    severity = list.msg->GetInt8() / 10;
                 csString type = GetCommonString(strhash);
@@ -595,16 +589,16 @@ void NetworkManager::HandlePerceptions(MsgEntry *msg)
             case psNPCCommandsMessage::PCPT_SHORTRANGEPLAYER:
             case psNPCCommandsMessage::PCPT_VERYSHORTRANGEPLAYER:
             {
-                PS_ID npcEID    = list.msg->GetUInt32();
-                PS_ID playerEID = list.msg->GetUInt32();
-                float faction   = list.msg->GetFloat();
+                EID npcEID    = EID(list.msg->GetUInt32());
+                EID playerEID = EID(list.msg->GetUInt32());
+                float faction = list.msg->GetFloat();
 
                 NPC *npc = npcclient->FindNPC(npcEID);
                 if (!npc)
                     break;  // This perception is not our problem
 
-                npc->Printf("Range perception npc: %d, player: %d, faction:%.0f\n",
-                            npcEID, playerEID, faction);
+                npc->Printf("Range perception: NPC: %s, player: %s, faction: %.0f\n",
+                            ShowID(npcEID), ShowID(playerEID), faction);
 
                 gemNPCObject *npc_ent = (npc) ? npc->GetActor() : npcclient->FindEntityID(npcEID);
                 gemNPCObject * player = npcclient->FindEntityID(playerEID);
@@ -640,9 +634,9 @@ void NetworkManager::HandlePerceptions(MsgEntry *msg)
             case psNPCCommandsMessage::PCPT_OWNER_CMD:
             {
                 psPETCommandMessage::PetCommand_t command = (psPETCommandMessage::PetCommand_t)list.msg->GetUInt32();
-                PS_ID owner_id = list.msg->GetUInt32();
-                PS_ID pet_id = list.msg->GetUInt32();
-                PS_ID target_id = list.msg->GetUInt32();
+                EID owner_id  = EID(list.msg->GetUInt32());
+                EID pet_id    = EID(list.msg->GetUInt32());
+                EID target_id = EID(list.msg->GetUInt32());
 
                 gemNPCObject *owner = npcclient->FindEntityID(owner_id);
                 NPC *npc = npcclient->FindNPC(pet_id);
@@ -674,9 +668,9 @@ void NetworkManager::HandlePerceptions(MsgEntry *msg)
             }
             case psNPCCommandsMessage::PCPT_OWNER_ACTION:
             {
-                PS_ID action = list.msg->GetUInt32();
-                PS_ID owner_id = list.msg->GetUInt32();
-                PS_ID pet_id = list.msg->GetUInt32();
+                int action = list.msg->GetInt32();
+                EID owner_id = EID(list.msg->GetUInt32());
+                EID pet_id = EID(list.msg->GetUInt32());
 
                 gemNPCObject *owner = npcclient->FindEntityID(owner_id);
                 NPC *npc = npcclient->FindNPC(pet_id);
@@ -704,7 +698,7 @@ void NetworkManager::HandlePerceptions(MsgEntry *msg)
             }
             case psNPCCommandsMessage::PCPT_INVENTORY:
             {
-                PS_ID owner_id = msg->GetUInt32();
+                EID owner_id = EID(msg->GetUInt32());
                 csString item_name = msg->GetStr();
                 bool inserted = msg->GetBool();
                 int count = msg->GetInt16();
@@ -753,7 +747,7 @@ void NetworkManager::HandlePerceptions(MsgEntry *msg)
 
             case psNPCCommandsMessage::PCPT_FLAG:
             {
-                PS_ID owner_id = msg->GetUInt32();
+                EID owner_id = EID(msg->GetUInt32());
                 uint32_t flags = msg->GetUInt32();
 
                 gemNPCObject * obj = npcclient->FindEntityID(owner_id);
@@ -769,7 +763,7 @@ void NetworkManager::HandlePerceptions(MsgEntry *msg)
 
             case psNPCCommandsMessage::PCPT_NPCCMD:
             {
-                PS_ID owner_id = msg->GetUInt32();
+                EID owner_id = EID(msg->GetUInt32());
                 csString cmd   = msg->GetStr();
 
                 NPC *npc = npcclient->FindNPC(owner_id);
@@ -786,7 +780,7 @@ void NetworkManager::HandlePerceptions(MsgEntry *msg)
             
             case psNPCCommandsMessage::PCPT_TRANSFER:
             {
-                PS_ID entity_id = msg->GetUInt32();
+                EID entity_id = EID(msg->GetUInt32());
                 csString item = msg->GetStr();
                 int count = msg->GetInt8();
                 csString target = msg->GetStr();
@@ -861,7 +855,7 @@ void NetworkManager::HandleNewNpc(MsgEntry *me)
     NPC *npc = npcclient->FindNPCByPID(msg.master_id);
     if (npc)
     {
-        npc->Printf("Got new NPC notification for new npc id %d",msg.new_npc_id);
+        npc->Printf("Got new NPC notification for %s", ShowID(msg.new_npc_id));
         
         // Insert a row in the db for this guy next.  
         // We will get an entity msg in a second to make him come alive.
@@ -870,7 +864,7 @@ void NetworkManager::HandleNewNpc(MsgEntry *me)
         // Now requery so we have the new guy on our list when we get the entity msg.
         if (!npcclient->ReadSingleNPC(msg.new_npc_id))
         {
-            Error3("Error creating copy of master %d as id %d.",msg.master_id,msg.new_npc_id);
+            Error3("Error creating copy of master %s as id %s.", ShowID(msg.master_id), ShowID(msg.new_npc_id));
             return;
         }
     }
@@ -928,11 +922,11 @@ void NetworkManager::QueueAttackCommand(gemNPCActor *attacker, gemNPCActor *targ
     }
 
     outbound->msg->Add( (int8_t) psNPCCommandsMessage::CMD_ATTACK);
-    outbound->msg->Add( (uint32_t) attacker->GetEID() );
+    outbound->msg->Add(attacker->GetEID().Unbox());
     
     if (target)
     {
-        outbound->msg->Add( (uint32_t) target->GetEID() );
+        outbound->msg->Add(target->GetEID().Unbox());
     }
     else
     {
@@ -956,8 +950,8 @@ void NetworkManager::QueueSpawnCommand(gemNPCActor *mother, gemNPCActor *father)
     }
 
     outbound->msg->Add( (int8_t) psNPCCommandsMessage::CMD_SPAWN);
-    outbound->msg->Add( (uint32_t) mother->GetEID() );
-    outbound->msg->Add( (uint32_t) father->GetEID() );
+    outbound->msg->Add(mother->GetEID().Unbox());
+    outbound->msg->Add(father->GetEID().Unbox());
 
     if ( outbound->msg->overrun )
     {
@@ -975,7 +969,7 @@ void NetworkManager::QueueTalkCommand(gemNPCActor *speaker, const char* text)
     }
 
     outbound->msg->Add( (int8_t) psNPCCommandsMessage::CMD_TALK);
-    outbound->msg->Add( (uint32_t) speaker->GetEID() );
+    outbound->msg->Add(speaker->GetEID().Unbox());
     
     outbound->msg->Add(text);
     if ( outbound->msg->overrun )
@@ -995,7 +989,7 @@ void NetworkManager::QueueVisibilityCommand(gemNPCActor *entity, bool status)
     }
 
     outbound->msg->Add( (int8_t) psNPCCommandsMessage::CMD_VISIBILITY);
-    outbound->msg->Add( (uint32_t) entity->GetEID() );
+    outbound->msg->Add(entity->GetEID().Unbox());
     
     outbound->msg->Add(status);
     if ( outbound->msg->overrun )
@@ -1015,8 +1009,8 @@ void NetworkManager::QueuePickupCommand(gemNPCActor *entity, gemNPCObject *item,
     }
 
     outbound->msg->Add( (int8_t) psNPCCommandsMessage::CMD_PICKUP);
-    outbound->msg->Add( (uint32_t) entity->GetEID() );
-    outbound->msg->Add( (uint32_t) item->GetEID() );
+    outbound->msg->Add(entity->GetEID().Unbox());
+    outbound->msg->Add(item->GetEID().Unbox());
     outbound->msg->Add( (int16_t) count );
 
     if ( outbound->msg->overrun )
@@ -1036,7 +1030,7 @@ void NetworkManager::QueueEquipCommand(gemNPCActor *entity, csString item, csStr
     }
 
     outbound->msg->Add( (int8_t) psNPCCommandsMessage::CMD_EQUIP);
-    outbound->msg->Add( (uint32_t) entity->GetEID() );
+    outbound->msg->Add(entity->GetEID().Unbox());
     outbound->msg->Add( item );
     outbound->msg->Add( slot );
     outbound->msg->Add( (int16_t) count );
@@ -1058,7 +1052,7 @@ void NetworkManager::QueueDequipCommand(gemNPCActor *entity, csString slot)
     }
 
     outbound->msg->Add( (int8_t) psNPCCommandsMessage::CMD_DEQUIP);
-    outbound->msg->Add( (uint32_t) entity->GetEID() );
+    outbound->msg->Add(entity->GetEID().Unbox());
     outbound->msg->Add( slot );
 
     if ( outbound->msg->overrun )
@@ -1078,7 +1072,7 @@ void NetworkManager::QueueDigCommand(gemNPCActor *entity, csString resource)
     }
 
     outbound->msg->Add( (int8_t) psNPCCommandsMessage::CMD_DIG);
-    outbound->msg->Add( (uint32_t) entity->GetEID() );
+    outbound->msg->Add(entity->GetEID().Unbox());
     outbound->msg->Add( resource );
 
     if ( outbound->msg->overrun )
@@ -1098,7 +1092,7 @@ void NetworkManager::QueueTransferCommand(gemNPCActor *entity, csString item, in
     }
 
     outbound->msg->Add( (int8_t) psNPCCommandsMessage::CMD_TRANSFER);
-    outbound->msg->Add( (uint32_t) entity->GetEID() );
+    outbound->msg->Add(entity->GetEID().Unbox());
     outbound->msg->Add( item );
     outbound->msg->Add( (int8_t)count );
     outbound->msg->Add( target );
@@ -1120,7 +1114,7 @@ void NetworkManager::QueueDropCommand(gemNPCActor *entity, csString slot)
     }
 
     outbound->msg->Add( (int8_t) psNPCCommandsMessage::CMD_DROP);
-    outbound->msg->Add( (uint32_t) entity->GetEID() );
+    outbound->msg->Add(entity->GetEID().Unbox());
     outbound->msg->Add( slot );
 
     if ( outbound->msg->overrun )
@@ -1132,7 +1126,7 @@ void NetworkManager::QueueDropCommand(gemNPCActor *entity, csString slot)
 }
 
 
-void NetworkManager::QueueResurrectCommand(csVector3 where, float rot, csString sector, int character_id)
+void NetworkManager::QueueResurrectCommand(csVector3 where, float rot, csString sector, PID character_id)
 {
     if ( outbound->msg->current > ( outbound->msg->bytes->GetSize() - 100 ) )
     {
@@ -1141,7 +1135,7 @@ void NetworkManager::QueueResurrectCommand(csVector3 where, float rot, csString 
     }
 
     outbound->msg->Add( (int8_t) psNPCCommandsMessage::CMD_RESURRECT);
-    outbound->msg->Add( (uint32_t) character_id );
+    outbound->msg->Add(character_id.Unbox());
     outbound->msg->Add( (float)rot );
     outbound->msg->Add( (float)where.x );
     outbound->msg->Add( (float)where.y );
@@ -1186,7 +1180,7 @@ void NetworkManager::QueueImperviousCommand(gemNPCActor * entity, bool imperviou
     }
 
     outbound->msg->Add( (int8_t) psNPCCommandsMessage::CMD_IMPERVIOUS);
-    outbound->msg->Add( (uint32_t) entity->GetEID() );
+    outbound->msg->Add(entity->GetEID().Unbox());
     outbound->msg->Add( (bool) impervious );
 
     if ( outbound->msg->overrun )
@@ -1202,7 +1196,7 @@ void NetworkManager::SendAllCommands(bool final)
     // If this is the final send all for a tick we need to check if any NPCs has been queued for sending of DR data.
     if (final)
     {
-        csHash<NPC*>::GlobalIterator it(cmd_dr_outbound.GetIterator());
+        csHash<NPC*,PID>::GlobalIterator it(cmd_dr_outbound.GetIterator());
         while ( it.HasNext() )
         {
             NPC * npc = it.Next();

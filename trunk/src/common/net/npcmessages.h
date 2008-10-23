@@ -250,10 +250,10 @@ public:
     void SetLength(int size,int client);
 
     /// Add a new entity's position to the data buffer
-    void Add(PS_ID id, csVector3& pos, iSector*& sector, int instance, csStringHashReversible* msgstrings);
+    void Add(EID id, csVector3 & pos, iSector* & sector, int instance, csStringHashReversible* msgstrings);
 
     /// Get the next entity and position from the buffer
-    void Get(PS_ID& id, csVector3& pos, iSector*& sector, int& instance, csStringHashReversible* msgstrings, iEngine *engine);
+    EID Get(csVector3 & pos, iSector* & sector, int & instance, csStringHashReversible* msgstrings, iEngine* engine);
 };
 
 /**
@@ -263,10 +263,10 @@ public:
 class psNewNPCCreatedMessage : public psMessageCracker
 {
 public:
-    int new_npc_id, master_id, owner_id;
+    PID new_npc_id, master_id, owner_id;
 
     /// Create psMessageBytes struct for outbound use
-    psNewNPCCreatedMessage(uint32_t clientToken,int new_npc_id, int master_id, int owner_id);
+    psNewNPCCreatedMessage(uint32_t clientToken, PID new_npc_id, PID master_id, PID owner_id);
 
     /// Crack incoming psMessageBytes struct for inbound use
     psNewNPCCreatedMessage(MsgEntry *message);

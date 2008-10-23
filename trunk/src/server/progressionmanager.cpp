@@ -415,7 +415,7 @@ public:
         csString str( "<traits>" );
         str.Append(trait->ToXML() );
         str.Append("</traits>");
-        psTraitChangeMessage message( (uint32_t)clientID, (uint32_t)actor->GetEID(), str );
+        psTraitChangeMessage message((uint32_t) clientID, actor->GetEID(), str);
         message.Multicast( actor->GetMulticastClients(), 0, PROX_LIST_ANY_RANGE );
         return true;
     }
@@ -2109,7 +2109,7 @@ public:
                         break; else continue;
 
                 case ACTOR:
-                    if ( nearobj->GetPID() )
+                    if (nearobj->GetPID().IsValid())
                         break; else continue;
 
                 case GROUP:
@@ -4951,7 +4951,7 @@ void ProgressionManager::SendSkillList(Client * client, bool forceOpen, PSSKILL 
         Skill * charSkill = character->GetSkills()->GetSkill( (PSSKILL)skillID );
         if (charSkill == NULL)
         {
-            Error3("Can't find skill %d in character %u", skillID, character->GetPID());
+            Error3("Can't find skill %d in character %s", skillID, ShowID(character->GetPID()));
             return;
         }
 

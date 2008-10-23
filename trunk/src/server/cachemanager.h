@@ -210,14 +210,14 @@ public:
      *  @param accountid - The unique id associated with the account.
      *  @return NULL if no account information was found for the given ID. The returned pointer must be deleted when no longer needed.
      */
-    psAccountInfo *GetAccountInfoByID(unsigned int accountid);
+    psAccountInfo *GetAccountInfoByID(AccountID accountid);
 
     /** Retrieves account information given an character ID.
      *
      *  @param charid - The unique id associated with the character.
      *  @return NULL if no account information was found for the given ID. The returned pointer must be deleted when no longer needed.
      */
-    psAccountInfo *GetAccountInfoByCharID(unsigned int charid);
+    psAccountInfo *GetAccountInfoByCharID(PID charid);
 
     /** Retrieves account information given a username.
      *

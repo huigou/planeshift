@@ -2657,12 +2657,12 @@ const char* CacheManager::GetBadName(int pos)
      return string->GetData();
 }
 
-psAccountInfo *CacheManager::GetAccountInfoByID(unsigned int accountid)
+psAccountInfo *CacheManager::GetAccountInfoByID(AccountID accountid)
 {
-    Result result(db->Select("SELECT * from accounts where id=%u",accountid));
+    Result result(db->Select("SELECT * from accounts where id=%u", accountid.Unbox()));
     if (!result.IsValid() || result.Count()<1)
     {
-        Warning3(LOG_CONNECTIONS,"Could not find account for id %u.  Error: %s",accountid,db->GetLastError());
+        Warning3(LOG_CONNECTIONS, "Could not find %s: %s", ShowID(accountid), db->GetLastError());
         return NULL;
     }
     psAccountInfo *accountinfo=new psAccountInfo;
@@ -2678,9 +2678,9 @@ psAccountInfo *CacheManager::GetAccountInfoByID(unsigned int accountid)
 }
 
 
-psAccountInfo *CacheManager::GetAccountInfoByCharID(unsigned int charid)
+psAccountInfo *CacheManager::GetAccountInfoByCharID(PID charid)
 {
-    unsigned int accountid = db->SelectSingleNumber("SELECT account_id from characters where id=%u",charid);
+    unsigned int accountid = db->SelectSingleNumber("SELECT account_id from characters where id=%u", charid.Unbox());
     return GetAccountInfoByID( accountid );
 }
 
@@ -2811,7 +2811,7 @@ psGuildInfo * CacheManager::FindGuild(const csString & name)
 
 bool CacheManager::CreateGuild(const char *guildname, Client *client)
 {
-    int leaderID = client->GetPID();
+    PID leaderID = client->GetPID();
 
     psGuildInfo *gi = new psGuildInfo(guildname,leaderID);
 

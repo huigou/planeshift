@@ -660,7 +660,7 @@ public:
     /** This is the ID which must be requested to instantiate the client
      * player.
      */
-    uint32_t msgPlayerID;
+    PID msgPlayerID;
 
     /// The number of characters for this account
     uint8_t msgNumOfChars;
@@ -669,7 +669,7 @@ public:
      *  a varying number of characters to be added via AddCharacter. Call ConstructMsg
      *  to create the actual message.
      */
-    psAuthApprovedMessage(uint32_t clientnum, uint32_t playerID, uint8_t numCharacters);
+    psAuthApprovedMessage(uint32_t clientnum, PID playerID, uint8_t numCharacters);
 
     /** Crack incoming psMessageBytes struct for inbound use */
     psAuthApprovedMessage(MsgEntry *message);
@@ -1168,10 +1168,10 @@ public:
 class psDisconnectMessage : public psMessageCracker
 {
 public:
-    PS_ID actor;
+    EID actor;
     csString msgReason;
 
-    psDisconnectMessage(uint32_t clientnum,PS_ID actorid,const char *reason);
+    psDisconnectMessage(uint32_t clientnum, EID actorid, const char *reason);
     psDisconnectMessage(MsgEntry *message);
 
     PSF_DECLARE_MSG_FACTORY();
@@ -1188,11 +1188,11 @@ public:
 class psUserActionMessage : public psMessageCracker
 {
 public:
-    PS_ID target;
+    EID target;
     csString action;
     csString dfltBehaviors;
 
-    psUserActionMessage(uint32_t clientnum,PS_ID target,const char *action, const char *dfltBehaviors="");
+    psUserActionMessage(uint32_t clientnum, EID target, const char *action, const char *dfltBehaviors="");
     psUserActionMessage(MsgEntry *message);
 
     PSF_DECLARE_MSG_FACTORY();
@@ -1306,7 +1306,7 @@ public:
 class psModeMessage : public psMessageCracker
 {
 public:
-    psModeMessage(uint32_t clientnum, uint32_t actorID, uint8_t mode, uint8_t stance);
+    psModeMessage(uint32_t clientnum, EID actorID, uint8_t mode, uint8_t stance);
     psModeMessage(MsgEntry* message);
 
     PSF_DECLARE_MSG_FACTORY();
@@ -1333,7 +1333,7 @@ public:
     };
 
 public:
-    uint32_t actorID;
+    EID actorID;
     uint8_t mode;
     uint8_t stance;
 };
@@ -1577,7 +1577,7 @@ public:
         LOOT_SELF,
         LOOT_ROLL
     };
-    psLootItemMessage(int client,int entity,int item,int action);
+    psLootItemMessage(int client, EID entity, int item, int action);
     psLootItemMessage(MsgEntry* message);
 
     PSF_DECLARE_MSG_FACTORY();
@@ -1590,7 +1590,9 @@ public:
      */
     virtual csString ToString(AccessPointers * access_ptrs);
 
-    int entity,lootitem,lootaction;
+    EID entity;
+    int lootitem;
+    int lootaction;
 };
 
 //---------------------------------------------------------------------------
@@ -1612,9 +1614,9 @@ public:
      */
     virtual csString ToString(AccessPointers * access_ptrs);
 
-    void Populate(PS_ID entity,csString& lootstr, int cnum);
+    void Populate(EID entity, csString & lootstr, int cnum);
 
-    PS_ID entity_id;
+    EID entity_id;
     csString lootxml;
 };
 
@@ -1678,7 +1680,7 @@ public:
 class psOverrideActionMessage : public psMessageCracker
 {
 public:
-    psOverrideActionMessage(int client,int entity,const char *action, int duration = 0);
+    psOverrideActionMessage(int client, EID entity, const char *action, int duration = 0);
     psOverrideActionMessage(MsgEntry* message);
 
     PSF_DECLARE_MSG_FACTORY();
@@ -1691,7 +1693,7 @@ public:
      */
     virtual csString ToString(AccessPointers * access_ptrs);
 
-    int entity_id;
+    EID entity_id;
     csString action;
     int duration;
 };
@@ -1729,7 +1731,7 @@ public:
      * If the type is DEEQUIP the meshName is ignored and sent as ""
      */
     psEquipmentMessage( uint32_t clientNum,
-                        PS_ID actorid,
+                        EID actorid,
                         uint8_t type,
                         int slot,
                         csString& mesh,
@@ -2115,8 +2117,8 @@ public:
      *   @param uid Optional ID that server can use to stop a particular Effect.
      */
     psEffectMessage(uint32_t clientNum, const csString &effectName,
-                    const csVector3 &effectOffset, uint32_t anchorID,
-                    uint32_t targetID, uint32_t uid);
+                    const csVector3 &effectOffset, EID anchorID,
+                    EID targetID, uint32_t uid);
 
     /**  @brief Constructs a new message that will tell the client to render a spell effect - not just a normal effect
      *   @param clientNum the client to send the effect message to
@@ -2128,8 +2130,8 @@ public:
      *   @param uid Optional ID that server can use to stop a particular Effect.
      */
     psEffectMessage(uint32_t clientNum, const csString &effectName,
-                    const csVector3 &effectOffset, uint32_t anchorID,
-                    uint32_t targetID, uint32_t castDuration, uint32_t uid);
+                    const csVector3 &effectOffset, EID anchorID,
+                    EID targetID, uint32_t castDuration, uint32_t uid);
 
     /**  @brief Constructs a new message that will tell the client to render a text effect - not just a normal effect
      *   @param clientNum the client to send the effect message to
@@ -2141,8 +2143,8 @@ public:
      *   @param uid Optional ID that server can use to stop a particular Effect.
      */
     psEffectMessage(uint32_t clientNum, const csString &effectName,
-                    const csVector3 &effectOffset, uint32_t anchorID,
-                    uint32_t targetID, csString &effectText, uint32_t uid);
+                    const csVector3 &effectOffset, EID anchorID,
+                    EID targetID, csString &effectText, uint32_t uid);
 
     /**  @brief Translates a generic message to a psEffectMessage
      *   @param message the generic message to translate
@@ -2161,8 +2163,8 @@ public:
 
     csString  name;
     csVector3 offset;
-    uint32_t  anchorID;
-    uint32_t  targetID;
+    EID       anchorID;
+    EID       targetID;
     uint32_t  castDuration;
     uint32_t  uid;
     csString effectText;
@@ -2184,7 +2186,7 @@ public:
      * @param clientNum   Client destination.
      * @param targetName  Name of the new target to display.
      */
-    psGUITargetUpdateMessage(uint32_t client_num, PS_ID target_id);
+    psGUITargetUpdateMessage(uint32_t client_num, EID target_id);
     psGUITargetUpdateMessage(MsgEntry *message);
 
     PSF_DECLARE_MSG_FACTORY();
@@ -2198,7 +2200,7 @@ public:
     virtual csString ToString(AccessPointers * access_ptrs);
 
     uint32_t clientNum;
-    PS_ID targetID;
+    EID targetID;
 };
 
 
@@ -2278,8 +2280,8 @@ class psCombatEventMessage : public psMessageCracker
 {
 public:
     int        event_type;
-    uint32_t   attacker_id;
-    uint32_t   target_id;
+    EID        attacker_id;
+    EID        target_id;
     int        target_location; // Where on the target the attack hit/miss
     float      damage;
     csStringID attack_anim;
@@ -2298,8 +2300,8 @@ public:
     /** Create psMessageBytes struct for outbound use */
     psCombatEventMessage(uint32_t clientnum,
                          int event_type,
-                         uint32_t attacker,
-                         uint32_t target,
+                         EID attacker,
+                         EID target,
                          int target_location,
                          float damage,
                          csStringID attack_anim,
@@ -2355,7 +2357,7 @@ public:
 class psStatDRMessage : public psMessageCracker
 {
 public:
-    psStatDRMessage(uint32_t clientnum, PS_ID eid, csArray<float> fVitals, csArray<uint32_t> uiVitals, uint8_t version, int flags);
+    psStatDRMessage(uint32_t clientnum, EID eid, csArray<float> fVitals, csArray<uint32_t> uiVitals, uint8_t version, int flags);
 
     /** Send a request to the server for a full stat update.  */
     psStatDRMessage();
@@ -2374,7 +2376,7 @@ public:
     virtual csString ToString(AccessPointers * access_ptrs);
 
     bool useful;
-    PS_ID entityid;
+    EID entityid;
     uint32_t statsDirty;
     uint8_t counter;
 
@@ -2699,7 +2701,7 @@ private:
 class psDRMessage : public psMessageCracker
 {
 protected:
-    void WriteDRInfo(uint32_t client,PS_ID mappedid,
+    void WriteDRInfo(uint32_t client, EID mappedid,
                     bool on_ground, uint8_t mode, uint8_t counter,
                     const csVector3& pos, float yrot, iSector *sector,
                     const csVector3& vel, csVector3& worldVel, float ang_vel,
@@ -2737,12 +2739,12 @@ public:
     iSector *sector;        ///< Ptr to sector for mesh
     csString sectorName;    ///< Name of the sector
     float ang_vel;          ///< Angular velocity of Yrot member changing
-    PS_ID entityid;         ///< The mapped id of the entity in question
+    EID entityid;           ///< The mapped id of the entity in question
 
     psDRMessage() { }
-    psDRMessage(uint32_t client, PS_ID mappedid, uint8_t counter,
+    psDRMessage(uint32_t client, EID mappedid, uint8_t counter,
                 csStringHashReversible* msgstrings, psLinearMovement *linmove, uint8_t mode=0);
-    psDRMessage(uint32_t client, PS_ID mappedid,
+    psDRMessage(uint32_t client, EID mappedid,
                 bool on_ground, uint8_t mode, uint8_t counter,
                 const csVector3& pos, float yrot, iSector *sector,
                 const csVector3& vel, csVector3& worldVel, float ang_vel,
@@ -2874,10 +2876,10 @@ public:
                     const char* texParts,
                     const char* equipmentParts,
                     uint8_t counter,
-                    PS_ID mappedid, csStringHashReversible* msgstrings, psLinearMovement *linmove,
+                    EID mappedid, csStringHashReversible* msgstrings, psLinearMovement *linmove,
                     uint8_t movementMode,
                     uint8_t serverMode,
-                    uint32_t playerID = 0, uint32_t groupID = 0, PS_ID ownerEID = 0,
+                    PID playerID = 0, uint32_t groupID = 0, EID ownerEID = 0,
                     uint32_t flags = NONE );
 
     psPersistActor( MsgEntry* me, csStringHashReversible* msgstrings, iEngine *engine );
@@ -2895,7 +2897,7 @@ public:
     /**
      * Used to insert playerid into the message buffer after creation.
      */
-    void SetPlayerID(uint32_t playerID);
+    void SetPlayerID(PID playerID);
 
     /**
      * Used to insert instance into the message buffer after creation.
@@ -2915,9 +2917,9 @@ public:
     int type;
     int masqueradeType;
     uint8_t serverMode;
-    uint32_t playerID;
+    PID playerID;
     uint32_t groupID;
-    PS_ID ownerEID;
+    EID ownerEID;
     bool control;
     uint32_t flags;
     int instance;
@@ -2938,7 +2940,7 @@ public:
     };
 
     psPersistItem(  uint32_t clientnum,
-                    uint32_t id,
+                    EID id,
                     int type,
                     const char* name,
                     const char* factname,
@@ -2967,7 +2969,7 @@ public:
     csString sector;
     csVector3 pos;
     float yRot;
-    uint32_t id;
+    EID eid;
     uint32_t type;
     uint32_t flags;
 };
@@ -2976,7 +2978,7 @@ class psPersistActionLocation : public psMessageCracker
 {
 public:
     psPersistActionLocation( uint32_t clientNum,
-                                uint32_t id,
+                                EID eid,
                                 int type,
                                 const char* name,
                                 const char* sector,
@@ -2998,14 +3000,14 @@ public:
     csString name;
     csString sector;
     csString mesh;
-    uint32_t id;
+    EID eid;
     uint32_t type;
 };
 
 class psRemoveObject : public psMessageCracker
 {
 public:
-    psRemoveObject( uint32_t clientNum, uint32_t objectEID );
+    psRemoveObject(uint32_t clientNum, EID objectEID);
     psRemoveObject( MsgEntry* me );
 
     PSF_DECLARE_MSG_FACTORY();
@@ -3018,7 +3020,7 @@ public:
      */
     virtual csString ToString(AccessPointers * access_ptrs);
 
-    uint32_t objectEID;
+    EID objectEID;
 };
 
 
@@ -3727,7 +3729,7 @@ public:
     /** @brief Constructs a message to go out to a client.
       *
       * @param to The desitination client.
-      * @param containerID The desitination container ID.
+      * @param containerID The destination container's entity ID (it's always a world container).
       * @param slotID The slot in the container where to make the update.
       * @param clearSlot Boolean that indicates if the update is to clear out the slot.
       * @param itemName The name of the item requested.
@@ -3735,7 +3737,7 @@ public:
       * @param stackCount The number of items in the stack.
       * @param ownerEID The GEM entity ID of the owner
       */
-    psViewItemUpdate( uint32_t to,  uint32_t containerID, uint32_t slotID, bool clearSlot, const char *itemName, const char *icon, uint32_t stackCount, uint32_t ownerID);
+    psViewItemUpdate(uint32_t to, EID containerID, uint32_t slotID, bool clearSlot, const char *itemName, const char *icon, uint32_t stackCount, EID ownerID);
 
     /// Crack out the details from the message.
     psViewItemUpdate( MsgEntry* me );
@@ -3759,15 +3761,15 @@ public:
     /// The destination client for this message.
     int to;
 
-    /// The container ID for this item.
-    int containerID;
+    /// The EID for the container we're updating.
+    EID containerID;
 
     /// Item info
     csString name;
     csString icon;
     int slotID;
     int stackCount;
-    uint32_t ownerID;
+    EID ownerID;
 };
 
 
@@ -4062,7 +4064,7 @@ public:
 class psUpdateObjectNameMessage : public psMessageCracker
 {
 public:
-    psUpdateObjectNameMessage( uint32_t client,uint32_t ID, const char* newName );
+    psUpdateObjectNameMessage(uint32_t client, EID eid, const char* newName);
     psUpdateObjectNameMessage( MsgEntry* me );
 
     PSF_DECLARE_MSG_FACTORY();
@@ -4075,15 +4077,15 @@ public:
      */
     virtual csString ToString(AccessPointers * access_ptrs);
 
-    uint32_t objectID;
+    EID objectID;
     csString newObjName;
 };
 
 class psUpdatePlayerGuildMessage : public psMessageCracker
 {
 public:
-    // If totalIsClient is true, then use total as an ID and just 1 entity
-    psUpdatePlayerGuildMessage( uint32_t client, int total ,const char* newGuild, bool totalIsClient = true  );
+    psUpdatePlayerGuildMessage(uint32_t client, int total,  const char* newGuild);
+    psUpdatePlayerGuildMessage(uint32_t client, EID entity, const char* newGuild); // shortcut for only 1 entity
     psUpdatePlayerGuildMessage( MsgEntry* me );
 
     PSF_DECLARE_MSG_FACTORY();
@@ -4096,7 +4098,7 @@ public:
      */
     virtual csString ToString(AccessPointers * access_ptrs);
 
-    void AddPlayer(uint32_t id); // Adds an object
+    void AddPlayer(EID id); // Adds an object
 
     csArray<uint32_t> objectID; // Array with objects
     csString newGuildName;
@@ -4106,7 +4108,7 @@ public:
 class psUpdatePlayerGroupMessage : public psMessageCracker
 {
 public:
-    psUpdatePlayerGroupMessage( int clientnum, uint32_t objectID, uint32_t groupID);
+    psUpdatePlayerGroupMessage(int clientnum, EID objectID, uint32_t groupID);
     psUpdatePlayerGroupMessage( MsgEntry* me );
 
     PSF_DECLARE_MSG_FACTORY();
@@ -4119,7 +4121,7 @@ public:
      */
     virtual csString ToString(AccessPointers * access_ptrs);
 
-    uint32_t objectID;
+    EID objectID;
     uint32_t groupID;
 };
 
@@ -4529,19 +4531,19 @@ public:
 class psTraitChangeMessage : public psMessageCracker
 {
 public:
-    psTraitChangeMessage( uint32_t client, uint32_t targetID, csString& string)
+    psTraitChangeMessage(uint32_t client, EID targetID, csString & string)
     {
         msg.AttachNew(new MsgEntry( string.Length()+1 + sizeof(uint32_t) ));
 
         msg->SetType(MSGTYPE_CHANGE_TRAIT);
         msg->clientnum = client;
-        msg->Add( targetID );
+        msg->Add(targetID.Unbox());
         msg->Add( string );
     }
 
     psTraitChangeMessage( MsgEntry* me )
     {
-        target = me->GetUInt32();
+        target = EID(me->GetUInt32());
         string  = me->GetStr();
         if (!string.Length())
             valid = false;
@@ -4557,7 +4559,7 @@ public:
      */
     virtual csString ToString(AccessPointers * access_ptrs);
 
-    uint32_t target;
+    EID target;
     csString string;
 };
 
@@ -4789,7 +4791,7 @@ class psEntranceMessage : public psMessageCracker
          *
          * @param gem entity ID
          */
-        psEntranceMessage(uint32_t entranceID);
+        psEntranceMessage(EID entranceID);
 
         psEntranceMessage( MsgEntry* me );
 
@@ -4804,7 +4806,7 @@ class psEntranceMessage : public psMessageCracker
         virtual csString ToString(AccessPointers *access_ptrs);
 
         /// The gem entity ID of the entrance object
-        uint32_t entranceID;
+        EID entranceID;
 };
 
 //--------------------------------------------------------------------------

@@ -102,7 +102,7 @@ public:
      *  @param byTheControllerGM: true if it is the controlling GM
      *  @return bool: true = success, false = failed.
      */
-    bool CompleteGMEvent (Client* client, unsigned int gmID, bool byTheControllerGM = true);
+    bool CompleteGMEvent (Client* client, PID gmID, bool byTheControllerGM = true);
 
     /** @brief A player completes an event.
      *
@@ -156,7 +156,7 @@ public:
      *  @param completedEventsAsGM: array of ids of completed events as GM.
      *  @return int: running event id.
      */
-    int GetAllGMEventsForPlayer (unsigned int playerID,
+    int GetAllGMEventsForPlayer (PID playerID,
                                  csArray<int>& completedEvents,
                                  int& runningEventAsGM,
                                  csArray<int>& completedEventsAsGM);
@@ -179,7 +179,7 @@ public:
       *  @param playerID: id of player being removed
       *  @return bool: true = success
       */
-     bool RemovePlayerFromGMEvents(unsigned int playerID);
+     bool RemovePlayerFromGMEvents(PID playerID);
 
     /** @brief GM attempts to assume control of an event, after originator has absconded.
      *
@@ -205,10 +205,10 @@ private:
     {
         int id;
         GMEventStatus status;
-        unsigned int gmID;
+        PID gmID;
         csString eventName;
         csString eventDescription;
-        csArray<unsigned int> playerID;
+        csArray<PID> playerID;
     };
     csArray<GMEvent*> gmEvents;    ///< cache of GM events
 
@@ -226,7 +226,7 @@ private:
      *  @param startIndex: start index into array.
      *  @return GMEvent*: ptr to GM event structure.
      */
-    GMEvent* GetGMEventByGM(unsigned int gmID, GMEventStatus status, int& startIndex);
+    GMEvent* GetGMEventByGM(PID gmID, GMEventStatus status, int& startIndex);
 
     /** @brief find a particular GM's event from them all.
      *
@@ -244,7 +244,7 @@ private:
      *  @param startIndex: start index into array.
      *  @return GMEvent*: ptr to GM event structure.
      */
-    GMEvent* GetGMEventByPlayer(unsigned int playerID, GMEventStatus status, int& startIndex);
+    GMEvent* GetGMEventByPlayer(PID playerID, GMEventStatus status, int& startIndex);
 
     /** @brief Reward player in event.
      *
@@ -279,7 +279,7 @@ private:
      *  @param playerID: the player id to be removed.
      *  @return bool: true/false success.
      */
-    bool RemovePlayerRefFromGMEvent(GMEvent* gmEvent, Client* client, unsigned int playerID);
+    bool RemovePlayerRefFromGMEvent(GMEvent* gmEvent, Client* client, PID playerID);
 
     /** @brief GM discards an event of theirs, by GMEvent*; participants are removed, and it is wiped from the DB.
      *

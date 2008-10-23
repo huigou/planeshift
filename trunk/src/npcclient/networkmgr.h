@@ -55,7 +55,7 @@ protected:
 
     // Command Message Queue  
     psNPCCommandsMessage *outbound;
-    csHash<NPC*>          cmd_dr_outbound; /// Entities queued for sending of DR. 
+    csHash<NPC*,PID>      cmd_dr_outbound; /// Entities queued for sending of DR. 
     int                   cmd_count;       /// Number of command messages queued
 
     void RequestAllObjects();
@@ -105,7 +105,7 @@ public:
     void QueueDigCommand(gemNPCActor *entity, csString resource);
     void QueueTransferCommand(gemNPCActor *entity, csString item, int count, csString target);
     void QueueDropCommand(gemNPCActor *entity, csString slot);
-    void QueueResurrectCommand(csVector3 where, float rot, csString sector, int character_id);
+    void QueueResurrectCommand(csVector3 where, float rot, csString sector, PID character_id);
     void QueueSequenceCommand(csString name, int cmd, int count);
     void QueueImperviousCommand(gemNPCActor * entity, bool impervious);
     void SendAllCommands(bool final = false);

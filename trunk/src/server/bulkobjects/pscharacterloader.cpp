@@ -76,19 +76,18 @@ bool psCharacterLoader::Initialize()
     return true;
 }
 
-bool psCharacterLoader::AccountOwner( const char* characterName, unsigned int accountID )
+bool psCharacterLoader::AccountOwner(const char* characterName, AccountID accountID)
 {
     csString escape;
     db->Escape(escape,characterName);
-    unsigned int account = db->SelectSingleNumber("SELECT count(*) from characters where name='%s' and account_id=%d",escape.GetData(), accountID);
-    //unsigned int account = db->SelectSingleNumber("SELECT account_id from characters where name='%s'",escape.GetData());
-    return (account > 0);
+    unsigned int count = db->SelectSingleNumber("SELECT count(*) FROM characters where name='%s' AND account_id=%d",escape.GetData(), accountID.Unbox());
+    return (count > 0);
 }
 
-psCharacterList *psCharacterLoader::LoadCharacterList(unsigned int accountid)
+psCharacterList *psCharacterLoader::LoadCharacterList(AccountID accountid)
 {
     // Check the generic cache first
-    iCachedObject *obj = CacheManager::GetSingleton().RemoveFromCache(CacheManager::GetSingleton().MakeCacheName("list",accountid));
+    iCachedObject *obj = CacheManager::GetSingleton().RemoveFromCache(CacheManager::GetSingleton().MakeCacheName("list",accountid.Unbox()));
     if (obj)
     {
         Notify2(LOG_CACHE,"Returning char object %p from cache.",obj->RecoverObject());
@@ -97,7 +96,7 @@ psCharacterList *psCharacterLoader::LoadCharacterList(unsigned int accountid)
 
     Notify1(LOG_CACHE,"******LOADING CHARACTER LIST*******");
     // Load if not in cache
-    Result result(db->Select("SELECT id,name,lastname from characters where account_id=%u order by id",accountid));
+    Result result(db->Select("SELECT id,name,lastname FROM characters WHERE account_id=%u ORDER BY id", accountid.Unbox()));
 
     if (!result.IsValid())
         return NULL;
@@ -162,17 +161,17 @@ psCharacter **psCharacterLoader::LoadAllNPCCharacterData(psSectorInfo *sector,in
     return charlist;
 }
 
-psCharacter *psCharacterLoader::LoadCharacterData(unsigned int uid, bool forceReload)
+psCharacter *psCharacterLoader::LoadCharacterData(PID pid, bool forceReload)
 {
     if (!forceReload)
     {
         // Check the generic cache first
-        iCachedObject *obj = CacheManager::GetSingleton().RemoveFromCache(CacheManager::GetSingleton().MakeCacheName("char",uid));
+        iCachedObject *obj = CacheManager::GetSingleton().RemoveFromCache(CacheManager::GetSingleton().MakeCacheName("char", pid.Unbox()));
         if (obj)
         {
             if (!forceReload)
             {
-                Debug2(LOG_CACHE,uid,"Returning char object %p from cache.\n",obj->RecoverObject());
+                Debug2(LOG_CACHE, pid.Unbox(), "Returning char object %p from cache.\n", obj->RecoverObject());
 
                 psCharacter *charData = (psCharacter *)obj->RecoverObject();
 
@@ -188,33 +187,33 @@ psCharacter *psCharacterLoader::LoadCharacterData(unsigned int uid, bool forceRe
     // Now load from the database if not found in cache
     csTicks start = csGetTicks();
 
-    Result result(db->Select("SELECT * from characters where id=%u",uid));
+    Result result(db->Select("SELECT * FROM characters WHERE id=%u", pid.Unbox()));
 
     if (!result.IsValid())
     {
-        Error2("Character data invalid for ID %u.",uid);
+        Error2("Character data invalid for %s.", ShowID(pid));
         return NULL;
     }
 
     if (result.Count()>1)
     {
-        Error2("Character ID %u has multiple entries.  Check table constraints.",uid);
+        Error2("Character %s has multiple entries.  Check table constraints.", ShowID(pid));
         return NULL;
     }
     if (result.Count()<1)
     {
-        Error2("Character ID %u has no character entry!",uid);
+        Error2("Character %s has no character entry!", ShowID(pid));
         return NULL;
     }
 
     psCharacter *chardata = new psCharacter();
 
-    Debug2(LOG_CACHE,uid,"New character data ptr is %p.",chardata);
+    Debug2(LOG_CACHE, pid.Unbox(), "New character data ptr is %p.", chardata);
     if(csGetTicks() - start > 500)
     {
         csString status;
-        status.Format("Warning: Spent %u time loading character ID %u %s:%d",
-                      csGetTicks() - start, uid, __FILE__, __LINE__);
+        status.Format("Warning: Spent %u time loading character %s %s:%d",
+                      csGetTicks() - start, ShowID(pid), __FILE__, __LINE__);
         psserver->GetLogCSV()->Write(CSV_STATUS, status);
     }
     // Read basic stats
@@ -223,11 +222,11 @@ psCharacter *psCharacterLoader::LoadCharacterData(unsigned int uid, bool forceRe
         if(csGetTicks() - start > 500)
         {
             csString status;
-            status.Format("Warning: Spent %u time loading FAILED character ID %u",
-                csGetTicks() - start, uid);
+            status.Format("Warning: Spent %u time loading FAILED character %s",
+                csGetTicks() - start, ShowID(pid));
             psserver->GetLogCSV()->Write(CSV_STATUS, status);
         }
-        Error2("Load failed for character ID %u.",uid);
+        Error2("Load failed for character %s.", ShowID(pid));
         delete chardata;
         return NULL;
     }
@@ -235,8 +234,8 @@ psCharacter *psCharacterLoader::LoadCharacterData(unsigned int uid, bool forceRe
     if(csGetTicks() - start > 500)
     {
         csString status;
-        status.Format("Warning: Spent %u time loading character ID %u %s:%d",
-            csGetTicks() - start, uid, __FILE__, __LINE__);
+        status.Format("Warning: Spent %u time loading character %s %s:%d",
+            csGetTicks() - start, ShowID(pid), __FILE__, __LINE__);
         psserver->GetLogCSV()->Write(CSV_STATUS, status);
     }
 
@@ -246,13 +245,13 @@ psCharacter *psCharacterLoader::LoadCharacterData(unsigned int uid, bool forceRe
 }
 
 
-psCharacter *psCharacterLoader::QuickLoadCharacterData(unsigned int uid, bool noInventory)
+psCharacter *psCharacterLoader::QuickLoadCharacterData(PID pid, bool noInventory)
 {
-    Result result(db->Select("SELECT id, name, lastname, racegender_id from characters where id=%u LIMIT 1",uid));
+    Result result(db->Select("SELECT id, name, lastname, racegender_id FROM characters WHERE id=%u LIMIT 1", pid.Unbox()));
 
     if (!result.IsValid() || result.Count() < 1)
     {
-        Error2("Character data invalid for ID %u.",uid);
+        Error2("Character data invalid for %s.", ShowID(pid));
         return NULL;
     }
 
@@ -260,7 +259,7 @@ psCharacter *psCharacterLoader::QuickLoadCharacterData(unsigned int uid, bool no
 
     if (!chardata->QuickLoad(result[0], noInventory))
     {
-        Error2("Quick load failed for character ID %u.",uid);
+        Error2("Quick load failed for character %s.", ShowID(pid));
         delete chardata;
         return NULL;
     }
@@ -269,7 +268,7 @@ psCharacter *psCharacterLoader::QuickLoadCharacterData(unsigned int uid, bool no
 }
 
 
-bool psCharacterLoader::NewNPCCharacterData(unsigned int accountid, psCharacter *chardata)
+bool psCharacterLoader::NewNPCCharacterData(AccountID accountid, psCharacter *chardata)
 {
     const char *fieldnames[]= {
             "account_id",
@@ -314,7 +313,7 @@ bool psCharacterLoader::NewNPCCharacterData(unsigned int accountid, psCharacter 
     };
     psStringArray values;
 
-    values.FormatPush("%d",accountid?accountid:chardata->GetAccount());
+    values.FormatPush("%d",accountid.Unbox() ? accountid.Unbox() : chardata->GetAccount().Unbox());
     values.FormatPush("%s",chardata->GetCharName());
     values.FormatPush("%s",chardata->GetCharLastName());
     values.FormatPush("%u",chardata->GetRaceInfo()->uid);
@@ -367,7 +366,7 @@ bool psCharacterLoader::NewNPCCharacterData(unsigned int accountid, psCharacter 
 
     if (id==0)
     {
-        Error3("Failed to create new character for account id %u. Error %s",accountid,db->GetLastError());
+        Error3("Failed to create new character for %s: %s", ShowID(accountid), db->GetLastError());
         return false;
     }
 
@@ -376,7 +375,7 @@ bool psCharacterLoader::NewNPCCharacterData(unsigned int accountid, psCharacter 
     return true;
 }
 
-bool psCharacterLoader::NewCharacterData(unsigned int accountid, psCharacter *chardata)
+bool psCharacterLoader::NewCharacterData(AccountID accountid, psCharacter *chardata)
 {
     chardata->npc_spawnruleid = 0;
     chardata->npc_masterid    = 0;
@@ -391,8 +390,8 @@ bool psCharacterLoader::NewCharacterData(unsigned int accountid, psCharacter *ch
     // traits
     if (!ClearCharacterTraits(chardata->GetPID()))
     {
-        Error3("Failed to clear traits for character id %u.  Error %s.",
-               chardata->GetPID(), db->GetLastError());
+        Error3("Failed to clear traits for character %s: %s.",
+               ShowID(chardata->GetPID()), db->GetLastError());
     }
 
     for (i=0;i<PSTRAIT_LOCATION_COUNT;i++)
@@ -408,8 +407,8 @@ bool psCharacterLoader::NewCharacterData(unsigned int accountid, psCharacter *ch
     // skills
     if (!ClearCharacterSkills(chardata->GetPID()))
     {
-        Error3("Failed to clear skills for character id %u.  Error %s.",
-               chardata->GetPID(), db->GetLastError());
+        Error3("Failed to clear skills for character %s: %s.",
+               ShowID(chardata->GetPID()), db->GetLastError());
     }
 
     for (i=0;i<PSSKILL_COUNT;i++)
@@ -423,7 +422,7 @@ bool psCharacterLoader::NewCharacterData(unsigned int accountid, psCharacter *ch
 
     // advantages
     if (!ClearCharacterAdvantages(chardata->GetPID()))
-        Error3("Failed to clear advantages for character id %u.  Error %s.",chardata->GetPID(),db->GetLastError());
+        Error3("Failed to clear advantages for character %s: %s.", ShowID(chardata->GetPID()), db->GetLastError());
 
     for (i=0;i<PSCHARACTER_ADVANTAGE_COUNT;i++)
     {
@@ -441,8 +440,7 @@ bool psCharacterLoader::UpdateQuestAssignments(psCharacter *chr)
 
 bool psCharacterLoader::ClearCharacterSpell( psCharacter * character )
 {
-    unsigned int character_id = character->GetPID();
-    unsigned long result=db->CommandPump("DELETE FROM player_spells WHERE player_id='%u'",character_id);
+    unsigned long result=db->CommandPump("DELETE FROM player_spells WHERE player_id='%u'", character->GetPID().Unbox());
     if (result==QUERY_FAILED)
         return false;
 
@@ -454,9 +452,8 @@ bool psCharacterLoader::SaveCharacterSpell( psCharacter * character )
     int index = 0;
     while (psSpell * spell = character->GetSpellByIdx(index))
     {
-        unsigned int character_id = character->GetPID();
         unsigned long result=db->CommandPump("INSERT INTO player_spells (player_id,spell_id,spell_slot) VALUES('%u','%u','%u')",
-            character_id,spell->GetID(),index);
+            character->GetPID().Unbox(), spell->GetID(), index);
         if (result==QUERY_FAILED)
             return false;
         index++;
@@ -466,27 +463,27 @@ bool psCharacterLoader::SaveCharacterSpell( psCharacter * character )
 
 
 
-bool psCharacterLoader::ClearCharacterTraits(unsigned int character_id)
+bool psCharacterLoader::ClearCharacterTraits(PID pid)
 {
-    unsigned long result=db->CommandPump("DELETE FROM character_traits WHERE character_id='%u'",character_id);
+    unsigned long result=db->CommandPump("DELETE FROM character_traits WHERE character_id='%u'", pid.Unbox());
     if (result==QUERY_FAILED)
         return false;
 
     return true;
 }
 
-bool psCharacterLoader::SaveCharacterTrait(unsigned int character_id,unsigned int trait_id)
+bool psCharacterLoader::SaveCharacterTrait(PID pid, unsigned int trait_id)
 {
-    unsigned long result=db->CommandPump("INSERT INTO character_traits (character_id,trait_id) VALUES('%u','%u')",character_id,trait_id);
+    unsigned long result=db->CommandPump("INSERT INTO character_traits (character_id,trait_id) VALUES('%u','%u')", pid.Unbox(), trait_id);
     if (result==QUERY_FAILED)
         return false;
 
     return true;
 }
 
-bool psCharacterLoader::ClearCharacterSkills(unsigned int character_id)
+bool psCharacterLoader::ClearCharacterSkills(PID pid)
 {
-    unsigned long result=db->CommandPump("DELETE FROM character_skills WHERE character_id='%u'",character_id);
+    unsigned long result=db->CommandPump("DELETE FROM character_skills WHERE character_id='%u'", pid.Unbox());
     if (result==QUERY_FAILED)
         return false;
 
@@ -494,26 +491,19 @@ bool psCharacterLoader::ClearCharacterSkills(unsigned int character_id)
 }
 
 
-bool psCharacterLoader::UpdateCharacterSkill(unsigned int character_id,unsigned int skill_id,
-                                           unsigned int skill_z, unsigned int skill_y, unsigned int skill_rank)
+bool psCharacterLoader::UpdateCharacterSkill(PID pid, unsigned int skill_id, unsigned int skill_z, unsigned int skill_y, unsigned int skill_rank)
 {
     csString sql;
 
     sql.Format("UPDATE character_skills SET skill_z=%u, skill_y=%u, skill_rank=%u WHERE character_id=%u AND skill_id=%u",
-        skill_z, skill_y, skill_rank, character_id, (unsigned int)skill_id );
+        skill_z, skill_y, skill_rank, pid.Unbox(), (unsigned int) skill_id);
 
     unsigned long result=db->Command(sql);
 
     // If there was nothing to update we can add the skill to the database
     if (result == 0)
     {
-        return SaveCharacterSkill(
-            character_id,
-            skill_id,
-            skill_z,
-            skill_y,
-            skill_rank
-            );
+        return SaveCharacterSkill(pid, skill_id, skill_z, skill_y, skill_rank);
     }
     else if ( result == 1 )
     {
@@ -527,7 +517,7 @@ bool psCharacterLoader::UpdateCharacterSkill(unsigned int character_id,unsigned 
 }
 
 
-bool psCharacterLoader::SaveCharacterSkill(unsigned int character_id,unsigned int skill_id,
+bool psCharacterLoader::SaveCharacterSkill(PID pid, unsigned int skill_id,
                                            unsigned int skill_z, unsigned int skill_y, unsigned int skill_rank)
 {
     // If a player has no knowledge of the skill then no need to add to database yet.
@@ -535,26 +525,26 @@ bool psCharacterLoader::SaveCharacterSkill(unsigned int character_id,unsigned in
         return true;
 
     unsigned long result=db->CommandPump("INSERT INTO character_skills (character_id,skill_id,skill_y,skill_z,skill_rank) VALUES('%u','%u','%u','%u','%u')",
-        character_id,skill_id,skill_y,skill_z,skill_rank);
+        pid.Unbox(), skill_id, skill_y, skill_z, skill_rank);
     if (result==QUERY_FAILED)
         return false;
 
     return true;
 }
 
-bool psCharacterLoader::ClearCharacterAdvantages(unsigned int character_id)
+bool psCharacterLoader::ClearCharacterAdvantages(PID pid)
 {
-    unsigned long result=db->CommandPump("DELETE FROM character_advantages WHERE character_id='%u'",character_id);
+    unsigned long result=db->CommandPump("DELETE FROM character_advantages WHERE character_id='%u'", pid.Unbox());
     if (result==QUERY_FAILED)
         return false;
 
     return true;
 }
 
-bool psCharacterLoader::SaveCharacterAdvantage(unsigned int character_id,unsigned int advantage_id)
+bool psCharacterLoader::SaveCharacterAdvantage(PID pid, unsigned int advantage_id)
 {
     unsigned long result=db->CommandPump("INSERT INTO character_advantages (character_id,advantages_id) VALUES('%u','%u')",
-        character_id,advantage_id);
+        pid.Unbox(), advantage_id);
     if (result==QUERY_FAILED)
         return false;
 
@@ -563,10 +553,10 @@ bool psCharacterLoader::SaveCharacterAdvantage(unsigned int character_id,unsigne
 }
 
 
-bool psCharacterLoader::DeleteCharacterData( unsigned int charID, csString& error )
+bool psCharacterLoader::DeleteCharacterData(PID pid, csString& error )
 {
     csString query;
-    query.Format( "SELECT name, lastname, guild_member_of, guild_level FROM characters where id='%u'\n", charID );
+    query.Format( "SELECT name, lastname, guild_member_of, guild_level FROM characters where id='%u'\n", pid.Unbox());
     Result result( db->Select(query) );
     if ( !result.IsValid() || !result.Count() )
     {
@@ -599,48 +589,48 @@ bool psCharacterLoader::DeleteCharacterData( unsigned int charID, csString& erro
     // Remove the character from guild if he has joined any
     psGuildInfo* guildinfo = CacheManager::GetSingleton().FindGuild( guild );
     if ( guildinfo )
-        guildinfo->RemoveMember( guildinfo->FindMember( charID ) );
+        guildinfo->RemoveMember(guildinfo->FindMember(pid));
 
     // Now delete this character and all refrences to him from DB
 
     // Note: Need to delete the pets using this function as well.
 
-    query.Format( "delete from character_relationships where character_id=%d or related_id=%d", charID, charID );
+    query.Format("DELETE FROM character_relationships WHERE character_id=%u OR related_id=%u", pid.Unbox(), pid.Unbox());
     db->CommandPump( query );
 
-    query.Format("delete from character_quests where player_id=%d", charID );
+    query.Format("DELETE FROM character_quests WHERE player_id=%u", pid.Unbox());
     db->CommandPump( query );
 
-    query.Format("delete from character_skills where character_id=%d", charID );
+    query.Format("DELETE FROM character_skills WHERE character_id=%u", pid.Unbox());
     db->CommandPump( query );
 
-    query.Format("delete from character_traits where character_id=%d", charID );
+    query.Format("DELETE FROM character_traits WHERE character_id=%u", pid.Unbox());
     db->CommandPump( query );
 
-    query.Format("delete from player_spells where player_id=%d", charID);
+    query.Format("DELETE FROM player_spells WHERE player_id=%u", pid.Unbox());
     db->CommandPump( query );
 
-    query.Format("delete from characters where id=%d", charID );
+    query.Format("DELETE FROM characters WHERE id=%u", pid.Unbox());
     db->CommandPump( query );
 
     /// Let GMEventManager sort the DB out, as it is a bit complex, and its cached too
-    if (!psserver->GetGMEventManager()->RemovePlayerFromGMEvents(charID))
-        Error2("Failed to remove %d character from GM events database/cache", charID);
+    if (!psserver->GetGMEventManager()->RemovePlayerFromGMEvents(pid))
+        Error2("Failed to remove %s from GM events database/cache", ShowID(pid));
 
     csArray<gemObject*> list;
-    GEMSupervisor::GetSingleton().GetPlayerObjects( charID, list );
+    GEMSupervisor::GetSingleton().GetPlayerObjects(pid, list);
     for ( size_t x = 0; x < list.GetSize(); x++ )
     {
         GEMSupervisor::GetSingleton().RemoveEntity(list[x]);
     }
 
-    query.Format("delete from item_instances where char_id_owner=%d", charID );
+    query.Format("DELETE from item_instances WHERE char_id_owner=%u", pid.Unbox());
     db->CommandPump( query );
 
-    query.Format("delete from introductions where charid=%d or introcharid=%d", charID, charID);
+    query.Format("DELETE from introductions WHERE charid=%u OR introcharid=%u", pid.Unbox(), pid.Unbox());
     db->CommandPump( query );
 
-    CPrintf( CON_DEBUG, "\nSuccessfully delete character id: %d\n", charID );
+    CPrintf(CON_DEBUG, "\nSuccessfully deleted character %s\n", ShowID(pid));
 
     return true;
 
@@ -814,11 +804,9 @@ bool psCharacterLoader::SaveCharacterData(psCharacter *chardata,gemActor *actor,
 
     // Done building the fields struct, now
     // SAVE it to the DB.
-    if(!targetUpdate->Execute(chardata->GetPID()))
+    if(!targetUpdate->Execute(chardata->GetPID().Unbox()))
     {
-        char characteridstring[25];
-        sprintf(characteridstring,"%u",chardata->GetPID());
-        Error3("Failed to save character %s. Error %s",characteridstring,db->GetLastError());
+        Error3("Failed to save character %s: %s", ShowID(chardata->GetPID()), db->GetLastError());
     }
 
     if (charRecordOnly)
@@ -826,7 +814,7 @@ bool psCharacterLoader::SaveCharacterData(psCharacter *chardata,gemActor *actor,
 
     // traits
     if (!ClearCharacterTraits(chardata->GetPID()))
-        Error3("Failed to clear traits for character id %u.  Error %s.",chardata->GetPID(),db->GetLastError());
+        Error3("Failed to clear traits for character %s: %s.", ShowID(chardata->GetPID()), db->GetLastError());
     for (i=0;i<PSTRAIT_LOCATION_COUNT;i++)
     {
         psTrait *trait=chardata->GetTraitForLocation((PSTRAIT_LOCATION)i);
@@ -850,7 +838,7 @@ bool psCharacterLoader::SaveCharacterData(psCharacter *chardata,gemActor *actor,
 
     // advantages
     if (!ClearCharacterAdvantages(chardata->GetPID()))
-        Error3("Failed to clear advantages for character id %u.  Error %s.",chardata->GetPID(),db->GetLastError());
+        Error3("Failed to clear advantages for character %s: %s.", ShowID(chardata->GetPID()), db->GetLastError());
     for (i=0;i<PSCHARACTER_ADVANTAGE_COUNT;i++)
     {
         if (chardata->HasAdvantage((PSCHARACTER_ADVANTAGE)i))
@@ -858,7 +846,7 @@ bool psCharacterLoader::SaveCharacterData(psCharacter *chardata,gemActor *actor,
     }
 
     if (!ClearCharacterSpell(chardata))
-        Error3("Failed to clear spells for character id %u.  Error %s.",chardata->GetPID(),db->GetLastError());
+        Error3("Failed to clear spells for character %s: %s.", ShowID(chardata->GetPID()), db->GetLastError());
     SaveCharacterSpell( chardata );
 
     UpdateQuestAssignments( chardata );
@@ -871,7 +859,7 @@ unsigned int psCharacterLoader::InsertNewCharacterData(const char **fieldnames, 
     return db->GenericInsertWithID("characters",fieldnames,fieldvalues);
 }
 
-unsigned int psCharacterLoader::FindCharacterID(const char *character_name, bool excludeNPCs )
+PID psCharacterLoader::FindCharacterID(const char *character_name, bool excludeNPCs )
 {
     csString escape;
 
@@ -894,17 +882,10 @@ unsigned int psCharacterLoader::FindCharacterID(const char *character_name, bool
         result = db->SelectSingleNumber("SELECT id from characters where name='%s' AND npc_master_id=0",escape.GetData());
     }
 
-    if(result == QUERY_FAILED)
-    {
-        return 0;
-    }
-    else
-    {
-        return result;
-    }
+    return PID(result == QUERY_FAILED ? 0 : result);
 }
 
-unsigned int psCharacterLoader::FindCharacterID(unsigned int accountID, const char *character_name )
+PID psCharacterLoader::FindCharacterID(AccountID accountID, const char *character_name)
 {
     csString escape;
 
@@ -916,14 +897,9 @@ unsigned int psCharacterLoader::FindCharacterID(unsigned int accountID, const ch
         return 0;
     db->Escape(escape,character_name);
 
-    unsigned long result;
+    unsigned long result = db->SelectSingleNumber("SELECT id FROM characters WHERE name='%s' AND account_id=%u", escape.GetData(), accountID.Unbox());
 
-    result = db->SelectSingleNumber("SELECT id FROM characters WHERE name='%s' AND account_id=%d", escape.GetData(), accountID);
-
-    if(result == QUERY_FAILED)
-        return 0;
-    else
-        return result;
+    return PID(result == QUERY_FAILED ? 0 : result);
 }
 
 

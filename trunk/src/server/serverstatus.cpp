@@ -100,8 +100,8 @@ void psServerStatusRunEvent::Trigger ()
         ReportClient(curr, clientLogger, reportString);
     }
     // Record npc data
-    csHash<gemObject *>& gems = EntityManager::GetSingleton().GetGEM()->GetAllGEMS();
-    csHash<gemObject *>::GlobalIterator gemi(gems.GetIterator());
+    csHash<gemObject*, EID> & gems = EntityManager::GetSingleton().GetGEM()->GetAllGEMS();
+    csHash<gemObject*, EID>::GlobalIterator gemi(gems.GetIterator());
     gemObject* obj;
     
     while ( gemi.HasNext() )
@@ -147,7 +147,7 @@ void psServerStatusRunEvent::ReportClient(Client * curr, ClientStatusLogger & cl
     }
     
     reportString.AppendFmt("<player name=\"%s\" characterID=\"%u\" guild=\"%s\" title=\"%s\" security=\"%d\" kills=\"%u\" deaths=\"%u\" suicides=\"%u\" pos=\"%s\" sector=\"%s\" />\n",
-                           EscpXML(curr->GetName()).GetData(), chr->GetPID(), guildName.GetDataSafe(), guildTitle.GetDataSafe(), curr->GetSecurityLevel(), chr->GetKills(), chr->GetDeaths(), chr->GetSuicides(), chr->location.loc.Description().GetData(), EscpXML(chr->location.loc_sector->name).GetData());
+                           EscpXML(curr->GetName()).GetData(), chr->GetPID().Unbox(), guildName.GetDataSafe(), guildTitle.GetDataSafe(), curr->GetSecurityLevel(), chr->GetKills(), chr->GetDeaths(), chr->GetSuicides(), chr->location.loc.Description().GetData(), EscpXML(chr->location.loc_sector->name).GetData());
 }
 
 void psServerStatusRunEvent::ReportNPC(psCharacter* chardata, csString & reportString)
@@ -156,7 +156,7 @@ void psServerStatusRunEvent::ReportNPC(psCharacter* chardata, csString & reportS
     csString player;
                
     player.Format("<npc name=\"%s\" characterID=\"%u\" kills=\"%u\" deaths=\"%u\" suicides=\"%u\" pos=\"%s\" sector=\"%s\" />\n", 
-                  escpxml_name.GetData(), chardata->GetPID(),
+                  escpxml_name.GetData(), chardata->GetPID().Unbox(),
                   chardata->GetKills(), chardata->GetDeaths(), chardata->GetSuicides(), (const char*) chardata->location.loc.Description(), (const char*) EscpXML(chardata->location.loc_sector->name));
     
     reportString.Append( player ); 

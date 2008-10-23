@@ -52,7 +52,7 @@ private:
     pawsTextBox*        name;
     pawsMultiLineTextBox* description;
     pawsWidget*         pic;
-    PS_ID               containerID;
+    ContainerID         containerID;
     pawsListBox*        contents;
 
     int containerSlots;

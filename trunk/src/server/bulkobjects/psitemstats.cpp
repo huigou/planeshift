@@ -306,7 +306,7 @@ bool psItemCreativeStats::FormatCreativeContent(void)
     }
     else if (creatorIDStatus != PSITEMSTATS_CREATOR_UNASSIGNED)
     {
-        creativeDefinitionXML.AppendFmt(" creator=\"%d\"", creatorID);
+        creativeDefinitionXML.AppendFmt(" creator=\"%u\"", creatorID.Unbox());
     }
 
     creativeDefinitionXML.AppendFmt("><content>%s</content></creative>", contentForXML.GetDataSafe());
@@ -943,13 +943,12 @@ float psItemStats::GetRange() const
     return weaponRange;
 }
 
-unsigned int psItemStats::GetCreator (PSITEMSTATS_CREATORSTATUS& creatorStatus)
+PID psItemStats::GetCreator (PSITEMSTATS_CREATORSTATUS& creatorStatus)
 {
     creatorStatus = creativeStats.creatorIDStatus;
     if (creativeStats.creatorIDStatus == PSITEMSTATS_CREATOR_VALID)
         return creativeStats.creatorID;
-    else
-        return 0;
+    return PID(0);
 }
 
 bool psItemStats::GetIsGlyph()
@@ -1436,7 +1435,7 @@ bool psItemStats::SetCreation (PSITEMSTATS_CREATIVETYPE creativeType, const csSt
     return false;
 }
 
-void psItemStats::SetCreator (unsigned int characterID, PSITEMSTATS_CREATORSTATUS creatorStatus)
+void psItemStats::SetCreator (PID characterID, PSITEMSTATS_CREATORSTATUS creatorStatus)
 {
     // if creator already set (i.e. valid or public) it cant be changed so return straightaway.
     if (creativeStats.creatorIDStatus == PSITEMSTATS_CREATOR_PUBLIC ||
@@ -1452,13 +1451,13 @@ void psItemStats::SetCreator (unsigned int characterID, PSITEMSTATS_CREATORSTATU
     }
     else
     {
-        creativeStats.creatorID = 0;
+        creativeStats.creatorID = PID(0);
     }
 
     creativeStats.FormatCreativeContent();   // result is n/a to setting creator.
 }
 
-bool psItemStats::IsThisTheCreator(unsigned int characterID)
+bool psItemStats::IsThisTheCreator(PID characterID)
 {
     // if characterID is creator of this item, or no creator assigned (then anyone can edit)
     // of if the item is 'public' then any can edit it.

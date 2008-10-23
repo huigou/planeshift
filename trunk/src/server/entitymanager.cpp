@@ -112,7 +112,7 @@ EntityManager::~EntityManager()
         }
     }
     {
-      csHash<psFamiliarType *, PS_ID>::GlobalIterator it(familiarTypeList.GetIterator ());
+      csHash<psFamiliarType *, PID>::GlobalIterator it(familiarTypeList.GetIterator ());
       while (it.HasNext ())
         {
         psFamiliarType* familiarType = it.Next ();
@@ -214,15 +214,16 @@ gemNPC* EntityManager::CreateFamiliar (gemActor *owner)
 {
     psCharacter *chardata = owner->GetCharacterData();
 
-    PS_ID familiarID, masterFamiliarID;
+    PID familiarID, masterFamiliarID;
     csString familiarname;
     csVector3 pos;
     float yrot = 0.0F;
     iSector *sector;
 
+    // FIXME: This probably ought to be an assertion.
     if ( chardata == NULL )
     {
-        CPrintf(CON_ERROR, "Player ID %u : Character Load failed!\n",owner->GetPID());
+        CPrintf(CON_ERROR, "Couldn't load character for familiar %s.\n", ShowID(owner->GetPID()));
         return NULL;
     }
     
@@ -246,7 +247,7 @@ gemNPC* EntityManager::CreateFamiliar (gemActor *owner)
     familiarID = this->CopyNPCFromDatabase( masterFamiliarID, pos.x + 1.5, pos.y, pos.z + 1.5, yrot, sector->QueryObject()->GetName(), instance, familiarname, "Familiar" );
     if ( familiarID == 0 )
     {
-        CPrintf(CON_ERROR, "Player ID %u : Create Familiar Failed : Could not copy the master NPC %u\n",owner->GetPID(), masterFamiliarID);
+        CPrintf(CON_ERROR, "CreateFamiliar failed for %s: Could not copy the master NPC %s\n", ShowID(owner->GetPID()), ShowID(masterFamiliarID));
         psserver->SendSystemError( owner->GetClientID(), "Could not copy the master NPC familiar." );
         return NULL;
     }
@@ -270,7 +271,7 @@ gemNPC* EntityManager::CreateFamiliar (gemActor *owner)
     owner->GetClient()->SetFamiliar( npc );
     owner->GetCharacterData()->SetFamiliarID( familiarID );
 
-    db->Command("INSERT INTO npc_knowledge_areas(player_id, area, priority) VALUES (%d, 'Pet %s 1', '1')", familiarID, npc->GetCharacterData()->GetRaceInfo()->name.GetData() );
+    db->Command("INSERT INTO npc_knowledge_areas(player_id, area, priority) VALUES (%d, 'Pet %s 1', '1')", familiarID.Unbox(), npc->GetCharacterData()->GetRaceInfo()->name.GetData());
 
     psServer::CharacterLoader.SaveCharacterData( npc->GetCharacterData(), npc, false );
 
@@ -291,7 +292,6 @@ gemNPC* EntityManager::CloneNPC ( psCharacter *chardata )
     csVector3 pos;
     float yrot = 0.0F;
     iSector *sector;
-    PS_ID npcPID;
 
     CS_ASSERT( chardata != NULL );
     
@@ -302,11 +302,11 @@ gemNPC* EntityManager::CloneNPC ( psCharacter *chardata )
     float deltaz = psserver->GetRandom(6)/4 - 1.5;
     
 
-    npcPID = this->CopyNPCFromDatabase( chardata->GetPID(),
+    PID npcPID(this->CopyNPCFromDatabase( chardata->GetPID(),
                                         pos.x + deltax, pos.y, pos.z + deltaz,  // Set position some distance from parent
                                         yrot, sector->QueryObject()->GetName(),
-                                        0,NULL, NULL ); // Keep name of parent
-    if ( npcPID == 0 )
+                                        0,NULL, NULL)); // Keep name of parent
+    if (!npcPID.IsValid())
     {
         Error1( "Could not clone the master NPC .");
         return NULL;
@@ -326,7 +326,7 @@ gemNPC* EntityManager::CloneNPC ( psCharacter *chardata )
     }
 
     db->Command("INSERT INTO npc_knowledge_areas(player_id, area, priority) VALUES (%d, 'Pet %s 1', '1')", 
-                npcPID, npc->GetCharacterData()->GetRaceInfo()->name.GetData() );
+                npcPID.Unbox(), npc->GetCharacterData()->GetRaceInfo()->name.GetData() );
 
     psServer::CharacterLoader.SaveCharacterData( npc->GetCharacterData(), npc, false );
 
@@ -338,7 +338,7 @@ gemNPC* EntityManager::CloneNPC ( psCharacter *chardata )
     return npc;
 }
 
-PS_ID EntityManager::GetMasterFamiliarID( psCharacter *charData )
+PID EntityManager::GetMasterFamiliarID(psCharacter *charData)
 {
     csHash< csHash< size_t, csString > *, csString  > charAttributes;
     csHash< size_t, csString > *charAttributeList;
@@ -346,7 +346,7 @@ PS_ID EntityManager::GetMasterFamiliarID( psCharacter *charData )
     int rank = 0;
     int currentRank = -1;
     psFamiliarType *currentFT = NULL;
-    csHash<psFamiliarType *>::GlobalIterator ftIter = familiarTypeList.GetIterator();
+    csHash<psFamiliarType*, PID>::GlobalIterator ftIter = familiarTypeList.GetIterator();
     psFamiliarType *ft = NULL;
     // Get Familiar Affinity 
     csString animalAffinity = charData->GetAnimalAffinity();
@@ -493,6 +493,12 @@ int EntityManager::CalculateFamiliarAffinity( psCharacter * chardata, size_t typ
 
 gemNPC* EntityManager::CreatePet (Client *client, int masterFamiliarID)
 {
+    // FIXME: Currently, the code below has an EID/PID mismatch which would
+    //        cause it to fail.  I don't think that pets are currently used
+    //        anyway - only familiars.  It would be wise to look into sharing
+    //        code between these two very similar concepts.
+    return NULL;
+#if 0
     psCharacter *charData = client->GetCharacterData();
 
     csString familiarname;
@@ -514,7 +520,7 @@ gemNPC* EntityManager::CreatePet (Client *client, int masterFamiliarID)
     // Prepare NPC client to the new npc
     psserver->npcmanager->NewNPCNotify(petData->GetPID(), masterFamiliarID, client->GetPID() );
 
-    PS_ID familiarID = this->CreateNPC( petData, false ); //Do not update proxList, we will do that later.
+    EID familiarID = this->CreateNPC(petData, false); // Do not update proxList, we will do that later.
 
     gemNPC * npc = GEMSupervisor::GetSingleton().FindNPCEntity( familiarID );
     if (npc == NULL)
@@ -542,6 +548,7 @@ gemNPC* EntityManager::CreatePet (Client *client, int masterFamiliarID)
     npc->UpdateProxList( true );
 
     return npc;
+#endif
 }
 
 bool EntityManager::CreatePlayer (Client* client)
@@ -550,15 +557,16 @@ bool EntityManager::CreatePlayer (Client* client)
     psCharacter *chardata=psServer::CharacterLoader.LoadCharacterData(client->GetPID(),true);
     if (chardata==NULL)
     {
-        CPrintf(CON_ERROR, "Player ID %u : Character Load failed!\n",client->GetPID());
+        CPrintf(CON_ERROR, "Couldn't load character for %s!\n", ShowID(client->GetPID()));
         psserver->RemovePlayer (client->GetClientNum(),"Your character data could not be loaded from the database.  Please contact tech support about this.");
         return false;
     }
 
+    // FIXME: This should really be an assert in LoadCharacterData or such
     psRaceInfo *raceinfo=chardata->GetRaceInfo();
     if (raceinfo==NULL)
     {
-        CPrintf(CON_ERROR, "Player ID %u : Character Load returned with NULL raceinfo pointer!\n",client->GetPID());
+        CPrintf(CON_ERROR, "Character load returned with NULL raceinfo pointer for %s!\n", ShowID(client->GetPID()));
         psserver->RemovePlayer (client->GetClientNum(),"Your character race could not be loaded from the database.  Please contact tech support about this.");
         delete chardata;
         return false;
@@ -575,7 +583,7 @@ bool EntityManager::CreatePlayer (Client* client)
     sector=FindSector(sectorinfo->name);
     if (sector==NULL)
     {
-        Error3("Player ID %u : Could not resolve sector named '%s'",client->GetPID(),sectorinfo->name.GetData());
+        Error3("Could not resolve sector >%s< for %s.", sectorinfo->name.GetData(), ShowID(client->GetPID()));
         psserver->RemovePlayer (client->GetClientNum(),"The server could not create your character entity. (Sector not found)  Please contact tech support about this.");
         delete chardata;
         return false;
@@ -656,10 +664,10 @@ bool EntityManager::DeletePlayer(Client * client)
     return true;
 }
 
-PS_ID EntityManager::CopyNPCFromDatabase(int master_id, float x, float y, float z, float angle, const csString & sector, INSTANCE_ID instance, const char *firstName, const char *lastName)
+PID EntityManager::CopyNPCFromDatabase(PID master_id, float x, float y, float z, float angle, const csString & sector, INSTANCE_ID instance, const char *firstName, const char *lastName)
 {
     psCharacter * npc = NULL;
-    int new_id;
+    PID new_id;
 
     npc = psServer::CharacterLoader.LoadCharacterData(master_id, false);
     if (npc == NULL)
@@ -681,11 +689,7 @@ PS_ID EntityManager::CopyNPCFromDatabase(int master_id, float x, float y, float 
     if (psServer::CharacterLoader.NewNPCCharacterData(0, npc))
     {
         new_id = npc->GetPID();
-        db->Command("update characters set npc_master_id=%i where id=%i", master_id, new_id);
-    }
-    else
-    {
-        new_id = 0;
+        db->Command("UPDATE characters SET npc_master_id=%d WHERE id=%d", master_id.Unbox(), new_id.Unbox());
     }
 
     delete npc;
@@ -693,7 +697,7 @@ PS_ID EntityManager::CopyNPCFromDatabase(int master_id, float x, float y, float 
     return new_id;
 }
 
-PS_ID EntityManager::CreateNPC(psCharacter *chardata, bool updateProxList)
+EID EntityManager::CreateNPC(psCharacter *chardata, bool updateProxList)
 {
     csVector3 pos;
     float yrot;
@@ -706,7 +710,7 @@ PS_ID EntityManager::CreateNPC(psCharacter *chardata, bool updateProxList)
 
     if (sector == NULL)
     {
-        Error3("NPC ID %u : Could not resolve sector named '%s'", chardata->GetPID(), sectorinfo->name.GetData() );
+        Error3("Could not resolve sector >%s< for NPC %s.", sectorinfo->name.GetData(), ShowID(chardata->GetPID()));
         delete chardata;
         return false;
     }
@@ -714,15 +718,16 @@ PS_ID EntityManager::CreateNPC(psCharacter *chardata, bool updateProxList)
     return CreateNPC(chardata, instance, pos, sector, yrot, updateProxList);
 }
 
-PS_ID EntityManager::CreateNPC(psCharacter *chardata, INSTANCE_ID instance, csVector3 pos, iSector* sector, float yrot, bool updateProxList)
+EID EntityManager::CreateNPC(psCharacter *chardata, INSTANCE_ID instance, csVector3 pos, iSector* sector, float yrot, bool updateProxList)
 {
     if (chardata==NULL)
         return false;
 
+    // FIXME: This should be an assert elsewhere.
     psRaceInfo *raceinfo=chardata->GetRaceInfo();
     if (raceinfo==NULL)
     {
-        CPrintf(CON_ERROR, "NPC ID %u : Character Load returned with NULL raceinfo pointer!\n",chardata->GetPID());
+        CPrintf(CON_ERROR, "NPC ID %u: Character Load returned with NULL raceinfo pointer!\n", ShowID(chardata->GetPID()));
         delete chardata;
         return false;
     }
@@ -732,7 +737,7 @@ PS_ID EntityManager::CreateNPC(psCharacter *chardata, INSTANCE_ID instance, csVe
 
     if ( !actor->IsValid() )
     {
-        CPrintf(CON_ERROR, "Error while creating Entity for NPC '%u'\n", chardata->GetPID());
+        CPrintf(CON_ERROR, "Error while creating Entity for NPC '%s'\n", ShowID(chardata->GetPID()));
         delete actor;
         delete chardata;
         return false;
@@ -752,18 +757,18 @@ PS_ID EntityManager::CreateNPC(psCharacter *chardata, INSTANCE_ID instance, csVe
 //        CPrintf(CON_NOTIFY,"------> Entity Manager Setting Imperv\n");
         psserver->npcmanager->ControlNPC( actor );
     }
-    Debug3(LOG_NPC,0,"Created NPC actor: <%s> [%u] in world\n", actor->GetName(), actor->GetEID());
+    Debug3(LOG_NPC, 0, "Created NPC actor: <%s>[%s] in world\n", actor->GetName(), ShowID(actor->GetEID()));
 
     return actor->GetEID();
 }
 
 
-PS_ID EntityManager::CreateNPC(int NPCID, bool updateProxList)
+EID EntityManager::CreateNPC(PID npcID, bool updateProxList)
 {
-    psCharacter *chardata=psServer::CharacterLoader.LoadCharacterData((unsigned int)NPCID,false);
+    psCharacter *chardata=psServer::CharacterLoader.LoadCharacterData(npcID,false);
     if (chardata==NULL)
     {
-        CPrintf(CON_ERROR, "NPC ID %u : Character Load failed!\n",NPCID);
+        CPrintf(CON_ERROR, "Couldn't load character for NPC %s.", ShowID(npcID));
         return 0;
     }
 
@@ -974,8 +979,8 @@ void EntityManager::HandleAllRequest( MsgEntry* me)
     // This is not available to regular clients!
     if ( client->IsSuperClient() )
     {
-        csHash<gemObject *>& gems = gem->GetAllGEMS();
-        csHash<gemObject *>::GlobalIterator i(gems.GetIterator());
+        csHash<gemObject*, EID>& gems = gem->GetAllGEMS();
+        csHash<gemObject*, EID>::GlobalIterator i(gems.GetIterator());
         gemObject* obj;
     
         while ( i.HasNext() )
@@ -1104,16 +1109,16 @@ void EntityManager::HandleUserAction(MsgEntry* me)
 
     client->SetTargetObject(object);  // have special tracking for this for fast processing of other messages
 
-    if (actionMsg.target && !object)
+    if (actionMsg.target.IsValid() && !object)
     {
-        Debug2(LOG_ANY,me->clientnum,"User action on unknown entity! Id:%u\n",actionMsg.target);
+        Debug2(LOG_ANY, me->clientnum, "User action on unknown entity (%s)!\n", ShowID(actionMsg.target));
         return;
     }
 
     if (!object)
     {
         // TODO: Evaluate if this output is needed. 
-        Debug2(LOG_ANY,me->clientnum,"User action on none or unknown object! Id:%u\n",actionMsg.target);
+        Debug2(LOG_ANY, me->clientnum, "User action on none or unknown object (%s)!\n", ShowID(actionMsg.target));
         return;
     }
 

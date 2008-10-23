@@ -31,6 +31,7 @@
 //=============================================================================
 // Project Includes
 //=============================================================================
+#include "util/psconst.h"
 
 //=============================================================================
 // Local Includes
@@ -411,7 +412,7 @@ public:
      * @param buddy: Is the player ID for the buddy you wish to add.
      * @return Returns either success or failure.
      */
-    bool AddBuddy(int self,int buddy);
+    bool AddBuddy(PID self, PID buddy);
 
     /** Removes a buddy from this character's list of buddies.
      * Takes the
@@ -422,7 +423,7 @@ public:
      * @param buddy: Is the player ID for the buddy you wish to remove.
      * @return Returns either success or failure.
      */
-    bool RemoveBuddy(int self,int buddy);
+    bool RemoveBuddy(PID self, PID buddy);
 
     /** Change the dialog responses for that trigger in the area.
      * Given the area, trigger and response number; change the

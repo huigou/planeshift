@@ -359,10 +359,10 @@ public:
 class DeathPerception : public Perception
 {
 protected:
-    PS_ID who;
+    EID who;
 
 public:
-    DeathPerception(PS_ID ent_id)
+    DeathPerception(EID ent_id)
         : Perception("death"), who(ent_id) { }
 
     virtual Perception *MakeCopy();

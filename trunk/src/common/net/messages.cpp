@@ -209,7 +209,7 @@ csString psAuthenticationMessage::ToString(AccessPointers * /*access_ptrs*/)
 PSF_IMPLEMENT_MSG_FACTORY(psAuthApprovedMessage,MSGTYPE_AUTHAPPROVED);
 
 psAuthApprovedMessage::psAuthApprovedMessage (uint32_t clientnum,
-    uint32_t playerID, uint8_t numChars)
+    PID playerID, uint8_t numChars)
 {
     msgClientValidToken = clientnum;
     msgPlayerID = playerID;
@@ -222,7 +222,7 @@ psAuthApprovedMessage::psAuthApprovedMessage(MsgEntry *message)
         return;
 
     msgClientValidToken = message->GetUInt32();
-    msgPlayerID         = message->GetUInt32();
+    msgPlayerID         = PID(message->GetUInt32());
     msgNumOfChars       = message->GetUInt8();
 }
 
@@ -262,7 +262,7 @@ void psAuthApprovedMessage::ConstructMsg()
     msg->clientnum      = msgClientValidToken;
 
     msg->Add(msgClientValidToken);
-    msg->Add(msgPlayerID);
+    msg->Add(msgPlayerID.Unbox());
     msg->Add(msgNumOfChars);
 
     for (size_t i = 0; i < contents.GetSize(); ++i)
@@ -274,7 +274,7 @@ csString psAuthApprovedMessage::ToString(AccessPointers * /*access_ptrs*/)
     csString msgtext;
 
     msgtext.AppendFmt("ClientValidToken: %d PlayerID: %d NumOfChars: %d",
-                      msgClientValidToken,msgPlayerID,msgNumOfChars);
+                      msgClientValidToken, msgPlayerID.Unbox(), msgNumOfChars);
 
     return msgtext;
 }
@@ -1522,14 +1522,14 @@ csString psAdminCmdMessage::ToString(AccessPointers * /*access_ptrs*/)
 
 PSF_IMPLEMENT_MSG_FACTORY(psDisconnectMessage,MSGTYPE_DISCONNECT);
 
-psDisconnectMessage::psDisconnectMessage(uint32_t clientnum,PS_ID actorid, const char *reason)
+psDisconnectMessage::psDisconnectMessage(uint32_t clientnum, EID actorid, const char *reason)
 {
-    msg.AttachNew(new MsgEntry( sizeof(PS_ID) + strlen(reason) + 1 ));
+    msg.AttachNew(new MsgEntry(sizeof(uint32_t) + strlen(reason) + 1 ));
 
     msg->SetType(MSGTYPE_DISCONNECT);
     msg->clientnum      = clientnum;
 
-    msg->Add((uint32_t) actorid);
+    msg->Add(actorid.Unbox());
     msg->Add(reason);
 
     // Sets valid flag based on message overrun state
@@ -1553,8 +1553,7 @@ csString psDisconnectMessage::ToString(AccessPointers * /*access_ptrs*/)
 {
     csString msgtext;
 
-    msgtext.AppendFmt("Actor: %d Reason: '%s'",
-                      actor,msgReason.GetDataSafe());
+    msgtext.AppendFmt("Actor: %u Reason: '%s'", actor.Unbox(), msgReason.GetDataSafe());
 
     return msgtext;
 }
@@ -1563,14 +1562,14 @@ csString psDisconnectMessage::ToString(AccessPointers * /*access_ptrs*/)
 
 PSF_IMPLEMENT_MSG_FACTORY(psUserActionMessage,MSGTYPE_USERACTION);
 
-psUserActionMessage::psUserActionMessage(uint32_t clientnum,PS_ID target,const char *action, const char *dfltBehaviors)
+psUserActionMessage::psUserActionMessage(uint32_t clientnum, EID target, const char *action, const char *dfltBehaviors)
 {
-    msg.AttachNew(new MsgEntry( strlen(action) + 1 + strlen(dfltBehaviors) + 1 + sizeof(PS_ID) ));
+    msg.AttachNew(new MsgEntry( strlen(action) + 1 + strlen(dfltBehaviors) + 1 + sizeof(uint32_t) ));
 
     msg->SetType(MSGTYPE_USERACTION);
     msg->clientnum      = clientnum;
 
-    msg->Add((uint32_t) target);
+    msg->Add(target.Unbox());
     msg->Add(action);
     msg->Add(dfltBehaviors);
 
@@ -1583,7 +1582,7 @@ psUserActionMessage::psUserActionMessage(MsgEntry *message)
     if (!message)
         return;
 
-    target = message->GetUInt32();
+    target = EID(message->GetUInt32());
     action = message->GetStr();
     dfltBehaviors = message->GetStr();
 
@@ -1596,7 +1595,7 @@ csString psUserActionMessage::ToString(AccessPointers * /*access_ptrs*/)
     csString msgtext;
 
     msgtext.AppendFmt("Target: %d Action: %s DfltBehaviors: %s",
-                      target,action.GetDataSafe(),dfltBehaviors.GetDataSafe());
+                      target.Unbox(), action.GetDataSafe(), dfltBehaviors.GetDataSafe());
 
     return msgtext;
 }
@@ -1739,14 +1738,14 @@ csString psMapActionMessage::ToString(AccessPointers * /*access_ptrs*/)
 
 PSF_IMPLEMENT_MSG_FACTORY(psModeMessage,MSGTYPE_MODE);
 
-psModeMessage::psModeMessage (uint32_t client, uint32_t actorID, uint8_t mode, uint8_t stance)
+psModeMessage::psModeMessage (uint32_t client, EID actorID, uint8_t mode, uint8_t stance)
 {
     msg.AttachNew(new MsgEntry(sizeof(uint32_t) + 2*sizeof(uint8_t)));
 
     msg->SetType(MSGTYPE_MODE);
     msg->clientnum      = client;
 
-    msg->Add(actorID);
+    msg->Add(actorID.Unbox());
     msg->Add(mode);
     msg->Add(stance);
 
@@ -1760,7 +1759,7 @@ psModeMessage::psModeMessage(MsgEntry *message)
     if ( !message )
         return;
 
-    actorID = message->GetUInt32();
+    actorID = EID(message->GetUInt32());
     mode    = message->GetUInt8();
     stance  = message->GetUInt8();
 
@@ -1772,7 +1771,7 @@ csString psModeMessage::ToString(AccessPointers * /*access_ptrs*/)
 {
     csString msgtext;
 
-    msgtext.AppendFmt("ActorID: %u Mode: %u Stance: %u", actorID, mode, stance);
+    msgtext.AppendFmt("ActorID: %u Mode: %u Stance: %u", actorID.Unbox(), mode, stance);
 
     return msgtext;
 }
@@ -2241,14 +2240,14 @@ csString psNewSectorMessage::ToString(AccessPointers * /*access_ptrs*/)
 
 PSF_IMPLEMENT_MSG_FACTORY(psLootItemMessage,MSGTYPE_LOOTITEM);
 
-psLootItemMessage::psLootItemMessage(int client,int entity,int item,int action)
+psLootItemMessage::psLootItemMessage(int client, EID entity, int item, int action)
 {
     msg.AttachNew(new MsgEntry(2*sizeof(int32_t) + sizeof(uint8_t) ));
 
     msg->SetType(MSGTYPE_LOOTITEM);
     msg->clientnum      = client;
 
-    msg->Add( (int32_t) entity);
+    msg->Add(entity.Unbox());
     msg->Add( (int32_t) item);
     msg->Add( (uint8_t) action);
     valid=!(msg->overrun);
@@ -2256,7 +2255,7 @@ psLootItemMessage::psLootItemMessage(int client,int entity,int item,int action)
 
 psLootItemMessage::psLootItemMessage(MsgEntry* message)
 {
-    entity   = message->GetInt32();
+    entity   = EID(message->GetUInt32());
     lootitem = message->GetInt32();
     lootaction = message->GetUInt8();
     valid=!(message->overrun);
@@ -2266,7 +2265,7 @@ csString psLootItemMessage::ToString(AccessPointers * /*access_ptrs*/)
 {
     csString msgtext;
 
-    msgtext.AppendFmt("Entity: %d Item: %d Action: %d", entity, lootitem, lootaction);
+    msgtext.AppendFmt("Entity: %d Item: %d Action: %d", entity.Unbox(), lootitem, lootaction);
 
     return msgtext;
 }
@@ -2282,19 +2281,19 @@ psLootMessage::psLootMessage()
 
 psLootMessage::psLootMessage(MsgEntry* msg)
 {
-    entity_id = msg->GetUInt32();
+    entity_id = EID(msg->GetUInt32());
     lootxml = msg->GetStr();
     valid=!(msg->overrun);
 }
 
-void psLootMessage::Populate(PS_ID entity,csString& lootstr, int cnum)
+void psLootMessage::Populate(EID entity, csString& lootstr, int cnum)
 {
     msg.AttachNew(new MsgEntry(sizeof(uint32_t) + lootstr.Length() + 1));
 
     msg->SetType(MSGTYPE_LOOT);
     msg->clientnum      = cnum;
 
-    msg->Add( (uint32_t) entity);
+    msg->Add(entity.Unbox());
     msg->Add( lootstr );
     valid=!(msg->overrun);
 }
@@ -2303,7 +2302,7 @@ csString psLootMessage::ToString(AccessPointers * /*access_ptrs*/)
 {
     csString msgtext;
 
-    msgtext.AppendFmt("Entity: %u ", entity_id);
+    msgtext.AppendFmt("Entity: %u ", entity_id.Unbox());
 #ifdef FULL_DEBUG_DUMP
     msgtext.AppendFmt("XML: '%s'", lootxml.GetDataSafe());
 #endif
@@ -2409,7 +2408,7 @@ csString psQuestInfoMessage::ToString(AccessPointers * /*access_ptrs*/)
 
 PSF_IMPLEMENT_MSG_FACTORY(psOverrideActionMessage,MSGTYPE_OVERRIDEACTION);
 
-psOverrideActionMessage::psOverrideActionMessage(int client,int entity,const char *action, int duration)
+psOverrideActionMessage::psOverrideActionMessage(int client, EID entity, const char *action, int duration)
 {
     size_t strlength = 0;
     if (action)
@@ -2422,7 +2421,7 @@ psOverrideActionMessage::psOverrideActionMessage(int client,int entity,const cha
     msg->SetType(MSGTYPE_OVERRIDEACTION);
     msg->clientnum  = client;
 
-    msg->Add( (uint32_t)entity );
+    msg->Add(entity.Unbox());
     msg->Add( action );
     msg->Add( (uint32_t)duration );
 
@@ -2435,7 +2434,7 @@ psOverrideActionMessage::psOverrideActionMessage(MsgEntry* message)
     if ( !message )
         return;
 
-    entity_id = message->GetUInt32();
+    entity_id = EID(message->GetUInt32());
     action    = message->GetStr();
     duration  = message->GetUInt32();
 
@@ -2447,7 +2446,7 @@ csString psOverrideActionMessage::ToString(AccessPointers * /*access_ptrs*/)
 {
     csString msgtext;
 
-    msgtext.AppendFmt("Entity: %d Action: '%s' Duration: %d", entity_id, action.GetDataSafe(), duration);
+    msgtext.AppendFmt("Entity: %d Action: '%s' Duration: %d", entity_id.Unbox(), action.GetDataSafe(), duration);
 
     return msgtext;
 }
@@ -2457,7 +2456,7 @@ csString psOverrideActionMessage::ToString(AccessPointers * /*access_ptrs*/)
 PSF_IMPLEMENT_MSG_FACTORY(psEquipmentMessage,MSGTYPE_EQUIPMENT);
 
 psEquipmentMessage::psEquipmentMessage( uint32_t clientNum,
-                                        PS_ID actorid,
+                                        EID actorid,
                                         uint8_t type,
                                         int slot,
                                         csString& meshName,
@@ -2476,7 +2475,7 @@ psEquipmentMessage::psEquipmentMessage( uint32_t clientNum,
     msg->clientnum  = clientNum;
 
     msg->Add( type );
-    msg->Add( (uint32_t)actorid );
+    msg->Add(actorid.Unbox());
     msg->Add( (uint32_t)slot );
     msg->Add( meshName );
     msg->Add( part );
@@ -2986,8 +2985,8 @@ PSF_IMPLEMENT_MSG_FACTORY(psStopEffectMessage,MSGTYPE_EFFECT_STOP);
 PSF_IMPLEMENT_MSG_FACTORY(psEffectMessage,MSGTYPE_EFFECT);
 
 psEffectMessage::psEffectMessage(uint32_t clientNum, const csString &effectName,
-                                 const csVector3 &effectOffset, uint32_t anchorID,
-                                 uint32_t targetID, uint32_t uid)
+                                 const csVector3 &effectOffset, EID anchorID,
+                                 EID targetID, uint32_t uid)
 {
     msg.AttachNew(new MsgEntry(effectName.Length() + sizeof(csVector3)
                 + sizeof(uint32_t) + sizeof(uint32_t) + sizeof(uint32_t) + sizeof(uint32_t) + 1));
@@ -2999,8 +2998,8 @@ psEffectMessage::psEffectMessage(uint32_t clientNum, const csString &effectName,
     msg->Add(effectOffset.x);
     msg->Add(effectOffset.y);
     msg->Add(effectOffset.z);
-    msg->Add(anchorID);
-    msg->Add(targetID);
+    msg->Add(anchorID.Unbox());
+    msg->Add(targetID.Unbox());
     msg->Add((uint32_t)0);
     msg->Add((uint32_t)uid);
 
@@ -3008,8 +3007,8 @@ psEffectMessage::psEffectMessage(uint32_t clientNum, const csString &effectName,
 }
 
 psEffectMessage::psEffectMessage(uint32_t clientNum, const csString &effectName,
-                                 const csVector3 &effectOffset, uint32_t anchorID,
-                                 uint32_t targetID, uint32_t castDuration,uint32_t uid)
+                                 const csVector3 &effectOffset, EID anchorID,
+                                 EID targetID, uint32_t castDuration,uint32_t uid)
 {
     msg.AttachNew(new MsgEntry(effectName.Length() + sizeof(csVector3)
                 + sizeof(uint32_t) + sizeof(uint32_t) + sizeof(uint32_t) + sizeof(uint32_t) + 1));
@@ -3021,8 +3020,8 @@ psEffectMessage::psEffectMessage(uint32_t clientNum, const csString &effectName,
     msg->Add(effectOffset.x);
     msg->Add(effectOffset.y);
     msg->Add(effectOffset.z);
-    msg->Add(anchorID);
-    msg->Add(targetID);
+    msg->Add(anchorID.Unbox());
+    msg->Add(targetID.Unbox());
     msg->Add(castDuration);
     msg->Add(uid);
 
@@ -3030,8 +3029,8 @@ psEffectMessage::psEffectMessage(uint32_t clientNum, const csString &effectName,
 }
 
 psEffectMessage::psEffectMessage(uint32_t clientNum, const csString &effectName,
-                                 const csVector3 &effectOffset, uint32_t anchorID,
-                                 uint32_t targetID, csString &effectText, uint32_t uid)
+                                 const csVector3 &effectOffset, EID anchorID,
+                                 EID targetID, csString &effectText, uint32_t uid)
 {
     msg.AttachNew(new MsgEntry(effectName.Length() + sizeof(csVector3)
                 + sizeof(uint32_t) + sizeof(uint32_t) + sizeof(effectText) + sizeof(uint32_t) + 1));
@@ -3043,8 +3042,8 @@ psEffectMessage::psEffectMessage(uint32_t clientNum, const csString &effectName,
     msg->Add(effectOffset.x);
     msg->Add(effectOffset.y);
     msg->Add(effectOffset.z);
-    msg->Add(anchorID);
-    msg->Add(targetID);
+    msg->Add(anchorID.Unbox());
+    msg->Add(targetID.Unbox());
     msg->Add(effectText);
     msg->Add(uid);
 
@@ -3060,8 +3059,8 @@ psEffectMessage::psEffectMessage(MsgEntry* message)
     offset.x = message->GetFloat();
     offset.y = message->GetFloat();
     offset.z = message->GetFloat();
-    anchorID = message->GetUInt32();
-    targetID = message->GetUInt32();
+    anchorID = EID(message->GetUInt32());
+    targetID = EID(message->GetUInt32());
     castDuration = message->GetUInt32();
     uid = message->GetUInt32();
 
@@ -3075,8 +3074,8 @@ csString psEffectMessage::ToString(AccessPointers * /*access_ptrs*/)
     msgtext.AppendFmt("Name: '%s' Offset: (%.3f, %.3f, %.3f) Anchor: %d Target: %d Duration: %d UID: %d",
             name.GetDataSafe(),
             offset.x, offset.y, offset.z,
-            anchorID,
-            targetID,
+            anchorID.Unbox(),
+            targetID.Unbox(),
             castDuration,
             uid);
 
@@ -3088,14 +3087,14 @@ csString psEffectMessage::ToString(AccessPointers * /*access_ptrs*/)
 PSF_IMPLEMENT_MSG_FACTORY(psGUITargetUpdateMessage,MSGTYPE_GUITARGETUPDATE);
 
 psGUITargetUpdateMessage::psGUITargetUpdateMessage(uint32_t client_num,
-                                                   PS_ID target_id)
+                                                   EID target_id)
 {
-    msg.AttachNew(new MsgEntry(sizeof(uint32_t) + sizeof(PS_ID)));
+    msg.AttachNew(new MsgEntry(2*sizeof(uint32_t)));
 
     msg->SetType(MSGTYPE_GUITARGETUPDATE);
     msg->clientnum      = client_num;
 
-    msg->Add((uint32_t)target_id);
+    msg->Add(target_id.Unbox());
 
     // Sets valid flag based on message overrun state
     valid=!(msg->overrun);
@@ -3116,7 +3115,7 @@ csString psGUITargetUpdateMessage::ToString(AccessPointers * /*access_ptrs*/)
 {
     csString msgtext;
 
-    msgtext.AppendFmt("Target ID: %d", targetID);
+    msgtext.AppendFmt("Target ID: %d", targetID.Unbox());
 
     return msgtext;
 }
@@ -3363,8 +3362,8 @@ PSF_IMPLEMENT_MSG_FACTORY(psCombatEventMessage,MSGTYPE_COMBATEVENT);
 
 psCombatEventMessage::psCombatEventMessage(uint32_t clientnum,
                                            int event_type,
-                                           uint32_t attacker,
-                                           uint32_t target,
+                                           EID attacker,
+                                           EID target,
                                            int targetLocation,
                                            float damage,
                                            csStringID attack_anim,
@@ -3386,8 +3385,8 @@ psCombatEventMessage::psCombatEventMessage(uint32_t clientnum,
             msg->Add( (uint32_t) attack_anim );
             msg->Add( (uint32_t) defense_anim );
 
-            msg->Add( (uint32_t) attacker );
-            msg->Add( (uint32_t) target );
+            msg->Add(attacker.Unbox());
+            msg->Add(target.Unbox());
             msg->Add( (int8_t)   targetLocation );
 
             // Sets valid flag based on message overrun state
@@ -3406,8 +3405,8 @@ psCombatEventMessage::psCombatEventMessage(uint32_t clientnum,
             msg->Add( (uint32_t) attack_anim );
             msg->Add( (uint32_t) defense_anim );
 
-            msg->Add( (uint32_t) attacker );
-            msg->Add( (uint32_t) target );
+            msg->Add(attacker.Unbox());
+            msg->Add(target.Unbox());
             msg->Add( (int8_t)   targetLocation );
             msg->Add( (float)    damage );
 
@@ -3432,8 +3431,8 @@ psCombatEventMessage::psCombatEventMessage(MsgEntry *message)
     event_type  = message->GetUInt8();
     attack_anim = message->GetUInt32();
     defense_anim = message->GetUInt32();
-    attacker_id = message->GetUInt32();
-    target_id = message->GetUInt32();
+    attacker_id = EID(message->GetUInt32());
+    target_id = EID(message->GetUInt32());
     target_location = message->GetInt8();
 
     if (event_type == COMBAT_DAMAGE || event_type == COMBAT_DAMAGE_NEARLY_DEAD)
@@ -3453,7 +3452,7 @@ csString psCombatEventMessage::ToString(AccessPointers * /*access_ptrs*/)
     csString msgtext;
 
     msgtext.AppendFmt("Event Type: %d Attack Anim: %lu Defense Anim: %lu Attacker: %d Target: %d Location: %d",
-            event_type, attack_anim, defense_anim, attacker_id, target_id, target_location);
+            event_type, attack_anim, defense_anim, attacker_id.Unbox(), target_id.Unbox(), target_location);
     if (event_type == COMBAT_DAMAGE)
     {
         msgtext.AppendFmt(" Damage: %.3f", damage);
@@ -3494,14 +3493,14 @@ csString psSoundEventMessage::ToString(AccessPointers * /*access_ptrs*/)
 
 PSF_IMPLEMENT_MSG_FACTORY(psStatDRMessage,MSGTYPE_STATDRUPDATE);
 
-psStatDRMessage::psStatDRMessage(uint32_t clientnum, PS_ID eid, csArray<float> fVitals, csArray<uint32_t> uiVitals, uint8_t version, int flags)
+psStatDRMessage::psStatDRMessage(uint32_t clientnum, EID eid, csArray<float> fVitals, csArray<uint32_t> uiVitals, uint8_t version, int flags)
 {
     msg.AttachNew(new MsgEntry(2*sizeof(uint32_t) + sizeof(float) * fVitals.GetSize() + sizeof(uint32_t) * uiVitals.GetSize() + sizeof(uint8_t), PRIORITY_LOW));
 
     msg->clientnum = clientnum;
     msg->SetType(MSGTYPE_STATDRUPDATE);
 
-    msg->Add((uint32_t) eid);
+    msg->Add(eid.Unbox());
     msg->Add((uint32_t) flags);
 
     for (size_t i = 0; i < fVitals.GetSize(); i++)
@@ -3528,12 +3527,7 @@ psStatDRMessage::psStatDRMessage()
 
 psStatDRMessage::psStatDRMessage(MsgEntry* me)
 {
-    /* We handle PS_ID as a uint32 - which it is at this time.  If it ever changes we
-     *  will need to adjust.
-     */
-    CS_ASSERT(sizeof(PS_ID) == sizeof(uint32_t));
-
-    entityid=me->GetUInt32();
+    entityid = EID(me->GetUInt32());
     statsDirty = me->GetUInt32();
 
     if (statsDirty & DIRTY_VITAL_HP)
@@ -3575,7 +3569,7 @@ csString psStatDRMessage::ToString(AccessPointers * /*access_ptrs*/)
 {
     csString msgtext;
 
-    msgtext.AppendFmt("Ent: %d",entityid);
+    msgtext.AppendFmt("Ent: %d", entityid.Unbox());
 
     msgtext.AppendFmt(" Dirty: %d ",statsDirty);
 
@@ -4146,7 +4140,7 @@ void psDRMessage::CreateMsgEntry(uint32_t client, csStringHashReversible* msgstr
     msg->clientnum = client;
 }
 
-psDRMessage::psDRMessage(uint32_t client, PS_ID mappedid, uint8_t counter,
+psDRMessage::psDRMessage(uint32_t client, EID mappedid, uint8_t counter,
                          csStringHashReversible* msgstrings, psLinearMovement *linmove, uint8_t mode)
 {
     float speed;
@@ -4162,7 +4156,7 @@ psDRMessage::psDRMessage(uint32_t client, PS_ID mappedid, uint8_t counter,
     valid=!(msg->overrun);
 }
 
-psDRMessage::psDRMessage(uint32_t client,PS_ID mappedid,
+psDRMessage::psDRMessage(uint32_t client, EID mappedid,
                          bool on_ground, uint8_t mode, uint8_t counter,
                          const csVector3& pos, float yrot,iSector *sector,
                          const csVector3& vel, csVector3& worldVel, float ang_vel,
@@ -4202,7 +4196,7 @@ uint8_t psDRMessage::GetDataFlags(const csVector3& v, const csVector3& wv, float
     return flags;
 }
 
-void psDRMessage::WriteDRInfo(uint32_t client,PS_ID mappedid,
+void psDRMessage::WriteDRInfo(uint32_t client, EID mappedid,
                         bool on_ground, uint8_t mode, uint8_t counter,
                         const csVector3& pos, float yrot, iSector *sector,
                         const csVector3& vel, csVector3& worldVel, float ang_vel,
@@ -4211,7 +4205,7 @@ void psDRMessage::WriteDRInfo(uint32_t client,PS_ID mappedid,
     sectorName = sector->QueryObject()->GetName();
     csStringID sectorNameStrId = msgstrings ? msgstrings->Request(sectorName) : csInvalidStringID;
 
-    msg->Add( (uint32_t) mappedid );
+    msg->Add(mappedid.Unbox());
     msg->Add( counter );
 
     if (on_ground)
@@ -4333,7 +4327,7 @@ csString psDRMessage::ToString(AccessPointers * /*access_ptrs*/)
 {
     csString msgtext;
 
-    msgtext.AppendFmt("EID: %d C: %d ",entityid,counter);
+    msgtext.AppendFmt("EID: %d C: %d ",entityid.Unbox(),counter);
     msgtext.AppendFmt("Sector: %s ",sectorName.GetDataSafe());
     msgtext.AppendFmt("Pos(%.2f,%.2f,%.2f) ",pos.x,pos.y,pos.z);
 
@@ -4467,12 +4461,12 @@ psPersistActor::psPersistActor( uint32_t clientNum,
                                 const char* texParts,
                                 const char* equipmentParts,
                                 uint8_t counter,
-                                PS_ID mappedid,csStringHashReversible* msgstrings, psLinearMovement *linmove,
+                                EID mappedid, csStringHashReversible* msgstrings, psLinearMovement *linmove,
                                 uint8_t movementMode,
                                 uint8_t serverMode,
-                                uint32_t playerID,
+                                PID playerID,
                                 uint32_t groupID,
-                                PS_ID ownerEID,
+                                EID ownerEID,
                                 uint32_t flags)
 {
     msg.AttachNew(new MsgEntry( 5000 ));
@@ -4507,9 +4501,9 @@ psPersistActor::psPersistActor( uint32_t clientNum,
     msg->Add( equipmentParts );
     msg->Add( serverMode );
     posPlayerID = (int) msg->current;
-    msg->Add( playerID );
+    msg->Add(playerID.Unbox());
     msg->Add( groupID );
-    msg->Add( (uint32_t)ownerEID );
+    msg->Add(ownerEID.Unbox());
     posInstance = (int) msg->current;
     msg->Add( (int32_t)0 );
     if (flags) // No point sending 0, has to be at the end
@@ -4546,9 +4540,9 @@ psPersistActor::psPersistActor( MsgEntry* me, csStringHashReversible* msgstrings
     equipment   = csString ( me->GetStr() );
 
     serverMode = me->GetUInt8();
-    playerID   = me->GetUInt32();
+    playerID   = PID(me->GetUInt32());
     groupID    = me->GetUInt32();
-    ownerEID   = me->GetUInt32();
+    ownerEID   = EID(me->GetUInt32());
     instance   = me->GetInt32();
 
     if (!me->IsEmpty())
@@ -4579,9 +4573,9 @@ csString psPersistActor::ToString(AccessPointers * access_ptrs)
     msgtext.AppendFmt(" TexParts: '%s'",texParts.GetDataSafe());
     msgtext.AppendFmt(" Equipment: '%s'",equipment.GetDataSafe());
     msgtext.AppendFmt(" Mode: %d",serverMode);
-    msgtext.AppendFmt(" PlayerID: %d",playerID);
+    msgtext.AppendFmt(" PlayerID: %d",playerID.Unbox());
     msgtext.AppendFmt(" GroupID: %d",groupID);
-    msgtext.AppendFmt(" OwnerEID: %d",ownerEID);
+    msgtext.AppendFmt(" OwnerEID: %d",ownerEID.Unbox());
     msgtext.AppendFmt(" Instance: %d",instance);
     msgtext.AppendFmt(" Flags:");
     if (flags & INVISIBLE) msgtext.AppendFmt(" INVISIBLE");
@@ -4591,10 +4585,10 @@ csString psPersistActor::ToString(AccessPointers * access_ptrs)
     return msgtext;
 }
 
-void psPersistActor::SetPlayerID(uint32_t playerID)
+void psPersistActor::SetPlayerID(PID playerID)
 {
     msg->Reset(posPlayerID);
-    msg->Add(playerID);
+    msg->Add(playerID.Unbox());
 }
 
 void psPersistActor::SetInstance(int instance)
@@ -4608,7 +4602,7 @@ void psPersistActor::SetInstance(int instance)
 PSF_IMPLEMENT_MSG_FACTORY(psPersistItem,MSGTYPE_PERSIST_ITEM);
 
 psPersistItem::psPersistItem( uint32_t clientNum,
-                              uint32_t id,
+                              EID eid,
                               int type,
                               const char* name,
                               const char* factname,
@@ -4623,7 +4617,7 @@ psPersistItem::psPersistItem( uint32_t clientNum,
     msg->SetType(MSGTYPE_PERSIST_ITEM);
     msg->clientnum  = clientNum;
 
-    msg->Add( (uint32_t) id );
+    msg->Add(eid.Unbox());
     msg->Add( (uint32_t) type );
     msg->Add( name );
     msg->Add( factname );
@@ -4642,7 +4636,7 @@ psPersistItem::psPersistItem( uint32_t clientNum,
 
 psPersistItem::psPersistItem( MsgEntry* me )
 {
-    id          = me->GetUInt32();
+    eid         = EID(me->GetUInt32());
     type        = me->GetUInt32();
     name        = csString ( me->GetStr() );
     factname    = csString ( me->GetStr() );
@@ -4663,7 +4657,7 @@ csString psPersistItem::ToString(AccessPointers * /*access_ptrs*/)
 {
     csString msgtext;
 
-    msgtext.AppendFmt("ID: %d type: %d Name: %s",id,type,name.GetData());
+    msgtext.AppendFmt("EID: %d type: %d Name: %s",eid.Unbox(),type,name.GetData());
     msgtext.AppendFmt(" Factname: %s Filename %s ",factname.GetData(),filename.GetData());
     msgtext.AppendFmt("Sector: %s ",sector.GetDataSafe());
     msgtext.AppendFmt("Pos(%.2f,%.2f,%.2f) ",pos.x,pos.y,pos.z);
@@ -4678,7 +4672,7 @@ csString psPersistItem::ToString(AccessPointers * /*access_ptrs*/)
 PSF_IMPLEMENT_MSG_FACTORY(psPersistActionLocation,MSGTYPE_PERSIST_ACTIONLOCATION);
 
 psPersistActionLocation::psPersistActionLocation( uint32_t clientNum,
-                                uint32_t id,
+                                EID eid,
                                 int type,
                                 const char* name,
                                 const char* sector,
@@ -4690,7 +4684,7 @@ psPersistActionLocation::psPersistActionLocation( uint32_t clientNum,
     msg->SetType(MSGTYPE_PERSIST_ACTIONLOCATION);
     msg->clientnum  = clientNum;
 
-    msg->Add( (uint32_t) id );
+    msg->Add(eid.Unbox());
     msg->Add( (uint32_t) type );
     msg->Add( name );
     msg->Add( sector );
@@ -4702,7 +4696,7 @@ psPersistActionLocation::psPersistActionLocation( uint32_t clientNum,
 
 psPersistActionLocation::psPersistActionLocation( MsgEntry* me )
 {
-    id          = me->GetUInt32();
+    eid         = EID(me->GetUInt32());
     type        = me->GetUInt32();
     name        = me->GetStr();
     sector      = me->GetStr();
@@ -4713,8 +4707,8 @@ csString psPersistActionLocation::ToString(AccessPointers * /*access_ptrs*/)
 {
     csString msgtext;
 
-    msgtext.AppendFmt("ID: %d Type: %d Name: '%s' Sector: '%s' Mesh: '%s'",
-                      id,type,name.GetDataSafe(),sector.GetDataSafe(),mesh.GetDataSafe());
+    msgtext.AppendFmt("EID: %d Type: %d Name: '%s' Sector: '%s' Mesh: '%s'",
+                      eid.Unbox(),type,name.GetDataSafe(),sector.GetDataSafe(),mesh.GetDataSafe());
 
     return msgtext;
 }
@@ -4723,27 +4717,27 @@ csString psPersistActionLocation::ToString(AccessPointers * /*access_ptrs*/)
 
 PSF_IMPLEMENT_MSG_FACTORY(psRemoveObject,MSGTYPE_REMOVE_OBJECT);
 
-psRemoveObject::psRemoveObject( uint32_t clientNum, uint32_t objectEID )
+psRemoveObject::psRemoveObject(uint32_t clientNum, EID objectEID)
 {
     msg.AttachNew(new MsgEntry( sizeof( uint32_t) ));
 
     msg->SetType(MSGTYPE_REMOVE_OBJECT);
     msg->clientnum  = clientNum;
 
-    msg->Add( (uint32_t) objectEID );
+    msg->Add(objectEID.Unbox());
     valid=!(msg->overrun);
 }
 
 psRemoveObject::psRemoveObject( MsgEntry* me )
 {
-    objectEID = me->GetUInt32();
+    objectEID = EID(me->GetUInt32());
 }
 
 csString psRemoveObject::ToString(AccessPointers * /*access_ptrs*/)
 {
     csString msgtext;
 
-    msgtext.AppendFmt("ObjectEID: %d", objectEID);
+    msgtext.AppendFmt("ObjectEID: %d", objectEID.Unbox());
 
     return msgtext;
 }
@@ -5240,19 +5234,19 @@ csString psViewItemDescription::ToString(AccessPointers * /*access_ptrs*/)
 
 PSF_IMPLEMENT_MSG_FACTORY(psViewItemUpdate,MSGTYPE_UPDATE_ITEM);
 
-psViewItemUpdate::psViewItemUpdate( uint32_t to,  uint32_t containerID, uint32_t slotID, bool clearSlot,
-                                    const char *itemName, const char *icon, uint32_t stackCount, uint32_t ownerID)
+psViewItemUpdate::psViewItemUpdate(uint32_t to, EID containerID, uint32_t slotID, bool clearSlot,
+                                   const char *itemName, const char *icon, uint32_t stackCount, EID ownerID)
 {
-    msg.AttachNew(new MsgEntry( sizeof(containerID)+1 + sizeof(slotID) + sizeof(clearSlot) + strlen(itemName)+1 + strlen(icon)+1 + sizeof(stackCount) + sizeof(ownerID) ));
+    msg.AttachNew(new MsgEntry( sizeof(containerID)+1 + sizeof(slotID) + sizeof(clearSlot) + strlen(itemName)+1 + strlen(icon)+1 + sizeof(stackCount) + sizeof(uint32_t) ));
     msg->SetType(MSGTYPE_UPDATE_ITEM);
     msg->clientnum = to;
-    msg->Add(containerID);
+    msg->Add(containerID.Unbox());
     msg->Add(slotID);
     msg->Add(clearSlot);
     msg->Add(itemName);
     msg->Add(icon);
     msg->Add(stackCount);
-    msg->Add(ownerID);
+    msg->Add(ownerID.Unbox());
 }
 
 //void psViewItemUpdate::ConstructMsg()
@@ -5270,13 +5264,13 @@ psViewItemUpdate::psViewItemUpdate( uint32_t to,  uint32_t containerID, uint32_t
 
 psViewItemUpdate::psViewItemUpdate( MsgEntry* me )
 {
-    containerID = me->GetUInt32();
+    containerID = EID(me->GetUInt32());
     slotID = me->GetUInt32();
     clearSlot = me->GetBool();
     name = me->GetStr();
     icon = me->GetStr();
     stackCount = me->GetUInt32();
-    ownerID = me->GetUInt32();
+    ownerID = EID(me->GetUInt32());
 }
 
 csString psViewItemUpdate::ToString(AccessPointers * /*access_ptrs*/)
@@ -5284,7 +5278,7 @@ csString psViewItemUpdate::ToString(AccessPointers * /*access_ptrs*/)
     csString msgtext;
 
     msgtext.AppendFmt("Container ID: %d Slot ID: %d Clear Slot? %s Name: '%s' Icon: '%s' Stack Count: %d",
-            containerID,
+            containerID.Unbox(),
             slotID,
             (clearSlot?"True":"False"),
             name.GetDataSafe(),
@@ -5689,14 +5683,14 @@ csString psExchangeEndMsg::ToString(AccessPointers * /*access_ptrs*/)
 
 PSF_IMPLEMENT_MSG_FACTORY(psUpdateObjectNameMessage,MSGTYPE_NAMECHANGE);
 
-psUpdateObjectNameMessage::psUpdateObjectNameMessage( uint32_t client,uint32_t ID, const char* newName )
+psUpdateObjectNameMessage::psUpdateObjectNameMessage(uint32_t client, EID eid, const char* newName)
 {
     msg.AttachNew(new MsgEntry( strlen(newName)+1 + sizeof(uint32_t)));
 
     msg->SetType(MSGTYPE_NAMECHANGE);
     msg->clientnum = client;
 
-    msg->Add( ID );
+    msg->Add(eid.Unbox());
     msg->Add( newName );
 
     // Sets valid flag based on message overrun state
@@ -5705,7 +5699,7 @@ psUpdateObjectNameMessage::psUpdateObjectNameMessage( uint32_t client,uint32_t I
 
 psUpdateObjectNameMessage::psUpdateObjectNameMessage( MsgEntry* me )
 {
-    objectID      = me->GetUInt32();
+    objectID      = EID(me->GetUInt32());
     newObjName    = me->GetStr();
 }
 
@@ -5713,7 +5707,7 @@ csString psUpdateObjectNameMessage::ToString(AccessPointers * /*access_ptrs*/)
 {
     csString msgtext;
 
-    msgtext.AppendFmt("Object ID: %d New Name: '%s'", objectID, newObjName.GetDataSafe());
+    msgtext.AppendFmt("Object ID: %d New Name: '%s'", objectID.Unbox(), newObjName.GetDataSafe());
 
     return msgtext;
 }
@@ -5722,12 +5716,8 @@ csString psUpdateObjectNameMessage::ToString(AccessPointers * /*access_ptrs*/)
 
 PSF_IMPLEMENT_MSG_FACTORY(psUpdatePlayerGuildMessage,MSGTYPE_GUILDCHANGE);
 
-psUpdatePlayerGuildMessage::psUpdatePlayerGuildMessage( uint32_t client,int tot, const char* newGuild,bool totalIsClient )
+psUpdatePlayerGuildMessage::psUpdatePlayerGuildMessage(uint32_t client, int total, const char* newGuild)
 {
-    int total = 1;
-    if(!totalIsClient)
-        total = tot;
-
     msg.AttachNew(new MsgEntry( strlen(newGuild)+1 + (sizeof(uint32_t) * (total+1) )));
 
     msg->SetType(MSGTYPE_GUILDCHANGE);
@@ -5737,9 +5727,19 @@ psUpdatePlayerGuildMessage::psUpdatePlayerGuildMessage( uint32_t client,int tot,
     msg->Add( newGuild );
 
     valid = false; // need to add first
+}
 
-    if(totalIsClient)
-        AddPlayer(tot);
+psUpdatePlayerGuildMessage::psUpdatePlayerGuildMessage(uint32_t client, EID entity, const char* newGuild)
+{
+    msg.AttachNew(new MsgEntry(strlen(newGuild) + 1 + sizeof(uint32_t)*2));
+
+    msg->SetType(MSGTYPE_GUILDCHANGE);
+    msg->clientnum = client;
+
+    msg->Add((uint32_t) 1);
+    msg->Add(newGuild);
+
+    AddPlayer(entity);
 }
 
 psUpdatePlayerGuildMessage::psUpdatePlayerGuildMessage( MsgEntry* me )
@@ -5751,9 +5751,9 @@ psUpdatePlayerGuildMessage::psUpdatePlayerGuildMessage( MsgEntry* me )
         objectID.Push(me->GetUInt32());
 }
 
-void psUpdatePlayerGuildMessage::AddPlayer(uint32_t id)
+void psUpdatePlayerGuildMessage::AddPlayer(EID id)
 {
-    msg->Add(id);
+    msg->Add(id.Unbox());
 
     // Sets valid flag based on message overrun state
     valid=!(msg->overrun);
@@ -5777,14 +5777,14 @@ csString psUpdatePlayerGuildMessage::ToString(AccessPointers * /*access_ptrs*/)
 
 PSF_IMPLEMENT_MSG_FACTORY(psUpdatePlayerGroupMessage,MSGTYPE_GROUPCHANGE);
 
-psUpdatePlayerGroupMessage::psUpdatePlayerGroupMessage( int clientnum, uint32_t objectID, uint32_t groupID)
+psUpdatePlayerGroupMessage::psUpdatePlayerGroupMessage(int clientnum, EID objectID, uint32_t groupID)
 {
     msg.AttachNew(new MsgEntry(sizeof(uint32_t)*2));
 
     msg->SetType(MSGTYPE_GROUPCHANGE);
     msg->clientnum = clientnum;
 
-    msg->Add( objectID );
+    msg->Add(objectID.Unbox());
     msg->Add( groupID );
 
     // Sets valid flag based on message overrun state
@@ -5793,7 +5793,7 @@ psUpdatePlayerGroupMessage::psUpdatePlayerGroupMessage( int clientnum, uint32_t 
 
 psUpdatePlayerGroupMessage::psUpdatePlayerGroupMessage( MsgEntry* me )
 {
-    objectID      = me->GetUInt32();
+    objectID      = EID(me->GetUInt32());
     groupID       = me->GetUInt32();
 }
 
@@ -5801,7 +5801,7 @@ csString psUpdatePlayerGroupMessage::ToString(AccessPointers * /*access_ptrs*/)
 {
     csString msgtext;
 
-    msgtext.AppendFmt("Object ID: %d Group ID: %d", objectID, groupID);
+    msgtext.AppendFmt("EID: %d Group ID: %d", objectID.Unbox(), groupID);
 
     return msgtext;
 }
@@ -6393,7 +6393,7 @@ csString psTraitChangeMessage::ToString(AccessPointers * /*access_ptrs*/)
 {
     csString msgtext;
 
-    msgtext.AppendFmt("Target: %d String: '%s'", target, string.GetDataSafe());
+    msgtext.AppendFmt("Target: %d String: '%s'", target.Unbox(), string.GetDataSafe());
 
     return msgtext;
 }
@@ -6545,24 +6545,24 @@ csString psMGBoardMessage::ToString(AccessPointers * /* access_ptrs */)
 
 PSF_IMPLEMENT_MSG_FACTORY(psEntranceMessage, MSGTYPE_ENTRANCE);
 
-psEntranceMessage::psEntranceMessage(uint32_t entranceID)
+psEntranceMessage::psEntranceMessage(EID entranceID)
 {
     msg.AttachNew(new MsgEntry( sizeof(int32_t)));
     msg->SetType(MSGTYPE_ENTRANCE);
     msg->clientnum = 0;
 
-    msg->Add( (int32_t)entranceID );
+    msg->Add(entranceID.Unbox());
 }
 
 psEntranceMessage::psEntranceMessage( MsgEntry* me )
 {
-    entranceID = me->GetUInt32();
+    entranceID = EID(me->GetUInt32());
 }
 
 csString psEntranceMessage::ToString(AccessPointers * /* access_ptrs */)
 {
     csString msgText;
-    msgText.AppendFmt("EntranceID: %u", entranceID);
+    msgText.AppendFmt("EntranceID: %u", entranceID.Unbox());
     return msgText;
 }
 

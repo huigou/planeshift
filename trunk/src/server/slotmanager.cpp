@@ -133,7 +133,7 @@ void SlotManager::MoveFromWorldContainer(psSlotMovementMsg& msg, Client *fromCli
     psItem *parentItem=NULL;
     gemContainer *worldContainer=NULL;
 
-    gemObject *obj = EntityManager::GetSingleton().GetGEM()->FindObject(containerEntityID); // CEL id assigned
+    gemObject *obj = EntityManager::GetSingleton().GetGEM()->FindObject(EID(containerEntityID)); // CEL id assigned
     worldContainer = dynamic_cast<gemContainer*>(obj);
     if (!worldContainer)
     {
@@ -200,7 +200,7 @@ void SlotManager::MoveFromWorldContainer(psSlotMovementMsg& msg, Client *fromCli
             psItem *parentItem = NULL;
             worldContainer = NULL;
  
-            gemObject *obj = EntityManager::GetSingleton().GetGEM()->FindObject(containerEntityID); // CEL id assigned
+            gemObject *obj = EntityManager::GetSingleton().GetGEM()->FindObject(EID(containerEntityID)); // CEL id assigned
             worldContainer = dynamic_cast<gemContainer*>(obj);
             if (!worldContainer)
             {
@@ -439,7 +439,7 @@ void SlotManager::MoveFromInventory(psSlotMovementMsg& msg, Client *fromClient)
             psItem *parentItem=NULL;
             worldContainer=NULL;
  
-            gemObject *obj = EntityManager::GetSingleton().GetGEM()->FindObject(containerEntityID); // CEL id assigned
+            gemObject *obj = EntityManager::GetSingleton().GetGEM()->FindObject(EID(containerEntityID)); // CEL id assigned
             worldContainer = dynamic_cast<gemContainer*>(obj);
             if (!worldContainer)
             {
@@ -818,7 +818,7 @@ psItem* SlotManager::FindItem(Client* client, int containerID, INVENTORY_SLOT_NU
 
         default:  // Find container in world
         {
-            gemObject* object = GEMSupervisor::GetSingleton().FindObject(containerID);
+            gemObject* object = GEMSupervisor::GetSingleton().FindObject(EID(containerID));
             if (object && slotID == -1)
                 return object->GetItem();
 

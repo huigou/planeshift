@@ -133,7 +133,7 @@ protected:
 
     /// Return true if all trade params are ok
     bool VerifyTrade( Client * client, psCharacter * character, psCharacter ** merchant, psMerchantInfo ** info,
-                      const char * trade,const char * itemName, unsigned int merchantID);
+                      const char * trade, const char * itemName, PID merchantID);
 
     // verifies that item dropped in mind slot is a valid goal
     bool VerifyGoal(Client* client, psCharacter* character, psItem* goal);

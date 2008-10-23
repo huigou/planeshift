@@ -64,7 +64,7 @@ public:
     /// Handle button clicks
     bool OnButtonPressed(int mouseButton, int keyModifier, pawsWidget* reporter);
 
-    PS_ID GetLootingActor() { return lootEntity;}
+    EID GetLootingActor() { return lootEntity; }
 
 protected:
 
@@ -77,7 +77,7 @@ protected:
     /// List widget of petitions for easy access
     pawsListBox* lootList;
 
-    PS_ID lootEntity;
+    EID lootEntity;
 };
 
 /** The pawsLootWindow factory

@@ -329,7 +329,7 @@ private:
     psXMLString creativeDefinitionXML;
     csString content;
 
-    unsigned int creatorID;
+    PID creatorID;
     PSITEMSTATS_CREATORSTATUS creatorIDStatus;
 };
 
@@ -490,7 +490,7 @@ public:
     PSITEMSTATS_CREATIVETYPE GetCreative();
     bool GetBuyPersonalise();
     float GetRange() const;
-    unsigned int GetCreator (PSITEMSTATS_CREATORSTATUS& creatorStatus);
+    PID GetCreator (PSITEMSTATS_CREATORSTATUS & creatorStatus);
     csSet<unsigned int> GetAmmoTypeID() const { return ammo_types; }
 
     float weaponRange;
@@ -626,8 +626,8 @@ public:
     bool SetCreation (PSITEMSTATS_CREATIVETYPE, const csString&, csString);
 
     /// creator (i.e. author, artist, etc) of creative things
-    void SetCreator (unsigned int, PSITEMSTATS_CREATORSTATUS);
-    bool IsThisTheCreator(unsigned int);
+    void SetCreator(PID, PSITEMSTATS_CREATORSTATUS);
+    bool IsThisTheCreator(PID);
 
     /// Return true if this item was equipted with charges.
     bool HasCharges() const;

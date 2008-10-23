@@ -38,11 +38,11 @@
 #include "psmerchantinfo.h"
 
 
-bool psMerchantInfo::Load(unsigned int pid)
+bool psMerchantInfo::Load(PID pid)
 {
     bool is_merchant = false;
     
-    Result merchant_categories(db->Select("SELECT * from merchant_item_categories where player_id=%u",pid));
+    Result merchant_categories(db->Select("SELECT * from merchant_item_categories where player_id=%u", pid.Unbox()));
     if (merchant_categories.IsValid())
     {
         int i;

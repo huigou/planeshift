@@ -730,7 +730,7 @@ void psNPCLoader::SetupEquipment()
             newItem->SetItemQuality(item_quality);
         if (!crafter.IsEmpty())
         {
-             unsigned int craftid=psServer::CharacterLoader.FindCharacterID((char*)crafter.GetData());
+             PID craftid = psServer::CharacterLoader.FindCharacterID(crafter.GetData());
              newItem->SetCrafterID(craftid);
         }
         if (!guild.IsEmpty())
@@ -768,22 +768,22 @@ bool psNPCLoader::WriteToDatabase()
     charloader.NewCharacterData(SUPER_CLIENT_ACCOUNT, npc);
 
     csString name = npc->GetCharName();
-    int      id   = npc->GetPID();
+    PID      pid  = npc->GetPID();
     csString invulnerable = (npc->GetImperviousToAttack() & ALWAYS_IMPERVIOUS) ? "Y" : "N";
     int kill_exp  = npc->GetKillExperience();
 
     // add a spawn rule for the npc
-    db->Command("UPDATE characters c SET c.npc_spawn_rule=1 WHERE c.id=%i;",id);
+    db->Command("UPDATE characters c SET c.npc_spawn_rule=1 WHERE c.id=%u;", pid.Unbox());
 
     // update factions
     db->Command("UPDATE characters c SET c.faction_standings='%s' WHERE c.id=%i;",
-                 factionStandings.GetDataSafe(),id);
+                 factionStandings.GetDataSafe(), pid.Unbox());
 
     // update npc_master_id
-    db->Command("UPDATE characters c SET c.npc_master_id=%i WHERE c.id=%i;",id,id);
+    db->Command("UPDATE characters c SET c.npc_master_id=%u WHERE c.id=%u;", pid.Unbox(), pid.Unbox());
 
     // update invulnerable and kill_exp
-    db->Command("UPDATE characters c SET c.npc_impervious_ind='%s', kill_exp=%i WHERE c.id=%i;",invulnerable.GetData(),kill_exp,id);
+    db->Command("UPDATE characters c SET c.npc_impervious_ind='%s', kill_exp=%i WHERE c.id=%u;", invulnerable.GetData(), kill_exp, pid.Unbox());
 
     // This can only be called after the character has been initialised.
     SetupEquipment();
@@ -794,7 +794,7 @@ bool psNPCLoader::WriteToDatabase()
         int priority = knowledgeAreasPriority[i];
         db->Command("INSERT INTO npc_knowledge_areas(player_id, area, priority) "
                     "VALUES (%d, '%s', '%d')", 
-                     id, knowledgeAreas[i].GetData(), priority );
+                     pid.Unbox(), knowledgeAreas[i].GetData(), priority );
     }
 
 
@@ -807,7 +807,7 @@ bool psNPCLoader::WriteToDatabase()
     {
         db->Command("INSERT INTO trainer_skills(player_id, skill_id, min_rank, max_rank, min_faction) "
                     "VALUES (%i, %i, %i, %i, %f)", 
-                     id,
+                     pid.Unbox(),
                      trainerSkills[i].skill->id,
                      trainerSkills[i].min_rank,
                      trainerSkills[i].max_rank,
@@ -816,12 +816,12 @@ bool psNPCLoader::WriteToDatabase()
 
     // write merchant info to database
     for (size_t i=0;i<buys.GetSize();i++)
-        db->Command("INSERT INTO merchant_item_categories VALUES(%i,%i)",id,buys[i]);
+        db->Command("INSERT INTO merchant_item_categories VALUES(%u,%d)", pid.Unbox(), buys[i]);
 
     for (size_t i=0;i<sells.GetSize();i++)
-        db->Command("INSERT INTO merchant_item_categories VALUES(%i,%i)",id,sells[i]);
+        db->Command("INSERT INTO merchant_item_categories VALUES(%u,%d)", pid.Unbox(), sells[i]);
 
-    CPrintf(CON_DEBUG, "The NPC has been assigned the following id: %u\n",npc->GetPID());
+    CPrintf(CON_DEBUG, "The NPC has been assigned the following id: %u\n", npc->GetPID().Unbox());
 
     return true;
 }

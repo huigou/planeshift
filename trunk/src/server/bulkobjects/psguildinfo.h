@@ -95,7 +95,7 @@ struct psGuildLevel
 class psGuildMember
 {
 public:
-    unsigned int char_id;       ///< The character ID of the person.
+    PID char_id;                ///< The character ID of the person.
     csString name;              ///< The name of the member
     psCharacter  *actor;        ///< Pointer to the character data of the person.
     psGuildLevel *guildlevel;   ///< Members current level.
@@ -114,7 +114,7 @@ class psGuildInfo : public csRefCount
 public:
     int id;                     ///< UID of the guild.
     csString name;              ///< Name of the guild.
-    unsigned int founder;       ///< Character id for the founder of the guild. 
+    PID founder;                ///< Character id for the founder of the guild. 
     int karma_points;           ///< Guild's current karma points.
     csString web_page;          ///< URL for the guild.
 
@@ -133,20 +133,20 @@ public:
     csArray<int> guild_war_with_id;
 
     psGuildInfo();
-    psGuildInfo(csString name, unsigned int founder);
+    psGuildInfo(csString name, PID founder);
     ~psGuildInfo();
 
     bool Load(unsigned int id);
     bool Load(iResultRow& row);
  
-    bool InsertNew(int leader_char_id);
+    bool InsertNew(PID leader_char_id);
     bool RemoveGuild();
 
     psGuildLevel *Connect(psCharacter *player);        // Find existing and set actor
     void Disconnect(psCharacter *player);        // Find actor, remove and check for delete if last one
 
     psGuildMember *FindMember(const char *name);
-    psGuildMember *FindMember(unsigned int char_id);
+    psGuildMember *FindMember(PID char_id);
     psGuildMember *FindLeader();
     psGuildLevel *FindLevel(int level);
 

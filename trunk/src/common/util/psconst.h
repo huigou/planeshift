@@ -18,7 +18,13 @@
  *
  */
 
-#ifndef CS_PRIORITY_USE_CAMERA
+#ifndef PSCONST_HEADER
+#define PSCONST_HEADER
+
+// FIXME: This is not so great, but we need to be able to show and compute
+// hashes for our new integral types.  Those probably shouldn't be here either.
+#include <csutil/csstring.h>
+#include <csutil/hash.h>
 
 #define CS_PRIORITY_USE_CAMERA    true
 
@@ -97,12 +103,6 @@ typedef uint32 INSTANCE_ID;
 
 #define SIZET_NOT_FOUND ((size_t)-1)
 
-
-//Changed from unsigned long to uint32 since we assert the size of PS_ID is equal to uint32_t
-//uint32 is defined by CS to magically be like uint32_t on systems that don't have it by default
-typedef uint32 PS_ID;
-
-
 // This is needed to 64bit code, some functions break on 32bit Linux, but we need them on 32bit windows
 #ifdef _WIN32
 #define _LP64
@@ -110,5 +110,52 @@ typedef uint32 PS_ID;
 
 #define WEATHER_MAX_RAIN_DROPS  8000
 #define WEATHER_MAX_SNOW_FALKES 6000
+
+// Make unique integer types for various types of IDs.  This allows the
+// compiler to statically check for the right kind of ID, preventing various
+// kinds of mistakes.  It also documents which kind of ID is required.
+#define MAKE_ID_TYPE(name)                                               \
+class name                                                               \
+{                                                                        \
+public:                                                                  \
+    name()           : id(0) {}                                          \
+    name(uint32_t i) : id(i) {}                                          \
+    uint32_t Unbox() const { return id; }                                \
+    bool IsValid() const { return id != 0; }                             \
+    csString Show() const                                                \
+    {                                                                    \
+        csString str(#name":");                                          \
+        str.Append((size_t) id);                                         \
+        return str;                                                      \
+    }                                                                    \
+    bool operator==(const name & other) const { return id == other.id; } \
+    bool operator!=(const name & other) const { return id != other.id; } \
+    bool operator< (const name & other) const { return id <  other.id; } \
+private:                                                                 \
+    uint32_t id;                                                         \
+};                                                                       \
+template<>                                                               \
+class csHashComputer<name>                                               \
+{                                                                        \
+public:                                                                  \
+    static uint ComputeHash(name key)                                    \
+    {                                                                    \
+        return key.Unbox();                                              \
+    }                                                                    \
+};
+// Note: The < operator allows us to use these as keys for sets and trees.
+//       The csHashComputer allows us to use them as keys in csHash.
+
+// Convenience wrapper so we don't have to write ugly things like
+// actor->GetEID().Show().GetData() all over the place.
+#define ShowID(id) id.Show().GetData()
+
+MAKE_ID_TYPE(EID);         /// GEM Entity IDs
+MAKE_ID_TYPE(PID);         /// Player IDs
+MAKE_ID_TYPE(AccountID);   /// Account IDs
+
+// Container IDs are either EIDs (if > 100) or inventory slot IDs.
+// This is quite ugly; we don't try to add proper typing.
+typedef uint32_t ContainerID;
 
 #endif

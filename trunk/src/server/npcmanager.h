@@ -120,7 +120,7 @@ public:
     csArray<PublishDestination>& GetSuperClients() { return superclients; }
 
     /// Send a newly spawned npc to a superclient to manage it.
-    void NewNPCNotify(int player_id,int master_id,int owner_id);
+    void NewNPCNotify(PID player_id, PID master_id, PID owner_id);
 
     /// Tell a superclient to control an existing npc.
     void ControlNPC( gemNPC* npc );

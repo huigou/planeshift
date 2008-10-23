@@ -124,7 +124,7 @@ protected:
     float substitutespawnodds;
 
     /// Player id to respawn if substitution spawn odds are met
-    int   substituteplayer;
+    PID   substituteplayer;
 
     /// If ranges are populated, these are ignored
     float    fixedspawnx;
@@ -166,7 +166,7 @@ public:
     int GetRespawnDelay();
 
     /// Determine if substitute player should be spawned.  Returns either original or substitute.
-    int CheckSubstitution(int originalplayer);
+    PID CheckSubstitution(PID originalplayer);
 
     /// Pick a spot for the entity to respawn
     void DetermineSpawnLoc(psCharacter *ch, csVector3& pos, float& angle, csString& sectorname, INSTANCE_ID& instance);
@@ -377,7 +377,7 @@ public:
      * This function is called periodically by the server and will respawn
      * NPCs as appropriate.
      */
-    void Respawn(INSTANCE_ID instance,csVector3& where,float rot,csString& sector,int playerID);
+    void Respawn(INSTANCE_ID instance, csVector3& where, float rot, csString& sector, PID playerID);
     
     /// Adds all items to the world.
     /** Called at the server startup to add all the items to the game. 
@@ -413,7 +413,7 @@ protected:
     csVector3 where;
     float     rot;
     csString  sector;
-    int       playerID;
+    PID       playerID;
     INSTANCE_ID instance;
 
 public:
@@ -422,7 +422,7 @@ public:
                csVector3& pos,
                float angle,
                csString& sector,
-               int newplayer,
+               PID newplayer,
                INSTANCE_ID newinstance);
 
     virtual void Trigger();  // Abstract event processing function
@@ -438,7 +438,7 @@ class psDespawnGameEvent : public psGameEvent
 protected:
     SpawnManager *spawnmanager;
     int ticks;
-    PS_ID entity;
+    EID entity;
 
 public:
     psDespawnGameEvent(SpawnManager *mgr,

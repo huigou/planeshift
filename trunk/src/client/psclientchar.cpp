@@ -283,12 +283,12 @@ void psClientCharManager::HandleMessage ( MsgEntry* me )
 void psClientCharManager::ChangeTrait( MsgEntry* me )
 {
     psTraitChangeMessage mesg(me);
-    unsigned int objectID = mesg.target;
+    EID objectID = mesg.target;
 
     GEMClientObject* object = (GEMClientObject *)psengine->GetCelClient()->FindObject(objectID);
     if (!object)
     {
-        Error2("Got trait change for object %d, but couldn't find it!", objectID);
+        Error2("Got trait change for %s, but couldn't find it!", ShowID(objectID));
         return;
     }
 
@@ -308,7 +308,7 @@ void psClientCharManager::ChangeTrait( MsgEntry* me )
         if (doll == NULL) 
             continue;
 
-        if (doll->GetID() == objectID) // This is a doll of the updated object
+        if (doll->GetID() == objectID.Unbox()) // This is a doll of the updated object
         {
             iMeshWrapper* dollObject = doll->GetObject();
             psCharAppearance p(psengine->GetObjectRegistry());
@@ -347,7 +347,7 @@ void psClientCharManager::SetTarget(GEMClientObject *newTarget, const char *acti
     psengine->GetEffectManager()->DeleteEffect(targetEffect);
     targetEffect = 0;
         
-    PS_ID mappedID = 0;
+    EID mappedID;
 
     // Action locations don't have effects
     if (target && target->GetObjectType() != GEM_ACTION_LOC)

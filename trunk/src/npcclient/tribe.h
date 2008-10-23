@@ -27,6 +27,11 @@
 #include <csgeom/vector3.h>
 #include <iengine/sector.h>
 
+//=============================================================================
+// Project Includes
+//=============================================================================
+#include <util/psconst.h>
+
 class iResultRow;
 class EventManager;
 class NPC;
@@ -235,7 +240,7 @@ protected:
     
     int                    id;
     csString               name;
-    csArray<unsigned int>  members_id;
+    csArray<PID>           members_id;
     csArray<NPC*>          members;
     csArray<NPC*>          dead_members;
     csArray<Resource>      resources;

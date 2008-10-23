@@ -156,7 +156,8 @@ void UserManager::HandleMOTDRequest(MsgEntry *me,Client *client)
     //If data isn't loaded, load from db
     if (!client->GetCharacterData())
     {
-        Result result(db->Select("SELECT guild_member_of FROM characters WHERE id = '%d'",client->GetPID()));
+        // FIXME: We really shouldn't be loading this from the DB.
+        Result result(db->Select("SELECT guild_member_of FROM characters WHERE id = '%u'", client->GetPID().Unbox()));
         if (result.Count() > 0)
             guildID = result[0].GetUInt32(0);
     }
@@ -250,7 +251,7 @@ void UserManager::HandleUserCommand(MsgEntry *me,Client *client)
     }
     else if ( msg.command == "/admin" )
     {
-        psserver->GetAdminManager()->Admin(client->GetPID(), me->clientnum, client);
+        psserver->GetAdminManager()->Admin(me->clientnum, client);
     }
     else if ( msg.command == "/loot" )
     {
@@ -484,7 +485,7 @@ csArray<csString> UserManager::DecodeCommandArea(Client *client, csString target
         {
             if (nearobj->GetClientID())
             {
-                newTarget.Format("pid:%d", nearobj->GetPID());
+                newTarget.Format("uid:%d", nearobj->GetPID().Unbox());
                 break;
             }
             else
@@ -492,9 +493,9 @@ csArray<csString> UserManager::DecodeCommandArea(Client *client, csString target
         }
         case 1: // Target actors
         {
-            if (nearobj->GetPID())
+            if (nearobj->GetPID().IsValid())
             {
-                newTarget.Format("pid:%d", nearobj->GetPID());
+                newTarget.Format("uid:%d", nearobj->GetPID().Unbox());
                 break;
             }
             else
@@ -504,7 +505,7 @@ csArray<csString> UserManager::DecodeCommandArea(Client *client, csString target
         {
             if (nearobj->GetItem())
             {
-                newTarget.Format("eid:%u", nearobj->GetEID());
+                newTarget.Format("eid:%u", nearobj->GetEID().Unbox());
                 break;
             }
             else
@@ -514,7 +515,7 @@ csArray<csString> UserManager::DecodeCommandArea(Client *client, csString target
         {
             if (nearobj->GetNPCPtr())
             {
-                newTarget.Format("pid:%d", nearobj->GetPID());
+                newTarget.Format("pid:%u", nearobj->GetPID().Unbox());
                 break;
             }
             else
@@ -522,7 +523,7 @@ csArray<csString> UserManager::DecodeCommandArea(Client *client, csString target
         }
         case 4: // Target everything
         {
-            newTarget.Format("eid:%u", nearobj->GetEID());
+            newTarget.Format("eid:%u", nearobj->GetEID().Unbox());
             break;
         }
         }
@@ -797,9 +798,9 @@ void UserManager::SendCharacterDescription(Client * client, psCharacter * charDa
 
 
         // Show owner name if character is a pet
-        if ( charData->IsPet() && charData->GetOwnerID() )
+        if (charData->IsPet() && charData->GetOwnerID().IsValid())
         {
-            gemActor *owner = GEMSupervisor::GetSingleton().FindPlayerEntity( charData->GetOwnerID() );
+            gemActor *owner = GEMSupervisor::GetSingleton().FindPlayerEntity(charData->GetOwnerID());
             if (owner)
                 desc.AppendFmt( "\n\nA pet owned by: %s", owner->GetName() );
         }
@@ -826,7 +827,7 @@ void UserManager::HandleCharDescUpdate(MsgEntry *me,Client *client)
         return;
 
     charData->SetDescription(descUpdate.newValue);
-    Debug3(LOG_USER, client->GetClientNum(), "Character description updated for %s (%d)\n",charData->GetCharFullName(),client->GetAccountID());
+    Debug3(LOG_USER, client->GetClientNum(), "Character description updated for %s (%s)\n", charData->GetCharFullName(), ShowID(client->GetAccountID()));
 }
 
 void UserManager::HandleTargetEvent(MsgEntry *me)
@@ -877,8 +878,9 @@ void UserManager::HandleEntranceMessage( MsgEntry* me, Client *client )
     psActionLocation *action = psserver->GetActionManager()->FindAction( mesg.entranceID );
     if ( !action )
     {
-        if (secure) psserver->SendSystemInfo(client->GetClientNum(),"No item/action : %d", mesg.entranceID );
-        Error2( "No item/action : %d", mesg.entranceID );
+        if (secure)
+            psserver->SendSystemInfo(client->GetClientNum(), "No item/action: %s", ShowID(mesg.entranceID));
+        Error2("No item/action: %s", ShowID(mesg.entranceID));
         return;
     }
 
@@ -1171,10 +1173,10 @@ void UserManager::Buddy(psUserCmdMessage& msg,Client *client,int clientnum)
     }
 
 
-    unsigned int selfid=client->GetCharacterData()->GetPID();
+    PID selfid=client->GetCharacterData()->GetPID();
 
     bool excludeNPCs = true;
-    unsigned int buddyid=psServer::CharacterLoader.FindCharacterID(msg.player.GetData(), excludeNPCs);
+    PID buddyid = psServer::CharacterLoader.FindCharacterID(msg.player.GetData(), excludeNPCs);
 
     if (buddyid==0)
     {
@@ -1222,10 +1224,10 @@ void UserManager::NotBuddy(psUserCmdMessage& msg,Client *client,int clientnum)
         Error3("Client for account '%s' attempted to remove buddy '%s' but has no character data!",client->GetName(),msg.player.GetData());
         return;
     }
-    unsigned int selfid=client->GetCharacterData()->GetPID();
+    PID selfid = client->GetCharacterData()->GetPID();
 
     bool searchNPCs = false;
-    unsigned int buddyid=psServer::CharacterLoader.FindCharacterID(msg.player.GetData(), searchNPCs);
+    PID buddyid = psServer::CharacterLoader.FindCharacterID(msg.player.GetData(), searchNPCs);
     if (buddyid==0)
     {
         psserver->SendSystemError(clientnum,"Could not remove buddy: Character '%s' not found.", msg.player.GetData());
@@ -1302,7 +1304,7 @@ void UserManager::NotifyBuddies(Client * client, bool logged_in)
 void UserManager::NotifyGuildBuddies(Client * client, bool logged_in)
 {
     csString name (client->GetName());
-    unsigned int char_id = client->GetCharacterData()->GetPID();
+    PID char_id = client->GetCharacterData()->GetPID();
     psGuildInfo * charGuild = client->GetCharacterData()->GetGuild();
     if(charGuild)
     {
@@ -2050,8 +2052,8 @@ void UserManager::HandlePickup(Client *client, csString target)
         gemObject* object= NULL;
         GEMSupervisor *gem = GEMSupervisor::GetSingletonPtr();
         csString eid_str = target.Slice(4);
-        PS_ID eID = (PS_ID)atoi(eid_str.GetDataSafe() );
-        if (eID)
+        EID eID = EID(strtoul(eid_str.GetDataSafe(), NULL, 10));
+        if (eID.IsValid())
         {
             object = gem->FindObject(eID);
             if (object && object->GetItem())

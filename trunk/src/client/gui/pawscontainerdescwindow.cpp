@@ -101,12 +101,12 @@ void pawsContainerDescWindow::HandleUpdateItem( MsgEntry* me )
     // We send ownerID to multiple clients, so each client must decide if the item is owned by
     // them or not.  This is double checked on the server if someone tries to move an item,
     // so hacking this to override just breaks the display, but does not enable a cheat.
-    if (mesg.ownerID && mesg.ownerID != psengine->GetCelClient()->GetMainPlayer()->GetEID())
+    if (mesg.ownerID.IsValid() && mesg.ownerID != psengine->GetCelClient()->GetMainPlayer()->GetEID())
     {
         mesg.stackCount = -1; // hardcoded signal that item is not owned by this player
     }
 
-    sigData.Format("invslot_%d", mesg.containerID * 100 + mesg.slotID + 16);
+    sigData.Format("invslot_%d", mesg.containerID.Unbox() * 100 + mesg.slotID + 16);
     if (!mesg.clearSlot)
     {
         data.Format("%s %d %d %s", mesg.icon.GetData(), mesg.stackCount, 0, mesg.name.GetData());
@@ -132,7 +132,7 @@ void pawsContainerDescWindow::HandleViewItem( MsgEntry* me )
         pic->Hide();
 
     bool newContainer = false;
-    if (containerID != (PS_ID)mesg.containerID)
+    if (containerID != mesg.containerID)
         newContainer = true;
 
     containerID = mesg.containerID;
@@ -269,7 +269,7 @@ bool pawsContainerDescWindow::OnButtonPressed( int mouseButton, int keyModifier,
     else if ( widget->GetID() == COMBINE_BUTTON )
     {
         GEMClientObject* oldtarget = psengine->GetCharManager()->GetTarget();
-        int oldID = 0;
+        EID oldID;
         if(oldtarget)
         {
              oldID = oldtarget->GetEID();

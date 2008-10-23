@@ -71,9 +71,7 @@ private:
 class gemNPCObject
 {
 public:
-    static const unsigned int NO_PLAYER_ID = (unsigned int)-1;
-
-    gemNPCObject( psNPCClient* cel, PS_ID id );
+    gemNPCObject(psNPCClient* cel, EID id);
     virtual ~gemNPCObject();
     
     bool InitMesh(const char *factname,const char *filename,
@@ -83,13 +81,13 @@ public:
     void Move(const csVector3& pos, float rotangle, const char* room);
     void Move(const csVector3& pos, float rotangle, const char* room, int instance);
     
-    int GetEID() { return eid; }
+    EID GetEID() { return eid; }
     npcMesh* pcmesh;   
     
     int GetType() { return type; }
     
     const char* GetName() { return name.GetDataSafe(); }
-    virtual unsigned int GetPID() { return NO_PLAYER_ID; }
+    virtual PID GetPID() { return PID(0); }
 
     virtual const char* GetObjectType(){ return "Object"; }
     virtual gemNPCActor *GetActorPtr() { return NULL; }
@@ -113,7 +111,7 @@ protected:
     
 
     csString name;
-    int  eid;
+    EID  eid;
     int  type;
     bool visible;
     bool invincible;
@@ -130,8 +128,8 @@ public:
     
     psLinearMovement* pcmove;
     
-    virtual unsigned int GetPID() { return playerID; }
-    virtual PS_ID GetOwnerEID() { return ownerEID; }
+    virtual PID GetPID() { return playerID; }
+    virtual EID GetOwnerEID() { return ownerEID; }
 
     csString& GetRace() { return race; };
 
@@ -148,8 +146,8 @@ protected:
                      
     bool InitCharData(const char* textures, const char* equipment);        
     
-    unsigned int playerID;
-    PS_ID ownerEID;
+    PID playerID;
+    EID ownerEID;
     csString race;
     
     NPC *npc;

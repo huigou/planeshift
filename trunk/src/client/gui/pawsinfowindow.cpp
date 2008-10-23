@@ -119,6 +119,9 @@ void pawsInfoWindow::HandleMessage( MsgEntry* me )
         case MSGTYPE_MODE:
             psModeMessage msg(me);
 
+            EID x;
+            EID y;
+            if (x == y) printf("foo\n");
             // We only want to deal with our own stance changes here...
             if (msg.actorID == psengine->GetCelClient()->GetMainPlayer()->GetEID())
             {

@@ -86,7 +86,7 @@ void EconomyManager::AddTransaction(TransactionEntity* trans,bool moneyIn, const
     
     csString buf;
     
-    buf.Format("%d, %d, %s, %d, %u, \"%u\"", trans->from, trans->to, type, trans->item, trans->count, trans->price);
+    buf.Format("%d, %d, %s, %d, %u, \"%u\"", trans->from.Unbox(), trans->to.Unbox(), type, trans->item, trans->count, trans->price);
     psserver->GetLogCSV()->Write(CSV_EXCHANGES, buf);
     
     if(!trans->item)
@@ -99,8 +99,8 @@ void EconomyManager::AddTransaction(TransactionEntity* trans,bool moneyIn, const
         trans->item.GetData(),
         trans->count,
         trans->quality,
-        trans->from,
-        trans->to,
+        trans->from.Unbox(),
+        trans->to.Unbox(),
         trans->price);
 #endif
     trans->moneyIn = moneyIn;
@@ -275,8 +275,8 @@ void psEconomyDrop::Trigger()
                     trans->count,
                     trans->item,
                     trans->quality,
-                    trans->from,
-                    trans->to,
+                    trans->from.Unbox(),
+                    trans->to.Unbox(),
                     trans->price,
                     (int)time(NULL) - trans->stamp);
 

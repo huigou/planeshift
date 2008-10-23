@@ -77,7 +77,7 @@ Client::Client ()
     valid               = false;
     
     // pets[0] is a special case for the players familiar.
-    pets.Insert( 0, (uint32)-1 );
+    pets.Insert(0, PID(0));
 }
 
 Client::~Client()
@@ -113,7 +113,7 @@ bool Client::Disconnect()
     }
     
     // Only save if an account has been found for this client.
-    if (GetAccountID())
+    if (accountID.IsValid())
     {
         SaveAccountData();
     }
@@ -197,54 +197,34 @@ void Client::SetFamiliar( gemActor *familiar )
     }
     else
     {
-        pets[0] = (uint32)-1;
+        pets[0] = PID(0);
     }
 }
 
 gemActor* Client::GetFamiliar() 
 {
-    uint32 id;
-
-    id = pets[ 0 ];
-    if ( id != (uint32)-1 )
+    if (pets[0].IsValid())
     {
-        return GEMSupervisor::GetSingleton().FindNPCEntity( id );
+        return GEMSupervisor::GetSingleton().FindNPCEntity(pets[0]);
     }
-    else
-    {
-        return NULL;
-    }
+    return NULL;
 }
 
 void Client::AddPet( gemActor *pet ) 
 { 
-    pets.Push(pet->GetEID()); 
+    pets.Push(pet->GetPID()); 
 }
 void Client::RemovePet( size_t index ) 
 { 
-    pets[index] = (uint32)-1; 
+    pets.DeleteIndex(index);
 }
 
-gemActor* Client::GetPet( size_t index ) 
+gemActor* Client::GetPet(size_t i)
 {
-    uint32 id;
-
-    if ( index < pets.GetSize() )
-    {
-        id = pets[ index ];
-        if ( id != (uint32)-1 )
-        {
-            return GEMSupervisor::GetSingleton().FindNPCEntity( id );
-        }
-        else
-        {
-            return NULL;
-        }
-    }
-    else
-    {
+    if (i >= pets.GetSize() || !pets[i].IsValid())
         return NULL;
-    }
+
+    return GEMSupervisor::GetSingleton().FindNPCEntity(pets[i]);
 }
 
 size_t Client::GetNumPets()
@@ -312,7 +292,7 @@ int Client::GetGuildID()
 unsigned int Client::GetAccountTotalOnlineTime()
 {
     unsigned int totalTimeConnected = GetCharacterData()->GetOnlineTimeThisSession();
-    Result result(db->Select("SELECT SUM(time_connected_sec) FROM characters WHERE account_id = %d", GetAccountID()));
+    Result result(db->Select("SELECT SUM(time_connected_sec) FROM characters WHERE account_id = %d", accountID.Unbox()));
     if (result.IsValid())
         totalTimeConnected += result[0].GetUInt32("SUM(time_connected_sec)");
         
@@ -508,7 +488,7 @@ bool Client::CanTake(psItem* item)
     // Check for npc-owned or locked container
     if (item->GetContainerID() && GetSecurityLevel() < GM_LEVEL_2)
     {
-        gemObject *gemcont = GEMSupervisor::GetSingleton().FindObject(item->GetContainerID());
+        gemObject *gemcont = GEMSupervisor::GetSingleton().FindObject(EID(item->GetContainerID()));
         if (gemcont)
         {
             psItem *cont = gemcont->GetItem();
@@ -526,16 +506,16 @@ bool Client::CanTake(psItem* item)
     }
 
     // Allow if the item is pickupable and either: public, guarded by the character, or the guarding character is offline
-    unsigned int guard = item->GetGuardingCharacterID();
+    PID guard = item->GetGuardingCharacterID();
     gemActor* guardingActor = GEMSupervisor::GetSingleton().FindPlayerEntity(guard);
 
-    if ((guard == 0 || guard == GetCharacterData()->GetPID() || !guardingActor)
+    if ((!guard.IsValid() || guard == GetCharacterData()->GetPID() || !guardingActor)
          && !item->GetIsNpcOwned() && !item->GetIsNoPickup())
     {        
         return true;
     }        
 
-    if (guard && guardingActor)
+    if (guard.IsValid() && guardingActor)
     {
         gemItem* gemitem = item->GetGemObject();
         if (item->GetContainerID())
@@ -682,7 +662,7 @@ void Client::SaveAccountData()
 
     // Save to the db
     db->CommandPump("UPDATE accounts SET spam_points = '%d', advisor_points = '%d' WHERE id = '%d' LIMIT 1",
-                 spamPoints, advisorPoints, accountID );
+                    spamPoints, advisorPoints, accountID.Unbox());
 }
 
 uint32_t Client::WaypointGetEffectID()
@@ -711,7 +691,7 @@ uint32_t Client::LocationGetEffectID()
 
 void Client::SetAdvisorBan(bool ban)
 {
-    db->Command("UPDATE accounts SET advisor_ban = %d WHERE id = %d", (int) ban, GetAccountID());
+    db->Command("UPDATE accounts SET advisor_ban = %d WHERE id = %d", (int) ban, accountID.Unbox());
     
     if (isAdvisor)
         psserver->GetAdviceManager()->RemoveAdvisor(clientnum, clientnum);
@@ -722,7 +702,7 @@ void Client::SetAdvisorBan(bool ban)
 bool Client::IsAdvisorBanned()
 {
     bool advisorBan = false;
-    Result result(db->Select("SELECT advisor_ban FROM accounts WHERE id = %d", GetAccountID()));
+    Result result(db->Select("SELECT advisor_ban FROM accounts WHERE id = %d", accountID.Unbox()));
     if (result.IsValid())
         advisorBan = result[0].GetUInt32("advisor_ban") != 0;
         

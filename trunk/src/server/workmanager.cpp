@@ -687,8 +687,8 @@ void psWorkManager::HandleProduction(gemActor *actor,const char *type,const char
     if (cur_skill <= 0.0)
     {
         //psserver->SendSystemInfo(client->GetClientNum(),"You don't have the skill to %s for %s.",type,reward);
-        Warning6(LOG_SUPERCLIENT,"%s(%d) don't have the skill(%d) to %s for %s.",
-                 actor->GetName(),actor->GetEID(),nr->skill->id,type,reward);
+        Warning6(LOG_SUPERCLIENT,"%s(%s) don't have the skill(%d) to %s for %s.",
+                 actor->GetName(), ShowID(actor->GetEID()), nr->skill->id, type, reward);
         return;
     }
 
@@ -883,8 +883,8 @@ void psWorkManager::HandleProductionEvent(psWorkGameEvent* workEvent)
 
             if (!worke->Inventory().AddOrDrop(item))
             {
-                Debug5(LOG_ANY,worke->GetPID(),"HandleProductionEvent() could not give item of stat %u (%s) to character %u [%s])",
-                    newitem->GetUID(),newitem->GetName(),worke->GetPID(),worke->GetCharName());
+                Debug5(LOG_ANY, worke->GetPID().Unbox(), "HandleProductionEvent() could not give item of stat %u (%s) to character %s[%s])",
+                    newitem->GetUID(), newitem->GetName(), worke->GetCharName(), ShowID(worke->GetPID()));
 
                 if (workEvent->client)
                 {
@@ -893,8 +893,8 @@ void psWorkManager::HandleProductionEvent(psWorkGameEvent* workEvent)
                 }
                 else
                 {
-                    Debug5(LOG_SUPERCLIENT,0,"%s(EID: %u) found %s, but dropped it: %s",workEvent->worker->GetName(),
-                           workEvent->worker->GetEID(), newitem->GetName(), worke->Inventory().lastError.GetDataSafe() );
+                    Debug5(LOG_SUPERCLIENT,0,"%s(%s) found %s, but dropped it: %s",workEvent->worker->GetName(),
+                           ShowID(workEvent->worker->GetEID()), newitem->GetName(), worke->Inventory().lastError.GetDataSafe());
                 }
 
             }
@@ -907,8 +907,8 @@ void psWorkManager::HandleProductionEvent(psWorkGameEvent* workEvent)
                 }
                 else
                 {
-                    Debug4(LOG_SUPERCLIENT,0,"%s(EID: %u) got some %s.",workEvent->worker->GetName(),
-                           workEvent->worker->GetEID(),newitem->GetName() );
+                    Debug4(LOG_SUPERCLIENT,0,"%s(%s) got some %s.",workEvent->worker->GetName(),
+                           ShowID(workEvent->worker->GetEID()), newitem->GetName());
                 }
             }
 
@@ -1061,7 +1061,7 @@ void psWorkManager::StopWork(Client* client, psItem* item)
     }
     else
     {
-        Debug3(LOG_TRADE,clientNum, "Player id #%d stopped working on %s item.\n", worker->GetPID(), item->GetName());
+        Debug3(LOG_TRADE, clientNum, "Player %s stopped working on %s item.\n", ShowID(worker->GetPID()), item->GetName());
 
         // Handle all the different transformation types
         if( curEvent->GetTransformationType() == TRANSFORMTYPE_AUTO_CONTAINER )
@@ -1755,7 +1755,7 @@ bool psWorkManager::ScriptAction(gemActionLocation* gemAction)
     INSTANCE_ID instance_id = action->GetInstanceID();
     if (instance_id==INSTANCE_ALL)
     {
-        instance_id = action->GetGemObject()->GetEID();
+        instance_id = action->GetGemObject()->GetEID().Unbox(); // FIXME: Need to understand & comment on ID interaction here.
     }
     gemItem* target = GEMSupervisor::GetSingleton().FindItemEntity( instance_id );
 
@@ -2399,7 +2399,7 @@ bool psWorkManager::ValidateTarget(Client* client)
       INSTANCE_ID instance_id = action->GetInstanceID();
       if (instance_id==INSTANCE_ALL)
       {
-          instance_id = action->GetGemObject()->GetEID();
+          instance_id = action->GetGemObject()->GetEID().Unbox(); // FIXME: Understand & comment on ID magic here.
       }
       target = GEMSupervisor::GetSingleton().FindItemEntity( instance_id );
     }
@@ -2738,8 +2738,8 @@ psItem* psWorkManager::CombineContainedItem(uint32 newId, int newQty, float item
     // Check for conditions that would cause assert on newItem->Save(true)
     if (newItem->GetLocInParent(false) == -1 && newItem->GetOwningCharacter() && newItem->GetContainerID()==0)
     {
-        Error6("Problem on item: item UID=%i crafterID=%i guildID=%i name=%s owner=%p",
-          newItem->GetBaseStats()->GetUID(),worker->GetPID(),
+        Error6("Problem on item: item UID=%i crafterID=%s guildID=%i name=%s owner=%p",
+          newItem->GetBaseStats()->GetUID(), ShowID(worker->GetPID()),
           worker->GetGuildID(), owner->GetCharName(), owner);
         if (workItem && workItem->GetBaseStats())
         {
@@ -2820,8 +2820,8 @@ psItem* psWorkManager::TransformContainedItem(psItem* oldItem, uint32 newId, int
     // Check for conditions that would cause assert on newItem->Save(true)
     if (newItem->GetLocInParent(false) == -1 && newItem->GetOwningCharacter() && newItem->GetContainerID()==0)
     {
-        Error6("Problem on item: item UID=%i crafterID=%i guildID=%i name=%s owner=%p",
-          newItem->GetBaseStats()->GetUID(),worker->GetPID(),
+        Error6("Problem on item: item UID=%i crafterID=%s guildID=%i name=%s owner=%p",
+          newItem->GetBaseStats()->GetUID(), ShowID(worker->GetPID()),
           worker->GetGuildID(), owner->GetCharName(), owner);
         if (workItem && workItem->GetBaseStats())
         {
@@ -2888,8 +2888,8 @@ psItem* psWorkManager::TransformSlotItem(INVENTORY_SLOT_NUMBER slot, uint32 newI
     // Check for conditions that would cause assert on newItem->Save(true)
     if (newItem->GetLocInParent(false) == -1 && newItem->GetOwningCharacter() && newItem->GetContainerID()==0)
     {
-        Error6("Problem on item: item UID=%i crafterID=%i guildID=%i name=%s owner=%p",
-          newItem->GetBaseStats()->GetUID(),worker->GetPID(),
+        Error6("Problem on item: item UID=%i crafterID=%s guildID=%i name=%s owner=%p",
+          newItem->GetBaseStats()->GetUID(), ShowID(worker->GetPID()),
           worker->GetGuildID(), owner->GetCharName(), owner);
         if (workItem && workItem->GetBaseStats())
         {
@@ -2965,8 +2965,8 @@ psItem* psWorkManager::TransformTargetSlotItem(INVENTORY_SLOT_NUMBER slot, uint3
     // Check for conditions that would cause assert on newItem->Save(true)
     if (newItem->GetLocInParent(false) == -1 && newItem->GetOwningCharacter() && newItem->GetContainerID()==0)
     {
-        Error6("Problem on item: item UID=%i crafterID=%i guildID=%i name=%s owner=%p",
-          newItem->GetBaseStats()->GetUID(),worker->GetPID(),
+        Error6("Problem on item: item UID=%i crafterID=%s guildID=%i name=%s owner=%p",
+          newItem->GetBaseStats()->GetUID(), ShowID(worker->GetPID()),
           worker->GetGuildID(), gemTarget->GetCharacterData()->GetCharName(), gemTarget->GetCharacterData());
         if (workItem && workItem->GetBaseStats())
         {
@@ -3040,8 +3040,8 @@ psItem* psWorkManager::TransformTargetItem(psItem* oldItem, uint32 newId, int ne
     // Check for conditions that would cause assert on newItem->Save(true)
     if (newItem->GetLocInParent(false) == -1 && newItem->GetOwningCharacter() && newItem->GetContainerID()==0)
     {
-        Error6("Problem on item: item UID=%i crafterID=%i guildID=%i name=%s owner=%p",
-          newItem->GetBaseStats()->GetUID(),worker->GetPID(),
+        Error6("Problem on item: item UID=%i crafterID=%s guildID=%i name=%s owner=%p",
+          newItem->GetBaseStats()->GetUID(), ShowID(worker->GetPID()),
           worker->GetGuildID(), owner->GetCharName(), owner);
         if (workItem && workItem->GetBaseStats())
         {
@@ -3106,8 +3106,8 @@ psItem* psWorkManager::CreateTradeItem(uint32 newId, int newQty, float itemQuali
             newItem->SetGuildID(0);
 
 #ifdef DEBUG_WORKMANAGER
-        CPrintf(CON_DEBUG, "done creating item crafterID=%i guildID=%i name=%s owner=%p\n",
-                worker->GetPID(), worker->GetGuildID(), owner->GetCharName(), owner);
+        CPrintf(CON_DEBUG, "done creating item crafterID=%s guildID=%i name=%s owner=%p\n",
+                ShowID(worker->GetPID()), worker->GetGuildID(), owner->GetCharName(), owner);
 #endif
 
         return newItem;

@@ -1652,8 +1652,8 @@ bool WanderOperation::StartMoveToWaypoint(NPC *npc, EventManager *eventmgr)
     
     if (!path)
     {
-        Error5("%s(%d) Could not find path between '%s' and '%s'",
-               npc->GetName(),npc->GetActor()->GetEID(),
+        Error5("%s(%s) Could not find path between '%s' and '%s'",
+               npc->GetName(), ShowID(npc->GetActor()->GetEID()),
                (prior_wp?prior_wp->GetName():""),
                (active_wp?active_wp->GetName():""));
         return false;
@@ -1998,15 +1998,15 @@ bool ChaseOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
     csVector3 dest;
     csString name;
     gemNPCObject *entity = NULL;
-    target_id = (uint32_t)~0;
+    target_id = EID(0);
         
     switch (type)
     {
     case NEAREST:
-        npc->GetNearestEntity(target_id, dest, name, searchRange);
+        target_id = npc->GetNearestEntity(dest, name, searchRange);
         npc->Printf(6, "Targeting nearest entity (%s) at (%1.2f,%1.2f,%1.2f) for chase ...",
                     (const char *)name, dest.x, dest.y, dest.z);
-        if ( target_id != (uint32_t)-1 )
+        if (target_id.IsValid())
         {
             entity = npcclient->FindEntityID(target_id);
         }
@@ -2047,13 +2047,13 @@ bool ChaseOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
         break;
     }
 
-    if ( ( target_id != (uint32_t)-1 ) && entity )
+    if (target_id.IsValid() && entity)
     {
         psGameObject::GetPosition(npc->GetActor(),myPos, myRot, mySector);
     
         psGameObject::GetPosition(entity, targetPos, targetRot, targetSector);
 
-        npc->Printf(5, "Chasing enemy (%s) EID: %u at %s",entity->GetName(),entity->GetEID(), 
+        npc->Printf(5, "Chasing enemy <%s, %s> at %s", entity->GetName(), ShowID(entity->GetEID()),
                     toString(targetPos,targetSector).GetDataSafe());
 
         // We need to work in the target sector space
@@ -2109,9 +2109,8 @@ void ChaseOperation::Advance(float timedelta, NPC *npc, EventManager *eventmgr)
     if (type == NEAREST)
     {
         // Switch target if a new entity is withing search range.
-        uint32_t newTargetEID = (uint32_t)-1;
-        npc->GetNearestEntity(newTargetEID,targetPos,name,searchRange);
-        if (newTargetEID != (uint32_t)-1)
+        EID newTargetEID = npc->GetNearestEntity(targetPos, name, searchRange);
+        if (newTargetEID.IsValid())
         {
             target_id = newTargetEID;
         }
@@ -2211,7 +2210,7 @@ void ChaseOperation::Advance(float timedelta, NPC *npc, EventManager *eventmgr)
                 Calc2DDistance(localDest, myPos));
 
     {
-        ScopedTimer st(250, "chase extrapolate %.2f time for EID: %u",timedelta,npc->GetActor()->GetEID());
+        ScopedTimer st(250, "chase extrapolate %.2f time for %s", timedelta, ShowID(npc->GetActor()->GetEID()));
         npc->GetLinMove()->ExtrapolatePosition(timedelta);
     }
     bool on_ground;
@@ -2594,7 +2593,7 @@ bool MeleeOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
     attacked_ent = npc->GetMostHated(melee_range,attack_invisible,attack_invincible);
     if (attacked_ent)
     {
-        npc->Printf(5, "Melee starting to attack %s(%d)",attacked_ent->GetName(),attacked_ent->GetEID());
+        npc->Printf(5, "Melee starting to attack %s(%s)", attacked_ent->GetName(), ShowID(attacked_ent->GetEID()));
 
         npcclient->GetNetworkMgr()->QueueAttackCommand(npc->GetActor(),attacked_ent);
     }
@@ -2648,7 +2647,7 @@ void MeleeOperation::Advance(float timedelta, NPC *npc, EventManager *eventmgr)
     {
         if (attacked_ent)
         {
-            npc->Printf(5, "Melee switching to attack %s(%d)", attacked_ent->GetName(), attacked_ent->GetEID());
+            npc->Printf(5, "Melee switching to attack %s(%s)", attacked_ent->GetName(), ShowID(attacked_ent->GetEID()));
         }
         else
         {
@@ -3126,15 +3125,15 @@ bool WatchOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
     csVector3 targetPos;
 
     csString name;
-    uint32_t  target_id = (uint32_t)~0;
+    EID target_id;
 
     switch (type)
     {
         case NEAREST:
-            npc->GetNearestEntity(target_id,targetPos,name,range);
+            target_id = npc->GetNearestEntity(targetPos, name, range);
             npc->Printf(5, "Targeting nearest entity (%s) at (%1.2f,%1.2f,%1.2f) for watch ...",
                         (const char *)name,targetPos.x,targetPos.y,targetPos.z);
-            if ( target_id != (uint32_t)-1 )
+            if (target_id.IsValid())
             {
                 watchedEnt = npcclient->FindEntityID(target_id);
             }

@@ -74,10 +74,10 @@
 class psItemRemovalEvent : public psGameEvent
 {
 protected:
-    PS_ID item_to_remove;
+    EID item_to_remove;
 
 public:
-    psItemRemovalEvent(int delayticks,PS_ID gemID)    
+    psItemRemovalEvent(int delayticks, EID gemID)    
         : psGameEvent(0,delayticks*1000,"psItemRemovalEvent")
     {
         item_to_remove = gemID;
@@ -86,7 +86,7 @@ public:
 
     virtual void Trigger()
     {
-        Debug2(LOG_USER,item_to_remove,"Removing object %u now.\n",item_to_remove);
+        Debug2(LOG_USER, 0, "Removing object %s now.\n", ShowID(item_to_remove));
         // cannot store pointer because object may have already been removed and ptr not valid
         gemObject *obj = GEMSupervisor::GetSingleton().FindObject(item_to_remove);
         if (obj)
@@ -252,7 +252,7 @@ bool psItem::Load(iResultRow& row)
 
     if (row.GetInt("creator_mark_id"))
     {
-        SetCrafterID(row.GetInt("creator_mark_id"));
+        SetCrafterID(PID(row.GetInt("creator_mark_id")));
     }
     if (row.GetInt("guild_mark_id"))
     {
@@ -509,8 +509,8 @@ void psItem::Commit(bool children)
     
     targetQuery->Reset();
     
-    targetQuery->AddField("char_id_owner",owning_character?owning_character->GetPID():0);
-    targetQuery->AddField("char_id_guardian", guardingCharacterID);
+    targetQuery->AddField("char_id_owner", owning_character ? owning_character->GetPID().Unbox() : 0);
+    targetQuery->AddField("char_id_guardian", guardingCharacterID.Unbox());
     targetQuery->AddField("stack_count",GetStackCount());
     targetQuery->AddField("item_quality",GetItemQuality());
     targetQuery->AddField("crafted_quality",GetMaxItemQuality());
@@ -518,7 +518,7 @@ void psItem::Commit(bool children)
     
     // Crafter ID
     if (GetIsCrafterIDValid())
-        targetQuery->AddField("creator_mark_id",GetCrafterID());
+        targetQuery->AddField("creator_mark_id", GetCrafterID().Unbox());
     else
         targetQuery->AddFieldNull("creator_mark_id");
     
@@ -788,7 +788,7 @@ void psItem::SetStackCount(unsigned short v)
     stack_count=v;
 }
 
-void psItem::SetCrafterID(unsigned int v)
+void psItem::SetCrafterID(PID v)
 {
     SetIsCrafterIDValid(true);
     crafter_id=v;
@@ -2326,14 +2326,14 @@ void psItem::DeleteObjectCallback(iDeleteNotificationObject * object)
     }
 }
 
-void psItem::UpdateView(Client *fromClient, uint EntityId, bool clear)
+void psItem::UpdateView(Client *fromClient, EID eid, bool clear)
 {
     if (!fromClient)
         return;
     
     gemActor *guardian = clear ? 0 : GEMSupervisor::GetSingleton().FindPlayerEntity(GetGuardingCharacterID());
     psViewItemUpdate mesg(fromClient->GetClientNum(), 
-                          EntityId,
+                          eid,
                           GetLocInParent(),
                           clear,
                           GetName(),
@@ -2483,7 +2483,7 @@ bool psItem::SendItemDescription( Client *client)
         }
     }
 
-    if ( GetGuardingCharacterID() )
+    if (GetGuardingCharacterID().IsValid())
     {
         csString guardingChar;
         gemActor *guardian = GEMSupervisor::GetSingleton().FindPlayerEntity(GetGuardingCharacterID());
@@ -2599,7 +2599,7 @@ bool psItem::SendContainerContents(Client *client, int containerID)
                                     IS_CONTAINER );
                                           
     if (gItem != NULL )
-        outgoing.containerID = gItem->GetEID();
+        outgoing.containerID = gItem->GetEID().Unbox();
     else
         outgoing.containerID = containerID;        
 
@@ -2893,7 +2893,7 @@ bool psItem::SendActionContents(Client *client, psActionLocation *action)
         outgoing.containerID = containerID;
     */
 
-    outgoing.containerID = gItem->GetEID();
+    outgoing.containerID = gItem->GetEID().Unbox();
 
     if ( isContainer )
     {           
