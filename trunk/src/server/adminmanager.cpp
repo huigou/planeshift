@@ -3897,7 +3897,7 @@ void AdminManager::CreateNPC(MsgEntry* me,psAdminCmdMessage& msg, AdminCmdData& 
         return;
     }
 
-    psserver->npcmanager->NewNPCNotify(newNPCID, masterNPCID, -1);
+    psserver->npcmanager->NewNPCNotify(newNPCID, masterNPCID, OWNER_ALL);
 
     // Make new entity
     EID eid = EntityManager::GetSingleton().CreateNPC(newNPCID, false);
@@ -4806,7 +4806,7 @@ void AdminManager::GMListPetitions(MsgEntry *me, psPetitionRequestMessage& msg,C
     // Try and grab the result set from the database:
 
     // Show the player all petitions.
-    iResultSet *rs = GetPetitions(-1, client->GetPID(), GM_DEVELOPER );
+    iResultSet *rs = GetPetitions(PETITION_GM, client->GetPID(), GM_DEVELOPER );
     if (rs)
     {
         // Send list to GM:
@@ -4857,7 +4857,7 @@ void AdminManager::GMHandlePetition(MsgEntry *me, psPetitionRequestMessage& msg,
     {
         // Cancellation:
         type = PETITION_CANCEL;
-        result = CancelPetition(-1, msg.id);
+        result = CancelPetition(PETITION_GM, msg.id);
     }
     else if (msg.request == "close")
     {
@@ -4900,7 +4900,7 @@ void AdminManager::GMHandlePetition(MsgEntry *me, psPetitionRequestMessage& msg,
     }
 
     // Try and grab the result set from the database:
-    iResultSet *rs = GetPetitions(-1, client->GetPID(), GM_DEVELOPER);
+    iResultSet *rs = GetPetitions(PETITION_GM, client->GetPID(), GM_DEVELOPER);
     if (rs)
     {
         // Send list to GM:
@@ -5033,8 +5033,8 @@ iResultSet *AdminManager::GetPetitions(PID playerID, PID gmID, int gmLevel)
 {
     iResultSet *rs;
 
-    // Check player ID (if ID is -1, get a complete list for the GM):
-    if (playerID == -1)
+    // Check player ID (if ID is PETITION_GM (0xFFFFFFFF), get a complete list for the GM):
+    if (playerID == PETITION_GM)
     {
         rs = db->Select("SELECT pet.id,pet.petition,pet.status,pet.escalation_level,pet.created_date,pl.name FROM petitions pet, "
                     "characters pl WHERE (pet.player!=%d AND ((pet.status=\"Open\" AND pet.escalation_level<=%d) "
@@ -5062,8 +5062,8 @@ iResultSet *AdminManager::GetPetitions(PID playerID, PID gmID, int gmLevel)
 
 bool AdminManager::CancelPetition(PID playerID, int petitionID)
 {
-    // If player ID is -1, just cancel the petition (a GM is requesting the change)
-    if (playerID == -1)
+    // If player ID is PETITION_GM, just cancel the petition (a GM is requesting the change)
+    if (playerID == PETITION_GM)
     {
         int result = db->CommandPump("UPDATE petitions SET status='Cancelled' WHERE id=%d", petitionID);
         return (result != -1);
@@ -5091,7 +5091,7 @@ bool AdminManager::ChangePetition(PID playerID, int petitionID, const char* peti
     db->Escape( escape, petition );
 
     // If player ID is -1, just change the petition (a GM is requesting the change)
-    if (playerID == -1)
+    if (playerID == PETITION_GM)
     {
         int result = db->Command("UPDATE petitions SET petition=\"%s\" WHERE id=%u", escape.GetData(), playerID.Unbox());
         return (result != -1);

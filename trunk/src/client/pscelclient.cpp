@@ -1,7 +1,7 @@
 /*
  * psCelClient.cpp by Matze Braun <MatzeBraun@gmx.de>
  *
- * Copyright (C) 2002 Atomic Blue (info@planeshift.it, http://www.atomicblue.org) 
+ * Copyright (C) 2002 Atomic Blue (info@planeshift.it, http://www.atomicblue.org)
  *
  *
  * This program is free software; you can redistribute it and/or
@@ -93,7 +93,7 @@ psCelClient *GEMClientObject::cel = NULL;
 psCelClient::psCelClient() : ignore_others(false)
 {
     requeststatus = 0;
-    
+
     clientdr        = NULL;
     zonehandler     = NULL;
     entityLabels    = NULL;
@@ -104,20 +104,20 @@ psCelClient::psCelClient() : ignore_others(false)
 }
 
 psCelClient::~psCelClient()
-{   
+{
     delete gameWorld;
-        
+
     if (msghandler)
     {
         msghandler->Unsubscribe( this, MSGTYPE_CELPERSIST);
         msghandler->Unsubscribe( this, MSGTYPE_PERSIST_WORLD );
         msghandler->Unsubscribe( this, MSGTYPE_PERSIST_ACTOR );
-        msghandler->Unsubscribe( this, MSGTYPE_PERSIST_ITEM ); 
-        msghandler->Unsubscribe( this, MSGTYPE_PERSIST_ACTIONLOCATION ); 
-        msghandler->Unsubscribe( this, MSGTYPE_REMOVE_OBJECT ); 
-        msghandler->Unsubscribe( this, MSGTYPE_NAMECHANGE ); 
-        msghandler->Unsubscribe( this, MSGTYPE_GUILDCHANGE ); 
-        msghandler->Unsubscribe( this, MSGTYPE_GROUPCHANGE ); 
+        msghandler->Unsubscribe( this, MSGTYPE_PERSIST_ITEM );
+        msghandler->Unsubscribe( this, MSGTYPE_PERSIST_ACTIONLOCATION );
+        msghandler->Unsubscribe( this, MSGTYPE_REMOVE_OBJECT );
+        msghandler->Unsubscribe( this, MSGTYPE_NAMECHANGE );
+        msghandler->Unsubscribe( this, MSGTYPE_GUILDCHANGE );
+        msghandler->Unsubscribe( this, MSGTYPE_GROUPCHANGE );
         msghandler->Unsubscribe( this, MSGTYPE_STATS );
     }
 
@@ -127,13 +127,13 @@ psCelClient::~psCelClient()
         delete entityLabels;
     if (shadowManager)
         delete shadowManager;
-        
+
 
     entities.DeleteAll();
-    entities_hash.DeleteAll();    
+    entities_hash.DeleteAll();
 }
 
-    
+
 
 bool psCelClient::Initialize(iObjectRegistry* object_reg,
         MsgHandler* newmsghandler,
@@ -144,12 +144,12 @@ bool psCelClient::Initialize(iObjectRegistry* object_reg,
     entityLabels->Initialize(object_reg, this);
 
     shadowManager = new psShadowManager();
-    
+
     vfs =  csQueryRegistry<iVFS> (object_reg);
     if (!vfs)
     {
         return false;
-    }        
+    }
 
     zonehandler = zonehndlr;
 
@@ -157,14 +157,14 @@ bool psCelClient::Initialize(iObjectRegistry* object_reg,
     msghandler->Subscribe( this, MSGTYPE_CELPERSIST);
     msghandler->Subscribe( this, MSGTYPE_PERSIST_WORLD );
     msghandler->Subscribe( this, MSGTYPE_PERSIST_ACTOR );
-    msghandler->Subscribe( this, MSGTYPE_PERSIST_ITEM ); 
-    msghandler->Subscribe( this, MSGTYPE_PERSIST_ACTIONLOCATION ); 
-    msghandler->Subscribe( this, MSGTYPE_REMOVE_OBJECT ); 
-    msghandler->Subscribe( this, MSGTYPE_NAMECHANGE ); 
-    msghandler->Subscribe( this, MSGTYPE_GUILDCHANGE ); 
-    msghandler->Subscribe( this, MSGTYPE_GROUPCHANGE ); 
+    msghandler->Subscribe( this, MSGTYPE_PERSIST_ITEM );
+    msghandler->Subscribe( this, MSGTYPE_PERSIST_ACTIONLOCATION );
+    msghandler->Subscribe( this, MSGTYPE_REMOVE_OBJECT );
+    msghandler->Subscribe( this, MSGTYPE_NAMECHANGE );
+    msghandler->Subscribe( this, MSGTYPE_GUILDCHANGE );
+    msghandler->Subscribe( this, MSGTYPE_GROUPCHANGE );
     msghandler->Subscribe( this, MSGTYPE_STATS );
-                           
+
     clientdr = new psClientDR;
     if (!clientdr->Initialize(object_reg, this, msghandler ))
     {
@@ -176,7 +176,7 @@ bool psCelClient::Initialize(iObjectRegistry* object_reg,
     unresSector = psengine->GetEngine()->CreateSector("SectorWhereWeKeepEntitiesResidingInUnloadedMaps");
 
     LoadEffectItems();
-    
+
     return true;
 }
 
@@ -192,14 +192,14 @@ void psCelClient::SetMainActor(GEMClientActor* actor)
         local_player = actor;
         // ModeHandler has no good way to find out the entity
         psengine->GetModeHandler()->SetEntity(actor);
-    }        
+    }
 }
 
 void psCelClient::RequestServerWorld()
 {
     psPersistWorldRequest world;
     msghandler->SendMessage( world.msg );
-    
+
     requeststatus=1;
 }
 
@@ -208,17 +208,17 @@ bool psCelClient::IsReady()
     if ( local_player == NULL || gameWorld == NULL )
         return false;
     else
-        return true; 
+        return true;
 }
 
 void psCelClient::HandleWorld( MsgEntry* me )
-{    
+{
     psPersistWorld mesg( me );
-    
-    
+
+
     gameWorld = new psWorld;
     gameWorld->Initialize( object_reg );
-    
+
     zonehandler->SetWorld(gameWorld);
 
     // Tell the user that we are loading the world
@@ -228,8 +228,8 @@ void psCelClient::HandleWorld( MsgEntry* me )
 
     zonehandler->LoadZone(mesg.sector);
 
-    requeststatus = 0;        
-    RequestActor();  
+    requeststatus = 0;
+    RequestActor();
 }
 
 void psCelClient::RequestActor()
@@ -259,7 +259,7 @@ void psCelClient::HandleActor( MsgEntry* me )
             HandleMainActor( mesg );
             return;
         }
-            
+
         Debug3(LOG_CELPERSIST, 0, "Found existing object <%s> with %s, removing.\n", found->GetName(), ShowID(mesg.entityid));
         RemoveObject(found);
     }
@@ -279,7 +279,7 @@ void psCelClient::HandleActor( MsgEntry* me )
 
     // The first actor that is sent to the client is his own one.
     if ( local_player == NULL && actor->control )
-    {        
+    {
         local_player = actor;
         SetMainActor( local_player );
 
@@ -301,7 +301,7 @@ void psCelClient::HandleActor( MsgEntry* me )
 
 void psCelClient::HandleMainActor( psPersistActor& mesg )
 {
-    
+
     // Saved for when we reset
     if ( local_player_defaultFactName.IsEmpty() )
     {
@@ -317,7 +317,7 @@ void psCelClient::HandleMainActor( psPersistActor& mesg )
     if (mesg.factname != local_player->GetFactName())
     {
         local_player->charApp->ClearEquipment();
-    
+
         csRef<iMeshFactoryWrapper> factory = psengine->GetEngine()->GetMeshFactories()->FindByName(mesg.factname);
         if (!factory)
         {
@@ -325,7 +325,7 @@ void psCelClient::HandleMainActor( psPersistActor& mesg )
             csString filename;
             if (!psengine->GetFileNameByFact(mesg.factname, filename))
             {
-                Error2( "Mesh Factory %s not found", mesg.factname.GetData() );            
+                Error2( "Mesh Factory %s not found", mesg.factname.GetData() );
                 return;
             }
             FactoryIndexEntry* fie = psengine->GetCacheManager()->GetFactoryEntry(filename);
@@ -340,8 +340,8 @@ void psCelClient::HandleMainActor( psPersistActor& mesg )
                 Error2("Couldn't morph main player! Factory %s doesn't exist!", mesg.factname.GetData() );
                 return;
             }
-       } 
-        
+       }
+
         // New or resetting?
         if (local_player_defaultFactName != mesg.factname)
         {
@@ -352,7 +352,7 @@ void psCelClient::HandleMainActor( psPersistActor& mesg )
             local_player->GetMesh()->SetMeshObject(mesh);
             local_player->GetMesh()->SetFactory(factory);
             local_player->charApp->SetMesh(local_player->GetMesh());
-            
+
             // Cal3d
             csRef<iSpriteCal3DState> calstate = scfQueryInterface<iSpriteCal3DState> (local_player->GetMesh()->GetMeshObject());
             if (calstate)
@@ -365,16 +365,16 @@ void psCelClient::HandleMainActor( psPersistActor& mesg )
         {
             // Reset
             local_player->GetMesh()->SetMeshObject(local_player_defaultMesh);
-            local_player->GetMesh()->SetFactory(local_player_defaultFact);         
+            local_player->GetMesh()->SetFactory(local_player_defaultFact);
         }
 
         // Update factory
         local_player->factname = mesg.factname;
-       
-        
+
+
         // Update cal3d
         local_player->RefreshCal3d();
-       
+
         local_player->charApp->ApplyEquipment(local_player->equipment);
     }
 }
@@ -393,12 +393,12 @@ void psCelClient::HandleItem( MsgEntry* me )
     }
 
     GEMClientItem* newItem = new GEMClientItem( this, mesg );
-    
+
     // Handle item effect if there is one.
     HandleItemEffect(newItem->GetFactName(), newItem->GetMesh());
     UpdateShader(newItem->GetMesh());
 
-    entities.Push(newItem);    
+    entities.Push(newItem);
     entities_hash.Put(newItem->GetEID(), newItem);
 }
 
@@ -412,11 +412,11 @@ void psCelClient::HandleActionLocation( MsgEntry* me )
     if ( found )
     {
         Debug3(LOG_CELPERSIST, 0, "Found existing location<%s> object with %s, removing.\n", found->GetName(), ShowID(mesg.eid));
-        RemoveObject( found );        
+        RemoveObject( found );
     }
 
     GEMClientActionLocation * newAction = new GEMClientActionLocation( this, mesg );
-    entities.Push( newAction );   
+    entities.Push( newAction );
     actions.Push( newAction );
     entities_hash.Put (newAction->GetEID(), newAction);
 }
@@ -424,11 +424,11 @@ void psCelClient::HandleActionLocation( MsgEntry* me )
 void psCelClient::HandleObjectRemoval( MsgEntry* me )
 {
     psRemoveObject mesg(me);
-    
+
     ForceEntityQueues();
 
     GEMClientObject* entity = FindObject( mesg.objectEID );
-    
+
     if (entity)
     {
         RemoveObject(entity);
@@ -571,7 +571,7 @@ void psCelClient::RemoveObject(GEMClientObject* entity)
         Error1("Nearly deleted player's object");
         return;
     }
-    
+
     if ( psengine->GetCharManager()->GetTarget() == entity )
     {
         pawsWidget* widget = PawsManager::GetSingleton().FindWidget("InteractWindow");
@@ -581,7 +581,7 @@ void psCelClient::RemoveObject(GEMClientObject* entity)
             psengine->GetCharManager()->SetTarget(NULL, "select");
         }
     }
-  
+
     entityLabels->RemoveObject(entity);
     shadowManager->RemoveShadow(entity);
     pawsLootWindow* loot = (pawsLootWindow*)PawsManager::GetSingleton().FindWidget("LootWindow");
@@ -679,10 +679,10 @@ void psCelClient::HandleNameChange( MsgEntry* me )
     if (psengine->GetCharManager()->GetTarget() == object)
     {
         if (object->GetType() == GEM_ACTOR)
-            PawsManager::GetSingleton().Publish("sTargetName",((GEMClientActor*)object)->GetName(false) ); 
+            PawsManager::GetSingleton().Publish("sTargetName",((GEMClientActor*)object)->GetName(false) );
         else
-            PawsManager::GetSingleton().Publish("sTargetName",object->GetName() ); 
-    } 
+            PawsManager::GetSingleton().Publish("sTargetName",object->GetName() );
+    }
 }
 
 void psCelClient::HandleGuildChange( MsgEntry* me )
@@ -701,7 +701,7 @@ void psCelClient::HandleGuildChange( MsgEntry* me )
             Error2("Couldn't find actor %d!",id);
             continue;
         }
-    
+
         actor->SetGuildName(msg.newGuildName);
 
         // we don't have a label over our own char
@@ -714,7 +714,7 @@ void psCelClient::HandleGroupChange(MsgEntry* me)
 {
     psUpdatePlayerGroupMessage msg(me);
     GEMClientActor* actor = (GEMClientActor*)FindObject(msg.objectID);
-    
+
     //Apply the new name
     if(!actor)
     {
@@ -748,12 +748,12 @@ void psCelClient::HandleGroupChange(MsgEntry* me)
 void psCelClient::HandleStats( MsgEntry* me )
 {
     psStatsMessage msg(me);
-    
-    PawsManager::GetSingleton().Publish( "fmaxhp", msg.hp );    
-    PawsManager::GetSingleton().Publish( "fmaxmana", msg.mana );        
-    PawsManager::GetSingleton().Publish( "fmaxweight", msg.weight );    
-    PawsManager::GetSingleton().Publish( "fmaxcapacity", msg.capacity );    
-    
+
+    PawsManager::GetSingleton().Publish( "fmaxhp", msg.hp );
+    PawsManager::GetSingleton().Publish( "fmaxmana", msg.mana );
+    PawsManager::GetSingleton().Publish( "fmaxweight", msg.weight );
+    PawsManager::GetSingleton().Publish( "fmaxcapacity", msg.capacity );
+
 }
 
 void psCelClient::ForceEntityQueues()
@@ -795,14 +795,14 @@ void psCelClient::Update()
         UpdateShader(actor);
     }
 
-    shadowManager->UpdateShadows();   
+    shadowManager->UpdateShadows();
 }
 
 void psCelClient::UpdateShader(GEMClientActor* actor)
 {
     if(actor)
     {
-        UpdateShader(actor->GetMesh());           
+        UpdateShader(actor->GetMesh());
     }
 }
 
@@ -877,28 +877,28 @@ void psCelClient::UpdateShader(iMeshWrapper* mesh)
 void psCelClient::HandleMessage(MsgEntry *me)
 {
   switch ( me->GetType() )
-  {     
+  {
         case MSGTYPE_STATS:
         {
             HandleStats(me);
             break;
         }
-        
+
         case MSGTYPE_PERSIST_WORLD:
         {
             HandleWorld( me );
             break;
-        }    
-        
+        }
+
         case MSGTYPE_PERSIST_ACTOR:
         {
             newActorQueue.Push(me);
             break;
-        }   
-        
+        }
+
         case MSGTYPE_PERSIST_ITEM:
         {
-            if (!ignore_others) 
+            if (!ignore_others)
             {
                 newItemQueue.Push(me);
             }
@@ -910,7 +910,7 @@ void psCelClient::HandleMessage(MsgEntry *me)
             HandleActionLocation( me );
             break;
         }
-        
+
         case MSGTYPE_REMOVE_OBJECT:
         {
             HandleObjectRemoval( me );
@@ -939,7 +939,7 @@ void psCelClient::HandleMessage(MsgEntry *me)
         {
             Error1("CEL UNKNOWN MESSAGE!!!\n");
             break;
-        }                       
+        }
     }
 }
 
@@ -968,7 +968,7 @@ void psCelClient::OnRegionsDeleted(csArray<iCollection*>& regions)
             bool unresolved = true;
 
             iSector* sectorToBeDeleted = 0;
-            
+
             // Are all the sectors going to be unloaded?
             for(int i = 0;i<sectors->GetCount();i++)
             {
@@ -1117,25 +1117,25 @@ void psCelClient::UnattachObject( iObject* object, GEMClientObject* clientObject
 {
     csRef<psGemMeshAttach> attacher (CS::GetChildObject<psGemMeshAttach>(object));
     if (attacher)
-    {     
+    {
         if ( attacher->GetObject () == clientObject )
-        { 
+        {
             csRef<iObject> attacher_obj (scfQueryInterface<iObject> (attacher));
             object->ObjRemove (attacher_obj);
-        }            
+        }
     }
 }
 
 GEMClientObject* psCelClient::FindAttachedObject(iObject* object)
 {
     GEMClientObject* found = 0;
-    
+
     csRef<psGemMeshAttach> attacher (CS::GetChildObject<psGemMeshAttach>(object));
     if (attacher)
     {
         found = attacher->GetObject();
-    }    
-  
+    }
+
     return found;
 }
 
@@ -1143,9 +1143,9 @@ GEMClientObject* psCelClient::FindAttachedObject(iObject* object)
 csArray<GEMClientObject*> psCelClient::FindNearbyEntities (iSector* sector, const csVector3& pos, float radius, bool doInvisible)
 {
     csArray<GEMClientObject*> list;
-  
+
     csRef<iMeshWrapperIterator> obj_it = psengine->GetEngine()->GetNearbyMeshes (sector, pos, radius);
-  
+
     while (obj_it->HasNext ())
     {
         iMeshWrapper* m = obj_it->Next ();
@@ -1156,7 +1156,7 @@ csArray<GEMClientObject*> psCelClient::FindNearbyEntities (iSector* sector, cons
                 continue;
         }
         GEMClientObject* object = FindAttachedObject(m->QueryObject());
-        
+
         if (object)
         {
             list.Push(object);
@@ -1182,23 +1182,23 @@ GEMClientObject::GEMClientObject(psCelClient* cel, EID id) : eid(id)
 {
     if (!this->cel)
         this->cel = cel;
-                                
+
     eid = id;
     //entity = cel->GetPlLayer()->CreateEntity(id);
     entitylabel = NULL;
     shadow = 0;
     charApp = new psCharAppearance(psengine->GetObjectRegistry());
-}    
+}
 
 GEMClientObject::~GEMClientObject()
 {
     if(pcmesh)
     {
-        cel->UnattachObject(pcmesh->QueryObject(), this);            
+        cel->UnattachObject(pcmesh->QueryObject(), this);
         psengine->GetEngine()->RemoveObject (pcmesh);
-    }        
-    
-    //cel->GetPlLayer()->RemoveEntity( entity );        
+    }
+
+    //cel->GetPlLayer()->RemoveEntity( entity );
     delete charApp;
 }
 
@@ -1265,27 +1265,27 @@ bool GEMClientObject::InitMesh( const char *factname,
                               )
 {
     // Helm Mesh Check
-    // If there is helm specific item and we don't have any race yet, fall back to 
+    // If there is helm specific item and we don't have any race yet, fall back to
     // the stonebreaker model
-    csString replacement("stonebm");        
+    csString replacement("stonebm");
     if ( cel->GetMainPlayer() )
     {
         replacement = cel->GetMainPlayer()->helmGroup;
-    }                        
+    }
     psString factoryName(factname);
-    factoryName.ReplaceAllSubString("$H", replacement); 
-    
-    csRef<iMeshFactoryWrapper> factory = psengine->GetEngine()->GetMeshFactories()->FindByName (factoryName);             
+    factoryName.ReplaceAllSubString("$H", replacement);
+
+    csRef<iMeshFactoryWrapper> factory = psengine->GetEngine()->GetMeshFactories()->FindByName (factoryName);
     if ( !factory )
     {
         // Try loading the mesh again
         csString filename;
         if (!psengine->GetFileNameByFact(factoryName, filename))
         {
-            Error2( "Mesh Factory %s not found.\nTrying to use a sack instead.", factoryName.GetData() );            
+            Error2( "Mesh Factory %s not found.\nTrying to use a sack instead.", factoryName.GetData() );
             if (!psengine->GetFileNameByFact("items#sack02a", filename))
             {
-                Error1( "Replacement Mesh Factory items#sack02a not found.\nGiving up loading the mesh.");            
+                Error1( "Replacement Mesh Factory items#sack02a not found.\nGiving up loading the mesh.");
                 return false;
             }
         }
@@ -1301,38 +1301,38 @@ bool GEMClientObject::InitMesh( const char *factname,
             Error2( "Mesh Factory %s not found", factoryName.GetData() );
             return false;
         }
-     }    
+     }
 
     pcmesh = factory->CreateMeshWrapper();
     psengine->GetEngine()->GetMeshes()->Add(pcmesh);
-    
+
     if ( !pcmesh )
     {
         Error2("Could not create Item because could not load %s file into mesh.",factname);
         return false;
     }
-    
+
     csRef<iSpriteCal3DState> calstate =  scfQueryInterface<iSpriteCal3DState> (pcmesh->GetMeshObject());
     if (calstate)
         calstate->SetUserData((void *)this);
 
     charApp->SetMesh(pcmesh);
-    
+
     cel->AttachObject(pcmesh->QueryObject(), this);
-    
+
     return true;
 }
 
 void GEMClientObject::ChangeName(const char* name)
-{    
-    this->name = name;      
+{
+    this->name = name;
 }
 
 float GEMClientObject::RangeTo(GEMClientObject * obj, bool ignoreY)
 {
     csVector3 pos1 = this->GetPosition();
     csVector3 pos2 = obj->GetPosition();
- 
+
     if ( ignoreY )
     {
         return ( sqrt(  (pos1.x - pos2.x)*(pos1.x - pos2.x)+
@@ -1346,7 +1346,7 @@ float GEMClientObject::RangeTo(GEMClientObject * obj, bool ignoreY)
     }
 }
 
-GEMClientActor::GEMClientActor( psCelClient* cel, psPersistActor& mesg ) 
+GEMClientActor::GEMClientActor( psCelClient* cel, psPersistActor& mesg )
                : GEMClientObject( cel, mesg.entityid )
 {
     vel = 0;
@@ -1370,10 +1370,10 @@ GEMClientActor::GEMClientActor( psCelClient* cel, psPersistActor& mesg )
     serverMode = mesg.serverMode;
     alive = true;
     vitalManager = new psClientVitals;
-    
+
     if ( helmGroup.Length() == 0 )
         helmGroup = factname;
-    
+
     Debug3(LOG_CELPERSIST, 0, "Actor %s(%s) Received", mesg.name.GetData(), ShowID(mesg.entityid));
 
     if ( !InitMesh(mesg.factname, mesg.filename) )
@@ -1390,8 +1390,8 @@ GEMClientActor::GEMClientActor( psCelClient* cel, psPersistActor& mesg )
         linmove->SetDRData(mesg.on_ground,1.0f,mesg.pos,mesg.yrot,mesg.sector,mesg.vel,mesg.worldVel,mesg.ang_vel);
     else
         cel->HandleUnresolvedPos(this, mesg.pos, mesg.yrot, mesg.sectorName);
-    
-    
+
+
     InitCharData( mesg.texParts, mesg.equipment );
 
     RefreshCal3d();
@@ -1402,11 +1402,11 @@ GEMClientActor::GEMClientActor( psCelClient* cel, psPersistActor& mesg )
 
     // Move into position
     Move( mesg.pos, mesg.yrot, mesg.sectorName);
-    
+
     if (!control && (flags & psPersistActor::NAMEKNOWN))
         cel->GetEntityLabels()->OnObjectArrived(this);
     cel->GetShadowManager()->CreateShadow(this);
-    
+
     lastDRUpdateTime = 0;
 
     ready = false;
@@ -1415,17 +1415,17 @@ GEMClientActor::GEMClientActor( psCelClient* cel, psPersistActor& mesg )
 
 GEMClientActor::~GEMClientActor()
 {
-    delete vitalManager;    
+    delete vitalManager;
     delete linmove;
 }
 
 int GEMClientActor::GetAnimIndex (csStringHashReversible* msgstrings, csStringID animid)
 {
-    if (!cal3dstate) 
+    if (!cal3dstate)
     {
         return -1;
     }
-    
+
     int idx = anim_hash.Get (animid, -1);
     if (idx >= 0)
     {
@@ -1466,7 +1466,7 @@ csVector3 GEMClientActor::Pos()
     float yrot;
     linmove->GetLastPosition (pos,yrot, sector);
     return pos;
-}  
+}
 
 csVector3 GEMClientActor::Rot()
 {
@@ -1475,7 +1475,7 @@ csVector3 GEMClientActor::Rot()
     iSector* sector;
     linmove->GetLastPosition (pos,rot.y, sector);
     return rot;
-}  
+}
 
 iSector *GEMClientActor::GetSector()
 {
@@ -1573,9 +1573,9 @@ void GEMClientActor::SendDRUpdate(unsigned char priority, csStringHashReversible
         on_ground = true;
         speed = 0;
         vel = 0;
-        ang_vel = 0;         
+        ang_vel = 0;
     }
-    
+
     // Hack to guarantee out of order packet detection -- KWF
     //if (DRcounter%20 == 0)
     //{
@@ -1583,7 +1583,7 @@ void GEMClientActor::SendDRUpdate(unsigned char priority, csStringHashReversible
     //    hackflag = true;
     //}
 
-    // ++DRcounter is the sequencer of these messages so the server and other 
+    // ++DRcounter is the sequencer of these messages so the server and other
     // clients do not use out of date messages when delivered out of order.
     psDRMessage drmsg(0, mappedid,on_ground,0,++DRcounter,pos,yrot,sector,vel,worldVel,ang_vel,msgstrings);
     drmsg.msg->priority = priority;
@@ -1630,10 +1630,10 @@ void GEMClientActor::SetDRData(psDRMessage& drmsg)
     {
         psengine->GetCelClient()->HandleUnresolvedPos(this, drmsg.pos, drmsg.yrot, drmsg.sectorName);
     }
-    
+
     // Update character mode and idle animation
     SetCharacterMode(drmsg.mode);
-    
+
     // Update the animations to match velocity
     SetAnimationVelocity(drmsg.vel);
 }
@@ -1661,13 +1661,13 @@ bool GEMClientActor::InitCharData( const char* traits, const char* equipment )
 
     this->traits = traits;
     this->equipment = equipment;
-    
+
     csString trt(traits);
     csString equip(equipment);
-    
+
     charApp->ApplyTraits(trt);
     charApp->ApplyEquipment(equip);
-    return true;    
+    return true;
 }
 
 psLinearMovement * GEMClientActor::GetMovement()
@@ -1690,7 +1690,7 @@ bool GEMClientActor::InitLinMove(const csVector3& pos, float angle, const char* 
         linmove->SetPosition(pos,angle,sectorObj);
     else
         psengine->GetCelClient()->HandleUnresolvedPos(this, pos, angle, sector);
-        
+
     return true;  // right now this func never fail, but might later.
 }
 
@@ -1710,7 +1710,7 @@ bool GEMClientActor::SetAnimation(const char* anim, int duration)
         Error3("Didn't find animation '%s' for '%s'.",anim , GetName());
         return false;
     }
-    
+
     if (!cal3dstate->GetCal3DModel()->getCoreModel()->getCoreAnimation(animation))
     {
         Error3("Could not get core animation '%s' for '%s'.",anim , GetName());
@@ -1718,7 +1718,7 @@ bool GEMClientActor::SetAnimation(const char* anim, int duration)
     }
 
     float ani_duration = cal3dstate->GetCal3DModel()->getCoreModel()->getCoreAnimation(animation)->getDuration();
-    
+
     // Check if the duration demands more than 1 playback?
     if (duration > ani_duration)
     {
@@ -1726,10 +1726,10 @@ bool GEMClientActor::SetAnimation(const char* anim, int duration)
         int repeat = (int)(duration / ani_duration);
 
         csRef<iSpriteCal3DFactoryState> sprite =
-            
+
                                 scfQueryInterface<iSpriteCal3DFactoryState> (pcmesh->GetFactory()->GetMeshObjectFactory());
 
-                                
+
         vmAnimCallback* callback = new vmAnimCallback;
 
         // Stuff callback's face with what he needs.
@@ -1742,7 +1742,7 @@ bool GEMClientActor::SetAnimation(const char* anim, int duration)
             Error2("Failed to register callback for animation %s",anim);
             delete callback;
         }
-        
+
     }
 
     float fadein = 0.25;
@@ -1754,7 +1754,7 @@ bool GEMClientActor::SetAnimation(const char* anim, int duration)
         fadein = 0.0;
         fadeout = 1.5;
     }
-    
+
     //removes the idle_var animation if it's in execution to avoid interferences.
     cal3dstate->GetCal3DModel()->getMixer()->removeAction(cal3dstate->FindAnim("idle_var"));
 
@@ -1793,7 +1793,7 @@ void GEMClientActor::SetMode(uint8_t mode, bool newactor)
             // TODO: Get stance and set anim for that stance
             SetIdleAnimation("combat stand");
             break;
-            
+
         case psModeMessage::DEAD:
             cal3dstate->ClearAllAnims();
             cal3dstate->SetAnimAction("death",0.0f,1.0f);
@@ -1873,28 +1873,28 @@ const char* GEMClientActor::GetName(bool trueName)
 
 GEMClientItem::GEMClientItem( psCelClient* cel, psPersistItem& mesg )
                : GEMClientObject(cel, mesg.eid)
-{        
+{
     name = mesg.name;
     Debug3(LOG_CELPERSIST, 0, "Item %s(%s) Received", mesg.name.GetData(), ShowID(mesg.eid));
     type = mesg.type;
     factname = mesg.factname;
     solid = 0;
-    
+
     if ( !InitMesh(mesg.factname, mesg.filename) )
     {
         Error3("Fatal Error: Could not create item %s(%s)", mesg.name.GetData(), ShowID(mesg.eid));
         return;
     }
     Move(mesg.pos, mesg.yRot, mesg.sector);
-    
+
     if (mesg.flags & psPersistItem::COLLIDE)
     {
         solid = new psSolid(psengine->GetObjectRegistry());
         solid->SetMesh(pcmesh);
         solid->Setup();
     }
-    
-    
+
+
     cel->GetEntityLabels()->OnObjectArrived(this);
     cel->GetShadowManager()->CreateShadow(this);
 }
@@ -1904,9 +1904,9 @@ GEMClientItem::~GEMClientItem()
     delete solid;
 }
 
-GEMClientActionLocation::GEMClientActionLocation( psCelClient* cel, psPersistActionLocation& mesg ) 
+GEMClientActionLocation::GEMClientActionLocation( psCelClient* cel, psPersistActionLocation& mesg )
                : GEMClientObject(cel, mesg.eid)
-{        
+{
     name = mesg.name;
 
     Debug3(LOG_CELPERSIST, 0, "Action location %s(%s) Received", mesg.name.GetData(), ShowID(mesg.eid));
@@ -1920,7 +1920,7 @@ GEMClientActionLocation::GEMClientActionLocation( psCelClient* cel, psPersistAct
         Error1("Could not create GEMClientActionLocation because crystalspace.mesh.onbject.null could not be created.");
         return ;
     }
-    
+
     csRef<iNullMeshState> state =  scfQueryInterface<iNullMeshState> (pcmesh->GetMeshObject());
     if (!state)
     {
@@ -1928,7 +1928,7 @@ GEMClientActionLocation::GEMClientActionLocation( psCelClient* cel, psPersistAct
         return ;
     }
     state->SetRadius(1.0);
-    
+
     Move( csVector3(0,0,0), 0.0f, mesg.sector);
 
 }

@@ -36,6 +36,9 @@
 #include "msgmanager.h"             // Parent class
 #include "gmeventmanager.h"
 
+///This is used for petitions to choose if it's a player or a gm asking
+///to do a certain operation
+#define PETITION_GM 0xFFFFFFFF
 
 class psDatabase;
 class psSpawnManager;

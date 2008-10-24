@@ -79,7 +79,7 @@ bool pawsConfigCamera::SaveConfig()
 void pawsConfigCamera::SetDefault()
 {
     psengine->GetPSCamera()->LoadFromFile(true);
-	SetCameraValues(tree->GetRoot());
+    SetCameraValues(tree->GetRoot());
     dirty = true;
 }
 
@@ -215,27 +215,27 @@ void pawsConfigCamera::SetCameraValues(pawsTreeNode * subtreeRoot)
     if (rootAsSeq != NULL)
     {
         csString cammode = subtreeRoot->GetAttr("cammode");
-		int currCamMode = -1;
+        int currCamMode = -1;
         if (cammode == "First Person")
-		{
+        {
             currCamMode = psCamera::CAMERA_FIRST_PERSON;
-		}
+        }
         else if (cammode == "Third Person Follow")
-		{
+        {
             currCamMode = psCamera::CAMERA_THIRD_PERSON;
-		}
+        }
         else if (cammode == "Third Person M64")
-		{
+        {
             currCamMode = psCamera::CAMERA_M64_THIRD_PERSON;
-		}
+        }
         else if (cammode == "Third Person Lara")
-		{
+        {
             currCamMode = psCamera::CAMERA_LARA_THIRD_PERSON;
-		}
+        }
         else if (cammode == "Free Rotation")
-		{
+        {
             currCamMode = psCamera::CAMERA_FREE;
-		}
+        }
 
         if (!strcmp(subtreeRoot->GetAttr("type"), "onoff"))
         {
