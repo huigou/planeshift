@@ -1,6 +1,7 @@
 <General>
     <camsetting name="StartingCameraMode" value="1" />
     <camsetting name="UseCollisionDetection" value="on" />
+    <camsetting name="UseNPCCam" value="off" />
     <camsetting name="TransitionThreshold" value="1" />
 </General>
 <CameraTransition>

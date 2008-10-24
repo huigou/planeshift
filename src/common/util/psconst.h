@@ -25,6 +25,7 @@
 // hashes for our new integral types.  Those probably shouldn't be here either.
 #include <csutil/csstring.h>
 #include <csutil/hash.h>
+#include "psstdint.h" //Added to fix msvc build
 
 #define CS_PRIORITY_USE_CAMERA    true
 

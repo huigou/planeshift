@@ -142,7 +142,7 @@ class pawsSketchWindow : public pawsWidget, public psClientNetSubscriber,public 
            /            \_
         p0-----------------p3
 
-        2 lines would actually be enough to handle the bezier curve. 
+        2 lines would actually be enough to handle the bezier curve.
         Connecting p0-p1 and p3-p2: However, the usability would suffer since we can't move the "whole line" then.
         Connecting p1-p2 and p0-p3: Displaying this doesn't look good and usability suffers.
         */
@@ -152,7 +152,7 @@ class pawsSketchWindow : public pawsWidget, public psClientNetSubscriber,public 
         SketchLine p0p1;
         SketchLine p0p3;
         SketchLine p3p2;
-        
+
         SketchBezier(int x, int y, int x1, int y1, int x2, int y2, int x3, int y3, pawsSketchWindow *_parent)
         {
             this->parent = _parent;
@@ -204,7 +204,7 @@ protected:
     BezierWeights bezierWeights;
 
     int frame; // incremented each frame till 10 (to update selection without clicking)
-    
+
     pawsWidget* FeatherTool;
     pawsWidget* TextTool;
     pawsWidget* LineTool;
@@ -234,9 +234,9 @@ protected:
     void SaveSketch();
     void LoadSketch();
     bool isBadChar(char c);
-    
+
     csString toXML();
-    
+
     csString filenameSafe(const csString &original);
 
     csString sketchName;
@@ -277,6 +277,6 @@ public:
 CREATE_PAWS_FACTORY( pawsSketchWindow );
 
 
-#endif 
+#endif
 
 

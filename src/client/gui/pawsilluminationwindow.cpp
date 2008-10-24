@@ -82,8 +82,8 @@ iGraphics2D *pawsSketchWindow::GetG2D()
 }
 
 void pawsSketchWindow::SetToolbarButtons()
-{        
-    //hide useless widgets in the window so the sketch is more clean 
+{
+    //hide useless widgets in the window so the sketch is more clean
     //to whoever looks at it while not being the author
     if(readOnly)
     {
@@ -97,7 +97,7 @@ void pawsSketchWindow::SetToolbarButtons()
          if(FeatherTool)
             FeatherTool->Show();
         if(SaveButton)
-            SaveButton->Show();       
+            SaveButton->Show();
     }
 
     if(!editMode) //we aren't in edit mode, let's hide the unusable tools
@@ -151,7 +151,7 @@ void pawsSketchWindow::SetToolbarButtons()
 }
 
 void pawsSketchWindow::HandleMessage( MsgEntry* me )
-{   
+{
     editMode      = false;
     isResizable = false;
     stringPending = false;
@@ -161,7 +161,7 @@ void pawsSketchWindow::HandleMessage( MsgEntry* me )
     currentItemID = msg.ItemID;
     Notify4(LOG_PAWS,"Got Sketch for item %u: %s\nLimits:%s\n", msg.ItemID, msg.Sketch.GetData(), msg.limits.GetDataSafe());
     objlist.Empty();
-    
+
     dirty = false;
     ParseLimits(msg.limits);
     if(!ParseSketch(msg.Sketch))
@@ -169,11 +169,11 @@ void pawsSketchWindow::HandleMessage( MsgEntry* me )
         Hide();
         return;
     }
-    
+
     // if char does not have the right to edit (ie not the originator-artist)...
     if (!msg.rightToEdit)
         readOnly = true;
-    
+
     SetToolbarButtons();
 
     sketchName = msg.name;
@@ -224,7 +224,7 @@ void pawsSketchWindow::Draw()
 
     // The close button X overrides the clip region so we have to set it back here
     ClipToParent();
-    
+
     // if (editMode && !mouseDown) update "new selection" each nth frame
     if (editMode && !mouseDown && !colorPending)
     {
@@ -261,7 +261,7 @@ void pawsSketchWindow::Draw()
 
                         // Select new object
                         selectedIndex = i;
-                        objlist[i]->Select(true);                        
+                        objlist[i]->Select(true);
                         break;
                     }
                 }
@@ -303,7 +303,7 @@ void pawsSketchWindow::DrawColorWidgetText(const char *text, int x, int y, int c
     if (style & FONT_DROPSHADOW)
         graphics2D->Write( font, x+2, y+2, GetFontShadowColour(), -1, text );
 
-    graphics2D->Write( font, x, y, color, -1, text);    
+    graphics2D->Write( font, x, y, color, -1, text);
 }
 
 double pawsSketchWindow::CalcFunction(const char * functionName, const double * params)
@@ -461,9 +461,9 @@ bool pawsSketchWindow::OnKeyDown( int keyCode, int key, int modifiers )
                 colorPending = true;
                 pawsColorPromptWindow::Create("Select Colour", color,0,120, this, "SetColor", 1);
                 /* // Used for testing.
-				iGraphics2D *g2d = GetG2D();
+                iGraphics2D *g2d = GetG2D();
                 int color = objlist[selectedIndex]->color;
-                
+
                 if(color == -1)
                 {
                     color = 0;
@@ -471,7 +471,7 @@ bool pawsSketchWindow::OnKeyDown( int keyCode, int key, int modifiers )
 
                 int r, g, b;
                 g2d->GetRGB(color, r, g, b);
-                
+
                 g=b;
                 b=g;
                 r+=0xf;
@@ -487,7 +487,7 @@ bool pawsSketchWindow::OnKeyDown( int keyCode, int key, int modifiers )
 
         switch (keyCode)
         {
-            case CSKEY_DEL:     RemoveSelected();    
+            case CSKEY_DEL:     RemoveSelected();
                                 return true;
             case CSKEY_PGDN:    NextPrevIcon(1); // +1 is next
                                 return true;
@@ -524,14 +524,14 @@ void pawsSketchWindow::AddSketchText()
 
         // This window calls OnStringEntered when Ok is pressed.
         pawsStringPromptWindow::Create("New Text", csString(""),
-            false, 220, 20, this, "AddText");            
+            false, 220, 20, this, "AddText");
     }
 }
 
 void pawsSketchWindow::OnStringEntered(const char *name,int param,const char *value)
 {
     stringPending = false;
-    
+
     if (!value || !strlen(value))
         return;
 
@@ -646,7 +646,7 @@ void pawsSketchWindow::AddSketchIcon()
     }
 
     // printf("Adding sketch icon now.\n");
-    
+
     int x = (ScreenFrame().xmax - ScreenFrame().xmin)/2;
     int y = (ScreenFrame().ymax - ScreenFrame().ymin)/2;
 
@@ -696,7 +696,7 @@ void pawsSketchWindow::RemoveSelected()
     {
         objlist.DeleteIndex(selectedIndex);
         selectedIndex = SIZET_NOT_FOUND;
-		// We don't set the mouse pointer anymore. It flickered on setting/unsetting and made problems with the offset. (icon jumped on click)
+        // We don't set the mouse pointer anymore. It flickered on setting/unsetting and made problems with the offset. (icon jumped on click)
         //if (IsMouseDown()) //if the mouse is being used we need to restore it's shape
         //    PawsManager::GetSingleton().GetMouse()->ChangeImage("Skins Normal Mouse Pointer");
     }
@@ -721,7 +721,7 @@ void pawsSketchWindow::SaveSketch()
     unsigned int tempNumber = 0;
     //searchs for a free sketch slot in the user directory and write in it
     csString tempFileNameTemplate = "/planeshift/userdata/sketches/%s.xml", tempFileName;
-    if (filenameSafe(sketchName).Length()) 
+    if (filenameSafe(sketchName).Length())
     {
         tempFileName.Format(tempFileNameTemplate, filenameSafe(sketchName).GetData());
     }
@@ -737,7 +737,7 @@ void pawsSketchWindow::SaveSketch()
 
     vfs->WriteFile(tempFileName, xml, xml.Length());
     psSystemMessage msg(0, MSG_ACK, "Sketch saved to %s", tempFileName.GetData()+30 );
-    msg.FireEvent();			
+    msg.FireEvent();
 }
 
 void pawsSketchWindow::LoadSketch()
@@ -746,7 +746,7 @@ void pawsSketchWindow::LoadSketch()
     {
         stringPending = true;
 
-        //This window calls OnStringEntered when Ok is pressed. 
+        //This window calls OnStringEntered when Ok is pressed.
         //Asks to the user the file name of the sketch inside the sketches directory under their user directory
         pawsStringPromptWindow::Create("Enter local filename", "",
             false, 220, 20, this, "FileNameBox",0,true);
@@ -815,7 +815,7 @@ bool pawsSketchWindow::ParseLimits(const char *xmlstr)
 {
     csRef<iDocumentSystem>  xml;
     xml =  csQueryRegistry<iDocumentSystem> ( psengine->GetObjectRegistry() );
-    if (!xml) 
+    if (!xml)
         xml = csPtr<iDocumentSystem>(new csTinyDocumentSystem);
 
     csRef<iDocument> doc = xml->CreateDocument();
@@ -870,7 +870,7 @@ bool pawsSketchWindow::ParseSketch(const char *xmlstr, bool checklimits)
 {
     csRef<iDocumentSystem>  xml;
     xml =  csQueryRegistry<iDocumentSystem> ( psengine->GetObjectRegistry() );
-    if (!xml) 
+    if (!xml)
         xml = csPtr<iDocumentSystem>(new csTinyDocumentSystem);
 
     csRef<iDocument> doc = xml->CreateDocument();
@@ -893,19 +893,19 @@ bool pawsSketchWindow::ParseSketch(const char *xmlstr, bool checklimits)
         return false;
     }
     csRef<iDocumentNodeIterator> iter = topNode->GetNodes("page");
-    
+
     while ( iter->HasNext() )
     {
         csRef<iDocumentNode> node = iter->Next();
         MoveTo(GetActualWidth(node->GetAttributeValueAsInt("l")),GetActualHeight(node->GetAttributeValueAsInt("t")));
         screenFrame.SetSize(GetActualWidth(node->GetAttributeValueAsInt("w")),GetActualHeight(node->GetAttributeValueAsInt("h")));
-        
+
         defaultFrame.xmin = GetActualWidth(node->GetAttributeValueAsInt("l"));
         defaultFrame.ymin = GetActualHeight(node->GetAttributeValueAsInt("y"));
         int width  = GetActualWidth(node->GetAttributeValueAsInt("w"));
         int height = GetActualHeight(node->GetAttributeValueAsInt("h"));
         defaultFrame.SetSize(width, height);
-                
+
         csRef<iDocumentNodeIterator> pagenodes = node->GetNodes();
         while (pagenodes->HasNext() )
         {
@@ -924,7 +924,7 @@ bool pawsSketchWindow::ParseSketch(const char *xmlstr, bool checklimits)
             else if (type == "ln")
                 obj = new SketchLine;
             else if (type == "bc") // bezier curve
-                obj = new SketchBezier; 
+                obj = new SketchBezier;
             else
             {
                 Error2("Illegal sketch op <%s>.  Sketch cannot display.",type.GetDataSafe() );
@@ -947,10 +947,10 @@ bool pawsSketchWindow::ParseSketch(const char *xmlstr, bool checklimits)
         }
         /// TODO: Support multiple pages here.
     }
-    
-    
+
+
     OnResize();
-        
+
     return true;
 }
 
@@ -1004,7 +1004,7 @@ void pawsSketchWindow::SketchIcon::Draw()
     if (!selected || parent->IsMouseDown() || frame > 15) // blink icon only if it isn't dragged.
     {
         // replacing the mouse cursor with the icon flickers and makes the icon jump.
-        //if (!parent->IsMouseDown() || !selected) 
+        //if (!parent->IsMouseDown() || !selected)
             iconImage->Draw(parent->GetActualWidth(x) + parent->ScreenFrame().xmin,
                             parent->GetActualHeight(y) + parent->ScreenFrame().ymin,
                             parent->GetActualWidth(iconImage->GetWidth()),
@@ -1051,8 +1051,8 @@ bool pawsSketchWindow::SketchText::Load(iDocumentNode *node, pawsSketchWindow *p
         i++;
     }
     color = tot;
-    
-	this->parent = parent;
+
+    this->parent = parent;
     return true;
 }
 
@@ -1163,7 +1163,7 @@ void pawsSketchWindow::SketchLine::Draw()
 
     int black = graphics2D->FindRGB( 0,0,0 );
     int _color;
-    
+
     bool showBoxes, showFirstBox, showSecondBox;
     if(selected && !colorSet)
     {
@@ -1177,14 +1177,14 @@ void pawsSketchWindow::SketchLine::Draw()
     showBoxes = (!selected || (frame > 15 && !parent->mouseDown));
     showFirstBox = (showBoxes || dragMode == 2);
     showSecondBox = (showBoxes || dragMode == 1);
-    
+
 
     graphics2D->DrawLine( parent->GetActualWidth(x)+parent->ScreenFrame().xmin,
                           parent->GetActualHeight(y)+parent->ScreenFrame().ymin,
                           parent->GetActualWidth(x2)+parent->ScreenFrame().xmin,
                           parent->GetActualHeight(y2)+parent->ScreenFrame().ymin,
                           _color );
-    
+
     //if (parent->IsMouseDown() || !selected || frame > 15)
     //{
     if(showFirstBox)
@@ -1240,7 +1240,7 @@ bool pawsSketchWindow::SketchLine::IsHit(int mouseX, int mouseY)
     int xDiff, yDiff;
     xDiff = rect.xmax - rect.xmin;
     yDiff = rect.ymax - rect.ymin;
-    
+
     // give a chance to select horizontal Lines
     if(xDiff < 3)
     {
@@ -1312,7 +1312,7 @@ bool pawsSketchWindow::SketchBezier::Load(iDocumentNode *node, pawsSketchWindow 
     y3 = atoi(num.GetDataSafe());
 
     this->parent = parent;
-	p0p1.parent = parent;
+    p0p1.parent = parent;
     p0p1.x = x0; // point 0 (also start point)
     p0p1.y = y0;
     p0p1.x2 = x1; // point 1 (control point 1)
@@ -1329,7 +1329,7 @@ bool pawsSketchWindow::SketchBezier::Load(iDocumentNode *node, pawsSketchWindow 
     p3p2.y2 = y2;
     p3p2.x = x3; // point 2 (control point 2)
     p3p2.y = y3;
-    
+
     psString col = node->GetAttributeValue("col");
     col.Upcase();
     const char* colc = col.GetDataSafe();
@@ -1357,13 +1357,13 @@ void pawsSketchWindow::SketchBezier::WriteXml(csString& xml)
     if(color == -1)
     {
                             //x0 y0 x1 y1 x2 y2 x3 y3
-        add.Format("<bc pts=\"%d %d %d %d %d %d %d %d\"/>", p0p1.x, p0p1.y, p0p1.x2, p0p1.y2, 
+        add.Format("<bc pts=\"%d %d %d %d %d %d %d %d\"/>", p0p1.x, p0p1.y, p0p1.x2, p0p1.y2,
                                                             p3p2.x2, p3p2.y2, p3p2.x, p3p2.y);
     }
     else
     {
                             //x0 y0 x1 y1 x2 y2 x3 y3
-        add.Format("<bc pts=\"%d %d %d %d %d %d %d %d\" col=\"%X\"/>", p0p1.x, p0p1.y, p0p1.x2, p0p1.y2, 
+        add.Format("<bc pts=\"%d %d %d %d %d %d %d %d\" col=\"%X\"/>", p0p1.x, p0p1.y, p0p1.x2, p0p1.y2,
                                                                        p3p2.x2, p3p2.y2, p3p2.x, p3p2.y, color);
     }
     xml += add;
@@ -1401,17 +1401,17 @@ void pawsSketchWindow::SketchBezier::Draw()
         // draw those "handle lines" which aren't selected in another colour
         // main line: blue
         if(!p0p3.selected)
-        { 
+        {
              graphics2D->DrawLine( parent->GetActualWidth(p0p3.x)+parent->ScreenFrame().xmin,
                               parent->GetActualHeight(p0p3.y)+parent->ScreenFrame().ymin,
                               parent->GetActualWidth(p0p3.x2)+parent->ScreenFrame().xmin,
                               parent->GetActualHeight(p0p3.y2)+parent->ScreenFrame().ymin,
                               blue );
         }
-        
+
         // Handle 1: green
         if(!p0p1.selected)
-        { 
+        {
              graphics2D->DrawLine( parent->GetActualWidth(p0p1.x)+parent->ScreenFrame().xmin,
                               parent->GetActualHeight(p0p1.y)+parent->ScreenFrame().ymin,
                               parent->GetActualWidth(p0p1.x2)+parent->ScreenFrame().xmin,
@@ -1421,7 +1421,7 @@ void pawsSketchWindow::SketchBezier::Draw()
 
         // Handle 2: green
         if(!p3p2.selected)
-        { 
+        {
              graphics2D->DrawLine( parent->GetActualWidth(p3p2.x)+parent->ScreenFrame().xmin,
                               parent->GetActualHeight(p3p2.y)+parent->ScreenFrame().ymin,
                               parent->GetActualWidth(p3p2.x2)+parent->ScreenFrame().xmin,
@@ -1438,18 +1438,18 @@ void pawsSketchWindow::SketchBezier::Draw()
     segY = p0p1.y;
     // skip 0,1,2,3    we use the total array offset, thus *4; +4
     for(int i = 4; i < SKETCHBEZIER_SEGMENTS*4 /*resolution*/; i+=4)
-	{
+    {
         // This is how the unoptimized code would look (alike - if we have Math.Pow)
-		// P(t) = (1-t)^3P0 + 3(1-t)^2tP1 + 3(1-t)t^2P2 + t^3P3 with t running from 0 to 1.
+        // P(t) = (1-t)^3P0 + 3(1-t)^2tP1 + 3(1-t)t^2P2 + t^3P3 with t running from 0 to 1.
         //float t = ((float)i/(float)20);
         /*float fsegX = Math.Pow((1-t), 3) *p0p1.x
-			+ 3* t * Math.Pow((1-t), 2) *p0p1.x2
-			+ 3* Math.Pow(t, 2)*(1-t)*p3p2.x2
-			+ Math.Pow(t, 3)*p3p2.x;
+            + 3* t * Math.Pow((1-t), 2) *p0p1.x2
+            + 3* Math.Pow(t, 2)*(1-t)*p3p2.x2
+            + Math.Pow(t, 3)*p3p2.x;
         float fsegY = Math.Pow((1-t), 3) *p0p1.y
-			+ 3* t * Math.Pow((1-t), 2) *p0p1.y2
-			+ 3* Math.Pow(t, 2)*(1-t)*p3p2.y2
-			+ Math.Pow(t, 3)*p3p2.y;*/
+            + 3* t * Math.Pow((1-t), 2) *p0p1.y2
+            + 3* Math.Pow(t, 2)*(1-t)*p3p2.y2
+            + Math.Pow(t, 3)*p3p2.y;*/
 
         float fsegX = parent->bezierWeights.Get(i) * p0p1.x +
                       parent->bezierWeights.Get(i+1) * p0p1.x2 +
@@ -1469,7 +1469,7 @@ void pawsSketchWindow::SketchBezier::Draw()
         }
         else
         {
-		    segX = (int)(fsegX + 0.5);
+            segX = (int)(fsegX + 0.5);
             segY = (int)(fsegY + 0.5);
         }
 
@@ -1478,7 +1478,7 @@ void pawsSketchWindow::SketchBezier::Draw()
                           parent->GetActualWidth(segX1)+parent->ScreenFrame().xmin,
                           parent->GetActualHeight(segY1)+parent->ScreenFrame().ymin,
                           _color );
-	}
+    }
 
     // no need to calculate the last point either
     if(SKETCHBEZIER_SEGMENTS&1)
@@ -1503,7 +1503,7 @@ bool pawsSketchWindow::SketchBezier::IsHit(int mouseX, int mouseY)
     p0p3.Select(false);
     p0p1.Select(false);
     p3p2.Select(false);
-    
+
     if(p0p3.IsHit(mouseX, mouseY))
     {
         p0p3.Select(true);
@@ -1547,7 +1547,7 @@ void pawsSketchWindow::SketchLine::UpdatePosition(int _x, int _y)
     rect.ymin = 0;
 
     rect.Normalize();
-    
+
     // _x, _y are already expected to be RELATIVE!
     dx = _x;
     dy = _y;

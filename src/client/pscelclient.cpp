@@ -1328,7 +1328,23 @@ void GEMClientObject::ChangeName(const char* name)
     this->name = name;      
 }
 
+float GEMClientObject::RangeTo(GEMClientObject * obj, bool ignoreY)
+{
+    csVector3 pos1 = this->GetPosition();
+    csVector3 pos2 = obj->GetPosition();
  
+    if ( ignoreY )
+    {
+        return ( sqrt(  (pos1.x - pos2.x)*(pos1.x - pos2.x)+
+                    (pos1.z - pos2.z)*(pos1.z - pos2.z)));
+    }
+    else
+    {
+        return ( sqrt(  (pos1.x - pos2.x)*(pos1.x - pos2.x)+
+                    (pos1.y - pos2.y)*(pos1.y - pos2.y)+
+                    (pos1.z - pos2.z)*(pos1.z - pos2.z)));
+    }
+}
 
 GEMClientActor::GEMClientActor( psCelClient* cel, psPersistActor& mesg ) 
                : GEMClientObject( cel, mesg.entityid )
