@@ -125,7 +125,7 @@ public:
      *   @param pos The new camera position for the current mode
      */
     void SetPosition(const csVector3& pos, int mode = -1);
-    
+
     /** returns the current position of the camera (different for each mode)
      *   @return The current camera position for the current mode
      */
@@ -135,7 +135,7 @@ public:
      *   @param tar The new camera target for the current mode
      */
     void SetTarget(const csVector3& tar, int mode = -1);
-    
+
     /** returns the current position of the camera (different for each mode)
      *   @return The current camera target for the current mode
      */
@@ -164,7 +164,7 @@ public:
      *   @return The current camera mode
      */
     int GetCameraMode() const;
-    
+
     /** returns the current camera mode (text description)
      *   @return A csString describing the current camera mode
      */
@@ -174,7 +174,7 @@ public:
      *   @return An iCamera that CS uses
      */
     iCamera *GetICamera();
-    
+
     /** returns the CS viewport
      *   @return an iView of this camera's CS viewport
      */
@@ -306,7 +306,7 @@ public:
      *   @param mode Optional - the camera mode to set the data (leave blank for current)
      */
     void SetMinDistance(float dist, int mode = -1);
-    
+
     /** returns the max distance from the camera position to the target
      *   @param mode Optional - the camera mode to get the data from (leave blank for current)
      *   @return the max distance
@@ -318,7 +318,7 @@ public:
      *   @param mode Optional - the camera mode to set the data (leave blank for current)
      */
     void SetMaxDistance(float dist, int mode = -1);
-    
+
     /** returns the turning speed of the camera (ignored for most camera modes)
      *   @param mode Optional - the camera mode to get the data from (leave blank for current)
      *   @return the turning speed
@@ -426,7 +426,7 @@ public:
      *   @return the swing coefficient
      */
     float GetSwingCoef(int mode = -1) const;
-    
+
     /** sets the swing coefficient of the specific camera mode
      *   @param swingCoef the new swing coefficient
      *   @param mode Optional - the camera mode to get the data from (leave blank for current)
@@ -480,7 +480,7 @@ private:
         float springCoef;
         float InertialDampeningCoef;
         float springLength;
-        
+
         float swingCoef;
     };
 
@@ -527,7 +527,7 @@ private:
      *   @param deltaIdealPos the difference between the last idealPos and the current one (velocity) - this is used for inertial dampening
      *   @param deltaTime the elapsed time (in seconds)
      *   @param springCoef this is basically the springyness of the spring, as this value rises the spring becomes stronger and more rigid
-     *   @param dampCoef this restricts/opposes movement of idealPos 
+     *   @param dampCoef this restricts/opposes movement of idealPos
      *   @param springLength this is the length of the spring, if the scale of the world increased 10x, this parameter would be increased 10x (leaving the others alone) to get the same physics
      *   @return the new position
      */
@@ -544,7 +544,7 @@ private:
      *   @param deltaIdeal the difference between the last ideal and the current (velocity) - this is used for inertial dampening
      *   @param deltaTime the elapsed time (in seconds)
      *   @param springCoef this is basically the springyness of the spring, as this value rises the spring becomes stronger and more rigid
-     *   @param dampCoef this restricts/opposes movement of idealPos 
+     *   @param dampCoef this restricts/opposes movement of idealPos
      *   @param springLength this is the length of the spring, if the scale of the world increased 10x, this parameter would be increased 10x (leaving the others alone) to get the same physics
      *   @return the new floating point
      */
@@ -589,7 +589,7 @@ private:
      *   @return an angle between 0 and 2*PI
      */
     float SaturateAngle(float angle) const;
-    
+
     /** clones camera data from one mode to another
      *   @param fromMode the camera mode to get the data from (not optional, but setting to -1 will use the current mode)
      *   @param toMode Optional - the camera mode to set the data (leave blank for current)
@@ -623,7 +623,7 @@ private:
     csVector3 firstPersonPositionOffset;
     csVector3 thirdPersonPositionOffset;
 
-    /* if the squared difference between the actual camera position and the ideal position is less than this, 
+    /* if the squared difference between the actual camera position and the ideal position is less than this,
      * then we're no longer in the transition phase.
      */
     float transitionThresholdSquared;
@@ -650,7 +650,7 @@ private:
 
     /// viewport used by CS
     csRef<iView> view;
-    
+
     /// virtual clock to keep track of the ticks passed between frames
     csRef<iVirtualClock> vc;
 

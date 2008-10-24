@@ -83,7 +83,7 @@ psCamera::psCamera()
     camData[CAMERA_FIRST_PERSON].minDistance = 1.0f;
     camData[CAMERA_FIRST_PERSON].turnSpeed = 0.0f;
     camData[CAMERA_FIRST_PERSON].swingCoef = 0.0f;
-    
+
     camData[CAMERA_THIRD_PERSON].springCoef = 3.5f;
     camData[CAMERA_THIRD_PERSON].InertialDampeningCoef = 0.25f;
     camData[CAMERA_THIRD_PERSON].springLength = 0.01f;
@@ -115,7 +115,7 @@ psCamera::psCamera()
     camData[CAMERA_FREE].maxDistance = 16.0f;
     camData[CAMERA_FREE].turnSpeed = 0.0f;
     camData[CAMERA_FREE].swingCoef = 0.0f;
-    
+
     camData[CAMERA_ACTUAL_DATA].springCoef = 0.0f;
     camData[CAMERA_ACTUAL_DATA].InertialDampeningCoef = 0.0;
     camData[CAMERA_ACTUAL_DATA].springLength = 0.01f;
@@ -219,12 +219,12 @@ const float CAM_MODE_SCALE[psCamera::CAMERA_MODES_COUNT] = {
 const char * psCamera::HandleCommand(const char *cmd)
 {
     WordArray words(cmd);
-    
+
     GEMClientObject* target = psengine->GetCharManager()->GetTarget();
 
     if (words.GetCount() == 0 || !target || !useNPCCam || target == actor)
         return 0;
-    
+
     // enable npc mode if the targeted npc is in talking distance
     if(GetCameraMode() != CAMERA_NPCTALK && actor->RangeTo(target, false) < NPC_MODE_DISTANCE)
     {
@@ -541,7 +541,7 @@ bool psCamera::LoadFromFile(bool useDefault, bool overrideCurrent)
             }
         }
     }
-    
+
     cameraInitialized = true;
     return true;
 }
@@ -571,7 +571,7 @@ bool psCamera::SaveToFile()
     xml += "    <camsetting name=\"SpringCoefficient\" value=\"";       xml += GetSpringCoef(CAMERA_COLLISION);            xml += "\" />\n";
     xml += "    <camsetting name=\"DampeningCoefficient\" value=\"";    xml += GetDampeningCoef(CAMERA_COLLISION);         xml += "\" />\n";
     xml += "</CollisionBuffer>\n";
-    
+
     xml += "<FirstPerson>\n";
     xml += "    <camsetting name=\"SpringLength\" value=\"";            xml += GetSpringLength(CAMERA_FIRST_PERSON);        xml += "\" />\n";
     xml += "    <camsetting name=\"SpringCoefficient\" value=\"";       xml += GetSpringCoef(CAMERA_FIRST_PERSON);          xml += "\" />\n";
@@ -911,7 +911,7 @@ iMeshWrapper *psCamera::Get3DPointFrom2D(int x, int y, csVector3 * worldCoord, c
                            vo, end, true, closest_tri, isect, &sel);
         if (dist < 0)
             return NULL;
-        
+
         if (worldCoord != 0)
             *worldCoord = isect;
         if (untransfCoord)
@@ -937,11 +937,11 @@ iMeshWrapper* psCamera::FindMeshUnder2D(int x, int y, csVector3 *pos, int *poly)
     if(!sector) {
         return NULL;
     }
-  
+
     // RS: when in mouselook mode, do not use the mouse x,y coords ... the
     // mouse is pinned to the center of the screen in this case, and the mesh
     // at this position will be the player
-    if (psengine->GetCharControl() && 
+    if (psengine->GetCharControl() &&
         psengine->GetCharControl()->GetMovementManager()->MouseLook() &&
         currCameraMode != CAMERA_FIRST_PERSON )
     {
@@ -950,15 +950,15 @@ iMeshWrapper* psCamera::FindMeshUnder2D(int x, int y, csVector3 *pos, int *poly)
         csVector3 isect;
         float actorYRot;
         iSector* sector;
-        
+
         psCelClient * cel = psengine->GetCelClient();
-        if(!cel) 
+        if(!cel)
         {
             return 0;
         }
-        
-        GEMClientObject* myEntity = cel->GetMainPlayer();        
-        if(!myEntity) 
+
+        GEMClientObject* myEntity = cel->GetMainPlayer();
+        if(!myEntity)
         {
             return 0;
         }
@@ -980,12 +980,12 @@ iMeshWrapper* psCamera::FindMeshUnder2D(int x, int y, csVector3 *pos, int *poly)
         for (size_t i = 0; i < entityCount; ++i)
         {
             GEMClientObject* entity = entities[i];
-            
+
             if ( (entity == myEntity) || !entity)
             {
                 continue;
-            }                            
-            
+            }
+
             csRef<iMeshWrapper> mesh = entity->GetMesh();
             csVector3 objPos = mesh->GetMovable()->GetPosition();
 
@@ -1000,15 +1000,15 @@ iMeshWrapper* psCamera::FindMeshUnder2D(int x, int y, csVector3 *pos, int *poly)
              * for a 45 degree angle. Ignore height for now.
              * a * s + b * c + dx = 0;  ||  a * c + b * s + dz = 0;
              */
-            if( s == 0.0 ) 
+            if( s == 0.0 )
             {
                 a = (-dz) / c; b = (-dx) / c;
-            } 
-            else if( c == 0.0 ) 
+            }
+            else if( c == 0.0 )
             {
                 a = (-dx) / s; b = (-dz) / s;
-            } 
-            else 
+            }
+            else
             {
                 a = (dx / c - dz / s) / (c/s - s/c);
                 b = (dx / s - dz / c) / (s/c - c/s);
@@ -1018,17 +1018,17 @@ iMeshWrapper* psCamera::FindMeshUnder2D(int x, int y, csVector3 *pos, int *poly)
             float score = fabs(b) + fabs(a);
 
             // outside the view cone gets a bad score
-            if( fabs(b) > fabs(a) ) 
+            if( fabs(b) > fabs(a) )
             {
                  score = score + 10;
             }
             // and even worse at the back of the player
-            if( a < 0.0 ) 
+            if( a < 0.0 )
             {
                  score = score + 30;
             }
 
-            if( score < optRange) 
+            if( score < optRange)
             {
                 bestMesh = mesh;
                 bestPos = objPos;
@@ -1038,21 +1038,21 @@ iMeshWrapper* psCamera::FindMeshUnder2D(int x, int y, csVector3 *pos, int *poly)
         if ( pos != NULL && bestMesh )
         {
             *pos = bestPos;
-        }            
+        }
         return (bestMesh);
-    } 
-    else 
+    }
+    else
     {
         vo = GetICamera()->GetTransform().GetO2TTranslation();
         csVector3 end = vo + (vw-vo)*100;
-        csSectorHitBeamResult result; 
+        csSectorHitBeamResult result;
 
         result = sector->HitBeamPortals( vo, end );
         //iMeshWrapper* sel = sector->HitBeamPortals(vo, end, isect, poly);
         if ( pos != NULL )
         {
             *pos = result.isect;
-        }            
+        }
         return result.mesh;
     }
     return NULL;
@@ -1326,7 +1326,7 @@ void psCamera::UseFixedDistanceClipping(float dist)
 {
     distanceCfg.adaptive = false;
     distanceCfg.dist = (int)dist;
-    SetDistanceClipping(dist);    
+    SetDistanceClipping(dist);
 }
 
 void psCamera::UseAdaptiveDistanceClipping(int minFPS, int maxFPS, int minDist)
@@ -1422,7 +1422,7 @@ void psCamera::DoCameraIdealCalcs(const csTicks elapsedTicks, const csVector3& a
                 SetCameraMode(lastCameraMode);
                 break;
             }
-            
+
             csVector3 targetPos = npcModeTarget->GetMesh()->GetMovable()->GetFullPosition();
             targetPos.y += npcModeTarget->GetMesh()->GetWorldBoundingBox().MaxY();
             csVector3 charPos = actorPos;
@@ -1471,7 +1471,7 @@ csVector3 psCamera::CalcCollisionPos(const csVector3& pseudoTarget, const csVect
 
             //iMeshWrapper* mesh = sector->HitBeamPortals(modifiedTarget, pseudoPosition, isect, &sel);
             //
-            iMeshWrapper * mesh;    
+            iMeshWrapper * mesh;
             csColliderHelper::TraceBeam(cdsys, sector, modifiedTarget, pseudoPosition, true, closest_tri, isect, &mesh);
             if (mesh)
             {
@@ -1503,7 +1503,7 @@ void psCamera::DoElasticPhysics(bool isElastic, const csTicks elapsedTicks, cons
     if (isElastic)
     {
         csVector3 newPseudoPos = CalcCollisionPos(GetTarget(), GetPosition(), sector);
-    
+
         float cameraSpringCoef, cameraInertialDampeningCoef, cameraSpringLength;
     if (hasCollision)
     {

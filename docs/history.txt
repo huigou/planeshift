@@ -9,6 +9,8 @@
 - Added a missing newline from pawseditor config file
 - Enabled again the NPC CAMERA and fixed various problems with it patch by peeg
   fixing FS#2393 - Reviving the special camera mode when talking to NPCs
+- Added some defines for those values retaining on -1 for pids and 
+  using 0xFFFFFFFF in place in order to mantain coherency with recent fixes
 - Identation/trailing spaces improvement/fixes in various files
 
 *** 2008-10-23 by Andrew Dai

@@ -38,6 +38,8 @@
 //=============================================================================
 #include "msgmanager.h"   // Subscriber class
 
+#define OWNER_ALL 0xFFFFFFFF
+
 
 class Client;
 class psDatabase;
