@@ -1,7 +1,7 @@
 /*
 * npcmanager.cpp by Keith Fulton <keith@paqrat.com>
 *
-* Copyright (C) 2003 Atomic Blue (info@planeshift.it, http://www.atomicblue.org) 
+* Copyright (C) 2003 Atomic Blue (info@planeshift.it, http://www.atomicblue.org)
 *
 *
 * This program is free software; you can redistribute it and/or
@@ -102,8 +102,8 @@ public:
     double elapsedTime;
     csString curDate;
 
-    PetOwnerSession() 
-    { 
+    PetOwnerSession()
+    {
         manager = NULL;
         owner = NULL;
         elapsedTime = 0.0f;
@@ -113,27 +113,27 @@ public:
     PetOwnerSession( NPCManager *mgr, gemActor *owner, psCharacter* pet)
     {
         manager = mgr;
-        
+
         if ( owner )
         {
             this->ownerID = owner->GetCharacterData()->GetPID();
             this->owner = owner;
             this->owner->RegisterCallback( this );
         }
-        
+
         if ( pet )
         {
             this->petID = pet->GetPID();
         }
-        
+
         if ( owner && pet )
         {
             CPrintf(CON_DEBUG, "Created PetSession (%s, %s)\n", owner->GetName(), ShowID(pet->GetPID()));
         }
-        
+
         elapsedTime = 0.0f;
         isActive = true;
-        
+
         /// Get pet characterdata
         if ( pet )
         {
@@ -142,7 +142,7 @@ public:
             {
                 curDate = last_login.Truncate( 10 ); // YYYY-MM-DD
                 CPrintf(CON_DEBUG,"Last Logged Date : %s\n", curDate.GetData() );
-                
+
                 csString curTime ;
                 pet->GetLastLoginTime().SubString(curTime, 11 );
                 CPrintf(CON_DEBUG,"Last Logged time : %s\n", curTime.GetData() );
@@ -163,12 +163,12 @@ public:
 
     };
 
-    virtual ~PetOwnerSession() 
+    virtual ~PetOwnerSession()
     {
-        if ( owner ) 
+        if ( owner )
             owner->UnregisterCallback( this );
     };
-    
+
     /// Renable Time tracking for returning players
     void Reconnect( gemActor *owner )
     {
@@ -178,20 +178,20 @@ public:
             {
                 owner->UnregisterCallback( this );
             }
-            
+
             this->owner = owner;
             this->owner->RegisterCallback( this );
         }
     };
 
-	/// Disable time tracking for disconnected clients
+    /// Disable time tracking for disconnected clients
     virtual void DeleteObjectCallback(iDeleteNotificationObject * object)
     {
         gemActor *sender = (gemActor *)object;
-        
+
         if ( sender && sender == owner )
         {
-            if ( owner ) 
+            if ( owner )
             {
                 owner->UnregisterCallback( this );
                 owner = NULL;
@@ -207,10 +207,10 @@ public:
         if ( owner && isActive)
         {
             this->elapsedTime += elapsed;
-            
+
             //Update Session status using new elpasedTime values
             CheckSession();
-            
+
             size_t numPets = owner->GetClient()->GetNumPets();
             // Check to make sure this pet is still summoned
             for( size_t i = 0; i < numPets; i++ )
@@ -297,7 +297,7 @@ public:
             // Max Pet Time Script isn't loaded, so load it
             maxPetTime = psserver->GetMathScriptEngine()->FindScript("CalculateMaxPetTime");
         }
-        
+
         if ( maxPetTime )
         {
             MathScriptVar* actorvar  = maxPetTime->GetOrCreateVar("Actor");
@@ -342,7 +342,7 @@ NPCManager::NPCManager(ClientConnectionSet *pCCS,
     psserver->GetEventManager()->Subscribe(this,MSGTYPE_NPCAUTHENT,REQUIRE_ANY_CLIENT);
     psserver->GetEventManager()->Subscribe(this,MSGTYPE_NPCOMMANDLIST,REQUIRE_ANY_CLIENT);
     psserver->GetEventManager()->Subscribe(this,MSGTYPE_NPC_COMMAND,REQUIRE_ANY_CLIENT);
-    
+
     psserver->GetEventManager()->Subscribe(this,MSGTYPE_DAMAGE_EVENT,NO_VALIDATION);
     psserver->GetEventManager()->Subscribe(this,MSGTYPE_DEATH_EVENT,NO_VALIDATION);
     psserver->GetEventManager()->Subscribe(this,MSGTYPE_PET_COMMAND,REQUIRE_ANY_CLIENT);
@@ -370,7 +370,7 @@ bool NPCManager::Initialize()
     {
         Error1("No CalculateMaxPetRange script!");
         return false;
-    }    
+    }
     varRangeEmpathySkill = petRangeScript->GetOrCreateVar("Skill");
     varMaxRange          = petRangeScript->GetOrCreateVar("MaxRange");
 
@@ -440,7 +440,7 @@ void NPCManager::HandleMessage(MsgEntry *me,Client *client)
             break;
         }
     }
-}    
+}
 
 void NPCManager::HandleDamageEvent(MsgEntry *me)
 {
@@ -468,7 +468,7 @@ void NPCManager::HandleConsoleCommand(MsgEntry *me)
 
     psServerCommandMessage msg(me);
     printf("Got command: %s\n", msg.command.GetDataSafe() );
-    
+
     size_t i = msg.command.FindFirst(' ');
     csString word;
     msg.command.SubString(word,0,i);
@@ -482,7 +482,7 @@ void NPCManager::HandleConsoleCommand(MsgEntry *me)
     }
     else
     {
-        buffer = cmd ? "That command is not allowed to be executed remotely" 
+        buffer = cmd ? "That command is not allowed to be executed remotely"
                      : "No command by that name.  Please try again.";
     }
     printf(buffer);
@@ -524,7 +524,7 @@ void NPCManager::HandleAuthentRequest(MsgEntry *me)
     {
         psDisconnectMessage disconnectMsg(client->GetClientNum(), 0, "Server not ready");
         psserver->GetEventManager()->Broadcast(disconnectMsg.msg, NetBase::BC_FINALPACKET);
-        
+
         if (psserver->HasBeenReady())
         {
             // Locked
@@ -548,9 +548,9 @@ void NPCManager::HandleAuthentRequest(MsgEntry *me)
         psDisconnectMessage disconnectMsg(client->GetClientNum(), 0, "Empty username.");
         psserver->GetEventManager()->Broadcast(disconnectMsg.msg, NetBase::BC_FINALPACKET);
         Error1("No username specified.\n");
-        return;   
+        return;
     }
- 
+
     msg.sUser.Downcase();
     msg.sUser.SetAt(0,toupper(msg.sUser.GetAt(0)));
 
@@ -560,22 +560,22 @@ void NPCManager::HandleAuthentRequest(MsgEntry *me)
 
     Notify2(LOG_SUPERCLIENT, "Check Superclient Login for: '%s'\n", (const char*)msg.sUser);
     psAccountInfo *acctinfo=CacheManager::GetSingleton().GetAccountInfoByUsername((const char *)msg.sUser);
-    
+
     if (clients->FindAccount(acctinfo->accountid, client->GetClientNum()))  // username already logged in
     {
         // invalid
         // psserver->RemovePlayer(me->clientnum,"You are already logged on to this server. If you were disconnected, please wait 30 seconds and try again.");
         psDisconnectMessage disconnectMsg(client->GetClientNum(), 0, "Already logged in.");
         psserver->GetEventManager()->Broadcast(disconnectMsg.msg, NetBase::BC_FINALPACKET);
-        
+
         Error2("User '%s' authentication request rejected: User already logged in.\n",
                (const char *)msg.sUser);
-        
+
         return;
     }
 
     csString password = csMD5::Encode(msg.sPassword).HexString();
-    
+
     if (acctinfo==NULL || strcmp(acctinfo->password,(const char *)password)) // authentication error
     {
         if (acctinfo==NULL)
@@ -702,7 +702,7 @@ void NPCManager::SendNPCList(Client *client)
 
         // NPC Client is now ready so add onto superclients list
         client->SetReady(true);
-		superclients.Push(PublishDestination(client->GetClientNum(), client, 0, 0));
+        superclients.Push(PublishDestination(client->GetClientNum(), client, 0, 0));
     }
     else
     {
@@ -713,7 +713,7 @@ void NPCManager::SendNPCList(Client *client)
 void NPCManager::HandleCommandList(MsgEntry *me)
 {
     psNPCCommandsMessage list(me);
-    
+
     if (!list.valid)
     {
         Debug2(LOG_NET,me->clientnum,"Could not parse psNPCCommandsMessage from client %u.\n",me->clientnum);
@@ -743,11 +743,11 @@ void NPCManager::HandleCommandList(MsgEntry *me)
                     Error2("Received incomplete CMD_DRDATA from NPC client %u.\n",me->clientnum);
                     break;
                 }
-                
+
                 psDRMessage drmsg(data,len,
                                   CacheManager::GetSingleton().GetMsgStrings(),
                                   EntityManager::GetSingleton().GetEngine());  // alternate method of cracking
-                
+
                 // copy the DR data into an iDataBuffer
                 csRef<iDataBuffer> databuf = csPtr<iDataBuffer> (new csDataBuffer (len));
                 memcpy(databuf->GetData(), data, len);
@@ -757,11 +757,11 @@ void NPCManager::HandleCommandList(MsgEntry *me)
                 if (!actor)
                 {
                     Error2("Illegal %s from superclient!\n", ShowID(drmsg.entityid));
-                    
+
                 }
                 else if (!actor->IsAlive())
                 {
-                    Debug3(LOG_SUPERCLIENT, actor->GetPID().Unbox(), "Ignoring DR data for dead npc %s(%s).\n", 
+                    Debug3(LOG_SUPERCLIENT, actor->GetPID().Unbox(), "Ignoring DR data for dead npc %s(%s).\n",
                            actor->GetName(), ShowID(drmsg.entityid));
                 }
                 else
@@ -770,12 +770,12 @@ void NPCManager::HandleCommandList(MsgEntry *me)
                     actor->SetDRData(drmsg);
                     // Now multicast to other clients
                     actor->UpdateProxList();
-                    
+
                     actor->MulticastDRUpdate();
                     if(drmsg.vel.y < -20 || drmsg.pos.y < -1000)                   //NPC has fallen down
                     {
                         // First print out what happend
-                        CPrintf(CON_DEBUG, "Received bad DR data from NPC %s(%s %s), killing NPC.\n", 
+                        CPrintf(CON_DEBUG, "Received bad DR data from NPC %s(%s %s), killing NPC.\n",
                                 actor->GetName(), ShowID(drmsg.entityid), ShowID(actor->GetPID()));
                         csVector3 pos;
                         float yrot;
@@ -814,7 +814,7 @@ void NPCManager::HandleCommandList(MsgEntry *me)
                         {
                             psserver->combatmanager->StopAttack(attacker);
                         }
-                        
+
                         if(target_id==0)
                         {
                             Debug2(LOG_SUPERCLIENT, attacker_id.Unbox(), "%s has stopped attacking.\n", attacker->GetName());
@@ -930,7 +930,7 @@ void NPCManager::HandleCommandList(MsgEntry *me)
                     Debug1(LOG_SUPERCLIENT,0,"Couldn't find character data.\n");
                     break;
                 }
-                
+
                 gemItem *gItem = dynamic_cast<gemItem *> (GEMSupervisor::GetSingleton().FindObject(item_id));
                 psItem *item = NULL;
                 if (gItem) item = gItem->GetItem();
@@ -939,7 +939,7 @@ void NPCManager::HandleCommandList(MsgEntry *me)
                     Debug1(LOG_SUPERCLIENT,0,"Couldn't find item data.\n");
                     break;
                 }
-                
+
                 // If the entity is in range of the item AND the item may be picked up, and check for dead user
                 if ( gEntity->IsAlive() && (gItem->RangeTo( gEntity ) < RANGE_TO_SELECT) && gItem->IsPickable())
                 {
@@ -958,7 +958,7 @@ void NPCManager::HandleCommandList(MsgEntry *me)
                         // TODO: Handle of pickup of partial stacks.
                     }
                 }
-                
+
                 break;
             }
             case psNPCCommandsMessage::CMD_EQUIP:
@@ -967,7 +967,7 @@ void NPCManager::HandleCommandList(MsgEntry *me)
                 csString item = list.msg->GetStr();
                 csString slot = list.msg->GetStr();
                 int count = list.msg->GetInt16();
-                Debug6(LOG_SUPERCLIENT, entity_id.Unbox(), "-->Got equip cmd from %u: Entity %s to equip %d %s in %s\n", 
+                Debug6(LOG_SUPERCLIENT, entity_id.Unbox(), "-->Got equip cmd from %u: Entity %s to equip %d %s in %s\n",
                        me->clientnum, ShowID(entity_id), count, item.GetData(), slot.GetData());
 
                 // Make sure we haven't run past the end of the buffer
@@ -992,7 +992,7 @@ void NPCManager::HandleCommandList(MsgEntry *me)
                     Debug2(LOG_SUPERCLIENT, entity_id.Unbox(), "Couldn't find slot %s.\n", slot.GetData());
                     break;
                 }
-                
+
                 // Create the item
                 psItemStats* baseStats = CacheManager::GetSingleton().GetBasicItemStatsByName(item);
                 if (!baseStats)
@@ -1065,7 +1065,7 @@ void NPCManager::HandleCommandList(MsgEntry *me)
                     Debug2(LOG_SUPERCLIENT, entity_id.Unbox(), "Couldn't find slot %s.\n", slot.GetData());
                     break;
                 }
-                
+
                 printf("Removing item in slot %d from %s.\n",slotID,chardata->GetCharName() );
 
                 psItem * oldItem = chardata->Inventory().RemoveItem(NULL,(INVENTORY_SLOT_NUMBER)slotID);
@@ -1130,7 +1130,7 @@ void NPCManager::HandleCommandList(MsgEntry *me)
                     Debug2(LOG_SUPERCLIENT, entity_id.Unbox(), "Couldn't find slot %s.\n", slot.GetData());
                     break;
                 }
-                
+
                 psItem * oldItem = chardata->Inventory().GetInventoryItem((INVENTORY_SLOT_NUMBER)slotID);
                 if (oldItem)
                 {
@@ -1180,7 +1180,7 @@ void NPCManager::HandleCommandList(MsgEntry *me)
                     Debug1(LOG_SUPERCLIENT, entity_id.Unbox(),  "Item not found\n");
                     break;
                 }
-                
+
 
                 psItem * transferItem = chardata->Inventory().RemoveItemIndex(slot,count);
                 if (!transferItem)
@@ -1227,18 +1227,18 @@ void NPCManager::HandleCommandList(MsgEntry *me)
                 csString name = list.msg->GetStr();
                 int cmd = list.msg->GetUInt8();
                 int count = list.msg->GetInt32();
-                
+
                 psSequenceMessage msg(0,name,cmd,count);
                 psserver->GetEventManager()->Broadcast(msg.msg,NetBase::BC_EVERYONE);
 
                 break;
             }
-            
+
             case psNPCCommandsMessage::CMD_IMPERVIOUS:
             {
                 EID entity_id = EID(list.msg->GetUInt32());
                 int impervious = list.msg->GetBool();
-                
+
                 gemNPC *entity = dynamic_cast<gemNPC *> (GEMSupervisor::GetSingleton().FindObject(entity_id));
 
                 psCharacter* chardata = NULL;
@@ -1324,7 +1324,7 @@ bool NPCManager::CanPetHearYou(int clientnum, Client *owner, gemNPC *pet, const 
         petRangeScript->DumpAllVars();
     }
 
-    if (pet->GetInstance() != owner->GetActor()->GetInstance() || 
+    if (pet->GetInstance() != owner->GetActor()->GetInstance() ||
         owner->GetActor()->RangeTo(pet, false) >= max_range )
     {
         psserver->SendSystemInfo(clientnum, "Your %s is too far away to hear you", type);
@@ -1364,7 +1364,7 @@ void NPCManager::HandlePetCommand( MsgEntry * me )
     csString prevFirstName, prevLastName;
     csString fullName, prevFullName;
     const char * typeStr = "familiar";
-    
+
     Client* owner = clients->FindAny(me->clientnum);
     if (!owner)
     {
@@ -1373,7 +1373,7 @@ void NPCManager::HandlePetCommand( MsgEntry * me )
     }
 
     PID familiarID = owner->GetCharacterData()->familiar_id;
-    
+
     if ( !msg.valid )
     {
         Debug2(LOG_NET,me->clientnum,"Could not parse psPETCommandMessage from client %u.\n",me->clientnum);
@@ -1437,7 +1437,7 @@ void NPCManager::HandlePetCommand( MsgEntry * me )
                 }
                 QueueOwnerCmdPerception( owner->GetActor(), pet, psPETCommandMessage::CMD_FOLLOW );
                 owner->GetCharacterData()->GetSkills()->AddSkillPractice(PSSKILL_EMPATHY, 1);
-            }        
+            }
         }
         else
         {
@@ -1465,10 +1465,10 @@ void NPCManager::HandlePetCommand( MsgEntry * me )
         if ( pet != NULL && pet->IsValid() )
         {
             PetOwnerSession key, *session = NULL;
-            
+
             key.ownerID = 0;
             key.petID = pet->GetCharacterData()->GetPID();
-            
+
             session = OwnerPetList.Find( &key );
             // Check for an existing session
             if ( !session )
@@ -1498,14 +1498,14 @@ void NPCManager::HandlePetCommand( MsgEntry * me )
             }
             return;
         }
-        
-        
+
+
         break;
     case psPETCommandMessage::CMD_SUMMON :
 
         // Attach to Familiar
         familiarID = owner->GetCharacterData()->familiar_id;
-            
+
         if ( owner->GetFamiliar() )
         {
             psserver->SendSystemInfo(me->clientnum, "Your familiar has already been summoned.");
@@ -1515,12 +1515,12 @@ void NPCManager::HandlePetCommand( MsgEntry * me )
         if (familiarID.IsValid())
         {
             PetOwnerSession key, *session = NULL;
-            
+
             key.ownerID = 0;
             key.petID = familiarID;
-            
+
             session = OwnerPetList.Find( &key );
-            
+
             psCharacter *petdata = psserver->CharacterLoader.LoadCharacterData( familiarID, false );
             // Check for an existing session
             if ( !session )
@@ -1528,7 +1528,7 @@ void NPCManager::HandlePetCommand( MsgEntry * me )
                 // Create session if one doesn't exist
                 session = CreatePetOwnerSession( owner->GetActor(), petdata );
             }
-            
+
             if ( !session )
             {
                 Error2("Error while creating pet session for Character '%s'\n", owner->GetCharacterData()->GetCharName());
@@ -1539,7 +1539,7 @@ void NPCManager::HandlePetCommand( MsgEntry * me )
             {
                 session->Reconnect( owner->GetActor() );
             }
-            
+
             // Check time in game for pet
             if ( session->CheckSession() )
             {
@@ -1566,9 +1566,9 @@ void NPCManager::HandlePetCommand( MsgEntry * me )
                 {
                     Error2("No valid Familiar NPC for Character '%s'\n", owner->GetCharacterData()->GetCharName());
                     psserver->SendSystemError( owner->GetClientNum(), "Could not find valid Familiar");
-                    return; // If all we didn't do was load the familiar 
+                    return; // If all we didn't do was load the familiar
                 }
-                
+
                 owner->SetFamiliar( pet );
                 // Send OwnerActionLogon Perception
                 pet->SetOwner( owner->GetActor() );
@@ -1584,7 +1584,7 @@ void NPCManager::HandlePetCommand( MsgEntry * me )
             psserver->SendSystemInfo(me->clientnum,"You have no familiar to command.");
             return;
         }
-            
+
         break;
     case psPETCommandMessage::CMD_ATTACK :
         if ( pet != NULL )
@@ -1596,7 +1596,7 @@ void NPCManager::HandlePetCommand( MsgEntry * me )
                 if ( trg != NULL )
                 {
                     gemActor * targetActor = trg->GetActorPtr();
-                    
+
                     if( targetActor == NULL ||
                         trg->GetCharacterData()->impervious_to_attack ||
                       ( trg->GetClient() && trg->GetActorPtr()->GetInvincibility() ) ||
@@ -1610,7 +1610,7 @@ void NPCManager::HandlePetCommand( MsgEntry * me )
                         csString tmp;
                         if (lastAttacker)
                         {
-                            tmp.Format("You must be grouped with %s for your pet to attack %s.", 
+                            tmp.Format("You must be grouped with %s for your pet to attack %s.",
                                        lastAttacker->GetName(), trg->GetName());
                         }
                         else
@@ -1688,63 +1688,63 @@ void NPCManager::HandlePetCommand( MsgEntry * me )
     case psPETCommandMessage::CMD_NAME :
         if ( pet != NULL )
         {
-            
+
             if (!CanPetHearYou(me->clientnum, owner, pet, typeStr))
             {
                 return;
             }
-            
+
             if ( words.GetCount() == 0 )
             {
                 psserver->SendSystemInfo( me->clientnum, "You must specify a new name for your pet." );
                 return;
             }
-            
+
             firstName = words.Get( 0 );
             if (firstName.Length() > MAX_PLAYER_NAME_LENGTH)
-            {   
-                psserver->SendSystemError( me->clientnum, "First name is too long!");   
-                return;   
+            {
+                psserver->SendSystemError( me->clientnum, "First name is too long!");
+                return;
             }
             firstName = NormalizeCharacterName( firstName );
-            if ( !psCharCreationManager::FilterName( firstName ) )   
-            {   
-                psserver->SendSystemError( me->clientnum, "The name %s is invalid!", firstName.GetData() );   
-                return;   
-            }   
+            if ( !psCharCreationManager::FilterName( firstName ) )
+            {
+                psserver->SendSystemError( me->clientnum, "The name %s is invalid!", firstName.GetData() );
+                return;
+            }
             if ( words.GetCount() > 1 )
             {
                 lastName = words.GetTail( 1 );
                 if (lastName.Length() > MAX_PLAYER_NAME_LENGTH)
-                {   
-                    psserver->SendSystemError( me->clientnum, "Last name is too long!");   
-                    return;   
+                {
+                    psserver->SendSystemError( me->clientnum, "Last name is too long!");
+                    return;
                 }
 
                 lastName = NormalizeCharacterName( lastName );
-                if ( !psCharCreationManager::FilterName( lastName ) )   
-                {   
-                    psserver->SendSystemError( me->clientnum, "The last name %s is invalid!", lastName.GetData() );   
-                    return;   
-                }   
+                if ( !psCharCreationManager::FilterName( lastName ) )
+                {
+                    psserver->SendSystemError( me->clientnum, "The last name %s is invalid!", lastName.GetData() );
+                    return;
+                }
             }
             else
             {
                 lastName.Clear();
             }
-            
+
             if (psserver->GetCharManager()->IsBanned(firstName))
-            { 
-                psserver->SendSystemError( me->clientnum, "The name %s is invalid!", firstName.GetData() );           
+            {
+                psserver->SendSystemError( me->clientnum, "The name %s is invalid!", firstName.GetData() );
                 return;
             }
-            
+
             if (psserver->GetCharManager()->IsBanned(lastName))
             {
-                psserver->SendSystemError( me->clientnum, "The last name %s is invalid!", lastName.GetData() );           
+                psserver->SendSystemError( me->clientnum, "The last name %s is invalid!", lastName.GetData() );
                 return;
             }
-            
+
             chardata = pet->GetCharacterData();
             prevFirstName = chardata->GetCharName();
             prevLastName = chardata->GetCharLastName();
@@ -1754,20 +1754,20 @@ void NPCManager::HandlePetCommand( MsgEntry * me )
                 psserver->SendSystemError( me->clientnum, "Your %s is already known with that name!", typeStr );
                 return;
             }
-            
+
             if (firstName != prevFirstName && !psCharCreationManager::IsUnique( firstName ))
             {
-                psserver->SendSystemError( me->clientnum, "The name %s is not unique!", 
-                                           firstName.GetDataSafe() );               
+                psserver->SendSystemError( me->clientnum, "The name %s is not unique!",
+                                           firstName.GetDataSafe() );
                 return;
             }
-            
+
             prevFullName = chardata->GetCharFullName();
             chardata->SetFullName( firstName, lastName );
             fullName = chardata->GetCharFullName();
-            
+
             psServer::CharacterLoader.SaveCharacterData( chardata, pet, true );
-            
+
             if ( owner->GetFamiliar() )
             {
                 psUpdateObjectNameMessage newNameMsg(0,pet->GetEID(),pet->GetCharacterData()->GetCharFullName());
@@ -1777,11 +1777,11 @@ void NPCManager::HandlePetCommand( MsgEntry * me )
             {
                 EntityManager::GetSingleton().RemoveActor( pet );
             }
-            
-            psserver->SendSystemInfo( me->clientnum, 
+
+            psserver->SendSystemInfo( me->clientnum,
                                       "Your pet %s is now known as %s",
-                                      prevFullName.GetData(), 
-                                      fullName.GetData());   
+                                      prevFullName.GetData(),
+                                      fullName.GetData());
         }
         else
         {
@@ -1799,7 +1799,7 @@ void NPCManager::HandlePetCommand( MsgEntry * me )
                     psserver->SendSystemInfo( me->clientnum, "You must specify a name for your pet to target." );
                     return;
                 }
-                
+
                 firstName = words.Get( 0 );
                 if ( words.GetCount() > 1 )
                 {
@@ -1808,14 +1808,14 @@ void NPCManager::HandlePetCommand( MsgEntry * me )
                 gemObject *target = psserver->GetAdminManager()->FindObjectByString(firstName,owner->GetActor());
 
                 firstName = NormalizeCharacterName( firstName );
-                    
+
                 if (firstName == "Me")
                 {
                     firstName = owner->GetName();
                 }
                 lastName = NormalizeCharacterName( lastName );
-                
-                if ( target ) 
+
+                if ( target )
                 {
                     pet->SetTarget( target );
                     psserver->SendSystemInfo( me->clientnum, "%s has successfully targeted %s." , pet->GetName(), target->GetName() );
@@ -1924,7 +1924,7 @@ void NPCManager::QueueDeathPerception(gemObject *who)
     Debug2(LOG_NPC, who->GetEID().Unbox(), "Added perception: %s death.\n", who->GetName());
 }
 
-void NPCManager::QueueSpellPerception(gemActor *caster, gemObject *target,const char *spell_cat_name, 
+void NPCManager::QueueSpellPerception(gemActor *caster, gemObject *target,const char *spell_cat_name,
                                       uint32_t spell_category, float severity)
 {
     outbound->msg->Add( (int8_t) psNPCCommandsMessage::PCPT_SPELL);
@@ -1936,8 +1936,8 @@ void NPCManager::QueueSpellPerception(gemActor *caster, gemObject *target,const 
     Debug4(LOG_NPC, caster->GetEID().Unbox(), "Added perception: %s cast a %s spell on %s.\n", caster->GetName(), spell_cat_name, target->GetName() );
 }
 
-void NPCManager::QueueEnemyPerception(psNPCCommandsMessage::PerceptionType type, 
-                                      gemActor *npc, gemActor *player, 
+void NPCManager::QueueEnemyPerception(psNPCCommandsMessage::PerceptionType type,
+                                      gemActor *npc, gemActor *player,
                                       float relative_faction)
 {
     outbound->msg->Add( (int8_t) type);
@@ -1955,13 +1955,13 @@ void NPCManager::QueueEnemyPerception(psNPCCommandsMessage::PerceptionType type,
 }
 
 /**
- * The client /pet stay command cause the OwnerCmd perception to be sent to 
+ * The client /pet stay command cause the OwnerCmd perception to be sent to
  * the superclient.
  */
 void NPCManager::QueueOwnerCmdPerception(gemActor *owner, gemNPC *pet, psPETCommandMessage::PetCommand_t command)
 {
     outbound->msg->Add( (int8_t) psNPCCommandsMessage::PCPT_OWNER_CMD );
-    outbound->msg->Add( (uint32_t) command ); 
+    outbound->msg->Add( (uint32_t) command );
     outbound->msg->Add(owner->GetEID().Unbox());
     outbound->msg->Add(pet->GetEID().Unbox());
     outbound->msg->Add((uint32_t) (pet->GetTarget() ? pet->GetTarget()->GetEID().Unbox() : 0));
@@ -1992,9 +1992,9 @@ void NPCManager::QueueFlagPerception(gemActor *owner)
 {
     outbound->msg->Add( (int8_t) psNPCCommandsMessage::PCPT_FLAG );
     outbound->msg->Add(owner->GetEID().Unbox());
-    
+
     uint32_t flags = 0;
-    
+
     if (!owner->GetVisibility())   flags |= psNPCCommandsMessage::INVISIBLE;
     if (owner->GetInvincibility()) flags |= psNPCCommandsMessage::INVINCIBLE;
 
@@ -2004,7 +2004,7 @@ void NPCManager::QueueFlagPerception(gemActor *owner)
            owner->GetName(),
            ShowID(owner->GetEID()),
            flags);
-    
+
 }
 
 void NPCManager::QueueNPCCmdPerception(gemActor *owner, const csString& cmd)
@@ -2018,7 +2018,7 @@ void NPCManager::QueueNPCCmdPerception(gemActor *owner, const csString& cmd)
            owner->GetName(),
            ShowID(owner->GetEID()),
            cmd.GetData());
-    
+
 }
 
 void NPCManager::QueueTransferPerception(gemActor *owner, psItem * itemdata, csString target)
@@ -2067,7 +2067,7 @@ void NPCManager::NewNPCNotify(PID player_id, PID master_id, PID owner_id)
 {
     Debug4(LOG_NPC, 0, "New NPC(%s) with master(%s) and owner(%s) sent to superclients.\n",
            ShowID(player_id), ShowID(master_id), ShowID(owner_id));
-    
+
     psNewNPCCreatedMessage msg(0, player_id, master_id, owner_id);
     msg.Multicast(superclients,-1,PROX_LIST_ANY_RANGE);
 }
@@ -2085,7 +2085,7 @@ void NPCManager::ControlNPC( gemNPC* npc )
         npc->GetCharacterData()->SetImperviousToAttack(npc->GetCharacterData()->GetImperviousToAttack() | TEMPORARILY_IMPERVIOUS);  // may switch this to 'hide' later
     }
 }
- 
+
 PetOwnerSession *NPCManager::CreatePetOwnerSession( gemActor *owner, psCharacter* petData )
 {
     if ( owner && petData )
@@ -2093,7 +2093,7 @@ PetOwnerSession *NPCManager::CreatePetOwnerSession( gemActor *owner, psCharacter
         PetOwnerSession *session = new PetOwnerSession( this, owner, petData );
         if ( session )
         {
-            OwnerPetList.Insert( session ); 
+            OwnerPetList.Insert( session );
             return session;
         }
     }
@@ -2116,8 +2116,8 @@ void NPCManager::UpdatePetTime()
 
     // Loop through all Sessions
     BinaryRBIterator< PetOwnerSession > loop( &OwnerPetList );
-    for ( po = loop.First(); po; po = ++loop )	    // Increase Pet Time in Game by NPC_TICK_INTERVAL
-    {  
+    for ( po = loop.First(); po; po = ++loop )      // Increase Pet Time in Game by NPC_TICK_INTERVAL
+    {
         if ( po->isActive )
         {
             po->UpdateElapsedTime( NPC_TICK_INTERVAL );
@@ -2179,7 +2179,7 @@ void NPCManager::HandlePetSkill( MsgEntry * me )
             csRef<iDocumentSystem> xml = csPtr<iDocumentSystem>(new csTinyDocumentSystem);
 
             CS_ASSERT( xml );
-            
+
             csRef<iDocument> invList  = xml->CreateDocument();
 
             const char* error = invList->Parse( msg.commandData );
@@ -2201,7 +2201,7 @@ void NPCManager::HandlePetSkill( MsgEntry * me )
                 Error1("No <S> tag");
                 return;
             }
-            
+
             csString skillName = topNode->GetAttributeValue( "NAME" );
 
             psSkillInfo *info = CacheManager::GetSingleton().GetSkillByName( skillName );
@@ -2237,7 +2237,7 @@ void NPCManager::HandlePetSkill( MsgEntry * me )
                             (unsigned int)(chr->GetStaminaMax(false)),
                             true,
                             PSSKILL_NONE);
-            
+
             if (newmsg.valid)
                 eventmanager->SendMessage(newmsg.msg);
             else
@@ -2252,7 +2252,7 @@ void NPCManager::HandlePetSkill( MsgEntry * me )
    //         csRef<iDocumentSystem> xml = csPtr<iDocumentSystem>(new csTinyDocumentSystem);
 
    //         CS_ASSERT( xml );
-   //         
+   //
    //         csRef<iDocument> invList  = xml->CreateDocument();
 
    //         const char* error = invList->Parse( msg.commandData);
@@ -2275,7 +2275,7 @@ void NPCManager::HandlePetSkill( MsgEntry * me )
             //    Error1("No <B> tag");
             //    return;
             //}
-   //         
+   //
    //         csString skillName = topNode->GetAttributeValue("NAME");
             //if(!skillName || (skillName==""))
             //{
@@ -2285,7 +2285,7 @@ void NPCManager::HandlePetSkill( MsgEntry * me )
 
    //         psSkillInfo * info = CacheManager::GetSingleton().GetSkillByName(skillName);
    //         CPrintf(CON_DEBUG, "    Looking for: %s\n", (const char*)skillName);
-   //         
+   //
    //         if (!info)
    //         {
    //             Error2("No skill with name %s found!",skillName.GetData());
@@ -2302,7 +2302,7 @@ void NPCManager::HandlePetSkill( MsgEntry * me )
    //                                      "Can't buy skills when not training!");
    //             return;
    //         }
-   //         
+   //
    //         gemActor* actorTrainer = character->GetTrainer()->GetActor();
    //         if ( actorTrainer )
    //         {
@@ -2310,14 +2310,14 @@ void NPCManager::HandlePetSkill( MsgEntry * me )
    //             {
    //                 psserver->SendSystemInfo(client->GetClientNum(),
    //                                          "Need to get a bit closer to understand the training.");
-   //                 return;                    
+   //                 return;
    //             }
    //         }
 
-   //         
-   //         
+   //
+   //
    //         CPrintf(CON_DEBUG, "    PP available: %d\n", character->GetProgressionPoints() );
-   //         
+   //
    //         // Test for progression points
    //         if (character->GetProgressionPoints() <= 0)
    //         {
@@ -2327,7 +2327,7 @@ void NPCManager::HandlePetSkill( MsgEntry * me )
    //         }
 
    //         // Test for money
-   //         
+   //
    //         if (info->price > character->Money())
    //         {
    //             psserver->SendSystemInfo(client->GetClientNum(),
@@ -2338,25 +2338,25 @@ void NPCManager::HandlePetSkill( MsgEntry * me )
    //         {
    //             psserver->SendSystemInfo(client->GetClientNum(),
    //                                      "You cannot train this skill any higher yet!");
-   //             return;            
+   //             return;
    //         }
-   //         
+   //
    //         int current = character->GetSkills()->GetSkillRank((PSSKILL)info->id);
    //         float faction = actorTrainer->GetRelativeFaction(character->GetActor());
    //         if ( !character->GetTrainer()->GetTrainerInfo()->TrainingInSkill((PSSKILL)info->id, current, faction))
    //         {
    //             psserver->SendSystemInfo(client->GetClientNum(),
    //                                      "You cannot train this skill currently.");
-   //             return;            
+   //             return;
    //         }
 
    //         character->UseProgressionPoints(1);
-   //         character->SetMoney(character->Money()-info->price);            
+   //         character->SetMoney(character->Money()-info->price);
    //         character->Train(info->id,1);
       //      SendSkillList(client,true,info->id);
-   //         
+   //
    //         psserver->SendSystemInfo(client->GetClientNum(), "You've received some %s training", skillName.GetData());
-   //         
+   //
    //         break;
    //     }
         case psPetSkillMessage::QUIT:
@@ -2385,7 +2385,7 @@ void NPCManager::SendPetSkillList(Client * client, bool forceOpen, PSSKILL focus
 
     int realID = -1;
     bool found = false;
-    
+
     for (int skillID = 0; skillID < (int)PSSKILL_COUNT; skillID++)
     {
         psSkillInfo * info = CacheManager::GetSingleton().GetSkillByID(skillID);
@@ -2422,7 +2422,7 @@ void NPCManager::SendPetSkillList(Client * client, bool forceOpen, PSSKILL focus
      //           if(info->id == focus)
      //               found = true;
      //       }
-    
+
         csString escpxml = EscpXML(info->name);
 
             buff.AppendFmt("<SKILL NAME=\"%s\" R=\"%i\" Y=\"%i\" YC=\"%i\" Z=\"%i\" ZC=\"%i\" CAT=\"%d\"/>",

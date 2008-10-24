@@ -1,7 +1,7 @@
 /*
 * npcmanager.h by Keith Fulton <keith@paqrat.com>
 *
-* Copyright (C) 2003 Atomic Blue (info@planeshift.it, http://www.atomicblue.org) 
+* Copyright (C) 2003 Atomic Blue (info@planeshift.it, http://www.atomicblue.org)
 *
 *
 * This program is free software; you can redistribute it and/or
@@ -31,7 +31,7 @@
 #include "net/npcmessages.h"
 #include "util/prb.h"
 
-#include "bulkobjects/psskills.h"    
+#include "bulkobjects/psskills.h"
 
 //=============================================================================
 // Local Includes
@@ -114,7 +114,7 @@ public:
 
     /// Let the superclient know that a transfer has happend.
     void QueueTransferPerception(gemActor *owner, psItem * itemdata, csString target);
-    
+
     /// Send all queued commands and perceptions to active superclients and reset the queues.
     void SendAllCommands();
 
@@ -132,10 +132,10 @@ public:
 
     /// Remove Session for pets
     void RemovePetOwnerSession( PetOwnerSession *session );
-    
+
     /// Updates time in game for a pet
     void UpdatePetTime();
-    
+
 protected:
 
     /// Handle a login message from a superclient.
@@ -161,7 +161,7 @@ protected:
 
     /// Check if your pet will reacto to your command based on skills
     bool WillPetReact(int clientnum, Client * owner, gemNPC * pet, const char * type, int level);
-    
+
     /// Handle network message with pet directives
     void HandlePetCommand( MsgEntry *me );
 

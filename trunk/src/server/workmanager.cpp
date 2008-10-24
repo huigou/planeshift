@@ -496,18 +496,25 @@ void psWorkManager::HandleRepairEvent(psWorkGameEvent* workEvent)
         // TODO: Implement decay of quality of repair tool here if not consumed.
     }
 
+    float qualitybefore = repairTarget->GetItemQuality();
+                             
     // Adjust the quality of the item
     repairTarget->SetItemQuality( repairTarget->GetItemQuality() + workEvent->repairAmount);
+    // Limit quality to maximum quality
+    if (repairTarget->GetItemQuality() > repairTarget->GetMaxItemQuality())
+    {
+        repairTarget->SetItemQuality(repairTarget->GetMaxItemQuality());
+    }
 
-    // Lower the maximum quality based on the repair amount
-    float newmax = repairTarget->GetMaxItemQuality() - (workEvent->repairAmount * 0.2);
+    // Lower the maximum quality based on the actual repair amount (new-qualitybefore)
+    float newmax = repairTarget->GetMaxItemQuality() - ((repairTarget->GetItemQuality()-qualitybefore) * 0.2);
     newmax = (newmax<0) ? 0 : newmax;
     repairTarget->SetMaxItemQuality(newmax);
 
-    // If new maximum is greater then current quality reduce current quality
-    if (repairTarget->GetItemQuality() > newmax)
+    // Limit quality to maximum quality again 
+    if (repairTarget->GetItemQuality() > repairTarget->GetMaxItemQuality())
     {
-        repairTarget->SetItemQuality(newmax);
+        repairTarget->SetItemQuality(repairTarget->GetMaxItemQuality());
     }
 
     psserver->SendSystemResult(workEvent->client->GetClientNum(),

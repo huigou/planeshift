@@ -5033,7 +5033,7 @@ iResultSet *AdminManager::GetPetitions(PID playerID, PID gmID, int gmLevel)
 {
     iResultSet *rs;
 
-    // Check player ID (if ID is PETITION_GM (0xFFFFFFFF), get a complete list for the GM):
+    // Check player ID, if ID is PETITION_GM (0xFFFFFFFF), get a complete list for the GM:
     if (playerID == PETITION_GM)
     {
         rs = db->Select("SELECT pet.id,pet.petition,pet.status,pet.escalation_level,pet.created_date,pl.name FROM petitions pet, "
