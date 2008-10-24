@@ -61,30 +61,30 @@ bool psServerVitals::SendStatDRMessage(uint32_t clientnum, EID eid, int flags, c
     csArray<uint32_t> uiVitals;
 
     if (statsDirty & DIRTY_VITAL_HP)
-        fVitals.Push(vitals[VITAL_HITPOINTS].value / vitals[VITAL_HITPOINTS].max);
+        fVitals.Push(vitals[VITAL_HITPOINTS].max ? vitals[VITAL_HITPOINTS].value / vitals[VITAL_HITPOINTS].max : 0);
 
     if (statsDirty & DIRTY_VITAL_HP_RATE)
-        fVitals.Push(vitals[VITAL_HITPOINTS].drRate / vitals[VITAL_HITPOINTS].max);
+        fVitals.Push(vitals[VITAL_HITPOINTS].max ? vitals[VITAL_HITPOINTS].drRate / vitals[VITAL_HITPOINTS].max : 0);
 
     if (statsDirty & DIRTY_VITAL_MANA)
-        fVitals.Push(vitals[VITAL_MANA].value / vitals[VITAL_MANA].max);
+        fVitals.Push(vitals[VITAL_MANA].max ? vitals[VITAL_MANA].value / vitals[VITAL_MANA].max : 0);
 
     if (statsDirty & DIRTY_VITAL_MANA_RATE)
-        fVitals.Push(vitals[VITAL_MANA].drRate / vitals[VITAL_MANA].max);
+        fVitals.Push(vitals[VITAL_MANA].max ? vitals[VITAL_MANA].drRate/vitals[VITAL_MANA].max : 0);
 
     // Pyshical Stamina
     if (statsDirty & DIRTY_VITAL_PYSSTAMINA)
-        fVitals.Push(vitals[VITAL_PYSSTAMINA].value / vitals[VITAL_PYSSTAMINA].max);
+        fVitals.Push(vitals[VITAL_PYSSTAMINA].max ? vitals[VITAL_PYSSTAMINA].value/vitals[VITAL_PYSSTAMINA].max : 0);
 
     if (statsDirty & DIRTY_VITAL_PYSSTAMINA_RATE)
-        fVitals.Push(vitals[VITAL_PYSSTAMINA].drRate / vitals[VITAL_PYSSTAMINA].max);
+        fVitals.Push(vitals[VITAL_PYSSTAMINA].max ? vitals[VITAL_PYSSTAMINA].drRate/vitals[VITAL_PYSSTAMINA].max : 0);
 
     // Mental Stamina
     if (statsDirty & DIRTY_VITAL_MENSTAMINA)
-        fVitals.Push(vitals[VITAL_MENSTAMINA].value / vitals[VITAL_MENSTAMINA].max);
+        fVitals.Push(vitals[VITAL_MENSTAMINA].max ? vitals[VITAL_MENSTAMINA].value/vitals[VITAL_MENSTAMINA].max : 0);
 
     if (statsDirty & DIRTY_VITAL_MENSTAMINA_RATE)
-        fVitals.Push(vitals[VITAL_MENSTAMINA].drRate / vitals[VITAL_MENSTAMINA].max);
+        fVitals.Push(vitals[VITAL_MENSTAMINA].max ? vitals[VITAL_MENSTAMINA].drRate/vitals[VITAL_MENSTAMINA].max : 0);
 
     if (statsDirty & DIRTY_VITAL_EXPERIENCE)
         uiVitals.Push(GetExp());

@@ -21,13 +21,14 @@
 #define PAWS_SKETCH_WINDOW_HEADER
 
 #include "paws/pawswidget.h"
+#include "paws/pawscolorpromptwindow.h"
 #include "paws/pawsstringpromptwindow.h"
 
 #define SKETCHBEZIER_SEGMENTS 20
 /**
  * A window that shows a map or picture.
  */
-class pawsSketchWindow : public pawsWidget, public psClientNetSubscriber,public iOnStringEnteredAction
+class pawsSketchWindow : public pawsWidget, public psClientNetSubscriber,public iOnStringEnteredAction,public iOnColorEnteredAction
 {
     class BezierWeights
     {
@@ -58,21 +59,24 @@ class pawsSketchWindow : public pawsWidget, public psClientNetSubscriber,public 
         int x,y;
         csString str;
         int frame;    /// This is incremented each frame when the object is selected to make it flash
+        int color;    /// This is the color. -1 by default = drawing "without colours".
+        bool colorSet;/// changed to true in SetColor, to false in Select. Needed to show the "new color" rather than drawing them "red"(selected)
 
         pawsSketchWindow *parent;
 
         const char *GetStr() { return str; }
         virtual void SetStr(const char *s) { str=s; }
-        SketchObject()  { x=0; y=0; selected=false; }
+        SketchObject()  { x=0; y=0; selected=false; color=-1; colorSet=false; }
         virtual ~SketchObject() {};
 
         virtual bool Load(iDocumentNode *node, pawsSketchWindow *parent)=0;
         virtual void WriteXml(csString& xml) = 0;
         virtual void Draw()=0;
         virtual bool IsHit(int mouseX, int mouseY)=0;
-        virtual void Select(bool _selected)         { selected=_selected;  frame=0; }
+        virtual void Select(bool _selected)         { selected=_selected; colorSet=false; frame=0; }
         // update the RELATIVE position
         virtual void UpdatePosition(int _x, int _y) { x = _x; y = _y;     }
+        virtual void SetColor(int _color) { color = _color; colorSet=true; }
     };
     struct SketchIcon : public SketchObject
     {
@@ -120,6 +124,7 @@ class pawsSketchWindow : public pawsWidget, public psClientNetSubscriber,public 
             x=_x;    y=_y;
             x2=_x2; y2=_y2;
             parent = _parent;
+            dragMode = 0;
         }
         SketchLine() {};
         virtual ~SketchLine() {};
@@ -195,6 +200,7 @@ protected:
     int primCount;
     bool readOnly;
     bool stringPending;
+    bool colorPending;
     BezierWeights bezierWeights;
 
     int frame; // incremented each frame till 10 (to update selection without clicking)
@@ -210,6 +216,7 @@ protected:
     pawsWidget* NameTool;
     pawsWidget* SaveButton;
     pawsWidget* LoadButton;
+    pawsWidget* ColorTool;
 
     void DrawSketch();
     bool ParseSketch(const char *xml, bool checklimits = false);
@@ -245,6 +252,9 @@ public:
     // inherited from iOnStringEnteredAction
     void OnStringEntered(const char *name,int param,const char *value);
 
+    // inherited from iOnColorEnteredAction
+    void OnColorEntered(const char *name,int param,int color);
+
     // inherited from iScriptableVar from pawsWidget
     double CalcFunction(const char * functionName, const double * params);
 
@@ -258,6 +268,7 @@ public:
     // SketchObject helper functions
     iGraphics2D *GetG2D();
     void DrawBlackBox(int x, int y);
+    void DrawColorWidgetText(const char *text, int x, int y, int color);
     bool IsMouseDown() { return mouseDown; }
 
     virtual const bool GetFocusOverridesControls() const { return true; }

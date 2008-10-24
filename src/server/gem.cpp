@@ -1657,7 +1657,7 @@ gemActor::gemActor( psCharacter *chardata,
                        float rotangle,
                        int clientnum) :
   gemObject(chardata->GetCharFullName(),factname,filename,myInstance,room,pos,rotangle,clientnum),
-psChar(chardata), factions(NULL), DRcounter(0), lastDR(0), lastSentSuperclientPos(0, 0, 0),
+psChar(chardata), factions(NULL), DRcounter(0), lastDR(0), lastV(0), lastSentSuperclientPos(0, 0, 0),
 lastSentSuperclientInstance(-1), numReports(0), reportTargetId(0), isFalling(false), invincible(false), visible(true), viewAllObjects(false), meshcache(factname),
 movementMode(0), isAllowedToMove(true), atRest(true), pcmove(NULL),
 nevertired(false), infinitemana(false), instantcast(false), safefall(false)
@@ -2797,7 +2797,7 @@ void gemActor::ApplyStaminaCalculations(const csVector3& v, float times)
 
         // Stuff comes out
         float value = drain->GetValue();
-        value *= times;
+        //value *= times;
 
         #ifdef STAMINA_PROCESS_DEBUG
             printf(" %f\n", value );
@@ -2808,10 +2808,11 @@ void gemActor::ApplyStaminaCalculations(const csVector3& v, float times)
         {
             psChar->SetStaminaRegenerationWalk();
             psChar->AdjustStaminaRate(-value,true);
+            psChar->AdjustStamina(-value*times,true);
         }
         else  // Another regen in place
         {
-            psChar->AdjustStamina(-value,true);
+            psChar->AdjustStamina(-value*times,true);
         }
     }
 

@@ -1,3 +1,13 @@
+*** 2008-10-24 by Stefano Angeleri
+- Fixed a possible div by zero hopefully fixing 
+  FS#862 - Miscalculation of Mana under Death Penalty patch by lanarel
+- Fixed some uninitialized variables and possible miscalculations hopefully
+  fixing FS#1826 and FS#161 patch by lanarel
+- Added a colour selection window and a new option in 
+  pawsillumination to allow to change colours to objects in 
+  sketches (FS#2219) patch by Arerano Areramau
+- added a missing newline from pawseditor config file
+
 *** 2008-10-23 by Andrew Dai
 - Added more debugging messages to "Went through event loop 100 times in one
   timeslice" message and for when the trigger time becomes inconsistent.
