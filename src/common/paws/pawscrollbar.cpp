@@ -344,7 +344,7 @@ void pawsScrollBar::SetThumbVisibility()
 {
     if (thumb != NULL)
     {
-        if (GetScrollBarSize()*1 < GetThumbScaleLength())
+        if (GetScrollBarSize()*0.1 < GetThumbScaleLength())
             thumb->Show();
         else
             thumb->Hide();
