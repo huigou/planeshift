@@ -36,6 +36,7 @@
 //=============================================================================
 #include "psoptions.h"
 
+#define NPC_MODE_DISTANCE 5.0f
 
 struct RaceDefinition;
 struct iView;
@@ -376,6 +377,16 @@ public:
      */
     void SetCameraCD(bool useCD);
 
+    /** returns whether the npc chat camera is used or not
+     *  @return true if using npc chat camera, false otherwise
+     */
+    bool GetUseNPCCam();
+
+    /** sets whether the npc chat camera is used or not
+     *  @param useNPCCam true if the npc chat camera should be used, false otherwise
+     */
+    void SetUseNPCCam(bool useNPCCam);
+
     /** gets the camera transition threshold (the distance between camera position and ideal where the camera ceases to be in transition)
      *   @return the camera transition threshold
      */
@@ -627,6 +638,9 @@ private:
     /// perform collision detection between the camera target and position
     bool useCameraCD;
 
+    // use the npc chat camera when talking to NPCs
+    bool useNPCCam;
+
     /// Have the settings been loaded from file and the camera mode been initialized?
     bool cameraInitialized;
 
@@ -653,7 +667,6 @@ private:
 
     GEMClientObject* npcModeTarget;
     csVector3 npcModePosition;
-    bool npcModeLookAtNPC;
     int fixedDistClip;
 };
 

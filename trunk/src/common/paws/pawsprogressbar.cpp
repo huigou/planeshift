@@ -30,13 +30,13 @@ pawsProgressBar::pawsProgressBar()
     percent      = 0.0f;
 }
 
-pawsProgressBar::~pawsProgressBar()               
+pawsProgressBar::~pawsProgressBar()
 {
 }
 
 bool pawsProgressBar::Setup( iDocumentNode* node )
 {
-    csRef<iDocumentNode> ColourNode = node->GetNode( "color" );    
+    csRef<iDocumentNode> ColourNode = node->GetNode( "color" );
     if ( ColourNode )
     {
         start_r = ColourNode->GetAttributeValueAsInt("r");
@@ -50,7 +50,7 @@ bool pawsProgressBar::Setup( iDocumentNode* node )
         start_b = 25;
     }
 
-    csRef<iDocumentNode> ColourNode2 = node->GetNode( "fadecolor" );    
+    csRef<iDocumentNode> ColourNode2 = node->GetNode( "fadecolor" );
     if ( ColourNode2 )
     {
         diff_r = ColourNode2->GetAttributeValueAsInt("r") - start_r;
@@ -69,8 +69,8 @@ bool pawsProgressBar::Setup( iDocumentNode* node )
 void pawsProgressBar::SetCurrentValue( float newValue )
 {
     currentValue = newValue;
-    
-    percent = currentValue / totalValue;        
+
+    percent = totalValue ? (currentValue / totalValue) : 0;
 }
 
 void pawsProgressBar::Draw()
@@ -78,21 +78,21 @@ void pawsProgressBar::Draw()
     ClipToParent();
 
     int alpha = 255;
-    if (parent 
-      && !parent->GetBackground().IsEmpty() 
-      && parent->isFadeEnabled() 
+    if (parent
+      && !parent->GetBackground().IsEmpty()
+      && parent->isFadeEnabled()
       && parent->GetMaxAlpha() != parent->GetMinAlpha())
-        alpha = (int) 
+        alpha = (int)
         (255 - (parent->GetMinAlpha() + (parent->GetMaxAlpha()-parent->GetMinAlpha()) * parent->GetFadeVal() * 0.010));
     DrawProgressBar(screenFrame, PawsManager::GetSingleton().GetGraphics3D(), percent,
-                    start_r, start_g, start_b, 
+                    start_r, start_g, start_b,
                     diff_r,  diff_g,  diff_b, alpha);
     pawsWidget::Draw();
 }
 
 void pawsProgressBar::DrawProgressBar(
                      const csRect & rect, iGraphics3D *graphics3D, float percent,
-                     int start_r, int start_g, int start_b, 
+                     int start_r, int start_g, int start_b,
                      int diff_r,  int diff_g,  int diff_b, int alpha)
 {
   csSimpleRenderMesh mesh;
@@ -119,7 +119,7 @@ void pawsProgressBar::DrawProgressBar(
 
   verts[0].Set (rect.xmin, rect.ymin, 0);
   colors[0].Set (fr1, fg1, fb1, fa);
-  
+
   verts[1].Set (rect.xmin + (rect.Width() * percent), rect.ymin, 0);
   colors[1].Set (fr2, fg2, fb2, fa);
 

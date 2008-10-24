@@ -144,7 +144,7 @@ psCamera::psCamera()
     camData[CAMERA_NPCTALK].InertialDampeningCoef = 0.25f;
     camData[CAMERA_NPCTALK].springLength = 0.01f;
     camData[CAMERA_NPCTALK].maxDistance = 15.0f;
-    camData[CAMERA_NPCTALK].minDistance = 0.05f;
+    camData[CAMERA_NPCTALK].minDistance = 0.50f;
     camData[CAMERA_NPCTALK].turnSpeed = 0.0f;
     camData[CAMERA_NPCTALK].swingCoef = 0.0f;
 
@@ -175,15 +175,13 @@ psCamera::psCamera()
     distanceCfg.minDist  = 30;
 
     useCameraCD = false;
+    useNPCCam = false;
 
     lastActorSector = 0;
 
     cameraInitialized = false;
 
-
     cmdsource->Subscribe("/tellnpc", this);
-    msgqueue->Subscribe(this, MSGTYPE_CHAT);
-
 
     psengine->GetOptions()->RegisterOptionsClass("camera", this);
     LoadOptions();
@@ -193,6 +191,13 @@ psCamera::~psCamera()
 {
     // save all the camera setting to the config file just once
     distanceCfg.dist = fixedDistClip;
+
+    // reset the camera mode to the last active mode if the player logs out while talking to a npc
+    if(currCameraMode == CAMERA_NPCTALK)
+    {
+        currCameraMode = lastCameraMode;
+    }
+
     SaveToFile();
 }
 
@@ -212,36 +217,29 @@ const float CAM_MODE_SCALE[psCamera::CAMERA_MODES_COUNT] = {
 };
 
 const char * psCamera::HandleCommand(const char *cmd)
-{/*
+{
     WordArray words(cmd);
     
-    if (words.GetCount() == 0)
+    GEMClientObject* target = psengine->GetCharManager()->GetTarget();
+
+    if (words.GetCount() == 0 || !target || !useNPCCam || target == actor)
         return 0;
     
-    if (words[0] == "/tellnpc" && GetCameraMode() != CAMERA_NPCTALK)
+    // enable npc mode if the targeted npc is in talking distance
+    if(GetCameraMode() != CAMERA_NPCTALK && actor->RangeTo(target, false) < NPC_MODE_DISTANCE)
     {
-        psClientCharManager* clientChar = psengine->GetCharManager();
-        if (npcModeTarget == clientChar->GetTarget())
-        {
-            npcModePosition = actor->pcmesh->GetMesh()->GetMovable()->GetFullPosition();
+        npcModeTarget = target;
+        npcModePosition = actor->GetMesh()->GetMovable()->GetFullPosition();
             SetCameraMode(CAMERA_NPCTALK);
-            npcModeLookAtNPC = false;
         }
-    } */
+
     return 0;
 }
+
 
 void psCamera::HandleMessage(MsgEntry *msg)
 {
     return;
-    psChatMessage chatMsg(msg);
-
-
-    if (chatMsg.iChatType == CHAT_NPC)
-    if (GetCameraMode() == CAMERA_NPCTALK)
-    if (npcModeTarget)
-    if (!strcmp(npcModeTarget->GetName(), chatMsg.sPerson))
-        npcModeLookAtNPC = true;
 }
 
 float psCamera::CalcSpringCoef(float springyness, float scale) const
@@ -272,6 +270,7 @@ void psCamera::LoadOptions()
 {
     psOptions * options = psengine->GetOptions();
     useCameraCD = options->GetOption("camera", "usecd", true);
+    useNPCCam = options->GetOption("camera", "useNPCam", false);
 
     float springyness = options->GetOption("camera", "springyness", true);
     for (size_t a=0; a<CAMERA_MODES_COUNT; ++a)
@@ -285,6 +284,7 @@ void psCamera::SaveOptions()
 {
     psOptions * options = psengine->GetOptions();
     options->SetOption("camera", "usecd", useCameraCD);
+    options->SetOption("camera", "usenpccam", useNPCCam);
     options->SetOption("camera", "springyness", EstimateSpringyness(0));
 }
 
@@ -412,6 +412,8 @@ bool psCamera::LoadFromFile(bool useDefault, bool overrideCurrent)
             csString settingValue = settingNode->GetAttributeValue("value");
             if (settingName == "UseCollisionDetection")
                 useCameraCD = (settingValue.Upcase() == "ON");
+            if (settingName == "UseNPCCam")
+                useNPCCam = (settingValue.Upcase() == "ON");
             else if (settingName == "TransitionThreshold")
             {
                 transitionThresholdSquared = atof(settingValue.GetData());
@@ -554,6 +556,7 @@ bool psCamera::SaveToFile()
     xml += "<General>\n";
     xml += "    <camsetting name=\"StartingCameraMode\" value=\"";      xml += GetCameraMode();                             xml += "\" />\n";
     xml += "    <camsetting name=\"UseCollisionDetection\" value=\"";   xml += (CheckCameraCD() ? "on" : "off");            xml += "\" />\n";
+    xml += "    <camsetting name=\"UseNPCCam\" value=\"";               xml += (GetUseNPCCam() ? "on" : "off");            xml += "\" />\n";
     xml += "    <camsetting name=\"TransitionThreshold\" value=\"";     xml += GetTransitionThreshold();                    xml += "\" />\n";
     xml += "</General>\n";
 
@@ -1263,6 +1266,16 @@ void psCamera::SetCameraCD(bool useCD)
     useCameraCD = useCD;
 }
 
+void psCamera::SetUseNPCCam(bool useNPCCam)
+{
+    this->useNPCCam = useNPCCam;
+}
+
+bool psCamera::GetUseNPCCam()
+{
+    return useNPCCam;
+}
+
 float psCamera::GetTransitionThreshold() const
 {
     return sqrt(transitionThresholdSquared);
@@ -1416,12 +1429,6 @@ void psCamera::DoCameraIdealCalcs(const csTicks elapsedTicks, const csVector3& a
             charPos.y += actor->GetMesh()->GetWorldBoundingBox().MaxY();
             csVector3 middle = charPos + (targetPos - charPos) * 0.5f;
 
-            /*
-            if (npcModeLookAtNPC)
-                SetTarget(targetPos);
-            else
-                SetTarget(charPos);
-            */
             SetTarget(middle);
 
             csVector3 delta = targetPos - charPos;

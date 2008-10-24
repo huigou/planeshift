@@ -361,6 +361,8 @@ public:
 
      virtual void Update();            
    
+     float RangeTo(GEMClientObject * obj, bool ignoreY);
+
 protected:
     friend class psCelClient;
 
