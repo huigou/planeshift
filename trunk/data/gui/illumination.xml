@@ -22,10 +22,20 @@
           <bgimage resource="LineTool" /> 
 	    <eventMouseDown>Ret = SketchWindow:ClickLineTool()</eventMouseDown>
       </widget>
-      <widget name="PlusTool" factory="pawsButton" id="103" tooltip="Create Icon (+)">
+	  <widget name="BezierTool" factory="pawsButton" id="113" tooltip="Add Bezier Curve (b)">
           <frame x="60" y="0" width="16" height="16" /> 
+          <bgimage resource="BezierTool" /> 
+	    <eventMouseDown>Ret = SketchWindow:ClickBezierTool()</eventMouseDown>
+      </widget>
+      <widget name="PlusTool" factory="pawsButton" id="103" tooltip="Create Icon (+)">
+          <frame x="78" y="0" width="16" height="16" /> 
           <bgimage resource="PlusTool" /> 
 	    <eventMouseDown>Ret = SketchWindow:ClickIconTool()</eventMouseDown>
+      </widget>
+	  <widget name="ColorTool" factory="pawsButton" id="113" tooltip="Chose Color (c)">
+          <frame x="96" y="0" width="16" height="16" /> 
+          <bgimage resource="ColorTool" /> 
+	    <eventMouseDown>Ret = SketchWindow:ClickColorPicker()</eventMouseDown>
       </widget>
       <!--widget name="MinusTool" factory="pawsButton" id="104" tooltip="Prev Icon (PgUp)">
           <frame x="86" y="10" width="32" height="32" /> 
@@ -33,12 +43,12 @@
 	    <eventMouseDown>Ret = SketchWindow:ClickMinusTool()</eventMouseDown>
       </widget-->
       <widget name="LeftArrowTool" factory="pawsButton" id="105" tooltip="Next Icon (PgDn)">
-          <frame x="86" y="0" width="16" height="16" /> 
+          <frame x="114" y="0" width="16" height="16" /> 
           <bgimage resource="LeftArrowTool" /> 
 	    <eventMouseDown>Ret = SketchWindow:ClickPrevIcon()</eventMouseDown>
       </widget>
       <widget name="RightArrowTool" factory="pawsButton" id="106" tooltip="Previous Icon (PgUp)">
-          <frame x="104" y="0" width="16" height="16" /> 
+          <frame x="132" y="0" width="16" height="16" /> 
           <bgimage resource="RightArrowTool" /> 
 	    <eventMouseDown>Ret = SketchWindow:ClickNextIcon()</eventMouseDown>
       </widget>
@@ -53,27 +63,22 @@
 	    <eventMouseDown>Ret = SketchWindow:ClickDownArrowTool()</eventMouseDown>
       </widget-->
       <widget name="DeleteTool" factory="pawsButton" id="109" tooltip="Delete Selected (del)">
-          <frame x="122" y="0" width="16" height="16" /> 
+          <frame x="150" y="0" width="16" height="16" /> 
           <bgimage resource="DeleteTool" /> 
 	    <eventMouseDown>Ret = SketchWindow:ClickDeleteTool()</eventMouseDown>
       </widget>
       <widget name="NameTool" factory="pawsButton" id="110" tooltip="Name (n)">
-          <frame x="140" y="0" width="16" height="16" /> 
+          <frame x="168" y="0" width="16" height="16" /> 
           <bgimage resource="TextTool" /> 
 	    <eventMouseDown>Ret = SketchWindow:ClickNameTool()</eventMouseDown>
       </widget>
-      <widget name="BezierTool" factory="pawsButton" id="113" tooltip="Add Bezier Curve (b)">
-          <frame x="158" y="0" width="16" height="16" /> 
-          <bgimage resource="BezierTool" /> 
-	    <eventMouseDown>Ret = SketchWindow:ClickBezierTool()</eventMouseDown>
-      </widget>
       <widget name="SaveButton" factory="pawsButton" id="111" tooltip="Save (s)">
-          <frame x="180" y="0" width="16" height="16" /> 
+          <frame x="186" y="0" width="16" height="16" /> 
           <bgimage resource="FeatherTool" /> 
 	    <eventMouseDown>Ret = SketchWindow:ClickSaveButton()</eventMouseDown>
       </widget>
       <widget name="LoadButton" factory="pawsButton" id="112" tooltip="Load (l)">
-          <frame x="200" y="0" width="16" height="16" /> 
+          <frame x="204" y="0" width="16" height="16" /> 
           <bgimage resource="FeatherTool" /> 
 	    <eventMouseDown>Ret = SketchWindow:ClickLoadButton()</eventMouseDown>
       </widget>
