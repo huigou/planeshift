@@ -15,6 +15,8 @@
   This needs to be worked more to make it more realistic (continuous heating
   of metals should damage it)
 - Identation/trailing spaces improvement/fixes in various files
+- Allowed the thumb to be showed in the scrollbars even when the space is more stritch
+  (eg: the description window)
 
 *** 2008-10-23 by Andrew Dai
 - Added more debugging messages to "Went through event loop 100 times in one
