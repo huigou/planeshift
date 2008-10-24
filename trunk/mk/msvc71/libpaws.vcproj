@@ -730,6 +730,9 @@
 				RelativePath="..\..\src\common\paws\pawscheckbox.cpp">
 			</File>
 			<File
+				RelativePath="..\..\src\common\paws\pawscolorpromptwindow.cpp">
+			</File>
+			<File
 				RelativePath="..\..\src\common\paws\pawscombo.cpp">
 			</File>
 			<File
@@ -849,6 +852,9 @@
 			</File>
 			<File
 				RelativePath="..\..\src\common\paws\pawscheckbox.h">
+			</File>
+			<File
+				RelativePath="..\..\src\common\paws\pawscolorpromptwindow.h">
 			</File>
 			<File
 				RelativePath="..\..\src\common\paws\pawscombo.h">
