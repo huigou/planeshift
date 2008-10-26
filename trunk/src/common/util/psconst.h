@@ -126,7 +126,7 @@ public:                                                                  \
     csString Show() const                                                \
     {                                                                    \
         csString str(#name":");                                          \
-        str.Append((size_t) id);                                         \
+        str.Append((unsigned int) id);                                         \
         return str;                                                      \
     }                                                                    \
     bool operator==(const name & other) const { return id == other.id; } \
