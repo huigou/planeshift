@@ -39,6 +39,9 @@ using namespace CS;
 
 #define QUEST_OPT_SAVEONCOMPLETE 0x01
 
+/// The quest is disabled and won't be loaded by the server, used for the flags column
+#define PSQUEST_DISABLED_QUEST 0x00000001
+
 
 class psQuestPrereqOp;
 class psCharacter;

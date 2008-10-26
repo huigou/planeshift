@@ -89,6 +89,9 @@ bool psQuest::Load(iResultRow& row)
     category = row["category"];
     prerequisiteStr = row["prerequisite"];
 
+    if(flags & PSQUEST_DISABLED_QUEST) //the quest is set as disabled
+        Active(false);
+
     parent_quest = CacheManager::GetSingleton().GetQuestByID( row.GetUInt32("master_quest_id") );
 
     image = CacheManager::GetSingleton().FindCommonString( row.GetUInt32("cstr_id_icon") );
