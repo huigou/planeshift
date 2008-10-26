@@ -58,17 +58,6 @@ int HexToDec8(char first, char second)
     return (HexToDec4(first) << 4) + HexToDec4(second);
 }
 
-int MakeColor(const csPixelFormat * fmt, int r, int g, int b)
-{
-  if (!fmt->PalEntries)
-    return ((r >> (8 - fmt->RedBits)) << fmt->RedShift)
-         | ((g >> (8 - fmt->GreenBits)) << fmt->GreenShift)
-         | ((b >> (8 - fmt->BlueBits)) << fmt->BlueShift);
-
-  // In paletted mode this is easy since we have a uniform 3-3-2 palette
-  return ((r >> 5) << 5) | ((g >> 5) << 2) | (b >> 6);
-}
-
 // converts hexadecimal string to color in current pixel format
 int ParseColor(const csString & str, iGraphics2D *g2d)
 {
@@ -81,7 +70,7 @@ int ParseColor(const csString & str, iGraphics2D *g2d)
     g = HexToDec8(str.GetAt(2), str.GetAt(3));
     b = HexToDec8(str.GetAt(4), str.GetAt(5));
 
-    return MakeColor(g2d->GetPixelFormat(), r, g, b);
+    return g2d->FindRGB(r, g, b);
 }
 
 
@@ -1080,8 +1069,8 @@ bool pawsTree::Setup(iDocumentNode * node)
         if (colSpace) colSpacing = colSpace->GetValueAsInt();
         
         SetTreeDecorator(new pawsStdTreeDecorator(this, graphics2D, 
-            MakeColor(graphics2D->GetPixelFormat(), selColour.red, selColour.blue, selColour.green),
-            MakeColor(graphics2D->GetPixelFormat(), lineColour.red, lineColour.blue, lineColour.green),
+            graphics2D->FindRGB(selColour.red, selColour.blue, selColour.green),
+            graphics2D->FindRGB(lineColour.red, lineColour.blue, lineColour.green),
             colSpacing));
     }
     

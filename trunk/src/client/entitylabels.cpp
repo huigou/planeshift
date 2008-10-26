@@ -59,7 +59,6 @@
 #define SCALE    0.004
 #define BORDER_SIZE 2
 
-int MakeColor(csPixelFormat * fmt, int r, int g, int b);
 int ParseColor(const csString & str, iGraphics2D *g2d);
 
 psEntityLabels::psEntityLabels()
