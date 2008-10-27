@@ -44,7 +44,7 @@ struct COMMAND;
 const COMMAND *find_command(const char *name);
 int execute_line(const char *line,csString *buffer);
 
-class iObjectRegistry;
+struct iObjectRegistry;
 
 /**
  * This defines an interface for intercepting commands instead of handling them
