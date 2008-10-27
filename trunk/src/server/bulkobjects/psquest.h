@@ -91,14 +91,26 @@ class psQuest : public CS::Utility::WeakReferenced
     void AddSubQuest(int id) { subquests.Push(id); }
     
     /**
-     * Return the prerequisite for this quest.
+     * @brief Return the prerequisite for this quest.
      * @return The prerequisite for this quest.
      */
     psQuestPrereqOp* GetPrerequisite() { return prerequisite; }
     csString GetPrerequisiteStr();
     const csString& GetCategory() const { return category; }
-    
-    bool Active() { return active; }
+        
+    /**
+     * @brief Check if the quest is active (and also it's parents)
+     * 
+     * A quest to be active must be active itself and, if so, also it's parents (most probably earlier steps)
+     * must be active themselves so check back to them if this quest is active else return as not active directly.
+     * 
+     * @return The active status of the quest.
+     */
+    bool Active() { return active ? (parent_quest ? parent_quest->Active() : active) : active; }
+
+    /**
+     * @brief Sets activation status of the quest
+     */
     void Active(bool state) { active = state; }
     
  protected:
