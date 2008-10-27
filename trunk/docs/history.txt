@@ -5,6 +5,8 @@
   if so, and they have a parent quest, the parent quest will be the one returning the active
   status. This allows to disable the "root" quest and conseguently disable all the
   quest steps.
+- updated configure.ac to point to the forums for bug reporting, updated also the version there
+  Fixing FS#2409 - contact email address does not seem to exist 
 
 *** 2008-10-26 by Stefano Angeleri
 - some updates to pawseditor and eedit cfg files and a typo fix
