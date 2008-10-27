@@ -1,3 +1,12 @@
+*** 2008-10-27 by Stefano Angeleri
+- reworked the if in HaveAvailableResponses hopefully fixing 
+  FS#2408 - Bug in testing responses may prevent npc from responding. 
+
+*** 2008-10-26 by Stefano Angeleri
+- some updates to pawseditor and eedit cfg files and a typo fix
+- enabling the quest disable feature using the unused flags column. use 1 to disable a quest
+  (for now only the quest assignment is disabled)
+
 *** 2008-10-24 by Stefano Angeleri
 - Fixed a possible div by zero hopefully fixing 
   FS#862 - Miscalculation of Mana under Death Penalty patch by lanarel
@@ -17,9 +26,6 @@
 - Identation/trailing spaces improvement/fixes in various files
 - Allowed the thumb to be showed in the scrollbars even when the space is more strict
   (eg: the description window)
-- some updates to pawseditor and eedit cfg files and a typo fix
-- enabling the quest disable feature using the unused flags column. use 1 to disable a quest
-  (for now only the quest assignment is disabled)
 
 *** 2008-10-23 by Andrew Dai
 - Added more debugging messages to "Went through event loop 100 times in one
