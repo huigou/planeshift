@@ -7,6 +7,8 @@
   quest steps.
 - updated configure.ac to point to the forums for bug reporting, updated also the version there
   Fixing FS#2409 - contact email address does not seem to exist 
+- Now mana isn't reset when the player dies to fix 
+  FS#2299 - Keep dying in death realm for unlimited mana patch by lanarel
 
 *** 2008-10-26 by Stefano Angeleri
 - some updates to pawseditor and eedit cfg files and a typo fix
