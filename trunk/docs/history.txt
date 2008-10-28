@@ -4,6 +4,7 @@
 - Added a /disablequest command which can change toggle a quest status from enabled
   to disabled and viceversa, and if the flag save is defined it will also save the new
   status to database
+- Updated /quest to use the new PID class
 - DB VERSION BUMP
 
 *** 2008-10-28 by Andrew Dai
