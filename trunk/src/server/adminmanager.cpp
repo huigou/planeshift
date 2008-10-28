@@ -5649,9 +5649,9 @@ void AdminManager::BanClient(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData&
     }
 
     Result result;
-    unsigned int account = atoi( data.player.GetDataSafe() );  // See if we're going by character name or account ID
+    AccountID accountID = AccountID(strtoul(data.player.GetDataSafe(), NULL, 10));  // See if we're going by character name or account ID
 
-    if (account == 0)
+    if (!accountID.IsValid())
     {
         if ( !GetAccount(data.player,result) )
         {
@@ -5659,14 +5659,14 @@ void AdminManager::BanClient(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData&
             psserver->SendSystemError(me->clientnum, "Couldn't find account with the name %s",data.player.GetData());
             return;
         }
-        account = result[0].GetUInt32("id");
+        accountID = AccountID(result[0].GetUInt32("id"));
     }
     else
     {
-        result = db->Select("SELECT * FROM accounts WHERE id = '%u' LIMIT 1",account);
+        result = db->Select("SELECT * FROM accounts WHERE id = '%u' LIMIT 1",accountID.Unbox());
         if ( !result.IsValid() || !result.Count() )
         {
-            psserver->SendSystemError(me->clientnum, "Couldn't find account with id %u",account);
+            psserver->SendSystemError(me->clientnum, "Couldn't find account with id %u",accountID.Unbox());
             return;
         }
     }
@@ -5676,7 +5676,7 @@ void AdminManager::BanClient(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData&
     // Ban by IP range, as well as account
     csString ip_range = Client::GetIPRange(result[0]["last_login_ip"]);
 
-    if ( !psserver->GetAuthServer()->GetBanManager()->AddBan(account,ip_range,secs,data.reason) )
+    if ( !psserver->GetAuthServer()->GetBanManager()->AddBan(accountID,ip_range,secs,data.reason) )
     {
         // Error adding; entry must already exist
         psserver->SendSystemError(me->clientnum, "%s is already banned", user.GetData() );
@@ -5727,9 +5727,9 @@ void AdminManager::UnbanClient(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdDat
     }
 
     Result result;
-    unsigned int account = atoi( data.player.GetDataSafe() );  // See if we're going by character name or account ID
+    AccountID accountId = AccountID(strtoul(data.player.GetDataSafe(), NULL, 10));  // See if we're going by character name or account ID
 
-    if (account == 0)
+    if (!accountId.IsValid())
     {
         if ( !GetAccount(data.player,result) )
         {
@@ -5737,21 +5737,21 @@ void AdminManager::UnbanClient(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdDat
             psserver->SendSystemError(me->clientnum, "Couldn't find account with the name %s",data.player.GetDataSafe());
             return;
         }
-        account = result[0].GetUInt32("id");
+        accountId = AccountID(result[0].GetUInt32("id"));
     }
     else
     {
-        result = db->Select("SELECT * FROM accounts WHERE id = '%u' LIMIT 1",account);
+        result = db->Select("SELECT * FROM accounts WHERE id = '%u' LIMIT 1",accountId.Unbox());
         if ( !result.IsValid() || !result.Count() )
         {
-            psserver->SendSystemError(me->clientnum, "Couldn't find account with id %u",account);
+            psserver->SendSystemError(me->clientnum, "Couldn't find account with id %u",accountId.Unbox());
             return;
         }
     }
 
     csString user = result[0]["username"];
 
-    if ( psserver->GetAuthServer()->GetBanManager()->RemoveBan(account) )
+    if ( psserver->GetAuthServer()->GetBanManager()->RemoveBan(accountId) )
         psserver->SendSystemResult(me->clientnum, "%s has been unbanned", user.GetData() );
     else
         psserver->SendSystemError(me->clientnum, "%s is not banned", user.GetData() );
@@ -5775,9 +5775,9 @@ void AdminManager::BanAdvisor(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
     }
 
     Result result;
-    unsigned int account = atoi( data.player.GetDataSafe() );  // See if we're going by character name or account ID
+    AccountID accountId = AccountID(strtoul(data.player.GetDataSafe(), NULL, 10));  // See if we're going by character name or account ID
 
-    if (account == 0)
+    if (!accountId.IsValid())
     {
         if ( !GetAccount(data.player,result) )
         {
@@ -5785,19 +5785,19 @@ void AdminManager::BanAdvisor(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
             psserver->SendSystemError(me->clientnum, "Couldn't find account with the name %s",data.player.GetDataSafe());
             return;
         }
-        account = result[0].GetUInt32("id");
+        accountId = AccountID(result[0].GetUInt32("id"));
     }
     else
     {
-        result = db->Select("SELECT * FROM accounts WHERE id = '%u' LIMIT 1",account);
+        result = db->Select("SELECT * FROM accounts WHERE id = '%u' LIMIT 1",accountId.Unbox());
         if ( !result.IsValid() || !result.Count() )
         {
-            psserver->SendSystemError(me->clientnum, "Couldn't find account with id %u",account);
+            psserver->SendSystemError(me->clientnum, "Couldn't find account with id %u",accountId.Unbox());
             return;
         }
     }
 
-    db->Command("UPDATE accounts SET advisor_ban = 1 WHERE id = %d", account);
+    db->Command("UPDATE accounts SET advisor_ban = 1 WHERE id = %d", accountId.Unbox());
 
     csString user = result[0]["username"];
 
@@ -5822,9 +5822,9 @@ void AdminManager::UnbanAdvisor(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdDa
     }
 
     Result result;
-    unsigned int account = atoi( data.player.GetDataSafe() );  // See if we're going by character name or account ID
+    AccountID accountId = AccountID(strtoul(data.player.GetDataSafe(), NULL, 10));  // See if we're going by character name or account ID
 
-    if (account == 0)
+    if (!accountId.IsValid())
     {
         if ( !GetAccount(data.player,result) )
         {
@@ -5832,19 +5832,19 @@ void AdminManager::UnbanAdvisor(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdDa
             psserver->SendSystemError(me->clientnum, "Couldn't find account with the name %s",data.player.GetDataSafe());
             return;
         }
-        account = result[0].GetUInt32("id");
+        accountId = AccountID(result[0].GetUInt32("id"));
     }
     else
     {
-        result = db->Select("SELECT * FROM accounts WHERE id = '%u' LIMIT 1",account);
+        result = db->Select("SELECT * FROM accounts WHERE id = '%u' LIMIT 1",accountId.Unbox());
         if ( !result.IsValid() || !result.Count() )
         {
-            psserver->SendSystemError(me->clientnum, "Couldn't find account with id %u",account);
+            psserver->SendSystemError(me->clientnum, "Couldn't find account with id %u",accountId.Unbox());
             return;
         }
     }
 
-    db->Command("UPDATE accounts SET advisor_ban = 0 WHERE id = %d", account);
+    db->Command("UPDATE accounts SET advisor_ban = 0 WHERE id = %d", accountId.Unbox());
 
     csString user = result[0]["username"];
 
@@ -5853,7 +5853,7 @@ void AdminManager::UnbanAdvisor(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdDa
 
 bool AdminManager::GetAccount(csString useroracc,Result& resultre )
 {
-    unsigned int id = 0;
+    AccountID accountId;
     bool character = false;
     csString usr;
 
@@ -5863,12 +5863,12 @@ bool AdminManager::GetAccount(csString useroracc,Result& resultre )
     resultre = db->Select("SELECT * FROM characters WHERE name = '%s' LIMIT 1",usr.GetData());
     if (resultre.IsValid() && resultre.Count() == 1)
     {
-        id = resultre[0].GetUInt32("account_id"); // store id
+        accountId = AccountID(resultre[0].GetUInt32("account_id")); // store id
         character = true;
     }
 
     if (character)
-        resultre = db->Select("SELECT * FROM accounts WHERE id = '%u' LIMIT 1",id);
+        resultre = db->Select("SELECT * FROM accounts WHERE id = '%u' LIMIT 1",accountId.Unbox());
     else
     {
         // account uses lowercase
@@ -7433,12 +7433,12 @@ void AdminManager::HandleCompleteQuest(MsgEntry* me,psAdminCmdMessage& msg, Admi
                 pid = PID(strtoul(data.player.Slice(4).GetData(), NULL, 10));
                 //get the name of the char from db
                 Result result(db->Select("SELECT name FROM characters where id=%u",pid.Unbox()));
-                if (!result.IsValid() && !result.Count())
+                if (!result.IsValid() && !result.Count()) //there were results?
                 {
                     psserver->SendSystemError(me->clientnum,"No online or offline player found with pid '%u'!",pid.Unbox());
                     return;
                 }
-                name = result[0]["name"];
+                name = result[0]["name"]; //take the name from db as we have the pid already
             }
             else //try to get the pid from the name
             {
@@ -7454,10 +7454,10 @@ void AdminManager::HandleCompleteQuest(MsgEntry* me,psAdminCmdMessage& msg, Admi
                     psserver->SendSystemError(me->clientnum,"Multiple characters with same name '%s'. Use pid.",name.GetData());
                     return;
                 }
-                pid = result[0].GetUInt32("id");
+                pid = PID(result[0].GetUInt32("id")); //get the PID as we have the name already
             }
 
-            if (!pid.IsValid())
+            if (!pid.IsValid()) //is the pid valid? (not zero)
             {
                 psserver->SendSystemError(me->clientnum,"Error, bad PID");
                 return;
@@ -7466,13 +7466,13 @@ void AdminManager::HandleCompleteQuest(MsgEntry* me,psAdminCmdMessage& msg, Admi
         else
         {
             target = client; //the issuer didn't provide a name so do this on him/herself
-            name = target->GetName();
+            name = target->GetName();  //get the name of the target for use later
         }
     }
     else
     {
         target = subject; //all's normal just get the target
-        name = target->GetName();
+        name = target->GetName(); //get the name of the target for use later
     }
 
     // Security levels involved:
@@ -7527,7 +7527,7 @@ void AdminManager::HandleCompleteQuest(MsgEntry* me,psAdminCmdMessage& msg, Admi
                 return;
         }
 
-        if(isOnline)
+        if(isOnline) //the player is online so we don't need to hit the database
         {
 
             QuestAssignment *questassignment = target->GetActor()->GetCharacterData()->IsQuestAssigned(quest->GetID());
@@ -7539,7 +7539,7 @@ void AdminManager::HandleCompleteQuest(MsgEntry* me,psAdminCmdMessage& msg, Admi
             target->GetActor()->GetCharacterData()->DiscardQuest(questassignment, true);
             psserver->SendSystemInfo(me->clientnum, "Quest %s discarded for %s!", data.text.GetData(), name.GetData());
         }
-        else
+        else //the player is offline so we have to hit the database
         {
             Result result(db->Select("DELETE FROM character_quests WHERE player_id=%u AND quest_id=%u",pid.Unbox(), quest->GetID()));
             if (result.IsValid())
@@ -7581,6 +7581,7 @@ void AdminManager::HandleCompleteQuest(MsgEntry* me,psAdminCmdMessage& msg, Admi
             {
                 for(uint currResult = 0; currResult < result.Count(); currResult++) //iterate the results and output info about the quest
                 {
+                    //get the quest data from the cache so we can print it's name without accessing the db again
                     psQuest* currQuest = CacheManager::GetSingleton().GetQuestByID(result[currResult].GetUInt32("quest_id"));
                     psserver->SendSystemInfo(me->clientnum, "Quest name: %s. Status: %s", currQuest->GetName(), result[currResult]["status"]);
                 }
@@ -7894,7 +7895,7 @@ void AdminManager::DisableQuest(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdDa
 {
     psQuest * quest = CacheManager::GetSingleton().GetQuestByName(data.text); //get the quest associated by name
 
-    if(!quest)
+    if(!quest) //the quest was not found
     {
         psserver->SendSystemError(client->GetClientNum(), "Unable to find the requested quest.");
         return;
@@ -7908,11 +7909,11 @@ void AdminManager::DisableQuest(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdDa
             psserver->SendSystemInfo(client->GetClientNum(),"You can't change the active status of quests: the quest status was changed only temporarily.");
             return;
         }
-        
+
         Result flags(db->Select("SELECT flags FROM quests WHERE id=%u", quest->GetID())); //get the current flags from the database
         if (!flags.IsValid() || flags.Count() == 0) //there were results?
         {
-            psserver->SendSystemError(client->GetClientNum(), "Unable to find the quest in the database.");    
+            psserver->SendSystemError(client->GetClientNum(), "Unable to find the quest in the database.");
             return;
         }
 
@@ -7926,7 +7927,7 @@ void AdminManager::DisableQuest(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdDa
         //save the flags to the db
         db->CommandPump("UPDATE quests SET flags=%u WHERE id=%u", flag, quest->GetID());
     }
-    
+
     //tell the user that everything went fine
-    psserver->SendSystemInfo(client->GetClientNum(),"The quest %s was %s successfully", quest->GetName(), quest->Active() ? "enabled" : "disabled");
+    psserver->SendSystemInfo(client->GetClientNum(),"The quest %s was %s successfully.", quest->GetName(), quest->Active() ? "enabled" : "disabled");
 }
