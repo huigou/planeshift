@@ -49,6 +49,7 @@ INSERT INTO command_group_assignment VALUES( "/path", 30 );
 INSERT INTO command_group_assignment VALUES( "/reload", 30 );
 INSERT INTO command_group_assignment VALUES( "/runscript", 30 );
 INSERT INTO command_group_assignment VALUES( "/loadquest", 30 );
+INSERT INTO command_group_assignment VALUES( "save quest disable", 30 );
 
 # GM5 and above
 INSERT INTO command_group_assignment VALUES( "/killnpc", 30 );
@@ -61,6 +62,8 @@ INSERT INTO command_group_assignment VALUES( "/modify", 30 );
 INSERT INTO command_group_assignment VALUES( "/modify", 25 );
 INSERT INTO command_group_assignment VALUES( "/key", 30 );
 INSERT INTO command_group_assignment VALUES( "/key", 25 );
+INSERT INTO command_group_assignment VALUES( "/disablequest", 30 );
+INSERT INTO command_group_assignment VALUES( "/disablequest", 25 );
 INSERT INTO command_group_assignment VALUES( "move unpickupables/spawns", 30 );
 INSERT INTO command_group_assignment VALUES( "move unpickupables/spawns", 25 );
 

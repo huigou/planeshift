@@ -383,6 +383,14 @@ protected:
      *  @param client The GM client the command came from.
      */
     void CheckTarget(psAdminCmdMessage& msg, AdminCmdData& data, gemObject* targetobject , Client *client);
+    
+    /** @brief Allows to disable/enable quests temporarily (server cache) or definitely (database)
+     * 
+     *  @param me The incoming message from the GM
+     *  @param msg The cracked command message.
+     *  @param client The GM client the command came from.
+     */
+    void DisableQuest(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data, Client *client );
 
     /** @brief Adds a petition under the passed user's name to the 'petitions' table in the database.
      *
