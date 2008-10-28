@@ -428,6 +428,9 @@ Temporarily changes a character's access level.  Used to give GMs abilities need
         <topic name="/divorce">/divorce name
 
 Divorce a character from another one if they are married.</topic>
+        <topic name="/disablequest">/disablequest questname [save]
+
+This function will toggle the quest from enabled to disabled status and viceversa, if the save flag is used the new status will also be saved in the database.</topic>
         <topic name="/event">Administer events.
 To create a new event, a GM should enter:
 /event create [name] [description]

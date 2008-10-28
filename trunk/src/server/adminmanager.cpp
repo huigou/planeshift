@@ -1069,6 +1069,12 @@ bool AdminManager::AdminCmdData::DecodeAdminCmdMessage(MsgEntry *pMsg, psAdminCm
         player = words[1];
         return true;
     }
+    else if (command == "/disablequest") //disables/enables quests
+    {
+        text   = words[1];  //name of the quest
+        subCmd  = words[2]; //save = save to db
+        return true;
+    }
     return false;
 }
 
@@ -1447,6 +1453,10 @@ void AdminManager::HandleAdminCmdMessage(MsgEntry *me, psAdminCmdMessage &msg, A
     else if (data.command == "/target_name")
     {
         CheckTarget(msg, data, targetobject, client);
+    }
+    else if (data.command == "/disablequest")
+    {
+        DisableQuest(me, msg, data, client);
     }
 }
 
@@ -7878,4 +7888,45 @@ void AdminManager::CheckTarget(psAdminCmdMessage& msg, AdminCmdData& data, gemOb
     }
     if(targetobject) //just to be sure
         psserver->SendSystemInfo(client->GetClientNum(),"Targeted: %s", targetobject->GetName());
+}
+
+void AdminManager::DisableQuest(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data, Client *client )
+{
+    psQuest * quest = CacheManager::GetSingleton().GetQuestByName(data.text); //get the quest associated by name
+
+    if(!quest)
+    {
+        psserver->SendSystemError(client->GetClientNum(), "Unable to find the requested quest.");
+        return;
+    }
+
+    quest->Active(!quest->Active()); //invert the status of the quest: if enabled, disable it, if disabled, enable it
+    if(data.subCmd == "save") //if the subcmd is save we save this also on the database
+    {
+        if(!Valid(client->GetSecurityLevel(), "save quest disable", me->clientnum)) //check if the client has the correct rights to do this
+        {
+            psserver->SendSystemInfo(client->GetClientNum(),"You can't change the active status of quests: the quest status was changed only temporarily.");
+            return;
+        }
+        
+        Result flags(db->Select("SELECT flags FROM quests WHERE id=%u", quest->GetID())); //get the current flags from the database
+        if (!flags.IsValid() || flags.Count() == 0) //there were results?
+        {
+            psserver->SendSystemError(client->GetClientNum(), "Unable to find the quest in the database.");    
+            return;
+        }
+
+        uint flag = flags[0].GetUInt32("flags"); //get the flags and assign them to a variable
+
+        if(quest->Active()) //if active assign the flag
+            flag |= PSQUEST_DISABLED_QUEST;
+        else //else remove the flag
+            flag &= ~PSQUEST_DISABLED_QUEST;
+
+        //save the flags to the db
+        db->CommandPump("UPDATE quests SET flags=%u WHERE id=%u", flag, quest->GetID());
+    }
+    
+    //tell the user that everything went fine
+    psserver->SendSystemInfo(client->GetClientNum(),"The quest %s was %s successfully", quest->GetName(), quest->Active() ? "enabled" : "disabled");
 }
