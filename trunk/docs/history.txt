@@ -5,6 +5,7 @@
   to disabled and viceversa, and if the flag save is defined it will also save the new
   status to database
 - Updated /quest to use the new PID class
+- Hopefully fixed last negative values assigned to PID in adminmanager
 - DB VERSION BUMP
 
 *** 2008-10-28 by Andrew Dai

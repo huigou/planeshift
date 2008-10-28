@@ -409,7 +409,7 @@ protected:
      *  @param gmLevel: Is the security level of the GM who is requesting petitions, ignored if playerID != -1
      *  @return Returns a iResultSet which contains the set of all matching petitions for the user
      */
-    iResultSet *GetPetitions(PID playerID, PID gmID = -1, int gmLevel = -1);
+    iResultSet *GetPetitions(PID playerID, PID gmID = PETITION_GM, int gmLevel = -1);
 
     /** @brief Cancels the specified petition if the player was its creator
      *  @param playerID: Is the ID of the player who is requesting the change.
