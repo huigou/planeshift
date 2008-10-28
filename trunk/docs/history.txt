@@ -4,6 +4,7 @@
 - Added a /disablequest command which can change toggle a quest status from enabled
   to disabled and viceversa, and if the flag save is defined it will also save the new
   status to database
+- DB VERSION BUMP
 
 *** 2008-10-28 by Andrew Dai
 - Moved NPCTypes to use a hash instead of a binary tree. Also removed globals
