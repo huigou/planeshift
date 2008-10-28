@@ -108,7 +108,7 @@ psLinearMovement* NPC::GetLinMove()
     return NULL;
 }
 
-bool NPC::Load(iResultRow& row,BinaryRBTree<NPCType>& npctypes)
+bool NPC::Load(iResultRow& row, csHash<NPCType*, const char*>& npctypes)
 {
     name = row["name"];
     pid   = row.GetInt("char_id");
@@ -127,8 +127,7 @@ bool NPC::Load(iResultRow& row,BinaryRBTree<NPCType>& npctypes)
 
     region_name = row["region"]; // optional
 
-    NPCType key(type),*t;
-    t = npctypes.Find(&key);
+    NPCType* t = npctypes.Get(type, NULL);
     if (!t)
     {
         Error2("NPC type '%s' is not found. Error in XML",(const char *)type);

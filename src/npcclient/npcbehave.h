@@ -34,7 +34,6 @@ struct iSector;
 //=============================================================================
 // Library Includes
 //=============================================================================
-#include "util/prb.h"
 #include "util/eventmanager.h"
 #include "util/gameevent.h"
 #include "util/consoleout.h"
@@ -109,8 +108,8 @@ protected:
     VelSource velSource;
 
 public:
-    NPCType();
-    NPCType(const char *n);
+    NPCType(psNPCClient* npcclient);
+    NPCType(psNPCClient* npcclient, const char *n);
     NPCType(NPCType& other) { DeepCopy(other); }
 
     ~NPCType();
@@ -132,17 +131,12 @@ public:
     {
         return behaviors.GetCurrentBehavior();
     }
-    bool operator==(NPCType& other) const
-    {
-        return (name == other.name);
-    }
-    bool operator<(NPCType& other) const
-    {
-        return (strcmp(name,other.name)<0);
-    }
     
     float GetAngularVelocity(NPC *npc);
     float GetVelocity(NPC *npc);
+    
+private:
+    psNPCClient* npcclient;
 };
 
 

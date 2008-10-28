@@ -48,12 +48,10 @@
 //=============================================================================
 // Local Includes
 //=============================================================================
-#include "globals.h"
 #include "npcoperations.h"
 #include "npcbehave.h"
 #include "npc.h"
 #include "perceptions.h"
-#include "npcclient.h"
 #include "networkmgr.h"
 #include "npcmesh.h"
 #include "gem.h"
@@ -61,13 +59,13 @@
 extern bool running;
 
 
-NPCType::NPCType()
-    :ang_vel(999),vel(999),velSource(VEL_DEFAULT)
+NPCType::NPCType(psNPCClient* npcclient)
+    :ang_vel(999),vel(999),velSource(VEL_DEFAULT), npcclient(npcclient)
 {
 }
 
-NPCType::NPCType(const char *n)
-    :name(n),ang_vel(999),vel(999),velSource(VEL_DEFAULT)
+NPCType::NPCType(psNPCClient* npcclient, const char *n)
+    :name(n),ang_vel(999),vel(999),velSource(VEL_DEFAULT), npcclient(npcclient)
 { 
 }
 
@@ -77,6 +75,7 @@ NPCType::~NPCType()
 
 void NPCType::DeepCopy(NPCType& other)
 {
+    npcclient = other.npcclient;
     name      = other.name;
     ang_vel   = other.ang_vel;
     velSource = other.velSource;
