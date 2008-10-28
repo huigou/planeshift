@@ -121,7 +121,7 @@ public:
     uint8_t               GetDRCounter() { return ++DRcounter;}
     void                  SetDRCounter(uint8_t counter) { DRcounter = counter;}
 
-    bool Load(iResultRow& row,BinaryRBTree<NPCType>& npctypes);
+    bool Load(iResultRow& row,csHash<NPCType*, const char*>& npctypes);
     bool InsertCopy(PID use_char_id, PID ownerPID);
 
     void SetActor(gemNPCActor * actor);

@@ -458,7 +458,7 @@ protected:
     psDatabase                *database;
     csRef<iVFS>                vfs;
 
-    BinaryRBTree<NPCType>      npctypes;
+    csHash<NPCType*, const char*> npctypes;
     BinaryRBTree<LocationType> loctypes;
     psPathNetwork             *pathNetwork;
     csArray<NPC*>              npcs;

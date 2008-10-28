@@ -360,10 +360,10 @@ bool psNPCClient::LoadNPCTypes(const char *xmlfile)
         // This is a NPC so load it.
         if ( strcmp( node->GetValue(), "npctype" ) == 0 )
         {
-            NPCType *npctype = new NPCType;
+            NPCType *npctype = new NPCType(this);
             if (npctype->Load(node))
             {
-                npctypes.Insert(npctype);
+                npctypes.Put(npctype->GetName(), npctype);
             }
             else
             {
@@ -931,9 +931,8 @@ LocationType *psNPCClient::FindLocation(const char *locname)
 
 NPCType *psNPCClient::FindNPCType(const char *npctype_name)
 {
-    NPCType key(npctype_name);
 
-    return npctypes.Find(&key);
+    return npctypes.Get(npctype_name, NULL);
 }
 
 void psNPCClient::AddRaceInfo(csString &name, float walkSpeed, float runSpeed)
