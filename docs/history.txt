@@ -1,3 +1,7 @@
+*** 2008-10-28 by Stefano Angeleri
+- Restricted mana restoring disable only when resurrecting from death realm
+  fixing FS#2299 - Keep dying in death realm for unlimited mana
+
 *** 2008-10-28 by Andrew Dai
 - Moved NPCTypes to use a hash instead of a binary tree. Also removed globals
   from npcbehave.cpp to prepare for unit testing.
