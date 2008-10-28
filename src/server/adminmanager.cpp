@@ -7420,7 +7420,7 @@ void AdminManager::HandleCompleteQuest(MsgEntry* me,psAdminCmdMessage& msg, Admi
 {
     Client *target; //holds the target of our query
     bool isOnline = true;
-    int pid = 0; //used to keep player pid used *only* in offline queries
+    PID pid; //used to keep player pid used *only* in offline queries
     csString name; //stores the char name
     if(!subject)    //the target was empty check if it was because it's a command targetting the issuer or an offline player
     {
@@ -7430,12 +7430,12 @@ void AdminManager::HandleCompleteQuest(MsgEntry* me,psAdminCmdMessage& msg, Admi
 
             if (data.player.StartsWith("pid:",true) && data.player.Length() > 4) // Find by player ID, this is useful only if offline
             {
-                pid = atoi( data.player.Slice(4).GetData() );
+                pid = PID(strtoul(data.player.Slice(4).GetData(), NULL, 10));
                 //get the name of the char from db
-                Result result(db->Select("SELECT name FROM characters where id=%u",pid));
+                Result result(db->Select("SELECT name FROM characters where id=%u",pid.Unbox()));
                 if (!result.IsValid() && !result.Count())
                 {
-                    psserver->SendSystemError(me->clientnum,"No online or offline player found with pid '%u'!",pid);
+                    psserver->SendSystemError(me->clientnum,"No online or offline player found with pid '%u'!",pid.Unbox());
                     return;
                 }
                 name = result[0]["name"];
@@ -7457,7 +7457,7 @@ void AdminManager::HandleCompleteQuest(MsgEntry* me,psAdminCmdMessage& msg, Admi
                 pid = result[0].GetUInt32("id");
             }
 
-            if (!pid)
+            if (!pid.IsValid())
             {
                 psserver->SendSystemError(me->clientnum,"Error, bad PID");
                 return;
@@ -7541,7 +7541,7 @@ void AdminManager::HandleCompleteQuest(MsgEntry* me,psAdminCmdMessage& msg, Admi
         }
         else
         {
-            Result result(db->Select("DELETE FROM character_quests WHERE player_id=%u AND quest_id=%u",pid, quest->GetID()));
+            Result result(db->Select("DELETE FROM character_quests WHERE player_id=%u AND quest_id=%u",pid.Unbox(), quest->GetID()));
             if (result.IsValid())
             {
                 psserver->SendSystemInfo(me->clientnum, "Quest %s discarded for %s!", data.text.GetData(), name.GetData());
@@ -7576,7 +7576,7 @@ void AdminManager::HandleCompleteQuest(MsgEntry* me,psAdminCmdMessage& msg, Admi
         else //our target is offline access the db then...
         {
             //get the quest list from the player and their status
-            Result result(db->Select("SELECT quest_id, status FROM character_quests WHERE player_id=%u",pid));
+            Result result(db->Select("SELECT quest_id, status FROM character_quests WHERE player_id=%u",pid.Unbox()));
             if (result.IsValid()) //we got a good result
             {
                 for(uint currResult = 0; currResult < result.Count(); currResult++) //iterate the results and output info about the quest
