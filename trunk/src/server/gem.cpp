@@ -1937,8 +1937,11 @@ void gemActor::Resurrect()
     }
 
     psChar->SetHitPoints(psChar->GetHitPointsMax());
-    //Do not reset mana to max, to prevent exploits in DR using /die
-    //psChar->SetMana(psChar->GetManaMax());
+
+    //Do not reset mana to max while in DR, to prevent exploits using /die
+    if (sector && strncmp ("DR", sector->QueryObject()->GetName(), 2))
+        psChar->SetMana(psChar->GetManaMax());
+
     psChar->SetStamina(psChar->GetStaminaMax(true), true);
     psChar->SetStamina(psChar->GetStaminaMax(false), false);
     psChar->SetHitPointsRate(HP_REGEN_RATE);
