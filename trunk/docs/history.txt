@@ -1,3 +1,7 @@
+*** 2008-10-28 by Andrew Dai
+- Moved NPCTypes to use a hash instead of a binary tree. Also removed globals
+  from npcbehave.cpp to prepare for unit testing.
+
 *** 2008-10-27 by Stefano Angeleri
 - reworked the if in HaveAvailableResponses hopefully fixing 
   FS#2408 - Bug in testing responses may prevent npc from responding. 
