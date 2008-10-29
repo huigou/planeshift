@@ -1115,7 +1115,7 @@ void pawsMultiLineTextBox::OrganizeText( const char* newText )
 
     GetFont()->GetMaxSize( maxWidth, maxHeight );
 
-    canDrawLines = screenFrame.Height() / maxHeight;
+    canDrawLines = (screenFrame.Height()-(margin*2)) / maxHeight;
 
     char* dummy = new char[text.Length() + 1];
     char* head = dummy;
@@ -1125,9 +1125,9 @@ void pawsMultiLineTextBox::OrganizeText( const char* newText )
     else
         dummy[0] = 0;
 
-    int offSet = 0;
+    int offSet = margin*2;
     if ( usingScrollBar ) 
-        offSet = 36;
+        offSet += 36;
 
 
     while ( dummy )
@@ -1265,14 +1265,14 @@ void pawsMultiLineTextBox::Draw()
     pawsWidget::Draw();
     pawsWidget::ClipToParent();
     
-    int drawX = screenFrame.xmin;
-    int drawY = screenFrame.ymin;
+    int drawX = screenFrame.xmin+margin;
+    int drawY = screenFrame.ymin+margin;
     
     if (!maxHeight && GetFont())
         GetFont()->GetMaxSize( maxWidth, maxHeight );
 
     if (!canDrawLines && maxHeight)
-        canDrawLines = screenFrame.Height() / maxHeight;
+        canDrawLines = (screenFrame.Height()-(margin*2)) / maxHeight;
 
     for (size_t x = startLine; x < (startLine+canDrawLines); x++ )
     {
