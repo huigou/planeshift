@@ -44,11 +44,6 @@ class gemObject;
 /**
  * Game board limits
  */
-#define GAMEBOARD_MIN_COLS 0
-#define GAMEBOARD_MAX_COLS 16
-#define GAMEBOARD_MIN_ROWS 0
-#define GAMEBOARD_MAX_ROWS 16
-
 #define GAMEBOARD_MIN_PLAYERS 1
 #define GAMEBOARD_MAX_PLAYERS 2
 #define GAMEBOARD_DEFAULT_PLAYERS 2
@@ -62,7 +57,10 @@ class psMiniGameBoardDef
 
 public:
 
-    psMiniGameBoardDef(csString defName, const int8_t defCols, const int8_t defRows, const char *defLayout, const char *defPieces, const int8_t defPlayers);
+    psMiniGameBoardDef(csString defName, const int8_t defCols, 
+                       const int8_t defRows, const char *defLayout,
+                       const char *defPieces, const int8_t defPlayers,
+                       const int16_t options);
 
     ~psMiniGameBoardDef();
 
@@ -77,6 +75,9 @@ public:
 
     /// pack string layout into binary array
     void PackLayoutString(const char *layoutStr, uint8_t *packedLayout);
+
+    /// returns gameboard layout options
+    uint16_t GetGameboardOptions(void) { return gameboardOptions; };
 
 private:
 
@@ -99,6 +100,9 @@ private:
     uint8_t *pieces;
 
     int8_t numPlayers;
+
+    /// gameboard options flags
+    int16_t gameboardOptions;
 };
 
 /**
@@ -136,6 +140,7 @@ public:
     /// Sets the tile state at the specified column and row.
     void Set(int8_t col, int8_t row, uint8_t state);
 
+    /// returns number of players
     int8_t GetNumPlayers(void) { return gameBoardDef->numPlayers; };
 
 protected:
@@ -326,6 +331,8 @@ protected:
     void HandleGameUpdate(Client *client, psMGUpdateMessage &msg);
 
     void ResetGameSession(psMiniGameSession *sessionToReset);
+
+    int16_t ParseGameboardOptions(psString optionsStr);
 
     /// Game sessions.
     csPDelArray<psMiniGameSession> sessions;
