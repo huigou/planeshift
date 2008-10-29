@@ -10,6 +10,7 @@ CREATE TABLE gameboards
   layout TEXT NOT NULL,
   pieces TEXT NOT NULL,
   numPlayers INTEGER DEFAULT 2 NOT NULL,
+  gameboardOptions varchar(100) DEFAULT 'White,Checked' NOT NULL,
   PRIMARY KEY (`name`)
 );
 
@@ -17,6 +18,6 @@ CREATE TABLE gameboards
 # data for gameboards
 #
 
-INSERT INTO `gameboards` VALUES ('Test Game', 6, 6, 'FF00FFF0000F000000000000F0000FFF00FF', '123456789ABCDE', 2);
-INSERT INTO `gameboards` VALUES ('Test Game 2', 6, 6, 'FF00FFF0000F000000000000F0000FFF00FF', '123456789ABCDE', 1);
-INSERT INTO `gameboards` VALUES ('Tic Tac Toe', 3, 3, '000000000', '12', 2);
+INSERT INTO `gameboards` VALUES ('Test Game', 6, 6, 'FF00FFF0000F000000000000F0000FFF00FF', '123456789ABCDE', 2, 'White,Checked');
+INSERT INTO `gameboards` VALUES ('Test Game 2', 6, 6, 'FF00FFF0000F000000000000F0000FFF00FF', '123456789ABCDE', 1, 'White,Checked');
+INSERT INTO `gameboards` VALUES ('Tic Tac Toe', 3, 3, '000000000', '12', 2, 'White,Plain');

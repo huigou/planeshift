@@ -1,3 +1,8 @@
+*** 2008-10-29 by Dave Bentham
+- Configurable squares on mini game boards. New field in DB gameboards.gameboardOptions
+  can be "White/Black,Plain/Checked". "White,Checked" is default.
+- DB Bumped
+
 *** 2008-10-28 by Stefano Angeleri
 - Implemented margin support in pawsMultiLineTextBox
 - Implemented margin support in pawsMessageTextBox

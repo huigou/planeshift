@@ -24,6 +24,13 @@
 /// Globals for minigames
 namespace psMiniGame
 {
+/**
+ * Game board limits
+ */
+#define GAMEBOARD_MIN_COLS 0
+#define GAMEBOARD_MAX_COLS 16
+#define GAMEBOARD_MIN_ROWS 0
+#define GAMEBOARD_MAX_ROWS 16
 
     /// Minigame options
     enum GameOptions
@@ -31,7 +38,9 @@ namespace psMiniGame
         ManagedGame         = 0x01, ///< A game managed by the server.
         BlackPieces         = 0x02, ///< Player with black pieces.
         ReadOnly            = 0x04, ///< The game is read-only (for watchers).
-        PersonalGame        = 0x08  ///< The game is personal & private
+        PersonalGame        = 0x08, ///< The game is personal & private
+        BlackSquare         = 0x10, ///< Top left/all squares Black. Else white.
+        PlainSquares        = 0x20  ///< Board squares all plain. Else checked.
     };
 
     /// Minigame tile state values

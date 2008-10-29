@@ -1022,6 +1022,11 @@ INSERT INTO command_group_assignment VALUES( "/disablequest", 30 );
 INSERT INTO command_group_assignment VALUES( "/disablequest", 25 );
 UPDATE `server_options` SET `option_value`='1201' WHERE `option_name`='db_version';
 
+#### 1202 - Dave Bentham - Mini game board options
+ALTER TABLE `gameboards` ADD COLUMN `gameboardOptions` varchar(100) NOT NULL DEFAULT 'White,Checked' AFTER `numPlayers`;
+UPDATE `server_options` SET `option_value`='1202' WHERE `option_name`='db_version';
+
+
 # Insert your upgrade before this line. Remember when you set a new db_version
 # to update the server_options.sql file and update psserver.cpp as well.
 # This to ensure that everything is working if you use the create_all.sql to

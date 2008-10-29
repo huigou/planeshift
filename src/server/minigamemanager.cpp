@@ -119,6 +119,7 @@ bool psMiniGameManager::Initialise(void)
             const int8_t cols = gameboards[i].GetInt("numColumns");
             const int8_t rows = gameboards[i].GetInt("numRows");
             int8_t players = gameboards[i].GetInt("numPlayers");
+            psString optionsStr(gameboards[i]["gameboardOptions"]);
 
             if (name && layout && pieces &&
                 cols >= GAMEBOARD_MIN_COLS && cols <= GAMEBOARD_MAX_COLS &&
@@ -130,7 +131,11 @@ bool psMiniGameManager::Initialise(void)
                     Error2("Minigames GameBoard definition %d invalid num players.", i+1);
                     players = GAMEBOARD_DEFAULT_PLAYERS;
                 }
-                gameDef = new psMiniGameBoardDef(name, cols, rows, layout, pieces, players);
+
+                // decipher board layout options
+                int16_t options = ParseGameboardOptions(optionsStr);
+
+                gameDef = new psMiniGameBoardDef(name, cols, rows, layout, pieces, players, options);
                 gameBoardDef.Put(name.Downcase(), gameDef);
             }
             else
@@ -373,9 +378,29 @@ void psMiniGameManager::ResetGameSession(psMiniGameSession *sessionToReset)
     }
 }
 
+int16_t psMiniGameManager::ParseGameboardOptions(psString optionsStr)
+{
+    uint16_t localOptions = 0;
+
+    // look for black/white. White by default.
+    if (optionsStr.FindSubString("black",0,true) != -1)
+    {
+        localOptions |= BlackSquare;
+    }
+
+    // look for checked/plain. Checked by default.
+    if (optionsStr.FindSubString("plain",0,true) != -1)
+    {
+        localOptions |= PlainSquares;
+    }
+
+    // parse the options string
+    return localOptions;
+}
+
 //---------------------------------------------------------------------------
 
-psMiniGameBoardDef::psMiniGameBoardDef(csString gameName, const int8_t noCols, const int8_t noRows, const char *layoutStr, const char *piecesStr, const int8_t defPlayers)
+psMiniGameBoardDef::psMiniGameBoardDef(csString gameName, const int8_t noCols, const int8_t noRows, const char *layoutStr, const char *piecesStr, const int8_t defPlayers, const int16_t options)
 {
     // rows & columns setup
     rows = noRows;
@@ -419,6 +444,7 @@ psMiniGameBoardDef::psMiniGameBoardDef(csString gameName, const int8_t noCols, c
     }
 
     numPlayers = defPlayers;
+    gameboardOptions = options;
 }
 
 psMiniGameBoardDef::~psMiniGameBoardDef()
@@ -554,6 +580,9 @@ bool psMiniGameSession::Load(csString &responseString)
         layout = new uint8_t[gameBoardDef->GetLayoutSize()];
         gameBoardDef->PackLayoutString(layoutStr, layout);
     }
+
+    // get the gameboard def options
+    options |= gameBoardDef->GetGameboardOptions();
 
     // get the session type. "Personal" means a minigame session per player; each player gets their
     // own personal session (i.e. no watchers, and restricted to single player games). Expected application

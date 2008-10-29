@@ -190,7 +190,7 @@ void pawsGameBoard::CleanBoard()
 void pawsGameBoard::SetupBoard(psMGBoardMessage &msg)
 {
 
-    if (msg.msgCols <= 0 || msg.msgRows <= 0 )
+    if (msg.msgCols <= GAMEBOARD_MIN_COLS || msg.msgRows <= GAMEBOARD_MIN_ROWS )
     {
         Error1("Invalid number of colums or rows for the game board.");
         return;
@@ -244,8 +244,8 @@ void pawsGameBoard::SetupBoard(psMGBoardMessage &msg)
         y += h*rows;
     }
 
-    // Start with a white tile
-    bool white = true;
+    // Start with a white (or black) tile
+    bool white = !(gameOptions & BlackSquare);
 
     for (int8_t i = 0; i < rows; i++)
     {
@@ -295,12 +295,13 @@ void pawsGameBoard::SetupBoard(psMGBoardMessage &msg)
             }
 
             // Flip colors
-            white = !white;
+            if (!(gameOptions & PlainSquares))
+                white = !white;
 
         }
 
         // Flip the color once more if we have an even number of columns
-        if (cols % 2 == 0)
+        if (cols % 2 == 0 && !(gameOptions & PlainSquares))
             white = !white;
 
     }
