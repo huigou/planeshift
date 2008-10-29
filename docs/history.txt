@@ -1,5 +1,7 @@
 *** 2008-10-28 by Stefano Angeleri
 - Implemented margin support in pawsMultiLineTextBox
+- Implemented margin support in pawsMessageTextBox
+- Implemented margin support in pawsEditTextBox
 
 *** 2008-10-28 by Stefano Angeleri
 - Restricted mana restoring disable only when resurrecting from death realm
