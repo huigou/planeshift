@@ -114,10 +114,10 @@ void pawsTextBox::CalcTextPos()
             textX = 0;
             break;
         case horizRIGHT:
-            textX = screenFrame.Width() - width;
+            textX = (screenFrame.Width()-margin*2) - width;
             break;
         case horizCENTRE:
-            textX = (screenFrame.Width() - width)  / 2;
+            textX = ((screenFrame.Width()-margin*2) - width)  / 2;
             break;
     }
 
@@ -127,10 +127,10 @@ void pawsTextBox::CalcTextPos()
             textY = 0;
             break;
         case vertBOTTOM:
-            textY = screenFrame.Height() - height;
+            textY = (screenFrame.Height()-margin*2) - height;
             break;
         case vertCENTRE:
-            textY = (screenFrame.Height() - height) / 2;
+            textY = ((screenFrame.Height()-margin*2) - height) / 2;
             break;
     }
 }
@@ -290,8 +290,8 @@ void pawsTextBox::Draw()
         {
             letterStr[0] = text.GetAt(i);
             DrawWidgetText( letterStr , 
-                            screenFrame.xmin + textX + (textWidth-letterSizes[i].x)/2,
-                            screenFrame.ymin + letterY );
+                            screenFrame.xmin + margin + textX + (textWidth-letterSizes[i].x)/2,
+                            screenFrame.ymin + margin + letterY );
 
             letterY += letterSizes[i].y;
         }
@@ -299,8 +299,8 @@ void pawsTextBox::Draw()
     else
     {
         DrawWidgetText( (const char*)text, 
-                        screenFrame.xmin + textX,
-                        screenFrame.ymin + textY );   
+                        screenFrame.xmin + margin + textX,
+                        screenFrame.ymin + margin + textY );   
     }
 }
 
@@ -730,7 +730,7 @@ void pawsEditTextBox::SetSizeByText()
     if (GetFont()!=NULL && text.GetData()!=NULL )
     {       
         GetFont()->GetDimensions( text.GetData(), width, height );
-        SetSize(width, height);
+        SetSize(width+margin*2, height+margin*2);
     }
 }
 
@@ -810,7 +810,7 @@ void pawsEditTextBox::Draw()
     {
         // Get the number of characters to draw
         int maxChars;
-        maxChars = GetFont()->GetLength( text.GetData() + start, screenFrame.Width());
+        maxChars = GetFont()->GetLength( text.GetData() + start, screenFrame.Width()-margin*2);
 
         if ( (int)cursorPosition > start + maxChars )
             start = (int)cursorPosition - maxChars;
@@ -832,12 +832,12 @@ void pawsEditTextBox::Draw()
 
         // Get the center
         int textCenterX = 4;
-        int textCenterY = screenFrame.Height() / 2  - textHeight / 2;
+        int textCenterY = (screenFrame.Height()-(margin*2)) / 2  - textHeight / 2;
 
 
         DrawWidgetText( tmp.GetData(),
-                        screenFrame.xmin + textCenterX,
-                        screenFrame.ymin + textCenterY );
+                        screenFrame.xmin + textCenterX + margin,
+                        screenFrame.ymin + textCenterY + margin);
 
         if ( blink && hasFocus )
         {
@@ -848,19 +848,19 @@ void pawsEditTextBox::Draw()
             int width, height;
             GetFont()->GetDimensions( tmp, width, height );
 
-            graphics2D->DrawLine( (float)(screenFrame.xmin + textCenterX + width + 1),
-                (float)(screenFrame.ymin + textCenterY),
-                (float)(screenFrame.xmin + textCenterX + width + 1),
-                (float)(screenFrame.ymin + textCenterY+height),
+            graphics2D->DrawLine( (float)(screenFrame.xmin + margin + textCenterX + width + 1),
+                (float)(screenFrame.ymin + margin + textCenterY),
+                (float)(screenFrame.xmin + margin + textCenterX + width + 1),
+                (float)(screenFrame.ymin + margin + textCenterY+height),
                 GetFontColour() );
         }
     } // End if stored.Length() > 0
     else if ( blink && hasFocus )
     {
-        graphics2D->DrawLine( (float)screenFrame.xmin + 5,
-            (float)screenFrame.ymin + 4,
-            (float)screenFrame.xmin + 5,
-            (float)screenFrame.ymax - 4,
+        graphics2D->DrawLine( (float)screenFrame.xmin + margin + 5,
+            (float)screenFrame.ymin + margin + 4,
+            (float)screenFrame.xmin + margin + 5,
+            (float)screenFrame.ymax - (margin + 4),
             GetFontColour() );
     }
 }
@@ -1010,9 +1010,9 @@ void pawsEditTextBox::Clear()
 
 bool pawsEditTextBox::OnMouseDown( int button, int modifiers, int x, int y )
 {
-    x -= (screenFrame.xmin+4); // Adjust x to be relative to the text box
+    x -= (screenFrame.xmin+margin+4); // Adjust x to be relative to the text box
     int textWidth; 
-    int boxWidth = screenFrame.xmax -  screenFrame.xmin;
+    int boxWidth = (screenFrame.xmax + margin) - (screenFrame.xmin + margin);
     int dummy;
 
     //Force the cursor to blink
