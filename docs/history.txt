@@ -1,4 +1,7 @@
 *** 2008-10-28 by Stefano Angeleri
+- Implemented margin support in pawsMultiLineTextBox
+
+*** 2008-10-28 by Stefano Angeleri
 - Restricted mana restoring disable only when resurrecting from death realm
   fixing FS#2299 - Keep dying in death realm for unlimited mana
 - Added a /disablequest command which can change toggle a quest status from enabled
