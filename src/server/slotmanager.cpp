@@ -55,20 +55,26 @@
 SlotManager::~SlotManager()
 {
     psserver->GetEventManager()->Unsubscribe(this, MSGTYPE_SLOT_MOVEMENT);
+    psserver->GetEventManager()->Unsubscribe(this, MSGTYPE_CMDDROP);
 }
 
 bool SlotManager::Initialize()
 {
     worldContainer = NULL;
     psserver->GetEventManager()->Subscribe(this, MSGTYPE_SLOT_MOVEMENT, REQUIRE_READY_CLIENT);
+    psserver->GetEventManager()->Subscribe(this, MSGTYPE_CMDDROP, REQUIRE_READY_CLIENT);
     return true;
 }
 
 
 void SlotManager::HandleMessage(MsgEntry* me, Client *fromClient)
 {
-    // This is the only type of message we should handle
-    if (me->GetType() != MSGTYPE_SLOT_MOVEMENT)
+    // Those are the only two types of messages we should handle
+    if (me->GetType() == MSGTYPE_CMDDROP)
+    {
+        CmdDrop(me, fromClient);
+    }
+    else if (me->GetType() != MSGTYPE_SLOT_MOVEMENT)
         return;
 
     psSlotMovementMsg mesg(me);
@@ -917,4 +923,54 @@ void SlotManager::Consume(psItem* item, psCharacter *charData, int count)
         consumedItem->Destroy();
         delete consumedItem;
     }
+}
+
+void SlotManager::CmdDrop(MsgEntry* me, Client *fromClient)
+{
+    psCmdDropMessage mesg(me);
+    if (mesg.quantity < 1)
+    {
+        mesg.quantity = 1;
+        psserver->SendSystemInfo(fromClient->GetClientNum(), "You cannot drop less than one item.");
+    }
+    if (mesg.quantity > 65)
+    {
+        mesg.quantity = 65;
+        psserver->SendSystemInfo(fromClient->GetClientNum(), "You cannot drop more than a stack.");
+    }
+
+    if (!fromClient->GetCharacterData())
+    {
+        Error2("Could not find Character Data for client: %s", fromClient->GetName());
+        return;
+    }
+
+    psCharacter *chr = fromClient->GetCharacterData();
+    csString type = mesg.itemName;
+    psItemStats * testItemStats = CacheManager::GetSingleton().GetBasicItemStatsByName(mesg.itemName);
+    if(!testItemStats)
+    {
+        Error2("Could not find Item Stats for this item: %s", mesg.itemName.GetData());
+        return;
+    }
+    
+    psItem* stackItem = chr->Inventory().StackNumberItems(testItemStats, mesg.quantity);
+
+    int removeCount;
+    if (mesg.quantity < stackItem->GetStackCount())
+    {
+        removeCount=mesg.quantity;
+    }
+    else
+    {
+        removeCount=-1;
+    }
+
+    psItem* toDropItem = chr->Inventory().RemoveItemID(stackItem->GetUID(), removeCount);
+    chr->DropItem(toDropItem);
+
+
+    psserver->GetCharManager()->UpdateItemViews(fromClient->GetClientNum());  
+
+    return;
 }

@@ -301,6 +301,9 @@ public:
       * @return The list of all items in category.
       */
     csArray<psItem*> GetItemsInCategory(psItemCategory * category);
+    
+    psItem* StackNumberItems(psItemStats * testItemStats, int count);
+
 
     size_t GetContainedItemCount(psItem *container);
     float GetContainedWeight(psItem *container);

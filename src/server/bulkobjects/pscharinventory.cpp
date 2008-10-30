@@ -1236,6 +1236,40 @@ csArray<psItem*> psCharacterInventory::GetItemsInCategory(psItemCategory * categ
     return items;
 }
 
+psItem* psCharacterInventory::StackNumberItems(psItemStats * testItemStats, int count)
+{
+    psItem* stackItem;
+
+    // Inventory indexes start at 1.  0 is reserved for the "NULL" item.
+    unsigned int i;
+    for (i = 1; i<inventory.GetSize(); i++)
+    {
+        if (inventory[i].item->GetBaseStats() == testItemStats && !(inventory[i].item->IsInUse()))
+        {
+            stackItem = inventory[i].item;
+            break;
+        }
+    }
+    
+    for (unsigned int j = i+1;count > stackItem->GetStackCount() && j<inventory.GetSize(); j++)
+    {
+        if (inventory[j].item->GetBaseStats() == testItemStats && !(inventory[j].item->IsInUse()))
+        {
+            psItem* stackedItem = inventory[j].item;
+            if (stackItem->CheckStackableWith(stackedItem, false))
+            {
+                SetLockEncumbranceState(true);
+                psItem *stack = RemoveItemID(stackedItem->GetUID());
+
+                stackItem->CombineStack(stack);
+                stackItem->Save(false);
+                SetLockEncumbranceState(false);
+            }
+        }
+    }
+    return stackItem;
+}
+
 bool psCharacterInventory::HasPurifiedGlyphs(csArray<psItemStats*> glyphsToCheck)
 {
     for (size_t i = 1; i < inventory.GetSize(); i++)

@@ -172,6 +172,7 @@ enum MSG_TYPES
     MSGTYPE_CLIENTSTATUS,
     MSGTYPE_TUTORIAL,
     MSGTYPE_BANKING,
+    MSGTYPE_CMDDROP,
 
     // Movement
     MSGTYPE_REQUESTMOVEMENTS,
@@ -3420,6 +3421,27 @@ public:
     int toSlot;
     int stackCount;
     csVector3 posWorld;
+};
+
+class psCmdDropMessage : public psMessageCracker
+{
+public:
+    psCmdDropMessage( int quantity, csString &itemName);
+    psCmdDropMessage( MsgEntry* me );
+
+    PSF_DECLARE_MSG_FACTORY();
+
+    /**
+     * @brief Converts the message into human readable string.
+     *
+     * @param access_ptrs A struct to a number of access pointers.
+     * @return Return a human readable string for the message.
+     */
+    virtual csString ToString(AccessPointers * access_ptrs);
+
+    int quantity;
+    csString itemName;
+
 };
 
 class psQuestionCancelMessage : public psMessageCracker
