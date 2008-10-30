@@ -91,7 +91,7 @@ psCharacterInventory::psCharacterInventory(psCharacter *ownr)
     equipment[PSCHARACTER_SLOT_ARMS].default_if_empty = basecloths;
     equipment[PSCHARACTER_SLOT_BOOTS].default_if_empty = basecloths;
     equipment[PSCHARACTER_SLOT_GLOVES].default_if_empty = basecloths;
-    equipment[PSCHARACTER_SLOT_HEAD].default_if_empty = basecloths;
+    equipment[PSCHARACTER_SLOT_HELM].default_if_empty = basecloths;
     equipment[PSCHARACTER_SLOT_TORSO].default_if_empty = basecloths;
     equipment[PSCHARACTER_SLOT_LEGS].default_if_empty = basecloths;
 
