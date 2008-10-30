@@ -1875,6 +1875,25 @@ psRaceInfo *CacheManager::GetRaceInfoByNameGender( unsigned int id, PSCHARACTER_
     return NULL;
 }
 
+
+psRaceInfo *CacheManager::GetRaceInfoByMeshName(const csString & meshname)
+{
+    size_t i;
+    psRaceInfo *currentri;
+
+    for (i=0;i<raceinfolist.GetSize();i++)
+    {
+        currentri=raceinfolist.Get(i);
+        csString meshName(currentri->mesh_name);
+        if (currentri!=NULL && meshName==meshname)
+        {
+            return currentri;
+        }
+    }
+    return NULL;
+}
+
+
 psItemCategory *CacheManager::GetItemCategoryByID(unsigned int id)
 {
     size_t i;

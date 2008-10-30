@@ -679,11 +679,12 @@ const enum PSITEMSTATS_STAT skilltostat[6] = {PSITEMSTATS_STAT_AGILITY,
 void UserManager::SendCharacterDescription(Client * client, psCharacter * charData, bool full, bool simple, const csString & requestor)
 {
     StatSet* playerAttr = client->GetCharacterData()->GetAttributes();
-
+    csString meshName = charData->GetActor()->GetMesh();
+    
     bool isSelf = (charData->GetPID() == client->GetCharacterData()->GetPID());
 
     csString charName = charData->GetCharFullName();
-    csString raceName = charData->GetRaceInfo()->name;
+    csString raceName = CacheManager::GetSingleton().GetRaceInfoByMeshName(meshName)->GetRace();
     csString desc     = charData->GetDescription();
     csArray<psCharacterDetailsMessage::NetworkDetailSkill> skills;
 
@@ -814,7 +815,7 @@ void UserManager::SendCharacterDescription(Client * client, psCharacter * charDa
 
     // Finally send the details message
     psCharacterDetailsMessage detailmsg(client->GetClientNum(), charName, 
-        (short unsigned int)charData->GetRaceInfo()->gender, raceName,
+        (short unsigned int)CacheManager::GetSingleton().GetRaceInfoByMeshName(meshName)->gender, raceName,
         desc, skills, requestor );
     detailmsg.SendMessage();
 }

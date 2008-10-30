@@ -287,6 +287,7 @@ public:
 
     // Mesh related functions
     iMeshWrapper *GetMeshWrapper();
+    csString GetMesh() { return factname; };
     void Move(const csVector3& pos,float rotangle,iSector* room);
     bool IsNear(gemObject *obj,float radius);
     void GetPosition(csVector3& pos, float& yrot,iSector*& sector);
