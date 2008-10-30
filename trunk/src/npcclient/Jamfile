@@ -1,7 +1,7 @@
 SubDir TOP src npcclient ;
 
 Library libpsnpcclient :
-        [ Filter [ Wildcard *.cpp *.h ] : main.cpp [ Wildcard *_unittest.cpp ] ]
+        [ Filter [ Wildcard *.cpp *.h ] : main.cpp command.cpp [ Wildcard *_unittest.cpp ] ]
 ;
 
 ExternalLibs libpsnpcclient : CRYSTAL ;
