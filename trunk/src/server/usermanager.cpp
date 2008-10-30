@@ -1489,8 +1489,7 @@ void UserManager::ReportPosition(psUserCmdMessage& msg,Client *client,int client
         if (extras)
         {
             // Get the region this sector belongs to
-            csRef<iRegion> psRegion =  scfQueryInterface<iRegion> (sector->QueryObject()->GetObjectParent());
-            csString region_name = (psRegion) ? psRegion->QueryObject()->GetName() : "(null)";
+            csString region_name = (sector) ? sector->QueryObject()->GetObjectParent()->GetName() : "(null)";
 
             int degrees = (int)(angle*180.0/PI);
             psserver->SendSystemInfo(clientnum,
