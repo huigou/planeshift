@@ -86,7 +86,7 @@ public:
     virtual csString ToString() const;
 };
 
-psNPCClient::psNPCClient ()
+psNPCClient::psNPCClient () : serverconsole(NULL)
 {
     world        = NULL;
     eventmanager = NULL;
@@ -100,8 +100,7 @@ psNPCClient::~psNPCClient()
 {
     running = false;
     delete serverconsole;
-    if (database)
-        delete database;
+    delete database;
 }
 
 bool psNPCClient::Initialize(iObjectRegistry* object_reg,const char *_host, const char *_user, const char *_pass, int _port)
@@ -200,8 +199,9 @@ bool psNPCClient::Initialize(iObjectRegistry* object_reg,const char *_host, cons
     }
     world->Initialize( object_reg );
 
+    csRef<iDocumentNode> root = GetRootNode("/this/data/npcbehave.xml");
 
-    if (!LoadNPCTypes("/this/data/npcbehave.xml"))
+    if (!root.IsValid() || LoadNPCTypes(root))
     {
         CPrintf(CON_ERROR, "Couldn't load npcbehave.xml.\n");
         exit(1);
@@ -317,7 +317,7 @@ void psNPCClient::SaveLogSettings()
 }
 
 
-bool psNPCClient::LoadNPCTypes(const char *xmlfile)
+csRef<iDocumentNode> psNPCClient::GetRootNode(const char *xmlfile)
 {
     csRef<iDocumentSystem> xml = csPtr<iDocumentSystem>(new csTinyDocumentSystem);
 
@@ -325,7 +325,7 @@ bool psNPCClient::LoadNPCTypes(const char *xmlfile)
 
     if ( !buff || !buff->GetSize() )
     {
-        return false;
+        return NULL;
     }
 
     csRef<iDocument> doc = xml->CreateDocument();
@@ -333,19 +333,23 @@ bool psNPCClient::LoadNPCTypes(const char *xmlfile)
     if ( error )
     {
         Error3("%s in %s", error, xmlfile);
-        return false;
+        return NULL;
     }
     csRef<iDocumentNode> root    = doc->GetRoot();
     if(!root)
     {
         Error2("No XML root in %s", xmlfile);
-        return false;
+        return NULL;
     }
+    return root;
+}
 
+bool psNPCClient::LoadNPCTypes(iDocumentNode* root)
+{
     csRef<iDocumentNode> topNode = root->GetNode("npctypes");
     if(!topNode)
     {
-        Error2("No <npctypes> tag in %s", xmlfile);
+        Error1("No <npctypes> tag");
         return false;
     }
     csRef<iDocumentNodeIterator> iter = topNode->GetNodes();
@@ -472,7 +476,7 @@ NPC* psNPCClient::ReadSingleNPC(PID char_id)
         Error2("Error loading char_id %s.", ShowID(char_id));
         return NULL;
     }
-    NPC *newnpc = new NPC;
+    NPC *newnpc = new NPC(this);
 
     if (newnpc->Load(result[0],npctypes))
     {
@@ -507,7 +511,7 @@ bool psNPCClient::ReadNPCsFromDatabase()
             continue;
         }
 
-        NPC *npc = new NPC;
+        NPC *npc = new NPC(this);
         if (npc->Load(rs[i],npctypes))
         {
             npcs.Push(npc);

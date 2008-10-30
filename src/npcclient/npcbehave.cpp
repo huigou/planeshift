@@ -89,6 +89,7 @@ void NPCType::DeepCopy(NPCType& other)
     }
 }
 
+
 bool NPCType::Load(iDocumentNode *node)
 {
     const char *parent = node->GetAttributeValue("parent");

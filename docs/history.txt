@@ -1,3 +1,6 @@
+*** 2008-10-30 by Andrew Dai
+- Initial proof of concept commit of npcclient unittesting.
+
 *** 2008-10-29 by Roland Schulz
 - commited fix to FS#224, thanks Kougaro
 - fix for FS#2184, dito

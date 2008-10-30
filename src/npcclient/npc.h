@@ -55,7 +55,7 @@ protected:
     csHash<HateListEntry*, EID> hatelist;
 
 public:
-    HateList() {}
+    HateList(psNPCClient* npcclient) : npcclient(npcclient) {}
 
     void AddHate(EID entity_id, float delta);
     gemNPCActor *GetMostHated(iSector *sector, csVector3& pos, float range, LocationType * region, bool include_invisible, bool include_invincible);
@@ -63,6 +63,9 @@ public:
     void DumpHateList(const csVector3& myPos, iSector *mySector);
     void Clear();
     float GetHate(EID ent);
+    
+private:
+    psNPCClient* npcclient;
 };
 
 
@@ -104,11 +107,12 @@ protected:
     bool               checked;
     bool               checkedResult;
     bool               disabled;
+    
 
 public:
     HateList           hatelist;
     
-    NPC();
+    NPC(psNPCClient* npcclient);
     ~NPC();
 
     PID                   GetPID() { return pid; }
@@ -122,6 +126,8 @@ public:
     void                  SetDRCounter(uint8_t counter) { DRcounter = counter;}
 
     bool Load(iResultRow& row,csHash<NPCType*, const char*>& npctypes);
+    void Load(const char* name, PID pid, NPCType* type, const char* region_name, int debugging, bool disabled);
+
     bool InsertCopy(PID use_char_id, PID ownerPID);
 
     void SetActor(gemNPCActor * actor);
@@ -234,6 +240,9 @@ public:
     bool IsDebugging(int debug) { return (debugging > 0 && debug <= debugging);};
 
     void CheckPosition();
+    
+private:
+    psNPCClient* npcclient;
 };
 
 struct HateListEntry

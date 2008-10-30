@@ -54,14 +54,13 @@
 #include "networkmgr.h"
 #include "npc.h"
 #include "npcclient.h"
-#include "globals.h"
 #include "gem.h"
 #include "npcmesh.h"
 
 extern iDataConnection *db;
 
 
-NPC::NPC(): checked(false) 
+NPC::NPC(psNPCClient* npcclient): checked(false), hatelist(npcclient), npcclient(npcclient)
 { 
     brain=NULL; 
     pid=0;
@@ -106,6 +105,17 @@ psLinearMovement* NPC::GetLinMove()
         return npcActor->pcmove;
     }
     return NULL;
+}
+
+void NPC::Load(const char* name, PID pid, NPCType* type, const char* region_name, int debugging, bool disabled)
+{
+    this->name = name;
+    this->pid = pid;
+    this->type = type;
+    this->region_name = region_name;
+    this->debugging = debugging;
+    this->disabled = disabled;
+    this->brain = new NPCType(*type);
 }
 
 bool NPC::Load(iResultRow& row, csHash<NPCType*, const char*>& npctypes)
