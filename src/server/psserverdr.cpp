@@ -141,11 +141,7 @@ void psServerDR::ResetPos(gemActor* actor)
     csString targetSectorName;
     float yRot = 0;
     actor->GetPosition(targetPoint, yRot, targetSector);
-    csRef<iRegion> psRegion =  scfQueryInterface<iRegion> (targetSector->QueryObject()->GetObjectParent());
-    if (psRegion)
-        targetSectorName = psRegion->QueryObject()->GetName();
-    else
-        targetSectorName = targetSector->QueryObject()->GetName();
+    targetSectorName = targetSector->QueryObject()->GetObjectParent()->GetName();
     psserver->GetAdminManager()->GetStartOfMap(actor->GetClient(), targetSectorName, targetSector, targetPoint);
     actor->pcmove->SetOnGround(false);
     actor->pcmove->SetVelocity(csVector3(0,0,0));
