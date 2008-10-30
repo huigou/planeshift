@@ -125,6 +125,7 @@ psUserCommands::psUserCommands(MsgHandler* mh,CmdHandler *ch,iObjectRegistry* ob
     cmdsource->Subscribe("/game", this);
     cmdsource->Subscribe("/bank", this);
     cmdsource->Subscribe("/introduce", this);
+    cmdsource->Subscribe("/drop", this);
 
 }
 
@@ -132,67 +133,69 @@ psUserCommands::~psUserCommands()
 {
 //    msgqueue->Unsubscribe(MSGTYPE_CHAT,this);
 
-    cmdsource->Unsubscribe("/who",      this);      
-    cmdsource->Unsubscribe("/buddy",    this);    
-    cmdsource->Unsubscribe("/notbuddy", this); 
-    cmdsource->Unsubscribe("/buddylist",this);
-    cmdsource->Unsubscribe("/roll",     this);
-    cmdsource->Unsubscribe("/pos",      this);
-    //cmdsource->Unsubscribe("/spawn",    this);
-    cmdsource->Unsubscribe("/unstick",  this);
-    cmdsource->Unsubscribe("/attack",   this);
-    cmdsource->Unsubscribe("/stopattack",this);
-    cmdsource->Unsubscribe("/admin",    this);
-    cmdsource->Unsubscribe("/listemotes", this);
-    cmdsource->Unsubscribe("/stoptrading", this);
-    cmdsource->Unsubscribe("/starttrading", this);
-    cmdsource->Unsubscribe("/buy",    this);
-    cmdsource->Unsubscribe("/sell",   this);
-    cmdsource->Unsubscribe("/trade",  this);
-    cmdsource->Unsubscribe("/give",   this);
-    cmdsource->Unsubscribe("/assist", this);
-    cmdsource->Unsubscribe("/ignore", this);
-    cmdsource->Unsubscribe("/add_ignore", this);
-    cmdsource->Unsubscribe("/remove_ignore", this);    
-    cmdsource->Unsubscribe("/cast",   this);
-    cmdsource->Unsubscribe("/away",   this);
-    cmdsource->Unsubscribe("/loot",   this);
-    cmdsource->Unsubscribe("/clear",  this);
-    cmdsource->Unsubscribe("/advisormode",          this);
-    cmdsource->Unsubscribe("/list_advice_requests", this);
+    cmdsource->Unsubscribe("/who",                   this);      
+    cmdsource->Unsubscribe("/buddy",                 this);    
+    cmdsource->Unsubscribe("/notbuddy",              this); 
+    cmdsource->Unsubscribe("/buddylist",             this);
+    cmdsource->Unsubscribe("/roll",                  this);
+    cmdsource->Unsubscribe("/pos",                   this);
+    //cmdsource->Unsubscribe("/spawn",               this);
+    cmdsource->Unsubscribe("/unstick",               this);
+    cmdsource->Unsubscribe("/attack",                this);
+    cmdsource->Unsubscribe("/stopattack",            this);
+    cmdsource->Unsubscribe("/admin",                 this);
+    cmdsource->Unsubscribe("/listemotes",            this);
+    cmdsource->Unsubscribe("/stoptrading",           this);
+    cmdsource->Unsubscribe("/starttrading",          this);
+    cmdsource->Unsubscribe("/buy",                   this);
+    cmdsource->Unsubscribe("/sell",                  this);
+    cmdsource->Unsubscribe("/trade",                 this);
+    cmdsource->Unsubscribe("/give",                  this);
+    cmdsource->Unsubscribe("/assist",                this);
+    cmdsource->Unsubscribe("/ignore",                this);
+    cmdsource->Unsubscribe("/add_ignore",            this);
+    cmdsource->Unsubscribe("/remove_ignore",         this);    
+    cmdsource->Unsubscribe("/cast",                  this);
+    cmdsource->Unsubscribe("/away",                  this);
+    cmdsource->Unsubscribe("/loot",                  this);
+    cmdsource->Unsubscribe("/clear",                 this);
+    cmdsource->Unsubscribe("/advisormode",           this);
+    cmdsource->Unsubscribe("/list_advice_requests",  this);
     cmdsource->Unsubscribe("/advisor_list",          this);        
-    cmdsource->Unsubscribe("/advisor",              this);
-    cmdsource->Unsubscribe("/advice",               this);
-    cmdsource->Unsubscribe("/train",     this);
-    //cmdsource->Unsubscribe("/quests",    this);
-    cmdsource->Unsubscribe("/use",       this);
-    cmdsource->Unsubscribe("/dig",       this);
-    cmdsource->Unsubscribe("/fish",		 this);
-    cmdsource->Unsubscribe("/target",    this);
-    cmdsource->Unsubscribe("/target_context",this);
-    cmdsource->Unsubscribe("/tip",       this);
-    cmdsource->Unsubscribe("/motd",      this);
-    cmdsource->Unsubscribe("/challenge", this);
-    cmdsource->Unsubscribe("/yield",     this);
-    cmdsource->Unsubscribe("/picklock",  this);
-    cmdsource->Unsubscribe("/targetinfo",this);
-    cmdsource->Unsubscribe("/equip",     this);
-    cmdsource->Unsubscribe("/dequip",    this);
-    cmdsource->Unsubscribe("/write",     this);
-    cmdsource->Unsubscribe("/show_active_magic", this);
-    cmdsource->Unsubscribe("/pet",        this);
-    cmdsource->Unsubscribe("/sit",        this);
-    cmdsource->Unsubscribe("/stand",      this);
-    cmdsource->Unsubscribe("/pickup",     this);
-    cmdsource->Unsubscribe("/study",      this );
-    cmdsource->Unsubscribe("/die",        this);
-    cmdsource->Unsubscribe("/combine",    this);
-    cmdsource->Unsubscribe("/show",       this);
-    cmdsource->Unsubscribe("/marriage",   this);
-    cmdsource->Unsubscribe("/repair",     this);
-    cmdsource->Unsubscribe("/game",       this);
-    cmdsource->Unsubscribe("/bank",       this);
-    cmdsource->Unsubscribe("/introduce",       this);
+    cmdsource->Unsubscribe("/advisor",               this);
+    cmdsource->Unsubscribe("/advice",                this);
+    cmdsource->Unsubscribe("/train",                 this);
+    //cmdsource->Unsubscribe("/quests",              this);
+    cmdsource->Unsubscribe("/use",                   this);
+    cmdsource->Unsubscribe("/dig",                   this);
+    cmdsource->Unsubscribe("/fish",		          this);
+    cmdsource->Unsubscribe("/target",                this);
+    cmdsource->Unsubscribe("/target_context",        this);
+    cmdsource->Unsubscribe("/tip",                   this);
+    cmdsource->Unsubscribe("/motd",                  this);
+    cmdsource->Unsubscribe("/challenge",             this);
+    cmdsource->Unsubscribe("/yield",                 this);
+    cmdsource->Unsubscribe("/picklock",              this);
+    cmdsource->Unsubscribe("/targetinfo",            this);
+    cmdsource->Unsubscribe("/equip",                 this);
+    cmdsource->Unsubscribe("/dequip",                this);
+    cmdsource->Unsubscribe("/write",                 this);
+    cmdsource->Unsubscribe("/show_active_magic",     this);
+    cmdsource->Unsubscribe("/pet",                   this);
+    cmdsource->Unsubscribe("/sit",                   this);
+    cmdsource->Unsubscribe("/stand",                 this);
+    cmdsource->Unsubscribe("/pickup",                this);
+    cmdsource->Unsubscribe("/study",                 this);
+    cmdsource->Unsubscribe("/die",                   this);
+    cmdsource->Unsubscribe("/combine",               this);
+    cmdsource->Unsubscribe("/show",                  this);
+    cmdsource->Unsubscribe("/marriage",              this);
+    cmdsource->Unsubscribe("/repair",                this);
+    cmdsource->Unsubscribe("/game",                  this);
+    cmdsource->Unsubscribe("/bank",                  this);
+    cmdsource->Unsubscribe("/introduce",             this);
+    cmdsource->Unsubscribe("/drop",                  this);
+
 
 
     // Unsubscribe emotes.
@@ -300,6 +303,7 @@ const char *psUserCommands::HandleCommand(const char *cmd)
             
         return NULL;                    
     }
+    
     else if (words[0] == "/equip" || (words[0] == "/use" && words.GetCount() > 1))
     {
         if ( words.GetCount() < 2 )
@@ -335,6 +339,7 @@ const char *psUserCommands::HandleCommand(const char *cmd)
         csString itemName( words.GetTail(1) );
         window->Write( itemName );             
     }
+    
     else if (words[0] == "/sell")
     {
         if (words.GetCount() > 1){
@@ -389,8 +394,7 @@ const char *psUserCommands::HandleCommand(const char *cmd)
             return "Ignore Window Not Found";
             
         window->Show();            
-    }            
-    
+    }
        
     else if (words[0] == "/add_ignore")
     {        
@@ -430,6 +434,7 @@ const char *psUserCommands::HandleCommand(const char *cmd)
                 return "Player is not ignored!";                
         }
     }
+    
     else if (words[0] == "/cast")
     {
        if (words.GetCount() <= 1)
@@ -438,6 +443,7 @@ const char *psUserCommands::HandleCommand(const char *cmd)
        csString tail_word = words.GetTail(1);
        AskToSlayBeforeSending(new psSpellCastMessage(tail_word, psengine->GetKFactor()));
     }
+    
     else if (words[0] == "/away")
     {
         pawsChatWindow* ChatWindow = (pawsChatWindow*) PawsManager::GetSingleton().FindWidget("ChatWindow");
@@ -447,12 +453,14 @@ const char *psUserCommands::HandleCommand(const char *cmd)
         else
             ChatWindow->SetAway("");
     }
+    
     else if (words[0] == "/clear")
     {
         printf("Clearing  history\n");
         pawsChatWindow* ChatWindow = (pawsChatWindow*) PawsManager::GetSingleton().FindWidget("ChatWindow");
         ChatWindow->Clear();
     }
+    
     else if (words[0] == "/target")
     {
         if (words[1].IsEmpty()) {
@@ -483,6 +491,7 @@ const char *psUserCommands::HandleCommand(const char *cmd)
                 psengine->GetCharManager()->SetTarget(FindEntityWithName(tail),"select");
         }
     }
+    
     else if (words[0] == "/target_context")
     {
         GEMClientObject *object = NULL;
@@ -495,6 +504,7 @@ const char *psUserCommands::HandleCommand(const char *cmd)
         if (object)
             psengine->GetCharManager()->SetTarget(object,"context");
     }
+    
     else if (words[0] == "/use" ||
              words[0] == "/combine" ||
              words[0] == "/dig" ||
@@ -504,17 +514,20 @@ const char *psUserCommands::HandleCommand(const char *cmd)
         psWorkCmdMessage work(cmd);
         msgqueue->SendMessage(work.msg);
     }
+    
     else if (words[0] == "/picklock")
     {
         psLockpickMessage lockpick("");
         msgqueue->SendMessage(lockpick.msg);
     }
+    
     else if(words[0] == "/targetinfo")
     {
         pawsDetailWindow* detail = (pawsDetailWindow*)PawsManager::GetSingleton().FindWidget("DetailWindow");
         detail->RequestDetails();
         return NULL;
     }
+    
     else if (words[0] == "/advisormode" )
     {
         csString pPerson;
@@ -527,6 +540,7 @@ const char *psUserCommands::HandleCommand(const char *cmd)
         msgqueue->SendMessage(advice.msg);
         return NULL;
     }
+    
     else if (words[0] == "/list_advice_requests" )
     {
         csString pPerson;
@@ -536,6 +550,7 @@ const char *psUserCommands::HandleCommand(const char *cmd)
         msgqueue->SendMessage(advice.msg);
         return NULL;
     }
+    
     else if (words[0] == "/advisor_list" )
     {
         csString pPerson;
@@ -545,6 +560,7 @@ const char *psUserCommands::HandleCommand(const char *cmd)
         msgqueue->SendMessage(advice.msg);
         return NULL;
     }
+    
     else if (words[0] == "/advisor" )
     {
         csString pPerson;
@@ -557,6 +573,7 @@ const char *psUserCommands::HandleCommand(const char *cmd)
         msgqueue->SendMessage(advice.msg);
         return NULL;
     }
+    
     else if (words[0] == "/advice")
     {
 
@@ -569,6 +586,7 @@ const char *psUserCommands::HandleCommand(const char *cmd)
         msgqueue->SendMessage(advice.msg);
         return NULL;
     }
+    
     else if (  words[0] == "/show_active_magic")
     {
         pawsActiveMagicWindow* window     = (pawsActiveMagicWindow*) PawsManager::GetSingleton().FindWidget("ActiveMagicWindow");
@@ -577,6 +595,7 @@ const char *psUserCommands::HandleCommand(const char *cmd)
             
         window->Show();            
     }
+    
     else if (  words[0] == "/pet")
     {
         const char *errorMsg = "You must enter the text. e.g /pet [petname,] <follow|stay|dismiss|summon|attack|guard|assist|name|target> <options>";
@@ -683,6 +702,7 @@ const char *psUserCommands::HandleCommand(const char *cmd)
         // The window will be shown when the server responds back with the game layout.
         return NULL;
     }
+    
     else if (words[0] == "/attack")
     {
         AskToSlayBeforeSending(new psUserCmdMessage(cmd));
@@ -701,6 +721,25 @@ const char *psUserCommands::HandleCommand(const char *cmd)
         psengine->GetCharControl()->GetMovementManager()->StopAllMovement();
     }
 
+    else if (words[0] == "/drop")
+    {
+        if ( words.GetCount() < 2 )
+            return "Usage: /drop  [quantity] [item name]";
+        int quantity = atoi(words[1]);
+        csString itemName;
+        if (quantity == 0)
+        {
+            quantity = 1;
+            itemName = words.GetTail(1);
+        }
+        else 
+        {
+            itemName = words.GetTail(2);
+        }
+        psCmdDropMessage cmddrop(quantity, itemName);
+        msgqueue->SendMessage(cmddrop.msg);
+    }
+    
     else
     {
         psUserCmdMessage cmdmsg(cmd);

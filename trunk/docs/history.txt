@@ -5,6 +5,7 @@
 - commited fix to FS#224, thanks Kougaro
 - fix for FS#2184, dito
 - fix for FS#2248, also by Kougaro
+- feature request FS#2340, add /drop command
 
 *** 2008-10-29 by Dave Bentham
 - Configurable squares on mini game boards. New field in DB gameboards.gameboardOptions

@@ -4917,6 +4917,34 @@ csString psSlotMovementMsg::ToString(AccessPointers * /*access_ptrs*/)
 
 //------------------------------------------------------------------------------
 
+PSF_IMPLEMENT_MSG_FACTORY(psCmdDropMessage,MSGTYPE_CMDDROP);
+
+psCmdDropMessage::psCmdDropMessage( int quantity, csString &itemName)
+{
+    msg.AttachNew(new MsgEntry( sizeof( int32_t ) + itemName.Length() + 1 ));
+
+    msg->SetType(MSGTYPE_CMDDROP);
+    msg->Add( (int32_t) quantity );
+    msg->Add( itemName );
+}
+
+psCmdDropMessage::psCmdDropMessage( MsgEntry* me )
+{
+    quantity  = me->GetInt32();
+    itemName  = me->GetStr();
+}
+
+csString psCmdDropMessage::ToString(AccessPointers * /*access_ptrs*/)
+{
+    csString msgtext;
+
+    msgtext.AppendFmt("Trying to remove");
+
+    return msgtext;
+}
+
+//------------------------------------------------------------------------------
+
 PSF_IMPLEMENT_MSG_FACTORY(psQuestionCancelMessage,MSGTYPE_QUESTIONCANCEL);
 
 csString psQuestionCancelMessage::ToString(AccessPointers * /*access_ptrs*/)

@@ -80,6 +80,9 @@ private:
 
     /// Consume an item and fire off any progression events it has.
     static void Consume(psItem* item, psCharacter *charData, int count);
+    
+    ///drop a stack of the item type requested by searching into the different slots
+    void CmdDrop(MsgEntry* me, Client *fromClient);
 };
 
 #endif
