@@ -2476,7 +2476,7 @@ void AdminManager::Teleport(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& 
 
 
     if ( dynamic_cast<gemActor*>(subject) ) // Record old location of actor, for undo
-        ((gemActor*)subject)->UpdateValidLocation(oldpos, 0.0f, oldyrot, oldsector, true);
+        ((gemActor*)subject)->SetPrevTeleportLocation(oldpos, oldyrot, oldsector);
 
     // Send explanations
     if (subject->GetClientID() != client->GetClientNum())
@@ -3617,7 +3617,7 @@ bool AdminManager::GetTargetOfTeleport(Client *client, psAdminCmdMessage& msg, A
     {
         if ( dynamic_cast<gemActor*>(subject) )
         {
-            ((gemActor*)subject)->GetValidPos(targetPoint, yRot, targetSector);
+            ((gemActor*)subject)->GetPrevTeleportLocation(targetPoint, yRot, targetSector);
         }
         else
         {
