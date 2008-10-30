@@ -349,6 +349,16 @@ CS_CHECK_LIB_WITH([mysqlclient],
 		[USED_MEM check; check.left = 0;])], [/usr /usr/include/mysql|/usr/lib /usr/local/mysql /usr/include/mysql|/usr/lib/mysql /usr/local/include/mysql|/usr/local/lib/mysql /usr/lib /usr/local/mysql], [],
 		[CS_EMIT_BUILD_RESULT([cs_cv_libmysqlclient], [LIBMYSQLCLIENT])], [], [], [], [], [])
 
+#----------------------------------------------------------------------------
+# Check for Google Test
+#----------------------------------------------------------------------------
+
+CS_CHECK_LIB_WITH([gtest],
+	[AC_LANG_PROGRAM([[#include <gtest/gtest.h>]],
+		[int dummyargc = 1; char* dummyargv = "gtest"; testing::InitGoogleTest(&dummyargc, &dummyargv);])], [], [C++],
+		[CS_EMIT_BUILD_RESULT([cs_cv_libgtest], [GTEST])], [], [], [], [], [])
+
+
 #------------------------------------------------------------------------------
 # Check if TemplateToolkit2 is installed (needed for MSVC project generation).
 #------------------------------------------------------------------------------
