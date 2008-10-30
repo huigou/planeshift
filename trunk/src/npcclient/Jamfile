@@ -1,12 +1,26 @@
 SubDir TOP src npcclient ;
 
+Library libpsnpcclient :
+        [ Filter [ Wildcard *.cpp *.h ] : main.cpp [ Wildcard *_unittest.cpp ] ]
+;
+
+ExternalLibs libpsnpcclient : CRYSTAL ;
+LinkWith libpsnpcclient : psnet psengine psrpgrules psutil fparser ;
+
 Application psnpcclient :
-	[ Wildcard *.cpp *.h ] : console
+	main.cpp : console
 ;
 
 CompileGroups psnpcclient : server ;
 ExternalLibs psnpcclient : CRYSTAL ;
-LinkWith psnpcclient : psnet psengine psrpgrules psutil fparser ;
+LinkWith psnpcclient : libpsnpcclient ;
+
+Application npcbehave_unittest :
+        npcbehave_unittest.cpp : console
+;
+
+ExternalLibs npcbehave_unittest : CRYSTAL GTEST ;
+LinkWith npcbehave_unittest : libpsnpcclient ;
 
 
 if $(HAVE_STATIC_PLUGINS) = "yes"

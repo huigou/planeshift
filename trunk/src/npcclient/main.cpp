@@ -14,15 +14,10 @@
 //#include "net/netpacket.h"
 #include "util/log.h"
 
-// ----------------------------------------------------------------
-// this is needed for the engine to construct OS specific stuff 
-// such as building WinMain() calling function in windows
-CS_IMPLEMENT_APPLICATION
-
-// ----------------------------------------------------------------
-
 // global vars
 psNPCClient* npcclient;
+
+CS_IMPLEMENT_APPLICATION
 
 // ----------------------------------------------------------------
 

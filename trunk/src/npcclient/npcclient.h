@@ -419,12 +419,14 @@ public:
       */
     csArray<gemNPCObject*> FindNearbyEntities (iSector* sector, const csVector3& pos, float radius, bool doInvisible = false);
 
+    csRef<iDocumentNode> GetRootNode(const char *xmlfile);
+    
+    bool LoadNPCTypes(iDocumentNode* root);
     
 protected:
 
     bool ReadNPCsFromDatabase();
 
-    bool LoadNPCTypes(const char *xmlfile);
 
 protected:
     bool LoadLocations();
