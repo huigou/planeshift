@@ -162,8 +162,9 @@ public:
     psRaceInfo *GetRaceInfoByIndex(int idx);
     psRaceInfo *GetRaceInfoByID(unsigned int id);
     psRaceInfo *GetRaceInfoByNameGender(const char *name,PSCHARACTER_GENDER gender);
-    psRaceInfo *GetRaceInfoByNameGender( unsigned int id, PSCHARACTER_GENDER gender);
-
+    psRaceInfo *GetRaceInfoByNameGender(unsigned int id, PSCHARACTER_GENDER gender);
+    psRaceInfo *GetRaceInfoByMeshName(const csString & meshname);
+    
     // Skills
     psSkillInfo *GetSkillByID(unsigned int id);
     psSkillInfo *GetSkillByName(const char *name);
