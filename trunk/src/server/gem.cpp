@@ -1443,6 +1443,7 @@ void gemItem::SetPosition(const csVector3& pos,float angle, iSector* sector, INS
     this->pos = pos;
     this->yRot = angle;
     this->sector = sector;
+    this->worldInstance = instance;
 
     psSectorInfo* sectorInfo = NULL;
     if (sector != NULL)
