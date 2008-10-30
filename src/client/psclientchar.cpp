@@ -416,7 +416,7 @@ void psClientCharManager::HandleEquipment( MsgEntry* me )
     
     csString slotname(psengine->slotName.GetName(equip.slot));
     
-    if ( equip.slot == PSCHARACTER_SLOT_HELM )
+    if ( equip.slot == PSCHARACTER_SLOT_HEAD )
     {
         psString result(equip.mesh);
         result.ReplaceAllSubString("$H",object->helmGroup);                                                    

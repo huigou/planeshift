@@ -594,10 +594,10 @@ void psItemStats::LoadSlots( iResultRow& row )
         valid_slots|=PSITEMSTATS_SLOT_BOTHHANDS;
         valid_slots_array.Push(PSCHARACTER_SLOT_BOTHHANDS);
     }            
-    if (slots.FindSubString("HELM",0,true)!=-1)
+    if (slots.FindSubString("HEAD",0,true)!=-1)
     {
-        valid_slots_array.Push(PSCHARACTER_SLOT_HELM);
-        valid_slots|=PSITEMSTATS_SLOT_HELM;
+        valid_slots_array.Push(PSCHARACTER_SLOT_HEAD);
+        valid_slots|=PSITEMSTATS_SLOT_HEAD;
     } 
     if (slots.FindSubString("LEFTFINGER",0,true)!=-1)
     {
