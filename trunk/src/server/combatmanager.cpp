@@ -180,7 +180,7 @@ psCombatManager::psCombatManager() : pvp_region(NULL)
         var_Attacker               = calc_damage->GetVar("Attacker");
         var_AttackLocationItem     = calc_damage->GetVar("AttackLocationItem");
 
-        targetLocations.Push(PSCHARACTER_SLOT_HELM);
+        targetLocations.Push(PSCHARACTER_SLOT_HEAD);
         targetLocations.Push(PSCHARACTER_SLOT_TORSO);
         targetLocations.Push(PSCHARACTER_SLOT_ARMS);
         targetLocations.Push(PSCHARACTER_SLOT_GLOVES);

@@ -1,3 +1,7 @@
+*** 2008-10-29 by Stefano Angeleri
+- Added missing file changes which were in kougaro patches
+  but that were not committed
+
 *** 2008-10-30 by Andrew Dai
 - Initial proof of concept commit of npcclient unittesting.
 
@@ -14,7 +18,7 @@
   can be "White/Black,Plain/Checked". "White,Checked" is default.
 - DB Bumped
 
-*** 2008-10-28 by Stefano Angeleri
+*** 2008-10-29 by Stefano Angeleri
 - Implemented margin support in pawsMultiLineTextBox
 - Implemented margin support in pawsMessageTextBox
 - Implemented margin support in pawsEditTextBox
@@ -22,7 +26,7 @@
 *** 2008-10-28 by Stefano Angeleri
 - Restricted mana restoring disable only when resurrecting from death realm
   fixing FS#2299 - Keep dying in death realm for unlimited mana
-- Added a /disablequest command which can change toggle a quest status from enabled
+- Added a /disablequest command which can toggle a quest status from enabled
   to disabled and viceversa, and if the flag save is defined it will also save the new
   status to database
 - Updated /quest to use the new PID class
