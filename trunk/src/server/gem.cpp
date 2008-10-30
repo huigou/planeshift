@@ -1695,6 +1695,8 @@ nevertired(false), infinitemana(false), instantcast(false), safefall(false)
     Debug6(LOG_NPC,0,"Successfully created actor %s at %1.2f,%1.2f,%1.2f in sector %s.\n",
         factname,pos.x,pos.y,pos.z,sector->QueryObject()->GetName() );
 
+    SetPrevTeleportLocation(pos, rotangle, sector);
+
     // Set the initial valid location to be the spot the actor was created at.
     UpdateValidLocation(pos, 0.0f, rotangle, sector, true);
 
@@ -2911,6 +2913,20 @@ void gemActor::GetLastLocation(csVector3& pos, float& vel_y, float& yrot, iSecto
     vel_y = last_location.vel_y;
     yrot = last_location.yrot;
     sector = last_location.sector;
+}
+
+void gemActor::SetPrevTeleportLocation(const csVector3& pos, float yrot, iSector* sector)
+{
+    prev_teleport_location.pos = pos;
+    prev_teleport_location.yrot = yrot;
+    prev_teleport_location.sector = sector;
+}
+
+void gemActor::GetPrevTeleportLocation(csVector3& pos, float& yrot, iSector*& sector)
+{
+    pos = prev_teleport_location.pos;
+    yrot = prev_teleport_location.yrot;
+    sector = prev_teleport_location.sector;
 }
 
 void gemActor::MulticastDRUpdate(MsgEntry *resend)

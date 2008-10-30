@@ -589,6 +589,7 @@ protected:
     } valid_location;
     DRstate newvalid_location;
     DRstate last_location;
+    DRstate prev_teleport_location;
 
     // To be used for the /report command.
     // NumReports says how many /report commands that haven't expired yet were applied on our object.
@@ -796,7 +797,13 @@ public:
 
     /// Get the last reported location this actor was at
     void GetLastLocation(csVector3& pos, float& vel_y, float& yrot, iSector*& sector);
+    /// Moves player to his last reported location
     void MoveToLastPos(); 
+
+    /// Record the location of this actor before he was teleported
+    void SetPrevTeleportLocation(const csVector3& pos, float yrot, iSector* sector);
+    /// Get the location of the player before he was teleported
+    void GetPrevTeleportLocation(csVector3& pos, float& yrot, iSector*& sector);
 
     const DamageHistory* GetDamageHistory(int pos) const { return dmgHistory.Get(pos); }
     DamageHistory* GetDamageHistory(int pos) { return dmgHistory.Get(pos); }
