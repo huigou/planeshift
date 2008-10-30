@@ -84,13 +84,16 @@ Buy from specified merchant.  If no merchant specified, buy from current target.
         <topic name="/dequip">/dequip item_name|slot_name
 
 Unequips the specified item or slot.  This is equivalent to moving equipped items back into your inventory in your Inventory Window.
-Slot Names: righthand, lefthand, head, legs, boots, bracers, torso, gloves, neck, rightfinger, leftfinger, belt, arms, back</topic>
+Slot Names: righthand, lefthand, helm, legs, boots, bracers, torso, gloves, neck, rightfinger, leftfinger, belt, arms, back</topic>
         <topic name="/die">/die
 
 Use to commit suicide, for example when /unstick does not get you free.</topic>
         <topic name="/dig">/dig for resource
 
 Mine for natural resources in the ground.  For example: /dig for gold.  Some locations are better than others for digging, and how well you do depends on where you are, your skill and your tools.</topic>
+        <topic name="/drop">/drop quantity item_name
+
+Drop the specified quantity of a certain item from your inventory. example : /drop 15 apple</topic>
         <topic name="/equip">/equip quantity item_name
 
 Equips the specified quantity of a certain item.  This is equivalent to equipping items in your Inventory Window.</topic>
@@ -157,7 +160,7 @@ Display current quest notebook.</topic>
 
 Begins a repair on the item in the specified slot. Default slot is righthand
 
-Slot Names: righthand, lefthand, head, legs, boots, bracers, torso, gloves, neck, rightfinger, leftfinger, belt, arms, back
+Slot Names: righthand, lefthand, helm, legs, boots, bracers, torso, gloves, neck, rightfinger, leftfinger, belt, arms, back
 </topic>
         <topic name="/roll">/roll times sides target
 
