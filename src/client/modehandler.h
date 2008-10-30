@@ -233,6 +233,7 @@ protected:
 private:
     pawsChatWindow* chatWindow; ///< Used to get the current chat filtering.
  
+    csString MungeName(GEMClientActor* obj);
     
     void SetCombatAnim( GEMClientActor* atObject, csStringID anim );
     
