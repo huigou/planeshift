@@ -42,7 +42,7 @@ SlotNameHash::SlotNameHash()
 
     AddSecondaryName("gloves",      "hands");
     AddSecondaryName("boots",       "feet");  
-    AddSecondaryName("head",        "helm");  
+    AddSecondaryName("helm",        "head");  
 }
 
 int SlotNameHash::GetID( const csString& name )
