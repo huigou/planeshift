@@ -576,12 +576,17 @@ const char *psUserCommands::HandleCommand(const char *cmd)
     
     else if (words[0] == "/advice")
     {
-
+        //get the chatwindow for use later
+        pawsChatWindow* chatWindow = dynamic_cast<pawsChatWindow*>(PawsManager::GetSingleton().FindWidget("ChatWindow"));
+        
         if (words.GetCount() < 2)
             return "You must enter the text. e.g /Advice [user] <text>";
         csString pPerson( words[1] );
         csString pText(words.GetTail(2));
-
+        
+        if (chatWindow && chatWindow->GetSettings().enableBadWordsFilterOutgoing) //check for badwords filtering
+            chatWindow->BadWordsFilter(pText); //if enabled apply it
+        
         psAdviceMessage advice(0,words[0],pPerson, pText);
         msgqueue->SendMessage(advice.msg);
         return NULL;
