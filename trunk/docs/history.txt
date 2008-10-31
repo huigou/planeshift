@@ -3,6 +3,7 @@
   but that were not committed
 - Removed the APPNAME define from psengine.cpp so the variable is fetched from pscssetup.h
   and changing it only there updates also the client version shown in the stdout
+- Added outgoing filtering support for /advice
 
 *** 2008-10-30 by Andrew Dai
 - Initial proof of concept commit of npcclient unittesting.
