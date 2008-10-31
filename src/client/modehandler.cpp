@@ -1695,9 +1695,19 @@ void ModeHandler::AttackBlock(GEMClientActor* atObject, GEMClientActor* tarObjec
     psengine->GetEffectManager()->RenderEffect("combatBlock", csVector3(0, 0, 0), tarObject->GetMesh(), atObject->GetMesh());
     if(!(chatWindow->GetSettings().meFilters & COMBAT_BLOCKED))
         return;
+    
+    csString nameTarget = tarObject->GetName();
+    if (nameTarget == tarObject->race )
+    {
+        psSystemMessage ev(0,MSG_COMBAT_BLOCK,"You attack the %s on the %s but are blocked", tarObject->GetName(), location.GetData() );
+        msghandler->Publish(ev.msg);
+    }
+    else
+    {
+        psSystemMessage ev(0,MSG_COMBAT_BLOCK,"You attack %s on the %s but are blocked", tarObject->GetName(), location.GetData() );
+        msghandler->Publish(ev.msg);
+    }
 
-    psSystemMessage ev(0,MSG_COMBAT_BLOCK,"You attack %s on the %s but are blocked", MungeName(tarObject).GetData(), location.GetData() );
-    msghandler->Publish(ev.msg);
 }
 
 void ModeHandler::AttackDamage(float damage, GEMClientActor* atObject, GEMClientActor* tarObject, csString& location )
@@ -1709,8 +1719,18 @@ void ModeHandler::AttackDamage(float damage, GEMClientActor* atObject, GEMClient
         if(!(chatWindow->GetSettings().meFilters & COMBAT_SUCCEEDED))
             return;
             
-        psSystemMessage ev(0,MSG_COMBAT_YOURHIT,"You hit %s on the %s for %1.2f damage!", MungeName(tarObject).GetData(), location.GetData(), damage );
-        msghandler->Publish(ev.msg);
+        csString nameTarget = tarObject->GetName();
+        if (nameTarget == tarObject->race )
+        {
+            psSystemMessage ev(0,MSG_COMBAT_YOURHIT,"You hit the %s on the %s for %1.2f damage!", tarObject->GetName(), location.GetData(), damage );
+            msghandler->Publish(ev.msg);
+        }
+        else
+        {
+            psSystemMessage ev(0,MSG_COMBAT_YOURHIT,"You hit %s on the %s for %1.2f damage!", tarObject->GetName(), location.GetData(), damage );
+            msghandler->Publish(ev.msg);
+        }
+
     }
     else
     {
@@ -1718,8 +1738,19 @@ void ModeHandler::AttackDamage(float damage, GEMClientActor* atObject, GEMClient
         if(!(chatWindow->GetSettings().meFilters & COMBAT_FAILED))
             return;
             
-        psSystemMessage ev(0,MSG_COMBAT_YOURHIT,"You hit %s on the %s but fail to do any damage!", MungeName(tarObject).GetData(), location.GetData());
-        msghandler->Publish(ev.msg);
+
+        csString nameTarget = tarObject->GetName();
+        if (nameTarget == tarObject->race )
+        {
+            psSystemMessage ev(0,MSG_COMBAT_YOURHIT,"You hit the %s on the %s but fail to do any damage!", tarObject->GetName(), location.GetData());
+            msghandler->Publish(ev.msg);
+        }
+        else
+        {
+            psSystemMessage ev(0,MSG_COMBAT_YOURHIT,"You hit %s on the %s but fail to do any damage!", tarObject->GetName(), location.GetData());
+            msghandler->Publish(ev.msg);
+        }
+
     }
 
 }
@@ -1731,8 +1762,18 @@ void ModeHandler::AttackDeath( GEMClientActor* atObject, GEMClientActor* tarObje
         if (psengine->GetSoundStatus() && soundmanager->PlayingCombatMusic())
             psengine->GetEffectManager()->RenderEffect("combatVictory", csVector3(0, 0, 0), atObject->GetMesh());
 
-        psSystemMessage ev(0,MSG_COMBAT_VICTORY,"You have killed %s!", MungeName(tarObject).GetData() );
-        msghandler->Publish(ev.msg);
+        csString nameTarget = tarObject->GetName();
+        if (nameTarget == tarObject->race )
+        {
+            psSystemMessage ev(0,MSG_COMBAT_VICTORY,"You have killed the %s!", tarObject->GetName() );
+            msghandler->Publish(ev.msg);
+        }
+        else
+        {
+            psSystemMessage ev(0,MSG_COMBAT_VICTORY,"You have killed %s!", tarObject->GetName() );
+            msghandler->Publish(ev.msg);
+        }
+
     }
     else //killing self
     {
@@ -1747,8 +1788,18 @@ void ModeHandler::AttackDodge(GEMClientActor* atObject, GEMClientActor* tarObjec
     if(!(chatWindow->GetSettings().meFilters & COMBAT_DODGED))
         return;
         
-    psSystemMessage ev(0,MSG_COMBAT_DODGE,"%s has dodged your attack!", MungeName(tarObject).GetData() );
-    msghandler->Publish(ev.msg);
+    
+    csString nameTarget = tarObject->GetName();
+    if (nameTarget == tarObject->race )
+    {        
+        psSystemMessage ev(0,MSG_COMBAT_DODGE,"The %s has dodged your attack!", tarObject->GetName() );
+        msghandler->Publish(ev.msg);
+    }
+    else
+    {
+        psSystemMessage ev(0,MSG_COMBAT_DODGE,"%s has dodged your attack!", tarObject->GetName() );
+        msghandler->Publish(ev.msg);
+    }
 
 }
 
@@ -1758,15 +1809,36 @@ void ModeHandler::AttackMiss(GEMClientActor* atObject, GEMClientActor* tarObject
     if(!(chatWindow->GetSettings().meFilters & COMBAT_MISSED))
         return;
         
-    psSystemMessage ev(0,MSG_COMBAT_MISS,"You attack %s but missed the %s.", MungeName(tarObject).GetData(), location.GetData() );
-    msghandler->Publish(ev.msg);
+    csString nameTarget = tarObject->GetName();
+    if (nameTarget == tarObject->race )
+    { 
+        psSystemMessage ev(0,MSG_COMBAT_MISS,"You attack the %s but missed the %s.", tarObject->GetName(), location.GetData() );
+        msghandler->Publish(ev.msg);
+    }
+    else
+    {
+        psSystemMessage ev(0,MSG_COMBAT_MISS,"You attack %s but missed the %s.", tarObject->GetName(), location.GetData() );
+        msghandler->Publish(ev.msg);
+    }
+
 }
 
 void ModeHandler::AttackOutOfRange( GEMClientActor* atObject, GEMClientActor* tarObject )
 {
     psengine->GetEffectManager()->RenderEffect("combatMiss", csVector3(0, 0, 0), atObject->GetMesh(), tarObject->GetMesh());
-    psSystemMessage ev(0,MSG_COMBAT_MISS,"You are too far away to attack %s.", MungeName(tarObject).GetData() );
-    msghandler->Publish(ev.msg);
+
+    csString nameTarget = tarObject->GetName();
+    if (nameTarget == tarObject->race )
+    {
+        psSystemMessage ev(0,MSG_COMBAT_MISS,"You are too far away to attack %s.", tarObject->GetName() );
+        msghandler->Publish(ev.msg);
+    }
+    else
+    {
+        psSystemMessage ev(0,MSG_COMBAT_MISS,"You are too far away to attack %s.", tarObject->GetName() );
+        msghandler->Publish(ev.msg);
+    }
+
 }
 
 
@@ -1821,8 +1893,18 @@ void ModeHandler::DefendBlock(GEMClientActor* atObject, GEMClientActor* tarObjec
     if(!(chatWindow->GetSettings().meFilters & COMBAT_BLOCKED))
         return;
         
-    psSystemMessage ev(0,MSG_COMBAT_BLOCK,"%s attacks you but your %s blocks it.", MungeName(atObject).GetData(), location.GetData() );
-    msghandler->Publish(ev.msg);
+    csString nameTarget = atObject->GetName();
+    if (nameTarget == atObject->race )
+    {    
+        psSystemMessage ev(0,MSG_COMBAT_BLOCK,"The %s attacks you but your %s blocks it.", atObject->GetName(), location.GetData() );
+        msghandler->Publish(ev.msg);
+    }
+    else
+    {
+        psSystemMessage ev(0,MSG_COMBAT_BLOCK,"%s attacks you but your %s blocks it.", atObject->GetName(), location.GetData() );
+        msghandler->Publish(ev.msg);
+    }
+
 }
 
 void ModeHandler::DefendDamage( float damage, GEMClientActor* atObject, GEMClientActor* tarObject, csString& location )
@@ -1833,8 +1915,18 @@ void ModeHandler::DefendDamage( float damage, GEMClientActor* atObject, GEMClien
         if(!(chatWindow->GetSettings().meFilters & COMBAT_SUCCEEDED))
             return;
             
-        psSystemMessage ev(0,MSG_COMBAT_HITYOU,"%s hits you on the %s for %1.2f damage!",  MungeName(atObject).GetData(), location.GetData(), damage );
-        msghandler->Publish(ev.msg);
+        csString nameTarget = atObject->GetName();
+        if (nameTarget == atObject->race )
+        {      
+            psSystemMessage ev(0,MSG_COMBAT_HITYOU,"The %s hits you on the %s for %1.2f damage!",  atObject->GetName(), location.GetData(), damage );
+            msghandler->Publish(ev.msg);
+        }
+        else
+        {
+            psSystemMessage ev(0,MSG_COMBAT_HITYOU,"%s hits you on the %s for %1.2f damage!",  atObject->GetName(), location.GetData(), damage );
+            msghandler->Publish(ev.msg);
+        }
+
     }
     else
     {
@@ -1842,8 +1934,18 @@ void ModeHandler::DefendDamage( float damage, GEMClientActor* atObject, GEMClien
         if(!(chatWindow->GetSettings().meFilters & COMBAT_FAILED))
             return;
             
-        psSystemMessage ev(0,MSG_COMBAT_HITYOU,"%s hits you on the %s but fails to do any damage!", MungeName(atObject).GetData(), location.GetData());
-        msghandler->Publish(ev.msg);
+        csString nameTarget = atObject->GetName();
+        if (nameTarget == atObject->race )
+        {      
+            psSystemMessage ev(0,MSG_COMBAT_HITYOU,"The %s hits you on the %s but fails to do any damage!",  atObject->GetName(), location.GetData());
+            msghandler->Publish(ev.msg);
+        }
+        else
+        {
+            psSystemMessage ev(0,MSG_COMBAT_HITYOU,"%s hits you on the %s but fails to do any damage!",  atObject->GetName(), location.GetData());
+            msghandler->Publish(ev.msg);
+        }
+
     }
 
 }
@@ -1852,8 +1954,19 @@ void ModeHandler::DefendDeath( GEMClientActor* atObject )
 {
     //atObject->
     psengine->GetEffectManager()->RenderEffect("combatDeath", csVector3(0,0,0), atObject->GetMesh());
-    psSystemMessage ev(0,MSG_COMBAT_OWN_DEATH,"You have been killed by %s!", MungeName(atObject).GetData() );
-    msghandler->Publish(ev.msg);
+
+    csString nameTarget = atObject->GetName();
+    if (nameTarget == atObject->race )
+    {
+        psSystemMessage ev(0,MSG_COMBAT_OWN_DEATH,"You have been killed by the %s!", atObject->GetName() );
+        msghandler->Publish(ev.msg);
+    }
+    else
+    {
+        psSystemMessage ev(0,MSG_COMBAT_OWN_DEATH,"You have been killed by %s!", atObject->GetName() );
+        msghandler->Publish(ev.msg);
+    }
+
 }
 
 void ModeHandler::DefendDodge( GEMClientActor* atObject, GEMClientActor* tarObject )
@@ -1862,8 +1975,19 @@ void ModeHandler::DefendDodge( GEMClientActor* atObject, GEMClientActor* tarObje
     if(!(chatWindow->GetSettings().meFilters & COMBAT_DODGED))
         return;
         
-    psSystemMessage ev(0,MSG_COMBAT_DODGE,"%s attacks you but you dodge.", MungeName(atObject).GetData() );
-    msghandler->Publish(ev.msg);
+
+    csString nameTarget = atObject->GetName();
+    if (nameTarget == atObject->race )
+    {    
+        psSystemMessage ev(0,MSG_COMBAT_DODGE,"The %s attacks you but you dodge.", atObject->GetName() );
+        msghandler->Publish(ev.msg);
+    }
+    else
+    {
+        psSystemMessage ev(0,MSG_COMBAT_DODGE,"%s attacks you but you dodge.", atObject->GetName() );
+        msghandler->Publish(ev.msg);
+    }
+
 }
 
 void ModeHandler::DefendMiss( GEMClientActor* atObject, GEMClientActor* tarObject )
@@ -1872,15 +1996,36 @@ void ModeHandler::DefendMiss( GEMClientActor* atObject, GEMClientActor* tarObjec
     if(!(chatWindow->GetSettings().meFilters & COMBAT_MISSED))
         return;
         
-    psSystemMessage ev(0,MSG_COMBAT_MISS,"%s attacks you but misses.", MungeName(atObject).GetData() );
-    msghandler->Publish(ev.msg);
+    csString nameTarget = atObject->GetName();
+    if (nameTarget == atObject->race )
+    {    
+        psSystemMessage ev(0,MSG_COMBAT_MISS,"The %s attacks you but misses.", atObject->GetName() );
+        msghandler->Publish(ev.msg);
+    }
+    else
+    {
+        psSystemMessage ev(0,MSG_COMBAT_MISS,"%s attacks you but misses.", atObject->GetName() );
+        msghandler->Publish(ev.msg);
+    }
+
 }
 
 void ModeHandler::DefendOutOfRange( GEMClientActor* atObject, GEMClientActor* tarObject )
 {
     psengine->GetEffectManager()->RenderEffect("combatMiss", csVector3(0, 0, 0), atObject->GetMesh(), tarObject->GetMesh());
-    psSystemMessage ev(0,MSG_COMBAT_MISS,"%s attacks but is too far away to reach you.", MungeName(atObject).GetData() );
-    msghandler->Publish(ev.msg);
+
+    csString nameTarget = atObject->GetName();
+    if (nameTarget == atObject->race )
+    {
+        psSystemMessage ev(0,MSG_COMBAT_MISS,"The %s attacks but is too far away to reach you.", atObject->GetName() );
+        msghandler->Publish(ev.msg);
+    }
+    else
+    {
+        psSystemMessage ev(0,MSG_COMBAT_MISS,"%s attacks but is too far away to reach you.", atObject->GetName() );
+        msghandler->Publish(ev.msg);
+    }
+
 }    
 
 void ModeHandler::DefendNearlyDead()
