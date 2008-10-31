@@ -1,6 +1,7 @@
-*** 2008-10-29 by Stefano Angeleri
+*** 2008-10-31 by Stefano Angeleri
 - Added missing file changes which were in kougaro patches
   but that were not committed
+- Updated version shown in shell when launching psclient to 0.4.03
 
 *** 2008-10-30 by Andrew Dai
 - Initial proof of concept commit of npcclient unittesting.
