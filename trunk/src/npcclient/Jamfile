@@ -1,7 +1,7 @@
 SubDir TOP src npcclient ;
 
 Library libpsnpcclient :
-        [ Filter [ Wildcard *.cpp *.h ] : main.cpp [ Wildcard *_unittest.cpp ] ]
+        [ Filter [ Wildcard *.cpp *.h ] : gtest_main.cpp main.cpp [ Wildcard *_unittest.cpp ] ]
 ;
 
 ExternalLibs libpsnpcclient : CRYSTAL ;
@@ -15,13 +15,15 @@ CompileGroups psnpcclient : server ;
 ExternalLibs psnpcclient : CRYSTAL ;
 LinkWith psnpcclient : libpsnpcclient ;
 
-Application npcbehave_unittest :
-        npcbehave_unittest.cpp : console
+if $(GTEST.AVAILABLE) = "yes"
+{
+Application npcclient_test :
+        [ Wildcard *_unittest.cpp ] gtest_main.cpp : console
 ;
 
-ExternalLibs npcbehave_unittest : CRYSTAL GTEST ;
-LinkWith npcbehave_unittest : libpsnpcclient ;
-
+ExternalLibs npcclient_test : CRYSTAL GTEST ;
+LinkWith npcclient_test : libpsnpcclient ;
+}
 
 if $(HAVE_STATIC_PLUGINS) = "yes"
 {

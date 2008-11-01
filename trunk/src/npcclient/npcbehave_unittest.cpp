@@ -34,46 +34,27 @@
 // This requires googletest to be installed
 #include <gtest/gtest.h>
 
-// This should be compiled as a standalone app.
-CS_IMPLEMENT_APPLICATION
+
 
 psNPCClient* npcclient;
 
 class BehaviorSetTest : public testing::Test {
 protected:
-    BehaviorSetTest() : behavior("test_behavior") {
+    BehaviorSetTest() {
         if (iSCF::SCF == 0)
             scfInitialize(0);
         objreg = new csObjectRegistry();
         
-        csRef<iDocumentSystem> xml = csPtr<iDocumentSystem>(new csTinyDocumentSystem);
-        csRef<iDocument> doc = xml->CreateDocument();
+        npcclient = new psNPCClient;
         
-        csString testNpctypeXml = "<npctypes>"
-                                  "<npctype name='type' vel='3'>"
-                                  "<behavior name='goChase' completion_decay='100' growth='0' initial='10'>"
-                                  "<chase type='target' anim='walk' />"
-                                  "</behavior>"
-                                  "</npctype>"
-                                  "</npctypes>";
+        npc = new NPC(npcclient, NULL, NULL, NULL, NULL);
+        npc->SetAlive(true);
         
-        doc->Parse(testNpctypeXml);
-        csRef<iDocumentNode> root = doc->GetRoot();
+        behavior = new Behavior("test_behavior");
         
+        behavior->SetDecay(20)->SetGrowth(50)->SetCompletionDecay(100)->SetInitial(200);
         
-        npcclient = ::npcclient = new psNPCClient;
-        
-        // This loads in the NPC client wide NPCtypes.
-        npcclient->LoadNPCTypes(root);
-        
-        //psPersistActor persistMsg(1, 1, 1, true, "npc", "npcs", "stonebm", "stonebm", "stoneb", 0, "helm", csVector3(1, 1, 1), csVector3(1, 1, 1), csVector3(), "tex", "equipment", 1, EID(1), npcclient->GetNetworkMgr()->GetMsgStrings(), npcclient->GetEngine(), 
-        //gemNPCActor(npcclient, persistMsg);
-        
-        npc = new NPC(npcclient);
-        
-        behaviorset.Add(&behavior);
-
-        npc->Load("npc", PID(1), npcclient->FindNPCType("type"), "region", 5, false);
+        behaviorset.Add(behavior);
     }
     
     ~BehaviorSetTest() {
@@ -84,23 +65,27 @@ protected:
     
     iObjectRegistry* objreg;
     BehaviorSet behaviorset;
-    Behavior behavior;
-    Reaction reaction;
+    Behavior* behavior;
     NPC* npc;
-    psNPCClient* npcclient;
-    csHash<NPCType*, const char*> npctypes;
     EventManager eventmgr;
 };
 
-TEST_F(BehaviorSetTest, Add) {
-    behaviorset.Add(&behavior);
+TEST_F(BehaviorSetTest, AddSameName) {
+    Behavior* behavior2 = new Behavior("test_behavior");
+    EXPECT_FALSE(behaviorset.Add(behavior2));
     
 }
 
 TEST_F(BehaviorSetTest, Find) {   
-    EXPECT_EQ(&behavior, behaviorset.Find("test_behavior"));
+    EXPECT_EQ(behavior, behaviorset.Find("test_behavior"));
+    EXPECT_EQ(NULL, behaviorset.Find("test"));
 }
 
-TEST_F(BehaviorSetTest, Advance) {
-    behaviorset.Advance(1000, npc, &eventmgr);
+TEST_F(BehaviorSetTest, Advance2Behaviors) {
+    Behavior* behavior2 = new Behavior("test_behavior2");
+    behavior2->SetDecay(20)->SetGrowth(100)->SetCompletionDecay(100)->SetInitial(10);
+    behaviorset.Add(behavior2);
+    EXPECT_EQ(behavior, behaviorset.Advance(10, npc, &eventmgr));
+    EXPECT_EQ(behavior, behaviorset.Advance(10, npc, &eventmgr));
+    EXPECT_EQ(behavior2, behaviorset.Advance(1000, npc, &eventmgr));
 }

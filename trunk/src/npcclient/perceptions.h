@@ -242,14 +242,17 @@ protected:
     Location *location;
 
 public:
-    LocationPerception(const char *n, const char*type, Location * location)
-    : Perception(n,type), location(location)  {}
+    LocationPerception(const char *n, const char*type, Location * location, iEngine* engine)
+    : Perception(n,type), location(location), engine(engine)  {}
     virtual ~LocationPerception() {}
 
     virtual bool ShouldReact(Reaction *reaction,NPC *npc);
     virtual Perception *MakeCopy();
     virtual bool GetLocation(csVector3& pos, iSector*& sector);
     virtual float GetRadius() const;
+    
+private:
+    iEngine* engine;
 };
 
 //-----------------------------------------------------------------------------
