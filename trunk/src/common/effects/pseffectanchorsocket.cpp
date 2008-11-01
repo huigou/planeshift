@@ -136,6 +136,9 @@ bool psEffectAnchorSocket::Update(csTicks elapsed)
 {
     if (!isReady)
     {
+        if(!mesh || !mesh->GetMovable() ) //not valid anchor. so tell pseffect to remove us.
+            return false;
+
         if (initPos == mesh->GetMovable()->GetFullPosition())
             return true;
         isReady = true;
