@@ -7,7 +7,9 @@
   moved the flash disable to pawsButton::SetState 
   fixing FS#2335 - Tell-tab still blinks when visited and left and an away-message is set
 - Checking for validity when attaching to a socket an effect. To avoid crashing if the socket
-  isn't available fixing FS#2371 - effects cause client crash when morphed 
+  isn't available fixing FS#2371 - effects cause client crash when morphed
+- Fixed a check in the npcclient initialization doing the inverse of what it should have done
+  (erroring out if everything was a success)
 
 *** 2008-11-1 by Andrew Dai
 - Did some more refactoring in npcclient to allow for dependency injection.
