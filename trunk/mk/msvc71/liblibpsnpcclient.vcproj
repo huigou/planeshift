@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding = "Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="9.00"
-	Name="apppsnpcclient_static"
-	ProjectGUID="{D268EFDA-EADC-B688-84E1-3C963CC8F503}"
+	Version="7.10"
+	Name="liblibpsnpcclient"
+	ProjectGUID="{344835D7-C469-E6E6-A559-A905E8539C74}"
 	SccProjectName=""
 	SccLocalPath="">
 	<Platforms>
@@ -13,11 +13,9 @@
 	<Configurations>
   		<Configuration
 			Name="Release (with static libs)|Win32"
-			OutputDirectory="..\..\out\release9\build\apppsnpcclient_static\"
-			IntermediateDirectory="..\..\out\release9\build\apppsnpcclient_static\"
-			ConfigurationType="1"
-			CharacterSet="2"
-			WholeProgramOptimization="1"
+			OutputDirectory="..\..\out\release71\build\liblibpsnpcclient\"
+			IntermediateDirectory="..\..\out\release71\build\liblibpsnpcclient\"
+			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
 			<Tool
@@ -28,14 +26,14 @@
 				RuntimeLibrary="2"
 				DebugInformationFormat="3"
 				BufferSecurityCheck="FALSE"
-				ProgramDataBaseFileName="..\..\out\release9\build\apppsnpcclient_static\psnpcclient_static.pdb"
-				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_CONSOLE;CS_STATIC_LINKED;WIN32"
+				ProgramDataBaseFileName="..\..\out\release71\build\liblibpsnpcclient\libpsnpcclient.pdb"
+				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;WIN32"
 				OptimizeForProcessor="1"
-				AdditionalOptions="/D CS_HAVE_CAL3D "
+				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
-				PrecompiledHeaderFile="..\..\out\release9\build\apppsnpcclient_static\apppsnpcclient_static.pch"
-				AssemblerListingLocation="..\..\out\release9\build\apppsnpcclient_static\"
-				ObjectFile="..\..\out\release9\build\apppsnpcclient_static\"
+				PrecompiledHeaderFile="..\..\out\release71\build\liblibpsnpcclient\liblibpsnpcclient.pch"
+				AssemblerListingLocation="..\..\out\release71\build\liblibpsnpcclient\"
+				ObjectFile="..\..\out\release71\build\liblibpsnpcclient\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="TRUE"
@@ -51,27 +49,25 @@
 				EnableCOMDATFolding="2"
 				GenerateDebugInformation="TRUE"
 				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD"
-				OutputFile="..\..\psnpcclient_static.exe"
-				ProgramDatabaseFile="..\..\out\release9\build\apppsnpcclient_static\psnpcclient_static.pdb"
-				SubSystem="1"
-				AdditionalOptions="libpng.lib freetype2.lib libcrystalspace_opengl.lib opengl32.lib cal3d-vc9.lib libcrystalspace_staticplugins.lib libcrystalspace.lib zlib.lib "
-				AdditionalDependencies="libcrystalspace.lib ws2_32.lib zlib.lib libmysql.lib"
+				AdditionalOptions=" "
+				AdditionalDependencies="libcrystalspace.lib ws2_32.lib zlib.lib"
 				SuppressStartupBanner="TRUE"
-				AdditionalLibraryDirectories="..\..\..\CS\out\release9\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\release9\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
+				AdditionalLibraryDirectories="..\..\..\CS\out\release71\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\release71\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
 				TargetMachine="1"/>
 			<Tool
 				Name="VCLibrarianTool"
+				OutputFile="..\..\out\release71\libs\liblibpsnpcclient.lib"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
-				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_CONSOLE;CS_STATIC_LINKED"
+				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX"
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\release9\build\apppsnpcclient_static\apppsnpcclient_static.tlb"/>
+				TypeLibraryName="..\..\out\release71\build\liblibpsnpcclient\liblibpsnpcclient.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="md ..\..\out\release9\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\release9\bin\&#x0D;&#x0A;"
+				CommandLine="md ..\..\out\release71\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\release71\bin\&#x0D;&#x0A;"
 				/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
@@ -79,7 +75,7 @@
 				Name="VCPreLinkEventTool"/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_CONSOLE;CS_STATIC_LINKED;PROJECTGEN_VERSION=9"
+				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;PROJECTGEN_VERSION=71"
 				AdditionalIncludeDirectories=".;..\..\src\npcclient;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
 				Culture="1033"/>
 			<Tool
@@ -89,11 +85,9 @@
 		</Configuration>
   		<Configuration
 			Name="Release (with DLLs)|Win32"
-			OutputDirectory="..\..\out\release9\build\apppsnpcclient_static\"
-			IntermediateDirectory="..\..\out\release9\build\apppsnpcclient_static\"
-			ConfigurationType="1"
-			CharacterSet="2"
-			WholeProgramOptimization="1"
+			OutputDirectory="..\..\out\release71\build\liblibpsnpcclient\"
+			IntermediateDirectory="..\..\out\release71\build\liblibpsnpcclient\"
+			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
 			<Tool
@@ -104,14 +98,14 @@
 				RuntimeLibrary="2"
 				DebugInformationFormat="3"
 				BufferSecurityCheck="FALSE"
-				ProgramDataBaseFileName="..\..\out\release9\build\apppsnpcclient_static\psnpcclient_static.pdb"
-				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_CONSOLE;CS_STATIC_LINKED;WIN32;CS_BUILD_SHARED_LIBS"
+				ProgramDataBaseFileName="..\..\out\release71\build\liblibpsnpcclient\libpsnpcclient.pdb"
+				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;WIN32;CS_BUILD_SHARED_LIBS"
 				OptimizeForProcessor="1"
-				AdditionalOptions="/D CS_HAVE_CAL3D "
+				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
-				PrecompiledHeaderFile="..\..\out\release9\build\apppsnpcclient_static\apppsnpcclient_static.pch"
-				AssemblerListingLocation="..\..\out\release9\build\apppsnpcclient_static\"
-				ObjectFile="..\..\out\release9\build\apppsnpcclient_static\"
+				PrecompiledHeaderFile="..\..\out\release71\build\liblibpsnpcclient\liblibpsnpcclient.pch"
+				AssemblerListingLocation="..\..\out\release71\build\liblibpsnpcclient\"
+				ObjectFile="..\..\out\release71\build\liblibpsnpcclient\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="TRUE"
@@ -127,27 +121,25 @@
 				EnableCOMDATFolding="2"
 				GenerateDebugInformation="TRUE"
 				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD"
-				OutputFile="..\..\psnpcclient_static.exe"
-				ProgramDatabaseFile="..\..\out\release9\build\apppsnpcclient_static\psnpcclient_static.pdb"
-				SubSystem="1"
-				AdditionalOptions="libpng.lib freetype2.lib libcrystalspace_opengl.lib opengl32.lib cal3d-vc9.lib libcrystalspace_staticplugins.lib libcrystalspace.lib zlib.lib "
-				AdditionalDependencies="libcrystalspace.lib ws2_32.lib zlib.lib libmysql.lib"
+				AdditionalOptions=" "
+				AdditionalDependencies="libcrystalspace.lib ws2_32.lib zlib.lib"
 				SuppressStartupBanner="TRUE"
-				AdditionalLibraryDirectories="..\..\..\CS\out\release9\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\release9\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
+				AdditionalLibraryDirectories="..\..\..\CS\out\release71\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\release71\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
 				TargetMachine="1"/>
 			<Tool
 				Name="VCLibrarianTool"
+				OutputFile="..\..\out\release71\libs\liblibpsnpcclient.lib"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
-				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_CONSOLE;CS_STATIC_LINKED"
+				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX"
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\release9\build\apppsnpcclient_static\apppsnpcclient_static.tlb"/>
+				TypeLibraryName="..\..\out\release71\build\liblibpsnpcclient\liblibpsnpcclient.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="md ..\..\out\release9\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\release9\bin\&#x0D;&#x0A;"
+				CommandLine="md ..\..\out\release71\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\release71\bin\&#x0D;&#x0A;"
 				/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
@@ -155,7 +147,7 @@
 				Name="VCPreLinkEventTool"/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_CONSOLE;CS_STATIC_LINKED;PROJECTGEN_VERSION=9"
+				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;PROJECTGEN_VERSION=71"
 				AdditionalIncludeDirectories=".;..\..\src\npcclient;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
 				Culture="1033"/>
 			<Tool
@@ -165,10 +157,9 @@
 		</Configuration>
     		<Configuration
 			Name="Debug (with static libs)|Win32"
-			OutputDirectory="..\..\out\debug9\build\apppsnpcclient_static\"
-			IntermediateDirectory="..\..\out\debug9\build\apppsnpcclient_static\"
-			ConfigurationType="1"
-			CharacterSet="2"
+			OutputDirectory="..\..\out\debug71\build\liblibpsnpcclient\"
+			IntermediateDirectory="..\..\out\debug71\build\liblibpsnpcclient\"
+			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
 			<Tool
@@ -179,14 +170,14 @@
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
-				ProgramDataBaseFileName="..\..\out\debug9\build\apppsnpcclient_static\psnpcclient_static.pdb"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_CONSOLE;CS_STATIC_LINKED;WIN32"
+				ProgramDataBaseFileName="..\..\out\debug71\build\liblibpsnpcclient\libpsnpcclient.pdb"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;WIN32"
 				OptimizeForProcessor="1"
-				AdditionalOptions="/D CS_HAVE_CAL3D "
+				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
-				PrecompiledHeaderFile="..\..\out\debug9\build\apppsnpcclient_static\apppsnpcclient_static.pch"
-				AssemblerListingLocation="..\..\out\debug9\build\apppsnpcclient_static\"
-				ObjectFile="..\..\out\debug9\build\apppsnpcclient_static\"
+				PrecompiledHeaderFile="..\..\out\debug71\build\liblibpsnpcclient\liblibpsnpcclient.pch"
+				AssemblerListingLocation="..\..\out\debug71\build\liblibpsnpcclient\"
+				ObjectFile="..\..\out\debug71\build\liblibpsnpcclient\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="TRUE"
@@ -200,27 +191,25 @@
 				LinkIncremental="2"
 				GenerateDebugInformation="TRUE"
 				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD,MSVCRT"
-				OutputFile="..\..\psnpcclient_static.exe"
-				ProgramDatabaseFile="..\..\out\debug9\build\apppsnpcclient_static\psnpcclient_static.pdb"
-				SubSystem="1"
-				AdditionalOptions="libpng.lib freetype2.lib libcrystalspace_opengl_d.lib opengl32.lib cal3d-vc9_d.lib libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib zlib.lib "
-				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib libmysql.lib"
+				AdditionalOptions=" "
+				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib"
 				SuppressStartupBanner="TRUE"
-				AdditionalLibraryDirectories="..\..\..\CS\out\debug9\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug9\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
+				AdditionalLibraryDirectories="..\..\..\CS\out\debug71\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug71\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
 				TargetMachine="1"/>
 			<Tool
 				Name="VCLibrarianTool"
+				OutputFile="..\..\out\debug71\libs\liblibpsnpcclient_d.lib"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_CONSOLE;CS_STATIC_LINKED"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX"
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug9\build\apppsnpcclient_static\apppsnpcclient_static.tlb"/>
+				TypeLibraryName="..\..\out\debug71\build\liblibpsnpcclient\liblibpsnpcclient.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="md ..\..\out\debug9\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug9\bin\&#x0D;&#x0A;"
+				CommandLine="md ..\..\out\debug71\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug71\bin\&#x0D;&#x0A;"
 				/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
@@ -228,7 +217,7 @@
 				Name="VCPreLinkEventTool"/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_CONSOLE;CS_STATIC_LINKED;PROJECTGEN_VERSION=9"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;PROJECTGEN_VERSION=71"
 				AdditionalIncludeDirectories=".;..\..\src\npcclient;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
 				Culture="1033"/>
 			<Tool
@@ -238,10 +227,9 @@
 		</Configuration>
   		<Configuration
 			Name="Debug (with DLLs)|Win32"
-			OutputDirectory="..\..\out\debug9\build\apppsnpcclient_static\"
-			IntermediateDirectory="..\..\out\debug9\build\apppsnpcclient_static\"
-			ConfigurationType="1"
-			CharacterSet="2"
+			OutputDirectory="..\..\out\debug71\build\liblibpsnpcclient\"
+			IntermediateDirectory="..\..\out\debug71\build\liblibpsnpcclient\"
+			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
 			<Tool
@@ -252,14 +240,14 @@
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
-				ProgramDataBaseFileName="..\..\out\debug9\build\apppsnpcclient_static\psnpcclient_static.pdb"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_CONSOLE;CS_STATIC_LINKED;WIN32;CS_BUILD_SHARED_LIBS"
+				ProgramDataBaseFileName="..\..\out\debug71\build\liblibpsnpcclient\libpsnpcclient.pdb"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;WIN32;CS_BUILD_SHARED_LIBS"
 				OptimizeForProcessor="1"
-				AdditionalOptions="/D CS_HAVE_CAL3D "
+				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
-				PrecompiledHeaderFile="..\..\out\debug9\build\apppsnpcclient_static\apppsnpcclient_static.pch"
-				AssemblerListingLocation="..\..\out\debug9\build\apppsnpcclient_static\"
-				ObjectFile="..\..\out\debug9\build\apppsnpcclient_static\"
+				PrecompiledHeaderFile="..\..\out\debug71\build\liblibpsnpcclient\liblibpsnpcclient.pch"
+				AssemblerListingLocation="..\..\out\debug71\build\liblibpsnpcclient\"
+				ObjectFile="..\..\out\debug71\build\liblibpsnpcclient\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="TRUE"
@@ -273,27 +261,25 @@
 				LinkIncremental="2"
 				GenerateDebugInformation="TRUE"
 				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD,MSVCRT"
-				OutputFile="..\..\psnpcclient_static.exe"
-				ProgramDatabaseFile="..\..\out\debug9\build\apppsnpcclient_static\psnpcclient_static.pdb"
-				SubSystem="1"
-				AdditionalOptions="libpng.lib freetype2.lib libcrystalspace_opengl_d.lib opengl32.lib cal3d-vc9_d.lib libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib zlib.lib "
-				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib libmysql.lib"
+				AdditionalOptions=" "
+				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib"
 				SuppressStartupBanner="TRUE"
-				AdditionalLibraryDirectories="..\..\..\CS\out\debug9\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug9\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
+				AdditionalLibraryDirectories="..\..\..\CS\out\debug71\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug71\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
 				TargetMachine="1"/>
 			<Tool
 				Name="VCLibrarianTool"
+				OutputFile="..\..\out\debug71\libs\liblibpsnpcclient_d.lib"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_CONSOLE;CS_STATIC_LINKED"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX"
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug9\build\apppsnpcclient_static\apppsnpcclient_static.tlb"/>
+				TypeLibraryName="..\..\out\debug71\build\liblibpsnpcclient\liblibpsnpcclient.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="md ..\..\out\debug9\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug9\bin\&#x0D;&#x0A;"
+				CommandLine="md ..\..\out\debug71\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug71\bin\&#x0D;&#x0A;"
 				/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
@@ -301,7 +287,7 @@
 				Name="VCPreLinkEventTool"/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_CONSOLE;CS_STATIC_LINKED;PROJECTGEN_VERSION=9"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;PROJECTGEN_VERSION=71"
 				AdditionalIncludeDirectories=".;..\..\src\npcclient;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
 				Culture="1033"/>
 			<Tool
@@ -311,10 +297,9 @@
 		</Configuration>
     		<Configuration
 			Name="MemoryTracker (with static libs)|Win32"
-			OutputDirectory="..\..\out\debug9\build\apppsnpcclient_static\"
-			IntermediateDirectory="..\..\out\debug9\build\apppsnpcclient_static\"
-			ConfigurationType="1"
-			CharacterSet="2"
+			OutputDirectory="..\..\out\debug71\build\liblibpsnpcclient\"
+			IntermediateDirectory="..\..\out\debug71\build\liblibpsnpcclient\"
+			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
 			<Tool
@@ -325,14 +310,14 @@
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
-				ProgramDataBaseFileName="..\..\out\debug9\build\apppsnpcclient_static\psnpcclient_static.pdb"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;_CONSOLE;CS_STATIC_LINKED;WIN32"
+				ProgramDataBaseFileName="..\..\out\debug71\build\liblibpsnpcclient\libpsnpcclient.pdb"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;WIN32"
 				OptimizeForProcessor="1"
-				AdditionalOptions="/D CS_HAVE_CAL3D "
+				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
-				PrecompiledHeaderFile="..\..\out\debug9\build\apppsnpcclient_static\apppsnpcclient_static.pch"
-				AssemblerListingLocation="..\..\out\debug9\build\apppsnpcclient_static\"
-				ObjectFile="..\..\out\debug9\build\apppsnpcclient_static\"
+				PrecompiledHeaderFile="..\..\out\debug71\build\liblibpsnpcclient\liblibpsnpcclient.pch"
+				AssemblerListingLocation="..\..\out\debug71\build\liblibpsnpcclient\"
+				ObjectFile="..\..\out\debug71\build\liblibpsnpcclient\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="TRUE"
@@ -346,27 +331,25 @@
 				LinkIncremental="2"
 				GenerateDebugInformation="TRUE"
 				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD,MSVCRT"
-				OutputFile="..\..\psnpcclient_static.exe"
-				ProgramDatabaseFile="..\..\out\debug9\build\apppsnpcclient_static\psnpcclient_static.pdb"
-				SubSystem="1"
-				AdditionalOptions="libpng.lib freetype2.lib libcrystalspace_opengl_d.lib opengl32.lib cal3d-vc9_d.lib libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib zlib.lib "
-				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib libmysql.lib"
+				AdditionalOptions=" "
+				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib"
 				SuppressStartupBanner="TRUE"
-				AdditionalLibraryDirectories="..\..\..\CS\out\debug9\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug9\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
+				AdditionalLibraryDirectories="..\..\..\CS\out\debug71\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug71\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
 				TargetMachine="1"/>
 			<Tool
 				Name="VCLibrarianTool"
+				OutputFile="..\..\out\debug71\libs\liblibpsnpcclient_d.lib"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;_CONSOLE;CS_STATIC_LINKED"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER"
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug9\build\apppsnpcclient_static\apppsnpcclient_static.tlb"/>
+				TypeLibraryName="..\..\out\debug71\build\liblibpsnpcclient\liblibpsnpcclient.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="md ..\..\out\debug9\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug9\bin\&#x0D;&#x0A;"
+				CommandLine="md ..\..\out\debug71\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug71\bin\&#x0D;&#x0A;"
 				/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
@@ -374,7 +357,7 @@
 				Name="VCPreLinkEventTool"/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;_CONSOLE;CS_STATIC_LINKED;PROJECTGEN_VERSION=9"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;PROJECTGEN_VERSION=71"
 				AdditionalIncludeDirectories=".;..\..\src\npcclient;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
 				Culture="1033"/>
 			<Tool
@@ -384,10 +367,9 @@
 		</Configuration>
   		<Configuration
 			Name="MemoryTracker (with DLLs)|Win32"
-			OutputDirectory="..\..\out\debug9\build\apppsnpcclient_static\"
-			IntermediateDirectory="..\..\out\debug9\build\apppsnpcclient_static\"
-			ConfigurationType="1"
-			CharacterSet="2"
+			OutputDirectory="..\..\out\debug71\build\liblibpsnpcclient\"
+			IntermediateDirectory="..\..\out\debug71\build\liblibpsnpcclient\"
+			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
 			<Tool
@@ -398,14 +380,14 @@
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
-				ProgramDataBaseFileName="..\..\out\debug9\build\apppsnpcclient_static\psnpcclient_static.pdb"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;_CONSOLE;CS_STATIC_LINKED;WIN32;CS_BUILD_SHARED_LIBS"
+				ProgramDataBaseFileName="..\..\out\debug71\build\liblibpsnpcclient\libpsnpcclient.pdb"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;WIN32;CS_BUILD_SHARED_LIBS"
 				OptimizeForProcessor="1"
-				AdditionalOptions="/D CS_HAVE_CAL3D "
+				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
-				PrecompiledHeaderFile="..\..\out\debug9\build\apppsnpcclient_static\apppsnpcclient_static.pch"
-				AssemblerListingLocation="..\..\out\debug9\build\apppsnpcclient_static\"
-				ObjectFile="..\..\out\debug9\build\apppsnpcclient_static\"
+				PrecompiledHeaderFile="..\..\out\debug71\build\liblibpsnpcclient\liblibpsnpcclient.pch"
+				AssemblerListingLocation="..\..\out\debug71\build\liblibpsnpcclient\"
+				ObjectFile="..\..\out\debug71\build\liblibpsnpcclient\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="TRUE"
@@ -419,27 +401,25 @@
 				LinkIncremental="2"
 				GenerateDebugInformation="TRUE"
 				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD,MSVCRT"
-				OutputFile="..\..\psnpcclient_static.exe"
-				ProgramDatabaseFile="..\..\out\debug9\build\apppsnpcclient_static\psnpcclient_static.pdb"
-				SubSystem="1"
-				AdditionalOptions="libpng.lib freetype2.lib libcrystalspace_opengl_d.lib opengl32.lib cal3d-vc9_d.lib libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib zlib.lib "
-				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib libmysql.lib"
+				AdditionalOptions=" "
+				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib"
 				SuppressStartupBanner="TRUE"
-				AdditionalLibraryDirectories="..\..\..\CS\out\debug9\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug9\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
+				AdditionalLibraryDirectories="..\..\..\CS\out\debug71\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug71\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
 				TargetMachine="1"/>
 			<Tool
 				Name="VCLibrarianTool"
+				OutputFile="..\..\out\debug71\libs\liblibpsnpcclient_d.lib"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;_CONSOLE;CS_STATIC_LINKED"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER"
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug9\build\apppsnpcclient_static\apppsnpcclient_static.tlb"/>
+				TypeLibraryName="..\..\out\debug71\build\liblibpsnpcclient\liblibpsnpcclient.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="md ..\..\out\debug9\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug9\bin\&#x0D;&#x0A;"
+				CommandLine="md ..\..\out\debug71\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug71\bin\&#x0D;&#x0A;"
 				/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
@@ -447,7 +427,7 @@
 				Name="VCPreLinkEventTool"/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;_CONSOLE;CS_STATIC_LINKED;PROJECTGEN_VERSION=9"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;PROJECTGEN_VERSION=71"
 				AdditionalIncludeDirectories=".;..\..\src\npcclient;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
 				Culture="1033"/>
 			<Tool
@@ -457,10 +437,9 @@
 		</Configuration>
     		<Configuration
 			Name="RefTracker (with static libs)|Win32"
-			OutputDirectory="..\..\out\debug9\build\apppsnpcclient_static\"
-			IntermediateDirectory="..\..\out\debug9\build\apppsnpcclient_static\"
-			ConfigurationType="1"
-			CharacterSet="2"
+			OutputDirectory="..\..\out\debug71\build\liblibpsnpcclient\"
+			IntermediateDirectory="..\..\out\debug71\build\liblibpsnpcclient\"
+			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
 			<Tool
@@ -471,14 +450,14 @@
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
-				ProgramDataBaseFileName="..\..\out\debug9\build\apppsnpcclient_static\psnpcclient_static.pdb"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;_CONSOLE;CS_STATIC_LINKED;WIN32"
+				ProgramDataBaseFileName="..\..\out\debug71\build\liblibpsnpcclient\libpsnpcclient.pdb"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;WIN32"
 				OptimizeForProcessor="1"
-				AdditionalOptions="/D CS_HAVE_CAL3D "
+				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
-				PrecompiledHeaderFile="..\..\out\debug9\build\apppsnpcclient_static\apppsnpcclient_static.pch"
-				AssemblerListingLocation="..\..\out\debug9\build\apppsnpcclient_static\"
-				ObjectFile="..\..\out\debug9\build\apppsnpcclient_static\"
+				PrecompiledHeaderFile="..\..\out\debug71\build\liblibpsnpcclient\liblibpsnpcclient.pch"
+				AssemblerListingLocation="..\..\out\debug71\build\liblibpsnpcclient\"
+				ObjectFile="..\..\out\debug71\build\liblibpsnpcclient\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="TRUE"
@@ -492,27 +471,25 @@
 				LinkIncremental="2"
 				GenerateDebugInformation="TRUE"
 				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD,MSVCRT"
-				OutputFile="..\..\psnpcclient_static.exe"
-				ProgramDatabaseFile="..\..\out\debug9\build\apppsnpcclient_static\psnpcclient_static.pdb"
-				SubSystem="1"
-				AdditionalOptions="libpng.lib freetype2.lib libcrystalspace_opengl_d.lib opengl32.lib cal3d-vc9_d.lib libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib zlib.lib "
-				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib libmysql.lib"
+				AdditionalOptions=" "
+				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib"
 				SuppressStartupBanner="TRUE"
-				AdditionalLibraryDirectories="..\..\..\CS\out\debug9\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug9\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
+				AdditionalLibraryDirectories="..\..\..\CS\out\debug71\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug71\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
 				TargetMachine="1"/>
 			<Tool
 				Name="VCLibrarianTool"
+				OutputFile="..\..\out\debug71\libs\liblibpsnpcclient_d.lib"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;_CONSOLE;CS_STATIC_LINKED"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER"
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug9\build\apppsnpcclient_static\apppsnpcclient_static.tlb"/>
+				TypeLibraryName="..\..\out\debug71\build\liblibpsnpcclient\liblibpsnpcclient.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="md ..\..\out\debug9\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug9\bin\&#x0D;&#x0A;"
+				CommandLine="md ..\..\out\debug71\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug71\bin\&#x0D;&#x0A;"
 				/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
@@ -520,7 +497,7 @@
 				Name="VCPreLinkEventTool"/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;_CONSOLE;CS_STATIC_LINKED;PROJECTGEN_VERSION=9"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;PROJECTGEN_VERSION=71"
 				AdditionalIncludeDirectories=".;..\..\src\npcclient;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
 				Culture="1033"/>
 			<Tool
@@ -530,10 +507,9 @@
 		</Configuration>
   		<Configuration
 			Name="RefTracker (with DLLs)|Win32"
-			OutputDirectory="..\..\out\debug9\build\apppsnpcclient_static\"
-			IntermediateDirectory="..\..\out\debug9\build\apppsnpcclient_static\"
-			ConfigurationType="1"
-			CharacterSet="2"
+			OutputDirectory="..\..\out\debug71\build\liblibpsnpcclient\"
+			IntermediateDirectory="..\..\out\debug71\build\liblibpsnpcclient\"
+			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
 			<Tool
@@ -544,14 +520,14 @@
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
-				ProgramDataBaseFileName="..\..\out\debug9\build\apppsnpcclient_static\psnpcclient_static.pdb"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;_CONSOLE;CS_STATIC_LINKED;WIN32;CS_BUILD_SHARED_LIBS"
+				ProgramDataBaseFileName="..\..\out\debug71\build\liblibpsnpcclient\libpsnpcclient.pdb"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;WIN32;CS_BUILD_SHARED_LIBS"
 				OptimizeForProcessor="1"
-				AdditionalOptions="/D CS_HAVE_CAL3D "
+				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
-				PrecompiledHeaderFile="..\..\out\debug9\build\apppsnpcclient_static\apppsnpcclient_static.pch"
-				AssemblerListingLocation="..\..\out\debug9\build\apppsnpcclient_static\"
-				ObjectFile="..\..\out\debug9\build\apppsnpcclient_static\"
+				PrecompiledHeaderFile="..\..\out\debug71\build\liblibpsnpcclient\liblibpsnpcclient.pch"
+				AssemblerListingLocation="..\..\out\debug71\build\liblibpsnpcclient\"
+				ObjectFile="..\..\out\debug71\build\liblibpsnpcclient\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="TRUE"
@@ -565,27 +541,25 @@
 				LinkIncremental="2"
 				GenerateDebugInformation="TRUE"
 				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD,MSVCRT"
-				OutputFile="..\..\psnpcclient_static.exe"
-				ProgramDatabaseFile="..\..\out\debug9\build\apppsnpcclient_static\psnpcclient_static.pdb"
-				SubSystem="1"
-				AdditionalOptions="libpng.lib freetype2.lib libcrystalspace_opengl_d.lib opengl32.lib cal3d-vc9_d.lib libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib zlib.lib "
-				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib libmysql.lib"
+				AdditionalOptions=" "
+				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib"
 				SuppressStartupBanner="TRUE"
-				AdditionalLibraryDirectories="..\..\..\CS\out\debug9\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug9\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
+				AdditionalLibraryDirectories="..\..\..\CS\out\debug71\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug71\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
 				TargetMachine="1"/>
 			<Tool
 				Name="VCLibrarianTool"
+				OutputFile="..\..\out\debug71\libs\liblibpsnpcclient_d.lib"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;_CONSOLE;CS_STATIC_LINKED"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER"
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug9\build\apppsnpcclient_static\apppsnpcclient_static.tlb"/>
+				TypeLibraryName="..\..\out\debug71\build\liblibpsnpcclient\liblibpsnpcclient.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="md ..\..\out\debug9\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug9\bin\&#x0D;&#x0A;"
+				CommandLine="md ..\..\out\debug71\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug71\bin\&#x0D;&#x0A;"
 				/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
@@ -593,7 +567,7 @@
 				Name="VCPreLinkEventTool"/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;_CONSOLE;CS_STATIC_LINKED;PROJECTGEN_VERSION=9"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;PROJECTGEN_VERSION=71"
 				AdditionalIncludeDirectories=".;..\..\src\npcclient;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
 				Culture="1033"/>
 			<Tool
@@ -603,10 +577,9 @@
 		</Configuration>
     		<Configuration
 			Name="DebugPSReleaseCSCEL (with static libs)|Win32"
-			OutputDirectory="..\..\out\debug9\build\apppsnpcclient_static\"
-			IntermediateDirectory="..\..\out\debug9\build\apppsnpcclient_static\"
-			ConfigurationType="1"
-			CharacterSet="2"
+			OutputDirectory="..\..\out\debug71\build\liblibpsnpcclient\"
+			IntermediateDirectory="..\..\out\debug71\build\liblibpsnpcclient\"
+			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
 			<Tool
@@ -617,14 +590,14 @@
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
-				ProgramDataBaseFileName="..\..\out\debug9\build\apppsnpcclient_static\psnpcclient_static.pdb"
-				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_CONSOLE;CS_STATIC_LINKED;WIN32"
+				ProgramDataBaseFileName="..\..\out\debug71\build\liblibpsnpcclient\libpsnpcclient.pdb"
+				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;WIN32"
 				OptimizeForProcessor="1"
-				AdditionalOptions="/D CS_HAVE_CAL3D "
+				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
-				PrecompiledHeaderFile="..\..\out\debug9\build\apppsnpcclient_static\apppsnpcclient_static.pch"
-				AssemblerListingLocation="..\..\out\debug9\build\apppsnpcclient_static\"
-				ObjectFile="..\..\out\debug9\build\apppsnpcclient_static\"
+				PrecompiledHeaderFile="..\..\out\debug71\build\liblibpsnpcclient\liblibpsnpcclient.pch"
+				AssemblerListingLocation="..\..\out\debug71\build\liblibpsnpcclient\"
+				ObjectFile="..\..\out\debug71\build\liblibpsnpcclient\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="TRUE"
@@ -638,27 +611,25 @@
 				LinkIncremental="2"
 				GenerateDebugInformation="TRUE"
 				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD,MSVCRT"
-				OutputFile="..\..\psnpcclient_static.exe"
-				ProgramDatabaseFile="..\..\out\debug9\build\apppsnpcclient_static\psnpcclient_static.pdb"
-				SubSystem="1"
-				AdditionalOptions="libpng.lib freetype2.lib libcrystalspace_opengl_d.lib opengl32.lib cal3d-vc9_d.lib libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib zlib.lib "
-				AdditionalDependencies="libcrystalspace.lib ws2_32.lib zlib.lib libmysql.lib"
+				AdditionalOptions=" "
+				AdditionalDependencies="libcrystalspace.lib ws2_32.lib zlib.lib"
 				SuppressStartupBanner="TRUE"
-				AdditionalLibraryDirectories="..\..\..\CS\out\release9\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\release9\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
+				AdditionalLibraryDirectories="..\..\..\CS\out\release71\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\release71\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
 				TargetMachine="1"/>
 			<Tool
 				Name="VCLibrarianTool"
+				OutputFile="..\..\out\debug71\libs\liblibpsnpcclient_d.lib"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
-				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_CONSOLE;CS_STATIC_LINKED"
+				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX"
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug9\build\apppsnpcclient_static\apppsnpcclient_static.tlb"/>
+				TypeLibraryName="..\..\out\debug71\build\liblibpsnpcclient\liblibpsnpcclient.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="md ..\..\out\debug9\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug9\bin\&#x0D;&#x0A;"
+				CommandLine="md ..\..\out\debug71\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug71\bin\&#x0D;&#x0A;"
 				/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
@@ -666,7 +637,7 @@
 				Name="VCPreLinkEventTool"/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_CONSOLE;CS_STATIC_LINKED;PROJECTGEN_VERSION=9"
+				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;PROJECTGEN_VERSION=71"
 				AdditionalIncludeDirectories=".;..\..\src\npcclient;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
 				Culture="1033"/>
 			<Tool
@@ -676,10 +647,9 @@
 		</Configuration>
   		<Configuration
 			Name="DebugPSReleaseCSCEL (with DLLs)|Win32"
-			OutputDirectory="..\..\out\debug9\build\apppsnpcclient_static\"
-			IntermediateDirectory="..\..\out\debug9\build\apppsnpcclient_static\"
-			ConfigurationType="1"
-			CharacterSet="2"
+			OutputDirectory="..\..\out\debug71\build\liblibpsnpcclient\"
+			IntermediateDirectory="..\..\out\debug71\build\liblibpsnpcclient\"
+			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
 			<Tool
@@ -690,14 +660,14 @@
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
-				ProgramDataBaseFileName="..\..\out\debug9\build\apppsnpcclient_static\psnpcclient_static.pdb"
-				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_CONSOLE;CS_STATIC_LINKED;WIN32;CS_BUILD_SHARED_LIBS"
+				ProgramDataBaseFileName="..\..\out\debug71\build\liblibpsnpcclient\libpsnpcclient.pdb"
+				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;WIN32;CS_BUILD_SHARED_LIBS"
 				OptimizeForProcessor="1"
-				AdditionalOptions="/D CS_HAVE_CAL3D "
+				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
-				PrecompiledHeaderFile="..\..\out\debug9\build\apppsnpcclient_static\apppsnpcclient_static.pch"
-				AssemblerListingLocation="..\..\out\debug9\build\apppsnpcclient_static\"
-				ObjectFile="..\..\out\debug9\build\apppsnpcclient_static\"
+				PrecompiledHeaderFile="..\..\out\debug71\build\liblibpsnpcclient\liblibpsnpcclient.pch"
+				AssemblerListingLocation="..\..\out\debug71\build\liblibpsnpcclient\"
+				ObjectFile="..\..\out\debug71\build\liblibpsnpcclient\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="TRUE"
@@ -711,27 +681,25 @@
 				LinkIncremental="2"
 				GenerateDebugInformation="TRUE"
 				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD,MSVCRT"
-				OutputFile="..\..\psnpcclient_static.exe"
-				ProgramDatabaseFile="..\..\out\debug9\build\apppsnpcclient_static\psnpcclient_static.pdb"
-				SubSystem="1"
-				AdditionalOptions="libpng.lib freetype2.lib libcrystalspace_opengl_d.lib opengl32.lib cal3d-vc9_d.lib libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib zlib.lib "
-				AdditionalDependencies="libcrystalspace.lib ws2_32.lib zlib.lib libmysql.lib"
+				AdditionalOptions=" "
+				AdditionalDependencies="libcrystalspace.lib ws2_32.lib zlib.lib"
 				SuppressStartupBanner="TRUE"
-				AdditionalLibraryDirectories="..\..\..\CS\out\release9\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\release9\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
+				AdditionalLibraryDirectories="..\..\..\CS\out\release71\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\release71\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
 				TargetMachine="1"/>
 			<Tool
 				Name="VCLibrarianTool"
+				OutputFile="..\..\out\debug71\libs\liblibpsnpcclient_d.lib"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
-				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_CONSOLE;CS_STATIC_LINKED"
+				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX"
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug9\build\apppsnpcclient_static\apppsnpcclient_static.tlb"/>
+				TypeLibraryName="..\..\out\debug71\build\liblibpsnpcclient\liblibpsnpcclient.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="md ..\..\out\debug9\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug9\bin\&#x0D;&#x0A;"
+				CommandLine="md ..\..\out\debug71\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug71\bin\&#x0D;&#x0A;"
 				/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
@@ -739,7 +707,7 @@
 				Name="VCPreLinkEventTool"/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_CONSOLE;CS_STATIC_LINKED;PROJECTGEN_VERSION=9"
+				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;PROJECTGEN_VERSION=71"
 				AdditionalIncludeDirectories=".;..\..\src\npcclient;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
 				Culture="1033"/>
 			<Tool
@@ -753,23 +721,89 @@
 			Name="Source Files"
 			Filter="">
 			<File
-				RelativePath="..\..\mk\msvc\apppsnpcclient_static_static_glue_app.cpp">
+				RelativePath="..\..\src\npcclient\gem.cpp">
 			</File>
 			<File
-				RelativePath="..\..\mk\msvc\apppsnpcclient_static_static_glue_app_CRYSTAL.cpp">
+				RelativePath="..\..\src\npcclient\networkmgr.cpp">
 			</File>
 			<File
-				RelativePath="..\..\src\npcclient\command.cpp">
+				RelativePath="..\..\src\npcclient\npc.cpp">
 			</File>
 			<File
-				RelativePath="..\..\src\npcclient\main.cpp">
+				RelativePath="..\..\src\npcclient\npcbehave.cpp">
+			</File>
+			<File
+				RelativePath="..\..\src\npcclient\npcclient.cpp">
+			</File>
+			<File
+				RelativePath="..\..\src\npcclient\npcmesh.cpp">
+			</File>
+			<File
+				RelativePath="..\..\src\npcclient\npcoperations.cpp">
+			</File>
+			<File
+				RelativePath="..\..\src\npcclient\pathfind.cpp">
+			</File>
+			<File
+				RelativePath="..\..\src\npcclient\perceptions.cpp">
+			</File>
+			<File
+				RelativePath="..\..\src\npcclient\status.cpp">
+			</File>
+			<File
+				RelativePath="..\..\src\npcclient\tribe.cpp">
+			</File>
+			<File
+				RelativePath="..\..\src\npcclient\tribeneed.cpp">
+			</File>
+			<File
+				RelativePath="..\..\src\npcclient\walkpoly.cpp">
 			</File>
 		</Filter>
 		<Filter
-			Name="Resource Files"
+			Name="Header Files"
 			Filter="">
 			<File
-				RelativePath="..\..\mk\msvc\apppsnpcclient_static.rc">
+				RelativePath="..\..\src\npcclient\gem.h">
+			</File>
+			<File
+				RelativePath="..\..\src\npcclient\globals.h">
+			</File>
+			<File
+				RelativePath="..\..\src\npcclient\networkmgr.h">
+			</File>
+			<File
+				RelativePath="..\..\src\npcclient\npc.h">
+			</File>
+			<File
+				RelativePath="..\..\src\npcclient\npcbehave.h">
+			</File>
+			<File
+				RelativePath="..\..\src\npcclient\npcclient.h">
+			</File>
+			<File
+				RelativePath="..\..\src\npcclient\npcmesh.h">
+			</File>
+			<File
+				RelativePath="..\..\src\npcclient\npcoperations.h">
+			</File>
+			<File
+				RelativePath="..\..\src\npcclient\pathfind.h">
+			</File>
+			<File
+				RelativePath="..\..\src\npcclient\perceptions.h">
+			</File>
+			<File
+				RelativePath="..\..\src\npcclient\status.h">
+			</File>
+			<File
+				RelativePath="..\..\src\npcclient\tribe.h">
+			</File>
+			<File
+				RelativePath="..\..\src\npcclient\tribeneed.h">
+			</File>
+			<File
+				RelativePath="..\..\src\npcclient\walkpoly.h">
 			</File>
 		</Filter>
 	</Files>
