@@ -404,7 +404,11 @@ bool pawsButton::IsEnabled() const
 
 void pawsButton::SetState(bool isDown, bool publish)
 {
-    down = isDown;
+    down = isDown;    
+    
+    if ( flash && down )
+        flash = 0;
+
 	if (!toggle)
 		return;
 
@@ -415,9 +419,6 @@ void pawsButton::SetState(bool isDown, bool publish)
 
     if (!publish)
         return;
-
-    if ( flash && down )
-        flash = 0;
 
     for (size_t a=0; a<publishList.GetSize(); ++a)
         PawsManager::GetSingleton().Publish(publishList[a], isDown);
