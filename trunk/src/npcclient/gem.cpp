@@ -50,7 +50,6 @@ psNpcMeshAttach::psNpcMeshAttach(gemNPCObject* objectToAttach) : scfImplementati
 
 
 //-------------------------------------------------------------------------------
-psNPCClient *gemNPCObject::npcclient = NULL;
 
 gemNPCObject::gemNPCObject(psNPCClient* npcclient, EID id)
     :eid(id), visible(true), invincible(false), instance(0)

@@ -832,7 +832,7 @@ protected:
     float     range;  //  Used for watch of type NEAREST 
     bool      watchInvisible, watchInvincible;
 
-    gemNPCObject *watchedEnt;
+    csWeakRef<gemNPCObject> watchedEnt;
 
     enum
     {

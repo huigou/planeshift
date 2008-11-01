@@ -37,6 +37,7 @@
 #include "util/prb.h"
 #include "util/psconst.h"
 #include "net/npcmessages.h"
+#include "gem.h"
 
 class ScriptOperation;
 class Perception;
@@ -46,7 +47,6 @@ class EventManager;
 class BehaviorSet;
 class Location;
 struct iSector;
-class gemNPCObject;
 class gemNPCActor;
 class gemNPCItem;
 
@@ -195,11 +195,11 @@ class FactionPerception : public Perception
 {
 protected:
     int faction_delta;
-    gemNPCObject* player;
+    csWeakRef<gemNPCActor> player;
 
 public:
     FactionPerception(const char *n,int d,gemNPCObject *p)
-    : Perception(n), faction_delta(d), player(p)  {    }
+    : Perception(n), faction_delta(d), player((gemNPCActor *)p)  {    }
     virtual ~FactionPerception() {}
 
     virtual bool ShouldReact(Reaction *reaction,NPC *npc);
@@ -218,7 +218,7 @@ public:
 class ItemPerception : public Perception
 {
 protected:
-    gemNPCObject* item;
+    csWeakRef<gemNPCObject> item;
 
 public:
     ItemPerception(const char *n,gemNPCObject *i)
@@ -268,11 +268,11 @@ private:
 class AttackPerception : public Perception
 {
 protected:
-    gemNPCObject* attacker;
+    csWeakRef<gemNPCActor> attacker;
 
 public:
     AttackPerception(const char *n,gemNPCObject *attack)
-        : Perception(n), attacker(attack) { }
+        : Perception(n), attacker((gemNPCActor*) attack) { }
 
     virtual Perception *MakeCopy();
     virtual void ExecutePerception(NPC *npc,float weight);
@@ -292,7 +292,7 @@ public:
 class GroupAttackPerception : public Perception
 {
 protected:
-    gemNPCObject *attacker;
+    csWeakRef<gemNPCObject> attacker;
     csArray<gemNPCObject *> attacker_ents;
     csArray<int> bestSkillSlots;
 
@@ -314,12 +314,12 @@ public:
 class DamagePerception : public Perception
 {
 protected:
-    gemNPCObject *attacker;
+    csWeakRef<gemNPCActor> attacker;
     float damage;
 
 public:
     DamagePerception(const char *n,gemNPCObject *attack,float dmg)
-        : Perception(n), attacker(attack), damage(dmg) { }
+        : Perception(n), attacker((gemNPCActor*)attack), damage(dmg) { }
 
     virtual Perception *MakeCopy();
     virtual void ExecutePerception(NPC *npc,float weight);
@@ -339,8 +339,8 @@ public:
 class SpellPerception : public Perception
 {
 protected:
-    gemNPCObject *caster;
-    gemNPCObject *target;
+    csWeakRef<gemNPCActor> caster;
+    csWeakRef<gemNPCActor> target;
     float       spell_severity;
 
 public:
@@ -410,9 +410,9 @@ class OwnerCmdPerception : public Perception
 {
 protected:
     psPETCommandMessage::PetCommand_t command;
-    gemNPCObject *owner;
-    gemNPCObject *pet;
-    gemNPCObject *target;
+    csWeakRef<gemNPCObject> owner;
+    csWeakRef<gemNPCObject> pet;
+    csWeakRef<gemNPCActor> target;
 
 public:
     OwnerCmdPerception(const char *n, psPETCommandMessage::PetCommand_t command, gemNPCObject *owner, gemNPCObject *pet, gemNPCObject *target);
@@ -435,8 +435,8 @@ class OwnerActionPerception : public Perception
 {
 protected:
     int action;
-    gemNPCObject *owner;
-    gemNPCObject *pet;
+    csWeakRef<gemNPCObject> owner;
+    csWeakRef<gemNPCObject> pet;
 
 public:
     OwnerActionPerception(const char *n, int action, gemNPCObject *owner, gemNPCObject *pet );
