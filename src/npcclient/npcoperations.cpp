@@ -1066,7 +1066,7 @@ void ReplaceVariables(csString & object,NPC *npc)
 bool LocateOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
 {
     // Reset old target
-    npc->SetTarget((gemNPCObject*)NULL);
+    npc->SetTarget(NULL);
 
     located_pos = csVector3(0.0f,0.0f,0.0f);
     located_angle = 0.0f;

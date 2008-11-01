@@ -559,8 +559,8 @@ SpellPerception::SpellPerception(const char *name,
                                  const char *type,float severity)
                                  : Perception(name)
 {
-    this->caster = caster;
-    this->target = target;
+    this->caster = (gemNPCActor*) caster;
+    this->target = (gemNPCActor*) target;
     this->spell_severity = severity;
     this->type = type;
 }
@@ -727,7 +727,7 @@ OwnerCmdPerception::OwnerCmdPerception( const char *name,
     this->command = command;
     this->owner = owner;
     this->pet = pet;
-    this->target = target;
+    this->target = (gemNPCActor *) target;
 }
 
 bool OwnerCmdPerception::ShouldReact( Reaction *reaction, NPC *npc )

@@ -68,7 +68,7 @@ private:
 
 
 
-class gemNPCObject
+class gemNPCObject : public CS::Utility::WeakReferenced
 {
 public:
     gemNPCObject(psNPCClient* npcclient, EID id);
@@ -107,7 +107,7 @@ public:
     virtual int GetInstance(){ return instance; };
 
 protected:
-    static psNPCClient *npcclient;
+    psNPCClient *npcclient;
     
 
     csString name;
