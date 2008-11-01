@@ -138,7 +138,15 @@ FactoryIndexEntry* ClientCacheManager::LoadNewFactory(const char* filename)
                 {
                     csRef<iDocumentNode> material = materials->Next();
                     material->RemoveNodes(material->GetNodes("shader"));
-                    material->RemoveNodes(material->GetNodes("shadervar"));
+                    csRef<iDocumentNodeIterator> shadervars = material->GetNodes("shadervar");
+                    while(shadervars->HasNext())
+                    {
+                        csRef<iDocumentNode> shadervar = shadervars->Next();
+                        if(strcmp("colorize", shadervar->GetContentsValue()) != 0)
+                        {
+                            material->RemoveNode(shadervar);
+                        }
+                    }
                 }
             }
         }
