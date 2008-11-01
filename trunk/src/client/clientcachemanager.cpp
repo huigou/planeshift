@@ -137,14 +137,14 @@ FactoryIndexEntry* ClientCacheManager::LoadNewFactory(const char* filename)
                 while(materials->HasNext())
                 {
                     csRef<iDocumentNode> material = materials->Next();
-                    material->RemoveNodes(material->GetNodes("shader"));
-                    csRef<iDocumentNodeIterator> shadervars = material->GetNodes("shadervar");
-                    while(shadervars->HasNext())
+                    material->RemoveNodes(material->GetNodes("shadervar"));
+                    csRef<iDocumentNodeIterator> shaders = material->GetNodes("shader");
+                    while(shaders->HasNext())
                     {
-                        csRef<iDocumentNode> shadervar = shadervars->Next();
-                        if(strcmp("colorize", shadervar->GetContentsValue()) != 0)
+                        csRef<iDocumentNode> shader = shaders->Next();
+                        if(strcmp("colorize", shader->GetContentsValue()) != 0)
                         {
-                            material->RemoveNode(shadervar);
+                            material->RemoveNode(shader);
                         }
                     }
                 }
