@@ -42,6 +42,7 @@ class ClientConnectionSet;
 class psCharacter;
 class psItem;
 class gemObject;
+class gemContainer;
 class gemActor;
 class gemNPC;
 class psPath;
@@ -198,7 +199,7 @@ public:
     /** Checks if this client is allowed to pick up an item, or take it
      *  out of the container.
      */
-    bool CanTake(psItem* item);
+    bool CanTake(gemContainer* gemcontainer, psItem* item);
 
     /** Returns the type of the target, from TARGET_TYPES.
      *

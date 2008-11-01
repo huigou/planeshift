@@ -2402,7 +2402,7 @@ void psItem::FillContainerMsg(Client* client, psViewItemDescription& outgoing)
             return;
         }
 
-        int stackCount = client->CanTake(child) ? child->GetStackCount() : -1;
+        int stackCount = client->CanTake(container,child) ? child->GetStackCount() : -1;
         outgoing.AddContents(child->GetName(), child->GetImageName(),
                 child->GetPurifyStatus(), child->GetLocInParent(), stackCount);
     }

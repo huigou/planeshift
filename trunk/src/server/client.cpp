@@ -480,28 +480,25 @@ bool Client::IsAllowedToAttack(gemObject * target, bool inform)
     return true;
 }
 
-bool Client::CanTake(psItem* item)
+bool Client::CanTake(gemContainer* gemcontainer, psItem* item)
 {
-    if (!item)
+    if (!item || !gemcontainer)
         return false;
 
+    psItem *containeritem = gemcontainer->GetItem();
+    CS_ASSERT(containeritem);
+
     // Check for npc-owned or locked container
-    if (item->GetContainerID() && GetSecurityLevel() < GM_LEVEL_2)
+    if (GetSecurityLevel() < GM_LEVEL_2)
     {
-        gemObject *gemcont = GEMSupervisor::GetSingleton().FindObject(EID(item->GetContainerID()));
-        if (gemcont)
+        if (containeritem->GetIsNpcOwned())
         {
-            psItem *cont = gemcont->GetItem();
-            CS_ASSERT(cont);
-            if (cont->GetIsNpcOwned())
-            {
-                return false;
-            }
-            if (cont->GetIsLocked())
-            {
-                psserver->SendSystemError(GetClientNum(), "You cannot take an item from a locked container!");
-                return false;
-            }
+            return false;
+        }
+        if (containeritem->GetIsLocked())
+        {
+            psserver->SendSystemError(GetClientNum(), "You cannot take an item from a locked container!");
+            return false;
         }
     }
 
@@ -510,20 +507,18 @@ bool Client::CanTake(psItem* item)
     gemActor* guardingActor = GEMSupervisor::GetSingleton().FindPlayerEntity(guard);
 
     if ((!guard.IsValid() || guard == GetCharacterData()->GetPID() || !guardingActor)
-         && !item->GetIsNpcOwned() && !item->GetIsNoPickup())
+        && !item->GetIsNpcOwned() && !item->GetIsNoPickup())
     {        
         return true;
     }        
 
     if (guard.IsValid() && guardingActor)
     {
-        gemItem* gemitem = item->GetGemObject();
-        if (item->GetContainerID())
-            gemitem = GEMSupervisor::GetSingleton().FindItemEntity(item->GetContainerID());
-        if (gemitem &&
-            guardingActor->RangeTo(gemitem) > 5)
+        if (guardingActor->RangeTo(gemcontainer) > 5)
+        {
             return true;
-    }
+        }
+   }
 
     // Allow GM2s to take any PC-owned stuff
     if (GetSecurityLevel() >= GM_LEVEL_2 && !item->GetIsNpcOwned() && !item->GetIsNoPickup())
