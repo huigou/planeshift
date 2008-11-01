@@ -1,14 +1,14 @@
 SubDir TOP src npcclient ;
 
 Library libpsnpcclient :
-        [ Filter [ Wildcard *.cpp *.h ] : gtest_main.cpp main.cpp [ Wildcard *_unittest.cpp ] ]
+        [ Filter [ Wildcard *.cpp *.h ] : gtest_main.cpp main.cpp command.cpp [ Wildcard *_unittest.cpp ] ]
 ;
 
 ExternalLibs libpsnpcclient : CRYSTAL ;
 LinkWith libpsnpcclient : psnet psengine psrpgrules psutil fparser ;
 
 Application psnpcclient :
-	main.cpp : console
+	main.cpp command.cpp : console
 ;
 
 CompileGroups psnpcclient : server ;
@@ -29,7 +29,7 @@ if $(HAVE_STATIC_PLUGINS) = "yes"
 {
 
 SubVariant static ;
-Application psnpcclient_static : [ Filter [ Wildcard *.cpp *.h ] : gtest_main.cpp main.cpp [ Wildcard *_unittest.cpp ] ] $(extrafiles) : console independent noinstall nohelp ;
+Application psnpcclient_static : main.cpp command.cpp $(extrafiles) : console independent noinstall nohelp ;
 CFlags psnpcclient_static : [ FDefines CS_STATIC_LINKED ] ;
 LFlags psnpcclient_static : -lcrystalspace_staticplugins-1.3 ;
 MsvcDefine psnpcclient_static : CS_STATIC_LINKED ;

@@ -8,6 +8,7 @@
 - Did some more refactoring in npcclient to allow for dependency injection.
 - Cleared up Jamfile for unittests.
 - Fixed npcclient crashes on NULL gemNPCActor.
+- Added workaround in Jamfile as the commands variable was being optimised out of command.cpp.
 
 *** 2008-10-31 by Stefano Angeleri
 - Added missing file changes which were in kougaro patches
