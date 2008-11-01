@@ -51,10 +51,11 @@
 
 extern bool running;
 
-NetworkManager::NetworkManager(MsgHandler *mh,psNetConnection* conn)
+NetworkManager::NetworkManager(MsgHandler *mh,psNetConnection* conn, iEngine* engine)
 : reconnect(false)
 {
     msghandler = mh;
+    this->engine = engine;
     ready = false;
     connected = false;
     msghandler->Subscribe(this,MSGTYPE_NPCLIST);
@@ -232,7 +233,7 @@ void NetworkManager::HandleRaceList( MsgEntry* me)
 
 void NetworkManager::HandleActor( MsgEntry* me )
 {
-    psPersistActor mesg( me, npcclient->GetNetworkMgr()->GetMsgStrings(), npcclient->GetEngine() );
+    psPersistActor mesg( me, GetMsgStrings(), engine );
 
     gemNPCObject * obj = npcclient->FindEntityID(mesg.entityid);
 

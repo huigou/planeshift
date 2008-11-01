@@ -496,7 +496,7 @@ bool LocationPerception::GetLocation(csVector3& pos, iSector*& sector)
     if (location)
     {
         pos = location->pos;
-        sector = location->GetSector(npcclient->GetEngine());
+        sector = location->GetSector(engine);
         return true;
     }
     return false;
@@ -504,7 +504,7 @@ bool LocationPerception::GetLocation(csVector3& pos, iSector*& sector)
 
 Perception *LocationPerception::MakeCopy()
 {
-    LocationPerception *p = new LocationPerception(name,type,location);
+    LocationPerception *p = new LocationPerception(name,type,location, engine);
     return p;
 }
 

@@ -83,7 +83,7 @@ protected:
 
 public:
 
-    NetworkManager(MsgHandler *mh,psNetConnection* conn);
+    NetworkManager(MsgHandler *mh,psNetConnection* conn, iEngine* engine);
     virtual ~NetworkManager();
 
     virtual void HandleMessage(MsgEntry *pMsg);
@@ -119,6 +119,8 @@ public:
     void ReConnect();
 
     bool reconnect;
+private:
+    iEngine* engine;
 };
 
 class psNPCReconnect : public psGameEvent

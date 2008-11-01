@@ -58,15 +58,18 @@
 
 extern bool running;
 
+psNPCClient* NPCType::npcclient = NULL;
 
 NPCType::NPCType(psNPCClient* npcclient)
-    :ang_vel(999),vel(999),velSource(VEL_DEFAULT), npcclient(npcclient)
+    :ang_vel(999),vel(999),velSource(VEL_DEFAULT)
 {
+    this->npcclient = npcclient;
 }
 
 NPCType::NPCType(psNPCClient* npcclient, const char *n)
-    :name(n),ang_vel(999),vel(999),velSource(VEL_DEFAULT), npcclient(npcclient)
-{ 
+    :name(n),ang_vel(999),vel(999),velSource(VEL_DEFAULT)
+{
+    this->npcclient = npcclient;
 }
 
 NPCType::~NPCType()
@@ -273,21 +276,21 @@ void BehaviorSet::ClearState()
     active = NULL;
 }
 
-void BehaviorSet::Add(Behavior *b)
+bool BehaviorSet::Add(Behavior *b)
 {
     for (size_t i=0; i<behaviors.GetSize(); i++)
     {
         if (!strcmp(behaviors[i]->GetName(),b->GetName()))
         {
-            delete behaviors[i];
             behaviors[i] = b;  // substitute
-            return;
+            return false;
         }
     }
     behaviors.Push(b);
+    return true;
 }
 
-void BehaviorSet::Advance(csTicks delta,NPC *npc,EventManager *eventmgr)
+Behavior* BehaviorSet::Advance(csTicks delta,NPC *npc,EventManager *eventmgr)
 {
     while (true)
     {
@@ -336,7 +339,7 @@ void BehaviorSet::Advance(csTicks delta,NPC *npc,EventManager *eventmgr)
         if (new_behaviour->CurrentNeed()<=0 || !new_behaviour->ApplicableToNPCState(npc))
         {
             npc->Printf(15,"NO Active applicable behavior." );
-            return;
+            return active;
         }
         
         if (new_behaviour != active)
@@ -374,6 +377,7 @@ void BehaviorSet::Advance(csTicks delta,NPC *npc,EventManager *eventmgr)
     }
     
     npc->Printf(15,"Active behavior is '%s'", active->GetName() );
+    return active;
 }
 
 void BehaviorSet::ResumeScript(NPC *npc,EventManager *eventmgr,Behavior *which)

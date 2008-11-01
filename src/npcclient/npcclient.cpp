@@ -78,7 +78,7 @@ extern iDataConnection *db;
 class psNPCTick : public psGameEvent
 {
 protected:
-    psNPCClient *client;
+    static psNPCClient *client;
 
 public:
     psNPCTick(int offsetticks, psNPCClient *c);
@@ -235,7 +235,7 @@ bool psNPCClient::Initialize(iObjectRegistry* object_reg,const char *_host, cons
 
     PFMaps = new psPFMaps(objreg);
     
-    network = new NetworkManager(msghandler,connection);
+    network = new NetworkManager(msghandler,connection, engine);
 
     // Starts the logon process
     network->Authenticate(host,port,user,pass);
@@ -476,7 +476,7 @@ NPC* psNPCClient::ReadSingleNPC(PID char_id)
         Error2("Error loading char_id %s.", ShowID(char_id));
         return NULL;
     }
-    NPC *newnpc = new NPC(this);
+    NPC *newnpc = new NPC(this, network, world, engine, cdsys);
 
     if (newnpc->Load(result[0],npctypes))
     {
@@ -511,7 +511,7 @@ bool psNPCClient::ReadNPCsFromDatabase()
             continue;
         }
 
-        NPC *npc = new NPC(this);
+        NPC *npc = new NPC(this, network, world, engine, cdsys);
         if (npc->Load(rs[i],npctypes))
         {
             npcs.Push(npc);
@@ -530,7 +530,7 @@ bool psNPCClient::ReadNPCsFromDatabase()
 bool psNPCClient::LoadPathNetwork()
 {
     pathNetwork = new psPathNetwork();
-    return pathNetwork->Load(engine,db,GetWorld());
+    return pathNetwork->Load(engine,db,world);
 }
 
 bool psNPCClient::LoadLocations()
@@ -574,7 +574,7 @@ bool psNPCClient::LoadTribes()
     }
     for (int i=0; i<(int)rs.Count(); i++)
     {
-        psTribe *tribe = new psTribe();
+        psTribe *tribe = new psTribe;
         if (tribe->Load(rs[i]))
         {
             tribes.Push(tribe);
@@ -771,7 +771,7 @@ void psNPCClient::TriggerEvent(NPC *npc,Perception *pcpt,float max_range,
                 float yrot;
                 psGameObject::GetPosition(npcs[i]->GetActor(),pos,yrot,sector);
 
-                float dist = GetWorld()->Distance(pos,sector,*base_pos,base_sector);
+                float dist = world->Distance(pos,sector,*base_pos,base_sector);
                 
                 if (dist <= max_range)
                 {
@@ -1009,7 +1009,7 @@ Location *psNPCClient::FindNearestLocation(const char *loctype, csVector3& pos, 
 
         for (size_t i=0; i<found->locs.GetSize(); i++)
         {
-            float dist2 = GetWorld()->Distance(pos,sector,found->locs[i]->pos,found->locs[i]->GetSector(engine));
+            float dist2 = world->Distance(pos,sector,found->locs[i]->pos,found->locs[i]->GetSector(engine));
 
             if (min_range < 0 || dist2 < min_range)
             {
@@ -1040,7 +1040,7 @@ Location *psNPCClient::FindRandomLocation(const char *loctype, csVector3& pos, i
     {
         for (size_t i=0; i<found->locs.GetSize(); i++)
         {
-            float dist2 = GetWorld()->Distance(pos,sector,found->locs[i]->pos,found->locs[i]->GetSector(engine));
+            float dist2 = world->Distance(pos,sector,found->locs[i]->pos,found->locs[i]->GetSector(engine));
 
             if (range < 0 || dist2 < range)
             {
@@ -1430,7 +1430,7 @@ void psNPCClient::PerceptProximityItems()
                          
             if (item && item->IsPickable())
             {
-                float dist = GetWorld()->Distance(npc_pos,npc_sector,item_pos,item_sector);
+                float dist = world->Distance(npc_pos,npc_sector,item_pos,item_sector);
                 
                 if (dist <= LONG_RANGE_PERCEPTION)
                 {
@@ -1463,7 +1463,7 @@ void psNPCClient::PerceptProximityLocations()
     {
         for (size_t i = 0; i < loc->locs.GetSize(); i++)
         {
-            LocationPerception pcpt_sensed("location sensed",loc->name, loc->locs[i]);  
+            LocationPerception pcpt_sensed("location sensed",loc->name, loc->locs[i], engine);  
       
             TriggerEvent(NULL, &pcpt_sensed, loc->locs[i]->radius + LONG_RANGE_PERCEPTION, 
                          &loc->locs[i]->pos, loc->locs[i]->GetSector(engine)); // Broadcast
@@ -1557,6 +1557,8 @@ csArray<gemNPCObject*> psNPCClient::FindNearbyEntities( iSector* sector, const c
 
 
 /*------------------------------------------------------------------*/
+
+psNPCClient* psNPCTick::client = NULL;
 
 psNPCTick::psNPCTick(int offsetticks, psNPCClient *c)
 : psGameEvent(0,offsetticks,"psNPCTick")

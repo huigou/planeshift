@@ -1,3 +1,7 @@
+*** 2008-11-1 by Andrew Dai
+- Did some more refactoring in npcclient to allow for dependency injection.
+- Cleared up Jamfile for unittests.
+
 *** 2008-10-31 by Stefano Angeleri
 - Added missing file changes which were in kougaro patches
   but that were not committed

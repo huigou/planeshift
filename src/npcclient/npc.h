@@ -34,7 +34,10 @@ struct iMovable;
 //=============================================================================
 #include "npcbehave.h"
 
+class iCollideSystem;
+
 class EventManager;
+class NetworkManager;
 class  HateList;
 struct HateListEntry;
 class iResultRow;
@@ -55,7 +58,7 @@ protected:
     csHash<HateListEntry*, EID> hatelist;
 
 public:
-    HateList(psNPCClient* npcclient) : npcclient(npcclient) {}
+    HateList(psNPCClient* npcclient, iEngine* engine, psWorld* world) { this->npcclient = npcclient; this->engine = engine; this->world = world; }
 
     void AddHate(EID entity_id, float delta);
     gemNPCActor *GetMostHated(iSector *sector, csVector3& pos, float range, LocationType * region, bool include_invisible, bool include_invincible);
@@ -66,6 +69,8 @@ public:
     
 private:
     psNPCClient* npcclient;
+    iEngine* engine;
+    psWorld* world;
 };
 
 
@@ -112,7 +117,7 @@ protected:
 public:
     HateList           hatelist;
     
-    NPC(psNPCClient* npcclient);
+    NPC(psNPCClient* npcclient, NetworkManager* networkmanager, psWorld* world, iEngine* engine, iCollideSystem* cdsys);
     ~NPC();
 
     PID                   GetPID() { return pid; }
@@ -243,6 +248,9 @@ public:
     
 private:
     psNPCClient* npcclient;
+    NetworkManager* networkmanager;
+    psWorld* world;
+    iCollideSystem* cdsys;
 };
 
 struct HateListEntry

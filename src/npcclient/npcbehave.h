@@ -63,21 +63,23 @@ class BehaviorSet
 {
 protected:
     // BinaryTree<Behavior> behaviors;
-    csArray<Behavior*> behaviors;
+    csPDelArray<Behavior> behaviors;
     Behavior *active;
     float max_need;
 
 public:
     BehaviorSet() { active=NULL; }
 
-    void Add(Behavior *b);
+    /// Returns true if the behavior didn't already exist. Otherwise returns false and removes the existing duplicate behavior.
+    bool Add(Behavior *b);
     Behavior *Find(Behavior *key);
     
     Behavior *Find(const char *name);
     void DeepCopy(BehaviorSet& other);
     void ClearState();
 
-    void Advance(csTicks delta,NPC *npc,EventManager *eventmgr);
+    /// Advances the behaviors and returns the active one.
+    Behavior* Advance(csTicks delta,NPC *npc,EventManager *eventmgr);
     void Interrupt(NPC *npc,EventManager *eventmgr);
     void ResumeScript(NPC *npc,EventManager *eventmgr,Behavior *which);
     Behavior *GetCurrentBehavior() { return active; }
@@ -136,7 +138,7 @@ public:
     float GetVelocity(NPC *npc);
     
 private:
-    psNPCClient* npcclient;
+    static psNPCClient* npcclient;
 };
 
 
@@ -170,6 +172,8 @@ public:
     Behavior();
     Behavior(const char *n);
     Behavior(Behavior& other) { DeepCopy(other); }
+    
+    virtual ~Behavior() { };
 
     const char *GetName() { return name; }
 
@@ -208,8 +212,6 @@ public:
     { return is_active; }
     void SetCurrentStep(int step) { current_step = step; }
     size_t GetCurrentStep(){ return current_step; }
-    void SetCompletionDecay(float decay)
-    { completion_decay = decay; }
     void ResetNeed() { current_need = new_need = init_need; }
 
     bool ApplicableToNPCState(NPC *npc);
@@ -219,6 +221,7 @@ public:
     void InterruptScript(NPC *npc,EventManager *eventmgr);
     bool IsInterrupted(){ return interrupted; }
     void ClearInterrupted() { interrupted = false; }
+    Behavior* SetCompletionDecay(float completion_decay) { this->completion_decay = completion_decay; return this; }
     
     inline bool operator==(const Behavior& other)
     {    return (current_need == other.current_need &&
@@ -233,6 +236,12 @@ public:
             return true;
         return false;
     }
+    
+    // For testing purposes only.
+    
+    Behavior* SetDecay(float need_decay_rate) { this->need_decay_rate = need_decay_rate; return this; }
+    Behavior* SetGrowth(float need_growth_rate) { this->need_growth_rate = need_growth_rate; return this; }
+    Behavior* SetInitial(float init_need) { this->init_need = init_need; return this; }
 };
 
 

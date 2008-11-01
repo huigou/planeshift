@@ -39,7 +39,6 @@
 #include "gem.h"
 #include "npc.h"
 #include "npcmesh.h"
-#include "globals.h"
 #include "networkmgr.h"
 
 //-----------------------------------------------------------------------------
@@ -51,13 +50,12 @@ psNpcMeshAttach::psNpcMeshAttach(gemNPCObject* objectToAttach) : scfImplementati
 
 
 //-------------------------------------------------------------------------------
-psNPCClient *gemNPCObject::cel = NULL;
+psNPCClient *gemNPCObject::npcclient = NULL;
 
-gemNPCObject::gemNPCObject(psNPCClient* cel, EID id)
+gemNPCObject::gemNPCObject(psNPCClient* npcclient, EID id)
     :eid(id), visible(true), invincible(false), instance(0)
 {
-    if (!this->cel)
-        this->cel = cel;
+    this->npcclient = npcclient;
 
 }    
 
@@ -75,7 +73,7 @@ void gemNPCObject::Move(const csVector3& pos, float rotangle,  const char* room,
 
 void gemNPCObject::Move(const csVector3& pos, float rotangle,  const char* room)
 {
-    csRef<iEngine> engine =  csQueryRegistry<iEngine> (cel->GetObjectReg());
+    csRef<iEngine> engine =  csQueryRegistry<iEngine> (npcclient->GetObjectReg());
 
     // Position and sector
     iSector* sector = engine->FindSector(room);
@@ -92,15 +90,14 @@ void gemNPCObject::Move(const csVector3& pos, float rotangle,  const char* room)
    
 }    
 
-bool gemNPCObject::InitMesh(  
-                                const char *factname,
+bool gemNPCObject::InitMesh(    const char *factname,
                                 const char *filename,
                                 const csVector3& pos,
                                 const float rotangle,
                                 const char* room
                              )
 {
-    pcmesh = new npcMesh(npcclient->GetObjectReg(), this, cel);
+    pcmesh = new npcMesh(npcclient->GetObjectReg(), this, npcclient);
     
     // Replace helm group token with the default race.
     psString fact_name(factname);
@@ -239,8 +236,8 @@ iMeshWrapper *gemNPCObject::GetMeshWrapper()
 //-------------------------------------------------------------------------------
  
 
-gemNPCActor::gemNPCActor( psNPCClient* cel, psPersistActor& mesg) 
-    : gemNPCObject( cel, mesg.entityid ), npc(NULL)
+gemNPCActor::gemNPCActor( psNPCClient* npcclient, psPersistActor& mesg) 
+    : gemNPCObject( npcclient, mesg.entityid ), npc(NULL)
 {
     name = mesg.name;
     type = mesg.type;
@@ -284,9 +281,9 @@ bool gemNPCActor::InitCharData( const char* textParts, const char* equipment )
 bool gemNPCActor::InitLinMove(const csVector3& pos, float angle, const char* sector,
                               csVector3 top, csVector3 bottom, csVector3 offset )
 {
-    pcmove =  new psLinearMovement(cel->GetObjectReg());
+    pcmove =  new psLinearMovement(npcclient->GetObjectReg());
 
-    csRef<iEngine> engine =  csQueryRegistry<iEngine> (cel->GetObjectReg());
+    csRef<iEngine> engine =  csQueryRegistry<iEngine> (npcclient->GetObjectReg());
 
     pcmove->InitCD(top, bottom, offset, GetMeshWrapper()); 
     pcmove->SetPosition(pos,angle,engine->FindSector(sector));
@@ -295,8 +292,8 @@ bool gemNPCActor::InitLinMove(const csVector3& pos, float angle, const char* sec
 }
 
 
-gemNPCItem::gemNPCItem( psNPCClient* cel, psPersistItem& mesg) 
-    : gemNPCObject(cel, mesg.eid), flags(NONE)
+gemNPCItem::gemNPCItem( psNPCClient* npcclient, psPersistItem& mesg) 
+    : gemNPCObject(npcclient, mesg.eid), flags(NONE)
 {        
     name = mesg.name;
     Debug3(LOG_CELPERSIST, 0, "Item %s(%s) Received", mesg.name.GetData(), ShowID(mesg.eid));

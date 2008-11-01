@@ -59,8 +59,7 @@
 
 extern iDataConnection *db;
 
-
-NPC::NPC(psNPCClient* npcclient): checked(false), hatelist(npcclient), npcclient(npcclient)
+NPC::NPC(psNPCClient* npcclient, NetworkManager* networkmanager, psWorld* world, iEngine* engine, iCollideSystem* cdsys): checked(false), hatelist(npcclient, engine, world)
 { 
     brain=NULL; 
     pid=0;
@@ -83,6 +82,10 @@ NPC::NPC(psNPCClient* npcclient): checked(false), hatelist(npcclient), npcclient
     checked = false;
     checkedResult = false;
     disabled = false;
+    this->npcclient = npcclient;
+    this->networkmanager = networkmanager;
+    this->world = world;
+    this->cdsys = cdsys;
 }
 
 NPC::~NPC()
@@ -344,8 +347,8 @@ void NPC::Disable()
     GetLinMove()->SetAngularVelocity( 0 );
 
     //now persist
-    npcclient->GetNetworkMgr()->QueueDRData(this);
-    npcclient->GetNetworkMgr()->QueueImperviousCommand(GetActor(),true);
+    networkmanager->QueueDRData(this);
+    networkmanager->QueueImperviousCommand(GetActor(),true);
 }
 
 void NPC::DumpState()
@@ -452,7 +455,7 @@ EID NPC::GetNearestEntity(csVector3& dest,csString& name,float range)
             float rot2;
             psGameObject::GetPosition(ent,loc2,rot2,sector2);
 
-            float dist = npcclient->GetWorld()->Distance(loc, sector, loc2, sector2);
+            float dist = world->Distance(loc, sector, loc2, sector2);
             if (dist < min_range)
             {
                 min_range = dist;
@@ -690,7 +693,6 @@ void NPC::CheckPosition()
 
 //-----------------------------------------------------------------------------
 
-
 void HateList::AddHate(EID entity_id, float delta)
 {
     HateListEntry *h = hatelist.Get(entity_id, 0);
@@ -729,7 +731,7 @@ gemNPCActor *HateList::GetMostHated(iSector *sector, csVector3& pos, float range
             if (!most || h->hate_amount > most_hate_amount)
             {
                 // Don't include if a region is defined and not within region.
-                if (region && !region->CheckWithinBounds(npcclient->GetEngine(),pos,sector)) 
+                if (region && !region->CheckWithinBounds(engine,pos,sector)) 
                 {
                     continue;
                 }
@@ -788,7 +790,7 @@ void HateList::DumpHateList(const csVector3& myPos, iSector *mySector)
             pos = obj->pcmesh->GetMesh()->GetMovable()->GetPosition();
             CPrintf(CON_CMDOUTPUT, "%6d %5.1f %40s %5.1f",
                     h->entity_id.Unbox(), h->hate_amount, toString(pos, sector).GetDataSafe(),
-                    npcclient->GetWorld()->Distance(pos,sector,myPos,mySector));
+                    world->Distance(pos,sector,myPos,mySector));
             // Print flags
             if (obj->IsInvisible())
             {

@@ -71,7 +71,7 @@ private:
 class gemNPCObject
 {
 public:
-    gemNPCObject(psNPCClient* cel, EID id);
+    gemNPCObject(psNPCClient* npcclient, EID id);
     virtual ~gemNPCObject();
     
     bool InitMesh(const char *factname,const char *filename,
@@ -107,7 +107,7 @@ public:
     virtual int GetInstance(){ return instance; };
 
 protected:
-    static psNPCClient *cel;
+    static psNPCClient *npcclient;
     
 
     csString name;
@@ -123,7 +123,7 @@ class gemNPCActor : public gemNPCObject
 {
 public:
 
-    gemNPCActor( psNPCClient* cel, psPersistActor& mesg);
+    gemNPCActor( psNPCClient* npcclient, psPersistActor& mesg);
     virtual ~gemNPCActor();
     
     psLinearMovement* pcmove;
@@ -163,7 +163,7 @@ public:
         NOPICKUP       = 1 << 0
     };
     
-    gemNPCItem( psNPCClient* cel, psPersistItem& mesg);
+    gemNPCItem( psNPCClient* npcclient, psPersistItem& mesg);
     virtual ~gemNPCItem();
     
     virtual const char* GetObjectType(){ return "Item"; }
