@@ -338,9 +338,6 @@ bool pawsButton::OnMouseDown( int button, int modifiers, int x, int y )
         SetState(true, false);
     }
 
-    if ( flash )
-        flash = 0;
-
     if (notify != NULL)
         return notify->CheckButtonPressed( button, modifiers, this );
     else if ( parent )
@@ -418,6 +415,9 @@ void pawsButton::SetState(bool isDown, bool publish)
 
     if (!publish)
         return;
+
+    if ( flash && down )
+        flash = 0;
 
     for (size_t a=0; a<publishList.GetSize(); ++a)
         PawsManager::GetSingleton().Publish(publishList[a], isDown);

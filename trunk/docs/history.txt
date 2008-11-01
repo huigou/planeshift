@@ -1,3 +1,9 @@
+*** 2008-11-1 by Stefano Angeleri
+- Buttons were dropping flash status only if clicked by a mouse
+  and not if the event was done from code. 
+  moved the flash disable to pawsButton::SetState 
+  fixing FS#2335 - Tell-tab still blinks when visited and left and an away-message is set 
+
 *** 2008-11-1 by Andrew Dai
 - Did some more refactoring in npcclient to allow for dependency injection.
 - Cleared up Jamfile for unittests.
