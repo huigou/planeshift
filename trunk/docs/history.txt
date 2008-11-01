@@ -1,3 +1,6 @@
+﻿*** 2008-11-1 by Mike Gist
+- Made shader stripping code not strip out colorize.
+
 *** 2008-11-1 by Stefano Angeleri
 - Buttons were dropping flash status only if clicked by a mouse
   and not if the event was done from code. 
@@ -67,6 +70,9 @@
   Fixing FS#2409 - contact email address does not seem to exist 
 - Now mana isn't reset when the player dies to fix 
   FS#2299 - Keep dying in death realm for unlimited mana patch by lanarel
+
+*** 2008-10-26 by Mike Gist
+- Removed MakeColor, replaced with iGraphics2D::FindRGB()
 
 *** 2008-10-26 by Stefano Angeleri
 - some updates to pawseditor and eedit cfg files and a typo fix
