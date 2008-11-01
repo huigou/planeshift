@@ -201,7 +201,7 @@ bool psNPCClient::Initialize(iObjectRegistry* object_reg,const char *_host, cons
 
     csRef<iDocumentNode> root = GetRootNode("/this/data/npcbehave.xml");
 
-    if (!root.IsValid() || LoadNPCTypes(root))
+    if (!root.IsValid() || !LoadNPCTypes(root))
     {
         CPrintf(CON_ERROR, "Couldn't load npcbehave.xml.\n");
         exit(1);
