@@ -311,16 +311,24 @@ void psCSSetup::MountMaps()
                 if (strcmp (filename + strlen(filename) - 4, ".zip"))
                     continue;
 
-                char* name = csStrNew(filename);
-                char* onlyname = PS_GetFileName(name);
-                onlyname[strlen(onlyname) - 4] = '\0';
-                csString finaldir ("/planeshift/world/");
-                finaldir += onlyname;
+				csString finaldir(filename);
+				// Get only filename
+				size_t term = finaldir.FindLast('/');
+				finaldir.DeleteAt(0,term);
+				finaldir.Insert(0,"/planeshift/world");
+				term = finaldir.FindLast('.');
+				finaldir.Truncate(term);
+
+                // char* name = csStrNew(filename);
+                // char* onlyname = PS_GetFileName(name);
+                // onlyname[strlen(onlyname) - 4] = '\0';
+                // csString finaldir ("/planeshift/world/");
+                // finaldir += onlyname;
 
                 csRef<iDataBuffer> xrpath = vfs->GetRealPath(filename);
                 vfs->Mount(finaldir, **xrpath);
             
-                delete[] name;
+                // delete[] name;
             }
         }
     } 

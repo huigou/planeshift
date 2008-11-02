@@ -479,6 +479,14 @@ public:
     bool AddToContainer(psItem *item,Client *fromClient, int slot=-1) { return AddToContainer(item, fromClient, slot, false); }
     bool RemoveFromContainer(psItem *item,Client *fromClient);
     
+    /** Checks if client is allowed to remove an item from the container.
+      * @param client A pointer to the client viewing the container
+      * @param item  Item being viewed or taken
+      *
+      * @return boolean indicating if client is allowed to take the item
+      */
+    bool CanTake(Client *client, psItem* item);
+
     /** Remove an item from the container.
       * @param itemStack A pointer to the complete stack of the items we are looking at.
       * @param fromslot  Where in the container the items are removed from.

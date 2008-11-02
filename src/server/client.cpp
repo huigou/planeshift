@@ -480,57 +480,6 @@ bool Client::IsAllowedToAttack(gemObject * target, bool inform)
     return true;
 }
 
-bool Client::CanTake(gemContainer* gemcontainer, psItem* item)
-{
-    if (!item || !gemcontainer)
-        return false;
-
-    psItem *containeritem = gemcontainer->GetItem();
-    CS_ASSERT(containeritem);
-
-    // Check for npc-owned or locked container
-    if (GetSecurityLevel() < GM_LEVEL_2)
-    {
-        if (containeritem->GetIsNpcOwned())
-        {
-            return false;
-        }
-        if (containeritem->GetIsLocked())
-        {
-            psserver->SendSystemError(GetClientNum(), "You cannot take an item from a locked container!");
-            return false;
-        }
-    }
-
-    // Allow if the item is pickupable and either: public, guarded by the character, or the guarding character is offline
-    PID guard = item->GetGuardingCharacterID();
-    gemActor* guardingActor = GEMSupervisor::GetSingleton().FindPlayerEntity(guard);
-
-    if ((!guard.IsValid() || guard == GetCharacterData()->GetPID() || !guardingActor)
-        && !item->GetIsNpcOwned() && !item->GetIsNoPickup())
-    {        
-        return true;
-    }        
-
-    if (guard.IsValid() && guardingActor)
-    {
-        if (guardingActor->RangeTo(gemcontainer) > 5)
-        {
-            return true;
-        }
-   }
-
-    // Allow GM2s to take any PC-owned stuff
-    if (GetSecurityLevel() >= GM_LEVEL_2 && !item->GetIsNpcOwned() && !item->GetIsNoPickup())
-        return true;
-
-    // Allow developers to take anything
-    if (GetSecurityLevel() >= GM_DEVELOPER)
-        return true;
-
-    return false;
-}
-
 int Client::GetTargetType(gemObject* target)
 {
     if (!target)

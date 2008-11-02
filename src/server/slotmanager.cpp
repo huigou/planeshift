@@ -168,7 +168,7 @@ void SlotManager::MoveFromWorldContainer(psSlotMovementMsg& msg, Client *fromCli
         return;
     }
 
-    if (!fromClient->CanTake(worldContainer,itemProposed))
+    if (!worldContainer->CanTake(fromClient,itemProposed))
     {
         Error2("Client %u tried to take item it doesn't own.", fromClient->GetClientNum());
         return;
