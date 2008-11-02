@@ -181,7 +181,13 @@ protected:
     void CopyKey(MsgEntry *me, psAdminCmdMessage& msg, AdminCmdData& data, Client *client, psItem* key);
     void AddRemoveLock(MsgEntry *me, psAdminCmdMessage& msg, AdminCmdData& data, Client *client,psItem* key);
 
-    void RunScript(MsgEntry *me, psAdminCmdMessage& msg, AdminCmdData& data, Client *client);
+    /** @brief Runs a progression script on the targetted client
+     *  @param me The incoming message from the GM
+     *  @param msg The cracked command message.
+     *  @param client The GM client the command came from.
+     *  @param The object we are going to run the progression script
+     */
+    void RunScript(MsgEntry *me, psAdminCmdMessage& msg, AdminCmdData& data, Client *client, gemObject* object);
 
     void CreateHuntLocation(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data, Client *client);
     void ModifyHuntLocation(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data, Client* client, gemObject* object);
@@ -374,8 +380,12 @@ protected:
     /// Handle reloads from DB
     void HandleReload(psAdminCmdMessage& msg, AdminCmdData& data, Client *client, gemObject* object );
 
-    /// List warnings given to account
-    void HandleListWarnings(psAdminCmdMessage& msg, AdminCmdData& data, Client *client, gemObject* object );
+    /** @brief List warnings given to account
+     *  @param msg The cracked command message.
+     *  @param client The GM client the command came from.
+     *  @param The client we are inspecting for warnings
+     */
+    void HandleListWarnings(psAdminCmdMessage& msg, AdminCmdData& data, Client *client, Client *target );
 
     /** @brief Shows what the target used in command will afflict in the game
      *  @param msg The cracked command message.
