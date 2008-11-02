@@ -1,4 +1,7 @@
-﻿*** 2008-11-2 by Stefano Angeleri
+﻿*** 2008-11-2 by Mike Gist
+- Bumped CS revision to r31532 to get a number of fixes.
+
+*** 2008-11-2 by Stefano Angeleri
 - Added standard targetting support to /setquality as part of FS#2254
 - Added standard targetting support to /setitemname as part of FS#2254
 - Added standard targetting support to /updaterespawn as part of FS#2254
