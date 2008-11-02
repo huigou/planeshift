@@ -1064,7 +1064,7 @@ bool AdminManager::AdminCmdData::DecodeAdminCmdMessage(MsgEntry *pMsg, psAdminCm
     }
     else if (command == "/listwarnings")
     {
-        target = words.Get(1);
+        player = words.Get(1);
         return true;
     }
     else if (command == "/target_name") //will return what would be targeted in an admin function, mostly useful with area targeting
@@ -1451,7 +1451,7 @@ void AdminManager::HandleAdminCmdMessage(MsgEntry *me, psAdminCmdMessage &msg, A
     }
     else if (data.command == "/listwarnings")
     {
-        HandleListWarnings(msg, data, client, targetobject);
+        HandleListWarnings(msg, data, client, targetclient);
     }
     else if (data.command == "/target_name")
     {
@@ -7833,21 +7833,10 @@ void AdminManager::HandleReload(psAdminCmdMessage& msg, AdminCmdData& data, Clie
     }
 }
 
-void AdminManager::HandleListWarnings(psAdminCmdMessage& msg, AdminCmdData& data, Client *client, gemObject* object )
+void AdminManager::HandleListWarnings(psAdminCmdMessage& msg, AdminCmdData& data, Client *client, Client *target )
 {
-    Client* target = NULL;
     AccountID accountID;
-
-    if (!data.target.IsEmpty() && data.target != "target")
-    {
-        target = psserver->GetCharManager()->FindPlayerClient(data.target);
-    }
-    else if(object)
-    {
-        gemActor* targetActor = dynamic_cast<gemActor*>(object);
-        if (targetActor)
-            target = targetActor->GetClient();
-    }
+    PID pid; //used when offline to allow the use of pids
 
     if(target)
     {
@@ -7855,8 +7844,18 @@ void AdminManager::HandleListWarnings(psAdminCmdMessage& msg, AdminCmdData& data
     }
     else
     {
+        csString query;
         // let's see if there's a offline character with given name
-        Result rs(db->Select("SELECT account_id FROM characters WHERE name='%s'", data.target.GetData()));
+        if (data.player.StartsWith("pid:",true) && data.player.Length() > 4) // Get player ID should happen only if offline
+            pid = PID(strtoul(data.player.Slice(4).GetData(), NULL, 10)); //convert the PID to something usable
+
+        if (pid.IsValid()) // Find by player ID
+            query.Format("SELECT account_id FROM characters WHERE id='%u'", pid.Unbox());
+        else //find by player name
+            query.Format("SELECT account_id FROM characters WHERE name='%s'", data.player.GetData());
+
+        Result rs(db->Select(query));
+
         if(rs.IsValid() && rs.Count() > 0)
         {
             accountID = AccountID(rs[0].GetUInt32("account_id"));
