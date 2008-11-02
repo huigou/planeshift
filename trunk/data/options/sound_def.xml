@@ -8,7 +8,7 @@
      <ambientvolume value="100" />
      <actionsvolume value="100" />
      <guivolume value="100" />
-     <muteonfocusloss on="no" />
+     <muteonfocusloss on="yes" />
      <loopbgm on="no" />
      <combatmusic on="yes" />
 </sound>

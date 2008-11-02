@@ -8,6 +8,7 @@
 - Added standard targetting and offline pid support to /listwarnings as part of FS#2254
 - Added standard targetting support to /runscript as part of FS#2254
 - Various updates and additions to help.xml
+- disabling audio on focus loss as default
 
 *** 2008-11-1 by Keith Fulton
 - Committing patch by Lanarel to fix bug #2425, where the server sometimes crashes when 
