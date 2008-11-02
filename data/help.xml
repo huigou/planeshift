@@ -618,7 +618,7 @@ Set a GM attribute on or off.  Available flags are:  invincible, invisible, view
 <topic name="/setlabelcolor">/setlabelcolor [target] [npc|player|tester|gm|gm1|dead|alive|normal]
 
 Set the color of the label of target to the given value. The normal setting will again display the targets normal label color.</topic>  
-        <topic name="/setitemname">/setitemname [name] [description]
+        <topic name="/setitemname">/setitemname [target/eid/area/original name] [name] [description]
 
 Allows changing the name and description of the targeted item. Description is optional.</topic>
         <topic name="/setquality">/setquality [target/eid/area/name] [quality] [max quality]
@@ -698,6 +698,9 @@ Unban a name and makes it available for use again in character creation</topic>
         <topic name="/unmute">/unmute player
 
 Unmute the named player.</topic>
+        <topic name="/updaterespawn"> /updaterespawn [me/target/eid/pid/area/name]
+
+Respawn targeted actor. </topic>
         <topic name="/warn">/warn target message
 
 Send a warning message to a player in big, red, un-ignorable text on their screen and in all chat tabs.</topic>
