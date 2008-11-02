@@ -26,7 +26,7 @@ SlotNameHash::SlotNameHash()
     slotNames.Register ("righthand",     PSCHARACTER_SLOT_RIGHTHAND );
     slotNames.Register ("lefthand",      PSCHARACTER_SLOT_LEFTHAND );
     slotNames.Register ("bothhands",     PSCHARACTER_SLOT_BOTHHANDS );
-    slotNames.Register ("head",          PSCHARACTER_SLOT_HEAD ); 
+    slotNames.Register ("helm",          PSCHARACTER_SLOT_HELM ); 
     slotNames.Register ("rightfinger",   PSCHARACTER_SLOT_RIGHTFINGER );
     slotNames.Register ("leftfinger",    PSCHARACTER_SLOT_LEFTFINGER );
     slotNames.Register ("neck",          PSCHARACTER_SLOT_NECK );    
