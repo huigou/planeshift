@@ -236,6 +236,7 @@ bool AdminManager::AdminCmdData::DecodeAdminCmdMessage(MsgEntry *pMsg, psAdminCm
 
     if (command == "/updaterespawn")
     {
+        player = words[1];
         return true;
     }
     else if (command == "/deletechar")
