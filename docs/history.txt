@@ -1,5 +1,6 @@
 ﻿*** 2008-11-1 by Stefano Angeleri
 - Added standard targetting support to /setquality as part of FS#2254
+- Added standard targetting support to /setitemname as part of FS#2254
 
 *** 2008-11-1 by Keith Fulton
 - Committing patch by Lanarel to fix bug #2425, where the server sometimes crashes when 

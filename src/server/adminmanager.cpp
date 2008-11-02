@@ -1048,8 +1048,9 @@ bool AdminManager::AdminCmdData::DecodeAdminCmdMessage(MsgEntry *pMsg, psAdminCm
     }
     else if (command == "/setitemname")
     {
-        name = words.Get(1);
-        description = words.Get(2);
+        player = words.Get(1);
+        name = words.Get(2);
+        description = words.Get(3);
         return true;
     }
     else if (command == "/reload")
