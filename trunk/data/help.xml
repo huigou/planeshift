@@ -508,8 +508,8 @@ Kicks the named player off of the server.</topic>
         <topic name="/killnpc">/killnpc name reload
 
 Kills the targeted NPC, using the current target if no name is given. The reload option recreates the NPC with stats and triggers from the DB.</topic>
-        <topic name="/listwarnings">/listwarnings [target]
-List all warnings given to the targeted account. Target is optional.</topic>
+        <topic name="/listwarnings">/listwarnings [me/target/eid/pid/area/name]
+List all warnings given to the targeted account.</topic>
         <topic name="/marriageinfo">/marriageinfo [me/target/eid/pid/area/name]
 
 View the details of a characters marriage.</topic>
@@ -612,6 +612,9 @@ value (in milliseconds).
 With specified sector, it starts rain with default values: density 4000 drops, length 10 minutes and 10 seconds of fade.
 The maximum number of drops allowed is 8000.
 Use /rain sector 0 0 0 or /rain sector off for ending the event. </topic>
+<topic name="/petition_manage">/runscript [script_name] [me/target/eid/pid/area/name]
+
+Runs a progression script on the target.</topic>
         <topic name="/set">/set attribute on|off
 
 Set a GM attribute on or off.  Available flags are:  invincible, invisible, viewall (see invisibles), nevertired, nofalldamage, infiniteinventory, questtester (bypass quest lockouts).  Many of these features are enabled by default for GMs.  You can also do "/set list" to view your current attributes.</topic>

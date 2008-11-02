@@ -361,6 +361,7 @@ bool AdminManager::AdminCmdData::DecodeAdminCmdMessage(MsgEntry *pMsg, psAdminCm
     else if (command == "/runscript")
     {
         script = words[1];
+        player = words[2];
         return true;
     }
     else if (command == "/crystal")
@@ -1227,7 +1228,7 @@ void AdminManager::HandleAdminCmdMessage(MsgEntry *me, psAdminCmdMessage &msg, A
     }
     else if (data.command == "/runscript")
     {
-        RunScript(me,msg,data,client);
+        RunScript(me,msg,data,client,targetobject);
     }
     else if (data.command == "/weather")
     {
@@ -4014,12 +4015,12 @@ void AdminManager::CreateMoney(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdDat
 
 }
 
-void AdminManager::RunScript(MsgEntry *me, psAdminCmdMessage& msg, AdminCmdData& data,Client *client)
+void AdminManager::RunScript(MsgEntry *me, psAdminCmdMessage& msg, AdminCmdData& data,Client *client, gemObject* object)
 {
     // Give syntax
     if((data.script.Length() == 0) || (data.script == "help"))
     {
-        psserver->SendSystemError(me->clientnum, "Syntax: /runscript script_name");
+        psserver->SendSystemError(me->clientnum, "Syntax: /runscript script_name [me/target/eid/pid/area/name]");
         return;
     }
 
@@ -4032,7 +4033,7 @@ void AdminManager::RunScript(MsgEntry *me, psAdminCmdMessage& msg, AdminCmdData&
     }
 
     // Run script
-    float result = progEvent->Run(client->GetActor(), client->GetTargetObject(),NULL);
+    float result = progEvent->Run(client->GetActor(), object,NULL);
     if ( !result )
     {
         psserver->SendSystemError(me->clientnum, "Progression script \"%s\" failed to run.",data.script.GetData());
@@ -7854,7 +7855,7 @@ void AdminManager::HandleListWarnings(psAdminCmdMessage& msg, AdminCmdData& data
         else //find by player name
             query.Format("SELECT account_id FROM characters WHERE name='%s'", data.player.GetData());
 
-        Result rs(db->Select(query));
+        Result rs(db->Select(query)); //do the sql query
 
         if(rs.IsValid() && rs.Count() > 0)
         {
