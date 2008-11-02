@@ -3947,6 +3947,54 @@ bool gemContainer::CanAdd(unsigned short amountToAdd, psItem *item, int slot)
     return result;
 }
 
+bool gemContainer::CanTake(Client *client, psItem* item)
+{
+    if (!client || !item)
+        return false;
+
+    // Allow developers to take anything
+    if (client->GetSecurityLevel() >= GM_DEVELOPER)
+        return true;
+
+    /* \note 
+     * The check if the item is NPCOwned or NoPickup only makes 
+     * sense if it is not possible to have NPCOwned items in a not
+     * NPCOwned container, or NoPickup items in a PickUpable container
+     */      
+    //not allowed to take npcowned or nopickup items in a container
+    if (item->GetIsNpcOwned() || item->GetIsNoPickup())
+        return false;
+
+    psItem *containeritem = GetItem();
+    CS_ASSERT(containeritem);
+
+    // Check for npc-owned or locked container
+    if (client->GetSecurityLevel() < GM_LEVEL_2)
+    {
+        if (containeritem->GetIsNpcOwned())
+        {
+            return false;
+        }
+        if (containeritem->GetIsLocked())
+        {
+            psserver->SendSystemError(client->GetClientNum(), "You cannot take an item from a locked container!");
+            return false;
+        }
+    }
+
+    // Allow if the item is pickupable and either: public, guarded by the character, or the guarding character is offline
+    PID guard = item->GetGuardingCharacterID();
+    gemActor* guardingActor = GEMSupervisor::GetSingleton().FindPlayerEntity(guard);
+
+    if ((!guard.IsValid() || guard == client->GetCharacterData()->GetPID() || !guardingActor) || (guardingActor->RangeTo(this) > 5))
+    {        
+        return true;
+    }        
+
+    return false;
+}
+
+
 bool gemContainer::AddToContainer(psItem *item, Client *fromClient, int slot, bool test)
 {
     // Slot changing and item creation in craft is done at the very end of event.

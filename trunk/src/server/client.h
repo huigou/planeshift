@@ -42,7 +42,6 @@ class ClientConnectionSet;
 class psCharacter;
 class psItem;
 class gemObject;
-class gemContainer;
 class gemActor;
 class gemNPC;
 class psPath;
@@ -195,11 +194,6 @@ public:
      *  If not, it sends him some informative text message
      */
     bool IsAllowedToAttack(gemObject* target, bool inform = true);
-
-    /** Checks if this client is allowed to pick up an item, or take it
-     *  out of the container.
-     */
-    bool CanTake(gemContainer* gemcontainer, psItem* item);
 
     /** Returns the type of the target, from TARGET_TYPES.
      *
