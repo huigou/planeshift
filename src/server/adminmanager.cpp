@@ -1026,8 +1026,9 @@ bool AdminManager::AdminCmdData::DecodeAdminCmdMessage(MsgEntry *pMsg, psAdminCm
     }
     else if (command == "/setquality")
     {
-        x = words.GetFloat(1);
-        y = words.GetFloat(2);
+        player = words.Get(1);
+        x = words.GetFloat(2);
+        y = words.GetFloat(3);
         return true;
     }
     else if (command == "/settrait")
