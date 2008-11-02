@@ -621,7 +621,7 @@ Set the color of the label of target to the given value. The normal setting will
         <topic name="/setitemname">/setitemname [name] [description]
 
 Allows changing the name and description of the targeted item. Description is optional.</topic>
-        <topic name="/setquality">/setquality [quality] [max quality]
+        <topic name="/setquality">/setquality [target/eid/area/name] [quality] [max quality]
 
 Allows changing the quality of the targeted item. Max quality is optional.</topic>
       <topic name="/setskill">/setskill [target] [skill|'all'] [value|-1]
