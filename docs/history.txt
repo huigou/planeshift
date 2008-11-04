@@ -1,4 +1,7 @@
-﻿*** 2008-11-2 by Mike Gist
+﻿*** 2008-11-4 by Stefano Angeleri
+- Changing documentsystem for pawseditor in order to improve the code managing the loading
+
+*** 2008-11-2 by Mike Gist
 - Bumped CS revision to r31532 to get a number of fixes.
 
 *** 2008-11-2 by Stefano Angeleri
