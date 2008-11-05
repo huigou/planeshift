@@ -1039,9 +1039,9 @@ If you update a repository, you will need to recompile that repository and each 
         possibility it will change in the future. Instead we will 'install' it into our working directory. This is done
         by using the --prefix option when we configure it.</p>
         <p></p>If you use gcc 4.3 or never you will need to fix cal3d sources:
-        Using a text editor open loader.cpp inside the src/cal3d/ directory and add</p>
-      <p>  <div class="commandBox">#include &lt;memory&gt;</div> in the line after <div class="commandBox">#include "cal3d/buffersource.h"</div></p>
-        and open cal3d_converter.cpp and add <div class="commandBox">#include &lt;string.h&gt;</div> in the line after <div class="commandBox">#include "cal3d/cal3d.h"</div></p>
+        Using a text editor open loader.cpp inside the src/cal3d/ directory.</p>
+      <p>  Add<div class="commandBox">#include &lt;memory&gt;</div> in the line after <div class="commandBox">#include "cal3d/buffersource.h"</div></p>
+        Open cal3d_converter.cpp and add <div class="commandBox">#include &lt;string.h&gt;</div> in the line after <div class="commandBox">#include "cal3d/cal3d.h"</div></p>
     <div class="linux-Generic" >
     Using a text editor open configure.in and remove the line
     <p><div class="commandBox">
