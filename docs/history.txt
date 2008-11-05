@@ -1,6 +1,7 @@
 ﻿*** 2008-11-4 by Stefano Angeleri
 - Added some informations needed to compile cal3d on gcc 4.3+
 - Cleaned up a bit pawseditor loading function
+- Updated the compiling guide for the new nvidia cg toolkit (2.1) and some missing spaces fixes
 
 *** 2008-11-4 by Stefano Angeleri
 - Changing documentsystem for pawseditor in order to improve the code managing the loading
