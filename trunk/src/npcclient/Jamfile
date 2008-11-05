@@ -18,7 +18,7 @@ LinkWith psnpcclient : libpsnpcclient ;
 if $(GTEST.AVAILABLE) = "yes"
 {
 Application npcclient_test :
-        [ Wildcard *_unittest.cpp ] gtest_main.cpp : console
+        [ Wildcard *_unittest.cpp ] gtest_main.cpp command.cpp : console
 ;
 
 ExternalLibs npcclient_test : CRYSTAL GTEST ;
