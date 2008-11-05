@@ -497,13 +497,13 @@ void psItem::Commit(bool children)
     if (GetUID()==0)
     {
         if(insertQuery == NULL)
-            insertQuery = db->NewInsertPreparedStatement("item_instances", 24); // 24 fields
+            insertQuery = db->NewInsertPreparedStatement("item_instances", 24, __FILE__, __LINE__); // 24 fields
         targetQuery = insertQuery;
     }
     else
     {
         if(updateQuery == NULL)
-            updateQuery = db->NewUpdatePreparedStatement("item_instances", "id", 25); // 24 fields + 1 id field
+            updateQuery = db->NewUpdatePreparedStatement("item_instances", "id", 25, __FILE__, __LINE__); // 24 fields + 1 id field
         targetQuery = updateQuery;
     }
     

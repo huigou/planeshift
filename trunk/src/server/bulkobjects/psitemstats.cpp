@@ -695,7 +695,7 @@ bool psItemStats::Save()
     static iRecord* update;
     
     if(update == NULL)
-        update = db->NewUpdatePreparedStatement("item_stats", "id", 31); // 30 parameters plus 1 id
+        update = db->NewUpdatePreparedStatement("item_stats", "id", 31, __FILE__, __LINE__); // 30 parameters plus 1 id
     
     update->Reset();
     
