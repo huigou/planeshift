@@ -434,14 +434,14 @@ void psMysqlConnection::ResetProfile()
     profileDump.Empty();
 }
 
-iRecord* psMysqlConnection::NewUpdatePreparedStatement(const char* table, const char* idfield, unsigned int count)
+iRecord* psMysqlConnection::NewUpdatePreparedStatement(const char* table, const char* idfield, unsigned int count, const char* file, unsigned int line)
 {
-    return new dbUpdate(conn, table, idfield, count);
+    return new dbUpdate(conn, table, idfield, count, logcsv, file, line);
 }
 
-iRecord* psMysqlConnection::NewInsertPreparedStatement(const char* table, unsigned int count)
+iRecord* psMysqlConnection::NewInsertPreparedStatement(const char* table, unsigned int count, const char* file, unsigned int line)
 {
-    return new dbInsert(conn, table, count);
+    return new dbInsert(conn, table, count, logcsv, file, line);
 }
 
 psResultSet::psResultSet(MYSQL *conn)
@@ -677,13 +677,23 @@ bool dbRecord::Execute(uint32 uid)
 
     if(!prepared)
         Prepare();
+    
+    psStopWatch timer;
 
     CS_ASSERT(count == mysql_stmt_param_count(stmt));
 
     if(mysql_stmt_bind_param(stmt, bind) != 0)
         return false;
 
-    return (mysql_stmt_execute(stmt) == 0);
+    bool result = (mysql_stmt_execute(stmt) == 0);
+    if(result && timer.Stop() > 1000)
+    {
+        csString status;
+        status.Format("SQL query in file %s line %d, has taken %u time to process.\n", file, line, timer.Stop());
+        if(logcsv)
+            logcsv->Write(CSV_STATUS, status);
+    }
+    return result;
 }
 
 bool dbInsert::Prepare()

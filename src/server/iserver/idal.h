@@ -104,8 +104,8 @@ public:
     virtual const char* DumpProfile()=0;
     virtual void ResetProfile()=0;
     
-    virtual iRecord* NewUpdatePreparedStatement(const char* table, const char* idfield, unsigned int count) =0;
-    virtual iRecord* NewInsertPreparedStatement(const char* table, unsigned int count) = 0;
+    virtual iRecord* NewUpdatePreparedStatement(const char* table, const char* idfield, unsigned int count, const char* file, unsigned int line) =0;
+    virtual iRecord* NewInsertPreparedStatement(const char* table, unsigned int count, const char* file, unsigned int line) = 0;
 };
 
 

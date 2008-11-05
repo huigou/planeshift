@@ -106,8 +106,8 @@ public:
     virtual const char* DumpProfile();
     virtual void ResetProfile();
     
-    iRecord* NewUpdatePreparedStatement(const char* table, const char* idfield, unsigned int count);
-    iRecord* NewInsertPreparedStatement(const char* table, unsigned int count);
+    iRecord* NewUpdatePreparedStatement(const char* table, const char* idfield, unsigned int count, const char* file, unsigned int line);
+    iRecord* NewInsertPreparedStatement(const char* table, unsigned int count, const char* file, unsigned int line);
 
 #ifdef USE_DELAY_QUERY    
     csRef<DelayedQueryManager> dqm;
@@ -191,6 +191,11 @@ protected:
     unsigned int index;
     unsigned int count;
     
+    // Useful for debugging
+    LogCSV* logcsv;
+    const char* file;
+    unsigned int line;
+    
     // This is a holding structure to ensure the data is available as long as the binding needs it.
     typedef struct{
         int iValue;
@@ -210,7 +215,7 @@ protected:
     virtual void SetID(uint32 uid) = 0;
     
 public:
-    dbRecord(MYSQL* db, const char* Table, const char* Idfield, unsigned int count)
+    dbRecord(MYSQL* db, const char* Table, const char* Idfield, unsigned int count, LogCSV* logcsv, const char* file, unsigned int line)
     {
         conn = db;
         table = Table;
@@ -220,6 +225,9 @@ public:
         temp = new dataType[count];
         index = 0;
         this->count = count;
+        this->logcsv = logcsv;
+        this->file = file;
+        this->line = line;
         
         stmt = (MYSQL_STMT*) mysql_stmt_init(conn);
         prepared = false;
@@ -268,8 +276,8 @@ class dbInsert : public dbRecord
     virtual void SetID(uint32 uid)  {  };
     
 public:
-    dbInsert(MYSQL* db, const char* Table, unsigned int count)
-    : dbRecord(db, Table, "", count) { }
+    dbInsert(MYSQL* db, const char* Table, unsigned int count, LogCSV* logcsv, const char* file, unsigned int line)
+    : dbRecord(db, Table, "", count, logcsv, file, line) { }
     
     virtual bool Prepare();
 };
@@ -291,8 +299,8 @@ class dbUpdate : public dbRecord
         index++;
     }
 public:
-    dbUpdate(MYSQL* db, const char* Table, const char* Idfield, unsigned int count)
-    : dbRecord(db, Table, Idfield, count) { }
+    dbUpdate(MYSQL* db, const char* Table, const char* Idfield, unsigned int count, LogCSV* logcsv, const char* file, unsigned int line)
+    : dbRecord(db, Table, Idfield, count, logcsv, file, line) { }
     
     virtual bool Prepare();
 
