@@ -609,44 +609,20 @@ csRef<iDocumentNode> PawsEditorApp::ParseWidgetFile_mod( const char* widgetFile 
         Error2("Could not find file: %s", widgetFile);
         return NULL;
     }
-    //why cs doesn't provide stdc++ string like replace functions?
-    //we need to make a new string by putting things togheter in order to work around this
-    //yes i know it looks crappy...
-    csString buff_tmp =  databuff->operator*();
-    csString buff;
-    size_t start = buff_tmp.Find("factory=\"", buff_tmp.Find("<widget "));
-    size_t end_of_line = buff_tmp.Find(">", buff_tmp.Find("<widget "));
-    buff += buff_tmp.Slice(0,start);
-    buff += "factory=\"peEditableWidget";
-    start = buff_tmp.Find("\"",1+buff_tmp.Find("\"",buff_tmp.Find("factory=\"", buff_tmp.Find("<widget "))));
-    size_t len = buff_tmp.Find("savepositions=\"", buff_tmp.Find("<widget "))-start;
-    if(!(len > end_of_line || len == (size_t)-1))
-    {
-        buff += buff_tmp.Slice(start,len);
-        buff += "savepositions=\"no";    
-        start = buff_tmp.Find("\"",1+buff_tmp.Find("\"",buff_tmp.Find("savepositions=\"", buff_tmp.Find("<widget "))));
-    }
-    len = buff_tmp.Find("configurable=\"", buff_tmp.Find("<widget "))-start;
-    if(!(len > end_of_line || len == (size_t)-1))
-    {
-        buff += buff_tmp.Slice(start,len);
-        buff += "configurable=\"no";
-        start = buff_tmp.Find("\"",1+buff_tmp.Find("\"",buff_tmp.Find("configurable=\"", buff_tmp.Find("<widget "))));
-    }
-    len = buff_tmp.Length()-start;
-    buff += buff_tmp.Slice(start,len);
-    
+
+    csString buff = databuff->operator*();
+
     //TODO: Shall we implement a limited pawsMoney, pawsglyphslot, pawsInventoryDollView and
     //      pawsSlot? ATM just falling back to the peEditableWidget
     buff.ReplaceAll("factory=\"pawsMoney\"", "factory=\"peEditableWidget\"");
     buff.ReplaceAll("factory=\"pawsGlyphSlot\"", "factory=\"peEditableWidget\""); 
     buff.ReplaceAll("factory=\"pawsInventoryDollView\"", "factory=\"peEditableWidget\""); 
     buff.ReplaceAll("factory=\"pawsSlot\"", "factory=\"peEditableWidget\""); 
-    
+
     //This is for debug purposes
     //printf("string =>\n %s\n---------------------\nCUT HERE\n", buff.GetData());
     csRef<iDocument> doc = ParseString(buff);
-    
+
     if (!doc)
     {
         Error2("Parse error in %s", widgetFile);
@@ -661,6 +637,20 @@ csRef<iDocumentNode> PawsEditorApp::ParseWidgetFile_mod( const char* widgetFile 
     csRef<iDocumentNode> widgetNode = root->GetNode("widget_description");
     if (!widgetNode)
         Error2("File %s has no <widget_description> tag", widgetFile);
+
+    csRef<iDocumentNode> widgetintnode = widgetNode->GetNode("widget");
+
+    if(!widgetintnode)
+    {
+        Error2("File %s has no <widget> tag", widgetFile);
+    }
+    else
+    {
+        widgetintnode->SetAttribute("factory", "peEditableWidget");
+        widgetintnode->SetAttribute("configurable", "no");
+        widgetintnode->SetAttribute("savepositions", "no");
+    }
+    
     return widgetNode;
 }
 
