@@ -5201,19 +5201,19 @@ const char *AdminManager::GetLastSQLError()
 
 void AdminManager::DeleteCharacter(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data,Client *client)
 {
-    unsigned int zombieID = 0;
+    PID zombieID;
 
     if ( data.zombie.StartsWith("pid:",true) ) // Find by player ID
     {
-        zombieID = atoi( data.zombie.Slice(4).GetData() );
-        if (!zombieID)
+        zombieID = PID(strtoul(data.player.Slice(4).GetData(), NULL, 10));
+        if (!zombieID.Valid())
         {
             psserver->SendSystemError(me->clientnum,"Error, bad PID");
             return;
         }
     }
 
-    if (zombieID == 0)  // Deleting by name; verify the petitioner gave us one of their characters
+    if (!zombieID.Valid())  // Deleting by name; verify the petitioner gave us one of their characters
     {
         if (data.zombie.IsEmpty() || data.requestor.IsEmpty())
         {
@@ -5249,10 +5249,10 @@ void AdminManager::DeleteCharacter(MsgEntry* me, psAdminCmdMessage& msg, AdminCm
     }
     else  // Deleting by PID; make sure this isn't a unique or master NPC
     {
-        Result result(db->Select("SELECT name, character_type, npc_master_id FROM characters WHERE id='%u'",zombieID));
+        Result result(db->Select("SELECT name, character_type, npc_master_id FROM characters WHERE id='%u'",zombieID.Unbox()));
         if (!result.IsValid() || result.Count() != 1)
         {
-            psserver->SendSystemError(me->clientnum,"No character found with PID %u!",zombieID);
+            psserver->SendSystemError(me->clientnum,"No character found with PID %u!",zombieID.Unbox());
             return;
         }
 
@@ -5269,7 +5269,7 @@ void AdminManager::DeleteCharacter(MsgEntry* me, psAdminCmdMessage& msg, AdminCm
                 return;
             }
 
-            if (masterID == zombieID)
+            if (masterID == zombieID.Unbox())
             {
                 psserver->SendSystemError(me->clientnum,"%s is a master NPC, and may not be deleted", data.zombie.GetData() );
                 return;
@@ -5278,8 +5278,8 @@ void AdminManager::DeleteCharacter(MsgEntry* me, psAdminCmdMessage& msg, AdminCm
     }
 
     csString error;
-    if ( psserver->CharacterLoader.DeleteCharacterData(zombieID,error) )
-        psserver->SendSystemInfo(me->clientnum,"Character %s (PID %u) has been deleted.", data.zombie.GetData(), zombieID );
+    if ( psserver->CharacterLoader.DeleteCharacterData(zombieID, error) )
+        psserver->SendSystemInfo(me->clientnum,"Character %s (PID %u) has been deleted.", data.zombie.GetData(), zombieID.Unbox() );
     else
     {
         if ( error.Length() )

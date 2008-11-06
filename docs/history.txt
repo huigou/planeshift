@@ -1,6 +1,7 @@
 ﻿*** 2008-11-6 by Stefano Angeleri
 - Fixed a problem with the npc camera when the npc was on
   a negative y position patch by lanarel
+- partly migrated DeleteCharacter to the new PID class
 
 *** 2008-11-5 by Andrew Dai
 - Fixed a build error in the npcclient unit tests.
