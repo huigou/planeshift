@@ -5206,14 +5206,14 @@ void AdminManager::DeleteCharacter(MsgEntry* me, psAdminCmdMessage& msg, AdminCm
     if ( data.zombie.StartsWith("pid:",true) ) // Find by player ID
     {
         zombieID = PID(strtoul(data.player.Slice(4).GetData(), NULL, 10));
-        if (!zombieID.Valid())
+        if (!zombieID.IsValid())
         {
             psserver->SendSystemError(me->clientnum,"Error, bad PID");
             return;
         }
     }
 
-    if (!zombieID.Valid())  // Deleting by name; verify the petitioner gave us one of their characters
+    if (!zombieID.IsValid())  // Deleting by name; verify the petitioner gave us one of their characters
     {
         if (data.zombie.IsEmpty() || data.requestor.IsEmpty())
         {
