@@ -1424,9 +1424,9 @@ void psCamera::DoCameraIdealCalcs(const csTicks elapsedTicks, const csVector3& a
             }
 
             csVector3 targetPos = npcModeTarget->GetMesh()->GetMovable()->GetFullPosition();
-            targetPos.y += npcModeTarget->GetMesh()->GetWorldBoundingBox().MaxY();
+            targetPos.y = npcModeTarget->GetMesh()->GetWorldBoundingBox().MaxY();
             csVector3 charPos = actorPos;
-            charPos.y += actor->GetMesh()->GetWorldBoundingBox().MaxY();
+            charPos.y = actor->GetMesh()->GetWorldBoundingBox().MaxY();
             csVector3 middle = charPos + (targetPos - charPos) * 0.5f;
 
             SetTarget(middle);
