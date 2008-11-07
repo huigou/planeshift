@@ -121,6 +121,9 @@ void pawsSpellBookWindow::HandleSpells( MsgEntry* me )
         
         for (size_t i = 0; i < 4; i++)
         {
+            if(!mesg.spells[x].glyphs[i])
+                break;
+
             pawsWidget* glyph = (pawsWidget*)row->GetColumn(1+i);
             glyph->SetBackground(mesg.spells[x].glyphs[i]);
         }
