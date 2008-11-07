@@ -515,7 +515,7 @@ int QuestManager::ParseQuestScript(int quest_id, const char *script)
     size_t which_trigger=0;
     int step_count=1; // Main quest is step 1
     csString current_npc;
-    csString response_text,error_text;
+    csString response_text,file_path;
     NpcResponse *last_response=NULL,*error_response=NULL;
     bool quest_assigned_already = false;
     csString response_requireop; // Accumulate prerequisites for next response
@@ -573,7 +573,7 @@ int QuestManager::ParseQuestScript(int quest_id, const char *script)
                 current_npc = npc_name;
                 next_to_last_response_id = last_response_id = -1;  // When you switch NPCs, the prior responses must be reset also.
             }
-            if (!GetResponseText(block,response_text,error_text,him,her,it,them))
+            if (!GetResponseText(block,response_text,file_path,him,her,it,them))
             {
                 Error2("Could not get response text out of <%s>!  Failing.",block.GetData() );
                 lastError.Format("Could not get response text out of <%s>!  Failing.",block.GetData() );
@@ -586,15 +586,14 @@ int QuestManager::ParseQuestScript(int quest_id, const char *script)
                 return line_number;
             }
 
-            Debug4( LOG_QUESTS, 0,"NPC %s responds with '%s', or the error "
-                                "response '%s'", current_npc.GetData(),
-                                response_text.GetData(), error_text.GetData() );
+            Debug4( LOG_QUESTS, 0,"NPC %s responds with '%s', with the voice file '%s'", current_npc.GetData(),
+                                response_text.GetData(), file_path.GetDataSafe() );
 
             // Now add this response to the npc dialog dict
             if (which_trigger == 0) // new sequence
                 next_to_last_response_id = last_response_id;
 
-            last_response = AddResponse(current_npc,response_text,last_response_id,quest,him,her,it,them);
+            last_response = AddResponse(current_npc,response_text,last_response_id,quest,him,her,it,them,file_path);
             if (last_response)
             {
                 bool ret = AddTrigger(current_npc,pending_triggers[which_trigger++],next_to_last_response_id,last_response_id, quest, "");
@@ -617,37 +616,6 @@ int QuestManager::ParseQuestScript(int quest_id, const char *script)
             {
                 return line_number;
             }
-
-            // Add response for error condition.
-            if (!error_text.IsEmpty())
-            {
-                int error_response_id = 0;
-                error_response = AddResponse(current_npc,error_text,error_response_id,quest,him,her,it,them);
-                if (error_response)
-                {
-                    error_response->quest = NULL; // Force quest to NULL, to prevent available checks only prerequisite tests.
-                    bool ret = AddTrigger(current_npc,pending_triggers[(which_trigger-1)],next_to_last_response_id,error_response_id, quest, " error");
-                    if (!ret)
-                    {
-                        lastError.Format("Trigger could not be added on line %d", line_number);
-                        return line_number;
-                    }
-
-                    if (mainQuest) // Prerequisites only apply to quest scripts, not KA scripts.
-                    {
-                        if (!PrependPrerequisites(substep_requireop, response_requireop, quest_assigned_already,error_response,mainQuest))
-                        {
-                            lastError.Format("PrependPrerequistes failed on %d", line_number);
-                            return line_number;
-                        }
-                    }
-                }
-                else
-                {
-                    return line_number;
-                }
-            }
-
         }
         else if (!strncasecmp(block,"Player ",7)) // player does something
         {
@@ -899,7 +867,7 @@ void QuestManager::CutOutParenthesis(csString &response, csString &within,char s
 }
 
 
-bool QuestManager::GetResponseText(csString& block,csString& response,csString& error,
+bool QuestManager::GetResponseText(csString& block,csString& response,csString& file_path,
                                    csString& him, csString& her, csString& it, csString& them)
 {
     size_t start;
@@ -912,7 +880,7 @@ bool QuestManager::GetResponseText(csString& block,csString& response,csString& 
     start++;  // skip colon
     block.SubString(response,start,block.Length()-start);
 
-    CutOutParenthesis(response,error,'(',')');
+    CutOutParenthesis(response,file_path,'(',')');
     CutOutParenthesis(response,pron,'{','}');
     him.Clear(); her.Clear(); it.Clear(); them.Clear();
     if (pron.Length())
@@ -941,11 +909,12 @@ bool QuestManager::GetResponseText(csString& block,csString& response,csString& 
     return true;
 }
 
-NpcResponse *QuestManager::AddResponse(csString& current_npc,const char *response_text,int& last_response_id, psQuest * quest, csString him, csString her, csString it, csString them)
+NpcResponse *QuestManager::AddResponse(csString& current_npc,const char *response_text,int& last_response_id, psQuest * quest, 
+									   csString& him, csString& her, csString& it, csString& them, csString& file_path)
 {
     last_response_id = 0;  // let AddResponse autoset this if set to 0
     Debug2( LOG_QUESTS, 0,"Adding response %s to dictionary...", response_text );
-    return dict->AddResponse(response_text,him,her,it,them,current_npc,last_response_id,quest);
+    return dict->AddResponse(response_text,him,her,it,them,current_npc,last_response_id,quest,file_path);
 }
 
 bool QuestManager::AddTrigger(csString& current_npc,const char *trigger,int prior_response_id,int trig_response, psQuest * quest, const psString& postfix)

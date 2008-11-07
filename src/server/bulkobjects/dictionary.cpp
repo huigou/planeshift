@@ -607,7 +607,8 @@ NpcResponse *NPCDialogDict::AddResponse(const char *response_text,
                                         const char *pronoun_them,
                                         const char *npc_name,
                                         int &new_id,
-                                        psQuest * quest)
+                                        psQuest * quest,
+										const char *audio_path)
 {
     NpcResponse *newresp = new NpcResponse;
 
@@ -686,6 +687,7 @@ NpcResponse *NPCDialogDict::AddResponse(const char *response_text,
     newresp->her  = pronoun_her;
     newresp->it   = pronoun_it;
     newresp->them = pronoun_them;
+	newresp->voiceAudioPath = audio_path;
 
     newresp->type = NpcResponse::VALID_RESPONSE;
 

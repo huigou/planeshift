@@ -130,7 +130,8 @@ public:
                              const char *pronoun_them,
                              const char *npc_name,
                              int &new_id,
-                             psQuest * quest);
+                             psQuest * quest,
+							 const char *audio_path);
 
     NpcTrigger *AddTrigger(const char *k_area,
                     const char *mytrigger,
