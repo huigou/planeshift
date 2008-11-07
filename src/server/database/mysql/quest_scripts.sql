@@ -43,7 +43,7 @@ Give Mug or Steel Falchion or Claymore
 #
 INSERT INTO quest_scripts VALUES("2","2","P: can bring you
 
-Merchant: I'm kinda hungry.. bring me a sandwich and hurry if you want a hexa and a mug for your trouble.(I don't need anything right now.)
+Merchant: I'm kinda hungry.. bring me a sandwich and hurry if you want a hexa and a mug for your trouble.(/data/voice/merchant/sandwich.spx)
 
 Assign Quest
 
