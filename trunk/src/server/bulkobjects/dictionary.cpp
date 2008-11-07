@@ -1117,6 +1117,12 @@ bool NpcResponse::Load(iResultRow& row)
     it   = row["pronoun_it"];
     them = row["pronoun_them"];
 
+
+	voiceAudioPath = row["audio_path"];
+	if (voiceAudioPath.Length() > 0)
+		printf("Got audio file '%s' on response %d.\n", voiceAudioPath.GetDataSafe(), id);
+
+
     type = NpcResponse::VALID_RESPONSE;
 
     // if a quest_id is specified in this response,
