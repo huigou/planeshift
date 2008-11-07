@@ -1026,6 +1026,8 @@ UPDATE `server_options` SET `option_value`='1201' WHERE `option_name`='db_versio
 ALTER TABLE `gameboards` ADD COLUMN `gameboardOptions` varchar(100) NOT NULL DEFAULT 'White,Checked' AFTER `numPlayers`;
 UPDATE `server_options` SET `option_value`='1202' WHERE `option_name`='db_version';
 
+#### 1203 - Keith Fulton - Voiced NPC Dialog Support
+ALTER TABLE `npc_responses` ADD `audio_path` VARCHAR(100) NULL COMMENT 'This holds an optional VFS path to a speech file to be sent to the client and played on demand.'
 
 # Insert your upgrade before this line. Remember when you set a new db_version
 # to update the server_options.sql file and update psserver.cpp as well.
