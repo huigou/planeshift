@@ -69,7 +69,7 @@ protected:
     int  ParseQuestScript(int id,const char *script);
     void CutOutParenthesis(csString &response, csString &within,char start_char,char end_char);
 
-    bool GetResponseText(csString& block,csString& response,csString& error,
+    bool GetResponseText(csString& block,csString& response,csString& file_path,
                          csString& him, csString& her, csString& it, csString& them);
     bool BuildTriggerList(csString& block,csStringArray& list);
     int GetNPCFromBlock(WordArray words,csString& current_npc);
@@ -78,7 +78,7 @@ protected:
 
     NpcResponse *AddResponse(csString& current_npc,const char *response_text,
                              int& last_response_id, psQuest * quest,
-                             csString him, csString her, csString it, csString them);
+                             csString& him, csString& her, csString& it, csString& them, csString& file_path);
     bool         AddTrigger(csString& current_npc,const char *trigger,
                             int prior_response_id,int trig_response, psQuest* quest, const psString& postfix);
 
