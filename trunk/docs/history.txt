@@ -3,6 +3,8 @@
   with activemagic (/show activemagic)
 - Fixed an entry in the help.xml
 - Updated the compiling guide patch by caarrie
+- Fixed errors being shown in the shell when opening the spell book
+  fixing FS#1137 - Error in client console when opening Spell Book. patch by peeg
 
 *** 2008-11-6 by Keith Fulton
 - Added column for voiced audio support in npc dialog.  Loaded
