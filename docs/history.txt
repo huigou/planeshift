@@ -1,6 +1,12 @@
 ﻿*** 2008-11-6 by Keith Fulton
 - Added column for voiced audio support in npc dialog.  Loaded
   and cached but not used yet.  DB version bump.
+- Removed incorrect and incomplete error response syntax in quest
+  scripts, which was using parentheses after the response to indicate 
+  something which didn't work.
+- Now parentheses after the response delimit the VFS path to the voiced 
+  audio file for the response.  This is the quest_script way of assigning 
+  the new audio_path column in the npc_responses table.
 
 *** 2008-11-6 by Stefano Angeleri
 - Fixed a problem with the npc camera when the npc was on
