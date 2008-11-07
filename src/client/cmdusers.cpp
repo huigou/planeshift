@@ -111,7 +111,6 @@ psUserCommands::psUserCommands(MsgHandler* mh,CmdHandler *ch,iObjectRegistry* ob
     cmdsource->Subscribe("/equip", this);
     cmdsource->Subscribe("/dequip", this);
     cmdsource->Subscribe("/write", this);
-    cmdsource->Subscribe("/show_active_magic", this);
     cmdsource->Subscribe("/pet", this);
     cmdsource->Subscribe("/sit", this);
     cmdsource->Subscribe("/stand", this);
@@ -180,7 +179,6 @@ psUserCommands::~psUserCommands()
     cmdsource->Unsubscribe("/equip",                 this);
     cmdsource->Unsubscribe("/dequip",                this);
     cmdsource->Unsubscribe("/write",                 this);
-    cmdsource->Unsubscribe("/show_active_magic",     this);
     cmdsource->Unsubscribe("/pet",                   this);
     cmdsource->Unsubscribe("/sit",                   this);
     cmdsource->Unsubscribe("/stand",                 this);
@@ -596,15 +594,6 @@ const char *psUserCommands::HandleCommand(const char *cmd)
         psAdviceMessage advice(0,words[0],pPerson, pText);
         msgqueue->SendMessage(advice.msg);
         return NULL;
-    }
-    
-    else if (  words[0] == "/show_active_magic")
-    {
-        pawsActiveMagicWindow* window     = (pawsActiveMagicWindow*) PawsManager::GetSingleton().FindWidget("ActiveMagicWindow");
-        if ( !window )
-            return "Active Magic Window Not Found";
-            
-        window->Show();            
     }
     
     else if (  words[0] == "/pet")

@@ -1,4 +1,9 @@
-﻿*** 2008-11-6 by Keith Fulton
+﻿*** 2008-11-7 by Stefano Angeleri
+- Removed /show_active_magic and moved it's functionality in /show
+  with activemagic (/show activemagic)
+- Fixed an entry in the help.xml
+
+*** 2008-11-6 by Keith Fulton
 - Added column for voiced audio support in npc dialog.  Loaded
   and cached but not used yet.  DB version bump.
 - Removed incorrect and incomplete error response syntax in quest

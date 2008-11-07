@@ -170,7 +170,7 @@ Rolls a certain number of dice with the specified sides and gives the answer.  E
 Sell to specified merchant.  If no merchant specified, sell to current target.</topic>
         <topic name="/show">/show
 
-Opens or closes the named window. Valid targets are: skills, spells, inv, help, buddy, info, petition, quest, shortcut, group, guild, glyph, bag, chat</topic>
+Opens or closes the named window. Valid targets are: skills, spells, inv, help, buddy, info, petition, quest, shortcut, group, guild, glyph, bag, chat, activemagic</topic>
         <topic name="/starttrading">/starttrading 
 
 You are ready to trade.</topic>
@@ -612,7 +612,7 @@ value (in milliseconds).
 With specified sector, it starts rain with default values: density 4000 drops, length 10 minutes and 10 seconds of fade.
 The maximum number of drops allowed is 8000.
 Use /rain sector 0 0 0 or /rain sector off for ending the event. </topic>
-<topic name="/petition_manage">/runscript [script_name] [me/target/eid/pid/area/name]
+<topic name="/runscript">/runscript [script_name] [me/target/eid/pid/area/name]
 
 Runs a progression script on the target.</topic>
         <topic name="/set">/set attribute on|off
