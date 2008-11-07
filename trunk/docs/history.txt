@@ -2,6 +2,7 @@
 - Removed /show_active_magic and moved it's functionality in /show
   with activemagic (/show activemagic)
 - Fixed an entry in the help.xml
+- Updated the compiling guide patch by caarrie
 
 *** 2008-11-6 by Keith Fulton
 - Added column for voiced audio support in npc dialog.  Loaded

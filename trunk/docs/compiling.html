@@ -49,8 +49,8 @@ e.custom(start,val,"");}});return true;});},queue:function(type,fn){if(jQuery.is
     var csWinLibsVersionStab = "1.3_004"; // cs win32 libs version.
     var csWinLibsVersion = "1.3_004"; // cs win32 libs version.
     //Update date and author, to be changed everytime and updates occurred
-    var UpdateDate = "05 Nov 2008"; //Date when the update occurred
-    var UpdateAuthor = "Stefano Angeleri"; //Author of the update
+    var UpdateDate = "07 Nov 2008"; //Date when the update occurred
+    var UpdateAuthor = "Caarrie"; //Author of the update
 -->
 </script>
 
@@ -387,14 +387,14 @@ $(document).ready(function(){
 </div>
     <div class="MacOSX">
         This guide gives a very basic description on how to get a working client up and
-        running on an Intel Mac. It gives instructions on how to get to check out the source code and configure it. At the end there you will have a
+        running on a Mac. It gives instructions on how to get to check out the source code and configure it. At the end there you will have a
         PlaneShift client and a PlaneShift updater application, and if you want also the server.<br><br>
       <b>Credits</b><br>
-       Caarrie, Author of the first basic Mac guide with help from the <a href="http://vaalnor.mine.nu/psdoc/?q=node/38">PSDocs</a> guide and Trymm
+       Caarrie, Author of the first basic Mac guide with help from the <a href="http://www.yliakum.com/psdocs/index.php?page=4">PSDocs</a> guide and Trymm
 
     </div>
     <div class="MacOSX">
-    <p>Here is a basic Mac guide based on the linux guide, for more specifics refer to <a href="http://vaalnor.mine.nu/psdoc/?q=node/38">PSDocs</a>, a user maintained guide.</p>
+    <p>Here is a basic Mac guide based on the linux guide, for more specifics refer to <a href="http://www.yliakum.com/psdocs/index.php?page=4">PSDocs</a>, a user maintained guide.</p>
             <div class="Static">There is no Mac static build guide at this time</div>
     </div>
 </p>
@@ -743,9 +743,39 @@ Writing updated configuration to '/sw/etc/fink.conf'...
 <br />
 
 You need to install Ftjam which you can get from <a href="http://sourceforge.net/project/showfiles.php?group_id=3157">here.</a> You also need to install the following packages from Fink <br />
-<i class="command"> libjpeg freetype freetype-shlibs freetype2 freetype2-dev freetype2-shlibs libogg libvorbis0 libvorbis0-shlibs libmng2 libpng3 autoconf2.5 automake1.9 libtool wget curl</i><br /><br />
+<div class="commandBox"> fink -y -v install libjpeg freetype freetype-shlibs freetype2 freetype2-dev freetype2-shlibs libogg libvorbis0 libvorbis0-shlibs libmng2 libpng3 autoconf2.5 automake1.9 libtool wget curl</div><br /><br />
 
-Since SVN is not always installed you need to make sure it is installed you can get it from <a href="http://metissian.com/projects/macosx/subversion/">here.</a> <br />
+Download SVN with SSL support from Fink with the following command:<br /><br />
+<i class="command">fink -y -v install svn-client</i><br /><br />
+
+Setup Environment Variable for SVN<br />
+Because SVN will be installed into a directory that isn't in the PATH by default, there are two options.
+Please decide which you prefer using.<br />
+
+Option #1 - Storing the path permanently<br />
+This option allows you to store the path once, and follow this guide "as-is".<br />
+Create or modify your profile. Your profile stores commands that will be invoked every time you open a new terminal session.<br /> 
+The single-user instructions allow you to modify only your terminal session. The multi-user instructions modify 
+the terminal session of everyone when they open a terminal. <br />
+<br />
+Bash Users Only - Please use either Single or Multiple User Instructions. This is the default shell for MacOSX.<br /> 
+You can use other shells, but the instructions here are only for bash.<br />
+<br />
+Single User Instructions: <i class="command"># nano ~/.profile</i><br />
+<br />
+Multiple User Instructions: <i class="command"># nano /etc/profile</i><br />
+<br />
+Paste the following lines into the file (for either Single or Multiple User Instructions).<br />
+Note: To exit nano, press Ctrl-X, then y to save the file, then enter to save to same location. # the path is initially set to <i class="command"> "/bin:/sbin:/usr/bin:/usr/sbin" </i><br /><br />
+<i class="command">export PATH=$PATH:/sw/bin/</i><br /><br />
+
+
+For additional information please read the<a href="http://www.macdevcenter.com/pub/a/mac/2004/02/24/bash.html">recommended bash tutorial.</a>  <br />
+
+Option #2 - Using a path to run the svn command<br />
+If you prefer NOT to store environment variables permanently, you can run the svn command as follows: # <i class="command">/sw/bin/svn co ...</i><br />
+
+Simply add /sw/bin/ to the start of every svn command in this guide to find and run the command.<br />
 
 You also need to install Nvidia's Cg Toolkit from <a href="http://www.nvidia.com/object/cg_toolkit.html">
 here.</a></div>
@@ -759,22 +789,27 @@ here.</a></div>
         PlaneShift uses MySQL version 5.0.
         <div class="Linux-Generic">
         <p> For your distro install the mysql package and the -dev package, It might be named mysql-dev or libmysqlclient-dev or something similar.<p>
-              <p>If after building if you see that mysql was not found when running the server and you get the following error:
-          <i class="command">WARNING: could not load plugin 'planeshift.database.mysql'</i> make sure you have  the dev package installed, if it was not installed, ./autogen.sh, ./configure, and recompile the server again, according to the documentation below.</p>
+              <p>If after building if you see that mysql was not found when running the server and you get the following error:<br /><br />
+          <i class="command">WARNING: could not load plugin 'planeshift.database.mysql'</i> <br /><br />make sure you have  the dev package installed, if it was not installed, ./autogen.sh, ./configure, and recompile the server again, according to the documentation below.</p>
         </div>
             <div class="Linux-Ubuntu">
         <p>for Hardy via apt-get: <div class="commandBox"># sudo apt-get --assume-yes install libdbd-mysql-perl libdbi-perl libnet-daemon-perl libplrpc-perl mysql-client-5.0 mysql-server-5.0 libmysqlclient15-dev libmysqlclient15off </div></p>
 
-        <p>If after building if you see that mysql was not found when running the server and you get the following error:
-        <i class="command">WARNING: could not load plugin 'planeshift.database.mysql'</i> make sure you have libmysqlclient15-dev installed, if it was not installed, ./autogen.sh, ./configure, and recompile the server again, according to the documentation below.</p>
+        <p>If after building if you see that mysql was not found when running the server and you get the following error:<br /><br />
+        <i class="command">WARNING: could not load plugin 'planeshift.database.mysql'</i><br /><br /> make sure you have libmysqlclient15-dev installed, if it was not installed, ./autogen.sh, ./configure, and recompile the server again, according to the documentation below.</p>
     </div>
         <div class="Linux-Gentoo">
             <p>via portage: <i class="command">#emerge mysql</i></p>
         </div>
     <div class="Linux-Debian">
        You need to make sure you have libmysqlclient-dev and mysql-server installed for your server to run correctly
-        <p>If after building if you see that mysql was not found when running the server and you get the following error:
-        <i class="command">WARNING: could not load plugin 'planeshift.database.mysql'</i> make sure you have libmysqlclient-dev installed, if it was not installed, ./autogen.sh, ./configure, and recompile the server again, according to the documentation below.</p></div>
+        <p>If after building if you see that mysql was not found when running the server and you get the following error:<br /><br />
+        <i class="command">WARNING: could not load plugin 'planeshift.database.mysql'</i> <br /><br />make sure you have libmysqlclient-dev installed, if it was not installed, ./autogen.sh, ./configure, and recompile the server again, according to the documentation below.</p></div>
+
+		<div class="MacOSX">
+		We need to install mysql. In order to do this we need to use fink.<br /><br />
+		<i class="command">fink -y -v install mysql mysql-client mysql15-dev mysql15-shlibs</i><br /><br />
+ If after building if you see that mysql was not found when running the server and you get the following error:<br /><br /><i class="command">WARNING: could not load plugin 'planeshift.database.mysql'</i><br /><br /> make sure you have mysql15-dev installed, if it was not installed, ./autogen.sh, ./configure, and recompile the server again, according to the documentation below.</p></div>
 
         <div class="Windows">
                 <p>From the download page, select the Community Server option. You will end up in another page where you should select
@@ -802,11 +837,6 @@ here.</a></div>
                 </div>
         </div>
 
-        <b>WordNet:</b><br>
-        You will also need the WordNet dictionaries. Download and install the <a href="http://wordnet.princeton.edu/obtain/">WordNet binaries</a>, version 2.1.
-        <div class="Linux-Ubuntu">
-            <p>via apt-get: <i class="command"># sudo apt-get --assume-yes install wordnet-base wordnet</i></p>
-        </div>
     </p>
 </p>
 
@@ -1484,16 +1514,6 @@ downloaded from the SVN are usually more recent and updated.
 <h2><a name="server">Get the Server Running</a></h2>
 <i>Optional section</i>
 
-<h3>Copy Dictionary Files</h3>
-<div class="Windows">
-  <p>Simply copy the dictionary files from your \WordNet\2.1\dict folder to the \planeshift\data\dict folder.</p>
-</div>
-<div class="Linux">
-  <p>Simply copy the dictionary files from your /usr/share/wordnet folder to the $HOME/development/planeshift/data/dict folder.</p>
-</div>
-<div class="MacOSX">
-  <p>Simply copy the dictionary files from your /usr/share/wordnet folder to the $HOME/development/planeshift/data/dict folder.</p>
-</div>
 <h3>Create the Database</h3>
 <p>Check if MySQL is running.<br>
 <div class="Windows">
@@ -1532,6 +1552,20 @@ You can start your MySQL server in this way:</p>
     The default username is root with no password.<br>
     If you wish to put a password on the root account you can
     <i class="command"> $ mysqladmin -u root password "newpwd"</i>
+</div>
+<div class="MacOSX">
+
+To start mysql automatically on boot do the following:
+<div class="commandBox">sudo daemonic enable mysql<br />
+sudo /Library/StartupItems/daemonic-mysql/daemonic-mysql start
+</div><br />
+Next we need to set a password for the root mysql user:
+<i class="command">mysqladmin -u root password yourpasswordhere</i><br /><br />
+
+To make the database you need to do the following:<br />
+<div class="commandBox">cd $HOME/development/planeshift/src/server/database/mysql<br />
+mysql -r root -pyourpasswordhere<br />
+</div>
 </div>
 <div class="Windows">
 <p>Start a command prompt (Start->Run and then type "cmd") and type:
