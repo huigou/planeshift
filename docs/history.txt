@@ -1,4 +1,7 @@
-﻿*** 2008-11-8 by Mike Gist
+﻿*** 2008-11-8 by Stefano Angeleri
+- Hopefully fixed rotating/sliding npcs after being killed
+
+*** 2008-11-8 by Mike Gist
 - Bumped CS rev to r31565.
 
 *** 2008-11-7 by Stefano Angeleri

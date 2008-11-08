@@ -1797,6 +1797,8 @@ void GEMClientActor::SetMode(uint8_t mode, bool newactor)
         case psModeMessage::DEAD:
             cal3dstate->ClearAllAnims();
             cal3dstate->SetAnimAction("death",0.0f,1.0f);
+            GetMovement()->SetVelocity(0);
+            GetMovement()->SetAngularVelocity(0);
             if (newactor) // If we're creating a new actor that's already dead, we shouldn't show the animation...
                 cal3dstate->SetAnimationTime(9999);  // the very end of the death animation ;)
             break;
