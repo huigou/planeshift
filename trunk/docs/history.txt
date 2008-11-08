@@ -1,5 +1,9 @@
 ﻿*** 2008-11-8 by Stefano Angeleri
 - Hopefully fixed rotating/sliding npcs after being killed
+- fixed a typo in the compiling guide
+- removed underscore from admin commands and removed
+  /show_gm which is a duplicate of /show gm
+- DB VERSION BUMP
 
 *** 2008-11-8 by Mike Gist
 - Bumped CS rev to r31565.

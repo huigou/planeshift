@@ -544,7 +544,7 @@ bool pawsPetitionGMWindow::OnButtonPressed( int mouseButton, int keyModifier, pa
                 psengine->SetTargetPetitioner("None");
 
             // load the gm gui so that the gm can access functions to aid the pet
-            const char* errorMessage = cmdsource->Publish( "/show_gm" );
+            const char* errorMessage = cmdsource->Publish( "/show gm" );
             if ( errorMessage )
             {
                 psSystemMessage error(0,MSG_INFO,errorMessage);

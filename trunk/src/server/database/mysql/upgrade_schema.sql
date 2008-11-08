@@ -1032,6 +1032,13 @@ UPDATE `server_options` SET `option_value`='1203' WHERE `option_name`='db_versio
 source npc_responses.sql
 source quest_scripts.sql
 
+#### 1204 - Stefano Angeleri - removed underscore from admin commands and removed /show_gm which is a duplicate of /show gm
+UPDATE command_group_assignment SET command_name = '/targetname' WHERE command_name = '/target_name';
+UPDATE command_group_assignment SET command_name = '/banadvisor' WHERE command_name = '/ban_advisor';
+UPDATE command_group_assignment SET command_name = '/unbanadvisor' WHERE command_name = '/unban_advisor';
+DELETE FROM command_group_assignment WHERE command_name="/show_gm";
+UPDATE `server_options` SET `option_value`='1204' WHERE `option_name`='db_version';
+
 # Insert your upgrade before this line. Remember when you set a new db_version
 # to update the server_options.sql file and update psserver.cpp as well.
 # This to ensure that everything is working if you use the create_all.sql to
