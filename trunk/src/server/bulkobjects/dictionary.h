@@ -320,6 +320,9 @@ class NpcResponse
 
     const char *GetResponse();
 
+	/// Returns the VFS path to the audio file which represents this response on the server, or NULL if one was not specified.
+	const char *GetVoiceFile() { return voiceAudioPath; }
+
     /// Check for SayResponseOp with public flag set, which tells chat whether it is public or private.
     bool HasPublicResponse();
     bool ParseResponseScript(const char *xmlstr,bool insertBeginning=false);

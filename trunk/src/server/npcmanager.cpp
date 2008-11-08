@@ -735,7 +735,7 @@ void NPCManager::HandleCommandList(MsgEntry *me)
             {
                 // extract the data
                 uint32_t len = 0;
-                void *data = list.msg->GetData(&len);
+				void *data = list.msg->GetBufferPointerUnsafe(len);
 
                 // Make sure we haven't run past the end of the buffer
                 if (list.msg->overrun)

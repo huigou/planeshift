@@ -55,7 +55,7 @@ CREATE TABLE /*!32312 IF NOT EXISTS*/ "npc_responses" (
 LOCK TABLES "npc_responses" WRITE;
 /*!40000 ALTER TABLE "npc_responses" DISABLE KEYS;*/
 REPLACE INTO "npc_responses" ("id", "trigger_id", "response1", "response2", "response3", "response4", "response5", "pronoun_him", "pronoun_her", "pronoun_it", "pronoun_them", "script", "prerequisite", "quest_id", "audio_path") VALUES
-	('1','1','Hello $playername.','Hello friend.','Hi.  What can I do for you?','Go away!','Whatever dude...','0','0','0','0','<response><respondpublic/><action anim="greet"/></response>','','0',NULL);
+	('1','1','Hello $playername.','Hello friend.','Hi.  What can I do for you?','Go away!','Whatever dude...','0','0','0','0','<response><respondpublic/><action anim="greet"/></response>','','0','/planeshift/data/voice/merchant/hello_n.wav');
 REPLACE INTO "npc_responses" ("id", "trigger_id", "response1", "response2", "response3", "response4", "response5", "pronoun_him", "pronoun_her", "pronoun_it", "pronoun_them", "script", "prerequisite", "quest_id", "audio_path") VALUES
 	('2','2','I''m fine and you?','Terrible... what a day...','Comme ci, comme ca... et toi?','Va bene, e tu?','','0','0','0','0','','','0',NULL);
 REPLACE INTO "npc_responses" ("id", "trigger_id", "response1", "response2", "response3", "response4", "response5", "pronoun_him", "pronoun_her", "pronoun_it", "pronoun_them", "script", "prerequisite", "quest_id", "audio_path") VALUES

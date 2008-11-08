@@ -161,6 +161,8 @@ protected:
     csRef<psCelClient>      celclient;
     csRef<MsgHandler>       msghandler;
     csRef<iEngine>          engine;
+	csRef<iVFS>				vfs;
+
     // Each element represents an hour of the day.
     csPDelArray<LightingList> lights;
     // Track the stage of the current step.
@@ -189,6 +191,7 @@ protected:
     void HandleWeatherMessage(MsgEntry* me);
     void HandleNewSectorMessage(MsgEntry* me);
     void HandleCombatEvent(MsgEntry* me);
+	void HandleCachedFile(MsgEntry* me);
 
     bool ProcessLighting(LightingSetting *color, float pct);
     LightingSetting *FindLight(LightingSetting *light,int which);

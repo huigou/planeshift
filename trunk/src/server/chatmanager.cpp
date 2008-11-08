@@ -172,8 +172,10 @@ void ChatManager::HandleMessage(MsgEntry *me, Client *client)
               gemNPC *targetnpc = dynamic_cast<gemNPC*>(target);
               NpcResponse *resp = CheckNPCResponse(msg,client,targetnpc);
               if (resp)
+			  {
+				  SendAudioFile(client, resp->GetVoiceFile());
                   resp->ExecuteScript(client, targetnpc);
-
+			  }
               break;
           }
           case CHAT_TELL:
@@ -425,6 +427,31 @@ NpcResponse *ChatManager::CheckNPCResponse(psChatMessage& msg,Client *client,gem
     return CheckNPCEvent(client,msg.sText,target);  // <L MONEY="0,0,0,3"></L>
 }
 
+void ChatManager::SendAudioFile(Client *client, const char *voiceFile)
+{
+	if (!voiceFile || voiceFile[0]==0)
+		return;
+
+	printf("Sending audio file '%s'.\n", voiceFile);
+
+	// need to cache this probably, later
+	csRef<iDataBuffer> buffer = psserver->vfs->ReadFile(voiceFile);
+	if (!buffer.IsValid())
+	{
+		Error2("Audio file '%s' not found.\n", voiceFile);
+		return;
+	}
+
+	psCachedFileMessage msg(client->GetClientNum(), voiceFile, buffer);
+	msg.SendMessage();
+}
+
+
+
+
+
+
+/************************************************************************************************/
 
 
 psEndChatLoggingEvent::psEndChatLoggingEvent(uint32_t _clientnum, const int delayticks=5000)

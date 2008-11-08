@@ -796,7 +796,7 @@ public:
     }
 
     // Get a pre-converted data buffer with recorded length from the current psMessageBytes buffer.
-    void * GetData(uint32_t*length)
+    void * GetBufferPointerUnsafe(size_t& length)
     {
         // If the message is in overrun state, we know we can't read anymore
         if (overrun)
@@ -805,25 +805,26 @@ public:
         if (current+sizeof(uint32_t) > bytes->GetSize())
         {
             Debug2(LOG_NET,0,"Message id %u would have read beyond end of buffer.\n",msgid);
-            *length=0;
+            length=0;
             overrun=true;
             return NULL;
         }
 
-        *length = GetUInt32();
-        if ((*length)==0) return NULL;
+        length = GetUInt32();
+        if (length==0) 
+			return NULL;
 
-        if (current + (*length) > bytes->GetSize())
+        if (current + (length) > bytes->GetSize())
         {
             Debug2(LOG_NET,0,"Message id %u would have read beyond end of buffer.\n",msgid);
-            *length=0;
+            length=0;
             overrun=true;
             return NULL;
         }
 
         void *datastream = bytes->payload+current;
-        current += *length;
-        return datastream;
+        current += length;
+        return datastream;  // Not safe to use this pointer after the MsgEntry goes out of scope!
     }
 
     void SetType(uint8_t type)

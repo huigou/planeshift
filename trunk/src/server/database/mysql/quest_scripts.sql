@@ -43,7 +43,7 @@ Give Mug or Steel Falchion or Claymore
 #
 INSERT INTO quest_scripts VALUES("2","2","P: can bring you
 
-Merchant: I'm kinda hungry.. bring me a sandwich and hurry if you want a hexa and a mug for your trouble.(/data/voice/merchant/sandwich.spx)
+Merchant: I'm kinda hungry.. bring me a sandwich and hurry if you want a hexa and a mug for your trouble.(/planeshift/data/voice/merchant/clawatit.wav)
 
 Assign Quest
 
@@ -51,10 +51,9 @@ Assign Quest
 
 P: here you
 
-M: Many thanks, this help for my hunger.
+M: Many thanks, this help for my hunger.(/planeshift/data/voice/merchant/thank_you.wav)
 
 Give 1 hexa. Give Mug. Give 3 Potion of Healing. Give 5 faction merchants.
-
 ");
 
 #

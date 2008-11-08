@@ -3215,7 +3215,7 @@ psMsgStringsMessage::psMsgStringsMessage(MsgEntry *message)
 
     // Read the data
     uint32_t length = 0;
-    const void* data = message->GetData(&length);
+	const void* data = message->GetBufferPointerUnsafe(length);
 
     if (message->overrun)
     {
@@ -3366,8 +3366,8 @@ psCombatEventMessage::psCombatEventMessage(uint32_t clientnum,
                                            EID target,
                                            int targetLocation,
                                            float damage,
-                                           csStringID attack_anim,
-                                           csStringID defense_anim)
+                                           int attack_anim,
+                                           int defense_anim)
 {
     switch (event_type)
     {
@@ -6523,11 +6523,11 @@ psMGBoardMessage::psMGBoardMessage(MsgEntry *me)
     msgCols = msg->GetInt8();
     msgRows = msg->GetInt8();
 
-    uint32_t tmp = 0;
-    msgLayout = (uint8_t *)msg->GetData(&tmp);
+    uint32_t size = 0;
+	msgLayout = (uint8_t *)msg->GetBufferPointerUnsafe(size);
 
     msgNumOfPieces = msg->GetInt8();
-    msgPieces = (uint8_t *)msg->GetData(&tmp);
+	msgPieces = (uint8_t *)msg->GetBufferPointerUnsafe(size);
 }
 
 bool psMGBoardMessage::IsNewerThan(uint8_t oldCounter)
@@ -6629,8 +6629,8 @@ psMGUpdateMessage::psMGUpdateMessage(MsgEntry *me)
     msgGameID = msg->GetUInt32();
     msgNumUpdates = msg->GetUInt8();
 
-    uint32_t tmp = 0;
-    msgUpdates = (uint8_t *)msg->GetData(&tmp);
+    uint32_t size = 0;
+	msgUpdates = (uint8_t *)msg->GetBufferPointerUnsafe(size);
 }
 
 bool psMGUpdateMessage::IsNewerThan(uint8_t oldCounter)
@@ -7113,4 +7113,30 @@ csString psCharIntroduction::ToString(AccessPointers * access_ptrs)
 {
     csString msgtext;
     return msgtext;
+}
+
+PSF_IMPLEMENT_MSG_FACTORY(psCachedFileMessage,MSGTYPE_CACHEFILE);
+
+psCachedFileMessage::psCachedFileMessage( uint32_t client, const char *pathname, iDataBuffer *contents)
+{
+	// We send the hash along with it to save as the filename on the client
+    hash = csMD5::Encode(pathname).HexString();
+
+    msg.AttachNew(new MsgEntry(hash.Length()+1 + contents->GetSize() + sizeof(uint32_t) ));
+
+    msg->SetType(MSGTYPE_CACHEFILE);
+    msg->clientnum = client;
+    msg->Add(hash);
+    msg->Add(contents->GetData(), (uint32_t) contents->GetSize());
+}
+
+psCachedFileMessage::psCachedFileMessage( MsgEntry* me )
+{
+	hash = me->GetStr();
+	size_t size=0;
+	char *ptr = (char *)me->GetBufferPointerUnsafe(size);
+	if (ptr)
+	{
+		databuf = csPtr<iDataBuffer> (new csDataBuffer (ptr, size, false));
+	}
 }

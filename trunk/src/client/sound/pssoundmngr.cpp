@@ -728,24 +728,32 @@ bool psSoundManager::psSndSourceMngr::CheckAlreadyPlaying( psSoundHandle* oldRes
 csPtr<psTemplateRes> psSoundManager::psSndSourceMngr::LoadResource
                                 (const char* name)
 {
-    csHash<psSoundFileInfo *>::Iterator i = sndfiles.GetIterator(csHashCompute(name));
-    psSoundFileInfo* info = NULL;
-    while (  i.HasNext()  )
-    {
-        info = i.Next();
-        if (!strcmp(info->name, name))
-            break;
-    }
-    if (!info)
-    {
-        Error2("Couldn't find a definition for '%s'", name);
-        return NULL;
-    }
+	csRef<iSndSysData> snddata;
+	
+	if (name[0] != '/') // not a pathname
+	{
+		csHash<psSoundFileInfo *>::Iterator i = sndfiles.GetIterator(csHashCompute(name));
+		psSoundFileInfo* info = NULL;
+		while (  i.HasNext()  )
+		{
+			info = i.Next();
+			if (!strcmp(info->name, name))
+				break;
+		}
+		if (!info)
+		{
+			Error2("Couldn't find a definition for '%s'", name);
+			return NULL;
+		}
 
-    csRef<iSndSysData> snddata = LoadSound(info->file);
-    if (!snddata)
-      return NULL;
-
+		snddata = LoadSound(info->file);
+		if (!snddata)
+		  return NULL;
+	}
+	else
+	{
+		snddata = LoadSound(name);
+	}
     return csPtr <psTemplateRes> (new psSoundHandle(snddata));
 }
 
