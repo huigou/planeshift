@@ -7070,6 +7070,11 @@ void AdminManager::ModifyHuntLocation(MsgEntry* me, psAdminCmdMessage& msg, Admi
             item->SetIsPickupable(onoff);
             psserver->SendSystemInfo(me->clientnum,"%s is now %s",item->GetName(),(onoff)?"pickupable":"un-pickupable");
         }
+        if (data.action == "unpickable")
+        {
+            item->SetIsUnpickable(onoff);
+            psserver->SendSystemInfo(me->clientnum,"%s is now %s",item->GetName(),(onoff)?"un-pickable":"pickable");
+        }
         else if (data.action == "transient")
         {
             item->SetIsTransient(onoff);
