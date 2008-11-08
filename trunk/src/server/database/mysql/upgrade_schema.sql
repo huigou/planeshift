@@ -1029,8 +1029,6 @@ UPDATE `server_options` SET `option_value`='1202' WHERE `option_name`='db_versio
 #### 1203 - Keith Fulton - Voiced NPC Dialog Support
 ALTER TABLE `npc_responses` ADD `audio_path` VARCHAR(100) NULL COMMENT 'This holds an optional VFS path to a speech file to be sent to the client and played on demand.'
 UPDATE `server_options` SET `option_value`='1203' WHERE `option_name`='db_version';
-source npc_responses.sql
-source quest_scripts.sql
 
 #### 1204 - Stefano Angeleri - removed underscore from admin commands and removed /show_gm which is a duplicate of /show gm
 UPDATE command_group_assignment SET command_name = '/targetname' WHERE command_name = '/target_name';
