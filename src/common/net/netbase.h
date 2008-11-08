@@ -67,6 +67,19 @@ struct iEngine;
 typedef GenericRefQueue <MsgEntry> MsgQueue;
 typedef GenericRefQueue <psNetPacketEntry> NetPacketQueue;
 
+/*
+ * Microsoft sockets do not use Berkeley error codes or functions in all cases.
+ * This is the workaround.
+ * http://msdn.microsoft.com/en-us/library/ms737828(VS.85).aspx
+ */
+#ifdef CS_PLATFORM_WIN32
+#undef errno
+#define errno WSAGetLastError()
+#else
+#define WSAEWOULDBLOCK EAGAIN
+#endif
+
+
 struct PublishDestination
 {
      int client;
@@ -319,8 +332,10 @@ protected:
             *  It's possible that the buffer will free between the sendto call and the select
             *  leaving the select hanging forever if not for the timeout value.
             */
-            while (retries++ < SENDTO_MAX_RETRIES && sentbytes==-1 && errno==EAGAIN)
+            while (retries++ < SENDTO_MAX_RETRIES && sentbytes==-1 && (errno==EAGAIN || errno==WSAEWOULDBLOCK))
             {
+				printf("In while loop on EAGAIN... retry #%d.\n", retries);
+
                 // Clear the file descriptor set
                 FD_ZERO(&wfds);
                 // Set the socket's FD in this set
@@ -346,8 +361,9 @@ protected:
                 totalcountout++;
             }
             else
-                Error1("NetBase::SendTo() gave up trying to send a packet.");
-
+			{
+                Error2("NetBase::SendTo() gave up trying to send a packet with errno=%d.",errno);
+			}
             return sentbytes;
         }
 

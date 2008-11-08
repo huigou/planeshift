@@ -25,6 +25,7 @@
 #include <csutil/csstring.h>
 #include <iutil/vfs.h>
 #include <iengine/engine.h>
+#include <csutil/strhashr.h>
 
 
 //=============================================================================

@@ -75,8 +75,10 @@ protected:
 
     NpcResponse *CheckNPCResponse(psChatMessage& msg,Client *client,gemNPC * &target);
 
-    //If this returns true, all went well.
-    //If it returns false, the client was muted
+	/// Starts the process of sending the specified file to the client
+	void SendAudioFile(Client *client, const char *voiceFile);
+	
+    /// If this returns true, all went well.  If it returns false, the client was muted
     bool FloodControl(csString& newMessage, Client *client);
 };
 

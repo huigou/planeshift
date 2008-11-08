@@ -23,6 +23,7 @@
 #include <iengine/sector.h>
 #include <iengine/engine.h>
 #include <iutil/object.h>
+#include <csutil/strhashr.h>
 #include "util/strutil.h"
 
 //---------------------------------------------------------------------------
@@ -225,7 +226,7 @@ csString psNPCCommandsMessage::ToString(AccessPointers * access_ptrs)
 
                 // Extract the data
                 uint32_t len = 0;
-                void *data = msg->GetData(&len);
+				void *data = msg->GetBufferPointerUnsafe(len);
 
                 // Make sure we haven't run past the end of the buffer
                 if (msg->overrun)

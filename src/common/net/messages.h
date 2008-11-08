@@ -25,7 +25,7 @@
 #include <csutil/array.h>
 #include <csutil/stringarray.h>
 #include <csutil/databuf.h>
-#include <csutil/strhashr.h>
+#include <csutil/csmd5.h>
 #include "util/psscf.h"
 #include <csgeom/vector3.h>
 #include "rpgrules/psmoney.h"
@@ -43,7 +43,7 @@ class psLinearMovement;
 
 // This holds the version number of the network code, remember to increase
 // this each time you do an update which breaks compatibility
-#define PS_NETVERSION   0x0094
+#define PS_NETVERSION   0x0095
 // Remember to bump the version in pscssetup.h, as well.
 
 // NPC Networking version is separate so we don't have to break compatibility
@@ -244,7 +244,9 @@ enum MSG_TYPES
     MSGTYPE_SEQUENCE,
     MSGTYPE_NPCRACELIST,
 
-    MSGTYPE_INTRODUCTION
+    MSGTYPE_INTRODUCTION,
+
+	MSGTYPE_CACHEFILE
 };
 
 class psMessageCracker;
@@ -2285,8 +2287,8 @@ public:
     EID        target_id;
     int        target_location; // Where on the target the attack hit/miss
     float      damage;
-    csStringID attack_anim;
-    csStringID defense_anim;
+    int        attack_anim;
+    int        defense_anim;
     enum
     {
         COMBAT_DODGE,
@@ -2305,8 +2307,8 @@ public:
                          EID target,
                          int target_location,
                          float damage,
-                         csStringID attack_anim,
-                         csStringID defense_anim);
+                         int attack_anim,
+                         int defense_anim);
 
     void SetClientNum(int cnum);
 
@@ -3165,7 +3167,7 @@ public:
         msg->SetType(MSGTYPE_QUESTIONRESPONSE);
         msg->clientnum  = clientnum;
         msg->Add(questionID);
-        msg->Add(answer.GetData());
+        msg->Add(answer);
     }
     psQuestionResponseMsg(MsgEntry *me)
     {
@@ -5042,4 +5044,34 @@ public:
      */
     virtual csString ToString(AccessPointers * access_ptrs);
 };
+
+/**
+ *  Class to send a possibly cached file to the client.
+ */
+class psCachedFileMessage : public psMessageCracker
+{
+
+public:
+	csString hash;
+	csRef<iDataBuffer> databuf;
+
+	psCachedFileMessage( uint32_t client, const char *pathname, iDataBuffer *contents);
+    psCachedFileMessage( MsgEntry* me );
+
+    PSF_DECLARE_MSG_FACTORY();
+
+    /**
+     * @brief Converts the message into human readable string.
+     *
+     * @param access_ptrs A struct to a number of access pointers.
+     * @return Return a human readable string for the message.
+     */
+    virtual csString ToString(AccessPointers * access_ptrs)
+    {
+        return csString("not implemented");
+    }
+
+};
+
+
 #endif

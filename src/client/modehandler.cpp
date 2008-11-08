@@ -110,6 +110,7 @@ ModeHandler::ModeHandler(iSoundManager *sm,
     actorEntity  = 0;
     object_reg   = obj_reg;
     engine =  csQueryRegistry<iEngine> (object_reg);
+	vfs    =  csQueryRegistry<iVFS>    (object_reg);
 
     downfall     = NULL;
     fog          = NULL;
@@ -142,6 +143,7 @@ ModeHandler::~ModeHandler()
         msghandler->Unsubscribe(this,MSGTYPE_WEATHER);
         msghandler->Unsubscribe(this,MSGTYPE_NEWSECTOR);
         msghandler->Unsubscribe(this,MSGTYPE_COMBATEVENT);
+        msghandler->Unsubscribe(this,MSGTYPE_CACHEFILE);
     }
     if (randomgen)
         delete randomgen;
@@ -156,6 +158,7 @@ bool ModeHandler::Initialize()
     msghandler->Subscribe(this,MSGTYPE_WEATHER);
     msghandler->Subscribe(this,MSGTYPE_NEWSECTOR);
     msghandler->Subscribe(this,MSGTYPE_COMBATEVENT);
+    msghandler->Subscribe(this,MSGTYPE_CACHEFILE);
 
     // Light levels
     if(!LoadLightingLevels())
@@ -307,6 +310,10 @@ void ModeHandler::HandleMessage(MsgEntry* me)
         case MSGTYPE_COMBATEVENT:
             HandleCombatEvent(me);
             return;
+
+		case MSGTYPE_CACHEFILE:
+			HandleCachedFile(me);
+			return;
     }
 }
 
@@ -2105,4 +2112,28 @@ void ModeHandler::SetCombatAnim( GEMClientActor* atObject, csStringID anim )
             state->SetAnimAction(idx,0.5F,0.5F);     
         }
     }    
+}
+
+void ModeHandler::HandleCachedFile(MsgEntry* me)
+{
+    psCachedFileMessage msg(me);
+
+	if (msg.valid)
+	{
+		// TODO: Check for cached version
+		csString fname;
+		fname.Format("/planeshift/userdata/%s",msg.hash.GetDataSafe() );
+
+		printf("Got audio file '%s' to play.\n", msg.hash.GetDataSafe() );
+
+		// Save sound file
+		if (!vfs->WriteFile(fname,msg.databuf->GetData(), msg.databuf->GetSize() ))
+		{
+			Error2("Could not write cached file '%s'.",fname.GetData());
+			return;
+		}
+
+		// Play sound file
+		soundmanager->StartAmbientSound(fname);
+	}
 }

@@ -26,6 +26,7 @@
 #include <csutil/refarr.h>
 #include <csutil/list.h>
 #include <csutil/hash.h>
+#include <csutil/strhashr.h>
 #include <iengine/collection.h>
 
 //=============================================================================
