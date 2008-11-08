@@ -65,24 +65,9 @@ const char *psAdminCommands::HandleCommand(const char *cmd)
     if (words.GetCount() == 0)
         return NULL;
 
-    if ( words[0] == "/show_gm" )
-    {
-        pawsWidget* widget = PawsManager::GetSingleton().FindWidget("GmGUI");
-        if (!widget)
-        {
-            Error1("Failure on a /show_gm command. GmGUI isn't loaded\n");
-            return NULL;
-        }
-        else
-        {
-            widget->Show();
-        }
-    }
-    else
-    {
-        psAdminCmdMessage cmdmsg(cmd,0);
-        cmdmsg.SendMessage();        
-    }
+    psAdminCmdMessage cmdmsg(cmd,0);
+    cmdmsg.SendMessage();        
+
     return NULL;  // don't display anything here
 }
 

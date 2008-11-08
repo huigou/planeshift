@@ -97,9 +97,9 @@ class AreaTargetConfirm : public PendingQuestion
         AreaTargetConfirm(const csString in_msg, csString in_player, const csString & question, Client *in_client)
             : PendingQuestion(in_client->GetClientNum(),question, psQuestionMessage::generalConfirm)
         {   //save variables for later use
-            this->command  =   in_msg;
-            this->client  =   in_client;
-            this->player = in_player;
+            this->command = in_msg;
+            this->client  = in_client;
+            this->player  = in_player;
         }
 
         /// Handles the user choice
@@ -108,7 +108,7 @@ class AreaTargetConfirm : public PendingQuestion
             if (answer != "yes") //if we haven't got a confirm just get out of here
                 return;
 
-            //decode the are command and get the list of objects to work on
+            //decode the area command and get the list of objects to work on
             csArray<csString> filters = UserManager::DecodeCommandArea(client, player);
             csArray<csString>::Iterator it(filters.GetIterator());
             while (it.HasNext())
@@ -252,8 +252,8 @@ bool AdminManager::AdminCmdData::DecodeAdminCmdMessage(MsgEntry *pMsg, psAdminCm
              command == "/mute" ||
              command == "/unmute" ||
              command == "/unban" ||
-             command == "/ban_advisor" ||
-             command == "/unban_advisor" ||
+             command == "/banadvisor" ||
+             command == "/unbanadvisor" ||
              command == "/death" ||
              command == "/info" ||
              command == "/charlist" ||
@@ -1068,7 +1068,7 @@ bool AdminManager::AdminCmdData::DecodeAdminCmdMessage(MsgEntry *pMsg, psAdminCm
         player = words.Get(1);
         return true;
     }
-    else if (command == "/target_name") //will return what would be targeted in an admin function, mostly useful with area targeting
+    else if (command == "/targetname") //will return what would be targeted in an admin function, mostly useful with area targeting
     {
         player = words[1];
         return true;
@@ -1334,11 +1334,11 @@ void AdminManager::HandleAdminCmdMessage(MsgEntry *me, psAdminCmdMessage &msg, A
     {
         UnbanClient( me, msg, data, client );
     }
-    else if (data.command == "/ban_advisor" )
+    else if (data.command == "/banadvisor" )
     {
         BanAdvisor( me, msg, data, client );
     }
-    else if (data.command == "/unban_advisor" )
+    else if (data.command == "/unbanadvisor" )
     {
         UnbanAdvisor( me, msg, data, client );
     }
@@ -1454,7 +1454,7 @@ void AdminManager::HandleAdminCmdMessage(MsgEntry *me, psAdminCmdMessage &msg, A
     {
         HandleListWarnings(msg, data, client, targetclient);
     }
-    else if (data.command == "/target_name")
+    else if (data.command == "/targetname")
     {
         CheckTarget(msg, data, targetobject, client);
     }
@@ -7887,7 +7887,7 @@ void AdminManager::CheckTarget(psAdminCmdMessage& msg, AdminCmdData& data, gemOb
 {
     if ((!data.player || !data.player.Length()) && !targetobject)
     {
-        psserver->SendSystemInfo(client->GetClientNum(),"Syntax: \"/target_name [me/target/eid/pid/area/name]\"");
+        psserver->SendSystemInfo(client->GetClientNum(),"Syntax: \"/targetname [me/target/eid/pid/area/name]\"");
         return;
     }
     if(targetobject) //just to be sure

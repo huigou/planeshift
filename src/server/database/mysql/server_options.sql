@@ -42,7 +42,7 @@ CREATE TABLE /*!32312 IF NOT EXISTS*/ "server_options" (
 LOCK TABLES "server_options" WRITE;
 /*!40000 ALTER TABLE "server_options" DISABLE KEYS;*/
 REPLACE INTO "server_options" ("option_name", "option_value") VALUES
-	('db_version','1203');
+	('db_version','1204');
 REPLACE INTO "server_options" ("option_name", "option_value") VALUES
 	('game_date','100-1-1');
 REPLACE INTO "server_options" ("option_name", "option_value") VALUES
