@@ -43,7 +43,7 @@ CREATE TABLE `npc_responses` (
 
 INSERT INTO `npc_responses` VALUES (1,1,'Hello $playername.','Hello friend.','Hi.  What can I do for you?','Go away!','Whatever dude...','0','0','0','0','<response><respondpublic/><action anim=\"greet\"/></response>','',0,'/planeshift/data/voice/merchant/hello_n.wav');
 INSERT INTO `npc_responses` VALUES (2,2,'I\'m fine and you?','Terrible... what a day...','Comme ci, comme ca... et toi?','Va bene, e tu?','','0','0','0','0','','',0,NULL);
-INSERT INTO `npc_responses` VALUES (3,3,'Later.','May the Crystal shine brightly on you.','Goodbye $playername.','','','0','0','0','0','','',0,NULL,NULL);
+INSERT INTO `npc_responses` VALUES (3,3,'Later.','May the Crystal shine brightly on you.','Goodbye $playername.','','','0','0','0','0','','',0,NULL);
 INSERT INTO `npc_responses` VALUES (11,4,'I\'m just a simple peasant.','','','','','','','','','','',0,NULL);
 INSERT INTO `npc_responses` VALUES (12,5,'I\'m the great creator of many weapons.','','','','','','','','','','',0,NULL);
 INSERT INTO `npc_responses` VALUES (15,6,'I will train you','','','','','','','','','<response><respond/><train skill=\"Sword\"/></response>','<pre><faction name=\"orcs\" value=\"0\"/></pre>',0,NULL);
