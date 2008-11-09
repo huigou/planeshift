@@ -136,7 +136,7 @@ bool pawsInventoryWindow::PostSetup()
     SetupSlot("righthand");
     SetupSlot("leftfinger");
     SetupSlot("rightfinger");
-    SetupSlot("head");
+    SetupSlot("helm");
     SetupSlot("neck");
     SetupSlot("back");
     SetupSlot("arms");
