@@ -15,6 +15,8 @@
 - Changed HEAD to HELM in item_stats in order to make everything work
   as expected after last kougaro patch
 - DB VERSION BUMP
+- Removed a duplicate define in messages.h, thanks to bovek for finding it,
+  and made the other ones look a bit better alligned
   
 
 *** 2008-11-8 by Keith Fulton
