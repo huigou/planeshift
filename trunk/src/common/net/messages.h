@@ -253,38 +253,37 @@ class psMessageCracker;
 
 
 // Types of system messages
-#define MSG_ERROR              0x00000000 // Used for stuff that failed (By default, OnScreen Red)
-#define MSG_INFO               0x00010000
-#define MSG_INFO_SERVER        0x00010001
-#define MSG_RESULT             0x00010002 // Used for things that the user might be interessted in (By default, OnScreen Yellow)
-#define MSG_OK                 0x00010003 // Used for confimation that the action was accepted (By default, OnScreen Green)
-#define MSG_WHO                0x00010004 // Used for the message with /who content
-#define MSG_ACK                0x00010005 // Used for feedback localy (By default, OnScreen Blue)
-#define MSG_INFO_BASE          0x00010006 // System messages that are shown on the "Main" tab
-#define MSG_COMBAT             0x00020000
-#define  MSG_COMBAT_DODGE      0x00020001
-#define  MSG_COMBAT_BLOCK      0x00020002
-#define  MSG_COMBAT_HITYOU     0x00020003
-#define  MSG_COMBAT_HITOTHER   0x00020004
-#define  MSG_COMBAT_YOURHIT    0x00020005
-#define  MSG_COMBAT_OTHERHIT   0x00020006
-#define  MSG_COMBAT_MISS       0x00020007
-#define  MSG_COMBAT_OWN_DEATH  0x00020008
-#define  MSG_COMBAT_DEATH      0x00020009
-#define  MSG_COMBAT_VICTORY    0x0002000a
-#define  MSG_COMBAT_STANCE     0x0002000b
-#define  MSG_COMBAT_NEARLY_DEAD 0x0002000c
-#define MSG_LOOT               0x00030000
-#define MSG_SEC                0x00300000
-#define MSG_SEC                0x00300000
-#define  SEC_LEVEL0            0x00300000
-#define  SEC_LEVEL1            0x00300001
-#define  SEC_LEVEL2            0x00300002
-#define  SEC_LEVEL3            0x00300003
-#define  SEC_LEVEL4            0x00300004
-#define MSG_PURCHASE           0x00400000
+#define MSG_ERROR               0x00000000 // Used for stuff that failed (By default, OnScreen Red)
+#define MSG_INFO                0x00010000
+#define MSG_INFO_SERVER         0x00010001
+#define MSG_RESULT              0x00010002 // Used for things that the user might be interessted in (By default, OnScreen Yellow)
+#define MSG_OK                  0x00010003 // Used for confimation that the action was accepted (By default, OnScreen Green)
+#define MSG_WHO                 0x00010004 // Used for the message with /who content
+#define MSG_ACK                 0x00010005 // Used for feedback localy (By default, OnScreen Blue)
+#define MSG_INFO_BASE           0x00010006 // System messages that are shown on the "Main" tab
+#define MSG_COMBAT              0x00020000
+#define MSG_COMBAT_DODGE        0x00020001
+#define MSG_COMBAT_BLOCK        0x00020002
+#define MSG_COMBAT_HITYOU       0x00020003
+#define MSG_COMBAT_HITOTHER     0x00020004
+#define MSG_COMBAT_YOURHIT      0x00020005
+#define MSG_COMBAT_OTHERHIT     0x00020006
+#define MSG_COMBAT_MISS         0x00020007
+#define MSG_COMBAT_OWN_DEATH    0x00020008
+#define MSG_COMBAT_DEATH        0x00020009
+#define MSG_COMBAT_VICTORY      0x0002000a
+#define MSG_COMBAT_STANCE       0x0002000b
+#define MSG_COMBAT_NEARLY_DEAD  0x0002000c
+#define MSG_LOOT                0x00030000
+#define MSG_SEC                 0x00300000
+#define SEC_LEVEL0              0x00300000
+#define SEC_LEVEL1              0x00300001
+#define SEC_LEVEL2              0x00300002
+#define SEC_LEVEL3              0x00300003
+#define SEC_LEVEL4              0x00300004
+#define MSG_PURCHASE            0x00400000
 
-#define TOP_SHORT_INT_VAL      65535
+#define TOP_SHORT_INT_VAL       65535
 
 class PublishVector;
 class MsgHandler;
