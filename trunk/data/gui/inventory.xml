@@ -91,7 +91,7 @@
         </subscriptions>     
     </widget>
 
-    <widget name="head" factory="pawsSlot" tooltip="Head">
+    <widget name="helm" factory="pawsSlot" tooltip="helm">
         <frame x="265" y="22" width="48" height="48" />
         <subscriptions>
             <subscribe data="sigClearSlot" />

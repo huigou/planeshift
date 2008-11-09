@@ -17,6 +17,7 @@
 - DB VERSION BUMP
 - Removed a duplicate define in messages.h, thanks to bovek for finding it,
   and made the other ones look a bit better alligned
+- Additional patch from kougaro to fix disappearing helms (correlated to FS#462)
   
 
 *** 2008-11-8 by Keith Fulton
