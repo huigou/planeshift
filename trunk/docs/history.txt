@@ -1,4 +1,19 @@
-﻿*** 2008-11-8 by Stefano Angeleri
+﻿*** 2008-11-8 by Keith Fulton
+- Voiced npc dialog is now working at a basic level.  There are three 
+  examples here:
+  - If you say hello to the merchant, he will say "Hello Newman" back.
+  - If you say "Can bring you" to him, he will say something when he 
+    assigns the quest.
+  - If you say "here you" to him after that, he will complete the quest 
+    and say thank you.
+- Also fixed a Windows sockets incompatibility problem that only shows 
+  up when sending large messages.
+- The hash (and therefore the future caching) includes the timestamp of 
+  the file on the server, in case a file is updated with the same 
+  name (it will get re-sent).
+
+
+*** 2008-11-8 by Stefano Angeleri
 - Hopefully fixed rotating/sliding npcs after being killed
 - fixed a typo in the compiling guide
 - removed underscore from admin commands and removed
