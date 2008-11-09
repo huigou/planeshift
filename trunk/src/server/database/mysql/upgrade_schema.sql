@@ -1037,6 +1037,10 @@ UPDATE command_group_assignment SET command_name = '/unbanadvisor' WHERE command
 DELETE FROM command_group_assignment WHERE command_name="/show_gm";
 UPDATE `server_options` SET `option_value`='1204' WHERE `option_name`='db_version';
 
+#1205 - Stefano Angeleri - Added a required change in order to make last kougaro patch work correctly
+UPDATE item_stats SET valid_slots = REPLACE(valid_slots, 'HEAD', 'HELM');
+UPDATE `server_options` SET `option_value`='1205' WHERE `option_name`='db_version';
+
 # Insert your upgrade before this line. Remember when you set a new db_version
 # to update the server_options.sql file and update psserver.cpp as well.
 # This to ensure that everything is working if you use the create_all.sql to
