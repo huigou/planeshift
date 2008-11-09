@@ -52,6 +52,20 @@ class gemActor;
 
 #define CHAT_SAY_RANGE 10
 
+struct CachedData
+{
+	csString key;
+	csString alternate;
+	csRef<iDataBuffer> data;
+
+	CachedData(iDataBuffer *buffer, const char *n, const char *alt)
+	{
+		data = buffer;
+		key = n;
+		alternate = alt;
+	}
+};
+
 class ChatManager : public MessageManager
 {
 public:
@@ -67,6 +81,8 @@ public:
     void SendGuild(const csString & sender, psGuildInfo * guild, psChatMessage& msg);
 
 protected:
+	csPDelArray<CachedData> audioFileCache;
+
     void SendTell(psChatMessage& msg, const char* who,Client *from,Client *target);
     void SendSay(uint32_t clientNum, gemActor* actor, psChatMessage& msg, const char* who);
     void SendGuild(Client * client, psChatMessage& msg);
