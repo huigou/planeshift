@@ -432,25 +432,58 @@ void ChatManager::SendAudioFile(Client *client, const char *voiceFile)
 	if (!voiceFile || voiceFile[0]==0)
 		return;
 
-	printf("Sending audio file '%s'.\n", voiceFile);
-
-	// need to cache this probably, later
-	csRef<iDataBuffer> buffer = psserver->vfs->ReadFile(voiceFile);
-	csFileTime oTime;
-	psserver->vfs->GetFileTime(voiceFile,oTime);
-
+	csRef<iDataBuffer> buffer;
 	csString timestamp;
-	timestamp.Format("%d/%d/%d %d:%d:%d ",
-		             oTime.mon, oTime.day, oTime.year,
-					 oTime.hour, oTime.min, oTime.sec);
+
+	printf("Checking cache for audio file '%s'.\n", voiceFile);
+
+	// Check cache for file
+	csRef<iDataBuffer> cache;
+	for (size_t i=0; i < audioFileCache.GetSize(); i++)
+	{
+		printf("Cached item %d: '%s'\n", i, audioFileCache[i]->key.GetDataSafe() );
+
+		if (audioFileCache[i]->key == voiceFile) // found
+		{
+			printf("Found in cache.  Moving to front.\n");
+
+			buffer = audioFileCache[i]->data;
+			timestamp = audioFileCache[i]->alternate;
+			// now make a new copy of the entry and move up to front of array
+			audioFileCache.DeleteIndex(i);
+			CachedData *n = new CachedData(buffer,voiceFile,timestamp);
+			audioFileCache.Insert(0,n);
+			break;
+		}
+	}
 
 	if (!buffer.IsValid())
 	{
-		Error2("Audio file '%s' not found.\n", voiceFile);
-		return;
-	}
+		printf("File not found in cache.  Loading from disk.\n");
 
-	timestamp.Append(voiceFile);
+		buffer = psserver->vfs->ReadFile(voiceFile);
+		if (!buffer.IsValid())
+		{
+			Error2("Audio file '%s' not found.\n", voiceFile);
+			return;
+		}
+		csFileTime oTime;
+		psserver->vfs->GetFileTime(voiceFile,oTime);
+
+		timestamp.Format("%d/%d/%d %d:%d:%d ",
+						 oTime.mon, oTime.day, oTime.year,
+						 oTime.hour, oTime.min, oTime.sec);
+
+
+		timestamp.Append(voiceFile);
+
+		// Add newly read file to the MRU cache
+		CachedData *n = new CachedData(buffer,voiceFile,timestamp);
+		audioFileCache.Insert(0,n);
+		// We added one to the front of our list, so keep the list at no more than 100 items.
+		if (audioFileCache.GetSize() > 100)
+			audioFileCache.Pop();
+	}
 
 	psCachedFileMessage msg(client->GetClientNum(), timestamp, buffer);
 	msg.SendMessage();
