@@ -7075,7 +7075,7 @@ void AdminManager::ModifyItem(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
         else //if the skill is defined as none
         {
             item->SetLockStrength(0); //we reset the skill level required to zero
-            item->SetLockpickSkill(-1); //and reset the required skill to none
+            item->SetLockpickSkill(PSSKILL_NONE); //and reset the required skill to none
             psserver->SendSystemInfo(me->clientnum,"The skill needed to open the lock of %s was removed",item->GetName());
         }
     }
