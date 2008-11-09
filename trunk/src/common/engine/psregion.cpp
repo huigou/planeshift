@@ -48,7 +48,7 @@ psRegion::psRegion(iObjectRegistry *obj_reg, const char *file, uint _gfxFeatures
     object_reg = obj_reg;
 
     worlddir.Format("/planeshift/world/%s", file);
-    colldetworlddir.Format("/planeshift/world/cd_%s", file);
+    colldetworlddir.Format("/planeshift/world/cd/%s", file);
     worldfile  = "world";
     regionName = file;
     loaded     = false;
