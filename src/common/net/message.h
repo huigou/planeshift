@@ -796,7 +796,7 @@ public:
     }
 
     // Get a pre-converted data buffer with recorded length from the current psMessageBytes buffer.
-    void * GetBufferPointerUnsafe(size_t& length)
+    void * GetBufferPointerUnsafe(uint32_t& length)
     {
         // If the message is in overrun state, we know we can't read anymore
         if (overrun)
