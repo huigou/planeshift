@@ -7133,7 +7133,7 @@ psCachedFileMessage::psCachedFileMessage( uint32_t client, const char *pathname,
 psCachedFileMessage::psCachedFileMessage( MsgEntry* me )
 {
 	hash = me->GetStr();
-	size_t size=0;
+	uint32_t size=0;
 	char *ptr = (char *)me->GetBufferPointerUnsafe(size);
 	if (ptr)
 	{
