@@ -7,7 +7,10 @@
   order to be consistent with his functionality
 - Added and fixed some comments around
 - Updated help.xml accordly with new functions and improved
-  readability of /modify help entry
+  readability of /modify help entryù
+- Fixed sorting problems of listboxes which hit primarly the gm gui.
+  Now the selected row is always set correctly after sorting.
+  
 
 *** 2008-11-8 by Keith Fulton
 - Voiced npc dialog is now working at a basic level.  There are three 

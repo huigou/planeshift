@@ -975,8 +975,10 @@ int pawsListBox::sort_cmp(const void * void_rowA, const void * void_rowB)
 void pawsListBox::SortRows()
 {
     pawsListBoxRow ** sortedRows;
+    pawsListBoxRow * selectedrow; //stores the currently selected row before sorting
+                                  //in order to be able to retrieve the correct position
     size_t i; 
-    
+
     if (sortColNum == -1)
         return;
     if (columnDef[sortColNum].sortFunc == NULL)
@@ -984,7 +986,11 @@ void pawsListBox::SortRows()
 
     sortedRows = new pawsListBoxRow*[rows.GetSize()];
     for ( i=0; i < rows.GetSize(); i++)
+    {
         sortedRows[i] = rows[i];
+    }
+
+    selectedrow = sortedRows[selected]; //saves the corrispondence to the selected row
 
     sort_sortFunc    = columnDef[sortColNum].sortFunc;
     sort_sortColNum  = sortColNum;
@@ -992,7 +998,11 @@ void pawsListBox::SortRows()
     qsort(sortedRows, rows.GetSize(), sizeof (void*), sort_cmp);
 
     for ( i=0; i < rows.GetSize(); i++)
+    {
         rows[i] = sortedRows[i];
+        if(sortedRows[i] == selectedrow) //check if the current row is the one which was selected
+            selected = i; //if so update our selected variable
+    }
     delete [] sortedRows;
     
     CalculateDrawPositions();
