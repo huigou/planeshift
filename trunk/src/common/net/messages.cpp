@@ -3214,7 +3214,7 @@ psMsgStringsMessage::psMsgStringsMessage(MsgEntry *message)
     }
 
     // Read the data
-    size_t length = 0;
+    uint32_t length = 0;
 	const void* data = message->GetBufferPointerUnsafe(length);
 
     if (message->overrun)
@@ -6523,7 +6523,7 @@ psMGBoardMessage::psMGBoardMessage(MsgEntry *me)
     msgCols = msg->GetInt8();
     msgRows = msg->GetInt8();
 
-    size_t size = 0;
+    uint32_t size = 0;
 	msgLayout = (uint8_t *)msg->GetBufferPointerUnsafe(size);
 
     msgNumOfPieces = msg->GetInt8();
@@ -6629,7 +6629,7 @@ psMGUpdateMessage::psMGUpdateMessage(MsgEntry *me)
     msgGameID = msg->GetUInt32();
     msgNumUpdates = msg->GetUInt8();
 
-    size_t size = 0;
+    uint32_t size = 0;
 	msgUpdates = (uint8_t *)msg->GetBufferPointerUnsafe(size);
 }
 
