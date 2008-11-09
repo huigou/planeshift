@@ -7083,7 +7083,7 @@ void AdminManager::ModifyItem(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
     {
         if(data.value >= 0) //check that we didn't get a negative value
         {
-            if(item->GetLockpickSkill() >= 0) //check that there is a valid skill associated to the item
+            if(item->GetLockpickSkill() != PSSKILL_NONE) //check that the skill isn't none (not set)
             {
                 item->SetLockStrength(data.value); //all went fine so set the skill level required to pick this item
                 psserver->SendSystemInfo(me->clientnum,"The skill level needed to open the lock of %s is now %u",item->GetName(),data.value);

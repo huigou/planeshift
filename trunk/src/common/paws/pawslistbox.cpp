@@ -977,7 +977,6 @@ void pawsListBox::SortRows()
     pawsListBoxRow ** sortedRows;
     pawsListBoxRow * selectedrow; //stores the currently selected row before sorting
                                   //in order to be able to retrieve the correct position
-    int selectednew = 0;
     size_t i;
 
     if (sortColNum == -1)
@@ -987,9 +986,7 @@ void pawsListBox::SortRows()
 
     sortedRows = new pawsListBoxRow*[rows.GetSize()];
     for ( i=0; i < rows.GetSize(); i++)
-    {
         sortedRows[i] = rows[i];
-    }
 
     selectedrow = sortedRows[selected]; //saves the corrispondence to the selected row
 
@@ -1002,7 +999,7 @@ void pawsListBox::SortRows()
     {
         rows[i] = sortedRows[i];
         if(sortedRows[i] == selectedrow) //check if the current row is the one which was selected
-            selectednew = i; //if so update our selected variable
+            selected = i; //if so update our selected variable
     }
 
     delete [] sortedRows;
