@@ -517,7 +517,29 @@ View the details of a characters marriage.</topic>
 
 Alters the settings for an item.  Allowed actions:
 
-'intervals' followed by 2 integer values for the interval and max modifier for spawning this item (must already spawn), 'amount' followed by an integer for the amount of items to spawned (must already spawn), 'range' followed by the range in which the items should spawn (must already spawn), 'remove' deletes this item and its spawn if it has one, 'pickupable' followed by 'true' or 'false', 'transient' followed by 'true or 'false' (transient items auto-delete in ~3 hours), 'npcowned' followed by 'true' or 'false', 'move' followed by x, y, z and optionally y-rotation coordinates. 'collide' - enable/disable collision detection for that item.</topic>
+'intervals' followed by 2 integer values for the interval and max modifier for spawning this item (must already spawn)
+
+'amount' followed by an integer for the amount of items to spawned (must already spawn)
+
+'range' followed by the range in which the items should spawn (must already spawn)
+
+'remove' deletes this item and its spawn if it has one
+
+'pickskill' followed by the name of a skill allows to change the skill required to pick the lock of the item
+
+'picklevel' followed by the level required of the currently set skill in order to be able to pick the lock of the item
+
+'pickupable' followed by 'true' or 'false' sets the pickupable flag
+
+'unpickable' followed by 'true' or 'false' sets the unpickable flag
+
+'transient' followed by 'true or 'false' sets the transient flag (transient items auto-delete in ~3 hours)
+
+'npcowned' followed by 'true' or 'false' sets the npcowned flag
+
+'move' followed by x, y, z and optionally y-rotation coordinates
+
+'collide' - enable/disable collision detection for that item.</topic>
        <topic name="/money">/money [circles|hexas|octas|trias] [random|quantity value]
 
 Will spawn the specified amount of money items to your inventory. Use random to spawn a random amount of money. 

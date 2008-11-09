@@ -185,12 +185,19 @@ protected:
      *  @param me The incoming message from the GM
      *  @param msg The cracked command message.
      *  @param client The GM client the command came from.
-     *  @param The object we are going to run the progression script
+     *  @param object The object we are going to run the progression script
      */
     void RunScript(MsgEntry *me, psAdminCmdMessage& msg, AdminCmdData& data, Client *client, gemObject* object);
 
     void CreateHuntLocation(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data, Client *client);
-    void ModifyHuntLocation(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data, Client* client, gemObject* object);
+    
+    /** @brief Changes various parameters associated to the item
+     *  @param me The incoming message from the GM
+     *  @param msg The cracked command message.
+     *  @param client The GM client the command came from.
+     *  @param object The item of which we are going to edit parameters
+     */
+    void ModifyItem(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data, Client* client, gemObject* object);
 
     void Slide(MsgEntry* me,psAdminCmdMessage& msg, AdminCmdData& data, Client *client, gemObject *target);
 
@@ -383,7 +390,7 @@ protected:
     /** @brief List warnings given to account
      *  @param msg The cracked command message.
      *  @param client The GM client the command came from.
-     *  @param The client we are inspecting for warnings
+     *  @param target The client we are inspecting for warnings
      */
     void HandleListWarnings(psAdminCmdMessage& msg, AdminCmdData& data, Client *client, Client *target );
 

@@ -645,7 +645,7 @@ bool AdminManager::AdminCmdData::DecodeAdminCmdMessage(MsgEntry *pMsg, psAdminCm
             random = words.GetInt(4);
             return true;
         }
-        else if (action == "amount")
+        else if (action == "amount" || action == "picklevel")
         {
             value = words.GetInt(3);
             return true;
@@ -666,6 +666,11 @@ bool AdminManager::AdminCmdData::DecodeAdminCmdMessage(MsgEntry *pMsg, psAdminCm
                 rot = words.GetFloat(6);
                 return true;
             }
+        }
+        else if(action == "pickskill")
+        {
+            name = words[3];
+            return true;
         }
         else
         {
@@ -1376,7 +1381,7 @@ void AdminManager::HandleAdminCmdMessage(MsgEntry *me, psAdminCmdMessage &msg, A
     }
     else if (data.command == "/modify")
     {
-        ModifyHuntLocation(me, msg, data, client, targetobject);
+        ModifyItem(me, msg, data, client, targetobject);
     }
     else if (data.command == "/morph")
     {
@@ -6958,7 +6963,7 @@ void AdminManager::Snow(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data
 }
 
 
-void AdminManager::ModifyHuntLocation(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data, Client* client, gemObject* object)
+void AdminManager::ModifyItem(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data, Client* client, gemObject* object)
 {
     if (!object)
     {
@@ -7052,6 +7057,47 @@ void AdminManager::ModifyHuntLocation(MsgEntry* me, psAdminCmdMessage& msg, Admi
             gItem->SetPosition(pos, data.rot, sector, instance);
         }
     }
+    else if (data.action == "pickskill") //sets the required skill in order to be able to pick the item
+    {
+        if(data.name != "none") //if the skill name isn't none...
+        {
+            psSkillInfo * skill = CacheManager::GetSingleton().GetSkillByName(data.name); //try searching for the skill
+            if(skill) //if found...
+            {
+                item->SetLockpickSkill(skill->id); //set the selected skill for picking the lock to the item
+                psserver->SendSystemInfo(me->clientnum,"The skill needed to open the lock of %s is now %s",item->GetName(),skill->name.GetDataSafe());
+            }
+            else //else alert the user that there isn't such a skill
+            {
+                psserver->SendSystemError(me->clientnum,"Invalid skill name!");
+            }
+        }
+        else //if the skill is defined as none
+        {
+            item->SetLockStrength(0); //we reset the skill level required to zero
+            item->SetLockpickSkill(-1); //and reset the required skill to none
+            psserver->SendSystemInfo(me->clientnum,"The skill needed to open the lock of %s was removed",item->GetName());
+        }
+    }
+    else if (data.action == "picklevel") //sets the required level of the already selected skill in order to be able to pick the item
+    {
+        if(data.value >= 0) //check that we didn't get a negative value
+        {
+            if(item->GetLockpickSkill() >= 0) //check that there is a valid skill associated to the item
+            {
+                item->SetLockStrength(data.value); //all went fine so set the skill level required to pick this item
+                psserver->SendSystemInfo(me->clientnum,"The skill level needed to open the lock of %s is now %u",item->GetName(),data.value);
+            }
+            else //alert the user that the item doesn't have a skill for picking it
+            {
+                psserver->SendSystemError(me->clientnum,"The item doesn't have a pick skill set!");
+            }
+        }
+        else //alert the user that the supplied value isn't valid
+        {
+            psserver->SendSystemError(me->clientnum,"Invalid skill level!");
+        }
+    }
     else
     {
         bool onoff;
@@ -7070,7 +7116,7 @@ void AdminManager::ModifyHuntLocation(MsgEntry* me, psAdminCmdMessage& msg, Admi
             item->SetIsPickupable(onoff);
             psserver->SendSystemInfo(me->clientnum,"%s is now %s",item->GetName(),(onoff)?"pickupable":"un-pickupable");
         }
-        if (data.action == "unpickable")
+        else if (data.action == "unpickable") //sets or unsets the UNPICKABLE flag on the item
         {
             item->SetIsUnpickable(onoff);
             psserver->SendSystemInfo(me->clientnum,"%s is now %s",item->GetName(),(onoff)?"un-pickable":"pickable");
