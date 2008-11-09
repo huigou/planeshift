@@ -436,13 +436,23 @@ void ChatManager::SendAudioFile(Client *client, const char *voiceFile)
 
 	// need to cache this probably, later
 	csRef<iDataBuffer> buffer = psserver->vfs->ReadFile(voiceFile);
+	csFileTime oTime;
+	psserver->vfs->GetFileTime(voiceFile,oTime);
+
+	csString timestamp;
+	timestamp.Format("%d/%d/%d %d:%d:%d ",
+		             oTime.mon, oTime.day, oTime.year,
+					 oTime.hour, oTime.min, oTime.sec);
+
 	if (!buffer.IsValid())
 	{
 		Error2("Audio file '%s' not found.\n", voiceFile);
 		return;
 	}
 
-	psCachedFileMessage msg(client->GetClientNum(), voiceFile, buffer);
+	timestamp.Append(voiceFile);
+
+	psCachedFileMessage msg(client->GetClientNum(), timestamp, buffer);
 	msg.SendMessage();
 }
 
