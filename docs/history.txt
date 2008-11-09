@@ -11,7 +11,9 @@
 - The hash (and therefore the future caching) includes the timestamp of 
   the file on the server, in case a file is updated with the same 
   name (it will get re-sent).
-
+- Now the top 100 most recently used audio files will be cached by the 
+  server instead of loading from scratch every time.  100 is just a 
+  guess.  We'll have to see what size this cache should really be.
 
 *** 2008-11-8 by Stefano Angeleri
 - Hopefully fixed rotating/sliding npcs after being killed
