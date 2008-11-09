@@ -7,9 +7,14 @@
   order to be consistent with his functionality
 - Added and fixed some comments around
 - Updated help.xml accordly with new functions and improved
-  readability of /modify help entryù
+  readability of /modify help entry
 - Fixed sorting problems of listboxes which hit primarly the gm gui.
   Now the selected row is always set correctly after sorting.
+- Little improvements in the size of the online players text and
+  position ofban edit boxes in the gm gui
+- Changed HEAD to HELM in item_stats in order to make everything work
+  as expected after last kougaro patch
+- DB VERSION BUMP
   
 
 *** 2008-11-8 by Keith Fulton
