@@ -80,7 +80,7 @@
                 </widget>
 
                 <widget name="PlayerCount" factory="pawsTextBox" >
-                    <frame x="240" y="375" width="150" height="20"/>
+                    <frame x="240" y="375" width="200" height="20"/>
 					<font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="10" />
                 </widget>
 
@@ -171,17 +171,17 @@
                 </widget>
 
                 <widget name="BanMin" factory="pawsEditTextBox">    
-                    <frame x="500" y="307" width="20" height="20" border="no"/>
+                    <frame x="500" y="309" width="20" height="20" border="no"/>
                     <text string="30" horizAdjust="CENTRE" />    
 					<font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="10" />
                 </widget>
                 <widget name="BanHrs" factory="pawsEditTextBox">    
-                    <frame x="534" y="307" width="20" height="20" border="no"/>
+                    <frame x="534" y="309" width="20" height="20" border="no"/>
                     <text string="0" horizAdjust="CENTRE" />    
 					<font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="10" />
                 </widget>        
                 <widget name="BanDays" factory="pawsEditTextBox">    
-                    <frame x="568" y="307" width="20" height="20" border="no"/> 
+                    <frame x="568" y="309" width="20" height="20" border="no"/> 
                     <text string="0" horizAdjust="CENTRE" />    
 					<font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="10" />
                 </widget>
