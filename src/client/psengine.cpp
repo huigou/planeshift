@@ -198,6 +198,7 @@ if (!myref) {                                                   \
 #include "gui/pawsbankwindow.h"
 #include "gui/pawsconfigchatbubbles.h"
 #include "gui/pawsconfigshadows.h"
+#include "gui/pawsnpcdialog.h"
 
 
 // ----------------------------------------------------------------------------
@@ -727,6 +728,7 @@ void psEngine::DeclareExtraFactories()
     RegisterFactory (pawsBankWindowFactory);
     RegisterFactory (pawsConfigChatBubblesFactory);
     RegisterFactory (pawsConfigShadowsFactory);
+	RegisterFactory (pawsNpcDialogWindowFactory);
 }
 
 
@@ -1314,6 +1316,7 @@ void psEngine::LoadGame()
         LoadPawsWidget( "Sketch",                  "data/gui/illumination.xml");
         LoadPawsWidget( "GameBoard",               "data/gui/gameboard.xml");
         LoadPawsWidget( "Writing window",          "data/gui/bookwriting.xml");
+        LoadPawsWidget( "NPC dialog window",       "data/gui/dialog.xml");
 
         LoadCustomPawsWidgets("/this/data/gui/customwidgetslist.xml");
 

@@ -461,7 +461,7 @@ NpcResponse *NPCDialogDict::FindResponse(gemNPC * npc,
     trig = triggers.Find(&key);
 
     if (trig)
-    {
+    { 
         Debug3(LOG_NPC, client->GetClientNum(),"NPCDialogDict::FindResponse consider trig(%d): '%s'",
                 trig->id,trig->trigger.GetDataSafe());
     }
@@ -1100,6 +1100,7 @@ bool NpcTrigger::operator<(NpcTrigger& other) const
 NpcResponse::NpcResponse()
 {
     quest = NULL;
+	menu = NULL;
     active_quest = -1;
 }
 
@@ -2346,4 +2347,35 @@ bool DoAdminCommandResponseOp::Run(gemNPC *who, Client *target,NpcResponse *owne
     msg.msg->current=0;
     psserver->GetAdminManager()->HandleMessage(msg.msg, target);
     return true;
+}
+
+NpcDialogMenu::NpcDialogMenu()
+{
+	counter = 0;
+}
+
+void NpcDialogMenu::AddTrigger(const csString &formatted, const csString &trigger)
+{
+	NpcDialogMenu::DialogTrigger new_trigger;
+
+	new_trigger.formatted = formatted;
+	new_trigger.trigger = trigger;
+	new_trigger.triggerID = counter++;
+
+	this->triggers.Push( new_trigger );
+}
+
+void NpcDialogMenu::ShowMenu( Client *client )
+{
+	if( client == NULL )
+		return;
+
+	psDialogMenuMessage me( client->GetClientNum() );
+
+	for( size_t i = 0; i < counter; i++ )
+		me.AddResponse( i, this->triggers[ i ].formatted );
+
+	me.BuildMsg();
+	
+	me.SendMessage();
 }

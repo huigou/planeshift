@@ -246,7 +246,8 @@ enum MSG_TYPES
 
     MSGTYPE_INTRODUCTION,
 
-	MSGTYPE_CACHEFILE
+	MSGTYPE_CACHEFILE,
+    MSGTYPE_DIALOG_MENU
 };
 
 class psMessageCracker;
@@ -5044,6 +5045,7 @@ public:
     virtual csString ToString(AccessPointers * access_ptrs);
 };
 
+
 /**
  *  Class to send a possibly cached file to the client.
  */
@@ -5072,5 +5074,46 @@ public:
 
 };
 
+//-----------------------------------------------------------------------------
+
+/** The message sent from server to client when a menu of possible responses is available
+ */
+
+class psDialogMenuMessage : public psMessageCracker
+{
+public:
+    psDialogMenuMessage( int clientnum );
+    psDialogMenuMessage( MsgEntry* message );
+
+	int clientnum;
+
+    PSF_DECLARE_MSG_FACTORY();
+
+	enum
+	{
+		RESPONSE_SECRET = 0x01
+	};
+
+	void BuildMsg();
+
+    /**
+     * @brief Converts the message into human readable string.
+     *
+     * @param access_ptrs A struct to a number of access pointers.
+     * @return Return a human readable string for the message.
+     */
+    virtual csString ToString(AccessPointers * access_ptrs);
+
+	struct DialogResponse
+	{
+		uint32_t id;
+		csString response;
+		uint32_t flags;
+	};
+
+	void AddResponse( uint32_t id, const csString& response, uint32_t flags = 0x00 );
+
+	csArray<DialogResponse> responses;
+};
 
 #endif

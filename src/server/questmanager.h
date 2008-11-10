@@ -47,6 +47,7 @@ struct QuestRewardOffer
 };
 
 class gemNPC;
+class NpcDialogMenu;
 class NpcResponse;
 class WordArray;
 class psString;
@@ -72,6 +73,9 @@ protected:
     bool GetResponseText(csString& block,csString& response,csString& file_path,
                          csString& him, csString& her, csString& it, csString& them);
     bool BuildTriggerList(csString& block,csStringArray& list);
+
+	bool BuildMenu(const csString& block,const csStringArray& list, NpcDialogMenu *menu);
+
     int GetNPCFromBlock(WordArray words,csString& current_npc);
     bool ParseItemList(const csString & input, csString & parsedItemList);
     bool ParseItem(const char *text, psStringArray & xmlItems, psMoney & money);
