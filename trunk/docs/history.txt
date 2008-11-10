@@ -1,4 +1,10 @@
-﻿*** 2008-11-9 by Keith Fulton
+﻿*** 2008-11-9 by Stefano Angeleri
+- Fixed a compiling problem discovered by caarrie
+- Removed the pow from the quit delay maximum time limit (calculated from
+  csticks) as it was giving problems with various microsoft compilers and
+  changed it with a simple 24 hours limit
+
+*** 2008-11-9 by Keith Fulton
 - Now the server only sends audio files to the client that the client does
   not already have.  This increase lag (when the file must be sent) but reduces
   total bandwidth and lag when the client already has the file.
