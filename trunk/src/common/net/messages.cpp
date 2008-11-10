@@ -7150,3 +7150,71 @@ psCachedFileMessage::psCachedFileMessage( MsgEntry* me )
 		databuf = csPtr<iDataBuffer> (new csDataBuffer (ptr, size, false));
 	}
 }
+
+PSF_IMPLEMENT_MSG_FACTORY(psDialogMenuMessage,MSGTYPE_DIALOG_MENU);
+
+psDialogMenuMessage::psDialogMenuMessage(int clientnum)
+{
+	this->clientnum = clientnum;
+	valid = false;
+}
+
+psDialogMenuMessage::psDialogMenuMessage( MsgEntry *me )
+{
+	while( ! msg->IsEmpty() )
+	{
+		int32_t flags, id;
+
+		id = msg->GetInt32();
+		flags = msg->GetUInt32();
+
+		AddResponse( id, msg->GetStr(), flags );
+	}
+
+	this->clientnum = 0;
+}
+
+void psDialogMenuMessage::AddResponse(uint32_t id, const csString &response, uint32_t flags)
+{
+	psDialogMenuMessage::DialogResponse new_response;
+
+	new_response.id = id;
+	new_response.response = response;
+	new_response.flags = flags;
+
+	responses.Push( new_response );
+}
+
+void psDialogMenuMessage::BuildMsg()
+{
+	size_t size = 0;
+
+	for( size_t i = 0; i < responses.GetSize(); i++ )
+		size += 9 + responses[ i ].response.Length();
+	
+	msg.AttachNew( new MsgEntry( size ) );
+
+	for( size_t i = 0; i < responses.GetSize(); i++ )
+	{
+		msg->Add( responses[ i ].id );
+		msg->Add( responses[ i ].flags );
+		msg->Add( responses[ i ].response.GetDataSafe() );
+	}
+
+	msg->SetType( MSGTYPE_DIALOG_MENU );
+	msg->clientnum = clientnum;
+
+	valid = !(msg->overrun);
+}
+
+csString psDialogMenuMessage::ToString(AccessPointers *access_ptrs)
+{
+	csString text;
+	for( size_t i = 0; i < responses.GetSize(); i++ )
+	{
+		text.AppendFmt( "Menu: (%d) %s -> %s\n",responses[ i ].id,
+			responses[ i ].flags, responses[ i ].response.GetDataSafe() );
+	}
+
+	return text;
+}

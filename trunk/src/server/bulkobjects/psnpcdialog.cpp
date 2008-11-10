@@ -664,6 +664,9 @@ NpcResponse *psNPCDialog::Respond(const char * text,Client *client)
             currentClient->GetCharacterData()->SetAssignedQuestLastResponse(resp->quest,resp->id);
         }
 
+		if( resp->menu )
+			resp->menu->ShowMenu(currentClient);
+
         return resp; // Found what we are looking for
     }
     else

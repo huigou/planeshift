@@ -560,6 +560,27 @@ int QuestManager::ParseQuestScript(int quest_id, const char *script)
                 Debug2( LOG_QUESTS, 0,"Player says '%s'", pending_triggers[i]);
             }
         }
+		else if (!strncasecmp(block,"Menu:",5))  // Menu: is an nice way of represention the various P: triggers
+        {
+			if( last_response == NULL )
+			{
+				Error1( "Menu without previous response - dialog menus as dialog starters are not supported" );
+				return line_number;
+			}
+
+			csRef<NpcDialogMenu> menu = new NpcDialogMenu();
+
+			if (!BuildMenu(block, pending_triggers, menu))
+            {
+                Error3("Could not determine triggers in script '%s', in line <%s>",
+                       mainQuest->GetName(),block.GetData());
+                lastError.Format("Could not determine triggers in script '%s', in line <%s>", mainQuest->GetName(),block.GetData());
+                       
+                return line_number;
+            }
+
+			last_response->menu = menu;
+        }
         else if (strchr(block,':')) // text response 
         {
             csString him,her,it,them,npc_name;
@@ -845,6 +866,35 @@ bool QuestManager::BuildTriggerList(csString& block,csStringArray& list)
     }
     return true;
 }
+
+bool QuestManager::BuildMenu(const csString& block,const csStringArray& list, NpcDialogMenu *menu)
+{
+    size_t start=0, end, counter = 0;
+    csString response;
+
+    while (start < block.Length())
+    {
+        start = block.Find("Menu:",start);
+        if (start == SIZET_NOT_FOUND)
+            return true;
+        start += 5;  // skip the actual Menu:
+
+        // Now find next P:, if any
+        end = block.Find("Menu:",start);
+        if (end == SIZET_NOT_FOUND)
+            end = block.Length();
+
+        block.SubString(response,start,end-start);
+        response.Trim();
+
+		menu->AddTrigger( response, list[ counter++ ] );
+        
+        start = end; // Start at next Menu: or exit loop
+    }
+    return true;
+}
+
+
 
 void QuestManager::CutOutParenthesis(csString &response, csString &within,char start_char,char end_char)
 {
