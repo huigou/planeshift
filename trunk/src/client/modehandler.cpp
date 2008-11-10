@@ -2120,20 +2120,40 @@ void ModeHandler::HandleCachedFile(MsgEntry* me)
 
 	if (msg.valid)
 	{
+
 		// TODO: Check for cached version
 		csString fname;
 		fname.Format("/planeshift/userdata/%s",msg.hash.GetDataSafe() );
 
 		printf("Got audio file '%s' to play.\n", msg.hash.GetDataSafe() );
 
-		// Save sound file
-		if (!vfs->WriteFile(fname,msg.databuf->GetData(), msg.databuf->GetSize() ))
+		// Check for cached version
+		if (!msg.databuf.IsValid())
 		{
-			Error2("Could not write cached file '%s'.",fname.GetData());
-			return;
+			printf("Checking if file exists locally already.\n");
+			if (!vfs->Exists(fname))  // doesn't exist so we need to request it
+			{
+				printf("Requesting file from server.\n");
+				psCachedFileMessage request(0,msg.hash,NULL); // cheating here to send the hash back in the filename field
+				request.SendMessage();
+			}
+			else // does exist, and we're done
+			{
+				printf("Yes, it is cached already.  Playing immediately.\n");
+				soundmanager->StartAmbientSound(fname);
+			}
 		}
-
-		// Play sound file
-		soundmanager->StartAmbientSound(fname);
+		else
+		{
+			printf("Received file from server.  Putting in cache.\n");
+			// Save sound file
+			if (!vfs->WriteFile(fname,msg.databuf->GetData(), msg.databuf->GetSize() ))
+			{
+				Error2("Could not write cached file '%s'.",fname.GetData());
+				return;
+			}
+			// Play sound file
+			soundmanager->StartAmbientSound(fname);
+		}
 	}
 }

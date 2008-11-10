@@ -57,219 +57,230 @@
 ChatManager::ChatManager()
 {
     psserver->GetEventManager()->Subscribe(this,MSGTYPE_CHAT,REQUIRE_ALIVE);
+    psserver->GetEventManager()->Subscribe(this,MSGTYPE_CACHEFILE,REQUIRE_READY_CLIENT);
 }
 
 ChatManager::~ChatManager()
 {
     psserver->GetEventManager()->Unsubscribe(this,MSGTYPE_CHAT);
+    psserver->GetEventManager()->Unsubscribe(this,MSGTYPE_CACHEFILE);
 }
 
 void ChatManager::HandleMessage(MsgEntry *me, Client *client)
 {
-    psChatMessage msg(me);
+	if (me->GetType() == MSGTYPE_CHAT)
+	{
+		psChatMessage msg(me);
 
-    // Dont
-    if (!msg.valid)
-    {
-        Debug2(LOG_NET,me->clientnum,"Received unparsable psChatMessage from client %u.\n",me->clientnum);
-        return;
-    }
+		// Dont
+		if (!msg.valid)
+		{
+			Debug2(LOG_NET,me->clientnum,"Received unparsable psChatMessage from client %u.\n",me->clientnum);
+			return;
+		}
 
-    const char *pType = msg.GetTypeText();
+		const char *pType = msg.GetTypeText();
 
-    if (msg.iChatType != CHAT_TELL)
-    {
-        Debug4(LOG_CHAT, client->GetClientNum(),
-                "%s %s: %s\n", client->GetName(),
-                pType, (const char *) msg.sText);
-    }
-    else
-    {
-        Debug5(LOG_CHAT,client->GetClientNum(), "%s %s %s: %s\n", client->GetName(),
-               pType, (const char *)msg.sPerson,(const char *)msg.sText);
-    }
+		if (msg.iChatType != CHAT_TELL)
+		{
+			Debug4(LOG_CHAT, client->GetClientNum(),
+					"%s %s: %s\n", client->GetName(),
+					pType, (const char *) msg.sText);
+		}
+		else
+		{
+			Debug5(LOG_CHAT,client->GetClientNum(), "%s %s %s: %s\n", client->GetName(),
+				   pType, (const char *)msg.sPerson,(const char *)msg.sText);
+		}
 
-    bool saveFlood = true;
+		bool saveFlood = true;
 
-    if (!client->IsMute())
-    {
-      // Send Chat to other players
-      switch (msg.iChatType)
-      {
-          case CHAT_GUILD:
-          {
-              SendGuild(client, msg);
-              break;
-          }
-          case CHAT_GROUP:
-          {
-              SendGroup(client, msg);
-              break;
-           }
-          case CHAT_AUCTION:
-          case CHAT_SHOUT:
-          {
-              SendShout(client, msg);
-              break;
-          }
-          case CHAT_PET_ACTION:
-          {
-              gemNPC *pet = NULL;
-
-              // Check if a specific pet's name was specified, in one of these forms:
-              // - /mypet Petname ...
-              // - /mypet Petname's ...
-              size_t numPets = client->GetNumPets();
-              for (size_t i = 0; i < numPets; i++)
-              {
-                  if ((pet = dynamic_cast <gemNPC*>(client->GetPet(i)))
-                      && msg.sText.StartsWith(pet->GetCharacterData()->GetCharName(), true))
-                  {
-                      size_t n = strlen(pet->GetCharacterData()->GetCharName());
-                      if (msg.sText.Length() >= n + 1 && msg.sText.GetAt(n) == ' ')
-                      {
-                          msg.sText.DeleteAt(0, n);
-                          msg.sText.LTrim();
-                          break;
-                      }
-                      else if (msg.sText.Length() >= n + 3 && msg.sText.GetAt(n) == '\''
-                               && msg.sText.GetAt(n + 1) == 's' && msg.sText.GetAt(n + 2) == ' ')
-                      {
-                          msg.sText.DeleteAt(0, n);
-                          break;
-                      }
-                  }
-                  else pet = NULL;
-              }
-              // If no particular pet was specified, assume the default familiar...
-              if (!pet)
-                  pet = dynamic_cast <gemNPC*>(client->GetFamiliar());
-
-              // Send the message or an appropriate error...
-              if (!pet)
-                  psserver->SendSystemInfo(me->clientnum, "You have no familiar to command.");
-              else
-                  SendSay(client->GetClientNum(), pet, msg, pet->GetCharacterData()->GetCharFullName());
-
-              break;
-          }
-          case CHAT_SAY:
-          {
-              // Send to all if there's no NPC response or the response is public
-              SendSay(client->GetClientNum(), client->GetActor(), msg, client->GetName());
-              break;
-          }
-          case CHAT_NPC:
-          {
-              // Only the speaker sees his successful chatting with an npc.
-              // This helps quests stay secret.
-              psChatMessage newMsg(client->GetClientNum(), client->GetName(), 0,
-                  msg.sText, msg.iChatType, msg.translate);
-              newMsg.SendMessage();
-              saveFlood = false;
-
-              gemObject *target = client->GetTargetObject();
-              gemNPC *targetnpc = dynamic_cast<gemNPC*>(target);
-              NpcResponse *resp = CheckNPCResponse(msg,client,targetnpc);
-              if (resp)
+		if (!client->IsMute())
+		{
+		  // Send Chat to other players
+		  switch (msg.iChatType)
+		  {
+			  case CHAT_GUILD:
 			  {
-				  SendAudioFile(client, resp->GetVoiceFile());
-                  resp->ExecuteScript(client, targetnpc);
+				  SendGuild(client, msg);
+				  break;
 			  }
-              break;
-          }
-          case CHAT_TELL:
-          {
-              if ( msg.sPerson.Length() == 0 )
-              {
-                  psserver->SendSystemError(client->GetClientNum(), "You must specify name of player.");
-                  break;
-              }
+			  case CHAT_GROUP:
+			  {
+				  SendGroup(client, msg);
+				  break;
+			   }
+			  case CHAT_AUCTION:
+			  case CHAT_SHOUT:
+			  {
+				  SendShout(client, msg);
+				  break;
+			  }
+			  case CHAT_PET_ACTION:
+			  {
+				  gemNPC *pet = NULL;
 
-              Client *target = FindPlayerClient(msg.sPerson);
-              if (target && !target->IsSuperClient())
-              {
-                  SendTell(msg, client->GetName(), client, target);
+				  // Check if a specific pet's name was specified, in one of these forms:
+				  // - /mypet Petname ...
+				  // - /mypet Petname's ...
+				  size_t numPets = client->GetNumPets();
+				  for (size_t i = 0; i < numPets; i++)
+				  {
+					  if ((pet = dynamic_cast <gemNPC*>(client->GetPet(i)))
+						  && msg.sText.StartsWith(pet->GetCharacterData()->GetCharName(), true))
+					  {
+						  size_t n = strlen(pet->GetCharacterData()->GetCharName());
+						  if (msg.sText.Length() >= n + 1 && msg.sText.GetAt(n) == ' ')
+						  {
+							  msg.sText.DeleteAt(0, n);
+							  msg.sText.LTrim();
+							  break;
+						  }
+						  else if (msg.sText.Length() >= n + 3 && msg.sText.GetAt(n) == '\''
+								   && msg.sText.GetAt(n + 1) == 's' && msg.sText.GetAt(n + 2) == ' ')
+						  {
+							  msg.sText.DeleteAt(0, n);
+							  break;
+						  }
+					  }
+					  else pet = NULL;
+				  }
+				  // If no particular pet was specified, assume the default familiar...
+				  if (!pet)
+					  pet = dynamic_cast <gemNPC*>(client->GetFamiliar());
 
-                  // Save to chat history
-	              client->GetActor()->LogMessage(client->GetActor()->GetName(), msg);
-				  if (target->GetActor()) // this can be null if someone sends a tell to a connecting client
-	                  target->GetActor()->LogMessage(client->GetActor()->GetName(), msg);
-              }
-              else
-              {
-                  psserver->SendSystemError(client->GetClientNum(), "%s is not found online.", msg.sPerson.GetDataSafe());
-              }
-              break;
-          }
-          case CHAT_REPORT:
-          {
-              // First thing to extract the name of the player to log
-              csString targetName;
-              int index = (int)msg.sText.FindFirst(' ', 0);
-              if ( index == -1 )
-                 targetName = msg.sText;
-              else
-                 targetName = msg.sText.Slice(0, index);
-              targetName = NormalizeCharacterName(targetName);
+				  // Send the message or an appropriate error...
+				  if (!pet)
+					  psserver->SendSystemInfo(me->clientnum, "You have no familiar to command.");
+				  else
+					  SendSay(client->GetClientNum(), pet, msg, pet->GetCharacterData()->GetCharFullName());
 
-              if ( msg.sText.Length() == 0 )
-              {
-                  psserver->SendSystemError(client->GetClientNum(), "You must specify name of player.");
-                  break;
-              }
+				  break;
+			  }
+			  case CHAT_SAY:
+			  {
+				  // Send to all if there's no NPC response or the response is public
+				  SendSay(client->GetClientNum(), client->GetActor(), msg, client->GetName());
+				  break;
+			  }
+			  case CHAT_NPC:
+			  {
+				  // Only the speaker sees his successful chatting with an npc.
+				  // This helps quests stay secret.
+				  psChatMessage newMsg(client->GetClientNum(), client->GetName(), 0,
+					  msg.sText, msg.iChatType, msg.translate);
+				  newMsg.SendMessage();
+				  saveFlood = false;
 
-              Client * target = psserver->GetConnections()->Find(targetName);
-              if ( !target )
-              {
-                  psserver->SendSystemError(client->GetClientNum(), "%s is not found online.", targetName.GetData());
-                  break;
-              }
-              if (target->IsSuperClient())
-              {
-                  psserver->SendSystemError(client->GetClientNum(), "Can't report NPCs.");
-                  break;
-              }
+				  gemObject *target = client->GetTargetObject();
+				  gemNPC *targetnpc = dynamic_cast<gemNPC*>(target);
+				  NpcResponse *resp = CheckNPCResponse(msg,client,targetnpc);
+				  if (resp)
+				  {
+					  SendAudioFileHash(client, resp->GetVoiceFile());
+					  resp->ExecuteScript(client, targetnpc);
+				  }
+				  break;
+			  }
+			  case CHAT_TELL:
+			  {
+				  if ( msg.sPerson.Length() == 0 )
+				  {
+					  psserver->SendSystemError(client->GetClientNum(), "You must specify name of player.");
+					  break;
+				  }
 
-              if (!client->GetActor()->IsLoggingChat())
-              {
-                  psserver->SendSystemError(client->GetClientNum(), "%s will be logged for five minutes now.", targetName.GetData());
-                  psserver->SendSystemError(target->GetClientNum(), "Your last 5 minutes of chat has been reported to the GMs, logging will now continue.");
-              }
-              else
-              {
-                  if (target->GetClientNum() != client->GetActor()->GetReportTargetId())
-                  {
-                      psserver->SendSystemError(client->GetClientNum(), "Previous logging is still active.");
-                      break;
-                  }
-                  psserver->SendSystemError(client->GetClientNum(), "Logging for another five minutes.");
-              }
-              client->GetActor()->AddChatReport(target->GetActor());
-              psserver->GetEventManager()->Push(new psEndChatLoggingEvent(client->GetClientNum(), 300000));
-              break;
-         }
-         case CHAT_ADVISOR:
-         case CHAT_ADVICE:
-          {
-             break;
-         }
+				  Client *target = FindPlayerClient(msg.sPerson);
+				  if (target && !target->IsSuperClient())
+				  {
+					  SendTell(msg, client->GetName(), client, target);
 
-         default:
-         {
-              Error2("Unknown Chat Type: %d\n",msg.iChatType);
-              break;
-         }
-       }
-    }
-    else
-    {
-        //User is muted but tries to chat anyway. Remind the user that he/she/it is muted
-        psserver->SendSystemInfo(client->GetClientNum(),"You can't send messages because you are muted.");
-    }
+					  // Save to chat history
+					  client->GetActor()->LogMessage(client->GetActor()->GetName(), msg);
+					  if (target->GetActor()) // this can be null if someone sends a tell to a connecting client
+						  target->GetActor()->LogMessage(client->GetActor()->GetName(), msg);
+				  }
+				  else
+				  {
+					  psserver->SendSystemError(client->GetClientNum(), "%s is not found online.", msg.sPerson.GetDataSafe());
+				  }
+				  break;
+			  }
+			  case CHAT_REPORT:
+			  {
+				  // First thing to extract the name of the player to log
+				  csString targetName;
+				  int index = (int)msg.sText.FindFirst(' ', 0);
+				  if ( index == -1 )
+					 targetName = msg.sText;
+				  else
+					 targetName = msg.sText.Slice(0, index);
+				  targetName = NormalizeCharacterName(targetName);
 
-    if (saveFlood)
-        client->FloodControl(msg.iChatType, msg.sText, msg.sPerson);
+				  if ( msg.sText.Length() == 0 )
+				  {
+					  psserver->SendSystemError(client->GetClientNum(), "You must specify name of player.");
+					  break;
+				  }
+
+				  Client * target = psserver->GetConnections()->Find(targetName);
+				  if ( !target )
+				  {
+					  psserver->SendSystemError(client->GetClientNum(), "%s is not found online.", targetName.GetData());
+					  break;
+				  }
+				  if (target->IsSuperClient())
+				  {
+					  psserver->SendSystemError(client->GetClientNum(), "Can't report NPCs.");
+					  break;
+				  }
+
+				  if (!client->GetActor()->IsLoggingChat())
+				  {
+					  psserver->SendSystemError(client->GetClientNum(), "%s will be logged for five minutes now.", targetName.GetData());
+					  psserver->SendSystemError(target->GetClientNum(), "Your last 5 minutes of chat has been reported to the GMs, logging will now continue.");
+				  }
+				  else
+				  {
+					  if (target->GetClientNum() != client->GetActor()->GetReportTargetId())
+					  {
+						  psserver->SendSystemError(client->GetClientNum(), "Previous logging is still active.");
+						  break;
+					  }
+					  psserver->SendSystemError(client->GetClientNum(), "Logging for another five minutes.");
+				  }
+				  client->GetActor()->AddChatReport(target->GetActor());
+				  psserver->GetEventManager()->Push(new psEndChatLoggingEvent(client->GetClientNum(), 300000));
+				  break;
+			 }
+			 case CHAT_ADVISOR:
+			 case CHAT_ADVICE:
+			  {
+				 break;
+			 }
+
+			 default:
+			 {
+				  Error2("Unknown Chat Type: %d\n",msg.iChatType);
+				  break;
+			 }
+		   }
+		}
+		else
+		{
+			//User is muted but tries to chat anyway. Remind the user that he/she/it is muted
+			psserver->SendSystemInfo(client->GetClientNum(),"You can't send messages because you are muted.");
+		}
+
+		if (saveFlood)
+			client->FloodControl(msg.iChatType, msg.sText, msg.sPerson);
+	}
+	else if (me->GetType() == MSGTYPE_CACHEFILE)  // client sends back hash to request file send
+	{
+		psCachedFileMessage msg(me);
+		printf("Got request for file '%s'\n",msg.hash.GetDataSafe());
+		SendAudioFile(client,msg.hash);
+	}
 }
 
 /// TODO: This function is guaranteed not to work atm.-Keith
@@ -427,25 +438,26 @@ NpcResponse *ChatManager::CheckNPCResponse(psChatMessage& msg,Client *client,gem
     return CheckNPCEvent(client,msg.sText,target);  // <L MONEY="0,0,0,3"></L>
 }
 
-void ChatManager::SendAudioFile(Client *client, const char *voiceFile)
+void ChatManager::SendAudioFileHash(Client *client, const char *voiceFile)
 {
 	if (!voiceFile || voiceFile[0]==0)
 		return;
 
-	csRef<iDataBuffer> buffer;
 	csString timestamp;
+	csRef<iDataBuffer> buffer;
 
-	printf("Checking cache for audio file '%s'.\n", voiceFile);
+	// printf("Checking cache for audio file '%s'.\n", voiceFile);
 
 	// Check cache for file
 	csRef<iDataBuffer> cache;
-	for (size_t i=0; i < audioFileCache.GetSize(); i++)
+	size_t i;
+	for (i=0; i < audioFileCache.GetSize(); i++)
 	{
-		printf("Cached item %d: '%s'\n", i, audioFileCache[i]->key.GetDataSafe() );
+		// printf("Cached item %d: '%s'\n", i, audioFileCache[i]->key.GetDataSafe() );
 
 		if (audioFileCache[i]->key == voiceFile) // found
 		{
-			printf("Found in cache.  Moving to front.\n");
+			// printf("Found in cache.  Moving to front.\n");
 
 			buffer = audioFileCache[i]->data;
 			timestamp = audioFileCache[i]->alternate;
@@ -457,9 +469,9 @@ void ChatManager::SendAudioFile(Client *client, const char *voiceFile)
 		}
 	}
 
-	if (!buffer.IsValid())
+	if (i == audioFileCache.GetSize())  // not found
 	{
-		printf("File not found in cache.  Loading from disk.\n");
+		// printf("File not found in cache.  Loading from disk.\n");
 
 		buffer = psserver->vfs->ReadFile(voiceFile);
 		if (!buffer.IsValid())
@@ -477,16 +489,56 @@ void ChatManager::SendAudioFile(Client *client, const char *voiceFile)
 
 		timestamp.Append(voiceFile);
 
+		csString hash = csMD5::Encode(timestamp).HexString();
+
+		// printf("Caching %s to hash value: %s\n", timestamp.GetData(), hash.GetData() );
+
 		// Add newly read file to the MRU cache
-		CachedData *n = new CachedData(buffer,voiceFile,timestamp);
+		CachedData *n = new CachedData(buffer,voiceFile,hash);
 		audioFileCache.Insert(0,n);
 		// We added one to the front of our list, so keep the list at no more than 100 items.
 		if (audioFileCache.GetSize() > 100)
 			audioFileCache.Pop();
 	}
 
-	psCachedFileMessage msg(client->GetClientNum(), timestamp, buffer);
+	// Send the file message but without the file.  The client will
+	// check the file hash.  If the client needs the file, it will reply
+	// back with a request for the file, which will come here 
+	// and call SendAudioFile.
+	psCachedFileMessage msg(client->GetClientNum(), timestamp, NULL);
 	msg.SendMessage();
+}
+
+void ChatManager::SendAudioFile(Client *client, const char *voiceFileHash)
+{
+	if (!voiceFileHash || voiceFileHash[0]==0)
+		return;
+
+	csRef<iDataBuffer> buffer;
+	csString timestamp,voiceFile;
+
+	// printf("Checking cache for audio file '%s'.\n", voiceFileHash);
+
+	// Check cache for file
+	csRef<iDataBuffer> cache;
+	for (size_t i=0; i < audioFileCache.GetSize(); i++)
+	{
+		// printf("Cached item %d: '%s'\n", i, audioFileCache[i]->key.GetDataSafe() );
+
+		if (audioFileCache[i]->alternate == voiceFileHash) // found
+		{
+			// printf("Found in cache.  Moving to front.\n");
+
+			buffer = audioFileCache[i]->data;
+			timestamp = audioFileCache[i]->alternate;
+			voiceFile = audioFileCache[i]->key;
+
+			psCachedFileMessage msg(client->GetClientNum(), timestamp, buffer);
+			msg.SendMessage();
+			return;
+		}
+	}
+	Error2("Client requested file hash that does not exist. (%s)", voiceFileHash);
 }
 
 
