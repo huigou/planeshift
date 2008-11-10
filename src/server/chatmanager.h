@@ -92,6 +92,8 @@ protected:
     NpcResponse *CheckNPCResponse(psChatMessage& msg,Client *client,gemNPC * &target);
 
 	/// Starts the process of sending the specified file to the client
+	void SendAudioFileHash(Client *client, const char *voiceFile);
+	/// Sends the actual file to the client if needed
 	void SendAudioFile(Client *client, const char *voiceFile);
 	
     /// If this returns true, all went well.  If it returns false, the client was muted
