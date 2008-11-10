@@ -1,4 +1,9 @@
-﻿*** 2008-11-9 by Stefano Angeleri
+﻿*** 2008-11-9 by Keith Fulton
+- Now the server only sends audio files to the client that the client does
+  not already have.  This increase lag (when the file must be sent) but reduces
+  total bandwidth and lag when the client already has the file.
+
+*** 2008-11-9 by Stefano Angeleri
 - Added a /modify pickskill [skillname] which allows to set a
   skill required for picking the item requested by rizin
 - Added a /modify picklevel [skilllevel] which allows to set the
