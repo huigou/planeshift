@@ -7128,7 +7128,7 @@ psCachedFileMessage::psCachedFileMessage( uint32_t client, const char *pathname,
 	else
 		hash = pathname;
 
-	size_t size = contents ? contents->GetSize() : 0;
+	uint32_t size = contents ? contents->GetSize() : 0;
     msg.AttachNew(new MsgEntry(hash.Length()+1 + size + sizeof(uint32_t) ));
 
     msg->SetType(MSGTYPE_CACHEFILE);
