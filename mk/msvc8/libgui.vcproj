@@ -880,6 +880,9 @@
 				RelativePath="..\..\src\client\gui\pawsmoney.cpp">
 			</File>
 			<File
+				RelativePath="..\..\src\client\gui\pawsnpcdialog.cpp">
+			</File>
+			<File
 				RelativePath="..\..\src\client\gui\pawspath.cpp">
 			</File>
 			<File
@@ -1095,6 +1098,9 @@
 			</File>
 			<File
 				RelativePath="..\..\src\client\gui\pawsmoney.h">
+			</File>
+			<File
+				RelativePath="..\..\src\client\gui\pawsnpcdialog.h">
 			</File>
 			<File
 				RelativePath="..\..\src\client\gui\pawspath.h">
