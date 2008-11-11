@@ -29,7 +29,7 @@ class pawsListBox;
 /** The buddy window that shows your current list of in game 'friends'.  
  *  This allows you to send them a tell or add/remove buddies.
  */
-class pawsNpcDialogWindow: public pawsControlledWindow, public psClientNetSubscriber
+class pawsNpcDialogWindow: public pawsWidget, public psClientNetSubscriber
 {
 public:
     pawsNpcDialogWindow();
