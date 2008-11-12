@@ -1,30 +1,31 @@
 <widget_description>
 
-<widget name="NPCDialogWindow" factory="pawsNpcDialogWindow" 
-        visible="yes" savepositions="yes" movable="yes" keepaspect="no" configurable="yes" resizable="yes">
+<widget name="NPCDialogWindow" factory="pawsNpcDialogWindow" xmlbinding="dlgmenu"
+        visible="no" savepositions="yes" movable="yes" scalefont="yes" keepaspect="no" configurable="yes" resizable="yes">
         
-    <frame x="0" y="100" width="370" height="130" border="yes" />
-    <minframe width="165" height="230" />
-	<maxframe width="355" height="860" />
-    <title resource="Blue Title" text="Dialog" align="left" close_button="yes" />
+    <frame x="0" y="100" width="400" height="100" border="yes" />
+    <!--minframe width="165" height="100" /-->
+    <!--maxframe width="600" height="500" /-->
+    <title resource="Blue Title" text="Quest Responses" align="left" close_button="yes" />
     <bgimage resource="Buddy Background" alpha="128" />
+    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="8" />
 
-
-    <widget name="ResponseList" factory="pawsListBox"  >
-        <frame x="33" y="33" width="135" height="219" border="no" />
+    <widget name="ResponseList" factory="pawsListBox" xmlbinding="options" >
+        <frame x="10" y="3" width="400" height="80" border="yes" />
         <highlight resource="Hightlight" alpha="128" />
-        <columns height="16">
-            <column width="250" >
-                <widget name="Name" factory="pawsTextBox">
-                    <font name="/planeshift/data/ttf/LiberationMono-Regular.ttf" size="10" scalefont="no" />
-                </widget>
+        <columns height="20" xmlbinding="row">
+            <column width="350" xmlbinding="text">
+                <widget name="Name" factory="pawsTextBox" scalefont="yes"></widget>
+            </column>
+            <column width="0" xmlbinding="trig">
+                <widget name="trigger" factory="pawsTextBox" visible="no"></widget>
             </column>
         </columns>
         <attachpoints>
-            <attach point="PROPORTIONAL_RIGHT" />
-            <attach point="PROPORTIONAL_TOP" />
-            <attach point="PROPORTIONAL_LEFT" />
-            <attach point="PROPORTIONAL_BOTTOM" />
+            <attach point="ATTACH_RIGHT" />
+            <attach point="ATTACH_TOP" />
+            <attach point="ATTACH_LEFT" />
+            <attach point="ATTACH_BOTTOM" />
         </attachpoints>
     </widget>
     
