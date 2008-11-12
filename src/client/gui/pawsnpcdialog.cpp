@@ -32,7 +32,6 @@
 #include "pawsnpcdialog.h"
 
 pawsNpcDialogWindow::pawsNpcDialogWindow()
-
 {
     responseList = NULL;
 }
@@ -47,10 +46,24 @@ bool pawsNpcDialogWindow::PostSetup()
 
 void pawsNpcDialogWindow::OnListAction( pawsListBox* widget, int status )
 {
-    if (status == LISTBOX_SELECTED)
+    if (status == LISTBOX_HIGHLIGHTED)
     {
-		printf( "Pressed: %p\n", widget->GetSelectedRow()->GetExtraData() );
+		pawsTextBox *fld = dynamic_cast<pawsTextBox *>(widget->GetSelectedRow()->FindWidgetXMLBinding("text"));
+		printf( "Pressed: %s\n",fld->GetText() );
     }
+	else if (status == LISTBOX_SELECTED)
+	{
+		pawsTextBox *fld  = dynamic_cast<pawsTextBox *>(widget->GetSelectedRow()->FindWidgetXMLBinding("text"));
+		printf("Player chose '%s'.\n", fld->GetText() );
+		pawsTextBox *trig = dynamic_cast<pawsTextBox *>(widget->GetSelectedRow()->FindWidgetXMLBinding("trig"));
+		printf("Player says '%s'.\n", trig->GetText() );
+
+		csString cmd;
+		cmd.Format("/tellnpc %s", trig->GetText() );
+		psengine->GetCmdHandler()->Publish(cmd);
+		responseList->Clear();
+		Hide();
+	}
 }
 
 void pawsNpcDialogWindow::HandleMessage( MsgEntry* me )
@@ -59,7 +72,9 @@ void pawsNpcDialogWindow::HandleMessage( MsgEntry* me )
     {
         psDialogMenuMessage mesg(me);
 
-		printf( "Got psDialogMenuMessage\n ");
+		printf( "Got psDialogMenuMessage: %s\n", mesg.xml.GetDataSafe() );
+		SelfPopulateXML(mesg.xml);
 
+		Show();
     }
 }

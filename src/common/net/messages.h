@@ -5082,19 +5082,15 @@ public:
 class psDialogMenuMessage : public psMessageCracker
 {
 public:
-    psDialogMenuMessage( int clientnum );
-    psDialogMenuMessage( MsgEntry* message );
+	csString xml;
 
-	int clientnum;
+    psDialogMenuMessage();
+    psDialogMenuMessage( MsgEntry* message );
 
     PSF_DECLARE_MSG_FACTORY();
 
-	enum
-	{
-		RESPONSE_SECRET = 0x01
-	};
 
-	void BuildMsg();
+	void BuildMsg(int clientnum);
 
     /**
      * @brief Converts the message into human readable string.
@@ -5107,11 +5103,12 @@ public:
 	struct DialogResponse
 	{
 		uint32_t id;
-		csString response;
+		csString menuText;
+		csString triggerText;
 		uint32_t flags;
 	};
 
-	void AddResponse( uint32_t id, const csString& response, uint32_t flags = 0x00 );
+	void AddResponse( uint32_t id, const csString& menuText, const csString& triggerText, uint32_t flags = 0x00 );
 
 	csArray<DialogResponse> responses;
 };

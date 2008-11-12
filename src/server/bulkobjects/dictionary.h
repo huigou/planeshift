@@ -287,7 +287,7 @@ public:
 /**
  * Holds the trigger menu, if it exists, for a given location in a dialog
  */
-class NpcDialogMenu : public csRefCount
+class NpcDialogMenu
 {
 protected:
 	struct DialogTrigger
@@ -326,8 +326,7 @@ class NpcResponse
     csTicks timeDelay;           /// This tracks the current time delay for chat msgs in the responses, so a single script can have a sequence of things that take a while
     csPDelArray<ResponseOperation> script;  /// list of ops in script to execute when triggered
     csRef<psQuestPrereqOp> prerequisite; /// prerequisite for this Response to be available
-
-	csRef<NpcDialogMenu> menu;
+	NpcDialogMenu *menu;		/// List of possible player trigger replies for this response, for display to the player.
 
     enum
     {

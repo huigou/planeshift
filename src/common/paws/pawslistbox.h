@@ -59,7 +59,7 @@ struct ColumnDef
 };
 
 
-#define LISTBOX_HIGHLIGHTED  0x01
+#define LISTBOX_HIGHLIGHTED  0x01  /// Single click event
 #define LISTBOX_SELECTED     0x02    
 
 //-----------------------------------------------------------------------------

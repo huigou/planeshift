@@ -49,7 +49,10 @@ Assign Quest
 
 ...
 
-P: here you
+P: cannot find. P: here you
+Menu: Sorry but I can't find any sandwiches.  Menu: Here is a nice sandwich for you, good sir.
+
+M: Well sandwiches are rare in these parts.  Thanks anyway.
 
 M: Many thanks, this help for my hunger.(/planeshift/data/voice/merchant/thank_you.wav)
 
@@ -79,25 +82,23 @@ Give 1 octa
 #
 # Quest: "Male Enki Alina Quest"
 #
-INSERT INTO quest_scripts VALUES("4","10","P: Greetings
+INSERT INTO quest_scripts VALUES("4","10","P: greetings
 
-MaleEnki: Hail!  Would you like to earn a little money?
+maleEnki: Hail!  Would you like to earn a little money?
 
 P: No   P: Yes
+Menu: I am not interested in your chores old man!  Menu: Cool yeah, I am totally broke.
 
 M: Well ok then.  Have a good day.
 
-M: My daughter Alina ran off with the smith and I fear they are up to no
-   good.
-   If you can find out if he really loves her, I'll pay you.
-   Can you do this for me?
+M: My daughter Alina ran off with the smith and I fear they are up to no good. If you can find out if he really loves her, I'll pay you.  Can you do this for me?
 
 P: No P: Yes
+Menu: You will never find her.  Menu: Ok I guess I can help you find her.
 
 M: Fair enough.  I guess I'll just try to find someone else.
 
-M: Last time I caught them upstairs above the blacksmith shop.  Please hurry
-   up and ask her!
+M: Last time I caught them upstairs above the blacksmith shop.  Please hurry up and ask her!
 
 Assign Quest.
 
@@ -133,15 +134,23 @@ Give 25 tria.
 #
 # Quest: "Male Enki Gold"
 #
-INSERT INTO quest_scripts VALUES("5","11","P: Greetings
+INSERT INTO quest_scripts VALUES("5","11","P: greetings
 
-MaleEnki: Hello there.  I'm looking for gold ore... Can you find some for me?
+MaleEnki: Hello there.  I'm looking for gold ore... But I need someone I can trust...
+
+P: No. P: Yes.
+Menu: Well then I am not your guy because I am chaotic neutral.  Menu: You can trust your instincts with me.
+
+M: Chaotic neutral characters are a pain but ok, thanks for telling me.  Bye.
+
+M: Yes, I think I will trust my instincts.  Can you find gold for me?  I'll gladly pay you a pittance.
 
 P: No.  P: Yes.
+Menu: I am a war hero, not a grubby miner.  Menu: I love pittances!  I'll start right away!
 
 M: Ok I guess I'll just try to find someone else to help me.
 
-M: Excellent.  If you will bring me 5 gold ores, I will reward you handsomely!
+M: Excellent.  If you will bring me 5 gold ores, I will reward you.  Now go!
 
 Assign Quest.
 
