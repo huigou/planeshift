@@ -568,11 +568,11 @@ int QuestManager::ParseQuestScript(int quest_id, const char *script)
 				return line_number;
 			}
 
-			csRef<NpcDialogMenu> menu = new NpcDialogMenu();
+			NpcDialogMenu *menu = new NpcDialogMenu();
 
 			if (!BuildMenu(block, pending_triggers, menu))
             {
-                Error3("Could not determine triggers in script '%s', in line <%s>",
+                Error3("Could not determine menu triggers in script '%s', in line <%s>",
                        mainQuest->GetName(),block.GetData());
                 lastError.Format("Could not determine triggers in script '%s', in line <%s>", mainQuest->GetName(),block.GetData());
                        
@@ -879,7 +879,7 @@ bool QuestManager::BuildMenu(const csString& block,const csStringArray& list, Np
             return true;
         start += 5;  // skip the actual Menu:
 
-        // Now find next P:, if any
+        // Now find next Menu: tag, if any
         end = block.Find("Menu:",start);
         if (end == SIZET_NOT_FOUND)
             end = block.Length();

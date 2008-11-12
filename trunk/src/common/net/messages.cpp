@@ -7128,7 +7128,7 @@ psCachedFileMessage::psCachedFileMessage( uint32_t client, const char *pathname,
 	else
 		hash = pathname;
 
-	uint32_t size = contents ? contents->GetSize() : 0;
+	uint32_t size = contents ? (uint32_t)contents->GetSize() : 0;
     msg.AttachNew(new MsgEntry(hash.Length()+1 + size + sizeof(uint32_t) ));
 
     msg->SetType(MSGTYPE_CACHEFILE);
@@ -7153,56 +7153,44 @@ psCachedFileMessage::psCachedFileMessage( MsgEntry* me )
 
 PSF_IMPLEMENT_MSG_FACTORY(psDialogMenuMessage,MSGTYPE_DIALOG_MENU);
 
-psDialogMenuMessage::psDialogMenuMessage(int clientnum)
+psDialogMenuMessage::psDialogMenuMessage()
 {
-	this->clientnum = clientnum;
 	valid = false;
 }
 
 psDialogMenuMessage::psDialogMenuMessage( MsgEntry *me )
 {
-	while( ! msg->IsEmpty() )
-	{
-		int32_t flags, id;
-
-		id = msg->GetInt32();
-		flags = msg->GetUInt32();
-
-		AddResponse( id, msg->GetStr(), flags );
-	}
-
-	this->clientnum = 0;
+	xml = me->GetStr();
 }
 
-void psDialogMenuMessage::AddResponse(uint32_t id, const csString &response, uint32_t flags)
+void psDialogMenuMessage::AddResponse(uint32_t id, const csString& menuText, const csString& triggerText, uint32_t flags)
 {
 	psDialogMenuMessage::DialogResponse new_response;
 
-	new_response.id = id;
-	new_response.response = response;
-	new_response.flags = flags;
+	new_response.id          = id;
+	new_response.menuText    = menuText;
+	new_response.triggerText = triggerText;
+	new_response.flags       = flags;
 
 	responses.Push( new_response );
 }
 
-void psDialogMenuMessage::BuildMsg()
+void psDialogMenuMessage::BuildMsg(int clientnum)
 {
-	size_t size = 0;
-
-	for( size_t i = 0; i < responses.GetSize(); i++ )
-		size += 9 + responses[ i ].response.Length();
-	
-	msg.AttachNew( new MsgEntry( size ) );
+	xml = "<dlgmenu><options>";
 
 	for( size_t i = 0; i < responses.GetSize(); i++ )
 	{
-		msg->Add( responses[ i ].id );
-		msg->Add( responses[ i ].flags );
-		msg->Add( responses[ i ].response.GetDataSafe() );
+		xml.AppendFmt("<row><text>%d. %s</text>",i+1, responses[i].menuText.GetData() );
+		xml.AppendFmt("<trig>%s</trig></row>",responses[i].triggerText.GetData() );
 	}
+	xml += "</options></dlgmenu>";
 
+	msg.AttachNew( new MsgEntry( xml.Length() + 1 ) );
 	msg->SetType( MSGTYPE_DIALOG_MENU );
 	msg->clientnum = clientnum;
+
+	msg->Add( xml );
 
 	valid = !(msg->overrun);
 }
@@ -7213,7 +7201,7 @@ csString psDialogMenuMessage::ToString(AccessPointers *access_ptrs)
 	for( size_t i = 0; i < responses.GetSize(); i++ )
 	{
 		text.AppendFmt( "Menu: (%d) %s -> %s\n",responses[ i ].id,
-			responses[ i ].flags, responses[ i ].response.GetDataSafe() );
+			responses[i].menuText.GetDataSafe(), responses[ i ].triggerText.GetDataSafe() );
 	}
 
 	return text;

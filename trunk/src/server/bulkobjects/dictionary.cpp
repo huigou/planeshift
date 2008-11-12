@@ -2370,12 +2370,12 @@ void NpcDialogMenu::ShowMenu( Client *client )
 	if( client == NULL )
 		return;
 
-	psDialogMenuMessage me( client->GetClientNum() );
+	psDialogMenuMessage menu;
 
 	for( size_t i = 0; i < counter; i++ )
-		me.AddResponse( i, this->triggers[ i ].formatted );
+		menu.AddResponse((uint32_t) i, this->triggers[ i ].formatted, this->triggers[i].trigger );
 
-	me.BuildMsg();
+	menu.BuildMsg(client->GetClientNum());
 	
-	me.SendMessage();
+	menu.SendMessage();
 }

@@ -228,6 +228,11 @@ bool pawsTextBox::SelfPopulate( iDocumentNode *node)
         SetText (node->GetAttributeValue("text"));
         return true;
     }
+	else if (node->GetContentsValue())
+	{
+		SetText (node->GetContentsValue());
+		return true;
+	}
     else
         return false;
 }
