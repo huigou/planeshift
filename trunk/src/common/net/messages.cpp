@@ -7163,7 +7163,9 @@ psDialogMenuMessage::psDialogMenuMessage( MsgEntry *me )
 	xml = me->GetStr();
 }
 
-void psDialogMenuMessage::AddResponse(uint32_t id, const csString& menuText, const csString& triggerText, uint32_t flags)
+void psDialogMenuMessage::AddResponse(uint32_t id, const csString& menuText, const csString& triggerText, 
+									  const csString& playerName, const csString& playerRace, const csString& honorific,
+									  const csString& possessive, uint32_t flags)
 {
 	psDialogMenuMessage::DialogResponse new_response;
 
@@ -7171,6 +7173,11 @@ void psDialogMenuMessage::AddResponse(uint32_t id, const csString& menuText, con
 	new_response.menuText    = menuText;
 	new_response.triggerText = triggerText;
 	new_response.flags       = flags;
+
+	new_response.menuText.ReplaceAll("$name",playerName);
+	new_response.menuText.ReplaceAll("$race",playerRace);
+	new_response.menuText.ReplaceAll("$sir",honorific);
+	new_response.menuText.ReplaceAll("$his",possessive);
 
 	responses.Push( new_response );
 }

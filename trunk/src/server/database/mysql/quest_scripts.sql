@@ -94,7 +94,7 @@ M: Well ok then.  Have a good day.
 M: My daughter Alina ran off with the smith and I fear they are up to no good. If you can find out if he really loves her, I'll pay you.  Can you do this for me?
 
 P: No P: Yes
-Menu: You will never find her.  Menu: Ok I guess I can help you find her.
+Menu: You will never find her.  Menu: $name shrugs $his shoulders and nods.
 
 M: Fair enough.  I guess I'll just try to find someone else.
 
@@ -146,7 +146,7 @@ M: Chaotic neutral characters are a pain but ok, thanks for telling me.  Bye.
 M: Yes, I think I will trust my instincts.  Can you find gold for me?  I'll gladly pay you a pittance.
 
 P: No.  P: Yes.
-Menu: I am a war hero, not a grubby miner.  Menu: I love pittances!  I'll start right away!
+Menu: I am a war hero, not a grubby miner.  Menu: I am a $race!  I love pittances!  $name will start right away!
 
 M: Ok I guess I'll just try to find someone else to help me.
 

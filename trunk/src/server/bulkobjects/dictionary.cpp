@@ -51,6 +51,7 @@
 #include "../npcmanager.h"
 #include "../adminmanager.h"
 #include "../netmanager.h"
+#include "psraceinfo.h"
 
 #include "../iserver/idal.h"
 extern "C" {
@@ -2373,8 +2374,13 @@ void NpcDialogMenu::ShowMenu( Client *client )
 	psDialogMenuMessage menu;
 
 	for( size_t i = 0; i < counter; i++ )
-		menu.AddResponse((uint32_t) i, this->triggers[ i ].formatted, this->triggers[i].trigger );
-
+	{
+		menu.AddResponse((uint32_t) i, this->triggers[ i ].formatted,
+		                  this->triggers[i].trigger, 
+						  client->GetName(), client->GetActor()->GetCharacterData()->GetRaceInfo()->GetRace(),
+						  client->GetActor()->GetCharacterData()->GetRaceInfo()->GetHonorific(),
+						  client->GetActor()->GetCharacterData()->GetRaceInfo()->GetPossessive() );
+	}
 	menu.BuildMsg(client->GetClientNum());
 	
 	menu.SendMessage();
