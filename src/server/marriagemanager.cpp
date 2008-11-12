@@ -248,12 +248,12 @@ void psMarriageManager::Propose( Client* client, csString proposedCharName, csSt
         // Make sure both parties know each other
         if (!client->GetCharacterData()->Knows(proposedClient->GetCharacterData()))
         {
-            psserver->SendSystemResult(client->GetClientNum(), "You haven't asked %s name yet!", proposedClient->GetCharacterData()->GetRaceInfo()->His());
+            psserver->SendSystemResult(client->GetClientNum(), "You haven't asked %s name yet!", proposedClient->GetCharacterData()->GetRaceInfo()->GetPossessive());
             return;
         }
         if (!proposedClient->GetCharacterData()->Knows(client->GetCharacterData()))
         {
-            psserver->SendSystemResult(client->GetClientNum(), "You haven't told %s your name yet!", proposedClient->GetCharacterData()->GetRaceInfo()->Him());
+            psserver->SendSystemResult(client->GetClientNum(), "You haven't told %s your name yet!", proposedClient->GetCharacterData()->GetRaceInfo()->GetObjectPronoun());
             return;
         }
 

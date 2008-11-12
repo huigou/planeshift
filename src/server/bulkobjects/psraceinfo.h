@@ -98,14 +98,14 @@ public:
         size = this->size;
     };
 
-    const char* Sir();
-    const char* Him();
-    const char* His();
+    const char *GetHonorific();
+    const char *GetObjectPronoun();
+    const char *GetPossessive();
 
-    csString ReadableRaceGender();
+    const char *ReadableRaceGender();
 
-    csString GetGender() { return sex; }
-    csString GetRace() { return name; }
+    const char *GetGender() { return sex; }
+    const char *GetRace() { return name; }
 };
 
 

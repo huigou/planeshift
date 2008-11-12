@@ -3282,7 +3282,7 @@ bool psWorkManager::constraintGender(psWorkManager* that, char* param)
     psRaceInfo* race = that->owner->GetRaceInfo();
 
     // Check constraint gender to player gender
-    if ( strcmp( race->GetGender().GetData(), param) != 0 )
+    if ( strcmp( race->GetGender(), param) != 0 )
         return false;
 
     return true;
@@ -3296,7 +3296,7 @@ bool psWorkManager::constraintRace(psWorkManager* that, char* param)
     psRaceInfo* race = that->owner->GetRaceInfo();
 
     // Check constraint race to player race
-    if ( strcmp( race->GetRace().GetData(), param) != 0 )
+    if ( strcmp( race->GetRace(), param) != 0 )
         return false;
 
     return true;
