@@ -525,7 +525,7 @@ Alters the settings for an item.  Allowed actions:
 
 'remove' deletes this item and its spawn if it has one
 
-'pickskill' followed by the name of a skill allows to change the skill required to pick the lock of the item
+'pickskill' followed by the name of a skill allows to change the skill required to pick the lock of the item. Use none to remove it.
 
 'picklevel' followed by the level required of the currently set skill in order to be able to pick the lock of the item
 

@@ -60,6 +60,9 @@ public:
     /// Virtual destructor
     virtual ~pawsPetitionGMWindow();
 
+    ///handles the request of petitions and checks if the user is allowed to use this window
+    void Show();
+
     /// Handles petition server messages
     void HandleMessage( MsgEntry* message );
 

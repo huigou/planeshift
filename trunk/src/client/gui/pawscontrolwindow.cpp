@@ -342,6 +342,8 @@ bool pawsControlWindow::HandleWindowName(csString widgetStr)
         widget = "ChatWindow";
     else if(widgetStr == "activemagic")
         widget = "ActiveMagicWindow";
+    else if(widgetStr == "managepetitions")
+        widget = "PetitionGMWindow";
     else if(widgetStr == "quit")
     {
         HandleQuit();
