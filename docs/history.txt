@@ -3,6 +3,8 @@
   data, then go to the MaleEnki and say "greetings".  You can also say "can bring
   you" to the Merchant.  Thanks to blueCmd who gave me a good head start on getting
   this done.
+- Now menu text supports $name, $race, $his, and $sir autosubstitution of variables
+  from the player in the dialog.  Changed some function names in psRaceInfo to clarify.
 
 *** 2008-11-9 by Stefano Angeleri
 - Fixed a compiling problem discovered by caarrie
