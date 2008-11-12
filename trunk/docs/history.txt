@@ -1,4 +1,10 @@
-﻿*** 2008-11-9 by Stefano Angeleri
+﻿*** 2008-11-11 by Keith Fulton
+- Quest dialog popups are now working. To try them, update your database with this
+  data, then go to the MaleEnki and say "greetings".  You can also say "can bring
+  you" to the Merchant.  Thanks to blueCmd who gave me a good head start on getting
+  this done.
+
+*** 2008-11-9 by Stefano Angeleri
 - Fixed a compiling problem discovered by caarrie
 - Removed the pow from the quit delay maximum time limit (calculated from
   csticks) as it was giving problems with various microsoft compilers and
