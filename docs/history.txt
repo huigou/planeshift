@@ -1,4 +1,13 @@
-﻿*** 2008-11-12 by Kenny Graunke
+﻿*** 2008-11-12 by Stefano Angeleri
+- Added the petition management window to /show handler. You can call it with
+  /show managepetitions.
+- Added a check when opening the window for the user security level. If wrong
+  it doesn't open. Before it was possible to leave the petition window open and
+  logging on a normal account would still show it on screen
+- Renamed /petition_manage to /managepetitions (NOTE: this should be removed
+  when show will be able to autocomplete window names)
+
+*** 2008-11-12 by Kenny Graunke
 - Committed Lanarel's patch for FS#2457.  Now CanAdd checks the distance to
   the container's guardian.
 
@@ -10,7 +19,7 @@
 - Now menu text supports $name, $race, $his, and $sir autosubstitution of variables
   from the player in the dialog.  Changed some function names in psRaceInfo to clarify.
 
-*** 2008-11-9 by Stefano Angeleri
+*** 2008-11-10 by Stefano Angeleri
 - Fixed a compiling problem discovered by caarrie
 - Removed the pow from the quit delay maximum time limit (calculated from
   csticks) as it was giving problems with various microsoft compilers and

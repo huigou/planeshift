@@ -74,9 +74,10 @@ bool pawsPetitionGMWindow::PostSetup()
 
     hasPetInterest = false;
 
+    //TODO: this should be removed when autocompletion autocompletes /show
     // If player is GM, give him the /petition_manage command
     if ( psengine->GetCelClient()->GetMainPlayer()->GetType() > 20 )
-        cmdsource->Subscribe("/petition_manage", this);
+        cmdsource->Subscribe("/managepetitions", this);
 
     return true;
 }
@@ -85,23 +86,29 @@ bool pawsPetitionGMWindow::PostSetup()
 // Command and Message Handling
 //////////////////////////////////////////////////////////////////////
 
+//TODO: To be removed when autocompletion for /show is implemented
 const char* pawsPetitionGMWindow::HandleCommand( const char* cmd )
 {
     WordArray words (cmd, false);
 
     // Check which command was invoked:
-    if ( words[0].CompareNoCase("/petition_manage") )
+    if ( words[0].CompareNoCase("/managepetitions") )
     {
-        hasPetInterest = true;
-
-        // First, display this window to the user
+        //display this window to the user
         Show();
-
-        // Query the server for messages:
-        QueryServer();
     }
 
     return NULL;
+}
+
+void pawsPetitionGMWindow::Show()
+{
+    if(psengine->GetCelClient()->GetMainPlayer()->GetType() > 20) //allow access only to who has really access
+    {
+        hasPetInterest = true;
+        pawsWidget::Show();
+        QueryServer();           //Query the server for messages
+    }
 }
 
 void pawsPetitionGMWindow::HandleMessage ( MsgEntry* me )
