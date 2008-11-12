@@ -1,4 +1,8 @@
-﻿*** 2008-11-11 by Keith Fulton
+﻿*** 2008-11-12 by Kenny Graunke
+- Committed Lanarel's patch for FS#2457.  Now CanAdd checks the distance to
+  the container's guardian.
+
+*** 2008-11-11 by Keith Fulton
 - Quest dialog popups are now working. To try them, update your database with this
   data, then go to the MaleEnki and say "greetings".  You can also say "can bring
   you" to the Merchant.  Thanks to blueCmd who gave me a good head start on getting

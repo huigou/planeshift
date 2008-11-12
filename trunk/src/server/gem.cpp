@@ -3921,7 +3921,12 @@ bool gemContainer::CanAdd(unsigned short amountToAdd, psItem *item, int slot)
     if (!item)
         return false;
 
-    if (GetItem()->GetGuardingCharacterID().IsValid() && GetItem()->GetGuardingCharacterID() != item->GetOwningCharacterID())
+    PID guard = GetItem()->GetGuardingCharacterID();
+    gemActor* guardingActor = GEMSupervisor::GetSingleton().FindPlayerEntity(guard);
+
+    // Test if container is guarded by someone else who is near
+    if (guard.IsValid() && guard != item->GetOwningCharacterID()
+        && guardingActor && (guardingActor->RangeTo(this) <= 5))
         return false;
 
     /* We often want to see if a partial stack could be added, but we want to
