@@ -314,7 +314,7 @@ void psSpellManager::Cast(Client * client, csString spellName, float kFactor)
     unsigned int  castingDuration;
     csString  castingText;
 
-    psSpellCastGameEvent *event = spell->Cast(this, client, effectName, offset, anchorID, targetID, castingDuration, &castingText);
+    psSpellCastGameEvent *event = spell->Cast(this, client, effectName, offset, anchorID, targetID, castingDuration, castingText);
     if ( event )
     {
         event->QueueEvent();
@@ -597,7 +597,7 @@ void psSpellManager::HandleSpellCastEvent(psSpellCastGameEvent *event)
         caster->DrainMana(-(spell->ManaCost(caster->GetCharacterData()->GetKFactor())),false);
 
         // Spell casting succeeded, find out what targets are affected.
-        if ( spell->AffectTargets( this, event, responseEffectName, offset, anchorID, targetID, &affectText ) )
+        if (spell->AffectTargets(this, event, responseEffectName, offset, anchorID, targetID, affectText))
         {
             // Only gain practice if the spell was effective
             caster->GetCharacterData()->GetSkills()->AddSkillPractice( spell->GetSkill(), 1 );

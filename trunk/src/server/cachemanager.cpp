@@ -2611,9 +2611,6 @@ psItemStats* CacheManager::CopyItemStats(uint32 id, csString newName)
 
 bool CacheManager::PreloadBadNames()
 {
-    unsigned int currentRow;
-    csString* name = NULL;
-
     Result result(db->Select("SELECT * from bad_names"));
 
     if (!result.IsValid())
@@ -2622,12 +2619,9 @@ bool CacheManager::PreloadBadNames()
         return false;
     }
 
-    for (currentRow=0; currentRow<result.Count(); currentRow++)
+    for (unsigned int i = 0; i < result.Count(); i++)
     {
-        name = new csString;
-        *name = NormalizeCharacterName(result[currentRow]["name"]);
-
-        bad_names.Push(name);
+        bad_names.Push(NormalizeCharacterName(result[i]["name"]));
     }
 
     Notify2( LOG_STARTUP, "%lu Bad Names Loaded", result.Count() );
@@ -2636,15 +2630,12 @@ bool CacheManager::PreloadBadNames()
 
 void CacheManager::AddBadName(const char* name)
 {
-    if(!name)
-    {
+    if (!name)
         return;
-    }
 
-    csString* newname = new csString();
-    *newname = NormalizeCharacterName(name);
+    csString newname = NormalizeCharacterName(name);
 
-    db->Command("INSERT INTO bad_names ( `name` ) VALUES ('%s')",newname->GetDataSafe());
+    db->Command("INSERT INTO bad_names (`name`) VALUES ('%s')", newname.GetDataSafe());
 
     bad_names.Push(newname);
 }
@@ -2655,7 +2646,7 @@ void CacheManager::DelBadName(const char* name)
 
     for(size_t i = 0; i < bad_names.GetSize();i++)
     {
-        if(cname.CompareNoCase(*bad_names[i]))
+        if(cname.CompareNoCase(bad_names[i]))
         {
             bad_names.DeleteIndex(i);
             db->Command("DELETE FROM bad_names WHERE name='%s'",cname.GetData());
@@ -2671,9 +2662,7 @@ size_t CacheManager::GetBadNamesCount()
 
 const char* CacheManager::GetBadName(int pos)
 {
-     csString* string = bad_names.Get(pos);
-
-     return string->GetData();
+     return bad_names[pos];
 }
 
 psAccountInfo *CacheManager::GetAccountInfoByID(AccountID accountid)

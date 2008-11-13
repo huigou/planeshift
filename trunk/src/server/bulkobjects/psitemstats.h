@@ -606,7 +606,7 @@ public:
       * with these stats.
       */
     bool CheckRequirements( psCharacter* charData, csString& resp );
-    bool SetRequirement( csString* statName, float statValue );
+    bool SetRequirement(const csString & statName, float statValue);
 
     /** 
      *  Called to create an instance of an item using basic item stats.
@@ -616,7 +616,7 @@ public:
     psItem *InstantiateBasicItem(bool transient=false);
 
     bool Save();
-    bool SetAttribute( csString* op, csString* attrName, float modifier);
+    bool SetAttribute(const csString & op, const csString & attrName, float modifier);
 
     /// return creative contents
     const csString& GetSketch(void) { return creativeStats.content; }

@@ -1532,11 +1532,12 @@ void psCharacter::CalculateEquipmentModifiers()
 
 void psCharacter::AddLootItem(psItemStats *item)
 {
-    if(!item){
+    if (!item)
+    {
         Error2("Attempted to add 'null' loot item to character %s, ignored.",fullname.GetDataSafe());
-    } else {
-        loot_pending.Push(item);
+        return;
     }
+    loot_pending.Push(item);
 }
 
 size_t psCharacter::GetLootItems(psLootMessage& msg, EID entity, int cnum)

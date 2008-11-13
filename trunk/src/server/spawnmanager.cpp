@@ -1732,7 +1732,7 @@ void LootRandomizer::ApplyModifier( psItemStats* loot, LootModifier* mod, bool l
         csString EffectName = node->GetAttribute("name")->GetValue();
         float EffectValue = node->GetAttribute("value")->GetValueAsFloat();
         //        Add to the Attributes
-        if ( !loot->SetAttribute( &EffectOp, &EffectName, EffectValue ) )
+        if (!loot->SetAttribute(EffectOp, EffectName, EffectValue))
         {
             // display error and continue
             Error2("Unable to set attribute %s on new loot item.",EffectName.GetData());
@@ -1777,7 +1777,7 @@ void LootRandomizer::ApplyModifier( psItemStats* loot, LootModifier* mod, bool l
         csString StatName = node->GetAttribute("name")->GetValue();
         float StatValue = node->GetAttribute("value")->GetValueAsFloat();
         //        Add to the Requirements
-        if ( !loot->SetRequirement( &StatName, StatValue ) )
+        if (!loot->SetRequirement(StatName, StatValue))
         {
             // Too Many Requirements, display error and continue
             Error2("Unable to set requirement %s on new loot item.",StatName.GetData());

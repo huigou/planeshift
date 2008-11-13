@@ -113,7 +113,7 @@ class psSpell : public iScriptableVar
      *  @return An array of new psSpellCastGameEvents that are ready to be pushed inot the event stream.
      */
     psSpellCastGameEvent *Cast(psSpellManager * mgr, Client * client, csString &effectName, csVector3 &offset,
-                           EID & anchorID, EID & targetID, unsigned int & castingDuration, csString *castingText) const;
+                           EID & anchorID, EID & targetID, unsigned int & castingDuration, csString & castingText) const;
         
     /** Find all objects in range for spell around caster
      *
@@ -126,9 +126,9 @@ class psSpell : public iScriptableVar
     csArray< gemObject *> *getTargetsInRange(Client * client, float max_range, float range) const;
     
     bool AffectTargets(psSpellManager * mgr,psSpellCastGameEvent * event, csString &effectName, csVector3 &offset, 
-                EID & anchorID, EID & targetID, csString *affectText) const;
+                EID & anchorID, EID & targetID, csString & affectText) const;
     bool AffectTarget( psSpellCastGameEvent * event, csString &effectName, csVector3 &offset,
-                       EID & anchorID, EID & targetID, csString *affectText) const;
+                       EID & anchorID, EID & targetID, csString & affectText) const;
     bool PerformResult(gemActor *caster, gemObject *target, float max_range, bool saved, float powerLevel, csTicks duration = 0) const;
 
     csString SpellToXML() const;
@@ -148,7 +148,7 @@ class psSpell : public iScriptableVar
     double CalcFunction(const char * functionName, const double * params);
 
 protected:
-    bool isTargetAffected( Client * client, gemObject *target, float max_range, csString *castingText ) const;
+    bool isTargetAffected(Client *client, gemObject *target, float max_range, csString & castingText) const;
     int checkRange( gemActor *caster, gemObject *target, float max_range) const;
 
     // Returns mathscript variable with given name - when there is no such variable, returns NULL and writes error into log
