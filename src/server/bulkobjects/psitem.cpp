@@ -2636,13 +2636,15 @@ void psItem::SendCraftTransInfo(Client *client)
     }
 
     // Get craft combo info string based on skill levels
-    csString* combString = GetComboInfoString(character,mindStats->GetUID());
-    mess.Append(combString->GetData());
+    csString comboString;
+    GetComboInfoString(character, mindStats->GetUID(), comboString);
+    mess.Append(comboString);
     mess.Append("\n");
 
     // Get transformation info string based on skill levels
-    csString* transString = GetTransInfoString(character,mindStats->GetUID());
-    mess.Append(transString->GetData());
+    csString transString;
+    GetTransInfoString(character,mindStats->GetUID(), transString);
+    mess.Append(transString);
 
     // Send info to cleint
     psMsgCraftingInfo msg(client->GetClientNum(),mess);
@@ -2652,14 +2654,11 @@ void psItem::SendCraftTransInfo(Client *client)
         Bug2("Could not create valid psMsgCraftingInfo for client %u.\n",client->GetClientNum());
 }
 
-csString* psItem::GetComboInfoString(psCharacter* character, uint32 designID)
+void psItem::GetComboInfoString(psCharacter* character, uint32 designID, csString & comboString)
 {
-    csString* combString = new csString("");
     CraftComboInfo* combInfo = CacheManager::GetSingleton().GetTradeComboInfoByItemID(designID);
-    if ( combInfo == NULL )
-    {
-        return combString;
-    }
+    if (!combInfo)
+        return;
 
     // If any skill check fails then do not display this combinations string
     csArray<CraftSkills*>* skillArray = combInfo->skillArray;
@@ -2671,7 +2670,7 @@ csString* psItem::GetComboInfoString(psCharacter* character, uint32 designID)
         {
             if(skillArray->Get(count)->minPriSkill >= (int)character->GetSkills()->GetSkillRank((PSSKILL)priSkill))
             {
-                return combString;
+                return;
             }
         }
 
@@ -2681,24 +2680,20 @@ csString* psItem::GetComboInfoString(psCharacter* character, uint32 designID)
         {
             if(skillArray->Get(count)->minSecSkill >= (int)character->GetSkills()->GetSkillRank((PSSKILL)priSkill))
             {
-                return combString;
+                return;
             }
         }
     }
 
     // Otherwise send combination string
-    combString->Append(combInfo->craftCombDescription.GetData());
-    return combString;
+    comboString.Append(combInfo->craftCombDescription);
 }
 
-csString* psItem::GetTransInfoString(psCharacter* character, uint32 designID)
+void psItem::GetTransInfoString(psCharacter* character, uint32 designID, csString & transString)
 {
-    csString* transString = new csString("");
     csArray<CraftTransInfo*>* craftArray = CacheManager::GetSingleton().GetTradeTransInfoByItemID(designID);
-    if ( craftArray == NULL )
-    {
-        return transString;
-    }
+    if (!craftArray)
+        return;
 
     for ( int count = 0; count<(int)craftArray->GetSize(); count++ )
     {
@@ -2723,9 +2718,8 @@ csString* psItem::GetTransInfoString(psCharacter* character, uint32 designID)
         }
 
         // Otherwise tack on trasnformation step description to message
-        transString->Append(craftArray->Get(count)->craftStepDescription.GetData());
+        transString.Append(craftArray->Get(count)->craftStepDescription);
     }
-    return transString;
 }
 
 bool psItem::SendBookText(Client *client, int containerID, int slotID)

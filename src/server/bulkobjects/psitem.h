@@ -253,9 +253,9 @@ private:
 
     void SendCraftTransInfo( Client *client);
     
-    csString* GetComboInfoString(psCharacter* character, uint32 designID);
+    void GetComboInfoString(psCharacter* character, uint32 designID, csString & comboString);
 
-    csString* GetTransInfoString(psCharacter* character, uint32 designID);
+    void GetTransInfoString(psCharacter* character, uint32 designID, csString & transString);
     
     bool SendBookText( Client *client, int containerID, int slotID);
     

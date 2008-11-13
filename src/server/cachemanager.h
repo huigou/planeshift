@@ -23,7 +23,7 @@
 //=============================================================================
 // Crystal Space Includes
 //=============================================================================
-#include <csutil/array.h>
+#include <csutil/stringarray.h>
 #include <csutil/hash.h>
 #include <csgeom/vector3.h>
 
@@ -456,7 +456,7 @@ protected:
     csHash<csArray<CraftTransInfo*> *,uint32> tradeCraftTransInfo_IDHash;
     csHash<CraftComboInfo*,uint32> tradeCraftComboInfo_IDHash;
     csArray<csString> tips_list;                                            /// List for the tips
-    csPDelArray<csString> bad_names;
+    csStringArray bad_names;
     csPDelArray<ArmorVsWeapon> armor_vs_weapon;
     csPDelArray<psCharMode> char_modes;
     csPDelArray<psMovement> movements;

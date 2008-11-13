@@ -1,4 +1,8 @@
-﻿*** 2008-11-12 by Stefano Angeleri
+﻿*** 2008-11-13 by Kenny Graunke
+- Cleaning and small memory leak fixes.  Please don't pass csStrings by
+  pointer or heap allocate them.
+
+*** 2008-11-12 by Stefano Angeleri
 - Added the petition management window to /show handler. You can call it with
   /show managepetitions.
 - Added a check when opening the window for the user security level. If wrong

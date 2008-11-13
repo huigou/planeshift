@@ -233,7 +233,7 @@ bool psSpell::MatchGlyphs(const glyphList_t & assembler)
 }
 
 psSpellCastGameEvent *psSpell::Cast(psSpellManager * mgr, Client * client, csString &effectName,
-    csVector3 &offset, EID &anchorID, EID &targetID, unsigned int &castingDuration, csString *castingText) const
+    csVector3 &offset, EID &anchorID, EID &targetID, unsigned int &castingDuration, csString & castingText) const
 {
     gemActor *caster = client->GetActor();
     gemObject *target = client->GetTargetObject();
@@ -245,20 +245,20 @@ psSpellCastGameEvent *psSpell::Cast(psSpellManager * mgr, Client * client, csStr
             target = caster;
         else
         {
-            castingText->Format( "You must select a target for %s", name.GetData() );
+            castingText.Format("You must select a target for %s", name.GetData());
             return NULL;
         }            
     }
 
     if (mode != PSCHARACTER_MODE_PEACE  &&  mode != PSCHARACTER_MODE_COMBAT)
     {
-        castingText->Format("You can't cast spells while %s.",caster->GetCharacterData()->GetModeStr());
+        castingText.Format("You can't cast spells while %s.", caster->GetCharacterData()->GetModeStr());
         return NULL;
     }
 
     if (caster->GetCharacterData()->IsSpellCasting())
     {
-        *castingText = "You are already casting a spell.";
+        castingText = "You are already casting a spell.";
         return NULL;
     }
 
@@ -268,14 +268,14 @@ psSpellCastGameEvent *psSpell::Cast(psSpellManager * mgr, Client * client, csStr
     {
         if (! caster->GetCharacterData()->CheckMagicKnowledge(GetSkill(), realm))
         {
-            *castingText = "You have insufficient knowledge of this magic way to cast this spell.";
+            castingText = "You have insufficient knowledge of this magic way to cast this spell.";
             return NULL;
         }
 
         // Check if needed glyphs are available
         if (!caster->GetCharacterData()->Inventory().HasPurifiedGlyphs(glyphList))
         {
-            castingText->Format("You don't have the purified glyphs to cast %s.",name.GetData());
+            castingText.Format("You don't have the purified glyphs to cast %s.",name.GetData());
             return NULL;
         }
     }
@@ -285,13 +285,13 @@ psSpellCastGameEvent *psSpell::Cast(psSpellManager * mgr, Client * client, csStr
         // Check for available Mana
         if (caster->GetCharacterData()->GetMana() < ManaCost(caster->GetCharacterData()->GetKFactor()))
         {
-            castingText->Format("You don't have the mana to cast %s.",name.GetData());
+            castingText.Format("You don't have the mana to cast %s.", name.GetData());
             return NULL;
         }
 
         if (caster->GetCharacterData()->GetStamina(false) < ManaCost(caster->GetCharacterData()->GetKFactor()))
         {
-            castingText->Format("You are too tired to cast %s.",name.GetData());
+            castingText.Format("You are too tired to cast %s.", name.GetData());
             return NULL;
         }
     }
@@ -334,11 +334,11 @@ psSpellCastGameEvent *psSpell::Cast(psSpellManager * mgr, Client * client, csStr
         client->GetTargetTypeName( spell_target, targetTypeName );
 
         if(target)
-            castingText->Format( "You cannot cast %s on %s. You can only cast it on %s.", 
-                             name.GetData(), target->GetName(), targetTypeName.GetData());
+            castingText.Format("You cannot cast %s on %s. You can only cast it on %s.", 
+                               name.GetData(), target->GetName(), targetTypeName.GetData());
         else
-            castingText->Format( "You cannot cast %s . You can only cast it on %s.", 
-                             name.GetData(), targetTypeName.GetData());
+            castingText.Format("You cannot cast %s . You can only cast it on %s.", 
+                               name.GetData(), targetTypeName.GetData());
         return NULL;
     }
     
@@ -348,7 +348,7 @@ psSpellCastGameEvent *psSpell::Cast(psSpellManager * mgr, Client * client, csStr
         // START CASTING SPELL
         
         caster->SetMode( PSCHARACTER_MODE_SPELL_CASTING );
-        castingText->Format("You start casting the spell %s",name.GetData());
+        castingText.Format("You start casting the spell %s", name.GetData());
 
         effectName = caster_effect;
         offset = csVector3(0,0,0);
@@ -371,7 +371,7 @@ psSpellCastGameEvent *psSpell::Cast(psSpellManager * mgr, Client * client, csStr
     return NULL;
 }
 
-bool psSpell::isTargetAffected( Client *client, gemObject *target, float max_range, csString *castingText ) const
+bool psSpell::isTargetAffected(Client *client, gemObject *target, float max_range, csString & castingText) const
 {
     gemActor *caster = client->GetActor();
 
@@ -383,17 +383,17 @@ bool psSpell::isTargetAffected( Client *client, gemObject *target, float max_ran
 
         if ( max_range == -1 && caster != target) // Self
         {
-            castingText->Format("You can only cast %s on yourself.",name.GetData());
+            castingText.Format("You can only cast %s on yourself.", name.GetData());
             return false;
         }
         else if (max_range == 0 && (caster->RangeTo(target) > SPELL_TOUCH_RANGE)) // Touch
         {
-            castingText->Format("You are not in touch range of target %s to cast %s.",target->GetName(),name.GetData());
+            castingText.Format("You are not in touch range of target %s to cast %s.", target->GetName(), name.GetData());
             return false;
         }
         else if (max_range > 0 && caster->RangeTo(target) > max_range)
         {
-            castingText->Format("%s is too far away to cast %s.",target->GetName(),name.GetData() );
+            castingText.Format("%s is too far away to cast %s.", target->GetName(), name.GetData());
             return false;
         }
     }
@@ -431,7 +431,7 @@ csArray< gemObject *> *psSpell::getTargetsInRange(Client * client, float max_ran
         if (!nearbyTarget)
             continue;
 
-        if ( ! isTargetAffected( client, nearbyTarget, max_range, &reason ) )
+        if (!isTargetAffected(client, nearbyTarget, max_range, reason))
         {
             //CPrintf(CON_DEBUG,  reason );
             targetsInRange->DeleteIndex( i );
@@ -445,14 +445,13 @@ csArray< gemObject *> *psSpell::getTargetsInRange(Client * client, float max_ran
 }
 
 bool psSpell::AffectTargets(psSpellManager * mgr, psSpellCastGameEvent * event, csString &effectName, csVector3 &offset, 
-                            EID &anchorID, EID &targetID, csString *affectText) const
+                            EID &anchorID, EID &targetID, csString & affectText) const
 {
     gemActor * caster = event->caster->GetActor();
     gemObject * target = event->target;
 
     float max_range = event->max_range;
 
-    csString *castingText = new csString();
     // Handle Area of Effect Spells
     float affectRange = varAffectRange->GetValue();
     if (  ( affectRange > 0 ) ) //( (spell_target & TARGET_NONE) != 0 ) &&
@@ -479,7 +478,7 @@ bool psSpell::AffectTargets(psSpellManager * mgr, psSpellCastGameEvent * event, 
         if ( targetList->GetSize() == 0 )
         {
             //CPrintf(CON_DEBUG, "No targets in range.\n");
-            affectText->Format("You successfully cast spell %s, however there are no targets within its range.",name.GetData());
+            affectText.Format("You successfully cast spell %s, however there are no targets within its range.", name.GetData());
             return false;
         }
 
@@ -541,11 +540,11 @@ bool psSpell::AffectTargets(psSpellManager * mgr, psSpellCastGameEvent * event, 
 
         if ( affectedCount > 0 )
         {
-            affectText->Format( "%s affected %i target(s)." , name.GetData(), affectedCount );
+            affectText.Format("%s affected %i target(s).", name.GetData(), affectedCount);
         }
         else
         {
-            affectText->Format("%s has no effect.", name.GetData() );
+            affectText.Format("%s has no effect.", name.GetData() );
         }
         
         // Reset the target back to the orginal.
@@ -554,7 +553,8 @@ bool psSpell::AffectTargets(psSpellManager * mgr, psSpellCastGameEvent * event, 
     }
     else // only one target
     {
-        if ( target && isTargetAffected( event->caster, target, max_range, castingText ) )
+        csString castingText;
+        if (target && isTargetAffected(event->caster, target, max_range, castingText))
         {
             if (offensive)
             {
@@ -562,20 +562,16 @@ bool psSpell::AffectTargets(psSpellManager * mgr, psSpellCastGameEvent * event, 
                 if (targetnpc)
                     psserver->npcmanager->QueueAttackPerception(caster, targetnpc);
             }
-            return 
-                AffectTarget( event, effectName, offset, anchorID, targetID, affectText);
+            return AffectTarget(event, effectName, offset, anchorID, targetID, affectText);
         }
-        else
-        {
-            return false;
-        }
+        return false;
     }
     return true;
 }
 
 
 bool psSpell::AffectTarget(psSpellCastGameEvent * event, csString &effectName, csVector3 &offset,
-                           EID & anchorID, EID & targetID, csString *affectText) const
+                           EID & anchorID, EID & targetID, csString & affectText) const
 {
 
     ////////////////////////////////////
@@ -657,7 +653,7 @@ bool psSpell::AffectTarget(psSpellCastGameEvent * event, csString &effectName, c
         // to run when the duration time is up.
         if ( !PerformResult( caster, target, event->max_range, saved, event->powerLevel, event->duration ) )
         {
-            affectText->Format("%s has no effect.", name.GetData() );
+            affectText.Format("%s has no effect.", name.GetData());
             return false;
         }
     }

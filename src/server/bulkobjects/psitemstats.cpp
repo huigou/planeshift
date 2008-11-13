@@ -1266,33 +1266,32 @@ bool psItemStats::CheckRequirements( psCharacter* charData, csString& resp )
     return false;
 }
 
-bool psItemStats::SetRequirement( csString* statName, float statValue )
+bool psItemStats::SetRequirement(const csString & statName, float statValue)
 {
+    CS_ASSERT(!statName.IsEmpty());
 
-    // The Stat already exists
-  for ( int z = 0; z < 3; z++ )
-  {
-    if ( reqs[z].name.IsEmpty() ) continue;
-
-    if ( statName->CompareNoCase( reqs[z].name ) && reqs[z].min_value < statValue )
+    // If it's already required, use the higher of the two requirements.
+    for (int i = 0; i < 3; i++)
     {
-        reqs[z].min_value = statValue;
-        return true;
+        if (statName.CompareNoCase(reqs[i].name))
+        {
+            reqs[i].min_value = MAX(reqs[i].min_value, statValue);
+            return true;
+        }
     }
-  }
 
-    // The Stat didn't exist
-  for ( int z = 0; z < 3; z++ )
-  {
-    if ( reqs[z].name.IsEmpty() )
+    // Otherwise try and add it.
+    for (int i = 0; i < 3; i++)
     {
-        reqs[z].name = statName->GetData();
-        reqs[z].min_value = statValue;
-        return true;
+        if (reqs[i].name.IsEmpty())
+        {
+            reqs[i].name = statName;
+            reqs[i].min_value = statValue;
+            return true;
+        }
     }
-  }
 
-    // No Space Available
+    // No space available (we're limited to three requirements by the DB)
     return false;
 }
 
@@ -1320,11 +1319,8 @@ psItem *psItemStats::InstantiateBasicItem(bool transient)
     return newitem;  // MUST do newitem->Loaded() when it is safe to save!
 }
 
-bool psItemStats::SetAttribute( csString* op, csString* attrName, float modifier)
+bool psItemStats::SetAttribute(const csString & op, const csString & attrName, float modifier)
 {
-    csString Operation = op->GetData(),
-  AttributeName = attrName->GetData();
-
     float* value[5] = { NULL, NULL, NULL, NULL, NULL };
      // Attribute Names:
     // item
@@ -1344,7 +1340,8 @@ bool psItemStats::SetAttribute( csString* op, csString* attrName, float modifier
     // target
     // wielder
 
-  AttributeName.Downcase();
+    csString AttributeName(attrName);
+    AttributeName.Downcase();
     if ( AttributeName.Compare( "item.weight" ) )
     {
         value[0] = &this->weight;
@@ -1401,17 +1398,17 @@ bool psItemStats::SetAttribute( csString* op, csString* attrName, float modifier
     // Operations  = ADD, MUL, SET
     for ( int i = 0; i < 5; i++ )
     {
-        if ( Operation.CompareNoCase( "ADD" ) )
+        if (op.CompareNoCase("ADD"))
         {
             if (value[i]) *value[i] += modifier;
         }
 
-        if ( Operation.CompareNoCase( "MUL" ) )
+        if (op.CompareNoCase("MUL"))
         {
             if (value[i]) *value[i] *= modifier;
         }
 
-        if ( Operation.CompareNoCase( "VAL" ) )
+        if (op.CompareNoCase("VAL"))
         {
             if (value[i]) *value[i] = modifier;
         }
