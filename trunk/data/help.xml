@@ -2,9 +2,6 @@
 <help>
     <branch name="Chat Commands">
 Commands used to talk.  You can also specify your chat method by simply typing into that method's tab.
-        <topic name="/add_ignore">/add_ignore player
-
-Ignores all communication from the target player in the Chat Window.  Use this if people are rude to you and there is no GM around to kick them.</topic>
         <topic name="/away">/away message
 
 Sets an auto-reply message if people send you tells and you are going to be away from your keyboard but still logged in.  ('/away off' will disable auto-reply).</topic>
@@ -23,9 +20,11 @@ Talk to your group privately.  This is good when your group is farther than 10 m
         <topic name="/guild">/guild message
 
 Talk to everyone in your guild privately.  Only guild members in the same guild as you can see what you write.</topic>
-        <topic name="/ignore">/ignore 
+        <topic name="/ignore">/ignore player
 
-Shows ignore window.</topic>
+Ignores all communication from the target player in the Chat Window.  Use this if people are rude to you and there is no GM around to kick them.
+You can use the same command to remove a player from your ignore list.
+If no player name is provided it will show the ignore window.</topic>
         <topic name="/introduce">/introduce
 
 Introduce yourself to the targeted player, or everyone within 10 meters if you haven't targeted anyone.</topic>
@@ -36,9 +35,6 @@ You can also use /my to describe yourself. Both these commands work in the tell,
         <topic name="/mypet">/mypet action
 
 Have your pet perform an action seen by those in its vicinity (within 10 meters).  This is a great roleplaying tool when you want your pet to do something not directly supported by the game. You can also use "/mypet 's property" to describe your pet, similar to the /my command.</topic>
-        <topic name="/remove_ignore">/remove_ignore player
-
-Remove named player from ignore list.</topic>
         <topic name="/report">/report player
 
 Makes the server log everything the indicated player says for 5 minutes. 

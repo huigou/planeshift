@@ -84,8 +84,6 @@ psUserCommands::psUserCommands(MsgHandler* mh,CmdHandler *ch,iObjectRegistry* ob
     cmdsource->Subscribe("/give",this);
     cmdsource->Subscribe("/assist", this);
     cmdsource->Subscribe("/ignore", this);                             
-    cmdsource->Subscribe("/add_ignore", this);
-    cmdsource->Subscribe("/remove_ignore", this);                         
     cmdsource->Subscribe("/cast", this);
     cmdsource->Subscribe("/away", this);
     cmdsource->Subscribe("/loot", this);
@@ -151,9 +149,7 @@ psUserCommands::~psUserCommands()
     cmdsource->Unsubscribe("/trade",                 this);
     cmdsource->Unsubscribe("/give",                  this);
     cmdsource->Unsubscribe("/assist",                this);
-    cmdsource->Unsubscribe("/ignore",                this);
-    cmdsource->Unsubscribe("/add_ignore",            this);
-    cmdsource->Unsubscribe("/remove_ignore",         this);    
+    cmdsource->Unsubscribe("/ignore",                this); 
     cmdsource->Unsubscribe("/cast",                  this);
     cmdsource->Unsubscribe("/away",                  this);
     cmdsource->Unsubscribe("/loot",                  this);
@@ -391,33 +387,6 @@ const char *psUserCommands::HandleCommand(const char *cmd)
         if ( !window )
             return "Ignore Window Not Found";
             
-        window->Show();            
-    }
-       
-    else if (words[0] == "/add_ignore")
-    {        
-        pawsIgnoreWindow* window     = (pawsIgnoreWindow*) PawsManager::GetSingleton().FindWidget("IgnoreWindow");
-        if ( !window )
-            return "Ignore Window Not Found";
-            
-        if (words.GetCount() < 2)
-            window->Show();
-        else
-        {
-            csString person(words[1]);
-            person.Downcase();
-            person.SetAt(0,toupper(person.GetAt(0)));
-            
-            window->AddIgnore(person);            
-        }
-    }
-    
-    else if (words[0] == "/remove_ignore")
-    {       
-        pawsIgnoreWindow* window     = (pawsIgnoreWindow*) PawsManager::GetSingleton().FindWidget("IgnoreWindow");
-        if ( !window )
-            return "Ignore Window Not Found";
-            
         if (words.GetCount() < 2)
             window->Show();
         else
@@ -429,10 +398,10 @@ const char *psUserCommands::HandleCommand(const char *cmd)
             if (window->IsIgnored(person))
                 window->RemoveIgnore(person);            
             else
-                return "Player is not ignored!";                
+                window->AddIgnore(person);    
         }
     }
-    
+
     else if (words[0] == "/cast")
     {
        if (words.GetCount() <= 1)
@@ -727,16 +696,21 @@ const char *psUserCommands::HandleCommand(const char *cmd)
             return "Usage: /drop  [quantity] [item name]";
         int quantity = atoi(words[1]);
         csString itemName;
+        bool guarded = true;
         if (quantity == 0)
         {
             quantity = 1;
-            itemName = words.GetTail(1);
+            itemName = words[1];
+            if(words[2] == "noguard")
+                guarded = false;
         }
         else 
         {
-            itemName = words.GetTail(2);
+            itemName = words[2];
+            if(words[3] == "noguard")
+                guarded = false;
         }
-        psCmdDropMessage cmddrop(quantity, itemName);
+        psCmdDropMessage cmddrop(quantity, itemName, guarded);
         msgqueue->SendMessage(cmddrop.msg);
     }
     
