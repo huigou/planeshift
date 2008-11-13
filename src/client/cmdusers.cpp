@@ -696,21 +696,16 @@ const char *psUserCommands::HandleCommand(const char *cmd)
             return "Usage: /drop  [quantity] [item name]";
         int quantity = atoi(words[1]);
         csString itemName;
-        bool guarded = true;
         if (quantity == 0)
         {
             quantity = 1;
-            itemName = words[1];
-            if(words[2] == "noguard")
-                guarded = false;
+            itemName = words.GetTail(1);
         }
         else 
         {
-            itemName = words[2];
-            if(words[3] == "noguard")
-                guarded = false;
+            itemName = words.GetTail(2);
         }
-        psCmdDropMessage cmddrop(quantity, itemName, guarded);
+        psCmdDropMessage cmddrop(quantity, itemName);
         msgqueue->SendMessage(cmddrop.msg);
     }
     
