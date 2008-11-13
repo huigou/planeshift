@@ -1,4 +1,9 @@
-﻿*** 2008-11-13 by Kenny Graunke
+﻿*** 2008-11-13 by Stefano Angeleri
+- Removed /add_ignore and /remove_ignore
+- Now /ignore player will toogle ignore status
+- Updated help for the changes
+
+*** 2008-11-13 by Kenny Graunke
 - Cleaning and small memory leak fixes.  Please don't pass csStrings by
   pointer or heap allocate them.
 

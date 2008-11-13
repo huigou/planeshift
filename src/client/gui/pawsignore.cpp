@@ -19,7 +19,7 @@
 #include <psconfig.h>
 
 #include <csutil/xmltiny.h>
-
+#include <ctype.h>
 
 #include "../globals.h"
 
@@ -29,6 +29,7 @@
 #include "paws/pawslistbox.h"
 #include "paws/pawstextbox.h"
 #include "gui/chatwindow.h"
+
 
 
 #define ADD     3000
@@ -225,12 +226,20 @@ void pawsIgnoreWindow::OnStringEntered(const char *name,int param,const char *va
     if (!value || !strlen(value))
         return;
 
-    csString command;                 
+    csString command;
+    csString person = value;
+    person.Downcase();
+    person.SetAt(0,toupper(person.GetAt(0))); //TODO: maybe we need to do this better
 
     if (!strcmp(name,"add"))
-        command.Format( "/add_ignore %s", (const char*)value );
-    else                        
-        command.Format( "/remove_ignore %s", (const char*)value );                            
+    {
+            AddIgnore(person);
+    }
+    else
+    {
+        if (IsIgnored(person))
+            RemoveIgnore(person);
+    }
 
     psengine->GetCmdHandler()->Execute(command);
 }
