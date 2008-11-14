@@ -1,4 +1,8 @@
-﻿*** 2008-11-13 by Stefano Angeleri
+﻿*** 2008-11-14 by Stefano Angeleri
+- Moved cached audio files to a more proper /cache/ subdirectory to avoid
+  littering in the user folder
+
+*** 2008-11-13 by Stefano Angeleri
 - Removed /add_ignore and /remove_ignore
 - Now /ignore player will toogle ignore status
 - Updated help for the changes
