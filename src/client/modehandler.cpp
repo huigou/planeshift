@@ -2123,7 +2123,7 @@ void ModeHandler::HandleCachedFile(MsgEntry* me)
 
 		// TODO: Check for cached version
 		csString fname;
-		fname.Format("/planeshift/userdata/%s",msg.hash.GetDataSafe() );
+		fname.Format("/planeshift/userdata/cache/%s",msg.hash.GetDataSafe() );
 
 		printf("Got audio file '%s' to play.\n", msg.hash.GetDataSafe() );
 
