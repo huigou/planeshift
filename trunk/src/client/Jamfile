@@ -100,12 +100,16 @@ STATIC.PLUGINLIST =
   xmltiny
   ;
 
+STATIC.PlUGINLIST.OPTIONAL =
+  svgimage
+  ;
+
 if $(TARGET.OS) != "WIN32" { if $(TARGET.OS) != "MACOS_X" { STATIC.PLUGINLIST += xwin xext86vm glx2d sndsysalsa sndsysoss ; } }
 if $(TARGET.OS) = "WIN32" { STATIC.PLUGINLIST += glwin32 sndsyswin ; }
 if $(TARGET.OS) = "MACOS_X" { STATIC.PLUGINLIST += glosx2d sndsyscoreaudio ; }
 
 LinkStaticPlugins psclient_static : $(STATIC.PLUGINLIST)
-:
+: $(STATIC.PlUGINLIST.OPTIONAL)
 : CRYSTAL
 ;
 
