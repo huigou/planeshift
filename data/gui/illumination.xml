@@ -69,17 +69,17 @@
       </widget>
       <widget name="NameTool" factory="pawsButton" id="110" tooltip="Name (n)">
           <frame x="168" y="0" width="16" height="16" />
-          <bgimage resource="TextTool" />
+          <bgimage resource="NameTool" />
         <eventMouseDown>Ret = SketchWindow:ClickNameTool()</eventMouseDown>
       </widget>
       <widget name="SaveButton" factory="pawsButton" id="111" tooltip="Save (s)">
           <frame x="186" y="0" width="16" height="16" />
-          <bgimage resource="FeatherTool" />
+          <bgimage resource="SaveTool" />
         <eventMouseDown>Ret = SketchWindow:ClickSaveButton()</eventMouseDown>
       </widget>
       <widget name="LoadButton" factory="pawsButton" id="112" tooltip="Load (l)">
           <frame x="204" y="0" width="16" height="16" />
-          <bgimage resource="FeatherTool" />
+          <bgimage resource="LoadTool" />
         <eventMouseDown>Ret = SketchWindow:ClickLoadButton()</eventMouseDown>
       </widget>
     </widget>
