@@ -310,7 +310,7 @@ void ChatManager::SendShout(Client *c, psChatMessage& msg)
     else
     {
         psserver->SendSystemError(c->GetClientNum(), "You are not allowed to shout or auction until you have been in-game for at least 1 hour.");
-        psserver->SendSystemInfo(c->GetClientNum(), "Please use the Help tab or /advisor if you need help.");
+        psserver->SendSystemInfo(c->GetClientNum(), "Please use the Help tab or /help if you need help.");
     }
 }
 

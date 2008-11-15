@@ -356,58 +356,43 @@ void AdviceManager::HandleMessage(MsgEntry *me,Client *client)
         return;
     }
 
-    if ( msg.sCommand == "/advisormode" )
+    if ( msg.sCommand == "on" )
     {
-        if ( msg.sMessage == "on" )
+        // Is account banned from advising?
+        if (client->IsAdvisorBanned())
         {
-            // Is account banned from advising?
-            if (client->IsAdvisorBanned())
+            psserver->SendSystemError(me->clientnum, "You are banned from advising!");
+            return;
+        }
+        // GM's can always become advisors
+        if (client->GetSecurityLevel() < GM_TESTER)
+        {                
+            // Has account been on for long enough?
+            if ((client->GetAccountTotalOnlineTime() / 3600) < 30)
             {
-                psserver->SendSystemError(me->clientnum, "You are banned from advising!");
+                psserver->SendSystemError(me->clientnum, "You must be in game for more than 30 hours to become an advisor.");
                 return;
             }
-            // GM's can always become advisors
-            if (client->GetSecurityLevel() < GM_TESTER)
-            {                
-                // Has account been on for long enough?
-                if ((client->GetAccountTotalOnlineTime() / 3600) < 30)
-                {
-                    psserver->SendSystemError(me->clientnum, "You must be in game for more than 30 hours to become an advisor.");
-                    return;
-                }
-            }
-            AddAdvisor(client);
         }
-        else if ( msg.sMessage == "off" )
-        {
-            RemoveAdvisor(client->GetClientNum(), me->clientnum);
-        }
-        else if ( msg.sMessage == "listsessions" )
-        {
-            //psserver->SendSystemInfo(client->GetClientNum(), "This command is under construction.");
-            HandleAdviseeList( client );
-        }
-        else
-        {
-            if (client->GetAdvisor()) 
-            {
-                psserver->SendSystemInfo(client->GetClientNum(),"You are an advisor.");
-            }
-            else
-            {
-                psserver->SendSystemInfo(client->GetClientNum(),"You are not an advisor.");
-            }
-        }
+        AddAdvisor(client);
     }
-    else if ( msg.sCommand == "/list_advice_requests" ) 
+    else if ( msg.sCommand == "off" )
+    {
+        RemoveAdvisor(client->GetClientNum(), me->clientnum);
+    }
+    else if ( msg.sCommand == "listsessions" )
+    {
+        HandleAdviseeList( client );
+    }
+    else if ( msg.sCommand == "requests" ) 
     {
         HandleAdviceList( client );
     }
-    else if ( msg.sCommand == "/advisor_list" ) 
+    else if ( msg.sCommand == "list" ) 
     {
         HandleListAdvisors( client );
     }
-    else if ( msg.sCommand == "/advisor" )
+    else if ( msg.sCommand == "/help" )
     {
         if (!client->IsMute())
         {
@@ -434,6 +419,17 @@ void AdviceManager::HandleMessage(MsgEntry *me,Client *client)
         }
         if ( msg.sMessage.Length() != 0 )
             client->FloodControl(CHAT_ADVICE, msg.sMessage, msg.sTarget);
+    }
+    else //Last case. Should happen only with /advisor being used alone
+    {
+        if (client->GetAdvisor()) 
+        {
+                psserver->SendSystemInfo(client->GetClientNum(),"You are an advisor.");
+        }
+        else
+        {
+                psserver->SendSystemInfo(client->GetClientNum(),"You are not an advisor.");
+        }
     }
 }
 
@@ -525,7 +521,7 @@ void AdviceManager::HandleAdviceRequest( Client *advisee, csString message )
 
     if ( advisee->GetAdvisor() )
     {
-        psserver->SendSystemInfo( advisee->GetClientNum(), "You cannot request advice while you are an advisor. Lay down your advisor role using \"/advisormode off\", then request advice.");
+        psserver->SendSystemInfo( advisee->GetClientNum(), "You cannot request advice while you are an advisor. Lay down your advisor role using \"/advisor off\", then request advice.");
         return;
     }
 
@@ -804,7 +800,7 @@ void AdviceManager::AddAdvisor(Client *client)
 {
     uint32_t id = client->GetClientNum();
 
-    // make sure we didn't do an "/advisormode on" twice...
+    // make sure we didn't do an "/advisor on" twice...
     for (size_t i = 0; i < advisors.GetSize(); i++)
     {
         if ( id == advisors[i].id)

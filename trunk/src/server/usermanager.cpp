@@ -302,13 +302,6 @@ void UserManager::HandleUserCommand(MsgEntry *me,Client *client)
     {
         Assist( msg, client, me->clientnum );
     }
-
-    /*
-    else if (msg.command == "/advisormode")
-    {
-    Advisor(client, me->clientnum, msg);
-    }
-    */
     else if (msg.command == "/tip")
     {
         GiveTip(me->clientnum);

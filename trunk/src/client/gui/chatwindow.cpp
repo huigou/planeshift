@@ -1790,7 +1790,7 @@ void pawsChatWindow::SendChatLine()
             else if (chatType == "AuctionText")
                 textToSend.Insert(0, "/auction ");
             else if (chatType == "HelpText")
-                textToSend.Insert(0, "/advisor ");
+                textToSend.Insert(0, "/help ");
             else if (chatType == "NpcText")
                 textToSend.Insert(0, "/tellnpc ");
             else

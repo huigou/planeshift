@@ -125,7 +125,7 @@ const char *CmdHandler::Publish(const char *cmd)
 
     // Only last error returned will be shown.
     // This should be ok since most commands will only have one subscriber.
-    return count ? err : "Sorry.  Unknown command (use /help).";
+    return count ? err : "Sorry.  Unknown command (use /show help).";
 }
 
 void CmdHandler::Execute(const char *script, bool breakSemiColon)

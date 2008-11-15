@@ -55,18 +55,19 @@ Commands to control various player actions.  Many of these are also available vi
         <topic name="/advice">/advice player message
 
 Use this command if you are an advisor to send a reply to a player. eg. /advice Eliandrus Middle click on a monster and then press Attack in your Shortcut Window.</topic>
-        <topic name="/advisor">/advisor message
+        <topic name="/advisor">/advisor [command]
 
-Ask one of the advisors a question.  eg. /advisor How do I attack something?. Anything you type in the Help channel of the Chat Window will be sent as an advice request automatically.</topic>
-        <topic name="/advisorlist">/advisor_list
+This is a command which brings the advisor various tools and has a different behaviour depending of the command argument:
 
-Returns how many advisors are online at the moment.</topic>
-        <topic name="/advisormode">/advisormode on/off
+If run with no parameters, will indicate your current advisor status.
 
-Turn advisor mode on or off. if you make yourself an advisor, other players will be able to contact you using the /advisor for help.  If run with no parameters, will indicate your current advisor status.</topic>
-        <topic name="/advisorrequests">/advisorrequests
+on and off turn changes your advisor mode. if you make yourself an advisor, other players will be able to contact you using the /help for help.
 
-If you are an advisor, lists all currently unanswered questions.</topic>
+list returns how many advisors are online at the moment.
+
+requests, if you are an advisor, lists all currently unanswered questions.
+
+listsessions, if you are an advisor, lists all the advice sessions currently assigned to you.</topic>
         <topic name="/bank">/bank [personal|guild]
 
 Select a banker npc and use this command to access your bank account, either personal or guild. The money tab will allow you to deposit, withdraw and exchange your coins.
@@ -99,6 +100,9 @@ Equips the specified quantity of a certain item.  This is equivalent to equippin
         <topic name="/give">/give 
 
 Give items to current Target NPC.</topic>
+        <topic name="/help">/help message
+
+Ask one of the advisors a question.  eg. /help How do I attack something?. Anything you type in the Help channel of the Chat Window will be sent as an advice request automatically.</topic>
         <topic name="/notbuddy">/notbuddy player
 
 Removes the named player from your buddy list.  Not your friend anymore?  What a shame.</topic>
@@ -325,9 +329,6 @@ This repeats the message in the Chat Window without sending it to anyone else.</
         <topic name="/graphicbug">/graphicbug 
 
 Saves a graphic report that you can mail to a developer.</topic>
-        <topic name="/help">/help 
-
-Displays the Help Window.</topic>
         <topic name="/motd">/motd 
 
 Requests the MOTD from the server.</topic>
@@ -376,9 +377,6 @@ To create a new action location entrance:
         <topic name="/admin">/admin
 
 Resets your admin level.  Lists and allows you to use various GM/admin commands.</topic>
-        <topic name="/advisor_list">/advisor_list
-
-Lists advisors that are online at the moment.</topic>
         <topic name="/awardexp">/awardexp target value
 
 Awards progression points to a player for the completion of a GM run event. (enter a negative value to take away PP)</topic>
