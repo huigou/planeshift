@@ -1,4 +1,8 @@
-﻿*** 2008-11-14 by Stefano Angeleri
+﻿*** 2008-11-15 by Stefano Angeleri
+- Setup the pawsillumination window and colourpickerwindow to get the new
+  going to come art for three buttons and a background
+
+*** 2008-11-14 by Stefano Angeleri
 - Moved cached audio files to a more proper /cache/ subdirectory to avoid
   littering in the user folder
 

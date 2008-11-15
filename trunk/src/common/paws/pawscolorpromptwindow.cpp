@@ -100,7 +100,6 @@ bool pawsColorPromptWindow::PostSetup()
     scrollBarG = colorInput->scrollBarG;
     scrollBarB = colorInput->scrollBarB;
     buttonPreview = colorInput->buttonPreview;
-
     return true;
 }
 
@@ -250,9 +249,8 @@ pawsColorPromptWindow * pawsColorPromptWindow::Create(const csString & label,
     w->PostSetup();
     w->UseBorder();
 
-    //TODO: "Color Prompt Background" instead of "Small Blank Background", however, this has to be made and added to all skins.
-    w->SetBackground("Small Blank Background");
-    //w->SetBackground("Color Prompt Background");
+
+    w->SetBackground("Color Prompt Background");
     PawsManager::GetSingleton().SetCurrentFocusedWidget(w);
         w->BringToTop(w);
 
