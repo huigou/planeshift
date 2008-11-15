@@ -89,8 +89,8 @@ psUserCommands::psUserCommands(MsgHandler* mh,CmdHandler *ch,iObjectRegistry* ob
     cmdsource->Subscribe("/loot", this);
     cmdsource->Subscribe("/clear", this);
     cmdsource->Subscribe("/advisormode", this);
-    cmdsource->Subscribe("/list_advice_requests", this);
-    cmdsource->Subscribe("/advisor_list", this);    
+    cmdsource->Subscribe("/advisorrequests", this);
+    cmdsource->Subscribe("/advisorlist", this);    
     cmdsource->Subscribe("/advisor", this);
     cmdsource->Subscribe("/advice", this);
     cmdsource->Subscribe("/train", this);
@@ -99,7 +99,7 @@ psUserCommands::psUserCommands(MsgHandler* mh,CmdHandler *ch,iObjectRegistry* ob
     cmdsource->Subscribe("/dig", this);
     cmdsource->Subscribe("/fish", this);
     cmdsource->Subscribe("/target", this);
-    cmdsource->Subscribe("/target_context", this);
+    cmdsource->Subscribe("/targetcontext", this);
     cmdsource->Subscribe("/tip", this);
     cmdsource->Subscribe("/motd", this);
     cmdsource->Subscribe("/challenge", this);
@@ -155,8 +155,8 @@ psUserCommands::~psUserCommands()
     cmdsource->Unsubscribe("/loot",                  this);
     cmdsource->Unsubscribe("/clear",                 this);
     cmdsource->Unsubscribe("/advisormode",           this);
-    cmdsource->Unsubscribe("/list_advice_requests",  this);
-    cmdsource->Unsubscribe("/advisor_list",          this);        
+    cmdsource->Unsubscribe("/advisorrequests",  this);
+    cmdsource->Unsubscribe("/advisorlist",          this);        
     cmdsource->Unsubscribe("/advisor",               this);
     cmdsource->Unsubscribe("/advice",                this);
     cmdsource->Unsubscribe("/train",                 this);
@@ -165,7 +165,7 @@ psUserCommands::~psUserCommands()
     cmdsource->Unsubscribe("/dig",                   this);
     cmdsource->Unsubscribe("/fish",		          this);
     cmdsource->Unsubscribe("/target",                this);
-    cmdsource->Unsubscribe("/target_context",        this);
+    cmdsource->Unsubscribe("/targetcontext",        this);
     cmdsource->Unsubscribe("/tip",                   this);
     cmdsource->Unsubscribe("/motd",                  this);
     cmdsource->Unsubscribe("/challenge",             this);
@@ -459,7 +459,7 @@ const char *psUserCommands::HandleCommand(const char *cmd)
         }
     }
     
-    else if (words[0] == "/target_context")
+    else if (words[0] == "/targetcontext")
     {
         GEMClientObject *object = NULL;
 
@@ -508,7 +508,7 @@ const char *psUserCommands::HandleCommand(const char *cmd)
         return NULL;
     }
     
-    else if (words[0] == "/list_advice_requests" )
+    else if (words[0] == "/advisorrequests" )
     {
         csString pPerson;
         csString pText;
@@ -518,7 +518,7 @@ const char *psUserCommands::HandleCommand(const char *cmd)
         return NULL;
     }
     
-    else if (words[0] == "/advisor_list" )
+    else if (words[0] == "/advisorlist" )
     {
         csString pPerson;
         csString pText;

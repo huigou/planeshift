@@ -67,9 +67,6 @@ bool pawsPetitionWindow::PostSetup()
     // Subscribe to certain types of messages (those we want to handle)
     msgqueue->Subscribe(this, MSGTYPE_PETITION);
 
-    // Subscribe certain petition commands with this widget
-    cmdsource->Subscribe("/petition_list",this);
-
     // Grab the pointer to the petition listbox:
     petitionList  = (pawsListBox*)FindWidget("PetitionList");
 
@@ -95,16 +92,6 @@ void pawsPetitionWindow::Show()
 
 const char* pawsPetitionWindow::HandleCommand( const char* cmd )
 {
-    WordArray words (cmd, false);
-    // Check which command was invoked:
-    if ( words[0].CompareNoCase("/petition_list") )
-    {
-        hasPetInterest = true;
-
-        // Display this window to the user and query the server for messages at the same time
-        this->Show();
-    }
-
     return NULL;
 }
 
