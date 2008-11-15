@@ -66,7 +66,6 @@ psUtilityCommands::psUtilityCommands(MsgHandler *mh,
     cmdsource->Subscribe("/confirm",this);
     cmdsource->Subscribe("/ping",this);
     cmdsource->Subscribe("/screenshot",this);
-    cmdsource->Subscribe("/help",this);
     cmdsource->Subscribe("/graphicbug",this);
     cmdsource->Subscribe("/repaintlabels",this);
     cmdsource->Subscribe("/dump_movements",this);
@@ -80,7 +79,6 @@ psUtilityCommands::~psUtilityCommands()
     cmdsource->Unsubscribe("/confirm",this);
     cmdsource->Unsubscribe("/ping",this);
     cmdsource->Unsubscribe("/screenshot",this);
-    cmdsource->Unsubscribe("/help", this);
     cmdsource->Unsubscribe("/graphicbug",this);
     cmdsource->Unsubscribe("/repaintlabels",this);
     cmdsource->Unsubscribe("/dump_movements",this);
@@ -139,11 +137,6 @@ const char *psUtilityCommands::HandleCommand(const char *cmd)
         // Wait for frame (which we might have drawn just above) to finish.
         psengine->GetG3D()->FinishDraw();
 
-        return NULL;
-    }
-    else if(words[0] == "/help")
-    {
-        PawsManager::GetSingleton().GetMainWidget()->FindWidget("HelpWindow")->Show();
         return NULL;
     }
     else if(words[0] == "/graphicbug")

@@ -1276,12 +1276,6 @@ psUserCmdMessage::psUserCmdMessage(MsgEntry *message)
     {
         return;
     }
-    //if (command == "/advisor" || command == "/advice")
-    if (command == "/advisormode")
-    {
-        filter = words.GetTail(1);
-        return;
-    }
     if (command == "/attack")
     {
         stance = words.Get(1);
@@ -1353,8 +1347,7 @@ csString psUserCmdMessage::ToString(AccessPointers * /*access_ptrs*/)
     csString msgtext;
 
     msgtext.AppendFmt("Command: '%s'", command.GetDataSafe());
-    if (command == "/who" || command == "/buddylist" ||
-            command == "/advisormode")
+    if (command == "/who" || command == "/buddylist")
     {
         msgtext.AppendFmt("Filter: '%s'", filter.GetDataSafe());
         return msgtext;

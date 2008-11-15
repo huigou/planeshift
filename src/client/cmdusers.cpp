@@ -88,10 +88,8 @@ psUserCommands::psUserCommands(MsgHandler* mh,CmdHandler *ch,iObjectRegistry* ob
     cmdsource->Subscribe("/away", this);
     cmdsource->Subscribe("/loot", this);
     cmdsource->Subscribe("/clear", this);
-    cmdsource->Subscribe("/advisormode", this);
-    cmdsource->Subscribe("/advisorrequests", this);
-    cmdsource->Subscribe("/advisorlist", this);    
     cmdsource->Subscribe("/advisor", this);
+    cmdsource->Subscribe("/help", this);
     cmdsource->Subscribe("/advice", this);
     cmdsource->Subscribe("/train", this);
     //cmdsource->Subscribe("/quests", this);
@@ -154,10 +152,8 @@ psUserCommands::~psUserCommands()
     cmdsource->Unsubscribe("/away",                  this);
     cmdsource->Unsubscribe("/loot",                  this);
     cmdsource->Unsubscribe("/clear",                 this);
-    cmdsource->Unsubscribe("/advisormode",           this);
-    cmdsource->Unsubscribe("/advisorrequests",  this);
-    cmdsource->Unsubscribe("/advisorlist",          this);        
-    cmdsource->Unsubscribe("/advisor",               this);
+    cmdsource->Unsubscribe("/advisor",           this);
+    cmdsource->Unsubscribe("/help",               this);
     cmdsource->Unsubscribe("/advice",                this);
     cmdsource->Unsubscribe("/train",                 this);
     //cmdsource->Unsubscribe("/quests",              this);
@@ -495,40 +491,18 @@ const char *psUserCommands::HandleCommand(const char *cmd)
         return NULL;
     }
     
-    else if (words[0] == "/advisormode" )
-    {
-        csString pPerson;
-        csString pText;
-
-        if ( words.GetCount() > 1 )
-             pText = words.GetTail( 1 );
-
-        psAdviceMessage advice(0,words[0].GetDataSafe(),pPerson.GetDataSafe(), pText.GetDataSafe());
-        msgqueue->SendMessage(advice.msg);
-        return NULL;
-    }
-    
-    else if (words[0] == "/advisorrequests" )
-    {
-        csString pPerson;
-        csString pText;
-
-        psAdviceMessage advice(0,words[0].GetDataSafe(),pPerson.GetDataSafe(), pText.GetDataSafe());
-        msgqueue->SendMessage(advice.msg);
-        return NULL;
-    }
-    
-    else if (words[0] == "/advisorlist" )
-    {
-        csString pPerson;
-        csString pText;
-
-        psAdviceMessage advice(0,words[0].GetDataSafe(),pPerson.GetDataSafe(), pText.GetDataSafe());
-        msgqueue->SendMessage(advice.msg);
-        return NULL;
-    }
-    
     else if (words[0] == "/advisor" )
+    {
+        csString pPerson;
+        csString pText;
+
+        psAdviceMessage advice(0,words[1].GetDataSafe(),pPerson.GetDataSafe(), pText.GetDataSafe());
+        msgqueue->SendMessage(advice.msg);
+
+        return NULL;
+    }
+    
+    else if (words[0] == "/help" )
     {
         //get the chatwindow for use later
         pawsChatWindow* chatWindow = dynamic_cast<pawsChatWindow*>(PawsManager::GetSingleton().FindWidget("ChatWindow"));
@@ -537,7 +511,7 @@ const char *psUserCommands::HandleCommand(const char *cmd)
         csString pText( words.GetTail( 1 ) );
 
         if (pText.IsEmpty())
-            return "You must enter the text. e.g /Advisor [text]";
+            return "You must enter the text. e.g /help [text]";
 
         if (chatWindow && chatWindow->GetSettings().enableBadWordsFilterOutgoing) //check for badwords filtering
             chatWindow->BadWordsFilter(pText); //if enabled apply it
