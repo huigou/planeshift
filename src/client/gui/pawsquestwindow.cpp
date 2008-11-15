@@ -134,10 +134,6 @@ bool pawsQuestListWindow::PostSetup()
     msgqueue->Subscribe(this, MSGTYPE_GMEVENT_LIST);
     msgqueue->Subscribe(this, MSGTYPE_GMEVENT_INFO);
 	
-    // Subscribe certain petition commands with this widget
-    // cmdsource->Subscribe("/petition_list", PawsManager::GetSingleton().Translate("List all of the petitions you have submitted."),
-    //                     CmdHandler::VISIBLE_TO_USER,this);
-
     questTab             = (pawsTabWindow*)FindWidget("QuestTabs");
     completedQuestList   = (pawsListBox*  )FindWidget("CompletedQuestList");
     uncompletedQuestList = (pawsListBox*  )FindWidget("UncompletedQuestList");

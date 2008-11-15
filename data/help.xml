@@ -58,12 +58,15 @@ Use this command if you are an advisor to send a reply to a player. eg. /advice 
         <topic name="/advisor">/advisor message
 
 Ask one of the advisors a question.  eg. /advisor How do I attack something?. Anything you type in the Help channel of the Chat Window will be sent as an advice request automatically.</topic>
-        <topic name="/advisor_list">/advisor_list
+        <topic name="/advisorlist">/advisor_list
 
 Returns how many advisors are online at the moment.</topic>
         <topic name="/advisormode">/advisormode on/off
 
 Turn advisor mode on or off. if you make yourself an advisor, other players will be able to contact you using the /advisor for help.  If run with no parameters, will indicate your current advisor status.</topic>
+        <topic name="/advisorrequests">/advisorrequests
+
+If you are an advisor, lists all currently unanswered questions.</topic>
         <topic name="/bank">/bank [personal|guild]
 
 Select a banker npc and use this command to access your bank account, either personal or guild. The money tab will allow you to deposit, withdraw and exchange your coins.
@@ -96,9 +99,6 @@ Equips the specified quantity of a certain item.  This is equivalent to equippin
         <topic name="/give">/give 
 
 Give items to current Target NPC.</topic>
-        <topic name="/list_advice_requests">/list_advice_requests 
-
-If you are an advisor, lists all currently unanswered questions.</topic>
         <topic name="/notbuddy">/notbuddy player
 
 Removes the named player from your buddy list.  Not your friend anymore?  What a shame.</topic>
@@ -137,9 +137,6 @@ the actor with the given pid.</topic>
         <topic name="/petition">/petition request
 
 Submits a petition to the GMs for a feature or bug fix.</topic>
-        <topic name="/petition_list">/petition_list 
-
-List all of the petitions you have submitted, so you can delete them if you figure out your own problems before the GMs get to you.</topic>
         <topic name="/picklock">/picklock 
 
 Attempts to pick a lock.</topic>
@@ -217,7 +214,7 @@ Examples:  "/target Bob" will target the player named Bob.  "/target prev npc" w
         <topic name="/targetinfo">/targetinfo target
 
 Displays more info about the target.</topic>
-        <topic name="/target_context">/target_context
+        <topic name="/targetcontext">/targetcontext
 
 Displays the options for interacting with the target item. The same as what is normally the right click menu.</topic>
         <topic name="/yield">/yield 

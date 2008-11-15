@@ -67,10 +67,6 @@ bool pawsLootWindow::PostSetup()
     msgqueue->Subscribe(this, MSGTYPE_LOOT);
     msgqueue->Subscribe(this, MSGTYPE_LOOTREMOVE);
 
-    // Subscribe certain petition commands with this widget
-    // cmdsource->Subscribe("/petition_list", PawsManager::GetSingleton().Translate("List all of the petitions you have submitted."),
-    //                     CmdHandler::VISIBLE_TO_USER,this);
-
     // Grab the pointer to the petition listbox:
     lootList  = (pawsListBox*)FindWidget("LootList");
 
