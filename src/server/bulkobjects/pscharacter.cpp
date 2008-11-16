@@ -1362,7 +1362,7 @@ const Stance& psCharacter::getStance(csString name)
     return CacheManager::GetSingleton().stances.Get(ID);
 }
 
-void psCharacter::DropItem(psItem *&item, csVector3 suggestedPos, bool transient)
+void psCharacter::DropItem(psItem *&item, csVector3 suggestedPos, bool guarded, bool transient)
 {
     if (!item)
         return;
@@ -1417,7 +1417,8 @@ void psCharacter::DropItem(psItem *&item, csVector3 suggestedPos, bool transient
     {
         // Assign new object to replace the original object
         item = obj->GetItem();
-        item->SetGuardingCharacterID(pid);
+        if(guarded) //if we want to guard the item assign the guarding pid
+            item->SetGuardingCharacterID(pid);
     }
 
     psMoney money;
@@ -1446,7 +1447,8 @@ void psCharacter::DropItem(psItem *&item, csVector3 suggestedPos, bool transient
                     Error2("Cannot add item into container slot %zu.\n", slot);
                     return;
                 }
-                item->SetGuardingCharacterID(pid);
+                if(guarded) //if we want to guard the item assign the guarding pid
+                    item->SetGuardingCharacterID(pid);
                 i--; // indexes shift when we remove one.
                 item->Save(false);
             }

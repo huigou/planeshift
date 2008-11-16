@@ -879,7 +879,7 @@ public:
       * @param Item to be dropped
       * @param Transient flag (decay?) (default=true)
       */
-    void DropItem(psItem *&item, csVector3 pos = 0, bool transient = true);
+    void DropItem(psItem *&item, csVector3 pos = 0, bool guarded = true, bool transient = true);
 
     float AdjustHitPoints(float adjust);
     float AdjustHitPointsMax(float adjust);

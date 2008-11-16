@@ -967,7 +967,7 @@ void SlotManager::CmdDrop(MsgEntry* me, Client *fromClient)
     }
 
     psItem* toDropItem = chr->Inventory().RemoveItemID(stackItem->GetUID(), removeCount);
-    chr->DropItem(toDropItem);
+    chr->DropItem(toDropItem, 0, mesg.guarded);
 
 
     psserver->GetCharManager()->UpdateItemViews(fromClient->GetClientNum());  
