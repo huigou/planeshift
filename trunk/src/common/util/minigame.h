@@ -40,7 +40,8 @@ namespace psMiniGame
         ReadOnly            = 0x04, ///< The game is read-only (for watchers).
         PersonalGame        = 0x08, ///< The game is personal & private
         BlackSquare         = 0x10, ///< Top left/all squares Black. Else white.
-        PlainSquares        = 0x20  ///< Board squares all plain. Else checked.
+        PlainSquares        = 0x20, ///< Board squares all plain. Else checked.
+        DisallowedMove      = 0x40  ///< Last move disallowed
     };
 
     /// Minigame tile state values

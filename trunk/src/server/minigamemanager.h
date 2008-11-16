@@ -49,6 +49,31 @@ class gemObject;
 #define GAMEBOARD_DEFAULT_PLAYERS 2
 
 /**
+ * Following enums define values to represent simple game rules
+ */
+enum Rule_PlayerTurn
+{
+    RELAXED,
+    STRICT
+};
+enum Rule_MovePieceType
+{
+    PLACE_OR_MOVE,
+    PLACE_ONLY,
+    MOVE_ONLY
+};
+enum Rule_MoveablePieces
+{
+    ANY_PIECE,
+    OWN_PIECES_ONLY,
+};
+enum Rule_MovePiecesTo
+{
+    ANYWHERE,
+    VACANCY_ONLY
+};
+
+/**
  * Game board definition class.
  */
 class psMiniGameBoardDef
@@ -57,10 +82,9 @@ class psMiniGameBoardDef
 
 public:
 
-    psMiniGameBoardDef(csString defName, const int8_t defCols, 
-                       const int8_t defRows, const char *defLayout,
-                       const char *defPieces, const int8_t defPlayers,
-                       const int16_t options);
+    psMiniGameBoardDef(const int8_t defCols, const int8_t defRows,
+		       const char *defLayout, const char *defPieces,
+		       const int8_t defPlayers, const int16_t options);
 
     ~psMiniGameBoardDef();
 
@@ -79,8 +103,10 @@ public:
     /// returns gameboard layout options
     uint16_t GetGameboardOptions(void) { return gameboardOptions; };
 
-private:
+    /// decipher simple game rules from XML
+    bool DetermineGameRules(csString rulesXMLstr, csString name);
 
+private:
     /// layout size
     int layoutSize;
 
@@ -103,6 +129,12 @@ private:
 
     /// gameboard options flags
     int16_t gameboardOptions;
+
+    /// simple game rule variables
+    Rule_PlayerTurn playerTurnRule;
+    Rule_MovePieceType movePieceTypeRule;
+    Rule_MoveablePieces moveablePiecesRule;
+    Rule_MovePiecesTo movePiecesToRule;
 };
 
 /**
@@ -142,6 +174,12 @@ public:
 
     /// returns number of players
     int8_t GetNumPlayers(void) { return gameBoardDef->numPlayers; };
+
+    /// return Game rules
+    Rule_PlayerTurn GetPlayerTurnRule(void) { return gameBoardDef->playerTurnRule; };
+    Rule_MovePieceType GetMovePieceTypeRule(void) { return gameBoardDef->movePieceTypeRule; };
+    Rule_MoveablePieces GetMoveablePiecesRule(void) { return gameBoardDef->moveablePiecesRule; };
+    Rule_MovePiecesTo GetMovePiecesToRule (void) { return gameBoardDef->movePiecesToRule; };
 
 protected:
 
@@ -289,6 +327,18 @@ protected:
 
     /// if game session marked for reset
     bool toReset;
+
+    /// next player to move: 0=dont care, 1=player 1 (white), 2=player 2 (black), etc
+    int nextPlayerToMove;
+
+private:
+    /// resend board layouts as was, e.g. correcting an illegal move
+    void ResendBoardLayout(uint32_t clientnum);
+
+    /// Game rule checking function
+    bool GameMovePassesRules(uint32_t movingClient,
+                             int8_t col1, int8_t row1, int8_t state1,
+                             int8_t col2=-1, int8_t row2=-1, int8_t state2=-1); 
 };
 
 

@@ -114,6 +114,11 @@ void pawsGameBoard::HandleMessage(MsgEntry *message)
         if (!counterSet)
             counterSet = true;
 
+        // if this update is resetting a disallowed move, need to resync
+        // with server & other clients, so undo the counter by 1.
+        if (msg.msgOptions & DisallowedMove)
+            currentCounter--;
+
         // Update or setup the game board
         UpdateBoard(msg);
     }
