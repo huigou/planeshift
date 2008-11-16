@@ -55,7 +55,7 @@ Commands to control various player actions.  Many of these are also available vi
         <topic name="/advice">/advice player message
 
 Use this command if you are an advisor to send a reply to a player. eg. /advice Eliandrus Middle click on a monster and then press Attack in your Shortcut Window.</topic>
-        <topic name="/advisor">/advisor <list|requests|sessions|on|off>
+        <topic name="/advisor">/advisor [list|requests|sessions|on|off]
 
 This is a command which brings the advisor various tools and has a different behaviour depending of the command argument:
 
