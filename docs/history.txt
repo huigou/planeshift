@@ -1,4 +1,9 @@
-﻿*** 2008-11-16 by Stefano Angeleri
+﻿*** 2008-11-16 by Dave Bentham
+- Basic rules for mini-games added: gameboards.gameRules field in DB holds string defining
+  simple rules in XML. gameboards.sql file has some notes on the format.
+- DB Version Bumped.
+
+*** 2008-11-16 by Stefano Angeleri
 - Commented out the remaining references to dump_movements which was already a dummy command
 - Identation/trailing spaces/comment improvement/fixes in various files
 - Removed a check for two things being different than themselves (?) thanks to peeg for pointing out

@@ -1041,6 +1041,10 @@ UPDATE `server_options` SET `option_value`='1204' WHERE `option_name`='db_versio
 UPDATE item_stats SET valid_slots = REPLACE(valid_slots, 'HEAD', 'HELM');
 UPDATE `server_options` SET `option_value`='1205' WHERE `option_name`='db_version';
 
+#### 1206 - Dave Bentham - added rules string to gameboards table
+ALTER TABLE `gameboards` ADD COLUMN `gameRules` TEXT AFTER `gameboardOptions`;
+UPDATE `server_options` SET `option_value`='1206' WHERE `option_name`='db_version';
+
 # Insert your upgrade before this line. Remember when you set a new db_version
 # to update the server_options.sql file and update psserver.cpp as well.
 # This to ensure that everything is working if you use the create_all.sql to

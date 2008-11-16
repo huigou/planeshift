@@ -120,6 +120,7 @@ bool psMiniGameManager::Initialise(void)
             const int8_t rows = gameboards[i].GetInt("numRows");
             int8_t players = gameboards[i].GetInt("numPlayers");
             psString optionsStr(gameboards[i]["gameboardOptions"]);
+            csString rulesXML(gameboards[i]["gameRules"]); 
 
             if (name && layout && pieces &&
                 cols >= GAMEBOARD_MIN_COLS && cols <= GAMEBOARD_MAX_COLS &&
@@ -135,8 +136,10 @@ bool psMiniGameManager::Initialise(void)
                 // decipher board layout options
                 int16_t options = ParseGameboardOptions(optionsStr);
 
-                gameDef = new psMiniGameBoardDef(name, cols, rows, layout, pieces, players, options);
+                gameDef = new psMiniGameBoardDef(cols, rows, layout, pieces, players, options);
                 gameBoardDef.Put(name.Downcase(), gameDef);
+
+                gameDef->DetermineGameRules(rulesXML, name);
             }
             else
             {
@@ -400,7 +403,9 @@ int16_t psMiniGameManager::ParseGameboardOptions(psString optionsStr)
 
 //---------------------------------------------------------------------------
 
-psMiniGameBoardDef::psMiniGameBoardDef(csString gameName, const int8_t noCols, const int8_t noRows, const char *layoutStr, const char *piecesStr, const int8_t defPlayers, const int16_t options)
+psMiniGameBoardDef::psMiniGameBoardDef(const int8_t noCols, const int8_t noRows,
+                                       const char *layoutStr, const char *piecesStr,
+                                       const int8_t defPlayers, const int16_t options)
 {
     // rows & columns setup
     rows = noRows;
@@ -445,6 +450,12 @@ psMiniGameBoardDef::psMiniGameBoardDef(csString gameName, const int8_t noCols, c
 
     numPlayers = defPlayers;
     gameboardOptions = options;
+
+    // default game rules
+    playerTurnRule = RELAXED;
+    movePieceTypeRule = PLACE_OR_MOVE;
+    moveablePiecesRule = ANY_PIECE;
+    movePiecesToRule = ANYWHERE;
 }
 
 psMiniGameBoardDef::~psMiniGameBoardDef()
@@ -474,6 +485,93 @@ void psMiniGameBoardDef::PackLayoutString(const char *layoutStr, uint8_t *packed
     }
 }
 
+bool psMiniGameBoardDef::DetermineGameRules(csString rulesXMLstr, csString name)
+{
+    if (rulesXMLstr.StartsWith("<GameRules>", false))
+    {
+        csRef<iDocument> doc = ParseString(rulesXMLstr);
+        if (doc)
+        {
+            csRef<iDocumentNode> root = doc->GetRoot();
+            if (root)
+            {
+                csRef<iDocumentNode> topNode = root->GetNode("GameRules");
+                if (topNode)
+                {
+                    csRef<iDocumentNode> rulesNode = topNode->GetNode("Rules");
+                    if (rulesNode )
+                    {
+                        // PlayerTurns can be 'Strict' (order of players' moves enforced)
+                        // or 'Relaxed' (default - free for all).
+                        csString playerTurnsVal (rulesNode->GetAttributeValue("PlayerTurns"));
+                        if (playerTurnsVal.Downcase() == "strict")
+                        {
+                            playerTurnRule = STRICT;
+                        }   
+                        else if (!playerTurnsVal.IsEmpty() && playerTurnsVal.Downcase() != "relaxed")
+                        {
+                            Error3("\"%s\" Rule PlayerTurns \"%s\" not recognised. Defaulting to \'Relaxed\'.",
+                                   name.GetDataSafe(), playerTurnsVal.GetDataSafe());
+                        }
+
+                        // MoveType can be 'MoveOnly' (player can only move existing pieces),
+                        // 'PlaceOnly' (player can only place new pieces on the board; cant move others),
+                        // or 'PlaceOrMovePiece' (default - either move existing or place new pieces).
+                        csString moveTypeVal (rulesNode->GetAttributeValue("MoveType"));
+                        if (moveTypeVal.Downcase() == "moveonly")
+                        {
+                            movePieceTypeRule = MOVE_ONLY;
+                        }
+                        else if (moveTypeVal.Downcase() == "placeonly")
+                        {
+                            movePieceTypeRule = PLACE_ONLY;
+                        }
+                        else if (!moveTypeVal.IsEmpty() && moveTypeVal.Downcase() != "placeormovepiece")
+                        {
+                            Error3("\"%s\" Rule MoveType \"%s\" not recognised. Defaulting to \'PlaceOrMovePiece\'.",
+                                   name.GetDataSafe(), moveTypeVal.GetDataSafe());
+                        }
+
+                        // MoveablePieces can be 'Own' (player can only move their own pieces) or
+                        // 'Any' (default - player can move any piece in play).
+                        csString moveablePiecesVal (rulesNode->GetAttributeValue("MoveablePieces"));
+                        if (moveablePiecesVal.Downcase() == "own")
+                        {
+                            moveablePiecesRule = OWN_PIECES_ONLY;
+                        }
+                        else if (!moveablePiecesVal.IsEmpty() && moveablePiecesVal.Downcase() != "any")
+                        {
+                            Error3("\"%s\" Rule MoveablePieces \"%s\" not recognised. Defaulting to \'Any\'.",
+                                   name.GetDataSafe(), moveablePiecesVal.GetDataSafe());
+                        }
+
+                        // MoveTo can be 'Vacancy' (player can move pieces to vacant squares only) or
+                        // 'Anywhere' (default - can move to any square, vacant or occupied).
+                        csString moveToVal (rulesNode->GetAttributeValue("MoveTo"));
+                        if (moveToVal.Downcase() == "vacancy")
+                        {
+                            movePiecesToRule = VACANCY_ONLY;
+                        }
+                        else if (!moveToVal.IsEmpty() && moveToVal.Downcase() != "anywhere")
+                        {
+                            Error3("\"%s\" Rule MoveTo \"%s\" not recognised. Defaulting to \'Anywhere\'.",
+                                   name.GetDataSafe(), moveToVal.GetDataSafe());
+                        }
+                        return true;
+                    }
+                }
+            }
+        }
+    }
+    else if (rulesXMLstr.IsEmpty())   // if no rules defined at all, dont worry - keep defaults
+    {
+        return true;
+    }
+
+    Error2("XML error in GameRules definition for \"%s\" .", name.GetDataSafe());
+    return false;
+}
+
 //---------------------------------------------------------------------------
 
 psMiniGameSession::psMiniGameSession(psMiniGameManager *mng, gemActionLocation *obj, const char *name)
@@ -486,6 +584,7 @@ psMiniGameSession::psMiniGameSession(psMiniGameManager *mng, gemActionLocation *
     whitePlayerID = (uint32_t)-1;
     blackPlayerID = (uint32_t)-1;
     toReset = false;
+    nextPlayerToMove = 0;
 }
 
 psMiniGameSession::~psMiniGameSession()
@@ -607,6 +706,10 @@ bool psMiniGameSession::Load(csString &responseString)
         Error2("Personal game %s has 2 or more players, which is untenable.", gameName);
         return false;
     }
+
+    // intialise player to move first, if appropriate
+    if (gameBoard.GetPlayerTurnRule() == STRICT)
+        nextPlayerToMove = 1;
 
     return true;
 }
@@ -794,22 +897,57 @@ void psMiniGameSession::Update(Client *client, psMGUpdateMessage &msg)
     {
         psserver->SendSystemError(clientnum, "You are not in range to play %s!",
                                   name.GetData());
-
         // Reset the client's game board
-        if (clientnum == whitePlayerID)
-            Send(whitePlayerID, 0);
-        else if (clientnum == blackPlayerID)
-            Send(blackPlayerID, BlackPieces);
-        else
-            Send(clientnum, ReadOnly);
+        ResendBoardLayout(clientnum);
+        return;
+    }
 
+    // valid move?
+    if ((nextPlayerToMove == 1 && clientnum == blackPlayerID) ||
+        (nextPlayerToMove == 2 && clientnum == whitePlayerID))
+    {
+        psserver->SendSystemError(clientnum, "It is not your turn to move.");
+        // Reset the client's game board
+        ResendBoardLayout(clientnum);
+        return;
+    }
+
+    // Check moves and apply updates if rules passed
+    bool moveAccepted;
+    if (msg.msgNumUpdates == 1)
+    {
+        // 1 update means a new piece is added to the board
+        moveAccepted = GameMovePassesRules(clientnum,
+                                           (msg.msgUpdates[0] & 0xF0) >> 4,
+                                           msg.msgUpdates[0] & 0x0F,
+                                           msg.msgUpdates[1]);
+    }
+    else if (msg.msgNumUpdates == 2)
+    {
+        // 2 updates means a piece has been moved from one tile to another
+        moveAccepted = GameMovePassesRules(clientnum,
+                                           (msg.msgUpdates[0] & 0xF0) >> 4,
+                                           msg.msgUpdates[0] & 0x0F,
+                                           msg.msgUpdates[1],
+                                           (msg.msgUpdates[2] & 0xF0) >> 4,
+                                           msg.msgUpdates[2] & 0x0F,
+                                           msg.msgUpdates[3]);
+    }
+
+    if (!moveAccepted)
+    {
+        psserver->SendSystemError(clientnum, "Illegal move.");
+        // Reset the client's game board
+        ResendBoardLayout(clientnum);
         return;
     }
 
     // Apply updates
     for (int i = 0; i < msg.msgNumUpdates; i++)
     {
-        gameBoard.Set((msg.msgUpdates[2*i] & 0xF0) >> 4, msg.msgUpdates[2*i] & 0x0F, msg.msgUpdates[2*i+1]);
+        gameBoard.Set((msg.msgUpdates[2*i] & 0xF0) >> 4,
+                      msg.msgUpdates[2*i] & 0x0F,
+                      msg.msgUpdates[2*i+1]);
     }
 
     // Update idle counters
@@ -838,6 +976,15 @@ void psMiniGameSession::Update(Client *client, psMGUpdateMessage &msg)
         uint32_t id = iter.Next();
         if (movedText && id != (uint32_t)-1)
             psserver->SendSystemInfo(id, movedText);
+    }
+
+    // whos move next?
+    if (nextPlayerToMove > 0)
+    {
+        if (nextPlayerToMove < gameBoard.GetNumPlayers())
+            nextPlayerToMove++;
+        else
+            nextPlayerToMove = 1;
     }
 }
 
@@ -917,6 +1064,56 @@ bool psMiniGameSession::GameSessionActive(void)
 bool psMiniGameSession::IsSessionPublic(void)
 {
     return !(options & PersonalGame);
+}
+
+void psMiniGameSession::ResendBoardLayout(uint32_t clientnum)
+{
+    if (clientnum == whitePlayerID)
+        Send(whitePlayerID, DisallowedMove);
+    else if (clientnum == blackPlayerID)
+        Send(blackPlayerID, BlackPieces | DisallowedMove);
+    else
+        Send(clientnum, ReadOnly | DisallowedMove);
+
+    // after a disallowed move, the other clients will be out of sync
+    // with server & disallowed client, so resync.
+    currentCounter--;
+}
+
+// checks move passes rules. If col/row/state-2 are -1 then a new piece is played,
+// otherwise an existing piece is moved
+bool psMiniGameSession::GameMovePassesRules(uint32_t movingClient,
+                                            int8_t col1, int8_t row1, int8_t state1,
+                                            int8_t col2, int8_t row2, int8_t state2)
+{
+    bool newPiecePlayed = (state2 == -1);
+
+    if ((newPiecePlayed && gameBoard.GetMovePieceTypeRule() == MOVE_ONLY) ||
+        (!newPiecePlayed && gameBoard.GetMovePieceTypeRule() == PLACE_ONLY))
+    {
+        return false;
+    }
+
+    if (gameBoard.GetMoveablePiecesRule() == OWN_PIECES_ONLY)
+    {
+        TileStates movingPiece = (TileStates) gameBoard.Get(col1, row1);
+        if (movingClient == whitePlayerID && (movingPiece < White1 || movingPiece > White7))
+        {
+            return false;
+        }
+        else if (movingClient == blackPlayerID && (movingPiece < Black1 || movingPiece > Black7))
+        {
+            return false;
+        }
+    }
+
+    if (!newPiecePlayed && 
+        gameBoard.GetMovePiecesToRule() == VACANCY_ONLY && gameBoard.Get(col2, row2) != EmptyTile)
+    {
+        return false;
+    }
+
+    return true;
 }
 
 //---------------------------------------------------------------------------
