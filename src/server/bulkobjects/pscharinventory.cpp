@@ -1236,7 +1236,7 @@ csArray<psItem*> psCharacterInventory::GetItemsInCategory(psItemCategory * categ
     return items;
 }
 
-psItem* psCharacterInventory::StackNumberItems(psItemStats * testItemStats, int count)
+psItem* psCharacterInventory::StackNumberItems(psItemStats * testItemStats, int count, bool container)
 {
     psItem* stackItem;
 
@@ -1244,7 +1244,8 @@ psItem* psCharacterInventory::StackNumberItems(psItemStats * testItemStats, int 
     unsigned int i;
     for (i = 1; i<inventory.GetSize(); i++)
     {
-        if (inventory[i].item->GetBaseStats() == testItemStats && !(inventory[i].item->IsInUse()))
+        if (inventory[i].item->GetBaseStats() == testItemStats && !(inventory[i].item->IsInUse()) &&
+            (container || (inventory[i].item->GetLocInParent(true) < PSCHARACTER_SLOT_BULK_END) ))
         {
             stackItem = inventory[i].item;
             break;
@@ -1253,7 +1254,8 @@ psItem* psCharacterInventory::StackNumberItems(psItemStats * testItemStats, int 
     
     for (unsigned int j = i+1;count > stackItem->GetStackCount() && j<inventory.GetSize(); j++)
     {
-        if (inventory[j].item->GetBaseStats() == testItemStats && !(inventory[j].item->IsInUse()))
+        if (inventory[j].item->GetBaseStats() == testItemStats && !(inventory[j].item->IsInUse()) &&
+            (container || (inventory[i].item->GetLocInParent(true) < PSCHARACTER_SLOT_BULK_END) ))
         {
             psItem* stackedItem = inventory[j].item;
             if (stackItem->CheckStackableWith(stackedItem, false))

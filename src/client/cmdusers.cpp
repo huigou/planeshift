@@ -667,20 +667,35 @@ const char *psUserCommands::HandleCommand(const char *cmd)
 
     else if (words[0] == "/drop")
     {
-        if ( words.GetCount() < 2 )
-            return "Usage: /drop  [quantity] [item name]";
+        if (words.GetCount() < 3)
+            return "Usage: /drop  [quantity] (any) [item name]";
         int quantity = atoi(words[1]);
         csString itemName;
-        if (quantity == 0)
+        bool any = false;
+        if (words[1] == "all")
         {
-            quantity = 1;
-            itemName = words.GetTail(1);
+            quantity = 65;
         }
-        else
+        int moneySlot;
+        if ( (words[2] == "tria" && (moneySlot=0)) || (words[2] == "hexa" && (moneySlot=1)) ||
+             (words[2] == "octa" && (moneySlot=2)) || (words[2] == "circle" && (moneySlot=3)) )
+        {        
+            psSlotMovementMsg moneydropmsg( CONTAINER_INVENTORY_MONEY, moneySlot,
+                                CONTAINER_WORLD, 0, quantity );
+            msgqueue->SendMessage(moneydropmsg.msg);
+            return NULL;
+        }
+        else if (words[2] == "any")
+        {
+            any = true;
+            itemName = words.GetTail(3);
+        }
+        else 
         {
             itemName = words.GetTail(2);
         }
-        psCmdDropMessage cmddrop(quantity, itemName);
+        
+        psCmdDropMessage cmddrop(quantity, itemName, any);
         msgqueue->SendMessage(cmddrop.msg);
     }
 

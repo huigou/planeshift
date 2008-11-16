@@ -4912,19 +4912,21 @@ csString psSlotMovementMsg::ToString(AccessPointers * /*access_ptrs*/)
 
 PSF_IMPLEMENT_MSG_FACTORY(psCmdDropMessage,MSGTYPE_CMDDROP);
 
-psCmdDropMessage::psCmdDropMessage( int quantity, csString &itemName)
+psCmdDropMessage::psCmdDropMessage( int quantity, csString &itemName, bool container)
 {
-    msg.AttachNew(new MsgEntry( sizeof( int32_t ) + itemName.Length() + 1 ));
+    msg.AttachNew(new MsgEntry( sizeof( int32_t ) + itemName.Length() + 1  + sizeof(bool)));
 
     msg->SetType(MSGTYPE_CMDDROP);
     msg->Add( (int32_t) quantity );
     msg->Add( itemName );
+    msg->Add( container );
 }
 
 psCmdDropMessage::psCmdDropMessage( MsgEntry* me )
 {
     quantity  = me->GetInt32();
     itemName  = me->GetStr();
+    container = me->GetBool();
 }
 
 csString psCmdDropMessage::ToString(AccessPointers * /*access_ptrs*/)

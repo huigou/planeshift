@@ -302,7 +302,7 @@ public:
       */
     csArray<psItem*> GetItemsInCategory(psItemCategory * category);
     
-    psItem* StackNumberItems(psItemStats * testItemStats, int count);
+    psItem* StackNumberItems(psItemStats * testItemStats, int count, bool container);
 
 
     size_t GetContainedItemCount(psItem *container);
