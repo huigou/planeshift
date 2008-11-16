@@ -68,7 +68,7 @@ psUtilityCommands::psUtilityCommands(MsgHandler *mh,
     cmdsource->Subscribe("/screenshot",this);
     cmdsource->Subscribe("/graphicbug",this);
     cmdsource->Subscribe("/repaintlabels",this);
-    cmdsource->Subscribe("/dump_movements",this);
+    //cmdsource->Subscribe("/dumpmovements",this);
     cmdsource->Subscribe("/testanim",this);
 }
 
@@ -81,7 +81,7 @@ psUtilityCommands::~psUtilityCommands()
     cmdsource->Unsubscribe("/screenshot",this);
     cmdsource->Unsubscribe("/graphicbug",this);
     cmdsource->Unsubscribe("/repaintlabels",this);
-    cmdsource->Unsubscribe("/dump_movements",this);
+    //cmdsource->Unsubscribe("/dumpmovements",this);
     cmdsource->Unsubscribe("/testanim",this);
 }
 
@@ -100,11 +100,11 @@ const char *psUtilityCommands::HandleCommand(const char *cmd)
             HandleQuit();
         return "Exiting Yliakum...";
     }
-    else if(words[0] == "/dump_movements")
+    /*else if(words[0] == "/dumpmovements")
     {
         HandleDumpMovements();
         return "";
-    }
+    }*/
     else if (words[0] == "/echo")
     {
         if ( !HandleEcho(words) )
@@ -269,9 +269,9 @@ void psUtilityCommands::HandleQuit()
 }
 
 
-void psUtilityCommands::HandleDumpMovements()
+/*void psUtilityCommands::HandleDumpMovements()
 {
-/*
+
     pawsChatWindow *chat = (pawsChatWindow*)PawsManager::GetSingleton().FindWidget("ChatWindow");
     chat->ChatOutput( "Active movements:" );
 
@@ -283,8 +283,8 @@ void psUtilityCommands::HandleDumpMovements()
         if(mov->IsApplied())
             chat->ChatOutput( csString(mov->GetName()) );
     }
-*/
-} 
+
+} */
 
 
 bool psUtilityCommands::HandleEcho( WordArray& words )
