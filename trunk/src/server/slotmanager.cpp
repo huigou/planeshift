@@ -954,7 +954,7 @@ void SlotManager::CmdDrop(MsgEntry* me, Client *fromClient)
         return;
     }
     
-    psItem* stackItem = chr->Inventory().StackNumberItems(testItemStats, mesg.quantity);
+    psItem* stackItem = chr->Inventory().StackNumberItems(testItemStats, mesg.quantity, mesg.container);
 
     int removeCount;
     if (mesg.quantity < stackItem->GetStackCount())

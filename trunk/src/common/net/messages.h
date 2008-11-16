@@ -3428,7 +3428,7 @@ public:
 class psCmdDropMessage : public psMessageCracker
 {
 public:
-    psCmdDropMessage( int quantity, csString &itemName);
+    psCmdDropMessage( int quantity, csString &itemName, bool container);
     psCmdDropMessage( MsgEntry* me );
 
     PSF_DECLARE_MSG_FACTORY();
@@ -3443,7 +3443,7 @@ public:
 
     int quantity;
     csString itemName;
-
+    bool container;
 };
 
 class psQuestionCancelMessage : public psMessageCracker
