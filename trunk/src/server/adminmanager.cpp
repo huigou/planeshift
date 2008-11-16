@@ -1956,12 +1956,6 @@ void AdminManager::CreateHuntLocation(MsgEntry* me,psAdminCmdMessage& msg, Admin
         psserver->SendSystemError(me->clientnum, "Insufficent parameters. Use /crystal <interval> <random> <amount> <range> <itemname>");
         return;
     }
-
-    if (data.interval != data.interval || data.random != data.random)
-    {
-        psserver->SendSystemError(me->clientnum, "Invalid interval(s)");
-        return;
-    }
     if (data.interval < 1 || data.random < 1)
     {
         psserver->SendSystemError(me->clientnum, "Intervals need to be greater than 0");
