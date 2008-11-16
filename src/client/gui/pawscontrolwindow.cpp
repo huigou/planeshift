@@ -91,7 +91,7 @@ bool pawsControlWindow::PostSetup()
     AddWindow( "SpellBookWindow" ,   "SpellBookButton" );
     AddWindow( "InfoWindow" ,        "InfoButton" );
     AddWindow( "HelpWindow" ,        "HelpButton" );
-    AddWindow( "ShortcutWindow" ,    "ShortcutButton" );        
+    AddWindow( "ShortcutWindow" ,    "ShortcutButton" );
     AddWindow( "BuddyWindow" ,       "BuddyButton" );
     AddWindow( "GroupWindow" ,       "GroupButton" );
     AddWindow( "PetitionWindow" ,    "PetitionButton" );
@@ -125,7 +125,7 @@ bool pawsControlWindow::PostSetup()
 //show/hide buttons
 void pawsControlWindow::Toggle()
 {
-    
+
     static int oldW = 0, oldH = 0;
     static int oldMinW = 0, oldMinH = 0;
 
@@ -134,11 +134,11 @@ void pawsControlWindow::Toggle()
         if (hidden) children[z]->Show();
         else children[z]->Hide();
     }
-    
-    if (hidden) 
+
+    if (hidden)
     {
         buttonUp->Show();
-        buttonDown->Hide();  
+        buttonDown->Hide();
         this->SetForceSize(oldW,oldH);
         this->SetMinSize(oldMinW,oldMinH);
     }
@@ -204,15 +204,15 @@ bool pawsControlWindow::OnButtonPressed( int mouseButton, int keyModifier, pawsW
         case CONTROL_MINIUP:
         {
             if ( !hidden )
-                Toggle();        
-            return true; 
+                Toggle();
+            return true;
         }
 
         case CONTROL_MINIDOWN:
         {
             if ( hidden )
                 Toggle();
-            return true; 
+            return true;
         }
 
         case CONTROL_QUIT:
@@ -223,13 +223,13 @@ bool pawsControlWindow::OnButtonPressed( int mouseButton, int keyModifier, pawsW
         ////////////////////////////////////////////////////////////////////
         //Special cases that need more than the standard to open correctly
         ////////////////////////////////////////////////////////////////////
-        
+
         ////////////////////////////////////////////////////////////////////
         // These two are from the confirm window buttons for quiting.
         ////////////////////////////////////////////////////////////////////
         case CONFIRM_YES:
         {
-            psengine->QuitClient();            
+            psengine->QuitClient();
             return true;
         }
         case CONFIRM_NO:
@@ -291,7 +291,7 @@ bool pawsControlWindow::HandleWindowName(csString widgetStr)
     if(widgetStr == "options" )
         widget = "ConfigWindow";
     else if(widgetStr == "stats" || widgetStr =="skills")
-        widget = "SkillWindow";  
+        widget = "SkillWindow";
     else if(widgetStr == "spell book" || widgetStr == "spells")
         widget = "SpellBookWindow";
     else if(widgetStr == "inventory" || widgetStr == "inv")
@@ -490,7 +490,7 @@ void pawsControlWindow::WindowOpen(pawsWidget* wnd)
 
     csString bg(icon->orgRes);
     bg += "_active";
-    
+
     btn->SetBackground(bg.GetData());
 }
 
@@ -499,7 +499,7 @@ void pawsControlWindow::WindowClose(pawsWidget* wnd)
 {
     pawsButton* btn = FindButtonFromWindow(wnd->GetName());
     Icon* icon = GetIcon(btn->GetName());
-    icon->IsActive = false;   
+    icon->IsActive = false;
     btn->SetBackground(icon->orgRes.GetData());
 }
 
@@ -643,7 +643,7 @@ bool pawsControlWindow::Contains( int x, int y )
     for (size_t z = 0; z < children.GetSize(); z++ )
     {
         if (children[z]->IsVisible() )
-        { 
+        {
             if ( children[z]->Contains(x,y) )
                 return true;
         }

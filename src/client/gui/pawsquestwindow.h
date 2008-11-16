@@ -27,7 +27,7 @@
 #include "gui/pawscontrolwindow.h"
 
 /// Enum of the columns for the quest listbox:
-enum 
+enum
 {
     QCOL_NAME = 0,
     QCOL_ID   = 1,
@@ -49,8 +49,8 @@ enum
     EVCOL_ID   = 2
 };
 
-/** 
- * Window contains a list of the available loot items. 
+/**
+ * Window contains a list of the available loot items.
  * with options to take them, roll for them or cancel the window.
  *
  * NOTE: the current expected columns for the listbox are
@@ -91,7 +91,7 @@ public:
 
     /// Load quest notes
     void LoadNotes(const char * fileName);
-    
+
     /// Show quest notes
     void ShowNotes();
 
@@ -164,7 +164,7 @@ protected:
     int questIDBuffer;  // ID of pending discard (in case selection changes during prompt)
 
     csArray<QuestNote*> quest_notes;
-    
+
     csRef<iVFS> vfs;
     csRef<iDocumentSystem> xml;
     psString filename;

@@ -1,7 +1,7 @@
 /*
  * cmdutil.h - Author: Keith Fulton
  *
- * Copyright (C) 2001 Atomic Blue (info@planeshift.it, http://www.atomicblue.org) 
+ * Copyright (C) 2001 Atomic Blue (info@planeshift.it, http://www.atomicblue.org)
  *
  *
  * This program is free software; you can redistribute it and/or
@@ -86,7 +86,7 @@ psUtilityCommands::~psUtilityCommands()
 }
 
 const char *psUtilityCommands::HandleCommand(const char *cmd)
-{ 
+{
     WordArray words(cmd, false);
 
     if (words.GetCount() == 0)
@@ -110,13 +110,13 @@ const char *psUtilityCommands::HandleCommand(const char *cmd)
         if ( !HandleEcho(words) )
             return "You must specify a word or phrase to echo.";
         else
-            return NULL;             
+            return NULL;
     }
     else if (words[0] == "/confirm")
     {
         csString errorString;
         HandleConfirm( words, errorString );
-        return errorString.Detach();        
+        return errorString.Detach();
     }
     else if (words[0] == "/ping")
     {
@@ -128,7 +128,7 @@ const char *psUtilityCommands::HandleCommand(const char *cmd)
     {
         if ( words.FindStr("nogui",1) != SIZET_NOT_FOUND )
             psengine->GetPSCamera()->Draw();  // Re-draw to hide the GUI for the pic
-        
+
         // Optionally choose not to compress
         bool compress = words.FindStr("lossless",1) == SIZET_NOT_FOUND;
 
@@ -190,7 +190,7 @@ csString psUtilityCommands::SaveCamera()
     This function is ported from walktest and should be
     compatible with it
     */
-    
+
     unsigned long int reportNum=0;
     //Get last saved report and increase it by 1
     reportNum=psengine->GetConfig()->GetInt("PlaneShift.GraphicBugs.LastUsed",1)+1;
@@ -220,13 +220,13 @@ csString psUtilityCommands::SaveCamera()
     //this function is called
     psengine->GetConfig()->SetInt("PlaneShift.GraphicBugs.LastUsed",reportNum);
     //Begin the saving process
-  
+
     //Get the iCamera stucture
     iCamera *c = psengine->GetPSCamera()->GetICamera();
     csOrthoTransform& camtrans = c->GetTransform ();
-    if (!c) 
+    if (!c)
         return "No camera found! (This is fatal!)";
-    
+
     const csMatrix3& m_o2t = camtrans.GetO2T ();
     const csVector3& v_o2t = camtrans.GetOrigin ();
     csString s;
@@ -242,12 +242,12 @@ csString psUtilityCommands::SaveCamera()
     //Write to the file
     psengine->GetVFS()->WriteFile (filename.GetData(), s.GetData(), s.Length());
 
-	return "Saved graphic bug report (" + filename + "). Please take your time and read 'Bug Report' under 'Help Us' on www.hydlaa.com";
+    return "Saved graphic bug report (" + filename + "). Please take your time and read 'Bug Report' under 'Help Us' on www.hydlaa.com";
 }
 
 
 void psUtilityCommands::HandleQuit( bool answeredYes, void *thisPtr )
-{    
+{
     if (answeredYes)
         psengine->QuitClient();
     else
@@ -265,7 +265,7 @@ void psUtilityCommands::HandleQuit()
     confirm->SetCallBack( psUtilityCommands::HandleQuit,this,text );
     confirm->MoveTo( (PawsManager::GetSingleton().GetGraphics2D()->GetWidth()-512)/2 , (PawsManager::GetSingleton().GetGraphics2D()->GetHeight()-256)/2);
     confirm->Show();
-    PawsManager::GetSingleton().SetModalWidget( confirm );       
+    PawsManager::GetSingleton().SetModalWidget( confirm );
 }
 
 
@@ -276,7 +276,7 @@ void psUtilityCommands::HandleQuit()
     chat->ChatOutput( "Active movements:" );
 
     psMovementManager* mgr = psengine->GetCharControl()->GetMovementManager();
-        
+
     for(size_t i = 0; i < mgr->GetMovementsCount(); i++)
     {
         psMovement* mov = mgr->GetMovement(i);
@@ -291,7 +291,7 @@ bool psUtilityCommands::HandleEcho( WordArray& words )
 {
     if (words.GetCount() < 2)
     {
-        return false;   
+        return false;
     }
 
     csString buffer;
@@ -340,9 +340,9 @@ void psUtilityCommands::HandleConfirm( WordArray& words, csString& error )
     if (text.IsEmpty())
     {
         error = "No text for confirm box is specified.";
-        return; 
+        return;
     }
-    
+
     if (yescommands=="" && nocommands=="")
     {
         error = "No commands for confirm box are specified.";
@@ -352,8 +352,8 @@ void psUtilityCommands::HandleConfirm( WordArray& words, csString& error )
     pawsYesNoBox* confirm = (pawsYesNoBox*)PawsManager::GetSingleton().FindWidget("YesNoWindow");
     confirm->SetCallBack( psUtilityCommands::HandleConfirmButton,this, text );
     confirm->Show();
-    PawsManager::GetSingleton().SetModalWidget( confirm );                                            
-}    
+    PawsManager::GetSingleton().SetModalWidget( confirm );
+}
 
 void psUtilityCommands::HandleScreenShot(bool compress)
 {
@@ -363,7 +363,7 @@ void psUtilityCommands::HandleScreenShot(bool compress)
     const char* format = compress ? "jpg" : "png" ;
     unsigned int ssNumber = psengine->GetConfig()->GetInt("PlaneShift.Screenshot.LastUsed",0);
     const char* ssFilename = psengine->GetConfig()->GetStr("PlaneShift.Screenshot.Filename", "shot");
-    
+
     csString filename, fullpath;
     do  // Loop until free file slot
     {
@@ -371,7 +371,7 @@ void psUtilityCommands::HandleScreenShot(bool compress)
         filename.Format("%s%02u.%s", ssFilename, ssNumber, format );
         fullpath = "/planeshift/userdata/screenshots/" + filename;
     } while ( psengine->GetVFS()->Exists(fullpath) );
-        
+
     // Save the number we're using, to improve the next use of this function
     psengine->GetConfig()->SetInt("PlaneShift.Screenshot.LastUsed",ssNumber);
 
@@ -382,10 +382,10 @@ void psUtilityCommands::HandleScreenShot(bool compress)
     csRef<iImageIO> imageio = csQueryRegistry<iImageIO> (psengine->GetObjectRegistry());
     csRef<iImage> image = psengine->GetG2D()->ScreenShot();
     csRef<iDataBuffer> buffer = imageio->Save(image,mime);
-    
+
     // Save the screenshot
     psengine->GetVFS()->WriteFile( fullpath.GetData(), buffer->GetData(), buffer->GetSize() );
-        
+
     psSystemMessage msg(0, MSG_ACK, "Screenshot saved to " + filename );
     msg.FireEvent();
 }

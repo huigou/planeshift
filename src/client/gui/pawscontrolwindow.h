@@ -27,7 +27,7 @@
 
 class pawsControlledWindow;
 
-/** Structure to relate windows with their buttons for lookup. 
+/** Structure to relate windows with their buttons for lookup.
  * @remark Used by FindButton.
  */
 struct WBName
@@ -49,8 +49,8 @@ struct Icon
 
 
 /** Window that drives the main interface.
- * This widget controls the behavior of the main toolbar and the interaction 
- * with the various windows it controls. 
+ * This widget controls the behavior of the main toolbar and the interaction
+ * with the various windows it controls.
  */
 class pawsControlWindow : public pawsWidget
 {
@@ -68,36 +68,36 @@ public:
     void Hide();
     void Show();
 
-    /** Used for generic controlled window behavior when a window's button is 
-     * pressed. 
-     * Displays a window that is hidden when it's button is pressed. Hides a 
+    /** Used for generic controlled window behavior when a window's button is
+     * pressed.
+     * Displays a window that is hidden when it's button is pressed. Hides a
      * window that is currently diplayed.
      * @param widgetStr: The window to handle.
-     * @return TRUE if it makes it visible, returns FALSE if it made it 
+     * @return TRUE if it makes it visible, returns FALSE if it made it
                invisible or error.
      */
     bool HandleWindow(csString widgetStr);
 
-    /** Used for generic controlled window behavior when a window's  is called 
-     * Displays a window that is hidden when asked for by a command. Hides a 
+    /** Used for generic controlled window behavior when a window's  is called
+     * Displays a window that is hidden when asked for by a command. Hides a
      * window that is currently diplayed.
      * @param widgetStr: The window to handle.
      * @return TRUE if the toggle was possible, returns FALSE if it was not found.
      */
     bool HandleWindowName(csString widgetStr);
-    
-    /** When the quit button is pressed this method displays the yes/no dialog  
+
+    /** When the quit button is pressed this method displays the yes/no dialog
      * box to confirm that a user really wants to quit.
      */
     void HandleQuit();
 
-    /** Changes the icon IsActive flag to TRUE and displays the proper 
+    /** Changes the icon IsActive flag to TRUE and displays the proper
      * background for it when a window is opened.
      * @param wnd: The window that opened.
      */
     void WindowOpen(pawsWidget* wnd);
 
-    /**  Changes the icon IsActive flag to FALSE and displays the proper 
+    /**  Changes the icon IsActive flag to FALSE and displays the proper
      * background for it when a window is closed.
      * @param wnd: The window that closed.
      */
@@ -117,14 +117,14 @@ public:
     bool PostSetup();
 
     /** The find window and find button methods are used to match a button to
-     * it's related window. 
+     * it's related window.
      * If you have the button name you can find the window.
      * @param btnName: The button name who's window you need.
      */
     pawsControlledWindow* FindWindowFromButton(csString btnName);
 
     /** The find window and find button methods are used to match a button to
-     * it's related window. 
+     * it's related window.
      * If you have the window name you can find the button.
      * @param wndName: The window name who's button you need.
      */
@@ -135,9 +135,9 @@ public:
      */
     Icon* GetIcon(csString btnName);
 
-    /** Advances through the available styles when a users clicks the right 
+    /** Advances through the available styles when a users clicks the right
      * mouse button in the control window.
-     */ 
+     */
     void NextStyle();
 
     bool OnMouseEnter();
@@ -151,8 +151,8 @@ private:
     csArray<WBName> wbs;
     csPDelArray<Icon> buttons;
 
-    pawsWidget* buttonUp;    
-    pawsWidget* buttonDown;       
+    pawsWidget* buttonUp;
+    pawsWidget* buttonDown;
 
     csRef<iKeyboardDriver> keyboard;
 
@@ -211,4 +211,4 @@ private:
     bool registered;
 };
 
-#endif 
+#endif

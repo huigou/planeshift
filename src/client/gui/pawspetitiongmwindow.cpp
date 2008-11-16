@@ -106,7 +106,7 @@ void pawsPetitionGMWindow::Show()
     if(psengine->GetCelClient()->GetMainPlayer()->GetType() > 20) //allow access only to who has really access
     {
         hasPetInterest = true;
-        pawsWidget::Show();
+        pawsWidget::Show();       //show the window
         QueryServer();           //Query the server for messages
     }
 }

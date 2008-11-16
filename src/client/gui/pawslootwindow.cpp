@@ -41,7 +41,7 @@
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
-pawsLootWindow::pawsLootWindow() 
+pawsLootWindow::pawsLootWindow()
     : psCmdBase( NULL,NULL,  PawsManager::GetSingleton().GetObjectRegistry() )
 {
     lootList = NULL;
@@ -59,7 +59,7 @@ pawsLootWindow::~pawsLootWindow()
 bool pawsLootWindow::PostSetup()
 {
     // Setup this widget to receive messages and commands
-    if ( !psCmdBase::Setup( psengine->GetMsgHandler(), 
+    if ( !psCmdBase::Setup( psengine->GetMsgHandler(),
         psengine->GetCmdHandler()) )
         return false;
 
@@ -108,9 +108,9 @@ void pawsLootWindow::HandleMessage ( MsgEntry* me )
 
             // Clear the list box and add the user's petitions
             lootList->Clear();
-            
+
             lootList->SelfPopulateXML(message.lootxml);
-            
+
             // Set up the row ids.
             for(int i = 0;i < lootList->GetRowCount();i++)
             {
@@ -120,7 +120,7 @@ void pawsLootWindow::HandleMessage ( MsgEntry* me )
 
                 pawsTextBox* field = (pawsTextBox*)row->GetColumn(LCOL_ID);
                 int id = atoi(field->GetText());
-                row->SetID( id );                
+                row->SetID( id );
             }
 
             if (lootList->GetRowCount() > 0)
@@ -135,7 +135,7 @@ void pawsLootWindow::HandleMessage ( MsgEntry* me )
                 return;
 
             psLootRemoveMessage msg(me);
-            
+
             for (int i=0; i < lootList->GetRowCount(); i++)
             {
                 pawsListBoxRow* row = lootList->GetRow(i);
@@ -165,7 +165,7 @@ void pawsLootWindow::HandleMessage ( MsgEntry* me )
 }
 
 bool pawsLootWindow::OnButtonPressed( int mouseButton, int keyModifier, pawsWidget* widget )
-{    
+{
     int button = widget->GetID();
 
     switch( button )
@@ -184,7 +184,7 @@ bool pawsLootWindow::OnButtonPressed( int mouseButton, int keyModifier, pawsWidg
             }
             break;
         }
-        
+
         case ROLL_BUTTON:
         {
             pawsListBoxRow *row = lootList->GetSelectedRow();

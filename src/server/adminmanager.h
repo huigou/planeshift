@@ -190,7 +190,7 @@ protected:
     void RunScript(MsgEntry *me, psAdminCmdMessage& msg, AdminCmdData& data, Client *client, gemObject* object);
 
     void CreateHuntLocation(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data, Client *client);
-    
+
     /** @brief Changes various parameters associated to the item
      *  @param me The incoming message from the GM
      *  @param msg The cracked command message.
@@ -400,9 +400,9 @@ protected:
      *  @param client The GM client the command came from.
      */
     void CheckTarget(psAdminCmdMessage& msg, AdminCmdData& data, gemObject* targetobject , Client *client);
-    
+
     /** @brief Allows to disable/enable quests temporarily (server cache) or definitely (database)
-     * 
+     *
      *  @param me The incoming message from the GM
      *  @param msg The cracked command message.
      *  @param client The GM client the command came from.

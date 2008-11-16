@@ -50,7 +50,7 @@ bool pawsIgnoreWindow::PostSetup()
 
     if ( !LoadIgnoreList() )
         return false;
-        
+
     return true;
 }
 
@@ -78,7 +78,7 @@ bool pawsIgnoreWindow::OnButtonPressed( int mouseButton, int keyModifier, pawsWi
             if ( currentIgnored.Length() == 0 )
                return false;
 
-            pawsStringPromptWindow::Create("Remove", currentIgnored, 
+            pawsStringPromptWindow::Create("Remove", currentIgnored,
                                         false, 220, 20, this, "remove" );
             return true;
         }
@@ -168,18 +168,18 @@ void pawsIgnoreWindow::AddIgnore( csString& name )
 
     if (!strcmp(name, psengine->GetCelClient()->GetMainPlayer()->GetName()))
     {
-        if ( chat )                
+        if ( chat )
             chat->ChatOutput(PawsManager::GetSingleton().Translate("You can not ignore yourself."));
         return;
     }
-    
+
     if ( chat )
     {
         csString temp;
         temp.Format(PawsManager::GetSingleton().Translate("You will now ignore %s."), name.GetData());
         chat->ChatOutput(temp);
-    }        
-            
+    }
+
     if (ignoredNames.FindSortedKey(name) == csArrayItemNotFound)
     {
         pawsListBoxRow* row = ignoreList->NewRow();
@@ -228,16 +228,17 @@ void pawsIgnoreWindow::OnStringEntered(const char *name,int param,const char *va
 
     csString command;
     csString person = value;
+    //normalize the name
     person.Downcase();
     person.SetAt(0,toupper(person.GetAt(0))); //TODO: maybe we need to do this better
 
-    if (!strcmp(name,"add"))
+    if (!strcmp(name,"add")) //If we got the add command...
     {
-            AddIgnore(person);
+            AddIgnore(person); //...add the person to the ignore list
     }
-    else
+    else //If we got the remove command...
     {
-        if (IsIgnored(person))
+        if (IsIgnored(person)) //... check if the person is ignored and if so remove him/her from the list
             RemoveIgnore(person);
     }
 
