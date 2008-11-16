@@ -14,6 +14,7 @@
   /advisor requests.
 - Updated the help for the changes to the commands
 - Removed some relic code still lying in messages.cpp
+- Commented out the remaining references to dump_movements which was already a dummy command
 
 *** 2008-11-14 by Stefano Angeleri
 - Moved cached audio files to a more proper /cache/ subdirectory to avoid

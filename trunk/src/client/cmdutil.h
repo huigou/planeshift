@@ -66,7 +66,7 @@ private:
     void HandleQuit();    
     
     /// Handles the /dump_movements command.
-    void HandleDumpMovements();
+    //void HandleDumpMovements();
     
     /// Handles the /screenshot command
     void HandleScreenShot(bool compress);
