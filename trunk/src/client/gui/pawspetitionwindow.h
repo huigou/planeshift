@@ -40,7 +40,7 @@ enum {
 #define     MAX_PETITION_LENGTH     (65)
 
 
-/** Window contains a list of the user's petitions. 
+/** Window contains a list of the user's petitions.
  * with options to view their resolutions or cancel them
  *
  * NOTE: the current expected columns for the listbox are
@@ -114,7 +114,7 @@ protected:
 
     /// Displays text of petition
     pawsMultilineEditTextBox * petText;
-    
+
 };
 
 /** The pawsPetitionWindow factory

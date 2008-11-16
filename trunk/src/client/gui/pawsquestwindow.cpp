@@ -113,17 +113,17 @@ void pawsQuestListWindow::Show(void)
     uncompletedEventList->Clear();
     description->Clear();
     notes->Clear();
- 
+
     psUserCmdMessage msg("/quests");
     psengine->GetMsgHandler()->SendMessage(msg.msg);
- 
+
     pawsControlledWindow::Show();
 }
 
 bool pawsQuestListWindow::PostSetup()
 {
     // Setup this widget to receive messages and commands
-    if ( !psCmdBase::Setup( psengine->GetMsgHandler(), 
+    if ( !psCmdBase::Setup( psengine->GetMsgHandler(),
         psengine->GetCmdHandler()) )
         return false;
 
@@ -133,14 +133,14 @@ bool pawsQuestListWindow::PostSetup()
 
     msgqueue->Subscribe(this, MSGTYPE_GMEVENT_LIST);
     msgqueue->Subscribe(this, MSGTYPE_GMEVENT_INFO);
-	
+
     questTab             = (pawsTabWindow*)FindWidget("QuestTabs");
     completedQuestList   = (pawsListBox*  )FindWidget("CompletedQuestList");
     uncompletedQuestList = (pawsListBox*  )FindWidget("UncompletedQuestList");
 
     // get pointer to active listbox:
     questList  = (pawsListBox*)questTab->GetActiveTab();
-    
+
     eventTab             = (pawsTabWindow*)FindWidget("EventTabs");
     completedEventList   = (pawsListBox*  )FindWidget("CompletedEventList");
     uncompletedEventList = (pawsListBox*  )FindWidget("UncompletedEventList");
@@ -197,7 +197,7 @@ void pawsQuestListWindow::HandleMessage ( MsgEntry* me )
                     start += questxml.GetTagSection((int)start,"q",section);
                     csString str = "status text=\"";
                     char status = section.GetAt(section.FindSubString(str) + str.Length());
-                
+
                     if (status == 'A')
                         uncompletedQuests += section;
                     else if (status == 'C')
@@ -212,7 +212,7 @@ void pawsQuestListWindow::HandleMessage ( MsgEntry* me )
             uncompletedQuestList->Clear();
             description->Clear();
             notes->Clear();
-            populateQuestLists = true;	    
+            populateQuestLists = true;
 
             // Reset window
             if (!topTab || topTab == questTab)
@@ -220,17 +220,17 @@ void pawsQuestListWindow::HandleMessage ( MsgEntry* me )
                 PopulateQuestTab();
             }
             break;
-	}
+    }
 
-	case MSGTYPE_QUESTINFO:
-	{
+    case MSGTYPE_QUESTINFO:
+    {
             psQuestInfoMessage message(me);
             SelfPopulateXML(message.xml);
             break;
-	}
+    }
 
-	case MSGTYPE_GMEVENT_LIST:
-	{
+    case MSGTYPE_GMEVENT_LIST:
+    {
             // get the GM events data
             psGMEventListMessage message(me);
 
@@ -247,7 +247,7 @@ void pawsQuestListWindow::HandleMessage ( MsgEntry* me )
 
             completedEvents   = "<gmevents>";
             uncompletedEvents = "<gmevents>";
-	    
+
             if (start != SIZET_NOT_FOUND)
             {
                 do
@@ -257,14 +257,14 @@ void pawsQuestListWindow::HandleMessage ( MsgEntry* me )
                     start += gmeventxml.GetTagSection((int)start,"event",section);
                     csString str = "status text=\"";
                     char status = section.GetAt(section.FindSubString(str) + str.Length());
-                
+
                     if (status == 'R')
                         uncompletedEvents += section;
                     else if (status == 'C')
                         completedEvents += section;
                 } while (section.Length()!=0 && start<end);
             }
-            
+
             completedEvents   += "</gmevents>";
             uncompletedEvents += "</gmevents>";
 
@@ -278,7 +278,7 @@ void pawsQuestListWindow::HandleMessage ( MsgEntry* me )
             {
                 PopulateGMEventTab();
             }
-	    break;
+        break;
         }
 
         case MSGTYPE_GMEVENT_INFO:
@@ -294,27 +294,27 @@ bool pawsQuestListWindow::OnButtonPressed( int mouseButton, int keyModifier, paw
 {
     // We know that the calling widget is a button.
     int button = widget->GetID();
-    
+
     questList = (pawsListBox*)questTab->GetActiveTab();
     eventList = (pawsListBox*)eventTab->GetActiveTab();
-    
+
     switch( button )
     {
         case TAB_COMPLETED_QUESTS_OR_EVENTS:
         case TAB_UNCOMPLETED_QUESTS_OR_EVENTS:
         {
-	    if (topTab == questTab)
+        if (topTab == questTab)
             {
                 questID = -1;
                 completedQuestList->Select(NULL);
                 uncompletedQuestList->Select(NULL);
             }
             else
-	    {
+        {
                 questID = -1;
                 completedEventList->Select(NULL);
                 uncompletedEventList->Select(NULL);
-	    }
+        }
             description->Clear();
             notes->Clear();
             break;
@@ -344,7 +344,7 @@ bool pawsQuestListWindow::OnButtonPressed( int mouseButton, int keyModifier, paw
             else if (topTab == eventTab)
                 DiscardGMEvent(questIDBuffer);
             questID = -1;
-            
+
             // Refresh window
             notes->Clear();
             description->Clear();
@@ -376,7 +376,7 @@ bool pawsQuestListWindow::OnButtonPressed( int mouseButton, int keyModifier, paw
                         break;
                     }
                 }
-                    
+
                 if (!found) // Add notes
                 {
                     QuestNote *qn = new QuestNote;
@@ -412,10 +412,10 @@ bool pawsQuestListWindow::OnButtonPressed( int mouseButton, int keyModifier, paw
                 PopulateGMEventTab();
             }
 
-	    description->Clear();
+        description->Clear();
             notes->Clear();
 
-	    break;
+        break;
         }
     }
     return true;
@@ -474,7 +474,7 @@ void pawsQuestListWindow::OnListAction( pawsListBox* selected, int status )
                 if (previousQuestID < 0)
                 {
                     quest_notes[i]->topLine = 0;
-                } 
+                }
                 // store topline of 'old' quest notes
                 else if (quest_notes[i]->id == previousQuestID)
                 {
@@ -493,7 +493,7 @@ void pawsQuestListWindow::OnListAction( pawsListBox* selected, int status )
 
             RequestQuestData(questID);
             ShowNotes();
-	}
+    }
         else
         {
             RequestGMEventData(questID);
@@ -517,7 +517,7 @@ void pawsQuestListWindow::SaveNotes(const char * fileName)
     for (size_t i=0; i < quest_notes.GetSize(); i++)
     {
         QuestNote *qn = quest_notes[i];
-        
+
         if ( !(qn->notes).IsEmpty() )
         {
             parent = parentMain->CreateNodeBefore(CS_NODE_ELEMENT);

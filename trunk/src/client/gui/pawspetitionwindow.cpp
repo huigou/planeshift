@@ -83,7 +83,7 @@ bool pawsPetitionWindow::PostSetup()
 
 void pawsPetitionWindow::Show()
 {
-        pawsControlledWindow::Show();
+        pawsControlledWindow::Show(); //actually shows the window
 
         // Query the server for messages:
         hasPetInterest = true;

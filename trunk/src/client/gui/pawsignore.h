@@ -41,7 +41,7 @@ public:
     void AddIgnore( csString& playerName );
     void RemoveIgnore( csString& playerName );
     bool IsIgnored( csString& playerName );
-    
+
     bool PostSetup();
 
     bool OnButtonPressed( int mouseButton, int keyModifier, pawsWidget* widget );
@@ -61,7 +61,7 @@ private:
     csString        currentIgnored;
 
     bool LoadIgnoreList();
-    void SaveIgnoreList();    
+    void SaveIgnoreList();
 };
 
 CREATE_PAWS_FACTORY( pawsIgnoreWindow );

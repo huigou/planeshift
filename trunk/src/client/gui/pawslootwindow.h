@@ -25,7 +25,7 @@
 #include "paws/pawsbutton.h"
 
 /// Enum of the columns for the listbox:
-enum 
+enum
 {
     LCOL_ICON = 0,
     LCOL_NAME = 1,
@@ -33,8 +33,8 @@ enum
 };
 
 
-/** 
- * Window contains a list of the available loot items. 
+/**
+ * Window contains a list of the available loot items.
  * with options to take them, roll for them or cancel the window.
  *
  * NOTE: the current expected columns for the listbox are

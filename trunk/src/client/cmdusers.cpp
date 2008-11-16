@@ -1,7 +1,7 @@
 /*
  * cmdusers.h - Author: Keith Fulton
  *
- * Copyright (C) 2001 Atomic Blue (info@planeshift.it, http://www.atomicblue.org) 
+ * Copyright (C) 2001 Atomic Blue (info@planeshift.it, http://www.atomicblue.org)
  *
  *
  * This program is free software; you can redistribute it and/or
@@ -83,7 +83,7 @@ psUserCommands::psUserCommands(MsgHandler* mh,CmdHandler *ch,iObjectRegistry* ob
     cmdsource->Subscribe("/trade",this);
     cmdsource->Subscribe("/give",this);
     cmdsource->Subscribe("/assist", this);
-    cmdsource->Subscribe("/ignore", this);                             
+    cmdsource->Subscribe("/ignore", this);
     cmdsource->Subscribe("/cast", this);
     cmdsource->Subscribe("/away", this);
     cmdsource->Subscribe("/loot", this);
@@ -128,9 +128,9 @@ psUserCommands::~psUserCommands()
 {
 //    msgqueue->Unsubscribe(MSGTYPE_CHAT,this);
 
-    cmdsource->Unsubscribe("/who",                   this);      
-    cmdsource->Unsubscribe("/buddy",                 this);    
-    cmdsource->Unsubscribe("/notbuddy",              this); 
+    cmdsource->Unsubscribe("/who",                   this);
+    cmdsource->Unsubscribe("/buddy",                 this);
+    cmdsource->Unsubscribe("/notbuddy",              this);
     cmdsource->Unsubscribe("/buddylist",             this);
     cmdsource->Unsubscribe("/roll",                  this);
     cmdsource->Unsubscribe("/pos",                   this);
@@ -147,7 +147,7 @@ psUserCommands::~psUserCommands()
     cmdsource->Unsubscribe("/trade",                 this);
     cmdsource->Unsubscribe("/give",                  this);
     cmdsource->Unsubscribe("/assist",                this);
-    cmdsource->Unsubscribe("/ignore",                this); 
+    cmdsource->Unsubscribe("/ignore",                this);
     cmdsource->Unsubscribe("/cast",                  this);
     cmdsource->Unsubscribe("/away",                  this);
     cmdsource->Unsubscribe("/loot",                  this);
@@ -159,7 +159,7 @@ psUserCommands::~psUserCommands()
     //cmdsource->Unsubscribe("/quests",              this);
     cmdsource->Unsubscribe("/use",                   this);
     cmdsource->Unsubscribe("/dig",                   this);
-    cmdsource->Unsubscribe("/fish",		          this);
+    cmdsource->Unsubscribe("/fish",               this);
     cmdsource->Unsubscribe("/target",                this);
     cmdsource->Unsubscribe("/targetcontext",        this);
     cmdsource->Unsubscribe("/tip",                   this);
@@ -213,19 +213,19 @@ bool psUserCommands::LoadEmotes()
         Error2("Error loading emotes: %s", error);
         return false;
     }
-    
+
     csRef<iDocumentNodeIterator> emoteIter = doc->GetRoot()->GetNode("emotes")->GetNodes("emote");
 
     while(emoteIter->HasNext())
     {
         csRef<iDocumentNode> emoteNode = emoteIter->Next();
-        
+
         EMOTE emote;
         emote.command = emoteNode->GetAttributeValue("command");
         emote.general = emoteNode->GetAttributeValue("general");
         emote.specific = emoteNode->GetAttributeValue("specific");
         emote.anim = emoteNode->GetAttributeValue("anim");
-        
+
         emoteList.Push(emote);
     }
 
@@ -272,7 +272,7 @@ const char *psUserCommands::HandleCommand(const char *cmd)
         return "";
 
     char buff[1024];
-    
+
     if (  words[0] == "/show")
     {
         if (words.GetCount() > 1)
@@ -290,10 +290,10 @@ const char *psUserCommands::HandleCommand(const char *cmd)
         pawsWidget * widget = PawsManager::GetSingleton().FindWidget("CraftWindow");
         if ( widget )
             widget->Show();
-            
-        return NULL;                    
+
+        return NULL;
     }
-    
+
     else if (words[0] == "/equip" || (words[0] == "/use" && words.GetCount() > 1))
     {
         if ( words.GetCount() < 2 )
@@ -309,27 +309,27 @@ const char *psUserCommands::HandleCommand(const char *cmd)
         pawsInventoryWindow* window = (pawsInventoryWindow*)PawsManager::GetSingleton().FindWidget("InventoryWindow");
         window->Equip( itemName, quanity );
     }
-    
+
     else if ( words[0] == "/dequip" )
     {
         if ( words.GetCount() < 2 )
             return "Usage: /dequip [item name|slot name]";
-            
+
         pawsInventoryWindow* window = (pawsInventoryWindow*)PawsManager::GetSingleton().FindWidget("InventoryWindow");
         csString itemName( words.GetTail(1) );
-        window->Dequip( itemName );                                                    
+        window->Dequip( itemName );
     }
-    
+
     else if ( words[0] == "/write" )
     {
         if ( words.GetCount() < 2 )
             return "Usage: /write [item name|slot name]";
-            
+
         pawsInventoryWindow* window = (pawsInventoryWindow*)PawsManager::GetSingleton().FindWidget("InventoryWindow");
         csString itemName( words.GetTail(1) );
-        window->Write( itemName );             
+        window->Write( itemName );
     }
-    
+
     else if (words[0] == "/sell")
     {
         if (words.GetCount() > 1){
@@ -349,7 +349,7 @@ const char *psUserCommands::HandleCommand(const char *cmd)
         if ( !window )
             return "Buddy List Not Found";
         else
-            window->Show();                                             
+            window->Show();
     }
     else if (words[0] == "/buy")
     {
@@ -364,7 +364,7 @@ const char *psUserCommands::HandleCommand(const char *cmd)
         psGUIMerchantMessage exchange(psGUIMerchantMessage::REQUEST,buff);
         msgqueue->SendMessage(exchange.msg);
     }
-    
+
     else if (words[0] == "/trade")
     {
         psExchangeRequestMsg exchange(true);
@@ -382,19 +382,20 @@ const char *psUserCommands::HandleCommand(const char *cmd)
         pawsIgnoreWindow* window     = (pawsIgnoreWindow*) PawsManager::GetSingleton().FindWidget("IgnoreWindow");
         if ( !window )
             return "Ignore Window Not Found";
-            
-        if (words.GetCount() < 2)
+
+        if (words.GetCount() < 2) //if the player didn't provide arguments just open the ignore window
             window->Show();
-        else
+        else //if the player provided a name toogle it's ignore status
         {
             csString person(words[1]);
+            //normalize the name
             person.Downcase();
             person.SetAt(0,toupper(person.GetAt(0)));
-            
+
             if (window->IsIgnored(person))
-                window->RemoveIgnore(person);            
+                window->RemoveIgnore(person);
             else
-                window->AddIgnore(person);    
+                window->AddIgnore(person);
         }
     }
 
@@ -406,7 +407,7 @@ const char *psUserCommands::HandleCommand(const char *cmd)
        csString tail_word = words.GetTail(1);
        AskToSlayBeforeSending(new psSpellCastMessage(tail_word, psengine->GetKFactor()));
     }
-    
+
     else if (words[0] == "/away")
     {
         pawsChatWindow* ChatWindow = (pawsChatWindow*) PawsManager::GetSingleton().FindWidget("ChatWindow");
@@ -416,14 +417,14 @@ const char *psUserCommands::HandleCommand(const char *cmd)
         else
             ChatWindow->SetAway("");
     }
-    
+
     else if (words[0] == "/clear")
     {
         printf("Clearing  history\n");
         pawsChatWindow* ChatWindow = (pawsChatWindow*) PawsManager::GetSingleton().FindWidget("ChatWindow");
         ChatWindow->Clear();
     }
-    
+
     else if (words[0] == "/target")
     {
         if (words[1].IsEmpty()) {
@@ -454,7 +455,7 @@ const char *psUserCommands::HandleCommand(const char *cmd)
                 psengine->GetCharManager()->SetTarget(FindEntityWithName(tail),"select");
         }
     }
-    
+
     else if (words[0] == "/targetcontext")
     {
         GEMClientObject *object = NULL;
@@ -467,7 +468,7 @@ const char *psUserCommands::HandleCommand(const char *cmd)
         if (object)
             psengine->GetCharManager()->SetTarget(object,"context");
     }
-    
+
     else if (words[0] == "/use" ||
              words[0] == "/combine" ||
              words[0] == "/dig" ||
@@ -477,21 +478,21 @@ const char *psUserCommands::HandleCommand(const char *cmd)
         psWorkCmdMessage work(cmd);
         msgqueue->SendMessage(work.msg);
     }
-    
+
     else if (words[0] == "/picklock")
     {
         psLockpickMessage lockpick("");
         msgqueue->SendMessage(lockpick.msg);
     }
-    
+
     else if(words[0] == "/targetinfo")
     {
         pawsDetailWindow* detail = (pawsDetailWindow*)PawsManager::GetSingleton().FindWidget("DetailWindow");
         detail->RequestDetails();
         return NULL;
     }
-    
-    else if (words[0] == "/advisor" )
+
+    else if (words[0] == "/advisor" ) //this manages all the subcases of advisor: on, off, list, listsessions, reuquests
     {
         csString pPerson;
         csString pText;
@@ -501,8 +502,8 @@ const char *psUserCommands::HandleCommand(const char *cmd)
 
         return NULL;
     }
-    
-    else if (words[0] == "/help" )
+
+    else if (words[0] == "/help" ) //used to request help
     {
         //get the chatwindow for use later
         pawsChatWindow* chatWindow = dynamic_cast<pawsChatWindow*>(PawsManager::GetSingleton().FindWidget("ChatWindow"));
@@ -520,25 +521,25 @@ const char *psUserCommands::HandleCommand(const char *cmd)
         msgqueue->SendMessage(advice.msg);
         return NULL;
     }
-    
-    else if (words[0] == "/advice")
+
+    else if (words[0] == "/advice") //used to give help
     {
         //get the chatwindow for use later
         pawsChatWindow* chatWindow = dynamic_cast<pawsChatWindow*>(PawsManager::GetSingleton().FindWidget("ChatWindow"));
-        
+
         if (words.GetCount() < 2)
             return "You must enter the text. e.g /Advice [user] <text>";
         csString pPerson( words[1] );
         csString pText(words.GetTail(2));
-        
+
         if (chatWindow && chatWindow->GetSettings().enableBadWordsFilterOutgoing) //check for badwords filtering
             chatWindow->BadWordsFilter(pText); //if enabled apply it
-        
+
         psAdviceMessage advice(0,words[0],pPerson, pText);
         msgqueue->SendMessage(advice.msg);
         return NULL;
     }
-    
+
     else if (  words[0] == "/pet")
     {
         const char *errorMsg = "You must enter the text. e.g /pet [petname,] <follow|stay|dismiss|summon|attack|guard|assist|name|target> <options>";
@@ -601,7 +602,7 @@ const char *psUserCommands::HandleCommand(const char *cmd)
             // Most cases do nothing
             break;
         }
-        
+
 
         psPETCommandMessage cmd(0, command, target.GetData(), options.GetData());
         msgqueue->SendMessage(cmd.msg);
@@ -645,7 +646,7 @@ const char *psUserCommands::HandleCommand(const char *cmd)
         // The window will be shown when the server responds back with the game layout.
         return NULL;
     }
-    
+
     else if (words[0] == "/attack")
     {
         AskToSlayBeforeSending(new psUserCmdMessage(cmd));
@@ -675,20 +676,20 @@ const char *psUserCommands::HandleCommand(const char *cmd)
             quantity = 1;
             itemName = words.GetTail(1);
         }
-        else 
+        else
         {
             itemName = words.GetTail(2);
         }
         psCmdDropMessage cmddrop(quantity, itemName);
         msgqueue->SendMessage(cmddrop.msg);
     }
-    
+
     else
     {
         psUserCmdMessage cmdmsg(cmd);
         msgqueue->SendMessage(cmdmsg.msg);
     }
-    
+
     return NULL;  // don't display anything here
 }
 
@@ -709,9 +710,9 @@ void psUserCommands::UpdateTarget(SearchDirection searchDirection,
     psCelClient* cel = psengine->GetCelClient();
 
     GEMClientObject* myEntity = cel->GetMainPlayer();
-    
-    
-    csRef<iMeshWrapper> myMesh = myEntity->GetMesh();        
+
+
+    csRef<iMeshWrapper> myMesh = myEntity->GetMesh();
     iMovable* myMov = myMesh->GetMovable();
     csVector3 myPos = myMov->GetPosition();
 
@@ -726,17 +727,17 @@ void psUserCommands::UpdateTarget(SearchDirection searchDirection,
     else
     {
         seDistance = (searchDirection == SEARCH_FORWARD) ? 0 : FLT_MAX;
-    }        
+    }
 
     float max_range = NEARBY_TARGET_MAX_RANGE;
-  
+
     if (entityType == PSENTITYTYPE_ITEM)
     {
        max_range = RANGE_TO_SELECT;
     }
 
-    csArray<GEMClientObject*> entities = cel->FindNearbyEntities(myMov->GetSectors()->Get(0), 
-                                                                 myPos, 
+    csArray<GEMClientObject*> entities = cel->FindNearbyEntities(myMov->GetSectors()->Get(0),
+                                                                 myPos,
                                                                  max_range);
 
     // Best entity is the next entity in a search.
@@ -750,23 +751,23 @@ void psUserCommands::UpdateTarget(SearchDirection searchDirection,
 
     // Iterate through the entity list looking for the nearest one.
     size_t entityCount = entities.GetSize();
-    
+
     for (size_t i = 0; i < entityCount; ++i)
     {
         GEMClientObject* object = entities[i];
-                
+
         GEMClientObject* other = ( startingEntity == NULL ) ? NULL : startingEntity;
-        
+
         if (object == myEntity || object == other)
         {
             continue;
-        }            
+        }
 
         CS_ASSERT( object );
-        
+
         // Skip if it's not the type of entity we're looking for.
         int eType = object->GetType();
-        
+
         if ((entityType == PSENTITYTYPE_PLAYER_CHARACTER && eType < 0)
             || (entityType == PSENTITYTYPE_NON_PLAYER_CHARACTER && (eType >= 0 || eType == -2))
             || (entityType == PSENTITYTYPE_ITEM && eType != -2))
@@ -804,7 +805,7 @@ void psUserCommands::UpdateTarget(SearchDirection searchDirection,
         if (dist < 0)
         {
             continue;
-        }            
+        }
 
         // Update best entity.
         if (dist < bestDistance)
@@ -813,7 +814,7 @@ void psUserCommands::UpdateTarget(SearchDirection searchDirection,
             bestDistance = dist;
         }
     }
-    
+
     return psengine->GetCharManager()->SetTarget((bestObject == startingEntity) ? loopObject : bestObject,"select");
 }
 
@@ -824,20 +825,20 @@ GEMClientObject* psUserCommands::FindEntityWithName(const char *name)
     psCelClient* cel = psengine->GetCelClient();
 
     GEMClientObject* myEntity = cel->GetMainPlayer();
-    csRef<iMeshWrapper> myMesh = myEntity->GetMesh();        
+    csRef<iMeshWrapper> myMesh = myEntity->GetMesh();
     iMovable* myMov = myMesh->GetMovable();
     csVector3 myPos = myMov->GetPosition();
 
-    
-    
+
+
     // Find all entities within a certain radius.
-    csArray<GEMClientObject*> entities = cel->FindNearbyEntities(myMov->GetSectors()->Get(0), 
-                                                                 myPos, 
+    csArray<GEMClientObject*> entities = cel->FindNearbyEntities(myMov->GetSectors()->Get(0),
+                                                                 myPos,
                                                                  NEARBY_TARGET_MAX_RANGE);
-        
+
     // Iterate through the entity list looking for one with the right name.
     size_t entityCount = entities.GetSize();
-    
+
     for (size_t i = 0; i < entityCount; ++i)
     {
         // Get the next entity, skip if it's me or the starting entity.
