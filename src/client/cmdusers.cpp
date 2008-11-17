@@ -66,8 +66,6 @@ psUserCommands::psUserCommands(MsgHandler* mh,CmdHandler *ch,iObjectRegistry* ob
 
     cmdsource->Subscribe("/who",this);       // list players on server
     cmdsource->Subscribe("/buddy",this);     // add named player to buddy list
-    cmdsource->Subscribe("/notbuddy",this);  // remove named player from buddy list
-    cmdsource->Subscribe("/buddylist",this); // display current buddy list
     cmdsource->Subscribe("/roll",this);
     cmdsource->Subscribe("/pos",this);
     //cmdsource->Subscribe("/spawn",this);
@@ -130,8 +128,6 @@ psUserCommands::~psUserCommands()
 
     cmdsource->Unsubscribe("/who",                   this);
     cmdsource->Unsubscribe("/buddy",                 this);
-    cmdsource->Unsubscribe("/notbuddy",              this);
-    cmdsource->Unsubscribe("/buddylist",             this);
     cmdsource->Unsubscribe("/roll",                  this);
     cmdsource->Unsubscribe("/pos",                   this);
     //cmdsource->Unsubscribe("/spawn",               this);
@@ -343,13 +339,21 @@ const char *psUserCommands::HandleCommand(const char *cmd)
         psGUIMerchantMessage exchange(psGUIMerchantMessage::REQUEST,buff);
         msgqueue->SendMessage(exchange.msg);
     }
-    else if ( words[0] == "/buddylist" )
+    else if ( words[0] == "/buddy" )
     {
-        pawsWidget* window     = PawsManager::GetSingleton().FindWidget("BuddyWindow");
-        if ( !window )
-            return "Buddy List Not Found";
-        else
-            window->Show();
+        if (words.GetCount() < 2) //if there were no arguments open the buddy window
+        {
+            pawsWidget* window     = PawsManager::GetSingleton().FindWidget("BuddyWindow");
+            if ( !window )
+                return "Buddy List Not Found";
+            else
+                window->Show();
+        }
+        else //else send the data to the server for parsing
+        {
+            psUserCmdMessage cmdmsg(cmd);
+            msgqueue->SendMessage(cmdmsg.msg);
+        }
     }
     else if (words[0] == "/buy")
     {
@@ -390,11 +394,11 @@ const char *psUserCommands::HandleCommand(const char *cmd)
             window->Show();
         else //If the player provided a name apply the setting
         {
-            if (words[2] == "on")       //The player provided an on so set ignore
+            if (words[2] == "add")         //The player provided an on so set ignore
                 onoff = true;
-            else if (words[2] == "off") //The player provided an off so unset ignore
+            else if (words[2] == "remove") //The player provided an off so unset ignore
                 onoff = false;
-            else                        //The player didn't provide anything so toggle the option
+            else                           //The player didn't provide anything so toggle the option
                 toggle = true;
 
             csString person(words[1]);

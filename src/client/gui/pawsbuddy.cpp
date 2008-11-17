@@ -86,7 +86,7 @@ void pawsBuddyWindow::OnListAction( pawsListBox* widget, int status )
 void pawsBuddyWindow::Show()
 {
     pawsControlledWindow::Show();
-    psUserCmdMessage cmdmsg("/buddylist");
+    psUserCmdMessage cmdmsg("/buddy");
     psengine->GetMsgHandler()->SendMessage(cmdmsg.msg); 
 }
 
@@ -235,14 +235,14 @@ void pawsBuddyWindow::OnStringEntered(const char *name,int param,const char *val
             return;
         }
         csString command;
-        command.Format("/buddy %s", value);
+        command.Format("/buddy %s add", value);
         psengine->GetCmdHandler()->Execute(command);
         PawsManager::GetSingleton().SetCurrentFocusedWidget(NULL);
     }
     else if (!strcmp(name,"RemoveBuddy"))
     {
         csString command;
-        command.Format("/notbuddy %s", value);
+        command.Format("/buddy %s remove", value);
         psengine->GetCmdHandler()->Execute(command);
         
         currentBuddy.Clear();

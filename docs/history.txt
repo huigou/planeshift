@@ -1,7 +1,12 @@
 ﻿*** 2008-11-17 by Stefano Angeleri
 - Added an additional argument to ignore which allows to force setting it as active or not,
-  if not provided it will toggle it's status. now ignore has this command /ignore player [on|off]
+  if not provided it will toggle it's status. now ignore has this command /ignore player [add|remove]
 - Some typo fixes in adminmanager
+- Inverted the evaluation of some data in order to put the most frequent ones as first in /set
+- Removed /notbuddy and /buddylist and merged all under /buddy. If buddy is called with no
+  arguments it will open the buddy window, if provided with a player name it will toggle the player
+  from the buddy list. if provided with also the add/remove argument it will follow that setting avoiding
+  toggling. The command is /buddy player [add|remove]
 - Updated the help
 
 *** 2008-11-16 by Dave Bentham

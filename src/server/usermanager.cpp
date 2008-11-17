@@ -217,14 +217,6 @@ void UserManager::HandleUserCommand(MsgEntry *me,Client *client)
     {
         Buddy(msg,client,me->clientnum);
     }
-    else if (msg.command == "/notbuddy")
-    {
-        NotBuddy(msg,client, me->clientnum);
-    }
-    else if (msg.command == "/buddylist")
-    {
-        BuddyList(client,me->clientnum, UserManager::ALL_PLAYERS);
-    }
     else if (msg.command == "/roll")
     {
         RollDice(msg,client,me->clientnum);
@@ -1153,98 +1145,87 @@ void UserManager::StrToLowerCase(csString& str)
 
 void UserManager::Buddy(psUserCmdMessage& msg,Client *client,int clientnum)
 {
-    msg.player = NormalizeCharacterName(msg.player);
+    bool onoff = false;  ///< Holds if the player is forcing add (true) or remove
+    bool toggle = false; ///< Holds if the player didn't force add or remove and so we are going to toggle
 
-    if (msg.player.Length() == 0)
+    psCharacter *chardata=client->GetCharacterData();
+
+    if (chardata==NULL)
     {
-        psserver->SendSystemError(clientnum,"The character name of your buddy must be specified.");
+        Error3("Client for account '%s' attempted to manage buddy '%s' but has no character data!",client->GetName(),msg.player.GetData());
         return;
     }
-    if (client->GetCharacterData()==NULL)
+
+    if (msg.player.Length() == 0) //if no imput was provided other than the command send the buddylist
     {
-        Error3("Client for account '%s' attempted to add buddy '%s' but has no character data!",client->GetName(),msg.player.GetData());
+        BuddyList(client,clientnum, UserManager::ALL_PLAYERS);
         return;
     }
 
+    msg.player = NormalizeCharacterName(msg.player); 
 
-    PID selfid=client->GetCharacterData()->GetPID();
+    PID selfid = chardata->GetPID();
+
+    if (msg.action == "add")         //The player provided an add so add the buddy
+        onoff = true;
+    else if (msg.action == "remove") //The player provided an remove so remove the buddy
+        onoff = false;
+    else                              //The player didn't provide anything so toggle the buddy
+        toggle = true;
 
     bool excludeNPCs = true;
     PID buddyid = psServer::CharacterLoader.FindCharacterID(msg.player.GetData(), excludeNPCs);
 
-    if (buddyid==0)
+    if (!buddyid.IsValid()) //Check the buddy was found
     {
         psserver->SendSystemError(clientnum,"Could not add buddy: Character '%s' not found.", msg.player.GetData());
         return;
     }
-
-    if ( !client->GetCharacterData()->AddBuddy( buddyid, msg.player ) )
+    
+    //If the player used add or didn't provide arguments and the buddy is missing from the list add it
+    if((onoff && !toggle)|| (toggle && !chardata->IsBuddy(buddyid))) 
     {
-        psserver->SendSystemError(clientnum,"%s could not be added to buddy list.",(const char *)msg.player);
-        return;
+        if ( !chardata->AddBuddy( buddyid, msg.player ) )
+        {
+            psserver->SendSystemError(clientnum,"%s could not be added to buddy list.",(const char *)msg.player);
+            return;
+        }
+
+        Client* buddyClient = clients->FindPlayer( buddyid );
+        if ( buddyClient && buddyClient->IsReady() )
+        {
+            buddyClient->GetCharacterData()->BuddyOf( selfid );
+        }
+
+        if (!psserver->AddBuddy(selfid,buddyid))
+        {
+            psserver->SendSystemError(clientnum,"%s is already on your buddy list.",(const char *)msg.player);
+            return;
+        }
+
+        psserver->SendSystemInfo(clientnum,"%s has been added to your buddy list.",(const char *)msg.player);
     }
-
-    Client* buddyClient = clients->FindPlayer( buddyid );
-    if ( buddyClient && buddyClient->IsReady() )
+    else //If the player used remove or the buddy was found in the player list remove it from there
     {
-        buddyClient->GetCharacterData()->BuddyOf( selfid );
-    }
+        chardata->RemoveBuddy( buddyid );
+        Client* buddyClient = clients->FindPlayer( buddyid );
+        if ( buddyClient )
+        {
+            psCharacter* buddyChar = buddyClient->GetCharacterData();
+            if (buddyChar)
+                buddyChar->NotBuddyOf( selfid );
+        }
 
-
-
-    if (!psserver->AddBuddy(selfid,buddyid))
-    {
-        psserver->SendSystemError(clientnum,"%s is already on your buddy list.",(const char *)msg.player);
-        return;
+        if (!psserver->RemoveBuddy(selfid,buddyid))
+        {
+            psserver->SendSystemError(clientnum,"%s is not on your buddy list.",(const char *)msg.player);
+            return;
+        }
+        
+        psserver->SendSystemInfo(clientnum,"%s has been removed from your buddy list.",(const char *)msg.player);
     }
 
     BuddyList( client, clientnum, true );
-
-    psserver->SendSystemInfo(clientnum,"%s has been added to your buddy list.",(const char *)msg.player);
-}
-
-
-void UserManager::NotBuddy(psUserCmdMessage& msg,Client *client,int clientnum)
-{
-    msg.player = NormalizeCharacterName(msg.player);
-
-    if (msg.player.Length() == 0)
-    {
-        psserver->SendSystemError(clientnum,"The character name of your buddy must be specified.");
-        return;
-    }
-    if (client->GetCharacterData()==NULL)
-    {
-        Error3("Client for account '%s' attempted to remove buddy '%s' but has no character data!",client->GetName(),msg.player.GetData());
-        return;
-    }
-    PID selfid = client->GetCharacterData()->GetPID();
-
-    bool searchNPCs = false;
-    PID buddyid = psServer::CharacterLoader.FindCharacterID(msg.player.GetData(), searchNPCs);
-    if (buddyid==0)
-    {
-        psserver->SendSystemError(clientnum,"Could not remove buddy: Character '%s' not found.", msg.player.GetData());
-        return;
-    }
-
-    client->GetCharacterData()->RemoveBuddy( buddyid );
-    Client* buddyClient = clients->FindPlayer( buddyid );
-    if ( buddyClient )
-    {
-        psCharacter* buddyChar = buddyClient->GetCharacterData();
-        if (buddyChar)
-            buddyChar->NotBuddyOf( selfid );
-    }
-
-    if (!psserver->RemoveBuddy(selfid,buddyid))
-    {
-        psserver->SendSystemError(clientnum,"%s is not on your buddy list.",(const char *)msg.player);
-        return;
-    }
-    BuddyList( client, clientnum, true );
-
-    psserver->SendSystemInfo(clientnum,"%s has been removed from your buddy list.",(const char *)msg.player);
 }
 
 void UserManager::BuddyList(Client *client,int clientnum,bool filter)

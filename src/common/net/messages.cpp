@@ -1237,17 +1237,18 @@ psUserCmdMessage::psUserCmdMessage(MsgEntry *message)
     level = 0;
 
     WordArray words(message->GetStr());
-
+    
     command = words[0];
 
-    if (command == "/who" || command == "/buddylist")
+    if (command == "/who")
     {
         filter = words[1];
         return;
     }
-    if (command == "/buddy" || command == "/notbuddy")
+    if (command == "/buddy")
     {
-        player = words[1];
+        player = words[1]; //Holds the name of the player we are going to add/remove from the buddy list
+        action = words[2]; //Holds if the player asked explictly to add or remove a buddy
         return;
     }
     if ( command == "/pos" )
@@ -1347,13 +1348,12 @@ csString psUserCmdMessage::ToString(AccessPointers * /*access_ptrs*/)
     csString msgtext;
 
     msgtext.AppendFmt("Command: '%s'", command.GetDataSafe());
-    if (command == "/who" || command == "/buddylist")
+    if (command == "/who")
     {
         msgtext.AppendFmt("Filter: '%s'", filter.GetDataSafe());
         return msgtext;
     }
-    if (command == "/buddy" || command == "/notbuddy" ||
-            command == "/pos" || command == "/assist")
+    if (command == "/buddy" || command == "/pos" || command == "/assist")
     {
         msgtext.AppendFmt("Player: '%s'", player.GetDataSafe());
         return msgtext;
