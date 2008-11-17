@@ -11,6 +11,9 @@
   from the buddy list. if provided with also the add/remove argument it will follow that setting avoiding
   toggling. The command is /buddy player [add|remove]
 - Updated the help
+- Fixed helms not appearing on login/morph
+- Fixed zodiacs.xml months to compare with sql data
+- Removed some useless \n which looked bad and fixed some comments
 
 *** 2008-11-16 by Dave Bentham
 - Basic rules for mini-games added: gameboards.gameRules field in DB holds string defining
