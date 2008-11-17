@@ -54,7 +54,7 @@ class gemObject;
 enum Rule_PlayerTurn
 {
     RELAXED,
-    STRICT
+    ORDERED
 };
 enum Rule_MovePieceType
 {

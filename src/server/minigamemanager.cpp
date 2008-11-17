@@ -504,9 +504,9 @@ bool psMiniGameBoardDef::DetermineGameRules(csString rulesXMLstr, csString name)
                         // PlayerTurns can be 'Strict' (order of players' moves enforced)
                         // or 'Relaxed' (default - free for all).
                         csString playerTurnsVal (rulesNode->GetAttributeValue("PlayerTurns"));
-                        if (playerTurnsVal.Downcase() == "strict")
+                        if (playerTurnsVal.Downcase() == "ordered")
                         {
-                            playerTurnRule = STRICT;
+                            playerTurnRule = ORDERED;
                         }   
                         else if (!playerTurnsVal.IsEmpty() && playerTurnsVal.Downcase() != "relaxed")
                         {
@@ -708,7 +708,7 @@ bool psMiniGameSession::Load(csString &responseString)
     }
 
     // intialise player to move first, if appropriate
-    if (gameBoard.GetPlayerTurnRule() == STRICT)
+    if (gameBoard.GetPlayerTurnRule() == ORDERED)
         nextPlayerToMove = 1;
 
     return true;

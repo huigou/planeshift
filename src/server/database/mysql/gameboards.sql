@@ -30,4 +30,4 @@ CREATE TABLE gameboards
 #
 INSERT INTO `gameboards` VALUES ('Test Game', 6, 6, 'FF00FFF0000F000000000000F0000FFF00FF', '123456789ABCDE', 2, 'White,Checked', '');
 INSERT INTO `gameboards` VALUES ('Test Game 2', 6, 6, 'FF00FFF0000F000000000000F0000FFF00FF', '123456789ABCDE', 1, 'White,Checked', '');
-INSERT INTO `gameboards` VALUES ('Tic Tac Toe', 3, 3, '000000000', '12', 2, 'White,Plain', '<GameRules><Rules PlayerTurns=\"Strict\" MoveType=\"PlaceOnly\" MoveTo=\"Vacancy\" /></GameRules>');
+INSERT INTO `gameboards` VALUES ('Tic Tac Toe', 3, 3, '000000000', '12', 2, 'White,Plain', '<GameRules><Rules PlayerTurns=\"Ordered\" MoveType=\"PlaceOnly\" MoveTo=\"Vacancy\" /></GameRules>');
