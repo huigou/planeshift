@@ -3039,6 +3039,18 @@ void psCharacter::NotBuddyOf(PID buddyID)
     buddyOfList.Delete( buddyID );
 }
 
+bool psCharacter::IsBuddy(PID buddyID)
+{
+    for ( size_t x = 0; x < buddyList.GetSize(); x++ )
+    {
+        if ( buddyList[x].playerID == buddyID )
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
 bool psCharacter::AddBuddy(PID buddyID, csString & buddyName)
 {
     // Cannot addself to buddy list

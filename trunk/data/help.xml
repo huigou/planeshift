@@ -20,11 +20,11 @@ Talk to your group privately.  This is good when your group is farther than 10 m
         <topic name="/guild">/guild message
 
 Talk to everyone in your guild privately.  Only guild members in the same guild as you can see what you write.</topic>
-        <topic name="/ignore">/ignore player [on|off]
+        <topic name="/ignore">/ignore player [add|remove]
 
 Ignores all communication from the target player in the Chat Window.  Use this if people are rude to you and there is no GM around to kick them.
 You can use the same command to remove a player from your ignore list.
-If you provide an on or off flag it will try to set the ignore status accordly and won't toggle it.
+If you provide an add or remove flag it will try to set the ignore status accordly and won't toggle it.
 If no player name is provided it will show the ignore window.</topic>
         <topic name="/introduce">/introduce
 
@@ -73,9 +73,10 @@ sessions, if you are an advisor, lists all the advice sessions currently assigne
 
 Select a banker npc and use this command to access your bank account, either personal or guild. The money tab will allow you to deposit, withdraw and exchange your coins.
 Move your mouse over each number to get a tooltip explaining what it means.</topic>
-        <topic name="/buddy">/buddy player
+        <topic name="/buddy">/buddy [player] [add|remove]
 
-Adds the named player to your buddy list.  You are automatically notified when people from your buddy list go online/offline, and it is easy to send them tells from the Buddy window.</topic>
+Adds/remove the named player to/from your buddy list.  You are automatically notified when people from your buddy list go online/offline, and it is easy to send them tells from the Buddy window.
+If you don't provide the add/remove argument the player will be added or removed depending if it's already or it isn't in the buddy list</topic>
         <topic name="/buddylist">/buddylist 
 
 Shows your current buddy list in the Buddy window.</topic>

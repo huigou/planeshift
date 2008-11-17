@@ -169,27 +169,15 @@ protected:
       */
     void StrToLowerCase(csString& str);
 
-    /** @brief Adds a person to a player's buddy list.
+    /** @brief Adds/removes a person to a player's buddy list.
       *
-      * This does a database hit to add to the buddy table.
+      * This does a database hit to add/remove to the buddy table.
       *
       * @param msg The incomming user command message.
       * @param client The client that request the /buddy.
       * @param clientnum The client id number of the requesting client.
       */
     void Buddy(psUserCmdMessage& msg,Client *client,int clientnum);
-
-    /** @brief Removes a person to a player's buddy list.
-      *
-      * This does a database hit to remove from the buddy table.
-      *
-      * @param msg The incomming user command message.
-      * @param client The client that request the /notbuddy.
-      * @param clientnum The client id number of the requesting client.
-      */
-    void NotBuddy(psUserCmdMessage& msg,Client *client,int clientnum);
-
-
 
     enum
     {

@@ -772,7 +772,23 @@ public:
     void SetRaceInfo(psRaceInfo *rinfo);
     psRaceInfo *GetRaceInfo() { return raceinfo; }
 
+    /** @brief Remove the player with a certain Player ID from this character buddy list
+     *
+     *  @param buddyID the Player ID which we are going to remove from the character buddy list
+     */
     void RemoveBuddy(PID buddyID);
+
+    /** @brief Checks if a playerID is a buddy of this character
+     *
+     *  @param buddyID the Player ID of which we are checking the presence in the character buddy list
+     *  @return  true if the provided PID was found in this character.
+     */
+    bool IsBuddy(PID buddyID);
+
+    /** @brief Add the player with a certain Player ID to this character buddy list
+     *
+     *  @param buddyID the Player ID which we are going to add to the character buddy list
+     */
     bool AddBuddy(PID buddyID, csString & name);
 
     void BuddyOf(PID buddyID);
