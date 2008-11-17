@@ -2068,7 +2068,7 @@ void AdminManager::SetAttrib(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData&
                                                 (actor->instantcast)?"on":"off");
         return;
     }
-    else if (data.attribute == "invinciblity" || data.attribute == "invincible")
+    else if (data.attribute == "invincibility" || data.attribute == "invincible")
     {
         if (toggle)
         {
@@ -2080,7 +2080,7 @@ void AdminManager::SetAttrib(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData&
         else
             actor->SetInvincibility(onoff);
     }
-    else if (data.attribute == "invisiblity" || data.attribute == "invisible")
+    else if (data.attribute == "invisibility" || data.attribute == "invisible")
     {
         if (toggle)
         {
