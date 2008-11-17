@@ -1,4 +1,10 @@
-﻿*** 2008-11-16 by Dave Bentham
+﻿*** 2008-11-17 by Stefano Angeleri
+- Added an additional argument to ignore which allows to force setting it as active or not,
+  if not provided it will toggle it's status. now ignore has this command /ignore player [on|off]
+- Some typo fixes in adminmanager
+- Updated the help
+
+*** 2008-11-16 by Dave Bentham
 - Basic rules for mini-games added: gameboards.gameRules field in DB holds string defining
   simple rules in XML. gameboards.sql file has some notes on the format.
 - DB Version Bumped.

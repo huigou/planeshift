@@ -379,23 +379,43 @@ const char *psUserCommands::HandleCommand(const char *cmd)
 
     else if (words[0] == "/ignore")
     {
+        bool onoff = false;
+        bool toggle = false;
+
         pawsIgnoreWindow* window     = (pawsIgnoreWindow*) PawsManager::GetSingleton().FindWidget("IgnoreWindow");
         if ( !window )
             return "Ignore Window Not Found";
 
-        if (words.GetCount() < 2) //if the player didn't provide arguments just open the ignore window
+        if (words.GetCount() < 2) //If the player didn't provide arguments just open the ignore window
             window->Show();
-        else //if the player provided a name toogle it's ignore status
+        else //If the player provided a name apply the setting
         {
+            if (words[2] == "on")       //The player provided an on so set ignore
+                onoff = true;
+            else if (words[2] == "off") //The player provided an off so unset ignore
+                onoff = false;
+            else                        //The player didn't provide anything so toggle the option
+                toggle = true;
+
             csString person(words[1]);
             //normalize the name
             person.Downcase();
             person.SetAt(0,toupper(person.GetAt(0)));
 
-            if (window->IsIgnored(person))
-                window->RemoveIgnore(person);
+            if(toggle) //No options were sent so toggle the option
+            {
+                if (window->IsIgnored(person)) //If the person is ignored...
+                    window->RemoveIgnore(person); //Remove his/her ignore status
+                else
+                    window->AddIgnore(person);//else add the person to the ignore list
+            }
             else
-                window->AddIgnore(person);
+            {
+                if(onoff) //The player requested explictly to add the ignore
+                    window->AddIgnore(person);
+                else if(window->IsIgnored(person)) //the player requested explictly to remove the ignore
+                    window->RemoveIgnore(person);
+            }
         }
     }
 
