@@ -321,8 +321,8 @@ void psCharAppearance::ApplyEquipment(csString& equipment)
         csString partMesh = equipNode->GetAttributeValue("partMesh");
         csString texture = equipNode->GetAttributeValue( "texture" );
         
-        // If this is a head item check for helm replacement
-        if ( slot == "head" )
+        // If this is a helm item check for helm replacement
+        if ( slot == "helm" )
         {
             psString result(mesh);                        
             result.ReplaceAllSubString("$H",helmGroup);                                                    
@@ -344,7 +344,7 @@ void psCharAppearance::Equip( csString& slotname,
                              )
 { 
     
-    if ( slotname == "head" )
+    if ( slotname == "helm" )
     {
         ShowHair(false);
     }
@@ -390,7 +390,7 @@ bool psCharAppearance::Dequip(csString& slotname,
                               csString& subMesh,
                               csString& texture)
 {  
-    if ( slotname == "head" )
+    if ( slotname == "helm" )
     {
          ShowHair(true);
     }

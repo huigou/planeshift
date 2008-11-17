@@ -1168,15 +1168,15 @@ void UserManager::Buddy(psUserCmdMessage& msg,Client *client,int clientnum)
 
     if (msg.action == "add")         //The player provided an add so add the buddy
         onoff = true;
-    else if (msg.action == "remove") //The player provided an remove so remove the buddy
+    else if (msg.action == "remove") //The player provided a remove so remove the buddy
         onoff = false;
-    else                              //The player didn't provide anything so toggle the buddy
+    else                              //The player didn't provide either so toggle the buddy
         toggle = true;
 
     bool excludeNPCs = true;
     PID buddyid = psServer::CharacterLoader.FindCharacterID(msg.player.GetData(), excludeNPCs);
 
-    if (!buddyid.IsValid()) //Check the buddy was found
+    if (!buddyid.IsValid()) //Check if the buddy was found
     {
         psserver->SendSystemError(clientnum,"Could not add buddy: Character '%s' not found.", msg.player.GetData());
         return;

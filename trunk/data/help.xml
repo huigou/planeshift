@@ -20,7 +20,7 @@ Talk to your group privately.  This is good when your group is farther than 10 m
         <topic name="/guild">/guild message
 
 Talk to everyone in your guild privately.  Only guild members in the same guild as you can see what you write.</topic>
-        <topic name="/ignore">/ignore player [add|remove]
+        <topic name="/ignore">/ignore [player] [add|remove]
 
 Ignores all communication from the target player in the Chat Window.  Use this if people are rude to you and there is no GM around to kick them.
 You can use the same command to remove a player from your ignore list.
