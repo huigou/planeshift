@@ -1,4 +1,7 @@
-﻿*** 2008-11-17 by Keith Fulton
+﻿*** 2008-11-18 by Stefano Angeleri
+- Committed a fix by Lanarel for FS#2485
+
+*** 2008-11-17 by Keith Fulton
 - Now initial triggers also work, not just ones with prior responses.  Multiple
   initial triggers in different quest scripts are merged into a single menu for the
   named NPC.  The menu is activated by the "talk" command on the NPC context menu now.

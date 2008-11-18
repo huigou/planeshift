@@ -2347,8 +2347,13 @@ bool psWorkManager::LoadLocalVars(Client* client, gemObject *target)
 // Check to see if client can do any trade work
 bool psWorkManager::ValidateWork()
 {
+    if ( worker->GetMode() == PSCHARACTER_MODE_WORK)
+    {
+        psserver->SendSystemInfo(clientNum,"You can not practice your trade when working." );
+        return false;
+    }    
     // Check if not in normal mode
-    if ( worker->GetMode() == PSCHARACTER_MODE_COMBAT)
+    else if ( worker->GetMode() == PSCHARACTER_MODE_COMBAT)
     {
         psserver->SendSystemInfo(clientNum,"You can not practice your trade during combat." );
         return false;
