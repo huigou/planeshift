@@ -345,6 +345,7 @@ bool pawsInteractWindow::OnButtonPressed( int mouseButton, int keyModifier, paws
         case INTERACT_NPCTALK: //speak to NPCs
         {
             psengine->GetCmdHandler()->Execute("/npcmenu");
+			Hide();
             return true;
         }
         case INTERACT_VIEWSTATS: //Request Viewing of Stats of PET
