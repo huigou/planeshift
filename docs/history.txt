@@ -1,4 +1,10 @@
-﻿*** 2008-11-17 by Dave Bentham
+﻿*** 2008-11-17 by Keith Fulton
+- Now initial triggers also work, not just ones with prior responses.  Multiple
+  initial triggers in different quest scripts are merged into a single menu for the
+  named NPC.  The menu is activated by the "talk" command on the NPC context menu now.
+  "Talk" to the Merchant in npcroom to see a demo.
+
+*** 2008-11-17 by Dave Bentham
 - Fixed a MSVC definition conflict from Minigame rule commit.
 
 *** 2008-11-17 by Stefano Angeleri
