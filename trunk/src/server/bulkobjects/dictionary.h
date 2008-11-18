@@ -49,6 +49,7 @@ class NpcTerm;
 class NpcTriggerGroupEntry;
 class NpcTrigger;
 class NpcResponse;
+class NpcDialogMenu;
 class psSkillInfo;
 class gemNPC;
 class gemActor;
@@ -69,7 +70,11 @@ protected:
     csHash<NpcTrigger>                 trigger_by_id;
     BinaryRBTree<NpcResponse>          responses;
     BinaryRBTree<csString>             disallowed_words;
-    int dynamic_id;
+
+	/// This is a storage area for popup menus parsed during quest loading, which is done before NPCs are spawned.
+	csHash<NpcDialogMenu*,csString>    initial_popup_menus;
+    
+	int dynamic_id;
 
     bool LoadSynonyms(iDataConnection *db);
     bool LoadTriggerGroups(iDataConnection *db);
@@ -139,6 +144,12 @@ public:
                     int trigger_response);
 
     void DeleteTriggerResponse(NpcTrigger * trigger, int responseId);
+
+	/// Find a stored initial trigger menu with the specified NPC name
+	NpcDialogMenu *FindMenu(const char *name);
+
+	/// Store an initial trigger menu with the specified NPC name
+	void AddMenu(const char *name, NpcDialogMenu *menu);
 
     /**
      * Dump the entire dictionary
@@ -297,9 +308,11 @@ protected:
 		csString trigger;
 	};
 
-	csArray<DialogTrigger> triggers;
 	unsigned int counter; // ID counter
+
 public:
+
+	csArray<DialogTrigger> triggers;
 
 	NpcDialogMenu();
 

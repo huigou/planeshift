@@ -279,6 +279,11 @@ protected:
       */
     void GiveMOTD(int id);
 
+    /** @brief Handles a player command to show the popup dialog menu of the currently targeted NPC, if any.
+      *
+      * @param client The client that issued the command.
+      */
+	void ShowNpcMenu(Client *client);
 
     /** @brief Handles a player command to start training with targeted entity.
       *

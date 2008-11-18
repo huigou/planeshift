@@ -1271,6 +1271,7 @@ psUserCmdMessage::psUserCmdMessage(MsgEntry *message)
          command == "/challenge" ||
          command == "/yield" ||
          command == "/admin" ||
+         command == "/npcmenu" ||
          command == "/listemotes" ||
          command == "/sit" ||
          command == "/stand")

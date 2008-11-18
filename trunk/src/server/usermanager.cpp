@@ -310,6 +310,10 @@ void UserManager::HandleUserCommand(MsgEntry *me,Client *client)
     {
         YieldDuel(client);
     }
+	else if (msg.command == "/npcmenu")
+	{
+		ShowNpcMenu(client);
+	}
     else if ( msg.command == "/die" )
     {
         gemActor* actor = client->GetActor();
@@ -2061,6 +2065,19 @@ void UserManager::GiveMOTD(int id)
     psserver->SendSystemInfo(id,psserver->GetMOTD());
 }
 
+
+void UserManager::ShowNpcMenu(Client *client)
+{
+	gemNPC *npc = dynamic_cast<gemNPC*> ( client->GetTargetObject() );
+	if (npc)
+	{
+		npc->ShowPopupMenu(client);
+	}
+	else
+	{
+		psserver->SendSystemError(client->GetClientNum(), "You must select an NPC first.");
+	}
+}
 
 void UserManager::ChallengeToDuel(psUserCmdMessage& msg,Client *client)
 {

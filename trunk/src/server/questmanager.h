@@ -85,6 +85,7 @@ protected:
                              csString& him, csString& her, csString& it, csString& them, csString& file_path);
     bool         AddTrigger(csString& current_npc,const char *trigger,
                             int prior_response_id,int trig_response, psQuest* quest, const psString& postfix);
+	void		 MergeTriggerMenus(NpcDialogMenu *pending_menu, const csString& current_npc);
 
     void GetNextScriptLine(psString& scr, csString& block, size_t& start, int& line_number);
     bool PrependPrerequisites(csString &substep_requireop, 

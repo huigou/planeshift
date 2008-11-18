@@ -3530,6 +3530,16 @@ void gemNPC::ReactToPlayerApproach(psNPCCommandsMessage::PerceptionType type,gem
     }
 }
 
+void gemNPC::ShowPopupMenu(Client *client)
+{
+	NpcDialogMenu *menu = dict->FindMenu( GetName() );
+
+	if (menu)
+		menu->ShowMenu(client);
+	else
+		psserver->SendSystemError(client->GetClientNum(), "This NPC has nothing to say to you.");
+}
+
 csString gemNPC::GetDefaultBehavior(const csString & dfltBehaviors)
 {
     int behNum;
