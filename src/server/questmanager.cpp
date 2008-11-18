@@ -523,7 +523,7 @@ int QuestManager::ParseQuestScript(int quest_id, const char *script)
     psQuest *mainQuest = CacheManager::GetSingleton().GetQuestByID(quest_id);
     psQuest *quest = mainQuest; // Substep is main step until substep is defined.
     int line_number = 0;
-
+	NpcDialogMenu *pending_menu = NULL;
 
     if (!mainQuest && quest_id > 0)
     {
@@ -562,12 +562,6 @@ int QuestManager::ParseQuestScript(int quest_id, const char *script)
         }
 		else if (!strncasecmp(block,"Menu:",5))  // Menu: is an nice way of represention the various P: triggers
         {
-			if( last_response == NULL )
-			{
-				Error1( "Menu without previous response - dialog menus as dialog starters are not supported" );
-				return line_number;
-			}
-
 			NpcDialogMenu *menu = new NpcDialogMenu();
 
 			if (!BuildMenu(block, pending_triggers, menu))
@@ -579,7 +573,10 @@ int QuestManager::ParseQuestScript(int quest_id, const char *script)
                 return line_number;
             }
 
-			last_response->menu = menu;
+			if (last_response)  // popup is part of a dialog chain
+				last_response->menu = menu;
+			else
+				pending_menu = menu;  // save for when we know the npc
         }
         else if (strchr(block,':')) // text response 
         {
@@ -593,6 +590,11 @@ int QuestManager::ParseQuestScript(int quest_id, const char *script)
             {
                 current_npc = npc_name;
                 next_to_last_response_id = last_response_id = -1;  // When you switch NPCs, the prior responses must be reset also.
+				if (pending_menu)
+				{
+					dict->AddMenu(current_npc, pending_menu);
+					pending_menu = NULL;
+				}
             }
             if (!GetResponseText(block,response_text,file_path,him,her,it,them))
             {
@@ -1004,6 +1006,10 @@ bool QuestManager::AddTrigger(csString& current_npc,const char *trigger,int prio
 }
 
 
+
+
+
+
 void QuestManager::HandleMessage(MsgEntry *me,Client *who)
 {
     if (me->GetType() == MSGTYPE_QUESTINFO)
@@ -1173,3 +1179,4 @@ bool QuestManager::Complete(psQuest *quest, Client *who)
     }
     return true;
 }
+

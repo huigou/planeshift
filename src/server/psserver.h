@@ -510,6 +510,7 @@ public:
     csRef<GroupManager>             groupmanager;
     UserManager*                    usermanager;
     ExchangeManager*                exchangemanager;
+    EntityManager*                  entitymanager;
     csRef<iVFS>                     vfs;
 
 protected:
@@ -517,7 +518,6 @@ protected:
     ServerConsole*                  serverconsole;
     CacheManager*                   cachemanager;
     NetManager*                     netmanager;
-    EntityManager*                  entitymanager;
     AdminManager*                   adminmanager;
     psDatabase*                     database;
     psServerCharManager*            charmanager;

@@ -119,7 +119,7 @@ psUserCommands::psUserCommands(MsgHandler* mh,CmdHandler *ch,iObjectRegistry* ob
     cmdsource->Subscribe("/bank", this);
     cmdsource->Subscribe("/introduce", this);
     cmdsource->Subscribe("/drop", this);
-
+    cmdsource->Subscribe("/npcmenu", this);
 }
 
 psUserCommands::~psUserCommands()
@@ -148,16 +148,16 @@ psUserCommands::~psUserCommands()
     cmdsource->Unsubscribe("/away",                  this);
     cmdsource->Unsubscribe("/loot",                  this);
     cmdsource->Unsubscribe("/clear",                 this);
-    cmdsource->Unsubscribe("/advisor",           this);
-    cmdsource->Unsubscribe("/help",               this);
+    cmdsource->Unsubscribe("/advisor",               this);
+    cmdsource->Unsubscribe("/help",                  this);
     cmdsource->Unsubscribe("/advice",                this);
     cmdsource->Unsubscribe("/train",                 this);
     //cmdsource->Unsubscribe("/quests",              this);
     cmdsource->Unsubscribe("/use",                   this);
     cmdsource->Unsubscribe("/dig",                   this);
-    cmdsource->Unsubscribe("/fish",               this);
+    cmdsource->Unsubscribe("/fish",                  this);
     cmdsource->Unsubscribe("/target",                this);
-    cmdsource->Unsubscribe("/targetcontext",        this);
+    cmdsource->Unsubscribe("/targetcontext",         this);
     cmdsource->Unsubscribe("/tip",                   this);
     cmdsource->Unsubscribe("/motd",                  this);
     cmdsource->Unsubscribe("/challenge",             this);
@@ -181,6 +181,7 @@ psUserCommands::~psUserCommands()
     cmdsource->Unsubscribe("/bank",                  this);
     cmdsource->Unsubscribe("/introduce",             this);
     cmdsource->Unsubscribe("/drop",                  this);
+    cmdsource->Unsubscribe("/npcmenu",               this);
 
 
 
@@ -289,7 +290,6 @@ const char *psUserCommands::HandleCommand(const char *cmd)
 
         return NULL;
     }
-
     else if (words[0] == "/equip" || (words[0] == "/use" && words.GetCount() > 1))
     {
         if ( words.GetCount() < 2 )
@@ -688,7 +688,6 @@ const char *psUserCommands::HandleCommand(const char *cmd)
         msgqueue->SendMessage(cmdmsg.msg);
         psengine->GetCharControl()->GetMovementManager()->StopAllMovement();
     }
-
     else if (words[0] == "/drop")
     {
         if (words.GetCount() < 3)
@@ -739,7 +738,6 @@ const char *psUserCommands::HandleCommand(const char *cmd)
         psCmdDropMessage cmddrop(quantity, itemName, any, guard);
         msgqueue->SendMessage(cmddrop.msg);
     }
-
     else
     {
         psUserCmdMessage cmdmsg(cmd);

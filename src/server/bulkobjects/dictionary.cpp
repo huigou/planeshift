@@ -789,6 +789,31 @@ NpcTrigger *NPCDialogDict::AddTrigger(const char *k_area,const char *mytrigger,i
     }
 }
 
+NpcDialogMenu *NPCDialogDict::FindMenu(const char *name)
+{
+	return initial_popup_menus.Get(csString(name),0);
+}
+
+void NPCDialogDict::AddMenu(const char *name, NpcDialogMenu *menu)
+{
+	NpcDialogMenu *found = FindMenu(name);
+	if (found)  // merge with existing
+	{
+		// We already have a menu, so we just need to append the new dialog onto this one
+		for (size_t i=0; i<menu->triggers.GetSize(); i++)
+		{
+			printf("--->Merging %s into existing menu.\n", menu->triggers[i].formatted.GetDataSafe());
+			found->AddTrigger(menu->triggers[i].formatted, menu->triggers[i].trigger);
+		}
+		delete menu;  // delete here if we don't keep it above
+	}
+	else // add a new menu
+	{
+		initial_popup_menus.PutUnique(csString(name),menu);
+	}
+}
+
+
 void PrintTrigger(NpcTrigger * trig)
 {
     CPrintf(CON_CMDOUTPUT ,"Trigger [%d] %s : \"%-60.60s\" %8d /",

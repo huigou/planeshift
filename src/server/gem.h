@@ -845,6 +845,7 @@ public:
 };
 
 //-----------------------------------------------------------------------------
+class NpcDialogMenu;
 
 class gemNPC : public gemActor
 {
@@ -880,6 +881,8 @@ protected:
 
     csPDelArray<DialogCounter> badText;
 
+	NpcDialogMenu *initial_triggers;
+
 public:
     gemNPC(psCharacter *chardata, const char* factname,const char* filename,
            unsigned int myInstance,iSector* room,const csVector3& pos,float rotangle,int clientnum);
@@ -904,9 +907,8 @@ public:
     Client *GetRandomLootClient(int range);
 
     /// Used to allow a NPC to communicate to its environment
-    /// void NPCTalk(const csString & text);
-
     void Say(const char *strsay,Client *who,bool saypublic,csTicks& timeDelay);
+
     void AddBadText(const char *playerSaid,const char *trigger);
     void GetBadText(size_t first,size_t last, csStringArray& saidArray, csStringArray& trigArray);
 
@@ -915,6 +917,7 @@ public:
 
     virtual void SendBehaviorMessage(const csString & str, gemObject *obj);
     virtual csString GetDefaultBehavior(const csString & dfltBehaviors);
+	void ShowPopupMenu(Client *client);
 
     virtual void SetTarget(gemObject* target)
     {

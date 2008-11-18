@@ -344,17 +344,7 @@ bool pawsInteractWindow::OnButtonPressed( int mouseButton, int keyModifier, paws
         }
         case INTERACT_NPCTALK: //speak to NPCs
         {
-            chatWindow = (pawsChatWindow*)PawsManager::GetSingleton().FindWidget("ChatWindow");
-            if (!chatWindow)
-                return false;
-            Hide();
-            
-            if (!chatWindow->IsVisible())//If the window is not visible, open it.
-                chatWindow->Show();
-            PawsManager::GetSingleton().SetCurrentFocusedWidget( chatWindow );//Put focus on the chat
-            BringToTop(chatWindow);
-            chatWindow->NpcChat(); //Select the chat tab and give focus to input text.
-            
+            psengine->GetCmdHandler()->Execute("/npcmenu");
             return true;
         }
         case INTERACT_VIEWSTATS: //Request Viewing of Stats of PET

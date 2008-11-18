@@ -23,6 +23,7 @@ CREATE TABLE quest_scripts (
 # Quest: "Rescue the Princess"
 #
 INSERT INTO quest_scripts VALUES("1","1","P:give me quest
+Menu: Is there anyone you need saving?
 
 Merchant: Congratulations! You get to save the princess now.[Merchant bows to $playername.]I wish you luck.[As he finishes talking, you notice clouds darkening on the horizon...]
 
@@ -31,6 +32,7 @@ Assign Quest
 ...
 
 P: done
+Menu: Ok she is safe on Yavin 4 now.
 
 M: OMG you did it!  I can\'t believe it.
 
@@ -42,6 +44,7 @@ Give Mug or Steel Falchion or Claymore
 # Quest: "Sandwich Quest"
 #
 INSERT INTO quest_scripts VALUES("2","2","P: can bring you
+Menu: Is there anything I can bring you?
 
 Merchant: I'm kinda hungry.. bring me a sandwich and hurry if you want a hexa and a mug for your trouble.(/planeshift/data/voice/merchant/clawatit.wav)
 
