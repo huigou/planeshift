@@ -83,23 +83,23 @@ class gemMesh;
 /** Helper class to attach a PlaneShift gem object to a particular mesh.
   */
 class psGemServerMeshAttach : public scfImplementationExt1<psGemServerMeshAttach,
-                                                           csObject, 
+                                                           csObject,
                                                            scfFakeInterface<psGemServerMeshAttach> >
 {
 public:
     SCF_INTERFACE(psGemServerMeshAttach, 0, 0, 1);
 
-    /** Setup this helper with the object we want to attach with.
-     * @param object  The gemObject we want to attach to a mesh.
+    /** @brief Setup this helper with the object we want to attach with.
+     *  @param object  The gemObject we want to attach to a mesh.
      */
     psGemServerMeshAttach(gemObject* object);
 
-    /** Get the gemObject that the mesh has attached.
+    /** @brief Get the gemObject that the mesh has attached.
      */
     gemObject* GetObject() { return object; }
 
 private:
-    gemObject* object;          ///< The object that is attached to a iMeshWrapper object. 
+    gemObject* object;          ///< The object that is attached to a iMeshWrapper object.
 };
 
 //-----------------------------------------------------------------------------
@@ -114,32 +114,35 @@ public:
     psDatabase             *database;                       ///< The main PlaneShift database object.
     NPCManager             *npcmanager;                     ///< NPC controller.
 
-    /** Create a new singleton of the GEM Supervisor object.
+    /** @brief Create a new singleton of the GEM Supervisor object.
       * @param objreg The Crystal Space Object Registry.
       * @param db The main PlaneShift database.
       */
     GEMSupervisor(iObjectRegistry *objreg, psDatabase *db);
 
-    /** Destroy this singleton.
-     * This will only be ever called on a server shutdown.
+    /** @brief Destroy this singleton.
+     *
+     *  This will only be ever called on a server shutdown.
      */
     virtual ~GEMSupervisor();
 
-    /** Get a hash of all the current entities on the server.
-     * @return a csHash of all the gemObjects.
+    /** @brief Get a hash of all the current entities on the server.
+     *
+     *  @return a csHash of all the gemObjects.
      */
     csHash<gemObject*, EID> & GetAllGEMS() { return entities_by_eid; }
 
     // Search functions
-    /** Find an entity ID for an item.
-     * @param item The psItem that we want to find the entity ID for.
+    /** @brief Find an entity ID for an item.
      *
-     * @return the EID of that item if it was found. 0 if no id could be found.
+     *  @param item The psItem that we want to find the entity ID for.
+     *
+     *  @return the EID of that item if it was found. 0 if no id could be found.
      */
     EID        FindItemID(psItem *item);
     gemObject *FindObject(EID cel_id);
     gemObject *FindObject(const csString& name);
-    
+
 
     gemActor  *FindPlayerEntity(PID player_id);
     gemNPC    *FindNPCEntity(PID npc_id);
@@ -151,9 +154,9 @@ public:
     void RemoveActorEntity(gemActor *actor);
     void AddItemEntity(gemItem *item);
     void RemoveItemEntity(gemItem *item);
-    
+
     void RemoveClientFromLootables(int cnum);
-        
+
     void UpdateAllDR();
     void UpdateAllStats();
 
@@ -162,7 +165,8 @@ public:
     void FillNPCList(MsgEntry *msg, AccountID superclientID);
     void StopAllNPCs(AccountID superclientID);
 
-    /** Gets a list of all the 'live' entities that this player has ownership of.
+    /** @brief Gets a list of all the 'live' entities that this player has ownership of.
+      *
       * This can be things like items in containers or work items.
       *
       * @param playerID The character owner ID we are looking for.
@@ -170,7 +174,7 @@ public:
       */
     void GetPlayerObjects(PID playerID, csArray<gemObject*> &list);
 
-    /** Teleport a player to a location.
+    /** @brief Teleport a player to a location.
      *
      *  @param object The player to move
      *  @param x,y,z  Location to move to
@@ -178,61 +182,65 @@ public:
      *  @param sector The sector name to move to.
      */
     void Teleport( gemObject* object, float x, float y, float z, float rot, const char* sectorname );
- 
+
     void HandleMessage(MsgEntry *me, Client *client);
 
-   
-    /** Attach a server gemObject to a Crystal Space object.
+
+   /** @brief Attach a server gemObject to a Crystal Space object.
+     *
      * In most cases this will be a mesh wrapper.
      *
      * @param object The Crystal Space object we want to attach our gemObject to.
      * @param gobject The PlaneShift object that we want to attach.
-     */ 
+     */
     void AttachObject( iObject* object, gemObject* gobject);
 
 
-    /** Unattach a gemObject from a Crystal Space object.
+    /** @brief Unattach a gemObject from a Crystal Space object.
+      *
       * In most cases the Crystal Space object is a meshwrapper.
       *
       * @param object The Crystal Space object we want to unattach our client object from.
       * @param gobject The gem object we want to unattach.
       */
-    void UnattachObject( iObject* object, gemObject* gobject); 
+    void UnattachObject( iObject* object, gemObject* gobject);
 
 
-    /** See if there is a gemObject attached to a given Crystal Space object.
-      * 
+    /** @brief See if there is a gemObject attached to a given Crystal Space object.
+      *
       * @param object The Cyrstal Space object we want to see if there is an object attached to.
       *
       * @return A gemObject if it exists that is attached to the Crystal Space object.
       */
     gemObject* FindAttachedObject (iObject* object);
-    
-    
-    /** Create a list of all nearby gem objects.
+
+
+    /** @brief Create a list of all nearby gem objects.
+      *
       * @param sector The sector to check in.
       * @param pos The starting position
       * @param radius The distance around the starting point to check.
-      * @param doInvisible If true check invisible meshes otherwise ignore them.     
+      * @param doInvisible If true check invisible meshes otherwise ignore them.
       *
       * @return A csArray<> of all the objects in the given radius.
       */
     csArray<gemObject*> FindNearbyEntities (iSector* sector, const csVector3& pos, float radius, bool doInvisible = false);
 
 protected:
-    /** Get the next ID for an object.
+    /** @brief Get the next ID for an object.
+      *
       * @return The next ID available that can be assigned to an object.
       */
-    EID GetNextID();    
+    EID GetNextID();
 
     csHash<gemObject*, EID> entities_by_eid; ///< A list of all the entities stored by EID (entity/gem ID).
     csHash<gemItem*>        items_by_uid;    ///< A list of all the items stored by UID (psItem ID).
     csHash<gemActor*,  PID> actors_by_pid;   ///< A list of all the actors stored by PID (player/character ID).
 
-    int                 count_players;                      ///< Total Number of players
+    int                 count_players;       ///< Total Number of players
 
-    uint32              nextEID;                            ///< The next ID available for an object.
-    
+    uint32              nextEID;             ///< The next ID available for an object.
+
 };
 
 //-----------------------------------------------------------------------------
@@ -267,12 +275,12 @@ public:
     uint32 GetClientID();
 
     virtual const char* GetObjectType() { return "Object"; }
-    
+
     virtual psItem *GetItem() { return NULL; }
     virtual gemActor* GetActorPtr() { return NULL; }
     virtual gemNPC* GetNPCPtr()  { return NULL; }
     virtual gemPet* GetPetPtr() { return NULL; }
-    
+
     virtual psCharacter *GetCharacterData() { return NULL; }
     virtual Client* GetClient() const { return NULL; }
 
@@ -317,10 +325,10 @@ public:
 
     virtual void SendBehaviorMessage(const csString & str, gemObject *obj);
     virtual csString GetDefaultBehavior(const csString & dfltBehaviors);
-    /** Dump debug in formation. Used in the com_print function
+    /** Dump debug information. Used in the com_print function
      */
     virtual void Dump();
-    
+
     // Networking functions
     virtual void Broadcast(int clientnum, bool control);
     virtual void Send( int clientnum, bool control, bool to_superclient) {}
@@ -349,28 +357,28 @@ public:
     virtual bool SeesObject(gemObject * object, float range) { return false; }
 
     virtual gemObject* GetOwner() { return NULL; }
-    
+
 protected:
-    bool valid;                             // Is object fully loaded
-//    csRef<gemObjectSafe> self_reference;    // Placeholder for ref 1 of saferef
+    bool valid;                                 ///< Is object fully loaded
+//  csRef<gemObjectSafe> self_reference;        ///< Placeholder for ref 1 of saferef
 
-    gemMesh* pcmesh;                        ///< link to mesh class
-    ProximityList *proxlist;                // Proximity List for this object
-    csString name;                          // Name of this object, used mostly for debugging
-    static GEMSupervisor *cel;              // Static ptr back to main collection of all objects
-    INSTANCE_ID worldInstance;              // Only objects which match instances can see each other
-    csVector3 pos;                          // Position in 3d space
-    float yRot;                             // Left-Right rotation, in radians
-    iSector *sector;                        // Ptr to the CS sector inhabited
-    bool is_alive;                          // Flag indicating whether object is alive or not
-    csString factname;                      // Name of CS Mesh Factory used to create this object
-    csString filename;                      // VFS Filename of mesh
-    EID eid;                                // Entity ID (unique identifier for object)
+    gemMesh* pcmesh;                            ///< link to mesh class
+    ProximityList *proxlist;                    ///< Proximity List for this object
+    csString name;                              ///< Name of this object, used mostly for debugging
+    static GEMSupervisor *cel;                  ///< Static ptr back to main collection of all objects
+    INSTANCE_ID worldInstance;                  ///< Only objects which match instances can see each other
+    csVector3 pos;                              ///< Position in 3d space
+    float yRot;                                 ///< Left-Right rotation, in radians
+    iSector *sector;                            ///< Ptr to the CS sector inhabited
+    bool is_alive;                              ///< Flag indicating whether object is alive or not
+    csString factname;                          ///< Name of CS Mesh Factory used to create this object
+    csString filename;                          ///< VFS Filename of mesh
+    EID eid;                                    ///< Entity ID (unique identifier for object)
 
-    csArray<iDeleteObjectCallback*> receivers;  // List of objects which are to be notified when this object is deleted.
+    csArray<iDeleteObjectCallback*> receivers;  ///< List of objects which are to be notified when this object is deleted.
 
-    float prox_distance_desired;        // What is the maximum range of proxlist we want
-    float prox_distance_current;        // What is the current actual range for proxlists (they adjust when the # of objects gets too high)
+    float prox_distance_desired;                ///< What is the maximum range of proxlist we want
+    float prox_distance_current;                ///< What is the current actual range for proxlists (they adjust when the # of objects gets too high)
 
     bool InitProximityList(float radius,int clientnum);
 
@@ -400,7 +408,7 @@ public:
 
     virtual void Broadcast(int clientnum, bool control);
     virtual void Send( int clientnum, bool control, bool to_superclient) { }
-    
+
     virtual void SendBehaviorMessage(const csString & str, gemObject *obj);
     virtual csString GetDefaultBehavior(const csString & dfltBehaviors);
 
@@ -478,8 +486,9 @@ public:
     bool CanAdd(unsigned short amountToAdd, psItem *item, int slot=-1);
     bool AddToContainer(psItem *item,Client *fromClient, int slot=-1) { return AddToContainer(item, fromClient, slot, false); }
     bool RemoveFromContainer(psItem *item,Client *fromClient);
-    
-    /** Checks if client is allowed to remove an item from the container.
+
+    /** @brief Checks if client is allowed to remove an item from the container.
+      *
       * @param client A pointer to the client viewing the container
       * @param item  Item being viewed or taken
       *
@@ -487,14 +496,15 @@ public:
       */
     bool CanTake(Client *client, psItem* item);
 
-    /** Remove an item from the container.
+    /** @brief Remove an item from the container.
+      *
       * @param itemStack A pointer to the complete stack of the items we are looking at.
       * @param fromslot  Where in the container the items are removed from.
-      * @param fromClient The client that is removing the items. 
+      * @param fromClient The client that is removing the items.
       * @param stackCount The amount of items we want to remove.
       *
       * @return An item pointer that is the removed items from container.  If itemStack == the item returned
-      *         then the entire stack has been removed.  Otherwise it will be a new item instance. 
+      *         then the entire stack has been removed.  Otherwise it will be a new item instance.
       */
     psItem* RemoveFromContainer(psItem *itemStack, int fromSlot, Client *fromClient, int stackCount);
 
@@ -533,7 +543,7 @@ public:
 
     virtual const char* GetObjectType() { return "ActionLocation"; }
     virtual psActionLocation *GetAction() { return action; }
-    
+
     virtual float GetBaseAdvertiseRange();
     virtual bool SeesObject(gemObject * object, float range);
 
@@ -576,7 +586,7 @@ protected:
 
     csWeakRef<Client> clientRef;
 
-    uint8_t DRcounter;  /// increments in loop to prevent out of order packet overwrites of better data
+    uint8_t DRcounter;  ///< increments in loop to prevent out of order packet overwrites of better data
     csTicks lastDR;
     csVector3 lastV;
 
@@ -586,7 +596,7 @@ protected:
     csVector3 lastSentSuperclientPos;
     unsigned int lastSentSuperclientInstance;
 
-    csArray<iDeathCallback*> deathReceivers;  // List of objects which are to be notified when this actor dies.
+    csArray<iDeathCallback*> deathReceivers;  ///< List of objects which are to be notified when this actor dies.
 
     struct DRstate
     {
@@ -615,14 +625,14 @@ protected:
     int securityLevel;
     int masqueradeLevel;
 
-    bool isFalling;         ///< is this object falling down ?
-    csVector3 fallStartPos; ///< the position where the fall began
+    bool isFalling;           ///< is this object falling down ?
+    csVector3 fallStartPos;   ///< the position where the fall began
     iSector* fallStartSector; ///< the sector where the fall began
     csTicks fallStartTime;
 
-    bool invincible;        ///< cannot be attacked
-    bool visible;           ///< is visible to clients ?
-    bool viewAllObjects;    ///< can view invisible objects?
+    bool invincible;          ///< cannot be attacked
+    bool visible;             ///< is visible to clients ?
+    bool viewAllObjects;      ///< can view invisible objects?
 
     csString meshcache;
 
@@ -653,14 +663,14 @@ public:
     virtual gemActor* GetActorPtr() { return this; }
     virtual psCharacter *GetCharacterData() { return psChar; }
     virtual Client* GetClient() const;
-    
+
     virtual PID GetPID() { return pid; }
 
     bool SetupCharData();
 
     void SetTextureParts(const char *parts);
     void SetEquipment(const char *equip);
-    
+
     void SetMode(PSCHARACTER_MODE mode) { psChar->SetMode(mode, GetClientID()); }
     PSCHARACTER_MODE GetMode() { return psChar->GetMode(); }
     bool IsAllowedToMove() { return isAllowedToMove; }  ///< Covers sitting, death, and out-of-stamina
@@ -680,10 +690,12 @@ public:
     void SetLastProductionPos(csVector3& pos) { last_production_pos = pos; }
     void GetLastProductionPos(csVector3& pos) { pos = last_production_pos; }
 
-    /** Returns the place where the player last started digging.
+    /** @brief Returns the place where the player last started digging.
+      *
       * @return The location where the player last started digging. */
     const csVector3& GetProductionStartPos(void) const { return productionStartPos; }
-    /** Sets the place where the player started digging.
+    /** @brief Sets the place where the player started digging.
+      *
       * @param pos The location where the player started digging. */
     void SetProductionStartPos(const csVector3& pos) { productionStartPos = pos; }
 
@@ -788,7 +800,7 @@ public:
 
     virtual bool GetInvincibility() { return invincible; }
     virtual void SetInvincibility(bool invincible);
-    
+
     /// Flag to determine of this player can see all objects
     bool GetViewAllObjects() { return viewAllObjects; }
     void SetViewAllObjects(bool v);
@@ -806,7 +818,7 @@ public:
     /// Get the last reported location this actor was at
     void GetLastLocation(csVector3& pos, float& vel_y, float& yrot, iSector*& sector);
     /// Moves player to his last reported location
-    void MoveToLastPos(); 
+    void MoveToLastPos();
 
     /// Record the location of this actor before he was teleported
     void SetPrevTeleportLocation(const csVector3& pos, float yrot, iSector* sector);
@@ -831,15 +843,15 @@ public:
     csArray<csString> GetActiveMagicCategories() { return active_spell_categories; }
 
     /** These flags are for GM/debug abilities */
-    bool nevertired;        // infinite stamina
-    bool infinitemana;      // infinite mana
-    bool instantcast;       // cast spells instantly
-    bool safefall;          // no fall damage
-    bool questtester;       // no quest lockouts
+    bool nevertired;        ///< infinite stamina
+    bool infinitemana;      ///< infinite mana
+    bool instantcast;       ///< cast spells instantly
+    bool safefall;          ///< no fall damage
+    bool questtester;       ///< no quest lockouts
 
     bool SetMesh(const char* meshname);
     bool ResetMesh() { return SetMesh(meshcache); }
-    
+
     bool GetFiniteInventory() { return GetCharacterData()->Inventory().GetDoRestrictions(); }
     void SetFiniteInventory(bool v) { GetCharacterData()->Inventory().SetDoRestrictions(v); }
 };
@@ -855,9 +867,9 @@ protected:
     csWeakRef<gemObject>  target;
     csWeakRef<gemObject>  owner;
 
-    csTicks nextVeryShortRangeAvail; /// When can npc respond to very short range prox trigger again
-    csTicks nextShortRangeAvail;     /// When can npc respond to short range prox trigger again
-    csTicks nextLongRangeAvail;      /// When can npc respond to long range prox trigger again
+    csTicks nextVeryShortRangeAvail; ///< When can npc respond to very short range prox trigger again
+    csTicks nextShortRangeAvail;     ///< When can npc respond to short range prox trigger again
+    csTicks nextLongRangeAvail;      ///< When can npc respond to long range prox trigger again
 
     /// Array of client id's allowed to loot this char
     csArray<int> lootable_clients;
@@ -881,7 +893,7 @@ protected:
 
     csPDelArray<DialogCounter> badText;
 
-	NpcDialogMenu *initial_triggers;
+    NpcDialogMenu *initial_triggers;
 
 public:
     gemNPC(psCharacter *chardata, const char* factname,const char* filename,
@@ -917,7 +929,7 @@ public:
 
     virtual void SendBehaviorMessage(const csString & str, gemObject *obj);
     virtual csString GetDefaultBehavior(const csString & dfltBehaviors);
-	void ShowPopupMenu(Client *client);
+    void ShowPopupMenu(Client *client);
 
     virtual void SetTarget(gemObject* target)
     {
@@ -953,14 +965,14 @@ class gemPet : public gemNPC
 public:
 
     gemPet(psCharacter *chardata, const char* factname,const char* filename,INSTANCE_ID instance,iSector* room,
-        const csVector3& pos,float rotangle,int clientnum,uint32 id) : gemNPC(chardata,factname,filename,instance,room,pos,rotangle,clientnum) 
+        const csVector3& pos,float rotangle,int clientnum,uint32 id) : gemNPC(chardata,factname,filename,instance,room,pos,rotangle,clientnum)
     {
         this->persistanceLevel = "Temporary";
     };
 
     virtual const char* GetObjectType() { return "PET"; }
     virtual gemPet* GetPetPtr()  { return this; }
-    
+
 
     void SetPersistanceLevel( const char *level )   { this->persistanceLevel = level; };
     const char* SetPersistanceLevel( void )         { return persistanceLevel.GetData(); };
@@ -1011,7 +1023,7 @@ public:
     virtual void DeleteObjectCallback(iDeleteNotificationObject * object)
     {
         SetValid(false); // Prevent the Trigger from beeing called.
-        
+
         if (dependency.IsValid())
         {
             dependency->UnregisterCallback(this);

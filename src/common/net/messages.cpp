@@ -1237,7 +1237,7 @@ psUserCmdMessage::psUserCmdMessage(MsgEntry *message)
     level = 0;
 
     WordArray words(message->GetStr());
-    
+
     command = words[0];
 
     if (command == "/who")
@@ -3215,7 +3215,7 @@ psMsgStringsMessage::psMsgStringsMessage(MsgEntry *message)
 
     // Read the data
     uint32_t length = 0;
-	const void* data = message->GetBufferPointerUnsafe(length);
+    const void* data = message->GetBufferPointerUnsafe(length);
 
     if (message->overrun)
     {
@@ -6528,10 +6528,10 @@ psMGBoardMessage::psMGBoardMessage(MsgEntry *me)
     msgRows = msg->GetInt8();
 
     uint32_t size = 0;
-	msgLayout = (uint8_t *)msg->GetBufferPointerUnsafe(size);
+    msgLayout = (uint8_t *)msg->GetBufferPointerUnsafe(size);
 
     msgNumOfPieces = msg->GetInt8();
-	msgPieces = (uint8_t *)msg->GetBufferPointerUnsafe(size);
+    msgPieces = (uint8_t *)msg->GetBufferPointerUnsafe(size);
 }
 
 bool psMGBoardMessage::IsNewerThan(uint8_t oldCounter)
@@ -6634,7 +6634,7 @@ psMGUpdateMessage::psMGUpdateMessage(MsgEntry *me)
     msgNumUpdates = msg->GetUInt8();
 
     uint32_t size = 0;
-	msgUpdates = (uint8_t *)msg->GetBufferPointerUnsafe(size);
+    msgUpdates = (uint8_t *)msg->GetBufferPointerUnsafe(size);
 }
 
 bool psMGUpdateMessage::IsNewerThan(uint8_t oldCounter)
@@ -7123,97 +7123,97 @@ PSF_IMPLEMENT_MSG_FACTORY(psCachedFileMessage,MSGTYPE_CACHEFILE);
 
 psCachedFileMessage::psCachedFileMessage( uint32_t client, const char *pathname, iDataBuffer *contents)
 {
-	// We send the hash along with it to save as the filename on the client
-	if (pathname[0] == '/')
-	{
-	    hash = csMD5::Encode(pathname).HexString();
-		// printf("Hashed %s to %s.\n", pathname, hash.GetData() );
-	}
-	else
-		hash = pathname;
+    // We send the hash along with it to save as the filename on the client
+    if (pathname[0] == '/')
+    {
+        hash = csMD5::Encode(pathname).HexString();
+        // printf("Hashed %s to %s.\n", pathname, hash.GetData() );
+    }
+    else
+        hash = pathname;
 
-	uint32_t size = contents ? (uint32_t)contents->GetSize() : 0;
+    uint32_t size = contents ? (uint32_t)contents->GetSize() : 0;
     msg.AttachNew(new MsgEntry(hash.Length()+1 + size + sizeof(uint32_t) ));
 
     msg->SetType(MSGTYPE_CACHEFILE);
     msg->clientnum = client;
     msg->Add(hash);
-	if (contents)
-	    msg->Add(contents->GetData(), size);
-	else
-		msg->Add(size);
+    if (contents)
+        msg->Add(contents->GetData(), size);
+    else
+        msg->Add(size);
 }
 
 psCachedFileMessage::psCachedFileMessage( MsgEntry* me )
 {
-	hash = me->GetStr();
-	uint32_t size=0;
-	char *ptr = (char *)me->GetBufferPointerUnsafe(size);
-	if (ptr)
-	{
-		databuf = csPtr<iDataBuffer> (new csDataBuffer (ptr, size, false));
-	}
+    hash = me->GetStr();
+    uint32_t size=0;
+    char *ptr = (char *)me->GetBufferPointerUnsafe(size);
+    if (ptr)
+    {
+        databuf = csPtr<iDataBuffer> (new csDataBuffer (ptr, size, false));
+    }
 }
 
 PSF_IMPLEMENT_MSG_FACTORY(psDialogMenuMessage,MSGTYPE_DIALOG_MENU);
 
 psDialogMenuMessage::psDialogMenuMessage()
 {
-	valid = false;
+    valid = false;
 }
 
 psDialogMenuMessage::psDialogMenuMessage( MsgEntry *me )
 {
-	xml = me->GetStr();
+    xml = me->GetStr();
 }
 
-void psDialogMenuMessage::AddResponse(uint32_t id, const csString& menuText, const csString& triggerText, 
-									  const csString& playerName, const csString& playerRace, const csString& honorific,
-									  const csString& possessive, uint32_t flags)
+void psDialogMenuMessage::AddResponse(uint32_t id, const csString& menuText, const csString& triggerText,
+                                      const csString& playerName, const csString& playerRace, const csString& honorific,
+                                      const csString& possessive, uint32_t flags)
 {
-	psDialogMenuMessage::DialogResponse new_response;
+    psDialogMenuMessage::DialogResponse new_response;
 
-	new_response.id          = id;
-	new_response.menuText    = menuText;
-	new_response.triggerText = triggerText;
-	new_response.flags       = flags;
+    new_response.id          = id;
+    new_response.menuText    = menuText;
+    new_response.triggerText = triggerText;
+    new_response.flags       = flags;
 
-	new_response.menuText.ReplaceAll("$name",playerName);
-	new_response.menuText.ReplaceAll("$race",playerRace);
-	new_response.menuText.ReplaceAll("$sir",honorific);
-	new_response.menuText.ReplaceAll("$his",possessive);
+    new_response.menuText.ReplaceAll("$name",playerName);
+    new_response.menuText.ReplaceAll("$race",playerRace);
+    new_response.menuText.ReplaceAll("$sir",honorific);
+    new_response.menuText.ReplaceAll("$his",possessive);
 
-	responses.Push( new_response );
+    responses.Push( new_response );
 }
 
 void psDialogMenuMessage::BuildMsg(int clientnum)
 {
-	xml = "<dlgmenu><options>";
+    xml = "<dlgmenu><options>";
 
-	for( size_t i = 0; i < responses.GetSize(); i++ )
-	{
-		xml.AppendFmt("<row><text>%d. %s</text>",i+1, responses[i].menuText.GetData() );
-		xml.AppendFmt("<trig>%s</trig></row>",responses[i].triggerText.GetData() );
-	}
-	xml += "</options></dlgmenu>";
+    for( size_t i = 0; i < responses.GetSize(); i++ )
+    {
+        xml.AppendFmt("<row><text>%d. %s</text>",i+1, responses[i].menuText.GetData() );
+        xml.AppendFmt("<trig>%s</trig></row>",responses[i].triggerText.GetData() );
+    }
+    xml += "</options></dlgmenu>";
 
-	msg.AttachNew( new MsgEntry( xml.Length() + 1 ) );
-	msg->SetType( MSGTYPE_DIALOG_MENU );
-	msg->clientnum = clientnum;
+    msg.AttachNew( new MsgEntry( xml.Length() + 1 ) );
+    msg->SetType( MSGTYPE_DIALOG_MENU );
+    msg->clientnum = clientnum;
 
-	msg->Add( xml );
+    msg->Add( xml );
 
-	valid = !(msg->overrun);
+    valid = !(msg->overrun);
 }
 
 csString psDialogMenuMessage::ToString(AccessPointers *access_ptrs)
 {
-	csString text;
-	for( size_t i = 0; i < responses.GetSize(); i++ )
-	{
-		text.AppendFmt( "Menu: (%d) %s -> %s\n",responses[ i ].id,
-			responses[i].menuText.GetDataSafe(), responses[ i ].triggerText.GetDataSafe() );
-	}
+    csString text;
+    for( size_t i = 0; i < responses.GetSize(); i++ )
+    {
+        text.AppendFmt( "Menu: (%d) %s -> %s\n",responses[ i ].id,
+            responses[i].menuText.GetDataSafe(), responses[ i ].triggerText.GetDataSafe() );
+    }
 
-	return text;
+    return text;
 }

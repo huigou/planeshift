@@ -278,7 +278,7 @@ void UserManager::HandleUserCommand(MsgEntry *me,Client *client)
         }
         else if (client->GetActor()->GetMode() == PSCHARACTER_MODE_OVERWEIGHT)
         {
-        	psserver->SendSystemError(client->GetClientNum(), "You can't stand up because you're overloaded!");
+            psserver->SendSystemError(client->GetClientNum(), "You can't stand up because you're overloaded!");
         }
     }
     else if (msg.command == "/starttrading")
@@ -311,10 +311,10 @@ void UserManager::HandleUserCommand(MsgEntry *me,Client *client)
     {
         YieldDuel(client);
     }
-	else if (msg.command == "/npcmenu")
-	{
-		ShowNpcMenu(client);
-	}
+    else if (msg.command == "/npcmenu")
+    {
+        ShowNpcMenu(client);
+    }
     else if ( msg.command == "/die" )
     {
         gemActor* actor = client->GetActor();
@@ -346,7 +346,7 @@ void UserManager::HandleUserCommand(MsgEntry *me,Client *client)
             // Send divorce prompt
             psserver->GetMarriageManager()->ContemplateDivorce(client,  msg.text);
         }
-        else 
+        else
         {
             psserver->SendSystemError( client->GetClientNum(), "Usage: /marriage [propose|divorce]" );
         }
@@ -674,7 +674,7 @@ void UserManager::SendCharacterDescription(Client * client, psCharacter * charDa
 {
     StatSet* playerAttr = client->GetCharacterData()->GetAttributes();
     csString meshName = charData->GetActor()->GetMesh();
-    
+
     bool isSelf = (charData->GetPID() == client->GetCharacterData()->GetPID());
 
     csString charName = charData->GetCharFullName();
@@ -808,7 +808,7 @@ void UserManager::SendCharacterDescription(Client * client, psCharacter * charDa
     }
 
     // Finally send the details message
-    psCharacterDetailsMessage detailmsg(client->GetClientNum(), charName, 
+    psCharacterDetailsMessage detailmsg(client->GetClientNum(), charName,
         (short unsigned int)CacheManager::GetSingleton().GetRaceInfoByMeshName(meshName)->gender, raceName,
         desc, skills, requestor );
     detailmsg.SendMessage();
@@ -879,7 +879,7 @@ void UserManager::HandleEntranceMessage( MsgEntry* me, Client *client )
         return;
     }
 
-    // Check range 
+    // Check range
     csWeakRef<gemObject> gem = client->GetActor();
     csWeakRef<gemObject> gemAction = action->GetGemObject();
     if (gem.IsValid() && gemAction.IsValid() && gem->RangeTo(gemAction, false) > RANGE_TO_SELECT)
@@ -889,7 +889,7 @@ void UserManager::HandleEntranceMessage( MsgEntry* me, Client *client )
     }
 
     // Check for entrance
-    if ( !action->IsEntrance() ) 
+    if ( !action->IsEntrance() )
     {
         if (secure) psserver->SendSystemInfo(client->GetClientNum(),"No <Entrance> tag in action response");
         Error1("No <Entrance> tag in action response");
@@ -919,7 +919,7 @@ void UserManager::HandleEntranceMessage( MsgEntry* me, Client *client )
             return;
         }
 
-        // Check if locked 
+        // Check if locked
         if(item->GetIsLocked())
         {
             if (!client->GetCharacterData()->Inventory().HaveKeyForLock(item->GetUID()))
@@ -966,7 +966,7 @@ void UserManager::HandleEntranceMessage( MsgEntry* me, Client *client )
         }
 
         // Check for return entrance
-        if ( !retAction->IsReturn() ) 
+        if ( !retAction->IsReturn() )
         {
             if (secure) psserver->SendSystemInfo(client->GetClientNum(),"No <Return tag in action response %s",retAction->response.GetData());
             Error2("No <Return tag in action response %s",retAction->response.GetData());
@@ -1098,7 +1098,7 @@ bool UserManager::WhoProcessClient(Client *curr, int guildId, csString* message,
 {
     if (curr->IsSuperClient() || !curr->GetActor())
         return true;
-    
+
     csString temp((size_t) 1024);
     csString playerName(curr->GetName());
     csString guildTitle;
@@ -1171,7 +1171,7 @@ void UserManager::Buddy(psUserCmdMessage& msg,Client *client,int clientnum)
         return;
     }
 
-    msg.player = NormalizeCharacterName(msg.player); 
+    msg.player = NormalizeCharacterName(msg.player);
 
     PID selfid = chardata->GetPID();
 
@@ -1190,9 +1190,9 @@ void UserManager::Buddy(psUserCmdMessage& msg,Client *client,int clientnum)
         psserver->SendSystemError(clientnum,"Could not add buddy: Character '%s' not found.", msg.player.GetData());
         return;
     }
-    
+
     //If the player used add or didn't provide arguments and the buddy is missing from the list add it
-    if((onoff && !toggle)|| (toggle && !chardata->IsBuddy(buddyid))) 
+    if((onoff && !toggle)|| (toggle && !chardata->IsBuddy(buddyid)))
     {
         if ( !chardata->AddBuddy( buddyid, msg.player ) )
         {
@@ -1230,7 +1230,7 @@ void UserManager::Buddy(psUserCmdMessage& msg,Client *client,int clientnum)
             psserver->SendSystemError(clientnum,"%s is not on your buddy list.",(const char *)msg.player);
             return;
         }
-        
+
         psserver->SendSystemInfo(clientnum,"%s has been removed from your buddy list.",(const char *)msg.player);
     }
 
@@ -1296,7 +1296,7 @@ void UserManager::NotifyGuildBuddies(Client * client, bool logged_in)
         {
             psCharacter *notifiedmember = charGuild->members[i]->actor;
             gemActor *notifiedactor = notifiedmember? notifiedmember->GetActor() : NULL;
-            
+
             if(notifiedactor && notifiedmember && (charGuild->members[i]->char_id != char_id))
             {
                 if(notifiedmember->IsGettingGuildNotifications())
@@ -1325,75 +1325,75 @@ void UserManager::RollDice(psUserCmdMessage& msg,Client *client,int clientnum)
         msg.dice = 100;
     if (msg.sides > 10000)
         msg.sides = 10000;
-		if (msg.dtarget > msg.sides)
-				msg.dtarget = msg.sides;
+        if (msg.dtarget > msg.sides)
+                msg.dtarget = msg.sides;
 
     if (msg.dice < 1)
         msg.dice = 1;
     if (msg.sides < 1)
         msg.sides = 1;
-		if (msg.dtarget < 0)
-				msg.dtarget = 0;
+        if (msg.dtarget < 0)
+                msg.dtarget = 0;
 
     for (int i = 0; i<msg.dice; i++)
     {
         // must use msg.sides instead of msg.sides-1 because rand never actually
         // returns max val, and int truncation never results in max val as a result
-				if (msg.dtarget)
-						total += ((psserver->rng->Get(msg.sides) + 1 >= (uint)msg.dtarget)? 1: 0);
-				else
-						total = total + psserver->rng->Get(msg.sides) + 1;
+                if (msg.dtarget)
+                        total += ((psserver->rng->Get(msg.sides) + 1 >= (uint)msg.dtarget)? 1: 0);
+                else
+                        total = total + psserver->rng->Get(msg.sides) + 1;
     }
-		if (msg.dtarget)
-		{
-				if (msg.dice > 1)
-				{
-						psSystemMessage newmsg(clientnum,MSG_INFO_BASE,
-								"Player %s has rolled %d %d-sided dice and had %d of them come up %d or greater.",
-								client->GetName(),
-								msg.dice,
-								msg.sides,
-								total,
-								msg.dtarget);
+        if (msg.dtarget)
+        {
+                if (msg.dice > 1)
+                {
+                        psSystemMessage newmsg(clientnum,MSG_INFO_BASE,
+                                "Player %s has rolled %d %d-sided dice and had %d of them come up %d or greater.",
+                                client->GetName(),
+                                msg.dice,
+                                msg.sides,
+                                total,
+                                msg.dtarget);
 
-						newmsg.Multicast(client->GetActor()->GetMulticastClients(),0, 10);
-				}
-				else
-				{
-						psSystemMessage newmsg(clientnum,MSG_INFO_BASE,((total)?
-								"Player %s has rolled a %d-sided dice and had it come up %d or greater.":
-								"Player %s has rolled a %d-sided dice and had it come up less than %d."),
-								client->GetName(),
-								msg.sides,
-								msg.dtarget);
+                        newmsg.Multicast(client->GetActor()->GetMulticastClients(),0, 10);
+                }
+                else
+                {
+                        psSystemMessage newmsg(clientnum,MSG_INFO_BASE,((total)?
+                                "Player %s has rolled a %d-sided dice and had it come up %d or greater.":
+                                "Player %s has rolled a %d-sided dice and had it come up less than %d."),
+                                client->GetName(),
+                                msg.sides,
+                                msg.dtarget);
 
-						newmsg.Multicast(client->GetActor()->GetMulticastClients(),0, 10);
-				}
-		}
-		else
-		{
-				if (msg.dice > 1)
-				{
-						psSystemMessage newmsg(clientnum,MSG_INFO_BASE,
-								"Player %s has rolled %d %d-sided dice for a %d.",
-								client->GetName(),
-								msg.dice,
-								msg.sides,
-								total);
+                        newmsg.Multicast(client->GetActor()->GetMulticastClients(),0, 10);
+                }
+        }
+        else
+        {
+                if (msg.dice > 1)
+                {
+                        psSystemMessage newmsg(clientnum,MSG_INFO_BASE,
+                                "Player %s has rolled %d %d-sided dice for a %d.",
+                                client->GetName(),
+                                msg.dice,
+                                msg.sides,
+                                total);
 
-						newmsg.Multicast(client->GetActor()->GetMulticastClients(),0, 10);
-				}
-				else
-				{
-						psSystemMessage newmsg(clientnum,MSG_INFO_BASE,
-								"Player %s has rolled a %d-sided die for a %d.",
-								client->GetName(),
-								msg.sides,
-								total);
+                        newmsg.Multicast(client->GetActor()->GetMulticastClients(),0, 10);
+                }
+                else
+                {
+                        psSystemMessage newmsg(clientnum,MSG_INFO_BASE,
+                                "Player %s has rolled a %d-sided die for a %d.",
+                                client->GetName(),
+                                msg.sides,
+                                total);
 
-						newmsg.Multicast(client->GetActor()->GetMulticastClients(),0, 10);
-				}
-		}
+                        newmsg.Multicast(client->GetActor()->GetMulticastClients(),0, 10);
+                }
+        }
 }
 
 
@@ -1692,8 +1692,8 @@ void UserManager::HandleLoot(Client *client)
         psserver->SendSystemError(clientnum,"You don't have a target selected.");
         return;
     }
-    
-    gemNPC *npc = target->GetNPCPtr();    
+
+    gemNPC *npc = target->GetNPCPtr();
     if(!npc)
     {
         gemActor *actor = target->GetActorPtr();
@@ -1758,7 +1758,7 @@ void UserManager::HandleLoot(Client *client)
             psserver->SendSystemError(client->GetClientNum(),"%s has nothing to be looted.",target->GetName() );
         }
 
-        // Split up money among LootableClients in group. 
+        // Split up money among LootableClients in group.
         // These are those clients who were close enough when the NPC was killed.
 
         if (money)
@@ -1808,7 +1808,7 @@ void UserManager::HandleLoot(Client *client)
                             //Normal loot is not shown in yellow. Until that happens, do not do it for few coins
                             //psserver->SendSystemResult(currmember->GetClient()->GetClientNum(), "You have looted %s.", eachstr.GetData());
                             psserver->SendSystemInfo(currmember->GetClient()->GetClientNum(), "You have looted %s.", eachstr.GetData());
-                            
+
                             psLootEvent evt(
                                             chr->GetPID(),
                                             currmember->GetCharacterData()->GetPID(),
@@ -1824,8 +1824,8 @@ void UserManager::HandleLoot(Client *client)
                             // Something less intrusive for players who were too far away
                             psserver->SendSystemInfo(currmember->GetClient()->GetClientNum(), "You were too far away to loot.");
                         }
-                        
-                        
+
+
                     }
 
                     for(unsigned int i=0; i< closegroupmembers.GetSize(); i++)
@@ -1860,7 +1860,7 @@ void UserManager::HandleLoot(Client *client)
                 loot.SendMessage();
 
                 client->GetCharacterData()->AdjustMoney(m, false);
-                
+
                 psLootEvent evt(
                                chr->GetPID(),
                                client->GetCharacterData()->GetPID(),
@@ -2083,7 +2083,7 @@ void UserManager::HandleGuard(Client *client, csString target, csString action)
                 onoff = false;
             else                           //The player didn't provide anything so toggle the option
                 toggle = true;
-            
+
             if (object && object->GetItem())
             {
                 if(onoff || (toggle && object->GetItem()->GetGuardingCharacterID() == 0))
@@ -2146,15 +2146,15 @@ void UserManager::GiveMOTD(int id)
 
 void UserManager::ShowNpcMenu(Client *client)
 {
-	gemNPC *npc = dynamic_cast<gemNPC*> ( client->GetTargetObject() );
-	if (npc)
-	{
-		npc->ShowPopupMenu(client);
-	}
-	else
-	{
-		psserver->SendSystemError(client->GetClientNum(), "You must select an NPC first.");
-	}
+    gemNPC *npc = dynamic_cast<gemNPC*> ( client->GetTargetObject() );
+    if (npc)
+    {
+        npc->ShowPopupMenu(client);
+    }
+    else
+    {
+        psserver->SendSystemError(client->GetClientNum(), "You must select an NPC first.");
+    }
 }
 
 void UserManager::ChallengeToDuel(psUserCmdMessage& msg,Client *client)

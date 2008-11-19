@@ -2,6 +2,7 @@
 - Committed a first implementation of /guard [target] [on|off]
   it will allow anyone guarding an item to unguard it, gm+ are allowed to unguard other
   people items and to guard items without picking them up
+- Identation/trailing spaces/comment improvement/fixes in various files
 
 *** 2008-11-18 by Stefano Angeleri
 - Committed a fix by Lanarel for FS#2485

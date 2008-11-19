@@ -725,7 +725,7 @@ const char *psUserCommands::HandleCommand(const char *cmd)
                 itemName = words.GetTail(3);
             }
         }
-        else 
+        else
         {
             if(words[2] == "noguard")
             {
