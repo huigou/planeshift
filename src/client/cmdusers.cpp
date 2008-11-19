@@ -80,6 +80,7 @@ psUserCommands::psUserCommands(MsgHandler* mh,CmdHandler *ch,iObjectRegistry* ob
     cmdsource->Subscribe("/sell", this);
     cmdsource->Subscribe("/trade",this);
     cmdsource->Subscribe("/give",this);
+    cmdsource->Subscribe("/guard",this);
     cmdsource->Subscribe("/assist", this);
     cmdsource->Subscribe("/ignore", this);
     cmdsource->Subscribe("/cast", this);
@@ -142,6 +143,7 @@ psUserCommands::~psUserCommands()
     cmdsource->Unsubscribe("/sell",                  this);
     cmdsource->Unsubscribe("/trade",                 this);
     cmdsource->Unsubscribe("/give",                  this);
+    cmdsource->Unsubscribe("/guard",                 this);
     cmdsource->Unsubscribe("/assist",                this);
     cmdsource->Unsubscribe("/ignore",                this);
     cmdsource->Unsubscribe("/cast",                  this);
