@@ -303,6 +303,13 @@ protected:
       */
     void HandlePickup(Client *client, csString target);
 
+    /** @brief Handles a player command to guard/unguard an item.
+      *
+      * @param client The client that issued the command.
+      * @param target description of the item to be guarded/unguarded.
+      */
+    void HandleGuard(Client *client, csString target, csString action);
+
     /** @brief Handles a player request to 'use' the targeted item.
       *
       * @param client The client that issued the command.

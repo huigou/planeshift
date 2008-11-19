@@ -82,6 +82,7 @@
 
 #define RANGE_TO_CHALLENGE 50
 
+//TODO: Implement or reuse adminmanager standard targetting also here
 
 class psUserStatRegeneration : public psGameEvent
 {
@@ -369,6 +370,10 @@ void UserManager::HandleUserCommand(MsgEntry *me,Client *client)
     else if (msg.command == "/pickup")
     {
         HandlePickup(client, msg.target);
+    }
+    else if (msg.command == "/guard")
+    {
+        HandleGuard(client, msg.target, msg.action);
     }
     else
     {
@@ -2048,6 +2053,79 @@ void UserManager::HandlePickup(Client *client, csString target)
     else
         psserver->SendSystemError(client->GetClientNum(),
                 "You can't pickup %s", target.GetData());
+}
+
+void UserManager::HandleGuard(Client *client, csString target, csString action)
+{
+    if (target.StartsWith("area:"))
+    {
+        csArray<csString> filters = DecodeCommandArea(client, target);
+        csArray<csString>::Iterator it(filters.GetIterator());
+        while (it.HasNext()) {
+            HandleGuard(client, it.Next(), action);
+        }
+        return;
+    }
+    else if (target.StartsWith("eid:", true))
+    {
+        gemObject* object= NULL;
+        bool onoff = false;
+        bool toggle = false;
+        GEMSupervisor *gem = GEMSupervisor::GetSingletonPtr();
+        csString eid_str = target.Slice(4);
+        EID eID = EID(strtoul(eid_str.GetDataSafe(), NULL, 10));
+        if (eID.IsValid())
+        {
+            object = gem->FindObject(eID);
+            if (action == "on")         //The player provided an on so set ignore
+                onoff = true;
+            else if (action == "off") //The player provided an off so unset ignore
+                onoff = false;
+            else                           //The player didn't provide anything so toggle the option
+                toggle = true;
+            
+            if (object && object->GetItem())
+            {
+                if(onoff || (toggle && object->GetItem()->GetGuardingCharacterID() == 0))
+                {
+                    if(client->GetSecurityLevel() > 20)
+                    {
+                        object->GetItem()->SetGuardingCharacterID(client->GetPID());
+                        psserver->SendSystemError(client->GetClientNum(), "You have guarded %s", object->GetName());
+                    }
+                    else
+                    {
+                        psserver->SendSystemError(client->GetClientNum(), "You can't guard %s", object->GetName());
+                    }
+                }
+                else
+                {
+                    if(object->GetItem()->GetGuardingCharacterID() == client->GetPID() || client->GetSecurityLevel() > 20)
+                    {
+                        object->GetItem()->SetGuardingCharacterID(0);
+                        psserver->SendSystemError(client->GetClientNum(), "You have unguarded %s", object->GetName());
+                    }
+                    else
+                    {
+                        psserver->SendSystemError(client->GetClientNum(), "You can't unguard %s", object->GetName());
+                    }
+                }
+            }
+            else
+            {
+                psserver->SendSystemError(client->GetClientNum(),
+                                "Item not found.", target.GetData());
+            }
+        }
+    }
+    else if(client->GetTargetObject())
+    {
+        gemObject* object= client->GetTargetObject();
+        HandleGuard(client, object->GetEID().Show(), action);
+    }
+    else
+        psserver->SendSystemError(client->GetClientNum(),
+                "You can't change guard status of %s", target.GetData());
 }
 
 void UserManager::GiveTip(int id)

@@ -1340,6 +1340,12 @@ psUserCmdMessage::psUserCmdMessage(MsgEntry *message)
         target = words.Get(1);
         return;
     }
+    if ( command == "/guard" )
+    {
+        target = words.Get(1);
+        action = words.Get(2);
+        return;
+    }
 
     valid = false;
 }
