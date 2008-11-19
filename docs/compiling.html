@@ -49,8 +49,8 @@ e.custom(start,val,"");}});return true;});},queue:function(type,fn){if(jQuery.is
     var csWinLibsVersionStab = "1.3_004"; // cs win32 libs version.
     var csWinLibsVersion = "1.3_004"; // cs win32 libs version.
     //Update date and author, to be changed everytime and updates occurred
-    var UpdateDate = "8 Nov 2008"; //Date when the update occurred
-    var UpdateAuthor = "Mike Gist"; //Author of the update
+    var UpdateDate = "19 Nov 2008"; //Date when the update occurred
+    var UpdateAuthor = "Steven Patrick"; //Author of the update
 -->
 </script>
 
@@ -1425,8 +1425,13 @@ psclient.exe -cfgset=PlaneShift.UserConfigPath=C:\development\pssettings</div>
     <p>Make sure that your specific 'msvc' folder has the 'read only' box unchecked (right click on the folder
 and select Properties, 'read only' is one of the attributes in the General tab) before continuing.</p>
 
-    <p>Go into the 'Build' menu, and select 'configuration manager'. Change the 'Active Solution Configuration' to 'Release(with DLLs)'.<br>
-    Right click on the solution and select 'Build Solution'. To test the build of CS, run walktest.exe in C:\development\CS.<br>
+    <div class="User">
+    Go into the 'Build' menu, and select 'configuration manager'. Change the 'Active Solution Configuration' to 'Release(with DLLs)'.<br>
+    </div>
+    <div class="Developer">
+    Go into the 'Build' menu, and select 'configuration manager'. Change the 'Active Solution Configuration' to 'Debug(with DLLs)'.<br>
+    </div>
+    <p>Right click on the solution and select 'Build Solution'. To test the build of CS, run walktest.exe in C:\development\CS.<br>
     If you encounter any errors, check you have done everything correctly, and then if the problem persists, you can
     ask for help in the CS IRC channel:<br>
     irc.freenode.net #crystalspace</p>
@@ -1436,7 +1441,12 @@ and select Properties, 'read only' is one of the attributes in the General tab) 
     folder. Under Projects choose "VC++ Directories". In the Show Directories for: choose
     "Library Files". Click the new folder icon to add the following directories:</p>
     <p>
+        <div class="User">
         C:\development\CS\out\releaseX\libs<br>
+        </div>
+        <div class="Developer">
+        C:\development\CS\out\debugX\libs<br>
+        </div>
     </p>
     <p>You have to change X (in the path concerning CS) to these
     values, depending from the version you have of MSVC:</p>
@@ -1465,6 +1475,13 @@ and select Properties, 'read only' is one of the attributes in the General tab) 
     <p>Do the following if you put mysql somewhere else than C:\mysql:<br>
     Right-click plgdbmysql, under properties->linker->general, change the "C:\mysql\lib\opt"
     in Additional Library Directories to whatever your location of mysql is.</p>
+
+    <div class="User">
+    Go into the 'Build' menu, and select 'configuration manager'. Change the 'Active Solution Configuration' to 'Release(with DLLs)'.<br>
+    </div>
+    <div class="Developer">
+    Go into the 'Build' menu, and select 'configuration manager'. Change the 'Active Solution Configuration' to 'Debug(with DLLs)'.<br>
+    </div>
 
     <p>Build solution.</p>
 </div>
