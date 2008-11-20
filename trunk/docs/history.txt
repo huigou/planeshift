@@ -1,4 +1,7 @@
-﻿*** 2008-11-20 by Stefano Angeleri
+﻿*** 2008-11-20 by Mike Gist
+- Bumped cal3d rev to r503.
+
+*** 2008-11-20 by Stefano Angeleri
 - Updates to the help
 
 *** 2008-11-19 by Keith Fulton
