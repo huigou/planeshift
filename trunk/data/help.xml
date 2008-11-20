@@ -76,10 +76,8 @@ Move your mouse over each number to get a tooltip explaining what it means.</top
         <topic name="/buddy">/buddy [player] [add|remove]
 
 Adds/remove the named player to/from your buddy list.  You are automatically notified when people from your buddy list go online/offline, and it is easy to send them tells from the Buddy window.
-If you don't provide the add/remove argument the player will be added or removed depending if it's already or it isn't in the buddy list</topic>
-        <topic name="/buddylist">/buddylist 
-
-Shows your current buddy list in the Buddy window.</topic>
+If you don't provide the add/remove argument the player will be added or removed depending if it's already or it isn't in the buddy list.
+If you don't provide a player name this command will open the buddy window.</topic>
         <topic name="/buy">/buy merchant
 
 Buy from specified merchant.  If no merchant specified, buy from current target.</topic>
@@ -105,12 +103,12 @@ Equips the specified quantity of a certain item.  This is equivalent to equippin
         <topic name="/give">/give 
 
 Give items to current Target NPC.</topic>
+        <topic name="/guard">/guard [target] [off] 
+
+This command allows you to unguard an item actually guarded by you. Most probably you will need to use this command without any parameter after targetting the item you want to unguard.</topic>
         <topic name="/help">/help message
 
 Ask one of the advisors a question.  eg. /help How do I attack something?. Anything you type in the Help channel of the Chat Window will be sent as an advice request automatically.</topic>
-        <topic name="/notbuddy">/notbuddy player
-
-Removes the named player from your buddy list.  Not your friend anymore?  What a shame.</topic>
         <branch name="/pet"> Control your pet(s).
 /pet [petname,] assist
 /pet [petname,] attack
@@ -465,6 +463,10 @@ Use /fog sector off or /fog sector -1 for resetting. </topic>
         <topic name="/giveitem">/giveitem [target] [quantity|'all'|''] [item|tria]
 
 Commands used to transfer an item from you to another character.  Example: "/giveitem Bob Apple"</topic>
+        <topic name="/guard">/guard [target] [off] 
+
+This command allows you to guard or unguard any item in the world. You just have to provide a target (which can be an area, an eid of the currently selected target. If no other parameter is provided it will toggle guard status on the item.
+NOTE: If you make an item guarded you will be the one guarding it.
         <topic name="/impersonate">/impersonate name command message
 
 Talk as if you are 'name'. Command can be say, shout, or worldshout. If you use the keyword 'text' for name it will produce a message similar to /me within the command's range.</topic>
