@@ -466,7 +466,7 @@ Commands used to transfer an item from you to another character.  Example: "/giv
         <topic name="/guard">/guard [target] [off] 
 
 This command allows you to guard or unguard any item in the world. You just have to provide a target (which can be an area, an eid of the currently selected target. If no other parameter is provided it will toggle guard status on the item.
-NOTE: If you make an item guarded you will be the one guarding it.
+NOTE: If you make an item guarded you will be the one guarding it.</topic>
         <topic name="/impersonate">/impersonate name command message
 
 Talk as if you are 'name'. Command can be say, shout, or worldshout. If you use the keyword 'text' for name it will produce a message similar to /me within the command's range.</topic>
