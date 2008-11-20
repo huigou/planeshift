@@ -317,6 +317,7 @@ public:
 	NpcDialogMenu();
 
 	void AddTrigger( const csString &formatted, const csString &trigger );
+	void Add( NpcDialogMenu *add);
 	void ShowMenu( Client *client );
 };
 

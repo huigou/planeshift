@@ -73,6 +73,8 @@ void pawsNpcDialogWindow::HandleMessage( MsgEntry* me )
         psDialogMenuMessage mesg(me);
 
 		printf( "Got psDialogMenuMessage: %s\n", mesg.xml.GetDataSafe() );
+		responseList->Clear();
+
 		SelfPopulateXML(mesg.xml);
 
 		Show();

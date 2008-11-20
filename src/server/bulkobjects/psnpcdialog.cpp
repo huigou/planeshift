@@ -349,7 +349,7 @@ NpcResponse *psNPCDialog::FindResponseWithAllPrior(const char *area,const char *
     bool TestedWithoutLastResponse = false;
 
     //first try with last responses of all assigned quests
-    for (uint q = 0; q < currentClient->GetCharacterData()->GetNumAssignedQuests(); q++)
+    for (size_t q = 0; q < currentClient->GetCharacterData()->GetNumAssignedQuests(); q++)
     {
         lastresponse = currentClient->GetCharacterData()->GetAssignedQuestLastResponse(q);
         if (lastresponse == -1)

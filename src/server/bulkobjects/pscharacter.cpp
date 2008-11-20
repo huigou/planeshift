@@ -2479,9 +2479,9 @@ QuestAssignment *psCharacter::IsQuestAssigned(int id)
     return NULL;
 }
 
-int psCharacter::GetAssignedQuestLastResponse(uint i)
+int psCharacter::GetAssignedQuestLastResponse(size_t i)
 {
-    if ((size_t) i<assigned_quests.GetSize())
+    if (i<assigned_quests.GetSize())
     {
         return assigned_quests[i]->last_response;
     }
@@ -2511,7 +2511,7 @@ bool psCharacter::SetAssignedQuestLastResponse(psQuest *quest, int response)
     for (size_t i=0; i<assigned_quests.GetSize(); i++)
     {
         if (assigned_quests[i]->GetQuest().IsValid() && assigned_quests[i]->GetQuest()->GetID() == id &&
-            assigned_quests[i]->status == PSQUEST_ASSIGNED)
+            assigned_quests[i]->status == PSQUEST_ASSIGNED && !assigned_quests[i]->GetQuest()->GetParentQuest())
         {
             assigned_quests[i]->last_response = response;
             assigned_quests[i]->dirty = true;
@@ -2592,7 +2592,8 @@ QuestAssignment *psCharacter::AssignQuest(psQuest *quest, PID assigner_id)
         q->status = PSQUEST_ASSIGNED;
         q->lockout_end = 0;
         q->assigner_id = assigner_id;
-        q->last_response = this->lastResponse; //This should be the response given when starting this quest
+        //set last response to current response only if this is the top parent
+        q->last_response = quest->GetParentQuest() ? -1 : this->lastResponse;    //This should be the response given when starting this quest
 
         // assign any skipped parent quests
         if (quest->GetParentQuest() && !IsQuestAssigned(quest->GetParentQuest()->GetID()))

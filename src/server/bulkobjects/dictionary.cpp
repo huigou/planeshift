@@ -2391,6 +2391,20 @@ void NpcDialogMenu::AddTrigger(const csString &formatted, const csString &trigge
 	this->triggers.Push( new_trigger );
 }
 
+
+void NpcDialogMenu::Add(NpcDialogMenu *add)
+{
+	if (!add)
+		return;
+
+	for (size_t i=0; i < add->triggers.GetSize(); i++)
+	{
+		printf("Adding '%s' to menu.\n", add->triggers[i].formatted.GetData() );
+		AddTrigger(add->triggers[i].formatted, add->triggers[i].trigger);
+	}
+	printf("Added %d triggers to menu.\n", add->triggers.GetSize() );
+}
+
 void NpcDialogMenu::ShowMenu( Client *client )
 {
 	if( client == NULL )

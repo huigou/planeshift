@@ -817,7 +817,7 @@ public:
     void DiscardQuest(QuestAssignment *q, bool force = false);
     bool SetAssignedQuestLastResponse(psQuest *quest, int response);
     size_t GetNumAssignedQuests() { return assigned_quests.GetSize(); }
-    int GetAssignedQuestLastResponse(uint i);
+    int GetAssignedQuestLastResponse(size_t i);
     /// The last_response given by an npc to this player.
     int GetLastResponse() { return lastResponse; }
     void SetLastResponse(int response) { lastResponse=response; }
@@ -831,7 +831,7 @@ public:
     bool UpdateQuestAssignments(bool force_update = false);
 
     size_t  GetAssignedQuests(psQuestListMessage& quests,int cnum);
-    csArray<QuestAssignment*> GetAssignedQuests() { return assigned_quests; }
+    csArray<QuestAssignment*>& GetAssignedQuests() { return assigned_quests; }
 
     bool CheckQuestAssigned(psQuest *quest);
     bool CheckQuestCompleted(psQuest *quest);

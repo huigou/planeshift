@@ -7615,7 +7615,7 @@ void AdminManager::HandleCompleteQuest(MsgEntry* me,psAdminCmdMessage& msg, Admi
         {
 
 
-            csArray<QuestAssignment*> quests = target->GetCharacterData()->GetAssignedQuests();
+            csArray<QuestAssignment*>& quests = target->GetCharacterData()->GetAssignedQuests();
             for (size_t i = 0; i < quests.GetSize(); i++)
             {
                 QuestAssignment *currassignment = quests.Get(i);
