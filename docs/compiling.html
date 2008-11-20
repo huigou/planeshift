@@ -43,14 +43,14 @@ e.custom(start,val,"");}});return true;});},queue:function(type,fn){if(jQuery.is
     // Standard revisions (CSrev) are the ones that are compatible with Laanx.
     // An additional CS revision (CSrev_HEAD) may be specified for the latest version of PS.
     var CSrev = "31565";  // CS_SOURCE_REV
-    var CAL3Drev = "493"; // CAL3D_SOURCE_REV
+    var CAL3Drev = "507"; // CAL3D_SOURCE_REV
     var CSrev_HEAD = "31565";  // CS_SOURCE_REV_HEAD
     var CAL3Drev_HEAD = "493"; // CAL3D_SOURCE_REV_HEAD
     var csWinLibsVersionStab = "1.3_004"; // cs win32 libs version.
     var csWinLibsVersion = "1.3_004"; // cs win32 libs version.
     //Update date and author, to be changed everytime and updates occurred
-    var UpdateDate = "19 Nov 2008"; //Date when the update occurred
-    var UpdateAuthor = "Steven Patrick"; //Author of the update
+    var UpdateDate = "20 Nov 2008"; //Date when the update occurred
+    var UpdateAuthor = "Caarrie"; //Author of the update
 -->
 </script>
 
@@ -1068,10 +1068,6 @@ If you update a repository, you will need to recompile that repository and each 
         <p>Since cal3d is a library in development we probably don't want to 'install' this one as root since there is a good
         possibility it will change in the future. Instead we will 'install' it into our working directory. This is done
         by using the --prefix option when we configure it.</p>
-        <p></p>If you use gcc 4.3 or newer you will need to fix cal3d sources:
-        Using a text editor open loader.cpp inside the src/cal3d/ directory.</p>
-      <p>  Add<div class="commandBox">#include &lt;memory&gt;</div> in the line after <div class="commandBox">#include "cal3d/buffersource.h"</div></p>
-        Open cal3d_converter.cpp and add <div class="commandBox">#include &lt;string.h&gt;</div> in the line after <div class="commandBox">#include "cal3d/cal3d.h"</div></p>
     <div class="linux-Generic" >
     Using a text editor open configure.in and remove the line
     <p><div class="commandBox">
