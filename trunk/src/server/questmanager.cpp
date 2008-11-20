@@ -584,7 +584,13 @@ int QuestManager::ParseQuestScript(int quest_id, const char *script)
             block.SubString(npc_name,0,block.FindFirst(':'));  // pull out name before colon
             if (current_npc.Find(npc_name) == 0)  // if npc_name is the beginning of the current npc name, then it is a repeat
             {
-                // don't need to do anything
+                // Need to add this trigger menu to the generic menu for this npc if same npc follows a "..."
+   				if (last_response_id == -1 && pending_menu)
+				{
+					dict->AddMenu(current_npc, pending_menu);
+					pending_menu = NULL;
+				}
+
             }
             else // switch NPCs here
             {
@@ -657,6 +663,7 @@ int QuestManager::ParseQuestScript(int quest_id, const char *script)
 
             // This clears out prior responses whether there is a quest or a KA script here
             next_to_last_response_id = last_response_id = -1;
+			last_response = NULL;  // This is used for popup menus
             substep_requireop.Free();
 
             if (mainQuest)

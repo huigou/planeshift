@@ -52,6 +52,7 @@
 #include "bulkobjects/psnpcdialog.h"
 #include "bulkobjects/pscharacter.h"
 #include "bulkobjects/psguildinfo.h"
+#include "bulkobjects/psquest.h"
 
 #include "rpgrules/factions.h"
 
@@ -3532,10 +3533,42 @@ void gemNPC::ReactToPlayerApproach(psNPCCommandsMessage::PerceptionType type,gem
 
 void gemNPC::ShowPopupMenu(Client *client)
 {
-	NpcDialogMenu *menu = dict->FindMenu( GetName() );
+    NpcResponse *resp = NULL;
+	NpcDialogMenu menu;
+	
+    csArray<QuestAssignment*>& quests = client->GetCharacterData()->GetAssignedQuests();
 
-	if (menu)
-		menu->ShowMenu(client);
+	// Merge current spot in active quests first
+	for (size_t i=0; i < quests.GetSize(); i++)
+	{
+		psQuest *q = quests[i]->GetQuest();
+		if (quests[i]->status == 'C')
+		{
+			printf("Skipping completed quest: %s\n", q->GetName() );
+			continue;
+		}
+		printf("Checking quest %d: %s.  ", i, q->GetName() );
+		int last_response = client->GetCharacterData()->GetAssignedQuestLastResponse(i);
+		printf("Got last response %d\n", last_response);
+		
+		if (last_response != -1) // within a quest step
+		{
+			resp = dict->FindResponse(last_response);
+			menu.Add(resp->menu);
+		}
+		else
+		{
+			printf("Got last_response==-1 for quest %d.\n",i);
+		}
+	}
+
+	// Also offer default choices in case a new quest should be started
+	NpcDialogMenu *npcmenu = dict->FindMenu( name );
+	if (npcmenu)
+		menu.Add(npcmenu);
+
+	if (menu.triggers.GetSize())
+		menu.ShowMenu(client);
 	else
 		psserver->SendSystemError(client->GetClientNum(), "This NPC has nothing to say to you.");
 }
