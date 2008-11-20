@@ -799,12 +799,7 @@ void NPCDialogDict::AddMenu(const char *name, NpcDialogMenu *menu)
 	NpcDialogMenu *found = FindMenu(name);
 	if (found)  // merge with existing
 	{
-		// We already have a menu, so we just need to append the new dialog onto this one
-		for (size_t i=0; i<menu->triggers.GetSize(); i++)
-		{
-			printf("--->Merging %s into existing menu.\n", menu->triggers[i].formatted.GetDataSafe());
-			found->AddTrigger(menu->triggers[i].formatted, menu->triggers[i].trigger);
-		}
+        found->Add(menu);
 		delete menu;  // delete here if we don't keep it above
 	}
 	else // add a new menu
@@ -2380,12 +2375,13 @@ NpcDialogMenu::NpcDialogMenu()
 	counter = 0;
 }
 
-void NpcDialogMenu::AddTrigger(const csString &formatted, const csString &trigger)
+void NpcDialogMenu::AddTrigger(const csString &formatted, const csString &trigger, psQuestPrereqOp *script)
 {
 	NpcDialogMenu::DialogTrigger new_trigger;
 
-	new_trigger.formatted = formatted;
-	new_trigger.trigger = trigger;
+	new_trigger.formatted    = formatted;
+	new_trigger.trigger      = trigger;
+    new_trigger.prerequisite = script;
 	new_trigger.triggerID = counter++;
 
 	this->triggers.Push( new_trigger );
@@ -2400,7 +2396,7 @@ void NpcDialogMenu::Add(NpcDialogMenu *add)
 	for (size_t i=0; i < add->triggers.GetSize(); i++)
 	{
 		printf("Adding '%s' to menu.\n", add->triggers[i].formatted.GetData() );
-		AddTrigger(add->triggers[i].formatted, add->triggers[i].trigger);
+		AddTrigger(add->triggers[i].formatted, add->triggers[i].trigger, add->triggers[i].prerequisite);
 	}
 	printf("Added %d triggers to menu.\n", add->triggers.GetSize() );
 }
@@ -2412,15 +2408,59 @@ void NpcDialogMenu::ShowMenu( Client *client )
 
 	psDialogMenuMessage menu;
 
-	for( size_t i = 0; i < counter; i++ )
+	for (size_t i=0; i < counter; i++ )
 	{
-		menu.AddResponse((uint32_t) i, this->triggers[ i ].formatted,
-		                  this->triggers[i].trigger, 
-						  client->GetName(), client->GetActor()->GetCharacterData()->GetRaceInfo()->GetRace(),
-						  client->GetActor()->GetCharacterData()->GetRaceInfo()->GetHonorific(),
-						  client->GetActor()->GetCharacterData()->GetRaceInfo()->GetPossessive() );
+        csString prereq;
+
+        if (triggers[i].prerequisite)
+            prereq = triggers[i].prerequisite->GetScript();
+
+        if (!prereq.IsEmpty())
+        {
+            printf("Item %d Prereq : %s\n",i, prereq.GetDataSafe());
+        }
+        else
+        {
+            printf("Item %d has no prereqs.\n", i);
+        }
+
+        if (triggers[i].prerequisite)
+        {
+            if (!triggers[i].prerequisite->Check(client->GetCharacterData()))
+            {
+                printf("Prereq check failed. Skipping.\n");
+                continue;
+            }
+        }
+
+		menu.AddResponse((uint32_t) i, 
+                          triggers[ i ].formatted,
+		                  triggers[i].trigger, 
+						  client->GetName(), client->GetCharacterData()->GetRaceInfo()->GetRace(),
+						  client->GetCharacterData()->GetRaceInfo()->GetHonorific(),
+						  client->GetCharacterData()->GetRaceInfo()->GetPossessive() );
 	}
 	menu.BuildMsg(client->GetClientNum());
 	
 	menu.SendMessage();
+}
+
+void NpcDialogMenu::SetPrerequisiteScript(psQuestPrereqOp *script)
+{
+    csString prereq;
+
+    if (script)
+        prereq = script->GetScript();
+
+    if (!prereq.IsEmpty())
+    {
+        printf("Setting menu %p to have trigger prereq : %s\n", this, prereq.GetDataSafe());
+    }
+
+    // Each item must have its own prequisite script so they can be different when menus are merged
+    // even though they appear to all be set the same here.
+	for (size_t i=0; i < counter; i++ )
+    {
+        triggers[i].prerequisite = script;
+    }
 }

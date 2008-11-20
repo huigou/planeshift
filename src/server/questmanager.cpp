@@ -524,6 +524,7 @@ int QuestManager::ParseQuestScript(int quest_id, const char *script)
     psQuest *quest = mainQuest; // Substep is main step until substep is defined.
     int line_number = 0;
 	NpcDialogMenu *pending_menu = NULL;
+    NpcDialogMenu *last_menu    = NULL;
 
     if (!mainQuest && quest_id > 0)
     {
@@ -574,9 +575,14 @@ int QuestManager::ParseQuestScript(int quest_id, const char *script)
             }
 
 			if (last_response)  // popup is part of a dialog chain
-				last_response->menu = menu;
+            {
+				last_response->menu = menu;  // attach the menu to the prior response for easy access in chains
+                last_menu = menu;           // save so we can add prerequisites later
+            }
 			else
-				pending_menu = menu;  // save for when we know the npc
+            {
+				pending_menu = menu;  // save for when we know the npc.  cannot attach to anything yet.
+            }
         }
         else if (strchr(block,':')) // text response 
         {
@@ -585,22 +591,22 @@ int QuestManager::ParseQuestScript(int quest_id, const char *script)
             if (current_npc.Find(npc_name) == 0)  // if npc_name is the beginning of the current npc name, then it is a repeat
             {
                 // Need to add this trigger menu to the generic menu for this npc if same npc follows a "..."
-   				if (last_response_id == -1 && pending_menu)
-				{
-					dict->AddMenu(current_npc, pending_menu);
-					pending_menu = NULL;
-				}
+//   				if (last_response_id == -1 && pending_menu)
+//				{
+//					dict->AddMenu(current_npc, pending_menu);
+//					pending_menu = NULL;
+//				}
 
             }
             else // switch NPCs here
             {
                 current_npc = npc_name;
                 next_to_last_response_id = last_response_id = -1;  // When you switch NPCs, the prior responses must be reset also.
-				if (pending_menu)
-				{
-					dict->AddMenu(current_npc, pending_menu);
-					pending_menu = NULL;
-				}
+//   				if (pending_menu)
+//				{
+//					dict->AddMenu(current_npc, pending_menu);
+//					pending_menu = NULL;
+//				}
             }
             if (!GetResponseText(block,response_text,file_path,him,her,it,them))
             {
@@ -639,6 +645,18 @@ int QuestManager::ParseQuestScript(int quest_id, const char *script)
                         lastError.Format("PrependPrerequistes failed on line %d", line_number);
                         return line_number;
                     }
+                }
+				if (pending_menu)
+				{
+                    // Now go back to the previous menu
+                    pending_menu->SetPrerequisiteScript( last_response->GetPrerequisiteScript() );
+					dict->AddMenu(current_npc, pending_menu);
+					pending_menu = NULL;
+				}
+                else if (last_menu)
+                {
+                    last_menu->SetPrerequisiteScript( last_response->GetPrerequisiteScript() );
+                    last_menu = NULL;
                 }
             }
             else

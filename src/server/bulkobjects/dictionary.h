@@ -306,6 +306,7 @@ protected:
 		unsigned int triggerID;
 		csString formatted;
 		csString trigger;
+        csRef<psQuestPrereqOp> prerequisite;
 	};
 
 	unsigned int counter; // ID counter
@@ -316,9 +317,10 @@ public:
 
 	NpcDialogMenu();
 
-	void AddTrigger( const csString &formatted, const csString &trigger );
+	void AddTrigger( const csString &formatted, const csString &trigger, psQuestPrereqOp *script=NULL );
 	void Add( NpcDialogMenu *add);
 	void ShowMenu( Client *client );
+    void SetPrerequisiteScript(psQuestPrereqOp *script);
 };
 
 /**
@@ -366,6 +368,9 @@ class NpcResponse
     bool ParseResponseScript(const char *xmlstr,bool insertBeginning=false);
     bool ExecuteScript(Client *client, gemNPC* target);
     csString GetResponseScript();
+
+    // This is used so that the popup menu and the subsequent response can share the same filtering criteria
+    psQuestPrereqOp *GetPrerequisiteScript() { return prerequisite; }
 
     /**
      * Pars and append the xml based prerequisite script to the
