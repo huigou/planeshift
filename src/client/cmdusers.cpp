@@ -698,13 +698,13 @@ const char *psUserCommands::HandleCommand(const char *cmd)
         csString itemName;
         bool any = false;
         bool guard = true;
-        int moneySlot;
+        int moneySlot = 0;
         if (words[1] == "all")
         {
             quantity = 65;
         }
 
-        if ( (words[2] == "tria" && (moneySlot=0)) || (words[2] == "hexa" && (moneySlot=1)) ||
+        if ( words[2] == "tria" || (words[2] == "hexa" && (moneySlot=1)) ||
              (words[2] == "octa" && (moneySlot=2)) || (words[2] == "circle" && (moneySlot=3)) )
         {
             psSlotMovementMsg moneydropmsg( CONTAINER_INVENTORY_MONEY, moneySlot,
