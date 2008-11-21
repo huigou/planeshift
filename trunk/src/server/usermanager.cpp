@@ -2088,7 +2088,7 @@ void UserManager::HandleGuard(Client *client, csString target, csString action)
             {
                 if(onoff || (toggle && object->GetItem()->GetGuardingCharacterID() == 0))
                 {
-                    if(client->GetSecurityLevel() > 20)
+                    if(client->GetSecurityLevel() > 22) //GM2
                     {
                         object->GetItem()->SetGuardingCharacterID(client->GetPID());
                         psserver->SendSystemError(client->GetClientNum(), "You have guarded %s", object->GetName());
@@ -2100,7 +2100,7 @@ void UserManager::HandleGuard(Client *client, csString target, csString action)
                 }
                 else
                 {
-                    if(object->GetItem()->GetGuardingCharacterID() == client->GetPID() || client->GetSecurityLevel() > 20)
+                    if(object->GetItem()->GetGuardingCharacterID() == client->GetPID() || client->GetSecurityLevel() > 22)
                     {
                         object->GetItem()->SetGuardingCharacterID(0);
                         psserver->SendSystemError(client->GetClientNum(), "You have unguarded %s", object->GetName());
