@@ -508,6 +508,9 @@ Kicks the named player off of the server.</topic>
 Kills the targeted NPC, using the current target if no name is given. The reload option recreates the NPC with stats and triggers from the DB.</topic>
         <topic name="/listwarnings">/listwarnings [me/target/eid/pid/area/name]
 List all warnings given to the targeted account.</topic>
+        <topic name="/managepetitions">/managepetitions
+
+Manage petitions to help users.</topic>
         <topic name="/marriageinfo">/marriageinfo [me/target/eid/pid/area/name]
 
 View the details of a characters marriage.</topic>
@@ -616,9 +619,6 @@ Start a new path. If there are a waypoint nearby the waypoint is used to start t
 
 Stop the current path. If there are a waypoint nearby the waypoint is used to end the path. Otherwise a new aypoint is created.</topic>
         </branch>
-        <topic name="/petition_manage">/petition_manage
-
-Manage petitions to help users.</topic>
         <topic name="/pos">/pos target
 
 GMs have an enhanced version of the /pos command which shows your current region and the direction you are facing.  It also has an optional parameter to get the position of another entity.  (may specify by name or an ID)</topic>

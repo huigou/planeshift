@@ -2201,7 +2201,11 @@ void AdminManager::SetLabelColor(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdD
 
     if(!subject)
     {
-        psserver->SendSystemInfo( me->clientnum, "The target was not found online\"");
+        if(data.player.IsEmpty())
+            psserver->SendSystemInfo(me->clientnum,
+            "Correct syntax is: \"/setlabelcolor [target] [npc|player|tester|gm1|gm|dead|alive|normal]\"");
+        else
+            psserver->SendSystemInfo( me->clientnum, "The target was not found online");
         return;
     }
 
