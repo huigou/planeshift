@@ -1,4 +1,7 @@
-﻿*** 2008-11-20 by Keith Fulton
+﻿*** 2008-11-21 by Stefano Angeleri
+-  Changed minimum level for unrestricted guard use to GM2
+
+*** 2008-11-20 by Keith Fulton
 - Quest prerequisites (at least the basic ones) now work with popup dialog.  This
   makes the popups more accurate and enforces the substeps in the quests correctly
   now.  There are probably lots of special cases not yet handled, so be careful.
