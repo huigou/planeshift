@@ -1,5 +1,6 @@
 ﻿*** 2008-11-21 by Stefano Angeleri
--  Changed minimum level for unrestricted guard use to GM2
+- Changed minimum level for unrestricted guard use to GM2
+- Fixed FS#2499 - Server crash when using /deletechar - a wrong variable was being used.
 
 *** 2008-11-20 by Keith Fulton
 - Quest prerequisites (at least the basic ones) now work with popup dialog.  This

@@ -5204,7 +5204,7 @@ void AdminManager::DeleteCharacter(MsgEntry* me, psAdminCmdMessage& msg, AdminCm
 
     if ( data.zombie.StartsWith("pid:",true) ) // Find by player ID
     {
-        zombieID = PID(strtoul(data.player.Slice(4).GetData(), NULL, 10));
+        zombieID = PID(strtoul(data.zombie.Slice(4).GetData(), NULL, 10));
         if (!zombieID.IsValid())
         {
             psserver->SendSystemError(me->clientnum,"Error, bad PID");
