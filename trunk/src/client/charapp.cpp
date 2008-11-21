@@ -563,9 +563,8 @@ void psCharAppearance::ProcessAttach(csRef<iMeshFactoryWrapper> factory, const c
      const char* socketName = socket->GetName();
 
     // Given a socket name of "righthand", we're looking for a key in the form of "socket_righthand"
-    char * keyName = (char *)malloc(strlen(socketName)+strlen("socket_")+1);
-    strcpy(keyName,"socket_");
-    strcat(keyName,socketName);
+    csString keyName = "socket_";
+    keyName += socketName;
 
     // Variables for transform to be specified
     float trans_x = 0, trans_y = 0.0, trans_z = 0, rot_x = -PI/2, rot_y = 0, rot_z = 0;
@@ -574,14 +573,11 @@ void psCharAppearance::ProcessAttach(csRef<iMeshFactoryWrapper> factory, const c
     while ( it->HasNext() )
     {
         csRef<iKeyValuePair> key ( scfQueryInterface<iKeyValuePair> (it->Next()));
-        if (key && strcmp(key->GetKey(),keyName) == 0)
+        if (key && keyName == key->GetKey())
         {
             sscanf(key->GetValue(),"%f,%f,%f,%f,%f,%f",&trans_x,&trans_y,&trans_z,&rot_x,&rot_y,&rot_z);
         }
     }
-
-    free(keyName);
-    keyName = NULL;
 
     meshWrap->QuerySceneNode()->SetParent( baseMesh->QuerySceneNode ());
     socket->SetMeshWrapper( meshWrap );
