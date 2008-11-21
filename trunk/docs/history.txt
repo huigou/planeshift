@@ -3,6 +3,8 @@
 - Fixed FS#2499 - Server crash when using /deletechar - a wrong variable was being used.
 - Fixed FS#2494 - Admin button in GM petition window works as delete  - wrong button id in the xml.
 - Migrating some code to c++
+- Committed an additional patch from kougaro for FS#2340 - Drop Command - fixing the /drop # tria
+  problems
 
 *** 2008-11-20 by Keith Fulton
 - Quest prerequisites (at least the basic ones) now work with popup dialog.  This
