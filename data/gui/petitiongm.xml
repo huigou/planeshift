@@ -65,7 +65,7 @@
         <font name="/planeshift/data/ttf/LiberationMono-Regular.ttf" r="255" g="255" b="255" size="10" />
     </widget>
 
-    <widget name="Admin Petition" factory="pawsButton" toggle="no" id="7" shadows="yes" >
+    <widget name="Admin Petition" factory="pawsButton" toggle="no" id="8" shadows="yes" >
         <frame x="20" y="324" width="75" height="22" border="no" />
         <bgimage resource="Standard Button"/>
     <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="10" />
