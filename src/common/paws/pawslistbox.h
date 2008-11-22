@@ -89,17 +89,20 @@ public:
 
     bool OnKeyDown(int keyCode, int keyChar, int modifiers);
 
-    /**
-     * A single mouse click (left button) highlights the row
-     */
+    /// A single mouse click (left button) highlights the row
     bool OnMouseDown(int button, int modifiers, int x, int y );
 
-    /**
-     * A double click selects the row.
-     */
+    /// A double click selects the row.
     bool OnDoubleClick(int button, int modifiers, int x, int y);
 
+    /// Heading rows exist within the list but are not clickable
+    void SetHeading(bool flag);
+
+    bool IsHeading() { return isHeading; }
 private:
+    /// Store whether this row should be a heading or not
+    bool isHeading;
+
     /// Store a list of columns for easy access.
     csArray<pawsWidget*> columns;
 

@@ -2561,6 +2561,8 @@ QuestAssignment *psCharacter::AssignQuest(psQuest *quest, PID assigner_id)
 {
     CS_ASSERT( quest );  // Must not be NULL
 
+    // Shame on Kayden for cutting and pasting those code from CheckQuestAvailable instead of making a distinct function for it. :)
+    /*********************************
     //first check if there is not another assigned quest with the same NPC
     for (size_t i=0; i<assigned_quests.GetSize(); i++)
     {
@@ -2575,6 +2577,7 @@ QuestAssignment *psCharacter::AssignQuest(psQuest *quest, PID assigner_id)
             return false; // Cannot have multiple quests from the same guy
         }
     }
+    ********************/
 
     QuestAssignment *q = IsQuestAssigned(quest->GetID() );
     if (!q)  // make new entry if needed, reuse if old
@@ -2767,6 +2770,7 @@ bool psCharacter::CheckQuestAvailable(psQuest *quest, PID assigner_id)
 
     //Since the quest is not assigned, this conversation will lead to starting the quest.
     //Check all assigned quests, to make sure there is no other quest already started by this NPC
+    /*****
     for (size_t i=0; i<assigned_quests.GetSize(); i++)
     {
         if (assigned_quests[i]->GetQuest().IsValid() && assigned_quests[i]->assigner_id == assigner_id &&
@@ -2783,6 +2787,7 @@ bool psCharacter::CheckQuestAvailable(psQuest *quest, PID assigner_id)
             return false; // Cannot have multiple quests from the same guy
         }
     }
+    ********/
 
     if (q) //then quest in assigned list, but not PSQUEST_ASSIGNED
     {

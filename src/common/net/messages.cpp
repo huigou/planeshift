@@ -7190,9 +7190,19 @@ void psDialogMenuMessage::BuildMsg(int clientnum)
 {
     xml = "<dlgmenu><options>";
 
+    int counter=1;
     for( size_t i = 0; i < responses.GetSize(); i++ )
     {
-        xml.AppendFmt("<row><text>%d. %s</text>",i+1, responses[i].menuText.GetData() );
+        csString choice = responses[i].menuText.GetData();
+        if (choice.GetAt(0) == 'h' && choice.GetAt(1) == ':') // heading tag
+        {
+            choice.DeleteAt(0,2); // take out tag
+            xml.AppendFmt("<row heading=\"1\"><text>%s</text>", choice.GetData() );
+        }
+        else
+        {
+            xml.AppendFmt("<row><text>%d. %s</text>",counter++, responses[i].menuText.GetData() );
+        }
         xml.AppendFmt("<trig>%s</trig></row>",responses[i].triggerText.GetData() );
     }
     xml += "</options></dlgmenu>";

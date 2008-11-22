@@ -74,7 +74,7 @@ protected:
                          csString& him, csString& her, csString& it, csString& them);
     bool BuildTriggerList(csString& block,csStringArray& list);
 
-	bool BuildMenu(const csString& block,const csStringArray& list, NpcDialogMenu *menu);
+	bool BuildMenu(const csString& block,const csStringArray& list, psQuest *quest, NpcDialogMenu *menu);
 
     int GetNPCFromBlock(WordArray words,csString& current_npc);
     bool ParseItemList(const csString & input, csString & parsedItemList);

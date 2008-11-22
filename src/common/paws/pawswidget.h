@@ -77,7 +77,12 @@ enum
 #define BORDER_ETCHED      (BORDER_REVERSED|BORDER_RAISED)
 
 
-#define TEXT_DROPSHADOW 1
+#define DEFAULT_FONT_SIZE   12
+
+#define DEFAULT_FONT_STYLE     0
+#define FONT_STYLE_DROPSHADOW  1
+#define FONT_STYLE_BOLD        2
+
 
 enum PAWS_WIDGET_SCRIPT_EVENTS
 {
@@ -1141,9 +1146,13 @@ public:
 
     /** Gets the current font style.
      * @return fontStyle if myFont, if not then the parent's,
-     * or if it doesn't have a parent it returns DFFAULT_FONT_STYLE.
+     * or if it doesn't have a parent it returns DEFAULT_FONT_STYLE.
      */
     int    GetFontStyle();
+
+    /** Sets the current font style.
+     */
+    void   SetFontStyle(int style);
 
     /** Determines if the coordinates are within this widget. Typically the border or screenFrame.
      * @param x The x screen position.

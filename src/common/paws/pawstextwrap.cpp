@@ -512,7 +512,7 @@ void pawsMultilineEditTextBox::DrawWidgetText(const char *text, size_t x, size_t
         int a = (int) (255 - (parent->GetMinAlpha() + (parent->GetMaxAlpha()-parent->GetMinAlpha()) * parent->GetFadeVal() * 0.010));
         int r, g, b;
 
-        if (style & FONT_DROPSHADOW)
+        if (style & FONT_STYLE_DROPSHADOW)
         {
             graphics2D->GetRGB(GetFontShadowColour(), r, g, b);
             graphics2D->Write( font, (int) x+2, (int) y+2, graphics2D->FindRGB(r, g, b, a), -1, text );
@@ -522,7 +522,7 @@ void pawsMultilineEditTextBox::DrawWidgetText(const char *text, size_t x, size_t
     }
     else
     {
-        if (style & FONT_DROPSHADOW)
+        if (style & FONT_STYLE_DROPSHADOW)
             graphics2D->Write( font, (int) x+2, (int) y+2, GetFontShadowColour(), -1, text );
 
         graphics2D->Write( font, (int) x, (int) y, fg, -1, text);    

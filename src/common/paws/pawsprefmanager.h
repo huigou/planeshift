@@ -32,12 +32,10 @@ struct iVFS;
 struct iGraphics2D;
 struct iFont;
 struct BorderDefinition;
-
 class PawsManager; 
+
 #define BORDER_COLOURS 5
-#define DEFAULT_FONT_SIZE   12
-#define DFFAULT_FONT_STYLE   0
-#define FONT_DROPSHADOW      1
+
 
 /** Holds/Loads the prefs from a pref file. 
  */
