@@ -4,6 +4,10 @@
   requirement to only have one quest active at a time per npc.
 - Also, there is now a bold text option for any font in any widget.  This bolding 
   is used for the headings. 
+- Added functor templates for net message callback support.  This is how ALL
+  net msgtype subscriptions should be done in the future.  I will work on backporting
+  the existing ones over the next day or so.  See authentserver for an example
+  of how the subscriptions are done now.
 
 *** 2008-11-22 by Steven Patrick
 - Removed teleport NPC restriction while superclient is running after thorough
