@@ -957,7 +957,7 @@ public:
 
     /** Update a npc's default spawn position with given data.
     */
-    void UpdateRespawn(csVector3 pos, float yrot, psSectorInfo *sector);
+    void UpdateRespawn(csVector3 pos, float yrot, psSectorInfo *sector, INSTANCE_ID instance);
 
 
     /**

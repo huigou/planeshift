@@ -50,6 +50,7 @@ INSERT INTO command_group_assignment VALUES( "/reload", 30 );
 INSERT INTO command_group_assignment VALUES( "/runscript", 30 );
 INSERT INTO command_group_assignment VALUES( "/loadquest", 30 );
 INSERT INTO command_group_assignment VALUES( "save quest disable", 30 );
+INSERT INTO command_group_assignment VALUES( "/updaterespawn", 30 );
 
 # GM5 and above
 INSERT INTO command_group_assignment VALUES( "/killnpc", 30 );
@@ -170,11 +171,6 @@ INSERT INTO command_group_assignment VALUES( "cast all spells", 25 );
 INSERT INTO command_group_assignment VALUES( "cast all spells", 24 );
 INSERT INTO command_group_assignment VALUES( "cast all spells", 23 );
 INSERT INTO command_group_assignment VALUES( "cast all spells", 22 );
-INSERT INTO command_group_assignment VALUES( "/updaterespawn", 30 );
-INSERT INTO command_group_assignment VALUES( "/updaterespawn", 25 );
-INSERT INTO command_group_assignment VALUES( "/updaterespawn", 24 );
-INSERT INTO command_group_assignment VALUES( "/updaterespawn", 23 );
-INSERT INTO command_group_assignment VALUES( "/updaterespawn", 22 );
 INSERT INTO command_group_assignment VALUES( "/setskill", 30 );
 INSERT INTO command_group_assignment VALUES( "/setskill", 25 );
 INSERT INTO command_group_assignment VALUES( "/setskill", 24 );

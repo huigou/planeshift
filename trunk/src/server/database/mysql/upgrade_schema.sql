@@ -1045,6 +1045,12 @@ UPDATE `server_options` SET `option_value`='1205' WHERE `option_name`='db_versio
 ALTER TABLE `gameboards` ADD COLUMN `gameRules` TEXT AFTER `gameboardOptions`;
 UPDATE `server_options` SET `option_value`='1206' WHERE `option_name`='db_version';
 
+#### 1207 - Steven Patrick - Changed /updaterespawn to developers only
+DELETE FROM command_group_assignment WHERE command_name = '/updaterespawn';
+INSERT INTO command_group_assignment VALUES( "/updaterespawn", 30 );
+UPDATE `server_options` SET `option_value`='1207' WHERE `option_name`='db_version';
+
+
 # Insert your upgrade before this line. Remember when you set a new db_version
 # to update the server_options.sql file and update psserver.cpp as well.
 # This to ensure that everything is working if you use the create_all.sql to

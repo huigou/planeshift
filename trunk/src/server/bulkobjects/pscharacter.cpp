@@ -962,11 +962,24 @@ void psCharacter::UnregisterProgressionEvent(int id)
     }
 }
 
-void psCharacter::UpdateRespawn(csVector3 pos, float yrot, psSectorInfo* sector)
+void psCharacter::UpdateRespawn(csVector3 pos, float yrot, psSectorInfo *sector, INSTANCE_ID instance)
 {
     spawn_loc.loc_sector = sector;
     spawn_loc.loc = pos;
     spawn_loc.loc_yrot   = yrot;
+    spawn_loc.worldInstance = instance;
+
+    // Save to database
+    st_location & l = spawn_loc;
+    psString sql;
+
+    sql.AppendFmt("update characters set loc_x=%10.2f, loc_y=%10.2f, loc_z=%10.2f, loc_yrot=%10.2f, loc_sector_id=%u, loc_instance=%u where id=%u",
+                     l.loc.x, l.loc.y, l.loc.z, l.loc_yrot, l.loc_sector->uid, l.worldInstance, pid.Unbox());
+    if (db->CommandPump(sql) != 1)
+    {
+        Error3 ("Couldn't save character's position to database.\nCommand was "
+            "<%s>.\nError returned was <%s>\n",db->GetLastQuery(),db->GetLastError());
+    }
 }
 
 void psCharacter::AddAdvantage( PSCHARACTER_ADVANTAGE advantage)
