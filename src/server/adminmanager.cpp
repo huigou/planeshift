@@ -2450,12 +2450,12 @@ void AdminManager::Teleport(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& 
         return;
     }
 
-    Client* superclient = clients->FindAccount( subject->GetSuperclientID() );
-    if(superclient && subject->GetSuperclientID()!=0)
-    {
-        psserver->SendSystemError(client->GetClientNum(), "This entity %s is controlled by superclient %s and can't be teleported.", subject->GetName(), ShowID(subject->GetSuperclientID()));
-        return;
-    }
+    //Client* superclient = clients->FindAccount( subject->GetSuperclientID() );
+    //if(superclient && subject->GetSuperclientID()!=0)
+    //{
+    //    psserver->SendSystemError(client->GetClientNum(), "This entity %s is controlled by superclient %s and can't be teleported.", subject->GetName(), ShowID(subject->GetSuperclientID()));
+    //    return;
+    //}
 
     if ( !MoveObject(client,subject,targetPoint,yRot,targetSector,targetInstance) )
         return;
