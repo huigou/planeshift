@@ -439,6 +439,8 @@ bool pawsWidget::LoadAttributes( iDocumentNode* node )
             
             if (fontAttribute->GetAttributeValueAsBool( "shadow" ))
                 fontStyle |= FONT_STYLE_DROPSHADOW;
+            if (fontAttribute->GetAttributeValueAsBool( "bold" ))
+                fontStyle |= FONT_STYLE_BOLD;
     }
 
     // Get the frame for this widget.
