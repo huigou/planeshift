@@ -26,7 +26,7 @@
 
 // PAWS INCLUDES
 #include "pawsilluminationwindow.h"
-#include "paws/pawsprefmanager.h" // For FONT_DROPSHADOW - DrawColorWidgetText (maybe move DrawColorWidgetText to pawswidget?)
+#include "paws/pawsprefmanager.h" // For FONT_STYLE_DROPSHADOW - DrawColorWidgetText (maybe move DrawColorWidgetText to pawswidget?)
 #include "paws/pawstextbox.h"
 #include "paws/pawsmanager.h"
 #include "net/messages.h"
@@ -300,7 +300,7 @@ void pawsSketchWindow::DrawColorWidgetText(const char *text, int x, int y, int c
     csRef<iFont> font = GetFont();
     int style = GetFontStyle();
 
-    if (style & FONT_DROPSHADOW)
+    if (style & FONT_STYLE_DROPSHADOW)
         graphics2D->Write( font, x+2, y+2, GetFontShadowColour(), -1, text );
 
     graphics2D->Write( font, x, y, color, -1, text);

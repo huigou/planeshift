@@ -761,8 +761,13 @@ bool pawsListBox::SelfPopulate( iDocumentNode *topNode )
         if ( strcmp( node->GetValue(), xmlbinding_row ) == 0 )
         {
             pawsListBoxRow *row = NewRow(count++);
+            if (node->GetAttributeValueAsBool("heading") == true)
+            {
+                row->SetHeading(true);
+            }
             int x;
             for (x=0; x<totalColumns; x++)
+            {
                 if (columnDef[x].xmlbinding.Length() > 0)
                 {
                     pawsWidget *columnwidget = row->GetColumn(x);
@@ -784,6 +789,7 @@ bool pawsListBox::SelfPopulate( iDocumentNode *topNode )
                         return false;
                     }
                 }
+            }
         }
     }
 
@@ -812,6 +818,14 @@ void pawsListBox::MoveSelectBar(bool direction)
         if (selected>0)
         {
             selected--;
+            if (GetSelectedRow()->IsHeading())
+            {
+                if (selected > 0)
+                    selected--;
+                else
+                    selected++; // go back where we were if nothing is above the heading
+            }
+
             Select(GetSelectedRow());
         }
     }
@@ -820,6 +834,13 @@ void pawsListBox::MoveSelectBar(bool direction)
         if (selected<totalRows-1)
         {
             selected++;
+            if (GetSelectedRow()->IsHeading())
+            {
+                if (selected < totalRows-1)
+                    selected++;
+                else
+                    selected--; // go back where we were if nothing is above the heading
+            }
             Select(GetSelectedRow());
         }
     }
@@ -1095,6 +1116,7 @@ void pawsListBox::MoveRow(int rownr,int dest)
 
 pawsListBoxRow::pawsListBoxRow()
 {
+    isHeading = false;
 }
 
 
@@ -1106,6 +1128,10 @@ bool pawsListBoxRow::OnKeyDown(int keyCode, int keyChar, int modifiers)
 
 bool pawsListBoxRow::OnMouseDown( int button, int modifiers, int x, int y )
 {
+    // Heading rows are not clickable or selectable
+    if (isHeading)
+        return true;
+
     pawsListBox* parentBox = (pawsListBox*)parent;
 
     // mouse wheel
@@ -1118,6 +1144,10 @@ bool pawsListBoxRow::OnMouseDown( int button, int modifiers, int x, int y )
 
 bool pawsListBoxRow::OnDoubleClick(int button, int modifiers, int x, int y)
 {
+    // Heading rows are not clickable or selectable
+    if (isHeading)
+        return false;
+
     pawsListBox * parentBox = (pawsListBox *)parent;
 
     if (button != csmbWheelUp && button != csmbWheelDown)
@@ -1196,6 +1226,16 @@ void pawsListBoxRow::AddTitleColumn( int column, ColumnDef* def )
     title->SetRelativeFrame( offset-4, -4, def[column].width, def[column].height );
     innerWidget->SetRelativeFrame(4, 4, def[column].width, def[column].height );
     title->SetID(column);
+}
+
+void pawsListBoxRow::SetHeading(bool flag)
+{
+    isHeading = flag;
+
+    for (size_t i=0; i<columns.GetSize(); i++)
+    {
+        columns[i]->SetFontStyle(flag ? FONT_STYLE_BOLD : DEFAULT_FONT_STYLE);
+    }
 }
 
 int pawsListBox::GetRowCount()

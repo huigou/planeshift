@@ -2375,14 +2375,15 @@ NpcDialogMenu::NpcDialogMenu()
 	counter = 0;
 }
 
-void NpcDialogMenu::AddTrigger(const csString &formatted, const csString &trigger, psQuestPrereqOp *script)
+void NpcDialogMenu::AddTrigger(const csString &menuText, const csString &trigger, psQuest *quest, psQuestPrereqOp *script)
 {
 	NpcDialogMenu::DialogTrigger new_trigger;
 
-	new_trigger.formatted    = formatted;
+	new_trigger.menuText     = menuText;
 	new_trigger.trigger      = trigger;
+	new_trigger.quest        = quest;
     new_trigger.prerequisite = script;
-	new_trigger.triggerID = counter++;
+	new_trigger.triggerID    = counter++;
 
 	this->triggers.Push( new_trigger );
 }
@@ -2395,8 +2396,8 @@ void NpcDialogMenu::Add(NpcDialogMenu *add)
 
 	for (size_t i=0; i < add->triggers.GetSize(); i++)
 	{
-		printf("Adding '%s' to menu.\n", add->triggers[i].formatted.GetData() );
-		AddTrigger(add->triggers[i].formatted, add->triggers[i].trigger, add->triggers[i].prerequisite);
+		printf("Adding '%s' to menu.\n", add->triggers[i].menuText.GetData() );
+		AddTrigger(add->triggers[i].menuText, add->triggers[i].trigger, add->triggers[i].quest, add->triggers[i].prerequisite);
 	}
 	printf("Added %d triggers to menu.\n", add->triggers.GetSize() );
 }
@@ -2407,6 +2408,8 @@ void NpcDialogMenu::ShowMenu( Client *client )
 		return;
 
 	psDialogMenuMessage menu;
+
+    csString currentQuest;
 
 	for (size_t i=0; i < counter; i++ )
 	{
@@ -2433,8 +2436,18 @@ void NpcDialogMenu::ShowMenu( Client *client )
             }
         }
 
+        // Check to see about inserting a quest heading
+        if (!(currentQuest == (triggers[i].quest ? triggers[i].quest->GetName() : "(Unknown)")))
+        {
+            currentQuest = triggers[i].quest ? triggers[i].quest->GetName() : "(Unknown)";
+            csString temp = "h:", temptrig = "heading";
+            temp += currentQuest;
+            menu.AddResponse((uint32_t) i, temp, temptrig,
+                             "", "", "", "" );
+        }
+        
 		menu.AddResponse((uint32_t) i, 
-                          triggers[ i ].formatted,
+                          triggers[i].menuText,
 		                  triggers[i].trigger, 
 						  client->GetName(), client->GetCharacterData()->GetRaceInfo()->GetRace(),
 						  client->GetCharacterData()->GetRaceInfo()->GetHonorific(),

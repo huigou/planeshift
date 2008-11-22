@@ -304,8 +304,9 @@ protected:
 	struct DialogTrigger
 	{
 		unsigned int triggerID;
-		csString formatted;
+		csString menuText;
 		csString trigger;
+        psQuest *quest;
         csRef<psQuestPrereqOp> prerequisite;
 	};
 
@@ -317,7 +318,7 @@ public:
 
 	NpcDialogMenu();
 
-	void AddTrigger( const csString &formatted, const csString &trigger, psQuestPrereqOp *script=NULL );
+	void AddTrigger( const csString &menuText, const csString &trigger, psQuest *quest, psQuestPrereqOp *script=NULL );
 	void Add( NpcDialogMenu *add);
 	void ShowMenu( Client *client );
     void SetPrerequisiteScript(psQuestPrereqOp *script);

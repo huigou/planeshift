@@ -438,7 +438,7 @@ bool pawsWidget::LoadAttributes( iDocumentNode* node )
             defaultFontShadowColour = graphics2D->FindRGB( r, g, b );
             
             if (fontAttribute->GetAttributeValueAsBool( "shadow" ))
-                fontStyle |= FONT_DROPSHADOW;
+                fontStyle |= FONT_STYLE_DROPSHADOW;
     }
 
     // Get the frame for this widget.
@@ -1093,20 +1093,28 @@ void pawsWidget::DrawWidgetText(const char *text, int x, int y, int style)
         int a = (int) (255 - (parent->GetMinAlpha() + (parent->GetMaxAlpha()-parent->GetMinAlpha()) * parent->GetFadeVal() * 0.010));
         int r, g, b;
 
-        if (style & FONT_DROPSHADOW)
+        if (style & FONT_STYLE_DROPSHADOW)
         {
             graphics2D->GetRGB(GetFontShadowColour(), r, g, b);
             graphics2D->Write( font, x+2, y+2, graphics2D->FindRGB(r, g, b, a), -1, text );
         }
         graphics2D->GetRGB(GetFontColour(), r, g, b);
         graphics2D->Write( font, x, y, graphics2D->FindRGB(r, g, b, a), -1, text);
+        if (style & FONT_STYLE_BOLD)
+        {
+            graphics2D->Write( font, x+1, y, graphics2D->FindRGB(r, g, b, a), -1, text);
+        }
     }
     else
     {
-        if (style & FONT_DROPSHADOW)
+        if (style & FONT_STYLE_DROPSHADOW)
             graphics2D->Write( font, x+2, y+2, GetFontShadowColour(), -1, text );
 
         graphics2D->Write( font, x, y, GetFontColour(), -1, text);    
+        if (style & FONT_STYLE_BOLD)
+        {
+            graphics2D->Write( font, x+1, y, GetFontColour(), -1, text);
+        }
     }
 }
 
@@ -2434,12 +2442,17 @@ float pawsWidget::GetFontSize()
 
 int pawsWidget::GetFontStyle()
 {
-    if (myFont)
+    if (fontStyle)
         return fontStyle;
     else if (parent)
         return parent->GetFontStyle();
     else
-        return DFFAULT_FONT_STYLE;   
+        return DEFAULT_FONT_STYLE;   
+}
+
+void pawsWidget::SetFontStyle(int style)
+{
+    fontStyle = style;
 }
 
 bool pawsWidget::SelfPopulateXML( const char *xmlstr )

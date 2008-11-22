@@ -565,7 +565,7 @@ int QuestManager::ParseQuestScript(int quest_id, const char *script)
         {
 			NpcDialogMenu *menu = new NpcDialogMenu();
 
-			if (!BuildMenu(block, pending_triggers, menu))
+			if (!BuildMenu(block, pending_triggers, mainQuest, menu))
             {
                 Error3("Could not determine menu triggers in script '%s', in line <%s>",
                        mainQuest->GetName(),block.GetData());
@@ -894,7 +894,7 @@ bool QuestManager::BuildTriggerList(csString& block,csStringArray& list)
     return true;
 }
 
-bool QuestManager::BuildMenu(const csString& block,const csStringArray& list, NpcDialogMenu *menu)
+bool QuestManager::BuildMenu(const csString& block,const csStringArray& list, psQuest *quest, NpcDialogMenu *menu)
 {
     size_t start=0, end, counter = 0;
     csString response;
@@ -914,7 +914,7 @@ bool QuestManager::BuildMenu(const csString& block,const csStringArray& list, Np
         block.SubString(response,start,end-start);
         response.Trim();
 
-		menu->AddTrigger( response, list[ counter++ ] );
+		menu->AddTrigger( response, list[ counter++ ], quest );
         
         start = end; // Start at next Menu: or exit loop
     }
