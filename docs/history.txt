@@ -1,4 +1,10 @@
-﻿*** 2008-11-22 by Keith Fulton
+﻿*** 2008-11-22 by Steven Patrick
+- Fixed /updaterespawn to work with instances and save to db.
+- You can now use 'here' to use your position instead of the NPC's with /updaterespawn.
+- Now only dev's can use /updaterespawn.
+- DB BUMP to 1207.
+
+*** 2008-11-22 by Keith Fulton
 - Now popup menus that originate from different quests have the names of their
   respective quests above each one.  This is important now that we have relaxed the
   requirement to only have one quest active at a time per npc.

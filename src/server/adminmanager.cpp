@@ -237,6 +237,7 @@ bool AdminManager::AdminCmdData::DecodeAdminCmdMessage(MsgEntry *pMsg, psAdminCm
     if (command == "/updaterespawn")
     {
         player = words[1];
+        type = words[2];
         return true;
     }
     else if (command == "/deletechar")
@@ -1377,7 +1378,7 @@ void AdminManager::HandleAdminCmdMessage(MsgEntry *me, psAdminCmdMessage &msg, A
     }
     else if ( data.command == "/updaterespawn")
     {
-        UpdateRespawn(client, targetactor);
+        UpdateRespawn(data, client, targetactor);
     }
     else if (data.command == "/modify")
     {
@@ -6523,7 +6524,7 @@ void AdminManager::SetSkill(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& 
     psserver->GetProgressionManager()->SendSkillList(target, false);
 }
 
-void AdminManager::UpdateRespawn(Client* client, gemActor* target)
+void AdminManager::UpdateRespawn(AdminCmdData& data, Client* client, gemActor* target)
 {
     if (!target)
     {
@@ -6540,15 +6541,28 @@ void AdminManager::UpdateRespawn(Client* client, gemActor* target)
     csVector3 pos;
     float yrot;
     iSector* sec;
-    target->GetPosition(pos, yrot, sec);
+    INSTANCE_ID instance;
+
+    // Update respawn to the NPC's current position or your current position?
+    if (!data.type.IsEmpty() && data.type.CompareNoCase("here"))
+    {
+        client->GetActor()->GetPosition(pos, yrot, sec);
+        instance = client->GetActor()->GetInstance();
+    }
+    else
+    {
+        target->GetPosition(pos, yrot, sec);
+        instance = target->GetInstance();
+    }
+  
     csString sector = sec->QueryObject()->GetName();
 
     psSectorInfo* sectorinfo = CacheManager::GetSingleton().GetSectorInfoByName(sector);
 
-    target->GetCharacterData()->UpdateRespawn(pos, yrot, sectorinfo);
+    target->GetCharacterData()->UpdateRespawn(pos, yrot, sectorinfo, instance);
 
     csString buffer;
-    buffer.Format("%s now respawning (%.2f,%.2f,%.2f) <%s>", target->GetName(), pos.x, pos.y, pos.z, sector.GetData());
+    buffer.Format("%s now respawning (%.2f,%.2f,%.2f) <%s> in instance %u", target->GetName(), pos.x, pos.y, pos.z, sector.GetData(), instance);
     psserver->SendSystemOK(client->GetClientNum(), buffer);
 }
 

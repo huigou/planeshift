@@ -297,7 +297,7 @@ protected:
     void ChangeName(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data, gemObject *targetobject, bool duplicateActor, Client *client);
 
     /// Handles a change to set the NPC's default spawn location.
-    void UpdateRespawn(Client* client, gemActor* target);
+    void UpdateRespawn(AdminCmdData& data, Client* client, gemActor* target);
 
     /// Controlls the rain / thunder and other weather
     void Weather(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data, Client *client);
