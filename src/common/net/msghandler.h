@@ -29,10 +29,51 @@
 // forward decls
 struct iNetSubscriber;
 class NetBase;
+class Client;
 
 #define  MAX_MESSAGE_TYPES 255   // MSGTYPE enumeration in messages.h has less types than this
 
-// This little struct tracks who is interested in what.
+/// Functor base class for direct callbacks on Subscriptions
+class MsgtypeCallback
+{
+public:
+    virtual void operator()(MsgEntry *message, Client *client) = 0; // call using operator
+    virtual void Call(MsgEntry *message, Client *client)       = 0; // call using function
+};
+
+template <class Manager>
+class NetMessageCallback : public MsgtypeCallback
+{
+ private:
+      void (Manager::*funcptr)(MsgEntry *message, Client *client);   // pointer to member function
+      Manager *thisPtr;                                              // pointer to object
+
+   public:
+
+      // constructor - takes pointer to an object and pointer to a member and stores
+      // them in two private variables
+      NetMessageCallback(Manager *myObject, void(Manager::*fpt)(MsgEntry *message, Client *client))
+      { 
+          thisPtr = myObject;
+          funcptr = fpt;
+      }
+
+      // override operator "()"
+      virtual void operator()(MsgEntry *message, Client *client)
+      {
+          (*thisPtr.*funcptr)(message,client);
+      }
+
+      // override function "Call"
+      virtual void Call(MsgEntry *message, Client *client)
+      {
+          (*thisPtr.*funcptr)(message,client);
+      }
+};
+
+
+
+/// This little struct tracks who is interested in what.
 struct Subscription
 {
     /// type of the messages this listener listens to
@@ -43,11 +84,13 @@ struct Subscription
 
     /// pointer to the subscriber
     iNetSubscriber *subscriber;
+
+    /// pointer to functor class callback as alternative to iNetSubscriber
+    MsgtypeCallback *callback;
 };
 
-/**
- * This class handles the incoming network packets
- */
+
+/// This class handles the incoming network packets
 class MsgHandler : public csRefCount
 {
 public:
@@ -61,6 +104,7 @@ public:
      * with this function
      */
     virtual bool Subscribe(iNetSubscriber *subscriber, msgtype type, uint32_t flags=0);
+    virtual bool Subscribe(iNetSubscriber *subscriber, MsgtypeCallback *callback, msgtype type, uint32_t flags=0);
 
     /// Remove subscriber from list
     virtual bool Unsubscribe(iNetSubscriber *subscriber, msgtype type);
