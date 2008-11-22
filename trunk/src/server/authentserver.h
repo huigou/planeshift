@@ -171,10 +171,10 @@ protected:
      * @param me: Is a message entry that contains the authenticate message.
      * @see psAuthMessageApproved 
      */
-    void HandleAuthent(MsgEntry *me);
+    void HandleAuthent(MsgEntry *me, Client *notused);
     /*  This just questsions a random number (clientnum) from server 
     *   It is used for authenticating*/
-    void HandlePreAuthent(MsgEntry *me);
+    void HandlePreAuthent(MsgEntry *me, Client *notused);
     
     /** Handles a disconnect message from the message queue.
      * This will remove the player from the server using
@@ -183,12 +183,12 @@ protected:
      * @param me: Is the disconnect message that was recieved.
      * @param msg: Is the reason for the disconnect.
      */
-    void HandleDisconnect(MsgEntry* me,const char *msg);
+    void HandleDisconnect(MsgEntry* me,Client *notused);
     
     /** Handles a message where a client picks his character to play with.
      *  Can remove the player using psServer::RemovePlayer if invalid.
      */
-    void HandleAuthCharacter(MsgEntry* me);    
+    void HandleAuthCharacter(MsgEntry* me, Client *notused);    
 };
 
 #endif

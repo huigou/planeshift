@@ -67,7 +67,12 @@ void MsgHandler::Publish(MsgEntry* me)
         Client *client;
         me->Reset();
         if (subscribers[mtype][x]->subscriber->Verify(me,subscribers[mtype][x]->flags,client))
-            subscribers[mtype][x]->subscriber->HandleMessage(me,client);
+        {
+            if (subscribers[mtype][x]->callback)
+                subscribers[mtype][x]->callback->Call(me,client);
+            else
+                subscribers[mtype][x]->subscriber->HandleMessage(me,client);
+        }
         handled = true;
     }
 
@@ -83,12 +88,35 @@ bool MsgHandler::Subscribe(iNetSubscriber *subscriber, msgtype type,uint32_t fla
     Subscription* p = new Subscription;
 
     p->subscriber = subscriber;
+    p->callback   = NULL; 
     p->type       = type;
     p->flags      = flags;
 
     CS::Threading::RecursiveMutexScopedLock lock(mutex);
     if ( IsSubscribed(p) )
         delete p;
+    else
+        subscribers[type].Push(p);
+
+    return true;
+}
+
+bool MsgHandler::Subscribe(iNetSubscriber *subscriber, MsgtypeCallback *callback, msgtype type,uint32_t flags)
+{
+    Subscription* p = new Subscription;
+
+    p->subscriber = subscriber;
+    p->callback   = callback;
+    p->type       = type;
+    p->flags      = flags;
+
+    CS::Threading::RecursiveMutexScopedLock lock(mutex);
+    if ( IsSubscribed(p) )
+    {
+        if (p->callback)
+            delete p->callback;
+        delete p;
+    }
     else
         subscribers[type].Push(p);
 

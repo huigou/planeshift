@@ -82,13 +82,11 @@ psAuthenticationServer::psAuthenticationServer(ClientConnectionSet *pCCS,
     guildmanager = gm;
     msgstringsmessage = NULL;
 
-    psserver->GetEventManager()->Subscribe(this,MSGTYPE_PREAUTHENTICATE,REQUIRE_ANY_CLIENT);
-    psserver->GetEventManager()->Subscribe(this,MSGTYPE_AUTHENTICATE,REQUIRE_ANY_CLIENT);
-    psserver->GetEventManager()->Subscribe(this,MSGTYPE_DISCONNECT,REQUIRE_ANY_CLIENT);
-    psserver->GetEventManager()->Subscribe(this,MSGTYPE_AUTHCHARACTER,REQUIRE_ANY_CLIENT);
-    psserver->GetEventManager()->Subscribe(this,MSGTYPE_SYSTEM,REQUIRE_ANY_CLIENT); // Handle the heartbeat from the client
-    psserver->GetEventManager()->Subscribe(this,MSGTYPE_CLIENTSTATUS,REQUIRE_ANY_CLIENT); // Handle the heartbeat from the client
-    psserver->GetEventManager()->Subscribe(this,MSGTYPE_HEART_BEAT,REQUIRE_ANY_CLIENT); // Handle the heartbeat from the client
+    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<psAuthenticationServer>(this,&psAuthenticationServer::HandlePreAuthent),MSGTYPE_PREAUTHENTICATE,REQUIRE_ANY_CLIENT);
+    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<psAuthenticationServer>(this,&psAuthenticationServer::HandleAuthent),MSGTYPE_AUTHENTICATE,REQUIRE_ANY_CLIENT);
+    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<psAuthenticationServer>(this,&psAuthenticationServer::HandleDisconnect),MSGTYPE_DISCONNECT,REQUIRE_ANY_CLIENT);
+    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<psAuthenticationServer>(this,&psAuthenticationServer::HandleAuthCharacter),MSGTYPE_AUTHCHARACTER,REQUIRE_ANY_CLIENT);
+    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<psAuthenticationServer>(this,&psAuthenticationServer::HandleStatusUpdate),MSGTYPE_CLIENTSTATUS,REQUIRE_ANY_CLIENT);
 }
 
 psAuthenticationServer::~psAuthenticationServer()
@@ -99,7 +97,6 @@ psAuthenticationServer::~psAuthenticationServer()
         psserver->GetEventManager()->Unsubscribe(this,MSGTYPE_AUTHENTICATE);
         psserver->GetEventManager()->Unsubscribe(this,MSGTYPE_DISCONNECT);
         psserver->GetEventManager()->Unsubscribe(this,MSGTYPE_AUTHCHARACTER);
-        psserver->GetEventManager()->Unsubscribe(this,MSGTYPE_SYSTEM);
         psserver->GetEventManager()->Unsubscribe(this,MSGTYPE_CLIENTSTATUS);
     }
     if (msgstringsmessage)
@@ -108,45 +105,11 @@ psAuthenticationServer::~psAuthenticationServer()
 
 void psAuthenticationServer::HandleMessage(MsgEntry *me,Client *client)
 {
-    if (me == NULL) 
-    {
-        Bug1("No Message Entity Found");
-        return;
-    }
-
-    switch (me->GetType())
-    {
-        case MSGTYPE_AUTHCHARACTER:
-            HandleAuthCharacter( me );
-            break;
-            
-        case MSGTYPE_AUTHENTICATE:
-            HandleAuthent(me);
-            break;
-
-        case MSGTYPE_PREAUTHENTICATE:
-            HandlePreAuthent(me);
-            break;
-
-        case MSGTYPE_DISCONNECT:
-            HandleDisconnect(me, "Your client has disconnected. If you are seeing this message a connection error has likely occurred.");
-            break;
-
-        case MSGTYPE_CLIENTSTATUS:
-            HandleStatusUpdate(me, client);
-            break;
-    }
+    // required for backward compatibility with pre-functor days but not used here
 }
 
-void psAuthenticationServer::HandleAuthCharacter( MsgEntry* me )
+void psAuthenticationServer::HandleAuthCharacter( MsgEntry* me, Client *client )
 {
-    Client *client = clients->FindAny(me->clientnum);
-    if (!client)
-    {
-        Bug2("Couldn't find client %d?!?",me->clientnum);
-        return;
-    }
-
     psCharacterPickerMessage charpick( me );
     if (!charpick.valid)
     {
@@ -230,7 +193,7 @@ bool psAuthenticationServer::CheckAuthenticationPreCondition(int clientnum, bool
 }
 
 
-void psAuthenticationServer::HandlePreAuthent(MsgEntry *me)
+void psAuthenticationServer::HandlePreAuthent(MsgEntry *me, Client *notused)
 {
     psPreAuthenticationMessage msg(me);
     if (!msg.valid)
@@ -246,7 +209,7 @@ void psAuthenticationServer::HandlePreAuthent(MsgEntry *me)
     reply.SendMessage();
 }
 
-void psAuthenticationServer::HandleAuthent(MsgEntry *me)
+void psAuthenticationServer::HandleAuthent(MsgEntry *me, Client *notused)
 {
     csTicks start = csGetTicks();
 
@@ -539,11 +502,9 @@ void psAuthenticationServer::HandleAuthent(MsgEntry *me)
     psserver->GetLogCSV()->Write(CSV_AUTHENT, status);
 }
 
-void psAuthenticationServer::HandleDisconnect(MsgEntry* me,const char *msg)
+void psAuthenticationServer::HandleDisconnect(MsgEntry* me,Client *client)
 {
     psDisconnectMessage mesg(me);
-    
-    Client *client = clients->FindAny(me->clientnum);
 
     // Check if this client is allowed to disconnect or if the
     // zombie state should be set
@@ -556,7 +517,7 @@ void psAuthenticationServer::HandleDisconnect(MsgEntry* me,const char *msg)
     }
     else
     {
-        psserver->RemovePlayer(me->clientnum,msg);
+        psserver->RemovePlayer(me->clientnum,"Your client has disconnected. If you are seeing this message a connection error has likely occurred.");
     }
     
 }
