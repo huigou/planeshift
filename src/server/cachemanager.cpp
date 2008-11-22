@@ -191,7 +191,6 @@ bool CacheManager::PreloadAll()
 
 //    PreCreateCraftMessages();
     PreloadCommandGroups();
-    PreloadUpdateInfo();
 
     return true;
 }
@@ -2938,26 +2937,6 @@ float CacheManager::GetArmorVSWeaponResistance(psItemStats* armor, psItemStats* 
     weapon->GetArmorVsWeaponType(weaponstr);
 
     return GetArmorVSWeaponResistance(armorstr,weaponstr);
-}
-
-void CacheManager::PreloadUpdateInfo()
-{
-    csRef<iVFS> vfs =  csQueryRegistry<iVFS> (psserver->GetObjectReg());
-    CS_ASSERT(vfs != NULL);
-
-    csRef<iDataBuffer> data = vfs->ReadFile("/this/version.dat");
-    if (!data)
-    {
-        Warning1(LOG_ANY,"Missing /this/version.dat!  Cannot send update notifications to clients.");
-        updateTimeStamp = 0;
-        return;
-    }
-
-    // The first 32 characters are the version stamp.
-    // We want the time stamp after it.
-    csString tmp(data->GetData());
-    tmp.DeleteAt(0,33);
-    updateTimeStamp = atoi( tmp.GetDataSafe() );
 }
 
 const char *CacheManager::MakeCacheName(const char *prefix, uint32 id)
