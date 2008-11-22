@@ -1,4 +1,8 @@
-﻿*** 2008-11-21 by Stefano Angeleri
+﻿*** 2008-11-22 by Steven Patrick
+- Removed teleport NPC restriction while superclient is running after thorough
+  testing and advice by Kerol.
+
+*** 2008-11-21 by Stefano Angeleri
 - Changed minimum level for unrestricted guard use to GM2
 - Fixed FS#2499 - Server crash when using /deletechar - a wrong variable was being used.
 - Fixed FS#2494 - Admin button in GM petition window works as delete  - wrong button id in the xml.
