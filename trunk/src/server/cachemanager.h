@@ -326,8 +326,6 @@ public:
     /// Translation table for Flag strings (from db) into bit codes
     csArray<psItemStatFlags> ItemStatFlagArray;
 
-    uint32_t GetUpdateTimeStamp() { return updateTimeStamp; }
-
     const char *MakeCacheName(const char *prefix, uint32 id);
     void AddToCache(iCachedObject *obj, const char *name, int max_cache_time_seconds);
     iCachedObject *RemoveFromCache(const char *name);
@@ -378,7 +376,6 @@ protected:
     bool PreloadMovement();
     bool PreloadStances();
     void PreloadCommandGroups();
-    void PreloadUpdateInfo();
     
     /// Cache in the crafting messages.        
     bool PreloadCraftMessages();
@@ -462,8 +459,6 @@ protected:
     csPDelArray<psMovement> movements;
     csPDelArray<psCharacterLimitation> limits;  /// All the limitations based on scores for characters.
     psCommandManager* commandManager;
-    
-    uint32_t updateTimeStamp;
 };
 
 
