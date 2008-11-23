@@ -141,10 +141,12 @@ protected:
         bool DecodeAdminCmdMessage(MsgEntry *pMsg, psAdminCmdMessage& msg, Client *client);
     };
 
-    void CommandArea(MsgEntry *me, psAdminCmdMessage& msg, AdminCmdData& data, Client *client, int range);
-    void HandleAdminCmdMessage(MsgEntry *pMsg, psAdminCmdMessage& msg, AdminCmdData& data, Client *client);
-    void HandlePetitionMessage(MsgEntry *pMsg, psPetitionRequestMessage& msg, Client *client);
-    void HandleGMGuiMessage(MsgEntry *pMsg, psGMGuiMessage& msg, Client *client);
+    void CommandArea          (MsgEntry *me, psAdminCmdMessage& msg, AdminCmdData& data, Client *client, int range);
+    void HandleAdminCmdMessage(MsgEntry *pMsg, Client *client);
+    void HandlePetitionMessage(MsgEntry *pMsg, Client *client);
+    void HandleGMGuiMessage   (MsgEntry *pMsg, Client *client);
+    void SpawnItemInv         ( MsgEntry* me, Client *client);
+    void SpawnItemInv         ( MsgEntry* me, psGMSpawnItem& msg, Client *client);
 
     /** @brief Handles a request to reload a quest from the database.
      *  @param msg The text name is in the msg.text field.
@@ -328,8 +330,7 @@ protected:
     void BanAdvisor(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data, Client *client);
     void UnbanAdvisor(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data, Client *client);
     void SendSpawnTypes (MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data, Client *client);
-    void SendSpawnItems (MsgEntry* me, psGMSpawnItems& msg, Client *client);
-    void SpawnItemInv( MsgEntry* me, psGMSpawnItem& msg, Client *client);
+    void SendSpawnItems (MsgEntry* me, Client *client);
     bool GetAccount(csString useroracc,Result& resultre);
     void RenameGuild( MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data, Client* client);
     void ChangeGuildLeader( MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data, Client* client);

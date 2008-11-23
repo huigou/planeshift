@@ -138,11 +138,11 @@ AdminManager::AdminManager()
 {
     clients = psserver->GetNetManager()->GetConnections();
 
-    psserver->GetEventManager()->Subscribe(this,MSGTYPE_ADMINCMD,REQUIRE_READY_CLIENT);
-    psserver->GetEventManager()->Subscribe(this,MSGTYPE_PETITION_REQUEST,REQUIRE_READY_CLIENT);
-    psserver->GetEventManager()->Subscribe(this,MSGTYPE_GMGUI,REQUIRE_READY_CLIENT);
-    psserver->GetEventManager()->Subscribe(this,MSGTYPE_GMSPAWNITEMS,REQUIRE_READY_CLIENT);
-    psserver->GetEventManager()->Subscribe(this,MSGTYPE_GMSPAWNITEM,REQUIRE_READY_CLIENT);
+    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<AdminManager>(this,&AdminManager::HandleAdminCmdMessage),MSGTYPE_ADMINCMD,REQUIRE_READY_CLIENT);
+    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<AdminManager>(this,&AdminManager::HandlePetitionMessage),MSGTYPE_PETITION_REQUEST,REQUIRE_READY_CLIENT);
+    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<AdminManager>(this,&AdminManager::HandleGMGuiMessage)   ,MSGTYPE_GMGUI,REQUIRE_READY_CLIENT);
+    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<AdminManager>(this,&AdminManager::SendSpawnItems)       ,MSGTYPE_GMSPAWNITEMS,REQUIRE_READY_CLIENT);
+    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<AdminManager>(this,&AdminManager::SpawnItemInv)         ,MSGTYPE_GMSPAWNITEM,REQUIRE_READY_CLIENT);
 
     // this makes sure that the player dictionary exists on start up.
     npcdlg = new psNPCDialog(NULL);
@@ -169,53 +169,7 @@ AdminManager::~AdminManager()
 
 void AdminManager::HandleMessage(MsgEntry *me, Client *client)
 {
-    switch ( me->GetType() )
-    {
-        case MSGTYPE_ADMINCMD:
-        {
-            AdminCmdData data;
-
-            psAdminCmdMessage msg(me);
-
-            // Decode the string from the message into a struct with data elements
-            if (!data.DecodeAdminCmdMessage(me,msg,client))
-            {
-                psserver->SendSystemInfo(me->clientnum,"Invalid admin command");
-                return;
-            }
-
-            HandleAdminCmdMessage(me, msg, data, client);
-            break;
-        }
-
-        case MSGTYPE_PETITION_REQUEST:
-        {
-            psPetitionRequestMessage msg(me);
-            HandlePetitionMessage(me, msg, client);
-            break;
-        }
-
-        case MSGTYPE_GMGUI:
-        {
-            psGMGuiMessage msg(me);
-            HandleGMGuiMessage(me, msg, client);
-            break;
-        }
-
-        case MSGTYPE_GMSPAWNITEMS:
-        {
-            psGMSpawnItems msg(me);
-            SendSpawnItems(me, msg, client);
-            break;
-        }
-
-        case MSGTYPE_GMSPAWNITEM:
-        {
-            psGMSpawnItem msg(me);
-            SpawnItemInv(me, msg, client);
-            break;
-        }
-    }
+    /******* No longer required with direct handler functors now. */
 }
 
 
@@ -1089,8 +1043,18 @@ bool AdminManager::AdminCmdData::DecodeAdminCmdMessage(MsgEntry *pMsg, psAdminCm
 }
 
 
-void AdminManager::HandleAdminCmdMessage(MsgEntry *me, psAdminCmdMessage &msg, AdminCmdData &data, Client *client)
+void AdminManager::HandleAdminCmdMessage(MsgEntry *me, Client *client)
 {
+    AdminCmdData data;
+
+    psAdminCmdMessage msg(me);
+
+    // Decode the string from the message into a struct with data elements
+    if (!data.DecodeAdminCmdMessage(me,msg,client))
+    {
+        psserver->SendSystemInfo(me->clientnum,"Invalid admin command");
+        return;
+    }
 
     // Security check
     if ( me->clientnum != 0 && !IsReseting(msg.cmd) && !Valid(client->GetSecurityLevel(), data.command,  me->clientnum) )
@@ -1885,8 +1849,10 @@ void AdminManager::GetInfo(MsgEntry* me,psAdminCmdMessage& msg, AdminCmdData& da
     }
 }
 
-void AdminManager::HandlePetitionMessage(MsgEntry *me, psPetitionRequestMessage& msg,Client *client)
+void AdminManager::HandlePetitionMessage(MsgEntry *me, Client *client)
 {
+    psPetitionRequestMessage msg(me);
+
     // Check which message and if this is a GM message or user message
     if (msg.request == "query")
     {
@@ -1909,8 +1875,9 @@ void AdminManager::HandlePetitionMessage(MsgEntry *me, psPetitionRequestMessage&
     }
 }
 
-void AdminManager::HandleGMGuiMessage(MsgEntry *me, psGMGuiMessage& msg,Client *client)
+void AdminManager::HandleGMGuiMessage(MsgEntry *me, Client *client)
 {
+    psGMGuiMessage msg(me);
     if (msg.type == psGMGuiMessage::TYPE_QUERYPLAYERLIST)
     {
         if (client->GetSecurityLevel() >= GM_LEVEL_0)
@@ -5919,8 +5886,10 @@ void AdminManager::SendSpawnTypes(MsgEntry* me, psAdminCmdMessage& msg, AdminCmd
     msg2.SendMessage();
 }
 
-void AdminManager::SendSpawnItems (MsgEntry* me, psGMSpawnItems& msg,Client *client)
+void AdminManager::SendSpawnItems (MsgEntry* me, Client *client)
 {
+    psGMSpawnItems msg(me);
+
     csArray<psItemStats*> items;
     unsigned int size = 0;
     if (!Valid(client->GetSecurityLevel(), "/item", client->GetClientNum()))
@@ -5977,7 +5946,13 @@ void AdminManager::SendSpawnItems (MsgEntry* me, psGMSpawnItems& msg,Client *cli
     msg2.SendMessage();
 }
 
-void AdminManager::SpawnItemInv(MsgEntry* me, psGMSpawnItem& msg,Client *client)
+void AdminManager::SpawnItemInv(MsgEntry* me, Client *client)
+{
+    psGMSpawnItem msg(me);
+    SpawnItemInv(me, msg, client);
+}
+
+void AdminManager::SpawnItemInv( MsgEntry* me, psGMSpawnItem& msg, Client *client)
 {
     if (!Valid(client->GetSecurityLevel(), "/item", client->GetClientNum()))
     {

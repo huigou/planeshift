@@ -118,12 +118,8 @@ ActionManager::ActionManager(  psDatabase *db)
 {
     database = db;
 
-    //clients = psserver->GetNetManager()->GetConnections();
     // Action Messages from client that need handling
-    psserver->GetEventManager()->Subscribe( this, MSGTYPE_MAPACTION, REQUIRE_READY_CLIENT );
-    //// Used to handle proximity triggers
-    //   psserver->GetEventManager()->Subscribe( this, MSGTYPE_DEAD_RECKONING, REQUIRE_READY_CLIENT );
-    //PreloadActionLocations();
+    psserver->GetEventManager()->Subscribe( this,new NetMessageCallback<ActionManager>(this,&ActionManager::HandleMapAction), MSGTYPE_MAPACTION, REQUIRE_READY_CLIENT );
 }
 
 
@@ -131,62 +127,46 @@ ActionManager::~ActionManager()
 {
     // Unsubscribe from Messages
     psserver->GetEventManager()->Unsubscribe( this, MSGTYPE_MAPACTION );
-    //psserver->GetEventManager()->Unsubscribe( this, MSGTYPE_DEAD_RECKONING );
+    
+    csHash<psActionLocation *>::GlobalIterator it (actionLocationList.GetIterator ());
+    while ( it.HasNext () )
     {
-        csHash<psActionLocation *>::GlobalIterator it (actionLocationList.GetIterator ());
-        while ( it.HasNext () )
-        {
-            psActionLocation* actionLocation = it.Next ();
-            delete actionLocation;
-        }
+        psActionLocation* actionLocation = it.Next ();
+        delete actionLocation;
     }
+
     database = NULL;
 }
 
 void ActionManager::HandleMessage( MsgEntry *me, Client *client )
 {
-    switch ( me->GetType() )
-    {
-        case MSGTYPE_MAPACTION:
-        {
-            psMapActionMessage msg( me );
-
-            if ( msg.valid )
-                HandleMessage( &msg, client );
-            break;
-        }
-    //case MSGTYPE_DEAD_RECKONING:
-    //    {
-    //        psDRMessage msg( me, CacheManager::GetSingleton().GetMsgStrings(), EntityManager::GetSingleton().GetEngine() );
-
-    //        if ( msg.valid )
- //               HandleMessage( &msg, client );
-    //        break;
-    //    }
-    }
+    // here for backwards compatibility.  no longer used
 }
 
-void ActionManager::HandleMessage( psMapActionMessage *msg, Client *client )
+void ActionManager::HandleMapAction(MsgEntry *me, Client *client )
 {
-    if ( !msg->valid ) return;
+    psMapActionMessage msg( me );
     
-    switch ( msg->command )
+    if ( !msg.valid ) 
+        return;
+    
+    switch ( msg.command )
     {
-    case psMapActionMessage::QUERY :
-        HandleQueryMessage( msg->actionXML, client );
-        break;
-    case psMapActionMessage::SAVE :
-        HandleSaveMessage( msg->actionXML, client );
-        break;
-    case psMapActionMessage::LIST_QUERY :
-        HandleListMessage( msg->actionXML, client );
-        break;
-    case psMapActionMessage::DELETE_ACTION:
-        HandleDeleteMessage( msg->actionXML, client );
-        break;
-    case psMapActionMessage::RELOAD_CACHE:
-        HandleReloadMessage( client );
-        break;
+        case psMapActionMessage::QUERY :
+            HandleQueryMessage( msg.actionXML, client );
+            break;
+        case psMapActionMessage::SAVE :
+            HandleSaveMessage( msg.actionXML, client );
+            break;
+        case psMapActionMessage::LIST_QUERY :
+            HandleListMessage( msg.actionXML, client );
+            break;
+        case psMapActionMessage::DELETE_ACTION:
+            HandleDeleteMessage( msg.actionXML, client );
+            break;
+        case psMapActionMessage::RELOAD_CACHE:
+            HandleReloadMessage( client );
+            break;
     }
 }
 
