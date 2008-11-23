@@ -232,6 +232,8 @@ struct PathDefinition
     csPDelArray<Bonus> skillBonuses;
     
     csString info;
+    csString parents;
+    csString life;
 };
 
 //------------------------------------------------------------------------------

@@ -415,12 +415,15 @@ void psClientCharManager::HandleEquipment( MsgEntry* me )
 
     
     csString slotname(psengine->slotName.GetName(equip.slot));
-    
+    printf("%s slotname\n", slotname.GetDataSafe());
+    printf("%d equipslot\n", equip.slot);
     if ( equip.slot == PSCHARACTER_SLOT_HELM )
     {
+        printf("result1 %s\n", equip.mesh.GetDataSafe());
         psString result(equip.mesh);
         result.ReplaceAllSubString("$H",object->helmGroup);                                                    
         equip.mesh = result;
+        printf("result1 %s\n", equip.mesh.GetDataSafe());
     }
         
     if ( equip.type == psEquipmentMessage::EQUIP )
@@ -440,7 +443,7 @@ void psClientCharManager::HandleEquipment( MsgEntry* me )
         
             if (doll == NULL) 
                 continue;
-        
+        printf("DOOLLLL2 %u\n", doll->GetID());
             if (doll->GetID() == playerID) // This is a doll of the updated object
             {
                 iMeshWrapper* dollObject = doll->GetObject();
@@ -449,7 +452,7 @@ void psClientCharManager::HandleEquipment( MsgEntry* me )
                     Error2("Cannot update registered doll view with ID %d because it has no object", doll->GetID());
                     continue;
                 }
-            
+            printf("DOOLLLL2 %u\n", doll->GetID());
                 psCharAppearance p(psengine->GetObjectRegistry());
                 p.Clone(object->charApp);
                 p.SetMesh(dollObject);
@@ -459,6 +462,7 @@ void psClientCharManager::HandleEquipment( MsgEntry* me )
     }
     else
     {
+        printf("dequip\n");
         // Update any doll views registered for changes
         csArray<iPAWSSubscriber*> dolls = PawsManager::GetSingleton().ListSubscribers("sigActorUpdate");
         for (size_t i=0; i<dolls.GetSize(); i++)
@@ -1000,6 +1004,12 @@ void psCreationManager::LoadPathInfo()
         path->info = node->GetAttributeValue("info");
         if ( path->info.IsEmpty() )
             path->info = "None";
+        path->parents = node->GetAttributeValue("parents");
+        if ( path->parents.IsEmpty() )
+             path->parents = "None";
+        path->life = node->GetAttributeValue("life");
+        if ( path->life.IsEmpty() )
+             path->life = "None";
 
         //Load in all of the stat bonuses
         csRef<iDocumentNodeIterator> iter = node->GetNodes("StatBonus");
