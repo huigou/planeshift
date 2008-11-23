@@ -1,5 +1,5 @@
 /*
-* shadowmanager.cpp - Author: Christian Svensson
+* pawsnpcdialog.cpp - Author: Christian Svensson
 *
 * Copyright (C) 2008 Atomic Blue (info@planeshift.it, http://www.atomicblue.org)
 *
@@ -58,8 +58,18 @@ void pawsNpcDialogWindow::OnListAction( pawsListBox* widget, int status )
 		pawsTextBox *trig = dynamic_cast<pawsTextBox *>(widget->GetSelectedRow()->FindWidgetXMLBinding("trig"));
 		printf("Player says '%s'.\n", trig->GetText() );
 
+        // Send the server the original trigger
 		csString cmd;
 		cmd.Format("/tellnpc %s", trig->GetText() );
+		psengine->GetCmdHandler()->Publish(cmd);
+        // Now send the chat window and chat bubbles the nice menu text
+        csString text(fld->GetText());
+        size_t dot = text.FindFirst('.'); // Take out the numbering to display
+        if (dot != SIZET_NOT_FOUND)
+        {
+            text.DeleteAt(0,dot+1);
+        }
+		cmd.Format("/tellnpcinternal %s", text.GetData() );
 		psengine->GetCmdHandler()->Publish(cmd);
 		responseList->Clear();
 		Hide();

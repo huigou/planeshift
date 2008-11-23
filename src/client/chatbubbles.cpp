@@ -156,7 +156,7 @@ bool psChatBubbles::Load(const char * filename, bool saveAgain)
         else if (type == "my")
             chat.chatType = CHATBUBBLE_MY;
         else if (type == "npc")
-            chat.chatType = CHAT_NPC;
+            chat.chatType = CHAT_NPCINTERNAL; // /tellnpc messages are now ignored and only /tellnpcinternal messages are displayed.  These are normally sent in pairs.
         else if (type == "npc_me")
             chat.chatType = CHAT_NPC_ME;
         else if (type == "npc_my")
@@ -277,7 +277,7 @@ void psChatBubbles::HandleMessage(MsgEntry * msg, Client * client)
     }
     
     //we have to manage this separately as sPerson in this case holds the destination in place of the origin
-    if(chatMsg.iChatType == CHAT_TELLSELF)
+    if (chatMsg.iChatType == CHAT_TELLSELF || chatMsg.iChatType == CHAT_NPCINTERNAL)
         chatMsg.sPerson = psengine->GetCelClient()->GetMainPlayer()->GetName();
 
     // Get the first name of the person (needed for NPCs with both the first and the last name)
