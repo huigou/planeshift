@@ -1,4 +1,18 @@
-﻿*** 2008-11-22 by Steven Patrick
+﻿*** 2008-11-23 by Keith Fulton
+- Now chat bubbles and the chat window show the nicer popup menu text even though
+  the raw trigger text is sent to the server.  This means separating out what is 
+  displayed from what is sent, so there is now special handling in several places
+  for these two types.  CHAT_NPC is for what goes back and forth, while
+  CHAT_NPCINTERNAL is just for client self-display purposes.
+- ChatManager converted to use message functors.
+- Now combatManager uses a functor for death events.  Also, changed the name of
+  psCombatManager to just CombatManager to be consistent with other manager classes.
+- Changed CharCreationManager to use functor callbacks for net messages.  Renamed
+  psCharCreationManager to CharCreationManager for consistency.
+- Converted two more managers to use the functor style callbacks.  Slight refactoring
+  so the callbacks could be standardized.
+
+*** 2008-11-22 by Steven Patrick
 - Fixed /updaterespawn to work with instances and save to db.
 - You can now use 'here' to use your position instead of the NPC's with /updaterespawn.
 - Now only dev's can use /updaterespawn.
