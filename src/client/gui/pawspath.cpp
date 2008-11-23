@@ -118,6 +118,21 @@ void pawsPathWindow::SetPath(int i)
     createManager->SetPath( path->name );
     pawsMultiLineTextBox* label = (pawsMultiLineTextBox*) FindWidget("label_description");
     label->SetText(path->info);
+    
+ {   
+        // put something in parents
+        pawsMultiLineTextBox* label = (pawsMultiLineTextBox*) FindWidget("label_parents");
+        label->SetText(path->parents);
+    
+}
+
+
+{
+        // put something in life
+        pawsMultiLineTextBox* label = (pawsMultiLineTextBox*) FindWidget("label_life");
+        label->SetText(path->life);
+
+}
 
     {
         // Show Stats
@@ -168,17 +183,6 @@ void pawsPathWindow::SetPath(int i)
             symbol->Show();
     }
 
-    {
-        // put something in parents
-        label = (pawsMultiLineTextBox*) FindWidget("label_parents");
-        label->SetText("Your parents were both peasants, but they had great hopes in you.");
-    }
-
-    {
-        // put something in life
-        label = (pawsMultiLineTextBox*) FindWidget("label_life");
-        label->SetText("Your youth was spent learning and practing. Curious about everything, you learned all you could.");
-    }
 }
 
 void pawsPathWindow::ClearPath(void)
