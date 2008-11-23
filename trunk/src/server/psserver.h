@@ -78,7 +78,7 @@ class  MathScriptEngine;
 class  AdviceManager;
 class  ActionManager;
 class  IntroductionManager;
-class  psMiniGameManager;
+class  MiniGameManager;
 class  LogCSV;
 class  iResultSet;
 class  csVector3;
@@ -324,7 +324,7 @@ public:
      * @return returns a reference to the current minigame manager for the
      * server.
      */
-    psMiniGameManager *GetMiniGameManager() { return minigamemanager; }
+    MiniGameManager *GetMiniGameManager() { return minigamemanager; }
 
     /** Returns the GM Event Manager
      *
@@ -529,7 +529,7 @@ protected:
     psWorkManager*                  workmanager;
     EconomyManager*                 economymanager;
     TutorialManager*                tutorialmanager;
-    psMiniGameManager*              minigamemanager;
+    MiniGameManager*                minigamemanager;
     IntroductionManager*            intromanager;
     csRandomGen                     randomGen;
     MathScriptEngine*               mathscriptengine;

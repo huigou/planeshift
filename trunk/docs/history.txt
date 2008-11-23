@@ -1,4 +1,8 @@
-﻿*** 2008-11-23 by Keith Fulton
+﻿*** 2008-11-23 by Dave Bentham
+- Slight reorganisation of MiniGames classes/files; including renaming 
+  psMiniGameManager to MiniGameManager (following Keith's lead).
+
+*** 2008-11-23 by Keith Fulton
 - Now chat bubbles and the chat window show the nicer popup menu text even though
   the raw trigger text is sent to the server.  This means separating out what is 
   displayed from what is sent, so there is now special handling in several places
