@@ -166,9 +166,9 @@ void ChatManager::HandleChatMessage(MsgEntry *me, Client *client)
 		  {
 			  // Only the speaker sees his successful chatting with an npc.
 			  // This helps quests stay secret.
-			  psChatMessage newMsg(client->GetClientNum(), client->GetName(), 0,
-				  msg.sText, msg.iChatType, msg.translate);
-			  newMsg.SendMessage();
+			  //psChatMessage newMsg(client->GetClientNum(), client->GetName(), 0,
+			//	  msg.sText, msg.iChatType, msg.translate);
+			  //newMsg.SendMessage();
 			  saveFlood = false;
 
 			  gemObject *target = client->GetTargetObject();

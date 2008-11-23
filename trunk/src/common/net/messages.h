@@ -747,6 +747,7 @@ enum {
     CHAT_GM,
     CHAT_SERVER_INFO,
     CHAT_NPC,
+    CHAT_NPCINTERNAL,
     CHAT_SYSTEM_BASE,      ///< System messages that are also shown on the "Main" tab
     CHAT_PET_ACTION,
     CHAT_NPC_ME,

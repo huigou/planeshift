@@ -524,6 +524,15 @@ const char* pawsChatWindow::HandleCommand( const char* cmd )
                     break;
             }
         }
+        else if (words[0] == "/tellnpcinternal")
+        {
+            pPerson = psengine->GetCelClient()->GetMainPlayer()->GetName();
+            int space = pPerson.FindFirst(' ');
+            if (space != SIZET_NOT_FOUND)
+                pPerson.DeleteAt(space,pPerson.Length()-space);
+            words.GetTail(1, text);
+            chattype = CHAT_NPCINTERNAL;
+        }
         else if (words[0] == "/tellnpc")
         {
             pPerson.Clear();
@@ -807,7 +816,10 @@ const char* pawsChatWindow::HandleCommand( const char* cmd )
     }
 
     psChatMessage chat(0, pPerson.GetDataSafe(), 0, text.GetDataSafe(), chattype, false);
-    msgqueue->SendMessage(chat.msg);
+    if (chattype != CHAT_NPCINTERNAL)
+        msgqueue->SendMessage(chat.msg);  // Send all chat msgs to server...
+    else
+        msgqueue->Publish(chat.msg);      // ...except for the display only ones.
 
     return NULL;
 }
@@ -1242,7 +1254,7 @@ void pawsChatWindow::HandleSystemMessage(MsgEntry *me)
     return;
 }
 
-void pawsChatWindow::HandleMessage (MsgEntry *me)
+void pawsChatWindow::HandleMessage(MsgEntry *me)
 {
     bool sendAway = false;
     bool flashEnabled = true;
@@ -1372,7 +1384,8 @@ void pawsChatWindow::HandleMessage (MsgEntry *me)
             break;
         }
 
-        case CHAT_NPC:
+        case CHAT_NPCINTERNAL:
+        case CHAT_NPC: 
         {
             buff.Format(PawsManager::GetSingleton().Translate("%s says: %s"),
                         (const char *)msg.sPerson, (const char *)msg.sText);
@@ -1579,6 +1592,7 @@ void pawsChatWindow::SubscribeCommands()
     cmdsource->Subscribe("/guild",this);
     cmdsource->Subscribe("/group",this);
     cmdsource->Subscribe("/tellnpc",this);
+    cmdsource->Subscribe("/tellnpcinternal",this);
 
     cmdsource->Subscribe("/me",this);
     cmdsource->Subscribe("/my",this);
@@ -1804,6 +1818,14 @@ void pawsChatWindow::SendChatLine()
 
         // Insert the command into the history
         chatHistory->Insert(textToSend);
+
+        // Now special handling for showing /tellnpc commands locally, since these are not reflected to the client from the server anymore
+        if (textToSend.StartsWith("/tellnpc"))
+        {
+            textToSend.Insert(8,"internal");
+            cmdsource->Publish(textToSend);
+        }
+
         currLine.Free(); // Set to NULL
     }
 }
@@ -2229,6 +2251,7 @@ void pawsChatWindow::ChatOutput(const char* data, int colour, int type, bool fla
         case CHAT_NPC_ME:
         case CHAT_NPC_MY:
         case CHAT_NPC_NARRATE:
+        case CHAT_NPCINTERNAL:
             toMain = settings.npcIncluded;
             flashMain &= currentTab != npcText;
             ChatOutput(npcText, s.GetDataSafe(), colour, flashEnabled && !toMain && (settings.npcFlashing || (hasCharName && settings.npccFlashing)), "NPC Button");
