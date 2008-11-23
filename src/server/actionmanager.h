@@ -111,7 +111,7 @@ public:
       * @param msg            The message to process
       * @param client      The client that sent the message.
       */
-    void HandleMessage( psMapActionMessage *msg, Client *client );
+    void HandleMapAction( MsgEntry *msg, Client *client );
 
     //   /** Processes psDRMessages
     //     *
