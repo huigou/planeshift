@@ -499,7 +499,7 @@ bool psServer::Initialize(iObjectRegistry* object_reg)
     economymanager->ScheduleDrop(1 * 60 * 60 * 1000,true); // 1 hour
 
     // Start minigame manager
-    minigamemanager = new psMiniGameManager();
+    minigamemanager = new MiniGameManager();
     if (!minigamemanager->Initialise())
     {
         Error1("Failed to load minigame data");

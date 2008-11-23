@@ -27,9 +27,9 @@ namespace psMiniGame
 /**
  * Game board limits
  */
-#define GAMEBOARD_MIN_COLS 0
+#define GAMEBOARD_MIN_COLS 1
 #define GAMEBOARD_MAX_COLS 16
-#define GAMEBOARD_MIN_ROWS 0
+#define GAMEBOARD_MIN_ROWS 1
 #define GAMEBOARD_MAX_ROWS 16
 
     /// Minigame options

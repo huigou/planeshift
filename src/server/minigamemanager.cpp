@@ -62,25 +62,25 @@ using namespace psMiniGame;
 
 //---------------------------------------------------------------------------
 
-class psMiniGameManagerTick : public psGameEvent
+class MiniGameManagerTick : public psGameEvent
 {
     public:
 
-        psMiniGameManagerTick(int offset, psMiniGameManager *m);
+        MiniGameManagerTick(int offset, MiniGameManager *m);
         virtual void Trigger();
 
     protected:
 
-        psMiniGameManager *manager;
+        MiniGameManager *manager;
 };
 
-psMiniGameManagerTick::psMiniGameManagerTick(int offset, psMiniGameManager *m)
+MiniGameManagerTick::MiniGameManagerTick(int offset, MiniGameManager *m)
     : psGameEvent(0, offset, "psMiniGameManagerTick")
 {
     manager = m;
 }
 
-void psMiniGameManagerTick::Trigger()
+void MiniGameManagerTick::Trigger()
 {
     manager->Idle();
 }
@@ -88,22 +88,22 @@ void psMiniGameManagerTick::Trigger()
 
 //---------------------------------------------------------------------------
 
-psMiniGameManager::psMiniGameManager()
+MiniGameManager::MiniGameManager()
 {
     psserver->GetEventManager()->Subscribe(this, MSGTYPE_MINIGAME_STARTSTOP, REQUIRE_READY_CLIENT);
     psserver->GetEventManager()->Subscribe(this, MSGTYPE_MINIGAME_UPDATE, REQUIRE_READY_CLIENT);
 
-    psMiniGameManagerTick *tick = new psMiniGameManagerTick(MINIGAME_TICK_INTERVAL, this);
+    MiniGameManagerTick *tick = new MiniGameManagerTick(MINIGAME_TICK_INTERVAL, this);
     psserver->GetEventManager()->Push(tick);
 }
 
-psMiniGameManager::~psMiniGameManager()
+MiniGameManager::~MiniGameManager()
 {
     psserver->GetEventManager()->Unsubscribe(this, MSGTYPE_MINIGAME_STARTSTOP);
     psserver->GetEventManager()->Unsubscribe(this, MSGTYPE_MINIGAME_UPDATE);
 }
 
-bool psMiniGameManager::Initialise(void)
+bool MiniGameManager::Initialise(void)
 {
     // Load gameboard definitions
     psMiniGameBoardDef *gameDef;
@@ -116,8 +116,8 @@ bool psMiniGameManager::Initialise(void)
             csString name(gameboards[i]["name"]);
             const char *layout = gameboards[i]["layout"];
             const char *pieces = gameboards[i]["pieces"];
-            const int8_t cols = gameboards[i].GetInt("numColumns");
-            const int8_t rows = gameboards[i].GetInt("numRows");
+            const uint8_t cols = gameboards[i].GetInt("numColumns");
+            const uint8_t rows = gameboards[i].GetInt("numRows");
             int8_t players = gameboards[i].GetInt("numPlayers");
             psString optionsStr(gameboards[i]["gameboardOptions"]);
             csString rulesXML(gameboards[i]["gameRules"]); 
@@ -154,7 +154,7 @@ bool psMiniGameManager::Initialise(void)
     return false;
 }
 
-void psMiniGameManager::HandleMessage(MsgEntry *me, Client *client)
+void MiniGameManager::HandleMessage(MsgEntry *me, Client *client)
 {
     if (me->GetType() == MSGTYPE_MINIGAME_STARTSTOP)
     {
@@ -186,7 +186,7 @@ void psMiniGameManager::HandleMessage(MsgEntry *me, Client *client)
 
 }
 
-void psMiniGameManager::HandleStartGameRequest(Client *client)
+void MiniGameManager::HandleStartGameRequest(Client *client)
 {
     if (!client || client->GetClientNum() == (uint32_t)-1)
     {
@@ -258,7 +258,7 @@ void psMiniGameManager::HandleStartGameRequest(Client *client)
 
 }
 
-void psMiniGameManager::HandleStopGameRequest(Client *client)
+void MiniGameManager::HandleStopGameRequest(Client *client)
 {
     if (!client || client->GetClientNum() == (uint32_t)-1)
     {
@@ -272,7 +272,7 @@ void psMiniGameManager::HandleStopGameRequest(Client *client)
     RemovePlayerFromSessions(playerSessions.Get(clientID, 0), client, clientID);
 }
 
-void psMiniGameManager::RemovePlayerFromSessions(psMiniGameSession *session, Client *client, uint32_t clientID)
+void MiniGameManager::RemovePlayerFromSessions(psMiniGameSession *session, Client *client, uint32_t clientID)
 {
     if (session)
     {
@@ -297,7 +297,7 @@ void psMiniGameManager::RemovePlayerFromSessions(psMiniGameSession *session, Cli
     }
 }
 
-void psMiniGameManager::HandleGameUpdate(Client *client, psMGUpdateMessage &msg)
+void MiniGameManager::HandleGameUpdate(Client *client, psMGUpdateMessage &msg)
 {
     if (!client || client->GetClientNum() == (uint32_t)-1)
     {
@@ -326,7 +326,7 @@ void psMiniGameManager::HandleGameUpdate(Client *client, psMGUpdateMessage &msg)
     session->Update(client, msg);
 }
 
-void psMiniGameManager::ResetAllGameSessions(void)
+void MiniGameManager::ResetAllGameSessions(void)
 {
     for (size_t i = 0; i < sessions.GetSize(); i++)
     {
@@ -334,7 +334,7 @@ void psMiniGameManager::ResetAllGameSessions(void)
     }
 }
 
-psMiniGameSession *psMiniGameManager::GetSessionByID(uint32_t id)
+psMiniGameSession *MiniGameManager::GetSessionByID(uint32_t id)
 {
     for (size_t i = 0; i < sessions.GetSize(); i++)
     {
@@ -344,23 +344,23 @@ psMiniGameSession *psMiniGameManager::GetSessionByID(uint32_t id)
     return 0;
 }
 
-void psMiniGameManager::Idle()
+void MiniGameManager::Idle()
 {
     for (size_t i = 0; i < sessions.GetSize(); i++)
     {
         sessions.Get(i)->Idle();
     }
 
-    psMiniGameManagerTick *tick = new psMiniGameManagerTick(MINIGAME_TICK_INTERVAL, this);
+    MiniGameManagerTick *tick = new MiniGameManagerTick(MINIGAME_TICK_INTERVAL, this);
     psserver->GetEventManager()->Push(tick);
 }
 
-psMiniGameBoardDef *psMiniGameManager::FindGameDef(csString gameName)
+psMiniGameBoardDef *MiniGameManager::FindGameDef(csString gameName)
 {
     return gameBoardDef.Get(gameName.Downcase(), NULL);
 }
 
-void psMiniGameManager::ResetGameSession(psMiniGameSession *sessionToReset)
+void MiniGameManager::ResetGameSession(psMiniGameSession *sessionToReset)
 {
     if (!sessionToReset)
     {
@@ -381,7 +381,7 @@ void psMiniGameManager::ResetGameSession(psMiniGameSession *sessionToReset)
     }
 }
 
-int16_t psMiniGameManager::ParseGameboardOptions(psString optionsStr)
+int16_t MiniGameManager::ParseGameboardOptions(psString optionsStr)
 {
     uint16_t localOptions = 0;
 
@@ -403,178 +403,7 @@ int16_t psMiniGameManager::ParseGameboardOptions(psString optionsStr)
 
 //---------------------------------------------------------------------------
 
-psMiniGameBoardDef::psMiniGameBoardDef(const int8_t noCols, const int8_t noRows,
-                                       const char *layoutStr, const char *piecesStr,
-                                       const int8_t defPlayers, const int16_t options)
-{
-    // rows & columns setup
-    rows = noRows;
-    cols = noCols;
-
-    // layout setup
-    layoutSize = cols * rows / 2;
-    if ((cols * rows % 2) != 0)
-        layoutSize++;
-
-    // Convert the layout string into a packed binary array
-    layout = new uint8_t[layoutSize];
-    PackLayoutString(layoutStr, layout);
-
-    // Get the list of available pieces
-    pieces = NULL;
-    uint8_t numPieces = 0;
-    
-    // Pack the list of pieces
-    numPieces = (uint8_t)strlen(piecesStr);
-    size_t piecesSize = numPieces / 2;
-    if (numPieces % 2)
-        piecesSize++;
-
-    pieces = new uint8_t[piecesSize];
-
-    for (size_t i = 0; i < numPieces; i++)
-    {
-        uint8_t v = 0;
-        if (isxdigit(piecesStr[i]))
-        {
-            char ch = toupper(piecesStr[i]);
-            v = (uint8_t)(ch - '0');
-            if (ch >= 'A')
-                v -= (uint8_t)('A' - '0') - 10;
-        }
-        if (i % 2)
-            pieces[i/2] |= v;
-        else
-            pieces[i/2] = (v << 4);
-    }
-
-    numPlayers = defPlayers;
-    gameboardOptions = options;
-
-    // default game rules
-    playerTurnRule = RELAXED;
-    movePieceTypeRule = PLACE_OR_MOVE;
-    moveablePiecesRule = ANY_PIECE;
-    movePiecesToRule = ANYWHERE;
-}
-
-psMiniGameBoardDef::~psMiniGameBoardDef()
-{
-    if (layout)
-        delete[] layout;
-    if (pieces)
-        delete[] pieces;
-}
-
-void psMiniGameBoardDef::PackLayoutString(const char *layoutStr, uint8_t *packedLayout)
-{
-    for (size_t i = 0; i < strlen(layoutStr); i++)
-    {
-        uint8_t v = 0x0F;
-        if (isxdigit(layoutStr[i]))
-        {
-            char ch = toupper(layoutStr[i]);
-            v = (uint8_t)(ch - '0');
-            if (ch >= 'A')
-                v -= (uint8_t)('A' - '0') - 10;
-        }
-        if (i % 2)
-            packedLayout[i/2] |= v;
-        else
-            packedLayout[i/2] = (v << 4);
-    }
-}
-
-bool psMiniGameBoardDef::DetermineGameRules(csString rulesXMLstr, csString name)
-{
-    if (rulesXMLstr.StartsWith("<GameRules>", false))
-    {
-        csRef<iDocument> doc = ParseString(rulesXMLstr);
-        if (doc)
-        {
-            csRef<iDocumentNode> root = doc->GetRoot();
-            if (root)
-            {
-                csRef<iDocumentNode> topNode = root->GetNode("GameRules");
-                if (topNode)
-                {
-                    csRef<iDocumentNode> rulesNode = topNode->GetNode("Rules");
-                    if (rulesNode )
-                    {
-                        // PlayerTurns can be 'Strict' (order of players' moves enforced)
-                        // or 'Relaxed' (default - free for all).
-                        csString playerTurnsVal (rulesNode->GetAttributeValue("PlayerTurns"));
-                        if (playerTurnsVal.Downcase() == "ordered")
-                        {
-                            playerTurnRule = ORDERED;
-                        }   
-                        else if (!playerTurnsVal.IsEmpty() && playerTurnsVal.Downcase() != "relaxed")
-                        {
-                            Error3("\"%s\" Rule PlayerTurns \"%s\" not recognised. Defaulting to \'Relaxed\'.",
-                                   name.GetDataSafe(), playerTurnsVal.GetDataSafe());
-                        }
-
-                        // MoveType can be 'MoveOnly' (player can only move existing pieces),
-                        // 'PlaceOnly' (player can only place new pieces on the board; cant move others),
-                        // or 'PlaceOrMovePiece' (default - either move existing or place new pieces).
-                        csString moveTypeVal (rulesNode->GetAttributeValue("MoveType"));
-                        if (moveTypeVal.Downcase() == "moveonly")
-                        {
-                            movePieceTypeRule = MOVE_ONLY;
-                        }
-                        else if (moveTypeVal.Downcase() == "placeonly")
-                        {
-                            movePieceTypeRule = PLACE_ONLY;
-                        }
-                        else if (!moveTypeVal.IsEmpty() && moveTypeVal.Downcase() != "placeormovepiece")
-                        {
-                            Error3("\"%s\" Rule MoveType \"%s\" not recognised. Defaulting to \'PlaceOrMovePiece\'.",
-                                   name.GetDataSafe(), moveTypeVal.GetDataSafe());
-                        }
-
-                        // MoveablePieces can be 'Own' (player can only move their own pieces) or
-                        // 'Any' (default - player can move any piece in play).
-                        csString moveablePiecesVal (rulesNode->GetAttributeValue("MoveablePieces"));
-                        if (moveablePiecesVal.Downcase() == "own")
-                        {
-                            moveablePiecesRule = OWN_PIECES_ONLY;
-                        }
-                        else if (!moveablePiecesVal.IsEmpty() && moveablePiecesVal.Downcase() != "any")
-                        {
-                            Error3("\"%s\" Rule MoveablePieces \"%s\" not recognised. Defaulting to \'Any\'.",
-                                   name.GetDataSafe(), moveablePiecesVal.GetDataSafe());
-                        }
-
-                        // MoveTo can be 'Vacancy' (player can move pieces to vacant squares only) or
-                        // 'Anywhere' (default - can move to any square, vacant or occupied).
-                        csString moveToVal (rulesNode->GetAttributeValue("MoveTo"));
-                        if (moveToVal.Downcase() == "vacancy")
-                        {
-                            movePiecesToRule = VACANCY_ONLY;
-                        }
-                        else if (!moveToVal.IsEmpty() && moveToVal.Downcase() != "anywhere")
-                        {
-                            Error3("\"%s\" Rule MoveTo \"%s\" not recognised. Defaulting to \'Anywhere\'.",
-                                   name.GetDataSafe(), moveToVal.GetDataSafe());
-                        }
-                        return true;
-                    }
-                }
-            }
-        }
-    }
-    else if (rulesXMLstr.IsEmpty())   // if no rules defined at all, dont worry - keep defaults
-    {
-        return true;
-    }
-
-    Error2("XML error in GameRules definition for \"%s\" .", name.GetDataSafe());
-    return false;
-}
-
-//---------------------------------------------------------------------------
-
-psMiniGameSession::psMiniGameSession(psMiniGameManager *mng, gemActionLocation *obj, const char *name)
+psMiniGameSession::psMiniGameSession(MiniGameManager *mng, gemActionLocation *obj, const char *name)
 {
     manager = mng;
     actionObject = obj;
@@ -1116,63 +945,3 @@ bool psMiniGameSession::GameMovePassesRules(uint32_t movingClient,
     return true;
 }
 
-//---------------------------------------------------------------------------
-
-psMiniGameBoard::psMiniGameBoard()
-    : layout(0)
-{
-}
-
-psMiniGameBoard::~psMiniGameBoard()
-{
-    if (layout)
-        delete[] layout;
-}
-
-void psMiniGameBoard::Setup(psMiniGameBoardDef *newGameDef, uint8_t *preparedLayout)
-{
-    // Delete the previous layout
-    if (layout)
-        delete[] layout;
-
-    gameBoardDef = newGameDef;
-
-    layout = new uint8_t[gameBoardDef->layoutSize];
-
-    if (!preparedLayout)
-        memcpy(layout, gameBoardDef->layout, gameBoardDef->layoutSize);
-    else
-        memcpy(layout, preparedLayout, gameBoardDef->layoutSize);
-}
-
-uint8_t psMiniGameBoard::Get(int8_t col, int8_t row) const
-{
-    if (col < 0 || col >= gameBoardDef->cols || row < 0 || row >= gameBoardDef->rows || !layout)
-        return DisabledTile;
-
-    int idx = row*gameBoardDef->cols + col;
-    uint8_t v = layout[idx/2];
-    if (idx % 2)
-        return v & 0x0F;
-    else
-        return (v & 0xF0) >> 4;
-}
-
-void psMiniGameBoard::Set(int8_t col, int8_t row, uint8_t state)
-{
-    if (col < 0 || col >= gameBoardDef->cols || row < 0 || row >= gameBoardDef->rows || !layout)
-        return;
-
-    int idx = row*gameBoardDef->cols + col;
-    uint8_t v = layout[idx/2];
-    if (idx % 2)
-    {
-        if ((v & 0x0F) != DisabledTile)
-            layout[idx/2] = (v & 0xF0) + (state & 0x0F);
-    }
-    else
-    {
-        if ((v & 0xF0) >> 4 != DisabledTile)
-            layout[idx/2] = (v & 0x0F) + ((state & 0x0F) << 4);
-    }
-}
