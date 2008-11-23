@@ -676,15 +676,12 @@ void BankManager::SendBankWindow(Client* client, bool guild, bool forceOpen)
 
 void BankManager::HandleMessage(MsgEntry *me, Client *client)
 {
-    if(me->GetType() == MSGTYPE_BANKING)
+    psGUIBankingMessage msg(me);
+    if (msg.valid)
+        HandleBanking(client, msg);
+    else
     {
-        psGUIBankingMessage msg(me);
-        if (msg.valid)
-            HandleBanking(client, msg);
-        else
-        {
-            Debug2(LOG_NET,me->clientnum,"Received unparsable psGUIBankingMessage from client %u.\n", me->clientnum);
-        }
+        Debug2(LOG_NET,me->clientnum,"Received unparsable psGUIBankingMessage from client %u.\n", me->clientnum);
     }
 }
 
