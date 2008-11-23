@@ -60,7 +60,7 @@
 
 
 
-psCharCreationManager::psCharCreationManager()
+CharCreationManager::CharCreationManager()
 {    
     raceCPValues = 0;
     raceCPValuesLength = 0;
@@ -68,13 +68,13 @@ psCharCreationManager::psCharCreationManager()
         psserver->GetEventManager()->Unsubscribe(this, MSGTYPE_CHAR_CREATE_UPLOAD);
 }
 
-psCharCreationManager::~psCharCreationManager()
+CharCreationManager::~CharCreationManager()
 {
     delete[] raceCPValues;    
 }
 
 
-bool psCharCreationManager::Initialize( )
+bool CharCreationManager::Initialize( )
 {
 
     if ( !( LoadCPValues() && 
@@ -82,76 +82,25 @@ bool psCharCreationManager::Initialize( )
             LoadLifeEvents()) )
         return false;
         
-    psserver->GetEventManager()->Subscribe(this, MSGTYPE_CHAR_CREATE_UPLOAD,REQUIRE_ANY_CLIENT);
-    psserver->GetEventManager()->Subscribe(this, MSGTYPE_CHAR_CREATE_CP,REQUIRE_ANY_CLIENT);
-    psserver->GetEventManager()->Subscribe(this, MSGTYPE_CHAR_CREATE_PARENTS,REQUIRE_ANY_CLIENT);
-    psserver->GetEventManager()->Subscribe(this, MSGTYPE_CHAR_CREATE_CHILDHOOD,REQUIRE_ANY_CLIENT);
-    psserver->GetEventManager()->Subscribe(this, MSGTYPE_CHAR_CREATE_LIFEEVENTS,REQUIRE_ANY_CLIENT);
-    psserver->GetEventManager()->Subscribe(this, MSGTYPE_CHAR_CREATE_TRAITS,REQUIRE_ANY_CLIENT);
-    psserver->GetEventManager()->Subscribe(this, MSGTYPE_CHAR_CREATE_NAME,REQUIRE_ANY_CLIENT);
-    psserver->GetEventManager()->Subscribe(this, MSGTYPE_CHAR_DELETE,REQUIRE_ANY_CLIENT);
+    psserver->GetEventManager()->Subscribe(this, new NetMessageCallback<CharCreationManager>(this,&CharCreationManager::HandleUploadMessage), MSGTYPE_CHAR_CREATE_UPLOAD,REQUIRE_ANY_CLIENT);
+    psserver->GetEventManager()->Subscribe(this, new NetMessageCallback<CharCreationManager>(this,&CharCreationManager::HandleCharCreateCP), MSGTYPE_CHAR_CREATE_CP,REQUIRE_ANY_CLIENT);
+    psserver->GetEventManager()->Subscribe(this, new NetMessageCallback<CharCreationManager>(this,&CharCreationManager::HandleParents), MSGTYPE_CHAR_CREATE_PARENTS,REQUIRE_ANY_CLIENT);
+    psserver->GetEventManager()->Subscribe(this, new NetMessageCallback<CharCreationManager>(this,&CharCreationManager::HandleChildhood), MSGTYPE_CHAR_CREATE_CHILDHOOD,REQUIRE_ANY_CLIENT);
+    psserver->GetEventManager()->Subscribe(this, new NetMessageCallback<CharCreationManager>(this,&CharCreationManager::HandleLifeEvents), MSGTYPE_CHAR_CREATE_LIFEEVENTS,REQUIRE_ANY_CLIENT);
+    psserver->GetEventManager()->Subscribe(this, new NetMessageCallback<CharCreationManager>(this,&CharCreationManager::HandleTraits), MSGTYPE_CHAR_CREATE_TRAITS,REQUIRE_ANY_CLIENT);
+    psserver->GetEventManager()->Subscribe(this, new NetMessageCallback<CharCreationManager>(this,&CharCreationManager::HandleName), MSGTYPE_CHAR_CREATE_NAME,REQUIRE_ANY_CLIENT);
+    psserver->GetEventManager()->Subscribe(this, new NetMessageCallback<CharCreationManager>(this,&CharCreationManager::HandleCharDelete), MSGTYPE_CHAR_DELETE,REQUIRE_ANY_CLIENT);
    
     // Other loaders are here.        
     return true;
 }
 
-void psCharCreationManager::HandleMessage(MsgEntry *pMsg,Client *client)
+void CharCreationManager::HandleMessage(MsgEntry *pMsg,Client *client)
 {
-    switch ( pMsg->GetType() )
-    {
-        /* This is a simple message requesting a CP value for a race
-         * so we can handle the raw message data here.
-         */
-        case MSGTYPE_CHAR_CREATE_CP:
-        {
-            HandleCharCreateCP( pMsg, client );
-            return;
-        }  
-       
-        case MSGTYPE_CHAR_DELETE:
-        {
-            HandleCharDelete( pMsg, client );
-            return;
-        }
-
-        case MSGTYPE_CHAR_CREATE_NAME:
-        {
-            HandleName(pMsg,client);
-            return;
-        }
-        case MSGTYPE_CHAR_CREATE_PARENTS:
-        {
-            HandleParents(pMsg,client);
-            return;            
-        }
-        
-        case MSGTYPE_CHAR_CREATE_CHILDHOOD:
-        {
-            HandleChildhood(pMsg,client);
-            return;
-        }
-
-        case MSGTYPE_CHAR_CREATE_LIFEEVENTS:
-        {
-            HandleLifeEvents(pMsg,client);
-            return;
-        }
-      
-        case MSGTYPE_CHAR_CREATE_TRAITS:
-        {
-            HandleTraits(pMsg,client);
-            return;
-        }
-                    
-        case MSGTYPE_CHAR_CREATE_UPLOAD: 
-        { 
-            HandleUploadMessage( pMsg, client ); 
-            break;
-        } 
-    }
+    // no longer used
 }
 
-bool psCharCreationManager::HandleCharDelete( MsgEntry* me, Client* client )
+void CharCreationManager::HandleCharDelete( MsgEntry* me, Client* client )
 {
     psCharDeleteMessage msg(me);
     csString charName = msg.charName;
@@ -159,7 +108,7 @@ bool psCharCreationManager::HandleCharDelete( MsgEntry* me, Client* client )
     if(!charName.Length())
     {
         CPrintf(CON_WARNING,"Client %u sent malformed character name to deletion code!",client->GetClientNum());
-        return false; // No char
+        return; // No char
     }
 
     PID pid = psserver->CharacterLoader.FindCharacterID(client->GetAccountID(), charName);
@@ -171,14 +120,14 @@ bool psCharCreationManager::HandleCharDelete( MsgEntry* me, Client* client )
         if (!pid.IsValid())
         {
             psserver->SendSystemError(client->GetClientNum(),"Couldn't find character data!");
-            return false;
+            return;
         }
 
         // Can we delete it?
         if (!psserver->CharacterLoader.DeleteCharacterData(pid, error))
         {
             psserver->SendSystemError(client->GetClientNum(),"Error: %s",error.GetData());
-            return false;
+            return;
         }
 
         // Remove cached objects to make sure that the client gets a fresh character
@@ -204,14 +153,12 @@ bool psCharCreationManager::HandleCharDelete( MsgEntry* me, Client* client )
     {
         CPrintf(CON_WARNING,"Character %s not deleted because of non-ownership\n", charName.GetData() );
         psserver->SendSystemError(client->GetClientNum(),"You do not own that character!");
-        return false;
+        return;
     }
-
-    return true;
 }
 
 
-bool psCharCreationManager::LoadCPValues()
+bool CharCreationManager::LoadCPValues()
 {
     Result result(db->Select("SELECT id,initial_cp from race_info"));
     if ( !result.IsValid() || result.Count() == 0 )
@@ -229,7 +176,7 @@ bool psCharCreationManager::LoadCPValues()
     return true;     
 }
 
-bool psCharCreationManager::LoadLifeEvents()
+bool CharCreationManager::LoadLifeEvents()
 {
     Result events( db->Select("SELECT * from char_create_life") );
     
@@ -272,7 +219,7 @@ bool psCharCreationManager::LoadLifeEvents()
     return true;                      
 }
 
-bool psCharCreationManager::LoadCreationChoices()
+bool CharCreationManager::LoadCreationChoices()
 {
     Result result( db->Select("SELECT * from character_creation") );
     
@@ -320,7 +267,7 @@ bool psCharCreationManager::LoadCreationChoices()
 }
  
  
-int psCharCreationManager::ConvertAreaToInt( const char* area )
+int CharCreationManager::ConvertAreaToInt( const char* area )
 {
     csString str( area );
     
@@ -350,7 +297,7 @@ int psCharCreationManager::ConvertAreaToInt( const char* area )
     return -1;
 }
 
-void psCharCreationManager::HandleName( MsgEntry* me, Client *client )
+void CharCreationManager::HandleName( MsgEntry* me, Client *client )
 {
     psNameCheckMessage name;
     name.FromClient( me );
@@ -437,7 +384,7 @@ void psCharCreationManager::HandleName( MsgEntry* me, Client *client )
     response.SendMessage();                                            
 }
 
-void psCharCreationManager::HandleChildhood( MsgEntry* me,Client *client )
+void CharCreationManager::HandleChildhood( MsgEntry* me,Client *client )
 {
     psCreationChoiceMsg message(me);
     
@@ -470,7 +417,7 @@ void psCharCreationManager::HandleChildhood( MsgEntry* me,Client *client )
     
 }
 
-void psCharCreationManager::HandleParents( MsgEntry* me,Client *client )
+void CharCreationManager::HandleParents( MsgEntry* me,Client *client )
 {
     psCreationChoiceMsg message(me);
     if (!message.valid)
@@ -498,7 +445,7 @@ void psCharCreationManager::HandleParents( MsgEntry* me,Client *client )
     }
 }
 
-void psCharCreationManager::HandleLifeEvents( MsgEntry* me,Client *client )
+void CharCreationManager::HandleLifeEvents( MsgEntry* me,Client *client )
 {
     psLifeEventMsg message(me);
 
@@ -525,7 +472,7 @@ void psCharCreationManager::HandleLifeEvents( MsgEntry* me,Client *client )
 
 }
 
-void psCharCreationManager::HandleTraits( MsgEntry* me,Client *client )
+void CharCreationManager::HandleTraits( MsgEntry* me,Client *client )
 {
     psCreationChoiceMsg message(me);
 
@@ -555,7 +502,7 @@ void psCharCreationManager::HandleTraits( MsgEntry* me,Client *client )
 
 
 
-psCharCreationManager::LifeEventChoiceServer* psCharCreationManager::FindLifeEvent( int id )
+CharCreationManager::LifeEventChoiceServer* CharCreationManager::FindLifeEvent( int id )
 {
     for (size_t x = 0; x < lifeEvents.GetSize(); x++ )
     {
@@ -567,7 +514,7 @@ psCharCreationManager::LifeEventChoiceServer* psCharCreationManager::FindLifeEve
 }
 
 
-psCharCreationManager::CreationChoice* psCharCreationManager::FindChoice( int id )
+CharCreationManager::CreationChoice* CharCreationManager::FindChoice( int id )
 {
     size_t x;
     for ( x = 0; x < childhoodData.GetSize(); x++ )
@@ -587,7 +534,7 @@ psCharCreationManager::CreationChoice* psCharCreationManager::FindChoice( int id
 
 
 
-bool psCharCreationManager::Validate( psCharUploadMessage& mesg, csString& errorMsg )
+bool CharCreationManager::Validate( psCharUploadMessage& mesg, csString& errorMsg )
 {
 
     // Check for bad parent modifier.    
@@ -629,12 +576,12 @@ bool psCharCreationManager::Validate( psCharUploadMessage& mesg, csString& error
 }
 
 
-int psCharCreationManager::CalculateCPLife( csArray<uint32_t>& events )
+int CharCreationManager::CalculateCPLife( csArray<uint32_t>& events )
 {
     int cpCost = 0;
     for ( size_t li = 0; li < events.GetSize(); li++ )
     {
-        psCharCreationManager::LifeEventChoiceServer *event;
+        CharCreationManager::LifeEventChoiceServer *event;
         event = psserver->charCreationManager->FindLifeEvent( events[li] );
         
         if ( event )
@@ -646,12 +593,12 @@ int psCharCreationManager::CalculateCPLife( csArray<uint32_t>& events )
     return cpCost;
 }
 
-int psCharCreationManager::CalculateCPChoices( csArray<uint32_t>& choices, int fatherMod, int motherMod )
+int CharCreationManager::CalculateCPChoices( csArray<uint32_t>& choices, int fatherMod, int motherMod )
 {
     int cpCost = 0;
     for ( size_t ci = 0; ci < choices.GetSize(); ci++ )
     {
-        psCharCreationManager::CreationChoice* choice = FindChoice( choices[ci] );
+        CharCreationManager::CreationChoice* choice = FindChoice( choices[ci] );
         if ( choice )
         {
             if ( choice->choiceArea == FATHER_JOB )
@@ -670,7 +617,7 @@ int psCharCreationManager::CalculateCPChoices( csArray<uint32_t>& choices, int f
     return cpCost;
 }
 
-void psCharCreationManager::HandleUploadMessage( MsgEntry* me, Client *client )
+void CharCreationManager::HandleUploadMessage( MsgEntry* me, Client *client )
 {
     Debug1( LOG_NEWCHAR, me->clientnum,"New Character is being created" );
 
@@ -972,7 +919,7 @@ void psCharCreationManager::HandleUploadMessage( MsgEntry* me, Client *client )
     //              psserver->charCreationManager->CalculateCPLife(upload.lifeEvents );    
     for ( size_t ci = 0; ci < upload.choices.GetSize(); ci++ )
     {
-        psCharCreationManager::CreationChoice* choice = psserver->charCreationManager->FindChoice( upload.choices[ci] );
+        CharCreationManager::CreationChoice* choice = psserver->charCreationManager->FindChoice( upload.choices[ci] );
         if ( choice )
         {
             csString script (choice->eventScript.GetData() );
@@ -1098,7 +1045,7 @@ void psCharCreationManager::HandleUploadMessage( MsgEntry* me, Client *client )
     }
 }
 
-bool psCharCreationManager::PlayerHasFinishedTutorial(AccountID acctID, uint32 tutorialsecid)
+bool CharCreationManager::PlayerHasFinishedTutorial(AccountID acctID, uint32 tutorialsecid)
 {
     // if there are characters associated with this account that are outside the tutorial assume the tutorial was passed...
     Result result(db->Select("SELECT id FROM characters WHERE account_id = %u AND loc_sector_id != %u", acctID.Unbox(), tutorialsecid));
@@ -1110,7 +1057,7 @@ bool psCharCreationManager::PlayerHasFinishedTutorial(AccountID acctID, uint32 t
 }
 
 
-void psCharCreationManager::AssignScript( psCharacter* character )
+void CharCreationManager::AssignScript( psCharacter* character )
 {
 /*
     csString query;
@@ -1131,7 +1078,7 @@ void psCharCreationManager::AssignScript( psCharacter* character )
     */
 }
 
-int psCharCreationManager::IsReserved(const char* name, AccountID acctID)
+int CharCreationManager::IsReserved(const char* name, AccountID acctID)
 {
     // Check to see if this name is reserved.  Does this check by comparing
     // the email address of the account with that stored in the migration table.
@@ -1161,7 +1108,7 @@ int psCharCreationManager::IsReserved(const char* name, AccountID acctID)
     return NAME_AVAILABLE;
 }
 
-bool psCharCreationManager::IsUnique( const char* name , bool dbUniqueness)
+bool CharCreationManager::IsUnique( const char* name , bool dbUniqueness)
 {
     csString escape;
     db->Escape( escape, name );
@@ -1174,7 +1121,7 @@ bool psCharCreationManager::IsUnique( const char* name , bool dbUniqueness)
     return ! ( result.IsValid() && (result.Count() > (unsigned long)(dbUniqueness ? 1:0)) );
 }
 
-bool psCharCreationManager::IsLastNameUnique( const char* lastname )
+bool CharCreationManager::IsLastNameUnique( const char* lastname )
 {
     if (lastname && strlen(lastname))
     {
@@ -1190,7 +1137,7 @@ bool psCharCreationManager::IsLastNameUnique( const char* lastname )
    return true;  // blank last name is now allowed.
 }
 
-bool psCharCreationManager::FilterName(const char* name)
+bool CharCreationManager::FilterName(const char* name)
 {
     if (name == NULL)
         return false;
@@ -1230,7 +1177,7 @@ bool psCharCreationManager::FilterName(const char* name)
 }
 
 
-bool psCharCreationManager::HandleCharCreateCP( MsgEntry* me, Client*client ) 
+void CharCreationManager::HandleCharCreateCP( MsgEntry* me, Client*client ) 
 {
     int32_t raceID =  me->GetInt32();
     int32_t raceCPValue = 0;
@@ -1245,6 +1192,4 @@ bool psCharCreationManager::HandleCharCreateCP( MsgEntry* me, Client*client )
 
     psCharCreateCPMessage response(me->clientnum,raceID, raceCPValue);
     psserver->GetEventManager()->SendMessage(response.msg);
-
-    return true;
 }
