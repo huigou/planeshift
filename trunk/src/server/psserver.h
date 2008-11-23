@@ -59,7 +59,7 @@ class  EventManager;
 class  TutorialManager;
 class  ServerStatus;
 class  psMarriageManager;
-class  psCombatManager;
+class  CombatManager;
 class  psSpellManager;
 class  ExchangeManager;
 class  ProgressionManager;
@@ -107,7 +107,7 @@ public:
      * Initializes the following modules:
      *     - marriage Manager ( psMarriageManager )
      *     - database ( psDatabase )
-     *     - combat manager ( psCombatManager )
+     *     - combat manager ( CombatManager )
      *     - weather manager ( WeatherManager )
      *     - user manager ( UserManager )
      *     - chat manager ( ChatManager )
@@ -289,7 +289,7 @@ public:
      *
      * @return Returns a reference to the current combat manager.
      */
-    psCombatManager* GetCombatManager() { return combatmanager; }
+    CombatManager* GetCombatManager() { return combatmanager; }
 
     /** Returns the spell manager.
      *
@@ -501,7 +501,7 @@ public:
 
     NPCManager*                     npcmanager;
     psMarriageManager*              marriageManager;
-    psCombatManager*                combatmanager;
+    CombatManager*                combatmanager;
     csRandomGen *                   rng;
     QuestManager *                  questmanager;
     psCharCreationManager*          charCreationManager;

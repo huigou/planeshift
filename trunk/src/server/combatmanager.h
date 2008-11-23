@@ -52,14 +52,14 @@ class MathScript;
  *  and information from the pspccharacterinfo Prop Classes for both
  *  the attacker and the target.
  */
-class psCombatManager: public MessageManager
+class CombatManager: public MessageManager
 {
 public:
 
-    psCombatManager();
+    CombatManager();
     bool InitializePVP();
 
-    virtual ~psCombatManager();
+    virtual ~CombatManager();
 
     void HandleMessage(MsgEntry *me, Client *client);
 
@@ -111,7 +111,7 @@ private:
     MathScriptVar* actorVar;
     MathScriptVar* weaponVar;
 
-    void HandleDeathEvent(MsgEntry *me);
+    void HandleDeathEvent(MsgEntry *me,Client *client);
 
     bool ValidDistance(gemObject *attacker, gemObject *target, psItem *Weapon);
     void SetCombat(gemActor *combatant, Stance stance);

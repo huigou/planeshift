@@ -49,13 +49,13 @@
 // FORWARD DECLARATIONS
 ///////////////////////////////////////////////////////////////////////////////
 class EntityManager;
-class psCombatManager;
+class CombatManager;
 class psServer;
 class AdminManager;
 class ClientConnectionSet;
 class psDatabase;
 class EventManager;
-class psCombatManager;
+class CombatManager;
 class PendingDuelInvite;
 class AdviceManager;
 class StatSet;
@@ -374,7 +374,7 @@ protected:
 //    psDatabase              *database;
 //    csRandomGen             *randomgen;
 //    EventManager            *eventmanager;
-//    psCombatManager         *combatmanager;
+//    CombatManager         *combatmanager;
 //    psServer                *server;
 //    AdminManager            *adminmanager;
     csTicks                  nextUserStatRegeneration;
