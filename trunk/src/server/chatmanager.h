@@ -74,6 +74,9 @@ public:
     virtual ~ChatManager();
 
     virtual void HandleMessage(MsgEntry *pMsg,Client *client);
+    void HandleChatMessage (MsgEntry *me, Client *client);
+    void HandleCacheMessage(MsgEntry *me, Client *client);
+
     void SendNotice(psChatMessage& msg);
 
     NpcResponse *CheckNPCEvent(Client *client,csString& trigger,gemNPC * &target);
