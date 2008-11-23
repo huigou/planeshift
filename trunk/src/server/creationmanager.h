@@ -44,11 +44,11 @@ enum ReservedNames {NAME_RESERVED_FOR_YOU, NAME_RESERVED, NAME_AVAILABLE};
  *   character_creation
  *
  */
-class psCharCreationManager : MessageManager
+class CharCreationManager : MessageManager
 {
 public:        
-    psCharCreationManager();
-    virtual ~psCharCreationManager();
+    CharCreationManager();
+    virtual ~CharCreationManager();
     
     /** Caches the data from the database needed for character creation.
      */
@@ -115,7 +115,7 @@ protected:
 
     /** Handles the creation of a character from the char creation screen
      */
-    bool HandleCharCreateCP(MsgEntry*me, Client* client);
+    void HandleCharCreateCP(MsgEntry*me, Client* client);
     
     /** Handles a check on a name. 
       * This will check the name against the migration and the current 
@@ -127,7 +127,7 @@ protected:
   
     /** Handles the deletion of a character from the char pick screen.
       */
-    bool HandleCharDelete( MsgEntry* me, Client* client );
+    void HandleCharDelete( MsgEntry* me, Client* client );
     
     int CalculateCPChoices( csArray<uint32_t>& choices, int fatherMod, int motherMod );
     int CalculateCPLife( csArray<uint32_t>& events );  

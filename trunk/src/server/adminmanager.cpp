@@ -1116,7 +1116,7 @@ void AdminManager::HandleAdminCmdMessage(MsgEntry *me, Client *client)
             else
             {
                 targetclient = FindPlayerClient(data.player); // Other player?
-                if(targetclient && !psCharCreationManager::IsUnique(data.player, true)) //check that the actor name isn't duplicate
+                if(targetclient && !CharCreationManager::IsUnique(data.player, true)) //check that the actor name isn't duplicate
                     duplicateActor = true;
             }
 
@@ -5384,19 +5384,19 @@ void AdminManager::ChangeName(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
     if (!checkFirst && !checkLast && data.newLastName.Length() != 0)
         return;
 
-    if(checkFirst && !psCharCreationManager::FilterName(data.newName))
+    if(checkFirst && !CharCreationManager::FilterName(data.newName))
     {
         psserver->SendSystemError(me->clientnum,"The name %s is invalid!",data.newName.GetData());
         return;
     }
 
-    if(checkLast && !psCharCreationManager::FilterName(data.newLastName))
+    if(checkLast && !CharCreationManager::FilterName(data.newLastName))
     {
         psserver->SendSystemError(me->clientnum,"The last name %s is invalid!",data.newLastName.GetData());
         return;
     }
 
-    bool nameUnique = psCharCreationManager::IsUnique(data.newName);
+    bool nameUnique = CharCreationManager::IsUnique(data.newName);
     bool allowedToClonename = CacheManager::GetSingleton().GetCommandManager()->Validate(
                     client->GetSecurityLevel(), "changenameall");
     if (!allowedToClonename)
@@ -5409,7 +5409,7 @@ void AdminManager::ChangeName(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
         return;
     }
 
-    bool secondNameUnique = psCharCreationManager::IsLastNameUnique(data.newLastName);
+    bool secondNameUnique = CharCreationManager::IsLastNameUnique(data.newLastName);
     // If the last name should be unique, check it
     if (checkLast && data.uniqueName && data.newLastName.Length() && !secondNameUnique)
     {

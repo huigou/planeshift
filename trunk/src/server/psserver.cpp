@@ -507,7 +507,7 @@ bool psServer::Initialize(iObjectRegistry* object_reg)
     }
     Debug1(LOG_STARTUP, 0, "Started Minigame Manager\n");
 
-    charCreationManager = new psCharCreationManager();
+    charCreationManager = new CharCreationManager();
     if ( !charCreationManager->Initialize() )
     {
         Error1("Failed to load character creation data");

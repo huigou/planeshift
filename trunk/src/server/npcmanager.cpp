@@ -1707,7 +1707,7 @@ void NPCManager::HandlePetCommand( MsgEntry * me )
                 return;
             }
             firstName = NormalizeCharacterName( firstName );
-            if ( !psCharCreationManager::FilterName( firstName ) )
+            if ( !CharCreationManager::FilterName( firstName ) )
             {
                 psserver->SendSystemError( me->clientnum, "The name %s is invalid!", firstName.GetData() );
                 return;
@@ -1722,7 +1722,7 @@ void NPCManager::HandlePetCommand( MsgEntry * me )
                 }
 
                 lastName = NormalizeCharacterName( lastName );
-                if ( !psCharCreationManager::FilterName( lastName ) )
+                if ( !CharCreationManager::FilterName( lastName ) )
                 {
                     psserver->SendSystemError( me->clientnum, "The last name %s is invalid!", lastName.GetData() );
                     return;
@@ -1755,7 +1755,7 @@ void NPCManager::HandlePetCommand( MsgEntry * me )
                 return;
             }
 
-            if (firstName != prevFirstName && !psCharCreationManager::IsUnique( firstName ))
+            if (firstName != prevFirstName && !CharCreationManager::IsUnique( firstName ))
             {
                 psserver->SendSystemError( me->clientnum, "The name %s is not unique!",
                                            firstName.GetDataSafe() );

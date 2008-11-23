@@ -67,7 +67,7 @@ class  NPCManager;
 class  CacheManager;
 class  psCharacterLoader;
 class  csRandomGen;
-class  psCharCreationManager;
+class  CharCreationManager;
 class  QuestManager;
 class  EconomyManager;
 class  psWorkManager;
@@ -504,7 +504,7 @@ public:
     CombatManager*                combatmanager;
     csRandomGen *                   rng;
     QuestManager *                  questmanager;
-    psCharCreationManager*          charCreationManager;
+    CharCreationManager*          charCreationManager;
     csRef<GuildManager>             guildmanager;
     csRef<QuestionManager>          questionmanager;
     csRef<GroupManager>             groupmanager;
