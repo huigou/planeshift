@@ -90,7 +90,7 @@ public:
     int   AttackResult;              ///< Code indicating the result of the attack attempt
     int   PreviousAttackResult;      ///< The code of the previous result of the attack attempt
 
-    psCombatGameEvent(psCombatManager *mgr,
+    psCombatGameEvent(CombatManager *mgr,
                       int delayticks,
                       int action,
                       gemObject *attacker,
@@ -133,10 +133,10 @@ public:
     int GetAttackResult()           { return AttackResult; };
 
 protected:
-    psCombatManager *combatmanager;
+    CombatManager *combatmanager;
 };
 
-psCombatManager::psCombatManager() : pvp_region(NULL)
+CombatManager::CombatManager() : pvp_region(NULL)
 {
     randomgen = psserver->rng;
     var_IAH       = NULL;         
@@ -194,10 +194,10 @@ psCombatManager::psCombatManager() : pvp_region(NULL)
     actorVar    = staminacombat->GetOrCreateVar("Actor");
     weaponVar   = staminacombat->GetOrCreateVar("Weapon");
 
-    psserver->GetEventManager()->Subscribe(this,MSGTYPE_DEATH_EVENT,NO_VALIDATION);
+    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<CombatManager>(this,&CombatManager::HandleDeathEvent),MSGTYPE_DEATH_EVENT,NO_VALIDATION);
 }
 
-psCombatManager::~psCombatManager()
+CombatManager::~CombatManager()
 {
     psserver->GetEventManager()->Unsubscribe(this,MSGTYPE_DEATH_EVENT);
     if (pvp_region) 
@@ -207,7 +207,7 @@ psCombatManager::~psCombatManager()
     }
 }
 
-bool psCombatManager::InitializePVP()
+bool CombatManager::InitializePVP()
 {
     Result rs(db->Select("select * from sc_location_type where name = 'pvp_region'"));
 
@@ -244,7 +244,7 @@ bool psCombatManager::InitializePVP()
     return true;
 }
 
-bool psCombatManager::InPVPRegion(csVector3& pos,iSector * sector)
+bool CombatManager::InPVPRegion(csVector3& pos,iSector * sector)
 {
     if (pvp_region->CheckWithinBounds(EntityManager::GetSingleton().GetEngine(), pos, sector))
         return true;
@@ -252,7 +252,7 @@ bool psCombatManager::InPVPRegion(csVector3& pos,iSector * sector)
     return false;
 }
 
-void psCombatManager::AttackSomeone(gemActor *attacker,gemObject *target,Stance stance)
+void CombatManager::AttackSomeone(gemActor *attacker,gemObject *target,Stance stance)
 {
     psCharacter *attacker_character = attacker->GetCharacterData();
 
@@ -334,7 +334,7 @@ void psCombatManager::AttackSomeone(gemActor *attacker,gemObject *target,Stance 
     }
 }
 
-void psCombatManager::SetCombat(gemActor *combatant, Stance stance)
+void CombatManager::SetCombat(gemActor *combatant, Stance stance)
 {
     // Sanity check
     if (!combatant || !combatant->GetCharacterData() || !combatant->IsAlive())
@@ -353,7 +353,7 @@ void psCombatManager::SetCombat(gemActor *combatant, Stance stance)
     Debug3(LOG_COMBAT,combatant->GetClientID(), "%s starts attacking with stance %s", combatant->GetName(), stance.stance_name.GetData());
 }
 
-void psCombatManager::StopAttack(gemActor *attacker)
+void CombatManager::StopAttack(gemActor *attacker)
 {
     if (!attacker)
         return;
@@ -374,7 +374,7 @@ void psCombatManager::StopAttack(gemActor *attacker)
     Debug2(LOG_COMBAT, attacker->GetClientID(), "%s stops attacking", attacker->GetName());
 }
 
-void psCombatManager::NotifyTarget(gemActor *attacker,gemObject *target)
+void CombatManager::NotifyTarget(gemActor *attacker,gemObject *target)
 {
     // Queue Attack percetion to npc clients
     gemNPC *targetnpc = dynamic_cast<gemNPC *>(target);
@@ -387,7 +387,7 @@ void psCombatManager::NotifyTarget(gemActor *attacker,gemObject *target)
     //    targetactor->GetCharacterData()->InterruptSpellCasting();
 }
 
-void psCombatManager::QueueNextEvent(psCombatGameEvent *event)
+void CombatManager::QueueNextEvent(psCombatGameEvent *event)
 {
     QueueNextEvent(event->GetAttacker(),
                    event->GetWeaponSlot(),
@@ -397,7 +397,7 @@ void psCombatManager::QueueNextEvent(psCombatGameEvent *event)
                    event->GetAttackResult());
 }
 
-void psCombatManager::QueueNextEvent(gemObject *attacker,INVENTORY_SLOT_NUMBER weaponslot,
+void CombatManager::QueueNextEvent(gemObject *attacker,INVENTORY_SLOT_NUMBER weaponslot,
                                      gemObject *target,
                                      int attackerCID,
                                      int targetCID, int previousResult)
@@ -444,7 +444,7 @@ void psCombatManager::QueueNextEvent(gemObject *attacker,INVENTORY_SLOT_NUMBER w
 }
 
 /* ----------------------- NOT IMPLEMENTED YET -------------------------
-int psCombatManager::GetQueuedAction(gemActor *attacker)
+int CombatManager::GetQueuedAction(gemActor *attacker)
 {
     (void) attacker;
     // TODO: This will eventually query the prop class for the next action
@@ -453,7 +453,7 @@ int psCombatManager::GetQueuedAction(gemActor *attacker)
     return 0;
 }
 
-int psCombatManager::GetDefaultModeAction(gemActor *attacker)
+int CombatManager::GetDefaultModeAction(gemActor *attacker)
 {
     (void) attacker;
     // TODO: This will eventually query the prop class for the mode
@@ -466,7 +466,7 @@ int psCombatManager::GetDefaultModeAction(gemActor *attacker)
 /**
  * This is the meat and potatoes of the combat engine here.
  */
-int psCombatManager::CalculateAttack(psCombatGameEvent *event, psItem* subWeapon)
+int CombatManager::CalculateAttack(psCombatGameEvent *event, psItem* subWeapon)
 {
     var_Attacker->SetObject(event->GetAttackerData() );
     var_Target->SetObject(event->GetTargetData() );
@@ -515,7 +515,7 @@ int psCombatManager::CalculateAttack(psCombatGameEvent *event, psItem* subWeapon
     return ATTACK_DAMAGE;
 }
 
-void psCombatManager::ApplyCombatEvent(psCombatGameEvent *event, int attack_result)
+void CombatManager::ApplyCombatEvent(psCombatGameEvent *event, int attack_result)
 {
     psCharacter *attacker_data,*target_data;
 
@@ -705,7 +705,7 @@ void psCombatManager::ApplyCombatEvent(psCombatGameEvent *event, int attack_resu
     }
 }
 
-void psCombatManager::HandleCombatEvent(psCombatGameEvent *event)
+void CombatManager::HandleCombatEvent(psCombatGameEvent *event)
 {
     psCharacter *attacker_data,*target_data;
     int attack_result;
@@ -919,7 +919,7 @@ void psCombatManager::HandleCombatEvent(psCombatGameEvent *event)
 //        CPrintf(CON_DEBUG, "Slot %d for %s not an auto-attack slot.\n",event->GetWeaponSlot(), event->attacker->GetName() );
 }
 
-void psCombatManager::DebugOutput(psCombatGameEvent *event)
+void CombatManager::DebugOutput(psCombatGameEvent *event)
 {
     psItem* item = event->GetAttackerData()->Inventory().GetEffectiveWeaponInSlot(event->GetWeaponSlot() );
     psString debug;
@@ -937,7 +937,7 @@ void psCombatManager::DebugOutput(psCombatGameEvent *event)
 
 
 
-bool psCombatManager::ValidDistance(gemObject *attacker,gemObject *target,psItem *Weapon)
+bool CombatManager::ValidDistance(gemObject *attacker,gemObject *target,psItem *Weapon)
 {
     if (Weapon==NULL)
         return false;
@@ -952,7 +952,7 @@ bool psCombatManager::ValidDistance(gemObject *attacker,gemObject *target,psItem
     }
 }
 
-bool psCombatManager::ValidCombatAngle(gemObject *attacker,gemObject *target,psItem *Weapon)
+bool CombatManager::ValidCombatAngle(gemObject *attacker,gemObject *target,psItem *Weapon)
 {
     csVector3 attackPos, targetPos;
     iSector *attackSector, *targetSector;
@@ -986,16 +986,12 @@ bool psCombatManager::ValidCombatAngle(gemObject *attacker,gemObject *target,psI
         return ( fabs(angle) < 3.14159F * .40);
 }
 
-void psCombatManager::HandleMessage(MsgEntry *me,Client *client)
+void CombatManager::HandleMessage(MsgEntry *me,Client *client)
 {
-    if (me->GetType() == MSGTYPE_DEATH_EVENT)
-    {
-        HandleDeathEvent(me);
-        return;
-    }
+    // converted to functor
 }
 
-void psCombatManager::HandleDeathEvent(MsgEntry *me)
+void CombatManager::HandleDeathEvent(MsgEntry *me,Client *client)
 {
     psDeathEvent death(me);
 
@@ -1042,7 +1038,7 @@ void psSpareDefeatedEvent::Trigger()
 
 /*-------------------------------------------------------------*/
 
-psCombatGameEvent::psCombatGameEvent(psCombatManager *mgr,
+psCombatGameEvent::psCombatGameEvent(CombatManager *mgr,
                                      int delayticks,
                                      int act,
                                      gemObject *attacker,

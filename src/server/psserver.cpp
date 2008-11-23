@@ -410,7 +410,7 @@ bool psServer::Initialize(iObjectRegistry* object_reg)
     Debug1(LOG_STARTUP,0,"Started CEL\n");
 
     // Start Combat Manager
-    combatmanager = new psCombatManager();
+    combatmanager = new CombatManager();
     if (!combatmanager->InitializePVP())
     {
         return false;
