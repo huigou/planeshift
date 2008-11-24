@@ -1,3 +1,9 @@
+*** 2008-11-23 by Stefano Angeleri
+- Fixed FS#2415 - [char create] in the paths screen parents info and
+  life never change by removing the hardcoded parents and life info and
+  taking them from the xml file like the other things in the same window
+  patch by Caarrie
+
 ﻿*** 2008-11-23 by Dave Bentham
 - Slight reorganisation of MiniGames classes/files; including renaming 
   psMiniGameManager to MiniGameManager (following Keith's lead).
