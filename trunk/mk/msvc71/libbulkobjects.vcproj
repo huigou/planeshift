@@ -760,6 +760,9 @@
 				RelativePath="..\..\src\server\bulkobjects\psmerchantinfo.cpp">
 			</File>
 			<File
+				RelativePath="..\..\src\server\bulkobjects\psminigameboard.cpp">
+			</File>
+			<File
 				RelativePath="..\..\src\server\bulkobjects\psnpcdialog.cpp">
 			</File>
 			<File
@@ -837,6 +840,9 @@
 			</File>
 			<File
 				RelativePath="..\..\src\server\bulkobjects\psmerchantinfo.h">
+			</File>
+			<File
+				RelativePath="..\..\src\server\bulkobjects\psminigameboard.h">
 			</File>
 			<File
 				RelativePath="..\..\src\server\bulkobjects\psnpcdialog.h">
