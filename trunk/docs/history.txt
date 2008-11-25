@@ -1,4 +1,8 @@
-﻿*** 2008-11-25 by Mike Gist
+﻿*** 2008-11-25 by Keith Fulton
+- Changed psAuthenticationServer to AuthenticationServer for naming consistency.
+- Updated EntityManager and ExchangeManager to use message functors.
+
+*** 2008-11-25 by Mike Gist
 - Added a check to the updater so it doesn't re-download files which are already up to date.
 
 *** 2008-11-23 by Stefano Angeleri
