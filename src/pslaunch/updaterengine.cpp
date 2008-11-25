@@ -713,6 +713,22 @@ void UpdaterEngine::GeneralUpdate()
                 csString oldFilePath = newFilePath;
                 oldFilePath.AppendFmt(".old");
 
+                // Start by checking whether the existing file is already up to date.
+                csRef<iDataBuffer> buffer = vfs->ReadFile("/this/" + newFilePath);
+                if(buffer)
+                {
+                  csMD5::Digest md5 = csMD5::Encode(buffer->GetData(), buffer->GetSize());
+                  csString md5sum = md5.HexString();
+
+                  csString fileMD5 = next->GetAttributeValue("md5sum");
+
+                  // If it's up to date then skip this file.
+                  if(md5sum.Compare(fileMD5))
+                  {
+                    continue;
+                  }
+                }
+
                 // Move old file to a temp location ready for input.
                 fileUtil->MoveFile("/this/" + newFilePath, "/this/" + oldFilePath, true, false, true);
 
