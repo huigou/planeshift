@@ -73,7 +73,7 @@ public:
 };
 
 
-psAuthenticationServer::psAuthenticationServer(ClientConnectionSet *pCCS,
+AuthenticationServer::AuthenticationServer(ClientConnectionSet *pCCS,
                                                UserManager *usermgr,
                                                GuildManager *gm)
 {
@@ -82,14 +82,14 @@ psAuthenticationServer::psAuthenticationServer(ClientConnectionSet *pCCS,
     guildmanager = gm;
     msgstringsmessage = NULL;
 
-    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<psAuthenticationServer>(this,&psAuthenticationServer::HandlePreAuthent),MSGTYPE_PREAUTHENTICATE,REQUIRE_ANY_CLIENT);
-    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<psAuthenticationServer>(this,&psAuthenticationServer::HandleAuthent),MSGTYPE_AUTHENTICATE,REQUIRE_ANY_CLIENT);
-    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<psAuthenticationServer>(this,&psAuthenticationServer::HandleDisconnect),MSGTYPE_DISCONNECT,REQUIRE_ANY_CLIENT);
-    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<psAuthenticationServer>(this,&psAuthenticationServer::HandleAuthCharacter),MSGTYPE_AUTHCHARACTER,REQUIRE_ANY_CLIENT);
-    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<psAuthenticationServer>(this,&psAuthenticationServer::HandleStatusUpdate),MSGTYPE_CLIENTSTATUS,REQUIRE_ANY_CLIENT);
+    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<AuthenticationServer>(this,&AuthenticationServer::HandlePreAuthent),MSGTYPE_PREAUTHENTICATE,REQUIRE_ANY_CLIENT);
+    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<AuthenticationServer>(this,&AuthenticationServer::HandleAuthent),MSGTYPE_AUTHENTICATE,REQUIRE_ANY_CLIENT);
+    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<AuthenticationServer>(this,&AuthenticationServer::HandleDisconnect),MSGTYPE_DISCONNECT,REQUIRE_ANY_CLIENT);
+    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<AuthenticationServer>(this,&AuthenticationServer::HandleAuthCharacter),MSGTYPE_AUTHCHARACTER,REQUIRE_ANY_CLIENT);
+    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<AuthenticationServer>(this,&AuthenticationServer::HandleStatusUpdate),MSGTYPE_CLIENTSTATUS,REQUIRE_ANY_CLIENT);
 }
 
-psAuthenticationServer::~psAuthenticationServer()
+AuthenticationServer::~AuthenticationServer()
 {
     if (psserver->GetEventManager())
     {
@@ -103,12 +103,12 @@ psAuthenticationServer::~psAuthenticationServer()
         delete msgstringsmessage;
 }
 
-void psAuthenticationServer::HandleMessage(MsgEntry *me,Client *client)
+void AuthenticationServer::HandleMessage(MsgEntry *me,Client *client)
 {
     // required for backward compatibility with pre-functor days but not used here
 }
 
-void psAuthenticationServer::HandleAuthCharacter( MsgEntry* me, Client *client )
+void AuthenticationServer::HandleAuthCharacter( MsgEntry* me, Client *client )
 {
     psCharacterPickerMessage charpick( me );
     if (!charpick.valid)
@@ -153,7 +153,7 @@ void psAuthenticationServer::HandleAuthCharacter( MsgEntry* me, Client *client )
 }
 
 
-bool psAuthenticationServer::CheckAuthenticationPreCondition(int clientnum, bool netversionok, const char * sUser)
+bool AuthenticationServer::CheckAuthenticationPreCondition(int clientnum, bool netversionok, const char * sUser)
 {
     /**
      * CHECK 1: Is Network protokol compatible?
@@ -193,7 +193,7 @@ bool psAuthenticationServer::CheckAuthenticationPreCondition(int clientnum, bool
 }
 
 
-void psAuthenticationServer::HandlePreAuthent(MsgEntry *me, Client *notused)
+void AuthenticationServer::HandlePreAuthent(MsgEntry *me, Client *notused)
 {
     psPreAuthenticationMessage msg(me);
     if (!msg.valid)
@@ -209,7 +209,7 @@ void psAuthenticationServer::HandlePreAuthent(MsgEntry *me, Client *notused)
     reply.SendMessage();
 }
 
-void psAuthenticationServer::HandleAuthent(MsgEntry *me, Client *notused)
+void AuthenticationServer::HandleAuthent(MsgEntry *me, Client *notused)
 {
     csTicks start = csGetTicks();
 
@@ -502,7 +502,7 @@ void psAuthenticationServer::HandleAuthent(MsgEntry *me, Client *notused)
     psserver->GetLogCSV()->Write(CSV_AUTHENT, status);
 }
 
-void psAuthenticationServer::HandleDisconnect(MsgEntry* me,Client *client)
+void AuthenticationServer::HandleDisconnect(MsgEntry* me,Client *client)
 {
     psDisconnectMessage mesg(me);
 
@@ -522,7 +522,7 @@ void psAuthenticationServer::HandleDisconnect(MsgEntry* me,Client *client)
     
 }
 
-void psAuthenticationServer::SendDisconnect(Client* client, const char *reason)
+void AuthenticationServer::SendDisconnect(Client* client, const char *reason)
 {
     if (client->GetActor())
     {
@@ -547,7 +547,7 @@ void psAuthenticationServer::SendDisconnect(Client* client, const char *reason)
     }
 }
 
-void psAuthenticationServer::SendMsgStrings(int cnum)
+void AuthenticationServer::SendMsgStrings(int cnum)
 {
     // send message strings hash table to client
     if (!msgstringsmessage)
@@ -564,7 +564,7 @@ void psAuthenticationServer::SendMsgStrings(int cnum)
         msgstringsmessage->SendMessage();
 }
 
-void psAuthenticationServer::HandleStatusUpdate(MsgEntry* me, Client* client)
+void AuthenticationServer::HandleStatusUpdate(MsgEntry* me, Client* client)
 {
     psClientStatusMessage msg(me);
     // printf("Got ClientStatus message!\n");

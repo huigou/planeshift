@@ -44,7 +44,7 @@ class  NetManager;
 struct iChat;
 class  EntityManager;
 class  MsgHandler;          // Receive and distributes incoming messages.
-class  psAuthenticationServer;
+class  AuthenticationServer;
 class  ChatManager;
 class  GuildManager;
 class  GroupManager;
@@ -345,8 +345,8 @@ public:
      */
     IntroductionManager *GetIntroductionManager() { return intromanager; }
 
-    /// Returns a pointer to the psAuthenticationServer
-    psAuthenticationServer* GetAuthServer() { return authserver; }
+    /// Returns a pointer to the AuthenticationServer
+    AuthenticationServer* GetAuthServer() { return authserver; }
 
     /** Gets a list of all connected clients.
      *
@@ -538,7 +538,7 @@ protected:
     csRef<ChatManager>              chatmanager;
     csRef<AdviceManager>            advicemanager;
     csRef<ActionManager>            actionmanager;
-    csRef<psAuthenticationServer>   authserver;
+    csRef<AuthenticationServer>   authserver;
     LogCSV*                         logcsv;
     bool                            MapLoaded;
     csString                        motd;

@@ -87,6 +87,12 @@ public:
                     ClientConnectionSet* clients,
                     UserManager *usermanager);
 
+    void HandleUserAction(MsgEntry* me, Client *client);    
+    void HandleWorld(MsgEntry* me, Client *client);
+    void HandleActor(MsgEntry* me, Client *client);
+    void HandleAllRequest(MsgEntry* me, Client *client);
+    void SendMovementInfo(MsgEntry* me, Client *client);
+
     bool LoadMap (const char* mapname);    
 
     iSector* FindSector(const char *name);
@@ -129,8 +135,6 @@ public:
     ClientConnectionSet *GetClients() { return clients; };
     psWorld* GetWorld() { return gameWorld; }
 
-    void SendMovementInfo(int cnum);
-
     void Teleport( gemObject *subject, gemObject *dest);
 
 protected:
@@ -141,11 +145,6 @@ protected:
 
     bool SamePos(gemObject * actor, iSector * sector, const csVector3 & point);
 
-    void HandleUserAction(MsgEntry* me);    
-    
-    void HandleWorld( MsgEntry* me );
-    void HandleActor( MsgEntry* me );
-    void HandleAllRequest( MsgEntry* me );
     
     bool SendActorList(Client *client);
 

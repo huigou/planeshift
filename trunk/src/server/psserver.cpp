@@ -464,7 +464,7 @@ bool psServer::Initialize(iObjectRegistry* object_reg)
     actionmanager = csPtr<ActionManager>(new ActionManager( database));
     Debug1(LOG_STARTUP,0,"Started Action Manager\n");
 
-    authserver = csPtr<psAuthenticationServer>(new psAuthenticationServer(GetConnections(), usermanager, guildmanager));
+    authserver = csPtr<AuthenticationServer>(new AuthenticationServer(GetConnections(), usermanager, guildmanager));
     Debug1(LOG_STARTUP,0,"Started Authentication Server\n");
 
     exchangemanager = new ExchangeManager(GetConnections());

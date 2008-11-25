@@ -1310,17 +1310,15 @@ ExchangeManager::ExchangeManager(ClientConnectionSet *pClnts)
 {
     clients      = pClnts;
 
-    psserver->GetEventManager()->Subscribe(this, MSGTYPE_GUIEXCHANGE, REQUIRE_READY_CLIENT|REQUIRE_ALIVE);
-    psserver->GetEventManager()->Subscribe(this, MSGTYPE_EXCHANGE_REQUEST, REQUIRE_READY_CLIENT|REQUIRE_ALIVE|REQUIRE_TARGETACTOR);
-    psserver->GetEventManager()->Subscribe(this, MSGTYPE_EXCHANGE_ACCEPT, REQUIRE_READY_CLIENT|REQUIRE_ALIVE);
-    psserver->GetEventManager()->Subscribe(this, MSGTYPE_EXCHANGE_END, REQUIRE_READY_CLIENT|REQUIRE_ALIVE);
+    psserver->GetEventManager()->Subscribe(this, new NetMessageCallback<ExchangeManager>(this,&ExchangeManager::HandleExchangeRequest),MSGTYPE_EXCHANGE_REQUEST, REQUIRE_READY_CLIENT|REQUIRE_ALIVE|REQUIRE_TARGETACTOR);
+    psserver->GetEventManager()->Subscribe(this, new NetMessageCallback<ExchangeManager>(this,&ExchangeManager::HandleExchangeAccept),MSGTYPE_EXCHANGE_ACCEPT, REQUIRE_READY_CLIENT|REQUIRE_ALIVE);
+    psserver->GetEventManager()->Subscribe(this, new NetMessageCallback<ExchangeManager>(this,&ExchangeManager::HandleExchangeEnd),MSGTYPE_EXCHANGE_END, REQUIRE_READY_CLIENT|REQUIRE_ALIVE);
 }
 
 ExchangeManager::~ExchangeManager()
 {
     if (psserver->GetEventManager())
     {
-        psserver->GetEventManager()->Unsubscribe(this, MSGTYPE_GUIEXCHANGE);
         psserver->GetEventManager()->Unsubscribe(this, MSGTYPE_EXCHANGE_REQUEST);
         psserver->GetEventManager()->Unsubscribe(this, MSGTYPE_EXCHANGE_ACCEPT);
         psserver->GetEventManager()->Unsubscribe(this, MSGTYPE_EXCHANGE_END);
@@ -1433,48 +1431,62 @@ void ExchangeManager::StartExchange( Client* client, bool withPlayer )
     }
 }
 
+void ExchangeManager::HandleExchangeRequest(MsgEntry *me,Client *client)
+{
+    Notify2( LOG_TRADE, "Trade Requested from %u", client->GetClientNum() );
+    psExchangeRequestMsg msg(me);
+    StartExchange( client, msg.withPlayer );
+}
+
+void ExchangeManager::HandleExchangeAccept(MsgEntry *me,Client *client)
+{
+    Notify3( LOG_TRADE, "Exchange %d Accept from %d", client->GetExchangeID(), client->GetClientNum() );
+
+    Exchange* exchange = GetExchange( client->GetExchangeID() );
+    if ( exchange )
+    {
+        if (exchange->HandleAccept(client))
+        {
+            DeleteExchange(exchange);
+        }
+    }
+}
+
+void ExchangeManager::HandleExchangeEnd(MsgEntry *me,Client *client)
+{
+    Notify2( LOG_TRADE, "Trade %d Rejected", client->GetExchangeID() );
+
+    Exchange* exchange = GetExchange( client->GetExchangeID() );
+    if ( exchange )
+    {
+        exchange->HandleEnd(client);
+        DeleteExchange(exchange);
+    }
+    else
+    {
+        Warning2( LOG_TRADE, "Trade %d Not located", client->GetExchangeID() );
+    }
+}
+
 void ExchangeManager::HandleMessage(MsgEntry *me,Client *client)
 {
     switch ( me->GetType() )
     {
         case MSGTYPE_EXCHANGE_END:
         {
-            Notify2( LOG_TRADE, "Trade %d Rejected", client->GetExchangeID() );
-
-            Exchange* exchange = GetExchange( client->GetExchangeID() );
-            if ( exchange )
-            {
-                exchange->HandleEnd(client);
-                DeleteExchange(exchange);
-            }
-            else
-            {
-                Warning2( LOG_TRADE, "Trade %d Not located", client->GetExchangeID() );
-            }
-
+            HandleExchangeEnd(me, client);
             break;
         }
 
         case MSGTYPE_EXCHANGE_REQUEST:
         {
-            Notify2( LOG_TRADE, "Trade Requested from %u", client->GetClientNum() );
-            psExchangeRequestMsg msg(me);
-            StartExchange( client, msg.withPlayer );
+            HandleExchangeRequest(me, client);
             break;
         }
 
         case MSGTYPE_EXCHANGE_ACCEPT:
         {
-            Notify3( LOG_TRADE, "Exchange %d Accept from %d", client->GetExchangeID(), client->GetClientNum() );
-
-            Exchange* exchange = GetExchange( client->GetExchangeID() );
-            if ( exchange )
-            {
-                if (exchange->HandleAccept(client))
-                {
-                    DeleteExchange(exchange);
-                }
-            }
+            HandleExchangeAccept(me, client);
             break;
         }
     }
