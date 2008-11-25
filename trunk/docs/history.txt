@@ -1,3 +1,6 @@
+﻿*** 2008-11-25 by Mike Gist
+- Added a check to the updater so it doesn't re-download files which are already up to date.
+
 *** 2008-11-23 by Stefano Angeleri
 - Fixed FS#2415 - [char create] in the paths screen parents info and
   life never change by removing the hardcoded parents and life info and
