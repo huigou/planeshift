@@ -1242,7 +1242,7 @@ psUserCmdMessage::psUserCmdMessage(MsgEntry *message)
 
     if (command == "/who")
     {
-        filter = words[1];
+        filter = words.GetTail(1);
         return;
     }
     if (command == "/buddy")
