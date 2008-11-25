@@ -334,6 +334,9 @@ public:
     void StartExchange( Client* client, bool withPlayer );
 
     virtual void HandleMessage(MsgEntry *pMsg,Client *client);
+    void HandleExchangeRequest(MsgEntry *me,Client *client);
+    void HandleExchangeAccept (MsgEntry *me,Client *client);
+    void HandleExchangeEnd    (MsgEntry *me,Client *client);
 
     /** Utility function to handle exchange objects */
     Exchange * GetExchange(int id);

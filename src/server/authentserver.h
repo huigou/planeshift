@@ -73,12 +73,12 @@ protected:
  * "Not Authorized" message.
  *
  */
-class psAuthenticationServer : public MessageManager
+class AuthenticationServer : public MessageManager
 {
 public:
 
     /** Initializing Constructor.
-     * This initializes the psAuthenticationServer object. Storing the
+     * This initializes the AuthenticationServer object. Storing the
      * references to the objects asked for. This also subscribes this object
      * to the message handler listening to messages of type:
      *     - MSGTYPE_AUTHENTICATE
@@ -93,7 +93,7 @@ public:
      * @param gm: Reference to the guild manager.
      * @see HandleMessage() , MsgHandler::Subscribe()
      */
-    psAuthenticationServer(ClientConnectionSet *pCCS,
+    AuthenticationServer(ClientConnectionSet *pCCS,
                            UserManager *usermgr,
                            GuildManager *gm);
 
@@ -102,7 +102,7 @@ public:
      *
      * @see MsgHandler::Unsubscribe()
      */
-    virtual ~psAuthenticationServer();
+    virtual ~AuthenticationServer();
 
     /** Handles a subscribed message.
      * This function handles the messages we subscribed to:

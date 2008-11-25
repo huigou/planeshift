@@ -135,12 +135,12 @@ bool EntityManager::Initialize(iObjectRegistry* object_reg,
 
     usermanager = umanager;
 
-    psserver->GetEventManager()->Subscribe(this, MSGTYPE_CELPERSIST,REQUIRE_ANY_CLIENT);
-    psserver->GetEventManager()->Subscribe(this, MSGTYPE_USERACTION,REQUIRE_READY_CLIENT|REQUIRE_ALIVE);
-    psserver->GetEventManager()->Subscribe(this, MSGTYPE_PERSIST_WORLD_REQUEST,REQUIRE_ANY_CLIENT );
-    psserver->GetEventManager()->Subscribe(this, MSGTYPE_PERSIST_ACTOR_REQUEST,REQUIRE_ANY_CLIENT );    
-    psserver->GetEventManager()->Subscribe(this, MSGTYPE_PERSIST_ALL,REQUIRE_ANY_CLIENT);
-    psserver->GetEventManager()->Subscribe(this, MSGTYPE_REQUESTMOVEMENTS,REQUIRE_ANY_CLIENT);
+//    psserver->GetEventManager()->Subscribe(this, new NetMessageCallback<EntityManager>(this,&EntityManager::HandlePreAuthent), MSGTYPE_CELPERSIST,REQUIRE_ANY_CLIENT);
+    psserver->GetEventManager()->Subscribe(this, new NetMessageCallback<EntityManager>(this,&EntityManager::HandleUserAction), MSGTYPE_USERACTION,REQUIRE_READY_CLIENT|REQUIRE_ALIVE);
+    psserver->GetEventManager()->Subscribe(this, new NetMessageCallback<EntityManager>(this,&EntityManager::HandleWorld)     , MSGTYPE_PERSIST_WORLD_REQUEST,REQUIRE_ANY_CLIENT );
+    psserver->GetEventManager()->Subscribe(this, new NetMessageCallback<EntityManager>(this,&EntityManager::HandleActor)     , MSGTYPE_PERSIST_ACTOR_REQUEST,REQUIRE_ANY_CLIENT );    
+    psserver->GetEventManager()->Subscribe(this, new NetMessageCallback<EntityManager>(this,&EntityManager::HandleAllRequest), MSGTYPE_PERSIST_ALL,REQUIRE_ANY_CLIENT);
+    psserver->GetEventManager()->Subscribe(this, new NetMessageCallback<EntityManager>(this,&EntityManager::SendMovementInfo), MSGTYPE_REQUESTMOVEMENTS,REQUIRE_ANY_CLIENT);
 
     EntityManager::clients = clients;
 
@@ -952,6 +952,7 @@ bool EntityManager::CreateRoom(const char* name, const char* mapfile)
 
 void EntityManager::HandleMessage(MsgEntry* me,Client *client)
 {
+    /****************************
     switch(me->GetType())
     {
         case MSGTYPE_USERACTION:
@@ -970,12 +971,11 @@ void EntityManager::HandleMessage(MsgEntry* me,Client *client)
             SendMovementInfo( me->clientnum );
             break;
     }
+    ****************************/
 }
 
-void EntityManager::HandleAllRequest( MsgEntry* me)
+void EntityManager::HandleAllRequest(MsgEntry* me, Client *client)
 {
-    Client* client = clients->FindAny(me->clientnum);
-    
     // This is not available to regular clients!
     if ( client->IsSuperClient() )
     {
@@ -999,9 +999,8 @@ void EntityManager::HandleAllRequest( MsgEntry* me)
 }
 
 
-void EntityManager::HandleActor(MsgEntry* me)
+void EntityManager::HandleActor(MsgEntry* me, Client *client)
 {
-    Client* client = clients->FindAny(me->clientnum);
     if(!client || client->IsSuperClient())
         return;
 
@@ -1024,7 +1023,7 @@ void EntityManager::HandleActor(MsgEntry* me)
     chardata->SetLastLoginTime();
 }
 
-void EntityManager::SendMovementInfo(int cnum)
+void EntityManager::SendMovementInfo(MsgEntry* me, Client *client)
 {
     if (moveinfomsg == NULL)  // Construct once and reuse
     {
@@ -1051,7 +1050,7 @@ void EntityManager::SendMovementInfo(int cnum)
         CS_ASSERT( moveinfomsg->valid );
     }
 
-    moveinfomsg->msg->clientnum = cnum;
+    moveinfomsg->msg->clientnum = client->GetClientNum();
     moveinfomsg->SendMessage();
 
     // Send modifiers too
@@ -1059,15 +1058,8 @@ void EntityManager::SendMovementInfo(int cnum)
 //        client->GetActor()->UpdateAllSpeedModifiers();
 }
 
-void EntityManager::HandleWorld( MsgEntry* me )
+void EntityManager::HandleWorld( MsgEntry* me, Client *client )
 {
-    Client* client = clients->FindAny(me->clientnum);
-    if (!client)
-    {
-        Error2("Client %d not found!", me->clientnum);
-                return;
-    }
-
     if (!client->GetActor() && !CreatePlayer (client))
     {
         Error1("Error while creating player in world!");
@@ -1087,7 +1079,7 @@ void EntityManager::HandleWorld( MsgEntry* me )
     psserver->GetWeatherManager()->UpdateClient(client->GetClientNum());
 }
 
-void EntityManager::HandleUserAction(MsgEntry* me)
+void EntityManager::HandleUserAction(MsgEntry* me, Client *client)
 {
     psUserActionMessage actionMsg(me);
     csString action;
@@ -1095,13 +1087,6 @@ void EntityManager::HandleUserAction(MsgEntry* me)
     if (!actionMsg.valid)
     {
         Debug2(LOG_NET,me->clientnum,"Received unparsable psUserActionMessage from client id %u.\n",me->clientnum);
-        return;
-    }
-
-    Client* client = clients->Find(me->clientnum);
-    if (!client)
-    {
-        Debug2(LOG_ANY,me->clientnum,"User action from unknown client!  Clientnum:%d\n",me->clientnum);
         return;
     }
 
