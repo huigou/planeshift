@@ -53,6 +53,9 @@ Talk to someone privately.  With this command you can send text only the person 
         <topic name="/tellnpc">/tellnpc message
 
 Talk to the currently targeted npc.</topic>
+        <topic name="/npcmenu">/npcmenu
+
+Shows a menu to talk to npcs where available.</topic>
     </branch>
     <branch name="User Commands">
 Commands to control various player actions.  Many of these are also available via windows and context menus.
@@ -84,6 +87,9 @@ If you don't provide a player name this command will open the buddy window.</top
         <topic name="/buy">/buy merchant
 
 Buy from specified merchant.  If no merchant specified, buy from current target.</topic>
+        <topic name="/combine">/combine 
+
+Combines items in a container.</topic>
         <topic name="/dequip">/dequip item_name|slot_name
 
 Unequips the specified item or slot.  This is equivalent to moving equipped items back into your inventory in your Inventory Window.
@@ -652,6 +658,9 @@ value (in milliseconds).
 With specified sector, it starts rain with default values: density 4000 drops, length 10 minutes and 10 seconds of fade.
 The maximum number of drops allowed is 8000.
 Use /rain sector 0 0 0 or /rain sector off for ending the event. </topic>
+<topic name="/reload">/reload item
+
+Reloads the currently targetted item from the database.</topic>
 <topic name="/runscript">/runscript [script_name] [me/target/eid/pid/area/name]
 
 Runs a progression script on the target.</topic>
