@@ -52,7 +52,7 @@ Talk to people within 100 meters of you.  Only use /shout in emergencies.</topic
 Talk to someone privately.  With this command you can send text only the person you specify can see.</topic>
         <topic name="/tellnpc">/tellnpc message
 
-Talks to the currently targeted npc.</topic>
+Talk to the currently targeted npc.</topic>
     </branch>
     <branch name="User Commands">
 Commands to control various player actions.  Many of these are also available via windows and context menus.
@@ -397,7 +397,7 @@ Resets your admin level.  Lists and allows you to use various GM/admin commands.
 Awards progression points to a player for the completion of a GM run event. (enter a negative value to take away PP)</topic>
         <topic name="/badtext">/badtext [first entry] [last entry]
 
-Shows what was told to the targetted npc and could be understand by it.
+Shows what was told to the targetted npc and couldn't be understand by it.
 First and last entry must be defined and last entry must be greather than first entry.
 Example: /badtext 1 10 shows the latest 10 entries</topic>
         <topic name="/ban">/ban name minutes hours days reason
