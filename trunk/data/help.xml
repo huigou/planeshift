@@ -50,6 +50,9 @@ Talk to people within 100 meters of you.  Only use /shout in emergencies.</topic
         <topic name="/tell">/tell player message
 
 Talk to someone privately.  With this command you can send text only the person you specify can see.</topic>
+        <topic name="/tellnpc">/tellnpc message
+
+Talks to the currently targeted npc.</topic>
     </branch>
     <branch name="User Commands">
 Commands to control various player actions.  Many of these are also available via windows and context menus.
@@ -153,9 +156,6 @@ Pickup the targeted item.</topic>
         <topic name="/pos">/pos 
 
 Shows your current location in the 3D world.  (Debug purposes only.)</topic>
-        <topic name="/quests">/quests 
-
-Display current quest notebook.</topic>
 				<topic name="/repair">/repair [slot name]
 
 Begins a repair on the item in the specified slot. Default slot is righthand
@@ -171,6 +171,12 @@ Sell to specified merchant.  If no merchant specified, sell to current target.</
         <topic name="/show">/show
 
 Opens or closes the named window. Valid targets are: skills, spells, inv, help, buddy, info, petition, quest, shortcut, group, guild, glyph, bag, chat, activemagic</topic>
+        <topic name="/sit">/sit
+
+Makes you sit down.</topic>
+        <topic name="/stand">/stand
+
+Makes you stand up.</topic>
         <topic name="/starttrading">/starttrading 
 
 You are ready to trade.</topic>
@@ -193,7 +199,7 @@ Uses the targeted item.</topic>
 
 Lists players currently online matching filter.  If no filter is specified, then all online players are listed.</topic>
     </branch>
-    <branch name="Combat&amp;Target Commands">
+    <branch name="Combat &amp; Target Commands">
 Commands used to manually control combat and the targeting system.  Attacking is normally done via the context menu or the info window's stance buttons.  Some commands like /cast and /target are useful for creating shortcuts to more easily perform certain actions.
         <topic name="/assist">/assist player
 
@@ -207,6 +213,9 @@ Start casting spell.</topic>
         <topic name="/challenge">/challenge 
 
 Challenge another player to a duel.</topic>
+        <topic name="/game">/game 
+
+Starts a minigame session using the targetted game.</topic>
         <topic name="/loot">/loot 
 
 Loots an available corpse if you have authority.</topic>
@@ -347,6 +356,9 @@ This exits you from the game. With the "now" option exits without asking.</topic
         <topic name="/screenshot">/screenshot [options]
 
 Takes a screenshot and saves it in a folder named "screenshots" in your PlaneShift directory.  The "nogui" option can be used to ignore the onscreen windows and control bar, and the "lossless" option can be used to save without compression to PNG instead of JPG.</topic>
+        <topic name="/testanim">/testanim [name] [fade in] [fade out]
+
+Allows to test an animation. No one will be able to see it except you. Name is the name of the animation, fade in and fade out define the fade time for the animation.</topic>
         <topic name="/tip">/tip 
 
 Requests a tip from the server.</topic>
@@ -383,6 +395,11 @@ Resets your admin level.  Lists and allows you to use various GM/admin commands.
         <topic name="/awardexp">/awardexp target value
 
 Awards progression points to a player for the completion of a GM run event. (enter a negative value to take away PP)</topic>
+        <topic name="/badtext">/badtext [first entry] [last entry]
+
+Shows what was told to the targetted npc and could be understand by it.
+First and last entry must be defined and last entry must be greather than first entry.
+Example: /badtext 1 10 shows the latest 10 entries</topic>
         <topic name="/ban">/ban name minutes hours days reason
 OR /ban name reason
 
@@ -619,6 +636,9 @@ Start a new path. If there are a waypoint nearby the waypoint is used to start t
 
 Stop the current path. If there are a waypoint nearby the waypoint is used to end the path. Otherwise a new aypoint is created.</topic>
         </branch>
+        <topic name="/pickup">/pickup [eid/area]
+
+GM have an enhaced version of /pickup which supports also eid and area arguments.</topic>
         <topic name="/pos">/pos target
 
 GMs have an enhanced version of the /pos command which shows your current region and the direction you are facing.  It also has an optional parameter to get the position of another entity.  (may specify by name or an ID)</topic>

@@ -1,6 +1,7 @@
 ﻿*** 2008-11-25 by Stefano Angeleri
 - Now the who command considers all the words after the command for the filter
   fixing FS#2513 - Who command uses only one term
+- Added various missing entries in the help
 
 *** 2008-11-25 by Keith Fulton
 - Changed psAuthenticationServer to AuthenticationServer for naming consistency.
