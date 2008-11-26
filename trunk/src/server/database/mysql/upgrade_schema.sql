@@ -1050,6 +1050,9 @@ DELETE FROM command_group_assignment WHERE command_name = '/updaterespawn';
 INSERT INTO command_group_assignment VALUES( "/updaterespawn", 30 );
 UPDATE `server_options` SET `option_value`='1207' WHERE `option_name`='db_version';
 
+#### 1208 - Keith Fulton - New required item stats for new quest
+UPDATE `server_options` SET `option_value`='1208' WHERE `option_name`='db_version';
+
 
 # Insert your upgrade before this line. Remember when you set a new db_version
 # to update the server_options.sql file and update psserver.cpp as well.
