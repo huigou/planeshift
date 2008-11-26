@@ -506,3 +506,40 @@ g: He is best described as drunk in love.
 P: laanx
 g: Not sure if she is a he or a she, but s/he likes very spiky temples apparently.");
 
+
+
+
+INSERT INTO quest_scripts VALUES("208","207","# Quest Acquire Lapar
+# ID 1214
+# Quest Description: Smith needs some juiceberry fruit before he will sell you any lapar.
+# Player lockout: 43200
+# 12 hours 
+# Quest Lockout: 1800
+# 30 minutes 
+# Syntax update 5.11.2008
+# Updated with menu system 11/2008.
+
+P: Give me Lapar.
+Menu: I\'m looking for some Lapar.
+
+Smith: Very well $sir, I have some lapar you can have, but it will cost you. [Levrus chuckles.] Shall we say two hundred tria, and three juiceberry fruit? (/planeshift/data/voice/Levrusacquirelapar/1verywellsir.spx)
+P: No. P: Yes.
+Menu: No, that is too much!  Are you kidding me old man?  Menu: You hold your lapar dear old man, but I\'ll pay your price.
+
+Smith: That is my price $playerrace, come back if you change your mind. (/planeshift/data/voice/Levrusacquirelapar/2thatismyprice.spx)
+Smith: Excellent! Bring me the fruit, and I\'ll have some lapar ready for you. (/planeshift/data/voice/Levrusacquirelapar/3excellentbringmethefruit.spx)
+Assign Quest.
+
+... NoRepeat
+# Step 2
+Player Gives Smith 3 Juiceberry fruit.
+Smith: Very nice, now for the tria, all two hundred of them please. [Levrus holds out his hand with a smile.] (/planeshift/data/voice/Levrusacquirelapar/4verynicenowforthetria.spx)
+Complete Acquire Lapar Step 2.
+
+...
+# Step 3
+Require Completion of Acquire Lapar Step 2.
+Player Gives Smith 200 tria.
+Smith: [The Smith takes the coins and stuffs them into his coin-pouch.] Very well, one bottle of Lapar for the $playerrace. [Smith hands you a bottle.] Use it wisely, it is not as abundant as water. [Smith chuckles as he turns his attention elsewhere.] (/planeshift/data/voice/Levrusacquirelapar/5verywellonebottle.spx)
+Give 1 Lapar. Give 600 Exp.
+Complete Acquire Lapar Step 3.");

@@ -7123,11 +7123,13 @@ PSF_IMPLEMENT_MSG_FACTORY(psCachedFileMessage,MSGTYPE_CACHEFILE);
 
 psCachedFileMessage::psCachedFileMessage( uint32_t client, const char *pathname, iDataBuffer *contents)
 {
+    printf("::Building cached file message for '%s'.\n", pathname);
+
     // We send the hash along with it to save as the filename on the client
-    if (pathname[0] == '/')
+    if (pathname[0] == '(')  // timestamp always starts with '('
     {
         hash = csMD5::Encode(pathname).HexString();
-        // printf("Hashed %s to %s.\n", pathname, hash.GetData() );
+        printf("::Hashed %s to %s.\n", pathname, hash.GetData() );
     }
     else
         hash = pathname;
@@ -7147,6 +7149,8 @@ psCachedFileMessage::psCachedFileMessage( uint32_t client, const char *pathname,
 psCachedFileMessage::psCachedFileMessage( MsgEntry* me )
 {
     hash = me->GetStr();
+    printf("::Received cached message for file '%s'.\n", hash.GetDataSafe() );
+
     uint32_t size=0;
     char *ptr = (char *)me->GetBufferPointerUnsafe(size);
     if (ptr)

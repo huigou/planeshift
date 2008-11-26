@@ -486,7 +486,7 @@ void ChatManager::SendAudioFileHash(Client *client, const char *voiceFile)
 		csFileTime oTime;
 		psserver->vfs->GetFileTime(voiceFile,oTime);
 
-		timestamp.Format("%d/%d/%d %d:%d:%d ",
+		timestamp.Format("(%d/%d/%d %d:%d:%d) ",
 						 oTime.mon, oTime.day, oTime.year,
 						 oTime.hour, oTime.min, oTime.sec);
 
