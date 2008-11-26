@@ -37,7 +37,7 @@ INSERT INTO quests VALUES("13","Male Enki Lost Found","Get Key","0","0","0","0",
 INSERT INTO quests VALUES("14","Flying a Kite","Up up and a way on a windy day!","0","0","0","0","1","1","Newbie",'<pre><activemagic name="+DefensiveWind"/></pre>');
 INSERT INTO quests VALUES("15","Reverse Word Lookup", "Tests checking each word in a phrase as as trigger", 0, 0, 0, 0, 1, 1, "Newbie", "");
 INSERT INTO quests VALUES("16","Multiple item test", "Tests giving multiple items and money at the same time", 0, 0, 0, 0, 1, 1, "Newbie", "");
-INSERT INTO quests VALUES("207","JuiceBerry Fruit quest","Test Quest for Audio with Smith","0","0","0","0","-1","0","TestAudio","");
+INSERT INTO quests VALUES("207","Acquire Lapar","Test Quest for Audio with Smith","0","0","0","0","-1","0","TestAudio","");
 
 #
 # Quest Test Case quests
