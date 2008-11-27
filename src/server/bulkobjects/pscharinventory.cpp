@@ -383,6 +383,12 @@ void psCharacterInventory::Unequip(psItem *item)
 
 void psCharacterInventory::RunEquipScript(psItem *item)
 {
+    // don't run the equip script for items that are already active - workaround for FS#1124
+    if(item->IsActive())
+    {
+        Warning2(LOG_SCRIPT, "Didn't run equip script for item \"%s\" because it's already active!", item->GetName());
+        return;
+    }
     gemActor *actor = owner->GetActor();
     csString equipScript = item->GetBaseStats()->GetProgressionEventEquip();            
     item->SetActive(true);
