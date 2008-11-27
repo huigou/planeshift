@@ -1,4 +1,10 @@
-﻿*** 2008-11-25 by Stefano Angeleri
+﻿*** 2008-11-26 by Keith Fulton
+- Committed an audio quest for demo purposes and fixed the last audio caching bug for now.
+- Right-click the merchant and click Talk to test it.
+- Now camera will update to NPC mode as soon as you click on the Talk option.
+- DB Version bump.
+
+*** 2008-11-25 by Stefano Angeleri
 - Now the who command considers all the words after the command for the filter
   fixing FS#2513 - Who command uses only one term
 - Added various missing entries in the help
