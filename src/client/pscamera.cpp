@@ -182,6 +182,7 @@ psCamera::psCamera()
     cameraInitialized = false;
 
     cmdsource->Subscribe("/tellnpc", this);
+    cmdsource->Subscribe("/npcmenu", this);
 
     psengine->GetOptions()->RegisterOptionsClass("camera", this);
     LoadOptions();
