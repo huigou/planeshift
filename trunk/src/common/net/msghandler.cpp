@@ -131,6 +131,7 @@ bool MsgHandler::Unsubscribe(iNetSubscriber *subscriber, msgtype type)
     {
         if (subscribers[type][x]->subscriber == subscriber)
         {
+            delete subscribers[type][x]->callback; // delete functor if present
             subscribers[type].DeleteIndex(x);
             return true;
         }        

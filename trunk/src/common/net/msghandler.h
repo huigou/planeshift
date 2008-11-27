@@ -37,6 +37,7 @@ class Client;
 class MsgtypeCallback
 {
 public:
+    virtual ~MsgtypeCallback() { };
     virtual void operator()(MsgEntry *message, Client *client) = 0; // call using operator
     virtual void Call(MsgEntry *message, Client *client)       = 0; // call using function
 };
@@ -57,6 +58,8 @@ class NetMessageCallback : public MsgtypeCallback
           thisPtr = myObject;
           funcptr = fpt;
       }
+
+      virtual ~NetMessageCallback() { };
 
       // override operator "()"
       virtual void operator()(MsgEntry *message, Client *client)
