@@ -46,6 +46,8 @@ e.custom(start,val,"");}});return true;});},queue:function(type,fn){if(jQuery.is
     var CAL3Drev = "507"; // CAL3D_SOURCE_REV
     var CSrev_HEAD = "31626";  // CS_SOURCE_REV_HEAD
     var CAL3Drev_HEAD = "507"; // CAL3D_SOURCE_REV_HEAD
+    var PSStable_Laanx = "2425"; //Last revision of ps stable that works with laanx
+    var PSStable_latest = "2490"; //STABLE HEAD - Set this the same as PSStable_Laanx to hide revision info for stable
     var csWinLibsVersionStab = "1.3_004"; // cs win32 libs version.
     var csWinLibsVersion = "1.3_004"; // cs win32 libs version.
     //Update date and author, to be changed everytime and updates occurred
@@ -255,14 +257,18 @@ function Initialize()
                               replace(/CS_SOURCE_REV_HEAD/g, CSrev_HEAD).
                               replace(/CAL3D_SOURCE_REV/g, CAL3Drev).
                               replace(/CS_SOURCE_REV/g, CSrev).
+                              replace(/PS_Laanx/g, PSStable_Laanx).
+                              replace(/PS_Stable/g, PSStable_latest).
                               replace(/UPDATE_DATE/g, UpdateDate).
                               replace(/LIBS_VER_STAB/g, csWinLibsVersionStab).
                               replace(/LIBS_VER/g, csWinLibsVersion).
                               replace(/UPDATE_AUTHOR/g, UpdateAuthor);
 
-    // Hide the second CS date if we don't need it
-    if (CSrev_HEAD == CSrev)
-      $("#forked").css({ display:"none" });
+   // Hide the second PS rev if we don't need it
+    if (PSStable_Laanx == PSStable_latest)
+      $(".PS").css({ display:"none" });
+    if (PSStable_Laanx != PSStable_latest)
+      $(".NOTPS").css({ display:"none" });
 
 }
 
@@ -411,11 +417,16 @@ $(document).ready(function(){
     Note that different versions of PS require different CS and PS revisions.<br>
     after those listed here may not be compatible with the public server.</i>
 
-    <div class="User">
-    <p>
+<div style="display: block;" class="User"> <div class="NOTPS">   <p>
         Currently compatible with Laanx:<br>
         <b>CAL3D SVN revision:</b> CAL3D_SOURCE_REV <br>
+        <b>CS 1.4 SVN revision:</b> CS_SOURCE_REV <br></div>
+              </p><div class="PS">
+                      Currently compatible with Laanx:<br>
+        <b>CAL3D SVN revision:</b> CAL3D_SOURCE_REV <br>
         <b>CS 1.4 SVN revision:</b> CS_SOURCE_REV <br>
+        <b>Planeshift Stable revision:</b> PS_Laanx <br>
+      </div>
     </p>
     </div>
     <div class="Developer">
@@ -868,7 +879,10 @@ here.</a></div>
     <h3>PlaneShift</h3>
     <p>Lastly, download our source:</p>
     <div class="User">
-    <p><i class="command">$HOME/development$ svn co https://planeshift.svn.sourceforge.net/svnroot/planeshift/stable planeshift</i></p>
+    <div class="NOTPS">   <p><i class="command">$HOME/development$ svn co https://planeshift.svn.sourceforge.net/svnroot/planeshift/stable planeshift</i></p>
+         </div>  <div class="PS">
+<i class="command">$HOME/development$ svn co -r PS_Laanx https://planeshift.svn.sourceforge.net/svnroot/planeshift/stable planeshift</i>
+      </div>
     </div>
     <div class="Developer">
     <p><i class="command">$HOME/development$ svn co https://planeshift.svn.sourceforge.net/svnroot/planeshift/trunk planeshift</i></p>
@@ -976,9 +990,12 @@ If you update a repository, you will need to recompile that repository and each 
     <p>Lastly, download PlaneShift source code:</p>
     <p>
         Right-click on the development directory and select "SVN Checkout".<br>
-        Enter the following as the URL:
+        Enter the following as the URL:       
         <div class="User">
         <p><i class="command">https://planeshift.svn.sourceforge.net/svnroot/planeshift/stable</i></p>
+ <div class="PS">Specify the checkout directory as "C:\development\PlaneShift", select "Revision", and paste the current
+        PS revision number: PS_Stable
+ </div>
         </div>
         <div class="Developer">
         <p><i class="command">https://planeshift.svn.sourceforge.net/svnroot/planeshift/trunk</i></p>
@@ -1025,8 +1042,10 @@ If you update a repository, you will need to recompile that repository and each 
     <h3>PlaneShift</h3>
     <p>Lastly, download our source:</p>
     <div class="User">
-    <p><i class="command">$HOME/development$ svn co https://planeshift.svn.sourceforge.net/svnroot/planeshift/stable planeshift</i></p>
-    </div>
+<div class="NOTPS">   <p><i class="command">$HOME/development$ svn co https://planeshift.svn.sourceforge.net/svnroot/planeshift/stable planeshift</i></p>
+         </div>  <div class="PS">
+<i class="command">$HOME/development$ svn co -r PS_Laanx https://planeshift.svn.sourceforge.net/svnroot/planeshift/stable planeshift</i>
+      </div>    </div>
     <div class="Developer">
     <p><i class="command">$HOME/development$ svn co https://planeshift.svn.sourceforge.net/svnroot/planeshift/trunk planeshift</i></p>
     </div>
