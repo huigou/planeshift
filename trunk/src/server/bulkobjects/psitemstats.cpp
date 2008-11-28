@@ -1227,8 +1227,8 @@ bool psItemStats::CheckRequirements( psCharacter* charData, csString& resp )
         if ( stat != PSITEMSTATS_STAT_NONE )
         {
             // Stat buffs may be negative; don't use those here
-            bool usebuff = charData->GetAttributes()->GetBuffVal(stat) > 0;
-            val = charData->GetAttributes()->GetStat(stat,usebuff);
+            bool usebuff = charData->Stats().GetBuffVal(stat) > 0;
+            val = charData->Stats().GetStat(stat, usebuff);
             // TODO: This should just use the buff always when a move from equipment to bulk can't fail
         }
         else
@@ -1236,7 +1236,7 @@ bool psItemStats::CheckRequirements( psCharacter* charData, csString& resp )
             PSSKILL skill = CacheManager::GetSingleton().ConvertSkillString(reqs[z].name);
             if ( skill != PSSKILL_NONE )
             {
-               val = charData->GetSkills()->GetSkillRank( skill );
+                val = charData->Skills().GetSkillRank(skill);
             }            
         }
         

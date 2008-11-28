@@ -569,7 +569,7 @@ void psSpellManager::HandleSpellCastEvent(psSpellCastGameEvent *event)
     const psSpell * spell = event->spell;
 
     // Check for spell failure
-    float chanceOfSuccess = spell->ChanceOfSuccess( caster->GetCharacterData()->GetKFactor(), caster->GetCharacterData()->GetSkills()->GetSkillRank( spell->GetSkill() ), caster->GetCharacterData()->GetSkills()->GetSkillRank( spell->GetRelatedStat() ) );
+    float chanceOfSuccess = spell->ChanceOfSuccess(caster->GetCharacterData()->GetKFactor(), caster->GetCharacterData()->Skills().GetSkillRank(spell->GetSkill()), caster->GetCharacterData()->Skills().GetSkillRank(spell->GetRelatedStat()));
 
     Notify4(LOG_SPELLS, "%s Casting %s with a chance of success = %.2f\n",caster->GetName(), spell->GetName().GetData(), chanceOfSuccess);
 
@@ -600,7 +600,7 @@ void psSpellManager::HandleSpellCastEvent(psSpellCastGameEvent *event)
         if (spell->AffectTargets(this, event, responseEffectName, offset, anchorID, targetID, affectText))
         {
             // Only gain practice if the spell was effective
-            caster->GetCharacterData()->GetSkills()->AddSkillPractice( spell->GetSkill(), 1 );
+            caster->GetCharacterData()->Skills().AddSkillPractice(spell->GetSkill(), 1);
         }
 
         // If there is some sort of visual/particle/audio effect for the target then fire it out.

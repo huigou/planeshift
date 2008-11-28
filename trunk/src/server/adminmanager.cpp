@@ -6437,7 +6437,7 @@ void AdminManager::SetSkill(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& 
             psSkillInfo * skill = CacheManager::GetSingleton().GetSkillByID(i);
             if (skill == NULL) continue;
 
-            unsigned int old_value = pchar->GetSkills()->GetSkillRank(skill->id);
+            unsigned int old_value = pchar->Skills().GetSkillRank(skill->id);
 
             if(data.value == -1)
             {
@@ -6468,7 +6468,7 @@ void AdminManager::SetSkill(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& 
             return;
         }
 
-        unsigned int old_value = pchar->GetSkills()->GetSkillRank(skill->id);
+        unsigned int old_value = pchar->Skills().GetSkillRank(skill->id);
         if (data.value == -1)
         {
             psserver->SendSystemInfo(me->clientnum, "Current '%s' of '%s' is %u",skill->name.GetDataSafe(), target->GetName(), old_value);

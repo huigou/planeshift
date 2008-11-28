@@ -447,7 +447,7 @@ csPtr<psQuestPrereqOp> psQuestPrereqOpXor::Copy()
 
 bool psQuestPrereqOpSkill::Check(psCharacter * character)
 {
-    unsigned int skill_val = character->GetSkills()->GetSkillRank(skill->id);
+    unsigned int skill_val = character->Skills().GetSkillRank(skill->id);
 
     if(max && skill_val > max)
     { 

@@ -672,7 +672,7 @@ const enum PSITEMSTATS_STAT skilltostat[6] = {PSITEMSTATS_STAT_AGILITY,
 
 void UserManager::SendCharacterDescription(Client * client, psCharacter * charData, bool full, bool simple, const csString & requestor)
 {
-    StatSet* playerAttr = client->GetCharacterData()->GetAttributes();
+    StatSet & playerAttr = client->GetCharacterData()->Stats();
     csString meshName = charData->GetActor()->GetMesh();
 
     bool isSelf = (charData->GetPID() == client->GetCharacterData()->GetPID());
@@ -689,29 +689,30 @@ void UserManager::SendCharacterDescription(Client * client, psCharacter * charDa
     {
         desc += "\n\n";
         desc += "HP: "+intToStr(int(charData->GetHP()))+" Max HP: "+intToStr(int(charData->GetHitPointsMax()))+"\n";
-        SkillSet *sks = charData->GetSkills();
-        StatSet *sts = charData->GetAttributes();
+        SkillSet & sks = charData->Skills();
+        StatSet & sts = charData->Stats();
 
-        for(int skill = 0; sks && sts && skill < PSSKILL_COUNT; skill++)
+        for (int skill = 0; skill < PSSKILL_COUNT; skill++)
         {
             psSkillInfo *skinfo;
             skinfo = CacheManager::GetSingleton().GetSkillByID((PSSKILL)skill);
-            if (skinfo != NULL) {
+            if (skinfo != NULL)
+            {
                 psCharacterDetailsMessage::NetworkDetailSkill s;
 
                 s.category = skinfo->category;
                 if (PSSKILL_AGI <= skill && skill <= PSSKILL_WILL)
                 {
-                        // handle stats specially in order to pick up buffs/debuffs
-                        s.text = fmtStatLine(skinfo->name,
-                            sts->GetStat(skilltostat[skill - PSSKILL_AGI], false),
-                            sts->GetStat(skilltostat[skill - PSSKILL_AGI], true));
+                    // handle stats specially in order to pick up buffs/debuffs
+                    s.text = fmtStatLine(skinfo->name,
+                                         sts.GetStat(skilltostat[skill - PSSKILL_AGI], false),
+                                         sts.GetStat(skilltostat[skill - PSSKILL_AGI], true));
                 }
                 else
                 {
-                        s.text = fmtStatLine(skinfo->name,
-                            sks->GetSkillRank(static_cast<PSSKILL>(skill), false),
-                            sks->GetSkillRank(static_cast<PSSKILL>(skill), true));
+                    s.text = fmtStatLine(skinfo->name,
+                                         sks.GetSkillRank(static_cast<PSSKILL>(skill), false),
+                                         sks.GetSkillRank(static_cast<PSSKILL>(skill), true));
                 }
                 skills.Push(s);
             }
@@ -738,7 +739,7 @@ void UserManager::SendCharacterDescription(Client * client, psCharacter * charDa
         //  dead or if we are viewing our own description
         if ( !charData->impervious_to_attack && (charData->GetMode() != PSCHARACTER_MODE_DEAD) && !isSelf )
         {
-            if ( playerAttr->GetStat(PSITEMSTATS_STAT_INTELLIGENCE) < 50 )
+            if (playerAttr.GetStat(PSITEMSTATS_STAT_INTELLIGENCE) < 50)
                 desc.AppendFmt( "\n\nYou try to evaluate the strength of %s, but you have no clue.", charName.GetData() );
             else
             {
@@ -754,7 +755,7 @@ void UserManager::SendCharacterDescription(Client * client, psCharacter * charDa
                 "is significantly more powerful than you",
                 "may be impossible to defeat" };
 
-                bool smart = (playerAttr->GetStat(PSITEMSTATS_STAT_INTELLIGENCE) >= 100);
+                bool smart = (playerAttr.GetStat(PSITEMSTATS_STAT_INTELLIGENCE) >= 100);
 
                 int CharsLvl      = charData->GetCharLevel();
                 int PlayersLvl    = client->GetCharacterData()->GetCharLevel();

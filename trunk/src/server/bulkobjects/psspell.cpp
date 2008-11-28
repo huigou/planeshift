@@ -608,9 +608,9 @@ bool psSpell::AffectTarget(psSpellCastGameEvent * event, csString &effectName, c
         if (targetData)
         {
             if ( saveThrow->statSave != PSITEMSTATS_STAT_NONE )
-                playerAttrib = (int)targetData->GetAttributes()->GetStat( saveThrow->statSave );
+                playerAttrib = (int) targetData->Stats().GetStat(saveThrow->statSave);
             else if ( saveThrow->skillSave != PSSKILL_NONE )
-                playerAttrib = (int)targetData->GetSkills()->GetSkillRank( saveThrow->skillSave );
+                playerAttrib = (int) targetData->Skills().GetSkillRank(saveThrow->skillSave);
         }
         if ( playerAttrib != -1.0 )
         {

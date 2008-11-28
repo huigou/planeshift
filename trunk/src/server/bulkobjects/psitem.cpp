@@ -1409,7 +1409,7 @@ void psItem::CombineStack(psItem *& stackme)
 int psItem::GetAttackAnimID(psCharacter *pschar)
 {
     PSSKILL skill = current_stats->Weapon().Skill(PSITEMSTATS_WEAPONSKILL_INDEX_0);
-    unsigned int curr_level = pschar->GetSkills()->GetSkillRank(skill);
+    unsigned int curr_level = pschar->Skills().GetSkillRank(skill);
 
     return current_stats->GetAttackAnimID(curr_level);
 }
@@ -2426,7 +2426,7 @@ bool psItem::SendItemDescription( Client *client)
     itemQuality = "";
     int idSkill = GetIdentifySkill();
     int idMin = GetIdentifyMinSkill();
-    if (!idSkill || ((uint)idMin < client->GetCharacterData()->GetSkills()->GetSkillRank((PSSKILL)idSkill)))
+    if (!idSkill || (uint) idMin < client->GetCharacterData()->Skills().GetSkillRank((PSSKILL) idSkill))
     {
         // If the item is an average stackable type object it has no max quality so don't 
         // send that information to the client since it is not applicable.
@@ -2668,7 +2668,7 @@ void psItem::GetComboInfoString(psCharacter* character, uint32 designID, csStrin
         int priSkill = skillArray->Get(count)->priSkillId;
         if(priSkill != 0)
         {
-            if(skillArray->Get(count)->minPriSkill >= (int)character->GetSkills()->GetSkillRank((PSSKILL)priSkill))
+            if (skillArray->Get(count)->minPriSkill >= (int) character->Skills().GetSkillRank((PSSKILL) priSkill))
             {
                 return;
             }
@@ -2678,7 +2678,7 @@ void psItem::GetComboInfoString(psCharacter* character, uint32 designID, csStrin
         int secSkill = skillArray->Get(count)->secSkillId;
         if(secSkill != 0)
         {
-            if(skillArray->Get(count)->minSecSkill >= (int)character->GetSkills()->GetSkillRank((PSSKILL)priSkill))
+            if (skillArray->Get(count)->minSecSkill >= (int)character->Skills().GetSkillRank((PSSKILL)priSkill))
             {
                 return;
             }
@@ -2701,7 +2701,7 @@ void psItem::GetTransInfoString(psCharacter* character, uint32 designID, csStrin
         int priSkill = craftArray->Get(count)->priSkillId;
         if(priSkill != 0)
         {
-            if(craftArray->Get(count)->minPriSkill >= (int)character->GetSkills()->GetSkillRank((PSSKILL)priSkill))
+            if (craftArray->Get(count)->minPriSkill >= (int) character->Skills().GetSkillRank((PSSKILL) priSkill))
             {
                 continue;
             }
@@ -2711,7 +2711,7 @@ void psItem::GetTransInfoString(psCharacter* character, uint32 designID, csStrin
         int secSkill = craftArray->Get(count)->secSkillId;
         if(secSkill != 0)
         {
-            if(craftArray->Get(count)->minSecSkill >= (int)character->GetSkills()->GetSkillRank((PSSKILL)secSkill))
+            if (craftArray->Get(count)->minSecSkill >= (int) character->Skills().GetSkillRank((PSSKILL) secSkill))
             {
                 continue;
             }

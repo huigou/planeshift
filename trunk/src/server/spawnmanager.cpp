@@ -1830,13 +1830,13 @@ float LootRandomizer::CalcModifierCostCap(psCharacter *chr)
         return 1000.0;
     }
 
-    // Use the mob's attribustes to calculate modifier cost cap
-    modifierCostCalc->GetOrCreateVar("Str")->SetValue((double)chr->GetAttributes()->GetStat(PSITEMSTATS_STAT_STRENGTH));
-    modifierCostCalc->GetOrCreateVar("End")->SetValue((double)chr->GetAttributes()->GetStat(PSITEMSTATS_STAT_ENDURANCE));
-    modifierCostCalc->GetOrCreateVar("Agi")->SetValue((double)chr->GetAttributes()->GetStat(PSITEMSTATS_STAT_AGILITY));
-    modifierCostCalc->GetOrCreateVar("Int")->SetValue((double)chr->GetAttributes()->GetStat(PSITEMSTATS_STAT_INTELLIGENCE));
-    modifierCostCalc->GetOrCreateVar("Will")->SetValue((double)chr->GetAttributes()->GetStat(PSITEMSTATS_STAT_WILL));
-    modifierCostCalc->GetOrCreateVar("Cha")->SetValue((double)chr->GetAttributes()->GetStat(PSITEMSTATS_STAT_CHARISMA));
+    // Use the mob's attributes to calculate modifier cost cap
+    modifierCostCalc->GetOrCreateVar("Str")->SetValue((double)chr->Stats().GetStat(PSITEMSTATS_STAT_STRENGTH));
+    modifierCostCalc->GetOrCreateVar("End")->SetValue((double)chr->Stats().GetStat(PSITEMSTATS_STAT_ENDURANCE));
+    modifierCostCalc->GetOrCreateVar("Agi")->SetValue((double)chr->Stats().GetStat(PSITEMSTATS_STAT_AGILITY));
+    modifierCostCalc->GetOrCreateVar("Int")->SetValue((double)chr->Stats().GetStat(PSITEMSTATS_STAT_INTELLIGENCE));
+    modifierCostCalc->GetOrCreateVar("Will")->SetValue((double)chr->Stats().GetStat(PSITEMSTATS_STAT_WILL));
+    modifierCostCalc->GetOrCreateVar("Cha")->SetValue((double)chr->Stats().GetStat(PSITEMSTATS_STAT_CHARISMA));
     modifierCostCalc->GetOrCreateVar("MaxHP")->SetValue((double)chr->GetHitPointsMax());
     modifierCostCalc->GetOrCreateVar("MaxMana")->SetValue((double)chr->GetManaMax());
 
