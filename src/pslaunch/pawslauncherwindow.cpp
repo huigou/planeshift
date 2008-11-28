@@ -120,7 +120,7 @@ bool pawsLauncherWindow::OnButtonPressed(int mouseButton, int keyModifier, pawsW
         widget->Hide();
         FindWidget("UpdaterNoButton")->Hide();
         FindWidget("UpdaterCancelButton")->Show();
-        psLaunchGUI->PerformUpdate(true);
+        psLaunchGUI->PerformUpdate(false, true);
     }
     else if(ID == UPDATER_NO_BUTTON)
     {
@@ -129,7 +129,7 @@ bool pawsLauncherWindow::OnButtonPressed(int mouseButton, int keyModifier, pawsW
         launcherUpdater->Hide();
         launcherMain->Show();
         launcherMain->OnGainFocus();
-        psLaunchGUI->PerformUpdate(false);
+        psLaunchGUI->PerformUpdate(false, false);
     }
     else if(ID == UPDATER_OK_BUTTON)
     {
@@ -217,7 +217,7 @@ bool pawsLauncherWindow::OnButtonPressed(int mouseButton, int keyModifier, pawsW
 void pawsLauncherWindow::HandleUpdateButton(bool choice, void *updatewindow)
 {
     pawsWidget* updateWindow = (pawsWidget*)updatewindow;
-    psLaunchGUI->PerformUpdate(choice);
+    psLaunchGUI->PerformUpdate(choice, false);
     updateWindow->Hide();
 }
 

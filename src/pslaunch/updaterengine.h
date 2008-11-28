@@ -57,6 +57,9 @@ private:
     /* Set to true to perform an integrity check. */
     bool checkIntegrity;
 
+    /* Communicator for ensuring sync. */
+    bool synched;
+
     /* Safety. */
     CS::Threading::Mutex mutex;
 
@@ -71,6 +74,7 @@ public:
         updateNeeded = false;
         checkIntegrity = false;
         cancelUpdater = false;
+        synched = false;
         mutex.Initialize();
     }
 
@@ -79,6 +83,18 @@ public:
     void SetPerformUpdate(bool v) { performUpdate = v; }
     void SetCheckIntegrity(bool v) { checkIntegrity = v; }
     void SetCancelUpdater(bool v) { cancelUpdater = v; }
+    void Sync(bool first)
+    {
+      if(first)
+      {
+        while(!synched);
+        synched = false;
+      }
+      else
+      {
+        synched = true;
+      }
+    }
 
     bool GetExitGUI() { return exitGUI; }
     bool GetUpdateNeeded() { return updateNeeded; }
@@ -188,7 +204,7 @@ public:
     void CheckIntegrity();
 
     /* Check if a quit event has been triggered. */
-    inline bool CheckQuit() { return infoShare->GetExitGUI() || infoShare->GetCancelUpdater(); }
+    inline bool CheckQuit() { return infoShare->GetCancelUpdater(); }
 
     /* Print to console and save to array for GUI output. */
     void PrintOutput(const char* string, ...);

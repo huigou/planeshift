@@ -51,7 +51,7 @@
 
     <!-- Update output window -->
     <widget name="LauncherUpdater" factory="pawsWidget" visible="no" savepositions="no" movable="no" resizable="no" resizetoscreen="yes" id="12">
-      <bgimage resource="Launcher Other" alpha="255" fading="false"/>
+      <bgimage resource="Launcher Other" alpha="0" fading="false"/>
       <frame x="0" y="0" width="850" height="600" border="no"/>
 
       <widget name="UpdaterOutput" factory="pawsMessageTextBox" id="121" alwaysontop="true">
@@ -89,7 +89,7 @@
 
     <!-- Settings window -->
     <widget name="LauncherSettings" factory="pawsButton" visible="no" alwaysontop="true" savepositions="no" movable="no" resizable="no" resizetoscreen="yes" id="13">
-      <bgimage resource="Launcher Other" alpha="255" fading="false"/>
+      <bgimage resource="Launcher Other" alpha="0" fading="false"/>
       <frame x="0" y="0" width="850" height="600" border="no"/>
 
       <!-- Ok button -->

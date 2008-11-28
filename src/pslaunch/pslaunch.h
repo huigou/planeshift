@@ -100,7 +100,7 @@ public:
 
     FileUtil* GetFileUtil() { return fileUtil; }
 
-    void PerformUpdate(bool update);
+    void PerformUpdate(bool update, bool integrity);
 
     void PerformRepair();
 
