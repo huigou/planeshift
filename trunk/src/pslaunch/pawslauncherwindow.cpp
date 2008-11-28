@@ -150,12 +150,26 @@ bool pawsLauncherWindow::OnButtonPressed(int mouseButton, int keyModifier, pawsW
     }
     else if(ID == SETTINGS_CANCEL_BUTTON)
     {
+        FindWidget("SettingsAudio")->Hide();
+        FindWidget("SettingsControls")->Hide();
+        FindWidget("SettingsGeneral")->Show();
+        FindWidget("SettingsGraphics")->Hide();
+        FindButton(SETTINGS_AUDIO_BUTTON)->SetState(false, false);
+        FindButton(SETTINGS_CONTROLS_BUTTON)->SetState(false, false);
+        FindButton(SETTINGS_GRAPHICS_BUTTON)->SetState(false, false);
         launcherSettings->Hide();
         launcherMain->Show();
         launcherMain->OnGainFocus();
     }
     else if(ID == SETTINGS_OK_BUTTON)
     {
+        FindWidget("SettingsAudio")->Hide();
+        FindWidget("SettingsControls")->Hide();
+        FindWidget("SettingsGeneral")->Show();
+        FindWidget("SettingsGraphics")->Hide();
+        FindButton(SETTINGS_AUDIO_BUTTON)->SetState(false, false);
+        FindButton(SETTINGS_CONTROLS_BUTTON)->SetState(false, false);
+        FindButton(SETTINGS_GRAPHICS_BUTTON)->SetState(false, false);
         launcherSettings->Hide();
         launcherMain->Show();
         launcherMain->OnGainFocus();

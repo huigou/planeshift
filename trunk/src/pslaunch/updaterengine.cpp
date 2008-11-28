@@ -215,6 +215,7 @@ void UpdaterEngine::CheckForUpdates()
         fflush(stdout);
 
         PrintOutput("Update finished!\n");
+        infoShare->Sync(false);
     }
     else
         PrintOutput("No updates needed!\n");
@@ -324,7 +325,7 @@ csRef<iDocumentNode> UpdaterEngine::GetRootNode(const char* nodeName, csRef<iDoc
     csRef<iDocumentSystem> xml = csPtr<iDocumentSystem> (new csTinyDocumentSystem);
     if (!xml)
     {
-        PrintOutput("Could not load the XML Document System\n");
+        printf("Could not load the XML Document System\n");
         return NULL;
     }
 
@@ -332,7 +333,7 @@ csRef<iDocumentNode> UpdaterEngine::GetRootNode(const char* nodeName, csRef<iDoc
     csRef<iDataBuffer> buf = vfs->ReadFile(nodeName);
     if (!buf || !buf->GetSize())
     {
-        PrintOutput("Couldn't open xml file '%s'!\n", nodeName);
+        printf("Couldn't open xml file '%s'!\n", nodeName);
         return NULL;
     }
 
@@ -350,7 +351,7 @@ csRef<iDocumentNode> UpdaterEngine::GetRootNode(const char* nodeName, csRef<iDoc
     const char* error = configdoc->Parse(buf);
     if (error)
     {
-        PrintOutput("XML Parsing error in file '%s': %s.\n", nodeName, error);
+        printf("XML Parsing error in file '%s': %s.\n", nodeName, error);
         return NULL;
     }
 
@@ -358,7 +359,7 @@ csRef<iDocumentNode> UpdaterEngine::GetRootNode(const char* nodeName, csRef<iDoc
     csRef<iDocumentNode> root = configdoc->GetRoot ();
     if (!root)
     {
-        PrintOutput("Couldn't get config file rootnode!");
+        printf("Couldn't get config file rootnode!");
         return NULL;
     }
 
@@ -747,7 +748,7 @@ void UpdaterEngine::GeneralUpdate()
 #endif
 
                 // Binary patch.
-                PrintOutput("Patching file %s: ", newFilePath.GetData());
+                PrintOutput("\nPatching file %s: ", newFilePath.GetData());
                 if(!PatchFile(oldFP->GetData(), diffFP->GetData(), newFP->GetData()))
                 {
                     PrintOutput("Failed!\n");
@@ -872,7 +873,7 @@ void UpdaterEngine::CheckIntegrity()
     bool success = true;
     if(!root.IsValid())
     {
-        PrintOutput("Unable to get root node!\n");
+        printf("Unable to get root node!\n");
         success = false;
     }
     else
@@ -880,7 +881,7 @@ void UpdaterEngine::CheckIntegrity()
       confignode = root->GetNode("config");
       if (!confignode.IsValid())
       {
-        PrintOutput("Couldn't find config node in configfile!\n");
+        printf("Couldn't find config node in configfile!\n");
         success = false;
       }
     }
@@ -894,7 +895,7 @@ void UpdaterEngine::CheckIntegrity()
             return;
         }
 
-        PrintOutput("Attempting to restore updaterinfo.xml!\n");
+        printf("Attempting to restore updaterinfo.xml!\n");
         fileUtil->RemoveFile("/this/updaterinfo.xml", true);
         downloader = new Downloader(vfs);
         downloader->SetProxy(config->GetProxy().host.GetData(), config->GetProxy().port);
@@ -909,14 +910,14 @@ void UpdaterEngine::CheckIntegrity()
         root = GetRootNode(UPDATERINFO_CURRENT_FILENAME);
         if(!root)
         {
-            PrintOutput("Unable to get root node!\n");
+            printf("Unable to get root node!\n");
             return;
         }
        
         confignode = root->GetNode("config");
         if (!confignode)
         {
-            PrintOutput("Couldn't find config node in configfile!\n");
+            printf("Couldn't find config node in configfile!\n");
             return;
         }
     }
@@ -924,7 +925,7 @@ void UpdaterEngine::CheckIntegrity()
     // Load updater config
     if (!config->GetCurrentConfig()->Initialize(confignode))
     {
-        PrintOutput("Failed to Initialize mirror config current!\n");
+        printf("Failed to Initialize mirror config current!\n");
         return;
     }
 
@@ -947,19 +948,19 @@ void UpdaterEngine::CheckIntegrity()
     root = GetRootNode(UPDATERINFO_CURRENT_FILENAME);
     if(!root)
     {
-        PrintOutput("Unable to get root node!\n");
+        printf("Unable to get root node!\n");
     }
 
     confignode = root->GetNode("config");
     if (!confignode)
     {
-        PrintOutput("Couldn't find config node in configfile!\n");
+        printf("Couldn't find config node in configfile!\n");
     }
 
     // Load updater config
     if (!config->GetCurrentConfig()->Initialize(confignode))
     {
-        PrintOutput("Failed to Initialize mirror config current!\n");
+        PrintOutput("\nFailed to Initialize mirror config current!\n");
         return;
     }
 
@@ -987,7 +988,7 @@ void UpdaterEngine::CheckIntegrity()
     csRef<iDocumentNode> r = GetRootNode("/zip/integrity.xml");
     if(!r)
     {
-        PrintOutput("Unable to get root node!\n");
+        printf("Unable to get root node!\n");
         failed = true;
     }
 
@@ -996,7 +997,7 @@ void UpdaterEngine::CheckIntegrity()
         csRef<iDocumentNode> md5sums = r->GetNode("md5sums");
         if (!md5sums)
         {
-            PrintOutput("Couldn't find md5sums node!\n");
+            printf("Couldn't find md5sums node!\n");
             failed = true;
         }
 
@@ -1052,7 +1053,7 @@ void UpdaterEngine::CheckIntegrity()
             }
             else
             {
-                PrintOutput("\nThe following files failed the check:\n");
+                PrintOutput("\nThe following files failed the check:\n\n");
                 for(size_t i=0; i<failedSize; i++)
                 {
                     PrintOutput("%s\n", failed.Get(i)->GetAttributeValue("path"));
@@ -1118,7 +1119,7 @@ void UpdaterEngine::CheckIntegrity()
                                // Restore file.
                                fileUtil->RemoveFile(downloadpath, true);
                                fileUtil->MoveFile(downloadpath + ".bak", downloadpath, true, false, true);
-                               PrintOutput("Failed!\n");
+                               PrintOutput(" Failed!\n");
                                continue;
                            }
                         }
@@ -1135,7 +1136,7 @@ void UpdaterEngine::CheckIntegrity()
                         }
 #endif
                         fileUtil->RemoveFile(downloadpath + ".bak", true);
-                        PrintOutput("Success!\n");
+                        PrintOutput(" Success!\n");
                     }
                     fileUtil->RemoveFile("/this/updaterinfo.xml.bak", true);
                     PrintOutput("\nDone!\n");

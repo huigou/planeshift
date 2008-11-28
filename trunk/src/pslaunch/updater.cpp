@@ -17,19 +17,11 @@
 *
 */
 
-/* 
-* This is the file for the console updater only. Everything in here needs to be
-* written again for the launcher!
-*/
-
 #include <psconfig.h>
 
 #include "updaterconfig.h"
 #include "updaterengine.h"
 #include "updater.h"
-
-
-CS_IMPLEMENT_APPLICATION
 
 iObjectRegistry* psUpdater::object_reg = NULL;
 
@@ -98,42 +90,4 @@ void psUpdater::RunUpdate(UpdaterEngine* engine) const
     printf("Checking for updates:\n");
     engine->CheckForUpdates();
     return;
-}
-
-int main(int argc, char* argv[])
-{
-    // Set up CS
-    psUpdater* updater = new psUpdater(argc, argv);
-
-    // Convert args to an array of csString.
-    csArray<csString> args;
-    for(int i=0; i<argc; i++)
-    {
-        args.Push(argv[i]);
-    }
-
-    // Initialize updater engine.
-    UpdaterEngine* engine = new UpdaterEngine(args, updater->GetObjectRegistry(), "psupdater");
-
-    printf("\nPlaneShift Updater Version %1.2f for %s.\n\n", UPDATER_VERSION, engine->GetConfig()->GetCurrentConfig()->GetPlatform());
-
-    // Run the update process!
-    updater->RunUpdate(engine);
-
-    // Maybe this fixes a bug.
-    fflush(stdout);
-
-    if(!engine->GetConfig()->IsSelfUpdating())
-    {
-        printf("\nUpdater finished, press enter to exit.\n");
-        getchar();
-    }
-
-    // Terminate updater!
-    delete engine;
-    delete updater;
-    engine = NULL;
-    updater = NULL;
-
-    return 0;
 }

@@ -31,6 +31,7 @@
 #include "globals.h"
 #include "pslaunch.h"
 #include "pawslauncherwindow.h"
+#include "updater.h"
 
 #include "paws/pawsbutton.h"
 #include "paws/pawstextbox.h"
@@ -215,27 +216,24 @@ bool psLauncherGUI::HandleEvent (iEvent &ev)
     }
     else if(infoShare->GetPerformUpdate())
     {
-        pawsMessageTextBox* updateProgressOutput = (pawsMessageTextBox*)paws->FindWidget("UpdaterOutput");
-        if(infoShare->GetUpdateNeeded())
+        if(!infoShare->GetUpdateNeeded())
         {
-            while(!infoShare->ConsoleIsEmpty())
-            {
-                csString message = infoShare->ConsolePop();
-                if(message.FindFirst("\n") == 0)
-                {
-                    updateProgressOutput->AddMessage(message);
-                }
-                else
-                {
-                    updateProgressOutput->AppendLastMessage(message);
-                }
-            }
-        }
-        else
-        {
-            updateProgressOutput->Hide();
-            paws->FindWidget("LauncherMain")->Show();
             infoShare->SetPerformUpdate(false);
+            infoShare->Sync(true);
+        }
+
+        pawsMessageTextBox* updateProgressOutput = (pawsMessageTextBox*)paws->FindWidget("UpdaterOutput");
+        while(!infoShare->ConsoleIsEmpty())
+        {
+            csString message = infoShare->ConsolePop();
+            if(message.FindFirst("\n") == 0)
+            {
+                updateProgressOutput->AddMessage(message);
+            }
+            else
+            {
+                updateProgressOutput->AppendLastMessage(message);
+            }
         }
     }
     else if(paws->FindWidget("LauncherUpdater")->IsVisible())
@@ -336,23 +334,21 @@ void psLauncherGUI::PerformRepair()
 
 int main(int argc, char* argv[])
 {
-    // Set to true to exit the app.
-    bool exitApp = false;
-    
-    while(!exitApp)
+    // Select between GUI and console mode.
+    bool console = false;
+    for(int i=0; i<argc; i++)
+    {
+        csString s(argv[i]);
+        if(s.CompareNoCase("--console") || s.CompareNoCase("-console"))
+        {
+            console = true;
+        }
+    }
+
+    if(console)
     {
         // Set up CS
-        iObjectRegistry* object_reg = csInitializer::CreateEnvironment (argc, argv);
-   
-        if(!object_reg)
-        {
-            printf("Object Reg failed to Init!\n");
-            exit(1);
-        }
-
-        // Request needed plugins for updater.
-        csInitializer::SetupConfigManager(object_reg, LAUNCHER_CONFIG_FILENAME);
-        csInitializer::RequestPlugins(object_reg, CS_REQUEST_VFS, CS_REQUEST_END);
+        psUpdater* updater = new psUpdater(argc, argv);
 
         // Convert args to an array of csString.
         csArray<csString> args;
@@ -361,135 +357,186 @@ int main(int argc, char* argv[])
             args.Push(argv[i]);
         }
 
-        InfoShare *infoShare = new InfoShare();
-        infoShare->SetPerformUpdate(false);
-        infoShare->SetUpdateNeeded(false);
-
-        // Mount the VFS paths.
-        csRef<iVFS> vfs = csQueryRegistry<iVFS>(object_reg);
-        if (!vfs->Mount ("/planeshift/", "$^"))
-        {
-          printf("Failed to mount /planeshift!\n");
-          return false;
-        }
-
-        csRef<iConfigManager> configManager = csQueryRegistry<iConfigManager> (object_reg);
-        csString configPath = csGetPlatformConfigPath("PlaneShift");
-        configPath.ReplaceAll("/.crystalspace/", "/.");
-        configPath = configManager->GetStr("PlaneShift.UserConfigPath", configPath);
-        FileUtil fileUtil(vfs);
-        csRef<FileStat> filestat = fileUtil.StatFile(configPath);
-        if (!filestat.IsValid() && CS_MKDIR(configPath) < 0)
-        {
-          printf("Could not create required %s directory!\n", configPath.GetData());
-          return false;
-        }
-
-        if (!vfs->Mount("/planeshift/userdata", configPath + "$/"))
-        {
-          printf("Could not mount %s as /planeshift/userdata!\n", configPath.GetData());
-          return false;
-        }
-
         // Initialize updater engine.
-        UpdaterEngine* engine = new UpdaterEngine(args, object_reg, "pslaunch", infoShare);
+        UpdaterEngine* engine = new UpdaterEngine(args, updater->GetObjectRegistry(), "pslaunch");
 
-        // If we're self updating, continue self update.
-        if(engine->GetConfig()->IsSelfUpdating())
+        printf("\nPlaneShift Updater Version %1.2f for %s.\n\n", UPDATER_VERSION, engine->GetConfig()->GetCurrentConfig()->GetPlatform());
+
+        // Run the update process!
+        updater->RunUpdate(engine);
+
+        // Maybe this fixes a bug.
+        fflush(stdout);
+
+        if(!engine->GetConfig()->IsSelfUpdating())
         {
-            exitApp = engine->SelfUpdate(engine->GetConfig()->IsSelfUpdating());
+            printf("\nUpdater finished, press enter to exit.\n");
+            getchar();
         }
 
-        // If we don't have to exit the app, create GUI thread and run updater.
-        if(!exitApp)
+        // Terminate updater!
+        delete engine;
+        delete updater;
+        engine = NULL;
+        updater = NULL;
+    }
+    else
+    {
+        // Set to true to exit the app.
+        bool exitApp = false;
+
+        while(!exitApp)
         {
-            // Set to true by GUI if we have to launch the client.
-            bool execPSClient = false;
-            // Ping stuff.
+            // Set up CS
+            iObjectRegistry* object_reg = csInitializer::CreateEnvironment (argc, argv);
 
-            // Request needed plugins for GUI.
-            csInitializer::RequestPlugins(object_reg, CS_REQUEST_FONTSERVER, CS_REQUEST_IMAGELOADER,
-                                          CS_REQUEST_OPENGL3D, CS_REQUEST_END);
-
-            // Start up GUI.
-            csRef<Runnable> gui;
-            gui.AttachNew(new psLauncherGUI(object_reg, infoShare, &execPSClient));
-            csRef<Thread> guiThread;
-            guiThread.AttachNew(new Thread(gui));
-            guiThread->Start();
-            
-            //Begin update checking.
-            if(engine)
-                engine->CheckForUpdates();
-
-            // Wait for the gui to exit.
-            while(guiThread->IsRunning())
+            if(!object_reg)
             {
-                csSleep(500);
-                if(infoShare->GetCheckIntegrity())
-                {
-                    engine->CheckIntegrity();
-                    csSleep(1000);
-                    infoShare->SetCheckIntegrity(false);
-                }
-
+                printf("Object Reg failed to Init!\n");
+                exit(1);
             }
 
-            // Free updater.
-            delete engine;
-            engine = NULL;
+            // Request needed plugins for updater.
+            csInitializer::SetupConfigManager(object_reg, LAUNCHER_CONFIG_FILENAME);
+            csInitializer::RequestPlugins(object_reg, CS_REQUEST_VFS, CS_REQUEST_END);
 
-            // Free the GUI.
-            guiThread = NULL;
-            gui = NULL;
-
-            // Clean up everything else.
-            csInitializer::DestroyApplication(object_reg);
-            object_reg = NULL;
-            delete infoShare;
-            infoShare = NULL;
-            
-            if (execPSClient)
+            // Convert args to an array of csString.
+            csArray<csString> args;
+            for(int i=0; i<argc; i++)
             {
-                // Execute psclient process.
+                args.Push(argv[i]);
+            }
+
+            InfoShare *infoShare = new InfoShare();
+            infoShare->SetPerformUpdate(false);
+            infoShare->SetUpdateNeeded(false);
+
+            // Mount the VFS paths.
+            csRef<iVFS> vfs = csQueryRegistry<iVFS>(object_reg);
+            if (!vfs->Mount ("/planeshift/", "$^"))
+            {
+                printf("Failed to mount /planeshift!\n");
+                return false;
+            }
+
+            csRef<iConfigManager> configManager = csQueryRegistry<iConfigManager> (object_reg);
+            csString configPath = csGetPlatformConfigPath("PlaneShift");
+            configPath.ReplaceAll("/.crystalspace/", "/.");
+            configPath = configManager->GetStr("PlaneShift.UserConfigPath", configPath);
+            FileUtil fileUtil(vfs);
+            csRef<FileStat> filestat = fileUtil.StatFile(configPath);
+            if (!filestat.IsValid() && CS_MKDIR(configPath) < 0)
+            {
+                printf("Could not create required %s directory!\n", configPath.GetData());
+                return false;
+            }
+
+            if (!vfs->Mount("/planeshift/userdata", configPath + "$/"))
+            {
+                printf("Could not mount %s as /planeshift/userdata!\n", configPath.GetData());
+                return false;
+            }
+
+            // Initialize updater engine.
+            UpdaterEngine* engine = new UpdaterEngine(args, object_reg, "pslaunch", infoShare);
+
+            // If we're self updating, continue self update.
+            if(engine->GetConfig()->IsSelfUpdating())
+            {
+                exitApp = engine->SelfUpdate(engine->GetConfig()->IsSelfUpdating());
+            }
+
+            // If we don't have to exit the app, create GUI thread and run updater.
+            if(!exitApp)
+            {
+                // Set to true by GUI if we have to launch the client.
+                bool execPSClient = false;
+                // Ping stuff.
+
+                // Request needed plugins for GUI.
+                csInitializer::RequestPlugins(object_reg, CS_REQUEST_FONTSERVER, CS_REQUEST_IMAGELOADER,
+                    CS_REQUEST_OPENGL3D, CS_REQUEST_END);
+
+                // Start up GUI.
+                csRef<Runnable> gui;
+                gui.AttachNew(new psLauncherGUI(object_reg, infoShare, &execPSClient));
+                csRef<Thread> guiThread;
+                guiThread.AttachNew(new Thread(gui));
+                guiThread->Start();
+
+                //Begin update checking.
+                if(engine)
+                    engine->CheckForUpdates();
+
+                // Wait for the gui to exit.
+                while(guiThread->IsRunning())
+                {
+                    csSleep(500);
+                    if(infoShare->GetCheckIntegrity())
+                    {
+                        engine->CheckIntegrity();
+                        csSleep(1000);
+                        infoShare->SetCheckIntegrity(false);
+                    }
+
+                }
+
+                // Free updater.
+                delete engine;
+                engine = NULL;
+
+                // Free the GUI.
+                guiThread = NULL;
+                gui = NULL;
+
+                // Clean up everything else.
+                csInitializer::DestroyApplication(object_reg);
+                object_reg = NULL;
+                delete infoShare;
+                infoShare = NULL;
+
+                if (execPSClient)
+                {
+                    // Execute psclient process.
 
 #ifdef CS_PLATFORM_WIN32
 
-                // Info for CreateProcess.
-                STARTUPINFO siStartupInfo;
-                DWORD dwExitCode;
-                PROCESS_INFORMATION piProcessInfo;
-                memset(&siStartupInfo, 0, sizeof(siStartupInfo));
-                memset(&piProcessInfo, 0, sizeof(piProcessInfo));
-                siStartupInfo.cb = sizeof(siStartupInfo);
+                    // Info for CreateProcess.
+                    STARTUPINFO siStartupInfo;
+                    DWORD dwExitCode;
+                    PROCESS_INFORMATION piProcessInfo;
+                    memset(&siStartupInfo, 0, sizeof(siStartupInfo));
+                    memset(&piProcessInfo, 0, sizeof(piProcessInfo));
+                    siStartupInfo.cb = sizeof(siStartupInfo);
 
-                CreateProcess(NULL, "psclient.exe", 0, 0, false,
-                    CREATE_DEFAULT_ERROR_MODE, 0, 0, &siStartupInfo, &piProcessInfo);
-                GetExitCodeProcess(piProcessInfo.hProcess, &dwExitCode);
-                while (dwExitCode == STILL_ACTIVE)
-                {
-                    csSleep(1000);
+                    CreateProcess(NULL, "psclient.exe", 0, 0, false,
+                        CREATE_DEFAULT_ERROR_MODE, 0, 0, &siStartupInfo, &piProcessInfo);
                     GetExitCodeProcess(piProcessInfo.hProcess, &dwExitCode);
-                }
-                exitApp = dwExitCode ? 0 : !0;
-                CloseHandle(piProcessInfo.hProcess);
-                CloseHandle(piProcessInfo.hThread);
+                    while (dwExitCode == STILL_ACTIVE)
+                    {
+                        csSleep(1000);
+                        GetExitCodeProcess(piProcessInfo.hProcess, &dwExitCode);
+                    }
+                    exitApp = dwExitCode ? 0 : !0;
+                    CloseHandle(piProcessInfo.hProcess);
+                    CloseHandle(piProcessInfo.hThread);
 #else
-                if(fork() == 0)
-                {
-                    execl("./psclient", "./psclient", (char*)0);                                        
-                }                
+                    if(fork() == 0)
+                    {
+                        execl("./psclient", "./psclient", (char*)0);                                        
+                    }                
+                    else
+                    {
+                        int status;
+                        wait(&status);
+                        exitApp = status ? 0 : !0;
+                    }                
+#endif
+                }
                 else
                 {
-                    int status;
-                    wait(&status);
-                    exitApp = status ? 0 : !0;
-                }                
-#endif
-            }
-            else
-            {
-                exitApp = true;
+                    exitApp = true;
+                }
             }
         }
     }
