@@ -1,4 +1,9 @@
-﻿*** 2008-11-28 by Steven Patrick
+﻿*** 2008-11-28 by Stefano Angeleri
+- Fixing FS#2529 and FS#2404 disabling the mouse hit on enter for buttons.
+  It is useless as it needs you to click one time on the click and it gives
+  only an undesidered behaviour.
+
+*** 2008-11-28 by Steven Patrick
 - Compiling.html changes by Caarrie.
 
 *** 2008-11-27 by Stefano Angeleri
