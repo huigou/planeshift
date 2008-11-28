@@ -165,6 +165,7 @@ bool psLauncherGUI::InitApp()
         csevFrame (object_reg),
         csevMouseEvent (object_reg),
         csevKeyboardEvent (object_reg),
+        csevQuit (object_reg),
         CS_EVENTLIST_END
     };
     queue->RegisterListener(event_handler, esub);
@@ -174,16 +175,28 @@ bool psLauncherGUI::InitApp()
 
 bool psLauncherGUI::HandleEvent (iEvent &ev)
 {
-    if(infoShare->GetExitGUI())
-        Quit();
+    if (ev.Name == csevQuit (object_reg))
+    {
+      if(!infoShare->GetExitGUI())
+      {
+        infoShare->SetCancelUpdater(true);
+      }
+      return false;
+    }
 
+    if(infoShare->GetExitGUI())
+    {
+        Quit();
+        return false;
+    }
+    
     if(infoShare->GetCheckIntegrity())
     {
         pawsMessageTextBox* updateProgressOutput = (pawsMessageTextBox*)paws->FindWidget("UpdaterOutput");
         while(!infoShare->ConsoleIsEmpty())
         {
             csString message = infoShare->ConsolePop();
-            if(message.FindLast("\n") == message.Length()-1 || message.FindFirst("\n") == 0)
+            if(message.FindFirst("\n") == 0)
             {
                 updateProgressOutput->AddMessage(message);
             }
@@ -200,6 +213,31 @@ bool psLauncherGUI::HandleEvent (iEvent &ev)
             no->Show();
         }
     }
+    else if(infoShare->GetPerformUpdate())
+    {
+        pawsMessageTextBox* updateProgressOutput = (pawsMessageTextBox*)paws->FindWidget("UpdaterOutput");
+        if(infoShare->GetUpdateNeeded())
+        {
+            while(!infoShare->ConsoleIsEmpty())
+            {
+                csString message = infoShare->ConsolePop();
+                if(message.FindFirst("\n") == 0)
+                {
+                    updateProgressOutput->AddMessage(message);
+                }
+                else
+                {
+                    updateProgressOutput->AppendLastMessage(message);
+                }
+            }
+        }
+        else
+        {
+            updateProgressOutput->Hide();
+            paws->FindWidget("LauncherMain")->Show();
+            infoShare->SetPerformUpdate(false);
+        }
+    }
     else if(paws->FindWidget("LauncherUpdater")->IsVisible())
     {
         paws->FindWidget("UpdaterOkButton")->Show();
@@ -211,29 +249,6 @@ bool psLauncherGUI::HandleEvent (iEvent &ev)
         {
             paws->FindWidget("UpdateAvailable")->Show();
             updateTold = true;
-        }
-    }
-    else if(infoShare->GetPerformUpdate())
-    {
-        pawsWidget* updateProgress = paws->FindWidget("UpdateProgress");
-        if(infoShare->GetUpdateNeeded())
-        {
-            pawsMultiLineTextBox* updateProgressOutput = (pawsMultiLineTextBox*)updateProgress->FindWidget("UpdaterOutput");
-            updateProgress->Show();
-            paws->FindWidget("launcher")->Hide();
-
-            while(!infoShare->ConsoleIsEmpty())
-            {
-                csString currentText = updateProgressOutput->GetText();
-                updateProgressOutput->SetText(currentText.Append(infoShare->ConsolePop()));
-            }
-        }
-        else
-        {
-            csSleep(3000);
-            paws->FindWidget("launcher")->Show();
-            updateProgress->Hide();
-            infoShare->SetPerformUpdate(false);
         }
     }
 
@@ -294,14 +309,19 @@ void psLauncherGUI::Quit()
     infoShare->SetExitGUI(true);
 }
 
-void psLauncherGUI::PerformUpdate(bool update)
+void psLauncherGUI::PerformUpdate(bool update, bool integrity)
 {
-    if(update)
+    infoShare->SetPerformUpdate(update || integrity);
+    infoShare->SetUpdateNeeded(update);
+    infoShare->Sync(true);
+
+    if(update && !infoShare->GetExitGUI())
     {
-        infoShare->SetPerformUpdate(true);
+      paws->FindWidget("LauncherMain")->Hide();
+      paws->FindWidget("LauncherUpdater")->Show();
+      paws->FindWidget("LauncherUpdater")->OnGainFocus();
+      paws->FindWidget("UpdaterCancelButton")->Show();
     }
-    
-    infoShare->SetUpdateNeeded(false);
 }
 
 void psLauncherGUI::PerformRepair()

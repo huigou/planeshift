@@ -581,7 +581,20 @@ void pawsMessageTextBox::AddMessage( const char* data, int msgColour )
 
 void pawsMessageTextBox::AppendLastMessage(const char* data)
 {
+    if(messages.IsEmpty())
+    {
+      AddMessage(data);
+      return;
+    }
+
     MessageLine* line = messages.Get(messages.GetSize()-1);
+    
+    if(line->text.FindLast("\n")== line->text.Length()-1)
+    {
+      AddMessage(data);
+      return;
+    }
+
     line->text.Append(data);
     line = adjusted.Get(adjusted.GetSize()-1);
     line->text.Append(data);

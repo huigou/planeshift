@@ -138,11 +138,11 @@ void UpdaterEngine::CheckForUpdates()
     downloader->SetProxy(GetConfig()->GetProxy().host.GetData(),
         GetConfig()->GetProxy().port);
 
-    PrintOutput("Checking for updates to the updater: ");
+    printf("Checking for updates to the updater: ");
 
     if(CheckUpdater())
     {
-        PrintOutput("Update Available!\n");
+        printf("Update Available!\n");
 
         // Check if we have write permissions.
         if(!log.IsValid())
@@ -155,23 +155,21 @@ void UpdaterEngine::CheckForUpdates()
         if(!appName.Compare("psupdater"))
         {
             infoShare->SetUpdateNeeded(true);         
-            while(!infoShare->GetPerformUpdate() || !infoShare->GetExitGUI())
+            while(!infoShare->GetPerformUpdate())
             {
-                csSleep(500);
                 // Make sure we die if we exit the gui as well.
                 if(!infoShare->GetUpdateNeeded() || infoShare->GetExitGUI())
                 {
+                    infoShare->Sync(false);
                     delete downloader;
                     downloader = NULL;
                     return;
                 }
-
-                // If we're going to self-update, close the GUI.
-                if(infoShare->GetPerformUpdate())
-                {
-                    infoShare->SetExitGUI(true);
-                }
             }
+
+            // If we're going to self-update, close the GUI.
+            infoShare->SetExitGUI(true);
+            infoShare->Sync(false);
         }
 
         // Begin the self update process.
@@ -179,12 +177,12 @@ void UpdaterEngine::CheckForUpdates()
         return;
     }
 
-    PrintOutput("No updates needed!\nChecking for updates to all files: ");
+    printf("No updates needed!\nChecking for updates to all files: ");
 
     // Check for normal updates.
     if(CheckGeneral())
     {
-        PrintOutput("Updates Available!\n");
+        printf("Updates Available!\n");
 
         // Check if we have write permissions.
         if(!log.IsValid())
@@ -199,14 +197,15 @@ void UpdaterEngine::CheckForUpdates()
             infoShare->SetUpdateNeeded(true);
             while(!infoShare->GetPerformUpdate())
             {
-                csSleep(500);
-                if(!infoShare->GetUpdateNeeded())
+                if(!infoShare->GetUpdateNeeded() || infoShare->GetExitGUI())
                 {
+                    infoShare->Sync(false);
                     delete downloader;
                     downloader = NULL;
                     return;
                 }
             }
+            infoShare->Sync(false);
         }
 
         // Begin general update.
@@ -262,7 +261,7 @@ bool UpdaterEngine::CheckUpdater()
     }
 
     // Compare Versions.
-    return(config->UpdatePlatform() && config->GetNewConfig()->GetUpdaterVersionLatest() > UPDATER_VERSION);        
+    return(config->UpdatePlatform() && (config->GetNewConfig()->GetUpdaterVersionLatest() - UPDATER_VERSION > 0.01));        
 }
 
 bool UpdaterEngine::CheckGeneral()
@@ -475,6 +474,7 @@ bool UpdaterEngine::SelfUpdate(int selfUpdating)
             if(!md5sum.Compare(config->GetNewConfig()->GetUpdaterVersionLatestMD5()))
             {
                 PrintOutput("md5sum of updater zip does not match correct md5sum!!\n");
+                fileUtil->RemoveFile("/this/" + zip);
                 return false;
             }
 
@@ -483,12 +483,11 @@ bool UpdaterEngine::SelfUpdate(int selfUpdating)
             vfs->Mount("/zip", realZipPath->GetData());
 
             csString from = "/zip/";
-            from.AppendFmt(appName);
-            from.AppendFmt(".exe");
+            from.AppendFmt("%s.exe", appName.GetData());
             appName.AppendFmt("2.exe");
 
             fileUtil->CopyFile(from, "/this/" + appName, true, true);
-            vfs->Mount("/zip", realZipPath->GetData());;
+            vfs->Unmount("/zip", realZipPath->GetData());
 
             // Create a new process of the updater.
             CreateProcess(appName.GetData(), "selfUpdateFirst", 0, 0, false, CREATE_DEFAULT_ERROR_MODE, 0, 0, &siStartupInfo, &piProcessInfo);
@@ -626,7 +625,6 @@ void UpdaterEngine::GeneralUpdate()
         if(!downloader->DownloadFile(zip, zip, false, true))
         {
             PrintOutput("Failed to download the update file! Try again later.\n");
-            fileUtil->MoveFile("/this/updaterinfo.xml.bak", "/this/updaterinfo.xml", true, false);
             return;
         }
 
@@ -635,7 +633,6 @@ void UpdaterEngine::GeneralUpdate()
         if (!buffer)
         {
             PrintOutput("Could not get MD5 of updater zip!!\n");
-            fileUtil->MoveFile("/this/updaterinfo.xml.bak", "/this/updaterinfo.xml", true, false);
             return;
         }
 
@@ -646,7 +643,6 @@ void UpdaterEngine::GeneralUpdate()
         if(!md5sum.Compare(newCv->GetMD5Sum()))
         {
             PrintOutput("md5sum of client zip does not match correct md5sum!!\n");
-            fileUtil->MoveFile("/this/updaterinfo.xml.bak", "/this/updaterinfo.xml", true, false);
             return;
         }
 
@@ -898,6 +894,7 @@ void UpdaterEngine::CheckIntegrity()
             return;
         }
 
+        PrintOutput("Attempting to restore updaterinfo.xml!\n");
         fileUtil->RemoveFile("/this/updaterinfo.xml", true);
         downloader = new Downloader(vfs);
         downloader->SetProxy(config->GetProxy().host.GetData(), config->GetProxy().port);
@@ -1063,7 +1060,7 @@ void UpdaterEngine::CheckIntegrity()
 
                 char c = ' ';
                 PrintOutput("\nDo you wish to download the correct copies of these files? (y/n)\n");
-                if(appName.Compare("psupdater"))
+                if(!appName.Compare("pslaunch"))
                 {
                     while(c != 'y' && c != 'n')
                     {
@@ -1075,10 +1072,11 @@ void UpdaterEngine::CheckIntegrity()
                     infoShare->SetUpdateNeeded(true);
                     while(infoShare->GetUpdateNeeded())
                     {
-                        csSleep(500);
+                      CHECK_QUIT
                     }
                     c = infoShare->GetPerformUpdate() ? 'y' : 'n';
                     infoShare->SetPerformUpdate(false);
+                    infoShare->Sync(false);
                 }
                 
                 if(c == 'n')
