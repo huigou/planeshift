@@ -1,4 +1,7 @@
-﻿*** 2008-11-27 by Stefano Angeleri
+﻿*** 2008-11-28 by Steven Patrick
+- Compiling.html changes by Caarrie.
+
+*** 2008-11-27 by Stefano Angeleri
 - Committed a fix for FS#1124 and FS#1245 patch by peeg
 
 *** 2008-11-26 by Keith Fulton
