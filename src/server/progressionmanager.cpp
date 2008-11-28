@@ -818,9 +818,9 @@ public:
         case CON:
         case STA:
             if (base || findBase)
-                return targetChar->GetAttributes()->GetStat(statToAttrib[stat], false);
+                return targetChar->Stats().GetStat(statToAttrib[stat], false);
             else
-                return targetChar->GetAttributes()->GetStat(statToAttrib[stat], true);
+                return targetChar->Stats().GetStat(statToAttrib[stat], true);
             break;
         case ATTACK:
             return targetChar->GetAttackValueModifier();
@@ -954,12 +954,12 @@ public:
             {
                 if (base)
                 {
-                    targetChar->GetAttributes()->SetStat(statToAttrib[stat],(unsigned)newValue);
+                    targetChar->Stats().SetStat(statToAttrib[stat], (unsigned) newValue);
                     targetChar->CalculateEquipmentModifiers();
                 }
                 else
                 {
-                    targetChar->GetAttributes()->BuffStat(statToAttrib[stat],unsigned(newValue-oldValue));
+                    targetChar->Stats().BuffStat(statToAttrib[stat], unsigned(newValue-oldValue));
                     targetChar->CalculateEquipmentModifiers();
                 }
                 break;
@@ -1293,14 +1293,14 @@ public:
 
         if (isBuff)
         {
-            character->GetSkills()->BuffSkillRank( skill, adjustValue );
+            character->Skills().BuffSkillRank(skill, adjustValue);
             result = adjustValue;
         }
         else
         {
-            oldSkillRank = character->GetSkills()->GetSkillRank(skill, false);
+            oldSkillRank = character->Skills().GetSkillRank(skill, false);
             result = adjustValue + (int) (setValue ? 0 : oldSkillRank);
-            character->GetSkills()->SetSkillRank(skill, (int) result);
+            character->Skills().SetSkillRank(skill, (int) result);
         }
 
         int delay = GetDelay(actor, target);
@@ -4769,12 +4769,12 @@ void ProgressionManager::HandleSkill(Client * client, psGUISkillMessage& msg)
                             psGUISkillMessage::DESCRIPTION,
                             buff,
                             NULL,
-                            (unsigned int)(chr->GetAttributes()->GetStat(PSITEMSTATS_STAT_STRENGTH)),
-                            (unsigned int)(chr->GetAttributes()->GetStat(PSITEMSTATS_STAT_ENDURANCE)),
-                            (unsigned int)(chr->GetAttributes()->GetStat(PSITEMSTATS_STAT_AGILITY)),
-                            (unsigned int)(chr->GetAttributes()->GetStat(PSITEMSTATS_STAT_INTELLIGENCE)),
-                            (unsigned int)(chr->GetAttributes()->GetStat(PSITEMSTATS_STAT_WILL)),
-                            (unsigned int)(chr->GetAttributes()->GetStat(PSITEMSTATS_STAT_CHARISMA)),
+                            (unsigned int)(chr->Stats().GetStat(PSITEMSTATS_STAT_STRENGTH)),
+                            (unsigned int)(chr->Stats().GetStat(PSITEMSTATS_STAT_ENDURANCE)),
+                            (unsigned int)(chr->Stats().GetStat(PSITEMSTATS_STAT_AGILITY)),
+                            (unsigned int)(chr->Stats().GetStat(PSITEMSTATS_STAT_INTELLIGENCE)),
+                            (unsigned int)(chr->Stats().GetStat(PSITEMSTATS_STAT_WILL)),
+                            (unsigned int)(chr->Stats().GetStat(PSITEMSTATS_STAT_CHARISMA)),
                             (unsigned int)(chr->GetHP()),
                             (unsigned int)(chr->GetMana()),
                             (unsigned int)(chr->GetStamina(true)),
@@ -4891,7 +4891,7 @@ void ProgressionManager::HandleSkill(Client * client, psGUISkillMessage& msg)
                 return;
             }
 
-            unsigned int current = character->GetSkills()->GetSkillRank((PSSKILL)info->id, false);
+            unsigned int current = character->Skills().GetSkillRank((PSSKILL) info->id, false);
             float faction = actorTrainer->GetRelativeFaction(character->GetActor());
             if ( !character->GetTrainer()->GetTrainerInfo()->TrainingInSkill((PSSKILL)info->id, current, faction))
             {
@@ -4948,7 +4948,7 @@ void ProgressionManager::SendSkillList(Client * client, bool forceOpen, PSSKILL 
             return;
         }
 
-        Skill * charSkill = character->GetSkills()->GetSkill( (PSSKILL)skillID );
+        Skill *charSkill = character->Skills().GetSkill((PSSKILL) skillID);
         if (charSkill == NULL)
         {
             Error3("Can't find skill %d in character %s", skillID, ShowID(character->GetPID()));
@@ -4959,7 +4959,7 @@ void ProgressionManager::SendSkillList(Client * client, bool forceOpen, PSSKILL 
         if  (
                 !trainerInfo
                     ||
-                trainerInfo->TrainingInSkill((PSSKILL)skillID, character->GetSkills()->GetSkillRank((PSSKILL)skillID, false), faction)
+                trainerInfo->TrainingInSkill((PSSKILL) skillID, character->Skills().GetSkillRank((PSSKILL) skillID, false), faction)
              )
         {
             bool stat = info->id == PSSKILL_AGI ||
@@ -4992,32 +4992,32 @@ void ProgressionManager::SendSkillList(Client * client, bool forceOpen, PSSKILL 
             unsigned int actualStat;
 
             if (info->category != 0)
-                actualStat = character->GetSkills()->GetSkillRank((PSSKILL)skillID);
+                actualStat = character->Skills().GetSkillRank((PSSKILL) skillID);
             else
             {
                 if(info->name=="Strength")
                 {
-                    actualStat=character->GetAttributes()->GetStat(PSITEMSTATS_STAT_STRENGTH);
+                    actualStat=character->Stats().GetStat(PSITEMSTATS_STAT_STRENGTH);
                 }
                 else if(info->name== "Endurance")
                 {
-                    actualStat=character->GetAttributes()->GetStat(PSITEMSTATS_STAT_ENDURANCE);
+                    actualStat=character->Stats().GetStat(PSITEMSTATS_STAT_ENDURANCE);
                 }
                 else if(info->name== "Agility")
                 {
-                    actualStat=character->GetAttributes()->GetStat(PSITEMSTATS_STAT_AGILITY);
+                    actualStat=character->Stats().GetStat(PSITEMSTATS_STAT_AGILITY);
                 }
                 else if(info->name== "Intelligence")
                 {
-                    actualStat=character->GetAttributes()->GetStat(PSITEMSTATS_STAT_INTELLIGENCE);
+                    actualStat=character->Stats().GetStat(PSITEMSTATS_STAT_INTELLIGENCE);
                 }
                 else if(info->name== "Will")
                 {
-                    actualStat=character->GetAttributes()->GetStat(PSITEMSTATS_STAT_WILL);
+                    actualStat=character->Stats().GetStat(PSITEMSTATS_STAT_WILL);
                 }
                 else
                 {
-                    actualStat=character->GetAttributes()->GetStat(PSITEMSTATS_STAT_CHARISMA);
+                    actualStat=character->Stats().GetStat(PSITEMSTATS_STAT_CHARISMA);
                 }
 
             }
@@ -5053,12 +5053,12 @@ void ProgressionManager::SendSkillList(Client * client, bool forceOpen, PSSKILL 
                             psGUISkillMessage::SKILL_LIST,
                             "",
                             skills,
-                            (unsigned int)character->GetAttributes()->GetStat(PSITEMSTATS_STAT_STRENGTH),
-                            (unsigned int)character->GetAttributes()->GetStat(PSITEMSTATS_STAT_ENDURANCE),
-                            (unsigned int)character->GetAttributes()->GetStat(PSITEMSTATS_STAT_AGILITY),
-                            (unsigned int)character->GetAttributes()->GetStat(PSITEMSTATS_STAT_INTELLIGENCE),
-                            (unsigned int)character->GetAttributes()->GetStat(PSITEMSTATS_STAT_WILL),
-                            (unsigned int)character->GetAttributes()->GetStat(PSITEMSTATS_STAT_CHARISMA),
+                            (unsigned int)character->Stats().GetStat(PSITEMSTATS_STAT_STRENGTH),
+                            (unsigned int)character->Stats().GetStat(PSITEMSTATS_STAT_ENDURANCE),
+                            (unsigned int)character->Stats().GetStat(PSITEMSTATS_STAT_AGILITY),
+                            (unsigned int)character->Stats().GetStat(PSITEMSTATS_STAT_INTELLIGENCE),
+                            (unsigned int)character->Stats().GetStat(PSITEMSTATS_STAT_WILL),
+                            (unsigned int)character->Stats().GetStat(PSITEMSTATS_STAT_CHARISMA),
                             (unsigned int)character->GetHP(),
                             (unsigned int)character->GetMana(),
                             (unsigned int)character->GetStamina(true),

@@ -3195,27 +3195,25 @@ double psCharacter::CalcFunction(const char * functionName, const double * param
 {
     if (!strcasecmp(functionName, "GetStatValue"))
     {
-        psCharacter *my_char = this;
         PSITEMSTATS_STAT stat = (PSITEMSTATS_STAT)(int)params[0];
 
-        return (double)my_char->GetAttributes()->GetStat(stat);
+        return (double) attributes.GetStat(stat);
     }
     else if (!strcasecmp(functionName, "GetAverageSkillValue"))
     {
-        psCharacter *my_char = this;
         PSSKILL skill1 = (PSSKILL)(int)params[0];
         PSSKILL skill2 = (PSSKILL)(int)params[1];
         PSSKILL skill3 = (PSSKILL)(int)params[2];
 
-        double v1 = my_char->GetSkills()->GetSkillRank(skill1);
+        double v1 = skills.GetSkillRank(skill1);
 
         if (skill2!=PSSKILL_NONE) {
-            double v2 = my_char->GetSkills()->GetSkillRank(skill2);
+            double v2 = skills.GetSkillRank(skill2);
             v1 = (v1+v2)/2;
         }
 
         if (skill3!=PSSKILL_NONE) {
-            double v3 = my_char->GetSkills()->GetSkillRank(skill3);
+            double v3 = skills.GetSkillRank(skill3);
             v1 = (v1+v3)/2;
         }
 
@@ -3227,10 +3225,9 @@ double psCharacter::CalcFunction(const char * functionName, const double * param
     }
     else if (!strcasecmp(functionName, "GetSkillValue"))
     {
-        psCharacter *my_char = this;
         PSSKILL skill = (PSSKILL)(int)params[0];
 
-        double value = my_char->GetSkills()->GetSkillRank(skill);
+        double value = skills.GetSkillRank(skill);
 
         // always give a small % of melee (unharmed) skill
         if (skill==PSSKILL_MARTIALARTS && value==0)

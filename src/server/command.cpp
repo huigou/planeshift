@@ -2063,12 +2063,12 @@ int com_liststats(char *line)
 
     CPrintf(CON_CMDOUTPUT ,"Stat        Base        Buff\n");
     {
-    CPrintf(CON_CMDOUTPUT ,"STR        %7.1f\t%7.1f\n",(float)charData->GetAttributes()->GetStat(PSITEMSTATS_STAT_STRENGTH, false), (float)charData->GetAttributes()->GetBuffVal(PSITEMSTATS_STAT_STRENGTH) );
-    CPrintf(CON_CMDOUTPUT ,"AGI        %7.1f\t%7.1f\n",(float)charData->GetAttributes()->GetStat(PSITEMSTATS_STAT_AGILITY, false), (float)charData->GetAttributes()->GetBuffVal(PSITEMSTATS_STAT_AGILITY));
-    CPrintf(CON_CMDOUTPUT ,"END        %7.1f\t%7.1f\n",(float)charData->GetAttributes()->GetStat(PSITEMSTATS_STAT_ENDURANCE, false), (float)charData->GetAttributes()->GetBuffVal(PSITEMSTATS_STAT_ENDURANCE));
-    CPrintf(CON_CMDOUTPUT ,"INT        %7.1f\t%7.1f\n",(float)charData->GetAttributes()->GetStat(PSITEMSTATS_STAT_INTELLIGENCE,false), (float)charData->GetAttributes()->GetBuffVal(PSITEMSTATS_STAT_INTELLIGENCE));
-    CPrintf(CON_CMDOUTPUT ,"WIL        %7.1f\t%7.1f\n",(float)charData->GetAttributes()->GetStat(PSITEMSTATS_STAT_WILL,false), (float)charData->GetAttributes()->GetBuffVal(PSITEMSTATS_STAT_WILL));
-    CPrintf(CON_CMDOUTPUT ,"CHA        %7.1f\t%7.1f\n",(float)charData->GetAttributes()->GetStat(PSITEMSTATS_STAT_CHARISMA, false),(float)charData->GetAttributes()->GetBuffVal(PSITEMSTATS_STAT_CHARISMA) );
+    CPrintf(CON_CMDOUTPUT ,"STR        %7.1f\t%7.1f\n",(float)charData->Stats().GetStat(PSITEMSTATS_STAT_STRENGTH, false), (float)charData->Stats().GetBuffVal(PSITEMSTATS_STAT_STRENGTH) );
+    CPrintf(CON_CMDOUTPUT ,"AGI        %7.1f\t%7.1f\n",(float)charData->Stats().GetStat(PSITEMSTATS_STAT_AGILITY, false), (float)charData->Stats().GetBuffVal(PSITEMSTATS_STAT_AGILITY));
+    CPrintf(CON_CMDOUTPUT ,"END        %7.1f\t%7.1f\n",(float)charData->Stats().GetStat(PSITEMSTATS_STAT_ENDURANCE, false), (float)charData->Stats().GetBuffVal(PSITEMSTATS_STAT_ENDURANCE));
+    CPrintf(CON_CMDOUTPUT ,"INT        %7.1f\t%7.1f\n",(float)charData->Stats().GetStat(PSITEMSTATS_STAT_INTELLIGENCE,false), (float)charData->Stats().GetBuffVal(PSITEMSTATS_STAT_INTELLIGENCE));
+    CPrintf(CON_CMDOUTPUT ,"WIL        %7.1f\t%7.1f\n",(float)charData->Stats().GetStat(PSITEMSTATS_STAT_WILL,false), (float)charData->Stats().GetBuffVal(PSITEMSTATS_STAT_WILL));
+    CPrintf(CON_CMDOUTPUT ,"CHA        %7.1f\t%7.1f\n",(float)charData->Stats().GetStat(PSITEMSTATS_STAT_CHARISMA, false),(float)charData->Stats().GetBuffVal(PSITEMSTATS_STAT_CHARISMA) );
     }
 
     CPrintf(CON_CMDOUTPUT ,"Experience points(W)  %7u\n",charData->GetExperiencePoints());
@@ -2083,9 +2083,9 @@ int com_liststats(char *line)
             continue;
         }
 
-        unsigned int z = charData->GetSkills()->GetSkillPractice(info->id);
-        unsigned int y = charData->GetSkills()->GetSkillKnowledge(info->id);
-        unsigned int rank = charData->GetSkills()->GetSkillRank(info->id);
+        unsigned int z = charData->Skills().GetSkillPractice(info->id);
+        unsigned int y = charData->Skills().GetSkillKnowledge(info->id);
+        unsigned int rank = charData->Skills().GetSkillRank(info->id);
 
 
         if ( z == 0 && y == 0 && rank == 0 )

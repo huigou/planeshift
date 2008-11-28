@@ -391,7 +391,7 @@ void psWorkManager::HandleRepair(Client *client, psWorkCmdMessage &msg)
     if (repairTarget->GetPrice().GetTotal()<300)
         rankneeded = 0;
     int skillid = repairTarget->GetBaseStats()->GetCategory()->repairSkillId;
-    int repairskillrank = client->GetCharacterData()->GetSkills()->GetSkillRank(PSSKILL(skillid));
+    int repairskillrank = client->GetCharacterData()->Skills().GetSkillRank(PSSKILL(skillid));
     if (repairskillrank<rankneeded)
     {
         psserver->SendSystemError(client->GetClientNum(),"This item is too complex for your current repair skill. You cannot repair it." );
@@ -400,7 +400,7 @@ void psWorkManager::HandleRepair(Client *client, psWorkCmdMessage &msg)
 
     // If skill=0, check if it has at least theoretical training in that skill
     if (repairskillrank==0) {
-        if( client->GetCharacterData()->GetSkills()->GetSkill(PSSKILL(skillid))->CanTrain() )
+        if( client->GetCharacterData()->Skills().GetSkill(PSSKILL(skillid))->CanTrain() )
         {
             psserver->SendSystemInfo(client->GetClientNum(),"You don't have the skill to repair your %s.",repairTarget->GetName());
             return;
@@ -527,7 +527,7 @@ void psWorkManager::HandleRepairEvent(psWorkGameEvent* workEvent)
     psSkillInfo *skill = CacheManager::GetSingleton().GetSkillByID((PSSKILL)skillid);
     if (skill)
     {
-        workEvent->client->GetCharacterData()->GetSkills()->AddSkillPractice((PSSKILL)skillid,1);
+        workEvent->client->GetCharacterData()->Skills().AddSkillPractice((PSSKILL)skillid,1);
     }
     repairTarget->Save(false);
 }
@@ -603,11 +603,11 @@ void psWorkManager::HandleProduction(Client *client,const char *type,const char 
     }
 
     // Validate the skill
-    float cur_skill = client->GetCharacterData()->GetSkills()->GetSkillRank((PSSKILL)nr->skill->id);
+    float cur_skill = client->GetCharacterData()->Skills().GetSkillRank((PSSKILL)nr->skill->id);
 
     // If skill=0, check if it has at least theoretical training in that skill
     if (cur_skill==0) {
-        bool fullTrainingReceived = !client->GetCharacterData()->GetSkills()->GetSkill((PSSKILL)nr->skill->id)->CanTrain();
+        bool fullTrainingReceived = !client->GetCharacterData()->Skills().GetSkill((PSSKILL)nr->skill->id)->CanTrain();
         if (fullTrainingReceived)
            cur_skill=0.7F;
     }
@@ -682,11 +682,11 @@ void psWorkManager::HandleProduction(gemActor *actor,const char *type,const char
     }
 
     // Validate the skill
-    float cur_skill = actor->GetCharacterData()->GetSkills()->GetSkillRank((PSSKILL)nr->skill->id);
+    float cur_skill = actor->GetCharacterData()->Skills().GetSkillRank((PSSKILL)nr->skill->id);
 
     // If skill=0, check if it has at least theoretical training in that skill
     if (cur_skill==0) {
-        bool fullTrainingReceived = !actor->GetCharacterData()->GetSkills()->GetSkill((PSSKILL)nr->skill->id)->CanTrain();
+        bool fullTrainingReceived = !actor->GetCharacterData()->Skills().GetSkill((PSSKILL)nr->skill->id)->CanTrain();
         if (fullTrainingReceived)
            cur_skill=0.7F;
     }
@@ -812,11 +812,11 @@ void psWorkManager::HandleProductionEvent(psWorkGameEvent* workEvent)
     float roll = psserver->GetRandom();
 
     // Get player skill value
-    float cur_skill = workerchar->GetSkills()->GetSkillRank((PSSKILL)workEvent->nr->skill->id);
+    float cur_skill = workerchar->Skills().GetSkillRank((PSSKILL)workEvent->nr->skill->id);
 
     // If skill=0, check if it has at least theoretical training in that skill
     if (cur_skill==0) {
-        bool fullTrainingReceived = !workerchar->GetSkills()->GetSkill((PSSKILL)workEvent->nr->skill->id)->CanTrain();
+        bool fullTrainingReceived = !workerchar->Skills().GetSkill((PSSKILL)workEvent->nr->skill->id)->CanTrain();
         if (fullTrainingReceived)
             cur_skill = 0.7F; // consider the skill somewhat usable
     }
@@ -939,7 +939,7 @@ void psWorkManager::HandleProductionEvent(psWorkGameEvent* workEvent)
             psSkillInfo *skill = CacheManager::GetSingleton().GetSkillByID((PSSKILL)workEvent->nr->skill->id);
             if (skill)
             {
-                workerchar->GetSkills()->AddSkillPractice(PSSKILL_MINING,1);
+                workerchar->Skills().AddSkillPractice(PSSKILL_MINING,1);
             }
         }
     }
@@ -2527,10 +2527,10 @@ bool psWorkManager::ValidateTraining(psTradeTransformations* transCandidate, psT
     if ( priSkill > 0 )
     {
         // If primary skill is zero, check if this skill should be trained first
-        unsigned int basePriSkill = owner->GetSkills()->GetSkillRank((PSSKILL)priSkill);
+        unsigned int basePriSkill = owner->Skills().GetSkillRank((PSSKILL)priSkill);
         if ( basePriSkill == 0 )
         {
-            if( owner->GetSkills()->GetSkill((PSSKILL)priSkill)->CanTrain() )
+            if( owner->Skills().GetSkill((PSSKILL)priSkill)->CanTrain() )
                 return false;
         }
     }
@@ -2540,10 +2540,10 @@ bool psWorkManager::ValidateTraining(psTradeTransformations* transCandidate, psT
     if ( secSkill > 0 )
     {
         // If secondary skill is zero, check if this skill should be trained first
-        unsigned int baseSecSkill = owner->GetSkills()->GetSkillRank((PSSKILL)secSkill);
+        unsigned int baseSecSkill = owner->Skills().GetSkillRank((PSSKILL)secSkill);
         if ( baseSecSkill == 0 )
         {
-            if( owner->GetSkills()->GetSkill((PSSKILL)secSkill)->CanTrain() )
+            if( owner->Skills().GetSkill((PSSKILL)secSkill)->CanTrain() )
                 return false;
         }
     }
@@ -2559,7 +2559,7 @@ bool psWorkManager::ValidateSkills(psTradeTransformations* transCandidate, psTra
     if ( priSkill > 0 )
     {
         unsigned int minPriSkill = processCandidate->GetMinPrimarySkill();
-        unsigned int basePriSkill = owner->GetSkills()->GetSkillRank((PSSKILL)priSkill);
+        unsigned int basePriSkill = owner->Skills().GetSkillRank((PSSKILL)priSkill);
         if ( minPriSkill > basePriSkill )
         {
             return false;
@@ -2571,7 +2571,7 @@ bool psWorkManager::ValidateSkills(psTradeTransformations* transCandidate, psTra
     if ( secSkill > 0 )
     {
         unsigned int minSecSkill = processCandidate->GetMinSecondarySkill();
-        unsigned int baseSecSkill = owner->GetSkills()->GetSkillRank((PSSKILL)secSkill);
+        unsigned int baseSecSkill = owner->Skills().GetSkillRank((PSSKILL)secSkill);
         if ( minSecSkill > baseSecSkill )
         {
             return false;
@@ -2597,7 +2597,7 @@ bool psWorkManager::ValidateNotOverSkilled(psTradeTransformations* transCandidat
     if ( priSkill > 0 )
     {
         unsigned int maxPriSkill = processCandidate->GetMaxPrimarySkill();
-        unsigned int basePriSkill = owner->GetSkills()->GetSkillRank((PSSKILL)priSkill);
+        unsigned int basePriSkill = owner->Skills().GetSkillRank((PSSKILL)priSkill);
         if ( maxPriSkill < basePriSkill )
         {
             return false;
@@ -2609,7 +2609,7 @@ bool psWorkManager::ValidateNotOverSkilled(psTradeTransformations* transCandidat
     if ( secSkill > 0 )
     {
         unsigned int maxSecSkill = processCandidate->GetMaxSecondarySkill();
-        unsigned int baseSecSkill = owner->GetSkills()->GetSkillRank((PSSKILL)secSkill);
+        unsigned int baseSecSkill = owner->Skills().GetSkillRank((PSSKILL)secSkill);
         if ( maxSecSkill < baseSecSkill )
         {
             return false;
@@ -3631,7 +3631,7 @@ bool psWorkManager::ApplySkills(float factor, psItem* transItem)
         }
 
         // Get the players skill level using the transformations primary skill
-        unsigned int basePriSkill = owner->GetSkills()->GetSkillRank((PSSKILL)priSkill);
+        unsigned int basePriSkill = owner->Skills().GetSkillRank((PSSKILL)priSkill);
         unsigned int maxPriSkill = process->GetMaxPrimarySkill();
 
         // Get the quality factor for this primary skill
@@ -3667,7 +3667,7 @@ bool psWorkManager::ApplySkills(float factor, psItem* transItem)
         {
             // Get some practice in
             int priPoints = process->GetPrimaryPracticePts();
-            owner->GetSkills()->AddSkillPractice( (PSSKILL)priSkill, priPoints );
+            owner->Skills().AddSkillPractice( (PSSKILL)priSkill, priPoints );
             if (secure) psserver->SendSystemInfo(clientNum,"Giving practice points %d to skill %d.",priPoints, priSkill);
         }
 
@@ -3690,7 +3690,7 @@ bool psWorkManager::ApplySkills(float factor, psItem* transItem)
                 currentQuality = currentQuality * 2;
             }
 
-            unsigned int baseSecSkill = owner->GetSkills()->GetSkillRank((PSSKILL)secSkill);
+            unsigned int baseSecSkill = owner->Skills().GetSkillRank((PSSKILL)secSkill);
             unsigned int maxSecSkill = process->GetMaxSecondarySkill();
 
             // Get the quality factor for this secmary skill
@@ -3723,7 +3723,7 @@ bool psWorkManager::ApplySkills(float factor, psItem* transItem)
             {
                 // Get some practice in
                 int secPoints = process->GetSecondaryPracticePts();
-                owner->GetSkills()->AddSkillPractice( (PSSKILL)secSkill, secPoints );
+                owner->Skills().AddSkillPractice( (PSSKILL)secSkill, secPoints );
                 if (secure) psserver->SendSystemInfo(clientNum,"Giving practice points %d to skill %d.",secPoints, secSkill);
             }
         }
@@ -4020,7 +4020,7 @@ void psWorkManager::LockpickComplete(psWorkGameEvent* workEvent)
     else
     {
         // Check if the user has the right skills
-        if(character->GetSkills()->GetSkillRank(skill) >= workEvent->object->GetLockStrength())
+        if(character->Skills().GetSkillRank(skill) >= workEvent->object->GetLockStrength())
         {
             bool locked = workEvent->object->GetIsLocked();
             psserver->SendSystemOK(workEvent->client->GetClientNum(), locked ? "You unlocked %s." : "You locked %s.", workEvent->object->GetName());

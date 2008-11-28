@@ -1007,7 +1007,7 @@ void CharCreationManager::HandleUploadMessage( MsgEntry* me, Client *client )
         int z;
         for ( z = 0; z < PSITEMSTATS_STAT_COUNT; z++ )
         {
-            unsigned int value = chardata->GetAttributes()->GetStat( (PSITEMSTATS_STAT)z);
+            unsigned int value = chardata->Stats().GetStat((PSITEMSTATS_STAT) z);
             if ( value > 0 )
             {
                 mesg.AddStat( value, CacheManager::GetSingleton().Attribute2String((PSITEMSTATS_STAT)z));                
@@ -1015,7 +1015,7 @@ void CharCreationManager::HandleUploadMessage( MsgEntry* me, Client *client )
         }
         for ( z = 0; z < PSSKILL_COUNT; z++ )
         {
-            unsigned int rank = chardata->GetSkills()->GetSkillRank( (PSSKILL)z, false );
+            unsigned int rank = chardata->Skills().GetSkillRank((PSSKILL) z, false);
             
             psSkillInfo* info = CacheManager::GetSingleton().GetSkillByID(z);
             csString name("Not found");

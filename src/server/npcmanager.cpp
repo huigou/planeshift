@@ -305,7 +305,7 @@ public:
             if ( owner )
             {
                 actorvar->SetObject( this->owner->GetCharacterData() );
-                skill->SetValue( owner->GetCharacterData()->GetSkills()->GetSkillRank(PSSKILL_EMPATHY) );
+                skill->SetValue(owner->GetCharacterData()->Skills().GetSkillRank(PSSKILL_EMPATHY));
 
                 maxPetTime->Execute();
                 MathScriptVar* timeValue =  maxPetTime->GetVar("MaxTime");
@@ -1436,7 +1436,7 @@ void NPCManager::HandlePetCommand( MsgEntry * me )
                     pet->SetTarget( owner->GetActor() );
                 }
                 QueueOwnerCmdPerception( owner->GetActor(), pet, psPETCommandMessage::CMD_FOLLOW );
-                owner->GetCharacterData()->GetSkills()->AddSkillPractice(PSSKILL_EMPATHY, 1);
+                owner->GetCharacterData()->Skills().AddSkillPractice(PSSKILL_EMPATHY, 1);
             }
         }
         else
@@ -1451,7 +1451,7 @@ void NPCManager::HandlePetCommand( MsgEntry * me )
             if (CanPetHearYou(me->clientnum, owner, pet, typeStr) && WillPetReact(me->clientnum, owner, pet, typeStr, 1))
             {
                 QueueOwnerCmdPerception( owner->GetActor(), pet, psPETCommandMessage::CMD_STAY );
-                owner->GetCharacterData()->GetSkills()->AddSkillPractice(PSSKILL_EMPATHY, 1);
+                owner->GetCharacterData()->Skills().AddSkillPractice(PSSKILL_EMPATHY, 1);
             }
         }
         else
@@ -1572,7 +1572,7 @@ void NPCManager::HandlePetCommand( MsgEntry * me )
                 owner->SetFamiliar( pet );
                 // Send OwnerActionLogon Perception
                 pet->SetOwner( owner->GetActor() );
-                owner->GetCharacterData()->GetSkills()->AddSkillPractice(PSSKILL_EMPATHY, 1);
+                owner->GetCharacterData()->Skills().AddSkillPractice(PSSKILL_EMPATHY, 1);
             }
             else
             {
@@ -1627,7 +1627,7 @@ void NPCManager::HandlePetCommand( MsgEntry * me )
                             stance.stance_id = words.GetInt( 0 );
                         }
                         QueueOwnerCmdPerception( owner->GetActor(), pet, psPETCommandMessage::CMD_ATTACK );
-                        owner->GetCharacterData()->GetSkills()->AddSkillPractice(PSSKILL_EMPATHY, 1);
+                        owner->GetCharacterData()->Skills().AddSkillPractice(PSSKILL_EMPATHY, 1);
                     }
                 }
                 else
@@ -1648,7 +1648,7 @@ void NPCManager::HandlePetCommand( MsgEntry * me )
             if (CanPetHearYou(me->clientnum, owner, pet, typeStr) && WillPetReact(me->clientnum, owner, pet, typeStr, 4))
             {
                 QueueOwnerCmdPerception( owner->GetActor(), pet, psPETCommandMessage::CMD_STOPATTACK );
-                owner->GetCharacterData()->GetSkills()->AddSkillPractice(PSSKILL_EMPATHY, 1);
+                owner->GetCharacterData()->Skills().AddSkillPractice(PSSKILL_EMPATHY, 1);
             }
         }
         else
@@ -1879,7 +1879,7 @@ void NPCManager::QueueAttackPerception(gemActor *attacker,gemNPC *target)
         for (int i=0; i<(int)g->GetMemberCount(); i++)
         {
             outbound->msg->Add(g->GetMember(i)->GetEID().Unbox());
-            outbound->msg->Add( (int8_t) g->GetMember(i)->GetCharacterData()->GetSkills()->GetBestSkillSlot(true));
+            outbound->msg->Add( (int8_t) g->GetMember(i)->GetCharacterData()->Skills().GetBestSkillSlot(true));
         }
 
         cmd_count++;
@@ -2221,12 +2221,12 @@ void NPCManager::HandlePetSkill( MsgEntry * me )
             psPetSkillMessage newmsg(client->GetClientNum(),
                             psPetSkillMessage::DESCRIPTION,
                             buff,
-                            (unsigned int)(chr->GetAttributes()->GetStat(PSITEMSTATS_STAT_STRENGTH)),
-                            (unsigned int)(chr->GetAttributes()->GetStat(PSITEMSTATS_STAT_ENDURANCE)),
-                            (unsigned int)(chr->GetAttributes()->GetStat(PSITEMSTATS_STAT_AGILITY)),
-                            (unsigned int)(chr->GetAttributes()->GetStat(PSITEMSTATS_STAT_INTELLIGENCE)),
-                            (unsigned int)(chr->GetAttributes()->GetStat(PSITEMSTATS_STAT_WILL)),
-                            (unsigned int)(chr->GetAttributes()->GetStat(PSITEMSTATS_STAT_CHARISMA)),
+                            (unsigned int)(chr->Stats().GetStat(PSITEMSTATS_STAT_STRENGTH)),
+                            (unsigned int)(chr->Stats().GetStat(PSITEMSTATS_STAT_ENDURANCE)),
+                            (unsigned int)(chr->Stats().GetStat(PSITEMSTATS_STAT_AGILITY)),
+                            (unsigned int)(chr->Stats().GetStat(PSITEMSTATS_STAT_INTELLIGENCE)),
+                            (unsigned int)(chr->Stats().GetStat(PSITEMSTATS_STAT_WILL)),
+                            (unsigned int)(chr->Stats().GetStat(PSITEMSTATS_STAT_CHARISMA)),
                             (unsigned int)(chr->GetHP()),
                             (unsigned int)(chr->GetMana()),
                             (unsigned int)(chr->GetStamina(true)),
@@ -2246,119 +2246,7 @@ void NPCManager::HandlePetSkill( MsgEntry * me )
             }
             break;
         }
-   //     case psPetSkillMessage::BUY_SKILL:
-   //     {
-   //         CPrintf(CON_DEBUG, "---------------Buying Skill-------------\n");
-   //         csRef<iDocumentSystem> xml = csPtr<iDocumentSystem>(new csTinyDocumentSystem);
 
-   //         CS_ASSERT( xml );
-   //
-   //         csRef<iDocument> invList  = xml->CreateDocument();
-
-   //         const char* error = invList->Parse( msg.commandData);
-   //         if ( error )
-   //         {
-   //             Error2("Error in XML: %s", error );
-   //             CPrintf(CON_DEBUG, "    Error in XML\n");
-   //             return;
-   //         }
-
-   //         csRef<iDocumentNode> root = invList->GetRoot();
-            //if(!root)
-            //{
-            //    Error1("No XML root");
-            //    return;
-            //}
-   //         csRef<iDocumentNode> topNode = root->GetNode("B");
-            //if(!topNode)
-            //{
-            //    Error1("No <B> tag");
-            //    return;
-            //}
-   //
-   //         csString skillName = topNode->GetAttributeValue("NAME");
-            //if(!skillName || (skillName==""))
-            //{
-            //    psserver->SendSystemError(client->GetClientNum(), "You don't have any skill selected.");
-            //    return;
-            //}
-
-   //         psSkillInfo * info = CacheManager::GetSingleton().GetSkillByName(skillName);
-   //         CPrintf(CON_DEBUG, "    Looking for: %s\n", (const char*)skillName);
-   //
-   //         if (!info)
-   //         {
-   //             Error2("No skill with name %s found!",skillName.GetData());
-   //             Error2("Full Data Sent from Client was: %s\n", msg.commandData.GetData() );
-   //             CPrintf(CON_DEBUG, "    No Skill Found\n");
-   //             return;
-   //         }
-
-   //         psCharacter * character = client->GetCharacterData();
-
-   //         if (character->GetTrainer() == NULL)
-   //         {
-   //             psserver->SendSystemInfo(client->GetClientNum(),
-   //                                      "Can't buy skills when not training!");
-   //             return;
-   //         }
-   //
-   //         gemActor* actorTrainer = character->GetTrainer()->GetActor();
-   //         if ( actorTrainer )
-   //         {
-   //             if ( character->GetActor()->RangeTo(actorTrainer) > RANGE_TO_SELECT )
-   //             {
-   //                 psserver->SendSystemInfo(client->GetClientNum(),
-   //                                          "Need to get a bit closer to understand the training.");
-   //                 return;
-   //             }
-   //         }
-
-   //
-   //
-   //         CPrintf(CON_DEBUG, "    PP available: %d\n", character->GetProgressionPoints() );
-   //
-   //         // Test for progression points
-   //         if (character->GetProgressionPoints() <= 0)
-   //         {
-   //             psserver->SendSystemInfo(client->GetClientNum(),
-   //                                      "You don't have any progression points!");
-   //             return;
-   //         }
-
-   //         // Test for money
-   //
-   //         if (info->price > character->Money())
-   //         {
-   //             psserver->SendSystemInfo(client->GetClientNum(),
-   //                                      "You don't have the money to buy this skill!");
-   //             return;
-   //         }
-   //         if ( !character->CanTrain( info->id ) )
-   //         {
-   //             psserver->SendSystemInfo(client->GetClientNum(),
-   //                                      "You cannot train this skill any higher yet!");
-   //             return;
-   //         }
-   //
-   //         int current = character->GetSkills()->GetSkillRank((PSSKILL)info->id);
-   //         float faction = actorTrainer->GetRelativeFaction(character->GetActor());
-   //         if ( !character->GetTrainer()->GetTrainerInfo()->TrainingInSkill((PSSKILL)info->id, current, faction))
-   //         {
-   //             psserver->SendSystemInfo(client->GetClientNum(),
-   //                                      "You cannot train this skill currently.");
-   //             return;
-   //         }
-
-   //         character->UseProgressionPoints(1);
-   //         character->SetMoney(character->Money()-info->price);
-   //         character->Train(info->id,1);
-      //      SendSkillList(client,true,info->id);
-   //
-   //         psserver->SendSystemInfo(client->GetClientNum(), "You've received some %s training", skillName.GetData());
-   //
-   //         break;
-   //     }
         case psPetSkillMessage::QUIT:
         {
             //client->GetCharacterData()->SetTrainer(NULL);
@@ -2395,40 +2283,18 @@ void NPCManager::SendPetSkillList(Client * client, bool forceOpen, PSSKILL focus
             return;
         }
 
-        Skill * charSkill = character->GetSkills()->GetSkill( (PSSKILL)skillID );
+        Skill * charSkill = character->Skills().GetSkill((PSSKILL) skillID);
         if (charSkill == NULL)
         {
             Error3("Can't find skill %d in character %s", skillID, ShowID(character->GetPID()));
             return;
         }
 
-     //   // If we are training, send skills that the trainer is providing education in only
-     //   if  (
-     //           !trainerInfo
-     //               ||
-     //           trainerInfo->TrainingInSkill((PSSKILL)skillID, character->GetSkills()->GetSkillRank((PSSKILL)skillID), faction)
-     //        )
-     //   {
-     //       bool stat = info->id == PSSKILL_AGI ||
-     //                   info->id == PSSKILL_CHA ||
-     //                   info->id == PSSKILL_END ||
-     //                   info->id == PSSKILL_INT ||
-     //                   info->id == PSSKILL_WILL ||
-     //                   info->id == PSSKILL_STR;
-
-     //       if(!found) // Get the row id the client will use
-     //       {
-     //           realID++;
-     //           if(info->id == focus)
-     //               found = true;
-     //       }
-
         csString escpxml = EscpXML(info->name);
 
             buff.AppendFmt("<SKILL NAME=\"%s\" R=\"%i\" Y=\"%i\" YC=\"%i\" Z=\"%i\" ZC=\"%i\" CAT=\"%d\"/>",
                               escpxml.GetData(), charSkill->rank,
                               charSkill->y, charSkill->yCost, charSkill->z, charSkill->zCost, info->category);
-        //}
     }
     buff.Append("</L>");
 
@@ -2436,12 +2302,12 @@ void NPCManager::SendPetSkillList(Client * client, bool forceOpen, PSSKILL focus
     psPetSkillMessage newmsg(client->GetClientNum(),
                             psPetSkillMessage::SKILL_LIST,
                             buff,
-                            (unsigned int)chr->GetAttributes()->GetStat(PSITEMSTATS_STAT_STRENGTH),
-                            (unsigned int)chr->GetAttributes()->GetStat(PSITEMSTATS_STAT_ENDURANCE),
-                            (unsigned int)chr->GetAttributes()->GetStat(PSITEMSTATS_STAT_AGILITY),
-                            (unsigned int)chr->GetAttributes()->GetStat(PSITEMSTATS_STAT_INTELLIGENCE),
-                            (unsigned int)chr->GetAttributes()->GetStat(PSITEMSTATS_STAT_WILL),
-                            (unsigned int)chr->GetAttributes()->GetStat(PSITEMSTATS_STAT_CHARISMA),
+                            (unsigned int)chr->Stats().GetStat(PSITEMSTATS_STAT_STRENGTH),
+                            (unsigned int)chr->Stats().GetStat(PSITEMSTATS_STAT_ENDURANCE),
+                            (unsigned int)chr->Stats().GetStat(PSITEMSTATS_STAT_AGILITY),
+                            (unsigned int)chr->Stats().GetStat(PSITEMSTATS_STAT_INTELLIGENCE),
+                            (unsigned int)chr->Stats().GetStat(PSITEMSTATS_STAT_WILL),
+                            (unsigned int)chr->Stats().GetStat(PSITEMSTATS_STAT_CHARISMA),
                             (unsigned int)chr->GetHP(),
                             (unsigned int)chr->GetMana(),
                             (unsigned int)chr->GetStamina(true),

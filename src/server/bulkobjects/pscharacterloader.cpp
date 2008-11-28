@@ -319,12 +319,12 @@ bool psCharacterLoader::NewNPCCharacterData(AccountID accountid, psCharacter *ch
     values.FormatPush("%u",chardata->GetRaceInfo()->uid);
     values.FormatPush("%u",chardata->GetCharType() );
     values.FormatPush("%s",chardata->GetDescription());
-    values.FormatPush("%d",chardata->GetAttributes()->GetStat(PSITEMSTATS_STAT_STRENGTH, false));
-    values.FormatPush("%d",chardata->GetAttributes()->GetStat(PSITEMSTATS_STAT_AGILITY, false));
-    values.FormatPush("%d",chardata->GetAttributes()->GetStat(PSITEMSTATS_STAT_ENDURANCE, false));
-    values.FormatPush("%d",chardata->GetAttributes()->GetStat(PSITEMSTATS_STAT_INTELLIGENCE, false));
-    values.FormatPush("%d",chardata->GetAttributes()->GetStat(PSITEMSTATS_STAT_WILL, false));
-    values.FormatPush("%d",chardata->GetAttributes()->GetStat(PSITEMSTATS_STAT_CHARISMA, false));
+    values.FormatPush("%d",chardata->Stats().GetStat(PSITEMSTATS_STAT_STRENGTH, false));
+    values.FormatPush("%d",chardata->Stats().GetStat(PSITEMSTATS_STAT_AGILITY, false));
+    values.FormatPush("%d",chardata->Stats().GetStat(PSITEMSTATS_STAT_ENDURANCE, false));
+    values.FormatPush("%d",chardata->Stats().GetStat(PSITEMSTATS_STAT_INTELLIGENCE, false));
+    values.FormatPush("%d",chardata->Stats().GetStat(PSITEMSTATS_STAT_WILL, false));
+    values.FormatPush("%d",chardata->Stats().GetStat(PSITEMSTATS_STAT_CHARISMA, false));
     values.FormatPush("%10.2f",chardata->GetHP());
     values.FormatPush("%10.2f",chardata->GetHitPointsMax());
     values.FormatPush("%10.2f",chardata->GetMana());
@@ -413,9 +413,9 @@ bool psCharacterLoader::NewCharacterData(AccountID accountid, psCharacter *chard
 
     for (i=0;i<PSSKILL_COUNT;i++)
     {
-        unsigned int skillRank=chardata->GetSkills()->GetSkillRank((PSSKILL)i, false);
-        unsigned int skillY=chardata->GetSkills()->GetSkillKnowledge((PSSKILL)i);
-        unsigned int skillZ=chardata->GetSkills()->GetSkillPractice((PSSKILL)i);
+        unsigned int skillRank = chardata->Skills().GetSkillRank((PSSKILL) i, false);
+        unsigned int skillY = chardata->Skills().GetSkillKnowledge((PSSKILL) i);
+        unsigned int skillZ = chardata->Skills().GetSkillPractice((PSSKILL) i);
         SaveCharacterSkill(chardata->GetPID(),i,skillZ,skillY,skillRank);
     }
 
@@ -665,12 +665,12 @@ bool psCharacterLoader::SaveCharacterData(psCharacter *chardata,gemActor *actor,
     targetUpdate->AddField("old_lastname", chardata->GetOldLastName());
     targetUpdate->AddField("racegender_id", chardata->GetRaceInfo()->uid);
     targetUpdate->AddField("character_type", chardata->GetCharType());
-    targetUpdate->AddField("base_strength", chardata->GetAttributes()->GetStat(PSITEMSTATS_STAT_STRENGTH, false));
-    targetUpdate->AddField("base_agility", chardata->GetAttributes()->GetStat(PSITEMSTATS_STAT_AGILITY, false));
-    targetUpdate->AddField("base_endurance", chardata->GetAttributes()->GetStat(PSITEMSTATS_STAT_ENDURANCE, false));
-    targetUpdate->AddField("base_intelligence", chardata->GetAttributes()->GetStat(PSITEMSTATS_STAT_INTELLIGENCE, false));
-    targetUpdate->AddField("base_will", chardata->GetAttributes()->GetStat(PSITEMSTATS_STAT_WILL, false));
-    targetUpdate->AddField("base_charisma", chardata->GetAttributes()->GetStat(PSITEMSTATS_STAT_CHARISMA, false));
+    targetUpdate->AddField("base_strength", chardata->Stats().GetStat(PSITEMSTATS_STAT_STRENGTH, false));
+    targetUpdate->AddField("base_agility", chardata->Stats().GetStat(PSITEMSTATS_STAT_AGILITY, false));
+    targetUpdate->AddField("base_endurance", chardata->Stats().GetStat(PSITEMSTATS_STAT_ENDURANCE, false));
+    targetUpdate->AddField("base_intelligence", chardata->Stats().GetStat(PSITEMSTATS_STAT_INTELLIGENCE, false));
+    targetUpdate->AddField("base_will", chardata->Stats().GetStat(PSITEMSTATS_STAT_WILL, false));
+    targetUpdate->AddField("base_charisma", chardata->Stats().GetStat(PSITEMSTATS_STAT_CHARISMA, false));
     targetUpdate->AddField("mod_hitpoints", (playerORpet)? chardata->GetHP():chardata->GetHitPointsMax());
     targetUpdate->AddField("mod_mana", (playerORpet)?chardata->GetMana():chardata->GetManaMax());
     targetUpdate->AddField("stamina_physical", chardata->GetStamina(true));
@@ -826,11 +826,11 @@ bool psCharacterLoader::SaveCharacterData(psCharacter *chardata,gemActor *actor,
     // one to the database.
     for (i=0;i<PSSKILL_COUNT;i++)
     {
-        if ( chardata->GetSkills()->GetSkill((PSSKILL)i)->dirtyFlag )
+        if (chardata->Skills().GetSkill((PSSKILL) i)->dirtyFlag)
         {
-            unsigned int skillY=chardata->GetSkills()->GetSkillKnowledge((PSSKILL)i);
-            unsigned int skillZ=chardata->GetSkills()->GetSkillPractice((PSSKILL)i);
-            unsigned int skillRank=chardata->GetSkills()->GetSkillRank((PSSKILL)i, false);
+            unsigned int skillY = chardata->Skills().GetSkillKnowledge((PSSKILL) i);
+            unsigned int skillZ = chardata->Skills().GetSkillPractice((PSSKILL) i);
+            unsigned int skillRank = chardata->Skills().GetSkillRank((PSSKILL) i, false);
             UpdateCharacterSkill(chardata->GetPID(),i,skillZ,skillY,skillRank);
         }
     }

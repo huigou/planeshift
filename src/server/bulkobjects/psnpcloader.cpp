@@ -441,12 +441,12 @@ void psNPCLoader::ReadStats()
     strength = xmlnode->GetAttributeValueAsFloat("str");
     will = xmlnode->GetAttributeValueAsFloat("wil");
 
-    npc->GetAttributes()->SetStat(PSITEMSTATS_STAT_AGILITY, (unsigned int)agility);
-    npc->GetAttributes()->SetStat(PSITEMSTATS_STAT_CHARISMA, (unsigned int)charisma);
-    npc->GetAttributes()->SetStat(PSITEMSTATS_STAT_ENDURANCE, (unsigned int)endurance);
-    npc->GetAttributes()->SetStat(PSITEMSTATS_STAT_INTELLIGENCE, (unsigned int)intelligence);
-    npc->GetAttributes()->SetStat(PSITEMSTATS_STAT_STRENGTH, (unsigned int)strength);
-    npc->GetAttributes()->SetStat(PSITEMSTATS_STAT_WILL, (unsigned int)will);
+    npc->Stats().SetStat(PSITEMSTATS_STAT_AGILITY, (unsigned int)agility);
+    npc->Stats().SetStat(PSITEMSTATS_STAT_CHARISMA, (unsigned int)charisma);
+    npc->Stats().SetStat(PSITEMSTATS_STAT_ENDURANCE, (unsigned int)endurance);
+    npc->Stats().SetStat(PSITEMSTATS_STAT_INTELLIGENCE, (unsigned int)intelligence);
+    npc->Stats().SetStat(PSITEMSTATS_STAT_STRENGTH, (unsigned int)strength);
+    npc->Stats().SetStat(PSITEMSTATS_STAT_WILL, (unsigned int)will);
 }
 
 
@@ -544,7 +544,7 @@ void psNPCLoader::ReadSkills()
         psSkillInfo*    skillInfo = CacheManager::GetSingleton().GetSkillByName(skill);
         if (skillInfo!=NULL)
         {
-            npc->GetSkills()->SetSkillRank(skillInfo->id, value);           
+            npc->Skills().SetSkillRank(skillInfo->id, value);           
         } else
         {
             CPrintf(CON_WARNING, "Unknown skill '%s'... skipping\n",skill.GetData());
@@ -1020,12 +1020,12 @@ void psNPCLoader::WriteStats()
     csRef<iDocumentNode> statsNode = npcRoot->CreateNodeBefore(CS_NODE_ELEMENT);
 
     statsNode->SetValue("stats");
-    statsNode->SetAttributeAsInt("agi", (int)npc->GetAttributes()->GetStat(PSITEMSTATS_STAT_AGILITY, false));
-    statsNode->SetAttributeAsInt("cha", (int)npc->GetAttributes()->GetStat(PSITEMSTATS_STAT_CHARISMA, false));
-    statsNode->SetAttributeAsInt("end", (int)npc->GetAttributes()->GetStat(PSITEMSTATS_STAT_ENDURANCE, false));
-    statsNode->SetAttributeAsInt("int", (int)npc->GetAttributes()->GetStat(PSITEMSTATS_STAT_INTELLIGENCE, false));
-    statsNode->SetAttributeAsInt("str", (int)npc->GetAttributes()->GetStat(PSITEMSTATS_STAT_STRENGTH, false));
-    statsNode->SetAttributeAsInt("wil", (int)npc->GetAttributes()->GetStat(PSITEMSTATS_STAT_WILL, false));
+    statsNode->SetAttributeAsInt("agi", (int)npc->Stats().GetStat(PSITEMSTATS_STAT_AGILITY, false));
+    statsNode->SetAttributeAsInt("cha", (int)npc->Stats().GetStat(PSITEMSTATS_STAT_CHARISMA, false));
+    statsNode->SetAttributeAsInt("end", (int)npc->Stats().GetStat(PSITEMSTATS_STAT_ENDURANCE, false));
+    statsNode->SetAttributeAsInt("int", (int)npc->Stats().GetStat(PSITEMSTATS_STAT_INTELLIGENCE, false));
+    statsNode->SetAttributeAsInt("str", (int)npc->Stats().GetStat(PSITEMSTATS_STAT_STRENGTH, false));
+    statsNode->SetAttributeAsInt("wil", (int)npc->Stats().GetStat(PSITEMSTATS_STAT_WILL, false));
 }
 
 
@@ -1433,7 +1433,7 @@ void psNPCLoader::WriteSkills()
     skillsNode->SetValue("skills");
     for (int i=0;i<PSSKILL_COUNT;i++)
     {
-        unsigned int rank = npc->GetSkills()->GetSkillRank((PSSKILL)i);
+        unsigned int rank = npc->Skills().GetSkillRank((PSSKILL)i);
         if (rank)
         {
             csRef<iDocumentNode> skillNode = skillsNode->CreateNodeBefore(CS_NODE_ELEMENT);

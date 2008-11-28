@@ -649,9 +649,8 @@ public:
     ///Sets if the client should receive notifications about guild members logging in
     void SetGuildNotifications(bool enabled) { guildNotified = enabled; }
 
-    StatSet *GetAttributes() { return &attributes; }
-    StatSet *GetModifiers()  { return &modifiers;  }
-    SkillSet *GetSkills()    { return &skills;     }
+    StatSet  & Stats()  { return attributes; }
+    SkillSet & Skills() { return skills;     }
 
     /**
      * Returns a pointer to the skill cache for this character
