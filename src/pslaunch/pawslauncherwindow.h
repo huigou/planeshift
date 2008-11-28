@@ -22,6 +22,7 @@
 
 #include "pslaunch.h"
 
+class pawsComboBox;
 class pawsWidget;
 class pawsYesNoBox;
 
@@ -35,6 +36,7 @@ private:
     pawsWidget* launcherMain;
     pawsWidget* launcherUpdater;
     pawsWidget* launcherSettings;
+    pawsComboBox* resolution;
     pawsYesNoBox* updateAvailable;
     csRef<iConfigFile> configFile;
     csRef<iConfigFile> configUser;
@@ -42,7 +44,8 @@ private:
     csString mountedPath;
     csString currentSkin;
 
-    static void HandleUpdateButton(bool choice, void *thisptr);
+    static void HandleUpdateButton(bool choice, void *thisptr);   
+    void HandleAspectRatio(csString ratio);
     void UpdateNews();
     void LoadSettings();
     void SaveSettings();
@@ -89,6 +92,8 @@ private:
         SETTINGS_CONTROLS_BUTTON,
         SETTINGS_GENERAL_BUTTON,
         SETTINGS_GRAPHICS_BUTTON,
+        ASPECT_RATIO = 1394,
+        SKINS = 1399,
         UPDATE_MESSAGE_BOX = 141,
         UPDATE_YES_BUTTON,
         UPDATE_NO_BUTTON

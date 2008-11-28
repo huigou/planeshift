@@ -25,8 +25,6 @@
 #ifndef __UPDATER_H__
 #define __UPDATER_H__
 
-#define APPNAME "PlaneShift Updater"
-
 struct iObjectRegistry;
 
 class psUpdater
