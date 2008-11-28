@@ -11,6 +11,12 @@
       <bgimage resource="Launcher Main" alpha="0" fading="false"/>
       <frame x="0" y="0" width="850" height="600" border="no"/>
 
+      <!-- Logo -->
+      <widget name="LauncherMain" factory="pawsWidget" visible="yes" savepositions="no" movable="no" resizable="no" id="110">
+        <bgimage resource="PSLogo" alpha="0" fading="false"/>
+        <frame x="430" y="25" width="300" height="80" border="no"/>
+      </widget>
+
       <!-- Server news -->
       <widget name="NewsWindow" factory="pawsButton" id="111" alwaysontop="true">
         <bgimage resource="News Window" alpha="255" fading="false"/>
@@ -323,23 +329,23 @@
 
     <!-- Update available window -->
     <widget name="UpdateAvailable" factory="pawsYesNoBox" visible="no" savepositions="no" movable="no" resizable="no" id="14">        
-      <frame x="200" y="100" width="400" height="250" border="no" />
+      <frame x="250" y="150" width="300" height="200" border="no" />
       <bgimage resource="YesNo" alpha="0" />
 
       <widget name="Message Box" factory="pawsMultiLineTextBox" id="141">
-        <frame x="100" y="50" width="250" height="68" border="no" />
+        <frame x="65" y="50" width="180" height="50" border="no" />
       </widget>
 
-      <widget name="YesButton" factory="pawsButton" id="-10" key="Y" id="142">
-        <frame x="120" y="180" width="80" height="40" border="no" />
-        <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" size="20" />
-        <label text="Yes" />
+      <widget name="YesButton" factory="pawsButton" id="-10" key="Y" id="142" changeonmouseover="true">
+        <frame x="65" y="100" width="80" height="40" border="no" />
+        <buttonup resource="Yes"/>
+        <buttondown resource="Yes MO"/>
       </widget>
 
-      <widget name="NoButton" factory="pawsButton" id="-20" key="N" id="143">
-        <frame x="220" y="180" width="50" height="40" border="no" />
-        <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" size="20" />
-        <label text="No" />
+      <widget name="NoButton" factory="pawsButton" id="-20" key="N" id="143" changeonmouseover="true">
+        <frame x="165" y="100" width="80" height="40" border="no" />
+        <buttonup resource="No"/>
+        <buttondown resource="No MO"/>
       </widget>
     </widget>
 
