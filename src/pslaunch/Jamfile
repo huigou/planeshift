@@ -1,48 +1,18 @@
 SubDir TOP src pslaunch ;
 
-Application psupdater :
-	[ Filter [ Wildcard *.cpp *.h ] : pslaunch.cpp pawslauncherwindow.cpp pslaunch.h pawslauncherwindow.h globals.h ] : console
-;
-
-ExternalLibs psupdater : CRYSTAL ;
-LinkWith psupdater : xdelta3 psutil xpnet ;
-
-if $(HAVE_STATIC_PLUGINS) = "yes"
-{
-
-SubVariant updaterStatic ;
-Application psupdater_static : [ Filter [ Wildcard *.cpp *.h ] : pslaunch.cpp pawslauncherwindow.cpp pslaunch.h pawslauncherwindow.h globals.h ] : console ;
-CFlags psupdater_static : [ FDefines CS_STATIC_LINKED ] ;
-LFlags psupdater_static : -lcrystalspace_staticplugins-$(CRYSTAL.VERSION) ;
-MsvcDefine psupdater_static : CS_STATIC_LINKED ;
-LinkWith psupdater_static : xdelta3 psutil xpnet ;
-
-LinkStaticPlugins psupdater_static :
-  vfs
-: 
-: CRYSTAL
-;
-
-ExternalLibs psupdater_static : CRYSTAL ;
-
-SubVariant ;
-}
-
-SubVariant pslauncher ;
 Application pslaunch :
-	[ Filter [ Wildcard *.cpp *.h ] : updater.cpp updater.h ] :
+	[ Wildcard *.cpp *.h ]
 ;
 
 ExternalLibs pslaunch : CRYSTAL ;
 CompileGroups pslaunch : client ;
 LinkWith pslaunch : xdelta3 paws psutil fparser xpnet ;
-SubVariant ;
 
 if $(HAVE_STATIC_PLUGINS) = "yes"
 {
 
-SubVariant launcherStatic ;
-Application pslaunch_static : [ Filter [ Wildcard *.cpp *.h ] : updater.cpp updater.h ] : ;
+SubVariant static ;
+Application pslaunch_static : [ Wildcard *.cpp *.h ] ;
 CFlags pslaunch_static : [ FDefines CS_STATIC_LINKED ] ;
 LFlags pslaunch_static : -lcrystalspace_staticplugins-$(CRYSTAL.VERSION) ;
 MsvcDefine pslaunch_static : CS_STATIC_LINKED ;

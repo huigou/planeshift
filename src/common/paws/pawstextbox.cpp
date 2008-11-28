@@ -480,6 +480,11 @@ void pawsMessageTextBox::AddMessage( const char* data, int msgColour )
     csArray<csString> cutMessages;
 
     size_t pos = message.Length();
+    if(pos == 0)
+    {
+      cutMessages.Push("");
+    }
+
     while(pos > 0)
     {
         size_t last = message.FindLast("\n");
@@ -488,11 +493,17 @@ void pawsMessageTextBox::AddMessage( const char* data, int msgColour )
             cutMessages.Push(message);
             break;
         }
+        if(last == 0)
+        {
+            cutMessages.Push(message.Slice(1, pos));
+            break;   
+        }
         if(last != message.Length()-1)
         {
             cutMessages.Push(message.Slice(last+1, pos));
             cutMessages.Push("");
         }
+        cutMessages.Push("");
         message.Truncate(last);
         pos = last;
     }
@@ -588,16 +599,16 @@ void pawsMessageTextBox::AppendLastMessage(const char* data)
     }
 
     MessageLine* line = messages.Get(messages.GetSize()-1);
-    
-    if(line->text.FindLast("\n")== line->text.Length()-1)
-    {
-      AddMessage(data);
-      return;
-    }
-
     line->text.Append(data);
     line = adjusted.Get(adjusted.GetSize()-1);
     line->text.Append(data);
+
+    // Trim \n from the end and add a new line.
+    if(line->text.FindLast("\n") == line->text.Length()-1)
+    {
+      line->text.Truncate(line->text.Length()-1);
+      AddMessage("");
+    }
 }
 
 void pawsMessageTextBox::OnUpdateData(const char *dataname,PAWSData& value)
