@@ -379,11 +379,19 @@ bool pawsButton::OnMouseUp( int button, int modifiers, int x, int y )
 
 bool pawsButton::OnKeyDown( int keyCode, int key, int modifiers )
 {
-    if (enabled && key == CSKEY_ENTER)
+    /* This would be supposed to send a mouse click to the button in case enter is used
+     * but in reality as we don't have tab (or similar) focus switching for things in the gui it requires
+     * the player to click on the button with the mouse first in order to use this. So in reality it gives only
+     * unwanted results so for now it will stay commented out.
+     * TODO: make a way to select the focused widget with the keyboard (like with tab) and check for autorepetion
+     * (make it lower or disable it?)
+     */
+
+    /*if (enabled && key == CSKEY_ENTER)
     {
         OnMouseDown(csmbLeft,modifiers,screenFrame.xmin,screenFrame.ymin);
         return true;
-    }
+    }*/
     return pawsWidget::OnKeyDown(keyCode, key, modifiers);
 }
 
