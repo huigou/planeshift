@@ -48,6 +48,7 @@ bool pawsLauncherWindow::PostSetup()
     launcherMain = FindWidget("LauncherMain");
     launcherSettings = FindWidget("LauncherSettings");
     launcherUpdater = FindWidget("LauncherUpdater");
+    resolution = (pawsComboBox*)FindWidget("ScreenResolution");
 
     launcherMain->OnGainFocus();
 
@@ -235,6 +236,90 @@ void pawsLauncherWindow::HandleUpdateButton(bool choice, void *updatewindow)
     updateWindow->Hide();
 }
 
+void pawsLauncherWindow::HandleAspectRatio(csString ratio)
+{
+    const char* current = resolution->GetSelectedRowString();
+    resolution->Clear();
+
+    if(ratio == "17:9")
+    {
+        resolution->NewOption("2048x1080");
+        if(!resolution->Select(current))
+        {
+            resolution->Select("2048x1080");
+        }
+    }
+    else if(ratio == "16:10")
+    {
+        resolution->NewOption("2560x1600");
+        resolution->NewOption("1920x1200");
+        resolution->NewOption("1680x1050");
+        resolution->NewOption("1440x900");
+        resolution->NewOption("1280x800");
+        resolution->NewOption("320x200");
+        if(!resolution->Select(current))
+        {
+            resolution->Select("1920x1200");
+        }
+    }
+    else if(ratio == "16:9")
+    {
+        resolution->NewOption("1920x1080");
+        resolution->NewOption("1366x768");
+        resolution->NewOption("1280x720");
+        resolution->NewOption("854x480");
+        if(!resolution->Select(current))
+        {
+            resolution->Select("1920x1080");
+        }
+    }
+    else if(ratio == "5:4")
+    {
+        resolution->NewOption("2560x2048");
+        resolution->NewOption("1280x1024");
+        if(!resolution->Select(current))
+        {
+            resolution->Select("1280x1024");
+        }
+    }
+    else if(ratio == "5:3")
+    {
+        resolution->NewOption("1280x768");
+        resolution->NewOption("800x480");
+        if(!resolution->Select(current))
+        {
+            resolution->Select("1280x768");
+        }
+    }
+    else if(ratio == "4:3")
+    {
+        resolution->NewOption("2048x1536");
+        resolution->NewOption("1600x1200");
+        resolution->NewOption("1400x1050");
+        resolution->NewOption("1280x960");
+        resolution->NewOption("1024x768");
+        resolution->NewOption("800x600");
+        resolution->NewOption("768x576");
+        resolution->NewOption("640x480");
+        resolution->NewOption("320x240");
+        if(!resolution->Select(current))
+        {
+            resolution->Select("1024x768");
+        }
+    }
+    else if(ratio == "3:2")
+    {
+        resolution->NewOption("1440x960");
+        resolution->NewOption("1280x854");
+        resolution->NewOption("1152x768");
+        resolution->NewOption("720x480");
+        if(!resolution->Select(current))
+        {
+            resolution->Select("1280x854");
+        }
+    }
+}
+
 void pawsLauncherWindow::LoadSettings()
 {
     csConfigFile configPSC("/planeshift/psclient.cfg", psLaunchGUI->GetVFS());
@@ -252,22 +337,28 @@ void pawsLauncherWindow::LoadSettings()
     csString setting = configUser->GetStr("PlaneShift.Graphics.Preset");
     if(setting.Compare(""))
     {
-        setting = configPSC.GetStr("PlaneShift.Graphics.Preset");
+        setting = configPSC.GetStr("PlaneShift.Graphics.Preset", "Custom");
     }
     graphicsPreset->Select(setting);
 
-    // Screen Resolution
-    pawsComboBox* resolution = (pawsComboBox*)FindWidget("ScreenResolution");
-    resolution->Clear();
-    resolution->NewOption("1920x1200");
-    resolution->NewOption("1680x1050");
-    resolution->NewOption("1600x1200");
-    resolution->NewOption("1400x1050");
-    resolution->NewOption("1280x1024");
-    resolution->NewOption("1280x960");
-    resolution->NewOption("1280x720");
-    resolution->NewOption("1024x768");
-    resolution->NewOption("800x600");
+    // Aspect Ratio and Screen Resolution
+    pawsComboBox* aspect = (pawsComboBox*)FindWidget("AspectRatio");
+    aspect->Clear();
+    aspect->NewOption("17:9");
+    aspect->NewOption("16:10");
+    aspect->NewOption("16:9");
+    aspect->NewOption("5:4");
+    aspect->NewOption("5:3");
+    aspect->NewOption("4:3");
+    aspect->NewOption("3:2");
+
+    setting = configUser->GetStr("Video.AspectRatio");
+    if(setting.Compare(""))
+    {
+        setting = configPSC.GetStr("Video.AspectRatio");
+    }
+    aspect->Select(setting);
+    HandleAspectRatio(setting);
 
     setting = configUser->GetStr("Video.ScreenWidth");
     if(setting.Compare(""))
@@ -479,13 +570,13 @@ void pawsLauncherWindow::LoadSettings()
     }
 
     pawsCheckBox* threadedLoading = (pawsCheckBox*)FindWidget("ThreadedLoading");
-    if(configUser->KeyExists("Planeshift.Loading.Threaded"))
+    if(configUser->KeyExists("ThreadManager.AlwaysRunNow"))
     {
-        threadedLoading->SetState(configUser->GetBool("Planeshift.Loading.Threaded"));
+        threadedLoading->SetState(configUser->GetBool("ThreadManager.AlwaysRunNow"));
     }
     else
     {
-        threadedLoading->SetState(configPSC.GetBool("Planeshift.Loading.Threaded"));
+        threadedLoading->SetState(configPSC.GetBool("ThreadManager.AlwaysRunNow"));
     }
 
     // Fill the skins
@@ -542,7 +633,7 @@ void pawsLauncherWindow::SaveSettings()
             configUser->SetBool("Planeshift.Loading.AllMaps", false);
             configUser->SetBool("Planeshift.Loading.KeepMaps", true);
             configUser->SetBool("Planeshift.Loading.PreloadModels", true);
-            configUser->SetBool("Planeshift.Loading.Threaded", false);
+            configUser->SetBool("ThreadManager.AlwaysRunNow", false);
             break;
         }
     case HIGH:
@@ -557,7 +648,7 @@ void pawsLauncherWindow::SaveSettings()
             configUser->SetBool("Planeshift.Loading.AllMaps", false);
             configUser->SetBool("Planeshift.Loading.KeepMaps", false);
             configUser->SetBool("Planeshift.Loading.PreloadModels", true);
-            configUser->SetBool("Planeshift.Loading.Threaded", false);
+            configUser->SetBool("ThreadManager.AlwaysRunNow", false);
             break;
         }
     case MEDIUM:
@@ -572,7 +663,7 @@ void pawsLauncherWindow::SaveSettings()
             configUser->SetBool("Planeshift.Loading.AllMaps", false);
             configUser->SetBool("Planeshift.Loading.KeepMaps", false);
             configUser->SetBool("Planeshift.Loading.PreloadModels", false);
-            configUser->SetBool("Planeshift.Loading.Threaded", false);
+            configUser->SetBool("ThreadManager.AlwaysRunNow", false);
             break;
         }
     case LOW:
@@ -587,7 +678,7 @@ void pawsLauncherWindow::SaveSettings()
             configUser->SetBool("Planeshift.Loading.AllMaps", false);
             configUser->SetBool("Planeshift.Loading.KeepMaps", false);
             configUser->SetBool("Planeshift.Loading.PreloadModels", false);
-            configUser->SetBool("Planeshift.Loading.Threaded", false);
+            configUser->SetBool("ThreadManager.AlwaysRunNow", false);
             break;
         }
     case LOWEST:
@@ -602,7 +693,7 @@ void pawsLauncherWindow::SaveSettings()
             configUser->SetBool("Planeshift.Loading.AllMaps", false);
             configUser->SetBool("Planeshift.Loading.KeepMaps", false);
             configUser->SetBool("Planeshift.Loading.PreloadModels", false);
-            configUser->SetBool("Planeshift.Loading.Threaded", false);
+            configUser->SetBool("ThreadManager.AlwaysRunNow", false);
             break;
         }
     case CUSTOM:
@@ -653,14 +744,15 @@ void pawsLauncherWindow::SaveSettings()
             configUser->SetBool("Planeshift.Loading.PreloadModels", preloadModels->GetState());
 
             pawsCheckBox* threadedLoading = (pawsCheckBox*)FindWidget("ThreadedLoading");
-            configUser->SetBool("Planeshift.Loading.Threaded", threadedLoading->GetState());
+            configUser->SetBool("ThreadManager.AlwaysRunNow", !threadedLoading->GetState());
 
             break;
         }
     };
 
-    // Screen Resolution
-    pawsComboBox* resolution = (pawsComboBox*)FindWidget("ScreenResolution");
+    // Aspect Ratio and Screen Resolution
+    pawsComboBox* aspect = (pawsComboBox*)FindWidget("AspectRatio");
+    configUser->SetStr("Video.AspectRatio", aspect->GetSelectedRowString());
     csString res = resolution->GetSelectedRowString();
     configUser->SetStr("Video.ScreenWidth", res.Slice(0, res.FindFirst('x')));
     configUser->SetStr("Video.ScreenHeight", res.Slice(res.FindFirst('x')+1));
@@ -917,10 +1009,23 @@ bool pawsLauncherWindow::LoadResource(const char* resource,const char* resname, 
 
 void pawsLauncherWindow::OnListAction(pawsListBox* widget, int status)
 {
-    pawsComboBox* skins = (pawsComboBox*)FindWidget("Skins");
-    csString selected = skins->GetSelectedRowString();
-    if(!selected.Compare(currentSkin))
+    switch(widget->GetID())
     {
-        LoadSkin(selected);
+    case SKINS:
+        {
+            pawsComboBox* skins = (pawsComboBox*)FindWidget("Skins");
+            csString selected = skins->GetSelectedRowString();
+            if(!selected.Compare(currentSkin))
+            {
+                LoadSkin(selected);
+            }
+            break;
+        }
+    case ASPECT_RATIO:
+        {
+            pawsComboBox* aspect = (pawsComboBox*)FindWidget("AspectRatio");
+            HandleAspectRatio(aspect->GetSelectedRowString());
+            break;
+        }
     }
 }
