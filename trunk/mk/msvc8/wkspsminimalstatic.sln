@@ -60,8 +60,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libpssetup_static_plugins_C
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libpssound", "libpssound.vcproj", "{C0CD3069-8659-1151-26AC-40C98186358B}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libpsupdater_static_plugins_CRYSTAL", "libpsupdater_static_plugins_CRYSTAL.vcproj", "{1C5636F0-96FB-812A-D807-37D81F5938BA}"
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libpsutil", "libpsutil.vcproj", "{D9DEA6DD-ED82-1526-6BBF-851FF399854C}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libwordnet", "libwordnet.vcproj", "{A4D92586-089F-D6D3-52C4-F11AA71CA951}"
@@ -732,26 +730,6 @@ Global
 		{C0CD3069-8659-1151-26AC-40C98186358B}.DebugPSReleaseCSCEL (with static libs).Build.0 = DebugPSReleaseCSCEL (with static libs)|Win32
   		{C0CD3069-8659-1151-26AC-40C98186358B}.DebugPSReleaseCSCEL (with DLLs).ActiveCfg = DebugPSReleaseCSCEL (with DLLs)|Win32
 		{C0CD3069-8659-1151-26AC-40C98186358B}.DebugPSReleaseCSCEL (with DLLs).Build.0 = DebugPSReleaseCSCEL (with DLLs)|Win32
-    		{1C5636F0-96FB-812A-D807-37D81F5938BA}.Release (with static libs).ActiveCfg = Release (with static libs)|Win32
-		{1C5636F0-96FB-812A-D807-37D81F5938BA}.Release (with static libs).Build.0 = Release (with static libs)|Win32
-  		{1C5636F0-96FB-812A-D807-37D81F5938BA}.Release (with DLLs).ActiveCfg = Release (with DLLs)|Win32
-		{1C5636F0-96FB-812A-D807-37D81F5938BA}.Release (with DLLs).Build.0 = Release (with DLLs)|Win32
-    		{1C5636F0-96FB-812A-D807-37D81F5938BA}.Debug (with static libs).ActiveCfg = Debug (with static libs)|Win32
-		{1C5636F0-96FB-812A-D807-37D81F5938BA}.Debug (with static libs).Build.0 = Debug (with static libs)|Win32
-  		{1C5636F0-96FB-812A-D807-37D81F5938BA}.Debug (with DLLs).ActiveCfg = Debug (with DLLs)|Win32
-		{1C5636F0-96FB-812A-D807-37D81F5938BA}.Debug (with DLLs).Build.0 = Debug (with DLLs)|Win32
-    		{1C5636F0-96FB-812A-D807-37D81F5938BA}.MemoryTracker (with static libs).ActiveCfg = MemoryTracker (with static libs)|Win32
-		{1C5636F0-96FB-812A-D807-37D81F5938BA}.MemoryTracker (with static libs).Build.0 = MemoryTracker (with static libs)|Win32
-  		{1C5636F0-96FB-812A-D807-37D81F5938BA}.MemoryTracker (with DLLs).ActiveCfg = MemoryTracker (with DLLs)|Win32
-		{1C5636F0-96FB-812A-D807-37D81F5938BA}.MemoryTracker (with DLLs).Build.0 = MemoryTracker (with DLLs)|Win32
-    		{1C5636F0-96FB-812A-D807-37D81F5938BA}.RefTracker (with static libs).ActiveCfg = RefTracker (with static libs)|Win32
-		{1C5636F0-96FB-812A-D807-37D81F5938BA}.RefTracker (with static libs).Build.0 = RefTracker (with static libs)|Win32
-  		{1C5636F0-96FB-812A-D807-37D81F5938BA}.RefTracker (with DLLs).ActiveCfg = RefTracker (with DLLs)|Win32
-		{1C5636F0-96FB-812A-D807-37D81F5938BA}.RefTracker (with DLLs).Build.0 = RefTracker (with DLLs)|Win32
-    		{1C5636F0-96FB-812A-D807-37D81F5938BA}.DebugPSReleaseCSCEL (with static libs).ActiveCfg = DebugPSReleaseCSCEL (with static libs)|Win32
-		{1C5636F0-96FB-812A-D807-37D81F5938BA}.DebugPSReleaseCSCEL (with static libs).Build.0 = DebugPSReleaseCSCEL (with static libs)|Win32
-  		{1C5636F0-96FB-812A-D807-37D81F5938BA}.DebugPSReleaseCSCEL (with DLLs).ActiveCfg = DebugPSReleaseCSCEL (with DLLs)|Win32
-		{1C5636F0-96FB-812A-D807-37D81F5938BA}.DebugPSReleaseCSCEL (with DLLs).Build.0 = DebugPSReleaseCSCEL (with DLLs)|Win32
     		{D9DEA6DD-ED82-1526-6BBF-851FF399854C}.Release (with static libs).ActiveCfg = Release (with static libs)|Win32
 		{D9DEA6DD-ED82-1526-6BBF-851FF399854C}.Release (with static libs).Build.0 = Release (with static libs)|Win32
   		{D9DEA6DD-ED82-1526-6BBF-851FF399854C}.Release (with DLLs).ActiveCfg = Release (with DLLs)|Win32
