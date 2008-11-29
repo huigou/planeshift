@@ -140,8 +140,6 @@ csTicks EventManager::ProcessEventQueue()
         }
         lastid    = event->id;
 
-        delete event;
-
         count++;
         if (count % 100 == 0)
         {
@@ -149,6 +147,8 @@ csTicks EventManager::ProcessEventQueue()
                 "bugs in event generation or bugs in deleting events from the event tree. "
                 "Last event: %s:%s took %u time\n", events, event->GetType(), event->ToString().GetDataSafe(), count);
         }
+
+        delete event;
     }
 
     if (event)
