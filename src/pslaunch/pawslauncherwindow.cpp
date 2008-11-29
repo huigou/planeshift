@@ -810,7 +810,7 @@ void pawsLauncherWindow::LoadSkin(const char* name)
 
     if (!psLaunchGUI->GetVFS()->Exists(zip))
     {
-        printf("Current skin doesn't exist, skipping..\n");
+        printf("Current skin %s doesn't exist, skipping..\n", zip.GetData());
         return;
     }
 

@@ -158,7 +158,7 @@ void UpdaterEngine::CheckForUpdates()
             while(!infoShare->GetPerformUpdate())
             {
                 // Make sure we die if we exit the gui as well.
-                if(!infoShare->GetUpdateNeeded() || infoShare->GetExitGUI())
+                if(!infoShare->GetUpdateNeeded() || infoShare->GetExitGUI() || CheckQuit())
                 {
                     infoShare->Sync(false);
                     delete downloader;
@@ -197,7 +197,7 @@ void UpdaterEngine::CheckForUpdates()
             infoShare->SetUpdateNeeded(true);
             while(!infoShare->GetPerformUpdate())
             {
-                if(!infoShare->GetUpdateNeeded() || infoShare->GetExitGUI())
+                if(!infoShare->GetUpdateNeeded() || infoShare->GetExitGUI() || CheckQuit())
                 {
                     infoShare->Sync(false);
                     delete downloader;
@@ -512,7 +512,7 @@ bool UpdaterEngine::SelfUpdate(int selfUpdating)
 
             // Construct zip name.
             csString zip = appName;
-            zip.AppendFmt(config->GetCurrentConfig()->GetPlatform());
+            zip.AppendFmt("%s", config->GetCurrentConfig()->GetPlatform());
             zip.AppendFmt(".zip");
 
             // Remove updater zip.
@@ -528,7 +528,7 @@ bool UpdaterEngine::SelfUpdate(int selfUpdating)
 
             // Construct zip name.
             csString zip = appName;
-            zip.AppendFmt(config->GetCurrentConfig()->GetPlatform());
+            zip.AppendFmt("%s", config->GetCurrentConfig()->GetPlatform());
             zip.AppendFmt(".zip");
 
             if(vfs->Exists("/this/" + zip))
@@ -560,7 +560,11 @@ bool UpdaterEngine::SelfUpdate(int selfUpdating)
             csString cmd;
             csRef<iDataBuffer> thisPath = vfs->GetRealPath("/this/");
             cmd.Format("cd %s; unzip -oqq %s", thisPath->GetData(), zip.GetData());
-            system(cmd);
+            int res = system(cmd);
+            if(res == -1)
+            {
+                printf("system(%s) failed!\n", cmd.GetData());
+            }
 
 #if defined(CS_PLATFORM_MACOSX)
 
