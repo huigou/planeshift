@@ -48,8 +48,6 @@ class MathScript;
 class psCharacter;
 
 class ProgressionEvent;
-struct Faction;
-
 
 class ProgressionManager : public MessageManager
 {
@@ -76,9 +74,6 @@ public:
 
     bool AddScript(const char *name, const char *script);
     void QueueUndoScript(const char *script, int delay, gemActor * actor = NULL, gemObject *target = NULL, psItem *item = NULL, int persistentID = 0);
-
-    Faction *FindFaction(const char *name);
-    Faction *FindFaction(int id);
 
     csHash< csString, csString> &GetAffinityCategories() { return affinitycategories; }
 

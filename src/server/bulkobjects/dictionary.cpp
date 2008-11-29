@@ -2054,7 +2054,7 @@ bool GiveItemResponseOp::Run(gemNPC *who, Client *target,NpcResponse *owner,csTi
 
 bool FactionResponseOp::Load(iDocumentNode *node)
 {
-    faction = psserver->GetProgressionManager()->FindFaction(node->GetAttributeValue("name"));
+    faction = CacheManager::GetSingleton().GetFaction(node->GetAttributeValue("name"));
     if (!faction)
     {
         Error2("Error: FactionOp faction(%s) not found\n",node->GetAttributeValue("name"));

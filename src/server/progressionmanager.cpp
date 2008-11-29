@@ -621,7 +621,7 @@ public:
         else
             aimIsActor = true; // Default
 
-        faction = psserver->GetProgressionManager()->FindFaction(node->GetAttributeValue("name") );
+        faction = CacheManager::GetSingleton().GetFaction(node->GetAttributeValue("name"));
         if (!faction)
         {
             Error2("Error: FactionOp faction(%s) not found\n",node->GetAttributeValue("name"));
@@ -5216,16 +5216,6 @@ ProgressionEvent *ProgressionManager::FindEvent(char const *name)
     if ( name == NULL ) return NULL;
 
     return events.Get(name, NULL);
-}
-
-Faction *ProgressionManager::FindFaction(const char *name)
-{
-    return CacheManager::GetSingleton().GetFaction(name);
-}
-
-Faction *ProgressionManager::FindFaction(int id)
-{
-    return CacheManager::GetSingleton().GetFaction(id);
 }
 
 void ProgressionManager::QueueEvent(psGameEvent *event)
