@@ -1,5 +1,6 @@
 ﻿*** 2008-11-29 by Stefano Angeleri
 - Converted some code using char arrays to use csString
+- Fixed inverted x has been killed by y message. Who killed was "being killed"
 
 *** 2008-11-28 by Stefano Angeleri
 - Fixing FS#2529 and FS#2404 disabling the mouse hit on enter for buttons.

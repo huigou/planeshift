@@ -2007,7 +2007,7 @@ void ModeHandler::OtherDeath( GEMClientActor* atObject, GEMClientActor* tarObjec
 {
     if (atObject != tarObject) //not killing self
     {
-        psSystemMessage ev(0,MSG_COMBAT_DEATH,"%s has been killed by %s!", MungeName(atObject).GetData(), MungeName(tarObject).GetData() );
+        psSystemMessage ev(0,MSG_COMBAT_DEATH,"%s has been killed by %s!", MungeName(tarObject).GetData(), MungeName(atObject).GetData() );
         msghandler->Publish(ev.msg);
     }
     else //killing self
