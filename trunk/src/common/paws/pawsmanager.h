@@ -314,25 +314,25 @@ public:
     void Subscribe(const char *dataname,iPAWSSubscriber *listener);
 
     /// Announce a change in a named element to all subscribers.
-    void Publish(const char *dataname,PAWSData& data);
+    void Publish(const csString & dataname,PAWSData& data);
 
     /// Publish a string to all subscribers.
-    void Publish(const char *dataname,const char *datavalue);
+    void Publish(const csString & dataname,const char *datavalue);
 
     /// Publish a boolean value to all subscribers.
-    void Publish(const char *dataname,bool  datavalue);
+    void Publish(const csString & dataname,bool  datavalue);
 
     /// Publish an int to all subscribers.
-    void Publish(const char *dataname,int   datavalue);
+    void Publish(const csString & dataname,int   datavalue);
 
     /// Publish an unsigned int to all subscribers.
-    void Publish(const char *dataname,unsigned int   datavalue);
+    void Publish(const csString & dataname,unsigned int   datavalue);
 
     /// Publish a float to all subscribers.
-    void Publish(const char *dataname,float datavalue);
+    void Publish(const csString & dataname,float datavalue);
 
     /// Publish nothing to all subscribers. (Used for one-time named signals.)
-    void Publish(const char *dataname);
+    void Publish(const csString & dataname);
 
     /// Return a list of all subscribers.
     csArray<iPAWSSubscriber*> ListSubscribers(const char *dataname);
