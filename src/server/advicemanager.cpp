@@ -380,7 +380,7 @@ void AdviceManager::HandleMessage(MsgEntry *me,Client *client)
     {
         RemoveAdvisor(client->GetClientNum(), me->clientnum);
     }
-    else if ( msg.sCommand == "sessions" ) //this case handles /advisor listsessions
+    else if ( msg.sCommand == "sessions" ) //this case handles /advisor sessions
     {
         HandleAdviseeList( client );
     }
