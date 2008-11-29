@@ -85,7 +85,7 @@ public:
      *
      * @return Always true.
      */
-    bool Authenticate (const csString user, const csString pwd);
+    bool Authenticate (const csString & user, const csString & pwd);
 
     /** Handle incomming messages based on the subscribed types.
      */

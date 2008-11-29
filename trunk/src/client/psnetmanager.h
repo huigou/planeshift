@@ -59,7 +59,7 @@ public:
     void SendDisconnect(bool final = true);
 
     /** Sends an authentication message to the server */
-    void Authenticate(const csString name, const csString pwd);
+    void Authenticate(const csString & name, const csString & pwd);
 
     MsgHandler* GetMsgHandler();
     CmdHandler* GetCmdHandler() { return cmdhandler; }
