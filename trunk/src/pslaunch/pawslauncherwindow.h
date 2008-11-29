@@ -20,10 +20,11 @@
 #ifndef __PAWS_LAUNCHER_WINDOW_H__
 #define __PAWS_LAUNCHER_WINDOW_H__
 
+#include "paws/pawswidget.h"
+
 #include "pslaunch.h"
 
 class pawsComboBox;
-class pawsWidget;
 class pawsYesNoBox;
 
 class pawsLauncherWindow : public pawsWidget
