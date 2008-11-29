@@ -1328,7 +1328,7 @@ void PawsManager::Subscribe(const char *dataname,iPAWSSubscriber *listener)
     }
 }
 
-void PawsManager::Publish(const char *dataname,PAWSData& data)
+void PawsManager::Publish(const csString & dataname,PAWSData& data)
 {
     PAWSSubscriptionsHash::Iterator iter = subscriptions.GetIterator(dataname);
     if (!iter.HasNext())  // no one has subscribed yet, so just save value
@@ -1349,7 +1349,7 @@ void PawsManager::Publish(const char *dataname,PAWSData& data)
     }
 }
 
-void PawsManager::Publish(const char *dataname,const char *datavalue)
+void PawsManager::Publish(const csString & dataname,const char *datavalue)
 {
     PAWSData data;
     data.type = PAWS_DATA_STR;
@@ -1357,7 +1357,7 @@ void PawsManager::Publish(const char *dataname,const char *datavalue)
     Publish(dataname,data);
 }
 
-void PawsManager::Publish(const char *dataname,bool  datavalue)
+void PawsManager::Publish(const csString & dataname,bool  datavalue)
 {
     PAWSData data;
     data.type = PAWS_DATA_BOOL;
@@ -1365,7 +1365,7 @@ void PawsManager::Publish(const char *dataname,bool  datavalue)
     Publish(dataname,data);
 }
 
-void PawsManager::Publish(const char *dataname,int   datavalue)
+void PawsManager::Publish(const csString & dataname,int   datavalue)
 {
     PAWSData data;
     data.type = PAWS_DATA_INT;
@@ -1373,7 +1373,7 @@ void PawsManager::Publish(const char *dataname,int   datavalue)
     Publish(dataname,data);
 }
 
-void PawsManager::Publish(const char *dataname,unsigned int   datavalue)
+void PawsManager::Publish(const csString & dataname,unsigned int   datavalue)
 {
     PAWSData data;
     data.type = PAWS_DATA_UINT;
@@ -1381,7 +1381,7 @@ void PawsManager::Publish(const char *dataname,unsigned int   datavalue)
     Publish(dataname,data);
 }
 
-void PawsManager::Publish(const char *dataname,float datavalue)
+void PawsManager::Publish(const csString & dataname,float datavalue)
 {
     PAWSData data;
     data.type = PAWS_DATA_FLOAT;
@@ -1389,7 +1389,7 @@ void PawsManager::Publish(const char *dataname,float datavalue)
     Publish(dataname,data);
 }
 
-void PawsManager::Publish(const char *dataname)
+void PawsManager::Publish(const csString & dataname)
 {
     PAWSData data;
     Publish(dataname,data);

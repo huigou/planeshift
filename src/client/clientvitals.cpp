@@ -44,7 +44,7 @@ psClientVitals::psClientVitals()
 
 void psClientVitals::HandleDRData(psStatDRMessage& msg, const char *labelname )
 {
-    char buff[100];
+    csString buff;
 
     // Skip out of date stat dr updates
     if (counterSet && (unsigned char)(msg.counter - counter) > 127)
@@ -61,84 +61,84 @@ void psClientVitals::HandleDRData(psStatDRMessage& msg, const char *labelname )
     if (msg.statsDirty & DIRTY_VITAL_HP)
     {
         vitals[VITAL_HITPOINTS].value = msg.hp;
-        sprintf(buff,"fVitalValue%d:%s",VITAL_HITPOINTS,labelname);
+        buff.Format("fVitalValue%d:%s",VITAL_HITPOINTS,labelname);
         PawsManager::GetSingleton().Publish(buff,vitals[VITAL_HITPOINTS].value);
     }
 
     if (msg.statsDirty & DIRTY_VITAL_HP_RATE)
     {
         vitals[VITAL_HITPOINTS].drRate = msg.hp_rate;
-        sprintf(buff,"fVitalRate%d:%s",VITAL_HITPOINTS,labelname);
+        buff.Format("fVitalRate%d:%s",VITAL_HITPOINTS,labelname);
         PawsManager::GetSingleton().Publish(buff,vitals[VITAL_HITPOINTS].drRate);
     }
 
     if (msg.statsDirty & DIRTY_VITAL_MANA)
     {
         vitals[VITAL_MANA].value = msg.mana;
-        sprintf(buff,"fVitalValue%d:%s",VITAL_MANA,labelname);
+        buff.Format("fVitalValue%d:%s",VITAL_MANA,labelname);
         PawsManager::GetSingleton().Publish(buff,vitals[VITAL_MANA].value);
     }
 
     if (msg.statsDirty & DIRTY_VITAL_MANA_RATE)
     {
         vitals[VITAL_MANA].drRate = msg.mana_rate;
-        sprintf(buff,"fVitalRate%d:%s",VITAL_MANA,labelname);
+        buff.Format("fVitalRate%d:%s",VITAL_MANA,labelname);
         PawsManager::GetSingleton().Publish(buff,vitals[VITAL_MANA].drRate);
     }
 
     if (msg.statsDirty & DIRTY_VITAL_PYSSTAMINA)
     {
         vitals[VITAL_PYSSTAMINA].value = msg.pstam;
-        sprintf(buff,"fVitalValue%d:%s",VITAL_PYSSTAMINA,labelname);
+        buff.Format("fVitalValue%d:%s",VITAL_PYSSTAMINA,labelname);
         PawsManager::GetSingleton().Publish(buff,vitals[VITAL_PYSSTAMINA].value);
     }
 
     if (msg.statsDirty & DIRTY_VITAL_PYSSTAMINA_RATE)
     {
         vitals[VITAL_PYSSTAMINA].drRate = msg.pstam_rate;
-        sprintf(buff,"fVitalRate%d:%s",VITAL_PYSSTAMINA,labelname);
+        buff.Format("fVitalRate%d:%s",VITAL_PYSSTAMINA,labelname);
         PawsManager::GetSingleton().Publish(buff,vitals[VITAL_PYSSTAMINA].drRate);
     }
 
     if (msg.statsDirty & DIRTY_VITAL_MENSTAMINA)
     {
         vitals[VITAL_MENSTAMINA].value = msg.mstam;
-        sprintf(buff,"fVitalValue%d:%s",VITAL_MENSTAMINA,labelname);
+        buff.Format("fVitalValue%d:%s",VITAL_MENSTAMINA,labelname);
         PawsManager::GetSingleton().Publish(buff,vitals[VITAL_MENSTAMINA].value);
     }
 
     if (msg.statsDirty & DIRTY_VITAL_MENSTAMINA_RATE)
     {
         vitals[VITAL_MENSTAMINA].drRate = msg.mstam_rate;
-        sprintf(buff,"fVitalRate%d:%s",VITAL_MENSTAMINA,labelname);
+        buff.Format("fVitalRate%d:%s",VITAL_MENSTAMINA,labelname);
         PawsManager::GetSingleton().Publish(buff,vitals[VITAL_MENSTAMINA].drRate);
     }
 
     if (msg.statsDirty & DIRTY_VITAL_EXPERIENCE)
     {
         experiencePoints = msg.exp;
-        sprintf(buff,"fExpPts:%s",labelname);
+        buff.Format("fExpPts:%s",labelname);
         PawsManager::GetSingleton().Publish(buff,(float)experiencePoints/200.0F);
     }
 
     if (msg.statsDirty & DIRTY_VITAL_PROGRESSION)
     {
         progressionPoints = msg.prog;
-        sprintf(buff,"fProgrPts:%s",labelname);
+        buff.Format("fProgrPts:%s",labelname);
         PawsManager::GetSingleton().Publish(buff,progressionPoints);
     }
 }
 
 void psClientVitals::HandleDeath(const char *labelname )
 {
-    char buff[100];
+    csString buff;
 
     vitals[VITAL_HITPOINTS].drRate = 0.0;
-    sprintf(buff,"fVitalRate%d:%s",VITAL_HITPOINTS,labelname);
+    buff.Format("fVitalRate%d:%s",VITAL_HITPOINTS,labelname);
     PawsManager::GetSingleton().Publish(buff,vitals[VITAL_HITPOINTS].drRate);
 
     vitals[VITAL_HITPOINTS].value = 0.0;
-    sprintf(buff,"fVitalValue%d:%s",VITAL_HITPOINTS,labelname);
+    buff.Format("fVitalValue%d:%s",VITAL_HITPOINTS,labelname);
     PawsManager::GetSingleton().Publish(buff,vitals[VITAL_HITPOINTS].value);
 }
 
@@ -148,7 +148,7 @@ void psClientVitals::Predict( csTicks now, const char *labelname )
     float delta = (now-lastDRUpdate)/1000.0;
     lastDRUpdate = now;
 
-    char buff[100];
+    csString buff;
 
     // iterate over all fields and predict their values based on their recharge rate
     for ( int x = 0; x < VITAL_COUNT; x++ )
@@ -163,7 +163,7 @@ void psClientVitals::Predict( csTicks now, const char *labelname )
 
         if (oldvalue != vitals[x].value) // need to republish info
         {
-            sprintf(buff,"fVitalValue%d:%s",x,labelname);
+            buff.Format("fVitalValue%d:%s",x,labelname);
             PawsManager::GetSingleton().Publish(buff,vitals[x].value);
         }
     }
