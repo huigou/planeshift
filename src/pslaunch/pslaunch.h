@@ -25,8 +25,6 @@
 #include "updaterconfig.h"
 #include "updaterengine.h"
 
-#include "paws/pawsmanager.h"
-#include "paws/pawsmainwidget.h"
 #include "util/genericevent.h"
 
 class pawsMessageTextBox;
@@ -35,6 +33,9 @@ class pawsMessageTextBox;
 
 #define LAUNCHER_CONFIG_FILENAME "/this/pslaunch.cfg"
 
+class pawsLauncherWindowFactory;
+class pawsMainWidget;
+class PawsManager;
 struct iObjectRegistry;
 
 using namespace CS::Threading;
@@ -55,6 +56,7 @@ private:
     // PAWS
     PawsManager*    paws;
     pawsMainWidget* mainWidget;
+    pawsLauncherWindowFactory* launcherWidget;
 
     /* Info shared with other threads. */
     InfoShare *infoShare;

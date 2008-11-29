@@ -34,6 +34,8 @@
 #include "updater.h"
 
 #include "paws/pawsbutton.h"
+#include "paws/pawsmainwidget.h"
+#include "paws/pawsmanager.h"
 #include "paws/pawstextbox.h"
 #include "util/log.h"
 
@@ -57,6 +59,10 @@ void psLauncherGUI::Run()
     if(InitApp())
         csDefaultRunLoop(object_reg);
 
+    delete launcherWidget;
+    launcherWidget = NULL;
+    delete mainWidget;
+    mainWidget = NULL;
     delete paws;
     paws = NULL;
     delete downloader;
@@ -138,7 +144,7 @@ bool psLauncherGUI::InitApp()
     paws->SetMainWidget(mainWidget);
 
     // Register factory
-    new pawsLauncherWindowFactory;
+    launcherWidget = new pawsLauncherWindowFactory();
 
     // Load and assign a default button click sound for pawsbutton
     paws->LoadSound("/planeshift/art/music/gui/ccreate/next.wav","sound.standardButtonClick");
