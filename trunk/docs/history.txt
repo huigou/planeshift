@@ -2,6 +2,7 @@
 - Converted some code using char arrays to use csString
 - Fixed inverted x has been killed by y message. Who killed was "being killed"
 - Added a missing variable in a debug output of the event manager
+- Events were being destroyed earlier than expected
 
 *** 2008-11-28 by Stefano Angeleri
 - Fixing FS#2529 and FS#2404 disabling the mouse hit on enter for buttons.
