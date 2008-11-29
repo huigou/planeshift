@@ -131,14 +131,14 @@ void psAuthenticationClient::HandleMessage(MsgEntry *me)
 }
 
 
-bool psAuthenticationClient::Authenticate (const char* user, const char* pwd )
+bool psAuthenticationClient::Authenticate (const csString user, const csString pwd)
 {
-    Notify3( LOG_CONNECTIONS, "Prelog in as: (%s,%s)\n", user, pwd );    
+    Notify3( LOG_CONNECTIONS, "Prelog in as: (%s,%s)\n", user.GetData(), pwd.GetData() );    
     psPreAuthenticationMessage request(0,PS_NETVERSION);
     request.SendMessage();
-    strcpy(username, user );
-    strcpy(password, pwd );   
-    
+    username = user;
+    password = pwd;
+   
     rejectmsg.Clear();
 
     return true;
@@ -192,7 +192,8 @@ void psAuthenticationClient::HandlePreAuth( MsgEntry* me )
     passwordhashandclientnum.Append(msg.ClientNum);
     // md5("password:clientnum")
     csString hexstring = csMD5::Encode(passwordhashandclientnum).HexString();
-    psAuthenticationMessage request(0,username, hexstring.GetData() );
+    //TODO: convert this to use csstrings
+    psAuthenticationMessage request(0,username.GetData(), hexstring.GetData() );
     
     request.SendMessage();                
 }
