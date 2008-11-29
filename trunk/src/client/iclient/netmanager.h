@@ -31,7 +31,7 @@ struct iNetManager : public iBase
     virtual bool Connect(const char* server, int port) = 0;
     virtual void Disconnect() = 0;
     virtual void SendDisconnect(bool final = true) = 0;
-    virtual void Authenticate(const char* name, const char* pwd ) = 0;
+    virtual void Authenticate(const csString name, const csString pwd ) = 0;
 
     virtual MsgHandler* GetMsgHandler() = 0;
     virtual CmdHandler* GetCmdHandler() = 0;
