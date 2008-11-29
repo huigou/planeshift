@@ -144,7 +144,7 @@ void psNetManager::SendDisconnect(bool final)
     msghandler->DispatchQueue(); // Flush inbound message queue
 }
 
-void psNetManager::Authenticate(const csString name, const csString pwd)
+void psNetManager::Authenticate(const csString & name, const csString & pwd)
 {
     authclient->Authenticate(name,pwd);
 }

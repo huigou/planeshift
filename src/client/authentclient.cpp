@@ -131,7 +131,7 @@ void psAuthenticationClient::HandleMessage(MsgEntry *me)
 }
 
 
-bool psAuthenticationClient::Authenticate (const csString user, const csString pwd)
+bool psAuthenticationClient::Authenticate (const csString & user, const csString & pwd)
 {
     Notify3( LOG_CONNECTIONS, "Prelog in as: (%s,%s)\n", user.GetData(), pwd.GetData() );    
     psPreAuthenticationMessage request(0,PS_NETVERSION);
