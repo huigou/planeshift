@@ -681,7 +681,7 @@ void pawsGmGUIWindow::QueryActionLocations()
 {
     if (psengine->IsGameLoaded())
     {
-        if (psengine->GetCelClient()->GetMainPlayer()->GetType() < 21)
+        if (psengine->GetCelClient()->GetMainPlayer()->GetType() < 29)
         {
             return;
         }
