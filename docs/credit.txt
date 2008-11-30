@@ -18,7 +18,7 @@ Andrew "Acraig" Craig, client side department leader.
 
 Keith "Vengeance" Fulton, for lights, animation management, char customization, client/server connections, ...
 
-Arianna "AryHann" Benigno, for marriage system, weather, running the testing team and many bug fixes.
+Arianna "AryHann" Benigno, for marriage system, weather, past running of the testing team and many bug fixes.
 
 Dave "Acissej" Bentham, for maps/book uniqueness, spells, active magic window, events commands.
 
@@ -43,6 +43,8 @@ Thomas "TomT" Towey, for weapon and armor craft systems, server maintenance and 
 Enar "Bereror" VÃ¤ikene, for minigames and bug fixing.
 
 Trond "Trymm" Varslot, for MacOSX support.
+
+Steven "Aresilek" Patrick, for refactors, bug fixes and patch reviewing.
 
 Andreas "Paldorin" Heinchen, for fixing many serious memory leaks and other code bugs.
 
@@ -124,6 +126,27 @@ Ruslan "Ellarion" Perezhilo, for travel songs, death jingles and lot of nice sou
 Jiri "GeorgeD" Ptacek, for death realm song, victory jingles and lot of nice sounds.
 
 Bruno "CyberMozart" Largarde, for the main theme, intro songs and battle theme.
+
+
+&Testing Team
+
+Bas "Lanarel" van den Broek, for leading the testing team, helping out with many issues, and fixing and closing many bugs.
+
+Jochen "Peeg" Woidich, for fixing and closing many bugs and providing support with issues related to bugs.
+
+Steven "Vornne" Schwartfeger, for fixing and closing many bugs, and investigating many issues.
+
+Michele "Caarrie" Davis, for fixing and closing many bugs, as well as providing support on the forums and in many other places.
+
+"Mrokii", for helping to test many mac issues and other bugs.
+
+Mario "LigH" Rohkrämer, for reporting and testing many art bugs, and work on bug prevention.
+
+"f-rd", for testing many bugs and making even weird ones reproducible.
+
+Thom "ThomPhoenix" Hurks, for testing and finding many bugs.
+
+Stefano "weltall" Angeleri, for contributing very many patches for bugs both reported and unknown.
 
 
 @Special Thanks to
