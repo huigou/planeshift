@@ -1,4 +1,4 @@
-﻿@PlaneShift Team at Steel Blue 0.4.01 Release (released June-2008)
+@PlaneShift Team at Steel Blue 0.4.03 Release (released December-2008)
 
 &Project Leader, Director
 
@@ -9,14 +9,14 @@ Luca "Talad" Pancallo, for building a great team to make a dream come true.
 
 Andrew "Acraig" Craig, for client gui foundation, char creation screens, equipment, inventory, overall coordination ...
 
-Brian Lee "Xillix" Bonfonti, Setting department leader, for quests, npcs dialogues, books, prospect management, hard work and lot of passion
+Brian Lee "Xillix" Bonfonti, Settings department leader, for quests, npcs dialogues, books, prospect management, hard work and lots of passion.
 
 
 &Client and Server engine
 
 Andrew "Acraig" Craig, client side department leader.
 
-Keith "Vengeance" Fulton, for lights, animations management, char customization, client/server connections, ...
+Keith "Vengeance" Fulton, for lights, animation management, char customization, client/server connections, ...
 
 Arianna "AryHann" Benigno, for marriage system, weather, running the testing team and many bug fixes.
 
@@ -44,6 +44,10 @@ Enar "Bereror" Väikene, for minigames and bug fixing.
 
 Trond "Trymm" Varslot, for MacOSX support.
 
+Andreas "Paldorin" Heinchen, for fixing many serious memory leaks and other code bugs.
+
+Stefano "weltall" Angeleri, for lots of bug fixing and code refactoring.
+
 
 &Settings
 
@@ -51,25 +55,25 @@ Brian Lee "Xillix" Bonfonti, Setting department leader, for quests, npcs dialogu
 
 Desmond "Jeraphon", for quests, npc dialogues, kas and books.
 
-Sherry "Rizin" Heidkamp, for quests, books, NPCs, oversight of and proposals for the tutorial, internal document management, and exceptional editing
+Sherry "Rizin" Heidkamp, for quests, books, NPCs, oversight of and proposals for the tutorial, internal document management, and exceptional editing.
+
 Steve "Darkmoon" Scott, for maps, npcs dialogues, quests and knowledge areas.
 
 Stacy "Venae Rell" Davis, for uncompromising editing, written and artistic contributions, and superior prospect management.
 
 Fred "Steuben" Prentice, for npc paths, and engine liason duties.
 
-Frank "Eriroley" Barton, for WebConsole utilities and special projects, quests, and editing
+Frank "Eriroley" Barton, for WebConsole utilities and special projects, quests, and editing.
 
+Melissa "Ellille" Barton for cooking and baking development, and her aid in furthering settings and making the world make sense.
 
-Melissa "Ellille" Barton for cooking and baking development, and her aid in furthering settings and making the world make sense
-
-Angela "Oomi" Miller, for quests, books, KAs, and organization of in-progress quests
+Angela "Oomi" Miller, for quests, books, KAs, and organization of in-progress quests.
 
 
 
 &2D Art
 
-Rob "Ulf" Walker, for gugrontid level, lot of good textures and his motivation
+Rob "Ulf" Walker, for gugrontid level, lot of good textures and his motivation.
 
 Kelvin "Gluonite" Mason for gugrontid textures, derghir tools, houses and textures, items.
 
@@ -86,7 +90,7 @@ Ethan "Gentar" Scheu, for bronze doors texturing, and armor textures.
 
 Ville "Cherppow" Rantapuska, for many item models, stone and elves client skins, deathrealm expansion and more.
 
-Rob "Ulf" Walker, for gugrontid level, lot of good textures and his motivation
+Rob "Ulf" Walker, for gugrontid level, lot of good textures and his motivation.
 
 Stacy "Venae Rell" Davis, for blackflame and xiosia altars and other textures.
 
@@ -103,7 +107,7 @@ Erik "Erik" Bakker, for Trepor model, Klyros model, sewers level, player animati
 
 &Game Masters
 
-Anselm "Kerol" Kiefner, GM Team Leader, oversight of and proposals for the tutorial, and settings contributor
+Anselm "Kerol" Kiefner, GM Team Leader, oversight of and proposals for the tutorial, and settings contributor.
 
 
 &Rules
@@ -115,16 +119,16 @@ Scott "Starg" Gibson, for adding new crafting, repairing old crafting, and many 
 
 &Music and sounds
 
-Ruslan "Ellarion" Perezhilo, for travel songs, death jingles and lot of nice sounds
+Ruslan "Ellarion" Perezhilo, for travel songs, death jingles and lot of nice sounds.
 
-Jiri "GeorgeD" Ptacek, for death realm song, victory jingles and lot of nice sounds
+Jiri "GeorgeD" Ptacek, for death realm song, victory jingles and lot of nice sounds.
 
-Bruno "CyberMozart" Largarde, for the main theme, intro songs and battle theme
+Bruno "CyberMozart" Largarde, for the main theme, intro songs and battle theme.
 
 
 @Special Thanks to
 
-Frank "res" Richter, for working on CS New Renderer and supporting  our project directly.
+Frank "res" Richter, for lots of great work on CS and supporting our project directly.
 
 Marc Haseinko, for providing a 99.9% reliable testing environment.
 
