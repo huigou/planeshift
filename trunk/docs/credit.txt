@@ -140,7 +140,7 @@ Michele "Caarrie" Davis, for fixing and closing many bugs, as well as providing 
 
 "Mrokii", for helping to test many mac issues and other bugs.
 
-Mario "LigH" Rohkr‰mer, for reporting and testing many art bugs, and work on bug prevention.
+Mario "LigH" Rohkr√§mer, for reporting and testing many art bugs, and work on bug prevention.
 
 "f-rd", for testing many bugs and making even weird ones reproducible.
 
