@@ -3,6 +3,7 @@
 - Fixed inverted x has been killed by y message. Who killed was "being killed"
 - Added a missing variable in a debug output of the event manager
 - Events were being destroyed earlier than expected
+- Fixed a crash caused by a pointer to null passed to cal3d cs plugin
 
 *** 2008-11-28 by Stefano Angeleri
 - Fixing FS#2529 and FS#2404 disabling the mouse hit on enter for buttons.

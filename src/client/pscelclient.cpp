@@ -1434,7 +1434,7 @@ int GEMClientActor::GetAnimIndex (csStringHashReversible* msgstrings, csStringID
 
     // Not cached yet.
     csString animName = msgstrings->Request (animid);
-    idx = cal3dstate->FindAnim (animName);
+    idx = cal3dstate->FindAnim (animName.GetDataSafe());
     if (idx >= 0)
     {
         // Cache it.
