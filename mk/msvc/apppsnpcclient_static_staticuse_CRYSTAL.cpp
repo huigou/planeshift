@@ -15,7 +15,6 @@
 struct _static_use_CRYSTAL { _static_use_CRYSTAL (); };
 _static_use_CRYSTAL::_static_use_CRYSTAL () {}
 SCF_USE_STATIC_PLUGIN(bindoc)
-SCF_USE_STATIC_PLUGIN(cpersist)
 SCF_USE_STATIC_PLUGIN(csddsimg)
 SCF_USE_STATIC_PLUGIN(csfont)
 SCF_USE_STATIC_PLUGIN(csopcode)
