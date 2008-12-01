@@ -1,4 +1,7 @@
-﻿*** 2008-12-01 by Steven Patrick
+﻿*** 2008-11-01 by Stefano Angeleri
+- added /show petitions
+
+*** 2008-12-01 by Steven Patrick
 - Fixed bug in /disablequest command that saved the flag in the db inversely.
 
 *** 2008-11-29 by Stefano Angeleri
