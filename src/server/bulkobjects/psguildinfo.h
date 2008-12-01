@@ -62,7 +62,7 @@ enum GUILD_PRIVILEGE
                                        //      Leader cannot leave guild.
                                        //      This means that each guild has _just_ one level 9 person.
                                        
-    RIGHTS_EDIT_LEVEL  = 32,           // User can change priviledges of lower guild levels
+    RIGHTS_EDIT_LEVEL  = 32,           // User can change privileges of lower guild levels
     
     RIGHTS_EDIT_POINTS = 64,           // User can change guild points of players of lower level
     
