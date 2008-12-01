@@ -302,7 +302,7 @@ bool pawsControlWindow::HandleWindowName(csString widgetStr)
         widget = "BuddyWindow";
     else if(widgetStr == "info")
         widget = "InfoWindow";
-    else if(widgetStr == "petition")
+    else if(widgetStr == "petition" || widgetStr == "petitions")
         widget = "PetitionWindow";
     else if(widgetStr == "quest")
         widget = "QuestNotebook";
