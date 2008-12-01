@@ -479,7 +479,7 @@ csArray<csString> UserManager::DecodeCommandArea(Client *client, csString target
         {
             if (nearobj->GetClientID())
             {
-                newTarget.Format("uid:%d", nearobj->GetPID().Unbox());
+                newTarget.Format("pid:%d", nearobj->GetPID().Unbox());
                 break;
             }
             else
@@ -489,7 +489,7 @@ csArray<csString> UserManager::DecodeCommandArea(Client *client, csString target
         {
             if (nearobj->GetPID().IsValid())
             {
-                newTarget.Format("uid:%d", nearobj->GetPID().Unbox());
+                newTarget.Format("pid:%d", nearobj->GetPID().Unbox());
                 break;
             }
             else
