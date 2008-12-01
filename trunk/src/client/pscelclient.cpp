@@ -1434,7 +1434,8 @@ int GEMClientActor::GetAnimIndex (csStringHashReversible* msgstrings, csStringID
 
     // Not cached yet.
     csString animName = msgstrings->Request (animid);
-    idx = cal3dstate->FindAnim (animName.GetDataSafe());
+    CS_ASSERT_MSG("Missing animName from common strings!", animName.GetData());
+    idx = cal3dstate->FindAnim (animName.GetData());
     if (idx >= 0)
     {
         // Cache it.
