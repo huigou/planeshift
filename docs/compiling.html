@@ -626,7 +626,7 @@ continue as indicated.<br></p>
 After that we need to refresh our sources.list file like so:<br>
     <p><i class="command"># sudo apt-get update</i></p>
     Once that is complete, we can fetch all the required packages using the following command:<br>
-    <p><div class="commandBox"># sudo apt-get --assume-yes install libjpeg62-dev x11proto-gl-dev autoconf jam bison flex-old automake1.9 libcurl4-openssl-dev libmng-dev libmikmod2-dev libogg-dev libvorbis-dev zlib1g-dev libpng12-dev build-essential libtool libglu1-mesa-dev libglu1-xorg-dev xserver-xorg-dev libxt-dev libopenal1a libopenal-dev subversion zlibc libttf2 libfreetype6-dev libfreetype6 libasound2-dev alsa-oss libxxf86vm-dev libxext-dev x11proto-xext-dev</div></p>
+    <p><div class="commandBox"># sudo apt-get --assume-yes install libjpeg62-dev x11proto-gl-dev autoconf jam bison flex-old automake1.9 libcurl4-openssl-dev libmng-dev libmikmod2-dev libogg-dev libvorbis-dev zlib1g-dev libpng12-dev build-essential libtool libglu1-mesa-dev libglu1-xorg-dev xserver-xorg-dev libxt-dev libopenal1a libopenal-dev subversion zlibc libttf2 libfreetype6-dev libfreetype6 libasound2-dev alsa-oss libxxf86vm-dev libxext-dev x11proto-xext-dev libspeex-dev</div></p>
 
 <strong> ALL of these above commands are assuming you do not need a server if you do please follow directions in the <a href="#mysql">mysql</a> section for installing other required packages</strong>
 </div>
@@ -635,7 +635,7 @@ After that we need to refresh our sources.list file like so:<br>
     <p>Note: This section is incomplete and untested, but contains the Debian specific build information that was previously in the manual.</p>
     <p>Due to the number of dependencies needed, if you wish to read the homepage listing, or dependency description please select Linux's generic dropdown selection.</p>
 
-    <p>via apt-get: <i class="command">#apt-get install jam svn build-essentials libfreetype6-dev libasound2-dev</i></p>
+    <p>via apt-get: <i class="command">#apt-get install jam svn build-essentials libfreetype6-dev libasound2-dev </i></p>
 
     <p>If you are using Debian testing (which uses X.Org), then you need xlibmesa-gl-dev instead of xlibmesa-glu-dev.</p>
     <p>
@@ -647,7 +647,7 @@ After that we need to refresh our sources.list file like so:<br>
     They would conflict with the older versions flex-old, bison1.35 and automake1.8 needed to compile PlaneShift.</p>
 
     <p><i class="command">#apt-get install libtool bison-1.35 flex-old autoconf automake1.8</i></p>
-    <p><i class="command">#apt-get install libmng-dev libmikmod2-dev libogg-dev libvorbis-dev zlib1g-dev libpng3-dev libjpeg62-dev python2.3-dev</i></p>
+    <p><i class="command">#apt-get install libmng-dev libmikmod2-dev libogg-dev libvorbis-dev zlib1g-dev libpng3-dev libjpeg62-dev python2.3-dev libspeex-dev</i></p>
 <strong> BOTH of these above commands are assuming you do not need a server if you do please follow directions in the <a href="#mysql">mysql</a> section for installing other required packages</strong>
 </div>
 
