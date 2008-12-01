@@ -7960,7 +7960,7 @@ void AdminManager::DisableQuest(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdDa
 
         uint flag = flags[0].GetUInt32("flags"); //get the flags and assign them to a variable
 
-        if(quest->Active()) //if active assign the flag
+        if(!quest->Active()) //if active assign the flag
             flag |= PSQUEST_DISABLED_QUEST;
         else //else remove the flag
             flag &= ~PSQUEST_DISABLED_QUEST;

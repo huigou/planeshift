@@ -1,4 +1,7 @@
-﻿*** 2008-11-29 by Stefano Angeleri
+﻿*** 2008-12-01 by Steven Patrick
+- Fixed bug in /disablequest command that saved the flag in the db inversely.
+
+*** 2008-11-29 by Stefano Angeleri
 - Converted some code using char arrays to use csString
 - Fixed inverted x has been killed by y message. Who killed was "being killed"
 - Added a missing variable in a debug output of the event manager
