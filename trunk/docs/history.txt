@@ -1,5 +1,6 @@
 ﻿*** 2008-11-01 by Stefano Angeleri
 - added /show petitions
+- Fixed a typo in 'privilege'
 
 *** 2008-12-01 by Steven Patrick
 - Fixed bug in /disablequest command that saved the flag in the db inversely.

@@ -416,7 +416,7 @@ int GuildManager::GetClientLevel(Client * client)
         return 0;
 }
 
-/** Checks if 'client' has priviledge 'priv' in his guild.
+/** Checks if 'client' has privilege 'priv' in his guild.
   */
 bool GuildManager::CheckClientRights(Client * client, GUILD_PRIVILEGE priv)
 {
@@ -432,7 +432,7 @@ bool GuildManager::CheckClientRights(Client * client, GUILD_PRIVILEGE priv)
         return false;
 }
 
-/** Checks if 'client' has priviledge 'priv' in his guild.
+/** Checks if 'client' has privilege 'priv' in his guild.
   * If not, he is sent 'denialMsg'.
   */
 bool GuildManager::CheckClientRights(Client * client, GUILD_PRIVILEGE priv, const char * denialMsg)
@@ -634,11 +634,11 @@ void GuildManager::HandleSetLevelRight(Client * client, iDocumentNode* root)
     
     if ( ! IsLeader(client))
     {
-        if ( ! CheckClientRights(client, RIGHTS_EDIT_LEVEL, "You do not have the rights to edit priviledges in your guild."))
+        if ( ! CheckClientRights(client, RIGHTS_EDIT_LEVEL, "You do not have the rights to edit privileges in your guild."))
             return;
         if ( GetClientLevel(client) <= level )
         {
-            psserver->SendSystemError(client->GetClientNum(),"You do not have the rights to edit priviledges of this level in your guild.");
+            psserver->SendSystemError(client->GetClientNum(),"You do not have the rights to edit privileges of this level in your guild.");
             return;
         }
     }
@@ -682,7 +682,7 @@ void GuildManager::HandleSetLevelRight(Client * client, iDocumentNode* root)
 
     if ( ! IsLeader(client))
     {
-        if ( ! CheckClientRights(client, right, "You cannot change a priviledge that you do not have yourself."))
+        if ( ! CheckClientRights(client, right, "You cannot change a privilege that you do not have yourself."))
         {
             return;
         }
