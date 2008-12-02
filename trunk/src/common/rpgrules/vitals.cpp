@@ -20,23 +20,20 @@
 #include <psconfig.h>
 #include "vitals.h"
 
-
 psVitalManager::psVitalManager()
 {
-    for ( int x = 0; x < VITAL_COUNT; x++ )
+    for (int i = 0; i < VITAL_COUNT; i++)
     {
-        orig_vitals[x].value = 0.0f;
-        orig_vitals[x].max = 0.0f;
-        orig_vitals[x].maxModifier = 0.0f;
+        orig_vitals[i].value = 0.0f;
+        orig_vitals[i].max = 0.0f;
+        orig_vitals[i].maxModifier = 0.0f;
     }
 
-    experiencePoints = 0;
-    progressionPoints = 0;
     orig_vitals[VITAL_HITPOINTS].drRate  = HP_REGEN_RATE;
     orig_vitals[VITAL_MANA].drRate       = MANA_REGEN_RATE;
 
-    orig_vitals[VITAL_PYSSTAMINA].drRate    = 0;
-    orig_vitals[VITAL_MENSTAMINA].drRate    = 0;
+    orig_vitals[VITAL_PYSSTAMINA].drRate = 0;
+    orig_vitals[VITAL_MENSTAMINA].drRate = 0;
 
     experiencePoints = 0;
     progressionPoints = 0;
@@ -53,46 +50,30 @@ psVitalManager::~psVitalManager()
 
 void psVitalManager::ResetVitals()
 {
-    for (int i=0; i<VITAL_COUNT; i++)
+    for (int i = 0; i < VITAL_COUNT; i++)
         vitals[i] = orig_vitals[i];
 }
 
 void psVitalManager::SetOrigVitals()
 {
-    for (int i=0; i<VITAL_COUNT; i++)
+    for (int i = 0; i < VITAL_COUNT; i++)
         orig_vitals[i] = vitals[i];
 }
 
-psCharVital& psVitalManager::GetVital( int vital )
+psCharVital & psVitalManager::GetVital(int vital)
 {
-    if ( vital >=0 && vital < VITAL_COUNT )
-    {
-        return vitals[vital];
-    }
-    else
-    {
-        static psCharVital dummy;
-        assert(false);
-        return dummy;
-    }
+    CS_ASSERT(vital >= 0 && vital < VITAL_COUNT);
+    return vitals[vital];
 }
 
-float psVitalManager::GetValue( int vital )
+float psVitalManager::GetValue(int vital)
 {
-    if ( vital >=0 && vital < VITAL_COUNT )
-    {
-        return vitals[vital].value;
-    }
-    else
-    {
-        return 0.0;
-    }
+    CS_ASSERT(vital >= 0 && vital < VITAL_COUNT);
+    return vitals[vital].value;
 }
+
 float psVitalManager::GetStamina(bool pys)
 {
-    if(pys)
-        return vitals[VITAL_PYSSTAMINA].value;
-    else
-        return vitals[VITAL_MENSTAMINA].value;
+    return vitals[pys ? VITAL_PYSSTAMINA : VITAL_MENSTAMINA].value;
 }
 
