@@ -298,7 +298,8 @@ void psSpellManager::Cast(Client * client, csString spellName, float kFactor)
         spell = client->GetCharacterData()->GetSpellByName(spellName); 
     }        
 
-    if (!spell)
+    //spells with empty glyphlists are not enabled
+    if (!spell || spell->GetGlyphList().IsEmpty())
     {
         psserver->SendSystemInfo(client->GetClientNum(),
                                  "%s is a unknown spell for you!",spellName.GetData());

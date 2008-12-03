@@ -1,4 +1,7 @@
-﻿*** 2008-11-01 by Stefano Angeleri
+﻿*** 2008-12-03 by Steven Patrick
+- Fixed FS#2526, patch by Lanarel
+
+*** 2008-11-01 by Stefano Angeleri
 - added /show petitions
 - Fixed a typo in 'privilege'
 - Fixed an uid: / pid: inconsistency
