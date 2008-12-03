@@ -333,7 +333,7 @@ bool AdminManager::AdminCmdData::DecodeAdminCmdMessage(MsgEntry *pMsg, psAdminCm
         player = words[1];
         target = words[2];
 
-        instance = 0;
+        instance = DEFAULT_INSTANCE;
         instanceValid = false;
 
         if (target == "map")
@@ -1692,7 +1692,7 @@ void AdminManager::GetInfo(MsgEntry* me,psAdminCmdMessage& msg, AdminCmdData& da
     csString name, ipAddress, securityLevel, sectorName;
     PID playerId;
     AccountID accountId;
-    int instance = 0;
+    INSTANCE_ID instance = DEFAULT_INSTANCE;
     float timeConnected = 0.0f, loc_x = 0.0f, loc_y = 0.0f, loc_z = 0.0f, loc_yrot = 0.0f;
 
     bool banned = false;
