@@ -949,7 +949,7 @@ void UserManager::HandleEntranceMessage( MsgEntry* me, Client *client )
     // Send player to unique instance
     else if (entranceType == "ActionID")
     {
-        int instance = (int)action->id;
+        INSTANCE_ID instance = action->id;
         if (secure) psserver->SendSystemInfo(client->GetClientNum(),"Teleporting to sector %s", sectorName.GetData());
         Teleport( client, pos.x, pos.y, pos.z, instance, rot, sectorName );
     }

@@ -3525,7 +3525,7 @@ void AdminManager::HandleLocation(MsgEntry* me, psAdminCmdMessage& msg, AdminCmd
 
 bool AdminManager::GetTargetOfTeleport(Client *client, psAdminCmdMessage& msg, AdminCmdData& data, iSector * & targetSector,  csVector3 & targetPoint, float &yRot, gemObject *subject, INSTANCE_ID &instance)
 {
-    instance = 0;
+    instance = DEFAULT_INSTANCE;
 
     // when teleporting to a map
     if (data.target == "map")
