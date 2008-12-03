@@ -398,7 +398,7 @@ public:
     gemActiveObject( const char* name,
                     const char* factname,
                     const char* filename,
-                    unsigned int myInstance,
+                    INSTANCE_ID myInstance,
                     iSector* room,
                     const csVector3& pos,
                     float rotangle,
@@ -433,7 +433,7 @@ public:
     gemItem(csWeakRef<psItem> item,
         const char* factname,
         const char* filename,
-        unsigned int myInstance,
+        INSTANCE_ID myInstance,
         iSector* room,
         const csVector3& pos,
         float rotangle,
@@ -477,7 +477,7 @@ public:
     gemContainer(csWeakRef<psItem> item,
         const char* factname,
         const char* filename,
-        unsigned int myInstance,
+        INSTANCE_ID myInstance,
         iSector* room,
         const csVector3& pos,
         float rotangle,
@@ -655,7 +655,7 @@ public:
     psLinearMovement* pcmove;
 
     gemActor(psCharacter *chardata, const char* factname,const char* filename,
-        unsigned int myInstance,iSector* room,const csVector3& pos,float rotangle,int clientnum);
+        INSTANCE_ID myInstance,iSector* room,const csVector3& pos,float rotangle,int clientnum);
 
     virtual ~gemActor();
 
@@ -897,7 +897,7 @@ protected:
 
 public:
     gemNPC(psCharacter *chardata, const char* factname,const char* filename,
-           unsigned int myInstance,iSector* room,const csVector3& pos,float rotangle,int clientnum);
+           INSTANCE_ID myInstance,iSector* room,const csVector3& pos,float rotangle,int clientnum);
 
     virtual ~gemNPC();
 

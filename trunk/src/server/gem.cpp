@@ -587,7 +587,7 @@ gemObject::gemObject(const char *name)
 gemObject::gemObject(const char* name,
                      const char* factname,
                      const char* filename,
-                     unsigned int myInstance,
+                     INSTANCE_ID myInstance,
                      iSector* room,
                      const csVector3& pos,
                      float rotangle,
@@ -1191,7 +1191,7 @@ gemActiveObject::gemActiveObject( const char* name )
 gemActiveObject::gemActiveObject( const char* name,
                                      const char* factname,
                                      const char* filename,
-                                     unsigned int myInstance,
+                                     INSTANCE_ID myInstance,
                                      iSector* room,
                                      const csVector3& pos,
                                      float rotangle,
@@ -1653,7 +1653,7 @@ void gemActionLocation::Send( int clientnum, bool , bool to_superclient )
 gemActor::gemActor( psCharacter *chardata,
                        const char* factname,
                        const char* filename,
-                       unsigned int myInstance,
+                       INSTANCE_ID myInstance,
                        iSector* room,
                        const csVector3& pos,
                        float rotangle,
@@ -1937,7 +1937,7 @@ void gemActor::Resurrect()
     {
         // TODO: Get Death Realm location from db somewhere
         cel->Teleport( this, -29.2f, -119.0f, 28.2f, 0.0f, "DR01");
-        SetInstance(0);
+        SetInstance(DEFAULT_INSTANCE);
     }
 
     psChar->SetHitPoints(psChar->GetHitPointsMax());
@@ -2632,7 +2632,7 @@ void gemActor::SetGMDefaults()
     questtester = false;  // Always off by default
 }
 
-void gemActor::SetInstance(unsigned int worldInstance)
+void gemActor::SetInstance(INSTANCE_ID worldInstance)
 {
     this->worldInstance = worldInstance;
 }
@@ -3950,7 +3950,7 @@ void gemNPC::NPCTalk(const csString & text)
 gemContainer::gemContainer(csWeakRef<psItem> item,
              const char* factname,
              const char* filename,
-             unsigned int myInstance,
+             INSTANCE_ID myInstance,
              iSector* room,
              const csVector3& pos,
              float rotangle,
