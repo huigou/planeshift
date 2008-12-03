@@ -3,6 +3,7 @@
 
 *** 2008-12-03 by Steven Patrick
 - Fixed FS#2526, patch by Lanarel
+- Further fix to FS#2526.
 
 *** 2008-11-01 by Stefano Angeleri
 - added /show petitions

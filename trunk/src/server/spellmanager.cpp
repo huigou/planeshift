@@ -211,9 +211,9 @@ void psSpellManager::HandleAssembler( Client* client, MsgEntry* me )
         return;
     }
 
-    // If the spell exists and the player has high enough skill, determine if the player successfully researches the spell.
+    // If the spell exists and the player has high enough skill, determine if the player successfully researches the spell. The spell must have at least 1 glpyh.
     bool gameMaster = CacheManager::GetSingleton().GetCommandManager()->Validate(client->GetSecurityLevel(), "cast all spells");
-    if ( researchSpellScript && spell && ( gameMaster || client->GetCharacterData()->CheckMagicKnowledge(spell->GetSkill(), spell->GetRealm()) ) )
+    if ( researchSpellScript && spell && ( gameMaster || client->GetCharacterData()->CheckMagicKnowledge(spell->GetSkill(), spell->GetRealm()) ) && numGlyphs > 0 )
     {
         varCaster->SetObject( client->GetCharacterData() );
         varSpell->SetObject( spell );
