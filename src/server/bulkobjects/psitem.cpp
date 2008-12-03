@@ -151,7 +151,7 @@ psItem::psItem() : transformationEvent(NULL), gItem(NULL), pendingsave(false), l
     guardingCharacterID = 0;
 
     location.loc_sectorinfo=NULL;
-    location.worldInstance=0;
+    location.worldInstance= DEFAULT_INSTANCE;
     location.loc_x=0.0f;
     location.loc_y=0.0f;
     location.loc_z=0.0f;

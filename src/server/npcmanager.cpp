@@ -1548,7 +1548,7 @@ void NPCManager::HandlePetCommand( MsgEntry * me )
                 iSector * targetSector;
                 csVector3 targetPoint;
                 float yRot = 0.0;
-                int instance;
+                INSTANCE_ID instance;
                 owner->GetActor()->GetPosition(targetPoint,yRot,targetSector);
                 instance = owner->GetActor()->GetInstance();
                 psSectorInfo* sectorInfo = CacheManager::GetSingleton().GetSectorInfoByName(targetSector->QueryObject()->GetName());

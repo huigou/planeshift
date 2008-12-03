@@ -77,7 +77,7 @@ ProximityList::ProximityList( iObjectRegistry* object_reg, gemObject *parent )
     iSector *sector;
     firstFrame = true;
     self->GetPosition (oldPos, rot, sector);
-    oldInstance = 0;
+    oldInstance = DEFAULT_INSTANCE;
 }
 
 ProximityList::~ProximityList()

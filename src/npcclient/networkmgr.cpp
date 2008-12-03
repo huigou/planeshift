@@ -399,7 +399,7 @@ void NetworkManager::HandlePositionUpdates(MsgEntry *msg)
     {
         csVector3 pos;
         iSector* sector;
-        int instance;
+        INSTANCE_ID instance;
 
         EID id = updates.Get(pos, sector, instance, npcclient->GetNetworkMgr()->GetMsgStrings(), engine);
         npcclient->SetEntityPos(id, pos, sector, instance);

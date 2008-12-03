@@ -2906,7 +2906,7 @@ public:
     /**
      * Used to insert instance into the message buffer after creation.
      */
-    void SetInstance(int instance);
+    void SetInstance(INSTANCE_ID instance);
 
     csString name;
     csString guild;
@@ -2926,7 +2926,7 @@ public:
     EID ownerEID;
     bool control;
     uint32_t flags;
-    int instance;
+    INSTANCE_ID instance;
 
     int posPlayerID; // Remember the position the playerID in the generated message
     int posInstance; // Remember the position of the instance field in the generated message

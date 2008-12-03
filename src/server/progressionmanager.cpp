@@ -2955,7 +2955,7 @@ public:
 
                 // Do teleport
                 actor->StopMoving(true);
-                actor->SetInstance(0);
+                actor->SetInstance(DEFAULT_INSTANCE);
                 actor->SetPosition(csVector3(x,y,z),yrot,sector);
                 actor->GetCharacterData()->SaveLocationInWorld();
                 actor->MulticastDRUpdate();
