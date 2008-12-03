@@ -52,7 +52,7 @@ e.custom(start,val,"");}});return true;});},queue:function(type,fn){if(jQuery.is
     var csWinLibsVersion = "1.3_004"; // cs win32 libs version.
     //Update date and author, to be changed everytime and updates occurred
     var UpdateDate = "03 Dec 2008"; //Date when the update occurred
-    var UpdateAuthor = "Stefano Angeleri"; //Author of the update
+    var UpdateAuthor = "Caarrie"; //Author of the update
 -->
 </script>
 
@@ -785,15 +785,31 @@ Note: To exit nano, press Ctrl-X, then y to save the file, then enter to save to
 <i class="command">export PATH=$PATH:/sw/bin/</i><br /><br />
 
 
-For additional information please read the<a href="http://www.macdevcenter.com/pub/a/mac/2004/02/24/bash.html">recommended bash tutorial.</a>  <br />
+For additional information please read the <a href="http://www.macdevcenter.com/pub/a/mac/2004/02/24/bash.html">recommended bash tutorial.</a>  <br />
 
 Option #2 - Using a path to run the svn command<br />
 If you prefer NOT to store environment variables permanently, you can run the svn command as follows: # <i class="command">/sw/bin/svn co ...</i><br />
 
-Simply add /sw/bin/ to the start of every svn command in this guide to find and run the command.<br />
+Simply add /sw/bin/ to the start of every svn command in this guide to find and run the command.<br /><br />
 
 You also need to install Nvidia's Cg Toolkit from <a href="http://www.nvidia.com/object/cg_toolkit.html">
-here.</a></div>
+here.</a><br /><br />
+You will also need to install and build speex. The current version of speex in fink will not work for our needs so we need to build it ourselves.<br />
+You need to download the latest source code from <a href="http://www.speex.org/downloads/">http://www.speex.org/downloads/</a> It should be atleast version 1.2beta3<br />
+Once you have downloaded the tar unzip it into a folder. In terminal cd into the folder you just unzipped it into.<br />
+As it says in the install.txt file you will need to<br /><br />
+<i class="command">./configure</i><br /><br />
+After you have configured if you see the following message you can ignore it safely<br /><br />
+<div class="commandBox">
+You don't seem to have the development package for libogg (libogg-devel) installed. Only the Speex library (libspeex) will be built (no encoder/decoder executable)<br />
+You can download libogg from http://downloads.xiph.org/releases/ogg/<br />
+Type "make; make install" to compile and install Speex</div><br />
+
+Next you will need to <br /><br />
+<i class="command">make</i><br /><br />
+then<br /><br />
+<i class="command">sudo make install</i><br />
+</div>
 <p>
     <h3>Server Databases</h3>
     <i>Optional section</i>
