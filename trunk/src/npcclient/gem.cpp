@@ -52,7 +52,7 @@ psNpcMeshAttach::psNpcMeshAttach(gemNPCObject* objectToAttach) : scfImplementati
 //-------------------------------------------------------------------------------
 
 gemNPCObject::gemNPCObject(psNPCClient* npcclient, EID id)
-    :eid(id), visible(true), invincible(false), instance(0)
+    :eid(id), visible(true), invincible(false), instance(DEFAULT_INSTANCE)
 {
     this->npcclient = npcclient;
 
@@ -63,7 +63,7 @@ gemNPCObject::~gemNPCObject()
     delete pcmesh;
 }
 
-void gemNPCObject::Move(const csVector3& pos, float rotangle,  const char* room, int instance)
+void gemNPCObject::Move(const csVector3& pos, float rotangle,  const char* room, INSTANCE_ID instance)
 {
     SetInstance(instance);
     Move(pos,rotangle,room);
@@ -217,7 +217,7 @@ bool gemNPCObject::InitMesh(    const char *factname,
     return true;
 }
 
-void gemNPCObject::SetPosition(csVector3& pos, iSector* sector, int* instance)
+void gemNPCObject::SetPosition(csVector3& pos, iSector* sector, INSTANCE_ID* instance)
 {
     psGameObject::SetPosition(this, pos, sector);
 
