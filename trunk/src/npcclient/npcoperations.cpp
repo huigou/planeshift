@@ -2096,7 +2096,7 @@ void ChaseOperation::Advance(float timedelta, NPC *npc, EventManager *eventmgr)
 
     csVector3 myPos,myNewPos,targetPos;
     float     myRot,dummyrot;
-    int       myInstance, targetInstance;
+    INSTANCE_ID       myInstance, targetInstance;
     iSector * mySector, *myNewSector, *targetSector;
     csVector3 forward;
     

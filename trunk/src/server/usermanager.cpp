@@ -1448,7 +1448,7 @@ void UserManager::ReportPosition(psUserCmdMessage& msg,Client *client,int client
         float angle;
 
         object->GetPosition(pos, angle, sector);
-        int instance = object->GetInstance();
+        INSTANCE_ID instance = object->GetInstance();
 
         csString sector_name = (sector) ? sector->QueryObject()->GetName() : "(null)";
 
@@ -2286,7 +2286,7 @@ void UserManager::SwitchAttackTarget(Client *targeter, Client *targeted )
         psserver->combatmanager->StopAttack(targeter->GetActor());
 }
 
-void UserManager::Teleport( Client *client, float x, float y, float z, int instance, float rot, const char* sectorname )
+void UserManager::Teleport( Client *client, float x, float y, float z, INSTANCE_ID instance, float rot, const char* sectorname )
 {
     csVector3 pos( x,y,z );
     csRef<iEngine> engine = csQueryRegistry<iEngine> (psserver->GetObjectReg());

@@ -4543,7 +4543,7 @@ psPersistActor::psPersistActor( MsgEntry* me, csStringHashReversible* msgstrings
     playerID   = PID(me->GetUInt32());
     groupID    = me->GetUInt32();
     ownerEID   = EID(me->GetUInt32());
-    instance   = me->GetInt32();
+    instance   = me->GetUInt32();
 
     if (!me->IsEmpty())
     {
@@ -4591,7 +4591,7 @@ void psPersistActor::SetPlayerID(PID playerID)
     msg->Add(playerID.Unbox());
 }
 
-void psPersistActor::SetInstance(int instance)
+void psPersistActor::SetInstance(INSTANCE_ID instance)
 {
     msg->Reset(posInstance);
     msg->Add(instance);

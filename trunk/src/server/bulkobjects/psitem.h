@@ -276,7 +276,7 @@ private:
         psSectorInfo *loc_sectorinfo;
         float loc_x,loc_y,loc_z;
         float loc_yrot;
-        int worldInstance;
+        INSTANCE_ID worldInstance;
     } location;
 
     /// 0% means item does not reduce decay at all.  100% means item does not decay.
@@ -918,7 +918,7 @@ private:
     uint32 itemID;         ///< Item
     csVector3 pos;         ///< Position
     psSectorInfo* sector;  ///< Sector
-    int worldInstance;     ///< Instance ID to spawn in
+    INSTANCE_ID worldInstance;     ///< Instance ID to spawn in
     int interval;          ///< Interval in msecs
     int maxrnd;            ///< Maximum random interval modifier in msecs
 	float range;		   ///< Range in which to spawn item

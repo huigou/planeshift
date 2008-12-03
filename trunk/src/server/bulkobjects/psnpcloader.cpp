@@ -349,7 +349,7 @@ bool psNPCLoader::ReadLocation()
     csString  sector;
     INSTANCE_ID instance;
 
-    instance = 0;
+    instance = DEFAULT_INSTANCE;
     const char * inst_str = xmlnode->GetAttributeValue("instance");
     if( inst_str ) {
         instance = strtoul(inst_str,NULL,10);
