@@ -795,7 +795,7 @@ void CharCreationManager::HandleUploadMessage( MsgEntry* me, Client *client )
     {
         raceinfo->GetStartingLocation(x,y,z,yrot,sectorname);
         sectorinfo = CacheManager::GetSingleton().GetSectorInfoByName(sectorname);
-        newinstance = 0;
+        newinstance = DEFAULT_INSTANCE;
     } else {
         // Try tutorial level first.
         x = -232.00f;
