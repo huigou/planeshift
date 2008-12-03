@@ -51,8 +51,8 @@ e.custom(start,val,"");}});return true;});},queue:function(type,fn){if(jQuery.is
     var csWinLibsVersionStab = "1.3_004"; // cs win32 libs version.
     var csWinLibsVersion = "1.3_004"; // cs win32 libs version.
     //Update date and author, to be changed everytime and updates occurred
-    var UpdateDate = "29 Nov 2008"; //Date when the update occurred
-    var UpdateAuthor = "Mike Gist"; //Author of the update
+    var UpdateDate = "03 Dec 2008"; //Date when the update occurred
+    var UpdateAuthor = "Stefano Angeleri"; //Author of the update
 -->
 </script>
 
@@ -598,12 +598,13 @@ continue as indicated.<br></p>
 <strong> BOTH of these above commands are assuming you do not need a server, if you do please follow directions in the <a href="#mysql">mysql</a> section for installing other required packages before moving on to building to save you time.</strong>
 </div>
 <div class="Linux-Ubuntu">
-    <p>The instructions here are tested using Ubuntu Hardy Heron.<br>
+    <p>The instructions here are tested using Ubuntu Hardy Heron and Intrepid Ibex.<br>
     Since Hardy Heron is installed by default with minimal packages, many required packages for this project are not available. <br>
     To correct this, you will first need to enable the universe and multiverse repositories.<br>
+    Please note that Intrepid has already these repositories enabled by default but in case they aren't you can follow the instruction here or enable them from the package manager (eg: synaptic)<br>
     To enable these, do the following:<br>
     <p><i class="command"># sudo gedit /etc/apt/sources.list</i></p>
-    Delete everything in the file that you have not added yourself. If you are not running Hardy Heron, replace each instance of the word "hardy" with the name of the distro you are using, i.e. hoary, warty, dapper, or edgy. Got that? Ok, Paste the following into the file and save it. Be sure to make the necessary changes if you are running a different version than Hardy:<br>
+    Delete everything in the file that you have not added yourself. If you are not running Hardy Heron, replace each instance of the word "hardy" with the name of the distro you are using, i.e. hoary, warty, dapper, or edgy, gutsy, intrepid. Got that? Ok, Paste the following into the file and save it. Be sure to make the necessary changes if you are running a different version than Hardy:<br>
     <p><div class="commandBox">
         # Ubuntu supported packages<br>
         # GPG key: 437D05B5<br>
@@ -626,7 +627,10 @@ continue as indicated.<br></p>
 After that we need to refresh our sources.list file like so:<br>
     <p><i class="command"># sudo apt-get update</i></p>
     Once that is complete, we can fetch all the required packages using the following command:<br>
-    <p><div class="commandBox"># sudo apt-get --assume-yes install libjpeg62-dev x11proto-gl-dev autoconf jam bison flex-old automake1.9 libcurl4-openssl-dev libmng-dev libmikmod2-dev libogg-dev libvorbis-dev zlib1g-dev libpng12-dev build-essential libtool libglu1-mesa-dev libglu1-xorg-dev xserver-xorg-dev libxt-dev libopenal1a libopenal-dev subversion zlibc libttf2 libfreetype6-dev libfreetype6 libasound2-dev alsa-oss libxxf86vm-dev libxext-dev x11proto-xext-dev libspeex-dev</div></p>
+    <p><div class="commandBox"># sudo apt-get --assume-yes install libjpeg62-dev x11proto-gl-dev autoconf jam bison flex-old automake1.9 libcurl4-openssl-dev libmng-dev libmikmod2-dev libogg-dev libvorbis-dev zlib1g-dev libpng12-dev build-essential libtool libglu1-mesa-dev libglu1-xorg-dev xserver-xorg-dev libxt-dev libopenal0a libopenal-dev subversion zlibc libttf2 libfreetype6-dev libfreetype6 libasound2-dev alsa-oss libxxf86vm-dev libxext-dev x11proto-xext-dev libspeex-dev</div></p>
+    In case you are using intrepid, we can fetch all the required packages using the following command:<br>
+    <p><div class="commandBox"># sudo apt-get --assume-yes install libjpeg62-dev x11proto-gl-dev autoconf jam bison flex-old automake1.9 libcurl4-openssl-dev libmng-dev libmikmod2-dev libogg-dev libvorbis-dev zlib1g-dev libpng12-dev build-essential libtool libglu1-mesa-dev libglu1-xorg-dev xserver-xorg-dev libxt-dev libopenal1 libopenal-dev subversion zlibc libttf2 libfreetype6-dev libfreetype6 libasound2-dev alsa-oss libxxf86vm-dev libxext-dev x11proto-xext-dev libspeex-dev</div></p>
+
 
 <strong> ALL of these above commands are assuming you do not need a server if you do please follow directions in the <a href="#mysql">mysql</a> section for installing other required packages</strong>
 </div>
@@ -677,7 +681,7 @@ After that we need to refresh our sources.list file like so:<br>
     </div>
     <div class="Linux-Ubuntu">
 
-    If you are on Hardy you can
+    If you are on Hardy or Intrepid you can
     <p><i class="command"># sudo apt-get install nvidia-cg-toolkit</i></p>
     <p> Otherwise you MUST do this</p>
     <div class="commandBox"># wget -c http://developer.download.nvidia.com/cg/Cg_2.0/2.1.0012/Cg-2.1_October2008_x86.tgz</br>
