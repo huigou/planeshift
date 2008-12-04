@@ -4,6 +4,8 @@
 - Changed some hardcoded values for default instance and instance all in order to use the defines
   in psconst
 - Committed patch for FS#832 - Dequip shortcuts are buggy by Geckolous
+- Automatically send new admin commands to client. No need to request who is deputized
+  to use /admin
 
 *** 2008-11-03 by Stefano Angeleri
 - Fixed some errors in the Ubuntu compiling guide and added special cases for Intrepid
