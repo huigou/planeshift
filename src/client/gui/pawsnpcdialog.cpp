@@ -58,10 +58,20 @@ void pawsNpcDialogWindow::OnListAction( pawsListBox* widget, int status )
 		pawsTextBox *trig = dynamic_cast<pawsTextBox *>(widget->GetSelectedRow()->FindWidgetXMLBinding("trig"));
 		printf("Player says '%s'.\n", trig->GetText() );
 
+        csString trigger(trig->GetText());
+
         // Send the server the original trigger
-		csString cmd;
-		cmd.Format("/tellnpc %s", trig->GetText() );
-		psengine->GetCmdHandler()->Publish(cmd);
+    	csString cmd;
+        if (trigger.GetAt(0) != '<')
+        {
+	    	cmd.Format("/tellnpc %s", trigger.GetData() );
+		    psengine->GetCmdHandler()->Publish(cmd);
+        }
+        else
+        {
+            psSimpleStringMessage gift(0,MSGTYPE_EXCHANGE_AUTOGIVE,trigger);
+            gift.SendMessage();
+        }
         // Now send the chat window and chat bubbles the nice menu text
         csString text(fld->GetText());
         size_t dot = text.FindFirst('.'); // Take out the numbering to display

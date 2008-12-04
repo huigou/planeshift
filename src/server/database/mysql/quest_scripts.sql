@@ -43,7 +43,7 @@ Give Mug or Steel Falchion or Claymore
 #
 # Quest: "Sandwich Quest"
 #
-INSERT INTO quest_scripts VALUES("2","2","P: can bring you
+INSERT INTO quest_scripts VALUES("2","2","P: can bring you sandwich
 Menu: Is there anything I can bring you?
 
 Merchant: I'm kinda hungry.. bring me a sandwich and hurry if you want a hexa and a mug for your trouble.(/planeshift/data/voice/merchant/clawatit.wav)
@@ -65,15 +65,17 @@ Give 1 hexa. Give Mug. Give 3 Potion of Healing. Give 5 faction merchants.
 #
 # Quest: "Falchion Quest"
 #
-INSERT INTO quest_scripts VALUES("3","3","P: can bring you
+INSERT INTO quest_scripts VALUES("3","3","P: can bring you falchion
+Menu: Is there anything you need?
 
-Merchant: Kill the enkidukai who wanders in the forest and bring me his steel falchion.(Don't think I need anything right now.)
+Merchant: Kill the enkidukai who wanders in the forest and bring me his steel falchion.
 
 Assign Quest
 
 ...
 
 Player gives Merchant Steel Falchion
+Menu: Give the merchant a Steel Falchion.
 
 M: Many thanks, brave stranger.  This will come in handy if the fans misbehave.
 

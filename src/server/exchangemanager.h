@@ -337,6 +337,7 @@ public:
     void HandleExchangeRequest(MsgEntry *me,Client *client);
     void HandleExchangeAccept (MsgEntry *me,Client *client);
     void HandleExchangeEnd    (MsgEntry *me,Client *client);
+    void HandleAutoGive       (MsgEntry *me,Client *client);
 
     /** Utility function to handle exchange objects */
     Exchange * GetExchange(int id);

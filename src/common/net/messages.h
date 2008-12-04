@@ -108,6 +108,7 @@ enum MSG_TYPES
     MSGTYPE_EXCHANGE_ACCEPT,
     MSGTYPE_EXCHANGE_STATUS,
     MSGTYPE_EXCHANGE_END,
+    MSGTYPE_EXCHANGE_AUTOGIVE,
     MSGTYPE_EXCHANGE_MONEY,
     MSGTYPE_GUIMERCHANT,
     MSGTYPE_GROUPCMD,
@@ -247,7 +248,8 @@ enum MSG_TYPES
     MSGTYPE_INTRODUCTION,
 
 	MSGTYPE_CACHEFILE,
-    MSGTYPE_DIALOG_MENU
+    MSGTYPE_DIALOG_MENU,
+    MSGTYPE_SIMPLE_STRING
 };
 
 class psMessageCracker;
@@ -5117,5 +5119,33 @@ public:
 
 	csArray<DialogResponse> responses;
 };
+
+/**
+ *  Class to send a single arbitrary string to the client or server.
+ */
+class psSimpleStringMessage : public psMessageCracker
+{
+
+public:
+	csString str;
+
+	psSimpleStringMessage( uint32_t client,MSG_TYPES type, const char *string);
+    psSimpleStringMessage( MsgEntry* me );
+
+    PSF_DECLARE_MSG_FACTORY();
+
+    /**
+     * @brief Converts the message into human readable string.
+     *
+     * @param access_ptrs A struct to a number of access pointers.
+     * @return Return a human readable string for the message.
+     */
+    virtual csString ToString(AccessPointers * access_ptrs)
+    {
+        return csString("not implemented");
+    }
+
+};
+
 
 #endif

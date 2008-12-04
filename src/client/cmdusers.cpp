@@ -258,7 +258,7 @@ void psUserCommands::AskToSlayBeforeSending(psMessageCracker *msg)
     }
     else
     {
-        msgqueue->SendMessage(msg->msg);
+        msg->SendMessage();
         delete msg;
     }
 }
@@ -339,7 +339,7 @@ const char *psUserCommands::HandleCommand(const char *cmd)
             sprintf(buff,"<R TYPE=\"SELL\"/>"); // If no target specified by user use active target
         }
         psGUIMerchantMessage exchange(psGUIMerchantMessage::REQUEST,buff);
-        msgqueue->SendMessage(exchange.msg);
+        exchange.SendMessage();
     }
     else if ( words[0] == "/buddy" )
     {
@@ -354,7 +354,7 @@ const char *psUserCommands::HandleCommand(const char *cmd)
         else //else send the data to the server for parsing
         {
             psUserCmdMessage cmdmsg(cmd);
-            msgqueue->SendMessage(cmdmsg.msg);
+            cmdmsg.SendMessage();
         }
     }
     else if (words[0] == "/buy")
@@ -368,19 +368,19 @@ const char *psUserCommands::HandleCommand(const char *cmd)
             sprintf(buff,"<R TYPE=\"BUY\"/>"); // If no target specified by user use active target
         }
         psGUIMerchantMessage exchange(psGUIMerchantMessage::REQUEST,buff);
-        msgqueue->SendMessage(exchange.msg);
+        exchange.SendMessage();
     }
 
     else if (words[0] == "/trade")
     {
         psExchangeRequestMsg exchange(true);
-        msgqueue->SendMessage(exchange.msg);
+        exchange.SendMessage();
     }
 
     else if (words[0] == "/give")
     {
         psExchangeRequestMsg exchange(false);
-        msgqueue->SendMessage(exchange.msg);
+        exchange.SendMessage();
     }
 
     else if (words[0] == "/ignore")
@@ -502,13 +502,13 @@ const char *psUserCommands::HandleCommand(const char *cmd)
              words[0] == "/repair" )
     {
         psWorkCmdMessage work(cmd);
-        msgqueue->SendMessage(work.msg);
+        work.SendMessage();
     }
 
     else if (words[0] == "/picklock")
     {
         psLockpickMessage lockpick("");
-        msgqueue->SendMessage(lockpick.msg);
+        lockpick.SendMessage();
     }
 
     else if(words[0] == "/targetinfo")
@@ -524,7 +524,7 @@ const char *psUserCommands::HandleCommand(const char *cmd)
         csString pText;
 
         psAdviceMessage advice(0,words[1].GetDataSafe(),pPerson.GetDataSafe(), pText.GetDataSafe());
-        msgqueue->SendMessage(advice.msg);
+        advice.SendMessage();
 
         return NULL;
     }
@@ -544,7 +544,7 @@ const char *psUserCommands::HandleCommand(const char *cmd)
             chatWindow->BadWordsFilter(pText); //if enabled apply it
 
         psAdviceMessage advice(0,words[0].GetDataSafe(),pPerson.GetDataSafe(), pText.GetDataSafe());
-        msgqueue->SendMessage(advice.msg);
+        advice.SendMessage();
         return NULL;
     }
 
@@ -562,7 +562,7 @@ const char *psUserCommands::HandleCommand(const char *cmd)
             chatWindow->BadWordsFilter(pText); //if enabled apply it
 
         psAdviceMessage advice(0,words[0],pPerson, pText);
-        msgqueue->SendMessage(advice.msg);
+        advice.SendMessage();
         return NULL;
     }
 
@@ -631,7 +631,8 @@ const char *psUserCommands::HandleCommand(const char *cmd)
 
 
         psPETCommandMessage cmd(0, command, target.GetData(), options.GetData());
-        msgqueue->SendMessage(cmd.msg);
+        cmd.SendMessage();
+
         return NULL;
     }
 
@@ -650,12 +651,12 @@ const char *psUserCommands::HandleCommand(const char *cmd)
              csString newCmd;
              newCmd.Format("/pickup eid:%u", mappedID.Unbox());
              psUserCmdMessage cmdmsg(newCmd);
-             msgqueue->SendMessage(cmdmsg.msg);
+             cmdmsg.SendMessage();
          }
          else
          {
              psUserCmdMessage cmdmsg(cmd);
-             msgqueue->SendMessage(cmdmsg.msg);
+             cmdmsg.SendMessage();
          }
     }
 
@@ -681,13 +682,13 @@ const char *psUserCommands::HandleCommand(const char *cmd)
     else if (words[0] == "/introduce")
     {
         psCharIntroduction introduce;
-        msgqueue->SendMessage(introduce.msg);
+        introduce.SendMessage();
     }
 
     else if (words[0] == "/unstick")
     {
         psUserCmdMessage cmdmsg(cmd);
-        msgqueue->SendMessage(cmdmsg.msg);
+        cmdmsg.SendMessage();
         psengine->GetCharControl()->GetMovementManager()->StopAllMovement();
     }
     else if (words[0] == "/drop")
@@ -709,7 +710,7 @@ const char *psUserCommands::HandleCommand(const char *cmd)
         {
             psSlotMovementMsg moneydropmsg( CONTAINER_INVENTORY_MONEY, moneySlot,
                                 CONTAINER_WORLD, 0, quantity );
-            msgqueue->SendMessage(moneydropmsg.msg);
+            moneydropmsg.SendMessage();
             return NULL;
         }
         else if (words[2] == "any")
@@ -738,12 +739,12 @@ const char *psUserCommands::HandleCommand(const char *cmd)
             }
         }
         psCmdDropMessage cmddrop(quantity, itemName, any, guard);
-        msgqueue->SendMessage(cmddrop.msg);
+        cmddrop.SendMessage();
     }
     else
     {
         psUserCmdMessage cmdmsg(cmd);
-        msgqueue->SendMessage(cmdmsg.msg);
+        cmdmsg.SendMessage();
     }
 
     return NULL;  // don't display anything here
