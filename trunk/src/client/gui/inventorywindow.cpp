@@ -214,7 +214,6 @@ bool pawsInventoryWindow::SetupDoll()
 
     // Register this doll for updates
     widget->SetID(actor->GetEID().Unbox());
-    printf("DOOLLLL %u\n", actor->GetEID().Unbox());
 
     csRef<iSpriteCal3DState> spstate = scfQueryInterface<iSpriteCal3DState> (widget->GetObject()->GetMeshObject());
     if (spstate)
