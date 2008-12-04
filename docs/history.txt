@@ -1,5 +1,13 @@
-﻿*** 2008-11-03 by Stefano Angeleri
+﻿*** 2008-11-04 by Stefano Angeleri
+- Fixed various instance ids scattered around the code to use INSTACE_ID in place of unsigned int
+  or even int
+- Changed some hardcoded values for default instance and instance all in order to use the defines
+  in psconst
+- Committed patch for FS#832 - Dequip shortcuts are buggy by Geckolous
+
+*** 2008-11-03 by Stefano Angeleri
 - Fixed some errors in the Ubuntu compiling guide and added special cases for Intrepid
+- Added instruction on how to build libspeex on macosx by caarrie
 
 *** 2008-12-03 by Steven Patrick
 - Fixed FS#2526, patch by Lanarel

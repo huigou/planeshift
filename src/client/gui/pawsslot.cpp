@@ -53,6 +53,8 @@ pawsSlot::pawsSlot()
     dragDrop = true;
     StackCount(0); 
 
+    reserved = false;
+
     drawStackCount = true;
 }
 
@@ -156,6 +158,8 @@ void pawsSlot::PlaceItem( const char* imageName, int count )
        
     stackCount = count;
     StackCount( count );
+
+    reserved = false;
 }
 
 
@@ -197,6 +201,9 @@ void pawsSlot::Clear()
     stackCountLabel->Hide();
     SetPurifyStatus(0);
     SetToolTip("");
+
+    reserved = false;
+    image = NULL;
 }    
 
 const char *pawsSlot::ImageName()

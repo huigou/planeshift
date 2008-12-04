@@ -214,6 +214,7 @@ bool pawsInventoryWindow::SetupDoll()
 
     // Register this doll for updates
     widget->SetID(actor->GetEID().Unbox());
+    printf("DOOLLLL %u\n", actor->GetEID().Unbox());
 
     csRef<iSpriteCal3DState> spstate = scfQueryInterface<iSpriteCal3DState> (widget->GetObject()->GetMeshObject());
     if (spstate)
@@ -327,13 +328,17 @@ void pawsInventoryWindow::Dequip( const char* itemName )
             {
 
                 // Move from the equipped slot to an empty slot
+                // this message isn't being processed until after all the 'dequip' messages are generated...
                 psSlotMovementMsg msg( container, slot,
                                        freeSlot->ContainerID() ,
                                        freeSlot->ID(),
                                        stackCount );
+                freeSlot->Reserve();
 
-                msgHandler->SendMessage( msg.msg );
+                               
+                msgHandler->SendMessage( msg.msg );                                               
                 fromSlot->Clear();
+	
             }
 
         }
