@@ -7177,9 +7177,16 @@ void psDialogMenuMessage::AddResponse(uint32_t id, const csString& menuText, con
 {
     psDialogMenuMessage::DialogResponse new_response;
 
+    csString escTriggerText(triggerText);
+    if (triggerText.GetAt(0) == '<')  // escape xml characters before putting in xml
+    {
+        escTriggerText.ReplaceAll("<","&lt;");
+        escTriggerText.ReplaceAll(">","&gt;");
+    }
+
     new_response.id          = id;
     new_response.menuText    = menuText;
-    new_response.triggerText = triggerText;
+    new_response.triggerText = escTriggerText;
     new_response.flags       = flags;
 
     new_response.menuText.ReplaceAll("$name",playerName);
@@ -7230,4 +7237,22 @@ csString psDialogMenuMessage::ToString(AccessPointers *access_ptrs)
     }
 
     return text;
+}
+
+PSF_IMPLEMENT_MSG_FACTORY(psSimpleStringMessage,MSGTYPE_SIMPLE_STRING);
+
+
+psSimpleStringMessage::psSimpleStringMessage( uint32_t client,MSG_TYPES type, const char *string)
+{
+    msg.AttachNew(new MsgEntry(strlen(string)+1));
+    msg->SetType(type);
+    msg->clientnum = client;
+    msg->Add(string);
+    valid=!(msg->overrun);
+}
+
+psSimpleStringMessage::psSimpleStringMessage( MsgEntry* me )
+{
+    str   = me->GetStr();
+    valid = !(me->overrun);
 }

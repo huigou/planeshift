@@ -1310,9 +1310,10 @@ ExchangeManager::ExchangeManager(ClientConnectionSet *pClnts)
 {
     clients      = pClnts;
 
-    psserver->GetEventManager()->Subscribe(this, new NetMessageCallback<ExchangeManager>(this,&ExchangeManager::HandleExchangeRequest),MSGTYPE_EXCHANGE_REQUEST, REQUIRE_READY_CLIENT|REQUIRE_ALIVE|REQUIRE_TARGETACTOR);
-    psserver->GetEventManager()->Subscribe(this, new NetMessageCallback<ExchangeManager>(this,&ExchangeManager::HandleExchangeAccept),MSGTYPE_EXCHANGE_ACCEPT, REQUIRE_READY_CLIENT|REQUIRE_ALIVE);
-    psserver->GetEventManager()->Subscribe(this, new NetMessageCallback<ExchangeManager>(this,&ExchangeManager::HandleExchangeEnd),MSGTYPE_EXCHANGE_END, REQUIRE_READY_CLIENT|REQUIRE_ALIVE);
+    psserver->GetEventManager()->Subscribe(this, new NetMessageCallback<ExchangeManager>(this,&ExchangeManager::HandleExchangeRequest),MSGTYPE_EXCHANGE_REQUEST,  REQUIRE_READY_CLIENT|REQUIRE_ALIVE|REQUIRE_TARGETACTOR);
+    psserver->GetEventManager()->Subscribe(this, new NetMessageCallback<ExchangeManager>(this,&ExchangeManager::HandleExchangeAccept) ,MSGTYPE_EXCHANGE_ACCEPT,   REQUIRE_READY_CLIENT|REQUIRE_ALIVE);
+    psserver->GetEventManager()->Subscribe(this, new NetMessageCallback<ExchangeManager>(this,&ExchangeManager::HandleExchangeEnd)    ,MSGTYPE_EXCHANGE_END,      REQUIRE_READY_CLIENT|REQUIRE_ALIVE);
+    psserver->GetEventManager()->Subscribe(this, new NetMessageCallback<ExchangeManager>(this,&ExchangeManager::HandleAutoGive)       ,MSGTYPE_EXCHANGE_AUTOGIVE, REQUIRE_READY_CLIENT|REQUIRE_ALIVE|REQUIRE_TARGETACTOR);
 }
 
 ExchangeManager::~ExchangeManager()
@@ -1322,6 +1323,7 @@ ExchangeManager::~ExchangeManager()
         psserver->GetEventManager()->Unsubscribe(this, MSGTYPE_EXCHANGE_REQUEST);
         psserver->GetEventManager()->Unsubscribe(this, MSGTYPE_EXCHANGE_ACCEPT);
         psserver->GetEventManager()->Unsubscribe(this, MSGTYPE_EXCHANGE_END);
+        psserver->GetEventManager()->Unsubscribe(this, MSGTYPE_EXCHANGE_AUTOGIVE);
     }
 }
 void ExchangeManager::StartExchange( Client* client, bool withPlayer )
@@ -1468,28 +1470,16 @@ void ExchangeManager::HandleExchangeEnd(MsgEntry *me,Client *client)
     }
 }
 
+void ExchangeManager::HandleAutoGive(MsgEntry *me,Client *client)
+{
+    psSimpleStringMessage give(me);
+
+    printf("Got autogive of '%s'\n", give.str.GetDataSafe() );
+}
+
 void ExchangeManager::HandleMessage(MsgEntry *me,Client *client)
 {
-    switch ( me->GetType() )
-    {
-        case MSGTYPE_EXCHANGE_END:
-        {
-            HandleExchangeEnd(me, client);
-            break;
-        }
-
-        case MSGTYPE_EXCHANGE_REQUEST:
-        {
-            HandleExchangeRequest(me, client);
-            break;
-        }
-
-        case MSGTYPE_EXCHANGE_ACCEPT:
-        {
-            HandleExchangeAccept(me, client);
-            break;
-        }
-    }
+    // not used anymore
 }
 
 
