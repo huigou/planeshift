@@ -786,7 +786,7 @@ void CharCreationManager::HandleUploadMessage( MsgEntry* me, Client *client )
 
     float x,y,z,yrot;
     const char *sectorname;
-    uint32 newinstance;
+    INSTANCE_ID newinstance;
     sectorname = "tutorial";
 
     psSectorInfo *sectorinfo = CacheManager::GetSingleton().GetSectorInfoByName(sectorname);

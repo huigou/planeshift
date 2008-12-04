@@ -7289,8 +7289,7 @@ void AdminManager::TempSecurityLevel(MsgEntry* me, psAdminCmdMessage& msg, Admin
     }
     else  // Notify of added/removed commands
     {
-        psserver->SendSystemInfo(target->GetClientNum(),"Your access level has been changed for this session. "
-                                 " Use \"/admin\" to enable and list available GM commands.");
+        psserver->SendSystemInfo(target->GetClientNum(),"Your access level has been changed for this session.");
     }
 
     if (value < GM_LEVEL_4) // Cannot access this command, but may still reset
@@ -7306,6 +7305,8 @@ void AdminManager::TempSecurityLevel(MsgEntry* me, psAdminCmdMessage& msg, Admin
 
     // Refresh the label
     target->GetActor()->UpdateProxList(true);
+
+    Admin(target->GetClientNum(), target); //enable automatically new commands no need to request /admin
 
     psserver->SendSystemOK(me->clientnum,"Access level for %s set to %s",target->GetName(),data.setting.GetData());
     if (target != client)
