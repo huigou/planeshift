@@ -40,7 +40,9 @@ public:
     void SetSlotID( int id ) { slotID = id; }
 
     void Clear();
-    bool IsEmpty() { return empty; }
+    bool IsEmpty() { if(!reserved) return empty; else return false; }
+
+    void Reserve() { reserved = true; }
 
     void DrawStackCount(bool value);
     
@@ -60,6 +62,7 @@ protected:
     bool empty;
     bool dragDrop;
     bool drawStackCount;
+    bool reserved;		// implemented to fix dequip behaviour. Cleared on PlaceItem and Clear
     
     csRef<iPAWSDrawable> image;
     pawsWidget* purifySign;
