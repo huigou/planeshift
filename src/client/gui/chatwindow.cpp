@@ -486,6 +486,26 @@ void pawsChatWindow::LoadChatSettings()
     }
 }
 
+void pawsChatWindow::DetermineChatTabAndSelect(const char *specificTabName,bool includeMain, const char *buttonName)
+{
+    csString tabList(specificTabName);
+    
+    if (includeMain)
+        tabList.Append("|MainText");
+
+    switch (settings.selectTabStyle)
+    {
+        case 1:
+            AutoselectChatTabIfNeeded(tabList, buttonName);
+            break;
+        case 2:
+            AutoselectChatTabIfNeeded(tabList, includeMain ? "Main Button" : buttonName);
+            break;
+        default:
+            break;
+    }
+}
+
 const char* pawsChatWindow::HandleCommand( const char* cmd )
 {
     WordArray words(cmd);
@@ -512,22 +532,12 @@ const char* pawsChatWindow::HandleCommand( const char* cmd )
             pPerson.Clear();
             words.GetTail(1, text);
             chattype = CHAT_SAY;
-            csArray<csString> allowedTabs;
-            allowedTabs.Push("MainText");
-            switch (settings.selectTabStyle)
-            {
-                case 1:
-                case 2:
-                    AutoselectChatTabIfNeeded(allowedTabs, "Main Button");
-                    break;
-                default:
-                    break;
-            }
+            DetermineChatTabAndSelect("MainText", false, "Main Button");
         }
         else if (words[0] == "/tellnpcinternal")
         {
             pPerson = psengine->GetCelClient()->GetMainPlayer()->GetName();
-            int space = pPerson.FindFirst(' ');
+            size_t space = pPerson.FindFirst(' ');
             if (space != SIZET_NOT_FOUND)
                 pPerson.DeleteAt(space,pPerson.Length()-space);
             words.GetTail(1, text);
@@ -538,105 +548,35 @@ const char* pawsChatWindow::HandleCommand( const char* cmd )
             pPerson.Clear();
             words.GetTail(1, text);
             chattype = CHAT_NPC;
-            csArray<csString> allowedTabs;
-            allowedTabs.Push("NpcText");
-            if (settings.npcIncluded)
-                allowedTabs.Push("MainText");
-            switch (settings.selectTabStyle)
-            {
-                case 1:
-                    AutoselectChatTabIfNeeded(allowedTabs, "NPC Button");
-                    break;
-                case 2:
-                    AutoselectChatTabIfNeeded(allowedTabs, settings.npcIncluded ?
-                            "Main Button" : "NPC Button");
-                    break;
-                default:
-                    break;
-            }
+            DetermineChatTabAndSelect("NpcText", settings.npcIncluded, "NPC Button");
         }
         else if (words[0] == "/report")
         {
             pPerson.Clear();
             words.GetTail(1,text);
             chattype = CHAT_REPORT;
-            csArray<csString> allowedTabs;
-            allowedTabs.Push("SystemText");
-            if (settings.systemIncluded)
-                allowedTabs.Push("MainText");
-            switch (settings.selectTabStyle)
-            {
-                case 1:
-                    AutoselectChatTabIfNeeded(allowedTabs, "System Button");
-                    break;
-                case 2:
-                    AutoselectChatTabIfNeeded(allowedTabs, settings.systemIncluded ?
-                            "Main Button" : "System Button");
-                    break;
-                default:
-                    break;
-            }
+            DetermineChatTabAndSelect("SystemText", settings.systemIncluded, "System Button");
         }
         else if (words[0] == "/guild")
         {
             pPerson.Clear();
             words.GetTail(1,text);
             chattype = CHAT_GUILD;
-            csArray<csString> allowedTabs;
-            allowedTabs.Push("GuildText");
-            if (settings.guildIncluded)
-                allowedTabs.Push("MainText");
-            switch (settings.selectTabStyle)
-            {
-                case 1:
-                    AutoselectChatTabIfNeeded(allowedTabs, "Guild Button");
-                    break;
-                case 2:
-                    AutoselectChatTabIfNeeded(allowedTabs, settings.guildIncluded ?
-                            "Main Button" : "Guild Button");
-                    break;
-                default:
-                    break;
-            }
+            DetermineChatTabAndSelect("GuildText", settings.guildIncluded, "Guild Button");
         }
         else if (words[0] == "/shout")
         {
             pPerson.Clear();
             words.GetTail(1,text);
             chattype = CHAT_SHOUT;
-            csArray<csString> allowedTabs;
-            allowedTabs.Push("MainText");
-            switch (settings.selectTabStyle)
-            {
-                case 1:
-                case 2:
-                    AutoselectChatTabIfNeeded(allowedTabs, "Main Button");
-                    break;
-                default:
-                    break;
-            }
+            DetermineChatTabAndSelect("MainText", false, "Main Button");
         }
         else if (words[0] == "/group")
         {
             pPerson.Clear();
             words.GetTail(1,text);
             chattype = CHAT_GROUP;
-            csArray<csString> allowedTabs;
-            allowedTabs.Push("GroupText");
-            if (settings.groupIncluded)
-                allowedTabs.Push("MainText");
-            switch (settings.selectTabStyle)
-            {
-                case 1:
-                    AutoselectChatTabIfNeeded(allowedTabs, "Group Button");
-                    break;
-                case 2:
-                    AutoselectChatTabIfNeeded(allowedTabs, settings.groupIncluded ?
-                            "Main Button" : "Group Button");
-                    break;
-                default:
-                    break;
-            }
+            DetermineChatTabAndSelect("GroupText", settings.groupIncluded, "Group Button");
         }
         else if (words[0] == "/tell")
         {
@@ -645,68 +585,28 @@ const char* pawsChatWindow::HandleCommand( const char* cmd )
                 return PawsManager::GetSingleton().Translate("You must enter the text").Detach();
             words.GetTail(2,text);
             chattype = CHAT_TELL;
-            csArray<csString> allowedTabs;
-            allowedTabs.Push("TellText");
-            if (settings.tellIncluded)
-                allowedTabs.Push("MainText");
-            switch (settings.selectTabStyle)
-            {
-                case 1:
-                    AutoselectChatTabIfNeeded(allowedTabs, "Tell Button");
-                    break;
-                case 2:
-                    AutoselectChatTabIfNeeded(allowedTabs, settings.tellIncluded ?
-                            "Main Button" : "Tell Button");
-                    break;
-                default:
-                    break;
-            }
+            DetermineChatTabAndSelect("TellText", settings.tellIncluded, "Tell Button");
         }
         else if (words[0] == "/auction")
         {
             pPerson.Clear();
             words.GetTail(1,text);
             chattype = CHAT_AUCTION;
-            csArray<csString> allowedTabs;
-            allowedTabs.Push("AuctionText");
-            if (settings.auctionIncluded)
-                allowedTabs.Push("MainText");
-            switch (settings.selectTabStyle)
-            {
-                case 1:
-                    AutoselectChatTabIfNeeded(allowedTabs, "Auction Button");
-                    break;
-                case 2:
-                    AutoselectChatTabIfNeeded(allowedTabs, settings.auctionIncluded ?
-                            "Main Button" : "Auction Button");
-                    break;
-                default:
-                    break;
-            }
+            DetermineChatTabAndSelect("AuctionText", settings.auctionIncluded, "Auction Button");
         }
         else if (words[0] == "/mypet")
         {
             pPerson.Clear();
             chattype = CHAT_PET_ACTION;
             words.GetTail(1,text);
-            csArray<csString> allowedTabs;
-            allowedTabs.Push("MainText");
-            switch (settings.selectTabStyle)
-            {
-                case 1:
-                case 2:
-                    AutoselectChatTabIfNeeded(allowedTabs, "Main Button");
-                    break;
-                default:
-                    break;
-            }
+            DetermineChatTabAndSelect("MainText", false, "Main Button");
         }
         else if (words[0] == "/me" || words[0] == "/my")
         {
             pPerson.Clear();
             csString chatType = tabs->GetActiveTab()->GetName();
 
-            csArray<csString> allowedTabs;
+            csString allowedTabs;
             csString defaultButton("Main Button");
 
             if (chatType == "TellText")
@@ -723,78 +623,31 @@ const char* pawsChatWindow::HandleCommand( const char* cmd )
                 }
                 words.GetTail(0,text);
                 chattype = CHAT_TELL;
-                csArray<csString> allowedTabs;
-                allowedTabs.Push("TellText");
-                defaultButton = "Tell Button";
-                if (settings.tellIncluded)
-                    allowedTabs.Push("MainText");
-                switch (settings.selectTabStyle)
-                {
-                    case 1:
-                        AutoselectChatTabIfNeeded(allowedTabs, "Tell Button");
-                        break;
-                    case 2:
-                        AutoselectChatTabIfNeeded(allowedTabs, settings.tellIncluded ?
-                                "Main Button" : "Tell Button");
-                        break;
-                    default:
-                        break;
-                }
+                DetermineChatTabAndSelect("TellText", settings.tellIncluded, "Tell Button");
             }
             else if (chatType == "GuildText")
             {
                 chattype = CHAT_GUILD;
                 words.GetTail(0,text);
-                allowedTabs.Push("GuildText");
-                defaultButton = "Guild Button";
-                if (settings.guildIncluded)
-                {
-                    allowedTabs.Push("MainText");
-                    if (settings.selectTabStyle == 2)
-                        defaultButton = "Main Button";
-                }
+                DetermineChatTabAndSelect("GuildText", settings.guildIncluded, "Guild Button");
             }
             else if (chatType == "GroupText")
             {
                 chattype = CHAT_GROUP;
                 words.GetTail(0,text);
-                allowedTabs.Push("GroupText");
-                defaultButton = "Group Button";
-                if (settings.groupIncluded)
-                {
-                    allowedTabs.Push("MainText");
-                    if (settings.selectTabStyle == 2)
-                        defaultButton = "Main Button";
-                }
+                DetermineChatTabAndSelect("GroupText", settings.groupIncluded, "Group Button");
             }
             else if (chatType == "AuctionText")
             {
                 chattype = CHAT_AUCTION;
                 words.GetTail(0,text);
-                allowedTabs.Push("AuctionText");
-                defaultButton = "Auction Button";
-                if (settings.auctionIncluded)
-                {
-                    allowedTabs.Push("MainText");
-                    if (settings.selectTabStyle == 2)
-                        defaultButton = "Main Button";
-                }
+                DetermineChatTabAndSelect("AuctionText", settings.auctionIncluded, "Auction Button");
             }
             else // when in doubt, use the normal way
             {
                 chattype = CHAT_SAY;
                 words.GetTail(0,text);
-                allowedTabs.Push("MainText");
-            }
-            //pPerson.Clear();
-            switch (settings.selectTabStyle)
-            {
-                case 1:
-                case 2:
-                    AutoselectChatTabIfNeeded(allowedTabs, defaultButton);
-                    break;
-                default:
-                    break;
+                DetermineChatTabAndSelect("MainText", false, "Main Button");
             }
         }
     }
@@ -1846,11 +1699,14 @@ bool pawsChatWindow::OnMenuAction(pawsWidget * widget, const pawsMenuAction & ac
     return pawsWidget::OnMenuAction(widget, action);
 }
 
-void pawsChatWindow::AutoselectChatTabIfNeeded(const csArray<csString> &allowedTabs, const char * defaultTab)
+void pawsChatWindow::AutoselectChatTabIfNeeded(const char *allowedTabList, const char * defaultTab)
 {
     pawsWidget * currentTab;
     csString currentTabName;
     size_t allowedTab;
+
+    csString list(allowedTabList);
+    csArray<csString> allowedTabs = psSplit(list,'|');
 
     currentTab = tabs->GetActiveTab();
     if (currentTab != NULL)
@@ -2323,10 +2179,7 @@ void pawsChatWindow::RemoveAutoCompleteName(const char *name)
 
 void pawsChatWindow::NpcChat()
 {
-    csArray<csString> allowedTabs;
-    allowedTabs.Push("NpcText");
-
-    AutoselectChatTabIfNeeded(allowedTabs, "NPC Button");
+    AutoselectChatTabIfNeeded("NpcText", "NPC Button");
 }
 
 int pawsChatWindow::mixColours(int colour1, int colour2)

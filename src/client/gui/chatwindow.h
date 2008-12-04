@@ -198,8 +198,11 @@ protected:
     void TabCompleteCommand(const char *cmd);
     void TabCompleteName(const char *cmd);
 
+    /// Helper function for AutoselectChatTabIfNeeded
+    void DetermineChatTabAndSelect(const char *specificTabName,bool includeMain, const char *buttonName);
+
     /// If currently selected chat tab is not in 'allowedTabs', switch to 'defaultTab'
-    void AutoselectChatTabIfNeeded(const csArray<csString> &allowedTabs, const char * defaultTab);
+    void AutoselectChatTabIfNeeded(const char *allowedTabList, const char * defaultTab);
 
     /// Output text to a specific tab.
     void ChatOutput(pawsMessageTextBox *pmtb, const char *data, int colour = -1,
