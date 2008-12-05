@@ -1,3 +1,7 @@
+﻿*** 2008-11-05 by Stefano Angeleri
+- Applyed a patch to prevent crash by kougaro for FS#224 - When you morph, your description still shows your original race. 
+  with some changes from the original one.
+
 ﻿*** 2008-11-04 by Stefano Angeleri
 - Fixed various instance ids scattered around the code to use INSTACE_ID in place of unsigned int
   or even int
