@@ -689,7 +689,7 @@ void UserManager::SendCharacterDescription(Client * client, psCharacter * charDa
     else
     {
         raceName = "being";
-        gender = PSCHARACTER_GENDER_NONE
+        gender = PSCHARACTER_GENDER_NONE;
     }
     csString desc     = charData->GetDescription();
     csArray<psCharacterDetailsMessage::NetworkDetailSkill> skills;
