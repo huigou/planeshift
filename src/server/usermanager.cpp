@@ -678,7 +678,19 @@ void UserManager::SendCharacterDescription(Client * client, psCharacter * charDa
     bool isSelf = (charData->GetPID() == client->GetCharacterData()->GetPID());
 
     csString charName = charData->GetCharFullName();
-    csString raceName = CacheManager::GetSingleton().GetRaceInfoByMeshName(meshName)->GetRace();
+    csString raceName;
+    PSCHARACTER_GENDER gender;
+    psRaceInfo* charrinfo = CacheManager::GetSingleton().GetRaceInfoByMeshName(meshName);
+    if (charrinfo != NULL)
+    {
+        raceName = CacheManager::GetSingleton().GetRaceInfoByMeshName(meshName)->GetRace();
+        gender = CacheManager::GetSingleton().GetRaceInfoByMeshName(meshName)->gender;
+    }
+    else
+    {
+        raceName = "being";
+        gender = PSCHARACTER_GENDER_NONE
+    }
     csString desc     = charData->GetDescription();
     csArray<psCharacterDetailsMessage::NetworkDetailSkill> skills;
 
@@ -810,7 +822,7 @@ void UserManager::SendCharacterDescription(Client * client, psCharacter * charDa
 
     // Finally send the details message
     psCharacterDetailsMessage detailmsg(client->GetClientNum(), charName,
-        (short unsigned int)CacheManager::GetSingleton().GetRaceInfoByMeshName(meshName)->gender, raceName,
+        (short unsigned int)gender, raceName,
         desc, skills, requestor );
     detailmsg.SendMessage();
 }
