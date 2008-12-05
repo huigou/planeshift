@@ -80,8 +80,8 @@ public:
 
     /// Returns instance ID of referenced in action location response string
     ///  This is either a container ID or a lock ID
-    INSTANCE_ID GetInstanceID() const { return instanceID; }
-    void SetInstanceID(INSTANCE_ID newID) { instanceID = newID; }
+    InstanceID GetInstanceID() const { return instanceID; }
+    void SetInstanceID(InstanceID newID) { instanceID = newID; }
 
     /// Returns the enter script in entrance action location response string
     csString GetEnterScript() const { return enterScript; }
@@ -195,7 +195,7 @@ private:
     bool isReturn;
 
     ///  This is either a container ID or a lock ID
-    INSTANCE_ID instanceID;
+    InstanceID instanceID;
 
     /// String containing the entrance type
     csString entranceType;

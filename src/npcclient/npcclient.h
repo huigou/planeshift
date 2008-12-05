@@ -278,7 +278,7 @@ public:
      * SetEntityPos finds the given ID entity, and updates
      * its position in mesh and linmove.
      */
-    void SetEntityPos(EID id, csVector3& pos, iSector* sector, INSTANCE_ID instance);
+    void SetEntityPos(EID id, csVector3& pos, iSector* sector, InstanceID instance);
 
     /**
      * Find the NPC* attached to the entity with the specified character ID

@@ -683,7 +683,7 @@ public:
         psSectorInfo *loc_sector;
         csVector3 loc;
         float loc_yrot;
-        INSTANCE_ID worldInstance;
+        InstanceID worldInstance;
     } location;
 
     unsigned int advantage_bitfield[PSCHARACTER_ADVANTAGE_32BIT_BITFIELDS];
@@ -956,7 +956,7 @@ public:
 
     /** Update a npc's default spawn position with given data.
     */
-    void UpdateRespawn(csVector3 pos, float yrot, psSectorInfo *sector, INSTANCE_ID instance);
+    void UpdateRespawn(csVector3 pos, float yrot, psSectorInfo *sector, InstanceID instance);
 
 
     /**
@@ -1039,8 +1039,8 @@ public:
     void SetTraitForLocation(PSTRAIT_LOCATION location,psTrait *trait);
     psTrait *GetTraitForLocation(PSTRAIT_LOCATION location);
 
-    void GetLocationInWorld(INSTANCE_ID &instance,psSectorInfo *&sectorinfo,float &loc_x,float &loc_y,float &loc_z,float &loc_yrot);
-    void SetLocationInWorld(INSTANCE_ID instance,psSectorInfo *sectorinfo,float loc_x,float loc_y,float loc_z,float loc_yrot);
+    void GetLocationInWorld(InstanceID &instance,psSectorInfo *&sectorinfo,float &loc_x,float &loc_y,float &loc_z,float &loc_yrot);
+    void SetLocationInWorld(InstanceID instance,psSectorInfo *sectorinfo,float loc_x,float loc_y,float loc_z,float loc_yrot);
     void SaveLocationInWorld();
 
     /// Construct an XML format string of the player's texture choices.

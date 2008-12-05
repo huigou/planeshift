@@ -782,7 +782,7 @@ void psNPCClient::TriggerEvent(NPC *npc,Perception *pcpt,float max_range,
     }
 }
 
-void psNPCClient::SetEntityPos(EID eid, csVector3& pos, iSector* sector, INSTANCE_ID instance)
+void psNPCClient::SetEntityPos(EID eid, csVector3& pos, iSector* sector, InstanceID instance)
 {
     
     gemNPCObject *obj = FindEntityID(eid);

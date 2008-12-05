@@ -962,7 +962,7 @@ void psCharacter::UnregisterProgressionEvent(int id)
     }
 }
 
-void psCharacter::UpdateRespawn(csVector3 pos, float yrot, psSectorInfo *sector, INSTANCE_ID instance)
+void psCharacter::UpdateRespawn(csVector3 pos, float yrot, psSectorInfo *sector, InstanceID instance)
 {
     spawn_loc.loc_sector = sector;
     spawn_loc.loc = pos;
@@ -2319,7 +2319,7 @@ psTrait *psCharacter::GetTraitForLocation(PSTRAIT_LOCATION location)
 }
 
 
-void psCharacter::GetLocationInWorld(INSTANCE_ID &instance,psSectorInfo *&sectorinfo,float &loc_x,float &loc_y,float &loc_z,float &loc_yrot)
+void psCharacter::GetLocationInWorld(InstanceID &instance,psSectorInfo *&sectorinfo,float &loc_x,float &loc_y,float &loc_z,float &loc_yrot)
 {
     sectorinfo=location.loc_sector;
     loc_x=location.loc.x;
@@ -2329,7 +2329,7 @@ void psCharacter::GetLocationInWorld(INSTANCE_ID &instance,psSectorInfo *&sector
     instance = location.worldInstance;
 }
 
-void psCharacter::SetLocationInWorld(INSTANCE_ID instance, psSectorInfo *sectorinfo,float loc_x,float loc_y,float loc_z,float loc_yrot)
+void psCharacter::SetLocationInWorld(InstanceID instance, psSectorInfo *sectorinfo,float loc_x,float loc_y,float loc_z,float loc_yrot)
 {
     psSectorInfo *oldsector = location.loc_sector;
 

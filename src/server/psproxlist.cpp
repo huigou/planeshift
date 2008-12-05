@@ -374,7 +374,7 @@ bool ProximityList::CheckUpdateRequired()
     iSector *sector;
 
     self->GetPosition (pos, rot, sector);
-    INSTANCE_ID instance = self->GetInstance();
+    InstanceID instance = self->GetInstance();
 
     if (self->IsUpdateReq (pos, oldPos) || instance != oldInstance || firstFrame)
     {

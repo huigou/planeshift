@@ -276,7 +276,7 @@ private:
         psSectorInfo *loc_sectorinfo;
         float loc_x,loc_y,loc_z;
         float loc_yrot;
-        INSTANCE_ID worldInstance;
+        InstanceID worldInstance;
     } location;
 
     /// 0% means item does not reduce decay at all.  100% means item does not decay.
@@ -327,7 +327,7 @@ private:
      *
      */
     /// Points to the object that contains this object, or NULL if there is none.
-    INSTANCE_ID parent_item_instance_id;
+    InstanceID parent_item_InstanceID;
 
 
     /** Dual use.  Indicates either the slot within the parent item if contained, or the slot in the player's inventory/equipment/bulk if appropriate.
@@ -591,8 +591,8 @@ public:
 
     /// Returns the item that contains this item, or NULL if it's not contained by another item.
     uint32 GetContainerID() const
-    { return parent_item_instance_id; }
-    void SetContainerID(uint32 parentId) { parent_item_instance_id = parentId; }
+    { return parent_item_InstanceID; }
+    void SetContainerID(uint32 parentId) { parent_item_InstanceID = parentId; }
 
     
     /** Returns the location of this item in it's parent item or in the players equipment, bulk or bank as appropriate.
@@ -704,8 +704,8 @@ public:
 
     float GetVisibleDistance();
 
-    void GetLocationInWorld(INSTANCE_ID &instance,psSectorInfo **sectorinfo,float &loc_x,float &loc_y,float &loc_z,float &loc_yrot) const;
-    void SetLocationInWorld(INSTANCE_ID instance,psSectorInfo *sectorinfo,float loc_x,float loc_y,float loc_z,float loc_yrot);
+    void GetLocationInWorld(InstanceID &instance,psSectorInfo **sectorinfo,float &loc_x,float &loc_y,float &loc_z,float &loc_yrot) const;
+    void SetLocationInWorld(InstanceID instance,psSectorInfo *sectorinfo,float loc_x,float loc_y,float loc_z,float loc_yrot);
 
     psSectorInfo* GetSector() const { return location.loc_sectorinfo; }
 
@@ -891,7 +891,7 @@ private:
 class psScheduledItem
 {
 public:
-    psScheduledItem(int spawnID,uint32 itemID,csVector3& position, psSectorInfo* sector,INSTANCE_ID instance, int interval,int maxrnd, 
+    psScheduledItem(int spawnID,uint32 itemID,csVector3& position, psSectorInfo* sector,InstanceID instance, int interval,int maxrnd, 
 				float range);
 
     psItem* CreateItem();
@@ -918,7 +918,7 @@ private:
     uint32 itemID;         ///< Item
     csVector3 pos;         ///< Position
     psSectorInfo* sector;  ///< Sector
-    INSTANCE_ID worldInstance;     ///< Instance ID to spawn in
+    InstanceID worldInstance;     ///< Instance ID to spawn in
     int interval;          ///< Interval in msecs
     int maxrnd;            ///< Maximum random interval modifier in msecs
 	float range;		   ///< Range in which to spawn item

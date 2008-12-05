@@ -79,7 +79,7 @@ public:
     
     iMeshWrapper *GetMeshWrapper();
     void Move(const csVector3& pos, float rotangle, const char* room);
-    void Move(const csVector3& pos, float rotangle, const char* room, INSTANCE_ID instance);
+    void Move(const csVector3& pos, float rotangle, const char* room, InstanceID instance);
     
     EID GetEID() { return eid; }
     npcMesh* pcmesh;   
@@ -102,9 +102,9 @@ public:
 
     virtual NPC *GetNPC() { return NULL; }
 
-    virtual void SetPosition(csVector3& pos, iSector* sector = NULL, INSTANCE_ID* instance = NULL);
-    virtual void SetInstance( INSTANCE_ID instance ) { this->instance = instance; }
-    virtual INSTANCE_ID GetInstance(){ return instance; };
+    virtual void SetPosition(csVector3& pos, iSector* sector = NULL, InstanceID* instance = NULL);
+    virtual void SetInstance( InstanceID instance ) { this->instance = instance; }
+    virtual InstanceID GetInstance(){ return instance; };
 
 protected:
     psNPCClient *npcclient;
@@ -115,7 +115,7 @@ protected:
     int  type;
     bool visible;
     bool invincible;
-    INSTANCE_ID  instance;
+    InstanceID  instance;
 };
 
 

@@ -3520,7 +3520,7 @@ public:
                 csVector3 pos;
                 float yrot;
                 psSectorInfo *sectorinfo;
-                INSTANCE_ID instance;
+                InstanceID instance;
                 character->GetLocationInWorld(instance,sectorinfo,pos.x,pos.y,pos.z,yrot);
 
                 // Put effect in front of actor or target where we drop stuff

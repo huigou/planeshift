@@ -445,7 +445,7 @@ void GEMSupervisor::GetAllEntityPos(psAllEntityPosMessage& update)
             {
                 csVector3 pos,pos2;
                 float yrot;
-                INSTANCE_ID instance,oldInstance;
+                InstanceID instance,oldInstance;
                 iSector *sector;
                 obj->GetPosition(pos,yrot,sector);
                 instance = obj->GetInstance();
@@ -587,7 +587,7 @@ gemObject::gemObject(const char *name)
 gemObject::gemObject(const char* name,
                      const char* factname,
                      const char* filename,
-                     INSTANCE_ID myInstance,
+                     InstanceID myInstance,
                      iSector* room,
                      const csVector3& pos,
                      float rotangle,
@@ -1191,7 +1191,7 @@ gemActiveObject::gemActiveObject( const char* name )
 gemActiveObject::gemActiveObject( const char* name,
                                      const char* factname,
                                      const char* filename,
-                                     INSTANCE_ID myInstance,
+                                     InstanceID myInstance,
                                      iSector* room,
                                      const csVector3& pos,
                                      float rotangle,
@@ -1403,7 +1403,7 @@ void gemActiveObject::SendBehaviorMessage(const csString & msg_id, gemObject *ac
 gemItem::gemItem(csWeakRef<psItem> item,
                      const char* factname,
                      const char* filename,
-                     INSTANCE_ID instance,
+                     InstanceID instance,
                      iSector* room,
                      const csVector3& pos,
                      float rotangle,
@@ -1439,7 +1439,7 @@ void gemItem::Broadcast(int clientnum, bool control )
     cel->RemoveItemEntity(this);
 }
 
-void gemItem::SetPosition(const csVector3& pos,float angle, iSector* sector, INSTANCE_ID instance)
+void gemItem::SetPosition(const csVector3& pos,float angle, iSector* sector, InstanceID instance)
 {
     this->pos = pos;
     this->yRot = angle;
@@ -1653,7 +1653,7 @@ void gemActionLocation::Send( int clientnum, bool , bool to_superclient )
 gemActor::gemActor( psCharacter *chardata,
                        const char* factname,
                        const char* filename,
-                       INSTANCE_ID myInstance,
+                       InstanceID myInstance,
                        iSector* room,
                        const csVector3& pos,
                        float rotangle,
@@ -2632,7 +2632,7 @@ void gemActor::SetGMDefaults()
     questtester = false;  // Always off by default
 }
 
-void gemActor::SetInstance(INSTANCE_ID worldInstance)
+void gemActor::SetInstance(InstanceID worldInstance)
 {
     this->worldInstance = worldInstance;
 }
@@ -2961,13 +2961,13 @@ bool gemActor::UpdateDR()
     return true;
 }
 
-void gemActor::GetLastSuperclientPos(csVector3& pos, INSTANCE_ID& instance) const
+void gemActor::GetLastSuperclientPos(csVector3& pos, InstanceID& instance) const
 {
     pos = lastSentSuperclientPos;
     instance = lastSentSuperclientInstance;
 }
 
-void gemActor::SetLastSuperclientPos(const csVector3& pos, INSTANCE_ID instance)
+void gemActor::SetLastSuperclientPos(const csVector3& pos, InstanceID instance)
 {
     lastSentSuperclientPos = pos;
     lastSentSuperclientInstance = instance;
@@ -3418,7 +3418,7 @@ bool gemActor::SetMesh(const char* meshname)
 gemNPC::gemNPC( psCharacter *chardata,
                    const char* factname,
                    const char* filename,
-                   INSTANCE_ID instance,
+                   InstanceID instance,
                    iSector* room,
                    const csVector3& pos,
                    float rotangle,
@@ -3950,7 +3950,7 @@ void gemNPC::NPCTalk(const csString & text)
 gemContainer::gemContainer(csWeakRef<psItem> item,
              const char* factname,
              const char* filename,
-             INSTANCE_ID myInstance,
+             InstanceID myInstance,
              iSector* room,
              const csVector3& pos,
              float rotangle,

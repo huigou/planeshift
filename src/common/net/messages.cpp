@@ -4591,7 +4591,7 @@ void psPersistActor::SetPlayerID(PID playerID)
     msg->Add(playerID.Unbox());
 }
 
-void psPersistActor::SetInstance(INSTANCE_ID instance)
+void psPersistActor::SetInstance(InstanceID instance)
 {
     msg->Reset(posInstance);
     msg->Add(instance);

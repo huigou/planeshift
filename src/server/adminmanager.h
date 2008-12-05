@@ -134,7 +134,7 @@ protected:
         bool uniqueName, uniqueFirstName,help,insert;
         float radius, range;
         unsigned short stackCount;
-        INSTANCE_ID instance;
+        InstanceID instance;
         bool instanceValid;
         RangeSpecifier rangeSpecifier;
 
@@ -207,10 +207,10 @@ protected:
 
     /** Get sector and coordinates of target of teleportation described by 'msg'.
         Return success */
-    bool GetTargetOfTeleport(Client *client, psAdminCmdMessage& msg, AdminCmdData& data, iSector * & targetSector,  csVector3 & targetPoint, float &yRot, gemObject *subject, INSTANCE_ID &instance);
+    bool GetTargetOfTeleport(Client *client, psAdminCmdMessage& msg, AdminCmdData& data, iSector * & targetSector,  csVector3 & targetPoint, float &yRot, gemObject *subject, InstanceID &instance);
 
     /** Handles movement of objects for teleport and slide. */
-    bool MoveObject(Client *client, gemObject *target, csVector3& pos, float yrot, iSector* sector, INSTANCE_ID instance);
+    bool MoveObject(Client *client, gemObject *target, csVector3& pos, float yrot, iSector* sector, InstanceID instance);
 
     /** This function sends a warning message from a GM to a player, and displays it in
      *  big, red, un-ignorable text on the screen and in the chat window.

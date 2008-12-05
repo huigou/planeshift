@@ -216,11 +216,11 @@ void psServerCharManager::ViewItem(Client* client, int containerID, INVENTORY_SL
             if ( action->IsContainer() )
             {
                 // Get container instance
-                uint32 instance_id = action->GetInstanceID();
-                gemItem* realItem = GEMSupervisor::GetSingleton().FindItemEntity( instance_id );
+                uint32 InstanceID = action->GetInstanceID();
+                gemItem* realItem = GEMSupervisor::GetSingleton().FindItemEntity( InstanceID );
                 if (!realItem)
                 {
-                    Error3("Invalid instance ID %u in action location %s", instance_id, action->name.GetDataSafe());
+                    Error3("Invalid instance ID %u in action location %s", InstanceID, action->name.GetDataSafe());
                     return;
                 }
 
