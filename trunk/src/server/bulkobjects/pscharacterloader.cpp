@@ -341,7 +341,7 @@ bool psCharacterLoader::NewNPCCharacterData(AccountID accountid, psCharacter *ch
     values.FormatPush("%u",chardata->BankMoney().GetOctas());
     float x,y,z,yrot;
     psSectorInfo *sectorinfo;
-    INSTANCE_ID instance;
+    InstanceID instance;
     chardata->GetLocationInWorld(instance,sectorinfo,x,y,z,yrot);
     values.FormatPush("%10.2f",x);
     values.FormatPush("%10.2f",y);

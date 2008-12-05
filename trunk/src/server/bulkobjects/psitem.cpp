@@ -141,7 +141,7 @@ psItem::psItem() : transformationEvent(NULL), gItem(NULL), pendingsave(false), l
     flags      = 0;
     crafter_id = 0;
     guild_id   = 0;
-    parent_item_instance_id = 0;
+    parent_item_InstanceID = 0;
 
 //    container_in_location=(unsigned int)-1;
     base_stats=NULL;
@@ -240,7 +240,7 @@ bool psItem::Load(iResultRow& row)
     // Item Unique ID #
     SetUID(row.GetUInt32("id"));
 	CS_ASSERT(uid != 0);
-    parent_item_instance_id = row.GetUInt32("parent_item_id");
+    parent_item_InstanceID = row.GetUInt32("parent_item_id");
     loc_in_parent = (INVENTORY_SLOT_NUMBER) row.GetInt("location_in_parent");
 
     // Stack count (will be 0 if NULL - either means this is a non stackable item)
@@ -380,7 +380,7 @@ bool psItem::Load(iResultRow& row)
        row.GetInt("parent_item_id") == 0)) // No owner and no slot
     {
         float x,y,z,yrot;
-        INSTANCE_ID instance;
+        InstanceID instance;
 
         instance = row.GetUInt32("loc_instance");
         //        printf("KWF: Item instance=%d\n", instance);
@@ -442,7 +442,7 @@ bool psItem::Load(iResultRow& row)
 
 void psItem::Save(bool children)
 {
-    CS_ASSERT(!(loc_in_parent == -1 && owning_character && parent_item_instance_id==0));
+    CS_ASSERT(!(loc_in_parent == -1 && owning_character && parent_item_InstanceID==0));
 
     if (loaded && !pendingsave)
     {
@@ -610,25 +610,25 @@ void psItem::Commit(bool children)
     targetQuery->AddField("item_stats_id_standard",GetBaseStats()->GetUID());
     
     // Container stuff
-    if (!parent_item_instance_id)  // if not in container
+    if (!parent_item_InstanceID)  // if not in container
     {
         targetQuery->AddFieldNull("parent_item_id");  // id of object containing this one        
         targetQuery->AddField("location_in_parent",loc_in_parent);  // slot number, or -1 if out in the world
     }
     else // in container
     {
-        targetQuery->AddField("parent_item_id",parent_item_instance_id);
+        targetQuery->AddField("parent_item_id",parent_item_InstanceID);
         targetQuery->AddField("location_in_parent",loc_in_parent);
     }
     
     
     float locx,locy,locz,locyrot;
     psSectorInfo *sectorinfo;
-    INSTANCE_ID instance;
+    InstanceID instance;
     
     GetLocationInWorld(instance,&sectorinfo,locx,locy,locz,locyrot);
     
-    if (!sectorinfo || parent_item_instance_id)
+    if (!sectorinfo || parent_item_InstanceID)
     {
         targetQuery->AddFieldNull("loc_x");
         targetQuery->AddFieldNull("loc_y");
@@ -728,12 +728,12 @@ void psItem::ForceSaveIfNew()
 
 INVENTORY_SLOT_NUMBER psItem::GetLocInParent(bool adjustSlot) 
 {
-    if (adjustSlot && parent_item_instance_id)
+    if (adjustSlot && parent_item_InstanceID)
     {
-        psItem *container = owning_character->Inventory().FindItemID(parent_item_instance_id);
+        psItem *container = owning_character->Inventory().FindItemID(parent_item_InstanceID);
         if (!container)
         {
-//            Error3("Bad container id %d in item %d.",parent_item_instance_id,uid);
+//            Error3("Bad container id %d in item %d.",parent_item_InstanceID,uid);
             return loc_in_parent;
         }
         int slot = container->GetLocInParent(false);
@@ -881,7 +881,7 @@ int psItem::GetIdentifyMinSkill()
         return 0;
 }
 
-void psItem::GetLocationInWorld(INSTANCE_ID &instance,psSectorInfo **sectorinfo,float &loc_x,float &loc_y,float &loc_z,float &loc_yrot) const
+void psItem::GetLocationInWorld(InstanceID &instance,psSectorInfo **sectorinfo,float &loc_x,float &loc_y,float &loc_z,float &loc_yrot) const
 {
     instance    = location.worldInstance;
     *sectorinfo = location.loc_sectorinfo;
@@ -891,7 +891,7 @@ void psItem::GetLocationInWorld(INSTANCE_ID &instance,psSectorInfo **sectorinfo,
     loc_yrot    = location.loc_yrot;
 }
 
-void psItem::SetLocationInWorld(INSTANCE_ID instance,psSectorInfo *sectorinfo,float loc_x,float loc_y,float loc_z,float loc_yrot)
+void psItem::SetLocationInWorld(InstanceID instance,psSectorInfo *sectorinfo,float loc_x,float loc_y,float loc_z,float loc_yrot)
 {
     location.worldInstance  = instance;
     location.loc_sectorinfo = sectorinfo;
@@ -1051,7 +1051,7 @@ void psItem::UpdateInventoryStatus(psCharacter *owner,uint32 parent_id, INVENTOR
         owning_character->Inventory().Unequip(this);
 
     SetOwningCharacter(owner);
-    parent_item_instance_id = parent_id;
+    parent_item_InstanceID = parent_id;
     loc_in_parent           = (INVENTORY_SLOT_NUMBER)(slot%100);
 
     if (IsEquipped() && owning_character)
@@ -2171,7 +2171,7 @@ void psItem::ScheduleRespawn()
     schedule = NULL;
 }
 
-psScheduledItem::psScheduledItem(int id,uint32 itemID,csVector3& position, psSectorInfo* sector,INSTANCE_ID instance, int interval,int maxrnd,
+psScheduledItem::psScheduledItem(int id,uint32 itemID,csVector3& position, psSectorInfo* sector,InstanceID instance, int interval,int maxrnd,
 			float range)
 {
     spawnID = id;
@@ -2382,7 +2382,7 @@ void psItem::FillContainerMsg(Client* client, psViewItemDescription& outgoing)
         for (size_t i = 0; i < client->GetCharacterData()->Inventory().GetInventoryIndexCount(); i++)
         {
             psItem *child = client->GetCharacterData()->Inventory().GetInventoryIndexItem(i);
-            if (parent_item_instance_id == uid)
+            if (parent_item_InstanceID == uid)
             {
                 outgoing.AddContents(child->GetName(), child->GetImageName(),
                         child->GetPurifyStatus(), slot++,

@@ -272,10 +272,10 @@ void psWorkManager::HandleMessage(MsgEntry* me,Client *client)
                 psActionLocation *action = gemAction->GetAction();
 
                 // Check if the actionlocation is linked to real item
-                INSTANCE_ID instance_id = action->GetInstanceID();
-                if( instance_id!= INSTANCE_ALL )
+                InstanceID InstanceID = action->GetInstanceID();
+                if( InstanceID!= INSTANCE_ALL )
                 {
-                    target = GEMSupervisor::GetSingleton().FindItemEntity( instance_id );
+                    target = GEMSupervisor::GetSingleton().FindItemEntity( InstanceID );
                 }
             }
 
@@ -1759,12 +1759,12 @@ bool psWorkManager::ScriptAction(gemActionLocation* gemAction)
     psActionLocation *action = gemAction->GetAction();
 
     // check if the actionlocation is linked to real item
-    INSTANCE_ID instance_id = action->GetInstanceID();
-    if (instance_id==INSTANCE_ALL)
+    InstanceID InstanceID = action->GetInstanceID();
+    if (InstanceID==INSTANCE_ALL)
     {
-        instance_id = action->GetGemObject()->GetEID().Unbox(); // FIXME: Need to understand & comment on ID interaction here.
+        InstanceID = action->GetGemObject()->GetEID().Unbox(); // FIXME: Need to understand & comment on ID interaction here.
     }
-    gemItem* target = GEMSupervisor::GetSingleton().FindItemEntity( instance_id );
+    gemItem* target = GEMSupervisor::GetSingleton().FindItemEntity( InstanceID );
 
     // Cast to item and call craft item
     return ScriptItem(target);
@@ -2408,12 +2408,12 @@ bool psWorkManager::ValidateTarget(Client* client)
         psActionLocation *action = gemAction->GetAction();
 
       // check if the actionlocation is linked to real item
-      INSTANCE_ID instance_id = action->GetInstanceID();
-      if (instance_id==INSTANCE_ALL)
+      InstanceID InstanceID = action->GetInstanceID();
+      if (InstanceID==INSTANCE_ALL)
       {
-          instance_id = action->GetGemObject()->GetEID().Unbox(); // FIXME: Understand & comment on ID magic here.
+          InstanceID = action->GetGemObject()->GetEID().Unbox(); // FIXME: Understand & comment on ID magic here.
       }
-      target = GEMSupervisor::GetSingleton().FindItemEntity( instance_id );
+      target = GEMSupervisor::GetSingleton().FindItemEntity( InstanceID );
     }
 
     if (target)
@@ -2741,7 +2741,7 @@ psItem* psWorkManager::CombineContainedItem(uint32 newId, int newQty, float item
     // Zero out x,y,z location because it is in container
     float xpos,ypos,zpos,yrot;
     psSectorInfo* sectorinfo;
-    INSTANCE_ID instance;
+    InstanceID instance;
     workItem->GetLocationInWorld(instance, &sectorinfo, xpos, ypos, zpos, yrot );
     newItem->SetLocationInWorld(instance,sectorinfo, 0.00, 0.00, 0.00, 0.00 );
 
@@ -2823,7 +2823,7 @@ psItem* psWorkManager::TransformContainedItem(psItem* oldItem, uint32 newId, int
     // Zero out x,y,z location because it is in container
     float xpos,ypos,zpos,yrot;
     psSectorInfo* sectorinfo;
-    INSTANCE_ID instance;
+    InstanceID instance;
     workItem->GetLocationInWorld(instance, &sectorinfo, xpos, ypos, zpos, yrot );
     newItem->SetLocationInWorld(instance,sectorinfo, 0.00, 0.00, 0.00, 0.00 );
 
@@ -3012,7 +3012,7 @@ psItem* psWorkManager::TransformTargetItem(psItem* oldItem, uint32 newId, int ne
 #endif
 
     // Get the location of what will be replaced
-    INSTANCE_ID instance;
+    InstanceID instance;
     psSectorInfo* sectorinfo;
     float xpos,ypos,zpos,yrot;
     oldItem->GetLocationInWorld(instance, &sectorinfo, xpos, ypos, zpos, yrot );

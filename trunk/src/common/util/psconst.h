@@ -66,7 +66,7 @@
 #define PROX_LIST_STEP_SIZE         10   // grow by this much each attempt
 
 #define DEFAULT_INSTANCE             0   // Instance 0 is where 99% of things happen
-typedef uint32 INSTANCE_ID;
+typedef uint32 InstanceID;
 #define INSTANCE_ALL 0xffffffff
 
 #define ASSIST_MAX_DIST 25   // Maximum distance that the /assist command will work

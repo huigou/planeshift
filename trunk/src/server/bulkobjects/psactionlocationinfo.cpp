@@ -333,19 +333,19 @@ gemActionLocation *psActionLocation::GetGemObject( void )
 gemItem *psActionLocation::GetRealItem()
 {
     // Check if the actionlocation is linked to real item
-    INSTANCE_ID instance_id = GetInstanceID();
-    if (instance_id==INSTANCE_ALL) 
+    InstanceID InstanceID = GetInstanceID();
+    if (InstanceID==INSTANCE_ALL) 
     {
         if (GetGemObject()->GetItem())
         {
-            instance_id = (int)GetGemObject()->GetItem()->GetUID();
+            InstanceID = (int)GetGemObject()->GetItem()->GetUID();
         }
     }
     // id 0 is not valid
-    if (instance_id == 0)
+    if (InstanceID == 0)
         return NULL;
 
-    return GEMSupervisor::GetSingleton().FindItemEntity( instance_id );
+    return GEMSupervisor::GetSingleton().FindItemEntity( InstanceID );
 }
 
 
@@ -594,13 +594,13 @@ void psActionLocation::SetupEntrance(csRef<iDocumentNode> entranceNode)
 
     // Set lock instance ID if any 
     // cannot use GetAttributeValueAsInt since it uses atoi, which will barf on values > 0x7fffffff
-    INSTANCE_ID instance_id = 0;
+    InstanceID InstanceID = 0;
     const char * lockid_str = entranceNode->GetAttributeValue( "LockID" );
     if( lockid_str ) {
-        instance_id = strtoul(lockid_str,NULL,10);
+        InstanceID = strtoul(lockid_str,NULL,10);
     }
-    SetInstanceID(instance_id);
-    if ( instance_id  != 0 )
+    SetInstanceID(InstanceID);
+    if ( InstanceID  != 0 )
     {
         isLockable = true;
     }

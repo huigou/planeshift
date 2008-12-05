@@ -63,7 +63,7 @@ gemNPCObject::~gemNPCObject()
     delete pcmesh;
 }
 
-void gemNPCObject::Move(const csVector3& pos, float rotangle,  const char* room, INSTANCE_ID instance)
+void gemNPCObject::Move(const csVector3& pos, float rotangle,  const char* room, InstanceID instance)
 {
     SetInstance(instance);
     Move(pos,rotangle,room);
@@ -217,7 +217,7 @@ bool gemNPCObject::InitMesh(    const char *factname,
     return true;
 }
 
-void gemNPCObject::SetPosition(csVector3& pos, iSector* sector, INSTANCE_ID* instance)
+void gemNPCObject::SetPosition(csVector3& pos, iSector* sector, InstanceID* instance)
 {
     psGameObject::SetPosition(this, pos, sector);
 

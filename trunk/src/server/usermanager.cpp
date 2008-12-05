@@ -910,16 +910,16 @@ void UserManager::HandleEntranceMessage( MsgEntry* me, Client *client )
     }
 
     // Check for a lock
-    uint32 instance_id = action->GetInstanceID();
-    if ( instance_id  != 0 )
+    uint32 instanceID = action->GetInstanceID();
+    if ( instanceID  != 0 )
     {
 
         // find lock to to test if locked
-        gemItem* realItem = GEMSupervisor::GetSingleton().FindItemEntity( instance_id );
+        gemItem* realItem = GEMSupervisor::GetSingleton().FindItemEntity( instanceID );
         if (!realItem)
         {
-            if (secure) psserver->SendSystemInfo(client->GetClientNum(),"Invalid instance ID %u in action location %s", instance_id, action->name.GetDataSafe());
-            Error3("Invalid instance ID %u in action location %s", instance_id, action->name.GetDataSafe());
+            if (secure) psserver->SendSystemInfo(client->GetClientNum(),"Invalid instance ID %u in action location %s", instanceID, action->name.GetDataSafe());
+            Error3("Invalid instance ID %u in action location %s", instanceID, action->name.GetDataSafe());
             return;
         }
 
@@ -961,7 +961,7 @@ void UserManager::HandleEntranceMessage( MsgEntry* me, Client *client )
     // Send player to unique instance
     else if (entranceType == "ActionID")
     {
-        INSTANCE_ID instance = action->id;
+        InstanceID instance = action->id;
         if (secure) psserver->SendSystemInfo(client->GetClientNum(),"Teleporting to sector %s", sectorName.GetData());
         Teleport( client, pos.x, pos.y, pos.z, instance, rot, sectorName );
     }
@@ -1460,7 +1460,7 @@ void UserManager::ReportPosition(psUserCmdMessage& msg,Client *client,int client
         float angle;
 
         object->GetPosition(pos, angle, sector);
-        INSTANCE_ID instance = object->GetInstance();
+        InstanceID instance = object->GetInstance();
 
         csString sector_name = (sector) ? sector->QueryObject()->GetName() : "(null)";
 
@@ -2298,7 +2298,7 @@ void UserManager::SwitchAttackTarget(Client *targeter, Client *targeted )
         psserver->combatmanager->StopAttack(targeter->GetActor());
 }
 
-void UserManager::Teleport( Client *client, float x, float y, float z, INSTANCE_ID instance, float rot, const char* sectorname )
+void UserManager::Teleport( Client *client, float x, float y, float z, InstanceID instance, float rot, const char* sectorname )
 {
     csVector3 pos( x,y,z );
     csRef<iEngine> engine = csQueryRegistry<iEngine> (psserver->GetObjectReg());

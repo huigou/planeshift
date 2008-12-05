@@ -253,7 +253,7 @@ class gemObject : public iDeleteNotificationObject, public CS::Utility::WeakRefe
 {
 
 public:
-    gemObject(const char* name, const char* factname,const char* filename,INSTANCE_ID myinstance,iSector* room,
+    gemObject(const char* name, const char* factname,const char* filename,InstanceID myinstance,iSector* room,
         const csVector3& pos,float rotangle,int clientnum);
 
     /// This ctor is only for use in making keys for the BinaryTree
@@ -287,8 +287,8 @@ public:
     const char *GetName();
     void SetName(const char* n);
 
-    void SetInstance(INSTANCE_ID newInstance) { worldInstance = newInstance; }
-    INSTANCE_ID  GetInstance()                { return worldInstance; }
+    void SetInstance(InstanceID newInstance) { worldInstance = newInstance; }
+    InstanceID  GetInstance()                { return worldInstance; }
 
     void RegisterCallback(iDeleteObjectCallback * receiver) { receivers.Push(receiver); }
     void UnregisterCallback(iDeleteObjectCallback * receiver) { receivers.Delete(receiver); }
@@ -344,8 +344,8 @@ public:
     virtual void BroadcastTargetStatDR(ClientConnectionSet *clients) { }
     virtual void SendTargetStatDR(Client *client) { }
     virtual psNPCDialog *GetNPCDialogPtr() { return 0; }
-    virtual void GetLastSuperclientPos(csVector3& pos, INSTANCE_ID& instance) const { }
-    virtual void SetLastSuperclientPos(const csVector3& pos, INSTANCE_ID instance) { }
+    virtual void GetLastSuperclientPos(csVector3& pos, InstanceID& instance) const { }
+    virtual void SetLastSuperclientPos(const csVector3& pos, InstanceID instance) { }
     virtual void AddLootableClient(int cnum) { }
     virtual void RemoveLootableClient(int cnum) { }
     virtual bool IsLootableClient(int cnum) { return false; }
@@ -366,7 +366,7 @@ protected:
     ProximityList *proxlist;                    ///< Proximity List for this object
     csString name;                              ///< Name of this object, used mostly for debugging
     static GEMSupervisor *cel;                  ///< Static ptr back to main collection of all objects
-    INSTANCE_ID worldInstance;                  ///< Only objects which match instances can see each other
+    InstanceID worldInstance;                  ///< Only objects which match instances can see each other
     csVector3 pos;                              ///< Position in 3d space
     float yRot;                                 ///< Left-Right rotation, in radians
     iSector *sector;                            ///< Ptr to the CS sector inhabited
@@ -398,7 +398,7 @@ public:
     gemActiveObject( const char* name,
                     const char* factname,
                     const char* filename,
-                    INSTANCE_ID myInstance,
+                    InstanceID myInstance,
                     iSector* room,
                     const csVector3& pos,
                     float rotangle,
@@ -433,7 +433,7 @@ public:
     gemItem(csWeakRef<psItem> item,
         const char* factname,
         const char* filename,
-        INSTANCE_ID myInstance,
+        InstanceID myInstance,
         iSector* room,
         const csVector3& pos,
         float rotangle,
@@ -447,7 +447,7 @@ public:
     virtual void Broadcast(int clientnum, bool control);
     virtual void Send( int clientnum, bool control, bool super_clients);
 
-    virtual void SetPosition(const csVector3& pos,float angle, iSector* sector, INSTANCE_ID instance);
+    virtual void SetPosition(const csVector3& pos,float angle, iSector* sector, InstanceID instance);
 
     virtual bool IsPickable();
     virtual bool IsLockable();
@@ -477,7 +477,7 @@ public:
     gemContainer(csWeakRef<psItem> item,
         const char* factname,
         const char* filename,
-        INSTANCE_ID myInstance,
+        InstanceID myInstance,
         iSector* room,
         const csVector3& pos,
         float rotangle,
@@ -655,7 +655,7 @@ public:
     psLinearMovement* pcmove;
 
     gemActor(psCharacter *chardata, const char* factname,const char* filename,
-        INSTANCE_ID myInstance,iSector* room,const csVector3& pos,float rotangle,int clientnum);
+        InstanceID myInstance,iSector* room,const csVector3& pos,float rotangle,int clientnum);
 
     virtual ~gemActor();
 
@@ -719,7 +719,7 @@ public:
     virtual float DrainMana(float adjust, bool absolute);
 
     void SetPosition(const csVector3& pos,float angle, iSector* sector);
-    void SetInstance(INSTANCE_ID worldInstance);
+    void SetInstance(InstanceID worldInstance);
 
     void UpdateValidLocation(const csVector3& pos, float vel_y, float yrot, iSector* sector, bool force = false);
 
@@ -756,8 +756,8 @@ public:
     void Resurrect();
 
     virtual bool UpdateDR();
-    virtual void GetLastSuperclientPos(csVector3& pos, INSTANCE_ID& instance) const;
-    virtual void SetLastSuperclientPos(const csVector3& pos, INSTANCE_ID instance);
+    virtual void GetLastSuperclientPos(csVector3& pos, InstanceID& instance) const;
+    virtual void SetLastSuperclientPos(const csVector3& pos, InstanceID instance);
 
     virtual void BroadcastTargetStatDR(ClientConnectionSet *clients);
     virtual void SendTargetStatDR(Client *client);
@@ -897,7 +897,7 @@ protected:
 
 public:
     gemNPC(psCharacter *chardata, const char* factname,const char* filename,
-           INSTANCE_ID myInstance,iSector* room,const csVector3& pos,float rotangle,int clientnum);
+           InstanceID myInstance,iSector* room,const csVector3& pos,float rotangle,int clientnum);
 
     virtual ~gemNPC();
 
@@ -964,7 +964,7 @@ class gemPet : public gemNPC
 {
 public:
 
-    gemPet(psCharacter *chardata, const char* factname,const char* filename,INSTANCE_ID instance,iSector* room,
+    gemPet(psCharacter *chardata, const char* factname,const char* filename,InstanceID instance,iSector* room,
         const csVector3& pos,float rotangle,int clientnum,uint32 id) : gemNPC(chardata,factname,filename,instance,room,pos,rotangle,clientnum)
     {
         this->persistanceLevel = "Temporary";

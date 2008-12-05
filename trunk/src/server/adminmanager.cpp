@@ -1692,7 +1692,7 @@ void AdminManager::GetInfo(MsgEntry* me,psAdminCmdMessage& msg, AdminCmdData& da
     csString name, ipAddress, securityLevel, sectorName;
     PID playerId;
     AccountID accountId;
-    INSTANCE_ID instance = DEFAULT_INSTANCE;
+    InstanceID instance = DEFAULT_INSTANCE;
     float timeConnected = 0.0f, loc_x = 0.0f, loc_y = 0.0f, loc_z = 0.0f, loc_yrot = 0.0f;
 
     bool banned = false;
@@ -1962,7 +1962,7 @@ void AdminManager::CreateHuntLocation(MsgEntry* me,psAdminCmdMessage& msg, Admin
     csVector3 pos;
     float angle;
     iSector* sector = 0;
-    INSTANCE_ID instance;
+    InstanceID instance;
 
     client->GetActor()->GetPosition(pos, angle, sector);
     instance = client->GetActor()->GetInstance();
@@ -2396,7 +2396,7 @@ void AdminManager::Teleport(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& 
     csVector3 targetPoint;
     float yRot = 0.0;
     iSector *targetSector;
-    INSTANCE_ID targetInstance;
+    InstanceID targetInstance;
     if ( !GetTargetOfTeleport(client, msg, data, targetSector, targetPoint, yRot, subject, targetInstance) )
     {
         psserver->SendSystemError(client->GetClientNum(), "Cannot teleport %s to %s", data.player.GetData(), data.target.GetData() );
@@ -2408,7 +2408,7 @@ void AdminManager::Teleport(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& 
     csVector3 oldpos;
     float oldyrot;
     iSector *oldsector;
-    INSTANCE_ID oldInstance;
+    InstanceID oldInstance;
     subject->GetPosition(oldpos,oldyrot,oldsector);
     oldInstance = subject->GetInstance();
 
@@ -3523,7 +3523,7 @@ void AdminManager::HandleLocation(MsgEntry* me, psAdminCmdMessage& msg, AdminCmd
 }
 
 
-bool AdminManager::GetTargetOfTeleport(Client *client, psAdminCmdMessage& msg, AdminCmdData& data, iSector * & targetSector,  csVector3 & targetPoint, float &yRot, gemObject *subject, INSTANCE_ID &instance)
+bool AdminManager::GetTargetOfTeleport(Client *client, psAdminCmdMessage& msg, AdminCmdData& data, iSector * & targetSector,  csVector3 & targetPoint, float &yRot, gemObject *subject, InstanceID &instance)
 {
     instance = DEFAULT_INSTANCE;
 
@@ -3769,7 +3769,7 @@ void AdminManager::Slide(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& dat
     }
 }
 
-bool AdminManager::MoveObject(Client *client, gemObject *target, csVector3& pos, float yrot, iSector* sector, INSTANCE_ID instance)
+bool AdminManager::MoveObject(Client *client, gemObject *target, csVector3& pos, float yrot, iSector* sector, InstanceID instance)
 {
     // This is a powerful feature; not everyone is allowed to use all of it
     csString response;
@@ -3859,7 +3859,7 @@ void AdminManager::CreateNPC(MsgEntry* me,psAdminCmdMessage& msg, AdminCmdData& 
     csVector3 pos;
     float angle;
     psSectorInfo* sectorInfo = NULL;
-    INSTANCE_ID instance;
+    InstanceID instance;
     client->GetActor()->GetCharacterData()->GetLocationInWorld(instance, sectorInfo, pos.x, pos.y, pos.z, angle );
 
     iSector* sector = NULL;
@@ -4186,12 +4186,12 @@ void AdminManager::MakeUnlockable(MsgEntry *me, psAdminCmdMessage& msg, AdminCmd
         psActionLocation *action = gemAction->GetAction();
 
         // check if the actionlocation is linked to real item
-        INSTANCE_ID instance_id = action->GetInstanceID();
-        if (instance_id == INSTANCE_ALL)
+        InstanceID InstanceID = action->GetInstanceID();
+        if (InstanceID == INSTANCE_ALL)
         {
-            instance_id = action->GetGemObject()->GetEID().Unbox(); // FIXME: Understand and comment on conversion magic
+            InstanceID = action->GetGemObject()->GetEID().Unbox(); // FIXME: Understand and comment on conversion magic
         }
-        target = GEMSupervisor::GetSingleton().FindItemEntity( instance_id );
+        target = GEMSupervisor::GetSingleton().FindItemEntity( InstanceID );
         if (!target)
         {
             psserver->SendSystemError(me->clientnum,"There is no item associated with this action location.");
@@ -4236,12 +4236,12 @@ void AdminManager::MakeSecurity(MsgEntry *me, psAdminCmdMessage& msg, AdminCmdDa
         psActionLocation *action = gemAction->GetAction();
 
         // check if the actionlocation is linked to real item
-        INSTANCE_ID instance_id = action->GetInstanceID();
-        if (instance_id == INSTANCE_ALL)
+        InstanceID InstanceID = action->GetInstanceID();
+        if (InstanceID == INSTANCE_ALL)
         {
-            instance_id = action->GetGemObject()->GetEID().Unbox(); // FIXME: Understand and comment on conversion magic
+            InstanceID = action->GetGemObject()->GetEID().Unbox(); // FIXME: Understand and comment on conversion magic
         }
-        target = GEMSupervisor::GetSingleton().FindItemEntity( instance_id );
+        target = GEMSupervisor::GetSingleton().FindItemEntity( InstanceID );
         if (!target)
         {
             psserver->SendSystemError(me->clientnum,"There is no item associated with this action location.");
@@ -4323,12 +4323,12 @@ void AdminManager::AddRemoveLock(MsgEntry *me, psAdminCmdMessage& msg, AdminCmdD
         psActionLocation *action = gemAction->GetAction();
 
         // check if the actionlocation is linked to real item
-        INSTANCE_ID instance_id = action->GetInstanceID();
-        if (instance_id == INSTANCE_ALL)
+        InstanceID InstanceID = action->GetInstanceID();
+        if (InstanceID == INSTANCE_ALL)
         {
-            instance_id = action->GetGemObject()->GetEID().Unbox(); // FIXME: Understand and comment on conversion magic
+            InstanceID = action->GetGemObject()->GetEID().Unbox(); // FIXME: Understand and comment on conversion magic
         }
-        target = GEMSupervisor::GetSingleton().FindItemEntity( instance_id );
+        target = GEMSupervisor::GetSingleton().FindItemEntity( InstanceID );
         if (!target)
         {
             psserver->SendSystemError(me->clientnum,"There is no item associated with this action location.");
@@ -4381,13 +4381,13 @@ void AdminManager::ChangeLock(MsgEntry *me, psAdminCmdMessage& msg, AdminCmdData
         psActionLocation *action = gemAction->GetAction();
 
         // check if the actionlocation is linked to real item
-        INSTANCE_ID instance_id = action->GetInstanceID();
-        if (instance_id == INSTANCE_ALL)
+        InstanceID InstanceID = action->GetInstanceID();
+        if (InstanceID == INSTANCE_ALL)
         {
-            instance_id = action->GetGemObject()->GetEID().Unbox(); // FIXME: Understand and comment on conversion magic
+            InstanceID = action->GetGemObject()->GetEID().Unbox(); // FIXME: Understand and comment on conversion magic
 
         }
-        target = GEMSupervisor::GetSingleton().FindItemEntity( instance_id );
+        target = GEMSupervisor::GetSingleton().FindItemEntity( InstanceID );
         if (!target)
         {
             psserver->SendSystemError(me->clientnum,"There is no item associated with this action location.");
@@ -6516,7 +6516,7 @@ void AdminManager::UpdateRespawn(AdminCmdData& data, Client* client, gemActor* t
     csVector3 pos;
     float yrot;
     iSector* sec;
-    INSTANCE_ID instance;
+    InstanceID instance;
 
     // Update respawn to the NPC's current position or your current position?
     if (!data.type.IsEmpty() && data.type.CompareNoCase("here"))
@@ -7037,7 +7037,7 @@ void AdminManager::ModifyItem(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
         gemItem* gItem = dynamic_cast<gemItem*>(object);
         if (gItem)
         {
-            INSTANCE_ID instance = object->GetInstance();
+            InstanceID instance = object->GetInstance();
             iSector* sector = object->GetSector();
 
             csVector3 pos(data.x, data.y, data.z);

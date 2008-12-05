@@ -63,7 +63,7 @@ protected:
     int          clientnum;
     bool         firstFrame;
     csVector3    oldPos;
-    INSTANCE_ID  oldInstance;
+    InstanceID  oldInstance;
 
     /** Adds 'interestedobject' to 'objectsThatWatchMe' */
     void AddWatcher(gemObject *interestedobject, float range);

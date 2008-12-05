@@ -821,7 +821,7 @@ void SpawnManager::RemoveNPC(gemObject *obj)
     float angle;
     csString sector;
     int delay = respawn->GetRespawnDelay();
-    INSTANCE_ID instance;
+    InstanceID instance;
 
     respawn->DetermineSpawnLoc(obj->GetCharacterData(),pos,angle,sector,instance);
 
@@ -859,7 +859,7 @@ void SpawnManager::HandleMessage(MsgEntry *me,Client *client)
     }
 }
 
-void SpawnManager::Respawn(INSTANCE_ID instance, csVector3& where, float rot, csString& sector, PID playerID)
+void SpawnManager::Respawn(InstanceID instance, csVector3& where, float rot, csString& sector, PID playerID)
 {
     psSectorInfo* spawnsector = CacheManager::GetSingleton().GetSectorInfoByName(sector);
     if (spawnsector==NULL)
@@ -1078,7 +1078,7 @@ void SpawnRule::Initialize(int idval,
                            const char *sector,
                            LootEntrySet *loot_id,
                            int dead_time,
-                           INSTANCE_ID instance)
+                           InstanceID instance)
 {
     id = idval;
     minspawntime = minspawn;
@@ -1114,7 +1114,7 @@ PID SpawnRule::CheckSubstitution(PID originalplayer)
         return originalplayer;
 }
 
-void SpawnRule::DetermineSpawnLoc(psCharacter *ch, csVector3& pos, float& angle, csString& sectorname, INSTANCE_ID& instance)
+void SpawnRule::DetermineSpawnLoc(psCharacter *ch, csVector3& pos, float& angle, csString& sectorname, InstanceID& instance)
 {
     // ignore fixed point if there are ranges in this rule
 
@@ -1250,7 +1250,7 @@ psRespawnGameEvent::psRespawnGameEvent(SpawnManager *mgr,
                                        float angle,
                                        csString& sectorname,
                                        PID newplayer,
-                                       INSTANCE_ID newinstance)
+                                       InstanceID newinstance)
     : psGameEvent(0,delayticks,"psRespawnGameEvent")
 {
     spawnmanager=mgr;

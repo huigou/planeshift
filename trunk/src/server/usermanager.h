@@ -332,7 +332,7 @@ protected:
      *  @param rot    The rotation to use.
      *  @param sector The sector name to move to.
      */
-    void Teleport( Client *client, float x, float y, float z, INSTANCE_ID instance, float rot, const char* sectorname );
+    void Teleport( Client *client, float x, float y, float z, InstanceID instance, float rot, const char* sectorname );
 
     void HandleMOTDRequest(MsgEntry *me,Client *client);
     void HandleUserCommand(MsgEntry *me,Client *client);
