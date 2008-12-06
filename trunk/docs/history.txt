@@ -1,8 +1,11 @@
-﻿*** 2008-11-05 by Stefano Angeleri
+﻿*** 2008-12-06 by Steven Patrick
+- Compiling.html fixes by Xhormaan.
+
+*** 2008-12-05 by Stefano Angeleri
 - Applyed a patch to prevent crash by kougaro for FS#224 - When you morph, your description still shows your original race. 
   with some changes from the original one.
 
-﻿*** 2008-11-04 by Stefano Angeleri
+﻿*** 2008-12-04 by Stefano Angeleri
 - Fixed various instance ids scattered around the code to use INSTACE_ID in place of unsigned int
   or even int
 - Changed some hardcoded values for default instance and instance all in order to use the defines
@@ -11,7 +14,7 @@
 - Automatically send new admin commands to client. No need to request who is deputized
   to use /admin
 
-*** 2008-11-03 by Stefano Angeleri
+*** 2008-12-03 by Stefano Angeleri
 - Fixed some errors in the Ubuntu compiling guide and added special cases for Intrepid
 - Added instruction on how to build libspeex on macosx by caarrie
 
@@ -19,7 +22,7 @@
 - Fixed FS#2526, patch by Lanarel
 - Further fix to FS#2526.
 
-*** 2008-11-01 by Stefano Angeleri
+*** 2008-12-01 by Stefano Angeleri
 - added /show petitions
 - Fixed a typo in 'privilege'
 - Fixed an uid: / pid: inconsistency
