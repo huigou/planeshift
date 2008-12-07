@@ -81,8 +81,6 @@ LinkStaticPlugins psnpcclient_static :
   sprcal3d
   sprcal3dldr
   stdrep
-  thing
-  thingldr
   vfs
   xmlread
   xmlshader
