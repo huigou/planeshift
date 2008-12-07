@@ -42,7 +42,6 @@ LinkStaticPlugins psserver_static :
   sprcal3d
   sprcal3dldr
   stdrep
-  thing
   vfs
   xmlread
   xmlshader
