@@ -1,6 +1,7 @@
 ﻿*** 2008-12-07 by Stefano Angeleri
 - Removed an useless step in the compiling guide, in cal3d section
   thanks to vonor for pointing it out
+- Committed a patch for FS#2578 by Arerano
 
 *** 2008-12-06 by Steven Patrick
 - Compiling.html fixes by Xhormaan.
