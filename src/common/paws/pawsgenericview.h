@@ -29,10 +29,8 @@
 #include <iengine/movable.h>
 #include <iengine/sector.h>
 
-#include <imesh/lighting.h>
 #include <imesh/object.h>
 #include <imesh/sprite3d.h>
-#include <imesh/thing.h>
 
 #include <cstool/csview.h>
 #include <csutil/leakguard.h>

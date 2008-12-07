@@ -100,7 +100,6 @@ FactoryIndexEntry* ClientCacheManager::LoadNewFactory(const char* filename)
 
     indexEntry->filename = filename;
     indexEntry->factory = NULL;
-    indexEntry->loaded = false;
     factIndex.Put(stringset->Request(filename), indexEntry);
 
     // Check if it's already loaded.
@@ -108,14 +107,14 @@ FactoryIndexEntry* ClientCacheManager::LoadNewFactory(const char* filename)
     if (meshW)
     {
         indexEntry->factory = meshW;
-        indexEntry->loaded = true;
+        cache->Add(meshW->QueryObject());
     }
 
-    if (!indexEntry->loaded)
+    if (!indexEntry->factory.IsValid())
     {
         if(file.Find(".cal3d") != (size_t)-1)
         {
-            if(!(psengine->GetGFXFeatures() & useNormalMaps))
+            if(!(psengine->GetGFXFeatures() & useAdvancedShaders))
             {
                 csRef<iDocumentNode> texNode = libNode->GetNode("textures");
                 csRef<iDocumentNodeIterator> textures = texNode->GetNodes();
@@ -151,7 +150,7 @@ FactoryIndexEntry* ClientCacheManager::LoadNewFactory(const char* filename)
             }
         }
 
-        psengine->GetLoader()->Load (root, cache, false);
+        indexEntry->result = psengine->GetLoader()->LoadNode(root, cache);
     }
 
     return indexEntry;
@@ -162,52 +161,51 @@ FactoryIndexEntry* ClientCacheManager::GetFactoryEntry(const char* filename)
     // Search for a factory entry with the filename we've passed.
     FactoryIndexEntry* indexEntry = factIndex.Get(stringset->Request(filename), NULL);
 
-    // If the factory entry exists...
-    if (indexEntry)
+    bool checked = false;
+    while(true)
     {
-        CS_ASSERT_MSG("Factory index != filename", indexEntry->filename == filename);
-
-        // If it's loaded then we can return it.
-        if(indexEntry->loaded)
+        // If the factory entry exists...
+        if (indexEntry)
         {
-            return indexEntry;
+            CS_ASSERT_MSG("Factory index != filename", indexEntry->filename == filename);
+
+            // If it's loaded then we can return it.
+            if(indexEntry->factory)
+            {
+                // Disable decals on all movable meshes. Make more specific if/when we need this and it works.
+                indexEntry->factory->GetFlags().Set(CS_ENTITY_NODECAL);
+                return indexEntry;
+            }
+            else if(indexEntry->result->IsFinished())
+            {
+                if(indexEntry->result->WasSuccessful())
+                {
+                    indexEntry->factory = cache->FindMeshFactory(indexEntry->factname);
+                }
+                else
+                {
+                    // Something bad happened (probably a data problem).
+                    csString msg;
+                    msg.Format("Factory Entry %s failed to load!", filename);
+                    CS_ASSERT_MSG(msg.GetData(), false);
+                }
+            }
+            else
+            {
+                // Try again later.
+                return NULL;
+            }
         }
 
-        // Check if it has been loaded.
-        iMeshFactoryWrapper* meshW = psengine->GetEngine()->GetMeshFactories()->FindByName(indexEntry->factname);
-        if(meshW && meshW->GetMeshObjectFactory())
+        if(checked)
         {
-            indexEntry->factory = meshW;
-            indexEntry->loaded = true;
-            return indexEntry;
+            // Try again later.
+            return NULL;
         }
 
-        // Try again later.
-        return NULL;
-    }
-    
-    // No such factory entry exists.. so create a new one.
-    indexEntry = LoadNewFactory(filename);
-
-    // Return it if it's loaded.
-    if(indexEntry)
-    {
-        if(indexEntry->loaded)
-        {
-            return indexEntry;
-        }
-
-        iMeshFactoryWrapper* meshW = psengine->GetEngine()->GetMeshFactories()->FindByName(indexEntry->factname);
-        if(meshW && meshW->GetMeshObjectFactory())
-        {
-            // Disable decals on all movable meshes. Make more specific if/when we need this and it works.
-            meshW->GetFlags().Set(CS_ENTITY_NODECAL);
-            indexEntry->factory = meshW;
-            indexEntry->loaded = true;
-            return indexEntry;
-        }
-
-        return NULL;
+        // No such factory entry exists.. so create a new one.
+        indexEntry = LoadNewFactory(filename);
+        checked = true;
     }
 
     // It looks like something bad happened. This should be caught before now.. so bail out screaming!

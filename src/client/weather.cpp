@@ -531,7 +531,7 @@ bool FogWeatherObject::CreateMesh()
 
     // Use this as a clipping plane if it's not adaptive
     psCamera* cam = psengine->GetPSCamera();
-    if( cam && cam->GetICamera()->GetSector() == sector && !cam->GetDistanceCfg().adaptive )
+    if( cam && cam->GetICamera()->GetCamera()->GetSector() == sector && !cam->GetDistanceCfg().adaptive )
     {
         if(density)
         {

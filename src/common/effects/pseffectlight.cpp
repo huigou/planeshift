@@ -48,7 +48,6 @@ unsigned int psLight::AttachLight(csRef<iLight> newLight, csRef<iMeshWrapper> mw
     sector = movable->GetSectors()->Get(0);
     light->GetMovable()->SetSector(sector);
     light->SetCenter(lightBasePos+movable->GetFullPosition());
-    light->Setup(); 
 
     return ++genUniqueID;
 }
@@ -75,7 +74,6 @@ bool psLight::Update()
                     light->GetMovable()->SetSector(sector);
                 }
                 light->SetCenter(newPos);
-                light->Setup(); 
             }
         }
         return true;

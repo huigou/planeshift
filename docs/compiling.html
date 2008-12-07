@@ -45,7 +45,7 @@ e.custom(start,val,"");}});return true;});},queue:function(type,fn){if(jQuery.is
     // An additional CS revision (CSrev_HEAD) may be specified for the latest version of PS.
     var CSrev = "31648";  // CS_SOURCE_REV
     var CAL3Drev = "507"; // CAL3D_SOURCE_REV
-    var CSrev_HEAD = "31648";  // CS_SOURCE_REV_HEAD
+    var CSrev_HEAD = "31684";  // CS_SOURCE_REV_HEAD
     var CAL3Drev_HEAD = "507"; // CAL3D_SOURCE_REV_HEAD
     var PSStable_Laanx = "2580"; //Last revision of ps stable that works with laanx
     var PSStable_latest = "2580"; //STABLE HEAD - Set this the same as PSStable_Laanx to hide revision info for stable
@@ -662,17 +662,17 @@ After that we need to refresh our sources.list file like so:<br>
     should download from <a href="http://developer.nvidia.com/object/cg_toolkit.html">www.nvidia.com</a> the nvidia-toolkit.  Download the appropriate version for your architecture&#8212;either x86 or x86-64.
     Make sure to use the appropriate file based on your chipset. To install the file, place it in the root directory and use the following commands, then delete the tar.gz file.</p>
     <div class="Linux-Generic">
-<div class="commandBox"># wget -c http://developer.download.nvidia.com/cg/Cg_2.0/2.1.0012/Cg-2.1_October2008_x86.tgz</br>
-        # sudo mv Cg-2.1_October2008_x86*.tgz /</br>
+<div class="commandBox"># wget -c http://developer.download.nvidia.com/cg/Cg_2.0/2.1.0016/Cg-2.1_November2008_x86.tgz</br>
+        # sudo mv Cg-2.1_November2008_x86*.tgz /</br>
         # cd /</br>
-        # sudo tar -zxvf Cg-2.1_October2008_x86*.tgz</br>
-        # sudo rm Cg-2.1_October2008_x86*.tgz</div></br>
+        # sudo tar -zxvf Cg-2.1_November2008_x86*.tgz</br>
+        # sudo rm Cg-2.1_November2008_x86*.tgz</div></br>
     <p>If you are a x86_64 system do the following </p>
-<div class="commandBox"># wget -c http://developer.download.nvidia.com/cg/Cg_2.0/2.1.0012/Cg-2.1_October2008_x86_64.tgz</br>
-        # sudo mv Cg-2.1_October2008_x86*.tgz /</br>
+<div class="commandBox"># wget -c http://developer.download.nvidia.com/cg/Cg_2.0/2.1.0016/Cg-2.1_November2008_x86_64.tgz</br>
+        # sudo mv Cg-2.1_November2008_x86*.tgz /</br>
         # cd /</br>
-        # sudo tar -zxvf Cg-2.1_October2008_x86*.tgz</br>
-        # sudo rm Cg-2.1_October2008_x86*.tgz</div></br>
+        # sudo tar -zxvf Cg-2.1_November2008_x86*.tgz</br>
+        # sudo rm Cg-2.1_November2008_x86*.tgz</div></br>
     </div>
     <div class="Linux-Debian">
         <i class="command">tar -zxvf Cg-2.1_October2008_x86*.tgz</i>
@@ -685,17 +685,17 @@ After that we need to refresh our sources.list file like so:<br>
     If you are on Hardy or Intrepid you can
     <p><i class="command"># sudo apt-get install nvidia-cg-toolkit</i></p>
     <p> Otherwise you MUST do this</p>
-    <div class="commandBox"># wget -c http://developer.download.nvidia.com/cg/Cg_2.0/2.1.0012/Cg-2.1_October2008_x86.tgz</br>
-        # sudo mv Cg-2.1_October2008_x86*.tgz /</br>
+    <div class="commandBox"># wget -c http://developer.download.nvidia.com/cg/Cg_2.0/2.1.0016/Cg-2.1_November2008_x86.tgz</br>
+        # sudo mv Cg-2.1_November2008_x86*.tgz /</br>
         # cd /</br>
-        # sudo tar -zxvf Cg-2.1_October2008_x86*.tgz</br>
-        # sudo rm Cg-2.1_October2008_x86*.tgz</div></br>
+        # sudo tar -zxvf Cg-2.1_November2008_x86*.tgz</br>
+        # sudo rm Cg-2.1_November2008_x86*.tgz</div></br>
     <p>If you are a x86_64 system do the following if the apt-get line above did not work</p>
-<div class="commandBox"># wget -c http://developer.download.nvidia.com/cg/Cg_2.0/2.1.0012/Cg-2.1_October2008_x86_64.tgz</br>
-        # sudo mv Cg-2.1_October2008_x86*.tgz /</br>
+<div class="commandBox"># wget -c http://developer.download.nvidia.com/cg/Cg_2.0/2.1.0016/Cg-2.1_November2008_x86_64.tgz</br>
+        # sudo mv Cg-2.1_November2008_x86*.tgz /</br>
         # cd /</br>
-        # sudo tar -zxvf Cg-2.1_October2008_x86*.tgz</br>
-        # sudo rm Cg-2.1_October2008_x86*.tgz</div></br>
+        # sudo tar -zxvf Cg-2.1_November2008_x86*.tgz</br>
+        # sudo rm Cg-2.1_November2008_x86*.tgz</div></br>
     </div>
     <div class="Linux-Gentoo">
         <p>Via portage: <i class="command"># emerge nvidia-cg-toolkit</i></p>
@@ -894,7 +894,7 @@ then<br /><br />
     <p><i class="command">$HOME/development$ svn co -r CS_SOURCE_REV https://crystal.svn.sourceforge.net/svnroot/crystal/CS/branches/release/V1.4 cs</i></p>
     </div>
     <div class="Developer">
-    <p><i class="command">$HOME/development$ svn co -r CS_SOURCE_REV_HEAD https://crystal.svn.sourceforge.net/svnroot/crystal/CS/branches/release/V1.4 cs</i></p>
+    <p><i class="command">$HOME/development$ svn co -r CS_SOURCE_REV_HEAD https://crystal.svn.sourceforge.net/svnroot/crystal/CS/trunk cs</i></p>
     </div>
 
     <h3>PlaneShift</h3>
@@ -947,7 +947,7 @@ If you update a repository, you will need to recompile that repository and each 
         CS revision number: CS_SOURCE_REV
     </div>
     <div class="Developer">
-    <p><i class="command">https://crystal.svn.sourceforge.net/svnroot/crystal/CS/branches/release/V1.4</i></p>
+    <p><i class="command">https://crystal.svn.sourceforge.net/svnroot/crystal/CS/trunk</i></p>
         Specify the checkout directory as "C:\development\CS", select "Revision", and paste the current
         CS revision number: CS_SOURCE_REV_HEAD
     </div>
@@ -1057,7 +1057,7 @@ If you update a repository, you will need to recompile that repository and each 
     <p><i class="command">$HOME/development$ svn co -r CS_SOURCE_REV https://crystal.svn.sourceforge.net/svnroot/crystal/CS/branches/release/V1.4 cs</i></p>
     </div>
     <div class="Developer">
-    <p><i class="command">$HOME/development$ svn co -r CS_SOURCE_REV_HEAD https://crystal.svn.sourceforge.net/svnroot/crystal/CS/branches/release/V1.4 cs</i></p>
+    <p><i class="command">$HOME/development$ svn co -r CS_SOURCE_REV_HEAD https://crystal.svn.sourceforge.net/svnroot/crystal/CS/trunk cs</i></p>
     </div>
 
     <h3>PlaneShift</h3>

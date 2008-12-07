@@ -28,11 +28,9 @@ class pawsSpinBox;
 
 /** A dialog window to select a new effect anchor keyframe.
  */
-class EEditSelectNewAnchorKeyFrame : public pawsWidget
+class EEditSelectNewAnchorKeyFrame : public pawsWidget, public scfImplementation0<EEditSelectNewAnchorKeyFrame>
 {
 public:
-    SCF_DECLARE_IBASE;
-
     EEditSelectNewAnchorKeyFrame();
     virtual ~EEditSelectNewAnchorKeyFrame();
 

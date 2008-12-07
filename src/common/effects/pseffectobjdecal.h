@@ -36,7 +36,7 @@ public:
     virtual ~psEffectObjDecal();
 
     // inheritted function overloads
-    virtual bool Load(iDocumentNode *node);
+    virtual bool Load(iDocumentNode *node, iLoaderContext* ldr_context);
     virtual bool Render(const csVector3 &up);
     virtual bool Update(csTicks elapsed);
     virtual psEffectObj *Clone() const;

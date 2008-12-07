@@ -23,7 +23,6 @@
 #include <iutil/databuff.h>
 #include <iengine/movable.h>
 #include <iengine/mesh.h>
-#include <iengine/region.h>
 #include <iutil/object.h>
 
 

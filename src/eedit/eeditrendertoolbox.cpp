@@ -24,17 +24,12 @@
 #include "paws/pawsmanager.h"
 #include "paws/pawsbutton.h"
 
-SCF_IMPLEMENT_IBASE(EEditRenderToolbox)
-SCF_IMPLEMENT_IBASE_END
-
-EEditRenderToolbox::EEditRenderToolbox()
+EEditRenderToolbox::EEditRenderToolbox() : scfImplementationType(this)
 {
-    SCF_CONSTRUCT_IBASE(0);
 }
 
 EEditRenderToolbox::~EEditRenderToolbox()
 {
-    SCF_DESTRUCT_IBASE();
 }
 
 void EEditRenderToolbox::Update(unsigned int elapsed)

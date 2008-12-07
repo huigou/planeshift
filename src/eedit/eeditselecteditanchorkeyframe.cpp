@@ -26,20 +26,14 @@
 #include "paws/pawsspinbox.h"
 #include "paws/pawscheckbox.h"
 
-SCF_IMPLEMENT_IBASE(EEditSelectEditAnchorKeyFrame)
-SCF_IMPLEMENT_IBASE_END
-
-EEditSelectEditAnchorKeyFrame::EEditSelectEditAnchorKeyFrame()
+EEditSelectEditAnchorKeyFrame::EEditSelectEditAnchorKeyFrame() : scfImplementationType(this)
 {
-    SCF_CONSTRUCT_IBASE(0);
     selectCallback = 0;
 }
 
 EEditSelectEditAnchorKeyFrame::~EEditSelectEditAnchorKeyFrame()
 {
     delete selectCallback;
-
-    SCF_DESTRUCT_IBASE();
 }
 
 void EEditSelectEditAnchorKeyFrame::Select(float time, EEditInputboxManager::iSelectEditAnchorKeyFrame * callback, 

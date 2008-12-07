@@ -37,14 +37,14 @@ struct iCollection;
 struct iDocumentNode;
 struct iDocumentSystem;
 struct iEngine;
-struct iLoader;
+struct iThreadedLoader;
 struct iObjectRegistry;
 struct iVFS;
 
 // Feature defines.
-#define useNormalMaps 0x01
+#define useAdvancedShaders 0x01
 #define useMeshGen 0x02
-#define useAll (useNormalMaps | useMeshGen)
+#define useAll (useAdvancedShaders | useMeshGen)
 
 /**
 * Replacement class for iPcRegion from CEL.
@@ -132,7 +132,7 @@ private:
     csRef<iEngine> engine;
     csRef<iVFS> vfs;
     csRef<iDocumentSystem> xml;
-    csRef<iLoader> loader;
+    csRef<iThreadedLoader> loader;
 
     static void CloneNode(iDocumentNode* from, iDocumentNode* to);
 };

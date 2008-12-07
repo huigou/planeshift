@@ -427,7 +427,7 @@ bool psMainWidget::OnMouseDown( int button, int keyModifier, int x, int y )
 
                     if (mesh)
                     {
-                        iSector* sector = psengine->GetPSCamera()->GetICamera()->GetSector();
+                        iSector* sector = psengine->GetPSCamera()->GetICamera()->GetCamera()->GetSector();
                         const char* sectorname = sector->QueryObject()->GetName();
                         const char* meshname = mesh->QueryObject()->GetName();
 
@@ -462,7 +462,7 @@ GEMClientObject* psMainWidget::FindMouseOverObject( int x, int y )
         cel = psengine->GetCelClient();
     }
 
-    if (psengine->GetPSCamera())
+    if (psengine->GetPSCamera() && psengine->GetPSCamera()->IsInitialized())
     {        
         iMeshWrapper* selectedMesh = psengine->GetPSCamera()->FindMeshUnder2D(x,y);        
         if ( selectedMesh && selectedMesh->QueryObject())        

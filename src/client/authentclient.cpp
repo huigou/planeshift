@@ -32,8 +32,6 @@
 #include "util/pserror.h"
 #include "util/log.h"
 
-#include "iclient/netmanager.h"
-
 #include "gui/pawsinfowindow.h"
 #include "gui/pawsloginwindow.h"
 #include "gui/psmainwidget.h"

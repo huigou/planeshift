@@ -32,7 +32,7 @@ public:
     ~psEffectObjSimpMesh();
 
     // inheritted function overloads
-    bool Load(iDocumentNode *node);
+    bool Load(iDocumentNode *node, iLoaderContext* ldr_context);
     bool Render(const csVector3 &up);
     bool Update(csTicks elapsed);
     psEffectObj *Clone() const;

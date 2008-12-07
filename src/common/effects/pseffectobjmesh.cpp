@@ -24,8 +24,8 @@
 #include <iengine/material.h>
 #include <iengine/mesh.h>
 #include <iengine/movable.h>
+#include <imap/ldrctxt.h>
 #include <imap/loader.h>
-#include <iengine/region.h>
 #include <imesh/objmodel.h>
 #include <csutil/cscolor.h>
 #include <csutil/flags.h>
@@ -46,7 +46,7 @@ psEffectObjMesh::~psEffectObjMesh()
 {
 }
 
-bool psEffectObjMesh::Load(iDocumentNode *node)
+bool psEffectObjMesh::Load(iDocumentNode *node, iLoaderContext * ldr_context)
 {
     // get the attributes
     name.Clear();
@@ -71,10 +71,10 @@ bool psEffectObjMesh::Load(iDocumentNode *node)
         return false;
     }
     
-    if (!psEffectObj::Load(node))
+    if (!psEffectObj::Load(node, ldr_context))
         return false;
 
-    return PostSetup();
+    return PostSetup(ldr_context);
 }
 
 bool psEffectObjMesh::Render(const csVector3 &up)
@@ -170,13 +170,13 @@ psEffectObj *psEffectObjMesh::Clone() const
     return newObj;
 }
 
-bool psEffectObjMesh::PostSetup()
+bool psEffectObjMesh::PostSetup(iLoaderContext * ldr_context)
 {
     static unsigned int uniqueID = 0;
     csString facName = "effect_mesh_fac_";
     facName += uniqueID++;
     
-    meshFact = effectsCollection->FindMeshFactory(factName);
+    meshFact = ldr_context->FindMeshFactory(factName);
     if (!meshFact)
     {
         csReport(psCSSetup::object_reg, CS_REPORTER_SEVERITY_ERROR, "planeshift_effects", "Couldn't find mesh factory %s in effect %s\n", factName.GetData(), name.GetData());

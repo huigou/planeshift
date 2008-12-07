@@ -31,21 +31,15 @@
 #include "effects/pseffectmanager.h"
 #include "eeditapp.h"
 
-SCF_IMPLEMENT_IBASE (psCal3DCallbackLoader)
-    SCF_IMPLEMENTS_INTERFACE(iLoaderPlugin)
-SCF_IMPLEMENT_IBASE_END
-
 psCal3DCallbackLoader::psCal3DCallbackLoader(iObjectRegistry * objreg, EEditApp * app)
+: scfImplementation1<psCal3DCallbackLoader, iLoaderPlugin>(this)
 {
-    SCF_CONSTRUCT_IBASE(0);
-   
     objreg->Register(this, "Cal3DCallbackLoader");
     parentApp = app;
 }
 
 psCal3DCallbackLoader::~psCal3DCallbackLoader()
 {
-    SCF_DESTRUCT_IBASE();
 }
 
 csPtr<iBase> psCal3DCallbackLoader::Parse(iDocumentNode * node, iStreamSource*, iLoaderContext * ldr_context, iBase * context)

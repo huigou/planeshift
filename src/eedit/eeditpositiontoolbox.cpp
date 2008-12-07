@@ -29,20 +29,14 @@
 #include "paws/pawsspinbox.h"
 #include "paws/pawsradio.h"
 
-SCF_IMPLEMENT_IBASE(EEditPositionToolbox)
-SCF_IMPLEMENT_IBASE_END
-
-EEditPositionToolbox::EEditPositionToolbox()
+EEditPositionToolbox::EEditPositionToolbox() : scfImplementationType(this)
 {
-    SCF_CONSTRUCT_IBASE(0);
-
     prevPos = csVector3(0,0,0);
     prevRot = 0.0f;
 }
 
 EEditPositionToolbox::~EEditPositionToolbox()
 {
-    SCF_DESTRUCT_IBASE();
 }
 
 void EEditPositionToolbox::SetMeshFile(const csString & file)

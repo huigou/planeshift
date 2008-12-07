@@ -33,7 +33,7 @@ MaterialManager::MaterialManager(iObjectRegistry* _object_reg, bool _keepModels)
     csRef<iGraphics3D> g3d = csQueryRegistry<iGraphics3D> (object_reg);    
     txtmgr = g3d->GetTextureManager();
     engine = csQueryRegistry<iEngine> (object_reg);
-    loader = csQueryRegistry<iLoader> (object_reg);
+    loader = csQueryRegistry<iThreadedLoader> (object_reg);
     vfs = csQueryRegistry<iVFS> (object_reg);
     keepModels = _keepModels;
 }
@@ -68,10 +68,15 @@ iTextureWrapper* MaterialManager::MissingTexture(const char *name, const char *f
         name = tempName.GetData();
     }
 
-    iTextureWrapper* texture = engine->GetTextureList()->FindByName(name);
+    csRef<iTextureWrapper> texture = engine->GetTextureList()->FindByName(name);
 
     if(!texture)
-        texture = loader->LoadTexture(name, filename, CS_TEXTURE_3D, txtmgr, true, false);
+    {
+        csRef<iThreadReturn> itr = loader->LoadTexture(name, filename, CS_TEXTURE_3D, txtmgr, true, false);
+        itr->Wait();
+        texture = scfQueryInterfaceSafe<iTextureWrapper>(itr->GetResultRefPtr());
+        engine->SyncEngineListsNow(loader);
+    }
 
     if (!texture)
     {

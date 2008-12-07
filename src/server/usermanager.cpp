@@ -28,7 +28,6 @@
 #include <iengine/mesh.h>
 #include <iengine/movable.h>
 #include <iengine/sector.h>
-#include <iengine/region.h>
 #include <iengine/engine.h>
 #include <iutil/object.h>
 

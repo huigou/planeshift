@@ -58,15 +58,11 @@ class pawsSpinBox;
 
  */
 
-class EEditFPSToolbox : public EEditToolbox, public pawsWidget
+class EEditFPSToolbox : public EEditToolbox, public pawsWidget, public scfImplementation0<EEditFPSToolbox>
 
 {
 
 public:
-
-    SCF_DECLARE_IBASE;
-
-
 
     EEditFPSToolbox();
 

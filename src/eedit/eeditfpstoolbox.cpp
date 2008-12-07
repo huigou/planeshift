@@ -55,21 +55,9 @@
 #include "paws/pawsspinbox.h"
 
 
-
-SCF_IMPLEMENT_IBASE(EEditFPSToolbox)
-
-SCF_IMPLEMENT_IBASE_END
-
-
-
-EEditFPSToolbox::EEditFPSToolbox()
+EEditFPSToolbox::EEditFPSToolbox() : scfImplementationType(this)
 
 {
-
-    SCF_CONSTRUCT_IBASE(0);
-
-
-
     fps = 60.0f;
 
     framesCount = 0;
@@ -85,8 +73,6 @@ EEditFPSToolbox::~EEditFPSToolbox()
 {
 
     editApp->SetConfigFloat("EEdit.TargetFPS", fpsTarget->GetValue());
-
-    SCF_DESTRUCT_IBASE();
 
 }
 

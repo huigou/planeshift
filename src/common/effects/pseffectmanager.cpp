@@ -52,7 +52,8 @@ void psEffectLoader::SetManager(psEffectManager *manager)
     this->manager = manager;
 }
 
-csPtr<iBase> psEffectLoader::Parse(iDocumentNode * node, iStreamSource * istream, iLoaderContext * ldr_context, iBase * context)
+csPtr<iBase> psEffectLoader::Parse(iDocumentNode * node, iStreamSource * istream, iLoaderContext * ldr_context,
+                                   iBase * context)
 {
 #ifndef DONT_DO_EFFECTS
     if (manager)
@@ -66,8 +67,9 @@ csPtr<iBase> psEffectLoader::Parse(iDocumentNode * node, iStreamSource * istream
             effectNode = xmlbinds->Next();
 
             psEffect * newEffect = new psEffect();
-            newEffect->Load(effectNode, manager->GetView(), manager->Get2DRenderer());
-            
+            newEffect->Load(effectNode, manager->GetView(), manager->Get2DRenderer(), ldr_context);
+
+            CS::Threading::MutexScopedLock lock(parseLock);
             if (manager->FindEffect(newEffect->GetName()))
             {
                 csReport(psCSSetup::object_reg, CS_REPORTER_SEVERITY_ERROR, "planeshift_effects", "Duplicate effect '%s' found!", newEffect->GetName().GetData());
@@ -84,7 +86,7 @@ csPtr<iBase> psEffectLoader::Parse(iDocumentNode * node, iStreamSource * istream
 
 //---------------------------------------------------------------------------------
 
-psEffectManager::psEffectManager()
+psEffectManager::psEffectManager(iObjectRegistry* objReg) : object_reg(objReg)
 {
     vc =  csQueryRegistry<iVirtualClock> (psCSSetup::object_reg);
 
@@ -127,19 +129,14 @@ psEffectManager::~psEffectManager()
 	delete effect2DRenderer;
 }
 
-bool psEffectManager::LoadEffects(const csString & fileName, iView * parentView)
+csRef<iThreadReturn> psEffectManager::LoadEffects(const csString & fileName, iView * parentView)
 {
 #ifndef DONT_DO_EFFECTS
     view = parentView;
 
-    csRef<iLoader> loader =  csQueryRegistry<iLoader> (psCSSetup::object_reg);
-    if (!loader->LoadLibraryFile(fileName, effectsCollection, true, true))
-    {
-        Error2("Failed to load %s",fileName.GetDataSafe());
-        return false;
-    }
+    csRef<iThreadedLoader> loader =  csQueryRegistry<iThreadedLoader> (psCSSetup::object_reg);
+    return csPtr<iThreadReturn>(loader->LoadLibraryFile(fileName, effectsCollection));
 #endif
-    return true;
 }
 
 bool psEffectManager::LoadFromEffectsList(const csString & fileName, iView * parentView)
@@ -182,7 +179,7 @@ bool psEffectManager::LoadFromEffectsList(const csString & fileName, iView * par
         return false;
     }
 
-    bool isSuccess = true;
+    csRefArray<iThreadReturn> threadReturns;
     csRef<iDocumentNode> listNode = root->GetNode("effectsFileList");
     if (listNode != 0)
     {
@@ -195,16 +192,12 @@ bool psEffectManager::LoadFromEffectsList(const csString & fileName, iView * par
             csString effectFile = fileNode->GetAttributeValue("file");
             if (vfs->Exists(effectFile))
             {
-                if (!LoadEffects(effectFile, parentView))
-                {
-                    csReport(psCSSetup::object_reg, CS_REPORTER_SEVERITY_ERROR, "planeshift_effects", "Failed to load effect: %s\n", effectFile.GetData());
-                    // don't return, because some cases might want it to load the other spells
-                    isSuccess = false;
-                }
+                threadReturns.Push(LoadEffects(effectFile, parentView));
             }
         }
     }
-    return isSuccess;
+    csRef<iThreadManager> threadman = csQueryRegistry<iThreadManager>(object_reg);
+    return threadman->Wait(threadReturns);
 #endif
     return true;
 }
@@ -227,6 +220,8 @@ bool psEffectManager::LoadFromDirectory(const csString & path, bool includeSubDi
         csReport(psCSSetup::object_reg, CS_REPORTER_SEVERITY_ERROR, "planeshift_effects", "Failed to load effects from directory; %s read failed", path.GetData());
         return false;
     }
+
+    csRefArray<iThreadReturn> threadReturns;
 
     csRef<iStringArray> files = vfs->FindFiles("*");
     for (size_t a=0; a<files->GetSize(); ++a)
@@ -252,14 +247,12 @@ bool psEffectManager::LoadFromDirectory(const csString & path, bool includeSubDi
         }
         else if (len > 4 && ((lastChar == 'f' || lastChar == 'F') && (file[len-2] == 'f' || file[len-2] == 'F') && (file[len-3] == 'e' || file[len-3] == 'E') && file[len-4] == '.'))
         {
-            if (!LoadEffects(file, parentView))
-            {
-                success = false;
-            }
+            threadReturns.Push(LoadEffects(file, parentView));
         }
     }
 #endif
-    return success;
+    csRef<iThreadManager> threadman = csQueryRegistry<iThreadManager>(object_reg);
+    return threadman->Wait(threadReturns);
 }
 
 bool psEffectManager::DeleteEffect(unsigned int effectID)

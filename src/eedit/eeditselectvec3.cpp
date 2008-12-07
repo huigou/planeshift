@@ -25,20 +25,14 @@
 #include "paws/pawsbutton.h"
 #include "paws/pawsspinbox.h"
 
-SCF_IMPLEMENT_IBASE(EEditSelectVec3)
-SCF_IMPLEMENT_IBASE_END
-
-EEditSelectVec3::EEditSelectVec3()
+EEditSelectVec3::EEditSelectVec3() : scfImplementationType(this)
 {
-    SCF_CONSTRUCT_IBASE(0);
     selectCallback = 0;
 }
 
 EEditSelectVec3::~EEditSelectVec3()
 {
     delete selectCallback;
-
-    SCF_DESTRUCT_IBASE();
 }
 
 void EEditSelectVec3::Select(const csVector3 & startValue, EEditInputboxManager::iSelectVec3 * callback, const csVector2 & pos)

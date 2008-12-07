@@ -63,7 +63,7 @@ private:
     iObjectRegistry* object_reg;
     csRef<iEngine> engine;
     csRef<iTextureManager> txtmgr;
-    csRef<iLoader> loader;
+    csRef<iThreadedLoader> loader;
     csRef<iVFS> vfs;
 };
 

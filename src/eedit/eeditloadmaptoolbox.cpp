@@ -26,17 +26,12 @@
 #include "paws/pawsbutton.h"
 #include "paws/pawstextbox.h"
 
-SCF_IMPLEMENT_IBASE(EEditLoadMapToolbox)
-SCF_IMPLEMENT_IBASE_END
-
-EEditLoadMapToolbox::EEditLoadMapToolbox()
+EEditLoadMapToolbox::EEditLoadMapToolbox() : scfImplementationType(this)
 {
-    SCF_CONSTRUCT_IBASE(0);
 }
 
 EEditLoadMapToolbox::~EEditLoadMapToolbox()
 {
-    SCF_DESTRUCT_IBASE();
 }
 
 void EEditLoadMapToolbox::SetMapFile(const char * mapFile)

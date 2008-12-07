@@ -48,11 +48,9 @@ public:
 
 /** This displays effect errors.
  */
-class EEditErrorToolbox : public EEditToolbox, public pawsWidget
+class EEditErrorToolbox : public EEditToolbox, public pawsWidget, public scfImplementation0<EEditErrorToolbox>
 {
 public:
-    SCF_DECLARE_IBASE;
-
     EEditErrorToolbox();
     virtual ~EEditErrorToolbox();
 

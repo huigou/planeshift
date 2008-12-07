@@ -1511,7 +1511,7 @@ unsigned int CacheManager::FindCommonStringID(const char *name)
     }
 
     csStringID id = (csStringID) msg_strings.Request(name);
-    return (id == csInvalidStringID) ? 0 : id;
+    return (id == csInvalidStringID) ? 0 : id.GetHash();
 }
 
 psQuest *CacheManager::GetQuestByID(unsigned int id)

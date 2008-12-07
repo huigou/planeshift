@@ -24,17 +24,12 @@
 #include "paws/pawsmanager.h"
 #include "paws/pawsbutton.h"
 
-SCF_IMPLEMENT_IBASE(EEditCameraToolbox)
-SCF_IMPLEMENT_IBASE_END
-
-EEditCameraToolbox::EEditCameraToolbox()
+EEditCameraToolbox::EEditCameraToolbox() : scfImplementationType(this)
 {
-    SCF_CONSTRUCT_IBASE(0);
 }
 
 EEditCameraToolbox::~EEditCameraToolbox()
 {
-    SCF_DESTRUCT_IBASE();
 }
 
 void EEditCameraToolbox::Update(unsigned int elapsed)

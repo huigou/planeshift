@@ -58,7 +58,7 @@ psRegion::psRegion(iObjectRegistry *obj_reg, const char *file, uint _gfxFeatures
     engine = csQueryRegistry<iEngine> (object_reg);
     vfs = csQueryRegistry<iVFS>(object_reg);
     xml = csQueryRegistry<iDocumentSystem>(object_reg);
-    loader = csQueryRegistry<iLoader>(object_reg);
+    loader = csQueryRegistry<iThreadedLoader>(object_reg);
 }
 
 psRegion::~psRegion()
@@ -118,13 +118,18 @@ bool psRegion::Load(bool loadMeshes)
     collection = engine->CreateCollection (regionName);
 
     // Now load the map into the selected region
-    vfs->ChDir (worlddir);
+    vfs->ChDir(worlddir);
+    vfs->SetSyncDir(vfs->GetCwd());
     engine->SetVFSCacheManager();
 
     csTicks start = csGetTicks();
     Debug2(LOG_LOAD, 0,"Loading map file %s", worlddir.GetData());
 
-    if (!loader->LoadMap(worldNode, CS_LOADER_KEEP_WORLD, collection, CS_LOADER_ACROSS_REGIONS, true, 0, 0, KEEP_USED))
+    csRef<iThreadReturn> itr = loader->LoadMap(worldNode, CS_LOADER_KEEP_WORLD, collection);
+    itr->Wait();
+    vfs->ChDir(worlddir); // Workaround a CS cwd bug.
+    engine->SyncEngineListsNow(loader);
+    if(!itr->WasSuccessful())
     {
         Error3("LoadMap failed: %s, %s.",worlddir.GetData(),worldfile.GetData() );
         Error2("Region name was: %s", regionName.GetData());
@@ -136,7 +141,6 @@ bool psRegion::Load(bool loadMeshes)
     // Successfully loaded.  Now get textures ready, etc. and return.
     if (using3D)
     {
-        engine->ShineLights(collection);
         engine->PrecacheDraw(collection);
         Debug2(LOG_LOAD, 0,"After Precache, %dms elapsed", csGetTicks()-start);
     }
@@ -336,7 +340,7 @@ csRef<iDocumentNode> psRegion::Filter(csRef<iDocumentNode> world, bool using3D)
     }
     else
     {
-        if(!(gfxFeatures & useNormalMaps))
+        if(!(gfxFeatures & useAdvancedShaders))
         {
             csRef<iDocumentNodeIterator> sectors = world->GetNodes("sector");
             while(sectors->HasNext())

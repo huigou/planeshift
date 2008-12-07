@@ -26,20 +26,14 @@
 #include "paws/pawsradio.h"
 #include "paws/pawstextbox.h"
 
-SCF_IMPLEMENT_IBASE(EEditSelectNewAnchor)
-SCF_IMPLEMENT_IBASE_END
-
-EEditSelectNewAnchor::EEditSelectNewAnchor()
+EEditSelectNewAnchor::EEditSelectNewAnchor() : scfImplementationType(this)
 {
-    SCF_CONSTRUCT_IBASE(0);
     selectCallback = 0;
 }
 
 EEditSelectNewAnchor::~EEditSelectNewAnchor()
 {
     delete selectCallback;
-
-    SCF_DESTRUCT_IBASE();
 }
 
 void EEditSelectNewAnchor::Select(EEditInputboxManager::iSelectNewAnchor * callback, const csVector2 & pos)

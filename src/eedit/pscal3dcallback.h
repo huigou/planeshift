@@ -32,19 +32,19 @@ class EEditApp;
 
 /** A stripped version of the cal3d callback loader used only for eedit
  */
-class psCal3DCallbackLoader : public iLoaderPlugin
+class psCal3DCallbackLoader : public scfImplementation1<psCal3DCallbackLoader, iLoaderPlugin>
 {
 private:
     EEditApp * parentApp;
     
-public:
-    SCF_DECLARE_IBASE;
-    
+public:  
     psCal3DCallbackLoader(iObjectRegistry * objreg, EEditApp * app);
     virtual ~psCal3DCallbackLoader();
     
     // used to handle and parse the <addon> tags.
     csPtr<iBase> Parse(iDocumentNode * node, iStreamSource*, iLoaderContext * ldr_context, iBase * context);
+
+    bool IsThreadSafe() { return true; }
 };
 
 /**

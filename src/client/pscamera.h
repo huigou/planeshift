@@ -40,7 +40,7 @@
 
 struct RaceDefinition;
 struct iView;
-struct iCamera;
+struct iPerspectiveCamera;
 struct iSector;
 struct iCollideSystem;
 struct iMeshWrapper;
@@ -173,7 +173,7 @@ public:
     /** returns the camera that CS use
      *   @return An iCamera that CS uses
      */
-    iCamera *GetICamera();
+    iPerspectiveCamera *GetICamera();
 
     /** returns the CS viewport
      *   @return an iView of this camera's CS viewport
@@ -454,6 +454,8 @@ public:
     void SetDistanceCfg(DistanceCfg newcfg);
 
     int GetFixedDistClip() { return fixedDistClip; }
+
+    bool IsInitialized() { return cameraInitialized; }
 
 private:
 

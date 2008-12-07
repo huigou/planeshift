@@ -35,8 +35,8 @@ class Heap : protected csArray<T*>
     using csArray<T*>::Top;
 
 public:
-    Heap(int ilimit = 0, int ithreshold = 0)
-        : csArray<T*>(ilimit, ithreshold)
+    Heap(int ilimit = 0)
+        : csArray<T*>(ilimit)
     {
     }
 

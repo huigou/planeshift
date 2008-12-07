@@ -40,6 +40,7 @@ struct iMeshWrapper;
 struct iMovable;
 struct iSector;
 struct iSectorList;
+struct iThreadReturn;
 struct iView;
 class psEffect;
 class psLight;
@@ -68,16 +69,18 @@ public:
     // used to handle and parse the <addon> tags.
     csPtr<iBase> Parse(iDocumentNode * node, iStreamSource*, iLoaderContext * ldr_context, iBase * context);
 
+    bool IsThreadSafe() { return true; }
+
 private:
     psEffectManager *manager;
-
+    CS::Threading::Mutex parseLock; 
 };
 
 
 class psEffectManager : public csRefCount
 {
 public:
-    psEffectManager();
+    psEffectManager(iObjectRegistry* objReg);
     virtual ~psEffectManager();
 
     /** loads one or more gfx effects from a file
@@ -85,7 +88,7 @@ public:
      *   @param parentView the CS viewport that views the effects
      *   @return true on success, false otherwise
      */
-    bool LoadEffects(const csString & fileName, iView * parentView);
+    csRef<iThreadReturn> LoadEffects(const csString & fileName, iView * parentView);
 
     /** loads the effect files listed in the given effects list
      *   @param fileName the vfs path to the file that holds the effects list
@@ -192,6 +195,8 @@ public:
   	psEffect2DRenderer * Get2DRenderer() const { return effect2DRenderer; }
 
 private:
+
+    iObjectRegistry* object_reg;
 
     /// Virtual clock to keep track of the ticks passed between frames.
     csRef<iVirtualClock> vc;

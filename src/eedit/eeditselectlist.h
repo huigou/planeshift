@@ -28,11 +28,9 @@ class pawsListBox;
 
 /** A dialog window to select from a list of values.
  */
-class EEditSelectList : public pawsWidget
+class EEditSelectList : public pawsWidget, public scfImplementation0<EEditSelectList>
 {
 public:
-    SCF_DECLARE_IBASE;
-
     EEditSelectList();
     virtual ~EEditSelectList();
 

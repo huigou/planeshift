@@ -22,28 +22,34 @@
 
 #include <csutil/ref.h>
 #include <csutil/refcount.h>
-#include <csutil/weakref.h>
 #include <csutil/scf_implementation.h>
 #include <csutil/scf.h>
+#include <csutil/threadmanager.h>
+#include <csutil/weakref.h>
 #include <ivaria/reporter.h>
 
 class EEditErrorToolbox;
 
 /** A csReporterListener for eedit
  */
-class EEditReporter : public scfImplementation1<EEditReporter, iReporterListener>
+class EEditReporter : public scfImplementation1<EEditReporter, iReporterListener>,
+  public ThreadedCallable<EEditReporter>
 {
 public:
-    EEditReporter();
+    EEditReporter(iObjectRegistry* obj_reg);
     virtual ~EEditReporter();
 
-    virtual bool Report(iReporter * reporter, int severity, const char * msgId, const char * description);
+    THREADED_CALLABLE_DECL4(EEditReporter, Report, csThreadReturn, iReporter*, reporter,
+      int, severity, const char*, msgId,	const char*, description, HIGH, true, false);
 
     void SetErrorToolbox(EEditErrorToolbox * toolbox);
+
+    iObjectRegistry* GetObjectRegistry() const { return object_reg; }
 
 private:
 
     EEditErrorToolbox * errorToolbox;
+    iObjectRegistry* object_reg;
 };
 
 #endif 

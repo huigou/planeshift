@@ -4128,9 +4128,10 @@ csString psPetSkillMessage::ToString(AccessPointers * /*access_ptrs*/)
 
 PSF_IMPLEMENT_MSG_FACTORY2(psDRMessage,MSGTYPE_DEAD_RECKONING);
 
-void psDRMessage::CreateMsgEntry(uint32_t client, csStringHashReversible* msgstrings, iSector *sector)
+void psDRMessage::CreateMsgEntry(uint32_t client, csStringHashReversible* msgstrings, iSector *sector, csString sectorName)
 {
-    const char* sectorName = sector->QueryObject()->GetName();
+    if(sector)
+        sectorName = sector->QueryObject()->GetName();
     csStringID sectorNameStrId = msgstrings ? msgstrings->Request(sectorName) : csInvalidStringID;
     int sectorNameLen = (sectorNameStrId == csInvalidStringID) ? (int) strlen (sectorName) : 0;
 
@@ -4146,10 +4147,10 @@ psDRMessage::psDRMessage(uint32_t client, EID mappedid, uint8_t counter,
     float speed;
     linmove->GetDRData(on_ground,speed,pos,yrot,sector,vel,worldVel,ang_vel);
 
-    CreateMsgEntry(client, msgstrings, sector);
+    CreateMsgEntry(client, msgstrings, sector, csString());
 
     WriteDRInfo(client, mappedid,
-         on_ground, mode, counter, pos, yrot, sector,
+        on_ground, mode, counter, pos, yrot, sector, csString(),
          vel,worldVel, ang_vel, msgstrings);
 
     // Sets valid flag based on message overrun state
@@ -4158,14 +4159,14 @@ psDRMessage::psDRMessage(uint32_t client, EID mappedid, uint8_t counter,
 
 psDRMessage::psDRMessage(uint32_t client, EID mappedid,
                          bool on_ground, uint8_t mode, uint8_t counter,
-                         const csVector3& pos, float yrot,iSector *sector,
+                         const csVector3& pos, float yrot,iSector *sector, csString sectorName,
                          const csVector3& vel, csVector3& worldVel, float ang_vel,
                          csStringHashReversible* msgstrings)
 {
-    CreateMsgEntry(client, msgstrings, sector);
+    CreateMsgEntry(client, msgstrings, sector, sectorName);
 
     WriteDRInfo(client, mappedid,
-         on_ground, mode, counter, pos, yrot, sector,
+         on_ground, mode, counter, pos, yrot, sector, sectorName,
          vel,worldVel, ang_vel ,msgstrings);
 
     // Sets valid flag based on message overrun state
@@ -4199,10 +4200,11 @@ uint8_t psDRMessage::GetDataFlags(const csVector3& v, const csVector3& wv, float
 void psDRMessage::WriteDRInfo(uint32_t client, EID mappedid,
                         bool on_ground, uint8_t mode, uint8_t counter,
                         const csVector3& pos, float yrot, iSector *sector,
-                        const csVector3& vel, csVector3& worldVel, float ang_vel,
-                        csStringHashReversible* msgstrings, bool donewriting)
+                        csString sectorName, const csVector3& vel, csVector3& worldVel,
+                        float ang_vel, csStringHashReversible* msgstrings, bool donewriting)
 {
-    sectorName = sector->QueryObject()->GetName();
+    if(sector)
+        sectorName = sector->QueryObject()->GetName();
     csStringID sectorNameStrId = msgstrings ? msgstrings->Request(sectorName) : csInvalidStringID;
 
     msg->Add(mappedid.Unbox());
@@ -4477,7 +4479,8 @@ psPersistActor::psPersistActor( uint32_t clientNum,
     float speed;
     linmove->GetDRData(on_ground,speed,pos,yrot,sector,vel, worldVel, ang_vel);
 
-    WriteDRInfo(clientNum, mappedid, on_ground, movementMode, counter, pos, yrot, sector, vel, worldVel, ang_vel, msgstrings, false);
+    WriteDRInfo(clientNum, mappedid, on_ground, movementMode, counter, pos, yrot, sector, csString(),
+        vel, worldVel, ang_vel, msgstrings, false);
 
     msg->Add( (uint32_t) type );
     msg->Add( (uint32_t) masqueradeType );

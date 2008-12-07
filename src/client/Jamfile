@@ -72,8 +72,12 @@ STATIC.PLUGINLIST =
   rendloop_loader
   rendstep_std
   reporter
+  rm_rlcompat
+  rm_shadow_pssm
+  rm_unshadowed
   sequence
   shadermgr
+  shaderweaver
   simpleformer
   simpleformerldr
   sndmanager
@@ -93,8 +97,6 @@ STATIC.PLUGINLIST =
   terrainldr
   terrain2
   terrain2ldr
-  thing
-  thingldr
   vfs
   xmlshader
   xmltiny

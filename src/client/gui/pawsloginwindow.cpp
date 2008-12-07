@@ -23,7 +23,6 @@
 #include <csutil/xmltiny.h>
 #include <csutil/csmd5.h>
 
-#include "iclient/netmanager.h"
 #include "iclient/isoundmngr.h"
 #include "pawsloginwindow.h"
 #include "paws/pawsmanager.h"

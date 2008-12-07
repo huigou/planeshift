@@ -27,17 +27,12 @@
 #include "paws/pawskeyselectbox.h"
 #include "paws/pawsbutton.h"
 
-SCF_IMPLEMENT_IBASE(EEditShortcutsToolbox)
-SCF_IMPLEMENT_IBASE_END
-
-EEditShortcutsToolbox::EEditShortcutsToolbox()
+EEditShortcutsToolbox::EEditShortcutsToolbox() : scfImplementationType(this)
 {
-    SCF_CONSTRUCT_IBASE(0);
 }
 
 EEditShortcutsToolbox::~EEditShortcutsToolbox()
 {
-    SCF_DESTRUCT_IBASE();
 }
 
 void EEditShortcutsToolbox::AddShortcut(const char * name)

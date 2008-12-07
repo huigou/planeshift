@@ -153,8 +153,8 @@ void psSoundManager::Update( iView* view )
     ListenerInitialized=true;
 
     // take position/direction from view->GetCamera ()
-    csVector3 v = view->GetCamera ()->GetTransform ().GetOrigin ();
-    csMatrix3 m = view->GetCamera ()->GetTransform ().GetT2O();
+    csVector3 v = view->GetPerspectiveCamera ()->GetCamera ()->GetTransform ().GetOrigin ();
+    csMatrix3 m = view->GetPerspectiveCamera ()->GetCamera ()->GetTransform ().GetT2O();
     csVector3 f = m.Col3();
     csVector3 t = m.Col2();
     sndListener->SetPosition(v);

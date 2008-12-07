@@ -68,7 +68,7 @@ bool pawsGenericView::Setup(iDocumentNode* node )
 bool pawsGenericView::LoadMap( const char* map, const char* sector )
 {
     csRef<iEngine> engine =  csQueryRegistry<iEngine > ( PawsManager::GetSingleton().GetObjectRegistry());
-    csRef<iLoader> loader =  csQueryRegistry<iLoader > ( PawsManager::GetSingleton().GetObjectRegistry());
+    csRef<iThreadedLoader> loader =  csQueryRegistry<iThreadedLoader> ( PawsManager::GetSingleton().GetObjectRegistry());
     csRef<iVFS> VFS =  csQueryRegistry<iVFS> ( PawsManager::GetSingleton().GetObjectRegistry());
              
     mapName = map;
@@ -80,9 +80,16 @@ bool pawsGenericView::LoadMap( const char* map, const char* sector )
 
     // Now load the map into the selected region
     VFS->ChDir (map);
+    VFS->SetSyncDir(VFS->GetCwd());
     engine->SetCacheManager(NULL);
-    if ( !loader->LoadMapFile("world", CS_LOADER_KEEP_WORLD, collection, CS_LOADER_ACROSS_REGIONS, true) )
+    csRef<iThreadReturn> itr = loader->LoadMapFile("world", CS_LOADER_KEEP_WORLD, collection);
+    itr->Wait();
+    if(!itr->WasSuccessful())
+    {
         return false;
+    }
+    engine->SyncEngineListsNow(loader);
+    VFS->ChDir (map);
 
     if (sector)
         sectorName = sector;
@@ -132,12 +139,12 @@ void pawsGenericView::Draw()
                        screenFrame.Width(),
                        screenFrame.Height() );
 
-    view->GetCamera()->SetPerspectiveCenter(
+    view->GetPerspectiveCamera()->SetPerspectiveCenter(
                        screenFrame.xmin + (screenFrame.Width() >> 1),
                        PawsManager::GetSingleton().GetGraphics3D()->GetHeight() - screenFrame.Height() - 
                        screenFrame.ymin + (screenFrame.Height() >> 1) );
 
-    view->GetCamera()->SetFOV( view->GetCamera()->GetFOV(), screenFrame.Width() );
+    view->GetPerspectiveCamera()->SetFOV( view->GetPerspectiveCamera()->GetFOV(), screenFrame.Width() );
     
     view->Draw();
 

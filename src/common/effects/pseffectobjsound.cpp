@@ -27,7 +27,6 @@
 #include <iengine/mesh.h>
 #include <iengine/movable.h>
 #include <iengine/sector.h>
-#include <iengine/region.h>
 
 #include <imap/loader.h>
 
@@ -65,9 +64,9 @@ psEffectObjSound::~psEffectObjSound()
   }
 }
 
-bool psEffectObjSound::Load(iDocumentNode *node)
+bool psEffectObjSound::Load(iDocumentNode *node, iLoaderContext* ldr_context)
 {
-    if (!psEffectObj::Load(node))
+    if (!psEffectObj::Load(node, ldr_context))
         return false;
 
     // get the attributes

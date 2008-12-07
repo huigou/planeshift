@@ -43,7 +43,10 @@ public:
     virtual ~psCal3DCallbackLoader();
 
     // used to handle and parse the <addon> tags.
-    csPtr<iBase> Parse(iDocumentNode * node, iStreamSource*, iLoaderContext * ldr_context, iBase * context);
+    csPtr<iBase> Parse(iDocumentNode * node, iStreamSource*, iLoaderContext * ldr_context,
+      iBase * context);
+
+    bool IsThreadSafe() { return true; }
 };
 
 /**

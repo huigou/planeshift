@@ -33,11 +33,6 @@
 
 CS_IMPLEMENT_PLUGIN
 
-SCF_IMPLEMENT_IBASE(psMysqlConnection)
-    SCF_IMPLEMENTS_INTERFACE(iComponent)
-    SCF_IMPLEMENTS_INTERFACE(iDataConnection)
-SCF_IMPLEMENT_IBASE_END
-
 // more SCF definitions
 
 SCF_IMPLEMENT_FACTORY(psMysqlConnection)
@@ -46,9 +41,8 @@ SCF_IMPLEMENT_FACTORY(psMysqlConnection)
  * Actual class which does all the work now.
  */
 
-psMysqlConnection::psMysqlConnection(iBase *iParent)
+psMysqlConnection::psMysqlConnection(iBase *iParent) : scfImplementationType(this, iParent)
 {
-    SCF_CONSTRUCT_IBASE (iParent);
     conn = NULL;
 }
 
@@ -56,8 +50,6 @@ psMysqlConnection::~psMysqlConnection()
 {
     mysql_close(conn);
     conn = NULL;
-
-    SCF_DESTRUCT_IBASE();
 }
 
 bool psMysqlConnection::Initialize (iObjectRegistry *objectreg)

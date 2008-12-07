@@ -25,20 +25,14 @@
 #include "paws/pawsbutton.h"
 #include "paws/pawsspinbox.h"
 
-SCF_IMPLEMENT_IBASE(EEditSelectFloat)
-SCF_IMPLEMENT_IBASE_END
-
-EEditSelectFloat::EEditSelectFloat()
+EEditSelectFloat::EEditSelectFloat() : scfImplementationType(this)
 {
-    SCF_CONSTRUCT_IBASE(0);
     selectCallback = 0;
 }
 
 EEditSelectFloat::~EEditSelectFloat()
 {
     delete selectCallback;
-
-    SCF_DESTRUCT_IBASE();
 }
 
 void EEditSelectFloat::Select(float startValue, EEditInputboxManager::iSelectFloat * callback, const csVector2 & pos)

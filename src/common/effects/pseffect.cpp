@@ -87,7 +87,7 @@ size_t psEffect::AddAnchor(psEffectAnchor * anchor)
     return effectAnchors.GetSize()-1;
 }
 
-bool psEffect::Load(iDocumentNode * node, iView * parentView, psEffect2DRenderer * renderer2d)
+bool psEffect::Load(iDocumentNode * node, iView * parentView, psEffect2DRenderer * renderer2d, iLoaderContext * ldr_context)
 {
     csRef<iDocumentNodeIterator> xmlbinds;
     
@@ -207,7 +207,7 @@ bool psEffect::Load(iDocumentNode * node, iView * parentView, psEffect2DRenderer
             
         if (obj)
         {
-            if (obj->Load(objNode))
+            if (obj->Load(objNode, ldr_context))
             {
                 effectObjs.Push(obj);
                 if (mainTextObj == (size_t)(-1))

@@ -24,7 +24,6 @@
 #include <iengine/material.h>
 #include <iengine/mesh.h>
 #include <iengine/movable.h>
-#include <iengine/region.h>
 #include <iengine/sector.h>
 #include <imesh/object.h>
 #include <imesh/objmodel.h>
@@ -64,7 +63,7 @@ psEffectObjTrail::~psEffectObjTrail()
     delete spline[1];
 }
 
-bool psEffectObjTrail::Load(iDocumentNode *node)
+bool psEffectObjTrail::Load(iDocumentNode *node, iLoaderContext* ldr_context)
 {
     // get the attributes
     name.Clear();
@@ -109,7 +108,7 @@ bool psEffectObjTrail::Load(iDocumentNode *node)
     else
         useMid = false;
     
-    if (!psEffectObj::Load(node))
+    if (!psEffectObj::Load(node, ldr_context))
         return false;
 
     return PostSetup();

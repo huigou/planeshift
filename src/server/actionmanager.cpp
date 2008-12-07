@@ -31,7 +31,6 @@
 #include <csgeom/math3d.h>
 #include <iutil/object.h>
 #include <iengine/campos.h>
-#include <iengine/region.h>
 
 //=============================================================================
 // Project Includes

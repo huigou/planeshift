@@ -33,6 +33,7 @@
 #include <csutil/parray.h>
 
 struct iDocumentNode;
+struct iLoaderContext;
 struct iView;
 
 class psEffectAnchor;
@@ -68,9 +69,11 @@ public:
      *   @param node an xml node containing the effect, must be valid.
      *   @param parentView the CS viewport that views the effect.
      *   @param sourceFile the location of the effect's source.
+     *   @param ldr_context the current loader context.
      *   @return true on success, false otherwise.
      */
-    bool Load(iDocumentNode * node, iView * parentView, psEffect2DRenderer * renderer2d);
+    bool Load(iDocumentNode * node, iView * parentView, psEffect2DRenderer * renderer2d,
+        iLoaderContext * ldr_context);
 
     /** renders the effect
      *   @param parentView the CS viewport that is viewing the effect

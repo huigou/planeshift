@@ -38,7 +38,7 @@
 //=============================================================================
 // Local Includes
 //=============================================================================
-
+#include "psengine.h"
 
 struct Trait;
 struct iVFS;
@@ -236,10 +236,9 @@ public:
       */
     csArray<GEMClientObject*> FindNearbyEntities (iSector* sector, const csVector3& pos, float radius, bool doInvisible = false);
 
-    void UpdateShader(GEMClientActor* actor);
-    void UpdateShader(iMeshWrapper* mesh);
-
 protected:
+    friend class GEMClientActor;
+
     /** Finds given entity in list of unresolved entities */
     csList<UnresolvedPos*>::Iterator FindUnresolvedPos(GEMClientObject * entity);
 
@@ -294,7 +293,7 @@ enum GEMOBJECT_TYPE
 /** An object that the client knows about. This is the base object for any
   * 'entity' that the client can be sent.
   */
-class GEMClientObject
+class GEMClientObject : public DelayedLoader
 {
 public:
     GEMClientObject();
@@ -304,12 +303,10 @@ public:
     virtual GEMOBJECT_TYPE GetObjectType() { return GEM_OBJECT; }
 
     /** Setup the mesh for this object.
-    *   @param factname The name of the mesh factory to use.
-    *   @param filename The name of the mesh file to load if factory not found.
     *
     *   @return true if the mesh was set correctly, false if mesh failed to be set or created.
     */
-    bool InitMesh(const char *factname,const char *filename);
+    bool InitMesh();
 
     /** Set position of mesh */
     void Move(const csVector3& pos,float rotangle, const char* room);
@@ -364,6 +361,16 @@ public:
 
      float RangeTo(GEMClientObject * obj, bool ignoreY);
 
+     /**
+      * Delayed mesh loading.
+      */
+     void CheckMeshLoad();
+
+     /**
+      * Delayed load 'post-process'.
+      */
+     virtual void PostLoad() { }
+
 protected:
     friend class psCelClient;
 
@@ -371,6 +378,7 @@ protected:
 
     csString name;
     csString factname;
+    csString filename;
     EID eid;
     int type;
 
@@ -501,6 +509,8 @@ protected:
     uint8_t  DRcounter;  /// increments in loop to prevent out of order packet overwrites of better data
     bool DRcounter_set;
 
+    virtual void PostLoad();
+
     bool InitLinMove(const csVector3& pos,float angle, const char* sector,
                      csVector3 top, csVector3 bottom, csVector3 offset);
 
@@ -513,7 +523,19 @@ protected:
     void SetCharacterMode(size_t id);
     size_t movementMode;
     uint8_t serverMode;
-};
+
+    // Post load data.
+    csVector3 pos;
+    float yrot;
+    csString sectorName;
+    csVector3 top;
+    csVector3 bottom;
+    csVector3 offset;
+    bool on_ground;
+    iSector* sector;
+    csVector3 worldVel;
+    float ang_vel;
+    csString texParts;};
 
 /** An item on the client. */
 class GEMClientItem : public GEMClientObject
@@ -525,7 +547,16 @@ public:
     virtual GEMOBJECT_TYPE GetObjectType() { return GEM_ITEM; }
 
 protected:
+    virtual void PostLoad();
+
     psSolid* solid;
+
+private:
+    // Post load data.
+    csVector3 pos;
+    float yRot;
+    csString sector;
+    uint32_t flags;
 };
 
 /** An action location on the client. */

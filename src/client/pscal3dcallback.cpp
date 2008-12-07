@@ -51,7 +51,8 @@ psCal3DCallbackLoader::~psCal3DCallbackLoader()
 {
 }
 
-csPtr<iBase> psCal3DCallbackLoader::Parse(iDocumentNode * node, iStreamSource*, iLoaderContext * ldr_context, iBase * context)
+csPtr<iBase> psCal3DCallbackLoader::Parse(iDocumentNode * node, iStreamSource*, iLoaderContext * ldr_context,
+                                          iBase * context)
 {
     // turn the iBase into an iSpriteCal3DFactoryState so we can use it
     csRef<iMeshFactoryWrapper> meshFactoryWrapper =  scfQueryInterface<iMeshFactoryWrapper > ( context);

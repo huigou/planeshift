@@ -29,11 +29,9 @@ class pawsCheckBox;
 
 /** A dialog window to edit an anchor keyframe.
  */
-class EEditSelectEditAnchorKeyFrame : public pawsWidget
+class EEditSelectEditAnchorKeyFrame : public pawsWidget, public scfImplementation0<EEditSelectEditAnchorKeyFrame>
 {
 public:
-    SCF_DECLARE_IBASE;
-
     EEditSelectEditAnchorKeyFrame();
     virtual ~EEditSelectEditAnchorKeyFrame();
 

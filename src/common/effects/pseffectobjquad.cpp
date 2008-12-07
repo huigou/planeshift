@@ -26,7 +26,6 @@
 #include <iengine/movable.h>
 #include <iengine/camera.h>
 #include <cstool/csview.h>
-#include <iengine/region.h>
 #include <imesh/objmodel.h>
 #include <csutil/flags.h>
 #include <csgeom/tri.h>
@@ -52,7 +51,7 @@ psEffectObjQuad::~psEffectObjQuad()
         engine->RemoveObject(meshFact);
 }
 
-bool psEffectObjQuad::Load(iDocumentNode *node)
+bool psEffectObjQuad::Load(iDocumentNode *node, iLoaderContext* ldr_context)
 {
     // get the attributes
     name.Clear();
@@ -74,7 +73,7 @@ bool psEffectObjQuad::Load(iDocumentNode *node)
         return false;
     }
     
-    if (!psEffectObj::Load(node))
+    if (!psEffectObj::Load(node, ldr_context))
         return false;
     
     return PostSetup();

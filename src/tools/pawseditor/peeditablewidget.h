@@ -33,11 +33,9 @@ class pawsButton;
 
 /** This handles the effect render toolbox.
  */
-class peEditableWidget :  public pawsWidget
+class peEditableWidget :  public pawsWidget, public scfImplementation0<peEditableWidget>
 {
 public:
-    SCF_DECLARE_IBASE;
-
     peEditableWidget();
     virtual ~peEditableWidget();
     

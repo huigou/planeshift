@@ -39,7 +39,6 @@
 #include <iengine/mesh.h>
 #include <iengine/movable.h>
 #include <csutil/flags.h>
-#include <iengine/region.h>
 #include <imesh/spritecal3d.h>
 #include <imesh/object.h>
 #include <csutil/scf.h>
@@ -208,10 +207,6 @@ bool PawsEditorApp::Init()
     // Register our event handler
     event_handler = csPtr<EventHandler> (new EventHandler (this));
     csEventID esub[] = {
-	  csevPreProcess (object_reg),
-	  csevProcess (object_reg),
-	  csevPostProcess (object_reg),
-	  csevFinalProcess (object_reg),
 	  csevFrame (object_reg),
 	  csevMouseEvent (object_reg),
 	  csevKeyboardEvent (object_reg),
@@ -482,19 +477,10 @@ bool PawsEditorApp::HandleEvent(iEvent &ev)
     if (paws->HandleEvent(ev))
         return true;
 
-    if (ev.Name == csevProcess (object_reg))
+    if (ev.Name == csevFrame (object_reg))
     {
         Update();
-        return true;
-    }
-    else if (ev.Name == csevFinalProcess (object_reg))
-    {
-        g3d->FinishDraw ();
-        g3d->Print (0);
-        return true;
-    }
-    else if (ev.Name == csevPostProcess (object_reg))
-    {
+
         if (drawScreen)
         {
             g3d->BeginDraw(engine->GetBeginDrawFlags() | CSDRAW_2DGRAPHICS);
@@ -504,6 +490,11 @@ bool PawsEditorApp::HandleEvent(iEvent &ev)
         {
             csSleep(150);
         }
+
+        g3d->FinishDraw ();
+        g3d->Print (0);
+
+        return true;
     }
     else if (ev.Name == csevCanvasHidden (object_reg, g3d->GetDriver2D ()))
     {

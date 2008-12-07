@@ -58,7 +58,6 @@ bool pawsGMSpawnWindow::PostSetup()
 {
     psengine->GetMsgHandler()->Subscribe( this, MSGTYPE_GMSPAWNITEMS );
     psengine->GetMsgHandler()->Subscribe( this, MSGTYPE_GMSPAWNTYPES );
-    psengine->RegisterDelayedLoader(this);
     loaded = true;
                 
     itemName = (pawsTextBox*)FindWidget("ItemName");
@@ -235,8 +234,13 @@ void pawsGMSpawnWindow::CheckMeshLoad()
 
         if(indexEntry && indexEntry->factory)
         {
+            psengine->UnregisterDelayedLoader(this);
             objView->View(indexEntry->factory);
             loaded = true;
+        }
+        else
+        {
+            psengine->RegisterDelayedLoader(this);
         }
     }
 }

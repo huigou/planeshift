@@ -161,7 +161,7 @@ public:
      *   @param node the xml node containing the effect object, must be valid
      *   @return true on success, false otherwise
      */
-    virtual bool Load(iDocumentNode *node);
+    virtual bool Load(iDocumentNode *node, iLoaderContext* ldr_context);
 
     /** renders the effect
      *   @param up the base up vector of the effect obj

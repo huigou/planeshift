@@ -53,27 +53,22 @@ iMeshFactoryWrapper* npcMesh::LoadMeshFactory(const char* fileName, const char* 
 {
     csRef<iVFS> vfs = csQueryRegistry<iVFS>(objectReg);
 
-    csRef<iLoader> loader = csQueryRegistry<iLoader>(objectReg);
-    iBase* result;
+    csRef<iThreadedLoader> loader = csQueryRegistry<iThreadedLoader>(objectReg);
 
-    bool success = loader->Load(fileName, result, 0, false, true);
+    csRef<iThreadReturn> ret = loader->LoadFile(fileName);
+    ret->Wait();
     
     csRef<iMeshFactoryWrapper> imesh_fact = 0;
 
-    if ( success )
+    if ( ret->WasSuccessful() )
     {
-        if ( result == 0 )
+        if ( !ret->GetResultRefPtr().IsValid() )
         {
             imesh_fact = engine->FindMeshFactory(factoryName);
         }
         else
         {
-            imesh_fact = scfQueryInterface<iMeshFactoryWrapper>(result);
-            if ( !imesh_fact )
-            {
-                csRef<iEngine> eng = scfQueryInterface<iEngine>(result);
-                imesh_fact = engine->FindMeshFactory(factoryName);
-            }
+            imesh_fact = scfQueryInterface<iMeshFactoryWrapper>(ret->GetResultRefPtr());
         }     
     }
 

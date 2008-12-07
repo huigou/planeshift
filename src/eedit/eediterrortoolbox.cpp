@@ -28,13 +28,8 @@
 #include "paws/pawstextbox.h"
 #include "paws/pawscheckbox.h"
 
-SCF_IMPLEMENT_IBASE(EEditErrorToolbox)
-SCF_IMPLEMENT_IBASE_END
-
-EEditErrorToolbox::EEditErrorToolbox()
+EEditErrorToolbox::EEditErrorToolbox() : scfImplementationType(this)
 {
-    SCF_CONSTRUCT_IBASE(0);
-
     errorText = 0;
     loadingEffects = false;
 }
@@ -45,8 +40,6 @@ EEditErrorToolbox::~EEditErrorToolbox()
     editApp->SetConfigBool("EEdit.Errors.ShowErrors", showErrors->GetState());
     editApp->SetConfigBool("EEdit.Errors.ShowWarnings", showWarnings->GetState());
     editApp->SetConfigBool("EEdit.Errors.ShowNotifications", showNotifications->GetState());
-
-    SCF_DESTRUCT_IBASE();
 }
 
 const int BUG_COLOUR[] =     { 255,   0, 255 };

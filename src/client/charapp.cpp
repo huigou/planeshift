@@ -4,7 +4,6 @@
 //=============================================================================
 #include <iengine/engine.h>
 #include <iengine/material.h>
-#include <iengine/region.h>
 #include <iengine/scenenode.h>
 #include <imap/loader.h>
 #include <imesh/object.h>
@@ -34,10 +33,8 @@
 
 psCharAppearance::psCharAppearance(iObjectRegistry* objectReg)
 {
-    psengine->RegisterDelayedLoader(this);
-    stringSet = csQueryRegistryTagInterface<iStringSet>(objectReg, "crystalspace.shared.stringset");
+    stringSet = csQueryRegistryTagInterface<iShaderVarStringSet>(objectReg, "crystalspace.shader.variablenameset");
     engine = csQueryRegistry<iEngine>(objectReg);
-    loader = csQueryRegistry<iLoader>(objectReg);
     vfs    = csQueryRegistry<iVFS>(objectReg);
     g3d    = csQueryRegistry<iGraphics3D>(objectReg);
     txtmgr = g3d->GetTextureManager();        
@@ -200,7 +197,7 @@ void psCharAppearance::HairColor(csVector3& color)
     
         if ( context_hair )
         {
-            csStringID varName = stringSet->Request("colorize");
+            CS::ShaderVarStringID varName = stringSet->Request("colorize");
             csShaderVariable* var = context_hair->GetVariableAdd(varName);
         
             if ( var )
@@ -211,7 +208,7 @@ void psCharAppearance::HairColor(csVector3& color)
         
         if ( context_beard )
         {
-            csStringID varName = stringSet->Request("colorize");
+            CS::ShaderVarStringID varName = stringSet->Request("colorize");
             csShaderVariable* var = context_beard->GetVariableAdd(varName);
         
             if ( var )
@@ -355,13 +352,6 @@ void psCharAppearance::Equip( csString& slotname,
         Attach(slotname, mesh);
     }
 
-    // Set up item effect if there is one.
-    if(state->FindSocket(slotname))
-    {
-        psengine->GetCelClient()->HandleItemEffect(mesh, state->FindSocket(slotname)->GetMeshWrapper(), false, slotname, &effectids, &lightids);
-        psengine->GetCelClient()->UpdateShader(baseMesh);
-    }
-    
     // This is a subMesh on the model change so change the mesh for that part.
     if ( subMesh.Length() )
     {
@@ -541,6 +531,10 @@ bool psCharAppearance::Attach(const char* socketName, const char* meshFactName)
             Attachment attach;
             attach.filename = filename;
             attach.socket = socket;
+            if(delayedAttach.IsEmpty())
+            {
+                psengine->RegisterDelayedLoader(this);
+            }
             delayedAttach.PushBack(attach);
         }
         else
@@ -584,6 +578,8 @@ void psCharAppearance::ProcessAttach(csRef<iMeshFactoryWrapper> factory, const c
     socket->SetTransform( csTransform(csZRotMatrix3(rot_z)*csYRotMatrix3(rot_y)*csXRotMatrix3(rot_x), csVector3(trans_x,trans_y,trans_z)) );
 
     usedSlots.PushSmart(socketName);
+
+    psengine->GetCelClient()->HandleItemEffect(factory->QueryObject()->GetName(), socket->GetMeshWrapper(), false, socketName, &effectids, &lightids);
 }
 
 void psCharAppearance::CheckMeshLoad()
@@ -597,6 +593,10 @@ void psCharAppearance::CheckMeshLoad()
             ProcessAttach(fie->factory, fie->factname, attach.socket);
             delayedAttach.PopFront();
         }
+    }
+    else
+    {
+        psengine->UnregisterDelayedLoader(this);
     }
 }
 
@@ -761,19 +761,22 @@ void psCharAppearance::ClearEquipment(const char* slot)
         Detach(deleteList[z]);
     }
 
-    csHash<int, csString>::GlobalIterator effectItr = effectids.GetIterator();
-    while(effectItr.HasNext())
+    if(psengine->GetEffectManager())
     {
-        psengine->GetEffectManager()->DeleteEffect(effectItr.Next());
-    }
-    effectids.Empty();
+        csHash<int, csString>::GlobalIterator effectItr = effectids.GetIterator();
+        while(effectItr.HasNext())
+        {
+            psengine->GetEffectManager()->DeleteEffect(effectItr.Next());
+        }
+        effectids.Empty();
 
-    csHash<int, csString>::GlobalIterator lightItr = lightids.GetIterator();
-    while(lightItr.HasNext())
-    {
-        psengine->GetEffectManager()->DeleteEffect(lightItr.Next());
+        csHash<int, csString>::GlobalIterator lightItr = lightids.GetIterator();
+        while(lightItr.HasNext())
+        {
+            psengine->GetEffectManager()->DeleteEffect(lightItr.Next());
+        }
+        lightids.Empty();
     }
-    lightids.Empty();
 }
 
 

@@ -770,8 +770,9 @@ bool gemObject::InitMesh(const char *name,
                     }
                 }
 
-                csRef<iLoader> loader (csQueryRegistry<iLoader> (psserver->GetObjectReg()));
-                loader->Load(root);
+                csRef<iThreadedLoader> loader (csQueryRegistry<iThreadedLoader> (psserver->GetObjectReg()));
+                csRef<iThreadReturn> ret = loader->LoadNode(root);
+                ret->Wait();
                 meshFact = engine->GetMeshFactories()->FindByName(factname);
                 if(meshFact.IsValid())
                 {
@@ -2940,7 +2941,7 @@ void gemActor::MulticastDRUpdate(MsgEntry *resend)
         iSector *sector;
         pcmove->GetDRData(on_ground,speed,pos,yrot,sector,vel,worldVel,ang_vel);
         psDRMessage drmsg(0, eid, on_ground, movementMode, DRcounter,
-                          pos,yrot,sector,vel,worldVel,ang_vel,
+                          pos,yrot,sector, "", vel,worldVel,ang_vel,
                           CacheManager::GetSingleton().GetMsgStrings() );
         drmsg.msg->priority = PRIORITY_HIGH;
         drmsg.Multicast(GetMulticastClients(),0,PROX_LIST_ANY_RANGE);

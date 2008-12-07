@@ -28,11 +28,9 @@ class pawsSpinBox;
 
 /** A dialog window to select a 3D vector value.
  */
-class EEditSelectVec3 : public pawsWidget
+class EEditSelectVec3 : public pawsWidget, public scfImplementation0<EEditSelectVec3>
 {
 public:
-    SCF_DECLARE_IBASE;
-
     EEditSelectVec3();
     virtual ~EEditSelectVec3();
 

@@ -27,11 +27,9 @@ class pawsRadioButton;
 
 /** A dialog window to select a yes or no value.
  */
-class EEditSelectYesNo : public pawsWidget
+class EEditSelectYesNo : public pawsWidget, public scfImplementation0<EEditSelectYesNo>
 {
 public:
-    SCF_DECLARE_IBASE;
-
     EEditSelectYesNo();
     virtual ~EEditSelectYesNo();
 

@@ -24,7 +24,7 @@
 // Crystal Space Includes
 //=============================================================================
 #include <csutil/hash.h>
-#include <csutil/refarr.h>
+#include <iutil/threadmanager.h>
 
 //=============================================================================
 // Project Includes
@@ -43,7 +43,7 @@ struct FactoryIndexEntry : public csRefCount
     csString filename;
     csString factname;
     csRef<iMeshFactoryWrapper> factory;
-    bool loaded;
+    csRef<iThreadReturn> result;
 };
 
 //-----------------------------------------------------------------------------
