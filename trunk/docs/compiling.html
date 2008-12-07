@@ -1114,7 +1114,7 @@ If you update a repository, you will need to recompile that repository and each 
         AM_USE_UNITTESTCPP</div></p>
         <p>Or you can use the following sed command</p>
         <p> <div class="commandBox" >
-sed -i s/AM_USE_UNITTESTCPP/#\ AM_USE_UNITTESTCPP/ configure.in </div></p>
+sed -i 's/AM_USE_UNITTESTCPP/#\ AM_USE_UNITTESTCPP/' configure.in </div></p>
 <p> Then you can build cal3d </p>
         <p><div class="commandBox">
             $HOME/development/cal3d$ autoreconf --install --force<br>
