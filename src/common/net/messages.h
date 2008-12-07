@@ -2713,7 +2713,7 @@ protected:
                     const csVector3& vel, csVector3& worldVel, float ang_vel,
                     csStringHashReversible* msgstrings, bool donewriting=true);
     void ReadDRInfo( MsgEntry* me, csStringHashReversible* msgstrings, iEngine *engine);
-    void CreateMsgEntry(uint32_t client, csStringHashReversible* msgstrings, iSector *sector, csString sectorName);
+    void CreateMsgEntry(uint32_t client, csStringHashReversible* msgstrings, iSector *sector);
 
     /// Flags indicating what components are packed in this message
     enum DRDataFlags
