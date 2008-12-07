@@ -27,11 +27,9 @@ class pawsButton;
 
 /** This handles the effect render toolbox.
  */
-class EEditRenderToolbox : public EEditToolbox, public pawsWidget
+class EEditRenderToolbox : public EEditToolbox, public pawsWidget, public scfImplementation0<EEditRenderToolbox>
 {
 public:
-    SCF_DECLARE_IBASE;
-
     EEditRenderToolbox();
     virtual ~EEditRenderToolbox();
 

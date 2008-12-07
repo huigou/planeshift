@@ -20,8 +20,7 @@
 #define __PSNETMANAGER_H__
 
 #include <csutil/csstring.h>
-#include <csutil/ref.h>
-#include "iclient/netmanager.h"
+#include <csutil/refcount.h>
 
 class psNetConnection;
 class psAuthenticationClient;
@@ -31,18 +30,18 @@ class psGuildCommands;
 class psGroupCommands;
 class psUtilityCommands;
 class psAdminCommands;
+class CmdHandler;
+class MsgHandler;
 
 /**
  * This class holds references to different network classes and provides some
  * conveniance functions to access them
  */
-class psNetManager : public iNetManager
+class psNetManager : public csRefCount
 {
 protected:
     
 public:
-    SCF_DECLARE_IBASE;
-    
     psNetManager();
     virtual ~psNetManager();
 

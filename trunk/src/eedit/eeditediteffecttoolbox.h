@@ -42,11 +42,9 @@ class pawsSeqTreeNode;
 
 /** This allows you to edit the effect.
  */
-class EEditEditEffectToolbox : public EEditToolbox, public pawsWidget
+class EEditEditEffectToolbox : public EEditToolbox, public pawsWidget, public scfImplementation0<EEditEditEffectToolbox>
 {
 public:
-    SCF_DECLARE_IBASE;
-
     EEditEditEffectToolbox();
     virtual ~EEditEditEffectToolbox();
 

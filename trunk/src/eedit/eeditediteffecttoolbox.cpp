@@ -73,20 +73,13 @@ const char ATTR_KEYTIME = 'y';
 const char ATTR_KEYFRAME = 'k';
 
 
-SCF_IMPLEMENT_IBASE(EEditEditEffectToolbox)
-SCF_IMPLEMENT_IBASE_END
-
-EEditEditEffectToolbox::EEditEditEffectToolbox()
+EEditEditEffectToolbox::EEditEditEffectToolbox() : scfImplementationType(this)
 {
-    SCF_CONSTRUCT_IBASE(0);
-
     currEffect = 0;
 }
 
 EEditEditEffectToolbox::~EEditEditEffectToolbox()
 {
-    SCF_DESTRUCT_IBASE();
-
     PawsManager::GetSingleton().UnSubscribe(this);
 }
 

@@ -22,8 +22,9 @@
 #include "eediterrortoolbox.h"
 
 
-EEditReporter::EEditReporter() : scfImplementationType (this)
+EEditReporter::EEditReporter(iObjectRegistry* obj_reg) : scfImplementationType (this)
 {
+    object_reg = obj_reg;
     errorToolbox = 0;
 }
 
@@ -32,7 +33,7 @@ EEditReporter::~EEditReporter()
  
 }
 
-bool EEditReporter::Report(iReporter * reporter, int severity, const char * msgId, const char * description)
+THREADED_CALLABLE_IMPL4(EEditReporter, Report, iReporter* reporter, int severity, const char * msgId, const char * description)
 {
     if (errorToolbox == 0)
         printf("%s[SEVERITY=%d]: %s\n", msgId, severity, description);

@@ -27,7 +27,6 @@
 #include <iengine/movable.h>
 #include <iengine/camera.h>
 #include <cstool/csview.h>
-#include <iengine/region.h>
 #include <ivideo/graph2d.h>
 #include <iengine/sector.h>
 
@@ -267,9 +266,9 @@ bool psEffectObjText2D::SetText(int rows, ...)
     return true;
 }
 
-bool psEffectObjText2D::Load(iDocumentNode * node)
+bool psEffectObjText2D::Load(iDocumentNode * node, iLoaderContext* ldr_context)
 {
-    if (!psEffectObj::Load(node))
+    if (!psEffectObj::Load(node, ldr_context))
         return false;
 
     // default text attributes
@@ -419,7 +418,7 @@ bool psEffectObjText2D::Update(csTicks elapsed)
     {
         // apply perspective
         sp = view->GetCamera()->Perspective(p);
-        sp.y = view->GetCamera()->GetShiftY() * 2 - sp.y;
+        sp.y = view->GetPerspectiveCamera()->GetShiftY() * 2 - sp.y;
     }
 
     len = elems.GetSize();

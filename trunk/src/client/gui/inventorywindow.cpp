@@ -68,7 +68,7 @@ pawsInventoryWindow::pawsInventoryWindow()
 {
     msgHandler = NULL;
 
-    loader =  csQueryRegistry<iLoader > ( PawsManager::GetSingleton().GetObjectRegistry() );
+    loader =  csQueryRegistry<iThreadedLoader> ( PawsManager::GetSingleton().GetObjectRegistry() );
 
     bulkSlots.SetSize( 32 );
     equipmentSlots.SetSize( PSCHARACTER_SLOT_COUNT );

@@ -246,8 +246,10 @@ bool ModeHandler::LoadLightingLevels()
         else if (newlight->type == "light")
         {
             iLight* light = psengine->GetEngine()->FindLight(newlight->object);
-            if (light)
-                newlight->sector = light->GetSector()->QueryObject()->GetName();
+            if (light && light->GetMovable()->GetSectors()->GetCount() > 0)
+            {
+                newlight->sector = light->GetMovable()->GetSectors()->Get(0)->QueryObject()->GetName();
+            }
         }
     }    
     return true;

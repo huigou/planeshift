@@ -29,11 +29,9 @@ class psEffectManager;
 
 /** This allows you to load an effect.
  */
-class EEditLoadEffectToolbox : public EEditToolbox, public pawsWidget
+class EEditLoadEffectToolbox : public EEditToolbox, public pawsWidget, public scfImplementation0<EEditLoadEffectToolbox>
 {
 public:
-    SCF_DECLARE_IBASE;
-
     EEditLoadEffectToolbox();
     virtual ~EEditLoadEffectToolbox();
 

@@ -31,11 +31,9 @@ class pawsEditTextBox;
 
 /** This allows loading of a new map.
  */
-class EEditLoadMapToolbox : public EEditToolbox, public pawsWidget
+class EEditLoadMapToolbox : public EEditToolbox, public pawsWidget, public scfImplementation0<EEditLoadMapToolbox>
 {
 public:
-    SCF_DECLARE_IBASE;
-
     EEditLoadMapToolbox();
     virtual ~EEditLoadMapToolbox();
 

@@ -28,17 +28,12 @@
 #include "effects/pseffectmanager.h"
 #include "effects/pseffect.h"
 
-SCF_IMPLEMENT_IBASE(EEditLoadEffectToolbox)
-SCF_IMPLEMENT_IBASE_END
-
-EEditLoadEffectToolbox::EEditLoadEffectToolbox()
+EEditLoadEffectToolbox::EEditLoadEffectToolbox() : scfImplementationType(this)
 {
-    SCF_CONSTRUCT_IBASE(0);
 }
 
 EEditLoadEffectToolbox::~EEditLoadEffectToolbox()
 {
-    SCF_DESTRUCT_IBASE();
 }
 
 void EEditLoadEffectToolbox::Update(unsigned int elapsed)

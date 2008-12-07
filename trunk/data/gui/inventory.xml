@@ -19,7 +19,8 @@
         <frame x="200" y="86" width="175" height="293" border="no"/>
         <mask resource="invborder" />
         <map file="/planeshift/world/podium" sector="room" />
-        <distance value="4.5"/>
+        <distance value="5"/>
+	  <cameramod x="0.0" y="1.1" z="0.0"/>
         <subscriptions>
             <subscribe data="sigActorUpdate" />
         </subscriptions>                    

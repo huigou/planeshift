@@ -19,17 +19,19 @@
 #ifndef __ENGINE_H__
 #define __ENGINE_H__
 
-#include <iutil/eventh.h>
 #include <csutil/sysfunc.h>
 #include <csutil/csstring.h>
-#include <csutil/ref.h>
 #include <csutil/leakguard.h>
+#include <csutil/eventhandlers.h>
+#include <csutil/weakrefarr.h>
 #include <ivaria/profile.h>
+#include <iutil/eventh.h>
 
 #include "paws/pawsmanager.h"
 #include "paws/psmousebinds.h"
 #include "psclientchar.h"
 #include "psinventorycache.h"
+#include "psnetmanager.h"
 
 #include "util/prb.h"
 #include "util/slots.h"
@@ -45,7 +47,7 @@ struct iEvent;
 struct iEventQueue;
 struct iLoader;
 struct iMeshFactoryWrapper;
-struct iNetManager;
+struct iThreadedLoader;
 struct iSoundManager;
 struct iVFS;
 struct iVirtualClock;
@@ -75,17 +77,17 @@ class GEMClientObject;
 class GEMClientActor;
 class GUIHandler;
 
-struct DelayedLoader
+struct DelayedLoader : public CS::Utility::WeakReferenced
 {
     virtual void CheckMeshLoad() = 0;
     virtual ~DelayedLoader() { };
 };
 
 /**
- * psEngine
- * This is the main class that contains all the object. This class responsible
- * for the whole game functionality.
- */
+* psEngine
+* This is the main class that contains all the object. This class responsible
+* for the whole game functionality.
+*/
 class psEngine
 {
 public:
@@ -108,32 +110,32 @@ public:
     virtual ~psEngine ();
 
     /** Creates and loads other interfaces.  There are 2 levels for the setup.
-      * @param level The level we want to load  
-      * At level 0:
-      * <UL>
-      * <LI> Various Crystal Space plugins are loaded.
-      * <LI> Crash/Dump system intialized. 
-      * <LI> Sound manager is loaded.
-      * <LI> Log system loaded. 
-      * <LI> PAWS windowing system and skins setup.
-      * </UL>
-      * At level 1:
-      * <UL>
-      * <LI> The network manager is setup.
-      * <LI> SlotManager, ModeManager, ActionHandler, ZoneManager, CacheManager setup.
-      * <LI> CEL setup. 
-      * <LI> Trigger to start loading models fired.
-      * </UL>
-      * 
-      * @return  True if the level was successful in loading/setting up all components. 
-      */
+    * @param level The level we want to load  
+    * At level 0:
+    * <UL>
+    * <LI> Various Crystal Space plugins are loaded.
+    * <LI> Crash/Dump system intialized. 
+    * <LI> Sound manager is loaded.
+    * <LI> Log system loaded. 
+    * <LI> PAWS windowing system and skins setup.
+    * </UL>
+    * At level 1:
+    * <UL>
+    * <LI> The network manager is setup.
+    * <LI> SlotManager, ModeManager, ActionHandler, ZoneManager, CacheManager setup.
+    * <LI> CEL setup. 
+    * <LI> Trigger to start loading models fired.
+    * </UL>
+    * 
+    * @return  True if the level was successful in loading/setting up all components. 
+    */
     bool Initialize (int level);
 
     /**
-     * Clean up stuff.
-     * Needs to be called before the engine is destroyed, since some objects
-     * owned by the engine require the engine during their destruction.
-     */
+    * Clean up stuff.
+    * Needs to be called before the engine is destroyed, since some objects
+    * owned by the engine require the engine during their destruction.
+    */
     void Cleanup();
 
     /// Do anything that needs to happen after the frame is rendered each time.
@@ -147,11 +149,14 @@ public:
     }
 
     /**
-     * Everything is event base for csApp based system. This method is called
-     * when any event is triggered such as when a button is pushed, mouse move,
-     * or keyboard pressed.
-     */
-    bool HandleEvent (iEvent &Event);
+    * Everything is event base for csApp based system. This method is called
+    * when any event is triggered such as when a button is pushed, mouse move,
+    * or keyboard pressed.
+    */
+    bool ProcessLogic(iEvent& Event);
+    bool Process2D(iEvent& Event);
+    bool Process3D(iEvent& Event);
+    bool ProcessFrame(iEvent& Event);
 
     /// Load game calls LoadWorld and also load characters, cameras, items, etc.
     void LoadGame();
@@ -169,16 +174,15 @@ public:
     iVFS*                 GetVFS()                { return vfs; }
     iVirtualClock*        GetVirtualClock()       { return vc; }
     iDocumentSystem*      GetXMLParser()          { return xmlparser; }
-    iLoader*              GetLoader()             { return loader; }
+    iThreadedLoader*      GetLoader()             { return loader; }
     iSoundManager*        GetSoundManager()       { return soundmanager; }
-    iNetManager*          GetNetManager();
-    iConfigManager*       GetConfig()             { return cfgmgr; };  ///< config file
+    iConfigManager*       GetConfig()             { return cfgmgr; }  ///< config file
 
     csRandomGen& GetRandomGen() { return random; }
     float GetRandom() { return random.Get(); }
 
-    MsgHandler*            GetMsgHandler();
-    CmdHandler*            GetCmdHandler();
+    MsgHandler*            GetMsgHandler()     { return netmanager->GetMsgHandler(); }
+    CmdHandler*            GetCmdHandler()     { return netmanager->GetCmdHandler(); }
     psSlotManager*         GetSlotManager()    { return slotManager;}
     ClientCacheManager*    GetCacheManager()   { return cachemanager; }
     psClientCharManager*   GetCharManager()    { return charmanager; }
@@ -192,6 +196,7 @@ public:
     psCharController*      GetCharControl()    { return charController; }
     psMouseBinds*          GetMouseBinds();
     psCamera*              GetPSCamera()       { return camera; }
+    psNetManager*          GetNetManager()     { return netmanager; }
 
     /// Access the player's petitioner target
     void SetTargetPetitioner(const char * pet) { targetPetitioner = pet; }
@@ -201,47 +206,14 @@ public:
     void QuitClient();
 
     /**
-     * Formally disconnects a client and allows time for an info box to be shown
-     * @param final Set to true if this is the final quit.
-     */
+    * Formally disconnects a client and allows time for an info box to be shown
+    * @param final Set to true if this is the final quit.
+    */
     void Disconnect(bool final);
 
     /// Tell the engine to start the load proceedure.
     void StartLoad() { loadstate = LS_LOAD_SCREEN; }
     LoadState loadstate;
-
-    /// Main event handler for psEngine
-
-    class EventHandler : public scfImplementation1< EventHandler, iEventHandler >
-    {
-    private:
-        psEngine* parent;
-
-    public:
-        EventHandler(psEngine* p)
-            : scfImplementationType(this), parent(p) {}
-
-        virtual ~EventHandler() {}
-
-        virtual bool HandleEvent(iEvent& ev)
-        {
-            return parent->HandleEvent(ev);
-        }
-
-        CS_EVENTHANDLER_NAMES ("planeshift.engine.int")
-        virtual const csHandlerID * GenericPrec(
-            csRef<iEventHandlerRegistry>&,
-            csRef<iEventNameRegistry>&,
-            csEventID) const;
-        virtual const csHandlerID * GenericSucc(
-            csRef<iEventHandlerRegistry>&,
-            csRef<iEventNameRegistry>&,
-            csEventID) const;
-        CS_EVENTHANDLER_DEFAULT_INSTANCE_CONSTRAINTS;
-    };
-
-    csRef<EventHandler> scfiEventHandler;
-    csHandlerID EHConstraintsFramePrec[2];
 
     size_t GetTime();
 
@@ -266,9 +238,9 @@ public:
     int GetDuelConfirm() { return confirmation; }
 
     /** Loads and applies the sound settings
-     * @param True if you want to load the default settings
-     * @return true if it was successfully done
-     */
+    * @param True if you want to load the default settings
+    * @return true if it was successfully done
+    */
     bool LoadSoundSettings(bool forceDef);
 
     /// Checks if the client has loaded its map
@@ -284,15 +256,15 @@ public:
     void LoadError(bool value) { loadError = value; }
 
     /** Loads a widget
-      * @param Title to show in the logs if an error occurs
-      * @param XML file
-      * @return Append this to a var and check it after all loading is done
-      */
+    * @param Title to show in the logs if an error occurs
+    * @param XML file
+    * @return Append this to a var and check it after all loading is done
+    */
     bool LoadPawsWidget(const char* title, const char* filename);
 
     /** Loads custom paws widgets that are specified as a list in an xml file.
-     *   \param filename The xml file that holds the list of custom widgets.
-     */
+    *   \param filename The xml file that holds the list of custom widgets.
+    */
     bool LoadCustomPawsWidgets(const char * filename);
 
     SlotNameHash slotName;
@@ -300,8 +272,8 @@ public:
     void AddLoadingWindowMsg(const csString & msg);
 
     /** Shortcut to pawsQuitInfoBox
-      * @param Message to display before quiting
-      */
+    * @param Message to display before quiting
+    */
     void FatalError(const char* msg);
 
     /// Logged in?
@@ -309,8 +281,8 @@ public:
     void SetLoggedIn(bool v) { loggedIn = v; }
 
     /** Set the number of characters this player has.
-      * Used to wait for full loading of characters in selection screen.
-      */
+    * Used to wait for full loading of characters in selection screen.
+    */
     void SetNumChars(int chars) { numOfChars = chars; }
 
     /// Get the number of characters this player should have.
@@ -326,12 +298,12 @@ public:
     const char *GetGuildName() { return guildname; }
 
     /** Gets whether sounds should be muted when the application loses focus.
-     * @return true if sounds should be muted, false otherwise
-     */
+    * @return true if sounds should be muted, false otherwise
+    */
     bool GetMuteSoundsOnFocusLoss(void) const { return muteSoundsOnFocusLoss; }
     /** Sets whether sounds should be muted when the application loses focus.
-     * @param value true if sounds should be muted, false otherwise
-     */
+    * @param value true if sounds should be muted, false otherwise
+    */
     void SetMuteSoundsOnFocusLoss(bool value) { muteSoundsOnFocusLoss = value; }
 
     /// Mute all sounds.
@@ -340,15 +312,15 @@ public:
     void UnmuteAllSounds(void);
 
     /** FindCommonString
-     * @param cstr_id The id of the common string to find.
-     */
+    * @param cstr_id The id of the common string to find.
+    */
     const char* FindCommonString(unsigned int cstr_id);
 
     /**
-     * FindCommonStringId
-     * @param[in] str The string we are looking for
-     * @return The id of the common string or csInvalidStringID if not found
-     */
+    * FindCommonStringId
+    * @param[in] str The string we are looking for
+    * @return The id of the common string or csInvalidStringID if not found
+    */
     csStringID FindCommonStringId(const char *str);
 
 
@@ -367,7 +339,7 @@ public:
     /// The graphics features that are enabled/disabled.
     uint GetGFXFeatures() { return gfxFeatures; }
 
-    void RegisterDelayedLoader(DelayedLoader* obj) { delayedLoaders.Push(obj); }
+    void RegisterDelayedLoader(DelayedLoader* obj) { delayedLoaders.PushSmart(obj); }
     void UnregisterDelayedLoader(DelayedLoader* obj) { delayedLoaders.Delete(obj); }
 
 private:
@@ -386,20 +358,20 @@ private:
     bool FrameLimit();
 
     /* plugins we're using... */
-    csRef<iObjectRegistry>    object_reg;   ///< The Object Registry
-    csRef<iEventNameRegistry> nameRegistry; ///< The name registry.
-    csRef<iEngine>            engine;       ///< Engine plug-in handle.
-    csRef<iConfigManager>     cfgmgr;       ///< Config Manager
-    csRef<iTextureManager>    txtmgr;       ///< Texture Manager
-    csRef<iVFS>               vfs;          ///< Virtual File System
-    csRef<iGraphics2D>        g2d;          ///< 2d canvas
-    csRef<iGraphics3D>        g3d;          ///< 3d canvas
-    csRef<iSoundManager>      soundmanager; ///< PS Sound manager
-    csRef<iEventQueue>        queue;        ///< Event Queue
-    csRef<iVirtualClock>      vc;           ///< Clock
-    csRef<iDocumentSystem>    xmlparser;    ///< XML Parser.
-    csRef<iLoader>            loader;       ///< Loader
-    csRef<iCommandLineParser> cmdline;      ///< Command line parser
+    csRef<iObjectRegistry>    object_reg;     ///< The Object Registry
+    csRef<iEventNameRegistry> nameRegistry;   ///< The name registry.
+    csRef<iEngine>            engine;         ///< Engine plug-in handle.
+    csRef<iConfigManager>     cfgmgr;         ///< Config Manager
+    csRef<iTextureManager>    txtmgr;         ///< Texture Manager
+    csRef<iVFS>               vfs;            ///< Virtual File System
+    csRef<iGraphics2D>        g2d;            ///< 2d canvas
+    csRef<iGraphics3D>        g3d;            ///< 3d canvas
+    csRef<iSoundManager>      soundmanager;   ///< PS Sound manager
+    csRef<iEventQueue>        queue;          ///< Event Queue
+    csRef<iVirtualClock>      vc;             ///< Clock
+    csRef<iDocumentSystem>    xmlparser;      ///< XML Parser
+    csRef<iThreadedLoader>    loader;         ///< Loader
+    csRef<iCommandLineParser> cmdline;        ///< Command line parser
     csRef<iStringSet>         stringset;
     csRandomGen               random;
 
@@ -448,16 +420,16 @@ private:
     bool modelsLoaded;  ///< Tells if the models are finished loading yet.
     size_t modelToLoad; ///< Keeps a count of the models loaded so far.
     bool modelsInit;    ///< True if we've begun the process of loading models.
+    bool okToLoadModels; ///< True if we can load models now.
     csStringArray modelnames;
     csHash<csString, csString> factfilenames;
 
-    public:
-        bool GetFileNameByFact(csString factName, csString& fileName);
-    private:
+public:
+    bool GetFileNameByFact(csString factName, csString& fileName);
+private:
 
     csString targetPetitioner;
 
-    bool okToLoadModels;     ///< Make sure that it is allowed to start preloading
     float BrightnessCorrection;
 
     float KFactor;           ///< Hold the K factor used for casting spells.
@@ -494,25 +466,132 @@ private:
     /// Define what kind of loading we want to do; unload first or unload last.
     bool unloadLast;
 
-    /// Whether or not we're using a threaded loader (will break things if you don't and you set to true).
-    bool threadedLoad;
-    
     // Event ID cache
-    csEventID event_preprocess;
-    csEventID event_process;
-    csEventID event_finalprocess;
     csEventID event_frame;
-    csEventID event_postprocess;
     csEventID event_canvashidden;
     csEventID event_canvasexposed;
     csEventID event_focusgained;
     csEventID event_focuslost;
+    csEventID event_mouse;
+    csEventID event_keyboard;
     csEventID event_quit;
 
-    CS_EVENTHANDLER_NAMES ("planeshift.engine")
-    CS_EVENTHANDLER_NIL_CONSTRAINTS
+    /**
+    * Embedded iEventHandler interface that handles frame events in the
+    * logic phase.
+    */
+    class LogicEventHandler : public scfImplementation1<LogicEventHandler, iEventHandler>
+    {
+    public:
+        LogicEventHandler (psEngine* parent) : scfImplementationType (this), parent (parent)
+        {
+        }
 
-    csArray<DelayedLoader*> delayedLoaders;
+        virtual ~LogicEventHandler ()
+        {
+        }
+
+        virtual bool HandleEvent (iEvent& ev)
+        {
+            return parent->ProcessLogic(ev);
+        }
+
+        virtual const csHandlerID * GenericPrec(csRef<iEventHandlerRegistry> &,
+            csRef<iEventNameRegistry> &, csEventID) const;
+        virtual const csHandlerID * GenericSucc(csRef<iEventHandlerRegistry> &,
+            csRef<iEventNameRegistry> &, csEventID) const;
+
+        CS_EVENTHANDLER_NAMES("planeshift.client.frame.logic")
+            CS_EVENTHANDLER_DEFAULT_INSTANCE_CONSTRAINTS
+
+    private:
+        psEngine* parent;
+    };
+
+    /**
+    * Embedded iEventHandler interface that handles frame events in the
+    * 3D phase.
+    */
+    class EventHandler3D : public scfImplementation1<EventHandler3D, iEventHandler>
+    {
+    public:
+        EventHandler3D (psEngine* parent) : scfImplementationType (this), parent (parent)
+        {
+        }
+
+        virtual ~EventHandler3D ()
+        {
+        }
+
+        virtual bool HandleEvent (iEvent& ev)
+        {
+            return parent->Process3D(ev);
+        }
+
+        CS_EVENTHANDLER_PHASE_3D("planeshift.client.frame.3d");
+
+    private:
+        psEngine* parent;
+    };
+
+    /**
+    * Embedded iEventHandler interface that handles frame events in the
+    * 2D phase.
+    */
+    class EventHandler2D : public scfImplementation1<EventHandler2D, iEventHandler>
+    {
+    public:
+        EventHandler2D (psEngine* parent) : scfImplementationType (this), parent (parent)
+        {
+        }
+
+        virtual ~EventHandler2D ()
+        {
+        }
+
+        virtual bool HandleEvent (iEvent& ev)
+        {
+            return parent->Process2D(ev);
+        }
+
+        CS_EVENTHANDLER_PHASE_2D("planeshift.client.frame.2d");
+
+    private:
+        psEngine* parent;
+    };
+
+    /**
+    * Embedded iEventHandler interface that handles frame events in the
+    * Frame phase.
+    */
+    class FrameEventHandler : public scfImplementation1<FrameEventHandler, iEventHandler>
+    {
+    public:
+        FrameEventHandler (psEngine* parent) : scfImplementationType (this), parent (parent)
+        {
+        }
+
+        virtual ~FrameEventHandler ()
+        {
+        }
+
+        virtual bool HandleEvent (iEvent& ev)
+        {
+            return parent->ProcessFrame(ev);
+        }
+
+        CS_EVENTHANDLER_PHASE_FRAME("planeshift.client.frame");
+
+    private:
+        psEngine* parent;
+    };
+
+    csRef<LogicEventHandler> eventHandlerLogic;
+    csRef<EventHandler3D> eventHandler3D;
+    csRef<EventHandler2D> eventHandler2D;
+    csRef<FrameEventHandler> eventHandlerFrame;
+
+    csWeakRefArray<DelayedLoader> delayedLoaders;
 };
 
 #endif

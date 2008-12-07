@@ -48,7 +48,6 @@
 #include <ivaria/reporter.h>
 #include "ivaria/mapnode.h"
 
-#include <imesh/thing.h>
 #include <imesh/objmodel.h>
 #include <igeom/path.h>
 #include <csgeom/path.h>

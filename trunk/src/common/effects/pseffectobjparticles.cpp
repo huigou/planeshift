@@ -17,16 +17,15 @@
 *
 */
 
-#if 1
 #include <psconfig.h>
 
 #include <csutil/xmltiny.h>
 #include <iengine/engine.h>
-#include <iengine/region.h>
 #include <iengine/material.h>
 #include <iengine/mesh.h>
 #include <iengine/movable.h>
 #include <iengine/sector.h>
+#include <imap/ldrctxt.h>
 #include <imap/loader.h>
 #include <imesh/particles.h>
 #include <imesh/partsys.h>
@@ -51,7 +50,7 @@ psEffectObjParticles::~psEffectObjParticles()
     //    pstate->Stop();
 }
 
-bool psEffectObjParticles::Load(iDocumentNode *node)
+bool psEffectObjParticles::Load(iDocumentNode *node, iLoaderContext* ldr_context)
 {
     
     // get the attributes
@@ -78,10 +77,10 @@ bool psEffectObjParticles::Load(iDocumentNode *node)
         return false;
     }
     
-    if (!psEffectObj::Load(node))
+    if (!psEffectObj::Load(node, ldr_context))
         return false;
         
-    return PostSetup();
+    return PostSetup(ldr_context);
 }
 
 bool psEffectObjParticles::Render(const csVector3 &up)
@@ -180,13 +179,13 @@ psEffectObj *psEffectObjParticles::Clone() const
     return newObj;
 }
 
-bool psEffectObjParticles::PostSetup()
+bool psEffectObjParticles::PostSetup(iLoaderContext* ldr_context)
 {
     static unsigned int uniqueID = 0;
     csString facName = "effect_particles_fac_";
     facName += uniqueID++;
 
-    meshFact = effectsCollection->FindMeshFactory(factName);
+    meshFact = ldr_context->FindMeshFactory(factName);
     if (!meshFact)
     {
         csReport(psCSSetup::object_reg, CS_REPORTER_SEVERITY_ERROR, "planeshift_effects",
@@ -196,4 +195,3 @@ bool psEffectObjParticles::PostSetup()
 
     return true;
 }
-#endif

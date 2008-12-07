@@ -25,20 +25,14 @@
 #include "paws/pawsbutton.h"
 #include "paws/pawstextbox.h"
 
-SCF_IMPLEMENT_IBASE(EEditSelectEditAnchor)
-SCF_IMPLEMENT_IBASE_END
-
-EEditSelectEditAnchor::EEditSelectEditAnchor()
+EEditSelectEditAnchor::EEditSelectEditAnchor() : scfImplementationType(this)
 {
-    SCF_CONSTRUCT_IBASE(0);
     selectCallback = 0;
 }
 
 EEditSelectEditAnchor::~EEditSelectEditAnchor()
 {
     delete selectCallback;
-
-    SCF_DESTRUCT_IBASE();
 }
 
 void EEditSelectEditAnchor::Select(const csString & currName, EEditInputboxManager::iSelectEditAnchor * callback, 

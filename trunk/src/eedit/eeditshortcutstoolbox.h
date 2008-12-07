@@ -40,11 +40,9 @@ struct EEditShortcutKey
 
 /** This manages the shortcuts.
  */
-class EEditShortcutsToolbox : public EEditToolbox, public pawsWidget
+class EEditShortcutsToolbox : public EEditToolbox, public pawsWidget, public scfImplementation0<EEditShortcutsToolbox>
 {
 public:
-    SCF_DECLARE_IBASE;
-
     EEditShortcutsToolbox();
     virtual ~EEditShortcutsToolbox();
 

@@ -24,7 +24,6 @@
 #include <iengine/material.h>
 #include <iengine/mesh.h>
 #include <iengine/movable.h>
-#include <iengine/region.h>
 #include <imesh/object.h>
 #include <imesh/objmodel.h>
 #include <csutil/flags.h>
@@ -55,7 +54,7 @@ psEffectObjSpire::~psEffectObjSpire()
     delete [] colour;    
 }
 
-bool psEffectObjSpire::Load(iDocumentNode *node)
+bool psEffectObjSpire::Load(iDocumentNode *node, iLoaderContext* ldr_context)
 {
     // get the attributes
     name.Clear();
@@ -99,7 +98,7 @@ bool psEffectObjSpire::Load(iDocumentNode *node)
         return false;
     }
     
-    if (!psEffectObj::Load(node))
+    if (!psEffectObj::Load(node, ldr_context))
         return false;
 
     return PostSetup();

@@ -369,8 +369,7 @@ void pawsCreationMain::ChangeFace( int newFace )
     if ( newFace < (int)race->location[PSTRAIT_LOCATION_FACE][currentGender].GetSize() )
     {
         Trait* trait = race->location[PSTRAIT_LOCATION_FACE][currentGender][newFace];
-        csVector3 at(0,0,0);       
-        view->LockCamera(race->zoomLocations[PSTRAIT_LOCATION_FACE], at);            
+        view->LockCamera(race->zoomLocations[PSTRAIT_LOCATION_FACE], csVector3(0, 0, 0));
                       
         charApp->FaceTexture(trait->material, trait->texture);
         

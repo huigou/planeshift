@@ -21,7 +21,6 @@
 
 #include <csutil/xmltiny.h>
 #include <iengine/engine.h>
-#include <iengine/region.h>
 #include <iengine/material.h>
 #include <iengine/mesh.h>
 #include <iengine/movable.h>
@@ -308,7 +307,7 @@ psEffectObj::~psEffectObj()
     // CS's smart pointer system
 }
 
-bool psEffectObj::Load(iDocumentNode *node)
+bool psEffectObj::Load(iDocumentNode *node, iLoaderContext* ldr_context)
 {
     
     csRef<iDocumentNode> dataNode;

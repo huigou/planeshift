@@ -59,7 +59,7 @@ public:
     virtual bool SetText(const csArray<psEffectTextRow> & rows);
     virtual bool SetText(int rows, ...);
 
-    bool Load(iDocumentNode * node);
+    bool Load(iDocumentNode * node, iLoaderContext* ldr_context);
     void LoadGlyphs(csString name);
     psEffectObj * Clone() const;
     // inherited function overloads

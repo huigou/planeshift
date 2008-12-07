@@ -2710,10 +2710,10 @@ protected:
     void WriteDRInfo(uint32_t client, EID mappedid,
                     bool on_ground, uint8_t mode, uint8_t counter,
                     const csVector3& pos, float yrot, iSector *sector,
-                    const csVector3& vel, csVector3& worldVel, float ang_vel,
-                    csStringHashReversible* msgstrings, bool donewriting=true);
+                    csString sectorName, const csVector3& vel, csVector3& worldVel,
+                    float ang_vel, csStringHashReversible* msgstrings, bool donewriting=true);
     void ReadDRInfo( MsgEntry* me, csStringHashReversible* msgstrings, iEngine *engine);
-    void CreateMsgEntry(uint32_t client, csStringHashReversible* msgstrings, iSector *sector);
+    void CreateMsgEntry(uint32_t client, csStringHashReversible* msgstrings, iSector *sector, csString sectorName);
 
     /// Flags indicating what components are packed in this message
     enum DRDataFlags
@@ -2752,7 +2752,7 @@ public:
                 csStringHashReversible* msgstrings, psLinearMovement *linmove, uint8_t mode=0);
     psDRMessage(uint32_t client, EID mappedid,
                 bool on_ground, uint8_t mode, uint8_t counter,
-                const csVector3& pos, float yrot, iSector *sector,
+                const csVector3& pos, float yrot, iSector *sector, csString sectorName,
                 const csVector3& vel, csVector3& worldVel, float ang_vel,
                 csStringHashReversible* msgstrings);
     psDRMessage(void *data,int size, csStringHashReversible* msgstrings, iEngine *engine);

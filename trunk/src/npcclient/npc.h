@@ -34,7 +34,7 @@ struct iMovable;
 //=============================================================================
 #include "npcbehave.h"
 
-class iCollideSystem;
+struct iCollideSystem;
 
 class EventManager;
 class NetworkManager;

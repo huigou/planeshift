@@ -28,11 +28,9 @@ class pawsEditTextBox;
 
 /** A dialog window to select a string value.
  */
-class EEditSelectString : public pawsWidget
+class EEditSelectString : public pawsWidget, public scfImplementation0<EEditSelectString>
 {
 public:
-    SCF_DECLARE_IBASE;
-
     EEditSelectString();
     virtual ~EEditSelectString();
 

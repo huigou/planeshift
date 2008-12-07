@@ -27,18 +27,13 @@
 #include "paws/pawslistbox.h"
 #include "paws/pawstextbox.h"
 
-SCF_IMPLEMENT_IBASE(EEditSelectList)
-SCF_IMPLEMENT_IBASE_END
-
-EEditSelectList::EEditSelectList()
+EEditSelectList::EEditSelectList() : scfImplementationType(this)
 {
-    SCF_CONSTRUCT_IBASE(0);
     selectCallback = 0;
 }
 
 EEditSelectList::~EEditSelectList()
 {
-    SCF_DESTRUCT_IBASE();
     delete selectCallback;
 }
 

@@ -26,7 +26,6 @@
 #include <iengine/movable.h>
 #include <iengine/camera.h>
 #include <cstool/csview.h>
-#include <iengine/region.h>
 #include <imesh/objmodel.h>
 #include <csutil/flags.h>
 #include <csgeom/tri.h>
@@ -56,7 +55,7 @@ psEffectObjDecal::~psEffectObjDecal()
         decalMgr->DeleteDecal(decal);
 }
 
-bool psEffectObjDecal::Load(iDocumentNode *node)
+bool psEffectObjDecal::Load(iDocumentNode *node, iLoaderContext* ldr_context)
 {
     if (!decalMgr)
     {
@@ -146,7 +145,7 @@ bool psEffectObjDecal::Load(iDocumentNode *node)
     decalTemplate->SetPerpendicularFaceThreshold(perpendicularFaceThreshold);
     decalTemplate->SetPerpendicularFaceOffset(perpendicularFaceOffset);
     
-    if (!psEffectObj::Load(node))
+    if (!psEffectObj::Load(node, ldr_context))
         return false;
     
     return PostSetup();

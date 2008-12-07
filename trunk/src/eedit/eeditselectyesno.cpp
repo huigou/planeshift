@@ -24,20 +24,14 @@
 #include "paws/pawsmanager.h"
 #include "paws/pawsradio.h"
 
-SCF_IMPLEMENT_IBASE(EEditSelectYesNo)
-SCF_IMPLEMENT_IBASE_END
-
-EEditSelectYesNo::EEditSelectYesNo()
+EEditSelectYesNo::EEditSelectYesNo() : scfImplementationType(this)
 {
-    SCF_CONSTRUCT_IBASE(0);
     selectCallback = 0;
 }
 
 EEditSelectYesNo::~EEditSelectYesNo()
 {
     delete selectCallback;
-
-    SCF_DESTRUCT_IBASE();
 }
 
 void EEditSelectYesNo::Select(bool startValue, EEditInputboxManager::iSelectYesNo * callback, const csVector2 & pos)

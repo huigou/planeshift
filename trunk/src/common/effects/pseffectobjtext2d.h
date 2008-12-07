@@ -93,7 +93,7 @@ public:
     bool SetText(int rows, ...);
 
     // inheritted function overloads
-    bool Load(iDocumentNode * node);
+    bool Load(iDocumentNode * node, iLoaderContext* ldr_context);
     bool Render(const csVector3 &up);
     bool AttachToAnchor(psEffectAnchor * newAnchor);
     bool Update(csTicks elapsed);

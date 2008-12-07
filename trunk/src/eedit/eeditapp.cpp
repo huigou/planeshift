@@ -37,7 +37,6 @@
 #include <iengine/mesh.h>
 #include <iengine/movable.h>
 #include <csutil/flags.h>
-#include <iengine/region.h>
 #include <imesh/spritecal3d.h>
 #include <imesh/object.h>
 #include <csutil/scf.h>
@@ -232,10 +231,6 @@ bool EEditApp::Init()
     // Register our event handler
     event_handler = csPtr<EventHandler> (new EventHandler (this));
     csEventID esub[] = {
-	  csevPreProcess (object_reg),
-	  csevProcess (object_reg),
-	  csevPostProcess (object_reg),
-	  csevFinalProcess (object_reg),
 	  csevFrame (object_reg),
 	  csevMouseEvent (object_reg),
 	  csevKeyboardEvent (object_reg),
@@ -250,7 +245,7 @@ bool EEditApp::Init()
     ((EEditLoadMapToolbox *)toolboxManager->GetToolbox(EEditToolbox::T_LOAD_MAP))->SetMapFile(editWindow->GetMapFile());
     
     // effect stuff
-    effectManager.AttachNew(new psEffectManager());
+    effectManager.AttachNew(new psEffectManager(object_reg));
     //effectManager->LoadFromEffectsList("/this/data/effects/effectslist.xml", editWindow->GetView());
     //effectManager->Prepare();
     
@@ -366,19 +361,10 @@ bool EEditApp::HandleEvent(iEvent &ev)
     if (controlManager->HandleEvent(ev))
         return true;
 
-    if (ev.Name == csevProcess (object_reg))
+    if (ev.Name == csevFrame (object_reg))
     {
         Update();
-        return true;
-    }
-    else if (ev.Name == csevFinalProcess (object_reg))
-    {
-        g3d->FinishDraw ();
-        g3d->Print (0);
-        return true;
-    }
-    else if (ev.Name == csevPostProcess (object_reg))
-    {
+
         if (drawScreen)
         {
             g3d->BeginDraw(CSDRAW_2DGRAPHICS);
@@ -388,6 +374,11 @@ bool EEditApp::HandleEvent(iEvent &ev)
         {
             csSleep(150);
         }
+
+        g3d->FinishDraw ();
+        g3d->Print (0);
+
+        return true;
     }
     else if (ev.Name == csevCanvasHidden (object_reg, g3d->GetDriver2D ()))
         drawScreen = false;
@@ -1055,10 +1046,11 @@ void EEditApp::TakeScreenshot(const csString & fileName)
  */
 int main (int argc, char *argv[])
 {
-    csRef<EEditReporter> reporter;
-    reporter.AttachNew(new EEditReporter());
-
     psCSSetup *CSSetup = new psCSSetup(argc, argv, EEditApp::CONFIG_FILENAME, EEditApp::CONFIG_FILENAME);
+
+    csRef<EEditReporter> reporter;
+    reporter.AttachNew(new EEditReporter(CSSetup->GetObjectRegistry()));
+
     iObjectRegistry *object_reg = CSSetup->InitCS(reporter);
     
     editApp = new EEditApp(object_reg, reporter);

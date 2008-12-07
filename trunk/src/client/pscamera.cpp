@@ -312,10 +312,9 @@ bool psCamera::InitializeView(GEMClientActor* entity)
     int height = psengine->GetG2D()->GetHeight();
 
     view->SetRectangle(0, 0, width, height);
-    view->GetCamera()->SetPerspectiveCenter(width >> 1, height >> 1);
+    view->GetPerspectiveCamera()->SetPerspectiveCenter(0.5, 0.5);
 
     view->SetContext(psengine->GetG3D());
-    view->GetCamera()->SetFOV( view->GetCamera()->GetFOV(), width );
 
     for (int i=0; i<CAMERA_MODES_COUNT; i++)
     {
@@ -878,9 +877,9 @@ csString psCamera::GetCameraModeVerbose() const
     return csString("Unknown");
 }
 
-iCamera *psCamera::GetICamera()
+iPerspectiveCamera *psCamera::GetICamera()
 {
-    return view->GetCamera();
+    return view->GetPerspectiveCamera();
 }
 
 iView *psCamera::GetView()
@@ -896,14 +895,14 @@ iMeshWrapper *psCamera::Get3DPointFrom2D(int x, int y, csVector3 * worldCoord, c
     csVector3 vc, vo, vw;
 
     csVector2 perspective( x, GetICamera()->GetShiftY() * 2 - y );
-    vc = GetICamera()->InvPerspective( perspective, 1 );
-    vw = GetICamera()->GetTransform().This2Other( vc );
+    vc = GetICamera()->GetCamera()->InvPerspective( perspective, 1 );
+    vw = GetICamera()->GetCamera()->GetTransform().This2Other( vc );
 
-    iSector* sector = GetICamera()->GetSector();
+    iSector* sector = GetICamera()->GetCamera()->GetSector();
 
     if ( sector )
     {
-        vo = GetICamera()->GetTransform().GetO2TTranslation();
+        vo = GetICamera()->GetCamera()->GetTransform().GetO2TTranslation();
         csVector3 isect;
         csVector3 end = vo + (vw-vo)*1000;
         csIntersectingTriangle closest_tri;
@@ -930,10 +929,10 @@ iMeshWrapper* psCamera::FindMeshUnder2D(int x, int y, csVector3 *pos, int *poly)
     csVector3 vc, vo, vw;
 
     csVector2 perspective( x, GetICamera()->GetShiftY() * 2 - y );
-    vc = GetICamera()->InvPerspective( perspective, 1 );
-    vw = GetICamera()->GetTransform().This2Other( vc );
+    vc = GetICamera()->GetCamera()->InvPerspective( perspective, 1 );
+    vw = GetICamera()->GetCamera()->GetTransform().This2Other( vc );
 
-    iSector* sector = GetICamera()->GetSector();
+    iSector* sector = GetICamera()->GetCamera()->GetSector();
 
     if(!sector) {
         return NULL;
@@ -1044,7 +1043,7 @@ iMeshWrapper* psCamera::FindMeshUnder2D(int x, int y, csVector3 *pos, int *poly)
     }
     else
     {
-        vo = GetICamera()->GetTransform().GetO2TTranslation();
+        vo = GetICamera()->GetCamera()->GetTransform().GetO2TTranslation();
         csVector3 end = vo + (vw-vo)*100;
         csSectorHitBeamResult result;
 
@@ -1434,8 +1433,8 @@ void psCamera::DoCameraIdealCalcs(const csTicks elapsedTicks, const csVector3& a
 
             csVector3 delta = targetPos - charPos;
 
-            float aspect = view->GetCamera()->GetShiftX() / view->GetCamera()->GetShiftY();
-            float d = (middle - charPos).Norm() / (tanf(view->GetCamera()->GetFOVAngle()) * aspect * 0.5f) * 20.1f;
+            float aspect = view->GetPerspectiveCamera()->GetShiftX() / view->GetPerspectiveCamera()->GetShiftY();
+            float d = (middle - charPos).Norm() / (tanf(view->GetPerspectiveCamera()->GetFOVAngle()) * aspect * 0.5f) * 20.1f;
             d += GetDistance();
 
             if (d < 2.0f)

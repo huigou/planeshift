@@ -107,7 +107,7 @@ protected:
 
     void UpdateMoney( const char* moneyName, const char* imageName, int value );
     
-    csRef<iLoader> loader;
+    csRef<iThreadedLoader> loader;
 
     /// Total items to drop
     int maxDropCount;

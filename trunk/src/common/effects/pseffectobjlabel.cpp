@@ -27,7 +27,6 @@
 #include <iengine/movable.h>
 #include <iengine/camera.h>
 #include <cstool/csview.h>
-#include <iengine/region.h>
 #include <imesh/objmodel.h>
 #include <csutil/flags.h>
 #include <csgeom/tri.h>
@@ -72,7 +71,7 @@ psEffectObjLabel::~psEffectObjLabel()
     //printf("label destroyed\n");
 }
 
-bool psEffectObjLabel::Load(iDocumentNode *node)
+bool psEffectObjLabel::Load(iDocumentNode *node, iLoaderContext* ldr_context)
 {
     // get the attributes
     name.Clear();
@@ -109,7 +108,7 @@ bool psEffectObjLabel::Load(iDocumentNode *node)
         LoadGlyphs(sizeFileName);
     } 
     
-    if (!psEffectObj::Load(node))
+    if (!psEffectObj::Load(node, ldr_context))
     {
         return false;
     }

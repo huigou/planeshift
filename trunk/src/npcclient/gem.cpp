@@ -182,8 +182,9 @@ bool gemNPCObject::InitMesh(    const char *factname,
                     }
                 }
 
-                csRef<iLoader> loader (csQueryRegistry<iLoader> (npcclient->GetObjectReg()));
-                loader->Load(root);
+                csRef<iThreadedLoader> loader (csQueryRegistry<iThreadedLoader> (npcclient->GetObjectReg()));
+                csRef<iThreadReturn> ret = loader->LoadNode(root);
+                ret->Wait();
                 meshFact = engine->GetMeshFactories()->FindByName(factname);
                 if(meshFact.IsValid())
                 {

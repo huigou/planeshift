@@ -59,10 +59,6 @@ void psLauncherGUI::Run()
     if(InitApp())
         csDefaultRunLoop(object_reg);
 
-    delete launcherWidget;
-    launcherWidget = NULL;
-    delete mainWidget;
-    mainWidget = NULL;
     delete paws;
     paws = NULL;
     delete downloader;
@@ -165,10 +161,6 @@ bool psLauncherGUI::InitApp()
     event_handler = csPtr<EventHandler> (new EventHandler (this));
     csEventID esub[] = 
     {
-        csevPreProcess (object_reg),
-        csevProcess (object_reg),
-        csevPostProcess (object_reg),
-        csevFinalProcess (object_reg),
         csevFrame (object_reg),
         csevMouseEvent (object_reg),
         csevKeyboardEvent (object_reg),
@@ -259,16 +251,8 @@ bool psLauncherGUI::HandleEvent (iEvent &ev)
     if (paws->HandleEvent(ev))
         return true;
 
-    if (ev.Name == csevProcess (object_reg))
-        return true;
-    else if (ev.Name == csevFinalProcess (object_reg))
+    if (ev.Name == csevFrame (object_reg))
     {
-        g3d->FinishDraw ();
-        g3d->Print (NULL);
-        return true;
-    }
-    else if (ev.Name == csevPostProcess (object_reg))
-    {    
         if (drawScreen)
         {
             FrameLimit();
@@ -279,6 +263,10 @@ bool psLauncherGUI::HandleEvent (iEvent &ev)
         {
             csSleep(150);
         }
+
+        g3d->FinishDraw ();
+        g3d->Print (NULL);
+        return true;
     }
     else if (ev.Name == csevCanvasHidden (object_reg, g2d))
     {
@@ -347,7 +335,7 @@ int main(int argc, char* argv[])
         csString s(argv[i]);
         if(s.CompareNoCase("--console") || s.CompareNoCase("-console"))
         {
-            console = true;
+            //console = true;
         }
     }
 

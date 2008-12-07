@@ -222,7 +222,7 @@ csString psUtilityCommands::SaveCamera()
     //Begin the saving process
 
     //Get the iCamera stucture
-    iCamera *c = psengine->GetPSCamera()->GetICamera();
+    iCamera *c = psengine->GetPSCamera()->GetICamera()->GetCamera();
     csOrthoTransform& camtrans = c->GetTransform ();
     if (!c)
         return "No camera found! (This is fatal!)";

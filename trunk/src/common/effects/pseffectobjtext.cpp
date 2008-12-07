@@ -27,7 +27,6 @@
 #include <iengine/movable.h>
 #include <iengine/camera.h>
 #include <cstool/csview.h>
-#include <iengine/region.h>
 #include <ivideo/graph2d.h>
 #include <iengine/sector.h>
 #include <imesh/particle.h>
@@ -211,7 +210,7 @@ bool psEffectObjText::SetText(int rows, ...)
     return false;
 }
 
-bool psEffectObjText::Load(iDocumentNode * node)
+bool psEffectObjText::Load(iDocumentNode * node, iLoaderContext* ldr_context)
 {
     // default text attributes
     fontName = "/this/data/ttf/LiberationSans-Regular.ttf";
@@ -231,7 +230,7 @@ bool psEffectObjText::Load(iDocumentNode * node)
             fontSize = attr->GetValueAsInt();
     }
 
-    if (!psEffectObjQuad::Load(node))
+    if (!psEffectObjQuad::Load(node, ldr_context))
       return false;
 
     return true;

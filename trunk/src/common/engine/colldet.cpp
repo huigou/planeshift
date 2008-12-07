@@ -43,7 +43,6 @@
 #include <cstool/collider.h>
 #include <ivaria/collider.h>
 
-#include <imesh/thing.h>
 #include <imesh/terrain.h>
 #include <imesh/objmodel.h>
 

@@ -546,7 +546,7 @@ void psClientCharManager::HandleEffect( MsgEntry* me )
             }
             else
             {
-                iSector * sector = psengine->GetPSCamera()->GetICamera()->GetSector(); // Sector should come in the message
+                iSector * sector = psengine->GetPSCamera()->GetICamera()->GetCamera()->GetSector(); // Sector should come in the message
                 effectID = psengine->GetEffectManager()->RenderEffect(effect.name, sector, 
                                                                       effect.offset, target,
                                                                       up,uniqueIDOverride); 

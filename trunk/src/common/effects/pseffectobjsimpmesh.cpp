@@ -24,7 +24,6 @@
 #include <iengine/material.h>
 #include <iengine/mesh.h>
 #include <iengine/movable.h>
-#include <iengine/region.h>
 #include <iengine/sector.h>
 #include <imap/loader.h>
 #include <imesh/objmodel.h>
@@ -47,7 +46,7 @@ psEffectObjSimpMesh::~psEffectObjSimpMesh()
 
 }
 
-bool psEffectObjSimpMesh::Load(iDocumentNode *node)
+bool psEffectObjSimpMesh::Load(iDocumentNode *node, iLoaderContext* ldr_context)
 {
 
     // get the attributes
@@ -84,7 +83,7 @@ bool psEffectObjSimpMesh::Load(iDocumentNode *node)
         return false;
     }
     
-    if (!psEffectObj::Load(node))
+    if (!psEffectObj::Load(node, ldr_context))
         return false;
 
     return PostSetup();
@@ -161,22 +160,10 @@ psEffectObj *psEffectObjSimpMesh::Clone() const
 
 bool psEffectObjSimpMesh::PostSetup()
 {
-    csRef<iLoader> loader =  csQueryRegistry<iLoader> (psCSSetup::object_reg);
+    csRef<iThreadedLoader> loader = csQueryRegistry<iThreadedLoader> (psCSSetup::object_reg);
+    csRef<iThreadReturn> itr = loader->LoadLibraryFile(fileName, effectsCollection);
+    itr->Wait();
+    engine->SyncEngineListsNow(loader);
 
-    loader->LoadLibraryFile(fileName, effectsCollection, false, true);
-
-    /*
-    // setup the material
-    if (materialName != "")
-    {
-        iMaterialWrapper* mat = matUtil->LoadMaterial(materialName, csString("/this/art/effects/") + materialName);
-        if (!mat)
-        {
-            csReport(psCSSetup::object_reg, CS_REPORTER_SEVERITY_ERROR, "planeshift_effects", "Couldn't find effect material: %s\n", materialName.GetData());
-            return false;
-        }
-        facState->SetMaterialWrapper(mat);
-    }
-    */
     return true;
 }

@@ -28,11 +28,9 @@ class pawsEditTextBox;
 
 /** A dialog window to edit effect anchor.
  */
-class EEditSelectEditAnchor : public pawsWidget
+class EEditSelectEditAnchor : public pawsWidget, public scfImplementation0<EEditSelectEditAnchor>
 {
 public:
-    SCF_DECLARE_IBASE;
-
     EEditSelectEditAnchor();
     virtual ~EEditSelectEditAnchor();
 

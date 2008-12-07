@@ -31,17 +31,12 @@
 #include "paws/pawsbutton.h"
 #include "paws/pawsmainwidget.h"
 
-SCF_IMPLEMENT_IBASE(peEditableWidget)
-SCF_IMPLEMENT_IBASE_END
-
-peEditableWidget::peEditableWidget()
+peEditableWidget::peEditableWidget() : scfImplementationType(this)
 {
-    SCF_CONSTRUCT_IBASE(0);
 }
 
 peEditableWidget::~peEditableWidget()
 {
-    SCF_DESTRUCT_IBASE();
 }
 
 bool peEditableWidget::PostSetup()

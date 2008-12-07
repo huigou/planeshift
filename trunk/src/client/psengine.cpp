@@ -47,13 +47,14 @@ MiniDumper minidumper;
 //////////////////////////////////////////////////////////////////////////////
 // Macros
 //////////////////////////////////////////////////////////////////////////////
-#define PS_QUERY_PLUGIN(myref,intf, str)                        \
-myref =  csQueryRegistry<intf> (object_reg);                   \
-if (!myref) {                                                   \
-    csReport (object_reg, CS_REPORTER_SEVERITY_ERROR, PSAPP,    \
-       "No " str " plugin!");                                   \
-    return false;                                               \
-}
+#define PS_QUERY_PLUGIN(myref, intf, str)                    \
+myref =  csQueryRegistryOrLoad<intf> (object_reg, str);      \
+if (!myref)                                                  \
+{                                                            \
+    csReport (object_reg, CS_REPORTER_SEVERITY_ERROR, PSAPP, \
+       "No " str " plugin!");                                \
+    return false;                                            \
+}                                                            \
 
 #define RegisterFactory(factoryclass)   \
     factory = new factoryclass();
@@ -231,12 +232,11 @@ psEngine::psEngine (iObjectRegistry *objectreg)
 
     loadtimeout = 10;  // Default load timeout
 
-    threadedLoad = false;
     modelsInit = false;
     preloadModels = false;
     modelsLoaded = false;
-    modelToLoad = (size_t)-1;
     okToLoadModels = false;
+    modelToLoad = (size_t)-1;
     drawScreen = true;
 
     cal3DCallbackLoader = csPtr<psCal3DCallbackLoader> (new psCal3DCallbackLoader(objectreg));
@@ -282,8 +282,17 @@ void psEngine::Cleanup()
     delete camera;
     delete chatBubbles;
 
-    if (scfiEventHandler && queue)
-        queue->RemoveListener (scfiEventHandler);
+    if (queue)
+    {
+        if(eventHandlerLogic)
+            queue->RemoveListener (eventHandlerLogic);
+        if(eventHandler2D)
+            queue->RemoveListener (eventHandler2D);
+        if(eventHandler3D)
+            queue->RemoveListener (eventHandler3D);
+        if(eventHandlerFrame)
+            queue->RemoveListener (eventHandlerFrame);
+    }
 
     delete paws; // Include delete of mainWidget
 
@@ -294,9 +303,8 @@ void psEngine::Cleanup()
     delete guiHandler;
     delete inventoryCache;
 
-
-    // Effect manager needs to be destoyed before the soundmanager
-    effectManager = NULL;
+    // Effect manager needs to be destroyed before the soundmanager.
+    effectManager.Invalidate();
 
     object_reg->Unregister ((iSoundManager*)soundmanager, "iSoundManager");
 
@@ -323,16 +331,15 @@ bool psEngine::Initialize (int level)
             "This game uses Crystal Space Engine created by Jorrit and others");
         csReport (object_reg, CS_REPORTER_SEVERITY_NOTIFY, PSAPP, CS_VERSION);
 
-
         // Query for plugins
-        PS_QUERY_PLUGIN (queue,  iEventQueue,    "iEventQueue");
-        PS_QUERY_PLUGIN (vfs,    iVFS,           "iVFS");
-        PS_QUERY_PLUGIN (engine, iEngine,        "iEngine");
-        PS_QUERY_PLUGIN (cfgmgr, iConfigManager, "iConfigManager");
-        PS_QUERY_PLUGIN (g3d,    iGraphics3D,    "iGraphics3D");
-        PS_QUERY_PLUGIN (loader, iLoader,        "iLoader");
-        PS_QUERY_PLUGIN (vc,     iVirtualClock,  "iVirtualClock");
-        PS_QUERY_PLUGIN (cmdline,iCommandLineParser, "iCommandLineParser");
+        PS_QUERY_PLUGIN (queue,   iEventQueue,    "iEventQueue");
+        PS_QUERY_PLUGIN (vfs,     iVFS,           "iVFS");
+        PS_QUERY_PLUGIN (engine,  iEngine,        "iEngine");
+        PS_QUERY_PLUGIN (cfgmgr,  iConfigManager, "iConfigManager");
+        PS_QUERY_PLUGIN (g3d,     iGraphics3D,    "iGraphics3D");
+        PS_QUERY_PLUGIN (loader,  iThreadedLoader, "crystalspace.level.loader.threaded");
+        PS_QUERY_PLUGIN (vc,      iVirtualClock,  "iVirtualClock");
+        PS_QUERY_PLUGIN (cmdline, iCommandLineParser, "iCommandLineParser");
 
         g2d = g3d->GetDriver2D();
 
@@ -381,24 +388,20 @@ bool psEngine::Initialize (int level)
         }
 
         // Check if we're preloading models.
-        preloadModels = (cmdline->GetBoolOption("preload_models", false) || GetConfig()->GetBool("PlaneShift.Client.Loading.PreloadModels", false));
+        preloadModels = (cmdline->GetBoolOption("preload_models", false) || GetConfig()->GetBool("PlaneShift.Loading.PreloadModels", false));
 
-        // Check if we're using normal maps etc.
-        if(cmdline->GetBoolOption("use_normal_maps", false))
+        // Check if we're using basic or more advanced shaders.
+        csString advanced("Advanced");
+        if(advanced.CompareNoCase(GetConfig()->GetStr("PlaneShift.Graphics.Shaders")))
         {
-            gfxFeatures |= useNormalMaps;
+            gfxFeatures |= useAdvancedShaders;
         }
 
         // Check if we're using meshgen.
-        if(cmdline->GetBoolOption("use_meshgen", true))
+        if(GetConfig()->GetBool("PlaneShift.Graphics.EnableGrass", true))
         {
             gfxFeatures |= useMeshGen;
-        }
-
-        if(cmdline->GetBoolOption("threaded_load", false))
-        {
-            threadedLoad = true;
-        }
+        }   
 
         //Check if sound is on or off in psclient.cfg
         csString soundPlugin;
@@ -454,7 +457,7 @@ bool psEngine::Initialize (int level)
         paws->GetMouse()->Hide(true);
 
         DeclareExtraFactories();
-
+       
         // Register default PAWS sounds
         if (soundmanager.IsValid() && soundOn)
         {
@@ -488,35 +491,37 @@ bool psEngine::Initialize (int level)
         if (!LoadDuelConfirm())
             return false;
 
-        // Register our event handler
-        scfiEventHandler = csPtr<EventHandler> (new EventHandler (this));
-        csEventID esub[] = {
-              csevPreProcess (object_reg),
-              csevProcess (object_reg),
-              csevPostProcess (object_reg),
-              csevFinalProcess (object_reg),
-              csevFrame (object_reg),
-              csevMouseEvent (object_reg),
-              csevKeyboardEvent (object_reg),
-              csevCanvasExposed (object_reg,g2d),
-              csevCanvasHidden (object_reg, g2d),
-              csevFocusGained (object_reg),
-              csevFocusLost (object_reg),
-              csevQuit (object_reg),
-              CS_EVENTLIST_END
-        };
-        queue->RegisterListener(scfiEventHandler, esub);
-
-        event_preprocess = csevPreProcess(object_reg);
-        event_process = csevProcess(object_reg);
-        event_finalprocess = csevFinalProcess(object_reg);
+        // Register our event handlers.
         event_frame = csevFrame (object_reg);
-        event_postprocess = csevPostProcess(object_reg);
         event_canvashidden = csevCanvasHidden(object_reg,g2d);
         event_canvasexposed = csevCanvasExposed(object_reg,g2d);
         event_focusgained = csevFocusGained(object_reg);
         event_focuslost = csevFocusLost(object_reg);
+        event_mouse = csevMouseEvent (object_reg);
+        event_keyboard = csevKeyboardEvent (object_reg);
         event_quit = csevQuit(object_reg);
+
+        eventHandlerLogic = csPtr<LogicEventHandler> (new LogicEventHandler (this));
+        eventHandler2D = csPtr<EventHandler2D> (new EventHandler2D (this));
+        eventHandler3D = csPtr<EventHandler3D> (new EventHandler3D (this));
+        eventHandlerFrame = csPtr<FrameEventHandler> (new FrameEventHandler (this));
+
+        csEventID esublog[] = {
+              event_frame,
+              event_canvashidden,
+              event_canvasexposed,
+              event_focusgained,
+              event_focuslost,
+              event_mouse,
+              event_keyboard,
+              event_quit,
+              CS_EVENTLIST_END
+        };
+
+        queue->RegisterListener(eventHandlerLogic, esublog);
+        queue->RegisterListener(eventHandler2D, event_frame);
+        queue->RegisterListener(eventHandler3D, event_frame);
+        queue->RegisterListener(eventHandlerFrame, event_frame);
 
         // Inform debug that everything initialized succesfully
         csReport (object_reg, CS_REPORTER_SEVERITY_NOTIFY, PSAPP,
@@ -610,7 +615,7 @@ bool psEngine::Initialize (int level)
         // Load effects now, before we have actors
         if (!effectManager)
         {
-            effectManager.AttachNew(new psEffectManager());
+            effectManager.AttachNew(new psEffectManager(object_reg));
         }
 
         if (!effectManager->LoadFromDirectory("/this/data/effects", true, camera->GetView()))
@@ -620,7 +625,7 @@ bool psEngine::Initialize (int level)
         }
 
         okToLoadModels = true;
-
+                
         return true;
     }
 
@@ -731,65 +736,20 @@ void psEngine::DeclareExtraFactories()
 	RegisterFactory (pawsNpcDialogWindowFactory);
 }
 
-
-// ----------------------------------------------------------------------------
-
-// access funtions
-MsgHandler* psEngine::GetMsgHandler()
-{
-    return netmanager->GetMsgHandler();
-}
-CmdHandler * psEngine::GetCmdHandler()
-{
-    return netmanager->GetCmdHandler();
-}
-iNetManager* psEngine::GetNetManager()
-{
-    return (iNetManager*)netmanager;
-}
-
 //-----------------------------------------------------------------------------
 
 /**
- *
- * psEngine::HandleEvent
- * This function receives all event that occured when the game runs. Event is
- * classified by CS as anything that occured whether be it mouse move, mouse
- * click, messages, etc. These events are processed by this function.
+ * These functions receive and process all events that occur when the game runs.
+ * An event is classified by CS as anything that occurs, whether be it mouse move,
+ * mouse click, messages, etc.
  */
-bool psEngine::HandleEvent (iEvent &ev)
+
+bool psEngine::ProcessLogic(iEvent& ev)
 {
     lastEvent = &ev;
 
-    if ( paws->HandleEvent( ev ) )
+    if(ev.Name == event_frame)
     {
-        if (charController && paws->GetFocusOverridesControls())
-        {
-            charController->GetMovementManager()->StopControlledMovement();
-        }
-
-        return true;
-    }
-
-    if ( charController && charController->HandleEvent( ev ) )
-    {
-        if (paws->GetFocusOverridesControls())
-        {
-            charController->GetMovementManager()->StopControlledMovement();
-        }
-
-        return true;
-    }
-
-    static bool drawFrame;
-
-    if (ev.Name == event_preprocess)
-    {
-        for(size_t i=0; i<delayedLoaders.GetSize(); i++)
-        {
-            delayedLoaders.Get(i)->CheckMeshLoad();
-        }
-
         if (gameLoaded)
         {
             modehandler->PreProcess();
@@ -801,97 +761,9 @@ bool psEngine::HandleEvent (iEvent &ev)
             celclient->CheckEntityQueues();
         }
 
-        // Loading the game
-        if (loadstate != LS_DONE)
-        {
-            if (!modelsLoaded)
-            {
-                if (preloadModels)
-                {
-                    // Preload models in spare time.
-                    PreloadModels();
-                }
-                else
-                {
-                    if (okToLoadModels)
-                    {
-                        PreloadModels();
-                        BuildFactoryList();
-                        Debug1(LOG_ADMIN,0, "Preloading complete");
-
-                        delete paws->FindWidget("SplashWindow");
-                        paws->LoadWidget("data/gui/loginwindow.xml");
-
-                        paws->GetMouse()->ChangeImage("Standard Mouse Pointer");
-                        paws->GetMouse()->Hide(false);
-
-                        modelsLoaded = true;
-                    }
-                }
-            }
-
-            /* Try forwarding loading every 10th frame... not that
-            * nice... but our guy doesn't produce idle events at the
-            * moment :(
-            */
-            static unsigned int count = 0;
-            if (++count%10 == 0)
-                LoadGame();
-        }
-        // Update the sound system
-        else if (GetSoundStatus())
-        {
-            soundmanager->Update( camera->GetView() );
-            soundmanager->Update( celclient->GetMainPlayer()->Pos() );
-        }
-
-        if (celclient)
-            celclient->Update();
-
-        if (effectManager)
-            effectManager->Update();
-    }
-    else if (ev.Name == event_process)
-    {
-        if (drawScreen)
-        {
-            // FPS limits
-            drawFrame = FrameLimit();
-
-            if (drawFrame)
-            {
-                if (camera)
-                    camera->Draw();
-
-                g3d->BeginDraw(CSDRAW_2DGRAPHICS);
-                if (effectManager)
-                    effectManager->Render2D(g3d, g2d);
-                paws->Draw();
-            }
-        }
-        else
-        {
-            csSleep(150);
-        }
-        return true;
-    }
-    else if (ev.Name == event_finalprocess)
-    {
-        if(drawFrame)
-            FinishFrame ();
-
-        // We need to call this after drawing was finished so
-        // LoadingScreen had a chance to be displayed when loading
-        // maps in-game
-        if (zonehandler)
-            zonehandler->OnDrawingFinished();
-        return true;
-    }
-    else if (ev.Name == event_postprocess)
-    {
         UpdatePerFrame();
     }
-    else if (ev.Name == event_canvashidden)
+    if (ev.Name == event_canvashidden)
     {
         drawScreen = false;
         if(soundOn)
@@ -901,16 +773,11 @@ bool psEngine::HandleEvent (iEvent &ev)
     }
     else if (ev.Name == event_canvasexposed)
     {
-        //camera->ResetActualCameraData();
         drawScreen = true;
         if(soundOn)
         {
             UnmuteAllSounds();
         }
-        // RS: this causes a freeze switching back to the client window
-        // for up to a few seconds, and seems very much unnecessary
-        //if (IsGameLoaded())
-        //    celclient->GetEntityLabels()->RepaintAllLabels();
     }
     else if (ev.Name == event_focusgained)
     {
@@ -931,34 +798,181 @@ bool psEngine::HandleEvent (iEvent &ev)
         // Disconnect and quit, if this event wasn't made here
         QuitClient();
     }
+    else
+    {
+        bool handled = false;
+        if(paws->HandleEvent(ev))
+        {
+          handled = true;
+        }
+
+        if(charController)
+        {
+            if(!handled && charController->HandleEvent(ev))
+            {
+              handled = true;
+            }
+
+            if(handled && paws->GetFocusOverridesControls())
+            {
+              charController->GetMovementManager()->StopControlledMovement();
+            }
+        }
+
+        return handled;
+    }
 
     return false;
 }
 
-// ----------------------------------------------------------------------------
-
-const csHandlerID * psEngine::EventHandler::GenericPrec(csRef<iEventHandlerRegistry>&handler_reg,
-                                                        csRef<iEventNameRegistry>&name_reg,
-                                                        csEventID e) const
+static bool drawFrame;
+bool psEngine::Process3D(iEvent& ev)
 {
-    if (name_reg->IsKindOf(e, csevFrame (name_reg)))
+    lastEvent = &ev;
+
+    if(!delayedLoaders.IsEmpty())
     {
-        // Make sure psClientMsgHandler::EventHandler is called before psEngine
-        parent->EHConstraintsFramePrec[0] = handler_reg->GetGenericID("planeshift.clientmsghandler");
-        parent->EHConstraintsFramePrec[1] = CS_HANDLERLIST_END;
-        return parent->EHConstraintsFramePrec;
+        csTicks c = csGetTicks();
+        csWeakRef<DelayedLoader> dl = delayedLoaders.Get(0);
+        if(dl.IsValid())
+        {
+            dl->CheckMeshLoad();
+        }
+        else
+        {
+            delayedLoaders.DeleteIndexFast(0);
+        }
     }
-    else
+
+    // Loading the game
+    if (loadstate != LS_DONE)
     {
-        return NULL;
+        if(!modelsLoaded && okToLoadModels)
+        {
+            if(preloadModels)
+            {
+                // Preload models in spare time.
+                PreloadModels();
+            }
+            else
+            {
+                // Load the cal3d model names.
+                PreloadSubDir("");
+                // Load the item model names.
+                PreloadItemsDir();
+                BuildFactoryList();
+                Debug1(LOG_ADMIN,0, "Preloading complete");
+
+                delete paws->FindWidget("SplashWindow");
+                paws->LoadWidget("data/gui/loginwindow.xml");
+
+                paws->GetMouse()->ChangeImage("Standard Mouse Pointer");
+                paws->GetMouse()->Hide(false);
+
+                modelsLoaded = true;
+            }
+        }
+
+        /* Try forwarding loading every 10th frame... not that
+        * nice... but our guy doesn't produce idle events at the
+        * moment :(
+        */
+        static unsigned int count = 0;
+        if (++count%10 == 0)
+            LoadGame();
     }
+    // Update the sound system
+    else if (GetSoundStatus())
+    {
+        soundmanager->Update( camera->GetView() );
+        soundmanager->Update( celclient->GetMainPlayer()->Pos() );
+    }
+
+    if (celclient)
+        celclient->Update();
+
+    if (effectManager)
+        effectManager->Update();
+
+    if (drawScreen)
+    {
+        // FPS limits
+        drawFrame = FrameLimit();
+
+        if(drawFrame)
+        {
+            if(camera)
+            {
+              camera->Draw();
+              return true;
+            }
+        }
+    }
+
+    return false;
 }
 
-const csHandlerID * psEngine::EventHandler::GenericSucc(csRef<iEventHandlerRegistry> &,
-                                                        csRef<iEventNameRegistry> &,
-                                                        csEventID) const
+bool psEngine::Process2D(iEvent& ev)
 {
-    return NULL;
+    lastEvent = &ev;
+
+    if (drawScreen && drawFrame)
+    {
+        g3d->BeginDraw(CSDRAW_2DGRAPHICS);
+        if (effectManager)
+            effectManager->Render2D(g3d, g2d);
+        paws->Draw();
+    }
+
+    return true;
+}
+
+bool psEngine::ProcessFrame(iEvent& ev)
+{
+    lastEvent = &ev;
+
+    if(drawScreen && drawFrame)
+        FinishFrame();
+
+    // We need to call this after drawing was finished so
+    // LoadingScreen had a chance to be displayed when loading
+    // maps in-game
+    if (zonehandler)
+        zonehandler->OnDrawingFinished();
+
+    return true;
+}
+
+// ----------------------------------------------------------------------------
+
+const csHandlerID * psEngine::LogicEventHandler::GenericPrec(csRef<iEventHandlerRegistry> &handler_reg,
+                                                        csRef<iEventNameRegistry> &name_reg,
+                                                        csEventID e) const
+{
+    if (e != csevFrame(name_reg))
+        return 0;
+    static csHandlerID precConstraint[2] = {
+        handler_reg->GetGenericID("planeshift.clientmsghandler"),
+        CS_HANDLERLIST_END
+    };
+    return precConstraint;
+}
+
+const csHandlerID * psEngine::LogicEventHandler::GenericSucc(csRef<iEventHandlerRegistry> &handler_reg,
+                                                             csRef<iEventNameRegistry> &name_reg,
+                                                             csEventID e) const
+{
+    if (e != csevFrame(name_reg))
+        return 0;
+    static csHandlerID succConstraint[6] = {
+        FrameSignpost_Logic3D::StaticID(handler_reg),
+        FrameSignpost_3D2D::StaticID(handler_reg),
+        FrameSignpost_2DConsole::StaticID(handler_reg),
+        FrameSignpost_ConsoleDebug::StaticID(handler_reg),
+        FrameSignpost_DebugFrame::StaticID(handler_reg),
+        CS_HANDLERLIST_END
+    };									
+    return succConstraint;						
 }
 
 // ----------------------------------------------------------------------------
@@ -1441,8 +1455,8 @@ bool psEngine::GetFileNameByFact(csString factName, csString& fileName)
 
 inline void psEngine::PreloadModels()
 {
-    /// Models are already finished loaded
-    if ( modelsLoaded || !okToLoadModels )
+    /// Models are already finished loading
+    if(modelsLoaded)
     {
         return;
     }
@@ -1453,7 +1467,7 @@ inline void psEngine::PreloadModels()
     bar->Show();
 
     /// Load the models
-    if (modelToLoad == (size_t)-1)
+    if(!modelsInit)
     {
         // Load the cal3d model names.
         PreloadSubDir("");
@@ -1463,19 +1477,17 @@ inline void psEngine::PreloadModels()
 
         bar->SetTotalValue( modelnames.GetSize() );
 
-        if(threadedLoad && !modelsInit)
+        for(size_t i=0; i<modelnames.GetSize(); i++)
         {
-            for(size_t i=0; i<modelnames.GetSize(); i++)
-            {
-                cachemanager->GetFactoryEntry(modelnames.Get(i));
-            }
-            modelsInit = true;
+          cachemanager->GetFactoryEntry(modelnames.Get(i));
         }
+        modelsInit = true;
     }
     else
     {
         if (modelnames.GetSize()-1 < modelToLoad)
         {
+            BuildFactoryList();
             Debug1(LOG_ADMIN,0, "Preloading complete");
 
             delete paws->FindWidget("SplashWindow");
@@ -1543,58 +1555,55 @@ void psEngine::BuildFactoryList()
 
 void psEngine::PreloadItemsDir()
 {
-    /// Models are already finished loaded
-    if ( modelsLoaded )
-        return;
+  /// Models are already finished loaded
+  if (modelsLoaded)
+    return;
 
-    if (okToLoadModels)
+  csRef<iDataBuffer> xpath = vfs->ExpandPath("/planeshift/");
+  csRef<iStringArray> files = vfs->FindFiles( **xpath );
+
+  if (!files)
+    return;
+
+  for (size_t i=0; i < files->GetSize(); i++)
+  {
+    csString filename = files->Get(i);
+
+    // Do it this way because if we do it by recursing (whatever) it will loop through a lot of
+    // stuff we don't want to load
+    if (filename.GetAt(filename.Length()-1) == '/')
     {
-        csRef<iDataBuffer> xpath = vfs->ExpandPath("/planeshift/");
-        csRef<iStringArray> files = vfs->FindFiles( **xpath );
+      csRef<iDataBuffer> xpath2 = vfs->ExpandPath(filename);
+      csRef<iStringArray> files2 = vfs->FindFiles( **xpath2 );
 
-        if (!files)
-            return;
-
-        for (size_t i=0; i < files->GetSize(); i++)
+      if (files2)
+      {
+        for (size_t i=0; i < files2->GetSize(); i++)
         {
-            csString filename = files->Get(i);
+          csString localName= files2->Get(i);
+          if (localName.Slice(localName.Length()-9,9) != ".meshfact")
+            continue;
 
-            // Do it this way because if we do it by recursing (whatever) it will loop through a lot of
-            // stuff we don't want to load
-            if (filename.GetAt(filename.Length()-1) == '/')
-            {
-                csRef<iDataBuffer> xpath2 = vfs->ExpandPath(filename);
-                csRef<iStringArray> files2 = vfs->FindFiles( **xpath2 );
-
-                if (files2)
-                {
-                    for (size_t i=0; i < files2->GetSize(); i++)
-                    {
-                        csString localName= files2->Get(i);
-                        if (localName.Slice(localName.Length()-9,9) != ".meshfact")
-                            continue;
-
-                        modelnames.Push(localName);
-                    }
-                }
-                continue;
-            }
-
-            if (filename.Slice(filename.Length()-9,9) != ".meshfact")
-                continue;
-
-            modelnames.Push(filename);
+          modelnames.Push(localName);
         }
+      }
+      continue;
     }
+
+    if (filename.Slice(filename.Length()-9,9) != ".meshfact")
+      continue;
+
+    modelnames.Push(filename);
+  }
 }
 
 void psEngine::PreloadSubDir(const char* dirname)
 {
     /// Models are already finished loaded
-    if ( modelsLoaded )
+    if (modelsLoaded)
         return;
 
-    if (okToLoadModels && modelToLoad == (size_t)-1)
+    if (modelToLoad == (size_t)-1)
     {
         csRef<iDataBuffer> xpath = vfs->ExpandPath("/planeshift/models/" + csString(dirname));
         csRef<iStringArray> files = vfs->FindFiles( **xpath );

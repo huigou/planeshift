@@ -28,11 +28,9 @@ class pawsSpinBox;
 
 /** A dialog window to select a floating point value.
  */
-class EEditSelectFloat : public pawsWidget
+class EEditSelectFloat : public pawsWidget, public scfImplementation0<EEditSelectFloat>
 {
 public:
-    SCF_DECLARE_IBASE;
-
     EEditSelectFloat();
     virtual ~EEditSelectFloat();
 

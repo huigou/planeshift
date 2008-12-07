@@ -34,11 +34,9 @@ class pawsRadioButton;
 
 /** This handles the effect position object.
  */
-class EEditPositionToolbox : public EEditToolbox, public pawsWidget
+class EEditPositionToolbox : public EEditToolbox, public pawsWidget, public scfImplementation0<EEditPositionToolbox>
 {
 public:
-    SCF_DECLARE_IBASE;
-
     EEditPositionToolbox();
     virtual ~EEditPositionToolbox();
 

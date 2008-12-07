@@ -201,11 +201,10 @@ private:
     csRef<iSpriteCal3DFactoryState>  stateFactory;      // The Cal3D factory object
     csRef<iSpriteCal3DState>    state;                  // The Cal3D sprite state
     
-    csRef<iStringSet>           stringSet;              // Used by shader variables.
+    csRef<iShaderVarStringSet>  stringSet;              // Used by shader variables.
     
     // Crystal space objects.
-    csRef<iEngine>              engine;                 
-    csRef<iLoader>              loader;
+    csRef<iEngine>              engine;
     csRef<iVFS>                 vfs;
     csRef<iGraphics3D>          g3d;
     csRef<iTextureManager>      txtmgr;    

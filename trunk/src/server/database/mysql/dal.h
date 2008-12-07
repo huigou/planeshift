@@ -10,6 +10,7 @@
 #include "iserver/idal.h"
 
 #include <csutil/scf.h>
+#include <csutil/scf_implementation.h>
 #include <csutil/threading/thread.h>
 
 #include "iutil/comp.h"
@@ -54,7 +55,7 @@ private:
 };
 #endif
 
-class psMysqlConnection : public iComponent, public iDataConnection
+class psMysqlConnection : public scfImplementation2<psMysqlConnection, iComponent, iDataConnection>
 {
 protected:
     MYSQL mydb; // Mysql connection
@@ -66,9 +67,6 @@ protected:
     LogCSV* logcsv;
 
 public:
-
-    SCF_DECLARE_IBASE;
-
     psMysqlConnection(iBase *iParent);
     virtual ~psMysqlConnection();
 

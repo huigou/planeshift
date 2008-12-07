@@ -690,7 +690,7 @@ void pawsGmGUIWindow::QueryActionLocations()
     if ( IsVisible() )
     {
         csString query( "" );
-        iSector* sector = psengine->GetPSCamera()->GetICamera()->GetSector();
+        iSector* sector = psengine->GetPSCamera()->GetICamera()->GetCamera()->GetSector();
         const char* sectorname = sector->QueryObject()->GetName();
 
         query.Append( "<location>" );

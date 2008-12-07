@@ -35,11 +35,9 @@ class pawsRadioButton;
 
 /** This handles the effect target object.
  */
-class EEditTargetToolbox : public EEditToolbox, public pawsWidget
+class EEditTargetToolbox : public EEditToolbox, public pawsWidget, public scfImplementation0<EEditTargetToolbox>
 {
 public:
-    SCF_DECLARE_IBASE;
-
     EEditTargetToolbox();
     virtual ~EEditTargetToolbox();
 

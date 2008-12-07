@@ -68,7 +68,7 @@ public:
     virtual bool SetText(int rows, ...);
 
     // inheritted function overloads
-    bool Load(iDocumentNode * node);
+    bool Load(iDocumentNode * node, iLoaderContext* ldr_context);
     psEffectObj * Clone() const;
 
 protected:

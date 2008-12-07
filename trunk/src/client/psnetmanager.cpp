@@ -34,14 +34,8 @@
 #include "paws/pawsmanager.h"
 #include "globals.h"
 
-SCF_IMPLEMENT_IBASE(psNetManager)
-    SCF_IMPLEMENTS_INTERFACE(iNetManager)
-SCF_IMPLEMENT_IBASE_END
-
 psNetManager::psNetManager()
 {
-    SCF_CONSTRUCT_IBASE(NULL);
-
     connected    = false;
     connection   = NULL;
 }
@@ -51,9 +45,7 @@ psNetManager::~psNetManager()
     if (connected)
         Disconnect();
     if (connection)
-        delete connection;    
-
-    SCF_DESTRUCT_IBASE();
+        delete connection;
 }
 
 bool psNetManager::Initialize( iObjectRegistry* newobjreg )

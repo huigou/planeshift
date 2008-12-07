@@ -65,8 +65,6 @@ pawsCharacterPickerWindow::pawsCharacterPickerWindow()
     lastResend = 0;
     
     charApp = new psCharAppearance(psengine->GetObjectRegistry());
-
-    psengine->RegisterDelayedLoader(this);
     loaded = true;
 }
 
@@ -530,6 +528,7 @@ void pawsCharacterPickerWindow::CheckMeshLoad()
         FactoryIndexEntry* entry = psengine->GetCacheManager()->GetFactoryEntry(models[selectedCharacter].fileName);
         if (entry && entry->factory)
         {
+            psengine->UnregisterDelayedLoader(this);
             view->View(entry->factory);
 
             iMeshWrapper * mesh = view->GetObject();        
@@ -540,7 +539,6 @@ void pawsCharacterPickerWindow::CheckMeshLoad()
             }
             charApp->ClearEquipment();
             charApp->SetMesh(mesh);
-            psengine->GetCelClient()->UpdateShader(mesh);
 
             csRef<iSpriteCal3DState> spstate = scfQueryInterface<iSpriteCal3DState> (mesh->GetMeshObject());
             if (spstate)
@@ -558,6 +556,10 @@ void pawsCharacterPickerWindow::CheckMeshLoad()
                 charApp->ApplyEquipment(equipment);
             }
             loaded = true;
+        }
+        else
+        {
+            psengine->RegisterDelayedLoader(this);
         }
     }
 }
