@@ -950,11 +950,19 @@ void SlotManager::CmdDrop(MsgEntry* me, Client *fromClient)
     psItemStats * testItemStats = CacheManager::GetSingleton().GetBasicItemStatsByName(mesg.itemName);
     if(!testItemStats)
     {
-        Error2("Could not find Item Stats for this item: %s", mesg.itemName.GetData());
+        //Error2("Could not find Item Stats for this item: %s", mesg.itemName.GetData());
+        psserver->SendSystemInfo(fromClient->GetClientNum(), "Item %s not found.", mesg.itemName.GetData());
         return;
     }
     
     psItem* stackItem = chr->Inventory().StackNumberItems(testItemStats, mesg.quantity, mesg.container);
+
+    if(!stackItem)
+    {
+        //Error2("Could not find Item  for this item: %s", mesg.itemName.GetData());
+        psserver->SendSystemInfo(fromClient->GetClientNum(), "Item %s not found in inventory.", mesg.itemName.GetData());
+        return;
+    }
 
     int removeCount;
     if (mesg.quantity < stackItem->GetStackCount())

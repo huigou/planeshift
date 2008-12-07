@@ -1244,7 +1244,7 @@ csArray<psItem*> psCharacterInventory::GetItemsInCategory(psItemCategory * categ
 
 psItem* psCharacterInventory::StackNumberItems(psItemStats * testItemStats, int count, bool container)
 {
-    psItem* stackItem;
+    psItem* stackItem = NULL;
 
     // Inventory indexes start at 1.  0 is reserved for the "NULL" item.
     unsigned int i;
@@ -1258,6 +1258,9 @@ psItem* psCharacterInventory::StackNumberItems(psItemStats * testItemStats, int 
         }
     }
     
+    if(!stackItem)
+        return NULL;
+
     for (unsigned int j = i+1;count > stackItem->GetStackCount() && j<inventory.GetSize(); j++)
     {
         if (inventory[j].item->GetBaseStats() == testItemStats && !(inventory[j].item->IsInUse()) &&
