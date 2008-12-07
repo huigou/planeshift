@@ -1,4 +1,8 @@
-﻿*** 2008-12-06 by Steven Patrick
+﻿*** 2008-12-07 by Stefano Angeleri
+- Removed an useless step in the compiling guide, in cal3d section
+  thanks to vonor for pointing it out
+
+*** 2008-12-06 by Steven Patrick
 - Compiling.html fixes by Xhormaan.
 
 *** 2008-12-05 by Stefano Angeleri
