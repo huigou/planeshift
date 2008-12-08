@@ -36,7 +36,7 @@ MaterialManager::MaterialManager(iObjectRegistry* _object_reg, bool _keepModels,
     loader = csQueryRegistry<iThreadedLoader> (object_reg);
     vfs = csQueryRegistry<iVFS> (object_reg);
     keepModels = _keepModels;
-    strings = csQueryRegistryTagInterface<iShaderVarStringSet>(object_reg, "crystalspace.shadervar.stringset");
+    strings = csQueryRegistryTagInterface<iShaderVarStringSet>(object_reg, "crystalspace.shader.variablenameset");
 }
 
 iMaterialWrapper* MaterialManager::LoadMaterial(const char *name, const char *filename)
