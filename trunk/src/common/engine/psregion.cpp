@@ -22,6 +22,7 @@
 // Crystal Space Includes
 //=============================================================================
 #include <cstool/collider.h>
+#include <csutil/documenthelper.h>
 #include <csutil/sysfunc.h>
 #include <iengine/engine.h>
 #include <iengine/collection.h>
@@ -202,9 +203,6 @@ bool psRegion::Load(bool loadMeshes)
 
 csRef<iDocumentNode> psRegion::Clean(csRef<iDocumentNode> world)
 {
-    csRef<iDocumentSystem> xml (
-        csQueryRegistry<iDocumentSystem> (object_reg));
-
     csRef<iDocument> doc = xml->CreateDocument();
     csRef<iDocumentNode> node = doc->CreateRoot();
 
@@ -267,8 +265,16 @@ csRef<iDocumentNode> psRegion::Clean(csRef<iDocumentNode> world)
 
 csRef<iDocumentNode> psRegion::Filter(csRef<iDocumentNode> world, bool using3D)
 {
+    csRef<iDocument> doc = xml->CreateDocument();
+    csRef<iDocumentNode> node = doc->CreateRoot();
+    CS::DocSystem::CloneNode(world->GetParent(), node);
+    world = node->GetNode("world");
+
     if(!using3D)
     {
+        if(world->GetNode("variables"))
+            world->RemoveNode(world->GetNode("variables"));
+
         if(world->GetNode("shaders"))
             world->RemoveNode(world->GetNode("shaders"));
 
@@ -277,6 +283,13 @@ csRef<iDocumentNode> psRegion::Filter(csRef<iDocumentNode> world, bool using3D)
 
         if(world->GetNode("materials"))
             world->RemoveNode(world->GetNode("materials"));
+
+        csRef<iDocumentNode> materials = world->CreateNodeBefore(CS_NODE_ELEMENT, world->GetNode("meshfact"));
+        materials->SetValue("materials");
+        materials = materials->CreateNodeBefore(CS_NODE_ELEMENT);
+        materials->SetValue("material");
+        materials->SetAttribute("name", "dummy");
+
 
         csRef<iDocumentNodeIterator> meshfacts = world->GetNodes("meshfact");
         while(meshfacts->HasNext())
@@ -296,6 +309,10 @@ csRef<iDocumentNode> psRegion::Filter(csRef<iDocumentNode> world, bool using3D)
                         if(submesh->GetNode("material"))
                         {
                             submesh->RemoveNode(submesh->GetNode("material"));
+                            submesh = submesh->CreateNodeBefore(CS_NODE_ELEMENT);
+                            submesh->SetValue("material");
+                            submesh = submesh->CreateNodeBefore(CS_NODE_TEXT);
+                            submesh->SetValue("dummy");
                         }
                     }
                 }
@@ -319,6 +336,10 @@ csRef<iDocumentNode> psRegion::Filter(csRef<iDocumentNode> world, bool using3D)
                         if(params->GetNode("material"))
                         {
                             params->RemoveNode(params->GetNode("material"));
+                            csRef<iDocumentNode> mat = params->CreateNodeBefore(CS_NODE_ELEMENT);
+                            mat->SetValue("material");
+                            mat = mat->CreateNodeBefore(CS_NODE_TEXT);
+                            mat->SetValue("dummy");
                         }
                         if(params->GetNode("materialpalette"))
                         {
@@ -331,6 +352,10 @@ csRef<iDocumentNode> psRegion::Filter(csRef<iDocumentNode> world, bool using3D)
                             if(submesh->GetNode("material"))
                             {
                                 submesh->RemoveNode(submesh->GetNode("material"));
+                                submesh = submesh->CreateNodeBefore(CS_NODE_ELEMENT);
+                                submesh->SetValue("material");
+                                submesh = submesh->CreateNodeBefore(CS_NODE_TEXT);
+                                submesh->SetValue("dummy");
                             }
                         }
                     }
@@ -342,20 +367,7 @@ csRef<iDocumentNode> psRegion::Filter(csRef<iDocumentNode> world, bool using3D)
     {
         if(!(gfxFeatures & useAdvancedShaders))
         {
-            csRef<iDocumentNodeIterator> sectors = world->GetNodes("sector");
-            while(sectors->HasNext())
-            {
-                csRef<iDocumentNode> sector = sectors->Next();
-                csRef<iDocumentNode> rloop = sector->GetNode("renderloop");
-                if(rloop.IsValid())
-                {
-                    csString value = rloop->GetContentsValue();
-                    if(value.Compare("std_rloop_diffuse"))
-                    {
-                        sector->RemoveNode(rloop);
-                    }
-                }
-            }
+            // TODO
         }
 
         if(!(gfxFeatures & useMeshGen))
