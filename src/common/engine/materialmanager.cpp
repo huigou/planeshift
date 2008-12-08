@@ -27,7 +27,7 @@
 #include "util/strutil.h"
 #include "globals.h"
 
-MaterialManager::MaterialManager(iObjectRegistry* _object_reg, bool _keepModels) : scfImplementationType (this)
+MaterialManager::MaterialManager(iObjectRegistry* _object_reg, bool _keepModels, uint gfxFeatures) : gfxFeatures(gfxFeatures)
 {
     object_reg = _object_reg;
     csRef<iGraphics3D> g3d = csQueryRegistry<iGraphics3D> (object_reg);    
@@ -36,26 +36,80 @@ MaterialManager::MaterialManager(iObjectRegistry* _object_reg, bool _keepModels)
     loader = csQueryRegistry<iThreadedLoader> (object_reg);
     vfs = csQueryRegistry<iVFS> (object_reg);
     keepModels = _keepModels;
+    strings = csQueryRegistryTagInterface<iShaderVarStringSet>(object_reg, "crystalspace.shadervar.stringset");
 }
 
-iMaterialWrapper* MaterialManager::MissingMaterial(const char *name, const char *filename)
+iMaterialWrapper* MaterialManager::LoadMaterial(const char *name, const char *filename)
 {
     iMaterialWrapper* materialWrap = engine->GetMaterialList()->FindByName(name);
     if(!materialWrap)
     {
         // Check that the texture exists.
-        if (!vfs->Exists(filename))
+        if(!vfs->Exists(filename))
             return NULL;
 
-        iTextureWrapper* texture = MissingTexture(name, filename);
+        // Load base texture.
+        iTextureWrapper* texture = LoadTexture(name, filename);
 
+        // Load base material.
         csRef<iMaterial> material (engine->CreateBaseMaterial(texture));
         materialWrap = engine->GetMaterialList()->NewMaterial(material, name);
+
+        // Check for shader maps.
+        if(gfxFeatures & useAdvancedShaders)
+        {
+            csString shadermap = filename;
+            filename = shadermap.Truncate(shadermap.Length()-4);
+
+            // Normal map
+            shadermap = csString(filename).Append("_n.dds");
+            if(vfs->Exists(shadermap))
+            {
+                iTextureWrapper* t = LoadTexture(shadermap, shadermap, "normalmap");
+                csShaderVariable* shadervar = new csShaderVariable();
+                shadervar->SetName(strings->Request("tex normal compressed"));
+                shadervar->SetValue(t);
+                material->AddVariable(shadervar);
+            }
+
+            // Height map
+            shadermap = csString(filename).Append("_h.dds");
+            if(vfs->Exists(shadermap))
+            {
+                iTextureWrapper* t = LoadTexture(shadermap, shadermap);
+                csShaderVariable* shadervar = new csShaderVariable();
+                shadervar->SetName(strings->Request("tex height"));
+                shadervar->SetValue(t);
+                material->AddVariable(shadervar);
+            }
+
+            // Spec map
+            shadermap = csString(filename).Append("_s.dds");
+            if(vfs->Exists(shadermap))
+            {
+                iTextureWrapper* t = LoadTexture(shadermap, shadermap);
+                csShaderVariable* shadervar = new csShaderVariable();
+                shadervar->SetName(strings->Request("tex specular"));
+                shadervar->SetValue(t);
+                material->AddVariable(shadervar);
+            }
+
+            // AO map
+            shadermap = csString(filename).Append("_ao.dds");
+            if(vfs->Exists(shadermap))
+            {
+                iTextureWrapper* t = LoadTexture(shadermap, shadermap);
+                csShaderVariable* shadervar = new csShaderVariable();
+                shadervar->SetName(strings->Request("tex ambient occlusion"));
+                shadervar->SetValue(t);
+                material->AddVariable(shadervar);
+            }
+        }
     }
     return materialWrap;
 }
 
-iTextureWrapper* MaterialManager::MissingTexture(const char *name, const char *filename)
+iTextureWrapper* MaterialManager::LoadTexture(const char *name, const char *filename, const char* className)
 {
     // name is the material name; blah.dds
     // filename will be /planeshift/blah/blah.dds
@@ -75,6 +129,10 @@ iTextureWrapper* MaterialManager::MissingTexture(const char *name, const char *f
         csRef<iThreadReturn> itr = loader->LoadTexture(name, filename, CS_TEXTURE_3D, txtmgr, true, false);
         itr->Wait();
         texture = scfQueryInterfaceSafe<iTextureWrapper>(itr->GetResultRefPtr());
+        if(className)
+        {
+          texture->SetTextureClass(className);
+        }
         engine->SyncEngineListsNow(loader);
     }
 
@@ -108,15 +166,15 @@ bool MaterialManager::LoadTextureDir(const char *dir)
             strcmp (filename + strlen(filename) - 4, ".dds"))
             continue;
 
-        // If this is an icon type texture then not required to load as a
-        // material. 
-        if ( strstr( filename, "_icon" ) )
+        // If this is an icon or shader map texture then we don't load as a material.
+        if(strstr(filename, "_icon" ) || strstr(filename, "_n." ) || strstr(filename, "_h." ) ||
+          strstr(filename, "_s." ) || strstr(filename, "_ao." ))
             continue;
         
         const char* name = csStrNew(filename);
         const char* onlyname = PS_GetFileName(name);
 
-        if (!MissingMaterial(onlyname,filename))
+        if (!LoadMaterial(onlyname,filename))
         {
             delete[] name;
             return false;
@@ -160,43 +218,4 @@ bool MaterialManager::PreloadTextures()
         return false;
 
     return true;
-}
-
-void MaterialManager::UnloadUnusedMaterials()
-{
-    iMaterialList *matList = engine->GetMaterialList();
-    for(int i=0; i<matList->GetCount(); i++)
-    {
-        if(matList->Get(i)->GetRefCount() == 1)
-        {
-            matList->Remove(i);
-            i--;
-        }
-    }
-}
-
-void MaterialManager::UnloadUnusedTextures()
-{
-    iTextureList *texList = engine->GetTextureList();
-    for(int i=0; i<texList->GetCount(); i++)
-    {
-        if(texList->Get(i)->GetRefCount() == 1)
-        {
-            texList->Remove(i);
-            i--;
-        }
-    }
-}
-
-void MaterialManager::UnloadUnusedFactories()
-{
-    iMeshFactoryList *factList = engine->GetMeshFactories();
-    for(int i=0; i<factList->GetCount(); i++)
-    {
-        if(factList->Get(i)->GetRefCount() == 1)
-        {
-            factList->Remove(i);
-            i--;
-        }
-    }
 }

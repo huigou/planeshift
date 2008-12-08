@@ -31,31 +31,17 @@
 
 struct iObjectRegistry;
 
-class MaterialManager : public scfImplementation1<MaterialManager, iMissingLoaderData>, public Singleton<MaterialManager>
+class MaterialManager : public Singleton<MaterialManager>
 {
 public:
-    MaterialManager(iObjectRegistry* _object_reg, bool _keepModels);
+    MaterialManager(iObjectRegistry* _object_reg, bool _keepModels, uint gfxFeatures);
 
-    virtual iMaterialWrapper* MissingMaterial (const char* name, const char* filename);
+    virtual iMaterialWrapper* LoadMaterial (const char* name, const char* filename);
 
-    virtual iTextureWrapper* MissingTexture (const char* name, const char* filename);
-
-    virtual iShader* MissingShader (const char* name) { return 0; }
-
-    virtual iMeshFactoryWrapper* MissingFactory (const char* name) { return 0; }
-
-    virtual iMeshWrapper* MissingMesh (const char* name){ return 0; }
-
-    virtual iSector* MissingSector (const char* name) { return 0; }
-
-    virtual iLight* MissingLight (const char* name) { return 0; }
+    virtual iTextureWrapper* LoadTexture (const char* name, const char* filename, const char* className = 0);
 
     bool PreloadTextures();
     bool KeepModels() { return keepModels; }
-
-    void UnloadUnusedMaterials();
-    void UnloadUnusedTextures();
-    void UnloadUnusedFactories();
 
 private:
     bool LoadTextureDir(const char *dir);
@@ -65,6 +51,8 @@ private:
     csRef<iTextureManager> txtmgr;
     csRef<iThreadedLoader> loader;
     csRef<iVFS> vfs;
+    csRef<iShaderVarStringSet> strings;
+    uint gfxFeatures;
 };
 
 #endif // __MATERIAL_MANAGER_H__
