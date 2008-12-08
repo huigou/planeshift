@@ -276,6 +276,13 @@ csRef<iDocumentNode> psRegion::Filter(csRef<iDocumentNode> world, bool using3D)
             CS::DocSystem::CloneNode(world->GetNode("plugins"), plugins);
         }
 
+        csRef<iDocumentNodeIterator> libs = world->GetNodes("library");
+        while (libs->HasNext())
+        {
+            csRef<iDocumentNode> library = newWorld->CreateNodeBefore(CS_NODE_ELEMENT);
+            CS::DocSystem::CloneNode(libs->Next(), library);
+        }        
+
         csRef<iDocumentNode> materials = newWorld->CreateNodeBefore(CS_NODE_ELEMENT);
         materials->SetValue("materials");
         materials = materials->CreateNodeBefore(CS_NODE_ELEMENT);
