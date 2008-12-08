@@ -300,6 +300,19 @@ csRef<iDocumentNode> psRegion::Filter(csRef<iDocumentNode> world, bool using3D)
                     mat->SetValue("dummy");
                 }
 
+                if(params->GetNode("cells") && params->GetNode("cells")->GetNode("celldefault"))
+                {
+                    csRef<iDocumentNode> cell = params->GetNode("cells")->GetNode("celldefault");
+                    if(cell->GetNode("basematerial"))
+                    {
+                        cell->RemoveNode(cell->GetNode("basematerial"));
+                        csRef<iDocumentNode> mat = cell->CreateNodeBefore(CS_NODE_ELEMENT);
+                        mat->SetValue("basematerial");
+                        mat = mat->CreateNodeBefore(CS_NODE_TEXT);
+                        mat->SetValue("dummy");
+                    }
+                }
+
                 params->RemoveNodes(params->GetNodes("n"));
                 csRef<iDocumentNodeIterator> submeshes = params->GetNodes("submesh");
                 while(submeshes->HasNext())
@@ -348,10 +361,34 @@ csRef<iDocumentNode> psRegion::Filter(csRef<iDocumentNode> world, bool using3D)
                         mat = mat->CreateNodeBefore(CS_NODE_TEXT);
                         mat->SetValue("dummy");
                     }
+
                     if(params->GetNode("materialpalette"))
                     {
                         params->RemoveNode(params->GetNode("materialpalette"));
                     }
+
+                    if(params->GetNode("cells"))
+                    {
+                        csRef<iDocumentNodeIterator> cells = params->GetNode("cells")->GetNodes("cell");
+                        while(cells->HasNext())
+                        {
+                            csRef<iDocumentNode> cell = cells->Next();
+                            if(cell->GetNode("renderproperties"))
+                            {
+                                cell = cell->GetNode("renderproperties");
+                                csRef<iDocumentNodeIterator> shadervars = cell->GetNodes("shadervar");
+                                while(shadervars->HasNext())
+                                {
+                                    csRef<iDocumentNode> shadervar = shadervars->Next();
+                                    if(csString(shadervar->GetAttributeValue("name")).Compare("tex lightmap"))
+                                    {
+                                        cell->RemoveNode(shadervar);
+                                    }
+                                }
+                            }
+                        }
+                    }
+
                     csRef<iDocumentNodeIterator> submeshes = params->GetNodes("submesh");
                     while(submeshes->HasNext())
                     {
