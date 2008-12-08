@@ -382,7 +382,7 @@ private:
     csRef<ActionHandler>      actionhandler;
     csRef<ZoneHandler>        zonehandler;  ///< Region/map file memory manager.
     csRef<psCal3DCallbackLoader> cal3DCallbackLoader;
-    csRef<MaterialManager>    materialmanager; ///< Handles loading of materials/textures.
+    MaterialManager*          materialmanager; ///< Handles loading of materials/textures.
     psClientCharManager*      charmanager;  ///< Holds the charactermanager
     GUIHandler*               guiHandler;
     psCharController*         charController;

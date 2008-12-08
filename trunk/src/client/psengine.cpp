@@ -309,6 +309,8 @@ void psEngine::Cleanup()
     object_reg->Unregister ((iSoundManager*)soundmanager, "iSoundManager");
 
     delete options;
+
+    delete materialmanager;
 }
 
 // ----------------------------------------------------------------------------
@@ -566,7 +568,7 @@ bool psEngine::Initialize (int level)
 
         unloadLast = GetConfig()->GetBool("PlaneShift.Client.Loading.UnloadLast", true);
 
-        materialmanager.AttachNew(new MaterialManager(object_reg, preloadModels));
+        materialmanager = new MaterialManager(object_reg, preloadModels, GetGFXFeatures());
 
         if(preloadModels)
         {

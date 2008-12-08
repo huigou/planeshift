@@ -82,7 +82,7 @@ void psCharAppearance::FaceTexture(csString& faceMaterial, csString& faceTexture
     csString materialParsed = ParseStrings("", faceMaterial);
     csString textureParsed  = ParseStrings("", faceTexture);
     
-    iMaterialWrapper* material = MaterialManager::GetSingletonPtr()->MissingMaterial(materialParsed, textureParsed);
+    iMaterialWrapper* material = MaterialManager::GetSingletonPtr()->LoadMaterial(materialParsed, textureParsed);
     
     if ( !material )
     {
@@ -260,7 +260,7 @@ void psCharAppearance::SetSkinTone(csString& part, csString& material, csString&
         csString materialNameParsed    = ParseStrings(part, material);
         csString textureNameParsed     = ParseStrings(part, texture);
 
-        iMaterialWrapper* material = MaterialManager::GetSingletonPtr()->MissingMaterial(materialNameParsed, textureNameParsed );
+        iMaterialWrapper* material = MaterialManager::GetSingletonPtr()->LoadMaterial(materialNameParsed, textureNameParsed );
         if ( !material )
         {
             // Not necisarily an error; this texture may just not exist for this character, yet
@@ -450,7 +450,7 @@ bool psCharAppearance::ChangeMaterial(const char* part, const char* meshName, co
     csString meshNameParsed    = ParseStrings(part, meshName);
     csString textureNameParsed = ParseStrings(part, textureName);
 
-    iMaterialWrapper* material = MaterialManager::GetSingletonPtr()->MissingMaterial( meshNameParsed, textureNameParsed );
+    iMaterialWrapper* material = MaterialManager::GetSingletonPtr()->LoadMaterial( meshNameParsed, textureNameParsed );
     if ( !material )
     {
         // Not necisarily an error; this texture may just not exist for this character, yet

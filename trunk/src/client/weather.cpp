@@ -214,7 +214,7 @@ bool RainWeatherObject::CreateMesh()
     float speed = 5;
 
     // Attempt to fetch material.
-    iMaterialWrapper* mat = MaterialManager::GetSingletonPtr()->MissingMaterial(matname, "/planeshift/art/effects/raindrop.dds");
+    iMaterialWrapper* mat = MaterialManager::GetSingletonPtr()->LoadMaterial(matname, "/planeshift/art/effects/raindrop.dds");
     if (!mat)
     {
         Bug2("Can't find material '%s' in memory for rain!", matname);
@@ -374,7 +374,7 @@ bool SnowWeatherObject::CreateMesh()
     float speed = 1.5f;
 
     // Attempt to fetch material.
-    iMaterialWrapper* mat = MaterialManager::GetSingletonPtr()->MissingMaterial(matname, "/planeshift/art/effects/snow.dds");
+    iMaterialWrapper* mat = MaterialManager::GetSingletonPtr()->LoadMaterial(matname, "/planeshift/art/effects/snow.dds");
     if (!mat)
     {
         Bug2("Can't find material '%s' in memory for snow!", matname);
