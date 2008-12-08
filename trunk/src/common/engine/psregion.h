@@ -133,8 +133,6 @@ private:
     csRef<iVFS> vfs;
     csRef<iDocumentSystem> xml;
     csRef<iThreadedLoader> loader;
-
-    static void CloneNode(iDocumentNode* from, iDocumentNode* to);
 };
 
 #endif // __PSREGION_H__

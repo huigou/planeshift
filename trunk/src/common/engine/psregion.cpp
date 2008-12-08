@@ -235,7 +235,7 @@ csRef<iDocumentNode> psRegion::Clean(csRef<iDocumentNode> world)
         {
             csRef<iDocumentNode> portal = nodes->Next();
             csRef<iDocumentNode> cleanedportal = cleanedSector->CreateNodeBefore(CS_NODE_ELEMENT);
-            CloneNode(portal, cleanedportal);
+            CS::DocSystem::CloneNode(portal, cleanedportal);
         }
 
         // Copy the portals
@@ -245,10 +245,8 @@ csRef<iDocumentNode> psRegion::Clean(csRef<iDocumentNode> world)
         {
             csRef<iDocumentNode> portals = portalsItr->Next();
             csRef<iDocumentNode> cleanedportals = cleanedSector->CreateNodeBefore(CS_NODE_ELEMENT);
-            CloneNode(portals, cleanedportals);
+            CS::DocSystem::CloneNode(portals, cleanedportals);
         }
-
-
     }
 
     // Copy the start node
@@ -257,7 +255,7 @@ csRef<iDocumentNode> psRegion::Clean(csRef<iDocumentNode> world)
     {
         csRef<iDocumentNode> start = startLocations->Next();
         csRef<iDocumentNode> cleanedStart = cleanedWorld->CreateNodeBefore(CS_NODE_ELEMENT);
-        CloneNode(start, cleanedStart);
+        CS::DocSystem::CloneNode(start, cleanedStart);
     }
 
     return cleanedWorld;
@@ -265,54 +263,64 @@ csRef<iDocumentNode> psRegion::Clean(csRef<iDocumentNode> world)
 
 csRef<iDocumentNode> psRegion::Filter(csRef<iDocumentNode> world, bool using3D)
 {
-    csRef<iDocument> doc = xml->CreateDocument();
-    csRef<iDocumentNode> node = doc->CreateRoot();
-    CS::DocSystem::CloneNode(world->GetParent(), node);
-    world = node->GetNode("world");
-
     if(!using3D)
     {
-        if(world->GetNode("variables"))
-            world->RemoveNode(world->GetNode("variables"));
+        csRef<iDocument> doc = xml->CreateDocument();
+        csRef<iDocumentNode> node = doc->CreateRoot();    
+        csRef<iDocumentNode> newWorld = node->CreateNodeBefore(CS_NODE_ELEMENT);
+        newWorld->SetValue("world");
 
-        if(world->GetNode("shaders"))
-            world->RemoveNode(world->GetNode("shaders"));
+        if(world->GetNode("plugins"))
+        {
+            csRef<iDocumentNode> plugins = newWorld->CreateNodeBefore(CS_NODE_ELEMENT);
+            CS::DocSystem::CloneNode(world->GetNode("plugins"), plugins);
+        }
 
-        if(world->GetNode("textures"))
-            world->RemoveNode(world->GetNode("textures"));
-
-        if(world->GetNode("materials"))
-            world->RemoveNode(world->GetNode("materials"));
-
-        csRef<iDocumentNode> materials = world->CreateNodeBefore(CS_NODE_ELEMENT, world->GetNode("meshfact"));
+        csRef<iDocumentNode> materials = newWorld->CreateNodeBefore(CS_NODE_ELEMENT);
         materials->SetValue("materials");
         materials = materials->CreateNodeBefore(CS_NODE_ELEMENT);
         materials->SetValue("material");
         materials->SetAttribute("name", "dummy");
 
-
         csRef<iDocumentNodeIterator> meshfacts = world->GetNodes("meshfact");
-        while(meshfacts->HasNext())
+        while (meshfacts->HasNext())
         {
-            csRef<iDocumentNode> meshfact = meshfacts->Next();
-            csRef<iDocumentNode> plugin = meshfact->GetNode("plugin");
-            if(!plugin || !csString("thingFact").Compare(plugin->GetContentsValue()))
+            csRef<iDocumentNode> meshfact = newWorld->CreateNodeBefore(CS_NODE_ELEMENT);
+            CS::DocSystem::CloneNode(meshfacts->Next(), meshfact);
+
+            csRef<iDocumentNode> params = meshfact->GetNode("params");
+            if(params)
             {
-                csRef<iDocumentNode> params = meshfact->GetNode("params");
-                if(params)
+                if(params->GetNode("material"))
                 {
-                    params->RemoveNodes(params->GetNodes("n"));
-                    csRef<iDocumentNodeIterator> submeshes = params->GetNodes("submesh");
-                    while(submeshes->HasNext())
+                    params->RemoveNode(params->GetNode("material"));
+                    csRef<iDocumentNode> mat = params->CreateNodeBefore(CS_NODE_ELEMENT);
+                    mat->SetValue("material");
+                    mat = mat->CreateNodeBefore(CS_NODE_TEXT);
+                    mat->SetValue("dummy");
+                }
+
+                params->RemoveNodes(params->GetNodes("n"));
+                csRef<iDocumentNodeIterator> submeshes = params->GetNodes("submesh");
+                while(submeshes->HasNext())
+                {
+                    csRef<iDocumentNode> submesh = submeshes->Next();
+                    if(submesh->GetNode("material"))
                     {
-                        csRef<iDocumentNode> submesh = submeshes->Next();
-                        if(submesh->GetNode("material"))
+                        submesh->RemoveNode(submesh->GetNode("material"));
+                        csRef<iDocumentNode> mat = submesh->CreateNodeBefore(CS_NODE_ELEMENT);
+                        mat->SetValue("material");
+                        mat = mat->CreateNodeBefore(CS_NODE_TEXT);
+                        mat->SetValue("dummy");
+                    }
+
+                    csRef<iDocumentNodeIterator> shadervars = submesh->GetNodes("shadervar");
+                    while(shadervars->HasNext())
+                    {
+                        csRef<iDocumentNode> shadervar = shadervars->Next();
+                        if(csString(shadervar->GetAttributeValue("name")).Compare("tex lightmap"))
                         {
-                            submesh->RemoveNode(submesh->GetNode("material"));
-                            submesh = submesh->CreateNodeBefore(CS_NODE_ELEMENT);
-                            submesh->SetValue("material");
-                            submesh = submesh->CreateNodeBefore(CS_NODE_TEXT);
-                            submesh->SetValue("dummy");
+                            submesh->RemoveNode(shadervar);
                         }
                     }
                 }
@@ -320,48 +328,57 @@ csRef<iDocumentNode> psRegion::Filter(csRef<iDocumentNode> world, bool using3D)
         }
 
         csRef<iDocumentNodeIterator> sectors = world->GetNodes("sector");
-        while(sectors->HasNext())
+        while (sectors->HasNext())
         {
-            csRef<iDocumentNode> sector = sectors->Next();
+            csRef<iDocumentNode> sector = newWorld->CreateNodeBefore(CS_NODE_ELEMENT);
+            CS::DocSystem::CloneNode(sectors->Next(), sector);
+
             csRef<iDocumentNodeIterator> meshobjs = sector->GetNodes("meshobj");
             while(meshobjs->HasNext())
             {
                 csRef<iDocumentNode> meshobj = meshobjs->Next();
-                csRef<iDocumentNode> plugin = meshobj->GetNode("plugin");
-                if(!plugin || !csString("thing").Compare(plugin->GetContentsValue()))
+                csRef<iDocumentNode> params = meshobj->GetNode("params");
+                if(params)
                 {
-                    csRef<iDocumentNode> params = meshobj->GetNode("params");
-                    if(params)
+                    if(params->GetNode("material"))
                     {
-                        if(params->GetNode("material"))
+                        params->RemoveNode(params->GetNode("material"));
+                        csRef<iDocumentNode> mat = params->CreateNodeBefore(CS_NODE_ELEMENT);
+                        mat->SetValue("material");
+                        mat = mat->CreateNodeBefore(CS_NODE_TEXT);
+                        mat->SetValue("dummy");
+                    }
+                    if(params->GetNode("materialpalette"))
+                    {
+                        params->RemoveNode(params->GetNode("materialpalette"));
+                    }
+                    csRef<iDocumentNodeIterator> submeshes = params->GetNodes("submesh");
+                    while(submeshes->HasNext())
+                    {
+                        csRef<iDocumentNode> submesh = submeshes->Next();
+                        if(submesh->GetNode("material"))
                         {
-                            params->RemoveNode(params->GetNode("material"));
-                            csRef<iDocumentNode> mat = params->CreateNodeBefore(CS_NODE_ELEMENT);
+                            submesh->RemoveNode(submesh->GetNode("material"));
+                            csRef<iDocumentNode> mat = submesh->CreateNodeBefore(CS_NODE_ELEMENT);
                             mat->SetValue("material");
                             mat = mat->CreateNodeBefore(CS_NODE_TEXT);
                             mat->SetValue("dummy");
                         }
-                        if(params->GetNode("materialpalette"))
+
+                        csRef<iDocumentNodeIterator> shadervars = submesh->GetNodes("shadervar");
+                        while(shadervars->HasNext())
                         {
-                            params->RemoveNode(params->GetNode("materialpalette"));
-                        }
-                        csRef<iDocumentNodeIterator> submeshes = params->GetNodes("submesh");
-                        while(submeshes->HasNext())
-                        {
-                            csRef<iDocumentNode> submesh = submeshes->Next();
-                            if(submesh->GetNode("material"))
+                            csRef<iDocumentNode> shadervar = shadervars->Next();
+                            if(csString(shadervar->GetAttributeValue("name")).Compare("tex lightmap"))
                             {
-                                submesh->RemoveNode(submesh->GetNode("material"));
-                                submesh = submesh->CreateNodeBefore(CS_NODE_ELEMENT);
-                                submesh->SetValue("material");
-                                submesh = submesh->CreateNodeBefore(CS_NODE_TEXT);
-                                submesh->SetValue("dummy");
+                                submesh->RemoveNode(shadervar);
                             }
                         }
                     }
                 }
             }
         }
+        world = newWorld;
     }
     else
     {
@@ -383,25 +400,6 @@ csRef<iDocumentNode> psRegion::Filter(csRef<iDocumentNode> world, bool using3D)
     }
 
     return world;
-}
-
-void psRegion::CloneNode (iDocumentNode* from, iDocumentNode* to)
-{
-    to->SetValue (from->GetValue ());
-    csRef<iDocumentNodeIterator> it = from->GetNodes ();
-    while (it->HasNext ())
-    {
-        csRef<iDocumentNode> child = it->Next ();
-        csRef<iDocumentNode> child_clone = to->CreateNodeBefore (
-            child->GetType (), 0);
-        CloneNode (child, child_clone);
-    }
-    csRef<iDocumentAttributeIterator> atit = from->GetAttributes ();
-    while (atit->HasNext ())
-    {
-        csRef<iDocumentAttribute> attr = atit->Next ();
-        to->SetAttribute (attr->GetName (), attr->GetValue ());
-    }
 }
 
 void psRegion::Unload()
