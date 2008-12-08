@@ -254,14 +254,14 @@ bool NetBase::CheckIn()
         if (connection && CheckDoublePackets (connection, pkt))
         {
 #ifdef PACKETDEBUG
-            Debug2(LOG_NET,0,"Droping doubled packet (ID %d)\n", pkt->packet->pktid);
+            Debug2(LOG_NET,0,"Dropping doubled packet (ID %d)\n", pkt->packet->pktid);
 #endif
             return true;
         }
     }
     
 #ifdef PACKETDEBUG
-    Debug7(LOG_NET,0,"Recveived Pkt, ID: %d, offset %d, from %d size %d (actual %d) flags %d\n", 
+    Debug7(LOG_NET,0,"Received Pkt, ID: %d, offset %d, from %d size %d (actual %d) flags %d\n", 
         pkt->packet->pktid, pkt->packet->offset, pkt->clientnum, pkt->packet->pktsize,packetlen, pkt->packet->flags);
 #endif
 

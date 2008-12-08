@@ -655,12 +655,12 @@ void psMovementManager::UpdateMouseLook()
 		}
 	}
 
-	if ( (abs(lastDeltaX) > 150 || abs(lastDeltaY) > 150) )
+	if ( fabs(lastDeltaX) > 150 || fabs(lastDeltaY) > 150 )
 	{ // Higher values shouldn't slow down too fast
 		lastDeltaX *= 0.9f;
 		lastDeltaY *= 0.9f;
 	}
-	else if ( (abs(lastDeltaX) > 5 || abs(lastDeltaY) > 5) )
+	else if ( fabs(lastDeltaX) > 5 || fabs(lastDeltaY) > 5 )
 	{
 		lastDeltaX *= 0.6f;
 		lastDeltaY *= 0.6f;

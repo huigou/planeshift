@@ -98,7 +98,7 @@ void pawsMouse::SetOSMouse(csRef<iPAWSDrawable> drawable)
     if (g2d->SetMouseCursor (image, &color))
     {
       if (!useOS)
-          Debug1(LOG_PAWS,NULL,"Using OS Cursor\n");
+          Debug1(LOG_PAWS,0,"Using OS Cursor\n");
       useOS = true;
       return;
     }
