@@ -185,6 +185,7 @@ psCamera::psCamera()
     cmdsource->Subscribe("/npcmenu", this);
 
     psengine->GetOptions()->RegisterOptionsClass("camera", this);
+
     LoadOptions();
 }
 
@@ -893,8 +894,7 @@ iMeshWrapper *psCamera::Get3DPointFrom2D(int x, int y, csVector3 * worldCoord, c
         return NULL;
 
     csVector3 vc, vo, vw;
-
-    csVector2 perspective( x, GetICamera()->GetShiftY() * 2 - y );
+    csVector2 perspective( x, GetICamera()->GetShiftY() * psengine->GetG2D()->GetHeight() * 2 - y );
     vc = GetICamera()->GetCamera()->InvPerspective( perspective, 1 );
     vw = GetICamera()->GetCamera()->GetTransform().This2Other( vc );
 
@@ -927,8 +927,7 @@ iMeshWrapper* psCamera::FindMeshUnder2D(int x, int y, csVector3 *pos, int *poly)
         return NULL;
 
     csVector3 vc, vo, vw;
-
-    csVector2 perspective( x, GetICamera()->GetShiftY() * 2 - y );
+    csVector2 perspective( x, GetICamera()->GetShiftY() * psengine->GetG2D()->GetHeight() * 2 - y );
     vc = GetICamera()->GetCamera()->InvPerspective( perspective, 1 );
     vw = GetICamera()->GetCamera()->GetTransform().This2Other( vc );
 
