@@ -773,6 +773,7 @@ bool gemObject::InitMesh(const char *name,
                 csRef<iThreadedLoader> loader (csQueryRegistry<iThreadedLoader> (psserver->GetObjectReg()));
                 csRef<iThreadReturn> ret = loader->LoadNode(root);
                 ret->Wait();
+                engine->SyncEngineListsNow(loader);
                 meshFact = engine->GetMeshFactories()->FindByName(factname);
                 if(meshFact.IsValid())
                 {
