@@ -418,7 +418,7 @@ bool psEffectObjText2D::Update(csTicks elapsed)
     {
         // apply perspective
         sp = view->GetCamera()->Perspective(p);
-        sp.y = view->GetPerspectiveCamera()->GetShiftY() * 2 - sp.y;
+        sp.y = view->GetPerspectiveCamera()->GetShiftY() * g2d->GetHeight() * 2 - sp.y;
     }
 
     len = elems.GetSize();
