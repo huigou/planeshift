@@ -89,7 +89,7 @@ bool psClientDR::Initialize(iObjectRegistry* object_reg, psCelClient* celclient,
     psClientDR::celclient = celclient;
     psClientDR::msghandler = msghandler;
     
-    msgstrings = 0; // will get it in a MSGTYPE_MSGSTRINGS message
+    msgstrings = NULL; // will get it in a MSGTYPE_MSGSTRINGS message
 
     msghandler->Subscribe(this,MSGTYPE_DEAD_RECKONING);
     msghandler->Subscribe(this,MSGTYPE_STATDRUPDATE);

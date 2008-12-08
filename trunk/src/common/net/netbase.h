@@ -392,7 +392,7 @@ protected:
         struct timeval prevTimeout = timeout;
 
         /* select returns 0 if timeout, 1 if input available, -1 if error. */
-        if (SOCK_SELECT(MAX(mysocket + 1, pipe_fd[0]) + 1, &set, NULL, NULL, &timeout) < 1)
+        if (SOCK_SELECT(MAX(mysocket, pipe_fd[0]) + 1, &set, NULL, NULL, &timeout) < 1)
         {
             timeout = prevTimeout;
             return 0;
