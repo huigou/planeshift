@@ -1373,8 +1373,16 @@ int GEMClientActor::GetAnimIndex (csStringHashReversible* msgstrings, csStringID
 
     // Not cached yet.
     csString animName = msgstrings->Request (animid);
-    CS_ASSERT_MSG("Missing animName from common strings!", animName.GetData());
-    idx = cal3dstate->FindAnim (animName.GetData());
+
+    if(animName.IsEmpty()) //check if we have an hit else bug the user for the bad data
+    {
+        Error2("Missing animName from common strings for animid %u!\n", (unsigned long int)animid);
+    }
+    else //no need to call this with an empty string in case of bad data so let's skip it in that case
+    {
+        idx = cal3dstate->FindAnim (animName.GetData());
+    }
+
     if (idx >= 0)
     {
         // Cache it.
