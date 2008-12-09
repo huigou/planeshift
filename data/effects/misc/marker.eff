@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="utf-8" ?> 
 <library>
+    <shaders>
+        <shader>
+            <file>/shader/lighting/fullbright.xml</file>
+        </shader>
+    </shaders>
     <textures>
         <texture name="marker">
             <file>/this/art/effects/marker01.dds</file>
@@ -8,6 +13,7 @@
     <materials>
         <material name="marker">
             <texture>marker</texture>
+	      <shader type="base">lighting_fullbright</shader>
         </material>
     </materials>
     <addon plugin="PSEffects">
