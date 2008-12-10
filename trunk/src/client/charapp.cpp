@@ -197,7 +197,7 @@ void psCharAppearance::HairColor(csVector3& color)
     
         if ( context_hair )
         {
-            CS::ShaderVarStringID varName = stringSet->Request("colorize");
+            CS::ShaderVarStringID varName = stringSet->Request("colour modulation");
             csShaderVariable* var = context_hair->GetVariableAdd(varName);
         
             if ( var )
@@ -208,7 +208,7 @@ void psCharAppearance::HairColor(csVector3& color)
         
         if ( context_beard )
         {
-            CS::ShaderVarStringID varName = stringSet->Request("colorize");
+            CS::ShaderVarStringID varName = stringSet->Request("colour modulation");
             csShaderVariable* var = context_beard->GetVariableAdd(varName);
         
             if ( var )
