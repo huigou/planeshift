@@ -43,7 +43,7 @@ psCharAppearance::psCharAppearance(iObjectRegistry* objectReg)
     hairMesh = "Hair";
     beardMesh = "Beard";
     hairAttached = true;    
-    colorSet = false;
+    hairColorSet = false;
     
     state = NULL;
     stateFactory = NULL;
@@ -141,7 +141,7 @@ void psCharAppearance::BeardMesh(csString& subMesh)
         beardMesh = newPartParsed;
     }
     
-    if ( colorSet )
+    if ( hairColorSet )
         HairColor(hairShader);    
 }
 
@@ -178,7 +178,7 @@ void psCharAppearance::HairMesh(csString& subMesh)
         hairMesh = newPartParsed;
     }
     
-    if ( colorSet )
+    if ( hairColorSet )
         HairColor(hairShader);    
 }
 
@@ -197,7 +197,7 @@ void psCharAppearance::HairColor(csVector3& color)
     
         if ( context_hair )
         {
-            CS::ShaderVarStringID varName = stringSet->Request("colour modulation");
+            CS::ShaderVarStringID varName = stringSet->Request("color modulation");
             csShaderVariable* var = context_hair->GetVariableAdd(varName);
         
             if ( var )
@@ -208,7 +208,7 @@ void psCharAppearance::HairColor(csVector3& color)
         
         if ( context_beard )
         {
-            CS::ShaderVarStringID varName = stringSet->Request("colour modulation");
+            CS::ShaderVarStringID varName = stringSet->Request("color modulation");
             csShaderVariable* var = context_beard->GetVariableAdd(varName);
         
             if ( var )
@@ -216,10 +216,13 @@ void psCharAppearance::HairColor(csVector3& color)
                 var->SetValue(hairShader);
             }
         }
-        colorSet = true;
+        hairColorSet = true;
     }        
 }
 
+void psCharAppearance::EyeColor(csVector3& color)
+{      
+}
 
 void psCharAppearance::ShowHair(bool show)
 {
@@ -230,7 +233,7 @@ void psCharAppearance::ShowHair(bool show)
 
         state->AttachCoreMesh(hairMesh);
 
-        if (colorSet)
+        if (hairColorSet)
             HairColor(hairShader);
 
         hairAttached = true;
@@ -690,8 +693,8 @@ bool psCharAppearance::SetTrait(Trait * trait)
                         
             case PSTRAIT_LOCATION_HAIR_STYLE:
             {
-                  HairMesh(trait->mesh);
-                  break;
+                HairMesh(trait->mesh);
+                break;
             }
             
             
@@ -706,12 +709,18 @@ bool psCharAppearance::SetTrait(Trait * trait)
             {
                 HairColor(trait->shader);            
                 break;
-            }                
+            }
+
+            case PSTRAIT_LOCATION_EYE_COLOR:
+            {
+                EyeColor(trait->shader);
+                break;
+            }
         
 
             default:
             {
-                Error3("Trait(%d) unkown trait location %d",trait->uid,trait->location);
+                Error3("Trait(%d) unknown trait location %d",trait->uid,trait->location);
                 result = false;
                 break;
             }
@@ -821,6 +830,6 @@ void psCharAppearance::Clone(psCharAppearance* clone)
     this->faceMaterial  = clone->faceMaterial;
     this->skinToneSet   = clone->skinToneSet;   
     this->hairAttached  = clone->hairAttached;
-    this->colorSet      = clone->colorSet;
+    this->hairColorSet  = clone->hairColorSet;
     this->effectids     = clone->effectids;
 }

@@ -21,8 +21,14 @@
 #               
 # HAIR_COLOR    : Hair color is composed of two traits. 1. is used to the beard. 2. is used for the hair.
 #                 - Material is the texture that will be the hair/beard.
-#                 - Texture is used to created the material if the material does not exists.
+#                 - Texture is used to create the material if the material does not exist.
 #                 - Mesh is the mesh that the material is assigned to.  
+#                 - Submesh not used.
+#
+# EYE_COLOR     : Eye color is a single trait.
+#                 - Material is the texture that will be the eyes.
+#                 - Texture is used to create the material if the material does not exist.
+#                 - Mesh is the mesh that the material is assigned to. 
 #                 - Submesh not used.
 #
 # SKIN_TONE     : Skin tone is composed of traits. Each trait is applayed to the given mesh.

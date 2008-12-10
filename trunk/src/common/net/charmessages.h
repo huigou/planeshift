@@ -25,6 +25,7 @@ enum PSTRAIT_LOCATION {
     PSTRAIT_LOCATION_HAIR_COLOR,
     PSTRAIT_LOCATION_SKIN_TONE,
     PSTRAIT_LOCATION_ITEM,
+    PSTRAIT_LOCATION_EYE_COLOR,
     PSTRAIT_LOCATION_COUNT
 };
                                                                                                                                                                                                             

@@ -156,6 +156,9 @@ PSTRAIT_LOCATION Trait::ConvertTraitLocationString(const char *locationstring)
                                                                                                                                                                                                             
     if (!strcasecmp(locationstring,"ITEM"))
         return PSTRAIT_LOCATION_ITEM;
+
+    if (!strcasecmp(locationstring,"EYE_COLOR"))
+        return PSTRAIT_LOCATION_EYE_COLOR;
                                                                                                                                                                                                             
     return PSTRAIT_LOCATION_NONE;
 }
