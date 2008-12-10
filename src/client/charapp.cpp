@@ -40,9 +40,12 @@ psCharAppearance::psCharAppearance(iObjectRegistry* objectReg)
     txtmgr = g3d->GetTextureManager();        
     xmlparser =  csQueryRegistry<iDocumentSystem> (objectReg);
     
+    eyeMesh = "Eyes";
     hairMesh = "Hair";
     beardMesh = "Beard";
-    hairAttached = true;    
+
+    eyeColorSet = false;
+    hairAttached = true;
     hairColorSet = false;
     
     state = NULL;
@@ -221,7 +224,22 @@ void psCharAppearance::HairColor(csVector3& color)
 }
 
 void psCharAppearance::EyeColor(csVector3& color)
-{      
+{
+    eyeShader = color;
+    iShaderVariableContext* context_eyes = state->GetCoreMeshShaderVarContext(eyeMesh);
+
+    if ( context_eyes )
+    {
+        CS::ShaderVarStringID varName = stringSet->Request("color modulation");
+        csShaderVariable* var = context_eyes->GetVariableAdd(varName);
+
+        if ( var )
+        {
+            var->SetValue(eyeShader);
+        }
+    }
+
+    eyeColorSet = true;
 }
 
 void psCharAppearance::ShowHair(bool show)
@@ -823,12 +841,15 @@ bool psCharAppearance::Detach(const char* socketName )
 
 void psCharAppearance::Clone(psCharAppearance* clone)
 {
+    this->eyeMesh       = clone->eyeMesh;
     this->hairMesh      = clone->hairMesh;
     this->beardMesh     = clone->beardMesh;
     
+    this->eyeShader     = clone->eyeShader;
     this->hairShader    = clone->hairShader;    
     this->faceMaterial  = clone->faceMaterial;
-    this->skinToneSet   = clone->skinToneSet;   
+    this->skinToneSet   = clone->skinToneSet;
+    this->eyeColorSet   = clone->eyeColorSet;
     this->hairAttached  = clone->hairAttached;
     this->hairColorSet  = clone->hairColorSet;
     this->effectids     = clone->effectids;

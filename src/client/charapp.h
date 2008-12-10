@@ -215,16 +215,18 @@ private:
     csRef<iTextureManager>      txtmgr;    
     csRef<iDocumentSystem>      xmlparser; 
         
-    
+    csString eyeMesh;                                   // Default eye mesh.
     csString hairMesh;                                  // Default hair mesh.
     csString beardMesh;                                 // Beard mesh.
     
+    csVector3 eyeShader;                                // Default eye colour.
     csVector3 hairShader;                               // Default hair colour.
     
     bool hairAttached;                                  // Flag if hair is on/off                        
     bool beardAttached;                                 // Flag if beard is on/off.
     
-    bool hairColorSet;                                      // Flag if hair colour set.
+    bool eyeColorSet;                                   // Flag if eye colour set.
+    bool hairColorSet;                                  // Flag if hair colour set.
     
     csString faceMaterial;                              // Default face materail.
     csArray<SkinToneSet> skinToneSet;                   // Default skin colours. 
