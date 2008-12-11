@@ -1,7 +1,9 @@
 ﻿*** 2008-12-11 by Stefano Angeleri
-- Added an /emote [emotename] command.
+- Added an /emote [emotename|list] command.
   It's possible to get a list of emotes with /emote list
   or if no arguments are passed to /emote
+- Removed /listemotes which is now in /emote list and made it avoid
+  calling the server for the data
 
 *** 2008-12-09 by Stefano Angeleri
 - Fixed a possible crash caused by bad data sent to GetAnimIndex

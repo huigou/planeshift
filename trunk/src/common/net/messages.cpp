@@ -1272,7 +1272,6 @@ psUserCmdMessage::psUserCmdMessage(MsgEntry *message)
          command == "/yield" ||
          command == "/admin" ||
          command == "/npcmenu" ||
-         command == "/listemotes" ||
          command == "/sit" ||
          command == "/stand")
     {
@@ -1394,7 +1393,7 @@ csString psUserCmdMessage::ToString(AccessPointers * /*access_ptrs*/)
          command == "/tip" || command == "/motd" ||
          command == "/challenge" || command == "/yield" ||
          command == "/admin" ||
-         command == "/list" || command == "/listemotes" ||
+         command == "/list" || 
          command == "/sit" || command == "/stand" ||
          command == "/bank")
     {
