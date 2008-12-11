@@ -73,7 +73,6 @@ psUserCommands::psUserCommands(MsgHandler* mh,CmdHandler *ch,iObjectRegistry* ob
     cmdsource->Subscribe("/attack",this);
     cmdsource->Subscribe("/stopattack",this);
     cmdsource->Subscribe("/admin", this);
-    cmdsource->Subscribe("/listemotes", this);
     cmdsource->Subscribe("/stoptrading", this);
     cmdsource->Subscribe("/starttrading", this);
     cmdsource->Subscribe("/buy", this);
@@ -137,7 +136,6 @@ psUserCommands::~psUserCommands()
     cmdsource->Unsubscribe("/attack",                this);
     cmdsource->Unsubscribe("/stopattack",            this);
     cmdsource->Unsubscribe("/admin",                 this);
-    cmdsource->Unsubscribe("/listemotes",            this);
     cmdsource->Unsubscribe("/stoptrading",           this);
     cmdsource->Unsubscribe("/starttrading",          this);
     cmdsource->Unsubscribe("/buy",                   this);
@@ -745,10 +743,18 @@ const char *psUserCommands::HandleCommand(const char *cmd)
     }
     else if(words[0] == "/emote")
     {
-        if(words[1] == "list")
+        if(words.GetCount() < 2 || words[1] == "list")
         {
-             psUserCmdMessage cmdmsg("/listemotes");
-             cmdmsg.SendMessage();
+            //generate a message
+            csString emotelistmsg = "List of emotes:\n";
+            for(unsigned int i=0; i < emoteList.GetSize(); i++)
+            {
+                emotelistmsg += emoteList[i].command.Slice(1);
+                emotelistmsg += ", ";
+            }
+            pawsChatWindow* chatWindow = (pawsChatWindow*)PawsManager::GetSingleton().FindWidget("ChatWindow");
+            if(chatWindow)
+                chatWindow->ChatOutput(emotelistmsg);
         }
         else
         {

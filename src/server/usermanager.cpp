@@ -350,14 +350,6 @@ void UserManager::HandleUserCommand(MsgEntry *me,Client *client)
             psserver->SendSystemError( client->GetClientNum(), "Usage: /marriage [propose|divorce]" );
         }
     }
-    else if (msg.command == "/listemotes")
-    {
-        psserver->SendSystemInfo(me->clientnum, "List of emotes:");
-        for(unsigned int i=0; i < emoteList.GetSize(); i++)
-        {
-            psserver->SendSystemInfo(me->clientnum, emoteList[i].command);
-        }
-    }
     else if(CheckForEmote(msg.command, true, me, client))
     {
         return;
