@@ -1,4 +1,9 @@
-﻿*** 2008-12-09 by Stefano Angeleri
+﻿*** 2008-12-11 by Stefano Angeleri
+- Added an /emote [emotename] command.
+  It's possible to get a list of emotes with /emote list
+  or if no arguments are passed to /emote
+
+*** 2008-12-09 by Stefano Angeleri
 - Fixed a possible crash caused by bad data sent to GetAnimIndex
 
 *** 2008-12-07 by Stefano Angeleri
