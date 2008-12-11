@@ -314,7 +314,7 @@ gemNPC *GEMSupervisor::FindNPCEntity(PID npc_id)
     return dynamic_cast<gemNPC*>(actors_by_pid.Get(npc_id, NULL));
 }
 
-gemItem *GEMSupervisor::FindItemEntity(int item_id)
+gemItem *GEMSupervisor::FindItemEntity(uint32 item_id)
 {
     return items_by_uid.Get(item_id, NULL);
 }
