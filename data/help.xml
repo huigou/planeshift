@@ -11,6 +11,9 @@ Put an item up for sale or offer to buy something.</topic>
         <topic name="/clear">/clear 
 
 Clears the history of the Chat Window.</topic>
+        <topic name="/emote">/emote [emotename|list] 
+
+Returns the emote list with list or sends an emote with name emotename.</topic>
         <topic name="/greet">/greet 
 
 Wave hello to your friends.</topic>

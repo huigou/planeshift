@@ -121,6 +121,7 @@ psUserCommands::psUserCommands(MsgHandler* mh,CmdHandler *ch,iObjectRegistry* ob
     cmdsource->Subscribe("/introduce", this);
     cmdsource->Subscribe("/drop", this);
     cmdsource->Subscribe("/npcmenu", this);
+    cmdsource->Subscribe("/emote", this);
 }
 
 psUserCommands::~psUserCommands()
@@ -184,6 +185,7 @@ psUserCommands::~psUserCommands()
     cmdsource->Unsubscribe("/introduce",             this);
     cmdsource->Unsubscribe("/drop",                  this);
     cmdsource->Unsubscribe("/npcmenu",               this);
+    cmdsource->Unsubscribe("/emote",               this);
 
 
 
@@ -740,6 +742,26 @@ const char *psUserCommands::HandleCommand(const char *cmd)
         }
         psCmdDropMessage cmddrop(quantity, itemName, any, guard);
         cmddrop.SendMessage();
+    }
+    else if(words[0] == "/emote")
+    {
+        if(words[1] == "list")
+        {
+             psUserCmdMessage cmdmsg("/listemotes");
+             cmdmsg.SendMessage();
+        }
+        else
+        {
+            for(unsigned int i=0; i < emoteList.GetSize(); i++)
+            {
+                if(words[1].Find(emoteList[i].command) != (size_t)-1)
+                {
+                    psUserCmdMessage cmdmsg(emoteList[i].command);
+                    cmdmsg.SendMessage();
+                    break;
+                }
+            }
+        }
     }
     else
     {
