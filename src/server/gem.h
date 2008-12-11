@@ -146,7 +146,7 @@ public:
 
     gemActor  *FindPlayerEntity(PID player_id);
     gemNPC    *FindNPCEntity(PID npc_id);
-    gemItem   *FindItemEntity(int item_id);
+    gemItem   *FindItemEntity(uint32 item_id);
 
     EID  CreateEntity(gemObject *obj);
     void RemoveEntity(gemObject *which);
@@ -234,7 +234,7 @@ protected:
     EID GetNextID();
 
     csHash<gemObject*, EID> entities_by_eid; ///< A list of all the entities stored by EID (entity/gem ID).
-    csHash<gemItem*>        items_by_uid;    ///< A list of all the items stored by UID (psItem ID).
+    csHash<gemItem*, uint32> items_by_uid;   ///< A list of all the items stored by UID (psItem ID).
     csHash<gemActor*,  PID> actors_by_pid;   ///< A list of all the actors stored by PID (player/character ID).
 
     int                 count_players;       ///< Total Number of players
