@@ -20,6 +20,7 @@
 #ifndef PS_EFFECT_OBJ_HEADER
 #define PS_EFFECT_OBJ_HEADER
 
+#include <csgfx/shadervar.h>
 #include <csutil/csstring.h>
 #include <csutil/array.h>
 #include <csutil/bitarray.h>
