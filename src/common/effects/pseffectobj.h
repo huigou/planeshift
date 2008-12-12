@@ -307,6 +307,8 @@ protected:
      */
     csMatrix3 BuildRotMatrix(const csVector3 &up) const;
 
+    csRef<iShaderVarStringSet> stringSet;
+
     csString name;
     csString materialName;
 

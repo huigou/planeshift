@@ -274,6 +274,8 @@ psEffectObj::psEffectObj(iView *parentView, psEffect2DRenderer * renderer2d)
 			: renderer2d(renderer2d)
 {
     engine =  csQueryRegistry<iEngine> (psCSSetup::object_reg);
+    stringSet = csQueryRegistryTagInterface<iShaderVarStringSet>(psCSSetup::object_reg,
+      "crystalspace.shader.variablenameset");
     view = parentView;
 
     killTime = -1;
