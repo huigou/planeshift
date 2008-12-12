@@ -55,7 +55,6 @@ psEffectObjLabel::psEffectObjLabel(iView * parentView, psEffect2DRenderer * rend
         xpos[i] = (i%16) * 64;
         ypos[i] = (i/16-2) * 64;
     }
-    //printf("new label created\n");
 }
 
 psEffectObjLabel::~psEffectObjLabel()
@@ -447,10 +446,15 @@ bool psEffectObjLabel::SetText(int rows, ...)
             cp += 4;
             x += width[c];
         }
-        csColor color((float)((newElem.colour>>16) & 255)/255.0F,
+        csVector3 color((float)((newElem.colour>>16) & 255)/255.0F,
                       (float)((newElem.colour>> 8) & 255)/255.0F,
                       (float)((newElem.colour    ) & 255)/255.0F);
-        mesh->GetMeshObject()->SetColor(color);
+        CS::ShaderVarStringID varName = stringSet->Request("color modulation");
+        csShaderVariable* var = mesh->GetSVContext()->GetVariableAdd(varName);
+        if(var)
+        {
+            var->SetValue(color);
+        }
     }
     facState->CalculateNormals();
 //    facState->SetLighting(false);
