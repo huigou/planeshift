@@ -191,11 +191,21 @@ public:
       * network messages.
       *
       * @param fromClient The client that this item came from.
-      * @param item The item that is being offered.
-      * @param toSlot Where in the exchange the item is placed.
-      * @param transaction The transaction item is currently in.
+      * @param fromSlot The originating slot in the exchange window for the item moved.
+      * @param stackCount The number of items being moved.
+      * @param toSlot Where in the exchange the item is to be placed.
       */
     virtual bool AddItem(Client* fromClient, INVENTORY_SLOT_NUMBER fromSlot, int stackCount, int toSlot);
+
+    /** Move an item from one slot to another in the exchange. Will swap items if another
+      * item is already in the destination slot. Sends out the relevant
+      * network messages.
+      *
+      * @param fromClient The client that this item came from.
+      * @param fromSlot The originating slot in the exchange window for the item moved.
+      * @param stackCount The number of items being moved.
+      * @param toSlot Where in the exchange the item is to be placed.
+      */
     virtual void MoveItem(Client* client, int fromSlot, int stackCount, int toSlot);
 
     /* Removes an item from the exchange.  Sends out the network messages to update

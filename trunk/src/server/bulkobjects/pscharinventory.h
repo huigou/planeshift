@@ -224,7 +224,7 @@ public:
 
     /** Return the direct index into inventory of the defined item
      */
-    size_t FindItemStatIndex(psItemStats *itemstats);
+    size_t FindItemStatIndex(psItemStats *itemstats,size_t startAt=1);
 
     /** Remove an item from the bulk slots. 
       * @param bulkSlot The slot we want to remove the item from.

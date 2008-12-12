@@ -35,6 +35,7 @@
 #include "util/psconst.h"
 #include "util/psstring.h"
 #include "util/eventmanager.h"
+#include "util/psxmlparser.h"
 
 //=============================================================================
 // Local Includes
@@ -1475,6 +1476,90 @@ void ExchangeManager::HandleAutoGive(MsgEntry *me,Client *client)
     psSimpleStringMessage give(me);
 
     printf("Got autogive of '%s'\n", give.str.GetDataSafe() );
+
+    // Expecting xml string like: <l money="0,0,0,0"><item n="Steel Falchion" c="1"/></l>
+
+    csRef<iDocument> doc = ParseString(give.str);
+    if (doc == NULL)
+    {
+        Error2("Failed to parse script %s", give.str.GetData() );
+        return;
+    }
+    csRef<iDocumentNode> root    = doc->GetRoot();
+    if(!root)
+    {
+        Error1("No XML root in progression script");
+        return;
+    }
+    csRef<iDocumentNode> topNode = root->GetNode("l");
+    if (!topNode)
+    {
+        Error1("Could not find <evt> tag in progression script!");
+        return;
+    }
+    // TODO: Validate that the person has sufficient money here
+
+    // Create a temporary exchange to actually do all the gift giving
+    StartExchange(client, false);
+
+    // Check to make sure it worked
+    Exchange* exchange = GetExchange( client->GetExchangeID() );
+    if (!exchange)
+    {
+        psserver->SendSystemError(client->GetClientNum(),"Could not give requested items.");
+        return;
+    }
+    // Now validate that the person has all the required items here
+    int exchangeSlot = 0, itemCount = 0;
+    csRef<iDocumentNodeIterator> iter = topNode->GetNodes();
+    while ( iter->HasNext() )
+    {
+        itemCount++;
+
+        csRef<iDocumentNode> node = iter->Next();
+        csString itemName  = node->GetAttributeValue("n");
+        int      itemCount = node->GetAttributeValueAsInt("c");
+
+        // Get the definition of the item from the name
+        psItemStats *itemstat = CacheManager::GetSingleton().GetBasicItemStatsByName(itemName);
+        if (itemstat)
+        {
+            // Now find that item in the player's inv from the definition
+            size_t foundIndex = client->GetCharacterData()->Inventory().FindItemStatIndex(itemstat);
+            if (foundIndex != SIZET_NOT_FOUND)
+            {
+                // Now verify that the player has exactly the right count of these items, and not more of them in another slot
+                psItem *invItem = client->GetCharacterData()->Inventory().GetInventoryIndexItem(foundIndex);
+                if (invItem->GetStackCount() > itemCount || client->GetCharacterData()->Inventory().FindItemStatIndex(itemstat,foundIndex+1) != SIZET_NOT_FOUND)
+                {
+                    psserver->SendSystemError(client->GetClientNum(), "You must give the items manually because you have too many %s.",itemName.GetData() );
+                    HandleExchangeEnd(NULL,client);
+                    break;
+                }
+                // Finally add the item to the exchange
+                client->GetCharacterData()->Inventory().SetExchangeOfferSlot(NULL, invItem->GetLocInParent(), exchangeSlot, itemCount);
+                exchange->AddItem(client,invItem->GetLocInParent(),itemCount,exchangeSlot);
+                exchangeSlot++;
+            }
+            else
+            {
+                psserver->SendSystemError(client->GetClientNum(), "You do not have required item: %s",itemName.GetData() );
+                HandleExchangeEnd(NULL,client);
+                break;
+            }
+        }
+        else
+        {
+            Error2("Could not find item stat for autogive, item name '%s'.",itemName.GetData() );
+            HandleExchangeEnd(NULL,client);
+            break;
+        }
+    }
+    // Now execute the exchange if all items were found
+    if (exchangeSlot == itemCount) // successfully added everything to the exchange
+    {
+        HandleExchangeAccept(NULL, client);
+    }
 }
 
 void ExchangeManager::HandleMessage(MsgEntry *me,Client *client)
