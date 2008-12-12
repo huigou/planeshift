@@ -1385,10 +1385,10 @@ void psCharacterInventory::WriteItem(csRef<iDocumentNode> equipmentNode, psItem*
     objNode->SetAttributeAsInt("slot", slot);
 }
 
-size_t psCharacterInventory::FindItemStatIndex(psItemStats *itemstats)
+size_t psCharacterInventory::FindItemStatIndex(psItemStats *itemstats, size_t startAt)
 {
     // Inventory indexes start at 1.  0 is reserved for the "NULL" item.
-    for (size_t i=1; i<inventory.GetSize(); i++)
+    for (size_t i=startAt; i<inventory.GetSize(); i++)
     {
         if (inventory[i].item->GetBaseStats() == itemstats)
             return i;
