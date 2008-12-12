@@ -1,4 +1,8 @@
-﻿*** 2008-12-11 by Stefano Angeleri
+﻿*** 2008-12-11 by Keith Fulton
+- Added support for AutoGive to ExchangeManager and popup menus.
+  Do the Falchion Quest with the Merchant to test this feature.
+
+*** 2008-12-11 by Stefano Angeleri
 - Added an /emote [emotename|list] command.
   It's possible to get a list of emotes with /emote list
   or if no arguments are passed to /emote
