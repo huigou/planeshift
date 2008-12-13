@@ -576,7 +576,10 @@ void SlotManager::MoveFromInventory(psSlotMovementMsg& msg, Client *fromClient)
                 {
                     destSlot = chr->Inventory().FindFreeEquipSlot(itemProposed);
                     if (destSlot == PSCHARACTER_SLOT_NONE)
+                    {
+                        psserver->SendSystemError(fromClient->GetClientNum(), "This item cannot be equipped.");
                         return;
+                    }
                 }
             }
                     
