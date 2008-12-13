@@ -423,7 +423,7 @@ protected:
     bool ValidateMind();
     bool ValidateStamina(Client* client);
     bool IsOnHand(uint32 equipId);
-    psItem* CreateTradeItem(uint32 newId, int newQty, float itemQuality);
+    psItem* CreateTradeItem(uint32 newId, int newQty, float itemQuality, bool transient = false);
     bool ValidateTraining(psTradeTransformations* transCandidate, psTradeProcesses* processCandidate);
     bool ValidateSkills(psTradeTransformations* transCandidate, psTradeProcesses* processCandidate);
     bool ValidateNotOverSkilled(psTradeTransformations* transCandidate, psTradeProcesses* processCandidate);

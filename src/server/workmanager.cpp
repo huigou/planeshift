@@ -2998,7 +2998,7 @@ psItem* psWorkManager::TransformTargetSlotItem(INVENTORY_SLOT_NUMBER slot, uint3
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// Transform all items in equipment into a new item
+// Transforms the targeted item into a new item
 psItem* psWorkManager::TransformTargetItem(psItem* oldItem, uint32 newId, int newQty, float itemQuality)
 {
     if (!oldItem)
@@ -3033,7 +3033,7 @@ psItem* psWorkManager::TransformTargetItem(psItem* oldItem, uint32 newId, int ne
         return NULL;
 
     // Create item
-    psItem* newItem = CreateTradeItem(newId, newQty, itemQuality);
+    psItem* newItem = CreateTradeItem(newId, newQty, itemQuality, true);
     if(!newItem)
     {
         Error2("CreateTradeItem() could not create new item ID #%u", newId);
@@ -3073,7 +3073,7 @@ psItem* psWorkManager::TransformTargetItem(psItem* oldItem, uint32 newId, int ne
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Create the new item and return newly created item pointer
 //  The location and saving of item is up to calling routine
-psItem* psWorkManager::CreateTradeItem(uint32 newId, int newQty, float itemQuality)
+psItem* psWorkManager::CreateTradeItem(uint32 newId, int newQty, float itemQuality, bool transient)
 {
     Debug3( LOG_TRADE, 0,"Creating new item id(%u) quantity(%d)\n", newId, newQty );
 
@@ -3094,7 +3094,7 @@ psItem* psWorkManager::CreateTradeItem(uint32 newId, int newQty, float itemQuali
         }
 
         // Make a perminent new item
-        psItem* newItem = baseStats->InstantiateBasicItem( true );
+        psItem* newItem = baseStats->InstantiateBasicItem( transient );
         if (!newItem)
         {
             Error3("CreateTradeItem() could not create item (%s) id #%u",
