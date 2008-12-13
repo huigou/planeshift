@@ -65,6 +65,11 @@ public:
       */
     FactoryIndexEntry* GetFactoryEntry(const char* filename);
 
+    /**
+     * Calls iEngine::PrecacheDraw on the collection.
+     */
+    void Precache();
+
 private:
 
     /** Loads a new model factory. 
