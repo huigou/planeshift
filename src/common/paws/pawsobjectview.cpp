@@ -130,13 +130,13 @@ bool pawsObjectView::LoadMap( const char* map, const char* sector )
 
     stage = engine->FindSector( sector );
 
-    // Create/Get collection and clear it in case it already existed.
-    iCollection* col = engine->CreateCollection(realName);
-
     if ( !stage )
     {
         csRef<iDocumentSystem> xml (
             csQueryRegistry<iDocumentSystem> (PawsManager::GetSingleton().GetObjectRegistry()));
+
+        // Create/Get collection
+        iCollection* col = engine->CreateCollection(realName);
 
         csRef<iDocument> doc = xml->CreateDocument();
         csString filename = map;
@@ -215,8 +215,6 @@ void pawsObjectView::View( iMeshFactoryWrapper* wrapper )
 
 void pawsObjectView::View( iMeshWrapper* wrapper )
 {
-    Clear();
-
     if(wrapper)
     {
       View(wrapper->GetFactory());
@@ -464,9 +462,10 @@ bool pawsObjectView::OnMouseExit()
 
 void pawsObjectView::Clear()
 {
-    if(object)
+    iMeshWrapper* mesh = stage->GetMeshes()->FindByName("PaperDoll");
+    if(mesh)
     {
-        object->GetMovable()->ClearSectors();
-        engine->GetMeshes()->Remove(object);
+      stage->GetMeshes()->Remove(mesh);
+      engine->GetMeshes()->Remove(mesh);
     }
 }

@@ -470,7 +470,6 @@ void pawsCharacterPickerWindow::SelectCharacter(int character)
     else
     {
         // Show the model for the selected character.
-        view->Clear();
         loaded = false;
         view->Show();
         CheckMeshLoad();
@@ -514,7 +513,6 @@ void pawsCharacterPickerWindow::SelectCharacter(int character, pawsWidget* widge
     else
     {
         // Show the model for the selected character.
-        view->Clear();
         loaded = false;
         view->Show();
         CheckMeshLoad();
