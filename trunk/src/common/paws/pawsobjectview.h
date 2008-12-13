@@ -141,9 +141,6 @@ private:
     static int idName;
     csString realName;
     
-    csRef<iSector> meshSector;
-    csRef<iView>   meshView;
-
     void RotateDef(); // Used to reset to the values given by the controlling widget
     void RotateTemp(int speed,float radians); // Used to for example stop the rotate but not write the def values
 

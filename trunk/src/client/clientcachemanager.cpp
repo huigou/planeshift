@@ -152,6 +152,11 @@ FactoryIndexEntry* ClientCacheManager::LoadNewFactory(const char* filename)
     return indexEntry;
 }
 
+void ClientCacheManager::Precache()
+{
+  psengine->GetEngine()->PrecacheDraw(cache);
+}
+
 FactoryIndexEntry* ClientCacheManager::GetFactoryEntry(const char* filename)
 {
     // Search for a factory entry with the filename we've passed.

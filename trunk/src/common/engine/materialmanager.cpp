@@ -217,5 +217,7 @@ bool MaterialManager::PreloadTextures()
     if (!LoadTextureDir("/planeshift/food/"))
         return false;
 
+    engine->SyncEngineListsNow(loader);
+
     return true;
 }

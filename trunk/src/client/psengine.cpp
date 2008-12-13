@@ -1490,6 +1490,8 @@ inline void psEngine::PreloadModels()
         if (modelnames.GetSize()-1 < modelToLoad)
         {
             BuildFactoryList();
+            engine->SyncEngineListsNow(loader);
+            cachemanager->Precache();
             Debug1(LOG_ADMIN,0, "Preloading complete");
 
             delete paws->FindWidget("SplashWindow");
