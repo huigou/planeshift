@@ -25,6 +25,7 @@
 #include <iengine/mesh.h>
 #include <iengine/movable.h>
 #include <iengine/camera.h>
+#include <ivideo/material.h>
 #include <cstool/csview.h>
 #include <imesh/objmodel.h>
 #include <csutil/flags.h>
@@ -137,9 +138,6 @@ bool psEffectObjQuad::Render(const csVector3 &up)
     texel[2].Set(0.0f, 1.0f);
     texel[3].Set(1.0f, 1.0f);
 
-    for (int a=0; a<4; ++a)
-        colour[a].Set(1, 1, 1);
-
     return true;
 }
 
@@ -157,8 +155,12 @@ bool psEffectObjQuad::Update(csTicks elapsed)
         // COLOUR
         csVector3 lerpColour = LERP_VEC_KEY(KA_COLOUR);
         float lerpAlpha = LERP_KEY(KA_ALPHA);
-        for (int a=0; a<4; ++a)
-            colour[a].Set(lerpColour.x, lerpColour.y, lerpColour.z, lerpAlpha);
+        CS::ShaderVarStringID varName = stringSet->Request("color modulation");
+        csShaderVariable* var = mat->GetMaterial()->GetVariableAdd(varName);
+        if(var)
+        {
+            var->SetValue(lerpColour);
+        }
 
         // HEIGHT
         halfHeightScale *= LERP_KEY(KA_HEIGHT);
@@ -264,9 +266,4 @@ const csVector3 * psEffectObjQuad::MeshAnimControl::UpdateVertices(csTicks curre
 const csVector2 * psEffectObjQuad::MeshAnimControl::UpdateTexels(csTicks current, const csVector2 * texels, int num_texels, uint32 version_id)
 {
     return parent->texel;
-}
-
-const csColor4 * psEffectObjQuad::MeshAnimControl::UpdateColors(csTicks current, const csColor4 * colors, int num_colors, uint32 version_id)
-{
-    return parent->colour;
 }
