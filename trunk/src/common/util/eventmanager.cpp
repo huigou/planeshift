@@ -260,7 +260,7 @@ public:
     virtual csString ToString() const
     {
         csString str;
-        str.Format("Delayed message of type : %d" + myMsg->GetType());
+        str.Format("Delayed message of type : %d", myMsg->GetType());
         return str;
     }
     

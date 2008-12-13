@@ -1376,7 +1376,7 @@ int GEMClientActor::GetAnimIndex (csStringHashReversible* msgstrings, csStringID
 
     if(animName.IsEmpty()) //check if we have an hit else bug the user for the bad data
     {
-        Error2("Missing animName from common strings for animid %u!\n", (unsigned long int)animid);
+        Error2("Missing animName from common strings for animid %lu!\n", (unsigned long int)animid);
     }
     else //no need to call this with an empty string in case of bad data so let's skip it in that case
     {
