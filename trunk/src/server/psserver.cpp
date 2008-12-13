@@ -216,6 +216,11 @@ psServer::~psServer()
 
 bool psServer::Initialize(iObjectRegistry* object_reg)
 {
+    // Disable threaded loading.
+    // This doesn't work correctly with psserver because the console isn't running in the main thread.
+    csRef<iThreadManager> tman = csQueryRegistry<iThreadManager>(object_reg);
+    tman->SetAlwaysRunNow(true);
+
     //Map isn't loaded yet
     MapLoaded=false;
 
