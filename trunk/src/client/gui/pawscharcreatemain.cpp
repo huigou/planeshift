@@ -994,7 +994,6 @@ void pawsCreationMain::Show()
 
 void pawsCreationMain::UpdateRace(int id)
 {
-    view->Clear();
     loaded = false;
     int raceCP = createManager->GetRaceCP( id );
     lastRaceID = id;                
