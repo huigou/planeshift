@@ -1,3 +1,6 @@
+*** 2008-12-14 by Stefano Angeleri
+- Added position/angle/instance in /info for action locations and items
+
 ﻿*** 2008-12-11 by Keith Fulton
 - Added support for AutoGive to ExchangeManager and popup menus.
   Do the Falchion Quest with the Merchant to test this feature.
