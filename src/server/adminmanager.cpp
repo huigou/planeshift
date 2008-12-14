@@ -1601,8 +1601,27 @@ bool AdminManager::Valid( int level, const char* command, int clientnum )
 void AdminManager::GetInfo(MsgEntry* me,psAdminCmdMessage& msg, AdminCmdData& data,Client *client, gemObject* target)
 {
     EID entityId;
-    if ( target )
+    csString sectorName;
+    InstanceID instance = DEFAULT_INSTANCE;
+    float loc_x = 0.0f, loc_y = 0.0f, loc_z = 0.0f, loc_yrot = 0.0f;
+    int degrees = 0;
+
+    if ( target ) //If the target is online or is an item or action location get some data about it like position and eid
+    {
         entityId = target->GetEID();
+        csVector3 pos;
+        iSector* sector = 0;
+
+        target->GetPosition(pos, loc_yrot, sector);
+        loc_x = pos.x;
+        loc_y = pos.y;
+        loc_z = pos.z;
+        degrees = (int)(loc_yrot * 180 / PI );
+
+        instance = target->GetInstance();
+
+        sectorName = (sector) ? sector->QueryObject()->GetName() : "(null)";
+    }
 
     if (target && strcmp(target->GetObjectType(), "ActionLocation") == 0) // Action location
     {
@@ -1615,7 +1634,13 @@ void AdminManager::GetInfo(MsgEntry* me,psAdminCmdMessage& msg, AdminCmdData& da
         psActionLocation *action = item->GetAction();
 
         csString info;
-        info.Format("ActionLocation: %s with ", item->GetName());
+        info.Format("ActionLocation: %s is at position (%1.2f, %1.2f, %1.2f) "
+                    "angle: %d in sector: %s, instance: %d with ",
+                    item->GetName(),
+                    loc_x, loc_y, loc_z, degrees,
+                    sectorName.GetData(),
+                    instance);
+
         if (action)
             info.AppendFmt("ID %u, and instance ID of the container %u.", action->id, action->GetInstanceID());
         else
@@ -1636,15 +1661,20 @@ void AdminManager::GetInfo(MsgEntry* me,psAdminCmdMessage& msg, AdminCmdData& da
           if ( item->GetStackCount() > 1 )
               info.AppendFmt("(x%d) ", item->GetStackCount() );
 
-          info.AppendFmt("with item ID %u, instance ID %u, and %s",
-                      item->GetBaseStats()->GetUID(),
-                      item->GetUID(),
-                      ShowID(entityId));
-
+          info.AppendFmt("with item ID %u, instance ID %u, and %s, is at position (%1.2f, %1.2f, %1.2f) "
+                         "angle: %d in sector: %s, instance: %d",
+                        item->GetBaseStats()->GetUID(),
+                        item->GetUID(),
+                        ShowID(entityId),
+                        loc_x, loc_y, loc_z, degrees,
+                        sectorName.GetData(),
+                        instance);
+                
           if ( item->GetScheduledItem() )
               info.AppendFmt(", spawns with interval %d + %d max modifier",
                              item->GetScheduledItem()->GetInterval(),
                              item->GetScheduledItem()->GetMaxModifier() );
+
 
           // Get all flags on this item
           int flags = item->GetFlags();
@@ -1689,11 +1719,10 @@ void AdminManager::GetInfo(MsgEntry* me,psAdminCmdMessage& msg, AdminCmdData& da
     }
 
     char ipaddr[20] = {0};
-    csString name, ipAddress, securityLevel, sectorName;
+    csString name, ipAddress, securityLevel;
     PID playerId;
     AccountID accountId;
-    InstanceID instance = DEFAULT_INSTANCE;
-    float timeConnected = 0.0f, loc_x = 0.0f, loc_y = 0.0f, loc_z = 0.0f, loc_yrot = 0.0f;
+    float timeConnected = 0.0f;
 
     bool banned = false;
     time_t banTimeLeft;
@@ -1702,18 +1731,6 @@ void AdminManager::GetInfo(MsgEntry* me,psAdminCmdMessage& msg, AdminCmdData& da
 
     if (target) // Online
     {
-        csVector3 pos;
-        iSector* sector = 0;
-
-        target->GetPosition(pos, loc_yrot, sector);
-        loc_x = pos.x;
-        loc_y = pos.y;
-        loc_z = pos.z;
-
-        instance = target->GetInstance();
-
-        sectorName = (sector) ? sector->QueryObject()->GetName() : "(null)";
-
         Client* targetclient = target->GetClient();
 
         playerId = target->GetPID();
@@ -1741,7 +1758,6 @@ void AdminManager::GetInfo(MsgEntry* me,psAdminCmdMessage& msg, AdminCmdData& da
         else // NPC
         {
             name = target->GetName();
-            int degrees = (int)(loc_yrot * 180 / PI );
             psserver->SendSystemInfo(client->GetClientNum(),
                 "NPC: <%s, %s, %s> is at position (%1.2f, %1.2f, %1.2f) "
                 "angle: %d in sector: %s, instance: %d, and has been active for %1.1f hours.",
@@ -1825,7 +1841,6 @@ void AdminManager::GetInfo(MsgEntry* me,psAdminCmdMessage& msg, AdminCmdData& da
         else
             info.Append("is offline, ");
 
-        int degrees = (int)(loc_yrot * 180 / PI );
         info.AppendFmt("at position %1.2f, %1.2f, %1.2f angle: %d in sector: %s, instance: %d, ",
                 loc_x, loc_y, loc_z, degrees, sectorName.GetData(), instance);
 
