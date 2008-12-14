@@ -1209,6 +1209,9 @@ bool GEMClientObject::InitMesh()
     // Set up callback.
     psengine->RegisterDelayedLoader(this);
 
+    // Check if the mesh is already loaded.
+    CheckMeshLoad();
+
     return true;
 }
 
