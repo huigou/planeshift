@@ -41,7 +41,8 @@ namespace psMiniGame
         PersonalGame        = 0x08, ///< The game is personal & private
         BlackSquare         = 0x10, ///< Top left/all squares Black. Else white.
         PlainSquares        = 0x20, ///< Board squares all plain. Else checked.
-        DisallowedMove      = 0x40  ///< Last move disallowed
+        DisallowedMove      = 0x40, ///< Last move disallowed
+        ObserveEndGame      = 0x80  ///< observe endgame play
     };
 
     /// Minigame tile state values
