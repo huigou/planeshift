@@ -1841,7 +1841,7 @@ void AdminManager::GetInfo(MsgEntry* me,psAdminCmdMessage& msg, AdminCmdData& da
         else
             info.Append("is offline, ");
 
-        info.AppendFmt("at position %1.2f, %1.2f, %1.2f angle: %d in sector: %s, instance: %d, ",
+        info.AppendFmt("at position (%1.2f, %1.2f, %1.2f) angle: %d in sector: %s, instance: %d, ",
                 loc_x, loc_y, loc_z, degrees, sectorName.GetData(), instance);
 
         info.AppendFmt("total time connected is %1.1f hours", timeConnected );
