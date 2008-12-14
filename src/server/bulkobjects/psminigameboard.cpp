@@ -94,6 +94,8 @@ psMiniGameBoardDef::psMiniGameBoardDef(const uint8_t noCols, const uint8_t noRow
     movePieceTypeRule = PLACE_OR_MOVE;
     moveablePiecesRule = ANY_PIECE;
     movePiecesToRule = ANYWHERE;
+
+    endgames.Empty();
 }
 
 psMiniGameBoardDef::~psMiniGameBoardDef()
@@ -210,6 +212,149 @@ bool psMiniGameBoardDef::DetermineGameRules(csString rulesXMLstr, csString name)
     return false;
 }
 
+bool psMiniGameBoardDef::DetermineEndgameSpecs(csString endgameXMLstr, csString name)
+{
+    if (endgameXMLstr.StartsWith("<MGEndGame>", false))
+    {
+        csRef<iDocument> doc = ParseString(endgameXMLstr);
+        if (doc)
+        {
+            csRef<iDocumentNode> root = doc->GetRoot();
+            if (root)
+            {
+                csRef<iDocumentNode> topNode = root->GetNode("MGEndGame");
+                if (topNode)
+                {
+                    csRef<iDocumentNodeIterator> egNodes = topNode->GetNodes("EndGame");
+                    if (egNodes)
+                    {
+                        while (egNodes->HasNext())
+                        {
+                            csRef<iDocumentNode> egNode = egNodes->Next();
+                            if (egNode)
+                            {
+                                Endgame_Spec* endgame = new Endgame_Spec;
+                                csString posAbsVal (egNode->GetAttributeValue("Coords"));
+                                if (posAbsVal.Downcase() == "relative")
+                                {
+                                    endgame->positionsAbsolute = false;
+                                }
+                                else if (posAbsVal.Downcase() == "absolute")
+                                {
+                                    endgame->positionsAbsolute = true;
+                                }
+                                else
+                                {
+                                    delete endgame;
+                                    Error2("Error in EndGame XML for \"%s\" minigame: Absolute/Relative setting misunderstood.",
+                                           name.GetDataSafe());
+                                    return false;
+                                }
+                                csString srcTileVal (egNode->GetAttributeValue("SourceTile"));
+                                Endgame_TileType srcTile;
+                                if (EvaluateTileTypeStr(srcTileVal, srcTile) && srcTile != FOLLOW_SOURCE_TILE)
+                                {
+                                    endgame->sourceTile = srcTile;
+                                }
+                                else if (endgame->positionsAbsolute == false)
+                                {
+                                    delete endgame;
+                                    Error2("Error in EndGame XML for \"%s\" minigame: SourceTile setting misunderstood.",
+                                           name.GetDataSafe());
+                                    return false;
+                                }
+
+                                csRef<iDocumentNodeIterator> coordNodes = egNode->GetNodes("Coord");
+                                if (coordNodes)
+                                {
+                                    while (coordNodes->HasNext())
+                                    {
+                                        csRef<iDocumentNode> coordNode = coordNodes->Next();
+                                        if (coordNode)
+                                        {
+                                            Endgame_TileSpec* egTileSpec = new Endgame_TileSpec;
+                                            int egCol = coordNode->GetAttributeValueAsInt("Col");
+                                            int egRow = coordNode->GetAttributeValueAsInt("Row");
+                                            if (abs(egCol) >= GAMEBOARD_MAX_COLS || abs(egRow) >= GAMEBOARD_MAX_ROWS)
+                                            {
+                                                delete endgame;
+                                                delete egTileSpec;
+                                                Error2("Error in EndGame XML for \"%s\" minigame: Col/Row spec out of range.",
+                                                        name.GetDataSafe());
+                                                return false;
+                                            }
+
+                                            csString tileVal (coordNode->GetAttributeValue("Tile"));
+                                            Endgame_TileType tile;
+                                            if (EvaluateTileTypeStr(tileVal, tile))
+                                            {
+                                                  egTileSpec->col = egCol;
+                                                  egTileSpec->row = egRow;
+                                                  egTileSpec->tile = tile;
+                                            }
+                                            else
+                                            {
+                                                delete endgame;
+                                                delete egTileSpec;
+                                                Error2("Error in EndGame XML for \"%s\" minigame: Tile setting misunderstood.",
+                                                       name.GetDataSafe());
+                                                return false;
+                                            }
+
+                                            endgame->endgameTiles.Push(egTileSpec); 
+                                        }
+                                    }
+                                }
+                                endgames.Push(endgame);
+                            }
+                        }
+                    }
+
+                   return true;
+                }
+            }
+        }
+    }
+    else if (endgameXMLstr.IsEmpty())   // if no endgames defined at all, then no worries
+    {
+        return true;
+    }
+
+    Error2("XML error in Endgames definition for \"%s\" .", name.GetDataSafe());
+    return false;
+}
+
+bool psMiniGameBoardDef::EvaluateTileTypeStr(csString TileTypeStr, Endgame_TileType& tileType)
+{
+    if (TileTypeStr.Length() == 1)
+    {
+        switch (TileTypeStr[0])
+        {
+            case 'A':
+            case 'a': tileType = PLAYED_PIECE;        // tile has any played piece on
+                break;
+            case 'W':
+            case 'w': tileType = WHITE_PIECE;         // tile has white piece
+                break;
+            case 'B':
+            case 'b': tileType = BLACK_PIECE;         // tile has black piece
+                break;
+            case 'E':
+            case 'e': tileType = EMPTY_TILE;          // empty tile
+                break;
+            case 'F':
+            case 'f': tileType = FOLLOW_SOURCE_TILE;  // tile has piece as per first tile in pattern
+                break;
+            default: return false;
+                break;
+        }
+
+        return true;
+    }
+
+    return false;
+}
+
 //---------------------------------------------------------------------------
 
 psMiniGameBoard::psMiniGameBoard()
@@ -269,5 +414,111 @@ void psMiniGameBoard::Set(uint8_t col, uint8_t row, uint8_t state)
         if ((v & 0xF0) >> 4 != DisabledTile)
             layout[idx/2] = (v & 0x0F) + ((state & 0x0F) << 4);
     }
+}
+
+bool psMiniGameBoard::DetermineEndgame(void)
+{
+    if (gameBoardDef->endgames.IsEmpty())
+        return false;
+
+    // look through each endgame spec individually...
+    csArray<Endgame_Spec*>::Iterator egIterator(gameBoardDef->endgames.GetIterator());
+    while (egIterator.HasNext())
+    {
+        size_t patternsMatched;
+        uint8_t tileAtPos;
+        Endgame_Spec* endgame = egIterator.Next();
+        if (endgame->positionsAbsolute)
+        {
+            // endgame absolute pattern: check each position for the required pattern
+            // ... and then through each tile for the endgame pattern
+            patternsMatched = 0;
+            csArray<Endgame_TileSpec*>::Iterator egTileIterator(endgame->endgameTiles.GetIterator());
+            while (egTileIterator.HasNext())
+            {
+                Endgame_TileSpec* endgameTile = egTileIterator.Next();
+                if (endgameTile->col > gameBoardDef->cols || endgameTile->row > gameBoardDef->rows ||
+                    endgameTile->col < 0 || endgameTile->row < 0)
+                    break;
+
+                tileAtPos = Get(endgameTile->col, endgameTile->row);
+
+                if (tileAtPos == DisabledTile || endgame->sourceTile == FOLLOW_SOURCE_TILE)
+                    break;
+                if (endgameTile->tile == PLAYED_PIECE && tileAtPos == EmptyTile)
+                    break;
+                if (endgameTile->tile == EMPTY_TILE && tileAtPos != EmptyTile)
+                    break;
+                if (endgameTile->tile == WHITE_PIECE && (tileAtPos < White1 || tileAtPos > White7))
+                    break;
+                if (endgameTile->tile == BLACK_PIECE && (tileAtPos < Black1 || tileAtPos > Black7))
+                    break;
+                if (endgameTile->tile == FOLLOW_SOURCE_TILE)
+                    break;
+
+                // if here, then the pattern has another match
+                patternsMatched++;
+            }
+
+            // if all patterns matched, a winner
+            if (endgame->endgameTiles.GetSize() == patternsMatched)
+            {
+                return true;
+            }
+        }
+        else
+        {
+            // endgame relative pattern: check each piece in play for pattern relative to the piece
+            uint8_t colCount, rowCount;
+            for (rowCount=0; rowCount<gameBoardDef->rows; rowCount++)
+            {
+                for (colCount=0; colCount<gameBoardDef->cols; colCount++)
+                {
+                    // look for next initial played piece
+                    uint8_t initialTile = Get(colCount, rowCount);
+                    if ((initialTile >= White1 && initialTile <= White7 &&
+                         (endgame->sourceTile == WHITE_PIECE || endgame->sourceTile == PLAYED_PIECE)) ||
+                        (initialTile >= Black1 && initialTile <= Black7 &&
+                         (endgame->sourceTile == BLACK_PIECE || endgame->sourceTile == PLAYED_PIECE)))
+                    {
+                        // ... and then through each tile for the endgame pattern
+                        patternsMatched = 0;
+                        csArray<Endgame_TileSpec*>::Iterator egTileIterator(endgame->endgameTiles.GetIterator());
+                        while (egTileIterator.HasNext())
+                        {
+                            Endgame_TileSpec* endgameTile = egTileIterator.Next();
+                            if (colCount+endgameTile->col > gameBoardDef->cols || rowCount+endgameTile->row > gameBoardDef->rows ||
+                                colCount+endgameTile->col < 0 || rowCount+endgameTile->row < 0)
+                                break;
+                            tileAtPos = Get(colCount+endgameTile->col, rowCount+endgameTile->row);
+                            if (tileAtPos == DisabledTile || endgame->sourceTile == FOLLOW_SOURCE_TILE)
+                                break;
+                            if (endgameTile->tile == PLAYED_PIECE && (tileAtPos < White1 || tileAtPos > Black7))
+                                break;
+                            if (endgameTile->tile == WHITE_PIECE && (tileAtPos < White1 || tileAtPos > White7))
+                                break;
+                            if (endgameTile->tile == BLACK_PIECE && (tileAtPos < Black1 || tileAtPos > Black7))
+                                break;
+                            if (endgameTile->tile == EMPTY_TILE && tileAtPos != EmptyTile)
+                                break;
+                            if (endgameTile->tile == FOLLOW_SOURCE_TILE && tileAtPos != initialTile)
+                                break;
+
+                            // if here, then the pattern has another match
+                            patternsMatched++;
+                        }
+
+                        // if all patterns matched, a winner
+                        if (endgame->endgameTiles.GetSize() == patternsMatched)
+                        {
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    return false;
 }
 

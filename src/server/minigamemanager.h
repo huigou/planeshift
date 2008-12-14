@@ -158,12 +158,14 @@ protected:
 
     /// The player with white game pieces.
     uint32_t whitePlayerID;
+    const char* whitePlayerName;
 
     /// Idle counter for the player with white pieces.
     int whiteIdleCounter;
 
     /// The player with black game pieces.
     uint32_t blackPlayerID;
+    const char* blackPlayerName;
 
     /// Idle counter for the player with black pieces.
     int blackIdleCounter;

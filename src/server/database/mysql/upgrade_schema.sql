@@ -1053,6 +1053,10 @@ UPDATE `server_options` SET `option_value`='1207' WHERE `option_name`='db_versio
 #### 1208 - Keith Fulton - New required item stats for new quest
 UPDATE `server_options` SET `option_value`='1208' WHERE `option_name`='db_version';
 
+#### 1209 - Dave Bentham - added endgames string to gameboards table
+ALTER TABLE `gameboards` ADD COLUMN `endgames` TEXT AFTER `gameRules`;
+UPDATE `server_options` SET `option_value`='1209' WHERE `option_name`='db_version';
+
 
 # Insert your upgrade before this line. Remember when you set a new db_version
 # to update the server_options.sql file and update psserver.cpp as well.

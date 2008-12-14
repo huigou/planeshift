@@ -69,6 +69,35 @@ enum Rule_MovePiecesTo
 };
 
 /**
+ * structs & types used to specify endgames of minigames, to recognise specific
+ * patterns of played pieces on a gameboard
+ */
+enum Endgame_TileType
+{
+    PLAYED_PIECE,
+    WHITE_PIECE,
+    BLACK_PIECE,
+    EMPTY_TILE,
+    FOLLOW_SOURCE_TILE
+};
+
+struct Endgame_TileSpec
+{
+    int col;
+    int row;
+    Endgame_TileType tile;
+};
+
+struct Endgame_Spec
+{
+    bool positionsAbsolute;       // true=x,y coords absolute, false=coords relative to source tile
+    Endgame_TileType sourceTile;
+    csArray<Endgame_TileSpec*> endgameTiles;
+};
+
+/*********************************************************************************/
+
+/**
  * Game board definition class.
  */
 class psMiniGameBoardDef
@@ -101,6 +130,12 @@ public:
     /// decipher simple game rules from XML
     bool DetermineGameRules(csString rulesXMLstr, csString name);
 
+    /// decipher endgame specs from XML
+    bool DetermineEndgameSpecs(csString endgameXMLstr, csString name);
+
+    /// clear endgame settings away
+    void ClearOutEndgames(void) { endgames.Empty(); };
+
 private:
     /// layout size
     int layoutSize;
@@ -130,6 +165,11 @@ private:
     Rule_MovePieceType movePieceTypeRule;
     Rule_MoveablePieces moveablePiecesRule;
     Rule_MovePiecesTo movePiecesToRule;
+
+    /// Endgame specifications
+    csArray<Endgame_Spec*> endgames;
+    bool EvaluateTileTypeStr(csString TileTypeStr, Endgame_TileType& tileType);
+
 };
 
 
@@ -176,6 +216,9 @@ public:
     Rule_MovePieceType GetMovePieceTypeRule(void) { return gameBoardDef->movePieceTypeRule; };
     Rule_MoveablePieces GetMoveablePiecesRule(void) { return gameBoardDef->moveablePiecesRule; };
     Rule_MovePiecesTo GetMovePiecesToRule (void) { return gameBoardDef->movePiecesToRule; };
+
+    /// determine if the current layout matches an endgame pattern. Returns true or false appropriately.
+    bool DetermineEndgame(void);
 
 protected:
 
