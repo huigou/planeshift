@@ -58,11 +58,12 @@ iMaterialWrapper* MaterialManager::LoadMaterial(const char *name, const char *fi
         // Check for shader maps.
         if(gfxFeatures & useAdvancedShaders)
         {
-            csString shadermap = filename;
-            filename = shadermap.Truncate(shadermap.Length()-4);
+            csString shadermapBase = filename;
+            shadermapBase.Truncate(shadermapBase.Length()-4);
 
             // Normal map
-            shadermap = csString(filename).Append("_n.dds");
+            csString shadermap = shadermapBase;
+            shadermap.Append("_n.dds");
             if(vfs->Exists(shadermap))
             {
                 iTextureWrapper* t = LoadTexture(shadermap, shadermap, "normalmap");
@@ -73,7 +74,8 @@ iMaterialWrapper* MaterialManager::LoadMaterial(const char *name, const char *fi
             }
 
             // Height map
-            shadermap = csString(filename).Append("_h.dds");
+            shadermap = shadermapBase;
+            shadermap.Append("_h.dds");
             if(vfs->Exists(shadermap))
             {
                 iTextureWrapper* t = LoadTexture(shadermap, shadermap);
@@ -84,7 +86,8 @@ iMaterialWrapper* MaterialManager::LoadMaterial(const char *name, const char *fi
             }
 
             // Spec map
-            shadermap = csString(filename).Append("_s.dds");
+            shadermap = shadermapBase;
+            shadermap.Append("_s.dds");
             if(vfs->Exists(shadermap))
             {
                 iTextureWrapper* t = LoadTexture(shadermap, shadermap);
@@ -95,7 +98,8 @@ iMaterialWrapper* MaterialManager::LoadMaterial(const char *name, const char *fi
             }
 
             // AO map
-            shadermap = csString(filename).Append("_ao.dds");
+            shadermap = shadermapBase;
+            shadermap.Append("_ao.dds");
             if(vfs->Exists(shadermap))
             {
                 iTextureWrapper* t = LoadTexture(shadermap, shadermap);
