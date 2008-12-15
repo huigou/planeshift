@@ -328,7 +328,7 @@ bool psMiniGameBoardDef::EvaluateTileTypeStr(csString TileTypeStr, Endgame_TileT
 {
     if (TileTypeStr.Length() == 1)
     {
-        switch (TileTypeStr[0])
+        switch (TileTypeStr.GetAt(0))
         {
             case 'A':
             case 'a': tileType = PLAYED_PIECE;        // tile has any played piece on
