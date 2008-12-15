@@ -1,3 +1,7 @@
+*** 2008-12-14 by Stefano Angeleri
+- Committed a patch for FS#1115 - After depleting a stack of arrows,
+  a shadow of the last arrow remains. by peeg
+
 *** 2008-12-14 by Dave Bentham
 - End-game rules for mini-games added: gameboards.endgames field in DB holds string 
   defining end-game rules in XML. gameboards.sql file has some notes on the format.
