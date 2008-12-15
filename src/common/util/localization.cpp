@@ -58,37 +58,39 @@ void psLocalization::SetLanguage(const csString & _lang)
     csRef<iDocumentNode> root, tblRoot, item;
     csRef<iDocumentNodeIterator> itemIter;
     psStringTableItem * itemData;
-    csString fileName;
-
+    
     assert(object_reg != NULL);
 
     ClearStringTable();
-    lang = _lang;
+    language = _lang;
 
-    fileName = "/this/lang/" + lang + "/stringtable.xml";
+    filename = "/this/lang/" + language + "/stringtable.xml";
 
     // If the file is not available at all, we will just silently quit because it is not required.
     // But any other errors will be reported.
-    if ( ! FileExists(fileName) )
+    if ( ! FileExists(filename) )
+    {
+        filename = "";
         return;
+    }
 
-    doc = ParseFile(object_reg, fileName);
+    doc = ParseFile(object_reg, filename);
     if (doc == NULL)
     {
-        Error2("Parsing of string table file %s failed", fileName.GetData());
+        Error2("Parsing of string table file %s failed", filename.GetData());
         return;
     }
     root = doc->GetRoot();
     if (root == NULL)    
     {
-        Error2("String table file %s has no root", fileName.GetData());
+        Error2("String table file %s has no root", filename.GetData());
         return;
     }
 
     tblRoot = root->GetNode("StringTable");
     if (tblRoot == NULL)
     {
-        Error2("String table file %s must have <StringTable> tag", fileName.GetData());
+        Error2("String table file %s must have <StringTable> tag", filename.GetData());
         return;
     }
 
@@ -98,9 +100,9 @@ void psLocalization::SetLanguage(const csString & _lang)
         item = itemIter->Next();
 
         itemData = new psStringTableItem;
-        itemData->orig   =  item->GetAttributeValue("orig");
-        itemData->trans  =  item->GetAttributeValue("trans");
-        stringTbl.Put(itemData->orig.GetData(), itemData);
+        itemData->original   =  item->GetAttributeValue("orig");
+        itemData->translated =  item->GetAttributeValue("trans");
+        stringTbl.Put(itemData->original.GetData(), itemData);
     }
 }
 
@@ -110,7 +112,7 @@ csString psLocalization::FindLocalizedFile(const csString & shortPath)
     csString fullPath;
     
     fullPath = "/this/lang/";
-    fullPath += lang;
+    fullPath += language;
     fullPath += "/";
     fullPath += shortPath;
     if (FileExists(fullPath))
@@ -122,17 +124,32 @@ csString psLocalization::FindLocalizedFile(const csString & shortPath)
     }
 }
 
-csString psLocalization::Translate(const csString & orig)
+const csString& psLocalization::Translate(const csString & orig)
 {
+    if (orig.IsEmpty() || filename.IsEmpty() )
+        return orig;
+
     psStringTableItem * item;
     psStringTableHash::Iterator iter = stringTbl.GetIterator(orig.GetData());
     
     while (iter.HasNext())
     {
         item = (psStringTableItem*)iter.Next();
-        if (item->orig == orig)
-            return item->trans;
+        if (item->original == orig && item->translated.Length() > 0)  // length 0 check is for "not found" ones added dynamically
+            return item->translated;
+        else if (item->translated.Length() == 0)
+            return orig;
     }
+    
+    // orig not found, so store it
+    printf("Added '%s' to stringtable.\n", orig.GetDataSafe() );
+
+    item = new psStringTableItem;
+    item->original    =  orig;
+    item->translated  =  "";
+    stringTbl.Put(item->original.GetData(), item);
+    dirty = true;
+
     return orig;
 }
 
@@ -141,12 +158,15 @@ bool psLocalization::FileExists(const csString & fileName)
     csRef<iVFS> vfs;
 
     vfs =  csQueryRegistry<iVFS > ( object_reg);
-    assert(vfs);
     return vfs->Exists(fileName);
 }
 
+
 void psLocalization::ClearStringTable()
 {
+    if (dirty)
+        WriteStringTable();
+
     psStringTableItem * item;
     psStringTableHash::GlobalIterator iter = stringTbl.GetIterator();
     
@@ -156,4 +176,38 @@ void psLocalization::ClearStringTable()
         delete item;
     }
     stringTbl.DeleteAll();
+    dirty = false;
+}
+
+void psLocalization::WriteStringTable()
+{
+    if (filename.IsEmpty())
+        return;
+     
+    csRef<iVFS> vfs;
+
+    vfs =  csQueryRegistry<iVFS > ( object_reg);
+    csRef<iFile> file = vfs->Open(filename,VFS_FILE_WRITE);
+
+    if (!file)
+    {
+        Error2("Could not write stringtable file '%s'.", filename.GetDataSafe() );
+        return;
+    }
+
+    psStringTableItem * item;
+    psStringTableHash::GlobalIterator iter = stringTbl.GetIterator();
+
+    file->Write("<StringTable>\n", strlen("<stringtable>\n") );
+
+    while (iter.HasNext())
+    {
+        item = (psStringTableItem*)iter.Next();
+        csString line;
+        line.Format("  <item orig=\"%s\" trans=\"%s\" />\n", item->original.GetDataSafe(), item->translated.GetDataSafe() );
+        file->Write(line, line.Length() );
+    }
+    
+    file->Write("</StringTable>",strlen("</stringtable>") );
+   
 }
