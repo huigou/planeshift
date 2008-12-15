@@ -582,7 +582,7 @@ bool psCharacterLoader::DeleteCharacterData(PID pid, csString& error )
     }
 
     // Online? Kick
-    Client* zombieClient = psserver->GetConnections()->Find( charName );
+    Client* zombieClient = psserver->GetConnections()->FindPlayer( pid );
     if ( zombieClient )
         psserver->RemovePlayer(zombieClient->GetClientNum(),"This character is being deleted");
 
