@@ -131,7 +131,7 @@ bool pawsCheckBox::Setup( iDocumentNode* node )
     ///////////////////////////////////////////////////////////////////////
     // Create the textbox that has the current selected choice
     ///////////////////////////////////////////////////////////////////////    
-    csString str(textNode->GetAttributeValue("string"));
+    csString str(PawsManager::GetSingleton().Translate(textNode->GetAttributeValue("string")));
     
     text = new pawsTextBox;
     AddChild( text );
