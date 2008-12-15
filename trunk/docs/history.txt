@@ -1,3 +1,9 @@
+﻿*** 2008-12-14 by Keith Fulton
+- Now if you are running in something other than English, the stringtable.xml
+  file will automatically add anything missing.  The file is written after you exit
+  the game.  Set Planeshift.GUI.Language in psclient.cfg to change.  The thing you 
+  set to must be a subdirectory of /lang/, like cesky or deutsch that are present now.
+
 *** 2008-12-14 by Stefano Angeleri
 - Committed a patch for FS#1115 - After depleting a stack of arrows,
   a shadow of the last arrow remains. by peeg
