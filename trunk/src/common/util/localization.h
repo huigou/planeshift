@@ -28,10 +28,11 @@
 
 struct iObjectRegistry;
 
-typedef struct
+struct psStringTableItem
 {
-    csString orig, trans;
-} psStringTableItem;
+    csString original;
+    csString translated;
+};
 
 typedef csHash<psStringTableItem*,csString> psStringTableHash;
 
@@ -58,12 +59,16 @@ public:
     csString FindLocalizedFile(const csString & shortPath);
     
     // Translates string 'orig' using stringtable of the current language.
-    csString Translate(const csString & orig);
+    const csString& Translate(const csString & orig);
+
 protected:
     bool FileExists(const csString & fileName);
     void ClearStringTable();
+    void WriteStringTable();
     
-    csString lang;
+    csString language;
+    csString filename;
+    bool dirty;
     psStringTableHash stringTbl;
     iObjectRegistry* object_reg;
 };
