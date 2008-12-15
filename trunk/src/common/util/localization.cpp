@@ -94,6 +94,7 @@ void psLocalization::SetLanguage(const csString & _lang)
         return;
     }
 
+    int i=0;
     itemIter = tblRoot->GetNodes("item");
     while (itemIter->HasNext())
     {
@@ -103,7 +104,9 @@ void psLocalization::SetLanguage(const csString & _lang)
         itemData->original   =  item->GetAttributeValue("orig");
         itemData->translated =  item->GetAttributeValue("trans");
         stringTbl.Put(itemData->original.GetData(), itemData);
+        i++;
     }
+    printf("-----------------------------------\nLoaded %d translation entries.\n-----------------------------------\n", i);
 }
 
 
@@ -200,8 +203,10 @@ void psLocalization::WriteStringTable()
 
     file->Write("<StringTable>\n", strlen("<stringtable>\n") );
 
+    int i=0;
     while (iter.HasNext())
     {
+        i++;
         item = (psStringTableItem*)iter.Next();
         csString line;
         line.Format("  <item orig=\"%s\" trans=\"%s\" />\n", item->original.GetDataSafe(), item->translated.GetDataSafe() );
@@ -209,5 +214,7 @@ void psLocalization::WriteStringTable()
     }
     
     file->Write("</StringTable>",strlen("</stringtable>") );
+   
+    printf("-----------------------------------\nSaved %d translation entries.\n-----------------------------------\n", i);
    
 }
