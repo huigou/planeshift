@@ -1,4 +1,5 @@
 <StringTable>
+  <item orig="750" trans="" />
   <item orig="System text color" trans="" />
   <item orig="Put an item up for sale or offer to buy something." trans="Metti un oggeto in vendita o offri di comprare qualcosa." />
   <item orig="Stats" trans="Stato" />
@@ -7,7 +8,6 @@
   <item orig="Desc" trans="" />
   <item orig="!!!WARNING!!!" trans="!!!ATTENZIONE!!!" />
   <item orig="Others' attacks (Successful ones)" trans="" />
-  <item orig="750" trans="" />
   <item orig="Own attacks that missed the target" trans="" />
   <item orig="Graphics" trans="Grafica" />
   <item orig="Loading GUI" trans="Caricamento GUI" />
@@ -20,9 +20,9 @@
   <item orig="Guild message of the day (A short message):" trans="Messaggio del giorno della gilda:" />
   <item orig="Modifiers" trans="" />
   <item orig="Actions sounds" trans="" />
+  <item orig="Randomize" trans="" />
   <item orig="Create alliance" trans="Crea alleanza" />
   <item orig="Third Person Lara" trans="" />
-  <item orig="Randomize" trans="" />
   <item orig="Disband" trans="" />
   <item orig="Edit" trans="" />
   <item orig="System" trans="Sistema" />
@@ -35,22 +35,22 @@
   <item orig="Active" trans="Attivo" />
   <item orig="Creatures:" trans="" />
   <item orig="View" trans="Vedi" />
+  <item orig="PATHS" trans="VIE" />
   <item orig="Shadows" trans="Ombre" />
   <item orig="Unclaim" trans="Deassegna" />
-  <item orig="PATHS" trans="VIE" />
   <item orig="Server:" trans="Server:" />
-  <item orig="Exit PlaneShift" trans="Esci da PlaneShift" />
   <item orig="Enable Shadows" trans="" />
+  <item orig="Exit PlaneShift" trans="Esci da PlaneShift" />
   <item orig="Escalation Level:" trans="" />
   <item orig="Notify when members login/logout" trans="" />
   <item orig="Talk to someone privately." trans="Parla a qualcuno privatamente." />
   <item orig="Magic Skills List:" trans="" />
+  <item orig="House:" trans="" />
   <item orig="Withdraw" trans="Preleva" />
   <item orig="%s from %s: %s" trans="%s da %s: %s" />
   <item orig="%s from %s: %s" trans="%s da %s: %s" />
   <item orig="Instant Cast" trans="" />
   <item orig="H:" trans="" />
-  <item orig="House:" trans="" />
   <item orig="Amount available to withdraw" trans="Quantitativo prelevabile" />
   <item orig="Adaptive distance" trans="" />
   <item orig="Ban" trans="Banna" />
@@ -66,8 +66,8 @@
   <item orig="Exchange coins" trans="Scambia monete" />
   <item orig="Log the system messages" trans="" />
   <item orig="Hostility" trans="Ostilita'" />
-  <item orig="Auction" trans="" />
   <item orig="Account User Name:" trans="Nome utente Account:" />
+  <item orig="Auction" trans="" />
   <item orig="You currently have no petitions." trans="Al momento non hai petizioni." />
   <item orig="Attributes" trans="" />
   <item orig="You will now ignore %s." trans="Da ora ignorerai %s." />
@@ -81,23 +81,23 @@
   <item orig="Main" trans="" />
   <item orig="Change" trans="Cambia" />
   <item orig="Descalate" trans="" />
+  <item orig="Mother Name:" trans="Nome Madre:" />
   <item orig="Privil." trans="" />
   <item orig="Skin Colour" trans="Colore Pelle" />
-  <item orig="Mother Name:" trans="Nome Madre:" />
   <item orig="Master:" trans="" />
   <item orig="Details" trans="Dettagli" />
   <item orig="Collision Detection" trans="Rilevamento collisioni" />
   <item orig="Max. FPS:" trans="" />
+  <item orig="Prev" trans="" />
   <item orig="Requesting connection" trans="Richiesta connessione" />
   <item orig="Prv notes" trans="" />
   <item orig="Reload Cache" trans="Ricarica Cache" />
   <item orig="Amount available to deposit" trans="Quantitativo depositabile" />
-  <item orig="Prev" trans="" />
   <item orig="Movements" trans="" />
   <item orig="Mesh:" trans="" />
   <item orig="Resolution" trans="Risoluzione" />
-  <item orig="Refresh MOTD" trans="Aggiorna MOTD" />
   <item orig="Gender:" trans="" />
+  <item orig="Refresh MOTD" trans="Aggiorna MOTD" />
   <item orig="Login" trans="" />
   <item orig="Z:" trans="" />
   <item orig="Spell Description:" trans="Descrizione magia:" />
@@ -117,17 +117,17 @@ Do you really wish to leave Yliakum?" trans="
 Vuoi veramente lasciare Yliakum?" />
   <item orig="Count" trans="Conto" />
   <item orig="Enter the command(s):" trans="Inserire i comandi:" />
-  <item orig="Chat" trans="" />
   <item orig="Month:" trans="Mese:" />
+  <item orig="Chat" trans="" />
   <item orig="Father Name:" trans="Nome Padre:" />
+  <item orig="Rank" trans="" />
   <item orig="Spawn item" trans="Crea oggetto" />
   <item orig="o&clock" trans="in punto" />
-  <item orig="Rank" trans="" />
   <item orig="Own combat stance changes" trans="" />
   <item orig="Experience" trans="Esperienza" />
+  <item orig="Upload!" trans="Carica!" />
   <item orig="Deposit" trans="Deposita" />
   <item orig="? Weight" trans="? Peso" />
-  <item orig="Upload!" trans="Carica!" />
   <item orig="No Target" trans="Nessuno obiettivo" />
   <item orig="Tria" trans="" />
   <item orig="Group text color" trans="" />
@@ -141,18 +141,19 @@ Vuoi veramente lasciare Yliakum?" />
   <item orig="Path" trans="" />
   <item orig="Kill Player" trans="Uccidi giocatore" />
   <item orig="%s says: %s" trans="%s dice: %s" />
-  <item orig="Own attacks that fail to penetrate the armor" trans="" />
-  <item orig="Magic" trans="Magia" />
   <item orig="Get Reward" trans="Ottieni ricompensa" />
+  <item orig="Magic" trans="Magia" />
+  <item orig="Own attacks that fail to penetrate the armor" trans="" />
   <item orig="Credits" trans="Crediti" />
   <item orig="details" trans="Dettagli" />
   <item orig="HP" trans="" />
   <item orig="%s shouts: %s" trans="%s urla: %s" />
   <item orig="No server running at the moment" trans="Non ci sono server attivi in questo momento" />
-  <item orig="Alliance:" trans="Alleanza:" />
-  <item orig="Glyphs" trans="Glyph" />
-  <item orig="Various Skill description:" trans="" />
+  <item orig="You have entered edit mode." trans="" />
   <item orig="CHARACTER CREATION" trans="CREAZIONE PERSONAGGIO" />
+  <item orig="Glyphs" trans="Glyph" />
+  <item orig="Alliance:" trans="Alleanza:" />
+  <item orig="Various Skill description:" trans="" />
   <item orig="Edit level" trans="Cambia livello" />
   <item orig="Leave" trans="Abbandona" />
   <item orig="Capacity:" trans="Capacità" />
@@ -169,16 +170,16 @@ Vuoi veramente lasciare Yliakum?" />
   <item orig="%s %s" trans="%s %s" />
   <item orig="Trias" trans="Tria" />
   <item orig="General" trans="Generale" />
+  <item orig="Life" trans="Vita" />
   <item orig="Password:" trans="" />
   <item orig="Currently, there are no petitions." trans="Al momento non ci sono petizioni." />
   <item orig="Set" trans="" />
-  <item orig="Life" trans="Vita" />
   <item orig="Actions Volume" trans="Volume Azioni" />
   <item orig="Quest Testing" trans="Quest test" />
+  <item orig="Year:" trans="Anno:" />
   <item orig="Save" trans="Salva" />
   <item orig="Promote" trans="" />
   <item orig="Combat Skills" trans="" />
-  <item orig="Year:" trans="Anno:" />
   <item orig="Polygon:" trans="" />
   <item orig="Talk to everyone in your guild privately." trans="Parla a chiunque nella tua gilda privatamente." />
   <item orig="Others' attacks that are dodged" trans="" />
@@ -199,11 +200,11 @@ Vuoi veramente lasciare Yliakum?" />
   <item orig="You have ignored no-one." trans="Non hai ignorato nessuno." />
   <item orig="NPC text color" trans="" />
   <item orig="%s tells group: %s" trans="%s dice al gruppo: %s" />
+  <item orig="Quick" trans="" />
   <item orig="Public notes" trans="Note publiche" />
   <item orig="Confirmation" trans="Conferma" />
   <item orig="Master Volume" trans="" />
   <item orig="Withdraw and Deposit" trans="Preleva e Deposita" />
-  <item orig="Quick" trans="" />
   <item orig="Labels" trans="" />
   <item orig="Upload" trans="" />
   <item orig="Exchange" trans="Scambia" />
@@ -233,8 +234,8 @@ Vuoi veramente lasciare Yliakum?" />
   <item orig="Ambiguous command: " trans="Comando Ambiguo: " />
   <item orig="The selected petition was %s" trans="La petizione selezionata era %s" />
   <item orig="Loading game" trans="Caricamento Gioco" />
-  <item orig="Invite" trans="Invita" />
   <item orig="Use Collision Detection" trans="" />
+  <item orig="Invite" trans="Invita" />
   <item orig="Sector:" trans="Settore:" />
   <item orig="Mix yourtext color" trans="" />
   <item orig="Permissions" trans="Permessi" />
@@ -244,9 +245,9 @@ Vuoi veramente lasciare Yliakum?" />
   <item orig="Money" trans="Soldi" />
   <item orig="Guild" trans="Gilda" />
   <item orig="0 Trias" trans="0 Tria" />
+  <item orig="Parents" trans="Genitori" />
   <item orig="Jobs" trans="Lavori" />
   <item orig="Chat - Bubbles" trans="" />
-  <item orig="Parents" trans="Genitori" />
   <item orig="Welcome to PlaneShift!" trans="Benvenuto su Planeshift" />
   <item orig="Delete" trans="Cancella" />
   <item orig="Entities" trans="Entità" />
@@ -423,7 +424,7 @@ Vuoi veramente lasciare Yliakum?" />
   <item orig="Unknown Chat Type: %d" trans="Tipo di Chat sconosciuto: %d" />
   <item orig="/ 100" trans="" />
   <item orig="Free Rotation" trans="" />
-  <item orig="Actual FPS may vary." trans="Gli FPS attuali potrebbero variare" />
+  <item orig="Actual FPS may vary." trans="Gli FPS effettivi potrebbero variare" />
   <item orig="You must select a petition from the list in order to view it." trans="" />
   <item orig="Spells" trans="" />
   <item orig="Shortcuts" trans="" />
