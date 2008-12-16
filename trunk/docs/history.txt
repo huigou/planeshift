@@ -1,6 +1,7 @@
 ﻿*** 2008-12-15 by Stefano Angeleri
 - Fixed FS#2608 - Deleting a char which has the same name of another makes all getting kicked
   by using the pid to search for the client in place of the char name
+- Added italian translation and translated it a bit
 
 *** 2008-12-14 by Keith Fulton
 - Now if you are running in something other than English, the stringtable.xml
