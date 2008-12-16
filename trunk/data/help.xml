@@ -651,9 +651,9 @@ GM have an enhaced version of /pickup which supports also eid and area arguments
         <topic name="/pos">/pos target
 
 GMs have an enhanced version of the /pos command which shows your current region and the direction you are facing.  It also has an optional parameter to get the position of another entity.  (may specify by name or an ID)</topic>
-        <topic name="/quest">/quest [me/target/eid/pid/area/name] [list|discard|complete]
+        <topic name="/quest">/quest [me/target/eid/pid/area/name] [list|discard|complete|assign]
 
-Manage completion of quests for the targeted player, or your own if you aren't targeting anyone.  Use /quest [target] to list quest completion status, and /quest target discard|complete (quest name) to change it.</topic>
+Manage completion of quests for the targeted player, or your own if you aren't targeting anyone.  Use /quest [target] to list quest completion status, and /quest target assign|discard|complete (quest name) to change it.</topic>
         <topic name="/rain"> /rain sector [drops [length [fade]]|stop]
 
 It creates rain effect in a specific sector, with a specific number of drops, the length of the effect (in milliseconds) and its fading
@@ -801,3 +801,9 @@ Default controls.  You may alter your settings to your liking via the options wi
         <topic name="1 - 0">Shortcuts one through to ten in the Shortcuts Window.</topic>
     </branch>
 </help>
+
+<!-- These commands are missing a topic (updated r2512):
+     fish
+     study
+     tellnpcinternal
+     write -->
