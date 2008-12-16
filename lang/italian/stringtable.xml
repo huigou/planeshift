@@ -60,6 +60,7 @@
   <item orig="Points" trans="Punti" />
   <item orig="Coins to exchange:" trans="Monete da cambiare:" />
   <item orig="PvP" trans="" />
+  <item orig="Are you sure you want to discard the selected quest?" trans="" />
   <item orig="landscape" trans="landscape" />
   <item orig="Type:" trans="Tipo:" />
   <item orig="Time: " trans="Ora: " />
@@ -147,9 +148,9 @@ Vuoi veramente lasciare Yliakum?" />
   <item orig="Credits" trans="Crediti" />
   <item orig="details" trans="Dettagli" />
   <item orig="HP" trans="" />
+  <item orig="You have entered edit mode." trans="" />
   <item orig="%s shouts: %s" trans="%s urla: %s" />
   <item orig="No server running at the moment" trans="Non ci sono server attivi in questo momento" />
-  <item orig="You have entered edit mode." trans="" />
   <item orig="CHARACTER CREATION" trans="CREAZIONE PERSONAGGIO" />
   <item orig="Glyphs" trans="Glyph" />
   <item orig="Alliance:" trans="Alleanza:" />
@@ -393,7 +394,7 @@ Vuoi veramente lasciare Yliakum?" />
   <item orig="Distance:" trans="" />
   <item orig="Echo screen text" trans="" />
   <item orig="Loading world" trans="Caricamento mondo" />
-  <item orig="New User? Register at http://laanx.fragnetics.com/register" trans="Nuovo utente? Vai su :http://laanx.fragnetics.com/register" />
+  <item orig="New User? Register at http://laanx.fragnetics.com/register" trans="Nuovo utente? Vai su: http://laanx.fragnetics.com/register" />
   <item orig="Quests" trans="" />
   <item orig="Please wait for verification from server" trans="" />
   <item orig="o'clock" trans="in punto" />
@@ -440,6 +441,7 @@ Vuoi veramente lasciare Yliakum?" />
   <item orig="Various" trans="Varie" />
   <item orig="Combat Skill description:" trans="" />
   <item orig="Ambient sounds" trans="Suoni ambientali" />
+  <item orig="Please re-login" trans="" />
   <item orig="Greetings" trans="Saluti" />
   <item orig="Select a reward:" trans="Seleziona una ricompensa:" />
   <item orig="Ambient Volume" trans="Volume Ambiente" />

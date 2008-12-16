@@ -7610,6 +7610,27 @@ void AdminManager::HandleCompleteQuest(MsgEntry* me,psAdminCmdMessage& msg, Admi
             }
         }
     }
+    else if(data.subCmd == "assign") //this command will assign the quest to the player
+    {
+        psQuest *quest = CacheManager::GetSingleton().GetQuestByName(data.text); //searches for the required quest
+        if (!quest) //if not found send an error
+        {
+            psserver->SendSystemError(me->clientnum, "Quest not found for %s", name.GetData());
+            return;
+        }
+
+        if(isOnline) //check if the player is online
+        {
+            if (target->GetActor()->GetCharacterData()->AssignQuest(quest, 0)) //assign the quest to him
+            {
+                psserver->SendSystemInfo(me->clientnum, "Quest %s assigned to %s!", data.text.GetData(), name.GetData());
+            }
+        }
+        else //TODO: add offline support?
+        {
+            psserver->SendSystemError(me->clientnum,"Unable to assign quests: player %s is offline!", name.GetData());
+        }
+    }
     else // assume "list" (even if it isn't)
     {
         if (target != client && !listOthers)//the first part will evaluate as true if offline which is fine for us
