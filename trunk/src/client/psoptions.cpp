@@ -23,12 +23,9 @@
 
 #include "psoptions.h"
 
-const char * psOptions::BuildKey(char * result, const char * className, const char * optionName) const
+void psOptions::BuildKey(csString & result, const char * className, const char * optionName) const
 {
-    strcpy(result, className);
-    strcat(result, ".");
-    strcat(result, optionName);
-    return result;
+    result.Format("%s.%s", className, optionName);
 }
 
 void psOptions::EnsureSubscription(const char * name)
@@ -116,35 +113,39 @@ void psOptions::RegisterOptionsClass(const char * className, iOptionsClass * opt
 
 void psOptions::SetOption(const char * className, const char * name, const char * value)
 {
-    char key[64];
-    configFile->SetStr(BuildKey(key, className, name), value);
+    csString key;
+    BuildKey(key, className, name);
+    configFile->SetStr(key, value);
     PawsManager::GetSingleton().Publish(key, value);
 }
 
 void psOptions::SetOption(const char * className, const char * name, float value)
 {
-    char key[64];
-    configFile->SetFloat(BuildKey(key, className, name), value);
+    csString key;
+    BuildKey(key, className, name);
+    configFile->SetFloat(key, value);
     PawsManager::GetSingleton().Publish(key, value);
 }
 
 void psOptions::SetOption(const char * className, const char * name, int value)
 {
-    char key[64];
-    configFile->SetInt(BuildKey(key, className, name), value);
+    csString key;
+    BuildKey(key, className, name);
+    configFile->SetInt(key, value);
     PawsManager::GetSingleton().Publish(key, value);
 }
 
 void psOptions::SetOption(const char * className, const char * name, bool value)
 {
-    char key[64];
-    configFile->SetBool(BuildKey(key, className, name), value);
+    csString key;
+    BuildKey(key, className, name);
+    configFile->SetBool(key, value);
     PawsManager::GetSingleton().Publish(key, value);
 }
 
 const char * psOptions::GetOption(const char * className, const char * name, const char * defaultValue)
 {
-    char key[64];
+    csString key;
     BuildKey(key, className, name);
     EnsureSubscription(key);
 
@@ -157,7 +158,7 @@ const char * psOptions::GetOption(const char * className, const char * name, con
 
 float psOptions::GetOption(const char * className, const char * name, float defaultValue)
 {
-    char key[64];
+    csString key;
     BuildKey(key, className, name);
     EnsureSubscription(key);
 
@@ -170,7 +171,7 @@ float psOptions::GetOption(const char * className, const char * name, float defa
 
 int psOptions::GetOption(const char * className, const char * name, int defaultValue)
 {
-    char key[64];
+    csString key;
     BuildKey(key, className, name);
     EnsureSubscription(key);
 
@@ -183,7 +184,7 @@ int psOptions::GetOption(const char * className, const char * name, int defaultV
 
 bool psOptions::GetOption(const char * className, const char * name, bool defaultValue)
 {
-    char key[64];
+    csString key;
     BuildKey(key, className, name);
     EnsureSubscription(key);
 

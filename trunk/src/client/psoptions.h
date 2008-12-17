@@ -56,7 +56,7 @@ private:
     csHash<csString, csString> subscriptions;
     csString filename;
 
-    const char * BuildKey(char * result, const char * className, const char * optionName) const;
+    void BuildKey(csString & result, const char * className, const char * optionName) const;
     void EnsureSubscription(const char * name);
 
 public:
