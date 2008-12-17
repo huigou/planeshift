@@ -112,6 +112,9 @@ The "noguard" flag will allow you to drop unguarded items</topic>
         <topic name="/equip">/equip quantity item_name
 
 Equips the specified quantity of a certain item.  This is equivalent to equipping items in your Inventory Window.</topic>
+        <topic name="/fish">/fish
+
+See /dig.</topic>
         <topic name="/give">/give 
 
 Give items to current Target NPC.</topic>
@@ -803,7 +806,6 @@ Default controls.  You may alter your settings to your liking via the options wi
 </help>
 
 <!-- These commands are missing a topic (updated r2512):
-     fish
      study
      tellnpcinternal
      write -->
