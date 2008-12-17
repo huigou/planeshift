@@ -14,6 +14,7 @@
         <material name="shadow">
             <texture>shadow</texture>
 	      <shader type="base">lighting_fullbright</shader>
+            <shader type="depthwrite">*null</shader>
         </material>
     </materials>
     <addon plugin="PSEffects">
