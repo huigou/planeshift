@@ -1,4 +1,8 @@
-﻿*** 2008-12-15 by Stefano Angeleri
+﻿*** 2008-12-18 by Stefano Angeleri
+- Changed ReadableRaceGender() to use csstring fixing the data being
+  sent to clients. Now when doing groups you will see the icon of the race again.
+
+*** 2008-12-15 by Stefano Angeleri
 - Fixed FS#2608 - Deleting a char which has the same name of another makes all getting kicked
   by using the pid to search for the client in place of the char name
 - Added italian translation and translated it a bit
