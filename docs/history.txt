@@ -1,4 +1,7 @@
-﻿*** 2008-12-18 by Stefano Angeleri
+﻿*** 2008-12-18 by Dave Bentham
+- Coding guidelines improvements to minigames files.
+
+*** 2008-12-18 by Stefano Angeleri
 - Changed ReadableRaceGender() to use csstring fixing the data being
   sent to clients. Now when doing groups you will see the icon of the race again.
 

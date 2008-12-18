@@ -77,7 +77,7 @@ enum Endgame_TileType
     PLAYED_PIECE,
     WHITE_PIECE,
     BLACK_PIECE,
-    EMPTY_TILE,
+    NO_PIECE,
     FOLLOW_SOURCE_TILE
 };
 
@@ -97,8 +97,10 @@ struct Endgame_Spec
 
 /*********************************************************************************/
 
-/**
- * Game board definition class.
+/** Game board definition class.
+ *
+ * Class for defining a mini-game, including board dimensions & layout
+ * and game rules.
  */
 class psMiniGameBoardDef
 {
@@ -155,6 +157,7 @@ private:
     /// The package list of available game pieces.
     uint8_t *pieces;
 
+    /// Number of players required for game.
     uint8_t numPlayers;
 
     /// gameboard options flags
@@ -173,8 +176,10 @@ private:
 };
 
 
-/**
- * Wrapper class for the game board layout buffer.
+/** Wrapper class for game board.
+ * 
+ * Wrapper class for a mini-game in play, and exists singly with a
+ * unique mini-game session.
  */
 class psMiniGameBoard
 {

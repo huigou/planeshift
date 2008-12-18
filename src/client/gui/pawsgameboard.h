@@ -26,7 +26,8 @@
 
 class pawsGameBoard;
 
-/**
+/** Game tile class.
+ *
  * Defines one game tile with or without game pieces on it.
  */
 class pawsGameTile : public pawsWidget
@@ -93,9 +94,10 @@ class pawsGameTile : public pawsWidget
 
 };
 
-
-/**
- * The game window class.
+/** The game window class.
+ *
+ * Minigame PAWS class handles the gameboard on the client:
+ * moves from players and updates from the server.
  */
 class pawsGameBoard : public pawsWidget, public psClientNetSubscriber
 {
@@ -159,7 +161,7 @@ class pawsGameBoard : public pawsWidget, public psClientNetSubscriber
             if (whitePieces.GetSize() > 0)
                 return whitePieces.Get(idx);
             else
-                return psMiniGame::White1;
+                return psMiniGame::WHITE_1;
         }
 
         /// List of available black pieces.
@@ -168,7 +170,7 @@ class pawsGameBoard : public pawsWidget, public psClientNetSubscriber
             if (blackPieces.GetSize() > 0)
                 return blackPieces.Get(idx);
             else
-                return psMiniGame::Black1;
+                return psMiniGame::BLACK_1;
         }
 
         /// Number of available white pieces

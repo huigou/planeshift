@@ -340,7 +340,7 @@ bool psMiniGameBoardDef::EvaluateTileTypeStr(csString TileTypeStr, Endgame_TileT
             case 'b': tileType = BLACK_PIECE;         // tile has black piece
                 break;
             case 'E':
-            case 'e': tileType = EMPTY_TILE;          // empty tile
+            case 'e': tileType = NO_PIECE;            // empty tile
                 break;
             case 'F':
             case 'f': tileType = FOLLOW_SOURCE_TILE;  // tile has piece as per first tile in pattern
@@ -387,7 +387,7 @@ void psMiniGameBoard::Setup(psMiniGameBoardDef *newGameDef, uint8_t *preparedLay
 uint8_t psMiniGameBoard::Get(uint8_t col, uint8_t row) const
 {
     if (col >= gameBoardDef->cols || row >= gameBoardDef->rows || !layout)
-        return DisabledTile;
+        return DISABLED_TILE;
 
     int idx = row*gameBoardDef->cols + col;
     uint8_t v = layout[idx/2];
@@ -406,12 +406,12 @@ void psMiniGameBoard::Set(uint8_t col, uint8_t row, uint8_t state)
     uint8_t v = layout[idx/2];
     if (idx % 2)
     {
-        if ((v & 0x0F) != DisabledTile)
+        if ((v & 0x0F) != DISABLED_TILE)
             layout[idx/2] = (v & 0xF0) + (state & 0x0F);
     }
     else
     {
-        if ((v & 0xF0) >> 4 != DisabledTile)
+        if ((v & 0xF0) >> 4 != DISABLED_TILE)
             layout[idx/2] = (v & 0x0F) + ((state & 0x0F) << 4);
     }
 }
@@ -443,15 +443,15 @@ bool psMiniGameBoard::DetermineEndgame(void)
 
                 tileAtPos = Get(endgameTile->col, endgameTile->row);
 
-                if (tileAtPos == DisabledTile || endgame->sourceTile == FOLLOW_SOURCE_TILE)
+                if (tileAtPos == DISABLED_TILE || endgame->sourceTile == FOLLOW_SOURCE_TILE)
                     break;
-                if (endgameTile->tile == PLAYED_PIECE && tileAtPos == EmptyTile)
+                if (endgameTile->tile == PLAYED_PIECE && tileAtPos == EMPTY_TILE)
                     break;
-                if (endgameTile->tile == EMPTY_TILE && tileAtPos != EmptyTile)
+                if (endgameTile->tile == NO_PIECE && tileAtPos != EMPTY_TILE)
                     break;
-                if (endgameTile->tile == WHITE_PIECE && (tileAtPos < White1 || tileAtPos > White7))
+                if (endgameTile->tile == WHITE_PIECE && (tileAtPos < WHITE_1 || tileAtPos > WHITE_7))
                     break;
-                if (endgameTile->tile == BLACK_PIECE && (tileAtPos < Black1 || tileAtPos > Black7))
+                if (endgameTile->tile == BLACK_PIECE && (tileAtPos < BLACK_1 || tileAtPos > BLACK_7))
                     break;
                 if (endgameTile->tile == FOLLOW_SOURCE_TILE)
                     break;
@@ -476,9 +476,9 @@ bool psMiniGameBoard::DetermineEndgame(void)
                 {
                     // look for next initial played piece
                     uint8_t initialTile = Get(colCount, rowCount);
-                    if ((initialTile >= White1 && initialTile <= White7 &&
+                    if ((initialTile >= WHITE_1 && initialTile <= WHITE_7 &&
                          (endgame->sourceTile == WHITE_PIECE || endgame->sourceTile == PLAYED_PIECE)) ||
-                        (initialTile >= Black1 && initialTile <= Black7 &&
+                        (initialTile >= BLACK_1 && initialTile <= BLACK_7 &&
                          (endgame->sourceTile == BLACK_PIECE || endgame->sourceTile == PLAYED_PIECE)))
                     {
                         // ... and then through each tile for the endgame pattern
@@ -491,15 +491,15 @@ bool psMiniGameBoard::DetermineEndgame(void)
                                 colCount+endgameTile->col < 0 || rowCount+endgameTile->row < 0)
                                 break;
                             tileAtPos = Get(colCount+endgameTile->col, rowCount+endgameTile->row);
-                            if (tileAtPos == DisabledTile || endgame->sourceTile == FOLLOW_SOURCE_TILE)
+                            if (tileAtPos == DISABLED_TILE || endgame->sourceTile == FOLLOW_SOURCE_TILE)
                                 break;
-                            if (endgameTile->tile == PLAYED_PIECE && (tileAtPos < White1 || tileAtPos > Black7))
+                            if (endgameTile->tile == PLAYED_PIECE && (tileAtPos < WHITE_1 || tileAtPos > BLACK_7))
                                 break;
-                            if (endgameTile->tile == WHITE_PIECE && (tileAtPos < White1 || tileAtPos > White7))
+                            if (endgameTile->tile == WHITE_PIECE && (tileAtPos < WHITE_1 || tileAtPos > WHITE_7))
                                 break;
-                            if (endgameTile->tile == BLACK_PIECE && (tileAtPos < Black1 || tileAtPos > Black7))
+                            if (endgameTile->tile == BLACK_PIECE && (tileAtPos < BLACK_1 || tileAtPos > BLACK_7))
                                 break;
-                            if (endgameTile->tile == EMPTY_TILE && tileAtPos != EmptyTile)
+                            if (endgameTile->tile == NO_PIECE && tileAtPos != EMPTY_TILE)
                                 break;
                             if (endgameTile->tile == FOLLOW_SOURCE_TILE && tileAtPos != initialTile)
                                 break;
