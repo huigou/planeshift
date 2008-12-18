@@ -3235,15 +3235,14 @@ void gemActor::ActionCommand(bool actionMy, bool actionNarrate, const char *actT
     else if (actionNarrate)
         chtype = CHAT_NPC_NARRATE;
 
-    // first response gets 2 seconds delay to simulate NPC thinking
+    // first response gets 1 second delay to simulate NPC thinking
     // subsequent ones add to the current time delay, and send delayed
     if (timeDelay==0)
-        timeDelay = (csTicks)(2000);
-    else
-        timeDelay += (csTicks)(1000 + 30*strlen(actText));
+        timeDelay = (csTicks)(1000);
     psChatMessage msg(destClientID,GetName(),0,actText,chtype,false);
-
     psserver->GetEventManager()->SendMessageDelayed(msg.msg,timeDelay);
+
+    timeDelay += (csTicks)(1000 + 30*strlen(actText));
 }
 
 float gemActor::FallEnded(const csVector3& pos, iSector* sector)
@@ -3766,13 +3765,12 @@ void gemNPC::Say(const char *strsay,Client *who, bool saypublic,csTicks& timeDel
             // Some NPC responses are now in the form of private tells.
             psChatMessage newMsg(who->GetClientNum(), GetName(), 0, strsay, CHAT_NPC, false);
 
-            // first response gets 2 seconds delay to simulate NPC thinking
+            // first response gets 1 second delay to simulate NPC thinking
             // subsequent ones add to the current time delay, and send delayed
             if (timeDelay==0)
-                timeDelay = (csTicks)(2000);
-            else
-                timeDelay += (csTicks)(1000 + 30*strlen(strsay));
+                timeDelay = (csTicks)(1000);
             psserver->GetEventManager()->SendMessageDelayed(newMsg.msg,timeDelay);
+            timeDelay += (csTicks)(2000 + 50*strlen(strsay));
         }
         else
         {
