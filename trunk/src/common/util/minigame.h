@@ -35,38 +35,38 @@ namespace psMiniGame
     /// Minigame options
     enum GameOptions
     {
-        ManagedGame         = 0x01, ///< A game managed by the server.
-        BlackPieces         = 0x02, ///< Player with black pieces.
-        ReadOnly            = 0x04, ///< The game is read-only (for watchers).
-        PersonalGame        = 0x08, ///< The game is personal & private
-        BlackSquare         = 0x10, ///< Top left/all squares Black. Else white.
-        PlainSquares        = 0x20, ///< Board squares all plain. Else checked.
-        DisallowedMove      = 0x40, ///< Last move disallowed
-        ObserveEndGame      = 0x80  ///< observe endgame play
+        MANAGED_GAME         = 0x01, ///< A game managed by the server.
+        BLACK_PIECES         = 0x02, ///< Player with black pieces.
+        READ_ONLY            = 0x04, ///< The game is read-only (for watchers).
+        PERSONAL_GAME        = 0x08, ///< The game is personal & private
+        BLACK_SQUARE         = 0x10, ///< Top left/all squares Black. Else white.
+        PLAIN_SQUARES        = 0x20, ///< Board squares all plain. Else checked.
+        DISALLOWED_MOVE      = 0x40, ///< Last move disallowed
+        OBSERVE_ENDGAME      = 0x80  ///< observe endgame play
     };
 
     /// Minigame tile state values
     enum TileStates
     {
-        EmptyTile          = 0,     ///< An empty game tile.
+        EMPTY_TILE         = 0,     ///< An empty game tile.
 
-        White1             = 1,     ///< White regular game piece
-        White2,
-        White3,
-        White4,
-        White5,
-        White6,
-        White7,
+        WHITE_1            = 1,     ///< White regular game piece
+        WHITE_2,
+        WHITE_3,
+        WHITE_4,
+        WHITE_5,
+        WHITE_6,
+        WHITE_7,
 
-        Black1              = 8,    ///< Black regular game piece.
-        Black2,
-        Black3,
-        Black4,
-        Black5,
-        Black6,
-        Black7,
+        BLACK_1            = 8,    ///< Black regular game piece.
+        BLACK_2,
+        BLACK_3,
+        BLACK_4,
+        BLACK_5,
+        BLACK_6,
+        BLACK_7,
 
-        DisabledTile        = 15    ///< Disable game tile.
+        DISABLED_TILE      = 15    ///< Disable game tile.
     };
 
 };

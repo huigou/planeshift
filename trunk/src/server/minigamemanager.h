@@ -42,8 +42,7 @@ class MiniGameManager;
 class gemActionLocation;
 class gemObject;
 
-/**
- * Implements one minigame session.
+/** Implements one minigame session.
  *
  * Game sessions are bound to a game board (action location) and identified
  * by a unique name. The name of the game board is defined in the action_locations table (name field).
@@ -53,7 +52,7 @@ class gemObject;
  * and an optional prepared layout & is expected to have the
  * following format:
  * <Examine>
- *  <GameBoard Name='gameboard name' [Layout='board layout'] [Session=personal|public] />
+ *  <GameBoard Name='gameboard name' [Layout='board layout'] [Session='personal'|'public'] [EndGame='yes'|'no'] />
  *  <Description>Description as seen by players</Description>
  * </Examine>
  *
@@ -65,6 +64,9 @@ class gemObject;
  * minigame at one action_location can spawn a session per player who plays their own
  * private game. Set to public is for the traditional board game, and is the default if
  * this option is omitted.
+ *
+ * The EndGame attribute specifies whether this game session is to adhere to the end-game rules.
+ * Optional. Default is No.
  *
  * In the future we will add more attributes like for game options and name of a plugin or
  * script for managed games.
@@ -133,10 +135,13 @@ public:
     /// Checks if game is actually active at all
     bool GameSessionActive(void);
 
+    /// Sets session to be reset (i.e. deleted and restarted next play)
     void SetSessionReset(void) { toReset = true; }
 
+    /// Gets reset status of session
     bool GetSessionReset(void) { return toReset; }
 
+    /// returns whether this is a public session or not.
     bool IsSessionPublic(void);
 
 protected:
@@ -196,8 +201,10 @@ private:
 };
 
 
-/**
- * This manager handles minigame sessions.
+/** Handles minigame sessions.
+ *
+ * This is the manager class of mini-games, handling overall mini-game definitions,
+ * action-location gameboards and game sessions.
  */
 class MiniGameManager : public MessageManager
 {
@@ -208,8 +215,10 @@ public:
 
     ~MiniGameManager();
 
+    /// Handles message from client.
     virtual void HandleMessage(MsgEntry *me, Client *client);
     
+    /// returns session by its id.
     psMiniGameSession *GetSessionByID(uint32_t id);
 
     /// Idle function to check for idle players and players too far away.
@@ -226,16 +235,22 @@ public:
 
 protected:
 
+    /// client requests start of game session.
     void HandleStartGameRequest(Client *client);
 
+    /// client handles stopping of game session.
     void HandleStopGameRequest(Client *client);
 
+    /// a client is removed from a game session.
     void RemovePlayerFromSessions(psMiniGameSession *session, Client *client, uint32_t clientID);
 
+    /// handles a client that has made a move.
     void HandleGameUpdate(Client *client, psMGUpdateMessage &msg);
 
+    /// requests a session to be reset.
     void ResetGameSession(psMiniGameSession *sessionToReset);
 
+    /// function parses game options string from gameboards DB table.
     int16_t ParseGameboardOptions(psString optionsStr);
 
     /// Game sessions.

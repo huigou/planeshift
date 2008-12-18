@@ -47,20 +47,20 @@ pawsGameBoard::pawsGameBoard()
     rows = 0;
 
     // Setup the piece ID to art file conversion table
-    pieceArt.Put(White1, "Minigame Piece White 1");
-    pieceArt.Put(White2, "Minigame Piece White 2");
-    pieceArt.Put(White3, "Minigame Piece White 3");
-    pieceArt.Put(White4, "Minigame Piece White 4");
-    pieceArt.Put(White5, "Minigame Piece White 5");
-    pieceArt.Put(White6, "Minigame Piece White 6");
-    pieceArt.Put(White7, "Minigame Piece White 7");
-    pieceArt.Put(Black1, "Minigame Piece Black 1");
-    pieceArt.Put(Black2, "Minigame Piece Black 2");
-    pieceArt.Put(Black3, "Minigame Piece Black 3");
-    pieceArt.Put(Black4, "Minigame Piece Black 4");
-    pieceArt.Put(Black5, "Minigame Piece Black 5");
-    pieceArt.Put(Black6, "Minigame Piece Black 6");
-    pieceArt.Put(Black7, "Minigame Piece Black 7");
+    pieceArt.Put(WHITE_1, "Minigame Piece White 1");
+    pieceArt.Put(WHITE_2, "Minigame Piece White 2");
+    pieceArt.Put(WHITE_3, "Minigame Piece White 3");
+    pieceArt.Put(WHITE_4, "Minigame Piece White 4");
+    pieceArt.Put(WHITE_5, "Minigame Piece White 5");
+    pieceArt.Put(WHITE_6, "Minigame Piece White 6");
+    pieceArt.Put(WHITE_7, "Minigame Piece White 7");
+    pieceArt.Put(BLACK_1, "Minigame Piece Black 1");
+    pieceArt.Put(BLACK_2, "Minigame Piece Black 2");
+    pieceArt.Put(BLACK_3, "Minigame Piece Black 3");
+    pieceArt.Put(BLACK_4, "Minigame Piece Black 4");
+    pieceArt.Put(BLACK_5, "Minigame Piece Black 5");
+    pieceArt.Put(BLACK_6, "Minigame Piece Black 6");
+    pieceArt.Put(BLACK_7, "Minigame Piece Black 7");
 }
 
 pawsGameBoard::~pawsGameBoard()
@@ -116,7 +116,7 @@ void pawsGameBoard::HandleMessage(MsgEntry *message)
 
         // if this update is resetting a disallowed move, need to resync
         // with server & other clients, so undo the counter by 1.
-        if (msg.msgOptions & DisallowedMove)
+        if (msg.msgOptions & DISALLOWED_MOVE)
             currentCounter--;
 
         // Update or setup the game board
@@ -243,20 +243,20 @@ void pawsGameBoard::SetupBoard(psMGBoardMessage &msg)
     gameOptions = msg.msgOptions;
 
     // Start from the bottom-right corner if we play with black pieces
-    if (gameOptions & BlackPieces)
+    if (gameOptions & BLACK_PIECES)
     {
         x += w*cols;
         y += h*rows;
     }
 
     // Start with a white (or black) tile
-    bool white = !(gameOptions & BlackSquare);
+    bool white = !(gameOptions & BLACK_SQUARE);
 
     for (int8_t i = 0; i < rows; i++)
     {
         for (int8_t j = 0; j < cols; j++)
         {
-            uint8_t state = EmptyTile;
+            uint8_t state = EMPTY_TILE;
 
             // Check the layout
             if (msg.msgLayout)
@@ -269,7 +269,7 @@ void pawsGameBoard::SetupBoard(psMGBoardMessage &msg)
                     state = (v & 0xF0) >> 4;
             }
 
-            if (state != DisabledTile)
+            if (state != DISABLED_TILE)
             {
 
                 pawsGameTile *tile = new pawsGameTile;
@@ -288,7 +288,7 @@ void pawsGameBoard::SetupBoard(psMGBoardMessage &msg)
                     tile->SetBackground("Minigame Tile Black");
 
                 // Reposition the game tile
-                if (gameOptions & BlackPieces)
+                if (gameOptions & BLACK_PIECES)
                     tile->SetRelativeFrame(x-(j+1)*w, y-(i+1)*h, w, h);
                 else
                     tile->SetRelativeFrame(x+j*w, y+i*h, w, h);
@@ -300,13 +300,13 @@ void pawsGameBoard::SetupBoard(psMGBoardMessage &msg)
             }
 
             // Flip colors
-            if (!(gameOptions & PlainSquares))
+            if (!(gameOptions & PLAIN_SQUARES))
                 white = !white;
 
         }
 
         // Flip the color once more if we have an even number of columns
-        if (cols % 2 == 0 && !(gameOptions & PlainSquares))
+        if (cols % 2 == 0 && !(gameOptions & PLAIN_SQUARES))
             white = !white;
 
     }
@@ -324,22 +324,21 @@ void pawsGameBoard::SetupBoard(psMGBoardMessage &msg)
                 piece = msg.msgPieces[idx] & 0x0F;
             else
                 piece = (msg.msgPieces[idx] & 0xF0) >> 4;
-            if (piece >= White1 && piece <= White7)
+            if (piece >= WHITE_1 && piece <= WHITE_7)
                 whitePieces.Push(piece);
-            else if (piece >= Black1 && piece <= Black7)
+            else if (piece >= BLACK_1 && piece <= BLACK_7)
                 blackPieces.Push(piece);
         }
     }
     else
     {
         // By default we will have only one white and one black variant of pieces
-        whitePieces.Push(White1);
-        blackPieces.Push(Black1);
+        whitePieces.Push(WHITE_1);
+        blackPieces.Push(BLACK_1);
     }
 
     // Show the window
     Show();
-
 }
 
 void pawsGameBoard::UpdateBoard(psMGBoardMessage &msg)
@@ -375,7 +374,7 @@ void pawsGameBoard::UpdateBoard(psMGBoardMessage &msg)
             else
                 state = (v & 0xF0) >> 4;
 
-            if (state != DisabledTile && k < tiles.GetSize())
+            if (state != DISABLED_TILE && k < tiles.GetSize())
             {
                 tiles[k++]->SetState(state);
             }
@@ -397,9 +396,9 @@ void pawsGameBoard::UpdateBoard(psMGBoardMessage &msg)
                 piece = msg.msgPieces[idx] & 0x0F;
             else
                 piece = (msg.msgPieces[idx] & 0xF0) >> 4;
-            if (piece >= White1 && piece <= White7)
+            if (piece >= WHITE_1 && piece <= WHITE_7)
                 whitePieces.Push(piece);
-            else if (piece >= Black1 && piece <= Black7)
+            else if (piece >= BLACK_1 && piece <= BLACK_7)
                 blackPieces.Push(piece);
         }
     }
@@ -429,7 +428,7 @@ void pawsGameBoard::DropPiece(pawsGameTile *tile)
     if (oldTile)
     {
         updates[idx++] = (oldTile->GetColumn() << 4) + oldTile->GetRow();
-        updates[idx++] = EmptyTile;
+        updates[idx++] = EMPTY_TILE;
         cnt++;
     }
     // New location.
@@ -446,7 +445,6 @@ void pawsGameBoard::DropPiece(pawsGameTile *tile)
         psMGUpdateMessage msg(0, ++currentCounter, gameID, cnt, updates);
         msgHandler->SendMessage(msg.msg);
     }
-
 }
 
 void pawsGameBoard::UpdatePiece(pawsGameTile *tile)
@@ -475,12 +473,11 @@ void pawsGameBoard::StartDragging(pawsGameTile *tile)
     widget->SetRelativeFrame(0, 0, tile->DefaultFrame().Width(), tile->DefaultFrame().Height());
     widget->SetState(tile->GetState());
     PawsManager::GetSingleton().SetDragDropWidget(widget);
-
 }
 
 uint8_t pawsGameBoard::NextPiece(uint8_t current) const
 {
-    if (current >= White1 && current <= White7)
+    if (current >= WHITE_1 && current <= WHITE_7)
     {
         size_t i = 0;
 
@@ -499,7 +496,7 @@ uint8_t pawsGameBoard::NextPiece(uint8_t current) const
         }
 
     }
-    else if (current >= Black1 && current <= Black7)
+    else if (current >= BLACK_1 && current <= BLACK_7)
     {
         size_t i = 0;
 
@@ -519,7 +516,7 @@ uint8_t pawsGameBoard::NextPiece(uint8_t current) const
 
     }
     else
-        return EmptyTile;
+        return EMPTY_TILE;
 }
 
 const csString pawsGameBoard::PieceArtName(uint8_t piece) const
@@ -540,11 +537,10 @@ pawsGameTile::pawsGameTile()
     configurable = false;
     fade = true;
 
-    state = EmptyTile;
-    oldState = EmptyTile;
+    state = EMPTY_TILE;
+    oldState = EMPTY_TILE;
     column = -1;
     row = -1;
-
 }
 
 pawsGameTile::~pawsGameTile()
@@ -570,7 +566,7 @@ void pawsGameTile::Draw()
 {
     pawsWidget::Draw();
 
-    if (state != EmptyTile)
+    if (state != EMPTY_TILE)
     {
         csRect frame = screenFrame;
         ClipToParent();
@@ -580,7 +576,7 @@ void pawsGameTile::Draw()
 
 bool pawsGameTile::OnMouseDown(int button, int modifiers, int x, int y)
 {
-    if (!board || board->GetGameOptions() & ReadOnly)
+    if (!board || board->GetGameOptions() & READ_ONLY)
         return false;
 
     // Use the EntitySelect mouse bind to select pieces/create player's pieces
@@ -592,16 +588,16 @@ bool pawsGameTile::OnMouseDown(int button, int modifiers, int x, int y)
             SetState(tile->GetState());
             board->DropPiece(this);
         }
-        else if (state == EmptyTile)
+        else if (state == EMPTY_TILE)
         {
-            SetState(board->GetGameOptions() & BlackPieces ?
+            SetState(board->GetGameOptions() & BLACK_PIECES ?
                     board->BlackPiecesList(0) : board->WhitePiecesList(0));
             board->UpdatePiece(this);
         }
         else
         {
             board->StartDragging(this);
-            SetState(EmptyTile);
+            SetState(EMPTY_TILE);
         }
         return true;
     }
@@ -609,9 +605,9 @@ bool pawsGameTile::OnMouseDown(int button, int modifiers, int x, int y)
     // Use the ContextMenu mouse bind to create oponent's pieces
     if (psengine->GetMouseBinds()->CheckBind("ContextMenu", button, modifiers))
     {
-        if (state == EmptyTile)
+        if (state == EMPTY_TILE)
         {
-            SetState(board->GetGameOptions() & BlackPieces ?
+            SetState(board->GetGameOptions() & BLACK_PIECES ?
                     board->WhitePiecesList(0) : board->BlackPiecesList(0));
             board->UpdatePiece(this);
         }
@@ -628,10 +624,10 @@ bool pawsGameTile::OnMouseDown(int button, int modifiers, int x, int y)
 
 bool pawsGameTile::OnDoubleClick(int button, int modifiers, int x, int y)
 {
-    if (!board || board->GetGameOptions() & ReadOnly)
+    if (!board || board->GetGameOptions() & READ_ONLY)
         return false;
 
-    if (psengine->GetMouseBinds()->CheckBind("EntitySelect", button, modifiers) && state != EmptyTile)
+    if (psengine->GetMouseBinds()->CheckBind("EntitySelect", button, modifiers) && state != EMPTY_TILE)
     {
 
         SetState(board->NextPiece(state));
@@ -655,7 +651,7 @@ void pawsGameTile::SetState(uint8_t state)
 
     if (state != this->state)
     {
-        if (state != EmptyTile && state != DisabledTile)
+        if (state != EMPTY_TILE && state != DISABLED_TILE)
         {
             csString art = board->PieceArtName(state);
             if (art.IsEmpty())
