@@ -102,7 +102,7 @@ public:
     const char *GetObjectPronoun();
     const char *GetPossessive();
 
-    const char *ReadableRaceGender();
+    csString ReadableRaceGender();
 
     const char *GetGender() { return sex; }
     const char *GetRace() { return name; }

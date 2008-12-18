@@ -266,7 +266,7 @@ const char* psRaceInfo::GetPossessive()
     }
 }
 
-const char *psRaceInfo::ReadableRaceGender()
+csString psRaceInfo::ReadableRaceGender()
 {
     switch (gender)
     {

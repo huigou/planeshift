@@ -221,7 +221,7 @@ void PlayerGroup::BroadcastMemberList()
         psCharacter *charData = members[n]->GetCharacterData();
         
         csString name = EscpXML(members[n]->GetCharacterData()->GetCharName());
-        csString race = EscpXML(members[n]->GetCharacterData()->GetRaceInfo()->ReadableRaceGender());
+        csString race = EscpXML(members[n]->GetCharacterData()->GetRaceInfo()->ReadableRaceGender().GetData());
         buff.Format("<M N=\"%s\" R=\"%s\" H=\"%.2f\" M=\"%.2f\" PS=\"%.2f\" MS=\"%.2f\"/>",
                 name.GetData(), race.GetData(),
                 charData->AdjustHitPoints(0.0) / fixZero(charData->AdjustHitPointsMax(0.0)) * 100,
