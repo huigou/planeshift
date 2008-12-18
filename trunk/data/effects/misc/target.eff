@@ -14,6 +14,7 @@
         <material name="marker">
             <texture>marker</texture>
 	      <shader type="base">lighting_fullbright</shader>
+	      <shader type="diffuse">lighting_fullbright</shader>
         </material>
     </materials>
     <addon plugin="PSEffects">
