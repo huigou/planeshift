@@ -3528,7 +3528,7 @@ public:
     };
 
     psCharacterDetailsMessage( int clientnum, const csString& name2s,unsigned short int gender2s,const csString& race2s,
-                               const csString& desc2s, const csArray<NetworkDetailSkill>& skills2s, const csString& creationinfo, const csString& requestor);
+                               const csString& desc2s, const csArray<NetworkDetailSkill>& skills2s, const csString& desc_ooc, const csString& creationinfo, const csString& requestor);
     psCharacterDetailsMessage( MsgEntry* me );
 
     PSF_DECLARE_MSG_FACTORY();
@@ -3545,6 +3545,7 @@ public:
     unsigned short int gender;
     csString race;
     csString desc;
+    csString desc_ooc;
     csString creationinfo;
     csArray<NetworkDetailSkill> skills;
 
@@ -3592,18 +3593,21 @@ public:
 class psCharacterDescriptionUpdateMessage : public psMessageCracker
 {
 public:
-    psCharacterDescriptionUpdateMessage(csString& newValue)
+    psCharacterDescriptionUpdateMessage(csString& newValue, bool oocdesc)
     {
 
-        msg.AttachNew(new MsgEntry( newValue.Length() +1 ));
+        msg.AttachNew(new MsgEntry( newValue.Length() +1 + sizeof(oocdesc) ));
         msg->SetType(MSGTYPE_CHARDESCUPDATE);
+
         msg->clientnum  = 0;
         msg->Add(newValue);
+        msg->Add(oocdesc);
     }
 
     psCharacterDescriptionUpdateMessage(MsgEntry *me)
     {
         newValue    = me->GetStr();
+        oocdesc     = me->GetBool();
     }
 
     PSF_DECLARE_MSG_FACTORY();
@@ -3617,6 +3621,7 @@ public:
     virtual csString ToString(AccessPointers * access_ptrs);
 
     csString newValue;
+    bool     oocdesc;
 };
 
 //------------------------------------------------------------------------------
