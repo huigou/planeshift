@@ -4985,6 +4985,7 @@ psCharacterDetailsMessage::psCharacterDetailsMessage( int clientnum,
                                                       const csString& race2s,
                                                       const csString& desc2s,
                                                       const csArray<NetworkDetailSkill>& skills2s,
+                                                      const csString& creationinfo,
                                                       const csString& requestor)
 {
     size_t size = sizeof(uint32_t);
@@ -4993,7 +4994,7 @@ psCharacterDetailsMessage::psCharacterDetailsMessage( int clientnum,
         size += sizeof(uint32_t) + skills2s[x].text.Length()+1;
     }
 
-    msg.AttachNew(new MsgEntry( desc2s.Length()+1 + sizeof(gender2s) + name2s.Length() +1 + race2s.Length() +1  +requestor.Length()+1 + size));
+    msg.AttachNew(new MsgEntry( desc2s.Length()+1 + sizeof(gender2s) + name2s.Length() + 1 + race2s.Length() + 1 + creationinfo.Length() + 1 + requestor.Length() + 1 + size));
 
     msg->SetType(MSGTYPE_CHARACTERDETAILS);
     msg->clientnum = clientnum;
@@ -5002,6 +5003,7 @@ psCharacterDetailsMessage::psCharacterDetailsMessage( int clientnum,
     msg->Add(gender2s);
     msg->Add(race2s);
     msg->Add(desc2s);
+    msg->Add(creationinfo);
     msg->Add(requestor);
 
     msg->Add( (uint32_t)skills2s.GetSize() );
@@ -5014,11 +5016,12 @@ psCharacterDetailsMessage::psCharacterDetailsMessage( int clientnum,
 
 psCharacterDetailsMessage::psCharacterDetailsMessage( MsgEntry* me )
 {
-    name       = me->GetStr();
-    gender     = me->GetUInt16();
-    race       = me->GetStr();
-    desc       = me->GetStr();
-    requestor  = me->GetStr();
+    name         = me->GetStr();
+    gender       = me->GetUInt16();
+    race         = me->GetStr();
+    desc         = me->GetStr();
+    creationinfo = me->GetStr();
+    requestor    = me->GetStr();
     uint32_t len = me->GetUInt32();
     for (uint32_t x = 0; x < len; x++)
     {

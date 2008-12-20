@@ -682,7 +682,9 @@ void UserManager::SendCharacterDescription(Client * client, psCharacter * charDa
         raceName = "being";
         gender = PSCHARACTER_GENDER_NONE;
     }
-    csString desc     = charData->GetDescription();
+    csString desc          = charData->GetDescription();
+    //send creation info only if the player is requesting  his info
+    csString creationinfo = isSelf? charData->GetCreationInfo() : "";
     csArray<psCharacterDetailsMessage::NetworkDetailSkill> skills;
 
     if ( !simple && CacheManager::GetSingleton().GetCommandManager()->Validate(client->GetSecurityLevel(), "view stats") )
@@ -814,7 +816,7 @@ void UserManager::SendCharacterDescription(Client * client, psCharacter * charDa
     // Finally send the details message
     psCharacterDetailsMessage detailmsg(client->GetClientNum(), charName,
         (short unsigned int)gender, raceName,
-        desc, skills, requestor );
+        desc, skills, creationinfo, requestor );
     detailmsg.SendMessage();
 }
 

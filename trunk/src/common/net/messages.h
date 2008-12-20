@@ -43,7 +43,7 @@ class psLinearMovement;
 
 // This holds the version number of the network code, remember to increase
 // this each time you do an update which breaks compatibility
-#define PS_NETVERSION   0x0096
+#define PS_NETVERSION   0x0097
 // Remember to bump the version in pscssetup.h, as well.
 
 // NPC Networking version is separate so we don't have to break compatibility
@@ -3528,7 +3528,7 @@ public:
     };
 
     psCharacterDetailsMessage( int clientnum, const csString& name2s,unsigned short int gender2s,const csString& race2s,
-                               const csString& desc2s, const csArray<NetworkDetailSkill>& skills2s, const csString& requestor);
+                               const csString& desc2s, const csArray<NetworkDetailSkill>& skills2s, const csString& creationinfo, const csString& requestor);
     psCharacterDetailsMessage( MsgEntry* me );
 
     PSF_DECLARE_MSG_FACTORY();
@@ -3545,6 +3545,7 @@ public:
     unsigned short int gender;
     csString race;
     csString desc;
+    csString creationinfo;
     csArray<NetworkDetailSkill> skills;
 
     csString requestor;  // Identifies which part of system initiated this

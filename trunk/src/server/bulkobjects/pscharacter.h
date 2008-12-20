@@ -1118,6 +1118,11 @@ public:
     const char* GetDescription();
     void SetDescription(const char* newValue);
 
+    /// This is used to get the stored informations from the char creation
+    const char* GetCreationInfo();
+    /// This is used to store the informations from the char creation. Players shouldn't be able to edit this.
+    void SetCreationInfo(const char* newValue);
+
     /// This is used by the math scripting engine to get various values.
     double GetProperty(const char *ptr);
     double CalcFunction(const char * functionName, const double * params);
@@ -1151,6 +1156,7 @@ public:
     psWorkGameEvent * workEvent;
 
     csString description; ///<Player description
+    csString creationinfo; ///<Creation manager informations
 
     /// Kill Exp
     int kill_exp;
