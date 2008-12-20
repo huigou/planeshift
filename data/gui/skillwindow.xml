@@ -158,13 +158,7 @@
 			<frame x="130" y="185" width="32" height="32" />
 			<bgimage resource="FilterSkill" />
 		</widget>
-		
-		<widget name="EditDesc" factory="pawsButton" id="102" tooltip="Modify Description" >
-			<frame x="175" y="185" width="32" height="32" />
-			<bgimage resource="Scribe" />
-		</widget>
-		
-		
+
 		<!-- Skills -->
 		<widget name="Skill Tabs" factory="pawsTabWindow" style="tabwindow">
 			<frame y="245" width="420" height="240" />

@@ -82,7 +82,12 @@
             <frame x="33" y="28" width="262" height="40" border="no" />
             <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="10" />
         </widget>
-        
+
+		<widget name="EditDesc" factory="pawsButton" id="100" tooltip="Modify Description" >
+			<frame x="260" y="28" width="32" height="32" />
+			<bgimage resource="Scribe" />
+		</widget>
+
         <!-- Description -->
         <widget name="Description" factory="pawsMultiLineTextBox">
             <frame x="33" y="85" width="262" height="98" border="no" />
