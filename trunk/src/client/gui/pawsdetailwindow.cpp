@@ -36,10 +36,12 @@
 
 // PAWS INCLUDES
 #include "pawsdetailwindow.h"
+#include "pawschardescription.h"
 #include "paws/pawstextbox.h"
 #include "paws/pawsmanager.h"
 #include "paws/pawsbutton.h"
 
+#define BTN_EDIT     100  //Edit button, if viewing your own description
 #define BTN_DESCR    999  //Description button for the tab panel
 #define BTN_STATS    1000 //Stats button for the tab panel
 #define BTN_COMBAT   1001 //Combat button for the tab panel
@@ -71,6 +73,10 @@ bool pawsDetailWindow::PostSetup()
 
     description = (pawsMultiLineTextBox*)FindWidget("Description");
     if ( !description )
+        return false;
+
+    editButton = (pawsButton*) FindWidget("EditDesc");
+    if (!editButton)
         return false;
 
     pawsButton* button = (pawsButton*)FindWidget( "ShowDescr" );
@@ -183,6 +189,12 @@ void pawsDetailWindow::HandleMessage( MsgEntry* me )
 		SelectTab((pawsWidget*)lastTab);
             }
         }
+
+        if (msg.name == psengine->GetCelClient()->GetMainPlayer()->GetName())
+            editButton->Show();
+        else
+            editButton->Hide();
+
         this->Show();
         return;
     }
@@ -197,6 +209,14 @@ bool pawsDetailWindow::SelectTab( pawsWidget* widget )
 {       
     switch ( widget->GetID() )
     {
+    case BTN_EDIT:
+        {
+            pawsCharDescription *editWindow = (pawsCharDescription*) PawsManager::GetSingleton().FindWidget("DescriptionEdit");
+            editWindow->PostSetup();
+            editWindow->Show();
+            Hide();
+            return true;
+        }
     case BTN_STATS:
     case BTN_FACTION:
     case BTN_COMBAT:

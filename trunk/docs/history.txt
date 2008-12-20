@@ -1,4 +1,8 @@
-﻿*** 2008-12-18 by Dave Bentham
+﻿*** 2008-12-20 by Kenny Graunke
+- Moved the "Edit Description" button to pawsDetailWindow; it appears if you
+  view your own description.  This is a much more intuitive place for it.
+
+*** 2008-12-18 by Dave Bentham
 - Coding guidelines improvements to minigames files.
 
 *** 2008-12-18 by Stefano Angeleri

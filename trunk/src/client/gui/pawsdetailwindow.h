@@ -47,6 +47,8 @@ public:
 private:
     pawsMultiLineTextBox    *intro;
     pawsMultiLineTextBox    *description;
+
+    pawsButton *editButton;
    
     csArray<csString>  skills;
     csString storedescription;
