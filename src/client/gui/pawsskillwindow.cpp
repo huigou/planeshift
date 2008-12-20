@@ -42,8 +42,6 @@
 
 #define BTN_BUY       100
 #define BTN_FILTER    101
-//#define BTN_QUIT    102
-#define BTN_EDIT      102 ///< Edit description
 #define BTN_BUYLVL    103
 #define BTN_STATS    1000 ///< Stats button for the tab panel
 #define BTN_COMBAT   1001 ///< Combat button for the tab panel
@@ -393,13 +391,6 @@ bool pawsSkillWindow::OnButtonPressed( int mouseButton, int keyModifier, pawsWid
             return true;
         }
 
-        case BTN_EDIT:
-        {
-            pawsCharDescription* descWnd = (pawsCharDescription*)PawsManager::GetSingleton().FindWidget("DescriptionEdit");
-            descWnd->PostSetup();
-            descWnd->Show();
-            return true;
-        }
         case BTN_STATS:
         case BTN_FACTION:
         case BTN_COMBAT:
