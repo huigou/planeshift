@@ -82,16 +82,6 @@ bool pawsScript::NextChar(const char * script, size_t & currIndex, char & c, cha
     return true;
 }
 
-bool pawsScript::IsAlpha(char c)
-{
-    return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z');
-}
-
-bool pawsScript::IsNumeric(char c)
-{
-    return c >= '0' && c <= '9';
-}
-
 pawsWidget * pawsScript::FindWidget(pawsWidget * widget, const char * name)
 {
 	// a better FindWidget that will go back up the parents to really try and find the thing
@@ -147,7 +137,7 @@ bool pawsScript::Parse(const char * script)
         }
 
         // alpha, numeric, and underscores don't break a token
-        if (IsAlpha(c) || IsNumeric(c) || c == '_')
+        if (isalnum(c) || c == '_')
         {
             currToken += c;
             continue;

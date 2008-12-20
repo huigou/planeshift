@@ -57,8 +57,6 @@ private:
 	csString scriptText;
 
     bool NextChar(const char * script, size_t & currIndex, char & c, char & n);
-    bool IsAlpha(char c);
-    bool IsNumeric(char c);
     bool Parse(const char * script);
 
 	pawsWidget * FindWidget(pawsWidget * widget, const char * name);
