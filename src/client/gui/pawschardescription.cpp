@@ -104,7 +104,7 @@ bool pawsCharDescription::OnButtonPressed( int mouseButton, int keyModifier, paw
         case BTN_OK:
         {
             csString newTxt(description->GetText());
-            psCharacterDescriptionUpdateMessage descUpdate(newTxt);
+            psCharacterDescriptionUpdateMessage descUpdate(newTxt,false); //TODO: add the dinstinction beetween ooc and ic
             psengine->GetMsgHandler()->SendMessage(descUpdate.msg);
             Hide();
 
