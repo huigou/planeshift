@@ -89,10 +89,10 @@ void pawsSummaryWindow::Update()
         switch(choice->choiceArea)
         {
         case FATHER_JOB:
-            tempString.Format("Father: %s\n", choice->name.GetData());
+            tempString.Format("Father: %s%s\n", createManager->GetFatherModAsText(), choice->name.GetData());
             break;
         case MOTHER_JOB:
-            tempString.Format("Mother: %s\n", choice->name.GetData());
+            tempString.Format("Mother: %s%s\n", createManager->GetMotherModAsText(), choice->name.GetData());
             break;
         case RELIGION:
             tempString.Format("Religion: %s\n", choice->name.GetData());

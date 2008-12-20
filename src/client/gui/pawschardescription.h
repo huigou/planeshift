@@ -38,7 +38,8 @@ public:
     void HandleMessage( MsgEntry* me );
 
 private:
-    pawsMultilineEditTextBox    *description;    
+    pawsMultilineEditTextBox    *description;
+    pawsMultiLineTextBox        *creationinfo;
 };
 
 CREATE_PAWS_FACTORY( pawsCharDescription );

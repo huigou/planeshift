@@ -243,6 +243,9 @@ bool psCharacter::Load(iResultRow& row)
 
     SetDescription(row["description"]);
 
+    SetCreationInfo(row["creation_info"]); //loads the info gathered in the creation in order to allow the player
+                                           //to review them
+
     attributes.SetStat(PSITEMSTATS_STAT_STRENGTH,(unsigned int)row.GetFloat("base_strength"), false);
     attributes.SetStat(PSITEMSTATS_STAT_AGILITY,(unsigned int)row.GetFloat("base_agility"), false);
     attributes.SetStat(PSITEMSTATS_STAT_ENDURANCE,(unsigned int)row.GetFloat("base_endurance"), false);
@@ -3756,6 +3759,25 @@ void psCharacter::SetDescription(const char* newValue)
         psserver->SendSystemError(GetActor()->GetClient()->GetClientNum(), "Warning! Description trimmed.");
 }
 
+//returns the stored char creation info of the player
+const char* psCharacter::GetCreationInfo()
+{
+    return creationinfo;
+}
+
+void psCharacter::SetCreationInfo(const char* newValue)
+{
+    creationinfo = newValue;
+    bool bChanged = false;
+    while (creationinfo.Find("\n\n\n\n") != (size_t)-1)
+    {
+        bChanged = true;
+        creationinfo.ReplaceAll("\n\n\n\n", "\n\n\n");
+    }
+
+    if (bChanged && GetActor() && GetActor()->GetClient())
+        psserver->SendSystemError(GetActor()->GetClient()->GetClientNum(), "Warning! creation info trimmed.");
+}
 
 //TODO: Make this not return a temp csString, but fix in place
 csString NormalizeCharacterName(const csString & name)

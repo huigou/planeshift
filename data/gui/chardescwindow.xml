@@ -4,7 +4,7 @@
             visible="yes" savepositions="no" movable="yes" 
             resizable="no" configurable="yes">
         
-        <frame x="100" y="100" width="320" height="270" border="yes" />
+        <frame x="100" y="100" width="320" height="310" border="yes" />
         <title resource="Blue Title" text="Modify description" align="left" close_button="yes" />
         <bgimage resource="Modify Description BG" alpha="128" />
     
@@ -21,14 +21,19 @@
         
         <widget name="Description" factory="pawsMultilineEditTextBox" >
             <frame x="25" y="30" width="270" height="185" border="no" />
-        </widget>  
+        </widget>
+
+        <widget name="CreationInfo" factory="pawsMultiLineTextBox" >
+            <frame x="25" y="228" width="270" height="40" border="no" />
+        </widget>
+
         <widget name="OK" factory="pawsButton" id="100">
-            <frame x="38" y="238" width="85" height="30" />
+            <frame x="38" y="278" width="85" height="30" />
             <bgimage resource="Modify Save" />
             <label text="OK" />
         </widget>
         <widget name="Cancel" factory="pawsButton" id="101">
-            <frame x="200" y="238" width="85" height="30" />
+            <frame x="200" y="278" width="85" height="30" />
             <bgimage resource="Modify Cancel" />
             <label text="Cancel" />
         </widget>

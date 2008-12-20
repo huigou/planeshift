@@ -360,6 +360,8 @@ public:
     
     void SetFatherMod( int mod ) { fatherMod = mod; }
     void SetMotherMod( int mod ) { motherMod = mod; }
+    const char *GetFatherModAsText( void ) { switch (fatherMod) { case 2: return "Famous "; case 3: return "Exceptional "; default: return "";} }
+    const char *GetMotherModAsText( void ) { switch (motherMod) { case 2: return "Famous "; case 3: return "Exceptional "; default: return "";} }
 
     void ClearChoices();
     void SetPath( const char* name ) { path = name; }

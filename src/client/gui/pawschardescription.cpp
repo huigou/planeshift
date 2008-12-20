@@ -55,6 +55,9 @@ bool pawsCharDescription::PostSetup()
     description = dynamic_cast<pawsMultilineEditTextBox*>(FindWidget( "Description" ));
     if ( !description )
         return false;
+    creationinfo = dynamic_cast<pawsMultiLineTextBox*>(FindWidget( "CreationInfo" ));
+    if ( !creationinfo )
+        return false;
 
     return true;
 }
@@ -87,6 +90,7 @@ void pawsCharDescription::HandleMessage( MsgEntry* me )
         if (msg.requestor == "pawsCharDescription")
         {
             description->SetText(msg.desc);
+            creationinfo->SetText(msg.creationinfo);
             psengine->GetMsgHandler()->Unsubscribe( this, MSGTYPE_CHARACTERDETAILS );
         }
         return;

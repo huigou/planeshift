@@ -767,7 +767,7 @@ void CharCreationManager::HandleUploadMessage( MsgEntry* me, Client *client )
     psCharacter *chardata=new psCharacter();
     chardata->SetCharType(PSCHARACTER_TYPE_PLAYER);
     chardata->SetFullName(playerName,lastName);
-    chardata->SetDescription(upload.bio);
+    chardata->SetCreationInfo(upload.bio);
 
     psRaceInfo *raceinfo=CacheManager::GetSingleton().GetRaceInfoByNameGender( upload.race, (PSCHARACTER_GENDER)upload.gender);
     if (raceinfo==NULL)
