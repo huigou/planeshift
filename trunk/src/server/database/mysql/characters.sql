@@ -70,7 +70,7 @@ CREATE TABLE `characters` (
   `progression_points` int(10) unsigned default '0',
   `description` text,
   `description_ooc` TEXT  DEFAULT NULL,
-  `creation_details` TEXT  DEFAULT NULL,
+  `creation_info` TEXT  DEFAULT NULL,
   `kill_exp` int(5) NOT NULL default '10',
   `animal_affinity` text,
   `help_event_flags` int(11) unsigned default '0' COMMENT 'Bit field of which instruction events have played for him.',
