@@ -685,6 +685,7 @@ void UserManager::SendCharacterDescription(Client * client, psCharacter * charDa
     csString desc          = charData->GetDescription();
     //send creation info only if the player is requesting  his info
     csString creationinfo = isSelf? charData->GetCreationInfo() : "";
+    csString desc_ooc          = ""; //placeholder
     csArray<psCharacterDetailsMessage::NetworkDetailSkill> skills;
 
     if ( !simple && CacheManager::GetSingleton().GetCommandManager()->Validate(client->GetSecurityLevel(), "view stats") )
@@ -816,7 +817,7 @@ void UserManager::SendCharacterDescription(Client * client, psCharacter * charDa
     // Finally send the details message
     psCharacterDetailsMessage detailmsg(client->GetClientNum(), charName,
         (short unsigned int)gender, raceName,
-        desc, skills, creationinfo, requestor );
+        desc, skills, desc_ooc, creationinfo, requestor );
     detailmsg.SendMessage();
 }
 
@@ -827,7 +828,11 @@ void UserManager::HandleCharDescUpdate(MsgEntry *me,Client *client)
     if (!charData)
         return;
 
-    charData->SetDescription(descUpdate.newValue);
+    if(descUpdate.oocdesc)
+    {} //placeholder
+    else
+        charData->SetDescription(descUpdate.newValue);
+
     Debug3(LOG_USER, client->GetClientNum(), "Character description updated for %s (%s)\n", charData->GetCharFullName(), ShowID(client->GetAccountID()));
 }
 
