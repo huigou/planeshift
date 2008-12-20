@@ -1059,7 +1059,7 @@ UPDATE `server_options` SET `option_value`='1209' WHERE `option_name`='db_versio
 
 #### 1210 - Stefano Angeleri - Added a new column to store char creation data
 ALTER TABLE `characters` ADD COLUMN `description_ooc` TEXT  DEFAULT NULL AFTER `description`;
-ALTER TABLE `characters` ADD COLUMN `creation_details` TEXT  DEFAULT NULL AFTER `description_ooc`;
+ALTER TABLE `characters` ADD COLUMN `creation_info` TEXT  DEFAULT NULL AFTER `description_ooc`;
 UPDATE `server_options` SET `option_value`='1210' WHERE `option_name`='db_version';
 
 
