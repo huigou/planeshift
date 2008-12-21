@@ -157,6 +157,7 @@ bool pawsObjectView::LoadMap( const char* map, const char* sector )
         engine->SetCacheManager(NULL);
         csRef<iThreadReturn> itr = loader->LoadMap(worldNode, CS_LOADER_KEEP_WORLD, col);
         itr->Wait();
+        VFS->SetSyncDir("/planeshift/maps/");
         if (!itr->WasSuccessful())
             return false;
 

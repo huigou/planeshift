@@ -25,6 +25,7 @@
 #include <csutil/scf.h>
 #include <csutil/csstring.h>
 #include <cstool/collider.h>
+#include <iutil/cfgmgr.h>
 #include <iutil/objreg.h>
 #include <iutil/vfs.h>
 #include <ivaria/collider.h>
@@ -53,6 +54,7 @@
 #include "engine/psworld.h"
 #include "engine/solid.h"
 #include "engine/linmove.h"
+#include "engine/loader.h"
 #include "engine/colldet.h"
 
 #include "net/messages.h"
@@ -204,7 +206,8 @@ void psCelClient::RequestServerWorld()
 
 bool psCelClient::IsReady()
 {
-    if ( local_player == NULL || gameWorld == NULL )
+    if ( local_player == NULL ||
+        (!psengine->ThreadedLoading() && gameWorld == NULL))
         return false;
     else
         return true;
@@ -212,20 +215,18 @@ bool psCelClient::IsReady()
 
 void psCelClient::HandleWorld( MsgEntry* me )
 {
-    psPersistWorld mesg( me );
+    if(!psengine->ThreadedLoading())
+    {
+        psPersistWorld mesg( me );
+        gameWorld = new psWorld;
+        gameWorld->Initialize(object_reg, psengine->UnloadingLast(), psengine->GetGFXFeatures());
 
-
-    gameWorld = new psWorld;
-    gameWorld->Initialize( object_reg );
-
-    zonehandler->SetWorld(gameWorld);
+        zonehandler->SetWorld(gameWorld);
+        zonehandler->LoadZone(mesg.sector);
+    }
 
     // Tell the user that we are loading the world
-    psengine->AddLoadingWindowMsg( "Loading world" );
-
-    gameWorld->Initialize(object_reg, psengine->UnloadingLast(), psengine->GetGFXFeatures());
-
-    zonehandler->LoadZone(mesg.sector);
+    psengine->AddLoadingWindowMsg("Loading world");
 
     requeststatus = 0;
     RequestActor();
@@ -281,6 +282,9 @@ void psCelClient::HandleActor( MsgEntry* me )
     {
         local_player = actor;
         SetMainActor( local_player );
+
+        // Now that we know where we are, trigger a world load around us.
+        Loader::GetSingleton().UpdatePosition(mesg.pos, mesg.sectorName);
 
         // This triggers the server to update our proxlist
         local_player->SendDRUpdate(PRIORITY_LOW,GetClientDR()->GetMsgStrings());
@@ -783,6 +787,13 @@ void psCelClient::Update()
     {
         entities[i]->Update();
         GEMClientActor* actor = dynamic_cast<GEMClientActor*>(entities[i]);
+    }
+
+    // Update loader.
+    if(local_player)
+    {
+        Loader::GetSingleton().UpdatePosition(local_player->Pos(),
+            local_player->GetSector()->QueryObject()->GetName());
     }
 
     shadowManager->UpdateShadows();

@@ -18,7 +18,7 @@
 #include "util/psstring.h"
 #include "effects/pseffect.h"
 #include "effects/pseffectmanager.h"
-#include "engine/materialmanager.h"
+#include "engine/loader.h"
 
 //=============================================================================
 // Local Includes
@@ -85,7 +85,7 @@ void psCharAppearance::FaceTexture(csString& faceMaterial, csString& faceTexture
     csString materialParsed = ParseStrings("", faceMaterial);
     csString textureParsed  = ParseStrings("", faceTexture);
     
-    iMaterialWrapper* material = MaterialManager::GetSingletonPtr()->LoadMaterial(materialParsed, textureParsed);
+    iMaterialWrapper* material = Loader::GetSingleton().LoadMaterial(materialParsed, textureParsed);
     
     if ( !material )
     {
@@ -281,7 +281,7 @@ void psCharAppearance::SetSkinTone(csString& part, csString& material, csString&
         csString materialNameParsed    = ParseStrings(part, material);
         csString textureNameParsed     = ParseStrings(part, texture);
 
-        iMaterialWrapper* material = MaterialManager::GetSingletonPtr()->LoadMaterial(materialNameParsed, textureNameParsed );
+        iMaterialWrapper* material = Loader::GetSingleton().LoadMaterial(materialNameParsed, textureNameParsed );
         if ( !material )
         {
             // Not necisarily an error; this texture may just not exist for this character, yet
@@ -471,7 +471,7 @@ bool psCharAppearance::ChangeMaterial(const char* part, const char* meshName, co
     csString meshNameParsed    = ParseStrings(part, meshName);
     csString textureNameParsed = ParseStrings(part, textureName);
 
-    iMaterialWrapper* material = MaterialManager::GetSingletonPtr()->LoadMaterial( meshNameParsed, textureNameParsed );
+    iMaterialWrapper* material = Loader::GetSingleton().LoadMaterial( meshNameParsed, textureNameParsed );
     if ( !material )
     {
         // Not necisarily an error; this texture may just not exist for this character, yet

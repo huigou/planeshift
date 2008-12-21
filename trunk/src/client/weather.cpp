@@ -38,7 +38,7 @@
 #include <iutil/plugin.h>
 
 #include "iclient/isoundmngr.h"
-#include "engine/materialmanager.h"
+#include "engine/loader.h"
 #include "pscelclient.h"
 #include "globals.h"
 #include "weather.h"
@@ -214,7 +214,7 @@ bool RainWeatherObject::CreateMesh()
     float speed = 5;
 
     // Attempt to fetch material.
-    iMaterialWrapper* mat = MaterialManager::GetSingletonPtr()->LoadMaterial(matname, "/planeshift/art/effects/raindrop.dds");
+    iMaterialWrapper* mat = Loader::GetSingleton().LoadMaterial(matname, "/planeshift/art/effects/raindrop.dds");
     if (!mat)
     {
         Bug2("Can't find material '%s' in memory for rain!", matname);
@@ -374,7 +374,7 @@ bool SnowWeatherObject::CreateMesh()
     float speed = 1.5f;
 
     // Attempt to fetch material.
-    iMaterialWrapper* mat = MaterialManager::GetSingletonPtr()->LoadMaterial(matname, "/planeshift/art/effects/snow.dds");
+    iMaterialWrapper* mat = Loader::GetSingleton().LoadMaterial(matname, "/planeshift/art/effects/snow.dds");
     if (!mat)
     {
         Bug2("Can't find material '%s' in memory for snow!", matname);
