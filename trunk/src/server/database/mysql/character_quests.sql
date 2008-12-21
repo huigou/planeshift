@@ -14,6 +14,7 @@ CREATE TABLE `character_quests` (
   `assigner_id` int(10) unsigned default '0',
   `remaininglockout` int(10) default '0',
   `last_response` int(10) default '-1',
+  `last_response_npc_id` INT(10) UNSIGNED NULL,
   PRIMARY KEY  (`player_id`,`quest_id`)
 );
 
