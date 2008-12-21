@@ -23,4 +23,4 @@ CREATE TABLE `character_quests` (
 #
 # Dumping data for table 'character_quests'
 #
-INSERT INTO `character_quests` VALUES (2,1,'C',6,0,-1);	# Somebody must rescue the Princess
+INSERT INTO `character_quests` VALUES (2,1,'C',6,0,-1,0);	# Somebody must rescue the Princess
