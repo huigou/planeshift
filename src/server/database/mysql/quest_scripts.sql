@@ -595,13 +595,13 @@ INSERT INTO quest_scripts VALUES("209","208","# Quest One Thousand Year Sammich
 P: Give me quest.
 Menu: I am hungry for something different. Got any food?
 
-Gertie: Yup.
+Gertie Hollaback: Yup.
 
 P: rude question. P: Nice question.
 Menu: Can I have some? Menu: Well... what kind?
 
-Gertie: No, ya ain\'t gunna get yer grubby mitts on my food. What kinda person comes up to a complete stranger an esks for a bite\'a her well earned grub? Now you git yerself off my premises a\'for I have ta blast you off.
-Gertie: [Gertie looks down at her bag, and rummages around a bit.] You like crawdads?
+G: No, ya ain\'t gunna get yer grubby mitts on my food. What kinda person comes up to a complete stranger an esks for a bite\'a her well earned grub? Now you git yerself off my premises a\'for I have ta blast you off.
+G: [Gertie looks down at her bag, and rummages around a bit.] You like crawdads?
 
 Assign Quest. 
 
@@ -612,13 +612,13 @@ Assign Quest.
 P: No. P: Yes. P: Don't know.
 Menu: They are horrid little creatures. Menu: They are delicious. Menu: Do I like what?
 
-Gertie: What? You just ain\'t got no taste. Get on outta here!
+G: What? You just ain\'t got no taste. Get on outta here!
 Complete One Thousand Year Sammich Step 2. Complete One Thousand Year Sammich.
 
-Gertie: [Gertie rummages around in her bag.] That\'s too bad. I ain\'t got none anyhow.
+G: [Gertie rummages around in her bag.] That\'s too bad. I ain\'t got none anyhow.
 Complete One Thousand Year Sammich Step 2.
 
-Gertie: How am I suppose to know what you like? Don\' ask me no fool questions.
+G: How am I suppose to know what you like? Don\' ask me no fool questions.
 Complete One Thousand Year Sammich Step 2. 
  
 
@@ -631,7 +631,7 @@ Require completion of One Thousand Year Sammich Step 2.
 P: give me food.
 Menu: So, where CAN a body get a snack around here?
 
-Gertie: Well, I just had a right tasty sammich. Yup, I did. Thick an\' juicy, one-o\'-a-kind like ya done ne\'er had bee-for. [Gertie stares off into the distance and pulls a folded red wire out of her pocket.]
+G: Well, I just had a right tasty sammich. Yup, I did. Thick an\' juicy, one-o\'-a-kind like ya done ne\'er had bee-for. [Gertie stares off into the distance and pulls a folded red wire out of her pocket.]
 Complete One Thousand Year Sammich Step 3. 
 
 ... NoRepeat 
@@ -643,7 +643,7 @@ Require completion of One Thousand Year Sammich Step 3.
 P: about sammich.
 Menu: Well, that sounds nice. Where do I learn more about this \"sammich\"?
 
-Gertie: [Gertie unfolds the wire and uses it to pick her teeth with great gusto.] Hmmm. Dwarves is real fond o\' they food. Try askin\' one. Oh, here, have a toothpicker. I'm done with it. [Gertie wipes off the red wire, folds it back up, and hands it to you.]
+G: [Gertie unfolds the wire and uses it to pick her teeth with great gusto.] Hmmm. Dwarves is real fond o\' they food. Try askin\' one. Oh, here, have a toothpicker. I'm done with it. [Gertie wipes off the red wire, folds it back up, and hands it to you.]
 Give 1 Red Paperclip.
 Complete One Thousand Year Sammich Step 4. 
 
@@ -729,7 +729,7 @@ Require completion of One Thousand Year Sammich Step 11.
 P: About sammich.
 Menu: Reginald told me you have the sandwiches.
 
-Gertie: Ya, so?
+Gertie Hollaback: Ya, so?
 Complete One Thousand Year Sammich Step 12. 
 
 ... NoRepeat 
@@ -741,7 +741,7 @@ Require completion of One Thousand Year Sammich Step 12.
 P: more about sammich.
 Menu: Why didn\'t you tell me you had one?
 
-Gertie: You asked whar you could larn about one. Ya din\'it ask if I had one. If you asked that, I would\'a said, \'Sure I \'as got one, but it\'ll cost ya five, no, ten silver pennies.\' You got ten silver pennies on you? Hand em over and you got yourself a sammich.
+G: You asked whar you could larn about one. Ya din\'it ask if I had one. If you asked that, I would\'a said, \'Sure I \'as got one, but it\'ll cost ya five, no, ten silver pennies.\' You got ten silver pennies on you? Hand em over and you got yourself a sammich.
 Complete One Thousand Year Sammich Step 13. 
 
 ... NoRepeat 
@@ -752,7 +752,7 @@ Require completion of One Thousand Year Sammich Step 13.
 
 Player gives Gertie Hollaback 10 Silver Penny.
 
-Gertie: Lemme count these har coins first. One...two...tree...five... [Gertie glances up at you and closes her hand.] Ten. All here. Here is yar sammich.
+G: Lemme count these har coins first. One...two...tree...five... [Gertie glances up at you and closes her hand.] Ten. All here. Here is yar sammich.
 Give 1 Sublime Sandwich. Give 10000 Exp.
 Complete One Thousand Year Sammich Step 14. Complete One Thousand Year Sammich. 
 
