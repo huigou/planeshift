@@ -30,7 +30,7 @@
 //=============================================================================
 #include "util/psxmlparser.h"
 
-#include "engine/materialmanager.h"
+#include "engine/loader.h"
 #include "engine/psworld.h"
 
 //=============================================================================
@@ -146,7 +146,7 @@ FactoryIndexEntry* ClientCacheManager::LoadNewFactory(const char* filename)
             }
         }
 
-        indexEntry->result = psengine->GetLoader()->LoadNode(root, cache);
+        indexEntry->result = Loader::GetSingleton().GetLoader()->LoadNode(root, cache);
     }
 
     return indexEntry;

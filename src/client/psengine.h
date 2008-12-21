@@ -45,7 +45,6 @@ struct iDialogManager;
 struct iEngine;
 struct iEvent;
 struct iEventQueue;
-struct iLoader;
 struct iMeshFactoryWrapper;
 struct iThreadedLoader;
 struct iSoundManager;
@@ -64,7 +63,7 @@ class psMainWidget;
 class ClientCacheManager;
 class psQuestionClient;
 class psOptions;
-class MaterialManager;
+class Loader;
 
 // Networking classes
 class psNetConnection;
@@ -174,7 +173,6 @@ public:
     iVFS*                 GetVFS()                { return vfs; }
     iVirtualClock*        GetVirtualClock()       { return vc; }
     iDocumentSystem*      GetXMLParser()          { return xmlparser; }
-    iThreadedLoader*      GetLoader()             { return loader; }
     iSoundManager*        GetSoundManager()       { return soundmanager; }
     iConfigManager*       GetConfig()             { return cfgmgr; }  ///< config file
 
@@ -339,6 +337,8 @@ public:
     /// The graphics features that are enabled/disabled.
     uint GetGFXFeatures() { return gfxFeatures; }
 
+    bool ThreadedLoading() { return threadedLoading; }
+
     void RegisterDelayedLoader(DelayedLoader* obj) { delayedLoaders.PushSmart(obj); }
     void UnregisterDelayedLoader(DelayedLoader* obj) { delayedLoaders.Delete(obj); }
 
@@ -370,7 +370,6 @@ private:
     csRef<iEventQueue>        queue;          ///< Event Queue
     csRef<iVirtualClock>      vc;             ///< Clock
     csRef<iDocumentSystem>    xmlparser;      ///< XML Parser
-    csRef<iThreadedLoader>    loader;         ///< Loader
     csRef<iCommandLineParser> cmdline;        ///< Command line parser
     csRef<iStringSet>         stringset;
     csRandomGen               random;
@@ -382,7 +381,6 @@ private:
     csRef<ActionHandler>      actionhandler;
     csRef<ZoneHandler>        zonehandler;  ///< Region/map file memory manager.
     csRef<psCal3DCallbackLoader> cal3DCallbackLoader;
-    MaterialManager*          materialmanager; ///< Handles loading of materials/textures.
     psClientCharManager*      charmanager;  ///< Holds the charactermanager
     GUIHandler*               guiHandler;
     psCharController*         charController;
@@ -396,6 +394,7 @@ private:
     PawsManager*              paws;         ///< Hold the ps AWS manager
     psMainWidget*             mainWidget;   ///< Hold the ps overridden version of the desktop
     psInventoryCache*	      inventoryCache;///< inventory cache for client
+    Loader*                   loader;
 
     /* status, misc. vars */
     bool gameLoaded; ///< determines if the game is loaded or not
@@ -465,6 +464,8 @@ private:
 
     /// Define what kind of loading we want to do; unload first or unload last.
     bool unloadLast;
+
+    bool threadedLoading;
 
     // Event ID cache
     csEventID event_frame;

@@ -112,7 +112,7 @@ if (!myref)                                                  \
 #include "util/log.h"
 #include "util/strutil.h"
 #include "engine/psworld.h"
-#include "engine/materialmanager.h"
+#include "engine/loader.h"
 #include "util/psutil.h"
 #include "util/consoleout.h"
 #include "entitylabels.h"
@@ -229,6 +229,7 @@ psEngine::psEngine (iObjectRegistry *objectreg)
     paws = NULL;
     mainWidget = NULL;
     inventoryCache = NULL;
+    loader = NULL;
 
     loadtimeout = 10;  // Default load timeout
 
@@ -302,6 +303,7 @@ void psEngine::Cleanup()
     delete mouseBinds;
     delete guiHandler;
     delete inventoryCache;
+    delete loader;
 
     // Effect manager needs to be destroyed before the soundmanager.
     effectManager.Invalidate();
@@ -309,8 +311,6 @@ void psEngine::Cleanup()
     object_reg->Unregister ((iSoundManager*)soundmanager, "iSoundManager");
 
     delete options;
-
-    delete materialmanager;
 }
 
 // ----------------------------------------------------------------------------
@@ -339,7 +339,6 @@ bool psEngine::Initialize (int level)
         PS_QUERY_PLUGIN (engine,  iEngine,        "iEngine");
         PS_QUERY_PLUGIN (cfgmgr,  iConfigManager, "iConfigManager");
         PS_QUERY_PLUGIN (g3d,     iGraphics3D,    "iGraphics3D");
-        PS_QUERY_PLUGIN (loader,  iThreadedLoader, "crystalspace.level.loader.threaded");
         PS_QUERY_PLUGIN (vc,      iVirtualClock,  "iVirtualClock");
         PS_QUERY_PLUGIN (cmdline, iCommandLineParser, "iCommandLineParser");
 
@@ -568,11 +567,25 @@ bool psEngine::Initialize (int level)
 
         unloadLast = GetConfig()->GetBool("PlaneShift.Client.Loading.UnloadLast", true);
 
-        materialmanager = new MaterialManager(object_reg, preloadModels, GetGFXFeatures());
+        threadedLoading = !psengine->GetConfig()->GetBool("ThreadManager.AlwaysRunNow");
 
-        if(preloadModels)
+        Loader* loader = new Loader();
+        Loader::GetSingleton().Init(object_reg, preloadModels, gfxFeatures, 100);
+
+        if(threadedLoading)
         {
-            materialmanager->PreloadTextures();
+            csString path;
+            csRef<iStringArray> maps = vfs->FindFiles("/planeshift/world/");
+            for(size_t i=0; i<maps->GetSize(); i++)
+            {
+                vfs->PushDir(maps->Get(i));
+                csRef<iDataBuffer> tmp = vfs->GetRealPath(maps->Get(i));
+                path.AppendFmt("%s, ", tmp->GetData());
+                Loader::GetSingleton().PrecacheData("world");
+                vfs->PopDir();
+            }
+            vfs->SetSyncDir("/planeshift/maps/");
+            vfs->Mount("/planeshift/maps/", path);
         }
 
         if (!celclient->Initialize(object_reg, GetMsgHandler(), zonehandler))
@@ -1490,7 +1503,6 @@ inline void psEngine::PreloadModels()
         if (modelnames.GetSize()-1 < modelToLoad)
         {
             BuildFactoryList();
-            engine->SyncEngineListsNow(loader);
             cachemanager->Precache();
             Debug1(LOG_ADMIN,0, "Preloading complete");
 

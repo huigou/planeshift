@@ -21,6 +21,7 @@
 // Crystal Space Includes
 //=============================================================================
 #include <csutil/objreg.h>
+#include <iutil/cfgmgr.h>
 #include <iutil/object.h>
 #include <iengine/engine.h>
 #include <iengine/sector.h>
@@ -49,6 +50,7 @@
 
 #include "gui/pawsloading.h"
 
+#include "engine/loader.h"
 #include "engine/psworld.h"
 
 #include "iclient/isoundmngr.h"
@@ -118,7 +120,7 @@ ZoneLoadInfo * ZoneHandler::FindZone(const char* sector)
     ZoneLoadInfo* zone = zonelist.Get(sector, NULL);
 
     if (zone == NULL)
-        Error2("Fatal error: Could not find zone info for sector %s!\n",sector);
+        Error2("Error: Could not find zone info for sector %s!\n",sector);
 
     return zone;
 }
@@ -193,16 +195,19 @@ void ZoneHandler::HandleMessage(MsgEntry* me)
     // We don't load the maps here: we just remember that we need to do it and we show LoadingWindow
     // If we began to load the maps immediately at this place, the LoadingWindow would not have a chance to be drawn
 
-    ZoneLoadInfo * zone = FindZone(msg.newSector);
+    ZoneLoadInfo* zone = FindZone(msg.newSector);
     if (zone == NULL)
     {
-        psengine->FatalError("The sector you have entered couldn't be loaded.\nPlease check your logs for details.");
+        Error1("The sector you have entered couldn't be loaded.\nPlease check your logs for details.");
         return;
     }
 
-    FlagRegions(zone);
+    if(!psengine->ThreadedLoading())
+    {
+        FlagRegions(zone);
+    }
 
-    if (world->NeedsLoading(zone->transitional))
+    if (psengine->ThreadedLoading() || world->NeedsLoading(zone->transitional))
     {
         SetMapLoadNeeded(true);
         sectorToLoad = msg.newSector;
@@ -273,7 +278,6 @@ void ZoneHandler::OnDrawingFinished()
     {
         if(ExecuteFlaggedRegions(sectorToLoad))
         {
-
             SetMapLoadNeeded(false);
 
             psengine->SetLoadedMap(true);
@@ -360,22 +364,30 @@ void ZoneHandler::LoadZone(const char* sector)
 bool ZoneHandler::ExecuteFlaggedRegions(const csString & sector)
 {
     ZoneLoadInfo* found = FindZone(sector);
+    bool background = true;
+    if(!psengine->ThreadedLoading())
+    {
+        background = false;
+    }
 
     if (found)
     {
-        // If the sector has a loading screen, display it
-        if (found->loadImage && FindLoadWindow())
+        if(!background)
         {
-            Debug2(LOG_LOAD, 0, "Setting background %s", found->loadImage.GetData());
-            loadWindow->SetBackground(found->loadImage.GetData());
-            psengine->ForceRefresh();
-        }
+            // If the sector has a loading screen, display it
+            if (found->loadImage && FindLoadWindow())
+            {
+                Debug2(LOG_LOAD, 0, "Setting background %s", found->loadImage.GetData());
+                loadWindow->SetBackground(found->loadImage.GetData());
+                psengine->ForceRefresh();
+            }
 
-        if(!found->transitional)
-        {
-            csArray<iCollection*> deletedRegions;
-            world->GetNotNeededRegions(deletedRegions);
-            celclient->OnRegionsDeleted(deletedRegions);
+            if(!found->transitional)
+            {
+                csArray<iCollection*> deletedRegions;
+                world->GetNotNeededRegions(deletedRegions);
+                celclient->OnRegionsDeleted(deletedRegions);
+            }
         }
 
         // Before the first map is loaded, we want to refresh the screen to get the loading background.
@@ -386,7 +398,20 @@ bool ZoneHandler::ExecuteFlaggedRegions(const csString & sector)
         }
 
         // Load a map.
-        int executed = world->ExecuteFlaggedRegions(found->transitional, psengine->UnloadingLast());
+        int executed = 2;
+        if(background)
+        {
+            if(Loader::GetSingleton().GetLoadingCount() == 0)
+            {
+                executed = 0;
+                psengine->GetEngine()->PrecacheDraw();
+            }
+        }
+        else
+        {
+            executed = world->ExecuteFlaggedRegions(found->transitional, psengine->UnloadingLast());
+        }
+
         switch(executed)
         {
             case 1:
