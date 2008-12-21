@@ -304,12 +304,13 @@ void Loader::PrecacheData(const char* path)
                     s->meshes.Push(m);
                 }
 
-                if(node->GetNode("portals"))
+                nodeItr2 = node->GetNodes("portals");
+                while(nodeItr2->HasNext())
                 {
-                    nodeItr2 = node->GetNode("portals")->GetNodes("portal");
-                    while(nodeItr2->HasNext())
+                    csRef<iDocumentNodeIterator> nodeItr3 = nodeItr2->Next()->GetNodes("portal");
+                    while(nodeItr3->HasNext())
                     {
-                        csRef<iDocumentNode> node2 = nodeItr2->Next();
+                        csRef<iDocumentNode> node2 = nodeItr3->Next();
                         csRef<Portal> p = csPtr<Portal>(new Portal(node2->GetAttributeValue("name")));
 
                         if(node2->GetNode("ww"))
@@ -453,6 +454,13 @@ void Loader::LoadSector(csVector3& pos, Sector* sector)
         LoadMesh(sector, loadingMeshes[i]);
     }
 
+    // Check other sectors linked to by active portals.
+    for(size_t i=0; i<loadedPortals.GetSize(); i++)
+    {
+        if(!loadedPortals[i]->targetSector->isLoading)
+            LoadSector(pos, loadedPortals[i]->targetSector);
+    }
+
     for(size_t i=0; i<sector->meshes.GetSize(); i++)
     {
         if(!sector->meshes[i]->loading)
@@ -466,7 +474,8 @@ void Loader::LoadSector(csVector3& pos, Sector* sector)
             }
             else if(sector->meshes[i]->object.IsValid() && csVector3(sector->meshes[i]->pos - pos).Norm() > loadRange*1.5)
             {
-                sector->object->GetMeshes()->Remove(sector->meshes[i]->object);
+                sector->meshes[i]->object->GetMovable()->ClearSectors();
+                sector->meshes[i]->object->GetMovable()->UpdateMove();
                 engine->GetMeshes()->Remove(sector->meshes[i]->object);
                 sector->meshes[i]->object.Invalidate();
                 --sector->objectCount;
@@ -486,6 +495,7 @@ void Loader::LoadSector(csVector3& pos, Sector* sector)
             sector->portals[i]->mObject = engine->CreatePortal(sector->portals[i]->name, sector->object,
                 csVector3(0), sector->portals[i]->targetSector->object, sector->portals[i]->vertices,
                 sector->portals[i]->num_vertices, sector->portals[i]->pObject);
+            loadedPortals.Push(sector->portals[i]);
             ++sector->objectCount;
         }
         else if(sector->portals[i]->mObject.IsValid() && sector->portals[i]->OutOfRange(pos))
@@ -498,6 +508,7 @@ void Loader::LoadSector(csVector3& pos, Sector* sector)
             engine->GetMeshes()->Remove(sector->portals[i]->mObject);
             sector->portals[i]->pObject = NULL;
             sector->portals[i]->mObject.Invalidate();
+            loadedPortals.Delete(sector->portals[i]);
             --sector->objectCount;
         }
     }

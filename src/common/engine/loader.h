@@ -87,6 +87,7 @@ private:
     csString curSector;
 
     csRefArray<MeshObj> loadingMeshes;
+    csRefArray<Portal> loadedPortals;
 
     csRefArray<Texture> textures;
     csRefArray<Material> materials;
