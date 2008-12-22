@@ -20,6 +20,7 @@
 #include <psconfig.h>
 
 #include <cstool/collider.h>
+#include <csutil/scanstr.h>
 #include <iengine/movable.h>
 #include <iengine/portal.h>
 #include <iutil/stringarray.h>
@@ -129,7 +130,9 @@ void Loader::PrecacheData(const char* path)
                     if(node->GetNode("texture"))
                     {
                         node = node->GetNode("texture");
-                        m->shadervars.Push(ShaderVar("tex diffuse", csShaderVariable::TEXTURE, node->GetContentsValue()));
+                        ShaderVar sv("tex diffuse", csShaderVariable::TEXTURE);
+                        sv.value = node->GetContentsValue();
+                        m->shadervars.Push(sv);
 
                         for(size_t i=0; i<textures.GetSize(); i++)
                         {
@@ -156,7 +159,9 @@ void Loader::PrecacheData(const char* path)
                         node = nodeItr2->Next();
                         if(csString("texture").Compare(node->GetAttributeValue("type")))
                         {
-                            m->shadervars.Push(ShaderVar(node->GetAttributeValue("name"), csShaderVariable::TEXTURE, node->GetContentsValue()));
+                            ShaderVar sv(node->GetAttributeValue("name"), csShaderVariable::TEXTURE);
+                            sv.value = node->GetContentsValue();
+                            m->shadervars.Push(sv);
                             for(size_t i=0; i<textures.GetSize(); i++)
                             {
                                 if(textures[i]->name.Compare(node->GetContentsValue()))
@@ -164,6 +169,12 @@ void Loader::PrecacheData(const char* path)
                                     m->textures.Push(textures[i]);
                                 }
                             }
+                        }
+                        else if(csString("vector2").Compare(node->GetAttributeValue("type")))
+                        {
+                            ShaderVar sv(node->GetAttributeValue("name"), csShaderVariable::VECTOR2);
+                            csScanStr (node->GetContentsValue(), "%f,%f", &sv.vec2.x, &sv.vec2.y);
+                            m->shadervars.Push(sv);
                         }
                         node = node->GetParent();
                     }
@@ -178,20 +189,54 @@ void Loader::PrecacheData(const char* path)
                 csRef<iDocumentNodeIterator> nodeItr3 = node->GetNode("params")->GetNodes("submesh");
                 while(nodeItr3->HasNext())
                 {
-                    node = nodeItr3->Next();
-                    if(node->GetNode("material"))
+                    csRef<iDocumentNode> node2 = nodeItr3->Next();
+                    if(node2->GetNode("material"))
                     {
                         for(size_t i=0; i<materials.GetSize(); i++)
                         {
-                            if(materials[i]->name.Compare(node->GetNode("material")->GetContentsValue()))
+                            if(materials[i]->name.Compare(node2->GetNode("material")->GetContentsValue()))
                             {
                                 mf->materials.PushSmart(materials[i]);
                             }
                         }
                     }
-
-                    node = node->GetParent()->GetParent();
                 }
+
+                if(node->GetNode("params")->GetNode("cells"))
+                {
+                    node = node->GetNode("params")->GetNode("cells")->GetNode("celldefault")->GetNode("basematerial");
+                    for(size_t i=0; i<materials.GetSize(); i++)
+                    {
+                        if(materials[i]->name.Compare(node->GetContentsValue()))
+                        {
+                            mf->materials.PushSmart(materials[i]);
+                        }
+                    }
+                    node = node->GetParent()->GetParent();
+
+                    nodeItr3 = node->GetNodes("cell");
+                    while(nodeItr3->HasNext())
+                    {
+                        node = nodeItr3->Next();
+                        node = node->GetNode("feederproperties");
+                        if(node)
+                        {
+                            csRef<iDocumentNodeIterator> nodeItr4 = node->GetNodes("alphamap");
+                            while(nodeItr4->HasNext())
+                            {
+                                csRef<iDocumentNode> node2 = nodeItr4->Next();
+                                for(size_t i=0; i<materials.GetSize(); i++)
+                                {
+                                    if(materials[i]->name.Compare(node2->GetAttributeValue("material")))
+                                    {
+                                        mf->materials.PushSmart(materials[i]);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
                 meshfacts.Push(mf);
             }
 
@@ -288,15 +333,61 @@ void Loader::PrecacheData(const char* path)
                             m->meshfacts.PushSmart(meshfacts[i]);
                         }
                     }
+                    node2 = node2->GetParent();
 
-                    node2 = node2->GetParent()->GetNode("material");
-                    if(node2.IsValid())
+                    if(node2->GetNode("material"))
                     {
+                        node2 = node2->GetNode("material");
                         for(size_t i=0; i<materials.GetSize(); i++)
                         {
                             if(materials[i]->name.Compare(node2->GetContentsValue()))
                             {
                                 m->materials.PushSmart(materials[i]);
+                            }
+                        }
+                        node2 = node2->GetParent();
+                    }
+
+                    
+                    if(node2->GetNode("materialpalette"))
+                    {
+                        nodeItr3 = node2->GetNode("materialpalette")->GetNodes("material");
+                        while(nodeItr3->HasNext())
+                        {
+                            csRef<iDocumentNode> node3 = nodeItr3->Next();
+                            for(size_t i=0; i<materials.GetSize(); i++)
+                            {
+                                if(materials[i]->name.Compare(node3->GetContentsValue()))
+                                {
+                                    m->materials.PushSmart(materials[i]);
+                                }
+                            }
+                        }
+                    }
+
+                    if(node2->GetNode("cells"))
+                    {
+                        nodeItr3 = node2->GetNode("cells")->GetNodes("cell");
+                        while(nodeItr3->HasNext())
+                        {
+                            node2 = nodeItr3->Next();
+                            if(node2->GetNode("renderproperties"))
+                            {
+                                csRef<iDocumentNodeIterator> nodeItr4 = node2->GetNode("renderproperties")->GetNodes("shadervar");
+                                while(nodeItr4->HasNext())
+                                {
+                                    csRef<iDocumentNode> node3 = nodeItr4->Next();
+                                    if(csString("texture").Compare(node3->GetAttributeValue("type")))
+                                    {
+                                        for(size_t i=0; i<textures.GetSize(); i++)
+                                        {
+                                            if(textures[i]->name.Compare(node3->GetContentsValue()))
+                                            {
+                                                m->textures.PushSmart(textures[i]);
+                                            }
+                                        }
+                                    }
+                                }
                             }
                         }
                     }
@@ -641,16 +732,25 @@ bool Loader::LoadMaterial(Material* material)
 
         for(size_t i=0; i<material->shadervars.GetSize(); i++)
         {
-            for(size_t j=0; j<material->textures.GetSize(); j++)
+            if(material->shadervars[i].type = csShaderVariable::TEXTURE)
             {
-                if(material->textures[j]->name.Compare(material->shadervars[i].value))
+                for(size_t j=0; j<material->textures.GetSize(); j++)
                 {
-                    csShaderVariable* var = mat->GetVariableAdd(svstrings->Request(material->shadervars[i].name));
-                    var->SetType(material->shadervars[i].type);
-                    csRef<iTextureWrapper> tex = scfQueryInterface<iTextureWrapper>(material->textures[j]->status->GetResultRefPtr());
-                    var->SetValue(tex);
-                    break;
+                    if(material->textures[j]->name.Compare(material->shadervars[i].value))
+                    {
+                        csShaderVariable* var = mat->GetVariableAdd(svstrings->Request(material->shadervars[i].name));
+                        var->SetType(material->shadervars[i].type);
+                        csRef<iTextureWrapper> tex = scfQueryInterface<iTextureWrapper>(material->textures[j]->status->GetResultRefPtr());
+                        var->SetValue(tex);
+                        break;
+                    }
                 }
+            }
+            else if(material->shadervars[i].type = csShaderVariable::VECTOR2)
+            {
+                csShaderVariable* var = mat->GetVariableAdd(svstrings->Request(material->shadervars[i].name));
+                var->SetType(material->shadervars[i].type);
+                var->SetValue(material->shadervars[i].vec2);
             }
         }
 
