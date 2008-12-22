@@ -515,7 +515,14 @@ void Loader::PrecacheData(const char* path)
 void Loader::UpdatePosition(csVector3& pos, const char* sectorName)
 {
     csRef<Sector> sector;
-    for(size_t i=0; i<sectors.GetSize(); i++)
+
+    // Hack to work around the weird sector stuff we do.
+    if(csString("SectorWhereWeKeepEntitiesResidingInUnloadedMaps").Compare(sectorName))
+    {
+        sector = lastSector;
+    }
+
+    for(size_t i=0; !sector.IsValid() && i<sectors.GetSize(); i++)
     {
         if(sectors[i]->name.Compare(sectorName))
         {
@@ -525,7 +532,10 @@ void Loader::UpdatePosition(csVector3& pos, const char* sectorName)
     }
 
     if(sector.IsValid())
+    {
+        lastSector = sector;
         LoadSector(pos, sector);
+    }
 }
 
 void Loader::LoadSector(csVector3& pos, Sector* sector)
@@ -657,6 +667,7 @@ void Loader::LoadMesh(Sector* sector, MeshObj* mesh)
 
     if(mesh->status && mesh->status->IsFinished())
     {
+        vfs->ChDir("/planeshift/maps/");
         mesh->object = scfQueryInterface<iMeshWrapper>(mesh->status->GetResultRefPtr());
         mesh->object->GetMovable()->SetSector(sector->object);
         mesh->object->GetMovable()->UpdateMove();
