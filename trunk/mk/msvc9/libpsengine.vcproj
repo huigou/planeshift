@@ -727,7 +727,7 @@
 				RelativePath="..\..\src\common\engine\linmove.cpp">
 			</File>
 			<File
-				RelativePath="..\..\src\common\engine\materialmanager.cpp">
+				RelativePath="..\..\src\common\engine\loader.cpp">
 			</File>
 			<File
 				RelativePath="..\..\src\common\engine\psregion.cpp">
@@ -749,7 +749,7 @@
 				RelativePath="..\..\src\common\engine\linmove.h">
 			</File>
 			<File
-				RelativePath="..\..\src\common\engine\materialmanager.h">
+				RelativePath="..\..\src\common\engine\loader.h">
 			</File>
 			<File
 				RelativePath="..\..\src\common\engine\psregion.h">
