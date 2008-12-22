@@ -214,6 +214,8 @@ void ZoneHandler::HandleMessage(MsgEntry* me)
         haveNewPos = true;
         newPos = msg.pos;
 
+        Loader::GetSingleton().UpdatePosition(newPos, sectorToLoad);
+
         if (FindLoadWindow())
         {
             loadWindow->SetAlwaysOnTop(true);

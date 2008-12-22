@@ -83,8 +83,7 @@ private:
     csRef<iStringSet> strings;
     uint gfxFeatures;
 
-    csVector3 curPos;
-    csString curSector;
+    csRef<Sector> lastSector;
 
     csRefArray<MeshObj> loadingMeshes;
     csRefArray<Portal> loadedPortals;
