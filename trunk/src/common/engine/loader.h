@@ -110,9 +110,10 @@ private:
         csString name;
         csShaderVariable::VariableType type;
         csString value;
-
-        ShaderVar(const char* name, csShaderVariable::VariableType type, const char* value)
-            : name(name), type(type), value(value)
+        csVector2 vec2;
+        
+        ShaderVar(const char* name, csShaderVariable::VariableType type)
+            : name(name), type(type)
         {
         }
     };
