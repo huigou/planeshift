@@ -447,14 +447,14 @@ THREADED_CALLABLE_IMPL2(Loader, PrecacheData, const char* path, bool recursive)
                         }
 
                         csRef<iDocumentNodeIterator> nodeItr3 = node2->GetNodes("v");
-                        p->num_vertices = (int)nodeItr3->GetEndPosition()-2;
-                        p->vertices = new csVector3[p->num_vertices];
-                        int i = 0;
                         while(nodeItr3->HasNext())
                         {
                             node2 = nodeItr3->Next();
-                            p->vertices[i++] = csVector3(node2->GetAttributeValueAsFloat("x"),
-                                node2->GetAttributeValueAsFloat("y"), node2->GetAttributeValueAsFloat("z"));
+														csVector3 vec;
+														vec.x = node2->GetAttributeValueAsFloat("x");
+														vec.y = node2->GetAttributeValueAsFloat("y");
+														vec.z = node2->GetAttributeValueAsFloat("z");
+														p->poly.AddVertex(vec);
                             node2 = node2->GetParent();
                         }
 
@@ -721,8 +721,8 @@ void Loader::LoadSector(const csVector3& pos, Sector* sector)
             }
 
             sector->portals[i]->mObject = engine->CreatePortal(sector->portals[i]->name, sector->object,
-                csVector3(0), sector->portals[i]->targetSector->object, sector->portals[i]->vertices,
-                sector->portals[i]->num_vertices, sector->portals[i]->pObject);
+                csVector3(0), sector->portals[i]->targetSector->object, sector->portals[i]->poly.GetVertices(),
+                sector->portals[i]->poly.GetVertexCount(), sector->portals[i]->pObject);
             sector->activePortals.Push(sector->portals[i]);
             ++sector->objectCount;
         }
