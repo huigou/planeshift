@@ -207,8 +207,7 @@ void ZoneHandler::HandleMessage(MsgEntry* me)
         FlagRegions(zone);
     }
 
-    if ((psengine->ThreadedLoading() && !psengine->IsGameLoaded()) ||
-        !psengine->ThreadedLoading() && world->NeedsLoading(zone->transitional))
+    if (psengine->ThreadedLoading() || world->NeedsLoading(zone->transitional))
     {
         SetMapLoadNeeded(true);
         sectorToLoad = msg.newSector;
@@ -217,7 +216,11 @@ void ZoneHandler::HandleMessage(MsgEntry* me)
 
         Loader::GetSingleton().UpdatePosition(newPos, sectorToLoad, true);
 
-        if (FindLoadWindow())
+        if(Loader::GetSingleton().GetLoadingCount() == 0)
+        {
+            haveNewPos = false;
+        }
+        else if (FindLoadWindow())
         {
             loadWindow->SetAlwaysOnTop(true);
             loadWindow->Clear();
