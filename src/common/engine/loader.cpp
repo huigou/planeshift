@@ -23,6 +23,7 @@
 #include <csutil/scanstr.h>
 #include <iengine/movable.h>
 #include <iengine/portal.h>
+#include <imesh/object.h>
 #include <iutil/stringarray.h>
 #include <iutil/object.h>
 #include <ivaria/collider.h>
@@ -44,6 +45,7 @@ void Loader::Init(iObjectRegistry* object_reg, bool keepModels, uint gfxFeatures
     vfs = csQueryRegistry<iVFS> (object_reg);
     svstrings = csQueryRegistryTagInterface<iShaderVarStringSet>(object_reg, "crystalspace.shader.variablenameset");
     strings = csQueryRegistryTagInterface<iStringSet>(object_reg, "crystalspace.shared.stringset");
+    cdsys = csQueryRegistry<iCollideSystem> (object_reg);
 
     csRef<iGraphics3D> g3d = csQueryRegistry<iGraphics3D> (object_reg);
     txtmgr = g3d->GetTextureManager();
@@ -276,6 +278,7 @@ void Loader::PrecacheData(const char* path)
                 {
                     csRef<iDocumentNode> node2 = nodeItr2->Next();
                     csRef<MeshObj> m = csPtr<MeshObj>(new MeshObj(node2->GetAttributeValue("name"), node2));
+                    m->sector = s;
 
                     if(node2->GetNode("move"))
                     {
@@ -413,7 +416,7 @@ void Loader::PrecacheData(const char* path)
                         }
 
                         csRef<iDocumentNodeIterator> nodeItr3 = node2->GetNodes("v");
-                        p->num_vertices = (int)nodeItr3->GetEndPosition();
+                        p->num_vertices = (int)nodeItr3->GetEndPosition()-2;
                         p->vertices = new csVector3[p->num_vertices];
                         int i = 0;
                         while(nodeItr3->HasNext())
@@ -512,10 +515,24 @@ void Loader::PrecacheData(const char* path)
     }
 }
 
-void Loader::UpdatePosition(csVector3& pos, const char* sectorName)
+void Loader::UpdatePosition(const csVector3& pos, const char* sectorName, bool force)
 {
-    csRef<Sector> sector;
+    // Check already loading meshes.
+    for(size_t i=0; i<loadingMeshes.GetSize(); i++)
+    {
+        LoadMesh(loadingMeshes[i]);
+    }
 
+    if(!force)
+    {
+        // Check if we've moved.
+        if(lastSector.IsValid() && lastSector->name.Compare(sectorName) && csVector3(lastPos - pos).Norm() < loadRange/10)
+        {
+            return;
+        }
+    }
+
+    csRef<Sector> sector;
     // Hack to work around the weird sector stuff we do.
     if(csString("SectorWhereWeKeepEntitiesResidingInUnloadedMaps").Compare(sectorName))
     {
@@ -533,12 +550,91 @@ void Loader::UpdatePosition(csVector3& pos, const char* sectorName)
 
     if(sector.IsValid())
     {
-        lastSector = sector;
         LoadSector(pos, sector);
+        if(lastSector != sector)
+        {
+            CleanDisconnectedSectors(sector);
+        }
+        lastPos = pos;
+        lastSector = sector;
     }
 }
 
-void Loader::LoadSector(csVector3& pos, Sector* sector)
+void Loader::CleanDisconnectedSectors(Sector* sector)
+{
+    // Create a list of connectedSectors;
+    csRefArray<Sector> connectedSectors;
+    FindConnectedSectors(connectedSectors, sector);
+
+    // Check for disconnected sectors.
+    for(size_t i=0; i<sectors.GetSize(); i++)
+    {
+        if(sectors[i]->object.IsValid() && connectedSectors.Find(sectors[i]) == csArrayItemNotFound)
+        {
+            CleanSector(sectors[i]);
+        }
+    }
+}
+
+void Loader::FindConnectedSectors(csRefArray<Sector>& connectedSectors, Sector* sector)
+{
+    if(connectedSectors.Find(sector) != csArrayItemNotFound)
+    {
+        return;
+    }
+
+    connectedSectors.Push(sector);
+
+    for(size_t i=0; i<sector->activePortals.GetSize(); i++)
+    {
+        FindConnectedSectors(connectedSectors, sector->activePortals[i]->targetSector);
+    }
+}
+
+void Loader::CleanSector(Sector* sector)
+{
+    for(size_t i=0; i<sector->meshes.GetSize(); i++)
+    {
+        if(sector->meshes[i]->object.IsValid())
+        {
+            sector->meshes[i]->object->GetMovable()->ClearSectors();
+            sector->meshes[i]->object->GetMovable()->UpdateMove();
+            engine->GetMeshes()->Remove(sector->meshes[i]->object);
+            sector->meshes[i]->object.Invalidate();
+            --sector->objectCount;
+        }
+    }
+
+    for(size_t i=0; i<sector->portals.GetSize(); i++)
+    {
+        if(sector->portals[i]->mObject.IsValid())
+        {
+            engine->GetMeshes()->Remove(sector->portals[i]->mObject);
+            sector->portals[i]->pObject = NULL;
+            sector->portals[i]->mObject.Invalidate();
+            sector->activePortals.Delete(sector->portals[i]);
+            --sector->objectCount;
+        }
+    }
+
+    for(size_t i=0; i<sector->lights.GetSize(); i++)
+    {
+        if(sector->lights[i]->object.IsValid())
+        {
+            engine->RemoveLight(sector->lights[i]->object);
+            sector->lights[i]->object.Invalidate();
+            --sector->objectCount;
+        }
+    }
+
+    CS_ASSERT_MSG("Error cleaning sector. Sector still has objects!", sector->objectCount == 0);
+    CS_ASSERT_MSG("Error cleaning sector. Sector is invalid!", sector->object.IsValid());
+
+    engine->GetSectors()->Remove(sector->object);
+    sector->object.Invalidate();
+}
+
+void Loader::LoadSector(const csVector3& pos, Sector* sector)
 {
     sector->isLoading = true;
 
@@ -549,17 +645,11 @@ void Loader::LoadSector(csVector3& pos, Sector* sector)
         sector->object->SetVisibilityCullerPlugin(sector->culler);
     }
 
-    // Check already loading meshes.
-    for(size_t i=0; i<loadingMeshes.GetSize(); i++)
-    {
-        LoadMesh(sector, loadingMeshes[i]);
-    }
-
     // Check other sectors linked to by active portals.
-    for(size_t i=0; i<loadedPortals.GetSize(); i++)
+    for(size_t i=0; i<sector->activePortals.GetSize(); i++)
     {
-        if(!loadedPortals[i]->targetSector->isLoading)
-            LoadSector(pos, loadedPortals[i]->targetSector);
+        if(!sector->activePortals[i]->targetSector->isLoading)
+            LoadSector(pos, sector->activePortals[i]->targetSector);
     }
 
     for(size_t i=0; i<sector->meshes.GetSize(); i++)
@@ -570,7 +660,7 @@ void Loader::LoadSector(csVector3& pos, Sector* sector)
             {
                 sector->meshes[i]->loading = true;
                 loadingMeshes.Push(sector->meshes[i]);
-                LoadMesh(sector, sector->meshes[i]);
+                LoadMesh(sector->meshes[i]);
                 ++sector->objectCount;
             }
             else if(sector->meshes[i]->object.IsValid() && csVector3(sector->meshes[i]->pos - pos).Norm() > loadRange*1.5)
@@ -596,7 +686,7 @@ void Loader::LoadSector(csVector3& pos, Sector* sector)
             sector->portals[i]->mObject = engine->CreatePortal(sector->portals[i]->name, sector->object,
                 csVector3(0), sector->portals[i]->targetSector->object, sector->portals[i]->vertices,
                 sector->portals[i]->num_vertices, sector->portals[i]->pObject);
-            loadedPortals.Push(sector->portals[i]);
+            sector->activePortals.Push(sector->portals[i]);
             ++sector->objectCount;
         }
         else if(sector->portals[i]->mObject.IsValid() && sector->portals[i]->OutOfRange(pos))
@@ -609,7 +699,7 @@ void Loader::LoadSector(csVector3& pos, Sector* sector)
             engine->GetMeshes()->Remove(sector->portals[i]->mObject);
             sector->portals[i]->pObject = NULL;
             sector->portals[i]->mObject.Invalidate();
-            loadedPortals.Delete(sector->portals[i]);
+            sector->activePortals.Delete(sector->portals[i]);
             --sector->objectCount;
         }
     }
@@ -642,7 +732,7 @@ void Loader::LoadSector(csVector3& pos, Sector* sector)
     sector->isLoading = false;
 }
 
-void Loader::LoadMesh(Sector* sector, MeshObj* mesh)
+void Loader::LoadMesh(MeshObj* mesh)
 {
     bool ready = true;
     for(size_t i=0; i<mesh->meshfacts.GetSize(); i++)
@@ -669,15 +759,11 @@ void Loader::LoadMesh(Sector* sector, MeshObj* mesh)
     {
         vfs->ChDir("/planeshift/maps/");
         mesh->object = scfQueryInterface<iMeshWrapper>(mesh->status->GetResultRefPtr());
-        mesh->object->GetMovable()->SetSector(sector->object);
+        engine->SyncEngineListsNow(tloader);
+        mesh->object->GetMovable()->SetSector(mesh->sector->object);
         mesh->object->GetMovable()->UpdateMove();
-        csRef<iCollideSystem> cdsys = csQueryRegistry<iCollideSystem> (object_reg);
-        csRef<csColliderWrapper> cw = csColliderHelper::InitializeCollisionWrapper(cdsys, mesh->object);
-        if(cw)
-        {
-            mesh->object->QueryObject()->ObjAdd(cw);
-            cw->SetObjectParent(mesh->object->QueryObject());
-        }
+        engine->PrecacheMesh(mesh->object);
+        csColliderHelper::InitializeCollisionWrapper(cdsys, mesh->object);
         loadingMeshes.Delete(mesh);
         mesh->loading = false;
     }
@@ -743,7 +829,7 @@ bool Loader::LoadMaterial(Material* material)
 
         for(size_t i=0; i<material->shadervars.GetSize(); i++)
         {
-            if(material->shadervars[i].type = csShaderVariable::TEXTURE)
+            if(material->shadervars[i].type == csShaderVariable::TEXTURE)
             {
                 for(size_t j=0; j<material->textures.GetSize(); j++)
                 {
@@ -757,7 +843,7 @@ bool Loader::LoadMaterial(Material* material)
                     }
                 }
             }
-            else if(material->shadervars[i].type = csShaderVariable::VECTOR2)
+            else if(material->shadervars[i].type == csShaderVariable::VECTOR2)
             {
                 csShaderVariable* var = mat->GetVariableAdd(svstrings->Request(material->shadervars[i].name));
                 var->SetType(material->shadervars[i].type);

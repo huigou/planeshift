@@ -34,6 +34,7 @@
 
 #include "util/singleton.h"
 
+struct iCollideSystem;
 struct iObjectRegistry;
 
 class Loader : public Singleton<Loader>
@@ -46,7 +47,7 @@ public:
     iTextureWrapper* LoadTexture (const char* name, const char* filename, const char* className = 0);
 
     void PrecacheData(const char* path);
-    void UpdatePosition(csVector3& pos, const char* sectorName);
+    void UpdatePosition(const csVector3& pos, const char* sectorName, bool force);
 
     bool PreloadTextures();
     bool KeepModels() { return keepModels; }
@@ -64,8 +65,11 @@ private:
     class Portal;
     class Light;
 
-    void LoadSector(csVector3& pos, Sector* sector);
-    void LoadMesh(Sector* sector, MeshObj* mesh);
+    void CleanDisconnectedSectors(Sector* sector);
+    void FindConnectedSectors(csRefArray<Sector>& connectedSectors, Sector* sector);
+    void CleanSector(Sector* sector);
+    void LoadSector(const csVector3& pos, Sector* sector);
+    void LoadMesh(MeshObj* mesh);
     bool LoadMeshFact(MeshFact* meshfact);
     bool LoadMaterial(Material* material);
     bool LoadTexture(Texture* texture);
@@ -81,12 +85,13 @@ private:
     csRef<iVFS> vfs;
     csRef<iShaderVarStringSet> svstrings;
     csRef<iStringSet> strings;
+    csRef<iCollideSystem> cdsys;
     uint gfxFeatures;
 
     csRef<Sector> lastSector;
+    csVector3 lastPos;
 
     csRefArray<MeshObj> loadingMeshes;
-    csRefArray<Portal> loadedPortals;
 
     csRefArray<Texture> textures;
     csRefArray<Material> materials;
@@ -163,7 +168,7 @@ private:
     class Sector : public CS::Utility::FastRefCount<Sector>
     {
     public:
-        Sector(const char* name) : name(name), isLoading(false)
+        Sector(const char* name) : name(name), isLoading(false), objectCount(0)
         {
             ambient = csColor(0.0f);
         }
@@ -176,6 +181,7 @@ private:
         csRef<iSector> object;
         csRefArray<MeshObj> meshes;
         csRefArray<Portal> portals;
+        csRefArray<Portal> activePortals;
         csRefArray<Light> lights;
     };
 
@@ -196,6 +202,7 @@ private:
         csRefArray<Texture> textures;
         csRefArray<Material> materials;
         csRefArray<MeshFact> meshfacts;
+        Sector* sector;
     };
 
     class Portal : public CS::Utility::FastRefCount<Portal>
@@ -205,7 +212,7 @@ private:
         {
         }
 
-        bool InRange(csVector3& pos)
+        bool InRange(const csVector3& pos)
         {
             for(int i=0; i<num_vertices; i++)
             {
@@ -218,7 +225,7 @@ private:
             return false;
         }
 
-        bool OutOfRange(csVector3& pos)
+        bool OutOfRange(const csVector3& pos)
         {
             for(int i=0; i<num_vertices; i++)
             {

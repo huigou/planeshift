@@ -433,7 +433,7 @@ public:
       */
     psClientVitals* GetVitalMgr() { return vitalManager; }
 
-    csVector3 Pos();
+    csVector3& Pos();
     csVector3 Rot();
     iSector *GetSector();
 
