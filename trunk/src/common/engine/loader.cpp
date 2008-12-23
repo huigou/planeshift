@@ -23,9 +23,11 @@
 #include <csutil/scanstr.h>
 #include <iengine/movable.h>
 #include <iengine/portal.h>
+#include <imap/services.h>
 #include <imesh/object.h>
 #include <iutil/stringarray.h>
 #include <iutil/object.h>
+#include <iutil/plugin.h>
 #include <ivaria/collider.h>
 #include <ivideo/material.h>
 
@@ -47,7 +49,9 @@ void Loader::Init(iObjectRegistry* object_reg, bool keepModels, uint gfxFeatures
     strings = csQueryRegistryTagInterface<iStringSet>(object_reg, "crystalspace.shared.stringset");
     cdsys = csQueryRegistry<iCollideSystem> (object_reg);
 
-    csRef<iGraphics3D> g3d = csQueryRegistry<iGraphics3D> (object_reg);
+    syntaxService = csQueryRegistryOrLoad<iSyntaxService>(object_reg, "crystalspace.syntax.loader.service.text");
+
+    csRef<iGraphics3D> g3d = csQueryRegistry<iGraphics3D>(object_reg);
     txtmgr = g3d->GetTextureManager();
 
     engine->SetClearZBuf(true);
@@ -438,24 +442,41 @@ THREADED_CALLABLE_IMPL2(Loader, PrecacheData, const char* path, bool recursive)
                         csRef<iDocumentNode> node2 = nodeItr3->Next();
                         csRef<Portal> p = csPtr<Portal>(new Portal(node2->GetAttributeValue("name")));
 
+                        if(node2->GetNode("matrix"))
+                        {
+                            p->warp = true;
+                            syntaxService->ParseMatrix(node2->GetNode("matrix"), p->matrix);
+                        }
+
+                        if(node2->GetNode("wv"))
+                        {
+                            p->warp = true;
+                            syntaxService->ParseVector(node2->GetNode("wv"), p->wv);
+                        }
+
                         if(node2->GetNode("ww"))
                         {
-                            node2 = node2->GetNode("ww");
-                            p->ww = csVector3(node2->GetAttributeValueAsFloat("x"),
-                                node2->GetAttributeValueAsFloat("y"), node2->GetAttributeValueAsFloat("z"));
-                            node2 = node2->GetParent();
+                            p->warp = true;
+                            p->ww_given = true;
+                            syntaxService->ParseVector(node2->GetNode("ww"), p->ww);
+                        }
+
+                        if(node2->GetNode("clip"))
+                        {
+                            p->clip = true;
+                        }
+
+                        if(node2->GetNode("zfill"))
+                        {
+                            p->zfill = true;
                         }
 
                         csRef<iDocumentNodeIterator> nodeItr3 = node2->GetNodes("v");
                         while(nodeItr3->HasNext())
                         {
-                            node2 = nodeItr3->Next();
                             csVector3 vec;
-                            vec.x = node2->GetAttributeValueAsFloat("x");
-                            vec.y = node2->GetAttributeValueAsFloat("y");
-                            vec.z = node2->GetAttributeValueAsFloat("z");
+                            syntaxService->ParseVector(nodeItr3->Next(), vec);
                             p->poly.AddVertex(vec);
-                            node2 = node2->GetParent();
                         }
 
                         csString targetSector = node2->GetNode("sector")->GetContentsValue();
@@ -530,17 +551,9 @@ THREADED_CALLABLE_IMPL2(Loader, PrecacheData, const char* path, bool recursive)
 
                     l->type = CS_LIGHT_POINTLIGHT;
 
-                    node = node->GetNode("center");
-                    l->pos = csVector3(node->GetAttributeValueAsFloat("x"),
-                        node->GetAttributeValueAsFloat("y"), node->GetAttributeValueAsFloat("z"));
-                    node = node->GetParent();
-
+                    syntaxService->ParseVector(node->GetNode("center"), l->pos);
                     l->radius = node->GetNode("radius")->GetContentsValueAsFloat();
-
-                    node = node->GetNode("color");
-                    l->colour = csColor(node->GetAttributeValueAsFloat("red"),
-                        node->GetAttributeValueAsFloat("green"), node->GetAttributeValueAsFloat("blue"));
-                    node = node->GetParent();
+                    syntaxService->ParseColor(node->GetNode("color"), l->colour);
 
                     s->lights.Push(l);
                     node = node->GetParent();
@@ -722,7 +735,28 @@ void Loader::LoadSector(const csVector3& pos, Sector* sector)
 
             sector->portals[i]->mObject = engine->CreatePortal(sector->portals[i]->name, sector->object,
                 csVector3(0), sector->portals[i]->targetSector->object, sector->portals[i]->poly.GetVertices(),
-                sector->portals[i]->poly.GetVertexCount(), sector->portals[i]->pObject);
+                (int)sector->portals[i]->poly.GetVertexCount(), sector->portals[i]->pObject);
+
+            if(sector->portals[i]->warp)
+            {
+                if(!sector->portals[i]->ww_given)
+                {
+                    sector->portals[i]->ww = sector->portals[i]->wv;
+                }
+
+                sector->portals[i]->pObject->SetWarp(sector->portals[i]->matrix, sector->portals[i]->wv, sector->portals[i]->ww);
+            }
+
+            if(sector->portals[i]->clip)
+            {
+                sector->portals[i]->pObject->GetFlags().SetBool(CS_PORTAL_CLIPDEST, true);
+            }
+
+            if(sector->portals[i]->zfill)
+            {
+                sector->portals[i]->pObject->GetFlags().SetBool(CS_PORTAL_ZFILL, true);
+            }
+
             sector->activePortals.Push(sector->portals[i]);
             ++sector->objectCount;
         }

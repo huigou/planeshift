@@ -38,6 +38,7 @@
 
 struct iCollideSystem;
 struct iObjectRegistry;
+struct iSyntaxService;
 
 class Loader : public Singleton<Loader>, public ThreadedCallable<Loader>
 {
@@ -90,6 +91,7 @@ private:
     csRef<iShaderVarStringSet> svstrings;
     csRef<iStringSet> strings;
     csRef<iCollideSystem> cdsys;
+    csRef<iSyntaxService> syntaxService;
     uint gfxFeatures;
 
     csRef<Sector> lastSector;
@@ -217,7 +219,7 @@ private:
     class Portal : public CS::Utility::FastRefCount<Portal>
     {
     public:
-        Portal(const char* name) : name(name)
+        Portal(const char* name) : name(name), clip(false), zfill(false), warp(false), ww_given(false)
         {
         }
 
@@ -248,7 +250,13 @@ private:
         }
 
         csString name;
+        csMatrix3 matrix;
+        csVector3 wv;
+        bool ww_given;
         csVector3 ww;
+        bool clip;
+        bool zfill;
+        bool warp;
         csPoly3D poly;
 
         csRef<Sector> targetSector;
