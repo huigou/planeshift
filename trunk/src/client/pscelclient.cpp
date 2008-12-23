@@ -786,7 +786,6 @@ void psCelClient::Update()
     for(size_t i =0; i < entities.GetSize();i++)
     {
         entities[i]->Update();
-        GEMClientActor* actor = dynamic_cast<GEMClientActor*>(entities[i]);
     }
 
     // Update loader.

@@ -118,7 +118,6 @@ bool psEffectObjQuad::Render(const csVector3 &up)
 
     // obj specific
     genState =  scfQueryInterface<iGeneralMeshState> (mesh->GetMeshObject());
-    genState->SetLighting(false);
 
     if (mixmode != CS_FX_ALPHA)
       mesh->GetMeshObject()->SetMixMode(mixmode);  // to check

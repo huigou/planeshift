@@ -138,9 +138,9 @@ private:
         {
         }
 
+        csString name;
         bool loaded;
         csRef<iThreadReturn> status;
-        csString name;
         csRef<iDocumentNode> data;
     };
 
@@ -152,8 +152,8 @@ private:
         {
         }
 
-        bool loaded;
         csString name;
+        bool loaded;
         csArray<Shader> shaders;
         csArray<ShaderVar> shadervars;
         csRefArray<Texture> textures;
@@ -162,13 +162,13 @@ private:
     class MeshFact : public CS::Utility::FastRefCount<MeshFact>
     {
     public:
-        MeshFact(const char* name, iDocumentNode* data) : name(name), data(data), loaded(false)
+        MeshFact(const char* name, iDocumentNode* data) : name(name), loaded(false), data(data)
         {
         }
 
+        csString name;
         bool loaded;
         csRef<iThreadReturn> status;
-        csString name;
         csRef<iDocumentNode> data;
         csRefArray<Material> materials;
     };
@@ -181,8 +181,8 @@ private:
             ambient = csColor(0.0f);
         }
 
-        bool isLoading;
         csString name;
+        bool isLoading;
         csString culler;
         csColor ambient;
         size_t objectCount;

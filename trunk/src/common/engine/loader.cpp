@@ -854,7 +854,7 @@ bool Loader::LoadMaterial(Material* material)
         csRefArray<csShaderVariable> shadervars;
 
         csRef<iMaterial> mat (engine->CreateBaseMaterial(0));
-        iMaterialWrapper* mw = engine->GetMaterialList()->NewMaterial(mat, material->name);
+        engine->GetMaterialList()->NewMaterial(mat, material->name);
 
         for(size_t i=0; i<material->shaders.GetSize(); i++)
         {

@@ -144,7 +144,6 @@ bool psEffectObjTrail::Render(const csVector3 &up)
 
     // obj specific
     genState =  scfQueryInterface<iGeneralMeshState> (mesh->GetMeshObject());
-    genState->SetLighting(false);
 
     mesh->GetMeshObject()->SetColor(csColor(1,1,1)); // to check
     //genState->SetColor(csColor(1,1,1)); was not working with latest CS

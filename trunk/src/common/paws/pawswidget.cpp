@@ -2465,7 +2465,7 @@ bool pawsWidget::SelfPopulateXML( const char *xmlstr )
     const char *error = doc->Parse( xmlstr );
     if (error)
     {
-        Error1(error);
+        Error2("%s\n", error);
         return false;
     }
     csRef<iDocumentNode> root    = doc->GetRoot();
