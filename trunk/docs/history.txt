@@ -5,6 +5,10 @@
   working and the moved edit description button appears only when a proper tab is selected,
   doesn't close the detail window anymore but updates it when clicking ok and can edit contextually
   to the selected tab
+- Added a /setkillexp to allow the issuer to set his killexp value (only in server cache no save in db)
+  This is the experience given in case the char is killed
+- Added a new flag in set to allow who has this flag enabled to give the experience set by /setkillexp
+  in case he/she/it gets killed (/set givekillexp)
 
 *** 2008-12-20 by Kenny Graunke
 - Moved the "Edit Description" button to pawsDetailWindow; it appears if you
