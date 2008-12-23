@@ -1678,7 +1678,7 @@ void AdminManager::GetInfo(MsgEntry* me,psAdminCmdMessage& msg, AdminCmdData& da
                         loc_x, loc_y, loc_z, degrees,
                         sectorName.GetData(),
                         instance);
-                
+
           if ( item->GetScheduledItem() )
               info.AppendFmt(", spawns with interval %d + %d max modifier",
                              item->GetScheduledItem()->GetInterval(),
@@ -6567,7 +6567,7 @@ void AdminManager::UpdateRespawn(AdminCmdData& data, Client* client, gemActor* t
         target->GetPosition(pos, yrot, sec);
         instance = target->GetInstance();
     }
-  
+
     csString sector = sec->QueryObject()->GetName();
 
     psSectorInfo* sectorinfo = CacheManager::GetSingleton().GetSectorInfoByName(sector);
