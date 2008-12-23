@@ -112,7 +112,6 @@ protected:
     bool Valid( int level, const char* command, int clientnum );
     bool IsReseting(const csString& command);
 
-
     struct AdminCmdData
     {
         csString player, target, command, subCmd, commandMod;
@@ -409,6 +408,14 @@ protected:
      *  @param client The GM client the command came from.
      */
     void DisableQuest(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data, Client *client );
+
+    /** @brief Allows to set an experience given to who kills the issing player
+     *
+     *  @param me The incoming message from the GM
+     *  @param msg The cracked command message.
+     *  @param client The GM client the command came from.
+     */
+    void SetKillExp(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data, Client *client );
 
     /** @brief Adds a petition under the passed user's name to the 'petitions' table in the database.
      *

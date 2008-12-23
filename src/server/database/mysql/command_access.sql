@@ -149,6 +149,10 @@ INSERT INTO command_group_assignment VALUES( "/morph", 30 );
 INSERT INTO command_group_assignment VALUES( "/morph", 25 );
 INSERT INTO command_group_assignment VALUES( "/morph", 24 );
 INSERT INTO command_group_assignment VALUES( "/morph", 23 );
+INSERT INTO command_group_assignment VALUES( "/setkillexp", 30 );
+INSERT INTO command_group_assignment VALUES( "/setkillexp", 25 );
+INSERT INTO command_group_assignment VALUES( "/setkillexp", 24 );
+INSERT INTO command_group_assignment VALUES( "/setkillexp", 23 );
 
 # GM2 and above
 INSERT INTO command_group_assignment VALUES( "command area", 30 );
