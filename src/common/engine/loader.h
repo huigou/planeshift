@@ -22,6 +22,7 @@
 
 #include <csgfx/shadervar.h>
 #include <csutil/scf_implementation.h>
+#include <csutil/threadmanager.h>
 
 #include <iengine/engine.h>
 #include <iengine/material.h>
@@ -37,7 +38,7 @@
 struct iCollideSystem;
 struct iObjectRegistry;
 
-class Loader : public Singleton<Loader>
+class Loader : public Singleton<Loader>, public ThreadedCallable<Loader>
 {
 public:
     void Init(iObjectRegistry* _object_reg, bool _keepModels, uint gfxFeatures, float loadRange);
@@ -46,7 +47,7 @@ public:
 
     iTextureWrapper* LoadTexture (const char* name, const char* filename, const char* className = 0);
 
-    void PrecacheData(const char* path);
+    THREADED_CALLABLE_DECL2(Loader, PrecacheData, csThreadReturn, const char*, path, bool, recursive, THREADEDL, false, false);
     void UpdatePosition(const csVector3& pos, const char* sectorName, bool force);
 
     bool PreloadTextures();
@@ -55,6 +56,8 @@ public:
     iThreadedLoader* GetLoader() { return tloader; }
 
     size_t GetLoadingCount() { return loadingMeshes.GetSize(); }
+
+    iObjectRegistry* GetObjectRegistry() const { return object_reg; }
 
 private:
     class Texture;
@@ -97,6 +100,11 @@ private:
     csRefArray<Material> materials;
     csRefArray<MeshFact> meshfacts;
     csRefArray<Sector> sectors;
+
+    CS::Threading::Mutex tLock;
+    CS::Threading::Mutex mLock;
+    CS::Threading::Mutex mfLock;
+    CS::Threading::Mutex sLock;
 
     struct Shader
     {

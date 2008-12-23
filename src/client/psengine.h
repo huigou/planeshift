@@ -422,6 +422,7 @@ private:
     bool okToLoadModels; ///< True if we can load models now.
     csStringArray modelnames;
     csHash<csString, csString> factfilenames;
+    csRefArray<iThreadReturn> precaches;
 
 public:
     bool GetFileNameByFact(csString factName, csString& fileName);

@@ -567,27 +567,6 @@ bool psEngine::Initialize (int level)
 
         unloadLast = GetConfig()->GetBool("PlaneShift.Client.Loading.UnloadLast", true);
 
-        threadedLoading = !psengine->GetConfig()->GetBool("ThreadManager.AlwaysRunNow");
-
-        Loader* loader = new Loader();
-        Loader::GetSingleton().Init(object_reg, preloadModels, gfxFeatures, 500);
-
-        if(threadedLoading)
-        {
-            csString path;
-            csRef<iStringArray> maps = vfs->FindFiles("/planeshift/world/");
-            for(size_t i=0; i<maps->GetSize(); i++)
-            {
-                vfs->PushDir(maps->Get(i));
-                csRef<iDataBuffer> tmp = vfs->GetRealPath(maps->Get(i));
-                path.AppendFmt("%s, ", tmp->GetData());
-                Loader::GetSingleton().PrecacheData("world");
-                vfs->PopDir();
-            }
-            vfs->SetSyncDir("/planeshift/maps/");
-            vfs->Mount("/planeshift/maps/", path);
-        }
-
         if (!celclient->Initialize(object_reg, GetMsgHandler(), zonehandler))
         {
             lasterror = "Couldn't init Cel Manager.";
@@ -637,6 +616,26 @@ bool psEngine::Initialize (int level)
         {
             FatalError("Failed to load effects!");
             return 1;
+        }
+
+        threadedLoading = !psengine->GetConfig()->GetBool("ThreadManager.AlwaysRunNow");
+
+        Loader* loader = new Loader();
+        Loader::GetSingleton().Init(object_reg, preloadModels, gfxFeatures, 500);
+
+        if(threadedLoading)
+        {
+            csString path;
+            csRef<iStringArray> maps = vfs->FindFiles("/planeshift/world/");
+            for(size_t i=0; i<maps->GetSize(); i++)
+            {
+                csRef<iDataBuffer> tmp = vfs->GetRealPath(maps->Get(i));
+                path.AppendFmt("%s, ", tmp->GetData());
+                csString path(maps->Get(i));
+                path.Append("/world");
+                precaches.Push(Loader::GetSingleton().PrecacheData(path.GetData(), false));
+            }
+            vfs->Mount("/planeshift/maps/", path);
         }
 
         okToLoadModels = true;
@@ -1240,6 +1239,23 @@ void psEngine::LoadGame()
     {
         if (!charController->IsReady())
             return;  // Wait for character modes
+
+        // Make sure all the maps have been precached.
+        bool precached = true;
+        for(size_t i=0; i<precaches.GetSize(); i++)
+        {
+            precached &= precaches[i]->IsFinished();
+        }
+
+        if(precached)
+        {
+            precaches.Empty();
+            vfs->SetSyncDir("/planeshift/maps/");
+        }
+        else
+        {
+            return;
+        }
 
         celclient->RequestServerWorld();
 
