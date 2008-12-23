@@ -50,6 +50,7 @@ psLocalization::~psLocalization()
 void psLocalization::Initialize(iObjectRegistry* _object_reg)
 {
     object_reg = _object_reg;
+		dirty = false;
 }
 
 void psLocalization::SetLanguage(const csString & _lang)
