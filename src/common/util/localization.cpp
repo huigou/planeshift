@@ -50,7 +50,7 @@ psLocalization::~psLocalization()
 void psLocalization::Initialize(iObjectRegistry* _object_reg)
 {
     object_reg = _object_reg;
-		dirty = false;
+    dirty = false;
 }
 
 void psLocalization::SetLanguage(const csString & _lang)
@@ -59,7 +59,7 @@ void psLocalization::SetLanguage(const csString & _lang)
     csRef<iDocumentNode> root, tblRoot, item;
     csRef<iDocumentNodeIterator> itemIter;
     psStringTableItem * itemData;
-    
+
     assert(object_reg != NULL);
 
     ClearStringTable();
@@ -114,7 +114,7 @@ void psLocalization::SetLanguage(const csString & _lang)
 csString psLocalization::FindLocalizedFile(const csString & shortPath)
 {
     csString fullPath;
-    
+
     fullPath = "/this/lang/";
     fullPath += language;
     fullPath += "/";
@@ -135,7 +135,7 @@ const csString& psLocalization::Translate(const csString & orig)
 
     psStringTableItem * item;
     psStringTableHash::Iterator iter = stringTbl.GetIterator(orig.GetData());
-    
+
     while (iter.HasNext())
     {
         item = (psStringTableItem*)iter.Next();
@@ -144,7 +144,7 @@ const csString& psLocalization::Translate(const csString & orig)
         else if (item->translated.Length() == 0)
             return orig;
     }
-    
+
     // orig not found, so store it
     printf("Added '%s' to stringtable.\n", orig.GetDataSafe() );
 
@@ -173,7 +173,7 @@ void psLocalization::ClearStringTable()
 
     psStringTableItem * item;
     psStringTableHash::GlobalIterator iter = stringTbl.GetIterator();
-    
+
     while (iter.HasNext())
     {
         item = (psStringTableItem*)iter.Next();
@@ -187,7 +187,7 @@ void psLocalization::WriteStringTable()
 {
     if (filename.IsEmpty())
         return;
-     
+
     csRef<iVFS> vfs;
 
     vfs =  csQueryRegistry<iVFS > ( object_reg);
@@ -213,9 +213,9 @@ void psLocalization::WriteStringTable()
         line.Format("  <item orig=\"%s\" trans=\"%s\" />\n", item->original.GetDataSafe(), item->translated.GetDataSafe() );
         file->Write(line, line.Length() );
     }
-    
+
     file->Write("</StringTable>",strlen("</stringtable>") );
-   
+
     printf("-----------------------------------\nSaved %d translation entries.\n-----------------------------------\n", i);
-   
+
 }

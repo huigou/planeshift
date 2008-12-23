@@ -39,7 +39,7 @@ void Loader::Init(iObjectRegistry* object_reg, bool keepModels, uint gfxFeatures
     this->keepModels = keepModels;
     this->gfxFeatures = gfxFeatures;
     this->loadRange = loadRange;
-    
+
     engine = csQueryRegistry<iEngine> (object_reg);
     tloader = csQueryRegistry<iThreadedLoader> (object_reg);
     vfs = csQueryRegistry<iVFS> (object_reg);
@@ -139,7 +139,7 @@ THREADED_CALLABLE_IMPL2(Loader, PrecacheData, const char* path, bool recursive)
                         CS::Threading::MutexScopedLock lock(mLock);
                         materials.Push(m);
                     }
-                    
+
                     if(node->GetNode("texture"))
                     {
                         node = node->GetNode("texture");
@@ -380,7 +380,7 @@ THREADED_CALLABLE_IMPL2(Loader, PrecacheData, const char* path, bool recursive)
                         node2 = node2->GetParent();
                     }
 
-                    
+
                     if(node2->GetNode("materialpalette"))
                     {
                         nodeItr3 = node2->GetNode("materialpalette")->GetNodes("material");
@@ -450,11 +450,11 @@ THREADED_CALLABLE_IMPL2(Loader, PrecacheData, const char* path, bool recursive)
                         while(nodeItr3->HasNext())
                         {
                             node2 = nodeItr3->Next();
-														csVector3 vec;
-														vec.x = node2->GetAttributeValueAsFloat("x");
-														vec.y = node2->GetAttributeValueAsFloat("y");
-														vec.z = node2->GetAttributeValueAsFloat("z");
-														p->poly.AddVertex(vec);
+                            csVector3 vec;
+                            vec.x = node2->GetAttributeValueAsFloat("x");
+                            vec.y = node2->GetAttributeValueAsFloat("y");
+                            vec.z = node2->GetAttributeValueAsFloat("z");
+                            p->poly.AddVertex(vec);
                             node2 = node2->GetParent();
                         }
 
@@ -539,7 +539,7 @@ THREADED_CALLABLE_IMPL2(Loader, PrecacheData, const char* path, bool recursive)
 
                     node = node->GetNode("color");
                     l->colour = csColor(node->GetAttributeValueAsFloat("red"),
-                            node->GetAttributeValueAsFloat("green"), node->GetAttributeValueAsFloat("blue"));
+                        node->GetAttributeValueAsFloat("green"), node->GetAttributeValueAsFloat("blue"));
                     node = node->GetParent();
 
                     s->lights.Push(l);
@@ -1025,7 +1025,7 @@ iTextureWrapper* Loader::LoadTexture(const char *name, const char *filename, con
         texture = scfQueryInterfaceSafe<iTextureWrapper>(itr->GetResultRefPtr());
         if(className)
         {
-          texture->SetTextureClass(className);
+            texture->SetTextureClass(className);
         }
         engine->SyncEngineListsNow(tloader);
     }
@@ -1062,9 +1062,9 @@ bool Loader::LoadTextureDir(const char *dir)
 
         // If this is an icon or shader map texture then we don't load as a material.
         if(strstr(filename, "_icon" ) || strstr(filename, "_n." ) || strstr(filename, "_h." ) ||
-          strstr(filename, "_s." ) || strstr(filename, "_g." ) || strstr(filename, "_ao." ))
+            strstr(filename, "_s." ) || strstr(filename, "_g." ) || strstr(filename, "_ao." ))
             continue;
-        
+
         const char* name = csStrNew(filename);
         const char* onlyname = PS_GetFileName(name);
 
@@ -1090,7 +1090,7 @@ bool Loader::PreloadTextures()
 
     if (!LoadTextureDir("/planeshift/shields/"))
         return false;
-        
+
     // Load the textures for the items.
     if (!LoadTextureDir("/planeshift/items/"))
         return false;

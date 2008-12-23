@@ -124,7 +124,7 @@ private:
         csShaderVariable::VariableType type;
         csString value;
         csVector2 vec2;
-        
+
         ShaderVar(const char* name, csShaderVariable::VariableType type)
             : name(name), type(type)
         {
@@ -249,7 +249,7 @@ private:
 
         csString name;
         csVector3 ww;
-				csPoly3D poly;
+        csPoly3D poly;
 
         csRef<Sector> targetSector;
         iPortal* pObject;

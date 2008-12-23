@@ -35,7 +35,7 @@
 //////////////////////////////////////////////////////////////////////
 
 pawsButton::pawsButton()
-          : enabled(true), upTextOffsetX(0), upTextOffsetY(0), downTextOffsetX(0), downTextOffsetY(0)
+: enabled(true), upTextOffsetX(0), upTextOffsetY(0), downTextOffsetX(0), downTextOffsetY(0)
 {
     down = false;
     notify = NULL;
@@ -109,8 +109,8 @@ bool pawsButton::Setup( iDocumentNode* node )
     {
         csString downImageName = buttonDownImage->GetAttributeValue("resource");
         SetDownImage(downImageName);
-		downTextOffsetX = buttonDownImage->GetAttributeValueAsInt("textoffsetx");
-		downTextOffsetY = buttonDownImage->GetAttributeValueAsInt("textoffsety");
+        downTextOffsetX = buttonDownImage->GetAttributeValueAsInt("textoffsetx");
+        downTextOffsetY = buttonDownImage->GetAttributeValueAsInt("textoffsety");
     }
 
     // Get the up button image name.
@@ -119,11 +119,11 @@ bool pawsButton::Setup( iDocumentNode* node )
     {
         csString upImageName = buttonUpImage->GetAttributeValue("resource");
         SetUpImage(upImageName);
-		upTextOffsetX = buttonUpImage->GetAttributeValueAsInt("textoffsetx");
-		upTextOffsetY = buttonUpImage->GetAttributeValueAsInt("textoffsety");
+        upTextOffsetX = buttonUpImage->GetAttributeValueAsInt("textoffsetx");
+        upTextOffsetY = buttonUpImage->GetAttributeValueAsInt("textoffsety");
     }
 
-	// Get the "on char name flash" button image name.
+    // Get the "on char name flash" button image name.
     csRef<iDocumentNode> buttonSpecialImage = node->GetNode( "buttonspecial" );
     if ( buttonSpecialImage )
     {
@@ -153,7 +153,7 @@ bool pawsButton::SelfPopulate( iDocumentNode *node)
     {
         SetState(strcmp(node->GetAttributeValue("down"),"true")==0);
     }
-    
+
     return true;
 }
 
@@ -170,12 +170,12 @@ void pawsButton::SetUpImage(const csString & image)
 
 void pawsButton::SetGreyUpImage(const char * greyUpImage)
 {
-	this->greyUpImage = PawsManager::GetSingleton().GetTextureManager()->GetDrawable(greyUpImage);
+    this->greyUpImage = PawsManager::GetSingleton().GetTextureManager()->GetDrawable(greyUpImage);
 }
 
 void pawsButton::SetGreyDownImage(const char * greyDownImage)
 {
-	this->greyDownImage = PawsManager::GetSingleton().GetTextureManager()->GetDrawable(greyDownImage);
+    this->greyDownImage = PawsManager::GetSingleton().GetTextureManager()->GetDrawable(greyDownImage);
 }
 
 void pawsButton::SetOnSpecialImage( const csString & image )
@@ -205,7 +205,7 @@ void pawsButton::SetText(const char* text)
     if(PawsManager::GetSingleton().GetSoundStatus() && 
         sound_click == PawsManager::GetSingleton().LoadSound("sound.standardButtonClick"))
     {
-       if(buttonLabel == "ok")
+        if(buttonLabel == "ok")
             SetSound("gui.ok");
         else if(buttonLabel == "quit")
             SetSound("gui.quit");
@@ -232,17 +232,17 @@ void pawsButton::Draw()
     }
     if ( down )
     {
-		if (!enabled && greyDownImage)
-			greyDownImage->Draw(screenFrame, drawAlpha);
+        if (!enabled && greyDownImage)
+            greyDownImage->Draw(screenFrame, drawAlpha);
         else if (pressedImage)
-			pressedImage->Draw(screenFrame, drawAlpha);
+            pressedImage->Draw(screenFrame, drawAlpha);
     }
     else if ( flash==0 )
     {
-		if (!enabled && greyUpImage)
-			greyUpImage->Draw(screenFrame, drawAlpha);
-		else if (releasedImage) 
-			releasedImage->Draw(screenFrame, drawAlpha);
+        if (!enabled && greyUpImage)
+            greyUpImage->Draw(screenFrame, drawAlpha);
+        else if (releasedImage) 
+            releasedImage->Draw(screenFrame, drawAlpha);
     }
     else // Flash the button if it's not depressed.
     {
@@ -253,13 +253,13 @@ void pawsButton::Draw()
             {
             case FLASH_REGULAR:
                 if ( pressedImage )
-					pressedImage->Draw( screenFrame );
+                    pressedImage->Draw( screenFrame );
                 break;
             case FLASH_SPECIAL:
                 if ( specialFlashImage ) 
-    				specialFlashImage->Draw( screenFrame );
+                    specialFlashImage->Draw( screenFrame );
                 break;
-			}
+            }
         }
         else
         {
@@ -285,10 +285,10 @@ void pawsButton::Draw()
         drawY = screenFrame.ymin + midY - height/2;
         drawY -= 2; // correction
 
-		if (down)
-			DrawWidgetText(buttonLabel, drawX + downTextOffsetX, drawY + downTextOffsetY);
-		else
-			DrawWidgetText(buttonLabel, drawX + upTextOffsetX, drawY + upTextOffsetY);
+        if (down)
+            DrawWidgetText(buttonLabel, drawX + downTextOffsetX, drawY + downTextOffsetY);
+        else
+            DrawWidgetText(buttonLabel, drawX + upTextOffsetX, drawY + upTextOffsetY);
     }
 }
 
@@ -315,24 +315,24 @@ bool pawsButton::OnMouseExit()
 bool pawsButton::OnMouseDown( int button, int modifiers, int x, int y )
 {  
     if ( !enabled )
-		{
+    {
         return true;
-		}
+    }
     else if ( button == csmbWheelUp || button == csmbWheelDown )
-		{
+    {
         if ( parent )
-				{
+        {
             return parent->OnMouseDown(button, modifiers, x, y);
         }
-				else
-				{
+        else
+        {
             return false;
-			  }
-		}
+        }
+    }
 
     // plays a sound
     PawsManager::GetSingleton().PlaySound(sound_click);
-    
+
     if ( toggle )
     {
         SetState(!IsDown());
@@ -388,17 +388,17 @@ bool pawsButton::OnMouseUp( int button, int modifiers, int x, int y )
 bool pawsButton::OnKeyDown( int keyCode, int key, int modifiers )
 {
     /* This would be supposed to send a mouse click to the button in case enter is used
-     * but in reality as we don't have tab (or similar) focus switching for things in the gui it requires
-     * the player to click on the button with the mouse first in order to use this. So in reality it gives only
-     * unwanted results so for now it will stay commented out.
-     * TODO: make a way to select the focused widget with the keyboard (like with tab) and check for autorepetion
-     * (make it lower or disable it?)
-     */
+    * but in reality as we don't have tab (or similar) focus switching for things in the gui it requires
+    * the player to click on the button with the mouse first in order to use this. So in reality it gives only
+    * unwanted results so for now it will stay commented out.
+    * TODO: make a way to select the focused widget with the keyboard (like with tab) and check for autorepetion
+    * (make it lower or disable it?)
+    */
 
     /*if (enabled && key == CSKEY_ENTER)
     {
-        OnMouseDown(csmbLeft,modifiers,screenFrame.xmin,screenFrame.ymin);
-        return true;
+    OnMouseDown(csmbLeft,modifiers,screenFrame.xmin,screenFrame.ymin);
+    return true;
     }*/
     return pawsWidget::OnKeyDown(keyCode, key, modifiers);
 }
@@ -410,28 +410,28 @@ void pawsButton::SetNotify( pawsWidget* widget )
 
 void pawsButton::SetEnabled(bool enabled)
 {
-	this->enabled = enabled;
+    this->enabled = enabled;
 }
 
 bool pawsButton::IsEnabled() const
 {
-	return enabled;
+    return enabled;
 }
 
 void pawsButton::SetState(bool isDown, bool publish)
 {
     down = isDown;    
-    
+
     if ( flash && down )
         flash = 0;
 
-	if (!toggle)
-		return;
+    if (!toggle)
+        return;
 
-	if (notify)
-		notify->RunScriptEvent(PW_SCRIPT_EVENT_VALUECHANGED);
-	else
-		RunScriptEvent(PW_SCRIPT_EVENT_VALUECHANGED);
+    if (notify)
+        notify->RunScriptEvent(PW_SCRIPT_EVENT_VALUECHANGED);
+    else
+        RunScriptEvent(PW_SCRIPT_EVENT_VALUECHANGED);
 
     if (!publish)
         return;
