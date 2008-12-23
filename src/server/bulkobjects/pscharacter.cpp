@@ -243,6 +243,8 @@ bool psCharacter::Load(iResultRow& row)
 
     SetDescription(row["description"]);
 
+    SetOOCDescription(row["description_ooc"]); //loads the ooc description of the player
+
     SetCreationInfo(row["creation_info"]); //loads the info gathered in the creation in order to allow the player
                                            //to review them
 
@@ -3748,6 +3750,25 @@ const char* psCharacter::GetDescription()
 void psCharacter::SetDescription(const char* newValue)
 {
     description = newValue;
+    bool bChanged = false;
+    while (description.Find("\n\n\n\n") != (size_t)-1)
+    {
+        bChanged = true;
+        description.ReplaceAll("\n\n\n\n", "\n\n\n");
+    }
+
+    if (bChanged && GetActor() && GetActor()->GetClient())
+        psserver->SendSystemError(GetActor()->GetClient()->GetClientNum(), "Warning! Description trimmed.");
+}
+
+const char* psCharacter::GetOOCDescription()
+{
+    return oocdescription;
+}
+
+void psCharacter::SetOOCDescription(const char* newValue)
+{
+    oocdescription = newValue;
     bool bChanged = false;
     while (description.Find("\n\n\n\n") != (size_t)-1)
     {

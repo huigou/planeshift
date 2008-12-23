@@ -52,6 +52,9 @@ private:
    
     csArray<csString>  skills;
     csString storedescription;
+    csString storedoocdescription;
+    csString storedcreationinfo;
+    bool details_editable;
     GEMClientObject* target;
     pawsButton* lastTab;
     

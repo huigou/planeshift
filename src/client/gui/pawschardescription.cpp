@@ -32,6 +32,7 @@
 
 // PAWS INCLUDES
 #include "pawschardescription.h"
+#include "pawsdetailwindow.h"
 #include "paws/pawsmanager.h"
 
 #define BTN_OK     100
@@ -43,6 +44,7 @@
 
 pawsCharDescription::pawsCharDescription()
 {
+    ooc_editing = false;
 }
 
 pawsCharDescription::~pawsCharDescription()
@@ -54,9 +56,6 @@ bool pawsCharDescription::PostSetup()
 {
     description = dynamic_cast<pawsMultilineEditTextBox*>(FindWidget( "Description" ));
     if ( !description )
-        return false;
-    creationinfo = dynamic_cast<pawsMultiLineTextBox*>(FindWidget( "CreationInfo" ));
-    if ( !creationinfo )
         return false;
 
     return true;
@@ -89,8 +88,10 @@ void pawsCharDescription::HandleMessage( MsgEntry* me )
 
         if (msg.requestor == "pawsCharDescription")
         {
-            description->SetText(msg.desc);
-            creationinfo->SetText(msg.creationinfo);
+            if(ooc_editing)
+                description->SetText(msg.desc_ooc);
+            else
+                description->SetText(msg.desc);
             psengine->GetMsgHandler()->Unsubscribe( this, MSGTYPE_CHARACTERDETAILS );
         }
         return;
@@ -104,12 +105,14 @@ bool pawsCharDescription::OnButtonPressed( int mouseButton, int keyModifier, paw
         case BTN_OK:
         {
             csString newTxt(description->GetText());
-            psCharacterDescriptionUpdateMessage descUpdate(newTxt,false); //TODO: add the dinstinction beetween ooc and ic
+            psCharacterDescriptionUpdateMessage descUpdate(newTxt,ooc_editing);
             psengine->GetMsgHandler()->SendMessage(descUpdate.msg);
             Hide();
 
             // Show the details window to let the user see the changes
-            RequestDetails();
+            pawsDetailWindow *detailWindow = (pawsDetailWindow*) PawsManager::GetSingleton().FindWidget("DetailWindow");
+            if(detailWindow)
+                detailWindow->RequestDetails();
             return true;
         }
         

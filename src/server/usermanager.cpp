@@ -683,13 +683,15 @@ void UserManager::SendCharacterDescription(Client * client, psCharacter * charDa
         gender = PSCHARACTER_GENDER_NONE;
     }
     csString desc          = charData->GetDescription();
-    //send creation info only if the player is requesting  his info
-    csString creationinfo = isSelf? charData->GetCreationInfo() : "";
-    csString desc_ooc          = ""; //placeholder
+
     csArray<psCharacterDetailsMessage::NetworkDetailSkill> skills;
 
     if ( !simple && CacheManager::GetSingleton().GetCommandManager()->Validate(client->GetSecurityLevel(), "view stats") )
         full = true;  // GMs can view the stats list
+
+    //send creation info only if the player is requesting  his info
+    csString creationinfo = ( isSelf || full )? charData->GetCreationInfo() : "";
+    csString desc_ooc     = charData->GetOOCDescription();
 
     if (full)
     {
@@ -829,7 +831,7 @@ void UserManager::HandleCharDescUpdate(MsgEntry *me,Client *client)
         return;
 
     if(descUpdate.oocdesc)
-    {} //placeholder
+        charData->SetOOCDescription(descUpdate.newValue);
     else
         charData->SetDescription(descUpdate.newValue);
 

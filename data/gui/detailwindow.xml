@@ -4,7 +4,7 @@
     <widget name="DetailWindow" factory="pawsDetailWindow" 
             visible="no" savepositions="yes" movable="yes" configurable="yes" resizable="no" >
         
-        <frame x="0" y="200" width="320" height="207" border="yes" />
+        <frame x="0" y="200" width="340" height="207" border="yes" />
         <title resource="Blue Title" text="Details" align="left" close_button="yes"/>
         <bgimage resource="Detail Background" alpha="128" />
 
@@ -15,8 +15,26 @@
          </widget>
  
         <widget name="ShowDescr" factory="pawsButton" style="tabbuttonskills" id="999" >
-            <frame x="33" y="65" width="33" />
+            <frame x="5" y="65" width="33" />
             <label text="Desc" />
+            <attachpoints>
+                <attach point="PROPORTIONAL_RIGHT" />
+                <attach point="ATTACH_LEFT" />
+            </attachpoints>
+        </widget>
+
+        <widget name="ShowDescrOOC" factory="pawsButton" style="tabbuttonskills" id="1006" >
+            <frame x="35" y="65" width="33" />
+            <label text="OOC" />
+            <attachpoints>
+                <attach point="PROPORTIONAL_RIGHT" />
+                <attach point="ATTACH_LEFT" />
+            </attachpoints>
+        </widget>
+
+        <widget name="ShowCC" factory="pawsButton" style="tabbuttonskills" id="1007" >
+            <frame x="65" y="65" width="33" />
+            <label text="CC" />
             <attachpoints>
                 <attach point="PROPORTIONAL_RIGHT" />
                 <attach point="ATTACH_LEFT" />
@@ -24,7 +42,7 @@
         </widget>
        
         <widget name="ShowStats" factory="pawsButton" style="tabbuttonskills" id="1000" >
-            <frame x="65" y="65" width="30" />
+            <frame x="95" y="65" width="30" />
             <label text="Stats" />
             <attachpoints>
                 <attach point="PROPORTIONAL_RIGHT" />
@@ -33,7 +51,7 @@
         </widget>
 
         <widget name="ShowFaction" factory="pawsButton" style="tabbuttonskills" id="1005" >
-            <frame x="95" y="65" width="40" />
+            <frame x="125" y="65" width="40" />
             <label text="Faction" />
             <attachpoints>
                 <attach point="PROPORTIONAL_RIGHT" />
@@ -42,7 +60,7 @@
         </widget>
 
         <widget name="ShowCombat" factory="pawsButton" style="tabbuttonskills" id="1001" >
-            <frame x="135" y="65" width="43" />
+            <frame x="165" y="65" width="43" />
             <label text="Combat" />
             <attachpoints>
                 <attach point="PROPORTIONAL_RIGHT" />
@@ -51,7 +69,7 @@
         </widget>
 
         <widget name="ShowMagic" factory="pawsButton" style="tabbuttonskills" id="1002">
-            <frame x="178" y="65" width="33"  />
+            <frame x="205" y="65" width="33"  />
             <label text="Magic" />
             <attachpoints>
                 <attach point="PROPORTIONAL_RIGHT" />
@@ -60,7 +78,7 @@
         </widget>
 
         <widget name="ShowCraft" factory="pawsButton" style="tabbuttonskills" id="1003">
-            <frame x="210" y="65" width="30"  />
+            <frame x="240" y="65" width="30"  />
             <label text="Jobs" />
             <attachpoints>
                 <attach point="PROPORTIONAL_RIGHT" />
@@ -69,7 +87,7 @@
         </widget>
 
         <widget name="ShowMisc" factory="pawsButton" style="tabbuttonskills" id="1004">
-            <frame x="240" y="65" width="40"  />
+            <frame x="280" y="65" width="40"  />
             <label text="Various" />
             <attachpoints>
                <attach point="ATTACH_RIGHT" />
@@ -79,18 +97,18 @@
 
         <!-- You see a {gender} {race} in front of you named {name}. -->
         <widget name="intro" factory="pawsMultiLineTextBox">
-            <frame x="33" y="28" width="262" height="40" border="no" />
+            <frame x="33" y="28" width="282" height="40" border="no" />
             <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="10" />
         </widget>
 
 		<widget name="EditDesc" factory="pawsButton" id="100" tooltip="Modify Description" >
-			<frame x="260" y="28" width="32" height="32" />
+			<frame x="275" y="28" width="32" height="32" />
 			<bgimage resource="Scribe" />
 		</widget>
 
         <!-- Description -->
         <widget name="Description" factory="pawsMultiLineTextBox">
-            <frame x="33" y="85" width="262" height="98" border="no" />
+            <frame x="33" y="85" width="282" height="98" border="no" />
             <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="10" />
         </widget>  
         
