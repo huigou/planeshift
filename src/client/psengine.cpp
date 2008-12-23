@@ -62,6 +62,7 @@ if (!myref)                                                  \
 //////////////////////////////////////////////////////////////////////////////
 
 // CS files
+#include <imap/services.h>
 #include <iutil/cfgmgr.h>
 #include <iutil/event.h>
 #include <iutil/eventq.h>
