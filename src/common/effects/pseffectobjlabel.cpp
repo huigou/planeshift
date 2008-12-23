@@ -265,7 +265,6 @@ bool psEffectObjLabel::Render(const csVector3 &up)
     mesh->GetMeshObject()->GetObjectModel()->SetTriangleData(viscull_id, 0);
 
     genState =  scfQueryInterface<iGeneralMeshState> (mesh->GetMeshObject());
-    genState->SetLighting(false);
 
     // obj specific
 

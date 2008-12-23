@@ -173,7 +173,7 @@ void ConsoleOut::Intern_VPrintf (ConsoleOutMsgClass con, const char* string, va_
                 printf("\n");
                 promptDisplayed = false;
             }
-            printf(output.GetDataSafe());
+            printf("%s", output.GetDataSafe());
             fflush(stdout);
         }
     }
@@ -182,7 +182,7 @@ void ConsoleOut::Intern_VPrintf (ConsoleOutMsgClass con, const char* string, va_
     // Check for output file
     if (outputfile && con <= maxoutput_file)
     {
-        fprintf(outputfile, output.GetDataSafe());
+        fprintf(outputfile, "%s", output.GetDataSafe());
     }
     // Check for error log
     if (con == CON_ERROR ||
@@ -195,7 +195,7 @@ void ConsoleOut::Intern_VPrintf (ConsoleOutMsgClass con, const char* string, va_
 
         if(errorLog)
         {
-            fprintf(errorLog, output.GetDataSafe());
+            fprintf(errorLog, "%s", output.GetDataSafe());
             fflush(errorLog);
         }
     }

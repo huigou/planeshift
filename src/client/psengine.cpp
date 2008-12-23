@@ -620,7 +620,7 @@ bool psEngine::Initialize (int level)
 
         threadedLoading = !psengine->GetConfig()->GetBool("ThreadManager.AlwaysRunNow");
 
-        Loader* loader = new Loader();
+        loader = new Loader();
         Loader::GetSingleton().Init(object_reg, preloadModels, gfxFeatures, 500);
 
         if(threadedLoading)
@@ -846,7 +846,6 @@ bool psEngine::Process3D(iEvent& ev)
 
     if(!delayedLoaders.IsEmpty())
     {
-        csTicks c = csGetTicks();
         csWeakRef<DelayedLoader> dl = delayedLoaders.Get(0);
         if(dl.IsValid())
         {
@@ -1928,7 +1927,7 @@ bool psEngine::LoadCustomPawsWidgets(const char * filename)
 void psEngine::FatalError(const char* msg)
 {
     loadstate = LS_ERROR;
-    Bug1(msg);
+    Bug2("%s\n", msg);
 
     pawsQuitInfoBox* quitinfo = (pawsQuitInfoBox*)(paws->FindWidget("QuitInfoWindow"));
     if (quitinfo)

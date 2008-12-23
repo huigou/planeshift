@@ -3450,7 +3450,7 @@ csString psCombatEventMessage::ToString(AccessPointers * /*access_ptrs*/)
 {
     csString msgtext;
 
-    msgtext.AppendFmt("Event Type: %d Attack Anim: %lu Defense Anim: %lu Attacker: %d Target: %d Location: %d",
+    msgtext.AppendFmt("Event Type: %d Attack Anim: %d Defense Anim: %d Attacker: %d Target: %d Location: %d",
             event_type, attack_anim, defense_anim, attacker_id.Unbox(), target_id.Unbox(), target_location);
     if (event_type == COMBAT_DAMAGE)
     {

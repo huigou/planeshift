@@ -315,12 +315,20 @@ bool pawsButton::OnMouseExit()
 bool pawsButton::OnMouseDown( int button, int modifiers, int x, int y )
 {  
     if ( !enabled )
+		{
         return true;
+		}
     else if ( button == csmbWheelUp || button == csmbWheelDown )
+		{
         if ( parent )
+				{
             return parent->OnMouseDown(button, modifiers, x, y);
-        else
+        }
+				else
+				{
             return false;
+			  }
+		}
 
     // plays a sound
     PawsManager::GetSingleton().PlaySound(sound_click);
