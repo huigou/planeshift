@@ -47,9 +47,6 @@ psCharAppearance::psCharAppearance(iObjectRegistry* objectReg)
     eyeColorSet = false;
     hairAttached = true;
     hairColorSet = false;
-    
-    state = NULL;
-    stateFactory = NULL;
 }
 
 psCharAppearance::~psCharAppearance()

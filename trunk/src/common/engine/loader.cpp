@@ -58,13 +58,18 @@ void Loader::Init(iObjectRegistry* object_reg, bool keepModels, uint gfxFeatures
     }
 }
 
-void Loader::PrecacheData(const char* path)
+THREADED_CALLABLE_IMPL2(Loader, PrecacheData, const char* path, bool recursive)
 {
     if(vfs->Exists(path))
     {
         csRef<iDocumentSystem> docsys = csQueryRegistry<iDocumentSystem>(object_reg);
         csRef<iDocument> doc = docsys->CreateDocument();
         csRef<iDataBuffer> data = vfs->ReadFile(path);
+
+        if(!recursive)
+        {
+            vfs->ChDir(csString(path).Truncate(csString(path).FindLast('/')));
+        }
 
         doc->Parse(data, true);
 
@@ -83,7 +88,7 @@ void Loader::PrecacheData(const char* path)
             while(nodeItr->HasNext())
             {
                 node = nodeItr->Next();
-                PrecacheData(node->GetContentsValue());
+                PrecacheData(node->GetContentsValue(), true);
             }
 
             node = root->GetNode("plugins");
@@ -113,7 +118,10 @@ void Loader::PrecacheData(const char* path)
                 {
                     node = nodeItr->Next();
                     csRef<Texture> t = csPtr<Texture>(new Texture());
-                    textures.Push(t);
+                    {
+                        CS::Threading::MutexScopedLock lock(tLock);
+                        textures.Push(t);
+                    }
                     t->name = node->GetAttributeValue("name");
                     t->data = node;
                 }
@@ -127,7 +135,10 @@ void Loader::PrecacheData(const char* path)
                 {
                     node = nodeItr->Next();
                     csRef<Material> m = csPtr<Material>(new Material(node->GetAttributeValue("name")));
-                    materials.Push(m);
+                    {
+                        CS::Threading::MutexScopedLock lock(mLock);
+                        materials.Push(m);
+                    }
                     
                     if(node->GetNode("texture"))
                     {
@@ -136,6 +147,7 @@ void Loader::PrecacheData(const char* path)
                         sv.value = node->GetContentsValue();
                         m->shadervars.Push(sv);
 
+                        CS::Threading::MutexScopedLock lock(tLock);
                         for(size_t i=0; i<textures.GetSize(); i++)
                         {
                             if(textures[i]->name.Compare(node->GetContentsValue()))
@@ -164,6 +176,7 @@ void Loader::PrecacheData(const char* path)
                             ShaderVar sv(node->GetAttributeValue("name"), csShaderVariable::TEXTURE);
                             sv.value = node->GetContentsValue();
                             m->shadervars.Push(sv);
+                            CS::Threading::MutexScopedLock lock(tLock);
                             for(size_t i=0; i<textures.GetSize(); i++)
                             {
                                 if(textures[i]->name.Compare(node->GetContentsValue()))
@@ -194,6 +207,7 @@ void Loader::PrecacheData(const char* path)
                     csRef<iDocumentNode> node2 = nodeItr3->Next();
                     if(node2->GetNode("material"))
                     {
+                        CS::Threading::MutexScopedLock lock(mLock);
                         for(size_t i=0; i<materials.GetSize(); i++)
                         {
                             if(materials[i]->name.Compare(node2->GetNode("material")->GetContentsValue()))
@@ -207,11 +221,14 @@ void Loader::PrecacheData(const char* path)
                 if(node->GetNode("params")->GetNode("cells"))
                 {
                     node = node->GetNode("params")->GetNode("cells")->GetNode("celldefault")->GetNode("basematerial");
-                    for(size_t i=0; i<materials.GetSize(); i++)
                     {
-                        if(materials[i]->name.Compare(node->GetContentsValue()))
+                        CS::Threading::MutexScopedLock lock(mLock);
+                        for(size_t i=0; i<materials.GetSize(); i++)
                         {
-                            mf->materials.PushSmart(materials[i]);
+                            if(materials[i]->name.Compare(node->GetContentsValue()))
+                            {
+                                mf->materials.PushSmart(materials[i]);
+                            }
                         }
                     }
                     node = node->GetParent()->GetParent();
@@ -227,6 +244,7 @@ void Loader::PrecacheData(const char* path)
                             while(nodeItr4->HasNext())
                             {
                                 csRef<iDocumentNode> node2 = nodeItr4->Next();
+                                CS::Threading::MutexScopedLock lock(mLock);
                                 for(size_t i=0; i<materials.GetSize(); i++)
                                 {
                                     if(materials[i]->name.Compare(node2->GetAttributeValue("material")))
@@ -239,6 +257,7 @@ void Loader::PrecacheData(const char* path)
                     }
                 }
 
+                CS::Threading::MutexScopedLock lock(mfLock);
                 meshfacts.Push(mf);
             }
 
@@ -249,18 +268,22 @@ void Loader::PrecacheData(const char* path)
 
                 csRef<Sector> s;
                 csString sectorName = node->GetAttributeValue("name");
-                for(size_t i=0; i<sectors.GetSize(); i++)
                 {
-                    if(sectors[i]->name.Compare(sectorName))
+                    CS::Threading::MutexScopedLock lock(sLock);
+                    for(size_t i=0; i<sectors.GetSize(); i++)
                     {
-                        s = sectors[i];
-                        break;
+                        if(sectors[i]->name.Compare(sectorName))
+                        {
+                            s = sectors[i];
+                            break;
+                        }
                     }
                 }
 
                 if(!s.IsValid())
                 {
                     s = csPtr<Sector>(new Sector(sectorName));
+                    CS::Threading::MutexScopedLock lock(sLock);
                     sectors.Push(s);
                 }
 
@@ -302,6 +325,7 @@ void Loader::PrecacheData(const char* path)
                         csRef<iDocumentNode> node3 = nodeItr3->Next();
                         if(node3->GetNode("material"))
                         {
+                            CS::Threading::MutexScopedLock lock(mLock);
                             for(size_t i=0; i<materials.GetSize(); i++)
                             {
                                 if(materials[i]->name.Compare(node3->GetNode("material")->GetContentsValue()))
@@ -317,6 +341,7 @@ void Loader::PrecacheData(const char* path)
                             node3 = nodeItr4->Next();
                             if(csString("texture").Compare(node3->GetAttributeValue("type")))
                             {
+                                CS::Threading::MutexScopedLock lock(tLock);
                                 for(size_t i=0; i<textures.GetSize(); i++)
                                 {
                                     if(textures[i]->name.Compare(node3->GetContentsValue()))
@@ -329,11 +354,14 @@ void Loader::PrecacheData(const char* path)
                     }
 
                     node2 = node2->GetNode("params")->GetNode("factory");
-                    for(size_t i=0; i<meshfacts.GetSize(); i++)
                     {
-                        if(meshfacts[i]->name.Compare(node2->GetContentsValue()))
+                        CS::Threading::MutexScopedLock lock(mfLock);
+                        for(size_t i=0; i<meshfacts.GetSize(); i++)
                         {
-                            m->meshfacts.PushSmart(meshfacts[i]);
+                            if(meshfacts[i]->name.Compare(node2->GetContentsValue()))
+                            {
+                                m->meshfacts.PushSmart(meshfacts[i]);
+                            }
                         }
                     }
                     node2 = node2->GetParent();
@@ -341,6 +369,7 @@ void Loader::PrecacheData(const char* path)
                     if(node2->GetNode("material"))
                     {
                         node2 = node2->GetNode("material");
+                        CS::Threading::MutexScopedLock lock(mLock);
                         for(size_t i=0; i<materials.GetSize(); i++)
                         {
                             if(materials[i]->name.Compare(node2->GetContentsValue()))
@@ -358,6 +387,7 @@ void Loader::PrecacheData(const char* path)
                         while(nodeItr3->HasNext())
                         {
                             csRef<iDocumentNode> node3 = nodeItr3->Next();
+                            CS::Threading::MutexScopedLock lock(mLock);
                             for(size_t i=0; i<materials.GetSize(); i++)
                             {
                                 if(materials[i]->name.Compare(node3->GetContentsValue()))
@@ -382,6 +412,7 @@ void Loader::PrecacheData(const char* path)
                                     csRef<iDocumentNode> node3 = nodeItr4->Next();
                                     if(csString("texture").Compare(node3->GetAttributeValue("type")))
                                     {
+                                        CS::Threading::MutexScopedLock lock(tLock);
                                         for(size_t i=0; i<textures.GetSize(); i++)
                                         {
                                             if(textures[i]->name.Compare(node3->GetContentsValue()))
@@ -428,18 +459,22 @@ void Loader::PrecacheData(const char* path)
                         }
 
                         csString targetSector = node2->GetNode("sector")->GetContentsValue();
-                        for(size_t i=0; i<sectors.GetSize(); i++)
                         {
-                            if(targetSector == sectors[i]->name)
+                            CS::Threading::MutexScopedLock lock(sLock);
+                            for(size_t i=0; i<sectors.GetSize(); i++)
                             {
-                                p->targetSector = sectors[i];
-                                break;
+                                if(targetSector == sectors[i]->name)
+                                {
+                                    p->targetSector = sectors[i];
+                                    break;
+                                }
                             }
                         }
 
                         if(!p->targetSector.IsValid())
                         {
                             p->targetSector = csPtr<Sector>(new Sector(targetSector));
+                            CS::Threading::MutexScopedLock lock(sLock);
                             sectors.Push(p->targetSector);
                         }
 
@@ -513,6 +548,8 @@ void Loader::PrecacheData(const char* path)
             }
         }
     }
+
+    return true;
 }
 
 void Loader::UpdatePosition(const csVector3& pos, const char* sectorName, bool force)
