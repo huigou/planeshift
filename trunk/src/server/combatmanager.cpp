@@ -580,7 +580,7 @@ void CombatManager::ApplyCombatEvent(psCombatGameEvent *event, int attack_result
             
             // If the target wasn't in combat, it is now...
             // Note that other modes shouldn't be interrupted automatically
-            if (gemTarget->GetMode() == PSCHARACTER_MODE_PEACE)
+            if (gemTarget->GetMode() == PSCHARACTER_MODE_PEACE || || gemTarget->GetMode() == PSCHARACTER_MODE_WORK))
             {
                 if (gemTarget->GetClient())  // Set reciprocal target
                     gemTarget->GetClient()->SetTargetObject(gemAttacker,true);
