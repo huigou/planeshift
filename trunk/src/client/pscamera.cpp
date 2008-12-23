@@ -164,6 +164,8 @@ psCamera::psCamera()
     camData[CAMERA_ERR].turnSpeed = 0.0f;
     camData[CAMERA_ERR].swingCoef = 0.0f;
 
+    currCameraMode = CAMERA_ERR;
+
     transitionThresholdSquared = 1.0f;
     cameraHasBeenPositioned = false;
     hasCollision = false;
