@@ -177,8 +177,11 @@ struct QuestAssignment
     bool dirty;
     /// When a quest is completed, often it cannot immediately be repeated.  This indicate the time when it can be started again.
     unsigned long lockout_end;
-    /// To avoid loosing a chain of responses in a quest, last responses are stored per assigned quest.
+    /// To avoid losing a chain of responses in a quest, last responses are stored per assigned quest.
     int last_response;
+    /// To avoid losing a chain of responses in a quest, last responses are stored per assigned quest.
+    PID last_response_from_npc_pid;
+
     /// Since "quest" member can be nulled without notice, this accessor function attempts to refresh it if NULL
     csWeakRef<psQuest>& GetQuest();
     void SetQuest(psQuest *q);
@@ -814,7 +817,7 @@ public:
     QuestAssignment *AssignQuest(psQuest *quest, PID assigner_id);
     bool CompleteQuest(psQuest *quest);
     void DiscardQuest(QuestAssignment *q, bool force = false);
-    bool SetAssignedQuestLastResponse(psQuest *quest, int response);
+    bool SetAssignedQuestLastResponse(psQuest *quest, int response, gemObject *npc);
     size_t GetNumAssignedQuests() { return assigned_quests.GetSize(); }
     int GetAssignedQuestLastResponse(size_t i);
     /// The last_response given by an npc to this player.

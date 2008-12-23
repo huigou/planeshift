@@ -909,7 +909,7 @@ public:
     virtual AccountID GetSuperclientID()        { return superClientID; }
     virtual void SetSuperclientID(AccountID id) { superClientID = id; }
 
-    void SetupDialog(PID npcID);
+    void SetupDialog(PID npcID,bool force=false);
     void ReactToPlayerApproach(psNPCCommandsMessage::PerceptionType type,gemActor *player);
 
     virtual void AddLootableClient(int cnum);

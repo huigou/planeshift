@@ -637,18 +637,6 @@ NpcResponse *psNPCDialog::Respond(const char * text,Client *client)
     {
         Debug2(LOG_NPC, currentClient->GetClientNum(),"Found response to: '%s'", copy.GetData());
 
-        //         // Removed till we find a better way to manage repeated responses
-        //         // At the moment are annoying since you cannot restart the conversation from
-        //         // a certain point
-        //         int times;
-        //         csTicks when;
-        //         if (dialogHistory.EverSaid(client->GetPID(), resp->id, when, times))
-        //         {
-        //             return RepeatedResponse(trigger.GetString(), resp, when, times);
-        //         }
-        //         else
-        //             dialogHistory.AddToHistory(client->GetPID(), resp->id, csGetTicks() );
-
         //May be it is safe not to check for characterdata (now needed for GetLastRespons())
         if (currentClient->GetCharacterData() == NULL)
         {
@@ -661,7 +649,7 @@ NpcResponse *psNPCDialog::Respond(const char * text,Client *client)
             currentClient->GetCharacterData()->SetLastResponse(resp->id);
             Debug4(LOG_NPC, currentClient->GetClientNum(),"Setting last response for quest '%s', %d: %s",
                resp->quest ? resp->quest->GetName() : "none", resp->id, resp->GetResponse());
-            currentClient->GetCharacterData()->SetAssignedQuestLastResponse(resp->quest,resp->id);
+            currentClient->GetCharacterData()->SetAssignedQuestLastResponse(resp->quest,resp->id, currentClient->GetTargetObject() );
         }
 
 		if( resp->menu )

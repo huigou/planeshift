@@ -996,6 +996,19 @@ NpcResponse *QuestManager::AddResponse(csString& current_npc,const char *respons
 
 bool QuestManager::AddTrigger(csString& current_npc,const char *trigger,int prior_response_id,int trig_response, psQuest * quest, const psString& postfix)
 {
+    // Now that this npc has a trigger associated, we need to make sure it has a KA for itself.
+    // These have been added manually in the past, but we will do it here automatically now.
+    gemNPC *npc = dynamic_cast<gemNPC *>(psserver->entitymanager->GetGEM()->FindObject(current_npc));
+    if (npc) // specific KA named here
+    {
+        // First check for no dialog at all on this npc, and create it if needed
+        if (!npc->GetNPCDialogPtr())
+        {
+            npc->SetupDialog(npc->GetPID(), true);  // force init even though potentially no KA's in database
+        }
+        //npc->GetNPCDialogPtr()->AddKnowledgeArea(current_npc);
+    }
+
     // search for multiple triggers
     csString temp(trigger);
     temp.Downcase();
