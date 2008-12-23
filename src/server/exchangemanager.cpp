@@ -1218,7 +1218,7 @@ bool PlayerToNPCExchange::CheckXMLResponse(Client * client, psNPCDialog *dlg, cs
             starterChar.TransferMoney(target->GetCharacterData());
             exchangeSuccess = true;
             client->GetCharacterData()->SetLastResponse(resp->id);
-            client->GetCharacterData()->SetAssignedQuestLastResponse(resp->quest,resp->id);
+            client->GetCharacterData()->SetAssignedQuestLastResponse(resp->quest,resp->id, target);
             return true;
         }
     }

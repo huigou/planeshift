@@ -3460,9 +3460,9 @@ void gemNPC::SetPosition(const csVector3& pos,float angle, iSector* sector)
     UpdateProxList(true);
 }
 
-void gemNPC::SetupDialog(PID npcID)
+void gemNPC::SetupDialog(PID npcID, bool force)
 {
-    if (db->SelectSingleNumber("SELECT count(*) FROM npc_knowledge_areas WHERE player_id=%d", npcID.Unbox()) > 0)
+    if (force || db->SelectSingleNumber("SELECT count(*) FROM npc_knowledge_areas WHERE player_id=%d", npcID.Unbox()) > 0)
     {
         npcdialog = new psNPCDialog(this);
         if (!npcdialog->Initialize(db,npcID))
@@ -3543,13 +3543,14 @@ void gemNPC::ShowPopupMenu(Client *client)
 	for (size_t i=0; i < quests.GetSize(); i++)
 	{
 		psQuest *q = quests[i]->GetQuest();
-		if (quests[i]->status == 'C')
+        // If the quest is completed or the last response was not from this NPC, then skip
+		if (quests[i]->last_response_from_npc_pid != pid || quests[i]->status == 'C')
 		{
-			printf("Skipping completed quest: %s\n", q->GetName() );
+			printf("Skipping completed or irrelevant quest: %s\n", q->GetName() );
 			continue;
 		}
 		printf("Checking quest %d: %s.  ", i, q->GetName() );
-		int last_response = client->GetCharacterData()->GetAssignedQuestLastResponse(i);
+		int last_response = quests[i]->last_response;
 		printf("Got last response %d\n", last_response);
 		
 		if (last_response != -1) // within a quest step

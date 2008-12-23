@@ -2512,7 +2512,7 @@ int psCharacter::GetAssignedQuestLastResponse(size_t i)
 
 
 //if (parent of) quest id is an assigned quest, set its last response
-bool psCharacter::SetAssignedQuestLastResponse(psQuest *quest, int response)
+bool psCharacter::SetAssignedQuestLastResponse(psQuest *quest, int response, gemObject *npc)
 {
     int id = 0;
 
@@ -2532,6 +2532,7 @@ bool psCharacter::SetAssignedQuestLastResponse(psQuest *quest, int response)
             assigned_quests[i]->status == PSQUEST_ASSIGNED && !assigned_quests[i]->GetQuest()->GetParentQuest())
         {
             assigned_quests[i]->last_response = response;
+            assigned_quests[i]->last_response_from_npc_pid = npc->GetPID();
             assigned_quests[i]->dirty = true;
             UpdateQuestAssignments();
             return true;
@@ -2928,19 +2929,21 @@ bool psCharacter::UpdateQuestAssignments(bool force_update)
 
             db->CommandPump("insert into character_quests "
                             "(player_id, assigner_id, quest_id, "
-                            "status, remaininglockout, last_response) "
-                            "values (%d, %d, %d, '%c', %d, %d) "
+                            "status, remaininglockout, last_response, last_response_npc_id) "
+                            "values (%d, %d, %d, '%c', %d, %d, %d) "
                             "ON DUPLICATE KEY UPDATE "
-                            "status='%c',remaininglockout=%ld,last_response=%ld;",
+                            "status='%c',remaininglockout=%ld,last_response=%ld,last_response_npc_id=%ld;",
                             pid.Unbox(),
                             q->assigner_id.Unbox(),
                             q->GetQuest()->GetID(),
                             q->status,
                             q->lockout_end,
                             q->last_response,
+                            q->last_response_from_npc_pid,
                             q->status,
                             q->lockout_end,
-                            q->last_response );
+                            q->last_response,
+                            q->last_response_from_npc_pid);
             Debug3(LOG_QUESTS, pid.Unbox(), "Updated quest info for player %d, quest %d.\n", pid.Unbox(), assigned_quests[i]->GetQuest()->GetID());
             assigned_quests[i]->dirty = false;
         }
@@ -2965,10 +2968,11 @@ bool psCharacter::LoadQuestAssignments()
         QuestAssignment *q = new QuestAssignment;
         q->dirty = false;
         q->SetQuest(CacheManager::GetSingleton().GetQuestByID( result[i].GetInt("quest_id") ) );
-        q->status = result[i]["status"][0];
-        q->lockout_end = result[i].GetInt("remaininglockout");
-        q->assigner_id = PID(result[i].GetInt("assigner_id"));
+        q->status        = result[i]["status"][0];
+        q->lockout_end   = result[i].GetInt("remaininglockout");
+        q->assigner_id   = PID(result[i].GetInt("assigner_id"));
         q->last_response = result[i].GetInt("last_response");
+        q->last_response_from_npc_pid = PID(result[i].GetInt("last_response_npc_id"));
 
         if (!q->GetQuest())
         {
