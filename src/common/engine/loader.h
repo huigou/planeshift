@@ -20,6 +20,7 @@
 #ifndef __LOADER_H__
 #define __LOADER_H__
 
+#include <csgeom/poly3d.h>
 #include <csgfx/shadervar.h>
 #include <csutil/scf_implementation.h>
 #include <csutil/threadmanager.h>
@@ -222,9 +223,9 @@ private:
 
         bool InRange(const csVector3& pos)
         {
-            for(int i=0; i<num_vertices; i++)
+            for(size_t i=0; i<poly.GetVertexCount(); i++)
             {
-                if(csVector3(vertices[i] - pos).Norm() <= Loader::GetSingleton().loadRange)
+                if(csVector3(poly.GetVertices()[i] - pos).Norm() <= Loader::GetSingleton().loadRange)
                 {
                     return true;
                 }
@@ -235,9 +236,9 @@ private:
 
         bool OutOfRange(const csVector3& pos)
         {
-            for(int i=0; i<num_vertices; i++)
+            for(size_t i=0; i<poly.GetVertexCount(); i++)
             {
-                if(csVector3(vertices[i] - pos).Norm() <= Loader::GetSingleton().loadRange*1.5)
+                if(csVector3(poly.GetVertices()[i] - pos).Norm() <= Loader::GetSingleton().loadRange*1.5)
                 {
                     return false;
                 }
@@ -247,9 +248,8 @@ private:
         }
 
         csString name;
-        csVector3* vertices;
         csVector3 ww;
-        int num_vertices;
+				csPoly3D poly;
 
         csRef<Sector> targetSector;
         iPortal* pObject;
