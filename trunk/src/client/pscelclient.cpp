@@ -284,7 +284,7 @@ void psCelClient::HandleActor( MsgEntry* me )
         SetMainActor( local_player );
 
         // Now that we know where we are, trigger a world load around us.
-        Loader::GetSingleton().UpdatePosition(mesg.pos, mesg.sectorName);
+        Loader::GetSingleton().UpdatePosition(mesg.pos, mesg.sectorName, true);
 
         // This triggers the server to update our proxlist
         local_player->SendDRUpdate(PRIORITY_LOW,GetClientDR()->GetMsgStrings());
@@ -793,7 +793,7 @@ void psCelClient::Update()
     if(local_player)
     {
         Loader::GetSingleton().UpdatePosition(local_player->Pos(),
-            local_player->GetSector()->QueryObject()->GetName());
+            local_player->GetSector()->QueryObject()->GetName(), false);
     }
 
     shadowManager->UpdateShadows();
@@ -1425,7 +1425,7 @@ const csVector3 GEMClientActor::GetVelocity () const
     return linmove->GetVelocity();
 }
 
-csVector3 GEMClientActor::Pos()
+csVector3& GEMClientActor::Pos()
 {
     if(linmove)
         linmove->GetLastPosition (pos, yrot, sector);
