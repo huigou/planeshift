@@ -18,13 +18,9 @@
             <font name="/planeshift/data/ttf/scurlock.ttf" r="0" g="0" b="0" size="14" />
             <text string="Character description:" />
         </widget>
-        
+
         <widget name="Description" factory="pawsMultilineEditTextBox" >
             <frame x="25" y="30" width="270" height="185" border="no" />
-        </widget>
-
-        <widget name="CreationInfo" factory="pawsMultiLineTextBox" >
-            <frame x="25" y="228" width="270" height="40" border="no" />
         </widget>
 
         <widget name="OK" factory="pawsButton" id="100">

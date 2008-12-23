@@ -1115,8 +1115,15 @@ public:
 
     unsigned int GetTimeConnected() { return timeconnected; }
 
+    /// This is used to get the stored the player description
     const char* GetDescription();
+    /// This is used to store the player description.
     void SetDescription(const char* newValue);
+
+    /// This is used to get the stored the player OOC description
+    const char* GetOOCDescription();
+    /// This is used to store the player OOC description.
+    void SetOOCDescription(const char* newValue);
 
     /// This is used to get the stored informations from the char creation
     const char* GetCreationInfo();
@@ -1156,6 +1163,7 @@ public:
     psWorkGameEvent * workEvent;
 
     csString description; ///<Player description
+    csString oocdescription; ///<Player OOC description
     csString creationinfo; ///<Creation manager informations
 
     /// Kill Exp

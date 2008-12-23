@@ -277,6 +277,7 @@ bool psCharacterLoader::NewNPCCharacterData(AccountID accountid, psCharacter *ch
             "racegender_id",
             "character_type",
             "description",
+            "description_ooc",
             "creation_info",
             "base_strength",
             "base_agility",
@@ -320,6 +321,7 @@ bool psCharacterLoader::NewNPCCharacterData(AccountID accountid, psCharacter *ch
     values.FormatPush("%u",chardata->GetRaceInfo()->uid);
     values.FormatPush("%u",chardata->GetCharType() );
     values.FormatPush("%s",chardata->GetDescription());
+    values.FormatPush("%s",chardata->GetOOCDescription());
     values.FormatPush("%s",chardata->GetCreationInfo());
     values.FormatPush("%d",chardata->Stats().GetStat(PSITEMSTATS_STAT_STRENGTH, false));
     values.FormatPush("%d",chardata->Stats().GetStat(PSITEMSTATS_STAT_AGILITY, false));
@@ -650,9 +652,9 @@ bool psCharacterLoader::SaveCharacterData(psCharacter *chardata,gemActor *actor,
     static iRecord* updatePlayer;
     static iRecord* updateNpc;
     if(playerORpet && updatePlayer == NULL)
-        updatePlayer = db->NewUpdatePreparedStatement("characters", "id", 40, __FILE__, __LINE__); // 39 fields + 1 id field
+        updatePlayer = db->NewUpdatePreparedStatement("characters", "id", 41, __FILE__, __LINE__); // 40 fields + 1 id field
     if(!playerORpet && updateNpc == NULL)
-        updateNpc = db->NewUpdatePreparedStatement("characters", "id", 33, __FILE__, __LINE__); // 32 fields + 1 id field
+        updateNpc = db->NewUpdatePreparedStatement("characters", "id", 34, __FILE__, __LINE__); // 33 fields + 1 id field
 
     // Give 100% hp if the char is dead
     if(!actor->IsAlive())
@@ -803,6 +805,7 @@ bool psCharacterLoader::SaveCharacterData(psCharacter *chardata,gemActor *actor,
     //fields.FormatPush("%u", chardata->owner_id );
     targetUpdate->AddField("help_event_flags", chardata->help_event_flags );
     targetUpdate->AddField("description",chardata->GetDescription());
+    targetUpdate->AddField("description_ooc",chardata->GetOOCDescription());
     targetUpdate->AddField("creation_info",chardata->GetCreationInfo());
 
     // Done building the fields struct, now
