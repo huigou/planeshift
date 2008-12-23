@@ -1066,6 +1066,12 @@ UPDATE `server_options` SET `option_value`='1210' WHERE `option_name`='db_versio
 ALTER TABLE `character_quests` ADD `last_response_npc_id` INT(10) UNSIGNED NULL COMMENT 'This field stores the npc PID who gave the last response. Required for menu filtering.'
 UPDATE `server_options` SET `option_value`='1211' WHERE `option_name`='db_version';
 
+#### 1211 - Stefano Angeleri - Added /setkillexp
+INSERT INTO command_group_assignment VALUES( "/setkillexp", 30 );
+INSERT INTO command_group_assignment VALUES( "/setkillexp", 25 );
+INSERT INTO command_group_assignment VALUES( "/setkillexp", 24 );
+INSERT INTO command_group_assignment VALUES( "/setkillexp", 23 );
+
 
 # Insert your upgrade before this line. Remember when you set a new db_version
 # to update the server_options.sql file and update psserver.cpp as well.

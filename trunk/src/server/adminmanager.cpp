@@ -1039,6 +1039,11 @@ bool AdminManager::AdminCmdData::DecodeAdminCmdMessage(MsgEntry *pMsg, psAdminCm
         subCmd  = words[2]; //save = save to db
         return true;
     }
+    else if (command == "/setkillexp") //allows to set the exp which will be given when killed. It doesn't support targeting on purpose
+    {
+        value = words.GetInt(1);
+        return true;
+    }
     return false;
 }
 
@@ -1431,6 +1436,10 @@ void AdminManager::HandleAdminCmdMessage(MsgEntry *me, Client *client)
     else if (data.command == "/disablequest")
     {
         DisableQuest(me, msg, data, client);
+    }
+    else if (data.command == "/setkillexp")
+    {
+        SetKillExp(me, msg, data, client);
     }
 }
 
@@ -2039,7 +2048,8 @@ void AdminManager::SetAttrib(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData&
                                                 "infiniteinventory = %s\n"
                                                 "questtester = %s\n"
                                                 "infinitemana = %s\n"
-                                                "instantcast = %s",
+                                                "instantcast = %s\n"
+                                                "givekillexp = %s",
                                                 (actor->GetInvincibility())?"on":"off",
                                                 (!actor->GetVisibility())?"on":"off",
                                                 (actor->GetViewAllObjects())?"on":"off",
@@ -2048,7 +2058,8 @@ void AdminManager::SetAttrib(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData&
                                                 (!actor->GetFiniteInventory())?"on":"off",
                                                 (actor->questtester)?"on":"off",
                                                 (actor->infinitemana)?"on":"off",
-                                                (actor->instantcast)?"on":"off");
+                                                (actor->instantcast)?"on":"off",
+                                                (actor->givekillexp)?"on":"off");
         return;
     }
     else if (data.attribute == "invincible" || data.attribute == "invincibility")
@@ -2158,6 +2169,18 @@ void AdminManager::SetAttrib(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData&
             already = true;
         else
             actor->questtester = onoff;
+    }
+    else if (data.attribute == "givekillexp")
+    {
+        if (toggle)
+        {
+            actor->givekillexp = !actor->givekillexp;
+            onoff = actor->givekillexp;
+        }
+        else if (actor->givekillexp == onoff)
+            already = true;
+        else
+            actor->givekillexp = onoff;
     }
     else if (!data.attribute.IsEmpty())
     {
@@ -7967,6 +7990,12 @@ void AdminManager::CheckTarget(psAdminCmdMessage& msg, AdminCmdData& data, gemOb
     }
     if(targetobject) //just to be sure
         psserver->SendSystemInfo(client->GetClientNum(),"Targeted: %s", targetobject->GetName());
+        gemActor *myact = targetobject->GetActorPtr();
+        if(myact && myact->GetCharacterData())
+        {
+            myact->GetCharacterData()->SetKillExperience(10000);
+            printf("%d\n",myact->GetCharacterData()->GetKillExperience());
+        }
 }
 
 void AdminManager::DisableQuest(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data, Client *client )
@@ -8008,4 +8037,25 @@ void AdminManager::DisableQuest(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdDa
 
     //tell the user that everything went fine
     psserver->SendSystemInfo(client->GetClientNum(),"The quest %s was %s successfully.", quest->GetName(), quest->Active() ? "enabled" : "disabled");
+}
+
+void AdminManager::SetKillExp(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data, Client *client )
+{
+    if(data.value < 0)
+    {
+        psserver->SendSystemInfo(client->GetClientNum(),"Only positive exp values are allowed.");
+        return;
+    }
+
+    if(client->GetActor() && client->GetActor()->GetCharacterData())
+    {
+        client->GetActor()->GetCharacterData()->SetKillExperience(data.value);
+        //tell the user that everything went fine
+        psserver->SendSystemInfo(client->GetClientNum(),"When killed you will now automatically award %d experience",data.value);
+    }
+    else
+    {
+        //tell the user that everything went wrong
+        psserver->SendSystemInfo(client->GetClientNum(),"Unable to find your characterData.");
+    }
 }

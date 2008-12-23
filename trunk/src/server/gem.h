@@ -848,6 +848,7 @@ public:
     bool instantcast;       ///< cast spells instantly
     bool safefall;          ///< no fall damage
     bool questtester;       ///< no quest lockouts
+    bool givekillexp;       ///< give exp if killed
 
     bool SetMesh(const char* meshname);
     bool ResetMesh() { return SetMesh(meshcache); }

@@ -4680,8 +4680,8 @@ void ProgressionManager::HandleDeathEvent(MsgEntry *me)
     Debug1(LOG_COMBAT, me->clientnum,"Progression Manager handling Death Event\n");
     psDeathEvent evt(me);
 
-    // Only do progression if dead guy is an NPC and not a pet
-    if (evt.deadActor->GetClientID()==0 && !evt.deadActor->GetCharacterData()->IsPet())
+    // Only do progression if dead guy is an NPC and not a pet or if a gm enabled the givexp flag
+    if ((evt.deadActor->GetClientID()==0 && !evt.deadActor->GetCharacterData()->IsPet()) || evt.deadActor->givekillexp)
     {
         csString progEvent = FindEvent( "kill" )->ToString(true);
 
