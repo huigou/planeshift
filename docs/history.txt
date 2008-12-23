@@ -1,4 +1,12 @@
-﻿*** 2008-12-20 by Kenny Graunke
+﻿*** 2008-12-23 by Stefano Angeleri
+- Completed the work on new descriptions (char creation info and ooc description)
+  GM and DEV and players using nature intuition can look also the creation info data
+  of the player (only for new players), additionally now the ooc description is entirely
+  working and the moved edit description button appears only when a proper tab is selected,
+  doesn't close the detail window anymore but updates it when clicking ok and can edit contextually
+  to the selected tab
+
+*** 2008-12-20 by Kenny Graunke
 - Moved the "Edit Description" button to pawsDetailWindow; it appears if you
   view your own description.  This is a much more intuitive place for it.
 
