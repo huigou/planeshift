@@ -715,6 +715,7 @@ Complete One Thousand Year Sammich Step 10.
 Require completion of One Thousand Year Sammich Step 10.
 
 Player gives Reginald Hartlepool 1 Red Paperclip.
+Menu: Give Reginald your Red Paperclip.
 
 Reginald Hartlepool: [Reginald takes the red paperclip and affixes it to his wayward trousers. He grins as the thing holds.] Wondrous And even a little stylish. Why, red paperclip trouser afixers might just become the new style! Thank you oh so much. Ah, yes, your \'sammich\'. Gertie that you conversed with before coming to me should have more. I sold her quite a few of my best creations. I don\'t know why she didn't just give you one in the first place. Here, take a few coins, as I am sure she will not part with such wondrous and savoury feasts cheaply.
 Give 10 Silver Penny.
@@ -751,6 +752,7 @@ Complete One Thousand Year Sammich Step 13.
 Require completion of One Thousand Year Sammich Step 13.
 
 Player gives Gertie Hollaback 10 Silver Penny.
+Menu: Give Gertie the 10 Silver Pennies.
 
 G: Lemme count these har coins first. One...two...tree...five... [Gertie glances up at you and closes her hand.] Ten. All here. Here is yar sammich.
 Give 1 Sublime Sandwich. Give 10000 Exp.
@@ -775,6 +777,7 @@ Complete One Thousand Year Sammich Step 15.
 Require completion of One Thousand Year Sammich Step 15.
 
 Player gives Reginald Hartlepool 1 Red Paperclip.
+Menu: Give Reginald your Red Paperclip.
 
 Reginald Hartlepool: Alas, I have no children to whom I may pass on the marvellous lore of the Sandwich. Since you have proven yourself a remarkably considerate and compassionate being, I have chosen to pass my knowledge on to you. However, you must learn the lore just as a child of my own getting would be required to do. I hereby present to you that which has been passed down in my family for generations unnumbered. I give you... the Sandwich Plate! [Reginald gingerly places an elderly serving plate in your hands. It is quite chipped and contains four sections, each in a different, and somewhat gaudy, colour.] When you have given this magnificent object the reverence due to it, tell me you are ready and I will impart its sublime knowledge to you.
 Give 1 Sandwich Plate.
@@ -945,6 +948,7 @@ Complete One Thousand Year Sammich Step 26.
 Require completion of One Thousand Year Sammich Step 26.
 
 Player gives Reginald Hartlepool 1 Sandwich Plate, 1 Artisan Waybread, 1 Corned Beef, 1 Smoked Provolone.
+Menu: Give Reginald the 3 ingredients you have gathered and the plate.
 
 Reginald Hartlepool: Observe carefully as I put the ingredients in their proper sections on the Sandwich Plate. Now tell me, my good apprentice, which section is empty?
 
