@@ -109,7 +109,7 @@ bool pawsGmGUIWindow::PostSetup()
         playerList->SetSortingFunc(i, textBoxSortFunc);
     }
     playerList->SetSortedColumn(0);
-    
+
     playerCount = (pawsTextBox*)FindWidget("PlayerCount");
     if (!playerCount) return false;
 
@@ -125,7 +125,7 @@ bool pawsGmGUIWindow::PostSetup()
     SetSecurity();
 
     QueryServer();
-    
+
     currentTab = 0;
 
     // get a handle on the widgets in our Attributes tab
@@ -297,7 +297,7 @@ bool pawsGmGUIWindow::OnButtonPressed( int mouseButton, int keyModifier, pawsWid
     case 1230: // kick
         pawsStringPromptWindow::Create(
                         "Please enter a reason","",
-                        false,250,20,this,"Reason", 0 );   
+                        false,250,20,this,"Reason", 0 );
         break;
     case 1231: // mute
         cmd.Format("/mute %s",GetSelectedName());
@@ -331,14 +331,14 @@ bool pawsGmGUIWindow::OnButtonPressed( int mouseButton, int keyModifier, pawsWid
 
             cmd.Format("/changename %s force %s %s",GetSelectedName(),first.GetData(),last.GetData());
             updateAfter = true;
-            
+
             break;
         }
     case 1236: // Ban player
     {
         pawsStringPromptWindow::Create(
                         "Please enter a reason","",
-                        false,250,20,this,"Reason", 1);      
+                        false,250,20,this,"Reason", 1);
         break;
     }
     /////////////////////////////////////////
@@ -449,7 +449,7 @@ bool pawsGmGUIWindow::OnButtonPressed( int mouseButton, int keyModifier, pawsWid
                 return true;
 
             pawsTextBox* box = (pawsTextBox*)row->GetColumn(0);
-            
+
             csString id = box->GetText();
 
             // Loop through all Locations
@@ -498,7 +498,7 @@ bool pawsGmGUIWindow::OnButtonPressed( int mouseButton, int keyModifier, pawsWid
                 return true;
 
             pawsTextBox* box = (pawsTextBox*)row->GetColumn(0);
-            
+
             csString id = box->GetText();
 
             psengine->GetActionHandler()->DeleteAction( id );
@@ -674,12 +674,12 @@ void pawsGmGUIWindow::SetSecurity()
 void pawsGmGUIWindow::QueryServer()
 {
     if (psengine->IsGameLoaded())
-    {     
+    {
         if (psengine->GetCelClient()->GetMainPlayer()->GetType() < 21)
         {
             this->Hide();
             return;
-        }    
+        }
 
         if (IsVisible())
         {
@@ -691,7 +691,7 @@ void pawsGmGUIWindow::QueryServer()
 
             QueryActionLocations();
         }
-    }        
+    }
 }
 
 void pawsGmGUIWindow::QueryActionLocations()
@@ -737,7 +737,7 @@ int cmpPlayers(const void * a, const void * b)
 void pawsGmGUIWindow::FillPlayerList(psGMGuiMessage& msg)
 {
     csArray<int> playerOrder;
-    
+
     // Clear the list from old data
     int sortedCol = playerList->GetSortedColumn();
     csString selectedPlayer;
@@ -751,7 +751,7 @@ void pawsGmGUIWindow::FillPlayerList(psGMGuiMessage& msg)
         // Make stuff easier
         //int playerNum = playerOrder[i];
         psGMGuiMessage::PlayerInfo playerInfo = msg.players.Get(i);
-        
+
         playerList->NewRow(i);
         pawsTextBox* nameBox = (pawsTextBox*)((pawsListBoxRow*)playerList->GetRow(i))->GetColumn(0);
         pawsTextBox* lastNameBox = (pawsTextBox*)((pawsListBoxRow*)playerList->GetRow(i))->GetColumn(1);
@@ -773,7 +773,7 @@ void pawsGmGUIWindow::FillPlayerList(psGMGuiMessage& msg)
         // Set the name
         csString name = playerInfo.name;
         nameBox->SetText(name);
-        
+
         // Select if needed
         if (name == selectedPlayer)
             playerList->Select(playerList->GetRow(i), true);
@@ -900,9 +900,9 @@ void pawsGmGUIWindow::FillActionList( psMapActionMessage& msg )
             if ( node->GetNode( "x" ) ) posx = node->GetNode( "x" )->GetContentsValueAsFloat();
             if ( node->GetNode( "y" ) ) posy = node->GetNode( "y" )->GetContentsValueAsFloat();
             if ( node->GetNode( "z" ) ) posz = node->GetNode( "z" )->GetContentsValueAsFloat();
-            
+
             posStr.Format( posFormat, posx, posy, posz );
-                
+
             posBox->SetText( posStr.GetData() );
         }
 
@@ -923,7 +923,7 @@ void pawsGmGUIWindow::HideWidget(const char* name)
         printf("Couldn't find widget %s!\n",name);
         return;
     }
-    
+
     widget->Hide();
 }
 
@@ -935,7 +935,7 @@ void pawsGmGUIWindow::ShowWidget(const char* name)
         printf("Couldn't find widget %s!\n",name);
         return;
     }
-    
+
     widget->Show();
 }
 
@@ -957,7 +957,7 @@ int pawsGmGUIWindow::GetSelectedGender()
         return PSCHARACTER_GENDER_NONE;
 
     pawsTextBox* box = (pawsTextBox*)row->GetColumn(1);
-    
+
     csString gender = box->GetText();
     if (gender == "M")
         return PSCHARACTER_GENDER_MALE;
@@ -965,7 +965,7 @@ int pawsGmGUIWindow::GetSelectedGender()
         return PSCHARACTER_GENDER_FEMALE;
     else
         return PSCHARACTER_GENDER_NONE;
-    
+
 }
 
 const char* pawsGmGUIWindow::GetSelectedSector()
@@ -1015,10 +1015,10 @@ void pawsGmGUIWindow::OnStringEntered(const char *name,int param,const char *val
         int place = (int)text.FindFirst(' ');
 
         csString firstName,lastName;
-        
+
         // TODO Does this make sense? Split the name to concat it?
         if (place == -1)
-        {        
+        {
             firstName = text;
         }
         else

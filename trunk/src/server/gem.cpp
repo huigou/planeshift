@@ -3535,44 +3535,44 @@ void gemNPC::ReactToPlayerApproach(psNPCCommandsMessage::PerceptionType type,gem
 void gemNPC::ShowPopupMenu(Client *client)
 {
     NpcResponse *resp = NULL;
-	NpcDialogMenu menu;
-	
+    NpcDialogMenu menu;
+
     csArray<QuestAssignment*>& quests = client->GetCharacterData()->GetAssignedQuests();
 
-	// Merge current spot in active quests first
-	for (size_t i=0; i < quests.GetSize(); i++)
-	{
-		psQuest *q = quests[i]->GetQuest();
+    // Merge current spot in active quests first
+    for (size_t i=0; i < quests.GetSize(); i++)
+    {
+        psQuest *q = quests[i]->GetQuest();
         // If the quest is completed or the last response was not from this NPC, then skip
-		if (quests[i]->last_response_from_npc_pid != pid || quests[i]->status == 'C')
-		{
-			printf("Skipping completed or irrelevant quest: %s\n", q->GetName() );
-			continue;
-		}
-		printf("Checking quest %d: %s.  ", i, q->GetName() );
-		int last_response = quests[i]->last_response;
-		printf("Got last response %d\n", last_response);
-		
-		if (last_response != -1) // within a quest step
-		{
-			resp = dict->FindResponse(last_response);
-			menu.Add(resp->menu);
-		}
-		else
-		{
-			printf("Got last_response==-1 for quest %d.\n",i);
-		}
-	}
+        if (quests[i]->last_response_from_npc_pid != pid || quests[i]->status == 'C')
+        {
+            printf("Skipping completed or irrelevant quest: %s\n", q->GetName() );
+            continue;
+        }
+        printf("Checking quest %d: %s.  ", i, q->GetName() );
+        int last_response = quests[i]->last_response;
+        printf("Got last response %d\n", last_response);
 
-	// Also offer default choices in case a new quest should be started
-	NpcDialogMenu *npcmenu = dict->FindMenu( name );
-	if (npcmenu)
-		menu.Add(npcmenu);
+        if (last_response != -1) // within a quest step
+        {
+            resp = dict->FindResponse(last_response);
+            menu.Add(resp->menu);
+        }
+        else
+        {
+            printf("Got last_response==-1 for quest %d.\n",i);
+        }
+    }
 
-	if (menu.triggers.GetSize())
-		menu.ShowMenu(client);
-	else
-		psserver->SendSystemError(client->GetClientNum(), "This NPC has nothing to say to you.");
+    // Also offer default choices in case a new quest should be started
+    NpcDialogMenu *npcmenu = dict->FindMenu( name );
+    if (npcmenu)
+        menu.Add(npcmenu);
+
+    if (menu.triggers.GetSize())
+        menu.ShowMenu(client);
+    else
+        psserver->SendSystemError(client->GetClientNum(), "This NPC has nothing to say to you.");
 }
 
 csString gemNPC::GetDefaultBehavior(const csString & dfltBehaviors)
@@ -4005,11 +4005,11 @@ bool gemContainer::CanTake(Client *client, psItem* item)
     if (client->GetSecurityLevel() >= GM_DEVELOPER)
         return true;
 
-    /* \note 
-     * The check if the item is NPCOwned or NoPickup only makes 
+    /* \note
+     * The check if the item is NPCOwned or NoPickup only makes
      * sense if it is not possible to have NPCOwned items in a not
      * NPCOwned container, or NoPickup items in a PickUpable container
-     */      
+     */
     //not allowed to take npcowned or nopickup items in a container
     if (item->GetIsNpcOwned() || item->GetIsNoPickup())
         return false;
@@ -4036,9 +4036,9 @@ bool gemContainer::CanTake(Client *client, psItem* item)
     gemActor* guardingActor = GEMSupervisor::GetSingleton().FindPlayerEntity(guard);
 
     if ((!guard.IsValid() || guard == client->GetCharacterData()->GetPID() || !guardingActor) || (guardingActor->RangeTo(this) > 5))
-    {        
+    {
         return true;
-    }        
+    }
 
     return false;
 }
