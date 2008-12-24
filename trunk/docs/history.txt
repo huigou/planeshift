@@ -1,4 +1,7 @@
-﻿*** 2008-12-23 by Stefano Angeleri
+﻿*** 2008-12-24 by Steven Patrick
+- Small improvement in the code fetching the char description, patch by kougaro.
+
+*** 2008-12-23 by Stefano Angeleri
 - Completed the work on new descriptions (char creation info and ooc description)
   GM and DEV and players using nature intuition can look also the creation info data
   of the player (only for new players), additionally now the ooc description is entirely
