@@ -307,6 +307,12 @@ THREADED_CALLABLE_IMPL2(Loader, PrecacheData, const char* path, bool recursive)
                     csRef<MeshObj> m = csPtr<MeshObj>(new MeshObj(node2->GetAttributeValue("name"), node2));
                     m->sector = s;
 
+                    if(node2->GetAttributeValueAsBool("alwaysloaded"))
+                    {
+                        ++s->alwaysLoadedCount;
+                        m->alwaysLoaded = true;
+                    }
+
                     if(node2->GetNode("move"))
                     {
                         node2 = node2->GetNode("move")->GetNode("v");
@@ -706,14 +712,14 @@ void Loader::LoadSector(const csVector3& pos, Sector* sector)
     {
         if(!sector->meshes[i]->loading)
         {
-            if(!sector->meshes[i]->object.IsValid() && csVector3(sector->meshes[i]->pos - pos).Norm() <= loadRange)
+            if(sector->meshes[i]->InRange(pos))
             {
                 sector->meshes[i]->loading = true;
                 loadingMeshes.Push(sector->meshes[i]);
                 LoadMesh(sector->meshes[i]);
                 ++sector->objectCount;
             }
-            else if(sector->meshes[i]->object.IsValid() && csVector3(sector->meshes[i]->pos - pos).Norm() > loadRange*1.5)
+            else if(sector->meshes[i]->OutOfRange(pos))
             {
                 sector->meshes[i]->object->GetMovable()->ClearSectors();
                 sector->meshes[i]->object->GetMovable()->UpdateMove();
@@ -726,7 +732,7 @@ void Loader::LoadSector(const csVector3& pos, Sector* sector)
 
     for(size_t i=0; i<sector->portals.GetSize(); i++)
     {
-        if(!sector->portals[i]->mObject.IsValid() && sector->portals[i]->InRange(pos))
+        if(sector->portals[i]->InRange(pos))
         {
             if(!sector->portals[i]->targetSector->isLoading)
             {
@@ -760,7 +766,7 @@ void Loader::LoadSector(const csVector3& pos, Sector* sector)
             sector->activePortals.Push(sector->portals[i]);
             ++sector->objectCount;
         }
-        else if(sector->portals[i]->mObject.IsValid() && sector->portals[i]->OutOfRange(pos))
+        else if(sector->portals[i]->OutOfRange(pos))
         {
             if(!sector->portals[i]->targetSector->isLoading)
             {
@@ -794,8 +800,20 @@ void Loader::LoadSector(const csVector3& pos, Sector* sector)
         }
     }
 
-    if(sector->objectCount == 0 && sector->object.IsValid())
+    if(sector->objectCount == sector->alwaysLoadedCount && sector->object.IsValid())
     {
+        for(size_t i=0; i<sector->meshes.GetSize(); i++)
+        {
+            if(sector->meshes[i]->alwaysLoaded)
+            {
+                sector->meshes[i]->object->GetMovable()->ClearSectors();
+                sector->meshes[i]->object->GetMovable()->UpdateMove();
+                engine->GetMeshes()->Remove(sector->meshes[i]->object);
+                sector->meshes[i]->object.Invalidate();
+                --sector->objectCount;
+            }
+        }
+
         engine->GetSectors()->Remove(sector->object);
         sector->object.Invalidate();
     }
