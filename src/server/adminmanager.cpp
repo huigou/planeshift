@@ -1936,6 +1936,8 @@ void AdminManager::SendGMAttribs(Client* client)
         gmSettings |= (1 << 7);
     if (client->GetActor()->instantcast)
         gmSettings |= (1 << 8);
+    if (client->GetActor()->givekillexp)
+        gmSettings |= (1 << 9);
 
     psGMGuiMessage gmMsg(client->GetClientNum(), gmSettings);
     gmMsg.SendMessage();

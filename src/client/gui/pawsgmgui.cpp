@@ -82,6 +82,7 @@ pawsGmGUIWindow::pawsGmGUIWindow()
     isFiniteInv = true;
     isSafeFall = false;
     isInstantCast = false;
+    isGiveKillExp = false;
 }
 
 pawsGmGUIWindow::~pawsGmGUIWindow()
@@ -137,6 +138,7 @@ bool pawsGmGUIWindow::PostSetup()
     cbQuestTester = (pawsCheckBox*)FindWidget("toggleQuestTester");
     cbInfiniteMana = (pawsCheckBox*)FindWidget("toggleInfiniteMana");
     cbInstantCast = (pawsCheckBox*)FindWidget("toggleInstantCast");
+    cbGiveKillExp = (pawsCheckBox*)FindWidget("toggleGiveKillExp");
 
     return true;
 }
@@ -216,6 +218,11 @@ void pawsGmGUIWindow::HandleMessage ( MsgEntry* me )
             isInstantCast = ( gmSets & (1 << 8) ? true : false);
             cbInstantCast->SetState(isInstantCast);
             cbInstantCast->SetText( isInstantCast ? "enabled" : "disabled" );
+
+            // Give kill experience
+            isGiveKillExp = ( gmSets & (1 << 9) ? true : false);
+            cbGiveKillExp->SetState(isGiveKillExp);
+            cbGiveKillExp->SetText( isGiveKillExp ? "enabled" : "disabled" );
         }
         }
         break;
@@ -394,6 +401,12 @@ bool pawsGmGUIWindow::OnButtonPressed( int mouseButton, int keyModifier, pawsWid
     case 1259:// instantcast
     {
         cmd.Format("/set instantcast"); // Toggle
+        confirm = false;
+        break;
+    }
+    case 1267:// instantcast
+    {
+        cmd.Format("/set givekillexp"); // Toggle
         confirm = false;
         break;
     }
@@ -584,6 +597,8 @@ void pawsGmGUIWindow::SetSecurity()
     HideWidget("toggleInfiniteMana");
     HideWidget("instantcast");
     HideWidget("toggleInstantCast");
+    HideWidget("givekillexp");
+    HideWidget("toggleGiveKillExp");
 
     // int to hold the access level
     int level = psengine->GetCelClient()->GetMainPlayer()->GetType();
@@ -649,6 +664,8 @@ void pawsGmGUIWindow::SetSecurity()
         ShowWidget("toggleInfiniteMana");
         ShowWidget("instantcast");
         ShowWidget("toggleInstantCast");
+        ShowWidget("givekillexp");
+        ShowWidget("toggleGiveKillExp");
     case 0:
         break;
     }

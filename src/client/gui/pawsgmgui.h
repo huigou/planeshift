@@ -39,6 +39,7 @@ class pawsGmGUIWindow : public pawsWidget, public psCmdBase, public iOnStringEnt
     bool isFiniteInv;
     bool isSafeFall;
     bool isInstantCast;
+    bool isGiveKillExp;
 
 public:
     pawsGmGUIWindow();
@@ -100,6 +101,7 @@ protected:
     pawsCheckBox* cbQuestTester;
     pawsCheckBox* cbInfiniteMana;
     pawsCheckBox* cbInstantCast;
+    pawsCheckBox* cbGiveKillExp;
 
     int currentTab;
     csString cmdToExectute;
