@@ -1496,7 +1496,7 @@ void UserManager::ReportPosition(psUserCmdMessage& msg,Client *client,int client
         else
         {
             psserver->SendSystemInfo(clientnum,"%s current position is %s %1.2f %1.2f %1.2f, instance: %d",
-                name.GetData(), sector_name.GetData(), pos.x, pos.y, pos.z, sector_name.GetData(), instance);
+                name.GetData(), sector_name.GetData(), pos.x, pos.y, pos.z, instance);
         }
     }
 }
