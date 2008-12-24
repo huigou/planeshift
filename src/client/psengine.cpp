@@ -622,7 +622,7 @@ bool psEngine::Initialize (int level)
         threadedLoading = !psengine->GetConfig()->GetBool("ThreadManager.AlwaysRunNow");
 
         loader = new Loader();
-        Loader::GetSingleton().Init(object_reg, preloadModels, gfxFeatures, 500);
+        Loader::GetSingleton().Init(object_reg, preloadModels, gfxFeatures, 200);
 
         if(threadedLoading)
         {

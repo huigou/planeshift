@@ -220,7 +220,7 @@ void ZoneHandler::HandleMessage(MsgEntry* me)
         {
             haveNewPos = false;
         }
-        else if (FindLoadWindow())
+        else if(psengine->IsGameLoaded() && FindLoadWindow())
         {
             loadWindow->SetAlwaysOnTop(true);
             loadWindow->Clear();

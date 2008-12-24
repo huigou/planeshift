@@ -213,48 +213,41 @@ bool pawsInventoryWindow::PostSetup()
 bool pawsInventoryWindow::SetupDoll()
 {
     pawsObjectView* widget = dynamic_cast<pawsObjectView*>(FindWidget("InventoryDoll"));
-    if (widget){
-    GEMClientActor* actor = psengine->GetCelClient()->GetMainPlayer();
-    if (!widget || !actor)
-        return false;
-
-    csRef<iMeshWrapper> mesh = actor->GetMesh();
-    if (!mesh)
+    if (widget)
     {
-        return false;
-    }
+        GEMClientActor* actor = psengine->GetCelClient()->GetMainPlayer();
+        if (!widget || !actor)
+            return false;
 
-    // Set the doll view
-    widget->View( mesh );
+        csRef<iMeshWrapper> mesh = actor->GetMesh();
+        if (!mesh)
+        {
+            return false;
+        }
 
-    // Register this doll for updates
-    widget->SetID(actor->GetEID().Unbox());
+        // Set the doll view
+        widget->View( mesh );
 
-    csRef<iSpriteCal3DState> spstate = scfQueryInterface<iSpriteCal3DState> (widget->GetObject()->GetMeshObject());
-    if (spstate)
-    {
-        // Setup cal3d to select random 0 velocity anims
-        spstate->SetVelocity(0.0,&psengine->GetRandomGen());
-    }
+        // Set the charApp.
+        widget->SetCharApp(charApp);
 
-    charApp->Clone(actor->charApp);
-    charApp->SetMesh(widget->GetObject());
+        // Register this doll for updates
+        widget->SetID(actor->GetEID().Unbox());
 
-    //printf("Inventory Applying Traits: %s\n", actor->traits.GetData());
-    //printf("Inventory Applying Equipment: %s\n", actor->equipment.GetData());
+        csRef<iSpriteCal3DState> spstate = scfQueryInterface<iSpriteCal3DState> (widget->GetObject()->GetMeshObject());
+        if (spstate)
+        {
+            // Setup cal3d to select random 0 velocity anims
+            spstate->SetVelocity(0.0,&psengine->GetRandomGen());
+        }
 
+        charApp->Clone(actor->charApp);
+        charApp->SetMesh(widget->GetObject());
 
-    charApp->ApplyTraits(actor->traits);
-    charApp->ApplyEquipment(actor->equipment);
-
-    // Build doll appearance and equipment
-    //bool a = psengine->BuildAppearance( widget->GetObject(), actor->traits );
-    //bool e = psengine->BuildEquipment( widget->GetObject(), actor->equipment, actor->traitList );
-
-
+        charApp->ApplyTraits(actor->traits);
+        charApp->ApplyEquipment(actor->equipment);
     }
     return true;
-    //return (a && e);
 }
 
 bool pawsInventoryWindow::OnMouseDown( int button, int keyModifier, int x, int y )
