@@ -370,6 +370,46 @@ THREADED_CALLABLE_IMPL2(Loader, PrecacheData, const char* path, bool recursive)
                         {
                             if(meshfacts[i]->name.Compare(node2->GetContentsValue()))
                             {
+                                // Calc bbox data.
+                                csRef<iDocumentNodeIterator> keys = meshfacts[i]->data->GetNodes("key");
+                                while(keys->HasNext())
+                                {
+                                    csRef<iDocumentNode> bboxdata = keys->Next();
+                                    if(csString("bbox").Compare(bboxdata->GetAttributeValue("name")))
+                                    {
+                                        csRef<iDocumentNode> position = node2->GetParent()->GetParent()->GetNode("move");
+                                        if(position)
+                                        {
+                                            m->hasBBox = true;
+                                            csVector3 pos;
+                                            syntaxService->ParseVector(position->GetNode("v"), pos);
+
+                                            csMatrix3 rot;
+                                            if(position->GetNode("matrix"))
+                                            {
+                                                syntaxService->ParseMatrix(position->GetNode("matrix"), rot);
+                                            }
+                                                                                        
+                                            csRef<iDocumentNodeIterator> vs = bboxdata->GetNodes("v");
+                                            while(vs->HasNext())
+                                            {
+                                                bboxdata = vs->Next();
+                                                csVector3 bPos;
+                                                syntaxService->ParseVector(bboxdata, pos);
+                                                if(position->GetNode("matrix"))
+                                                {
+                                                    m->bbox.AddBoundingVertex(rot*csVector3(pos+bPos));
+                                                }
+                                                else
+                                                {
+                                                    m->bbox.AddBoundingVertex(pos+bPos);
+                                                }
+                                            }
+                                        }
+                                        break;
+                                    }
+                                }
+
                                 m->meshfacts.PushSmart(meshfacts[i]);
                             }
                         }
@@ -606,7 +646,17 @@ void Loader::UpdatePosition(const csVector3& pos, const char* sectorName, bool f
 
     if(sector.IsValid())
     {
-        LoadSector(pos, sector);
+        // Calc bbox.
+        csBox3 curBox;
+        curBox.AddBoundingVertex(pos.x+loadRange, pos.y, pos.z);
+        curBox.AddBoundingVertexSmart(pos.x, pos.y+loadRange, pos.z);
+        curBox.AddBoundingVertexSmart(pos.x, pos.y, pos.z+loadRange);
+        curBox.AddBoundingVertexSmart(pos.x-loadRange, pos.y, pos.z);
+        curBox.AddBoundingVertexSmart(pos.x, pos.y-loadRange, pos.z);
+        curBox.AddBoundingVertexSmart(pos.x, pos.y, pos.z-loadRange);
+
+        // Check.
+        LoadSector(pos, curBox, sector);
         if(lastSector != sector)
         {
             CleanDisconnectedSectors(sector);
@@ -690,7 +740,7 @@ void Loader::CleanSector(Sector* sector)
     sector->object.Invalidate();
 }
 
-void Loader::LoadSector(const csVector3& pos, Sector* sector)
+void Loader::LoadSector(const csVector3& pos, const csBox3& bbox, Sector* sector)
 {
     sector->isLoading = true;
 
@@ -705,21 +755,21 @@ void Loader::LoadSector(const csVector3& pos, Sector* sector)
     for(size_t i=0; i<sector->activePortals.GetSize(); i++)
     {
         if(!sector->activePortals[i]->targetSector->isLoading)
-            LoadSector(pos, sector->activePortals[i]->targetSector);
+            LoadSector(pos, bbox, sector->activePortals[i]->targetSector);
     }
 
     for(size_t i=0; i<sector->meshes.GetSize(); i++)
     {
         if(!sector->meshes[i]->loading)
         {
-            if(sector->meshes[i]->InRange(pos))
+            if(sector->meshes[i]->InRange(pos, bbox))
             {
                 sector->meshes[i]->loading = true;
                 loadingMeshes.Push(sector->meshes[i]);
                 LoadMesh(sector->meshes[i]);
                 ++sector->objectCount;
             }
-            else if(sector->meshes[i]->OutOfRange(pos))
+            else if(sector->meshes[i]->OutOfRange(pos, bbox))
             {
                 sector->meshes[i]->object->GetMovable()->ClearSectors();
                 sector->meshes[i]->object->GetMovable()->UpdateMove();
@@ -736,7 +786,7 @@ void Loader::LoadSector(const csVector3& pos, Sector* sector)
         {
             if(!sector->portals[i]->targetSector->isLoading)
             {
-                LoadSector(pos, sector->portals[i]->targetSector);
+                LoadSector(pos, bbox, sector->portals[i]->targetSector);
             }
 
             sector->portals[i]->mObject = engine->CreatePortal(sector->portals[i]->name, sector->object,
@@ -770,7 +820,7 @@ void Loader::LoadSector(const csVector3& pos, Sector* sector)
         {
             if(!sector->portals[i]->targetSector->isLoading)
             {
-                LoadSector(pos, sector->portals[i]->targetSector);
+                LoadSector(pos, bbox, sector->portals[i]->targetSector);
             }
 
             engine->GetMeshes()->Remove(sector->portals[i]->mObject);

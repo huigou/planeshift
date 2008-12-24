@@ -73,7 +73,7 @@ private:
     void CleanDisconnectedSectors(Sector* sector);
     void FindConnectedSectors(csRefArray<Sector>& connectedSectors, Sector* sector);
     void CleanSector(Sector* sector);
-    void LoadSector(const csVector3& pos, Sector* sector);
+    void LoadSector(const csVector3& pos, const csBox3& bbox, Sector* sector);
     void LoadMesh(MeshObj* mesh);
     bool LoadMeshFact(MeshFact* meshfact);
     bool LoadMaterial(Material* material);
@@ -201,18 +201,20 @@ private:
     {
     public:
         MeshObj(const char* name, iDocumentNode* data) : name(name), data(data),
-            loading(false), alwaysLoaded(false)
+            loading(false), alwaysLoaded(false), hasBBox(false)
         {
         }
 
-        bool InRange(const csVector3& curpos)
+        bool InRange(const csVector3& curpos, const csBox3& curBBox)
         {
-            return !object.IsValid() && (alwaysLoaded || csVector3(pos - curpos).Norm() <= Loader::GetSingleton().loadRange);
+            return !object.IsValid() && (alwaysLoaded ||
+                hasBBox ? curBBox.Overlap(bbox) : csVector3(pos - curpos).Norm() <= Loader::GetSingleton().loadRange);
         }
 
-        bool OutOfRange(const csVector3& curpos)
+        bool OutOfRange(const csVector3& curpos, const csBox3& curBBox)
         {
-            return !alwaysLoaded && object.IsValid() && csVector3(pos - curpos).Norm() > Loader::GetSingleton().loadRange*1.5;
+            return !alwaysLoaded && object.IsValid() &&
+                hasBBox ? !curBBox.Overlap(bbox) : csVector3(pos - curpos).Norm() > Loader::GetSingleton().loadRange*1.5;
         }
 
         csString name;
@@ -221,6 +223,8 @@ private:
 
         bool loading;
         bool alwaysLoaded;
+        bool hasBBox;
+        csBox3 bbox;
         csRef<iThreadReturn> status;
         csRef<iMeshWrapper> object;
         csRefArray<Texture> textures;
