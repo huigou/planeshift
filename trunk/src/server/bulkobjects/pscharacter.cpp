@@ -2939,11 +2939,11 @@ bool psCharacter::UpdateQuestAssignments(bool force_update)
                             q->status,
                             q->lockout_end,
                             q->last_response,
-                            q->last_response_from_npc_pid,
+                            q->last_response_from_npc_pid.Unbox(),
                             q->status,
                             q->lockout_end,
                             q->last_response,
-                            q->last_response_from_npc_pid);
+                            q->last_response_from_npc_pid.Unbox());
             Debug3(LOG_QUESTS, pid.Unbox(), "Updated quest info for player %d, quest %d.\n", pid.Unbox(), assigned_quests[i]->GetQuest()->GetID());
             assigned_quests[i]->dirty = false;
         }
