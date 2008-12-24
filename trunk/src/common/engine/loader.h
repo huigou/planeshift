@@ -232,7 +232,7 @@ private:
     class Portal : public CS::Utility::FastRefCount<Portal>
     {
     public:
-        Portal(const char* name) : name(name), clip(false), zfill(false), warp(false), ww_given(false)
+        Portal(const char* name) : name(name), clip(false), zfill(false), ww_given(false), warp(false)
         {
         }
 
