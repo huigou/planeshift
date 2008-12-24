@@ -382,13 +382,10 @@ void psCharAppearance::Equip( csString& slotname,
             ChangeMaterial( ParseStrings(part,subMesh),texture, texture);
         }
     }
-    else
+    else if ( part.Length() )
     {
-        if ( part.Length() )
-        {
-            ChangeMaterial(part, texture, texture);
-        }
-    }          
+        ChangeMaterial(part, texture, texture);
+    }   
 }
 
 

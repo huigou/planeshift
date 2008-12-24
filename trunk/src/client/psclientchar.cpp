@@ -428,8 +428,6 @@ void psClientCharManager::HandleEquipment( MsgEntry* me )
     if ( equip.type == psEquipmentMessage::EQUIP )
     {            
         // Update the actor
-        //Equip(object->pcmesh->GetMesh(), &equip, slotname, object->traitList);
-        
         object->charApp->Equip(slotname,equip.mesh,equip.part,equip.partMesh,equip.texture);    
 
         // Update any doll views registered for changes
@@ -450,10 +448,10 @@ void psClientCharManager::HandleEquipment( MsgEntry* me )
                     Error2("Cannot update registered doll view with ID %d because it has no object", doll->GetID());
                     continue;
                 }
-                psCharAppearance p(psengine->GetObjectRegistry());
-                p.Clone(object->charApp);
-                p.SetMesh(dollObject);
-                p.Equip(slotname,equip.mesh,equip.part,equip.partMesh,equip.texture);
+                psCharAppearance* p = doll->GetCharApp();
+                p->Clone(object->charApp);
+                p->SetMesh(dollObject);
+                p->Equip(slotname,equip.mesh,equip.part,equip.partMesh,equip.texture);
             }
         }
     }
@@ -479,15 +477,15 @@ void psClientCharManager::HandleEquipment( MsgEntry* me )
                     continue;
                 }
             
-                psCharAppearance p(psengine->GetObjectRegistry());
-                p.SetMesh(dollObject);
-                p.Clone(object->charApp);
-                p.Dequip(slotname,equip.mesh,equip.part,equip.partMesh,equip.texture);
+                psCharAppearance* p = doll->GetCharApp();
+                p->SetMesh(dollObject);
+                p->Clone(object->charApp);
+                p->Dequip(slotname,equip.mesh,equip.part,equip.partMesh,equip.texture);
             }
         }    
         
         object->charApp->Dequip(slotname,equip.mesh,equip.part,equip.partMesh,equip.texture);    
-    }        
+    }
 }
 
 void psClientCharManager::HandleEffectStop(MsgEntry* me)

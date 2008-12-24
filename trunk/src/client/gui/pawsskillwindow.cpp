@@ -175,6 +175,9 @@ bool pawsSkillWindow::SetupDoll()
     // Set the doll view
     widget->View( mesh );
 
+    // Set the charApp.
+    widget->SetCharApp(charApp);
+
     // Register this doll for updates
     widget->SetID(actor->GetEID().Unbox());
 

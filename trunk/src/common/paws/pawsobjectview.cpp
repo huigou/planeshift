@@ -33,22 +33,17 @@
 #include "util/log.h"
 #include "util/psconst.h"
 
-int pawsObjectView::idName = 0;
-
 pawsObjectView::pawsObjectView()
 {
     engine =  csQueryRegistry<iEngine > ( PawsManager::GetSingleton().GetObjectRegistry());
-    object = NULL;
     ID = 0;
-
-    idName++;
-    realName.Format("NAME%d", idName);
 
     rotateTime = orgTime = 0;
     rotateRadians = orgRadians = 0;
     camRotate = 0.0f;
     objectPos = csVector3(0,0,0); // Center of podium
     cameraMod = csVector3(0,0,0);
+    charApp = NULL;
 
     loadedMap = false;
     spinMouse = false;
@@ -61,8 +56,10 @@ pawsObjectView::pawsObjectView()
 
 pawsObjectView::~pawsObjectView()
 {
-    engine->RemoveCollection(realName);
-    idName--;
+    if(col->GetRefCount() == 2)
+    {
+        engine->RemoveCollection(col);
+    }
 }
 
 bool pawsObjectView::Setup(iDocumentNode* node )
@@ -128,15 +125,13 @@ bool pawsObjectView::LoadMap( const char* map, const char* sector )
     csRef<iThreadedLoader> loader =  csQueryRegistry<iThreadedLoader> ( PawsManager::GetSingleton().GetObjectRegistry());
     csRef<iVFS> VFS =  csQueryRegistry<iVFS> ( PawsManager::GetSingleton().GetObjectRegistry());
 
+    col = engine->CreateCollection(sector);
     stage = engine->FindSector( sector );
 
     if ( !stage )
     {
         csRef<iDocumentSystem> xml (
             csQueryRegistry<iDocumentSystem> (PawsManager::GetSingleton().GetObjectRegistry()));
-
-        // Create/Get collection
-        iCollection* col = engine->CreateCollection(realName);
 
         csRef<iDocument> doc = xml->CreateDocument();
         csString filename = map;
@@ -170,9 +165,27 @@ bool pawsObjectView::LoadMap( const char* map, const char* sector )
              return false;
     }
 
+    static uint sectorCount = 0;
+    meshSector = engine->CreateSector( csString(sector).AppendFmt("%u", sectorCount++));
+
+    iLightList* lightList = meshSector->GetLights();
+    iLightList* stageLightList = stage->GetLights();
+
+    for(int i=0; i<stageLightList->GetCount(); i++)
+    {
+        lightList->Add(stageLightList->Get(i));
+    }
+
+    meshView = csPtr<iView> (new csView( engine, PawsManager::GetSingleton().GetGraphics3D() ));
+    meshView->GetCamera()->SetSector(meshSector);
+    meshView->GetCamera()->GetTransform().SetOrigin(csVector3(0, 1, -distance));
+
+    meshView->SetRectangle(screenFrame.xmin, screenFrame.ymin,
+        screenFrame.Width(),screenFrame.Height());
+
     view = csPtr<iView> (new csView( engine, PawsManager::GetSingleton().GetGraphics3D() ));
     view->GetCamera()->SetSector(stage);
-    view->GetCamera()->GetTransform().SetOrigin(csVector3(0,1,-distance));
+    view->GetCamera()->GetTransform().SetOrigin(csVector3(0, 1, -distance));
 
     view->SetRectangle(screenFrame.xmin, screenFrame.ymin, screenFrame.Width(), screenFrame.Height());
 
@@ -209,7 +222,8 @@ void pawsObjectView::View( iMeshFactoryWrapper* wrapper )
 
     if(wrapper)
     {
-      object = engine->CreateMeshWrapper (wrapper, "PaperDoll", stage, csVector3(0,0,0) );
+        iSector* sector = loadedMap ? meshSector : stage;
+        mesh = engine->CreateMeshWrapper (wrapper, "PaperDoll", stage, csVector3(0,0,0) );
     }
 }
 
@@ -217,7 +231,7 @@ void pawsObjectView::View( iMeshWrapper* wrapper )
 {
     if(wrapper)
     {
-      View(wrapper->GetFactory());
+        View(wrapper->GetFactory());
     }
 }
 
@@ -314,6 +328,23 @@ void pawsObjectView::DrawNoRotate()
 
     view->Draw();
 
+    if ( loadedMap )
+    {
+        og3d = meshView->GetContext();
+
+        meshView->SetContext(PawsManager::GetSingleton().GetGraphics3D());
+
+        meshView->SetRectangle(screenFrame.xmin,
+            PawsManager::GetSingleton().GetGraphics3D()->GetHeight() - screenFrame.ymax ,
+            screenFrame.Width(), screenFrame.Height());
+        meshView->GetPerspectiveCamera()->SetPerspectiveCenter((float)(screenFrame.xmin+(screenFrame.Width() >> 1))/graphics2D->GetWidth(),
+            1-(float)(screenFrame.ymin+(screenFrame.Height() >> 1))/graphics2D->GetHeight());
+
+        meshView->GetCamera()->GetTransform().SetOrigin(cameraPosition);
+        meshView->GetCamera()->GetTransform().LookAt(lookingAt, csVector3(0, 1, 0));
+        meshView->Draw();
+    }
+
     PawsManager::GetSingleton().GetGraphics3D()->BeginDraw( CSDRAW_2DGRAPHICS );
 
     view->SetContext( og3d );
@@ -403,6 +434,24 @@ void pawsObjectView::DrawRotate()
 
     view->Draw();
 
+    if ( loadedMap )
+    {
+        og3d = meshView->GetContext();
+
+        meshView->SetContext(PawsManager::GetSingleton().GetGraphics3D());
+
+        meshView->SetRectangle(screenFrame.xmin,
+            PawsManager::GetSingleton().GetGraphics3D()->GetHeight() - screenFrame.ymax ,
+            screenFrame.Width(), screenFrame.Height());
+
+        meshView->GetPerspectiveCamera()->SetPerspectiveCenter((float)(screenFrame.xmin+(screenFrame.Width() >> 1))/graphics2D->GetWidth(),
+            1-(float)(screenFrame.ymin+(screenFrame.Height() >> 1))/graphics2D->GetHeight());
+
+        meshView->GetCamera()->GetTransform().SetOrigin(camera);
+        meshView->GetCamera()->GetTransform().LookAt(objectPos - camera + cameraMod, csVector3(0, 1, 0));
+        meshView->Draw();
+    }
+
     PawsManager::GetSingleton().GetGraphics3D()->BeginDraw( CSDRAW_2DGRAPHICS );
 
     view->SetContext( og3d );
@@ -466,6 +515,6 @@ void pawsObjectView::Clear()
     if(mesh)
     {
       stage->GetMeshes()->Remove(mesh);
-      engine->GetMeshes()->Remove(mesh);
+      col->Remove(mesh->QueryObject());
     }
 }

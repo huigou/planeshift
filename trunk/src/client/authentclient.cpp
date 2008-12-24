@@ -84,8 +84,8 @@ void psAuthenticationClient::HandleMessage(MsgEntry *me)
         // This means that the character selected was ok and we should start 
         // loading the game.
         case MSGTYPE_AUTHCHARACTERAPPROVED:
-        {            
-            delete PawsManager::GetSingleton().FindWidget("CharPickerWindow");            
+        {
+            PawsManager::GetSingleton().FindWidget("CharPickerWindow")->Hide(); 
             psengine->StartLoad();                        
             break;
         }

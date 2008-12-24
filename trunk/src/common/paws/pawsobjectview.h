@@ -36,6 +36,8 @@
 
 #include "pawswidget.h"
 
+class psCharAppearance;
+
 /** This widget is used to view a mesh in it's own seperate world.
  */
 class pawsObjectView : public pawsWidget
@@ -83,7 +85,7 @@ public:
     
     void Draw();
 
-    iMeshWrapper* GetObject() { return object; }
+    iMeshWrapper* GetObject() { return mesh; }
                                                 
     bool OnMouseDown(int button,int mod, int x, int y);
     bool OnMouseUp(int button,int mod, int x, int y);
@@ -105,6 +107,9 @@ public:
     /// Assign this view an ID
     void SetID(unsigned int id) { ID = id; }
     unsigned int GetID() { return ID; }
+
+    void SetCharApp(psCharAppearance* cApp) { charApp = cApp; }
+    psCharAppearance* GetCharApp() { return charApp; }
 
 private:
 
@@ -134,12 +139,14 @@ private:
     csRef<iSector> stage;
     csRef<iView>   view;
     csRef<iEngine> engine;
-    csRef<iMeshWrapper> object;
+    csRef<iMeshWrapper> mesh;
+    csRef<iCollection> col;
+    csRef<iSector> meshSector;
+    csRef<iView>   meshView;
+    psCharAppearance* charApp;
 
     csVector3 objectPos;
     csVector3 cameraMod;
-    static int idName;
-    csString realName;
     
     void RotateDef(); // Used to reset to the values given by the controlling widget
     void RotateTemp(int speed,float radians); // Used to for example stop the rotate but not write the def values
