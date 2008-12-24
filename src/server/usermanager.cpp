@@ -674,8 +674,8 @@ void UserManager::SendCharacterDescription(Client * client, psCharacter * charDa
     psRaceInfo* charrinfo = CacheManager::GetSingleton().GetRaceInfoByMeshName(meshName);
     if (charrinfo != NULL)
     {
-        raceName = CacheManager::GetSingleton().GetRaceInfoByMeshName(meshName)->GetRace();
-        gender = CacheManager::GetSingleton().GetRaceInfoByMeshName(meshName)->gender;
+        raceName = charrinfo->GetRace();
+        gender = charrinfo->gender;
     }
     else
     {
