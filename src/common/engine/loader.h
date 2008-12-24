@@ -179,7 +179,7 @@ private:
     class Sector : public CS::Utility::FastRefCount<Sector>
     {
     public:
-        Sector(const char* name) : name(name), isLoading(false), objectCount(0)
+        Sector(const char* name) : name(name), isLoading(false), objectCount(0), alwaysLoadedCount(0)
         {
             ambient = csColor(0.0f);
         }
@@ -189,6 +189,7 @@ private:
         csString culler;
         csColor ambient;
         size_t objectCount;
+        size_t alwaysLoadedCount;
         csRef<iSector> object;
         csRefArray<MeshObj> meshes;
         csRefArray<Portal> portals;
@@ -199,8 +200,19 @@ private:
     class MeshObj : public CS::Utility::FastRefCount<MeshObj>
     {
     public:
-        MeshObj(const char* name, iDocumentNode* data) : name(name), data(data), loading(false)
+        MeshObj(const char* name, iDocumentNode* data) : name(name), data(data),
+            loading(false), alwaysLoaded(false)
         {
+        }
+
+        bool InRange(const csVector3& curpos)
+        {
+            return !object.IsValid() && (alwaysLoaded || csVector3(pos - curpos).Norm() <= Loader::GetSingleton().loadRange);
+        }
+
+        bool OutOfRange(const csVector3& curpos)
+        {
+            return !alwaysLoaded && object.IsValid() && csVector3(pos - curpos).Norm() > Loader::GetSingleton().loadRange*1.5;
         }
 
         csString name;
@@ -208,6 +220,7 @@ private:
         csVector3 pos;
 
         bool loading;
+        bool alwaysLoaded;
         csRef<iThreadReturn> status;
         csRef<iMeshWrapper> object;
         csRefArray<Texture> textures;
@@ -225,6 +238,11 @@ private:
 
         bool InRange(const csVector3& pos)
         {
+            if(mObject.IsValid())
+            {
+                return false;
+            }
+
             for(size_t i=0; i<poly.GetVertexCount(); i++)
             {
                 if(csVector3(poly.GetVertices()[i] - pos).Norm() <= Loader::GetSingleton().loadRange)
@@ -238,6 +256,11 @@ private:
 
         bool OutOfRange(const csVector3& pos)
         {
+            if(!mObject.IsValid())
+            {
+                return false;
+            }
+
             for(size_t i=0; i<poly.GetVertexCount(); i++)
             {
                 if(csVector3(poly.GetVertices()[i] - pos).Norm() <= Loader::GetSingleton().loadRange*1.5)
