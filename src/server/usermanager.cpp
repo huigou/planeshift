@@ -2180,6 +2180,14 @@ void UserManager::ChallengeToDuel(psUserCmdMessage& msg,Client *client)
         return;
     }
 
+    //don't allow frozen clients to challenge
+    if(client->IsFrozen())
+    {
+        psserver->SendSystemInfo(client->GetClientNum(), "You can't challenge opponents while being frozen by a GM");
+        return;
+    }
+
+
     // Check target dead
     gemObject *target = client->GetTargetObject();
     if (!target)
@@ -2205,6 +2213,12 @@ void UserManager::ChallengeToDuel(psUserCmdMessage& msg,Client *client)
     if (!target->IsAlive())
     {
         psserver->SendSystemError(clientnum, "You can't challenge a dead person");
+        return;
+    }
+
+    if(target->IsFrozen())
+    {
+        psserver->SendSystemInfo(client->GetClientNum(), "% was frozen by a GM and cannot be challenged", target->GetName());
         return;
     }
 
