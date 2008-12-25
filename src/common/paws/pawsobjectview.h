@@ -156,8 +156,6 @@ private:
     int rotateTime;
     float rotateRadians;
     float camRotate;
-
-    bool loadedMap;
     
     unsigned int ID;
     bool needToFilter;
