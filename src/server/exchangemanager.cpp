@@ -1338,6 +1338,13 @@ void ExchangeManager::StartExchange( Client* client, bool withPlayer )
         return;
     }
 
+    //don't allow frozen clients to drain all their possessions to an alt before punishment
+    if(client->IsFrozen())
+    {
+        psserver->SendSystemInfo(client->GetClientNum(), "You can't trade while being frozen by a GM");
+        return;
+    }
+
     if ( client->GetExchangeID() )
     {
         psserver->SendSystemError(client->GetClientNum(), "You are already busy with another trade" );
@@ -1364,6 +1371,12 @@ void ExchangeManager::StartExchange( Client* client, bool withPlayer )
     if ( client->GetCharacterData()->GetTradingStatus() != psCharacter::NOT_TRADING )
     {
         psserver->SendSystemError(client->GetClientNum(), "You are busy with the merchant", target->GetName());
+        return;
+    }
+
+    if(client->IsFrozen())
+    {
+        psserver->SendSystemInfo(client->GetClientNum(), "% was frozen by a GM and cannot trade", target->GetName());
         return;
     }
 
