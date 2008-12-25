@@ -191,7 +191,7 @@ psServer::~psServer()
     delete gmeventManager;
     delete bankmanager;
     delete intromanager;
-
+    delete serverconsole;
     /*
     PS_CHECK_REF_COUNT(guildmanager);
     PS_CHECK_REF_COUNT(questionmanager);
