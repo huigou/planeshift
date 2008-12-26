@@ -2216,7 +2216,7 @@ void UserManager::ChallengeToDuel(psUserCmdMessage& msg,Client *client)
         return;
     }
 
-    if(target->IsFrozen())
+    if(targetClient->IsFrozen())
     {
         psserver->SendSystemInfo(client->GetClientNum(), "% was frozen by a GM and cannot be challenged", target->GetName());
         return;
