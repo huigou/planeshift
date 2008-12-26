@@ -1063,7 +1063,7 @@ ALTER TABLE `characters` ADD COLUMN `creation_info` TEXT  DEFAULT NULL AFTER `de
 UPDATE `server_options` SET `option_value`='1210' WHERE `option_name`='db_version';
 
 #### 1211 - Keith Fulton - added last npc tracking to quest assignements
-ALTER TABLE `character_quests` ADD `last_response_npc_id` INT(10) UNSIGNED NULL COMMENT 'This field stores the npc PID who gave the last response. Required for menu filtering.'
+ALTER TABLE `character_quests` ADD `last_response_npc_id` INT(10) UNSIGNED NULL COMMENT 'This field stores the npc PID who gave the last response. Required for menu filtering.';
 UPDATE `server_options` SET `option_value`='1211' WHERE `option_name`='db_version';
 
 #### 1211 - Stefano Angeleri - Added /setkillexp
