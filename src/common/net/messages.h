@@ -3379,9 +3379,11 @@ public:
                        int toContainerID,
                        int toSlotID,
                        int stackCount,
-                       csVector3 *pt3d=NULL)
+                       csVector3 *pt3d=NULL,
+                       bool guarded=true,
+                       bool inplace=true)
     {
-        msg.AttachNew(new MsgEntry( sizeof( int32_t ) * 5 + 3 * sizeof(float) ));
+        msg.AttachNew(new MsgEntry( sizeof( int32_t ) * 5 + 3 * sizeof(float) + 2 * sizeof(bool) ));
 
         msg->SetType(MSGTYPE_SLOT_MOVEMENT);
         msg->clientnum  = 0;
@@ -3398,6 +3400,9 @@ public:
             csVector3 v = 0;
             msg->Add(v);  // add dummy zeroes if not specified.
         }
+        msg->Add( guarded );
+        msg->Add( inplace );
+
     }
 
     psSlotMovementMsg( MsgEntry* me )
@@ -3408,6 +3413,9 @@ public:
         toSlot        = me->GetInt32();
         stackCount    = me->GetInt32();
         posWorld      = me->GetVector();
+        guarded       = me->GetBool();
+        inplace       = me->GetBool();
+
     }
 
     PSF_DECLARE_MSG_FACTORY();
@@ -3426,12 +3434,14 @@ public:
     int toSlot;
     int stackCount;
     csVector3 posWorld;
+    bool guarded;
+    bool inplace;
 };
 
 class psCmdDropMessage : public psMessageCracker
 {
 public:
-    psCmdDropMessage( int quantity, csString &itemName, bool container, bool guarded);
+    psCmdDropMessage( int quantity, csString &itemName, bool container, bool guarded, bool inplace);
     psCmdDropMessage( MsgEntry* me );
 
     PSF_DECLARE_MSG_FACTORY();
@@ -3449,6 +3459,7 @@ public:
 
     bool container;
     bool guarded;
+    bool inplace;
 };
 
 class psQuestionCancelMessage : public psMessageCracker

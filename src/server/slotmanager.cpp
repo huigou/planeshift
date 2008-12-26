@@ -343,7 +343,6 @@ void SlotManager::MoveFromMoney(psSlotMovementMsg& msg, Client *fromClient)
     psMoney money;
     money.Adjust(msg.fromSlot, msg.stackCount);
     
-
     switch (msg.toContainer)
     {
         case CONTAINER_WORLD:
@@ -360,7 +359,7 @@ void SlotManager::MoveFromMoney(psSlotMovementMsg& msg, Client *fromClient)
                 // Remove the money from inventory, and put in world.
                 money.Set(-money.Get(3), -money.Get(2), -money.Get(1), -money.Get(0));
                 chr->AdjustMoney(money, false);
-                chr->DropItem(item, msg.posWorld);
+                chr->DropItem(item, msg.posWorld, msg.guarded, true, msg.inplace);
             }
             else
                 Error3("Could not create money item from slot %d, count %d!", msg.fromSlot, msg.stackCount);
@@ -978,7 +977,7 @@ void SlotManager::CmdDrop(MsgEntry* me, Client *fromClient)
     }
 
     psItem* toDropItem = chr->Inventory().RemoveItemID(stackItem->GetUID(), removeCount);
-    chr->DropItem(toDropItem, 0, mesg.guarded);
+    chr->DropItem(toDropItem, 0, mesg.guarded, true, mesg.inplace);
 
 
     psserver->GetCharManager()->UpdateItemViews(fromClient->GetClientNum());  

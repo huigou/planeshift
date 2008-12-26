@@ -693,53 +693,64 @@ const char *psUserCommands::HandleCommand(const char *cmd)
     }
     else if (words[0] == "/drop")
     {
-        if (words.GetCount() < 3)
-            return "Usage: /drop  [quantity] (any) (noguard) [item name]";
-        int quantity = atoi(words[1]);
+        if (words.GetCount() < 2)
+            return "Usage: /drop  [quantity] (any) (noguard) (inplace) [item name]";
+        int quantity;
         csString itemName;
         bool any = false;
         bool guard = true;
+        bool inplace = false;
         int moneySlot = 0;
-        if (words[1] == "all")
+        
+        unsigned int i = 1;
+        
+        if (quantity = atoi(words[1]))
+        {
+            i++;
+        }
+        else if (words[1] == "all")
         {
             quantity = 65;
-        }
-
-        if ( words[2] == "tria" || (words[2] == "hexa" && (moneySlot=1)) ||
-             (words[2] == "octa" && (moneySlot=2)) || (words[2] == "circle" && (moneySlot=3)) )
-        {
-            psSlotMovementMsg moneydropmsg( CONTAINER_INVENTORY_MONEY, moneySlot,
-                                CONTAINER_WORLD, 0, quantity );
-            moneydropmsg.SendMessage();
-            return NULL;
-        }
-        else if (words[2] == "any")
-        {
-            any = true;
-            if(words[3] == "noguard")
-            {
-                guard = false;
-                itemName = words.GetTail(4);
-            }
-            else
-            {
-                itemName = words.GetTail(3);
-            }
+            i++;
         }
         else
         {
-            if(words[2] == "noguard")
-            {
-                guard = false;
-                itemName = words.GetTail(3);
-            }
-            else
-            {
-                itemName = words.GetTail(2);
-            }
+            quantity = 1;
         }
-        psCmdDropMessage cmddrop(quantity, itemName, any, guard);
-        cmddrop.SendMessage();
+
+        
+        if(words[i] == "any")
+        {
+            i++;
+            any = true;
+        }
+        
+        if(words[i] == "noguard")
+        {
+            i++;
+            guard = false;
+        }
+        
+        if(words[i] == "inplace")
+        {
+            i++;
+            inplace = true;
+        }
+        
+        if ( words[i] == "tria" || (words[i] == "hexa" && (moneySlot=1)) ||
+           (words[i] == "octa" && (moneySlot=2)) || (words[i] == "circle" && (moneySlot=3)) )
+        {
+            psSlotMovementMsg moneydropmsg( CONTAINER_INVENTORY_MONEY, moneySlot,
+                                CONTAINER_WORLD, 0, quantity, 0, guard, inplace );
+            moneydropmsg.SendMessage();
+            return NULL;
+        }
+        else
+        {
+            itemName = words.GetTail(i);
+            psCmdDropMessage cmddrop(quantity, itemName, any, guard, inplace);
+            cmddrop.SendMessage();
+        }
     }
     else if(words[0] == "/emote")
     {
