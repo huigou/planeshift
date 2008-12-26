@@ -58,7 +58,8 @@
 
 pawsDetailWindow::pawsDetailWindow()
 {
-    target = NULL;     
+    target = NULL;
+    details_editable = false;
     psengine->GetMsgHandler()->Subscribe( this, MSGTYPE_CHARACTERDETAILS );
 }
 
@@ -203,8 +204,15 @@ void pawsDetailWindow::HandleMessage( MsgEntry* me )
         if (msg.name == psengine->GetCelClient()->GetMainPlayer()->GetName())
         {
             details_editable = true;
-            if(!storedescription.Length() ) //if the player didn't input anything inform him
-                storedescription = PawsManager::GetSingleton().Translate("This window is what people will read when they click on you; this box is not to be filled with anything other than things that a person could reasonably perceive with their senses. There is no reason to include anything beyond what one can sense when looking at your character. While sensual detail ONLY is to be included, this does not mean that you should be sparing, please include as many appeals to the senses as your character clearly eminates that can be sensed with the five accepted senses (sight, touch, hearing and smell (being primary)(only list taste if you anticipate people tasting your character)).");
+            if(!storedescription.Length()) //if the player didn't input anything inform him
+                storedescription = PawsManager::GetSingleton().Translate("This window is what people "
+                "will read when they click on you; this box is not to be filled with anything other than "
+                "things that a person could reasonably perceive with their senses. There is no reason to "
+                "include anything beyond what one can sense when looking at your character. While sensual "
+                "detail ONLY is to be included, this does not mean that you should be sparing, please "
+                "include as many appeals to the senses as your character clearly eminates that can be "
+                "sensed with the five accepted senses (sight, touch, hearing and smell (being primary)"
+                "(only list taste if you anticipate people tasting your character)).");
         }
         else
         {
@@ -231,10 +239,10 @@ bool pawsDetailWindow::SelectTab( pawsWidget* widget )
         {
             pawsCharDescription *editWindow = (pawsCharDescription*) PawsManager::GetSingleton().FindWidget("DescriptionEdit");
             editWindow->PostSetup();
-            if(lastTab == (pawsButton*)FindWidget( "ShowDescrOOC" ))
-                editWindow->SetOOCDescription(true);
+            //if the OOC description tab is selected this will be true and the occ description will be shown
+            editWindow->SetOOCDescription(lastTab == (pawsButton*)FindWidget( "ShowDescrOOC" ));
             editWindow->Show();
-            return true;
+            break;
         }
     case BTN_STATS:
     case BTN_FACTION:
@@ -277,6 +285,7 @@ bool pawsDetailWindow::SelectTab( pawsWidget* widget )
             {
                 description->SetText(storedescription);
                 if(details_editable) editButton->Show(); //if it's editable show the button
+                else                 editButton->Hide();
             }
             else if(widget->GetID() == BTN_DESCRCC)
             {
@@ -287,6 +296,7 @@ bool pawsDetailWindow::SelectTab( pawsWidget* widget )
             {
                 description->SetText(storedoocdescription);
                 if(details_editable) editButton->Show(); //if it's editable show the button
+                else                 editButton->Hide();
             }
             break;
         }
