@@ -76,7 +76,7 @@ PendingInvite::PendingInvite(
      * Penalties:
      * 1st) 1 min lockout
      * 2nd) 5 min lockout + warning
-     * 3rd) 10 min lockout + 10 point fine(s) (advisor, plus duel if dueling) + death
+     * 3rd) 10 min lockout + 10 point fine(s) (advisor) + death
      * 4th) 30 point fine(s) + death + kick from server (level reset to 3rd after this)
      */
     if (penalize && CheckForSpam(inviter, invType))
