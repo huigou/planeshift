@@ -37,6 +37,7 @@ public:
     virtual ~pawsDetailWindow();
 
     bool OnButtonPressed( int mouseButton, int keyModifier, pawsWidget* widget );
+    void UpdateTabsVisibility(bool Skills, bool CharCreation, bool OOCDescription);
     bool SelectTab( pawsWidget* widget );
 
     bool PostSetup();
