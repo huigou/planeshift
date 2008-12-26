@@ -87,24 +87,8 @@ bool pawsDetailWindow::PostSetup()
     {
         lastTab = button;
         button->SetState(true);
-        button->Show();
     }
-    button = (pawsButton*)FindWidget( "ShowDescrOOC" );
-    if(button) button->Show();
-    button = (pawsButton*)FindWidget( "ShowCC" );
-    if(button) button->Hide();
-    button = (pawsButton*)FindWidget( "ShowStats" );
-    if(button) button->Hide();
-    button = (pawsButton*)FindWidget( "ShowCombat" );
-    if(button) button->Hide();
-    button = (pawsButton*)FindWidget( "ShowMagic" );
-    if(button) button->Hide();
-    button = (pawsButton*)FindWidget( "ShowCraft" );
-    if(button) button->Hide();
-    button = (pawsButton*)FindWidget( "ShowMisc" );
-    if(button) button->Hide();
-    button = (pawsButton*)FindWidget( "ShowFaction" );
-    if(button) button->Hide();
+    UpdateTabsVisibility(false, false, false);
     skills.SetSize(6);
     for(int i=0; i<6; i++)
     {
@@ -117,6 +101,58 @@ void pawsDetailWindow::RequestDetails()
 {
     psCharacterDetailsRequestMessage requestMsg(false, false, "pawsDetailWindow");
     psengine->GetMsgHandler()->SendMessage(requestMsg.msg);
+}
+
+void pawsDetailWindow::UpdateTabsVisibility(bool Skills, bool CharCreation, bool OOCDescription)
+{
+    pawsButton* button = (pawsButton*)FindWidget( "ShowDescr" );
+    if(button)
+    {   //show this only if there are other tabs
+        if(Skills || CharCreation || OOCDescription) button->Show();
+        else                                         button->Hide();
+    }
+    button = (pawsButton*)FindWidget( "ShowDescrOOC" );
+    if(button)
+    {   //show this only if there is an OOC description or the player can edit it
+        if(OOCDescription) button->Show();
+        else               button->Hide();
+    }
+    button = (pawsButton*)FindWidget( "ShowCC" );
+    if(button)
+    {   //show this only if there is an CC description
+        if(CharCreation) button->Show();
+        else             button->Hide();
+    }
+    if(Skills) //show skills tabs only if enabled
+    {
+        button = (pawsButton*)FindWidget( "ShowStats" );
+        if(button) button->Show();
+        button = (pawsButton*)FindWidget( "ShowCombat" );
+        if(button) button->Show();
+        button = (pawsButton*)FindWidget( "ShowMagic" );
+        if(button) button->Show();
+        button = (pawsButton*)FindWidget( "ShowCraft" );
+        if(button) button->Show();
+        button = (pawsButton*)FindWidget( "ShowMisc" );
+        if(button) button->Show();
+        button = (pawsButton*)FindWidget( "ShowFaction" );
+        if(button) button->Show();
+    }
+    else
+    {
+        button = (pawsButton*)FindWidget( "ShowStats" );
+        if(button) button->Hide();
+        button = (pawsButton*)FindWidget( "ShowCombat" );
+        if(button) button->Hide();
+        button = (pawsButton*)FindWidget( "ShowMagic" );
+        if(button) button->Hide();
+        button = (pawsButton*)FindWidget( "ShowCraft" );
+        if(button) button->Hide();
+        button = (pawsButton*)FindWidget( "ShowMisc" );
+        if(button) button->Hide();
+        button = (pawsButton*)FindWidget( "ShowFaction" );
+        if(button) button->Hide();
+    }
 }
 
 void pawsDetailWindow::HandleMessage( MsgEntry* me )
@@ -167,39 +203,6 @@ void pawsDetailWindow::HandleMessage( MsgEntry* me )
         storedoocdescription = msg.desc_ooc;
         storedcreationinfo = msg.creationinfo;
 
-        for(int i=0; i<6; i++)
-        {
-            skills[i].Clear();
-        }
-        if(storedcreationinfo.Length())
-        {
-            pawsButton* button = (pawsButton*)FindWidget( "ShowCC" );
-            if(button) button->Show();
-        }
-        if(msg.skills.GetSize() != 0 ) {
-            pawsButton* button = (pawsButton*)FindWidget( "ShowStats" );
-            if(button) button->Show();
-            button = (pawsButton*)FindWidget( "ShowCombat" );
-            if(button) button->Show();
-            button = (pawsButton*)FindWidget( "ShowMagic" );
-            if(button) button->Show();
-            button = (pawsButton*)FindWidget( "ShowCraft" );
-            if(button) button->Show();
-            button = (pawsButton*)FindWidget( "ShowMisc" );
-            if(button) button->Show();
-            button = (pawsButton*)FindWidget( "ShowFaction" );
-            if(button) button->Show();
-            for( size_t s = 0; s < msg.skills.GetSize(); s++ )
-            {
-                int cat = msg.skills[s].category;
-                if(cat >= 0 && cat < 6)
-                {
-                    skills[cat].Append(msg.skills[s].text);
-                }
-		        SelectTab((pawsWidget*)lastTab);
-            }
-        }
-
         //check if the player is looking at his/her/its own description
         if (msg.name == psengine->GetCelClient()->GetMainPlayer()->GetName())
         {
@@ -217,6 +220,26 @@ void pawsDetailWindow::HandleMessage( MsgEntry* me )
         else
         {
             details_editable = false;
+        }
+
+        //checks what tabs should be shown
+        UpdateTabsVisibility(msg.skills.GetSize() != 0, storedcreationinfo.Length() != 0,
+                             storedoocdescription.Length() != 0 || details_editable);
+
+        for(int i=0; i<6; i++)
+        {
+            skills[i].Clear();
+        }
+        if(msg.skills.GetSize() != 0 ) {
+             for( size_t s = 0; s < msg.skills.GetSize(); s++ )
+            {
+                int cat = msg.skills[s].category;
+                if(cat >= 0 && cat < 6)
+                {
+                    skills[cat].Append(msg.skills[s].text);
+                }
+		        SelectTab((pawsWidget*)lastTab);
+            }
         }
 
         SelectTab(lastTab);
