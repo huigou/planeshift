@@ -1,4 +1,7 @@
-﻿*** 2008-12-24 by Steven Patrick
+﻿*** 2008-12-26 by Stefano Angeleri
+- Blocked frozen clients from challenging/being challenged and trading
+
+*** 2008-12-24 by Steven Patrick
 - Small improvement in the code fetching the char description, patch by kougaro.
 
 *** 2008-12-23 by Stefano Angeleri
@@ -12,6 +15,7 @@
   This is the experience given in case the char is killed
 - Added a new flag in set to allow who has this flag enabled to give the experience set by /setkillexp
   in case he/she/it gets killed (/set givekillexp)
+- Added the givekillexp flag to gm gui
 
 *** 2008-12-20 by Kenny Graunke
 - Moved the "Edit Description" button to pawsDetailWindow; it appears if you
