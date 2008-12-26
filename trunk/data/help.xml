@@ -103,12 +103,13 @@ Use to commit suicide, for example when /unstick does not get you free.</topic>
         <topic name="/dig">/dig for resource
 
 Mine for natural resources in the ground.  For example: /dig for gold.  Some locations are better than others for digging, and how well you do depends on where you are, your skill and your tools.</topic>
-        <topic name="/drop">/drop quantity|all (any) (noguard) item_name
+        <topic name="/drop">/drop [quantity|all] (any) (noguard) (inplace) item_name
 
 Drop the specified quantity of a certain item from your inventory. example : /drop 15 apple
 "all" will try and drop all items of this kind available, in the limit of 65 items.
 The "any" flag allows the function to search for items in containers.
-The "noguard" flag will allow you to drop unguarded items</topic>
+The "noguard" flag allows you to drop unguarded items.
+The "inplace" flag allows you to drop items at your current position.</topic>
         <topic name="/equip">/equip quantity item_name
 
 Equips the specified quantity of a certain item.  This is equivalent to equipping items in your Inventory Window.</topic>

@@ -1380,7 +1380,7 @@ const Stance& psCharacter::getStance(csString name)
     return CacheManager::GetSingleton().stances.Get(ID);
 }
 
-void psCharacter::DropItem(psItem *&item, csVector3 suggestedPos, bool guarded, bool transient)
+void psCharacter::DropItem(psItem *&item, csVector3 suggestedPos, bool guarded, bool transient, bool inplace)
 {
     if (!item)
         return;
@@ -1406,12 +1406,18 @@ void psCharacter::DropItem(psItem *&item, csVector3 suggestedPos, bool guarded, 
             suggestedPos = 0;
     }
 
-    if (suggestedPos == 0)
+    if (suggestedPos == 0 && !inplace)
     {
         // No position specified or it was invalid.
         suggestedPos.x = location.loc.x - (DROP_DISTANCE * sinf(location.loc_yrot));
         suggestedPos.y = location.loc.y;
         suggestedPos.z = location.loc.z - (DROP_DISTANCE * cosf(location.loc_yrot));
+    }
+    else if (inplace)
+    {
+        suggestedPos.x = location.loc.x;
+        suggestedPos.y = location.loc.y;
+        suggestedPos.z = location.loc.z;
     }
 
     // Play the drop item sound for this item

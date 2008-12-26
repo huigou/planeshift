@@ -4921,15 +4921,16 @@ csString psSlotMovementMsg::ToString(AccessPointers * /*access_ptrs*/)
 
 PSF_IMPLEMENT_MSG_FACTORY(psCmdDropMessage,MSGTYPE_CMDDROP);
 
-psCmdDropMessage::psCmdDropMessage( int quantity, csString &itemName, bool container, bool guarded)
+psCmdDropMessage::psCmdDropMessage( int quantity, csString &itemName, bool container, bool guarded, bool inplace)
 {
-    msg.AttachNew(new MsgEntry( sizeof( int32_t ) + itemName.Length() + sizeof(bool)*2 + 1 ));
+    msg.AttachNew(new MsgEntry( sizeof( int32_t ) + itemName.Length() + sizeof(bool)*3 + 1 ));
 
     msg->SetType(MSGTYPE_CMDDROP);
     msg->Add( (int32_t) quantity );
     msg->Add( itemName );
     msg->Add( container );
     msg->Add( guarded );
+    msg->Add(inplace);
 }
 
 psCmdDropMessage::psCmdDropMessage( MsgEntry* me )
@@ -4938,6 +4939,7 @@ psCmdDropMessage::psCmdDropMessage( MsgEntry* me )
     itemName  = me->GetStr();
     container  = me->GetBool();
     guarded = me->GetBool();
+    inplace = me->GetBool();
 }
 
 csString psCmdDropMessage::ToString(AccessPointers * /*access_ptrs*/)
