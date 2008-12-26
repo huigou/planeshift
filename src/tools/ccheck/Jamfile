@@ -1,0 +1,9 @@
+SubDir TOP src tools ccheck ;
+
+Application ccheck :
+	[ Wildcard *.cpp *.h ]
+;
+
+CompileGroups ccheck : tools ;
+ExternalLibs ccheck : CRYSTAL;
+
