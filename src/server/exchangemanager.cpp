@@ -1374,7 +1374,7 @@ void ExchangeManager::StartExchange( Client* client, bool withPlayer )
         return;
     }
 
-    if(target->IsFrozen())
+    if(targetClient->IsFrozen())
     {
         psserver->SendSystemInfo(client->GetClientNum(), "% was frozen by a GM and cannot trade", target->GetName());
         return;
