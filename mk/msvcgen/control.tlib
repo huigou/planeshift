@@ -192,4 +192,18 @@ mutators = [
   }
 ];
 
+#------------------------------------------------------------------------------
+# "Platforms" create seperate platform configurations.
+#------------------------------------------------------------------------------
+platforms = [
+  {
+    name => 'Win32',
+    targetmachine => 1
+  },
+  {
+    name => 'x64',
+    targetmachine => 17
+  }
+];
+
 END %]

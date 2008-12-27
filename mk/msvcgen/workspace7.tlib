@@ -28,14 +28,14 @@
   projects = filter(my.doc.project).split('\|').sort;
   guids = {};
   FOREACH project IN projects;
-    guids.$project = guid(project);
+	guids.$project = guid(project);
   END;
 END -%]
 Microsoft Visual Studio Solution File, Format Version [% my.doc.formatversion.0 %]
 [% my.doc.headercomment.0 %]
 [% FOREACH project IN projects -%]
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "[% project %]", "
-    [%- project %].vcproj", "{[% guids.$project %]}"
+	[%- project %].vcproj", "{[% guids.$project %]}"
 EndProject
 [% END -%]
 Global
@@ -57,8 +57,10 @@ Global
 [% FOREACH project IN projects; g = guids.$project -%]
 [% FOREACH build IN builds -%]
   [% FOREACH mutator IN mutators -%]
-		{[% g %]}.[% build.name %][% mutator.namesuffix %].ActiveCfg = [% build.name %][% mutator.namesuffix %]|Win32
-		{[% g %]}.[% build.name %][% mutator.namesuffix %].Build.0 = [% build.name %][% mutator.namesuffix %]|Win32
+    [% FOREACH platform IN platforms -%]
+		{[% g %]}.[% build.name %][% mutator.namesuffix %].ActiveCfg = [% build.name %][% mutator.namesuffix %]|[% platform.name %]
+		{[% g %]}.[% build.name %][% mutator.namesuffix %].Build.0 = [% build.name %][% mutator.namesuffix %]|[% platform.name %]
+    [% END -%]
   [% END -%]
 [% END -%]
 [% END -%]
