@@ -308,7 +308,7 @@ bool UpdaterEngine::CheckGeneral()
                 // There's a problem and we can't continue. Throw a boo boo and clean up.
                 PrintOutput("\nLocal config and server config are incompatible!\n");
                 PrintOutput("This is caused when your local version becomes out of sync with the update mirrors.\n");
-                PrintOutput("To resolve this, reinstall your client using the latest installer on the website.\n");
+                PrintOutput("To resolve this, run a repair.\n");
             }
         }
 
