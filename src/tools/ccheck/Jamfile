@@ -5,5 +5,5 @@ Application ccheck :
 ;
 
 CompileGroups ccheck : tools ;
-ExternalLibs ccheck : CRYSTAL;
+ExternalLibs ccheck : CRYSTAL ;
 
