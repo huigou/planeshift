@@ -23,7 +23,9 @@
 rule ListFile
 {
     listfile = $(1:S=.txt) ;
-    MakeLocate $(listfile) : [ ConcatDirs $(BUILDTOP) out lists ] ;
+    local dir = [ ConcatDirs $(BUILDTOP) out lists ] ;
+    MakeLocate $(listfile) : $(dir) ;
+    SEARCH on $(listfile) = $(dir) ;
     Clean filelistsclean : $(listfile) ;
     Depends clean : filelistsclean ;
     return $(listfile) ;
@@ -82,6 +84,7 @@ rule FileListEntriesData
 ##  FileListEntryApplications app : list
 rule FileListEntryApplications
 {
+    $($(1)_TARGET)_FILELIST = $(2) ;
     Depends filelists :
       [ SystemDoFileListEntryApplications $(1) : $(2) ] ;
 }
@@ -89,6 +92,7 @@ rule FileListEntryApplications
 ##  FileListEntryPlugin plugin : list
 rule FileListEntryPlugin
 {
+    $($(1)_TARGET)_FILELIST = $(2) ;
     Depends filelists :
       [ SystemDoFileListEntryPlugin $(1) : $(2) ] ;
 }

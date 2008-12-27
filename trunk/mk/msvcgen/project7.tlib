@@ -1,7 +1,7 @@
 [% FILTER null;
 #==============================================================================
 # TemplateToolkit2 template for MSVC7 project (vcproj) file.
-# Copyright (C) 2004 by Eric Sunshine <sunshine@sunshineco.com>
+# Copyright (C) 2004,2008 by Eric Sunshine <sunshine@sunshineco.com>
 #
 #    This library is free software; you can redistribute it and/or modify it
 #    under the terms of the GNU Library General Public License as published by
@@ -22,7 +22,7 @@
   PROCESS control.tlib;
   PROCESS projectx7.tlib;
 
-  MACRO composedefs(defs) GET compose('defines', defs, ';');
+  MACRO composedefs(defs) GET compose('defines', defs, ';').replace('"', '\\&quot;');
   MACRO composedirs(tag, seed) GET composepaths(${"build.${tag}key"},seed,';');
 
   my = {};
@@ -40,14 +40,16 @@ END -%]
 	SccProjectName=""
 	SccLocalPath="">
 	<Platforms>
-		<Platform
-			Name="Win32"/>
+[% FOREACH platform IN platforms -%]
+		<Platform Name="[% platform.name %]"/>
+[% END -%]
 	</Platforms>
 	<Configurations>
-[% FOREACH build IN builds -%]
-  [% FOREACH mutator IN mutators -%]
+[% FOREACH platform IN platforms -%]
+  [% FOREACH build IN builds -%]
+    [% FOREACH mutator IN mutators -%]
 		<Configuration
-			Name="[% build.name %][% mutator.namesuffix %]|Win32"
+			Name="[% build.name %][% mutator.namesuffix %]|[% platform.name %]"
 			OutputDirectory="[% workbuild([]) %]"
 			IntermediateDirectory="[% workbuild([]) %]"
 [% interpolate('global') -%]
@@ -66,7 +68,7 @@ END -%]
 				ObjectFile="[% workbuild([]) %]"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
-				Detect64BitPortabilityProblems="TRUE"
+				Detect64BitPortabilityProblems="false"
 				TreatWChar_tAsBuiltInType="false"
 				ForceConformanceInForLoopScope="true"
 				CompileAs="0"/>
@@ -79,7 +81,7 @@ END -%]
 				AdditionalDependencies="[% compose('libs', [], ' ') %]"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="[% composedirs('libdirs', []) %]"
-				TargetMachine="1"/>
+				TargetMachine="[% platform.targetmachine %]"/>
 			<Tool
 				Name="VCLibrarianTool"
 [% interpolate('librarian') -%]
@@ -109,6 +111,7 @@ END -%]
 			<Tool
 				Name="VCWebDeploymentTool"/>
 		</Configuration>
+    [% END -%]
   [% END -%]
 [% END -%]
 	</Configurations>
