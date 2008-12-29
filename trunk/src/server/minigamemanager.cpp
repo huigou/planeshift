@@ -423,9 +423,12 @@ psMiniGameSession::psMiniGameSession(MiniGameManager *mng, gemActionLocation *ob
     this->name = name;
     currentCounter = 0;
     whitePlayerID = (uint32_t)-1;
+    whitePlayerName = NULL;
     blackPlayerID = (uint32_t)-1;
+    blackPlayerName = NULL;
     toReset = false;
     nextPlayerToMove = 0;
+    endgameReached = false;
 }
 
 psMiniGameSession::~psMiniGameSession()
@@ -775,6 +778,13 @@ void psMiniGameSession::Update(Client *client, psMGUpdateMessage &msg)
     }
 
     // valid move?
+    if (endgameReached)
+    {
+        psserver->SendSystemError(clientnum, "Game over");
+        // Reset the client's game board
+        ResendBoardLayout(clientnum);
+        return;
+    }
     if ((nextPlayerToMove == 1 && clientnum == blackPlayerID) ||
         (nextPlayerToMove == 2 && clientnum == whitePlayerID))
     {
@@ -839,43 +849,59 @@ void psMiniGameSession::Update(Client *client, psMGUpdateMessage &msg)
     Broadcast();
 
     // see if endgame has been identified?
-    bool endgameReached = (options & OBSERVE_ENDGAME) ? gameBoard.DetermineEndgame() : false;
+    Endgame_TileType winningPiece;
+    endgameReached = (options & OBSERVE_ENDGAME) ? gameBoard.DetermineEndgame(winningPiece) : false;
 
     // if endgame reached, determine winner
-    if (endgameReached && piecePlayed >= WHITE_1 && piecePlayed <= BLACK_7)
+    if (endgameReached)
     {
-        // winner determined by colour of last piece played
+        // determine winner
         uint32_t winnerID, loserID;
-        if (piecePlayed >= WHITE_1 && piecePlayed <= WHITE_7)
+        csString wonText;
+        if (winningPiece == WHITE_PIECE || winningPiece == BLACK_PIECE)
         {
-            winnerID = whitePlayerID;
-            loserID = blackPlayerID;
+            if (winningPiece == WHITE_PIECE)
+            {
+                winnerID = whitePlayerID;
+                loserID = blackPlayerID;
+            }
+            else
+            {
+                loserID = whitePlayerID;
+                winnerID = blackPlayerID;
+            }
+
+            // announce winner
+            if (winnerID != (uint32_t)-1)
+                psserver->SendSystemInfo(winnerID, (GetName() + ": You have won!"));
+            wonText = GetName() + ": ";
+            if (winnerID == whitePlayerID && whitePlayerName)
+            {
+                wonText += csString(whitePlayerName) + " (white)";
+            }
+            else if (winnerID == blackPlayerID && blackPlayerName)
+            {
+                wonText += csString(blackPlayerName) + " (black)";
+            }
+            else
+            {
+                wonText += "Someone";
+            }
+            wonText += " has won.";
         }
         else
         {
-            loserID = whitePlayerID;
-            winnerID = blackPlayerID;
+            wonText = "Game over.";
+            if (winnerID != (uint32_t)-1)
+            {
+                psserver->SendSystemInfo(winnerID, wonText);
+            }
         }
 
-        // announce winner
-        psserver->SendSystemInfo(winnerID, (GetName() + ": You have won!"));
-        csString wonText = GetName() + ": ";
-        if (winnerID == whitePlayerID && whitePlayerName)
+        if (loserID != (uint32_t)-1)
         {
-            wonText += csString(whitePlayerName) + " (white)";
+            psserver->SendSystemInfo(loserID, wonText);
         }
-        else if (winnerID == blackPlayerID && blackPlayerName)
-        {
-            wonText += csString(blackPlayerName) + " (black)";
-        }
-        else
-        {
-            wonText += "Someone";
-        }
-        wonText += " has won.";
-
-        psserver->SendSystemInfo(loserID, wonText);
-
         csArray<uint32_t>::Iterator iter = watchers.GetIterator();
         while (iter.HasNext())
         {
@@ -885,6 +911,9 @@ void psMiniGameSession::Update(Client *client, psMGUpdateMessage &msg)
                 psserver->SendSystemInfo(id, wonText);
             }
         }
+
+        // reset the gameboard session
+        SetSessionReset();
     }
     else
     {

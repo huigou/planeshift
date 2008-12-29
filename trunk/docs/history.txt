@@ -1,4 +1,7 @@
-﻿*** 2008-12-26 by Stefano Angeleri
+﻿*** 2008-12-29 by Dave Bentham
+- Improved the way winners are determined in minigames.
+
+*** 2008-12-26 by Stefano Angeleri
 - Blocked frozen clients from challenging/being challenged and trading
 - Committed a patch by kougaro for some additional requests in FS#2340 - Drop Command
 
