@@ -191,6 +191,9 @@ protected:
     int nextPlayerToMove;
 
 private:
+    /// flag for when end game reached (i.e. game over).
+    bool endgameReached;
+
     /// resend board layouts as was, e.g. correcting an illegal move
     void ResendBoardLayout(uint32_t clientnum);
 

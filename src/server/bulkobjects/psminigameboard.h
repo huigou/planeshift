@@ -92,6 +92,7 @@ struct Endgame_Spec
 {
     bool positionsAbsolute;       // true=x,y coords absolute, false=coords relative to source tile
     Endgame_TileType sourceTile;
+    Endgame_TileType winner;
     csArray<Endgame_TileSpec*> endgameTiles;
 };
 
@@ -223,9 +224,12 @@ public:
     Rule_MovePiecesTo GetMovePiecesToRule (void) { return gameBoardDef->movePiecesToRule; };
 
     /// determine if the current layout matches an endgame pattern. Returns true or false appropriately.
-    bool DetermineEndgame(void);
+    bool DetermineEndgame(Endgame_TileType& winningPiece);
 
-protected:
+private:
+
+    /// determine winner of game
+    Endgame_TileType EndgameWinner(uint8_t winningTileState);
 
     /// The current game board layout with tiles and pieces.
     uint8_t *layout;

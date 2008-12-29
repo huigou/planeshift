@@ -212,6 +212,12 @@ bool psMiniGameBoardDef::DetermineGameRules(csString rulesXMLstr, csString name)
     return false;
 }
 
+// Decipher end game XML
+// <MGEndGame>
+//  <EndGame Coords="relative"/"absolute" [SourceTile="T"] [Winner="T"]>
+//   <Coord Col="?" Row="?" Tile="T" />
+//  </EndGame>
+// </MGEndGame>
 bool psMiniGameBoardDef::DetermineEndgameSpecs(csString endgameXMLstr, csString name)
 {
     if (endgameXMLstr.StartsWith("<MGEndGame>", false))
@@ -222,9 +228,11 @@ bool psMiniGameBoardDef::DetermineEndgameSpecs(csString endgameXMLstr, csString 
             csRef<iDocumentNode> root = doc->GetRoot();
             if (root)
             {
+                // <MGEndGame>
                 csRef<iDocumentNode> topNode = root->GetNode("MGEndGame");
                 if (topNode)
                 {
+                    //  <EndGame Coords="relative"/"absolute" [SourceTile="T"] [Winner="T"]>
                     csRef<iDocumentNodeIterator> egNodes = topNode->GetNodes("EndGame");
                     if (egNodes)
                     {
@@ -233,6 +241,7 @@ bool psMiniGameBoardDef::DetermineEndgameSpecs(csString endgameXMLstr, csString 
                             csRef<iDocumentNode> egNode = egNodes->Next();
                             if (egNode)
                             {
+                                // Coords="relative"/"absolute"
                                 Endgame_Spec* endgame = new Endgame_Spec;
                                 csString posAbsVal (egNode->GetAttributeValue("Coords"));
                                 if (posAbsVal.Downcase() == "relative")
@@ -250,6 +259,8 @@ bool psMiniGameBoardDef::DetermineEndgameSpecs(csString endgameXMLstr, csString 
                                            name.GetDataSafe());
                                     return false;
                                 }
+
+                                //  [SourceTile="T"] (optional)
                                 csString srcTileVal (egNode->GetAttributeValue("SourceTile"));
                                 Endgame_TileType srcTile;
                                 if (EvaluateTileTypeStr(srcTileVal, srcTile) && srcTile != FOLLOW_SOURCE_TILE)
@@ -264,6 +275,17 @@ bool psMiniGameBoardDef::DetermineEndgameSpecs(csString endgameXMLstr, csString 
                                     return false;
                                 }
 
+                                //  [Winner="T"] (optional)
+                                csString winningPieceVal (egNode->GetAttributeValue("Winner"));
+                                Endgame_TileType winningTile;
+                                endgame->winner = NO_PIECE;  // default - no winner specified
+                                if (EvaluateTileTypeStr(winningPieceVal, winningTile) &&
+                                    (winningTile == WHITE_PIECE || winningTile == BLACK_PIECE))
+                                {
+                                    endgame->winner = winningTile;    // winner is white or black player
+                                }
+
+                                //   <Coord Col="?" Row="?" Tile="T" />
                                 csRef<iDocumentNodeIterator> coordNodes = egNode->GetNodes("Coord");
                                 if (coordNodes)
                                 {
@@ -272,6 +294,7 @@ bool psMiniGameBoardDef::DetermineEndgameSpecs(csString endgameXMLstr, csString 
                                         csRef<iDocumentNode> coordNode = coordNodes->Next();
                                         if (coordNode)
                                         {
+                                            //   Col="?" Row="?"
                                             Endgame_TileSpec* egTileSpec = new Endgame_TileSpec;
                                             int egCol = coordNode->GetAttributeValueAsInt("Col");
                                             int egRow = coordNode->GetAttributeValueAsInt("Row");
@@ -284,6 +307,7 @@ bool psMiniGameBoardDef::DetermineEndgameSpecs(csString endgameXMLstr, csString 
                                                 return false;
                                             }
 
+                                            //   Tile="T"
                                             csString tileVal (coordNode->GetAttributeValue("Tile"));
                                             Endgame_TileType tile;
                                             if (EvaluateTileTypeStr(tileVal, tile))
@@ -416,7 +440,7 @@ void psMiniGameBoard::Set(uint8_t col, uint8_t row, uint8_t state)
     }
 }
 
-bool psMiniGameBoard::DetermineEndgame(void)
+bool psMiniGameBoard::DetermineEndgame(Endgame_TileType& winningPiece)
 {
     if (gameBoardDef->endgames.IsEmpty())
         return false;
@@ -463,6 +487,8 @@ bool psMiniGameBoard::DetermineEndgame(void)
             // if all patterns matched, a winner
             if (endgame->endgameTiles.GetSize() == patternsMatched)
             {
+                // determine winning piece - using last tile of the pattern if no explicit winner is defined.
+                winningPiece = (endgame->winner != NO_PIECE) ? endgame->winner : EndgameWinner(tileAtPos);
                 return true;
             }
         }
@@ -511,6 +537,8 @@ bool psMiniGameBoard::DetermineEndgame(void)
                         // if all patterns matched, a winner
                         if (endgame->endgameTiles.GetSize() == patternsMatched)
                         {
+                            // determine winning piece - using last tile of the pattern if no explicit winner is defined.
+                            winningPiece = (endgame->winner != NO_PIECE) ? endgame->winner : EndgameWinner(tileAtPos);
                             return true;
                         }
                     }
@@ -520,5 +548,22 @@ bool psMiniGameBoard::DetermineEndgame(void)
     }
 
     return false;
+}
+
+Endgame_TileType psMiniGameBoard::EndgameWinner(uint8_t winningTileState)
+{
+    // determine winning piece - using passed-in state of winning tile.
+    if (winningTileState >= WHITE_1 && winningTileState <= WHITE_7)
+    {
+        return WHITE_PIECE;
+    }
+    else if (winningTileState >= BLACK_1 && winningTileState <= BLACK_7)
+    {
+        return BLACK_PIECE;
+    }
+    else
+    {
+        return NO_PIECE; // really means indeterminate winner
+    }
 }
 
