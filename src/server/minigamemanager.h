@@ -194,6 +194,9 @@ private:
     /// flag for when end game reached (i.e. game over).
     bool endgameReached;
 
+    /// count of players in session
+    uint8_t playerCount;
+
     /// resend board layouts as was, e.g. correcting an illegal move
     void ResendBoardLayout(uint32_t clientnum);
 

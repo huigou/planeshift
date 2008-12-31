@@ -141,13 +141,18 @@ bool psMiniGameBoardDef::DetermineGameRules(csString rulesXMLstr, csString name)
                     csRef<iDocumentNode> rulesNode = topNode->GetNode("Rules");
                     if (rulesNode )
                     {
-                        // PlayerTurns can be 'Strict' (order of players' moves enforced)
+                        // PlayerTurns can be 'Ordered' (order of players' moves enforced)
+                        // or 'StrictOrdered' (as Ordered, and all players must be present)
                         // or 'Relaxed' (default - free for all).
                         csString playerTurnsVal (rulesNode->GetAttributeValue("PlayerTurns"));
                         if (playerTurnsVal.Downcase() == "ordered")
                         {
                             playerTurnRule = ORDERED;
-                        }   
+                        }
+                        else if (playerTurnsVal.Downcase() == "strictordered")
+                        {
+                            playerTurnRule = STRICT_ORDERED;
+                        }
                         else if (!playerTurnsVal.IsEmpty() && playerTurnsVal.Downcase() != "relaxed")
                         {
                             Error3("\"%s\" Rule PlayerTurns \"%s\" not recognised. Defaulting to \'Relaxed\'.",
