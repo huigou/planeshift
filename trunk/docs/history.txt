@@ -1,4 +1,7 @@
-﻿*** 2008-12-29 by Dave Bentham
+﻿*** 2008-12-31 by Dave Bentham
+- Expanded rules for player turns in minigames.
+
+*** 2008-12-29 by Dave Bentham
 - Improved the way winners are determined in minigames.
 
 *** 2008-12-26 by Stefano Angeleri

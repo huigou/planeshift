@@ -49,7 +49,8 @@ class Client;
 enum Rule_PlayerTurn
 {
     RELAXED,
-    ORDERED
+    ORDERED,
+    STRICT_ORDERED
 };
 enum Rule_MovePieceType
 {

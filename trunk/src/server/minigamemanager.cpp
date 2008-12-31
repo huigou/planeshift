@@ -429,6 +429,7 @@ psMiniGameSession::psMiniGameSession(MiniGameManager *mng, gemActionLocation *ob
     toReset = false;
     nextPlayerToMove = 0;
     endgameReached = false;
+    playerCount = 0;
 }
 
 psMiniGameSession::~psMiniGameSession()
@@ -570,7 +571,7 @@ bool psMiniGameSession::Load(csString &responseString)
     }
 
     // intialise player to move first, if appropriate
-    if (gameBoard.GetPlayerTurnRule() == ORDERED)
+    if (gameBoard.GetPlayerTurnRule() >= ORDERED)
     {
         nextPlayerToMove = 1;
     }
@@ -608,6 +609,8 @@ void psMiniGameSession::AddPlayer(Client *client)
         psSystemMessage newmsg(clientID, MSG_INFO, "%s started playing %s with white pieces.",
                                whitePlayerName, name.GetData());
         newmsg.Multicast(client->GetActor()->GetMulticastClients(), 0, CHAT_SAY_RANGE);
+
+        playerCount++;
     }
 
     // Or if there is no player with black pieces, and its a 2-player game, give black pieces
@@ -623,6 +626,7 @@ void psMiniGameSession::AddPlayer(Client *client)
                                blackPlayerName, name.GetData());
         newmsg.Multicast(client->GetActor()->GetMulticastClients(), 0, CHAT_SAY_RANGE);
 
+        playerCount++;
     }
 
     // Otherwise add to the list of watchers
@@ -640,7 +644,6 @@ void psMiniGameSession::AddPlayer(Client *client)
 #ifdef DEBUG_MINIGAMES
     Debug3(LOG_ANY, 0, "Added player %u to the game session \"%s\"\n", clientID, name.GetData());
 #endif
-
 }
 
 void psMiniGameSession::RemovePlayer(Client *client)
@@ -665,6 +668,7 @@ void psMiniGameSession::RemovePlayer(Client *client)
         newmsg.Multicast(client->GetActor()->GetMulticastClients(), 0, CHAT_SAY_RANGE);
 
         whitePlayerName = NULL;
+        playerCount--;
     }
 
     // Or the player with black pieces?
@@ -678,6 +682,7 @@ void psMiniGameSession::RemovePlayer(Client *client)
         newmsg.Multicast(client->GetActor()->GetMulticastClients(), 0, CHAT_SAY_RANGE);
 
         blackPlayerName = NULL;
+        playerCount--;
     }
 
     // Otherwise it is one of the watchers
@@ -1079,6 +1084,11 @@ bool psMiniGameSession::GameMovePassesRules(uint32_t movingClient,
                                             int8_t col2, int8_t row2, int8_t state2)
 {
     bool newPiecePlayed = (state2 == -1);
+
+    if (gameBoard.GetPlayerTurnRule() == STRICT_ORDERED && gameBoard.GetNumPlayers() != playerCount)
+    {
+        return false;
+    }
 
     if ((newPiecePlayed && gameBoard.GetMovePieceTypeRule() == MOVE_ONLY) ||
         (!newPiecePlayed && gameBoard.GetMovePieceTypeRule() == PLACE_ONLY))

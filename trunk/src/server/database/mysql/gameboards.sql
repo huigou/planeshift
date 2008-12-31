@@ -21,7 +21,7 @@ CREATE TABLE gameboards
 #
 # Notes for gameboards.gameRules
 # <GameRules>
-#   <Rules PlayerTurns = 'Strict'/'Relaxed'*
+#   <Rules PlayerTurns = 'Ordered'/'Relaxed'*/'StrictOrdered'
 #          MoveType = 'PlaceOrMovePiece'*/'MoveOnly'/'PlaceOnly'
 #          MoveablePieces = 'Own'/'Any'*
 #          MoveTo = 'Vacancy'/'Anywhere'* />
@@ -43,5 +43,5 @@ CREATE TABLE gameboards
 #
 INSERT INTO `gameboards` VALUES ('Test Game', 6, 6, 'FF00FFF0000F000000000000F0000FFF00FF', '123456789ABCDE', 2, 'White,Checked', '', '');
 INSERT INTO `gameboards` VALUES ('Test Game 2', 6, 6, 'FF00FFF0000F000000000000F0000FFF00FF', '123456789ABCDE', 1, 'White,Checked', '', '');
-INSERT INTO `gameboards` VALUES ('Tic Tac Toe', 3, 3, '000000000', '12', 2, 'White,Plain', '<GameRules><Rules PlayerTurns=\"Ordered\" MoveType=\"PlaceOnly\" MoveTo=\"Vacancy\" /></GameRules>', '<MGEndGame><EndGame Coords=\"relative\" SourceTile=\"A\"><Coord Col=\"1\" Row=\"0\" Tile=\"F\" /><Coord Col=\"2\" Row=\"0\" Tile=\"F\" /></EndGame><EndGame Coords=\"relative\" SourceTile=\"A\"><Coord Col=\"0\" Row=\"1\" Tile=\"F\" /><Coord Col=\"0\" Row=\"2\" Tile=\"F\" /></EndGame><EndGame Coords=\"relative\" SourceTile=\"A\"><Coord Col=\"1\" Row=\"1\" Tile=\"F\" /><Coord Col=\"2\" Row=\"2\" Tile=\"F\" /></EndGame><EndGame Coords=\"relative\" SourceTile=\"A\"><Coord Col=\"-1\" Row=\"1\" Tile=\"F\" /><Coord Col=\"-2\" Row=\"2\" Tile=\"F\" /></EndGame></MGEndGame>');
+INSERT INTO `gameboards` VALUES ('Tic Tac Toe', 3, 3, '000000000', '12', 2, 'White,Plain', '<GameRules><Rules PlayerTurns=\"StrictOrdered\" MoveType=\"PlaceOnly\" MoveTo=\"Vacancy\" /></GameRules>', '<MGEndGame><EndGame Coords=\"relative\" SourceTile=\"A\"><Coord Col=\"1\" Row=\"0\" Tile=\"F\" /><Coord Col=\"2\" Row=\"0\" Tile=\"F\" /></EndGame><EndGame Coords=\"relative\" SourceTile=\"A\"><Coord Col=\"0\" Row=\"1\" Tile=\"F\" /><Coord Col=\"0\" Row=\"2\" Tile=\"F\" /></EndGame><EndGame Coords=\"relative\" SourceTile=\"A\"><Coord Col=\"1\" Row=\"1\" Tile=\"F\" /><Coord Col=\"2\" Row=\"2\" Tile=\"F\" /></EndGame><EndGame Coords=\"relative\" SourceTile=\"A\"><Coord Col=\"-1\" Row=\"1\" Tile=\"F\" /><Coord Col=\"-2\" Row=\"2\" Tile=\"F\" /></EndGame></MGEndGame>');
 
