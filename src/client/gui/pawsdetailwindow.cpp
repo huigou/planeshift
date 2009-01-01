@@ -216,6 +216,8 @@ void pawsDetailWindow::HandleMessage( MsgEntry* me )
                 "include as many appeals to the senses as your character clearly eminates that can be "
                 "sensed with the five accepted senses (sight, touch, hearing and smell (being primary)"
                 "(only list taste if you anticipate people tasting your character)).");
+            if(!storeoocdescription.Length()) //if the player didn't input anything in ooc description inform him
+                storedescription = PawsManager::GetSingleton().Translate("HELP TEXT HERE.");
         }
         else
         {
