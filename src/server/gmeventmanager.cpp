@@ -249,7 +249,7 @@ bool GMEventManager::RegisterPlayerInGMEvent (Client* client, Client* target)
 }
 
 /// Register all players within range (upto 100m)
-bool GMEventManager::RegisterPlayersInRangeInGMEvent (Client* client, float range)
+bool GMEventManager::RegisterPlayersInRangeInGMEvent (Client *client, float range)
 {
     int clientnum = client->GetClientNum(), zero = 0;
     PID gmID = client->GetPID();
@@ -273,14 +273,16 @@ bool GMEventManager::RegisterPlayersInRangeInGMEvent (Client* client, float rang
        return false;
     }
 
-    csArray<PublishDestination>& participants = client->GetActor()->GetMulticastClients();
-
-    // search for players in range & register them
+    // look for other players in range (ignoring NPCs & pets).
+    gemActor *registeringGM = client->GetActor();
+    csArray<gemObject*> *targetsInRange = registeringGM->GetObjectsInRange(range);
     bool regResult;
-    for (size_t i = 0; i < participants.GetSize(); i++)
+    for (size_t i=0; i<targetsInRange->GetSize(); i++)
     {
-        Client *target = psserver->GetConnections()->Find(participants[i].client);
-        if (target && target != client && target->IsReady() && participants[i].dist <= range)
+        gemObject *nearbyTarget;
+        Client *target;
+        if ((nearbyTarget=targetsInRange->Get(i)) && (target=nearbyTarget->GetClient()) &&
+            target != client && target->IsReady())
         {
             regResult = RegisterPlayerInGMEvent (client, target);
         }
