@@ -1,3 +1,9 @@
-﻿*** 2009-01-02 by Dave Bentham
+﻿*** 2009-01-03 by Stefano Angeleri
+- Lowered access level of /killnpc to gm2
+- Added /assignfaction [target] [factioname] value for gm4+
+  It allows to assign relative factions to targets
+
+
+*** 2009-01-02 by Dave Bentham
 - Fixed bug FS#2498: invisible GMs can register in events now.
 
