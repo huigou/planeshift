@@ -1077,6 +1077,11 @@ INSERT INTO command_group_assignment VALUES( "/killnpc", 24 );
 INSERT INTO command_group_assignment VALUES( "/killnpc", 23 );
 INSERT INTO command_group_assignment VALUES( "/killnpc", 22 );
 
+#### 1211 - Stefano Angeleri - Added /assignfaction for gm4+
+INSERT INTO command_group_assignment VALUES( "/assignfaction", 30 );
+INSERT INTO command_group_assignment VALUES( "/assignfaction", 25 );
+INSERT INTO command_group_assignment VALUES( "/assignfaction", 24 );
+
 
 # Insert your upgrade before this line. Remember when you set a new db_version
 # to update the server_options.sql file and update psserver.cpp as well.
