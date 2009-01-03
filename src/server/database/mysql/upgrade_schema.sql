@@ -1072,6 +1072,11 @@ INSERT INTO command_group_assignment VALUES( "/setkillexp", 25 );
 INSERT INTO command_group_assignment VALUES( "/setkillexp", 24 );
 INSERT INTO command_group_assignment VALUES( "/setkillexp", 23 );
 
+#### 1211 - Stefano Angeleri - Lowered killnpc required access level to gm2
+INSERT INTO command_group_assignment VALUES( "/killnpc", 24 );
+INSERT INTO command_group_assignment VALUES( "/killnpc", 23 );
+INSERT INTO command_group_assignment VALUES( "/killnpc", 22 );
+
 
 # Insert your upgrade before this line. Remember when you set a new db_version
 # to update the server_options.sql file and update psserver.cpp as well.

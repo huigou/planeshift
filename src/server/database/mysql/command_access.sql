@@ -53,8 +53,6 @@ INSERT INTO command_group_assignment VALUES( "save quest disable", 30 );
 INSERT INTO command_group_assignment VALUES( "/updaterespawn", 30 );
 
 # GM5 and above
-INSERT INTO command_group_assignment VALUES( "/killnpc", 30 );
-INSERT INTO command_group_assignment VALUES( "/killnpc", 25 );
 INSERT INTO command_group_assignment VALUES( "/death", 30 );
 INSERT INTO command_group_assignment VALUES( "/death", 25 );
 INSERT INTO command_group_assignment VALUES( "/crystal", 30 );
@@ -266,6 +264,11 @@ INSERT INTO command_group_assignment VALUES( "pickup override", 25 );
 INSERT INTO command_group_assignment VALUES( "pickup override", 24 );
 INSERT INTO command_group_assignment VALUES( "pickup override", 23 );
 INSERT INTO command_group_assignment VALUES( "pickup override", 22 );
+INSERT INTO command_group_assignment VALUES( "/killnpc", 30 );
+INSERT INTO command_group_assignment VALUES( "/killnpc", 25 );
+INSERT INTO command_group_assignment VALUES( "/killnpc", 24 );
+INSERT INTO command_group_assignment VALUES( "/killnpc", 23 );
+INSERT INTO command_group_assignment VALUES( "/killnpc", 22 );
 
 
 # GM1 and above
