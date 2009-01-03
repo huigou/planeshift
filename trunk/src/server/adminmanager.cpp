@@ -1044,6 +1044,13 @@ bool AdminManager::AdminCmdData::DecodeAdminCmdMessage(MsgEntry *pMsg, psAdminCm
         value = words.GetInt(1);
         return true;
     }
+    else if (command == "/assignfaction")
+    {
+        player = words[1];
+        name = words[2];
+        value = words.GetInt(3);
+        return true;
+    }
     return false;
 }
 
@@ -1440,6 +1447,10 @@ void AdminManager::HandleAdminCmdMessage(MsgEntry *me, Client *client)
     else if (data.command == "/setkillexp")
     {
         SetKillExp(me, msg, data, client);
+    }
+    else if (data.command == "/assignfaction")
+    {
+        AssignFaction(me, msg, data, client, targetclient);
     }
 }
 
@@ -1938,6 +1949,9 @@ void AdminManager::SendGMAttribs(Client* client)
         gmSettings |= (1 << 8);
     if (client->GetActor()->givekillexp)
         gmSettings |= (1 << 9);
+    if (client->GetActor()->attackable)
+        gmSettings |= (1 << 10);
+
 
     psGMGuiMessage gmMsg(client->GetClientNum(), gmSettings);
     gmMsg.SendMessage();
@@ -2051,7 +2065,8 @@ void AdminManager::SetAttrib(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData&
                                                 "questtester = %s\n"
                                                 "infinitemana = %s\n"
                                                 "instantcast = %s\n"
-                                                "givekillexp = %s",
+                                                "givekillexp = %s\n"
+                                                "attackable = %s",
                                                 (actor->GetInvincibility())?"on":"off",
                                                 (!actor->GetVisibility())?"on":"off",
                                                 (actor->GetViewAllObjects())?"on":"off",
@@ -2061,7 +2076,8 @@ void AdminManager::SetAttrib(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData&
                                                 (actor->questtester)?"on":"off",
                                                 (actor->infinitemana)?"on":"off",
                                                 (actor->instantcast)?"on":"off",
-                                                (actor->givekillexp)?"on":"off");
+                                                (actor->givekillexp)?"on":"off",
+                                                (actor->attackable)?"on":"off");
         return;
     }
     else if (data.attribute == "invincible" || data.attribute == "invincibility")
@@ -2183,6 +2199,18 @@ void AdminManager::SetAttrib(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData&
             already = true;
         else
             actor->givekillexp = onoff;
+    }
+    else if (data.attribute == "attackable")
+    {
+        if (toggle)
+        {
+            actor->attackable = !actor->attackable;
+            onoff = actor->attackable;
+        }
+        else if (actor->attackable == onoff)
+            already = true;
+        else
+            actor->attackable = onoff;
     }
     else if (!data.attribute.IsEmpty())
     {
@@ -8060,4 +8088,21 @@ void AdminManager::SetKillExp(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
         //tell the user that everything went wrong
         psserver->SendSystemInfo(client->GetClientNum(),"Unable to find your characterData.");
     }
+}
+
+//This is used as a wrapper for the command version of adjustfactionstanding.
+void AdminManager::AssignFaction(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data, Client *client, Client *target)
+{
+    if(!data.player.Length())
+    {
+        psserver->SendSystemInfo(client->GetClientNum(),"Syntax: \"/assignfaction [me/target/eid/pid/area/name] [factionname] [points]\"");
+        return;
+    }
+    if(!target)
+    {
+        psserver->SendSystemInfo(client->GetClientNum(),"Unable to find the player to assign faction points to.");
+        return;
+    }
+
+    AdjustFactionStandingOfTarget(client->GetClientNum(), target, data.name, data.value);
 }

@@ -121,6 +121,9 @@ INSERT INTO command_group_assignment VALUES( "/setstackable", 24 );
 INSERT INTO command_group_assignment VALUES( "morph others", 30 );
 INSERT INTO command_group_assignment VALUES( "morph others", 25 );
 INSERT INTO command_group_assignment VALUES( "morph others", 24 );
+INSERT INTO command_group_assignment VALUES( "/assignfaction", 30 );
+INSERT INTO command_group_assignment VALUES( "/assignfaction", 25 );
+INSERT INTO command_group_assignment VALUES( "/assignfaction", 24 );
 
 # GM3 and above
 INSERT INTO command_group_assignment VALUES( "/settrait", 30 );

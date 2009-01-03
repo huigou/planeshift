@@ -417,6 +417,15 @@ protected:
      */
     void SetKillExp(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data, Client *client );
 
+    /** @brief Allows to change faction points of players.
+     *
+     *  @param me The incoming message from the GM.
+     *  @param msg The cracked command message.
+     *  @param client The GM client the command came from.
+     *  @param client The target client which will have his faction points changed.
+     */
+    void AssignFaction(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data, Client *client, Client *target);
+
     /** @brief Adds a petition under the passed user's name to the 'petitions' table in the database.
      *
      *  Will automatically add the date and time of the petition's submission

@@ -405,6 +405,11 @@ To create a new action location entrance:
         <topic name="/admin">/admin
 
 Resets your admin level.  Lists and allows you to use various GM/admin commands.</topic>
+        <topic name="/assignfaction"> /assignfaction [me/target/eid/pid/area/name] [factionname] [points]
+
+Awards the player of a positive or negative faction points for a particular faction.
+factionname is the name of the faction of which the player is being changed
+points can be negative or positive and it's relative to the current player faction points</topic>
         <topic name="/awardexp">/awardexp target value
 
 Awards progression points to a player for the completion of a GM run event. (enter a negative value to take away PP)</topic>
