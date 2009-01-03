@@ -2063,7 +2063,7 @@ void AdminManager::SetAttrib(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData&
                                                 "questtester = %s\n"
                                                 "infinitemana = %s\n"
                                                 "instantcast = %s\n"
-                                                "givekillexp = %s\n"
+                                                "givekillexp = %s\n",
                                                 (actor->GetInvincibility())?"on":"off",
                                                 (!actor->GetVisibility())?"on":"off",
                                                 (actor->GetViewAllObjects())?"on":"off",
