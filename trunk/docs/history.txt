@@ -1,4 +1,10 @@
-﻿*** 2009-01-03 by Stefano Angeleri
+﻿*** 2009-01-04 by Stefano Angeleri
+- Changed cordinates of the hide/show button in order to make it not
+  move around when clicked (except style 2)
+- Disabled Style change if the toolbar is hidden
+- Added some descriptive tooltip on the hide/show button
+
+*** 2009-01-03 by Stefano Angeleri
 - Lowered access level of /killnpc to gm2
 - Added /assignfaction [target] [factioname] value for gm4+
   It allows to assign relative factions to targets
