@@ -5,8 +5,8 @@
         <frame x="10" y="10" width="497" height="36" border="no" />
         <minframe width="360" height="30" />
 
-        <widget name="ShowButtonUp" factory="pawsButton" id="10" >
-            <frame x="5" y="5" width="10" height="10" />
+        <widget name="ShowButtonUp" factory="pawsButton" id="10" tooltip="Hide Toolbar/Change Style" >
+            <frame x="0" y="0" width="10" height="10" />
             <bgimage resource="MiniUp" />
             <attachpoints>
                 <attach point="PROPORTIONAL_RIGHT" />
@@ -15,8 +15,8 @@
                 <attach point="PROPORTIONAL_TOP" />
             </attachpoints>
         </widget>
-        <widget name="ShowButtonDown" factory="pawsButton" id="20" visible="no">
-            <frame x="5" y="5" width="10" height="10" />
+        <widget name="ShowButtonDown" factory="pawsButton" id="20" tooltip="Show Tollbar" visible="no">
+            <frame x="0" y="0" width="10" height="10" />
             <bgimage resource="MiniDown" />
             <attachpoints>
                 <attach point="PROPORTIONAL_RIGHT" />

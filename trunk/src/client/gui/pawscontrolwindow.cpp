@@ -188,7 +188,8 @@ bool pawsControlWindow::OnButtonPressed( int mouseButton, int keyModifier, pawsW
     {
         if (mouseButton == csmbRight)
         { //If the user clicked on the right mouse button, switch to another style
-            NextStyle();
+            if ( !hidden ) //don't allow to change styles while the toolbar is closed
+                NextStyle();
             return true;
         }
         else if (mouseButton == csmbMiddle)

@@ -4,8 +4,8 @@
     <buttons width="34" height="34" hide_width="10" hide_height="10" />
 
     <!-- Here you align your buttons, using X and Y cords NOTE: 1 = 1px in 800x600 -->
-    <button name="ShowButtonUp"     y="5" x="5" />
-    <button name="ShowButtonDown"   y="5" x="5" />
+    <button name="ShowButtonUp"     y="0" x="0" />
+    <button name="ShowButtonDown"   y="0" x="0" />
     <button name="ChatButton"       y="19" x="1" />
     <button name="SkillsButton"    y="53" x="1" />
     <button name="InventoryButton"       y="87" x="1" />
@@ -29,7 +29,7 @@
     <buttons width="34" height="34" hide_width="10" hide_height="10" />
     <!-- Standard values -->
     <button name="ShowButtonUp"     x="42" y="42" />
-    <button name="ShowButtonDown"   x="5" y="5" />
+    <button name="ShowButtonDown"   x="0" y="0" />
     <!-- Right -->
     <button name="ChatButton"       x="5" y="5" />
     <button name="SkillsButton"    x="39" y="5" />
@@ -52,8 +52,8 @@
     <bar width="500" height="36" min_w="360" min_h="30" />
     <buttons width="34" height="34" hide_width="10" hide_height="10" />
     <!-- Standard values -->
-    <button name="ShowButtonUp"     x="5" y="5" />
-    <button name="ShowButtonDown"   x="5" y="5" />
+    <button name="ShowButtonUp"     x="0" y="0" />
+    <button name="ShowButtonDown"   x="0" y="0" />
     <button name="ChatButton"       x="19" y="1" />
     <button name="SkillsButton"    x="53" y="1" />
     <button name="InventoryButton"       x="87" y="1" />
