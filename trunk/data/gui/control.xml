@@ -15,7 +15,7 @@
                 <attach point="PROPORTIONAL_TOP" />
             </attachpoints>
         </widget>
-        <widget name="ShowButtonDown" factory="pawsButton" id="20" tooltip="Show Tollbar" visible="no">
+        <widget name="ShowButtonDown" factory="pawsButton" id="20" tooltip="Show Toolbar" visible="no">
             <frame x="0" y="0" width="10" height="10" />
             <bgimage resource="MiniDown" />
             <attachpoints>
