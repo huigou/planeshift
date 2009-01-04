@@ -321,10 +321,10 @@ void pawsPetitionGMWindow::HandleMessage ( MsgEntry* me )
     int tempCount = petCount;
     AddPetitions(message.petitions);
 
-    //alert GM that there are petitons waiting
+    //alert GM that there are petitions waiting
     if (petCount > tempCount)
     {
-        psSystemMessage alert(0,MSG_INFO,PawsManager::GetSingleton().Translate("Petitons are waiting."));
+        psSystemMessage alert(0,MSG_INFO,PawsManager::GetSingleton().Translate("Petitions are waiting."));
         msgqueue->Publish(alert.msg);
     }
 }
