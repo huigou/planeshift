@@ -4267,6 +4267,7 @@ void psDRMessage::operator=(psDRMessage& other)
     counter    = other.counter;
     ang_vel    = other.ang_vel;
     vel        = other.vel;
+    worldVel   = other.worldVel;
     pos        = other.pos;
     on_ground  = other.on_ground;
     yrot       = other.yrot;
