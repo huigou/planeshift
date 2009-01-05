@@ -27,7 +27,7 @@ Talk to everyone in your guild privately.  Only guild members in the same guild 
 
 Ignores all communication from the target player in the Chat Window.  Use this if people are rude to you and there is no GM around to kick them.
 You can use the same command to remove a player from your ignore list.
-If you provide an add or remove flag it will try to set the ignore status accordly and won't toggle it.
+If you provide an add or remove flag it will try to set the ignore status accordingly and won't toggle it.
 If no player name is provided it will show the ignore window.</topic>
         <topic name="/introduce">/introduce
 
@@ -228,7 +228,7 @@ Start casting spell.</topic>
 Challenge another player to a duel.</topic>
         <topic name="/game">/game 
 
-Starts a minigame session using the targetted game.</topic>
+Starts a minigame session using the targeted game.</topic>
         <topic name="/loot">/loot 
 
 Loots an available corpse if you have authority.</topic>
@@ -415,8 +415,8 @@ points can be negative or positive and it's relative to the current player facti
 Awards progression points to a player for the completion of a GM run event. (enter a negative value to take away PP)</topic>
         <topic name="/badtext">/badtext [first entry] [last entry]
 
-Shows what was told to the targetted npc and couldn't be understand by it.
-First and last entry must be defined and last entry must be greather than first entry.
+Shows what was told to the targeted npc and couldn't be understand by it.
+First and last entry must be defined and last entry must be greater than first entry.
 Example: /badtext 1 10 shows the latest 10 entries</topic>
         <topic name="/ban">/ban name minutes hours days reason
 OR /ban name reason
@@ -672,7 +672,7 @@ The maximum number of drops allowed is 8000.
 Use /rain sector 0 0 0 or /rain sector off for ending the event. </topic>
 <topic name="/reload">/reload item
 
-Reloads the currently targetted item from the database.</topic>
+Reloads the currently targeted item from the database.</topic>
 <topic name="/runscript">/runscript [script_name] [me/target/eid/pid/area/name]
 
 Runs a progression script on the target.</topic>
