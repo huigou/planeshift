@@ -1845,7 +1845,7 @@ void UserManager::HandleLoot(Client *client)
                     for(unsigned int i=0; i< closegroupmembers.GetSize(); i++)
                     {
                         closegroupmembers[i]->GetCharacterData()->AdjustMoney(eachmoney, false);
-                        psserver->GetCharManager()->SendPlayerMoney(closegroupmembers[i]);
+                        psserver->GetCharManager()->SendPlayerMoney(closegroupmembers[i]->GetClient());
                     }
 
                 }
