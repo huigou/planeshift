@@ -3,6 +3,7 @@
   move around when clicked (except style 2)
 - Disabled Style change if the toolbar is hidden
 - Added some descriptive tooltip on the hide/show button
+- Fix for FS#673 - trias in skills panel not updated patch by kougaro
 
 *** 2009-01-03 by Stefano Angeleri
 - Lowered access level of /killnpc to gm2
