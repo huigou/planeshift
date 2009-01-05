@@ -68,6 +68,7 @@
 #include "adminmanager.h"
 #include "commandmanager.h"
 #include "psserver.h"
+#include "psserverchar.h"
 #include "cachemanager.h"
 #include "playergroup.h"
 #include "progressionmanager.h"
@@ -1844,6 +1845,7 @@ void UserManager::HandleLoot(Client *client)
                     for(unsigned int i=0; i< closegroupmembers.GetSize(); i++)
                     {
                         closegroupmembers[i]->GetCharacterData()->AdjustMoney(eachmoney, false);
+                        psserver->GetCharManager()->SendPlayerMoney(closegroupmembers[i]);
                     }
 
                 }
@@ -1853,6 +1855,7 @@ void UserManager::HandleLoot(Client *client)
                     loot2.SendMessage();
 
                     client->GetCharacterData()->AdjustMoney(remmoney, false);
+                    psserver->GetCharManager()->SendPlayerMoney(client);
                     psLootEvent evt(
                                     chr->GetPID(),
                                     client->GetCharacterData()->GetPID(),
@@ -1873,6 +1876,7 @@ void UserManager::HandleLoot(Client *client)
                 loot.SendMessage();
 
                 client->GetCharacterData()->AdjustMoney(m, false);
+                psserver->GetCharManager()->SendPlayerMoney(client);
 
                 psLootEvent evt(
                                chr->GetPID(),

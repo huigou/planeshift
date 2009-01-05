@@ -121,6 +121,8 @@ public:
 
     void Attack(Stance stance, Client *client,int clientnum);
 
+    void SendPlayerMoney(Client *client);
+
     /** @brief Handles a /loot command from a player to loot something.
       *
       * Sends the lootable item to the client and splits any loot money across
