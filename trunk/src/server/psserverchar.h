@@ -79,6 +79,8 @@ public:
     /// Sends the client an inventory
     virtual bool SendInventory( int clientNum, bool sendUpdatesOnly=true );
 
+    void SendPlayerMoney( Client *client);
+
     /// Update all views with items
     virtual bool UpdateItemViews( int clientNum );
 
@@ -124,7 +126,6 @@ protected:
     void HandleMerchantSell(psGUIMerchantMessage& msg, Client *client);
     void HandleMerchantView(psGUIMerchantMessage& msg, Client *client);
 
-    void SendPlayerMoney( Client *client);
 
     bool SendPlayerItems( Client *client, psItemCategory * category);
    
