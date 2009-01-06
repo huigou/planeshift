@@ -297,11 +297,11 @@ bool PaladinJr::SpeedCheck(Client* client, psDRMessage& currUpdate)
             client->GetName (),dist,timedelta,client->accumulatedLag);
 
         client->CountDetectedCheat();
-        if (client->GetDetectedCheatCount() % 25 == 0)
+        if (client->GetDetectedCheatCount() % 5 == 0)
         {
             psserver->SendSystemError(client->GetClientNum(),"You have been flagged as using speed hacks.  You will be disconnected if you continue.");
         }
-        if (client->GetDetectedCheatCount() > 100)
+        if (client->GetDetectedCheatCount() > 10)
         {
             printf("Disconnecting a cheating client.\n");
             psserver->RemovePlayer(client->GetClientNum(),"Paladin has kicked you from the server for cheating.");
