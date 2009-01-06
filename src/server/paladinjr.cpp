@@ -260,8 +260,8 @@ bool PaladinJr::SpeedCheck(Client* client, psDRMessage& currUpdate)
     else
     {
         printf("Went %1.2f in %u ticks when %1.2f was expected plus %1.2f allowed lag distance (%1.2f)\n", dist, timedelta, max_noncheat_distance, lag_distance, max_noncheat_distance+lag_distance);
-        printf("Z Vel is %1.2f\n", currUpdate.vel.z);
-        printf("MaxSpeed is %1.2f\n", maxSpeed);
+        //printf("Z Vel is %1.2f\n", currUpdate.vel.z);
+        //printf("MaxSpeed is %1.2f\n", maxSpeed);
 
         // Report cheater
         csVector3 vel;
