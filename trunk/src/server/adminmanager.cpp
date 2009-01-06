@@ -1748,6 +1748,7 @@ void AdminManager::GetInfo(MsgEntry* me,psAdminCmdMessage& msg, AdminCmdData& da
     time_t banTimeLeft;
     int daysLeft = 0, hoursLeft = 0, minsLeft = 0;
     bool advisorBanned = false;
+    int cheatCount = 0;
 
     if (target) // Online
     {
@@ -1774,6 +1775,7 @@ void AdminManager::GetInfo(MsgEntry* me,psAdminCmdMessage& msg, AdminCmdData& da
                 securityLevel.Format("%d",currSL);
 
             advisorBanned = targetclient->IsAdvisorBanned();
+            cheatCount = targetclient->GetDetectedCheatCount();
         }
         else // NPC
         {
@@ -1866,7 +1868,7 @@ void AdminManager::GetInfo(MsgEntry* me,psAdminCmdMessage& msg, AdminCmdData& da
 
         info.AppendFmt("total time connected is %1.1f hours", timeConnected );
 
-        info.AppendFmt(" has had %d cheats flagged.", client->GetDetectedCheatCount());
+        info.AppendFmt(" has had %d cheats flagged.", cheatCount);
 
         if(banned)
         {
