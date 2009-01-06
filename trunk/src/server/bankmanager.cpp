@@ -50,7 +50,7 @@ enum coin
 
 BankManager::BankManager()
 {
-    psserver->GetEventManager()->Subscribe(this,MSGTYPE_BANKING,REQUIRE_READY_CLIENT);
+    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<BankManager>(this,&BankManager::HandleBanking),MSGTYPE_BANKING,REQUIRE_READY_CLIENT);
 
     // Load money events.
     Result result(db->Select("select * from money_events"));
@@ -674,19 +674,13 @@ void BankManager::SendBankWindow(Client* client, bool guild, bool forceOpen)
 }
 
 
-void BankManager::HandleMessage(MsgEntry *me, Client *client)
+void BankManager::HandleBanking( MsgEntry *me, Client *client )
 {
     psGUIBankingMessage msg(me);
-    if (msg.valid)
-        HandleBanking(client, msg);
-    else
+    if (!msg.valid)
     {
         Debug2(LOG_NET,me->clientnum,"Received unparsable psGUIBankingMessage from client %u.\n", me->clientnum);
     }
-}
-
-void BankManager::HandleBanking(Client *client, psGUIBankingMessage &msg)
-{
     // Check we're still near the banker.
     gemObject *banker = NULL;
     banker = client->GetTargetObject();    

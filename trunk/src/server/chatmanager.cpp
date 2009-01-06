@@ -282,11 +282,6 @@ void ChatManager::HandleCacheMessage(MsgEntry *me, Client *client)
 	SendAudioFile(client,msg.hash);
 }
 
-void ChatManager::HandleMessage(MsgEntry *me, Client *client)
-{
-    // no longer used
-}
-
 /// TODO: This function is guaranteed not to work atm.-Keith
 void ChatManager::SendNotice(psChatMessage& msg)
 {

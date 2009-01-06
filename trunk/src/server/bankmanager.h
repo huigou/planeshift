@@ -38,7 +38,7 @@ public:
     BankManager();
     ~BankManager();
     inline void StartBanking(Client* client, bool guild) { SendBankWindow(client, guild, true); }
-    void HandleMessage(MsgEntry *me, Client *client);
+    void HandleMessage(MsgEntry *me, Client *client) { }
     void ProcessTax();
 
 protected:
@@ -69,7 +69,7 @@ private:
     void DepositFunds(Client* client, bool guild, int circles, int octas, int hexas, int trias);
     void ExchangeFunds(Client* client, bool guild, int coins, int coin);
     psMoney* GetTotalFunds(psCharacter* pschar, bool guild);
-    void HandleBanking(Client* client, psGUIBankingMessage& msg);
+    void HandleBanking(MsgEntry *me, Client *client);
     int CoinsForExchange(psCharacter* pschar, bool guild, int type, float fee);
     int CalculateAccountLevel(psCharacter* pschar, bool guild);
     inline float CalculateFee(psCharacter* pschar, bool guild);

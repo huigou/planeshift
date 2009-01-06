@@ -73,7 +73,7 @@ public:
     ChatManager();
     virtual ~ChatManager();
 
-    virtual void HandleMessage(MsgEntry *pMsg,Client *client);
+    virtual void HandleMessage(MsgEntry *pMsg,Client *client) { }
     void HandleChatMessage (MsgEntry *me, Client *client);
     void HandleCacheMessage(MsgEntry *me, Client *client);
 

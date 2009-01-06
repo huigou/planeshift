@@ -986,11 +986,6 @@ bool CombatManager::ValidCombatAngle(gemObject *attacker,gemObject *target,psIte
         return ( fabs(angle) < 3.14159F * .40);
 }
 
-void CombatManager::HandleMessage(MsgEntry *me,Client *client)
-{
-    // converted to functor
-}
-
 void CombatManager::HandleDeathEvent(MsgEntry *me,Client *client)
 {
     psDeathEvent death(me);

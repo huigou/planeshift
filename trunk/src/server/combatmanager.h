@@ -61,7 +61,7 @@ public:
 
     virtual ~CombatManager();
 
-    void HandleMessage(MsgEntry *me, Client *client);
+    void HandleMessage(MsgEntry *me, Client *client) { }
 
     /// This is how you start an attack sequence
     void AttackSomeone(gemActor *attacker, gemObject *target, Stance stance);

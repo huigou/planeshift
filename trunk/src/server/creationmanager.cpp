@@ -95,11 +95,6 @@ bool CharCreationManager::Initialize( )
     return true;
 }
 
-void CharCreationManager::HandleMessage(MsgEntry *pMsg,Client *client)
-{
-    // no longer used
-}
-
 void CharCreationManager::HandleCharDelete( MsgEntry* me, Client* client )
 {
     psCharDeleteMessage msg(me);
